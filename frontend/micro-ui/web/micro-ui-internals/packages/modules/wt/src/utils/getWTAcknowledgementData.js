@@ -54,7 +54,7 @@ const getWTAcknowledgementData = async (booking, tenantInfo, t) => {
         asSectionHeader: true,
         values: [
           { title: t("WT_TANKER_TYPE"), value: booking?.tankerType },
-          { title: t("WT_WATER_TYPE"), value: booking?.waterType },
+          { title: t("WT_WATER_TYPE"), value: t(booking?.waterType) },
           { title: t("WT_TANKER_QUANTITY"), value: booking?.tankerQuantity },
           { title: t("WT_WATER_QUANTITY"), value: booking?.waterQuantity + " Ltr" },
           { 

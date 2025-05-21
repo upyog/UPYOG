@@ -252,7 +252,7 @@ const NewGrievance = ({ t, config, onSelect, userType, formData }) => {
 
   return (
     <Fragment>
-      <FormStep config={config} onSelect={goNext} onSkip={onSkip}
+      <FormStep config={config} onSelect={goNext} t={t} onSkip={onSkip}
         isDisabled={!grievanceText || !grievanceType || !grievanceSubType ||
           (user.type === "EMPLOYEE" && (!name || !phoneNumber))}
       >
@@ -266,6 +266,7 @@ const NewGrievance = ({ t, config, onSelect, userType, formData }) => {
               type="text"
               isMandatory={false}
               name="name"
+              placeholder={"Enter Name"}
               value={name}
               style={{ width: "50%" }}
               onChange={(e) => setName(e.target.value)}
@@ -284,6 +285,7 @@ const NewGrievance = ({ t, config, onSelect, userType, formData }) => {
               type="tel"
               isMandatory={false}
               name="phoneNumber"
+              placeholder={"Enter Phone Number"}
               value={phoneNumber}
               style={{ width: "50%" }}
               onChange={handlePhoneNumberChange}
@@ -300,6 +302,7 @@ const NewGrievance = ({ t, config, onSelect, userType, formData }) => {
             isMandatory={false}
             name="grievance"
             value={grievanceText}
+            placeholder={t("Start typing to get suggestions")}
             style={{ width: user.type === "EMPLOYEE" ? "50%" : "86%" }}
             onChange={(e) => setGrievanceText(e.target.value)}
             onFocus={handleInputFocus}
@@ -334,6 +337,7 @@ const NewGrievance = ({ t, config, onSelect, userType, formData }) => {
           isMandatory={false}
           style={{ width: user.type === "EMPLOYEE" ? "50%" : "86%" }}
           name="grievanceType"
+          placeholder={"Grievance Type"}
           value={grievanceType}
           onChange={(e) => setGrievanceType(e.target.value)}
           disabled={isLoading}
@@ -347,6 +351,7 @@ const NewGrievance = ({ t, config, onSelect, userType, formData }) => {
           type="text"
           style={{ width: user.type === "EMPLOYEE" ? "50%" : "86%" }}
           isMandatory={false}
+          placeholder={"Grievance Sub Type"}
           name="grievanceSubType"
           value={grievanceSubType}
           onChange={(e) => setGrievanceSubType(e.target.value)}
@@ -362,6 +367,7 @@ const NewGrievance = ({ t, config, onSelect, userType, formData }) => {
           <TextInput
             t={t}
             value={location}
+            placeholder={"Click on the icon to fetch location"}
             onChange={handleLocationChange}
             style={{ paddingRight: "30px", width: user.type === "EMPLOYEE" ? "50%" : "86%"}}
           />
@@ -371,14 +377,22 @@ const NewGrievance = ({ t, config, onSelect, userType, formData }) => {
             <LocationIcon styles={{ width: "16px", border: "none" }} className="fill-path-primary-main" />
           </div>
         </div>
+        <div style={{ display: 'flex', justifyContent: 'center',  marginRight:"40%" }}>
+          <span>OR</span>
+        </div>        
+        <SubmitBar label={t("PGR_AI_ADD_ADDRESS_DETAILS")} onSubmit={handleAddAddressClick}/>
+        {showAddressPopup && (
+          <AddressPopup t={t} isOpen={showAddressPopup} onClose={() => setShowAddressPopup(false)} onSubmit={handleAddressSubmit} />
 
-        <LabelFieldPair>
+        )}
+        <LabelFieldPair style={{ marginTop: "16px" }}>
           <CardLabel>{`${t("PGR_AI_LANDMARK")}`} <span className="astericColor">*</span></CardLabel>
         </LabelFieldPair>
         <TextInput
           t={t}
           type="text"
           name="landmark"
+          placeholder={"Enter Landmark"}
           style={{ width: user.type === "EMPLOYEE" ? "50%" : "86%" }}
           value={addressDetails.landmark || ""}
           onChange={(e) => setAddressDetails({ ...addressDetails, landmark: e.target.value })}
@@ -397,11 +411,6 @@ const NewGrievance = ({ t, config, onSelect, userType, formData }) => {
 
         <PhotoUpload t={t} config={{ key: "documents" }} onSelect={handlePhotoUpload} formData={{ documents }}  setDocumentUploaded={ setVerificationDocuments} />
 
-        <SubmitBar label={t("PGR_AI_ADD_ADDRESS_DETAILS")} onSubmit={handleAddAddressClick} style={{ marginTop: "16px" }} />
-
-        {showAddressPopup && (
-          <AddressPopup t={t} isOpen={showAddressPopup} onClose={() => setShowAddressPopup(false)} onSubmit={handleAddressSubmit} />
-        )}
       </FormStep>
     </Fragment>
   );
