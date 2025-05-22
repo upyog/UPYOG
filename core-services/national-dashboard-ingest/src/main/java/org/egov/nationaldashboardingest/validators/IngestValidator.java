@@ -416,11 +416,22 @@ public class IngestValidator {
         int validCounts=0;
         
         Boolean isUsageCategoryInvalid = false;
+
+        /* Cmmenting out because we simplified this approach below
         if (ingestData.getModule() != null && ingestData.getModule().equals("COMMON") || ingestData.getModule().equals("PGR") || ingestData.getModule() != null && ingestData.getModule().equals("TL") || ingestData.getModule() != null && ingestData.getModule().equals("OBPS") || ingestData.getModule().equals("SV")||ingestData.getModule() != null && ingestData.getModule().equals("MCOLLECT") ) {
             keyToFetch = null;
             isUsageCategoryInvalid = true;
         }
-    
+        */
+
+        // Check if module is one of the specific modules that require usage category validation
+        Set<String> validModules = new HashSet<>(Arrays.asList("COMMON", "PGR", "TL", "OBPS", "SV", "MCOLLECT"));
+        String module = ingestData.getModule();
+        if (module != null && validModules.contains(module)) {
+            keyToFetch = null;
+            isUsageCategoryInvalid = true;
+        }
+            
         if (ingestData.getModule() != null && ingestData.getModule().equals("PT")) {
             keyToFetch = applicationProperties.getNationalDashboardUsageTypePT();
         }
