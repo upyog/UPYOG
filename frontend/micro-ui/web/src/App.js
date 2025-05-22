@@ -4,12 +4,12 @@ import {
   initPGRComponents,
   PGRReducers,
 } from "@nudmcdgnpm/digit-ui-module-pgr";
-import { initFSMComponents } from "@upyog/digit-ui-module-fsm";
+import { initFSMComponents } from "@nudmcdgnpm/upyog-ui-module-fsm";
 import {
   PTModule,
   PTLinks,
   PTComponents,
-} from "@upyog/digit-ui-module-pt";
+} from "@nudmcdgnpm/upyog-ui-module-pt";
 import { MCollectModule, MCollectLinks, initMCollectComponents } from "@upyog/digit-ui-module-mcollect";
 import { initDSSComponents } from "@upyog/digit-ui-module-dss";
 import {

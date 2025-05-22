@@ -11,9 +11,7 @@
     "micro-ui-internals/packages/modules/dss",
     "micro-ui-internals/packages/modules/engagement",
     "micro-ui-internals/packages/modules/vendor",
-    "micro-ui-internals/packages/modules/sv",
-    "micro-ui-internals/packages/modules/wt",
-    "micro-ui-internals/packages/modules/pgrai"
+    "micro-ui-internals/packages/modules/sv"
     
   ],
   "engines": {
@@ -27,7 +25,7 @@
     "@upyog/digit-ui-module-core": "1.8.2",
     "@upyog/digit-ui-module-engagement": "1.8.0",
     "@upyog/digit-ui-module-dss": "1.8.11",
-    "@upyog/digit-ui-module-fsm": "1.8.17",
+    "@nudmcdgnpm/upyog-ui-module-fsm": "1.0.0",
     "@nudmcdgnpm/digit-ui-module-hrms": "1.2.2",
     "@nudmcdgnpm/upyog-ui-module-asset": "1.2.10",
     "@upyog/digit-ui-module-mcollect": "1.8.8",
@@ -35,7 +33,7 @@
     "@upyog/digit-ui-module-obps": "1.8.16",
     "@upyog/digit-ui-module-noc": "1.8.0",
     "@nudmcdgnpm/digit-ui-module-pgr": "1.2.1",
-    "@upyog/digit-ui-module-pt": "1.8.17",
+    "@nudmcdgnpm/upyog-ui-module-pt": "1.0.0",
     "@upyog/digit-ui-module-receipts": "1.8.0",
     "@upyog/digit-ui-module-tl": "1.8.10",
     "@upyog/digit-ui-module-ws": "1.8.16",
@@ -45,7 +43,7 @@
     "@nudmcdgnpm/upyog-ui-module-ew":"1.2.9",
     "@nudmcdgnpm/upyog-ui-module-chb":"1.2.9",
     "@nudmcdgnpm/upyog-ui-module-ads":"1.2.12",
-    "@nudmcdgnpm/upyog-ui-module-wt":"1.0.0",
+    "@nudmcdgnpm/upyog-ui-module-wt":"1.0.1",
     "@nudmcdgnpm/upyog-ui-module-pgrai":"1.0.0",
     "@nudmcdgnpm/upyog-ui-module-vendor":"1.2.1",
     "babel-loader": "8.1.0",

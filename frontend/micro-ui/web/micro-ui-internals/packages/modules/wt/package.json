@@ -1,7 +1,7 @@
 {
     "name": "@nudmcdgnpm/upyog-ui-module-wt",
     "author": "Shivank Shukla",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "license": "MIT",
     "main": "dist/index.js",
     "module": "dist/index.modern.js",
