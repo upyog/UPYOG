@@ -2,6 +2,7 @@ package org.upyog.chb.service.impl;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -70,7 +71,7 @@ import org.upyog.chb.service.ReportService;
 import org.upyog.chb.service.UserService;
 import java.util.stream.Collectors;
 
-
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import digit.models.coremodels.PaymentDetail;
@@ -535,29 +536,30 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 				.hallsBookingApplication(communityHallApplication).requestInfo(requestInfo).build();
 
 		setRelatedAssetData(communityHallsBookingRequest);
-		
-Map<String, Object> AssetParentCategoryDetails = mdmsUtil.getCHBAssetParentCategoryDetails(requestInfo, communityHallApplication.getTenantId(),communityHallApplication.getPurpose().getPurpose());
-//		
-////		String code = (String) asset.get("code");
-////		String ulbName = (String) asset.get("UlbName");
-		Integer assetGstCost = (Integer) AssetParentCategoryDetails.get("assetGstCost");
-		Integer securityAmount = (Integer) AssetParentCategoryDetails.get("securityAmount");
-		Integer gstPercentage = (Integer) AssetParentCategoryDetails.get("gstPercentage");
-		Integer assetCost = (Integer) AssetParentCategoryDetails.get("assetCost");
+		JsonNode node = null;
+		try {
+		    String additionalDetailsStr = communityHallApplication.getAdditionaldetail().toString();
+		    ObjectMapper objectMapper = new ObjectMapper();
+		     node = objectMapper.readTree(additionalDetailsStr);
+		} catch (Exception e) {
+		    e.printStackTrace(); // log error if the string isn't valid JSON
+		}
+		Map<String, Object> AssetParentCategoryDetails = mdmsUtil.getCHBAssetParentCategoryDetails(requestInfo, communityHallApplication.getTenantId(),node.get("bookingFor").asText());
 
+		Number assetGstCost = (Number) AssetParentCategoryDetails.get("assetGstCost");
+		Number securityAmount = (Number) AssetParentCategoryDetails.get("securityAmount");
+		Number gstPercentage = (Number) AssetParentCategoryDetails.get("gstPercentage");
+		Number assetCost = (Number) AssetParentCategoryDetails.get("assetCost");
 
 		long days = calculateDaysBetween(communityHallApplication.getBookingSlotDetails().get(0).getBookingDate(),
 				communityHallApplication.getBookingSlotDetails().get(0).getBookingToDate());
 		
 		// Total Payable amount
 		BigDecimal totalPayableAmount = BigDecimal.valueOf(days)
-			    .multiply(new BigDecimal(assetGstCost)) // Converts assetCost string to BigDecimal
-			    .add(new BigDecimal(securityAmount)); // Converts securityAmount string to BigDecimal
-		
-
+			    .multiply(new BigDecimal(assetGstCost.doubleValue())) // Converts assetCost string to BigDecimal
+			    .add(new BigDecimal(securityAmount.doubleValue())); // Converts securityAmount string to BigDecimal
 
 		// Fee calculation formula
-
 		applicationDetail.setFeeCalculationFormula("From Date: (<b>"
 				+ communityHallApplication.getBookingSlotDetails().get(0).getBookingDate() + "</b>), To Date: " + "(<b>"
 				+ communityHallApplication.getBookingSlotDetails().get(0).getBookingToDate()
@@ -567,7 +569,7 @@ Map<String, Object> AssetParentCategoryDetails = mdmsUtil.getCHBAssetParentCateg
 				+ gstPercentage
 				+ "</b>) + Security(<b>"
 				+ securityAmount
-				+ ")</b> " + "= Total Payable Amount(<b>" + totalPayableAmount + "</b>)");
+				+ ")</b> " + "= Total Payable Amount(<b>" + totalPayableAmount.setScale(2, RoundingMode.CEILING) + "</b>)");
 
 		// search bill Details
 		BillSearchCriteria billSearchCriteria = BillSearchCriteria.builder()
