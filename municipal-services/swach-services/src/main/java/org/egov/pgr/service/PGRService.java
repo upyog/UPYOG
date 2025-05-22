@@ -8,13 +8,18 @@ import org.egov.pgr.repository.PGRRepository;
 import org.egov.pgr.util.MDMSUtils;
 import org.egov.pgr.validator.ServiceRequestValidator;
 import org.egov.pgr.web.models.ServiceWrapper;
+import org.egov.pgr.web.models.AuditDetails;
+import org.egov.pgr.web.models.ImageData;
+import org.egov.pgr.web.models.ImageRequest;
 import org.egov.pgr.web.models.RequestSearchCriteria;
 import org.egov.pgr.web.models.ServiceRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 
 import java.util.*;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @org.springframework.stereotype.Service
 public class PGRService {
 
@@ -61,12 +66,25 @@ public class PGRService {
      * @return
      */
     public ServiceRequest create(ServiceRequest request){
+    	log.info("Request "+ request.toString());
         Object mdmsData = mdmsUtils.mDMSCall(request);
         validator.validateCreate(request, mdmsData);
         enrichmentService.enrichCreateRequest(request);
         workflowService.updateWorkflowStatus(request);
         producer.push(config.getCreateTopic(),request);
         return request;
+    }
+    
+    
+    
+    
+    public ImageData imagecreate(ImageRequest request) {
+        ImageData data = request.getImgaeData();
+        enrichmentService.enrichCreateimageRequest(request);
+
+        validator.validateImageData(data);
+        producer.push(config.getImageTopic(), request);
+        return data;
     }
 
 

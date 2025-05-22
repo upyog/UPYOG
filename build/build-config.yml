@@ -458,6 +458,14 @@ config:
         dockerfile: "build/maven/Dockerfile"
       - work-dir: "municipal-services/pgr-services/src/main/resources/db"
         image-name: "pgr-services-db"
+ 
+  - name: "builds/upyog/municipal-services/swach-services"
+    build:
+      - work-dir: "municipal-services/swach-services"
+        image-name: "swach-services"
+        dockerfile: "build/maven/Dockerfile"
+      - work-dir: "municipal-services/swach-services/src/main/resources/db"
+        image-name: "swach-services-db"
 
   - name: "builds/upyog/municipal-services/tl-calculator"
     build:

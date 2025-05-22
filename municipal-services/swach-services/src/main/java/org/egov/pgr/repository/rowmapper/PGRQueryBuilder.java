@@ -14,6 +14,7 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Repository
 public class PGRQueryBuilder {
@@ -89,22 +90,18 @@ public class PGRQueryBuilder {
             addToPreparedStatement(preparedStmtList, applicationStatuses);
         }
 
-//        if (criteria.getServiceRequestId() != null) {
-//            addClauseIfRequired(preparedStmtList, builder);
-//            builder.append(" ser.serviceRequestId=? ");
-//            preparedStmtList.add(criteria.getServiceRequestId());
-//        }
-        
-        String serviceRequestId = criteria.getServiceRequestId();
-        if (serviceRequestId != null && !serviceRequestId.trim().isEmpty()) {
-            // Split the serviceRequestId by comma (or any other delimiter you expect)
-            List<String> serviceRequestIdsList = Arrays.asList(serviceRequestId.split(","));
+        if (criteria.getServiceRequestId() != null && !criteria.getServiceRequestId().isEmpty()) {
+            List<String> requestIds = Arrays.stream(criteria.getServiceRequestId().split(","))
+                                            .map(String::trim)
+                                            .filter(s -> !s.isEmpty())
+                                            .collect(Collectors.toList());
 
-            if (!CollectionUtils.isEmpty(serviceRequestIdsList)) {
-            	
+            if (!requestIds.isEmpty()) {
                 addClauseIfRequired(preparedStmtList, builder);
-                builder.append(" ser.serviceRequestId IN (").append(createQuery(serviceRequestIdsList)).append(")");
-                addToPreparedStatement(preparedStmtList, serviceRequestIdsList);
+                builder.append(" ser.serviceRequestId IN (");
+                builder.append(requestIds.stream().map(id -> "?").collect(Collectors.joining(", ")));
+                builder.append(") ");
+                preparedStmtList.addAll(requestIds);
             }
         }
 
