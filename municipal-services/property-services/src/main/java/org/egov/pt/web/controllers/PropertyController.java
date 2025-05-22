@@ -339,4 +339,15 @@ public class PropertyController {
 		return new ResponseEntity<>(response, HttpStatus.OK);
 
 	}
+	
+	@PostMapping("/_updateExistingOwnerDetails")
+	public ResponseEntity<?> updateExistingOwnerDetails(@RequestBody RequestInfoWrapper requestInfoWrapper) {
+
+//		Object owners = propertyService.updateExistingOwnerDetails(requestInfoWrapper);
+		propertyService.updateExistingOwnerDetails(requestInfoWrapper);
+
+		return new ResponseEntity("Owner details updated successfully", HttpStatus.OK);
+//		return new ResponseEntity(owners, HttpStatus.OK);
+	}
+	
 }

@@ -75,7 +75,7 @@ serviceMaps:
       - jsonPath: $.Property.businessService
 
 
-    - query: INSERT INTO eg_pt_owner(ownerinfouuid, tenantid, propertyid, userid, status, isprimaryowner, ownertype, ownershippercentage, institutionid, relationship, createdby, createdtime, lastmodifiedby, lastmodifiedtime, additionaldetails) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+    - query: INSERT INTO eg_pt_owner(ownerinfouuid, tenantid, propertyid, userid, status, isprimaryowner, ownertype, ownershippercentage, institutionid, relationship, createdby, createdtime, lastmodifiedby, lastmodifiedtime, additionaldetails, name, mobile_number) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
       basePath: Property.owners.*
       jsonMaps:
 
@@ -110,6 +110,10 @@ serviceMaps:
       - jsonPath: $.Property.owners.*.additionalDetails
         type: JSON
         dbType: JSONB
+      
+      - jsonPath: $.Property.owners.*.name
+      
+      - jsonPath: $.Property.owners.*.mobileNumber
 
 
     - query: INSERT INTO eg_pt_document (id, tenantid, entityid, documenttype, filestoreid, documentuid, status, createdby, lastmodifiedby, createdtime, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
@@ -354,7 +358,7 @@ serviceMaps:
       - jsonPath: $.Property.tenantId
 
 
-    - query: UPDATE eg_pt_owner SET lastmodifiedby=?, lastmodifiedtime=?, additionaldetails=? WHERE propertyid=?;
+    - query: UPDATE eg_pt_owner SET lastmodifiedby=?, lastmodifiedtime=?, additionaldetails=?, name=?, mobile_number=? WHERE propertyid=?;
       basePath: Property.owners.*
       jsonMaps:
 
@@ -365,6 +369,10 @@ serviceMaps:
       - jsonPath: $.Property.owners.*.additionalDetails
         type: JSON
         dbType: JSONB
+
+      - jsonPath: $.Property.owners.*.name
+      
+      - jsonPath: $.Property.owners.*.mobileNumber
 
       - jsonPath: $.Property.id
 

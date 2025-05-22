@@ -27,13 +27,15 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-
+@Builder
 public class OwnerInfo extends User {
 
 
 	@SafeHtml
 	@JsonProperty("ownerInfoUuid")
 	private String ownerInfoUuid;
+	
+	private String propertyId;
 
 	@SafeHtml
 	@JsonProperty("gender")
@@ -48,7 +50,8 @@ public class OwnerInfo extends User {
 	private String correspondenceAddress;
 
 	@JsonProperty("isPrimaryOwner")
-	private Boolean isPrimaryOwner;
+	@Builder.Default
+	private Boolean isPrimaryOwner = false;
 
 	@JsonProperty("ownerShipPercentage")
 	private Double ownerShipPercentage;
