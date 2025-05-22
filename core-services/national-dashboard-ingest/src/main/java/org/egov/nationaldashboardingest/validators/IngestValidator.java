@@ -418,7 +418,7 @@ public class IngestValidator {
         Boolean isUsageCategoryInvalid = false;
 
         /* Commenting out because we simplified this approach below
-        if (ingestData.getModule() != null && ingestData.getModule().equals("COMMON") || ingestData.getModule().equals("PGR") || ingestData.getModule() != null && ingestData.getModule().equals("TL") || ingestData.getModule() != null && ingestData.getModule().equals("OBPS") || ingestData.getModule().equals("SV")||ingestData.getModule() != null && ingestData.getModule().equals("MCOLLECT") ) {
+        if (ingestData.getModule() != null && ingestData.getModule().equals("COMMON") || ingestData.getModule().equals("PGR") || ingestData.getModule() != null && ingestData.getModule().equals("TL") || ingestData.getModule() != null && ingestData.getModule().equals("OBPS") ||ingestData.getModule() != null && ingestData.getModule().equals("MCOLLECT") ) {
             keyToFetch = null;
             isUsageCategoryInvalid = true;
         }
@@ -427,6 +427,8 @@ public class IngestValidator {
         // Check if module is one of the specific modules that require usage category validation
         Set<String> validModules = new HashSet<>(Arrays.asList("COMMON", "PGR", "TL", "OBPS", "MCOLLECT", "SV"));
         String module = ingestData.getModule();
+        log.info("Processing usage type for module: {}", module);
+        
         if (module != null && validModules.contains(module)) {
             keyToFetch = null;
             isUsageCategoryInvalid = true;
@@ -491,7 +493,7 @@ public class IngestValidator {
 	            isPaymentChannelInvalid = true;
 	        }
 	    
-	        if (ingestData.getModule() != null && (ingestData.getModule().equals("PT")|| ingestData.getModule().equals("FIRENOC") || ingestData.getModule().equals("TL") || ingestData.getModule().equals("FSM") || ingestData.getModule().equals("WS") || ingestData.getModule().equals("OBPS")||ingestData.getModule().equals("SV")) ) {
+	        if (ingestData.getModule() != null && (ingestData.getModule().equals("PT")|| ingestData.getModule().equals("FIRENOC") || ingestData.getModule().equals("TL") || ingestData.getModule().equals("FSM") || ingestData.getModule().equals("WS") || ingestData.getModule().equals("OBPS")) ) {
 	            keyToFetch = applicationProperties.getNationalDashboardpaymentChannel();
 	        }
 	        else if (ingestData.getModule() != null && ingestData.getModule().equals("MCOLLECT")) {
@@ -506,6 +508,8 @@ public class IngestValidator {
 
             String module = ingestData.getModule();
             Boolean isPaymentChannelInvalid = false;
+
+            log.info("Processing payment channel for module: {}", module);
 
             if (module != null) {
                 if (moduleWithoutPayment.contains(module)) {
