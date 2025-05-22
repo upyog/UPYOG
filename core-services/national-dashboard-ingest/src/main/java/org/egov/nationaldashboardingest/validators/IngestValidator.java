@@ -417,7 +417,7 @@ public class IngestValidator {
         
         Boolean isUsageCategoryInvalid = false;
 
-        /* Cmmenting out because we simplified this approach below
+        /* Commenting out because we simplified this approach below
         if (ingestData.getModule() != null && ingestData.getModule().equals("COMMON") || ingestData.getModule().equals("PGR") || ingestData.getModule() != null && ingestData.getModule().equals("TL") || ingestData.getModule() != null && ingestData.getModule().equals("OBPS") || ingestData.getModule().equals("SV")||ingestData.getModule() != null && ingestData.getModule().equals("MCOLLECT") ) {
             keyToFetch = null;
             isUsageCategoryInvalid = true;
@@ -425,7 +425,7 @@ public class IngestValidator {
         */
 
         // Check if module is one of the specific modules that require usage category validation
-        Set<String> validModules = new HashSet<>(Arrays.asList("COMMON", "PGR", "TL", "OBPS", "SV", "MCOLLECT"));
+        Set<String> validModules = new HashSet<>(Arrays.asList("COMMON", "PGR", "TL", "OBPS", "MCOLLECT", "SV"));
         String module = ingestData.getModule();
         if (module != null && validModules.contains(module)) {
             keyToFetch = null;
@@ -482,6 +482,9 @@ public class IngestValidator {
 	        Boolean isValid=false;
 	        int validCounts=0;
 	        
+            /* 
+            Commenting out because we simplified this approach below 
+
 	        Boolean isPaymentChannelInvalid = false;
 	        if (ingestData.getModule() != null && (ingestData.getModule().equals("COMMON")||ingestData.getModule().equals("PGR")) ) {
 	            keyToFetch = null;
@@ -494,6 +497,29 @@ public class IngestValidator {
 	        else if (ingestData.getModule() != null && ingestData.getModule().equals("MCOLLECT")) {
 	            keyToFetch = applicationProperties.getNationalDashboardpaymentChannelMISC();
 	        }
+            */
+
+
+            // Define module groups for payment channel handling
+            Set<String> moduleWithoutPayment = new HashSet<>(Arrays.asList("COMMON", "PGR"));
+            Set<String> moduleWithPayment = new HashSet<>(Arrays.asList("PT", "FIRENOC", "TL", "FSM", "WS", "OBPS", "SV"));
+
+            String module = ingestData.getModule();
+            Boolean isPaymentChannelInvalid = false;
+
+            if (module != null) {
+                if (moduleWithoutPayment.contains(module)) {
+                    // COMMON and PGR modules have invalid payment channels
+                    keyToFetch = null;
+                    isPaymentChannelInvalid = true;
+                } else if (moduleWithPayment.contains(module)) {
+                    // Standard modules use national dashboard payment channel
+                    keyToFetch = applicationProperties.getNationalDashboardpaymentChannel();
+                } else if (module.equals("MCOLLECT")) {
+                    // MCOLLECT uses miscellaneous payment channel
+                    keyToFetch = applicationProperties.getNationalDashboardpaymentChannelMISC();
+                }
+            }
 
 	        if (keyToFetch != null) {
 	            for (String key: keyToFetch) {
