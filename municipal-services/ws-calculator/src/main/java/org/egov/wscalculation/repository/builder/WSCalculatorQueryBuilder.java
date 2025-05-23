@@ -908,6 +908,22 @@ StringBuilder query = new StringBuilder(connectionNoListQueryUpdate);
 			query.append(" egbs_bill_v1.id = egbs_billdetail_v1.billid");
 			
 	        return query.toString();
-}	
-
+}
+	public String searchBillGenerationSchedulerQuery(BillGenerationSearchCriteria criteria,
+			List<Object> preparedStatement) {
+		StringBuilder query = new StringBuilder(billGenerationSchedulerSearchQuery);
+		query.append("egws inner join eg_bndry_mohalla egbm on egws.locality = egbm.localitycode ");
+		if(!StringUtils.isEmpty(criteria.getTenantId())) {
+			addClauseIfRequired(preparedStatement, query);
+			query.append(" egws.tenantid= ? ");
+			preparedStatement.add(criteria.getTenantId());
+		}
+		if (criteria.getBatch() != null) {
+			addClauseIfRequired(preparedStatement, query);
+			query.append(" egbm.blockcode = ? ");
+			preparedStatement.add(criteria.getBatch());
+		}
+		query.append(" ORDER BY egws.createdtime ");
+		return query.toString();
+	}
 }

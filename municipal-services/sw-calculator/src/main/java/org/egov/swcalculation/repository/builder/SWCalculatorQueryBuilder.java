@@ -262,34 +262,18 @@ public class SWCalculatorQueryBuilder {
 	public String getBillGenerationSchedulerQuery(BillGenerationSearchCriteria criteria,
 			List<Object> preparedStatement) {
 		StringBuilder query = new StringBuilder(billGenerationSchedulerSearchQuery);
-		if (!StringUtils.isEmpty(criteria.getTenantId())) {
+		query.append("egsw inner join eg_bndry_mohalla egbm on egsw.locality = egbm.localitycode ");
+		if(!StringUtils.isEmpty(criteria.getTenantId())) {
 			addClauseIfRequired(preparedStatement, query);
-			query.append(" tenantid= ? ");
+			query.append(" egsw.tenantid= ? ");
 			preparedStatement.add(criteria.getTenantId());
 		}
-		if (criteria.getLocality() != null) {
+		if (criteria.getBatch() != null) {
 			addClauseIfRequired(preparedStatement, query);
-			query.append(" locality = ? ");
-			preparedStatement.add(criteria.getLocality());
+			query.append(" egbm.blockcode = ? ");
+			preparedStatement.add(criteria.getBatch());
 		}
-		if (criteria.getStatus() != null) {
-			addClauseIfRequired(preparedStatement, query);
-			query.append(" status = ? ");
-			preparedStatement.add(criteria.getStatus());
-		}
-		if (criteria.getBillingcycleStartdate() != null) {
-			addClauseIfRequired(preparedStatement, query);
-			query.append(" billingcyclestartdate >= ? ");
-			preparedStatement.add(criteria.getBillingcycleStartdate());
-		}
-		if (criteria.getBillingcycleEnddate() != null) {
-			addClauseIfRequired(preparedStatement, query);
-			query.append(" billingcycleenddate <= ? ");
-			preparedStatement.add(criteria.getBillingcycleEnddate());
-		}
-		
-		query.append(" ORDER BY createdtime ");
-
+		query.append(" ORDER BY egsw.createdtime ");
 		return query.toString();
 	}
 
