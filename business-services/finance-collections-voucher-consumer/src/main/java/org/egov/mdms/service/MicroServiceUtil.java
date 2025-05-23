@@ -40,6 +40,7 @@
 package org.egov.mdms.service;
 
 import java.util.List;
+import java.util.Map;
 
 import org.egov.receipt.consumer.model.BusinessService;
 import org.egov.receipt.consumer.model.FinanceMdmsModel;
@@ -53,16 +54,27 @@ import org.egov.receipt.custom.exception.VoucherCustomException;
 import org.egov.tracer.model.CustomException;
 
 public interface MicroServiceUtil {
-	public List<TaxHeadMaster> getTaxHeadMasters(String tenantId, String code, RequestInfo requestInfo, FinanceMdmsModel finSerMdms) throws CustomException, VoucherCustomException;
-	public List<BusinessService> getBusinessService(String tenantId, String code, RequestInfo requestInfo, FinanceMdmsModel finSerMdms)  throws CustomException, VoucherCustomException;
+	public List<TaxHeadMaster> getTaxHeadMasters(String tenantId, String code, RequestInfo requestInfo,
+			FinanceMdmsModel finSerMdms) throws CustomException, VoucherCustomException;
+
+	public List<BusinessService> getBusinessService(String tenantId, String code, RequestInfo requestInfo,
+			FinanceMdmsModel finSerMdms) throws CustomException, VoucherCustomException;
+
 	String getBusinessServiceName(String tenantId, String code, RequestInfo requestInfo, FinanceMdmsModel finSerMdms)
 			throws VoucherCustomException;
+
 	String getGlcodeByInstrumentType(String tenantId, String businessCode, RequestInfo requestInfo,
 			FinanceMdmsModel finSerMdms, String instrumentType) throws VoucherCustomException;
+	// Fetch dynamic GL codes from MDMS using tax head codes
+	public Map<String, String> getGlcodeByTaxHead(String tenantId, String businessServiceCode, RequestInfo requestInfo,
+			FinanceMdmsModel finSerMdms, String taxHeadCode) throws CustomException, VoucherCustomException;
+
 	FinancialStatus getFinancialStatusByCode(String tenantId, RequestInfo requestInfo, FinanceMdmsModel finSerMdms,
 			String statusCode) throws VoucherCustomException;
-	List<Tenant> getFinanceTenantList(String tenantId, String businessCode, RequestInfo requestInfo, FinanceMdmsModel finSerMdms)
-			throws VoucherCustomException;
+
+	List<Tenant> getFinanceTenantList(String tenantId, String businessCode, RequestInfo requestInfo,
+			FinanceMdmsModel finSerMdms) throws VoucherCustomException;
+
 	List<InstrumentContract> getInstruments(InstrumentSearchContract instrumentSearchContract, RequestInfo requestInfo,
 			String tenantId) throws VoucherCustomException;
 }

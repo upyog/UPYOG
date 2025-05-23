@@ -171,7 +171,8 @@ public class PropertiesManager {
     	try {
     		tenantId = tenantId.split(Pattern.quote("."))[1];
     		if(finCoeErpEnvName != null && finCoeErpEnvName.equalsIgnoreCase("local")){
-    			return "http://localhost:8080/";
+    			// return "http://tenant." + tenantId + ".localhost:8080/";
+    			 return "http://localhost:8080/";
     		}
     		if(finCoeErpEnvName != null && !finCoeErpEnvName.isEmpty()){
     			return httpProtocol+"://"+tenantId+"-"+finCoeErpEnvName+"."+finCoeErpDomainName+"/";
