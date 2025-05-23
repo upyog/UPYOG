@@ -218,7 +218,7 @@ public class PropertyRowMapper implements ResultSetExtractor<List<Property>> {
 
 		if (!CollectionUtils.isEmpty(owners))
 			for (OwnerInfo owner : owners) {
-				if (owner.getUuid().equals(uuid))
+				if (null != owner.getUuid() && owner.getUuid().equals(uuid))
 					return;
 			}
 
