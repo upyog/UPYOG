@@ -1,6 +1,6 @@
 {
-  "name": "@upyog/digit-ui-module-commonpt",
-  "version": "1.8.1",
+  "name": "@nudmcdgnpm/upyog-ui-module-commonpt",
+  "version": "1.0.0",
   "license": "MIT",
   "description": "Digit PT Light weight Module",
   "main": "dist/index.js",
