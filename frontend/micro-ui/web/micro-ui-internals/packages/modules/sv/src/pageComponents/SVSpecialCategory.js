@@ -27,8 +27,8 @@ const SVSpecialCategory = ({ t, config, onSelect, userType, formData, editdata, 
     (formData?.specialCategoryData?.beneficiaryList) || (previousData?.benificiaryOfSocialSchemes) || (editdata?.benificiaryOfSocialSchemes) ||
     [
       {
-        schemeName: (formData?.specialCategoryData?.schemeName || convertToObject(previousData?.benificiaryOfSocialSchemes || editdata?.benificiaryOfSocialSchemes) || ""),
-        enrollmentId: (formData?.specialCategoryData?.enrollmentId || previousData?.enrollmentId || editdata?.enrollmentId || "")
+        schemeName: "",
+        enrollmentId: ""
       }
     ]);
 

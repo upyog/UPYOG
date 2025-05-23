@@ -59,7 +59,7 @@ const RenewPopup = ({ t, closeModal, onSubmit, application }) => {
     return (
         <React.Fragment>
         <Modal
-            headerBarMain={<Heading label={"SV_WANT_TO_EDIT"}/>}
+            headerBarMain={<Heading label={t("SV_WANT_TO_EDIT")}/>}
             headerBarEnd={<CloseBtn onClick={closeModal} />}
             actionCancelLabel={t("CS_COMMON_BACK")}
             actionCancelOnSubmit={closeModal}
