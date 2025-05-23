@@ -183,10 +183,9 @@ const SvApplicationDetails = () => {
             <Row className="border-none" label={t("SV_VENDING_LOCALITY")} text={streetVendingDetails?.localityValue || t("CS_NA")} />
             <Row className="border-none" label={t("SV_VENDING_TYPE")} text={streetVendingDetails?.vendingActivity || t("CS_NA")} />
             {streetVendingDetails?.vendingActivity === "STATIONARY" && (
-              <Row className="border-none" label={t("SV_AREA_REQUIRED")} text={streetVendingDetails?.vendingArea || t("CS_NA")} />)}
+            <Row className="border-none" label={t("SV_AREA_REQUIRED")} text={streetVendingDetails?.vendingArea || t("CS_NA")} />)}
             <Row className="border-none" label={t("SV_LOCAL_AUTHORITY_NAME")} text={streetVendingDetails?.localAuthorityName || t("CS_NA")} />
-            {/* <Row className="border-none" label={t("SV_BENEFICIARY_SCHEMES")} text={streetVendingDetails?.benificiaryOfSocialSchemes || t("CS_NA")} /> */}
-            <Row className="border-none" label={t("SV_CATEGORY")} text={streetVendingDetails?.disabilityStatus || t("CS_NA")} />
+            <Row className="border-none" label={t("SV_CATEGORY")} text={t("streetVendingDetails?.disabilityStatus") || t("CS_NA")} />
           </StatusTable>
 
           <CardSubHeader style={{ fontSize: "24px" }}>{t("SV_ADDITIONAL_DETAILS")}</CardSubHeader>
