@@ -193,7 +193,7 @@ public class PropertyRepository {
 
 		UserSearchRequest userSearchRequest = userService.getBaseUserSearchRequest(criteria.getTenantId(), requestInfo);
 		userSearchRequest.setUuid(ownerIds);
-		log.info(userSearchRequest.toString());
+
 		UserDetailResponse userDetailResponse = userService.getUser(userSearchRequest);
 		util.enrichOwner(userDetailResponse, properties, isOpenSearch);
 		return properties;
