@@ -63,7 +63,8 @@ public class NotificationService {
             ServiceWrapper serviceWrapper = ServiceWrapper.builder().service(request.getService()).workflow(request.getWorkflow()).build();
             String applicationStatus = request.getService().getApplicationStatus();
             String action = request.getWorkflow().getAction();
-
+log.info("Action "+action);
+log.info ("Application Status "+applicationStatus);
             if (!(NOTIFICATION_ENABLE_FOR_STATUS.contains(action+"_"+applicationStatus))) {
                 log.info("Notification Disabled For State :" + applicationStatus);
                 return;

@@ -1,11 +1,14 @@
 package org.egov.pgr.service;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.User;
 import org.egov.pgr.config.PGRConfiguration;
 import org.egov.pgr.repository.ServiceRequestRepository;
+import org.egov.pgr.util.HRMSUtil;
+import org.egov.pgr.util.MDMSUtils;
 import org.egov.pgr.web.models.*;
 import org.egov.pgr.web.models.workflow.*;
 import org.egov.tracer.model.CustomException;
@@ -14,9 +17,14 @@ import org.springframework.util.CollectionUtils;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 import static org.egov.pgr.util.PGRConstants.*;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @org.springframework.stereotype.Service
 public class WorkflowService {
 
@@ -26,7 +34,11 @@ public class WorkflowService {
 
     private ObjectMapper mapper;
 
-
+    @Autowired
+    private HRMSUtil hrmsUtil;
+    @Autowired
+    private MDMSUtils mdmsUtils;
+    
     @Autowired
     public WorkflowService(PGRConfiguration pgrConfiguration, ServiceRequestRepository repository, ObjectMapper mapper) {
         this.pgrConfiguration = pgrConfiguration;
@@ -64,9 +76,26 @@ public class WorkflowService {
      *
      * */
     public String updateWorkflowStatus(ServiceRequest serviceRequest) {
+
+
         ProcessInstance processInstance = getProcessInstanceForPGR(serviceRequest);
-        ProcessInstanceRequest workflowRequest = new ProcessInstanceRequest(serviceRequest.getRequestInfo(), Collections.singletonList(processInstance));
+        if (processInstance == null) {
+            throw new IllegalStateException("Failed to generate ProcessInstance for the given ServiceRequest");
+        }
+
+        ProcessInstanceRequest workflowRequest = new ProcessInstanceRequest(
+            serviceRequest.getRequestInfo(),
+            Collections.singletonList(processInstance)
+        );
+
         State state = callWorkFlow(workflowRequest);
+        if (state == null) {
+            throw new IllegalStateException("Workflow service returned null State");
+        }
+        if (state.getApplicationStatus() == null) {
+            throw new IllegalStateException("ApplicationStatus in workflow State is null");
+        }
+
         serviceRequest.getService().setApplicationStatus(state.getApplicationStatus());
         return state.getApplicationStatus();
     }
@@ -186,6 +215,22 @@ public class WorkflowService {
         processInstance.setBusinessService(getBusinessService(request).getBusinessService());
         processInstance.setDocuments(request.getWorkflow().getVerificationDocuments());
         processInstance.setComment(workflow.getComments());
+        String localityCode = request.getService().getAddress().getLocality().getCode();
+
+      //  String wardId = extractWardId(localityName);
+        
+        Object mdmsData = mdmsUtils.wardmDMSCall(request);
+        String wardId = extractWardNameFromAdminHierarchy(mdmsData, localityCode);
+
+        log.info("Ward Id "+wardId);
+        log.info("locality "+ localityCode);
+        List<String> employeeIds = null;
+        if (wardId != null) {
+        	
+            employeeIds = hrmsUtil.getward(wardId, service.getTenantId(), request.getRequestInfo());
+       
+            log.info("employeeIds "+ employeeIds);
+        }
 
         if(!CollectionUtils.isEmpty(workflow.getAssignes())){
             List<User> users = new ArrayList<>();
@@ -197,11 +242,72 @@ public class WorkflowService {
             });
 
             processInstance.setAssignes(users);
+            
         }
+        else if (!CollectionUtils.isEmpty(employeeIds) && APPLY.equals(workflow.getAction())) {
+            // Prepare assignee list
+            List<User> users = new ArrayList<>();
+            
+            // Take the first employee ID and assign
+            String employeeId = employeeIds.get(0); 
+            User user = new User();
+            user.setUuid(employeeId);
+            users.add(user);
+            
+            // Set action and assignees to processInstance
+            processInstance.setAction(PGR_ACTION);  
+            processInstance.setAssignes(users);
+        }
+
 
         return processInstance;
     }
 
+    
+    
+    
+    public static String extractWardNameFromAdminHierarchy(Object mdmsData, String localityCode) {
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            JsonNode root = mapper.convertValue(mdmsData, JsonNode.class);
+
+            JsonNode tenantBoundaries = root.path("MdmsRes")
+                                            .path("egov-location")
+                                            .path("TenantBoundary");
+
+            for (JsonNode tenantBoundary : tenantBoundaries) {
+                JsonNode hierarchyType = tenantBoundary.path("hierarchyType");
+                if ("ADMIN".equals(hierarchyType.path("code").asText())) {
+                    JsonNode boundary = tenantBoundary.path("boundary");
+                    JsonNode zones = boundary.path("children");
+
+                    for (JsonNode zone : zones) {
+                        JsonNode wards = zone.path("children");
+                        for (JsonNode ward : wards) {
+                            JsonNode localities = ward.path("children");
+                            for (JsonNode locality : localities) {
+                                if (localityCode.equals(locality.path("code").asText())) {
+                                    return ward.path("name").asText(); 
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace(); 
+        }
+
+        return null; 
+    }
+
+
+    
+    
+    
+    
+    
     /**
      *
      * @param processInstances
@@ -238,12 +344,34 @@ public class WorkflowService {
      * and return wf-response to sets the resultant status
      */
     private State callWorkFlow(ProcessInstanceRequest workflowReq) {
+        try {
+            // Log the request
+            String reqJson = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(workflowReq);
+//            log.info("Workflow Request:\n{}", reqJson);
 
-        ProcessInstanceResponse response = null;
-        StringBuilder url = new StringBuilder(pgrConfiguration.getWfHost().concat(pgrConfiguration.getWfTransitionPath()));
-        Object optional = repository.fetchResult(url, workflowReq);
-        response = mapper.convertValue(optional, ProcessInstanceResponse.class);
-        return response.getProcessInstances().get(0).getState();
+            // Prepare URL
+            StringBuilder url = new StringBuilder(pgrConfiguration.getWfHost().concat(pgrConfiguration.getWfTransitionPath()));
+
+            // Make the call
+            Object optional = repository.fetchResult(url, workflowReq);
+
+            // Log the raw response object
+            String resJson = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(optional);
+//            log.info("Workflow Raw Response:\n{}", resJson);
+
+            // Convert to typed response
+            ProcessInstanceResponse response = mapper.convertValue(optional, ProcessInstanceResponse.class);
+
+            // Log parsed response (optional)
+            String parsedResJson = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(response);
+//            log.info("Workflow Parsed Response:\n{}", parsedResJson);
+
+            return response.getProcessInstances().get(0).getState();
+
+        } catch (Exception e) {
+            log.error("Error during workflow call: {}", e.getMessage(), e);
+            return null;
+        }
     }
 
 
