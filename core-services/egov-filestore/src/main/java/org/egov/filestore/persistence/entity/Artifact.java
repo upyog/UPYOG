@@ -92,10 +92,13 @@ public class Artifact extends AbstractPersistable<Long> {
 
     private Long createdTime;
 
-    private Long lastModifiedTime; 
+    private Long lastModifiedTime;
+    
+    @Column(name = "alfresco_id")
+    private String alfrescoId;
 
     public FileLocation getFileLocation() {
-        return new FileLocation(fileStoreId, module, tag,tenantId,fileName,fileSource);
+        return new FileLocation(fileStoreId, module, tag,tenantId,fileName,fileSource,alfrescoId);
     }
 }
 
