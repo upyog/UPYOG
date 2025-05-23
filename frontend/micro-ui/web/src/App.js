@@ -27,14 +27,14 @@ import {
   TLModule,
   TLLinks,
   initTLComponents,
-} from "@upyog/digit-ui-module-tl";
+} from "@nudmcdgnpm/upyog-ui-module-tl";
 import { initReceiptsComponents, ReceiptsModule } from "@upyog/digit-ui-module-receipts";
 import { initOBPSComponents } from "@upyog/digit-ui-module-obps";
 import { initNOCComponents } from "@upyog/digit-ui-module-noc";
 import { initEngagementComponents } from "@upyog/digit-ui-module-engagement";
 import { initWSComponents } from "@upyog/digit-ui-module-ws";
 // import { initCustomisationComponents } from "./Customisations";
-import { initCommonPTComponents } from "@upyog/digit-ui-module-commonpt";
+import { initCommonPTComponents } from "@nudmcdgnpm/upyog-ui-module-commonpt";
 import { initBillsComponents } from "@upyog/digit-ui-module-bills";
 import {
   PTRModule,
