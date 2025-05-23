@@ -65,10 +65,10 @@ export const fetchGrievanceCategories = async (prompt, t) => {
 
     const data = await response.json();
     if (data && data.length > 0) {
-      // Transform the subtypes to camelCase format
+      // Use the code field
       return data.map(item => ({
         ...item,
-        subtype: item.subtype.replace(/\s+(\w)/g, (_, letter) => letter.toUpperCase())
+        subtype: item.code 
       }));
     }
     return [];
@@ -80,7 +80,7 @@ export const fetchGrievanceCategories = async (prompt, t) => {
 
   export const APPLICATION_PATH = "/digit-ui";
 
-export const DataConvert = (data) => {
+export const DataConvert = (data,user) => {
    
  const formdata = {
   service: {
@@ -110,7 +110,7 @@ export const DataConvert = (data) => {
       }
     };
   
-    if (data.userType === "EMPLOYEE") {
+    if (user.type === "EMPLOYEE") {
       formdata.service.citizen = {
           type: "CITIZEN",
           name: data.newGrievance?.name || data.newGrievance?.citizenName,
