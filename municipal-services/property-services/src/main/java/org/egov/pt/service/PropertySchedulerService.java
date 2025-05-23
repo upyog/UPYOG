@@ -661,7 +661,7 @@ public class PropertySchedulerService {
 
 			// fetch/create bill
 			GenerateBillCriteria billCriteria = GenerateBillCriteria.builder().tenantId(property.getTenantId())
-					.businessService(property.getBusinessService()).consumerCode(property.getPropertyId()).build();
+					.businessService(PTConstants.MODULE_PROPERTY).consumerCode(property.getPropertyId()).build();
 
 			BillResponse billResponse = billService.generateBill(calculateTaxRequest.getRequestInfo(), billCriteria);
 			return billResponse;

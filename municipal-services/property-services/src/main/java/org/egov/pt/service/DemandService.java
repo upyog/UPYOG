@@ -44,7 +44,7 @@ public class DemandService {
 				.payer(User.builder().uuid(property.getOwners().get(0).getUuid()).build())
 				.tenantId(property.getTenantId()).taxPeriodFrom(calculateTaxRequest.getFromDate().getTime())
 				.taxPeriodTo(calculateTaxRequest.getToDate().getTime()).fixedBillExpiryDate(cal.getTimeInMillis())
-				.consumerType(PTConstants.MODULE_PROPERTY).businessService(businessService).build();
+				.consumerType(PTConstants.MODULE_PROPERTY).businessService(PTConstants.MODULE_PROPERTY).build();
 
 		List<Demand> demands = Arrays.asList(demandOne);
 
