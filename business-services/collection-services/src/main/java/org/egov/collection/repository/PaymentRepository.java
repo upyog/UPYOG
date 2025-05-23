@@ -120,7 +120,7 @@ public class PaymentRepository {
             for (Payment payment : payments) {
                 billIds.addAll(payment.getPaymentDetails().stream().map(detail -> detail.getBillId()).collect(Collectors.toSet()));
             }
-            Map<String, Bill> billMap = getBills(billIds);
+            Map<String, Bill> billMap = getBills(billIds,paymentSearchCriteria.getTenantId());
             for (Payment payment : payments) {
                 payment.getPaymentDetails().forEach(detail -> {
                     detail.setBill(billMap.get(detail.getBillId()));
@@ -130,7 +130,7 @@ public class PaymentRepository {
         }
 
         return payments;
-    }
+    }  
     
     public Long getPaymentsCount (String tenantId, String businessService) {
     	
@@ -150,7 +150,7 @@ public class PaymentRepository {
             for (Payment payment : payments) {
                 billIds.addAll(payment.getPaymentDetails().stream().map(detail -> detail.getBillId()).collect(Collectors.toSet()));
             }
-            Map<String, Bill> billMap = getBills(billIds);
+            Map<String, Bill> billMap = getBills(billIds,paymentSearchCriteria.getTenantId());
             for (Payment payment : payments) {
                 payment.getPaymentDetails().forEach(detail -> {
                     detail.setBill(billMap.get(detail.getBillId()));
@@ -162,7 +162,21 @@ public class PaymentRepository {
         return payments;
     }
 
+    private Map<String, Bill> getBills(Set<String> ids, String tenantId){
+    	Map<String, Bill> mapOfIdAndBills = new HashMap<>();
+        Map<String, Object> preparedStatementValues = new HashMap<>();
+        preparedStatementValues.put("id", ids);
+        preparedStatementValues.put("tenantId", tenantId);
+        StringBuilder query = new StringBuilder(paymentQueryBuilder.getBillQuery());
+        query.append(" AND	b.tenantid= :tenantId ;");
+        List<Bill> bills = namedParameterJdbcTemplate.query(query.toString(), preparedStatementValues, billRowMapper);
+        bills.forEach(bill -> {
+        	mapOfIdAndBills.put(bill.getId(), bill);
+        });
+        
+        return mapOfIdAndBills;
 
+    }
     
     private Map<String, Bill> getBills(Set<String> ids){
     	Map<String, Bill> mapOfIdAndBills = new HashMap<>();
