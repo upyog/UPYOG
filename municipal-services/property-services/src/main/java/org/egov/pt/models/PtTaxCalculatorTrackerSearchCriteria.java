@@ -26,5 +26,7 @@ public class PtTaxCalculatorTrackerSearchCriteria {
 	private Set<String> propertyIds;
 
 	private Set<String> financialYears;
+	
+	private Integer limit;
 
 }

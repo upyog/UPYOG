@@ -21,6 +21,7 @@ import org.egov.pt.models.OwnerInfo;
 import org.egov.pt.models.Property;
 import org.egov.pt.models.PropertyCriteria;
 import org.egov.pt.models.PtTaxCalculatorTracker;
+import org.egov.pt.models.collection.Bill;
 import org.egov.pt.models.enums.Status;
 import org.egov.pt.models.user.User;
 import org.egov.pt.util.PTConstants;
@@ -357,23 +358,21 @@ public class EnrichmentService {
     }
     
 	public PtTaxCalculatorTrackerRequest enrichTaxCalculatorTrackerCreateRequest(Property property,
-			CalculateTaxRequest calculateTaxRequest, BigDecimal finalPropertyTax,JsonNode additionalDetails) {
+			CalculateTaxRequest calculateTaxRequest, BigDecimal finalPropertyTax, JsonNode additionalDetails,
+			List<Bill> bills) {
 
-//		Date fromDate = calculateTaxRequest.getFromDate();
 		SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
-//		String formattedDate = formatter.format(calculateTaxRequest.getFromDate());
 		AuditDetails createAuditDetails = propertyutil
 				.getAuditDetails(calculateTaxRequest.getRequestInfo().getUserInfo().getUuid().toString(), true);
+		Bill bill = bills.stream().findFirst().orElse(null);
 		PtTaxCalculatorTracker ptTaxCalculatorTracker = PtTaxCalculatorTracker.builder()
 				.uuid(UUID.randomUUID().toString()).propertyId(property.getPropertyId())
 				.tenantId(property.getTenantId()).financialYear(calculateTaxRequest.getFinancialYear())
 				.fromDate(calculateTaxRequest.getFromDate()).toDate(calculateTaxRequest.getToDate())
 				.fromDateString(formatter.format(calculateTaxRequest.getFromDate()))
-				.toDateString(formatter.format(calculateTaxRequest.getToDate()))
-				.propertyTax(finalPropertyTax)
-				.additionalDetails(additionalDetails)
-				.auditDetails(createAuditDetails)
-				.build();
+				.toDateString(formatter.format(calculateTaxRequest.getToDate())).propertyTax(finalPropertyTax)
+				.additionalDetails(additionalDetails).auditDetails(createAuditDetails)
+				.billId(null != bill ? bill.getId() : null).build();
 
 		return PtTaxCalculatorTrackerRequest.builder().requestInfo(calculateTaxRequest.getRequestInfo())
 				.ptTaxCalculatorTracker(ptTaxCalculatorTracker).build();

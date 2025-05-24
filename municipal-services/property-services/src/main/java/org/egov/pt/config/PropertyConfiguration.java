@@ -398,5 +398,11 @@ public class PropertyConfiguration {
 
     @Value("${persister.update.property.audit.oldData.topic}")
     private String updatePropertyAuditEncTopic;
+    
+    @Value("${egov.report.context.host}")
+    private String reportHost;
+    
+	@Value("${egov.report.pdf.create.endpoint}")
+	private String reportCreateEndPoint;
 
 }

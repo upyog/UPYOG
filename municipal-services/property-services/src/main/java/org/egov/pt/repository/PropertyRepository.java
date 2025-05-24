@@ -331,6 +331,7 @@ public class PropertyRepository {
 			PtTaxCalculatorTrackerSearchCriteria ptTaxCalculatorTrackerSearchCriteria) {
 		List<Object> preparedStmtList = new ArrayList<>();
 		String query = queryBuilder.getTaxCalculatedPropertiesSearchQuery(ptTaxCalculatorTrackerSearchCriteria, preparedStmtList);
+		query = queryBuilder.getLimitAndOrderByUpdatedTimeDesc(ptTaxCalculatorTrackerSearchCriteria, query, preparedStmtList);
 		List<PtTaxCalculatorTracker> ptTaxCalculatorTrackers = jdbcTemplate.query(query, preparedStmtList.toArray(),
 				ptTaxCalculatorTrackerRowMapper);
 		return ptTaxCalculatorTrackers;

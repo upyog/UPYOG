@@ -2,6 +2,7 @@ package org.egov.pt.repository;
 
 import java.util.List;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.pt.config.PropertyConfiguration;
@@ -54,9 +55,17 @@ public class BillRepository {
 
 		String uri = config.getBillHost().concat(config.getSearchBillEndpoint());
 		uri = uri.concat("?tenantId=").concat(billCriteria.getTenantId());
-		uri = uri.concat("&service=").concat(billCriteria.getService());
-		uri = uri.concat("&retrieveAll=").concat("true");
-		uri = uri.concat("&consumerCode=").concat(StringUtils.join(billCriteria.getConsumerCode(), ","));
+		if (!StringUtils.isEmpty(billCriteria.getService())) {
+			uri = uri.concat("&service=").concat(billCriteria.getService());
+		}
+//		uri = uri.concat("&retrieveAll=").concat("true");
+		if (!CollectionUtils.isEmpty(billCriteria.getConsumerCode())) {
+			uri = uri.concat("&consumerCode=").concat(StringUtils.join(billCriteria.getConsumerCode(), ","));
+		}
+		if (!CollectionUtils.isEmpty(billCriteria.getBillId())) {
+			uri = uri.concat("&billId=").concat(StringUtils.join(billCriteria.getBillId(), ","));
+		}
+		
 
 		Object result = restCallRepository.fetchResult(new StringBuilder(uri),
 				RequestInfoWrapper.builder().requestInfo(requestInfo).build());
