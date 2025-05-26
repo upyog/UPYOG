@@ -9,8 +9,8 @@
     "micro-ui-internals/packages/modules/core",
     "micro-ui-internals/packages/modules/common",
     "micro-ui-internals/packages/modules/dss",
-    "micro-ui-internals/packages/modules/pgrai"
-    
+    "micro-ui-internals/packages/modules/pgrai",
+    "micro-ui-internals/packages/modules/engagement"
   ],
   "engines": {
     "node": ">=14"
