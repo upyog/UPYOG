@@ -420,14 +420,18 @@ public class PropertySchedulerService {
 				finalProperty.add(property);
 			} else {
 				// Check if the property matches the conditions
-				for (PtTaxCalculatorTracker ptTaxCalculatorTracker : trackers) {
-					if (property.getPropertyId().equalsIgnoreCase(ptTaxCalculatorTracker.getPropertyId())
-							&& (ptTaxCalculatorTracker.getFromDate().after(calculateTaxRequest.getFromDate())
-									|| ptTaxCalculatorTracker.getFromDate().equals(calculateTaxRequest.getFromDate()))
-							&& ptTaxCalculatorTracker.getToDate().before(calculateTaxRequest.getToDate())
-							|| ptTaxCalculatorTracker.getToDate().equals(calculateTaxRequest.getToDate())) {
-						finalProperty.add(property);
-					}
+				boolean isValid = trackers.stream()
+						.noneMatch(tracker -> property.getPropertyId().equalsIgnoreCase(tracker.getPropertyId()) && (
+						// Request is inside tracker
+						(tracker.getFromDate().compareTo(calculateTaxRequest.getFromDate()) <= 0
+								&& tracker.getToDate().compareTo(calculateTaxRequest.getToDate()) >= 0) ||
+
+						// Tracker is inside request
+								(calculateTaxRequest.getFromDate().compareTo(tracker.getFromDate()) <= 0
+										&& calculateTaxRequest.getToDate().compareTo(tracker.getToDate()) >= 0)));
+
+				if (isValid) {
+					finalProperty.add(property);
 				}
 			}
 		}
