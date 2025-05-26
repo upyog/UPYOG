@@ -1,5 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { CardLabel, UploadFile, Toast, FormStep, LabelFieldPair, SubmitBar, DeleteIcon } from "@nudmcdgnpm/digit-ui-react-components";
+import { CardLabel,Toast, FormStep, LabelFieldPair, SubmitBar, DeleteIcon } from "@nudmcdgnpm/digit-ui-react-components";
+import UploadFile from "./UploadFile";
+import { styles } from "../utils/styles";
+
+// Document component for handling file uploads in the application 
+// It allows users to upload multiple files, validate them, and manage the upload state
 
 const Document = ({ t, config, onSelect, formData, setDocumentUploaded }) => {
   const [files, setFiles] = useState([null]);
@@ -22,14 +27,6 @@ const Document = ({ t, config, onSelect, formData, setDocumentUploaded }) => {
     }
   }, [formData]);
 
-  /**
-   * Processes form submission by filtering and formatting document data
-   */
-  // const handleSubmit = () => {
-  //   let document = formData.documents;
-  //   let documentStep = { ...document, documents: uploadedFiles.filter((file) => file !== null) };
-  //   onSelect(config.key, documentStep);
-  // };
 
 
   useEffect(() => {
@@ -113,12 +110,12 @@ const Document = ({ t, config, onSelect, formData, setDocumentUploaded }) => {
   return (
     <div>
        {files.map((file, index) => (
-  <div key={index} style={{ marginBottom: "24px" }}>
-    <CardLabel className="card-label-smaller">
+  <div key={index} style={styles.documentContainer}>
+    <CardLabel className="card-label-smaller" style={styles.cardLabelStyle} >
       {t("PHOTO_UPLOAD") + (index !== 0 ? " " + (index + 1) : " 1")}
     </CardLabel>
 
-    <div className="field" style={{ display: "flex", alignItems: "center", justifyContent: "space-between",width: user.type === "EMPLOYEE" ? "50%" : "50%"}}>
+    <div className="field" style={styles.documentField}>
       <UploadFile
         onUpload={(e) => handleFileSelect(e, index)}
         onDelete={() =>
@@ -139,17 +136,23 @@ const Document = ({ t, config, onSelect, formData, setDocumentUploaded }) => {
 
       <div style={{ display: "flex", alignItems: "center" }}>
         {uploadedFiles[index] && index === files.length - 1 && (
-          <SubmitBar
-            label={t("CS_COMMON_ADD")}
-            style={{ marginLeft: "10px" }}
-            onSubmit={addFileField}
+          <button 
+            style={styles.addButton} 
+            onClick={addFileField}
+            type="button"
             disabled={ind > 4}
-          />
+          >
+            {t("CS_COMMON_ADD")}
+          </button>
         )}
 
         {(!uploadedFiles[index] || index !== files.length - 1) && index>0 && (
-          <button onClick={() => removeFileField(index)} style={{ marginLeft: "10px" }}>
-            <DeleteIcon className="delete" fill="#a82227" style={{ cursor: "pointer" }} />
+          <button 
+            onClick={() => removeFileField(index)} 
+            style={styles.deleteButton}
+            type="button"
+          >
+            <DeleteIcon className="delete" fill="#902434" style={styles.deleteIcon} />
           </button>
         )}
       </div>
