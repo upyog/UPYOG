@@ -42,7 +42,7 @@ const formatNumbers = (amount) => {
   }
   
   // For numbers greater than 5 digits
-  if (num >= 10000000) { // 1 crore and above
+  else if (num >= 10000000) { // 1 crore and above
     const crores = num / 10000000;
     if (crores >= 100) {
       return `${Math.round(crores)} Crores`;
