@@ -413,31 +413,23 @@ public class PropertySchedulerService {
 		Map<String, List<PtTaxCalculatorTracker>> ptTaxCalculatorTrackerMap = ptTaxCalculatorTrackers.stream()
 				.collect(Collectors.groupingBy(PtTaxCalculatorTracker::getPropertyId));
 
-		for (Property property : properties) {
+		finalProperty = properties.stream().filter(property -> {
 			List<PtTaxCalculatorTracker> trackers = ptTaxCalculatorTrackerMap.get(property.getPropertyId());
-			if (trackers == null) {
-				// If no trackers found for the property, we add the property.
-				finalProperty.add(property);
-			} else {
-				// Check if the property matches the conditions
-				boolean isValid = trackers.stream()
-						.noneMatch(tracker -> property.getPropertyId().equalsIgnoreCase(tracker.getPropertyId()) && (
-						// Request is inside tracker
-						(tracker.getFromDate().compareTo(calculateTaxRequest.getFromDate()) <= 0
-								&& tracker.getToDate().compareTo(calculateTaxRequest.getToDate()) >= 0) ||
 
-						// Tracker is inside request
-								(calculateTaxRequest.getFromDate().compareTo(tracker.getFromDate()) <= 0
-										&& calculateTaxRequest.getToDate().compareTo(tracker.getToDate()) >= 0)));
-
-				if (isValid) {
-					finalProperty.add(property);
-				}
-			}
-		}
+			return trackers == null || trackers.stream().noneMatch(tracker -> isOverlapping(tracker.getFromDate(),
+					tracker.getToDate(), calculateTaxRequest.getFromDate(), calculateTaxRequest.getToDate()));
+		}).collect(Collectors.toList());
 
 		return finalProperty;
 	}
+	
+	private boolean isOverlapping(Date trackerFrom, Date trackerTo, Date requestFrom, Date requestTo) {
+		// Request is fully inside tracker OR tracker is fully inside request
+		boolean requestInsideTracker = !trackerFrom.after(requestFrom) && !trackerTo.before(requestTo);
+		boolean trackerInsideRequest = !requestFrom.after(trackerFrom) && !requestTo.before(trackerTo);
+		return requestInsideTracker || trackerInsideRequest;
+	}
+
 
 	private BillResponse generateDemandAndBill(CalculateTaxRequest calculateTaxRequest, Property property,
 			BigDecimal finalPropertyTax) {
