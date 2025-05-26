@@ -101,7 +101,7 @@ export const filterFunctions = {
         const searchFilters = {};
         const workflowFilters = {};
     
-        const { applicationNo, assetParentCategory,assetclassification, limit, offset, sortBy, sortOrder, total, applicationStatus, services } = filtersArg || {};
+        const { applicationNo, assetParentCategory,assetClassification, limit, offset, sortBy, sortOrder, total, applicationStatus, services } = filtersArg || {};
     
         if (filtersArg?.applicationNo) {
           searchFilters.applicationNo = filtersArg?.applicationNo;
@@ -109,8 +109,8 @@ export const filterFunctions = {
         if (filtersArg?.assetParentCategory) {
           searchFilters.assetParentCategory = filtersArg?.assetParentCategory;
         }
-        if (filtersArg?.assetclassification) {
-          searchFilters.assetclassification = filtersArg?.assetclassification;
+        if (filtersArg?.assetClassification) {
+          searchFilters.assetClassification = filtersArg?.assetClassification;
         }
         
         
@@ -129,9 +129,10 @@ export const filterFunctions = {
         if (applicationNo) {
           searchFilters.applicationNo = applicationNo;
         }
-        if (assetclassification) {
-          searchFilters.assetclassification = assetclassification;
+        if (assetClassification) {
+          searchFilters.assetClassification = assetClassification.code;
         }
+
         if (assetParentCategory) {
           searchFilters.assetParentCategory = assetParentCategory;
         }

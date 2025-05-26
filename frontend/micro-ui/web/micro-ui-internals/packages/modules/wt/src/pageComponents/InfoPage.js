@@ -2,43 +2,39 @@ import { Card, CardHeader, CardText, SubmitBar } from "@nudmcdgnpm/digit-ui-reac
 import React, { useState } from "react";
 import BookingPopup from "../components/BookingPopup";
 
-// First component which will show the details for the application form
-
 const InfoPage = ({ t, onSelect, formData, config, userType }) => {
   const [existingDataSet, setExistingDataSet] = useState("");
   const [showModal, setShowModal] = useState(false);
-  const [isExistingPopupRequired,setIsExistingPopupRequired] = useState(false);
-  
+  const [isExistingPopupRequired, setIsExistingPopupRequired] = useState(false);
 
-  // Function to open the BookingPopup
-  const handleOpenModal = () => {
-    if(isExistingPopupRequired){
-      setShowModal(true);  // Show modal when button is clicked
-    }else{
-      goNext();  // Ensure action is called only when submitting
-    }
+  // Module mapping for dynamic header
+  const moduleMap = {
+    MobileToilet: "MT_MODULE",
+    WT: "WT_MODULE",
+    TREE_PRUNING: "TREE_PRUNING",
   };
-  // Function to handle the next action
+
+  const code = formData?.serviceType?.serviceType.code;
+  const moduleKey = moduleMap[code];
+
+  const handleOpenModal = () => {
+    isExistingPopupRequired ? setShowModal(true) : goNext();
+  };
+
   const goNext = () => {
-    let owner = formData.infodetails;
-    let ownerStep;
-      ownerStep = { ...owner, existingDataSet };
-      onSelect(config.key, { ...formData[config.key], ...ownerStep });
+    const owner = formData.infodetails || {};
+    const ownerStep = { ...owner, existingDataSet };
+    onSelect(config.key, { ...formData[config.key], ...ownerStep });
   };
 
   return (
     <React.Fragment>
       <Card>
-        {formData?.serviceType?.serviceType.code=== "MobileToilet" ? (
-          <CardHeader>{t("MT_MODULE")}</CardHeader>
-        ) : formData?.serviceType?.serviceType.code=== "WT" ? (
-          <CardHeader>{t("WT_MODULE")}</CardHeader>
-        ) : null}
-        
+        {moduleKey && <CardHeader>{t(moduleKey)}</CardHeader>}
         <div>
-          <CardText className={"primaryColor"}>{t("SV_DOC_REQ_SCREEN_SUB_HEADER")}</CardText>
-          <CardText className={"primaryColor"}>{t("SV_DOC_REQ_SCREEN_TEXT")}</CardText>
-          <CardText className={"primaryColor"}>{t("SV_DOC_REQ_SCREEN_SUB_TEXT")}</CardText>
+          <CardText className="primaryColor">{t("SV_DOC_REQ_SCREEN_SUB_HEADER")}</CardText>
+          <CardText className="primaryColor">{t("SV_DOC_REQ_SCREEN_TEXT")}</CardText>
+          <CardText className="primaryColor">{t("SV_DOC_REQ_SCREEN_SUB_TEXT")}</CardText>
         </div>
         <span>
           <SubmitBar label={t("COMMON_NEXT")} onSubmit={handleOpenModal} />
@@ -54,7 +50,7 @@ const InfoPage = ({ t, onSelect, formData, config, userType }) => {
             goNext();
             setShowModal(false);
           }}
-          setExistingDataSet={setExistingDataSet} // Pass the setExistingDataSet function
+          setExistingDataSet={setExistingDataSet}
         />
       )}
     </React.Fragment>

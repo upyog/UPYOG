@@ -22,13 +22,16 @@ import { FormStep, CardLabel, Dropdown , Modal} from "@nudmcdgnpm/digit-ui-react
 };
 
 const ServiceTypes = ({ t, config, onSelect, userType, formData }) => {
+ 
   const user = Digit.UserService.getUser().info;
   const [serviceType, setServiceType] = useState(formData?.serviceType?.serviceType || "");
+
 
   // Function to proceed to the next step, updating selected service type in form data.
   const goNext = useCallback(() => {
     let serviceTypes = formData.serviceType;
     let ServiceType = { ...serviceTypes, serviceType };
+   
     onSelect(config.key, ServiceType, false);
   }, [formData.serviceType, serviceType, onSelect, config.key]);
 
@@ -42,11 +45,17 @@ const ServiceTypes = ({ t, config, onSelect, userType, formData }) => {
       code: "MobileToilet",
       i18nKey: "Mobile Toilet",
       value: "Mobile Toilet"
+    },
+    {
+      code: "TREE_PRUNING",
+      i18nKey: "Tree Pruning",
+      value: "Tree Pruning"
     }
   ];
 
   useEffect(() => {
     if (userType === "citizen") {
+      console.log('calling meeeeeee');
       goNext();
     }
   }, [serviceType, userType, goNext]);
