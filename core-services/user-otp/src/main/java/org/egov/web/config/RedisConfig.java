@@ -20,7 +20,7 @@ public class RedisConfig {
 	@Bean
     public JedisConnectionFactory redisConnectionFactory() {
         RedisStandaloneConfiguration redisConfig = new RedisStandaloneConfiguration();
-        redisConfig.setHostName("localhost");
+        redisConfig.setHostName("redis.backbone");
         redisConfig.setPort(6379);
         // redisConfig.setPassword("yourpassword"); // if needed
 
