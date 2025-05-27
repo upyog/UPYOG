@@ -632,9 +632,9 @@ const OwnerForm = (_props) => {
                     <LabelFieldPair>
                         <CardLabel className="card-label-smaller" style={{ display: "flex", alignItems: "center", gap: "8px" }}>
                             {t("AST_MAINTENANCE_TYPE")}
-                            <Tooltip message={t("TOOLTIP_AST_MAINTENANCE_TYPE")}>
+                            {/* <Tooltip message={t("TOOLTIP_AST_MAINTENANCE_TYPE")}>
                                 <InfoBannerIcon style={{ verticalAlign: "middle", cursor: "pointer" }} />
-                            </Tooltip>
+                            </Tooltip> */}
                         </CardLabel>
                         <Controller
                             control={control}
@@ -779,7 +779,7 @@ const OwnerForm = (_props) => {
                     </LabelFieldPair>
                     <CardLabelError style={errorStyle}>{localFormState.touched.paymentType ? errors?.paymentType?.message : ""}</CardLabelError>
 
-                    <LabelFieldPair>
+                    {/* <LabelFieldPair>
                         <CardLabel className="card-label-smaller" style={{ display: "flex", alignItems: "center", gap: "8px" }}>
                             {t("AST_COST_MAINTENANCE_OVERHEAD")}
                             <Tooltip message={t("TOOLTIP_AST_COST_MAINTENANCE_OVERHEAD")}>
@@ -815,7 +815,7 @@ const OwnerForm = (_props) => {
                                 )}
                             />
                         </div>
-                    </LabelFieldPair>
+                    </LabelFieldPair> */}
                     <CardLabelError style={errorStyle}>{localFormState.touched.amcDetails ? errors?.amcDetails?.message : ""}</CardLabelError>
 
                     <LabelFieldPair>

@@ -473,11 +473,7 @@ const OwnerForm = (_props) => {
 
                     <LabelFieldPair>
                         <CardLabel className="card-label-smaller">{t("AST_DISPOSAL_CODE")}
-                        <Tooltip message={t("TOOLTIP_AST_DISPOSAL_CODE")}>
-                            <div style={{ marginLeft: "8px"}}>
-                                <InfoBannerIcon style={{ verticalAlign: "middle", cursor: "pointer"}} />
-                            </div>
-                            </Tooltip>
+                      
                         </CardLabel>
                         <div className="field" style={{ marginTop: "20px", marginBottom: "20px" }}>
                             <Controller
@@ -507,11 +503,7 @@ const OwnerForm = (_props) => {
 
                     <LabelFieldPair>
                         <CardLabel className="card-label-smaller">{t("AST_DISPOSE_RECIPT")}
-                        <Tooltip message={t("TOOLTIP_AST_DISPOSE_RECIPT")}>
-                            <div style={{ marginLeft: "8px"}}>
-                                <InfoBannerIcon style={{ verticalAlign: "middle", cursor: "pointer"}} />
-                            </div>
-                            </Tooltip>
+                       
                         </CardLabel>
                         <div className="field">
                             <Controller
