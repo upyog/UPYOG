@@ -222,7 +222,8 @@ public class PropertyQueryBuilder {
 				&& null == criteria.getOldPropertyId() && null == criteria.getDocumentNumbers()
 				&& null == criteria.getLocality() && null == criteria.getPropertyType()
 				&& (null == criteria.getFromDate() && null == criteria.getToDate())
-				&& CollectionUtils.isEmpty(criteria.getCreationReason());
+				&& CollectionUtils.isEmpty(criteria.getCreationReason())
+				&& null == criteria.getSurveyId() ;
 
 		if (isEmpty)
 			throw new CustomException("EG_PT_SEARCH_ERROR", " No criteria given for the property search");
@@ -384,6 +385,12 @@ public class PropertyQueryBuilder {
 		addClauseIfRequired(preparedStmtList, builder);
 		builder.append("owner.status = ?");
 		preparedStmtList.add(Status.ACTIVE.toString());
+		
+		if (null != criteria.getSurveyId()) {
+			addClauseIfRequired(preparedStmtList, builder);
+			builder.append("property.surveyid = ?");
+			preparedStmtList.add(criteria.getSurveyId());
+		}
 
 		String withClauseQuery = WITH_CLAUSE_QUERY.replace(REPLACE_STRING, builder);
 		if (onlyIds || criteria.getIsRequestForCount())
