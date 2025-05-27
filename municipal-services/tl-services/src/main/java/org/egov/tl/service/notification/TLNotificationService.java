@@ -37,7 +37,7 @@ import static org.egov.tl.util.TLConstants.PROPERTY_ID;
 @Service
 public class TLNotificationService {
 
-
+	@Autowired
 	private TLConfiguration config;
 
 	private ServiceRequestRepository serviceRequestRepository;
@@ -50,14 +50,8 @@ public class TLNotificationService {
 
 	private MultiStateInstanceUtil centralInstanceUtil;
 
-  private PropertyUtil propertyUtil;
-
-	@Value("${mdms.v2.host}")
-	private String mdmsHost;
-
-	@Value("${mdms.v2.search.endpoint}")
-	private String mdmsUrl;
-
+    private PropertyUtil propertyUtil;
+  
 	@Autowired
 	private RestTemplate restTemplate;
 
@@ -472,7 +466,7 @@ public class TLNotificationService {
 		Map<Object, Object> map = new HashMap<>();
 
 		StringBuilder uri = new StringBuilder();
-		uri.append(mdmsHost).append(mdmsUrl);
+		uri.append(config.getMdmsHost()).append(config.getMdmsV1EndPoint());
 
 		if(StringUtils.isEmpty(tenantId))
 			return map;
