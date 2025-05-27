@@ -335,7 +335,7 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 		} catch (Exception e) {
 		    e.printStackTrace(); // log error if the string isn't valid JSON
 		}
-		Map<String, Object> AssetParentCategoryDetails = mdmsUtil.getCHBAssetParentCategoryDetails(communityHallsBookingRequest.getRequestInfo(), communityHallsBookingRequest.getHallsBookingApplication().getTenantId(),node.get("bookingFor").asText());
+		Map<String, Object> AssetParentCategoryDetails = mdmsUtil.getCHBAssetParentCategoryDetails(communityHallsBookingRequest.getRequestInfo(), communityHallsBookingRequest.getHallsBookingApplication().getTenantId(),node.get("bookingFor").asText(),communityHallsBookingRequest.getHallsBookingApplication().getCommunityHallCode());
 
 		Number assetGstCost = (Number) AssetParentCategoryDetails.get("assetGstCost");
 		Number securityAmount = (Number) AssetParentCategoryDetails.get("securityAmount");
@@ -512,7 +512,7 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 		} catch (Exception e) {
 		    e.printStackTrace(); // log error if the string isn't valid JSON
 		}
-		Map<String, Object> AssetParentCategoryDetails = mdmsUtil.getCHBAssetParentCategoryDetails(requestInfo, communityHallApplication.getTenantId(),node.get("bookingFor").asText());
+		Map<String, Object> AssetParentCategoryDetails = mdmsUtil.getCHBAssetParentCategoryDetails(requestInfo, communityHallApplication.getTenantId(),node.get("bookingFor").asText(),communityHallApplication.getCommunityHallCode());
 
 		Number assetGstCost = (Number) AssetParentCategoryDetails.get("assetGstCost");
 		Number securityAmount = (Number) AssetParentCategoryDetails.get("securityAmount");

@@ -155,7 +155,7 @@ public class MdmsUtil {
 
 	}
 	
-	public Map<String, Object> getCHBAssetParentCategoryDetails(RequestInfo requestInfo,String tenantId,String purpose) {
+	public Map<String, Object> getCHBAssetParentCategoryDetails(RequestInfo requestInfo,String tenantId,String purpose,String HallCode) {
 
 		// master details for CHB module
 		List<MasterDetail> chbMasterDtls = new ArrayList<>();
@@ -170,7 +170,7 @@ public class MdmsUtil {
 
 		// filter to only get code field from master data
 			
-		    final String filterCode = String.format("[?(@.code == \"%s\" && @.UlbName == \"%s\")]", purpose, ulbName);
+		    final String filterCode = String.format("[?(@.code == \"%s\" && @.UlbName == \"%s\" && @.assetNumber == \"%s\")]", purpose, ulbName,HallCode);
 
 //			final String filterCode = "[?(@.code == \"purpose\" && @.UlbName == \"ulbName\")]";
 			

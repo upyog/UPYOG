@@ -72,7 +72,7 @@ public class DemandService {
 				.mobileNumber(user.getMobileNumber()).tenantId(bookingDetail.getTenantId()).build();
 		Map<String, Object> detailMap = (Map<String, Object>) bookingRequest.getHallsBookingApplication().getAdditionaldetail();
 		String bookingFor = (String) detailMap.get("bookingFor");
-		Map<String, Object> AssetParentCategoryDetails = mdmsUtil.getCHBAssetParentCategoryDetails(bookingRequest.getRequestInfo(), tenantId,bookingFor);
+		Map<String, Object> AssetParentCategoryDetails = mdmsUtil.getCHBAssetParentCategoryDetails(bookingRequest.getRequestInfo(), tenantId,bookingFor,bookingRequest.getHallsBookingApplication().getCommunityHallCode());
 		
 //		String code = (String) asset.get("code");
 //		String ulbName = (String) asset.get("UlbName");
