@@ -48,6 +48,7 @@ const CreateAnonymousEDCR = ({ parentRoute }) => {
       edcrNumber: "",
       planFile: null,
       tenantId: "pg.citya",
+      coreArea: "NO",
       RequestInfo: {
         apiId: "",
         ver: "",
