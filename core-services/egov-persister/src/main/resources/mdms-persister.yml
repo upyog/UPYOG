@@ -61,5 +61,23 @@ serviceMaps:
             - jsonPath: $.Mdms.auditDetails.createdTime
 
             - jsonPath: $.Mdms.auditDetails.lastModifiedTime
+       
+    - version: 1.0
+      description: Updates the mdms data
+      fromTopic: update-mdms-data
+      isTransaction: true
+      queryMaps:
+        - query: UPDATE eg_mdms_data SET data = ?, isactive = ?, lastmodifiedby = ?, lastmodifiedtime = ? WHERE tenantid = ? AND uniqueidentifier = ? AND schemacode = ?;
+          basePath: $.Mdms
+          jsonMaps:
+            - jsonPath: $.Mdms.data
+              type: JSON
+              dbType: JSONB
+            - jsonPath: $.Mdms.isActive
+            - jsonPath: $.Mdms.auditDetails.lastModifiedBy
+            - jsonPath: $.Mdms.auditDetails.lastModifiedTime
+            - jsonPath: $.Mdms.tenantId
+            - jsonPath: $.Mdms.uniqueIdentifier
+            - jsonPath: $.Mdms.schemaCode
 
 
