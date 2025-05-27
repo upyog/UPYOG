@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<title>Property Tax - Bill Receipt</title>
+	<style>
+		body {
+			font-family: Arial, sans-serif;
+			margin: 30px;
+			line-height: 1.6;
+		}
+
+		.header-container {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			margin-bottom: 20px;
+			margin-right: 60px;
+		}
+
+
+		.header-container img {
+			height: 100px;
+			margin-right: 20px;
+		}
+
+		.header-text {
+			text-align: center;
+		}
+
+		.header-text h1,
+		.header-text h2 {
+			margin: 0;
+			padding: 0;
+		}
+
+		h1 {
+			font-size: 24px;
+		}
+
+		h2 {
+			font-size: 18px;
+			color: #444;
+		}
+
+		.section1 {
+			text-align: center;
+		}
+
+		.section {
+			margin-bottom: 20px;
+		}
+
+		table {
+			width: 100%;
+			border-collapse: collapse;
+			margin-top: 10px;
+		}
+
+		td,
+		th {
+			border: 1px solid #ccc;
+			padding: 8px;
+			vertical-align: top;
+		}
+
+		.no-border td {
+			border: none;
+		}
+
+		.bold {
+			font-weight: bold;
+		}
+	</style>
+</head>
+
+<body>
+
+	<!-- Logo and Header Section -->
+	<div class="header-container">
+		<td><img class="hp-govt" th:src="${hpLogo}" alt="HP Govt Logo" /></td>
+		<div class="header-text">
+			<h1>Property Tax - Bill Receipt</h1>
+			<h2><span th:text="${ulbType}">NA</span>, <span th:text="${ulbName}">NA</span>, Himachal Pradesh</h2>
+		</div>
+	</div>
+
+	<!-- Bill Info -->
+	<div class="section1">
+		<table class="no-border">
+			<tr>
+				<td><strong>Bill No.: </strong><span th:text="${billNo}">NA</span></td>
+				<td><strong>Date:</strong> <span th:text="${date}">NA</span></td>
+			</tr>
+			<tr>
+				<td><strong>Bill Period:</strong> <span th:text="${billPeriod}">NA</span></td>
+				<td><strong>From:</strong> <span th:text="${from}">NA</span> <strong>To:</strong> <span
+						th:text="${to}">NA</span></td>
+			</tr>
+		</table>
+	</div>
+
+	<!-- Property Owner Info -->
+	<div class="section">
+		<table>
+			<tr>
+				<td><strong>District:</strong></td>
+				<td><span th:text="${district}">NA</span></td>
+			</tr>
+			<tr>
+				<td><strong>ULB:</strong></td>
+				<td><span th:text="${ulbType}">NA</span>, <span th:text="${ulbName}">NA</span></td>
+			</tr>
+			<tr>
+				<td><strong>Ward Number:</strong></td>
+				<td><span th:text="${wardNumber}">NA</span></td>
+			</tr>
+			<tr>
+				<td><strong>Address:</strong></td>
+				<td><span th:text="${address}">NA</span></td>
+			</tr>
+			<tr>
+				<td><strong>Customer ID:</strong></td>
+				<td><span th:text="${customerId}">NA</span></td>
+			</tr>
+			<tr>
+				<td><strong>Property ID:</strong></td>
+				<td><span th:text="${propertyId}">NA</span></td>
+			</tr>
+			<tr>
+				<td><strong>Owner/Occupier:</strong></td>
+				<td><span th:text="${ownerOrOccupier}">NA</span></td>
+			</tr>
+			<tr>
+				<td><strong>Father's/Husband's Name:</strong></td>
+				<td><span th:text="${fatherOrHusbandName}">NA</span></td>
+			</tr>
+			<tr>
+				<td><strong>No. of Stories:</strong></td>
+				<td><span th:text="${noOfStories}">NA</span></td>
+			</tr>
+			<tr>
+				<td><strong>Building No:</strong></td>
+				<td><span th:text="${buildingNo}">NA</span></td>
+			</tr>
+		</table>
+	</div>
+
+	<!-- Property Details -->
+	<div class="section">
+		<strong>Property Details:</strong>
+		<table>
+			<tr>
+				<th>#</th>
+				<th>F1</th>
+				<th>F2</th>
+				<th>F3</th>
+				<th>F4</th>
+				<th>F5</th>
+				<th>Plinth Area</th>
+			</tr>
+			<tr>
+				<td>1</td>
+				<td>B</td>
+				<td>PUCCA</td>
+				<td>2001 to 2021</td>
+				<td>Purchased Property / Flat</td>
+				<td>Residential</td>
+				<td>186.84</td>
+			</tr>
+			<tr>
+				<td colspan="6" class="bold">Total</td>
+				<td>186.84</td>
+			</tr>
+		</table>
+	</div>
+
+	<!-- Tax Details -->
+	<div class="section">
+		<table>
+			<tr>
+				<td><strong>Property Tax:</strong></td>
+				<td>₹1205.02</td>
+			</tr>
+			<tr>
+				<td><strong>Arrear:</strong></td>
+				<td>₹0.00</td>
+			</tr>
+			<tr>
+				<td><strong>Property Tax + Arrear:</strong></td>
+				<td>₹1205.02</td>
+			</tr>
+			<tr>
+				<td><strong>Rebate (Within 15 Days):</strong></td>
+				<td>₹0.00</td>
+			</tr>
+			<tr>
+				<td><strong>Interest:</strong></td>
+				<td>₹12.05</td>
+			</tr>
+			<tr>
+				<td><strong>Penalty:</strong></td>
+				<td>₹0.00</td>
+			</tr>
+			<tr>
+				<td><strong>Total Tax:</strong></td>
+				<td>₹1217.00</td>
+			</tr>
+			<tr>
+				<td><strong>Amount Paid:</strong></td>
+				<td>₹1217.00</td>
+			</tr>
+			<tr>
+				<td><strong>Payment Status:</strong></td>
+				<td>Success</td>
+			</tr>
+		</table>
+	</div>
+
+	<!-- Dates -->
+	<div class="section">
+		<table class="no-border">
+			<tr>
+				<td><strong>Bill Generated Date:</strong> 13/11/2024</td>
+				<td><strong>Payment Date:</strong> 08/01/2025</td>
+			</tr>
+		</table>
+	</div>
+
+	<!-- Disclaimer -->
+	<div class="section">
+		<em>Disclaimer: Property Tax payment does not legalize unauthorized properties.</em>
+	</div>
+
+	<!-- Auto-print -->
+	<script>
+		window.onload = function () {
+			window.print();
+		};
+	</script>
+
+</body>
+
+</html>

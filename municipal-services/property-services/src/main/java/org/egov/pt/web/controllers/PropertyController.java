@@ -39,6 +39,7 @@ import org.egov.pt.web.contracts.RequestInfoWrapper;
 import org.egov.pt.web.contracts.TotalCountRequest;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -49,6 +50,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -348,6 +350,16 @@ public class PropertyController {
 
 		return new ResponseEntity("Owner details updated successfully", HttpStatus.OK);
 //		return new ResponseEntity(owners, HttpStatus.OK);
+	}
+	
+	@PostMapping("/_generatePropertyTaxBillReceipt")
+	public ResponseEntity<Resource> generatePropertyTaxBillReceipt(
+			@Valid @RequestBody RequestInfoWrapper requestInfoWrapper, @RequestParam String propertyId) {
+
+		ResponseEntity<Resource> response = propertyService.generatePropertyTaxBillReceipt(requestInfoWrapper,
+				propertyId);
+
+		return response;
 	}
 	
 }

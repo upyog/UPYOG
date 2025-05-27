@@ -224,7 +224,7 @@ public class PropertyQueryBuilder {
 			+ "COUNT(distinct case when property.status = 'REJECTED' then property.id end) as applicationRejected "
 			+ "from EG_PT_PROPERTY property";
 	
-	private static final String PROPERTY_OWNERS_SEARCH_QUERY = "select * from eg_pt_owner epo ";
+	private static final String PROPERTY_OWNERS_SEARCH_QUERY = "select * from eg_pt_owner epo where mobile_number is null limit 500";
 
 	private String addPaginationWrapper(String query, List<Object> preparedStmtList, PropertyCriteria criteria) {
 		
@@ -719,6 +719,18 @@ public class PropertyQueryBuilder {
 		builder.append(PROPERTY_OWNERS_SEARCH_QUERY);
 
 		return builder.toString();
+	}
+	
+	public String getLimitAndOrderByUpdatedTimeDesc(PtTaxCalculatorTrackerSearchCriteria criteria, String query,
+			List<Object> preparedStmtList) {
+		StringBuilder queryBuilder = new StringBuilder(query);
+		if (null != criteria.getLimit()) {
+			queryBuilder.append(" order by eptct.lastmodifiedtime desc ");
+			queryBuilder.append(" limit ? ");
+			preparedStmtList.add(criteria.getLimit());
+		}
+
+		return queryBuilder.toString();
 	}
 
 }

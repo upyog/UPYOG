@@ -27,7 +27,6 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
 public class OwnerInfo extends User {
 
 
@@ -50,8 +49,7 @@ public class OwnerInfo extends User {
 	private String correspondenceAddress;
 
 	@JsonProperty("isPrimaryOwner")
-	@Builder.Default
-	private Boolean isPrimaryOwner = false;
+	private Boolean isPrimaryOwner;
 
 	@JsonProperty("ownerShipPercentage")
 	private Double ownerShipPercentage;

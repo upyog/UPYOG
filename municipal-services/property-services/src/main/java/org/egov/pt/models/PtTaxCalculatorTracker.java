@@ -36,5 +36,5 @@ public class PtTaxCalculatorTracker {
 	private AuditDetails auditDetails;
 	@JsonProperty("additionalDetails")
 	private JsonNode additionalDetails;
-
+	private String billId;
 }
