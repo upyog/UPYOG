@@ -58,7 +58,7 @@ const SearchApplication = ({ onSearch, type, onClose, searchFields, searchParams
       i18nKey: "IMMOVABLE",
       value: "IMMOVABLE"
     }
-  ]
+  ];
 
   const onSubmitInput = (data) => {
     if (!data.mobileNumber) {
