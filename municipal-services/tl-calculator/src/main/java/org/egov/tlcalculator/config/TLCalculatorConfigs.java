@@ -100,10 +100,6 @@ public class TLCalculatorConfigs {
     @Value("${mdms.v2.host}")
     private String mdmsV2Host;
 
-    @Value("${mdms.v2.search.endpoint}")
-    private String mdmsSearchEndpoint;
-
-
     //Kafka Topics
     @Value("${persister.save.tl.calculation.topic}")
     private String saveTopic;
