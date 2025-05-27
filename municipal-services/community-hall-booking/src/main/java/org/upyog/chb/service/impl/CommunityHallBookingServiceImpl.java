@@ -297,9 +297,6 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 		UserSearchResponse userInfo = userService.searchUser(bookingRepository.getApproverName(bookingDetail.getTenantId()),communityHallsBookingRequest.getRequestInfo());
 		chbObject.put("approverName", bookingRepository.getApproverName(bookingDetail.getTenantId()));
 		chbObject.put("userName", userInfo.getUserSearchResponseContent().get(0).getName());
-		
-		
-		
 		chbObject.put("fromDate",convertDate(bookingDetail.getBookingSlotDetails().get(0).getBookingDate()));
 		chbObject.put("toDate",convertDate(bookingDetail.getBookingSlotDetails().get(0).getBookingToDate()));		
 		chbObject.put("siteName", bookingDetail.getRelatedAsset().getAssetName());
@@ -324,64 +321,35 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 		chbObject.put("pinLocation", null);
 		chbObject.put("contactLocation", null);
 		chbObject.put("bookingStatus","BOOKED");
-		chbObject.put("perDayCost", new BigDecimal(communityHallsBookingRequest
-	            .getHallsBookingApplication()
-	            .getRelatedAsset()
-	            .getAssetDetails()
-	            .get("gstAssetCost")
-	            .asText()));
+
 		chbObject.put("ulbName", bookingDetail.getRelatedAsset().getAddressDetails().getStreet());
 		chbObject.put("ulbType", bookingDetail.getRelatedAsset().getAddressDetails().getType());
 		long days = calculateDaysBetween(bookingDetail.getBookingSlotDetails().get(0).getBookingDate(),
 				bookingDetail.getBookingSlotDetails().get(0).getBookingToDate());
 		chbObject.put("numberOfDays", days);
+		JsonNode node = null;
+		try {
+		    String additionalDetailsStr = communityHallsBookingRequest.getHallsBookingApplication().getAdditionaldetail().toString();
+		    ObjectMapper objectMapper = new ObjectMapper();
+		     node = objectMapper.readTree(additionalDetailsStr);
+		} catch (Exception e) {
+		    e.printStackTrace(); // log error if the string isn't valid JSON
+		}
+		Map<String, Object> AssetParentCategoryDetails = mdmsUtil.getCHBAssetParentCategoryDetails(communityHallsBookingRequest.getRequestInfo(), communityHallsBookingRequest.getHallsBookingApplication().getTenantId(),node.get("bookingFor").asText(),communityHallsBookingRequest.getHallsBookingApplication().getCommunityHallCode());
+
+		Number assetGstCost = (Number) AssetParentCategoryDetails.get("assetGstCost");
+		Number securityAmount = (Number) AssetParentCategoryDetails.get("securityAmount");
+		
+		chbObject.put("perDayCost", assetGstCost.doubleValue());
 
 		// Total Payable amount
 		BigDecimal totalPayableAmount = BigDecimal.valueOf(days)
-			    .multiply(new BigDecimal(communityHallsBookingRequest
-			            .getHallsBookingApplication()
-			            .getRelatedAsset()
-			            .getAssetDetails()
-			            .get("gstAssetCost")
-			            .asText())) // Converts assetCost string to BigDecimal
-			    .add(new BigDecimal(communityHallsBookingRequest
-			            .getHallsBookingApplication()
-			            .getRelatedAsset()
-			            .getAssetDetails()
-			            .get("securityAmount")
-			            .asText()));
-		chbObject.put("totalAmount", totalPayableAmount);
-		chbObject.put("securityAmount", new BigDecimal(communityHallsBookingRequest.getHallsBookingApplication()
-				.getRelatedAsset()
-	            .getAssetDetails()
-	            .get("securityAmount")
-	            .asText()));
+			    .multiply(new BigDecimal(assetGstCost.doubleValue())) // Converts assetCost string to BigDecimal
+			    .add(new BigDecimal(securityAmount.doubleValue())); // Converts securityAmount string to BigDecimal
+		
+		chbObject.put("totalAmount", totalPayableAmount.doubleValue());
+		chbObject.put("securityAmount", securityAmount.doubleValue());
 
-//		chbObject.put("ownerName", GarbageAccount.getName());// owner Name
-//		chbObject.put("address",
-//				GarbageAccount.getAddresses().get(0).getAddress1().concat(", ")
-//						.concat(GarbageAccount.getAddresses().get(0).getWardName()).concat(", ")
-//						.concat(GarbageAccount.getAddresses().get(0).getUlbName()).concat(" (")
-//						.concat(GarbageAccount.getAddresses().get(0).getUlbType()).concat(") ")
-//						.concat(GarbageAccount.getAddresses().get(0).getAdditionalDetail().get("district").asText())
-//						.concat(", ").concat(GarbageAccount.getAddresses().get(0).getPincode()));
-		// Applicant
-		// Name
-		// Contact // No
-//		chbObject.put("propertyId", GarbageAccount.getPropertyId());
-
-//		chbObject.put("createdTime", "sjgjkhd");
-
-//		chbObject.put("approverName",null != requestInfo.getUserInfo() ? requestInfo.getUserInfo().getUserName() : null);
-
-//		chbObject.put("userName", null != requestInfo.getUserInfo() ? requestInfo.getUserInfo().getName() : null);
-		// generate QR code from attributes
-//		StringBuilder uri = new StringBuilder(applicationPropertiesAndConstant.getFrontEndBaseUri());
-//		uri.append("citizen-payment");
-//		String qr = GarbageAccount.getCreated_by().concat("/").concat(GarbageAccount.getUuid())
-//				.concat("/").concat(GarbageAccount.getPropertyId());
-//		uri.append("/").append(qr);
-//		chbObject.put("qrCodeText", uri);
 		map.put("chb", chbObject);
 		PDFRequest pdfRequest = PDFRequest.builder().RequestInfo(communityHallsBookingRequest.getRequestInfo()).key("chbBookingCertificate")
 				.tenantId(bookingDetail.getTenantId()).data(map).build();
@@ -544,7 +512,7 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 		} catch (Exception e) {
 		    e.printStackTrace(); // log error if the string isn't valid JSON
 		}
-		Map<String, Object> AssetParentCategoryDetails = mdmsUtil.getCHBAssetParentCategoryDetails(requestInfo, communityHallApplication.getTenantId(),node.get("bookingFor").asText());
+		Map<String, Object> AssetParentCategoryDetails = mdmsUtil.getCHBAssetParentCategoryDetails(requestInfo, communityHallApplication.getTenantId(),node.get("bookingFor").asText(),communityHallApplication.getCommunityHallCode());
 
 		Number assetGstCost = (Number) AssetParentCategoryDetails.get("assetGstCost");
 		Number securityAmount = (Number) AssetParentCategoryDetails.get("securityAmount");
