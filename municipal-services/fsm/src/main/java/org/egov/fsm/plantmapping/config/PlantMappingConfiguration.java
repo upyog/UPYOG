@@ -18,41 +18,47 @@ import lombok.Setter;
 public class PlantMappingConfiguration {
 
 	// MDMS
-			@Value("${egov.mdms.host}")
-			private String mdmsHost;
+	@Value("${egov.mdms.host}")
+	private String mdmsHost;
 
-			@Value("${egov.mdms.search.endpoint}")
-			private String mdmsEndPoint;
-			
-	//User service 
+	@Value("${egov.mdms.search.endpoint}")
+	private String mdmsEndPoint;
 
-			@Value("${egov.user.host}")
-			private String userHost;
+	@Value("${egov.mdms.v2.host}")
+	private String mdmsHostv2;
 
-			@Value("${egov.user.context.path}")
-			private String userContextPath;
+	@Value("${egov.mdms.search.v2.endpoint}")
+	private String mdmsv2EndPoint;
 
-			@Value("${egov.user.create.path}")
-			private String userCreateEndpoint;
+	@Value("${egov.mdms.search.v2.max.limit}")
+	private Integer mdmsv2MaxLimit;
+	// User service
 
-			@Value("${egov.user.search.path}")
-			private String userSearchEndpoint;
+	@Value("${egov.user.host}")
+	private String userHost;
 
-			@Value("${egov.user.update.path}")
-			private String userUpdateEndpoint;
+	@Value("${egov.user.context.path}")
+	private String userContextPath;
 
-			@Value("${egov.user.username.prefix}")
-			private String usernamePrefix;
-			
+	@Value("${egov.user.create.path}")
+	private String userCreateEndpoint;
+
+	@Value("${egov.user.search.path}")
+	private String userSearchEndpoint;
+
+	@Value("${egov.user.update.path}")
+	private String userUpdateEndpoint;
+
+	@Value("${egov.user.username.prefix}")
+	private String usernamePrefix;
 
 	// Persister Config
-			@Value("${persister.save.plantmap.topic}")
-			private String saveTopic;
-			
+	@Value("${persister.save.plantmap.topic}")
+	private String saveTopic;
 
-			@Value("${plant.mapping.allowed.search.params}")
-			private String allowedPlantMappingSearchParameters;
-			
-			@Value("${persister.update.plantmap.topic}")
-			private String updateTopic;
+	@Value("${plant.mapping.allowed.search.params}")
+	private String allowedPlantMappingSearchParameters;
+
+	@Value("${persister.update.plantmap.topic}")
+	private String updateTopic;
 }

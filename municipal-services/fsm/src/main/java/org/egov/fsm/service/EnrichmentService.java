@@ -1,12 +1,14 @@
 package org.egov.fsm.service;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
-
+import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.fsm.config.FSMConfiguration;
 import org.egov.fsm.repository.IdGenRepository;
@@ -24,14 +26,16 @@ import org.egov.fsm.web.model.Workflow;
 import org.egov.fsm.web.model.idgen.IdResponse;
 import org.egov.fsm.web.model.user.User;
 import org.egov.fsm.web.model.user.UserDetailResponse;
+import org.egov.fsm.web.model.worker.Worker;
+import org.egov.fsm.web.model.worker.WorkerSearchCriteria;
+import org.egov.fsm.web.model.worker.WorkerStatus;
+import org.egov.fsm.web.model.worker.repository.FsmWorkerRepository;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
-
-import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Slf4j
@@ -53,6 +57,9 @@ public class EnrichmentService {
 	@Autowired
 	private ComparisionUtility comparisionUtility;
 
+	@Autowired
+	private FsmWorkerRepository fsmWorkerRepository;
+
 	/**
 	 * enrich the create FSM request with the required data
 	 * 
@@ -65,7 +72,7 @@ public class EnrichmentService {
 		if (fsmRequest.getRequestInfo().getUserInfo().getType().equalsIgnoreCase(FSMConstants.CITIZEN)) {
 			User citzen = new User();
 			BeanUtils.copyProperties(fsmRequest.getRequestInfo().getUserInfo(), citzen);
-			if (fsmRequest.getFsm().getCitizen() != null) {
+			if (fsmRequest.getFsm().getCitizen() != null && fsmRequest.getFsm().getCitizen().getGender() != null) {
 				UserDetailResponse userDetailResponse = userService
 						.updateApplicantsGender(fsmRequest.getFsm().getCitizen(), fsmRequest.getRequestInfo());
 				citzen = userDetailResponse.getUser().get(0);
@@ -195,6 +202,26 @@ public class EnrichmentService {
 			fsmRequest.getFsm().getPitDetail().setAuditDetails(auditDetails);
 		}
 
+		if (!CollectionUtils.isEmpty(fsmRequest.getFsm().getWorkers())){
+			enrichFsmWorkers(fsmRequest);
+		}
+	}
+
+	public void enrichFsmWorkers(FSMRequest fsmRequest) {
+		fsmRequest.getFsm().getWorkers().forEach(worker -> {
+			if (StringUtils.isEmpty(worker.getId())) {
+				Long time = System.currentTimeMillis();
+				worker.setId(UUID.randomUUID().toString());
+				worker.setAuditDetails(AuditDetails.builder()
+						.createdBy(fsmRequest.getRequestInfo().getUserInfo().getUuid())
+						.lastModifiedBy(fsmRequest.getRequestInfo().getUserInfo().getUuid())
+						.createdTime(time)
+						.lastModifiedTime(time)
+						.build());
+			} else {
+				worker.setAuditDetails(fsmRequest.getFsm().getAuditDetails());
+			}
+		});
 	}
 
 	/**
@@ -211,6 +238,7 @@ public class EnrichmentService {
 		fsmsearch.setOwnerIds(accountIds);
 		UserDetailResponse userDetailResponse = userService.getUser(fsmsearch, requestInfo);
 		encrichApplicant(userDetailResponse, fsms);
+		enrichFsmWorkersSearch(fsms);
 	}
 
 	/**
@@ -249,5 +277,16 @@ public class EnrichmentService {
 
 	public List<FSMAudit> enrichFSMAudit(FSMAuditUtil sourceObject, List<FSMAuditUtil> targetObjects) {
 		return comparisionUtility.compareData(sourceObject, targetObjects);
+	}
+
+	public void enrichFsmWorkersSearch(List<FSM> fsmApplications) {
+		fsmApplications.forEach(fsm -> {
+			List<Worker> workers = fsmWorkerRepository.getWorkersData(WorkerSearchCriteria.builder()
+					.tenantId(fsm.getTenantId())
+					.applicationIds(Collections.singletonList(fsm.getId()))
+					.status(Arrays.asList(WorkerStatus.ACTIVE.toString(), WorkerStatus.INACTIVE.toString()))
+					.build());
+			fsm.setWorkers(workers);
+		});
 	}
 }

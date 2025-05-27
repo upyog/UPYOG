@@ -37,13 +37,12 @@ public class WorkflowService {
 	/**
 	 * Get the workflow config for the given tenant
 	 * 
-	 * @param fsm
-	 *            The FSM Object
-	 * @param requestInfo
-	 *            The RequestInfo object of the request
+	 * @param fsm         The FSM Object
+	 * @param requestInfo The RequestInfo object of the request
 	 * @return BusinessService for the the given tenantId
 	 */
-	public BusinessService getBusinessService(FSM fsm, RequestInfo requestInfo, String businessServceName, String applicationNo) {
+	public BusinessService getBusinessService(FSM fsm, RequestInfo requestInfo, String businessServceName,
+			String applicationNo) {
 		StringBuilder url = getSearchURLWithParams(fsm.getTenantId(), businessServceName, applicationNo);
 		RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(requestInfo).build();
 		Object result = serviceRequestRepository.fetchResult(url, requestInfoWrapper);
@@ -59,10 +58,8 @@ public class WorkflowService {
 	/**
 	 * Get the ProcessInstance for the given Application
 	 * 
-	 * @param FSM
-	 *            The FSM Object
-	 * @param requestInfo
-	 *            The RequestInfo object of the request
+	 * @param FSM         The FSM Object
+	 * @param requestInfo The RequestInfo object of the request
 	 * 
 	 */
 	public ProcessInstance getProcessInstance(FSM fsm, RequestInfo requestInfo) {
@@ -75,20 +72,20 @@ public class WorkflowService {
 		} catch (IllegalArgumentException e) {
 			throw new CustomException(FSMErrorConstants.PARSING_ERROR, "Failed to parse response of Workflow");
 		}
-		return response.getProcessInstances().get(0);
+		if (!response.getProcessInstances().isEmpty())
+			return response.getProcessInstances().get(0);
+		else return null;
 	}
+
 	/**
 	 * Creates url for search based on given tenantId
 	 *
-	 * @param tenantId
-	 *            The tenantId for which url is generated
+	 * @param tenantId The tenantId for which url is generated
 	 * @return The search url
 	 */
 	private StringBuilder getSearchURLWithParams(String tenantId, String businessService, String applicationNo) {
 		StringBuilder url = new StringBuilder(config.getWfHost());
-		
-		
-		
+
 		if (businessService != null) {
 			url.append(config.getWfBusinessServiceSearchPath());
 			url.append("?businessServices=");
@@ -96,48 +93,40 @@ public class WorkflowService {
 		} else {
 			url.append(config.getWfProcessPath());
 			url.append("?businessIds=");
-			url.append(applicationNo); 
+			url.append(applicationNo);
 		}
-		
+
 		url.append("&tenantId=");
 		url.append(tenantId);
-		
+
 		return url;
 	}
 
 	/**
 	 * Returns boolean value to specifying if the state is updatable
 	 * 
-	 * @param statusEnum
-	 *            The stateCode of the fsm
-	 * @param businessService
-	 *            The BusinessService of the application flow
+	 * @param statusEnum      The stateCode of the fsm
+	 * @param businessService The BusinessService of the application flow
 	 * @return State object to be fetched
 	 */
 	public Boolean isStateUpdatable(String status, BusinessService businessService) {
 		for (org.egov.fsm.web.model.workflow.State state : businessService.getStates()) {
-			if (state.getApplicationStatus() != null
-					&& state.getApplicationStatus().equalsIgnoreCase(status))
+			if (state.getApplicationStatus() != null && state.getApplicationStatus().equalsIgnoreCase(status))
 				return state.getIsStateUpdatable();
 		}
 		return Boolean.FALSE;
 	}
 
-	
-
 	/**
 	 * Returns State Obj fo the current state of the document
 	 * 
-	 * @param statusEnum
-	 *            The stateCode of the fsm
-	 * @param businessService
-	 *            The BusinessService of the application flow
+	 * @param statusEnum      The stateCode of the fsm
+	 * @param businessService The BusinessService of the application flow
 	 * @return State object to be fetched
 	 */
 	public State getCurrentStateObj(String status, BusinessService businessService) {
 		for (State state : businessService.getStates()) {
-			if (state.getApplicationStatus() != null
-					&& state.getApplicationStatus().equalsIgnoreCase(status))
+			if (state.getApplicationStatus() != null && state.getApplicationStatus().equalsIgnoreCase(status))
 				return state;
 		}
 		return null;
