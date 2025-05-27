@@ -25,8 +25,7 @@ import static org.egov.inbox.util.NocConstants.NOC_APPLICATION_NUMBER_PARAM;
 import static org.egov.inbox.util.PTConstants.ACKNOWLEDGEMENT_IDS_PARAM;
 import static org.egov.inbox.util.PTConstants.PT;
 import static org.egov.inbox.util.RequestServiceConstants.*;
-import static org.egov.inbox.util.StreetVendingConstants.SV_APPLICATION_NUMBER_PARAM;
-import static org.egov.inbox.util.StreetVendingConstants.SV_SERVICES;
+import static org.egov.inbox.util.StreetVendingConstants.*;
 import static org.egov.inbox.util.TLConstants.APPLICATION_NUMBER_PARAM;
 import static org.egov.inbox.util.TLConstants.BUSINESS_SERVICE_PARAM;
 import static org.egov.inbox.util.TLConstants.REQUESTINFO_PARAM;
@@ -483,6 +482,9 @@ public class InboxService {
 					moduleSearchCriteria.remove(LOCALITY_PARAM);
 					moduleSearchCriteria.remove(OFFSET_PARAM);
 					moduleSearchCriteria.remove(STATUS_PARAM);
+					if(moduleSearchCriteria.containsKey(APPLICATION_STATUS)) {
+						moduleSearchCriteria.put(STATUS_PARAM, moduleSearchCriteria.get(APPLICATION_STATUS));
+					}
 				} else {
 					isSearchResultEmpty = true;
 				}
