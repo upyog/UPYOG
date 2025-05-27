@@ -204,7 +204,7 @@ public class TLConfiguration {
 
 
     //MDMS
-    @Value("${mdms.v2.host}")
+    @Value("${egov.mdms.host}")
     private String mdmsHost;
 
     @Value("${mdms.v2.search.endpoint}")
