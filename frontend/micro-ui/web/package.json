@@ -11,7 +11,8 @@
     "micro-ui-internals/packages/modules/dss",
     "micro-ui-internals/packages/modules/pgrai",
     "micro-ui-internals/packages/modules/engagement",
-    "micro-ui-internals/packages/modules/asset"
+    "micro-ui-internals/packages/modules/sv",
+    "micro-ui-internals/packages/modules/obps"
   ],
   "engines": {
     "node": ">=14"

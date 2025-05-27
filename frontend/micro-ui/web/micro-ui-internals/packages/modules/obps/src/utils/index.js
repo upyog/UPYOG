@@ -1,10 +1,15 @@
 import cloneDeep from "lodash/cloneDeep";
 // import { v4 as uuid_v4 } from 'uuid';
 
-import uuid from 'uuid';
+// import uuid from 'uuid';
+import { v4 as uuid_v4 } from 'uuid';
+
+// export const uuidv4 = () => {
+//   return uuid.v4();
+// };
 
 export const uuidv4 = () => {
-  return uuid.v4();
+  return uuid_v4();
 };
 
 export const getPattern = (type) => {
