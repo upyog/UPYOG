@@ -190,7 +190,7 @@ public class Ventilation_Citya extends FeatureProcess {
 	                }
 
 	                // Check bathroom ventilation
-	                if (f.getBathVentilaion() != null && f.getBathVentilaion().getMeasurements() != null
+	               /* if (f.getBathVentilaion() != null && f.getBathVentilaion().getMeasurements() != null
 	                        && !f.getBathVentilaion().getMeasurements().isEmpty()) {
 
 	                    BigDecimal totalVentilationArea = f.getBathVentilaion().getMeasurements().stream()
@@ -218,8 +218,8 @@ public class Ventilation_Citya extends FeatureProcess {
 	                    details1.put(STATUS, Result.Not_Accepted.getResultVal());
 	                    scrutinyDetail1.getDetail().add(details1);
 	                    pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail1);
-	                }
-	            }
+	                } */
+	            } 
 	        }
 	    }
 
