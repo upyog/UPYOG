@@ -172,7 +172,7 @@ public class MDMSService {
      * @return MDMS Search URL
      */
     private StringBuilder getMdmsSearchUrl() {
-        return new StringBuilder().append(config.getMdmsHost()).append(config.getMdmsSearchEndpoint());
+        return new StringBuilder().append(config.getMdmsHost()).append(config.getMdmsEndPoint());
     }
 
 

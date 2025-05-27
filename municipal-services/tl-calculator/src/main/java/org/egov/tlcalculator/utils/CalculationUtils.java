@@ -128,7 +128,7 @@ public class CalculationUtils {
      * @return
      */
     public StringBuilder getMdmsSearchUrl() {
-        return new StringBuilder().append(config.getMdmsHost()).append(config.getMdmsSearchEndpoint());
+        return new StringBuilder().append(config.getMdmsHost()).append(config.getMdmsEndPoint());
     }
 
 }
