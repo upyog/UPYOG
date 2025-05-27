@@ -1,10 +1,10 @@
-package org.egov.fsm.producer;
+package org.egov.fsm.fsmProducer;
 
 import org.egov.tracer.kafka.CustomKafkaTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 @Service
-public class Producer {
+public class FSMProducer {
 	@Autowired
 	private CustomKafkaTemplate<String, Object> kafkaTemplate;
 
