@@ -209,6 +209,9 @@ public class TLConfiguration {
 
     @Value("${mdms.v2.search.endpoint}")
     private String mdmsEndPoint;
+    
+    @Value("${egov.mdms.search.endpoint}")
+    private String mdmsV1EndPoint;
 
 
     //Allowed Search Parameters
