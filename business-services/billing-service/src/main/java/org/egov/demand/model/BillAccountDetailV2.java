@@ -39,6 +39,9 @@ public class BillAccountDetailV2   {
   
   @JsonProperty("adjustedAmount")
   private BigDecimal adjustedAmount;
+  
+  @JsonProperty("glcode")
+  private String glcode;
 
   @JsonProperty("taxHeadCode")
   private String taxHeadCode;

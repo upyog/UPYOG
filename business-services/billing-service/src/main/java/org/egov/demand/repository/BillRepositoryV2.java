@@ -196,6 +196,7 @@ public class BillRepositoryV2 {
 				ps.setString(12, auditDetails.getLastModifiedBy());
 				ps.setLong(13, auditDetails.getLastModifiedTime());
 				ps.setString(14, billAccountDetail.getTaxHeadCode());
+				ps.setString(15, billAccountDetail.getGlcode());
 			}
 
 			@Override

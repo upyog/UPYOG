@@ -9,6 +9,7 @@ public class Constants {
 	public static final String DB_TYPE_JSONB = "jsonb";
 
 	public static final String MODULE_NAME = "BillingService";
+	public static final String FINANCE_MODULE_NAME = "FinanceModule";
 	
 	public static final String MDMS_CODE_FILTER = "$.*.code";
 	public static final String TAXPERIOD_CODE_FILTER = null;
@@ -25,6 +26,7 @@ public class Constants {
 	
 	public static final String TAXPERIOD_MASTERNAME = "TaxPeriod";
 	public static final String TAXHEAD_MASTERNAME = "TaxHeadMaster";
+	public static final String FINANCE_TAXHEAD_MASTERNAME = "TaxHeadMasterGlCodeMapping";
 	public static final String BUSINESSSERVICE_MASTERNAME = "BusinessService";
 	
 	public static final List<String> MDMS_MASTER_NAMES = Collections
@@ -106,14 +108,18 @@ public class Constants {
 	 */
 
 	public static final String TAXHEADMASTER_SERVICE_FILTER = "$.[?(@.service== \"{}\")]";
+	public static final String FINANCE_TAXHEADMASTER_SERVICE_FILTER = "$.[?(@.billingservicecode== \"{}\")]";
 	public static final String TAXHEADMASTER_EXPRESSION = "$.MdmsRes.BillingService.TaxHeadMaster[?(EXPRESSION)]";
+	public static final String FINANCE_TAXHEADMASTER_EXPRESSION = "$.MdmsRes.FinanceModule.TaxHeadMasterGlCodeMapping[?(EXPRESSION)]";
 	public static final String TAXHEADMASTER_CATEGORY_FILTER = "@.category == \"VAL\"";
 	public static final String TAXHEADMASTER_NAME_FILTER = "@.name== \"VAL\"";
+	public static final String FINANCE_TAXHEADMASTER_NAME_FILTER = "@.taxhead== \"VAL\"";
 	public static final String TAXHEADMASTER_ISDEBIT_FILTER = "@.isDebit== \"VAL\"";
 	public static final String TAXHEADMASTER_ISACTUALAMOUNT_FILTER = "@.isActualDemand== \"VAL\"";
 	public static final String TAXHEADMASTER_IDS_FILTER = "@.id in [VAL]";
 	public static final String TAXHEADMASTER_CODES_FILTER = "@.code in [VAL]";
 	public static final String MDMS_NO_FILTER_TAXHEADMASTER = "$.MdmsRes.BillingService.TaxHeadMaster.*";
+	public static final String FINANCE_MDMS_NO_FILTER_TAXHEADMASTER = "$.MdmsRes.FinanceModule.TaxHeadMasterGlCodeMapping.*";
 	
 
 
@@ -210,6 +216,13 @@ public class Constants {
 	public static final String Q3FlatDays="91";
 	public static final String H1FlatDays="182";
 	public static final String InterestPrecentage="0.014";
+	
+	public static final String PROPERTY_TAX="PT_TAX";
+	public static final String PROPERTY_TAX_GENERAL_CONSERVANCY="PT_GENERAL_CONSERVANCY";
+	public static final String PROPERTY_TAX_STREET_LIGHTING="PT_STREET_LIGHTING";
+	public static final String PROPERTY_TAX_PENALTY="PT_PAST_DUE_PENALTY";
+	public static final String PROPERTY_TAX_INTEREST="PT_PROPERTY_INTEREST";
+	public static final String ROUND_OFF="PT_ROUNDOFF";
 	
 	
 }
