@@ -1,6 +1,12 @@
 import cloneDeep from "lodash/cloneDeep";
 // import { v4 as uuid_v4 } from 'uuid';
 
+import uuid from 'uuid';
+
+export const uuidv4 = () => {
+  return uuid.v4();
+};
+
 export const getPattern = (type) => {
   switch (type) {
     case "Name":
