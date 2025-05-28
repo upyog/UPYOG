@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import ApplicationTable from "./inbox/ApplicationTable";
 import SearchApplication from "./inbox/search";
+import { cndStyles } from "../utils/cndStyles";
 
 /**
  * The CNDDesktopInbox component provides a structured layout for viewing application data in a table format, 
@@ -44,11 +45,11 @@ const CNDDesktopInbox = ({ tableConfig, filterComponent, ...props }) => {
     result =
       (EmptyInboxComp && <EmptyInboxComp data={data} />) ||
       (data?.length === 0 || (useNewInboxAPI && data?.[0].dataEmpty) ? (
-        <Card style={{ marginTop: 20 }}>
+        <Card style={cndStyles.clearButton}>
           {t("CS_MYAPPLICATIONS_NO_APPLICATION")
             .split("\\n")
             .map((text, index) => (
-              <p key={index} style={{ textAlign: "center" }}>
+              <p key={index} style={cndStyles.noInboxApplication}>
                 {text}
               </p>
             ))}
@@ -64,11 +65,7 @@ const CNDDesktopInbox = ({ tableConfig, filterComponent, ...props }) => {
         columns={columns}
         getCellProps={(cellInfo) => {
           return {
-            style: {
-              minWidth: cellInfo.column.Header === t("ES_INBOX_APPLICATION_NO") ? "240px" : "",
-              padding: "20px 18px",
-              fontSize: "16px",
-            },
+            style: cndStyles.applicationTable,
           };
         }}
         onPageSizeChange={props.onPageSizeChange}
@@ -103,7 +100,7 @@ const CNDDesktopInbox = ({ tableConfig, filterComponent, ...props }) => {
           </div>
         </div>
       )}
-      <div style={{ width: isCitizen?"75%":"" }}>
+      <div style={isCitizen?cndStyles.searchApplication:null}>
         <SearchApplication
           defaultSearchParams={props.defaultSearchParams}
           onSearch={(d) => {
@@ -116,7 +113,7 @@ const CNDDesktopInbox = ({ tableConfig, filterComponent, ...props }) => {
           searchParams={props.searchParams}
           clearSearch={() => setClearSearchCalled(true)}
         />
-        <div className="result" style={{ marginLeft: !props?.isSearch ? "24px" : "", flex: 1 }}>
+        <div className="result" style={!props?.isSearch ? cndStyles.resultWithoutSearch:cndStyles.resultWithSearch}>
           {result}
         </div>
       </div>

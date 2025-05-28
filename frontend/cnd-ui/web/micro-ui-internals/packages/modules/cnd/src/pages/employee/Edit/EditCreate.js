@@ -6,6 +6,7 @@ import { useParams } from "react-router-dom";
 import { EditConfig } from "../../../config/editConfig";
 import { ApplicationProvider } from "./ApplicationContext";
 import { CND_VARIABLES } from "../../../utils";
+import { cndStyles } from "../../../utils/cndStyles";
 
 /**
  * Parent Component For Edit Case, 
@@ -172,8 +173,8 @@ const EditCreate = () => {
           body: config.body.filter((a) => !a.hideInEmployee),
         };
       })}
-      fieldStyle={{ marginRight: 0 }}
-      cardStyle={{Width: "60%"}}
+      fieldStyle={cndStyles.fieldStyle}
+      cardStyle={cndStyles.cardStyle}
       onSubmit={onSubmit}
       onFormValueChange={onFormValueChange}
     />

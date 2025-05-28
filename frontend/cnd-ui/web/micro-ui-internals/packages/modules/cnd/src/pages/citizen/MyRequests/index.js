@@ -3,6 +3,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import CndApplicationData from "./CndApplicationData";
+import { cndStyles } from "../../../utils/cndStyles";
 
 export const MyRequests = () => {
   const { t } = useTranslation();
@@ -41,20 +42,20 @@ export const MyRequests = () => {
               <CndApplicationData application={application} tenantId={user?.permanentCity} buttonLabel={t("CS_CF_TRACK")}/>
             </div>
           ))}
-        {!applicationsList?.length > 0 && <p style={{ marginLeft: "16px", marginTop: "16px" }}>{t("CND_NO_APPLICATION_FOUND")}</p>}
+        {!applicationsList?.length > 0 && <p style={cndStyles.applicationList}>{t("CND_NO_APPLICATION_FOUND")}</p>}
 
         {applicationsList?.length !== 0 && (
           <div>
-            <p style={{ marginLeft: "16px", marginTop: "16px" }}>
+            <p style={cndStyles.applicationList}>
               <span className="link">{<Link to={`/cnd-ui/citizen/cnd/my-request/${t1}`}>{t("CND_LOAD_MORE")}</Link>}</span>
             </p>
           </div>
         )}
       </div>
 
-      <p style={{ marginLeft: "16px", marginTop: "16px" }}>
+      <p style={cndStyles.applicationList}>
         {t("CND_NO_APPLICATION_FOUND")}{" "}
-        <span className="link" style={{ display: "block" }}>
+        <span className="link" style={cndStyles.newApplication}>
           <Link to="/cnd-ui/citizen/cnd/apply">{t("CND_CLICK_TO_REQUEST")}</Link>
         </span>
       </p>

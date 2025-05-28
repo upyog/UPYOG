@@ -4,6 +4,7 @@ import { Route, Switch, useRouteMatch, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import Inbox from "./Inbox";
 import SearchApp from "./SearchApp";
+import { cndStyles } from "../../utils/cndStyles";
 
 /** The Main routes component for the employee side
  * Contains routes for every page there is to redirect in the employee side
@@ -27,10 +28,10 @@ const EmployeeApp = () => {
   const FacilitySubmissionResponse = Digit?.ComponentRegistryService?.getComponent("FacilitySubmissionResponse");
 
   return (
-    <span className={"cnd-citizen"}style={{width:"100%"}}>
+    <span className={"cnd-citizen"} style={cndStyles.wasteQuantityCitizen}>
       <Switch>
         <AppContainer>
-          <BackButton style={{marginTop:"15px"}}>Back</BackButton>
+          <BackButton style={cndStyles.backButton}>Back</BackButton>
           <PrivateRoute
             path={`${path}/inbox`}
             component={() => (

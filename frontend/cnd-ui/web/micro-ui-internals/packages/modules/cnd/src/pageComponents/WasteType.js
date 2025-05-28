@@ -6,6 +6,7 @@ import { useApplicationDetails } from "../pages/employee/Edit/ApplicationContext
 import { convertToObject } from "../utils";
 import WasteTypeTable from "./WasteTypeTable";
 import { calculateTotalWasteInTons, formatWasteQuantity } from "../utils";
+import { cndStyles } from "../utils/cndStyles";
 
 /**
 * WasteType component that collects information about waste collection requests including
@@ -19,7 +20,7 @@ const WasteType = ({ t, config, onSelect, formData }) => {
   const isEmployee = window.location.href.includes("/employee") ?true:false;
   const applicationDetails = isEmployee ? useApplicationDetails():null;
   const userType = Digit.UserService.getUser().info.type;
-  const inputStyles = { width: userType === "EMPLOYEE" ? "50%" : "100%" };
+  const inputStyles = userType === "EMPLOYEE" ? cndStyles.employeeFields:cndStyles.citizenWidth;
   // Process wasteTypeDetails from applicationDetails to get unique waste types
   const processWasteTypeDetails = (details) => {
     if (!details || !Array.isArray(details)) return [];
@@ -39,23 +40,8 @@ const WasteType = ({ t, config, onSelect, formData }) => {
     siteMediaPhoto: formData?.wasteType?.siteMediaPhoto || null,
     siteStack: formData?.wasteType?.siteStack || null,
   });
-
-  /* TODO: add these CSS inside Classname
-  isInPickupProgress, containerStyle, labelStyle  
-  these CSS added for Waste quantity as well as Pickup date because they are not aliging well in Facility centre Screen
-  */
   const isInPickupProgress = applicationDetails?.applicationStatus === "WASTE_PICKUP_INPROGRESS";
 
-  const containerStyle = {
-    display: isInPickupProgress ? 'flex' : 'block',
-    alignItems: isInPickupProgress ? 'center' : 'initial',
-    marginBottom: '10px'
-  };
-
-  const labelStyle = {
-    minWidth: isInPickupProgress ? '180px' : 'auto',
-    flexShrink: isInPickupProgress ? 0 : 'initial'
-  };
 
   // Initially the files state should just be empty, as we don't have the actual File objects
   const [files, setFiles] = useState({ 
@@ -296,12 +282,12 @@ const WasteType = ({ t, config, onSelect, formData }) => {
           />
           )}
          
-          <div style={containerStyle}>
-          <CardLabel style={labelStyle}>
+          <div style={isInPickupProgress?cndStyles.containerStyleInProgress:cndStyles.containerStyleNotInProgress}>
+          <CardLabel style={isInPickupProgress?cndStyles.labelStyleInProgress:cndStyles.labelStyleNotInProgress}>
             {`${t("CND_WASTE_QUANTITY")}`}<span className="astericColor">*</span>
           </CardLabel>
          { isEmployee? 
-         <span style={{fontWeight:"bold"}}>{wasteQuantity}</span>
+         <span style={cndStyles.employeeSideWasteTypeFont}>{wasteQuantity}</span>
          :
           <TextInput
             t={t}
@@ -311,7 +297,7 @@ const WasteType = ({ t, config, onSelect, formData }) => {
             name="wasteQuantity"
             value={wasteQuantity}
             onChange={setWasteQuantity}
-            style={{width:isInPickupProgress?"72%":userType === "EMPLOYEE" ? "50%" : "100%"}}
+            style={isInPickupProgress?cndStyles.wasteQunatityInProgress:userType === "EMPLOYEE" ? cndStyles.employeeFields : cndStyles.wasteQuantityCitizen}
             ValidationRequired={true}
             {...(validation = {
               isRequired: true,
@@ -321,8 +307,8 @@ const WasteType = ({ t, config, onSelect, formData }) => {
             })}
           />}
         </div>
-        <div style={containerStyle}>
-          <CardLabel style={labelStyle}>{t("CND_SCHEDULE_PICKUP")}<span className="astericColor">*</span></CardLabel>
+        <div style={isInPickupProgress?cndStyles.containerStyleInProgress:cndStyles.containerStyleNotInProgress}>
+          <CardLabel style={isInPickupProgress?cndStyles.labelStyleInProgress:cndStyles.labelStyleNotInProgress}>{t("CND_SCHEDULE_PICKUP")}<span className="astericColor">*</span></CardLabel>
           <DatePicker
             date={pickupDate}
             name="pickupDate"
@@ -341,14 +327,19 @@ const WasteType = ({ t, config, onSelect, formData }) => {
          { !window.location.href.includes("facility-centre")&&(
           <React.Fragment>
           <CardLabel>{`${t("CND_SITE_MEDIA")}`}</CardLabel>
-          <div style={{ marginBottom: "15px", width:userType === "EMPLOYEE" ? "50%" : "100%" }}>
+          <div style={{
+                ...cndStyles.siteMediaPhotoEmployee,
+                ...(userType === "EMPLOYEE"
+                  ? cndStyles.employeeFields
+                  : cndStyles.wasteQuantityCitizen),
+              }}>
             <UploadFile
               onUpload={(e) => handleFileUpload(e, "siteMediaPhoto")}
               onDelete={() => setFileUploads((prev) => ({ ...prev, siteMediaPhoto: null }))}
               id={"CND"}
               message={
                 isUploadingMedia ? (
-                  <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                  <div style={cndStyles.loaderAlignment}>
                     <LoadingSpinner />
                     <span>Uploading...</span>
                   </div>
@@ -364,14 +355,20 @@ const WasteType = ({ t, config, onSelect, formData }) => {
           </div>
           
           <CardLabel>{`${t("CND_SITE_STACK")}`}</CardLabel>
-          <div style={{ marginBottom: "20px", width:userType === "EMPLOYEE" ? "50%" : "100%" }}>
+          <div style={{
+                ...cndStyles.siteSackPhotoEmployee,
+                ...(userType === "EMPLOYEE"
+                  ? cndStyles.employeeFields
+                  : cndStyles.wasteQuantityCitizen),
+              }}
+            >
             <UploadFile
               onUpload={(e) => handleFileUpload(e, "siteStack")}
               onDelete={() => setFileUploads((prev) => ({ ...prev, siteStack: null }))}
               id={"CND"}
               message={
                 isUploadingStack ? (
-                  <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                  <div style={cndStyles.loaderAlignment}>
                     <LoadingSpinner />
                     <span>Uploading...</span>
                   </div>

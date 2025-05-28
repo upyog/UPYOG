@@ -45,25 +45,12 @@ const LocationPopup = ({ t, closeModal }) => {
             hideSubmit={true}
             formId="modal-action"
         >
-        {/* <Card style={{ boxShadow: "none" }}>
-        <div style={{
-                display: 'flex',
-                justifyContent: 'center',
-                gap: '20px', 
-                flexDirection: 'column', 
-                alignItems: 'center', 
-            }}>
-            
-        </div>
-        </Card> */}
-
+    
         <FormComposer
             config={config.form}
             noBoxShadow
             inline
             childrenAtTheBottom
-            // onSubmit={submit}
-            // defaultValues={defaultValues}
             formId="modal-action"
             />
         </Modal>

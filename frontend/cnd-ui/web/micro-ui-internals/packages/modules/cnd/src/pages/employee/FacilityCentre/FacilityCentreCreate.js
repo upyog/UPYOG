@@ -6,6 +6,7 @@ import { useParams } from "react-router-dom";
 import { FacilityCentreConfig } from "../../../config/facilityCentreConfig";
 import { ApplicationProvider } from "../Edit/ApplicationContext";
 import { CND_VARIABLES } from "../../../utils";
+import { cndStyles } from "../../../utils/cndStyles";
 
 
 /**
@@ -154,8 +155,8 @@ const FacilityCentreCreationDetails = () => {
           body: config.body.filter((a) => !a.hideInEmployee),
         };
       })}
-      fieldStyle={{ marginRight: 0 }}
-      cardStyle={{Width: "60%"}}
+      fieldStyle={cndStyles.fieldStyle}
+      cardStyle={cndStyles.cardStyle}
       onSubmit={onSubmit}
       onFormValueChange={onFormValueChange}
     />

@@ -45,7 +45,7 @@ export const filterFunctions = {
 
       // Adding status filter if provided
       if (status) {
-          searchFilters.status = status;
+          searchFilters.applicationStatus = status;
       }
 
       // Adding application number filter if provided

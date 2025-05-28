@@ -8,12 +8,10 @@ import {
   ActionBar,
   CloseSvg,
   DatePicker,
-  MobileNumber,
-  Dropdown,
-  Localities,
+  MobileNumber
 } from "@nudmcdgnpm/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
-
+import { cndStyles } from "../../utils/cndStyles";
 /**
  * The SearchApplication component creates a dynamic search form based on configurable search fields, 
  * with different layouts for mobile and desktop views. It manages form state, validation, and submission of search criteria.
@@ -26,7 +24,7 @@ const fieldComponents = {
 
 const SearchApplication = ({ onSearch, type, onClose, searchFields, searchParams, isInboxPage, defaultSearchParams, clearSearch: _clearSearch }) => {
   const { t } = useTranslation();
-  const { handleSubmit, reset, watch, control, setError, clearErrors, formState, setValue } = useForm({
+  const { handleSubmit, reset, watch, control, formState, setValue } = useForm({
     defaultValues: isInboxPage ? searchParams : { locality: null, city: null, ...searchParams },
   });
 
@@ -78,9 +76,8 @@ const SearchApplication = ({ onSearch, type, onClose, searchFields, searchParams
   }
 
   const clearAll = (mobileView) => {
-    const mobileViewStyles = mobileView ? { margin: 0 } : {};
     return (
-      <LinkLabel style={{ display: "inline", margin: "10px", ...mobileViewStyles }} onClick={clearSearch}>
+      <LinkLabel style={mobileView?cndStyles.clearButtonMobile:cndStyles.clearButtonDesktop} onClick={clearSearch}>
         {t("ES_COMMON_CLEAR_SEARCH")}
       </LinkLabel>
     );
@@ -89,7 +86,7 @@ const SearchApplication = ({ onSearch, type, onClose, searchFields, searchParams
   return (
     <form onSubmit={handleSubmit(onSubmitInput)}>
       <React.Fragment>
-        <div className="search-container" style={{ width: "auto", marginLeft: isInboxPage ? "24px" : "revert" }}>
+        <div className="search-container" style={ isInboxPage ? cndStyles.searchContainerInbox:cndStyles.searchContainer}>
           <div className="search-complaint-container">
             {(type === "mobile" || mobileView) && (
               <div className="complaint-header">
@@ -99,14 +96,13 @@ const SearchApplication = ({ onSearch, type, onClose, searchFields, searchParams
                 </span>
               </div>
             )}
-            <div className={"complaint-input-container for-pt " + (!isInboxPage ? "for-search" : "")} style={{ width: "100%", display:"grid" }}>
+            <div className={"complaint-input-container for-pt " + (!isInboxPage ? "for-search" : "")}>
               {searchFields
                 ?.filter((e) => true)
                 ?.map((input, index) => (
                   <div key={input.name} className="input-fields">
-                    {/* <span className={index === 0 ? "complaint-input" : "mobile-input"}> */}
                     <span className={"mobile-input"}>
-                      <Label>{t(input.label) + ` ${input.isMendatory ? "*" : ""}`}</Label>
+                      <Label>{t(input.label) + ` ${input.isMandatory ? "*" : ""}`}</Label>
                       {!input.type ? (
                         <Controller
                           render={(props) => {
@@ -128,34 +124,24 @@ const SearchApplication = ({ onSearch, type, onClose, searchFields, searchParams
                         />
                       )}
                     </span>
-                    {formState?.dirtyFields?.[input.name] ? (
-                      <span
-                        style={{ fontWeight: "700", color: "rgba(212, 53, 28)", paddingLeft: "8px", marginTop: "-20px", fontSize: "12px" }}
-                        className="inbox-search-form-error"
-                      >
-                        {formState?.errors?.[input.name]?.message}
-                      </span>
-                    ) : null}
                   </div>
                 ))}
 
-              {isInboxPage && (
-                <div style={{ gridColumn: "2/3", textAlign: "right", paddingTop: "10px" }} className="input-fields">
-                  <div>{clearAll()}</div>
-                </div>
-              )}
-
               {type === "desktop" && !mobileView && (
-                <div style={{ maxWidth: "unset", marginLeft: "unset" }} className="search-submit-wrapper">
+                <div style={cndStyles.searchWrapper} className="search-submit-wrapper">
                   <SubmitBar
                     className="submit-bar-search"
                     label={t("ES_COMMON_SEARCH")}
                     disabled={!!Object.keys(formState.errors).length || formValueEmpty()}
-                    style={{width:"60%"}}
+                    style={cndStyles.searchSubmitBar}
                     submit
                   />
-                  {/* style={{ paddingTop: "16px", textAlign: "center" }} className="clear-search" */}
                   {!isInboxPage && <div>{clearAll()}</div>}
+                </div>
+              )}
+            {isInboxPage && (
+                <div style={cndStyles.inboxClearButton} className="input-fields">
+                  <div>{clearAll()}</div>
                 </div>
               )}
             </div>
@@ -163,10 +149,10 @@ const SearchApplication = ({ onSearch, type, onClose, searchFields, searchParams
         </div>
         {(type === "mobile" || mobileView) && (
           <ActionBar className="clear-search-container">
-            <button className="clear-search" style={{ flex: 1 }}>
+            <button className="clear-search" style={cndStyles.submitBarFlex}>
               {clearAll(mobileView)}
             </button>
-            <SubmitBar disabled={!!Object.keys(formState.errors).length} label={t("ES_COMMON_SEARCH")} style={{ flex: 1 }} submit={true} />
+            <SubmitBar disabled={!!Object.keys(formState.errors).length} label={t("ES_COMMON_SEARCH")} style={cndStyles.submitBarFlex} submit={true} />
           </ActionBar>
         )}
       </React.Fragment>
