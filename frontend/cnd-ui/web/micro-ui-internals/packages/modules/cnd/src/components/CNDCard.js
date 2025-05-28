@@ -1,6 +1,7 @@
 import React,{useState,useEffect} from "react";
 import { useTranslation } from "react-i18next";
 import { EmployeeModuleCard, PropertyHouse } from "@nudmcdgnpm/digit-ui-react-components";
+import { cndStyles } from "../utils/cndStyles";
 /**
  *  Custom component for the Employee card which shows links like - My Requests as well as Inbox
  *  It will check if the user has access using cndUserAccess and accordingly Render the Card in UI
@@ -45,7 +46,7 @@ const CNDCard = () => {
 
   const propsForModuleCard = {
     Icon: <PropertyHouse />,
-    moduleName: <div style={{ width: "200px", wordWrap: "break-word" }}>{t("MODULE_CND")}</div>,
+    moduleName: <div style={cndStyles.moduleCardHeader}>{t("MODULE_CND")}</div>,
     kpis: [{
       count: total?.totalCount,
       label: t("CND_APPLICANT_COUNT"),

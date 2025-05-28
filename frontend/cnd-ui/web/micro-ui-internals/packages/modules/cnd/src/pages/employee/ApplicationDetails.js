@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
 import ApplicationDetailsTemplate from "../../../../templates/ApplicationDetails";
 import cndAcknowledgementData from "../../utils/cndAcknowledgementData";
+import { cndStyles } from "../../utils/cndStyles";
 
 /**
 * ApplicationDetails component displays the details of a CND application
@@ -118,11 +119,11 @@ const ApplicationDetails = () => {
   
   return (
     <div>
-      <div className={"employee-application-details"} style={{ marginBottom: "15px" }}>
-        <Header styles={{ marginLeft: "0px", paddingTop: "10px", fontSize: "32px" }}>{t("CND_APPLICATION_DETAILS")}</Header>
-        <div style={{zIndex: "10",display:"flex",flexDirection:"row-reverse",alignItems:"center",marginTop:"-25px"}}>
+      <div className={"employee-application-details"} style={cndStyles.siteMediaPhotoEmployee}>
+        <Header styles={cndStyles.applicationDetailHeader}>{t("CND_APPLICATION_DETAILS")}</Header>
+        <div style={cndStyles.applicationDetailCard}>
          
-      <div style={{zIndex: "10",  position: "relative"}}>
+      <div style={cndStyles.downloadButton}>
         {dowloadOptions && dowloadOptions.length > 0 && (
           <MultiLink
             className="multilinkWrapper"
@@ -155,7 +156,7 @@ const ApplicationDetails = () => {
         timelineStatusPrefix={"CND_"}
         forcedActionPrefix={"C&D"}
         statusAttribute={"state"}
-        MenuStyle={{ color: "#FFFFFF", fontSize: "18px" }}
+        MenuStyle={cndStyles.menuStyle}
       />
 
     </div>

@@ -1,8 +1,10 @@
 import { CardSectionHeader, CheckPoint, ConnectingCheckPoints, Loader, SubmitBar } from "@nudmcdgnpm/digit-ui-react-components";
-import React, { Fragment } from "react";
+import React, { Fragment, useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
+import PropTypes from 'prop-types';
 import Caption from "./Caption";
+import { cndStyles } from "../utils/cndStyles";
 
 
 /**
@@ -31,33 +33,34 @@ import Caption from "./Caption";
  * appealing format with headers and connecting lines.
  */
 
-const CNDApplicationTimeLine = (props) => {
+const CNDApplicationTimeLine = ({ application, id, userType }) => {
   const { t } = useTranslation();
-  const businessService = props?.application?.workflow?.businessService;
-  
+  const businessService = application?.workflow?.businessService;
 
   const { isLoading, data } = Digit.Hooks.useWorkflowDetails({
-    tenantId: props.application?.tenantId,
-    id: props.id,
+    tenantId: application?.tenantId,
+    id,
     moduleCode: businessService,
   });
-  
 
-  function OpenImage(thumbnailsToShow) {
-    window.open(thumbnailsToShow?.fullImage?.[0], "_blank");
-  }
+  const OpenImage = useCallback((thumbnailsToShow) => {
+    if (thumbnailsToShow?.fullImage?.[0]) {
+      window.open(thumbnailsToShow.fullImage[0], "_blank");
+    }
+  }, []);
 
-  const getTimelineCaptions = (checkpoint) => {
-    
-    if (checkpoint.state === "OPEN")
-    {
+  const getTimelineCaptions = useCallback((checkpoint) => {
+    if (!checkpoint) return null;
+
+    if (checkpoint.state === "OPEN") {
       const caption = {
         date: checkpoint?.auditDetails?.lastModified,
-        source: props.application?.channel || "",
+        source: application?.channel || "",
       };
       return <Caption data={caption} />;
     }
-    else if (checkpoint.state) {
+
+    if (checkpoint.state) {
       const caption = {
         date: checkpoint?.auditDetails?.lastModified,
         name: checkpoint?.assignes?.[0]?.name,
@@ -67,39 +70,54 @@ const CNDApplicationTimeLine = (props) => {
         thumbnailsToShow: checkpoint?.thumbnailsToShow,
       };
       return <Caption data={caption} OpenImage={OpenImage} />;
-    } 
-    
-   
-    else {
-      const caption = {
-        date: Digit.DateUtils.ConvertTimestampToDate(props.application?.auditDetails.lastModified),
-        name: checkpoint?.assigner?.name,
-        comment: t(checkpoint?.comment),
-      };
-      return <Caption data={caption} />;
     }
-  };
 
-  const showNextActions = (nextActions) => {
-    let nextAction = nextActions?.[0];
-    switch (nextAction?.action) {
+    return (
+      <Caption
+        data={{
+          date: Digit.DateUtils.ConvertTimestampToDate(application?.auditDetails.lastModified),
+          name: checkpoint?.assigner?.name,
+          comment: t(checkpoint?.comment),
+        }}
+      />
+    );
+  }, [application, t, OpenImage]);
+
+  const showNextActions = useCallback((nextActions) => {
+    const nextAction = nextActions?.[0];
+    if (!nextAction) return null;
+
+    switch (nextAction.action) {
       case "PAY":
-        return (
-          props?.userType === 'citizen'
-          ? (
-          <div style={{ marginTop: "1em", bottom: "0px", width: "100%", marginBottom: "1.2em" }}>
+        return userType === 'citizen' ? (
+          <div style={cndStyles.payButton}>
             <Link
-              to={{ pathname: `/cnd-ui/citizen/payment/my-bills/cnd-service/${props?.application?.applicationNumber}`, state: { tenantId: props.application.tenantId, applicationNumber : props?.application?.applicationNo } }}
+              to={{
+                pathname: `/cnd-ui/citizen/payment/my-bills/cnd-service/${application?.applicationNumber}`,
+                state: {
+                  tenantId: application.tenantId,
+                  applicationNumber: application?.applicationNo
+                }
+              }}
             >
               <SubmitBar label={t("CS_APPLICATION_DETAILS_MAKE_PAYMENT")} />
             </Link>
           </div>
-          ) : null
-        );
+        ) : null;
       default:
         return null;
     }
-  };
+  }, [userType, application, t]);
+
+  const timelineData = useMemo(() => {
+    if (!data?.timeline) return null;
+
+    return data.timeline.map((checkpoint, index) => ({
+      isCompleted: index === 0,
+      label: t(`CND_${data?.processInstances[index].state?.["state"]}`),
+      checkpoint
+    }));
+  }, [data, t]);
 
   if (isLoading) {
     return <Loader />;
@@ -110,37 +128,27 @@ const CNDApplicationTimeLine = (props) => {
       {!isLoading && (
         <Fragment>
           {data?.timeline?.length > 0 && (
-            <CardSectionHeader style={{ marginBottom: "16px", marginTop: "32px" }}>
+            <CardSectionHeader style={cndStyles.timelineHeader}>
               {t("CS_APPLICATION_DETAILS_APPLICATION_TIMELINE")}
             </CardSectionHeader>
           )}
-          {data?.timeline && data?.timeline?.length === 1 ? (
+          {data?.timeline?.length === 1 ? (
             <CheckPoint
               isCompleted={true}
-              label={t((data?.timeline[0]?.state && `WF_${businessService}_${data.timeline[0].state}`) || "NA")}
-              customChild={getTimelineCaptions(data?.timeline[0])}
+              label={t((data.timeline[0]?.state && `WF_${businessService}_${data.timeline[0].state}`) || "NA")}
+              customChild={getTimelineCaptions(data.timeline[0])}
             />
           ) : (
             <ConnectingCheckPoints>
-              {data?.timeline &&
-                data?.timeline.map((checkpoint, index, arr) => {
-                  
-                  let timelineStatusPostfix = "";
-                  return (
-                    <React.Fragment key={index}>
-                      <CheckPoint
-                        keyValue={index}
-                        isCompleted={index === 0}
-                       //label={checkpoint.state ? t(`WF_${businessService}_${checkpoint.state}`) : "NA"}
-                       label={t(
-                        `CND_${data?.processInstances[index].state?.["state"]
-                        }${timelineStatusPostfix}`
-                      )}
-                        customChild={getTimelineCaptions(checkpoint)}
-                      />
-                    </React.Fragment>
-                  );
-                })}
+              {timelineData?.map(({ isCompleted, label, checkpoint }, index) => (
+                <CheckPoint
+                  key={index}
+                  keyValue={index}
+                  isCompleted={isCompleted}
+                  label={label}
+                  customChild={getTimelineCaptions(checkpoint)}
+                />
+              ))}
             </ConnectingCheckPoints>
           )}
         </Fragment>
@@ -150,4 +158,19 @@ const CNDApplicationTimeLine = (props) => {
   );
 };
 
-export default CNDApplicationTimeLine;
+CNDApplicationTimeLine.propTypes = {
+  application: PropTypes.shape({
+    workflow: PropTypes.shape({
+      businessService: PropTypes.string
+    }),
+    tenantId: PropTypes.string,
+    applicationNumber: PropTypes.string,
+    applicationNo: PropTypes.string,
+    channel: PropTypes.string,
+    auditDetails: PropTypes.object
+  }),
+  id: PropTypes.string.isRequired,
+  userType: PropTypes.string
+};
+
+export default React.memo(CNDApplicationTimeLine);

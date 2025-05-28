@@ -1,9 +1,9 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import { Dropdown, CloseSvg, SubmitBar } from "@nudmcdgnpm/digit-ui-react-components";
 import { useQueryClient } from "react-query";
 import { useTranslation } from "react-i18next";
-import Status from "./Status";
 import _ from "lodash";
+import { cndStyles } from "../../utils/cndStyles";
 
 /**
  * The Filter component creates a UI for applying filters to a list of applications, 
@@ -32,13 +32,33 @@ const Filter = ({ searchParams, onFilterChange, defaultSearchParams, statusMap, 
     },
   ];
 
-  //TODO: Will Add the Real Status Later
   let StatusFields = [
     {
-      i18nKey: "TEST1"
+      i18nKey: "PENDING_FOR_FIELD_INSPECTOR_ASSIGNMENT"
     },
     {
-      i18nKey: "TEST2"
+      i18nKey: "PENDING_FOR_APPROVAL"
+    },
+    {
+      i18nKey: "APPROVED"
+    },
+    {
+      i18nKey: "PENDING_FOR_VENDOR_ASSIGNMENT"
+    },
+    {
+      i18nKey: "PENDING_FOR_VEHICLE_DRIVER_ASSIGN"
+    },
+    {
+      i18nKey: "WASTE_PICKUP_INPROGRESS"
+    },
+    {
+      i18nKey: "CITIZEN_ACTION_REQUIRED"
+    },
+    {
+      i18nKey: "COMPLETED"
+    },
+    {
+      i18nKey: "REJECTED"
     }
   ];
 
@@ -67,14 +87,19 @@ const Filter = ({ searchParams, onFilterChange, defaultSearchParams, statusMap, 
     setAppStatus(null)
   };
 
+  // setting the vendingzone, vendingtype and status values in searchparams
+  useEffect(() => {
+    if (app_status) localParamChange({ status: app_status?.i18nKey || "" });
+  }, [app_status])
+
 
   if (window.location.href.includes("employee")){
   return (
     <React.Fragment>
       <div className="filter">
         <div className="filter-card">
-          <div className="heading" style={{ alignItems: "center" }}>
-            <div className="filter-label" style={{ display: "flex", alignItems: "center" }}>
+          <div className="heading" style={cndStyles.filterHeading}>
+            <div className="filter-label" style={cndStyles.filterLabel}>
               <span>
                 <svg width="17" height="17" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path
@@ -83,13 +108,13 @@ const Filter = ({ searchParams, onFilterChange, defaultSearchParams, statusMap, 
                   />
                 </svg>
               </span>
-              <span style={{ marginLeft: "8px", fontWeight: "normal" }}>{t("ES_COMMON_FILTER_BY")}:</span>
+              <span style={cndStyles.filterMargin}>{t("ES_COMMON_FILTER_BY")}:</span>
             </div>
             <div className="clearAll" onClick={clearAll}>
               {t("ES_COMMON_CLEAR_ALL")}
             </div>
             {props.type === "desktop" && (
-              <span className="clear-search" onClick={clearAll} style={{ border: "1px solid #e0e0e0", padding: "6px" }}>
+              <span className="clear-search" onClick={clearAll} style={cndStyles.filterClearButton}>
                 <svg width="17" height="17" viewBox="0 0 16 22" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path
                     d="M8 5V8L12 4L8 0V3C3.58 3 0 6.58 0 11C0 12.57 0.46 14.03 1.24 15.26L2.7 13.8C2.25 12.97 2 12.01 2 11C2 7.69 4.69 5 8 5ZM14.76 6.74L13.3 8.2C13.74 9.04 14 9.99 14 11C14 14.31 11.31 17 8 17V14L4 18L8 22V19C12.42 19 16 15.42 16 11C16 9.43 15.54 7.97 14.76 6.74Z"
@@ -105,10 +130,8 @@ const Filter = ({ searchParams, onFilterChange, defaultSearchParams, statusMap, 
             )}
           </div>
           <div>
-
-
             <div>
-              <div className="filter-label" style={{ fontWeight: "normal" }}>
+              <div className="filter-label">
                 {t("CND_APPLICATION_STATUS")}:
               </div>
               <div>
@@ -120,24 +143,7 @@ const Filter = ({ searchParams, onFilterChange, defaultSearchParams, statusMap, 
                   t={t}
                   placeholder={"Select"}
                 />
-
               </div>
-            </div>
-
-            <div>
-              <Status
-                searchParams={_searchParams}
-                businessServices={_searchParams.services}
-                statusMap={statusMap || client.getQueryData(`INBOX_STATUS_MAP_${moduleCode}`)}
-                moduleCode={moduleCode}
-                onAssignmentChange={(e, status) => {
-                  if (e.target.checked) localParamChange({ applicationStatus: [..._searchParams?.applicationStatus, status] });
-                  else {
-                    let applicationStatus = _searchParams?.applicationStatus.filter((e) => e.state !== status.state);
-                    localParamChange({ applicationStatus });
-                  }
-                }}
-              />
             </div>
             <div>
               <SubmitBar onSubmit={() => applyLocalFilters()} label={t("ES_COMMON_APPLY")} />

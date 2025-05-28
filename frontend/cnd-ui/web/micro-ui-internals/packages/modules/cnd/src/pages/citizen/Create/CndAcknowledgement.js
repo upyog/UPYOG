@@ -5,6 +5,7 @@ import { Link, useRouteMatch } from "react-router-dom";
 import { cndPayload } from "../../../utils";
 import { CND_VARIABLES } from "../../../utils";
 import cndAcknowledgementData from "../../../utils/cndAcknowledgementData";
+import { cndStyles } from "../../../utils/cndStyles";
 
 /**
  * Acknowledgement page which will render when form is submitted, it will show
@@ -22,11 +23,6 @@ const GetActionMessage = (props) => {
   }
 };
 
-const rowContainerStyle = {
-  padding: "4px 0px",
-  justifyContent: "space-between",
-};
-
 const BannerPicker = (props) => {
   return (
     <Banner
@@ -34,7 +30,7 @@ const BannerPicker = (props) => {
       applicationNumber={props.data?.cndApplicationDetails?.applicationNumber}
       info={props.isSuccess ? props.t("CND_APPLICATION_NO") : ""}
       successful={props.isSuccess}
-      style={{width: "100%"}}
+      style={cndStyles.successBar}
     />
   );
 };
@@ -80,9 +76,9 @@ const CndAcknowledgement = ({ data, onSuccess }) => {
       <StatusTable>
         {mutation.isSuccess && (
           <Row
-            rowContainerStyle={rowContainerStyle}
+            rowContainerStyle={cndStyles.rowContainerStyle}
             last       
-            textStyle={{ whiteSpace: "pre", width: "60%" }}
+            textStyle={cndStyles.textStyle}
           />
         )}
       </StatusTable>

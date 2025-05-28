@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
 import { checkForNA } from "../../../utils";
 import ApplicationTable from "../../../components/inbox/ApplicationTable";
+import { cndStyles } from "../../../utils/cndStyles";
 
 /* Custom Component to to show all the form details filled by user. All the details are coming through the value, 
 In Parent Component,  we are passing the data as a props coming through params (data in params comes through session storage) into the value.
@@ -17,7 +18,7 @@ In Parent Component,  we are passing the data as a props coming through params (
       history.push(jumpTo);
     }
     return <LinkButton 
-    label={<EditIcon style={{ marginTop: "-30px", float: "right", position: "relative", bottom: "32px" }} />}
+    label={<EditIcon style={cndStyles.editIcon} />}
     className="check-page-link-button" onClick={routeTo} />;
   };
 
@@ -49,7 +50,7 @@ In Parent Component,  we are passing the data as a props coming through params (
         <CardHeader>{t("CND_SUMMARY_PAGE")}</CardHeader>
         <div>
         <CardSubHeader>{t("CND_CONTRUCTION_NATURE_PROPERTY")}</CardSubHeader>
-          <StatusTable style={{marginTop:"30px",marginBottom:"30px"}}>
+          <StatusTable style={cndStyles.rowStyle}>
           <Row
               label={t("CND_TYPE_CONSTRUCTION")}
               text={`${t(checkForNA(propertyNature?.constructionType?.code))}`}
@@ -71,17 +72,12 @@ In Parent Component,  we are passing the data as a props coming through params (
               data={operationRows}
               columns={columnName}
               getCellProps={(cellInfo) => ({
-                style: {
-                  minWidth: "150px",
-                  padding: "10px",
-                  fontSize: "16px",
-                  paddingLeft: "20px",
-                },
+                style: cndStyles.citizenApplicationTable,
               })}
               isPaginationRequired={false}
               totalRecords={operationRows.length}
             />
-          <StatusTable style={{marginTop:"30px",marginBottom:"30px"}}>
+          <StatusTable style={cndStyles.rowStyle}>
           <Row
               label={t("CND_SCHEDULE_PICKUP")}
               text={`${t(checkForNA(wasteType?.pickupDate))}`}
@@ -93,7 +89,7 @@ In Parent Component,  we are passing the data as a props coming through params (
           />:null}
           </StatusTable>
           <CardSubHeader>{t("COMMON_PERSONAL_DETAILS")}</CardSubHeader>
-          <StatusTable style={{marginTop:"30px",marginBottom:"30px"}}>
+          <StatusTable style={cndStyles.rowStyle}>
           <Row
               label={t("COMMON_APPLICANT_NAME")}
               text={`${t(checkForNA(owner?.applicantName))}`}
@@ -114,7 +110,7 @@ In Parent Component,  we are passing the data as a props coming through params (
           </StatusTable>
          
           <CardSubHeader>{t("ADDRESS_DEATILS")}</CardSubHeader>
-          <StatusTable style={{marginTop:"30px",marginBottom:"30px"}}>
+          <StatusTable style={cndStyles.rowStyle}>
           <Row
               label={t("HOUSE_NO")}
               text={`${t(checkForNA(address?.houseNo|| addressDetails?.selectedAddressStatement?.houseNumber))}`}
@@ -155,7 +151,7 @@ In Parent Component,  we are passing the data as a props coming through params (
           <CheckBox
             label={t("CND_DECALARATION_MESSAGE")}
             onChange={setdeclarationhandler}
-            styles={{ height: "auto", marginBottom:"30px", marginTop:"10px" }}
+            styles={cndStyles.checkBox}
           />
         </div>
         <SubmitBar label={t("COMMON_BUTTON_SUBMIT")} onSubmit={onSubmit} disabled={!agree} />
