@@ -95,8 +95,8 @@ export const ASSETSearch = {
         row.warrantyStatus,
         row.costOfMaintenance,
         row.maintenanceCycle,
-        row.documents,
-        {editButton: true, data: row}
+        row.documents
+        // {editButton: true, data: row}
       ]
     )) || [];
 
@@ -227,8 +227,8 @@ export const ASSETSearch = {
             `${t("AST_WARRANTY_STATUS")}`,
             `${t("AST_COST_OF_MAINTENANCE")}`,
             `${t("AST_MAINTENANCE_CYCLE")}`,
-            `${t("AST_MAINTENANCE_DOCUMENT")}`,
-            `${t("AST_MAINTENANCE_ACTION")}`
+            `${t("AST_MAINTENANCE_DOCUMENT")}`
+            // `${t("AST_MAINTENANCE_ACTION")}`
           ]
           : [`${t("AST_NO_MAINTENANCE_DATA")}`],
         tableRows: maintenanceListRows,

@@ -473,9 +473,9 @@ const OwnerForm = (_props) => {
                     </LabelFieldPair>
                     <LabelFieldPair>
                         <CardLabel className="card-label-smaller" style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                            {t("AST_MAINTENANCE_OPTIONS")}
-                            <Tooltip message={t("TOOLTIP_AST_MAINTENANCE_OPTIONS")}>
-                                <InfoBannerIcon style={{ verticalAlign: "middle", cursor: "pointer" }} />
+                            {t("AST_MAINTENANCE_OPTIONS")} <span style={{ color: "red" }}>*</span>
+                            <Tooltip className="tooltip-wrapper" message={t("TOOLTIP_AST_MAINTENANCE_OPTIONS")} style={{ maxWidth: "300px" }}>
+                                <InfoBannerIcon style={{ verticalAlign: "middle", cursor: "pointer", fontSize: "16px" }} />
                             </Tooltip>
                         </CardLabel>
                         <div className="field">
@@ -527,7 +527,7 @@ const OwnerForm = (_props) => {
                                 <CardLabelError style={errorStyle}>{localFormState.touched.assetWarrantyDescription ? errors?.assetWarrantyDescription?.message : ""}</CardLabelError> */}
 
                                 <LabelFieldPair>
-                                    <CardLabel className="card-label-smaller">{t("AST_WARRANTY_DESCRIPTION")}</CardLabel>
+                                    <CardLabel className="card-label-smaller">{t("AST_WARRANTY_DESCRIPTION")} <span style={{ color: "red" }}>*</span></CardLabel>
                                     <div className="field">
                                         <Controller
                                             control={control}
@@ -596,7 +596,7 @@ const OwnerForm = (_props) => {
                                 <CardLabelError style={errorStyle}>{localFormState.touched.amcDetails ? errors?.amcDetails?.message : ""}</CardLabelError> */}
 
                                 <LabelFieldPair>
-                                    <CardLabel className="card-label-smaller">{t("AST_AMC_DETAILS")}</CardLabel>
+                                    <CardLabel className="card-label-smaller">{t("AST_AMC_DETAILS")} <span style={{ color: "red" }}>*</span> </CardLabel>
                                     <div className="field">
                                         <Controller
                                             control={control}
@@ -631,7 +631,7 @@ const OwnerForm = (_props) => {
 
                     <LabelFieldPair>
                         <CardLabel className="card-label-smaller" style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                            {t("AST_MAINTENANCE_TYPE")}
+                            {t("AST_MAINTENANCE_TYPE")} <span style={{ color: "red" }}>*</span>
                             {/* <Tooltip message={t("TOOLTIP_AST_MAINTENANCE_TYPE")}>
                                 <InfoBannerIcon style={{ verticalAlign: "middle", cursor: "pointer" }} />
                             </Tooltip> */}
@@ -655,7 +655,7 @@ const OwnerForm = (_props) => {
                     </LabelFieldPair>
                     <LabelFieldPair>
                         <CardLabel className="card-label-smaller">
-                            {t("AST_MAINTENANCE_DATE")}
+                            {t("AST_MAINTENANCE_DATE")} <span style={{ color: "red" }}>*</span>
                         </CardLabel>
                         <div className="field">
                             <Controller
@@ -686,7 +686,7 @@ const OwnerForm = (_props) => {
                     </LabelFieldPair>
                     <LabelFieldPair>
                         <CardLabel className="card-label-smaller" style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                            {t("AST_MAINTENANCE_CYCLE")}
+                            {t("AST_MAINTENANCE_CYCLE")} <span style={{ color: "red" }}>*</span>
                             <Tooltip message={t("TOOLTIP_AST_MAINTENANCE_CYCLE")}>
                                 <InfoBannerIcon style={{ verticalAlign: "middle", cursor: "pointer" }} />
                             </Tooltip>
@@ -720,7 +720,7 @@ const OwnerForm = (_props) => {
                     <CardLabelError style={errorStyle}>{localFormState.touched.maintenanceCycle ? errors?.maintenanceCycle?.message : ""}</CardLabelError>
                     <LabelFieldPair>
                         <CardLabel className="card-label-smaller" style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                                {t("AST_NEXT_MAINTENANCE_DATE")}
+                                {t("AST_NEXT_MAINTENANCE_DATE")} <span style={{ color: "red" }}>*</span>
                             <Tooltip message={t("TOOLTIP_AST_NEXT_MAINTENANCE_DATE")}>
                                <InfoBannerIcon style={{ verticalAlign: "middle", cursor: "pointer" }} />
                             </Tooltip>
@@ -754,7 +754,7 @@ const OwnerForm = (_props) => {
                     </LabelFieldPair>
                     <LabelFieldPair>
                         <CardLabel className="card-label-smaller" style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                            {t("AST_PAYMENT_TYPE")}
+                            {t("AST_PAYMENT_TYPE")} <span style={{ color: "red" }}>*</span>
                             <Tooltip message={t("TOOLTIP_AST_PAYMENT_TYPE")}>
                                 <InfoBannerIcon style={{ verticalAlign: "middle", cursor: "pointer" }} />
                             </Tooltip>
@@ -819,7 +819,7 @@ const OwnerForm = (_props) => {
                     <CardLabelError style={errorStyle}>{localFormState.touched.amcDetails ? errors?.amcDetails?.message : ""}</CardLabelError>
 
                     <LabelFieldPair>
-                        <CardLabel className="card-label-smaller">{t("AST_MAINTENANCE_DESCRIPTION")}</CardLabel>
+                        <CardLabel className="card-label-smaller">{t("AST_MAINTENANCE_DESCRIPTION")} <span style={{ color: "red" }}>*</span> </CardLabel>
                         <div className="field">
                             <Controller
                                 control={control}
@@ -849,7 +849,7 @@ const OwnerForm = (_props) => {
                     </LabelFieldPair>
                     <CardLabelError style={errorStyle}>{localFormState.touched.description ? errors?.assignedUser?.description : ""}</CardLabelError>
                     <LabelFieldPair>
-                        <CardLabel className="card-label-smaller">{t("AST_VENDOR")}</CardLabel>
+                        <CardLabel className="card-label-smaller">{t("AST_VENDOR")} <span style={{ color: "red" }}>*</span> </CardLabel>
                         <div className="field">
                             <Controller
                                 control={control}
@@ -883,7 +883,7 @@ const OwnerForm = (_props) => {
                     <CardLabelError style={errorStyle}>{localFormState.touched.vendor ? errors?.vendor?.message : ""}</CardLabelError>
 
                     <LabelFieldPair>
-                        <CardLabel className="card-label-smaller">{t("AST_PARTS_TO_BE_ADDED")}</CardLabel>
+                        <CardLabel className="card-label-smaller">{t("AST_PARTS_TO_BE_ADDED")} <span style={{ color: "red" }}>*</span></CardLabel>
                         <div className="field">
                             <Controller
                                 control={control}
@@ -914,7 +914,7 @@ const OwnerForm = (_props) => {
                     <CardLabelError style={errorStyle}>{localFormState.touched.partsAddedOrReplaced ? errors?.assignedUser?.partsAddedOrReplaced : ""}</CardLabelError>
 
                     <LabelFieldPair>
-                        <CardLabel className="card-label-smaller">{t("AST_SUPPORTING_DOCUMENTS")}</CardLabel>
+                        <CardLabel className="card-label-smaller">{t("AST_SUPPORTING_DOCUMENTS")} <span style={{ color: "red" }}>*</span> </CardLabel>
                         <div className="field">
                             <Controller
                                 control={control}
@@ -938,7 +938,7 @@ const OwnerForm = (_props) => {
                     </LabelFieldPair>
 
                     <LabelFieldPair>
-                        <CardLabel className="card-label-smaller">{t("AST_PRE_CONDITION_DOC")}</CardLabel>
+                        <CardLabel className="card-label-smaller">{t("AST_PRE_CONDITION_DOC")} <span style={{ color: "red" }}>*</span> </CardLabel>
                         <div className="field" style={{ marginTop: "15px" }}>
                             <Controller
                                 control={control}
@@ -961,7 +961,7 @@ const OwnerForm = (_props) => {
                         </div>
                     </LabelFieldPair>
                     <LabelFieldPair>
-                        <CardLabel className="card-label-smaller">{t("AST_PRE_CONDITION_DESCRIPTION")}</CardLabel>
+                        <CardLabel className="card-label-smaller">{t("AST_PRE_CONDITION_DESCRIPTION")} <span style={{ color: "red" }}>*</span> </CardLabel>
                         <div className="field">
                             <Controller
                                 control={control}
@@ -994,7 +994,7 @@ const OwnerForm = (_props) => {
 
 
                         <LabelFieldPair>
-                            <CardLabel className="card-label-smaller">{t("AST_POST_CONDITION_DOC")}</CardLabel>
+                            <CardLabel className="card-label-smaller">{t("AST_POST_CONDITION_DOC")} <span style={{ color: "red" }}>*</span></CardLabel>
                             <div className="field">
                                 <Controller
                                     control={control}
@@ -1017,7 +1017,7 @@ const OwnerForm = (_props) => {
                             </div>
                         </LabelFieldPair>
                         <LabelFieldPair>
-                            <CardLabel className="card-label-smaller">{t("AST_POST_CONDITION_DESCRIPTION")}</CardLabel>
+                            <CardLabel className="card-label-smaller">{t("AST_POST_CONDITION_DESCRIPTION")} <span style={{ color: "red" }}>*</span> </CardLabel>
                             <div className="field">
                                 <Controller
                                     control={control}
@@ -1048,10 +1048,10 @@ const OwnerForm = (_props) => {
                         <CardLabelError style={errorStyle}>{localFormState.touched.postConditionRemarks ? errors?.assignedUser?.postConditionRemarks : ""}</CardLabelError>
                         <LabelFieldPair>
                             <CardLabel className="card-label-smaller" style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                                {t("AST_IS_LIFE_OF__ASSET_AFFECTED")}
-                                <Tooltip message={t("TOOLTIP_AST_IS_LIFE_OF__ASSET_AFFECTED")}>
+                                {t("AST_IS_LIFE_OF__ASSET_AFFECTED")} <span style={{ color: "red" }}>*</span>
+                                {/* <Tooltip message={t("TOOLTIP_AST_IS_LIFE_OF__ASSET_AFFECTED")}>
                                 <InfoBannerIcon style={{ verticalAlign: "middle", cursor: "pointer" }} />
-                            </Tooltip>
+                            </Tooltip> */}
                             </CardLabel>
                             <div className="field">
                                 <RadioButtons
@@ -1072,7 +1072,7 @@ const OwnerForm = (_props) => {
                             (
                                 <div>
                                     <LabelFieldPair>
-                                        <CardLabel className="card-label-smaller">{t("AST_MAINTENANCE_INCREASED_NO_OF_YEAR")}</CardLabel>
+                                        <CardLabel className="card-label-smaller">{t("AST_MAINTENANCE_INCREASED_NO_OF_YEAR")} <span style={{ color: "red" }}>*</span></CardLabel>
                                         <Controller
                                             control={control}
                                             name={"assetMaintenanceIncreasedYear"}
