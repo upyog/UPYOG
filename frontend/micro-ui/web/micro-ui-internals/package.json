@@ -12,7 +12,8 @@
     "packages/modules/dss",
     "packages/modules/pgrai",
     "packages/modules/engagement",
-    "packages/modules/obps"
+    "packages/modules/obps",
+    "packages/modules/asset"
 
   ],
   "license": "MIT",
