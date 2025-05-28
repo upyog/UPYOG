@@ -65,4 +65,8 @@ public class BillAccountDetail {
 
 	@JsonProperty("auditDetails")
 	private AuditDetails auditDetails;
+	
+	@Size(max=64)
+	@JsonProperty("glcode")
+	private String glcode;
 }
