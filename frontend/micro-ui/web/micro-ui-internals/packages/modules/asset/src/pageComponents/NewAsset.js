@@ -119,6 +119,10 @@ const NewAsset = ({ t, config, onSelect, formData }) => {
     }));
   };
 
+useEffect(() => {
+  
+}, [assetDetails]); // Triggers when purchaseDate changes
+
   // Set State Dynamically!
   const handleInputChange = (e) => {
     // Get the name & value from the input and select field
@@ -145,9 +149,9 @@ const NewAsset = ({ t, config, onSelect, formData }) => {
       }
 
       // Calculate asset age if the field is "purchaseDate"
-      if (name === "purchaseDate") {
-        calculateAssetAge(value);
-      }
+      // if (name === "purchaseDate") {
+      //   calculateAssetAge(value);
+      // }
       
       return updatedData;
     });
@@ -336,6 +340,7 @@ const NewAsset = ({ t, config, onSelect, formData }) => {
           </div>
           <TextInput
                   t={t}
+                  key={assetDetails["purchaseDate"] || "no-purchase"}
                   type={"date"}
                   isMandatory={false}
                   optionKey="i18nKey"
@@ -422,12 +427,13 @@ const NewAsset = ({ t, config, onSelect, formData }) => {
             onChange={handleInputChange}
             {...(validation = {
               isRequired: true,
-              pattern: "^[a-zA-Z0-9/-]*$",
-              type: "text",
+               pattern: regexPattern("number"),
+               type: "number",
               title: t("PT_NAME_ERROR_MESSAGE"),
             })}
             style={{ width: "50%" }}
           />
+
 
 
         <div>
