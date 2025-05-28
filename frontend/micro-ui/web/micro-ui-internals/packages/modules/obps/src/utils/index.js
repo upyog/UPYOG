@@ -1,10 +1,20 @@
 import cloneDeep from "lodash/cloneDeep";
 // import { v4 as uuid_v4 } from 'uuid';
+// import uuid from 'uuid';
 
-import uuid from 'uuid';
+// export const uuidv4 = () => {
+//   return uuid.v4();
+// };
 
+// TODO: This function will be removed later and uuid functionality will be used 
 export const uuidv4 = () => {
-  return uuid.v4();
+  // return uuid_v4();
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+    const r = Math.random() * 16 | 0;
+    const v = c === 'x' ? r : (r & 0x3 | 0x8);
+    return v.toString(16);
+  });
+
 };
 
 export const getPattern = (type) => {
@@ -27,10 +37,6 @@ export const stringReplaceAll = (str = "", searcher = "", replaceWith = "") => {
 export const sortDropdownNames = (options, optionkey, locilizationkey) => {
   return options.sort((a, b) => locilizationkey(a[optionkey]).localeCompare(locilizationkey(b[optionkey])));
 };
-
-// export const uuidv4 = () => {
-//   return uuid_v4();
-// };
 
 export const pdfDownloadLink = (documents = {}, fileStoreId = "", format = "") => {
   let downloadLink = documents[fileStoreId] || "";
