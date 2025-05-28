@@ -141,13 +141,14 @@ public class PDFRequestGenerator {
 
 		ptbr.put("plinthAreaTotal", String.valueOf(plinthAreaTotal));
 
-		ptbr.put("propertyTax", String.valueOf(ptTaxCalculatorTracker.getPropertyTax()));
+		BigDecimal propertyTax = ptTaxCalculatorTracker.getPropertyTax(); // TODO get from bill
+		ptbr.put("propertyTax", String.valueOf(propertyTax));
 
 		// TODO START
 		BigDecimal arrear = new BigDecimal("0.00");
 		ptbr.put("arrear", String.valueOf(arrear));
 
-		ptbr.put("propertyTaxPlusArrear", String.valueOf(ptTaxCalculatorTracker.getPropertyTax().add(arrear)));
+		ptbr.put("propertyTaxPlusArrear", String.valueOf(propertyTax.add(arrear)));
 
 		BigDecimal rebate = new BigDecimal("0.00");
 		ptbr.put("rebate", String.valueOf(rebate));
@@ -158,8 +159,7 @@ public class PDFRequestGenerator {
 		BigDecimal penalty = new BigDecimal("0.00");
 		ptbr.put("penalty", String.valueOf(penalty));
 
-		ptbr.put("totalTax", String.valueOf(
-				ptTaxCalculatorTracker.getPropertyTax().add(arrear).subtract(rebate).add(interest).add(penalty)));
+		ptbr.put("totalTax", String.valueOf(propertyTax.add(arrear).subtract(rebate).add(interest).add(penalty)));
 		// TODO END
 
 		BigDecimal amountPaid = new BigDecimal("0.00");
