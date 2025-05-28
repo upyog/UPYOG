@@ -317,6 +317,7 @@ public class PaymentQueryBuilder {
         sqlParameterSource.addValue("isactualdemand", billAccountDetail.getIsActualDemand());
         sqlParameterSource.addValue("taxheadcode", billAccountDetail.getTaxHeadCode());
         sqlParameterSource.addValue("additionaldetails", getJsonb(billAccountDetail.getAdditionalDetails()));
+        sqlParameterSource.addValue("glcode", billAccountDetail.getGlcode());
 
         return sqlParameterSource;
     }
