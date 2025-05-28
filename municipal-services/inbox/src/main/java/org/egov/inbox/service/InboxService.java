@@ -556,6 +556,9 @@ public class InboxService {
 					businessKeys.addAll(applicationNumbers);
 					moduleSearchCriteria.remove(OFFSET_PARAM);
 					moduleSearchCriteria.remove(STATUS_PARAM);
+					if(moduleSearchCriteria.containsKey(APPLICATION_STATUS)) {
+						moduleSearchCriteria.put(STATUS_PARAM, moduleSearchCriteria.get(APPLICATION_STATUS));
+					}
 					
 				} else {
 					isSearchResultEmpty = true;
