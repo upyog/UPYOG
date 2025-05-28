@@ -145,7 +145,7 @@ public class PDFRequestGenerator {
 		ptbr.put("propertyTax", String.valueOf(propertyTax));
 
 		// TODO START
-		BigDecimal arrear = new BigDecimal("0.00");
+		BigDecimal arrear = bill.getTotalAmount().subtract(propertyTax);
 		ptbr.put("arrear", String.valueOf(arrear));
 
 		ptbr.put("propertyTaxPlusArrear", String.valueOf(propertyTax.add(arrear)));
