@@ -101,6 +101,78 @@
 						"value": {
 							"path": "$.buildingNo"
 						}
+					},
+					{
+						"variable": "plinthAreaTotal",
+						"value": {
+							"path": "$.plinthAreaTotal"
+						}
+					},
+					{
+						"variable": "propertyTax",
+						"value": {
+							"path": "$.propertyTax"
+						}
+					},
+					{
+						"variable": "arrear",
+						"value": {
+							"path": "$.arrear"
+						}
+					},
+					{
+						"variable": "propertyTaxPlusArrear",
+						"value": {
+							"path": "$.propertyTaxPlusArrear"
+						}
+					},
+					{
+						"variable": "rebate",
+						"value": {
+							"path": "$.rebate"
+						}
+					},
+					{
+						"variable": "interest",
+						"value": {
+							"path": "$.interest"
+						}
+					},
+					{
+						"variable": "penalty",
+						"value": {
+							"path": "$.penalty"
+						}
+					},
+					{
+						"variable": "totalTax",
+						"value": {
+							"path": "$.totalTax"
+						}
+					},
+					{
+						"variable": "amountPaid",
+						"value": {
+							"path": "$.amountPaid"
+						}
+					},
+					{
+						"variable": "paymentStatus",
+						"value": {
+							"path": "$.paymentStatus"
+						}
+					},
+					{
+						"variable": "billGeneratedDate",
+						"value": {
+							"path": "$.billGeneratedDate"
+						}
+					},
+					{
+						"variable": "paymentDate",
+						"value": {
+							"path": "$.paymentDate"
+						}
 					}
 				]
 			}

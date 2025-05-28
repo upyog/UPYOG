@@ -2,6 +2,7 @@
 <html lang="en">
 
 <head>
+	<meta charset="UTF-8" />
 	<title>Property Tax - Bill Receipt</title>
 	<style>
 		body {
@@ -71,6 +72,10 @@
 		.bold {
 			font-weight: bold;
 		}
+
+		.section.break-to-new-page {
+			page-break-before: always;
+		}
 	</style>
 </head>
 
@@ -78,7 +83,7 @@
 
 	<!-- Logo and Header Section -->
 	<div class="header-container">
-		<td><img class="hp-govt" th:src="${hpLogo}" alt="HP Govt Logo" /></td>
+		<img class="logo" src="logo.png" alt="Urban Development Department Logo" />
 		<div class="header-text">
 			<h1>Property Tax - Bill Receipt</h1>
 			<h2><span th:text="${ulbType}">NA</span>, <span th:text="${ulbName}">NA</span>, Himachal Pradesh</h2>
@@ -150,27 +155,37 @@
 	<div class="section">
 		<strong>Property Details:</strong>
 		<table>
-			<tr>
-				<th>#</th>
-				<th>F1</th>
-				<th>F2</th>
-				<th>F3</th>
-				<th>F4</th>
-				<th>F5</th>
-				<th>Plinth Area</th>
-			</tr>
-			<tr>
-				<td>1</td>
-				<td>B</td>
-				<td>PUCCA</td>
-				<td>2001 to 2021</td>
-				<td>Purchased Property / Flat</td>
-				<td>Residential</td>
-				<td>186.84</td>
-			</tr>
+			<thead style="text-align: center;">
+				<tr>
+					<th>#</th>
+					<th>F1</th>
+					<th>F2</th>
+					<th>F3</th>
+					<th>F4</th>
+					<th>F5</th>
+					<th>Plinth Area</th>
+				</tr>
+			</thead>
+			<tbody style="text-align: center;">
+				<tr style="display:none">
+					<td style="display:none"> PROPERTY_TAX_BILL_TABLE_ROW_START </td>
+				</tr>
+				<tr style="display:none">
+					<td><span th:text="slNo">NA</span></td>
+					<td><span th:text="f1">NA</span></td>
+					<td><span th:text="f2">NA</span></td>
+					<td><span th:text="f3">NA</span></td>
+					<td><span th:text="f4">NA</span></td>
+					<td><span th:text="f5">NA</span></td>
+					<td><span th:text="plinthArea">NA</span></td>
+				</tr>
+				<tr style="display:none">
+					<td style="display:none"> PROPERTY_TAX_BILL_TABLE_ROW_END </td>
+				</tr>
+			</tbody>
 			<tr>
 				<td colspan="6" class="bold">Total</td>
-				<td>186.84</td>
+				<td style="text-align: center;"><span th:text="${plinthAreaTotal}">NA</span></td>
 			</tr>
 		</table>
 	</div>
@@ -180,39 +195,39 @@
 		<table>
 			<tr>
 				<td><strong>Property Tax:</strong></td>
-				<td>₹1205.02</td>
+				<td><span th:text="${propertyTax}">NA</span></td>
 			</tr>
 			<tr>
 				<td><strong>Arrear:</strong></td>
-				<td>₹0.00</td>
+				<td><span th:text="${arrear}">NA</span></td>
 			</tr>
 			<tr>
 				<td><strong>Property Tax + Arrear:</strong></td>
-				<td>₹1205.02</td>
+				<td><span th:text="${propertyTaxPlusArrear}">NA</span></td>
 			</tr>
 			<tr>
 				<td><strong>Rebate (Within 15 Days):</strong></td>
-				<td>₹0.00</td>
+				<td><span th:text="${rebate}">NA</span></td>
 			</tr>
 			<tr>
 				<td><strong>Interest:</strong></td>
-				<td>₹12.05</td>
+				<td><span th:text="${interest}">NA</span></td>
 			</tr>
 			<tr>
 				<td><strong>Penalty:</strong></td>
-				<td>₹0.00</td>
+				<td><span th:text="${penalty}">NA</span></td>
 			</tr>
 			<tr>
 				<td><strong>Total Tax:</strong></td>
-				<td>₹1217.00</td>
+				<td><span th:text="${totalTax}">NA</span></td>
 			</tr>
 			<tr>
 				<td><strong>Amount Paid:</strong></td>
-				<td>₹1217.00</td>
+				<td><span th:text="${amountPaid}">NA</span></td>
 			</tr>
 			<tr>
 				<td><strong>Payment Status:</strong></td>
-				<td>Success</td>
+				<td><span th:text="${paymentStatus}">NA</span></td>
 			</tr>
 		</table>
 	</div>
@@ -221,8 +236,8 @@
 	<div class="section">
 		<table class="no-border">
 			<tr>
-				<td><strong>Bill Generated Date:</strong> 13/11/2024</td>
-				<td><strong>Payment Date:</strong> 08/01/2025</td>
+				<td><strong>Bill Generated Date:</strong> <span th:text="${billGeneratedDate}">NA</span></td>
+				<td><strong>Payment Date:</strong> <span th:text="${paymentDate}">NA</span></td>
 			</tr>
 		</table>
 	</div>
