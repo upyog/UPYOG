@@ -99,7 +99,7 @@ public class BillRowMapper implements ResultSetExtractor<List<Bill>> {
 					.tenantId(rs.getString("ad_tenantid")).billDetailId(rs.getString("ad_billdetailid"))
 					.order(rs.getInt("ad_order")).amount(rs.getBigDecimal("ad_amount"))
 					.adjustedAmount(rs.getBigDecimal("ad_adjustedamount")).taxHeadCode(rs.getString("ad_taxheadcode"))
-					.demandDetailId(rs.getString("ad_demanddetailid")).build();
+					.demandDetailId(rs.getString("ad_demanddetailid")).glcode(rs.getNString("ad_glcode")).build();
 			
 			PGobject obj = (PGobject) rs.getObject("ad_additionalDetails");
 			billAccDetail.setAdditionalDetails(getJsonValue(obj));

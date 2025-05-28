@@ -114,9 +114,9 @@ public class PaymentQueryBuilder {
 
     public static final String INSERT_BILLACCOUNTDETAIL_SQL = "INSERT INTO egcl_billaccountdetail(" +
             "            id, tenantid, billdetailid, demanddetailid, " +
-            "            \"order\", amount, adjustedamount, isactualdemand, taxheadcode, additionaldetails)" +
+            "            \"order\", amount, adjustedamount, isactualdemand, taxheadcode, additionaldetails, glcode)" +
             "            VALUES (:id, :tenantid, :billdetailid, :demanddetailid, " +
-            "            :order, :amount, :adjustedamount, :isactualdemand, :taxheadcode, :additionaldetails);";
+            "            :order, :amount, :adjustedamount, :isactualdemand, :taxheadcode, :additionaldetails, :glcode);";
 
 
     // Payment Status update queries
@@ -173,7 +173,7 @@ public class PaymentQueryBuilder {
 			+ "bd.callbackforapportioning AS bd_callbackforapportioning, bd.expirydate AS bd_expirydate, ad.id AS ad_id, ad.tenantid AS ad_tenantid, "
 			+ "ad.billdetailid AS ad_billdetailid, ad.order AS ad_order, ad.amount AS ad_amount, ad.adjustedamount AS ad_adjustedamount, "
 			+ "ad.taxheadcode AS ad_taxheadcode, ad.demanddetailid as ad_demanddetailid, ad.isactualdemand AS ad_isactualdemand, b.additionaldetails as b_additionaldetails,  "
-			+ "bd.additionaldetails as bd_additionaldetails,  ad.additionaldetails as ad_additionaldetails "
+			+ "bd.additionaldetails as bd_additionaldetails,  ad.additionaldetails as ad_additionaldetails, ad.glcode as ad_glcode "
 			+ "FROM egcl_bill b LEFT OUTER JOIN egcl_billdetial bd ON b.id = bd.billid AND b.tenantid = bd.tenantid "
 			+ "LEFT OUTER JOIN egcl_billaccountdetail ad ON bd.id = ad.billdetailid AND bd.tenantid = ad.tenantid "
 			+ "WHERE b.id IN (:id);"; 
@@ -360,11 +360,18 @@ public class PaymentQueryBuilder {
         whereClause.append(" ORDER BY py_inner.transactiondate DESC ").toString();
         addPagination(whereClause,preparedStatementValues,searchCriteria);
         String query = ID_QUERY.replace("{{WHERE_CLAUSE}}",whereClause.toString());
-        if(searchCriteria.getTenantId().split("\\.").length > 1){
-            query = query.replace("{{operator}}", "=");
+        if (StringUtils.isNotBlank(searchCriteria.getTenantId()))
+        {
+        	if(searchCriteria.getTenantId().split("\\.").length > 1){
+                query = query.replace("{{operator}}", "=");
+            }
+            else
+                query = query.replace("{{operator}}", "LIKE");
         }
-        else
-            query = query.replace("{{operator}}", "LIKE");
+        else if(!CollectionUtils.isEmpty(searchCriteria.getTenantIds()))
+        {
+        	query = query.replace("{{operator}}", "IN").replace(":tenantId", "(:tenantId)");
+        }
 
         return query;
     }
@@ -392,6 +399,12 @@ public class PaymentQueryBuilder {
                 preparedStatementValues.put("tenantId", searchCriteria.getTenantId() + "%");
             }
 
+        }
+        
+        else if(!CollectionUtils.isEmpty(searchCriteria.getTenantIds())) {
+            addClauseIfRequired(preparedStatementValues, selectQuery);
+            selectQuery.append(" py_inner.tenantId IN :tenantId  ");
+            preparedStatementValues.put("tenantId", searchCriteria.getTenantIds());
         }
 
         if(!CollectionUtils.isEmpty(searchCriteria.getIds())) {
