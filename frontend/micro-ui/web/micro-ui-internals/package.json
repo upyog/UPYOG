@@ -12,7 +12,6 @@
     "packages/modules/dss",
     "packages/modules/pgrai",
     "packages/modules/engagement",
-    "packages/modules/sv",
     "packages/modules/obps"
 
   ],
@@ -81,7 +80,7 @@
     "buildD:chb": "cd packages/modules/chb && yarn build",
     "buildD:ads": "cd packages/modules/ads && yarn build",
     "buildD:ew": "cd packages/modules/ew && yarn build",
-    "build:sv": "cd packages/modules/sv && yarn build",
+    "buildD:sv": "cd packages/modules/sv && yarn build",
     "buildD:cm": "cd packages/modules/cm && yarn build",
     "buildD:wt": "cd packages/modules/wt && yarn build",
     "build:pgrai": "cd packages/modules/pgrai && yarn build",
