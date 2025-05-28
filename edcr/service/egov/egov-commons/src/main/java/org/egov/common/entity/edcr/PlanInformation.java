@@ -218,6 +218,11 @@ public class PlanInformation implements Serializable {
     //Extracted from Plan info.District name.
     private String district;
     
+    //Extracted from Plan info. ULB type and number of floors.
+    private String ulbType;
+    private String numberOfFloors;
+    private String roadType;
+    
   //Extracted from Plan info.City name.
     private String city;
     public String getCity() {
@@ -686,6 +691,30 @@ public class PlanInformation implements Serializable {
 
     public void setRwhDeclared(String rwhDeclared) {
         this.rwhDeclared = rwhDeclared;
+    }
+    
+    public String getUlbType() {
+        return ulbType;
+    }
+
+    public void setUlbType(String ulbType) {
+        this.ulbType = ulbType;
+    }
+    
+    public String getNumberOfFloors() {
+        return numberOfFloors;
+    }
+
+    public void setNumberOfFloors(String numberOfFloors) {
+        this.numberOfFloors = numberOfFloors;
+    }
+    
+    public String getRoadType() {
+        return roadType;
+    }
+
+    public void setRoadType(String roadType) {
+        this.roadType = roadType;
     }
 
 }

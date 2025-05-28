@@ -67,7 +67,9 @@ public class EnrichmentService {
 		String roleCodeName=null;
 
 		String userType = requestInfo.getUserInfo().getType().toUpperCase();
-		Object thirdPartyData = fetchThirdPartyIntegration(requestInfo, config.getStateLevelTenantId(), PTConstants.MDMS_WC_ROLE_MODLENAME , PTConstants.MDMS_WC_ROLE_MASTERNAME, userType,true);
+		String filter = String.format("[?(@.category=='%s' && @.active==%b)]", userType, true);
+		
+		Object thirdPartyData = fetchDataFromMdms(requestInfo, config.getStateLevelTenantId(), PTConstants.MDMS_WC_ROLE_MODLENAME , PTConstants.MDMS_WC_ROLE_MASTERNAME, filter);
 
 		 Map<String, String> roleMap = new HashMap<>();
 		 
@@ -113,24 +115,30 @@ public class EnrichmentService {
 	}
 
 	
-public Object fetchThirdPartyIntegration(RequestInfo requestInfo, String tenantId, String moduleName, String masterName, String userType, Boolean active) {
+public Object fetchDataFromMdms(RequestInfo requestInfo, String tenantId, String moduleName, String masterName, String filter) {
 	    
 		
 		List<MasterDetail> masterDetails = new ArrayList<>();
-		String filter = String.format("[?(@.category=='%s' && @.active==%b)]", userType, active);
+		
 	    
 	    // Add master detail with the dynamic filter
-	    masterDetails.add(MasterDetail.builder()
-	            .name(PTConstants.MDMS_WC_ROLE_MASTERNAME)
-	            .filter(filter)
-	            .build());
+		if(filter!= null) {
+			 masterDetails.add(MasterDetail.builder()
+			            .name(masterName)
+			            .filter(filter)
+			            .build());
 
+		}else {
+			 masterDetails.add(MasterDetail.builder()
+			            .name(masterName)
+			            .build());
+		}
      
         List<ModuleDetail> wfModuleDtls = Collections.singletonList(ModuleDetail.builder().masterDetails(masterDetails)
-                .moduleName(PTConstants.MDMS_WC_ROLE_MODLENAME).build());
+                .moduleName(moduleName).build());
 
         MdmsCriteria mdmsCriteria = MdmsCriteria.builder().moduleDetails(wfModuleDtls)
-                .tenantId(config.getStateLevelTenantId())
+                .tenantId(config.getStateLevelTenantId())    
                 .build();
 
         MdmsCriteriaReq mdmsCriteriaReq = MdmsCriteriaReq.builder().mdmsCriteria(mdmsCriteria)

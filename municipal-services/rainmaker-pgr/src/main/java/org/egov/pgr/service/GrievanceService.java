@@ -472,7 +472,7 @@ public class GrievanceService {
 			 * GRO can search complaints belonging to only his tenant.
 			 */
 			if(precedentRole.equalsIgnoreCase(PGRConstants.ROLE_GRO)) {
-				serviceReqSearchCriteria.setTenantId(requestInfo.getUserInfo().getTenantId());
+				serviceReqSearchCriteria.setTenantId(serviceReqSearchCriteria.getTenantId());
 			}
 			/**
 			 * DGRO belongs to a department and that department takes care of certain complaint types.
@@ -493,7 +493,9 @@ public class GrievanceService {
 				} catch (Exception e) {
 					throw new CustomException(ErrorConstants.NO_DATA_KEY, ErrorConstants.NO_DATA_MSG);
 				}
-				serviceReqSearchCriteria.setTenantId(requestInfo.getUserInfo().getTenantId());
+				serviceReqSearchCriteria.setTenantId(serviceReqSearchCriteria.getTenantId());
+
+						//requestInfo.getUserInfo().getTenantId());
 			}
 			/**
 			 * An Employee can by default search only the complaints assigned to him.

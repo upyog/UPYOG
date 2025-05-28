@@ -92,6 +92,9 @@ public class PropertyService {
 
 	@Autowired
 	EncryptionDecryptionUtil encryptionDecryptionUtil;
+	
+	@Autowired
+	private PropertyUtil propertyUtil;
 
 	/**
 	 * Enriches the Request and pushes to the Queue
@@ -100,7 +103,16 @@ public class PropertyService {
 	 * @return List of properties successfully created
 	 */
 	public Property createProperty(PropertyRequest request) {
-
+  
+		RequestInfo requestInfo = request.getRequestInfo();
+		//get the tenantId Mapping from mdms
+		String tenantIdMapping = propertyUtil.getTenantIdMapping(requestInfo, config.getStateLevelTenantId(), request.getProperty().getTenantId());
+	
+		if (tenantIdMapping != null) {
+			request.getProperty().setTenantId(tenantIdMapping);
+			request.getRequestInfo().getUserInfo().setTenantId(tenantIdMapping);
+		} 
+		;
 		propertyValidator.validateCreateRequest(request);
 		enrichmentService.enrichCreateRequest(request);
 		userService.createUser(request);

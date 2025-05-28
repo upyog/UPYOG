@@ -335,6 +335,8 @@ public class FrontYardService extends GeneralRule {
 	        minVal = MIN_VAL_300_PlUS_SQM;
 	    } else if (plotArea.compareTo(PLOT_AREA_1000_SQM) <= 0) {
 	        minVal = MIN_VAL_300_PlUS_SQM;
+	    } else if (plotArea.compareTo(PLOT_AREA_1000_SQM) > 0) {
+	        minVal = MIN_VAL_300_PlUS_SQM;
 	    }
 
 	    // Validate minimum and mean value
@@ -348,7 +350,7 @@ public class FrontYardService extends GeneralRule {
 //	    }
 	    if(!valid) {
 	    	LOG.info("Front Yard Service: min value validity False: "+minVal+"/"+min);
-	    	errors.put("Minimum and Mean Value Validation", "Minimum value is less than the required minimum " + minVal+"/"+min);
+	    	errors.put("Minimum and Mean Value Validation", "Front setback values are less than permissible value i.e." + minVal+" /" + " current values are " + min);
 	    	
 	    }
 	    else {
