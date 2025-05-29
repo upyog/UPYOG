@@ -3,12 +3,7 @@ package org.upyog.pgrai.service;
 
 import static org.upyog.pgrai.util.PGRConstants.USERTYPE_CITIZEN;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -96,12 +91,20 @@ public class UserService {
         	log.info("in update user");
         	log.info("User response in search"+userDetailResponse.getUser().get(0));
             User userFromSearch = userDetailResponse.getUser().get(0);
-            if(!user.getName().equalsIgnoreCase(userFromSearch.getName()) || !user.getEmailId().equalsIgnoreCase(userFromSearch.getEmailId())){
-            	log.info("Update user");
+            String newName = Optional.ofNullable(user.getName()).orElse("");
+            String existingName = Optional.ofNullable(userFromSearch.getName()).orElse("");
+
+            String newEmail = Optional.ofNullable(user.getEmailId()).orElse("");
+            String existingEmail = Optional.ofNullable(userFromSearch.getEmailId()).orElse("");
+            if(!newName.equalsIgnoreCase(existingName) ||
+                    !newEmail.equalsIgnoreCase(existingEmail)){
+                log.info("Update user");
 
                 userServiceResponse = updateUser(request.getRequestInfo(),user,userFromSearch);
             }
-            else userServiceResponse = userDetailResponse.getUser().get(0);
+            else {
+                userServiceResponse = userDetailResponse.getUser().get(0);
+            }
         }
         else {
         	log.info("in create user");
