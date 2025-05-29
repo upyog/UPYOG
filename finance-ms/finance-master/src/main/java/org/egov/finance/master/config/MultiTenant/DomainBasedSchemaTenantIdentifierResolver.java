@@ -66,6 +66,7 @@ public class DomainBasedSchemaTenantIdentifierResolver implements CurrentTenantI
     @Override
     public String resolveCurrentTenantIdentifier() {
     	//ApplicationThreadLocals.getTenantID()
+    	log.info(defaultIfBlank(defaultSchema, defaultSchema));
         return defaultIfBlank(defaultSchema, defaultSchema);
     }
 

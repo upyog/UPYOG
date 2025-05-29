@@ -87,7 +87,7 @@ import jakarta.persistence.ValidationMode;
 @Configuration
 @EnableTransactionManagement
 @EnableJpaRepositories(
-    basePackages = "org.egov.finance.repository",
+    basePackages = "org.egov.finance.*",
     entityManagerFactoryRef = "entityManagerFactory",
     transactionManagerRef = "transactionManager"
 )
@@ -133,7 +133,7 @@ public class JpaConfiguration {
         Map<String, Object> props = new HashMap<>();
 
         // Only bean references and complex props stay here
-        if (Boolean.parseBoolean(env.getProperty("multitenancy.enabled", "false"))) {
+        if (true) {
             props.put(MULTI_TENANT_CONNECTION_PROVIDER, multiTenantConnectionProvider);
             props.put(MULTI_TENANT_IDENTIFIER_RESOLVER, tenantIdentifierResolver);
         }

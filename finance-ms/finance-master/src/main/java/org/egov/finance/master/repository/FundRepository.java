@@ -46,80 +46,31 @@
  *
  */
 
-package org.egov.finance.master.config.MultiTenant;
+package org.egov.finance.master.repository;
 
-import java.sql.Connection;
-import java.sql.SQLException;
+import org.egov.finance.master.entity.*;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-import javax.sql.DataSource;
+import java.util.List;
 
-import org.hibernate.engine.jdbc.connections.spi.AbstractMultiTenantConnectionProvider;
-import org.hibernate.engine.jdbc.connections.spi.MultiTenantConnectionProvider;
-import org.hibernate.service.Service;
-import org.hibernate.service.UnknownUnwrapTypeException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+@Repository
+public interface FundRepository extends JpaRepository<Fund, Long> {
+    Fund findByName(String name);
 
-import lombok.extern.slf4j.Slf4j;
+    Fund findByCode(String code);
 
-@Component
-@Slf4j
-public class MultiTenantSchemaConnectionProvider implements MultiTenantConnectionProvider {
-  
-    /**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-	@Autowired
-    private transient DataSource dataSource;
+    List<Fund> findByNameContainingIgnoreCaseOrCodeContainingIgnoreCaseOrIsactive(String name, String code,
+            Boolean isactive);
 
-   
+    List<Fund> findByCodeContainingIgnoreCase(String code);
 
-    @Override
-    public Connection getConnection(Object tenantIdentifier) throws SQLException {
-        Connection connection = dataSource.getConnection();
-        connection.setSchema(tenantIdentifier.toString()); 
-        // switch schema
-        return connection;
-    }
-    @Override
-    public void releaseConnection(Object tenantId, Connection connection) throws SQLException {
-        try {
-            connection.setSchema(tenantId.toString());
-            
-        } catch (SQLException e) {
-        	log.warn("Error occurred while switching schema upon release connection", e);
-        }
-        releaseAnyConnection(connection);
-    }
-    @Override
-    public boolean supportsAggressiveRelease() {
-        return Boolean.TRUE;
-    }
+    List<Fund> findByIsactive(Boolean isactive);
 
-    @Override
-    public boolean isUnwrappableAs(Class unwrapType) {
-        return MultiTenantConnectionProvider.class.equals(unwrapType)
-                || AbstractMultiTenantConnectionProvider.class.isAssignableFrom(unwrapType);
-    }
+    List<Fund> findByNameContainingIgnoreCase(String name);
 
-    @Override
-    public <T> T unwrap(Class<T> unwrapType) {
-        if (isUnwrappableAs(unwrapType))
-            return (T) this;
-        else
-            throw new UnknownUnwrapTypeException(unwrapType);
-    }
-    @Override
-    public Connection getAnyConnection() throws SQLException {
-        return dataSource.getConnection();
-    }
+    List<Fund> findByIsnotleaf(Boolean isnotleaf);
 
-    @Override
-    public void releaseAnyConnection(Connection connection) throws SQLException {
-        connection.close();
-    }
+    List<Fund> findByIsactiveAndIsnotleaf(final Boolean active, final Boolean isNotLeaf);
 
-	
-	
 }
