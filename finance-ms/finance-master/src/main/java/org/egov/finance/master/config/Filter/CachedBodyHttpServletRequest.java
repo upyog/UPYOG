@@ -1,4 +1,4 @@
-package org.egov.finance.master.config;
+package org.egov.finance.master.config.Filter;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;

@@ -2,7 +2,7 @@ package org.egov.finance.master.prefilter;
 
 import java.io.IOException;
 
-import org.egov.finance.master.config.CachedBodyHttpServletRequest;
+import org.egov.finance.master.config.Filter.CachedBodyHttpServletRequest;
 import org.springframework.stereotype.Component;
 
 import jakarta.servlet.Filter;

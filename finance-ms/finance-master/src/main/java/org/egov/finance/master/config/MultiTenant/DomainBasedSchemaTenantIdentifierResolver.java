@@ -46,75 +46,32 @@
  *
  */
 
-package org.egov.finance.master.config;
+package org.egov.finance.master.config.MultiTenant;
 
-import org.hibernate.HibernateException;
-import org.hibernate.engine.jdbc.connections.spi.AbstractMultiTenantConnectionProvider;
-import org.hibernate.engine.jdbc.connections.spi.MultiTenantConnectionProvider;
-import org.hibernate.service.UnknownUnwrapTypeException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
 
-import javax.sql.DataSource;
-import java.sql.Connection;
-import java.sql.SQLException;
+import org.hibernate.context.spi.CurrentTenantIdentifierResolver;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
-public class MultiTenantSchemaConnectionProvider implements MultiTenantConnectionProvider {
-    private static final long serialVersionUID = -6022082859572861041L;
-    private static final Logger LOG = LoggerFactory.getLogger(MultiTenantSchemaConnectionProvider.class);
+import lombok.extern.slf4j.Slf4j;
 
-    @Autowired
-    private transient DataSource dataSource;
+@Component
+@Slf4j
+public class DomainBasedSchemaTenantIdentifierResolver implements CurrentTenantIdentifierResolver {
+
+    @Value("${default.schema.name}")
+    private String defaultSchema;
 
     @Override
-    public Connection getAnyConnection() throws SQLException {
-        return dataSource.getConnection();
+    public String resolveCurrentTenantIdentifier() {
+    	//ApplicationThreadLocals.getTenantID()
+        return defaultIfBlank(defaultSchema, defaultSchema);
     }
 
     @Override
-    public void releaseAnyConnection(Connection connection) throws SQLException {
-        connection.close();
+    public boolean validateExistingCurrentSessions() {
+        return true;
     }
 
-    @Override
-    public Connection getConnection(String tenantId) {
-        try {
-            Connection connection = getAnyConnection();
-            connection.setSchema(tenantId);
-            return connection;
-        } catch (SQLException e) {
-            LOG.error("Error occurred while switching tenant schema upon getting connection", e);
-            throw new HibernateException("Could not alter JDBC connection to specified schema [" + tenantId + "]", e);
-        }
-    }
-
-    @Override
-    public void releaseConnection(String tenantId, Connection connection) throws SQLException {
-        try {
-            connection.setSchema(tenantId);
-        } catch (SQLException e) {
-            LOG.warn("Error occurred while switching schema upon release connection", e);
-        }
-        releaseAnyConnection(connection);
-    }
-
-    @Override
-    public boolean supportsAggressiveRelease() {
-        return Boolean.TRUE;
-    }
-
-    @Override
-    public boolean isUnwrappableAs(Class unwrapType) {
-        return MultiTenantConnectionProvider.class.equals(unwrapType)
-                || AbstractMultiTenantConnectionProvider.class.isAssignableFrom(unwrapType);
-    }
-
-    @Override
-    public <T> T unwrap(Class<T> unwrapType) {
-        if (isUnwrappableAs(unwrapType))
-            return (T) this;
-        else
-            throw new UnknownUnwrapTypeException(unwrapType);
-    }
 }

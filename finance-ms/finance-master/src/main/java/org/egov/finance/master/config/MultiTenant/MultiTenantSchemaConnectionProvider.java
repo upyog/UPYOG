@@ -46,27 +46,78 @@
  *
  */
 
-package org.egov.infra.config.persistence.multitenancy;
+package org.egov.finance.master.config.MultiTenant;
 
-import org.egov.infra.config.core.ApplicationThreadLocals;
-import org.hibernate.context.spi.CurrentTenantIdentifierResolver;
-import org.springframework.beans.factory.annotation.Value;
+import java.sql.Connection;
+import java.sql.SQLException;
 
-import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
+import javax.sql.DataSource;
 
-public class DomainBasedSchemaTenantIdentifierResolver implements CurrentTenantIdentifierResolver {
+import org.hibernate.engine.jdbc.connections.spi.AbstractMultiTenantConnectionProvider;
+import org.hibernate.engine.jdbc.connections.spi.MultiTenantConnectionProvider;
+import org.hibernate.service.Service;
+import org.hibernate.service.UnknownUnwrapTypeException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
-    @Value("${default.schema.name}")
-    private String defaultSchema;
+import lombok.extern.slf4j.Slf4j;
+
+@Component
+@Slf4j
+public class MultiTenantSchemaConnectionProvider implements MultiTenantConnectionProvider {
+  
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	@Autowired
+    private transient DataSource dataSource;
+
+   
 
     @Override
-    public String resolveCurrentTenantIdentifier() {
-        return defaultIfBlank(ApplicationThreadLocals.getTenantID(), defaultSchema);
+    public Connection getConnection(Object tenantIdentifier) throws SQLException {
+        Connection connection = dataSource.getConnection();
+        connection.setSchema(tenantIdentifier.toString());  // switch schema
+        return connection;
+    }
+    @Override
+    public void releaseConnection(Object tenantId, Connection connection) throws SQLException {
+        try {
+            connection.setSchema(tenantId.toString());
+        } catch (SQLException e) {
+        	log.warn("Error occurred while switching schema upon release connection", e);
+        }
+        releaseAnyConnection(connection);
+    }
+    @Override
+    public boolean supportsAggressiveRelease() {
+        return Boolean.TRUE;
     }
 
     @Override
-    public boolean validateExistingCurrentSessions() {
-        return true;
+    public boolean isUnwrappableAs(Class unwrapType) {
+        return MultiTenantConnectionProvider.class.equals(unwrapType)
+                || AbstractMultiTenantConnectionProvider.class.isAssignableFrom(unwrapType);
     }
 
+    @Override
+    public <T> T unwrap(Class<T> unwrapType) {
+        if (isUnwrappableAs(unwrapType))
+            return (T) this;
+        else
+            throw new UnknownUnwrapTypeException(unwrapType);
+    }
+    @Override
+    public Connection getAnyConnection() throws SQLException {
+        return dataSource.getConnection();
+    }
+
+    @Override
+    public void releaseAnyConnection(Connection connection) throws SQLException {
+        connection.close();
+    }
+
+	
+	
 }
