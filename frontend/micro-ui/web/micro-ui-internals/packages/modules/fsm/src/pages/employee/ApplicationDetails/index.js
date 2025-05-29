@@ -49,6 +49,9 @@ const ApplicationDetails = (props) => {
   const [viewTimeline, setViewTimeline] = useState(false);
   const DSO = Digit.UserService.hasAccess(["FSM_DSO"]) || false;
   const [showOptions, setShowOptions] = useState(false);
+  const [showReceiptOptions, setShowReceiptOptions]=useState(false);
+  const isMobile = window.Digit.Utils.browser.isMobile();
+  const [shownDownloadOptions, setShoowDownloadOptions]=useState(false)
   const { data: storeData } = Digit.Hooks.useStore.getInitData();
 
   const { tenants } = storeData || {};
@@ -240,18 +243,39 @@ const ApplicationDetails = (props) => {
 
   const handleDownloadPdf = async () => {
     const tenantInfo = tenants.find((tenant) => tenant.code === applicationDetails?.tenantId);
-    const data = getPDFData({ ...applicationDetails?.applicationDetailsResponse }, tenantInfo, t);
+    const data = getPDFData({ ...applicationData }, tenantInfo, t);
     Digit.Utils.pdf.generate(data);
     setShowOptions(false);
   };
 
-  const downloadPaymentReceipt = async () => {
+  const downloadFinalPaymentReceipt = async () => {
     const receiptFile = {
       filestoreIds: [paymentsHistory.Payments[0]?.fileStoreId],
     };
 
     if (!receiptFile?.fileStoreIds?.[0]) {
       const newResponse = await Digit.PaymentService.generatePdf(state, { Payments: [paymentsHistory.Payments[0]] }, "fsm-receipt");
+      const fileStore = await Digit.PaymentService.printReciept(state, {
+        fileStoreIds: newResponse.filestoreIds[0],
+      });
+      window.open(fileStore[newResponse.filestoreIds[0]], "_blank");
+      setShowOptions(false);
+    } else {
+      const fileStore = await Digit.PaymentService.printReciept(state, {
+        fileStoreIds: receiptFile.filestoreIds[0],
+      });
+      window.open(fileStore[receiptFile.filestoreIds[0]], "_blank");
+      setShowOptions(false);
+    }
+  };
+  const downloadAdvancePaymentReceipt = async () => {
+    const paymemntIndex= paymentsHistory.Payments.length===1  ? 0 : 1;
+    const receiptFile = {
+      filestoreIds: [paymentsHistory.Payments[paymemntIndex]?.fileStoreId],
+    };
+
+    if (!receiptFile?.fileStoreIds?.[0]) {
+      const newResponse = await Digit.PaymentService.generatePdf(state, { Payments: [paymentsHistory.Payments[paymemntIndex]] }, "fsm-receipt");
       const fileStore = await Digit.PaymentService.printReciept(state, {
         fileStoreIds: newResponse.filestoreIds[0],
       });
@@ -276,7 +300,11 @@ const ApplicationDetails = (props) => {
         },
         {
           label: t("CS_DOWNLOAD_RECEIPT"),
-          onClick: downloadPaymentReceipt,
+          onClick: ()=> {
+            setShowReceiptOptions(true),
+            setShowOptions(false)
+          }
+           
         },
       ]
       : [
@@ -285,6 +313,25 @@ const ApplicationDetails = (props) => {
           onClick: handleDownloadPdf,
         },
       ];
+      const receiptOptions=paymentsHistory?.Payments.length>1 ? [
+        
+        {
+          label : t("ADVANCE_PAYMENT_RECEIPT"),
+          onClick:downloadAdvancePaymentReceipt
+        },
+        {
+          label : t("FINAL_PAYMENT_RECEIPT"),
+          onClick:downloadFinalPaymentReceipt
+        }
+      
+      
+      ]:
+      [
+        {
+          label : t("ADVANCE_PAYMENT_RECEIPT"),
+          onClick:downloadAdvancePaymentReceipt
+        },
+      ]
 
   if (isLoading) {
     return <Loader />;
@@ -310,10 +357,35 @@ const ApplicationDetails = (props) => {
     <React.Fragment>
       {!isLoading ? (
         <React.Fragment>
-          <div style={{display:"flex",justifyContent:"space-between"}}>
-          <Header style={{ marginBottom: "16px" }}>{t("ES_TITLE_APPLICATION_DETAILS")}</Header>           
+        <div className="cardHeaderWithOptions" style={isMobile ? {} : {width:"100%", display:"flex", alignItems:"center"}}>
+        <div  style={{flexGrow:1, textAlign:"left"}}>
+        <Header>{t("CS_FSM_APPLICATION_DETAIL_TITLE_APPLICATION_DETAILS")}</Header>
+        </div>
+        <div style={{display:"flex",flexDirection:"row-reverse",alignItems:"center", marginTop:"-25px", justifyContent:"flex-end",gap:"10px"}}>
+        {dowloadOptions && dowloadOptions.length > 0 && !showReceiptOptions && (
+          <MultiLink
+            className="multilinkWrapper"
+            onHeadClick={() => setShowOptions(!showOptions)}
+            displayOptions={showOptions}
+            options={dowloadOptions}
+          />
+        )}
+        
           <LinkButton label={t("VIEW_TIMELINE")} style={{ color:"#A52A2A"}} onClick={handleViewTimeline}></LinkButton>
-          </div>
+
+        </div> 
+        <div style={{display:"flex",flexDirection:"row-reverse",alignItems:"center",gap:"10px", marginTop:"-25px", zIndex:"10"}}>
+        {receiptOptions && receiptOptions.length > 0 && showReceiptOptions && (
+          <MultiLink
+            className="multilinkWrapper"
+            onHeadClick={() => setShowReceiptOptions(!showReceiptOptions)}
+            displayOptions={showReceiptOptions}
+            options={receiptOptions}
+            
+          />
+        )}   
+        </div>    
+      </div>
           <Card className="fsm" style={{ position: "relative" }}>
             {/* {!DSO && (
               <LinkButton
@@ -421,6 +493,7 @@ const ApplicationDetails = (props) => {
               submitAction={submitAction}
               actionData={workflowDetails?.data?.timeline}
               module={workflowDetails?.data?.applicationBusinessService}
+              applicationDetails={applicationDetails}
             />
           ) : null}
           {showToast && (
