@@ -350,6 +350,7 @@ import useCreateDemand from "./sv/useCreateDemand";
 import useEmpvendorCommonSearch from "./vendor/useEmpvendorCommonSearch";
 import useFilterEmployee from "./pgrAi/useFilterEmployee";
 import useApplicationDetails from "./pgrAi/useApplicationDetails";
+import useWorkerSearch from "./fsm/useWorkerSearch";
 
 const wt={
   useTankerCreateAPI,
@@ -424,6 +425,7 @@ const fsm = {
   useVehicleTripCreate,
   useVendorSearch,
   useAdvanceBalanceCalulation,
+  useWorkerSearch
 };
 const ptr = {
   usePetMDMS,
