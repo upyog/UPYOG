@@ -60,11 +60,11 @@
 		<repository>
 			<id>AsposeJavaAPI</id>
 			<name>Aspose Java API</name>
-			<url>http://releases.aspose.com/repo/</url>
+			<url>https://repository.aspose.com/repo/</url>
 		</repository> 
 		<repository>
-			<id>javaxt.com</id>
-			<url>http://www.javaxt.com/maven</url>
+			<id>javaxt</id>
+			<url>https://www.javaxt.com/maven</url>
 		</repository>
 	</repositories>
 
