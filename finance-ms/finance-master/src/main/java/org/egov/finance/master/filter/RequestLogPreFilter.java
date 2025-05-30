@@ -1,16 +1,21 @@
-package org.egov.finance.master.prefilter;
+/**
+ * Created on May 30, 2025.
+ * 
+ * @author bdhal
+ */
+package org.egov.finance.master.filter;
 
 import java.io.IOException;
 
 import org.egov.finance.master.config.Filter.CachedBodyHttpServletRequest;
 import org.egov.finance.master.model.RequestInfo;
 import org.egov.finance.master.util.ApplicationThreadLocals;
+import org.egov.finance.master.util.MasterConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.JsonObject;
 
 import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;
@@ -22,7 +27,9 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Component
-public class RequestLogFilter implements Filter {
+public class RequestLogPreFilter implements Filter {
+	
+	
 	@Autowired
 	private ObjectMapper mapper;
 	@Override
@@ -36,13 +43,10 @@ public class RequestLogFilter implements Filter {
 
 	        try {
 	            JsonNode root = mapper.readTree(body);
-	            JsonNode reqInfoNode = root.get("RequestInfo");
+	            JsonNode reqInfoNode = root.get(MasterConstants.REQUEST_INFO);
 	            if (reqInfoNode != null && !reqInfoNode.isNull()) {
 	                RequestInfo reqInfo = mapper.treeToValue(reqInfoNode, RequestInfo.class);
-	                // Now set the tenant ID to thread-local or context
-	              //  System.out.println(reqInfo.getTenantId().split("\\.")[0]);
-	                
-	                String schema = (reqInfo.getTenantId().split("\\.")[1].isBlank()?null:reqInfo.getTenantId().split("\\.")[1]);
+	                String schema = (reqInfo.getTenantId().split(MasterConstants.REQUEST_TENANT_SPLIT_REGEX)[1].isBlank()?null:reqInfo.getTenantId().split(MasterConstants.REQUEST_TENANT_SPLIT_REGEX)[1]);
 	                ApplicationThreadLocals.setTenantID(schema);
 	            }
 	        } catch (Exception e) {

@@ -48,15 +48,8 @@
 
 package org.egov.finance.master.config.JpaDatasource;
 
-import static org.hibernate.cfg.BatchSettings.BATCH_VERSIONED_DATA;
-import static org.hibernate.cfg.BatchSettings.ORDER_INSERTS;
-import static org.hibernate.cfg.BatchSettings.ORDER_UPDATES;
-import static org.hibernate.cfg.CacheSettings.USE_MINIMAL_PUTS;
-import static org.hibernate.cfg.FetchSettings.DEFAULT_BATCH_FETCH_SIZE;
-import static org.hibernate.cfg.JdbcSettings.AUTOCOMMIT;
 import static org.hibernate.cfg.MultiTenancySettings.MULTI_TENANT_CONNECTION_PROVIDER;
 import static org.hibernate.cfg.MultiTenancySettings.MULTI_TENANT_IDENTIFIER_RESOLVER;
-import static org.hibernate.cfg.TransactionSettings.AUTO_CLOSE_SESSION;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -65,11 +58,11 @@ import javax.sql.DataSource;
 
 import org.egov.finance.master.config.MultiTenant.DomainBasedSchemaTenantIdentifierResolver;
 import org.egov.finance.master.config.MultiTenant.MultiTenantSchemaConnectionProvider;
+import org.egov.finance.master.util.MasterConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.DependsOn;
 import org.springframework.core.env.Environment;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.orm.jpa.JpaTransactionManager;
@@ -87,13 +80,11 @@ import jakarta.persistence.ValidationMode;
 @Configuration
 @EnableTransactionManagement
 @EnableJpaRepositories(
-    basePackages = "org.egov.finance.*",
-    entityManagerFactoryRef = "entityManagerFactory",
-    transactionManagerRef = "transactionManager"
+    basePackages = MasterConstants.ORG_EGOV_FINANCE,
+    entityManagerFactoryRef = MasterConstants.ENTITY_MANAGER_FACTORY,
+    transactionManagerRef = MasterConstants.TRANSACTION_MANAGER
 )
 public class JpaConfiguration {
-
-    private static final String ORG_EGOV_FINANCE = "org.egov.finance.*";
 
 	@Autowired
     private Environment env;
@@ -103,6 +94,9 @@ public class JpaConfiguration {
 
     @Value("${jpa.showSql:false}")
     private boolean showSQL;
+    
+    @Value("${multiTenancy.schema.enabled}")
+    private boolean enabledMultiTenant;
 
     @Autowired
     private MultiTenantSchemaConnectionProvider multiTenantConnectionProvider;
@@ -112,11 +106,11 @@ public class JpaConfiguration {
 
     @Bean
     //@DependsOn("flyway")
-    public EntityManagerFactory entityManagerFactory() {
+     EntityManagerFactory entityManagerFactory() {
         LocalContainerEntityManagerFactoryBean factoryBean = new LocalContainerEntityManagerFactoryBean();
         factoryBean.setDataSource(dataSource);
-        factoryBean.setPersistenceUnitName("EgovPersistenceUnit");
-        factoryBean.setPackagesToScan(ORG_EGOV_FINANCE);
+        factoryBean.setPersistenceUnitName(MasterConstants.EGOV_PERSISTENCE_UNIT);
+        factoryBean.setPackagesToScan(MasterConstants.ORG_EGOV_FINANCE);
         factoryBean.setJpaVendorAdapter(jpaVendorAdapter());
         factoryBean.setJpaPropertyMap(additionalProperties());
         factoryBean.setValidationMode(ValidationMode.NONE);
@@ -126,7 +120,7 @@ public class JpaConfiguration {
     }
 
     @Bean
-    public JpaVendorAdapter jpaVendorAdapter() {
+     JpaVendorAdapter jpaVendorAdapter() {
         HibernateJpaVendorAdapter adapter = new HibernateJpaVendorAdapter();
         adapter.setDatabase(Database.POSTGRESQL);
         adapter.setShowSql(true);
@@ -135,8 +129,7 @@ public class JpaConfiguration {
 
     private Map<String, Object> additionalProperties() {
         Map<String, Object> props = new HashMap<>();
-        if (true) {
-        	//props.put("hibernate.multiTenancy", "SCHEMA");
+        if (enabledMultiTenant) {
             props.put(MULTI_TENANT_CONNECTION_PROVIDER, multiTenantConnectionProvider);
             props.put(MULTI_TENANT_IDENTIFIER_RESOLVER, tenantIdentifierResolver);
         }
@@ -145,8 +138,7 @@ public class JpaConfiguration {
     }
 
     @Bean
-    public PlatformTransactionManager transactionManager() {
-    	
+    PlatformTransactionManager transactionManager() {
         return new JpaTransactionManager(entityManagerFactory());
     }
 }

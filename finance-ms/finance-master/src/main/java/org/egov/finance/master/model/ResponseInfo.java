@@ -1,3 +1,8 @@
+/**
+ * Created on May 30, 2025.
+ * 
+ * @author bdhal
+ */
 package org.egov.finance.master.model;
 
 import lombok.Builder;

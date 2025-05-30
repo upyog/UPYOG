@@ -1,4 +1,8 @@
-
+/**
+ * Created on May 30, 2025.
+ * 
+ * @author bdhal
+ */
 package org.egov.finance.master.config.MultiTenant;
 
 import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
@@ -20,7 +24,7 @@ public class DomainBasedSchemaTenantIdentifierResolver implements CurrentTenantI
     @Override
     public String resolveCurrentTenantIdentifier() {
     	String tenantId = ApplicationThreadLocals.getTenantID();
-    	//log.info(defaultIfBlank(tenantId, defaultSchema));
+    	log.debug(defaultIfBlank(tenantId, defaultSchema));
         return defaultIfBlank(tenantId, defaultSchema);
     }
 

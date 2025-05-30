@@ -3,6 +3,11 @@
  * 
  * @author bdhal
  */
+/**
+ * Created on May 30, 2025.
+ * 
+ * @author bdhal
+ */
 package org.egov.finance.master.entity;
 
 import java.math.BigDecimal;
