@@ -23,6 +23,7 @@ import lombok.Data;
 @Table(name = "fund")
 @SequenceGenerator(name = Fund.SEQ, sequenceName = Fund.SEQ, allocationSize = 1)
 @Data
+//changed for initial setup need to fix
 //@Unique(fields = {"code", "name"}, enableDfltMsg = true)
 public class Fund {
 
