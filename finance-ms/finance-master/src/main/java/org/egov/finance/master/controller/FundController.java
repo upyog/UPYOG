@@ -33,5 +33,6 @@ public class FundController {
 		
 		return new ResponseEntity<>(fund,HttpStatus.OK);
 	}
+	
 
 }

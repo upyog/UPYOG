@@ -60,6 +60,7 @@ import org.hibernate.service.UnknownUnwrapTypeException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 
 @Component
@@ -74,23 +75,32 @@ public class MultiTenantSchemaConnectionProvider implements MultiTenantConnectio
     private transient DataSource dataSource;
 
    
+	@Override
+	public Connection getConnection(Object tenantIdentifier) throws SQLException {
+	    Connection connection = dataSource.getConnection();
+	    String schema = tenantIdentifier.toString();
 
-    @Override
-    public Connection getConnection(Object tenantIdentifier) throws SQLException {
-        Connection connection = dataSource.getConnection();
-        connection.setSchema(tenantIdentifier.toString()); 
-        // switch schema
-        return connection;
-    }
+	    try {
+	     //   connection.createStatement().execute("SET SCHEMA '" + schema + "'");
+	    	connection.setSchema(schema);
+	        log.info(">>> Switched schema using SET SCHEMA '{}'", schema);
+	    } catch (SQLException e) {
+	        log.error("Schema switch failed for tenant: " + schema, e);
+	        throw e;
+	    }
+
+	    return connection;
+	}
     @Override
     public void releaseConnection(Object tenantId, Connection connection) throws SQLException {
+    	String schema = tenantId.toString();
         try {
-            connection.setSchema(tenantId.toString());
-            
+            connection.setSchema(schema);
         } catch (SQLException e) {
-        	log.warn("Error occurred while switching schema upon release connection", e);
+            log.warn("Failed to reset schema on connection release", e);
+        } finally {
+            connection.close();
         }
-        releaseAnyConnection(connection);
     }
     @Override
     public boolean supportsAggressiveRelease() {

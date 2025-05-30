@@ -93,7 +93,9 @@ import jakarta.persistence.ValidationMode;
 )
 public class JpaConfiguration {
 
-    @Autowired
+    private static final String ORG_EGOV_FINANCE = "org.egov.finance.*";
+
+	@Autowired
     private Environment env;
 
     @Autowired
@@ -108,13 +110,13 @@ public class JpaConfiguration {
     @Autowired
     private DomainBasedSchemaTenantIdentifierResolver tenantIdentifierResolver;
 
-  //  @Bean
-    @DependsOn("flyway")
+    @Bean
+    //@DependsOn("flyway")
     public EntityManagerFactory entityManagerFactory() {
         LocalContainerEntityManagerFactoryBean factoryBean = new LocalContainerEntityManagerFactoryBean();
         factoryBean.setDataSource(dataSource);
         factoryBean.setPersistenceUnitName("EgovPersistenceUnit");
-        factoryBean.setPackagesToScan("org.egov.**.entity");
+        factoryBean.setPackagesToScan(ORG_EGOV_FINANCE);
         factoryBean.setJpaVendorAdapter(jpaVendorAdapter());
         factoryBean.setJpaPropertyMap(additionalProperties());
         factoryBean.setValidationMode(ValidationMode.NONE);
@@ -126,14 +128,15 @@ public class JpaConfiguration {
     @Bean
     public JpaVendorAdapter jpaVendorAdapter() {
         HibernateJpaVendorAdapter adapter = new HibernateJpaVendorAdapter();
+        adapter.setDatabase(Database.POSTGRESQL);
+        adapter.setShowSql(true);
         return adapter;
     }
 
     private Map<String, Object> additionalProperties() {
         Map<String, Object> props = new HashMap<>();
-
-        // Only bean references and complex props stay here
         if (true) {
+        	//props.put("hibernate.multiTenancy", "SCHEMA");
             props.put(MULTI_TENANT_CONNECTION_PROVIDER, multiTenantConnectionProvider);
             props.put(MULTI_TENANT_IDENTIFIER_RESOLVER, tenantIdentifierResolver);
         }
@@ -143,6 +146,7 @@ public class JpaConfiguration {
 
     @Bean
     public PlatformTransactionManager transactionManager() {
+    	
         return new JpaTransactionManager(entityManagerFactory());
     }
 }
