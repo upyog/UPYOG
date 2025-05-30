@@ -51,18 +51,27 @@ public class DBMigrationConfiguration {
 
     @Value("${statewide.schema.name}")
     private String statewideSchemaName;
+    
+    @Value("$db.flyway.collection.migration.file.path")
+    private String collectionMigrationFile;
+    
+    @Value("$db.flyway.commons.migration.file.path")
+    private String commonsMigrationFile;
+    
 
     @Autowired
     private ConfigurableEnvironment environment;
 
     @Bean
-    @DependsOn("dataSource")
-    public Flyway flyway(DataSource dataSource, @Qualifier("cities") List<String> cities) {
+   @DependsOn("dataSource")
+    public Flyway flyway(DataSource dataSource ) {
     	//dbMigrationEnabled=false;
-        if (dbMigrationEnabled) {
+    	List<String> cities   = new ArrayList<>();
+    	cities.add("tetsin");
+        if (true) {
             cities.stream().forEach(schema -> {
                 if (devMode)
-                    migrateDatabase(dataSource, schema,
+                    migrateDatabase(dataSource, schema,collectionMigrationFile,commonsMigrationFile,
                             mainMigrationFilePath, sampleMigrationFilePath, format(tenantMigrationFilePath, schema));
                 else
                     migrateDatabase(dataSource, schema,
@@ -76,33 +85,35 @@ public class DBMigrationConfiguration {
             }
         }
 
-        return new Flyway();
+        return Flyway.configure()
+                .dataSource(dataSource)
+                .schemas(cities.isEmpty() ? "public" : cities.get(0)) // fallback schema
+                .load();
     }
 
     private void migrateDatabase(DataSource dataSource, String schema, String... locations) {
-        Flyway flyway = new Flyway().configure().baselineOnMigrate(dbMigrationEnabled);
-        //flyway.setBaselineOnMigrate(true);
-        //flyway.setValidateOnMigrate(validateOnMigrate);
-        flyway.setOutOfOrder(true);
-        flyway.setLocations(locations);
-        flyway.setDataSource(dataSource);
-        flyway.setSchemas(schema);
-        if (repairMigration)
-            flyway.repair();
+       Flyway flyway =  Flyway.configure()
+        .baselineOnMigrate(true)
+        .validateOnMigrate(false)
+        .outOfOrder(true)
+        .locations(locations)
+        .dataSource(dataSource)
+        .schemas(schema)
+        .load();
+      if (true)
+         flyway.repair();
+       
         flyway.migrate();
     }
 
-    @Bean(name = "tenants", autowire = Autowire.BY_NAME)
-    public List<String> tenants() {
-        List<String> tenants = new ArrayList<>();
-        environment.getPropertySources().iterator().forEachRemaining(propertySource -> {
-            if (propertySource instanceof MapPropertySource)
-                ((MapPropertySource) propertySource).getSource().forEach((key, value) -> {
-                    if (key.startsWith("tenant."))
-                        tenants.add(value.toString());
-                });
-        });
-        return tenants;
-    }
+	/*
+	 * @Bean(name = "tenants", autowire = Autowire.BY_NAME) public List<String>
+	 * tenants() { List<String> tenants = new ArrayList<>();
+	 * environment.getPropertySources().iterator().forEachRemaining(propertySource
+	 * -> { if (propertySource instanceof MapPropertySource) ((MapPropertySource)
+	 * propertySource).getSource().forEach((key, value) -> { if
+	 * (key.startsWith("tenant.")) tenants.add(value.toString()); }); }); return
+	 * tenants; }
+	 */
 
 }

@@ -63,11 +63,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.core.env.Environment;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
+import org.springframework.orm.jpa.support.SharedEntityManagerBean;
 import org.springframework.orm.jpa.vendor.Database;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -80,9 +82,7 @@ import jakarta.persistence.ValidationMode;
 @Configuration
 @EnableTransactionManagement
 @EnableJpaRepositories(
-    basePackages = MasterConstants.ORG_EGOV_FINANCE,
-    entityManagerFactoryRef = MasterConstants.ENTITY_MANAGER_FACTORY,
-    transactionManagerRef = MasterConstants.TRANSACTION_MANAGER
+    basePackages = MasterConstants.ORG_EGOV_FINANCE
 )
 public class JpaConfiguration {
 
@@ -104,9 +104,11 @@ public class JpaConfiguration {
     @Autowired
     private DomainBasedSchemaTenantIdentifierResolver tenantIdentifierResolver;
 
+    
+   
     @Bean
-    //@DependsOn("flyway")
-     EntityManagerFactory entityManagerFactory() {
+    @DependsOn("flyway")
+    public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
         LocalContainerEntityManagerFactoryBean factoryBean = new LocalContainerEntityManagerFactoryBean();
         factoryBean.setDataSource(dataSource);
         factoryBean.setPersistenceUnitName(MasterConstants.EGOV_PERSISTENCE_UNIT);
@@ -115,8 +117,7 @@ public class JpaConfiguration {
         factoryBean.setJpaPropertyMap(additionalProperties());
         factoryBean.setValidationMode(ValidationMode.NONE);
         factoryBean.setSharedCacheMode(SharedCacheMode.DISABLE_SELECTIVE);
-        factoryBean.afterPropertiesSet();
-        return factoryBean.getObject();
+        return factoryBean;
     }
 
     @Bean
@@ -138,7 +139,16 @@ public class JpaConfiguration {
     }
 
     @Bean
-    PlatformTransactionManager transactionManager() {
-        return new JpaTransactionManager(entityManagerFactory());
+     PlatformTransactionManager transactionManager(
+            EntityManagerFactory emf) {
+        return new JpaTransactionManager(emf);
+    }
+
+    @Bean
+    SharedEntityManagerBean entityManager(
+            EntityManagerFactory emf) {
+        SharedEntityManagerBean sem = new SharedEntityManagerBean();
+        sem.setEntityManagerFactory(emf);
+        return sem;
     }
 }
