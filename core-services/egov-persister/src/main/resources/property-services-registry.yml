@@ -580,7 +580,7 @@ serviceMaps:
     fromTopic: save-property-tax-calculator-tracker
     isTransaction: true
     queryMaps:
-    - query: INSERT INTO eg_pt_tax_calculator_tracker (uuid, propertyid, tenantid, financialyear, fromdate, todate, propertytax, createdby, lastmodifiedby, createdtime, lastmodifiedtime, additionaldetails, bill_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+    - query: INSERT INTO eg_pt_tax_calculator_tracker (uuid, propertyid, tenantid, financialyear, fromdate, todate, propertytax, createdby, lastmodifiedby, createdtime, lastmodifiedtime, additionaldetails) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
       basePath: ptTaxCalculatorTracker
       jsonMaps:
       - jsonPath: $.ptTaxCalculatorTracker.uuid
@@ -597,5 +597,3 @@ serviceMaps:
       - jsonPath: $.ptTaxCalculatorTracker.additionalDetails
         type: JSON
         dbType: JSONB
-      - jsonPath: $.ptTaxCalculatorTracker.billId
-
