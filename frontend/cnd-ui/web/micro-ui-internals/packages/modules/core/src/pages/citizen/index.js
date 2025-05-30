@@ -49,7 +49,7 @@ const Home = ({
     [
       {
         name: "actions-test",
-        filter: "[?(@.url == 'digit-ui-card' || @.url == 'cnd-ui-card')]",
+        filter: "[?(@.url == 'digit-ui-card')]",
       },
     ],
     {
