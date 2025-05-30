@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { FormStep, RadioButtons } from "@egovernments/digit-ui-react-components";
+import { FormStep, RadioButtons } from "@upyog/digit-ui-react-components";
 import Timeline from "../../components/CPTTimeline";
 
 const KnowYourProperty = ({ t, config, onSelect, userType, formData }) => {

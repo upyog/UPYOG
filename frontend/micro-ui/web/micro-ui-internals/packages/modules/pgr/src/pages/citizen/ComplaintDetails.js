@@ -16,7 +16,7 @@ import {
   ImageViewer,
   Loader,
   Toast,
-} from "@egovernments/digit-ui-react-components";
+} from "@upyog/digit-ui-react-components";
 
 import TimeLine from "../../components/TimeLine";
 
