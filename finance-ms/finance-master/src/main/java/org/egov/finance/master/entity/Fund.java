@@ -1,12 +1,7 @@
 /**
- * Created on May 29, 2025.
- * 
- * @author bdhal
- */
-/**
  * Created on May 30, 2025.
  * 
- * @author bdhal
+ * @author bikashdhal
  */
 package org.egov.finance.master.entity;
 

@@ -1,5 +1,9 @@
 
-
+/**
+ * Created on May 30, 2025.
+ * 
+ * @author bikashdhal
+ */
 package org.egov.finance.master.config.Flyway;
 
 import org.flywaydb.core.Flyway;
@@ -58,7 +62,8 @@ public class DBMigrationConfiguration {
     @Value("$db.flyway.commons.migration.file.path")
     private String commonsMigrationFile;
     
-
+    
+    
     @Autowired
     private ConfigurableEnvironment environment;
 
@@ -67,19 +72,20 @@ public class DBMigrationConfiguration {
     public Flyway flyway(DataSource dataSource ) {
     	//dbMigrationEnabled=false;
     	List<String> cities   = new ArrayList<>();
-    	cities.add("tetsin");
+    	cities.add("demo");
         if (true) {
             cities.stream().forEach(schema -> {
                 if (devMode)
-                    migrateDatabase(dataSource, schema,collectionMigrationFile,commonsMigrationFile,
-                            mainMigrationFilePath, sampleMigrationFilePath, format(tenantMigrationFilePath, schema));
+                    migrateDatabase(dataSource, schema,
+                            mainMigrationFilePath, sampleMigrationFilePath);
                 else
                     migrateDatabase(dataSource, schema,
                             mainMigrationFilePath, format(tenantMigrationFilePath, schema));
             });
-
+            
+            //Changes to Be done
             if (statewideMigrationRequired && !devMode) {
-                migrateDatabase(dataSource, statewideSchemaName, mainMigrationFilePath, statewideMigrationFilePath);
+                migrateDatabase(dataSource,  mainMigrationFilePath, statewideMigrationFilePath);
             } else if (!devMode) {
                 migrateDatabase(dataSource, statewideSchemaName, mainMigrationFilePath);
             }
@@ -106,6 +112,8 @@ public class DBMigrationConfiguration {
         flyway.migrate();
     }
 
+    
+    //GET THE CITIES FROM THE MDMS AND POPULATE
 	/*
 	 * @Bean(name = "tenants", autowire = Autowire.BY_NAME) public List<String>
 	 * tenants() { List<String> tenants = new ArrayList<>();
