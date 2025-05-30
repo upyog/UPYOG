@@ -9,6 +9,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import javax.validation.Valid;
@@ -293,6 +294,26 @@ public class PropertyService {
 			userService.updateUser(request);
 //		} else {
 //			request.getProperty().setOwners(util.getCopyOfOwners(propertyFromSearch.getOwners()));
+		}
+		else if (CreationReason.UPDATE.equals(request.getProperty().getCreationReason())) {
+			if(request.getProperty().getOwners().size() > propertyFromSearch.getOwners().size())
+			{
+				request.getProperty().getOwners().forEach(owner -> {
+					
+					if(owner.getOwnerInfoUuid() == null) {
+						owner.setOwnerInfoUuid(UUID.randomUUID().toString());
+						if (!CollectionUtils.isEmpty(owner.getDocuments()))
+							owner.getDocuments().forEach(doc -> {
+								doc.setId(UUID.randomUUID().toString());
+								doc.setStatus(Status.ACTIVE);
+							});
+						
+						owner.setStatus(Status.ACTIVE);
+					}
+
+				});
+				userService.createUser(request);
+			}
 		}
 
 		enrichmentService.enrichAssignes(request.getProperty());

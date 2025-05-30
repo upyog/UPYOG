@@ -21,7 +21,6 @@ import org.egov.pt.models.OwnerInfo;
 import org.egov.pt.models.Property;
 import org.egov.pt.models.enums.Status;
 import org.egov.pt.models.user.CreateUserRequest;
-import org.egov.pt.models.user.User;
 import org.egov.pt.models.user.UserDetailResponse;
 import org.egov.pt.models.user.UserSearchRequest;
 import org.egov.pt.models.user.UserSearchResponse;
@@ -420,7 +419,8 @@ public class UserService {
 				uri = uri.append(userContextPath).append(userCreateEndpoint);
 			} else {
 				owner.setId(userDetailResponse.getUser().get(0).getId());
-				uri = uri.append(userContextPath).append(owner.getId()).append(userUpdateEndpoint);
+				uri = uri.append(userContextPath).append(userUpdateEndpoint);
+//						.append(owner.getId())
 			}
 			userDetailResponse = userCall(new CreateUserRequest(requestInfo, owner), uri);
 			setOwnerFields(owner, userDetailResponse, requestInfo);
