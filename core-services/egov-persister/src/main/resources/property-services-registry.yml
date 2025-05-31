@@ -357,25 +357,52 @@ serviceMaps:
 
       - jsonPath: $.Property.tenantId
 
-
-    - query: UPDATE eg_pt_owner SET lastmodifiedby=?, lastmodifiedtime=?, additionaldetails=?, name=?, mobile_number=? WHERE propertyid=?;
+    - query: INSERT INTO eg_pt_owner(ownerinfouuid, tenantid, propertyid, userid, status, isprimaryowner, ownertype, ownershippercentage, institutionid, relationship, createdby, createdtime, lastmodifiedby, lastmodifiedtime, additionaldetails, name, mobile_number) 
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ON CONFLICT (propertyid, userid) DO UPDATE SET
+        name = EXCLUDED.name,
+        mobile_number = EXCLUDED.mobile_number,
+        additionaldetails = EXCLUDED.additionaldetails,
+        lastmodifiedby = EXCLUDED.lastmodifiedby,
+        lastmodifiedtime = EXCLUDED.lastmodifiedtime;
       basePath: Property.owners.*
       jsonMaps:
+         - jsonPath: $.Property.*.ownerInfoUuid
 
-      - jsonPath: $.Property.auditDetails.lastModifiedBy
-
-      - jsonPath: $.Property.auditDetails.lastModifiedTime
-      
-      - jsonPath: $.Property.owners.*.additionalDetails
-        type: JSON
-        dbType: JSONB
-
-      - jsonPath: $.Property.owners.*.name
-      
-      - jsonPath: $.Property.owners.*.mobileNumber
-
-      - jsonPath: $.Property.id
-
+         - jsonPath: $.Property.tenantId
+                
+         - jsonPath: $.Property.id
+              
+         - jsonPath: $.Property.owners.*.uuid
+            
+         - jsonPath: $.Property.owners.*.status
+            
+         - jsonPath: $.Property.owners.*.isPrimaryOwner
+           
+         - jsonPath: $.Property.owners.*.ownerType
+             
+         - jsonPath: $.Property.owners.*.ownerShipPercentage
+            
+         - jsonPath: $.Property.owners.*.institutionId
+           
+         - jsonPath: $.Property.owners.*.relationship
+              
+         - jsonPath: $.Property.auditDetails.createdBy
+            
+         - jsonPath: $.Property.auditDetails.createdTime
+              
+         - jsonPath: $.Property.auditDetails.lastModifiedBy
+             
+         - jsonPath: $.Property.auditDetails.lastModifiedTime
+               
+         - jsonPath: $.Property.owners.*.additionalDetails
+           type: JSON
+           dbType: JSONB
+            
+         - jsonPath: $.Property.owners.*.name
+               
+         - jsonPath: $.Property.owners.*.mobileNumber
+         
     - query: INSERT INTO eg_pt_document (id, tenantid, entityid, documenttype, filestoreid, documentuid, status, createdby, lastmodifiedby, createdtime, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT (id) DO UPDATE SET documenttype = EXCLUDED.documenttype,fileStoreid = EXCLUDED.filestoreid, documentuid=EXCLUDED.documentuid, status=EXCLUDED.status, lastmodifiedby = EXCLUDED.lastModifiedby, lastmodifiedtime = EXCLUDED.lastmodifiedtime;
       basePath: $.Property.documents.*
       jsonMaps:
