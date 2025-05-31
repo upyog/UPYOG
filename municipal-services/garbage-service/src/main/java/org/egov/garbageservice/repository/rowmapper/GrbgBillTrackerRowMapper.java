@@ -25,6 +25,7 @@ public class GrbgBillTrackerRowMapper implements RowMapper<GrbgBillTracker> {
 				.grbgApplicationId(rs.getString("grbg_application_id")).tenantId(rs.getString("tenant_id"))
 				.month(rs.getString("month")).year(rs.getString("year")).fromDate(rs.getString("from_date"))
 				.toDate(rs.getString("to_date")).grbgBillAmount(rs.getBigDecimal("grbg_bill_amount"))
+				.billId(rs.getString("bill_id"))
 				.auditDetails(auditDetails).build();
 	}
 

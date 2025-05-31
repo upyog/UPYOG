@@ -69,9 +69,14 @@ public class BillRepository {
 		
 		String uri = config.getBillHost().concat(config.getSearchBillEndpoint());
         uri = uri.concat("?tenantId=").concat(billCriteria.getTenantId());
-        uri = uri.concat("&service=").concat(billCriteria.getService());
+//        uri = uri.concat("&service=").concat(billCriteria.getService());
         uri = uri.concat("&retrieveAll=").concat("true");
-        uri = uri.concat("&consumerCode=").concat(StringUtils.join(billCriteria.getConsumerCode(), ","));
+        if(null != billCriteria.getConsumerCode()) {
+            uri = uri.concat("&consumerCode=").concat(StringUtils.join(billCriteria.getConsumerCode(), ","));
+        }
+        if(billCriteria.getBillId() != null) {
+            uri = uri.concat("&billId=").concat(StringUtils.join(billCriteria.getBillId(), ","));
+        }
 
         Object result = restCallRepository.fetchResult(new StringBuilder(uri),RequestInfoWrapper.builder()
                                                              .requestInfo(requestInfo).build());

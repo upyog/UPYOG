@@ -23,6 +23,8 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import javax.validation.Valid;
+
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
@@ -77,6 +79,7 @@ import org.egov.garbageservice.util.ResponseInfoFactory;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -102,6 +105,9 @@ public class GarbageAccountService {
 
 	@Autowired
 	private GrbgDocumentRepository grbgDocumentRepository;
+	
+	@Autowired
+	private PDFRequestGenerator pdfRequestGenerator;
 
 	@Autowired
 	private GrbgAddressRepository grbgAddressRepository;
@@ -838,9 +844,9 @@ public class GarbageAccountService {
 	public Resource createNoSavePDF(GarbageAccount GarbageAccount, RequestInfo requestInfo) {
 
 		PDFRequest pdfRequest = generatePdfRequestByGarbage(GarbageAccount, requestInfo);
-		Resource resource = reportService.createNoSavePDF(pdfRequest);
+		ResponseEntity<Resource> resource = reportService.createNoSavePDF(pdfRequest);
 
-		return resource;
+		return resource.getBody();
 	}
 
 	private PDFRequest generatePdfRequestByGarbage(GarbageAccount GarbageAccount, RequestInfo requestInfo) {
@@ -1979,6 +1985,56 @@ public class GarbageAccountService {
 
 	private boolean containsIgnoreCase(String source, String target) {
 	    return source != null && source.toLowerCase().contains(target.toLowerCase());
+	}
+	
+	public ResponseEntity<Resource> generateGrbgTaxBillReceipt(RequestInfoWrapper requestInfoWrapper,
+			@Valid String grbgId) {
+		
+		List<GarbageAccount> garbageAccounts = Collections.singletonList(GarbageAccount.builder().grbgApplicationNumber(grbgId).build());
+				
+		SearchCriteriaGarbageAccount searchCriteriaGarbageAccount = createSearchCriteriaByGarbageAccounts(garbageAccounts);
+		
+		SearchCriteriaGarbageAccountRequest searchCriteriaGarbageAccountRequest = SearchCriteriaGarbageAccountRequest
+				.builder().searchCriteriaGarbageAccount(searchCriteriaGarbageAccount).requestInfo(requestInfoWrapper.getRequestInfo()).build();
+		GarbageAccountResponse garbageAccountResponse = searchGarbageAccounts(searchCriteriaGarbageAccountRequest);
+		
+		GarbageAccount grbAccount = garbageAccountResponse.getGarbageAccounts().stream().findFirst().orElse(null);
+		if (null == grbAccount) {
+			return null;
+		}
+		
+		GrbgBillTrackerSearchCriteria grbgTrackerSearchCriteria = GrbgBillTrackerSearchCriteria
+				.builder().grbgApplicationIds(Collections.singleton(grbgId)).limit(1).build();
+
+		List<GrbgBillTracker> grbgTaxCalculatorTrackers = getBillCalculatedGarbageAccounts(grbgTrackerSearchCriteria);
+
+		GrbgBillTracker grbgTaxCalculatorTracker = grbgTaxCalculatorTrackers.stream().findFirst().orElse(null);
+		if (null == grbgTaxCalculatorTracker) {
+			return null;
+		}
+
+		
+		BillSearchCriteria billSearchCriteria = BillSearchCriteria.builder()
+				.tenantId(grbgTaxCalculatorTracker.getTenantId())
+				.service(grbAccount.getBusinessService())
+				.billId(Collections.singleton(grbgTaxCalculatorTracker.getBillId())).build();
+
+		BillResponse billResponse = billService.searchBill(billSearchCriteria, requestInfoWrapper.getRequestInfo());
+
+		if (null == billResponse || CollectionUtils.isEmpty(billResponse.getBill())) {
+			return null;
+		}
+
+		Bill bill = billResponse.getBill().stream().findFirst().orElse(null);
+		if (null == bill) {
+			return null;
+		}
+		
+		
+		PDFRequest pdfRequest = pdfRequestGenerator.generatePdfRequestForBill(requestInfoWrapper, grbAccount,grbgTaxCalculatorTracker,bill);
+
+		return reportService.createNoSavePDF(pdfRequest);
+		
 	}
 	
 }

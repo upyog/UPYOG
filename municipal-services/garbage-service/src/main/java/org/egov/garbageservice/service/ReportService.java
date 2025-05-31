@@ -26,7 +26,7 @@ public class ReportService {
 	private RestTemplate restTemplate;
 
 	
-	public Resource createNoSavePDF(PDFRequest pdfRequest) {
+	public ResponseEntity<Resource> createNoSavePDF(PDFRequest pdfRequest) {
 		
 //		Object result = serviceRequestRepository.fetchResult(new StringBuilder(config.getReportHost().concat(config.getReportCreateEndPoint())), pdfRequest);
 //		Resource resource = mapper.convertValue(result,Resource.class);
@@ -38,7 +38,7 @@ public class ReportService {
 
         HttpEntity<PDFRequest> requestEntity = new HttpEntity<>(pdfRequest, headers);
 
-        ResponseEntity<Resource> responseEntity = restTemplate.exchange(
+        return restTemplate.exchange(
         		config.getReportHost().concat(config.getReportCreateEndPoint()),
             HttpMethod.POST,
             requestEntity,
@@ -46,7 +46,7 @@ public class ReportService {
         );
 		
 		
-		return responseEntity.getBody();
+//		return responseEntity.getBody();
 	}
 	
 }
