@@ -720,5 +720,17 @@ public class PropertyQueryBuilder {
 
 		return builder.toString();
 	}
+	
+	public String getLimitAndOrderByUpdatedTimeDesc(PtTaxCalculatorTrackerSearchCriteria criteria, String query,
+			List<Object> preparedStmtList) {
+		StringBuilder queryBuilder = new StringBuilder(query);
+		if (null != criteria.getLimit()) {
+			queryBuilder.append(" order by eptct.lastmodifiedtime desc ");
+			queryBuilder.append(" limit ? ");
+			preparedStmtList.add(criteria.getLimit());
+		}
+
+		return queryBuilder.toString();
+	}
 
 }

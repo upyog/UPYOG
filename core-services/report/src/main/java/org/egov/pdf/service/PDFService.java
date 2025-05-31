@@ -97,6 +97,9 @@ public class PDFService {
 
 	@Autowired
 	private RestTemplate restTemplate;
+	
+	@Autowired
+	private PdfV2Service pdfV2Service;
 
 	public ResponseEntity<Resource> generatePdf(PDFRequest pdfRequest) {
 
@@ -115,6 +118,10 @@ public class PDFService {
 			context.setVariable("util", new PDFUtill());
 			template = getTemplate(pdfRequest.getKey(), context);
 		}
+		
+		pdfRequest.setHtmlTemplateContent(template);
+		HtmlContentResponse htmlContentResponse = pdfV2Service.htmlPlaceholderReplacement(pdfRequest);
+		template = htmlContentResponse.getHtmlContent();
 
 		ByteArrayOutputStream outputStream = generateHtmlToPdf(pdfRequest.getKey(), template);
 		return prepareResponce(pdfRequest, outputStream);

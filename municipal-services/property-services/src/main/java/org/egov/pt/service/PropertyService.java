@@ -26,11 +26,15 @@ import org.egov.pt.models.PropertySearchRequest;
 import org.egov.pt.models.PropertySearchResponse;
 import org.egov.pt.models.PtTaxCalculatorTracker;
 import org.egov.pt.models.PtTaxCalculatorTrackerSearchCriteria;
+import org.egov.pt.models.bill.BillSearchCriteria;
+import org.egov.pt.models.collection.Bill;
 import org.egov.pt.models.collection.BillDetail;
 import org.egov.pt.models.collection.BillResponse;
 import org.egov.pt.models.enums.CreationReason;
 import org.egov.pt.models.enums.Status;
 import org.egov.pt.models.oldProperty.PropertyInfo;
+import org.egov.pt.models.report.PDFRequest;
+import org.egov.pt.models.report.PDFRequestGenerator;
 import org.egov.pt.models.user.UserDetailResponse;
 import org.egov.pt.models.user.UserSearchRequest;
 import org.egov.pt.models.workflow.BusinessServiceResponse;
@@ -52,6 +56,8 @@ import org.egov.pt.web.contracts.RequestInfoWrapper;
 import org.egov.pt.web.contracts.TotalCountRequest;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -114,6 +120,15 @@ public class PropertyService {
 	
 	@Autowired
 	private OwnersRepository ownersRepository;
+	
+	@Autowired
+	private ReportService reportService;
+	
+	@Autowired
+	private PDFRequestGenerator pdfRequestGenerator;
+	
+	@Autowired
+	private BillService billService;
 
 	/**
 	 * Enriches the Request and pushes to the Queue
@@ -890,5 +905,49 @@ public class PropertyService {
 		return owners;
 	}
 
+	public ResponseEntity<Resource> generatePropertyTaxBillReceipt(RequestInfoWrapper requestInfoWrapper,
+			@Valid String propertyId) {
+
+		PropertyCriteria propertyCriteria = PropertyCriteria.builder().isSchedulerCall(true)
+				.propertyIds(Collections.singleton(propertyId)).build();
+
+		List<Property> properties = searchProperty(propertyCriteria, requestInfoWrapper.getRequestInfo(), null);
+
+		Property property = properties.stream().findFirst().orElse(null);
+		if (null == property) {
+			return null;
+		}
+
+		PtTaxCalculatorTrackerSearchCriteria ptTaxCalculatorTrackerSearchCriteria = PtTaxCalculatorTrackerSearchCriteria
+				.builder().propertyIds(Collections.singleton(propertyId)).limit(1).build();
+
+		List<PtTaxCalculatorTracker> ptTaxCalculatorTrackers = getTaxCalculatedProperties(
+				ptTaxCalculatorTrackerSearchCriteria);
+
+		PtTaxCalculatorTracker ptTaxCalculatorTracker = ptTaxCalculatorTrackers.stream().findFirst().orElse(null);
+		if (null == ptTaxCalculatorTracker) {
+			return null;
+		}
+
+		BillSearchCriteria billSearchCriteria = BillSearchCriteria.builder()
+				.tenantId(ptTaxCalculatorTracker.getTenantId())
+				.billId(Collections.singleton(ptTaxCalculatorTracker.getBillId())).build();
+
+		BillResponse billResponse = billService.searchBill(billSearchCriteria, requestInfoWrapper.getRequestInfo());
+
+		if (null == billResponse || CollectionUtils.isEmpty(billResponse.getBill())) {
+			return null;
+		}
+
+		Bill bill = billResponse.getBill().stream().findFirst().orElse(null);
+		if (null == bill) {
+			return null;
+		}
+
+		PDFRequest pdfRequest = pdfRequestGenerator.generatePdfRequest(requestInfoWrapper, property,
+				ptTaxCalculatorTracker, bill);
+
+		return reportService.createNoSavePDF(pdfRequest);
+	}
 
 }
