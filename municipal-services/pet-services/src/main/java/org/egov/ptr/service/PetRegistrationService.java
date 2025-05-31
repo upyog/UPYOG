@@ -163,11 +163,15 @@ public class PetRegistrationService {
 		List<String> rolesWithinTenant = getRolesByTenantId(petApplicationSearchCriteria.getTenantId(), roles);	
 		Set<String> statusWithRoles = new HashSet();
 		AtomicReference<String> tempTenantId = new AtomicReference<>(petApplicationSearchCriteria.getTenantId());
-		
+	
 		rolesWithinTenant.stream().forEach(role -> {
 			
 			if(StringUtils.equalsIgnoreCase(role, PTRConstants.USER_ROLE_PTR_VERIFIER)) {
 				statusWithRoles.add(PTRConstants.APPLICATION_STATUS_PENDINGFORVERIFICATION);
+				statusWithRoles.add(PTRConstants.APPLICATION_STATUS_PENDINGFORPAYMENT);
+				statusWithRoles.add(PTRConstants.APPLICATION_STATUS_APPROVED);
+				statusWithRoles.add(PTRConstants.APPLICATION_STATUS_REJECTED);
+				statusWithRoles.add(PTRConstants.APPLICATION_STATUS_PENDINGFORMODIFICATION);
 			}else if(StringUtils.equalsIgnoreCase(role, PTRConstants.USER_ROLE_PTR_APPROVER)) {
 				statusWithRoles.add(PTRConstants.APPLICATION_STATUS_PENDINGFORAPPROVAL);
 				statusWithRoles.add(PTRConstants.APPLICATION_STATUS_APPROVED);
