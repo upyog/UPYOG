@@ -354,7 +354,8 @@ public class FSMService {
 		fsm.setDso(vendor);
 
 		validateDSOVehicle(fsm, vendor, fsmRequest);
-		validateDSOWorkers(fsm, vendor, fsmRequest);
+	// Commented out because vendor only returns vehicle and driver details, not worker details.
+//		validateDSOWorkers(fsm, vendor, fsmRequest);
 		callVehicleTripService(fsmRequest, fsm, oldFSM);
 
 	}
