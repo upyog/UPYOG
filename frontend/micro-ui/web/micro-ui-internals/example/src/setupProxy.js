@@ -112,7 +112,8 @@ module.exports = function (app) {
     "/user/_updateAddress",
     "/pgr-ai-services/v1/request/_create",
     "/pgr-ai-services/v1/request/_search",
-    "/pgr-ai-services/v1/request/_update"
+    "/pgr-ai-services/v1/request/_update",
+    "/individual/v1/_search"
     
   ].forEach((location) => app.use(location, createProxy));
   ["/pb-egov-assets"].forEach((location) => app.use(location, assetsProxy));
