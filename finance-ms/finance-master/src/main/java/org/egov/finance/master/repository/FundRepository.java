@@ -7,12 +7,13 @@ package org.egov.finance.master.repository;
 
 import org.egov.finance.master.entity.*;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
 @Repository
-public interface FundRepository extends JpaRepository<Fund, Long> {
+public interface FundRepository extends JpaRepository<Fund, Long> , JpaSpecificationExecutor<Fund>{
     Fund findByName(String name);
 
     Fund findByCode(String code);

@@ -16,7 +16,7 @@ public class RequestInfo {
     private String apiId;
     private String ver;
     @JsonFormat(pattern = "dd-MM-yyyy HH:mm:ss", timezone = "IST")
-    private Date ts;
+    private Long ts;
     private String action;
     private String did;
     private String key;

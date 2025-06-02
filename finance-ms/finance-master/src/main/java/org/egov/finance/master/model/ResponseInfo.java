@@ -13,7 +13,7 @@ import lombok.Getter;
 public class ResponseInfo   {
     private String apiId;
     private String ver;
-    private String ts;
+    private Long ts;
     private String resMsgId;
     private String msgId;
     private String status;

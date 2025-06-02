@@ -8,6 +8,8 @@ package org.egov.finance.master.entity;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -32,19 +34,13 @@ public class Fund {
     private static final long serialVersionUID = 7977534010758407945L;
     @Id
     @GeneratedValue(generator = Fund.SEQ, strategy = GenerationType.SEQUENCE)
-    private Long id;
-
-   
+    private Long id;   
     private String name;
-
-   
     private String code;
-
     private Character identifier;
-    
-   
     private BigDecimal llevel = BigDecimal.ONE;
 
+    //@JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parentid")
     private Fund parentId;
@@ -59,9 +55,6 @@ public class Fund {
     private Long lastModifiedBy;
 
     private Date lastModifiedDate;
-
-
-
 
 }
 
