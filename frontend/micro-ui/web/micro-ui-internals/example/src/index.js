@@ -18,7 +18,7 @@ import { PaymentModule, PaymentLinks, paymentConfigs } from "@upyog/digit-ui-mod
 import { HRMSModule } from "@nudmcdgnpm/digit-ui-module-hrms";
 import { initOBPSComponents } from "@nudmcdgnpm/upyog-ui-module-obps";
 import { initEngagementComponents } from "@upyog/digit-ui-module-engagement";
-import { initNOCComponents } from "@upyog/digit-ui-module-noc";
+import { initNOCComponents } from "@nudmcdgnpm/upyog-ui-module-noc";
 import { initWSComponents } from "@upyog/digit-ui-module-ws";
 import { DigitUI } from "@upyog/digit-ui-module-core";
 import { initCommonPTComponents } from "@nudmcdgnpm/upyog-ui-module-commonpt";
