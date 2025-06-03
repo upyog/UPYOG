@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 @RestController
 @RequestMapping("/fund")
@@ -40,7 +41,7 @@ public class FundController {
 	    private ResponseInfoFactory responseInfoFactory;
 	
 	@PostMapping("/_save")
-	private ResponseEntity<?>saveFund(@RequestBody FundRequest fund){
+	private ResponseEntity<?>saveFund(@Valid @RequestBody FundRequest fund){
 		final FundModel fundM = fundService.save(fund);
 		ResponseInfo resInfo =responseInfoFactory.createResponseInfoFromRequestInfo(fund.getRequestInfo(), true);
 		FundResponse response = FundResponse.builder()

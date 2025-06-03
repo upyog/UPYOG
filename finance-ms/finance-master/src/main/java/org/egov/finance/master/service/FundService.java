@@ -6,10 +6,13 @@
 package org.egov.finance.master.service;
 
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.egov.finance.master.entity.Fund;
+import org.egov.finance.master.exception.SingularityException;
 import org.egov.finance.master.model.FundModel;
 import org.egov.finance.master.model.request.FundRequest;
 import org.egov.finance.master.repository.FundRepository;
@@ -17,6 +20,7 @@ import org.egov.finance.master.validation.FundValidation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import lombok.extern.slf4j.Slf4j;
 @Slf4j
@@ -68,11 +72,8 @@ public class FundService {
 	public FundModel save(FundRequest request) {
 		FundModel  fundM = request.getFund();
 		Fund fundE = validation.modelToEntity(fundM);
+		validation.fundFieldValidation(fundM,fundRepository);
 		fundE.setParentId(fundRepository.findById(fundM.getId()).orElse(null));
-		//if()
-		//validation 
-		//Check uniuness of Name and code 
-		//use above search
 		return validation.entityTOModel(fundRepository.save(fundE));
 	}
 	

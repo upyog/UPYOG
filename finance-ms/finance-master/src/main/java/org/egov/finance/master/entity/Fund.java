@@ -8,6 +8,9 @@ package org.egov.finance.master.entity;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import org.egov.finance.master.validation.customannotation.SafeHtml;
+import org.hibernate.validator.constraints.Length;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Entity;
@@ -19,6 +22,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 @Entity
@@ -29,32 +33,38 @@ import lombok.Data;
 //@Unique(fields = {"code", "name"}, enableDfltMsg = true)
 public class Fund {
 
+	public static final String SEQ = "SEQ_Fund";
+	private static final long serialVersionUID = 7977534010758407945L;
+	@Id
+	@GeneratedValue(generator = Fund.SEQ, strategy = GenerationType.SEQUENCE)
+	private Long id;
 
-    public static final String SEQ = "SEQ_Fund";
-    private static final long serialVersionUID = 7977534010758407945L;
-    @Id
-    @GeneratedValue(generator = Fund.SEQ, strategy = GenerationType.SEQUENCE)
-    private Long id;   
-    private String name;
-    private String code;
-    private Character identifier;
-    private BigDecimal llevel = BigDecimal.ONE;
+	@Length(max = 50, min = 2)
+	@SafeHtml
+	@NotNull
+	private String name;
 
-    //@JsonIgnore
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "parentid")
-    private Fund parentId;
+	@Length(max = 50, min = 2)
+	@SafeHtml
+	@NotNull
+	private String code;
+	private Character identifier;
+	private BigDecimal llevel = BigDecimal.ONE;
 
-    private Boolean isnotleaf;
+	// @JsonIgnore
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "parentid")
+	private Fund parentId;
 
-    private Boolean isactive;
+	private Boolean isnotleaf;
 
-    private Long createdby;
-    private Date createdDate;
+	private Boolean isactive;
 
-    private Long lastModifiedBy;
+	private Long createdby;
+	private Date createdDate;
 
-    private Date lastModifiedDate;
+	private Long lastModifiedBy;
+
+	private Date lastModifiedDate;
 
 }
-
