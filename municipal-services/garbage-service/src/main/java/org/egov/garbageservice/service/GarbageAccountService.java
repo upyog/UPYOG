@@ -631,25 +631,8 @@ public class GarbageAccountService {
 					updateGarbageRequest.getGarbageAccounts());
 			existingGarbageIdAccountsMap = searchGarbageAccountMap(searchCriteriaGarbageAccount,
 					updateGarbageRequest.getRequestInfo());
-
-			 existingGarbageApplicationAccountsMap = new HashMap<>();
-
-			 for (Map.Entry<Long, GarbageAccount> entry : existingGarbageIdAccountsMap.entrySet()) {
-			     GarbageAccount garbageAccount = entry.getValue();
-			     String applicationNo = garbageAccount.getGrbgApplication().getApplicationNo();
-
-			     // Logging values
-			     System.out.println("Application No: " + applicationNo);
-			     System.out.println("GarbageAccount: " + garbageAccount);
-
-			     existingGarbageApplicationAccountsMap.put(applicationNo, garbageAccount);
-			 }
-
-
-			
-			
-//			existingGarbageApplicationAccountsMap = existingGarbageIdAccountsMap.entrySet().stream().collect(
-//					Collectors.toMap(a -> a.getValue().getGrbgApplication().getApplicationNo(), b -> b.getValue()));
+			existingGarbageApplicationAccountsMap = existingGarbageIdAccountsMap.entrySet().stream().collect(
+					Collectors.toMap(a -> a.getValue().getGrbgApplication().getApplicationNo(), b -> b.getValue()));
 		} catch (Exception e) {
 			throw new CustomException("FAILED_SEARCH_GARBAGE_ACCOUNTS", "Search Garbage account details failed.");
 		}
