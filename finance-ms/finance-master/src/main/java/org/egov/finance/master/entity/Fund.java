@@ -8,11 +8,6 @@ package org.egov.finance.master.entity;
 import java.math.BigDecimal;
 import java.util.Date;
 
-import org.egov.finance.master.validation.customannotation.SafeHtml;
-import org.hibernate.validator.constraints.Length;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -22,7 +17,6 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 @Entity
@@ -39,14 +33,8 @@ public class Fund {
 	@GeneratedValue(generator = Fund.SEQ, strategy = GenerationType.SEQUENCE)
 	private Long id;
 
-	@Length(max = 50, min = 2)
-	@SafeHtml
-	@NotNull
 	private String name;
 
-	@Length(max = 50, min = 2)
-	@SafeHtml
-	@NotNull
 	private String code;
 	private Character identifier;
 	private BigDecimal llevel = BigDecimal.ONE;

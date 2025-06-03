@@ -73,7 +73,7 @@ public class FundService {
 		FundModel  fundM = request.getFund();
 		Fund fundE = validation.modelToEntity(fundM);
 		validation.fundFieldValidation(fundM,fundRepository);
-		fundE.setParentId(fundRepository.findById(fundM.getId()).orElse(null));
+		fundE.setParentId(fundRepository.findById(fundM.getParentId()).orElse(null));
 		return validation.entityTOModel(fundRepository.save(fundE));
 	}
 	

@@ -10,6 +10,7 @@ import org.egov.finance.master.model.RequestInfo;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import jakarta.validation.Valid;
 import lombok.Data;
 
 @Data
@@ -17,6 +18,7 @@ public class FundRequest {
 	
 	@JsonProperty("RequestInfo")
 	RequestInfo requestInfo;
+	@Valid
 	@JsonProperty("Fund")
 	FundModel Fund;
 	

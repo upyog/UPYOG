@@ -1,9 +1,8 @@
-package org.egov.finance.master.validation.customannotation;
+package org.egov.finance.master.customannotation;
 
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
 import java.lang.annotation.*;
-import org.egov.finance.master.validation.SafeHtmlValidator;
 
 @Documented
 @Constraint(validatedBy = SafeHtmlValidator.class)
