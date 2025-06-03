@@ -889,7 +889,6 @@ public class GarbageAccountService {
 
 		grbObject.put("approverName",
 				null != requestInfo.getUserInfo() ? requestInfo.getUserInfo().getUserName() : null);
-
 		grbObject.put("userName", null != requestInfo.getUserInfo() ? requestInfo.getUserInfo().getName() : null);
 		// generate QR code from attributes
 		StringBuilder uri = new StringBuilder(applicationPropertiesAndConstant.getFrontEndBaseUri());
@@ -1455,6 +1454,11 @@ public class GarbageAccountService {
 			}
 		}
 
+		if (null != searchCriteriaGarbageAccountRequest.getSearchCriteriaGarbageAccount()) {
+			searchCriteriaGarbageAccountRequest.getSearchCriteriaGarbageAccount().setIsUserUuidNull(searchCriteriaGarbageAccountRequest.getIsUserUuidNull());
+		}
+		
+		
 		if (null != searchCriteriaGarbageAccountRequest.getIsSchedulerCall()
 				&& !searchCriteriaGarbageAccountRequest.getIsSchedulerCall()) {
 			if (null != searchCriteriaGarbageAccountRequest.getSearchCriteriaGarbageAccount()) {
@@ -1865,12 +1869,12 @@ public class GarbageAccountService {
 		return garbageBillTrackerRepository.getBillTracker(grbgBillTrackerSearchCriteria);
 	}
 
-	public void createUserForGarbage(RequestInfoWrapper requestInfoWrapper) {
+	public void createUserForGarbage(SearchCriteriaGarbageAccountRequest searchCriteriaGarbageAccountRequest) {
 		// Create GarbageAccountRequest object
-		GarbageAccountRequest createGarbageRequest = buildGarbageAccountRequest(requestInfoWrapper);
+		GarbageAccountRequest createGarbageRequest = buildGarbageAccountRequest(RequestInfoWrapper.builder().requestInfo(searchCriteriaGarbageAccountRequest.getRequestInfo()).build());
 
 		// Fetch garbage accounts if available
-		List<GarbageAccount> garbageAccounts = fetchGarbageAccounts();
+		List<GarbageAccount> garbageAccounts = fetchGarbageAccounts(searchCriteriaGarbageAccountRequest);
 
 		// Set garbage accounts if available
 		if (!garbageAccounts.isEmpty()) {
@@ -1879,16 +1883,31 @@ public class GarbageAccountService {
 																					// exist
 		}
 		
-		update(createGarbageRequest);
+		
+		List<GarbageAccount> allAccounts = createGarbageRequest.getGarbageAccounts();
+		int batchSize = 100;
+
+		for (int i = 0; i < allAccounts.size(); i += batchSize) {
+			int end = Math.min(i + batchSize, allAccounts.size());
+			List<GarbageAccount> batchList = allAccounts.subList(i, end);
+
+			// Create a new request for the current batch
+			GarbageAccountRequest batchRequest = new GarbageAccountRequest();
+			batchRequest.setGarbageAccounts(batchList);
+			batchRequest.setRequestInfo(createGarbageRequest.getRequestInfo()); // if needed
+
+			update(batchRequest);
+		}
 	}
 
 	private GarbageAccountRequest buildGarbageAccountRequest(RequestInfoWrapper requestInfoWrapper) {
 		return GarbageAccountRequest.builder().requestInfo(requestInfoWrapper.getRequestInfo()).build();
 	}
 
-	private List<GarbageAccount> fetchGarbageAccounts() {
-		SearchCriteriaGarbageAccountRequest searchCriteriaGarbageAccountRequest = SearchCriteriaGarbageAccountRequest
-				.builder().isSchedulerCall(true).build();
+	private List<GarbageAccount> fetchGarbageAccounts(SearchCriteriaGarbageAccountRequest searchCriteriaGarbageAccountRequest) {
+
+		searchCriteriaGarbageAccountRequest.setIsSchedulerCall(true);
+		searchCriteriaGarbageAccountRequest.setIsUserUuidNull(true);
 		GarbageAccountResponse garbageAccountResponse = searchGarbageAccounts(searchCriteriaGarbageAccountRequest);
 
 		if (garbageAccountResponse != null && !CollectionUtils.isEmpty(garbageAccountResponse.getGarbageAccounts())) {

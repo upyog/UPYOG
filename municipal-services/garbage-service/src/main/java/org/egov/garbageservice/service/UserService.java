@@ -121,19 +121,34 @@ public class UserService {
 	    RequestInfo requestInfo = createGarbageRequest.getRequestInfo();
 	    Role role = getCitizenRole();
 
-	    createGarbageRequest.getGarbageAccounts().forEach(garbageAccount -> {
-	        // Process parent garbage account
-	        processGarbageAccount(requestInfo, role, garbageAccount);
+	    List<GarbageAccount> allGarbageAccounts = new ArrayList<>();
 
-	        // Process child garbage accounts if they exist
-	        if (!CollectionUtils.isEmpty(garbageAccount.getChildGarbageAccounts())) {
-	            garbageAccount.getChildGarbageAccounts().forEach(childGarbageAccount -> {
-	                processGarbageAccount(requestInfo, role, childGarbageAccount);
-	            });
-	        }
+	    // Step 1: Flatten parent and child garbage accounts into one list
+	    createGarbageRequest.getGarbageAccounts().forEach(garbageAccount -> {
+	        allGarbageAccounts.add(garbageAccount);
 	    });
 
+	    // Step 2: Process accounts in batches of 100 to avoid potential failures
+	    int batchSize = 100;
+	    for (int i = 0; i < allGarbageAccounts.size(); i += batchSize) {
+	        int end = Math.min(i + batchSize, allGarbageAccounts.size());
+	        List<GarbageAccount> batch = allGarbageAccounts.subList(i, end);
+
+			for (GarbageAccount account : batch) {
+				if (isValidPhoneNumber(account.getMobileNumber())) {
+					processGarbageAccount(requestInfo, role, account);
+				}
+			}
+	    }
 	    return createGarbageRequest;
+	}
+
+
+	private boolean isValidPhoneNumber(String mobileNumber) {
+		
+		String regex = "^[6-9]\\d{9}$";
+		return mobileNumber != null && mobileNumber.matches(regex);
+
 	}
 
 	private void processGarbageAccount(RequestInfo requestInfo, Role role, GarbageAccount garbageAccount) {
@@ -230,7 +245,6 @@ public class UserService {
 		userSearchRequest.setUserType(owner.getType());
 		userSearchRequest.setName(owner.getName());
 		
-		//log.info(owner.getName());
 
 		StringBuilder uri = new StringBuilder(grbgConfig.getUserServiceHostUrl())
 				.append(grbgConfig.getUserSearchEndpoint());
