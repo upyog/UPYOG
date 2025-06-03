@@ -6,6 +6,7 @@
  */
 package org.egov.finance.master.config.Flyway;
 
+import org.egov.finance.master.util.CommonUtils;
 import org.flywaydb.core.Flyway;
 import org.springframework.beans.factory.annotation.Autowire;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +20,9 @@ import org.springframework.core.env.MapPropertySource;
 
 import javax.sql.DataSource;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import static java.lang.String.format;
 
@@ -62,7 +65,8 @@ public class DBMigrationConfiguration {
     @Value("$db.flyway.commons.migration.file.path")
     private String commonsMigrationFile;
     
-    
+    @Autowired
+    private CommonUtils commonUtils;
     
     @Autowired
     private ConfigurableEnvironment environment;
@@ -71,9 +75,12 @@ public class DBMigrationConfiguration {
    @DependsOn("dataSource")
     public Flyway flyway(DataSource dataSource ) {
     	//dbMigrationEnabled=false;
-    	List<String> cities   = new ArrayList<>();
-    	cities.add("demo");
-        if (true) {
+    	List<String> masterNames = new ArrayList<>(Arrays.asList("tenants"));
+    	Map<String, List<String>> codes = commonUtils.getAttributeValues("mn", "tenant", masterNames,
+				"[?(@.city.name)].city.name", "$.MdmsRes.tenant");
+    	List<String> cities = codes.get("tenants");
+    	//cities.add("demo");
+        if (dbMigrationEnabled) {
             cities.stream().forEach(schema -> {
                 if (devMode)
                     migrateDatabase(dataSource, schema,
