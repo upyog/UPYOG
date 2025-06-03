@@ -11,7 +11,12 @@
     "micro-ui-internals/packages/modules/noc",
     "micro-ui-internals/packages/modules/commonPt",
     "micro-ui-internals/packages/modules/common",
-    "micro-ui-internals/packages/modules/dss"
+    "micro-ui-internals/packages/modules/dss",
+    "micro-ui-internals/packages/modules/fsm",
+    "micro-ui-internals/packages/modules/ws",
+    "micro-ui-internals/packages/modules/pt",
+    "micro-ui-internals/packages/modules/tl",
+    "micro-ui-internals/packages/modules/pgr"
   ],
   "engines": {
     "node": ">=14"

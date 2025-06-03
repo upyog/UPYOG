@@ -43,7 +43,7 @@ if (property !== "undefined")
         label: "PT_PROPERTY_ADDRESS_STREET_NAME",
         type: "text",
         name: "street",
-        isMandatory: true,
+        // isMandatory: true,
         validation: {
           pattern: "[a-zA-Z0-9 ]{1,255}",
           // maxlength: 256,
@@ -54,7 +54,7 @@ if (property !== "undefined")
         label: "PT_PROPERTY_ADDRESS_HOUSE_NO",
         type: "text",
         name: "doorNo",
-        isMandatory: true,
+        // isMandatory: true,
         validation: {
           pattern: "[A-Za-z0-9#,/ -]{1,63}",
           // maxlength: 256,
