@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.egov.finance.master.errorresponse.ErrorResponse;
-import org.egov.finance.master.exception.SingularityException;
+import org.egov.finance.master.exception.MasterServiceException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -15,8 +15,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class CustomControllerAdvice {
 
-	@ExceptionHandler(SingularityException.class)
-	public ResponseEntity<ErrorResponse> handleSingularityException(SingularityException singularityException) {
+	@ExceptionHandler(MasterServiceException.class)
+	public ResponseEntity<ErrorResponse> handleSingularityException(MasterServiceException singularityException) {
 		ErrorResponse errorResponse = new ErrorResponse(LocalDateTime.now(), HttpStatus.BAD_REQUEST.value(),
 				singularityException.getErrors());
 

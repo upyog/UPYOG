@@ -9,14 +9,17 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.egov.finance.master.entity.Fund;
-import org.egov.finance.master.exception.SingularityException;
+import org.egov.finance.master.exception.MasterServiceException;
 import org.egov.finance.master.model.FundModel;
 import org.egov.finance.master.repository.FundRepository;
+import org.egov.finance.master.util.MasterConstants;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
 @Component
 public class FundValidation {
+
+
 
 	public Fund modelToEntity(FundModel model) {
 
@@ -50,11 +53,13 @@ public class FundValidation {
 	{
 		Map<String,String> errorMap = new HashMap<>();
 		if(fundRepository.findByCode(fundM.getCode())!=null)
-			errorMap.put("CODE_NOT_UNIQUE", "Code is already exists");
+			errorMap.put(MasterConstants.CODE_NOT_UNIQUE, MasterConstants.CODE_IS_ALREADY_EXISTS_MSG);
 		if(fundRepository.findByName(fundM.getName())!=null)
-			errorMap.put("NAME_NOT_UNIQUE", "Name is already exists");
+			errorMap.put(MasterConstants.NAME_NOT_UNIQUE, MasterConstants.NAME_IS_ALREADY_EXISTS_MSG);
+		
+		
 		if(!CollectionUtils.isEmpty(errorMap))
-			throw new SingularityException(errorMap);
+			throw new MasterServiceException(errorMap);
 	}
 
 }

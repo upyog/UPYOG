@@ -10,6 +10,7 @@ import java.util.Date;
 
 import org.egov.finance.master.customannotation.SafeHtml;
 import org.egov.finance.master.entity.Fund;
+import org.egov.finance.master.util.MasterConstants;
 import org.hibernate.validator.constraints.Length;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -24,16 +25,18 @@ import lombok.extern.slf4j.Slf4j;
 
 @Data
 public class FundModel {
-    private Long id;
+    
+
+	private Long id;
     
     @Length(max = 50, min = 2)
-	@SafeHtml
+	@SafeHtml(message=MasterConstants.INVALID_TEXT_CONTAINS_HTML_TAGS_MSG)
 	@NotNull
 	@JsonProperty("name")
     private String name; 
     
     @Length(max = 50, min = 2)
-	@SafeHtml
+    @SafeHtml(message=MasterConstants.INVALID_TEXT_CONTAINS_HTML_TAGS_MSG)
 	@NotNull
     private String code;
     

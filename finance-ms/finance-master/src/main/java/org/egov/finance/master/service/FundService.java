@@ -12,21 +12,23 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.egov.finance.master.entity.Fund;
-import org.egov.finance.master.exception.SingularityException;
+import org.egov.finance.master.exception.MasterServiceException;
 import org.egov.finance.master.model.FundModel;
 import org.egov.finance.master.model.request.FundRequest;
 import org.egov.finance.master.repository.FundRepository;
+import org.egov.finance.master.util.MasterConstants;
 import org.egov.finance.master.validation.FundValidation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
+import org.springframework.util.ObjectUtils;
 
 import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Service
 public class FundService {
 
+	
 	@Autowired
 	private  FundRepository fundRepository;
 	@Autowired
@@ -34,10 +36,6 @@ public class FundService {
 	
 	public List<FundModel> search( FundModel fundCriteria) {
 		 Specification<Fund> spec = Specification.where(null);
-		 //root =  FROM FUND = sle
-		 //QUERY CODEV + ""
-		 //WHERE cb
-		 
 		    if (fundCriteria.getCode() != null && !fundCriteria.getCode().isEmpty()) {
 		        spec = spec.and((root, query, cb) -> cb.equal(root.get("code"), fundCriteria.getCode()));
 		    }
@@ -60,17 +58,22 @@ public class FundService {
 		    if (fundCriteria.getIdentifier() != null && !fundCriteria.getIdentifier().equals("")) {
 		        spec = spec.and((root, query, cb) -> cb.equal(root.get("identifier"),fundCriteria.getIdentifier() ));
 		    }
-		    
-		 //   Pageable pageable = PageRequest.of(page, size, Sort.by("name").ascending());
-		 //   Page<Fund> result = fundRepository.findAll(spec, pageable);
 
 		    return   fundRepository.findAll(spec)
 		    		.stream().map(validation::entityTOModel)
 		    		.sorted(Comparator.comparingLong(FundModel::getId))
 		    		.collect(Collectors.toList());
 	}
+	
+	
+	
 	public FundModel save(FundRequest request) {
 		FundModel  fundM = request.getFund();
+		if (!ObjectUtils.isEmpty(fundM.getId())) {
+			Map<String,String> errorMap = new HashMap<>();
+				errorMap.put(MasterConstants.INVALID_ID_PASSED, MasterConstants.ID_CANNOT_BE_PASSED_IN_CREATION_MSG);
+				throw new MasterServiceException(errorMap);
+		}
 		Fund fundE = validation.modelToEntity(fundM);
 		validation.fundFieldValidation(fundM,fundRepository);
 		fundE.setParentId(fundRepository.findById(fundM.getParentId()).orElse(null));
