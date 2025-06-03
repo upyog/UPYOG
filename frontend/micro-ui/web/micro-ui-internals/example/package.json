@@ -14,7 +14,7 @@
     "@upyog/digit-ui-module-engagement": "1.8.0",
     "@nudmcdgnpm/upyog-ui-module-fsm": "1.0.2",
     "@upyog/digit-ui-module-mcollect": "1.8.8",
-    "@upyog/digit-ui-module-noc": "1.8.0",
+    "@nudmcdgnpm/upyog-ui-module-noc": "1.0.0",
     "@nudmcdgnpm/upyog-ui-module-obps": "1.0.0",
     "@nudmcdgnpm/digit-ui-module-pgr": "1.2.1",
     "@nudmcdgnpm/upyog-ui-module-pt": "1.0.0",
