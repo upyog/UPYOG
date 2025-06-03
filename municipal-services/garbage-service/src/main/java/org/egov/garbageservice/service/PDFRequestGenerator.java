@@ -90,68 +90,6 @@ public class PDFRequestGenerator {
 		grbg.put("grbgId", grbgAccount.getGrbgApplicationNumber());
 //
 		grbg.put("ownerOrOccupier",AdditionalDetail.get("propertyOwnerName").asText());
-//		grbg.put("fatherOrHusbandName","kjasdl");
-//		grbg.put("noOfStories","kjasdl");
-
-
-//
-//		grbg.put("fatherOrHusbandName", property.getOwners().stream().map(owner -> {
-//			if (owner.getAdditionalDetails() == null)
-//				return null;
-//			Object nameObj = owner.getAdditionalDetails().get("fatherOrHusbandName");
-//			if (nameObj == null)
-//				return null;
-//			return nameObj.toString().replaceAll("\"", "");
-//		}).filter(name -> name != null && !name.isEmpty()).collect(Collectors.joining(", ")));
-//
-//		grbg.put("noOfStories", String.valueOf(property.getNoOfFloors()));
-//		grbg.put("buildingNo", ""); // TODO blank
-
-		// table data generation
-//		int conut = 1;
-//		List<String> slNos = new ArrayList<>();
-//		List<String> f1Values = new ArrayList<>();
-//		List<String> f2Values = new ArrayList<>();
-//		List<String> f3Values = new ArrayList<>();
-//		List<String> f4Values = new ArrayList<>();
-//		List<String> f5Values = new ArrayList<>();
-//		List<String> plinthAreas = new ArrayList<>();
-//		BigDecimal plinthAreaTotal = BigDecimal.ZERO;
-
-//		for (Unit unit : property.getUnits()) {
-//			JsonNode unitAdditionalDetails = objectMapper.valueToTree(unit.getAdditionalDetails());
-//			slNos.add(String.valueOf(conut++));
-//			f1Values.add(addressAdditionalDetails.get("zone").asText());
-//			f2Values.add(unitAdditionalDetails.get("propBuildingType").asText());
-//			f3Values.add(unitAdditionalDetails.get("propYearOfCons").asText());
-//			f4Values.add(unitAdditionalDetails.get("propType").asText());
-//			f5Values.add(unitAdditionalDetails.get("useOfBuilding").asText());
-//			plinthAreas.add(unitAdditionalDetails.get("propArea").asText());
-//		}
-
-//		Map<String, Object> ptDetailsTableRow = new HashMap<>();
-//
-//		ptDetailsTableRow.put("slNo", slNos);
-//		ptDetailsTableRow.put("f1", f1Values);
-//		ptDetailsTableRow.put("f2", f2Values);
-//		ptDetailsTableRow.put("f3", f3Values);
-//		ptDetailsTableRow.put("f4", f4Values);
-//		ptDetailsTableRow.put("f5", f5Values);
-//		ptDetailsTableRow.put("f5", f5Values);
-//		ptDetailsTableRow.put("plinthArea", plinthAreas);
-//		plinthAreaTotal = plinthAreas.stream().map(BigDecimal::new).reduce(BigDecimal.ZERO, BigDecimal::add);
-
-//		Map<String, Object> tableRow = new HashMap<>();
-//		tableRow.put("tag", "PROPERTY_TAX_BILL_TABLE_ROW");
-//		tableRow.put("values", ptDetailsTableRow);
-
-//		List<Map<String, Object>> tableRows = new ArrayList<>();
-//		tableRows.add(tableRow);
-
-//		Map<String, Object> tableRowMap = new HashMap<>();
-//		tableRowMap.put("TABLE_ROW", tableRows);
-//
-//		grbg.put("plinthAreaTotal", String.valueOf(plinthAreaTotal));
 
 		BigDecimal grbgTax = grbgBillTracker.getGrbgBillAmount(); // TODO get from bill
 		grbg.put("grbgTax", String.valueOf(grbgTax));
