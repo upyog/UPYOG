@@ -61,6 +61,8 @@ public class SearchCriteriaGarbageAccount {
     
     private Boolean isActiveAccount;
     
+    private Boolean isUserUuidNull;
+    
     @Builder.Default
 	private Boolean isSchedulerCall = false;
     
@@ -79,7 +81,8 @@ public class SearchCriteriaGarbageAccount {
 				.isSchedulerCall(this.isSchedulerCall).offset(this.offset).limit(this.limit)
 				.channels(copyList(this.channels)).wardNames(copyList(this.wardNames))
 				.oldGarbageIds(copyList(this.oldGarbageIds)).unitTypes(copyList(this.unitTypes))
-				.unitCategories(copyList(this.unitCategories)).build();
+				.unitCategories(copyList(this.unitCategories))
+				.isUserUuidNull(this.isUserUuidNull).build();
 	}
 
 	private <T> List<T> copyList(List<T> originalList) {

@@ -74,9 +74,9 @@ public class GarbageAccountController {
 	}
 	
 	@PostMapping("/_createUserForGarbage")
-	public ResponseEntity<?> createUserForGarbage(@RequestBody RequestInfoWrapper requestInfoWrapper) {
+	public ResponseEntity<?> createUserForGarbage(@RequestBody SearchCriteriaGarbageAccountRequest searchCriteriaGarbageAccountRequest) {
 
-		service.createUserForGarbage(requestInfoWrapper);
+		service.createUserForGarbage(searchCriteriaGarbageAccountRequest);
 
 		return new ResponseEntity("User created for garbage account", HttpStatus.OK);
 	}

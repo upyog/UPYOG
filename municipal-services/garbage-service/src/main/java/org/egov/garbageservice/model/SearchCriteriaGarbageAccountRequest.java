@@ -22,5 +22,7 @@ public class SearchCriteriaGarbageAccountRequest {
 
 	@Builder.Default
 	private Boolean isSchedulerCall = false;
+	
+	private Boolean isUserUuidNull;
 
 }
