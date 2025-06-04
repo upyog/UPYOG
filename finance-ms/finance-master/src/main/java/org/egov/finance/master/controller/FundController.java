@@ -60,5 +60,16 @@ public class FundController {
 		return new ResponseEntity<>(response,HttpStatus.OK);
 	}
 	
+	@PostMapping(value = "/_update")
+	public ResponseEntity<FundResponse> update(@RequestBody FundRequest fundupdate) {
+		final FundModel fundM = fundService.update(fundupdate);
+		ResponseInfo resInfo =responseInfoFactory.createResponseInfoFromRequestInfo(fundupdate.getRequestInfo(), true);
+		FundResponse response = FundResponse.builder()
+		.responseInfo(resInfo)
+		.funds(Arrays.asList(fundM))
+		.build();
+		return new ResponseEntity<>(response, HttpStatus.CREATED);
+	}
+	
 
 }
