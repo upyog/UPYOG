@@ -2,7 +2,6 @@ package org.egov.advertisementcanopy.service;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -550,6 +549,10 @@ public class SiteBookingService {
 		SiteObject.put("ulbName", siteBooking.getSiteCreationData().getUlbName()); // Security Amount
 		SiteObject.put("ulbType", siteBooking.getSiteCreationData().getUlbType()); // Security Amount
 		SiteObject.put("approvalDate", approvalDate); // approval date
+		SiteObject.put("approverName",
+				null != requestInfo.getUserInfo() ? requestInfo.getUserInfo().getUserName() : null);
+
+		SiteObject.put("userName", null != requestInfo.getUserInfo() ? requestInfo.getUserInfo().getName() : null);
 //		SiteObject.put("total",0); // Security Amount
 		// search bill Details
 		BillSearchCriteria billSearchCriteria = BillSearchCriteria.builder()
@@ -852,7 +855,7 @@ public class SiteBookingService {
 												.multiply(new BigDecimal(cost.get()))
 												.add(BigDecimal.valueOf(booking.getSiteCreationData().getSecurityAmount() != null 
 										                ? booking.getSiteCreationData().getSecurityAmount() 
-										                        : 0.0)).setScale(0, RoundingMode.CEILING);
+										                        : 0.0));
 				siteBookingDetail.setTotalPayableAmount(totalPayableAmount);
 				siteBookingDetail.setFeeCalculationFormula("From Date: (<b>"+fromDate+"</b>), To Date: "
 						+ "(<b>"+toDate+"</b>) = Number Of Days (<b>"+numberOfDays+"</b>) * Cost per day: (<b>"

@@ -455,6 +455,17 @@ public class GarbageAccountRepository {
 					.append(" )");
 		}
         
+		if (searchCriteriaGarbageAccount.getIsUserUuidNull() != null) {
+		    isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, whereClause);
+		    
+		    if (searchCriteriaGarbageAccount.getIsUserUuidNull()) {
+		        whereClause.append(" acc.user_uuid IS NULL ");
+		    } else {
+		        whereClause.append(" acc.user_uuid IS NOT NULL ");
+		    }
+		}
+
+		 
         return whereClause.toString();
 	}
 	
