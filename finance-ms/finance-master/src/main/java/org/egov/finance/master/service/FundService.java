@@ -78,9 +78,10 @@ public class FundService {
 		Fund parentFund = null;
 
 		if (!ObjectUtils.isEmpty(fundM.getParentId())) {
-			parentFund = fundRepository.findById(fundM.getParentId()).orElse(null);
-			errorMap.put(MasterConstants.INVALID_PARENT_ID, MasterConstants.INVALID_PARENT_ID_MSG);
-			throw new MasterServiceException(errorMap);
+			parentFund = fundRepository.findById(fundM.getParentId()).orElseThrow(()->{
+				errorMap.put(MasterConstants.INVALID_PARENT_ID, MasterConstants.INVALID_PARENT_ID_MSG);
+				throw new MasterServiceException(errorMap);
+			});
 		}
 		fundE.setParentId(parentFund);
 		return validation.entityTOModel(fundRepository.save(fundE));
@@ -101,7 +102,7 @@ public class FundService {
 	}
 
 	public FundModel update(FundRequest request) {
-		FundModel fundRequest = request.getFund();
+		Fund fundRequest = validation.modelToEntity(request.getFund());
 		Map<String, String> errorMap = new HashMap<>();
 		if (ObjectUtils.isEmpty(fundRequest.getId())) {
 			errorMap.put(MasterConstants.INVALID_ID_PASSED, MasterConstants.INVALID_ID_PASSED_MESSAGE);
@@ -113,11 +114,13 @@ public class FundService {
 			applyNonNullFields(fundRequest, fundSearch);
 			fundUpdate = fundSearch.get();
 		}
-		if (!ObjectUtils.isEmpty(fundRequest.getParentId())) {
-			fundRepository.findById(fundRequest.getParentId()).orElseThrow(() -> {
+		if (!ObjectUtils.isEmpty(request.getFund().getParentId())) {
+			fundUpdate.setParentId(fundRepository.findById(request.getFund().getParentId()).orElseThrow(() -> {
 				errorMap.put(MasterConstants.INVALID_PARENT_ID, MasterConstants.INVALID_PARENT_ID_MSG);
 				throw new MasterServiceException(errorMap);
-			});
+			}));
+		}else {
+			fundUpdate.setParentId(null);
 		}
 		
 		return validation.entityTOModel(fundRepository.save(fundUpdate));
