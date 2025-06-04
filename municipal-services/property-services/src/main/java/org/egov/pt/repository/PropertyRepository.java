@@ -234,7 +234,7 @@ public class PropertyRepository {
 
 		UserSearchRequest userSearchRequest = userService.getBaseUserSearchRequest(userTenant, requestInfo);
 		userSearchRequest.setMobileNumber(criteria.getMobileNumber());
-		userSearchRequest.setName(criteria.getName());
+		//userSearchRequest.setName(criteria.getName());
 		userSearchRequest.setUuid(ownerIds);
 
 		UserDetailResponse userDetailResponse = userService.getUser(userSearchRequest);
