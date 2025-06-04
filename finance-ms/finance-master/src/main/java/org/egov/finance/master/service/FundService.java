@@ -33,9 +33,6 @@ public class FundService {
 	private FundRepository fundRepository;
 	@Autowired
 	private FundValidation validation;
-	
-
-
 
 	public List<FundModel> search(FundModel fundCriteria) {
 		Specification<Fund> spec = Specification.where(null);
@@ -78,7 +75,7 @@ public class FundService {
 		Fund parentFund = null;
 
 		if (!ObjectUtils.isEmpty(fundM.getParentId())) {
-			parentFund = fundRepository.findById(fundM.getParentId()).orElseThrow(()->{
+			parentFund = fundRepository.findById(fundM.getParentId()).orElseThrow(() -> {
 				errorMap.put(MasterConstants.INVALID_PARENT_ID, MasterConstants.INVALID_PARENT_ID_MSG);
 				throw new MasterServiceException(errorMap);
 			});
@@ -108,23 +105,23 @@ public class FundService {
 			errorMap.put(MasterConstants.INVALID_ID_PASSED, MasterConstants.INVALID_ID_PASSED_MESSAGE);
 			throw new MasterServiceException(errorMap);
 		}
-		Optional<Fund> fundSearch = fundRepository.findById(fundRequest.getId());
-		Fund fundUpdate=new Fund();
-		if (fundSearch.isPresent()) {
-			applyNonNullFields(fundRequest, fundSearch);
-			fundUpdate = fundSearch.get();
-		}
+		Fund fundUpdate = fundRepository.findById(fundRequest.getId()).orElseThrow(() -> {
+			errorMap.put(MasterConstants.INVALID_ID_PASSED, MasterConstants.INVALID_ID_PASSED_MESSAGE);
+			throw new MasterServiceException(errorMap);
+		});
+
+		applyNonNullFields(fundRequest, fundUpdate);
 		if (!ObjectUtils.isEmpty(request.getFund().getParentId())) {
 			fundUpdate.setParentId(fundRepository.findById(request.getFund().getParentId()).orElseThrow(() -> {
 				errorMap.put(MasterConstants.INVALID_PARENT_ID, MasterConstants.INVALID_PARENT_ID_MSG);
 				throw new MasterServiceException(errorMap);
 			}));
-		}else {
+		} else {
 			fundUpdate.setParentId(null);
 		}
-		
+
 		return validation.entityTOModel(fundRepository.save(fundUpdate));
-		
+
 	}
 
 }
