@@ -69,14 +69,21 @@ public class FundService {
 	
 	public FundModel save(FundRequest request) {
 		FundModel  fundM = request.getFund();
+		Map<String,String> errorMap = new HashMap<>();
 		if (!ObjectUtils.isEmpty(fundM.getId())) {
-			Map<String,String> errorMap = new HashMap<>();
 				errorMap.put(MasterConstants.INVALID_ID_PASSED, MasterConstants.ID_CANNOT_BE_PASSED_IN_CREATION_MSG);
 				throw new MasterServiceException(errorMap);
 		}
 		Fund fundE = validation.modelToEntity(fundM);
 		validation.fundFieldValidation(fundM,fundRepository);
-		fundE.setParentId(fundRepository.findById(fundM.getParentId()).orElse(null));
+		Fund parentFund = null;
+		if(!ObjectUtils.isEmpty(fundM.getParentId())) {
+			parentFund = fundRepository.findById(fundM.getParentId()).orElse(null);
+			errorMap.put(MasterConstants.INVALID__PARENT_ID, MasterConstants.INVALID__PARENT_ID_MSG);
+			throw new MasterServiceException(errorMap);
+
+		}
+		fundE.setParentId(parentFund);
 		return validation.entityTOModel(fundRepository.save(fundE));
 	}
 	
