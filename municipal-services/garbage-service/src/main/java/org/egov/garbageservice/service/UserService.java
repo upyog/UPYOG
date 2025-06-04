@@ -135,7 +135,7 @@ public class UserService {
 	        List<GarbageAccount> batch = allGarbageAccounts.subList(i, end);
 
 			for (GarbageAccount account : batch) {
-				if (isValidPhoneNumber(account.getMobileNumber())) {
+				if (isValidPhoneNumber(account.getMobileNumber()) && isValidUserName(account.getName())) {
 					processGarbageAccount(requestInfo, role, account);
 				}
 			}
@@ -143,6 +143,14 @@ public class UserService {
 	    return createGarbageRequest;
 	}
 
+
+	private boolean isValidUserName(String name) {
+		
+		 if (name == null) return false;
+		    // Regex pattern: Disallow specified special characters
+		    String regex = "^[^\\\"$<>?\\\\\\\\~`!@#$%^()+={}\\\\[\\\\]*,:;“”‘’]{0,50}$";
+		    return name.matches(regex);
+	}
 
 	private boolean isValidPhoneNumber(String mobileNumber) {
 		
