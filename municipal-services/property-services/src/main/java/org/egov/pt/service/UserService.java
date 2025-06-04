@@ -238,8 +238,8 @@ public class UserService {
 
 		UserSearchRequest userSearchRequest = getBaseUserSearchRequest(owner.getTenantId(), requestInfo);
 		userSearchRequest.setMobileNumber(owner.getMobileNumber());
-		userSearchRequest.setUserType(owner.getType());
-		userSearchRequest.setName(owner.getName());
+		userSearchRequest.setUserType("CITIZEN");
+		//userSearchRequest.setName(owner.getName());
 		
         StringBuilder uri = new StringBuilder(userHost).append(userSearchEndpoint);
         return userCall(userSearchRequest,uri);
@@ -550,7 +550,7 @@ public class UserService {
 	private UserDetailResponse searchedSingleUserExists(OwnerInfo owner, RequestInfo requestInfo) {
 		
 		UserSearchRequest userSearchRequest = getBaseUserSearchRequest(owner.getTenantId(), requestInfo);
-		userSearchRequest.setUserType(owner.getType());
+		userSearchRequest.setUserType("CITIZEN");
 		Set <String> uuids = new HashSet<String>();
 		uuids.add(owner.getUuid());
 		userSearchRequest.setUuid(uuids);
