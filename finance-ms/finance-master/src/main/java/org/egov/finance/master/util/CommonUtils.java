@@ -92,14 +92,4 @@ public class CommonUtils {
 		return MdmsCriteriaReq.builder().requestInfo(requestInfo).mdmsCriteria(mdmsCriteria).build();
 	}
 	
-	public void applyAuditing(AuditDetails auditable, Long createdBy) {
-		Date currentDate = new Date();
-		if (auditable.isNew()) {
-			auditable.setCreatedBy(createdBy);
-			auditable.setCreatedDate(currentDate);
-		}
-		auditable.setLastModifiedBy(createdBy);
-		auditable.setLastModifiedDate(currentDate);
-	}
-
 }

@@ -28,32 +28,41 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Component
 public class RequestLogPreFilter implements Filter {
-	
-	
+
 	@Autowired
 	private ObjectMapper mapper;
+
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
-	        throws IOException, ServletException {
-	        HttpServletRequest req = (HttpServletRequest) request;
-	        CachedBodyHttpServletRequest wrappedRequest = new CachedBodyHttpServletRequest(req);
-	        String body = wrappedRequest.getCachedBodyAsString();
-	        log.info("Incoming request: " + req.getMethod() + " " + req.getRequestURI());
-	        log.debug("Request Body : {}", body);
+			throws IOException, ServletException {
+		HttpServletRequest req = (HttpServletRequest) request;
+		CachedBodyHttpServletRequest wrappedRequest = new CachedBodyHttpServletRequest(req);
+		String body = wrappedRequest.getCachedBodyAsString();
+		log.info("Incoming request: " + req.getMethod() + " " + req.getRequestURI());
+		log.debug("Request Body : {}", body);
 
-	        try {
-	            JsonNode root = mapper.readTree(body);
-	            JsonNode reqInfoNode = root.get(MasterConstants.REQUEST_INFO);
-	            if (reqInfoNode != null && !reqInfoNode.isNull()) {
-	                RequestInfo reqInfo = mapper.treeToValue(reqInfoNode, RequestInfo.class);
-	                String schema = (reqInfo.getTenantId().split(MasterConstants.REQUEST_TENANT_SPLIT_REGEX)[1].isBlank()?null:reqInfo.getTenantId().split(MasterConstants.REQUEST_TENANT_SPLIT_REGEX)[1]);
-	                ApplicationThreadLocals.setTenantID(schema);
-	            }
-	        } catch (Exception e) {
-	            log.warn("Could not extract RequestInfo from body: {}", e.getMessage());
-	        }
-	        
-	        chain.doFilter(wrappedRequest, response);
-	    }
+		try {
+			JsonNode root = mapper.readTree(body);
+			JsonNode reqInfoNode = root.get(MasterConstants.REQUEST_INFO);
+			if (reqInfoNode != null && !reqInfoNode.isNull()) {
+				RequestInfo reqInfo = mapper.treeToValue(reqInfoNode, RequestInfo.class);
+				String schema = (reqInfo.getTenantId().split(MasterConstants.REQUEST_TENANT_SPLIT_REGEX)[1].isBlank()
+						? null
+						: reqInfo.getTenantId().split(MasterConstants.REQUEST_TENANT_SPLIT_REGEX)[1]);
+				ApplicationThreadLocals.setTenantID(schema);
+			}
+
+			JsonNode userIdNode = root.path("RequestInfo").path("userInfo").path("id");
+			if (!userIdNode.isMissingNode() && userIdNode.isNumber()) {
+				Long userId = userIdNode.asLong();
+				ApplicationThreadLocals.setCurrentUserId(userId);
+			}
+
+		} catch (Exception e) {
+			log.warn("Could not extract RequestInfo from body: {}", e.getMessage());
+		}
+
+		chain.doFilter(wrappedRequest, response);
+	}
 
 }

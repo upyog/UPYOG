@@ -17,6 +17,7 @@ public class ApplicationThreadLocals {
     private static ThreadLocal<String> userTenantId = new ThreadLocal<>();
     private static ThreadLocal<String> userToken = new ThreadLocal<>();
     private static ThreadLocal<String> collectionVersion = new ThreadLocal<>();
+    private static final ThreadLocal<Long> currentUserId = new ThreadLocal<>();
     
     private ApplicationThreadLocals() {
         //Not to be initialized
@@ -111,6 +112,14 @@ public class ApplicationThreadLocals {
         collectionVersion.set(colVersion);
     }
     
+    public static void setCurrentUserId(Long userId) {
+        currentUserId.set(userId);
+    }
+
+    public static Long getCurrentUserId() {
+        return currentUserId.get();
+    }
+    
     public static void clearValues() {
         domainName.remove();
         userId.remove();
@@ -123,6 +132,7 @@ public class ApplicationThreadLocals {
         userTenantId.remove();
         userToken.remove();
         collectionVersion.remove();
+        currentUserId.remove();
     }
     
 

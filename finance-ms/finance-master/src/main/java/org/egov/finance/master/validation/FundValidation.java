@@ -22,9 +22,9 @@ import org.springframework.util.ObjectUtils;
 @Component
 public class FundValidation {
 
-	
 	@Autowired
-	CommonUtils commonUtils; 
+	CommonUtils commonUtils;
+
 	public Fund modelToEntity(FundModel model) {
 
 		Fund f = new Fund();
@@ -35,13 +35,9 @@ public class FundValidation {
 		f.setIsnotleaf(model.getIsnotleaf() ? true : false);
 		f.setCode(null != model.getCode() ? model.getCode() : null);
 		f.setLlevel(null != model.getLlevel() ? model.getLlevel() : null);
-		commonUtils.applyAuditing(f, Long.parseLong("1"));
 		return f;
 	}
-	
-	
-	
-	
+
 	public FundModel entityTOModel(Fund entity) {
 		FundModel f = new FundModel();
 		f.setId(entity.getId() != null ? entity.getId() : null);
@@ -58,15 +54,14 @@ public class FundValidation {
 		f.setLastModifiedDate(null != entity.getLastModifiedDate() ? entity.getLastModifiedDate() : null);
 		return f;
 	}
-	
-	public void fundFieldValidation(FundModel fundM, FundRepository fundRepository)
-	{
-		Map<String,String> errorMap = new HashMap<>();
-		if(fundRepository.findByCode(fundM.getCode())!=null)
+
+	public void fundFieldValidation(FundModel fundM, FundRepository fundRepository) {
+		Map<String, String> errorMap = new HashMap<>();
+		if (fundRepository.findByCode(fundM.getCode()) != null)
 			errorMap.put(MasterConstants.CODE_NOT_UNIQUE, MasterConstants.CODE_IS_ALREADY_EXISTS_MSG);
-		if(fundRepository.findByName(fundM.getName())!=null)
+		if (fundRepository.findByName(fundM.getName()) != null)
 			errorMap.put(MasterConstants.NAME_NOT_UNIQUE, MasterConstants.NAME_IS_ALREADY_EXISTS_MSG);
-		if(!CollectionUtils.isEmpty(errorMap))
+		if (!CollectionUtils.isEmpty(errorMap))
 			throw new MasterServiceException(errorMap);
 	}
 
