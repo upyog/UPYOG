@@ -18,8 +18,9 @@ public class MasterConstants {
 	public static final String CODE_NOT_UNIQUE = "CODE_NOT_UNIQUE";
 	public static final String ID_CANNOT_BE_PASSED_IN_CREATION_MSG = "Id cannot be passed in creation";
 	public static final String INVALID_ID_PASSED = "INVALID_ID_PASSED";
-	public static final String INVALID__PARENT_ID = "INVALID_PARENT_ID";
-	public static final String INVALID__PARENT_ID_MSG = "Please Provide a valid parent Parent Id";
+	public static final String INVALID_ID_PASSED_MESSAGE = "id can not be empty in case of update";
+	public static final String INVALID_PARENT_ID = "INVALID_PARENT_ID";
+	public static final String INVALID_PARENT_ID_MSG = "Please Provide a valid parent Parent Id";
 	public static final String INVALID_TEXT_CONTAINS_HTML_TAGS_MSG = "Invalid Text, contains HTML Tags";
 
 }
