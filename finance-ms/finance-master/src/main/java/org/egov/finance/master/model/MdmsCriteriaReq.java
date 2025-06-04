@@ -1,6 +1,4 @@
-package org.egov.finance.master.model.mdms;
-
-import org.egov.finance.master.model.RequestInfo;
+package org.egov.finance.master.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

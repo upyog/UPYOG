@@ -1,4 +1,4 @@
-package org.egov.finance.master.model.mdms;
+package org.egov.finance.master.model;
 
 import lombok.Builder;
 import lombok.Data;

@@ -8,11 +8,11 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.egov.finance.master.exception.MasterServiceException;
+import org.egov.finance.master.model.MasterDetail;
+import org.egov.finance.master.model.MdmsCriteria;
+import org.egov.finance.master.model.MdmsCriteriaReq;
+import org.egov.finance.master.model.ModuleDetail;
 import org.egov.finance.master.model.RequestInfo;
-import org.egov.finance.master.model.mdms.MasterDetail;
-import org.egov.finance.master.model.mdms.MdmsCriteria;
-import org.egov.finance.master.model.mdms.MdmsCriteriaReq;
-import org.egov.finance.master.model.mdms.ModuleDetail;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;

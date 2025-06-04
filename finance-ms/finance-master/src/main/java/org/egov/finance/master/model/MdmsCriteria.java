@@ -1,4 +1,4 @@
-package org.egov.finance.master.model.mdms;
+package org.egov.finance.master.model;
 
 import java.util.List;
 
