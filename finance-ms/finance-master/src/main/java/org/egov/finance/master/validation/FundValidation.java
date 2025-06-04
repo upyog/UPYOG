@@ -30,6 +30,7 @@ public class FundValidation {
 		f.setName(null != model.getName() ? model.getName() : null);
 		f.setIsnotleaf(model.getIsnotleaf() ? true : false);
 		f.setCode(null != model.getCode() ? model.getCode() : null);
+		f.setLlevel(null != model.getLlevel() ? model.getLlevel() : null);
 		return f;
 	}
 
@@ -46,6 +47,7 @@ public class FundValidation {
 		f.setLastModifiedBy(null != entity.getLastModifiedBy() ? entity.getLastModifiedBy() : null);
 		f.setLastModifiedDate(null != entity.getLastModifiedDate() ? entity.getLastModifiedDate() : null);
 		f.setParentId(null != entity.getParentId() ? entity.getParentId().getId() : null);
+		f.setLlevel(null != entity.getLlevel() ? entity.getLlevel() : null);
 		return f;
 	}
 	
