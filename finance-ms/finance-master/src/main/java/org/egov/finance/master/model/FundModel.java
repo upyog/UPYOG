@@ -45,7 +45,7 @@ public class FundModel {
     private Long parentId;
     private Boolean isnotleaf;
     private Boolean isactive;
-    private Long createdby;
+    private Long createdBy;
     private Date createdDate;
     private Long lastModifiedBy;
     private Date lastModifiedDate;

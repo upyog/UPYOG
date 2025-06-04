@@ -12,15 +12,19 @@ import org.egov.finance.master.entity.Fund;
 import org.egov.finance.master.exception.MasterServiceException;
 import org.egov.finance.master.model.FundModel;
 import org.egov.finance.master.repository.FundRepository;
+import org.egov.finance.master.util.CommonUtils;
 import org.egov.finance.master.util.MasterConstants;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.ObjectUtils;
 
 @Component
 public class FundValidation {
 
-
-
+	
+	@Autowired
+	CommonUtils commonUtils; 
 	public Fund modelToEntity(FundModel model) {
 
 		Fund f = new Fund();
@@ -31,9 +35,13 @@ public class FundValidation {
 		f.setIsnotleaf(model.getIsnotleaf() ? true : false);
 		f.setCode(null != model.getCode() ? model.getCode() : null);
 		f.setLlevel(null != model.getLlevel() ? model.getLlevel() : null);
+		commonUtils.applyAuditing(f, Long.parseLong("1"));
 		return f;
 	}
-
+	
+	
+	
+	
 	public FundModel entityTOModel(Fund entity) {
 		FundModel f = new FundModel();
 		f.setId(entity.getId() != null ? entity.getId() : null);
@@ -42,12 +50,12 @@ public class FundValidation {
 		f.setName(null != entity.getName() ? entity.getName() : null);
 		f.setIsnotleaf(entity.getIsnotleaf() ? true : false);
 		f.setCode(null != entity.getCode() ? entity.getCode() : null);
-		f.setCreatedby(null != entity.getCreatedby() ? entity.getCreatedby() : null);
+		f.setParentId(null != entity.getParentId() ? entity.getParentId().getId() : null);
+		f.setLlevel(null != entity.getLlevel() ? entity.getLlevel() : null);
+		f.setCreatedBy(null != entity.getCreatedBy() ? entity.getCreatedBy() : null);
 		f.setCreatedDate(null != entity.getCreatedDate() ? entity.getCreatedDate() : null);
 		f.setLastModifiedBy(null != entity.getLastModifiedBy() ? entity.getLastModifiedBy() : null);
 		f.setLastModifiedDate(null != entity.getLastModifiedDate() ? entity.getLastModifiedDate() : null);
-		f.setParentId(null != entity.getParentId() ? entity.getParentId().getId() : null);
-		f.setLlevel(null != entity.getLlevel() ? entity.getLlevel() : null);
 		return f;
 	}
 	
@@ -58,8 +66,6 @@ public class FundValidation {
 			errorMap.put(MasterConstants.CODE_NOT_UNIQUE, MasterConstants.CODE_IS_ALREADY_EXISTS_MSG);
 		if(fundRepository.findByName(fundM.getName())!=null)
 			errorMap.put(MasterConstants.NAME_NOT_UNIQUE, MasterConstants.NAME_IS_ALREADY_EXISTS_MSG);
-		
-		
 		if(!CollectionUtils.isEmpty(errorMap))
 			throw new MasterServiceException(errorMap);
 	}

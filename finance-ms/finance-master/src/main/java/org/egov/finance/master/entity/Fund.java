@@ -25,7 +25,7 @@ import lombok.Data;
 @Data
 //changed for initial setup need to fix
 //@Unique(fields = {"code", "name"}, enableDfltMsg = true)
-public class Fund {
+public class Fund  extends AuditDetails{
 
 	public static final String SEQ = "SEQ_Fund";
 	private static final long serialVersionUID = 7977534010758407945L;
@@ -38,21 +38,12 @@ public class Fund {
 	private String code;
 	private Character identifier;
 	private BigDecimal llevel = BigDecimal.ONE;
-
 	// @JsonIgnore
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "parentid")
 	private Fund parentId;
-
 	private Boolean isnotleaf;
-
 	private Boolean isactive;
 
-	private Long createdby;
-	private Date createdDate;
-
-	private Long lastModifiedBy;
-
-	private Date lastModifiedDate;
 
 }

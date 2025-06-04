@@ -16,7 +16,7 @@ import lombok.Data;
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
 @Data
-public abstract class AbstractAuditable extends AbstractPersistable<Long> {
+public abstract class AuditDetails extends AbstractPersistable<Long> {
 
 	private static final long serialVersionUID = 7138056997693406739L;
 

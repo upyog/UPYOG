@@ -2,11 +2,13 @@ package org.egov.finance.master.util;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import org.egov.finance.master.entity.AuditDetails;
 import org.egov.finance.master.exception.MasterServiceException;
 import org.egov.finance.master.model.MasterDetail;
 import org.egov.finance.master.model.MdmsCriteria;
@@ -88,6 +90,16 @@ public class CommonUtils {
 		moduleDetails.add(moduleDetail);
 		MdmsCriteria mdmsCriteria = MdmsCriteria.builder().tenantId(tenantId).moduleDetails(moduleDetails).build();
 		return MdmsCriteriaReq.builder().requestInfo(requestInfo).mdmsCriteria(mdmsCriteria).build();
+	}
+	
+	public void applyAuditing(AuditDetails auditable, Long createdBy) {
+		Date currentDate = new Date();
+		if (auditable.isNew()) {
+			auditable.setCreatedBy(createdBy);
+			auditable.setCreatedDate(currentDate);
+		}
+		auditable.setLastModifiedBy(createdBy);
+		auditable.setLastModifiedDate(currentDate);
 	}
 
 }
