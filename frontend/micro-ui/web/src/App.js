@@ -32,7 +32,7 @@ import { initReceiptsComponents, ReceiptsModule } from "@upyog/digit-ui-module-r
 import { initOBPSComponents } from "@nudmcdgnpm/upyog-ui-module-obps";
 import { initNOCComponents } from "@nudmcdgnpm/upyog-ui-module-noc";
 import { initEngagementComponents } from "@upyog/digit-ui-module-engagement";
-import { initWSComponents } from "@upyog/digit-ui-module-ws";
+import { initWSComponents } from "@nudmcdgnpm/upyog-ui-module-ws";
 // import { initCustomisationComponents } from "./Customisations";
 import { initCommonPTComponents } from "@nudmcdgnpm/upyog-ui-module-commonpt";
 import { initBillsComponents } from "@upyog/digit-ui-module-bills";

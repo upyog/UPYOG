@@ -19,7 +19,7 @@ import { HRMSModule } from "@nudmcdgnpm/digit-ui-module-hrms";
 import { initOBPSComponents } from "@nudmcdgnpm/upyog-ui-module-obps";
 import { initEngagementComponents } from "@upyog/digit-ui-module-engagement";
 import { initNOCComponents } from "@nudmcdgnpm/upyog-ui-module-noc";
-import { initWSComponents } from "@upyog/digit-ui-module-ws";
+import { initWSComponents } from "@nudmcdgnpm/upyog-ui-module-ws";
 import { DigitUI } from "@upyog/digit-ui-module-core";
 import { initCommonPTComponents } from "@nudmcdgnpm/upyog-ui-module-commonpt";
 import { initBillsComponents, BillsModule } from "@upyog/digit-ui-module-bills";

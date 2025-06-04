@@ -7,7 +7,7 @@ RUN yarn add @nudmcdgnpm/upyog-ui-module-fsm
 RUN yarn add @nudmcdgnpm/upyog-ui-module-pt
 RUN yarn add @nudmcdgnpm/upyog-ui-module-tl
 RUN yarn add @nudmcdgnpm/upyog-ui-module-obps
-RUN yarn add @upyog/digit-ui-module-ws
+RUN yarn add @nudmcdgnpm/upyog-ui-module-ws
 RUN yarn add @upyog/digit-ui-module-dss
 RUN yarn add @upyog/digit-ui-module-mcollect
 RUN yarn add @nudmcdgnpm/digit-ui-module-pgr
