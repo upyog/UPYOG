@@ -29,7 +29,7 @@ public class CacheConfig {
 	        List<String> parts = new ArrayList<>();
 	        String tenantId = ApplicationThreadLocals.getTenantID();
 	        String version = cacheEvictionService.getVersionForTenant(tenantId);
-
+	        
 	        parts.add("v=" + version);
 	        addIfNotNull(parts, "id", criteria.getId());
 	        addIfNotNull(parts, "name", criteria.getName());

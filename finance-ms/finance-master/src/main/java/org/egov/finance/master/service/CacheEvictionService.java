@@ -62,7 +62,7 @@ public class CacheEvictionService {
 		String currentVersion = getVersionForTenant(tenantId);
 		int versionNumber = Integer.parseInt(currentVersion.replace("v", ""));
 		String newVersion = "v" + (versionNumber + 1);
-		redisTemplate.opsForValue().set(key, newVersion);
+		stringRedisTemplate.opsForValue().set(key, newVersion);
 	}
 
 }
