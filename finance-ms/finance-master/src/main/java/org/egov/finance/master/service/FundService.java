@@ -9,7 +9,6 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.egov.finance.master.entity.Fund;
@@ -20,6 +19,7 @@ import org.egov.finance.master.repository.FundRepository;
 import org.egov.finance.master.util.MasterConstants;
 import org.egov.finance.master.validation.FundValidation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
@@ -34,6 +34,7 @@ public class FundService {
 	@Autowired
 	private FundValidation validation;
 
+	@Cacheable(value = "fundSearchCache", keyGenerator = "fundSearchKeyGenerator")
 	public List<FundModel> search(FundModel fundCriteria) {
 		Specification<Fund> spec = Specification.where(null);
 		if (fundCriteria.getCode() != null && !fundCriteria.getCode().isEmpty()) {

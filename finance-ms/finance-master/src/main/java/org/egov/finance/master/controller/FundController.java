@@ -24,52 +24,38 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
-import lombok.extern.slf4j.Slf4j;
 
 @RestController
 @RequestMapping("/fund")
-@Slf4j
 public class FundController {
-	
-	
+
 	@Autowired
 	private FundService fundService;
-	
-	 @Autowired
-	    private ResponseInfoFactory responseInfoFactory;
-	
+
+	@Autowired
+	private ResponseInfoFactory responseInfoFactory;
+
 	@PostMapping("/_save")
-	private ResponseEntity<?>saveFund(@Valid @RequestBody FundRequest fund){
+	private ResponseEntity<?> saveFund(@Valid @RequestBody FundRequest fund) {
 		final FundModel fundM = fundService.save(fund);
-		ResponseInfo resInfo =responseInfoFactory.createResponseInfoFromRequestInfo(fund.getRequestInfo(), true);
-		FundResponse response = FundResponse.builder()
-		.responseInfo(resInfo)
-		.funds(Arrays.asList(fundM))
-		.build();
+		ResponseInfo resInfo = responseInfoFactory.createResponseInfoFromRequestInfo(fund.getRequestInfo(), true);
+		FundResponse response = FundResponse.builder().responseInfo(resInfo).funds(Arrays.asList(fundM)).build();
 		return new ResponseEntity<>(response, HttpStatus.CREATED);
 	}
-	
+
 	@PostMapping(value = "/_search")
 	public ResponseEntity<?> _search(@RequestBody FundRequest request) {
-		final List<FundModel> fundM  = fundService.search(request.getFund());
-		ResponseInfo resInfo =responseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(), true);
-		FundResponse response = FundResponse.builder()
-		.responseInfo(resInfo)
-		.funds(fundM)
-		.build();
-		return new ResponseEntity<>(response,HttpStatus.OK);
+		final List<FundModel> fundM = fundService.search(request.getFund());
+		ResponseInfo resInfo = responseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(), true);
+		FundResponse response = FundResponse.builder().responseInfo(resInfo).funds(fundM).build();
+		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
-	
+
 	@PostMapping(value = "/_update")
 	public ResponseEntity<FundResponse> update(@RequestBody FundRequest fundupdate) {
 		final FundModel fundM = fundService.update(fundupdate);
-		ResponseInfo resInfo =responseInfoFactory.createResponseInfoFromRequestInfo(fundupdate.getRequestInfo(), true);
-		FundResponse response = FundResponse.builder()
-		.responseInfo(resInfo)
-		.funds(Arrays.asList(fundM))
-		.build();
+		ResponseInfo resInfo = responseInfoFactory.createResponseInfoFromRequestInfo(fundupdate.getRequestInfo(), true);
+		FundResponse response = FundResponse.builder().responseInfo(resInfo).funds(Arrays.asList(fundM)).build();
 		return new ResponseEntity<>(response, HttpStatus.CREATED);
 	}
-	
-
 }
