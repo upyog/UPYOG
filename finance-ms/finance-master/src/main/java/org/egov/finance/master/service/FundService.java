@@ -16,23 +16,34 @@ import org.egov.finance.master.exception.MasterServiceException;
 import org.egov.finance.master.model.FundModel;
 import org.egov.finance.master.model.request.FundRequest;
 import org.egov.finance.master.repository.FundRepository;
+import org.egov.finance.master.util.ApplicationThreadLocals;
 import org.egov.finance.master.util.MasterConstants;
 import org.egov.finance.master.validation.FundValidation;
+import org.springframework.beans.BeanWrapper;
+import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
-import org.springframework.beans.BeanWrapper;
-import org.springframework.beans.BeanWrapperImpl;
 
 @Service
 public class FundService {
 
-	@Autowired
+	
 	private FundRepository fundRepository;
-	@Autowired
+	
 	private FundValidation validation;
+	
+	private CacheEvictionService cacheEvictionService;
+	
+	@Autowired
+	public FundService(FundRepository fundRepository, FundValidation validation,
+			CacheEvictionService cacheEvictionService) {
+		this.fundRepository = fundRepository;
+		this.validation = validation;
+		this.cacheEvictionService = cacheEvictionService;
+	}
 
 	@Cacheable(value = "fundSearchCache", keyGenerator = "fundSearchKeyGenerator")
 	public List<FundModel> search(FundModel fundCriteria) {
@@ -99,6 +110,7 @@ public class FundService {
 		}
 	}
 
+	
 	public FundModel update(FundRequest request) {
 		Fund fundRequest = validation.modelToEntity(request.getFund());
 		Map<String, String> errorMap = new HashMap<>();
@@ -120,7 +132,7 @@ public class FundService {
 		} else {
 			fundUpdate.setParentId(null);
 		}
-
+		cacheEvictionService.incrementVersionForTenant(ApplicationThreadLocals.getTenantID());
 		return validation.entityTOModel(fundRepository.save(fundUpdate));
 
 	}

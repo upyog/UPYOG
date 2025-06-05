@@ -77,17 +77,17 @@ public class DBMigrationConfiguration {
     	//dbMigrationEnabled=false;
     	List<String> masterNames = new ArrayList<>(Arrays.asList("tenants"));
     	Map<String, List<String>> codes = commonUtils.getAttributeValues("mn", "tenant", masterNames,
-				"[?(@.city.name)].city.name", "$.MdmsRes.tenant");
+				"[?(@.city.name)].city.districtTenantCode", "$.MdmsRes.tenant");
     	List<String> cities = codes.get("tenants");
     	//cities.add("demo");
         if (dbMigrationEnabled) {
             cities.stream().forEach(schema -> {
                 if (devMode)
-                    migrateDatabase(dataSource, schema,
+                    migrateDatabase(dataSource, schema.split("\\.")[1],
                             mainMigrationFilePath, sampleMigrationFilePath);
                 else
-                    migrateDatabase(dataSource, schema,
-                            mainMigrationFilePath, format(tenantMigrationFilePath, schema));
+                    migrateDatabase(dataSource, schema.split("\\.")[1],
+                            mainMigrationFilePath, format(tenantMigrationFilePath, schema.split("\\.")[1]));
             });
             
             //Changes to Be done
