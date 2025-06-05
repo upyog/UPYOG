@@ -65,6 +65,7 @@ public abstract class FeatureProcess {
 	public static final String AREA_PROVIDED = "Area Provided";
 	public static final String LEVEL = "Level";
 	public static final String OCCUPANCY = "Occupancy";
+	public static final String ROADTYPE = "Road type";
 	public static final String FIELDVERIFIED = "Field Verified";
 	public static final String REQUIRED = "Required";
 	public static final String VENTILATION_REQUIRED = "Ventilation Required";

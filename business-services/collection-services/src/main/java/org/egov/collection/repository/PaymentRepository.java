@@ -7,8 +7,17 @@ import static org.egov.collection.repository.querybuilder.PaymentQueryBuilder.*;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.web.client.RestTemplate;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpMethod;
+
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.kafka.common.config.Config;
 import org.egov.collection.model.Payment;
 import org.egov.collection.model.PaymentDetail;
 import org.egov.collection.model.PaymentSearchCriteria;
@@ -16,9 +25,11 @@ import org.egov.collection.repository.querybuilder.PaymentQueryBuilder;
 import org.egov.collection.repository.rowmapper.BillRowMapper;
 import org.egov.collection.repository.rowmapper.PaymentRowMapper;
 import org.egov.collection.web.contract.Bill;
+import org.egov.collection.web.contract.BillResponse;
 import org.egov.collection.web.contract.PropertyDetail;
 import org.egov.collection.web.contract.RoadCuttingInfo;
 import org.egov.collection.web.contract.UsageCategoryInfo;
+import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -34,6 +45,8 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.egov.collection.config.ApplicationProperties;
+
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -49,6 +62,9 @@ public class PaymentRepository {
     private PaymentRowMapper paymentRowMapper;
     
     private BillRowMapper billRowMapper;
+    private  RestTemplate restTemplate;
+    @Autowired
+    private ApplicationProperties config;
 
     @Autowired
     public PaymentRepository(NamedParameterJdbcTemplate namedParameterJdbcTemplate, PaymentQueryBuilder paymentQueryBuilder, 
@@ -120,7 +136,7 @@ public class PaymentRepository {
             for (Payment payment : payments) {
                 billIds.addAll(payment.getPaymentDetails().stream().map(detail -> detail.getBillId()).collect(Collectors.toSet()));
             }
-            Map<String, Bill> billMap = getBills(billIds);
+            Map<String, Bill> billMap = getBills(billIds,paymentSearchCriteria.getTenantId());
             for (Payment payment : payments) {
                 payment.getPaymentDetails().forEach(detail -> {
                     detail.setBill(billMap.get(detail.getBillId()));
@@ -130,7 +146,7 @@ public class PaymentRepository {
         }
 
         return payments;
-    }
+    }  
     
     public Long getPaymentsCount (String tenantId, String businessService) {
     	
@@ -150,7 +166,7 @@ public class PaymentRepository {
             for (Payment payment : payments) {
                 billIds.addAll(payment.getPaymentDetails().stream().map(detail -> detail.getBillId()).collect(Collectors.toSet()));
             }
-            Map<String, Bill> billMap = getBills(billIds);
+            Map<String, Bill> billMap = getBills(billIds,paymentSearchCriteria.getTenantId());
             for (Payment payment : payments) {
                 payment.getPaymentDetails().forEach(detail -> {
                     detail.setBill(billMap.get(detail.getBillId()));
@@ -162,7 +178,21 @@ public class PaymentRepository {
         return payments;
     }
 
+    private Map<String, Bill> getBills(Set<String> ids, String tenantId){
+    	Map<String, Bill> mapOfIdAndBills = new HashMap<>();
+        Map<String, Object> preparedStatementValues = new HashMap<>();
+        preparedStatementValues.put("id", ids);
+        preparedStatementValues.put("tenantId", tenantId);
+        StringBuilder query = new StringBuilder(paymentQueryBuilder.getBillQuery());
+        query.append(" AND	b.tenantid= :tenantId ;");
+        List<Bill> bills = namedParameterJdbcTemplate.query(query.toString(), preparedStatementValues, billRowMapper);
+        bills.forEach(bill -> {
+        	mapOfIdAndBills.put(bill.getId(), bill);
+        });
+        
+        return mapOfIdAndBills;
 
+    }
     
     private Map<String, Bill> getBills(Set<String> ids){
     	Map<String, Bill> mapOfIdAndBills = new HashMap<>();
@@ -425,24 +455,24 @@ public class PaymentRepository {
 				queryString = "select a2.landarea from eg_ws_connection a1 inner join eg_pt_property a2 on a1.property_id= a2.propertyid"
 						+ " where a1.applicationno = '" + consumerCode + "'"
 						+ " and a1.status='Active'"
-						+ " and a2.status='ACTIVE';";
+						+ " and (a2.status='ACTIVE' or a2.status ='PENDINGWS');";
 			} else {
 				queryString = "select a2.landarea from eg_sw_connection a1 inner join eg_pt_property a2 on a1.property_id= a2.propertyid"
 						+ " where a1.applicationno = '" + consumerCode + "'"
 						+ " and a1.status='Active'"
-						+ " and a2.status='ACTIVE';";
+						+ " and (a2.status='ACTIVE' or a2.status ='PENDINGWS');";
 			}
 		} else {
 			if (businessservice.equals("WS")) {
 				queryString = "select a2.landarea from eg_ws_connection a1 inner join eg_pt_property a2 on a1.property_id= a2.propertyid"
 						+ " where a1.connectionno = '" + consumerCode + "'"
 						+ " and a1.status='Active'"
-						+ " and a2.status='ACTIVE';";
+						+ " and (a2.status='ACTIVE' or a2.status ='PENDINGWS');";
 			} else {
 				queryString = "select a2.landarea from eg_sw_connection a1 inner join eg_pt_property a2 on a1.property_id= a2.propertyid"
 						+ " where a1.connectionno = '" + consumerCode + "'"
-						+ " and a1.status='Active'"
-						+ " and a2.status='ACTIVE';";
+						+ " and a1.status='Active' "
+						+ " and (a2.status='ACTIVE' or a2.status ='PENDINGWS');";
 			}
 		}
 		log.info("Query: " + queryString);
@@ -467,25 +497,30 @@ public class PaymentRepository {
 				Isapp=true;
 	if (Isapp) {
 	    if(businessservice.equals("WS")) {
-		 queryString = "select a2.usagecategory from eg_ws_connection a1 inner join eg_pt_property a2 on a1.property_id= a2.propertyid"
-				+ " where a1.applicationno = '"+consumerCode+"'"
-				+ " and a2.status='ACTIVE';";
+	    	queryString = "SELECT a2.usagecategory FROM eg_ws_connection a1 " +
+	                  "INNER JOIN eg_pt_property a2 ON a1.property_id = a2.propertyid " +
+	                  "WHERE a1.applicationno = '" + consumerCode + "' " +
+	                  "AND (a2.status = 'ACTIVE' OR a2.status = 'PENDINGWS');";
+	    	
 	    }else {
-	    	 queryString = "select a2.usagecategory from eg_sw_connection a1 inner join eg_pt_property a2 on a1.property_id= a2.propertyid"
-	 				+ " where a1.applicationno = '"+consumerCode+"'"
-	 				+ " and a2.status='ACTIVE';";
+	    	queryString = "SELECT a2.usagecategory FROM eg_sw_connection a1 " +
+	                  "INNER JOIN eg_pt_property a2 ON a1.property_id = a2.propertyid " +
+	                  "WHERE a1.applicationno = '" + consumerCode + "' " +
+	                  "AND (a2.status = 'ACTIVE' OR a2.status = 'PENDINGWS');";
 	    }
 	}
 	else
 	{
 		  if(businessservice.equals("WS")) {
-				 queryString = "select a2.usagecategory from eg_ws_connection a1 inner join eg_pt_property a2 on a1.property_id= a2.propertyid"
-						+ " where a1.connectionno = '"+consumerCode+"'"
-						+ " and a2.status='ACTIVE';";
+			  queryString = "SELECT a2.usagecategory FROM eg_ws_connection a1 " +
+	                  "INNER JOIN eg_pt_property a2 ON a1.property_id = a2.propertyid " +
+	                  "WHERE a1.applicationno = '" + consumerCode + "' " +
+	                  "AND (a2.status = 'ACTIVE' OR a2.status = 'PENDINGWS');";
 			    }else {
-			    	 queryString = "select a2.usagecategory from eg_sw_connection a1 inner join eg_pt_property a2 on a1.property_id= a2.propertyid"
-			 				+ " where a1.connectionno = '"+consumerCode+"'"
-			 				+ " and a2.status='ACTIVE';";
+			    	queryString = "SELECT a2.usagecategory FROM eg_sw_connection a1 " +
+			                  "INNER JOIN eg_pt_property a2 ON a1.property_id = a2.propertyid " +
+			                  "WHERE a1.applicationno = '" + consumerCode + "' " +
+			                  "AND (a2.status = 'ACTIVE' OR a2.status = 'PENDINGWS');";
 			    }	
 	}
 		log.info("Query: " +queryString);
@@ -509,21 +544,21 @@ public class PaymentRepository {
 	    if(businessservice.equals("WS")) {
 		 queryString = "select a2.propertyid from eg_ws_connection a1 inner join eg_pt_property a2 on a1.property_id= a2.propertyid"
 				+ " where a1.applicationno = '"+consumerCode+"'"
-				+ " and a2.status='ACTIVE';";
+				+ " and a1.status = 'ACTIVE' and (a2.status='ACTIVE' or a2.status ='PENDINGWS');";
 	    }else {
 	    	 queryString = "select a2.propertyid from eg_sw_connection a1 inner join eg_pt_property a2 on a1.property_id= a2.propertyid"
-	 				+ " where a1.applicationno = '"+consumerCode+"'"
-	 				+ " and a2.status='ACTIVE';";
+	 				+ " where a1.applicationno = '"+consumerCode+"'" 
+	 				+ " and a1.status = 'ACTIVE' and (a2.status='ACTIVE' or a2.status ='PENDINGWS');";
 	    }}
 	else {
 		 if(businessservice.equals("WS")) {
 			 queryString = "select a2.propertyid from eg_ws_connection a1 inner join eg_pt_property a2 on a1.property_id= a2.propertyid"
 					+ " where a1.connectionno = '"+consumerCode+"'"
-					+ " and a2.status='ACTIVE';";
+					+ " and a1.status = 'ACTIVE' and (a2.status='ACTIVE' or a2.status ='PENDINGWS');";
 		    }else {
 		    	 queryString = "select a2.propertyid from eg_sw_connection a1 inner join eg_pt_property a2 on a1.property_id= a2.propertyid"
 		 				+ " where a1.connectionno = '"+consumerCode+"'"
-		 				+ " and a2.status='ACTIVE';";
+		 				+ " and a1.status = 'ACTIVE' and (a2.status='ACTIVE' or a2.status ='PENDINGWS');";
 		    }
 		
 	}
@@ -550,14 +585,14 @@ public class PaymentRepository {
 	 				+ " inner join eg_pt_property a2 on a1.property_id = a2.propertyid "
 	 				+ " inner join eg_pt_address a3 on a2.id=a3.propertyid "
 	 				+ " where a1.applicationno='"+consumerCode+"'"
-	 				+ " and a2.status='ACTIVE';";
+	 				+ " a1.status = 'ACTIVE' and (a2.status='ACTIVE' or a2.status ='PENDINGWS');";
 	 			       
 	    }else {               
 	    	queryString = "select CONCAT(doorno,'.',buildingname,'.',city) as address from eg_sw_connection a1 "
 					+ " inner join eg_pt_property a2 on a1.property_id = a2.propertyid "
 					+ " inner join eg_pt_address a3 on a2.id=a3.propertyid "
 					+ " where a1.applicationno='"+consumerCode+"'"
-					+ " and a2.status='ACTIVE';";
+					+ " a1.status = 'ACTIVE' and (a2.status='ACTIVE' or a2.status ='PENDINGWS');";
 				       
 	    }
 	    }
@@ -567,14 +602,14 @@ public class PaymentRepository {
 						+ " inner join eg_pt_property a2 on a1.property_id = a2.propertyid "
 						+ " inner join eg_pt_address a3 on a2.id=a3.propertyid "
 						+ " where a1.connectionno='"+consumerCode+"';"
-						+ " and a2.status='ACTIVE';";
+						+ " a1.status = 'ACTIVE' and (a2.status='ACTIVE' or a2.status ='PENDINGWS');";
 					       
 		    }else {
 		    	queryString = "select   CONCAT(doorno,'.',buildingname,'.',city) as address from eg_sw_connection a1 "
 						+ " inner join eg_pt_property a2 on a1.property_id = a2.propertyid "
 						+ " inner join eg_pt_address a3 on a2.id=a3.propertyid "
 						+ " where a1.connectionno='"+consumerCode+"';"
-						+ " and a2.status='ACTIVE';";
+						+ " a1.status = 'ACTIVE' and (a2.status='ACTIVE' or a2.status ='PENDINGWS');";
 					     
 		    }
 		
@@ -607,14 +642,14 @@ public class PaymentRepository {
 				+ " inner join eg_pt_property a2 on a1.property_id = a2.propertyid "
 				+ " inner join eg_pt_address a3 on a2.id=a3.propertyid "
 				+ " where a1.applicationno='"+consumercode+"'"
-			        + " and a2.status='ACTIVE';";
+				+ " and a1.status='ACTIVE' and (a2.status='ACTIVE' or a2.status ='PENDINGWS');";
 		log.info("Query for fetchPaymentIdsByCriteria: " +queryString);
 		} else {
 			queryString = "select a2.usagecategory from eg_sw_connection a1 "
 					+ " inner join eg_pt_property a2 on a1.property_id = a2.propertyid "
 					+ " inner join eg_pt_address a3 on a2.id=a3.propertyid "
 					+ " where a1.applicationno='"+consumercode+"'"
-				        + " and a2.status='ACTIVE';";
+					+ " and a1.status='ACTIVE' and (a2.status='ACTIVE' or a2.status ='PENDINGWS');";
 			log.info("Query for fetchPaymentIdsByCriteria: " +queryString);
 		}
 		try {
@@ -638,7 +673,7 @@ public class PaymentRepository {
 				+ " inner join eg_pt_property a2 on a1.property_id = a2.propertyid "
 				+ " inner join eg_pt_address a3 on a2.id=a3.propertyid "
 				+ " where a1.applicationno='"+consumercode+"'"
-			        + " and a2.status='ACTIVE';";
+			        + " a1.status = 'ACTIVE' and (a2.status='ACTIVE' or a2.status ='PENDINGWS');";
 		log.info("Query for fetchAddressByApplicationno: " +queryString);
 		}
 		else {
@@ -646,7 +681,7 @@ public class PaymentRepository {
 						+ " inner join eg_pt_property a2 on a1.property_id = a2.propertyid "
 						+ " inner join eg_pt_address a3 on a2.id=a3.propertyid "
 						+ " where a1.applicationno='"+consumercode+"'"
-				                + " and a2.status='ACTIVE';";
+				        + " a1.status = 'ACTIVE' and (a2.status='ACTIVE' or a2.status ='PENDINGWS');";
 				log.info("Query for fetchAddressByApplicationno: " +queryString);
 		}
 		try {
@@ -712,7 +747,7 @@ public class PaymentRepository {
 	        queryString.append("eg_sw_connection a1 ");
 	    }
 
-	    queryString.append("INNER JOIN eg_pt_property a2 ON a1.property_id = a2.propertyid WHERE a1.status = 'Active' and a2.status='ACTIVE' ");
+	    queryString.append("INNER JOIN eg_pt_property a2 ON a1.property_id = a2.propertyid WHERE a1.status = 'Active' and (a2.status='ACTIVE' or a2.status ='PENDINGWS')");
 
 	    // Prepare parameters using MapSqlParameterSource
 	    MapSqlParameterSource preparedStatementValues = new MapSqlParameterSource();
@@ -740,9 +775,13 @@ public class PaymentRepository {
 	    } catch (Exception ex) {
 	        log.error("Exception while reading usage category: " + ex.getMessage(), ex);
 	    }
+	    
+	    
 
 	    return res;
 	}
+	
+	
 	public List<String> fetchlandareaByApplicationnos(Set<String> consumerCodes, Set<String> applicationNumbers, String businessService) {
 	    List<String> res = new ArrayList<>();
 	    Map<String, Object> preparedStatementValues = new HashMap<>();
@@ -755,7 +794,7 @@ public class PaymentRepository {
 	        queryString.append("eg_sw_connection a1 ");
 	    }
 
-	    queryString.append("INNER JOIN eg_pt_property a2 ON a1.property_id = a2.propertyid WHERE a1.status = 'Active' and a2.status='ACTIVE' ");
+	    queryString.append("INNER JOIN eg_pt_property a2 ON a1.property_id = a2.propertyid WHERE a1.status = 'Active' and (a2.status='ACTIVE' or a2.status ='PENDINGWS') ");
 
 	    // Adding conditions dynamically for consumer codes
 	    if (!CollectionUtils.isEmpty(consumerCodes)) {
@@ -797,7 +836,7 @@ public class PaymentRepository {
 	    queryString.append("INNER JOIN eg_pt_property a2 ON a1.property_id = a2.propertyid ")
 	               .append("INNER JOIN eg_pt_address a3 ON a2.id = a3.propertyid ")
 	               .append("WHERE a1.status = 'Active'")
-	               .append(" AND a2.status = 'ACTIVE'");
+	               .append(" and (a2.status='ACTIVE' or a2.status ='PENDINGWS') ");
 
 	    // Add condition for consumer codes if present
 	    if (!CollectionUtils.isEmpty(consumerCodes)) {
@@ -843,7 +882,7 @@ public class PaymentRepository {
 
 	    queryString.append("INNER JOIN eg_pt_property a2 ON a1.property_id = a2.propertyid ")
 	               .append("WHERE a1.status = 'Active'")
-	               .append(" AND a2.status = 'ACTIVE'");
+	               .append(" and (a2.status='ACTIVE' or a2.status ='PENDINGWS') ");
 
 	    // Add condition for consumer codes if present
 	    if (!CollectionUtils.isEmpty(consumerCodes)) {
@@ -1069,4 +1108,151 @@ public List<String> fetchConsumerCodeByReceiptNumber(String receiptnumber) {
 				emptyAddtlParameterSource.toArray(new MapSqlParameterSource[0]));
 
 	}
+		
+	@SuppressWarnings("null")
+	public Object Curl_WS(RequestInfo requestInfo, Set<String> consumerCodes,
+	                      Set<String> applicationNo, String tenantId, String businessservice) {
+
+	    List<Map<String, Object>> waterConnections = new ArrayList<>();
+	    StringBuilder url = null;
+
+	    if (businessservice.contains("WS")) {
+	        url = new StringBuilder(config.getWsHost());
+	        url.append(config.getWsUrl());
+	    } else {
+	        url = new StringBuilder(config.getSwHost());
+	        url.append(config.getSwUrl());
+	    }
+
+	    String consumerCodeStr = (consumerCodes != null && !consumerCodes.isEmpty()) ? consumerCodes.iterator().next() : null;
+	    String applicationNoStr = (applicationNo != null && !applicationNo.isEmpty()) ? applicationNo.iterator().next() : null;
+
+	    if (consumerCodeStr != null && (applicationNoStr == null)) {
+	        url.append("searchType=CONNECTION")
+	           .append("&connectionNumber=")
+	           .append(consumerCodeStr);
+	    } else if (applicationNoStr != null && (consumerCodeStr == null)) {
+	        url.append("isConnectionSearch=true");
+	        url.append("&applicationNumber=").append(applicationNoStr);
+	    } else if (consumerCodeStr != null) {
+	        url.append("isConnectionSearch=true");
+	        url.append("&connectionNumber=").append(consumerCodeStr);
+	    } else {
+	        throw new IllegalArgumentException("Either consumerCodes or applicationNo must be provided.");
+	    }
+
+	    if (tenantId != null && !tenantId.isEmpty()) {
+	        url.append("&tenantId=").append(tenantId);
+	    }
+
+	    try {
+	        log.info(url.toString());
+	        RestTemplate restTemplate = new RestTemplate();
+	        HttpHeaders headers = new HttpHeaders();
+	        headers.setContentType(MediaType.APPLICATION_JSON);
+	        headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+
+	        Map<String, Object> requestBody = new HashMap<>();
+	        requestBody.put("RequestInfo", requestInfo);
+	        requestBody.put("tenantId", tenantId);
+	        requestBody.put("isConnectionSearch", true);
+
+	        if (applicationNoStr != null) {
+	            requestBody.put("applicationNumber", applicationNoStr);
+	        } else if (consumerCodeStr != null) {
+	            requestBody.put("connectionNumber", consumerCodeStr);
+	        }
+
+	        HttpEntity<Map<String, Object>> entity = new HttpEntity<>(requestBody, headers);
+
+	        ResponseEntity<String> response = restTemplate.exchange(url.toString(), HttpMethod.POST, entity, String.class);
+
+	        if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
+	            ObjectMapper objectMapper = new ObjectMapper();
+	            JsonNode rootNode = objectMapper.readTree(response.getBody());
+
+	            JsonNode waterConnectionNode;
+	            if (businessservice.contains("WS")) {
+	                waterConnectionNode = rootNode.path("WaterConnection");
+	            } else {
+	                waterConnectionNode = rootNode.path("SewerageConnections");
+	            }
+	            if (waterConnectionNode.isArray()) {
+	                for (JsonNode connection : waterConnectionNode) {
+	                    Map<String, Object> connectionMap = objectMapper.convertValue(connection, Map.class);
+	                    waterConnections.add(connectionMap);
+	                }
+	            }
+	        }
+	    } catch (Exception ex) {
+	        log.error("Exception while calling WS service: ", ex);
+	    }
+
+	    return waterConnections;
+	}
+
+	
+
+
+
+	public List<Map<String, Object>> Curl_Property(RequestInfo requestInfo, String tenantId, String Property_Id) {
+		// TODO Auto-generated method stub
+		List<Map<String, Object>> PTConnections = new ArrayList<>();
+		StringBuilder property_url = new StringBuilder(config.getPtHost());
+		property_url.append(config.getPtUrl())
+					.append("tenantId=")
+					.append(tenantId);
+		
+		if(!Property_Id.isEmpty() || Property_Id != null){
+			property_url.append("&propertyIds=").append(Property_Id);
+		}
+	    try {
+	    	log.info(property_url.toString());
+	        RestTemplate restTemplate = new RestTemplate();
+	        HttpHeaders headers = new HttpHeaders();
+	        headers.setContentType(MediaType.APPLICATION_JSON);
+	        headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+
+	        // Creating request body as a map
+	        Map<String, Object> requestBody = new HashMap<>();
+	        requestBody.put("RequestInfo", requestInfo);
+	        requestBody.put("tenantId", tenantId);
+	        requestBody.put("isConnectionSearch", true);
+	        requestBody.put("propertyId", Property_Id);
+	        
+	        // Wrapping request body into HttpEntity
+	        HttpEntity<Map<String, Object>> entity = new HttpEntity<>(requestBody, headers);
+
+	        // Making POST request
+	        ResponseEntity<String> response = restTemplate.exchange( property_url.toString() , HttpMethod.POST, entity, String.class);
+
+	        // Check if response is successful
+	        if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
+	            ObjectMapper objectMapper = new ObjectMapper();
+	            JsonNode rootNode = objectMapper.readTree(response.getBody());
+
+	            // Extracting "propertyConnection" array
+	            JsonNode ptConnectionNode = rootNode.path("Properties");
+
+//	            JsonNode statusNode = ptConnectionNode.path("status");
+	            
+	            for (JsonNode connection : ptConnectionNode) {
+	                JsonNode statusNode = connection.path("status");
+	            
+	                if (statusNode.asText().equalsIgnoreCase("ACTIVE") || statusNode.asText().equalsIgnoreCase("PENDINGWS") ) {
+	                	Map<String, Object> connectionMap = objectMapper.convertValue(connection, Map.class);
+	                	PTConnections.add(connectionMap);
+	            }
+	        }
+	        
+	      }
+	        
+	    }catch (Exception ex) {
+	        log.error("Exception while calling PT service: ", ex);
+	    }
+		return PTConnections;
+	}
+
 }
+	
+

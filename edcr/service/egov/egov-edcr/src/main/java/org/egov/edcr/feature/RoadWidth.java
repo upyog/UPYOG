@@ -49,6 +49,18 @@
 
 package org.egov.edcr.feature;
 
+//RESIDENTIAL - Occupancies code
+import static org.egov.edcr.constants.DxfFileConstants.A;
+//RESIDENTIAL - Sub occupancies code
+import static org.egov.edcr.constants.DxfFileConstants.A2; // Old Age Home
+import static org.egov.edcr.constants.DxfFileConstants.A_R; //Single family Residential
+import static org.egov.edcr.constants.DxfFileConstants.A_AF; // Apartment/Flat
+import static org.egov.edcr.constants.DxfFileConstants.A_FH; // Farm House
+import static org.egov.edcr.constants.DxfFileConstants.A_SR; // Special Residential
+import static org.egov.edcr.constants.DxfFileConstants.A_HE; // Hostel Educational
+import static org.egov.edcr.constants.DxfFileConstants.A_SA; // Service Apartment
+import static org.egov.edcr.constants.DxfFileConstants.A_PO; // Professional Office
+import static org.egov.edcr.constants.DxfFileConstants.A_AF_GH;
 import static org.egov.edcr.constants.DxfFileConstants.B;
 import static org.egov.edcr.constants.DxfFileConstants.D;
 import static org.egov.edcr.constants.DxfFileConstants.F;
@@ -75,8 +87,9 @@ public class RoadWidth extends FeatureProcess {
 
     private static final Logger LOG = LogManager.getLogger(RoadWidth.class);
     private static final String RULE_34 = "34-1";
-    public static final String ROADWIDTH_DESCRIPTION = "Minimum Road Width";
+    public static final String ROADWIDTH_DESCRIPTION = "Road Width and Type";
     public static final BigDecimal TWELVE_POINT_TWENTY = BigDecimal.valueOf(12.20);
+    public static final BigDecimal THREE = BigDecimal.valueOf(3);
     public static final String NEW = "NEW";
 
     @Override
@@ -94,16 +107,19 @@ public class RoadWidth extends FeatureProcess {
        
         if (pl.getPlanInformation() != null && pl.getPlanInformation().getRoadWidth() != null) {
             BigDecimal roadWidth = pl.getPlanInformation().getRoadWidth();
+            String roadType = pl.getPlanInformation().getRoadType() != null ? pl.getPlanInformation().getRoadType() : "Mention Road type in PlanInfo" ;
             String typeOfArea = pl.getPlanInformation().getTypeOfArea();
-            if (typeOfArea != null && NEW.equalsIgnoreCase(typeOfArea)) {
+            if (typeOfArea != null
+//            		&& NEW.equalsIgnoreCase(typeOfArea)
+            		) {
                 ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
-                scrutinyDetail.setKey("Common_Road Width");
+                scrutinyDetail.setKey("Common_Road Width And Type");
                 scrutinyDetail.addColumnHeading(1, RULE_NO);
                 scrutinyDetail.addColumnHeading(2, DESCRIPTION);
-                scrutinyDetail.addColumnHeading(3, OCCUPANCY);
-                scrutinyDetail.addColumnHeading(4, PERMITTED);
-                scrutinyDetail.addColumnHeading(5, PROVIDED);
-                scrutinyDetail.addColumnHeading(6, STATUS);
+                scrutinyDetail.addColumnHeading(3, OCCUPANCY +" - "+ ROADTYPE);
+//                scrutinyDetail.addColumnHeading(4, PERMITTED);
+                scrutinyDetail.addColumnHeading(4, PROVIDED);
+//                scrutinyDetail.addColumnHeading(6, STATUS);
 
                 Map<String, String> details = new HashMap<>();
                 details.put(RULE_NO, RULE_34);
@@ -118,22 +134,22 @@ public class RoadWidth extends FeatureProcess {
                                     : pl.getVirtualBuilding().getMostRestrictiveFarHelper().getType();
 
                     if (occupancyType != null) {
-                        details.put(OCCUPANCY, occupancyType.getName());
+                        details.put(OCCUPANCY +" - "+ ROADTYPE, occupancyType.getName() +" - "+ "("+ roadType +")");
                         BigDecimal roadWidthRequired = occupancyValuesMap.get(occupancyType.getCode());
                         if (roadWidthRequired != null) {
-                            if (roadWidth.compareTo(roadWidthRequired) >= 0) {
-                                details.put(PERMITTED, String.valueOf(roadWidthRequired) + "m");
+//                            if (roadWidth.compareTo(roadWidthRequired) >= 0) {
+//                                details.put(PERMITTED, String.valueOf(roadWidthRequired) + "m");
                                 details.put(PROVIDED, roadWidth.toString() + "m");
-                                details.put(STATUS, Result.Accepted.getResultVal());
+//                                details.put(STATUS, Result.Accepted.getResultVal());
                                 scrutinyDetail.getDetail().add(details);
                                 pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
-                            } else {
-                                details.put(PERMITTED, String.valueOf(roadWidthRequired) + "m");
-                                details.put(PROVIDED, roadWidth.toString() + "m");
-                                details.put(STATUS, Result.Not_Accepted.getResultVal());
-                                scrutinyDetail.getDetail().add(details);
-                                pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
-                            }
+//                            } else {
+//                                details.put(PERMITTED, String.valueOf(roadWidthRequired) + "m");
+//                                details.put(PROVIDED, roadWidth.toString() + "m");
+//                                details.put(STATUS, Result.Not_Accepted.getResultVal());
+//                                scrutinyDetail.getDetail().add(details);
+//                                pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+//                            }
                         }
                     }
                 }
@@ -145,6 +161,16 @@ public class RoadWidth extends FeatureProcess {
     public Map<String, BigDecimal> getOccupancyValues() {
 
         Map<String, BigDecimal> roadWidthValues = new HashMap<>();
+        roadWidthValues.put(A, THREE);
+        roadWidthValues.put(A_R, THREE);
+        roadWidthValues.put(A2, THREE);
+        roadWidthValues.put(A_AF, THREE);
+        roadWidthValues.put(A_FH, THREE);
+        roadWidthValues.put(A_SR, THREE);
+        roadWidthValues.put(A_HE, THREE);
+        roadWidthValues.put(A_SA, THREE);
+        roadWidthValues.put(A_PO, THREE);
+        roadWidthValues.put(A_AF_GH, THREE);
         roadWidthValues.put(B, TWELVE_POINT_TWENTY);
         roadWidthValues.put(D, TWELVE_POINT_TWENTY);
         roadWidthValues.put(G, TWELVE_POINT_TWENTY);

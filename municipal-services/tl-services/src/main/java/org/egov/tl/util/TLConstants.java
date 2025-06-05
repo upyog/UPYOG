@@ -377,6 +377,7 @@ public class TLConstants {
 	
 	
 	public static final String TL_ACTION_INITIATE = "INITIATE";
+	public static final String TL_ACTION_APPLY = "APPLY";
 
 
 

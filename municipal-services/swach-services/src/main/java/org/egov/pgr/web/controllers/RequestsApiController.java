@@ -51,6 +51,20 @@ public class RequestsApiController{
 
     }
 
+    @RequestMapping(value="/request/image/_create", method = RequestMethod.POST)
+    public ResponseEntity<ImageResponse> requestsCreateimagePost(@Valid @RequestBody ImageRequest request) throws IOException {
+    	ImageData enrichedReq = pgrService.imagecreate(request);
+        ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(), true);
+        ImageResponseWrapper imageresposneWrapper = ImageResponseWrapper.builder().imagedata(enrichedReq).build();
+        ImageResponse response = ImageResponse.builder()
+        	    .responseInfo(responseInfo)
+        	    .imageresponsewrapper(Collections.singletonList(imageresposneWrapper))
+        	    .build();
+        return new ResponseEntity<>(response, HttpStatus.OK);
+
+    }
+
+    
     @RequestMapping(value="/request/_search", method = RequestMethod.POST)
     public ResponseEntity<ServiceResponse> requestsSearchPost(@Valid @RequestBody RequestInfoWrapper requestInfoWrapper,
                                                               @Valid @ModelAttribute RequestSearchCriteria criteria) {
@@ -88,6 +102,8 @@ public class RequestsApiController{
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    
+    
     @RequestMapping(value="/request/_count", method = RequestMethod.POST)
     public ResponseEntity<CountResponse> requestsCountPost(@Valid @RequestBody RequestInfoWrapper requestInfoWrapper,
                                                            @Valid @ModelAttribute RequestSearchCriteria criteria) {
