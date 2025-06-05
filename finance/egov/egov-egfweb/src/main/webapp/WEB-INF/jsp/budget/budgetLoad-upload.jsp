@@ -236,37 +236,16 @@
             });
         });
 
-        // function onChartOfAccountChange(selectElement) {
-        //     const selectedGlcode = selectElement.value; // glcode selected from visible dropdown
-        //     const allCoAs = document.getElementById('hiddenChartOfAccounts');
-
-        //     for (let i = 0; i < allCoAs.options.length; i++) {
-        //         const option = allCoAs.options[i];
-        //         if (option.value === selectedGlcode) {
-        //             const majorCode = option.getAttribute("data-majorcode");
-
-        //             // If you want to show only majorCode:
-        //             document.getElementById("majorCode").value = majorCode || "";
-
-        //             break;
-        //         }
-        //     }
-        // }
 
         function onChartOfAccountChange(selectElement) {
-            console.log("inside onchangecoa")
             const selectedGlcode = selectElement.value;
-
             // Get the current row
             const row = selectElement.closest('tr');
-            console.log("row",row)
-
             // Get hidden select and input within the same row
             const allCoAs = row.querySelector('.hiddenChartOfAccounts');
             const majorCodeInput = row.querySelector('.major-code');
-            console.log("allCoAs",allCoAs,"majorCodeInput",majorCodeInput)
+            
             if (!allCoAs || !majorCodeInput) {
-                console.warn("Missing .hiddenChartOfAccounts or .major-code");
                 return;
             }
             for (let i = 0; i < allCoAs.options.length; i++) {
@@ -279,7 +258,6 @@
             }
         }
 
-
         document.getElementById("reYear").addEventListener("input", function () {
             const input = this.value;
             const pattern = /^\d{4}-\d{2}$/;
@@ -290,23 +268,6 @@
             }
         });
 
-
- 
-        // function calculatePercentage(elem, index) {
-        //     var last = parseFloat(document.getElementsByName("budgetData[" + index + "].lastYearApproved")[0]?.value) || 0;
-        //     var current = parseFloat(document.getElementsByName("budgetData[" + index + "].currentApproved")[0]?.value) || 0;
-
-        //     var percentageField = document.getElementsByName("budgetData[" + index + "].percentageChange")[0];
-
-        //     if (last !== 0) {
-        //         var change = ((current - last) / last) * 100;
-        //         percentageField.value = change.toFixed(2);
-        //     } else if (current !== 0) {
-        //         percentageField.value = "∞";
-        //     } else {
-        //         percentageField.value = "0.00";
-        //     }
-        // }
 
         function calculatePercentage(elem) {
             const row = elem.closest('tr');
@@ -323,15 +284,47 @@
 
             if (last !== 0) {
                 const change = ((current - last) / last) * 100;
-                percentageInput.value = change.toFixed(2);
+                //percentageInput.value = change.toFixed(2);
+                percentageInput.value = Math.round(change);  // No decimal points
             } else if (current !== 0) {
                 percentageInput.value = "∞";
             } else {
-                percentageInput.value = "0.00";
+                percentageInput.value = "0";
             }
         }
 
+        function validateReYear(input) {
+			const errorMsg = document.getElementById('reYearError');
+			const submitBtn = document.getElementById('submitBtn');
+			const value = input.value.trim();
 
+			const regex = /^\d{4}-\d{2}$/;
+
+			if (!regex.test(value)) {
+				errorMsg.textContent = "Format should be YYYY-YY (e.g., 2024-25)";
+				errorMsg.style.display = "block";
+				input.setCustomValidity("Invalid format");
+				submitBtn.disabled = true;
+				return;
+			}
+
+			const parts = value.split("-");
+			const startYear = parseInt(parts[0], 10);
+			const endYearShort = parseInt(parts[1], 10);
+			const expectedEndYearShort = (startYear + 1) % 100;
+
+			if (endYearShort !== expectedEndYearShort) {
+				errorMsg.textContent = "Year range must be one year apart: e.g. 2024-25";
+				errorMsg.style.display = "block";
+				input.setCustomValidity("Year range invalid");
+				submitBtn.disabled = true;
+			} else {
+				errorMsg.textContent = "";
+				errorMsg.style.display = "none";
+				input.setCustomValidity("");
+				submitBtn.disabled = false;
+			}
+		}
 
     </script>
 </head>
@@ -428,12 +421,15 @@
                         </div>
                         <div class="form-group" style="text-align: left; margin-top: 10px;">
                             <label for="reYear">RE Year (YYYY-YY)</label><br>
-                            <input type="text" id="reYear" name="reYear" class="form-control" 
-                                   style="width: 200px;" 
-                                   pattern="^\d{4}-\d{2}$"
-                                   title="Enter year in YYYY-YY format (e.g., 2024-25)" 
+                            <input type="text"
+                                   id="reYear"
+                                   name="reYear"
+                                   class="form-control"
+                                   style="width: 200px;"
+                                   oninput="validateReYear(this)"  
                                    required />
-                        </div>                        
+                            <small id="reYearError" style="color: red; display: none;"></small>
+                        </div>                                                              
                         <div class="form-group" style="text-align: left; margin-top: 10px;">
                             <label for="beYear" >BE Year(YYYY-YY)</label><br>
                             <input type="text" id="beYear" name="beYear" class="form-control" style="width: 200px;" readonly/>
@@ -441,29 +437,29 @@
                     </div>
 
                     <!-- BOX 2: Table and Add Row Button -->
-                    <div style="border: 2px solid #fff; padding: 20px;">
+                    <div style= "width: 100%; overflow-x: auto; border: 2px solid #fff; padding: 20px;">
                         <!-- Your existing table -->
-                        <table border="1" width="80%" cellspacing="0" cellpadding="5" id="budgetTable">
+                        <table border="1" cellspacing="0" cellpadding="5" id="budgetTable" style="width: 100%; border-collapse: collapse; font-family: Arial, sans-serif; font-size: 14px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
                             <thead>
                                 <tr>
-                                    <th style="text-align:center; background-color: #f2851f; border-radius: 5px; color: #ffffff; width: 100px;">Fund </th>
-                                    <th style="text-align:center; background-color: #f2851f; border-radius: 5px; color: #ffffff; width: 100px;">Department </th>
-                                    <th style="text-align:center; background-color: #f2851f; border-radius: 5px; color: #ffffff; width: 100px;">Function </th>
-                                    <th style="text-align:center; background-color: #f2851f; border-radius: 5px; color: #ffffff; width: 100px;" >Chart of Account </th>
-                                    <th style="text-align:center; background-color: #f2851f; border-radius: 5px; color: #ffffff; width: 100px;" >Major Code </th>
-                                    <th style="text-align:center; background-color: #f2851f; border-radius: 5px;color: #ffffff; width: 100px;">RE Amount (Rs)</th>
-                                    <th style="text-align:center;background-color: #f2851f; border-radius: 5px;color: #ffffff; width: 100px;">BE Amount (Rs)</th>
-                                    <th style="text-align:center;background-color: #f2851f; border-radius: 5px;color: #ffffff; width: 100px;">Last Year Approved Budget</th>
-                                    <th style="text-align:center;background-color: #f2851f; border-radius: 5px;color: #ffffff; width: 100px;">Current Approved Budget</th>
-                                    <th style="text-align:center;background-color: #f2851f; border-radius: 5px;color: #ffffff; width: 100px;">% Increase / Decrease in Budget Head</th>
-                                    <th style="text-align:center;background-color: #f2851f; border-radius: 5px;color: #ffffff; width: 100px;">Planning Percentage</th>
-                                    <th style="text-align:center;background-color: #f2851f; border-radius: 5px;color: #ffffff; width: 100px;">Action</th>
+                                    <th style="background-color: #f2851f; color: #fff; padding: 10px; text-align: center; border: 1px solid #ddd;">Fund</th>
+                                    <th style="background-color: #f2851f; color: #fff; padding: 10px; text-align: center; border: 1px solid #ddd;">Department </th>
+                                    <th style="background-color: #f2851f; color: #fff; padding: 10px; text-align: center; border: 1px solid #ddd;">Function </th>
+                                    <th style="background-color: #f2851f; color: #fff; padding: 10px; text-align: center; border: 1px solid #ddd;" >Chart of Account </th>
+                                    <th style="background-color: #f2851f; color: #fff; padding: 10px; text-align: center; border: 1px solid #ddd;" >Major Code </th>
+                                    <th style="background-color: #f2851f; color: #fff; padding: 10px; text-align: center; border: 1px solid #ddd;">RE Amount (Rs)</th>
+                                    <th style="background-color: #f2851f; color: #fff; padding: 10px; text-align: center; border: 1px solid #ddd;">BE Amount (Rs)</th>
+                                    <th style="background-color: #f2851f; color: #fff; padding: 10px; text-align: center; border: 1px solid #ddd;">Last Year Approved Budget</th>
+                                    <th style="background-color: #f2851f; color: #fff; padding: 10px; text-align: center; border: 1px solid #ddd;">Current Approved Budget</th>
+                                    <th style="background-color: #f2851f; color: #fff; padding: 10px; text-align: center; border: 1px solid #ddd;">% Increase / Decrease in Budget Head</th>
+                                    <th style="background-color: #f2851f; color: #fff; padding: 10px; text-align: center; border: 1px solid #ddd;">Planning Percentage</th>
+                                    <th style="background-color: #f2851f; color: #fff; padding: 10px; text-align: center; border: 1px solid #ddd;">Action</th>
                                 </tr>
                             </thead>				
                             
                             <tbody>
                                 <tr id="budgetRowTemplate">
-                                    <td >
+                                    <td style="padding: 8px; border: 1px solid #ddd; text-align: center;">
                                     <s:select 
                                         list="%{dropdownData.fundList != null && !dropdownData.fundList.isEmpty() ? dropdownData.fundList : {}}" 
                                         listKey="code" 
@@ -475,7 +471,7 @@
                                         style="width: 100px;"
                                     />                                      
                                     </td>                               
-                                    <td>
+                                    <td style="padding: 8px; border: 1px solid #ddd; text-align: center;">
                                         <s:select 
                                             list="%{dropdownData.executingDepartmentList != null && !dropdownData.executingDepartmentList.isEmpty() ? dropdownData.executingDepartmentList : {}}" 
                                             listKey="code" 
@@ -487,7 +483,7 @@
                                             style="width: 100px;"
                                         />
                                     </td>
-                                    <td>
+                                    <td style="padding: 8px; border: 1px solid #ddd; text-align: center;">
                                         <s:select 
                                             list="%{dropdownData.functionList != null && !dropdownData.functionList.isEmpty() ? dropdownData.functionList : {}}" 
                                             listKey="code" 
@@ -499,31 +495,7 @@
                                             style="width: 100px;"
                                         />
                                     </td>                                
-                                    <!-- <td>
-                                        <s:select list="dropdownData.chartOfAccountList"
-                                            listKey="glcode"
-                                            listValue="%{glcode + ' - ' + name}"
-                                            name="budgetData[new].chartOfAccountCode"
-                                            headerKey="0"
-                                            headerValue="%{getText('lbl.choose.options')}"
-                                            id="budgetDetail_chartOfAccount"
-                                            onchange="onChartOfAccountChange(this)"
-                                            class="form-control"
-                                            style="width: 100px;"
-                                            />
-
-                                            <select id="hiddenChartOfAccounts" style="display:none;">
-                                                <c:forEach var="coa" items="${dropdownData.chartOfAccountList}">
-                                                    <option value="${coa.glcode}"
-                                                            data-majorcode="${coa.majorCode}">
-                                                        ${coa.glcode}
-                                                    </option>
-                                                </c:forEach>
-                                            </select>                                                                                   
-                                                                                                      
-                                    </td>
-                                    <td><input type="text" id="majorCode" name="majorCode" class="form-control" style="width: 100px;" readonly /></td>  -->
-                                    <td>
+                                    <td style="padding: 8px; border: 1px solid #ddd; text-align: center;">
                                         <s:select list="dropdownData.chartOfAccountList"
                                             listKey="glcode"
                                             listValue="%{glcode + ' - ' + name}"
@@ -542,7 +514,7 @@
                                             </c:forEach>
                                         </select>      
                                     </td>                              
-                                    <td>
+                                    <td style="padding: 8px; border: 1px solid #ddd; text-align: center;">
                                         <input type="text" id="majorCode" name="majorCode" class="form-control major-code" style="width: 100px;" readonly />
                                       </td>                                      
                                     <td>
@@ -552,7 +524,7 @@
                                             class="form-control"
                                             style="width: 100px;"
                                         />
-                                    <td>
+                                    <td style="padding: 8px; border: 1px solid #ddd; text-align: center;">
                                             <s:textfield 
                                                 name="budgetData[new].beAmount" 
                                                 oninput="this.value=this.value.replace(/[^0-9]/g,'')" 
@@ -560,11 +532,10 @@
                                                 style="width: 100px;"
                                             />
                                     </td>
-                                    <td><s:textfield name="budgetData[new].lastYearApproved"  class="form-control" style="width: 100px;" onblur="calculatePercentage(this)" /></td>
-                                    <!-- <td><s:textfield name="budgetData[new].currentApproved"  class="form-control"  style="width: 100px;" onblur="calculatePercentage(this,'new')" /></td> -->
-                                    <td><s:textfield name="budgetData[new].currentApproved" class="form-control" onblur="calculatePercentage(this)" /></td>
-                                    <td><s:textfield name="budgetData[new].percentageChange"  class="form-control" style="width: 100px;" /></td>
-                                    <td>
+                                    <td style="padding: 8px; border: 1px solid #ddd; text-align: center;"><s:textfield name="budgetData[new].lastYearApproved"  class="form-control" style="width: 100px;" onblur="calculatePercentage(this)" /></td>
+                                    <td style="padding: 8px; border: 1px solid #ddd; text-align: center;"><s:textfield name="budgetData[new].currentApproved" class="form-control" onblur="calculatePercentage(this)" /></td>
+                                    <td style="padding: 8px; border: 1px solid #ddd; text-align: center;"><s:textfield name="budgetData[new].percentageChange"  class="form-control" style="width: 100px;" /></td>
+                                    <td style="padding: 8px; border: 1px solid #ddd; text-align: center;">
                                         <s:textfield 
                                             name="budgetData[new].planningPercentage"
                                             oninput="this.value=this.value.replace(/[^0-9]/g,'')" 
@@ -572,7 +543,7 @@
                                             style="width: 100px;"
                                         />
                                     </td>
-                                    <td>
+                                    <td style="padding: 8px; border: 1px solid #ddd; text-align: center;">
                                         <button type="button" class="btn btn-sm" style="background-color: #fe7a51; color: #ffffff; margin-left:5px ;" onclick="deleteRow(this)">Delete</button>
                                     </td>
                                 </tr>
@@ -580,14 +551,27 @@
                             
                             <tbody id="tableBody">
                                 <!-- rows will be dynamically added here -->
-                            </tbody>
-                            
+                            </tbody>                            
                         </table>
 
                         <!-- Add row button -->
                         <div style="margin-top: 10px;">
-                            <button type="button" class="buttonsubmit" onclick="addNewRow()">Add New Entry</button>
-                        </div>
+                            <button type="button" onclick="addNewRow()"
+                                style="background-color:#f88865; 
+                                       color: white; 
+                                       border: none; 
+                                       padding: 6px 16px; 
+                                       font-size: 12px; 
+                                       margin-top: 10px;
+                                       border-radius: 4px; 
+                                       cursor: pointer; 
+                                       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+                                       transition: background-color 0.2s ease-in-out;"
+                                onmouseover="this.style.backgroundColor='#e65c2c';"
+                                onmouseout="this.style.backgroundColor='#f76c3c';">
+                                Add New Entry
+                            </button>
+                        </div>                        
 
                         <!-- Limit note -->
                         <div style="color: red; margin-top: 15px; font-size: 10px;">* Only 50 entries are allowed at a time.</div>
@@ -596,7 +580,7 @@
                     <div class="buttonbottom" id="buttondiv">
                         <table>
                             <tr>
-                                <td><s:submit type="submit" cssClass="buttonsubmit" key="lbl.submit" name="upload" method="upload" onclick="return submitManualData(event);" /></td>
+                                <td><s:submit type="submit" cssClass="buttonsubmit" key="lbl.submit" name="upload" method="upload" onclick="return submitManualData(event);" id="submitBtn" /></td>
                                 <!-- <td><input type="button" value="<s:text name='lbl.close'/>" onclick="javascript:window.close()" class="buttonsubmit" /></td> -->
                                 <td><input type="button" value="Close" onclick="window.history.back();" class="buttonsubmit"/></td>
                             </tr>
