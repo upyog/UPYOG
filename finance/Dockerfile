@@ -1,4 +1,3 @@
-
 FROM egovio/alpine-maven-builder-jdk-8:gcp AS build
 ARG WORK_DIR
 WORKDIR /app
