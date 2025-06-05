@@ -185,7 +185,6 @@ public class UserService {
 
 	private OwnerInfo createOwnerInfoFromAccount(GarbageAccount garbageAccount) {
 	    return OwnerInfo.builder()
-	            .name(garbageAccount.getName())
 	            .mobileNumber(garbageAccount.getMobileNumber())
 	            .tenantId(garbageAccount.getTenantId())
 	            .build();
@@ -251,7 +250,7 @@ public class UserService {
 		UserSearchRequest userSearchRequest = getBaseUserSearchRequest(owner.getTenantId(), requestInfo);
 		userSearchRequest.setMobileNumber(owner.getMobileNumber());
 		userSearchRequest.setUserType(owner.getType());
-		userSearchRequest.setName(owner.getName());
+		//userSearchRequest.setName(owner.getName());
 		
 
 		StringBuilder uri = new StringBuilder(grbgConfig.getUserServiceHostUrl())

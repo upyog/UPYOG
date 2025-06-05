@@ -380,7 +380,7 @@ public class MigrationService {
         userSearchRequest.setRequestInfo(requestInfo);
         userSearchRequest.setTenantId(criteria.getTenantId());
         userSearchRequest.setMobileNumber(criteria.getMobileNumber());
-        userSearchRequest.setName(criteria.getName());
+        //userSearchRequest.setName(criteria.getName());
         userSearchRequest.setActive(true);
         userSearchRequest.setUserType("CITIZEN");
         return userSearchRequest;
