@@ -103,11 +103,19 @@ public class PropertyConfiguration {
 
     @Value("${egov.idgen.ptid.name}")
     private String propertyIdGenName;
-
+    
     @Value("${egov.idgen.ptid.format}")
     private String propertyIdGenFormat;
 
+    @Value("${thirdParty.host}")
+    private String thirdPartyhost;
 
+    @Value("${thirdParty.subUrl}")
+    private String thirdPartysubUrl;
+    
+    @Value("${thirdparty.key}")
+   private String thirdpartykey;
+    
     //NOTIFICATION TOPICS
     @Value("${kafka.topics.notification.sms}")
     private String smsNotifTopic;
