@@ -99,6 +99,7 @@ public class SewerageServiceImpl implements SewerageService {
 	@Override
 	public List<SewerageConnection> createFullUpdateSewerageConnection(SewerageConnectionRequest sewerageConnectionRequest) {
 		int reqType = SWConstants.CREATE_APPLICATION;
+		Connection.StatusEnum status = sewerageConnectionRequest.getSewerageConnection().getStatus();
 
 		Boolean isMigration=false;
 
@@ -108,9 +109,20 @@ public class SewerageServiceImpl implements SewerageService {
 			validateDisconnectionRequest(sewerageConnectionRequest);
 		}
 		
-		if(sewerageConnectionRequest.getSewerageConnection().getAdditionalDetails().toString().contains("isMigrated"))
-		{
-			isMigration=true;
+		Object additionalDetailsObj = sewerageConnectionRequest.getSewerageConnection().getAdditionalDetails();
+
+		if (additionalDetailsObj instanceof Map) {
+		    Map<String, Object> additionalDetails = (Map<String, Object>) additionalDetailsObj;
+
+		    if (additionalDetails.containsKey("isMigrated")) {
+		        Object migratedValue = additionalDetails.get("isMigrated");
+
+		        if (migratedValue instanceof Boolean) {
+		            isMigration = (Boolean) migratedValue;
+		        } else if (migratedValue instanceof String) {
+		            isMigration = Boolean.parseBoolean((String) migratedValue);
+		        }
+		    }
 		}
 		else if (sewerageConnectionRequest.isReconnectRequest()) {
 			reqType = SWConstants.RECONNECTION;
@@ -160,7 +172,15 @@ public class SewerageServiceImpl implements SewerageService {
 		sewerageConnectionRequest.setSewerageConnection(encryptConnectionDetails(sewerageConnectionRequest.getSewerageConnection()));
 		/* encrypt here for connection holder details */
 		sewerageConnectionRequest.setSewerageConnection(encryptConnectionHolderDetails(sewerageConnectionRequest.getSewerageConnection()));
+		
+		if (isMigration) {
+			if (sewerageConnectionRequest.getSewerageConnection() != null
+					&& sewerageConnectionRequest.getSewerageConnection().getStatus() != null
+					&& !sewerageConnectionRequest.getSewerageConnection().getStatus().toString().isEmpty()) {
 
+				sewerageConnectionRequest.getSewerageConnection().setStatus(status);
+			}
+		}
 		sewerageDao.saveSewerageConnection(sewerageConnectionRequest);
 		if (!isMigration)
 		{
@@ -178,6 +198,7 @@ public class SewerageServiceImpl implements SewerageService {
 		else
 		{
 			log.info("Skipping Update for migrated connection");
+			  
 		}
 		return Arrays.asList(sewerageConnectionRequest.getSewerageConnection());
 	}
