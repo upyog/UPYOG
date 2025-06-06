@@ -35,7 +35,7 @@ public class PDFRequestGenerator {
 	private ObjectMapper objectMapper;
 
 	public PDFRequest generatePdfRequest(RequestInfoWrapper requestInfoWrapper, Property property,
-			PtTaxCalculatorTracker ptTaxCalculatorTracker, Bill bill) {
+			PtTaxCalculatorTracker ptTaxCalculatorTracker, Bill bill, Map<String, Integer> tenantIdDaysMap) {
 
 		Map<String, Object> dataObject = new HashMap<>();
 		Map<String, String> ptbr = new HashMap<>();
@@ -144,15 +144,17 @@ public class PDFRequestGenerator {
 		BigDecimal propertyTax = ptTaxCalculatorTracker.getPropertyTaxWithoutRebate();
 		ptbr.put("propertyTax", String.valueOf(propertyTax));
 
-		// TODO START
 		BigDecimal arrear = bill.getTotalAmount().subtract(ptTaxCalculatorTracker.getPropertyTax());
 		ptbr.put("arrear", String.valueOf(arrear));
 
 		ptbr.put("propertyTaxPlusArrear", String.valueOf(propertyTax.add(arrear)));
 
+		ptbr.put("rebateDays", String.valueOf(tenantIdDaysMap.getOrDefault(property.getTenantId(), 15)));
+
 		BigDecimal rebate = ptTaxCalculatorTracker.getRebateAmount();
 		ptbr.put("rebate", String.valueOf(rebate));
 
+		// TODO START
 		BigDecimal interest = new BigDecimal("0.00");
 		ptbr.put("interest", String.valueOf(interest));
 

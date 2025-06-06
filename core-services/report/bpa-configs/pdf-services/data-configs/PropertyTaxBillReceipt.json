@@ -127,6 +127,12 @@
 						}
 					},
 					{
+						"variable": "rebateDays",
+						"value": {
+							"path": "$.rebateDays"
+						}
+					},
+					{
 						"variable": "rebate",
 						"value": {
 							"path": "$.rebate"
