@@ -34,7 +34,7 @@ public class CacheConfig {
 	        List<String> parts = new ArrayList<>();
 	        String tenantId = ApplicationThreadLocals.getTenantID();
 	        String version = cacheEvictionService.getVersionForTenant(tenantId,MasterConstants.FUND_SEARCH_REDIS_CACHE_VERSION_KEY);
-	        
+	        addIfNotNull(parts, "tenant", tenantId);
 	        parts.add("version=" + version);
 	        addIfNotNull(parts, "id", criteria.getId());
 	        addIfNotNull(parts, "name", criteria.getName());
@@ -48,7 +48,7 @@ public class CacheConfig {
 	        addIfNotNull(parts, "createdDate", criteria.getCreatedDate() != null ? criteria.getCreatedDate().getTime() : null);
 	        addIfNotNull(parts, "lastModifiedBy", criteria.getLastModifiedBy());
 	        addIfNotNull(parts, "lastModifiedDate", criteria.getLastModifiedDate() != null ? criteria.getLastModifiedDate().getTime() : null);
-	        addIfNotNull(parts, "tenant", tenantId);
+	       
 
 	        return String.join("::", parts);
 	    };

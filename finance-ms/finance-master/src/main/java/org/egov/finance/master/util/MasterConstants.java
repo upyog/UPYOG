@@ -29,5 +29,8 @@ public class MasterConstants {
 	public static final String FUND_SEARCH_REDIS_KEY_GENERATOR = "fundSearchKeyGenerator";
 	public static final String FUND_SEARCH_REDIS_CACHE_NAME = "fundSearchCache";
 	public static final String FUND_SEARCH_REDIS_CACHE_VERSION_KEY = "fundSearchCacheVersion::";
+	public static final String REDIS_SEARCH_VERSION_TAG= "::version=";
+	public static final String REDIS_SEARCH_TENANT_TAG = "::tenant=";
+	public static final String REDIS_START_VERSION_V1 = "v1";
 
 }

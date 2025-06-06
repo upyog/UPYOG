@@ -44,7 +44,7 @@ public class FundService {
 		this.cacheEvictionService = cacheEvictionService;
 	}
 
-	@Cacheable(value = "fundSearchCache", keyGenerator = "fundSearchKeyGenerator")
+	@Cacheable(value = MasterConstants.FUND_SEARCH_REDIS_CACHE_NAME, keyGenerator = MasterConstants.FUND_SEARCH_REDIS_KEY_GENERATOR)
 	public List<FundModel> search(FundModel fundCriteria) {
 		Specification<Fund> spec = Specification.where(null);
 		if (fundCriteria.getCode() != null && !fundCriteria.getCode().isEmpty()) {
@@ -92,7 +92,9 @@ public class FundService {
 			});
 		}
 		fundE.setParentId(parentFund);
-		cacheEvictionService.incrementVersionForTenant(ApplicationThreadLocals.getTenantID(),MasterConstants.FUND_SEARCH_REDIS_CACHE_VERSION_KEY);
+		cacheEvictionService.incrementVersionForTenant(ApplicationThreadLocals.getTenantID(),
+				MasterConstants.FUND_SEARCH_REDIS_CACHE_VERSION_KEY,
+				MasterConstants.FUND_SEARCH_REDIS_CACHE_NAME);
 		return validation.entityTOModel(fundRepository.save(fundE));
 	}
 
@@ -132,7 +134,9 @@ public class FundService {
 		} else {
 			fundUpdate.setParentId(null);
 		}
-		cacheEvictionService.incrementVersionForTenant(ApplicationThreadLocals.getTenantID(),MasterConstants.FUND_SEARCH_REDIS_CACHE_VERSION_KEY);
+		cacheEvictionService.incrementVersionForTenant(ApplicationThreadLocals.getTenantID(),
+				MasterConstants.FUND_SEARCH_REDIS_CACHE_VERSION_KEY,
+				MasterConstants.FUND_SEARCH_REDIS_CACHE_NAME);
 		return validation.entityTOModel(fundRepository.save(fundUpdate));
 
 	}
