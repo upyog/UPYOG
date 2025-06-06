@@ -4,7 +4,7 @@
  * @author bikashdhal
  */
 
-package org.egov.finance.master.config.MultiTenant;
+package org.egov.finance.master.config.multitenant;
 
 import java.sql.Connection;
 import java.sql.SQLException;

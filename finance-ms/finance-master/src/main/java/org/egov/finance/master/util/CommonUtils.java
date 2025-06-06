@@ -1,14 +1,17 @@
+/**
+ * 
+ * 
+ * @author Surya
+ */
 package org.egov.finance.master.util;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import org.egov.finance.master.entity.AuditDetails;
 import org.egov.finance.master.exception.MasterServiceException;
 import org.egov.finance.master.model.MasterDetail;
 import org.egov.finance.master.model.MdmsCriteria;
@@ -81,9 +84,9 @@ public class CommonUtils {
 
 		List<MasterDetail> masterDetails = new ArrayList<>();
 
-		names.forEach(name -> {
-			masterDetails.add(MasterDetail.builder().name(name).filter(filter).build());
-		});
+		names.forEach(name -> 
+			masterDetails.add(MasterDetail.builder().name(name).filter(filter).build())
+		);
 
 		ModuleDetail moduleDetail = ModuleDetail.builder().moduleName(moduleName).masterDetails(masterDetails).build();
 		List<ModuleDetail> moduleDetails = new ArrayList<>();

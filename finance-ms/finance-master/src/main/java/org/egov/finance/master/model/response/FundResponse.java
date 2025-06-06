@@ -12,7 +12,6 @@ import org.egov.finance.master.model.FundModel;
 import org.egov.finance.master.model.ResponseInfo;
 
 import lombok.Builder;
-import lombok.Data;
 import lombok.Getter;
 
 @Builder

@@ -29,14 +29,18 @@ import jakarta.validation.Valid;
 @RequestMapping("/fund")
 public class FundController {
 
-	@Autowired
 	private FundService fundService;
 
-	@Autowired
 	private ResponseInfoFactory responseInfoFactory;
 
+	@Autowired
+	public FundController(FundService fundService, ResponseInfoFactory responseInfoFactory) {
+		this.fundService = fundService;
+		this.responseInfoFactory = responseInfoFactory;
+	}
+
 	@PostMapping("/_save")
-	private ResponseEntity<?> saveFund(@Valid @RequestBody FundRequest fund) {
+	public ResponseEntity<FundResponse> saveFund(@Valid @RequestBody FundRequest fund) {
 		final FundModel fundM = fundService.save(fund);
 		ResponseInfo resInfo = responseInfoFactory.createResponseInfoFromRequestInfo(fund.getRequestInfo(), true);
 		FundResponse response = FundResponse.builder().responseInfo(resInfo).funds(Arrays.asList(fundM)).build();
@@ -44,7 +48,7 @@ public class FundController {
 	}
 
 	@PostMapping(value = "/_search")
-	public ResponseEntity<?> _search(@RequestBody FundRequest request) {
+	public ResponseEntity<FundResponse> search(@RequestBody FundRequest request) {
 		final List<FundModel> fundM = fundService.search(request.getFund());
 		ResponseInfo resInfo = responseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(), true);
 		FundResponse response = FundResponse.builder().responseInfo(resInfo).funds(fundM).build();

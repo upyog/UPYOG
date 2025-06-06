@@ -3,7 +3,7 @@
  * 
  * @author bikashdhal
  */
-package org.egov.finance.master.config.MultiTenant;
+package org.egov.finance.master.config.multitenant;
 
 import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
 
@@ -18,19 +18,19 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class DomainBasedSchemaTenantIdentifierResolver implements CurrentTenantIdentifierResolver {
 
-    @Value("${default.schema.name}")
-    private String defaultSchema;
+	@Value("${default.schema.name}")
+	private String defaultSchema;
 
-    @Override
-    public String resolveCurrentTenantIdentifier() {
-    	String tenantId = ApplicationThreadLocals.getTenantID();
-    	log.debug(defaultIfBlank(tenantId, defaultSchema));
-        return defaultIfBlank(tenantId, defaultSchema);
-    }
+	@Override
+	public String resolveCurrentTenantIdentifier() {
+		String tenantId = ApplicationThreadLocals.getTenantID();
+		log.debug(defaultIfBlank(tenantId, defaultSchema));
+		return defaultIfBlank(tenantId, defaultSchema);
+	}
 
-    @Override
-    public boolean validateExistingCurrentSessions() {
-        return true;
-    }
+	@Override
+	public boolean validateExistingCurrentSessions() {
+		return true;
+	}
 
 }

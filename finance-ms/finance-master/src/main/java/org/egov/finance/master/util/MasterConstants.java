@@ -6,7 +6,11 @@
 package org.egov.finance.master.util;
 
 public class MasterConstants {
-	public  static final String REQUEST_INFO = "RequestInfo";
+	
+	private MasterConstants() {
+		super();
+	}
+	public static final String REQUEST_INFO = "RequestInfo";
 	public static final String REQUEST_TENANT_SPLIT_REGEX = "\\.";
 	public static final String ORG_EGOV_FINANCE = "org.egov.finance.*";
 	public static final String EGOV_PERSISTENCE_UNIT = "EgovPersistenceUnit";
@@ -22,6 +26,8 @@ public class MasterConstants {
 	public static final String INVALID_PARENT_ID = "INVALID_PARENT_ID";
 	public static final String INVALID_PARENT_ID_MSG = "Please Provide a valid parent Parent Id";
 	public static final String INVALID_TEXT_CONTAINS_HTML_TAGS_MSG = "Invalid Text, contains HTML Tags";
+	public static final String FUND_SEARCH_REDIS_KEY_GENERATOR = "fundSearchKeyGenerator";
+	public static final String FUND_SEARCH_REDIS_CACHE_NAME = "fundSearchCache";
+	public static final String FUND_SEARCH_REDIS_CACHE_VERSION_KEY = "fundSearchCacheVersion::";
 
 }
-

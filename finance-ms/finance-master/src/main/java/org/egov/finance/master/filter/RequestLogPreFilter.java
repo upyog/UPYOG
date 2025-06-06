@@ -7,7 +7,7 @@ package org.egov.finance.master.filter;
 
 import java.io.IOException;
 
-import org.egov.finance.master.config.Filter.CachedBodyHttpServletRequest;
+import org.egov.finance.master.config.filter.CachedBodyHttpServletRequest;
 import org.egov.finance.master.model.RequestInfo;
 import org.egov.finance.master.util.ApplicationThreadLocals;
 import org.egov.finance.master.util.MasterConstants;
@@ -29,8 +29,12 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 public class RequestLogPreFilter implements Filter {
 
-	@Autowired
 	private ObjectMapper mapper;
+
+	@Autowired
+	public RequestLogPreFilter(ObjectMapper mapper) {
+		this.mapper = mapper;
+	}
 
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)

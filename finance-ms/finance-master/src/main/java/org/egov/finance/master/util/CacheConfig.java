@@ -1,3 +1,8 @@
+/**
+ * 
+ * 
+ * @author Surya
+ */
 package org.egov.finance.master.util;
 
 import java.util.ArrayList;
@@ -28,9 +33,9 @@ public class CacheConfig {
 	        FundModel criteria = (FundModel) params[0];
 	        List<String> parts = new ArrayList<>();
 	        String tenantId = ApplicationThreadLocals.getTenantID();
-	        String version = cacheEvictionService.getVersionForTenant(tenantId);
+	        String version = cacheEvictionService.getVersionForTenant(tenantId,MasterConstants.FUND_SEARCH_REDIS_CACHE_VERSION_KEY);
 	        
-	        parts.add("v=" + version);
+	        parts.add("version=" + version);
 	        addIfNotNull(parts, "id", criteria.getId());
 	        addIfNotNull(parts, "name", criteria.getName());
 	        addIfNotNull(parts, "code", criteria.getCode());

@@ -9,7 +9,6 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.egov.finance.master.entity.Fund;
 import org.egov.finance.master.exception.MasterServiceException;
@@ -72,7 +71,7 @@ public class FundService {
 		}
 
 		return fundRepository.findAll(spec).stream().map(validation::entityTOModel)
-				.sorted(Comparator.comparingLong(FundModel::getId)).collect(Collectors.toList());
+				.sorted(Comparator.comparingLong(FundModel::getId)).toList();
 	}
 
 	public FundModel save(FundRequest request) {
@@ -93,6 +92,7 @@ public class FundService {
 			});
 		}
 		fundE.setParentId(parentFund);
+		cacheEvictionService.incrementVersionForTenant(ApplicationThreadLocals.getTenantID(),MasterConstants.FUND_SEARCH_REDIS_CACHE_VERSION_KEY);
 		return validation.entityTOModel(fundRepository.save(fundE));
 	}
 
@@ -132,7 +132,7 @@ public class FundService {
 		} else {
 			fundUpdate.setParentId(null);
 		}
-		cacheEvictionService.incrementVersionForTenant(ApplicationThreadLocals.getTenantID());
+		cacheEvictionService.incrementVersionForTenant(ApplicationThreadLocals.getTenantID(),MasterConstants.FUND_SEARCH_REDIS_CACHE_VERSION_KEY);
 		return validation.entityTOModel(fundRepository.save(fundUpdate));
 
 	}
