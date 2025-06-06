@@ -21,6 +21,9 @@ public interface SewerageCalculatorDao {
 	
 	List<String> getConnectionsNoByLocality(String tenantId, String connectionType, String locality);
 	
+	List<String> getConnectionsNoByGroups(String tenantId, String connectionType, String groups);
+
+	
 	Long searchLastDemandGenFromDate(String consumerCode, String tenantId);
 	
 	Boolean isConnectionDemandAvailableForBillingCycle(String tenantId, Long taxPeriodFrom, Long taxPeriodTo, String consumerCode); 

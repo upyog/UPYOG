@@ -268,6 +268,14 @@ public class SWCalculatorQueryBuilder {
 			query.append(" egsw.tenantid= ? ");
 			preparedStatement.add(criteria.getTenantId());
 		}
+		
+		if (criteria.getStatus() != null) {
+			addClauseIfRequired(preparedStatement, query);
+			query.append(" egsw.status = ? ");
+			preparedStatement.add(criteria.getStatus());
+		}
+		
+		
 		if (criteria.getBatch() != null) {
 			addClauseIfRequired(preparedStatement, query);
 			query.append(" egbm.blockcode = ? ");
@@ -276,6 +284,27 @@ public class SWCalculatorQueryBuilder {
 		query.append(" ORDER BY egsw.createdtime ");
 		return query.toString();
 	}
+	
+	
+	public String searchBillGenerationSchedulerQuerys(BillGenerationSearchCriteria criteria,
+			List<Object> preparedStatement) {
+		StringBuilder query = new StringBuilder(billGenerationSchedulerSearchQuery);
+		if(!StringUtils.isEmpty(criteria.getTenantId())) {
+			addClauseIfRequired(preparedStatement, query);
+			query.append(" tenantid= ? ");
+			preparedStatement.add(criteria.getTenantId());
+		}
+		
+		if (criteria.getStatus() != null) {
+			addClauseIfRequired(preparedStatement, query);
+			query.append(" status = ? ");
+			preparedStatement.add(criteria.getStatus());
+		}
+		query.append(" and groups is not null ");
+		query.append(" ORDER BY createdtime ");
+		return query.toString();
+	}
+	
 
 	public String getConnectionNumber(String tenantId, String consumerCode,String connectionType, List<Object> preparedStatement,Long fromDate, Long toDate) {
 		//StringBuilder query = new StringBuilder(connectionNoListQuery);
@@ -360,7 +389,7 @@ public class SWCalculatorQueryBuilder {
 		}
 	}
 	
-	public String getConnectionsNoByLocality(String tenantId, String connectionType,String status,String locality, List<Object> preparedStatement) {
+	public String getConnectionsNoByLocality(String tenantId, String connectionType,String status,String locality, String groups,List<Object> preparedStatement) {
 		StringBuilder query = new StringBuilder(connectionNoByLocality);
 		// add tenantid
 		if(tenantId != null) {
@@ -389,9 +418,16 @@ public class SWCalculatorQueryBuilder {
 
 		if (locality != null) {
 			addClauseIfRequired(preparedStatement, query);
-			query.append(" locality = ? ");
+			query.append(" conn.locality = ? ");
 			preparedStatement.add(locality);
 		}
+		
+		
+		if (groups != null) {
+	        addClauseIfRequired(preparedStatement, query);
+	        query.append(" conn.additionaldetails->>'groups' = ? ");
+	        preparedStatement.add(groups); // Exact match
+	    }
 		
 		//Getting only non exempted connection to generate bill
 		addClauseIfRequired(preparedStatement, query);
