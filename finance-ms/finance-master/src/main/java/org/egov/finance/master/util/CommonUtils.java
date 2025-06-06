@@ -18,6 +18,8 @@ import org.egov.finance.master.model.MdmsCriteria;
 import org.egov.finance.master.model.MdmsCriteriaReq;
 import org.egov.finance.master.model.ModuleDetail;
 import org.egov.finance.master.model.RequestInfo;
+import org.springframework.beans.BeanWrapper;
+import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -73,9 +75,9 @@ public class CommonUtils {
 			errormap.put("MDMS_ERROR", e.getLocalizedMessage());
 		}
 
-		if(!CollectionUtils.isEmpty(errormap))
+		if (!CollectionUtils.isEmpty(errormap))
 			throw new MasterServiceException(errormap);
-		
+
 		return Collections.emptyMap();
 	}
 
@@ -84,9 +86,7 @@ public class CommonUtils {
 
 		List<MasterDetail> masterDetails = new ArrayList<>();
 
-		names.forEach(name -> 
-			masterDetails.add(MasterDetail.builder().name(name).filter(filter).build())
-		);
+		names.forEach(name -> masterDetails.add(MasterDetail.builder().name(name).filter(filter).build()));
 
 		ModuleDetail moduleDetail = ModuleDetail.builder().moduleName(moduleName).masterDetails(masterDetails).build();
 		List<ModuleDetail> moduleDetails = new ArrayList<>();
@@ -94,5 +94,26 @@ public class CommonUtils {
 		MdmsCriteria mdmsCriteria = MdmsCriteria.builder().tenantId(tenantId).moduleDetails(moduleDetails).build();
 		return MdmsCriteriaReq.builder().requestInfo(requestInfo).mdmsCriteria(mdmsCriteria).build();
 	}
-	
+
+	/**
+	 * Removes Null Values between source and target
+	 *
+	 * @param source is the request object
+	 * @param target is the object wich will be compared with source
+	 * 
+	 * @author bpattanayak
+	 */
+	public void applyNonNullFields(Object source, Object target) {
+		BeanWrapper srcWrapper = new BeanWrapperImpl(source);
+		BeanWrapper trgWrapper = new BeanWrapperImpl(target);
+
+		for (java.beans.PropertyDescriptor propertyDescriptor : srcWrapper.getPropertyDescriptors()) {
+			String propertyName = propertyDescriptor.getName();
+			Object value = srcWrapper.getPropertyValue(propertyName);
+
+			if (value != null && trgWrapper.isWritableProperty(propertyName)) {
+				trgWrapper.setPropertyValue(propertyName, value);
+			}
+		}
+	}
 }

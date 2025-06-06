@@ -16,10 +16,9 @@ import org.egov.finance.master.model.FundModel;
 import org.egov.finance.master.model.request.FundRequest;
 import org.egov.finance.master.repository.FundRepository;
 import org.egov.finance.master.util.ApplicationThreadLocals;
+import org.egov.finance.master.util.CommonUtils;
 import org.egov.finance.master.util.MasterConstants;
 import org.egov.finance.master.validation.FundValidation;
-import org.springframework.beans.BeanWrapper;
-import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.jpa.domain.Specification;
@@ -29,19 +28,21 @@ import org.springframework.util.ObjectUtils;
 @Service
 public class FundService {
 
-	
 	private FundRepository fundRepository;
-	
+
 	private FundValidation validation;
-	
+
 	private CacheEvictionService cacheEvictionService;
-	
+
+	private CommonUtils commonUtils;
+
 	@Autowired
 	public FundService(FundRepository fundRepository, FundValidation validation,
-			CacheEvictionService cacheEvictionService) {
+			CacheEvictionService cacheEvictionService, CommonUtils commonUtils) {
 		this.fundRepository = fundRepository;
 		this.validation = validation;
 		this.cacheEvictionService = cacheEvictionService;
+		this.commonUtils = commonUtils;
 	}
 
 	@Cacheable(value = MasterConstants.FUND_SEARCH_REDIS_CACHE_NAME, keyGenerator = MasterConstants.FUND_SEARCH_REDIS_KEY_GENERATOR)
@@ -70,6 +71,8 @@ public class FundService {
 			spec = spec.and((root, query, cb) -> cb.equal(root.get("identifier"), fundCriteria.getIdentifier()));
 		}
 
+		cacheEvictionService.incrementVersionForTenant(ApplicationThreadLocals.getTenantID(),
+				MasterConstants.FUND_SEARCH_REDIS_CACHE_VERSION_KEY, MasterConstants.FUND_SEARCH_REDIS_CACHE_NAME);
 		return fundRepository.findAll(spec).stream().map(validation::entityTOModel)
 				.sorted(Comparator.comparingLong(FundModel::getId)).toList();
 	}
@@ -93,26 +96,10 @@ public class FundService {
 		}
 		fundE.setParentId(parentFund);
 		cacheEvictionService.incrementVersionForTenant(ApplicationThreadLocals.getTenantID(),
-				MasterConstants.FUND_SEARCH_REDIS_CACHE_VERSION_KEY,
-				MasterConstants.FUND_SEARCH_REDIS_CACHE_NAME);
+				MasterConstants.FUND_SEARCH_REDIS_CACHE_VERSION_KEY, MasterConstants.FUND_SEARCH_REDIS_CACHE_NAME);
 		return validation.entityTOModel(fundRepository.save(fundE));
 	}
 
-	public static void applyNonNullFields(Object source, Object target) {
-		BeanWrapper srcWrapper = new BeanWrapperImpl(source);
-		BeanWrapper trgWrapper = new BeanWrapperImpl(target);
-
-		for (java.beans.PropertyDescriptor propertyDescriptor : srcWrapper.getPropertyDescriptors()) {
-			String propertyName = propertyDescriptor.getName();
-			Object value = srcWrapper.getPropertyValue(propertyName);
-
-			if (value != null && trgWrapper.isWritableProperty(propertyName)) {
-				trgWrapper.setPropertyValue(propertyName, value);
-			}
-		}
-	}
-
-	
 	public FundModel update(FundRequest request) {
 		Fund fundRequest = validation.modelToEntity(request.getFund());
 		Map<String, String> errorMap = new HashMap<>();
@@ -125,7 +112,7 @@ public class FundService {
 			throw new MasterServiceException(errorMap);
 		});
 
-		applyNonNullFields(fundRequest, fundUpdate);
+		commonUtils.applyNonNullFields(fundRequest, fundUpdate);
 		if (!ObjectUtils.isEmpty(request.getFund().getParentId())) {
 			fundUpdate.setParentId(fundRepository.findById(request.getFund().getParentId()).orElseThrow(() -> {
 				errorMap.put(MasterConstants.INVALID_PARENT_ID, MasterConstants.INVALID_PARENT_ID_MSG);
@@ -135,8 +122,7 @@ public class FundService {
 			fundUpdate.setParentId(null);
 		}
 		cacheEvictionService.incrementVersionForTenant(ApplicationThreadLocals.getTenantID(),
-				MasterConstants.FUND_SEARCH_REDIS_CACHE_VERSION_KEY,
-				MasterConstants.FUND_SEARCH_REDIS_CACHE_NAME);
+				MasterConstants.FUND_SEARCH_REDIS_CACHE_VERSION_KEY, MasterConstants.FUND_SEARCH_REDIS_CACHE_NAME);
 		return validation.entityTOModel(fundRepository.save(fundUpdate));
 
 	}
