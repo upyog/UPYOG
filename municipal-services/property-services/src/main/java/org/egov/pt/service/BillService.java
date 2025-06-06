@@ -47,5 +47,10 @@ public class BillService {
 				.resposneInfo(responseInfoFactory.createResponseInfoFromRequestInfo(requestInfo, true)).bill(bills)
 				.build();
 	}
+	
+	public List<Bill> updateBill(RequestInfo requestInfo, List<Bill> bills) {
+
+		return billRepository.updateBill(requestInfo, bills);
+	}
 
 }

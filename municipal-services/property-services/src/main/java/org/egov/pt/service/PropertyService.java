@@ -832,11 +832,25 @@ public class PropertyService {
 
 		return ptTaxCalculatorTrackerRequest.getPtTaxCalculatorTracker();
 	}
+	
+	public PtTaxCalculatorTracker updatePtTaxCalculatorTracker(
+			PtTaxCalculatorTrackerRequest ptTaxCalculatorTrackerRequest) {
+
+		producer.push(config.getUpdatePropertyTaxCalculatorTrackerTopic(), ptTaxCalculatorTrackerRequest);
+
+		return ptTaxCalculatorTrackerRequest.getPtTaxCalculatorTracker();
+	}
 
 	public List<PtTaxCalculatorTracker> getTaxCalculatedProperties(
 			PtTaxCalculatorTrackerSearchCriteria ptTaxCalculatorTrackerSearchCriteria) {
 
 		return repository.getTaxCalculatedProperties(ptTaxCalculatorTrackerSearchCriteria);
+	}
+	
+	public List<String> getTaxCalculatedTenantIds(
+			PtTaxCalculatorTrackerSearchCriteria ptTaxCalculatorTrackerSearchCriteria) {
+
+		return repository.getTaxCalculatedTenantIds(ptTaxCalculatorTrackerSearchCriteria);
 	}
 
 	public boolean isCriteriaEmpty(PropertyCriteria propertyCriteria) {

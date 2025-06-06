@@ -53,17 +53,22 @@ public class DemandService {
 		return savedDemands;
 	}
 
-	List<Demand> searchDemand(String tenantId, Set<String> consumerCodes, RequestInfo requestInfo,
+	List<Demand> searchDemand(String tenantId, Set<String> demandIds, Set<String> consumerCodes, RequestInfo requestInfo,
 			String businessService) {
 
 		RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(requestInfo).build();
-		DemandResponse response = demandRepository.search(tenantId, consumerCodes, requestInfoWrapper, businessService);
+		DemandResponse response = demandRepository.search(tenantId, demandIds, consumerCodes, requestInfoWrapper, businessService);
 
 		if (CollectionUtils.isEmpty(response.getDemands())) {
 			return null;
 		} else {
 			return response.getDemands();
 		}
+	}
+	
+	public List<Demand> updateDemand(RequestInfo requestInfo, List<Demand> demands) {
+
+		return demandRepository.updateDemand(requestInfo, demands);
 	}
 
 }

@@ -94,7 +94,7 @@ public class Scheduler {
 		pgService.transferAmount(requestInfo);
 		log.info("transferAmount CRON JOB Ends");
 	}
-	
+
 	@Scheduled(cron = "${cron.job.default.pg.settlement.status.update}", zone = "IST")
 	public void settlementStatusUpdate() {
 		log.info("settlementStatusUpdate CRON JOB Starts");
@@ -109,6 +109,22 @@ public class Scheduler {
 		RequestInfo requestInfo = requestInfoUtils.getSystemRequestInfo();
 		siteBookingService.changeSiteStatus(requestInfo);
 		log.info("changeSiteStatus CRON JOB Ends");
+	}
+
+	@Scheduled(cron = "${cron.job.default.property.tracker.bill.status.updater}", zone = "IST")
+	public void updateTrackerBillStatus() {
+		log.info("updateTrackerBillStatus CRON JOB Starts");
+		RequestInfo requestInfo = requestInfoUtils.getSystemRequestInfo();
+		propertyService.updateTrackerBillStatus(requestInfo);
+		log.info("updateTrackerBillStatus CRON JOB Ends");
+	}
+
+	@Scheduled(cron = "${cron.job.default.property.tracker.rebate.amount.reverser}", zone = "IST")
+	public void reverseRebateAmount() {
+		log.info("reverseRebateAmount CRON JOB Starts");
+		RequestInfo requestInfo = requestInfoUtils.getSystemRequestInfo();
+		propertyService.reverseRebateAmount(requestInfo);
+		log.info("reverseRebateAmount CRON JOB Ends");
 	}
 
 }

@@ -13,6 +13,7 @@ import org.egov.pt.web.contracts.RequestInfoWrapper;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.util.CollectionUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -71,15 +72,32 @@ public class DemandRepository {
 
 	}
 
-	public DemandResponse search(String tenantId, Set<String> consumerCodes, RequestInfoWrapper requestInfoWrapper,
-			String businessService) {
+	public DemandResponse search(String tenantId, Set<String> demandIds, Set<String> consumerCodes,
+			RequestInfoWrapper requestInfoWrapper, String businessService) {
 
-		String uri = config.getBillHost().concat(config.getDemandSearchEndpoint());
-		uri = uri.replace("{1}", tenantId);
-		uri = uri.replace("{2}", businessService);
-		uri = uri.replace("{3}", StringUtils.join(consumerCodes, ','));
+		StringBuilder uriBuilder = new StringBuilder(config.getBillHost()).append(config.getDemandSearchEndpoint());
 
-		Object result = restCallRepository.fetchResult(new StringBuilder(uri), requestInfoWrapper);
+		if (!StringUtils.isEmpty(tenantId)) {
+			uriBuilder.append("?tenantId=").append(tenantId);
+		}
+
+		boolean hasQueryParam = uriBuilder.toString().contains("?");
+
+		if (!StringUtils.isEmpty(businessService)) {
+			uriBuilder.append(hasQueryParam ? "&" : "?").append("businessService=").append(businessService);
+			hasQueryParam = true;
+		}
+
+		if (!CollectionUtils.isEmpty(consumerCodes)) {
+			uriBuilder.append(hasQueryParam ? "&" : "?").append("consumerCode=")
+					.append(String.join(",", consumerCodes));
+			hasQueryParam = true;
+		}
+		if (!CollectionUtils.isEmpty(demandIds)) {
+			uriBuilder.append(hasQueryParam ? "&" : "?").append("demandId=").append(String.join(",", demandIds));
+		}
+
+		Object result = restCallRepository.fetchResult(uriBuilder, requestInfoWrapper);
 		DemandResponse response = null;
 
 		try {

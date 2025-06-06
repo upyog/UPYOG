@@ -8,6 +8,7 @@ import java.util.Date;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.pt.models.AuditDetails;
 import org.egov.pt.models.PtTaxCalculatorTracker;
+import org.egov.pt.models.enums.BillStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
@@ -35,7 +36,9 @@ public class PtTaxCalculatorTrackerRowMapper implements RowMapper<PtTaxCalculato
 				.fromDate(purseToDate(rs.getString("fromdate"))).toDate(purseToDate(rs.getString("todate")))
 				.propertyTax(rs.getBigDecimal("propertytax")).auditDetails(auditDetails)
 				.additionalDetails(getAdditionalDetail(rs, "additionaldetails")).billId(rs.getString("bill_id"))
-				.build();
+				.rebateAmount(rs.getBigDecimal("rebateamount"))
+				.propertyTaxWithoutRebate(rs.getBigDecimal("propertytaxwithoutrebate"))
+				.billStatus(BillStatus.fromValue(rs.getString("bill_status"))).build();
 	}
 
 	private JsonNode getAdditionalDetail(ResultSet rs, String column) {

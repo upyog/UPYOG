@@ -12,11 +12,16 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import org.apache.commons.lang3.StringUtils;
 import org.egov.mdms.model.MdmsResponse;
+import org.egov.pt.config.PropertyConfiguration;
 import org.egov.pt.models.CalculateTaxRequest;
 import org.egov.pt.models.CalculateTaxResponse;
 import org.egov.pt.models.OwnerInfo;
@@ -25,12 +30,17 @@ import org.egov.pt.models.PropertyCriteria;
 import org.egov.pt.models.PtTaxCalculatorTracker;
 import org.egov.pt.models.PtTaxCalculatorTrackerSearchCriteria;
 import org.egov.pt.models.Unit;
+import org.egov.pt.models.bill.BillSearchCriteria;
 import org.egov.pt.models.bill.Demand;
 import org.egov.pt.models.bill.GenerateBillCriteria;
+import org.egov.pt.models.collection.Bill;
+import org.egov.pt.models.collection.BillDetail;
 import org.egov.pt.models.collection.BillResponse;
+import org.egov.pt.models.enums.BillStatus;
 import org.egov.pt.models.enums.Status;
 import org.egov.pt.util.PTConstants;
 import org.egov.pt.web.contracts.PtTaxCalculatorTrackerRequest;
+import org.egov.pt.web.contracts.RequestInfoWrapper;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -68,6 +78,9 @@ public class PropertySchedulerService {
 	@Autowired
 	private NotificationService notificationService;
 
+	@Autowired
+	private PropertyConfiguration propertyConfiguration;
+
 	public CalculateTaxResponse calculateTax(CalculateTaxRequest calculateTaxRequest) {
 
 		List<PtTaxCalculatorTracker> taxCalculatorTrackers = new ArrayList<>();
@@ -80,6 +93,7 @@ public class PropertySchedulerService {
 		JsonNode buildingPurposes = null;
 		JsonNode buildingUses = null;
 		JsonNode overAllRebatePercentages = null;
+		JsonNode earlyPaymentRebatePercentages = null;
 		JsonNode propertyTaxRates = null;
 
 		BigDecimal days = calculateDays(calculateTaxRequest);
@@ -105,6 +119,9 @@ public class PropertySchedulerService {
 			overAllRebatePercentages = objectMapper
 					.valueToTree(ulbModules.get(PTConstants.MDMS_MASTER_DETAILS_OVERALLREBATE));
 
+			earlyPaymentRebatePercentages = objectMapper
+					.valueToTree(ulbModules.get(PTConstants.MDMS_MASTER_DETAILS_EARLYPAYMENTREBATE));
+
 			propertyTaxRates = objectMapper
 					.valueToTree(propertyTaxRateModules.get(PTConstants.MDMS_MASTER_DETAILS_PROPERTYTAXRATE));
 		}
@@ -119,6 +136,8 @@ public class PropertySchedulerService {
 			BigDecimal totalPropertyTax = BigDecimal.ZERO;
 			BigDecimal oneDayPropertyTax = BigDecimal.ZERO;
 			BigDecimal finalPropertyTax = BigDecimal.ZERO;
+			BigDecimal rebateAmount = BigDecimal.ZERO;
+			BigDecimal propertyTaxWithoutRebate = BigDecimal.ZERO;
 			String ulbName = property.getTenantId().split("\\.")[1];
 
 			JsonNode addressAdditionalDetails = objectMapper.valueToTree(property.getAddress().getAdditionalDetails());
@@ -205,10 +224,10 @@ public class PropertySchedulerService {
 					totalRateableValue = new BigDecimal(unitAdditionalDetails.get("propArea").asText())
 							.multiply(structuralFactor).multiply(ageFactor).multiply(occupancyFactor)
 							.multiply(useFactor).multiply(locationFactor);
-				}else if(property.getPropertyType().equalsIgnoreCase("VACANT") && null != locationFactor) {
+				} else if (property.getPropertyType().equalsIgnoreCase("VACANT") && null != locationFactor) {
 					totalRateableValue = new BigDecimal(unitAdditionalDetails.get("propArea").asText())
 							.multiply(locationFactor);
-				}else {
+				} else {
 					errorSet.add("PropertyType issue factor value" + " is missing in mdms");
 				}
 
@@ -258,25 +277,24 @@ public class PropertySchedulerService {
 					BigDecimal propertyTaxGenerated = taxPerDay.multiply(days);
 					JsonNode node = objectMapper.createObjectNode();
 
-					((ObjectNode) node)
-					    .put("propertyType", property.getPropertyType())
-					    .put(PTConstants.MDMS_MASTER_DETAILS_ZONES, locationFactor.doubleValue())
-					    .put(PTConstants.MDMS_MASTER_DETAILS_OVERALLREBATE, oAndMRebatePercentage.doubleValue())
-					    .put(PTConstants.MDMS_MASTER_DETAILS_PROPERTYTAXRATE, propertyTaxRatePercentage.doubleValue())
-					    .put("netRateableValue", netRateableValue.doubleValue())
-					    .put("propertyArea", unitAdditionalDetails.get("propArea").asText())
-					    .put("propertyTaxCalculated", propertyTax.doubleValue())
-					    .put("propertyTaxGenerated", propertyTaxGenerated)
-					    .put("days", days.doubleValue());
+					((ObjectNode) node).put("propertyType", property.getPropertyType())
+							.put(PTConstants.MDMS_MASTER_DETAILS_ZONES, locationFactor.doubleValue())
+							.put(PTConstants.MDMS_MASTER_DETAILS_OVERALLREBATE, oAndMRebatePercentage.doubleValue())
+							.put(PTConstants.MDMS_MASTER_DETAILS_PROPERTYTAXRATE,
+									propertyTaxRatePercentage.doubleValue())
+							.put("netRateableValue", netRateableValue.doubleValue())
+							.put("propertyArea", unitAdditionalDetails.get("propArea").asText())
+							.put("propertyTaxCalculated", propertyTax.doubleValue())
+							.put("propertyTaxGenerated", propertyTaxGenerated).put("days", days.doubleValue());
 
 					if (property.getPropertyType().equalsIgnoreCase("BUILTUP")) {
-					    ((ObjectNode) node)
-					        .put(PTConstants.MDMS_MASTER_DETAILS_BUILDINGSTRUCTURE, structuralFactor.doubleValue())
-					        .put(PTConstants.MDMS_MASTER_DETAILS_BUILDINGESTABLISHMENTYEAR, ageFactor.doubleValue())
-					        .put(PTConstants.MDMS_MASTER_DETAILS_BUILDINGPURPOSE, occupancyFactor.doubleValue())
-					        .put(PTConstants.MDMS_MASTER_DETAILS_BUILDINGUSE, useFactor.doubleValue());
+						((ObjectNode) node)
+								.put(PTConstants.MDMS_MASTER_DETAILS_BUILDINGSTRUCTURE, structuralFactor.doubleValue())
+								.put(PTConstants.MDMS_MASTER_DETAILS_BUILDINGESTABLISHMENTYEAR, ageFactor.doubleValue())
+								.put(PTConstants.MDMS_MASTER_DETAILS_BUILDINGPURPOSE, occupancyFactor.doubleValue())
+								.put(PTConstants.MDMS_MASTER_DETAILS_BUILDINGUSE, useFactor.doubleValue());
 					}
-					
+
 					if (node != null) {
 						trackeradditionalDetails.add(node);
 					}
@@ -293,13 +311,28 @@ public class PropertySchedulerService {
 
 				finalPropertyTax = oneDayPropertyTax.multiply(days);
 
+				propertyTaxWithoutRebate = finalPropertyTax;
+
+				// calculate property tax after rebate for early payment
+				BigDecimal epRebatePercentage = null;
+				for (JsonNode earlyPaymentRebatePercentage : objectMapper.valueToTree(earlyPaymentRebatePercentages)) {
+					if (ulbName.equalsIgnoreCase(earlyPaymentRebatePercentage.get("ulbName").asText())) {
+						epRebatePercentage = new BigDecimal(earlyPaymentRebatePercentage.get("rate").asText());
+					}
+				}
+				if (null != epRebatePercentage) {
+					rebateAmount = finalPropertyTax.multiply(epRebatePercentage.divide(BigDecimal.valueOf(100)));
+					finalPropertyTax = finalPropertyTax.subtract(rebateAmount);
+				}
+
 				BillResponse billResponse = generateDemandAndBill(calculateTaxRequest, property, finalPropertyTax);
 
 				if (null != billResponse && !CollectionUtils.isEmpty(billResponse.getBill())) {
 					PtTaxCalculatorTrackerRequest ptTaxCalculatorTrackerRequest = enrichmentService
 							.enrichTaxCalculatorTrackerCreateRequest(property, calculateTaxRequest, finalPropertyTax,
-									trackeradditionalDetails, billResponse.getBill());
-					
+									trackeradditionalDetails, billResponse.getBill(), rebateAmount,
+									propertyTaxWithoutRebate);
+
 					PtTaxCalculatorTracker ptTaxCalculatorTracker = propertyService
 							.saveToPtTaxCalculatorTracker(ptTaxCalculatorTrackerRequest);
 
@@ -315,7 +348,7 @@ public class PropertySchedulerService {
 
 		return CalculateTaxResponse.builder().taxCalculatorTrackers(taxCalculatorTrackers).build();
 	}
-	
+
 	private BigDecimal calculateDays(CalculateTaxRequest calculateTaxRequest) {
 		BigDecimal days = new BigDecimal(365);
 
@@ -422,14 +455,13 @@ public class PropertySchedulerService {
 
 		return finalProperty;
 	}
-	
+
 	private boolean isOverlapping(Date trackerFrom, Date trackerTo, Date requestFrom, Date requestTo) {
 		// Request is fully inside tracker OR tracker is fully inside request
 		boolean requestInsideTracker = !trackerFrom.after(requestFrom) && !trackerTo.before(requestTo);
 		boolean trackerInsideRequest = !requestFrom.after(trackerFrom) && !requestTo.before(trackerTo);
 		return requestInsideTracker || trackerInsideRequest;
 	}
-
 
 	private BillResponse generateDemandAndBill(CalculateTaxRequest calculateTaxRequest, Property property,
 			BigDecimal finalPropertyTax) {
@@ -476,6 +508,264 @@ public class PropertySchedulerService {
 			return propertyArea.compareTo(threshold) <= 0;
 		}
 		return false;
+	}
+
+	public Object updateTrackerBillStatus(RequestInfoWrapper requestInfoWrapper) {
+
+		List<PtTaxCalculatorTracker> latestTaxCalculatorTrackers = new ArrayList<>();
+
+		PtTaxCalculatorTrackerSearchCriteria taxCalculatorTrackerSearchCriteria = PtTaxCalculatorTrackerSearchCriteria
+				.builder().billStatus(Collections.singleton(BillStatus.ACTIVE)).build();
+
+		List<PtTaxCalculatorTracker> ptTaxCalculatorTrackers = propertyService
+				.getTaxCalculatedProperties(taxCalculatorTrackerSearchCriteria);
+
+		Set<String> billIds = ptTaxCalculatorTrackers.stream().map(PtTaxCalculatorTracker::getBillId)
+				.filter(Objects::nonNull).collect(Collectors.toSet());
+
+		// Batch size
+		final int batchSize = 100;
+
+		Map<String, Bill> billIdBillMap = new HashMap<>();
+
+		List<String> billIdList = new ArrayList<>(billIds);
+		for (int start = 0; start < billIdList.size(); start += batchSize) {
+			int end = Math.min(start + batchSize, billIdList.size());
+
+			Set<String> batch = new HashSet<>(billIdList.subList(start, end));
+
+			BillSearchCriteria billSearchCriteria = BillSearchCriteria.builder().billId(batch).skipValidation(true)
+					.build();
+
+			BillResponse billResponse = billService.searchBill(billSearchCriteria, requestInfoWrapper.getRequestInfo());
+
+			Map<String, Bill> batchMap = Optional.ofNullable(billResponse).map(BillResponse::getBill)
+					.filter(bills -> !bills.isEmpty())
+					.map(bills -> bills.stream().collect(Collectors.toMap(Bill::getId, Function.identity())))
+					.orElse(Collections.emptyMap());
+
+			billIdBillMap.putAll(batchMap);
+		}
+
+		for (PtTaxCalculatorTracker ptTaxCalculatorTracker : ptTaxCalculatorTrackers) {
+			Optional.ofNullable(billIdBillMap.get(ptTaxCalculatorTracker.getBillId())).map(Bill::getStatus)
+					.map(Enum::name).map(BillStatus::fromValue).ifPresent(ptTaxCalculatorTracker::setBillStatus);
+
+			PtTaxCalculatorTrackerRequest ptTaxCalculatorTrackerRequest = enrichmentService
+					.enrichTaxCalculatorTrackerUpdateRequest(ptTaxCalculatorTracker,
+							requestInfoWrapper.getRequestInfo());
+
+			PtTaxCalculatorTracker ptTaxCalculatorTrackerUpdated = propertyService
+					.updatePtTaxCalculatorTracker(ptTaxCalculatorTrackerRequest);
+
+			latestTaxCalculatorTrackers.add(ptTaxCalculatorTrackerUpdated);
+		}
+
+		return latestTaxCalculatorTrackers;
+	}
+
+	public Object reverseRebateAmount(RequestInfoWrapper requestInfoWrapper) {
+		List<PtTaxCalculatorTracker> latestTaxCalculatorTrackers = new ArrayList<>();
+
+		List<String> taxCalculatedTenantIds = getActiveTaxCalculatedTenantIds();
+
+		if (CollectionUtils.isEmpty(taxCalculatedTenantIds)) {
+			return Collections.emptyList();
+		}
+
+		MdmsResponse mdmsResponse = mdmsService.getPropertyReabateDaysMdmsData(requestInfoWrapper.getRequestInfo(),
+				null);
+		Map<String, Integer> tenantIdDaysMap = getUlbDaysMap(mdmsResponse);
+
+		for (String tenantId : taxCalculatedTenantIds) {
+			Integer days = tenantIdDaysMap.getOrDefault(tenantId, 15);
+
+			List<PtTaxCalculatorTracker> ptTaxCalculatorTrackers = getTrackersForTenantAndDays(tenantId, days);
+
+			Set<String> billIds = ptTaxCalculatorTrackers.stream().map(PtTaxCalculatorTracker::getBillId)
+					.filter(Objects::nonNull).collect(Collectors.toSet());
+
+			Map<String, Bill> billIdBillMap = fetchBillsByBatch(billIds, requestInfoWrapper);
+			Map<String, String> demandIdToTenantMap = extractDemandIdToTenantMap(billIdBillMap);
+
+			Map<String, Demand> demandIdToDemandMap = fetchDemandsByBatch(demandIdToTenantMap, requestInfoWrapper);
+
+			latestTaxCalculatorTrackers.addAll(
+					processTrackers(ptTaxCalculatorTrackers, billIdBillMap, demandIdToDemandMap, requestInfoWrapper));
+		}
+
+		return latestTaxCalculatorTrackers;
+	}
+
+	private List<String> getActiveTaxCalculatedTenantIds() {
+		PtTaxCalculatorTrackerSearchCriteria criteria = PtTaxCalculatorTrackerSearchCriteria.builder()
+				.billStatus(Collections.singleton(BillStatus.ACTIVE)).build();
+
+		return propertyService.getTaxCalculatedTenantIds(criteria);
+	}
+
+	public Map<String, Integer> getUlbDaysMap(MdmsResponse mdmsResponse) {
+		return Optional.ofNullable(mdmsResponse).map(MdmsResponse::getMdmsRes)
+				.map(mdmsRes -> mdmsRes.get(PTConstants.MDMS_MODULE_ULBS)).map(objectMapper::valueToTree)
+				.map(ulbsNode -> {
+					JsonNode jsonNode = (JsonNode) ulbsNode; // explicit cast
+					return jsonNode.get(PTConstants.MDMS_MASTER_DETAILS_PROPERTYREBATEDAYS);
+				}).filter(JsonNode::isArray)
+				.map(rebateDaysNode -> StreamSupport.stream(rebateDaysNode.spliterator(), false)
+						.collect(Collectors.toMap(node -> propertyConfiguration.getStateLevelTenantId() + "."
+								+ node.get("ulbName").asText(), node -> node.get("days").asInt())))
+				.orElseGet(HashMap::new);
+	}
+
+	private List<PtTaxCalculatorTracker> getTrackersForTenantAndDays(String tenantId, int days) {
+		long startDateTime = LocalDate.now().minusDays(days).atStartOfDay(ZoneId.systemDefault()).toInstant()
+				.toEpochMilli();
+		long endDateTime = LocalDate.now().minusDays(days).atTime(23, 59, 59, 999_999_999)
+				.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+
+		PtTaxCalculatorTrackerSearchCriteria criteria = PtTaxCalculatorTrackerSearchCriteria.builder()
+				.startDateTime(startDateTime).endDateTime(endDateTime).tenantId(tenantId)
+				.billStatus(Collections.singleton(BillStatus.ACTIVE)).build();
+
+		return propertyService.getTaxCalculatedProperties(criteria);
+	}
+
+	private Map<String, Bill> fetchBillsByBatch(Set<String> billIds, RequestInfoWrapper requestInfoWrapper) {
+		Map<String, Bill> billIdBillMap = new HashMap<>();
+		final int batchSize = 100;
+		List<String> billIdList = new ArrayList<>(billIds);
+
+		for (int start = 0; start < billIdList.size(); start += batchSize) {
+			int end = Math.min(start + batchSize, billIdList.size());
+			Set<String> batch = new HashSet<>(billIdList.subList(start, end));
+
+			BillSearchCriteria searchCriteria = BillSearchCriteria.builder().billId(batch).skipValidation(true).build();
+
+			BillResponse billResponse = billService.searchBill(searchCriteria, requestInfoWrapper.getRequestInfo());
+
+			if (billResponse != null && !CollectionUtils.isEmpty(billResponse.getBill())) {
+				billIdBillMap.putAll(
+						billResponse.getBill().stream().collect(Collectors.toMap(Bill::getId, Function.identity())));
+			}
+		}
+		return billIdBillMap;
+	}
+
+	private Map<String, String> extractDemandIdToTenantMap(Map<String, Bill> billIdBillMap) {
+		Map<String, String> demandIdToTenantMap = new HashMap<>();
+		for (Bill bill : billIdBillMap.values()) {
+			if (bill.getBillDetails() != null) {
+				for (BillDetail billDetail : bill.getBillDetails()) {
+					if (billDetail.getDemandId() != null && bill.getTenantId() != null) {
+						demandIdToTenantMap.put(billDetail.getDemandId(), bill.getTenantId());
+					}
+				}
+			}
+		}
+		return demandIdToTenantMap;
+	}
+
+	private Map<String, Demand> fetchDemandsByBatch(Map<String, String> demandIdToTenantMap,
+			RequestInfoWrapper requestInfoWrapper) {
+		Map<String, Demand> demandIdToDemandMap = new HashMap<>();
+		final int batchSize = 100;
+		List<Map.Entry<String, String>> entries = new ArrayList<>(demandIdToTenantMap.entrySet());
+
+		for (int start = 0; start < entries.size(); start += batchSize) {
+			int end = Math.min(start + batchSize, entries.size());
+			List<Map.Entry<String, String>> batch = entries.subList(start, end);
+
+			// Group demandIds by tenantId
+			Map<String, Set<String>> tenantToDemandIds = batch.stream().collect(Collectors
+					.groupingBy(Map.Entry::getValue, Collectors.mapping(Map.Entry::getKey, Collectors.toSet())));
+
+			for (Map.Entry<String, Set<String>> tenantEntry : tenantToDemandIds.entrySet()) {
+				String tenantId = tenantEntry.getKey();
+				Set<String> demandIds = tenantEntry.getValue();
+
+				List<Demand> demands = demandService.searchDemand(tenantId, demandIds, null,
+						requestInfoWrapper.getRequestInfo(), null);
+
+				if (demands != null) {
+					demandIdToDemandMap.putAll(demands.stream().filter(demand -> demand.getId() != null)
+							.collect(Collectors.toMap(Demand::getId, Function.identity())));
+				}
+			}
+		}
+		return demandIdToDemandMap;
+	}
+
+	private List<PtTaxCalculatorTracker> processTrackers(List<PtTaxCalculatorTracker> trackers,
+			Map<String, Bill> billIdBillMap, Map<String, Demand> demandIdToDemandMap,
+			RequestInfoWrapper requestInfoWrapper) {
+
+		List<PtTaxCalculatorTracker> updatedTrackers = new ArrayList<>();
+
+		for (PtTaxCalculatorTracker tracker : trackers) {
+			if (!isValidTracker(tracker))
+				continue;
+
+			BigDecimal newAmount = tracker.getPropertyTaxWithoutRebate();
+
+			Bill bill = billIdBillMap.get(tracker.getBillId());
+			if (bill == null || CollectionUtils.isEmpty(bill.getBillDetails())) {
+				log.warn("No bill or bill details found for billId [{}]. Skipping tracker [{}].", tracker.getBillId(),
+						tracker.getUuid());
+				continue;
+			}
+
+			updateBillAndDemandAmounts(bill, demandIdToDemandMap, newAmount, requestInfoWrapper);
+
+			// Update tracker
+			tracker.setPropertyTax(newAmount);
+			tracker.setRebateAmount(BigDecimal.ZERO);
+
+			PtTaxCalculatorTrackerRequest updateRequest = enrichmentService
+					.enrichTaxCalculatorTrackerUpdateRequest(tracker, requestInfoWrapper.getRequestInfo());
+
+			PtTaxCalculatorTracker updatedTracker = propertyService.updatePtTaxCalculatorTracker(updateRequest);
+
+			updatedTrackers.add(updatedTracker);
+		}
+
+		return updatedTrackers;
+	}
+
+	private boolean isValidTracker(PtTaxCalculatorTracker tracker) {
+		if (tracker.getBillId() == null) {
+			log.warn("Tracker Uuid [{}] has null billId. Skipping.", tracker.getUuid());
+			return false;
+		}
+		if (tracker.getPropertyTaxWithoutRebate() == null) {
+			log.warn("PropertyTaxWithoutRebate is null in tracker [{}]. Skipping.", tracker.getUuid());
+			return false;
+		}
+		return true;
+	}
+
+	private void updateBillAndDemandAmounts(Bill bill, Map<String, Demand> demandIdToDemandMap, BigDecimal newAmount,
+			RequestInfoWrapper requestInfoWrapper) {
+
+		for (BillDetail billDetail : bill.getBillDetails()) {
+			Demand demand = demandIdToDemandMap.get(billDetail.getDemandId());
+
+			if (demand != null) {
+				demand.setMinimumAmountPayable(newAmount);
+				if (demand.getDemandDetails() != null) {
+					demand.getDemandDetails().forEach(demandDetail -> demandDetail.setTaxAmount(newAmount));
+				}
+				demandService.updateDemand(requestInfoWrapper.getRequestInfo(), Collections.singletonList(demand));
+			}
+
+			if (billDetail.getBillAccountDetails() != null) {
+				billDetail.getBillAccountDetails().forEach(billAccountDetail -> billAccountDetail.setAmount(newAmount));
+			}
+
+			billDetail.setAmount(newAmount);
+		}
+
+		bill.setTotalAmount(newAmount);
+		billService.updateBill(requestInfoWrapper.getRequestInfo(), Collections.singletonList(bill));
 	}
 
 }

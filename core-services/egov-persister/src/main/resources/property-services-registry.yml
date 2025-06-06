@@ -594,7 +594,7 @@ serviceMaps:
     fromTopic: save-property-tax-calculator-tracker
     isTransaction: true
     queryMaps:
-    - query: INSERT INTO eg_pt_tax_calculator_tracker (uuid, propertyid, tenantid, financialyear, fromdate, todate, propertytax, createdby, lastmodifiedby, createdtime, lastmodifiedtime, additionaldetails) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+    - query: INSERT INTO eg_pt_tax_calculator_tracker (uuid, propertyid, tenantid, financialyear, fromdate, todate, propertytax, createdby, lastmodifiedby, createdtime, lastmodifiedtime, additionaldetails, bill_id, rebateamount, propertytaxwithoutrebate, bill_status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
       basePath: ptTaxCalculatorTracker
       jsonMaps:
       - jsonPath: $.ptTaxCalculatorTracker.uuid
@@ -611,3 +611,25 @@ serviceMaps:
       - jsonPath: $.ptTaxCalculatorTracker.additionalDetails
         type: JSON
         dbType: JSONB
+      - jsonPath: $.ptTaxCalculatorTracker.billId
+      - jsonPath: $.ptTaxCalculatorTracker.rebateAmount
+      - jsonPath: $.ptTaxCalculatorTracker.propertyTaxWithoutRebate
+      - jsonPath: $.ptTaxCalculatorTracker.billStatus
+
+
+  - version: 1.0
+    description: Updates Bill Status in eg_pt_tax_calculator_tracker
+    fromTopic: update-property-tax-calculator-tracker
+    isTransaction: true
+    queryMaps:
+    - query: UPDATE eg_pt_tax_calculator_tracker 
+             SET bill_status = ?, propertytax = ?, rebateamount = ?, lastmodifiedby = ?, lastmodifiedtime = ? 
+             WHERE uuid = ?;
+      basePath: ptTaxCalculatorTracker
+      jsonMaps:
+      - jsonPath: $.ptTaxCalculatorTracker.billStatus
+      - jsonPath: $.ptTaxCalculatorTracker.propertyTax
+      - jsonPath: $.ptTaxCalculatorTracker.rebateAmount
+      - jsonPath: $.ptTaxCalculatorTracker.auditDetails.lastModifiedBy
+      - jsonPath: $.ptTaxCalculatorTracker.auditDetails.lastModifiedTime
+      - jsonPath: $.ptTaxCalculatorTracker.uuid

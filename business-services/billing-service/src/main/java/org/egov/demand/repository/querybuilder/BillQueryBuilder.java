@@ -70,6 +70,19 @@ public class BillQueryBuilder {
 			+ " JOIN egbs_billdetail_v1 bd ON b.id = bd.billid AND b.tenantid = bd.tenantid"
 			+ " JOIN egbs_billaccountdetail_v1 ad ON bd.id = ad.billdetail AND bd.tenantid = ad.tenantid";
 	
+	public static final String UPDATE_BILL_QUERY = "UPDATE egbs_bill_v1 SET "
+			+ "tenantid = ?, payername = ?, payeraddress = ?, payeremail = ?, lastmodifiedby = ?, lastmodifieddate = ?, mobilenumber = ?, "
+			+ "status = ?, additionaldetails = ?, filestoreid = ?, payerid = ?, consumercode = ? WHERE id = ?";
+	
+	public static final String UPDATE_BILLDETAILS_QUERY = "UPDATE egbs_billdetail_v1 SET "
+			+ "tenantid = ?, billid = ?, demandid = ?, fromperiod = ?, toperiod = ?, businessservice = ?, billno = ?, billdate = ?, "
+			+ "consumercode = ?, totalamount = ?, lastmodifiedby = ?, lastmodifieddate = ?, expirydate = ?, additionaldetails = ? "
+			+ "WHERE id = ?";
+	
+	public static final String UPDATE_BILLACCOUNTDETAILS_QUERY = "UPDATE egbs_billaccountdetail_v1 SET "
+			+ "tenantid = ?, billdetail = ?, demanddetailid = ?, orderno = ?, amount = ?, adjustedamount = ?, taxheadcode = ?, "
+			+ "additionaldetails = ?, lastmodifiedby = ?, lastmodifieddate = ? " + "WHERE id = ?";
+	
 	public String getBillQuery(BillSearchCriteria billSearchCriteria, List<Object> preparedStatementValues){
 		
 		StringBuilder billQuery = new StringBuilder(BILL_BASE_QUERY);

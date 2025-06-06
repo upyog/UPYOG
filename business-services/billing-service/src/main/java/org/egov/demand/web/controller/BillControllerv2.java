@@ -113,4 +113,13 @@ public class BillControllerv2 {
 		responseMap.put(Constants.MESSAGE_STRING, responseMsg);
 		return new ResponseEntity<>(responseMap, status);
 	}
+	
+	@PostMapping("_update")
+	@ResponseBody
+	public ResponseEntity<?> update(@RequestBody @Valid BillRequestV2 billRequest, BindingResult bindingResult) {
+
+		BillResponseV2 billResponse = billService.update(billRequest);
+		return new ResponseEntity<>(billResponse, HttpStatus.OK);
+	}
+	
 }

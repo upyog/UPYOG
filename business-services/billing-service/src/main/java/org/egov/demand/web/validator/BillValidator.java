@@ -51,8 +51,8 @@ public class BillValidator {
 
 	public void validateBillSearchCriteria(BillSearchCriteria billCriteria, RequestInfo requestInfo) {
 
-		util.validateTenantIdForUserType(billCriteria.getTenantId(), requestInfo);
 		if(!billCriteria.getSkipValidation()) {
+			util.validateTenantIdForUserType(billCriteria.getTenantId(), requestInfo);
 			if (billCriteria.getPayerId() == null && billCriteria.getBillId() == null && CollectionUtils.isEmpty(billCriteria.getConsumerCode())
 					&& billCriteria.getMobileNumber() == null && billCriteria.getEmail() == null && billCriteria.getBillNumber()==null) {
 
