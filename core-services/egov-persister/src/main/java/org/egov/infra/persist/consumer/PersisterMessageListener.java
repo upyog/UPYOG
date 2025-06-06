@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.listener.MessageListener;
+import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -20,7 +21,7 @@ import java.util.Map;
 @Service
 @Slf4j
 public class PersisterMessageListener implements MessageListener<String, Object> {
-	
+
 	@Autowired
 	private PersistService persistService;
 
@@ -29,7 +30,8 @@ public class PersisterMessageListener implements MessageListener<String, Object>
 
 	@Autowired
 	private CustomKafkaTemplate kafkaTemplate;
-
+	@Autowired
+	private Acknowledgment acknowledgment;
 	@Value("${audit.persist.kafka.topic}")
 	private String persistAuditKafkaTopic;
 
@@ -39,15 +41,16 @@ public class PersisterMessageListener implements MessageListener<String, Object>
 	@Override
 	public void onMessage(ConsumerRecord<String, Object> data) {
 		String rcvData = null;
-		
+
 		try {
 			rcvData = objectMapper.writeValueAsString(data.value());
+			persistService.persist(data.topic(), rcvData);
+			acknowledgment.acknowledge();
 		} catch (JsonProcessingException e) {
 			log.error("Failed to serialize incoming message", e);
 		}
-		persistService.persist(data.topic(),rcvData);
 
-		if(!data.topic().equalsIgnoreCase(persistAuditKafkaTopic)){
+		if (!data.topic().equalsIgnoreCase(persistAuditKafkaTopic)) {
 			Map<String, Object> producerRecord = new HashMap<>();
 			producerRecord.put("topic", data.topic());
 			producerRecord.put("value", data.value());

@@ -60,6 +60,16 @@ public class PersisterBatchConsumerConfig {
     @Value("${persister.batch.size}")
     private Integer batchSize;
 
+    @Value("${spring.kafka.consumer.auto_commit}")
+	private String persistAuditKafkaTopic;
+    
+    @Value("${spring.kafka.consumer.session_timeout_ms_config}")
+	private String session_timeout_ms;
+    
+    @Value("${spring.kafka.listener.concurrency}")
+	private String concurrency;
+    @Value("${spring.kafka.listener.polltime}")
+	private String pollTime;
     @PostConstruct
     public void setTopics() {
         topicMap.getTopicMap().keySet().forEach(topic -> {
@@ -74,8 +84,8 @@ public class PersisterBatchConsumerConfig {
     public ConsumerFactory<String, String> consumerFactory() {
         Map<String, Object> props = kafkaProperties.buildConsumerProperties();
 
-        props.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, true);
-        props.put(ConsumerConfig.SESSION_TIMEOUT_MS_CONFIG, "15000");
+        props.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, persistAuditKafkaTopic);
+        props.put(ConsumerConfig.SESSION_TIMEOUT_MS_CONFIG, session_timeout_ms);
         props.put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, batchSize);
 
 
@@ -88,12 +98,14 @@ public class PersisterBatchConsumerConfig {
 
     }
 
+    
+    
     @Bean("kafkaListenerContainerFactoryBatch")
     public KafkaListenerContainerFactory<ConcurrentMessageListenerContainer<String, String>> kafkaListenerContainerFactory() {
         ConcurrentKafkaListenerContainerFactory<String, String> factory = new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(consumerFactory());
-        factory.setConcurrency(3);
-        factory.getContainerProperties().setPollTimeout(30000);
+        factory.setConcurrency(Integer.parseInt(concurrency));
+        factory.getContainerProperties().setPollTimeout(Integer.parseInt(pollTime));
         factory.getContainerProperties().setAckMode(ContainerProperties.AckMode.BATCH);
         factory.setBatchErrorHandler(new SeekToCurrentBatchErrorHandler());
 
