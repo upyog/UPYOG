@@ -2,3 +2,9 @@
 frontend/micro-ui-internals/node_modules/*
 .idea
 index.lock
+*.properties
+core-services/egov-mdms-service/src/main/resources/application.properties
+core-services/egov-user/src/main/resources/application.properties
+*.properties
+core-services/zuul/src/main/resources/routes.properties
+core-services/zuul/src/main/resources/routes.properties

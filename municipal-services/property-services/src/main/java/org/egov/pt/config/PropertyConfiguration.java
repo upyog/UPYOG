@@ -94,6 +94,12 @@ public class PropertyConfiguration {
 
     @Value("${egov.idgen.mutation.format}")
     private String mutationIdGenFormat;
+    
+    
+    @Value("${egov.idgen.bifurcation.name}")
+    private String bifurcationIdGenName;
+    @Value("${egov.idgen.bifurcation.format}")
+    private String bifurcationIdGenFormat;
 
     @Value("${egov.idgen.assm.name}")
     private String assessmentIdGenName;
@@ -374,5 +380,84 @@ public class PropertyConfiguration {
 
     @Value("${persister.update.property.audit.oldData.topic}")
     private String updatePropertyAuditEncTopic;
-
+    
+    
+    @Value("${persister.update.property.amalgamation.inactive}")
+    private String updatePropertyForDeactivaingForAmalgamationTopic;
+    
+    @Value("${persister.update.property.bifurcation.inactive}")
+    private String updatePropertyForDeactivaingForBifurcationTopic;
+    
+    @Value("${persister.update.parent.property.bifurcation}")
+    private String updateParentPropertyForBifurcation;
+    
+    @Value("${persister.update.parent.property.active.amalgamation}")
+    private String updateAmalgamatedPropertyToActive;
+    
+    @Value("${persister.update.parent.property.inactive.amalgamation}")
+    private String updateAmalgamatedPropertyInactive;
+    
+    @Value("${persister.save.bifurcation.topic}")
+    private String saveBifurcationTopic;
+    
+    @Value("${persister.update.property.bifurcation.child.inactive}")
+    private String bifurcationChildInactive;
+    
+    @Value("${persister.save.appeal.topic}")
+    private String saveAppealTopic;
+    
+    
+    @Value("${appeal.create.wf.name}")
+    private String appealCreateWorkflowName;
+    
+    
+    @Value("${persister.update.appeal.topic}")
+    private String appealUpdateTopic;
+    
+    @Value("{egov.idgen.appeal.name}")
+    private String appealidname;
+    
+    @Value("${egov.idgen.appeal.format}")
+    private String appealidformat;
+    
+    @Value("${persister.update.bifurcation.for.child.status}")
+    private String updateChildStatusForBifurcation;
+    
+    @Value("${persister.update.property.status.bifurcation.success}")
+    private String updatePropertyStatusForBifurcationSuccess;
+    
+    @Value("${egov.idgen.notice.name}")
+	private String noticeidname;
+	
+	@Value("${egov.idgen.notice.format}")
+	private String noticeformat;
+    
+	@Value("${persister.save.notice.topic}")
+	private String savenoticetopic;
+	
+	@Value("${persister.update.notice.topic}")
+	private String updatenoticetopic;
+	
+	@Value("${default.propertyid}")
+	private boolean defaultPropertyId;
+	
+	@Value("${egbs.fetchdemand.endpoint}")
+	private String fetchdemandEndpoint;
+	
+	@Value("${egbs.updatedemand.endpoint}")
+	private String updateDemandEndpoint;
+	
+	@Value("${current.finyear.start}")
+	private Integer finYearStart;
+	
+	@Value("${current.finyear.end}")
+	private Integer finYearEnd;
+	
+	@Value("${assesment.start.year}")
+	private Integer assesmentStartyear;
+	
+	
+	@Value("${egov.integration.system.user.uuid}")
+	private String systemUser;
+	    
 }

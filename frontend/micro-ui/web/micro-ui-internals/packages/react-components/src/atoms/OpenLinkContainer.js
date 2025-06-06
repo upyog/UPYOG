@@ -10,7 +10,7 @@ const OpenLinkContainer = ({ img,}) => {
           className="city"
           id="topbar-logo" 
           crossOrigin="anonymous"
-          src={"https://in-egov-assets.s3.ap-south-1.amazonaws.com/images/Upyog-logo.png"}
+          src={"https://mnptapp-terraform.s3.ap-south-1.amazonaws.com/images/trlogo2.png"}
           alt="mSeva"
         />
       </div>
