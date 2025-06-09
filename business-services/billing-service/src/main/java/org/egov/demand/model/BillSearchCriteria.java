@@ -58,6 +58,8 @@ public class BillSearchCriteria {
 	private Long size;
 
 	private Long offset;
+	
+	private Long limit;
 
 	@Email
 	private String email;

@@ -372,6 +372,7 @@ public class GarbageAccountService {
 				subAccount.setUuid(UUID.randomUUID().toString());
 				subAccount.setPropertyId(garbageAccount.getPropertyId());
 				subAccount.setTenantId(garbageAccount.getTenantId());
+				subAccount.setAdditionalDetail(garbageAccount.getAdditionalDetail());
 //				subAccount.setIsOwner(false);
 				subAccount.setGarbageId(garbageAccountRepository.getNextGarbageId());
 				subAccount.setStatus(GrbgConstants.STATUS_INITIATED);
@@ -1487,7 +1488,8 @@ public class GarbageAccountService {
 					if (null != requestInfo && null != requestInfo.getUserInfo() && StringUtils
 							.equalsIgnoreCase(requestInfo.getUserInfo().getType(), GrbgConstants.USER_TYPE_CITIZEN)) {
 						searchCriteriaGarbageAccountRequest.getSearchCriteriaGarbageAccount()
-								.setCreatedBy(Collections.singletonList(requestInfo.getUserInfo().getUuid()));
+//								.setCreatedBy(Collections.singletonList(requestInfo.getUserInfo().getUuid()))
+								;
 					} else if (null != requestInfo && null != requestInfo.getUserInfo() && StringUtils
 							.equalsIgnoreCase(requestInfo.getUserInfo().getType(), GrbgConstants.USER_TYPE_EMPLOYEE)) {
 
@@ -1507,7 +1509,9 @@ public class GarbageAccountService {
 			} else if (null != requestInfo && null != requestInfo.getUserInfo() && StringUtils
 					.equalsIgnoreCase(requestInfo.getUserInfo().getType(), GrbgConstants.USER_TYPE_CITIZEN)) {
 				searchCriteriaGarbageAccountRequest.setSearchCriteriaGarbageAccount(SearchCriteriaGarbageAccount
-						.builder().createdBy(Collections.singletonList(requestInfo.getUserInfo().getUuid())).build());
+						.builder()
+//						.createdBy(Collections.singletonList(requestInfo.getUserInfo().getUuid()))
+						.build());
 			}
 		}
 

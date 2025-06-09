@@ -354,7 +354,8 @@ public class DemandService {
 		if (demandCriteria.getEmail() != null || demandCriteria.getMobileNumber() != null) {
 			
 			userSearchRequest = UserSearchRequest.builder().requestInfo(requestInfo)
-					.tenantId(citizenTenantId).emailId(demandCriteria.getEmail())
+					.tenantId(citizenTenantId)
+//					.emailId(demandCriteria.getEmail())
 					.mobileNumber(demandCriteria.getMobileNumber()).build();
 			
 			payers = mapper.convertValue(serviceRequestRepository.fetchResult(userUri, userSearchRequest), UserResponse.class).getUser();

@@ -186,6 +186,7 @@ public class UserService {
 	private OwnerInfo createOwnerInfoFromAccount(GarbageAccount garbageAccount) {
 	    return OwnerInfo.builder()
 	            .mobileNumber(garbageAccount.getMobileNumber())
+//	            .name(garbageAccount.getName())
 	            .tenantId(garbageAccount.getTenantId())
 	            .build();
 	}
