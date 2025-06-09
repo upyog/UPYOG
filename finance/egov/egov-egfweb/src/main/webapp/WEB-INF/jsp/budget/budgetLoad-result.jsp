@@ -112,11 +112,7 @@
 								onclick="window.parent.postMessage('close','*');window.close();" class="buttonsubmit" /></td> -->
 							<!-- <td><input type="button" value="Close"
 								onclick="window.history.back();" class="buttonsubmit" /></td> -->
-							<td>
-                                <input type="button" value="Close"
-                                           onclick="window.location.href = window.location.origin + '/employee/services/EGF/budget/budgetLoad-beforeUpload.action';"
-                                           class="buttonsubmit" />
-                            </td>							
+							<td><input type="button" value="Close" onclick="window.location.reload();" class="buttonsubmit" /></td>						
 						</tr>
 					</table>
 				</div>
