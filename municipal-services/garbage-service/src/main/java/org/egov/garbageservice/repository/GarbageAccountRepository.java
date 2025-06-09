@@ -315,7 +315,7 @@ public class GarbageAccountRepository {
 						&& CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getName())
 						&& CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getMobileNumber())
 						&& CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getApplicationNumber())
-						&& CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getCreatedBy())
+						&& CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getUser_uuid())
 						&& CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getStatus())
 						&& StringUtils.isEmpty(searchCriteriaGarbageAccount.getTenantId()))) {
 			throw new CustomException("INCORRECT_SEARCH_CRITERIA", "Provide criteria to search garbage account.");
@@ -357,6 +357,13 @@ public class GarbageAccountRepository {
         	whereClause.append(" acc.uuid IN ( ").append(getQueryForCollection(searchCriteriaGarbageAccount.getUuid(),
         			preparedStatementValues)).append(" )");
         }
+        
+        if (!CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getUser_uuid())) {
+        	isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, whereClause);
+        	whereClause.append(" acc.user_uuid IN ( ").append(getQueryForCollection(searchCriteriaGarbageAccount.getUser_uuid(),
+        			preparedStatementValues)).append(" )");
+        }
+
 
         if (!CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getType())) {
             isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, whereClause);

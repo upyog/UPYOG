@@ -70,6 +70,21 @@ public class BillQueryBuilder {
 			+ " JOIN egbs_billdetail_v1 bd ON b.id = bd.billid AND b.tenantid = bd.tenantid"
 			+ " JOIN egbs_billaccountdetail_v1 ad ON bd.id = ad.billdetail AND bd.tenantid = ad.tenantid";
 	
+	private final String paginationWrapper = "WITH base AS ("
+			+ "  {}"
+			+ "),"
+			+ "ranked AS ("
+			+ "  SELECT *, DENSE_RANK() OVER (ORDER BY b_lastmodifieddate DESC, b_id) AS offset_"
+			+ "  FROM base"
+			+ "),"
+			+ "total_count AS ("
+			+ "  SELECT COUNT(*) AS total FROM base"
+			+ ") "
+			+ "SELECT r.*, t.total "
+			+ "FROM ranked r "
+			+ "CROSS JOIN total_count t "
+			+ "WHERE r.offset_ > ? AND r.offset_ <= ?";
+	
 	public String getBillQuery(BillSearchCriteria billSearchCriteria, List<Object> preparedStatementValues){
 		
 		StringBuilder billQuery = new StringBuilder(BILL_BASE_QUERY);
@@ -86,8 +101,33 @@ public class BillQueryBuilder {
 		}
 		addWhereClause(billQuery, preparedStatementValues, billSearchCriteria);
 		StringBuilder maxQuery = addPagingClause(billQuery, preparedStatementValues, billSearchCriteria);
+		String finalQuery = addPaginationWrapper(maxQuery.toString(), preparedStatementValues, billSearchCriteria);
 		
-		return maxQuery.toString();
+		return finalQuery;
+	}
+	
+	private String addPaginationWrapper(String query, List<Object> preparedStmtList, BillSearchCriteria criteria) {
+		
+		Long limit = 5000L;
+		Long offset = 0L;
+		String finalQuery = null;
+
+		if (criteria.getLimit() != null)
+			limit = criteria.getLimit();
+
+		if (criteria.getOffset() != null)
+			offset = criteria.getOffset();
+
+		if(limit != null && offset != null) {
+			finalQuery = paginationWrapper.replace("{}", query);
+			preparedStmtList.add(offset);
+			preparedStmtList.add(limit + offset);
+		}
+		else {
+			finalQuery = query;
+		}
+
+		return finalQuery;
 	}
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })

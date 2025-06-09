@@ -20,5 +20,8 @@ public class GrbgBillTrackerSearchCriteria {
 	private Set<String> uuids;
 
 	private Set<String> grbgApplicationIds;
+	
+	private Integer limit;
+
 
 }

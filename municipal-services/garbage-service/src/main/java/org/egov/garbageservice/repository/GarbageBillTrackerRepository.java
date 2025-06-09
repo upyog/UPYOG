@@ -67,6 +67,18 @@ public class GarbageBillTrackerRepository {
 				grbgBillTrackerRowMapper);
 		return grbgBillTrackers;
 	}
+	
+	public String getLimitAndOrderByUpdatedTimeDesc(GrbgBillTrackerSearchCriteria criteria, String query,
+			List<Object> preparedStmtList) {
+		StringBuilder queryBuilder = new StringBuilder(query);
+		if (null != criteria.getLimit()) {
+			queryBuilder.append(" order by egbt.last_modified_time desc ");
+			queryBuilder.append(" limit ? ");
+			preparedStmtList.add(criteria.getLimit());
+		}
+
+		return queryBuilder.toString();
+	}
 
 	private String getBillTrackerSearchQuery(GrbgBillTrackerSearchCriteria criteria, List<Object> preparedStmtList) {
 		StringBuilder builder = new StringBuilder(GRBG_BILL_TRACKER_SEARCH_QUERY);
@@ -105,8 +117,10 @@ public class GarbageBillTrackerRepository {
 					.append(")");
 			addToPreparedStatement(preparedStmtList, criteria.getGrbgApplicationIds());
 		}
-
-		return builder.toString();
+		
+		String Query = getLimitAndOrderByUpdatedTimeDesc(criteria,builder.toString(),preparedStmtList);
+		
+		return Query;
 	}
 
 	private void addToPreparedStatement(List<Object> preparedStmtList, Set<String> ids) {

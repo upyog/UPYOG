@@ -1,0 +1,169 @@
+{
+	"key": "grbgBillReceipt",
+	"DataConfigs": {
+		"version": "1.0.0",
+		"baseKeyPath": "$.grbg",
+		"mappings": [
+			{
+				"direct": [
+					{
+						"variable": "ulbType",
+						"value": {
+							"path": "$.ulbType"
+						}
+					},
+					{
+						"variable": "ulbName",
+						"value": {
+							"path": "$.ulbName"
+						}
+					},
+					{
+						"variable": "billNo",
+						"value": {
+							"path": "$.billNo"
+						}
+					},
+					{
+						"variable": "date",
+						"value": {
+							"path": "$.date"
+						}
+					},
+					{
+						"variable": "billPeriod",
+						"value": {
+							"path": "$.billPeriod"
+						}
+					},
+					{
+						"variable": "from",
+						"value": {
+							"path": "$.from"
+						}
+					},
+					{
+						"variable": "to",
+						"value": {
+							"path": "$.to"
+						}
+					},
+					{
+						"variable": "finYear",
+						"value": {
+							"path": "$.finYear"
+						}
+					},
+					{
+						"variable": "billDueDate",
+						"value": {
+							"path": "$.billDueDate"
+						}
+					},
+					{
+						"variable": "district",
+						"value": {
+							"path": "$.district"
+						}
+					},
+					{
+						"variable": "wardNumber",
+						"value": {
+							"path": "$.wardNumber"
+						}
+					},
+					{
+						"variable": "address",
+						"value": {
+							"path": "$.address"
+						}
+					},
+					{
+						"variable": "unitCategory",
+						"value": {
+							"path": "$.unitCategory"
+						}
+					},
+					{
+						"variable": "customerId",
+						"value": {
+							"path": "$.customerId"
+						}
+					},
+					{
+						"variable": "propertyId",
+						"value": {
+							"path": "$.propertyId"
+						}
+					},
+					{
+						"variable": "grbgId",
+						"value": {
+							"path": "$.grbgId"
+						}
+					},
+					{
+						"variable": "ownerOrOccupier",
+						"value": {
+							"path": "$.ownerOrOccupier"
+						}
+					},
+					{
+						"variable": "grbgTax",
+						"value": {
+							"path": "$.grbgTax"
+						}
+					},
+					{
+						"variable": "arrear",
+						"value": {
+							"path": "$.arrear"
+						}
+					},
+					{
+						"variable": "grbgTaxPlusArrear",
+						"value": {
+							"path": "$.grbgTaxPlusArrear"
+						}
+					},
+					{
+						"variable": "penalty",
+						"value": {
+							"path": "$.penalty"
+						}
+					},
+					{
+						"variable": "totalTax",
+						"value": {
+							"path": "$.totalTax"
+						}
+					},
+					{
+						"variable": "interest",
+						"value": {
+							"path": "$.interest"
+						}
+					},
+					{
+						"variable": "paymentStatus",
+						"value": {
+							"path": "$.paymentStatus"
+						}
+					},
+					{
+						"variable": "billGeneratedDate",
+						"value": {
+							"path": "$.billGeneratedDate"
+						}
+					},
+					{
+						"variable": "paymentDate",
+						"value": {
+							"path": "$.paymentDate"
+						}
+					}
+				]
+			}
+		]
+	}
+}
