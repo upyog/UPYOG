@@ -71,8 +71,6 @@ public class FundService {
 			spec = spec.and((root, query, cb) -> cb.equal(root.get("identifier"), fundCriteria.getIdentifier()));
 		}
 
-		cacheEvictionService.incrementVersionForTenant(ApplicationThreadLocals.getTenantID(),
-				MasterConstants.FUND_SEARCH_REDIS_CACHE_VERSION_KEY, MasterConstants.FUND_SEARCH_REDIS_CACHE_NAME);
 		return fundRepository.findAll(spec).stream().map(validation::entityTOModel)
 				.sorted(Comparator.comparingLong(FundModel::getId)).toList();
 	}

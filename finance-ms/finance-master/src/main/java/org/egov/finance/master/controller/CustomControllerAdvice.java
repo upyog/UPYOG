@@ -17,6 +17,9 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @RestControllerAdvice
 public class CustomControllerAdvice {
 
@@ -25,6 +28,7 @@ public class CustomControllerAdvice {
 		ErrorResponse errorResponse = new ErrorResponse(LocalDateTime.now(), HttpStatus.BAD_REQUEST.value(),
 				singularityException.getErrors());
 
+		log.error("MasterServiceException-{}",singularityException.getLocalizedMessage());
 		return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
 	}
 
@@ -40,6 +44,8 @@ public class CustomControllerAdvice {
 		
 		ErrorResponse errorResponse=new ErrorResponse(
 				LocalDateTime.now(), HttpStatus.BAD_REQUEST.value(), errors);
+		
+		log.error("MethodArgumentNotValidException-{}",argumentNotValidException.getLocalizedMessage());
 		
 		return new ResponseEntity<>(errorResponse,HttpStatus.BAD_REQUEST);
 
