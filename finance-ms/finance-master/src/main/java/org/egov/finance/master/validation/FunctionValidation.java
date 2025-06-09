@@ -18,6 +18,7 @@ import org.egov.finance.master.repository.FundRepository;
 import org.egov.finance.master.util.CommonUtils;
 import org.egov.finance.master.util.MasterConstants;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.util.CollectionUtils;
 
 public class FunctionValidation {
@@ -56,12 +57,21 @@ public class FunctionValidation {
 		return f;
 	}
 
-	public void fundFieldValidation(FunctionModel funcM) {
+	public void functionFieldValidation(FunctionModel funcM) {
 		Map<String, String> errorMap = new HashMap<>();
-		if (functionRespository.find(funcM.getCode()) != null)
-			errorMap.put(MasterConstants.CODE_NOT_UNIQUE, MasterConstants.CODE_IS_ALREADY_EXISTS_MSG);
-		if (functionRespository.findByName(funcM.getName()) != null)
-			errorMap.put(MasterConstants.NAME_NOT_UNIQUE, MasterConstants.NAME_IS_ALREADY_EXISTS_MSG);
+		
+			if(null==funcM.getName()||funcM.getName().isEmpty() || 
+				null==funcM.getCode()|| funcM.getCode().isEmpty()) {
+			errorMap.put(MasterConstants.INVALID_PARAMETERS, MasterConstants.INVALID_PARAMETERS_MSG);
+		}
+		if(errorMap.isEmpty()) {
+			Specification<Function> spec = Specification.where(null);
+			spec = spec.and((root, query, cb) -> cb.equal(root.get("code"), funcM.getCode()))
+					.and( (root, query, cb) -> cb.equal(root.get("name"), funcM.getName()));    
+			
+			if (!functionRespository.findAll(spec).isEmpty())
+				errorMap.put(MasterConstants.CODE_NAME_NOT_UNIQUE, MasterConstants.CODE_NAME_NOT_UNIQUE_MSG);
+			}
 		if (!CollectionUtils.isEmpty(errorMap))
 			throw new MasterServiceException(errorMap);
 	}

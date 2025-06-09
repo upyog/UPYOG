@@ -12,7 +12,7 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface FunctionRepository extends JpaRepository<Fund, Long> , JpaSpecificationExecutor<Function>{
+public interface FunctionRepository extends JpaRepository<Function, Long> , JpaSpecificationExecutor<Function>{
 
 }
 
