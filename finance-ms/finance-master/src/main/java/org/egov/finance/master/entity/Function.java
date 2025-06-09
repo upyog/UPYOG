@@ -44,7 +44,7 @@ public class Function extends AuditDetails {
     @SafeHtml
     private String type;
 
-    private int llevel;
+    private Integer llevel;
 
     private Boolean isActive;
 

@@ -8,6 +8,7 @@ package org.egov.finance.master.model.response;
 import java.util.List;
 
 import org.egov.finance.master.entity.Function;
+import org.egov.finance.master.model.FunctionModel;
 import org.egov.finance.master.model.ResponseInfo;
 
 import lombok.Builder;
@@ -18,6 +19,6 @@ import lombok.Getter;
 public class FunctionResponse {
 
 	ResponseInfo responseInfo;
-	List<Function>function;
+	List<FunctionModel>function;
 }
 

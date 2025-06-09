@@ -25,7 +25,7 @@ public class FunctionModel {
     @Length(max = 50)
     @SafeHtml
     private String type;
-    private int llevel;
+    private Integer llevel;
     private Boolean isActive;
     private Boolean isNotLeaf;
     private Long parentId;

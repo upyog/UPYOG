@@ -6,6 +6,7 @@
 package org.egov.finance.master.model.request;
 
 import org.egov.finance.master.entity.Function;
+import org.egov.finance.master.model.FunctionModel;
 import org.egov.finance.master.model.RequestInfo;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -20,6 +21,6 @@ public class FunctionRequest {
 	RequestInfo requestInfo;
 	@Valid
 	@JsonProperty("Function")
-	Function function;
+	FunctionModel function;
 }
 
