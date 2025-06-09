@@ -42,6 +42,12 @@ public class SchedulerConfiguration {
 	@Value("${egov.property.endpoint.tax-calculator}")
 	private String propertyTaxCalculatorEndpoint;
 
+	@Value("${egov.property.endpoint.update-tracker-bill-status}")
+	private String propertyUpdateTrackerBillStatusEndpoint;
+
+	@Value("${egov.property.endpoint.reverse-rebate-amount}")
+	private String propertyReverseRebateAmountEndpoint;
+
 	@Value("${egov.pgr.context.host}")
 	private String pgrServiceHostUrl;
 
@@ -59,7 +65,7 @@ public class SchedulerConfiguration {
 
 	@Value("${egov.pg.endpoint.transfer-amount}")
 	private String pgTransferAmountEndpoint;
-	
+
 	@Value("${egov.pg.endpoint.settlement-status-update}")
 	private String pgSettlementStatusUpdateEndpoint;
 

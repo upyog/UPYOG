@@ -6,6 +6,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.pt.config.PropertyConfiguration;
+import org.egov.pt.models.bill.BillRequest;
 import org.egov.pt.models.bill.BillSearchCriteria;
 import org.egov.pt.models.bill.GenerateBillCriteria;
 import org.egov.pt.models.collection.Bill;
@@ -52,27 +53,59 @@ public class BillRepository {
 	}
 
 	public List<Bill> searchBill(BillSearchCriteria billCriteria, RequestInfo requestInfo) {
+		StringBuilder uriBuilder = new StringBuilder(config.getBillHost()).append(config.getSearchBillEndpoint());
 
-		String uri = config.getBillHost().concat(config.getSearchBillEndpoint());
-		uri = uri.concat("?tenantId=").concat(billCriteria.getTenantId());
+		if (!StringUtils.isEmpty(billCriteria.getTenantId())) {
+			uriBuilder.append("?tenantId=").append(billCriteria.getTenantId());
+		}
+
+		boolean hasQueryParam = uriBuilder.toString().contains("?");
+
 		if (!StringUtils.isEmpty(billCriteria.getService())) {
-			uri = uri.concat("&service=").concat(billCriteria.getService());
+			uriBuilder.append(hasQueryParam ? "&" : "?").append("service=").append(billCriteria.getService());
+			hasQueryParam = true;
 		}
-//		uri = uri.concat("&retrieveAll=").concat("true");
-		if (!CollectionUtils.isEmpty(billCriteria.getConsumerCode())) {
-			uri = uri.concat("&consumerCode=").concat(StringUtils.join(billCriteria.getConsumerCode(), ","));
-		}
-		if (!CollectionUtils.isEmpty(billCriteria.getBillId())) {
-			uri = uri.concat("&billId=").concat(StringUtils.join(billCriteria.getBillId(), ","));
-		}
-		
 
-		Object result = restCallRepository.fetchResult(new StringBuilder(uri),
+		if (!CollectionUtils.isEmpty(billCriteria.getConsumerCode())) {
+			uriBuilder.append(hasQueryParam ? "&" : "?").append("consumerCode=")
+					.append(String.join(",", billCriteria.getConsumerCode()));
+			hasQueryParam = true;
+		}
+
+		if (!CollectionUtils.isEmpty(billCriteria.getBillId())) {
+			uriBuilder.append(hasQueryParam ? "&" : "?").append("billId=")
+					.append(String.join(",", billCriteria.getBillId()));
+			hasQueryParam = true;
+		}
+
+		if (billCriteria.getSkipValidation()) {
+			uriBuilder.append(hasQueryParam ? "&" : "?").append("skipValidation=").append("true");
+			hasQueryParam = true;
+		}
+
+		uriBuilder.append(hasQueryParam ? "&" : "?").append("retrieveAll=").append("true");
+
+		Object result = restCallRepository.fetchResult(uriBuilder,
 				RequestInfoWrapper.builder().requestInfo(requestInfo).build());
 
 		BillResponse billResponse = objectMapper.convertValue(result, BillResponse.class);
-
 		return billResponse.getBill();
 	}
+	
+	public List<Bill> updateBill(RequestInfo requestInfo, List<Bill> bills) {
+		StringBuilder url = new StringBuilder(config.getBillHost());
+		url.append(config.getUpdateBillEndpoint());
+		BillRequest request = new BillRequest(requestInfo, bills);
+		Object result = restCallRepository.fetchResult(url, request);
+		BillResponse response = null;
+		try {
+			response = objectMapper.convertValue(result, BillResponse.class);
+		} catch (IllegalArgumentException e) {
+			throw new CustomException("PARSING ERROR", "Failed to parse response of update bill");
+		}
+
+		return response.getBill();
+	}
+
 
 }

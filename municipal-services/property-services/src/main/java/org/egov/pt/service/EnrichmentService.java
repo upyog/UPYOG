@@ -2,10 +2,6 @@ package org.egov.pt.service;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -22,8 +18,8 @@ import org.egov.pt.models.Property;
 import org.egov.pt.models.PropertyCriteria;
 import org.egov.pt.models.PtTaxCalculatorTracker;
 import org.egov.pt.models.collection.Bill;
+import org.egov.pt.models.enums.BillStatus;
 import org.egov.pt.models.enums.Status;
-import org.egov.pt.models.user.User;
 import org.egov.pt.util.PTConstants;
 import org.egov.pt.util.PropertyUtil;
 import org.egov.pt.web.contracts.PropertyRequest;
@@ -359,7 +355,7 @@ public class EnrichmentService {
     
 	public PtTaxCalculatorTrackerRequest enrichTaxCalculatorTrackerCreateRequest(Property property,
 			CalculateTaxRequest calculateTaxRequest, BigDecimal finalPropertyTax, JsonNode additionalDetails,
-			List<Bill> bills) {
+			List<Bill> bills, BigDecimal rebateAmount, BigDecimal propertyTaxWithoutRebate) {
 
 		SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
 		AuditDetails createAuditDetails = propertyutil
@@ -372,22 +368,23 @@ public class EnrichmentService {
 				.fromDateString(formatter.format(calculateTaxRequest.getFromDate()))
 				.toDateString(formatter.format(calculateTaxRequest.getToDate())).propertyTax(finalPropertyTax)
 				.additionalDetails(additionalDetails).auditDetails(createAuditDetails)
-				.billId(null != bill ? bill.getId() : null).build();
+				.billId(null != bill ? bill.getId() : null).rebateAmount(rebateAmount)
+				.propertyTaxWithoutRebate(propertyTaxWithoutRebate).billStatus(BillStatus.ACTIVE).build();
 
 		return PtTaxCalculatorTrackerRequest.builder().requestInfo(calculateTaxRequest.getRequestInfo())
 				.ptTaxCalculatorTracker(ptTaxCalculatorTracker).build();
 	}
 
-	public Date getFromDateInIST(Date date) {
-		if (date == null) {
-			return null;
-		}
-		// Convert the Date to Instant, then to ZonedDateTime in GMT
-		ZonedDateTime gmtZonedDateTime = date.toInstant().atZone(ZoneId.of("GMT"));
-		// Convert to IST
-		ZonedDateTime istZonedDateTime = gmtZonedDateTime.withZoneSameInstant(ZoneId.of("Asia/Kolkata"));
-		// Convert back to Date (in IST)
-		return Date.from(istZonedDateTime.toInstant());
+	public PtTaxCalculatorTrackerRequest enrichTaxCalculatorTrackerUpdateRequest(
+			PtTaxCalculatorTracker ptTaxCalculatorTracker, RequestInfo requestInfo) {
+		AuditDetails updateAuditDetails = propertyutil.getAuditDetails(requestInfo.getUserInfo().getUuid().toString(),
+				false);
+		updateAuditDetails.setCreatedBy(ptTaxCalculatorTracker.getAuditDetails().getCreatedBy());
+		updateAuditDetails.setCreatedTime(ptTaxCalculatorTracker.getAuditDetails().getCreatedTime());
+		ptTaxCalculatorTracker.setAuditDetails(updateAuditDetails);
+
+		return PtTaxCalculatorTrackerRequest.builder().requestInfo(requestInfo)
+				.ptTaxCalculatorTracker(ptTaxCalculatorTracker).build();
 	}
 
 }

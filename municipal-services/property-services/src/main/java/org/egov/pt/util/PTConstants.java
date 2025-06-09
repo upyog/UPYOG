@@ -482,6 +482,9 @@ public class PTConstants {
 	public static final String MDMS_MASTER_DETAILS_BUILDINGPURPOSE = "BuildingPurpose";
 	public static final String MDMS_MASTER_DETAILS_BUILDINGUSE = "BuildingUse";
 	public static final String MDMS_MASTER_DETAILS_OVERALLREBATE = "OverAllRebate";
+	public static final String MDMS_MASTER_DETAILS_EARLYPAYMENTREBATE = "EarlyPaymentRebate";
+	
+	public static final String MDMS_MASTER_DETAILS_PROPERTYREBATEDAYS = "PropertyReabateDays";
 	
 	public static final String MDMS_MASTER_DETAILS_PROPERTYTAXRATE = "PropertyTaxRate";
 

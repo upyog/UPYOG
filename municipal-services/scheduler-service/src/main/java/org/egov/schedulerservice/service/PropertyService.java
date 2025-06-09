@@ -27,8 +27,8 @@ public class PropertyService {
 		try {
 			StringBuilder url = new StringBuilder(applicationConfig.getPropertyServiceHostUrl());
 			url.append(applicationConfig.getPropertyTaxCalculatorEndpoint());
-			// Make the POST request
 
+			// Make the POST request
 			RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(requestInfo).build();
 
 			ResponseEntity<String> responseEntity = restTemplate.postForEntity(url.toString(), requestInfoWrapper,
@@ -39,7 +39,44 @@ public class PropertyService {
 			throw new SchedulerServiceException(ErrorConstants.ERR_PROPERTY_SERVICE_ERROR,
 					"Error occured while generating property tax. Message: " + e.getMessage());
 		}
+	}
 
+	public String updateTrackerBillStatus(RequestInfo requestInfo) {
+
+		try {
+			StringBuilder url = new StringBuilder(applicationConfig.getPropertyServiceHostUrl());
+			url.append(applicationConfig.getPropertyUpdateTrackerBillStatusEndpoint());
+
+			// Make the POST request
+			RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(requestInfo).build();
+
+			ResponseEntity<String> responseEntity = restTemplate.postForEntity(url.toString(), requestInfoWrapper,
+					String.class);
+			return responseEntity.getBody();
+		} catch (Exception e) {
+			log.error("Error occured while updating tracker bill status.", e);
+			throw new SchedulerServiceException(ErrorConstants.ERR_PROPERTY_SERVICE_ERROR,
+					"Error occured while updating tracker bill status. Message: " + e.getMessage());
+		}
+	}
+
+	public String reverseRebateAmount(RequestInfo requestInfo) {
+
+		try {
+			StringBuilder url = new StringBuilder(applicationConfig.getPropertyServiceHostUrl());
+			url.append(applicationConfig.getPropertyReverseRebateAmountEndpoint());
+
+			// Make the POST request
+			RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(requestInfo).build();
+
+			ResponseEntity<String> responseEntity = restTemplate.postForEntity(url.toString(), requestInfoWrapper,
+					String.class);
+			return responseEntity.getBody();
+		} catch (Exception e) {
+			log.error("Error occured while reverse rebate amount.", e);
+			throw new SchedulerServiceException(ErrorConstants.ERR_PROPERTY_SERVICE_ERROR,
+					"Error occured while reverse rebate amount. Message: " + e.getMessage());
+		}
 	}
 
 }

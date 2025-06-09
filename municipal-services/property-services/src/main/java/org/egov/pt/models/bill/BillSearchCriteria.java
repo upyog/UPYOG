@@ -40,6 +40,9 @@ public class BillSearchCriteria {
 
 	@Default
 	private Boolean retrieveAll = false;
+	
+	@Default
+	private Boolean skipValidation = false;
 
 	private Boolean isActive;
 
