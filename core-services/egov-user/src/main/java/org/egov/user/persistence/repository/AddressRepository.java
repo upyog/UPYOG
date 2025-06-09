@@ -30,6 +30,7 @@ public class AddressRepository {
     public static final String DELETE_ADDRESSES = "delete from eg_user_address where id IN (:id)";
     public static final String DELETE_ADDRESS = "delete from eg_user_address where id=:id";
     public static final String UPDATE_ADDRESS_BYIDAND_TENANTID = "update eg_user_address set address=:address,city=:city,pincode=:pincode,lastmodifiedby=:lastmodifiedby,lastmodifieddate=:lastmodifieddate, status=:status where userid=:userid and tenantid=:tenantid and type=:type";
+    public static final String UPDATE_ADDRESS_STATUS = "update eg_user_address set status=:status, lastmodifieddate=:lastmodifieddate, lastmodifiedby=:lastmodifiedby where userid=:userid and tenantid=:tenantid and type=:type";
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
     private JdbcTemplate jdbcTemplate;
     private AddressQueryBuilder addressQueryBuilder;
@@ -131,7 +132,7 @@ public class AddressRepository {
      */
     private void updateAddresses(List<Address> domainAddresses, List<Address> entityAddresses, Long userId) {
         Map<String, Address> typeToEntityAddressMap = toMap(entityAddresses);
-        domainAddresses.forEach(address -> updateAddress(typeToEntityAddressMap, address, userId));
+        domainAddresses.forEach(address -> updateAddress(typeToEntityAddressMap, address, userId, UserConstants.ADDRESS_ACTIVE_STATUS));
     }
 
 
@@ -141,8 +142,9 @@ public class AddressRepository {
      * @param typeToEntityAddressMap
      * @param address
      * @param userId
+     * @param addressStatus
      */
-    private void updateAddress(Map<String, Address> typeToEntityAddressMap, Address address, Long userId) {
+    private void updateAddress(Map<String, Address> typeToEntityAddressMap, Address address, Long userId, String addressStatus) {
         final Address matchingEntityAddress = typeToEntityAddressMap.getOrDefault(address.getType().name(), null);
 
         if (matchingEntityAddress == null) {
@@ -158,7 +160,7 @@ public class AddressRepository {
         addressInputs.put("tenantid", matchingEntityAddress.getTenantId());
         addressInputs.put("lastmodifieddate", new Date());
         addressInputs.put("lastmodifiedby", userId);
-        addressInputs.put("status", UserConstants.ADDRESS_ACTIVE_STATUS);
+        addressInputs.put("status", addressStatus);
 
         namedParameterJdbcTemplate.update(UPDATE_ADDRESS_BYIDAND_TENANTID, addressInputs);
     }
@@ -293,4 +295,57 @@ public class AddressRepository {
 
         return addresses;
     }
+
+    /**
+     * Updates address records: marks old ones inactive and creates new ones if address details differ.
+     *
+     * @param addresses List of addresses from payload
+     * @param userId User ID
+     * @param tenantId Tenant ID
+     */
+    public void updateStatusIfChanged(List<Address> addresses, Long userId, String tenantId) {
+//        if (addresses == null || addresses.isEmpty()) return;
+
+        List<Address> dbAddresses = find(userId, tenantId);
+        Map<String, Address> dbAddressMap = dbAddresses.stream()
+                .collect(Collectors.toMap(a -> a.getType().name(), a -> a));
+
+        for (Address payloadAddress : addresses) {
+            if (payloadAddress == null || payloadAddress.getType() == null) continue;
+
+            String addressType = payloadAddress.getType().name();
+            Address dbAddress = dbAddressMap.get(addressType);
+
+            if (dbAddress != null && !isAddressSame(payloadAddress, dbAddress)) {
+                // Mark existing address as inactive
+                updateAddress(dbAddressMap, dbAddress, userId, UserConstants.ADDRESS_INACTIVE_STATUS);
+                log.info("Address of type {} for user {} marked as inactive due to change.", addressType, userId);
+
+                // Insert new address as active
+                createAddressV2(payloadAddress, userId, tenantId);
+            } else if (dbAddress == null) {
+                // Address type does not exist in DB — create new one
+                createAddressV2(payloadAddress, userId, tenantId);
+            }
+        }
+    }
+
+    /**
+     * Compares all relevant address fields to determine if they are the same.
+     */
+    private boolean isAddressSame(Address a1, Address a2) {
+        if (a1 == null || a2 == null) return false;
+        return Objects.equals(a1.getAddress(), a2.getAddress()) &&
+                Objects.equals(a1.getAddress2(), a2.getAddress2()) &&
+                Objects.equals(a1.getHouseNumber(), a2.getHouseNumber()) &&
+                Objects.equals(a1.getHouseName(), a2.getHouseName()) &&
+                Objects.equals(a1.getStreetName(), a2.getStreetName()) &&
+                Objects.equals(a1.getLandmark(), a2.getLandmark()) &&
+                Objects.equals(a1.getLocality(), a2.getLocality()) &&
+                Objects.equals(a1.getPinCode(), a2.getPinCode()) &&
+                Objects.equals(a1.getCity(), a2.getCity()) &&
+                Objects.equals(a1.getType(), a2.getType()) &&
+                Objects.equals(a1.getTenantId(), a2.getTenantId());
+    }
+
 }
