@@ -36,5 +36,6 @@ public class MasterConstants {
 	public static final String CODE_NAME_NOT_UNIQUE_MSG = "Code Or Name Provided already exist ";
 	public static final String INVALID_PARAMETERS = "INVALID_PARAMETERS";
 	public static final String INVALID_PARAMETERS_MSG="Invlaid Parameters Passed";
+	public static final String EXCEPTION_FROM_MASTER_SERVICE_MSG = "Exception From master Service---- {}";
 
 }
