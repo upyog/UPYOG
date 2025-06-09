@@ -170,6 +170,7 @@ public class UserService {
 	    if (existingUsersFromService.isEmpty()) {
 	        // Create new user if not found
 	        owner.setUserName(UUID.randomUUID().toString());
+	    	owner.setName(garbageAccount.getName());
 	        userDetailResponse = createUser(requestInfo, owner);
 	    } else {
 	        // Update existing user if found
