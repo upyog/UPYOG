@@ -46,7 +46,7 @@ const SelectTrips = ({ t, config, onSelect, formData = {}, userType, styles, FSM
 
   const inputs = [
     {
-      label: "ES_NEW_APPLICATION_PAYMENT_NO_OF_TRIP6556sS",
+      label: "ES_NEW_APPLICATION_PAYMENT_NO_OF_TRIP",
       type: "text",
       name: "noOfTrips",
       error: t("ES_NEW_APPLICATION_NO_OF_TRIPS_INVALID"),
