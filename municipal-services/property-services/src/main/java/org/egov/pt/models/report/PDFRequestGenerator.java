@@ -164,7 +164,7 @@ public class PDFRequestGenerator {
 		ptbr.put("totalTax", String.valueOf(propertyTax.add(arrear).subtract(rebate).add(interest).add(penalty)));
 		// TODO END
 
-		BigDecimal amountPaid = new BigDecimal("0.00");
+		BigDecimal amountPaid = BigDecimal.ZERO;
 		String paymentStatus = "";
 		String paymentDate = "";
 		if (bill.getStatus().equals(StatusEnum.PAID)) {
