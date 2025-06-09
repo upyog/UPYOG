@@ -64,24 +64,26 @@ public class GarbageAccountSchedulerService {
 		// create demand and bill for every account
 		if (null != garbageAccounts && !CollectionUtils.isEmpty(garbageAccounts)) {
 			garbageAccounts.stream().forEach(garbageAccount -> {
-				Object mdmsResponse = mdmsService.fetchGarbageFeeFromMdms(generateBillRequest.getRequestInfo(),
-						garbageAccount.getTenantId());
-				// calculate fees from mdms response
-				BigDecimal billAmount = mdmsService.fetchGarbageAmountFromMDMSResponse(mdmsResponse, garbageAccount);
+				if(null != garbageAccount.getUserUuid()) {
+					Object mdmsResponse = mdmsService.fetchGarbageFeeFromMdms(generateBillRequest.getRequestInfo(),
+							garbageAccount.getTenantId());
+					// calculate fees from mdms response
+					BigDecimal billAmount = mdmsService.fetchGarbageAmountFromMDMSResponse(mdmsResponse, garbageAccount);
 
-				BillResponse billResponse = generateDemandAndBill(generateBillRequest, garbageAccount, billAmount);
+					BillResponse billResponse = generateDemandAndBill(generateBillRequest, garbageAccount, billAmount);
 
-				if (null != billResponse && !CollectionUtils.isEmpty(billResponse.getBill())) {
-					GrbgBillTrackerRequest grbgBillTrackerRequest = garbageAccountService
-							.enrichGrbgBillTrackerCreateRequest(garbageAccount, generateBillRequest, billAmount,billResponse.getBill().get(0));
-					// add to garbage bill tracker
-					GrbgBillTracker grbgBillTracker = garbageAccountService
-							.saveToGarbageBillTracker(grbgBillTrackerRequest);
-					grbgBillTrackers.add(grbgBillTracker);
+					if (null != billResponse && !CollectionUtils.isEmpty(billResponse.getBill())) {
+						GrbgBillTrackerRequest grbgBillTrackerRequest = garbageAccountService
+								.enrichGrbgBillTrackerCreateRequest(garbageAccount, generateBillRequest, billAmount,billResponse.getBill().get(0));
+						// add to garbage bill tracker
+						GrbgBillTracker grbgBillTracker = garbageAccountService
+								.saveToGarbageBillTracker(grbgBillTrackerRequest);
+						grbgBillTrackers.add(grbgBillTracker);
 
-					// triggerNotifications
-					notificationService.triggerNotificationsGenerateBill(garbageAccount, billResponse.getBill().get(0),
-							generateBillRequest.getRequestInfo());
+						// triggerNotifications
+						notificationService.triggerNotificationsGenerateBill(garbageAccount, billResponse.getBill().get(0),
+								generateBillRequest.getRequestInfo());
+					}
 				}
 			});
 		}
@@ -201,7 +203,7 @@ public class GarbageAccountSchedulerService {
 					.businessService("GB")
 					.consumerCode(garbageAccount.getGrbgApplicationNumber())
 					.mobileNumber(garbageAccount.getMobileNumber())
-					.email(garbageAccount.getEmailId())
+//					.email(garbageAccount.getEmailId())
 					.build();
 			BillResponse billResponse = billService.generateBill(generateBillRequest.getRequestInfo(), billCriteria);
 

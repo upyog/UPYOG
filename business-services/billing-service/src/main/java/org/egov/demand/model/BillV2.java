@@ -81,6 +81,10 @@ public class BillV2 {
 	@JsonProperty("tenantId")
 	@Size(max = 256)
 	private String tenantId;
+	
+	@JsonProperty("count")
+	@Size(max = 256)
+	private String count;
 
 	@JsonProperty("fileStoreId")
 	private String fileStoreId;

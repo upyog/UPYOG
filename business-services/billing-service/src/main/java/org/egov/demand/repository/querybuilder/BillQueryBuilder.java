@@ -70,19 +70,34 @@ public class BillQueryBuilder {
 			+ " JOIN egbs_billdetail_v1 bd ON b.id = bd.billid AND b.tenantid = bd.tenantid"
 			+ " JOIN egbs_billaccountdetail_v1 ad ON bd.id = ad.billdetail AND bd.tenantid = ad.tenantid";
 	
+	private final String paginationWrapper = "WITH base AS ("
+			+ "  {}"
+			+ "),"
+			+ "ranked AS ("
+			+ "  SELECT *, DENSE_RANK() OVER (ORDER BY b_lastmodifieddate DESC, b_id) AS offset_"
+			+ "  FROM base"
+			+ "),"
+			+ "total_count AS ("
+			+ "  SELECT COUNT(*) AS total FROM base"
+			+ ") "
+			+ "SELECT r.*, t.total "
+			+ "FROM ranked r "
+			+ "CROSS JOIN total_count t "
+			+ "WHERE r.offset_ > ? AND r.offset_ <= ?";
+
 	public static final String UPDATE_BILL_QUERY = "UPDATE egbs_bill_v1 SET "
 			+ "tenantid = ?, payername = ?, payeraddress = ?, payeremail = ?, lastmodifiedby = ?, lastmodifieddate = ?, mobilenumber = ?, "
 			+ "status = ?, additionaldetails = ?, filestoreid = ?, payerid = ?, consumercode = ? WHERE id = ?";
-	
+
 	public static final String UPDATE_BILLDETAILS_QUERY = "UPDATE egbs_billdetail_v1 SET "
 			+ "tenantid = ?, billid = ?, demandid = ?, fromperiod = ?, toperiod = ?, businessservice = ?, billno = ?, billdate = ?, "
 			+ "consumercode = ?, totalamount = ?, lastmodifiedby = ?, lastmodifieddate = ?, expirydate = ?, additionaldetails = ? "
 			+ "WHERE id = ?";
-	
+
 	public static final String UPDATE_BILLACCOUNTDETAILS_QUERY = "UPDATE egbs_billaccountdetail_v1 SET "
 			+ "tenantid = ?, billdetail = ?, demanddetailid = ?, orderno = ?, amount = ?, adjustedamount = ?, taxheadcode = ?, "
 			+ "additionaldetails = ?, lastmodifiedby = ?, lastmodifieddate = ? " + "WHERE id = ?";
-	
+
 	public String getBillQuery(BillSearchCriteria billSearchCriteria, List<Object> preparedStatementValues){
 		
 		StringBuilder billQuery = new StringBuilder(BILL_BASE_QUERY);
@@ -99,8 +114,33 @@ public class BillQueryBuilder {
 		}
 		addWhereClause(billQuery, preparedStatementValues, billSearchCriteria);
 		StringBuilder maxQuery = addPagingClause(billQuery, preparedStatementValues, billSearchCriteria);
-		
-		return maxQuery.toString();
+		String finalQuery = addPaginationWrapper(maxQuery.toString(), preparedStatementValues, billSearchCriteria);
+
+		return finalQuery;
+	}
+
+	private String addPaginationWrapper(String query, List<Object> preparedStmtList, BillSearchCriteria criteria) {
+
+		Long limit = 5000L;
+		Long offset = 0L;
+		String finalQuery = null;
+
+		if (criteria.getLimit() != null)
+			limit = criteria.getLimit();
+
+		if (criteria.getOffset() != null)
+			offset = criteria.getOffset();
+
+		if(limit != null && offset != null) {
+			finalQuery = paginationWrapper.replace("{}", query);
+			preparedStmtList.add(offset);
+			preparedStmtList.add(limit + offset);
+		}
+		else {
+			finalQuery = query;
+		}
+
+		return finalQuery;
 	}
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
