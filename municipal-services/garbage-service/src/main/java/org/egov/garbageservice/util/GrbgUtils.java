@@ -1,6 +1,9 @@
 package org.egov.garbageservice.util;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.stream.Collectors;
@@ -33,16 +36,13 @@ public class GrbgUtils {
 	}
 
 	public String getContentAsString(ClassPathResource resource) {
-		String htmlContent = "";
-		try {
-			// Read all lines from the file and join them into a single string
-			htmlContent = Files.lines(Paths.get(resource.getURI())).collect(Collectors.joining("\n"));
-			// Output the content of the HTML file
-		} catch (IOException e) {
-			// Handle exception if the file is not found or can't be read
-//			e.printStackTrace();
-		}
-		return htmlContent;
+	    try (InputStream is = resource.getInputStream();
+	         BufferedReader reader = new BufferedReader(new InputStreamReader(is))) {
+	        return reader.lines().collect(Collectors.joining("\n"));
+	    } catch (IOException e) {
+	        e.printStackTrace();
+	        return "";
+	    }
 	}
 	
 	public AuditDetails buildCreateAuditDetails(RequestInfo requestInfo) {
