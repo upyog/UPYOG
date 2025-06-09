@@ -403,11 +403,7 @@
                             <tr>
                                 <td><s:submit type="submit" cssClass="buttonsubmit" key="lbl.upload.budget" name="upload" method="upload" onclick="return validate(event);" /></td>
                                 <!-- <td><input type="button" value="<s:text name='lbl.close'/>" onclick="javascript:window.close()" class="buttonsubmit" /></td> -->
-                                <td>
-                                    <input type="button" value="<s:text name='lbl.close'/>"
-                                           onclick="window.location.href = window.location.origin + '/employee/services/EGF/budget/budgetLoad-beforeUpload.action';"
-                                           class="buttonsubmit" />
-                                  </td>
+                                <td><input type="button" value="Close" onclick="window.location.reload();" class="buttonsubmit" /></td>	
                             </tr>
                         </table>
                     </div>
@@ -588,11 +584,7 @@
                                 <td><s:submit type="submit" cssClass="buttonsubmit" key="lbl.submit" name="upload" method="upload" onclick="return submitManualData(event);" id="submitBtn" /></td>
                                 <!-- <td><input type="button" value="<s:text name='lbl.close'/>" onclick="javascript:window.close()" class="buttonsubmit" /></td> -->
                                 <!-- <td><input type="button" value="Close" onclick="window.history.back();" class="buttonsubmit"/></td> -->
-                                <td>
-                                    <input type="button" value="Close"
-                                           onclick="window.location.href = window.location.origin + '/employee/services/EGF/budget/budgetLoad-beforeUpload.action';"
-                                           class="buttonsubmit" />
-                                  </td>                                  
+                                <td><input type="button" value="Close" onclick="window.location.reload();" class="buttonsubmit" /></td>	                             
                             </tr>
                         </table>
                     </div>					
