@@ -15,6 +15,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.egov.pt.config.PropertyConfiguration;
 import org.egov.pt.models.PropertyCriteria;
 import org.egov.pt.models.PtTaxCalculatorTrackerSearchCriteria;
+import org.egov.pt.models.enums.BillStatus;
 import org.egov.pt.models.enums.Status;
 import org.egov.pt.web.contracts.TotalCountRequest;
 import org.egov.tracer.model.CustomException;
@@ -33,6 +34,8 @@ public class PropertyQueryBuilder {
 	private PropertyConfiguration config;
 	
 	private static final String PT_TAX_CALCULATOR_TRACKER_SEARCH_QUERY = "SELECT * FROM eg_pt_tax_calculator_tracker eptct";
+	
+	private static final String PT_TAX_CALCULATOR_TRACKER_TENANT_ID_SEARCH_QUERY = "SELECT distinct(eptct.tenantid) FROM eg_pt_tax_calculator_tracker eptct";
 
 	private static final String SELECT = "SELECT ";
 	private static final String INNER_JOIN = "INNER JOIN";
@@ -694,6 +697,37 @@ public class PropertyQueryBuilder {
 			builder.append(" eptct.financialyear IN (").append(createQuery(criteria.getFinancialYears())).append(")");
 			addToPreparedStatement(preparedStmtList, criteria.getFinancialYears());
 		}
+		if (!CollectionUtils.isEmpty(criteria.getBillStatus())) {
+			andClauseIfRequired(preparedStmtList, builder);
+			Set<String> billStatus = criteria.getBillStatus().stream().map(BillStatus::name)
+					.collect(Collectors.toSet());
+			builder.append(" eptct.bill_status IN (").append(createQuery(billStatus)).append(")");
+			addToPreparedStatement(preparedStmtList, billStatus);
+		}
+		if (!CollectionUtils.isEmpty(criteria.getNotInBillStatus())) {
+			andClauseIfRequired(preparedStmtList, builder);
+			Set<String> notInBillStatus = criteria.getNotInBillStatus().stream().map(BillStatus::name)
+					.collect(Collectors.toSet());
+			builder.append(" eptct.bill_status NOT IN (").append(createQuery(notInBillStatus)).append(")");
+			addToPreparedStatement(preparedStmtList, notInBillStatus);
+		}
+
+		return builder.toString();
+	}
+	
+	public String getTaxCalculatedTenantIdsSearchQuery(PtTaxCalculatorTrackerSearchCriteria criteria,
+			List<Object> preparedStmtList) {
+		StringBuilder builder = new StringBuilder(PT_TAX_CALCULATOR_TRACKER_TENANT_ID_SEARCH_QUERY);
+
+		builder.append(" WHERE 1 = 1 ");
+
+		if (!CollectionUtils.isEmpty(criteria.getBillStatus())) {
+			andClauseIfRequired(preparedStmtList, builder);
+			Set<String> billStatus = criteria.getBillStatus().stream().map(BillStatus::name)
+					.collect(Collectors.toSet());
+			builder.append(" eptct.bill_status IN (").append(createQuery(billStatus)).append(")");
+			addToPreparedStatement(preparedStmtList, billStatus);
+		}
 
 		return builder.toString();
 	}
@@ -725,12 +759,30 @@ public class PropertyQueryBuilder {
 			List<Object> preparedStmtList) {
 		StringBuilder queryBuilder = new StringBuilder(query);
 		if (null != criteria.getLimit()) {
-			queryBuilder.append(" order by eptct.lastmodifiedtime desc ");
+			queryBuilder.append(" order by eptct.createdtime desc ");
 			queryBuilder.append(" limit ? ");
 			preparedStmtList.add(criteria.getLimit());
 		}
 
 		return queryBuilder.toString();
+	}
+
+	public String checkLastUpdatedTime(PtTaxCalculatorTrackerSearchCriteria ptTaxCalculatorTrackerSearchCriteria,
+			String query, List<Object> preparedStmtList) {
+		StringBuilder builder = new StringBuilder(query);
+
+		if (!query.contains("WHERE"))
+			builder.append(" WHERE ");
+		else
+			builder.append(" AND ");
+
+		builder.append(" eptct.createdtime >= ? ");
+		preparedStmtList.add(ptTaxCalculatorTrackerSearchCriteria.getStartDateTime());
+		builder.append(" AND ");
+		builder.append(" eptct.createdtime <= ? ");
+		preparedStmtList.add(ptTaxCalculatorTrackerSearchCriteria.getEndDateTime());
+
+		return builder.toString();
 	}
 
 }

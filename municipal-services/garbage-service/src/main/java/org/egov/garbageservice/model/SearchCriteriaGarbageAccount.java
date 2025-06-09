@@ -20,6 +20,8 @@ public class SearchCriteriaGarbageAccount {
     private List<String> propertyId;
     
     private List<String> uuid;
+    
+    private List<String> user_uuid;
 
     private List<String> type;
 

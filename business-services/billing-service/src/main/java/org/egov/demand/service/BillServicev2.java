@@ -65,6 +65,8 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import javax.validation.Valid;
+
 import org.egov.common.contract.request.PlainAccessRequest;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.demand.config.ApplicationProperties;
@@ -764,6 +766,12 @@ public class BillServicev2 {
 
 	public Integer updateBillStatusToExpire(Set<String> billIds) {
 		return billRepository.updateBillStatusToExpiredByBillId(billIds);
+	}
+
+	public BillResponseV2 update(@Valid BillRequestV2 billRequest) {
+		if (!CollectionUtils.isEmpty(billRequest.getBills()))
+			billRepository.updateBill(billRequest);
+		return getBillResponse(billRequest.getBills());
 	}
 	
 }

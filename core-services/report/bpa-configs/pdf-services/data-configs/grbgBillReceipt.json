@@ -1,8 +1,8 @@
 {
-	"key": "PropertyTaxBillReceipt",
+	"key": "grbgBillReceipt",
 	"DataConfigs": {
 		"version": "1.0.0",
-		"baseKeyPath": "$.ptbr",
+		"baseKeyPath": "$.grbg",
 		"mappings": [
 			{
 				"direct": [
@@ -49,6 +49,18 @@
 						}
 					},
 					{
+						"variable": "finYear",
+						"value": {
+							"path": "$.finYear"
+						}
+					},
+					{
+						"variable": "billDueDate",
+						"value": {
+							"path": "$.billDueDate"
+						}
+					},
+					{
 						"variable": "district",
 						"value": {
 							"path": "$.district"
@@ -67,6 +79,12 @@
 						}
 					},
 					{
+						"variable": "unitCategory",
+						"value": {
+							"path": "$.unitCategory"
+						}
+					},
+					{
 						"variable": "customerId",
 						"value": {
 							"path": "$.customerId"
@@ -79,39 +97,21 @@
 						}
 					},
 					{
+						"variable": "grbgId",
+						"value": {
+							"path": "$.grbgId"
+						}
+					},
+					{
 						"variable": "ownerOrOccupier",
 						"value": {
 							"path": "$.ownerOrOccupier"
 						}
 					},
 					{
-						"variable": "fatherOrHusbandName",
+						"variable": "grbgTax",
 						"value": {
-							"path": "$.fatherOrHusbandName"
-						}
-					},
-					{
-						"variable": "noOfStories",
-						"value": {
-							"path": "$.noOfStories"
-						}
-					},
-					{
-						"variable": "buildingNo",
-						"value": {
-							"path": "$.buildingNo"
-						}
-					},
-					{
-						"variable": "plinthAreaTotal",
-						"value": {
-							"path": "$.plinthAreaTotal"
-						}
-					},
-					{
-						"variable": "propertyTax",
-						"value": {
-							"path": "$.propertyTax"
+							"path": "$.grbgTax"
 						}
 					},
 					{
@@ -121,27 +121,9 @@
 						}
 					},
 					{
-						"variable": "propertyTaxPlusArrear",
+						"variable": "grbgTaxPlusArrear",
 						"value": {
-							"path": "$.propertyTaxPlusArrear"
-						}
-					},
-					{
-						"variable": "rebateDays",
-						"value": {
-							"path": "$.rebateDays"
-						}
-					},
-					{
-						"variable": "rebate",
-						"value": {
-							"path": "$.rebate"
-						}
-					},
-					{
-						"variable": "interest",
-						"value": {
-							"path": "$.interest"
+							"path": "$.grbgTaxPlusArrear"
 						}
 					},
 					{
@@ -157,9 +139,9 @@
 						}
 					},
 					{
-						"variable": "amountPaid",
+						"variable": "interest",
 						"value": {
-							"path": "$.amountPaid"
+							"path": "$.interest"
 						}
 					},
 					{

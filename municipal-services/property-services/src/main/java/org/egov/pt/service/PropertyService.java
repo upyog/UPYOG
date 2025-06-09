@@ -8,8 +8,11 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import javax.validation.Valid;
 
@@ -17,6 +20,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.Role;
 import org.egov.common.contract.request.User;
+import org.egov.mdms.model.MdmsResponse;
 import org.egov.pt.config.PropertyConfiguration;
 import org.egov.pt.models.OwnerInfo;
 import org.egov.pt.models.Property;
@@ -61,6 +65,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Sets;
 
@@ -129,6 +134,9 @@ public class PropertyService {
 	
 	@Autowired
 	private BillService billService;
+	
+	@Autowired
+	private MDMSService mdmsService;
 
 	/**
 	 * Enriches the Request and pushes to the Queue
@@ -308,6 +316,26 @@ public class PropertyService {
 			userService.updateUser(request);
 //		} else {
 //			request.getProperty().setOwners(util.getCopyOfOwners(propertyFromSearch.getOwners()));
+		}
+		else if (CreationReason.UPDATE.equals(request.getProperty().getCreationReason())) {
+			if(request.getProperty().getOwners().size() > propertyFromSearch.getOwners().size())
+			{
+				request.getProperty().getOwners().forEach(owner -> {
+					
+					if(owner.getOwnerInfoUuid() == null) {
+						owner.setOwnerInfoUuid(UUID.randomUUID().toString());
+						if (!CollectionUtils.isEmpty(owner.getDocuments()))
+							owner.getDocuments().forEach(doc -> {
+								doc.setId(UUID.randomUUID().toString());
+								doc.setStatus(Status.ACTIVE);
+							});
+						
+						owner.setStatus(Status.ACTIVE);
+					}
+
+				});
+				userService.createUser(request);
+			}
 		}
 
 		enrichmentService.enrichAssignes(request.getProperty());
@@ -811,11 +839,25 @@ public class PropertyService {
 
 		return ptTaxCalculatorTrackerRequest.getPtTaxCalculatorTracker();
 	}
+	
+	public PtTaxCalculatorTracker updatePtTaxCalculatorTracker(
+			PtTaxCalculatorTrackerRequest ptTaxCalculatorTrackerRequest) {
+
+		producer.push(config.getUpdatePropertyTaxCalculatorTrackerTopic(), ptTaxCalculatorTrackerRequest);
+
+		return ptTaxCalculatorTrackerRequest.getPtTaxCalculatorTracker();
+	}
 
 	public List<PtTaxCalculatorTracker> getTaxCalculatedProperties(
 			PtTaxCalculatorTrackerSearchCriteria ptTaxCalculatorTrackerSearchCriteria) {
 
 		return repository.getTaxCalculatedProperties(ptTaxCalculatorTrackerSearchCriteria);
+	}
+	
+	public List<String> getTaxCalculatedTenantIds(
+			PtTaxCalculatorTrackerSearchCriteria ptTaxCalculatorTrackerSearchCriteria) {
+
+		return repository.getTaxCalculatedTenantIds(ptTaxCalculatorTrackerSearchCriteria);
 	}
 
 	public boolean isCriteriaEmpty(PropertyCriteria propertyCriteria) {
@@ -944,10 +986,28 @@ public class PropertyService {
 			return null;
 		}
 
+		MdmsResponse mdmsResponse = mdmsService.getPropertyReabateDaysMdmsData(requestInfoWrapper.getRequestInfo(),
+				null);
+
+		Map<String, Integer> tenantIdDaysMap = getUlbDaysMap(mdmsResponse);
+
 		PDFRequest pdfRequest = pdfRequestGenerator.generatePdfRequest(requestInfoWrapper, property,
-				ptTaxCalculatorTracker, bill);
+				ptTaxCalculatorTracker, bill, tenantIdDaysMap);
 
 		return reportService.createNoSavePDF(pdfRequest);
+	}
+	
+	public Map<String, Integer> getUlbDaysMap(MdmsResponse mdmsResponse) {
+		return Optional.ofNullable(mdmsResponse).map(MdmsResponse::getMdmsRes)
+				.map(mdmsRes -> mdmsRes.get(PTConstants.MDMS_MODULE_ULBS)).map(mapper::valueToTree).map(ulbsNode -> {
+					JsonNode jsonNode = (JsonNode) ulbsNode; // explicit cast
+					return jsonNode.get(PTConstants.MDMS_MASTER_DETAILS_PROPERTYREBATEDAYS);
+				}).filter(JsonNode::isArray)
+				.map(rebateDaysNode -> StreamSupport.stream(rebateDaysNode.spliterator(), false)
+						.collect(Collectors.toMap(
+								node -> config.getStateLevelTenantId() + "." + node.get("ulbName").asText(),
+								node -> node.get("days").asInt())))
+				.orElseGet(HashMap::new);
 	}
 
 }

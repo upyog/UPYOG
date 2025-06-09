@@ -46,6 +46,9 @@ public class PropertyConfiguration {
     @Value("${persister.save.property.tax.calculator.tracker.topic}")
     private String savePropertyTaxCalculatorTrackerTopic;
     
+    @Value("${persister.update.property.tax.calculator.tracker.topic}")
+    private String updatePropertyTaxCalculatorTrackerTopic;
+    
     @Value("${persister.save.property.topic}")
     private String savePropertyTopic;
 
@@ -286,6 +289,9 @@ public class PropertyConfiguration {
 
 	@Value("${egov.bill.endpoint.search}")
 	public String searchBillEndpoint;
+	
+	@Value("${egov.bill.endpoint.update}")
+	public String updateBillEndpoint;
 
 	@Value("${egov.demand.create.endpoint}")
 	public String demandCreateEndpoint;

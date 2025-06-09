@@ -2,6 +2,10 @@ package org.egov.pt.models;
 
 import java.util.Set;
 
+import org.egov.pt.models.enums.BillStatus;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -26,7 +30,17 @@ public class PtTaxCalculatorTrackerSearchCriteria {
 	private Set<String> propertyIds;
 
 	private Set<String> financialYears;
-	
+
+	private Set<BillStatus> billStatus;
+
+	private Set<BillStatus> notInBillStatus;
+
 	private Integer limit;
+
+	@JsonIgnore
+	private Long startDateTime;
+
+	@JsonIgnore
+	private Long endDateTime;
 
 }

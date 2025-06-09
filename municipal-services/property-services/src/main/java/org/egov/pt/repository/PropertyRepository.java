@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -330,11 +331,25 @@ public class PropertyRepository {
 	public List<PtTaxCalculatorTracker> getTaxCalculatedProperties(
 			PtTaxCalculatorTrackerSearchCriteria ptTaxCalculatorTrackerSearchCriteria) {
 		List<Object> preparedStmtList = new ArrayList<>();
-		String query = queryBuilder.getTaxCalculatedPropertiesSearchQuery(ptTaxCalculatorTrackerSearchCriteria, preparedStmtList);
-		query = queryBuilder.getLimitAndOrderByUpdatedTimeDesc(ptTaxCalculatorTrackerSearchCriteria, query, preparedStmtList);
+		String query = queryBuilder.getTaxCalculatedPropertiesSearchQuery(ptTaxCalculatorTrackerSearchCriteria,
+				preparedStmtList);
+		if (!Objects.isNull(ptTaxCalculatorTrackerSearchCriteria.getStartDateTime())
+				&& !Objects.isNull(ptTaxCalculatorTrackerSearchCriteria.getEndDateTime())) {
+			query = queryBuilder.checkLastUpdatedTime(ptTaxCalculatorTrackerSearchCriteria, query, preparedStmtList);
+		}
+		query = queryBuilder.getLimitAndOrderByUpdatedTimeDesc(ptTaxCalculatorTrackerSearchCriteria, query,
+				preparedStmtList);
 		List<PtTaxCalculatorTracker> ptTaxCalculatorTrackers = jdbcTemplate.query(query, preparedStmtList.toArray(),
 				ptTaxCalculatorTrackerRowMapper);
 		return ptTaxCalculatorTrackers;
+	}
+	
+	public List<String> getTaxCalculatedTenantIds(
+			PtTaxCalculatorTrackerSearchCriteria ptTaxCalculatorTrackerSearchCriteria) {
+		List<Object> preparedStmtList = new ArrayList<>();
+		String query = queryBuilder.getTaxCalculatedTenantIdsSearchQuery(ptTaxCalculatorTrackerSearchCriteria,
+				preparedStmtList);
+		return jdbcTemplate.queryForList(query, preparedStmtList.toArray(), String.class);
 	}
 	
 	public List<Map<String, Object>> getStatusCounts(TotalCountRequest totalCountRequest) {

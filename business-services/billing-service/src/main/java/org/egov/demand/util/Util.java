@@ -110,6 +110,15 @@ public class Util {
 		return AuditDetails.builder().createdBy(userId).createdTime(currEpochDate).lastModifiedBy(userId)
 				.lastModifiedTime(currEpochDate).build();
 	}
+	
+	public AuditDetails getUpdateAuditDetail(AuditDetails auditDetails, RequestInfo requestInfo) {
+
+		String userId = requestInfo.getUserInfo().getUuid();
+		Long currEpochDate = System.currentTimeMillis();
+
+		return AuditDetails.builder().createdBy(auditDetails.getCreatedBy()).createdTime(auditDetails.getCreatedTime())
+				.lastModifiedBy(userId).lastModifiedTime(currEpochDate).build();
+	}
 
 	public String getStringVal(Set<String> set) {
 		StringBuilder builder = new StringBuilder();

@@ -1,5 +1,6 @@
 package org.egov.demand.repository;
 
+import java.math.BigDecimal;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -9,6 +10,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import javax.validation.Valid;
 
 import org.egov.demand.model.AuditDetails;
 import org.egov.demand.model.BillAccountDetailV2;
@@ -238,6 +241,160 @@ public class BillRepositoryV2 {
 		List<Object> preparedStmtList = new ArrayList<>();
 		String queryStr = billQueryBuilder.getBillStatusUpdateQuery(updateBillCriteria, preparedStmtList);
 		return jdbcTemplate.update(queryStr, preparedStmtList.toArray());
+	}
+
+	@Transactional
+	public void updateBill(BillRequestV2 billRequest) {
+
+		List<BillV2> bills = billRequest.getBills();
+
+		if (bills == null || bills.isEmpty()) {
+			throw new IllegalArgumentException("No bills provided to update.");
+		}
+
+		jdbcTemplate.batchUpdate(BillQueryBuilder.UPDATE_BILL_QUERY, new BatchPreparedStatementSetter() {
+
+			@Override
+			public void setValues(PreparedStatement ps, int index) throws SQLException {
+				BillV2 bill = bills.get(index);
+				AuditDetails auditDetails = util.getUpdateAuditDetail(bill.getAuditDetails(),
+						billRequest.getRequestInfo());
+				bill.setAuditDetails(auditDetails);
+
+				ps.setString(1, bill.getTenantId());
+				ps.setString(2, bill.getPayerName());
+				ps.setString(3, bill.getPayerAddress());
+				ps.setString(4, bill.getPayerEmail());
+				ps.setString(5, auditDetails.getLastModifiedBy());
+				ps.setLong(6, auditDetails.getLastModifiedTime());
+				ps.setString(7, bill.getMobileNumber());
+				ps.setString(8, bill.getStatus().toString());
+				ps.setObject(9, util.getPGObject(bill.getAdditionalDetails()));
+				ps.setString(10, bill.getFileStoreId());
+				ps.setString(11, bill.getUserId());
+				ps.setString(12, bill.getConsumerCode());
+				ps.setString(13, bill.getId()); // WHERE clause uses ID
+			}
+
+			@Override
+			public int getBatchSize() {
+				return bills.size();
+			}
+		});
+
+		updateBillDetails(billRequest);
+	}
+
+	public void updateBillDetails(BillRequestV2 billRequest) {
+		List<BillV2> bills = billRequest.getBills();
+		if (bills == null || bills.isEmpty()) {
+			throw new IllegalArgumentException("No bills provided in the request.");
+		}
+
+		List<BillDetailV2> billDetails = new ArrayList<>();
+		Map<String, BillV2> billDetailIdToBillMap = new HashMap<>();
+		AuditDetails auditDetails = bills.get(0).getAuditDetails();
+
+		for (BillV2 bill : bills) {
+			BigDecimal totalAmount = BigDecimal.ZERO;
+			List<BillDetailV2> details = bill.getBillDetails();
+			if (details != null) {
+				billDetails.addAll(details);
+				for (BillDetailV2 detail : details) {
+					totalAmount = totalAmount.add(detail.getAmount());
+					billDetailIdToBillMap.put(detail.getId(), bill);
+				}
+			}
+			bill.setTotalAmount(totalAmount);
+		}
+
+		if (billDetails.isEmpty()) {
+			return; // Nothing to update
+		}
+
+		jdbcTemplate.batchUpdate(BillQueryBuilder.UPDATE_BILLDETAILS_QUERY, new BatchPreparedStatementSetter() {
+
+			@Override
+			public void setValues(PreparedStatement ps, int index) throws SQLException {
+				BillDetailV2 detail = billDetails.get(index);
+				BillV2 bill = billDetailIdToBillMap.get(detail.getId());
+
+				ps.setString(1, detail.getTenantId());
+				ps.setString(2, detail.getBillId());
+				ps.setString(3, detail.getDemandId());
+				ps.setLong(4, detail.getFromPeriod());
+				ps.setLong(5, detail.getToPeriod());
+				ps.setString(6, bill.getBusinessService());
+				ps.setString(7, bill.getBillNumber());
+				ps.setLong(8, bill.getBillDate());
+				ps.setString(9, bill.getConsumerCode());
+				ps.setObject(10, detail.getAmount());
+				ps.setString(11, auditDetails.getLastModifiedBy());
+				ps.setLong(12, auditDetails.getLastModifiedTime());
+				ps.setLong(13, detail.getExpiryDate());
+				ps.setObject(14, util.getPGObject(detail.getAdditionalDetails()));
+				ps.setString(15, detail.getId()); // WHERE clause ID
+			}
+
+			@Override
+			public int getBatchSize() {
+				return billDetails.size();
+			}
+		});
+
+		updateBillAccountDetails(billDetails, auditDetails);
+	}
+
+	public void updateBillAccountDetails(List<BillDetailV2> billDetails, AuditDetails auditDetails) {
+		if (billDetails == null || billDetails.isEmpty()) {
+			throw new IllegalArgumentException("No bill details provided.");
+		}
+
+		List<BillAccountDetailV2> accountDetails = new ArrayList<>();
+		Map<String, AuditDetails> billDetailIdToAuditMap = new HashMap<>();
+
+		for (BillDetailV2 detail : billDetails) {
+			if (detail.getBillAccountDetails() != null && !detail.getBillAccountDetails().isEmpty()) {
+				accountDetails.addAll(detail.getBillAccountDetails());
+				// Assuming AuditDetails is available at BillDetailV2 level or passed somehow
+				// If not, you must adjust this accordingly
+				billDetailIdToAuditMap.put(detail.getId(), auditDetails);
+			}
+		}
+
+		if (accountDetails.isEmpty()) {
+			return; // nothing to update
+		}
+
+		jdbcTemplate.batchUpdate(BillQueryBuilder.UPDATE_BILLACCOUNTDETAILS_QUERY, new BatchPreparedStatementSetter() {
+
+			@Override
+			public void setValues(PreparedStatement ps, int index) throws SQLException {
+				BillAccountDetailV2 accountDetail = accountDetails.get(index);
+
+				AuditDetails auditDetails = billDetailIdToAuditMap.get(accountDetail.getBillDetailId());
+				if (auditDetails == null) {
+					throw new SQLException("Missing audit details for BillAccountDetail ID: " + accountDetail.getId());
+				}
+
+				ps.setString(1, accountDetail.getTenantId());
+				ps.setString(2, accountDetail.getBillDetailId());
+				ps.setString(3, accountDetail.getDemandDetailId());
+				ps.setInt(4, accountDetail.getOrder());
+				ps.setObject(5, accountDetail.getAmount());
+				ps.setObject(6, accountDetail.getAdjustedAmount());
+				ps.setString(7, accountDetail.getTaxHeadCode());
+				ps.setObject(8, util.getPGObject(accountDetail.getAdditionalDetails()));
+				ps.setString(9, auditDetails.getLastModifiedBy());
+				ps.setLong(10, auditDetails.getLastModifiedTime());
+				ps.setString(11, accountDetail.getId()); // WHERE clause
+			}
+
+			@Override
+			public int getBatchSize() {
+				return accountDetails.size();
+			}
+		});
 	}
 	
 }
