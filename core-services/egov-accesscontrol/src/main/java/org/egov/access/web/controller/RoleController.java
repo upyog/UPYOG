@@ -6,9 +6,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import javax.validation.Valid;
-import javax.validation.constraints.Size;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Size;
 import org.egov.access.domain.criteria.RoleSearchCriteria;
 import org.egov.access.domain.model.Role;
 import org.egov.access.domain.service.RoleService;
@@ -64,9 +64,8 @@ public class RoleController {
 		System.out.println("Tenant id from the controller: "+tenantId);
 
 		if (code != null && !code.isEmpty()) {
-
-			roleSearchCriteria = RoleSearchCriteria.builder()
-					.codes(Arrays.stream(code.split(",")).map(String::trim).collect(Collectors.toList())).tenantId(tenantId).build();
+			roleSearchCriteria.getCodes()
+					.addAll(Arrays.stream(code.split(",")).map(String::trim).collect(Collectors.toList()));
 		}
 
 		
