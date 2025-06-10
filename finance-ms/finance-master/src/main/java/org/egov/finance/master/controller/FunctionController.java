@@ -38,7 +38,7 @@ public class FunctionController {
 	
 	@PostMapping("/_save")
 	public ResponseEntity<FunctionResponse> saveFund(@Valid @RequestBody FunctionRequest function) {
-		final FunctionModel funcM =null;//= functionService.save(fund);
+		final FunctionModel funcM = functionService.save(function);
 		ResponseInfo resInfo = responseInfoFactory.createResponseInfoFromRequestInfo(function.getRequestInfo(), true);
 		FunctionResponse response = FunctionResponse.builder().responseInfo(resInfo).function(Arrays.asList(funcM)).build();
 		return new ResponseEntity<>(response, HttpStatus.CREATED);
@@ -53,9 +53,9 @@ public class FunctionController {
 	}
 
 	@PostMapping(value = "/_update")
-	public ResponseEntity<FunctionResponse> update(@RequestBody FunctionRequest fundupdate) {
-		final FunctionModel funcM=null ;//= fundService.update(fundupdate);
-		ResponseInfo resInfo = responseInfoFactory.createResponseInfoFromRequestInfo(fundupdate.getRequestInfo(), true);
+	public ResponseEntity<FunctionResponse> update(@RequestBody FunctionRequest funcupdate) {
+		final FunctionModel funcM=functionService.update(funcupdate);
+		ResponseInfo resInfo = responseInfoFactory.createResponseInfoFromRequestInfo(funcupdate.getRequestInfo(), true);
 		FunctionResponse response = FunctionResponse.builder().responseInfo(resInfo).function(Arrays.asList(funcM)).build();
 		return new ResponseEntity<>(response, HttpStatus.CREATED);
 	}
