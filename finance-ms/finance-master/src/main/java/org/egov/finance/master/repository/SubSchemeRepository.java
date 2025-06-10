@@ -16,5 +16,6 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
  */
 
 public interface SubSchemeRepository extends JpaRepository<SubScheme, Long>,JpaSpecificationExecutor<SubScheme>{
+	
 
 }
