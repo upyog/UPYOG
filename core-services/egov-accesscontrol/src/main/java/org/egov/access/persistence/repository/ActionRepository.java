@@ -49,6 +49,7 @@ import org.egov.access.web.contract.action.ActionRequest;
 import org.egov.access.web.contract.action.ActionService;
 import org.egov.access.web.contract.action.Module;
 import org.egov.common.contract.request.RequestInfo;
+//import org.egov.common.utils.MultiStateInstanceUtil;
 import org.egov.mdms.model.MasterDetail;
 import org.egov.mdms.model.MdmsCriteria;
 import org.egov.mdms.model.MdmsCriteriaReq;
@@ -101,6 +102,8 @@ public class ActionRepository {
 	@Value("${mdms.actionstest.path}")
 	private String actionTestPath;
 	
+//	@Autowired
+//	private MultiStateInstanceUtil centralInstanceUtil;
 	
 
 	@Autowired
