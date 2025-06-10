@@ -86,7 +86,7 @@ public class FundService {
 			throw new MasterServiceException(errorMap);
 		}
 		Fund fundE = validation.modelToEntity(fundM);
-		validation.fundFieldValidation(fundM, fundRepository);
+		validation.fundCreateNameAndCodeValidation(fundM);
 		Fund parentFund = null;
 
 		if (!ObjectUtils.isEmpty(fundM.getParentId())) {
@@ -120,7 +120,9 @@ public class FundService {
 			fundModel.setName(fundUpdate.getName());
 		if (updatedSet.contains("code")) 
 			fundModel.setCode(fundUpdate.getCode());
-		validation.fundFieldValidation(fundModel, fundRepository);
+		
+		if(!ObjectUtils.isEmpty(updatedSet))
+		validation.fundCodeNameValidationForUpdate(fundModel,updatedSet);
 
 		if (!ObjectUtils.isEmpty(request.getFund().getParentId())) {
 			fundUpdate.setParentId(fundRepository.findById(request.getFund().getParentId()).orElseThrow(() -> {
