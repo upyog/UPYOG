@@ -17,6 +17,7 @@ import org.egov.finance.master.util.MasterConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.ObjectUtils;
 
 public class FunctionValidation {
 	
@@ -40,7 +41,6 @@ public class FunctionValidation {
 	public FunctionModel entityTOModel(Function entity) {
 		FunctionModel f = new FunctionModel();
 		f.setId(entity.getId() != null ? entity.getId() : null);
-		
 		f.setIsActive(entity.getIsActive() ? true : false);
 		f.setName(null != entity.getName() ? entity.getName() : null);
 		f.setIsNotLeaf(entity.getIsNotLeaf() ? true : false);
@@ -54,7 +54,7 @@ public class FunctionValidation {
 		return f;
 	}
 
-	public void functionFieldValidation(FunctionModel funcM) {
+	public void functionCreateNameAndCodeValidation(FunctionModel funcM) {
 		Map<String, String> errorMap = new HashMap<>();
 		
 			if(null==funcM.getName()||funcM.getName().isEmpty() || 
@@ -70,6 +70,28 @@ public class FunctionValidation {
 				errorMap.put(MasterConstants.CODE_NAME_NOT_UNIQUE, MasterConstants.CODE_NAME_NOT_UNIQUE_MSG);
 			}
 		if (!CollectionUtils.isEmpty(errorMap))
+			throw new MasterServiceException(errorMap);
+	}
+	
+	public void validateCreateRequestModel(FunctionModel funcM) {
+		Map<String, String> errorMap = new HashMap<>();
+		
+		if (!ObjectUtils.isEmpty(funcM.getId())) {
+			errorMap.put(MasterConstants.INVALID_ID_PASSED, MasterConstants.ID_CANNOT_BE_PASSED_IN_CREATION_MSG);
+		}
+		
+		if(ObjectUtils.isEmpty(funcM.getCode())) {
+			errorMap.put(MasterConstants.INVALID_CODE, MasterConstants.INVALID_CODE_MSG);
+			
+		}
+		if(ObjectUtils.isEmpty(funcM.getName())) {
+			errorMap.put(MasterConstants.INVALID_NAME, MasterConstants.INVALID_NAME_MSG);
+			
+		}
+		if(ObjectUtils.isEmpty(funcM.getParentId())) {
+			errorMap.put(MasterConstants.INVALID_PARENT_ID, MasterConstants.INVALID_PARENT_ID_MSG);
+		}
+		if(!errorMap.isEmpty())
 			throw new MasterServiceException(errorMap);
 	}
 
