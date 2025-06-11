@@ -1,0 +1,280 @@
+"BusinessServices": [
+        {
+            "tenantId": "pg.citya",
+            "businessService": "EDITRENEWAL",
+            "business": "tl-services",
+            "businessServiceSla": 172800000,
+            "states": [
+                {
+                    "tenantId": "pg.citya",
+                    "sla": null,
+                    "state": null,
+                    "applicationStatus": null,
+                    "docUploadRequired": false,
+                    "isStartState": true,
+                    "isTerminateState": false,
+                    "isStateUpdatable": false,
+                    "actions": [
+                        {
+                            "tenantId": "pg.citya",
+                            "currentState": null,
+                            "action": "INITIATE",
+                            "nextState": "INITIATED",
+                            "roles": [
+                                "CITIZEN",
+                                "TL_CEMP"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "tenantId": "pg.citya",
+                    "sla": null,
+                    "state": "INITIATED",
+                    "applicationStatus": "INITIATED",
+                    "docUploadRequired": false,
+                    "isStartState": true,
+                    "isTerminateState": false,
+                    "isStateUpdatable": true,
+                    "actions": [
+                        {
+                            "tenantId": "pg.citya",
+                            "currentState": "INITIATED",
+                            "action": "APPLY",
+                            "nextState": "APPLIED",
+                            "roles": [
+                                "CITIZEN",
+                                "TL_CEMP"
+                            ]
+                        },
+                        {
+                            "tenantId": "pg.citya",
+                            "currentState": "INITIATED",
+                            "action": "INITIATE",
+                            "nextState": "INITIATED",
+                            "roles": [
+                                "CITIZEN",
+                                "TL_CEMP"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "tenantId": "pg.citya",
+                    "sla": null,
+                    "state": "APPLIED",
+                    "applicationStatus": "APPLIED",
+                    "docUploadRequired": false,
+                    "isStartState": true,
+                    "isTerminateState": false,
+                    "isStateUpdatable": true,
+                    "actions": [
+                        {
+                            "tenantId": "pg.citya",
+                            "currentState": "APPLIED",
+                            "action": "SENDBACKTOCITIZEN",
+                            "nextState": "CITIZENACTIONREQUIRED",
+                            "roles": [
+                                "TL_DOC_VERIFIER"
+                            ]
+                        },
+                        {
+                            "tenantId": "pg.citya",
+                            "currentState": "APPLIED",
+                            "action": "FORWARD",
+                            "nextState": "FIELDINSPECTION",
+                            "roles": [
+                                "TL_DOC_VERIFIER"
+                            ]
+                        },
+                        {
+                            "tenantId": "pg.citya",
+                            "currentState": "APPLIED",
+                            "action": "REJECT",
+                            "nextState": "REJECTED",
+                            "roles": [
+                                "TL_DOC_VERIFIER"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "tenantId": "pg.citya",
+                    "sla": null,
+                    "state": "REJECTED",
+                    "applicationStatus": "REJECTED",
+                    "docUploadRequired": false,
+                    "isStartState": false,
+                    "isTerminateState": true,
+                    "isStateUpdatable": false,
+                    "actions": null
+                },
+                {
+                    "tenantId": "pg.citya",
+                    "sla": null,
+                    "state": "FIELDINSPECTION",
+                    "applicationStatus": "FIELDINSPECTION",
+                    "docUploadRequired": false,
+                    "isStartState": false,
+                    "isTerminateState": false,
+                    "isStateUpdatable": true,
+                    "actions": [
+                        {
+                            "tenantId": "pg.citya",
+                            "currentState": "FIELDINSPECTION",
+                            "action": "FORWARD",
+                            "nextState": "PENDINGAPPROVAL",
+                            "roles": [
+                                "TL_FIELD_INSPECTOR"
+                            ]
+                        },
+                        {
+                            "tenantId": "pg.citya",
+                            "currentState": "FIELDINSPECTION",
+                            "action": "SENDBACKTOCITIZEN",
+                            "nextState": "CITIZENACTIONREQUIRED",
+                            "roles": [
+                                "TL_FIELD_INSPECTOR"
+                            ]
+                        },
+                        {
+                            "tenantId": "pg.citya",
+                            "currentState": "FIELDINSPECTION",
+                            "action": "REJECT",
+                            "nextState": "REJECTED",
+                            "roles": [
+                                "TL_FIELD_INSPECTOR"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "tenantId": "pg.citya",
+                    "businessServiceId": "be9355fe-07b2-48ab-88ee-35d8c3f3b36e",
+                    "sla": null,
+                    "state": "PENDINGAPPROVAL",
+                    "applicationStatus": "PENDINGAPPROVAL",
+                    "docUploadRequired": false,
+                    "isStartState": false,
+                    "isTerminateState": false,
+                    "isStateUpdatable": false,
+                    "actions": [
+                        {
+                            "tenantId": "pg.citya",
+                            "currentState": "PENDINGAPPROVAL",
+                            "action": "REJECT",
+                            "nextState": "REJECTED",
+                            "roles": [
+                                "TL_APPROVER"
+                            ]
+                        },
+                        {
+                            "tenantId": "pg.citya",
+                            "currentState": "PENDINGAPPROVAL",
+                            "action": "APPROVE",
+                            "nextState": "PENDINGPAYMENT",
+                            "roles": [
+                                "TL_APPROVER"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "tenantId": "pg.citya",
+                    "businessServiceId": "be9355fe-07b2-48ab-88ee-35d8c3f3b36e",
+                    "sla": null,
+                    "state": "PENDINGPAYMENT",
+                    "applicationStatus": "PENDINGPAYMENT",
+                    "docUploadRequired": false,
+                    "isStartState": false,
+                    "isTerminateState": false,
+                    "isStateUpdatable": false,
+                    "actions": [
+                        {
+                            "tenantId": "pg.citya",
+                            "currentState": "PENDINGPAYMENT",
+                            "action": "ADHOC",
+                            "nextState": "PENDINGPAYMENT",
+                            "roles": [
+                                "TL_CEMP"
+                            ]
+                        },
+                        {
+                            "tenantId": "pg.citya",
+                            "currentState": "PENDINGPAYMENT",
+                            "action": "PAY",
+                            "nextState": "APPROVED",
+                            "roles": [
+                                "CITIZEN",
+                                "TL_CEMP",
+                                "SYSTEM_PAYMENT"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "tenantId": "pg.citya",
+                    "sla": null,
+                    "state": "APPROVED",
+                    "applicationStatus": "APPROVED",
+                    "docUploadRequired": false,
+                    "isStartState": false,
+                    "isTerminateState": false,
+                    "isStateUpdatable": false,
+                    "actions": [
+                        {
+                            "tenantId": "pg.citya",
+                            "currentState": "APPROVED",
+                            "action": "CANCEL",
+                            "nextState": "CANCELLED",
+                            "roles": [
+                                "TL_APPROVER"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "tenantId": "pg.citya",
+                    "sla": null,
+                    "state": "CANCELLED",
+                    "applicationStatus": "CANCELLED",
+                    "docUploadRequired": false,
+                    "isStartState": false,
+                    "isTerminateState": true,
+                    "isStateUpdatable": false,
+                    "actions": null
+                },
+                {
+                    "tenantId": "pg.citya",
+                    "businessServiceId": "be9355fe-07b2-48ab-88ee-35d8c3f3b36e",
+                    "sla": null,
+                    "state": "CITIZENACTIONREQUIRED",
+                    "applicationStatus": "CITIZENACTIONREQUIRED",
+                    "docUploadRequired": false,
+                    "isStartState": false,
+                    "isTerminateState": false,
+                    "isStateUpdatable": true,
+                    "actions": [
+                        {
+                            "tenantId": "pg.citya",
+                            "currentState": "CITIZENACTIONREQUIRED",
+                            "action": "RESUBMIT",
+                            "nextState": "APPLIED",
+                            "roles": [
+                                "TL_CEMP"
+                            ]
+                        },
+                        {
+                            "tenantId": "pg.citya",
+                            "currentState": "CITIZENACTIONREQUIRED",
+                            "action": "FORWARD",
+                            "nextState": "APPLIED",
+                            "roles": [
+                                "CITIZEN"
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
