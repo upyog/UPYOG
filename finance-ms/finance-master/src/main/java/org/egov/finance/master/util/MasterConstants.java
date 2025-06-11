@@ -6,10 +6,11 @@
 package org.egov.finance.master.util;
 
 public class MasterConstants {
-	
+
 	private MasterConstants() {
 		super();
 	}
+
 	public static final String REQUEST_INFO = "RequestInfo";
 	public static final String REQUEST_TENANT_SPLIT_REGEX = "\\.";
 	public static final String ORG_EGOV_FINANCE = "org.egov.finance.*";
@@ -27,15 +28,18 @@ public class MasterConstants {
 	public static final String INVALID_PARENT_ID_MSG = "Please Provide a valid parent Parent Id";
 	public static final String INVALID_TEXT_CONTAINS_HTML_TAGS_MSG = "Invalid Text, contains HTML Tags";
 	public static final String FUND_SEARCH_REDIS_KEY_GENERATOR = "fundSearchKeyGenerator";
+	public static final String SCHEME_SEARCH_REDIS_KEY_GENERATOR = "schemeSearchKeyGenerator";
 	public static final String FUND_SEARCH_REDIS_CACHE_NAME = "fundSearchCache";
+	public static final String SCHEME_SEARCH_REDIS_CACHE_NAME = "schemeSearchCache";
 	public static final String FUND_SEARCH_REDIS_CACHE_VERSION_KEY = "fundSearchCacheVersion::";
-	public static final String REDIS_SEARCH_VERSION_TAG= "::version=";
+	public static final String SCHEME_SEARCH_REDIS_CACHE_VERSION_KEY = "schemeSearchCacheVersion::";
+	public static final String REDIS_SEARCH_VERSION_TAG = "::version=";
 	public static final String REDIS_SEARCH_TENANT_TAG = "::tenant=";
 	public static final String REDIS_START_VERSION_V1 = "v1";
 	public static final String CODE_NAME_NOT_UNIQUE = "CODE_NAME_NOT_UNIQUE";
 	public static final String CODE_NAME_NOT_UNIQUE_MSG = "Code Or Name Provided already exist ";
 	public static final String INVALID_PARAMETERS = "INVALID_PARAMETERS";
-	public static final String INVALID_PARAMETERS_MSG="Invlaid Parameters Passed";
+	public static final String INVALID_PARAMETERS_MSG = "Invlaid Parameters Passed";
 	public static final String EXCEPTION_FROM_MASTER_SERVICE_MSG = "Exception From master Service---- {}";
 
 }
