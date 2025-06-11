@@ -1,0 +1,486 @@
+  { "BusinessServices": [
+        {
+            "tenantId": "pg",
+            "businessService": "BPA_LOW",
+            "business": "bpa-services",
+            "businessServiceSla": 5184000000,
+            "states": [
+                 {
+                    "tenantId": "pg",
+                    "sla": null,
+                    "state": null,
+                    "applicationStatus": null,
+                    "docUploadRequired": false,
+                    "isStartState": true,
+                    "isTerminateState": false,
+                    "isStateUpdatable": true,
+                    "actions": [
+                        {
+                            "tenantId": "pg",
+                            "currentState": null,
+                            "action": "INITIATE",
+                            "nextState": "SEND_TO_CITIZEN",
+                            "roles": [
+                                "BPA_ARCHITECT",
+                                "BPA_ENGINEER",
+                                "BPA_BUILDER",
+                                "BPA_STRUCTURALENGINEER",
+                                "BPA_TOWNPLANNER",
+                                "BPA_SUPERVISOR"
+                            ],
+                            "active": true
+                        }
+                    ]
+                },
+                 {
+                    "tenantId": "pg",
+                    "sla": null,
+                    "state": "SEND_TO_CITIZEN",
+                    "applicationStatus": "INITIATED",
+                    "docUploadRequired": false,
+                    "isStartState": false,
+                    "isTerminateState": false,
+                    "isStateUpdatable": true,
+                    "actions": [
+                        {
+                            "tenantId": "pg",
+                            "currentState": "SEND_TO_CITIZEN",
+                            "action": "INITIATE",
+                            "nextState": "SEND_TO_CITIZEN",
+                            "roles": [
+                                "BPA_ARCHITECT",
+                                "BPA_ENGINEER",
+                                "BPA_BUILDER",
+                                "BPA_STRUCTURALENGINEER",
+                                "BPA_TOWNPLANNER",
+                                "BPA_SUPERVISOR"
+                            ],
+                            "active": true
+                        },
+                        {
+                            "tenantId": "pg",
+                            "currentState": "SEND_TO_CITIZEN",
+                            "action": "SEND_TO_CITIZEN",
+                            "nextState": "CITIZEN_APPROVAL_PENDING",
+                            "roles": [
+                                "BPA_ARCHITECT",
+                                "BPA_ENGINEER",
+                                "BPA_BUILDER",
+                                "BPA_STRUCTURALENGINEER",
+                                "BPA_TOWNPLANNER",
+                                "BPA_SUPERVISOR"
+                            ],
+                            "active": true
+                        }
+                    ]
+                },
+                {
+                    "tenantId": "pg",
+                    "sla": null,
+                    "state": "CITIZEN_APPROVAL_PENDING",
+                    "applicationStatus": "CITIZEN_APPROVAL_INPROCESS",
+                    "docUploadRequired": false,
+                    "isStartState": false,
+                    "isTerminateState": false,
+                    "isStateUpdatable": false,
+                    "actions": [
+                        {
+                            "tenantId": "pg",
+                            "currentState": "CITIZEN_APPROVAL_PENDING",
+                            "action": "SEND_TO_ARCHITECT",
+                            "nextState": "SEND_TO_CITIZEN",
+                            "roles": [
+                                "CITIZEN"
+                            ],
+                            "active": true
+                        },
+                        {
+                            "tenantId": "pg",
+                            "currentState": "CITIZEN_APPROVAL_PENDING",
+                            "action": "APPROVE",
+                            "nextState": "INPROGRESS",
+                            "roles": [
+                                "CITIZEN"
+                            ],
+                            "active": true
+                        }
+                    ]
+                },
+                 {
+                    "tenantId": "pg",
+                    "sla": null,
+                    "state": "INPROGRESS",
+                    "applicationStatus": "INPROGRESS",
+                    "docUploadRequired": false,
+                    "isStartState": false,
+                    "isTerminateState": false,
+                    "isStateUpdatable": false,
+                    "actions": [
+                        {
+                            "tenantId": "pg",
+                            "currentState": "INPROGRESS",
+                            "action": "INITIATE",
+                            "nextState": "INPROGRESS",
+                            "roles": [
+                                "BPA_ARCHITECT",
+                                "BPA_ENGINEER",
+                                "BPA_BUILDER",
+                                "BPA_STRUCTURALENGINEER",
+                                "BPA_TOWNPLANNER",
+                                "BPA_SUPERVISOR"
+                            ],
+                            "active": true
+                        },
+                        {
+                            "tenantId": "pg",
+                            "currentState": "INPROGRESS",
+                            "action": "APPLY",
+                            "nextState": "PENDING_FEE_PAYMENT",
+                            "roles": [
+                                "BPA_ARCHITECT",
+                                "BPA_ENGINEER",
+                                "BPA_BUILDER",
+                                "BPA_STRUCTURALENGINEER",
+                                "BPA_TOWNPLANNER",
+                                "BPA_SUPERVISOR"
+                            ],
+                            "active": true
+                        }
+                    ]
+                },
+               {
+                    "tenantId": "pg",
+                    "sla": null,
+                    "state": "PENDING_FEE_PAYMENT",
+                    "applicationStatus": "PENDING_FEE",
+                    "docUploadRequired": false,
+                    "isStartState": false,
+                    "isTerminateState": false,
+                    "isStateUpdatable": false,
+                    "actions": [
+                        {
+                            "tenantId": "pg",
+                            "currentState": "PENDING_FEE_PAYMENT",
+                            "action": "SKIP_PAYMENT",
+                            "nextState": "DOC_VERIFICATION_PENDING",
+                            "roles": [
+                                "CITIZEN",
+                                "BPA_ARCHITECT",
+                                "BPA_ENGINEER",
+                                "BPA_BUILDER",
+                                "BPA_STRUCTURALENGINEER",
+                                "BPA_TOWNPLANNER",
+                                "BPA_SUPERVISOR",
+                                "SYSTEM_PAYMENT",
+                                "CEMP"
+                            ],
+                            "active": true
+                        },
+                        {
+                            "tenantId": "pg",
+                            "currentState": "PENDING_FEE_PAYMENT",
+                            "action": "PAY",
+                            "nextState": "DOC_VERIFICATION_PENDING",
+                            "roles": [
+                                "CITIZEN",
+                                "BPA_ARCHITECT",
+                                "BPA_ENGINEER",
+                                "BPA_BUILDER",
+                                "BPA_STRUCTURALENGINEER",
+                                "BPA_TOWNPLANNER",
+                                "BPA_SUPERVISOR",
+                                "SYSTEM_PAYMENT",
+                                "CEMP"
+                            ],
+                            "active": true
+                        },
+                        {
+                            "tenantId": "pg",
+                            "currentState": "PENDING_FEE_PAYMENT",
+                            "action": "ADHOC",
+                            "nextState": "PENDING_FEE_PAYMENT",
+                            "roles": [
+                                "CITIZEN",
+                                "BPA_ARCHITECT",
+                                "BPA_ENGINEER",
+                                "BPA_BUILDER",
+                                "BPA_STRUCTURALENGINEER",
+                                "BPA_TOWNPLANNER",
+                                "BPA_SUPERVISOR",
+                                "SYSTEM_PAYMENT",
+                                "CEMP"
+                            ],
+                            "active": true
+                        }
+                    ]
+                },
+                {
+                    "tenantId": "pg",
+                    "sla": null,
+                    "state": "DOC_VERIFICATION_PENDING",
+                    "applicationStatus": "DOC_VERIFICATION_INPROGRESS",
+                    "docUploadRequired": false,
+                    "isStartState": false,
+                    "isTerminateState": false,
+                    "isStateUpdatable": false,
+                    "actions": [
+                        {
+                            "tenantId": "pg",
+                            "currentState": "DOC_VERIFICATION_PENDING",
+                            "action": "FORWARD",
+                            "nextState": "FIELDINSPECTION_PENDING",
+                            "roles": [
+                                "BPA_VERIFIER"
+                            ],
+                            "active": true
+                        },
+                        {
+                            "tenantId": "pg",
+                            "currentState": "DOC_VERIFICATION_PENDING",
+                            "action": "REVOCATE",
+                            "nextState": "REVOCATED",
+                            "roles": [
+                                "BPA_VERIFIER"
+                            ],
+                            "active": true
+                        },
+                        {
+                            "tenantId": "pg",
+                            "currentState": "DOC_VERIFICATION_PENDING",
+                            "action": "SEND_BACK_TO_CITIZEN",
+                            "nextState": "BACK_FROM_DOC_VERIFICATION",
+                            "roles": [
+                                "BPA_VERIFIER"
+                            ],
+                            "active": true
+                        }
+                    ]
+                },
+                { "tenantId": "pg",
+                    "sla": null,
+                    "state": "FIELDINSPECTION_PENDING",
+                    "applicationStatus": "FIELDINSPECTION_INPROGRESS",
+                    "docUploadRequired": false,
+                    "isStartState": false,
+                    "isTerminateState": false,
+                    "isStateUpdatable": false,
+                    "actions": [
+
+                        {
+                            "tenantId": "pg",
+                            "currentState": "FIELDINSPECTION_PENDING",
+                            "action": "REVOCATE",
+                            "nextState": "REVOCATED",
+                            "roles": [
+                                "BPA_FIELD_INSPECTOR"
+                            ],
+                            "active": true
+                        },
+                        {
+                            "tenantId": "pg",
+                            "currentState": "FIELDINSPECTION_PENDING",
+                            "action": "FORWARD",
+                            "nextState": "NOC_VERIFICATION_PENDING",
+                            "roles": [
+                                "BPA_FIELD_INSPECTOR"
+                            ],
+                            "active": true
+                        },
+{
+                            "tenantId": "pg",
+                            "currentState": "FIELDINSPECTION_PENDING",
+                            "action": "SEND_BACK_TO_CITIZEN",
+                            "nextState": "BACK_FROM_FI_VERIFICATION",
+                            "roles": [
+                                "BPA_FIELD_INSPECTOR"
+                            ],
+                            "active": true
+                        }
+                     
+                    ]
+                },
+               {
+                    "tenantId": "pg",
+                    "sla": null,
+                    "state": "NOC_VERIFICATION_PENDING",
+                    "applicationStatus": "NOC_VERIFICATION_INPROGRESS",
+                    "docUploadRequired": false,
+                    "isStartState": false,
+                    "isTerminateState": false,
+                    "isStateUpdatable": false,
+                    "actions": [
+                        {
+                            "tenantId": "pg",
+                            "currentState": "NOC_VERIFICATION_PENDING",
+                            "action": "FORWARD",
+                            "nextState": "PENDINGAPPROVAL",
+                            "roles": [
+                                "BPA_NOC_VERIFIER"
+                            ],
+                            "active": true
+                        },
+                        {
+                            "tenantId": "pg",
+                            "currentState": "NOC_VERIFICATION_PENDING",
+                            "action": "REVOCATE",
+                            "nextState": "REVOCATED",
+                            "roles": [
+                                "BPA_NOC_VERIFIER"
+                            ],
+                            "active": true
+                        },
+                        {
+                            "tenantId": "pg",
+                            "currentState": "NOC_VERIFICATION_PENDING",
+                            "action": "SEND_BACK_TO_CITIZEN",
+                            "nextState": "BACK_FROM_NOC_VERIFICATION",
+                            "roles": [
+                                "BPA_NOC_VERIFIER"
+                            ],
+                            "active": true
+                        }
+                    ]
+                },
+               {
+                    "tenantId": "pg",
+                    "sla": null,
+                    "state": "PENDINGAPPROVAL",
+                    "applicationStatus": "APPROVAL_INPROGRESS",
+                    "docUploadRequired": false,
+                    "isStartState": false,
+                    "isTerminateState": false,
+                    "isStateUpdatable": false,
+                    "actions": [
+                      
+                        {
+                            "tenantId": "pg",
+                            "currentState": "PENDINGAPPROVAL",
+                            "action": "APPROVE",
+                            "nextState": "APPROVED",
+                            "roles": [
+                                "BPA_APPROVER"
+                            ],
+                            "active": true
+                        },
+                       
+                        {
+                            "tenantId": "pg",
+                            "currentState": "PENDINGAPPROVAL",
+                            "action": "REJECT",
+                            "nextState": "REJECTED",
+                            "roles": [
+                                "BPA_APPROVER"
+                            ],
+                            "active": true
+                        }
+                    ]
+                },                  
+                 {
+                    "tenantId": "pg",
+                    "sla": null,
+                    "state": "APPROVED",
+                    "applicationStatus": "APPROVED",
+                    "docUploadRequired": false,
+                    "isStartState": false,
+                    "isTerminateState": true,
+                    "isStateUpdatable": false,
+                    "actions": null
+                },
+                {
+                    "tenantId": "pg",
+                    "sla": null,
+                    "state": "REVOCATED",
+                    "applicationStatus": "PERMIT REVOCATION",
+                    "docUploadRequired": false,
+                    "isStartState": false,
+                    "isTerminateState": true,
+                    "isStateUpdatable": false,
+                    "actions": null
+                },
+{
+                    "tenantId": "pg",
+                    "sla": null,
+                    "state": "REJECTED",
+                    "applicationStatus": "REJECTED",
+                    "docUploadRequired": false,
+                    "isStartState": false,
+                    "isTerminateState": true,
+                    "isStateUpdatable": false,
+                    "actions": null
+                },
+ {
+                    "tenantId": "pg",
+                    "sla": null,
+                    "state": "BACK_FROM_FI_VERIFICATION",
+                    "applicationStatus": "CITIZEN_ACTION_PENDING_AT_FI_VERIF",
+                    "docUploadRequired": false,
+                    "isStartState": false,
+                    "isTerminateState": false,
+                    "isStateUpdatable": true,
+                    "actions": [
+                        {
+                            "tenantId": "pg",
+                            "currentState": "BACK_FROM_FI_VERIFICATION",
+                            "action": "FORWARD",
+                            "nextState": "FIELDINSPECTION_PENDING",
+                            "roles": [
+                                "CITIZEN",
+                                "BPA_ARCHITECT"
+                            ],
+                            "active": true
+                        }
+                    ]
+                },
+
+{
+                    "tenantId": "pg",
+                    "sla": null,
+                    "state": "BACK_FROM_DOC_VERIFICATION",
+                    "applicationStatus": "CITIZEN_ACTION_PENDING_AT_DOC_VERIF",
+                    "docUploadRequired": false,
+                    "isStartState": false,
+                    "isTerminateState": false,
+                    "isStateUpdatable": true,
+                    "actions": [
+                        {
+                            "tenantId": "pg",
+                            "currentState": "BACK_FROM_DOC_VERIFICATION",
+                            "action": "FORWARD",
+                            "nextState": "DOC_VERIFICATION_PENDING",
+                            "roles": [
+                                "CITIZEN",
+                                "BPA_ARCHITECT"
+                            ],
+                            "active": true
+                        }
+                    ]
+                },
+               
+               {
+                    "tenantId": "pg",
+                    "sla": null,
+                    "state": "BACK_FROM_NOC_VERIFICATION",
+                    "applicationStatus": "CITIZEN_ACTION_PENDING_AT_NOC_VERIF",
+                    "docUploadRequired": false,
+                    "isStartState": false,
+                    "isTerminateState": false,
+                    "isStateUpdatable": true,
+                    "actions": [
+                        {
+                            "tenantId": "pg",
+                            "currentState": "BACK_FROM_NOC_VERIFICATION",
+                            "action": "FORWARD",
+                            "nextState": "NOC_VERIFICATION_PENDING",
+                            "roles": [
+                                "CITIZEN",
+                                "BPA_ARCHITECT"
+                            ],
+                            "active": true
+                        }
+                    ]
+                }
+            ]
+           
+        }
+    ]
+    }
