@@ -68,6 +68,9 @@ public class ServiceRequestRepositoryImpl implements ServiceRequestRepository {
 		case EWASTE:
 			query = DashboardQueryConstant.EWASTE_DASHBOARD_QUERY_;
 			break;
+		case SV:
+			query = DashboardQueryConstant.SV_DASHBOARD_QUERY_;
+			break;
 		case ALL:
 			query = DashboardQueryConstant.DASHBOARD_QUERY_ALL;
 			break;
