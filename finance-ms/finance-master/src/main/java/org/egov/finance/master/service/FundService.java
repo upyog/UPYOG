@@ -9,6 +9,8 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.egov.finance.master.entity.Fund;
 import org.egov.finance.master.exception.MasterServiceException;
@@ -23,6 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 
 @Service
@@ -83,7 +86,7 @@ public class FundService {
 			throw new MasterServiceException(errorMap);
 		}
 		Fund fundE = validation.modelToEntity(fundM);
-		validation.fundFieldValidation(fundM, fundRepository);
+		validation.fundCreateNameAndCodeValidation(fundM);
 		Fund parentFund = null;
 
 		if (!ObjectUtils.isEmpty(fundM.getParentId())) {
@@ -110,7 +113,17 @@ public class FundService {
 			throw new MasterServiceException(errorMap);
 		});
 
-		commonUtils.applyNonNullFields(fundRequest, fundUpdate);
+		List<String> updatedFields = commonUtils.applyNonNullFields(fundRequest, fundUpdate);
+		FundModel fundModel = new FundModel();
+		Set<String> updatedSet = updatedFields.stream().map(String::toLowerCase).collect(Collectors.toSet());
+		if (updatedSet.contains("name")) 
+			fundModel.setName(fundUpdate.getName());
+		if (updatedSet.contains("code")) 
+			fundModel.setCode(fundUpdate.getCode());
+		
+		if(!ObjectUtils.isEmpty(updatedSet))
+		validation.fundCodeNameValidationForUpdate(fundModel,updatedSet);
+
 		if (!ObjectUtils.isEmpty(request.getFund().getParentId())) {
 			fundUpdate.setParentId(fundRepository.findById(request.getFund().getParentId()).orElseThrow(() -> {
 				errorMap.put(MasterConstants.INVALID_PARENT_ID, MasterConstants.INVALID_PARENT_ID_MSG);

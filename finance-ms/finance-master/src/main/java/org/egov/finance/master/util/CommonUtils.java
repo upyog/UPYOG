@@ -5,11 +5,13 @@
  */
 package org.egov.finance.master.util;
 
+import java.beans.PropertyDescriptor;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 import org.egov.finance.master.exception.MasterServiceException;
@@ -24,6 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.ObjectUtils;
 import org.springframework.web.client.RestTemplate;
 
 import com.jayway.jsonpath.JsonPath;
@@ -103,17 +106,29 @@ public class CommonUtils {
 	 * 
 	 * @author bpattanayak
 	 */
-	public void applyNonNullFields(Object source, Object target) {
-		BeanWrapper srcWrapper = new BeanWrapperImpl(source);
-		BeanWrapper trgWrapper = new BeanWrapperImpl(target);
+	public List<String> applyNonNullFields(Object source, Object target) {
+	    BeanWrapper srcWrapper = new BeanWrapperImpl(source);
+	    BeanWrapper trgWrapper = new BeanWrapperImpl(target);
+	    List<String> updatedFields = new ArrayList<>();
 
-		for (java.beans.PropertyDescriptor propertyDescriptor : srcWrapper.getPropertyDescriptors()) {
-			String propertyName = propertyDescriptor.getName();
-			Object value = srcWrapper.getPropertyValue(propertyName);
+	    for (PropertyDescriptor propertyDescriptor : srcWrapper.getPropertyDescriptors()) {
+	        String propertyName = propertyDescriptor.getName();
 
-			if (value != null && trgWrapper.isWritableProperty(propertyName)) {
-				trgWrapper.setPropertyValue(propertyName, value);
-			}
-		}
+	        if (!trgWrapper.isWritableProperty(propertyName)) {
+	            continue;
+	        }
+
+	        Object sourceValue = srcWrapper.getPropertyValue(propertyName);
+	        Object targetValue = trgWrapper.getPropertyValue(propertyName);
+
+	        if (!ObjectUtils.isEmpty(sourceValue) && !Objects.equals(sourceValue, targetValue)) {
+	            trgWrapper.setPropertyValue(propertyName, sourceValue);
+	            updatedFields.add(propertyName);
+	        }
+	    }
+
+	    return updatedFields;
 	}
+
+
 }

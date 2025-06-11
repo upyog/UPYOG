@@ -7,6 +7,7 @@ package org.egov.finance.master.validation;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import org.egov.finance.master.entity.Fund;
 import org.egov.finance.master.exception.MasterServiceException;
@@ -17,12 +18,16 @@ import org.egov.finance.master.util.MasterConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
 @Component
 public class FundValidation {
 
 	@Autowired
 	CommonUtils commonUtils;
+
+	@Autowired
+	FundRepository fundRepository;
 
 	public Fund modelToEntity(FundModel model) {
 
@@ -54,14 +59,33 @@ public class FundValidation {
 		return f;
 	}
 
-	public void fundFieldValidation(FundModel fundM, FundRepository fundRepository) {
+	public void fundCodeNameValidationForUpdate(FundModel fundM, Set<String> updatedSet) {
 		Map<String, String> errorMap = new HashMap<>();
-		if (fundRepository.findByCode(fundM.getCode()) != null)
+
+		if (updatedSet.contains("code") && fundRepository.findByCode(fundM.getCode()) != null)
 			errorMap.put(MasterConstants.CODE_NOT_UNIQUE, MasterConstants.CODE_IS_ALREADY_EXISTS_MSG);
-		if (fundRepository.findByName(fundM.getName()) != null)
+		if (updatedSet.contains("name") && fundRepository.findByName(fundM.getName()) != null)
 			errorMap.put(MasterConstants.NAME_NOT_UNIQUE, MasterConstants.NAME_IS_ALREADY_EXISTS_MSG);
 		if (!CollectionUtils.isEmpty(errorMap))
 			throw new MasterServiceException(errorMap);
 	}
+
+	public void fundCreateNameAndCodeValidation(FundModel fundM) {
+	    Map<String, String> errorMap = new HashMap<>();
+
+	    if (!StringUtils.hasText(fundM.getName()) || !StringUtils.hasText(fundM.getCode())) {
+	        errorMap.put(MasterConstants.INVALID_PARAMETERS, MasterConstants.INVALID_PARAMETERS_MSG);
+	        throw new MasterServiceException(errorMap);
+	    }
+
+	    boolean codeExists = fundRepository.exists((root, query, cb) -> cb.equal(root.get("code"), fundM.getCode()));
+	    boolean nameExists = fundRepository.exists((root, query, cb) -> cb.equal(root.get("name"), fundM.getName()));
+
+	    if (codeExists || nameExists) {
+	        errorMap.put(MasterConstants.CODE_NAME_NOT_UNIQUE, MasterConstants.CODE_NAME_NOT_UNIQUE_MSG);
+	        throw new MasterServiceException(errorMap);
+	    }
+	}
+
 
 }
