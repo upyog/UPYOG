@@ -400,6 +400,33 @@ public class DashboardQueryConstant {
 			+ "    AND pi.createdtime < EXTRACT(EPOCH FROM DATE_TRUNC('year', CURRENT_DATE) + INTERVAL '1 year') * 1000 \n"
 			+ "     AND pi.tenantid = ?");
 
+	public static StringBuilder SV_DASHBOARD_QUERY_ = new StringBuilder(
+			"SELECT \n"
+					+ "    COUNT(DISTINCT pi.businessid) AS Total_Applications_Received,\n"
+					+ "    SUM(CASE WHEN pi.action = 'APPROVE' THEN 1 ELSE 0 END) AS Total_Applications_Approved,\n"
+					+ "    COUNT(DISTINCT CASE \n"
+					+ "        WHEN pi.action IN ('APPLY', 'APPROVE', 'REJECT', 'FORWARD', 'PAY') \n"
+					+ "        AND pi.businessid NOT IN (\n"
+					+ "            SELECT businessid \n"
+					+ "            FROM eg_wf_processinstance_v2 \n"
+					+ "            WHERE action = 'APPROVE'\n"
+					+ "        ) THEN pi.businessid \n"
+					+ "    END) AS Total_Applications_Pending,\n"
+					+ "    (SELECT SUM(o.amountpaid) \n"
+					+ "     FROM egcl_bill b \n"
+					+ "     JOIN egcl_paymentdetail o ON o.billid = b.id \n"
+					+ "     WHERE o.businessservice IN ('sv-services')\n"
+					+ "     AND b.createdtime >= EXTRACT(EPOCH FROM DATE_TRUNC('year', CURRENT_DATE) + INTERVAL '3 months') * 1000  \n"
+					+ "     AND b.createdtime < EXTRACT(EPOCH FROM DATE_TRUNC('year', CURRENT_DATE) + INTERVAL '1 year') * 1000  \n"
+					+ "    ) AS Total_Amount \n"
+					+ "FROM \n"
+					+ "    eg_wf_processinstance_v2 pi \n"
+					+ "WHERE \n"
+					+ "    pi.businessservice = 'street-vending'\n"
+					+ "    AND pi.createdtime >= EXTRACT(EPOCH FROM DATE_TRUNC('year', CURRENT_DATE) + INTERVAL '3 months') * 1000  \n"
+					+ "    AND pi.createdtime < EXTRACT(EPOCH FROM DATE_TRUNC('year', CURRENT_DATE) + INTERVAL '1 year') * 1000 \n"
+					+ "     AND pi.tenantid = ?");
+
 	
 	
 	
