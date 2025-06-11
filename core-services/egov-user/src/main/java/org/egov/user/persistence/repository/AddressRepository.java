@@ -276,7 +276,7 @@ public class AddressRepository {
      */
     public void updateAddressV2(Long addressId, Long userId ) {
         final Map<String, Object> params = new HashMap<>();
-        params.put("addressId", addressId);
+        params.put("addressid", addressId);
         params.put("status", UserConstants.ADDRESS_INACTIVE_STATUS);
         params.put("lastmodifieddate", new Date());
         params.put("lastmodifiedby", userId);
@@ -305,13 +305,14 @@ public class AddressRepository {
      * @param userId User ID
      * @param tenantId Tenant ID
      */
-    public void updateAddressStatusIfChanged(List<Address> addresses, Long userId, String tenantId) {
-//        if (addresses == null || addresses.isEmpty()) return;
+    public void updateAddressesIfChangedV2(List<Address> addresses, Long userId, String tenantId) {
+        if (addresses == null || addresses.isEmpty()) return;
 
+        // Fetch existing addresses from DB for the user
         List<Address> dbAddresses = find(userId, tenantId);
         Map<String, Address> dbAddressMap = dbAddresses.stream()
                 .collect(Collectors.toMap(a -> a.getType().name(), a -> a));
-
+        // Iterate through payload addresses and compare with existing ones
         for (Address payloadAddress : addresses) {
             if (payloadAddress == null || payloadAddress.getType() == null) continue;
 
@@ -337,6 +338,7 @@ public class AddressRepository {
      */
     private boolean isAddressSame(Address a1, Address a2) {
         if (a1 == null || a2 == null) return false;
+        // Compare all address fields to determine if they are the same, if any field differs, return false
         return Objects.equals(a1.getAddress(), a2.getAddress()) &&
                 Objects.equals(a1.getAddress2(), a2.getAddress2()) &&
                 Objects.equals(a1.getHouseNumber(), a2.getHouseNumber()) &&

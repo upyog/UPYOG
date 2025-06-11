@@ -308,9 +308,11 @@ public class UserRepository {
             updateRoles(user);
         }
         if (user.getPermanentAndCorrespondenceAddresses() != null) {
+            // this will update the addresses only if the address soft update flag is enabled from properties file
+            // this is put to bypass existing logic of updating addresses where addresses were deleted and recreated
             if (addressSoftUpdateFlag) {
                 log.info("Address soft update is enabled, updating addresses only if changed");
-                addressRepository.updateAddressStatusIfChanged(user.getPermanentAndCorrespondenceAddresses(), user.getId(), user.getTenantId());
+                addressRepository.updateAddressesIfChangedV2(user.getPermanentAndCorrespondenceAddresses(), user.getId(), user.getTenantId());
             } else {
                 addressRepository.update(user.getPermanentAndCorrespondenceAddresses(), user.getId(), user.getTenantId());
             }
