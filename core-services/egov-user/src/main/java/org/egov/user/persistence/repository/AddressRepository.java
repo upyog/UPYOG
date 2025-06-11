@@ -29,7 +29,7 @@ public class AddressRepository {
     public static final String SELECT_NEXT_SEQUENCE = "select nextval('seq_eg_user_address')";
     public static final String DELETE_ADDRESSES = "delete from eg_user_address where id IN (:id)";
     public static final String DELETE_ADDRESS = "delete from eg_user_address where id=:id";
-    public static final String UPDATE_ADDRESS_BYIDAND_TENANTID = "update eg_user_address set address=:address,city=:city,pincode=:pincode,lastmodifiedby=:lastmodifiedby,lastmodifieddate=:lastmodifieddate, status=:status where userid=:userid and tenantid=:tenantid and type=:type";
+    public static final String UPDATE_ADDRESS_BYIDAND_TENANTID = "update eg_user_address set address=:address,city=:city,pincode=:pincode,lastmodifiedby=:lastmodifiedby,lastmodifieddate=:lastmodifieddate where userid=:userid and tenantid=:tenantid and type=:type";
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
     private JdbcTemplate jdbcTemplate;
     private AddressQueryBuilder addressQueryBuilder;
@@ -131,7 +131,7 @@ public class AddressRepository {
      */
     private void updateAddresses(List<Address> domainAddresses, List<Address> entityAddresses, Long userId) {
         Map<String, Address> typeToEntityAddressMap = toMap(entityAddresses);
-        domainAddresses.forEach(address -> updateAddress(typeToEntityAddressMap, address, userId, UserConstants.ADDRESS_ACTIVE_STATUS));
+        domainAddresses.forEach(address -> updateAddress(typeToEntityAddressMap, address, userId));
     }
 
 
@@ -141,9 +141,8 @@ public class AddressRepository {
      * @param typeToEntityAddressMap
      * @param address
      * @param userId
-     * @param addressStatus
      */
-    private void updateAddress(Map<String, Address> typeToEntityAddressMap, Address address, Long userId, String addressStatus) {
+    private void updateAddress(Map<String, Address> typeToEntityAddressMap, Address address, Long userId) {
         final Address matchingEntityAddress = typeToEntityAddressMap.getOrDefault(address.getType().name(), null);
 
         if (matchingEntityAddress == null) {
@@ -159,7 +158,6 @@ public class AddressRepository {
         addressInputs.put("tenantid", matchingEntityAddress.getTenantId());
         addressInputs.put("lastmodifieddate", new Date());
         addressInputs.put("lastmodifiedby", userId);
-        addressInputs.put("status", addressStatus);
 
         namedParameterJdbcTemplate.update(UPDATE_ADDRESS_BYIDAND_TENANTID, addressInputs);
     }
@@ -274,10 +272,10 @@ public class AddressRepository {
      * @param addressId the unique identifier of the address to be updated
      * @param userId    the ID of the user performing the update (for auditing purposes)
      */
-    public void updateAddressV2(Long addressId, Long userId ) {
+    public void updateAddressV2(Long addressId, Long userId, String addressStatus ) {
         final Map<String, Object> params = new HashMap<>();
         params.put("addressid", addressId);
-        params.put("status", UserConstants.ADDRESS_INACTIVE_STATUS);
+        params.put("status", addressStatus);
         params.put("lastmodifieddate", new Date());
         params.put("lastmodifiedby", userId);
         String query = AddressQueryBuilder.UPDATE_ADDRESS_STATUS;
@@ -305,7 +303,7 @@ public class AddressRepository {
      * @param userId User ID
      * @param tenantId Tenant ID
      */
-    public void updateAddressesIfChangedV2(List<Address> addresses, Long userId, String tenantId) {
+    public void updateExistingAddressesV2(List<Address> addresses, Long userId, String tenantId) {
         if (addresses == null || addresses.isEmpty()) return;
 
         // Fetch existing addresses from DB for the user
@@ -321,7 +319,7 @@ public class AddressRepository {
 
             if (dbAddress != null && !isAddressSame(payloadAddress, dbAddress)) {
                 // Mark existing address as inactive
-                updateAddressV2(dbAddressMap.get(addressType).getId(), userId);
+                updateAddressV2(dbAddressMap.get(addressType).getId(), userId, UserConstants.ADDRESS_INACTIVE_STATUS);
                 log.info("Address of type {} for user {} marked as inactive due to change.", addressType, userId);
 
                 // Insert new address as active
