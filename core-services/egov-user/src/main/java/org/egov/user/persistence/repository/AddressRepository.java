@@ -30,7 +30,6 @@ public class AddressRepository {
     public static final String DELETE_ADDRESSES = "delete from eg_user_address where id IN (:id)";
     public static final String DELETE_ADDRESS = "delete from eg_user_address where id=:id";
     public static final String UPDATE_ADDRESS_BYIDAND_TENANTID = "update eg_user_address set address=:address,city=:city,pincode=:pincode,lastmodifiedby=:lastmodifiedby,lastmodifieddate=:lastmodifieddate, status=:status where userid=:userid and tenantid=:tenantid and type=:type";
-    public static final String UPDATE_ADDRESS_STATUS = "update eg_user_address set status=:status, lastmodifieddate=:lastmodifieddate, lastmodifiedby=:lastmodifiedby where userid=:userid and tenantid=:tenantid and type=:type";
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
     private JdbcTemplate jdbcTemplate;
     private AddressQueryBuilder addressQueryBuilder;
@@ -273,12 +272,15 @@ public class AddressRepository {
      * Updates the status of an address to inactive based on the provided addressId.
      *
      * @param addressId the unique identifier of the address to be updated
+     * @param userId    the ID of the user performing the update (for auditing purposes)
      */
-    public void updateAddressV2(Long addressId) {
+    public void updateAddressV2(Long addressId, Long userId ) {
         final Map<String, Object> params = new HashMap<>();
         params.put("addressId", addressId);
         params.put("status", UserConstants.ADDRESS_INACTIVE_STATUS);
-        String query = AddressQueryBuilder.UPDATE_ADDRESS_STATUS_INACTIVE;
+        params.put("lastmodifieddate", new Date());
+        params.put("lastmodifiedby", userId);
+        String query = AddressQueryBuilder.UPDATE_ADDRESS_STATUS;
         namedParameterJdbcTemplate.update(query, params);
     }
 
@@ -303,7 +305,7 @@ public class AddressRepository {
      * @param userId User ID
      * @param tenantId Tenant ID
      */
-    public void updateStatusIfChanged(List<Address> addresses, Long userId, String tenantId) {
+    public void updateAddressStatusIfChanged(List<Address> addresses, Long userId, String tenantId) {
 //        if (addresses == null || addresses.isEmpty()) return;
 
         List<Address> dbAddresses = find(userId, tenantId);
@@ -318,7 +320,7 @@ public class AddressRepository {
 
             if (dbAddress != null && !isAddressSame(payloadAddress, dbAddress)) {
                 // Mark existing address as inactive
-                updateAddress(dbAddressMap, dbAddress, userId, UserConstants.ADDRESS_INACTIVE_STATUS);
+                updateAddressV2(dbAddressMap.get(addressType).getId(), userId);
                 log.info("Address of type {} for user {} marked as inactive due to change.", addressType, userId);
 
                 // Insert new address as active

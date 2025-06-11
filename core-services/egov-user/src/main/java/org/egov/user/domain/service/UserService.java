@@ -729,7 +729,7 @@ public class UserService {
         // Encrypt address before updating
         address = encryptionDecryptionUtil.encryptObject(address, UserConstants.USER_ADDRESS_ENCRYPTION_KEY, Address.class);
         // Update the old address status to inactive
-        addressRepository.updateAddressV2(address.getId());
+        addressRepository.updateAddressV2(address.getId(), address.getUserId());
         // Create a new address entry with the updated details with the same user id
         Address savedAddress = addressRepository.createAddressV2(address, address.getUserId(), address.getTenantId());
         // Decrypt address before returning

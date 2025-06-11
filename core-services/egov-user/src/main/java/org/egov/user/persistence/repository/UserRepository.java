@@ -310,7 +310,7 @@ public class UserRepository {
         if (user.getPermanentAndCorrespondenceAddresses() != null) {
             if (addressSoftUpdateFlag) {
                 log.info("Address soft update is enabled, updating addresses only if changed");
-                addressRepository.updateStatusIfChanged(user.getPermanentAndCorrespondenceAddresses(), user.getId(), user.getTenantId());
+                addressRepository.updateAddressStatusIfChanged(user.getPermanentAndCorrespondenceAddresses(), user.getId(), user.getTenantId());
             } else {
                 addressRepository.update(user.getPermanentAndCorrespondenceAddresses(), user.getId(), user.getTenantId());
             }
