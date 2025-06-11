@@ -68,13 +68,16 @@ public class FunctionService {
 			throw new MasterServiceException(errorMap);
 		});
 		
-		if(ObjectUtils.isEmpty(model.getParentId()))
-			funcRequest.setParentId(null);
-		
-		if(!ObjectUtils.isEmpty(model.getParentId()) 
-				&& null!=funcUpdate.getParentId()
-				&& !funcUpdate.getParentId().getId().equals(model.getParentId())  )
-			funcRequest.setParentId(Function.builder().id(model.getParentId()).build());
+		if (ObjectUtils.isEmpty(model.getParentId())) {
+		    funcRequest.setParentId(null);
+		} else {
+		    boolean parentChanged = funcUpdate.getParentId() == null 
+		        || !funcUpdate.getParentId().getId().equals(model.getParentId());
+
+		    if (parentChanged) {
+		        funcRequest.setParentId(Function.builder().id(model.getParentId()).build());
+		    }
+		}
 		
 		List<String> updatedFields = commonUtils.applyNonNullFields(funcRequest, funcUpdate);
 		Set<String> updatedSet = updatedFields.stream().map(String::toLowerCase).collect(Collectors.toSet());

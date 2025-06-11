@@ -43,7 +43,7 @@ public class RequestLogPreFilter implements Filter {
 		CachedBodyHttpServletRequest wrappedRequest = new CachedBodyHttpServletRequest(req);
 		String body = wrappedRequest.getCachedBodyAsString();
 		log.info("Incoming request: " + req.getMethod() + " " + req.getRequestURI());
-		log.debug("Request Body : {}", body);
+		//log.info("Request Body : {}", body);
 
 		try {
 			JsonNode root = mapper.readTree(body);
