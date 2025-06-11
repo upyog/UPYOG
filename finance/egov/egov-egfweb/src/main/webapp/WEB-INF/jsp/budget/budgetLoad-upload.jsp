@@ -59,6 +59,25 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
     <script type="text/javascript">
+        window.onload = function () {
+            // Clone the hidden template
+            const template = document.getElementById('budgetRowTemplate');
+            const firstRow = template.cloneNode(true);
+            firstRow.removeAttribute('id');
+            firstRow.style.display = '';
+
+            // Disable delete button
+            const deleteBtn = firstRow.querySelector('.delete-button');
+            if (deleteBtn) {
+                deleteBtn.disabled = true;
+                deleteBtn.style.opacity = 0.5;
+                deleteBtn.style.cursor = "not-allowed";
+            }
+
+            // Add the first row to the table body
+            document.getElementById('tableBody').appendChild(firstRow);
+        };
+        
         function validate(event) {
             event.preventDefault();
             document.getElementById("msg").innerHTML = "";
@@ -96,19 +115,40 @@
 
 			var budgetRows = [];
 
-			$("#budgetTable tbody tr").each(function () {
-				var row = {};
-				row["fundCode"] = $(this).find('select[name*="fundCode"]').val();
-				row["departmentCode"] = $(this).find('select[name*="departmentCode"]').val();
-				row["functionCode"] = $(this).find('select[name*="functionCode"]').val();
-				row["chartOfAccountCode"] = $(this).find('select[name*="chartOfAccountCode"]').val();
-                // row["maxCode"] = $(this).find('select[name*="maxCode"]').val();
-                // row["minCode"] = $(this).find('select[name*="minCode"]').val();
-				row["reAmount"] = $(this).find('input[name*="reAmount"]').val();
-				row["beAmount"] = $(this).find('input[name*="beAmount"]').val();
-				row["planningPercentage"] = $(this).find('input[name*="planningPercentage"]').val();
-				budgetRows.push(row);
-			});
+            jQuery("#budgetTable tbody tr").each(function () {
+                const $row = jQuery(this);
+                const fundCode = $row.find('select[name*="fundCode"]').val();
+                const departmentCode = $row.find('select[name*="departmentCode"]').val();
+                const functionCode = $row.find('select[name*="functionCode"]').val();
+                const chartOfAccountCode = $row.find('select[name*="chartOfAccountCode"]').val();
+                const reAmount = $row.find('input[name*="reAmount"]').val();
+                const beAmount = $row.find('input[name*="beAmount"]').val();
+                const planningPercentage = $row.find('input[name*="planningPercentage"]').val();
+
+                if (
+                    fundCode === "" &&
+                    departmentCode === "" &&
+                    functionCode === "" &&
+                    chartOfAccountCode === "0" &&
+                    reAmount === "" &&
+                    beAmount === "" &&
+                    planningPercentage === ""
+                ) {
+                    return;
+                }
+
+                const row = {
+                    fundCode,
+                    departmentCode,
+                    functionCode,
+                    chartOfAccountCode,
+                    reAmount,
+                    beAmount,
+                    planningPercentage
+                };
+
+                budgetRows.push(row);
+            });
 
 			if (budgetRows.length === 0) {
 				bootbox.alert("<s:text name='msg.no.budget.rows'/>");
@@ -147,8 +187,6 @@
 
 			return true;
 		}
-
-
 		
         function urlLoad(fileStoreId) {
             var sUrl = "/services/egi/downloadfile?fileStoreId=" + fileStoreId + "&moduleName=EGF";
@@ -173,7 +211,7 @@
 
         function addNewRow() {
             const currentRows = $('#tableBody tr').length;
-            if (currentRows >= 49) {
+            if (currentRows >= 50) {
                 bootbox.alert("* Only 50 entries are allowed at a time.");
                 return;
             }
@@ -181,7 +219,7 @@
             const template = document.getElementById('budgetRowTemplate');
             const clone = template.cloneNode(true);
             clone.removeAttribute('id');
-            clone.style.display = ''; // make it visible
+            clone.style.display = '';
 
             $(clone).find('input, select').each(function () {
                 if (this.tagName.toLowerCase() === 'select') {
@@ -190,6 +228,11 @@
                     this.value = '';
                 }
             });
+
+            // Enable delete button
+            const deleteBtn = $(clone).find('.delete-button');
+            deleteBtn.prop('disabled', false)
+                    .css({ opacity: 1, cursor: 'pointer' });
 
             document.getElementById('tableBody').appendChild(clone);
         }
@@ -459,7 +502,7 @@
                             </thead>				
                             
                             <tbody>
-                                <tr id="budgetRowTemplate">
+                                <tr id="budgetRowTemplate" style="display: none;">
                                     <td style="padding: 8px; border: 1px solid #ddd; text-align: center;">
                                     <s:select 
                                         list="%{dropdownData.fundList != null && !dropdownData.fundList.isEmpty() ? dropdownData.fundList : {}}" 
@@ -545,7 +588,7 @@
                                         />
                                     </td>
                                     <td style="padding: 8px; border: 1px solid #ddd; text-align: center;">
-                                        <button type="button" class="btn btn-sm" style="background-color: #fe7a51; color: #ffffff; margin-left:5px ;" onclick="deleteRow(this)">Delete</button>
+                                        <button type="button" class="btn btn-sm delete-button" style="background-color: #fe7a51; color: #ffffff; margin-left:5px ;" onclick="deleteRow(this)">Delete</button>
                                     </td>
                                 </tr>
                             </tbody>
