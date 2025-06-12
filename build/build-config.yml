@@ -938,4 +938,9 @@ config:
         dockerfile: 'build/maven/Dockerfile'
       - work-dir: "municipal-services/pgr-ai-services/src/main/resources/db"
         image-name: "pgr-ai-services-db"
-        
+
+  - name: builds/upyog/frontend/sv-ui
+    build:
+      - work-dir: frontend/sv-ui/
+        dockerfile: frontend/sv-ui/web/docker/Dockerfile
+        image-name: sv-ui       
