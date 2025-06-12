@@ -1,7 +1,16 @@
 package org.egov.finance.master.validation;
 
+/**
+ * SchemeValidation.java
+ * 
+ * @author mmavuluri
+ * @date 9 Jun 2025
+ * @version 1.0
+ */
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.egov.finance.master.entity.Fund;
 import org.egov.finance.master.entity.Scheme;
@@ -13,6 +22,7 @@ import org.egov.finance.master.util.MasterConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
 @Component
 public class SchemeValidation {
@@ -20,25 +30,27 @@ public class SchemeValidation {
 	@Autowired
 	private FundRepository fundRepository;
 
+	@Autowired
+	SchemeRepository schemeRepository;
+
 	public Scheme modelToEntity(SchemeModel model) {
-		Scheme s = new Scheme();
-		s.setId(model.getId());
-		s.setCode(model.getCode());
-		s.setName(model.getName());
-		s.setValidfrom(model.getValidfrom());
-		s.setValidto(model.getValidto());
-		s.setIsactive(model.getIsactive());
-		s.setDescription(model.getDescription());
-		s.setSectorid(model.getSectorid());
-		s.setAaes(model.getAaes());
-		s.setFieldid(model.getFieldid());
+		Scheme scheme = new Scheme();
+		scheme.setId(model.getId());
+		scheme.setCode(model.getCode());
+		scheme.setName(model.getName());
+		scheme.setValidfrom(model.getValidfrom());
+		scheme.setValidto(model.getValidto());
+		scheme.setIsactive(model.getIsactive());
+		scheme.setDescription(model.getDescription());
+		scheme.setSectorid(model.getSectorid());
+		scheme.setAaes(model.getAaes());
+		scheme.setFieldid(model.getFieldid());
 
 		if (model.getFundId() != null) {
-			Fund fund = fundRepository.findById(model.getFundId()).orElse(null);
-			s.setFund(fund);
+			Fund fund = validateAndGetFund(model.getFundId());
+			scheme.setFund(fund);
 		}
-
-		return s;
+		return scheme;
 	}
 
 	public SchemeModel entityToModel(Scheme s) {
@@ -61,14 +73,80 @@ public class SchemeValidation {
 		return model;
 	}
 
-	public void schemeFieldValidation(SchemeModel schemeM, SchemeRepository schemeRepository) {
+	public void schemeCreateValidation(SchemeModel schemeM) {
 		Map<String, String> errorMap = new HashMap<>();
-		if (schemeRepository.findByCode(schemeM.getCode()) != null)
+
+		if (!StringUtils.hasText(schemeM.getCode()) || !StringUtils.hasText(schemeM.getName())) {
+			errorMap.put(MasterConstants.INVALID_PARAMETERS, MasterConstants.INVALID_PARAMETERS_MSG);
+			throw new MasterServiceException(errorMap);
+		}
+
+		boolean codeExists = schemeRepository
+				.exists((root, query, cb) -> cb.equal(root.get("code"), schemeM.getCode()));
+		boolean nameExists = schemeRepository
+				.exists((root, query, cb) -> cb.equal(root.get("name"), schemeM.getName()));
+
+		// Check (name, fundId) uniqueness
+		boolean nameFundExists = isNameFundCombinationExists(schemeM.getName(), schemeM.getFundId());
+
+		if (codeExists || nameExists || nameFundExists) {
+			if (codeExists)
+				errorMap.put(MasterConstants.CODE_NOT_UNIQUE, MasterConstants.CODE_IS_ALREADY_EXISTS_MSG);
+			if (nameExists)
+				errorMap.put(MasterConstants.NAME_NOT_UNIQUE, MasterConstants.NAME_IS_ALREADY_EXISTS_MSG);
+			if (nameFundExists)
+				errorMap.put(MasterConstants.DUPLICATE_SCHEME, MasterConstants.NAME_FUND_ALREADY_EXISTS_MSG);
+			throw new MasterServiceException(errorMap);
+		}
+		// Fund existence check
+		validateAndGetFund(schemeM.getFundId());
+	}
+
+	public void schemeUpdateValidation(SchemeModel schemeM, Set<String> updatedSet) {
+		Map<String, String> errorMap = new HashMap<>();
+
+		if (updatedSet.contains("code") && schemeRepository.findByCode(schemeM.getCode()) != null)
 			errorMap.put(MasterConstants.CODE_NOT_UNIQUE, MasterConstants.CODE_IS_ALREADY_EXISTS_MSG);
-		if (schemeRepository.findByName(schemeM.getName()) != null)
+
+		if (updatedSet.contains("name") && schemeRepository.findByName(schemeM.getName()) != null)
 			errorMap.put(MasterConstants.NAME_NOT_UNIQUE, MasterConstants.NAME_IS_ALREADY_EXISTS_MSG);
+
+		if (updatedSet.contains("name") || updatedSet.contains("fund")) {
+			if (isNameFundCombinationExistsForUpdate(schemeM.getName(), schemeM.getFundId(), schemeM.getId())) {
+				errorMap.put(MasterConstants.DUPLICATE_SCHEME, MasterConstants.NAME_FUND_ALREADY_EXISTS_MSG);
+			}
+		}
+
+		if (updatedSet.contains("fund")) {
+			validateAndGetFund(schemeM.getFundId());// If our update logic supports changing fundId
+		}
+
 		if (!CollectionUtils.isEmpty(errorMap))
 			throw new MasterServiceException(errorMap);
+
+	}
+
+	private Fund validateAndGetFund(Long fundId) {
+		if (fundId == null)
+			return null;
+
+		return fundRepository.findById(fundId).orElseThrow(() -> {
+			Map<String, String> errorMap = new HashMap<>();
+			errorMap.put(MasterConstants.INVALID_FUND, MasterConstants.INVALID_FUND_ASSOCIATED_MSG);
+			return new MasterServiceException(errorMap);
+		});
+	}
+
+	private boolean isNameFundCombinationExists(String name, Long fundId) {
+		if (name == null || fundId == null)
+			return false;
+		return schemeRepository.existsByNameIgnoreCaseAndFundId(name.trim(), fundId);
+	}
+
+	public boolean isNameFundCombinationExistsForUpdate(String name, Long fundId, Long currentSchemeId) {
+		if (name == null || fundId == null || currentSchemeId == null)
+			return false;
+		return schemeRepository.existsByNameIgnoreCaseAndFundIdAndIdNot(name.trim(), fundId, currentSchemeId);
 	}
 
 }

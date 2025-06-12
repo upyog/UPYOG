@@ -1,5 +1,12 @@
 package org.egov.finance.master.model.request;
 
+/**
+ * SchemeRequest.java
+ * 
+ * @author mmavuluri
+ * @date 9 Jun 2025
+ * @version 1.0
+ */
 import org.egov.finance.master.model.RequestInfo;
 import org.egov.finance.master.model.SchemeModel;
 

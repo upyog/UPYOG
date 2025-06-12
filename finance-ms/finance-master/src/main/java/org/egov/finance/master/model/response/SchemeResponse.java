@@ -1,5 +1,11 @@
 package org.egov.finance.master.model.response;
-
+/**
+ * SchemeResponse.java
+ * 
+ * @author mmavuluri
+ * @date 9 Jun 2025
+ * @version 1.0
+ */
 import java.util.List;
 
 import org.egov.finance.master.model.ResponseInfo;

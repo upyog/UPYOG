@@ -18,8 +18,13 @@ public class MasterConstants {
 	public static final String TRANSACTION_MANAGER = "transactionManager";
 	public static final String ENTITY_MANAGER_FACTORY = "entityManagerFactory";
 	public static final String NAME_IS_ALREADY_EXISTS_MSG = "Name is already exists";
+	
+	public static final String NAME_FUND_ALREADY_EXISTS_MSG = "Scheme with same name and fund already exists";
+	
 	public static final String CODE_IS_ALREADY_EXISTS_MSG = "Code is already exists";
 	public static final String NAME_NOT_UNIQUE = "NAME_NOT_UNIQUE";
+	public static final String DUPLICATE_SCHEME = "DUPLICATE_SCHEME";
+	
 	public static final String CODE_NOT_UNIQUE = "CODE_NOT_UNIQUE";
 	public static final String ID_CANNOT_BE_PASSED_IN_CREATION_MSG = "Id cannot be passed in creation";
 	public static final String INVALID_ID_PASSED = "INVALID_ID_PASSED";
@@ -48,5 +53,8 @@ public class MasterConstants {
 	
 	public static final String FUNCTION_SEARCH_REDIS_CACHE_VERSION_KEY = "fuctionSearchCacheVersion::";
 	public static final String FUNCTION_SEARCH_REDIS_CACHE_NAME = "fundSearchCache";
+	
+	public static final String INVALID_FUND = "INVALID_FUND";
+	public static final String INVALID_FUND_ASSOCIATED_MSG = "Invalid fund associated with scheme.";
 
 }

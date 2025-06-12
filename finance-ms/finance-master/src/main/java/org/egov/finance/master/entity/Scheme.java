@@ -1,5 +1,12 @@
 package org.egov.finance.master.entity;
 
+/**
+ * Scheme.java
+ * 
+ * @author mmavuluri
+ * @date 09 Jun 2025
+ * @version 1.0
+ */
 import java.math.BigDecimal;
 import java.util.Date;
 

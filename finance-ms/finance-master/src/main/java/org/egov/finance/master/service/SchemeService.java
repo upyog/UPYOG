@@ -1,9 +1,18 @@
 package org.egov.finance.master.service;
 
+/**
+ * SchemeService.java
+ * 
+ * @author mmavuluri
+ * @date 9 Jun 2025
+ * @version 1.0
+ */
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.egov.finance.master.entity.Scheme;
 import org.egov.finance.master.exception.MasterServiceException;
@@ -20,7 +29,10 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Service
+@Slf4j
 public class SchemeService {
 
 	private SchemeRepository schemeRepository;
@@ -53,8 +65,10 @@ public class SchemeService {
 		if (!ObjectUtils.isEmpty(schemeCriteria.getId()))
 			spec = spec.and((root, query, cb) -> cb.equal(root.get("id"), schemeCriteria.getId()));
 
-		if (!ObjectUtils.isEmpty(schemeCriteria.getFundId()))
-			spec = spec.and((root, query, cb) -> cb.equal(root.get("fundid"), schemeCriteria.getFundId()));
+		if (!ObjectUtils.isEmpty(schemeCriteria.getFundId())) {
+			log.info("Filtering by Fund ID: {}", schemeCriteria.getFundId());
+			spec = spec.and((root, query, cb) -> cb.equal(root.join("fund").get("id"), schemeCriteria.getFundId()));
+		}
 
 		return schemeRepository.findAll(spec).stream().map(validation::entityToModel)
 				.sorted(Comparator.comparingLong(SchemeModel::getId)).toList();
@@ -67,8 +81,9 @@ public class SchemeService {
 			errorMap.put(MasterConstants.INVALID_ID_PASSED, MasterConstants.ID_CANNOT_BE_PASSED_IN_CREATION_MSG);
 			throw new MasterServiceException(errorMap);
 		}
+
 		Scheme schemeE = validation.modelToEntity(schemeM);
-		validation.schemeFieldValidation(schemeM, schemeRepository);
+		validation.schemeCreateValidation(schemeM);
 
 		cacheEvictionService.incrementVersionForTenant(ApplicationThreadLocals.getTenantID(),
 				MasterConstants.SCHEME_SEARCH_REDIS_CACHE_VERSION_KEY, MasterConstants.SCHEME_SEARCH_REDIS_CACHE_NAME);
@@ -78,15 +93,38 @@ public class SchemeService {
 	public SchemeModel update(SchemeRequest request) {
 		Scheme schemeRequest = validation.modelToEntity(request.getScheme());
 		Map<String, String> errorMap = new HashMap<>();
+
 		if (ObjectUtils.isEmpty(schemeRequest.getId())) {
 			errorMap.put(MasterConstants.INVALID_ID_PASSED, MasterConstants.INVALID_ID_PASSED_MESSAGE);
 			throw new MasterServiceException(errorMap);
 		}
+
 		Scheme schemeUpdate = schemeRepository.findById(schemeRequest.getId()).orElseThrow(() -> {
 			errorMap.put(MasterConstants.INVALID_ID_PASSED, MasterConstants.INVALID_ID_PASSED_MESSAGE);
 			throw new MasterServiceException(errorMap);
 		});
-		commonUtils.applyNonNullFields(schemeRequest, schemeUpdate);
+
+		List<String> updatedFields = commonUtils.applyNonNullFields(schemeRequest, schemeUpdate);
+		SchemeModel schemeModel = new SchemeModel();
+		schemeModel.setId(schemeUpdate.getId()); //Set ID
+		Set<String> updatedSet = updatedFields.stream().map(String::toLowerCase).collect(Collectors.toSet());
+
+		if (updatedSet.contains("name"))
+			schemeModel.setName(schemeUpdate.getName());
+
+		if (updatedSet.contains("code"))
+			schemeModel.setCode(schemeUpdate.getCode());
+
+		if (updatedSet.contains("fund")) {
+			schemeModel.setFundId(request.getScheme().getFundId() != null ? request.getScheme().getFundId()
+					: (schemeUpdate.getFund() != null ? schemeUpdate.getFund().getId() : null));
+		} else if (schemeUpdate.getFund() != null) {
+			schemeModel.setFundId(schemeUpdate.getFund().getId());
+		}
+
+		if (!ObjectUtils.isEmpty(updatedSet))
+			validation.schemeUpdateValidation(schemeModel, updatedSet);
+
 		cacheEvictionService.incrementVersionForTenant(ApplicationThreadLocals.getTenantID(),
 				MasterConstants.SCHEME_SEARCH_REDIS_CACHE_VERSION_KEY, MasterConstants.SCHEME_SEARCH_REDIS_CACHE_NAME);
 		return validation.entityToModel(schemeRepository.save(schemeUpdate));
