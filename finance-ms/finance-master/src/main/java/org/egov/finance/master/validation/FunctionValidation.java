@@ -69,10 +69,9 @@ public class FunctionValidation {
 			errorMap.put(MasterConstants.INVALID_PARAMETERS, MasterConstants.INVALID_PARAMETERS_MSG);
 		}
 		if(errorMap.isEmpty()) {
-			Specification<Function> spec = Specification.where(null);
-			spec = spec.or((root, query, cb) -> cb.equal(root.get("code"), funcM.getCode()))
-					.or( (root, query, cb) -> cb.equal(root.get("name"), funcM.getName()));    
-			
+			Specification<Function> spec = Specification
+					.where(hasCode(funcM.getName()))
+					.or( hasName(funcM.getName()));
 			if (!functionRespository.findAll(spec).isEmpty())
 				errorMap.put(MasterConstants.CODE_NAME_NOT_UNIQUE, MasterConstants.CODE_NAME_NOT_UNIQUE_MSG);
 			}
@@ -123,9 +122,7 @@ public class FunctionValidation {
 		Map<String, String> errorMap = new HashMap<>();
 		
 		if (updatedSet.contains("code") && !updatedSet.contains("name")){
-			Specification<Function> spec = (root, query, cb) ->
-            cb.equal(root.get("code"), funcM.getCode());
-            
+            Specification<Function> spec = Specification.where(hasCode(funcM.getCode()));
 			functionRespository.findAll(spec).stream()
 			.filter(x->!x.getId().equals(funcM.getId()))
 			.findFirst()
@@ -134,8 +131,7 @@ public class FunctionValidation {
 			});	
 		}	
 		if (updatedSet.contains("name")&&!updatedSet.contains("code")) {
-				Specification<Function> spec = (root, query, cb) -> 
-				cb.equal(root.get("name"), funcM.getName());
+				Specification<Function> spec =Specification.where(hasName(funcM.getName()));
 			functionRespository.findAll(spec).stream()
 			.filter(x->!x.getId().equals(funcM.getId()))
 			.findFirst()
@@ -145,10 +141,10 @@ public class FunctionValidation {
 			
 		}
 		else  if(updatedSet.contains("name")&&updatedSet.contains("code")){
-			Specification<Function> spec = Specification.where(null);
-			spec = spec
-					.and((root, query, cb) -> cb.equal(root.get("code"), funcM.getCode()))
-					.and( (root, query, cb) -> cb.equal(root.get("name"), funcM.getName()));    	
+			Specification<Function> spec = Specification
+					.where(hasCode(funcM.getCode()))
+					.or(hasName(funcM.getCode()));  
+			
 			functionRespository.findAll(spec).stream()
 			.filter(x->!x.getId().equals(funcM.getId()))
 			.findFirst()
@@ -159,6 +155,14 @@ public class FunctionValidation {
 			
 		if (!CollectionUtils.isEmpty(errorMap))
 			throw new MasterServiceException(errorMap);
+	}
+	
+	private Specification<Function> hasCode(String code) {
+	    return (root, query, cb) -> cb.equal(cb.lower(root.get("code")), code.toLowerCase());
+	}
+
+	private Specification<Function> hasName(String name) {
+	    return (root, query, cb) -> cb.equal(cb.lower(root.get("name")), name.toLowerCase());
 	}
 
 }
