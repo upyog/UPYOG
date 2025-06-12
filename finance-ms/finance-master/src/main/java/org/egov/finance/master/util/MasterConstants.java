@@ -44,5 +44,10 @@ public class MasterConstants {
 	public static final String FUNCTION_SEARCH_REDIS_KEY_GENERATOR = "functionSearchKeyGenerator";
 	public static final String FUNCTION_SEARCH_REDIS_CACHE_VERSION_KEY = "fuctionSearchCacheVersion::";
 	public static final String FUNCTION_SEARCH_REDIS_CACHE_NAME = "functionSearchCache";
+	public static final String SUBSCHEME_SEARCH_REDIS_KEY_GENERATOR = "subschemeSearchKeyGenerator";
+	public static final String SUBSCHEME_SEARCH_REDIS_CACHE_NAME = "subschemeSearchCache";
+	public static final String SUBSCHEME_SEARCH_REDIS_CACHE_VERSION_KEY = "subschemeSearchCacheVersion::";
+	public static final String CODE_SCHEMEID_NOT_UNIQUE="CODE_SCHEMEID_NOT_UNIQUE";
+	public static final String CODE_SCHEMEID_NOT_UNIQUE_MESSAGE="Code and SchemeID already exists";
 
 }
