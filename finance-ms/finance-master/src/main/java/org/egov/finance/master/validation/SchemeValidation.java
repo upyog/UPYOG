@@ -19,7 +19,9 @@ import org.egov.finance.master.model.SchemeModel;
 import org.egov.finance.master.repository.FundRepository;
 import org.egov.finance.master.repository.SchemeRepository;
 import org.egov.finance.master.util.MasterConstants;
+import org.egov.finance.master.util.SpecificationHelper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
@@ -105,11 +107,21 @@ public class SchemeValidation {
 	public void schemeUpdateValidation(SchemeModel schemeM, Set<String> updatedSet) {
 		Map<String, String> errorMap = new HashMap<>();
 
-		if (updatedSet.contains("code") && schemeRepository.findByCode(schemeM.getCode()) != null)
-			errorMap.put(MasterConstants.CODE_NOT_UNIQUE, MasterConstants.CODE_IS_ALREADY_EXISTS_MSG);
+		if (updatedSet.contains("code")) {
+			boolean exists = schemeRepository.exists(
+					(root, query, cb) -> cb.and(cb.equal(cb.lower(root.get("code")), schemeM.getCode().toLowerCase()),
+							cb.notEqual(root.get("id"), schemeM.getId())));
+			if (exists)
+				errorMap.put(MasterConstants.CODE_NOT_UNIQUE, MasterConstants.CODE_IS_ALREADY_EXISTS_MSG);
+		}
 
-		if (updatedSet.contains("name") && schemeRepository.findByName(schemeM.getName()) != null)
-			errorMap.put(MasterConstants.NAME_NOT_UNIQUE, MasterConstants.NAME_IS_ALREADY_EXISTS_MSG);
+		if (updatedSet.contains("name")) {
+			boolean exists = schemeRepository.exists(
+					(root, query, cb) -> cb.and(cb.equal(cb.lower(root.get("name")), schemeM.getName().toLowerCase()),
+							cb.notEqual(root.get("id"), schemeM.getId())));
+			if (exists)
+				errorMap.put(MasterConstants.NAME_NOT_UNIQUE, MasterConstants.NAME_IS_ALREADY_EXISTS_MSG);
+		}
 
 		if (updatedSet.contains("name") || updatedSet.contains("fund")) {
 			if (isNameFundCombinationExistsForUpdate(schemeM.getName(), schemeM.getFundId(), schemeM.getId())) {
@@ -140,13 +152,22 @@ public class SchemeValidation {
 	private boolean isNameFundCombinationExists(String name, Long fundId) {
 		if (name == null || fundId == null)
 			return false;
-		return schemeRepository.existsByNameIgnoreCaseAndFundId(name.trim(), fundId);
+
+		Specification<Scheme> spec = SpecificationHelper.<Scheme, String>equal("name", name.trim())
+				.and(SpecificationHelper.<Scheme, Long>equal("fund.id", fundId));
+
+		return schemeRepository.count(spec) > 0;
 	}
 
 	public boolean isNameFundCombinationExistsForUpdate(String name, Long fundId, Long currentSchemeId) {
 		if (name == null || fundId == null || currentSchemeId == null)
 			return false;
-		return schemeRepository.existsByNameIgnoreCaseAndFundIdAndIdNot(name.trim(), fundId, currentSchemeId);
+
+		Specification<Scheme> spec = SpecificationHelper.<Scheme, String>equal("name", name.trim())
+				.and(SpecificationHelper.<Scheme, Long>equal("fund.id", fundId))
+				.and((root, query, cb) -> cb.notEqual(root.get("id"), currentSchemeId));
+
+		return schemeRepository.count(spec) > 0;
 	}
 
 }

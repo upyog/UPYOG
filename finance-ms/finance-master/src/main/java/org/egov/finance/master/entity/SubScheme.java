@@ -10,6 +10,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -25,27 +26,25 @@ import lombok.EqualsAndHashCode;
 @SequenceGenerator(name = SubScheme.SEQ, sequenceName = SubScheme.SEQ, allocationSize = 1)
 @Data
 @EqualsAndHashCode(callSuper = false)
-public class SubScheme extends AuditDetails {
+public class SubScheme extends AuditDetailswithVersion {
 
 	private static final long serialVersionUID = -1261345271879178855L;
-	private static final String SEQ = "seq_sub_scheme";
+	public static final String SEQ = "seq_sub_scheme";
 
 	@Id
 	@GeneratedValue(generator = SubScheme.SEQ, strategy = GenerationType.SEQUENCE)
 	private Long id;
 
-	// private Scheme scheme;
-
-	@NotBlank(message = "Code can not be blank")
+	@NotBlank(message = "Code cannot be blank")
 	private String code;
 
-	@NotBlank(message = "Name can not be blank")
+	@NotBlank(message = "Name cannot be blank")
 	private String name;
 
-	@NotBlank(message = "Validform can not be blank")
+	@NotNull(message = "Valid from cannot be null")
 	private Date validfrom;
 
-	@NotBlank(message = "Validto can not be blank")
+	@NotNull(message = "Valid to cannot be null")
 	private Date validto;
 
 	private Boolean isactive;
@@ -60,5 +59,4 @@ public class SubScheme extends AuditDetails {
 	private Date councilAdminSanctionDate;
 	private Date govtLoanProposalDate;
 	private Date govtAdminSanctionDate;
-
 }
