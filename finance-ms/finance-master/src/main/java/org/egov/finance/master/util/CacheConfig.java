@@ -61,7 +61,7 @@ public class CacheConfig {
 	        SubSchemeModel criteria = (SubSchemeModel) params[0];
 	        List<String> parts = new ArrayList<>();
 	        String tenantId = ApplicationThreadLocals.getTenantID();
-	        String version = cacheEvictionService.getVersionForTenant(tenantId,MasterConstants.SUBSCHEME_SEARCH_REDIS_KEY_GENERATOR);
+	        String version = cacheEvictionService.getVersionForTenant(tenantId,MasterConstants.SUBSCHEME_SEARCH_REDIS_CACHE_VERSION_KEY);
 	        addIfNotNull(parts, "tenant", tenantId);
 	        parts.add("version=" + version);
 	        addIfNotNull(parts, "id", criteria.getId());
