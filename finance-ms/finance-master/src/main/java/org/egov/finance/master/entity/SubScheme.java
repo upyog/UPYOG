@@ -2,7 +2,6 @@ package org.egov.finance.master.entity;
 
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.Date;
 
 import com.fasterxml.jackson.annotation.JsonFormat;

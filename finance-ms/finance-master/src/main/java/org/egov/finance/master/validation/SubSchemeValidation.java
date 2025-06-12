@@ -3,14 +3,10 @@
  */
 package org.egov.finance.master.validation;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import java.util.TimeZone;
 
 import org.egov.finance.master.entity.SubScheme;
 import org.egov.finance.master.exception.MasterServiceException;
@@ -126,27 +122,12 @@ public class SubSchemeValidation {
 
 	private static Specification<SubScheme> validFrom(Date fromDate) {
 		return (fromDate == null) ? null
-				: (root, query, cb) -> cb.greaterThanOrEqualTo(root.get("validfrom"), parseFormattedDate(fromDate));
+				: (root, query, cb) -> cb.greaterThanOrEqualTo(root.get("validfrom"), fromDate);
 	}
 
 	private static Specification<SubScheme> validTo(Date toDate) {
 		return (toDate == null) ? null : (root, query, cb) -> cb.lessThanOrEqualTo(root.get("validto"), toDate);
 	}
 	
-	public static Date parseFormattedDate(Date fromDate) {
-	    try {
-	        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
-	        formatter.setTimeZone(TimeZone.getTimeZone("Asia/Kolkata")); // IST
-
-	        String formatted = formatter.format(fromDate);
-	        System.out.println("formatter.parse(formatted)"+formatter.parse(formatted));
-	        return formatter.parse(formatted);
-	    } catch (ParseException e) {
-	        e.printStackTrace();
-	        return null;
-	    }
-	}
-
-
 
 }

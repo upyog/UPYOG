@@ -1,12 +1,10 @@
 package org.egov.finance.master.model;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.Date;
 
 import org.egov.finance.master.customannotation.SafeHtml;
 import org.egov.finance.master.util.MasterConstants;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 

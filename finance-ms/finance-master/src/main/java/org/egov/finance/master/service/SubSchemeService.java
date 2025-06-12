@@ -3,10 +3,7 @@
  */
 package org.egov.finance.master.service;
 
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,11 +22,8 @@ import org.egov.finance.master.validation.SubSchemeValidation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
-
-import com.fasterxml.jackson.annotation.JsonFormat;
 
 /**
  * SubSchemeService.java
@@ -72,6 +66,10 @@ public class SubSchemeService {
 	@Cacheable(value = MasterConstants.SUBSCHEME_SEARCH_REDIS_CACHE_NAME, keyGenerator = MasterConstants.SUBSCHEME_SEARCH_REDIS_KEY_GENERATOR)
 	public List<SubSchemeModel> search(SubSchemeModel subSchemeModel) {
 		Specification<SubScheme> specification = subSchemeValidation.build(subSchemeModel);
+		
+		cacheEvictionService.incrementVersionForTenant(ApplicationThreadLocals.getTenantID(),
+				MasterConstants.SUBSCHEME_SEARCH_REDIS_CACHE_VERSION_KEY, MasterConstants.SUBSCHEME_SEARCH_REDIS_CACHE_NAME);
+		
 		return subSchemeRepository.findAll(specification).stream().map(subSchemeValidation::entitytoModel)
 				.sorted(Comparator.comparingLong(SubSchemeModel::getId)).toList();
 	}
