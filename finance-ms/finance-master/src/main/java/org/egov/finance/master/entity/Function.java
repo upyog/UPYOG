@@ -28,7 +28,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "Function")
 @Data
 @SequenceGenerator(name = Function.SEQ, sequenceName = Function.SEQ, allocationSize = 1)
-public class Function extends AuditDetails {
+public class Function extends AuditDetailswithVersion {
 
     private static final long serialVersionUID = 1L;
     public static final String SEQ = "SEQ_FUNCTION";
