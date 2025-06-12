@@ -46,7 +46,7 @@ public class FunctionController {
 
 	@PostMapping(value = "/_search")
 	public ResponseEntity<FunctionResponse> search(@RequestBody FunctionRequest request) {
-		final List<FunctionModel> funcM = functionService.search(request.getFunction());
+		final List<FunctionModel> funcM =null;;//= functionService.search(request.getFund());
 		ResponseInfo resInfo = responseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(), true);
 		FunctionResponse response = FunctionResponse.builder().responseInfo(resInfo).function(funcM).build();
 		return new ResponseEntity<>(response, HttpStatus.OK);
