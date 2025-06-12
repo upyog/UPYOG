@@ -120,3 +120,42 @@ export const waterTankerPayload = (data) =>{
   };
   return formdata;
 }
+
+  export const treePruningPayload = (data) =>{
+  const formdata={
+    treePruningBookingDetail: {
+        tenantId:data?.tenantId,
+        geoTagLocation: data?.treePruningRequestDetails?.geoTagLocation,
+        reasonOfPruning: data?.treePruningRequestDetails?.reasonOfPruning?.code,
+   
+        applicantDetail: {
+            name: data?.owner?.applicantName,
+            mobileNumber: data?.owner?.mobileNumber,
+            alternateNumber: data?.owner?.alternateNumber,
+            emailId: data?.owner?.emailId,
+        },
+        address: {
+            addressType:data?.address?.addressType?.code,
+            pincode: data?.address?.pincode,
+            city: data?.address?.city?.city?.name,
+            cityCode: data?.address?.city?.city?.code,
+            addressLine1: data?.address?.addressLine1,
+            addressLine2: data?.address?.addressLine2,
+            locality: data?.address?.locality?.i18nKey,
+            localityCode: data?.address?.locality?.code,
+            streetName: data?.address?.streetName,
+            houseNo: data?.address?.houseNo,
+            landmark: data?.address?.landmark
+        },
+        
+        bookingStatus: "BOOKING_CREATED",
+        workflow:{
+          action:"APPLY",
+          comments:"",
+          businessService:"treePruning",
+          moduleName:"request-service.tree_pruning"
+        }
+    }
+  };
+  return formdata;
+}

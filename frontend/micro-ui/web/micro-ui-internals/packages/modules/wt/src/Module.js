@@ -22,7 +22,9 @@ import WTCitizenCard from "./components/WTCitizenCard";
 import MTCard from "./components/MTCard";
 import ServiceTypes from "./pageComponents/ServiceTypes";
 import ToiletRequestDetails from "./pageComponents/ToiletRequestDetails";
+import TreePruningRequestDetails from "./pageComponents/TreePruningRequestDetails";
 import MTAcknowledgement from "./pages/citizen/Create/MTAcknowledgement";
+import TPAcknowledgement from "./pages/citizen/Create/TPAcknowledgement";
 import MTApplicationDetails from "./pages/citizen/MTApplicationDetails";
 import MTCitizenCard from "./components/MTCitizenCard";
 
@@ -44,7 +46,9 @@ const componentsToRegister = {
     WTCitizenCard: WTCitizenCard,
     ServiceTypes,
     ToiletRequestDetails,
+    TreePruningRequestDetails,
     MTAcknowledgement,
+    TPAcknowledgement,
     MTCitizenCard: MTCitizenCard,
   };
   
