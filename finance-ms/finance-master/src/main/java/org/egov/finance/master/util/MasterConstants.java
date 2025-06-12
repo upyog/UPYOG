@@ -29,11 +29,16 @@ public class MasterConstants {
 	public static final String FUND_SEARCH_REDIS_KEY_GENERATOR = "fundSearchKeyGenerator";
 	public static final String FUND_SEARCH_REDIS_CACHE_NAME = "fundSearchCache";
 	public static final String FUND_SEARCH_REDIS_CACHE_VERSION_KEY = "fundSearchCacheVersion::";
+	public static final String SUBSCHEME_SEARCH_REDIS_KEY_GENERATOR = "subschemeSearchKeyGenerator";
+	public static final String SUBSCHEME_SEARCH_REDIS_CACHE_NAME = "subschemeSearchCache";
+	public static final String SUBSCHEME_SEARCH_REDIS_CACHE_VERSION_KEY = "subschemeSearchCacheVersion::";
 	public static final String REDIS_SEARCH_VERSION_TAG= "::version=";
 	public static final String REDIS_SEARCH_TENANT_TAG = "::tenant=";
 	public static final String REDIS_START_VERSION_V1 = "v1";
 	public static final String CODE_NAME_NOT_UNIQUE = "CODE_NAME_NOT_UNIQUE";
 	public static final String CODE_NAME_NOT_UNIQUE_MSG = "Code Or Name Provided already exist ";
+	public static final String CODE_SCHEMEID_NOT_UNIQUE="CODE_SCHEMEID_NOT_UNIQUE";
+	public static final String CODE_SCHEMEID_NOT_UNIQUE_MESSAGE="Code and SchemeID already exists";
 	public static final String INVALID_PARAMETERS = "INVALID_PARAMETERS";
 	public static final String INVALID_PARAMETERS_MSG="Invlaid Parameters Passed";
 	public static final String EXCEPTION_FROM_MASTER_SERVICE_MSG = "Exception From master Service---- {}";

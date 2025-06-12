@@ -18,8 +18,6 @@ import lombok.extern.slf4j.Slf4j;
 @EqualsAndHashCode(callSuper = false)
 public class MasterServiceException extends RuntimeException{
 
-	
-
 	private static final long serialVersionUID = -19921057227329617L;
 
 	private final Map<String, String> errors;

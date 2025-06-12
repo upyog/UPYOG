@@ -4,7 +4,6 @@ package org.egov.finance.master.entity;
 import java.io.Serializable;
 import java.util.Date;
 
-import org.egov.finance.master.exception.MasterServiceException;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;

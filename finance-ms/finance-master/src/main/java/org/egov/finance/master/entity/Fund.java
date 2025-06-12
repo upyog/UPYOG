@@ -6,7 +6,6 @@
 package org.egov.finance.master.entity;
 
 import java.math.BigDecimal;
-import java.util.Date;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -18,12 +17,14 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 @Entity
 @Table(name = "fund")
 @SequenceGenerator(name = Fund.SEQ, sequenceName = Fund.SEQ, allocationSize = 1)
 @Data
-public class Fund  extends AuditDetails{
+@EqualsAndHashCode(callSuper = false)
+public class Fund  extends AuditDetailswithVersion{
 
 	public static final String SEQ = "SEQ_Fund";
 	private static final long serialVersionUID = 7977534010758407945L;

@@ -17,5 +17,9 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 public interface SubSchemeRepository extends JpaRepository<SubScheme, Long>,JpaSpecificationExecutor<SubScheme>{
 	
+	SubScheme findByCode(String code);
 
+	SubScheme findByName(String name);
+	
+	boolean existsByCodeAndScheme(String code, Long scheme);
 }
