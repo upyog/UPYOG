@@ -29,7 +29,7 @@ public class CacheConfig {
 	}
 	
 
-	@Bean("fundSearchKeyGenerator")
+	@Bean(MasterConstants.FUND_SEARCH_REDIS_KEY_GENERATOR)
 	public KeyGenerator fundSearchKeyGenerator() {
 	    return (target, method, params) -> {
 	        FundModel criteria = (FundModel) params[0];
@@ -75,11 +75,10 @@ public class CacheConfig {
 	        addIfNotNull(parts, "createdDate", criteria.getCreatedDate() != null ? criteria.getCreatedDate().getTime() : null);
 	        addIfNotNull(parts, "lastModifiedBy", criteria.getLastModifiedBy());
 	        addIfNotNull(parts, "lastModifiedDate", criteria.getLastModifiedDate() != null ? criteria.getLastModifiedDate().getTime() : null);
-	       
-
 	        return String.join("::", parts);
 	    };
 	}
+	
 
 	private void addIfNotNull(List<String> parts, String key, Object value) {
 	    if (value != null) {
