@@ -10,6 +10,7 @@ import java.util.List;
 
 import org.egov.finance.master.model.FunctionModel;
 import org.egov.finance.master.model.FundModel;
+import org.egov.finance.master.model.SubSchemeModel;
 import org.egov.finance.master.service.CacheEvictionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.interceptor.KeyGenerator;
@@ -45,6 +46,30 @@ public class CacheConfig {
 	        addIfNotNull(parts, "llevel", criteria.getLlevel());
 	        addIfNotNull(parts, "parentId", criteria.getParentId());
 	        addIfNotNull(parts, "isnotleaf", criteria.getIsnotleaf());
+	        addIfNotNull(parts, "isactive", criteria.getIsactive());
+	        addIfNotNull(parts, "createdBy", criteria.getCreatedBy());
+	        addIfNotNull(parts, "createdDate", criteria.getCreatedDate() != null ? criteria.getCreatedDate().getTime() : null);
+	        addIfNotNull(parts, "lastModifiedBy", criteria.getLastModifiedBy());
+	        addIfNotNull(parts, "lastModifiedDate", criteria.getLastModifiedDate() != null ? criteria.getLastModifiedDate().getTime() : null);
+	        return String.join("::", parts);
+	    };
+	}
+	
+	@Bean(MasterConstants.SUBSCHEME_SEARCH_REDIS_KEY_GENERATOR)
+	public KeyGenerator subschemeSearchKeyGenerator() {
+	    return (target, method, params) -> {
+	        SubSchemeModel criteria = (SubSchemeModel) params[0];
+	        List<String> parts = new ArrayList<>();
+	        String tenantId = ApplicationThreadLocals.getTenantID();
+	        String version = cacheEvictionService.getVersionForTenant(tenantId,MasterConstants.SUBSCHEME_SEARCH_REDIS_KEY_GENERATOR);
+	        addIfNotNull(parts, "tenant", tenantId);
+	        parts.add("version=" + version);
+	        addIfNotNull(parts, "id", criteria.getId());
+	        addIfNotNull(parts, "name", criteria.getName());
+	        addIfNotNull(parts, "code", criteria.getCode());
+	        addIfNotNull(parts, "schemeid", criteria.getScheme());
+	        addIfNotNull(parts, "validfrom", criteria.getValidfrom());
+	        addIfNotNull(parts, "validto", criteria.getValidto());
 	        addIfNotNull(parts, "isactive", criteria.getIsactive());
 	        addIfNotNull(parts, "createdBy", criteria.getCreatedBy());
 	        addIfNotNull(parts, "createdDate", criteria.getCreatedDate() != null ? criteria.getCreatedDate().getTime() : null);
