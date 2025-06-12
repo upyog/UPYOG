@@ -62,9 +62,7 @@
 	<div class="container">
 		<h1>Garbage Collection Bill</h1>
 		<p>Dear {recipients_name},</p>
-		<p>We hope this message finds you well. We would like to inform you that your garbage collection bill for the
-			period of <strong>{month}/{year}</strong> has been generated. Below are the details of your bill:</p>
-
+		<p>The garbage bill for the month of <strong>{month}/{year}</strong> against your ID <strong>{bill_no}</strong> has been successfully generated on the CitizenSeva Portal.</p>
 		<table class="bill-details">
 			<tr>
 				<th>Bill Details</th>
@@ -95,8 +93,12 @@
 				<td>{due_date}</td>
 			</tr>
 		</table>
-
-		<p class="footer">Thank you for your cooperation and timely payment.</p> {garbage_pay_now_bill_url}
+		<p class="footer">
+		  Please visit the portal to make the necessary payment, or use the link below for direct access:<br />
+		  <a href="{garbage_pay_now_bill_url}" target="_blank" rel="noopener noreferrer">
+		    Click here to pay your bill
+		  </a>
+		</p>
 	</div>
 </body>
 
