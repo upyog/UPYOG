@@ -15,10 +15,9 @@ import jakarta.persistence.criteria.Root;
 public final class SpecificationHelper {
 
 	 private SpecificationHelper() {
-	        // Private constructor to prevent instantiation
 	    }
 
-	    // Utility to navigate nested field paths safely
+	   
 	    private static <T, Y> Path<Y> getPath(Root<T> root, String fieldPath, Class<Y> type) {
 	        String[] parts = fieldPath.split("\\.");
 	        Path<?> path = root.get(parts[0]);
