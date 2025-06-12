@@ -17,9 +17,6 @@ import org.upyog.tp.web.models.AuditDetails;
 import org.upyog.tp.web.models.ResponseInfo;
 import org.upyog.tp.web.models.ResponseInfo.StatusEnum;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import net.logstash.logback.encoder.org.apache.commons.lang.StringUtils;
 
 @Component
@@ -115,28 +112,8 @@ public class TreePruningUtil {
         return auditdetails;
     }
 
-    public static String beuatifyJson(Object result) {
-        ObjectMapper mapper = new ObjectMapper();
-        String data = null;
-        try {
-            data = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(result);
-        } catch (JsonProcessingException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        return data;
-    }
-
     public static String getTenantId(String tenantId) {
         return tenantId.split("\\.")[0];
-    }
-
-    public static LocalDate getMonthsAgo(int month) {
-        LocalDate currentDate = LocalDate.now();
-        // Calculate the date given months ago
-        LocalDate monthsAgo = currentDate.minusMonths(month);
-
-        return monthsAgo;
     }
 
     // To get the current financial year end date in epoch to set in Tax to in demand

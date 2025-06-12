@@ -82,18 +82,18 @@ public class TreePruningController {
                 .treePruningBookingDetails(applications).responseInfo(responseInfo).count(count).build();
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
-//
-//    @PostMapping("/water-tanker/v1/_update")
-//    public ResponseEntity<TreePruningBookingResponse> treePruningUpdate(
-//            @ApiParam(value = "Updated water tanker details and RequestInfo meta data.", required = true)
-//            @RequestBody TreePruningBookingRequest treePruningRequest) {
-//
-//        TreePruningBookingDetail treePruningDetail = treePruningService.updateTreePruningBooking(treePruningRequest, null);
-//
-//        TreePruningBookingResponse response = TreePruningBookingResponse.builder().treePruningBookingApplication(treePruningDetail)
-//                .responseInfo(RequestServiceUtil.createReponseInfo(treePruningRequest.getRequestInfo(),
-//                        RequestServiceConstants.APPLICATION_UPDATED, StatusEnum.SUCCESSFUL))
-//                .build();
-//        return new ResponseEntity<TreePruningBookingResponse>(response, HttpStatus.OK);
-//    }
+
+    @PostMapping("/tree-pruning/v1/_update")
+    public ResponseEntity<TreePruningBookingResponse> treePruningUpdate(
+            @ApiParam(value = "Updated Tree Pruning details and RequestInfo meta data.", required = true)
+            @RequestBody TreePruningBookingRequest treePruningRequest) {
+
+        TreePruningBookingDetail treePruningDetail = treePruningService.updateTreePruningBooking(treePruningRequest, null);
+
+        TreePruningBookingResponse response = TreePruningBookingResponse.builder().treePruningBookingApplication(treePruningDetail)
+                .responseInfo(TreePruningUtil.createReponseInfo(treePruningRequest.getRequestInfo(),
+                        TreePruningConstants.APPLICATION_UPDATED, StatusEnum.SUCCESSFUL))
+                .build();
+        return new ResponseEntity<TreePruningBookingResponse>(response, HttpStatus.OK);
+    }
 }

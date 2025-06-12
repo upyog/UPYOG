@@ -80,7 +80,7 @@ public class TreePruningRepositoryImpl implements TreePruningRepository {
 
     @Override
     public void updateTreePruningBooking(TreePruningBookingRequest treePruningRequest) {
-        log.info("Updating water tanker request data for booking no : "
+        log.info("Updating Tree Pruning request data for booking no : "
                 + treePruningRequest.getTreePruningBookingDetail().getBookingNo());
         producer.push(treePruningConfiguration.getTreePruningApplicationUpdateTopic(), treePruningRequest);
 

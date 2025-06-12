@@ -38,7 +38,7 @@ public class EnrichmentService {
 
     public void enrichCreateTreePruningRequest(TreePruningBookingRequest treePruningRequest) {
         String bookingId = TreePruningUtil.getRandonUUID();
-        log.info("Enriching water tanker booking id :" + bookingId);
+        log.info("Enriching Tree Pruning booking id :" + bookingId);
 
         TreePruningBookingDetail treePruningDetail = treePruningRequest.getTreePruningBookingDetail();
         RequestInfo requestInfo = treePruningRequest.getRequestInfo();

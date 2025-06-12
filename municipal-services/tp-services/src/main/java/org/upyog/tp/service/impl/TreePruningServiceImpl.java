@@ -151,17 +151,15 @@ public class TreePruningServiceImpl implements TreePruningService {
             enrichmentService.enrichTreePruningBookingUponUpdate(state.getApplicationStatus(), treePruningRequest);
 
             // If action is APPROVE, create demand
-//            if (TreePruningConstants.ACTION_APPROVE
-//                    .equals(treePruningRequest.getTreePruningBookingDetail().getWorkflow().getAction())) {
-//                demandService.createDemand(treePruningRequest);
-//            }
+            if (TreePruningConstants.ACTION_APPROVE
+                    .equals(treePruningRequest.getTreePruningBookingDetail().getWorkflow().getAction())) {
+                demandService.createDemand(treePruningRequest);
+            }
         }
 
-        log.info("Payment request is null, updating water tanker booking without payment");
-        // If no payment request, just update the water tanker booking request
+        log.info("Payment request is null, updating Tree Pruning booking without payment");
+        // If no payment request, just update the tree pruning booking request
         treePruningRepository.updateTreePruningBooking(treePruningRequest);
-
-        Workflow workflow = treePruningRequest.getTreePruningBookingDetail().getWorkflow();
 
         return treePruningRequest.getTreePruningBookingDetail();
     }
@@ -169,7 +167,7 @@ public class TreePruningServiceImpl implements TreePruningService {
     @Override
     public void updateTreePruningBooking(PaymentRequest paymentRequest, String applicationStatus) {
         log.info("Payment request: {}", paymentRequest);
-        // Handle the payment request and update the water tanker booking if applicable
+        // Handle the payment request and update the Tree Pruning booking if applicable
         TreePruningBookingDetail treePruningDetail=null;
         if (paymentRequest != null) {
             try {
@@ -178,7 +176,7 @@ public class TreePruningServiceImpl implements TreePruningService {
                         .getTreePruningBookingDetails(
                                 TreePruningBookingSearchCriteria.builder().bookingNo(consumerCode).build())
                         .stream().findFirst().orElse(null);
-                log.info("Water tanker booking detail: {}", treePruningDetail);
+                log.info("Tree Pruning booking detail: {}", treePruningDetail);
                 log.info("Consumer code: {}", consumerCode);
                 if (treePruningDetail == null) {
                     log.info("Application not found in consumer class while updating status");
@@ -190,19 +188,19 @@ public class TreePruningServiceImpl implements TreePruningService {
                     treePruningDetail.setBookingStatus(applicationStatus);
                     treePruningDetail.setPaymentDate(System.currentTimeMillis());
 
-                    log.info("Water tanker detail after updating booking status: {}", treePruningDetail);
+                    log.info("Tree Pruning detail after updating booking status: {}", treePruningDetail);
 
-                    // Update water tanker booking request
+                    // Update Tree Pruning booking request
                     TreePruningBookingRequest updatedTreePruningRequest = TreePruningBookingRequest.builder()
                             .requestInfo(paymentRequest.getRequestInfo()).treePruningBookingDetail(treePruningDetail).build();
 
-                    log.info("Water Tanker Request to update application status in consumer: {}", updatedTreePruningRequest);
+                    log.info("Tree Pruning Request to update application status in consumer: {}", updatedTreePruningRequest);
                     treePruningRepository.updateTreePruningBooking(updatedTreePruningRequest);
                 }
             }
             catch (Exception e) {
-                log.error("Error while updating water tanker booking: {}", e.getMessage(), e);
-                throw new CustomException("UPDATE_FAILED", "Failed to update water tanker booking");
+                log.error("Error while updating Tree Pruning booking: {}", e.getMessage(), e);
+                throw new CustomException("UPDATE_FAILED", "Failed to update Tree Pruning booking");
             }
 
         }

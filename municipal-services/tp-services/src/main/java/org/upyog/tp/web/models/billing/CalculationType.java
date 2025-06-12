@@ -16,8 +16,6 @@ import lombok.ToString;
 @Getter
 @ToString
 public class CalculationType {
-
-	String code;
 	String applicationType;
 	String serviceType;
 	String feeType;

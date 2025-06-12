@@ -15,9 +15,9 @@ import lombok.Setter;
 import lombok.ToString;
 
 /**
- * Details of the advertisement booking
+ * Details of the Tree Pruning
  */
-@ApiModel(description = "Details of the advertisement booking")
+@ApiModel(description = "Details of the Tree Pruning booking")
 @Validated
 @javax.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2024-04-19T11:17:29.419+05:30")
 

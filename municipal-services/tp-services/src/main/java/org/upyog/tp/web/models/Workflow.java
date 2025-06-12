@@ -7,7 +7,6 @@ import javax.validation.Valid;
 
 import org.springframework.validation.annotation.Validated;
 import org.upyog.tp.web.models.workflow.Document;
-import org.upyog.tp.web.models.workflow.State;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -19,10 +18,10 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /**
- * BPA application object to capture the details of land, land owners, and
- * address of the land.
+ * Represents a workflow object used for tracking actions, status, and related details
+ * in the Tree Pruning booking process.
  */
-@ApiModel(description = "BPA application object to capture the details of land, land owners, and address of the land.")
+@ApiModel(description = "Represents a workflow object used for tracking actions, status, and related details in the Tree Pruning booking process.")
 @Validated
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-06-23T05:52:32.717Z[GMT]")
 @NoArgsConstructor

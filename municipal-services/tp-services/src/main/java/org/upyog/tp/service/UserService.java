@@ -21,8 +21,6 @@ import org.upyog.tp.web.models.ApplicantDetail;
 import org.upyog.tp.web.models.user.*;
 import org.upyog.tp.web.models.treePruning.TreePruningBookingDetail;
 import org.upyog.tp.web.models.treePruning.TreePruningBookingRequest;
-import org.upyog.tp.web.models.treePruning.TreePruningBookingSearchCriteria;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.extern.slf4j.Slf4j;
@@ -280,15 +278,15 @@ public class UserService {
 
     /**
      * Enriches a generic booking object with user details by using reflection to dynamically
-     * access and invoke methods on either MobileToiletBookingDetail or TreePruningBookingDetail.
+     * access and invoke methods on TreePruningBookingDetail.
      *
      * This method:
      * - Extracts the applicant UUID, address detail ID, and booking ID from the booking object.
      * - Uses the applicant UUID to fetch user details via a user search service.
      * - Populates the booking object with applicant and optionally address details.
-     * - Supports both MobileToilet and TreePruning bookings using reflection.
+     * - Supports TreePruning bookings using reflection.
      *
-     * @param booking         The booking object (either MobileToiletBookingDetail or TreePruningBookingDetail).
+     * @param booking         The booking object TreePruningBookingDetail.
      * @param searchCriteria  The corresponding search criteria object used to determine enrichment behavior.
      */
     public void enrichBookingWithUserDetails(Object booking, Object searchCriteria) {

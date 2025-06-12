@@ -64,13 +64,11 @@ public class NotificationUtil {
 
     public static final String ACTION_STATUS_APPROVE = "APPROVE";
 
-    public static final String ACTION_STATUS_ASSIGN_VENDOR = "ASSIGN_VENDOR";
+    public static final String ACTION_STATUS_VERIFY = "VERIFY";
 
-    public static final String ACTION_STATUS_ASSIGN_VEHICLE_DRIVER = "ASSIGN_VEHICLE_DRIVER";
+    public static final String ACTION_STATUS_EXECUTE = "EXECUTE";
 
     public static final String ACTION_STATUS_REJECT = "REJECT";
-
-    public static final String ACTION_STATUS_COMPLETE_REQUEST = "COMPLETE_REQUEST";
 
     public static final String ACTION_STATUS_PAY = "PAY";
 
@@ -494,18 +492,13 @@ public class NotificationUtil {
                 //	link = getPayUrl(treePruningDetail, message);
                 break;
 
-            case ACTION_STATUS_ASSIGN_VENDOR:
-                messageTemplate = getMessageTemplate(TreePruningConstants.NOTIFICATION_ASSIGN_VENDOR, localizationMessage);
+            case ACTION_STATUS_VERIFY:
+                messageTemplate = getMessageTemplate(TreePruningConstants.NOTIFICATION_VEFIFY, localizationMessage);
                 message = getMessageWithNumberAndFinalDetails(treePruningDetail, messageTemplate);
                 break;
 
-            case ACTION_STATUS_ASSIGN_VEHICLE_DRIVER:
-                messageTemplate = getMessageTemplate(TreePruningConstants.NOTIFICATION_ASSIGN_VEHICLE_DRIVER, localizationMessage);
-                message = getMessageWithNumberAndFinalDetails(treePruningDetail, messageTemplate);
-                break;
-
-            case ACTION_STATUS_COMPLETE_REQUEST:
-                messageTemplate = getMessageTemplate(TreePruningConstants.NOTIFICATION_COMPLETE_REQUEST, localizationMessage);
+            case ACTION_STATUS_EXECUTE:
+                messageTemplate = getMessageTemplate(TreePruningConstants.NOTIFICATION_EXECUTE, localizationMessage);
                 message = getMessageWithNumberAndFinalDetails(treePruningDetail, messageTemplate);
                 break;
 
@@ -515,7 +508,7 @@ public class NotificationUtil {
                 break;
 
             case ACTION_STATUS_PAY:
-                messageTemplate = getMessageTemplate(TreePruningConstants.NOTIFICATION_TANKERBOOKED,
+                messageTemplate = getMessageTemplate(TreePruningConstants.NOTIFICATION_TREEPRUNINGBOOKED,
                         localizationMessage);
                 message = getMessageWithNumberAndFinalDetails(treePruningDetail, messageTemplate);
                 break;

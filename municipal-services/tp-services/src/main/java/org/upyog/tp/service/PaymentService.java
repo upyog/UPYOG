@@ -1,24 +1,12 @@
 package org.upyog.tp.service;
-
-import java.util.Collections;
 import java.util.HashMap;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.upyog.tp.config.TreePruningConfiguration;
-import org.upyog.tp.constant.TreePruningConstants;
 import org.upyog.tp.repository.TreePruningRepository;
 import org.upyog.tp.repository.ServiceRequestRepository;
 import org.upyog.tp.service.impl.TreePruningServiceImpl;
-import org.upyog.tp.util.IdgenUtil;
-import org.upyog.tp.util.TreePruningUtil;
-import org.upyog.tp.web.models.treePruning.TreePruningBookingDetail;
-import org.upyog.tp.web.models.treePruning.TreePruningBookingRequest;
-import org.upyog.tp.web.models.treePruning.TreePruningBookingSearchCriteria;
-import org.upyog.tp.web.models.workflow.ProcessInstance;
-import org.upyog.tp.web.models.workflow.ProcessInstanceRequest;
-import org.upyog.tp.web.models.workflow.ProcessInstanceResponse;
 import org.upyog.tp.web.models.workflow.State;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -68,7 +56,7 @@ public class PaymentService {
                     .equals(businessService)){
                 String applicationNo = paymentRequest.getPayment().getPaymentDetails().get(0).getBill()
                         .getConsumerCode();
-                log.info("Updating payment status for water tanker booking : " + applicationNo);
+                log.info("Updating payment status for Tree Pruning booking : " + applicationNo);
                 State state = workflowService.updateWorkflowStatus(paymentRequest, null);
                 String applicationStatus = state.getApplicationStatus();
                 treePruningService.updateTreePruningBooking(paymentRequest, applicationStatus);
