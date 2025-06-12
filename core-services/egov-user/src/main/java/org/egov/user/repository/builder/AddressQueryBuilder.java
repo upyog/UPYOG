@@ -21,8 +21,8 @@ public class AddressQueryBuilder {
     public static final String INSERT_ADDRESS_BYUSERID_V2 = "insert into eg_user_address (id,type,address,city,pincode,userid,tenantid,createddate,lastmodifieddate,createdby,lastmodifiedby, address2, houseNumber, houseName, streetName, landmark, locality, status) "
             + "values(:id,:type,:address,:city,:pincode,:userid,:tenantid,:createddate,:lastmodifieddate,:createdby,:lastmodifiedby, :address2, :houseNumber, :houseName, :streetName, :landmark, :locality, :status)";
 
-    public static final String UPDATE_ADDRESS_STATUS_INACTIVE = "UPDATE eg_user_address SET status = :status WHERE id = :addressId";
-
+    // To update the address status with last modified date and last modified by
+    public static final String UPDATE_ADDRESS_STATUS = "update eg_user_address set status=:status, lastmodifieddate=:lastmodifieddate, lastmodifiedby=:lastmodifiedby where id=:addressid";
 
     public String getAddressQuery(AddressSearchCriteria addressSearchCriteria, final List prepareStatementValues) {
         final StringBuilder selectQuery;

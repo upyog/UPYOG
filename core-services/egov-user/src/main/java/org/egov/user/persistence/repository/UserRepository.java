@@ -2,7 +2,6 @@ package org.egov.user.persistence.repository;
 
 import lombok.extern.slf4j.Slf4j;
 
-import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
 import org.egov.user.domain.model.Address;
 import org.egov.user.domain.model.Role;
@@ -18,6 +17,7 @@ import org.egov.user.repository.builder.UserTypeQueryBuilder;
 import org.egov.user.repository.rowmapper.UserResultSetExtractor;
 import org.egov.user.repository.rowmapper.UserResultSetExtractorV2;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -46,6 +46,9 @@ public class UserRepository {
     private UserResultSetExtractor userResultSetExtractor;
     @Autowired
     private UserResultSetExtractorV2 userResultSetExtractorV2;
+
+    @Value("${user.address.update.strategy}")
+    private Boolean addressSoftUpdateFlag;
 
     @Autowired
     UserRepository(RoleRepository roleRepository, UserTypeQueryBuilder userTypeQueryBuilder,
@@ -305,7 +308,14 @@ public class UserRepository {
             updateRoles(user);
         }
         if (user.getPermanentAndCorrespondenceAddresses() != null) {
-            addressRepository.update(user.getPermanentAndCorrespondenceAddresses(), user.getId(), user.getTenantId());
+            // this will update the addresses only if the address soft update flag is enabled from properties file
+            // this is put to bypass existing logic of updating addresses where addresses were deleted and recreated
+            if (addressSoftUpdateFlag) {
+                log.info("Address soft update is enabled, updating addresses only if changed");
+                addressRepository.updateExistingAddressesV2(user.getPermanentAndCorrespondenceAddresses(), user.getId(), user.getTenantId());
+            } else {
+                addressRepository.update(user.getPermanentAndCorrespondenceAddresses(), user.getId(), user.getTenantId());
+            }
         }
     }
 
