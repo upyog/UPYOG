@@ -4,7 +4,7 @@
   "license": "MIT",
   "main": "dist/index.css",
   "author": "Shivank Shukla",
-  "description": "CSS Only for CND UI",
+  "description": "CSS for CND UI & SV UI",
   "engines": {
     "node": ">=14"
   },
@@ -57,10 +57,12 @@
     "src/**/*.css"
   ],
   "keywords": [
-    "digit",
-    "egov",
+    "upyog",
+    "nudm",
     "dpg",
     "sv-ui",
+    "core",
+    "niua",
     "css"
   ]
 }

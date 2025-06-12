@@ -1,5 +1,5 @@
 /** 
- * CND Payment Configuration
+ * Payment Configuration
  * It uses `react-query` for data fetching and caching, and dynamically sets the search function based on the business service.
  * The returned object includes the fetched applications and metadata like `key` and `label` for bill generation reference.
  * 

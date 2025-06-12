@@ -99,18 +99,6 @@ const Home = ({
                   header={t(mdmsDataObj?.header)}
                   links={mdmsDataObj?.links}
                   Icon={() => <span />}
-                  // Info={
-                  //   code === "CND"
-                  //     ? () => (
-                  //         <CitizenInfoLabel
-                  //           style={{ margin: "0px", padding: "10px" }}
-                  //           info={t("CS_FILE_APPLICATION_INFO_LABEL")}
-                  //           text={t(`CND_INFO_LABEL_ONE`)}
-                  //         />
-                  //       )
-                  //     : null
-                  // }
-                  // isInfo={code === "CND" ? true : false}
                 />
               )}
             </div>

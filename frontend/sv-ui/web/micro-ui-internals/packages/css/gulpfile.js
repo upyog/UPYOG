@@ -61,8 +61,3 @@ if (true) {
 } else {
   exports.build = series(styles, livereloadStyles);
 }
-
-// gulp.task("watch:styles", function () {
-//   livereload.listen();
-//   gulp.watch("**/*.scss", ["styles"]);
-// });

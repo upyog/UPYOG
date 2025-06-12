@@ -1,6 +1,4 @@
 import { useTranslation } from "react-i18next";
-import { CNDIcon } from "../../Svg";
-import { CaseIcon } from "@nudmcdgnpm/digit-ui-react-components";
 
 const CitizenSubMenuSideBar = ({ item }) => {
   const [subnav, setSubnav] = useState(false);
@@ -9,12 +7,8 @@ const CitizenSubMenuSideBar = ({ item }) => {
   const showSubnav = () => setSubnav(!subnav);
   const { t } = useTranslation();
 
-  const IconsObject = {
-    // CNDIcon: <CaseIcon />
-  };
-
   const leftIconArray = item.icon;
-  const leftIcon = leftIconArray ? IconsObject[leftIconArray] : IconsObject.BillsIcon;
+  const leftIcon = leftIconArray; 
   return (
     <React.Fragment>
       <div className="submenu-container" style={{"position":"relative"}}>

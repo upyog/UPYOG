@@ -40,6 +40,4 @@ module.exports = function (app) {
  * Above loops through a list of API paths and applies the createProxy middleware to each one.
  * Any request that matches these paths will be automatically forwarded to https://qa.digit.org
  */
-
-  ["/pb-egov-assets"].forEach((location) => app.use(location, assetsProxy));
 };

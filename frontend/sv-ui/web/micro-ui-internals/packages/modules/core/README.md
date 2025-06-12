@@ -10,7 +10,7 @@ npm install --save @upyog/digit-ui-module-core
 ## Limitation
 
 ```bash
-This Package is more specific to CND's can be used across mission's
+This Package is more specific to SV's can be used across mission's
 ```
 
 ## Usage

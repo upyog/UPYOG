@@ -7,7 +7,6 @@ import {
 import React from "react";
 import { useTranslation } from "react-i18next";
 import EmployeeDashboard from "./EmployeeDashboard";
-import {CNDIcon} from "./Svg"
 
 
 
@@ -33,8 +32,6 @@ export const processLinkData = (newData, code, t) => {
 
 const iconSelector = (code) => {
   switch (code) {
-    case "CND":
-      return <CNDIcon className="fill-path-primary-main" />
     default:
       return <PTIcon className="fill-path-primary-main" />;
   }

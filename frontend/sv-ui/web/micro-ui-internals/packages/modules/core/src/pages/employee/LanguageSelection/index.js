@@ -15,8 +15,6 @@ const LanguageSelection = () => {
     setselected(language.value);
     Digit.LocalizationService.changeLanguage(language.value, stateInfo.code);
   };
-  let sourceUrl = "https://s3.ap-south-1.amazonaws.com/egov-qa-assets";
-  const pdfUrl = "https://pg-egov-assets.s3.ap-south-1.amazonaws.com/Upyog+Code+and+Copyright+License_v1.pdf";
 
   const handleSubmit = (event) => {
     history.push("/sv-ui/employee/user/login");

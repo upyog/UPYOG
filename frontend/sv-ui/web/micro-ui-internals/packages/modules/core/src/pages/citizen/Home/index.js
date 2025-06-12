@@ -60,8 +60,8 @@ const Home = () => {
     },
     props: [
         {
-            code: "CITIZEN_SERVICE_CND",
-            name: "Cnd",
+            code: "CITIZEN_SERVICE_SV",
+            name: "SV",
             label: "ES_PGR_HEADER_COMPLAINT",
             enabled: true,
             navigationUrl: "/sv-ui/citizen/sv-home"

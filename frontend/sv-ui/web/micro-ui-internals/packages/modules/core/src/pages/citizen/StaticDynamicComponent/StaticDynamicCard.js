@@ -12,7 +12,6 @@ import {
 } from "@nudmcdgnpm/digit-ui-react-components";
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { CNDIcon } from "../../../components/Svg";
 
 const StaticDynamicCard = ({moduleCode}) => {
     const { t } = useTranslation();

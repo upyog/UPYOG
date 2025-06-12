@@ -87,7 +87,6 @@ export const StreetVendingUI = ({ stateCode, registry, enabledModules, moduleRed
                 /**
                  * Main Method to update the privacy object anywhere in the application
                  *
-                 * @author jagankumar-egov
                  *
                  * Feature :: Privacy
                  *

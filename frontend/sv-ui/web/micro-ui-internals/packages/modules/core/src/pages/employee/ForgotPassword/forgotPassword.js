@@ -10,9 +10,6 @@ const ForgotPassword = ({ config: propsConfig, t }) => {
   const [user, setUser] = useState(null);
   const history = useHistory();
   const [showToast, setShowToast] = useState(null);
-  const getUserType = () => Digit.UserService.getType();
-  let sourceUrl = "https://s3.ap-south-1.amazonaws.com/egov-qa-assets";
-  const pdfUrl = "https://pg-egov-assets.s3.ap-south-1.amazonaws.com/Upyog+Code+and+Copyright+License_v1.pdf";
   
   useEffect(() => {
     if (!user) {

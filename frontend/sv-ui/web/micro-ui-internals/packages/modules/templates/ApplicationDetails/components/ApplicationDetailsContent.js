@@ -98,7 +98,7 @@ function ApplicationDetailsContent({
   };
 
 
-  const isCND = window.location.href.includes("employee/cnd");
+  const isSV = window.location.href.includes("employee/sv");
   const getTextValue = (value) => {
     if (value?.skip) return value.value;
     else if (value?.isUnit) return value?.value ? `${getTranslatedValues(value?.value, value?.isNotTranslated)} ${t(value?.isUnit)}` : t("N/A");
@@ -138,7 +138,7 @@ function ApplicationDetailsContent({
   };
   
   return (
-    <Card style={{ position: "relative" }} className={isCND?"employeeCard-override":""}>
+    <Card style={{ position: "relative" }} className={isSV?"employeeCard-override":""}>
       {applicationDetails?.applicationDetails?.map((detail, index) => (
         <React.Fragment key={index}>
           <div>

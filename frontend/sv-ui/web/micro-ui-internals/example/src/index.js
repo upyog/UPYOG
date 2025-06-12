@@ -4,11 +4,11 @@ import ReactDOM from "react-dom";
 import { initLibraries } from "@nudmcdgnpm/digit-ui-libraries";
 import { PaymentModule } from "@upyog/digit-ui-module-common";
 import { StreetVendingUI } from "@upyog/digit-ui-module-core";
-import { initBillsComponents, BillsModule } from "@upyog/digit-ui-module-bills";
+import { BillsModule } from "@upyog/digit-ui-module-bills";
 import "@nudmcdgnpm/cnd-css";
 import { SVComponents, SVLinks, SVModule } from "@nudmcdgnpm/upyog-ui-module-sv";
 
-import { CndConstants } from "./CndConstants";
+import { SVConstants } from "./SVConstants";
 
 var Digit = window.Digit || {};
 
@@ -54,7 +54,6 @@ const initSVUI = () => {
   ...SVComponents,
   });
 
-  // initBillsComponents();
 
   const moduleReducers = (initData) => ({
     // pgr: PGRReducers(initData),
@@ -63,7 +62,7 @@ const initSVUI = () => {
   window.Digit.Customizations = {
   };
 
-  const stateCode = window?.globalConfigs?.getConfig("STATE_LEVEL_TENANT_ID") || CndConstants.Tenant;
+  const stateCode = window?.globalConfigs?.getConfig("STATE_LEVEL_TENANT_ID") || SVConstants.Tenant;
   initTokens(stateCode);
 
   // const registry = window?.Digit.ComponentRegistryService.getRegistry();

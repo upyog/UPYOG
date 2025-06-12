@@ -27,7 +27,6 @@ import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
 import LogoutDialog from "../../Dialog/LogoutDialog";
 import ChangeCity from "../../ChangeCity";
-import { CNDIcon } from "../../Svg";
 
 const defaultImage =
   "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAO4AAADUCAMAAACs0e/bAAAAM1BMVEXK0eL" +
@@ -94,7 +93,6 @@ const IconsObject = {
   EditPencilIcon: <EditPencilIcon className="icon" />,
   LogoutIcon: <LogoutIcon className="icon" />,
   Phone: <Phone className="icon" />,
-  CNDIcon: <CNDIcon className="icon" />,
   LoginIcon: <LoginIcon className="icon" />,
 };
 const StaticCitizenSideBar = ({ linkData, islinkDataLoading }) => {
