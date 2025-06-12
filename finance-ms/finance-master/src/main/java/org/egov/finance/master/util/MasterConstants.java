@@ -41,7 +41,7 @@ public class MasterConstants {
 	public static final String INVALID_NAME_MSG = "Please Provide a valid name";
 	public static final String INVALID_CODE = "INVALID_CODE";
 	public static final String INVALID_CODE_MSG = "Please Provide a valid code";
-	
+	public static final String FUNCTION_SEARCH_REDIS_KEY_GENERATOR = "functionSearchKeyGenerator";
 	public static final String FUNCTION_SEARCH_REDIS_CACHE_VERSION_KEY = "fuctionSearchCacheVersion::";
 	public static final String FUNCTION_SEARCH_REDIS_CACHE_NAME = "fundSearchCache";
 
