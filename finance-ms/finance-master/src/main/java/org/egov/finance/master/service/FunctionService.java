@@ -56,8 +56,8 @@ public class FunctionService {
 			throw new MasterServiceException(errorMap);
 		});
 		funcE.setParentId(parentFunction);
-		cacheEvictionService.incrementVersionForTenant(ApplicationThreadLocals.getTenantID(),
-				MasterConstants.FUNCTION_SEARCH_REDIS_CACHE_VERSION_KEY, MasterConstants.FUNCTION_SEARCH_REDIS_CACHE_NAME);
+		//cacheEvictionService.incrementVersionForTenant(ApplicationThreadLocals.getTenantID(),
+			//	MasterConstants.FUNCTION_SEARCH_REDIS_CACHE_VERSION_KEY, MasterConstants.FUNCTION_SEARCH_REDIS_CACHE_NAME);
 		return validation.entityTOModel(functionRespository.save(funcE));
 		
 	}
@@ -83,7 +83,6 @@ public class FunctionService {
 		        funcRequest.setParentId(Function.builder().id(model.getParentId()).build());
 		    }
 		}
-		
 		List<String> updatedFields = commonUtils.applyNonNullFields(funcRequest, funcUpdate);
 		Set<String> updatedSet = updatedFields.stream().map(String::toLowerCase).collect(Collectors.toSet());
 		if (updatedSet.contains("name")) 
@@ -109,7 +108,7 @@ public class FunctionService {
 	
 	
 	
-	//@Cacheable(value = MasterConstants.FUNCTION_SEARCH_REDIS_CACHE_NAME, keyGenerator = MasterConstants.FUNCTION_SEARCH_REDIS_KEY_GENERATOR)
+	@Cacheable(value = MasterConstants.FUNCTION_SEARCH_REDIS_CACHE_NAME, keyGenerator = MasterConstants.FUNCTION_SEARCH_REDIS_KEY_GENERATOR)
 	public List<FunctionModel> search(FunctionModel funcCriteria) {
 		Specification<Function> spec = Specification.where(null);
 		if (funcCriteria.getCode() != null && !funcCriteria.getCode().isEmpty()) {
@@ -122,7 +121,7 @@ public class FunctionService {
 			spec = SpecificationHelper.equal("isActive", funcCriteria.getIsActive());
 		}
 		if (funcCriteria.getIsNotLeaf() != null) {
-			spec = SpecificationHelper.equal("isnotleaf", funcCriteria.getIsNotLeaf());
+			spec = SpecificationHelper.equal("isNotLeaf", funcCriteria.getIsNotLeaf());
 		}
 		if (funcCriteria.getParentId() != null) {
 			spec = SpecificationHelper.equal("parentId.id", funcCriteria.getParentId());
