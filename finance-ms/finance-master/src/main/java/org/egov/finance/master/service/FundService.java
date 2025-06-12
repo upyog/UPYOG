@@ -12,14 +12,17 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.egov.finance.master.entity.Function;
 import org.egov.finance.master.entity.Fund;
 import org.egov.finance.master.exception.MasterServiceException;
+import org.egov.finance.master.model.FunctionModel;
 import org.egov.finance.master.model.FundModel;
 import org.egov.finance.master.model.request.FundRequest;
 import org.egov.finance.master.repository.FundRepository;
 import org.egov.finance.master.util.ApplicationThreadLocals;
 import org.egov.finance.master.util.CommonUtils;
 import org.egov.finance.master.util.MasterConstants;
+import org.egov.finance.master.util.SpecificationHelper;
 import org.egov.finance.master.validation.FundValidation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
@@ -50,28 +53,27 @@ public class FundService {
 
 	@Cacheable(value = MasterConstants.FUND_SEARCH_REDIS_CACHE_NAME, keyGenerator = MasterConstants.FUND_SEARCH_REDIS_KEY_GENERATOR)
 	public List<FundModel> search(FundModel fundCriteria) {
-		Specification<Fund> spec = Specification.where(null);
-		if (fundCriteria.getCode() != null && !fundCriteria.getCode().isEmpty()) {
-			spec = spec.and((root, query, cb) -> cb.equal(root.get("code"), fundCriteria.getCode()));
+		Specification<Fund> spec = Specification.where((root, query, cb) -> cb.conjunction());
+		if (fundCriteria.getCode() != null && !fundCriteria.getCode().isEmpty()) {	
+			spec = spec.and(SpecificationHelper.equal("code", fundCriteria.getCode()));
 		}
-
-		if (fundCriteria.getName() != null && !fundCriteria.getName().isEmpty()) {
-			spec = spec.and((root, query, cb) -> cb.like(root.get("name"), "%" + fundCriteria.getName() + "%"));
+		if (!ObjectUtils.isEmpty(fundCriteria.getName())) {
+			spec = spec.and(SpecificationHelper.likeIgnoreCase("name", fundCriteria.getName()));
 		}
-		if (fundCriteria.getIsactive() != null) {
-			spec = spec.and((root, query, cb) -> cb.equal(root.get("isactive"), fundCriteria.getIsactive()));
+		if (!ObjectUtils.isEmpty(fundCriteria.getIsactive())) {
+			spec = spec.and(SpecificationHelper.equal("isactive", fundCriteria.getIsactive()));
 		}
-		if (fundCriteria.getIsnotleaf() != null) {
-			spec = spec.and((root, query, cb) -> cb.equal(root.get("isnotleaf"), fundCriteria.getIsnotleaf()));
+		if (!ObjectUtils.isEmpty(fundCriteria.getIsnotleaf())) {
+			spec = spec.and(SpecificationHelper.equal("isnotleaf", fundCriteria.getIsnotleaf()));
 		}
-		if (fundCriteria.getParentId() != null) {
-			spec = spec.and((root, query, cb) -> cb.equal(root.get("parentId").get("id"), fundCriteria.getParentId()));
+		if (!ObjectUtils.isEmpty(fundCriteria.getParentId())) {
+			spec = spec.and(SpecificationHelper.equal("parentId.id", fundCriteria.getParentId()));
 		}
-		if (fundCriteria.getId() != null) {
-			spec = spec.and((root, query, cb) -> cb.equal(root.get("id"), fundCriteria.getId()));
+		if (!ObjectUtils.isEmpty(fundCriteria.getId())) {
+			spec = spec.and(SpecificationHelper.equal("id", fundCriteria.getId()));
 		}
-		if (fundCriteria.getIdentifier() != null && !fundCriteria.getIdentifier().equals("")) {
-			spec = spec.and((root, query, cb) -> cb.equal(root.get("identifier"), fundCriteria.getIdentifier()));
+		if (!ObjectUtils.isEmpty(fundCriteria.getIdentifier())) {
+			spec = spec.and(SpecificationHelper.equal("identifier", fundCriteria.getIdentifier()));
 		}
 
 		return fundRepository.findAll(spec).stream().map(validation::entityTOModel)
@@ -102,6 +104,8 @@ public class FundService {
 	}
 
 	public FundModel update(FundRequest request) {
+		FundModel model = request.getFund();
+		Fund parentFund = null;
 		Fund fundRequest = validation.modelToEntity(request.getFund());
 		Map<String, String> errorMap = new HashMap<>();
 		if (ObjectUtils.isEmpty(fundRequest.getId())) {
@@ -112,26 +116,37 @@ public class FundService {
 			errorMap.put(MasterConstants.INVALID_ID_PASSED, MasterConstants.INVALID_ID_PASSED_MESSAGE);
 			throw new MasterServiceException(errorMap);
 		});
+		
+		if (ObjectUtils.isEmpty(model.getParentId())) {
+			fundRequest.setParentId(null);
+		} else {
+		    boolean parentChanged = fundUpdate.getParentId() == null 
+		        || !fundUpdate.getParentId().getId().equals(model.getParentId());
 
+		    if (parentChanged) {
+		    	Fund f = new Fund();
+		    	f.setId(model.getParentId());
+		    	//fundRequest.setParentId(parentFund);
+		    	fundRequest.setParentId(f);
+		    }
+		}
 		List<String> updatedFields = commonUtils.applyNonNullFields(fundRequest, fundUpdate);
-		FundModel fundModel = new FundModel();
 		Set<String> updatedSet = updatedFields.stream().map(String::toLowerCase).collect(Collectors.toSet());
 		if (updatedSet.contains("name")) 
-			fundModel.setName(fundUpdate.getName());
+			model.setName(fundUpdate.getName());
 		if (updatedSet.contains("code")) 
-			fundModel.setCode(fundUpdate.getCode());
+			model.setCode(fundUpdate.getCode());
 		
 		if(!ObjectUtils.isEmpty(updatedSet))
-		validation.fundCodeNameValidationForUpdate(fundModel,updatedSet);
-
-		if (!ObjectUtils.isEmpty(request.getFund().getParentId())) {
-			fundUpdate.setParentId(fundRepository.findById(request.getFund().getParentId()).orElseThrow(() -> {
-				errorMap.put(MasterConstants.INVALID_PARENT_ID, MasterConstants.INVALID_PARENT_ID_MSG);
-				throw new MasterServiceException(errorMap);
-			}));
-		} else {
-			fundUpdate.setParentId(null);
-		}
+			validation.fundCodeNameValidationForUpdate(model,updatedSet);
+				if(updatedSet.contains("parentid") && !ObjectUtils.isEmpty(model.getParentId())) {
+					parentFund = fundRepository.findById(model.getParentId()).orElseThrow(()->{
+					errorMap.put(MasterConstants.INVALID_PARENT_ID, MasterConstants.INVALID_PARENT_ID);
+					throw new MasterServiceException(errorMap);
+				});
+				}
+				fundUpdate.setParentId(parentFund);
+		
 		cacheEvictionService.incrementVersionForTenant(ApplicationThreadLocals.getTenantID(),
 				MasterConstants.FUND_SEARCH_REDIS_CACHE_VERSION_KEY, MasterConstants.FUND_SEARCH_REDIS_CACHE_NAME);
 		return validation.entityTOModel(fundRepository.save(fundUpdate));

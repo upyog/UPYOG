@@ -64,10 +64,27 @@ public class FundValidation {
 	public void fundCodeNameValidationForUpdate(FundModel fundM, Set<String> updatedSet) {
 		Map<String, String> errorMap = new HashMap<>();
 
-		if (updatedSet.contains("code") && fundRepository.findByCode(fundM.getCode()) != null)
-			errorMap.put(MasterConstants.CODE_NOT_UNIQUE, MasterConstants.CODE_IS_ALREADY_EXISTS_MSG);
-		if (updatedSet.contains("name") && fundRepository.findByName(fundM.getName()) != null)
-			errorMap.put(MasterConstants.NAME_NOT_UNIQUE, MasterConstants.NAME_IS_ALREADY_EXISTS_MSG);
+			if (updatedSet.contains("code") && !updatedSet.contains("name")) {
+			    fundRepository.findOne(
+			        SpecificationHelper.equal("code", fundM.getCode())
+			    ).ifPresent(x->errorMap.put(MasterConstants.CODE_NOT_UNIQUE, MasterConstants.CODE_IS_ALREADY_EXISTS_MSG));
+			}
+		    if (updatedSet.contains("name") && !updatedSet.contains("code")) {
+			    fundRepository.findOne(
+			        SpecificationHelper.equal("name", fundM.getName())
+			    ).ifPresent(x->errorMap.put(MasterConstants.NAME_NOT_UNIQUE, MasterConstants.NAME_IS_ALREADY_EXISTS_MSG));
+		    }
+		    else if (updatedSet.contains("name") && updatedSet.contains("code")) {
+		    	if (updatedSet.contains("name") && !updatedSet.contains("code")) {
+				    Specification <Fund> spec = Specification
+				    		.where(SpecificationHelper.<Fund,String>equal("name",fundM.getName()))
+				    		.or(SpecificationHelper.<Fund,String>equal("code",fundM.getCode()));
+				    	fundRepository.findOne(spec).ifPresent(x->{
+				    		errorMap.put(MasterConstants.CODE_NAME_NOT_UNIQUE, MasterConstants.CODE_NAME_NOT_UNIQUE_MSG);
+				    	});
+				    }
+				    		
+		    }
 		if (!CollectionUtils.isEmpty(errorMap))
 			throw new MasterServiceException(errorMap);
 	}
