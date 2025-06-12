@@ -16,14 +16,19 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+
 
 @Entity
 @Table(name = "fund")
 @SequenceGenerator(name = Fund.SEQ, sequenceName = Fund.SEQ, allocationSize = 1)
 @Data
 @EqualsAndHashCode(callSuper = false)
+@NoArgsConstructor
+@AllArgsConstructor
 public class Fund  extends AuditDetailswithVersion{
 
 	public static final String SEQ = "SEQ_Fund";
@@ -43,6 +48,4 @@ public class Fund  extends AuditDetailswithVersion{
 	private Fund parentId;
 	private Boolean isnotleaf;
 	private Boolean isactive;
-
-
 }
