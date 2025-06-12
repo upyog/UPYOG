@@ -15,7 +15,9 @@ import org.egov.finance.master.model.FundModel;
 import org.egov.finance.master.repository.FundRepository;
 import org.egov.finance.master.util.CommonUtils;
 import org.egov.finance.master.util.MasterConstants;
+import org.egov.finance.master.util.SpecificationHelper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
@@ -77,14 +79,14 @@ public class FundValidation {
 	        errorMap.put(MasterConstants.INVALID_PARAMETERS, MasterConstants.INVALID_PARAMETERS_MSG);
 	        throw new MasterServiceException(errorMap);
 	    }
-
-	    boolean codeExists = fundRepository.exists((root, query, cb) -> cb.equal(root.get("code"), fundM.getCode()));
-	    boolean nameExists = fundRepository.exists((root, query, cb) -> cb.equal(root.get("name"), fundM.getName()));
-
-	    if (codeExists || nameExists) {
-	        errorMap.put(MasterConstants.CODE_NAME_NOT_UNIQUE, MasterConstants.CODE_NAME_NOT_UNIQUE_MSG);
-	        throw new MasterServiceException(errorMap);
-	    }
+	    
+	    fundRepository.findOne(Specification
+	    		.where(SpecificationHelper.<Fund,String>equal("name", fundM.getName())
+	    			.or(SpecificationHelper.<Fund,String>equal("code", fundM.getCode())
+	    				))).ifPresent(x->{
+	    					 errorMap.put(MasterConstants.CODE_NAME_NOT_UNIQUE, MasterConstants.CODE_NAME_NOT_UNIQUE_MSG);
+	    				        throw new MasterServiceException(errorMap);
+	    				});
 	}
 
 
