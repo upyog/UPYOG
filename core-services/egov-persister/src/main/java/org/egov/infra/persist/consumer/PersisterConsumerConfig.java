@@ -1,12 +1,12 @@
 package org.egov.infra.persist.consumer;
 
-
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.egov.infra.persist.web.contract.TopicMap;
 import org.egov.tracer.KafkaConsumerErrorHandler;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -27,124 +27,134 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-
 @Configuration
 @EnableKafka
 @PropertySource("classpath:application.properties")
 @Slf4j
 public class PersisterConsumerConfig {
 
-    @Autowired
-    private StoppingErrorHandler stoppingErrorHandler;
+	@Autowired
+	private StoppingErrorHandler stoppingErrorHandler;
 
-    @Autowired
-    private PersisterMessageListener indexerMessageListener;
+	@Autowired
+	private PersisterMessageListener indexerMessageListener;
 
-    @Autowired
-    private TopicMap topicMap;
+	@Autowired
+	private TopicMap topicMap;
 
-    @Autowired
-    private KafkaProperties kafkaProperties;
+	@Autowired
+	private KafkaProperties kafkaProperties;
 
-    @Autowired
-    private KafkaConsumerErrorHandler kafkaConsumerErrorHandler;
+	@Autowired
+	private KafkaConsumerErrorHandler kafkaConsumerErrorHandler;
 
-    private Set<String> topics = new HashSet<>();
+	private Set<String> topics = new HashSet<>();
+	@Value("${spring.kafka.consumer.auto_commit}")
+	private String persistAuditKafkaTopic;
 
-    @PostConstruct
-    public void setTopics(){
-        topicMap.getTopicMap().keySet().forEach(topic -> {
-                    if(!topic.contains("-batch")){
-                        topics.add(topic);
-                    }
-               });
-        log.info("Topics subscribed for single listner: "+topics.toString());
-    }
+	@Value("${spring.kafka.listener.concurrency}")
+	private String concurrency;
+	@Value("${spring.kafka.listener.polltime}")
+	private String pollTime;
+	@Value("${spring.kafka.consumer.session_timeout_ms_config}")
+	private String session_timeout_ms;
 
-    @Bean
-    public ConsumerFactory<String, String> consumerFactory() {
-        Map<String, Object> props = kafkaProperties.buildConsumerProperties();
+	@PostConstruct
+	public void setTopics() {
+		topicMap.getTopicMap().keySet().forEach(topic -> {
+			if (!topic.contains("-batch")) {
+				topics.add(topic);
+			}
+		});
+		log.info("Topics subscribed for single listner: " + topics.toString());
+	}
 
-        props.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, true);
-        props.put(ConsumerConfig.SESSION_TIMEOUT_MS_CONFIG, "15000");
+	@Bean
+	public ConsumerFactory<String, String> consumerFactory() {
 
-        JsonDeserializer jsonDeserializer = new JsonDeserializer<>(Object.class,false);
+		Map<String, Object> props = kafkaProperties.buildConsumerProperties();
 
-        ErrorHandlingDeserializer2<String> errorHandlingDeserializer
-                = new ErrorHandlingDeserializer2<>(jsonDeserializer);
+		props.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, persistAuditKafkaTopic);
+		props.put(ConsumerConfig.SESSION_TIMEOUT_MS_CONFIG, session_timeout_ms);
 
-        return new DefaultKafkaConsumerFactory<>(props, new StringDeserializer(), errorHandlingDeserializer);
-    }
+		JsonDeserializer jsonDeserializer = new JsonDeserializer<>(Object.class, false);
 
-    @Bean
-    public KafkaListenerContainerFactory<ConcurrentMessageListenerContainer<String, String>> kafkaListenerContainerFactory() {
-        ConcurrentKafkaListenerContainerFactory<String, String> factory = new ConcurrentKafkaListenerContainerFactory<>();
-        factory.setConsumerFactory(consumerFactory());
-        factory.getContainerProperties();
-        factory.setConcurrency(3);
-        factory.getContainerProperties().setPollTimeout(30000);
-        factory.setErrorHandler(kafkaConsumerErrorHandler);
+		ErrorHandlingDeserializer2<String> errorHandlingDeserializer = new ErrorHandlingDeserializer2<>(
+				jsonDeserializer);
 
-        log.info("Custom KafkaListenerContainerFactory built...");
-        return factory;
+		return new DefaultKafkaConsumerFactory<>(props, new StringDeserializer(), errorHandlingDeserializer);
+	}
 
-    }
+	///// to do /////
+	@Bean
+	public KafkaListenerContainerFactory<ConcurrentMessageListenerContainer<String, String>> kafkaListenerContainerFactory() {
+		ConcurrentKafkaListenerContainerFactory<String, String> factory = new ConcurrentKafkaListenerContainerFactory<>();
+		factory.setConsumerFactory(consumerFactory());
+		factory.getContainerProperties();
+		factory.setConcurrency(Integer.parseInt(concurrency));
+		factory.getContainerProperties().setPollTimeout(Integer.parseInt(pollTime));
+		factory.setErrorHandler(kafkaConsumerErrorHandler);
 
-    @Bean
-    public KafkaMessageListenerContainer<String, String> container() throws Exception {
-        ContainerProperties properties = new ContainerProperties(this.topics.toArray(new String[topics.size()]));
-        // set more properties
-     //   properties.setPauseEnabled(true);
-     //   properties.setPauseAfter(0);
-     //   properties.setGenericErrorHandler(kafkaConsumerErrorHandler);
-        properties.setMessageListener(indexerMessageListener);
+		log.info("Custom KafkaListenerContainerFactory built...");
+		return factory;
 
-        log.info("Custom KafkaListenerContainer built...");
+	}
 
-        return new KafkaMessageListenerContainer<>(consumerFactory(), properties);
-    }
+	@Bean
+	public KafkaMessageListenerContainer<String, String> container() throws Exception {
+		ContainerProperties properties = new ContainerProperties(this.topics.toArray(new String[topics.size()]));
+		// set more properties
+		// properties.setPauseEnabled(true);
+		// properties.setPauseAfter(0);
+		// properties.setGenericErrorHandler(kafkaConsumerErrorHandler);
+		properties.setMessageListener(indexerMessageListener);
 
-    @Bean
-    public boolean startContainer(){
-        KafkaMessageListenerContainer<String, String> container = null;
-        try {
-            container = container();
-        } catch (Exception e) {
-            log.error("Container couldn't be started: ",e);
-            return false;
-        }
-        container.start();
-        log.info("Custom KakfaListenerContainer STARTED...");
-        return true;
+		log.info("Custom KafkaListenerContainer built...");
 
-    }
+		return new KafkaMessageListenerContainer<>(consumerFactory(), properties);
+	}
 
-    public boolean pauseContainer(){
-        KafkaMessageListenerContainer<String, String> container = null;
-        try {
-            container = container();
-        } catch (Exception e) {
-            log.error("Container couldn't be started: ",e);
-            return false;
-        }
-        container.stop();
-        log.info("Custom KakfaListenerContainer STOPPED...");
+	@Bean
+	public boolean startContainer() {
+		KafkaMessageListenerContainer<String, String> container = null;
+		try {
+			container = container();
+		} catch (Exception e) {
+			log.error("Container couldn't be started: ", e);
+			return false;
+		}
+		container.start();
+		log.info("Custom KakfaListenerContainer STARTED...");
+		return true;
 
-        return true;
-    }
+	}
 
-    public boolean resumeContainer(){
-        KafkaMessageListenerContainer<String, String> container = null;
-        try {
-            container = container();
-        } catch (Exception e) {
-            log.error("Container couldn't be started: ",e);
-            return false;
-        }
-        container.start();
-        log.info("Custom KakfaListenerContainer STARTED...");
+	public boolean pauseContainer() {
+		KafkaMessageListenerContainer<String, String> container = null;
+		try {
+			container = container();
+		} catch (Exception e) {
+			log.error("Container couldn't be started: ", e);
+			return false;
+		}
+		container.stop();
+		log.info("Custom KakfaListenerContainer STOPPED...");
 
-        return true;
-    }
+		return true;
+	}
+
+	public boolean resumeContainer() {
+		KafkaMessageListenerContainer<String, String> container = null;
+		try {
+			container = container();
+		} catch (Exception e) {
+			log.error("Container couldn't be started: ", e);
+			return false;
+		}
+		container.start();
+		log.info("Custom KakfaListenerContainer STARTED...");
+
+		return true;
+	}
 
 }
