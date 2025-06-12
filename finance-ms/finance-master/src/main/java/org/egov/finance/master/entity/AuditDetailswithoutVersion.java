@@ -1,8 +1,10 @@
 
 package org.egov.finance.master.entity;
 
+import java.io.Serializable;
 import java.util.Date;
 
+import org.egov.finance.master.exception.MasterServiceException;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
@@ -14,14 +16,16 @@ import jakarta.persistence.MappedSuperclass;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
 @Data
-public abstract class AuditDetails extends AbstractPersistable<Long> {
+@EqualsAndHashCode(callSuper = false)
+public abstract class AuditDetailswithoutVersion implements Serializable {
 
-	private static final long serialVersionUID = 7138056997693406739L;
-
+	private static final long serialVersionUID = -1904617415925139035L;
+	
 	@CreatedBy
 	private Long createdBy;
 	@Temporal(TemporalType.TIMESTAMP)
