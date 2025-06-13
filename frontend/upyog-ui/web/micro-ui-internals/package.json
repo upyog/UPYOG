@@ -12,12 +12,7 @@
     "packages/modules/noc",
     "packages/modules/commonPt",
     "packages/modules/common",
-    "packages/modules/dss",
-    "packages/modules/fsm",
-    "packages/modules/ws",
-    "packages/modules/pt",
-    "packages/modules/tl",
-    "packages/modules/pgr"
+    "packages/modules/dss"
   ],
   "license": "MIT",
   "private": true,
