@@ -64,20 +64,31 @@ public class BoundaryService {
 		if (hierarchyTypeCode != null)
 			uri.append("&").append("hierarchyTypeCode=").append(hierarchyTypeCode);
 
+		StringBuilder uri2 = new StringBuilder(uri);
+		
 		uri.append("&").append("boundaryType=").append("Locality").append("&").append("codes=")
 				.append(property.getAddress().getLocality().getCode());
 
 		Optional<Object> response = serviceRequestRepository.fetchResult(uri, RequestInfoWrapper.builder().requestInfo(requestInfo).build());
 		
+		uri2.append("&").append("boundaryType=").append("Block").append("&").append("codes=")
+		.append(property.getAddress().getLocality().getCode());
+		
+		Optional<Object> responseForWard = serviceRequestRepository.fetchResult(uri2, RequestInfoWrapper.builder().requestInfo(requestInfo).build());
+		
 		if (response.isPresent()) {
 			LinkedHashMap responseMap = (LinkedHashMap) response.get();
+			LinkedHashMap responseMapForWard = (LinkedHashMap) responseForWard.get();
 			if (CollectionUtils.isEmpty(responseMap))
 				throw new CustomException("BOUNDARY ERROR", "The response from location service is empty or null");
 			String jsonString = new JSONObject(responseMap).toString();
-
+			String wardJson = new JSONObject(responseMapForWard).toString();
 			Map<String, String> propertyIdToJsonPath = getJsonpath(property);
-
+			
+			Map<String, String> propertyIdToJsonPathForWard = getJsonpathForWard(property);
+			
 			DocumentContext context = JsonPath.parse(jsonString);
+			DocumentContext contextForWard = JsonPath.parse(wardJson);
 
 			Object boundaryObject = context.read(propertyIdToJsonPath.get(property.getPropertyId()));
 			if (!(boundaryObject instanceof ArrayList) || CollectionUtils.isEmpty((ArrayList) boundaryObject))
@@ -110,6 +121,15 @@ public class BoundaryService {
 		String jsonpath = "$..boundary[?(@.code==\"{}\")]";
 		propertyIdToJsonPath.put(property.getPropertyId(),
 				jsonpath.replace("{}", property.getAddress().getLocality().getCode()));
+		return propertyIdToJsonPath;
+	}
+	
+	private Map<String, String> getJsonpathForWard(Property property) {
+
+		Map<String, String> propertyIdToJsonPath = new LinkedHashMap<>();
+		String jsonpath = "$..boundary[?(@.name==\"{}\")]";
+		propertyIdToJsonPath.put(property.getPropertyId(),
+				jsonpath.replace("{}", property.getAddress().getWardNo()));
 		return propertyIdToJsonPath;
 	}
 
