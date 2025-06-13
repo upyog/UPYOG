@@ -28,35 +28,35 @@ import lombok.NoArgsConstructor;
 @Table(name = "Function")
 @Data
 @SequenceGenerator(name = Function.SEQ, sequenceName = Function.SEQ, allocationSize = 1)
-public class Function extends AuditDetails {
+public class Function extends AuditDetailswithVersion {
 
-    private static final long serialVersionUID = 1L;
-    public static final String SEQ = "SEQ_FUNCTION";
+	private static final long serialVersionUID = 1L;
+	public static final String SEQ = "SEQ_FUNCTION";
 
-    @Id
-    @GeneratedValue(generator = SEQ, strategy = GenerationType.SEQUENCE)
-    private Long id;
+	@Id
+	@GeneratedValue(generator = SEQ, strategy = GenerationType.SEQUENCE)
+	private Long id;
 
-    @Length(max = 100, min = 2)
-    @SafeHtml
-    private String name;
+	@Length(max = 100, min = 2)
+	@SafeHtml
+	private String name;
 
-    @Length(max = 50, min = 2)
-    @SafeHtml
-    private String code;
+	@Length(max = 50, min = 2)
+	@SafeHtml
+	private String code;
 
-    @Length(max = 50)
-    @SafeHtml
-    private String type;
+	@Length(max = 50)
+	@SafeHtml
+	private String type;
 
-    private Integer llevel;
+	private Integer llevel;
 
-    private Boolean isActive;
+	private Boolean isActive;
 
-    private Boolean isNotLeaf;
+	private Boolean isNotLeaf;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "parentId")
-    private Function parentId;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "parentId")
+	private Function parentId;
 
 }
