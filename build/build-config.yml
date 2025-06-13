@@ -944,3 +944,11 @@ config:
       - work-dir: frontend/sv-ui/
         dockerfile: frontend/sv-ui/web/docker/Dockerfile
         image-name: sv-ui       
+
+  - name: "builds/upyog/municipal-services/tp-services"
+    build:
+      - work-dir: "municipal-services/tp-services"
+        image-name: "tp-services"
+        dockerfile: "build/maven/Dockerfile"
+      - work-dir: "municipal-services/tp-services/src/main/resources/db"
+        image-name: "tp-services-db"
