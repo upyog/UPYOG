@@ -11,7 +11,7 @@ import {
   StatusTable,
   SubmitBar,
   Toast,
-} from "@egovernments/digit-ui-react-components";
+} from "@upyog/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory, useRouteMatch, Link } from "react-router-dom";
@@ -105,7 +105,7 @@ const WrapCheckPage = ({ onSubmit, value }) => {
     <React.Fragment>
       {window.location.href.includes("/citizen") ? <Timeline currentStep={4} /> : null}
 
-      <Header styles={{ fontSize: "32px" }}>{t("TL_COMMON_SUMMARY")}</Header>
+      <Header styles={{ fontSize: "16px" }}>{t("TL_COMMON_SUMMARY")}</Header>
       <Card style={{ paddingRight: "16px" }}>
         <CardHeader styles={{ fontSize: "28px" }}>{t("TL_LOCALIZATION_TRADE_DETAILS")}</CardHeader>
         <StatusTable>

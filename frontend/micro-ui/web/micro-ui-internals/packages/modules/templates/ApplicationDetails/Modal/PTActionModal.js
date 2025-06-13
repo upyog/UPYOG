@@ -1,4 +1,4 @@
-import { Loader, Modal, FormComposer } from "@egovernments/digit-ui-react-components";
+import { Loader, Modal, FormComposer, Dropdown } from "@upyog/digit-ui-react-components";
 import React, { useState, useEffect } from "react";
 
 import { configPTRejectApplication, configPTVerifyApplication, configPTApproverApplication, configPTAssessProperty } from "../config";
@@ -9,7 +9,7 @@ const Heading = (props) => {
 };
 
 const Close = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#FFFFFF">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="red">
     <path d="M0 0h24v24H0V0z" fill="none" />
     <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z" />
   </svg>
@@ -23,7 +23,8 @@ const CloseBtn = (props) => {
   );
 };
 
-const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction, actionData, applicationData, businessService, moduleCode }) => {
+const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction, actionData, applicationData, businessService, moduleCode,assmentSearchData,userRole }) => {
+
   const { data: approverData, isLoading: PTALoading } = Digit.Hooks.useEmployeeSearch(
     tenantId,
     {
@@ -54,10 +55,13 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
   const [error, setError] = useState(null);
   const [financialYears, setFinancialYears] = useState([]);
   const [selectedFinancialYear, setSelectedFinancialYear] = useState(null);
+  
+  const [selectedModeofPayment, setSelectedModeofPayment] = useState(null);
   const [disableActionSubmit, setDisableActionSubmit] = useState(false);
-
+  let modeOfPayments = [{code: 'YEARLY', name: 'YEARLY'},{code: 'HALFYEARLY', name: 'HALFYEARLY'},{code: 'QUARTERLY', name: 'QUARTERLY'}]
   useEffect(() => {
     if (financialYearsData && financialYearsData["egf-master"]) {
+      console.log("=====",financialYearsData["egf-master"]?.["FinancialYear"]);
       setFinancialYears(financialYearsData["egf-master"]?.["FinancialYear"]);
     }
   }, [financialYearsData]);
@@ -104,18 +108,35 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
             fileStoreId: uploadedFile,
           },
         ];
-
-      submitAction({
-        Property: {
-          ...applicationData,
-          workflow,
-        },
-      });
+        if(userRole && userRole=='ASSIGNING_OFFICER') {
+          submitAction({
+            Assessment: {
+              ...assmentSearchData[0],
+              workflow,
+            },
+          });
+        } else if(userRole && userRole=='EXECUTING_OFFICER') {
+          submitAction({
+            Appeal: {
+              ...applicationData,
+              workflow,
+            },
+          });
+        } else {
+          submitAction({
+            Property: {
+              ...applicationData,
+              workflow,
+            },
+          });
+        }
+      
     } else {
       submitAction({
         customFunctionToExecute: action?.customFunctionToExecute,
         Assessment: {
           financialYear: selectedFinancialYear?.name,
+          modeOfPayment: selectedModeofPayment?.name,
           propertyId: applicationData?.propertyId,
           tenantId,
           source: applicationData?.source,
@@ -125,10 +146,29 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
       });
     }
   }
+  function getCurrentFinancialYear() {
+    var fiscalyear = "";
+    var today = new Date();
+    if ((today.getMonth() + 1) <= 3) {
+      fiscalyear = (today.getFullYear() - 1) + "-" + today.getFullYear()
+    } else {
+      fiscalyear = today.getFullYear() + "-" + (today.getFullYear() + 1).toString().substr(-2)
+    }
+    return fiscalyear
+  }
 
   useEffect(() => {
     if (action) {
       if (action?.showFinancialYearsModal) {
+   
+        let currentFinYr = getCurrentFinancialYear();
+        // setSelectedModeofPayment(null)
+        if(selectedFinancialYear && selectedFinancialYear.name == currentFinYr) {
+          modeOfPayments = [{code: 'YEARLY', name: 'YEARLY'},{code: 'HALFYEARLY', name: 'HALFYEARLY'},{code: 'QUARTERLY', name: 'QUARTERLY'}]
+        } else {
+          modeOfPayments = [{code: 'YEARLY', name: 'YEARLY'}]
+
+        }
         setConfig(
           configPTAssessProperty({
             t,
@@ -136,6 +176,9 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
             financialYears,
             selectedFinancialYear,
             setSelectedFinancialYear,
+            modeOfPayments,
+            selectedModeofPayment,
+            setSelectedModeofPayment
           })
         );
       } else {
@@ -154,7 +197,7 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
         );
       }
     }
-  }, [action, approvers, financialYears, selectedFinancialYear, uploadedFile]);
+  }, [action, approvers, financialYears, selectedFinancialYear,modeOfPayments,selectedModeofPayment, uploadedFile]);
 
   return action && config.form ? (
     <Modal
@@ -164,7 +207,7 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
       actionCancelOnSubmit={closeModal}
       actionSaveLabel={t(config.label.submit)}
       actionSaveOnSubmit={() => {}}
-      isDisabled={!action.showFinancialYearsModal ? PTALoading || (action?.docUploadRequired && !uploadedFile) : !selectedFinancialYear}
+      isDisabled={!action.showFinancialYearsModal ? PTALoading : !selectedFinancialYear || !selectedModeofPayment}
       formId="modal-action"
     >
       {financialYearsLoading ? (
@@ -178,7 +221,7 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
           onSubmit={submit}
           defaultValues={defaultValues}
           formId="modal-action"
-          // isDisabled={!action.showFinancialYearsModal ? PTALoading || (!action?.isTerminateState && !selectedApprover?.uuid) : !selectedFinancialYear}
+          isDisabled={!action.showFinancialYearsModal ? PTALoading || (!action?.isTerminateState && !selectedApprover?.uuid) : !selectedFinancialYear}
         />
       )}
     </Modal>

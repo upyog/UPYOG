@@ -1,4 +1,4 @@
-import { CardLabel, LabelFieldPair, LinkButton, Loader, TextInput } from "@egovernments/digit-ui-react-components";
+import { CardLabel, LabelFieldPair, LinkButton, Loader, TextInput } from "@upyog/digit-ui-react-components";
 import React from "react";
 import { Link } from "react-router-dom";
 
@@ -52,11 +52,11 @@ const WSPropertyDetails = ({ t, config, onSelect, userType, formData, setError, 
         </div>
       </LabelFieldPair>
       <Link to={`/digit-ui/employee/commonpt/search?redirectToUrl=${redirectBackUrl}`}>
-        <LinkButton label={t("CPT_SEARCH_PROPERTY")} style={{ color: "#a82227", display: "inline-block" }} />
+        <LinkButton label={t("CPT_SEARCH_PROPERTY")} style={{ color: "#0f4f9e", display: "inline-block" }} />
       </Link>
       &nbsp; | &nbsp;
       <Link to={`/digit-ui/employee/commonpt/new-application?redirectToUrl=${redirectBackUrl}`}>
-        <LinkButton label={t("CPT_CREATE_PROPERTY")} style={{ color: "#a82227", display: "inline-block" }} />
+        <LinkButton label={t("CPT_CREATE_PROPERTY")} style={{ color: "#0f4f9e", display: "inline-block" }} />
       </Link>
       {propertyDetails && propertyDetails?.Properties.length && (
         <React.Fragment>
@@ -82,7 +82,7 @@ const WSPropertyDetails = ({ t, config, onSelect, userType, formData, setError, 
             </div>
           </LabelFieldPair>
           <Link to={`/digit-ui/employee/commonpt/view-property?propertyId=${propertyId}&tenantId=${tenantId}`}>
-            <LinkButton label={t("CPT_COMPLETE_PROPERTY_DETAILS")} style={{ color: "#a82227" }} />
+            <LinkButton label={t("CPT_COMPLETE_PROPERTY_DETAILS")} style={{ color: "#0f4f9e" }} />
           </Link>
         </React.Fragment>
       )}
