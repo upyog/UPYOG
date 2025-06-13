@@ -12,7 +12,9 @@ import java.util.List;
 import org.egov.finance.master.entity.Scheme;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public interface SchemeRepository extends JpaRepository<Scheme, Long>, JpaSpecificationExecutor<Scheme> {
 
 }
