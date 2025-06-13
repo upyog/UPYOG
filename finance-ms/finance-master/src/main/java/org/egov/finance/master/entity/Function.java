@@ -16,6 +16,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -25,7 +26,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 @Entity
-@Table(name = "Function")
+@Table(name = "Function",uniqueConstraints = @UniqueConstraint(columnNames = { "name","code" }))
 @Data
 @SequenceGenerator(name = Function.SEQ, sequenceName = Function.SEQ, allocationSize = 1)
 public class Function extends AuditDetailswithVersion {
