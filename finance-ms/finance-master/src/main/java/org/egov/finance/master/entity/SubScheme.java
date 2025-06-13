@@ -1,6 +1,5 @@
 package org.egov.finance.master.entity;
 
-
 import java.math.BigDecimal;
 import java.util.Date;
 
@@ -23,8 +22,6 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
-
-
 /**
  * SubScheme.java
  * 
@@ -33,20 +30,20 @@ import lombok.NoArgsConstructor;
  * 
  */
 @Entity
-@Table(name = "sub_scheme",uniqueConstraints = @UniqueConstraint(columnNames = {"code","schemeid"}))
-@SequenceGenerator(name = SubScheme.SEQ,sequenceName = SubScheme.SEQ,allocationSize = 1)
+@Table(name = "sub_scheme", uniqueConstraints = @UniqueConstraint(columnNames = { "code", "schemeid" }))
+@SequenceGenerator(name = SubScheme.SEQ, sequenceName = SubScheme.SEQ, allocationSize = 1)
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @Data
 @EqualsAndHashCode(callSuper = false)
-public class SubScheme extends AuditDetailswithoutVersion{
-	
+public class SubScheme extends AuditDetailswithoutVersion {
+
 	private static final long serialVersionUID = -1261345271879178855L;
-	public static final String SEQ="seq_sub_scheme";
-	
+	public static final String SEQ = "seq_sub_scheme";
+
 	@Id
-	@GeneratedValue(generator = SubScheme.SEQ,strategy = GenerationType.SEQUENCE)
+	@GeneratedValue(generator = SubScheme.SEQ, strategy = GenerationType.SEQUENCE)
 	private Long id;
 
 	@NotNull(message = "scheme can not be blank")
@@ -57,7 +54,7 @@ public class SubScheme extends AuditDetailswithoutVersion{
 	private String code;
 
 	@NotBlank(message = "Name can not be blank")
-	@Size(min = 3,max = 100,message = "Name should be between 100 words")
+	@Size(min = 3, max = 100, message = "Name should be between 100 words")
 	private String name;
 
 	@NotNull(message = "Validform can not be blank")
@@ -72,7 +69,7 @@ public class SubScheme extends AuditDetailswithoutVersion{
 
 	@Column(name = "department")
 	private String department;
-	
+
 	@Column(name = "initial_estimate_amount")
 	private BigDecimal initialEstimateAmount;
 	@Column(name = "council_loan_proposal_number")
@@ -91,5 +88,4 @@ public class SubScheme extends AuditDetailswithoutVersion{
 	private Date govtLoanProposalDate;
 	@Column(name = "govt_admin_sanction_date")
 	private Date govtAdminSanctionDate;
-
 }
