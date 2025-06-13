@@ -89,7 +89,6 @@ public class BoundaryService {
 			String wardNo = getWardName(wardJson);
 
 			DocumentContext context = JsonPath.parse(jsonString);
-			DocumentContext contextForWard = JsonPath.parse(wardJson);
 
 			Object boundaryObject = context.read(propertyIdToJsonPath.get(property.getPropertyId()));
 			if (!(boundaryObject instanceof ArrayList) || CollectionUtils.isEmpty((ArrayList) boundaryObject))
