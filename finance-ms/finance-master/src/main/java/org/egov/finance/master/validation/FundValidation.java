@@ -15,7 +15,9 @@ import org.egov.finance.master.model.FundModel;
 import org.egov.finance.master.repository.FundRepository;
 import org.egov.finance.master.util.CommonUtils;
 import org.egov.finance.master.util.MasterConstants;
+import org.egov.finance.master.util.SpecificationHelper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
@@ -62,10 +64,27 @@ public class FundValidation {
 	public void fundCodeNameValidationForUpdate(FundModel fundM, Set<String> updatedSet) {
 		Map<String, String> errorMap = new HashMap<>();
 
-		if (updatedSet.contains("code") && fundRepository.findByCode(fundM.getCode()) != null)
-			errorMap.put(MasterConstants.CODE_NOT_UNIQUE, MasterConstants.CODE_IS_ALREADY_EXISTS_MSG);
-		if (updatedSet.contains("name") && fundRepository.findByName(fundM.getName()) != null)
-			errorMap.put(MasterConstants.NAME_NOT_UNIQUE, MasterConstants.NAME_IS_ALREADY_EXISTS_MSG);
+			if (updatedSet.contains("code") && !updatedSet.contains("name")) {
+			    fundRepository.findOne(
+			        SpecificationHelper.equal("code", fundM.getCode())
+			    ).ifPresent(x->errorMap.put(MasterConstants.CODE_NOT_UNIQUE, MasterConstants.CODE_IS_ALREADY_EXISTS_MSG));
+			}
+		    if (updatedSet.contains("name") && !updatedSet.contains("code")) {
+			    fundRepository.findOne(
+			        SpecificationHelper.equal("name", fundM.getName())
+			    ).ifPresent(x->errorMap.put(MasterConstants.NAME_NOT_UNIQUE, MasterConstants.NAME_IS_ALREADY_EXISTS_MSG));
+		    }
+		    else if (updatedSet.contains("name") && updatedSet.contains("code")) {
+		    	if (updatedSet.contains("name") && !updatedSet.contains("code")) {
+				    Specification <Fund> spec = Specification
+				    		.where(SpecificationHelper.<Fund,String>equal("name",fundM.getName()))
+				    		.or(SpecificationHelper.<Fund,String>equal("code",fundM.getCode()));
+				    	fundRepository.findOne(spec).ifPresent(x->{
+				    		errorMap.put(MasterConstants.CODE_NAME_NOT_UNIQUE, MasterConstants.CODE_NAME_NOT_UNIQUE_MSG);
+				    	});
+				    }
+				    		
+		    }
 		if (!CollectionUtils.isEmpty(errorMap))
 			throw new MasterServiceException(errorMap);
 	}
@@ -77,14 +96,14 @@ public class FundValidation {
 	        errorMap.put(MasterConstants.INVALID_PARAMETERS, MasterConstants.INVALID_PARAMETERS_MSG);
 	        throw new MasterServiceException(errorMap);
 	    }
-
-	    boolean codeExists = fundRepository.exists((root, query, cb) -> cb.equal(root.get("code"), fundM.getCode()));
-	    boolean nameExists = fundRepository.exists((root, query, cb) -> cb.equal(root.get("name"), fundM.getName()));
-
-	    if (codeExists || nameExists) {
-	        errorMap.put(MasterConstants.CODE_NAME_NOT_UNIQUE, MasterConstants.CODE_NAME_NOT_UNIQUE_MSG);
-	        throw new MasterServiceException(errorMap);
-	    }
+	    
+	    fundRepository.findOne(Specification
+	    		.where(SpecificationHelper.<Fund,String>equal("name", fundM.getName())
+	    			.or(SpecificationHelper.<Fund,String>equal("code", fundM.getCode())
+	    				))).ifPresent(x->{
+	    					 errorMap.put(MasterConstants.CODE_NAME_NOT_UNIQUE, MasterConstants.CODE_NAME_NOT_UNIQUE_MSG);
+	    				        throw new MasterServiceException(errorMap);
+	    				});
 	}
 
 
