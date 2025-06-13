@@ -7,9 +7,12 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
@@ -47,8 +50,9 @@ public class SubScheme extends AuditDetailswithoutVersion {
 	private Long id;
 
 	@NotNull(message = "scheme can not be blank")
-	@Column(name = "schemeid")
-	private Long scheme;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "schemeid")
+	private Scheme scheme;
 
 	@NotBlank(message = "Code can not be blank")
 	private String code;

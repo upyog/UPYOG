@@ -28,7 +28,7 @@ import lombok.Data;
 @Table(name = "scheme")
 @SequenceGenerator(name = Scheme.SEQ, sequenceName = Scheme.SEQ, allocationSize = 1)
 @Data
-public class Scheme extends AuditDetailswithVersion {
+public class Scheme extends AuditDetailswithoutVersion {
 
 	public static final String SEQ = "SEQ_Scheme";
 

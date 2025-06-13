@@ -98,7 +98,7 @@ public class CacheConfig {
 			List<String> parts = new ArrayList<>();
 			String tenantId = ApplicationThreadLocals.getTenantID();
 			String version = cacheEvictionService.getVersionForTenant(tenantId,
-					MasterConstants.SUBSCHEME_SEARCH_REDIS_KEY_GENERATOR);
+					MasterConstants.SUBSCHEME_SEARCH_REDIS_CACHE_VERSION_KEY);
 			addIfNotNull(parts, "tenant", tenantId);
 			parts.add("version=" + version);
 			addIfNotNull(parts, "id", criteria.getId());

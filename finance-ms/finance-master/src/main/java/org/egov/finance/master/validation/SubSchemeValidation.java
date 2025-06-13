@@ -5,13 +5,17 @@ package org.egov.finance.master.validation;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import org.egov.finance.master.entity.SubScheme;
 import org.egov.finance.master.exception.MasterServiceException;
+import org.egov.finance.master.model.SchemeModel;
 import org.egov.finance.master.model.SubSchemeModel;
 import org.egov.finance.master.repository.SubSchemeRepository;
+import org.egov.finance.master.service.SchemeService;
+import org.egov.finance.master.util.CommonUtils;
 import org.egov.finance.master.util.MasterConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
@@ -31,10 +35,16 @@ import org.springframework.util.StringUtils;
 public class SubSchemeValidation {
 
 	private final SubSchemeRepository schemeRepository;
+	private final SchemeService schemeService;
+	private final SchemeValidation schemeValidation;
+	private final CommonUtils commonUtils;
 
 	@Autowired
-	public SubSchemeValidation(SubSchemeRepository schemeRepository) {
+	public SubSchemeValidation(SubSchemeRepository schemeRepository,SchemeService schemeService,SchemeValidation schemeValidation,CommonUtils commonUtils) {
 		this.schemeRepository = schemeRepository;
+		this.schemeService=schemeService;
+		this.schemeValidation=schemeValidation;
+		this.commonUtils=commonUtils;
 	}
 
 	public SubScheme modeltoEntity(SubSchemeModel subSchemeModel) {
@@ -55,7 +65,7 @@ public class SubSchemeValidation {
 
 	public SubSchemeModel entitytoModel(SubScheme subScheme) {
 
-		return SubSchemeModel.builder().id(subScheme.getId()).scheme(subScheme.getScheme()).code(subScheme.getCode())
+		return SubSchemeModel.builder().id(subScheme.getId()).scheme(subScheme.getScheme().getId()).code(subScheme.getCode())
 				.name(subScheme.getName()).validfrom(subScheme.getValidfrom()).validto(subScheme.getValidto())
 				.isactive(subScheme.getIsactive()).department(subScheme.getDepartment())
 				.initialEstimateAmount(subScheme.getInitialEstimateAmount())
@@ -84,14 +94,28 @@ public class SubSchemeValidation {
 
 	public void subSchemeCreateCodeAndSchemIDValidation(SubSchemeModel subSchemeModel) {
 		Map<String, String> errorMap = new HashMap<>();
-
+		SchemeModel searchcriteria=new SchemeModel();
 		if (!StringUtils.hasText(subSchemeModel.getCode())
 				&& (subSchemeModel.getScheme() != null && subSchemeModel.getScheme() > 0)) {
 			errorMap.put(MasterConstants.INVALID_PARAMETERS, MasterConstants.INVALID_PARAMETERS_MSG);
 			throw new MasterServiceException(errorMap);
 		}
+		
+		searchcriteria.setId(subSchemeModel.getScheme());
+		List<SchemeModel> schemeModels=commonUtils.convertListIfNeeded(schemeService.search(searchcriteria), SchemeModel.class);
+		SubScheme scheme=new SubScheme();
+		if(!CollectionUtils.isEmpty(schemeModels))
+		{
+			scheme.setScheme(schemeValidation.modelToEntity(schemeModels.get(0)));
+		}
+		else
+			errorMap.put(MasterConstants.INVALID_SCHEME_ID, MasterConstants.INVALID_SCHEME_ID_MSG);
+		
+		if(!CollectionUtils.isEmpty(errorMap))
+			throw new MasterServiceException(errorMap);
+		
 		if (errorMap.isEmpty()
-				&& schemeRepository.existsByCodeAndScheme(subSchemeModel.getCode(), subSchemeModel.getScheme()))
+				&& schemeRepository.existsByCodeAndScheme(subSchemeModel.getCode(), scheme.getScheme()))
 			errorMap.put(MasterConstants.CODE_SCHEMEID_NOT_UNIQUE, MasterConstants.CODE_SCHEMEID_NOT_UNIQUE_MESSAGE);
 
 		if (!CollectionUtils.isEmpty(errorMap))
@@ -112,7 +136,7 @@ public class SubSchemeValidation {
 	}
 
 	private static Specification<SubScheme> hasScheme(Long schemeId) {
-		return (schemeId == null) ? null : (root, query, cb) -> cb.equal(root.get("scheme"), schemeId);
+		return (schemeId == null) ? null : (root, query, cb) -> cb.equal(root.get("scheme").get("id"), schemeId);
 	}
 
 	private static Specification<SubScheme> hasName(String name) {

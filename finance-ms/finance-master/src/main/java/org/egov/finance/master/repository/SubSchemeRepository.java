@@ -3,6 +3,7 @@
  */
 package org.egov.finance.master.repository;
 
+import org.egov.finance.master.entity.Scheme;
 import org.egov.finance.master.entity.SubScheme;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -21,5 +22,5 @@ public interface SubSchemeRepository extends JpaRepository<SubScheme, Long>,JpaS
 
 	SubScheme findByName(String name);
 	
-	boolean existsByCodeAndScheme(String code, Long scheme);
+	boolean existsByCodeAndScheme(String code, Scheme scheme);
 }

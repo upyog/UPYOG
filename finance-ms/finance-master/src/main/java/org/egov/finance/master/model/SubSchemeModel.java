@@ -7,6 +7,7 @@ import org.egov.finance.master.customannotation.SafeHtml;
 import org.egov.finance.master.util.MasterConstants;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -31,7 +32,8 @@ public class SubSchemeModel {
 	
 	private Long id;
 
-	@NotNull(message = "Code can not be blank")
+	@NotNull(message = "Scheme can not be blank")
+	@JsonProperty("schemeId")
 	private Long scheme;
 	
 	@NotBlank(message = "Code can not be blank")

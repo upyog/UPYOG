@@ -28,45 +28,50 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 @Configuration
 public class RedisCacheConfig {
 
-	@Bean
-	public RedisCacheConfiguration cacheConfiguration() {
-		ObjectMapper objectMapper = new ObjectMapper();
-		objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-		objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-		objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+	
+	  @Bean public RedisCacheConfiguration cacheConfiguration() { ObjectMapper
+	  objectMapper = new ObjectMapper();
+	  objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+	  objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+	  objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES,
+	  false);
+	  
+	  Jackson2JsonRedisSerializer<Object> jacksonSerializer = new
+	  Jackson2JsonRedisSerializer<>(objectMapper, Object.class);
+	  
+	  return
+	  RedisCacheConfiguration.defaultCacheConfig().entryTtl(Duration.ofMinutes(10))
+	  .serializeValuesWith(RedisSerializationContext.SerializationPair.
+	  fromSerializer(jacksonSerializer)) .disableCachingNullValues(); }
+	 
 
-		Jackson2JsonRedisSerializer<Object> jacksonSerializer = new Jackson2JsonRedisSerializer<>(objectMapper,
-				Object.class);
 
-		return RedisCacheConfiguration.defaultCacheConfig().entryTtl(Duration.ofMinutes(10))
-				.serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(jacksonSerializer))
-				.disableCachingNullValues();
-	}
-
+	
 	@Bean
 	public CacheManager cacheManager(RedisConnectionFactory redisConnectionFactory) {
 		return RedisCacheManager.builder(redisConnectionFactory).cacheDefaults(cacheConfiguration()).build();
 	}
-
-	@Bean
-	public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory connectionFactory) {
-		RedisTemplate<String, Object> template = new RedisTemplate<>();
-		template.setConnectionFactory(connectionFactory);
-
-		ObjectMapper objectMapper = new ObjectMapper();
-		objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-		objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-		objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-
-		Jackson2JsonRedisSerializer<Object> serializer = new Jackson2JsonRedisSerializer<>(objectMapper, Object.class);
-
-		template.setKeySerializer(new StringRedisSerializer());
-		template.setValueSerializer(serializer);
-		template.setHashKeySerializer(new StringRedisSerializer());
-		template.setHashValueSerializer(serializer);
-
-		template.afterPropertiesSet();
-		return template;
-	}
+	
+	
+	  @Bean public RedisTemplate<String, Object>
+	  redisTemplate(RedisConnectionFactory connectionFactory) {
+	  RedisTemplate<String, Object> template = new RedisTemplate<>();
+	  template.setConnectionFactory(connectionFactory);
+	  
+	  ObjectMapper objectMapper = new ObjectMapper();
+	  objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+	  objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+	  objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES,
+	  false);
+	  
+	  Jackson2JsonRedisSerializer<Object> serializer = new
+	  Jackson2JsonRedisSerializer<>(objectMapper, Object.class);
+	  
+	  template.setKeySerializer(new StringRedisSerializer());
+	  template.setValueSerializer(serializer); template.setHashKeySerializer(new
+	  StringRedisSerializer()); template.setHashValueSerializer(serializer);
+	  
+	  template.afterPropertiesSet(); return template; }
+	 
 
 }

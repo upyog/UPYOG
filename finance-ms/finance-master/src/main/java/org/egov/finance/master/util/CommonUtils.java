@@ -9,6 +9,7 @@ import java.beans.PropertyDescriptor;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -29,6 +30,7 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.client.RestTemplate;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
 
 @Component
@@ -129,6 +131,31 @@ public class CommonUtils {
 
 	    return updatedFields;
 	}
+	
+	/**
+     * Safely converts a list of unknown objects (e.g., LinkedHashMap) to a list of the specified target class.
+     *
+     * @param sourceList  the original list (possibly from cache or deserialized JSON)
+     * @param targetClass the class to convert each element to
+     * @param <T>         the type of the target class
+     * @return a list of converted objects
+     * @author bpattanayak
+     */
+	public <T> List<T> convertListIfNeeded(Object sourceList, Class<T> targetClass) {
+		final ObjectMapper objectMapper = new ObjectMapper();
+	        if (sourceList instanceof List<?> list && !list.isEmpty()) {
+	            Object first = list.get(0);
+	            if (targetClass.isInstance(first)) {
+	                return (List<T>) list;
+	            } else if (first instanceof LinkedHashMap) {
+	                return objectMapper.convertValue(
+	                    list,
+	                    objectMapper.getTypeFactory().constructCollectionType(List.class, targetClass)
+	                );
+	            }
+	        }
+	        return List.of(); 
+	    }
 
 
 }

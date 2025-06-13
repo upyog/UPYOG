@@ -31,6 +31,8 @@ public class MasterConstants {
 	public static final String INVALID_ID_PASSED_MESSAGE = "Please pass correct id in case of update";
 	public static final String INVALID_PARENT_ID = "INVALID_PARENT_ID";
 	public static final String INVALID_PARENT_ID_MSG = "Please Provide a valid parent Parent Id";
+	public static final String INVALID_SCHEME_ID = "INVALID_SCHEME_ID";
+	public static final String INVALID_SCHEME_ID_MSG = "Please Provide a valid scheme Id";
 	public static final String INVALID_TEXT_CONTAINS_HTML_TAGS_MSG = "Invalid Text, contains HTML Tags";
 	public static final String FUND_SEARCH_REDIS_KEY_GENERATOR = "fundSearchKeyGenerator";
 	public static final String SCHEME_SEARCH_REDIS_KEY_GENERATOR = "schemeSearchKeyGenerator";
@@ -43,7 +45,7 @@ public class MasterConstants {
 	public static final String REDIS_SEARCH_VERSION_TAG = "::version=";
 
 	public static final String REDIS_SEARCH_TENANT_TAG = "::tenant=";
-	public static final String REDIS_START_VERSION_V1 = "v1";
+	public static final String REDIS_START_VERSION_V0 = "v0";
 	public static final String CODE_NAME_NOT_UNIQUE = "CODE_NAME_NOT_UNIQUE";
 	public static final String CODE_NAME_NOT_UNIQUE_MSG = "Code Or Name Provided already exist ";
 

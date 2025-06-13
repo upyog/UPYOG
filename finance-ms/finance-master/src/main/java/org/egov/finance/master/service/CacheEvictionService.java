@@ -84,7 +84,7 @@ public class CacheEvictionService {
 	public String getVersionForTenant(String tenantId, String cacheKeyName) {
 		String key = cacheKeyName + tenantId;
 		String version = stringRedisTemplate.opsForValue().get(key);
-		return version != null ? version : MasterConstants.REDIS_START_VERSION_V1;
+		return version != null ? version : MasterConstants.REDIS_START_VERSION_V0;
 	}
 
 	public void incrementVersionForTenant(String tenantId, String cacheKeyName, String cacheName) {

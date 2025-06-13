@@ -12,17 +12,20 @@ import java.util.stream.Collectors;
 
 import org.egov.finance.master.entity.SubScheme;
 import org.egov.finance.master.exception.MasterServiceException;
+import org.egov.finance.master.model.SchemeModel;
 import org.egov.finance.master.model.SubSchemeModel;
 import org.egov.finance.master.model.request.SubSchemeRequest;
 import org.egov.finance.master.repository.SubSchemeRepository;
 import org.egov.finance.master.util.ApplicationThreadLocals;
 import org.egov.finance.master.util.CommonUtils;
 import org.egov.finance.master.util.MasterConstants;
+import org.egov.finance.master.validation.SchemeValidation;
 import org.egov.finance.master.validation.SubSchemeValidation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 
 /**
@@ -38,27 +41,43 @@ public class SubSchemeService {
 
 	private final SubSchemeValidation subSchemeValidation;
 	private final SubSchemeRepository subSchemeRepository;
+	private final SchemeService schemeService;
+	private final SchemeValidation schemeValidation;
 	private final CacheEvictionService cacheEvictionService;
 	private final CommonUtils commonUtils;
 
 	@Autowired
-	public SubSchemeService(SubSchemeValidation subSchemeValidation, SubSchemeRepository subSchemeRepository,
-			CacheEvictionService cacheEvictionService, CommonUtils commonUtils) {
+	public SubSchemeService(SubSchemeValidation subSchemeValidation, SubSchemeRepository subSchemeRepository,SchemeService schemeService,
+			SchemeValidation schemeValidation,CacheEvictionService cacheEvictionService, CommonUtils commonUtils) {
 		this.subSchemeValidation = subSchemeValidation;
 		this.subSchemeRepository = subSchemeRepository;
+		this.schemeService=schemeService;
+		this.schemeValidation=schemeValidation;
 		this.cacheEvictionService = cacheEvictionService;
 		this.commonUtils = commonUtils;
 	}
 
 	public SubSchemeModel save(SubSchemeRequest subSchemeRequest) {
 		SubSchemeModel subSchemeModel = subSchemeRequest.getSubSchemeRequest();
+		SchemeModel searchcriteria=new SchemeModel();
 		Map<String, String> errorMap = new HashMap<>();
 		if (!ObjectUtils.isEmpty(subSchemeModel.getId())) {
 			errorMap.put(MasterConstants.INVALID_ID_PASSED, MasterConstants.ID_CANNOT_BE_PASSED_IN_CREATION_MSG);
 			throw new MasterServiceException(errorMap);
 		}
 		SubScheme subScheme = subSchemeValidation.modeltoEntity(subSchemeModel);
-		subScheme.setScheme(subSchemeModel.getScheme());
+		searchcriteria.setId(subSchemeModel.getScheme());
+		List<SchemeModel> schemsearch=commonUtils.convertListIfNeeded(schemeService.search(searchcriteria), SchemeModel.class);
+		if(!CollectionUtils.isEmpty(schemsearch))
+		{
+			subScheme.setScheme(schemeValidation.modelToEntity(schemsearch.get(0)));
+		}
+		else
+			errorMap.put(MasterConstants.INVALID_SCHEME_ID, MasterConstants.INVALID_SCHEME_ID_MSG);
+		
+		if(!CollectionUtils.isEmpty(errorMap))
+			throw new MasterServiceException(errorMap);
+		
 		subSchemeValidation.subSchemeCreateCodeAndSchemIDValidation(subSchemeModel);
 		return subSchemeValidation.entitytoModel(subSchemeRepository.save(subScheme));
 	}
@@ -67,17 +86,14 @@ public class SubSchemeService {
 	public List<SubSchemeModel> search(SubSchemeModel subSchemeModel) {
 		Specification<SubScheme> specification = subSchemeValidation.build(subSchemeModel);
 		
-		cacheEvictionService.incrementVersionForTenant(ApplicationThreadLocals.getTenantID(),
-				MasterConstants.SUBSCHEME_SEARCH_REDIS_CACHE_VERSION_KEY, MasterConstants.SUBSCHEME_SEARCH_REDIS_CACHE_NAME);
-		
 		return subSchemeRepository.findAll(specification).stream().map(subSchemeValidation::entitytoModel)
 				.sorted(Comparator.comparingLong(SubSchemeModel::getId)).toList();
 	}
 
 	public SubSchemeModel update(SubSchemeRequest subSchemeRequest) {
 		Map<String, String> errorMap = new HashMap<>();
+		SchemeModel searchcriteria=new SchemeModel();
 		SubScheme subSchemerequest = subSchemeValidation.modeltoEntity(subSchemeRequest.getSubSchemeRequest());
-		subSchemerequest.setScheme(subSchemeRequest.getSubSchemeRequest().getScheme());
 		if (ObjectUtils.isEmpty(subSchemerequest.getId())) {
 			errorMap.put(MasterConstants.INVALID_ID_PASSED, MasterConstants.INVALID_ID_PASSED_MESSAGE);
 			throw new MasterServiceException(errorMap);
@@ -88,15 +104,24 @@ public class SubSchemeService {
 			throw new MasterServiceException(errorMap);
 		});
 		
+		searchcriteria.setId(subSchemeRequest.getSubSchemeRequest().getScheme());
+		List<SchemeModel> schemesearch=commonUtils.convertListIfNeeded(schemeService.search(searchcriteria), SchemeModel.class);
+		if(!CollectionUtils.isEmpty(schemesearch))
+		{
+			subSchemerequest.setScheme(schemeValidation.modelToEntity(schemesearch.get(0)));
+		}
+		else
+			subSchemerequest.setScheme(null);
+		
 		List<String> updatedFields = commonUtils.applyNonNullFields(subSchemerequest, subSchemeupdate);
 		SubSchemeModel subSchemeModel=new SubSchemeModel();
 		Set<String> updatedSet = updatedFields.stream().map(String::toLowerCase).collect(Collectors.toSet());
 		if(!ObjectUtils.isEmpty(updatedSet))
 		{
-			if(updatedSet.contains("code") && updatedSet.contains("scheme"))
+			if(updatedSet.contains("code") || updatedSet.contains("scheme"))
 			{
 				subSchemeModel.setCode(subSchemeupdate.getCode());
-				subSchemeModel.setScheme(subSchemeupdate.getScheme());
+				subSchemeModel.setScheme(subSchemeupdate.getScheme().getId());
 				subSchemeValidation.subSchemeCreateCodeAndSchemIDValidation(subSchemeModel);
 			}
 		}
