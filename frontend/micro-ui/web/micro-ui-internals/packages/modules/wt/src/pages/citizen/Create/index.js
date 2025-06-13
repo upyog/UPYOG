@@ -47,9 +47,14 @@ const WTCreate = () => {
       nextStep = key;
     }
     // Change next step to "toiletRequest-details" if the current step is "request-details" and the service type code is not "WT".
-    if(nextStep === "request-details" && params?.serviceType?.serviceType?.code !== "WT"){
-      nextStep= "toiletRequest-details";
-    }
+    if (nextStep === "request-details") { 
+        const code = params?.serviceType?.serviceType?.code;
+        if (code === "MobileToilet") {
+          nextStep = "toiletRequest-details";
+        } else if (code === "TREE_PRUNING") {
+          nextStep = "treePruningRequest-details"; 
+        }
+    } 
     if (nextStep === null) {
       return redirectWithHistory(`${match.path}/check`);
     }
@@ -72,11 +77,15 @@ const WTCreate = () => {
     }
 
   const wt_create = async () => {
+
     if(params?.serviceType?.serviceType?.code === "WT"){
       history.push(`${match.path}/wt-acknowledgement`);
     }
     if(params?.serviceType?.serviceType?.code === "MobileToilet"){
       history.push(`${match.path}/mt-acknowledgement`);
+    }
+    if(params?.serviceType?.serviceType?.code === "TREE_PRUNING"){
+      history.push(`${match.path}/tp-acknowledgement`);
     }
   };
 
@@ -102,8 +111,6 @@ const WTCreate = () => {
     queryClient.invalidateQueries("WT_Create");
   };
 
-
-
   let commonFields = commonConfig;
   commonFields.forEach((obj) => {
     config = config.concat(obj.body.filter((a) => !a.hideInCitizen));
@@ -114,7 +121,7 @@ const WTCreate = () => {
   const CheckPage = Digit?.ComponentRegistryService?.getComponent("WTCheckPage");
   const WTAcknowledgement = Digit?.ComponentRegistryService?.getComponent("WTAcknowledgement");
   const MTAcknowledgement = Digit?.ComponentRegistryService?.getComponent("MTAcknowledgement");
-
+  const TPAcknowledgement = Digit?.ComponentRegistryService?.getComponent("TPAcknowledgement");
 
 
 
@@ -140,6 +147,9 @@ const WTCreate = () => {
       </Route>
       <Route path={`${match.path}/mt-acknowledgement`}>
         <MTAcknowledgement data={params} onSuccess={onSuccess} />
+      </Route>
+       <Route path={`${match.path}/tp-acknowledgement`}>
+        <TPAcknowledgement data={params} onSuccess={onSuccess} />
       </Route>
       <Route>
         <Redirect to={`${match.path}/${config.indexRoute}`} />

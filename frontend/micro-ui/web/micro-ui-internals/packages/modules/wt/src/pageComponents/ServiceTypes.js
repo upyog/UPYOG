@@ -22,7 +22,15 @@ import { FormStep, CardLabel, Dropdown , Modal} from "@nudmcdgnpm/digit-ui-react
 };
 
 const ServiceTypes = ({ t, config, onSelect, userType, formData }) => {
- 
+const tenantId=Digit.ULBService.getStateId();
+//Fetching service type data from MDMS
+    const { data: serviceTypeData} = Digit.Hooks.useCustomMDMS(tenantId, "request-service", [{ name: "ServiceType" }], {
+    select: (data) => {
+      const formattedData = data?.["request-service"]?.["ServiceType"];
+      return formattedData;
+    },
+  });
+  
   const user = Digit.UserService.getUser().info;
   const [serviceType, setServiceType] = useState(formData?.serviceType?.serviceType || "");
 
@@ -35,24 +43,7 @@ const ServiceTypes = ({ t, config, onSelect, userType, formData }) => {
     onSelect(config.key, ServiceType, false);
   }, [formData.serviceType, serviceType, onSelect, config.key]);
 
-  const serviceTypeData = [
-    {
-      code: "WT",
-      i18nKey: "Water Tanker",
-      value: "Water Tanker"
-    },
-    {
-      code: "MobileToilet",
-      i18nKey: "Mobile Toilet",
-      value: "Mobile Toilet"
-    },
-    {
-      code: "TREE_PRUNING",
-      i18nKey: "Tree Pruning",
-      value: "Tree Pruning"
-    }
-  ];
-
+ 
   useEffect(() => {
     if (userType === "citizen") {
       console.log('calling meeeeeee');
