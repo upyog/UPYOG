@@ -2,6 +2,7 @@ package org.egov.pt.service;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -43,10 +44,8 @@ public class BoundaryService {
 	/**
 	 * Enriches the locality object by calling the location service
 	 * 
-	 * @param request
-	 *            PropertyRequest for create
-	 * @param hierarchyTypeCode
-	 *            HierarchyTypeCode of the boundaries
+	 * @param request           PropertyRequest for create
+	 * @param hierarchyTypeCode HierarchyTypeCode of the boundaries
 	 */
 	public void getAreaType(Property property, RequestInfo requestInfo, String hierarchyTypeCode) {
 
@@ -65,17 +64,19 @@ public class BoundaryService {
 			uri.append("&").append("hierarchyTypeCode=").append(hierarchyTypeCode);
 
 		StringBuilder uri2 = new StringBuilder(uri);
-		
+
 		uri.append("&").append("boundaryType=").append("Locality").append("&").append("codes=")
 				.append(property.getAddress().getLocality().getCode());
 
-		Optional<Object> response = serviceRequestRepository.fetchResult(uri, RequestInfoWrapper.builder().requestInfo(requestInfo).build());
-		
+		Optional<Object> response = serviceRequestRepository.fetchResult(uri,
+				RequestInfoWrapper.builder().requestInfo(requestInfo).build());
+
 		uri2.append("&").append("boundaryType=").append("Block").append("&").append("codes=")
-		.append(property.getAddress().getLocality().getCode());
-		
-		Optional<Object> responseForWard = serviceRequestRepository.fetchResult(uri2, RequestInfoWrapper.builder().requestInfo(requestInfo).build());
-		
+				.append(property.getAddress().getLocality().getCode());
+
+		Optional<Object> responseForWard = serviceRequestRepository.fetchResult(uri2,
+				RequestInfoWrapper.builder().requestInfo(requestInfo).build());
+
 		if (response.isPresent()) {
 			LinkedHashMap responseMap = (LinkedHashMap) response.get();
 			LinkedHashMap responseMapForWard = (LinkedHashMap) responseForWard.get();
@@ -84,9 +85,9 @@ public class BoundaryService {
 			String jsonString = new JSONObject(responseMap).toString();
 			String wardJson = new JSONObject(responseMapForWard).toString();
 			Map<String, String> propertyIdToJsonPath = getJsonpath(property);
-			
-			Map<String, String> propertyIdToJsonPathForWard = getJsonpathForWard(property);
-			
+
+			String wardNo = getWardName(wardJson);
+
 			DocumentContext context = JsonPath.parse(jsonString);
 			DocumentContext contextForWard = JsonPath.parse(wardJson);
 
@@ -100,6 +101,7 @@ public class BoundaryService {
 				throw new CustomException("INVALID BOUNDARY DATA", "The boundary data for the code "
 						+ property.getAddress().getLocality().getCode() + " is not available");
 			property.getAddress().setLocality(boundary);
+			property.getAddress().setWardNo(wardNo);
 
 		}
 
@@ -111,8 +113,7 @@ public class BoundaryService {
 	 * Prepares map of propertyId to jsonpath which contains the code of the
 	 * property
 	 * 
-	 * @param request
-	 *            PropertyRequest for create
+	 * @param request PropertyRequest for create
 	 * @return Map of propertyId to jsonPath with properties locality code
 	 */
 	private Map<String, String> getJsonpath(Property property) {
@@ -123,14 +124,10 @@ public class BoundaryService {
 				jsonpath.replace("{}", property.getAddress().getLocality().getCode()));
 		return propertyIdToJsonPath;
 	}
-	
-	private Map<String, String> getJsonpathForWard(Property property) {
 
-		Map<String, String> propertyIdToJsonPath = new LinkedHashMap<>();
-		String jsonpath = "$..boundary[?(@.name==\"{}\")]";
-		propertyIdToJsonPath.put(property.getPropertyId(),
-				jsonpath.replace("{}", property.getAddress().getWardNo()));
-		return propertyIdToJsonPath;
+	private String getWardName(String wardJson) {
+		List<String> names = JsonPath.read(wardJson, "$.TenantBoundary[*].boundary[*].name");
+		return names.isEmpty() ? null : names.get(0);
 	}
 
 }
