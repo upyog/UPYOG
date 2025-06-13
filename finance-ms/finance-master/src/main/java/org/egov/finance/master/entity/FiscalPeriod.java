@@ -22,6 +22,11 @@ import lombok.Data;
 @Data
 public class FiscalPeriod extends AuditDetailswithVersion {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	public static final String SEQ = "seq_fiscalperiod";
 
 	@Id

@@ -4,7 +4,6 @@ import java.io.Serializable;
 
 import org.hibernate.validator.constraints.Length;
 
-import io.lettuce.core.Range.Boundary;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;

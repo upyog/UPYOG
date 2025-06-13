@@ -31,6 +31,11 @@ import lombok.Data;
 @Data
 public class CChartOfAccounts extends AuditDetailswithVersion {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	public static final String SEQ_CHARTOFACCOUNTS = "SEQ_CHARTOFACCOUNTS";
 
 	@Id

@@ -16,6 +16,11 @@ import lombok.Data;
 @Data
 public class EgwStatus extends AuditDetailswithVersion {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	public static final String SEQ = "SEQ_EGW_STATUS";
 
 	@Id

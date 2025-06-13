@@ -10,9 +10,11 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
+import lombok.Data;
 
 @Entity
 @Table(name = "functionary")
+@Data
 @SequenceGenerator(name = "seq_functionary", sequenceName = "seq_functionary", allocationSize = 1)
 public class Functionary implements Serializable {
 
