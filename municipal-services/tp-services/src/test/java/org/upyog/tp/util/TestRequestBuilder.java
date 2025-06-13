@@ -6,6 +6,7 @@ import org.upyog.tp.web.models.*;
 import org.upyog.tp.web.models.treePruning.TreePruningBookingDetail;
 import org.upyog.tp.web.models.treePruning.TreePruningBookingRequest;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.UUID;
 
@@ -27,8 +28,8 @@ public class TestRequestBuilder {
                 .bookingId("BK12345")
                 .bookingNo("TP-2025-0001")
                 .reasonForPruning("Hanging branches")
-                .latitude(31.6340)
-                .longitude(74.8723)
+                .latitude(BigDecimal.valueOf(31.6340))  // FIX 1: Convert double to BigDecimal
+                .longitude(BigDecimal.valueOf(74.8723)) // FIX 1: Convert double to BigDecimal
                 .paymentDate(System.currentTimeMillis())
                 .applicationDate(System.currentTimeMillis())
                 .bookingCreatedBy("Citizen")
@@ -57,7 +58,8 @@ public class TestRequestBuilder {
                 .documentDetails(Arrays.asList(
                         DocumentDetail.builder()
                                 .documentDetailId("DOC123")
-                                .applicationId("BK12345")
+                                // FIX 2: Remove the non-existent applicationId() method
+                                // .applicationId("BK12345")  // This method doesn't exist
                                 .documentType("PruningPermit")
                                 .fileStoreId("filestore-123")
                                 .auditDetails(AuditDetails.builder()
