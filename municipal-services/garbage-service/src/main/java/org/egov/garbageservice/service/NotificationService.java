@@ -3,6 +3,7 @@ package org.egov.garbageservice.service;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -48,10 +49,16 @@ public class NotificationService {
 	private static final String GARBAGE_PLACEHOLDER = "garbage";
 	private static final String LINK_PLACEHOLDER = "{link}";
 
-	private static final String SMS_BODY_GENERATE_BILL = "The bill for " + GARBAGE_PLACEHOLDER + " for the period "
-			+ MONTH_PLACEHOLDER + "/" + YEAR_PLACEHOLDER + " against your ID " + GARBAGE_NO_PLACEHOLDER
-			+ " has been generated on CitizenSeva Portal.  Kindly visit the website and make the necessary payments or use the following link for payment "
-			+ LINK_PLACEHOLDER + ". CitizenSeva H.P.";
+//	private static final String SMS_BODY_GENERATE_BILL = "The bill for " + GARBAGE_PLACEHOLDER + " for the period "
+//			+ MONTH_PLACEHOLDER + "/" + YEAR_PLACEHOLDER + " against your ID " + GARBAGE_NO_PLACEHOLDER
+//			+ " has been generated on CitizenSeva Portal.  Kindly visit the website and make the necessary payments or use the following link for payment "
+//			+ LINK_PLACEHOLDER + ". CitizenSeva H.P.";
+	
+	private static final String SMS_BODY_GENERATE_BILL ="Dear "+ RECIPINTS_NAME_PLACEHOLDER
+			+", your "+GARBAGE_PLACEHOLDER+" bill vide " + GARBAGE_PLACEHOLDER +" id "+GARBAGE_NO_PLACEHOLDER+" for the period "
+			+ MONTH_PLACEHOLDER + "/" + YEAR_PLACEHOLDER +" amounting to Rs "+AMOUNT_PLACEHOLDER
+			+" has been generated on CitizenSeva portal. Please pay on CitizenSeva Portal or using link "
+			+GARBAGE_PAY_NOW_BILL_URL_PLACEHOLDER+".  CitizenSeva H.P.";
 
 	private static final String EMAIL_SUBJECT_GENERATE_BILL = "Your Garbage Collection Bill for " + MONTH_PLACEHOLDER
 			+ "/" + YEAR_PLACEHOLDER + " with " + GARBAGE_NO_PLACEHOLDER;
@@ -124,6 +131,12 @@ public class NotificationService {
 
 		Instant instant = Instant.ofEpochMilli(bill.getBillDate());
 		LocalDateTime dateTime = instant.atZone(ZoneId.systemDefault()).toLocalDateTime();
+		
+		Instant instantExpiry = Instant.ofEpochMilli(bill.getBillDetails().get(0).getExpiryDate());
+		LocalDateTime dateTimeExpiry = instantExpiry.atZone(ZoneId.systemDefault()).toLocalDateTime();
+		
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMM yyyy, hh:mm a"); // e.g., "12 Jun 2025, 10:30 AM"
+		String expiryDateStr = dateTimeExpiry.format(formatter);
 
 		body = body.replace(RECIPINTS_NAME_PLACEHOLDER, garbageAccount.getName());
 		body = body.replace(MONTH_PLACEHOLDER, GrbgUtils.toCamelCase(String.valueOf(dateTime.getMonth())));
@@ -139,11 +152,13 @@ public class NotificationService {
 							: "");
 		}
 		body = body.replace(AMOUNT_PLACEHOLDER, String.valueOf(bill.getTotalAmount()));
-		body = body.replace(DUE_DATE_PLACEHOLDER, "");
+		body = body.replace(DUE_DATE_PLACEHOLDER, expiryDateStr);
 		body = body.replace(GARBAGE_NO_PLACEHOLDER, garbageAccount.getGrbgApplicationNumber());
-		body = body.replace(GARBAGE_PAY_NOW_BILL_URL_PLACEHOLDER,
-				grbgConfig.getGrbgServiceHostUrl() + "" + grbgConfig.getGrbgPayNowBillEndpoint() + ""
-						+ encryptionService.encryptString(garbageAccount.getCreated_by()));
+		body = body.replace(GARBAGE_PAY_NOW_BILL_URL_PLACEHOLDER,grbgConfig.getFrontEndBaseUri());
+
+//		body = body.replace(GARBAGE_PAY_NOW_BILL_URL_PLACEHOLDER,
+//				grbgConfig.getGrbgServiceHostUrl() + "" + grbgConfig.getGrbgPayNowBillEndpoint() + ""
+//						+ encryptionService.encryptString(garbageAccount.getCreated_by()));
 
 		return body;
 	}
