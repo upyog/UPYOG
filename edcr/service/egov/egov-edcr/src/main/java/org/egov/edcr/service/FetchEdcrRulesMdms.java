@@ -35,8 +35,8 @@ public class FetchEdcrRulesMdms {
 		    LOG.info("Entered getEdcrRules method");
 
 		    // Make the MDMS call
-		 //   Object mdmsData = bpaMdmsUtil.mDMSCallv2(new RequestInfo(), "pg");
-		    Object mdmsData = bpaMdmsUtil.mDMSCall(new RequestInfo(), "pg");
+		    Object mdmsData = bpaMdmsUtil.mDMSCallv2(new RequestInfo(), "pg");
+		    //Object mdmsData = bpaMdmsUtil.mDMSCall(new RequestInfo(), "pg");
 //		    Log.info("----------------mdmsdata------------- :: " + mdmsData);
 		    if (mdmsData == null) {
 		        LOG.warn("MDMS data is null");
