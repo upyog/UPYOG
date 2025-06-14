@@ -120,15 +120,12 @@ public class InteriorOpenSpaceService_Citya extends FeatureProcess {
      */
     @Override
     public Plan process(Plan pl) {
-        String occupancyName = null;
+       
         String feature = MdmsFeatureConstants.INTERIOR_OPEN_SPACE_SERVICE;
 
         // Determine the occupancy type for fetching permissible values
         Map<String, Object> params = new HashMap<>();
-        if (DxfFileConstants.A.equals(pl.getVirtualBuilding().getMostRestrictiveFarHelper().getType().getCode())) {
-            occupancyName = "Residential";
-        }
-
+        String occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl);
         params.put("feature", feature);
         params.put("occupancy", occupancyName);
 

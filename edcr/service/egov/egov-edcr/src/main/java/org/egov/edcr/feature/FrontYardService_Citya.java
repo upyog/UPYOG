@@ -332,6 +332,8 @@ public class FrontYardService_Citya extends GeneralRule {
 		} else if (G.equalsIgnoreCase(mostRestrictiveOccupancy.getType().getCode())) {
 			occupancyName = "Industrial";
 			
+		}else {
+			 occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl);
 		}
 //		else if (mostRestrictiveOccupancy.getType() != null
 //				&& J.equalsIgnoreCase(mostRestrictiveOccupancy.getType().getCode())) {

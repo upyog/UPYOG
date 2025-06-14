@@ -109,18 +109,14 @@ public class StairCover_Citya extends FeatureProcess {
         BigDecimal minHeight = BigDecimal.ZERO;        // Will hold the minimum stair cover height in a block
         BigDecimal stairCoverValue = BigDecimal.ZERO;  // Permissible stair cover height from MDMS
         
-        String occupancyName = null;
+        String occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl);
 
         // Feature key used to fetch related values from MDMS
         String feature = MdmsFeatureConstants.STAIR_COVER;
 			
         // Prepare parameters for MDMS fetch call
         Map<String, Object> params = new HashMap<>();
-
-        // Identify occupancy type – currently only checking for Residential
-        if (DxfFileConstants.A.equals(pl.getVirtualBuilding().getMostRestrictiveFarHelper().getType().getCode())) {
-            occupancyName = "Residential";
-        }
+       
 
         params.put("feature", feature);
         params.put("occupancy", occupancyName);

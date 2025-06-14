@@ -195,15 +195,12 @@ public class Kitchen_Citya extends FeatureProcess {
                                 if (!kitchenHeights.isEmpty()) {
                                     BigDecimal minHeight = kitchenHeights.stream().reduce(BigDecimal::min).get().setScale(2, BigDecimal.ROUND_HALF_UP);
                                     
-                                    String occupancyName = null;
+                                    String occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl);
                 					
                					 String feature = "kitchen";
                						
                						Map<String, Object> params = new HashMap<>();
-               						if(DxfFileConstants.A
-               								.equals(pl.getVirtualBuilding().getMostRestrictiveFarHelper().getType().getCode())){
-               							occupancyName = "Residential";
-               						}
+               						
 
                						params.put("feature", feature);
                						params.put("occupancy", occupancyName);

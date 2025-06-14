@@ -109,14 +109,11 @@ public Plan process(Plan pl) {
     BigDecimal parapetValueTwo = BigDecimal.ZERO;
 
     // Determine the occupancy type
-    String occupancyName = null;
+    String occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl);
     String feature = MdmsFeatureConstants.PARAPET; // Feature name for parapet
 
     Map<String, Object> params = new HashMap<>();
-    if (DxfFileConstants.A.equals(pl.getVirtualBuilding().getMostRestrictiveFarHelper().getType().getCode())) {
-        occupancyName = "Residential"; // Set occupancy type to Residential if condition matches
-    }
-
+   
     // Add feature and occupancy to the parameters map
     params.put("feature", feature);
     params.put("occupancy", occupancyName);

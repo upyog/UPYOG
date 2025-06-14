@@ -198,22 +198,14 @@ public class Coverage_Citya extends FeatureProcess {
 //		}
 //		String occupancyType;
 
-		String occupancyName = "";
+		String occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl);
 		String feature = "Coverage";
 		// get coverage permissible value from method and store in
 		// permissibleCoverageValue
 		if (plotArea.compareTo(BigDecimal.valueOf(0)) > 0 && mostRestrictiveOccupancy != null
 				) {
 //			occupancyType = mostRestrictiveOccupancy.getType().getCode();
-			if (A.equals(mostRestrictiveOccupancy.getType().getCode())) { // if
-				occupancyName = "Residential";
-
-			} else if (F.equals(mostRestrictiveOccupancy.getType().getCode())) { // if
-
-				occupancyName = "Commercial";
-
-			}
-
+			
 			permissibleCoverageValue = getPermissibleCoverage(plotArea, feature, occupancyName,
 					pl.getEdcrRulesFeatures());
 		}

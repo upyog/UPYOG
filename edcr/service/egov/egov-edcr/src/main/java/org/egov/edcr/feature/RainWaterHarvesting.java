@@ -48,21 +48,30 @@
 package org.egov.edcr.feature;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.egov.common.constants.MdmsFeatureConstants;
 import org.egov.common.entity.edcr.OccupancyTypeHelper;
 import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.Result;
 import org.egov.common.entity.edcr.ScrutinyDetail;
 import org.egov.edcr.constants.DxfFileConstants;
+import org.egov.edcr.constants.EdcrRulesMdmsConstants;
+import org.egov.edcr.service.FetchEdcrRulesMdms;
 import org.egov.edcr.utility.DcrConstants;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class RainWaterHarvesting extends FeatureProcess {
+	private static final Logger LOG = LogManager.getLogger(RainWaterHarvesting.class);
     private static final String RULE_51 = "10.3";
     /*
      * private static final String RULE_51_DESCRIPTION = "RainWater Storage Arrangement "; private static final String
@@ -70,7 +79,6 @@ public class RainWaterHarvesting extends FeatureProcess {
      */
     private static final String RULE_51_DESCRIPTION = "Rain Water Harvesting";
     // private static final String RAINWATER_HARVESTING_TANK_CAPACITY = "Minimum capacity of Rain Water Harvesting Tank";
-    private static final BigDecimal HUNDRED = BigDecimal.valueOf(100);
     private static final String RWH_DECLARATION_ERROR = DxfFileConstants.RWH_DECLARED
             + " in PLAN_INFO layer must be declared as YES for plot area greater than 100 sqm.";
 
@@ -78,133 +86,147 @@ public class RainWaterHarvesting extends FeatureProcess {
     public Plan validate(Plan pl) {
         return pl;
     }
+    
+    @Autowired
+    FetchEdcrRulesMdms fetchEdcrRulesMdms;
+@Override
+public Plan process(Plan pl) {
+    // Initialize a map to store errors
+    HashMap<String, String> errors = new HashMap<>();
 
-    @Override
-    public Plan process(Plan pl) {
-        HashMap<String, String> errors = new HashMap<>();
+    // Initialize scrutiny details for the report
+    scrutinyDetail = new ScrutinyDetail();
+    scrutinyDetail.addColumnHeading(1, RULE_NO); // Column for rule number
+    scrutinyDetail.addColumnHeading(2, DESCRIPTION); // Column for description
+    scrutinyDetail.addColumnHeading(4, PROVIDED); // Column for provided values
+    scrutinyDetail.addColumnHeading(5, STATUS); // Column for status (Accepted/Not Accepted)
+    scrutinyDetail.setKey("Common_Rain Water Harvesting"); // Key for the scrutiny detail
 
-        scrutinyDetail = new ScrutinyDetail();
-        scrutinyDetail.addColumnHeading(1, RULE_NO);
-        scrutinyDetail.addColumnHeading(2, DESCRIPTION);
-        // scrutinyDetail.addColumnHeading(3, REQUIRED);
-        scrutinyDetail.addColumnHeading(4, PROVIDED);
-        scrutinyDetail.addColumnHeading(5, STATUS);
-        scrutinyDetail.setKey("Common_Rain Water Harvesting");
-        String subRule = RULE_51;
-        String subRuleDesc = RULE_51_DESCRIPTION;
-        // BigDecimal expectedTankCapacity = BigDecimal.ZERO;
-        BigDecimal plotArea = pl.getPlot() != null ? pl.getPlot().getArea() : BigDecimal.ZERO;
-        OccupancyTypeHelper mostRestrictiveFarHelper = pl.getVirtualBuilding() != null
-                ? pl.getVirtualBuilding().getMostRestrictiveFarHelper()
-                : null;
-      
-       
-      
-        if (mostRestrictiveFarHelper != null && mostRestrictiveFarHelper.getType() != null) {
-            if (DxfFileConstants.A.equalsIgnoreCase(mostRestrictiveFarHelper.getType().getCode()) &&
-                    plotArea.compareTo(HUNDRED) >= 0) {
-                addOutput(pl, errors, subRule, subRuleDesc);
-            } else if (DxfFileConstants.F.equalsIgnoreCase(mostRestrictiveFarHelper.getType().getCode())) {
-                addOutput(pl, errors, subRule, subRuleDesc);
-            } else if (DxfFileConstants.G.equalsIgnoreCase(mostRestrictiveFarHelper.getType().getCode())) {
-                addOutput(pl, errors, subRule, subRuleDesc);
-            }    
-        } 
-       
+    // Define rule and description for rainwater harvesting
+    String subRule = RULE_51;
+    String subRuleDesc = RULE_51_DESCRIPTION;
 
-        /*
-         * if (plotArea.compareTo(HUNDRED) >= 0) { validateRWH(pl, errors); if (pl.getUtility() != null &&
-         * !pl.getUtility().getRainWaterHarvest().isEmpty() && pl.getUtility().getRainWaterHarvestingTankCapacity() != null) {
-         * Boolean valid = false; BigDecimal roundOffPlotArea = plotArea.divide(HUNDRED); expectedTankCapacity =
-         * BigDecimal.valueOf(55000) .multiply(roundOffPlotArea.setScale(0, BigDecimal.ROUND_HALF_UP)); if
-         * (pl.getUtility().getRainWaterHarvestingTankCapacity().compareTo(expectedTankCapacity) >= 0) { valid = true; }
-         * processRWHTankCapacity(pl, "", subRule, subRuleDesc, expectedTankCapacity, valid); } }
-         */
-        return pl;
+    // Initialize variables for plot area and permissible values
+    BigDecimal plotArea = pl.getPlot() != null ? pl.getPlot().getArea() : BigDecimal.ZERO;
+    BigDecimal rainWaterHarvestingPermissibleValue = BigDecimal.ZERO;
+
+    // Get the most restrictive FAR helper for the virtual building
+    OccupancyTypeHelper mostRestrictiveFarHelper = pl.getVirtualBuilding() != null
+            ? pl.getVirtualBuilding().getMostRestrictiveFarHelper()
+            : null;
+
+    // Determine the occupancy type
+    String occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl);
+    String feature = MdmsFeatureConstants.RAIN_WATER_HARVESTING; // Feature name for rainwater harvesting
+
+    // Prepare parameters for fetching MDMS values
+    Map<String, Object> params = new HashMap<>();
+    
+    params.put("feature", feature);
+    params.put("occupancy", occupancyName);
+
+    // Fetch the list of rules from the plan object
+    Map<String, List<Map<String, Object>>> edcrRuleList = pl.getEdcrRulesFeatures();
+
+    // Specify the columns to fetch from the rules
+    ArrayList<String> valueFromColumn = new ArrayList<>();
+    valueFromColumn.add(EdcrRulesMdmsConstants.PERMISSIBLE_VALUE); // Permissible value for rainwater harvesting
+
+    // Initialize a list to store permissible values
+    List<Map<String, Object>> permissibleValue = new ArrayList<>();
+
+    // Fetch permissible values from MDMS
+    permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
+    LOG.info("permissibleValue" + permissibleValue); // Log the fetched permissible values
+
+    // Check if permissible values are available and update the permissible value for rainwater harvesting
+    if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey(EdcrRulesMdmsConstants.PERMISSIBLE_VALUE)) {
+        rainWaterHarvestingPermissibleValue = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.PERMISSIBLE_VALUE).toString()));
     }
 
-    private void addOutput(Plan pl, HashMap<String, String> errors, String subRule, String subRuleDesc) {
-        if (pl.getPlanInformation() != null &&  pl.getPlanInformation().getRwhDeclared()!= null) {
-            if (pl.getPlanInformation().getRwhDeclared().equalsIgnoreCase(DcrConstants.NO)
-                    || pl.getPlanInformation().getRwhDeclared().equalsIgnoreCase(DcrConstants.NA)) {
-            
-                errors.put(DxfFileConstants.RWH_DECLARED, RWH_DECLARATION_ERROR);
-                pl.addErrors(errors);
-                addReportOutput(pl, subRule, subRuleDesc);
-            } else {
-            	
-                addReportOutput(pl, subRule, subRuleDesc);
-            }
+    // Validate the plot area and occupancy type for rainwater harvesting
+    if (mostRestrictiveFarHelper != null && mostRestrictiveFarHelper.getType() != null) {
+        if (DxfFileConstants.A.equalsIgnoreCase(mostRestrictiveFarHelper.getType().getCode()) &&
+                plotArea.compareTo(rainWaterHarvestingPermissibleValue) >= 0) {
+            addOutput(pl, errors, subRule, subRuleDesc); // Add output for compliance
+        } else if (DxfFileConstants.F.equalsIgnoreCase(mostRestrictiveFarHelper.getType().getCode())) {
+            addOutput(pl, errors, subRule, subRuleDesc); // Add output for compliance
+        } else if (DxfFileConstants.G.equalsIgnoreCase(mostRestrictiveFarHelper.getType().getCode())) {
+            addOutput(pl, errors, subRule, subRuleDesc); // Add output for compliance
         }
     }
 
-    private void addReportOutput(Plan pl, String subRule, String subRuleDesc) {
-        if (pl.getUtility() != null) {
-            if (pl.getUtility().getRainWaterHarvest() != null && !pl.getUtility().getRainWaterHarvest().isEmpty()) {
-                setReportOutputDetails(pl, subRule, subRuleDesc, null,
-                		 " Capacity - " + pl.getUtility().getRainWaterHarvestingTankCapacity(),
-                        Result.Verify.getResultVal());
-            } else {
-                setReportOutputDetails(pl, subRule, subRuleDesc, null,
-                        "Not Defined in the plan",
-                        Result.Not_Accepted.getResultVal());
-            }
+    return pl; // Return the updated plan object
+}
+
+/**
+ * Adds output details for rainwater harvesting compliance.
+ *
+ * @param pl The plan object
+ * @param errors The map of errors
+ * @param subRule The rule number
+ * @param subRuleDesc The rule description
+ */
+private void addOutput(Plan pl, HashMap<String, String> errors, String subRule, String subRuleDesc) {
+    if (pl.getPlanInformation() != null && pl.getPlanInformation().getRwhDeclared() != null) {
+        if (pl.getPlanInformation().getRwhDeclared().equalsIgnoreCase(DcrConstants.NO)
+                || pl.getPlanInformation().getRwhDeclared().equalsIgnoreCase(DcrConstants.NA)) {
+            // Add error if rainwater harvesting is not declared
+            errors.put(DxfFileConstants.RWH_DECLARED, RWH_DECLARATION_ERROR);
+            pl.addErrors(errors);
+            addReportOutput(pl, subRule, subRuleDesc); // Add report output
+        } else {
+            addReportOutput(pl, subRule, subRuleDesc); // Add report output
         }
     }
+}
 
-    
-    /*
-     * private void processRWHTankCapacity(Plan plan, String rule, String subRule, String subRuleDesc, BigDecimal
-     * expectedTankCapacity, Boolean valid) { if (expectedTankCapacity.compareTo(BigDecimal.valueOf(0)) > 0) { if (valid) {
-     * setReportOutputDetails(plan, subRule, RAINWATER_HARVESTING_TANK_CAPACITY, expectedTankCapacity.toString(),
-     * plan.getUtility().getRainWaterHarvestingTankCapacity().toString(), Result.Accepted.getResultVal()); } else {
-     * setReportOutputDetails(plan, subRule, RAINWATER_HARVESTING_TANK_CAPACITY, expectedTankCapacity.toString() + IN_LITRE,
-     * plan.getUtility().getRainWaterHarvestingTankCapacity().toString() + IN_LITRE, Result.Not_Accepted.getResultVal()); } } }
-     */
-     
-
-    
-    /*
-     * private boolean processRWH(Plan plan, String rule, String subRule, String subRuleDesc) { if
-     * (!plan.getUtility().getRainWaterHarvest().isEmpty()) { setReportOutputDetails(plan, subRule, subRuleDesc, "",
-     * OBJECTDEFINED_DESC, Result.Accepted.getResultVal()); return true; } else if
-     * (plan.getUtility().getRainWaterHarvest().isEmpty()) { setReportOutputDetails(plan, subRule, subRuleDesc, "",
-     * OBJECTNOTDEFINED_DESC, Result.Not_Accepted.getResultVal()); return true; } return false; } private boolean
-     * checkOccupancyTypeForRWH(OccupancyType occupancyType) { return occupancyType.equals(OccupancyType.OCCUPANCY_A2) ||
-     * occupancyType.equals(OccupancyType.OCCUPANCY_A3) || occupancyType.equals(OccupancyType.OCCUPANCY_B1) ||
-     * occupancyType.equals(OccupancyType.OCCUPANCY_B2) || occupancyType.equals(OccupancyType.OCCUPANCY_B3) ||
-     * occupancyType.equals(OccupancyType.OCCUPANCY_C) || occupancyType.equals(OccupancyType.OCCUPANCY_C1) ||
-     * occupancyType.equals(OccupancyType.OCCUPANCY_C2) || occupancyType.equals(OccupancyType.OCCUPANCY_C3) ||
-     * occupancyType.equals(OccupancyType.OCCUPANCY_D) || occupancyType.equals(OccupancyType.OCCUPANCY_D1) ||
-     * occupancyType.equals(OccupancyType.OCCUPANCY_D2) || occupancyType.equals(OccupancyType.OCCUPANCY_E) ||
-     * occupancyType.equals(OccupancyType.OCCUPANCY_G1) || occupancyType.equals(OccupancyType.OCCUPANCY_G2) ||
-     * occupancyType.equals(OccupancyType.OCCUPANCY_I1) || occupancyType.equals(OccupancyType.OCCUPANCY_I2); }
-     */
-     
-
-    private void setReportOutputDetails(Plan pl, String ruleNo, String ruleDesc, String expected, String actual,
-            String status) {
-        Map<String, String> details = new HashMap<>();
-        details.put(RULE_NO, ruleNo);
-        details.put(DESCRIPTION, ruleDesc);
-        // details.put(REQUIRED, expected);
-        details.put(PROVIDED, actual);
-        details.put(STATUS, status);
-        scrutinyDetail.getDetail().add(details);
-        pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+/**
+ * Adds report output details for rainwater harvesting compliance.
+ *
+ * @param pl The plan object
+ * @param subRule The rule number
+ * @param subRuleDesc The rule description
+ */
+private void addReportOutput(Plan pl, String subRule, String subRuleDesc) {
+    if (pl.getUtility() != null) {
+        if (pl.getUtility().getRainWaterHarvest() != null && !pl.getUtility().getRainWaterHarvest().isEmpty()) {
+            // Add report output if rainwater harvesting is defined
+            setReportOutputDetails(pl, subRule, subRuleDesc, null,
+                    "Capacity - " + pl.getUtility().getRainWaterHarvestingTankCapacity(),
+                    Result.Verify.getResultVal());
+        } else {
+            // Add report output if rainwater harvesting is not defined
+            setReportOutputDetails(pl, subRule, subRuleDesc, null,
+                    "Not Defined in the plan",
+                    Result.Not_Accepted.getResultVal());
+        }
     }
+}
 
-    /*
-     * private boolean validateRWH(Plan pl, HashMap<String, String> errors) { if (pl.getUtility().getRainWaterHarvest().isEmpty())
-     * { errors.put(RAINWATER_HARVESTING, edcrMessageSource.getMessage(OBJECTNOTDEFINED, new String[] { RAINWATER_HARVESTING },
-     * LocaleContextHolder.getLocale())); pl.addErrors(errors); return true; } else if
-     * (!pl.getUtility().getRainWaterHarvest().isEmpty() && pl.getUtility().getRainWaterHarvestingTankCapacity() == null) {
-     * errors.put(RAINWATER_HARVES_TANKCAPACITY, edcrMessageSource.getMessage(OBJECTNOTDEFINED, new String[] {
-     * RAINWATER_HARVES_TANKCAPACITY }, LocaleContextHolder.getLocale())); pl.addErrors(errors); return true; } return false; }
-     */
+/**
+ * Sets the report output details for scrutiny.
+ *
+ * @param pl The plan object
+ * @param ruleNo The rule number
+ * @param ruleDesc The rule description
+ * @param expected The expected value
+ * @param actual The actual value
+ * @param status The validation status
+ */
+private void setReportOutputDetails(Plan pl, String ruleNo, String ruleDesc, String expected, String actual,
+        String status) {
+    Map<String, String> details = new HashMap<>();
+    details.put(RULE_NO, ruleNo); // Rule number
+    details.put(DESCRIPTION, ruleDesc); // Rule description
+    details.put(PROVIDED, actual); // Actual value
+    details.put(STATUS, status); // Validation status
+    scrutinyDetail.getDetail().add(details); // Add details to scrutiny detail
+    pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail); // Add scrutiny detail to the plan's report output
+}
 
-    @Override
-    public Map<String, Date> getAmendments() {
-        return new LinkedHashMap<>();
-    }
+@Override
+public Map<String, Date> getAmendments() {
+    return new LinkedHashMap<>(); // Return an empty map for amendments
+}
 }

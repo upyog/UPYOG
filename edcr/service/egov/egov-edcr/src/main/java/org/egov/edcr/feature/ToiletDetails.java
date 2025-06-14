@@ -47,6 +47,7 @@
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -62,6 +63,9 @@ import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.Result;
 import org.egov.common.entity.edcr.ScrutinyDetail;
 import org.egov.common.entity.edcr.Toilet;
+import org.egov.edcr.constants.DxfFileConstants;
+import org.egov.edcr.service.FetchEdcrRulesMdms;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -76,6 +80,8 @@ public class ToiletDetails extends FeatureProcess {
         return pl;
     }
 
+    @Autowired
+	FetchEdcrRulesMdms fetchEdcrRulesMdms;
     @Override
     public Plan process(Plan pl) {
 
@@ -106,20 +112,64 @@ public class ToiletDetails extends FeatureProcess {
                                     BigDecimal ventilationHeight = toilet.getToiletVentilation() != null 
                                             ? toilet.getToiletVentilation().setScale(2, RoundingMode.HALF_UP)
                                             : BigDecimal.ZERO;
+                                    BigDecimal minToiletArea = null;
+                                    String occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl);
+                                    BigDecimal minToiletWidth = null;
+                                    BigDecimal minToiletVentilation = null;
                                     
+                					
+               					 String feature = "Toilet";
+               						
+               						Map<String, Object> params = new HashMap<>();
+               						
+
+               						params.put("feature", feature);
+               						params.put("occupancy", occupancyName);
+               						
+
+               						Map<String,List<Map<String,Object>>> edcrRuleList = pl.getEdcrRulesFeatures();
+               						
+               						ArrayList<String> valueFromColumn = new ArrayList<>();
+               						valueFromColumn.add("permissibleValue");
+               						valueFromColumn.add("minToiletArea");
+               						valueFromColumn.add("minToiletWidth");
+               						valueFromColumn.add("minToiletVentilation");
+               						
+
+               						List<Map<String, Object>> permissibleValue = new ArrayList<>();
+
+               						try {
+               							permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
+               							LOG.info("permissibleValue" + permissibleValue);
+               							
+
+               						} catch (NullPointerException e) {
+
+               							LOG.error("Permissible Value for ToiletDetails not found--------", e);
+               							return null;
+               						}
+
+               						if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey("minToiletArea")) {
+               							minToiletArea = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get("minToiletArea").toString()));
+               							minToiletWidth = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get("minToiletWidth").toString()));
+               							minToiletVentilation = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get("minToiletVentilation").toString()));
+               						}
+               			
                                     
 
-                                    if (area.compareTo(new BigDecimal(1.8)) >= 0
-                                            && width.compareTo(new BigDecimal(1.2)) >= 0
-                                            && ventilationHeight.compareTo(new BigDecimal(0.3)) >= 0) {
+                                    if (area.compareTo(minToiletArea) >= 0
+                                            && width.compareTo(minToiletWidth) >= 0
+                                            && ventilationHeight.compareTo(minToiletVentilation) >= 0) {
 
-                                        details.put(REQUIRED, "Total Area >= 1.8, Width >= 1.2, Ventilation >= 0.3");
+                                        details.put(REQUIRED, "Total Area >= " + minToiletArea + ", Width >= " + minToiletWidth + ","
+                                        		+ " Ventilation >= " + minToiletVentilation);
                                         details.put(PROVIDED, "Total Area = " + area
                                                 + ", Width = " + width + ", Ventilation Height = " + ventilationHeight);
                                         details.put(STATUS, Result.Accepted.getResultVal());
 
                                     } else {
-                                        details.put(REQUIRED, "Total Area >= 1.8, Width >= 1.2, Ventilation >= 0.3");
+                                        details.put(REQUIRED,"Total Area >= " + minToiletArea + ", Width >= " + minToiletWidth + ","
+                                        		+ " Ventilation >= " + minToiletVentilation);
                                         details.put(PROVIDED, "Total Area = " + area
                                                 + ", Width = " + width + ", Ventilation Height = " + ventilationHeight);
                                         details.put(STATUS, Result.Not_Accepted.getResultVal());

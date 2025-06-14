@@ -92,14 +92,12 @@ public class PassageService_Citya extends FeatureProcess {
         BigDecimal passageMinWidth = BigDecimal.ZERO;
 
         // Determine the occupancy type
-        String occupancyName = null;
+        String occupancyName = fetchEdcrRulesMdms.getOccupancyName(plan);
         String feature = MdmsFeatureConstants.PASSAGE_SERVICE; // Feature name for passage service
 
         // Prepare parameters for fetching MDMS values
         Map<String, Object> params = new HashMap<>();
-        if (DxfFileConstants.A.equals(plan.getVirtualBuilding().getMostRestrictiveFarHelper().getType().getCode())) {
-            occupancyName = "Residential"; // Set occupancy type to Residential if condition matches
-        }
+        
         params.put("feature", feature);
         params.put("occupancy", occupancyName);
 

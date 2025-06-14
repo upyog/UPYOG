@@ -101,13 +101,11 @@ public class OverHangs_Citya extends FeatureProcess {
         BigDecimal overHangsValue = BigDecimal.ZERO;
 
         // Determine the occupancy type
-        String occupancyName = null;
+        String occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl);
         String feature = MdmsFeatureConstants.OVERHANGS; // Feature name for overhangs
 
         Map<String, Object> params = new HashMap<>();
-        if (DxfFileConstants.A.equals(pl.getVirtualBuilding().getMostRestrictiveFarHelper().getType().getCode())) {
-            occupancyName = "Residential"; // Set occupancy type to Residential if condition matches
-        }
+       
 
         // Add feature and occupancy to the parameters map
         params.put("feature", feature);

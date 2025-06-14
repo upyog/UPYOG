@@ -108,14 +108,11 @@ public class WaterTankCapacity_Citya extends FeatureProcess {
         BigDecimal waterTankCapacityExpected = BigDecimal.ZERO;
 
         // Determine occupancy type
-        String occupancyName = null;
+        String occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl);
         String feature = MdmsFeatureConstants.WATER_TANK_CAPACITY;
 
         Map<String, Object> params = new HashMap<>();
-        if (DxfFileConstants.A.equals(pl.getVirtualBuilding().getMostRestrictiveFarHelper().getType().getCode())) {
-            occupancyName = "Residential";
-        }
-
+       
         params.put("feature", feature);
         params.put("occupancy", occupancyName);
 

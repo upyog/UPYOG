@@ -103,17 +103,14 @@ public class RoofTank_Citya extends FeatureProcess {
 
 		BigDecimal minHeight = BigDecimal.ZERO;
 		BigDecimal roofTankValue = BigDecimal.ZERO;
-		String occupancyName = null;
+		String occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl);
 
 		String feature = MdmsFeatureConstants.ROOF_TANK;
 
 		Map<String, Object> params = new HashMap<>();
 
 		// Determine occupancy type based on building type code
-		if (DxfFileConstants.A.equals(pl.getVirtualBuilding().getMostRestrictiveFarHelper().getType().getCode())) {
-			occupancyName = "Residential";
-		}
-
+		
 		// Prepare parameters to fetch permissible value from MDMS
 		params.put("feature", feature);
 		params.put("occupancy", occupancyName);

@@ -126,16 +126,12 @@ public class Basement_Citya extends FeatureProcess {
                 if (b.getBuilding() != null && b.getBuilding().getFloors() != null
                         && !b.getBuilding().getFloors().isEmpty()) {
 
-                    String occupancyName = null;
+                	String occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl);
                     String feature = MdmsFeatureConstants.BASEMENT;
 
                     // Prepare parameters to fetch permissible values
                     Map<String, Object> params = new HashMap<>();
-                    if (DxfFileConstants.A
-                            .equals(pl.getVirtualBuilding().getMostRestrictiveFarHelper().getType().getCode())) {
-                        occupancyName = "Residential";
-                    }
-
+                   
                     params.put("feature", feature);
                     params.put("occupancy", occupancyName);
 

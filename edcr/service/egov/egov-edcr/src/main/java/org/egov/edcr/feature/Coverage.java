@@ -45,29 +45,25 @@
  *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-/* 
- * Edited by @Bhupesh Dewangan
- */
+
 package org.egov.edcr.feature;
 
 import static org.egov.edcr.constants.DxfFileConstants.A;
 import static org.egov.edcr.constants.DxfFileConstants.F;
-import static org.egov.edcr.constants.DxfFileConstants.G;
-//import static org.egov.edcr.constants.DxfFileConstants.J;
-import static org.egov.edcr.utility.DcrConstants.OBJECTNOTDEFINED;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.egov.common.entity.dcr.helper.OccupancyHelperDetail;
 import org.egov.common.entity.edcr.Block;
 import org.egov.common.entity.edcr.Floor;
 import org.egov.common.entity.edcr.Measurement;
@@ -77,7 +73,10 @@ import org.egov.common.entity.edcr.OccupancyTypeHelper;
 import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.Result;
 import org.egov.common.entity.edcr.ScrutinyDetail;
+import org.egov.edcr.service.EdcrRestService;
+import org.egov.edcr.service.FetchEdcrRulesMdms;
 import org.egov.edcr.utility.DcrConstants;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -90,6 +89,9 @@ public class Coverage extends FeatureProcess {
 	private static final String RULE_DESCRIPTION_KEY = "coverage.description";
 	private static final String RULE_EXPECTED_KEY = "coverage.expected";
 	private static final String RULE_ACTUAL_KEY = "coverage.actual";
+	
+	@Autowired
+	FetchEdcrRulesMdms fetchEdcrRulesMdms;
 //	private static final BigDecimal Thirty = BigDecimal.valueOf(30);
 //	private static final BigDecimal ThirtyFive = BigDecimal.valueOf(35);
 //	private static final BigDecimal Forty = BigDecimal.valueOf(40);
@@ -196,14 +198,28 @@ public class Coverage extends FeatureProcess {
 //		}
 //		String occupancyType;
 
+		String occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl);
+		String feature = "Coverage";
 		// get coverage permissible value from method and store in
 		// permissibleCoverageValue
-		if (plotArea.compareTo(BigDecimal.valueOf(0)) > 0 && mostRestrictiveOccupancy != null &&
-				A.equals(mostRestrictiveOccupancy.getType().getCode())
+		if (plotArea.compareTo(BigDecimal.valueOf(0)) > 0 && mostRestrictiveOccupancy != null
 				) {
 //			occupancyType = mostRestrictiveOccupancy.getType().getCode();
-			permissibleCoverageValue = getPermissibleCoverageForResidential(plotArea, coreArea);
+			
+			permissibleCoverageValue = getPermissibleCoverage(plotArea, feature, occupancyName,
+					pl.getEdcrRulesFeatures());
 		}
+
+		if (permissibleCoverageValue.compareTo(BigDecimal.valueOf(0)) > 0) {
+			processCoverage(pl, mostRestrictiveOccupancy.getType().getName(), totalCoverage, permissibleCoverageValue
+					);
+		}
+//		if (plotArea.compareTo(BigDecimal.valueOf(0)) > 0 && mostRestrictiveOccupancy != null &&
+//				A.equals(mostRestrictiveOccupancy.getType().getCode())
+//				) {
+////			occupancyType = mostRestrictiveOccupancy.getType().getCode();
+//			permissibleCoverageValue = getPermissibleCoverageForResidential(plotArea, coreArea);
+//		}
 				//permissibleCoverageValue = getPermissibleCoverageForMix(plotArea);
 //			} else if (A.equals(mostRestrictiveOccupancy.getType().getCode())) { // if
 //				permissibleCoverageValue = getPermissibleCoverageForResidential(plotArea);
@@ -216,22 +232,28 @@ public class Coverage extends FeatureProcess {
 //				permissibleCoverageValue = getPermissibleCoverageForIndustrial();
 //			}
 		
-
-		if (permissibleCoverageValue.compareTo(BigDecimal.valueOf(0)) > 0
-				&& A.equals(mostRestrictiveOccupancy.getType().getCode())
-				) {
-			//if (occupancyList != null && occupancyList.size() > 1) {
-				processCoverage(pl,mostRestrictiveOccupancy.getType().getName(), totalCoverage, permissibleCoverageValue);
-		//	}
-//			else if (A.equals(mostRestrictiveOccupancy.getType().getCode())
-//					|| F.equals(mostRestrictiveOccupancy.getType().getCode())) {
+		
+//		permissibleCoverageValue = getPermissibleCoverage(plotArea, feature, occupancyName,
+//				pl.getEdcrRulesFeatures());
+//		if (permissibleCoverageValue.compareTo(BigDecimal.valueOf(0)) > 0
+//				&& A.equals(mostRestrictiveOccupancy.getType().getCode())
+//				) {
+//			//if (occupancyList != null && occupancyList.size() > 1) {
+//				processCoverage(pl,mostRestrictiveOccupancy.getType().getName(), totalCoverage, permissibleCoverageValue);
+//		//	}
 //
-//			} 
-//			else {
-//				processCoverage(pl, mostRestrictiveOccupancy.getType().getName(), totalCoverage,
-//						permissibleCoverageValue);
+//				if (A.equals(mostRestrictiveOccupancy.getType().getCode())) { // if
+//					occupancyName = "Residential";
+//
+//				} else if (F.equals(mostRestrictiveOccupancy.getType().getCode())) { // if
+//
+//					occupancyName = "Commercial";
+//
+//				}
+
+//				
 //			}
-		}
+		//}
 
 //		if (roadWidth != null && roadWidth.compareTo(ROAD_WIDTH_TWELVE_POINTTWO) >= 0
 //				&& roadWidth.compareTo(ROAD_WIDTH_THIRTY_POINTFIVE) <= 0) {
@@ -241,6 +263,48 @@ public class Coverage extends FeatureProcess {
 
 		return pl;
 	}
+	
+	
+	private BigDecimal getPermissibleCoverage(BigDecimal area,  String feature,
+			String occupancyName, Map<String, List<Map<String, Object>>> edcrRuleList) {
+		LOG.info("inside getPermissibleCoverage()");
+
+		BigDecimal permissibleCoverage = BigDecimal.ZERO;
+
+		Map<String, Object> params = new HashMap<>();
+		params.put("feature", feature);
+		params.put("occupancy", occupancyName);
+		params.put("plotArea", area);
+		//params.put("developmentZone", developmentZone);
+		
+		
+		ArrayList<String> valueFromColumn = new ArrayList<>();
+		valueFromColumn.add("permissibleValue");
+
+		List<Map<String, Object>> permissibleValue = new ArrayList<>();
+
+		try {
+			permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
+			LOG.info("permissibleValue" + permissibleValue);
+			
+
+		} catch (NullPointerException e) {
+
+			LOG.error("Permissible Value for Coverage not found--------", e);
+			return null;
+		}
+
+		if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey("permissibleValue")) {
+			permissibleCoverage = BigDecimal
+					.valueOf(Double.valueOf(permissibleValue.get(0).get("permissibleValue").toString()));
+		}
+		
+		return permissibleCoverage;
+		
+		
+
+	}
+
 
 //	private BigDecimal getPermissibleCoverage(OccupancyType type, BigDecimal area) {
 
@@ -252,7 +316,7 @@ public class Coverage extends FeatureProcess {
 		BigDecimal permissibleCoverage = BigDecimal.ZERO;
 
 		if(coreArea.equalsIgnoreCase("Yes")) {
-			permissibleCoverage = BigDecimal.valueOf(90);
+			permissibleCoverage = BigDecimal.valueOf(100);
 		}else {
 		if (plotArea.compareTo(BigDecimal.valueOf(150)) <= 0) {
             permissibleCoverage = BigDecimal.valueOf(90); // 90% coverage for plot area up to 150 sqm

@@ -48,6 +48,7 @@
 package org.egov.edcr.feature;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -55,6 +56,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.egov.common.entity.edcr.Block;
 import org.egov.common.entity.edcr.Floor;
 import org.egov.common.entity.edcr.Lift;
@@ -64,11 +67,16 @@ import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.Result;
 import org.egov.common.entity.edcr.ScrutinyDetail;
 import org.egov.edcr.constants.DxfFileConstants;
+import org.egov.edcr.service.EdcrRestService;
+import org.egov.edcr.service.FetchEdcrRulesMdms;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class LiftService extends FeatureProcess {
 
+	@Autowired
+	FetchEdcrRulesMdms fetchEdcrRulesMdms;
     private static final String SUBRULE_48_DESC = "Minimum number of lifts for block %s";
     private static final String SUBRULE_48 = "48";
     private static final String REMARKS = "Remarks";
@@ -77,6 +85,7 @@ public class LiftService extends FeatureProcess {
     private static final String SUBRULE_118 = "118";
     private static final String SUBRULE_118_DESCRIPTION = "Dimension Of lift";
     private static final String SUBRULE_118_DESC = "Minimum dimension Of lift";
+    private static final Logger LOG = LogManager.getLogger(LiftService.class);
   
 
     @Override
@@ -135,7 +144,40 @@ public class LiftService extends FeatureProcess {
 					 * block.getBuilding().getOccupancies().stream() .map(occupancy ->
 					 * occupancy.getType()).collect(Collectors.toList());
 					 */
-					BigDecimal noOfLiftsRqrd;
+					BigDecimal noOfLiftsRqrd = BigDecimal.ZERO;
+					String occupancyName = fetchEdcrRulesMdms.getOccupancyName(plan);
+					
+					 String feature = "lift";
+						
+						Map<String, Object> params = new HashMap<>();
+						
+						params.put("feature", feature);
+						params.put("occupancy", occupancyName);
+						
+
+						Map<String,List<Map<String,Object>>> edcrRuleList = plan.getEdcrRulesFeatures();
+						
+						ArrayList<String> valueFromColumn = new ArrayList<>();
+						valueFromColumn.add("permissibleValue");
+
+						List<Map<String, Object>> permissibleValue = new ArrayList<>();
+
+						try {
+							permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
+							LOG.info("permissibleValue" + permissibleValue);
+							
+
+						} catch (NullPointerException e) {
+
+							LOG.error("Permissible Value for Lift Service not found--------", e);
+							return null;
+						}
+
+						if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey("permissibleValue")) {
+							noOfLiftsRqrd = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get("permissibleValue").toString()));
+						}
+			
+
 					/*
 					 * To be added Rule 48 Lift shall be provided for buildings above 15 m. height
 					 * in case of apartments, group housing, commercial, institutional and office
@@ -152,7 +194,7 @@ public class LiftService extends FeatureProcess {
 									plan.getVirtualBuilding().getMostRestrictiveFarHelper().getSubtype().getCode())
 							|| DxfFileConstants.F.equals(
 									plan.getVirtualBuilding().getMostRestrictiveFarHelper().getSubtype().getCode()))) {
-						noOfLiftsRqrd = BigDecimal.valueOf(1);
+//						noOfLiftsRqrd = BigDecimal.valueOf(1);
 						boolean valid = false;
 						if (BigDecimal.valueOf(Double.valueOf(block.getNumberOfLifts()))
 								.compareTo(noOfLiftsRqrd) >= 0) {

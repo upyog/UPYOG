@@ -13,6 +13,7 @@ import java.util.Set;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.egov.common.constants.MdmsFeatureConstants;
+import org.egov.common.entity.edcr.Plan;
 import org.egov.commons.mdms.BpaMdmsUtil;
 import org.egov.edcr.constants.EdcrRulesMdmsConstants;
 //import org.egov.infra.mdms.controller.MDMSController;
@@ -34,8 +35,8 @@ public class FetchEdcrRulesMdms {
 		    LOG.info("Entered getEdcrRules method");
 
 		    // Make the MDMS call
-		    Object mdmsData = bpaMdmsUtil.mDMSCallv2(new RequestInfo(), "pg");
-//		    Object mdmsData = bpaMdmsUtil.mDMSCall(new RequestInfo(), "pg");
+		 //   Object mdmsData = bpaMdmsUtil.mDMSCallv2(new RequestInfo(), "pg");
+		    Object mdmsData = bpaMdmsUtil.mDMSCall(new RequestInfo(), "pg");
 //		    Log.info("----------------mdmsdata------------- :: " + mdmsData);
 		    if (mdmsData == null) {
 		        LOG.warn("MDMS data is null");
@@ -527,6 +528,39 @@ public class FetchEdcrRulesMdms {
 	            return new BigDecimal(((Number) value).doubleValue());
 	        }
 	        return null;
+	    }
+	    
+	    public String getOccupancyName(Plan pl) {
+	        if (pl.getPlanInformation() == null || pl.getPlanInformation().getOccupancy() == null) {
+	            return null;
+	        }
+
+	        String occupancyName = pl.getPlanInformation().getOccupancy();
+	        
+	        Log.info("Occupancy Name : " + occupancyName);
+
+	        if (occupancyName.equalsIgnoreCase(EdcrRulesMdmsConstants.RESIDENTIAL)) {
+	            return EdcrRulesMdmsConstants.RESIDENTIAL;
+	        } else if (occupancyName.equalsIgnoreCase(EdcrRulesMdmsConstants.INDUSTRIAL)) {
+	            return EdcrRulesMdmsConstants.INDUSTRIAL;
+	        } else if (occupancyName.equalsIgnoreCase(EdcrRulesMdmsConstants.COMMERCIAL)) {
+	            return EdcrRulesMdmsConstants.COMMERCIAL;
+	        } else if (occupancyName.equalsIgnoreCase(EdcrRulesMdmsConstants.STORAGE)) {
+	            return EdcrRulesMdmsConstants.STORAGE;
+	        } else if (occupancyName.equalsIgnoreCase(EdcrRulesMdmsConstants.ASSEMBLY)) {
+	            return EdcrRulesMdmsConstants.ASSEMBLY;
+	        } else if (occupancyName.equalsIgnoreCase(EdcrRulesMdmsConstants.BUSINESS)) {
+	            return EdcrRulesMdmsConstants.BUSINESS;
+	        } else if (occupancyName.equalsIgnoreCase(EdcrRulesMdmsConstants.HAZARDOUS)) {
+	            return EdcrRulesMdmsConstants.HAZARDOUS;
+	        } else if (occupancyName.equalsIgnoreCase(EdcrRulesMdmsConstants.EDUCATIONAL)) {
+	            return EdcrRulesMdmsConstants.EDUCATIONAL;
+	        }  else if (occupancyName.equalsIgnoreCase(EdcrRulesMdmsConstants.MEDICAL)) {
+	            return EdcrRulesMdmsConstants.MEDICAL;
+	        }
+	        
+
+	        return occupancyName;
 	    }
 
 }

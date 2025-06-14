@@ -49,7 +49,6 @@ package org.egov.edcr.feature;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -57,29 +56,76 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.egov.common.constants.MdmsFeatureConstants;
 import org.egov.common.entity.edcr.Block;
 import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.Result;
 import org.egov.common.entity.edcr.ScrutinyDetail;
-import org.egov.common.entity.edcr.SetBack;
+import org.egov.edcr.constants.DxfFileConstants;
+import org.egov.edcr.constants.EdcrRulesMdmsConstants;
+import org.egov.edcr.service.FetchEdcrRulesMdms;
 import org.egov.edcr.utility.DcrConstants;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class PlantationGreenStrip extends FeatureProcess {
-
+    private static final Logger LOG = LogManager.getLogger(PlantationGreenStrip.class);
     private static final String RULE_37_6 = "37-6";
 
     @Override
     public Plan validate(Plan pl) {
-        return null;
+        return null; // Validation logic is not implemented
     }
+
+    @Autowired
+    FetchEdcrRulesMdms fetchEdcrRulesMdms;
 
     @Override
     public Plan process(Plan pl) {
-        if (pl.getPlot() != null && pl.getPlot().getArea().compareTo(BigDecimal.valueOf(300)) > 0) {
+        // Initialize variables to store permissible values for plantation green strip
+        BigDecimal plantationGreenStripPlanValue = BigDecimal.ZERO;
+        BigDecimal plantationGreenStripMinWidth = BigDecimal.ZERO;
+
+        // Determine the occupancy type
+        String occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl);
+        String feature = MdmsFeatureConstants.PLANTATION_GREEN_STRIP; // Feature name for plantation green strip
+
+        // Prepare parameters for fetching MDMS values
+        Map<String, Object> params = new HashMap<>();
+       
+        params.put("feature", feature);
+        params.put("occupancy", occupancyName);
+
+        // Fetch the list of rules from the plan object
+        Map<String, List<Map<String, Object>>> edcrRuleList = pl.getEdcrRulesFeatures();
+
+        // Specify the columns to fetch from the rules
+        ArrayList<String> valueFromColumn = new ArrayList<>();
+        valueFromColumn.add(EdcrRulesMdmsConstants.PLANTATION_GREEN_STRIP_PLAN_VALUE); // Minimum plot area for plantation
+        valueFromColumn.add(EdcrRulesMdmsConstants.PLANTATION_GREEN_STRIP_MIN_WIDTH); // Minimum width of plantation strip
+
+        // Initialize a list to store permissible values
+        List<Map<String, Object>> permissibleValue = new ArrayList<>();
+
+        // Fetch permissible values from MDMS
+        permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
+        LOG.info("permissibleValue" + permissibleValue); // Log the fetched permissible values
+
+        // Check if permissible values are available and update the plantation green strip values
+        if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey(EdcrRulesMdmsConstants.PLANTATION_GREEN_STRIP_PLAN_VALUE)) {
+            plantationGreenStripPlanValue = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.PLANTATION_GREEN_STRIP_PLAN_VALUE).toString()));
+            plantationGreenStripMinWidth = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.PLANTATION_GREEN_STRIP_MIN_WIDTH).toString()));
+        }
+
+        // Check if the plot area exceeds the minimum required area for plantation
+        if (pl.getPlot() != null && pl.getPlot().getArea().compareTo(plantationGreenStripPlanValue) > 0) {
+            // Iterate through all blocks in the plan
             for (Block block : pl.getBlocks()) {
 
+                // Initialize scrutiny details for the block
                 ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
                 scrutinyDetail.addColumnHeading(1, RULE_NO);
                 scrutinyDetail.addColumnHeading(2, DESCRIPTION);
@@ -88,76 +134,58 @@ public class PlantationGreenStrip extends FeatureProcess {
                 scrutinyDetail.addColumnHeading(5, STATUS);
                 scrutinyDetail.setKey("Block_" + block.getNumber() + "_" + "Continuous Green Planting Strip");
 
-                boolean isWidthAccepted = false;
-                // boolean isHeightAccepted = false;
-                BigDecimal minWidth = BigDecimal.ZERO;
-                // BigDecimal minHeight = BigDecimal.ZERO;
+                boolean isWidthAccepted = false; // Flag to track if the width is acceptable
+                BigDecimal minWidth = BigDecimal.ZERO; // Minimum width of the plantation strip
+
+                // Collect the widths of all plantation green strips in the block
                 List<BigDecimal> widths = block.getPlantationGreenStripes().stream()
                         .map(greenStrip -> greenStrip.getWidth()).collect(Collectors.toList());
-                /*
-                 * List<BigDecimal> heights = block.getPlantationGreenStripes().stream() .map(greenStripe ->
-                 * greenStripe.getHeight()).collect(Collectors.toList());
-                 */
-                // List<BigDecimal> minimumDistances = new ArrayList<>();
 
-//                if (widths.isEmpty()) {
-//                    pl.addError("RULE_37_6", getLocaleMessage(DcrConstants.OBJECTNOTDEFINED,
-//                            "Block " + block.getNumber() + " " + "Continuous Green Planting Strip"));
-//                }
-                /*
-                 * for (SetBack setBack : block.getSetBacks()) { if (setBack.getRearYard() != null)
-                 * minimumDistances.add(setBack.getRearYard().getHeight()); if (setBack.getSideYard1() != null)
-                 * minimumDistances.add(setBack.getSideYard1().getHeight()); if (setBack.getSideYard2() != null)
-                 * minimumDistances.add(setBack.getSideYard2().getHeight()); }
-                 */
-
+                // Check if widths are available
                 if (!widths.isEmpty()) {
+                    // Find the minimum width among the plantation strips
                     minWidth = widths.stream().reduce(BigDecimal::min).get();
-                    // minHeight = heights.stream().reduce(BigDecimal::min).get();
-                    // BigDecimal minLength = Collections.min(minimumDistances);
 
-                    if (minWidth.compareTo(BigDecimal.valueOf(0.6)) >= 0) {
-                        isWidthAccepted = true;
-
+                    // Validate the minimum width against the permissible width
+                    if (minWidth.compareTo(plantationGreenStripMinWidth) >= 0) {
+                        isWidthAccepted = true; // Mark as accepted if the width is within permissible limits
                     }
 
-                    /*
-                     * if (minHeight.doubleValue()>=1d) { isHeightAccepted = true; }
-                     */
-
-                    /*
-                     * if (minHeight.doubleValue()>=minLength.doubleValue()) { isHeightAccepted = true; }
-                     */
-                    buildResult(pl, scrutinyDetail, isWidthAccepted, "Width of continuos plantation green strip",
-                            ">= 0.6",
+                    // Add the result to the scrutiny report
+                    buildResult(pl, scrutinyDetail, isWidthAccepted, "Width of continuous plantation green strip",
+                            ">= " + plantationGreenStripMinWidth.toString(),
                             minWidth.setScale(DcrConstants.DECIMALDIGITS_MEASUREMENTS, DcrConstants.ROUNDMODE_MEASUREMENTS)
                                     .toString());
-                    /*
-                     * buildResult(pl, scrutinyDetail, isHeightAccepted, "length of continuos plantation green strip ",
-                     * "should be equal to rear or side yard",
-                     * minHeight.setScale(DcrConstants.DECIMALDIGITS_MEASUREMENTS,DcrConstants.ROUNDMODE_MEASUREMENTS).toString())
-                     * ;
-                     */
                 }
             }
         }
-        return pl;
+        return pl; // Return the updated plan object
     }
 
+    /**
+     * Adds the result of the validation to the scrutiny report.
+     *
+     * @param pl The plan object
+     * @param scrutinyDetail The scrutiny detail object
+     * @param valid Whether the validation passed or failed
+     * @param description Description of the validation
+     * @param permited The permissible value
+     * @param provided The provided value
+     */
     private void buildResult(Plan pl, ScrutinyDetail scrutinyDetail, boolean valid, String description, String permited,
             String provided) {
         Map<String, String> details = new HashMap<>();
-        details.put(RULE_NO, RULE_37_6);
-        details.put(DESCRIPTION, description);
-        details.put(PERMISSIBLE, permited);
-        details.put(PROVIDED, provided);
-        details.put(STATUS, valid ? Result.Accepted.getResultVal() : Result.Not_Accepted.getResultVal());
-        scrutinyDetail.getDetail().add(details);
-        pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+        details.put(RULE_NO, RULE_37_6); // Rule number for plantation green strip
+        details.put(DESCRIPTION, description); // Description of the validation
+        details.put(PERMISSIBLE, permited); // Permissible value
+        details.put(PROVIDED, provided); // Provided value
+        details.put(STATUS, valid ? Result.Accepted.getResultVal() : Result.Not_Accepted.getResultVal()); // Validation status
+        scrutinyDetail.getDetail().add(details); // Add details to scrutiny detail
+        pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail); // Add scrutiny detail to the plan's report output
     }
 
     @Override
     public Map<String, Date> getAmendments() {
-        return new LinkedHashMap<>();
+        return new LinkedHashMap<>(); // Return an empty map for amendments
     }
 }

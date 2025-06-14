@@ -236,7 +236,7 @@ public class GeneralStair_Citya extends FeatureProcess {
         			subOccupancyName = "Apartment/Flat";
 //        			return BigDecimal.valueOf(0.25);
         		} else {
-        			occupancyName = "Common";
+        			 occupancyName = fetchEdcrRulesMdms.getOccupancyName(plan);
 //        			return BigDecimal.valueOf(0.3);
         		}
         		

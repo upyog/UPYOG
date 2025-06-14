@@ -48,6 +48,7 @@
 package org.egov.edcr.feature;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -57,12 +58,17 @@ import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import org.egov.common.constants.MdmsFeatureConstants;
 import org.egov.common.entity.edcr.Block;
 import org.egov.common.entity.edcr.Building;
 import org.egov.common.entity.edcr.Floor;
 import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.Result;
 import org.egov.common.entity.edcr.ScrutinyDetail;
+import org.egov.edcr.constants.DxfFileConstants;
+import org.egov.edcr.constants.EdcrRulesMdmsConstants;
+import org.egov.edcr.service.FetchEdcrRulesMdms;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -78,18 +84,56 @@ public class OverHangs extends FeatureProcess {
 
         return pl;
     }
+    
+    @Autowired
+    FetchEdcrRulesMdms fetchEdcrRulesMdms;
 
     @Override
     public Plan process(Plan pl) {
 
+        // Initialize a map to store rule details
         Map<String, String> details = new HashMap<>();
-        details.put(RULE_NO, RULE_45);
-        details.put(DESCRIPTION, OVERHANGS_DESCRIPTION);
+        details.put(RULE_NO, RULE_45); // Rule number for overhangs
+        details.put(DESCRIPTION, OVERHANGS_DESCRIPTION); // Description of the rule
 
+        // Initialize variables to store minimum width and permissible overhang value
         BigDecimal minWidth = BigDecimal.ZERO;
+        BigDecimal overHangsValue = BigDecimal.ZERO;
 
+        // Determine the occupancy type
+        String occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl);
+        String feature = MdmsFeatureConstants.OVERHANGS; // Feature name for overhangs
+
+        Map<String, Object> params = new HashMap<>();
+       
+
+        // Add feature and occupancy to the parameters map
+        params.put("feature", feature);
+        params.put("occupancy", occupancyName);
+
+        // Fetch the list of rules from the plan object
+        Map<String, List<Map<String, Object>>> edcrRuleList = pl.getEdcrRulesFeatures();
+
+        // Specify the columns to fetch from the rules
+        ArrayList<String> valueFromColumn = new ArrayList<>();
+        valueFromColumn.add(EdcrRulesMdmsConstants.PERMISSIBLE_VALUE);
+
+        // Initialize a list to store permissible values
+        List<Map<String, Object>> permissibleValue = new ArrayList<>();
+
+        // Fetch permissible values from MDMS
+        permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
+        LOG.info("permissibleValue" + permissibleValue); // Log the fetched permissible values
+
+        // Check if permissible values are available and update the overhangs value
+        if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey(EdcrRulesMdmsConstants.PERMISSIBLE_VALUE)) {
+            overHangsValue = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.PERMISSIBLE_VALUE).toString()));
+        }
+
+        // Iterate through all blocks in the plan
         for (Block b : pl.getBlocks()) {
 
+            // Initialize scrutiny details for the block
             ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
             scrutinyDetail.setKey("Block_" + b.getNumber() + "_" + "Chajja");
             scrutinyDetail.addColumnHeading(1, RULE_NO);
@@ -98,25 +142,34 @@ public class OverHangs extends FeatureProcess {
             scrutinyDetail.addColumnHeading(4, PERMISSIBLE);
             scrutinyDetail.addColumnHeading(5, PROVIDED);
             scrutinyDetail.addColumnHeading(6, STATUS);
+
+            // Get the building object from the block
             Building building = b.getBuilding();
             if (building != null) {
+                // Iterate through all floors in the building
                 for (Floor floor : building.getFloors()) {
+                    // Check if the floor has overhangs
                     if (floor.getOverHangs() != null && !floor.getOverHangs().isEmpty()) {
+                        // Collect the widths of all overhangs
                         List<BigDecimal> widths = floor.getOverHangs().stream().map(overhang -> overhang.getWidth())
                                 .collect(Collectors.toList());
 
+                        // Find the minimum width among the overhangs
                         minWidth = widths.stream().reduce(BigDecimal::min).get();
 
-                        if (minWidth.compareTo(new BigDecimal("0.75")) > 0) {
+                        // Compare the minimum width with the permissible overhang value
+                        if (minWidth.compareTo(overHangsValue) > 0) {
+                            // If the minimum width is greater than the permissible value, mark as Accepted
                             details.put(FLOOR, floor.getNumber().toString());
-                            details.put(PERMISSIBLE, ">0.75");
+                            details.put(PERMISSIBLE, ">" + overHangsValue.toString());
                             details.put(PROVIDED, minWidth.toString());
                             details.put(STATUS, Result.Accepted.getResultVal());
                             scrutinyDetail.getDetail().add(details);
                             pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
                         } else {
+                            // If the minimum width is less than or equal to the permissible value, mark as Not Accepted
                             details.put(FLOOR, floor.getNumber().toString());
-                            details.put(PERMISSIBLE, ">0.75");
+                            details.put(PERMISSIBLE, ">" + overHangsValue.toString());
                             details.put(PROVIDED, minWidth.toString());
                             details.put(STATUS, Result.Not_Accepted.getResultVal());
                             scrutinyDetail.getDetail().add(details);
@@ -125,9 +178,8 @@ public class OverHangs extends FeatureProcess {
                     }
                 }
             }
-
         }
-        return pl;
+        return pl; // Return the updated plan object
     }
 
     @Override

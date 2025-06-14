@@ -61,6 +61,9 @@ import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.egov.common.constants.MdmsFeatureConstants;
 import org.egov.common.entity.dcr.helper.OccupancyHelperDetail;
 import org.egov.common.entity.edcr.Block;
 import org.egov.common.entity.edcr.Floor;
@@ -70,25 +73,32 @@ import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.Result;
 import org.egov.common.entity.edcr.ScrutinyDetail;
 import org.egov.edcr.constants.DxfFileConstants;
+import org.egov.edcr.constants.EdcrRulesMdmsConstants;
+import org.egov.edcr.service.FetchEdcrRulesMdms;
 import org.egov.edcr.service.ProcessHelper;
 import org.egov.edcr.utility.DcrConstants;
 import org.egov.infra.utils.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 
 @Service
 public class ExitWidth extends FeatureProcess {
-
+	
+	private static final Logger LOG = LogManager.getLogger(ExitWidth.class);
     private static final String EXIT_WIDTH_DESC = "Exit Width";
-    // private static final String SUB_RULE_DESCRIPTION = "Minimum exit width";
-    public static final BigDecimal VAL_0_75 = BigDecimal.valueOf(0.75);
-    public static final BigDecimal VAL_1_2 = BigDecimal.valueOf(1.2);
     private static final String SUBRULE_42_3 = "42-3";
-    // private static final String SUB_RULE_OCCUPANTS_DESCRIPTION = "Maximum number of occupants that can be allowed through";
     private static final String OCCUPANCY = "Occupancy";
     private static final String EXIT_WIDTH = "Exit Width";
     private static final String FLOOR = "Floor";
 
+    /**
+     * Validates the given plan object for exit width compliance.
+     * Ensures that either exit width for doors or stairs is defined for each floor.
+     *
+     * @param pl The plan object to validate.
+     * @return The validated plan object.
+     */
     private Plan validateExitWidth(Plan pl) {
         HashMap<String, String> errors = new HashMap<>();
         // validate either exit width door or exit width stair should be compulsory
@@ -116,13 +126,155 @@ public class ExitWidth extends FeatureProcess {
         }
         return pl;
     }
+    
+    @Autowired
+    FetchEdcrRulesMdms fetchEdcrRulesMdms;
 
+    /**
+     * Processes the given plan to validate exit width dimensions.
+     * Fetches permissible values for exit width and validates them against the plan details.
+     *
+     * @param pl The plan object to process.
+     * @return The processed plan object with scrutiny details added.
+     */
     @Override
     public Plan process(Plan pl) {
 
+    	
         String rule = EXIT_WIDTH_DESC;
         String subRule = null;
         validateExitWidth(pl);
+        
+        BigDecimal exitWidthOccupancyTypeHandlerVal = BigDecimal.ZERO;
+        BigDecimal exitWidthNotOccupancyTypeHandlerVal = BigDecimal.ZERO;
+        BigDecimal exitWidth_A_occupantLoadDivisonFactor = BigDecimal.ZERO;
+        BigDecimal exitWidth_A_noOfDoors = BigDecimal.ZERO;
+        BigDecimal exitWidth_A_noOfOccupantsPerUnitExitWidthOfStairWay = BigDecimal.ZERO;
+        BigDecimal exitWidth_A_SR_occupantLoadDivisonFactor = BigDecimal.ZERO;
+        BigDecimal exitWidth_A_SR_noOfDoors = BigDecimal.ZERO;
+        BigDecimal exitWidth_A_SR_noOfOccupantsPerUnitExitWidthOfStairWay = BigDecimal.ZERO;
+        BigDecimal exitWidth_B_occupantLoadDivisonFactor = BigDecimal.ZERO;
+        BigDecimal exitWidth_B_noOfDoors = BigDecimal.ZERO;
+        BigDecimal exitWidth_B_noOfOccupantsPerUnitExitWidthOfStairWay = BigDecimal.ZERO;
+        BigDecimal exitWidth_C_occupantLoadDivisonFactor = BigDecimal.ZERO;
+        BigDecimal exitWidth_C_noOfDoors = BigDecimal.ZERO;
+        BigDecimal exitWidth_C_noOfOccupantsPerUnitExitWidthOfStairWay = BigDecimal.ZERO;
+        BigDecimal exitWidth_D_occupantLoadDivisonFactor = BigDecimal.ZERO;
+        BigDecimal exitWidth_D_noOfDoors = BigDecimal.ZERO;
+        BigDecimal exitWidth_D_noOfOccupantsPerUnitExitWidthOfStairWay = BigDecimal.ZERO;
+        BigDecimal exitWidth_E_occupantLoadDivisonFactor = BigDecimal.ZERO;
+        BigDecimal exitWidth_E_noOfDoors = BigDecimal.ZERO;
+        BigDecimal exitWidth_E_noOfOccupantsPerUnitExitWidthOfStairWay = BigDecimal.ZERO;
+        BigDecimal exitWidth_F_occupantLoadDivisonFactor = BigDecimal.ZERO;
+        BigDecimal exitWidth_F_noOfDoors = BigDecimal.ZERO;
+        BigDecimal exitWidth_F_noOfOccupantsPerUnitExitWidthOfStairWay = BigDecimal.ZERO;
+        BigDecimal exitWidth_G_occupantLoadDivisonFactor = BigDecimal.ZERO;
+        BigDecimal exitWidth_G_noOfDoors = BigDecimal.ZERO;
+        BigDecimal exitWidth_G_noOfOccupantsPerUnitExitWidthOfStairWay = BigDecimal.ZERO;
+        BigDecimal exitWidth_H_occupantLoadDivisonFactor = BigDecimal.ZERO;
+        BigDecimal exitWidth_H_noOfDoors = BigDecimal.ZERO;
+        BigDecimal exitWidth_H_noOfOccupantsPerUnitExitWidthOfStairWay = BigDecimal.ZERO;
+        BigDecimal exitWidth_I_occupantLoadDivisonFactor = BigDecimal.ZERO;
+        BigDecimal exitWidth_I_noOfDoors = BigDecimal.ZERO;
+        BigDecimal exitWidth_I_noOfOccupantsPerUnitExitWidthOfStairWay = BigDecimal.ZERO;
+        
+        String occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl);
+		
+			 String feature = MdmsFeatureConstants.EXIT_WIDTH;
+				
+				Map<String, Object> params = new HashMap<>();
+				
+				params.put("feature", feature);
+				params.put("occupancy", occupancyName);
+				
+				Map<String,List<Map<String,Object>>> edcrRuleList = pl.getEdcrRulesFeatures();
+				
+				ArrayList<String> valueFromColumn = new ArrayList<>();
+		        valueFromColumn.add(EdcrRulesMdmsConstants.EXIT_WIDTH_OCCUPANCY_TYPE_HANDLER_VAL);
+		        valueFromColumn.add(EdcrRulesMdmsConstants.EXIT_WIDTH_NOT_OCCUPANCY_TYPE_HANDLER_VAL);
+		        valueFromColumn.add(EdcrRulesMdmsConstants.EXIT_WIDTH_A_OCCUPANT_LOAD_DIVISON_FACTOR);
+		        valueFromColumn.add(EdcrRulesMdmsConstants.EXIT_WIDTH_A_NO_OF_DOORS);
+		        valueFromColumn.add(EdcrRulesMdmsConstants.EXIT_WIDTH_A_NO_OF_OCCUPANTS_PER_UNIT_EXIT_WIDTH_OF_STAIRWAY);
+		        valueFromColumn.add(EdcrRulesMdmsConstants.EXIT_WIDTH_A_SR_OCCUPANT_LOAD_DIVISON_FACTOR);
+		        valueFromColumn.add(EdcrRulesMdmsConstants.EXIT_WIDTH_A_SR_NO_OF_DOORS);
+		        valueFromColumn.add(EdcrRulesMdmsConstants.EXIT_WIDTH_A_SR_NO_OF_OCCUPANTS_PER_UNIT_EXIT_WIDTH_OF_STAIRWAY);
+		        valueFromColumn.add(EdcrRulesMdmsConstants.EXIT_WIDTH_B_OCCUPANT_LOAD_DIVISON_FACTOR);
+		        valueFromColumn.add(EdcrRulesMdmsConstants.EXIT_WIDTH_B_NO_OF_DOORS);
+		        valueFromColumn.add(EdcrRulesMdmsConstants.EXIT_WIDTH_B_NO_OF_OCCUPANTS_PER_UNIT_EXIT_WIDTH_OF_STAIRWAY);
+		        valueFromColumn.add(EdcrRulesMdmsConstants.EXIT_WIDTH_C_OCCUPANT_LOAD_DIVISON_FACTOR);
+		        valueFromColumn.add(EdcrRulesMdmsConstants.EXIT_WIDTH_C_NO_OF_DOORS);
+		        valueFromColumn.add(EdcrRulesMdmsConstants.EXIT_WIDTH_C_NO_OF_OCCUPANTS_PER_UNIT_EXIT_WIDTH_OF_STAIRWAY);
+		        valueFromColumn.add(EdcrRulesMdmsConstants.EXIT_WIDTH_D_OCCUPANT_LOAD_DIVISON_FACTOR);
+		        valueFromColumn.add(EdcrRulesMdmsConstants.EXIT_WIDTH_D_NO_OF_DOORS);
+		        valueFromColumn.add(EdcrRulesMdmsConstants.EXIT_WIDTH_D_NO_OF_OCCUPANTS_PER_UNIT_EXIT_WIDTH_OF_STAIRWAY);
+		        valueFromColumn.add(EdcrRulesMdmsConstants.EXIT_WIDTH_E_OCCUPANT_LOAD_DIVISON_FACTOR);
+		        valueFromColumn.add(EdcrRulesMdmsConstants.EXIT_WIDTH_E_NO_OF_DOORS);
+		        valueFromColumn.add(EdcrRulesMdmsConstants.EXIT_WIDTH_E_NO_OF_OCCUPANTS_PER_UNIT_EXIT_WIDTH_OF_STAIRWAY);
+		        valueFromColumn.add(EdcrRulesMdmsConstants.EXIT_WIDTH_F_OCCUPANT_LOAD_DIVISON_FACTOR);
+		        valueFromColumn.add(EdcrRulesMdmsConstants.EXIT_WIDTH_F_NO_OF_DOORS);
+		        valueFromColumn.add(EdcrRulesMdmsConstants.EXIT_WIDTH_F_NO_OF_OCCUPANTS_PER_UNIT_EXIT_WIDTH_OF_STAIRWAY);
+		        valueFromColumn.add(EdcrRulesMdmsConstants.EXIT_WIDTH_G_OCCUPANT_LOAD_DIVISON_FACTOR);
+		        valueFromColumn.add(EdcrRulesMdmsConstants.EXIT_WIDTH_G_NO_OF_DOORS);
+		        valueFromColumn.add(EdcrRulesMdmsConstants.EXIT_WIDTH_G_NO_OF_OCCUPANTS_PER_UNIT_EXIT_WIDTH_OF_STAIRWAY);
+		        valueFromColumn.add(EdcrRulesMdmsConstants.EXIT_WIDTH_H_OCCUPANT_LOAD_DIVISON_FACTOR);
+		        valueFromColumn.add(EdcrRulesMdmsConstants.EXIT_WIDTH_H_NO_OF_DOORS);
+		        valueFromColumn.add(EdcrRulesMdmsConstants.EXIT_WIDTH_H_NO_OF_OCCUPANTS_PER_UNIT_EXIT_WIDTH_OF_STAIRWAY);
+		        valueFromColumn.add(EdcrRulesMdmsConstants.EXIT_WIDTH_I_OCCUPANT_LOAD_DIVISON_FACTOR);
+		        valueFromColumn.add(EdcrRulesMdmsConstants.EXIT_WIDTH_I_NO_OF_DOORS);
+		        valueFromColumn.add(EdcrRulesMdmsConstants.EXIT_WIDTH_I_NO_OF_OCCUPANTS_PER_UNIT_EXIT_WIDTH_OF_STAIRWAY);
+
+
+				List<Map<String, Object>> permissibleValue = new ArrayList<>();
+			
+				try {
+					permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
+					LOG.info("permissibleValue" + permissibleValue);
+					
+
+					} catch (NullPointerException e) {
+
+						LOG.error("Permissible Value for ExitWidth not found--------", e);
+						return null;
+					}
+
+				if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey(EdcrRulesMdmsConstants.EXIT_WIDTH_OCCUPANCY_TYPE_HANDLER_VAL)) {
+					exitWidthOccupancyTypeHandlerVal = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.EXIT_WIDTH_OCCUPANCY_TYPE_HANDLER_VAL).toString()));
+					exitWidthNotOccupancyTypeHandlerVal = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.EXIT_WIDTH_NOT_OCCUPANCY_TYPE_HANDLER_VAL).toString()));
+					exitWidth_A_occupantLoadDivisonFactor = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.EXIT_WIDTH_A_OCCUPANT_LOAD_DIVISON_FACTOR).toString()));
+					exitWidth_A_noOfDoors = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.EXIT_WIDTH_A_NO_OF_DOORS).toString()));
+					exitWidth_A_noOfOccupantsPerUnitExitWidthOfStairWay = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.EXIT_WIDTH_A_NO_OF_OCCUPANTS_PER_UNIT_EXIT_WIDTH_OF_STAIRWAY).toString()));
+					exitWidth_A_SR_occupantLoadDivisonFactor = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.EXIT_WIDTH_A_SR_OCCUPANT_LOAD_DIVISON_FACTOR).toString()));
+					exitWidth_A_SR_noOfDoors = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.EXIT_WIDTH_A_SR_NO_OF_DOORS).toString()));
+					exitWidth_A_SR_noOfOccupantsPerUnitExitWidthOfStairWay = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.EXIT_WIDTH_A_SR_NO_OF_OCCUPANTS_PER_UNIT_EXIT_WIDTH_OF_STAIRWAY).toString()));
+					exitWidth_B_occupantLoadDivisonFactor = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.EXIT_WIDTH_B_OCCUPANT_LOAD_DIVISON_FACTOR).toString()));
+					exitWidth_B_noOfDoors = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.EXIT_WIDTH_B_NO_OF_DOORS).toString()));
+					exitWidth_B_noOfOccupantsPerUnitExitWidthOfStairWay = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.EXIT_WIDTH_B_NO_OF_OCCUPANTS_PER_UNIT_EXIT_WIDTH_OF_STAIRWAY).toString()));
+					exitWidth_C_occupantLoadDivisonFactor = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.EXIT_WIDTH_C_OCCUPANT_LOAD_DIVISON_FACTOR).toString()));
+					exitWidth_C_noOfDoors = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.EXIT_WIDTH_C_NO_OF_DOORS).toString()));
+					exitWidth_C_noOfOccupantsPerUnitExitWidthOfStairWay = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.EXIT_WIDTH_C_NO_OF_OCCUPANTS_PER_UNIT_EXIT_WIDTH_OF_STAIRWAY).toString()));
+					exitWidth_D_occupantLoadDivisonFactor = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.EXIT_WIDTH_D_OCCUPANT_LOAD_DIVISON_FACTOR).toString()));
+					exitWidth_D_noOfDoors = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.EXIT_WIDTH_D_NO_OF_DOORS).toString()));
+					exitWidth_D_noOfOccupantsPerUnitExitWidthOfStairWay = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.EXIT_WIDTH_D_NO_OF_OCCUPANTS_PER_UNIT_EXIT_WIDTH_OF_STAIRWAY).toString()));
+					exitWidth_E_occupantLoadDivisonFactor = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.EXIT_WIDTH_E_OCCUPANT_LOAD_DIVISON_FACTOR).toString()));
+					exitWidth_E_noOfDoors = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.EXIT_WIDTH_E_NO_OF_DOORS).toString()));
+					exitWidth_E_noOfOccupantsPerUnitExitWidthOfStairWay = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.EXIT_WIDTH_E_NO_OF_OCCUPANTS_PER_UNIT_EXIT_WIDTH_OF_STAIRWAY).toString()));
+					exitWidth_F_occupantLoadDivisonFactor = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.EXIT_WIDTH_F_OCCUPANT_LOAD_DIVISON_FACTOR).toString()));
+					exitWidth_F_noOfDoors = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.EXIT_WIDTH_F_NO_OF_DOORS).toString()));
+					exitWidth_F_noOfOccupantsPerUnitExitWidthOfStairWay = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.EXIT_WIDTH_F_NO_OF_OCCUPANTS_PER_UNIT_EXIT_WIDTH_OF_STAIRWAY).toString()));
+					exitWidth_G_occupantLoadDivisonFactor = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.EXIT_WIDTH_G_OCCUPANT_LOAD_DIVISON_FACTOR).toString()));
+					exitWidth_G_noOfDoors = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.EXIT_WIDTH_G_NO_OF_DOORS).toString()));
+					exitWidth_G_noOfOccupantsPerUnitExitWidthOfStairWay = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.EXIT_WIDTH_G_NO_OF_OCCUPANTS_PER_UNIT_EXIT_WIDTH_OF_STAIRWAY).toString()));
+					exitWidth_H_occupantLoadDivisonFactor = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.EXIT_WIDTH_H_OCCUPANT_LOAD_DIVISON_FACTOR).toString()));
+					exitWidth_H_noOfDoors = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.EXIT_WIDTH_H_NO_OF_DOORS).toString()));
+					exitWidth_H_noOfOccupantsPerUnitExitWidthOfStairWay = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.EXIT_WIDTH_H_NO_OF_OCCUPANTS_PER_UNIT_EXIT_WIDTH_OF_STAIRWAY).toString()));
+					exitWidth_I_occupantLoadDivisonFactor = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.EXIT_WIDTH_I_OCCUPANT_LOAD_DIVISON_FACTOR).toString()));
+					exitWidth_I_noOfDoors = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.EXIT_WIDTH_I_NO_OF_DOORS).toString()));
+					exitWidth_I_noOfOccupantsPerUnitExitWidthOfStairWay = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.EXIT_WIDTH_I_NO_OF_OCCUPANTS_PER_UNIT_EXIT_WIDTH_OF_STAIRWAY).toString()));
+
+				}
+        
+        
+        
         if (!pl.getBlocks().isEmpty()) {
             blk: for (Block block : pl.getBlocks()) {
                 scrutinyDetail = new ScrutinyDetail();
@@ -171,9 +323,9 @@ public class ExitWidth extends FeatureProcess {
                                         || occupancyTypeHelper.equals(DxfFileConstants.A_HE) ||
                                         occupancyTypeHelper.equals(DxfFileConstants.A_AF)
                                         || occupancyTypeHelper.equals(DxfFileConstants.A_PO)) {
-                                    value = VAL_0_75;
+                                    value = exitWidthOccupancyTypeHandlerVal;
                                 } else {
-                                    value = VAL_1_2;
+                                    value = exitWidthNotOccupancyTypeHandlerVal;
                                 }
                                 if(occupancyHelperDetail != null)
                                 occupancyTypeValueMap.put(OCCUPANCY, occupancyHelperDetail.getName());
@@ -228,55 +380,55 @@ public class ExitWidth extends FeatureProcess {
                                     occupancyTypeHelper.equals(DxfFileConstants.A_R)
                                     || occupancyTypeHelper.equals(DxfFileConstants.A_AF) ||
                                     occupancyTypeHelper.equals(DxfFileConstants.A_PO)) {
-                                occupantLoadDivisonFactor = BigDecimal.valueOf(12.5);
+                                occupantLoadDivisonFactor = exitWidth_A_occupantLoadDivisonFactor;
                                 occupantLoad = getOccupantLoadOfAFloor(occupancy, occupantLoadDivisonFactor);
-                                BigDecimal noOfDoors = BigDecimal.valueOf(75);
-                                BigDecimal noOfOccupantsPerUnitExitWidthOfStairWay = BigDecimal.valueOf(25);
+                                BigDecimal noOfDoors = exitWidth_A_noOfDoors;
+                                BigDecimal noOfOccupantsPerUnitExitWidthOfStairWay = exitWidth_A_noOfOccupantsPerUnitExitWidthOfStairWay;
                                 maxOccupantsAllowedThrghExits = getMaximumNumberOfOccupantsAllwdThroughExits(flr, noOfDoors,
                                         noOfOccupantsPerUnitExitWidthOfStairWay);
                             } else if (occupancyTypeHelper.equals(DxfFileConstants.A_SR)
                                     || occupancyTypeHelper.equals(DxfFileConstants.A_HE)) {
-                                occupantLoadDivisonFactor = BigDecimal.valueOf(4);
+                                occupantLoadDivisonFactor = exitWidth_A_SR_occupantLoadDivisonFactor;
                                 occupantLoad = getOccupantLoadOfAFloor(occupancy,
                                         occupantLoadDivisonFactor);
-                                BigDecimal noOfDoors = BigDecimal.valueOf(75);
-                                BigDecimal noOfOccupantsPerUnitExitWidthOfStairWay = BigDecimal.valueOf(50);
+                                BigDecimal noOfDoors = exitWidth_A_SR_noOfDoors;
+                                BigDecimal noOfOccupantsPerUnitExitWidthOfStairWay = exitWidth_A_SR_noOfOccupantsPerUnitExitWidthOfStairWay;
                                 maxOccupantsAllowedThrghExits = getMaximumNumberOfOccupantsAllwdThroughExits(flr, noOfDoors,
                                         noOfOccupantsPerUnitExitWidthOfStairWay);
                             } else if (occupancyTypeHelper.equals(DxfFileConstants.B)
                                     || occupancyTypeHelper.equals(DxfFileConstants.B2) ||
                                     occupancyTypeHelper.equals(DxfFileConstants.B_HEI)) {
-                                occupantLoadDivisonFactor = BigDecimal.valueOf(4);
+                                occupantLoadDivisonFactor = exitWidth_B_occupantLoadDivisonFactor;
                                 occupantLoad = getOccupantLoadOfAFloor(occupancy, occupantLoadDivisonFactor);
-                                BigDecimal noOfDoors = BigDecimal.valueOf(75);
-                                BigDecimal noOfOccupantsPerUnitExitWidthOfStairWay = BigDecimal.valueOf(25);
+                                BigDecimal noOfDoors = exitWidth_B_noOfDoors;
+                                BigDecimal noOfOccupantsPerUnitExitWidthOfStairWay = exitWidth_B_noOfOccupantsPerUnitExitWidthOfStairWay;
                                 maxOccupantsAllowedThrghExits = getMaximumNumberOfOccupantsAllwdThroughExits(flr, noOfDoors,
                                         noOfOccupantsPerUnitExitWidthOfStairWay);
                             } else if (occupancyTypeHelper.equals(DxfFileConstants.C)
                                     || occupancyTypeHelper.equals(DxfFileConstants.C_MIP) ||
                                     occupancyTypeHelper.equals(DxfFileConstants.C_MOP)
                                     || occupancyTypeHelper.equals(DxfFileConstants.C_MA)) {
-                                occupantLoadDivisonFactor = BigDecimal.valueOf(15);
+                                occupantLoadDivisonFactor = exitWidth_C_occupantLoadDivisonFactor;
                                 occupantLoad = getOccupantLoadOfAFloor(occupancy,
                                         occupantLoadDivisonFactor);
-                                BigDecimal noOfDoors = BigDecimal.valueOf(75);
-                                BigDecimal noOfOccupantsPerUnitExitWidthOfStairWay = BigDecimal.valueOf(25);
+                                BigDecimal noOfDoors = exitWidth_C_noOfDoors;
+                                BigDecimal noOfOccupantsPerUnitExitWidthOfStairWay = exitWidth_C_noOfOccupantsPerUnitExitWidthOfStairWay;
                                 maxOccupantsAllowedThrghExits = getMaximumNumberOfOccupantsAllwdThroughExits(flr, noOfDoors,
                                         noOfOccupantsPerUnitExitWidthOfStairWay);
                             } else if (occupancyTypeHelper.equals(DxfFileConstants.D)
                                     || occupancyTypeHelper.equals(DxfFileConstants.D_AW) ||
                                     occupancyTypeHelper.equals(DxfFileConstants.D_BT)) {
-                                occupantLoadDivisonFactor = BigDecimal.valueOf(1.5);
+                                occupantLoadDivisonFactor = exitWidth_D_occupantLoadDivisonFactor;
                                 occupantLoad = getOccupantLoadOfAFloor(occupancy, occupantLoadDivisonFactor);
-                                BigDecimal noOfDoors = BigDecimal.valueOf(90);
-                                BigDecimal noOfOccupantsPerUnitExitWidthOfStairWay = BigDecimal.valueOf(60);
+                                BigDecimal noOfDoors = exitWidth_D_noOfDoors;
+                                BigDecimal noOfOccupantsPerUnitExitWidthOfStairWay = exitWidth_D_noOfOccupantsPerUnitExitWidthOfStairWay;
                                 maxOccupantsAllowedThrghExits = getMaximumNumberOfOccupantsAllwdThroughExits(flr, noOfDoors,
                                         noOfOccupantsPerUnitExitWidthOfStairWay);
                             } else if (occupancyTypeHelper.equals(DxfFileConstants.E)) {
-                                occupantLoadDivisonFactor = BigDecimal.valueOf(1.5);
+                                occupantLoadDivisonFactor = exitWidth_E_occupantLoadDivisonFactor;
                                 occupantLoad = getOccupantLoadOfAFloor(occupancy, occupantLoadDivisonFactor);
-                                BigDecimal noOfDoors = BigDecimal.valueOf(75);
-                                BigDecimal noOfOccupantsPerUnitExitWidthOfStairWay = BigDecimal.valueOf(50);
+                                BigDecimal noOfDoors = exitWidth_E_noOfDoors;
+                                BigDecimal noOfOccupantsPerUnitExitWidthOfStairWay = exitWidth_E_noOfOccupantsPerUnitExitWidthOfStairWay;
                                 maxOccupantsAllowedThrghExits = getMaximumNumberOfOccupantsAllwdThroughExits(flr, noOfDoors,
                                         noOfOccupantsPerUnitExitWidthOfStairWay);
                             } else if (occupancyTypeHelper.equals(DxfFileConstants.F)
@@ -284,38 +436,38 @@ public class ExitWidth extends FeatureProcess {
                                     occupancyTypeHelper.equals(DxfFileConstants.F_PA)
                                     || occupancyTypeHelper.equals(DxfFileConstants.F_H) ||
                                     occupancyTypeHelper.equals(DxfFileConstants.F_K)) {
-                                occupantLoadDivisonFactor = BigDecimal.valueOf(4.5);
+                                occupantLoadDivisonFactor = exitWidth_F_occupantLoadDivisonFactor;
                                 occupantLoad = getOccupantLoadOfAFloor(occupancy, occupantLoadDivisonFactor);
-                                BigDecimal noOfDoors = BigDecimal.valueOf(75);
-                                BigDecimal noOfOccupantsPerUnitExitWidthOfStairWay = BigDecimal.valueOf(50);
+                                BigDecimal noOfDoors = exitWidth_F_noOfDoors;
+                                BigDecimal noOfOccupantsPerUnitExitWidthOfStairWay = exitWidth_F_noOfOccupantsPerUnitExitWidthOfStairWay;
                                 maxOccupantsAllowedThrghExits = getMaximumNumberOfOccupantsAllwdThroughExits(flr, noOfDoors,
                                         noOfOccupantsPerUnitExitWidthOfStairWay);
                             } else if (occupancyTypeHelper.equals(DxfFileConstants.G)
                                     || occupancyTypeHelper.equals(DxfFileConstants.G_SI)
                                     || occupancyTypeHelper.equals(DxfFileConstants.G_PHI)
                                     || occupancyTypeHelper.equals(DxfFileConstants.G_NPHI)) {
-                                occupantLoadDivisonFactor = BigDecimal.valueOf(10);
+                                occupantLoadDivisonFactor = exitWidth_G_occupantLoadDivisonFactor;
                                 occupantLoad = getOccupantLoadOfAFloor(occupancy,
                                         occupantLoadDivisonFactor);
-                                BigDecimal noOfDoors = BigDecimal.valueOf(75);
-                                BigDecimal noOfOccupantsPerUnitExitWidthOfStairWay = BigDecimal.valueOf(50);
+                                BigDecimal noOfDoors = exitWidth_G_noOfDoors;
+                                BigDecimal noOfOccupantsPerUnitExitWidthOfStairWay = exitWidth_G_noOfOccupantsPerUnitExitWidthOfStairWay;
                                 maxOccupantsAllowedThrghExits = getMaximumNumberOfOccupantsAllwdThroughExits(flr, noOfDoors,
                                         noOfOccupantsPerUnitExitWidthOfStairWay);
                             } else if (occupancyTypeHelper.equals(DxfFileConstants.H)) {
-                                occupantLoadDivisonFactor = BigDecimal.valueOf(30);
+                                occupantLoadDivisonFactor = exitWidth_H_occupantLoadDivisonFactor;
                                 occupantLoad = getOccupantLoadOfAFloor(occupancy, occupantLoadDivisonFactor);
-                                BigDecimal noOfDoors = BigDecimal.valueOf(75);
-                                BigDecimal noOfOccupantsPerUnitExitWidthOfStairWay = BigDecimal.valueOf(50);
+                                BigDecimal noOfDoors = exitWidth_H_noOfDoors;
+                                BigDecimal noOfOccupantsPerUnitExitWidthOfStairWay = exitWidth_H_noOfOccupantsPerUnitExitWidthOfStairWay;
                                 maxOccupantsAllowedThrghExits = getMaximumNumberOfOccupantsAllwdThroughExits(flr, noOfDoors,
                                         noOfOccupantsPerUnitExitWidthOfStairWay);
                             } else if (occupancyTypeHelper.equals(DxfFileConstants.I)
                                     || occupancyTypeHelper.equals(DxfFileConstants.I1)
                                     || occupancyTypeHelper.equals(DxfFileConstants.I2)) {
-                                occupantLoadDivisonFactor = BigDecimal.valueOf(10);
+                                occupantLoadDivisonFactor = exitWidth_I_occupantLoadDivisonFactor;
                                 occupantLoad = getOccupantLoadOfAFloor(occupancy,
                                         occupantLoadDivisonFactor);
-                                BigDecimal noOfDoors = BigDecimal.valueOf(25);
-                                BigDecimal noOfOccupantsPerUnitExitWidthOfStairWay = BigDecimal.valueOf(10);
+                                BigDecimal noOfDoors = exitWidth_I_noOfDoors;
+                                BigDecimal noOfOccupantsPerUnitExitWidthOfStairWay = exitWidth_I_noOfOccupantsPerUnitExitWidthOfStairWay;
                                 maxOccupantsAllowedThrghExits = getMaximumNumberOfOccupantsAllwdThroughExits(flr, noOfDoors,
                                         noOfOccupantsPerUnitExitWidthOfStairWay);
                             }
@@ -341,6 +493,18 @@ public class ExitWidth extends FeatureProcess {
         return pl;
     }
 
+    /**
+     * Validates the occupant load for a floor against the maximum allowed occupants through exits.
+     *
+     * @param rule The rule description.
+     * @param subRule The sub-rule identifier.
+     * @param occupantLoadInAFlr The occupant load for the floor.
+     * @param maxOccupantsAllowedThrghExits The maximum allowed occupants through exits.
+     * @param pl The plan object.
+     * @param block The block containing the floor.
+     * @param floor The floor being validated.
+     * @param scrutinyDetail The scrutiny detail object for validation.
+     */
     private void validateRuleOccupantLoad(String rule, String subRule, BigDecimal occupantLoadInAFlr,
             BigDecimal maxOccupantsAllowedThrghExits, Plan pl, Block block, Floor floor, ScrutinyDetail scrutinyDetail2) {
         boolean valid = false;
@@ -370,6 +534,14 @@ public class ExitWidth extends FeatureProcess {
         }
     }
 
+/**
+ * Calculates the maximum number of occupants allowed through exits for a given floor.
+ *
+ * @param floor The floor object.
+ * @param noOfDoors The number of doors on the floor.
+ * @param noOfOccupantsPerUnitExitWidthOfStairWay The number of occupants allowed per unit exit width of stairways.
+ * @return The maximum number of occupants allowed through exits.
+ */
     private BigDecimal getMaximumNumberOfOccupantsAllwdThroughExits(Floor floor, BigDecimal noOfDoors,
             BigDecimal noOfOccupantsPerUnitExitWidthOfStairWay) {
         if (!floor.getExitWidthDoor().isEmpty() || !floor.getExitWidthStair().isEmpty()) {
@@ -403,12 +575,31 @@ public class ExitWidth extends FeatureProcess {
         return BigDecimal.ZERO;
     }
 
+/**
+ * Calculates the occupant load for a given floor based on its built-up area and division factor.
+ *
+ * @param occupancy The occupancy object containing details of the floor.
+ * @param occupantLoadDivisonFactor The division factor for calculating occupant load.
+ * @return The calculated occupant load for the floor.
+ */
     private BigDecimal getOccupantLoadOfAFloor(Occupancy occupancy, BigDecimal occupantLoadDivisonFactor) {
         return BigDecimal
                 .valueOf(Math.ceil(occupancy.getBuiltUpArea().divide(occupantLoadDivisonFactor, DECIMALDIGITS_MEASUREMENTS,
                         ROUNDMODE_MEASUREMENTS).doubleValue()));
     }
 
+/**
+ * Validates the exit width for a given floor against the permissible value.
+ * Ensures that the minimum exit width provided meets the required value.
+ *
+ * @param floor The floor object being validated.
+ * @param pl The plan object.
+ * @param subRule The sub-rule identifier.
+ * @param rule The rule description.
+ * @param block The block containing the floor.
+ * @param value The permissible exit width value.
+ * @param occupancyType The type of occupancy for the floor.
+ */
     private void validateExitWidth(Floor floor, Plan pl, String subRule, String rule, Block block, BigDecimal value,
             String occupancyType) {
         // calculate minimum of exit widths provided and validate for that.
@@ -443,6 +634,17 @@ public class ExitWidth extends FeatureProcess {
         }
     }
 
+/**
+ * Sets the scrutiny details for exit width validation with occupancy information.
+ *
+ * @param pl The plan object.
+ * @param ruleNo The rule number.
+ * @param floor The floor being validated.
+ * @param occupancy The occupancy type for the floor.
+ * @param expected The expected exit width value.
+ * @param actual The actual exit width value provided.
+ * @param status The validation status (Accepted/Not Accepted).
+ */
     private void setReportOutputDetails(Plan pl, String ruleNo, String floor, String occupancy, String expected, String actual,
             String status) {
         Map<String, String> details = new HashMap<>();
@@ -456,6 +658,17 @@ public class ExitWidth extends FeatureProcess {
         pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
     }
 
+/**
+ * Sets the scrutiny details for exit width validation without occupancy information.
+ *
+ * @param pl The plan object.
+ * @param ruleNo The rule number.
+ * @param floor The floor being validated.
+ * @param expected The expected exit width value.
+ * @param actual The actual exit width value provided.
+ * @param status The validation status (Accepted/Not Accepted).
+ * @param scrutinyDetail2 The scrutiny detail object for validation.
+ */
     private void setReportOutputDetailsWithoutOccupancy(Plan pl, String ruleNo, String floor, String expected, String actual,
             String status, ScrutinyDetail scrutinyDetail2) {
         Map<String, String> details = new HashMap<>();
@@ -468,6 +681,12 @@ public class ExitWidth extends FeatureProcess {
         pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail2);
     }
 
+/**
+ * Removes duplicate entries from a sorted set of strings and returns a comma-separated string.
+ *
+ * @param uniqueData The sorted set of unique strings.
+ * @return A comma-separated string of unique values.
+ */
     private String removeDuplicates(SortedSet<String> uniqueData) {
         StringBuilder str = new StringBuilder();
         List<String> unqList = new ArrayList<>(uniqueData);
@@ -480,12 +699,24 @@ public class ExitWidth extends FeatureProcess {
         return str.toString();
     }
 
+/**
+ * Validates the given plan object for exit width compliance.
+ * Ensures that either exit width for doors or stairs is defined for each floor.
+ *
+ * @param pl The plan object to validate.
+ * @return The validated plan object.
+ */
     @Override
     public Plan validate(Plan pl) {
         validateExitWidth(pl);
         return pl;
     }
 
+/**
+ * Returns an empty map as no amendments are defined for this feature.
+ *
+ * @return An empty map of amendments.
+ */
     @Override
     public Map<String, Date> getAmendments() {
         return new LinkedHashMap<>();

@@ -56,261 +56,327 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.egov.common.constants.MdmsFeatureConstants;
 import org.egov.common.entity.edcr.Block;
 import org.egov.common.entity.edcr.BlockDistances;
 import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.Result;
 import org.egov.common.entity.edcr.ScrutinyDetail;
 import org.egov.common.entity.edcr.SetBack;
+import org.egov.edcr.constants.DxfFileConstants;
+import org.egov.edcr.constants.EdcrRulesMdmsConstants;
+import org.egov.edcr.service.FetchEdcrRulesMdms;
 import org.egov.edcr.utility.DcrConstants;
 import org.egov.infra.utils.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 
 @Service
 public class BlockDistancesService extends FeatureProcess {
-	public static final String SUBRULE_54_3 = "54-3";
-	public static final String SUBRULE_55_2 = "55-2";
-	public static final String SUBRULE_57_4 = "57-4";
-	public static final String SUBRULE_58_3_A = "58-3-a";
-	public static final String SUBRULE_59_3 = "59-3";
-	public static final String SUBRULE_117_3 = "117-3";
-	public static final BigDecimal DIS_7_5 = BigDecimal.valueOf(7.5);
-	public static final String BLK_NUMBER = "blkNumber";
-	public static final String SUBRULE = "subrule";
-	public static final String MIN_DISTANCE = "minimumDistance";
-	public static final String OCCUPANCY = "occupancy";
-	private static final String SUBRULE_37_1 = "37-1";
-	private static final String SUB_RULE_DES = "Minimum distance between blocks %s and %s";
-	public static final String MINIMUM_DISTANCE_SETBACK = "Minimum distance should not be less than setback of tallest building or 3m";
-	public static final String MINIMUM_DISTANCE_BUILDING = "Minimum distance should not be less than 1/3 of height of tallest building or 18m";
-	private static final BigDecimal THREE = BigDecimal.valueOf(3);
+    private static final Logger LOG = LogManager.getLogger(BlockDistancesService.class);
 
-	@Override
-	public Plan validate(Plan pl) {
-		return pl;
-	}
+    // Constants for subrules and other configurations
+    public static final String SUBRULE_54_3 = "54-3";
+    public static final String SUBRULE_55_2 = "55-2";
+    public static final String SUBRULE_57_4 = "57-4";
+    public static final String SUBRULE_58_3_A = "58-3-a";
+    public static final String SUBRULE_59_3 = "59-3";
+    public static final String SUBRULE_117_3 = "117-3";
+    public static final String BLK_NUMBER = "blkNumber";
+    public static final String SUBRULE = "subrule";
+    public static final String MIN_DISTANCE = "minimumDistance";
+    public static final String OCCUPANCY = "occupancy";
+    private static final String SUBRULE_37_1 = "37-1";
+    private static final String SUB_RULE_DES = "Minimum distance between blocks %s and %s";
+    public static final String MINIMUM_DISTANCE_SETBACK = "Minimum distance should not be less than setback of tallest building or 3m";
+    public static final String MINIMUM_DISTANCE_BUILDING = "Minimum distance should not be less than 1/3 of height of tallest building or 18m";
 
-	@Override
-	public Plan process(Plan pl) {
-		processDistanceBetweenBlocks(pl);
-		return pl;
-	}
+    @Autowired
+    FetchEdcrRulesMdms fetchEdcrRulesMdms;
 
-	public void validateDistanceBetweenBlocks(Plan pl) {
-		HashMap<String, String> errors = new HashMap<>();
-		List<String> sourceBlockNumbers = new ArrayList<>();
-		// iterating blocks one by one
-		for (Block sourceBlock : pl.getBlocks()) {
-			// validation for building height and occupancies present in diagram or not
-			if (sourceBlock.getBuilding() != null) {
-				if (sourceBlock.getBuilding().getBuildingHeight().compareTo(BigDecimal.ZERO) == 0) {
-					errors.put(String.format(DcrConstants.BLOCK_BUILDING_HEIGHT, sourceBlock.getNumber()),
-							edcrMessageSource.getMessage(
-									DcrConstants.OBJECTNOTDEFINED, new String[] { String
-											.format(DcrConstants.BLOCK_BUILDING_HEIGHT, sourceBlock.getNumber()) },
-									LocaleContextHolder.getLocale()));
-					pl.addErrors(errors);
-				}
-				if (sourceBlock.getBuilding().getOccupancies().isEmpty()) {
-					errors.put(String.format(DcrConstants.BLOCK_BUILDING_OCCUPANCY, sourceBlock.getNumber()),
-							edcrMessageSource.getMessage(
-									DcrConstants.OBJECTNOTDEFINED, new String[] { String
-											.format(DcrConstants.BLOCK_BUILDING_OCCUPANCY, sourceBlock.getNumber()) },
-									LocaleContextHolder.getLocale()));
-					pl.addErrors(errors);
-				}
-			}
-			// eg if i have three blocks b1 , b2 ,b3 in first iteration and b1 is source,
-			// b1-> b1 is not validated as b1 is
-			// present in list sourceBlockNumbers.
-			// b1->b2 is validated and b2 -> b1 is validated.if no one is present error
-			// message is thrown.
-			// b1->b3 is validated and b3 -> b1 is validated .if no one is present error
-			// message is thrown.
-			// in second iteration, when b2 is source b2-> b2 is not validated as b2 is
-			// present in list sourceBlockNumbers.
-			// b2-> b1 is not validated as b2 is present in list sourceBlockNumbers.
-			// b2->b3 is validated and b3 -> b2 is validated .if no one is present error
-			// message is thrown.
-			// in third iteration , when b3 is source b3->b3,b3->b1,b3->b2 all are not
-			// validated as b1,b2,b3 all are present in
-			// list sourceBlockNumbers.
-			sourceBlockNumbers.add(sourceBlock.getNumber());
-			for (Block destinationBlock : pl.getBlocks()) {
-				if (!sourceBlockNumbers.contains(destinationBlock.getNumber())) {
-					// distance from source to destination block present or not
-					List<BigDecimal> distanceBetBlocks = new ArrayList<>();
-					List<BigDecimal> distanceBtwBlocks = new ArrayList<>();
-					if (!sourceBlock.getDistanceBetweenBlocks().isEmpty()) {
-						for (BlockDistances distanceBetweenBlock : sourceBlock.getDistanceBetweenBlocks()) {
-							if (distanceBetweenBlock.getBlockNumber().equals(destinationBlock.getNumber())) {
-								distanceBetBlocks = distanceBetweenBlock.getDistances();
-							}
-						}
-					}
-					// distance from destination to source block present or not
-					if (!destinationBlock.getDistanceBetweenBlocks().isEmpty()) {
-						for (BlockDistances distanceBetweenBlock : destinationBlock.getDistanceBetweenBlocks()) {
-							if (distanceBetweenBlock.getBlockNumber().equals(sourceBlock.getNumber())) {
-								distanceBtwBlocks = distanceBetweenBlock.getDistances();
-							}
-						}
-					}
-					// throw error if no distance is found from source to destination and
-					// destination to source blocks
-					if (distanceBetBlocks.isEmpty() && distanceBtwBlocks.isEmpty()) {
-						errors.put(
-								String.format(DcrConstants.BLOCKS_DISTANCE, sourceBlock.getNumber(),
-										destinationBlock.getNumber()),
-								edcrMessageSource.getMessage(DcrConstants.OBJECTNOTDEFINED,
-										new String[] { String.format(DcrConstants.BLOCKS_DISTANCE,
-												sourceBlock.getNumber(), destinationBlock.getNumber()) },
-										LocaleContextHolder.getLocale()));
-						pl.addErrors(errors);
+    /**
+     * Validates the given plan object.
+     * Currently, no specific validation logic is implemented.
+     *
+     * @param pl The plan object to validate.
+     * @return The same plan object without any modifications.
+     */
+    @Override
+    public Plan validate(Plan pl) {
+        return pl;
+    }
 
-					}
-				}
-			}
-		}
-	}
+    /**
+     * Processes the given plan to validate and calculate distances between blocks.
+     * Calls the `processDistanceBetweenBlocks` method to handle the logic.
+     *
+     * @param pl The plan object to process.
+     * @return The processed plan object with scrutiny details added.
+     */
+    @Override
+    public Plan process(Plan pl) {
+        processDistanceBetweenBlocks(pl);
+        return pl;
+    }
 
-	public void processDistanceBetweenBlocks(Plan pl) {
-		if (pl.getBlocks().isEmpty())
-			return;
-		validateDistanceBetweenBlocks(pl);
-		scrutinyDetail = new ScrutinyDetail();
-		scrutinyDetail.setKey("Common_Distance Between Blocks");
-		scrutinyDetail.addColumnHeading(1, RULE_NO);
-		scrutinyDetail.addColumnHeading(2, DESCRIPTION);
-		scrutinyDetail.addColumnHeading(3, REQUIRED);
-		scrutinyDetail.addColumnHeading(4, PROVIDED);
-		scrutinyDetail.addColumnHeading(5, STATUS);
-		for (Block b : pl.getBlocks()) {
-			for (Block block : pl.getBlocks()) {
-				if (b.getNumber() != block.getNumber()) {
-					if (!b.getDistanceBetweenBlocks().isEmpty()) {
-						for (BlockDistances distanceBetweenBlock : b.getDistanceBetweenBlocks()) {
-							// if b is source block , checking that its destination block number is same as
-							// block
-							if (distanceBetweenBlock.getBlockNumber().equals(block.getNumber())) {
-								BigDecimal minimumDistance;
-								boolean valid1 = false;
-								boolean valid2 = false;
-								// calculate minimum of provided distances between source and destination
-								if (!distanceBetweenBlock.getDistances().isEmpty()) {
-									minimumDistance = distanceBetweenBlock.getDistances().get(0);
-									for (BigDecimal distance : distanceBetweenBlock.getDistances()) {
-										if (distance.compareTo(minimumDistance) < 0) {
-											minimumDistance = distance;
-										}
-									}
-									validateMinimumDistance(pl, minimumDistance, b, block, valid1, valid2);
-								}
-							}
+    /**
+     * Validates the distances between blocks in the given plan.
+     * Checks if the required distances are defined and throws errors if not.
+     *
+     * @param pl The plan object to validate.
+     */
+    public void validateDistanceBetweenBlocks(Plan pl) {
+        HashMap<String, String> errors = new HashMap<>();
+        List<String> sourceBlockNumbers = new ArrayList<>();
 
-						}
-					}
-				}
-			}
-		}
-	}
+        // Iterate through all blocks in the plan
+        for (Block sourceBlock : pl.getBlocks()) {
+            // Validate building height and occupancies for the source block
+            if (sourceBlock.getBuilding() != null) {
+                if (sourceBlock.getBuilding().getBuildingHeight().compareTo(BigDecimal.ZERO) == 0) {
+                    errors.put(String.format(DcrConstants.BLOCK_BUILDING_HEIGHT, sourceBlock.getNumber()),
+                            edcrMessageSource.getMessage(
+                                    DcrConstants.OBJECTNOTDEFINED, new String[]{String
+                                            .format(DcrConstants.BLOCK_BUILDING_HEIGHT, sourceBlock.getNumber())},
+                                    LocaleContextHolder.getLocale()));
+                    pl.addErrors(errors);
+                }
+                if (sourceBlock.getBuilding().getOccupancies().isEmpty()) {
+                    errors.put(String.format(DcrConstants.BLOCK_BUILDING_OCCUPANCY, sourceBlock.getNumber()),
+                            edcrMessageSource.getMessage(
+                                    DcrConstants.OBJECTNOTDEFINED, new String[]{String
+                                            .format(DcrConstants.BLOCK_BUILDING_OCCUPANCY, sourceBlock.getNumber())},
+                                    LocaleContextHolder.getLocale()));
+                    pl.addErrors(errors);
+                }
+            }
 
-	/*
-	 * private String removeDuplicates(SortedSet<String> uniqueData) { StringBuffer
-	 * str = new StringBuffer(); List<String> unqList = new ArrayList<>(uniqueData);
-	 * for (String unique : unqList) { str.append(unique); if
-	 * (!unique.equals(unqList.get(unqList.size() - 1))) { str.append(" , "); } }
-	 * return str.toString(); }
-	 */
+            // Add the source block to the list of processed blocks
+            sourceBlockNumbers.add(sourceBlock.getNumber());
 
-	private void setReportOutputDetails(Plan pl, String ruleNo, String ruleDesc, String occupancy, String expected,
-			String actual, String status) {
-		Map<String, String> details = new HashMap<>();
-		details.put(RULE_NO, ruleNo);
-		details.put(DESCRIPTION, ruleDesc);
-		details.put(REQUIRED, expected);
-		details.put(PROVIDED, actual);
-		details.put(STATUS, status);
-		scrutinyDetail.getDetail().add(details);
-		pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
-	}
+            // Validate distances between the source block and other blocks
+            for (Block destinationBlock : pl.getBlocks()) {
+                if (!sourceBlockNumbers.contains(destinationBlock.getNumber())) {
+                    List<BigDecimal> distanceBetBlocks = new ArrayList<>();
+                    List<BigDecimal> distanceBtwBlocks = new ArrayList<>();
 
-	/*
-	 * private boolean getHeightGreaterThanTenAndLessThanSixteenCondition(Block
-	 * block) { return
-	 * block.getBuilding().getBuildingHeight().compareTo(BigDecimal.valueOf(10)) > 0
-	 * && block.getBuilding().getBuildingHeight().compareTo(BigDecimal.valueOf(16))
-	 * < 0; }
-	 * 
-	 * private boolean getHeightLessThanTenCondition(Block block) { return
-	 * block.getBuilding().getBuildingHeight().compareTo(BigDecimal.valueOf(10)) <=
-	 * 0; }
-	 */
+                    // Check distances from source to destination block
+                    if (!sourceBlock.getDistanceBetweenBlocks().isEmpty()) {
+                        for (BlockDistances distanceBetweenBlock : sourceBlock.getDistanceBetweenBlocks()) {
+                            if (distanceBetweenBlock.getBlockNumber().equals(destinationBlock.getNumber())) {
+                                distanceBetBlocks = distanceBetweenBlock.getDistances();
+                            }
+                        }
+                    }
 
-	private void validateMinimumDistance(Plan pl, BigDecimal actualDistance, Block b, Block block, Boolean valid1,
-			Boolean valid2) {
-		BigDecimal bHeight = b.getBuilding().getBuildingHeight();
-		BigDecimal blockHeight = block.getBuilding().getBuildingHeight();
-		HashMap<BigDecimal, Block> blockMap = new HashMap();
-		blockMap.put(bHeight, b);
-		blockMap.put(blockHeight, block);
-		List<BigDecimal> blkHeights = Arrays.asList(bHeight, blockHeight);
-		BigDecimal maxHeight = blkHeights.stream().reduce(BigDecimal::max).get();
+                    // Check distances from destination to source block
+                    if (!destinationBlock.getDistanceBetweenBlocks().isEmpty()) {
+                        for (BlockDistances distanceBetweenBlock : destinationBlock.getDistanceBetweenBlocks()) {
+                            if (distanceBetweenBlock.getBlockNumber().equals(sourceBlock.getNumber())) {
+                                distanceBtwBlocks = distanceBetweenBlock.getDistances();
+                            }
+                        }
+                    }
 
-		ArrayList<BigDecimal> setBacksValues = new ArrayList();
-		setBacksValues.add(THREE);
-		List<SetBack> setBacks = block.getSetBacks();
-		for (SetBack setback : setBacks) {
-			if (setback.getRearYard() != null)
-				setBacksValues.add(setback.getRearYard().getHeight());
-			if (setback.getSideYard1() != null)
-				setBacksValues.add(setback.getSideYard1().getHeight());
-			if (setback.getSideYard2() != null)
-				setBacksValues.add(setback.getSideYard2().getHeight());
-		}
-		
+                    // Throw error if no distances are found between the blocks
+                    if (distanceBetBlocks.isEmpty() && distanceBtwBlocks.isEmpty()) {
+                        errors.put(
+                                String.format(DcrConstants.BLOCKS_DISTANCE, sourceBlock.getNumber(),
+                                        destinationBlock.getNumber()),
+                                edcrMessageSource.getMessage(DcrConstants.OBJECTNOTDEFINED,
+                                        new String[]{String.format(DcrConstants.BLOCKS_DISTANCE,
+                                                sourceBlock.getNumber(), destinationBlock.getNumber())},
+                                        LocaleContextHolder.getLocale()));
+                        pl.addErrors(errors);
+                    }
+                }
+            }
+        }
+    }
 
-		BigDecimal dividedHeight = maxHeight.divide(THREE, DcrConstants.DECIMALDIGITS_MEASUREMENTS,
-				DcrConstants.ROUNDMODE_MEASUREMENTS);
+    /**
+     * Processes the distances between blocks in the given plan.
+     * Validates the distances and calculates the minimum required distances.
+     *
+     * @param pl The plan object to process.
+     */
+    public void processDistanceBetweenBlocks(Plan pl) {
+        if (pl.getBlocks().isEmpty())
+            return;
 
-		
-		List<BigDecimal> heights = Arrays.asList(dividedHeight, BigDecimal.valueOf(18));
-		BigDecimal minHeight = heights.stream().reduce(BigDecimal::min).get();
+        // Validate distances between blocks
+        validateDistanceBetweenBlocks(pl);
 
-		if (actualDistance.compareTo(minHeight) >= 0) {
-			valid1 = true;
-		}
+        // Initialize scrutiny details for reporting
+        scrutinyDetail = new ScrutinyDetail();
+        scrutinyDetail.setKey("Common_Distance Between Blocks");
+        scrutinyDetail.addColumnHeading(1, RULE_NO);
+        scrutinyDetail.addColumnHeading(2, DESCRIPTION);
+        scrutinyDetail.addColumnHeading(3, REQUIRED);
+        scrutinyDetail.addColumnHeading(4, PROVIDED);
+        scrutinyDetail.addColumnHeading(5, STATUS);
 
-		BigDecimal maxSetBack = setBacksValues.stream().reduce(BigDecimal::max).get();
-		if (actualDistance.compareTo(maxSetBack) >= 0) {
-			valid2 = true;
-		}
+        // Iterate through all blocks to calculate distances
+        for (Block b : pl.getBlocks()) {
+            for (Block block : pl.getBlocks()) {
+                if (b.getNumber() != block.getNumber()) {
+                    if (!b.getDistanceBetweenBlocks().isEmpty()) {
+                        for (BlockDistances distanceBetweenBlock : b.getDistanceBetweenBlocks()) {
+                            if (distanceBetweenBlock.getBlockNumber().equals(block.getNumber())) {
+                                BigDecimal minimumDistance;
+                                boolean valid1 = false;
+                                boolean valid2 = false;
 
-		if (valid1) {
-			setReportOutputDetails(pl, SUBRULE_37_1, String.format(SUB_RULE_DES, b.getNumber(), block.getNumber()),
-					StringUtils.EMPTY, MINIMUM_DISTANCE_BUILDING, actualDistance.toString() + DcrConstants.IN_METER,
-					Result.Accepted.getResultVal());
-		} else {
-			setReportOutputDetails(pl, SUBRULE_37_1, String.format(SUB_RULE_DES, b.getNumber(), block.getNumber()),
-					StringUtils.EMPTY, MINIMUM_DISTANCE_BUILDING, actualDistance.toString() + DcrConstants.IN_METER,
-					Result.Not_Accepted.getResultVal());
-		}
+                                // Calculate the minimum distance between blocks
+                                if (!distanceBetweenBlock.getDistances().isEmpty()) {
+                                    minimumDistance = distanceBetweenBlock.getDistances().get(0);
+                                    for (BigDecimal distance : distanceBetweenBlock.getDistances()) {
+                                        if (distance.compareTo(minimumDistance) < 0) {
+                                            minimumDistance = distance;
+                                        }
+                                    }
+                                    validateMinimumDistance(pl, minimumDistance, b, block, valid1, valid2);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
 
-		if (valid2) {
-			setReportOutputDetails(pl, SUBRULE_37_1, String.format(SUB_RULE_DES, b.getNumber(), block.getNumber()),
-					StringUtils.EMPTY, MINIMUM_DISTANCE_SETBACK, actualDistance.toString() + DcrConstants.IN_METER,
-					Result.Accepted.getResultVal());
-		} else {
-			setReportOutputDetails(pl, SUBRULE_37_1, String.format(SUB_RULE_DES, b.getNumber(), block.getNumber()),
-					StringUtils.EMPTY, MINIMUM_DISTANCE_SETBACK, actualDistance.toString() + DcrConstants.IN_METER,
-					Result.Not_Accepted.getResultVal());
-		}
+    /**
+     * Validates the minimum distance between two blocks.
+     * Checks if the distance meets the required conditions based on height and setbacks.
+     *
+     * @param pl             The plan object.
+     * @param actualDistance The actual distance between the blocks.
+     * @param b              The source block.
+     * @param block          The destination block.
+     * @param valid1         Validation flag for height-based distance.
+     * @param valid2         Validation flag for setback-based distance.
+     */
+    private void validateMinimumDistance(Plan pl, BigDecimal actualDistance, Block b, Block block, Boolean valid1,
+                                         Boolean valid2) {
+        BigDecimal bHeight = b.getBuilding().getBuildingHeight();
+        BigDecimal blockHeight = block.getBuilding().getBuildingHeight();
+        HashMap<BigDecimal, Block> blockMap = new HashMap<>();
+        blockMap.put(bHeight, b);
+        blockMap.put(blockHeight, block);
+        List<BigDecimal> blkHeights = Arrays.asList(bHeight, blockHeight);
+        BigDecimal maxHeight = blkHeights.stream().reduce(BigDecimal::max).get();
 
-	}
+        BigDecimal blockDistanceServiceValue = BigDecimal.ZERO;
 
-	@Override
-	public Map<String, Date> getAmendments() {
-		return new LinkedHashMap<>();
-	}
+        // Fetch permissible values for block distances
+        String occupancyName = null;
+        String feature = MdmsFeatureConstants.BLOCK_DISTANCES_SERVICE;
+        Map<String, Object> params = new HashMap<>();
+        if (DxfFileConstants.A.equals(pl.getVirtualBuilding().getMostRestrictiveFarHelper().getType().getCode())) {
+            occupancyName = "Residential";
+        }
+        params.put("feature", feature);
+        params.put("occupancy", occupancyName);
+
+        Map<String, List<Map<String, Object>>> edcrRuleList = pl.getEdcrRulesFeatures();
+        ArrayList<String> valueFromColumn = new ArrayList<>();
+        valueFromColumn.add(EdcrRulesMdmsConstants.PERMISSIBLE_VALUE);
+
+        List<Map<String, Object>> permissibleValue = new ArrayList<>();
+        try {
+            permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
+            LOG.info("permissibleValue" + permissibleValue);
+        } catch (NullPointerException e) {
+            LOG.error("Permissible Value for BlockDistancesService not found--------", e);
+        }
+
+        if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey(EdcrRulesMdmsConstants.PERMISSIBLE_VALUE)) {
+            blockDistanceServiceValue = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.PERMISSIBLE_VALUE).toString()));
+        } else {
+            blockDistanceServiceValue = BigDecimal.ZERO;
+        }
+
+        ArrayList<BigDecimal> setBacksValues = new ArrayList<>();
+        setBacksValues.add(blockDistanceServiceValue);
+        List<SetBack> setBacks = block.getSetBacks();
+        for (SetBack setback : setBacks) {
+            if (setback.getRearYard() != null)
+                setBacksValues.add(setback.getRearYard().getHeight());
+            if (setback.getSideYard1() != null)
+                setBacksValues.add(setback.getSideYard1().getHeight());
+            if (setback.getSideYard2() != null)
+                setBacksValues.add(setback.getSideYard2().getHeight());
+        }
+
+        BigDecimal dividedHeight = maxHeight.divide(blockDistanceServiceValue, DcrConstants.DECIMALDIGITS_MEASUREMENTS,
+                DcrConstants.ROUNDMODE_MEASUREMENTS);
+
+        List<BigDecimal> heights = Arrays.asList(dividedHeight, BigDecimal.valueOf(18));
+        BigDecimal minHeight = heights.stream().reduce(BigDecimal::min).get();
+
+        if (actualDistance.compareTo(minHeight) >= 0) {
+            valid1 = true;
+        }
+
+        BigDecimal maxSetBack = setBacksValues.stream().reduce(BigDecimal::max).get();
+        if (actualDistance.compareTo(maxSetBack) >= 0) {
+            valid2 = true;
+        }
+
+        if (valid1) {
+            setReportOutputDetails(pl, SUBRULE_37_1, String.format(SUB_RULE_DES, b.getNumber(), block.getNumber()),
+                    StringUtils.EMPTY, MINIMUM_DISTANCE_BUILDING, actualDistance.toString() + DcrConstants.IN_METER,
+                    Result.Accepted.getResultVal());
+        } else {
+            setReportOutputDetails(pl, SUBRULE_37_1, String.format(SUB_RULE_DES, b.getNumber(), block.getNumber()),
+                    StringUtils.EMPTY, MINIMUM_DISTANCE_BUILDING, actualDistance.toString() + DcrConstants.IN_METER,
+                    Result.Not_Accepted.getResultVal());
+        }
+
+        if (valid2) {
+            setReportOutputDetails(pl, SUBRULE_37_1, String.format(SUB_RULE_DES, b.getNumber(), block.getNumber()),
+                    StringUtils.EMPTY, MINIMUM_DISTANCE_SETBACK, actualDistance.toString() + DcrConstants.IN_METER,
+                    Result.Accepted.getResultVal());
+        } else {
+            setReportOutputDetails(pl, SUBRULE_37_1, String.format(SUB_RULE_DES, b.getNumber(), block.getNumber()),
+                    StringUtils.EMPTY, MINIMUM_DISTANCE_SETBACK, actualDistance.toString() + DcrConstants.IN_METER,
+                    Result.Not_Accepted.getResultVal());
+        }
+    }
+
+    /**
+     * Sets the report output details for the scrutiny process.
+     *
+     * @param pl       The plan object.
+     * @param ruleNo   The rule number.
+     * @param ruleDesc The rule description.
+     * @param occupancy The occupancy type.
+     * @param expected The expected value.
+     * @param actual   The actual value.
+     * @param status   The status of the validation.
+     */
+    private void setReportOutputDetails(Plan pl, String ruleNo, String ruleDesc, String occupancy, String expected,
+                                        String actual, String status) {
+        Map<String, String> details = new HashMap<>();
+        details.put(RULE_NO, ruleNo);
+        details.put(DESCRIPTION, ruleDesc);
+        details.put(REQUIRED, expected);
+        details.put(PROVIDED, actual);
+        details.put(STATUS, status);
+        scrutinyDetail.getDetail().add(details);
+        pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+    }
+
+    /**
+     * Returns an empty map as no amendments are defined for this feature.
+     *
+     * @return An empty map of amendments.
+     */
+    @Override
+    public Map<String, Date> getAmendments() {
+        return new LinkedHashMap<>();
+    }
 }

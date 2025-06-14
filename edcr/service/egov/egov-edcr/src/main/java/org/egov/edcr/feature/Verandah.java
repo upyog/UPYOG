@@ -48,19 +48,26 @@
 package org.egov.edcr.feature;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import org.egov.common.constants.MdmsFeatureConstants;
 import org.egov.common.entity.edcr.Block;
 import org.egov.common.entity.edcr.Floor;
 import org.egov.common.entity.edcr.Measurement;
 import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.Result;
 import org.egov.common.entity.edcr.ScrutinyDetail;
+import org.egov.edcr.constants.DxfFileConstants;
+import org.egov.edcr.constants.EdcrRulesMdmsConstants;
+import org.egov.edcr.service.FetchEdcrRulesMdms;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -74,12 +81,17 @@ public class Verandah extends FeatureProcess {
 
 	@Override
 	public Plan validate(Plan pl) {
+		// Currently no validation logic required for Verandah feature
 		return pl;
 	}
+	
+	@Autowired
+	FetchEdcrRulesMdms fetchEdcrRulesMdms;
 
 	@Override
 	public Plan process(Plan pl) {
 		for (Block b : pl.getBlocks()) {
+			// Create a scrutiny detail to hold verandah rule checks
 			ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
 			scrutinyDetail.setKey("Common_Verandah");
 			scrutinyDetail.addColumnHeading(1, RULE_NO);
@@ -87,53 +99,90 @@ public class Verandah extends FeatureProcess {
 			scrutinyDetail.addColumnHeading(3, REQUIRED);
 			scrutinyDetail.addColumnHeading(4, PROVIDED);
 			scrutinyDetail.addColumnHeading(5, STATUS);
+			
+			BigDecimal verandahWidth = BigDecimal.ZERO;
+			BigDecimal verandahDepth = BigDecimal.ZERO;
+			
+			String occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl);
+			String feature = MdmsFeatureConstants.VERANDAH;
 
+			// Check occupancy type; only residential is supported for now
+			Map<String, Object> params = new HashMap<>();
+			
+
+			params.put("feature", feature);
+			params.put("occupancy", occupancyName);
+			
+			// Fetch permissible verandah dimension rules from MDMS
+			Map<String,List<Map<String,Object>>> edcrRuleList = pl.getEdcrRulesFeatures();
+			
+			ArrayList<String> valueFromColumn = new ArrayList<>();
+			valueFromColumn.add(EdcrRulesMdmsConstants.VERANDAH_DEPTH);
+			valueFromColumn.add(EdcrRulesMdmsConstants.VERANDAH_WIDTH);
+
+			List<Map<String, Object>> permissibleValue = new ArrayList<>();
+			permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
+			LOG.info("permissibleValue" + permissibleValue);
+
+			// Parse permissible width and depth if values are found
+			if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey(EdcrRulesMdmsConstants.VERANDAH_WIDTH)) {
+				verandahWidth = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.VERANDAH_WIDTH).toString()));
+				verandahDepth = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.VERANDAH_DEPTH).toString()));
+			}
+
+			// Loop through each floor and perform width and depth checks
 			if (b.getBuilding() != null && b.getBuilding().getFloors() != null
 					&& !b.getBuilding().getFloors().isEmpty()) {
 
 				for (Floor f : b.getBuilding().getFloors()) {
 
+					// Check if verandah data exists
 					if (f.getVerandah() != null && f.getVerandah().getMeasurements() != null
 							&& !f.getVerandah().getMeasurements().isEmpty()) {
 
+						// Find minimum verandah width
 						BigDecimal minVerandaWidth = f.getVerandah().getMeasurements().stream()
 								.map(Measurement::getWidth).reduce(BigDecimal::min).get();
+
+						// Find minimum verandah depth (heightOrDepth list)
 						BigDecimal minVerandDepth = f.getVerandah().getHeightOrDepth().stream().reduce(BigDecimal::min)
 								.get();
 
+						// Width check against permissible value
 						if (minVerandaWidth.compareTo(BigDecimal.ZERO) > 0) {
 							Map<String, String> details = new HashMap<>();
 							details.put(RULE_NO, RULE_43);
 							details.put(DESCRIPTION, VERANDAH_DESCRIPTION);
 
-							if (minVerandaWidth.compareTo(BigDecimal.valueOf(1.8)) >= 0) {
-								details.put(REQUIRED, "Minimum width 1.8m   ");
+							if (minVerandaWidth.compareTo(verandahWidth) >= 0) {
+								details.put(REQUIRED, "Minimum width " + verandahWidth.toString() + "m   ");
 								details.put(PROVIDED, "Width area " + minVerandaWidth + " at floor " + f.getNumber());
 								details.put(STATUS, Result.Accepted.getResultVal());
 								scrutinyDetail.getDetail().add(details);
 								pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
-
 							} else {
-								details.put(REQUIRED, "Minimum width 1.8m   ");
+								details.put(REQUIRED, "Minimum width " + verandahWidth.toString() + "m   ");
 								details.put(PROVIDED, "Width area " + minVerandaWidth + " at floor " + f.getNumber());
 								details.put(STATUS, Result.Not_Accepted.getResultVal());
 								scrutinyDetail.getDetail().add(details);
 								pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
 							}
 						}
+
+						// Depth check against permissible value
 						if (minVerandDepth.compareTo(BigDecimal.ZERO) > 0) {
 							Map<String, String> details = new HashMap<>();
 							details.put(RULE_NO, RULE_43A);
 							details.put(DESCRIPTION, VERANDAH_DESCRIPTION);
-							if (minVerandDepth.compareTo(BigDecimal.valueOf(3.66)) <= 0) {
-								details.put(REQUIRED, "Minimum depth not more than 3.66 m ");
+
+							if (minVerandDepth.compareTo(verandahDepth) <= 0) {
+								details.put(REQUIRED, "Minimum depth not more than " + verandahDepth.toString() + " m ");
 								details.put(PROVIDED, " Depth area  " + minVerandDepth + " at floor " + f.getNumber());
 								details.put(STATUS, Result.Accepted.getResultVal());
 								scrutinyDetail.getDetail().add(details);
 								pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
-
 							} else {
-								details.put(REQUIRED, "Minimum depth not more than 3.66 m ");
+								details.put(REQUIRED, "Minimum depth not more than " + verandahDepth.toString() + " m ");
 								details.put(PROVIDED, " Depth area  " + minVerandDepth + " at floor " + f.getNumber());
 								details.put(STATUS, Result.Not_Accepted.getResultVal());
 								scrutinyDetail.getDetail().add(details);
@@ -141,17 +190,17 @@ public class Verandah extends FeatureProcess {
 							}
 						}
 					}
-
 				}
 			}
-
 		}
 		return pl;
 	}
 
 	@Override
 	public Map<String, Date> getAmendments() {
+		// No amendments for this feature as of now
 		return new LinkedHashMap<>();
 	}
+
 
 }

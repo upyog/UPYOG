@@ -141,14 +141,11 @@ public class MonumentDistance_Citya extends FeatureProcess {
                 minDistanceFromMonument = distancesFromMonument.stream().reduce(BigDecimal::min).get();
 
                 // Fetch permissible values for monument distance
-                String occupancyName = null;
+                String occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl);
                 String feature = MdmsFeatureConstants.MONUMENT_DISTANCE;
 
                 Map<String, Object> params = new HashMap<>();
-                if (DxfFileConstants.A.equals(pl.getVirtualBuilding().getMostRestrictiveFarHelper().getType().getCode())) {
-                    occupancyName = "Residential";
-                }
-
+                
                 params.put("feature", feature);
                 params.put("occupancy", occupancyName);
 

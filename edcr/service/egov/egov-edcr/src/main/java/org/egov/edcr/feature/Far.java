@@ -96,6 +96,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
@@ -111,9 +112,12 @@ import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.Result;
 import org.egov.common.entity.edcr.ScrutinyDetail;
 import org.egov.edcr.constants.DxfFileConstants;
+import org.egov.edcr.service.EdcrRestService;
+import org.egov.edcr.service.FetchEdcrRulesMdms;
 import org.egov.edcr.service.ProcessPrintHelper;
 import org.egov.edcr.utility.DcrConstants;
 import org.egov.infra.utils.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -126,7 +130,7 @@ public class Far extends FeatureProcess {
 	private static final String VALIDATION_NEGATIVE_BUILTUP_AREA = "msg.error.negative.builtuparea.occupancy.floor";
 	private static final String VALIDATION_NEGATIVE_EXISTING_BUILTUP_AREA = "msg.error.negative.existing.builtuparea.occupancy.floor";
 	public static final String RULE_31_1 = "31-1";
-	public static final String RULE = "4.4.4";
+	public static final String RULE_38 = "38";
 
 	private static final BigDecimal POINTTWO = BigDecimal.valueOf(0.2);
 	private static final BigDecimal POINTFOUR = BigDecimal.valueOf(0.4);
@@ -183,6 +187,10 @@ public class Far extends FeatureProcess {
 	public static final BigDecimal PLOT_AREA_ABOVE_1000_SQM = new BigDecimal(Integer.MAX_VALUE); // Use an appropriate
 																									// upper bound
 
+	@Autowired
+	FetchEdcrRulesMdms fetchEdcrRulesMdms;
+	
+	
 	@Override
 	public Plan validate(Plan pl) {
 		if (pl.getPlot() == null || (pl.getPlot() != null
@@ -190,6 +198,13 @@ public class Far extends FeatureProcess {
 			pl.addError(PLOT_AREA, getLocaleMessage(OBJECTNOTDEFINED, PLOT_AREA));
 			
 		}
+		
+		// ArrayList<Map<String, Object>> edcrRulesFeatures = edcrRestService.getEdcrRules();
+		 Map<String, List<Map<String, Object>>> edcrRulesFeatures = fetchEdcrRulesMdms.getEdcrRules();
+	   
+	        // Set this list to the pl object
+	       pl.setEdcrRulesFeatures(edcrRulesFeatures);
+	      
 		return pl;
 	}
 
@@ -640,7 +655,21 @@ public class Far extends FeatureProcess {
 		pl.getFarDetails().setProvidedFar(providedFar.doubleValue());
 		String typeOfArea = pl.getPlanInformation().getTypeOfArea();
 		BigDecimal roadWidth = pl.getPlanInformation().getRoadWidth();
+		String feature = "Far";
 
+		if (pl.getVirtualBuilding() != null && !pl.getVirtualBuilding().getOccupancyTypes().isEmpty()) {
+            List<String> occupancies = new ArrayList<>();
+            pl.getVirtualBuilding().getOccupancyTypes().forEach(occ -> {
+                if (occ.getType() != null)
+                    occupancies.add(occ.getType().getName());
+            });
+            Set<String> distinctOccupancies = new HashSet<>(occupancies);
+            pl.getPlanInformation()
+                    .setOccupancy(distinctOccupancies.stream().map(String::new).collect(Collectors.joining(",")));
+        }
+       
+       
+   
 		if (mostRestrictiveOccupancyType != null && StringUtils.isNotBlank(typeOfArea) && roadWidth != null
 				&& !processFarForSpecialOccupancy(pl, mostRestrictiveOccupancyType, providedFar, typeOfArea, roadWidth,
 						errorMsgs)) {
@@ -650,8 +679,11 @@ public class Far extends FeatureProcess {
 							&& (A_R.equalsIgnoreCase(mostRestrictiveOccupancyType.getSubtype().getCode())
 									|| A_AF.equalsIgnoreCase(mostRestrictiveOccupancyType.getSubtype().getCode())))) {
 				// extra parameter added plotArea by Bimal Kumar on 12 March 2024
-				processFarResidential(pl, mostRestrictiveOccupancyType, providedFar, typeOfArea, roadWidth, errorMsgs,
-						plotArea);
+//				processFarResidential(pl, mostRestrictiveOccupancyType, providedFar, typeOfArea, roadWidth, errorMsgs,
+//						plotArea);
+				processFarResidential(pl, mostRestrictiveOccupancyType , providedFar, typeOfArea,
+						 roadWidth,  errorMsgs, feature, mostRestrictiveOccupancyType.getType().getName(), pl.getEdcrRulesFeatures());
+					
 			}
 			if (mostRestrictiveOccupancyType.getType() != null
 					&& (DxfFileConstants.G.equalsIgnoreCase(mostRestrictiveOccupancyType.getType().getCode())
@@ -917,62 +949,63 @@ public class Far extends FeatureProcess {
 
 		return false;
 	}
+	
 
 	// Method updated by Bimal Kumar on 14 March 2024
-	private void processFarResidential(Plan pl, OccupancyTypeHelper occupancyType, BigDecimal far, String typeOfArea,
-			BigDecimal roadWidth, HashMap<String, String> errors, BigDecimal plotArea) {
-
-		String expectedResult = StringUtils.EMPTY;
-		boolean isAccepted = false;
-		
-		LOG.info("Processing FAR (Residential) for punjab as per new Bylaws");
-		System.out.println("Processing FAR (Residential) for punjab as per new Bylaws");
-		LOG.info("Type of area: " + typeOfArea);
-		System.out.println("Type of area: " + typeOfArea);
-		// Start Rule updated by Bimal on 14 March 2024
-		
-			if (plotArea.compareTo(BigDecimal.ZERO) < 0) {
-				errors.put("Plot Area Error:", "Plot area cannot be less than 0.");
-				pl.addErrors(errors);
-			} else if (plotArea.compareTo(PLOT_AREA_UP_TO_100_SQM) <= 0) {
-				isAccepted = far.compareTo(FAR_UP_TO_2_00) <= 0;
-				LOG.info("FAR_UP_TO_2_00: " + isAccepted);
-				pl.getFarDetails().setPermissableFar(FAR_UP_TO_2_00.doubleValue());
-				expectedResult = "<= 2.00";
-			} else if (plotArea.compareTo(PLOT_AREA_100_150_SQM) <= 0) {
-				isAccepted = far.compareTo(FAR_UP_TO_1_90) <= 0;
-				LOG.info("FAR_UP_TO_1_90: " + isAccepted);
-				pl.getFarDetails().setPermissableFar(FAR_UP_TO_1_90.doubleValue());
-				expectedResult = "<= 1.90";
-			} else if (plotArea.compareTo(PLOT_AREA_150_200_SQM) <= 0) {
-				isAccepted = far.compareTo(FAR_UP_TO_1_75) <= 0;
-				LOG.info("FAR_UP_TO_1_75: " + isAccepted);
-				pl.getFarDetails().setPermissableFar(FAR_UP_TO_1_75.doubleValue());
-				expectedResult = "<= 1.75";
-			} else if (plotArea.compareTo(PLOT_AREA_200_300_SQM) <= 0) {
-				isAccepted = far.compareTo(FAR_UP_TO_1_65) <= 0;
-				LOG.info("FAR_UP_TO_1_65: " + isAccepted);
-				pl.getFarDetails().setPermissableFar(FAR_UP_TO_1_65.doubleValue());
-				expectedResult = "<= 1.65";
-			} else if (plotArea.compareTo(PLOT_AREA_300_500_SQM) <= 0) {
-				isAccepted = far.compareTo(FAR_UP_TO_1_50) <= 0;
-				LOG.info("FAR_UP_TO_1_50: " + isAccepted);
-				pl.getFarDetails().setPermissableFar(FAR_UP_TO_1_50.doubleValue());
-				expectedResult = "<= 1.50";
-			} else if (plotArea.compareTo(PLOT_AREA_500_1000_SQM) <= 0) {
-				isAccepted = far.compareTo(FAR_UP_TO_1_50) <= 0;
-				LOG.info("FAR_UP_TO_1_50 2nd: " + isAccepted);
-				pl.getFarDetails().setPermissableFar(FAR_UP_TO_1_50.doubleValue());
-				expectedResult = "<= 1.50";
-			} else {
-				isAccepted = far.compareTo(FAR_UP_TO_1_25) <= 0;
-				LOG.info("FAR_UP_TO_1_25: " + isAccepted);
-				pl.getFarDetails().setPermissableFar(FAR_UP_TO_1_25.doubleValue());
-				expectedResult = "<= 1.25";
-			}
-		
-
-//		if (typeOfArea.equalsIgnoreCase(NEW)) {
+//	private void processFarResidential(Plan pl, OccupancyTypeHelper occupancyType, BigDecimal far, String typeOfArea,
+//			BigDecimal roadWidth, HashMap<String, String> errors, BigDecimal plotArea) {
+//
+//		String expectedResult = StringUtils.EMPTY;
+//		boolean isAccepted = false;
+//		
+//		LOG.info("Processing FAR (Residential) for punjab as per new Bylaws");
+//		System.out.println("Processing FAR (Residential) for punjab as per new Bylaws");
+//		LOG.info("Type of area: " + typeOfArea);
+//		System.out.println("Type of area: " + typeOfArea);
+//		// Start Rule updated by Bimal on 14 March 2024
+//		
+//			if (plotArea.compareTo(BigDecimal.ZERO) < 0) {
+//				errors.put("Plot Area Error:", "Plot area cannot be less than 0.");
+//				pl.addErrors(errors);
+//			} else if (plotArea.compareTo(PLOT_AREA_UP_TO_100_SQM) <= 0) {
+//				isAccepted = far.compareTo(FAR_UP_TO_2_00) <= 0;
+//				LOG.info("FAR_UP_TO_2_00: " + isAccepted);
+//				pl.getFarDetails().setPermissableFar(FAR_UP_TO_2_00.doubleValue());
+//				expectedResult = "<= 2.00";
+//			} else if (plotArea.compareTo(PLOT_AREA_100_150_SQM) <= 0) {
+//				isAccepted = far.compareTo(FAR_UP_TO_1_90) <= 0;
+//				LOG.info("FAR_UP_TO_1_90: " + isAccepted);
+//				pl.getFarDetails().setPermissableFar(FAR_UP_TO_1_90.doubleValue());
+//				expectedResult = "<= 1.90";
+//			} else if (plotArea.compareTo(PLOT_AREA_150_200_SQM) <= 0) {
+//				isAccepted = far.compareTo(FAR_UP_TO_1_75) <= 0;
+//				LOG.info("FAR_UP_TO_1_75: " + isAccepted);
+//				pl.getFarDetails().setPermissableFar(FAR_UP_TO_1_75.doubleValue());
+//				expectedResult = "<= 1.75";
+//			} else if (plotArea.compareTo(PLOT_AREA_200_300_SQM) <= 0) {
+//				isAccepted = far.compareTo(FAR_UP_TO_1_65) <= 0;
+//				LOG.info("FAR_UP_TO_1_65: " + isAccepted);
+//				pl.getFarDetails().setPermissableFar(FAR_UP_TO_1_65.doubleValue());
+//				expectedResult = "<= 1.65";
+//			} else if (plotArea.compareTo(PLOT_AREA_300_500_SQM) <= 0) {
+//				isAccepted = far.compareTo(FAR_UP_TO_1_50) <= 0;
+//				LOG.info("FAR_UP_TO_1_50: " + isAccepted);
+//				pl.getFarDetails().setPermissableFar(FAR_UP_TO_1_50.doubleValue());
+//				expectedResult = "<= 1.50";
+//			} else if (plotArea.compareTo(PLOT_AREA_500_1000_SQM) <= 0) {
+//				isAccepted = far.compareTo(FAR_UP_TO_1_50) <= 0;
+//				LOG.info("FAR_UP_TO_1_50 2nd: " + isAccepted);
+//				pl.getFarDetails().setPermissableFar(FAR_UP_TO_1_50.doubleValue());
+//				expectedResult = "<= 1.50";
+//			} else {
+//				isAccepted = far.compareTo(FAR_UP_TO_1_25) <= 0;
+//				LOG.info("FAR_UP_TO_1_25: " + isAccepted);
+//				pl.getFarDetails().setPermissableFar(FAR_UP_TO_1_25.doubleValue());
+//				expectedResult = "<= 1.25";
+//			}
+//		
+//
+////		if (typeOfArea.equalsIgnoreCase(NEW)) {
 //
 //			if (plotArea.compareTo(BigDecimal.ZERO) < 0) {
 //				errors.put("Plot Area Error:", "Plot area cannot be less than 0.");
@@ -1096,12 +1129,71 @@ public class Far extends FeatureProcess {
 		 * }
 		 */
 
-		String occupancyName = occupancyType.getType().getName();
+//		String occupancyName = occupancyType.getType().getName();
+//		if (errors.isEmpty() && StringUtils.isNotBlank(expectedResult)) {
+//			buildResult(pl, occupancyName, far, typeOfArea, roadWidth, expectedResult, isAccepted);
+//		}
+//	}
+//	
+	
+	private void processFarResidential(Plan pl, OccupancyTypeHelper occupancyType, BigDecimal far, String typeOfArea,
+			BigDecimal roadWidth, HashMap<String, String> errors, String feature, String occupancyName, Map<String, List<Map<String, Object>>> edcrRuleList) {
+		
+		System.out.println("under processFarResidentoal");
+		System.out.println("+++++" );
+		// occupancyName = occupancyType.getType().getName();
+		System.out.println("+++++" + pl.getPlot().getArea());
+		
+		BigDecimal plotArea = pl.getPlot().getArea();
+		System.out.println("plotarea" + plotArea);
+	
+		BigDecimal permissibleFar = BigDecimal.ZERO;
+		
+		Map<String, Object> params = new HashMap<>();
+		
+		params.put("feature", feature);
+		params.put("occupancy", occupancyName);
+		params.put("plotArea", plotArea);
+		
+		System.out.println("Featureeee" + params.get("feature"));
+		ArrayList<String> valueFromColumn = new ArrayList<>();
+		valueFromColumn.add("permissibleValue");
+		
+		List<Map<String, Object>> permissibleValue = new ArrayList<>();
+		System.out.println("listt" + pl.getEdcrRulesFeatures());
+		try {
+		 //permissibleValue = edcrRestService.getPermissibleValue1(pl.getEdcrRulesFeatures(), params, valueFromColumn);
+		 permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(pl.getEdcrRulesFeatures(), params, valueFromColumn);
+
+			LOG.info("permissibleValue" + permissibleValue);
+			System.out.println("permis___+++" + permissibleValue);
+		
+		} catch (NullPointerException e) {
+			
+			
+			 LOG.error("Permissible Far not found--------", e);
+		}
+		
+		String expectedResult = StringUtils.EMPTY;
+		boolean isAccepted = false;
+		System.out.println("+++++" + occupancyName + plotArea + permissibleValue);
+      
+		if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey("permissibleValue")) {
+		    permissibleFar = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get("permissibleValue").toString())) ;
+		}
+
+		System.out.println("farrr+" + permissibleFar);
+		isAccepted = far.compareTo(permissibleFar) <= 0;
+		pl.getFarDetails().setPermissableFar(permissibleFar.doubleValue());
+		expectedResult = "<= " + permissibleFar;
+	System.out.println("ec" + expectedResult);
 		if (errors.isEmpty() && StringUtils.isNotBlank(expectedResult)) {
 			buildResult(pl, occupancyName, far, typeOfArea, roadWidth, expectedResult, isAccepted);
 		}
-	}
 
+	}
+//
+//
 	private void processFarNonResidential(Plan pl, OccupancyTypeHelper occupancyType, BigDecimal far, String typeOfArea,
 			BigDecimal roadWidth, HashMap<String, String> errors) {
 
@@ -1297,7 +1389,7 @@ public class Far extends FeatureProcess {
 		scrutinyDetail.addColumnHeading(1, RULE_NO);
 		scrutinyDetail.addColumnHeading(2, OCCUPANCY);
 		scrutinyDetail.addColumnHeading(3, AREA_TYPE);
-		//scrutinyDetail.addColumnHeading(4, ROAD_WIDTH);
+		scrutinyDetail.addColumnHeading(4, ROAD_WIDTH);
 		scrutinyDetail.addColumnHeading(5, PERMISSIBLE);
 		scrutinyDetail.addColumnHeading(6, PROVIDED);
 		scrutinyDetail.addColumnHeading(7, STATUS);
@@ -1306,10 +1398,10 @@ public class Far extends FeatureProcess {
 		String actualResult = far.toString();
 
 		Map<String, String> details = new HashMap<>();
-		details.put(RULE_NO, RULE);
+		details.put(RULE_NO, RULE_38);
 		details.put(OCCUPANCY, occupancyName);
 		details.put(AREA_TYPE, typeOfArea);
-	//	details.put(ROAD_WIDTH, roadWidth.toString());
+		details.put(ROAD_WIDTH, roadWidth.toString());
 		details.put(PERMISSIBLE, expectedResult);
 		details.put(PROVIDED, actualResult);
 		details.put(STATUS, isAccepted ? Result.Accepted.getResultVal() : Result.Not_Accepted.getResultVal());
@@ -1322,7 +1414,7 @@ public class Far extends FeatureProcess {
 		ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
 		scrutinyDetail.addColumnHeading(1, RULE_NO);
 		scrutinyDetail.addColumnHeading(2, "Area Type");
-		//scrutinyDetail.addColumnHeading(3, "Road Width");
+		scrutinyDetail.addColumnHeading(3, "Road Width");
 		scrutinyDetail.addColumnHeading(4, PERMISSIBLE);
 		scrutinyDetail.addColumnHeading(5, PROVIDED);
 		scrutinyDetail.addColumnHeading(6, STATUS);

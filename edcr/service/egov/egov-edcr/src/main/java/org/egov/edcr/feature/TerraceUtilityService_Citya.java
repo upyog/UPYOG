@@ -109,7 +109,7 @@ public class TerraceUtilityService_Citya extends FeatureProcess {
         // Default permissible value set to zero initially
         BigDecimal terraceUtilityValue = BigDecimal.ZERO;
 
-        String occupancyName = null;
+        String occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl);
 
         // Define the feature name for fetching rules
         String feature = MdmsFeatureConstants.TERRACE_UTILITY_SERVICE;
@@ -118,11 +118,7 @@ public class TerraceUtilityService_Citya extends FeatureProcess {
         Map<String, Object> params = new HashMap<>();
         
         // If occupancy is residential, set the corresponding string
-        if (DxfFileConstants.A
-                .equals(pl.getVirtualBuilding().getMostRestrictiveFarHelper().getType().getCode())) {
-            occupancyName = "Residential";
-        }
-
+       
         params.put("feature", feature);
         params.put("occupancy", occupancyName);
 

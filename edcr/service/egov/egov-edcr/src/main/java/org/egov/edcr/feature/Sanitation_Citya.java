@@ -124,13 +124,10 @@ public class Sanitation_Citya extends FeatureProcess {
     FetchEdcrRulesMdms fetchEdcrRulesMdms;  
     
     private Map<String, BigDecimal> fetchSanitationValues(Plan pl) {
-        String occupancyName = null;
+    	String occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl);
 		String feature = MdmsFeatureConstants.SANITATION;
         Map<String, Object> params = new HashMap<>();
-        
-        if (DxfFileConstants.A.equals(pl.getVirtualBuilding().getMostRestrictiveFarHelper().getType().getCode())) {
-            occupancyName = "Residential";
-        }
+       
 
         params.put("feature", feature);
         params.put("occupancy", occupancyName);

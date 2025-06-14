@@ -50,32 +50,46 @@ package org.egov.edcr.feature;
 import static org.egov.edcr.utility.DcrConstants.IN_LITRE;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.egov.common.constants.MdmsFeatureConstants;
 import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.Result;
 import org.egov.common.entity.edcr.ScrutinyDetail;
+import org.egov.edcr.constants.DxfFileConstants;
+import org.egov.edcr.constants.EdcrRulesMdmsConstants;
+import org.egov.edcr.service.FetchEdcrRulesMdms;
 import org.egov.edcr.utility.DcrConstants;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class WaterTankCapacity extends FeatureProcess {
+	private static final Logger LOG = LogManager.getLogger(WaterTankCapacity.class);
+
     private static final String RULE_59_10_vii = "59-10-vii";
     private static final String RULE_59_10_vii_DESCRIPTION = "Water tank capacity";
     private static final String WATER_TANK_CAPACITY = "Minimum capacity of Water tank";
-    private static final BigDecimal TWELVE_POINTFIVE = BigDecimal.valueOf(12.5);
-    private static final BigDecimal ONEHUNDRED_THIRTYFIVE = BigDecimal.valueOf(135);
 
     @Override
     public Plan validate(Plan pl) {
+        // No specific validation logic added; returning the input plan as-is.
         return pl;
     }
 
+    @Autowired
+    FetchEdcrRulesMdms fetchEdcrRulesMdms;
+
     @Override
     public Plan process(Plan pl) {
+        // Initialize ScrutinyDetail for reporting the rule check
         scrutinyDetail = new ScrutinyDetail();
         scrutinyDetail.addColumnHeading(1, RULE_NO);
         scrutinyDetail.addColumnHeading(2, DESCRIPTION);
@@ -83,34 +97,78 @@ public class WaterTankCapacity extends FeatureProcess {
         scrutinyDetail.addColumnHeading(4, PROVIDED);
         scrutinyDetail.addColumnHeading(5, STATUS);
         scrutinyDetail.setKey("Common_Water tank capacity");
+
+        // Rule metadata
         String subRule = RULE_59_10_vii;
         String subRuleDesc = RULE_59_10_vii_DESCRIPTION;
-        BigDecimal expectedWaterTankCapacity = BigDecimal.ZERO;
 
+        // Default expected values
+        BigDecimal expectedWaterTankCapacity = BigDecimal.ZERO;
+        BigDecimal waterTankCapacityArea = BigDecimal.ZERO;
+        BigDecimal waterTankCapacityExpected = BigDecimal.ZERO;
+
+        // Determine occupancy type
+        String occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl);
+        String feature = MdmsFeatureConstants.WATER_TANK_CAPACITY;
+
+        Map<String, Object> params = new HashMap<>();
+       
+        params.put("feature", feature);
+        params.put("occupancy", occupancyName);
+
+        // Fetch permissible values from edcr rules
+        Map<String, List<Map<String, Object>>> edcrRuleList = pl.getEdcrRulesFeatures();
+        ArrayList<String> valueFromColumn = new ArrayList<>();
+        valueFromColumn.add(EdcrRulesMdmsConstants.WATER_TANK_CAPACITY_AREA);
+        valueFromColumn.add(EdcrRulesMdmsConstants.WATER_TANK_CAPACITY_EXPECTED);
+
+        List<Map<String, Object>> permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
+        LOG.info("permissibleValue" + permissibleValue);
+
+        // Extract permissible values
+        if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey(EdcrRulesMdmsConstants.WATER_TANK_CAPACITY_AREA)) {
+            waterTankCapacityArea = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.WATER_TANK_CAPACITY_AREA).toString()));
+            waterTankCapacityExpected = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.WATER_TANK_CAPACITY_EXPECTED).toString()));
+        }
+
+        // Proceed if water tank capacity is available in plan
         if (pl.getUtility() != null && pl.getVirtualBuilding() != null
                 && pl.getUtility().getWaterTankCapacity() != null) {
-            // No of persons = total builtup area / 12.5(occupant load)
-            // Required Water tank capacity = 135 * no of persons
+
             Boolean valid = false;
+
+            // Calculate number of persons = total built-up area / permissible area per person
             BigDecimal totalBuitUpArea = pl.getVirtualBuilding().getTotalBuitUpArea();
-            BigDecimal noOfPersons = totalBuitUpArea.divide(TWELVE_POINTFIVE, DcrConstants.DECIMALDIGITS_MEASUREMENTS,
+            BigDecimal noOfPersons = totalBuitUpArea.divide(
+                    waterTankCapacityArea,
+                    DcrConstants.DECIMALDIGITS_MEASUREMENTS,
                     DcrConstants.ROUNDMODE_MEASUREMENTS);
-            expectedWaterTankCapacity = ONEHUNDRED_THIRTYFIVE
-                    .multiply(noOfPersons.setScale(0, BigDecimal.ROUND_HALF_UP));
+
+            // Required tank capacity = expected liters * number of persons
+            expectedWaterTankCapacity = waterTankCapacityExpected.multiply(noOfPersons.setScale(0, BigDecimal.ROUND_HALF_UP));
             expectedWaterTankCapacity = expectedWaterTankCapacity.setScale(DcrConstants.DECIMALDIGITS_MEASUREMENTS,
                     DcrConstants.ROUNDMODE_MEASUREMENTS);
+
+            // Get provided tank capacity from plan
             BigDecimal providedWaterTankCapacity = pl.getUtility().getWaterTankCapacity();
             providedWaterTankCapacity = providedWaterTankCapacity.setScale(DcrConstants.DECIMALDIGITS_MEASUREMENTS,
                     DcrConstants.ROUNDMODE_MEASUREMENTS);
+
+            // Validate whether provided capacity meets the requirement
             if (providedWaterTankCapacity.compareTo(expectedWaterTankCapacity) >= 0) {
                 valid = true;
             }
+
+            // Process result and update scrutiny report
             processWaterTankCapacity(pl, "", subRule, subRuleDesc, expectedWaterTankCapacity, valid);
         }
 
         return pl;
     }
 
+    /**
+     * Add the rule check result to scrutiny report based on validation
+     */
     private void processWaterTankCapacity(Plan plan, String rule, String subRule, String subRuleDesc,
             BigDecimal expectedWaterTankCapacity, Boolean valid) {
         if (expectedWaterTankCapacity.compareTo(BigDecimal.valueOf(0)) > 0) {
@@ -128,6 +186,9 @@ public class WaterTankCapacity extends FeatureProcess {
         }
     }
 
+    /**
+     * Helper method to populate scrutiny report
+     */
     private void setReportOutputDetails(Plan pl, String ruleNo, String ruleDesc, String expected, String actual,
             String status) {
         Map<String, String> details = new HashMap<>();
@@ -139,6 +200,7 @@ public class WaterTankCapacity extends FeatureProcess {
         scrutinyDetail.getDetail().add(details);
         pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
     }
+
 
     @Override
     public Map<String, Date> getAmendments() {

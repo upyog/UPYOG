@@ -114,15 +114,12 @@ public class SegregatedToilet_Citya extends FeatureProcess {
         BigDecimal sTSegregatedToiletRequired = BigDecimal.ZERO;
         BigDecimal sTminDimensionRequired = BigDecimal.ZERO;
 
-        String occupancyName = null;
+        String occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl);
         String feature = MdmsFeatureConstants.SEGREGATED_TOILET;
 
         // Determine occupancy based on code (A = Residential)
         Map<String, Object> params = new HashMap<>();
-        if (DxfFileConstants.A.equals(pl.getVirtualBuilding().getMostRestrictiveFarHelper().getType().getCode())) {
-            occupancyName = "Residential";
-        }
-
+       
         // Add params for MDMS fetch
         params.put("feature", feature);
         params.put("occupancy", occupancyName);

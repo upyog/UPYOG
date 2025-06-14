@@ -80,14 +80,11 @@ public class MezzanineFloorService_Citya extends FeatureProcess {
 
         if (pl != null && !pl.getBlocks().isEmpty()) {
             // Determine the occupancy type and feature for fetching permissible values
-            String occupancyName = null;
+        	String occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl);
             String feature = MdmsFeatureConstants.MEZZANINE_FLOOR_SERVICE;
 
             Map<String, Object> params = new HashMap<>();
-            if (DxfFileConstants.A.equals(pl.getVirtualBuilding().getMostRestrictiveFarHelper().getType().getCode())) {
-                occupancyName = "Residential";
-            }
-
+           
             params.put("feature", feature);
             params.put("occupancy", occupancyName);
 

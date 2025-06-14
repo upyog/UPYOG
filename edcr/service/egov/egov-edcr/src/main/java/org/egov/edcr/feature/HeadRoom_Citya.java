@@ -107,14 +107,11 @@ public class HeadRoom_Citya extends FeatureProcess {
         BigDecimal HeadRoomValue = BigDecimal.ZERO;
 
         // Determine the occupancy type and feature for fetching permissible values
-        String occupancyName = null;
+        String occupancyName = fetchEdcrRulesMdms.getOccupancyName(plan);
         String feature = MdmsFeatureConstants.HEAD_ROOM;
 
         Map<String, Object> params = new HashMap<>();
-        if (DxfFileConstants.A.equals(plan.getVirtualBuilding().getMostRestrictiveFarHelper().getType().getCode())) {
-            occupancyName = "Residential";
-        }
-
+        
         params.put("feature", feature);
         params.put("occupancy", occupancyName);
 

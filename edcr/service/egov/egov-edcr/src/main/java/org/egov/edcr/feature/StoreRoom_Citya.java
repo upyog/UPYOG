@@ -122,14 +122,12 @@ public class StoreRoom_Citya extends FeatureProcess {
         BigDecimal storeRoomValueTwo = BigDecimal.ZERO;
         BigDecimal storeRoomValueThree = BigDecimal.ZERO;
 
-        String occupancyName = null;
+        String occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl);
         String feature = MdmsFeatureConstants.STORE_ROOM;
 
         // Determine occupancy type (currently checks only for "Residential")
         Map<String, Object> params = new HashMap<>();
-        if (DxfFileConstants.A.equals(pl.getVirtualBuilding().getMostRestrictiveFarHelper().getType().getCode())) {
-            occupancyName = "Residential";
-        }
+        
 
         // Setup parameters to fetch values from MDMS
         params.put("feature", feature);
