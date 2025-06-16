@@ -350,11 +350,8 @@ import useCreateDemand from "./sv/useCreateDemand";
 import useEmpvendorCommonSearch from "./vendor/useEmpvendorCommonSearch";
 import useFilterEmployee from "./pgrAi/useFilterEmployee";
 import useApplicationDetails from "./pgrAi/useApplicationDetails";
-<<<<<<< Updated upstream
 import useWorkerSearch from "./fsm/useWorkerSearch";
-=======
 import useTreePruningCreateAPI from "./wt/useTreePruningCreateAPI";
->>>>>>> Stashed changes
 
 const wt={
   useTankerCreateAPI,
