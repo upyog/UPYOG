@@ -1,6 +1,5 @@
 package org.egov.finance.master.entity;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
@@ -18,19 +17,19 @@ import lombok.Data;
 @SequenceGenerator(name = "seq_functionary", sequenceName = "seq_functionary", allocationSize = 1)
 public class Functionary extends AuditDetailswithVersion {
 
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-    @Id
-    @GeneratedValue(generator = "seq_functionary", strategy = GenerationType.SEQUENCE)
-    private Integer id;
+	@Id
+	@GeneratedValue(generator = "seq_functionary", strategy = GenerationType.SEQUENCE)
+	private Integer id;
 
-    private BigDecimal code;
+	private BigDecimal code;
 
-    private String name;
+	private String name;
 
-    private Date createtimestamp;
+	private Date createtimestamp;
 
-    private Date updatetimestamp;
+	private Date updatetimestamp;
 
-    private Boolean isactive;
+	private Boolean isactive;
 }

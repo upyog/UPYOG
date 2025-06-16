@@ -5,8 +5,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.egov.finance.master.customannotation.SafeHtml;
+import org.egov.finance.master.model.AccountDetailModel;
+import org.egov.finance.master.model.EgwStatusModel;
+import org.egov.finance.master.model.FiscalPeriodModel;
 import org.egov.finance.master.model.FunctionModel;
+import org.egov.finance.master.model.FunctionaryModel;
 import org.egov.finance.master.model.FundModel;
+import org.egov.finance.master.model.FundsourceModel;
+import org.egov.finance.master.model.SchemeModel;
+import org.egov.finance.master.model.SubSchemeModel;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -48,9 +55,9 @@ public class Voucher {
 
 	private FunctionModel function;
 
-	private FiscalPeriod fiscalPeriod;
+	private FiscalPeriodModel fiscalPeriod;
 
-	private EgwStatus status;
+	private EgwStatusModel status;
 
 	private Long originalVhId;
 
@@ -67,15 +74,15 @@ public class Voucher {
 	@SafeHtml
 	private String source;
 
-	private Scheme scheme;
+	private SchemeModel scheme;
 
-	private SubScheme subScheme;
+	private SubSchemeModel subScheme;
 
-	private Functionary functionary;
+	private FunctionaryModel functionary;
 
-	private Fundsource fundsource;
+	private FundsourceModel fundsource;
 
-	private List<AccountDetail> ledgers = new ArrayList<>();
+	private List<AccountDetailModel> ledgers = new ArrayList<>();
 
 	@SafeHtml
 	private String tenantId;
@@ -103,7 +110,7 @@ public class Voucher {
 				? FunctionModel.builder().code(vh.getVouchermis().getFunction().getCode()).build()
 				: null;
 
-		this.status = vh.getStatus() != null ? new EgwStatus(vh.getStatus()) : null;
+		this.status = vh.getStatus() != null ? new EgwStatusModel(vh.getStatus()) : null;
 		this.moduleId = vh.getModuleId() != null ? vh.getModuleId().longValue() : null;
 		this.cgvn = vh.getCgvn();
 		this.serviceName = vh.getVouchermis() != null ? vh.getVouchermis().getServiceName() : null;
@@ -111,7 +118,7 @@ public class Voucher {
 
 		if (vh.getGeneralLedger() != null) {
 			for (CGeneralLedger gl : vh.getGeneralLedger()) {
-				this.ledgers.add(new AccountDetail(gl));
+				this.ledgers.add(new AccountDetailModel(new AccountDetail(gl)));
 			}
 		}
 	}
