@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.egov.finance.master.customannotation.SafeHtml;
+import org.egov.finance.master.model.FunctionModel;
+import org.egov.finance.master.model.FundModel;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -42,9 +44,9 @@ public class Voucher {
 	@SafeHtml
 	private String voucherDate;
 
-	private Fund fund;
+	private FundModel fund;
 
-	private Function function;
+	private FunctionModel function;
 
 	private FiscalPeriod fiscalPeriod;
 
@@ -94,11 +96,11 @@ public class Voucher {
 		this.description = vh.getDescription();
 		this.voucherDate = vh.getVoucherDate() != null ? sdf.format(vh.getVoucherDate()) : null;
 
-		this.fund = vh.getFundId() != null ? new Fund(vh.getFundId().getId()) : null;
+		this.fund = vh.getFundId() != null ? FundModel.builder().code(vh.getFundId().getCode()).build() : null;
 
 		this.department = vh.getVouchermis() != null ? vh.getVouchermis().getDepartmentcode() : null;
 		this.function = vh.getVouchermis() != null && vh.getVouchermis().getFunction() != null
-				? new Function(vh.getVouchermis().getFunction())
+				? FunctionModel.builder().code(vh.getVouchermis().getFunction().getCode()).build()
 				: null;
 
 		this.status = vh.getStatus() != null ? new EgwStatus(vh.getStatus()) : null;

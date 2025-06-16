@@ -10,9 +10,11 @@ import java.util.Date;
 import org.egov.finance.master.customannotation.SafeHtml;
 import org.hibernate.validator.constraints.Length;
 
+import lombok.Builder;
 import lombok.Data;
 
 @Data
+@Builder
 public class FunctionModel {
 	
     private Long id;
