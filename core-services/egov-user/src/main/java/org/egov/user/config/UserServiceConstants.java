@@ -46,6 +46,7 @@ public class UserServiceConstants {
 
     public static final String EMAIL_UPDATION_CODE = "EMAIL_UPDATED";
 
+    public static final String DEFAULT_EMAIL_UPDATION_MESSAGE = "Dear Citizen, your e-mail has been updated from {oldEmail} to {newEmail}.\n\nEGOVS";
     public static final String INVALID_USER_REQUEST = "UserRequest is Invalid";
 
     public static final String ROLECODE_MISSING_CODE = "egs_001";
@@ -63,5 +64,7 @@ public class UserServiceConstants {
     public static final String PATTERN_CITY = "^[a-zA-Z. ]*$";
     public static final String PATTERN_TENANT = "^[a-zA-Z. ]*$";
     public static final String PATTERN_PINCODE = "^[1-9][0-9]{5}$";
+    public static final String TENANTID_MDC_STRING = "TENANTID";
+    public static final String CITIZEN_ROLE_CODE = "CITIZEN";
 }
 

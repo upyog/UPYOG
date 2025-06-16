@@ -9,6 +9,7 @@ import java.util.Date;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@Data
 @ToString
 @EqualsAndHashCode(of = {"code", "tenantId"})
 public class Role {

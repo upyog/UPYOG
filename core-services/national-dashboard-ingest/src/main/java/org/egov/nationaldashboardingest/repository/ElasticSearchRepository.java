@@ -1,9 +1,14 @@
 package org.egov.nationaldashboardingest.repository;
 
-import java.util.ArrayList;
+/**import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
-import java.util.Map;
+import java.util.Map;**/
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import lombok.extern.slf4j.Slf4j;
 
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.nationaldashboardingest.config.ApplicationProperties;
@@ -19,10 +24,17 @@ import org.springframework.stereotype.Repository;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 
-import com.fasterxml.jackson.databind.JsonNode;
+import java.util.ArrayList;
+import java.util.Base64;
+
+/**import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import lombok.extern.slf4j.Slf4j;
+import lombok.extern.slf4j.Slf4j;**/
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Repository
@@ -45,11 +57,7 @@ public class ElasticSearchRepository {
 
         // Conversion of multi-index request to a single request to avoid repetitive REST calls to ES.
         indexNameVsDocumentsToBeIndexed.keySet().forEach(indexName -> {
-            String actionMetaData;
-        	if(applicationProperties.getIsLegacyVersionES())
-        		actionMetaData = String.format("{ \"index\" : { \"_index\" : \"%s\", \"_type\" : \"_doc\" } }%n", indexName);
-        	else
-        		actionMetaData = String.format("{ \"index\" : { \"_index\" : \"%s\" } }%n", indexName);
+            String actionMetaData = String.format("{ \"index\" : { \"_index\" : \"%s\", \"_type\" : \"_doc\" } }%n", indexName);
             for (String document : indexNameVsDocumentsToBeIndexed.get(indexName)) {
                 bulkRequestBody.append(actionMetaData);
                 bulkRequestBody.append(document);
@@ -59,7 +67,8 @@ public class ElasticSearchRepository {
 
         // Persisting flattened data to ES.
         try {
-            HttpHeaders headers = getHttpHeaders();
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
             HttpEntity<Object> httpEntity = new HttpEntity<>(bulkRequestBody.toString(), headers);
             StringBuilder uri = new StringBuilder(applicationProperties.getElasticSearchHost() + IngestConstants.BULK_ENDPOINT);
             Object response = restTemplate.postForEntity(uri.toString(), httpEntity, Map.class);
@@ -81,9 +90,7 @@ public class ElasticSearchRepository {
     public Integer findIfRecordAlreadyExists(StringBuilder uri) {
         Integer recordsFound = 0;
         try {
-             HttpHeaders headers = getHttpHeaders();
-            HttpEntity<Object> httpEntity = new HttpEntity<>(null, headers);
-            Object response = restTemplate.postForEntity(uri.toString(),httpEntity, Map.class);
+            Object response = restTemplate.getForEntity(uri.toString(), Map.class);
             String res = objectMapper.writeValueAsString(response);
             JsonNode responseNode = objectMapper.readValue(res, JsonNode.class);
             log.info(responseNode.get(IngestConstants.BODY).toString());

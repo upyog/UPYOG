@@ -1,14 +1,16 @@
 package org.egov.user.web.contract;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
+//import lombok.AllArgsConstructor;
+//import lombok.Builder;
+//import lombok.EqualsAndHashCode;
+import lombok.*;
 import org.egov.user.domain.model.Role;
 
 @Getter
 @Builder
 @AllArgsConstructor
+@Data
+@NoArgsConstructor
 @EqualsAndHashCode(of = {"code", "tenantId"})
 public class RoleRequest {
 

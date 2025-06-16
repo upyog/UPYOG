@@ -1,14 +1,50 @@
 package org.egov.user.web.controller;
 
+import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
+import static org.apache.commons.lang3.ArrayUtils.isEquals;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyBoolean;
+import static org.mockito.Matchers.argThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.TimeZone;
+//import org.egov.common.utils.MultiStateInstanceUtil;
 import org.apache.commons.io.IOUtils;
-import org.egov.encryption.EncryptionService;
+//import org.egov.encryption.EncryptionService;
+import org.egov.common.utils.MultiStateInstanceUtil;
 import org.egov.user.TestConfiguration;
 import org.egov.user.domain.exception.InvalidUserSearchCriteriaException;
-import org.egov.user.domain.model.*;
-import org.egov.user.domain.model.enums.*;
+import org.egov.user.domain.model.Action;
+import org.egov.user.domain.model.Address;
+import org.egov.user.domain.model.SecureUser;
+import org.egov.user.domain.model.UserDetail;
+import org.egov.user.domain.model.UserSearchCriteria;
+import org.egov.user.domain.model.enums.AddressType;
+import org.egov.user.domain.model.enums.BloodGroup;
+import org.egov.user.domain.model.enums.Gender;
+import org.egov.user.domain.model.enums.GuardianRelation;
+import org.egov.user.domain.model.enums.UserType;
 import org.egov.user.domain.service.TokenService;
 import org.egov.user.domain.service.UserService;
-import org.egov.user.domain.service.utils.EncryptionDecryptionUtil;
+//import org.egov.user.domain.service.utils.EncryptionDecryptionUtil;
 import org.egov.user.security.CustomAuthenticationKeyGenerator;
 import org.egov.user.web.contract.auth.Role;
 import org.egov.user.web.contract.auth.User;
@@ -17,7 +53,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.ArgumentMatcher;
-import org.mockito.Mock;
+//import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -29,7 +65,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
-import java.io.IOException;
+/**import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -47,7 +83,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;**/
 
 @RunWith(SpringRunner.class)
 @WebMvcTest(UserController.class)
@@ -62,6 +98,9 @@ public class UserControllerTest {
 
     @MockBean
     private TokenService tokenService;
+    
+    @MockBean
+    private MultiStateInstanceUtil multiStateInstanceUtil;
 
     @MockBean
     private CustomAuthenticationKeyGenerator authenticationKeyGenerator;
