@@ -36,11 +36,6 @@ public class EgwStatus extends AuditDetailswithVersion {
 	@SafeHtml
 	private String description;
 
-	public EgwStatus(Long id) {
-		this.id = id;
-	}
+	
 
-	public EgwStatus(Integer id) {
-		this.id = id != null ? id.longValue() : null;
-	}
 }
