@@ -12,10 +12,10 @@ import org.springframework.web.client.RestTemplate;
 
 
 @SpringBootApplication
-public class MasterApplication {
+public class VoucherApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(MasterApplication.class, args);
+		SpringApplication.run(VoucherApplication.class, args);
 	}
 
 	@Bean
