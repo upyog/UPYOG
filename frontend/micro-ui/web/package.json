@@ -9,10 +9,7 @@
     "micro-ui-internals/packages/modules/core",
     "micro-ui-internals/packages/modules/common",
     "micro-ui-internals/packages/modules/dss",
-    "micro-ui-internals/packages/modules/pgrai",
-    "micro-ui-internals/packages/modules/engagement",
-    "micro-ui-internals/packages/modules/obps",
-    "micro-ui-internals/packages/modules/asset"
+    "micro-ui-internals/packages/modules/tl"
   ],
   "engines": {
     "node": ">=14"
