@@ -40,4 +40,8 @@ public class AccountDetailType extends AuditDetailswithVersion {
     private String fullyQualifiedName;
 
     private Boolean active;
+    
+    public AccountDetailType(Long id) {
+        this.id = id;
+    }
 }

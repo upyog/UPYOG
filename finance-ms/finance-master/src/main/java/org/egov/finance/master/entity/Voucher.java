@@ -1,41 +1,35 @@
 package org.egov.finance.master.entity;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import org.egov.finance.master.customannotation.SafeHtml;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.SequenceGenerator;
-import jakarta.persistence.Table;
-import jakarta.persistence.Temporal;
-import jakarta.persistence.TemporalType;
-import lombok.Data;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-@Entity
-@Table(name = "voucher")
-@SequenceGenerator(name = Voucher.SEQ, sequenceName = Voucher.SEQ, allocationSize = 1)
-@Data
-public class Voucher extends AuditDetailswithVersion {
+import jakarta.validation.constraints.NotBlank;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-	public static final String SEQ = "SEQ_Voucher";
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class Voucher {
 
-	@Id
-	@GeneratedValue(generator = SEQ, strategy = GenerationType.SEQUENCE)
 	private Long id;
 
+	@NotBlank
 	@SafeHtml
 	private String name;
 
+	@NotBlank
 	@SafeHtml
 	private String type;
 
@@ -45,26 +39,19 @@ public class Voucher extends AuditDetailswithVersion {
 	@SafeHtml
 	private String description;
 
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date voucherDate;
+	@SafeHtml
+	private String voucherDate;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "fundid")
 	private Fund fund;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "functionid")
 	private Function function;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "fiscalperiodid")
 	private FiscalPeriod fiscalPeriod;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "statusid")
 	private EgwStatus status;
 
 	private Long originalVhId;
+
 	private Long refVhId;
 
 	@SafeHtml
@@ -78,23 +65,14 @@ public class Voucher extends AuditDetailswithVersion {
 	@SafeHtml
 	private String source;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "schemeid")
 	private Scheme scheme;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "subschemeid")
 	private SubScheme subScheme;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "functionaryid")
-    private Functionary functionary;
+	private Functionary functionary;
 
-   @ManyToOne(fetch = FetchType.LAZY)
-   @JoinColumn(name = "fundsourceid")
-   private Fundsource fundsource;
+	private Fundsource fundsource;
 
-	@OneToMany(mappedBy = "voucher", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<AccountDetail> ledgers = new ArrayList<>();
 
 	@SafeHtml
@@ -105,4 +83,35 @@ public class Voucher extends AuditDetailswithVersion {
 
 	@SafeHtml
 	private String referenceDocument;
+
+	public Voucher(final CVoucherHeader vh) {
+		final SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+
+		this.id = vh.getId();
+		this.name = vh.getName();
+		this.type = vh.getType();
+		this.voucherNumber = vh.getVoucherNumber();
+		this.description = vh.getDescription();
+		this.voucherDate = vh.getVoucherDate() != null ? sdf.format(vh.getVoucherDate()) : null;
+
+		this.fund = vh.getFundId() != null ? new Fund(vh.getFundId().getId()) : null;
+
+		this.department = vh.getVouchermis() != null ? vh.getVouchermis().getDepartmentcode() : null;
+		this.function = vh.getVouchermis() != null && vh.getVouchermis().getFunction() != null
+				? new Function(vh.getVouchermis().getFunction())
+				: null;
+
+		this.status = vh.getStatus() != null ? new EgwStatus(vh.getStatus()) : null;
+		this.moduleId = vh.getModuleId() != null ? vh.getModuleId().longValue() : null;
+		this.cgvn = vh.getCgvn();
+		this.serviceName = vh.getVouchermis() != null ? vh.getVouchermis().getServiceName() : null;
+		this.referenceDocument = vh.getVouchermis() != null ? vh.getVouchermis().getReferenceDocument() : null;
+
+		if (vh.getGeneralLedger() != null) {
+			for (CGeneralLedger gl : vh.getGeneralLedger()) {
+				this.ledgers.add(new AccountDetail(gl));
+			}
+		}
+	}
+
 }

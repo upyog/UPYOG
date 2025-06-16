@@ -26,7 +26,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 @Entity
-@Table(name = "Function",uniqueConstraints = @UniqueConstraint(columnNames = { "name","code" }))
+@Table(name = "Function", uniqueConstraints = @UniqueConstraint(columnNames = { "name", "code" }))
 @Data
 @SequenceGenerator(name = Function.SEQ, sequenceName = Function.SEQ, allocationSize = 1)
 public class Function extends AuditDetailswithVersion {
@@ -59,5 +59,22 @@ public class Function extends AuditDetailswithVersion {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "parentId")
 	private Function parentId;
+
+	public Function(Function function) {
+		if (function != null) {
+			this.id = function.getId();
+			this.code = function.getCode();
+			this.name = function.getName();
+			this.type = function.getType();
+			this.llevel = function.getLlevel();
+			this.isActive = function.getIsActive();
+			this.isNotLeaf = function.getIsNotLeaf();
+			this.parentId = function.getParentId();
+		}
+	}
+
+	public Function(Long id) {
+		this.id = id;
+	}
 
 }
