@@ -118,7 +118,7 @@ public class Voucher {
 
 		if (vh.getGeneralLedger() != null) {
 			for (CGeneralLedger gl : vh.getGeneralLedger()) {
-				this.ledgers.add(new AccountDetailModel(new AccountDetail(gl)));
+				this.ledgers.add(new AccountDetailModel(gl));
 			}
 		}
 	}
