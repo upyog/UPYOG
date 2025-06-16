@@ -30,13 +30,18 @@ import lombok.Data;
 @Data
 public class Scheme extends AuditDetailswithoutVersion {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	public static final String SEQ = "SEQ_Scheme";
 
 	@Id
 	@GeneratedValue(generator = SEQ, strategy = GenerationType.SEQUENCE)
 	private Long id;
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.LAZY,targetEntity = Fund.class)
 	@JoinColumn(name = "fundid")
 	private Fund fund;
 

@@ -15,11 +15,13 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
+import lombok.Data;
 
 @Entity
 @Table(name = "VOUCHERMIS")
+@Data
 @SequenceGenerator(name = "SEQ_VOUCHERMIS", sequenceName = "SEQ_VOUCHERMIS", allocationSize = 1)
-public class Vouchermis implements Serializable {
+public class Vouchermis extends AuditDetailswithVersion {
 
     private static final long serialVersionUID = 1L;
 
@@ -33,7 +35,7 @@ public class Vouchermis implements Serializable {
 
     private Integer billnumber;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY,targetEntity = Boundary.class)
     @JoinColumn(name = "divisionid")
     private Boundary divisionid;
 

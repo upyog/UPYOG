@@ -86,13 +86,13 @@ public class Voucher extends AuditDetailswithVersion {
 	@JoinColumn(name = "subschemeid")
 	private SubScheme subScheme;
 
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "functionaryid")
-//    private Functionary functionary;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "functionaryid")
+    private Functionary functionary;
 
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "fundsourceid")
-//    private Fundsource fundsource;
+   @ManyToOne(fetch = FetchType.LAZY)
+   @JoinColumn(name = "fundsourceid")
+   private Fundsource fundsource;
 
 	@OneToMany(mappedBy = "voucher", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<AccountDetail> ledgers = new ArrayList<>();

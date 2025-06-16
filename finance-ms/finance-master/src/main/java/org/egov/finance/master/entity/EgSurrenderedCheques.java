@@ -24,14 +24,14 @@ import lombok.Data;
 @Table(name = "eg_surrendered_cheques")
 @SequenceGenerator(name = EgSurrenderedCheques.SEQ_EGSURRENDEREDCHEQUES, sequenceName = EgSurrenderedCheques.SEQ_EGSURRENDEREDCHEQUES, allocationSize = 1)
 @Data
-public class EgSurrenderedCheques implements Serializable {
+public class EgSurrenderedCheques extends AuditDetailswithVersion{
 
 	private static final long serialVersionUID = 1L;
 	public static final String SEQ_EGSURRENDEREDCHEQUES = "seq_egsurrenderedcheques";
 
 	@Id
 	@GeneratedValue(generator = SEQ_EGSURRENDEREDCHEQUES, strategy = GenerationType.SEQUENCE)
-	private Integer id;
+	private Long id;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "bankaccountid", nullable = false)

@@ -48,20 +48,22 @@
 
 package org.egov.finance.master.entity;
 
-import static org.egov.finance.master.entity.BoundaryType.SEQ_BOUNDARY_TYPE;
 
-import java.util.Set;
+import static org.egov.finance.master.entity.AppConfigValues.SEQ_APPCONFIG_VALUE;
+
+import java.util.Date;
+import java.util.Objects;
 
 import org.egov.finance.master.customannotation.SafeHtml;
-import org.egov.finance.master.validation.Unique;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
-import org.springframework.data.jpa.domain.AbstractAuditable;
 
-import com.google.common.base.Objects;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.gson.annotations.Expose;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -69,137 +71,89 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
 import jakarta.persistence.Transient;
 import jakarta.validation.constraints.NotNull;
-import lombok.Data;
 
 @Entity
-@Table(name = "EG_BOUNDARY_TYPE")
-@Unique(fields = "code", enableDfltMsg = true)
-@Data
-@SequenceGenerator(name = SEQ_BOUNDARY_TYPE, sequenceName = SEQ_BOUNDARY_TYPE, allocationSize = 1)
-public class BoundaryType extends AuditDetailswithVersion {
+@Table(name = "eg_appconfig_values")
+@SequenceGenerator(name = SEQ_APPCONFIG_VALUE, sequenceName = SEQ_APPCONFIG_VALUE, allocationSize = 1)
+public class AppConfigValues extends AuditDetailswithVersion {
 
-    public static final String SEQ_BOUNDARY_TYPE = "SEQ_EG_BOUNDARY_TYPE";
-    private static final long serialVersionUID = 859229842367886336L;
+    public static final String SEQ_APPCONFIG_VALUE = "SEQ_EG_APPCONFIG_VALUES";
+    private static final long serialVersionUID = 1L;
     @Expose
     @Id
-    @GeneratedValue(generator = SEQ_BOUNDARY_TYPE, strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(generator = SEQ_APPCONFIG_VALUE, strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    @NotNull
+    @NotBlank
     @SafeHtml
-    private String name;
+    @Length(max = 4000)
+    @Column(name = "value")
+    private String value;
 
     @NotNull
-    @Length(max = 25)
-    @SafeHtml
-    private String code;
+    @Temporal(TemporalType.DATE)
+    @Column(name = "effective_from", updatable = false)
+    private Date effectiveFrom;
 
-    @ManyToOne
-    @NotNull
-    @JoinColumn(name = "hierarchytype")
-    private HierarchyType hierarchyType;
-
-    @ManyToOne
-    @JoinColumn(name = "parent")
-    private BoundaryType parent;
-
-    private Long hierarchy;
-
-    @SafeHtml
-    private String localName;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "key_id", nullable = false)
+    @JsonIgnore
+    private AppConfig config;
 
     @Transient
-    private String parentName;
-
-    @Transient
-    private Set<BoundaryType> childBoundaryTypes;
+    private boolean markedForRemoval;
 
    
 
-    public String getName() {
-        return name;
+    public Date getEffectiveFrom() {
+        return effectiveFrom;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setEffectiveFrom(final Date effectiveFrom) {
+        this.effectiveFrom = effectiveFrom;
     }
 
-    public String getCode() {
-        return code;
+    public String getValue() {
+        return value;
     }
 
-    public void setCode(String code) {
-        this.code = code;
+    public void setValue(final String value) {
+        this.value = value;
     }
 
-    public HierarchyType getHierarchyType() {
-        return hierarchyType;
+    public AppConfig getConfig() {
+        return config;
     }
 
-    public void setHierarchyType(HierarchyType hierarchyType) {
-        this.hierarchyType = hierarchyType;
+    public void setConfig(final AppConfig config) {
+        this.config = config;
     }
 
-    public BoundaryType getParent() {
-        return parent;
+    public boolean isMarkedForRemoval() {
+        return markedForRemoval;
     }
 
-    public void setParent(BoundaryType parent) {
-        this.parent = parent;
-    }
-
-    public Long getHierarchy() {
-        return hierarchy;
-    }
-
-    public void setHierarchy(Long hierarchy) {
-        this.hierarchy = hierarchy;
-    }
-
-    public String getParentName() {
-        return parentName;
-    }
-
-    public void setParentName(String parentName) {
-        this.parentName = parentName;
-    }
-
-    public Set<BoundaryType> getChildBoundaryTypes() {
-        return childBoundaryTypes;
-    }
-
-    public void setChildBoundaryTypes(Set<BoundaryType> childBoundaryTypes) {
-        this.childBoundaryTypes = childBoundaryTypes;
-    }
-
-    public void addChildBoundaryType(BoundaryType boundaryType) {
-        boundaryType.setParent(this);
-        childBoundaryTypes.add(boundaryType);
-    }
-
-    public String getLocalName() {
-        return localName;
-    }
-
-    public void setLocalName(final String localName) {
-        this.localName = localName;
+    public void setMarkedForRemoval(final boolean markedForRemoval) {
+        this.markedForRemoval = markedForRemoval;
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (this == o)
             return true;
-        if (!(o instanceof BoundaryType))
+        if (!(o instanceof AppConfigValues))
             return false;
-        BoundaryType that = (BoundaryType) o;
-        return Objects.equal(name, that.name) &&
-                Objects.equal(hierarchyType, that.hierarchyType);
+        final AppConfigValues that = (AppConfigValues) o;
+        return Objects.equals(id, that.id) &&
+                Objects.equals(value, that.value);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(name, hierarchyType);
+        return Objects.hash(id, value);
     }
 }

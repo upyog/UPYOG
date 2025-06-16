@@ -1,6 +1,7 @@
 
 package org.egov.finance.master.entity;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import org.springframework.data.annotation.CreatedBy;
@@ -18,7 +19,7 @@ import lombok.Data;
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
 @Data
-public abstract class AuditDetailswithVersion extends AbstractPersistable<Long> {
+public abstract class AuditDetailswithVersion implements Serializable {
 
 	private static final long serialVersionUID = 7138056997693406739L;
 

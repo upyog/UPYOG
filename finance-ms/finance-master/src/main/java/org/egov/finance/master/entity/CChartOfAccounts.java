@@ -88,6 +88,6 @@ public class CChartOfAccounts extends AuditDetailswithVersion {
 
 	@JsonIgnore
 	@OneToMany(mappedBy = "glCodeId", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-	@JoinTable
+	//@JoinTable
 	private Set<CChartOfAccountDetail> chartOfAccountDetails = new HashSet<>();
 }

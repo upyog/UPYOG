@@ -8,5 +8,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface CGeneralLedgerRepository extends JpaRepository<CGeneralLedger, Long> {
-	List<CGeneralLedger> findByVoucherHeaderId(Long voucherHeaderId);
+	//List<CGeneralLedger> findByVoucherHeaderId(Long voucherHeaderId);
 }

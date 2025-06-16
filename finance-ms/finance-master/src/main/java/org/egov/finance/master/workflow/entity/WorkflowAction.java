@@ -2,7 +2,6 @@ package org.egov.finance.master.workflow.entity;
 
 import org.egov.finance.master.entity.AuditDetailswithVersion;
 import org.hibernate.validator.constraints.Length;
-import org.springframework.data.jpa.domain.AbstractAuditable;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -11,11 +10,13 @@ import jakarta.persistence.Id;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
+import lombok.Data;
 
-@Entity
+
 @Table(name = "EG_WF_ACTION")
 @SequenceGenerator(name = WorkflowAction.SEQ_WF_ACTION, sequenceName = WorkflowAction.SEQ_WF_ACTION, allocationSize = 1)
-public class WorkflowAction extends AbstractAuditable {
+@Data
+public class WorkflowAction extends  AuditDetailswithVersion {
 
 	public static final String SEQ_WF_ACTION = "SEQ_EG_WF_ACTION"; // Moved above & made public
 

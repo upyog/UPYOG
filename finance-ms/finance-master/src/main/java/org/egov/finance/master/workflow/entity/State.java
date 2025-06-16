@@ -5,9 +5,9 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.egov.finance.master.customannotation.SafeHtml;
+import org.egov.finance.master.entity.AuditDetailswithVersion;
 import org.egov.finance.master.model.StateModel.StateStatus;
 import org.hibernate.validator.constraints.Length;
-import org.springframework.data.jpa.domain.AbstractAuditable;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -27,11 +27,13 @@ import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import lombok.Data;
 
 @Entity
 @Table(name = "EG_WF_STATES")
 @SequenceGenerator(name = State.SEQ_STATE, sequenceName = State.SEQ_STATE, allocationSize = 1)
-public class State extends AbstractAuditable {
+@Data
+public class State extends AuditDetailswithVersion {
 
     public static final String SEQ_STATE = "SEQ_EG_WF_STATES"; // Moved up and made public
 

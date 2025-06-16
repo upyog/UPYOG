@@ -15,7 +15,12 @@ import lombok.Data;
 @Data
 public class AccountDetailKey extends AuditDetailswithVersion {
 
-    @Id
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	@Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_accountdetailkey")
     @SequenceGenerator(name = "seq_accountdetailkey", sequenceName = "seq_accountdetailkey", allocationSize = 1)
     private Long id;

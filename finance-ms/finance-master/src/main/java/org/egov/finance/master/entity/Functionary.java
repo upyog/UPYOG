@@ -16,7 +16,7 @@ import lombok.Data;
 @Table(name = "functionary")
 @Data
 @SequenceGenerator(name = "seq_functionary", sequenceName = "seq_functionary", allocationSize = 1)
-public class Functionary implements Serializable {
+public class Functionary extends AuditDetailswithVersion {
 
     private static final long serialVersionUID = 1L;
 

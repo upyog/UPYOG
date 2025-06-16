@@ -79,6 +79,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
+import lombok.Data;
 
 @Entity
 @CompositeUnique(fields = {"boundaryNum", "boundaryType"}, enableDfltMsg = true)
@@ -87,6 +88,7 @@ import jakarta.validation.constraints.NotNull;
 @NamedQuery(name = "Boundary.findBoundariesByBoundaryType",
         query = "select b from Boundary b where b.boundaryType.id = :boundaryTypeId")
 @SequenceGenerator(name = SEQ_BOUNDARY, sequenceName = SEQ_BOUNDARY, allocationSize = 1)
+@Data
 public class Boundary extends AuditDetailswithVersion {
 
     public static final String SEQ_BOUNDARY = "seq_eg_boundary";
@@ -143,16 +145,7 @@ public class Boundary extends AuditDetailswithVersion {
     @Length(max = 32)
     private String materializedPath;
 
-    @Override
-    public Long getId() {
-        return id;
-    }
-
-    @Override
-    public void setId(final Long id) {
-        this.id = id;
-    }
-
+  
     public String getLocalName() {
         return localName;
     }

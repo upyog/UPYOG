@@ -48,158 +48,127 @@
 
 package org.egov.finance.master.entity;
 
-import static org.egov.finance.master.entity.BoundaryType.SEQ_BOUNDARY_TYPE;
 
-import java.util.Set;
+import static org.egov.finance.master.entity.AppConfig.FETCH_WITH_VALUES;
+import static org.egov.finance.master.entity.AppConfig.SEQ_APPCONFIG;
+import static org.hibernate.annotations.FetchMode.JOIN;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+
+import org.egov.finance.master.customannotation.CompositeUnique;
 import org.egov.finance.master.customannotation.SafeHtml;
-import org.egov.finance.master.validation.Unique;
+import org.hibernate.annotations.Fetch;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
 import org.springframework.data.jpa.domain.AbstractAuditable;
 
-import com.google.common.base.Objects;
 import com.google.gson.annotations.Expose;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.NamedAttributeNode;
+import jakarta.persistence.NamedEntityGraph;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
-import jakarta.persistence.Transient;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
-import lombok.Data;
 
 @Entity
-@Table(name = "EG_BOUNDARY_TYPE")
-@Unique(fields = "code", enableDfltMsg = true)
-@Data
-@SequenceGenerator(name = SEQ_BOUNDARY_TYPE, sequenceName = SEQ_BOUNDARY_TYPE, allocationSize = 1)
-public class BoundaryType extends AuditDetailswithVersion {
+@Table(name = "eg_appconfig")
+@SequenceGenerator(name = SEQ_APPCONFIG, sequenceName = SEQ_APPCONFIG, allocationSize = 1)
+@CompositeUnique(fields = {"keyName", "module"}, enableDfltMsg = true)
+@NamedEntityGraph(name = FETCH_WITH_VALUES, attributeNodes = @NamedAttributeNode("confValues"))
+public class AppConfig extends AuditDetailswithVersion {
 
-    public static final String SEQ_BOUNDARY_TYPE = "SEQ_EG_BOUNDARY_TYPE";
-    private static final long serialVersionUID = 859229842367886336L;
+    public static final String SEQ_APPCONFIG = "SEQ_EG_APPCONFIG";
+    public static final String FETCH_WITH_VALUES = "AppConfig.values";
+    private static final long serialVersionUID = 8904645810221559541L;
     @Expose
     @Id
-    @GeneratedValue(generator = SEQ_BOUNDARY_TYPE, strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(generator = SEQ_APPCONFIG, strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    @NotNull
+    @NotBlank
     @SafeHtml
-    private String name;
+    @Length(max = 250)
+    @Column(name = "key_name", updatable = false)
+    private String keyName;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "module", nullable = false, updatable = false)
     @NotNull
-    @Length(max = 25)
+    private Module module;
+
+    @NotBlank
     @SafeHtml
-    private String code;
+    @Length(max = 250)
+    @Column(name = "description")
+    private String description;
 
-    @ManyToOne
-    @NotNull
-    @JoinColumn(name = "hierarchytype")
-    private HierarchyType hierarchyType;
+    @Valid
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "config", orphanRemoval = true)
+    @Fetch(JOIN)
+    private List<AppConfigValues> confValues = new ArrayList<>();
 
-    @ManyToOne
-    @JoinColumn(name = "parent")
-    private BoundaryType parent;
-
-    private Long hierarchy;
-
-    @SafeHtml
-    private String localName;
-
-    @Transient
-    private String parentName;
-
-    @Transient
-    private Set<BoundaryType> childBoundaryTypes;
+  
 
    
-
-    public String getName() {
-        return name;
+    public String getKeyName() {
+        return keyName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setKeyName(final String keyName) {
+        this.keyName = keyName;
     }
 
-    public String getCode() {
-        return code;
+    public Module getModule() {
+        return module;
     }
 
-    public void setCode(String code) {
-        this.code = code;
+    public void setModule(final Module module) {
+        this.module = module;
     }
 
-    public HierarchyType getHierarchyType() {
-        return hierarchyType;
+    public String getDescription() {
+        return description;
     }
 
-    public void setHierarchyType(HierarchyType hierarchyType) {
-        this.hierarchyType = hierarchyType;
+    public void setDescription(final String description) {
+        this.description = description;
     }
 
-    public BoundaryType getParent() {
-        return parent;
+    public List<AppConfigValues> getConfValues() {
+        confValues.forEach(configValue -> configValue.setConfig(this));
+        return confValues;
     }
 
-    public void setParent(BoundaryType parent) {
-        this.parent = parent;
-    }
-
-    public Long getHierarchy() {
-        return hierarchy;
-    }
-
-    public void setHierarchy(Long hierarchy) {
-        this.hierarchy = hierarchy;
-    }
-
-    public String getParentName() {
-        return parentName;
-    }
-
-    public void setParentName(String parentName) {
-        this.parentName = parentName;
-    }
-
-    public Set<BoundaryType> getChildBoundaryTypes() {
-        return childBoundaryTypes;
-    }
-
-    public void setChildBoundaryTypes(Set<BoundaryType> childBoundaryTypes) {
-        this.childBoundaryTypes = childBoundaryTypes;
-    }
-
-    public void addChildBoundaryType(BoundaryType boundaryType) {
-        boundaryType.setParent(this);
-        childBoundaryTypes.add(boundaryType);
-    }
-
-    public String getLocalName() {
-        return localName;
-    }
-
-    public void setLocalName(final String localName) {
-        this.localName = localName;
+    public void setConfValues(final List<AppConfigValues> confValues) {
+        this.confValues = confValues;
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (this == o)
             return true;
-        if (!(o instanceof BoundaryType))
+        if (!(o instanceof AppConfig))
             return false;
-        BoundaryType that = (BoundaryType) o;
-        return Objects.equal(name, that.name) &&
-                Objects.equal(hierarchyType, that.hierarchyType);
+        final AppConfig appConfig = (AppConfig) o;
+        return Objects.equals(keyName, appConfig.keyName) &&
+                Objects.equals(module, appConfig.module);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(name, hierarchyType);
+        return Objects.hash(keyName, module);
     }
 }

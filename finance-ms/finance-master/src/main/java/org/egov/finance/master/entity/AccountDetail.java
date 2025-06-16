@@ -19,12 +19,17 @@ import jakarta.persistence.Table;
 import lombok.Data;
 
 @Entity
-@Table(name = "account_detail")
+@Table(name = "accountentitymaster")
 @SequenceGenerator(name = AccountDetail.SEQ, sequenceName = AccountDetail.SEQ, allocationSize = 1)
 @Data
 public class AccountDetail extends AuditDetailswithVersion {
 
-    public static final String SEQ = "seq_account_detail";
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	public static final String SEQ = "seq_account_detail";
 
     @Id
     @GeneratedValue(generator = SEQ, strategy = GenerationType.SEQUENCE)
@@ -44,4 +49,7 @@ public class AccountDetail extends AuditDetailswithVersion {
 
     @OneToMany(mappedBy = "accountDetail", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<SubledgerDetail> subledgerDetails = new ArrayList<>();
+    
+    
+    
 }

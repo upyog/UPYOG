@@ -18,7 +18,6 @@ import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import jakarta.validation.constraints.NotNull;
-
 @Entity
 @Immutable
 @Table(name = "eg_wf_state_history")
