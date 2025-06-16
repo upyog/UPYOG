@@ -1,5 +1,6 @@
 package org.egov.finance.master.model;
 
+import org.egov.finance.master.entity.CGeneralLedgerDetail;
 import org.egov.finance.master.entity.SubledgerDetail;
 
 import lombok.Builder;
@@ -11,12 +12,17 @@ public class SubledgerDetailModel {
 	private Long accountDetailTypeId;
 	private Long accountDetailKeyId;
 	private Double amount;
-	
-	public SubledgerDetailModel(SubledgerDetail sub) {
-	    this.id = sub.getId();
-	    this.accountDetailTypeId = sub.getAccountDetailType() != null ? sub.getAccountDetailType().getId() : null;
-	    this.accountDetailKeyId = sub.getAccountDetailKey() != null ? sub.getAccountDetailKey().getId() : null;
-	    this.amount = sub.getAmount();
-	}
 
+	public SubledgerDetailModel(final CGeneralLedgerDetail sub) {
+		this.id = sub.getId();
+		this.amount = sub.getAmount() != null ? sub.getAmount().doubleValue() : null;
+
+		if (sub.getDetailTypeId() != null) {
+			this.accountDetailTypeId = sub.getDetailTypeId().getId();
+		}
+
+		if (sub.getDetailKeyId() != null) {
+			this.accountDetailKeyId = sub.getDetailKeyId().longValue();
+		}
+	}
 }
