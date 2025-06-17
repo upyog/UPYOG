@@ -28,6 +28,8 @@ public class DemandService {
 
 	@Autowired
 	private DemandRepository demandRepository;
+	
+
 
 	public List<Demand> createDemand(PetRegistrationRequest petReq, BigDecimal taxAmount) {
 		String tenantId = petReq.getPetRegistrationApplications().get(0).getTenantId();
@@ -41,10 +43,16 @@ public class DemandService {
 		.taxAmount(taxAmount)
 				.taxHeadMasterCode("PET_REGISTRATION_FEE").tenantId(null).build());
 
+		Calendar cal = Calendar.getInstance();
+		cal.add(Calendar.DAY_OF_MONTH, Integer.valueOf(config.getBillExpiryAfter()));
+		cal.set(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DATE), 23, 59, 59);
+		
 		Demand demand = Demand.builder().consumerCode(consumerCode).demandDetails(demandDetails).payer(owner)
-				.minimumAmountPayable(BigDecimal.valueOf(500.00)).tenantId(tenantId)
+				.minimumAmountPayable(taxAmount).tenantId(tenantId)
 				.taxPeriodFrom(new Date().getTime()).taxPeriodTo(new Date().getTime() + 31536000L)	// fee for 1year
-				.consumerType("ptr").businessService("pet-services").additionalDetails(null).build();
+				.consumerType("ptr").businessService("pet-services")
+				.fixedBillExpiryDate(cal.getTimeInMillis())
+				.additionalDetails(null).build();
 		List<Demand> demands = new ArrayList<>();
 		demands.add(demand);
 
