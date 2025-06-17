@@ -14,9 +14,10 @@ import java.util.Map;
 import java.util.Set;
 
 
-import javax.annotation.PostConstruct;
 
 import com.fasterxml.jackson.core.type.*;
+import jakarta.annotation.PostConstruct;
+import net.minidev.json.JSONArray;
 import org.apache.commons.io.*;
 import org.egov.infra.mdms.utils.MDMSConstants;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,13 +25,13 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
 
 import lombok.extern.slf4j.Slf4j;
-import net.minidev.json.JSONArray;
 
 
 @Component
@@ -160,7 +161,7 @@ public class MDMSApplicationRunnerImpl {
         }
     }
 
-    public void readMdmsConfigFiles(String masterConfigUrl) throws Exception {
+    public void readMdmsConfigFiles(String masterConfigUrl) {
         log.info("Loading master configs from: " + masterConfigUrl);
         Resource resource = resourceLoader.getResource(masterConfigUrl);
         InputStream inputStream = null;
@@ -170,7 +171,6 @@ public class MDMSApplicationRunnerImpl {
             });
         } catch (IOException e) {
             log.error("Exception while fetching service map for: ", e);
-            log.error("Incorrect format of the file: " + masterConfigUrl);
         } finally {
             IOUtils.closeQuietly(inputStream);
         }
