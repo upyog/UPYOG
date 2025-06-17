@@ -31,8 +31,8 @@ public class PersisterBatchListner implements BatchAcknowledgingMessageListener<
 
 	@Autowired
 	private PersistService persistService;
-	@Autowired
-	private Acknowledgment acknowledgment;
+	
+	
 	@Autowired
 	private CustomKafkaTemplate kafkaTemplate;
 

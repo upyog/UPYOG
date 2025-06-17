@@ -29,8 +29,9 @@ public class PersisterMessageListener implements AcknowledgingMessageListener<St
 
 	@Autowired
 	private CustomKafkaTemplate kafkaTemplate;
-	@Autowired
-	private Acknowledgment acknowledgment;
+	
+	
+	
 	@Value("${audit.persist.kafka.topic}")
 	private String persistAuditKafkaTopic;
 
