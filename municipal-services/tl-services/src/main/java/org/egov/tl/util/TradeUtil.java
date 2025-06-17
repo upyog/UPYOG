@@ -190,7 +190,7 @@ public class TradeUtil {
      * @return url for mdms search endpoint
      */
     public StringBuilder getMdmsSearchUrl() {
-        return new StringBuilder().append(config.getMdmsHost()).append(config.getMdmsEndPoint());
+        return new StringBuilder().append(config.getMdmsHost()).append(config.getMdmsV1EndPoint());
     }
 
 
