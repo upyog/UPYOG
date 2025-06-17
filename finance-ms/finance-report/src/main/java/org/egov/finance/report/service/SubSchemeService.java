@@ -11,14 +11,14 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.egov.finance.report.entity.SubScheme;
-import org.egov.finance.report.exception.MasterServiceException;
+import org.egov.finance.report.exception.ReportServiceException;
 import org.egov.finance.report.model.SchemeModel;
 import org.egov.finance.report.model.SubSchemeModel;
 import org.egov.finance.report.model.request.SubSchemeRequest;
 import org.egov.finance.report.repository.SubSchemeRepository;
 import org.egov.finance.report.util.ApplicationThreadLocals;
 import org.egov.finance.report.util.CommonUtils;
-import org.egov.finance.report.util.MasterConstants;
+import org.egov.finance.report.util.ReportConstants;
 import org.egov.finance.report.validation.SchemeValidation;
 import org.egov.finance.report.validation.SubSchemeValidation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,8 +62,8 @@ public class SubSchemeService {
 		SchemeModel searchcriteria=new SchemeModel();
 		Map<String, String> errorMap = new HashMap<>();
 		if (!ObjectUtils.isEmpty(subSchemeModel.getId())) {
-			errorMap.put(MasterConstants.INVALID_ID_PASSED, MasterConstants.ID_CANNOT_BE_PASSED_IN_CREATION_MSG);
-			throw new MasterServiceException(errorMap);
+			errorMap.put(ReportConstants.INVALID_ID_PASSED, ReportConstants.ID_CANNOT_BE_PASSED_IN_CREATION_MSG);
+			throw new ReportServiceException(errorMap);
 		}
 		SubScheme subScheme = subSchemeValidation.modeltoEntity(subSchemeModel);
 		searchcriteria.setId(subSchemeModel.getScheme());
@@ -73,16 +73,16 @@ public class SubSchemeService {
 			subScheme.setScheme(schemeValidation.modelToEntity(schemsearch.get(0)));
 		}
 		else
-			errorMap.put(MasterConstants.INVALID_SCHEME_ID, MasterConstants.INVALID_SCHEME_ID_MSG);
+			errorMap.put(ReportConstants.INVALID_SCHEME_ID, ReportConstants.INVALID_SCHEME_ID_MSG);
 		
 		if(!CollectionUtils.isEmpty(errorMap))
-			throw new MasterServiceException(errorMap);
+			throw new ReportServiceException(errorMap);
 		
 		subSchemeValidation.subSchemeCreateCodeAndSchemIDValidation(subSchemeModel);
 		return subSchemeValidation.entitytoModel(subSchemeRepository.save(subScheme));
 	}
 
-	@Cacheable(value = MasterConstants.SUBSCHEME_SEARCH_REDIS_CACHE_NAME, keyGenerator = MasterConstants.SUBSCHEME_SEARCH_REDIS_KEY_GENERATOR)
+	@Cacheable(value = ReportConstants.SUBSCHEME_SEARCH_REDIS_CACHE_NAME, keyGenerator = ReportConstants.SUBSCHEME_SEARCH_REDIS_KEY_GENERATOR)
 	public List<SubSchemeModel> search(SubSchemeModel subSchemeModel) {
 		Specification<SubScheme> specification = subSchemeValidation.build(subSchemeModel);
 		
@@ -95,13 +95,13 @@ public class SubSchemeService {
 		SchemeModel searchcriteria=new SchemeModel();
 		SubScheme subSchemerequest = subSchemeValidation.modeltoEntity(subSchemeRequest.getSubSchemeRequest());
 		if (ObjectUtils.isEmpty(subSchemerequest.getId())) {
-			errorMap.put(MasterConstants.INVALID_ID_PASSED, MasterConstants.INVALID_ID_PASSED_MESSAGE);
-			throw new MasterServiceException(errorMap);
+			errorMap.put(ReportConstants.INVALID_ID_PASSED, ReportConstants.INVALID_ID_PASSED_MESSAGE);
+			throw new ReportServiceException(errorMap);
 		}
 
 		SubScheme subSchemeupdate = subSchemeRepository.findById(subSchemerequest.getId()).orElseThrow(() -> {
-			errorMap.put(MasterConstants.INVALID_ID_PASSED, MasterConstants.INVALID_ID_PASSED_MESSAGE);
-			throw new MasterServiceException(errorMap);
+			errorMap.put(ReportConstants.INVALID_ID_PASSED, ReportConstants.INVALID_ID_PASSED_MESSAGE);
+			throw new ReportServiceException(errorMap);
 		});
 		
 		searchcriteria.setId(subSchemeRequest.getSubSchemeRequest().getScheme());
@@ -128,7 +128,7 @@ public class SubSchemeService {
 		
 		
 		cacheEvictionService.incrementVersionForTenant(ApplicationThreadLocals.getTenantID(),
-				MasterConstants.SUBSCHEME_SEARCH_REDIS_CACHE_VERSION_KEY, MasterConstants.SUBSCHEME_SEARCH_REDIS_CACHE_NAME);
+				ReportConstants.SUBSCHEME_SEARCH_REDIS_CACHE_VERSION_KEY, ReportConstants.SUBSCHEME_SEARCH_REDIS_CACHE_NAME);
 		return subSchemeValidation.entitytoModel(subSchemeRepository.save(subSchemeupdate));
 		
 	}

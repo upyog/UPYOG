@@ -18,8 +18,14 @@ import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 @Entity
 @Immutable
+@AllArgsConstructor
+@NoArgsConstructor
+@Data
 @Table(name = "eg_wf_state_history")
 @SequenceGenerator(name = StateHistory.SEQ_STATEHISTORY, sequenceName = StateHistory.SEQ_STATEHISTORY, allocationSize = 1)
 public class StateHistory implements Serializable {
@@ -69,4 +75,23 @@ public class StateHistory implements Serializable {
 	// @ManyToOne(targetEntity = OwnerGroup.class, fetch = FetchType.LAZY)
 	@Column(name = "INITIATOR_POS")
 	private Long initiatorPosition;
+	
+	public StateHistory(State state) {
+		this.state = state;
+		createdBy = state.getCreatedBy();
+		createdDate = state.getCreatedDate();
+		lastModifiedBy = state.getLastModifiedBy();
+		lastModifiedDate = state.getLastModifiedDate();
+		value = state.getValue();
+		ownerPosition = state.getOwnerPosition();
+		ownerUser = state.getOwnerUser();
+		senderName = state.getSenderName();
+		nextAction = state.getNextAction();
+		comments = state.getComments();
+		extraInfo = state.getExtraInfo();
+		dateInfo = state.getDateInfo();
+		extraDateInfo = state.getExtraDateInfo();
+		natureOfTask = state.getNatureOfTask();
+		initiatorPosition = state.getInitiatorPosition();
+	}
 }

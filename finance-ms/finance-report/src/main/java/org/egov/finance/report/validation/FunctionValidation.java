@@ -10,12 +10,12 @@ import java.util.Map;
 import java.util.Set;
 
 import org.egov.finance.report.entity.Function;
-import org.egov.finance.report.exception.MasterServiceException;
+import org.egov.finance.report.exception.ReportServiceException;
 import org.egov.finance.report.model.FunctionModel;
 import org.egov.finance.report.model.FundModel;
 import org.egov.finance.report.repository.FunctionRepository;
 import org.egov.finance.report.util.CommonUtils;
-import org.egov.finance.report.util.MasterConstants;
+import org.egov.finance.report.util.ReportConstants;
 import org.egov.finance.report.util.SpecificationHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
@@ -67,55 +67,55 @@ public class FunctionValidation {
 		
 			if(null==funcM.getName()||funcM.getName().isEmpty() || 
 				null==funcM.getCode()|| funcM.getCode().isEmpty()) {
-			errorMap.put(MasterConstants.INVALID_PARAMETERS, MasterConstants.INVALID_PARAMETERS_MSG);
+			errorMap.put(ReportConstants.INVALID_PARAMETERS, ReportConstants.INVALID_PARAMETERS_MSG);
 		}
 		if(errorMap.isEmpty()) {
 			Specification<Function> spec = Specification
 					.where(SpecificationHelper.<Function,String>equal("name", funcM.getName()))
 					.or(SpecificationHelper.<Function,String>equal("code", funcM.getCode()));
 			if (!functionRespository.findAll(spec).isEmpty())
-				errorMap.put(MasterConstants.CODE_NAME_NOT_UNIQUE, MasterConstants.CODE_NAME_NOT_UNIQUE_MSG);
+				errorMap.put(ReportConstants.CODE_NAME_NOT_UNIQUE, ReportConstants.CODE_NAME_NOT_UNIQUE_MSG);
 			}
 		if (!CollectionUtils.isEmpty(errorMap))
-			throw new MasterServiceException(errorMap);
+			throw new ReportServiceException(errorMap);
 	}
 	
 	public void validateCreateRequestModel(FunctionModel funcM) {
 		Map<String, String> errorMap = new HashMap<>();
 		
 		if (!ObjectUtils.isEmpty(funcM.getId())) {
-			errorMap.put(MasterConstants.INVALID_ID_PASSED, MasterConstants.ID_CANNOT_BE_PASSED_IN_CREATION_MSG);
+			errorMap.put(ReportConstants.INVALID_ID_PASSED, ReportConstants.ID_CANNOT_BE_PASSED_IN_CREATION_MSG);
 		}
 		
 		if(ObjectUtils.isEmpty(funcM.getCode())) {
-			errorMap.put(MasterConstants.INVALID_CODE, MasterConstants.INVALID_CODE_MSG);
+			errorMap.put(ReportConstants.INVALID_CODE, ReportConstants.INVALID_CODE_MSG);
 			
 		}
 		if(ObjectUtils.isEmpty(funcM.getName())) {
-			errorMap.put(MasterConstants.INVALID_NAME, MasterConstants.INVALID_NAME_MSG);
+			errorMap.put(ReportConstants.INVALID_NAME, ReportConstants.INVALID_NAME_MSG);
 			
 		}
 		if(!errorMap.isEmpty())
-			throw new MasterServiceException(errorMap);
+			throw new ReportServiceException(errorMap);
 	}
 	
 	public void validateUpdateRequestModel(FunctionModel funcM) {
 		Map<String, String> errorMap = new HashMap<>();
 		
 		if (ObjectUtils.isEmpty(funcM.getId())) {
-			errorMap.put(MasterConstants.INVALID_ID_PASSED, MasterConstants.INVALID_ID_PASSED_MESSAGE);
+			errorMap.put(ReportConstants.INVALID_ID_PASSED, ReportConstants.INVALID_ID_PASSED_MESSAGE);
 		}
 		
 		if(ObjectUtils.isEmpty(funcM.getCode())) {
-			errorMap.put(MasterConstants.INVALID_CODE, MasterConstants.INVALID_CODE_MSG);
+			errorMap.put(ReportConstants.INVALID_CODE, ReportConstants.INVALID_CODE_MSG);
 			
 		}
 		if(ObjectUtils.isEmpty(funcM.getName())) {
-			errorMap.put(MasterConstants.INVALID_NAME, MasterConstants.INVALID_NAME_MSG);
+			errorMap.put(ReportConstants.INVALID_NAME, ReportConstants.INVALID_NAME_MSG);
 			
 		}
 		if(!errorMap.isEmpty())
-			throw new MasterServiceException(errorMap);
+			throw new ReportServiceException(errorMap);
 	}
 	
 	
@@ -129,7 +129,7 @@ public class FunctionValidation {
 			.filter(x->!x.getId().equals(funcM.getId()))
 			.findFirst()
 			.ifPresent(x->{
-				errorMap.put(MasterConstants.CODE_NOT_UNIQUE, MasterConstants.CODE_IS_ALREADY_EXISTS_MSG);
+				errorMap.put(ReportConstants.CODE_NOT_UNIQUE, ReportConstants.CODE_IS_ALREADY_EXISTS_MSG);
 			});	
 		}	
 		if (updatedSet.contains("name")&&!updatedSet.contains("code")) {
@@ -139,7 +139,7 @@ public class FunctionValidation {
 			.filter(x->!x.getId().equals(funcM.getId()))
 			.findFirst()
 			.ifPresent(x->{
-				errorMap.put(MasterConstants.NAME_NOT_UNIQUE, MasterConstants.NAME_IS_ALREADY_EXISTS_MSG);
+				errorMap.put(ReportConstants.NAME_NOT_UNIQUE, ReportConstants.NAME_IS_ALREADY_EXISTS_MSG);
 			});
 			
 		}
@@ -154,12 +154,12 @@ public class FunctionValidation {
 			.filter(x->!x.getId().equals(funcM.getId()))
 			.findFirst()
 			.ifPresent(x->{
-				errorMap.put(MasterConstants.CODE_NAME_NOT_UNIQUE, MasterConstants.CODE_NAME_NOT_UNIQUE_MSG);
+				errorMap.put(ReportConstants.CODE_NAME_NOT_UNIQUE, ReportConstants.CODE_NAME_NOT_UNIQUE_MSG);
 			});
 		}
 			
 		if (!CollectionUtils.isEmpty(errorMap))
-			throw new MasterServiceException(errorMap);
+			throw new ReportServiceException(errorMap);
 	}
 }
 

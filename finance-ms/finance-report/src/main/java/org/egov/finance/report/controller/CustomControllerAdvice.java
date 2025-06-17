@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.egov.finance.report.errorresponse.ErrorResponse;
-import org.egov.finance.report.exception.MasterServiceException;
+import org.egov.finance.report.exception.ReportServiceException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -23,8 +23,8 @@ import lombok.extern.slf4j.Slf4j;
 @RestControllerAdvice
 public class CustomControllerAdvice {
 
-	@ExceptionHandler(MasterServiceException.class)
-	public ResponseEntity<ErrorResponse> handleSingularityException(MasterServiceException singularityException) {
+	@ExceptionHandler(ReportServiceException.class)
+	public ResponseEntity<ErrorResponse> handleSingularityException(ReportServiceException singularityException) {
 		ErrorResponse errorResponse = new ErrorResponse(LocalDateTime.now(), HttpStatus.BAD_REQUEST.value(),
 				singularityException.getErrors());
 

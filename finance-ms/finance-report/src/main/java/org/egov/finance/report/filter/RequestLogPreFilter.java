@@ -10,7 +10,7 @@ import java.io.IOException;
 import org.egov.finance.report.config.filter.CachedBodyHttpServletRequest;
 import org.egov.finance.report.model.RequestInfo;
 import org.egov.finance.report.util.ApplicationThreadLocals;
-import org.egov.finance.report.util.MasterConstants;
+import org.egov.finance.report.util.ReportConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -47,12 +47,12 @@ public class RequestLogPreFilter implements Filter {
 
 		try {
 			JsonNode root = mapper.readTree(body);
-			JsonNode reqInfoNode = root.get(MasterConstants.REQUEST_INFO);
+			JsonNode reqInfoNode = root.get(ReportConstants.REQUEST_INFO);
 			if (reqInfoNode != null && !reqInfoNode.isNull()) {
 				RequestInfo reqInfo = mapper.treeToValue(reqInfoNode, RequestInfo.class);
-				String schema = (reqInfo.getTenantId().split(MasterConstants.REQUEST_TENANT_SPLIT_REGEX)[1].isBlank()
+				String schema = (reqInfo.getTenantId().split(ReportConstants.REQUEST_TENANT_SPLIT_REGEX)[1].isBlank()
 						? null
-						: reqInfo.getTenantId().split(MasterConstants.REQUEST_TENANT_SPLIT_REGEX)[1]);
+						: reqInfo.getTenantId().split(ReportConstants.REQUEST_TENANT_SPLIT_REGEX)[1]);
 				ApplicationThreadLocals.setTenantID(schema);
 			}
 

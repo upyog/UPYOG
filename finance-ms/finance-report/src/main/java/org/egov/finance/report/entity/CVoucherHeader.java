@@ -123,4 +123,9 @@ public class CVoucherHeader extends StateAware implements Serializable {
 	private String voucherNumType;
 	@Transient
 	private String fiscalName;
+	
+	@Override
+    public String getStateDetails() {
+        return getState().getComments().isEmpty() ? voucherNumber : voucherNumber + "-" + getState().getComments();
+    }
 }

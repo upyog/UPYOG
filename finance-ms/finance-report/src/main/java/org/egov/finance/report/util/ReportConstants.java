@@ -5,9 +5,9 @@
  */
 package org.egov.finance.report.util;
 
-public class MasterConstants {
+public class ReportConstants {
 
-	private MasterConstants() {
+	private ReportConstants() {
 		super();
 	}
 
@@ -51,7 +51,7 @@ public class MasterConstants {
 
 	public static final String INVALID_PARAMETERS = "INVALID_PARAMETERS";
 	public static final String INVALID_PARAMETERS_MSG = "Invlaid Parameters Passed";
-	public static final String EXCEPTION_FROM_MASTER_SERVICE_MSG = "Exception From master Service---- {}";
+	public static final String EXCEPTION_FROM_REPORT_SERVICE_MSG = "Exception From report Service---- {}";
 	public static final String INVALID_NAME = "INVALID_NAME";
 	public static final String INVALID_NAME_MSG = "Please Provide a valid name";
 	public static final String INVALID_CODE = "INVALID_CODE";
@@ -68,5 +68,10 @@ public class MasterConstants {
 	public static final String SUBSCHEME_SEARCH_REDIS_CACHE_VERSION_KEY = "subschemeSearchCacheVersion::";
 	public static final String CODE_SCHEMEID_NOT_UNIQUE = "CODE_SCHEMEID_NOT_UNIQUE";
 	public static final String CODE_SCHEMEID_NOT_UNIQUE_MESSAGE = "Code and SchemeID already exists";
+	
+	public static final String INVALID_PARAMETERS_FILE_TYPE = "INVALID_PARAMETERS_FILE_TYPE";
+	public static final String INVALID_PARAMETERS_FILE_TYPE_MSG = "Please Select a valid file type PDF/XLS";
+	public static final String JASPER_REPORT_TEMPLATE_NOT_FOUND_AT_PATH = "JASPER_REPORT_TEMPLATE_NOT_FOUND_AT_PATH";
+	public static final String JASPER_REPORT_TEMPLATE_NOT_FOUND_AT_PATH_MSG = "Jasper report template not found at path:";
 
 }

@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 import org.egov.finance.report.customannotation.SafeHtml;
-import org.egov.finance.report.util.MasterConstants;
+import org.egov.finance.report.util.ReportConstants;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -37,11 +37,11 @@ public class SubSchemeModel {
 	private Long scheme;
 	
 	@NotBlank(message = "Code can not be blank")
-	@SafeHtml(message = MasterConstants.INVALID_TEXT_CONTAINS_HTML_TAGS_MSG)
+	@SafeHtml(message = ReportConstants.INVALID_TEXT_CONTAINS_HTML_TAGS_MSG)
 	private String code;
 	
 	@NotBlank(message = "Name can not be blank")
-	@SafeHtml(message = MasterConstants.INVALID_TEXT_CONTAINS_HTML_TAGS_MSG)
+	@SafeHtml(message = ReportConstants.INVALID_TEXT_CONTAINS_HTML_TAGS_MSG)
 	@Size(min = 3,max = 100,message = "Name should be between 100 words")
 	private String name;
 

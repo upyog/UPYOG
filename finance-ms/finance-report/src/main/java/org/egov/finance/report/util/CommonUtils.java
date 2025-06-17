@@ -6,16 +6,21 @@
 package org.egov.finance.report.util;
 
 import java.beans.PropertyDescriptor;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.regex.Matcher;
 
-import org.egov.finance.report.exception.MasterServiceException;
+import org.egov.finance.report.exception.ReportServiceException;
 import org.egov.finance.report.model.MasterDetail;
 import org.egov.finance.report.model.MdmsCriteria;
 import org.egov.finance.report.model.MdmsCriteriaReq;
@@ -81,7 +86,7 @@ public class CommonUtils {
 		}
 
 		if (!CollectionUtils.isEmpty(errormap))
-			throw new MasterServiceException(errormap);
+			throw new ReportServiceException(errormap);
 
 		return Collections.emptyMap();
 	}
@@ -157,5 +162,24 @@ public class CommonUtils {
 	        return List.of(); 
 	    }
 
+	
+	public  String getFormattedDate(Date date, String pattern) {
+	    if (date == null || pattern == null) {
+	        return "";
+	    }
+	    DateTimeFormatter formatter = DateTimeFormatter.ofPattern(pattern);
+	    LocalDateTime localDateTime = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+	    return formatter.format(localDateTime);
+	}
+	
+	public String removeSpecialCharacters(final String str) {
+	    if (str == null || str.isEmpty()) {
+	        return "";
+	    }
+	    String sanitized = str.replaceAll("\\s{2,}|\\r?\\n", "<br/>");
+	    sanitized = sanitized.replaceAll("'", Matcher.quoteReplacement("\\'"));
+
+	    return sanitized;
+	}
 
 }

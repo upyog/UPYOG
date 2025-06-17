@@ -9,6 +9,8 @@ import org.egov.finance.report.entity.AuditDetailswithVersion;
 import org.egov.finance.report.model.StateModel.StateStatus;
 import org.hibernate.validator.constraints.Length;
 
+import com.google.gson.Gson;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -28,11 +30,15 @@ import jakarta.persistence.Transient;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
 @Table(name = "EG_WF_STATES")
 @SequenceGenerator(name = State.SEQ_STATE, sequenceName = State.SEQ_STATE, allocationSize = 1)
 @Data
+@Getter
+@Setter
 public class State extends AuditDetailswithVersion {
 
     public static final String SEQ_STATE = "SEQ_EG_WF_STATES"; // Moved up and made public
@@ -112,4 +118,25 @@ public class State extends AuditDetailswithVersion {
     private String desgCode;
     @Transient
     private String desgName;
+    
+    protected void addStateHistory(final StateHistory history) {
+		getHistory().add(history);
+	}
+    
+    public enum StateStatus {
+		STARTED, INPROGRESS, ENDED
+	}
+    
+    public boolean isInprogress() {
+		return status.equals(StateStatus.INPROGRESS);
+	}
+
+	public boolean isEnded() {
+		return status.equals(StateStatus.ENDED);
+	}
+	
+	public <S> S extraInfoAs(Class<S> type) {
+		return new Gson().fromJson(getExtraInfo(), type);
+		
+	}
 }

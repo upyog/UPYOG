@@ -28,6 +28,10 @@ public class AccountDetailKey extends AuditDetailswithVersion {
 	@ManyToOne
 	@JoinColumn(name = "accountdetailtypeid")
 	private AccountDetailType accountDetailType;
+	
+	 private Integer groupid;
+	 private String detailname;
+	 private Integer detailkey;
 
 	private Long key;
 

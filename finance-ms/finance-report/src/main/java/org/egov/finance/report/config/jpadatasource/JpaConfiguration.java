@@ -16,7 +16,7 @@ import javax.sql.DataSource;
 
 import org.egov.finance.report.config.multitenant.DomainBasedSchemaTenantIdentifierResolver;
 import org.egov.finance.report.config.multitenant.MultiTenantSchemaConnectionProvider;
-import org.egov.finance.report.util.MasterConstants;
+import org.egov.finance.report.util.ReportConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -38,7 +38,7 @@ import jakarta.persistence.ValidationMode;
 
 @Configuration
 @EnableTransactionManagement
-@EnableJpaRepositories(basePackages = MasterConstants.ORG_EGOV_FINANCE)
+@EnableJpaRepositories(basePackages = ReportConstants.ORG_EGOV_FINANCE)
 public class JpaConfiguration {
 
 	private DataSource dataSource;
@@ -66,8 +66,8 @@ public class JpaConfiguration {
 	public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
 		LocalContainerEntityManagerFactoryBean factoryBean = new LocalContainerEntityManagerFactoryBean();
 		factoryBean.setDataSource(dataSource);
-		factoryBean.setPersistenceUnitName(MasterConstants.EGOV_PERSISTENCE_UNIT);
-		factoryBean.setPackagesToScan(MasterConstants.ORG_EGOV_FINANCE);
+		factoryBean.setPersistenceUnitName(ReportConstants.EGOV_PERSISTENCE_UNIT);
+		factoryBean.setPackagesToScan(ReportConstants.ORG_EGOV_FINANCE);
 		factoryBean.setJpaVendorAdapter(jpaVendorAdapter());
 		factoryBean.setJpaPropertyMap(additionalProperties());
 		factoryBean.setValidationMode(ValidationMode.NONE);

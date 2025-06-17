@@ -28,7 +28,7 @@ public class CacheConfig {
 		this.cacheEvictionService = cacheEvictionService;
 	}
 
-	@Bean(MasterConstants.FUND_SEARCH_REDIS_KEY_GENERATOR)
+	@Bean(ReportConstants.FUND_SEARCH_REDIS_KEY_GENERATOR)
 	public KeyGenerator fundSearchKeyGenerator() {
 
 		return (target, method, params) -> {
@@ -36,7 +36,7 @@ public class CacheConfig {
 			List<String> parts = new ArrayList<>();
 			String tenantId = ApplicationThreadLocals.getTenantID();
 			String version = cacheEvictionService.getVersionForTenant(tenantId,
-					MasterConstants.FUND_SEARCH_REDIS_CACHE_VERSION_KEY);
+					ReportConstants.FUND_SEARCH_REDIS_CACHE_VERSION_KEY);
 			addIfNotNull(parts, "tenant", tenantId);
 			parts.add("version=" + version);
 			addIfNotNull(parts, "id", criteria.getId());
@@ -58,14 +58,14 @@ public class CacheConfig {
 		};
 	}
 
-	@Bean(MasterConstants.SCHEME_SEARCH_REDIS_KEY_GENERATOR)
+	@Bean(ReportConstants.SCHEME_SEARCH_REDIS_KEY_GENERATOR)
 	public KeyGenerator schemeSearchKeyGenerator() {
 		return (target, method, params) -> {
 			SchemeModel criteria = (SchemeModel) params[0];
 			List<String> parts = new ArrayList<>();
 			String tenantId = ApplicationThreadLocals.getTenantID();
 			String version = cacheEvictionService.getVersionForTenant(tenantId,
-					MasterConstants.SCHEME_SEARCH_REDIS_CACHE_VERSION_KEY);
+					ReportConstants.SCHEME_SEARCH_REDIS_CACHE_VERSION_KEY);
 
 			addIfNotNull(parts, "tenant", tenantId);
 			parts.add("version=" + version);
@@ -88,14 +88,14 @@ public class CacheConfig {
 		};
 	}
 
-	@Bean(MasterConstants.SUBSCHEME_SEARCH_REDIS_KEY_GENERATOR)
+	@Bean(ReportConstants.SUBSCHEME_SEARCH_REDIS_KEY_GENERATOR)
 	public KeyGenerator subschemeSearchKeyGenerator() {
 		return (target, method, params) -> {
 			SubSchemeModel criteria = (SubSchemeModel) params[0];
 			List<String> parts = new ArrayList<>();
 			String tenantId = ApplicationThreadLocals.getTenantID();
 			String version = cacheEvictionService.getVersionForTenant(tenantId,
-					MasterConstants.SUBSCHEME_SEARCH_REDIS_CACHE_VERSION_KEY);
+					ReportConstants.SUBSCHEME_SEARCH_REDIS_CACHE_VERSION_KEY);
 			addIfNotNull(parts, "tenant", tenantId);
 			parts.add("version=" + version);
 			addIfNotNull(parts, "id", criteria.getId());
@@ -116,14 +116,14 @@ public class CacheConfig {
 
 	}
 
-	@Bean(MasterConstants.FUNCTION_SEARCH_REDIS_KEY_GENERATOR)
+	@Bean(ReportConstants.FUNCTION_SEARCH_REDIS_KEY_GENERATOR)
 	public KeyGenerator functionSearchKeyGenerator() {
 		return (target, method, params) -> {
 			FunctionModel criteria = (FunctionModel) params[0];
 			List<String> parts = new ArrayList<>();
 			String tenantId = ApplicationThreadLocals.getTenantID();
 			String version = cacheEvictionService.getVersionForTenant(tenantId,
-					MasterConstants.FUNCTION_SEARCH_REDIS_CACHE_VERSION_KEY);
+					ReportConstants.FUNCTION_SEARCH_REDIS_CACHE_VERSION_KEY);
 			addIfNotNull(parts, "tenant", tenantId);
 			parts.add("version=" + version);
 			addIfNotNull(parts, "id", criteria.getId());

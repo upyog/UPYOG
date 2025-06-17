@@ -7,7 +7,7 @@ package org.egov.finance.report.exception;
 
 import java.util.Map;
 
-import org.egov.finance.report.util.MasterConstants;
+import org.egov.finance.report.util.ReportConstants;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -16,16 +16,16 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Data
 @EqualsAndHashCode(callSuper = false)
-public class MasterServiceException extends RuntimeException{
+public class ReportServiceException extends RuntimeException{
 
 	private static final long serialVersionUID = -19921057227329617L;
 
 	private final Map<String, String> errors;
     
-	public MasterServiceException(Map<String, String> errors) {
+	public ReportServiceException(Map<String, String> errors) {
 		super();
 		this.errors = errors;
-		log.error(MasterConstants.EXCEPTION_FROM_MASTER_SERVICE_MSG,errors);
+		log.error(ReportConstants.EXCEPTION_FROM_REPORT_SERVICE_MSG,errors);
 	}
     
     
