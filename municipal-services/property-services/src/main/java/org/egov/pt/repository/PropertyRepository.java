@@ -22,6 +22,7 @@ import org.egov.pt.models.EncryptionCount;
 import org.egov.pt.models.OwnerInfo;
 import org.egov.pt.models.Property;
 import org.egov.pt.models.PropertyCriteria;
+import org.egov.pt.models.WardwithTanent;
 import org.egov.pt.models.user.User;
 import org.egov.pt.models.user.UserDetailResponse;
 import org.egov.pt.models.user.UserSearchRequest;
@@ -29,6 +30,7 @@ import org.egov.pt.models.PropertyAudit;
 import org.egov.pt.models.PropertyBifurcation;
 import org.egov.pt.repository.builder.PropertyQueryBuilder;
 import org.egov.pt.repository.rowmapper.AppealRowMapper;
+import org.egov.pt.repository.rowmapper.DashboardRowmapper;
 import org.egov.pt.repository.rowmapper.EncryptionCountRowMapper;
 import org.egov.pt.repository.rowmapper.OpenPropertyRowMapper;
 import org.egov.pt.repository.rowmapper.PropertyAuditRowMapper;
@@ -301,6 +303,64 @@ public class PropertyRepository {
 		return count;
 	}
 	
+	public List<WardwithTanent> getTotalapplicationwithward()
+	{
+		return jdbcTemplate.query(PropertyQueryBuilder.TOTAL_APPLICATION_COUNT_WITH_WARD, new DashboardRowmapper());
+	}
+	
+	public List<WardwithTanent> getTotalapplicationwitAssessment()
+	{
+		return jdbcTemplate.query(PropertyQueryBuilder.TOTAL_ASSESMENT_COUNT_WITH_WARD, new DashboardRowmapper());
+	}
+	
+	public List<WardwithTanent> getTotalapplicationwitClosed()
+	{
+		return jdbcTemplate.query(PropertyQueryBuilder.TOTAL_PROPERTY_CLOSED_COUNT_WITH_WARD, new DashboardRowmapper());
+	}
+	public List<WardwithTanent> getTotalapplicationwithPaid()
+	{
+		return jdbcTemplate.query(PropertyQueryBuilder.TOTAL_PROPERTY_PAID_COUNT_WITH_WARD, new DashboardRowmapper());
+	}
+	public List<WardwithTanent> getTotalapplicationApproved()
+	{
+		return jdbcTemplate.query(PropertyQueryBuilder.TOTAL_PROPERTY_APPROVED_WITH_WARD, new DashboardRowmapper());
+	}
+	public List<WardwithTanent> getTotalapplicationwithMoved()
+	{
+		return jdbcTemplate.query(PropertyQueryBuilder.TOTAL_MOVED_APPLICATION_COUNT_WITH_WARD, new DashboardRowmapper());
+	}
+	public List<WardwithTanent> getTotalpropertyRegistered()
+	{
+		return jdbcTemplate.query(PropertyQueryBuilder.TOTAL_PROPERTY_REGISTERED_COUNT_WITH_WARD, new DashboardRowmapper());
+	}
+	public List<WardwithTanent> getTotalAssedproperties()
+	{
+		return jdbcTemplate.query(PropertyQueryBuilder.TOTAL_ASSEDPROPERTIES_COUNT_WITH_WARD, new DashboardRowmapper());
+	}
+	public List<WardwithTanent> getTotaltransactionCount()
+	{
+		return jdbcTemplate.query(PropertyQueryBuilder.TOTAL_TRANSACTIONS_COUNT_WITH_WARD, new DashboardRowmapper());
+	}
+	public List<WardwithTanent> getTotaltodaysCollection()
+	{
+		return jdbcTemplate.query(PropertyQueryBuilder.TOTAL_TODAYS_COLLECTION_WITH_WARD, new DashboardRowmapper());
+	}
+	public List<WardwithTanent> getTotalpropertyCount()
+	{
+		return jdbcTemplate.query(PropertyQueryBuilder.TOTAL_PROPERTY_COUNT_WITH_WARD, new DashboardRowmapper());
+	}
+	public List<WardwithTanent> getTotalrebateCollection()
+	{
+		return jdbcTemplate.query(PropertyQueryBuilder.TOTAL_REBATE_COLLECTION_WITH_WARD, new DashboardRowmapper());
+	}
+	public List<WardwithTanent> getTotalpenaltyCollection()
+	{
+		return jdbcTemplate.query(PropertyQueryBuilder.TOTAL_PENALTY_COLLECTED_WITH_WARD, new DashboardRowmapper());
+	}
+	public List<WardwithTanent> getTotalinterestCollection()
+	{
+		return jdbcTemplate.query(PropertyQueryBuilder.TOTAL_INTEREST_COLLECTED_WITH_WARD, new DashboardRowmapper());
+	}
 	private void addToPreparedStatement(List<Object> preparedStmtList, Set<String> ids) {
 		ids.forEach(id -> {
 			preparedStmtList.add(id);
