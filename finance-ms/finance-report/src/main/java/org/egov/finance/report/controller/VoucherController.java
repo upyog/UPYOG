@@ -61,7 +61,7 @@ public class VoucherController {
 		
 		if(!errormap.isEmpty())
 			throw new ReportServiceException(errormap);
-		Resource pdf = null;// voucherReportService.generateReport(request);
+		Resource pdf = voucherReportService.voucherForReport(request);
 
 		return ResponseEntity.ok()
 				.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=JournalVoucherReport." + fileExt)

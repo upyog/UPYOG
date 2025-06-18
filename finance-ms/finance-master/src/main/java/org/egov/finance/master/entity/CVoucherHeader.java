@@ -10,6 +10,8 @@ import org.egov.finance.master.customannotation.SafeHtml;
 import org.egov.finance.master.workflow.entity.StateAware;
 import org.hibernate.validator.constraints.Length;
 
+import com.google.errorprone.annotations.Immutable;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -27,12 +29,20 @@ import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import jakarta.persistence.Transient;
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name = "voucherheader")
 @SequenceGenerator(name = CVoucherHeader.SEQ_VOUCHERHEADER, sequenceName = CVoucherHeader.SEQ_VOUCHERHEADER, allocationSize = 1)
-@Data
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@Immutable
 public class CVoucherHeader extends StateAware implements Serializable {
 
 	public static final String SEQ_VOUCHERHEADER = "SEQ_VOUCHERHEADER";

@@ -2,6 +2,9 @@ package org.egov.finance.master.entity;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Date;
+import java.util.List;
+import java.util.Set;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -14,12 +17,17 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
 @Table(name = "generalledgerdetail")
 @SequenceGenerator(name = CGeneralLedgerDetail.SEQ_GENERALLEDGERDETAIL, sequenceName = CGeneralLedgerDetail.SEQ_GENERALLEDGERDETAIL, allocationSize = 1)
-@Data
+@Getter
+@Setter
+@AllArgsConstructor
 public class CGeneralLedgerDetail implements Serializable {
 
 	public static final String SEQ_GENERALLEDGERDETAIL = "seq_generalledgerdetail";

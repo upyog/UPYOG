@@ -21,7 +21,7 @@ import lombok.Data;
 @Table(name = "VOUCHERMIS")
 @Data
 @SequenceGenerator(name = "SEQ_VOUCHERMIS", sequenceName = "SEQ_VOUCHERMIS", allocationSize = 1)
-public class Vouchermis extends AuditDetailswithVersion {
+public class Vouchermis implements Serializable {
 
     private static final long serialVersionUID = 1L;
 

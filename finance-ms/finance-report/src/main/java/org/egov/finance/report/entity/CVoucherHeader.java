@@ -28,11 +28,13 @@ import jakarta.persistence.TemporalType;
 import jakarta.persistence.Transient;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 @Entity
 @Table(name = "voucherheader")
 @SequenceGenerator(name = CVoucherHeader.SEQ_VOUCHERHEADER, sequenceName = CVoucherHeader.SEQ_VOUCHERHEADER, allocationSize = 1)
 @Data
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class CVoucherHeader extends StateAware implements Serializable {
 
 	public static final String SEQ_VOUCHERHEADER = "SEQ_VOUCHERHEADER";

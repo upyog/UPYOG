@@ -32,7 +32,7 @@ import lombok.Data;
 @Table(name = "generalledger")
 @SequenceGenerator(name = CGeneralLedger.SEQ_GENERALLEDGER, sequenceName = CGeneralLedger.SEQ_GENERALLEDGER, allocationSize = 1)
 @Data
-public class CGeneralLedger extends AuditDetailswithVersion {
+public class CGeneralLedger implements Serializable {
 
 	public static final String SEQ_GENERALLEDGER = "seq_generalledger";
 	private static final long serialVersionUID = 1L;

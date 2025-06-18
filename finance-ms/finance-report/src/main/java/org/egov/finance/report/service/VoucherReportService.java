@@ -11,17 +11,21 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 
 import org.egov.finance.report.entity.CVoucherHeader;
 import org.egov.finance.report.exception.ApplicationRuntimeException;
+import org.egov.finance.report.exception.ReportServiceException;
 import org.egov.finance.report.model.WorkFlowHistoryItem;
 import org.egov.finance.report.model.request.VoucherPrintRequest;
 import org.egov.finance.report.repository.CVoucherHeaderRepository;
 import org.egov.finance.report.repository.FunctionRepository;
 import org.egov.finance.report.repository.FundRepository;
 import org.egov.finance.report.util.CommonUtils;
+import org.egov.finance.report.util.ReportConstants;
 import org.egov.finance.report.workflow.entity.StateHistory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
@@ -42,10 +46,15 @@ public class VoucherReportService {
 	CommonUtils commonUtils;
 	
 	
-	public Resource getVoucherForReport(VoucherPrintRequest request) {
+	public Resource voucherForReport(VoucherPrintRequest request) {
 		CVoucherHeader voucher =null;
-		
-		
+		List<Object> voucherList = new ArrayList<>();
+		Map<String, String> errorMap = new HashMap<>();
+		voucher = voucherHeaderRepo.findById(request.getVoucher().getId()).orElseThrow(()->{
+			errorMap.put(ReportConstants.INVALID_ID_PASSED, ReportConstants.INVALID_ID_PASSED_MESSAGE);
+			throw new ReportServiceException(errorMap);
+		});
+		voucher.getGeneralLedger().forEach(x->System.out.println(x.getId()));
 		return null;
 	}
 	
@@ -77,7 +86,7 @@ public class VoucherReportService {
                         ? commonUtils.removeSpecialCharacters(voucher.getState().getComments()) : "");
         inboxHistory.add(inboxHistoryItem);
 
-}
+	}
 	
 	
 	
