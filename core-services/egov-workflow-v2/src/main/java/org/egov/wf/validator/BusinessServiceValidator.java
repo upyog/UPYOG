@@ -1,5 +1,7 @@
 package org.egov.wf.validator;
 
+import org.egov.common.contract.request.Role;
+import org.egov.common.contract.request.User;
 import org.egov.tracer.model.CustomException;
 import org.egov.wf.repository.BusinessServiceRepository;
 import org.egov.wf.web.models.*;

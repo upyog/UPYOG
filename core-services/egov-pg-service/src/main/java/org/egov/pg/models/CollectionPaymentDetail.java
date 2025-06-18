@@ -2,11 +2,12 @@ package org.egov.pg.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.*;
-
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import java.math.BigDecimal;
+//import javax.validation.constraints.NotNull;
+//import java.math.BigDecimal;
 
 
 @Data

@@ -1,15 +1,18 @@
 package org.egov.url.shortening.repository;
 
+import jakarta.annotation.PostConstruct;
 import org.egov.url.shortening.model.ShortenRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Repository;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import redis.clients.jedis.HostAndPort;
 import redis.clients.jedis.Jedis;
 
 @Repository
