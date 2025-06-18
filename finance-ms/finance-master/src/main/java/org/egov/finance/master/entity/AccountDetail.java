@@ -19,29 +19,55 @@ import jakarta.persistence.Table;
 import lombok.Data;
 
 @Entity
-@Table(name = "account_detail")
+@Table(name = "accountentitymaster")
 @SequenceGenerator(name = AccountDetail.SEQ, sequenceName = AccountDetail.SEQ, allocationSize = 1)
 @Data
 public class AccountDetail extends AuditDetailswithVersion {
 
-    public static final String SEQ = "seq_account_detail";
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 
-    @Id
-    @GeneratedValue(generator = SEQ, strategy = GenerationType.SEQUENCE)
-    private Long id;
+	public static final String SEQ = "seq_account_detail";
 
-    private Long orderId;
+	@Id
+	@GeneratedValue(generator = SEQ, strategy = GenerationType.SEQUENCE)
+	private Long id;
 
-    @SafeHtml
-    private String glcode;
+	private Long orderId;
 
-    private Double debitAmount;
-    private Double creditAmount;
+	@SafeHtml
+	private String glcode;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "function_id")
-    private Function function;
+	private Double debitAmount;
+	private Double creditAmount;
 
-    @OneToMany(mappedBy = "accountDetail", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<SubledgerDetail> subledgerDetails = new ArrayList<>();
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "function_id")
+	private Function function;
+
+	@OneToMany(mappedBy = "accountDetail", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<SubledgerDetail> subledgerDetails = new ArrayList<>();
+
+	public AccountDetail(final CGeneralLedger gl) {
+		this.id = gl.getId();
+		this.orderId = gl.getVoucherlineId() != null ? gl.getVoucherlineId().longValue() : null;
+		this.glcode = gl.getGlcode();
+		this.creditAmount = gl.getCreditAmount();
+		this.debitAmount = gl.getDebitAmount();
+
+		if (gl.getFunctionId() != null) {
+			this.function = new Function(gl.getFunctionId().longValue());
+		}
+
+		if (gl.getGeneralLedgerDetails() != null) {
+			for (final CGeneralLedgerDetail sub : gl.getGeneralLedgerDetails()) {
+				SubledgerDetail subDetail = new SubledgerDetail(sub);
+				subDetail.setAccountDetail(this); // set the back-reference
+				this.subledgerDetails.add(subDetail);
+			}
+		}
+
+	}
 }

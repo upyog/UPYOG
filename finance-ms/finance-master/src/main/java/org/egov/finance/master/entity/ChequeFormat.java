@@ -12,7 +12,7 @@ import jakarta.persistence.Table;
 @Entity
 @Table(name = "chequeformat")
 @SequenceGenerator(name = ChequeFormat.SEQ, sequenceName = ChequeFormat.SEQ, allocationSize = 1)
-public class ChequeFormat extends AbstractAuditable {
+public class ChequeFormat extends AuditDetailswithVersion {
     
     private static final long serialVersionUID = 1L;
     public static final String SEQ = "seq_chequeformat";

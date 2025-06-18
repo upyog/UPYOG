@@ -3,10 +3,8 @@ package org.egov.finance.master.entity;
 import java.math.BigDecimal;
 import java.util.Date;
 
-import org.checkerframework.common.aliasing.qual.Unique;
 import org.egov.finance.master.customannotation.SafeHtml;
 import org.hibernate.validator.constraints.Length;
-import org.springframework.data.jpa.domain.AbstractAuditable;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -20,12 +18,13 @@ import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 import jakarta.validation.constraints.NotNull;
+import lombok.Data;
 
 @Entity
 @Table(name = "fundsource", uniqueConstraints = @UniqueConstraint(columnNames = { "name", "code" }))
-
+@Data
 @SequenceGenerator(name = Fundsource.SEQ_FUNDSOURCE, sequenceName = Fundsource.SEQ_FUNDSOURCE, allocationSize = 1)
-public class Fundsource extends AbstractAuditable {
+public class Fundsource extends AuditDetailswithVersion {
 
 	public static final String SEQ_FUNDSOURCE = "SEQ_FUNDSOURCE";
 	private static final long serialVersionUID = 1L;
@@ -129,4 +128,6 @@ public class Fundsource extends AbstractAuditable {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "subschemeid")
 	private SubScheme subSchemeId;
+
+
 }

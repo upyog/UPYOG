@@ -17,6 +17,11 @@ import lombok.Data;
 @Data
 public class FinancialYear extends AuditDetailswithVersion {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	public static final String SEQ = "SEQ_FINANCIAL_YEAR";
 
 	@Id

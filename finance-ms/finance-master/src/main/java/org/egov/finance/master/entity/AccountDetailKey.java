@@ -15,14 +15,27 @@ import lombok.Data;
 @Data
 public class AccountDetailKey extends AuditDetailswithVersion {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_accountdetailkey")
-    @SequenceGenerator(name = "seq_accountdetailkey", sequenceName = "seq_accountdetailkey", allocationSize = 1)
-    private Long id;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 
-    @ManyToOne
-    @JoinColumn(name = "accountdetailtypeid")
-    private AccountDetailType accountDetailType;
+	@Id
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_accountdetailkey")
+	@SequenceGenerator(name = "seq_accountdetailkey", sequenceName = "seq_accountdetailkey", allocationSize = 1)
+	private Long id;
 
-    private Long key;
+	@ManyToOne
+	@JoinColumn(name = "accountdetailtypeid")
+	private AccountDetailType accountDetailType;
+	
+	 private Integer groupid;
+	 private String detailname;
+	 private Integer detailkey;
+
+	private Long key;
+
+	public AccountDetailKey(Long id) {
+		this.id = id;
+	}
 }

@@ -16,7 +16,12 @@ import lombok.Data;
 @Data
 public class AccountDetailType extends AuditDetailswithVersion {
 
-    public static final String SEQ = "SEQ_AccountDetailType";
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	public static final String SEQ = "SEQ_AccountDetailType";
 
     @Id
     @GeneratedValue(generator = SEQ, strategy = GenerationType.SEQUENCE)
@@ -35,4 +40,8 @@ public class AccountDetailType extends AuditDetailswithVersion {
     private String fullyQualifiedName;
 
     private Boolean active;
+    
+    public AccountDetailType(Long id) {
+        this.id = id;
+    }
 }

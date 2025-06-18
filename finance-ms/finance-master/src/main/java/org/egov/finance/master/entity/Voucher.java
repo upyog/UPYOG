@@ -1,41 +1,44 @@
 package org.egov.finance.master.entity;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import org.egov.finance.master.customannotation.SafeHtml;
+import org.egov.finance.master.model.AccountDetailModel;
+import org.egov.finance.master.model.EgwStatusModel;
+import org.egov.finance.master.model.FiscalPeriodModel;
+import org.egov.finance.master.model.FunctionModel;
+import org.egov.finance.master.model.FunctionaryModel;
+import org.egov.finance.master.model.FundModel;
+import org.egov.finance.master.model.FundsourceModel;
+import org.egov.finance.master.model.SchemeModel;
+import org.egov.finance.master.model.SubSchemeModel;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.SequenceGenerator;
-import jakarta.persistence.Table;
-import jakarta.persistence.Temporal;
-import jakarta.persistence.TemporalType;
-import lombok.Data;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-@Entity
-@Table(name = "voucher")
-@SequenceGenerator(name = Voucher.SEQ, sequenceName = Voucher.SEQ, allocationSize = 1)
-@Data
-public class Voucher extends AuditDetailswithVersion {
+import jakarta.validation.constraints.NotBlank;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-	public static final String SEQ = "SEQ_Voucher";
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class Voucher {
 
-	@Id
-	@GeneratedValue(generator = SEQ, strategy = GenerationType.SEQUENCE)
 	private Long id;
 
+	@NotBlank
 	@SafeHtml
 	private String name;
 
+	@NotBlank
 	@SafeHtml
 	private String type;
 
@@ -45,26 +48,19 @@ public class Voucher extends AuditDetailswithVersion {
 	@SafeHtml
 	private String description;
 
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date voucherDate;
+	@SafeHtml
+	private String voucherDate;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "fundid")
-	private Fund fund;
+	private FundModel fund;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "functionid")
-	private Function function;
+	private FunctionModel function;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "fiscalperiodid")
-	private FiscalPeriod fiscalPeriod;
+	private FiscalPeriodModel fiscalPeriod;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "statusid")
-	private EgwStatus status;
+	private EgwStatusModel status;
 
 	private Long originalVhId;
+
 	private Long refVhId;
 
 	@SafeHtml
@@ -78,24 +74,15 @@ public class Voucher extends AuditDetailswithVersion {
 	@SafeHtml
 	private String source;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "schemeid")
-	private Scheme scheme;
+	private SchemeModel scheme;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "subschemeid")
-	private SubScheme subScheme;
+	private SubSchemeModel subScheme;
 
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "functionaryid")
-//    private Functionary functionary;
+	private FunctionaryModel functionary;
 
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "fundsourceid")
-//    private Fundsource fundsource;
+	private FundsourceModel fundsource;
 
-	@OneToMany(mappedBy = "voucher", cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<AccountDetail> ledgers = new ArrayList<>();
+	private List<AccountDetailModel> ledgers = new ArrayList<>();
 
 	@SafeHtml
 	private String tenantId;
@@ -105,4 +92,35 @@ public class Voucher extends AuditDetailswithVersion {
 
 	@SafeHtml
 	private String referenceDocument;
+
+	public Voucher(final CVoucherHeader vh) {
+		final SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+
+		this.id = vh.getId();
+		this.name = vh.getName();
+		this.type = vh.getType();
+		this.voucherNumber = vh.getVoucherNumber();
+		this.description = vh.getDescription();
+		this.voucherDate = vh.getVoucherDate() != null ? sdf.format(vh.getVoucherDate()) : null;
+
+		this.fund = vh.getFundId() != null ? FundModel.builder().code(vh.getFundId().getCode()).build() : null;
+
+		this.department = vh.getVouchermis() != null ? vh.getVouchermis().getDepartmentcode() : null;
+		this.function = vh.getVouchermis() != null && vh.getVouchermis().getFunction() != null
+				? FunctionModel.builder().code(vh.getVouchermis().getFunction().getCode()).build()
+				: null;
+
+		this.status = vh.getStatus() != null ? new EgwStatusModel(vh.getStatus()) : null;
+		this.moduleId = vh.getModuleId() != null ? vh.getModuleId().longValue() : null;
+		this.cgvn = vh.getCgvn();
+		this.serviceName = vh.getVouchermis() != null ? vh.getVouchermis().getServiceName() : null;
+		this.referenceDocument = vh.getVouchermis() != null ? vh.getVouchermis().getReferenceDocument() : null;
+
+		if (vh.getGeneralLedger() != null) {
+			for (CGeneralLedger gl : vh.getGeneralLedger()) {
+				this.ledgers.add(new AccountDetailModel(gl));
+			}
+		}
+	}
+
 }

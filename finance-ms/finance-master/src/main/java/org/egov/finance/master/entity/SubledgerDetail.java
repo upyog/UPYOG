@@ -17,6 +17,11 @@ import lombok.Data;
 @Data
 public class SubledgerDetail extends AuditDetailswithVersion {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	public static final String SEQ = "seq_subledger_detail";
 
 	@Id
@@ -36,4 +41,20 @@ public class SubledgerDetail extends AuditDetailswithVersion {
 	private AccountDetailKey accountDetailKey;
 
 	private Double amount;
+
+	public SubledgerDetail(final CGeneralLedgerDetail sub) {
+		this.id = sub.getId();
+		this.amount = sub.getAmount() != null ? sub.getAmount().doubleValue() : null;
+
+		if (sub.getDetailTypeId() != null) {
+			this.accountDetailType = new AccountDetailType(sub.getDetailTypeId().getId());
+		}
+
+		if (sub.getDetailKeyId() != null) {
+			this.accountDetailKey = new AccountDetailKey(sub.getDetailKeyId().longValue());
+		}
+
+		this.amount = sub.getAmount().doubleValue();
+	}
+
 }

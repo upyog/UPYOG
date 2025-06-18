@@ -1,8 +1,8 @@
 package org.egov.finance.master.workflow.entity;
 
+import org.egov.finance.master.entity.AuditDetailswithVersion;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
-import org.springframework.data.jpa.domain.AbstractAuditable;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -13,11 +13,13 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
+import lombok.Data;
 
 @Entity
 @Table(name = "EG_WF_TYPES")
 @SequenceGenerator(name = WorkflowType.SEQ_WORKFLOWTYPES, sequenceName = WorkflowType.SEQ_WORKFLOWTYPES, allocationSize = 1)
-public class WorkflowType extends AbstractAuditable {
+@Data
+public class WorkflowType extends  AuditDetailswithVersion {
 
     public static final String SEQ_WORKFLOWTYPES = "SEQ_EG_WF_TYPES"; // Moved up and made public
 
@@ -30,7 +32,7 @@ public class WorkflowType extends AbstractAuditable {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "module")
     @Fetch(FetchMode.JOIN)
-    private Module module;
+    private org.egov.finance.master.entity.Module module;
 
     private String type;
     private String typeFQN;

@@ -1,10 +1,12 @@
 package org.egov.finance.master.entity;
 
 import java.io.Serializable;
+import java.util.Date;
+import java.util.List;
+import java.util.Set;
 
 import org.hibernate.validator.constraints.Length;
 
-import io.lettuce.core.Range.Boundary;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -16,11 +18,19 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+@Getter
+@Setter
+@AllArgsConstructor
 @Entity
 @Table(name = "VOUCHERMIS")
 @SequenceGenerator(name = "SEQ_VOUCHERMIS", sequenceName = "SEQ_VOUCHERMIS", allocationSize = 1)
-public class Vouchermis implements Serializable {
+public class Vouchermis extends AuditDetailswithVersion {
 
     private static final long serialVersionUID = 1L;
 
@@ -34,7 +44,7 @@ public class Vouchermis implements Serializable {
 
     private Integer billnumber;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY,targetEntity = Boundary.class)
     @JoinColumn(name = "divisionid")
     private Boundary divisionid;
 

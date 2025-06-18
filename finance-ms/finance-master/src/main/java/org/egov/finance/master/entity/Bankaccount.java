@@ -25,13 +25,20 @@ import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 @Entity
 @Table(name = "bankaccount", uniqueConstraints = @UniqueConstraint(columnNames = { "accountnumber" }))
 @SequenceGenerator(name = Bankaccount.SEQ_BANKACCOUNT, sequenceName = Bankaccount.SEQ_BANKACCOUNT, allocationSize = 1)
 
 @Data
+@EqualsAndHashCode(callSuper = false)
 public class Bankaccount extends AuditDetailswithVersion {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 
 	public static final String SEQ_BANKACCOUNT = "SEQ_BANKACCOUNT";
 

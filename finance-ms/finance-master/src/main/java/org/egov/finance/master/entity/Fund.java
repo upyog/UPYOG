@@ -26,17 +26,15 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-
 @Entity
 @Table(name = "fund")
 @SequenceGenerator(name = Fund.SEQ, sequenceName = Fund.SEQ, allocationSize = 1)
 @Getter
 @Setter
-@EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString(callSuper = true)
-public class Fund  extends AuditDetailswithVersion{
+public class Fund extends AuditDetailswithVersion {
 
 	public static final String SEQ = "SEQ_Fund";
 	private static final long serialVersionUID = 7977534010758407945L;
@@ -56,5 +54,8 @@ public class Fund  extends AuditDetailswithVersion{
 	private Boolean isnotleaf;
 	private Boolean isactive;
 
+	public Fund(Long id) {
+		this.id = id;
+	}
 
 }
