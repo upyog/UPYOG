@@ -269,9 +269,9 @@ const Urls = {
     search: "/request-service/mobile-toilet/v1/_search",
   },
   tp: {
-    create: "/request-service/tree-pruning/v1/_create",
-    update: "/request-service/tree-pruning/v1/_update",
-    search: "/request-service/tree-pruning/v1/_search",
+    create: "/tp-services/tree-pruning/v1/_create",
+    update: "/tp-services/tree-pruning/v1/_update",
+    search: "/tp-services/tree-pruning/v1/_search",
   },
 
   vendor: {

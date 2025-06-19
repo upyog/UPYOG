@@ -4,6 +4,8 @@ import { FormStep, CardLabel, TextInput, UploadFile, Dropdown, LocationIcon } fr
 const TreePruningRequestDetails = ({ t, config, onSelect, userType, formData }) => {
   const user = Digit.UserService.getUser().info;
   const [reasonOfPruning, setReasonOfPruning] = useState(formData?.treePruningRequestDetails?.reasonOfPruning || "");
+  const [latitude, setLatitude] = useState("");
+  const [longitude, setLongitude] = useState("");
   const [geoTagLocation, setGeoTagLocation] = useState(formData?.treePruningRequestDetails?.geoTagLocation || "");
   const [supportingDocumentFile, setSupportingDocumentFile] = useState(formData?.treePruningRequestDetails?.supportingDocumentFile || "");
   const [uploadError, setUploadError] = useState("");
@@ -18,7 +20,7 @@ const TreePruningRequestDetails = ({ t, config, onSelect, userType, formData }) 
  
   const goNext = () => {
     let treePruningRequestDetails = formData.treePruningRequestDetails;
-    let Service = { ...treePruningRequestDetails, reasonOfPruning, geoTagLocation, supportingDocumentFile };
+    let Service = { ...treePruningRequestDetails, reasonOfPruning, geoTagLocation, supportingDocumentFile,latitude, longitude };
     onSelect(config.key, Service, false);
   };
 
@@ -64,6 +66,8 @@ const TreePruningRequestDetails = ({ t, config, onSelect, userType, formData }) 
       (position) => {
         const { latitude, longitude } = position.coords;
         setGeoTagLocation(`${latitude}, ${longitude}`); 
+        setLatitude(latitude);
+        setLongitude(longitude);
       },
       (error) => {
         console.error("Error getting location:", error);
