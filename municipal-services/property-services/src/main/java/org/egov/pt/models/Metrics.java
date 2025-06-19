@@ -1,20 +1,21 @@
 package org.egov.pt.models;
 
+import java.math.BigInteger;
 import java.util.List;
 
 import lombok.Data;
 
 @Data
 public class Metrics {
-    private int assessments;
-    private int todaysTotalApplications;
-    private int todaysClosedApplications;
-    private int noOfPropertiesPaidToday;
-    private int todaysApprovedApplications;
-    private int todaysApprovedApplicationsWithinSLA;
-    private int pendingApplicationsBeyondTimeline;
-    private int avgDaysForApplicationApproval;
-    private int StipulatedDays;
+    private BigInteger assessments;
+    private BigInteger todaysTotalApplications;
+    private BigInteger todaysClosedApplications;
+    private BigInteger noOfPropertiesPaidToday;
+    private BigInteger todaysApprovedApplications;
+    private BigInteger todaysApprovedApplicationsWithinSLA;
+    private BigInteger pendingApplicationsBeyondTimeline;
+    private BigInteger avgDaysForApplicationApproval;
+    private BigInteger StipulatedDays;
     private List<TodaysMovedApplications> todaysMovedApplications;
     private List<PropertiesRegistered> propertiesRegistered;
     private List<AssessedProperties> assessedProperties;

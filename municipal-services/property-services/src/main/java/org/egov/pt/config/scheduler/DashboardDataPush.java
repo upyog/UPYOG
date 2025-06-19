@@ -1,6 +1,7 @@
 package org.egov.pt.config.scheduler;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -9,6 +10,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.egov.common.contract.request.RequestInfo;
+import org.egov.pt.config.PropertyConfiguration;
 import org.egov.pt.dashboardservice.DashboardService;
 import org.egov.pt.models.AssessedProperties;
 import org.egov.pt.models.Bucket;
@@ -23,6 +26,7 @@ import org.egov.pt.models.TodaysCollection;
 import org.egov.pt.models.TodaysMovedApplications;
 import org.egov.pt.models.Transactions;
 import org.egov.pt.util.PTConstants;
+import org.egov.pt.util.PropertyUtil;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
@@ -32,6 +36,10 @@ public class DashboardDataPush implements Job {
 
 	@Autowired
 	DashboardService dashboardService;
+	@Autowired
+	PropertyUtil propertyutil;
+	@Autowired
+	PropertyConfiguration config;
 
 	public synchronized void dataPush() {
 		List<Data> propertyTaxPayloads = new ArrayList<Data>();
@@ -80,42 +88,47 @@ public class DashboardDataPush implements Job {
 				propertiesRegistered.setGroupBy("financialYear");
 				AssessedProperties assessedProperties = new AssessedProperties();
 				List<AssessedProperties> propertiesAssed = new ArrayList<AssessedProperties>();
-				assessedProperties.setGroupBy("usageCategory");
+				assessedProperties.setGroupBy(PTConstants.MDMS_PT_USAGECATEGORY);
 				Transactions transactions = new Transactions();
 				List<Transactions> transactionslist = new ArrayList<Transactions>();
-				transactions.setGroupBy("usageCategory");
+				transactions.setGroupBy(PTConstants.MDMS_PT_USAGECATEGORY);
 				TodaysCollection todaysCollection = new TodaysCollection();
 				List<TodaysCollection> todaysCollections = new ArrayList<TodaysCollection>();
-				todaysCollection.setGroupBy("usageCategory");
+				todaysCollection.setGroupBy(PTConstants.MDMS_PT_USAGECATEGORY);
 				PropertyTax propertyTax = new PropertyTax();
 				List<PropertyTax> propertyTaxs = new ArrayList<PropertyTax>();
-				propertyTax.setGroupBy("usageCategory");
+				propertyTax.setGroupBy(PTConstants.MDMS_PT_USAGECATEGORY);
 				Rebate rebate = new Rebate();
 				List<Rebate> rebates = new ArrayList<Rebate>();
-				rebate.setGroupBy("usageCategory");
+				rebate.setGroupBy(PTConstants.MDMS_PT_USAGECATEGORY);
 				Penalty penalty = new Penalty();
 				List<Penalty> penalties = new ArrayList<Penalty>();
-				penalty.setGroupBy("usageCategory");
+				penalty.setGroupBy(PTConstants.MDMS_PT_USAGECATEGORY);
 				Interest interest = new Interest();
 				List<Interest> interests = new ArrayList<Interest>();
-				interest.setGroupBy("usageCategory");
+				interest.setGroupBy(PTConstants.MDMS_PT_USAGECATEGORY);
 				propertyTaxPayload.setDate(formattedDate);
 				propertyTaxPayload.setModule(PTConstants.ASMT_MODULENAME);
-				propertyTaxPayload.setState("mn");
+				propertyTaxPayload.setState(config.getStateLevelTenantId());
 				String key = entry.getKey();
 				propertyTaxPayload.setWard(key.split("-")[0]);
 				propertyTaxPayload.setUlb(key.split("-")[1]);
-				propertyTaxPayload.setRegion(propertyTaxPayload.getUlb().split("\\.")[1]);
+				RequestInfo requestInfo=new RequestInfo();
+				List<String> masterNames = new ArrayList<>(
+						Arrays.asList("tenants"));
+				Map<String, List<String>> regionName = propertyutil.getAttributeValues(config.getStateLevelTenantId(), "tenant", masterNames,
+						"[?(@.city.districtTenantCode== '"+propertyTaxPayload.getUlb()+"')].city.districtCode", "$.MdmsRes.tenant", requestInfo);
+				propertyTaxPayload.setRegion(regionName.get("tenants").get(0));
 				if (wardwithtenatasmtMap.containsKey(key))
-					metrics.setAssessments(Integer.parseInt(wardwithtenatasmtMap.get(key)));
+					metrics.setAssessments(new BigInteger(wardwithtenatasmtMap.get(key)));
 				if (wardwithTanentsMap.containsKey(key))
-					metrics.setTodaysTotalApplications(Integer.parseInt(wardwithTanentsMap.get(key)));
+					metrics.setTodaysTotalApplications(new BigInteger(wardwithTanentsMap.get(key)));
 				if (wardwithtenatClosdMap.containsKey(key))
-					metrics.setTodaysClosedApplications(Integer.parseInt(wardwithtenatClosdMap.get(key)));
+					metrics.setTodaysClosedApplications(new BigInteger(wardwithtenatClosdMap.get(key)));
 				if (wardwithtenatPaidMap.containsKey(key))
-					metrics.setNoOfPropertiesPaidToday(Integer.parseInt(wardwithtenatPaidMap.get(key)));
+					metrics.setNoOfPropertiesPaidToday(new BigInteger(wardwithtenatPaidMap.get(key)));
 				if (wardwithtenatApprovedMap.containsKey(key))
-					metrics.setTodaysApprovedApplications(Integer.parseInt(wardwithtenatApprovedMap.get(key)));
+					metrics.setTodaysApprovedApplications(new BigInteger(wardwithtenatApprovedMap.get(key)));
 				if (wardwithtenatMovedMap.containsKey(key)) {
 					List<Bucket> buckets = new ArrayList<Bucket>();
 					List<String> values = Arrays.asList(wardwithtenatMovedMap.get(key).split(","));
