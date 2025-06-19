@@ -17,15 +17,24 @@ import jakarta.persistence.Id;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Unique(fields = {"name", "code"}, enableDfltMsg = true)
 @Table(name = "eg_department")
 @SequenceGenerator(name = SEQ_DEPARTMENT, sequenceName = SEQ_DEPARTMENT, allocationSize = 1)
-@Data
 @Builder
+
+@AllArgsConstructor
+@NoArgsConstructor
+@Setter
+@Getter
+
 
 public class Department extends AuditDetailswithVersion {
 

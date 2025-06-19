@@ -1,0 +1,6 @@
+
+package org.egov.finance.report.util;
+
+public enum BudgetAccountType {
+    REVENUE_RECEIPTS, REVENUE_EXPENDITURE, CAPITAL_RECEIPTS, CAPITAL_EXPENDITURE
+}

@@ -62,7 +62,7 @@ public class CVoucherHeader extends StateAware implements Serializable {
 
 	@SafeHtml
 	@Length(max = 30)
-	@Column(updatable = false)
+	@Column(name="vouchernumber",updatable = false)
 	private String voucherNumber;
 
 	@Temporal(TemporalType.DATE)

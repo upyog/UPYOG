@@ -8,6 +8,7 @@
 package org.egov.finance.report.util;
 
 import java.util.Collection;
+import java.util.Date;
 
 import org.springframework.data.jpa.domain.Specification;
 
@@ -74,6 +75,38 @@ public class SpecificationHelper {
 			}
 		};
 	}
+	
+	
+	public static <T> Specification<T> equalNested(String fieldPath, Object value) {
+	    return (root, query, cb) -> {
+	        if (value == null) return cb.conjunction();
+
+	        String[] parts = fieldPath.split("\\.");
+	        Path<?> path = root;
+	        for (String part : parts) {
+	            path = (path instanceof Root) ? ((Root<?>) path).join(part) : path.get(part);
+	        }
+	        return cb.equal(path, value);
+	    };
+	}
+	
+	
+	public static <T> Specification<T> isDateWithinRangeWithFlag(
+		    String startField, String endField, Date date, String flagField, boolean flagValue) {
+		    return (root, query, cb) -> {
+		        if (date == null) return cb.conjunction();
+
+		        Path<Date> startPath = getPath(root, startField, Date.class);
+		        Path<Date> endPath = getPath(root, endField, Date.class);
+		        Path<Boolean> flagPath = getPath(root, flagField, Boolean.class);
+
+		        return cb.and(
+		            cb.lessThanOrEqualTo(startPath, date),
+		            cb.greaterThanOrEqualTo(endPath, date),
+		            cb.equal(flagPath, flagValue) // more flexible than isTrue()
+		        );
+		    };
+		}
 
 	/*
 	 * USAGE EXAMPLE
