@@ -516,6 +516,14 @@ public class PropertyQueryBuilder {
 			preparedStmtList.add(criteria.getMobileNumber());
 		}
 		
+		if (null !=criteria.getIsActiveUnit() && criteria.getIsActiveUnit()) {
+			addClauseIfRequired(preparedStmtList, builder);
+			builder.append("unit.active = ?");
+			preparedStmtList.add(criteria.getIsActiveUnit());
+		}
+		
+		
+		
 		return builder.toString();
 	}
 
