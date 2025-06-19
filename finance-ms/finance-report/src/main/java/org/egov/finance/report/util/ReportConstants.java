@@ -214,5 +214,9 @@ public class ReportConstants {
 	public static final String EXPENSE_TYPE = "Expense";
 	public static final String LIABILITY_TYPE = "Liability";
 	public static final String ASSET_TYPE = "Asset";
+	
+	public static final String BUDGETHEADID = "budgetheadid";
+	public static final String BUDGETARY_CHECK_GROUPBY_VALUES = "budgetaryCheck_groupby_values";
+	public static final String GLCODEID = "glcodeid";
 
 }

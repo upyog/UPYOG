@@ -5,18 +5,39 @@
  */
 package org.egov.finance.report.util;
 
+import java.math.BigDecimal;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
 import org.egov.finance.report.entity.AppConfigValues;
+import org.egov.finance.report.entity.FinancialYear;
+import org.egov.finance.report.exception.ReportServiceException;
+import org.egov.finance.report.repository.AppConfigValuesRepository;
+import org.egov.finance.report.service.MasterCommonService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
-@Component
-public class VoucherReportQueryHelper {
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.TypedQuery;
 
+@Component
+public class BudgetReportQueryHelper {
+	
+	
+	@Autowired
+	MasterCommonService masterCommonService;
+	
+	@Autowired
+	AppConfigValuesRepository appConfigRepo;
+	
+	@PersistenceContext
+    private EntityManager entityManager;
+	
 	public  String prepareQueryForBudget(
 	        final String departmentCode, final Long functionid, final Integer functionaryid,
 	        final Integer schemeid, final Integer subschemeid, final Integer boundaryid,
@@ -27,8 +48,8 @@ public class VoucherReportQueryHelper {
 	     // list = appConfigValuesService.getConfigValuesByModuleAndKey(EGF, BUDGETARY_CHECK_GROUPBY_VALUES);
 
 	    if (list.isEmpty()) {
-	    //	errorMap.put(ReportConstants.INVALID_ID_PASSED, departmentCode)
-	       // throw new ValidationException(EMPTY_STRING, "budgetaryCheck_groupby_values is not defined in AppConfig");
+	    	errorMap.put(ReportConstants.INVALID_CODE, "budgetaryCheck_groupby_values is not defined in AppConfig");
+	        throw new ReportServiceException(errorMap);
 	    }
 
 	    AppConfigValues configValue = list.get(0);
@@ -59,14 +80,19 @@ public class VoucherReportQueryHelper {
 	            	Function<Integer, Long> toLong = v-> v != null ? v.longValue() : null;
 	                validateAndAppend(query, "Boundary", boundaryid, "bd.boundary", "boundaryId", params, toLong);
 	            default:
-	               // throw new ValidationException(EMPTY_STRING, "Unsupported budgetary group by value: " + value);
+	            	//need to update
+	            	errorMap.put(ReportConstants.INVALID_CODE, "budgetaryCheck_groupby_values is not defined in AppConfig");
+	    	        throw new ReportServiceException(errorMap);
 	        }
 	    }
 
 	    return query.toString();
 	}
+	
+	
+	
 
-	private <T, R> void validateAndAppend(StringBuilder query, String fieldName, T value, String queryField,
+	public <T, R> void validateAndAppend(StringBuilder query, String fieldName, T value, String queryField,
 			String paramKey, Map<String, Object> params, Function<T, R> converter) {
 		if (value == null || value.equals(0)) {
 			//throw new ValidationException(EMPTY_STRING, fieldName + " is required");
@@ -75,5 +101,7 @@ public class VoucherReportQueryHelper {
 			params.put(paramKey, converter.apply(value));
 		}
 	}
+	
+	
 
 }

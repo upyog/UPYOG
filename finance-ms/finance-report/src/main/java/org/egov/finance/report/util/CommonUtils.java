@@ -181,5 +181,9 @@ public class CommonUtils {
 
 	    return sanitized;
 	}
+	
+	public String toStr(Object obj) { return obj != null ? obj.toString() : null; }
+	public Long toLong(Object obj) { return obj != null ? Long.valueOf(obj.toString()) : null; }
+	public Integer toInt(Object obj) { return obj != null ? Integer.valueOf(obj.toString()) : null; }
 
 }

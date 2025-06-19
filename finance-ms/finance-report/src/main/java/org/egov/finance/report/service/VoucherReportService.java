@@ -18,6 +18,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.regex.Matcher;
 
+import org.apache.commons.lang3.StringUtils;
 import org.egov.finance.report.entity.AppConfigValues;
 import org.egov.finance.report.entity.BudgetDetail;
 import org.egov.finance.report.entity.BudgetGroup;
@@ -44,7 +45,7 @@ import org.egov.finance.report.repository.FunctionRepository;
 import org.egov.finance.report.repository.FundRepository;
 import org.egov.finance.report.util.CommonUtils;
 import org.egov.finance.report.util.ReportConstants;
-import org.egov.finance.report.util.VoucherReportQueryHelper;
+import org.egov.finance.report.util.BudgetReportQueryHelper;
 import org.egov.finance.report.workflow.entity.State;
 import org.egov.finance.report.workflow.entity.StateHistory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,33 +59,34 @@ public class VoucherReportService {
 
 	@Autowired
 	JasperReportHelperService reportHelper;
-	
+
 	@Autowired
 	CommonUtils commonUtils;
 	@Autowired
 	MasterCommonService masterCommonService;
-	
+
 	@Autowired
 	CVoucherHeaderRepository voucherHeaderRepo;
-	
+
 	@Autowired
 	BudgetGroupRepository budgetGroupRepository;
+
+	@Autowired
+	BudgetReportQueryHelper budgetReportQueryHelper;
 	
 	@Autowired
-	VoucherReportQueryHelper voucherReportQueryHelper;
-	
-	
+	BudgetService budgetService;
 
 	public Resource voucherForReport(VoucherPrintRequest request) {
 		List<Object> voucherList = new ArrayList<>();
 		final Map<String, Object> paramMap = new HashMap<>();
 		Map<String, String> errorMap = new HashMap<>();
-		
+
 		CVoucherHeader voucher = Optional.ofNullable(masterCommonService.getVoucherById(request.getVoucher().getId()))
 				.orElseThrow(() -> {
 					errorMap.put(ReportConstants.INVALID_ID_PASSED, ReportConstants.INVALID_ID_PASSED_MESSAGE);
 					return new ReportServiceException(errorMap);
-				});		
+				});
 		voucher.getGeneralLedger().forEach(x -> System.out.println(x.getId()));
 		populateParamMap(paramMap, voucher);
 		return null;
@@ -126,7 +128,7 @@ public class VoucherReportService {
 	}
 
 	private void populateParamMap(Map<String, Object> paramMap, CVoucherHeader voucher) {
-		 List<WorkFlowHistoryItem> inboxHistory = new ArrayList<>();
+		List<WorkFlowHistoryItem> inboxHistory = new ArrayList<>();
 		paramMap.put("fundName", Optional.ofNullable(voucher).map(CVoucherHeader::getFundId)
 				.map(fund -> masterCommonService.getFundById(fund.getId())).map(Fund::getName).orElse(""));
 		paramMap.put("departmentName",
@@ -142,7 +144,7 @@ public class VoucherReportService {
 
 		Optional<State> optionalState = Optional.ofNullable(voucher).map(CVoucherHeader::getState);
 		if (optionalState.isPresent()) {
-		    inboxHistory = loadInboxHistoryData(voucher);
+			inboxHistory = loadInboxHistoryData(voucher);
 		}
 		paramMap.put("workFlowHistory", inboxHistory);
 		paramMap.put("workFlowJasper",
@@ -151,89 +153,85 @@ public class VoucherReportService {
 		// final HttpServletRequest request = ServletActionContext.getRequest();
 		// final HttpSession session = request.getSession();
 
-		//final City cityWebsite = cityService.getCityByURL((String) session.getAttribute("cityurl"));
-		String billType =Optional.ofNullable(voucher)
-				.map(CVoucherHeader::getId)
-				.map(id->masterCommonService.getEgBillRegisterByVoucherId(id))
-				.map(EgBillregister::getExpendituretype)
+		// final City cityWebsite = cityService.getCityByURL((String)
+		// session.getAttribute("cityurl"));
+		String billType = Optional.ofNullable(voucher).map(CVoucherHeader::getId)
+				.map(id -> masterCommonService.getEgBillRegisterByVoucherId(id)).map(EgBillregister::getExpendituretype)
 				.orElse(null);
-				
+
 		if (ObjectUtils.isEmpty(billType))
 			billType = "General";
 		else if ("Works".equalsIgnoreCase(billType))
 			billType = "Contractor";
 		if ("Purchase".equalsIgnoreCase(billType))
-			billType = Optional.ofNullable(voucher)
-					.map(CVoucherHeader::getId)
-					.map(id->masterCommonService.getEgBillRegisterByVoucherId(id))
-					.map(EgBillregister::getEgBillregistermis)
-					.map(EgBillregistermis::getEgBillSubType)
-					.map(EgBillSubType::getExpenditureType)
-					.orElse(null);
-		
-		EgBillregistermis billRegistermis = Optional.ofNullable(voucher)
-				.map(CVoucherHeader::getId)
-				.map(id->masterCommonService.getEgBillregistermisByVoucherId(id))
-				.orElse(null);
-				
-		
+			billType = Optional.ofNullable(voucher).map(CVoucherHeader::getId)
+					.map(id -> masterCommonService.getEgBillRegisterByVoucherId(id))
+					.map(EgBillregister::getEgBillregistermis).map(EgBillregistermis::getEgBillSubType)
+					.map(EgBillSubType::getExpenditureType).orElse(null);
+
+		EgBillregistermis billRegistermis = Optional.ofNullable(voucher).map(CVoucherHeader::getId)
+				.map(id -> masterCommonService.getEgBillregistermisByVoucherId(id)).orElse(null);
+
 		final StringBuilder cityName = new StringBuilder(100);
 		cityName.append("TEST");
 		paramMap.put("cityName", cityName.toString());
 		paramMap.put("voucherName", billType.toUpperCase().concat(" JOURNAL VOUCHER"));
-		
-		System.out.println("paramMap-------------------------"+paramMap);
+
+		System.out.println("paramMap-------------------------" + paramMap);
 		paramMap.put("budgetAppropriationDetailJasper",
 				reportHelper.getClass().getResourceAsStream("/reports/templates/budgetAppropriationDetail.jasper"));
 		if (billRegistermis != null && billRegistermis.getBudgetaryAppnumber() != null
 				&& !"".equalsIgnoreCase(billRegistermis.getBudgetaryAppnumber()))
-			//paramMap.put("budgetDetail",budgetAppropriationService.getBudgetDetailsForBill(billRegistermis.getEgBillregister()));
-		//else if (voucher != null && voucher.getVouchermis().getBudgetaryAppnumber() != null
-		//		&& !"".equalsIgnoreCase(voucher.getVouchermis().getBudgetaryAppnumber()))
-		//	paramMap.put("budgetDetail", budgetAppropriationService.getBudgetDetailsForVoucher(voucher));
-		//else
-		//	paramMap.put("budgetDetail", new ArrayList<>());
-			System.out.println("paramMap-------------------------"+paramMap);
+			// paramMap.put("budgetDetail",budgetAppropriationService.getBudgetDetailsForBill(billRegistermis.getEgBillregister()));
+			// else if (voucher != null && voucher.getVouchermis().getBudgetaryAppnumber()
+			// != null
+			// && !"".equalsIgnoreCase(voucher.getVouchermis().getBudgetaryAppnumber()))
+			// paramMap.put("budgetDetail",
+			// budgetAppropriationService.getBudgetDetailsForVoucher(voucher));
+			// else
+			// paramMap.put("budgetDetail", new ArrayList<>());
+			System.out.println("paramMap-------------------------" + paramMap);
 
 		// return paramMap;
 	}
+
 	
-	
-	
-	/*
-	 * private boolean isBudgetCheckNeeded(final CChartOfAccounts coa) { boolean
-	 * checkReq = false; if
-	 * (!budgetControlTypeService.getConfigValue().equals(BudgetControlType.
-	 * BudgetCheckOption.NONE.toString())) if (null != coa && null !=
-	 * coa.getBudgetCheckReq() && coa.getBudgetCheckReq()) checkReq = true; return
-	 * checkReq; }
-	 * 
-	 * private void populateDataForBill(final EgBillregister bill, final
-	 * CFinancialYear financialYear, final EgBilldetails detail, final
-	 * BudgetReportEntry budgetReportEntry, final CChartOfAccounts coa) { final
-	 * Function function = getFunction(detail); final Map<String, Object>
-	 * budgetDataMap = getRequiredBudgetDataForBill(bill, financialYear, function,
-	 * coa); budgetReportEntry.setFunctionName(function.getName());
-	 * budgetReportEntry.setGlCode(coa.getGlcode());
-	 * budgetReportEntry.setFinancialYear(financialYear.getFinYearRange());
-	 * BigDecimal budgetedAmtForYear = BigDecimal.ZERO; try { budgetedAmtForYear =
-	 * budgetDetailsDAO.getBudgetedAmtForYear(budgetDataMap); } catch (final
-	 * ValidationException e) { throw e; }
-	 * budgetReportEntry.setBudgetedAmtForYear(budgetedAmtForYear);
-	 * populateBudgetAppNumber(bill, budgetReportEntry); final BigDecimal billAmount
-	 * = getBillAmount(detail); BigDecimal soFarAppropriated = BigDecimal.ZERO;
-	 * soFarAppropriated = getSoFarAppropriated(budgetDataMap, billAmount);
-	 * budgetReportEntry.setAccountCode(coa.getGlcode());
-	 * budgetReportEntry.setSoFarAppropriated(soFarAppropriated); final BigDecimal
-	 * balance = budgetReportEntry.getBudgetedAmtForYear()
-	 * .subtract(budgetReportEntry.getSoFarAppropriated());
-	 * budgetReportEntry.setBalance(balance);
-	 * budgetReportEntry.setCumilativeIncludingCurrentBill(soFarAppropriated.add(
-	 * billAmount));
-	 * budgetReportEntry.setCurrentBalanceAvailable(balance.subtract(billAmount));
-	 * budgetReportEntry.setCurrentBillAmount(billAmount); }
-	 */
-	
+	private boolean isBudgetCheckNeeded(final CChartOfAccounts coa) {
+		boolean checkReq = false;
+		if (!budgetControlTypeService.getConfigValue().equals(BudgetControlType.BudgetCheckOption.NONE.toString()))
+			if (null != coa && null != coa.getBudgetCheckReq() && coa.getBudgetCheckReq())
+				checkReq = true;
+		return checkReq;
+	}
+
+	private void populateDataForBill(final EgBillregister bill, final FinancialYear financialYear,
+			final EgBilldetails detail, final BudgetReportEntry budgetReportEntry, final CChartOfAccounts coa) {
+		final Function function = getFunction(detail);
+		final Map<String, Object> budgetDataMap = getRequiredBudgetDataForBill(bill, financialYear, function, coa);
+		budgetReportEntry.setFunctionName(function.getName());
+		budgetReportEntry.setGlCode(coa.getGlcode());
+		budgetReportEntry.setFinancialYear(financialYear.getFinYearRange());
+		BigDecimal budgetedAmtForYear = BigDecimal.ZERO;
+		try {
+			budgetedAmtForYear = budgetService.getBudgetedAmtForYear(budgetDataMap);
+		} catch (final ValidationException e) {
+			throw e;
+		}
+		budgetReportEntry.setBudgetedAmtForYear(budgetedAmtForYear);
+		budgetService.populateBudgetAppNumber(bill, budgetReportEntry);
+		final BigDecimal billAmount = getBillAmount(detail);
+		BigDecimal soFarAppropriated = BigDecimal.ZERO;
+		soFarAppropriated = getSoFarAppropriated(budgetDataMap, billAmount);
+		budgetReportEntry.setAccountCode(coa.getGlcode());
+		budgetReportEntry.setSoFarAppropriated(soFarAppropriated);
+		final BigDecimal balance = budgetReportEntry.getBudgetedAmtForYear()
+				.subtract(budgetReportEntry.getSoFarAppropriated());
+		budgetReportEntry.setBalance(balance);
+		budgetReportEntry.setCumilativeIncludingCurrentBill(soFarAppropriated.add(billAmount));
+		budgetReportEntry.setCurrentBalanceAvailable(balance.subtract(billAmount));
+		budgetReportEntry.setCurrentBillAmount(billAmount);
+	}
+	 
 	private Map<String, Object> getRequiredBudgetDataForBill(final EgBillregister cbill,
 			final FinancialYear financialYear, final Function function, final CChartOfAccounts coa) {
 		final Map<String, Object> budgetDataMap = new HashMap<String, Object>();
@@ -255,44 +253,42 @@ public class VoucherReportService {
 		budgetDataMap.put("budgetheadid", getBudgetHeadByGlcode(coa));
 		return budgetDataMap;
 	}
-	
-	
+
 	public List<BudgetGroup> getBudgetHeadByGlcode(final CChartOfAccounts coa) {
-		Map<String,String> errorMap  = new HashMap<>();
+		Map<String, String> errorMap = new HashMap<>();
 		String glcode = coa.getGlcode();
 		List<BudgetGroup> bgList = null;
-			int majorCodeLnegth = Optional.ofNullable(masterCommonService.getConfigValuesByModuleAndKey(EGF,
-					"coa_majorcode_length"))
-					.filter(x->x!=null)
-					.map(list -> Integer.valueOf(list.get(0).getValue()))
-					.orElseThrow(()->{ 
-						errorMap.put(ReportConstants.FUNCTIONID, "coa_majorcode_length is not defined");
-						throw new ReportServiceException (errorMap);			
-					});
-			
-			int minorCodeLength = Optional.ofNullable(masterCommonService.getConfigValuesByModuleAndKey(EGF,
-					"coa_minorcode_length"))
-					.filter(x->x!=null)
-					.map(list -> Integer.valueOf(list.get(0).getValue()))
-					.orElseThrow(()->{ 
-						errorMap.put(ReportConstants.FUNCTIONID, "coa_majorcode_length is not defined");
-						throw new ReportServiceException (errorMap);
-							
-					});
-				bgList = budgetGroupRepository.findEligibleBudgetGroups(glcode);
-				if (!bgList.isEmpty()) return bgList;
-				
-				bgList = budgetGroupRepository.findEligibleBudgetGroups(glcode.substring(0,minorCodeLength));
-				if (!bgList.isEmpty()) return bgList;
-				
-				bgList = budgetGroupRepository.findByMajorCodeGlcode(glcode.substring(0, majorCodeLnegth));
-				if (!bgList.isEmpty()) return bgList;
-				
-				errorMap.put(ReportConstants.FUNCTIONID, "Budget Check failed: Budget not defined for the given combination.");
-				throw new ReportServiceException (errorMap);
-			} 
-	
-	
+		int majorCodeLnegth = Optional
+				.ofNullable(masterCommonService.getConfigValuesByModuleAndKey(EGF, "coa_majorcode_length"))
+				.filter(x -> x != null).map(list -> Integer.valueOf(list.get(0).getValue())).orElseThrow(() -> {
+					errorMap.put(ReportConstants.FUNCTIONID, "coa_majorcode_length is not defined");
+					throw new ReportServiceException(errorMap);
+				});
+
+		int minorCodeLength = Optional
+				.ofNullable(masterCommonService.getConfigValuesByModuleAndKey(EGF, "coa_minorcode_length"))
+				.filter(x -> x != null).map(list -> Integer.valueOf(list.get(0).getValue())).orElseThrow(() -> {
+					errorMap.put(ReportConstants.FUNCTIONID, "coa_majorcode_length is not defined");
+					throw new ReportServiceException(errorMap);
+
+				});
+		bgList = budgetGroupRepository.findEligibleBudgetGroups(glcode);
+		if (!bgList.isEmpty())
+			return bgList;
+
+		bgList = budgetGroupRepository.findEligibleBudgetGroups(glcode.substring(0, minorCodeLength));
+		if (!bgList.isEmpty())
+			return bgList;
+
+		bgList = budgetGroupRepository.findByMajorCodeGlcode(glcode.substring(0, majorCodeLnegth));
+		if (!bgList.isEmpty())
+			return bgList;
+
+		// need to change all the Exception
+		errorMap.put(ReportConstants.FUNCTIONID, "Budget Check failed: Budget not defined for the given combination.");
+		throw new ReportServiceException(errorMap);
+	}
+
 	private BigDecimal getApprovedAmt(final List<BudgetDetail> bdList) {
 		BigDecimal approvedAmt = BigDecimal.ZERO;
 		for (final BudgetDetail bd : bdList) {
@@ -305,5 +301,7 @@ public class VoucherReportService {
 		return approvedAmt;
 	}
 	
-		
+	
+
+
 }
