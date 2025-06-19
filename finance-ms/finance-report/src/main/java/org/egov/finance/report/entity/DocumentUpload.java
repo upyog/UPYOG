@@ -45,22 +45,17 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  *
  */
-
 package org.egov.finance.report.entity;
 
-
-import static org.egov.finance.report.entity.AppConfigValues.SEQ_APPCONFIG_VALUE;
-
+import java.io.ByteArrayInputStream;
+import java.io.Serializable;
 import java.util.Date;
-import java.util.Objects;
 
 import org.egov.finance.report.customannotation.SafeHtml;
+
 import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.NotBlank;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.google.gson.annotations.Expose;
-
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -71,89 +66,116 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
-import jakarta.persistence.Temporal;
-import jakarta.persistence.TemporalType;
-import jakarta.persistence.Transient;
 import jakarta.validation.constraints.NotNull;
 
 @Entity
-@Table(name = "eg_appconfig_values")
-@SequenceGenerator(name = SEQ_APPCONFIG_VALUE, sequenceName = SEQ_APPCONFIG_VALUE, allocationSize = 1)
-public class AppConfigValues extends AuditDetailswithVersion {
+@Table(name = "EGF_DOCUMENTS")
+@SequenceGenerator(name = DocumentUpload.SEQ_EGF_DOCUMENTS, sequenceName = DocumentUpload.SEQ_EGF_DOCUMENTS, allocationSize = 1)
+public class DocumentUpload implements Serializable {
 
-    public static final String SEQ_APPCONFIG_VALUE = "SEQ_EG_APPCONFIG_VALUES";
-    private static final long serialVersionUID = 1L;
-    @Expose
+    public static final String SEQ_EGF_DOCUMENTS = "SEQ_EGF_DOCUMENTS";
+
     @Id
-    @GeneratedValue(generator = SEQ_APPCONFIG_VALUE, strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(generator = SEQ_EGF_DOCUMENTS, strategy = GenerationType.SEQUENCE)
     private Long id;
+
+    @Column(name = "objectid")
+    private Long objectId;
 
     @NotNull
     @SafeHtml
-    @Length(max = 4000)
-    @Column(name = "value")
-    private String value;
+    @Length(max = 128)
+    private String objectType;
 
-    @NotNull
-    @Temporal(TemporalType.DATE)
-    @Column(name = "effective_from", updatable = false)
-    private Date effectiveFrom;
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "filestoreid")
+    private FileStoreMapper fileStore;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "key_id", nullable = false)
-    @JsonIgnore
-    private AppConfig config;
+    @Column(name = "uploadeddate")
+    private Date uploadedDate;
+     
+    private Boolean isMigrated;
 
-    @Transient
-    private boolean markedForRemoval;
+    private transient ByteArrayInputStream inputStream;
 
-   
+    private transient String fileName;
 
-    public Date getEffectiveFrom() {
-        return effectiveFrom;
+    private transient String contentType;
+
+    public String getObjectType() {
+        return objectType;
     }
 
-    public void setEffectiveFrom(final Date effectiveFrom) {
-        this.effectiveFrom = effectiveFrom;
+    public void setObjectType(final String objectType) {
+        this.objectType = objectType;
     }
 
-    public String getValue() {
-        return value;
+    public FileStoreMapper getFileStore() {
+        return fileStore;
     }
 
-    public void setValue(final String value) {
-        this.value = value;
+    public void setFileStore(final FileStoreMapper fileStore) {
+        this.fileStore = fileStore;
     }
 
-    public AppConfig getConfig() {
-        return config;
+    public Long getObjectId() {
+        return objectId;
     }
 
-    public void setConfig(final AppConfig config) {
-        this.config = config;
+    public void setObjectId(final Long objectId) {
+        this.objectId = objectId;
     }
 
-    public boolean isMarkedForRemoval() {
-        return markedForRemoval;
+    public Long getId() {
+        return id;
     }
 
-    public void setMarkedForRemoval(final boolean markedForRemoval) {
-        this.markedForRemoval = markedForRemoval;
+    public void setId(final Long id) {
+        this.id = id;
     }
 
-    @Override
-    public boolean equals(final Object o) {
-        if (this == o)
-            return true;
-        if (!(o instanceof AppConfigValues))
-            return false;
-        final AppConfigValues that = (AppConfigValues) o;
-        return Objects.equals(id, that.id) &&
-                Objects.equals(value, that.value);
+    public ByteArrayInputStream getInputStream() {
+        return inputStream;
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, value);
+    public void setInputStream(ByteArrayInputStream inputStream) {
+        this.inputStream = inputStream;
     }
+
+    public String getFileName() {
+        return fileName;
+    }
+
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
+    }
+
+    public String getContentType() {
+        return contentType;
+    }
+
+    public void setContentType(String contentType) {
+        this.contentType = contentType;
+    }
+
+    public Date getUploadedDate() {
+        return uploadedDate;
+    }
+
+    public void setUploadedDate(Date uploadedDate) {
+        this.uploadedDate = uploadedDate;
+    }
+    
+    public Date getCreatedDate(){
+        return fileStore.getCreatedDate();
+    }
+    
+    public Boolean getIsMigrated() {
+        return isMigrated;
+    }
+
+    public void setIsMigrated(Boolean isMigrated) {
+        this.isMigrated = isMigrated;
+    }
+    
 }

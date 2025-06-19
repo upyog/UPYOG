@@ -14,9 +14,13 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.regex.Matcher;
 
 import org.egov.finance.report.entity.CVoucherHeader;
+import org.egov.finance.report.entity.Department;
+import org.egov.finance.report.entity.Fund;
+import org.egov.finance.report.entity.Vouchermis;
 import org.egov.finance.report.exception.ApplicationRuntimeException;
 import org.egov.finance.report.exception.ReportServiceException;
 import org.egov.finance.report.model.WorkFlowHistoryItem;
@@ -45,48 +49,145 @@ public class VoucherReportService {
 	@Autowired
 	CommonUtils commonUtils;
 	
+	@Autowired
+	MasterCommonService masterCommonService;
+	
 	
 	public Resource voucherForReport(VoucherPrintRequest request) {
 		CVoucherHeader voucher =null;
 		List<Object> voucherList = new ArrayList<>();
+		final Map<String, Object> paramMap = new HashMap<>();
 		Map<String, String> errorMap = new HashMap<>();
 		voucher = voucherHeaderRepo.findById(request.getVoucher().getId()).orElseThrow(()->{
 			errorMap.put(ReportConstants.INVALID_ID_PASSED, ReportConstants.INVALID_ID_PASSED_MESSAGE);
 			throw new ReportServiceException(errorMap);
 		});
 		voucher.getGeneralLedger().forEach(x->System.out.println(x.getId()));
+		populateParamMap(paramMap, voucher);
+		
 		return null;
 	}
 	
 	
-	private void loadInboxHistoryData(final CVoucherHeader voucher) throws ApplicationRuntimeException {
-		List<WorkFlowHistoryItem> inboxHistory = new ArrayList();
-        Collections.reverse(voucher.getStateHistory());
-        WorkFlowHistoryItem inboxHistoryItem;
-        String pos;
-        String nextAction;
+	private List<WorkFlowHistoryItem> loadInboxHistoryData(final CVoucherHeader voucher) throws ApplicationRuntimeException {
+	    List<WorkFlowHistoryItem> inboxHistory = new ArrayList<>();
+	    List<StateHistory> stateHistories = Optional.ofNullable(voucher.getStateHistory())
+	                                                .orElse(Collections.emptyList());
+	    Collections.reverse(stateHistories);
 
-        for (final StateHistory historyState : voucher.getStateHistory()) {
-            pos = historyState.getSenderName().concat(" / ").concat(historyState.getSenderName());
-            nextAction = historyState.getNextAction();
-            if (!"NEW".equalsIgnoreCase(historyState.getValue())) {
-                inboxHistoryItem = new WorkFlowHistoryItem(
-                		commonUtils.getFormattedDate(historyState.getCreatedDate(), "dd/MM/yyyy hh:mm a"), pos, nextAction,
-                        historyState.getValue(),
-                        historyState.getComments() != null ? commonUtils.removeSpecialCharacters(historyState.getComments()) : "");
-                inboxHistory.add(inboxHistoryItem);
-            }
+	    for (final StateHistory historyState : stateHistories) {
+	        if (!"NEW".equalsIgnoreCase(historyState.getValue())) {
+	            String pos = historyState.getSenderName() + " / " + historyState.getSenderName();
+	            String nextAction = historyState.getNextAction();
 
-        }
-        pos = voucher.getState().getSenderName().concat(" / ").concat(voucher.getState().getSenderName());
-        nextAction = voucher.getState().getNextAction();
-        inboxHistoryItem = new WorkFlowHistoryItem(
-        		commonUtils.getFormattedDate(voucher.getState().getCreatedDate(), "dd/MM/yyyy hh:mm a"), pos, nextAction,
-                voucher.getState().getValue(), voucher.getState().getComments() != null
-                        ? commonUtils.removeSpecialCharacters(voucher.getState().getComments()) : "");
-        inboxHistory.add(inboxHistoryItem);
+	            String comment = Optional.ofNullable(historyState.getComments())
+	                                     .map(commonUtils::removeSpecialCharacters)
+	                                     .orElse("");
 
+	            inboxHistory.add(new WorkFlowHistoryItem(
+	                commonUtils.getFormattedDate(historyState.getCreatedDate(), "dd/MM/yyyy hh:mm a"),
+	                pos,
+	                nextAction,
+	                historyState.getValue(),
+	                comment
+	            ));
+	        }
+	    }
+	    Optional.ofNullable(voucher.getState()).ifPresent(state -> {
+	        String pos = state.getSenderName() + " / " + state.getSenderName();
+	        String nextAction = state.getNextAction();
+
+	        String comment = Optional.ofNullable(state.getComments())
+	                                 .map(commonUtils::removeSpecialCharacters)
+	                                 .orElse("");
+
+	        inboxHistory.add(new WorkFlowHistoryItem(
+	            commonUtils.getFormattedDate(state.getCreatedDate(), "dd/MM/yyyy hh:mm a"),
+	            pos,
+	            nextAction,
+	            state.getValue(),
+	            comment
+	        ));
+	    });
+
+	    return inboxHistory;
 	}
+	
+	private void populateParamMap( Map<String, Object> paramMap,CVoucherHeader voucher ) {
+		List<WorkFlowHistoryItem> inboxHistory = new ArrayList<>();
+		paramMap.put("fundName",
+			    Optional.ofNullable(voucher)
+			    		.map(CVoucherHeader::getFundId)
+			            .map(fund -> masterCommonService.getFundById(fund.getId()))
+			            .map(Fund::getName)
+			            .orElse("")
+			);
+        paramMap.put("departmentName", Optional.ofNullable(voucher)
+        		.map(CVoucherHeader::getVouchermis)
+        		.map(Vouchermis::getDepartmentcode)
+        		.map(code-> masterCommonService.getDepartmenByCode(code))
+        		.map(Department::getCode)
+        		.orElse("")
+        		);
+        
+        paramMap.put("voucherNumber", Optional.ofNullable(voucher)
+        		.map(CVoucherHeader::getVoucherNumber)
+        		.orElse("")
+        		);
+        
+        paramMap.put("voucherNumber", Optional.ofNullable(voucher)
+        		.map(CVoucherHeader::getVoucherDate)
+        		.map(date->commonUtils.getFormattedDate(date, null))
+        		.orElse("")
+        		);
+        
+        paramMap.put("voucherDescription", Optional.ofNullable(voucher)
+        		.map(CVoucherHeader::getDescription)
+        		.orElse("")
+        		);
+      
+       Optional.ofNullable(voucher)
+       .map(CVoucherHeader::getState)
+       .ifPresent(x->{
+    	   loadInboxHistoryData(voucher);
+       });
+        paramMap.put("workFlowHistory", inboxHistory);
+        paramMap.put("workFlowJasper",
+                reportHelper.getClass().getResourceAsStream("/reports/templates/workFlowHistoryReport.jasper"));
+        
+       // final HttpServletRequest request = ServletActionContext.getRequest();
+       // final HttpSession session = request.getSession();
+		/*
+		 * final City cityWebsite = cityService.getCityByURL((String)
+		 * session.getAttribute("cityurl")); String billType =
+		 * billsManager.getBillTypeforVoucher(voucher); if (isBlank(billType)) billType
+		 * = "General"; else if ("Works".equalsIgnoreCase(billType)) billType =
+		 * "Contractor"; if ("Purchase".equalsIgnoreCase(billType)) billType =
+		 * billsManager.getBillSubTypeforVoucher(voucher); EgBillregistermis
+		 * billRegistermis = null; if (voucher != null) billRegistermis =
+		 * (EgBillregistermis) persistenceService
+		 * .find("from EgBillregistermis where voucherHeader.id=?", voucher.getId());
+		 * final StringBuilder cityName = new StringBuilder(100);
+		 * cityName.append(cityWebsite.getName().toUpperCase());
+		 * paramMap.put("cityName", cityName.toString()); paramMap.put("voucherName",
+		 * billType.toUpperCase().concat(" JOURNAL VOUCHER"));
+		 * paramMap.put("budgetAppropriationDetailJasper",
+		 * reportHelper.getClass().getResourceAsStream(
+		 * "/reports/templates/budgetAppropriationDetail.jasper")); if (billRegistermis
+		 * != null && billRegistermis.getBudgetaryAppnumber() != null &&
+		 * !"".equalsIgnoreCase(billRegistermis.getBudgetaryAppnumber()))
+		 * paramMap.put("budgetDetail",
+		 * budgetAppropriationService.getBudgetDetailsForBill(billRegistermis.
+		 * getEgBillregister())); else if (voucher != null &&
+		 * voucher.getVouchermis().getBudgetaryAppnumber() != null &&
+		 * !"".equalsIgnoreCase(voucher.getVouchermis().getBudgetaryAppnumber()))
+		 * paramMap.put("budgetDetail",
+		 * budgetAppropriationService.getBudgetDetailsForVoucher(voucher)); else
+		 * paramMap.put("budgetDetail", new ArrayList<>());
+		 */
+        //return paramMap;
+    }
+
 	
 	
 	
