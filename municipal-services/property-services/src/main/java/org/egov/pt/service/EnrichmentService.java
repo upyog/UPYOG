@@ -2,11 +2,13 @@ package org.egov.pt.service;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.pt.config.PropertyConfiguration;
@@ -17,6 +19,7 @@ import org.egov.pt.models.OwnerInfo;
 import org.egov.pt.models.Property;
 import org.egov.pt.models.PropertyCriteria;
 import org.egov.pt.models.PtTaxCalculatorTracker;
+import org.egov.pt.models.Unit;
 import org.egov.pt.models.collection.Bill;
 import org.egov.pt.models.enums.BillStatus;
 import org.egov.pt.models.enums.Status;
@@ -149,8 +152,36 @@ public class EnrichmentService {
 				if (unit.getId() == null) {
 					unit.setId(UUID.randomUUID().toString());
 					unit.setActive(true);
+				}else {
+					unit.setActive(true);
 				}
 			});
+	    	
+	    	
+	    	
+	    	if (!CollectionUtils.isEmpty(propertyFromDb.getUnits())) {
+
+	    	    // Step 1: Get all unit IDs from frontend (property)
+	    	    Set<String> updatedUnitIds = property.getUnits().stream()
+	    	        .filter(unit -> unit.getId() != null)
+	    	        .map(Unit::getId)
+	    	        .collect(Collectors.toSet());
+
+	    	    // Step 2: Deactivate units from DB that are not in the frontend data
+	    	    List<Unit> deactivatedUnits = new ArrayList<>();
+	    	    
+	    	    propertyFromDb.getUnits().forEach(dbUnit -> {
+	    	    	
+	    	        if (dbUnit.getId() != null && !updatedUnitIds.contains(dbUnit.getId())) {
+	    	            dbUnit.setActive(false);
+	    	            deactivatedUnits.add(dbUnit); // collect for Kafka payload
+	    	        }
+	    	    });
+
+	    	    // Step 3: Add deactivated units to the property request object
+	    	    property.getUnits().addAll(deactivatedUnits);
+	    	}
+
 				
 		Institution institute = property.getInstitution();
 		if (!ObjectUtils.isEmpty(institute) && null == institute.getId())

@@ -93,6 +93,8 @@ public class PropertyCriteria {
 
 	@Builder.Default
 	private Boolean isSchedulerCall = false;
+	
+	private Boolean isActiveUnit;
 
 	private Set<String> addressAdditionalDetailsWardNumbers;
 
@@ -114,6 +116,7 @@ public class PropertyCriteria {
 				.isCitizen(this.isCitizen).isRequestForCount(this.isRequestForCount)
 				.isRequestForOldDataEncryption(this.isRequestForOldDataEncryption).createdBy(copySet(this.createdBy))
 				.isSchedulerCall(this.isSchedulerCall)
+				.isActiveUnit(this.isActiveUnit)
 				.addressAdditionalDetailsWardNumbers(copySet(this.addressAdditionalDetailsWardNumbers))
 				.ownerOldCustomerIds(copySet(this.ownerOldCustomerIds)).build();
 	}
