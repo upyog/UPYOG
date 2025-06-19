@@ -18,6 +18,7 @@ import org.upyog.tp.util.TreePruningUtil;
 import org.upyog.tp.util.UserUtil;
 import org.upyog.tp.web.models.Address;
 import org.upyog.tp.web.models.ApplicantDetail;
+import org.upyog.tp.web.models.AuditDetails;
 import org.upyog.tp.web.models.user.*;
 import org.upyog.tp.web.models.treePruning.TreePruningBookingDetail;
 import org.upyog.tp.web.models.treePruning.TreePruningBookingRequest;
@@ -235,7 +236,7 @@ public class UserService {
      * @param user The user object.
      * @return The converted applicant detail.
      */
-    public ApplicantDetail convertUserToApplicantDetail(User user, String applicantUuid, String bookingId) {
+    public ApplicantDetail convertUserToApplicantDetail(User user, String applicantUuid, String bookingId, AuditDetails auditDetails) {
         if (user == null) {
             return null;
         }
@@ -247,6 +248,7 @@ public class UserService {
                 .alternateNumber(user.getAltContactNumber())
                 .bookingId(bookingId)
                 .applicantId(applicantUuid)
+                .auditDetails(auditDetails)
                 .build();
     }
 
@@ -321,7 +323,12 @@ public class UserService {
             if (userDetailResponse != null && !CollectionUtils.isEmpty(userDetailResponse.getUser())) {
                 User user = userDetailResponse.getUser().get(0);
 
-                Object applicantDetail = convertUserToApplicantDetail(user, applicantUuid, bookingId);
+                // Step 1: Get method named "getAuditDetails"
+                Method getAuditDetails = booking.getClass().getMethod("getAuditDetails");
+                // Step 2: Invoke the method and cast the result to AuditDetails
+                AuditDetails auditDetails = (AuditDetails) getAuditDetails.invoke(booking);
+
+                Object applicantDetail = convertUserToApplicantDetail(user, applicantUuid, bookingId, auditDetails);
                 Method setApplicantDetail = booking.getClass().getMethod("setApplicantDetail", applicantDetail.getClass());
                 setApplicantDetail.invoke(booking, applicantDetail);
 
