@@ -507,10 +507,21 @@ public class GarbageAccountRepository {
 		builder.append(COUNT_STATUS_BASED_QUERY);
 		builder.append(" WHERE 1 = 1 ");
 		if (!StringUtils.isEmpty(totalCountRequest.getTenantId())) {
-			addAndClauseIfRequired(true, builder);
-			builder.append(" grbg.tenant_id = ? ");
-			preparedStmtList.add(totalCountRequest.getTenantId());
+		    // Add "AND" clause if required
+		    addAndClauseIfRequired(true, builder);
+
+		    // Append tenant ID condition
+		    builder.append(" grbg.tenant_id = ? ");
+		    preparedStmtList.add(totalCountRequest.getTenantId());
+
+		    // Add "AND" clause before the next condition
+		    addAndClauseIfRequired(true, builder);
+
+		    // Append status condition
+		    builder.append(" grbg.is_active = ? ");
+		    preparedStmtList.add(true); // Assuming status is a boolean 'true'
 		}
+
 //		return builder.toString();
 		System.out.println(builder.toString());
 		return jdbcTemplate.queryForList(builder.toString(), preparedStmtList.toArray());
