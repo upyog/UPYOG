@@ -67,7 +67,7 @@ public class DemandQueryBuilder {
 			+ "dmd.taxperiodfrom AS dtaxperiodfrom,dmd.taxperiodto AS dtaxperiodto,"
 			+ "dmd.minimumamountpayable AS dminimumamountpayable,dmd.createdby AS dcreatedby,"
 			+ "dmd.lastmodifiedby AS dlastmodifiedby,dmd.createdtime AS dcreatedtime,"
-			+ "dmd.lastmodifiedtime AS dlastmodifiedtime,dmd.tenantid AS dtenantid,dmd.status,"
+			+ "dmd.lastmodifiedtime AS dlastmodifiedtime,dmd.tenantid AS dtenantid,dmd.status,dmd.advanceamount as advanceamount,"
 			+ "dmd.additionaldetails as demandadditionaldetails,dmd.ispaymentcompleted as ispaymentcompleted,"
 
 			+ "dmdl.id AS dlid,dmdl.demandid AS dldemandid,dmdl.taxheadcode AS dltaxheadcode,"
@@ -92,8 +92,8 @@ public class DemandQueryBuilder {
 
 	public static final String DEMAND_INSERT_QUERY = "INSERT INTO egbs_demand_v1 "
 			+ "(id,consumerCode,consumerType,businessService,payer,taxPeriodFrom,taxPeriodTo,"
-			+ "minimumAmountPayable,createdby,lastModifiedby,createdtime,lastModifiedtime,tenantid, status, additionaldetails, billexpirytime, fixedBillExpiryDate) "
-			+ "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);";
+			+ "minimumAmountPayable,createdby,lastModifiedby,createdtime,lastModifiedtime,tenantid, status, additionaldetails, billexpirytime, fixedBillExpiryDate,advanceamount) "
+			+ "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);";
 
 	public static final String DEMAND_DETAIL_INSERT_QUERY = "INSERT INTO egbs_demanddetail_v1 "
 			+ "(id,demandid,taxHeadCode,taxamount,collectionamount,"
@@ -102,7 +102,9 @@ public class DemandQueryBuilder {
 
 	public static final String DEMAND_UPDATE_QUERY = "UPDATE egbs_demand_v1 SET " + "payer=?,taxPeriodFrom=?,"
 			+ "taxPeriodTo=?,minimumAmountPayable=?,lastModifiedby=?," + "lastModifiedtime=?,tenantid=?,"
-			+ " status=?,additionaldetails=?,billexpirytime=?,ispaymentcompleted=?, fixedBillExpiryDate=? WHERE id=? AND tenantid=?;";
+			+ " status=?,additionaldetails=?,billexpirytime=?,ispaymentcompleted=?, fixedBillExpiryDate=?,advanceamount=? WHERE id=? AND tenantid=?;";
+	
+	
 	
 	public static final String DEMAND_DETAIL_UPDATE_QUERY = "UPDATE egbs_demanddetail_v1 SET taxamount=?,collectionamount=?,"
 			+ "lastModifiedby=?,lastModifiedtime=?, additionaldetails=? WHERE id=? AND demandid=? AND tenantid=?;";
