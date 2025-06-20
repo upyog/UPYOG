@@ -133,6 +133,11 @@
 			</dependency>
 			
 			<dependency>
+  <groupId>net.sf.jasperreports</groupId>
+  <artifactId>jasperreports</artifactId>
+  <version>6.21.0</version> <!-- or your preferred version -->
+</dependency>
+			<dependency>
     <groupId>org.hibernate</groupId>
     <artifactId>hibernate-envers</artifactId>
     <version>6.4.4.Final</version> <!-- Or match your Hibernate ORM version -->

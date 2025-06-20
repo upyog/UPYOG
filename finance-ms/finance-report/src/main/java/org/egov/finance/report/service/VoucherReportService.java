@@ -104,7 +104,7 @@ public class VoucherReportService {
 				});
 		voucherList = generateVoucherReportList2(voucher,voucherList);
 		paramMap = populateParamMap(paramMap, voucher);
-		String jasperpath = "/reports/templates/journalVoucherReport.jasper";
+		String jasperpath = "/reports/templates/journalVoucherReport_new.jasper";
 		try (InputStream pdfStream = reportBuilder.exportPdf(jasperpath, paramMap, voucherList)) {
 	        return new InputStreamResource(pdfStream);
 	    } catch (IOException | JRException e) {
