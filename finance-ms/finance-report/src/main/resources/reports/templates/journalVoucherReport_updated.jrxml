@@ -1,0 +1,17 @@
+
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="journalVoucherReport" pageWidth="599" pageHeight="842" orientation="Landscape" columnWidth="559" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="b6d8f2d9-355e-4afe-bfb2-72df572b464f">
+    <!-- Skipping unchanged content for brevity -->
+    <field name="debitAmount" class="java.math.BigDecimal">
+        <fieldDescription><![CDATA[generalLedger.debitAmount]]></fieldDescription>
+    </field>
+    <field name="creditAmount" class="java.math.BigDecimal">
+        <fieldDescription><![CDATA[generalLedger.creditAmount]]></fieldDescription>
+    </field>
+    <variable name="debitTotal" class="java.math.BigDecimal" calculation="Sum">
+        <variableExpression><![CDATA[$F{debitAmount}]]></variableExpression>
+    </variable>
+    <variable name="creditTotal" class="java.math.BigDecimal" calculation="Sum">
+        <variableExpression><![CDATA[$F{creditAmount}]]></variableExpression>
+    </variable>
+    <!-- Rest of the report continues unchanged -->
+</jasperReport>

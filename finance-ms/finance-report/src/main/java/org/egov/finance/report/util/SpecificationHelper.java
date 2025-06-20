@@ -75,6 +75,10 @@ public class SpecificationHelper {
 			}
 		};
 	}
+	public static <T, Y> Specification<T> equal(String fieldPath, Y value, Class<Y> type) {
+	    return (root, query, cb) -> value == null ? cb.conjunction()
+	            : cb.equal(getPath(root, fieldPath, type), value);
+	}
 	
 	
 	public static <T> Specification<T> equalNested(String fieldPath, Object value) {

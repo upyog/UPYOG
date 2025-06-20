@@ -42,9 +42,9 @@ public class EgBilldetails  implements java.io.Serializable {
     @NotNull
     private EgBillregister egBillregister;
 
-    private BigDecimal functionid;
+    private Long functionid;
     @NotNull
-    private BigDecimal glcodeid;
+    private Long glcodeid;
     @Min(1)
     private BigDecimal debitamount;
     @Min(1)
@@ -70,7 +70,7 @@ public class EgBilldetails  implements java.io.Serializable {
     }
 
     public EgBilldetails(final Integer id, final EgBillregister egBillregister,
-            final BigDecimal glcodeid, final Date lastupdatedtime) {
+            final Long glcodeid, final Date lastupdatedtime) {
         this.id = id;
         this.egBillregister = egBillregister;
         this.glcodeid = glcodeid;
@@ -78,7 +78,7 @@ public class EgBilldetails  implements java.io.Serializable {
     }
 
     public EgBilldetails(final Integer id, final EgBillregister egBillregister,
-            final BigDecimal functionid, final BigDecimal glcodeid, final BigDecimal debitamount,
+            final Long functionid, final Long glcodeid, final BigDecimal debitamount,
             final BigDecimal creditamount, final Date lastupdatedtime, final Set<EgBillPayeedetails> egBillPaydetailes,
             final String narration) {
         this.id = id;
@@ -106,19 +106,19 @@ public class EgBilldetails  implements java.io.Serializable {
         this.egBillregister = egBillregister;
     }
 
-    public BigDecimal getFunctionid() {
+    public Long getFunctionid() {
         return functionid;
     }
 
-    public void setFunctionid(final BigDecimal functionid) {
+    public void setFunctionid(final Long functionid) {
         this.functionid = functionid;
     }
 
-    public BigDecimal getGlcodeid() {
+    public Long getGlcodeid() {
         return glcodeid;
     }
 
-    public void setGlcodeid(final BigDecimal glcodeid) {
+    public void setGlcodeid(final Long glcodeid) {
         this.glcodeid = glcodeid;
     }
 

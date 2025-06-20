@@ -41,11 +41,11 @@ public class BudgetReportQueryHelper {
 	public  String prepareQueryForBudget(
 	        final String departmentCode, final Long functionid, final Integer functionaryid,
 	        final Integer schemeid, final Integer subschemeid, final Integer boundaryid,
-	        final Integer fundid, Map<String, Object> params,List<AppConfigValues> list) {
+	        final Integer fundid, Map<String, Object> params) {
 		
 		Map<String, String> errorMap  = new HashMap<>();
 
-	     // list = appConfigValuesService.getConfigValuesByModuleAndKey(EGF, BUDGETARY_CHECK_GROUPBY_VALUES);
+		List<AppConfigValues>  list = masterCommonService.getConfigValuesByModuleAndKey(ReportConstants.EGF, ReportConstants.BUDGETARY_CHECK_GROUPBY_VALUES);
 
 	    if (list.isEmpty()) {
 	    	errorMap.put(ReportConstants.INVALID_CODE, "budgetaryCheck_groupby_values is not defined in AppConfig");
@@ -88,6 +88,7 @@ public class BudgetReportQueryHelper {
 
 	    return query.toString();
 	}
+	
 	
 	
 	

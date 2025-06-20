@@ -20,11 +20,15 @@ import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
 @Table(name = "EG_BILLREGISTERMIS")
+@Setter
+@Getter
 @SequenceGenerator(name = EgBillregistermis.SEQ_EG_BILLREGISTERMIS, sequenceName = EgBillregistermis.SEQ_EG_BILLREGISTERMIS, allocationSize = 1)
-public class EgBillregistermis extends AbstractPersistable<Integer> implements java.io.Serializable {
+public class EgBillregistermis implements java.io.Serializable {
 
     private static final long serialVersionUID = -4947159761135531623L;
 
@@ -32,7 +36,7 @@ public class EgBillregistermis extends AbstractPersistable<Integer> implements j
 
     @Id
     @GeneratedValue(generator = SEQ_EG_BILLREGISTERMIS, strategy = GenerationType.SEQUENCE)
-    private Integer id;
+    private Long id;
 
     @ManyToOne
     @JoinColumn(name = "billid")
@@ -191,7 +195,7 @@ public class EgBillregistermis extends AbstractPersistable<Integer> implements j
     public EgBillregistermis() {
     }
 
-    public EgBillregistermis(final Integer id, final EgBillregister egBillregister,
+    public EgBillregistermis(final Long id, final EgBillregister egBillregister,
             final Date lastupdatedtime, final Date paybydate) {
         this.id = id;
         this.egBillregister = egBillregister;
@@ -199,7 +203,7 @@ public class EgBillregistermis extends AbstractPersistable<Integer> implements j
         this.paybydate = paybydate;
     }
 
-    public EgBillregistermis(final Integer id, final EgBillregister egBillregister, final Function function,
+    public EgBillregistermis(final Long id, final EgBillregister egBillregister, final Function function,
             final Fund fundid, final BigDecimal segmentid, final BigDecimal subsegmentid,
             final Boundary fieldid, final BigDecimal subfieldid,
             final Functionary functionaryid, final String sanctionedby, final Date sanctiondate,

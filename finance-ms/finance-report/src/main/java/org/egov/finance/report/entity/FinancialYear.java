@@ -2,6 +2,7 @@ package org.egov.finance.report.entity;
 
 import java.util.Date;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -27,13 +28,14 @@ public class FinancialYear extends AuditDetailswithVersion {
 	@Id
 	@GeneratedValue(generator = SEQ, strategy = GenerationType.SEQUENCE)
 	private Long id;
-
+	
+	@Column(name="financialyear")
 	private String finYearRange;
 
 	private Date startingDate;
 
 	private Date endingDate;
-
+	@Column(name="isactive")
 	private Boolean active;
 
 	private Boolean isActiveForPosting;

@@ -1,5 +1,7 @@
 package org.egov.finance.report.entity;
 
+import java.io.Serializable;
+
 import org.egov.finance.report.customannotation.SafeHtml;
 
 import jakarta.persistence.Entity;
@@ -14,7 +16,7 @@ import lombok.Data;
 @Table(name = "egw_status")
 @SequenceGenerator(name = EgwStatus.SEQ, sequenceName = EgwStatus.SEQ, allocationSize = 1)
 @Data
-public class EgwStatus extends AuditDetailswithVersion {
+public class EgwStatus implements Serializable {
 
 	/**
 	 * 

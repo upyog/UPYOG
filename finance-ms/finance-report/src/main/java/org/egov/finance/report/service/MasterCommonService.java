@@ -10,14 +10,19 @@ import java.util.List;
 import java.util.Optional;
 
 import org.egov.finance.report.entity.AppConfigValues;
+import org.egov.finance.report.entity.BudgetControlType;
+import org.egov.finance.report.entity.CChartOfAccounts;
 import org.egov.finance.report.entity.CVoucherHeader;
 import org.egov.finance.report.entity.Department;
 import org.egov.finance.report.entity.EgBillregister;
 import org.egov.finance.report.entity.EgBillregistermis;
 import org.egov.finance.report.entity.FinancialYear;
+import org.egov.finance.report.entity.Function;
 import org.egov.finance.report.entity.Fund;
 import org.egov.finance.report.repository.AppConfigValuesRepository;
+import org.egov.finance.report.repository.BudgetControlTypeRepository;
 import org.egov.finance.report.repository.CVoucherHeaderRepository;
+import org.egov.finance.report.repository.ChartOfAccountsRepository;
 import org.egov.finance.report.repository.DepartmentRepository;
 import org.egov.finance.report.repository.EgBillRegisterRepository;
 import org.egov.finance.report.repository.EgBillregistermisRepository;
@@ -27,6 +32,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.egov.finance.report.repository.FinancialYearRepository;
+import org.egov.finance.report.repository.FunctionRepository;
 
 @Service
 public class MasterCommonService {
@@ -50,9 +56,27 @@ public class MasterCommonService {
 	@Autowired
 	AppConfigValuesRepository appConfigValuesRepository;
 	
+	@Autowired
+	ChartOfAccountsRepository chartOfAccountsRepository;
+	
+	@Autowired
+	FunctionRepository functionRepository;
+	
+	@Autowired
+	BudgetControlTypeRepository budgetControlTypeRepository;
+	
+	
+	
+	
 	protected Fund getFundById(Long id) {
 		 Specification<Fund> spec = SpecificationHelper.equal("id", id);
 		 return fundRepository.findOne(spec).orElse(null);
+	}
+	
+	
+	protected Function getFunctionById(Long id) {
+		 Specification<Function> spec = SpecificationHelper.equal("id", id);
+		 return functionRepository.findOne(spec).orElse(null);
 	}
 	
 	
@@ -91,5 +115,20 @@ public class MasterCommonService {
 
 		    return appConfigValuesRepository.findAll(spec);
 		}
+	 
+	 public CChartOfAccounts getCChartOfAccountsByGlCode(final String glCode) {
+		 Specification<CChartOfAccounts> spec = SpecificationHelper.equal("glcode", glCode);
+	        return chartOfAccountsRepository.findOne(spec).orElse(null);
+	    }
+	 
+	 public CChartOfAccounts getCChartOfAccountsById(final Long id) {
+		 Specification<CChartOfAccounts> spec = SpecificationHelper.equal("id", id);
+	        return chartOfAccountsRepository.findOne(spec).orElse(null);
+	    }
+	 
+	 public List<BudgetControlType> getAllBudgetControlType() {
+	        return budgetControlTypeRepository.findAll();
+	    }
+
 }
 
