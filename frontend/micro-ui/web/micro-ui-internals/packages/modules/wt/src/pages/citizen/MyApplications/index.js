@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Header, Loader, TextInput, Dropdown, SubmitBar, CardLabel, Card } from "@nudmcdgnpm/digit-ui-react-components";
 import { Link } from "react-router-dom";
@@ -61,6 +62,7 @@ export const WTMyApplications = () => {
   // Both hooks unconditionally
   const { isLoading: isLoadingTanker, data: dataTanker } = Digit.Hooks.wt.useTankerSearchAPI({ filters });
   const { isLoading: isLoadingToilet, data: dataToilet } = Digit.Hooks.wt.useMobileToiletSearchAPI({ filters });
+  const { isLoading: isLoadingTreePruning, data: dataTreePruning } = Digit.Hooks.wt.useTreePruningSearchAPI({ filters });
 
   // Use the results conditionally based on the `serviceType`
   let isLoading = false;
@@ -72,11 +74,15 @@ export const WTMyApplications = () => {
   } else if (serviceType === "mobileToilet") {
     isLoading = isLoadingToilet;
     filteredData = dataToilet?.mobileToiletBookingDetails || [];
+  } else if (serviceType === "treePruning") {
+    isLoading = isLoadingTreePruning;
+    filteredData = dataTreePruning?.treePruningBookingDetails;
   } else {
-    isLoading = isLoadingTanker || isLoadingToilet;
+    isLoading = isLoadingTanker || isLoadingToilet || isLoadingTreePruning;
     filteredData = [
       ...(dataToilet?.mobileToiletBookingDetails || []),
       ...(dataTanker?.waterTankerBookingDetail || []),
+      ...(dataTreePruning?.treePruningBookingDetails || [])
     ];
   }
 
@@ -101,6 +107,7 @@ export const WTMyApplications = () => {
   const serviceOptions = [
     { label: t("MOBILE_TOILET"), code: "mobileToilet" },
     { label: t("WATER_TANKER"), code: "watertanker" },
+    { label: t("TREE_PRUNING"), code: "treePruning" }
   ];
 
   const statusOptions = [
@@ -110,6 +117,39 @@ export const WTMyApplications = () => {
     { i18nKey: "Vendor Assigned", code: "ASSIGN_VENDOR", value: t("WT_ASSIGN_VENDOR") },
     { i18nKey: "Rejected", code: "REJECT", value: t("WT_BOOKING_REJECTED") }
   ];
+
+  const statusOptionForTreePruning = [
+  {
+    i18nKey: "BOOKING_CREATED",
+    code: "BOOKING_CREATED",
+    value: t("TP_BOOKING_CREATED")
+  },
+  {
+    i18nKey: "PENDING_FOR_APPROVAL",
+    code: "PENDING_FOR_APPROVAL",
+    value: t("TP_PENDING_FOR_APPROVAL")
+  },
+  {
+    i18nKey: "PAYMENT_PENDING",
+    code: "PAYMENT_PENDING",
+    value: t("TP_PAYMENT_PENDING")
+  },
+  {
+    i18nKey: "TEAM_ASSIGNMENT_FOR_VERIFICATION",
+    code: "TEAM_ASSIGNMENT_FOR_VERIFICATION",
+    value: t("TP_TEAM_ASSIGNMENT_FOR_VERIFICATION")
+  },
+  {
+    i18nKey: "TEAM_ASSIGNMENT_FOR_EXECUTION",
+    code: "TEAM_ASSIGNMENT_FOR_EXECUTION",
+    value: t("TP_TEAM_ASSIGNMENT_FOR_EXECUTION")
+  },
+  {
+    i18nKey: "TREE_PRUNING_SERVICE_COMPLETED",
+    code: "TREE_PRUNING_SERVICE_COMPLETED",
+    value: t("TP_TREE_PRUNING_SERVICE_COMPLETED")
+  }
+];
 
   return (
     <React.Fragment>
@@ -143,7 +183,7 @@ export const WTMyApplications = () => {
                   className="form-field"
                   selected={status}
                   select={setStatus}
-                  option={statusOptions}
+                  option={tempServiceType === 'treePruning' ? statusOptionForTreePruning : statusOptions}
                   placeholder={t("Select Status")}
                   optionKey="value"
                   style={{ width: "100%" }}
@@ -181,7 +221,7 @@ export const WTMyApplications = () => {
             {t("NO_APPLICATION_FOUND_MSG")}
           </p>
         )}
-        {filteredData.length !== 0 && ((dataToilet?.count || 0) + (dataTanker?.count || 0)) > t1 && (
+        {filteredData.length !== 0 && ((dataToilet?.count || 0) + (dataTanker?.count || 0) + (dataTreePruning?.count || 0)) > t1 && (
           <div>
             <p style={{ marginLeft: "16px", marginTop: "16px" }}>
               <span className="link">
