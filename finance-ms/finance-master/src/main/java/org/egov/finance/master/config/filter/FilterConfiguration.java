@@ -14,7 +14,7 @@ public class FilterConfiguration {
 	 public FilterRegistrationBean<RequestLogPreFilter> requestLogFilter(){
 	        FilterRegistrationBean<RequestLogPreFilter> registrationBean = new FilterRegistrationBean<>();
 
-	        registrationBean.setFilter(new RequestLogPreFilter(null));
+	        registrationBean.setFilter(new RequestLogPreFilter(null, null));
 	        registrationBean.addUrlPatterns("/*"); // Apply to all URLs
 	        registrationBean.setOrder(1); // Set order if multiple filters
 	        return registrationBean;
