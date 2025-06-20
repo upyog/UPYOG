@@ -132,7 +132,4 @@ public class DashboardService {
 	    return wardwithTanentinterestcollectedMap;
 	}
 
-	
-	
-	
 }

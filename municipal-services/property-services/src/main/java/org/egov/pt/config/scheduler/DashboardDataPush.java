@@ -25,12 +25,15 @@ import org.egov.pt.models.Rebate;
 import org.egov.pt.models.TodaysCollection;
 import org.egov.pt.models.TodaysMovedApplications;
 import org.egov.pt.models.Transactions;
+import org.egov.pt.repository.PropertyRepository;
 import org.egov.pt.util.PTConstants;
 import org.egov.pt.util.PropertyUtil;
+import org.egov.pt.web.contracts.DashboardDataRequest;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.client.RestTemplate;
 
 public class DashboardDataPush implements Job {
 
@@ -40,8 +43,12 @@ public class DashboardDataPush implements Job {
 	PropertyUtil propertyutil;
 	@Autowired
 	PropertyConfiguration config;
+	@Autowired
+	RestTemplate restTemplate;
+	@Autowired
+	PropertyRepository propertyRepository;
 
-	public synchronized void dataPush() {
+	public synchronized List<Data> dataPush() {
 		List<Data> propertyTaxPayloads = new ArrayList<Data>();
 		Map<String, String> parentMap = new HashMap<String, String>();
 		LocalDate currentDate = LocalDate.now();
@@ -113,11 +120,12 @@ public class DashboardDataPush implements Job {
 				String key = entry.getKey();
 				propertyTaxPayload.setWard(key.split("-")[0]);
 				propertyTaxPayload.setUlb(key.split("-")[1]);
-				RequestInfo requestInfo=new RequestInfo();
-				List<String> masterNames = new ArrayList<>(
-						Arrays.asList("tenants"));
-				Map<String, List<String>> regionName = propertyutil.getAttributeValues(config.getStateLevelTenantId(), "tenant", masterNames,
-						"[?(@.city.districtTenantCode== '"+propertyTaxPayload.getUlb()+"')].city.districtCode", "$.MdmsRes.tenant", requestInfo);
+				RequestInfo requestInfo = new RequestInfo();
+				List<String> masterNames = new ArrayList<>(Arrays.asList("tenants"));
+				Map<String, List<String>> regionName = propertyutil.getAttributeValues(config.getStateLevelTenantId(),
+						"tenant", masterNames,
+						"[?(@.city.districtTenantCode== '" + propertyTaxPayload.getUlb() + "')].city.districtCode",
+						"$.MdmsRes.tenant", requestInfo);
 				propertyTaxPayload.setRegion(regionName.get("tenants").get(0));
 				if (wardwithtenatasmtMap.containsKey(key))
 					metrics.setAssessments(new BigInteger(wardwithtenatasmtMap.get(key)));
@@ -135,7 +143,7 @@ public class DashboardDataPush implements Job {
 					for (String valueString : values) {
 						Bucket bucket = new Bucket();
 						bucket.setName(valueString.split(":")[0]);
-						bucket.setValue(new BigDecimal(valueString.split(":")[1]));
+						bucket.setValue(new BigInteger(valueString.split(":")[1]));
 						buckets.add(bucket);
 					}
 					todaysMovedApplications.setBuckets(buckets);
@@ -148,7 +156,7 @@ public class DashboardDataPush implements Job {
 					for (String valueString : values) {
 						Bucket bucket = new Bucket();
 						bucket.setName(valueString.split(":")[0]);
-						bucket.setValue(new BigDecimal(valueString.split(":")[1]));
+						bucket.setValue(new BigInteger(valueString.split(":")[1]));
 						buckets.add(bucket);
 					}
 					propertiesRegistered.setBuckets(buckets);
@@ -161,7 +169,7 @@ public class DashboardDataPush implements Job {
 					for (String valueString : values) {
 						Bucket bucket = new Bucket();
 						bucket.setName(valueString.split(":")[0]);
-						bucket.setValue(new BigDecimal(valueString.split(":")[1]));
+						bucket.setValue(new BigInteger(valueString.split(":")[1]));
 						buckets.add(bucket);
 					}
 					assessedProperties.setBuckets(buckets);
@@ -174,7 +182,7 @@ public class DashboardDataPush implements Job {
 					for (String valueString : values) {
 						Bucket bucket = new Bucket();
 						bucket.setName(valueString.split(":")[0]);
-						bucket.setValue(new BigDecimal(valueString.split(":")[1]));
+						bucket.setValue(new BigInteger(valueString.split(":")[1]));
 						buckets.add(bucket);
 					}
 					transactions.setBuckets(buckets);
@@ -187,7 +195,7 @@ public class DashboardDataPush implements Job {
 					for (String valueString : values) {
 						Bucket bucket = new Bucket();
 						bucket.setName(valueString.split(":")[0]);
-						bucket.setValue(new BigDecimal(valueString.split(":")[1]));
+						bucket.setValue(new BigInteger(valueString.split(":")[1]));
 						buckets.add(bucket);
 					}
 					todaysCollection.setBuckets(buckets);
@@ -200,7 +208,7 @@ public class DashboardDataPush implements Job {
 					for (String valueString : values) {
 						Bucket bucket = new Bucket();
 						bucket.setName(valueString.split(":")[0]);
-						bucket.setValue(new BigDecimal(valueString.split(":")[1]));
+						bucket.setValue(new BigInteger(valueString.split(":")[1]));
 						buckets.add(bucket);
 					}
 					propertyTax.setBuckets(buckets);
@@ -213,7 +221,7 @@ public class DashboardDataPush implements Job {
 					for (String valueString : values) {
 						Bucket bucket = new Bucket();
 						bucket.setName(valueString.split(":")[0]);
-						bucket.setValue(new BigDecimal(valueString.split(":")[1]));
+						bucket.setValue(new BigInteger(valueString.split(":")[1]));
 						buckets.add(bucket);
 					}
 					rebate.setBuckets(buckets);
@@ -226,7 +234,7 @@ public class DashboardDataPush implements Job {
 					for (String valueString : values) {
 						Bucket bucket = new Bucket();
 						bucket.setName(valueString.split(":")[0]);
-						bucket.setValue(new BigDecimal(valueString.split(":")[1]));
+						bucket.setValue(new BigInteger(valueString.split(":")[1]));
 						buckets.add(bucket);
 					}
 					penalty.setBuckets(buckets);
@@ -239,7 +247,7 @@ public class DashboardDataPush implements Job {
 					for (String valueString : values) {
 						Bucket bucket = new Bucket();
 						bucket.setName(valueString.split(":")[0]);
-						bucket.setValue(new BigDecimal(valueString.split(":")[1]));
+						bucket.setValue(new BigInteger(valueString.split(":")[1]));
 						buckets.add(bucket);
 					}
 					interest.setBuckets(buckets);
@@ -254,11 +262,20 @@ public class DashboardDataPush implements Job {
 		}
 
 		System.out.println("propertyTaxPayloads::" + propertyTaxPayloads);
+		return propertyTaxPayloads;
 	}
 
 	@Override
 	public void execute(JobExecutionContext context) throws JobExecutionException {
-		dataPush();
+		List<Data> datas = dataPush();
+		RequestInfo requestInfo = new RequestInfo();
+		DashboardDataRequest dashboardDataRequest = DashboardDataRequest.builder().datas(datas).requestInfo(requestInfo)
+				.build();
+		try {
+			// propertyRepository.savedashbordDatalog(dashboardDataRequest,null);
+		} catch (Exception e) {
+			// propertyRepository.savedashbordDatalog(dashboardDataRequest,e.getLocalizedMessage());
+		}
 	}
 
 }

@@ -30,6 +30,10 @@ public class PropertyQueryBuilder {
 			+"(parent_property,property_details, max_bifurcation, createdtime, id,status,childpropertyuuid,createdby,lastmodifiedby,lastmodifiedtime)"
 			+"VALUES(?, ? ::jsonb, ?, ?, ? ,?,?,?,?,?)";
 	
+	public final static String INSERT_DASHBOARD_DATA_LOG = "INSERT INTO dashboard_datapush_log"
+			+"(date,time, request, response, status, exception_message)"
+			+"VALUES(?, ? , ? ::jsonb, ? ::jsonb,?,?)";
+	
 	public final static String appealselectvalue="appeal.id as id, appeal.propertyid, appeal.status, appeal.creationreason, appeal.acknowldgementnumber,appeal.appealid,(CASE WHEN appeal.status='ACTIVE' then 0 WHEN appeal.status='INWORKFLOW' then 1 WHEN appeal.status='INACTIVE' then 2 ELSE 3 END) as statusorder, appeal.tenantid as tenantid,appeal.propertyaddress,appeal.assesmnetyear,appeal.nameofassigningofficer,appeal.designation,appeal.ruleunderorderpassed,appeal.dateoforder,appeal.dateofservice,appeal.dateofpayment,appeal.ownername,appeal.applicantaddress,appeal.reliefclaimed,appeal.statementoffacts,appeal.groundofappeal,appeal.createdby,appeal.lastmodifiedby,appeal.createdtime,appeal.lastmodifiedtime,";
 
 	private static String PROEPRTY_AUDIT_QUERY = "select property from eg_pt_property_audit where propertyid=?";
@@ -213,7 +217,7 @@ public class PropertyQueryBuilder {
 			+ ")\r\n"
 			+ "SELECT \r\n"
 			+ "    rd.usagecategory,\r\n"
-			+ "    SUM(rd.rebate_amount) AS todayrebategiven,\r\n"
+			+ "    SUM(rd.rebate_amount)::BIGINT AS todayrebategiven,\r\n"
 			+ "    rd.tenantid,\r\n"
 			+ "    rd.ward_no\r\n"
 			+ "FROM rebate_demand rd\r\n"
@@ -250,7 +254,7 @@ public class PropertyQueryBuilder {
 			+ "        epp.tenantid,\r\n"
 			+ "        epa.ward_no,\r\n"
 			+ "        epp.usagecategory,\r\n"
-			+ "        SUM(edv2.taxamount) AS penalty_amount\r\n"
+			+ "        SUM(edv2.taxamount)::BIGINT AS penalty_amount\r\n"
 			+ "    FROM egbs_demand_v1 edv\r\n"
 			+ "    JOIN egbs_demanddetail_v1 edv2 ON edv.id = edv2.demandid\r\n"
 			+ "    JOIN eg_pt_property epp ON epp.propertyid = edv.consumercode\r\n"
@@ -264,7 +268,7 @@ public class PropertyQueryBuilder {
 			+ ")\r\n"
 			+ "SELECT \r\n"
 			+ "    pd.usagecategory,\r\n"
-			+ "    SUM(pd.penalty_amount) AS todaypenaltycollection,\r\n"
+			+ "    SUM(pd.penalty_amount)::BIGINT AS todaypenaltycollection,\r\n"
 			+ "	pd.tenantid,\r\n"
 			+ "    pd.ward_no\r\n"
 			+ "FROM penalty_demand pd\r\n"
