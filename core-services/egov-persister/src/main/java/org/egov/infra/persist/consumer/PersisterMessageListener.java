@@ -1,12 +1,14 @@
 package org.egov.infra.persist.consumer;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.egov.infra.persist.service.PersistService;
 import org.egov.tracer.kafka.CustomKafkaTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.kafka.core.KafkaTemplate;
-import org.springframework.kafka.listener.MessageListener;
+import org.springframework.kafka.listener.AcknowledgingMessageListener;
 import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.stereotype.Service;
 
@@ -15,12 +17,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.HashMap;
-import java.util.Map;
-
-@Service
+@Service	
 @Slf4j
-public class PersisterMessageListener implements MessageListener<String, Object> {
+public class PersisterMessageListener implements AcknowledgingMessageListener<String, Object> {
 
 	@Autowired
 	private PersistService persistService;
@@ -30,8 +29,9 @@ public class PersisterMessageListener implements MessageListener<String, Object>
 
 	@Autowired
 	private CustomKafkaTemplate kafkaTemplate;
-	@Autowired
-	private Acknowledgment acknowledgment;
+	
+	
+	
 	@Value("${audit.persist.kafka.topic}")
 	private String persistAuditKafkaTopic;
 
@@ -39,7 +39,7 @@ public class PersisterMessageListener implements MessageListener<String, Object>
 	private String auditGenerateKafkaTopic;
 
 	@Override
-	public void onMessage(ConsumerRecord<String, Object> data) {
+	public void onMessage(ConsumerRecord<String, Object> data, Acknowledgment acknowledgment) {
 		String rcvData = null;
 
 		try {
@@ -57,5 +57,10 @@ public class PersisterMessageListener implements MessageListener<String, Object>
 			kafkaTemplate.send(auditGenerateKafkaTopic, producerRecord);
 		}
 	}
+
+	
+		// TODO Auto-generated method stub
+		
+	
 
 }

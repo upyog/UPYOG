@@ -3,12 +3,16 @@ package org.egov.infra.persist.consumer;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
+
+import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.egov.infra.persist.service.PersistService;
 import org.egov.tracer.kafka.CustomKafkaTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.kafka.listener.BatchAcknowledgingConsumerAwareMessageListener;
+import org.springframework.kafka.listener.BatchAcknowledgingMessageListener;
 import org.springframework.kafka.listener.BatchMessageListener;
 import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.stereotype.Service;
@@ -20,15 +24,15 @@ import java.util.Map;
 
 @Service
 @Slf4j
-public class PersisterBatchListner implements BatchMessageListener<String, Object> {
+public class PersisterBatchListner implements BatchAcknowledgingMessageListener<String, Object> {
 
 	@Autowired
 	private ObjectMapper objectMapper;
 
 	@Autowired
 	private PersistService persistService;
-	@Autowired
-	private Acknowledgment acknowledgment;
+	
+	
 	@Autowired
 	private CustomKafkaTemplate kafkaTemplate;
 
@@ -39,7 +43,7 @@ public class PersisterBatchListner implements BatchMessageListener<String, Objec
 	private String auditGenerateKafkaTopic;
 
 	@Override
-	public void onMessage(List<ConsumerRecord<String, Object>> dataList) {
+	public void onMessage(List<ConsumerRecord<String, Object>> dataList, Acknowledgment acknowledgment) {
 
 		Map<String, List<String>> topicTorcvDataList = new HashMap<>();
 
@@ -70,4 +74,8 @@ public class PersisterBatchListner implements BatchMessageListener<String, Objec
 
 	}
 
+	// TODO Auto-generated method stub
+
 }
+
+// TODO Auto-generated method stub
