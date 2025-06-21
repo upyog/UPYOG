@@ -71,7 +71,9 @@ public class BillRepository {
 		
 		String uri = config.getBillHost().concat(config.getSearchBillEndpoint());
         uri = uri.concat("?tenantId=").concat(billCriteria.getTenantId());
-//        uri = uri.concat("&service=").concat(billCriteria.getService());
+        if(null != billCriteria.getConsumerCode()) {
+        	uri = uri.concat("&service=").concat("GB");
+        }
         uri = uri.concat("&retrieveAll=").concat("true");
         if(null != billCriteria.getConsumerCode()) {
             uri = uri.concat("&consumerCode=").concat(StringUtils.join(billCriteria.getConsumerCode(), ","));

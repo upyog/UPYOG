@@ -1604,7 +1604,7 @@ public class GarbageAccountService {
 			if (null != garbageAccountActionRequest.getRequestInfo()
 					&& null != garbageAccountActionRequest.getRequestInfo().getUserInfo()
 					&& !StringUtils.isEmpty(garbageAccountActionRequest.getRequestInfo().getUserInfo().getUuid())) {
-				criteria.setCreatedBy(Collections
+				criteria.setUser_uuid(Collections
 						.singletonList(garbageAccountActionRequest.getRequestInfo().getUserInfo().getUuid()));
 			} else {
 				throw new CustomException("INVALID REQUEST", "Provide Application Number.");
@@ -1647,8 +1647,7 @@ public class GarbageAccountService {
 			// search bill Details
 			BillSearchCriteria billSearchCriteria = BillSearchCriteria.builder().tenantId(account.getTenantId())
 					.consumerCode(Collections.singleton(account.getGrbgApplication().getApplicationNo()))
-					.service(null != account.getBusinessService() ? account.getBusinessService() : "GB")// business
-																										// service
+					.service(null != account.getBusinessService() ? account.getBusinessService() : "GB")// business// service
 					.build();
 			BillResponse billResponse = billService.searchBill(billSearchCriteria, requestInfo);
 			Map<Object, Object> billDetailsMap = new HashMap<>();

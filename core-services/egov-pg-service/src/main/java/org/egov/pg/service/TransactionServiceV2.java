@@ -117,7 +117,13 @@ public class TransactionServiceV2 {
 				transaction.setTxnStatus(Transaction.TxnStatusEnum.SUCCESS);
 				paymentsService.registerPayment(
 						TransactionRequest.builder().transaction(transaction).requestInfo(requestInfo).build());
-			} else {
+			}
+			else if(transaction.getGateway().equalsIgnoreCase("OFFLINE")){
+				transaction.setTxnStatus(Transaction.TxnStatusEnum.SUCCESS);
+				paymentsService.registerPayment(
+						TransactionRequest.builder().transaction(transaction).requestInfo(requestInfo).build());
+			}
+			else {
 				URI uri = gatewayService.initiateTxn(transaction);
 				transaction.setRedirectUrl(uri.toString());
 

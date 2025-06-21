@@ -27,6 +27,8 @@ public class TransactionCriteria {
     private String receipt;
 
     private String consumerCode;
+    
+    private String gateway;
 
     @JsonIgnore
     private Long createdTime;

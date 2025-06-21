@@ -197,7 +197,7 @@ public class TransactionValidator {
 	}
 
 	public void isGatewayActive(Transaction transaction, Map<String, String> errorMap) {
-		if (!gatewayService.isGatewayActive(transaction.getGateway()))
+		if (!gatewayService.isGatewayActive(transaction.getGateway()) && !transaction.getGateway().equalsIgnoreCase("OFFLINE"))
 			errorMap.put("INVALID_PAYMENT_GATEWAY", "Invalid or inactive payment gateway provided");
 	}
 
