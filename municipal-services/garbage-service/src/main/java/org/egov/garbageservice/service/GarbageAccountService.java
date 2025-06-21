@@ -2060,4 +2060,144 @@ public class GarbageAccountService {
 		
 	}
 	
+	public GarbageAccountResponse updateStatus(GarbageAccountRequest updateGarbageRequest) {
+
+		List<GarbageAccount> garbageAccounts = new ArrayList<>();
+		// search existing garbage accounts
+		Map<Long, GarbageAccount> existingGarbageIdAccountsMap;
+		Map<String, GarbageAccount> existingGarbageApplicationAccountsMap;
+		try {
+			SearchCriteriaGarbageAccount searchCriteriaGarbageAccount = createSearchCriteriaByGarbageAccounts(
+					updateGarbageRequest.getGarbageAccounts());
+			existingGarbageIdAccountsMap = searchGarbageAccountMap(searchCriteriaGarbageAccount,
+					updateGarbageRequest.getRequestInfo());
+			existingGarbageApplicationAccountsMap = existingGarbageIdAccountsMap.entrySet().stream().collect(
+					Collectors.toMap(a -> a.getValue().getGrbgApplication().getApplicationNo(), b -> b.getValue()));
+		} catch (Exception e) {
+			throw new CustomException("FAILED_SEARCH_GARBAGE_ACCOUNTS", "Search Garbage account details failed.");
+		}
+
+		// load garbage account from backend if workflow = true
+		GarbageAccountRequest garbageAccountRequest = loadUpdateGarbageAccountRequestFromMap(updateGarbageRequest,
+				existingGarbageApplicationAccountsMap);
+
+		ProcessInstanceResponse processInstanceResponse = null;
+		// call workflow
+		if (updateGarbageRequest != null && !CollectionUtils.isEmpty(updateGarbageRequest.getGarbageAccounts())
+				&& updateGarbageRequest.getGarbageAccounts().stream().anyMatch(GarbageAccount::getIsOnlyWorkflowCall)) {
+			processInstanceResponse = callWfUpdateStatus(garbageAccountRequest);
+		}
+		Map<String, String> applicationNumberToCurrentStatus = new HashMap<>();
+		if (null != processInstanceResponse) {
+			applicationNumberToCurrentStatus = processInstanceResponse.getProcessInstances().stream().collect(Collectors
+					.toMap(ProcessInstance::getBusinessId, instance -> instance.getState().getApplicationStatus()));
+		}
+
+		// update garbage account
+		if (!CollectionUtils.isEmpty(garbageAccountRequest.getGarbageAccounts())) {
+			garbageAccountRequest.getGarbageAccounts().stream().forEach(newGarbageAccount -> {
+
+//				if(!newGarbageAccount.getIsOnlyWorkflowCall()) {
+				// validate garbage account request
+				validateGarbageAccount(newGarbageAccount, existingGarbageIdAccountsMap.entrySet().stream()
+						.map(entry -> entry.getValue()).collect(Collectors.toList()));
+
+			});
+
+			for (GarbageAccount newGarbageAccount : garbageAccountRequest.getGarbageAccounts()) {
+//			garbageAccountRequest.getGarbageAccounts().stream().forEach(newGarbageAccount -> {
+
+				// get existing garbage account from map
+				GarbageAccount existingGarbageAccount = existingGarbageIdAccountsMap
+						.get(newGarbageAccount.getGarbageId());
+
+				// enrich garbage account
+				enrichUpdateGarbageAccount(newGarbageAccount, existingGarbageAccount,
+						updateGarbageRequest.getRequestInfo(), applicationNumberToCurrentStatus);
+
+				// update garbage account
+				if (!newGarbageAccount.equals(existingGarbageAccount)) {
+					updateGarbageAccount(updateGarbageRequest, newGarbageAccount, existingGarbageAccount,
+							applicationNumberToCurrentStatus);
+				}
+
+				// update other objects of garbage account
+				updateAndEnrichGarbageAccountObjects(newGarbageAccount, existingGarbageAccount,
+						applicationNumberToCurrentStatus);
+
+				garbageAccounts.add(newGarbageAccount);
+			}
+
+		}
+
+		if (!updateGarbageRequest.getFromMigration()) {
+			// generate certificate and upload
+
+			createAndUploadPDF(garbageAccountRequest, updateGarbageRequest.getRequestInfo());
+
+			// generate demand and fetch bill
+			// generateDemandAndBill(garbageAccountRequest);
+		}
+
+		// RESPONSE builder
+		GarbageAccountResponse garbageAccountResponse = GarbageAccountResponse.builder()
+				.responseInfo(responseInfoFactory
+						.createResponseInfoFromRequestInfo(garbageAccountRequest.getRequestInfo(), false))
+				.garbageAccounts(garbageAccounts).build();
+		if (!CollectionUtils.isEmpty(garbageAccounts)) {
+			garbageAccountResponse.setResponseInfo(responseInfoFactory
+					.createResponseInfoFromRequestInfo(garbageAccountRequest.getRequestInfo(), true));
+		}
+
+		return garbageAccountResponse;
+	}
+
+	private ProcessInstanceResponse callWfUpdateStatus(GarbageAccountRequest updateGarbageRequest) {
+
+		ProcessInstanceResponse processInstanceResponse = null;
+
+		if (!CollectionUtils.isEmpty(updateGarbageRequest.getGarbageAccounts())) {
+
+			ProcessInstanceRequest processInstanceRequest = null;
+			List<ProcessInstance> processInstances = new ArrayList<>();
+			String businessService = null;
+
+			Set<String> userRoles = updateGarbageRequest.getRequestInfo().getUserInfo().getRoles().stream()
+					.map(Role::getCode).collect(Collectors.toSet());
+
+			for (GarbageAccount newGarbageAccount : updateGarbageRequest.getGarbageAccounts()) {
+
+				if (!StringUtils.isEmpty(newGarbageAccount.getBusinessService())) {
+					businessService = newGarbageAccount.getBusinessService();
+				} else {
+					if (userRoles.contains(GrbgConstants.USER_TYPE_CITIZEN)) {
+						businessService = GrbgConstants.BUSINESS_SERVICE_GB_CITIZEN;
+					} else {
+						businessService = GrbgConstants.BUSINESS_SERVICE_GB_EMPLOYEE;
+					}
+				}
+
+				newGarbageAccount.setBusinessService(businessService);
+				ProcessInstance parentProcessInstance = ProcessInstance.builder()
+						.tenantId(newGarbageAccount.getTenantId()).businessService(businessService)
+						.moduleName(GrbgConstants.WORKFLOW_MODULE_NAME)
+						.businessId(newGarbageAccount.getGrbgApplication().getApplicationNo())
+						.action(null != newGarbageAccount.getWorkflowAction() ? newGarbageAccount.getWorkflowAction()
+								: getStatusOrAction(newGarbageAccount.getStatus(), false))
+						.comment(newGarbageAccount.getWorkflowComment()).build();
+
+				processInstances.add(parentProcessInstance);
+
+			}
+
+			processInstanceRequest = ProcessInstanceRequest.builder().requestInfo(updateGarbageRequest.getRequestInfo())
+					.processInstances(processInstances).build();
+			// call workflow
+			processInstanceResponse = workflowService.callWf(processInstanceRequest);
+
+		}
+
+		return processInstanceResponse;
+	}
+	
 }
