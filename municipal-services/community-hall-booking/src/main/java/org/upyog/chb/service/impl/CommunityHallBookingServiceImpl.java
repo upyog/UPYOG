@@ -2,7 +2,6 @@ package org.upyog.chb.service.impl;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -537,7 +536,7 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 				+ gstPercentage
 				+ "</b>) + Security(<b>"
 				+ securityAmount
-				+ ")</b> " + "= Total Payable Amount(<b>" + totalPayableAmount.setScale(2, RoundingMode.CEILING) + "</b>)");
+				+ ")</b> " + "= Total Payable Amount(<b>" + totalPayableAmount + "</b>)");
 
 		// search bill Details
 		BillSearchCriteria billSearchCriteria = BillSearchCriteria.builder()

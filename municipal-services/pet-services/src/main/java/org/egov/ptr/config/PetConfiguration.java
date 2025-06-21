@@ -181,5 +181,8 @@ public class PetConfiguration {
 
 	@Value("${egov.bill.search.endpoint}")
 	private String billSearchEndpoint;
+	
+	@Value("${egov.bill.expiry.after}")
+	private String billExpiryAfter;
 
 }
