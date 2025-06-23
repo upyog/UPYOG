@@ -8,8 +8,12 @@ public enum CollectionPaymentModeEnum {
     CHEQUE("CHEQUE"),
     DD("DD"),
     ONLINE("ONLINE"),
-    CARD("CARD");
-
+    CARD("CARD"),
+    OFFLINE_NEFT("OFFLINE_NEFT"),
+    OFFLINE_RTGS("OFFLINE_RTGS");
+	
+	
+	
 
     private String value;
 

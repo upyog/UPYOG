@@ -103,11 +103,17 @@ public class PaymentsService {
 					.build();
 			paymentDetails.add(detail);
 		}
-				
+		
+		CollectionPaymentModeEnum paymentMode = CollectionPaymentModeEnum.ONLINE;
+		
+		if(request.getTransaction().getGatewayPaymentMode() !=null) {
+			paymentMode = CollectionPaymentModeEnum.valueOf(request.getTransaction().getGatewayPaymentMode());
+		}
+		
 		return CollectionPayment.builder().paymentDetails(paymentDetails)
 				.tenantId(request.getTransaction().getTenantId())
 				.totalAmountPaid(new BigDecimal(request.getTransaction().getTxnAmount()))
-				.paymentMode(CollectionPaymentModeEnum.ONLINE)
+				.paymentMode(paymentMode)
 				.paidBy(request.getTransaction().getUser().getName())
 				.mobileNumber(request.getTransaction().getUser().getMobileNumber())
 				.instrumentDate(System.currentTimeMillis())

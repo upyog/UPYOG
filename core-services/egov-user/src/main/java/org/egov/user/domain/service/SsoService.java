@@ -181,7 +181,9 @@ public class SsoService {
 		int count = userSsoRepository.getCountBySsoId(hpSsoValidateTokenResponse.getSsoId());
 		// if ssoid not exist
 		if (count == 0) {
-			UserSearchCriteria searchCriteria = UserSearchCriteria.builder().mobileNumber(user.getMobileNumber()).tenantId("hp").build();
+			UserSearchCriteria searchCriteria = UserSearchCriteria.builder()
+					.type(UserType.CITIZEN)
+					.mobileNumber(user.getMobileNumber()).tenantId("hp").build();
 			List<User> userInDb = userService.searchUsers(searchCriteria, false, null);
 			User newUser;
 			if (CollectionUtils.isEmpty(userInDb)) {

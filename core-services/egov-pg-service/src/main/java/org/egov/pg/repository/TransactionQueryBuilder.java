@@ -118,6 +118,11 @@ class TransactionQueryBuilder {
 			isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, builder);
 			builder.append(" pg.receipt = ").append("'" + transactionCriteria.getReceipt() + "'");
 		}
+		
+		if (!Objects.isNull(transactionCriteria.getGateway())) {
+			isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, builder);
+			builder.append(" pg.gateway = ").append("'" + transactionCriteria.getGateway() + "'");
+		}
 
 		if (!Objects.isNull(transactionCriteria.getTxnSettlementStatus())) {
 			isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, builder);
