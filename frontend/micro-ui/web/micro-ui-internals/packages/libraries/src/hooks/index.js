@@ -352,6 +352,7 @@ import useFilterEmployee from "./pgrAi/useFilterEmployee";
 import useApplicationDetails from "./pgrAi/useApplicationDetails";
 import useWorkerSearch from "./fsm/useWorkerSearch";
 import useTreePruningCreateAPI from "./wt/useTreePruningCreateAPI";
+import useTreePruningSearchAPI from "./wt/useTreePruningSearchAPI";
 
 const wt={
   useTankerCreateAPI,
@@ -362,7 +363,8 @@ const wt={
   useMobileToiletSearchAPI,
   useMTApplicationDetail,
   useMTApplicationAction,
-  useTreePruningCreateAPI
+  useTreePruningCreateAPI,
+  useTreePruningSearchAPI
 };
 const pgrAi={
   useCreate,

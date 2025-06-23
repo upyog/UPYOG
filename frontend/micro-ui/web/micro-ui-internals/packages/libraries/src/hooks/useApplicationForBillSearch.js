@@ -8,6 +8,7 @@ import {ADSServices} from "../services/elements/ADS";
 import { SVService } from "../services/elements/SV";
 import { WTService } from "../services/elements/WT";
 import { MTService } from "../services/elements/MT";
+import { TPService } from "../services/elements/TP";
 
 const fsmApplications = async (tenantId, filters) => {
   return (await FSMService.search(tenantId, { ...filters, limit: 10000 })).fsm;
@@ -44,7 +45,11 @@ const wtBookings = async (tenantId, filters) => {
 };
 
 const mtBookings = async (tenantId, filters) => {
-  return (await MTService.search({ tenantId, filters })).waterTankerBookingDetail;
+  return (await MTService.search({ tenantId, filters })).mobileToiletBookingDetails;
+};
+
+const tpBookings = async (tenantId, filters) => {
+  return (await TPService.search({ tenantId, filters })).treePruningBookingDetails;
 };
 
 const refObj = (tenantId, filters) => {
@@ -122,6 +127,11 @@ const refObj = (tenantId, filters) => {
       key: "bookingNo",
       label: "MT_BOOKING_NO",
     },
+    tp: {
+      searchFn: () => tpBookings(null, { ...filters, bookingNo: consumerCodes }),
+      key: "bookingNo",
+      label: "TP_BOOKING_NO",
+    }
   };
 };
 
@@ -157,6 +167,9 @@ export const useApplicationsForBusinessServiceSearch = ({ tenantId, businessServ
   if (window.location.href.includes("request-service.mobile_toilet")) {
     _key = "mt"
   } 
+  if (window.location.href.includes("request-service.tree_pruning")) {
+    _key = "tp"
+  }
 
 
 
