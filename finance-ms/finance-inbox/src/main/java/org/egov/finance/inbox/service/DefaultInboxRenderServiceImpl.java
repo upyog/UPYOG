@@ -21,9 +21,11 @@ public class DefaultInboxRenderServiceImpl<T extends StateAware> implements Inbo
     @PersistenceContext
     private EntityManager entityManager;
 
-    public DefaultInboxRenderServiceImpl(Class<T> stateAwareType) {
+    public DefaultInboxRenderServiceImpl(Class<T> stateAwareType, EntityManager entityManager) {
         this.stateAwareType = stateAwareType;
+        this.entityManager = entityManager;
     }
+
 
     @Override
     public List<T> getAssignedWorkflowItems(List<Long> owners) {
@@ -33,7 +35,7 @@ public class DefaultInboxRenderServiceImpl<T extends StateAware> implements Inbo
         Join<T, ?> stateJoin = root.join("state");
 
         Predicate typePredicate = cb.equal(stateJoin.get("type"), stateAwareType.getSimpleName());
-        Predicate positionPredicate = stateJoin.get("ownerPosition").get("id").in(owners);
+        Predicate positionPredicate = stateJoin.get("ownerPosition").in(owners);
         Predicate statusPredicate = stateJoin.get("status").in(StateStatus.INPROGRESS, StateStatus.STARTED);
 
         query.select(root)
@@ -51,9 +53,9 @@ public class DefaultInboxRenderServiceImpl<T extends StateAware> implements Inbo
         Join<T, ?> stateJoin = root.join("state");
 
         Predicate typePredicate = cb.equal(stateJoin.get("type"), stateAwareType.getSimpleName());
-        Predicate positionPredicate = stateJoin.get("ownerPosition").get("id").in(owners);
+        Predicate positionPredicate = stateJoin.get("ownerPosition").in(owners);
         Predicate statusPredicate = cb.equal(stateJoin.get("status"), StateStatus.STARTED);
-        Predicate createdByPredicate = cb.equal(stateJoin.get("createdBy").get("id"), ApplicationThreadLocals.getUserId());
+        Predicate createdByPredicate = cb.equal(stateJoin.get("createdBy"), ApplicationThreadLocals.getUserId());
 
         query.select(root)
              .where(cb.and(typePredicate, positionPredicate, statusPredicate, createdByPredicate))
