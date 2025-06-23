@@ -353,6 +353,8 @@ import useApplicationDetails from "./pgrAi/useApplicationDetails";
 import useWorkerSearch from "./fsm/useWorkerSearch";
 import useTreePruningCreateAPI from "./wt/useTreePruningCreateAPI";
 import useTreePruningSearchAPI from "./wt/useTreePruningSearchAPI";
+import useTPApplicationDetail from "./wt/useTPApplicationDetail";
+import useTPApplicationAction from "./wt/useTPApplicationAction";
 
 const wt={
   useTankerCreateAPI,
@@ -364,7 +366,9 @@ const wt={
   useMTApplicationDetail,
   useMTApplicationAction,
   useTreePruningCreateAPI,
-  useTreePruningSearchAPI
+  useTreePruningSearchAPI,
+  useTPApplicationDetail,
+  useTPApplicationAction
 };
 const pgrAi={
   useCreate,

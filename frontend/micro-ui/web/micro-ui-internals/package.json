@@ -13,7 +13,8 @@
     "packages/modules/tl",
     "packages/modules/wt",
     "packages/modules/engagement",
-    "packages/modules/pgrai"
+    "packages/modules/pgrai",
+    "packages/modules/asset"
 
   ],
   "license": "MIT",
@@ -59,7 +60,7 @@
     "dev:vendor": "cd packages/modules/vendor && yarn start",
     "build": "run-p build:**",
     "build:libraries": "cd packages/libraries && yarn build",
-    "buildD:asset": "cd packages/modules/asset && yarn build",
+    "build:asset": "cd packages/modules/asset && yarn build",
     "build:components": "cd packages/react-components && yarn build",
     "build:common": "cd packages/modules/common && yarn build",
     "buildD:pt": "cd packages/modules/pt && yarn build",

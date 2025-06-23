@@ -94,6 +94,7 @@ const enabledModules = [
   "MT",
   "VENDOR",
   "PGRAI",
+  "TP"
 ];
 window.Digit.ComponentRegistryService.setupRegistry({
   ...paymentConfigs,
