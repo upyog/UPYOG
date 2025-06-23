@@ -100,41 +100,66 @@
 		
         // Function to handle manual budget submission
 		function submitManualData(event) {
-			event.preventDefault();
-			document.getElementById("msg").innerHTML = "";
-			document.getElementById("Errors").innerHTML = "";
+            event.preventDefault(); // Stop default form submission
+            
+            let isValid = true;
+            let message = "";
+            document.getElementById("msg").innerHTML = "";
+            document.getElementById("Errors").innerHTML = "";
 
-			var municipalityName = document.getElementById("municipalityName").value;
-			var reYear = document.getElementById("reYear").value;
-			var beYear = document.getElementById("beYear").value;
+            const municipalityName = document.getElementById("municipalityName").value;
+            const reYear = document.getElementById("reYear").value;
+            const beYear = document.getElementById("beYear").value;
 
-			if (municipalityName === "" || reYear === "" || beYear === "") {
-				bootbox.alert("<s:text name='msg.all.fields.required'/>");
-				return false;
-			}
+            if (!municipalityName || !reYear || !beYear) {
+                bootbox.alert("Please fill all the Municipality details (Name, RE Year, BE Year).");
+                return false;
+            }
 
-			var budgetRows = [];
+            const budgetRows = [];
+            let rowIndex = 0;
 
             jQuery("#budgetTable tbody tr").each(function () {
                 const $row = jQuery(this);
+
+                // Skip the hidden template row
+                if ($row.attr("id") === "budgetRowTemplate") return;
+                
+
                 const fundCode = $row.find('select[name*="fundCode"]').val();
                 const departmentCode = $row.find('select[name*="departmentCode"]').val();
                 const functionCode = $row.find('select[name*="functionCode"]').val();
                 const chartOfAccountCode = $row.find('select[name*="chartOfAccountCode"]').val();
+                const majorCode = $row.find('input[name*="majorCode"]').val();
+                const minorCode = $row.find('input[name*="minorCode"]').val();
                 const reAmount = $row.find('input[name*="reAmount"]').val();
                 const beAmount = $row.find('input[name*="beAmount"]').val();
+                const lastYearApproved = $row.find('input[name*="lastYearApproved"]').val();
+                const currentApproved = $row.find('input[name*="currentApproved"]').val();
+                const percentageChange = $row.find('input[name*="percentageChange"]').val();
                 const planningPercentage = $row.find('input[name*="planningPercentage"]').val();
 
+                // Skip if all fields are empty (row not filled by user)
                 if (
-                    fundCode === "" &&
-                    departmentCode === "" &&
-                    functionCode === "" &&
-                    chartOfAccountCode === "0" &&
-                    reAmount === "" &&
-                    beAmount === "" &&
-                    planningPercentage === ""
+                    !fundCode && !departmentCode && !functionCode &&
+                    (!chartOfAccountCode || chartOfAccountCode === "0") &&
+                    !majorCode && !minorCode &&
+                    !reAmount && !beAmount &&
+                    !lastYearApproved && !currentApproved &&
+                    !percentageChange && !planningPercentage
                 ) {
                     return;
+                }
+
+                //  Validate required fields
+                if (
+                    !fundCode || !departmentCode || !functionCode || chartOfAccountCode === "0" ||
+                    !majorCode || !minorCode || !reAmount || !beAmount ||
+                    !lastYearApproved || !currentApproved || !percentageChange || !planningPercentage
+                ) {
+                    isValid = false;
+                    message = `Please fill all fields in the rows .`;
+                    return false; // Break .each loop
                 }
 
                 const row = {
@@ -142,51 +167,62 @@
                     departmentCode,
                     functionCode,
                     chartOfAccountCode,
+                    majorCode,
+                    minorCode,
                     reAmount,
                     beAmount,
+                    lastYearApproved,
+                    currentApproved,
+                    percentageChange,
                     planningPercentage
                 };
 
                 budgetRows.push(row);
+                rowIndex++;
             });
 
-			if (budgetRows.length === 0) {
-				bootbox.alert("<s:text name='msg.no.budget.rows'/>");
-				return false;
-			}
+            if (!isValid) {
+                bootbox.alert(message);
+                return false;
+            }
 
-			// Combine all data into one object
-			var fullData = {
-				municipalityName: municipalityName,
-				reYear: reYear,
-				beYear: beYear,
-				budgetRows: budgetRows
-			};
+            if (budgetRows.length === 0) {
+                bootbox.alert("No budget rows found. Please add at least one entry.");
+                return false;
+            }
 
-			// Create and submit form with one hidden input
-			var form = $('<form>', {
-				//method: 'POST',
-				action: '/services/EGF/budget/budgetLoad-manualSubmit.action'
-			});
+            // ✅ Create final object
+            const fullData = {
+                municipalityName: municipalityName,
+                reYear: reYear,
+                beYear: beYear,
+                budgetRows: budgetRows
+            };
 
-			form.append($('<input>', {
-				type: 'hidden',
-				name: 'budgetData',
-				value: JSON.stringify(fullData) // All data in one variable
-			}));
+            // ✅ Create and submit the dynamic form
+            const form = $('<form>', {
+                action: '/services/EGF/budget/budgetLoad-manualSubmit.action',
+                method: 'POST'
+            });
 
-			// CSRF token
-			form.append($('<input>', {
-				type: 'hidden',
-				name: '${_csrf.parameterName}',
-				value: '${_csrf.token}'
-			}));
+            form.append($('<input>', {
+                type: 'hidden',
+                name: 'budgetData',
+                value: JSON.stringify(fullData)
+            }));
 
-			$('body').append(form);
-			form.submit();
+            // CSRF token handling
+            form.append($('<input>', {
+                type: 'hidden',
+                name: '${_csrf.parameterName}',
+                value: '${_csrf.token}'
+            }));
 
-			return true;
-		}
+            $('body').append(form);
+            form.submit();
+
+            return true;
+        }
 		
         function urlLoad(fileStoreId) {
             var sUrl = "/services/egi/downloadfile?fileStoreId=" + fileStoreId + "&moduleName=EGF";
@@ -491,6 +527,7 @@
                                     <th style="background-color: #f2851f; color: #fff; padding: 10px; text-align: center; border: 1px solid #ddd;">Function </th>
                                     <th style="background-color: #f2851f; color: #fff; padding: 10px; text-align: center; border: 1px solid #ddd;" >Chart of Account </th>
                                     <th style="background-color: #f2851f; color: #fff; padding: 10px; text-align: center; border: 1px solid #ddd;" >Major Code </th>
+                                    <th style="background-color: #f2851f; color: #fff; padding: 10px; text-align: center; border: 1px solid #ddd;" >Minor Code </th>
                                     <th style="background-color: #f2851f; color: #fff; padding: 10px; text-align: center; border: 1px solid #ddd;">RE Amount (Rs)</th>
                                     <th style="background-color: #f2851f; color: #fff; padding: 10px; text-align: center; border: 1px solid #ddd;">BE Amount (Rs)</th>
                                     <th style="background-color: #f2851f; color: #fff; padding: 10px; text-align: center; border: 1px solid #ddd;">Last Year Approved Budget</th>
@@ -559,8 +596,15 @@
                                         </select>      
                                     </td>                              
                                     <td style="padding: 8px; border: 1px solid #ddd; text-align: center;">
-                                        <input type="text" id="majorCode" name="majorCode" class="form-control major-code" style="width: 100px;" readonly />
-                                      </td>                                      
+                                        <input type="text" id="majorCode" name="budgetData[new].majorCode" class="form-control major-code" style="width: 100px;" readonly />
+                                    </td>       
+                                    <td>
+                                        <s:textfield 
+                                            name="budgetData[new].minorCode"
+                                            class="form-control"
+                                            style="width: 100px;"
+                                        />
+                                    </td>                             
                                     <td>
                                         <s:textfield 
                                             name="budgetData[new].reAmount" 
@@ -568,6 +612,7 @@
                                             class="form-control"
                                             style="width: 100px;"
                                         />
+                                    </td>
                                     <td style="padding: 8px; border: 1px solid #ddd; text-align: center;">
                                             <s:textfield 
                                                 name="budgetData[new].beAmount" 
@@ -578,7 +623,7 @@
                                     </td>
                                     <td style="padding: 8px; border: 1px solid #ddd; text-align: center;"><s:textfield name="budgetData[new].lastYearApproved"  class="form-control" style="width: 100px;" onblur="calculatePercentage(this)" /></td>
                                     <td style="padding: 8px; border: 1px solid #ddd; text-align: center;"><s:textfield name="budgetData[new].currentApproved" class="form-control" onblur="calculatePercentage(this)" /></td>
-                                    <td style="padding: 8px; border: 1px solid #ddd; text-align: center;"><s:textfield name="budgetData[new].percentageChange"  class="form-control" style="width: 100px;" /></td>
+                                    <td style="padding: 8px; border: 1px solid #ddd; text-align: center;"><s:textfield name="budgetData[new].percentageChange"  class="form-control" style="width: 100px;" readonly="true"/></td>
                                     <td style="padding: 8px; border: 1px solid #ddd; text-align: center;">
                                         <s:textfield 
                                             name="budgetData[new].planningPercentage"

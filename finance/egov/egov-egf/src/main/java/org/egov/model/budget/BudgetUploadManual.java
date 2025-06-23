@@ -5,9 +5,14 @@ public class BudgetUploadManual {
     private String fundCode;
     private String departmentCode;
     private String functionCode;
+    private String majorCode;
+    private String minorCode;
     private String chartOfAccountCode;
     private String reAmount;
     private String beAmount;
+    private String lastYearApproved;
+    private String currentApproved;
+    private String percentageChange;
     private String planningPercentage;
 
     public BudgetUploadManual() {
@@ -45,6 +50,22 @@ public class BudgetUploadManual {
     public void setChartOfAccountCode(String chartOfAccountCode) {
         this.chartOfAccountCode = chartOfAccountCode;
     }
+    
+    public String getMajorCode() {
+		return majorCode;
+	}
+
+	public void setMajorCode(String majorCode) {
+		this.majorCode = majorCode;
+	}
+
+	public String getMinorCode() {
+		return minorCode;
+	}
+
+	public void setMinorCode(String minorCode) {
+		this.minorCode = minorCode;
+	}
 
     public String getReAmount() {
         return reAmount;
@@ -69,6 +90,30 @@ public class BudgetUploadManual {
     public void setPlanningPercentage(String planningPercentage) {
         this.planningPercentage = planningPercentage;
     }
+    
+	public String getLastYearApproved() {
+		return lastYearApproved;
+	}
+
+	public void setlastYearApproved(String lastYearApproved) {
+		this.lastYearApproved = lastYearApproved;
+	}
+
+	public String getCurrentApproved() {
+		return currentApproved;
+	}
+
+	public void setCurrentApproved(String currentApproved) {
+		this.currentApproved = currentApproved;
+	}
+
+	public String getPercentageChange() {
+		return percentageChange;
+	}
+
+	public void setPercentageChange(String percentageChange) {
+		this.percentageChange = percentageChange;
+	}
 
     @Override
     public String toString() {
@@ -77,9 +122,16 @@ public class BudgetUploadManual {
                 ", departmentCode='" + departmentCode + '\'' +
                 ", functionCode='" + functionCode + '\'' +
                 ", chartOfAccountCode='" + chartOfAccountCode + '\'' +
+                ", majorCode='" + majorCode + '\'' +
+                ", minorCode='" + minorCode + '\'' +
                 ", reAmount='" + reAmount + '\'' +
                 ", beAmount='" + beAmount + '\'' +
+                ", lastYearApproved='"+lastYearApproved+'\''+
+                ", currentApproved='"+currentApproved+'\''+
+                ", percentageChange='"+percentageChange+'\''+
                 ", planningPercentage='" + planningPercentage + '\'' +
                 '}';
     }
+
+
 }
