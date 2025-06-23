@@ -10,7 +10,11 @@
     "packages/modules/core",
     "packages/modules/common",
     "packages/modules/dss",
-    "packages/modules/tl"
+    "packages/modules/tl",
+    "packages/modules/wt",
+    "packages/modules/engagement",
+    "packages/modules/pgrai"
+
   ],
   "license": "MIT",
   "private": true,
@@ -70,7 +74,7 @@
     "build:tl": "cd packages/modules/tl && yarn build",
     "buildD:hrms": "cd packages/modules/hrms && yarn build",
     "buildD:obps": "cd packages/modules/obps && yarn build",
-    "buildD:engagement": "cd packages/modules/engagement && yarn build",
+    "build:engagement": "cd packages/modules/engagement && yarn build",
     "buildD:noc": "cd packages/modules/noc && yarn build",
     "buildD:ws": "cd packages/modules/ws && yarn build",
     "buildD:bills": "cd packages/modules/bills && yarn build",
@@ -79,8 +83,8 @@
     "buildD:ew": "cd packages/modules/ew && yarn build",
     "buildD:sv": "cd packages/modules/sv && yarn build",
     "buildD:cm": "cd packages/modules/cm && yarn build",
-    "buildD:wt": "cd packages/modules/wt && yarn build",
-    "buildD:pgrai": "cd packages/modules/pgrai && yarn build",
+    "build:wt": "cd packages/modules/wt && yarn build",
+    "build:pgrai": "cd packages/modules/pgrai && yarn build",
     "buildD:vendor": "cd packages/modules/vendor && yarn build",
     "buildR:reports": "cd packages/modules/reports && yarn build",
     "deploy:jenkins": "./scripts/jenkins.sh"
