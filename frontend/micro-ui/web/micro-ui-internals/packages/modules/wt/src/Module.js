@@ -20,6 +20,7 @@ import WFCaption from "./pageComponents/WFCaption";
 import Inbox from "./pages/employee/Inbox";
 import WTCitizenCard from "./components/WTCitizenCard";
 import MTCard from "./components/MTCard";
+import TPCard from "./components/TPCard";
 import ServiceTypes from "./pageComponents/ServiceTypes";
 import ToiletRequestDetails from "./pageComponents/ToiletRequestDetails";
 import TreePruningRequestDetails from "./pageComponents/TreePruningRequestDetails";
@@ -112,6 +113,7 @@ const componentsToRegister = {
     WTCard,
     WTModule,
     MTCard, 
+    TPCard,
     WTLinks,
     WT_INBOX_FILTER: (props) => <InboxFilter {...props} />,
     WTInboxTableConfig: TableConfig,

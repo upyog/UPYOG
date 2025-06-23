@@ -162,9 +162,14 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
  *  
  * The payload is then passed to `submitAction` for processing.  
  */
-    let requestPayload = businessService === "watertanker"
-      ? { waterTankerBookingDetail: { ...applicationData, workflow } }
-      : { mobileToiletBookingDetail: { ...applicationData, workflow } };
+   let requestPayload;
+   if (businessService === "watertanker") {
+     requestPayload = { waterTankerBookingDetail: { ...applicationData, workflow } };
+   } else if (businessService === "treePruning") {
+     requestPayload = { treePruningBookingDetail: { ...applicationData, workflow } };
+   } else {
+     requestPayload = { mobileToiletBookingDetail: { ...applicationData, workflow } };
+   }
      submitAction(requestPayload);
       }
 
