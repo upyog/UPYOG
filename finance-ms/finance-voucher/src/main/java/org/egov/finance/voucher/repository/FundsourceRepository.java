@@ -9,4 +9,10 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface FundsourceRepository extends JpaRepository<Fundsource, Long> {
     Optional<Fundsource> findByCodeAndName(String code, String name);
+    
+    Fundsource findByName(String name);
+
+    Fundsource findByCode(String code);
+    
+    
 }

@@ -87,7 +87,7 @@ public class CVoucherHeader extends StateAware implements Serializable {
 	private Integer moduleId;
 
 	@OneToMany(orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "voucherHeaderId", targetEntity = CGeneralLedger.class)
-	private Set<CGeneralLedger> generalLedger;
+	private Set<org.egov.finance.voucher.entity.CGeneralLedger> generalLedger;
 
 	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "voucherheaderid", targetEntity = Vouchermis.class)
 	private Vouchermis vouchermis;
@@ -100,9 +100,9 @@ public class CVoucherHeader extends StateAware implements Serializable {
 	@Transient
 	private String voucherNumberPrefix;
 	@Transient
-	private List<CGeneralLedger> accountDetails = new ArrayList<>();
+	private List<org.egov.finance.voucher.entity.CGeneralLedger> accountDetails = new ArrayList<>();
 	@Transient
-	private List<CGeneralLedgerDetail> subLedgerDetails = new ArrayList<>();
+	private List<org.egov.finance.voucher.entity.CGeneralLedgerDetail> subLedgerDetails = new ArrayList<>();
 	@Transient
 	private String partyName;
 	@Transient
