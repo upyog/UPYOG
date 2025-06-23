@@ -81,7 +81,7 @@ const TreePruningRequestDetails = ({ t, config, onSelect, userType, formData }) 
 
 
   return (
-    <FormStep config={config} onSelect={goNext} t={t} isDisabled={!reasonOfPruning || !geoTagLocation || !supportingDocumentFile}>
+    <FormStep config={config} onSelect={goNext} t={t} isDisabled={!reasonOfPruning || !supportingDocumentFile}>
       <div>
         {/* Reason Dropdown */}
         <CardLabel>
@@ -98,7 +98,7 @@ const TreePruningRequestDetails = ({ t, config, onSelect, userType, formData }) 
           t={t}
         />
         <CardLabel>
-          {t("LOCATION_GEOTAG")} <span className="check-page-link-button">*</span>
+          {t("LOCATION_GEOTAG")}
         </CardLabel>
         <div style={{ display: "flex", alignItems: "stretch", gap: "8px" }}>
           <TextInput
