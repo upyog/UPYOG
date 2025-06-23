@@ -26,6 +26,7 @@ import TreePruningRequestDetails from "./pageComponents/TreePruningRequestDetail
 import MTAcknowledgement from "./pages/citizen/Create/MTAcknowledgement";
 import TPAcknowledgement from "./pages/citizen/Create/TPAcknowledgement";
 import MTApplicationDetails from "./pages/citizen/MTApplicationDetails";
+import TPApplicationDetails from "./pages/citizen/TPApplicationDetails";
 import MTCitizenCard from "./components/MTCitizenCard";
 
 const componentsToRegister = {
@@ -38,6 +39,7 @@ const componentsToRegister = {
     WTAcknowledgement,
     WTApplicationDetails: WTApplicationDetails,
     MTApplicationDetails: MTApplicationDetails,
+    TPApplicationDetails: TPApplicationDetails,
     WTMyApplications: WTMyApplications,
     ApplicationDetails: ApplicationDetails,
     WFApplicationTimeline: WFApplicationTimeline,

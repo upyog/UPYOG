@@ -26,6 +26,11 @@ const WTApplication = ({ application, tenantId, buttonLabel }) => {
           <SubmitBar label={buttonLabel} />
         </Link> 
       )}
+      {bookingCode==="TP" &&(
+        <Link to={`${APPLICATION_PATH}/citizen/wt/booking/treePruning/${application?.bookingNo}/${tenantId}`}>
+          <SubmitBar label={buttonLabel} />
+        </Link>
+      )}
       </div>
     </Card>
   );
