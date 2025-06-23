@@ -16,7 +16,7 @@ import javax.sql.DataSource;
 
 import org.egov.finance.inbox.config.multitenant.DomainBasedSchemaTenantIdentifierResolver;
 import org.egov.finance.inbox.config.multitenant.MultiTenantSchemaConnectionProvider;
-import org.egov.finance.inbox.util.ReportConstants;
+import org.egov.finance.inbox.util.InboxConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -38,7 +38,7 @@ import jakarta.persistence.ValidationMode;
 
 @Configuration
 @EnableTransactionManagement
-@EnableJpaRepositories(basePackages = ReportConstants.ORG_EGOV_FINANCE)
+@EnableJpaRepositories(basePackages = InboxConstants.ORG_EGOV_FINANCE)
 public class JpaConfiguration {
 
 	private DataSource dataSource;
@@ -66,8 +66,8 @@ public class JpaConfiguration {
 	public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
 		LocalContainerEntityManagerFactoryBean factoryBean = new LocalContainerEntityManagerFactoryBean();
 		factoryBean.setDataSource(dataSource);
-		factoryBean.setPersistenceUnitName(ReportConstants.EGOV_PERSISTENCE_UNIT);
-		factoryBean.setPackagesToScan(ReportConstants.ORG_EGOV_FINANCE);
+		factoryBean.setPersistenceUnitName(InboxConstants.EGOV_PERSISTENCE_UNIT);
+		factoryBean.setPackagesToScan(InboxConstants.ORG_EGOV_FINANCE);
 		factoryBean.setJpaVendorAdapter(jpaVendorAdapter());
 		factoryBean.setJpaPropertyMap(additionalProperties());
 		factoryBean.setValidationMode(ValidationMode.NONE);

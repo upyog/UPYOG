@@ -10,13 +10,13 @@ import java.util.Map;
 import java.util.Set;
 
 import org.egov.finance.inbox.entity.SubScheme;
-import org.egov.finance.inbox.exception.ReportServiceException;
+import org.egov.finance.inbox.exception.InboxServiceException;
 import org.egov.finance.inbox.model.SchemeModel;
 import org.egov.finance.inbox.model.SubSchemeModel;
 import org.egov.finance.inbox.repository.SubSchemeRepository;
 import org.egov.finance.inbox.service.SchemeService;
 import org.egov.finance.inbox.util.CommonUtils;
-import org.egov.finance.inbox.util.ReportConstants;
+import org.egov.finance.inbox.util.InboxConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
@@ -85,11 +85,11 @@ public class SubSchemeValidation {
 		Map<String, String> errorMap = new HashMap<>();
 
 		if (updatedSet.contains("code") && schemeRepository.findByCode(schemeModel.getCode()) != null)
-			errorMap.put(ReportConstants.CODE_NOT_UNIQUE, ReportConstants.CODE_IS_ALREADY_EXISTS_MSG);
+			errorMap.put(InboxConstants.CODE_NOT_UNIQUE, InboxConstants.CODE_IS_ALREADY_EXISTS_MSG);
 		if (updatedSet.contains("name") && schemeRepository.findByName(schemeModel.getName()) != null)
-			errorMap.put(ReportConstants.NAME_NOT_UNIQUE, ReportConstants.NAME_IS_ALREADY_EXISTS_MSG);
+			errorMap.put(InboxConstants.NAME_NOT_UNIQUE, InboxConstants.NAME_IS_ALREADY_EXISTS_MSG);
 		if (!CollectionUtils.isEmpty(errorMap))
-			throw new ReportServiceException(errorMap);
+			throw new InboxServiceException(errorMap);
 	}
 
 	public void subSchemeCreateCodeAndSchemIDValidation(SubSchemeModel subSchemeModel) {
@@ -97,8 +97,8 @@ public class SubSchemeValidation {
 		SchemeModel searchcriteria=new SchemeModel();
 		if (!StringUtils.hasText(subSchemeModel.getCode())
 				&& (subSchemeModel.getScheme() != null && subSchemeModel.getScheme() > 0)) {
-			errorMap.put(ReportConstants.INVALID_PARAMETERS, ReportConstants.INVALID_PARAMETERS_MSG);
-			throw new ReportServiceException(errorMap);
+			errorMap.put(InboxConstants.INVALID_PARAMETERS, InboxConstants.INVALID_PARAMETERS_MSG);
+			throw new InboxServiceException(errorMap);
 		}
 		
 		searchcriteria.setId(subSchemeModel.getScheme());
@@ -109,17 +109,17 @@ public class SubSchemeValidation {
 			scheme.setScheme(schemeValidation.modelToEntity(schemeModels.get(0)));
 		}
 		else
-			errorMap.put(ReportConstants.INVALID_SCHEME_ID, ReportConstants.INVALID_SCHEME_ID_MSG);
+			errorMap.put(InboxConstants.INVALID_SCHEME_ID, InboxConstants.INVALID_SCHEME_ID_MSG);
 		
 		if(!CollectionUtils.isEmpty(errorMap))
-			throw new ReportServiceException(errorMap);
+			throw new InboxServiceException(errorMap);
 		
 		if (errorMap.isEmpty()
 				&& schemeRepository.existsByCodeAndScheme(subSchemeModel.getCode(), scheme.getScheme()))
-			errorMap.put(ReportConstants.CODE_SCHEMEID_NOT_UNIQUE, ReportConstants.CODE_SCHEMEID_NOT_UNIQUE_MESSAGE);
+			errorMap.put(InboxConstants.CODE_SCHEMEID_NOT_UNIQUE, InboxConstants.CODE_SCHEMEID_NOT_UNIQUE_MESSAGE);
 
 		if (!CollectionUtils.isEmpty(errorMap))
-			throw new ReportServiceException(errorMap);
+			throw new InboxServiceException(errorMap);
 	}
 
 	public  Specification<SubScheme> build(SubSchemeModel model) {

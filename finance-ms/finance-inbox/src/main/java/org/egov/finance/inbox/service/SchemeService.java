@@ -15,13 +15,13 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.egov.finance.inbox.entity.Scheme;
-import org.egov.finance.inbox.exception.ReportServiceException;
+import org.egov.finance.inbox.exception.InboxServiceException;
 import org.egov.finance.inbox.model.SchemeModel;
 import org.egov.finance.inbox.model.request.SchemeRequest;
 import org.egov.finance.inbox.repository.SchemeRepository;
 import org.egov.finance.inbox.util.ApplicationThreadLocals;
 import org.egov.finance.inbox.util.CommonUtils;
-import org.egov.finance.inbox.util.ReportConstants;
+import org.egov.finance.inbox.util.InboxConstants;
 import org.egov.finance.inbox.validation.SchemeValidation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
@@ -49,7 +49,7 @@ public class SchemeService {
 		this.commonUtils = commonUtils;
 	}
 
-	@Cacheable(value = ReportConstants.SCHEME_SEARCH_REDIS_CACHE_NAME, keyGenerator = ReportConstants.SCHEME_SEARCH_REDIS_KEY_GENERATOR)
+	@Cacheable(value = InboxConstants.SCHEME_SEARCH_REDIS_CACHE_NAME, keyGenerator = InboxConstants.SCHEME_SEARCH_REDIS_KEY_GENERATOR)
 	public List<SchemeModel> search(SchemeModel schemeCriteria) {
 		Specification<Scheme> spec = Specification.where(null);
 
@@ -78,15 +78,15 @@ public class SchemeService {
 		SchemeModel schemeM = request.getScheme();
 		Map<String, String> errorMap = new HashMap<>();
 		if (!ObjectUtils.isEmpty(schemeM.getId())) {
-			errorMap.put(ReportConstants.INVALID_ID_PASSED, ReportConstants.ID_CANNOT_BE_PASSED_IN_CREATION_MSG);
-			throw new ReportServiceException(errorMap);
+			errorMap.put(InboxConstants.INVALID_ID_PASSED, InboxConstants.ID_CANNOT_BE_PASSED_IN_CREATION_MSG);
+			throw new InboxServiceException(errorMap);
 		}
 
 		Scheme schemeE = validation.modelToEntity(schemeM);
 		validation.schemeCreateValidation(schemeM);
 
 		cacheEvictionService.incrementVersionForTenant(ApplicationThreadLocals.getTenantID(),
-				ReportConstants.SCHEME_SEARCH_REDIS_CACHE_VERSION_KEY, ReportConstants.SCHEME_SEARCH_REDIS_CACHE_NAME);
+				InboxConstants.SCHEME_SEARCH_REDIS_CACHE_VERSION_KEY, InboxConstants.SCHEME_SEARCH_REDIS_CACHE_NAME);
 		return validation.entityToModel(schemeRepository.save(schemeE));
 	}
 
@@ -95,13 +95,13 @@ public class SchemeService {
 		Map<String, String> errorMap = new HashMap<>();
 
 		if (ObjectUtils.isEmpty(schemeRequest.getId())) {
-			errorMap.put(ReportConstants.INVALID_ID_PASSED, ReportConstants.INVALID_ID_PASSED_MESSAGE);
-			throw new ReportServiceException(errorMap);
+			errorMap.put(InboxConstants.INVALID_ID_PASSED, InboxConstants.INVALID_ID_PASSED_MESSAGE);
+			throw new InboxServiceException(errorMap);
 		}
 
 		Scheme schemeUpdate = schemeRepository.findById(schemeRequest.getId()).orElseThrow(() -> {
-			errorMap.put(ReportConstants.INVALID_ID_PASSED, ReportConstants.INVALID_ID_PASSED_MESSAGE);
-			throw new ReportServiceException(errorMap);
+			errorMap.put(InboxConstants.INVALID_ID_PASSED, InboxConstants.INVALID_ID_PASSED_MESSAGE);
+			throw new InboxServiceException(errorMap);
 		});
 
 		List<String> updatedFields = commonUtils.applyNonNullFields(schemeRequest, schemeUpdate);
@@ -126,7 +126,7 @@ public class SchemeService {
 			validation.schemeUpdateValidation(schemeModel, updatedSet);
 
 		cacheEvictionService.incrementVersionForTenant(ApplicationThreadLocals.getTenantID(),
-				ReportConstants.SCHEME_SEARCH_REDIS_CACHE_VERSION_KEY, ReportConstants.SCHEME_SEARCH_REDIS_CACHE_NAME);
+				InboxConstants.SCHEME_SEARCH_REDIS_CACHE_VERSION_KEY, InboxConstants.SCHEME_SEARCH_REDIS_CACHE_NAME);
 		return validation.entityToModel(schemeRepository.save(schemeUpdate));
 	}
 

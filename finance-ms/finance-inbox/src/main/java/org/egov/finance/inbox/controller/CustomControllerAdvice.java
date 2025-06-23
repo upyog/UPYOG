@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.egov.finance.inbox.errorresponse.ErrorResponse;
-import org.egov.finance.inbox.exception.ReportServiceException;
+import org.egov.finance.inbox.exception.InboxServiceException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -23,8 +23,8 @@ import lombok.extern.slf4j.Slf4j;
 @RestControllerAdvice
 public class CustomControllerAdvice {
 
-	@ExceptionHandler(ReportServiceException.class)
-	public ResponseEntity<ErrorResponse> handleSingularityException(ReportServiceException singularityException) {
+	@ExceptionHandler(InboxServiceException.class)
+	public ResponseEntity<ErrorResponse> handleSingularityException(InboxServiceException singularityException) {
 		ErrorResponse errorResponse = new ErrorResponse(LocalDateTime.now(), HttpStatus.BAD_REQUEST.value(),
 				singularityException.getErrors());
 

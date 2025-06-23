@@ -10,7 +10,7 @@ import java.io.IOException;
 import org.egov.finance.inbox.config.filter.CachedBodyHttpServletRequest;
 import org.egov.finance.inbox.model.RequestInfo;
 import org.egov.finance.inbox.util.ApplicationThreadLocals;
-import org.egov.finance.inbox.util.ReportConstants;
+import org.egov.finance.inbox.util.InboxConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -47,12 +47,12 @@ public class RequestLogPreFilter implements Filter {
 
 		try {
 			JsonNode root = mapper.readTree(body);
-			JsonNode reqInfoNode = root.get(ReportConstants.REQUEST_INFO);
+			JsonNode reqInfoNode = root.get(InboxConstants.REQUEST_INFO);
 			if (reqInfoNode != null && !reqInfoNode.isNull()) {
 				RequestInfo reqInfo = mapper.treeToValue(reqInfoNode, RequestInfo.class);
-				String schema = (reqInfo.getTenantId().split(ReportConstants.REQUEST_TENANT_SPLIT_REGEX)[1].isBlank()
+				String schema = (reqInfo.getTenantId().split(InboxConstants.REQUEST_TENANT_SPLIT_REGEX)[1].isBlank()
 						? null
-						: reqInfo.getTenantId().split(ReportConstants.REQUEST_TENANT_SPLIT_REGEX)[1]);
+						: reqInfo.getTenantId().split(InboxConstants.REQUEST_TENANT_SPLIT_REGEX)[1]);
 				ApplicationThreadLocals.setTenantID(schema);
 			}
 
@@ -61,6 +61,13 @@ public class RequestLogPreFilter implements Filter {
 				Long userId = userIdNode.asLong();
 				ApplicationThreadLocals.setCurrentUserId(userId);
 			}
+			
+			JsonNode userAuthToken = root.path("RequestInfo").path("authToken");
+			if (!userAuthToken.isMissingNode()) {
+				String token = userIdNode.asText();
+				ApplicationThreadLocals.setUserToken(token);
+			}
+
 
 		} catch (Exception e) {
 			log.warn("Could not extract RequestInfo from body: {}", e.getMessage());

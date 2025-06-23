@@ -142,4 +142,8 @@ public class State extends AuditDetailswithVersion {
 		return new Gson().fromJson(getExtraInfo(), type);
 		
 	}
+	
+	  public boolean isNew() {
+	        return null == getId();
+	    }
 }

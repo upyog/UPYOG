@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.egov.finance.inbox.util.ReportConstants;
+import org.egov.finance.inbox.util.InboxConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.connection.RedisKeyCommands;
 import org.springframework.data.redis.core.Cursor;
@@ -38,8 +38,8 @@ public class CacheEvictionService {
 	}
 
 	public void evictTenantCache(String tenantId, int versionThreshold, String cacheName) {
-		String pattern = cacheName + ReportConstants.REDIS_SEARCH_TENANT_TAG + tenantId
-				+ ReportConstants.REDIS_SEARCH_VERSION_TAG + "v*";
+		String pattern = cacheName + InboxConstants.REDIS_SEARCH_TENANT_TAG + tenantId
+				+ InboxConstants.REDIS_SEARCH_VERSION_TAG + "v*";
 		log.info("Patterns to be deleted: {}", pattern);
 
 		redisTemplate.execute((RedisCallback<Void>) connection -> {
@@ -84,7 +84,7 @@ public class CacheEvictionService {
 	public String getVersionForTenant(String tenantId, String cacheKeyName) {
 		String key = cacheKeyName + tenantId;
 		String version = stringRedisTemplate.opsForValue().get(key);
-		return version != null ? version : ReportConstants.REDIS_START_VERSION_V0;
+		return version != null ? version : InboxConstants.REDIS_START_VERSION_V0;
 	}
 
 	public void incrementVersionForTenant(String tenantId, String cacheKeyName, String cacheName) {

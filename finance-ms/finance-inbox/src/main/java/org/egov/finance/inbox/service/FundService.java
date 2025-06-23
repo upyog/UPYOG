@@ -14,14 +14,14 @@ import java.util.stream.Collectors;
 
 import org.egov.finance.inbox.entity.Function;
 import org.egov.finance.inbox.entity.Fund;
-import org.egov.finance.inbox.exception.ReportServiceException;
+import org.egov.finance.inbox.exception.InboxServiceException;
 import org.egov.finance.inbox.model.FunctionModel;
 import org.egov.finance.inbox.model.FundModel;
 import org.egov.finance.inbox.model.request.FundRequest;
 import org.egov.finance.inbox.repository.FundRepository;
 import org.egov.finance.inbox.util.ApplicationThreadLocals;
 import org.egov.finance.inbox.util.CommonUtils;
-import org.egov.finance.inbox.util.ReportConstants;
+import org.egov.finance.inbox.util.InboxConstants;
 import org.egov.finance.inbox.util.SpecificationHelper;
 import org.egov.finance.inbox.validation.FundValidation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,7 +51,7 @@ public class FundService {
 		this.commonUtils = commonUtils;
 	}
 
-	@Cacheable(value = ReportConstants.FUND_SEARCH_REDIS_CACHE_NAME, keyGenerator = ReportConstants.FUND_SEARCH_REDIS_KEY_GENERATOR)
+	@Cacheable(value = InboxConstants.FUND_SEARCH_REDIS_CACHE_NAME, keyGenerator = InboxConstants.FUND_SEARCH_REDIS_KEY_GENERATOR)
 	public List<FundModel> search(FundModel fundCriteria) {
 		Specification<Fund> spec = Specification.where((root, query, cb) -> cb.conjunction());
 		if (fundCriteria.getCode() != null && !fundCriteria.getCode().isEmpty()) {	
@@ -84,8 +84,8 @@ public class FundService {
 		FundModel fundM = request.getFund();
 		Map<String, String> errorMap = new HashMap<>();
 		if (!ObjectUtils.isEmpty(fundM.getId())) {
-			errorMap.put(ReportConstants.INVALID_ID_PASSED, ReportConstants.ID_CANNOT_BE_PASSED_IN_CREATION_MSG);
-			throw new ReportServiceException(errorMap);
+			errorMap.put(InboxConstants.INVALID_ID_PASSED, InboxConstants.ID_CANNOT_BE_PASSED_IN_CREATION_MSG);
+			throw new InboxServiceException(errorMap);
 		}
 		Fund fundE = validation.modelToEntity(fundM);
 		validation.fundCreateNameAndCodeValidation(fundM);
@@ -93,13 +93,13 @@ public class FundService {
 
 		if (!ObjectUtils.isEmpty(fundM.getParentId())) {
 			parentFund = fundRepository.findById(fundM.getParentId()).orElseThrow(() -> {
-				errorMap.put(ReportConstants.INVALID_PARENT_ID, ReportConstants.INVALID_PARENT_ID_MSG);
-				throw new ReportServiceException(errorMap);
+				errorMap.put(InboxConstants.INVALID_PARENT_ID, InboxConstants.INVALID_PARENT_ID_MSG);
+				throw new InboxServiceException(errorMap);
 			});
 		}
 		fundE.setParentId(parentFund);
 		cacheEvictionService.incrementVersionForTenant(ApplicationThreadLocals.getTenantID(),
-				ReportConstants.FUND_SEARCH_REDIS_CACHE_VERSION_KEY, ReportConstants.FUND_SEARCH_REDIS_CACHE_NAME);
+				InboxConstants.FUND_SEARCH_REDIS_CACHE_VERSION_KEY, InboxConstants.FUND_SEARCH_REDIS_CACHE_NAME);
 		return validation.entityTOModel(fundRepository.save(fundE));
 	}
 
@@ -109,12 +109,12 @@ public class FundService {
 		Fund fundRequest = validation.modelToEntity(request.getFund());
 		Map<String, String> errorMap = new HashMap<>();
 		if (ObjectUtils.isEmpty(fundRequest.getId())) {
-			errorMap.put(ReportConstants.INVALID_ID_PASSED, ReportConstants.INVALID_ID_PASSED_MESSAGE);
-			throw new ReportServiceException(errorMap);
+			errorMap.put(InboxConstants.INVALID_ID_PASSED, InboxConstants.INVALID_ID_PASSED_MESSAGE);
+			throw new InboxServiceException(errorMap);
 		}
 		Fund fundUpdate = fundRepository.findById(fundRequest.getId()).orElseThrow(() -> {
-			errorMap.put(ReportConstants.INVALID_ID_PASSED, ReportConstants.INVALID_ID_PASSED_MESSAGE);
-			throw new ReportServiceException(errorMap);
+			errorMap.put(InboxConstants.INVALID_ID_PASSED, InboxConstants.INVALID_ID_PASSED_MESSAGE);
+			throw new InboxServiceException(errorMap);
 		});
 		
 		if (ObjectUtils.isEmpty(model.getParentId())) {
@@ -141,14 +141,14 @@ public class FundService {
 			validation.fundCodeNameValidationForUpdate(model,updatedSet);
 				if(updatedSet.contains("parentid") && !ObjectUtils.isEmpty(model.getParentId())) {
 					parentFund = fundRepository.findById(model.getParentId()).orElseThrow(()->{
-					errorMap.put(ReportConstants.INVALID_PARENT_ID, ReportConstants.INVALID_PARENT_ID);
-					throw new ReportServiceException(errorMap);
+					errorMap.put(InboxConstants.INVALID_PARENT_ID, InboxConstants.INVALID_PARENT_ID);
+					throw new InboxServiceException(errorMap);
 				});
 				}
 				fundUpdate.setParentId(parentFund);
 		
 		cacheEvictionService.incrementVersionForTenant(ApplicationThreadLocals.getTenantID(),
-				ReportConstants.FUND_SEARCH_REDIS_CACHE_VERSION_KEY, ReportConstants.FUND_SEARCH_REDIS_CACHE_NAME);
+				InboxConstants.FUND_SEARCH_REDIS_CACHE_VERSION_KEY, InboxConstants.FUND_SEARCH_REDIS_CACHE_NAME);
 		return validation.entityTOModel(fundRepository.save(fundUpdate));
 
 	}

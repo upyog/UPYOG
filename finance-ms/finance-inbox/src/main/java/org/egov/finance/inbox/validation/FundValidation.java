@@ -10,11 +10,11 @@ import java.util.Map;
 import java.util.Set;
 
 import org.egov.finance.inbox.entity.Fund;
-import org.egov.finance.inbox.exception.ReportServiceException;
+import org.egov.finance.inbox.exception.InboxServiceException;
 import org.egov.finance.inbox.model.FundModel;
 import org.egov.finance.inbox.repository.FundRepository;
 import org.egov.finance.inbox.util.CommonUtils;
-import org.egov.finance.inbox.util.ReportConstants;
+import org.egov.finance.inbox.util.InboxConstants;
 import org.egov.finance.inbox.util.SpecificationHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
@@ -67,12 +67,12 @@ public class FundValidation {
 			if (updatedSet.contains("code") && !updatedSet.contains("name")) {
 			    fundRepository.findOne(
 			        SpecificationHelper.equal("code", fundM.getCode())
-			    ).ifPresent(x->errorMap.put(ReportConstants.CODE_NOT_UNIQUE, ReportConstants.CODE_IS_ALREADY_EXISTS_MSG));
+			    ).ifPresent(x->errorMap.put(InboxConstants.CODE_NOT_UNIQUE, InboxConstants.CODE_IS_ALREADY_EXISTS_MSG));
 			}
 		    if (updatedSet.contains("name") && !updatedSet.contains("code")) {
 			    fundRepository.findOne(
 			        SpecificationHelper.equal("name", fundM.getName())
-			    ).ifPresent(x->errorMap.put(ReportConstants.NAME_NOT_UNIQUE, ReportConstants.NAME_IS_ALREADY_EXISTS_MSG));
+			    ).ifPresent(x->errorMap.put(InboxConstants.NAME_NOT_UNIQUE, InboxConstants.NAME_IS_ALREADY_EXISTS_MSG));
 		    }
 		    else if (updatedSet.contains("name") && updatedSet.contains("code")) {
 		    	if (updatedSet.contains("name") && !updatedSet.contains("code")) {
@@ -80,29 +80,29 @@ public class FundValidation {
 				    		.where(SpecificationHelper.<Fund,String>equal("name",fundM.getName()))
 				    		.or(SpecificationHelper.<Fund,String>equal("code",fundM.getCode()));
 				    	fundRepository.findOne(spec).ifPresent(x->{
-				    		errorMap.put(ReportConstants.CODE_NAME_NOT_UNIQUE, ReportConstants.CODE_NAME_NOT_UNIQUE_MSG);
+				    		errorMap.put(InboxConstants.CODE_NAME_NOT_UNIQUE, InboxConstants.CODE_NAME_NOT_UNIQUE_MSG);
 				    	});
 				    }
 				    		
 		    }
 		if (!CollectionUtils.isEmpty(errorMap))
-			throw new ReportServiceException(errorMap);
+			throw new InboxServiceException(errorMap);
 	}
 
 	public void fundCreateNameAndCodeValidation(FundModel fundM) {
 	    Map<String, String> errorMap = new HashMap<>();
 
 	    if (!StringUtils.hasText(fundM.getName()) || !StringUtils.hasText(fundM.getCode())) {
-	        errorMap.put(ReportConstants.INVALID_PARAMETERS, ReportConstants.INVALID_PARAMETERS_MSG);
-	        throw new ReportServiceException(errorMap);
+	        errorMap.put(InboxConstants.INVALID_PARAMETERS, InboxConstants.INVALID_PARAMETERS_MSG);
+	        throw new InboxServiceException(errorMap);
 	    }
 	    
 	    fundRepository.findOne(Specification
 	    		.where(SpecificationHelper.<Fund,String>equal("name", fundM.getName())
 	    			.or(SpecificationHelper.<Fund,String>equal("code", fundM.getCode())
 	    				))).ifPresent(x->{
-	    					 errorMap.put(ReportConstants.CODE_NAME_NOT_UNIQUE, ReportConstants.CODE_NAME_NOT_UNIQUE_MSG);
-	    				        throw new ReportServiceException(errorMap);
+	    					 errorMap.put(InboxConstants.CODE_NAME_NOT_UNIQUE, InboxConstants.CODE_NAME_NOT_UNIQUE_MSG);
+	    				        throw new InboxServiceException(errorMap);
 	    				});
 	}
 

@@ -14,11 +14,11 @@ import java.util.Set;
 
 import org.egov.finance.inbox.entity.Fund;
 import org.egov.finance.inbox.entity.Scheme;
-import org.egov.finance.inbox.exception.ReportServiceException;
+import org.egov.finance.inbox.exception.InboxServiceException;
 import org.egov.finance.inbox.model.SchemeModel;
 import org.egov.finance.inbox.repository.FundRepository;
 import org.egov.finance.inbox.repository.SchemeRepository;
-import org.egov.finance.inbox.util.ReportConstants;
+import org.egov.finance.inbox.util.InboxConstants;
 import org.egov.finance.inbox.util.SpecificationHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
@@ -79,8 +79,8 @@ public class SchemeValidation {
 		Map<String, String> errorMap = new HashMap<>();
 
 		if (!StringUtils.hasText(schemeM.getCode()) || !StringUtils.hasText(schemeM.getName())) {
-			errorMap.put(ReportConstants.INVALID_PARAMETERS, ReportConstants.INVALID_PARAMETERS_MSG);
-			throw new ReportServiceException(errorMap);
+			errorMap.put(InboxConstants.INVALID_PARAMETERS, InboxConstants.INVALID_PARAMETERS_MSG);
+			throw new InboxServiceException(errorMap);
 		}
 
 		boolean codeExists = schemeRepository
@@ -93,12 +93,12 @@ public class SchemeValidation {
 
 		if (codeExists || nameExists || nameFundExists) {
 			if (codeExists)
-				errorMap.put(ReportConstants.CODE_NOT_UNIQUE, ReportConstants.CODE_IS_ALREADY_EXISTS_MSG);
+				errorMap.put(InboxConstants.CODE_NOT_UNIQUE, InboxConstants.CODE_IS_ALREADY_EXISTS_MSG);
 			if (nameExists)
-				errorMap.put(ReportConstants.NAME_NOT_UNIQUE, ReportConstants.NAME_IS_ALREADY_EXISTS_MSG);
+				errorMap.put(InboxConstants.NAME_NOT_UNIQUE, InboxConstants.NAME_IS_ALREADY_EXISTS_MSG);
 			if (nameFundExists)
-				errorMap.put(ReportConstants.DUPLICATE_SCHEME, ReportConstants.NAME_FUND_ALREADY_EXISTS_MSG);
-			throw new ReportServiceException(errorMap);
+				errorMap.put(InboxConstants.DUPLICATE_SCHEME, InboxConstants.NAME_FUND_ALREADY_EXISTS_MSG);
+			throw new InboxServiceException(errorMap);
 		}
 		// Fund existence check
 		validateAndGetFund(schemeM.getFundId());
@@ -112,7 +112,7 @@ public class SchemeValidation {
 					(root, query, cb) -> cb.and(cb.equal(cb.lower(root.get("code")), schemeM.getCode().toLowerCase()),
 							cb.notEqual(root.get("id"), schemeM.getId())));
 			if (exists)
-				errorMap.put(ReportConstants.CODE_NOT_UNIQUE, ReportConstants.CODE_IS_ALREADY_EXISTS_MSG);
+				errorMap.put(InboxConstants.CODE_NOT_UNIQUE, InboxConstants.CODE_IS_ALREADY_EXISTS_MSG);
 		}
 
 		if (updatedSet.contains("name")) {
@@ -120,12 +120,12 @@ public class SchemeValidation {
 					(root, query, cb) -> cb.and(cb.equal(cb.lower(root.get("name")), schemeM.getName().toLowerCase()),
 							cb.notEqual(root.get("id"), schemeM.getId())));
 			if (exists)
-				errorMap.put(ReportConstants.NAME_NOT_UNIQUE, ReportConstants.NAME_IS_ALREADY_EXISTS_MSG);
+				errorMap.put(InboxConstants.NAME_NOT_UNIQUE, InboxConstants.NAME_IS_ALREADY_EXISTS_MSG);
 		}
 
 		if (updatedSet.contains("name") || updatedSet.contains("fund")) {
 			if (isNameFundCombinationExistsForUpdate(schemeM.getName(), schemeM.getFundId(), schemeM.getId())) {
-				errorMap.put(ReportConstants.DUPLICATE_SCHEME, ReportConstants.NAME_FUND_ALREADY_EXISTS_MSG);
+				errorMap.put(InboxConstants.DUPLICATE_SCHEME, InboxConstants.NAME_FUND_ALREADY_EXISTS_MSG);
 			}
 		}
 
@@ -134,7 +134,7 @@ public class SchemeValidation {
 		}
 
 		if (!CollectionUtils.isEmpty(errorMap))
-			throw new ReportServiceException(errorMap);
+			throw new InboxServiceException(errorMap);
 
 	}
 
@@ -144,8 +144,8 @@ public class SchemeValidation {
 
 		return fundRepository.findById(fundId).orElseThrow(() -> {
 			Map<String, String> errorMap = new HashMap<>();
-			errorMap.put(ReportConstants.INVALID_FUND, ReportConstants.INVALID_FUND_ASSOCIATED_MSG);
-			return new ReportServiceException(errorMap);
+			errorMap.put(InboxConstants.INVALID_FUND, InboxConstants.INVALID_FUND_ASSOCIATED_MSG);
+			return new InboxServiceException(errorMap);
 		});
 	}
 

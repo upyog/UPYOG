@@ -9,7 +9,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.egov.finance.inbox.util.ReportConstants;
+import org.egov.finance.inbox.util.InboxConstants;
 import org.egov.finance.inbox.workflow.entity.StateAware;
 
 import jakarta.persistence.CascadeType;
@@ -97,7 +97,7 @@ public class BudgetReAppropriationMisc extends StateAware {
 		final List<BudgetReAppropriation> reAppList = new ArrayList<>();
 		budgetReAppropriations = budgetReAppropriations == null ? new HashSet<>() : budgetReAppropriations;
 		for (final BudgetReAppropriation entry : budgetReAppropriations)
-			if (!ReportConstants.END.equalsIgnoreCase(entry.getState().getValue())
+			if (!InboxConstants.END.equalsIgnoreCase(entry.getState().getValue())
 					|| !"APPROVED".equalsIgnoreCase(entry.getState().getValue()))
 				reAppList.add(entry);
 		return reAppList;

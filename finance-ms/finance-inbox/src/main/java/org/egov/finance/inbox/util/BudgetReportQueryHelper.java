@@ -14,7 +14,7 @@ import java.util.function.Function;
 
 import org.egov.finance.inbox.entity.AppConfigValues;
 import org.egov.finance.inbox.entity.FinancialYear;
-import org.egov.finance.inbox.exception.ReportServiceException;
+import org.egov.finance.inbox.exception.InboxServiceException;
 import org.egov.finance.inbox.repository.AppConfigValuesRepository;
 import org.egov.finance.inbox.service.MasterCommonService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,11 +45,11 @@ public class BudgetReportQueryHelper {
 		
 		Map<String, String> errorMap  = new HashMap<>();
 
-		List<AppConfigValues>  list = masterCommonService.getConfigValuesByModuleAndKey(ReportConstants.EGF, ReportConstants.BUDGETARY_CHECK_GROUPBY_VALUES);
+		List<AppConfigValues>  list = masterCommonService.getConfigValuesByModuleAndKey(InboxConstants.EGF, InboxConstants.BUDGETARY_CHECK_GROUPBY_VALUES);
 
 	    if (list.isEmpty()) {
-	    	errorMap.put(ReportConstants.INVALID_CODE, "budgetaryCheck_groupby_values is not defined in AppConfig");
-	        throw new ReportServiceException(errorMap);
+	    	errorMap.put(InboxConstants.INVALID_CODE, "budgetaryCheck_groupby_values is not defined in AppConfig");
+	        throw new InboxServiceException(errorMap);
 	    }
 
 	    AppConfigValues configValue = list.get(0);
@@ -81,8 +81,8 @@ public class BudgetReportQueryHelper {
 	                validateAndAppend(query, "Boundary", boundaryid, "bd.boundary", "boundaryId", params, toLong);
 	            default:
 	            	//need to update
-	            	errorMap.put(ReportConstants.INVALID_CODE, "budgetaryCheck_groupby_values is not defined in AppConfig");
-	    	        throw new ReportServiceException(errorMap);
+	            	errorMap.put(InboxConstants.INVALID_CODE, "budgetaryCheck_groupby_values is not defined in AppConfig");
+	    	        throw new InboxServiceException(errorMap);
 	        }
 	    }
 

@@ -20,7 +20,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.regex.Matcher;
 
-import org.egov.finance.inbox.exception.ReportServiceException;
+import org.egov.finance.inbox.exception.InboxServiceException;
 import org.egov.finance.inbox.model.MasterDetail;
 import org.egov.finance.inbox.model.MdmsCriteria;
 import org.egov.finance.inbox.model.MdmsCriteriaReq;
@@ -86,7 +86,7 @@ public class CommonUtils {
 		}
 
 		if (!CollectionUtils.isEmpty(errormap))
-			throw new ReportServiceException(errormap);
+			throw new InboxServiceException(errormap);
 
 		return Collections.emptyMap();
 	}
@@ -172,14 +172,12 @@ public class CommonUtils {
 	    return formatter.format(localDateTime);
 	}
 	
-	public String removeSpecialCharacters(final String str) {
-	    if (str == null || str.isEmpty()) {
+	public static  String removeSpecialCharacters(final String str) {
+		if (str == null || str.isEmpty()) {
 	        return "";
 	    }
-	    String sanitized = str.replaceAll("\\s{2,}|\\r?\\n", "<br/>");
-	    sanitized = sanitized.replaceAll("'", Matcher.quoteReplacement("\\'"));
-
-	    return sanitized;
+	    return str.replaceAll("\\s{2,}|\\r?\\n", "<br/>")  
+	              .replace("'", "\\'");    
 	}
 	
 	public String toStr(Object obj) { return obj != null ? obj.toString() : null; }

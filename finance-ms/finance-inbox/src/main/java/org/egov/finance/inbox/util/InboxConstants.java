@@ -8,9 +8,9 @@ package org.egov.finance.inbox.util;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 
-public class ReportConstants {
+public class InboxConstants {
 
-	private ReportConstants() {
+	private InboxConstants() {
 		super();
 	}
 
@@ -218,5 +218,20 @@ public class ReportConstants {
 	public static final String BUDGETHEADID = "budgetheadid";
 	public static final String BUDGETARY_CHECK_GROUPBY_VALUES = "budgetaryCheck_groupby_values";
 	public static final String GLCODEID = "glcodeid";
+	
+
+	public static final Character Y = 'Y';
+	public static final Character N = 'N';
+	public static final String NA = "N/A";
+	public static final String YES = "Yes";
+	public static final String NO = "No";
+	public static final String UNDERSCORE = "_";
+	public static final String HYPHEN = "-";
+	public static final String WHITESPACE = " ";
+	public static final String SLASH = "/";
+	public static final String COLON = ":";
+	public static final String DOT = ".";
+	public static final String COMMA = ",";
+	public static final String UNKNOWN = "Unknown";
 
 }

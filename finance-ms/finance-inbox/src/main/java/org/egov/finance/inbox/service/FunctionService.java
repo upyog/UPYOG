@@ -14,14 +14,14 @@ import java.util.stream.Collectors;
 
 import org.egov.finance.inbox.entity.Function;
 import org.egov.finance.inbox.entity.Fund;
-import org.egov.finance.inbox.exception.ReportServiceException;
+import org.egov.finance.inbox.exception.InboxServiceException;
 import org.egov.finance.inbox.model.FunctionModel;
 import org.egov.finance.inbox.model.FundModel;
 import org.egov.finance.inbox.model.request.FunctionRequest;
 import org.egov.finance.inbox.repository.FunctionRepository;
 import org.egov.finance.inbox.util.ApplicationThreadLocals;
 import org.egov.finance.inbox.util.CommonUtils;
-import org.egov.finance.inbox.util.ReportConstants;
+import org.egov.finance.inbox.util.InboxConstants;
 import org.egov.finance.inbox.util.SpecificationHelper;
 import org.egov.finance.inbox.validation.FunctionValidation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,8 +52,8 @@ public class FunctionService {
 		
 		if(!ObjectUtils.isEmpty(model.getParentId()))
 		 parentFunction = functionRespository.findById(model.getParentId()).orElseThrow(()->{
-			errorMap.put(ReportConstants.INVALID_PARENT_ID, ReportConstants.INVALID_PARENT_ID);
-			throw new ReportServiceException(errorMap);
+			errorMap.put(InboxConstants.INVALID_PARENT_ID, InboxConstants.INVALID_PARENT_ID);
+			throw new InboxServiceException(errorMap);
 		});
 		funcE.setParentId(parentFunction);
 		//cacheEvictionService.incrementVersionForTenant(ApplicationThreadLocals.getTenantID(),
@@ -69,8 +69,8 @@ public class FunctionService {
 		validation.validateUpdateRequestModel(model);	
 		Function funcRequest = validation.modelToEntity(model);
 		Function funcUpdate = functionRespository.findById(model.getId()).orElseThrow(() -> {
-			errorMap.put(ReportConstants.INVALID_ID_PASSED, ReportConstants.INVALID_ID_PASSED_MESSAGE);
-			throw new ReportServiceException(errorMap);
+			errorMap.put(InboxConstants.INVALID_ID_PASSED, InboxConstants.INVALID_ID_PASSED_MESSAGE);
+			throw new InboxServiceException(errorMap);
 		});
 		
 		if (ObjectUtils.isEmpty(model.getParentId())) {
@@ -94,21 +94,21 @@ public class FunctionService {
 		validation.functionCodeNameValidationForUpdate(model,updatedSet);		
 			if(updatedSet.contains("parentid") && !ObjectUtils.isEmpty(model.getParentId())) {
 			 parentFunction = functionRespository.findById(model.getParentId()).orElseThrow(()->{
-				errorMap.put(ReportConstants.INVALID_PARENT_ID, ReportConstants.INVALID_PARENT_ID);
-				throw new ReportServiceException(errorMap);
+				errorMap.put(InboxConstants.INVALID_PARENT_ID, InboxConstants.INVALID_PARENT_ID);
+				throw new InboxServiceException(errorMap);
 			});
 			 
 		}
 		funcUpdate.setParentId(parentFunction);
 		cacheEvictionService.incrementVersionForTenant(ApplicationThreadLocals.getTenantID(),
-				ReportConstants.FUNCTION_SEARCH_REDIS_CACHE_VERSION_KEY, ReportConstants.FUNCTION_SEARCH_REDIS_CACHE_NAME);
+				InboxConstants.FUNCTION_SEARCH_REDIS_CACHE_VERSION_KEY, InboxConstants.FUNCTION_SEARCH_REDIS_CACHE_NAME);
 		return validation.entityTOModel(functionRespository.save(funcUpdate));
 		
 	}
 	
 	
 	
-	@Cacheable(value = ReportConstants.FUNCTION_SEARCH_REDIS_CACHE_NAME, keyGenerator = ReportConstants.FUNCTION_SEARCH_REDIS_KEY_GENERATOR)
+	@Cacheable(value = InboxConstants.FUNCTION_SEARCH_REDIS_CACHE_NAME, keyGenerator = InboxConstants.FUNCTION_SEARCH_REDIS_KEY_GENERATOR)
 	public List<FunctionModel> search(FunctionModel funcCriteria) {
 		Specification<Function> spec = Specification.where(null);
 		if (funcCriteria.getCode() != null && !funcCriteria.getCode().isEmpty()) {

@@ -37,7 +37,7 @@ import org.egov.finance.inbox.entity.Function;
 import org.egov.finance.inbox.entity.Fund;
 import org.egov.finance.inbox.entity.Vouchermis;
 import org.egov.finance.inbox.exception.ApplicationRuntimeException;
-import org.egov.finance.inbox.exception.ReportServiceException;
+import org.egov.finance.inbox.exception.InboxServiceException;
 import org.egov.finance.inbox.model.BudgetReportEntry;
 import org.egov.finance.inbox.model.VoucherReportModel;
 import org.egov.finance.inbox.model.WorkFlowHistoryItem;
@@ -49,7 +49,7 @@ import org.egov.finance.inbox.repository.FunctionRepository;
 import org.egov.finance.inbox.repository.FundRepository;
 import org.egov.finance.inbox.util.BudgetReportQueryHelper;
 import org.egov.finance.inbox.util.CommonUtils;
-import org.egov.finance.inbox.util.ReportConstants;
+import org.egov.finance.inbox.util.InboxConstants;
 import org.egov.finance.inbox.workflow.entity.State;
 import org.egov.finance.inbox.workflow.entity.StateHistory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -99,8 +99,8 @@ public class VoucherReportService {
 
 		CVoucherHeader voucher = Optional.ofNullable(masterCommonService.getVoucherById(request.getVoucher().getId()))
 				.orElseThrow(() -> {
-					errorMap.put(ReportConstants.INVALID_ID_PASSED, ReportConstants.INVALID_ID_PASSED_MESSAGE);
-					return new ReportServiceException(errorMap);
+					errorMap.put(InboxConstants.INVALID_ID_PASSED, InboxConstants.INVALID_ID_PASSED_MESSAGE);
+					return new InboxServiceException(errorMap);
 				});
 		voucherList = generateVoucherReportList(voucher,voucherList);
 		paramMap = populateParamMap(paramMap, voucher);
@@ -110,7 +110,7 @@ public class VoucherReportService {
 	    } catch (IOException | JRException e) {
 	        log.error("Failed to generate voucher report: {}", e.getMessage(), e);
 	        errorMap.put("REPORT_GENERATION_FAILED", "Unable to generate report.");
-	        throw new ReportServiceException(errorMap);
+	        throw new InboxServiceException(errorMap);
 	    }
 	}
 
@@ -127,7 +127,7 @@ public class VoucherReportService {
 				String nextAction = historyState.getNextAction();
 
 				String comment = Optional.ofNullable(historyState.getComments())
-						.map(commonUtils::removeSpecialCharacters).orElse("");
+						.map(CommonUtils::removeSpecialCharacters).orElse("");
 
 				inboxHistory.add(new WorkFlowHistoryItem(
 						commonUtils.getFormattedDate(historyState.getCreatedDate(), "dd/MM/yyyy hh:mm a"), pos,
@@ -138,7 +138,7 @@ public class VoucherReportService {
 			String pos = state.getSenderName() + " / " + state.getSenderName();
 			String nextAction = state.getNextAction();
 
-			String comment = Optional.ofNullable(state.getComments()).map(commonUtils::removeSpecialCharacters)
+			String comment = Optional.ofNullable(state.getComments()).map(CommonUtils::removeSpecialCharacters)
 					.orElse("");
 
 			inboxHistory.add(

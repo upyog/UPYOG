@@ -11,14 +11,14 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.egov.finance.inbox.entity.SubScheme;
-import org.egov.finance.inbox.exception.ReportServiceException;
+import org.egov.finance.inbox.exception.InboxServiceException;
 import org.egov.finance.inbox.model.SchemeModel;
 import org.egov.finance.inbox.model.SubSchemeModel;
 import org.egov.finance.inbox.model.request.SubSchemeRequest;
 import org.egov.finance.inbox.repository.SubSchemeRepository;
 import org.egov.finance.inbox.util.ApplicationThreadLocals;
 import org.egov.finance.inbox.util.CommonUtils;
-import org.egov.finance.inbox.util.ReportConstants;
+import org.egov.finance.inbox.util.InboxConstants;
 import org.egov.finance.inbox.validation.SchemeValidation;
 import org.egov.finance.inbox.validation.SubSchemeValidation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,8 +62,8 @@ public class SubSchemeService {
 		SchemeModel searchcriteria=new SchemeModel();
 		Map<String, String> errorMap = new HashMap<>();
 		if (!ObjectUtils.isEmpty(subSchemeModel.getId())) {
-			errorMap.put(ReportConstants.INVALID_ID_PASSED, ReportConstants.ID_CANNOT_BE_PASSED_IN_CREATION_MSG);
-			throw new ReportServiceException(errorMap);
+			errorMap.put(InboxConstants.INVALID_ID_PASSED, InboxConstants.ID_CANNOT_BE_PASSED_IN_CREATION_MSG);
+			throw new InboxServiceException(errorMap);
 		}
 		SubScheme subScheme = subSchemeValidation.modeltoEntity(subSchemeModel);
 		searchcriteria.setId(subSchemeModel.getScheme());
@@ -73,16 +73,16 @@ public class SubSchemeService {
 			subScheme.setScheme(schemeValidation.modelToEntity(schemsearch.get(0)));
 		}
 		else
-			errorMap.put(ReportConstants.INVALID_SCHEME_ID, ReportConstants.INVALID_SCHEME_ID_MSG);
+			errorMap.put(InboxConstants.INVALID_SCHEME_ID, InboxConstants.INVALID_SCHEME_ID_MSG);
 		
 		if(!CollectionUtils.isEmpty(errorMap))
-			throw new ReportServiceException(errorMap);
+			throw new InboxServiceException(errorMap);
 		
 		subSchemeValidation.subSchemeCreateCodeAndSchemIDValidation(subSchemeModel);
 		return subSchemeValidation.entitytoModel(subSchemeRepository.save(subScheme));
 	}
 
-	@Cacheable(value = ReportConstants.SUBSCHEME_SEARCH_REDIS_CACHE_NAME, keyGenerator = ReportConstants.SUBSCHEME_SEARCH_REDIS_KEY_GENERATOR)
+	@Cacheable(value = InboxConstants.SUBSCHEME_SEARCH_REDIS_CACHE_NAME, keyGenerator = InboxConstants.SUBSCHEME_SEARCH_REDIS_KEY_GENERATOR)
 	public List<SubSchemeModel> search(SubSchemeModel subSchemeModel) {
 		Specification<SubScheme> specification = subSchemeValidation.build(subSchemeModel);
 		
@@ -95,13 +95,13 @@ public class SubSchemeService {
 		SchemeModel searchcriteria=new SchemeModel();
 		SubScheme subSchemerequest = subSchemeValidation.modeltoEntity(subSchemeRequest.getSubSchemeRequest());
 		if (ObjectUtils.isEmpty(subSchemerequest.getId())) {
-			errorMap.put(ReportConstants.INVALID_ID_PASSED, ReportConstants.INVALID_ID_PASSED_MESSAGE);
-			throw new ReportServiceException(errorMap);
+			errorMap.put(InboxConstants.INVALID_ID_PASSED, InboxConstants.INVALID_ID_PASSED_MESSAGE);
+			throw new InboxServiceException(errorMap);
 		}
 
 		SubScheme subSchemeupdate = subSchemeRepository.findById(subSchemerequest.getId()).orElseThrow(() -> {
-			errorMap.put(ReportConstants.INVALID_ID_PASSED, ReportConstants.INVALID_ID_PASSED_MESSAGE);
-			throw new ReportServiceException(errorMap);
+			errorMap.put(InboxConstants.INVALID_ID_PASSED, InboxConstants.INVALID_ID_PASSED_MESSAGE);
+			throw new InboxServiceException(errorMap);
 		});
 		
 		searchcriteria.setId(subSchemeRequest.getSubSchemeRequest().getScheme());
@@ -128,7 +128,7 @@ public class SubSchemeService {
 		
 		
 		cacheEvictionService.incrementVersionForTenant(ApplicationThreadLocals.getTenantID(),
-				ReportConstants.SUBSCHEME_SEARCH_REDIS_CACHE_VERSION_KEY, ReportConstants.SUBSCHEME_SEARCH_REDIS_CACHE_NAME);
+				InboxConstants.SUBSCHEME_SEARCH_REDIS_CACHE_VERSION_KEY, InboxConstants.SUBSCHEME_SEARCH_REDIS_CACHE_NAME);
 		return subSchemeValidation.entitytoModel(subSchemeRepository.save(subSchemeupdate));
 		
 	}

@@ -13,8 +13,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.egov.finance.inbox.exception.ReportServiceException;
-import org.egov.finance.inbox.util.ReportConstants;
+import org.egov.finance.inbox.exception.InboxServiceException;
+import org.egov.finance.inbox.util.InboxConstants;
 import org.springframework.stereotype.Service;
 
 import net.sf.jasperreports.engine.JREmptyDataSource;
@@ -32,9 +32,9 @@ public class JasperReportHelperService {
 		Map<String, String> error = new HashMap<>();
 		try (InputStream reportStream = this.getClass().getResourceAsStream(jasperPath)) {
 			if (reportStream == null) {
-				error.put(ReportConstants.JASPER_REPORT_TEMPLATE_NOT_FOUND_AT_PATH,
-						ReportConstants.JASPER_REPORT_TEMPLATE_NOT_FOUND_AT_PATH_MSG + jasperPath);
-				throw new ReportServiceException(error);
+				error.put(InboxConstants.JASPER_REPORT_TEMPLATE_NOT_FOUND_AT_PATH,
+						InboxConstants.JASPER_REPORT_TEMPLATE_NOT_FOUND_AT_PATH_MSG + jasperPath);
+				throw new InboxServiceException(error);
 			}
 			if (dataSource != null && !dataSource.isEmpty()) {
 				return JasperFillManager.fillReport(reportStream, paramMap, new JRBeanCollectionDataSource(dataSource));

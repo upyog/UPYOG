@@ -30,13 +30,13 @@ import org.egov.finance.inbox.entity.FinancialYear;
 import org.egov.finance.inbox.entity.Fund;
 import org.egov.finance.inbox.entity.Vouchermis;
 import org.egov.finance.inbox.exception.ApplicationRuntimeException;
-import org.egov.finance.inbox.exception.ReportServiceException;
+import org.egov.finance.inbox.exception.InboxServiceException;
 import org.egov.finance.inbox.model.BudgetReportEntry;
 import org.egov.finance.inbox.repository.BudgetGroupRepository;
 import org.egov.finance.inbox.repository.BudgetRepository;
 import org.egov.finance.inbox.util.BudgetReportQueryHelper;
 import org.egov.finance.inbox.util.CommonUtils;
-import org.egov.finance.inbox.util.ReportConstants;
+import org.egov.finance.inbox.util.InboxConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -98,21 +98,21 @@ public class BudgetService {
 
 	public BigDecimal getBudgetedAmtForYear(Map<String, Object> paramMap) {
 		Map<String, Object> params = new HashMap<>();
-		String deptCode = commonUtils.toStr(paramMap.get(ReportConstants.DEPTID));
-		Long functionid = commonUtils.toLong(paramMap.get(ReportConstants.FUNCTIONID));
-		Integer functionaryid = commonUtils.toInt(paramMap.get(ReportConstants.FUNCTIONARYID));
-		Integer schemeid = commonUtils.toInt(paramMap.get(ReportConstants.SCHEMEID));
-		Integer subschemeid = commonUtils.toInt(paramMap.get(ReportConstants.SUBSCHEMEID));
-		Long boundaryid = commonUtils.toLong(paramMap.get(ReportConstants.BOUNDARYID));
-		Integer fundid = commonUtils.toInt(paramMap.get(ReportConstants.FUNDID));
+		String deptCode = commonUtils.toStr(paramMap.get(InboxConstants.DEPTID));
+		Long functionid = commonUtils.toLong(paramMap.get(InboxConstants.FUNCTIONID));
+		Integer functionaryid = commonUtils.toInt(paramMap.get(InboxConstants.FUNCTIONARYID));
+		Integer schemeid = commonUtils.toInt(paramMap.get(InboxConstants.SCHEMEID));
+		Integer subschemeid = commonUtils.toInt(paramMap.get(InboxConstants.SUBSCHEMEID));
+		Long boundaryid = commonUtils.toLong(paramMap.get(InboxConstants.BOUNDARYID));
+		Integer fundid = commonUtils.toInt(paramMap.get(InboxConstants.FUNDID));
 		Long financialyearid = commonUtils.toLong(paramMap.get("financialyearid"));
 		List<BudgetGroup> budgetHeadList = (List<BudgetGroup>) paramMap.get("BUDGETHEADID");
 
 		if (financialyearid == null)
-			throw new ReportServiceException(Map.of("financialyearid", "Financial Year id is required"));
+			throw new InboxServiceException(Map.of("financialyearid", "Financial Year id is required"));
 
 		if (budgetHeadList == null || budgetHeadList.isEmpty())
-			throw new ReportServiceException(Map.of("budgetHeadList", "Budget Head list cannot be empty"));
+			throw new InboxServiceException(Map.of("budgetHeadList", "Budget Head list cannot be empty"));
 
 		String queryStr = budgetReportQueryHelper.prepareQueryForBudget(deptCode, functionid, functionaryid, schemeid,
 				subschemeid, boundaryid != null ? boundaryid.intValue() : null, fundid, params);
@@ -133,7 +133,7 @@ public class BudgetService {
 		List<BudgetDetail> result = typedQuery.getResultList();
 
 		if (result == null || result.isEmpty()) {
-			throw new ReportServiceException(Map.of("budget", "No matching budget found for given parameters"));
+			throw new InboxServiceException(Map.of("budget", "No matching budget found for given parameters"));
 		}
 
 		return getApprovedAmt(result);
@@ -158,33 +158,33 @@ public class BudgetService {
 	}
 
 	public BigDecimal getBillAmountForBudgetCheck(final Map<String, Object> paramMap) {
-		String deptCode = (String) paramMap.get(ReportConstants.DEPTID);
-		Long functionid = (Long) paramMap.get(ReportConstants.FUNCTIONID);
-		Integer functionaryid = (Integer) paramMap.get(ReportConstants.FUNCTIONARYID);
-		Integer schemeid = (Integer) paramMap.get(ReportConstants.SCHEMEID);
-		Integer subschemeid = (Integer) paramMap.get(ReportConstants.SUBSCHEMEID);
-		Long boundaryid = (Long) paramMap.get(ReportConstants.BOUNDARYID);
-		Integer fundid = (Integer) paramMap.get(ReportConstants.FUNDID);
-		Long glcodeid = (Long) paramMap.get(ReportConstants.GLCODEID);
-		Date asondate = (Date) paramMap.get(ReportConstants.ASONDATE);
+		String deptCode = (String) paramMap.get(InboxConstants.DEPTID);
+		Long functionid = (Long) paramMap.get(InboxConstants.FUNCTIONID);
+		Integer functionaryid = (Integer) paramMap.get(InboxConstants.FUNCTIONARYID);
+		Integer schemeid = (Integer) paramMap.get(InboxConstants.SCHEMEID);
+		Integer subschemeid = (Integer) paramMap.get(InboxConstants.SUBSCHEMEID);
+		Long boundaryid = (Long) paramMap.get(InboxConstants.BOUNDARYID);
+		Integer fundid = (Integer) paramMap.get(InboxConstants.FUNDID);
+		Long glcodeid = (Long) paramMap.get(InboxConstants.GLCODEID);
+		Date asondate = (Date) paramMap.get(InboxConstants.ASONDATE);
 		Date fromdate = (Date) paramMap.get("fromdate");
 
 		if (asondate == null)
-			throw new ReportServiceException(Map.of("CHECKDATE", "As On Date is null"));
+			throw new InboxServiceException(Map.of("CHECKDATE", "As On Date is null"));
 
 		final FinancialYear finyear = masterCommonService.getFinancialYearByDate(asondate);
 		if (finyear == null)
-			throw new ReportServiceException(Map.of("CHECKDATE", "Financial year is not defined for this date"));
+			throw new InboxServiceException(Map.of("CHECKDATE", "Financial year is not defined for this date"));
 
 		fromdate = finyear.getStartingDate();
 		paramMap.put("financialyearid", finyear.getId());
 		paramMap.put("fromdate", fromdate);
-		paramMap.put(ReportConstants.ASONDATE, finyear.getEndingDate());
+		paramMap.put(InboxConstants.ASONDATE, finyear.getEndingDate());
 
 		final List<AppConfigValues> budgetGrouplist = masterCommonService
-				.getConfigValuesByModuleAndKey(ReportConstants.EGF, ReportConstants.BUDGETARY_CHECK_GROUPBY_VALUES);
+				.getConfigValuesByModuleAndKey(InboxConstants.EGF, InboxConstants.BUDGETARY_CHECK_GROUPBY_VALUES);
 		if (budgetGrouplist.isEmpty())
-			throw new ReportServiceException(
+			throw new InboxServiceException(
 					Map.of("CHECKDATE", "budgetaryCheck_groupby_values is not defined in AppConfig"));
 
 		final AppConfigValues appConfigValues = budgetGrouplist.get(0);
@@ -209,7 +209,7 @@ public class BudgetService {
 					"bmis.subScheme.id", "subschemeid", queryParams, Function.identity());
 			case "boundary" -> budgetReportQueryHelper.validateAndAppend(jpqlCondition, "Boundary", boundaryid,
 					"bmis.fieldid.id", "boundaryid", queryParams, Function.identity());
-			default -> throw new ReportServiceException(
+			default -> throw new InboxServiceException(
 					Map.of("CHECKDATE", "Unsupported budgetaryCheck_groupby_values value: " + value));
 			}
 		}
@@ -235,7 +235,7 @@ public class BudgetService {
 
 		if ((billAmount == null || billAmount.compareTo(BigDecimal.ZERO) == 0)
 				&& (cancelledBillAmount == null || cancelledBillAmount.compareTo(BigDecimal.ZERO) == 0)) {
-			throw new ReportServiceException(Map.of("budget", "No matching budget found for given parameters"));
+			throw new InboxServiceException(Map.of("budget", "No matching budget found for given parameters"));
 		}
 
 		return (billAmount != null ? billAmount : BigDecimal.ZERO).add(cancelledBillAmount);
@@ -292,17 +292,17 @@ public class BudgetService {
 			final CChartOfAccounts coa) {
 		final Map<String, Object> budgetDataMap = new HashMap<String, Object>();
 		budgetDataMap.put("financialyearid", financialYear.getId());
-		budgetDataMap.put(ReportConstants.DEPTID, cbill.getEgBillregistermis().getDepartmentcode());
+		budgetDataMap.put(InboxConstants.DEPTID, cbill.getEgBillregistermis().getDepartmentcode());
 		if (cbill.getEgBillregistermis().getFunctionaryid() != null)
-			budgetDataMap.put(ReportConstants.FUNCTIONARYID, cbill.getEgBillregistermis().getFunctionaryid().getId());
+			budgetDataMap.put(InboxConstants.FUNCTIONARYID, cbill.getEgBillregistermis().getFunctionaryid().getId());
 		if (cbill.getEgBillregistermis().getScheme() != null)
-			budgetDataMap.put(ReportConstants.SCHEMEID, cbill.getEgBillregistermis().getScheme().getId());
+			budgetDataMap.put(InboxConstants.SCHEMEID, cbill.getEgBillregistermis().getScheme().getId());
 		if (cbill.getEgBillregistermis().getSubScheme() != null)
-			budgetDataMap.put(ReportConstants.SUBSCHEMEID, cbill.getEgBillregistermis().getSubScheme().getId());
-		budgetDataMap.put(ReportConstants.FUNDID, cbill.getEgBillregistermis().getFund().getId());
-		budgetDataMap.put(ReportConstants.BOUNDARYID, cbill.getDivision());
-		budgetDataMap.put(ReportConstants.ASONDATE, cbill.getBilldate());
-		budgetDataMap.put(ReportConstants.FUNCTIONID, function.getId());
+			budgetDataMap.put(InboxConstants.SUBSCHEMEID, cbill.getEgBillregistermis().getSubScheme().getId());
+		budgetDataMap.put(InboxConstants.FUNDID, cbill.getEgBillregistermis().getFund().getId());
+		budgetDataMap.put(InboxConstants.BOUNDARYID, cbill.getDivision());
+		budgetDataMap.put(InboxConstants.ASONDATE, cbill.getBilldate());
+		budgetDataMap.put(InboxConstants.FUNCTIONID, function.getId());
 		budgetDataMap.put("fromdate", financialYear.getStartingDate());
 		budgetDataMap.put("glcode", coa.getGlcode());
 		budgetDataMap.put("glcodeid", coa.getId());
@@ -316,18 +316,18 @@ public class BudgetService {
 		List<BudgetGroup> bgList = null;
 		int majorCodeLnegth = Optional
 				.ofNullable(
-						masterCommonService.getConfigValuesByModuleAndKey(ReportConstants.EGF, "coa_majorcode_length"))
+						masterCommonService.getConfigValuesByModuleAndKey(InboxConstants.EGF, "coa_majorcode_length"))
 				.filter(x -> x != null).map(list -> Integer.valueOf(list.get(0).getValue())).orElseThrow(() -> {
-					errorMap.put(ReportConstants.FUNCTIONID, "coa_majorcode_length is not defined");
-					throw new ReportServiceException(errorMap);
+					errorMap.put(InboxConstants.FUNCTIONID, "coa_majorcode_length is not defined");
+					throw new InboxServiceException(errorMap);
 				});
 
 		int minorCodeLength = Optional
 				.ofNullable(
-						masterCommonService.getConfigValuesByModuleAndKey(ReportConstants.EGF, "coa_minorcode_length"))
+						masterCommonService.getConfigValuesByModuleAndKey(InboxConstants.EGF, "coa_minorcode_length"))
 				.filter(x -> x != null).map(list -> Integer.valueOf(list.get(0).getValue())).orElseThrow(() -> {
-					errorMap.put(ReportConstants.FUNCTIONID, "coa_majorcode_length is not defined");
-					throw new ReportServiceException(errorMap);
+					errorMap.put(InboxConstants.FUNCTIONID, "coa_majorcode_length is not defined");
+					throw new InboxServiceException(errorMap);
 
 				});
 		bgList = budgetGroupRepository.findEligibleBudgetGroups(glcode);
@@ -343,8 +343,8 @@ public class BudgetService {
 			return bgList;
 
 		// need to change all the Exception
-		errorMap.put(ReportConstants.FUNCTIONID, "Budget Check failed: Budget not defined for the given combination.");
-		throw new ReportServiceException(errorMap);
+		errorMap.put(InboxConstants.FUNCTIONID, "Budget Check failed: Budget not defined for the given combination.");
+		throw new InboxServiceException(errorMap);
 	}
 
 	private BigDecimal getApprovedAmt(final List<BudgetDetail> bdList) {
@@ -390,23 +390,23 @@ public class BudgetService {
 	}
 
 	public BigDecimal getActualBudgetUtilizedForBudgetaryCheck(final Map<String, Object> paramMap) {
-		Date asondate = (Date) paramMap.get(ReportConstants.ASONDATE);
+		Date asondate = (Date) paramMap.get(InboxConstants.ASONDATE);
 		if (asondate == null)
-			throw new ReportServiceException(Map.of("CHECKDATE", "As On Date is null"));
+			throw new InboxServiceException(Map.of("CHECKDATE", "As On Date is null"));
 
 		FinancialYear finyear = masterCommonService.getFinancialYearByDate(asondate);
 		if (finyear == null)
-			throw new ReportServiceException(Map.of("CHECKDATE", "Financial year is not defined for this date"));
+			throw new InboxServiceException(Map.of("CHECKDATE", "Financial year is not defined for this date"));
 
 		Date fromdate = finyear.getStartingDate();
 		paramMap.put("financialyearid", finyear.getId());
 		paramMap.put("fromdate", fromdate);
-		paramMap.put(ReportConstants.ASONDATE, finyear.getEndingDate());
+		paramMap.put(InboxConstants.ASONDATE, finyear.getEndingDate());
 
-		List<AppConfigValues> budgetGrouplist = masterCommonService.getConfigValuesByModuleAndKey(ReportConstants.EGF,
-				ReportConstants.BUDGETARY_CHECK_GROUPBY_VALUES);
+		List<AppConfigValues> budgetGrouplist = masterCommonService.getConfigValuesByModuleAndKey(InboxConstants.EGF,
+				InboxConstants.BUDGETARY_CHECK_GROUPBY_VALUES);
 		if (budgetGrouplist.isEmpty())
-			throw new ReportServiceException(
+			throw new InboxServiceException(
 					Map.of("CONFIG", "budgetaryCheck_groupby_values is not defined in AppConfig"));
 
 		String[] values = StringUtils.split(budgetGrouplist.get(0).getValue(), ",");
@@ -416,48 +416,48 @@ public class BudgetService {
 		for (String value : values) {
 			switch (value.trim()) {
 			case "department" -> budgetReportQueryHelper.validateAndAppend(query, "Department",
-					paramMap.get(ReportConstants.DEPTID), "vmis.departmentcode", "deptCode", params, Object::toString);
+					paramMap.get(InboxConstants.DEPTID), "vmis.departmentcode", "deptCode", params, Object::toString);
 			case "function" ->
-				budgetReportQueryHelper.validateAndAppend(query, "Function", paramMap.get(ReportConstants.FUNCTIONID),
+				budgetReportQueryHelper.validateAndAppend(query, "Function", paramMap.get(InboxConstants.FUNCTIONID),
 						"gl.functionId", "functionid", params, Function.identity());
 			case "functionary" -> budgetReportQueryHelper.validateAndAppend(query, "Functionary",
-					paramMap.get(ReportConstants.FUNCTIONARYID), "vmis.functionary", "functionaryid", params,
+					paramMap.get(InboxConstants.FUNCTIONARYID), "vmis.functionary", "functionaryid", params,
 					Function.identity());
 			case "fund" -> budgetReportQueryHelper.validateAndAppend(query, "Fund",
-					paramMap.get(ReportConstants.FUNDID), "vh.fundId", "fundid", params, Function.identity());
+					paramMap.get(InboxConstants.FUNDID), "vh.fundId", "fundid", params, Function.identity());
 			case "scheme" -> budgetReportQueryHelper.validateAndAppend(query, "Scheme",
-					paramMap.get(ReportConstants.SCHEMEID), "vmis.schemeid", "schemeid", params, Function.identity());
+					paramMap.get(InboxConstants.SCHEMEID), "vmis.schemeid", "schemeid", params, Function.identity());
 			case "subscheme" ->
-				budgetReportQueryHelper.validateAndAppend(query, "Subscheme", paramMap.get(ReportConstants.SUBSCHEMEID),
+				budgetReportQueryHelper.validateAndAppend(query, "Subscheme", paramMap.get(InboxConstants.SUBSCHEMEID),
 						"vmis.subschemeid", "subschemeid", params, Function.identity());
 			case "boundary" ->
-				budgetReportQueryHelper.validateAndAppend(query, "Boundary", paramMap.get(ReportConstants.BOUNDARYID),
+				budgetReportQueryHelper.validateAndAppend(query, "Boundary", paramMap.get(InboxConstants.BOUNDARYID),
 						"vmis.divisionid", "boundaryid", params, Function.identity());
-			default -> throw new ReportServiceException(
+			default -> throw new InboxServiceException(
 					Map.of("CONFIG", "Unsupported budgetaryCheck_groupby_values value: " + value));
 			}
 		}
 
 		String glcode = (String) paramMap.get("glcode");
 		if (StringUtils.isBlank(glcode))
-			throw new ReportServiceException(Map.of("GLCODE", "Glcode is null"));
+			throw new InboxServiceException(Map.of("GLCODE", "Glcode is null"));
 
 		query.append(" and gl.glcode=:glcode");
 		params.put("glcode", glcode);
 
 		CChartOfAccounts coa = masterCommonService.getCChartOfAccountsByGlCode(glcode);
 		if (coa == null)
-			throw new ReportServiceException(Map.of("GLCODE", "ChartOfAccounts not found for glcode: " + glcode));
+			throw new InboxServiceException(Map.of("GLCODE", "ChartOfAccounts not found for glcode: " + glcode));
 
 		String select = ("I".equalsIgnoreCase(coa.getType().toString())
 				|| "L".equalsIgnoreCase(coa.getType().toString()))
 						? "SELECT SUM(gl.creditAmount) - SUM(gl.debitAmount) "
 						: "SELECT SUM(gl.debitAmount) - SUM(gl.creditAmount) ";
 
-		List<AppConfigValues> statusConfig = masterCommonService.getConfigValuesByModuleAndKey(ReportConstants.EGF,
+		List<AppConfigValues> statusConfig = masterCommonService.getConfigValuesByModuleAndKey(InboxConstants.EGF,
 				"exclude_status_forbudget_actual");
 		if (statusConfig.isEmpty())
-			throw new ReportServiceException(
+			throw new InboxServiceException(
 					Map.of("CONFIG", "exclude_status_forbudget_actual is not defined in AppConfig"));
 
 		StringBuilder queryString = new StringBuilder(select)
@@ -558,23 +558,23 @@ public class BudgetService {
 		final Vouchermis mis = voucher.getVouchermis();
 
 		budgetDataMap.put("financialyearid", financialYear.getId());
-		budgetDataMap.put(ReportConstants.DEPTID, mis.getDepartmentcode());
+		budgetDataMap.put(InboxConstants.DEPTID, mis.getDepartmentcode());
 
 		if (mis.getFunctionary() != null)
-			budgetDataMap.put(ReportConstants.FUNCTIONARYID, mis.getFunctionary().getId());
+			budgetDataMap.put(InboxConstants.FUNCTIONARYID, mis.getFunctionary().getId());
 
 		if (mis.getSchemeid() != null)
-			budgetDataMap.put(ReportConstants.SCHEMEID, mis.getSchemeid().getId());
+			budgetDataMap.put(InboxConstants.SCHEMEID, mis.getSchemeid().getId());
 
 		if (mis.getSubschemeid() != null)
-			budgetDataMap.put(ReportConstants.SUBSCHEMEID, mis.getSubschemeid().getId());
+			budgetDataMap.put(InboxConstants.SUBSCHEMEID, mis.getSubschemeid().getId());
 
 		if (voucher.getFundId() != null)
-			budgetDataMap.put(ReportConstants.FUNDID, voucher.getFundId().getId());
+			budgetDataMap.put(InboxConstants.FUNDID, voucher.getFundId().getId());
 
-		budgetDataMap.put(ReportConstants.BOUNDARYID, mis.getDivisionid());
-		budgetDataMap.put(ReportConstants.ASONDATE, voucher.getVoucherDate());
-		budgetDataMap.put(ReportConstants.FUNCTIONID, function.getId());
+		budgetDataMap.put(InboxConstants.BOUNDARYID, mis.getDivisionid());
+		budgetDataMap.put(InboxConstants.ASONDATE, voucher.getVoucherDate());
+		budgetDataMap.put(InboxConstants.FUNCTIONID, function.getId());
 		budgetDataMap.put("fromdate", financialYear.getStartingDate());
 		budgetDataMap.put("glcode", coa.getGlcode());
 		budgetDataMap.put("glcodeid", coa.getId());

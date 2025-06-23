@@ -9,7 +9,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 import org.egov.finance.inbox.customannotation.SafeHtml;
-import org.egov.finance.inbox.util.ReportConstants;
+import org.egov.finance.inbox.util.InboxConstants;
 import org.hibernate.validator.constraints.Length;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -29,13 +29,13 @@ public class FundModel {
 	private Long id;
 
 	@Length(max = 50, min = 2)
-	@SafeHtml(message = ReportConstants.INVALID_TEXT_CONTAINS_HTML_TAGS_MSG)
+	@SafeHtml(message = InboxConstants.INVALID_TEXT_CONTAINS_HTML_TAGS_MSG)
 	@NotNull
 	@JsonProperty("name")
 	private String name;
 
 	@Length(max = 50, min = 2)
-	@SafeHtml(message = ReportConstants.INVALID_TEXT_CONTAINS_HTML_TAGS_MSG)
+	@SafeHtml(message = InboxConstants.INVALID_TEXT_CONTAINS_HTML_TAGS_MSG)
 	@NotNull
 	private String code;
 
