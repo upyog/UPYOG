@@ -1,6 +1,9 @@
 package org.egov.finance.master.entity;
 
 import java.io.Serializable;
+import java.util.Date;
+import java.util.List;
+import java.util.Set;
 
 import org.hibernate.validator.constraints.Length;
 
@@ -15,11 +18,17 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+@Getter
+@Setter
+@AllArgsConstructor
 @Entity
 @Table(name = "VOUCHERMIS")
-@Data
 @SequenceGenerator(name = "SEQ_VOUCHERMIS", sequenceName = "SEQ_VOUCHERMIS", allocationSize = 1)
 public class Vouchermis extends AuditDetailswithVersion {
 

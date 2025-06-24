@@ -4,12 +4,18 @@ package org.egov.pt.repository;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -18,10 +24,12 @@ import org.egov.common.contract.request.RequestInfo;
 import org.egov.pt.models.Appeal;
 import org.egov.pt.models.AppealCriteria;
 import org.egov.pt.models.AuditDetails;
+import org.egov.pt.models.Data;
 import org.egov.pt.models.EncryptionCount;
 import org.egov.pt.models.OwnerInfo;
 import org.egov.pt.models.Property;
 import org.egov.pt.models.PropertyCriteria;
+import org.egov.pt.models.WardwithTanent;
 import org.egov.pt.models.user.User;
 import org.egov.pt.models.user.UserDetailResponse;
 import org.egov.pt.models.user.UserSearchRequest;
@@ -29,6 +37,7 @@ import org.egov.pt.models.PropertyAudit;
 import org.egov.pt.models.PropertyBifurcation;
 import org.egov.pt.repository.builder.PropertyQueryBuilder;
 import org.egov.pt.repository.rowmapper.AppealRowMapper;
+import org.egov.pt.repository.rowmapper.DashboardRowmapper;
 import org.egov.pt.repository.rowmapper.EncryptionCountRowMapper;
 import org.egov.pt.repository.rowmapper.OpenPropertyRowMapper;
 import org.egov.pt.repository.rowmapper.PropertyAuditRowMapper;
@@ -37,6 +46,7 @@ import org.egov.pt.repository.rowmapper.PropertyRowMapper;
 import org.egov.pt.repository.rowmapper.PropertyAuditEncRowMapper;
 import org.egov.pt.service.UserService;
 import org.egov.pt.util.PropertyUtil;
+import org.egov.pt.web.contracts.DashboardDataRequest;
 import org.egov.pt.web.contracts.PropertyRequest;
 import org.json.JSONObject;
 import org.postgresql.util.PGobject;
@@ -53,6 +63,7 @@ import org.springframework.util.ObjectUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ser.std.DateSerializer;
 import com.google.common.collect.Sets;
 
 @Slf4j
@@ -301,6 +312,64 @@ public class PropertyRepository {
 		return count;
 	}
 	
+	public List<WardwithTanent> getTotalapplicationwithward()
+	{
+		return jdbcTemplate.query(PropertyQueryBuilder.TOTAL_APPLICATION_COUNT_WITH_WARD, new DashboardRowmapper());
+	}
+	
+	public List<WardwithTanent> getTotalapplicationwitAssessment()
+	{
+		return jdbcTemplate.query(PropertyQueryBuilder.TOTAL_ASSESMENT_COUNT_WITH_WARD, new DashboardRowmapper());
+	}
+	
+	public List<WardwithTanent> getTotalapplicationwitClosed()
+	{
+		return jdbcTemplate.query(PropertyQueryBuilder.TOTAL_PROPERTY_CLOSED_COUNT_WITH_WARD, new DashboardRowmapper());
+	}
+	public List<WardwithTanent> getTotalapplicationwithPaid()
+	{
+		return jdbcTemplate.query(PropertyQueryBuilder.TOTAL_PROPERTY_PAID_COUNT_WITH_WARD, new DashboardRowmapper());
+	}
+	public List<WardwithTanent> getTotalapplicationApproved()
+	{
+		return jdbcTemplate.query(PropertyQueryBuilder.TOTAL_PROPERTY_APPROVED_WITH_WARD, new DashboardRowmapper());
+	}
+	public List<WardwithTanent> getTotalapplicationwithMoved()
+	{
+		return jdbcTemplate.query(PropertyQueryBuilder.TOTAL_MOVED_APPLICATION_COUNT_WITH_WARD, new DashboardRowmapper());
+	}
+	public List<WardwithTanent> getTotalpropertyRegistered()
+	{
+		return jdbcTemplate.query(PropertyQueryBuilder.TOTAL_PROPERTY_REGISTERED_COUNT_WITH_WARD, new DashboardRowmapper());
+	}
+	public List<WardwithTanent> getTotalAssedproperties()
+	{
+		return jdbcTemplate.query(PropertyQueryBuilder.TOTAL_ASSEDPROPERTIES_COUNT_WITH_WARD, new DashboardRowmapper());
+	}
+	public List<WardwithTanent> getTotaltransactionCount()
+	{
+		return jdbcTemplate.query(PropertyQueryBuilder.TOTAL_TRANSACTIONS_COUNT_WITH_WARD, new DashboardRowmapper());
+	}
+	public List<WardwithTanent> getTotaltodaysCollection()
+	{
+		return jdbcTemplate.query(PropertyQueryBuilder.TOTAL_TODAYS_COLLECTION_WITH_WARD, new DashboardRowmapper());
+	}
+	public List<WardwithTanent> getTotalpropertyCount()
+	{
+		return jdbcTemplate.query(PropertyQueryBuilder.TOTAL_PROPERTY_COUNT_WITH_WARD, new DashboardRowmapper());
+	}
+	public List<WardwithTanent> getTotalrebateCollection()
+	{
+		return jdbcTemplate.query(PropertyQueryBuilder.TOTAL_REBATE_COLLECTION_WITH_WARD, new DashboardRowmapper());
+	}
+	public List<WardwithTanent> getTotalpenaltyCollection()
+	{
+		return jdbcTemplate.query(PropertyQueryBuilder.TOTAL_PENALTY_COLLECTED_WITH_WARD, new DashboardRowmapper());
+	}
+	public List<WardwithTanent> getTotalinterestCollection()
+	{
+		return jdbcTemplate.query(PropertyQueryBuilder.TOTAL_INTEREST_COLLECTED_WITH_WARD, new DashboardRowmapper());
+	}
 	private void addToPreparedStatement(List<Object> preparedStmtList, Set<String> ids) {
 		ids.forEach(id -> {
 			preparedStmtList.add(id);
@@ -373,6 +442,45 @@ public class PropertyRepository {
 				;
 			}
 		});
+	}
+	
+	@Transactional
+	public void savedashbordDatalog(DashboardDataRequest dashboardDataRequest,String exception)
+	{
+
+		LocalDate currentDate = LocalDate.now();
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+		String formattedDate = currentDate.format(formatter);
+		ZonedDateTime zonedDateTime = ZonedDateTime.now(ZoneId.of("Asia/Kolkata"));
+		String timeString = zonedDateTime.format(DateTimeFormatter.ofPattern("HH:mm:ss"));
+		String date=(!CollectionUtils.isEmpty(dashboardDataRequest.getDatas()))?dashboardDataRequest.getDatas().get(0).getDate():formattedDate;
+		String requestjson = null;
+		try {
+		    requestjson = mapper.writeValueAsString(dashboardDataRequest);
+		} catch (JsonProcessingException e) {
+		    e.printStackTrace();
+		}
+
+		final String exception_message = exception;
+		final String status = Optional.ofNullable(dashboardDataRequest.getDatas())
+		    .filter(data -> !data.isEmpty())
+		    .map(data -> exception == null ? "SUCCESS" : "FAILED")
+		    .orElse("NODATA");
+
+		final String finalRequestJson = requestjson; 
+
+		jdbcTemplate.update(PropertyQueryBuilder.INSERT_DASHBOARD_DATA_LOG, new PreparedStatementSetter() {
+		    @Override
+		    public void setValues(PreparedStatement ps) throws SQLException {
+		        ps.setString(1, date);
+		        ps.setString(2, timeString);
+		        ps.setString(3, finalRequestJson);
+		        ps.setString(4, null);
+		        ps.setString(5, status);
+		        ps.setString(6, exception_message);
+		    }
+		});
+
 	}
 	
 	public List<Appeal> getAppeal(AppealCriteria appealCriteria) {

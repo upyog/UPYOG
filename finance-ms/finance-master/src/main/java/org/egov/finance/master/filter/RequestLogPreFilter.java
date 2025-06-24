@@ -6,10 +6,15 @@
 package org.egov.finance.master.filter;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 import org.egov.finance.master.config.filter.CachedBodyHttpServletRequest;
 import org.egov.finance.master.model.RequestInfo;
 import org.egov.finance.master.util.ApplicationThreadLocals;
+import org.egov.finance.master.util.CommonUtils;
 import org.egov.finance.master.util.MasterConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -30,10 +35,12 @@ import lombok.extern.slf4j.Slf4j;
 public class RequestLogPreFilter implements Filter {
 
 	private ObjectMapper mapper;
+	private CommonUtils commonUtils;
 
 	@Autowired
-	public RequestLogPreFilter(ObjectMapper mapper) {
+	public RequestLogPreFilter(ObjectMapper mapper,CommonUtils commonUtils) {
 		this.mapper = mapper;
+		this.commonUtils=commonUtils;
 	}
 
 	@Override
@@ -50,9 +57,16 @@ public class RequestLogPreFilter implements Filter {
 			JsonNode reqInfoNode = root.get(MasterConstants.REQUEST_INFO);
 			if (reqInfoNode != null && !reqInfoNode.isNull()) {
 				RequestInfo reqInfo = mapper.treeToValue(reqInfoNode, RequestInfo.class);
-				String schema = (reqInfo.getTenantId().split(MasterConstants.REQUEST_TENANT_SPLIT_REGEX)[1].isBlank()
-						? null
-						: reqInfo.getTenantId().split(MasterConstants.REQUEST_TENANT_SPLIT_REGEX)[1]);
+				List<String> masterNames = new ArrayList<>(Arrays.asList("tenants"));
+				Map<String, List<String>> codes = commonUtils.getAttributeValues("mn", "tenant", masterNames,
+						"[?(@.city.name)].city.districtTenantCode", "$.MdmsRes.tenant");
+				List<String> cities = codes.get("tenants");
+				cities.add("mn.demo");//as we using demo for testing
+				String schema = null;
+				if (cities.contains(reqInfo.getTenantId())) {
+				    String[] parts = reqInfo.getTenantId().split(MasterConstants.REQUEST_TENANT_SPLIT_REGEX);
+				    schema = (parts.length > 1 && !parts[1].isBlank()) ? parts[1] : null;
+				}
 				ApplicationThreadLocals.setTenantID(schema);
 			}
 

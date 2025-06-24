@@ -15,7 +15,7 @@ import lombok.Data;
 
 @Table(name="financial_institution")
 @Entity
-@SequenceGenerator(name = FinancialYear.SEQ, sequenceName = FinancialYear.SEQ, allocationSize = 1)
+@SequenceGenerator(name = FinancingInstitution.SEQ, sequenceName = FinancingInstitution.SEQ, allocationSize = 1)
 @Data
 public class FinancingInstitution implements Serializable{
 
