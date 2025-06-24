@@ -6,8 +6,9 @@ import java.util.Set;
 
 import org.egov.finance.voucher.customannotation.SafeHtml;
 import org.egov.finance.voucher.entity.AuditDetailswithVersion;
-import org.egov.finance.voucher.model.StateModel.StateStatus;
 import org.hibernate.validator.constraints.Length;
+
+import com.google.gson.Gson;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -27,12 +28,18 @@ import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.Data;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name = "EG_WF_STATES")
 @SequenceGenerator(name = State.SEQ_STATE, sequenceName = State.SEQ_STATE, allocationSize = 1)
-@Data
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class State extends AuditDetailswithVersion {
 
     public static final String SEQ_STATE = "SEQ_EG_WF_STATES"; // Moved up and made public
@@ -63,7 +70,7 @@ public class State extends AuditDetailswithVersion {
     @Column(name = "OWNER_USER")
     private Long ownerUser;
 
-    @OneToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, fetch = FetchType.LAZY, mappedBy = "state", targetEntity = StateHistory.class)
+    @OneToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, fetch = FetchType.EAGER, mappedBy = "state", targetEntity = StateHistory.class)
     @OrderBy("id")
     private Set<StateHistory> history = new HashSet<>();
 
@@ -112,4 +119,29 @@ public class State extends AuditDetailswithVersion {
     private String desgCode;
     @Transient
     private String desgName;
+    
+    protected void addStateHistory(final StateHistory history) {
+		getHistory().add(history);
+	}
+    
+    public enum StateStatus {
+		STARTED, INPROGRESS, ENDED
+	}
+    
+    public boolean isInprogress() {
+		return status.equals(StateStatus.INPROGRESS);
+	}
+
+	public boolean isEnded() {
+		return status.equals(StateStatus.ENDED);
+	}
+	
+	public <S> S extraInfoAs(Class<S> type) {
+		return new Gson().fromJson(getExtraInfo(), type);
+		
+	}
+	
+	  public boolean isNew() {
+	        return null == getId();
+	    }
 }

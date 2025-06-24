@@ -79,8 +79,7 @@ public interface VoucherConstant {
 	public static final String TRANSACTION_DATE = "Transaction date";
 	public static final String ALLOWNEGETIVE = "allow Negetive Amount In Budget";
 	public static final String BILLNUMBER = "billnumber";
-	
-	
+	public static final String END = "END";	
 	public static final String EXCEPTION_FROM_VOUCHER_SERVICE_MSG = "Exception From VOUCHER Service---- {}";
 
 }

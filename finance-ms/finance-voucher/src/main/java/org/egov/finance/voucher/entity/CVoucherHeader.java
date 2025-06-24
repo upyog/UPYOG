@@ -28,11 +28,15 @@ import jakarta.persistence.TemporalType;
 import jakarta.persistence.Transient;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
 @Table(name = "voucherheader")
+@Setter
+@Getter
 @SequenceGenerator(name = CVoucherHeader.SEQ_VOUCHERHEADER, sequenceName = CVoucherHeader.SEQ_VOUCHERHEADER, allocationSize = 1)
-@Data
+
 public class CVoucherHeader extends StateAware implements Serializable {
 
 	public static final String SEQ_VOUCHERHEADER = "SEQ_VOUCHERHEADER";
@@ -100,9 +104,9 @@ public class CVoucherHeader extends StateAware implements Serializable {
 	@Transient
 	private String voucherNumberPrefix;
 	@Transient
-	private List<org.egov.finance.voucher.entity.CGeneralLedger> accountDetails = new ArrayList<>();
+	private List<CGeneralLedger> accountDetails = new ArrayList<>();
 	@Transient
-	private List<org.egov.finance.voucher.entity.CGeneralLedgerDetail> subLedgerDetails = new ArrayList<>();
+	private List<CGeneralLedgerDetail> subLedgerDetails = new ArrayList<>();
 	@Transient
 	private String partyName;
 	@Transient
@@ -123,4 +127,9 @@ public class CVoucherHeader extends StateAware implements Serializable {
 	private String voucherNumType;
 	@Transient
 	private String fiscalName;
+	
+	@Override
+    public String getStateDetails() {
+        return getState().getComments().isEmpty() ? voucherNumber : voucherNumber + "-" + getState().getComments();
+    }
 }
