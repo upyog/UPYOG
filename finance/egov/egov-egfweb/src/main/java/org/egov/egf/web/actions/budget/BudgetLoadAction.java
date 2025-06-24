@@ -130,9 +130,15 @@ public class BudgetLoadAction extends BaseFormAction {
     private static final int DEPARTMENTCODE_CELL_INDEX = 1;
     private static final int FUNCTIONCODE_CELL_INDEX = 2;
     private static final int GLCODE_CELL_INDEX = 3;
-    private static final int REAMOUNT_CELL_INDEX = 4;
-    private static final int BEAMOUNT_CELL_INDEX = 5;
-    private static final int PLANNINGPERCENTAGE_CELL_INDEX = 6;
+    private static final int REAMOUNT_CELL_INDEX = 6;
+    private static final int BEAMOUNT_CELL_INDEX = 7;
+    private static final int PLANNINGPERCENTAGE_CELL_INDEX = 11;
+    private static final int MAJORCODE_CELL_INDEX = 4;
+    private static final int MINORCODE_CELL_INDEX = 5;
+    private static final int LASTYEARBUDGET_CELL_INDEX = 8;
+    private static final int CURRENTBUDGET_CELL_INDEX = 9;
+    private static final int PERCENTAGECHANGE_CELL_INDEX = 10;
+
     private boolean errorInMasterData = false;
     private boolean isBudgetUploadFileEmpty = true;
     private MultipartFile[] originalFile = new MultipartFile[1];
@@ -544,7 +550,7 @@ public class BudgetLoadAction extends BaseFormAction {
             wb.getNumberOfSheets();
             final HSSFSheet sheet = wb.getSheetAt(0);
             HSSFRow row = sheet.getRow(3);
-            HSSFCell cell = row.createCell(7);
+            HSSFCell cell = row.createCell(12);
             cell.setCellValue("Error Reason");
             cell.setAsActiveCell();
             HSSFCellStyle cellStyle = wb.createCellStyle();
@@ -559,7 +565,7 @@ public class BudgetLoadAction extends BaseFormAction {
             for (int i = DATA_STARTING_ROW_INDEX; i <= sheet.getLastRowNum(); i++) {
                 HSSFRow errorRow = sheet.getRow(i);
                 if(!isRowEmpty(errorRow)){
-                    HSSFCell errorCell = errorRow.createCell(7);
+                    HSSFCell errorCell = errorRow.createCell(12);
                     String fundCode = getStrValue(sheet.getRow(i).getCell(FUNDCODE_CELL_INDEX));
                     fundCode = fundCode != null ? fundCode : "";
                     String funcCode = getStrValue(sheet.getRow(i).getCell(FUNCTIONCODE_CELL_INDEX));
@@ -623,7 +629,7 @@ public class BudgetLoadAction extends BaseFormAction {
             Map<String, String> finalStatusMap = new HashMap<String, String>();
 
             HSSFRow row = sheet.getRow(3);
-            HSSFCell cell = row.createCell(7);
+            HSSFCell cell = row.createCell(12);
             cell.setCellValue("Status");
 
             for (BudgetUpload budget : budgetUploadList)
@@ -633,7 +639,7 @@ public class BudgetLoadAction extends BaseFormAction {
 
             for (int i = DATA_STARTING_ROW_INDEX; i <= sheet.getLastRowNum(); i++) {
                 HSSFRow finalStatusRow = sheet.getRow(i);
-                HSSFCell finalStatusCell = finalStatusRow.createCell(7);
+                HSSFCell finalStatusCell = finalStatusRow.createCell(12);
                 finalStatusCell.setCellValue(finalStatusMap.get((getStrValue(sheet.getRow(i).getCell(FUNDCODE_CELL_INDEX)) + "-"
                         + getStrValue(sheet.getRow(i).getCell(FUNCTIONCODE_CELL_INDEX)) + "-"
                         + getStrValue(sheet.getRow(i).getCell(DEPARTMENTCODE_CELL_INDEX)) + "-" + getStrValue(sheet.getRow(i)
@@ -845,6 +851,16 @@ public class BudgetLoadAction extends BaseFormAction {
                         .getCell(FUNCTIONCODE_CELL_INDEX)));
                 budget.setBudgetHead(getStrValue(row.getCell(GLCODE_CELL_INDEX)) == null ? "" : getStrValue(row
                         .getCell(GLCODE_CELL_INDEX)));
+                budget.setMajorCode(getStrValue(row.getCell(MAJORCODE_CELL_INDEX)) == null ? "" : getStrValue(row
+                        .getCell(MAJORCODE_CELL_INDEX)));
+                budget.setMajorCode(getStrValue(row.getCell(MINORCODE_CELL_INDEX)) == null ? "" : getStrValue(row
+                        .getCell(MINORCODE_CELL_INDEX)));
+                budget.setMajorCode(getStrValue(row.getCell(LASTYEARBUDGET_CELL_INDEX)) == null ? "" : getStrValue(row
+                        .getCell(LASTYEARBUDGET_CELL_INDEX)));
+                budget.setMajorCode(getStrValue(row.getCell(CURRENTBUDGET_CELL_INDEX)) == null ? "" : getStrValue(row
+                        .getCell(CURRENTBUDGET_CELL_INDEX)));
+                budget.setMajorCode(getStrValue(row.getCell(PERCENTAGECHANGE_CELL_INDEX)) == null ? "" : getStrValue(row
+                        .getCell(PERCENTAGECHANGE_CELL_INDEX)));                
                 budget.setReAmount(BigDecimal.valueOf(Long.valueOf(getStrValue(row.getCell(REAMOUNT_CELL_INDEX)) == null ? "0"
                         : getStrValue(row.getCell(REAMOUNT_CELL_INDEX)))));
                 budget.setBeAmount(BigDecimal.valueOf(Long.valueOf(getStrValue(row.getCell(BEAMOUNT_CELL_INDEX)) == null ? "0"
