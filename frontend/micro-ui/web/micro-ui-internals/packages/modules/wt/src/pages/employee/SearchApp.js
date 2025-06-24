@@ -80,6 +80,7 @@ const SearchApp = ({path,moduleCode}) => {
                 onSubmit={onSubmit} 
                 data={isSuccess && !isLoading ? (searchResult.length > 0 ? searchResult : { display: "ES_COMMON_NO_DATA" }) : ""} 
                 count={count} 
+                moduleCode={moduleCode}
             />
             {showToast && (
                 <Toast

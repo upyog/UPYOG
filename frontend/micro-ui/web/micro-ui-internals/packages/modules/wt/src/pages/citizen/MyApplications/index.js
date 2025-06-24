@@ -161,7 +161,10 @@ export const WTMyApplications = () => {
               <CardLabel>{t("SERVICE_TYPE")}</CardLabel>
               <Dropdown
                 selected={serviceOptions.find((option) => option.code === tempServiceType)}
-                select={(option) => setTempServiceType(option.code)} // Temporary state update
+                select={(option) => {
+                  setTempServiceType(option.code);
+                  setStatus("");
+                }}
                 option={serviceOptions}
                 placeholder={t("Select Service Type")}
                 optionKey="label"
