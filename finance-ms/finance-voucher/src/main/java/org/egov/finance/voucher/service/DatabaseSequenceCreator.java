@@ -1,5 +1,6 @@
 package org.egov.finance.voucher.service;
 
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import jakarta.persistence.EntityManager;
@@ -11,7 +12,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import static java.lang.String.format;
 
-@Service
+@Component
 public class DatabaseSequenceCreator {
 
 	private static final String CREATE_SEQ_QUERY = "CREATE SEQUENCE IF NOT EXISTS %s";
