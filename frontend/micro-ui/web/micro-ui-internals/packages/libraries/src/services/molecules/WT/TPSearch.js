@@ -54,6 +54,36 @@ export const TPSearch = {
           { title: "ADDRESS_LINE2", value: response?.address?.addressLine2  || t("CS_NA")}
         ],
       },
+      {
+        title: "TP_REQUEST_DETAILS",
+        asSectionHeader: true,
+        values: [
+          { title: t("REASON_FOR_PRUNING"), value: t(response?.reasonForPruning) || t("CS_NA") },
+          { title: t("LATITUDE_GEOTAG"), value: response?.latitude || t("CS_NA") },
+          { title: t("LONGITUDE_GEOTAG"), value: response?.longitude  || t("CS_NA") },
+        ],
+      },
+      {
+        title: "SITE_PHOTOGRAPH",
+        additionalDetails: {
+          
+          documents: [
+            {
+             
+              values: response?.documentDetails
+                ?.map((document) => {
+
+                  return {
+                    title: `${document?.documentType?.split('.').slice(0,2).join('_')}`,
+                    documentType: document?.documentType,
+                    documentUid: document?.documentDetailId,
+                    fileStoreId: document?.fileStoreId
+                  };
+                }),
+            },
+          ],
+        },
+      },
     ];
   },
   /*  

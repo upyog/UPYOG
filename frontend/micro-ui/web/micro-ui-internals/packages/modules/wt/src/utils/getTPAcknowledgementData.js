@@ -1,4 +1,3 @@
-import { convertTo12HourFormat,formatDate } from "./index";
 const capitalize = (text) => text.substr(0, 1).toUpperCase() + text.substr(1);
 const ulbCamel = (ulb) => ulb.toLowerCase().split(" ").map(capitalize).join(" ");
 
@@ -52,7 +51,7 @@ const getTPAcknowledgementData = async (booking, tenantInfo, t) => {
         title: t("TP_REQUEST_DETAILS"),
         asSectionHeader: true,
         values: [
-          { title: t("REASON_FOR_PRUNING"), value: booking?.reasonForPruning },
+          { title: t("REASON_FOR_PRUNING"), value: t(booking?.reasonForPruning) },
           { title: t("LATITUDE_GEOTAG"), value: booking?.latitude },
           { title: t("LONGITUDE_GEOTAG"), value: booking?.longitude },
           

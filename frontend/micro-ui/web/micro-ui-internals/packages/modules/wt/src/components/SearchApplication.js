@@ -22,7 +22,7 @@
  * @param {Function} props.setShowToast - Function to control toast messages.
  */
 
-  const WTSearchApplication = ({tenantId, isLoading, t, onSubmit, data, count, setShowToast }) => {
+  const WTSearchApplication = ({tenantId, isLoading, t, onSubmit, data, count, setShowToast, moduleCode }) => {
     
       const isMobile = window.Digit.Utils.browser.isMobile();
       const { register, control, handleSubmit, setValue, getValues, reset, formState } = useForm({
@@ -101,6 +101,40 @@
           { i18nKey: "Vendor Assigned", code: "ASSIGN_VENDOR", value: t("WT_ASSIGN_VENDOR") },
           { i18nKey: "Rejected", code: "REJECT", value: t("WT_BOOKING_REJECTED") }
         ];
+
+        const statusOptionForTreePruning = [
+          {
+            i18nKey: "TP_BOOKING_CREATED",
+            code: "TP_BOOKING_CREATED",
+            value: t("TP_BOOKING_CREATED")
+          },
+          {
+            i18nKey: "TP_PENDING_FOR_APPROVAL",
+            code: "TP_PENDING_FOR_APPROVAL",
+            value: t("TP_PENDING_FOR_APPROVAL")
+          },
+          {
+            i18nKey: "TP_PAYMENT_PENDING",
+            code: "TP_PAYMENT_PENDING",
+            value: t("TP_PAYMENT_PENDING")
+          },
+          {
+            i18nKey: "TP_TEAM_ASSIGNMENT_FOR_VERIFICATION",
+            code: "TP_TEAM_ASSIGNMENT_FOR_VERIFICATION",
+            value: t("TP_TEAM_ASSIGNMENT_FOR_VERIFICATION")
+          },
+          {
+            i18nKey: "TP_TEAM_ASSIGNMENT_FOR_EXECUTION",
+            code: "TP_TEAM_ASSIGNMENT_FOR_EXECUTION",
+            value: t("TP_TEAM_ASSIGNMENT_FOR_EXECUTION")
+          },
+          {
+            i18nKey: "TP_TREE_PRUNING_SERVICE_COMPLETED",
+            code: "TP_TREE_PRUNING_SERVICE_COMPLETED",
+            value: t("TP_TREE_PRUNING_SERVICE_COMPLETED")
+          }
+        ];
+                
       const onSort = useCallback((args) => {
           if (args.length === 0) return
           setValue("sortBy", args.id)
@@ -150,7 +184,7 @@
                                   selected={props.value}
                                   select={props.onChange}
                                   onBlur={props.onBlur}
-                                  option={statusOptions}
+                                  option={moduleCode==="TP"? statusOptionForTreePruning : statusOptions}
                                   optionKey="i18nKey"
                                   t={t}
                                   disable={false}

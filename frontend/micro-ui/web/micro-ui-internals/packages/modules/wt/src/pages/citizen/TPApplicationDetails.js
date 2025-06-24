@@ -178,12 +178,11 @@ import {
                   <Row className="border-none" label={t("LANDMARK")} text={tp_details?.address?.landmark || t("CS_NA")} />
                 </StatusTable>
       
-                <CardSubHeader style={{ fontSize: "24px" }}>{t("ES_REQUEST_DETAILS")}</CardSubHeader>
+                <CardSubHeader style={{ fontSize: "24px" }}>{t("TP_REQUEST_DETAILS")}</CardSubHeader>
                 <StatusTable>
-                  <Row className="border-none" label={t("REASON_FOR_PRUNING")} text={tp_details?.reasonForPruning || t("CS_NA")} />
+                  <Row className="border-none" label={t("REASON_FOR_PRUNING")} text={t(tp_details?.reasonForPruning) || t("CS_NA")} />
                   <Row className="border-none" label={t("LATITUDE_GEOTAG")} text={tp_details?.latitude || t("CS_NA")} />
                   <Row className="border-none" label={t("LONGITUDE_GEOTAG")} text={tp_details?.longitude || t("CS_NA")} />
-                  <Row className="border-none" label={t("UPLOAD_THE_SITE_PHOTOGRAPH")} text={tp_details?.documentDetails[0]?.fileStoreId || t("CS_NA")} />
                 </StatusTable>
       
                 <WFApplicationTimeline application={application} id={application?.bookingNo} userType={"citizen"} />
