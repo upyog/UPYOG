@@ -188,4 +188,15 @@ public class Action extends AuditDetailswithVersion {
     public boolean hasRole(Role role) {
         return this.getRoles().contains(role);
     }
+    
+    @Override
+    public Long getId() {
+        return id;
+    }
+
+    @Override
+    public void setId(final Long id) {
+        this.id = id;
+    }
+
 }

@@ -21,7 +21,7 @@ public class Functionary extends AuditDetailswithVersion {
 
 	@Id
 	@GeneratedValue(generator = "seq_functionary", strategy = GenerationType.SEQUENCE)
-	private Integer id;
+	private Long id;
 
 	private BigDecimal code;
 

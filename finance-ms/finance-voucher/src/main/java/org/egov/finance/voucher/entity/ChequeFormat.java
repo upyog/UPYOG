@@ -38,4 +38,15 @@ public class ChequeFormat extends AuditDetailswithVersion {
     private Double amountLength;
     private String amountCoordinate;
     private boolean formatStatus;
+    
+    @Override
+    public Long getId() {
+        return id;
+    }
+
+    @Override
+    public void setId(final Long id) {
+        this.id = id;
+    }
+
 }

@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.egov.finance.voucher.entity.AbstractPersistable;
 import org.egov.finance.voucher.entity.AuditDetailswithVersion;
 import org.egov.finance.voucher.exception.ApplicationRuntimeException;
 import org.egov.finance.voucher.model.StateInfoBuilder;
@@ -37,9 +38,11 @@ public abstract class StateAware extends AuditDetailswithVersion {
 
     private static final long serialVersionUID = 5776408218810221246L;
     
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+	/*
+	 * @Id
+	 * 
+	 * @GeneratedValue(strategy = GenerationType.IDENTITY) private Long id;
+	 */
 
     @ManyToOne(targetEntity = State.class, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "STATE_ID")
@@ -61,9 +64,9 @@ public abstract class StateAware extends AuditDetailswithVersion {
      * To set the Group Link, Any State Aware Object which needs Grouping should override this method
      **/
  
-    public String myLinkId() {
-        return getId().toString();
-    }
+	
+	// public String myLinkId() { return getId().toString(); }
+	 
 
     @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
     public State getState() {

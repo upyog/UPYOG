@@ -110,4 +110,14 @@ public class AppConfigValues extends AuditDetailswithVersion {
     public int hashCode() {
         return Objects.hash(id, value);
     }
+    @Override
+    public Long getId() {
+        return id;
+    }
+
+    @Override
+    public void setId(final Long id) {
+        this.id = id;
+    }
+
 }

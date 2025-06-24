@@ -140,5 +140,16 @@ public class User extends AuditDetailswithVersion {
 
 	@Transient
 	private String uuid;
+	
+	 @Override
+	    public Long getId() {
+	        return id;
+	    }
+
+	    @Override
+	    public void setId(final Long id) {
+	        this.id = id;
+	    }
+
 
 }

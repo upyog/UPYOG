@@ -29,9 +29,13 @@ import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
 import jakarta.validation.constraints.NotNull;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
 @Table(name = "EGF_BUDGETDETAIL")
+@Getter
+@Setter
 @SequenceGenerator(name = SEQ_BUDGETDETAIL, sequenceName = SEQ_BUDGETDETAIL, allocationSize = 1)
 public class BudgetDetail extends StateAware {
     public static final String SEQ_BUDGETDETAIL = "SEQ_EGF_BUDGETDETAIL";
@@ -228,15 +232,11 @@ public class BudgetDetail extends StateAware {
         this.budgetGroup = budgetGroup;
     }
 
-    @Override
-    public Long getId() {
-        return id;
-    }
-
-    @Override
-    public void setId(final Long id) {
-        this.id = id;
-    }
+	/*
+	 * @Override public Long getId() { return id; }
+	 * 
+	 * @Override public void setId(final Long id) { this.id = id; }
+	 */
 
     public BigDecimal getOriginalAmount() {
         return originalAmount;
@@ -427,11 +427,9 @@ public class BudgetDetail extends StateAware {
         this.planningPercent = planningPercent;
     }
 
-    @Override
-    public String myLinkId() {
-        return getBudget().getId().toString();
-    }
-
+	/*
+	 * @Override public String myLinkId() { return getBudget().getId().toString(); }
+	 */
     public void setWfState(final State state) {
         //Won't work
     }

@@ -37,7 +37,7 @@ public class EgBilldetails extends AuditDetailswithVersion implements Serializab
 
     @Id
     @GeneratedValue(generator = SEQ_EG_BILLDETAILS, strategy = GenerationType.SEQUENCE)
-    private Integer id;
+    private Long id;
 
     @ManyToOne
     @JoinColumn(name = "billid")
@@ -71,7 +71,7 @@ public class EgBilldetails extends AuditDetailswithVersion implements Serializab
     public EgBilldetails() {
     }
 
-    public EgBilldetails(final Integer id, final EgBillregister egBillregister,
+    public EgBilldetails(final Long id, final EgBillregister egBillregister,
             final BigDecimal glcodeid, final Date lastupdatedtime) {
         this.id = id;
         this.egBillregister = egBillregister;
@@ -79,7 +79,7 @@ public class EgBilldetails extends AuditDetailswithVersion implements Serializab
         this.lastupdatedtime = lastupdatedtime;
     }
 
-    public EgBilldetails(final Integer id, final EgBillregister egBillregister,
+    public EgBilldetails(final Long id, final EgBillregister egBillregister,
             final BigDecimal functionid, final BigDecimal glcodeid, final BigDecimal debitamount,
             final BigDecimal creditamount, final Date lastupdatedtime, final Set<EgBillPayeedetails> egBillPaydetailes,
             final String narration) {

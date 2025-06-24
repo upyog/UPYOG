@@ -131,4 +131,16 @@ public class Role extends AuditDetailswithVersion {
     public int hashCode() {
         return Objects.hash(getName());
     }
+    
+    @Override
+    public Long getId() {
+        return id;
+    }
+
+    @Override
+    public void setId(final Long id) {
+        this.id = id;
+    }
+
 }
+

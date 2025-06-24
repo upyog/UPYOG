@@ -21,7 +21,7 @@ import lombok.EqualsAndHashCode;
 @EntityListeners(AuditingEntityListener.class)
 @Data
 @EqualsAndHashCode(callSuper = false)
-public abstract class AuditDetailswithoutVersion implements Serializable {
+public abstract class AuditDetailswithoutVersion extends  AbstractPersistable<Long> implements Serializable {
 
 	private static final long serialVersionUID = -1904617415925139035L;
 	

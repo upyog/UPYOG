@@ -24,7 +24,11 @@ import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
 import jakarta.validation.constraints.NotNull;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 @Entity
 @Table(name = "EGF_BUDGET")
 @SequenceGenerator(name = SEQ_BUDGET, sequenceName = SEQ_BUDGET, allocationSize = 1)
@@ -86,15 +90,11 @@ public class Budget extends StateAware {
     private String searchBere;
 
 
-    @Override
-    public Long getId() {
-        return id;
-    }
-
-    @Override
-    public void setId(final Long id) {
-        this.id = id;
-    }
+	/*
+	 * @Override public Long getId() { return id; }
+	 * 
+	 * @Override public void setId(final Long id) { this.id = id; }
+	 */
 
     public Budget getParent() {
         return parent;
@@ -218,10 +218,9 @@ public class Budget extends StateAware {
         this.documentNumber = documentNumber;
     }
 
-    @Override
-    public String myLinkId() {
-        return getId().toString();
-    }
+	/*
+	 * @Override public String myLinkId() { return getId().toString(); }
+	 */
 
     public EgwStatus getStatus() {
         return status;

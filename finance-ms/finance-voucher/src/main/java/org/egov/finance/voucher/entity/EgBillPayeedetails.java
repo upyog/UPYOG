@@ -33,7 +33,7 @@ public class EgBillPayeedetails extends AuditDetailswithVersion implements Seria
 
 	    @Id
 	    @GeneratedValue(generator = SEQ_EG_BILLPAYEEDETAILS, strategy = GenerationType.SEQUENCE)
-	    private Integer id;
+	    private Long id;
 
 	    @ManyToOne
 	    @JoinColumn(name = "billdetailid")

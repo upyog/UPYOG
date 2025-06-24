@@ -17,8 +17,11 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
+import lombok.Getter;
+import lombok.Setter;
 
-
+@Getter
+@Setter
 @Entity
 @Table(name = "egf_budget_reappropriation")
 @SequenceGenerator(name = SEQ_BUDGETAPPRO, sequenceName = SEQ_BUDGETAPPRO, allocationSize = 1)
