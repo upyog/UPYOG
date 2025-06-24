@@ -393,7 +393,7 @@
 			const expectedEndYearShort = (startYear + 1) % 100;
 
 			if (endYearShort !== expectedEndYearShort) {
-				errorMsg.textContent = "Year range must be one year apart: e.g. 2024-25";
+				errorMsg.textContent = "Please provide valid Financial Year e.g. 2024-25";
 				errorMsg.style.display = "block";
 				input.setCustomValidity("Year range invalid");
 				submitBtn.disabled = true;
@@ -689,12 +689,12 @@
 
             <!-- Hide Enter Manually Section Button -->
             <center>
-                <button type="button" id="hideEnterManuallyButton" onclick="hideEnterManually()" class="btn btn-secondary" style="display:none;">Upload Budget File</button>
+                <button type="button" id="hideEnterManuallyButton" onclick="hideEnterManually()" class="buttonsubmit" style="display:none;">Upload Budget File</button>
             </center>
 
             <!-- Enter Manually Button -->
             <center>
-                <button type="button" id="enterManuallyButton" onclick="showEnterManually()" class="btn btn-primary">Enter Manually</button>
+                <button type="button" id="enterManuallyButton" onclick="showEnterManually()" class="buttonsubmit">Enter Manually</button>
             </center>
 
 		</div>
