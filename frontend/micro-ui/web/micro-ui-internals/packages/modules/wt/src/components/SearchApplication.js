@@ -105,32 +105,32 @@
         const statusOptionForTreePruning = [
           {
             i18nKey: "TP_BOOKING_CREATED",
-            code: "TP_BOOKING_CREATED",
+            code: "BOOKING_CREATED",
             value: t("TP_BOOKING_CREATED")
           },
           {
             i18nKey: "TP_PENDING_FOR_APPROVAL",
-            code: "TP_PENDING_FOR_APPROVAL",
+            code: "PENDING_FOR_APPROVAL",
             value: t("TP_PENDING_FOR_APPROVAL")
           },
           {
             i18nKey: "TP_PAYMENT_PENDING",
-            code: "TP_PAYMENT_PENDING",
+            code: "PAYMENT_PENDING",
             value: t("TP_PAYMENT_PENDING")
           },
           {
             i18nKey: "TP_TEAM_ASSIGNMENT_FOR_VERIFICATION",
-            code: "TP_TEAM_ASSIGNMENT_FOR_VERIFICATION",
+            code: "TEAM_ASSIGNMENT_FOR_VERIFICATION",
             value: t("TP_TEAM_ASSIGNMENT_FOR_VERIFICATION")
           },
           {
             i18nKey: "TP_TEAM_ASSIGNMENT_FOR_EXECUTION",
-            code: "TP_TEAM_ASSIGNMENT_FOR_EXECUTION",
+            code: "TEAM_ASSIGNMENT_FOR_EXECUTION",
             value: t("TP_TEAM_ASSIGNMENT_FOR_EXECUTION")
           },
           {
             i18nKey: "TP_TREE_PRUNING_SERVICE_COMPLETED",
-            code: "TP_TREE_PRUNING_SERVICE_COMPLETED",
+            code: "TREE_PRUNING_SERVICE_COMPLETED",
             value: t("TP_TREE_PRUNING_SERVICE_COMPLETED")
           }
         ];

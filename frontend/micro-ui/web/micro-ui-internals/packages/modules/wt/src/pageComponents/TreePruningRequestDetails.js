@@ -8,6 +8,7 @@ const TreePruningRequestDetails = ({ t, config, onSelect, userType, formData }) 
   const [longitude, setLongitude] = useState("");
   const [geoTagLocation, setGeoTagLocation] = useState(formData?.treePruningRequestDetails?.geoTagLocation || "");
   const [supportingDocumentFile, setSupportingDocumentFile] = useState(formData?.treePruningRequestDetails?.supportingDocumentFile || "");
+  const [isUploading, setIsUploading] = useState(false);
   const [uploadError, setUploadError] = useState("");
   const tenantId = Digit.ULBService.getStateId();
 
@@ -28,7 +29,7 @@ const TreePruningRequestDetails = ({ t, config, onSelect, userType, formData }) 
     if (userType === "citizen") {
       goNext();
     }
-  }, [reasonOfPruning, geoTagLocation, supportingDocumentFile]);
+  }, [reasonOfPruning, geoTagLocation, supportingDocumentFile, isUploading]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target ? e.target : { name: e.name, value: e };
@@ -47,6 +48,7 @@ const TreePruningRequestDetails = ({ t, config, onSelect, userType, formData }) 
       setError("supportingDocument", { message: t("CS_MAXIMUM_UPLOAD_SIZE_EXCEEDED") }); // Set error for supportingDocument
       setFileStoreId(null); // Clear previous successful upload
     } else {
+      setIsUploading(true);
       //setError("supportingDocument", { message: "" }); // Clear any previous errors
       Digit.UploadServices.Filestorage("TP", file, Digit.ULBService.getStateId())
         .then((response) => {
@@ -57,7 +59,8 @@ const TreePruningRequestDetails = ({ t, config, onSelect, userType, formData }) 
             setError("supportingDocument", { message: t("CS_FILE_UPLOAD_ERROR") });
           }
         })
-        .catch(() => setError("supportingDocument", { message: t("CS_FILE_UPLOAD_ERROR") }));
+        .catch(() => setError("supportingDocument", { message: t("CS_FILE_UPLOAD_ERROR") }))
+        .finally(() => setIsUploading(false));
     }
   };
   const fetchCurrentLocation = () => {
@@ -79,7 +82,10 @@ const TreePruningRequestDetails = ({ t, config, onSelect, userType, formData }) 
   }
 };
 
-
+  const LoadingSpinner = () => (
+    <div className="loading-spinner"
+    />
+  );
   return (
     <FormStep config={config} onSelect={goNext} t={t} isDisabled={!reasonOfPruning || !supportingDocumentFile}>
       <div>
@@ -140,9 +146,15 @@ const TreePruningRequestDetails = ({ t, config, onSelect, userType, formData }) 
             onUpload={(e) => handleFileUpload(e, setSupportingDocumentFile)}
             onDelete={() => {
               setSupportingDocumentFile(null);
-              props.onChange(null);
+             
             }}
-            message={supportingDocumentFile ? `1 ${t(`CS_ACTION_FILEUPLOADED`)}` : t(`CS_ACTION_NO_FILEUPLOADED`)}
+            message={isUploading ? (
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <LoadingSpinner />
+                <span>Uploading...</span>
+              </div>
+            ) : supportingDocumentFile ? "1 File Uploaded" : "No File Uploaded"}           
+            textStyles={{ width: "100%" }}
             accept="image/*, .pdf, .png, .jpeg, .jpg"
             buttonType="button"
             error={uploadError || !supportingDocumentFile}
