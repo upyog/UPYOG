@@ -13,7 +13,6 @@ import {
       import { useParams } from "react-router-dom";
       import get from "lodash/get";
       import WFApplicationTimeline from "../../pageComponents/WFApplicationTimeline";
-      import { convertTo12HourFormat, formatDate } from "../../utils";
       import getTPAcknowledgementData from "../../utils/getTPAcknowledgementData";
       /**
        * `TPApplicationDetails` is a React component that fetches and displays detailed information for a specific Mobile Toilet (MT) service application.
@@ -104,16 +103,6 @@ import {
           window.open(fileStore[fileStoreId], "_blank");
         }
       
-        const { isLoading: auditDataLoading, data: auditResponse } = Digit.Hooks.wt.useTreePruningSearchAPI(
-          {
-            tenantId,
-            filters: { bookingNo: tpId, audit: true },
-          },
-          {
-            enabled: true,
-          }
-        );
-      
         let dowloadOptions = [];
 
         dowloadOptions.push({
@@ -121,7 +110,7 @@ import {
           onClick: () => getAcknowledgementData(),
         });
       
-        if (isLoading || auditDataLoading) {
+        if (isLoading) {
           return <Loader />;
         }
 

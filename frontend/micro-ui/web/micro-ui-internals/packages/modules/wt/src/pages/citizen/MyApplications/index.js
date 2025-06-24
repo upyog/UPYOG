@@ -59,10 +59,19 @@ export const WTMyApplications = () => {
     setFilters(initialFilters);
   }, [filter]);
 
-  // Both hooks unconditionally
-  const { isLoading: isLoadingTanker, data: dataTanker } = Digit.Hooks.wt.useTankerSearchAPI({ filters });
-  const { isLoading: isLoadingToilet, data: dataToilet } = Digit.Hooks.wt.useMobileToiletSearchAPI({ filters });
-  const { isLoading: isLoadingTreePruning, data: dataTreePruning } = Digit.Hooks.wt.useTreePruningSearchAPI({ filters });
+  // Conditionally enable hooks based on service type
+  const { isLoading: isLoadingTanker, data: dataTanker } = Digit.Hooks.wt.useTankerSearchAPI(
+    { filters },
+    { enabled: !!filters && (serviceType === "watertanker") }
+  );
+  const { isLoading: isLoadingToilet, data: dataToilet } = Digit.Hooks.wt.useMobileToiletSearchAPI(
+    { filters },
+    { enabled: !!filters && (serviceType === "mobileToilet") }
+  );
+  const { isLoading: isLoadingTreePruning, data: dataTreePruning } = Digit.Hooks.wt.useTreePruningSearchAPI(
+    { filters },
+    { enabled: !!filters && (serviceType === "treePruning") }
+  );
 
   // Use the results conditionally based on the `serviceType`
   let isLoading = false;
