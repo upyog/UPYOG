@@ -68,7 +68,7 @@ const TPCard = () => {
       {
         count: total?.totalCount,
         label: t("ES_TITLE_INBOX"),
-        link: `${APPLICATION_PATH}/employee/tp/inbox`,
+        link: `${APPLICATION_PATH}/employee/wt/tp/inbox`,
       },
     ],
     links:links.filter(link=>!link?.role||TP_CEMP),
