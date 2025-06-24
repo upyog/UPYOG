@@ -8,7 +8,6 @@ import { useQuery, useQueryClient } from "react-query";
  * method to refetch data. The hook also allows for custom configurations 
  */
 const useTreePruningSearchAPI = ({ tenantId, filters, auth }, config = {}) => {
-  console.log("✅ useTreePruningSearchAPI called");
   const client = useQueryClient();
 
   const args = tenantId ? { tenantId, filters, auth } : { filters, auth };

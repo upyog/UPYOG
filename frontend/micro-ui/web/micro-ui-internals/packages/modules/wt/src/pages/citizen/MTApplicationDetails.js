@@ -103,16 +103,6 @@ import {
           window.open(fileStore[fileStoreId], "_blank");
         }
       
-        const { isLoading: auditDataLoading, data: auditResponse } = Digit.Hooks.wt.useMobileToiletSearchAPI(
-          {
-            tenantId,
-            filters: { bookingNo: mtId, audit: true },
-          },
-          {
-            enabled: true,
-          }
-        );
-      
         let dowloadOptions = [];
 
         dowloadOptions.push({
@@ -120,7 +110,7 @@ import {
           onClick: () => getAcknowledgementData(),
         });
       
-        if (isLoading || auditDataLoading) {
+        if (isLoading) {
           return <Loader />;
         }
 
