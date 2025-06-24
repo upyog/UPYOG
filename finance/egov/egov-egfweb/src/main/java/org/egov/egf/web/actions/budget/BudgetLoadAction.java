@@ -397,6 +397,11 @@ public class BudgetLoadAction extends BaseFormAction {
         upload.setDeptCode(manual.getDepartmentCode());
         upload.setFunctionCode(manual.getFunctionCode());
         upload.setBudgetHead(manual.getChartOfAccountCode());
+        upload.setMajorCode(manual.getMajorCode());
+        upload.setMinorCode(manual.getMinorCode());
+        upload.setLastYearApproved(manual.getLastYearApproved());
+        upload.setCurrentApproved(manual.getCurrentApproved());
+        upload.setPercentageChange(manual.getPercentageChange());
         upload.setReFinYear(reYear);
         upload.setBeFinYear(beYear);
 
@@ -471,7 +476,7 @@ public class BudgetLoadAction extends BaseFormAction {
 	        addActionError("Error processing budget data. Please verify the year or record details.");
 	        return "result";
 	    }
-	    LOG.info("-----------conversion of manual to budjet upload done-----------------");
+	    LOG.info("-----------conversion of manual to budget upload done-----------------");
 
 	    // Step 4: Validate against Master Data
 	    try {

@@ -2143,6 +2143,11 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
                     budgetDetail.setFund(budgetUpload.getFund());
                     budgetDetail.setFunction(budgetUpload.getFunction());
                     budgetDetail.setExecutingDepartment(budgetUpload.getDeptCode());
+                    budgetDetail.setMajorCode(budgetUpload.getMajorCode());
+                    budgetDetail.setMinorCode(budgetUpload.getMinorCode());     
+                    budgetDetail.setLastYearApproved(new BigDecimal(budgetUpload.getLastYearApproved()) );   
+                    budgetDetail.setCurrentApproved(new  BigDecimal(budgetUpload.getCurrentApproved()) );   
+                    budgetDetail.setPercentageChange(new BigDecimal(budgetUpload.getPercentageChange()) );   
                     budgetDetail.setAnticipatoryAmount(BigDecimal.ZERO);
                     budgetDetail.setPlanningPercent(BigDecimal.valueOf(budgetUpload.getPlanningPercentage()));
                     if (budgetType.equalsIgnoreCase(RE)) {
