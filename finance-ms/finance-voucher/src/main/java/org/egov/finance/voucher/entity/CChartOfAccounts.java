@@ -58,6 +58,7 @@ public class CChartOfAccounts extends AuditDetailswithVersion {
 	@Column(name = "description")
 	private String desc;
 
+	@Column(name = "isactiveforposting")
 	private Boolean isActiveForPosting;
 
 	private Long parentId;

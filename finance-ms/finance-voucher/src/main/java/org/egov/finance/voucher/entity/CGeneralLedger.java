@@ -9,6 +9,8 @@ import java.util.Set;
 import org.egov.finance.voucher.customannotation.SafeHtml;
 import org.hibernate.validator.constraints.Length;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -21,46 +23,46 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
-import jakarta.persistence.Temporal;
-import jakarta.persistence.TemporalType;
 import jakarta.persistence.Transient;
-import jakarta.validation.constraints.Digits;
 import jakarta.validation.constraints.NotNull;
-import lombok.Data;
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
 @Entity
 @Table(name = "generalledger")
-@SequenceGenerator(name = CGeneralLedger.SEQ_GENERALLEDGER, sequenceName = CGeneralLedger.SEQ_GENERALLEDGER, allocationSize = 1)
-@Data
-public class CGeneralLedger extends AuditDetailswithVersion {
-
-	public static final String SEQ_GENERALLEDGER = "seq_generalledger";
-	private static final long serialVersionUID = 1L;
+@SequenceGenerator(name = "seq_generalledger", sequenceName = "seq_generalledger", allocationSize = 1)
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+public class CGeneralLedger implements Serializable {
 
 	@Id
-	@GeneratedValue(generator = SEQ_GENERALLEDGER, strategy = GenerationType.SEQUENCE)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_generalledger")
 	private Long id;
 
 	@NotNull
 	private Integer voucherlineId;
 
-	@Temporal(TemporalType.DATE)
 	private Date effectiveDate;
 
-	@NotNull
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "glcodeid")
 	private CChartOfAccounts glcodeId;
 
-	@NotNull
 	@SafeHtml
+	@NotNull
 	@Length(max = 50)
 	private String glcode;
 
 	@NotNull
 	@Column(name = "debitamount", precision = 19, scale = 2)
 	private BigDecimal debitAmount;
-	
+
 	@NotNull
 	@Column(name = "creditamount", precision = 19, scale = 2)
 	private BigDecimal creditAmount;
@@ -74,7 +76,10 @@ public class CGeneralLedger extends AuditDetailswithVersion {
 
 	private Integer functionId;
 
-	@OneToMany(mappedBy = "generalLedgerId", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+	@OneToMany(mappedBy = "generalLedgerId", cascade = CascadeType.ALL, orphanRemoval = true)
+	@ToString.Exclude
+	@EqualsAndHashCode.Exclude
+	@JsonIgnore
 	private Set<CGeneralLedgerDetail> generalLedgerDetails = new HashSet<>();
 
 	@Transient

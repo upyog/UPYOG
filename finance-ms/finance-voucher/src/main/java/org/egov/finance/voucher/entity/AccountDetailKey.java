@@ -25,6 +25,9 @@ public class AccountDetailKey extends AuditDetailswithVersion {
 	@SequenceGenerator(name = "seq_accountdetailkey", sequenceName = "seq_accountdetailkey", allocationSize = 1)
 	private Long id;
 
+	private Integer groupid;
+	private String detailname;
+	private Integer detailkey;
 	@ManyToOne
 	@JoinColumn(name = "accountdetailtypeid")
 	private AccountDetailType accountDetailType;

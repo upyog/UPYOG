@@ -6,13 +6,15 @@
 package org.egov.finance.voucher.repository;
 
 import org.egov.finance.voucher.entity.Function;
-import org.egov.finance.voucher.entity.Fund;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface FunctionRepository extends JpaRepository<Function, Long> , JpaSpecificationExecutor<Function>{
+public interface FunctionRepository extends JpaRepository<Function, Long>, JpaSpecificationExecutor<Function> {
+
+	Function findByName(String name);
+
+	Function findByCode(String code);
 
 }
-

@@ -3,6 +3,7 @@ package org.egov.finance.voucher.model.response;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.egov.finance.voucher.entity.Voucher;
 import org.egov.finance.voucher.model.ResponseInfo;
 import org.egov.finance.voucher.model.VoucherModel;
 
@@ -20,7 +21,8 @@ import lombok.NoArgsConstructor;
 public class VoucherResponse {
 
 	@JsonProperty("Vouchers")
-	private List<VoucherModel> vouchers;
+	@Builder.Default
+	private List<Voucher> vouchers = new ArrayList<>(); // ✅ prevents null
 
 	@JsonProperty("ResponseInfo")
 	private ResponseInfo responseInfo;
