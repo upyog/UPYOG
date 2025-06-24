@@ -169,7 +169,7 @@ public class PropertySchedulerService {
 				for (JsonNode buildingEstablishmentYear : objectMapper.valueToTree(buildingEstablishmentYears)) {
 					if (ulbName.equalsIgnoreCase(buildingEstablishmentYear.get("ulbName").asText())
 							&& buildingEstablishmentYear.get("yearRange").asText()
-									.equalsIgnoreCase(unitAdditionalDetails.get("propYearOfCons").asText())) {
+									.equalsIgnoreCase(ulbName+"."+unitAdditionalDetails.get("propYearOfCons").asText())) {
 						ageFactor = new BigDecimal(buildingEstablishmentYear.get("rate").asText());
 					}
 				}
