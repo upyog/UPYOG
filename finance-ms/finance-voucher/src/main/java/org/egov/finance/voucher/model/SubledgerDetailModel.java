@@ -1,28 +1,24 @@
 package org.egov.finance.voucher.model;
 
 import org.egov.finance.voucher.entity.CGeneralLedgerDetail;
-import org.egov.finance.voucher.entity.SubledgerDetail;
-
-import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@NoArgsConstructor
 public class SubledgerDetailModel {
+
 	private Long id;
-	private Long accountDetailTypeId;
-	private Long accountDetailKeyId;
+	private Integer detailKeyId;
+	private String detailKeyName;
 	private Double amount;
+	private Long accountDetailTypeId;
 
-	public SubledgerDetailModel(final CGeneralLedgerDetail sub) {
-		this.id = sub.getId();
-		this.amount = sub.getAmount() != null ? sub.getAmount().doubleValue() : null;
-
-		if (sub.getDetailTypeId() != null) {
-			this.accountDetailTypeId = sub.getDetailTypeId().getId();
-		}
-
-		if (sub.getDetailKeyId() != null) {
-			this.accountDetailKeyId = sub.getDetailKeyId().longValue();
-		}
+	public SubledgerDetailModel(CGeneralLedgerDetail detail) {
+		this.id = detail.getId();
+		this.detailKeyId = detail.getDetailKeyId();
+		this.detailKeyName = detail.getDetailKeyName();
+		this.amount = detail.getAmount() != null ? detail.getAmount().doubleValue() : null;
+		this.accountDetailTypeId = detail.getDetailTypeId() != null ? detail.getDetailTypeId().getId() : null;
 	}
 }
