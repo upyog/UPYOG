@@ -20,8 +20,7 @@ const SelectPropertySubtype = ({ config, onSelect, t, userType, formData }) => {
   const [subtype, setSubtype] = useState();
 
   const [subtypeOptions, setSubtypeOptions] = useState([]);
-  console.log("propertyType",formData)
-  formData.propertyType = property?.usageCategory || formData.propertyType
+  
   const { propertyType } =formData || {};
 
   useEffect(() => {
@@ -39,7 +38,7 @@ const SelectPropertySubtype = ({ config, onSelect, t, userType, formData }) => {
   }, [propertyType, formData?.subtype, propertySubtypesData]);
 
   useEffect(() => {
-    console.log("propertyType2222",propertyType)
+    
     if (!propertySubtypesDataLoading && propertyType) {
     
       const subTypes = propertySubtypesData.filter((item) => item.propertyType === (propertyType?.code || propertyType));

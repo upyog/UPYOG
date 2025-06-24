@@ -105,6 +105,8 @@ const EditForm = ({ tenantId, applicationData, channelMenu, vehicleMenu, sanitat
         (formData?.address?.propertyLocation?.code === "FROM_GRAM_PANCHAYAT" &&
           (formData?.address?.gramPanchayat?.code || formData?.address?.additionalDetails?.gramPanchayat?.code))) &&
       formData?.tripData?.vehicleType &&
+      formData?.pitDetail?.diameter!==null &&
+      formData?.pitDetail?.height &&
       (formData?.tripData?.amountPerTrip || formData?.tripData?.amountPerTrip === 0)
     ) {
       setSubmitValve(true);
@@ -470,6 +472,7 @@ const EditForm = ({ tenantId, applicationData, channelMenu, vehicleMenu, sanitat
           },
           "type": "component",
           "key": "pitDetail",
+          "isMandatory":true,
           "nextStep": "select-payment-preference",
           "label": "ES_NEW_APPLICATION_PIT_DIMENSION"
         },

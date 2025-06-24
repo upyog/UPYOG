@@ -113,6 +113,23 @@ const PropertyOwnerDetails = ({ t, config, onSelect, userType, formData, formSta
   const formValue = watch();
 
   useEffect(() => {
+    if (ownershipCategory?.code === "INDIVIDUAL.MULTIPLEOWNERS") {
+      if (ownerDetails.length > 1) {
+        clearErrors("mulipleOwnerError");
+      } else if (ownerDetails.length === 1) {
+        setError("mulipleOwnerError", { type: "owner_missing", message: `TL_ERROR_MULTIPLE_OWNER` });
+      }
+    } else {
+      clearErrors("mulipleOwnerError");
+    }
+
+    const data = ownerDetails?.map((e) => {
+      return e;
+    });
+    onSelect(config?.key, data);
+  }, [ownerDetails, ownershipCategory, clearErrors, setError, onSelect]);
+
+  useEffect(() => {
     let hasErrors = false;
     const part = {};
     ownerDetails.map((own) => {
@@ -192,6 +209,9 @@ const PropertyOwnerDetails = ({ t, config, onSelect, userType, formData, formSta
               selected={value}
               option={dropdownData}
               select={(value) => {
+                if (value?.value.includes("INSTITUTIONAL")) {
+                  value.value = value.value.split('.')[0]; 
+                }
                 if (!value?.code?.includes("MULTIPLEOWNERS") && ownerDetails?.length > 1) {
                   setOwnerDetails([...ownerDetails.filter((own, ind) => ind == 0)]);
                 }
