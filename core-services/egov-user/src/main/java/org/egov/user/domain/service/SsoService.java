@@ -76,6 +76,8 @@ public class SsoService {
 			
 			User user = getUserFromSsoTokenResponse(hpSsoValidateTokenResponse);
 			
+            log.info("getUserFromSsoTokenResponse Request " +user.getMobileNumber(),user.getUsername());
+
 			// we can use this api for user's extra details
 //			List<User> userInDb = userService.searchUsers(UserSearchCriteria.builder().mobileNumber(user.getMobileNumber()).build(), false, null);
 //			if (CollectionUtils.isEmpty(userInDb)) {
@@ -84,6 +86,8 @@ public class SsoService {
 
 			checkAndCreateUserSso(hpSsoValidateTokenResponse, user);
 			
+            log.info("checkAndCreate Request" ,user.getUsername());
+
 //			do login;
 			Object loginResponse = userService.getLoginAccess(user, user.getPassword());
 			
@@ -179,11 +183,14 @@ public class SsoService {
 	private void checkAndCreateUserSso(HpSsoValidateTokenResponse hpSsoValidateTokenResponse, User user) {
 		// check ssoid exist
 		int count = userSsoRepository.getCountBySsoId(hpSsoValidateTokenResponse.getSsoId());
+        log.info("count of ids with sso mapping with ssoId "+hpSsoValidateTokenResponse.getSsoId() +" " + count, count);
+
 		// if ssoid not exist
 		if (count == 0) {
 			UserSearchCriteria searchCriteria = UserSearchCriteria.builder()
 					.type(UserType.CITIZEN)
 					.mobileNumber(user.getMobileNumber()).tenantId("hp").build();
+	        log.info("count of ids with sso mapping with ssoId "+user.getMobileNumber() + " "+ count, count);
 			List<User> userInDb = userService.searchUsers(searchCriteria, false, null);
 			User newUser;
 			if (CollectionUtils.isEmpty(userInDb)) {
