@@ -5,9 +5,7 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.egov.pt.models.WardwithTanent;
 import org.springframework.dao.DataAccessException;
@@ -31,7 +29,7 @@ public class DashboardRowmapper implements ResultSetExtractor<List<WardwithTanen
 			BigDecimal todayscollection=hasColumn(rs, "todayscollection")?rs.getBigDecimal("todayscollection"):BigDecimal.ZERO;
 			BigDecimal todayrebategiven=hasColumn(rs, "todayrebategiven")?rs.getBigDecimal("todayrebategiven"):BigDecimal.ZERO;
 			BigDecimal todaypenaltycollection=hasColumn(rs, "todaypenaltycollection")?rs.getBigDecimal("todaypenaltycollection"):BigDecimal.ZERO;
-			BigDecimal todayinterestcollection=hasColumn(rs, "todayinterstcollection")?rs.getBigDecimal("todayinterstcollection"):BigDecimal.ZERO;
+			BigDecimal todayinterestcollection=hasColumn(rs, "todayinterestcollection")?rs.getBigDecimal("todayinterestcollection"):BigDecimal.ZERO;
 			wardwithtanent.add(WardwithTanent.builder().count(count).WardNo(wardNo).Tanentid(tenantid).Action(action)
 					.Financiyalyear(financiyalyear).Usagecategory(usagecategory).TodaysCollection(todayscollection)
 					.Todayrebategiven(todayrebategiven).Todaypenaltycollection(todaypenaltycollection).Todayinterestcollection(todayinterestcollection).build());

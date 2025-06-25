@@ -108,10 +108,10 @@ public class InboxRenderServiceDelegate<T extends StateAware> {
 
     private List<T> getAssignedWorkflowItems(boolean draft) {
         List<T> workflowItems = new ArrayList<>();
-        List<Long> owners = currentUserPositionIds();
-//        List<Long> owners = new ArrayList<>();
-//        owners.add(4L);
-//        owners.add(1L);
+       // List<Long> owners = currentUserPositionIds();
+      List<Long> owners = new ArrayList<>();
+       owners.add(58L);
+      // owners.add(1L);
         if (!owners.isEmpty()) {
             List<String> types = stateService.getAssignedWorkflowTypeNames(owners);
             for (String type : types) {

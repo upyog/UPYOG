@@ -33,7 +33,7 @@ public class EgBillregistermis extends AuditDetailswithVersion implements Serial
 
 	    @Id
 	    @GeneratedValue(generator = SEQ_EG_BILLREGISTERMIS, strategy = GenerationType.SEQUENCE)
-	    private Integer id;
+	    private Long id;
 
 	    @ManyToOne
 	    @JoinColumn(name = "billid")
@@ -160,7 +160,7 @@ public class EgBillregistermis extends AuditDetailswithVersion implements Serial
 	    private Boolean budgetCheckReq = true;
 	    
 	    
-	    public EgBillregistermis(final Integer id, final EgBillregister egBillregister,
+	    public EgBillregistermis(final Long id, final EgBillregister egBillregister,
 	            final Date lastupdatedtime, final Date paybydate) {
 	        this.id = id;
 	        this.egBillregister = egBillregister;
@@ -168,7 +168,7 @@ public class EgBillregistermis extends AuditDetailswithVersion implements Serial
 	        this.paybydate = paybydate;
 	    }
 
-	    public EgBillregistermis(final Integer id, final EgBillregister egBillregister, final Function function,
+	    public EgBillregistermis(final Long id, final EgBillregister egBillregister, final Function function,
 	            final Fund fundid, final BigDecimal segmentid, final BigDecimal subsegmentid,
 	            final Boundary fieldid, final BigDecimal subfieldid,
 	            final Functionary functionaryid, final String sanctionedby, final Date sanctiondate,

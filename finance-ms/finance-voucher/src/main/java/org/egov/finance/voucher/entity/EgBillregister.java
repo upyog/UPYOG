@@ -165,4 +165,10 @@ public class EgBillregister extends StateAware implements java.io.Serializable {
 		this.egBilldetailes = egBilldetailes;
 		this.status = status;
 	}
+
+	@Override
+	public String getStateDetails() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

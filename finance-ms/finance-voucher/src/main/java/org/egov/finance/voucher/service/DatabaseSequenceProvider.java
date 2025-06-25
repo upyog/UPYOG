@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 import org.hibernate.Session;
 import org.hibernate.exception.SQLGrammarException;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,7 +13,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.Query;
 
-@Service
+@Component
 public class DatabaseSequenceProvider {
 
 	private static final String NEXT_SEQ_QUERY = "SELECT NEXTVAL (:sequenceName) AS NEXTVAL";

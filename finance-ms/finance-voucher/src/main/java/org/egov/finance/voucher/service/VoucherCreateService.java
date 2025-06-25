@@ -79,7 +79,9 @@ public class VoucherCreateService {
 						}
 					}
 				}
-
+				
+				
+				
 				CVoucherHeader voucherHeader = createVoucher.createVoucher(headerDetails, accountdetails,
 						subledgerDetails);
 				voucher.setId(voucherHeader.getId());

@@ -1,6 +1,5 @@
 package org.egov.pt.config.scheduler;
 
-import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -11,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.common.contract.request.User;
 import org.egov.pt.config.PropertyConfiguration;
 import org.egov.pt.dashboardservice.DashboardService;
 import org.egov.pt.models.AssessedProperties;
@@ -33,7 +33,15 @@ import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.util.CollectionUtils;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class DashboardDataPush implements Job {
 
@@ -48,6 +56,9 @@ public class DashboardDataPush implements Job {
 	@Autowired
 	PropertyRepository propertyRepository;
 
+	@Autowired
+	ObjectMapper objectMapper;
+	
 	public synchronized List<Data> dataPush() {
 		List<Data> propertyTaxPayloads = new ArrayList<Data>();
 		Map<String, String> parentMap = new HashMap<String, String>();
@@ -95,28 +106,28 @@ public class DashboardDataPush implements Job {
 				propertiesRegistered.setGroupBy("financialYear");
 				AssessedProperties assessedProperties = new AssessedProperties();
 				List<AssessedProperties> propertiesAssed = new ArrayList<AssessedProperties>();
-				assessedProperties.setGroupBy(PTConstants.MDMS_PT_USAGECATEGORY);
+				assessedProperties.setGroupBy("usageCategory");
 				Transactions transactions = new Transactions();
 				List<Transactions> transactionslist = new ArrayList<Transactions>();
-				transactions.setGroupBy(PTConstants.MDMS_PT_USAGECATEGORY);
+				transactions.setGroupBy("usageCategory");
 				TodaysCollection todaysCollection = new TodaysCollection();
 				List<TodaysCollection> todaysCollections = new ArrayList<TodaysCollection>();
-				todaysCollection.setGroupBy(PTConstants.MDMS_PT_USAGECATEGORY);
+				todaysCollection.setGroupBy("usageCategory");
 				PropertyTax propertyTax = new PropertyTax();
 				List<PropertyTax> propertyTaxs = new ArrayList<PropertyTax>();
-				propertyTax.setGroupBy(PTConstants.MDMS_PT_USAGECATEGORY);
+				propertyTax.setGroupBy("usageCategory");
 				Rebate rebate = new Rebate();
 				List<Rebate> rebates = new ArrayList<Rebate>();
-				rebate.setGroupBy(PTConstants.MDMS_PT_USAGECATEGORY);
+				rebate.setGroupBy("usageCategory");
 				Penalty penalty = new Penalty();
 				List<Penalty> penalties = new ArrayList<Penalty>();
-				penalty.setGroupBy(PTConstants.MDMS_PT_USAGECATEGORY);
+				penalty.setGroupBy("usageCategory");
 				Interest interest = new Interest();
 				List<Interest> interests = new ArrayList<Interest>();
-				interest.setGroupBy(PTConstants.MDMS_PT_USAGECATEGORY);
+				interest.setGroupBy("usageCategory");
 				propertyTaxPayload.setDate(formattedDate);
 				propertyTaxPayload.setModule(PTConstants.ASMT_MODULENAME);
-				propertyTaxPayload.setState(config.getStateLevelTenantId());
+				propertyTaxPayload.setState("Manipur");
 				String key = entry.getKey();
 				propertyTaxPayload.setWard(key.split("-")[0]);
 				propertyTaxPayload.setUlb(key.split("-")[1]);
@@ -261,7 +272,6 @@ public class DashboardDataPush implements Job {
 
 		}
 
-		System.out.println("propertyTaxPayloads::" + propertyTaxPayloads);
 		return propertyTaxPayloads;
 	}
 
@@ -269,13 +279,46 @@ public class DashboardDataPush implements Job {
 	public void execute(JobExecutionContext context) throws JobExecutionException {
 		List<Data> datas = dataPush();
 		RequestInfo requestInfo = new RequestInfo();
-		DashboardDataRequest dashboardDataRequest = DashboardDataRequest.builder().datas(datas).requestInfo(requestInfo)
+		authenticationdetails(requestInfo);
+		DashboardDataRequest dashboardDataRequest = DashboardDataRequest.builder().requestInfo(requestInfo).datas(datas)
 				.build();
+		Object response=new Object();
 		try {
-			// propertyRepository.savedashbordDatalog(dashboardDataRequest,null);
+			if(!CollectionUtils.isEmpty(datas))
+			{
+				response= restTemplate.postForEntity(config.getDashbordUserHost() + "/national-dashboard/metric/_ingest", dashboardDataRequest, Map.class).getBody();
+			}
+			System.out.println("response::"+response);
+			propertyRepository.savedashbordDatalog(dashboardDataRequest,response,null);
 		} catch (Exception e) {
-			// propertyRepository.savedashbordDatalog(dashboardDataRequest,e.getLocalizedMessage());
+			propertyRepository.savedashbordDatalog(dashboardDataRequest,response,e.getLocalizedMessage());
 		}
+	}
+
+	private void authenticationdetails(RequestInfo requestInfo) {
+		
+		HttpHeaders headers = new HttpHeaders();
+		List<MediaType> mediaTypes=new ArrayList<MediaType>();
+		mediaTypes.add(MediaType.APPLICATION_JSON);
+		mediaTypes.add(MediaType.TEXT_PLAIN);
+		headers.setAccept(mediaTypes);
+		headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+		headers.set("Authorization", "Basic ZWdvdi11c2VyLWNsaWVudDo=");
+		MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
+		map.add("username", "MN_NDA_USER");
+		map.add("password", "upyogTest@123");
+		map.add("grant_type", "password");
+		map.add("scope", "read");
+		map.add("tenantId", "pg");
+		map.add("userType", "SYSTEM");
+
+		HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<MultiValueMap<String, String>>(map,
+				headers);
+		Map<String, Object> response= restTemplate.postForEntity(config.getDashbordUserHost() + "/user/oauth/token", request, Map.class).getBody();
+		requestInfo.setApiId("asset-services");
+		requestInfo.setMsgId("search with from and to values");
+		requestInfo.setAuthToken(objectMapper.convertValue(response.get("access_token"),String.class));
+		requestInfo.setUserInfo(objectMapper.convertValue(response.get("UserRequest"), User.class));
 	}
 
 }

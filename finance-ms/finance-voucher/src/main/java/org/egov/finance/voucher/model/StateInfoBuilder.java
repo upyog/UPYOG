@@ -46,101 +46,96 @@
  *
  */
 
-package org.egov.finance.voucher.entity;
+package org.egov.finance.voucher.model;
 
-import static org.egov.finance.voucher.entity.Role.SEQ_ROLE;
+import com.google.gson.GsonBuilder;
 
-import java.util.Objects;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
 
-import org.egov.finance.voucher.customannotation.SafeHtml;
-import org.egov.finance.voucher.validation.Unique;
-import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.NotBlank;
-import org.springframework.data.jpa.domain.AbstractAuditable;
+public class StateInfoBuilder {
+    String refNum;
+    String refDate;
+    String task;
+    String citizenName;
+    String citizenPhoneno;
+    String citizenAddress;
+    String status;
+    String resolutionDate;
+    String location;
+    String sender;
+    String senderPhoneno;
+    String itemDetails;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.SequenceGenerator;
-import jakarta.persistence.Table;
-
-@Entity
-@Unique(fields = "name", enableDfltMsg = true)
-@Table(name = "eg_role")
-@SequenceGenerator(name = SEQ_ROLE, sequenceName = SEQ_ROLE, allocationSize = 1)
-public class Role extends AuditDetailswithVersion {
-
-    public static final String SEQ_ROLE = "SEQ_EG_ROLE";
-    private static final long serialVersionUID = 7034114743461088547L;
-    @Id
-    @GeneratedValue(generator = SEQ_ROLE, strategy = GenerationType.SEQUENCE)
-    private Long id;
-
-    @NotBlank
-    @SafeHtml
-    @Length(max = 32)
-    private String name;
-
-    @SafeHtml
-    @Length(max = 150)
-    private String description;
-
-    private boolean internal;
-
-    public String getName() {
-        return name;
+    public StateInfoBuilder refNum(String refNum) {
+        this.refNum = refNum;
+        return this;
     }
 
-    public void setName(final String name) {
-        this.name = name;
+    public StateInfoBuilder refDate(Date refDate) {
+    	DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy hh:mm a");
+        ZonedDateTime zonedDateTime = refDate.toInstant().atZone(ZoneId.systemDefault());
+        this.refDate = formatter.format(zonedDateTime);
+        return this;
     }
 
-    public String getDescription() {
-        return description;
+    public StateInfoBuilder task(String task) {
+        this.task = task;
+        return this;
     }
 
-    public void setDescription(final String description) {
-        this.description = description;
+    public StateInfoBuilder citizenName(String citizenName) {
+        this.citizenName = citizenName;
+        return this;
     }
 
-    public boolean isInternal() {
-        return internal;
+    public StateInfoBuilder citizenPhoneno(String citizenPhoneno) {
+        this.citizenPhoneno = citizenPhoneno;
+        return this;
     }
 
-    public void setInternal(final boolean internal) {
-        this.internal = internal;
+    public StateInfoBuilder citizenAddress(String citizenAddress) {
+        this.citizenAddress = citizenAddress;
+        return this;
     }
 
-    @Override
-    public String toString() {
-        return name;
+    public StateInfoBuilder status(String status) {
+        this.status = status;
+        return this;
     }
 
-    @Override
-    public boolean equals(final Object o) {
-        if (this == o)
-            return true;
-        if (o == null || getClass() != o.getClass())
-            return false;
-        final Role role = (Role) o;
-        return Objects.equals(getName(), role.getName());
+    public StateInfoBuilder resolutionDate(Date resolutionDate) {
+    	LocalDate localDate = resolutionDate.toInstant()
+    	        .atZone(ZoneId.systemDefault())
+    	        .toLocalDate();
+    	    this.resolutionDate = localDate.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));
+    	    return this;
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(getName());
-    }
-    
-    @Override
-    public Long getId() {
-        return id;
+    public StateInfoBuilder location(String location) {
+        this.location = location;
+        return this;
     }
 
-    @Override
-    public void setId(final Long id) {
-        this.id = id;
+    public StateInfoBuilder sender(String sender) {
+        this.sender = sender;
+        return this;
     }
 
+    public StateInfoBuilder senderPhoneno(String senderPhoneno) {
+        this.senderPhoneno = senderPhoneno;
+        return this;
+    }
+
+    public StateInfoBuilder itemDetails(String itemDetails) {
+        this.itemDetails = itemDetails;
+        return this;
+    }
+
+    public String toJson() {
+        return new GsonBuilder().create().toJson(this);
+    }
 }
-

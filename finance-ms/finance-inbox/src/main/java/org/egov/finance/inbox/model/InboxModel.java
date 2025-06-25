@@ -36,8 +36,13 @@ public class InboxModel {
 	
     private InboxModel(StateAware stateAware, WorkflowType workflowTypes, String nextAction) {
         State state = stateAware.getCurrentState();
-        this.id = workflowTypes.isGrouped() ? "" : new StringBuilder(5).append(state.getId()).append("#")
-                .append(workflowTypes.getId()).toString();
+		/*
+		 * this.id = workflowTypes.isGrouped() ? "" : new
+		 * StringBuilder(5).append(state.getId()).append("#")
+		 * .append(workflowTypes.getId()).toString();
+		 */
+        this.id =state.getId().toString();
+        
         this.date = DateUtils.toDefaultDateTimeFormat(state.getCreatedDate());
         this.sender = state.getSenderName();
         

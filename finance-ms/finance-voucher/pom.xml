@@ -91,6 +91,13 @@
 			<artifactId>logstash-logback-encoder</artifactId>
 			<version>8.1</version>
 		</dependency>
+		
+		
+			<dependency>
+    <groupId>org.hibernate</groupId>
+    <artifactId>hibernate-envers</artifactId>
+    <version>6.4.4.Final</version> <!-- Or match your Hibernate ORM version -->
+</dependency>
 
 	</dependencies>
 

@@ -53,5 +53,16 @@ public class Designation extends AuditDetailswithVersion {
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinTable(name = "egeis_desig_rolemapping", joinColumns = @JoinColumn(name = "designationid"), inverseJoinColumns = @JoinColumn(name = "roleid"))
 	private Set<Role> roles = new HashSet<>();
+	
+	 @Override
+	    public Long getId() {
+	        return id;
+	    }
+
+	    @Override
+	    public void setId(final Long id) {
+	        this.id = id;
+	    }
+
 
 }

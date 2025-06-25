@@ -1,14 +1,19 @@
 package org.egov.finance.voucher.service;
 
 import java.io.Serializable;
+import java.sql.SQLException;
 
 import org.hibernate.exception.SQLGrammarException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
+import org.springframework.dao.InvalidDataAccessResourceUsageException;
 import org.springframework.stereotype.Service;
 
 import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
+@Slf4j
 public class GenericSequenceNumberGenerator {
 
 	private static final String DISALLOWED_CHARACTERS = "[\\/ -]";
@@ -27,9 +32,10 @@ public class GenericSequenceNumberGenerator {
 
 		try {
 			return databaseSequenceProvider.getNextSequence(normalizedSequenceName);
-		} catch (SQLGrammarException e) {
+		} catch (Exception e) {
+			
 			// Log warning that sequence is missing and being created
-			System.out.printf("Sequence [%s] not found. Creating it dynamically...\n", normalizedSequenceName);
+			log.info("Sequence [%s] not found. Creating it dynamically...\n", normalizedSequenceName);
 			databaseSequenceCreator.createSequence(normalizedSequenceName);
 
 			// Retry fetching the sequence
