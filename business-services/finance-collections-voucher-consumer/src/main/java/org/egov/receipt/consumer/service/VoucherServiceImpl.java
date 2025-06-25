@@ -49,6 +49,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -84,6 +85,7 @@ import org.egov.receipt.consumer.model.VoucherResponse;
 import org.egov.receipt.consumer.model.VoucherSearchCriteria;
 import org.egov.receipt.consumer.model.VoucherSearchRequest;
 import org.egov.receipt.consumer.repository.ServiceRequestRepository;
+import org.egov.receipt.consumer.v2.model.BillAccountDetailV2;
 import org.egov.receipt.custom.exception.VoucherCustomException;
 import org.egov.reciept.consumer.config.PropertiesManager;
 import org.egov.tracer.model.CustomException;
@@ -127,6 +129,7 @@ public class VoucherServiceImpl implements VoucherService {
 	private static final String STREET_LIGHTING = "PT_STREET_LIGHTING";
 
 	private static final String ROUND_OFF = "PT_ROUNDOFF";
+	private static final Object INTEREST = "PT_PROPERTY_INTEREST";
 
 	@Override
 	/**
@@ -161,11 +164,15 @@ public class VoucherServiceImpl implements VoucherService {
 	@Override
 	public VoucherResponse createVoucher(List<Voucher> vouchers, RequestInfo requestInfo, String tenantId)
 			throws VoucherCustomException {
+		// Set tenantId inside requestInfo object
+		if (requestInfo.getTenantId() == null) {
+			requestInfo.setTenantId(tenantId);
+		}
 		final StringBuilder voucher_create_url = new StringBuilder(
 				propertiesManager.getErpURLBytenantId(tenantId) + propertiesManager.getVoucherCreateUrl());
 		VoucherRequest voucherRequest = new VoucherRequest();
 		voucherRequest.setVouchers(vouchers);
-		voucherRequest.setRequestInfo(requestInfo);
+		voucherRequest.setRequestInfo(requestInfo);// ----in this requestInfo itselft we need pass tenantId
 		voucherRequest.setTenantId(tenantId);
 
 		// Set custom Host header
@@ -250,6 +257,10 @@ public class VoucherServiceImpl implements VoucherService {
 	 */
 	private void setVoucherDetails(Voucher voucher, Receipt receipt, String tenantId, RequestInfo requestInfo,
 			FinanceMdmsModel finSerMdms, String collectiobVersion) throws CustomException, VoucherCustomException {
+		// Set tenantId inside requestInfo object
+		if (requestInfo.getTenantId() == null) {
+			requestInfo.setTenantId(tenantId);
+		}
 		BillDetail billDetail = receipt.getBill().get(0).getBillDetails().get(0);
 		String receiptNumber = null;
 		String consumerCode = null;
@@ -305,7 +316,7 @@ public class VoucherServiceImpl implements VoucherService {
 		LOGGER.info("Service Attribute  ::: {}", serviceAttribute);
 		amountMapwithGlcode = new LinkedHashMap<>();
 		// Setting glcode and amount in Map as key value pair.
-		for (BillAccountDetail bad : billDetail.getBillAccountDetails()) {
+		for (BillAccountDetailV2 bad : billDetail.getBillAccountDetails()) {
 			BigDecimal adjustedAmount = bad.getAdjustedAmount();
 			if (bad.getTaxHeadCode().toLowerCase().contains(ADVANCE))
 				adjustedAmount = bad.getAmount().abs();
@@ -362,6 +373,10 @@ public class VoucherServiceImpl implements VoucherService {
 
 	private String getServiceAttributeByBusinessService(String tenantId, RequestInfo requestInfo,
 			BusinessService businessService, String consumerCode) throws VoucherCustomException {
+		// Set tenantId inside requestInfo object
+		if (requestInfo.getTenantId() == null) {
+			requestInfo.setTenantId(tenantId);
+		}
 		if (businessService.isServiceAttributeMappingEnabled()) {
 			try {
 				final List<?> list = Arrays.asList(consumerCode.split(":"));
@@ -423,6 +438,10 @@ public class VoucherServiceImpl implements VoucherService {
 	 */
 	private boolean isManualReceiptDateEnabled(String tenantId, RequestInfo requestInfo) throws VoucherCustomException {
 //		requestInfo.setAuthToken(propertiesManager.getSiAuthToken());
+		// Set tenantId inside requestInfo object
+		if (requestInfo.getTenantId() == null) {
+			requestInfo.setTenantId(tenantId);
+		}
 		VoucherRequest request = new VoucherRequest(tenantId, requestInfo, null);
 		StringBuilder url = new StringBuilder(
 				propertiesManager.getErpURLBytenantId(tenantId) + propertiesManager.getManualReceiptDateConfigUrl());
@@ -449,58 +468,68 @@ public class VoucherServiceImpl implements VoucherService {
 	 */
 	private Map<String, BigDecimal> setNetReceiptAmount(Receipt receipt, RequestInfo requestInfo, String tenantId,
 			String businessCode, FinanceMdmsModel finSerMdms) throws VoucherCustomException {
-		BigDecimal amountPaid = receipt.getBill().get(0).getBillDetails().get(0).getAmountPaid();
-
+		// Set tenantId inside requestInfo object
+		if (requestInfo.getTenantId() == null) {
+			requestInfo.setTenantId(tenantId);
+		}
 		Map<String, BigDecimal> amountMapwithGlcode = new LinkedHashMap<>();
+		BigDecimal interestAmountToUse = BigDecimal.ZERO;
 
 		try {
-			// Fetch dynamic GL codes from MDMS using tax head codes
+			BillDetail billDetail = receipt.getBill().get(0).getBillDetails().get(0);
+			BigDecimal amountPaid = billDetail.getAmountPaid();
+			List<BillAccountDetailV2> accountDetails = billDetail.getBillAccountDetails();
 
-			// Fetch and cache all tax head to GL code mappings once
-			Map<String, String> taxHeadToGlcodeMap = microServiceUtil.getGlcodeByTaxHead(tenantId, businessCode,
-					requestInfo, finSerMdms, businessCode);
+			// Only include these tax heads
+			Set<String> validTaxHeads = new HashSet<>(
+					Arrays.asList(PROPERTY_TAX, GENERAL_CONSERVANCY, STREET_LIGHTING, ROUND_OFF));
 
-			String glcodePTTAX = taxHeadToGlcodeMap.get(PROPERTY_TAX);
-			String glcodePTConservancy = taxHeadToGlcodeMap.get(GENERAL_CONSERVANCY);
-			String glcodePTStreetLight = taxHeadToGlcodeMap.get(STREET_LIGHTING);
-			String glcodePTRounding = taxHeadToGlcodeMap.get(ROUND_OFF);
+			for (BillAccountDetailV2 detail : accountDetails) {
+				String taxHeadCode = detail.getTaxHeadCode();
+				String glcode = detail.getGlcode();
+				BigDecimal amount = detail.getAmount();
 
-			// Split amount using RATIO 5:2:1
-			BigDecimal unitAmount = amountPaid.divide(BigDecimal.valueOf(8), 2, RoundingMode.DOWN);
+				if (taxHeadCode == null || glcode == null)
+					continue;
 
-			BigDecimal taxAmount = unitAmount.multiply(BigDecimal.valueOf(5)).setScale(2, RoundingMode.HALF_UP);
-			BigDecimal conservancyAmount = unitAmount.multiply(BigDecimal.valueOf(2)).setScale(2, RoundingMode.HALF_UP);
-			BigDecimal streetLightAmount = unitAmount.multiply(BigDecimal.valueOf(1)).setScale(2, RoundingMode.HALF_UP);
-
-			amountMapwithGlcode.put(glcodePTTAX, taxAmount);
-			amountMapwithGlcode.put(glcodePTConservancy, conservancyAmount);
-			amountMapwithGlcode.put(glcodePTStreetLight, streetLightAmount);
-
-			// Calculate rounding difference
-			BigDecimal total = taxAmount.add(conservancyAmount).add(streetLightAmount);
-			BigDecimal roundingDiff = amountPaid.subtract(total);
-
-			if (roundingDiff.compareTo(BigDecimal.ZERO) != 0) {
-				amountMapwithGlcode.merge(glcodePTRounding, roundingDiff, BigDecimal::add);
+				if (taxHeadCode.equals(INTEREST)) {
+					BigDecimal interestExpected = BigDecimal.ZERO; // billDetail.getTotalAmountForIntCal();
+					interestAmountToUse = amount.compareTo(interestExpected) == 0 ? amount : interestExpected;
+					// Do NOT merge into amountMapwithGlcode
+				} else if (validTaxHeads.contains(taxHeadCode)) {
+					if (amount != null && amount.compareTo(BigDecimal.ZERO) != 0) {
+						amountMapwithGlcode.merge(glcode, amount, BigDecimal::add);
+					}
+				}
 			}
-			if (amountPaid != null && amountPaid.compareTo(new BigDecimal(0)) != 0) {
+
+			if (amountPaid != null && amountPaid.compareTo(BigDecimal.ZERO) != 0) {
 				String instrumentType = receipt.getInstrument().getInstrumentType().getName();
-				;
 				String glcode = microServiceUtil.getGlcodeByInstrumentType(tenantId, businessCode, requestInfo,
 						finSerMdms, instrumentType);
 				if (glcode == null) {
 					throw new VoucherCustomException(ProcessStatus.FAILED,
 							"Account code mapping is missing for Instrument Type " + instrumentType);
 				}
-				amountMapwithGlcode.put(glcode, new BigDecimal(-amountPaid.doubleValue()));
 
-				// Log final mappings for audit/debug
-				amountMapwithGlcode.forEach((gl, amt) -> LOGGER.info("GL Code: {}, Amount: {}", gl, amt));
-
+				BigDecimal debitAmount = amountPaid.negate();
+				if (debitAmount.compareTo(BigDecimal.ZERO) != 0) {
+					amountMapwithGlcode.put(glcode, debitAmount);
+				}
 			}
+
+			// Log final non-zero mappings for audit/debug
+			amountMapwithGlcode.forEach((gl, amt) -> LOGGER.info("GL Code: {}, Amount: {}", gl, amt));
+
+			// Optional: log interest for info/debug
+			if (interestAmountToUse.compareTo(BigDecimal.ZERO) > 0) {
+				LOGGER.info("PT_TIME_INTEREST amount calculated (not merged): {}", interestAmountToUse);
+			}
+
 		} catch (Exception e) {
 			throw new VoucherCustomException(ProcessStatus.FAILED, "Error in setNetReceiptAmount: " + e.getMessage());
 		}
+
 		return amountMapwithGlcode;
 	}
 
@@ -514,6 +543,10 @@ public class VoucherServiceImpl implements VoucherService {
 	 */
 	private List<BusinessService> getBusinessServiceByCode(String tenantId, String bsCode, RequestInfo requestInfo,
 			FinanceMdmsModel finSerMdms) throws CustomException, VoucherCustomException {
+		// Set tenantId inside requestInfo object
+		if (requestInfo.getTenantId() == null) {
+			requestInfo.setTenantId(tenantId);
+		}
 		List<BusinessService> businessServices = null;
 		try {
 			businessServices = microServiceUtil.getBusinessService(tenantId, bsCode, requestInfo, finSerMdms);
@@ -539,6 +572,10 @@ public class VoucherServiceImpl implements VoucherService {
 	 */
 	private List<TaxHeadMaster> getTaxHeadMasterByBusinessServiceCode(String tenantId, String bsCode,
 			RequestInfo requestInfo, FinanceMdmsModel finSerMdms) throws CustomException {
+		// Set tenantId inside requestInfo object
+		if (requestInfo.getTenantId() == null) {
+			requestInfo.setTenantId(tenantId);
+		}
 		List<TaxHeadMaster> taxHeadMasters = null;
 		try {
 			taxHeadMasters = microServiceUtil.getTaxHeadMasters(tenantId, bsCode, requestInfo, finSerMdms);
@@ -559,6 +596,10 @@ public class VoucherServiceImpl implements VoucherService {
 	private EgModules getModuleIdByModuleName(String moduleName, String tenantId, RequestInfo requestInfo)
 			throws VoucherCustomException {
 //		requestInfo.setAuthToken(propertiesManager.getSiAuthToken());
+		// Set tenantId inside requestInfo object
+		if (requestInfo.getTenantId() == null) {
+			requestInfo.setTenantId(tenantId);
+		}
 		VoucherRequest request = new VoucherRequest(tenantId, requestInfo, null);
 		StringBuilder url = new StringBuilder(propertiesManager.getErpURLBytenantId(tenantId)
 				+ propertiesManager.getModuleIdSearchUrl() + "?moduleName=" + moduleName);
@@ -622,7 +663,13 @@ public class VoucherServiceImpl implements VoucherService {
 	public VoucherResponse getVoucherByServiceAndRefDoc(RequestInfo requestInfo, String tenantId, String serviceCode,
 			String referenceDoc) throws VoucherCustomException, UnsupportedEncodingException {
 //		requestInfo.setAuthToken(propertiesManager.getSiAuthToken());
+		// Set tenantId inside requestInfo object
+		if (requestInfo.getTenantId() == null) {
+			requestInfo.setTenantId(tenantId);
+		}
 		VoucherRequest request = new VoucherRequest(tenantId, requestInfo, null);
+		request.setRequestInfo(requestInfo);
+
 		StringBuilder url = new StringBuilder(propertiesManager.getErpURLBytenantId(tenantId))
 				.append(propertiesManager.getVoucherSearchByRefUrl()).append("?");
 		if (serviceCode != null && !serviceCode.isEmpty()) {
@@ -652,6 +699,10 @@ public class VoucherServiceImpl implements VoucherService {
 	@Override
 	public VoucherResponse getVouchers(VoucherSearchCriteria criteria, RequestInfo requestInfo, String tenantId)
 			throws VoucherCustomException {
+		// Set tenantId inside requestInfo object
+		if (requestInfo.getTenantId() == null) {
+			requestInfo.setTenantId(tenantId);
+		}
 		VoucherSearchRequest request = new VoucherSearchRequest();
 		request.setRequestInfo(requestInfo);
 		request.setTenantId(tenantId);

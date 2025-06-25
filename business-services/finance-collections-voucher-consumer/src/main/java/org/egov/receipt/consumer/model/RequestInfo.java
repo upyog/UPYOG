@@ -74,4 +74,5 @@ public class RequestInfo {
     private String authToken;
     private String correlationId;
     private User userInfo;
+    private String tenantId;
 }
