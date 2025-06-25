@@ -317,13 +317,14 @@
 
 
         function onChartOfAccountChange(selectElement) {
-            const selectedGlcode = selectElement.value;
+            const selectedGlcode = selectElement.value;            
             // Get the current row
-            const row = selectElement.closest('tr');
-            // Get hidden select and input within the same row
+            const row = selectElement.closest('tr');            
+            // Get hidden select and inputs within the same row
             const allCoAs = row.querySelector('.hiddenChartOfAccounts');
             const majorCodeInput = row.querySelector('.major-code');
-            
+            const minorCodeInput = row.querySelector("input[name$='minorCode']");
+
             if (!allCoAs || !majorCodeInput) {
                 return;
             }
@@ -332,6 +333,12 @@
                 if (option.value === selectedGlcode) {
                     const majorCode = option.getAttribute("data-majorcode");
                     majorCodeInput.value = majorCode || "";
+
+                    // Populate Minor Code by extracting 4th and 5th characters
+                    if (selectedGlcode.length >= 5 && minorCodeInput) {
+                        const minorCode = selectedGlcode.substring(3, 5); // index 3 and 4
+                        minorCodeInput.value = minorCode;
+                    }
                     break;
                 }
             }
@@ -603,6 +610,7 @@
                                             name="budgetData[new].minorCode"
                                             class="form-control"
                                             style="width: 100px;"
+                                            readonly="true"
                                         />
                                     </td>                             
                                     <td>
