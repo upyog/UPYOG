@@ -273,8 +273,16 @@ public class BudgetLoadAction extends BaseFormAction {
             dropdownData.put("financialYearList", persistenceService.findAllBy("from CFinancialYear where isActive=true order by finYearRange desc"));
             if (shouldShowField(Constants.FUND))
                 dropdownData.put("fundList",persistenceService.findAllBy("from Fund where isActive=true and isnotleaf=false ORDER BY name ASC "));
-            if (shouldShowField(Constants.EXECUTING_DEPARTMENT))
-                dropdownData.put("executingDepartmentList", masterDataCache.get("egi-department"));
+            if (shouldShowField(Constants.EXECUTING_DEPARTMENT)) {
+                List<Department> departmentList = (List<Department>) masterDataCache.get("egi-department");
+                if (departmentList != null) {
+                    departmentList.sort(Comparator.comparing(
+                        Department::getName,
+                        Comparator.nullsLast(String.CASE_INSENSITIVE_ORDER)
+                    ));
+                }
+                dropdownData.put("executingDepartmentList", departmentList);
+            }
             if (shouldShowField(Constants.FUNCTION))
                 dropdownData.put("functionList", persistenceService.findAllBy("from CFunction where isactive=true and isnotleaf=false ORDER BY name ASC"));
             // if (shouldShowField(Constants.FUNCTION))
