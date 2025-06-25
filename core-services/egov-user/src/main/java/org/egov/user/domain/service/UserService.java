@@ -313,7 +313,7 @@ public class UserService {
             map.add("tenantId", user.getTenantId());
             map.add("isInternal", "true");
             map.add("userType", UserType.CITIZEN.name());
-
+            log.info("Request", user.getUsername());
             HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<MultiValueMap<String, String>>(map,
                     headers);
             return restTemplate.postForEntity(userHost + "/user/oauth/token", request, Map.class).getBody();
