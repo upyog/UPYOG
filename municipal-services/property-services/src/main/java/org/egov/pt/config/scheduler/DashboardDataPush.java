@@ -1,6 +1,7 @@
 package org.egov.pt.config.scheduler;
 
-import java.math.BigDecimal;
+import static org.apache.commons.lang3.StringUtils.isEmpty;
+
 import java.math.BigInteger;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -11,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.common.contract.request.User;
 import org.egov.pt.config.PropertyConfiguration;
 import org.egov.pt.dashboardservice.DashboardService;
 import org.egov.pt.models.AssessedProperties;
@@ -33,7 +35,14 @@ import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class DashboardDataPush implements Job {
 
@@ -48,6 +57,9 @@ public class DashboardDataPush implements Job {
 	@Autowired
 	PropertyRepository propertyRepository;
 
+	@Autowired
+	ObjectMapper objectMapper;
+	
 	public synchronized List<Data> dataPush() {
 		List<Data> propertyTaxPayloads = new ArrayList<Data>();
 		Map<String, String> parentMap = new HashMap<String, String>();
@@ -269,13 +281,40 @@ public class DashboardDataPush implements Job {
 	public void execute(JobExecutionContext context) throws JobExecutionException {
 		List<Data> datas = dataPush();
 		RequestInfo requestInfo = new RequestInfo();
-		DashboardDataRequest dashboardDataRequest = DashboardDataRequest.builder().datas(datas).requestInfo(requestInfo)
+		authenticationdetails(requestInfo);
+		DashboardDataRequest dashboardDataRequest = DashboardDataRequest.builder().requestInfo(requestInfo).datas(datas)
 				.build();
 		try {
-			// propertyRepository.savedashbordDatalog(dashboardDataRequest,null);
+			propertyRepository.savedashbordDatalog(dashboardDataRequest,null);
 		} catch (Exception e) {
-			// propertyRepository.savedashbordDatalog(dashboardDataRequest,e.getLocalizedMessage());
+			propertyRepository.savedashbordDatalog(dashboardDataRequest,e.getLocalizedMessage());
 		}
+	}
+
+	private void authenticationdetails(RequestInfo requestInfo) {
+		
+		HttpHeaders headers = new HttpHeaders();
+		List<MediaType> mediaTypes=new ArrayList<MediaType>();
+		mediaTypes.add(MediaType.APPLICATION_JSON);
+		mediaTypes.add(MediaType.TEXT_PLAIN);
+		headers.setAccept(mediaTypes);
+		headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+		headers.set("Authorization", "Basic ZWdvdi11c2VyLWNsaWVudDo=");
+		MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
+		map.add("username", "MN_NDA_USER");
+		map.add("password", "upyogTest@123");
+		map.add("grant_type", "password");
+		map.add("scope", "read");
+		map.add("tenantId", "pg");
+		map.add("userType", "SYSTEM");
+
+		HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<MultiValueMap<String, String>>(map,
+				headers);
+		Map<String, Object> response= restTemplate.postForEntity(config.getDashbordUserHost() + "/user/oauth/token", request, Map.class).getBody();
+		requestInfo.setApiId("asset-services");
+		requestInfo.setMsgId("search with from and to values");
+		requestInfo.setAuthToken(objectMapper.convertValue(response.get("access_token"),String.class));
+		requestInfo.setUserInfo(objectMapper.convertValue(response.get("UserRequest"), User.class));
 	}
 
 }
