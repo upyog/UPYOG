@@ -255,6 +255,70 @@ public Object fetchDataFromMdms(RequestInfo requestInfo, String tenantId, String
 		property.setAdditionalDetails(
 				propertyutil.jsonMerge(propertyFromDb.getAdditionalDetails(), property.getAdditionalDetails()));
     }
+    
+    
+    
+    
+    /* This change for surveyId edit PI-PI-18601 */
+    
+ public void enrichUpdateRequests(PropertyRequest request,Property propertyFromDb, Boolean issurveyChange) {
+    	
+    	Property property = request.getProperty();
+        RequestInfo requestInfo = request.getRequestInfo();
+        AuditDetails auditDetailsForUpdate = propertyutil.getAuditDetails(requestInfo.getUserInfo().getUuid().toString(), true);
+        propertyFromDb.setAuditDetails(auditDetailsForUpdate);
+        
+        
+		Boolean isWfEnabled = config.getIsWorkflowEnabled();
+		/**
+		 *  commenting given boolean value AS added in else if
+		 */
+	//	Boolean iswfStarting = propertyFromDb.getStatus().equals(Status.ACTIVE);
+	//	Boolean isactiveexist = propertyFromDb.getStatus().equals(Status.INACTIVE);
+
+		if (!isWfEnabled)
+		{
+
+			property.setStatus(Status.ACTIVE);
+			property.getAddress().setId(propertyFromDb.getAddress().getId());
+
+		} 
+		
+		else if ((propertyFromDb.getStatus().equals(Status.ACTIVE)|| propertyFromDb.getStatus().equals(Status.INACTIVE)) && isWfEnabled && !issurveyChange)
+		{
+				enrichPropertyForNewWf(requestInfo, property, false);	
+		}
+		
+		
+		if (!CollectionUtils.isEmpty(property.getDocuments()))
+			property.getDocuments().forEach(doc -> {
+
+				if (doc.getId() == null) {
+					doc.setId(UUID.randomUUID().toString());
+					doc.setStatus(Status.ACTIVE);
+				}
+			});
+				
+	    	if (!CollectionUtils.isEmpty(property.getUnits()))
+			property.getUnits().forEach(unit -> {
+
+				if (unit.getId() == null) {
+					unit.setId(UUID.randomUUID().toString());
+					unit.setActive(true);
+				}
+			});
+				
+		Institution institute = property.getInstitution();
+		if (!ObjectUtils.isEmpty(institute) && null == institute.getId())
+			property.getInstitution().setId(UUID.randomUUID().toString());
+
+		AuditDetails auditDetails = propertyutil.getAuditDetails(requestInfo.getUserInfo().getUuid().toString(), true);
+		property.setAuditDetails(auditDetails);
+		property.setAccountId(propertyFromDb.getAccountId());
+       
+		property.setAdditionalDetails(
+				propertyutil.jsonMerge(propertyFromDb.getAdditionalDetails(), property.getAdditionalDetails()));
+    }
 
 
 

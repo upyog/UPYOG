@@ -159,12 +159,18 @@ public class PropertyService {
 	 * @param request PropertyRequest containing list of properties to be update
 	 * @return List of updated properties
 	 */
+	
+	/* This change for surveyId edit PI-PI-18601 */
+	
+	
 	public Property updateProperty(PropertyRequest request) {
 
 		Property propertyFromSearch = unmaskingUtil.getPropertyUnmasked(request);
 
 		boolean isNumberDifferent = checkIsRequestForMobileNumberUpdate(request, propertyFromSearch);
-		if (!isNumberDifferent) {
+	    boolean surveyIdChanged = isSurveyIdUpdate(request, propertyFromSearch);
+
+		if (!isNumberDifferent && !surveyIdChanged) {
 			propertyValidator.validateCommonUpdateInformation(request, propertyFromSearch);
 		}
 
@@ -174,6 +180,9 @@ public class PropertyService {
 
 		if (isNumberDifferent) {
 			processMobileNumberUpdate(request, propertyFromSearch);
+			return request.getProperty();
+		}else if (surveyIdChanged) {
+			processSurveyIdUpdate(request, propertyFromSearch);
 			return request.getProperty();
 		} else if (isRequestForOwnerMutation) {
 			processOwnerMutation(request, propertyFromSearch);
@@ -231,6 +240,39 @@ public class PropertyService {
 		// return encryptionDecryptionUtil.decryptObject(request.getProperty(),
 		// PTConstants.PROPERTY_MODEL, Property.class, request.getRequestInfo());
 	}
+	
+	
+	
+	/* This change for surveyId edit PI-PI-18601 */
+	private void processSurveyIdUpdate(PropertyRequest request,
+	                                   Property propertyFromSearch) {
+
+	    // 1.  Copy the incoming value onto the entity that will be persisted
+	    propertyFromSearch.setSurveyId(request.getProperty().getSurveyId());
+
+	    // 2.  Enrich + merge common fields
+	    enrichmentService.enrichUpdateRequests(request, propertyFromSearch, true);
+	    util.mergeAdditionalDetails(request, propertyFromSearch);
+
+	    // 3.  Push to the same topic you already use
+	    producer.push(config.getUpdatePropertyTopic(), request);
+	}
+	
+	
+	
+	/* This change for surveyId edit PI-PI-18601 */
+	
+	private boolean isSurveyIdUpdate(PropertyRequest request, Property propertyFromSearch) {
+	    String oldSurveyId = propertyFromSearch.getSurveyId();         
+	    String newSurveyId = request.getProperty().getSurveyId();       
+
+	    if (newSurveyId == null) return false;                          
+	    return !newSurveyId.equals(oldSurveyId);            
+	}
+
+	
+	
+
 
 	/*
 	 * Method to check if the update request is for updating owner mobile numbers
