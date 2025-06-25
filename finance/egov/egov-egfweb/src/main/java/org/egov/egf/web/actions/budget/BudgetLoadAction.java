@@ -110,6 +110,7 @@ import org.egov.model.budget.Budget;
 import org.egov.model.budget.BudgetGroup;
 import java.util.Collections;
 import org.egov.utils.BudgetDetailHelper;
+import java.util.Comparator;
 
 @ParentPackage("egov")
 @Results({
@@ -272,8 +273,16 @@ public class BudgetLoadAction extends BaseFormAction {
             dropdownData.put("financialYearList", persistenceService.findAllBy("from CFinancialYear where isActive=true order by finYearRange desc"));
             if (shouldShowField(Constants.FUND))
                 dropdownData.put("fundList",persistenceService.findAllBy("from Fund where isActive=true and isnotleaf=false ORDER BY name ASC "));
-            if (shouldShowField(Constants.EXECUTING_DEPARTMENT))
-                dropdownData.put("executingDepartmentList", masterDataCache.get("egi-department"));
+            if (shouldShowField(Constants.EXECUTING_DEPARTMENT)) {
+                List<Department> departmentList = (List<Department>) masterDataCache.get("egi-department");
+                if (departmentList != null) {
+                    departmentList.sort(Comparator.comparing(
+                        Department::getName,
+                        Comparator.nullsLast(String.CASE_INSENSITIVE_ORDER)
+                    ));
+                }
+                dropdownData.put("executingDepartmentList", departmentList);
+            }
             if (shouldShowField(Constants.FUNCTION))
                 dropdownData.put("functionList", persistenceService.findAllBy("from CFunction where isactive=true and isnotleaf=false ORDER BY name ASC"));
             // if (shouldShowField(Constants.FUNCTION))
@@ -853,13 +862,13 @@ public class BudgetLoadAction extends BaseFormAction {
                         .getCell(GLCODE_CELL_INDEX)));
                 budget.setMajorCode(getStrValue(row.getCell(MAJORCODE_CELL_INDEX)) == null ? "" : getStrValue(row
                         .getCell(MAJORCODE_CELL_INDEX)));
-                budget.setMajorCode(getStrValue(row.getCell(MINORCODE_CELL_INDEX)) == null ? "" : getStrValue(row
+                budget.setMinorCode(getStrValue(row.getCell(MINORCODE_CELL_INDEX)) == null ? "" : getStrValue(row
                         .getCell(MINORCODE_CELL_INDEX)));
-                budget.setMajorCode(getStrValue(row.getCell(LASTYEARBUDGET_CELL_INDEX)) == null ? "" : getStrValue(row
+                budget.setLastYearApproved(getStrValue(row.getCell(LASTYEARBUDGET_CELL_INDEX)) == null ? "" : getStrValue(row
                         .getCell(LASTYEARBUDGET_CELL_INDEX)));
-                budget.setMajorCode(getStrValue(row.getCell(CURRENTBUDGET_CELL_INDEX)) == null ? "" : getStrValue(row
+                budget.setCurrentApproved(getStrValue(row.getCell(CURRENTBUDGET_CELL_INDEX)) == null ? "" : getStrValue(row
                         .getCell(CURRENTBUDGET_CELL_INDEX)));
-                budget.setMajorCode(getStrValue(row.getCell(PERCENTAGECHANGE_CELL_INDEX)) == null ? "" : getStrValue(row
+                budget.setPercentageChange(getStrValue(row.getCell(PERCENTAGECHANGE_CELL_INDEX)) == null ? "" : getStrValue(row
                         .getCell(PERCENTAGECHANGE_CELL_INDEX)));                
                 budget.setReAmount(BigDecimal.valueOf(Long.valueOf(getStrValue(row.getCell(REAMOUNT_CELL_INDEX)) == null ? "0"
                         : getStrValue(row.getCell(REAMOUNT_CELL_INDEX)))));
