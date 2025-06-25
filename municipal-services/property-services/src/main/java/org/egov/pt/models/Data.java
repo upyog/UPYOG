@@ -1,7 +1,5 @@
 package org.egov.pt.models;
 
-import java.util.List;
-
 @lombok.Data
 public class Data {
 	private String date;

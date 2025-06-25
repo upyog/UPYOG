@@ -445,7 +445,7 @@ public class PropertyRepository {
 	}
 	
 	@Transactional
-	public void savedashbordDatalog(DashboardDataRequest dashboardDataRequest,String exception)
+	public void savedashbordDatalog(DashboardDataRequest dashboardDataRequest,Object object,String exception)
 	{
 
 		LocalDate currentDate = LocalDate.now();
@@ -455,19 +455,23 @@ public class PropertyRepository {
 		String timeString = zonedDateTime.format(DateTimeFormatter.ofPattern("HH:mm:ss"));
 		String date=(!CollectionUtils.isEmpty(dashboardDataRequest.getDatas()))?dashboardDataRequest.getDatas().get(0).getDate():formattedDate;
 		String requestjson = null;
+		String responsejson = null;
 		try {
 		    requestjson = mapper.writeValueAsString(dashboardDataRequest);
+		    responsejson = mapper.writeValueAsString(object);
 		} catch (JsonProcessingException e) {
 		    e.printStackTrace();
+		    exception=exception+"::"+e.getLocalizedMessage();
 		}
 
 		final String exception_message = exception;
 		final String status = Optional.ofNullable(dashboardDataRequest.getDatas())
 		    .filter(data -> !data.isEmpty())
-		    .map(data -> exception == null ? "SUCCESS" : "FAILED")
+		    .map(data -> exception_message == null ? "SUCCESS" : "FAILED")
 		    .orElse("NODATA");
 
-		final String finalRequestJson = requestjson; 
+		final String finalRequestJson = requestjson;
+		final String finalResponseJson = responsejson;
 
 		jdbcTemplate.update(PropertyQueryBuilder.INSERT_DASHBOARD_DATA_LOG, new PreparedStatementSetter() {
 		    @Override
@@ -475,7 +479,7 @@ public class PropertyRepository {
 		        ps.setString(1, date);
 		        ps.setString(2, timeString);
 		        ps.setString(3, finalRequestJson);
-		        ps.setString(4, null);
+		        ps.setString(4, finalResponseJson);
 		        ps.setString(5, status);
 		        ps.setString(6, exception_message);
 		    }
