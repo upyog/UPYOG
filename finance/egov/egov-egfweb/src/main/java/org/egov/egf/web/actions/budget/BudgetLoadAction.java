@@ -110,6 +110,7 @@ import org.egov.model.budget.Budget;
 import org.egov.model.budget.BudgetGroup;
 import java.util.Collections;
 import org.egov.utils.BudgetDetailHelper;
+import java.util.Comparator;
 
 @ParentPackage("egov")
 @Results({
@@ -853,13 +854,13 @@ public class BudgetLoadAction extends BaseFormAction {
                         .getCell(GLCODE_CELL_INDEX)));
                 budget.setMajorCode(getStrValue(row.getCell(MAJORCODE_CELL_INDEX)) == null ? "" : getStrValue(row
                         .getCell(MAJORCODE_CELL_INDEX)));
-                budget.setMajorCode(getStrValue(row.getCell(MINORCODE_CELL_INDEX)) == null ? "" : getStrValue(row
+                budget.setMinorCode(getStrValue(row.getCell(MINORCODE_CELL_INDEX)) == null ? "" : getStrValue(row
                         .getCell(MINORCODE_CELL_INDEX)));
-                budget.setMajorCode(getStrValue(row.getCell(LASTYEARBUDGET_CELL_INDEX)) == null ? "" : getStrValue(row
+                budget.setLastYearApproved(getStrValue(row.getCell(LASTYEARBUDGET_CELL_INDEX)) == null ? "" : getStrValue(row
                         .getCell(LASTYEARBUDGET_CELL_INDEX)));
-                budget.setMajorCode(getStrValue(row.getCell(CURRENTBUDGET_CELL_INDEX)) == null ? "" : getStrValue(row
+                budget.setCurrentApproved(getStrValue(row.getCell(CURRENTBUDGET_CELL_INDEX)) == null ? "" : getStrValue(row
                         .getCell(CURRENTBUDGET_CELL_INDEX)));
-                budget.setMajorCode(getStrValue(row.getCell(PERCENTAGECHANGE_CELL_INDEX)) == null ? "" : getStrValue(row
+                budget.setPercentageChange(getStrValue(row.getCell(PERCENTAGECHANGE_CELL_INDEX)) == null ? "" : getStrValue(row
                         .getCell(PERCENTAGECHANGE_CELL_INDEX)));                
                 budget.setReAmount(BigDecimal.valueOf(Long.valueOf(getStrValue(row.getCell(REAMOUNT_CELL_INDEX)) == null ? "0"
                         : getStrValue(row.getCell(REAMOUNT_CELL_INDEX)))));

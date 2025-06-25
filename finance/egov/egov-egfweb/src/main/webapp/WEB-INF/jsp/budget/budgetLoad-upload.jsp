@@ -689,12 +689,12 @@
 
             <!-- Hide Enter Manually Section Button -->
             <center>
-                <button type="button" id="hideEnterManuallyButton" onclick="hideEnterManually()" class="buttonsubmit" style="display:none;">Upload Budget File</button>
+                <button type="button" id="hideEnterManuallyButton" onclick="hideEnterManually()" style="font-size: 12px;" class="btn btn-secondary" style="display:none;">Upload Budget File</button>
             </center>
 
             <!-- Enter Manually Button -->
             <center>
-                <button type="button" id="enterManuallyButton" onclick="showEnterManually()" class="buttonsubmit">Enter Manually</button>
+                <button type="button" id="enterManuallyButton" onclick="showEnterManually()" style="font-size: 12px;" class="btn btn-primary">Enter Manually</button>
             </center>
 
 		</div>
