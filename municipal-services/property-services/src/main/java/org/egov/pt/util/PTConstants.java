@@ -556,6 +556,14 @@ public class PTConstants {
     public static final String NOTICE_FOR_PAYMENT_REMINDER="NOTICE_FOR_PAYMENT_REMINDER";
     public static final String NOTICE_FOR_PAYMENT_REMINDER_TEMPLATE_ID="1007181774565090601";
     
+    
+//////////////////////////////////DASHBOARD DETAILS/////////////////////////////////
+    public static final String DASHBOARD_MODULENAME = "PT";
+    public static final String DASHBOARD_STATE = "Manipur";
+	public static final String DASHBOARD_APPLICATION_STATUS = "applicationStatus";
+	public static final String DASHBOARD_FINANCIAL_YEAR = "financialYear";
+	public static final String DASHBOARD_USAGE_CATEGORY = "usageCategory";
+    
 
 }
 

@@ -8,3 +8,11 @@ core-services/egov-user/src/main/resources/application.properties
 *.properties
 core-services/zuul/src/main/resources/routes.properties
 core-services/zuul/src/main/resources/routes.properties
+
+######ADDED FOR STAGE ISSUE SHOULD BE REMOVED IN PROD##########################
+/build/
+*.xml
+core-services/user-otp/src/main/java/org/egov/web/config/RedisConfig.java
+
+
+###################################################
