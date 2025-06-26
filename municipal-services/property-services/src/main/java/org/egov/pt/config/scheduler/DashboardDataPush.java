@@ -93,7 +93,6 @@ public class DashboardDataPush implements Job {
 		parentMap.putAll(wardwithtenatrebategivenMap);
 		parentMap.putAll(wardwithtenatpenaltyCollectedMap);
 		parentMap.putAll(wardwithtenatinterestCollectedMap);
-		System.out.println("parentMap is::" + parentMap);
 		if (parentMap.size() > 0) {
 			for (Map.Entry<String, String> entry : parentMap.entrySet()) {
 				Data propertyTaxPayload = new Data();
@@ -288,7 +287,6 @@ public class DashboardDataPush implements Job {
 			{
 				response= restTemplate.postForEntity(config.getDashbordUserHost() + "/national-dashboard/metric/_ingest", dashboardDataRequest, Map.class).getBody();
 			}
-			System.out.println("response::"+response);
 			propertyRepository.savedashbordDatalog(dashboardDataRequest,response,null);
 		} catch (Exception e) {
 			propertyRepository.savedashbordDatalog(dashboardDataRequest,response,e.getLocalizedMessage());
