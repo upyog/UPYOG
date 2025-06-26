@@ -1,10 +1,12 @@
 package org.egov.user.persistence.repository;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.egov.user.domain.model.UserSso;
 import org.egov.user.repository.builder.UserSsoQueryBuilder;
+import org.egov.user.repository.rowmapper.UserSsoRowMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -21,12 +23,16 @@ public class UserSsoRepository {
 
 //	@Autowired
 //  private UserResultSetExtractor userResultSetExtractor;
-
+//
 //	@Autowired
 //	private JdbcTemplate jdbcTemplate;
 	
 	@Autowired
 	private UserSsoQueryBuilder userSsoQueryBuilder;
+//	
+	@Autowired
+    private UserSsoRowMapper userSsoRowMapper;
+
 
 	public UserSso create(UserSso newUserSso) {
 		Map<String, Object> inputs = new HashMap<String, Object>();
@@ -43,17 +49,19 @@ public class UserSsoRepository {
         return newUserSso;
 	}
 
-	public int getCountBySsoId(Long ssoId) {
+	public UserSso getCountBySsoId(Long ssoId) {
 		Map<String, Object> inputs = new HashMap<String, Object>();
 		inputs.put("ssoId", ssoId);
 		
-		int count = namedParameterJdbcTemplate.queryForObject(
-		        userSsoQueryBuilder.COUNT_USER_SSO_QUERY, 
+		List<UserSso> users = namedParameterJdbcTemplate.query(
+		        userSsoQueryBuilder.SELECT_USER_SSO_QUERY, 
 		        inputs, 
-		        Integer.class
+		        userSsoRowMapper
 		    );
 		
-		return count;
+	    return users.isEmpty() ? null : users.get(0);
+
+//		return user;
 	}
 
 }
