@@ -7,6 +7,7 @@ import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.springframework.util.CollectionUtils;
@@ -200,11 +201,12 @@ public class SsoService {
 			{
 				newUser = userInDb.get(0);
 				Boolean update = false;
-				if(user.getUsername() != newUser.getUsername() ) {
+				if(!user.getUsername().equals(newUser.getUsername()) ) {
 					newUser.setUsername(user.getUsername());
 					update = true;
 				}
-				if( (newUser.getName().isEmpty() || newUser.getName() != null || user.getName() != user.getName())) {
+				if (!Objects.equals(newUser.getName(), user.getName())) {
+//				if( (newUser.getName().isEmpty() || newUser.getName() != null || user.getName() != user.getName())) {
 					newUser.setName(user.getName());
 					update = true;
 				}
