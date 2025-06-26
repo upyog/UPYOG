@@ -1,0 +1,1 @@
+ALTER TABLE eg_pt_owner ADD CONSTRAINT eg_pt_owner_pk PRIMARY KEY (ownerinfouuid);

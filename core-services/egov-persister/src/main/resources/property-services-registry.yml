@@ -359,8 +359,9 @@ serviceMaps:
 
     - query: INSERT INTO eg_pt_owner(ownerinfouuid, tenantid, propertyid, userid, status, isprimaryowner, ownertype, ownershippercentage, institutionid, relationship, createdby, createdtime, lastmodifiedby, lastmodifiedtime, additionaldetails, name, mobile_number) 
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        ON CONFLICT (propertyid, userid) DO UPDATE SET
+        ON CONFLICT (ownerinfouuid) DO UPDATE SET
         name = EXCLUDED.name,
+        userid = EXCLUDED.userid,
         mobile_number = EXCLUDED.mobile_number,
         additionaldetails = EXCLUDED.additionaldetails,
         lastmodifiedby = EXCLUDED.lastmodifiedby,

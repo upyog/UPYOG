@@ -280,7 +280,7 @@ public class PropertyService {
 			}
 		}
 
-		return isUpdate;
+		return true;
 	}
 
 	/*
@@ -292,7 +292,8 @@ public class PropertyService {
 		if (CreationReason.CREATE.equals(request.getProperty().getCreationReason())) {
 			userService.createUser(request);
 		} else {
-			userService.updateOwnerDetails(request);
+			userService.createUser(request);
+			//userService.updateOwnerDetails(request);
 		}
 
 		enrichmentService.enrichUpdateRequest(request, propertyFromSearch);
