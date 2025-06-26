@@ -16,6 +16,7 @@ import org.egov.garbageservice.model.Email;
 import org.egov.garbageservice.model.EmailRequest;
 import org.egov.garbageservice.model.GarbageAccount;
 import org.egov.garbageservice.model.GrbgAddress;
+import org.egov.garbageservice.model.GrbgBillTracker;
 import org.egov.garbageservice.model.SMSSentRequest;
 import org.egov.garbageservice.util.GrbgConstants;
 import org.egov.garbageservice.util.GrbgUtils;
@@ -107,15 +108,15 @@ public class NotificationService {
 		kafkaTemplate.send(emailTopic, emailRequest);
 	}
 
-	public void triggerNotificationsGenerateBill(GarbageAccount garbageAccount, Bill bill, RequestInfo requestInfo) {
+	public void triggerNotificationsGenerateBill(GarbageAccount garbageAccount, Bill bill, RequestInfo requestInfo,GrbgBillTracker grbgBillTracker) {
 		ClassPathResource resource = new ClassPathResource(GARBAGE_BILL_EMAIL_TEMPLATE_LOCATION);
 		String emailBody = grbgUtils.getContentAsString(resource);
 		String smsBody = SMS_BODY_GENERATE_BILL;
 		String emailSubject = EMAIL_SUBJECT_GENERATE_BILL;
 
-		emailBody = populateNotificationPlaceholders(emailBody, garbageAccount, bill);
-		smsBody = populateNotificationPlaceholders(smsBody, garbageAccount, bill);
-		emailSubject = populateNotificationPlaceholders(emailSubject, garbageAccount, bill);
+		emailBody = populateNotificationPlaceholders(emailBody, garbageAccount, bill,grbgBillTracker);
+		smsBody = populateNotificationPlaceholders(smsBody, garbageAccount, bill,grbgBillTracker);
+		emailSubject = populateNotificationPlaceholders(emailSubject, garbageAccount, bill,grbgBillTracker);
 
 		if (!StringUtils.isEmpty(garbageAccount.getEmailId())) {
 			sendEmail(emailBody, Collections.singletonList(garbageAccount.getEmailId()), requestInfo, null,
@@ -127,7 +128,7 @@ public class NotificationService {
 
 	}
 
-	private String populateNotificationPlaceholders(String body, GarbageAccount garbageAccount, Bill bill) {
+	private String populateNotificationPlaceholders(String body, GarbageAccount garbageAccount, Bill bill,GrbgBillTracker grbgBillTracker) {
 
 		Instant instant = Instant.ofEpochMilli(bill.getBillDate());
 		LocalDateTime dateTime = instant.atZone(ZoneId.systemDefault()).toLocalDateTime();
@@ -139,7 +140,7 @@ public class NotificationService {
 		String expiryDateStr = dateTimeExpiry.format(formatter);
 
 		body = body.replace(RECIPINTS_NAME_PLACEHOLDER, garbageAccount.getName());
-		body = body.replace(MONTH_PLACEHOLDER, GrbgUtils.toCamelCase(String.valueOf(dateTime.getMonth())));
+		body = body.replace(MONTH_PLACEHOLDER, GrbgUtils.toCamelCase(String.valueOf(grbgBillTracker.getMonth())));
 		body = body.replace(YEAR_PLACEHOLDER, String.valueOf(dateTime.getYear()));
 		body = body.replace(GARBAGE_BILL_NO_PLACEHOLDER, bill.getBillNumber());
 		if (!CollectionUtils.isEmpty(garbageAccount.getAddresses())) {
