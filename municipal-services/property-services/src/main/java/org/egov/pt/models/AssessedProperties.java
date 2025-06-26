@@ -5,7 +5,7 @@ import java.util.List;
 import lombok.Data;
 
 @Data
-public class AssessedProperties {
+public class AssessedProperties implements BucketGroup{
     private String groupBy;
     private List<Bucket> buckets;
 

@@ -5,7 +5,7 @@ import java.util.List;
 import lombok.Data;
 
 @Data
-public class Penalty {
+public class Penalty implements BucketGroup{
     private String groupBy;
     private List<Bucket> buckets;
 

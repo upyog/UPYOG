@@ -5,9 +5,13 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.User;
@@ -15,6 +19,7 @@ import org.egov.pt.config.PropertyConfiguration;
 import org.egov.pt.dashboardservice.DashboardService;
 import org.egov.pt.models.AssessedProperties;
 import org.egov.pt.models.Bucket;
+import org.egov.pt.models.BucketGroup;
 import org.egov.pt.models.Data;
 import org.egov.pt.models.Interest;
 import org.egov.pt.models.Metrics;
@@ -58,245 +63,117 @@ public class DashboardDataPush implements Job {
 
 	@Autowired
 	ObjectMapper objectMapper;
-	
+
 	public synchronized List<Data> dataPush() {
-		List<Data> propertyTaxPayloads = new ArrayList<Data>();
-		Map<String, String> parentMap = new HashMap<String, String>();
+		List<Data> propertyTaxPayloads = new ArrayList<>();
 		LocalDate currentDate = LocalDate.now();
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
-		String formattedDate = currentDate.format(formatter);
-		Map<String, String> wardwithTanentsMap = dashboardService.wardwithtanentlist();
-		Map<String, String> wardwithtenatasmtMap = dashboardService.wardwithAssesment();
-		Map<String, String> wardwithtenatClosdMap = dashboardService.wardwithClosedcount();
-		Map<String, String> wardwithtenatPaidMap = dashboardService.wardwithPaidcount();
-		Map<String, String> wardwithtenatApprovedMap = dashboardService.wardwithApprovedcount();
-		Map<String, String> wardwithtenatMovedMap = dashboardService.wardwithMovedcount();
-		Map<String, String> wardwithtenatRegisteredMap = dashboardService.wardwithpropertyRegistered();
-		Map<String, String> wardwithtenatAssedMap = dashboardService.wardwithpropertyAssed();
-		Map<String, String> wardwithtenatTransactionMap = dashboardService.wardwithTransactioncount();
-		Map<String, String> wardwithtenattodaysCollectionMap = dashboardService.wardwithtodaysCollection();
-		Map<String, String> wardwithtenatpropertyCountMap = dashboardService.wardwithpropertyCount();
-		Map<String, String> wardwithtenatrebategivenMap = dashboardService.wardwithrebategiven();
-		Map<String, String> wardwithtenatpenaltyCollectedMap = dashboardService.wardwithpenaltyCollected();
-		Map<String, String> wardwithtenatinterestCollectedMap = dashboardService.wardwithinterestCollected();
-		parentMap.putAll(wardwithTanentsMap);
-		parentMap.putAll(wardwithtenatasmtMap);
-		parentMap.putAll(wardwithtenatClosdMap);
-		parentMap.putAll(wardwithtenatPaidMap);
-		parentMap.putAll(wardwithtenatApprovedMap);
-		parentMap.putAll(wardwithtenatMovedMap);
-		parentMap.putAll(wardwithtenatRegisteredMap);
-		parentMap.putAll(wardwithtenatAssedMap);
-		parentMap.putAll(wardwithtenatTransactionMap);
-		parentMap.putAll(wardwithtenattodaysCollectionMap);
-		parentMap.putAll(wardwithtenatpropertyCountMap);
-		parentMap.putAll(wardwithtenatrebategivenMap);
-		parentMap.putAll(wardwithtenatpenaltyCollectedMap);
-		parentMap.putAll(wardwithtenatinterestCollectedMap);
-		if (parentMap.size() > 0) {
-			for (Map.Entry<String, String> entry : parentMap.entrySet()) {
-				Data propertyTaxPayload = new Data();
-				Metrics metrics = new Metrics();
-				TodaysMovedApplications todaysMovedApplications = new TodaysMovedApplications();
-				List<TodaysMovedApplications> movedApplications = new ArrayList<TodaysMovedApplications>();
-				todaysMovedApplications.setGroupBy("applicationStatus");
-				PropertiesRegistered propertiesRegistered = new PropertiesRegistered();
-				List<PropertiesRegistered> propertiesRegistereds = new ArrayList<PropertiesRegistered>();
-				propertiesRegistered.setGroupBy("financialYear");
-				AssessedProperties assessedProperties = new AssessedProperties();
-				List<AssessedProperties> propertiesAssed = new ArrayList<AssessedProperties>();
-				assessedProperties.setGroupBy("usageCategory");
-				Transactions transactions = new Transactions();
-				List<Transactions> transactionslist = new ArrayList<Transactions>();
-				transactions.setGroupBy("usageCategory");
-				TodaysCollection todaysCollection = new TodaysCollection();
-				List<TodaysCollection> todaysCollections = new ArrayList<TodaysCollection>();
-				todaysCollection.setGroupBy("usageCategory");
-				PropertyTax propertyTax = new PropertyTax();
-				List<PropertyTax> propertyTaxs = new ArrayList<PropertyTax>();
-				propertyTax.setGroupBy("usageCategory");
-				Rebate rebate = new Rebate();
-				List<Rebate> rebates = new ArrayList<Rebate>();
-				rebate.setGroupBy("usageCategory");
-				Penalty penalty = new Penalty();
-				List<Penalty> penalties = new ArrayList<Penalty>();
-				penalty.setGroupBy("usageCategory");
-				Interest interest = new Interest();
-				List<Interest> interests = new ArrayList<Interest>();
-				interest.setGroupBy("usageCategory");
-				propertyTaxPayload.setDate(formattedDate);
-				propertyTaxPayload.setModule(PTConstants.ASMT_MODULENAME);
-				propertyTaxPayload.setState("Manipur");
-				String key = entry.getKey();
-				propertyTaxPayload.setWard(key.split("-")[0]);
-				propertyTaxPayload.setUlb(key.split("-")[1]);
-				RequestInfo requestInfo = new RequestInfo();
-				List<String> masterNames = new ArrayList<>(Arrays.asList("tenants"));
-				Map<String, List<String>> regionName = propertyutil.getAttributeValues(config.getStateLevelTenantId(),
-						"tenant", masterNames,
-						"[?(@.city.districtTenantCode== '" + propertyTaxPayload.getUlb() + "')].city.districtCode",
-						"$.MdmsRes.tenant", requestInfo);
-				propertyTaxPayload.setRegion(regionName.get("tenants").get(0));
-				if (wardwithtenatasmtMap.containsKey(key))
-					metrics.setAssessments(new BigInteger(wardwithtenatasmtMap.get(key)));
-				if (wardwithTanentsMap.containsKey(key))
-					metrics.setTodaysTotalApplications(new BigInteger(wardwithTanentsMap.get(key)));
-				if (wardwithtenatClosdMap.containsKey(key))
-					metrics.setTodaysClosedApplications(new BigInteger(wardwithtenatClosdMap.get(key)));
-				if (wardwithtenatPaidMap.containsKey(key))
-					metrics.setNoOfPropertiesPaidToday(new BigInteger(wardwithtenatPaidMap.get(key)));
-				if (wardwithtenatApprovedMap.containsKey(key))
-					metrics.setTodaysApprovedApplications(new BigInteger(wardwithtenatApprovedMap.get(key)));
-				if (wardwithtenatMovedMap.containsKey(key)) {
-					List<Bucket> buckets = new ArrayList<Bucket>();
-					List<String> values = Arrays.asList(wardwithtenatMovedMap.get(key).split(","));
-					for (String valueString : values) {
-						Bucket bucket = new Bucket();
-						bucket.setName(valueString.split(":")[0]);
-						bucket.setValue(new BigInteger(valueString.split(":")[1]));
-						buckets.add(bucket);
-					}
-					todaysMovedApplications.setBuckets(buckets);
-					movedApplications.add(todaysMovedApplications);
-					metrics.setTodaysMovedApplications(movedApplications);
-				}
-				if (wardwithtenatRegisteredMap.containsKey(key)) {
-					List<Bucket> buckets = new ArrayList<Bucket>();
-					List<String> values = Arrays.asList(wardwithtenatRegisteredMap.get(key).split(","));
-					for (String valueString : values) {
-						Bucket bucket = new Bucket();
-						bucket.setName(valueString.split(":")[0]);
-						bucket.setValue(new BigInteger(valueString.split(":")[1]));
-						buckets.add(bucket);
-					}
-					propertiesRegistered.setBuckets(buckets);
-					propertiesRegistereds.add(propertiesRegistered);
-					metrics.setPropertiesRegistered(propertiesRegistereds);
-				}
-				if (wardwithtenatAssedMap.containsKey(key)) {
-					List<Bucket> buckets = new ArrayList<Bucket>();
-					List<String> values = Arrays.asList(wardwithtenatAssedMap.get(key).split(","));
-					for (String valueString : values) {
-						Bucket bucket = new Bucket();
-						bucket.setName(valueString.split(":")[0]);
-						bucket.setValue(new BigInteger(valueString.split(":")[1]));
-						buckets.add(bucket);
-					}
-					assessedProperties.setBuckets(buckets);
-					propertiesAssed.add(assessedProperties);
-					metrics.setAssessedProperties(propertiesAssed);
-				}
-				if (wardwithtenatTransactionMap.containsKey(key)) {
-					List<Bucket> buckets = new ArrayList<Bucket>();
-					List<String> values = Arrays.asList(wardwithtenatTransactionMap.get(key).split(","));
-					for (String valueString : values) {
-						Bucket bucket = new Bucket();
-						bucket.setName(valueString.split(":")[0]);
-						bucket.setValue(new BigInteger(valueString.split(":")[1]));
-						buckets.add(bucket);
-					}
-					transactions.setBuckets(buckets);
-					transactionslist.add(transactions);
-					metrics.setTransactions(transactionslist);
-				}
-				if (wardwithtenattodaysCollectionMap.containsKey(key)) {
-					List<Bucket> buckets = new ArrayList<Bucket>();
-					List<String> values = Arrays.asList(wardwithtenattodaysCollectionMap.get(key).split(","));
-					for (String valueString : values) {
-						Bucket bucket = new Bucket();
-						bucket.setName(valueString.split(":")[0]);
-						bucket.setValue(new BigInteger(valueString.split(":")[1]));
-						buckets.add(bucket);
-					}
-					todaysCollection.setBuckets(buckets);
-					todaysCollections.add(todaysCollection);
-					metrics.setTodaysCollection(todaysCollections);
-				}
-				if (wardwithtenatpropertyCountMap.containsKey(key)) {
-					List<Bucket> buckets = new ArrayList<Bucket>();
-					List<String> values = Arrays.asList(wardwithtenatpropertyCountMap.get(key).split(","));
-					for (String valueString : values) {
-						Bucket bucket = new Bucket();
-						bucket.setName(valueString.split(":")[0]);
-						bucket.setValue(new BigInteger(valueString.split(":")[1]));
-						buckets.add(bucket);
-					}
-					propertyTax.setBuckets(buckets);
-					propertyTaxs.add(propertyTax);
-					metrics.setPropertyTax(propertyTaxs);
-				}
-				if (wardwithtenatrebategivenMap.containsKey(key)) {
-					List<Bucket> buckets = new ArrayList<Bucket>();
-					List<String> values = Arrays.asList(wardwithtenatrebategivenMap.get(key).split(","));
-					for (String valueString : values) {
-						Bucket bucket = new Bucket();
-						bucket.setName(valueString.split(":")[0]);
-						bucket.setValue(new BigInteger(valueString.split(":")[1]));
-						buckets.add(bucket);
-					}
-					rebate.setBuckets(buckets);
-					rebates.add(rebate);
-					metrics.setRebate(rebates);
-				}
-				if (wardwithtenatpenaltyCollectedMap.containsKey(key)) {
-					List<Bucket> buckets = new ArrayList<Bucket>();
-					List<String> values = Arrays.asList(wardwithtenatpenaltyCollectedMap.get(key).split(","));
-					for (String valueString : values) {
-						Bucket bucket = new Bucket();
-						bucket.setName(valueString.split(":")[0]);
-						bucket.setValue(new BigInteger(valueString.split(":")[1]));
-						buckets.add(bucket);
-					}
-					penalty.setBuckets(buckets);
-					penalties.add(penalty);
-					metrics.setPenalty(penalties);
-				}
-				if (wardwithtenatinterestCollectedMap.containsKey(key)) {
-					List<Bucket> buckets = new ArrayList<Bucket>();
-					List<String> values = Arrays.asList(wardwithtenatinterestCollectedMap.get(key).split(","));
-					for (String valueString : values) {
-						Bucket bucket = new Bucket();
-						bucket.setName(valueString.split(":")[0]);
-						bucket.setValue(new BigInteger(valueString.split(":")[1]));
-						buckets.add(bucket);
-					}
-					interest.setBuckets(buckets);
-					interests.add(interest);
-					metrics.setInterest(interests);
-				}
+		String formattedDate = currentDate.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));
 
-				propertyTaxPayload.setMetrics(metrics);
-				propertyTaxPayloads.add(propertyTaxPayload);
-			}
+		Map<String, String> parentMap = new HashMap<>();
+		parentMap.putAll(dashboardService.wardWithTanentList());
+		parentMap.putAll(dashboardService.wardWithAssessment());
+		parentMap.putAll(dashboardService.wardWithClosedCount());
+		parentMap.putAll(dashboardService.wardWithPaidCount());
+		parentMap.putAll(dashboardService.wardWithApprovedCount());
+		parentMap.putAll(dashboardService.wardWithMovedCount());
+		parentMap.putAll(dashboardService.wardWithPropertyRegistered());
+		parentMap.putAll(dashboardService.wardWithPropertyAssessed());
+		parentMap.putAll(dashboardService.wardWithTransactionCount());
+		parentMap.putAll(dashboardService.wardWithTodaysCollection());
+		parentMap.putAll(dashboardService.wardWithPropertyCount());
+		parentMap.putAll(dashboardService.wardWithRebateGiven());
+		parentMap.putAll(dashboardService.wardWithPenaltyCollected());
+		parentMap.putAll(dashboardService.wardWithInterestCollected());
 
+		if (parentMap.isEmpty())
+			return propertyTaxPayloads;
+
+		for (Map.Entry<String, String> entry : parentMap.entrySet()) {
+			String key = entry.getKey();
+			String[] keyParts = key.split("-");
+
+			Data propertyTaxPayload = new Data();
+			propertyTaxPayload.setDate(formattedDate);
+			propertyTaxPayload.setModule(PTConstants.ASMT_MODULENAME);
+			propertyTaxPayload.setState("Manipur");
+			propertyTaxPayload.setWard(keyParts[0]);
+			propertyTaxPayload.setUlb(keyParts[1]);
+
+			RequestInfo requestInfo = new RequestInfo();
+			List<String> masterNames = Collections.singletonList("tenants");
+			Map<String, List<String>> regionName = propertyutil.getAttributeValues(config.getStateLevelTenantId(),
+					"tenant", masterNames,
+					"[?(@.city.districtTenantCode== '" + propertyTaxPayload.getUlb() + "')].city.districtCode",
+					"$.MdmsRes.tenant", requestInfo);
+			propertyTaxPayload.setRegion(regionName.get("tenants").get(0));
+
+			Metrics metrics = new Metrics();
+			populateSimpleMetrics(metrics, key);
+			populateBucketMetrics(metrics, key);
+
+			propertyTaxPayload.setMetrics(metrics);
+			propertyTaxPayloads.add(propertyTaxPayload);
 		}
 
 		return propertyTaxPayloads;
 	}
 
-	@Override
-	public void execute(JobExecutionContext context) throws JobExecutionException {
-		List<Data> datas = dataPush();
-		RequestInfo requestInfo = new RequestInfo();
-		authenticationdetails(requestInfo);
-		DashboardDataRequest dashboardDataRequest = DashboardDataRequest.builder().requestInfo(requestInfo).datas(datas)
-				.build();
-		Object response=new Object();
-		try {
-			if(!CollectionUtils.isEmpty(datas))
-			{
-				response= restTemplate.postForEntity(config.getDashbordUserHost() + "/national-dashboard/metric/_ingest", dashboardDataRequest, Map.class).getBody();
-			}
-			propertyRepository.savedashbordDatalog(dashboardDataRequest,response,null);
-		} catch (Exception e) {
-			propertyRepository.savedashbordDatalog(dashboardDataRequest,response,e.getLocalizedMessage());
+	private void populateSimpleMetrics(Metrics metrics, String key) {
+		if (dashboardService.wardWithAssessment().containsKey(key))
+			metrics.setAssessments(new BigInteger(dashboardService.wardWithAssessment().get(key)));
+		if (dashboardService.wardWithTanentList().containsKey(key))
+			metrics.setTodaysTotalApplications(new BigInteger(dashboardService.wardWithTanentList().get(key)));
+		if (dashboardService.wardWithClosedCount().containsKey(key))
+			metrics.setTodaysClosedApplications(new BigInteger(dashboardService.wardWithClosedCount().get(key)));
+		if (dashboardService.wardWithPaidCount().containsKey(key))
+			metrics.setNoOfPropertiesPaidToday(new BigInteger(dashboardService.wardWithPaidCount().get(key)));
+		if (dashboardService.wardWithApprovedCount().containsKey(key))
+			metrics.setTodaysApprovedApplications(new BigInteger(dashboardService.wardWithApprovedCount().get(key)));
+	}
+
+	private void populateBucketMetrics(Metrics metrics, String key) {
+		addBucketData(metrics::setTodaysMovedApplications, dashboardService.wardWithMovedCount(), key,
+				"applicationStatus", TodaysMovedApplications::new);
+		addBucketData(metrics::setPropertiesRegistered, dashboardService.wardWithPropertyRegistered(), key,
+				"financialYear", PropertiesRegistered::new);
+		addBucketData(metrics::setAssessedProperties, dashboardService.wardWithPropertyAssessed(), key, "usageCategory",
+				AssessedProperties::new);
+		addBucketData(metrics::setTransactions, dashboardService.wardWithTransactionCount(), key, "usageCategory",
+				Transactions::new);
+		addBucketData(metrics::setTodaysCollection, dashboardService.wardWithTodaysCollection(), key, "usageCategory",
+				TodaysCollection::new);
+		addBucketData(metrics::setPropertyTax, dashboardService.wardWithPropertyCount(), key, "usageCategory",
+				PropertyTax::new);
+		addBucketData(metrics::setRebate, dashboardService.wardWithRebateGiven(), key, "usageCategory", Rebate::new);
+		addBucketData(metrics::setPenalty, dashboardService.wardWithPenaltyCollected(), key, "usageCategory",
+				Penalty::new);
+		addBucketData(metrics::setInterest, dashboardService.wardWithInterestCollected(), key, "usageCategory",
+				Interest::new);
+	}
+
+	private <T extends BucketGroup> void addBucketData(Consumer<List<T>> setter, Map<String, String> sourceMap,
+			String key, String groupBy, Supplier<T> constructor) {
+		if (sourceMap.containsKey(key)) {
+			List<Bucket> buckets = Arrays.stream(sourceMap.get(key).split(",")).map(s -> {
+				String[] parts = s.split(":");
+				Bucket bucket = new Bucket();
+				bucket.setName(parts[0]);
+				bucket.setValue(new BigInteger(parts[1]));
+				return bucket;
+			}).collect(Collectors.toList());
+
+			T group = constructor.get();
+			group.setGroupBy(groupBy);
+			group.setBuckets(buckets);
+
+			setter.accept(Collections.singletonList(group));
 		}
 	}
 
 	private void authenticationdetails(RequestInfo requestInfo) {
-		
+
 		HttpHeaders headers = new HttpHeaders();
-		List<MediaType> mediaTypes=new ArrayList<MediaType>();
+		List<MediaType> mediaTypes = new ArrayList<MediaType>();
 		mediaTypes.add(MediaType.APPLICATION_JSON);
 		mediaTypes.add(MediaType.TEXT_PLAIN);
 		headers.setAccept(mediaTypes);
@@ -310,13 +187,34 @@ public class DashboardDataPush implements Job {
 		map.add("tenantId", "pg");
 		map.add("userType", "SYSTEM");
 
-		HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<MultiValueMap<String, String>>(map,
-				headers);
-		Map<String, Object> response= restTemplate.postForEntity(config.getDashbordUserHost() + "/user/oauth/token", request, Map.class).getBody();
+		HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<MultiValueMap<String, String>>(map, headers);
+		Map<String, Object> response = restTemplate
+				.postForEntity(config.getDashbordUserHost() + "/user/oauth/token", request, Map.class).getBody();
 		requestInfo.setApiId("asset-services");
 		requestInfo.setMsgId("search with from and to values");
-		requestInfo.setAuthToken(objectMapper.convertValue(response.get("access_token"),String.class));
+		requestInfo.setAuthToken(objectMapper.convertValue(response.get("access_token"), String.class));
 		requestInfo.setUserInfo(objectMapper.convertValue(response.get("UserRequest"), User.class));
+	}
+
+	@Override
+	public void execute(JobExecutionContext context) throws JobExecutionException {
+		List<Data> datas = dataPush();
+		RequestInfo requestInfo = new RequestInfo();
+		authenticationdetails(requestInfo);
+		DashboardDataRequest dashboardDataRequest = DashboardDataRequest.builder().requestInfo(requestInfo).datas(datas)
+				.build();
+		Object response = new Object();
+		try {
+			if (!CollectionUtils.isEmpty(datas)) {
+				response = restTemplate
+						.postForEntity(config.getDashbordUserHost() + "/national-dashboard/metric/_ingest",
+								dashboardDataRequest, Map.class)
+						.getBody();
+			}
+			propertyRepository.savedashbordDatalog(dashboardDataRequest, response, null);
+		} catch (Exception e) {
+			propertyRepository.savedashbordDatalog(dashboardDataRequest, response, e.getLocalizedMessage());
+		}
 	}
 
 }

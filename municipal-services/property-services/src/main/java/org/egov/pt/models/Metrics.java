@@ -4,6 +4,8 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import lombok.Data;
 
 @Data
@@ -16,6 +18,7 @@ public class Metrics {
     private BigInteger todaysApprovedApplicationsWithinSLA= BigInteger.ZERO;
     private BigInteger pendingApplicationsBeyondTimeline = BigInteger.ZERO;
     private BigInteger avgDaysForApplicationApproval = BigInteger.ZERO;
+    @JsonProperty("StipulatedDays")
     private BigInteger StipulatedDays= BigInteger.ZERO;
 
     private List<TodaysMovedApplications> todaysMovedApplications = new ArrayList<>();
