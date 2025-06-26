@@ -199,18 +199,22 @@ public class SsoService {
 		    }
 			else
 			{
+
 				newUser = userInDb.get(0);
+		        log.info("userFound "+newUser.getName());
 				Boolean update = false;
 				if(!user.getUsername().equals(newUser.getUsername()) ) {
+			        log.info("campareUserName - "+user.getUsername()+" "+newUser.getUsername());
 					newUser.setUsername(user.getUsername());
 					update = true;
 				}
 				if (!Objects.equals(newUser.getName(), user.getName())) {
-//				if( (newUser.getName().isEmpty() || newUser.getName() != null || user.getName() != user.getName())) {
+			        log.info("campareName --- "+newUser.getName()+" "+user.getName()+"---");
 					newUser.setName(user.getName());
 					update = true;
 				}
 				if(update) {
+			        log.info("Update user");
 					userService.updateUsernameWithoutOtpValidation(newUser,null);
 				}
 			}

@@ -82,7 +82,7 @@ public class GarbageAccountSchedulerService {
 
 						// triggerNotifications
 						notificationService.triggerNotificationsGenerateBill(garbageAccount, billResponse.getBill().get(0),
-								generateBillRequest.getRequestInfo());
+								generateBillRequest.getRequestInfo(),grbgBillTracker);
 					}
 				}
 			});
