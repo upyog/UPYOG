@@ -71,5 +71,15 @@ public class Unit   {
 
         @JsonProperty("arv")
         private BigDecimal arv;
+        
+        
+    	@JsonProperty("structureType")
+    	private String structureType;
+    	
+    	
+    	@JsonProperty("ageOfProperty")
+    	private String ageOfProperty;
+    	
+    	private BigDecimal taxamount;
 }
 

@@ -59,37 +59,38 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class BillAccountDetailV2   {
-        
-  @JsonProperty("id")
-  private String id;
+public class BillAccountDetailV2 {
 
-  @JsonProperty("tenantId")
-  private String tenantId;
+	@JsonProperty("id")
+	private String id;
 
-  @JsonProperty("billDetailId")
-  private String billDetailId;
+	@JsonProperty("tenantId")
+	private String tenantId;
 
-  @JsonProperty("demandDetailId")
-  private String demandDetailId;
+	@JsonProperty("billDetailId")
+	private String billDetailId;
 
-  @JsonProperty("order")
-  private Integer order;
+	@JsonProperty("demandDetailId")
+	private String demandDetailId;
 
-  @JsonProperty("amount")
-  private BigDecimal amount;
-  
-  @JsonProperty("adjustedAmount")
-  private BigDecimal adjustedAmount;
+	@JsonProperty("order")
+	private Integer order;
 
-  @JsonProperty("taxHeadCode")
-  private String taxHeadCode;
+	@JsonProperty("amount")
+	private BigDecimal amount;
 
-  @JsonProperty("additionalDetails")
-  private Object additionalDetails;
+	@JsonProperty("adjustedAmount")
+	private BigDecimal adjustedAmount;
 
-  @JsonProperty("auditDetails")
-  private AuditDetails auditDetails;
+	@JsonProperty("glcode")
+	private String glcode;
+
+	@JsonProperty("taxHeadCode")
+	private String taxHeadCode;
+
+	@JsonProperty("additionalDetails")
+	private Object additionalDetails;
+
+	@JsonProperty("auditDetails")
+	private AuditDetails auditDetails;
 }
-
-
