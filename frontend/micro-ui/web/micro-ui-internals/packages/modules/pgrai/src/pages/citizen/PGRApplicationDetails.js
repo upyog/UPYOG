@@ -16,7 +16,7 @@ const PGRApplicationDetails = () => {
   // Using the PGR AI hook to fetch data for application details
   const { isLoading, isError, error, data } = Digit.Hooks.pgrAi.useSearchPGRAI({
     tenantId,
-    filters: { requestId: acknowledgementIds },
+    filters: { serviceRequestId: acknowledgementIds },
   });
   const serviceWrapper = data?.ServiceWrappers?.[0] || {};
   const service = serviceWrapper?.service || {};

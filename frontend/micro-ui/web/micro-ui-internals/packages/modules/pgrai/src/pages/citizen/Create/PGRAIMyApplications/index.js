@@ -15,7 +15,6 @@ export const PGRAIMyApplications = () => {
     const { t } = useTranslation();
     const tenantId = Digit.ULBService.getCitizenCurrentTenant(true) || Digit.ULBService.getCurrentTenantId();
     const user = Digit.UserService.getUser().info;
-    const [filters, setFilters] = useState(null);
 
  const [searchTerm, setSearchTerm] = useState("");
   
@@ -32,6 +31,8 @@ export const PGRAIMyApplications = () => {
     let initialFilters = !isNaN(parseInt(filter))
       ? { limit: "50", offset: off, tenantId }
       : { limit: "50", offset: "0", tenantId};
+
+    const [filters, setFilters] = useState(initialFilters);
 
   const { isLoading, isError, error, data } = Digit.Hooks.pgrAi.useSearchPGRAI({ filters });
    
