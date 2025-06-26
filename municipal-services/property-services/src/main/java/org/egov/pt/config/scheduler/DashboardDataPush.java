@@ -204,7 +204,7 @@ public class DashboardDataPush implements Job {
 		authenticationdetails(requestInfo);
 		DashboardDataRequest dashboardDataRequest = DashboardDataRequest.builder().requestInfo(requestInfo).datas(datas)
 				.build();
-		Object response = new Object();
+		Object response = "No Response";
 		try {
 			if (!CollectionUtils.isEmpty(datas)) {
 				response = restTemplate
