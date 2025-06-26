@@ -190,6 +190,7 @@ public class SsoService {
 		
 			UserSearchCriteria searchCriteria = UserSearchCriteria.builder()
 					.type(UserType.CITIZEN)
+					.active(true)
 					.mobileNumber(user.getMobileNumber()).tenantId("hp").build();
 	        log.info("count of ids with sso mapping with ssoId "+user.getMobileNumber() + " "+ count, count);
 			List<User> userInDb = userService.searchUsers(searchCriteria, false, null);
