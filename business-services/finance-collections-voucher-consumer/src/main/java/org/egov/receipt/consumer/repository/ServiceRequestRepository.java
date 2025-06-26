@@ -65,139 +65,139 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class ServiceRequestRepository {
 
-    private static final String SEARCHER_EXCEPTION_MESSAGE = "Exception while fetching from searcher: ";
+	private static final String SEARCHER_EXCEPTION_MESSAGE = "Exception while fetching from searcher: ";
 
-    @Autowired
-    private RestTemplate restTemplate;
-    @Autowired
-    private TokenService tokenService;
-    @Autowired
-    private ObjectMapper mapper;
+	@Autowired
+	private RestTemplate restTemplate;
+	@Autowired
+	private TokenService tokenService;
+	@Autowired
+	private ObjectMapper mapper;
 
-    /**
-     * Fetches results from searcher framework based on the uri and request that define what is to be searched.
-     * 
-     * @param requestInfo
-     * @param serviceReqSearchCriteria
-     * @return Object
-     * @author atique
-     */
-    public Object fetchResult(StringBuilder uri, Object request, String tenantId) throws VoucherCustomException {
-        mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
-        Object response = null;
+	/**
+	 * Fetches results from searcher framework based on the uri and request that
+	 * define what is to be searched.
+	 * 
+	 * @param requestInfo
+	 * @param serviceReqSearchCriteria
+	 * @return Object
+	 * @author atique
+	 */
+	public Object fetchResult(StringBuilder uri, Object request, String tenantId) throws VoucherCustomException {
+		mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+		Object response = null;
 
-        try {
-            populateWithAdminToken(uri, request, tenantId);
-            response = restTemplate.postForObject(uri.toString(), request, Map.class);
-        } catch (HttpClientErrorException e) {
-            if (e.getStatusCode().equals(HttpStatus.UNAUTHORIZED)) {
-                log.error("Unauthorized accessed : Retrying http uri {} with SYSTEM auth token.", uri.toString());
-                response = this.retryHttpCallOnUnauthorizedAccess(uri, request, tenantId);
-            } else {
-                log.error(SEARCHER_EXCEPTION_MESSAGE, e.getResponseBodyAsString());
-                throw new VoucherCustomException(ProcessStatus.FAILED, e.getResponseBodyAsString());
-            }
-        } catch (Exception e) {
-            log.error(SEARCHER_EXCEPTION_MESSAGE, e);
-            throw new VoucherCustomException(ProcessStatus.FAILED, "Exception while fetching from searcher.");
-        }
-        return response;
-    }
-    
-    // calling with headers Host or SchmeNane
-    public Object fetchResultWithHeaders(StringBuilder uri, Object request, String tenantId, HttpHeaders headers)
-            throws VoucherCustomException {
-        mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
-        Object response = null;
+		try {
+			populateWithAdminToken(uri, request, tenantId);
+			response = restTemplate.postForObject(uri.toString(), request, Map.class);
+		} catch (HttpClientErrorException e) {
+			if (e.getStatusCode().equals(HttpStatus.UNAUTHORIZED)) {
+				log.error("Unauthorized accessed : Retrying http uri {} with SYSTEM auth token.", uri.toString());
+				response = this.retryHttpCallOnUnauthorizedAccess(uri, request, tenantId);
+			} else {
+				log.error(SEARCHER_EXCEPTION_MESSAGE, e.getResponseBodyAsString());
+				throw new VoucherCustomException(ProcessStatus.FAILED, e.getResponseBodyAsString());
+			}
+		} catch (Exception e) {
+			log.error(SEARCHER_EXCEPTION_MESSAGE, e);
+			throw new VoucherCustomException(ProcessStatus.FAILED, "Exception while fetching from searcher.");
+		}
+		return response;
+	}
 
-        try {
-            populateWithAdminToken(uri, request, tenantId);
-            // LOG HEADERS
-            log.info("Calling URL: {}", uri);
-            log.info("Request Headers: {}", headers.toSingleValueMap());
-            
-            HttpEntity<Object> httpEntity = new HttpEntity<>(request, headers);
-            response = restTemplate.postForObject(uri.toString(), httpEntity, Map.class);
-        } catch (HttpClientErrorException e) {
-            if (e.getStatusCode().equals(HttpStatus.UNAUTHORIZED)) {
-                log.error("Unauthorized accessed : Retrying http uri {} with SYSTEM auth token.", uri.toString());
-                response = this.retryHttpCallOnUnauthorizedAccessWithHeaders(uri, request, tenantId, headers);
-            } else {
-                log.error(SEARCHER_EXCEPTION_MESSAGE, e.getResponseBodyAsString());
-                throw new VoucherCustomException(ProcessStatus.FAILED, e.getResponseBodyAsString());
-            }
-        } catch (Exception e) {
-            log.error(SEARCHER_EXCEPTION_MESSAGE, e);
-            throw new VoucherCustomException(ProcessStatus.FAILED, "Exception while fetching from searcher.");
-        }
+	// calling with headers Host or SchmeNane
+	public Object fetchResultWithHeaders(StringBuilder uri, Object request, String tenantId, HttpHeaders headers)
+			throws VoucherCustomException {
+		mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+		Object response = null;
 
-        return response;
-    }
+		try {
 
+			populateWithAdminToken(uri, request, tenantId);
+			// LOG HEADERS
+			log.info("Calling URL: {}", uri);
+			log.info("Request Headers: {}", headers.toSingleValueMap());
 
-    private Object retryHttpCallOnUnauthorizedAccess(StringBuilder uri, Object request, String tenantId)
-            throws VoucherCustomException {
-        try {
-            populateWithAdminToken(uri, request, tenantId);
-            return restTemplate.postForObject(uri.toString(), request, Map.class);
-        } catch (HttpClientErrorException e) {
-            if (e.getStatusCode().equals(HttpStatus.UNAUTHORIZED)) {
-                log.error("Unauthorized accessed : Even after retrying with SYSTEM auth token.");
-                throw new VoucherCustomException(ProcessStatus.FAILED,
-                        "Error occurred even after retrying uri " + uri.toString() + " with SYSTEM auth token.");
-            }
-        } catch (IllegalArgumentException | IllegalAccessException e) {
-            log.error(e.getMessage());
-        }
-        return null;
-    }
-    
-    private Object retryHttpCallOnUnauthorizedAccessWithHeaders(StringBuilder uri, Object request, String tenantId, HttpHeaders headers)
-            throws VoucherCustomException {
-        try {
-            populateWithAdminToken(uri, request, tenantId);
-            HttpEntity<Object> httpEntity = new HttpEntity<>(request, headers);
-            return restTemplate.postForObject(uri.toString(), httpEntity, Map.class);
-        } catch (HttpClientErrorException e) {
-            if (e.getStatusCode().equals(HttpStatus.UNAUTHORIZED)) {
-                log.error("Unauthorized accessed : Even after retrying with SYSTEM auth token.");
-                throw new VoucherCustomException(ProcessStatus.FAILED,
-                        "Error occurred even after retrying uri " + uri.toString() + " with SYSTEM auth token.");
-            }
-        } catch (IllegalArgumentException | IllegalAccessException e) {
-            log.error(e.getMessage());
-        }
-        return null;
-    }
+			HttpEntity<Object> httpEntity = new HttpEntity<>(request, headers);
+			response = restTemplate.postForObject(uri.toString(), httpEntity, Map.class);
+		} catch (HttpClientErrorException e) {
+			if (e.getStatusCode().equals(HttpStatus.UNAUTHORIZED)) {
+				log.error("Unauthorized accessed : Retrying http uri {} with SYSTEM auth token.", uri.toString());
+				response = this.retryHttpCallOnUnauthorizedAccessWithHeaders(uri, request, tenantId, headers);
+			} else {
+				log.error(SEARCHER_EXCEPTION_MESSAGE, e.getResponseBodyAsString());
+				throw new VoucherCustomException(ProcessStatus.FAILED, e.getResponseBodyAsString());
+			}
+		} catch (Exception e) {
+			log.error(SEARCHER_EXCEPTION_MESSAGE, e);
+			throw new VoucherCustomException(ProcessStatus.FAILED, "Exception while fetching from searcher.");
+		}
 
+		return response;
+	}
 
-    private void populateWithAdminToken(StringBuilder uri, Object request, String tenantId)
-            throws IllegalAccessException, VoucherCustomException {
-        RequestInfo requestInfo = null;
-        Class<?> clazz = request.getClass();
-        Field field = ReflectionUtils.findField(clazz, "requestInfo");
-        if (field != null) {
-            ReflectionUtils.makeAccessible(field);
-            requestInfo = (RequestInfo) field.get(request);
-            if (requestInfo.getAuthToken() == null)
-                requestInfo.setAuthToken(tokenService.generateAdminToken(tenantId));
-            ReflectionUtils.setField(field, request, requestInfo);
-        } else {
-            throw new VoucherCustomException(ProcessStatus.FAILED,
-                    "requestInfo properties is not found in uri " + uri.toString());
-        }
-    }
+	private Object retryHttpCallOnUnauthorizedAccess(StringBuilder uri, Object request, String tenantId)
+			throws VoucherCustomException {
+		try {
+			populateWithAdminToken(uri, request, tenantId);
+			return restTemplate.postForObject(uri.toString(), request, Map.class);
+		} catch (HttpClientErrorException e) {
+			if (e.getStatusCode().equals(HttpStatus.UNAUTHORIZED)) {
+				log.error("Unauthorized accessed : Even after retrying with SYSTEM auth token.");
+				throw new VoucherCustomException(ProcessStatus.FAILED,
+						"Error occurred even after retrying uri " + uri.toString() + " with SYSTEM auth token.");
+			}
+		} catch (IllegalArgumentException | IllegalAccessException e) {
+			log.error(e.getMessage());
+		}
+		return null;
+	}
 
-    public Object fetchResultGet(String uri) throws VoucherCustomException {
-        mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
-        Object response = null;
+	private Object retryHttpCallOnUnauthorizedAccessWithHeaders(StringBuilder uri, Object request, String tenantId,
+			HttpHeaders headers) throws VoucherCustomException {
+		try {
+			populateWithAdminToken(uri, request, tenantId);
+			HttpEntity<Object> httpEntity = new HttpEntity<>(request, headers);
+			return restTemplate.postForObject(uri.toString(), httpEntity, Map.class);
+		} catch (HttpClientErrorException e) {
+			if (e.getStatusCode().equals(HttpStatus.UNAUTHORIZED)) {
+				log.error("Unauthorized accessed : Even after retrying with SYSTEM auth token.");
+				throw new VoucherCustomException(ProcessStatus.FAILED,
+						"Error occurred even after retrying uri " + uri.toString() + " with SYSTEM auth token.");
+			}
+		} catch (IllegalArgumentException | IllegalAccessException e) {
+			log.error(e.getMessage());
+		}
+		return null;
+	}
 
-        try {
-            response = restTemplate.getForObject(uri, Map.class);
-        } catch (Exception e) {
-            log.error(SEARCHER_EXCEPTION_MESSAGE, e);
-            throw new VoucherCustomException(ProcessStatus.FAILED, "IFSC code is invalid : url : " + uri);
-        }
-        return response;
-    }
+	private void populateWithAdminToken(StringBuilder uri, Object request, String tenantId)
+			throws IllegalAccessException, VoucherCustomException {
+		RequestInfo requestInfo = null;
+		Class<?> clazz = request.getClass();
+		Field field = ReflectionUtils.findField(clazz, "requestInfo");
+		if (field != null) {
+			ReflectionUtils.makeAccessible(field);
+			requestInfo = (RequestInfo) field.get(request);
+			if (requestInfo.getAuthToken() == null)
+				requestInfo.setAuthToken(tokenService.generateAdminToken(tenantId));
+			ReflectionUtils.setField(field, request, requestInfo);
+		} else {
+			throw new VoucherCustomException(ProcessStatus.FAILED,
+					"requestInfo properties is not found in uri " + uri.toString());
+		}
+	}
+
+	public Object fetchResultGet(String uri) throws VoucherCustomException {
+		mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+		Object response = null;
+
+		try {
+			response = restTemplate.getForObject(uri, Map.class);
+		} catch (Exception e) {
+			log.error(SEARCHER_EXCEPTION_MESSAGE, e);
+			throw new VoucherCustomException(ProcessStatus.FAILED, "IFSC code is invalid : url : " + uri);
+		}
+		return response;
+	}
 }
