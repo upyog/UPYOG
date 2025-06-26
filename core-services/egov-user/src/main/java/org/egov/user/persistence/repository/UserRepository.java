@@ -346,6 +346,19 @@ public class UserRepository {
                 Collections.singletonMap("user_uuid", uuid));
     }
 
+	public void updateUsername(final User user, User oldUser) {
+        Map<String, Object> updateuserInputs = new HashMap<>();
+        updateuserInputs.put("username", user.getUsername());
+        updateuserInputs.put("name", user.getName());
+        updateuserInputs.put("uuid", oldUser.getUuid());
+        updateuserInputs.put("type", oldUser.getType().toString());
+        namedParameterJdbcTemplate.update(userTypeQueryBuilder.getUpdateUserName(), updateuserInputs);
+//        if (user.getRoles() != null && !CollectionUtils.isEmpty(user.getRoles()) && !oldUser.getRoles().equals(user.getRoles())) {
+//            validateAndEnrichRoles(Collections.singletonList(user));
+//            updateRoles(user);
+//        }
+
+    }
 
     /**
      * Fetch roles by role codes

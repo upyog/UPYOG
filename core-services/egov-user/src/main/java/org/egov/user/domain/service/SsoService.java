@@ -76,7 +76,7 @@ public class SsoService {
 			
 			User user = getUserFromSsoTokenResponse(hpSsoValidateTokenResponse);
 			
-            log.info("getUserFromSsoTokenResponse Request " +user.getMobileNumber(),user.getUsername());
+            log.info("getUserFromSsoTokenResponse Request " +user.getMobileNumber() + " "+ user.getUsername(),user.getUsername());
 
 			// we can use this api for user's extra details
 //			List<User> userInDb = userService.searchUsers(UserSearchCriteria.builder().mobileNumber(user.getMobileNumber()).build(), false, null);
@@ -86,7 +86,7 @@ public class SsoService {
 
 			checkAndCreateUserSso(hpSsoValidateTokenResponse, user);
 			
-            log.info("checkAndCreate Request" ,user.getUsername());
+            log.info("checkAndCreate Request " + user.getUsername() ,user.getUsername());
 
 //			do login;
 			Object loginResponse = userService.getLoginAccess(user, user.getPassword());
@@ -186,7 +186,7 @@ public class SsoService {
         log.info("count of ids with sso mapping with ssoId "+hpSsoValidateTokenResponse.getSsoId() +" " + count, count);
 
 		// if ssoid not exist
-		if (count == 0) {
+		
 			UserSearchCriteria searchCriteria = UserSearchCriteria.builder()
 					.type(UserType.CITIZEN)
 					.mobileNumber(user.getMobileNumber()).tenantId("hp").build();
@@ -199,7 +199,20 @@ public class SsoService {
 			else
 			{
 				newUser = userInDb.get(0);
+				Boolean update = false;
+				if(user.getUsername() != newUser.getUsername() ) {
+					newUser.setUsername(user.getUsername());
+					update = true;
+				}
+				if( (newUser.getName().isEmpty() || newUser.getName() != null || user.getName() != user.getName())) {
+					newUser.setName(user.getName());
+					update = true;
+				}
+				if(update) {
+					userService.updateUsernameWithoutOtpValidation(newUser,null);
+				}
 			}
+		if (count == 0) {
 			// create new user
 			// enrich new user_sso
 			UserSso newUserSso = enrichCreateUserSso(hpSsoValidateTokenResponse, newUser);

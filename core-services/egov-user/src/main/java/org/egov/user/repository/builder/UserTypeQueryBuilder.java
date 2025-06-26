@@ -302,6 +302,9 @@ public class UserTypeQueryBuilder {
                 "lastmodifiedby=:LastModifiedBy, alternatemobilenumber=:alternatemobilenumber where username=:username and tenantid=:tenantid and type=:type";
     }
 
+    public String getUpdateUserName() {
+        return "update eg_user set username=:username,name=:name where uuid=:uuid and type=:type";
+    }
 
     public String getUserPresentByUserNameAndTenant() {
         return "select count(*) from eg_user where username =:userName and tenantId =:tenantId and type = :userType ";
