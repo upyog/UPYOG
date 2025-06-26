@@ -313,7 +313,7 @@ public class UserService {
             map.add("tenantId", user.getTenantId());
             map.add("isInternal", "true");
             map.add("userType", UserType.CITIZEN.name());
-            log.info("Request", user.getUsername());
+            log.info("Request " + user.getUsername(), user.getUsername());
             HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<MultiValueMap<String, String>>(map,
                     headers);
             return restTemplate.postForEntity(userHost + "/user/oauth/token", request, Map.class).getBody();
@@ -374,6 +374,26 @@ public class UserService {
         // If user is being unlocked via update, reset failed login attempts
         if (user.getAccountLocked() != null && !user.getAccountLocked() && existingUser.getAccountLocked())
             resetFailedLoginAttempts(user);
+
+        User encryptedUpdatedUserfromDB = getUserByUuid(user.getUuid());
+        User decryptedupdatedUserfromDB = encryptionDecryptionUtil.decryptObject(encryptedUpdatedUserfromDB, "UserSelf", User.class, requestInfo);
+        return decryptedupdatedUserfromDB;
+    }
+
+    public User updateUsernameWithoutOtpValidation(User user, RequestInfo requestInfo) {
+        final User existingUser = getUserByUuid(user.getUuid());
+//        user.setTenantId(getStateLevelTenantForCitizen(user.getTenantId(), user.getType()));
+//        validateUserRoles(user);
+//        user.validateUserModification();
+//        validatePassword(user.getPassword());
+//        user.setPassword(encryptPwd(user.getPassword()));
+        /* encrypt */
+        user = encryptionDecryptionUtil.encryptObject(user, "User", User.class);
+        userRepository.updateUsername(user, existingUser);
+
+        // If user is being unlocked via update, reset failed login attempts
+//        if (user.getAccountLocked() != null && !user.getAccountLocked() && existingUser.getAccountLocked())
+//            resetFailedLoginAttempts(user);
 
         User encryptedUpdatedUserfromDB = getUserByUuid(user.getUuid());
         User decryptedupdatedUserfromDB = encryptionDecryptionUtil.decryptObject(encryptedUpdatedUserfromDB, "UserSelf", User.class, requestInfo);
