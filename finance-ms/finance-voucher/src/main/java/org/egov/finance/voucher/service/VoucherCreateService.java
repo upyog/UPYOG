@@ -2,21 +2,26 @@ package org.egov.finance.voucher.service;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
+import java.util.ArrayList;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.egov.finance.voucher.daoimpl.VouchermisHibernateDAO;
+import org.egov.finance.voucher.entity.AppConfigValues;
 import org.egov.finance.voucher.entity.CVoucherHeader;
 import org.egov.finance.voucher.entity.Voucher;
 import org.egov.finance.voucher.exception.ApplicationRuntimeException;
 import org.egov.finance.voucher.exception.TaskFailedException;
 import org.egov.finance.voucher.exception.ValidationException;
 import org.egov.finance.voucher.model.AccountDetailModel;
+import org.egov.finance.voucher.model.EgModules;
 import org.egov.finance.voucher.model.SubledgerDetailModel;
 import org.egov.finance.voucher.model.request.VoucherRequest;
 import org.egov.finance.voucher.model.response.VoucherResponse;
+import org.egov.finance.voucher.util.FinancialConstants;
 import org.egov.finance.voucher.util.VoucherConstant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -34,6 +39,12 @@ public class VoucherCreateService {
 	private ChartOfAccountDetailService chartOfAccountDetailService;
 	@Autowired
 	private AppConfigValueService appConfigValuesService;
+
+	@Autowired
+	private EgModulesService egModuleService;
+
+	@Autowired
+	private VouchermisHibernateDAO vmisHibernateDao;
 
 	public VoucherResponse processVoucherCreate(VoucherRequest voucherRequest) {
 		VoucherResponse response = VoucherResponse.builder().build();
@@ -129,5 +140,20 @@ public class VoucherCreateService {
 
 		return headerDetails;
 	}
+
+	public List<CVoucherHeader> getVoucherByServiceNameAndReferenceDocument(String serviceName,
+			String referenceDocument) {
+		return vmisHibernateDao.getRecentVoucherByServiceNameAndReferenceDoc1(serviceName, referenceDocument);
+	}
+
+	public EgModules getModulesIdByName(String name) {
+		List<EgModules> egModuleServiceByName = egModuleService.getEgModuleServiceByName(name);
+		return !egModuleServiceByName.isEmpty() ? egModuleServiceByName.get(0) : null;
+	}
+	
+	public AppConfigValues isManualReceiptDateEnabledForVoucher(){
+        List<AppConfigValues> appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(FinancialConstants.MODULE_NAME_APPCONFIG, "IsManualReceiptDateConsideredForVoucher");
+        return appConfigValue.isEmpty() ? null : appConfigValue.get(0);
+    }
 
 }
