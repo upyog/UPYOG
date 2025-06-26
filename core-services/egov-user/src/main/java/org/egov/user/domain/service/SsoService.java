@@ -5,6 +5,7 @@ import static org.egov.tracer.http.HttpUtils.isInterServiceCall;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -183,16 +184,25 @@ public class SsoService {
 
 	private void checkAndCreateUserSso(HpSsoValidateTokenResponse hpSsoValidateTokenResponse, User user) {
 		// check ssoid exist
-		int count = userSsoRepository.getCountBySsoId(hpSsoValidateTokenResponse.getSsoId());
-        log.info("count of ids with sso mapping with ssoId "+hpSsoValidateTokenResponse.getSsoId() +" " + count, count);
+		UserSso userSso = userSsoRepository.getCountBySsoId(hpSsoValidateTokenResponse.getSsoId());
+		log.info("Fetched userSso object: {}", userSso);
+
+		log.info("userSso is null? {}", userSso == null);
+
+//				.getCountBySsoId(hpSsoValidateTokenResponse.getSsoId());
+//        log.info("count of ids with sso mapping with ssoId "+hpSsoValidateTokenResponse.getSsoId() +" " + userSso.getUserUuid(), userSso);
 
 		// if ssoid not exist
 		
+
 			UserSearchCriteria searchCriteria = UserSearchCriteria.builder()
 					.type(UserType.CITIZEN)
 					.active(true)
 					.mobileNumber(user.getMobileNumber()).tenantId("hp").build();
-	        log.info("count of ids with sso mapping with ssoId "+user.getMobileNumber() + " "+ count, count);
+	        if(userSso != null ) {
+	        	searchCriteria.setUuid(Collections.singletonList(userSso.getUserUuid()));
+		        log.info("count of ids with sso mapping with ssoId "+user.getMobileNumber() + " "+ userSso.getUserUuid(), userSso);
+	        }
 			List<User> userInDb = userService.searchUsers(searchCriteria, false, null);
 			User newUser;
 			if (CollectionUtils.isEmpty(userInDb)) {
@@ -219,7 +229,7 @@ public class SsoService {
 					userService.updateUsernameWithoutOtpValidation(newUser,null);
 				}
 			}
-		if (count == 0) {
+		if (userSso == null || userSso.getUserUuid() == null) {
 			// create new user
 			// enrich new user_sso
 			UserSso newUserSso = enrichCreateUserSso(hpSsoValidateTokenResponse, newUser);
