@@ -2,6 +2,8 @@ package org.egov.encryption.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
+
+import jakarta.annotation.PostConstruct;
 import net.minidev.json.JSONArray;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.encryption.models.KeyRoleAttributeAccess;
@@ -12,7 +14,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
-import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
