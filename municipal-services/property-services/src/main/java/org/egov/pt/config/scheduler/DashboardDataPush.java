@@ -50,6 +50,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class DashboardDataPush implements Job {
 
+	
 	@Autowired
 	DashboardService dashboardService;
 	@Autowired
@@ -94,8 +95,8 @@ public class DashboardDataPush implements Job {
 
 			Data propertyTaxPayload = new Data();
 			propertyTaxPayload.setDate(formattedDate);
-			propertyTaxPayload.setModule(PTConstants.ASMT_MODULENAME);
-			propertyTaxPayload.setState("Manipur");
+			propertyTaxPayload.setModule(PTConstants.DASHBOARD_MODULENAME);
+			propertyTaxPayload.setState(PTConstants.DASHBOARD_STATE);
 			propertyTaxPayload.setWard(keyParts[0]);
 			propertyTaxPayload.setUlb(keyParts[1]);
 
@@ -103,7 +104,7 @@ public class DashboardDataPush implements Job {
 			List<String> masterNames = Collections.singletonList("tenants");
 			Map<String, List<String>> regionName = propertyutil.getAttributeValues(config.getStateLevelTenantId(),
 					"tenant", masterNames,
-					"[?(@.city.districtTenantCode== '" + propertyTaxPayload.getUlb() + "')].city.districtCode",
+					"[?(@.city.districtTenantCode== '" + propertyTaxPayload.getUlb() + "')].city.name",
 					"$.MdmsRes.tenant", requestInfo);
 			propertyTaxPayload.setRegion(regionName.get("tenants").get(0));
 
@@ -133,21 +134,21 @@ public class DashboardDataPush implements Job {
 
 	private void populateBucketMetrics(Metrics metrics, String key) {
 		addBucketData(metrics::setTodaysMovedApplications, dashboardService.wardWithMovedCount(), key,
-				"applicationStatus", TodaysMovedApplications::new);
+				PTConstants.DASHBOARD_APPLICATION_STATUS, TodaysMovedApplications::new);
 		addBucketData(metrics::setPropertiesRegistered, dashboardService.wardWithPropertyRegistered(), key,
-				"financialYear", PropertiesRegistered::new);
-		addBucketData(metrics::setAssessedProperties, dashboardService.wardWithPropertyAssessed(), key, "usageCategory",
+				PTConstants.DASHBOARD_FINANCIAL_YEAR, PropertiesRegistered::new);
+		addBucketData(metrics::setAssessedProperties, dashboardService.wardWithPropertyAssessed(), key, PTConstants.DASHBOARD_USAGE_CATEGORY,
 				AssessedProperties::new);
-		addBucketData(metrics::setTransactions, dashboardService.wardWithTransactionCount(), key, "usageCategory",
+		addBucketData(metrics::setTransactions, dashboardService.wardWithTransactionCount(), key, PTConstants.DASHBOARD_USAGE_CATEGORY,
 				Transactions::new);
-		addBucketData(metrics::setTodaysCollection, dashboardService.wardWithTodaysCollection(), key, "usageCategory",
+		addBucketData(metrics::setTodaysCollection, dashboardService.wardWithTodaysCollection(), key, PTConstants.DASHBOARD_USAGE_CATEGORY,
 				TodaysCollection::new);
-		addBucketData(metrics::setPropertyTax, dashboardService.wardWithPropertyCount(), key, "usageCategory",
+		addBucketData(metrics::setPropertyTax, dashboardService.wardWithPropertyCount(), key,PTConstants.DASHBOARD_USAGE_CATEGORY,
 				PropertyTax::new);
-		addBucketData(metrics::setRebate, dashboardService.wardWithRebateGiven(), key, "usageCategory", Rebate::new);
-		addBucketData(metrics::setPenalty, dashboardService.wardWithPenaltyCollected(), key, "usageCategory",
+		addBucketData(metrics::setRebate, dashboardService.wardWithRebateGiven(), key, PTConstants.DASHBOARD_USAGE_CATEGORY, Rebate::new);
+		addBucketData(metrics::setPenalty, dashboardService.wardWithPenaltyCollected(), key, PTConstants.DASHBOARD_USAGE_CATEGORY,
 				Penalty::new);
-		addBucketData(metrics::setInterest, dashboardService.wardWithInterestCollected(), key, "usageCategory",
+		addBucketData(metrics::setInterest, dashboardService.wardWithInterestCollected(), key, PTConstants.DASHBOARD_USAGE_CATEGORY,
 				Interest::new);
 	}
 
