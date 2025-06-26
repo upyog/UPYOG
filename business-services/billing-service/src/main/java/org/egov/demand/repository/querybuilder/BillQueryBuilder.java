@@ -38,8 +38,8 @@ public class BillQueryBuilder {
 	
 	public static final String INSERT_BILLACCOUNTDETAILS_QUERY = "INSERT into egbs_billaccountdetail_v1 "
 			+"(id, tenantid, billdetail, demanddetailid, orderno, amount, adjustedamount, isactualdemand, purpose, "
-			+ "createdby, createddate, lastmodifiedby, lastmodifieddate, taxheadcode)"
-			+"values(?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+			+ "createdby, createddate, lastmodifiedby, lastmodifieddate, taxheadcode, glcode)"
+			+"values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 	
 	
 	
