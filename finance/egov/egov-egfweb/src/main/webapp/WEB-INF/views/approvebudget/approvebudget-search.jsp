@@ -69,7 +69,7 @@
 					<div class="panel-body">
 						<div class="form-group">
 							<label class="col-sm-3 control-label text-right"><spring:message
-									code="lbl.budget" text="Budget"/> <span class="mandatory1">*</span></label>
+									code="lbl.budget" text="RE YEAR"/> <span class="mandatory1">*</span></label>
 							<div class="col-sm-3 add-margin">
 								<form:select path="reBudget.id" required="required"
 									id="reBudget" cssClass="form-control"
@@ -83,7 +83,7 @@
 								<form:errors path="reBudget" cssClass="error-msg" />
 							</div>
 							<label class="col-sm-2 control-label text-right"><spring:message
-									code="lbl.referenceBudget" text="Reference Budget"/> </label>
+									code="lbl.referenceBudget" text="BE YEAR"/> </label>
 							<div class="col-sm-3 add-margin">
 								<div id="referenceBudget"></div>
 							</div>
