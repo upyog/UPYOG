@@ -95,6 +95,7 @@ public class PersisterConsumerConfig {
 		factory.setConcurrency(Integer.parseInt(concurrency));
 		factory.getContainerProperties().setPollTimeout(Integer.parseInt(pollTime));
 		factory.setErrorHandler(kafkaConsumerErrorHandler);
+		
 		factory.getContainerProperties().setAckMode(ContainerProperties.AckMode.MANUAL);
 		log.info("Custom KafkaListenerContainerFactory built...");
 		return factory;
