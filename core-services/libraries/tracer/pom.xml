@@ -5,12 +5,11 @@
   <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
-    <version>1.5.22.RELEASE</version>
-    <relativePath></relativePath>
+    <version>3.2.2</version>
   </parent>
   <groupId>org.egov.services</groupId>
   <artifactId>tracer</artifactId>
-  <version>1.1.5-SNAPSHOT</version>
+  <version>2.9.0-SNAPSHOT</version>
   <name>tracer</name>
   <description>Assist in tracing http and message queue flows</description>
   <distributionManagement>
@@ -23,9 +22,9 @@
   <properties>
     <log4j2.version>2.17.1</log4j2.version>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <java.version>1.8</java.version>
+    <java.version>17</java.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <lombok.version>1.18.8</lombok.version>
+   <!-- <lombok.version>1.18.8</lombok.version>-->
   </properties>
   <dependencies>
     <dependency>
@@ -71,7 +70,7 @@
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-actuator</artifactId>
     </dependency>
-    <dependency>
+   <!-- <dependency>
       <groupId>io.opentracing.contrib</groupId>
       <artifactId>opentracing-spring-web-starter</artifactId>
       <version>0.3.3</version>
@@ -85,7 +84,7 @@
       <groupId>io.opentracing.contrib</groupId>
       <artifactId>opentracing-spring-jaeger-starter</artifactId>
       <version>0.2.2</version>
-    </dependency>
+    </dependency>-->
     <dependency>
       <groupId>io.micrometer</groupId>
       <artifactId>micrometer-core</artifactId>
@@ -147,6 +146,14 @@
             </goals>
           </execution>
         </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.12.1</version>
+        <configuration>
+          <release>17</release>
+        </configuration>
       </plugin>
     </plugins>
   </build>

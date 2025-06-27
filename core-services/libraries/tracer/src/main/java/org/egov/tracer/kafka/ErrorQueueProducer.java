@@ -5,10 +5,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.common.errors.SerializationException;
 import org.egov.tracer.config.ObjectMapperFactory;
 import org.egov.tracer.config.TracerProperties;
+import org.egov.tracer.model.ErrorDetailDTO;
 import org.egov.tracer.model.ErrorQueueContract;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
+import java.util.List;
 
 @Component
 @Slf4j

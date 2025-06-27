@@ -1,12 +1,35 @@
 package org.egov.tracer.http.filters;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.IOUtils;
+import static java.util.Objects.isNull;
+import static org.egov.tracer.constants.TracerConstants.CORRELATION_ID_FIELD_NAME;
+import static org.egov.tracer.constants.TracerConstants.CORRELATION_ID_HEADER;
+import static org.egov.tracer.constants.TracerConstants.CORRELATION_ID_MDC;
+import static org.egov.tracer.constants.TracerConstants.REQUEST_INFO_FIELD_NAME_IN_JAVA_CLASS_CASE;
+import static org.egov.tracer.constants.TracerConstants.REQUEST_INFO_IN_CAMEL_CASE;
+import static org.egov.tracer.constants.TracerConstants.TENANTID_MDC;
+import static org.egov.tracer.constants.TracerConstants.TENANT_ID_HEADER;
+import static org.springframework.util.ObjectUtils.isEmpty;
+
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.regex.Pattern;
+
+import jakarta.servlet.*;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
 import org.egov.tracer.config.ObjectMapperFactory;
 import org.egov.tracer.config.TracerProperties;
 import org.slf4j.MDC;
 import org.springframework.http.MediaType;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.IOUtils;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
