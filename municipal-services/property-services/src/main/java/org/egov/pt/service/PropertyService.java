@@ -190,7 +190,7 @@ public class PropertyService {
 	 * @param request PropertyRequest containing list of properties to be update
 	 * @return List of updated properties
 	 */
-	public Property updateProperty(PropertyRequest request) {
+	public Property updateProperty(PropertyRequest request,Boolean isStatusUpdate) {
 
 		Property propertyFromSearch = unmaskingUtil.getPropertyUnmasked(request);
 		propertyValidator.validateCommonUpdateInformation(request, propertyFromSearch);
@@ -203,7 +203,7 @@ public class PropertyService {
 
 		if (isRequestForOwnerMutation)
 			processOwnerMutation(request, propertyFromSearch);
-		else if (isOwnerUpdate)
+		else if (isOwnerUpdate && isStatusUpdate)
 			processOwnerUpdate(request, propertyFromSearch);
 
 		else {
@@ -282,7 +282,7 @@ public class PropertyService {
 			}
 		}
 
-		return true;
+		return isUpdate;
 	}
 
 	/*
@@ -810,7 +810,7 @@ public class PropertyService {
 		PropertyRequest propertyRequest = PropertyRequest.builder().property(property)
 				.requestInfo(request.getRequestInfo()).build();
 
-		return updateProperty(propertyRequest);
+		return updateProperty(propertyRequest,false);
 	}
 
 	public void setAllCount(List<Property> properties, PropertyResponse response) {

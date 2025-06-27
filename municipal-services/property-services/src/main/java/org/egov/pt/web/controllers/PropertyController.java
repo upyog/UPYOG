@@ -134,7 +134,7 @@ public class PropertyController {
 			}
 		}
 
-		Property property = propertyService.updateProperty(propertyRequest);
+		Property property = propertyService.updateProperty(propertyRequest,true);
 		ResponseInfo resInfo = responseInfoFactory.createResponseInfoFromRequestInfo(propertyRequest.getRequestInfo(),
 				true);
 		PropertyResponse response = PropertyResponse.builder().properties(Arrays.asList(property)).responseInfo(resInfo)
