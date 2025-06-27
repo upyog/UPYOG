@@ -56,17 +56,24 @@ import static org.egov.edcr.constants.DxfFileConstants.M_NAPI;
 import static org.egov.edcr.constants.DxfFileConstants.S_MCH;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import org.egov.common.constants.MdmsFeatureConstants;
 import org.egov.common.entity.dcr.helper.OccupancyHelperDetail;
 import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.Result;
 import org.egov.common.entity.edcr.ScrutinyDetail;
+import org.egov.edcr.constants.DxfFileConstants;
+import org.egov.edcr.constants.EdcrRulesMdmsConstants;
+import org.egov.edcr.service.FetchEdcrRulesMdms;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -75,8 +82,6 @@ public class PlotArea extends FeatureProcess {
     private static final Logger LOG = LogManager.getLogger(PlotArea.class);
     private static final String RULE_34 = "34-1";
     public static final String PLOTAREA_DESCRIPTION = "Minimum Plot Area";
-    public static final BigDecimal THREE_ZERO = BigDecimal.valueOf(300);
-    public static final BigDecimal FIVE_ZERO = BigDecimal.valueOf(500);
 
     @Override
     public Map<String, Date> getAmendments() {
@@ -88,44 +93,59 @@ public class PlotArea extends FeatureProcess {
         return pl;
     }
 
+    @Autowired
+    FetchEdcrRulesMdms fetchEdcrRulesMdms;
+
     @Override
     public Plan process(Plan pl) {
-
+        // Check if the plot object is not null
         if (pl.getPlot() != null) {
+            // Get the area of the plot
             BigDecimal plotArea = pl.getPlot().getArea();
             if (plotArea != null) {
+                // Initialize scrutiny details for the report
                 ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
-                scrutinyDetail.setKey("Common_Plot Area");
-                scrutinyDetail.addColumnHeading(1, RULE_NO);
-                scrutinyDetail.addColumnHeading(2, DESCRIPTION);
-                scrutinyDetail.addColumnHeading(3, OCCUPANCY);
-                scrutinyDetail.addColumnHeading(4, PERMITTED);
-                scrutinyDetail.addColumnHeading(5, PROVIDED);
-                scrutinyDetail.addColumnHeading(6, STATUS);
+                scrutinyDetail.setKey("Common_Plot Area"); // Key for the scrutiny detail
+                scrutinyDetail.addColumnHeading(1, RULE_NO); // Column for rule number
+                scrutinyDetail.addColumnHeading(2, DESCRIPTION); // Column for description
+                scrutinyDetail.addColumnHeading(3, OCCUPANCY); // Column for occupancy type
+                scrutinyDetail.addColumnHeading(4, PERMITTED); // Column for permitted plot area
+                scrutinyDetail.addColumnHeading(5, PROVIDED); // Column for provided plot area
+                scrutinyDetail.addColumnHeading(6, STATUS); // Column for status (Accepted/Not Accepted)
 
+                // Initialize a map to store rule details
                 Map<String, String> details = new HashMap<>();
-                details.put(RULE_NO, RULE_34);
-                details.put(DESCRIPTION, PLOTAREA_DESCRIPTION);
+                details.put(RULE_NO, RULE_34); // Rule number for plot area
+                details.put(DESCRIPTION, PLOTAREA_DESCRIPTION); // Description of the rule
 
-                Map<String, BigDecimal> occupancyValuesMap = getOccupancyValues();
+                // Fetch permissible plot area values based on occupancy
+                Map<String, BigDecimal> occupancyValuesMap = getOccupancyValues(pl);
 
+                // Check if the virtual building and its most restrictive FAR helper are not null
                 if (pl.getVirtualBuilding() != null && pl.getVirtualBuilding().getMostRestrictiveFarHelper() != null) {
+                    // Get the occupancy type (subtype or type)
                     OccupancyHelperDetail occupancyType = pl.getVirtualBuilding().getMostRestrictiveFarHelper()
                             .getSubtype() != null
                                     ? pl.getVirtualBuilding().getMostRestrictiveFarHelper().getSubtype()
                                     : pl.getVirtualBuilding().getMostRestrictiveFarHelper().getType();
 
                     if (occupancyType != null) {
+                        // Add occupancy type to the details map
                         details.put(OCCUPANCY, occupancyType.getName());
+
+                        // Fetch the permissible plot area value for the occupancy type
                         BigDecimal occupancyValues = occupancyValuesMap.get(occupancyType.getCode());
                         if (occupancyValues != null) {
+                            // Compare the provided plot area with the permissible value
                             if (plotArea.compareTo(occupancyValues) >= 0) {
+                                // If the plot area is within permissible limits, mark as Accepted
                                 details.put(PERMITTED, String.valueOf(occupancyValues) + "m2");
                                 details.put(PROVIDED, plotArea.toString() + "m2");
                                 details.put(STATUS, Result.Accepted.getResultVal());
                                 scrutinyDetail.getDetail().add(details);
                                 pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
                             } else {
+                                // If the plot area is not within permissible limits, mark as Not Accepted
                                 details.put(PERMITTED, String.valueOf(occupancyValues) + "m2");
                                 details.put(PROVIDED, plotArea.toString() + "m2");
                                 details.put(STATUS, Result.Not_Accepted.getResultVal());
@@ -137,17 +157,53 @@ public class PlotArea extends FeatureProcess {
                 }
             }
         }
-        return pl;
+        return pl; // Return the updated plan object
     }
 
-    public Map<String, BigDecimal> getOccupancyValues() {
+    public Map<String, BigDecimal> getOccupancyValues(Plan pl) {
+        // Initialize variables to store permissible plot area values
+        BigDecimal plotAreaValueOne = BigDecimal.ZERO;
+        BigDecimal plotAreaValueTwo = BigDecimal.ZERO;
 
+        // Determine the occupancy type
+        String occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl);
+        String feature = MdmsFeatureConstants.PLOT_AREA; // Feature name for plot area
+
+        // Prepare parameters for fetching MDMS values
+        Map<String, Object> params = new HashMap<>();
+       
+        params.put("feature", feature);
+        params.put("occupancy", occupancyName);
+
+        // Fetch the list of rules from the plan object
+        Map<String, List<Map<String, Object>>> edcrRuleList = pl.getEdcrRulesFeatures();
+
+        // Specify the columns to fetch from the rules
+        ArrayList<String> valueFromColumn = new ArrayList<>();
+        valueFromColumn.add(EdcrRulesMdmsConstants.PLOT_AREA_VALUE_ONE); // First permissible plot area value
+        valueFromColumn.add(EdcrRulesMdmsConstants.PLOT_AREA_VALUE_TWO); // Second permissible plot area value
+
+        // Initialize a list to store permissible values
+        List<Map<String, Object>> permissibleValue = new ArrayList<>();
+
+        // Fetch permissible values from MDMS
+        permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
+        LOG.info("permissibleValue" + permissibleValue); // Log the fetched permissible values
+
+        // Check if permissible values are available and update the plot area values
+        if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey(EdcrRulesMdmsConstants.PLOT_AREA_VALUE_ONE)) {
+            plotAreaValueOne = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.PLOT_AREA_VALUE_ONE).toString()));
+            plotAreaValueTwo = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.PLOT_AREA_VALUE_TWO).toString()));
+        }
+
+        // Map the permissible plot area values to their respective occupancy codes
         Map<String, BigDecimal> plotAreaValues = new HashMap<>();
-        plotAreaValues.put(F_RT, THREE_ZERO);
-        plotAreaValues.put(M_NAPI, THREE_ZERO);
-        plotAreaValues.put(F_CB, THREE_ZERO);
-        plotAreaValues.put(S_MCH, FIVE_ZERO);
-        plotAreaValues.put(E_PS, THREE_ZERO);
-        return plotAreaValues;
+        plotAreaValues.put(F_RT, plotAreaValueOne);
+        plotAreaValues.put(M_NAPI, plotAreaValueOne);
+        plotAreaValues.put(F_CB, plotAreaValueOne);
+        plotAreaValues.put(S_MCH, plotAreaValueTwo);
+        plotAreaValues.put(E_PS, plotAreaValueOne);
+
+        return plotAreaValues; // Return the map of permissible plot area values
     }
 }

@@ -320,7 +320,7 @@ public class Parking_Citya extends FeatureProcess {
         validateSpecialParking(pl, helper, totalBuiltupArea);
 
         Double noOfrequiredParking = 0d;
-        String occupancyName = "";
+        String occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl);
 		String subOccupancyName = null;
 		String featureName = "Parking";
 		if (mostRestrictiveOccupancy != null && A.equals(mostRestrictiveOccupancy.getType().getCode())

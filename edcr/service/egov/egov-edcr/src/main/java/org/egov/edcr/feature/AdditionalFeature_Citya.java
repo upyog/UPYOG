@@ -608,22 +608,15 @@ public class AdditionalFeature_Citya extends FeatureProcess {
             ScrutinyDetail scrutinyDetail = getNewScrutinyDetail("Block_" + blkNo + "_" + "Plinth");
             List<BigDecimal> plinthHeights = block.getPlinthHeight();
             
-            String occupancyName = null;
+            String occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl);
 			
 			 String feature = "plinthHeight";
 				
 				Map<String, Object> params = new HashMap<>();
-				if(DxfFileConstants.A
-						.equals(pl.getVirtualBuilding().getMostRestrictiveFarHelper().getType().getCode())){
-					occupancyName = "Residential";
-				}
-
+				
 				params.put("feature", feature);
 				params.put("occupancy", occupancyName);
-				
-
-				
-				
+			
 				ArrayList<String> valueFromColumn = new ArrayList<>();
 				valueFromColumn.add("permissibleValue");
 

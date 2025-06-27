@@ -48,26 +48,20 @@
 package org.egov.edcr.feature;
 
 import static org.egov.edcr.constants.DxfFileConstants.A;
-import static org.egov.edcr.constants.DxfFileConstants.A_AF;
-import static org.egov.edcr.constants.DxfFileConstants.F;
-import static org.egov.edcr.constants.DxfFileConstants.F_H;
-import static org.egov.edcr.constants.DxfFileConstants.F_RT;
-import static org.egov.edcr.constants.DxfFileConstants.F_LD;
-import static org.egov.edcr.constants.DxfFileConstants.F_CB;
-import static org.egov.edcr.constants.DxfFileConstants.F_IT;
-import static org.egov.edcr.constants.DxfFileConstants.G;
 import static org.egov.edcr.constants.DxfFileConstants.PARKING_SLOT;
 import static org.egov.edcr.utility.DcrConstants.SQMTRS;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.egov.common.entity.edcr.Block;
 import org.egov.common.entity.edcr.Floor;
 import org.egov.common.entity.edcr.Measurement;
@@ -79,8 +73,11 @@ import org.egov.common.entity.edcr.ParkingHelper;
 import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.Result;
 import org.egov.common.entity.edcr.ScrutinyDetail;
+import org.egov.edcr.service.EdcrRestService;
+import org.egov.edcr.service.FetchEdcrRulesMdms;
 import org.egov.edcr.utility.DcrConstants;
 import org.egov.edcr.utility.Util;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -143,6 +140,9 @@ public class Parking extends FeatureProcess {
     private static final String PARKING_VIOLATED_DIM = " parking violated dimension.";
     private static final String PARKING_AREA_DIM = "1.5 M x 2 M";
 
+    
+    @Autowired
+	FetchEdcrRulesMdms fetchEdcrRulesMdms;
 
 
     @Override
@@ -319,7 +319,54 @@ public class Parking extends FeatureProcess {
 
         validateSpecialParking(pl, helper, totalBuiltupArea);
 
-        Integer noOfrequiredParking = 0;
+        Double noOfrequiredParking = 0d;
+        String occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl);
+		String subOccupancyName = null;
+		String featureName = "Parking";
+		if (mostRestrictiveOccupancy != null && A.equals(mostRestrictiveOccupancy.getType().getCode())
+				) {
+			// multi family residential
+			occupancyName = "Residential";
+			subOccupancyName = "Apartment/Flat";
+		}
+        Map<String, Object> params = new HashMap<>();
+		params.put("feature", featureName);
+		params.put("occupancy", occupancyName);
+		params.put("plotArea", plotArea);
+		if (subOccupancyName != null && !subOccupancyName.equals("")) {
+		    params.put("subOccupancy", subOccupancyName);
+		}
+
+		
+		
+
+		ArrayList<String> valueFromColumn = new ArrayList<>();
+		valueFromColumn.add("permissibleValue");
+
+		List<Map<String, Object>> permissibleValue = new ArrayList<>();
+		
+		Map<String, List<Map<String, Object>>> edcrRuleList = pl.getEdcrRulesFeatures();
+		
+		double requiredEcs = 0d;
+		
+		
+		try {
+			permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
+			LOGGER.info("permissibleValue" + permissibleValue);
+			
+
+		} catch (NullPointerException e) {
+
+			LOGGER.error("Permissible Value for Parking not found--------", e);
+			return;
+		}
+
+//		if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey("permissibleValue")) {
+//			noOfrequiredParking = Double.valueOf(permissibleValue.get(0).get("permissibleValue").toString());
+//		}
+
+		//noOfrequiredParking =  BigDecimal.valueOf(noOfrequiredParking).setScale(0, RoundingMode.UP).doubleValue();
+ 
         if (mostRestrictiveOccupancy != null && A.equals(mostRestrictiveOccupancy.getType().getCode())) {
             if (plotArea != null && plotArea.doubleValue() < 100) {
                 requiredCarParkArea += 2.5;
@@ -349,9 +396,8 @@ public class Parking extends FeatureProcess {
         BigDecimal requiredVisitorParkingArea = Util.roundOffTwoDecimal(BigDecimal.valueOf(requiredVisitorParkArea));
         BigDecimal providedVisitorParkingArea = Util.roundOffTwoDecimal(providedVisitorParkArea);
         
-        BigDecimal totalECS = new BigDecimal(roundedValueOpen + roundedValueCover + roundedValueBsmnt + roundedValueStilt)
-                .setScale(2, BigDecimal.ROUND_HALF_UP);
- 
+        double totalECS = roundedValueOpen + roundedValueCover + roundedValueBsmnt + roundedValueStilt;
+        
         if (totalProvidedCarParkArea.doubleValue() == 0) {
             pl.addError(RULE__DESCRIPTION,
                     getLocaleMessage("msg.error.not.defined", RULE__DESCRIPTION));

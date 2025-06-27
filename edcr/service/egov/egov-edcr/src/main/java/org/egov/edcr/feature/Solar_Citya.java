@@ -93,15 +93,12 @@ public class Solar_Citya extends FeatureProcess {
 
     // Fetch permissible solar rule values from MDMS
     private Map<String, BigDecimal> fetchSolarValues(Plan pl) {
-        String occupancyName = null;
+    	String occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl);
 		String feature = MdmsFeatureConstants.SOLAR;
         Map<String, Object> params = new HashMap<>();
         
         // Check occupancy type (only A i.e., residential considered here)
-        if (DxfFileConstants.A.equals(pl.getVirtualBuilding().getMostRestrictiveFarHelper().getType().getCode())) {
-            occupancyName = "Residential";
-        }
-
+       
         params.put("feature", feature);
         params.put("occupancy", occupancyName);
 

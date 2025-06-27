@@ -145,16 +145,12 @@ public class LiftService_Citya extends FeatureProcess {
 					 * occupancy.getType()).collect(Collectors.toList());
 					 */
 					BigDecimal noOfLiftsRqrd = BigDecimal.ZERO;
-					String occupancyName = null;
+					String occupancyName = fetchEdcrRulesMdms.getOccupancyName(plan);
 					
 					 String feature = "lift";
 						
 						Map<String, Object> params = new HashMap<>();
-						if(DxfFileConstants.A
-								.equals(plan.getVirtualBuilding().getMostRestrictiveFarHelper().getType().getCode())){
-							occupancyName = "Residential";
-						}
-
+						
 						params.put("feature", feature);
 						params.put("occupancy", occupancyName);
 						

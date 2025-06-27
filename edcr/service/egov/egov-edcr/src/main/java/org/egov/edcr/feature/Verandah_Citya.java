@@ -103,15 +103,12 @@ public class Verandah_Citya extends FeatureProcess {
 			BigDecimal verandahWidth = BigDecimal.ZERO;
 			BigDecimal verandahDepth = BigDecimal.ZERO;
 			
-	        String occupancyName = null;
+			String occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl);
 			String feature = MdmsFeatureConstants.VERANDAH;
 
 			// Check occupancy type; only residential is supported for now
 			Map<String, Object> params = new HashMap<>();
-			if(DxfFileConstants.A
-					.equals(pl.getVirtualBuilding().getMostRestrictiveFarHelper().getType().getCode())){
-				occupancyName = "Residential";
-			}
+			
 
 			params.put("feature", feature);
 			params.put("occupancy", occupancyName);

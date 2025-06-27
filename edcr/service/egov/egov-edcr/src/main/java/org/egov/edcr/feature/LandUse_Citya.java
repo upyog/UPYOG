@@ -124,14 +124,12 @@ public class LandUse_Citya extends FeatureProcess {
      * @param errors The map to store validation errors.
      */
     private void validateCommercialZone(Plan pl, HashMap<String, String> errors) {
-        String occupancyName = null;
+    	String occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl);
         String feature = MdmsFeatureConstants.LAND_USE;
 
         // Determine the occupancy type for fetching permissible values
         Map<String, Object> params = new HashMap<>();
-        if (DxfFileConstants.A.equals(pl.getVirtualBuilding().getMostRestrictiveFarHelper().getType().getCode())) {
-            occupancyName = "Residential";
-        }
+      
 
         params.put("feature", feature);
         params.put("occupancy", occupancyName);

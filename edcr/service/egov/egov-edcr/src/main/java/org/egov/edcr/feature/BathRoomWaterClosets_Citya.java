@@ -131,14 +131,11 @@ public class BathRoomWaterClosets_Citya extends FeatureProcess {
         BigDecimal bathroomWCRequiredHeight = BigDecimal.ZERO;
 
         // Determine the occupancy type and feature for fetching permissible values
-        String occupancyName = null;
+        String occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl);
         String feature = MdmsFeatureConstants.BATHROOM_WATER_CLOSETS;
 
         Map<String, Object> params = new HashMap<>();
-        if (DxfFileConstants.A.equals(pl.getVirtualBuilding().getMostRestrictiveFarHelper().getType().getCode())) {
-            occupancyName = "Residential";
-        }
-
+        
         params.put("feature", feature);
         params.put("occupancy", occupancyName);
 

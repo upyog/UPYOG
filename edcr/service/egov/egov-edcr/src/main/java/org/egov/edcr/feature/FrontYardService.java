@@ -50,18 +50,20 @@ package org.egov.edcr.feature;
 
 import static org.egov.edcr.constants.DxfFileConstants.A;
 import static org.egov.edcr.constants.DxfFileConstants.A_AF;
+import static org.egov.edcr.constants.DxfFileConstants.A_PO;
 import static org.egov.edcr.constants.DxfFileConstants.A_R;
 import static org.egov.edcr.constants.DxfFileConstants.B;
 import static org.egov.edcr.constants.DxfFileConstants.D;
 import static org.egov.edcr.constants.DxfFileConstants.F;
-import static org.egov.edcr.constants.DxfFileConstants.I;
-import static org.egov.edcr.constants.DxfFileConstants.A_PO;
 import static org.egov.edcr.constants.DxfFileConstants.G;
+import static org.egov.edcr.constants.DxfFileConstants.I;
 import static org.egov.edcr.utility.DcrConstants.FRONT_YARD_DESC;
 import static org.egov.edcr.utility.DcrConstants.OBJECTNOTDEFINED;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
@@ -76,7 +78,10 @@ import org.egov.common.entity.edcr.Result;
 import org.egov.common.entity.edcr.ScrutinyDetail;
 import org.egov.common.entity.edcr.SetBack;
 import org.egov.edcr.constants.DxfFileConstants;
+import org.egov.edcr.service.EdcrRestService;
+import org.egov.edcr.service.FetchEdcrRulesMdms;
 import org.egov.infra.utils.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -95,6 +100,7 @@ public class FrontYardService extends GeneralRule {
 	private static final String RULE = "4.4.4";
 
 	private static final String MINIMUMLABEL = "Minimum distance ";
+	String occupancyName = "";
 	
 	// Added by Bimal 18-March-2924 for method processFrontYardResidential
 	private static final BigDecimal MIN_PLOT_AREA = BigDecimal.valueOf(30);
@@ -134,6 +140,9 @@ public class FrontYardService extends GeneralRule {
 
 	public static final String BSMT_FRONT_YARD_DESC = "Basement Front Yard";
 	private static final int PLOTAREA_300 = 300;
+	
+	@Autowired
+	FetchEdcrRulesMdms fetchEdcrRulesMdms;
 
 	private class FrontYardResult {
 		String rule;
@@ -167,6 +176,7 @@ public class FrontYardService extends GeneralRule {
 			for (Block block : pl.getBlocks()) { // for each block
 
 				ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
+				//scrutinyDetail.setKey("Block_" + block.getName() + "_" + "Basement Front Yard");
 				scrutinyDetail.addColumnHeading(1, RULE_NO);
 				scrutinyDetail.addColumnHeading(2, LEVEL);
 				scrutinyDetail.addColumnHeading(3, OCCUPANCY);
@@ -195,16 +205,17 @@ public class FrontYardService extends GeneralRule {
 										: block.getBuilding().getBuildingHeight();
 
 						if (buildingHeight != null && (min.doubleValue() > 0 || mean.doubleValue() > 0)) {
-							for (final Occupancy occupancy : block.getBuilding().getTotalArea()) {
+							//for (final Occupancy occupancy : block.getBuilding().getTotalArea()) {
+							final Occupancy occupancy = block.getBuilding().getTotalArea().get(0);
 								scrutinyDetail.setKey("Block_" + block.getName() + "_" + FRONT_YARD_DESC);
 
-								if (setback.getLevel() < 0) {
-									scrutinyDetail.setKey("Block_" + block.getName() + "_" + "Basement Front Yard");
-									checkFrontYardBasement(pl, block.getBuilding(), block.getName(), setback.getLevel(),
-											plot, BSMT_FRONT_YARD_DESC, min, mean, occupancy.getTypeHelper(),
-											frontYardResult);
-
-								}
+							//	if (setback.getLevel() < 0) {
+//									scrutinyDetail.setKey("Block_" + block.getName() + "_" + "Basement Front Yard");
+//									checkFrontYardBasement(pl, block.getBuilding(), block.getName(), setback.getLevel(),
+//											plot, BSMT_FRONT_YARD_DESC, min, mean, occupancy.getTypeHelper(),
+//											frontYardResult);
+//
+//								}
 
 								/*if ((occupancy.getTypeHelper().getSubtype() != null
 										&& (A_R.equalsIgnoreCase(occupancy.getTypeHelper().getSubtype().getCode())
@@ -214,15 +225,15 @@ public class FrontYardService extends GeneralRule {
 														occupancy.getTypeHelper().getSubtype().getCode()))
 										|| F.equalsIgnoreCase(occupancy.getTypeHelper().getType().getCode()))) {*/
 								// updated by Bimal 18-March-2924 type F condition is removed
-								if ((occupancy.getTypeHelper().getSubtype() != null
-										&& (A_R.equalsIgnoreCase(occupancy.getTypeHelper().getSubtype().getCode())
-												|| A_AF.equalsIgnoreCase(occupancy.getTypeHelper().getSubtype().getCode())
-												|| A_PO.equalsIgnoreCase(occupancy.getTypeHelper().getSubtype().getCode())))) {
-									//Added by Bimal 18-March-2924 to check front yard based on plotarea not on height
-									checkFrontYardResidentialCommon(pl, block.getBuilding(), block.getName(),
-											setback.getLevel(), plot, FRONT_YARD_DESC, min, mean,
-											occupancy.getTypeHelper(), frontYardResult, errors);
-									// Commented by Bimal 18-March-2924 to check front yard based on plot are not on height
+//								if ((occupancy.getTypeHelper().getSubtype() != null
+//										&& (A_R.equalsIgnoreCase(occupancy.getTypeHelper().getSubtype().getCode())
+//												|| A_AF.equalsIgnoreCase(occupancy.getTypeHelper().getSubtype().getCode())
+//												|| A_PO.equalsIgnoreCase(occupancy.getTypeHelper().getSubtype().getCode())))) {
+//									//Added by Bimal 18-March-2924 to check front yard based on plotarea not on height
+//									checkFrontYardResidentialCommon(pl, block.getBuilding(), block.getName(),
+//											setback.getLevel(), plot, FRONT_YARD_DESC, min, mean,
+//											occupancy.getTypeHelper(), frontYardResult, errors);
+//									// Commented by Bimal 18-March-2924 to check front yard based on plot are not on height
 									/*
 									 * if (buildingHeight.compareTo(BigDecimal.valueOf(10)) <= 0 &&
 									 * block.getBuilding() .getFloorsAboveGround().compareTo(BigDecimal.valueOf(3))
@@ -243,7 +254,7 @@ public class FrontYardService extends GeneralRule {
 									 * pl, setback.getLevel(), block.getName(), plot, FRONT_YARD_DESC, min, mean,
 									 * occupancy.getTypeHelper(), frontYardResult); }
 									 */
-								} 	// Condition removed by Bimal 18-March-2924 type to calculate frontyard for residential occupancy only 
+								//} 	// Condition removed by Bimal 18-March-2924 type to calculate frontyard for residential occupancy only 
 									/*
 									 * else if (G.equalsIgnoreCase(occupancy.getTypeHelper().getType().getCode())) {
 									 * checkFrontYardForIndustrial(pl, block.getBuilding(), block.getName(),
@@ -256,7 +267,10 @@ public class FrontYardService extends GeneralRule {
 									 * occupancy.getTypeHelper(), frontYardResult); }
 									 */
 
-							}
+							//}
+								checkFrontYard(pl, block.getBuilding(), block.getName(), setback.getLevel(), plot,
+										FRONT_YARD_DESC, min, mean, occupancy.getTypeHelper(), frontYardResult, errors);
+
 
 							if (errors.isEmpty()) {
 								Map<String, String> details = new HashMap<>();
@@ -265,7 +279,7 @@ public class FrontYardService extends GeneralRule {
 										frontYardResult.level != null ? frontYardResult.level.toString() : "");
 								details.put(OCCUPANCY, frontYardResult.occupancy);
 								details.put(FIELDVERIFIED, MINIMUMLABEL);
-								details.put(PERMISSIBLE, frontYardResult.expectedminimumDistance.toString());
+								details.put(PERMISSIBLE, frontYardResult.expectedmeanDistance.toString());
 								details.put(PROVIDED, frontYardResult.actualMinDistance.toString());
 
 								if (frontYardResult.status) {
@@ -283,6 +297,112 @@ public class FrontYardService extends GeneralRule {
 			}
 		}
 	}
+	
+	private Boolean checkFrontYard(Plan pl, Building building, String blockName, Integer level, Plot plot,
+			String frontYardFieldName, BigDecimal min, BigDecimal mean, OccupancyTypeHelper mostRestrictiveOccupancy,
+			FrontYardResult frontYardResult, HashMap<String, String> errors) {
+		Boolean valid = false;
+		String subRule = "";
+		String rule = FRONT_YARD_DESC;
+		BigDecimal minVal = BigDecimal.ZERO;
+		BigDecimal meanVal = BigDecimal.ZERO;
+		BigDecimal depthOfPlot = pl.getPlanInformation().getDepthOfPlot();
+		
+//		if (mostRestrictiveOccupancy.getSubtype() != null
+//				&& (A.equalsIgnoreCase(mostRestrictiveOccupancy.getType().getCode())
+//						|| A_R.equalsIgnoreCase(mostRestrictiveOccupancy.getSubtype().getCode())
+//						|| A_AF.equalsIgnoreCase(mostRestrictiveOccupancy.getSubtype().getCode())
+//						|| A_PO.equalsIgnoreCase(mostRestrictiveOccupancy.getSubtype().getCode()))) {
+		if (A.equalsIgnoreCase(mostRestrictiveOccupancy.getType().getCode())) {
+			if (pl.getPlanInformation() != null && pl.getPlanInformation().getRoadWidth() != null
+					&& StringUtils.isNotBlank(pl.getPlanInformation().getLandUseZone())
+					&& DxfFileConstants.COMMERCIAL.equalsIgnoreCase(pl.getPlanInformation().getLandUseZone())
+//					&& pl.getPlanInformation().getRoadWidth().compareTo(ROAD_WIDTH_TWELVE_POINTTWO) < 0
+			) {
+				occupancyName = "Commercial";
+				
+			} else {
+				occupancyName = "Residential";
+				
+			}
+		} else if (F.equalsIgnoreCase(mostRestrictiveOccupancy.getType().getCode())) {
+			
+			occupancyName = "Commercial";
+		
+		} else if (G.equalsIgnoreCase(mostRestrictiveOccupancy.getType().getCode())) {
+			occupancyName = "Industrial";
+			
+		}else {
+			 occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl);
+		}
+//		else if (mostRestrictiveOccupancy.getType() != null
+//				&& J.equalsIgnoreCase(mostRestrictiveOccupancy.getType().getCode())) {
+//			   occupancyName = "Government/Semi Government";
+//		}
+		valid = processFrontYardService(blockName, level, min, mean, mostRestrictiveOccupancy, frontYardResult, valid,
+				subRule, rule, minVal, meanVal, depthOfPlot, errors, pl,  occupancyName, pl.getEdcrRulesFeatures()
+				);
+		return valid;
+	}
+	private Boolean processFrontYardService(String blockName, Integer level, BigDecimal min, BigDecimal mean,
+			OccupancyTypeHelper mostRestrictiveOccupancy, FrontYardResult frontYardResult, Boolean valid,
+			String subRule, String rule, BigDecimal minVal, BigDecimal meanVal, BigDecimal depthOfPlot,
+			HashMap<String, String> errors, Plan pl, String occupancyName, Map<String,List<Map<String,Object>>> edcrRuleList ) {
+
+	   BigDecimal  plotArea = pl.getPlot().getArea();
+		System.out.println("plotarea" + plotArea);
+	
+		
+		String feature = "FrontSetBack";
+			
+		Map<String, Object> params = new HashMap<>();
+		
+		params.put("feature", feature);
+		
+		params.put("occupancy", occupancyName);
+		params.put("depthOfPlot", depthOfPlot);
+		params.put("plotArea", plotArea);
+		
+		if(occupancyName.equalsIgnoreCase("Industrial")) {
+		
+			
+			params.put("plotArea", plotArea);
+		}
+
+		ArrayList<String> valueFromColumn = new ArrayList<>();
+		valueFromColumn.add("permissibleValue");
+
+		List<Map<String, Object>> permissibleValue = new ArrayList<>();
+
+		try {
+			permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
+			LOG.info("permissibleValue" + permissibleValue);
+		
+
+		} catch (NullPointerException e) {
+
+			LOG.error("Permissible Value for Front Yard service not found--------", e);
+			return null;
+		}
+
+		if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey("permissibleValue")) {
+			meanVal = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get("permissibleValue").toString()));
+	
+		} 
+      System.out.println("meanVllll" + meanVal);
+		/*
+		 * if (-1 == level) { rule = BSMT_FRONT_YARD_DESC; subRuleDesc =
+		 * SUB_RULE_24_12_DESCRIPTION; subRule = SUB_RULE_24_12; }
+		 */
+
+		valid = validateMinimumAndMeanValue(min, mean, minVal, meanVal);
+
+		compareFrontYardResult(blockName, min, mean, mostRestrictiveOccupancy, frontYardResult, valid, subRule, rule,
+				minVal, meanVal, level);
+		return valid;
+	}
+
+
 
 	// Added by Bimal 18-March-2924 to check front yard based on plot are not on height
 	private Boolean checkFrontYardResidentialCommon(Plan pl, Building building, String blockName, Integer level,
@@ -710,7 +830,6 @@ public class FrontYardService extends GeneralRule {
 			frontYardResult.actualMinDistance = min;
 			frontYardResult.actualMeanDistance = mean;
 			frontYardResult.status = valid;
-			LOG.info("FrontYardResult +" + frontYardResult.toString());
 
 		}
 	}

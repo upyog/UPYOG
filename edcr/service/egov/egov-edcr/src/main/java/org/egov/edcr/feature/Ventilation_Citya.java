@@ -112,16 +112,13 @@ public class Ventilation_Citya extends FeatureProcess {
 	        BigDecimal ventilationValueOne = BigDecimal.ZERO;
 	        BigDecimal ventilationValueTwo = BigDecimal.ZERO;
 
-	        String occupancyName = null;
+	        String occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl);
 	        String feature = MdmsFeatureConstants.VENTILATION;
 
 	        Map<String, Object> params = new HashMap<>();
 
 	        // Identify occupancy type — currently only checking for Residential
-	        if (DxfFileConstants.A.equals(pl.getVirtualBuilding().getMostRestrictiveFarHelper().getType().getCode())) {
-	            occupancyName = "Residential";
-	        }
-
+	       
 	        params.put("feature", feature);
 	        params.put("occupancy", occupancyName);
 

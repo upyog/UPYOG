@@ -899,6 +899,8 @@ public class RearYardService_Citya extends GeneralRule {
 		} else if (F.equalsIgnoreCase(mostRestrictiveOccupancy.getType().getCode())) {
 			
 			occupancyName = "Commercial";
+		}else {
+			 occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl);
 		}
 //		else if (G.equalsIgnoreCase(mostRestrictiveOccupancy.getType().getCode())) {
 //			occupancyName = "Industrial";

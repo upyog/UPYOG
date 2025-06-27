@@ -21,8 +21,10 @@ import org.egov.common.entity.edcr.Result;
 import org.egov.common.entity.edcr.ScrutinyDetail;
 import org.egov.common.entity.edcr.StairLanding;
 import org.egov.edcr.constants.DxfFileConstants;
+import org.egov.edcr.service.FetchEdcrRulesMdms;
 import org.egov.edcr.utility.DcrConstants;
 import org.egov.edcr.utility.Util;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -48,7 +50,11 @@ public class GeneralStair extends FeatureProcess {
     public Plan validate(Plan plan) {
         return plan;
     }
-
+    
+    @Autowired
+	FetchEdcrRulesMdms fetchEdcrRulesMdms;
+    
+   
     @Override
     public Plan process(Plan plan) {
     	
@@ -213,23 +219,73 @@ public class GeneralStair extends FeatureProcess {
 
                     }
                 }
+                
                 System.out.println("landnig" + totalLandings);
                 System.out.println("flights" + totalFlights);
                
-                if(flrHt != null) {
+               String occupancyName = "";
+        		String subOccupancyName = "";
+        		String featureName = "RiserHeight";
+        		//String featureName1 = "riserHeight";
+        		BigDecimal value = BigDecimal.ZERO;
+        		 Map<String, List<Map<String, Object>>>   edcrRuleList =  plan.getEdcrRulesFeatures();
+        		
+        		if (mostRestrictiveOccupancyType != null && mostRestrictiveOccupancyType.getSubtype() != null
+        				&& DxfFileConstants.A.equalsIgnoreCase(mostRestrictiveOccupancyType.getType().getCode())) {
+        			occupancyName = "Residential";
+        			subOccupancyName = "Apartment/Flat";
+//        			return BigDecimal.valueOf(0.25);
+        		} else {
+        			 occupancyName = fetchEdcrRulesMdms.getOccupancyName(plan);
+//        			return BigDecimal.valueOf(0.3);
+        		}
+        		
+        		Map<String, Object> params = new HashMap<>();
+
+        		params.put("feature", featureName);
+        		params.put("occupancy", occupancyName);
+        		//params.put("featureName", featureName1);
+        		if (!subOccupancyName.equals("")) {
+        			params.put("subOccupancy", subOccupancyName);
+        		}
+
+        		ArrayList<String> valueFromColumn = new ArrayList<>();
+        		valueFromColumn.add("permissibleValue");
+
+        		List<Map<String, Object>> permissibleValue = new ArrayList<>();
+
+        		try {
+        			permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
+        			LOG.info("permissibleValue" + permissibleValue);
+        		
+
+        		} catch (NullPointerException e) {
+
+        			LOG.error("Permissible Value for General Stairs Riser height not found--------", e);
+        			return null;
+        		}
+
+
+        		if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey("permissibleValue")) {
+        			value = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get("permissibleValue").toString()));
+        		}
+        		
+        	
+            if(flrHt != null) {
                 BigDecimal riserHeight = flrHt.divide(totalSteps, 2, RoundingMode.HALF_UP);
+                
                 
 
                 
                 System.out.println("riserHt====" + riserHeight);
                 
-                if (riserHeight.compareTo(BigDecimal.valueOf(0.19)) <= 0) {
-                    setReportOutputDetailsFloorStairWise(plan, RULE, "","", "" + 0.19, "" + 
+                if (riserHeight.compareTo(value) <= 0) {
+                    setReportOutputDetailsFloorStairWise(plan, RULE, "","", "" + value, "" + 
                             riserHeight,
                            
                              Result.Accepted.getResultVal(), scrutinyDetail4);
                 } else {
-                	setReportOutputDetailsFloorStairWise(plan, RULE, "", "", "" + 0.19, "" + 
+                	setReportOutputDetailsFloorStairWise(plan, RULE, "", "", "" + value, "" + 
                             riserHeight, Result.Not_Accepted.getResultVal(), scrutinyDetail4);
                 }}
                 	
@@ -267,11 +323,12 @@ public class GeneralStair extends FeatureProcess {
             BigDecimal landingWidth = widths.stream().reduce(BigDecimal::min).get();
             BigDecimal minWidth = BigDecimal.ZERO;
             boolean valid = false;
-            
+            Map<String, List<Map<String, Object>>>   edcrRuleList =  plan.getEdcrRulesFeatures();
+
 
             if (!(Boolean) typicalFloorValues.get("isTypicalRepititiveFloor")) {
                 minWidth = Util.roundOffTwoDecimal(landingWidth);
-                BigDecimal minimumWidth = getRequiredLandingWidth(block, mostRestrictiveOccupancyType);
+                BigDecimal minimumWidth = getRequiredWidth(block, mostRestrictiveOccupancyType, edcrRuleList);
 
                 if (minWidth.compareTo(minimumWidth) >= 0) {
                     valid = true;
@@ -413,12 +470,12 @@ public class GeneralStair extends FeatureProcess {
             List<BigDecimal> flightWidths, BigDecimal minFlightWidth,
             OccupancyTypeHelper mostRestrictiveOccupancyType) {
         BigDecimal flightPolyLine = flightWidths.stream().reduce(BigDecimal::min).get();
-
+        Map<String, List<Map<String, Object>>>   edcrRuleList =  plan.getEdcrRulesFeatures();
         boolean valid = false;
 
         if (!(Boolean) typicalFloorValues.get("isTypicalRepititiveFloor")) {
             minFlightWidth = Util.roundOffTwoDecimal(flightPolyLine);
-            BigDecimal minimumWidth = getRequiredWidth(block, mostRestrictiveOccupancyType);
+            BigDecimal minimumWidth = getRequiredWidth(block, mostRestrictiveOccupancyType, edcrRuleList);
 
             if (minFlightWidth.compareTo(minimumWidth) >= 0) {
                 valid = true;
@@ -440,33 +497,113 @@ public class GeneralStair extends FeatureProcess {
         return minFlightWidth;
     }
 
-    private BigDecimal getRequiredWidth(Block block, OccupancyTypeHelper mostRestrictiveOccupancyType) {
-        if (mostRestrictiveOccupancyType != null && mostRestrictiveOccupancyType.getType() != null
-                && DxfFileConstants.A_AF.equalsIgnoreCase(mostRestrictiveOccupancyType.getType().getCode())) {
-            return BigDecimal.valueOf(1.9);
-        } else if (mostRestrictiveOccupancyType != null && mostRestrictiveOccupancyType.getType() != null
-                && DxfFileConstants.A_AF_GH.equalsIgnoreCase(mostRestrictiveOccupancyType.getType().getCode())) {
-            return BigDecimal.valueOf(0.75);
-        }
+//    private BigDecimal getRequiredWidth(Block block, OccupancyTypeHelper mostRestrictiveOccupancyType) {
+//        if (mostRestrictiveOccupancyType != null && mostRestrictiveOccupancyType.getType() != null
+//                && DxfFileConstants.A_AF.equalsIgnoreCase(mostRestrictiveOccupancyType.getType().getCode())) {
+//            return BigDecimal.valueOf(1.9);
+//        } else if (mostRestrictiveOccupancyType != null && mostRestrictiveOccupancyType.getType() != null
+//                && DxfFileConstants.A_AF_GH.equalsIgnoreCase(mostRestrictiveOccupancyType.getType().getCode())) {
+//            return BigDecimal.valueOf(0.75);
+//        }
         //else if (mostRestrictiveOccupancyType != null && mostRestrictiveOccupancyType.getType() != null
 //                && DxfFileConstants.A.equalsIgnoreCase(mostRestrictiveOccupancyType.getType().getCode())
 //                && block.getBuilding().getBuildingHeight().compareTo(BigDecimal.valueOf(10)) <= 0
 //                && block.getBuilding().getFloorsAboveGround().compareTo(BigDecimal.valueOf(3)) <= 0) {
 //            return BigDecimal.ONE;
 //        }
-        else if (mostRestrictiveOccupancyType != null && mostRestrictiveOccupancyType.getType() != null
-                && DxfFileConstants.A.equalsIgnoreCase(mostRestrictiveOccupancyType.getType().getCode())) {
-            return BigDecimal.valueOf(0.76);
-        } else if (mostRestrictiveOccupancyType != null && mostRestrictiveOccupancyType.getType() != null
-                && DxfFileConstants.B.equalsIgnoreCase(mostRestrictiveOccupancyType.getType().getCode())) {
-            return BigDecimal.valueOf(1.5);
-        } else if (mostRestrictiveOccupancyType != null && mostRestrictiveOccupancyType.getType() != null
-                && DxfFileConstants.D.equalsIgnoreCase(mostRestrictiveOccupancyType.getType().getCode())) {
-            return BigDecimal.valueOf(2);
-        } else {
-            return BigDecimal.valueOf(1.5);
-        }
-    }
+//        else if (mostRestrictiveOccupancyType != null && mostRestrictiveOccupancyType.getType() != null
+//                && DxfFileConstants.A.equalsIgnoreCase(mostRestrictiveOccupancyType.getType().getCode())) {
+//            return BigDecimal.valueOf(0.76);
+//        } else if (mostRestrictiveOccupancyType != null && mostRestrictiveOccupancyType.getType() != null
+//                && DxfFileConstants.B.equalsIgnoreCase(mostRestrictiveOccupancyType.getType().getCode())) {
+//            return BigDecimal.valueOf(1.5);
+//        } else if (mostRestrictiveOccupancyType != null && mostRestrictiveOccupancyType.getType() != null
+//                && DxfFileConstants.D.equalsIgnoreCase(mostRestrictiveOccupancyType.getType().getCode())) {
+//            return BigDecimal.valueOf(2);
+//        } else {
+//            return BigDecimal.valueOf(1.5);
+//        }
+//    }
+    
+    private BigDecimal getRequiredWidth(Block block, OccupancyTypeHelper mostRestrictiveOccupancyType,
+			Map<String, List<Map<String, Object>>> edcrRuleList) {
+//		BigDecimal buildingHeight = block.getBuilding().getHeight();
+    	
+
+		String occupancyName = "";
+		String subOccupancyName = "";
+		String featureName = "RequiredWidth";
+		
+		BigDecimal value = BigDecimal.ZERO;
+
+		if (mostRestrictiveOccupancyType != null && mostRestrictiveOccupancyType.getType() != null
+				&& DxfFileConstants.A_R.equalsIgnoreCase(mostRestrictiveOccupancyType.getType().getCode())) {
+			occupancyName = "Residential";
+			subOccupancyName = "Apartment/Flat";
+//			return BigDecimal.valueOf(0.85);
+		} else if (mostRestrictiveOccupancyType != null && mostRestrictiveOccupancyType.getType() != null
+				&& DxfFileConstants.A_AF_GH.equalsIgnoreCase(mostRestrictiveOccupancyType.getType().getCode())) {
+			occupancyName = "Residential";
+			subOccupancyName = "";
+//			return BigDecimal.valueOf(0.85);
+		} else if (mostRestrictiveOccupancyType != null && mostRestrictiveOccupancyType.getType() != null
+				&& DxfFileConstants.A.equalsIgnoreCase(mostRestrictiveOccupancyType.getType().getCode())) {
+			occupancyName = "Residential";
+//			return BigDecimal.valueOf(0.85);
+		} else if (mostRestrictiveOccupancyType != null && mostRestrictiveOccupancyType.getType() != null
+				&& DxfFileConstants.B.equalsIgnoreCase(mostRestrictiveOccupancyType.getType().getCode())
+				&& block.getBuilding().getBuildingHeight().compareTo(BigDecimal.valueOf(24)) <= 0) {
+			occupancyName = "Educational";
+			// return BigDecimal.valueOf(1.5);
+		} else if (mostRestrictiveOccupancyType != null && mostRestrictiveOccupancyType.getType() != null
+				&& DxfFileConstants.B.equalsIgnoreCase(mostRestrictiveOccupancyType.getType().getCode())) {
+			occupancyName = "Educational";
+//			return BigDecimal.valueOf(2.0);
+		} else if (mostRestrictiveOccupancyType != null && mostRestrictiveOccupancyType.getType() != null
+				&& DxfFileConstants.C.equalsIgnoreCase(mostRestrictiveOccupancyType.getType().getCode())) {
+			occupancyName = "Medical/Hospital";
+//			return BigDecimal.valueOf(1.5);
+		} else if (mostRestrictiveOccupancyType != null && mostRestrictiveOccupancyType.getType() != null
+				&& DxfFileConstants.D.equalsIgnoreCase(mostRestrictiveOccupancyType.getType().getCode())) {
+			occupancyName = "Assembly";
+//			return BigDecimal.valueOf(1.5);
+		} else {
+			occupancyName = "Common";
+//			return BigDecimal.valueOf(1.5);
+		}
+
+		Map<String, Object> params = new HashMap<>();
+
+		params.put("feature", featureName);
+		//params.put("featureName", featureName1);
+		params.put("occupancy", occupancyName);
+		if (!subOccupancyName.equals("")) {
+			params.put("subOccupancy", subOccupancyName);
+		}
+
+		ArrayList<String> valueFromColumn = new ArrayList<>();
+		valueFromColumn.add("permissibleValue");
+
+		List<Map<String, Object>> permissibleValue = new ArrayList<>();
+		try {
+			permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
+			LOG.info("permissibleValue" + permissibleValue);
+		
+
+		} catch (NullPointerException e) {
+
+			LOG.error("Permissible Value for General Stairs Required Width not found--------", e);
+			return null;
+		}
+
+
+		
+
+		if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey("permissibleValue")) {
+			value = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get("permissibleValue").toString()));
+		}
+		return value;
+	}
     
     private BigDecimal getRequiredLandingWidth(Block block, OccupancyTypeHelper mostRestrictiveOccupancyType) {
       
@@ -478,6 +615,8 @@ public class GeneralStair extends FeatureProcess {
             return BigDecimal.valueOf(1.5);
         }
     }
+    
+    
 
     private BigDecimal validateTread(Plan plan, HashMap<String, String> errors, Block block,
             ScrutinyDetail scrutinyDetail3, Floor floor, Map<String, Object> typicalFloorValues,
@@ -485,10 +624,11 @@ public class GeneralStair extends FeatureProcess {
             BigDecimal minTread,
             OccupancyTypeHelper mostRestrictiveOccupancyType) {
         BigDecimal totalLength = flightLengths.stream().reduce(BigDecimal.ZERO, BigDecimal::add);
+        Map<String, List<Map<String, Object>>>   edcrRuleList =  plan.getEdcrRulesFeatures();
 
         totalLength = Util.roundOffTwoDecimal(totalLength);
 
-        BigDecimal requiredTread = getRequiredTread(mostRestrictiveOccupancyType);
+        BigDecimal requiredTread = getRequiredTread(mostRestrictiveOccupancyType, edcrRuleList);
 
         if (flight.getNoOfRises() != null) {
             /*
@@ -540,44 +680,160 @@ public class GeneralStair extends FeatureProcess {
         return minTread;
     }
 
-	private BigDecimal getRequiredTread(OccupancyTypeHelper mostRestrictiveOccupancyType) {
-        if (mostRestrictiveOccupancyType != null
-        		//&& mostRestrictiveOccupancyType.getSubtype() != null
-                //&& DxfFileConstants.A_AF.equalsIgnoreCase(mostRestrictiveOccupancyType.getSubtype().getCode())) {
-        	 && DxfFileConstants.A.equalsIgnoreCase(mostRestrictiveOccupancyType.getType().getCode())) {
-            return BigDecimal.valueOf(0.25);
-        } else {
-            return BigDecimal.valueOf(0.3);
-        	//return null;
-        }
-    }
+//	private BigDecimal getRequiredTread(OccupancyTypeHelper mostRestrictiveOccupancyType) {
+//        if (mostRestrictiveOccupancyType != null
+//        		//&& mostRestrictiveOccupancyType.getSubtype() != null
+//                //&& DxfFileConstants.A_AF.equalsIgnoreCase(mostRestrictiveOccupancyType.getSubtype().getCode())) {
+//        	 && DxfFileConstants.A.equalsIgnoreCase(mostRestrictiveOccupancyType.getType().getCode())) {
+//            return BigDecimal.valueOf(0.25);
+//        } else {
+//            return BigDecimal.valueOf(0.3);
+//        	//return null;
+//        }
+//    }
+	
+	private BigDecimal getRequiredTread(OccupancyTypeHelper mostRestrictiveOccupancyType,
+			Map<String, List<Map<String, Object>>> edcrRuleList) {
+		
+		String occupancyName = "";
+		String subOccupancyName = "";
+		String featureName = "RequiredTread";
+		//String featureName1 = "requiredTread";
+		BigDecimal value = BigDecimal.ZERO;
+		
+		if (mostRestrictiveOccupancyType != null && mostRestrictiveOccupancyType.getSubtype() != null
+				&& DxfFileConstants.A_R.equalsIgnoreCase(mostRestrictiveOccupancyType.getSubtype().getCode())) {
+			occupancyName = "Residential";
+			subOccupancyName = "Apartment/Flat";
+//			return BigDecimal.valueOf(0.25);
+		} else {
+			occupancyName = "Common";
+//			return BigDecimal.valueOf(0.3);
+		}
+		
+		Map<String, Object> params = new HashMap<>();
 
-    private void validateNoOfRises(Plan plan, HashMap<String, String> errors, Block block,
-            ScrutinyDetail scrutinyDetail3, Floor floor, Map<String, Object> typicalFloorValues,
-            org.egov.common.entity.edcr.GeneralStair generalStair, Flight flight, BigDecimal noOfRises) {
-        boolean valid = false;
+		params.put("feature", featureName);
+		params.put("occupancy", occupancyName);
+		//params.put("featureName", featureName1);
+		if (!subOccupancyName.equals("")) {
+			params.put("subOccupancy", subOccupancyName);
+		}
 
-        if (!(Boolean) typicalFloorValues.get("isTypicalRepititiveFloor")) {
-            if (Util.roundOffTwoDecimal(noOfRises).compareTo(Util.roundOffTwoDecimal(BigDecimal.valueOf(12))) <= 0) {
-                valid = true;
-            }
+		ArrayList<String> valueFromColumn = new ArrayList<>();
+		valueFromColumn.add("permissibleValue");
 
-            String value = typicalFloorValues.get("typicalFloors") != null
-                    ? (String) typicalFloorValues.get("typicalFloors")
-                    : " floor " + floor.getNumber();
-            if (valid) {
-                setReportOutputDetailsFloorStairWise(plan, RULERISER, value,
-                        String.format(NO_OF_RISER_DESCRIPTION, generalStair.getNumber(), flight.getNumber()),
-                        EXPECTED_NO_OF_RISER,
-                        String.valueOf(noOfRises), Result.Accepted.getResultVal(), scrutinyDetail3);
-            } else {
-                setReportOutputDetailsFloorStairWise(plan, RULERISER, value,
-                        String.format(NO_OF_RISER_DESCRIPTION, generalStair.getNumber(), flight.getNumber()),
-                        EXPECTED_NO_OF_RISER,
-                        String.valueOf(noOfRises), Result.Not_Accepted.getResultVal(), scrutinyDetail3);
-            }
-        }
-    }
+		List<Map<String, Object>> permissibleValue = new ArrayList<>();
+
+		try {
+			permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
+			LOG.info("permissibleValue" + permissibleValue);
+		
+
+		} catch (NullPointerException e) {
+
+			LOG.error("Permissible Value for General Stairs Required Tread not found--------", e);
+			return null;
+		}
+
+
+		if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey("permissibleValue")) {
+			value = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get("permissibleValue").toString()));
+		}
+		return value;
+	}
+
+//    private void validateNoOfRises(Plan plan, HashMap<String, String> errors, Block block,
+//            ScrutinyDetail scrutinyDetail3, Floor floor, Map<String, Object> typicalFloorValues,
+//            org.egov.common.entity.edcr.GeneralStair generalStair, Flight flight, BigDecimal noOfRises) {
+//        boolean valid = false;
+//
+//        if (!(Boolean) typicalFloorValues.get("isTypicalRepititiveFloor")) {
+//            if (Util.roundOffTwoDecimal(noOfRises).compareTo(Util.roundOffTwoDecimal(BigDecimal.valueOf(12))) <= 0) {
+//                valid = true;
+//            }
+//
+//            String value = typicalFloorValues.get("typicalFloors") != null
+//                    ? (String) typicalFloorValues.get("typicalFloors")
+//                    : " floor " + floor.getNumber();
+//            if (valid) {
+//                setReportOutputDetailsFloorStairWise(plan, RULERISER, value,
+//                        String.format(NO_OF_RISER_DESCRIPTION, generalStair.getNumber(), flight.getNumber()),
+//                        EXPECTED_NO_OF_RISER,
+//                        String.valueOf(noOfRises), Result.Accepted.getResultVal(), scrutinyDetail3);
+//            } else {
+//                setReportOutputDetailsFloorStairWise(plan, RULERISER, value,
+//                        String.format(NO_OF_RISER_DESCRIPTION, generalStair.getNumber(), flight.getNumber()),
+//                        EXPECTED_NO_OF_RISER,
+//                        String.valueOf(noOfRises), Result.Not_Accepted.getResultVal(), scrutinyDetail3);
+//            }
+//        }
+//    }
+	
+	private void validateNoOfRises(Plan plan, HashMap<String, String> errors, Block block,
+			ScrutinyDetail scrutinyDetail3, Floor floor, Map<String, Object> typicalFloorValues,
+			org.egov.common.entity.edcr.GeneralStair generalStair, Flight flight, BigDecimal noOfRises) {
+		boolean valid = false;
+		
+		if (!(Boolean) typicalFloorValues.get("isTypicalRepititiveFloor")) {
+			
+			Map<String, List<Map<String, Object>>> edcrRuleList = plan.getEdcrRulesFeatures();
+			String occupancyName = "Residential";
+//			String subOccupancyName = "";
+			String featureName = "NoOfRiser";
+			//String featureName1 = "noOfRiser";
+			BigDecimal noOfRisersValue = BigDecimal.ZERO;
+			
+			Map<String, Object> params = new HashMap<>();
+
+			params.put("feature", featureName);
+			//params.put("featureName", featureName1);
+			params.put("occupancy", occupancyName);
+//			if (!subOccupancyName.equals("")) {
+//				params.put("subOccupancy", subOccupancyName);
+//			}
+
+			ArrayList<String> valueFromColumn = new ArrayList<>();
+			valueFromColumn.add("permissibleValue");
+
+			List<Map<String, Object>> permissibleValue = new ArrayList<>();
+
+			try {
+				permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
+				LOG.info("permissibleValue" + permissibleValue);
+			
+
+			} catch (NullPointerException e) {
+
+				LOG.error("Permissible Value for General Stairs No of riser not found--------", e);
+				return;
+			}
+
+
+			if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey("permissibleValue")) {
+				noOfRisersValue = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get("permissibleValue").toString()));
+			}
+			
+			if (Util.roundOffTwoDecimal(noOfRises).compareTo(Util.roundOffTwoDecimal(noOfRisersValue)) <= 0) {
+				valid = true;
+			}
+//			valid = true;
+			String value = typicalFloorValues.get("typicalFloors") != null
+					? (String) typicalFloorValues.get("typicalFloors")
+					: " floor " + floor.getNumber();
+			 if (valid) {
+               setReportOutputDetailsFloorStairWise(plan, RULERISER, value,
+                       String.format(NO_OF_RISER_DESCRIPTION, generalStair.getNumber(), flight.getNumber()),
+                      "" + noOfRisersValue,
+                       String.valueOf(noOfRises), Result.Accepted.getResultVal(), scrutinyDetail3);
+           } else {
+               setReportOutputDetailsFloorStairWise(plan, RULERISER, value,
+                       String.format(NO_OF_RISER_DESCRIPTION, generalStair.getNumber(), flight.getNumber()),
+                      "" + noOfRisersValue,
+                       String.valueOf(noOfRises), Result.Not_Accepted.getResultVal(), scrutinyDetail3);
+           }
+		}
+	}
 
     /*
      * private void setReportOutputDetails(Plan pl, String ruleNo, String ruleDesc, String expected, String actual, String status,

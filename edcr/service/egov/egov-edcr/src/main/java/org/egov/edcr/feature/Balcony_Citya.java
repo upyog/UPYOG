@@ -117,15 +117,13 @@ public class Balcony_Citya extends FeatureProcess {
                             minWidth = minWidth.setScale(DcrConstants.DECIMALDIGITS_MEASUREMENTS,
                                     DcrConstants.ROUNDMODE_MEASUREMENTS);
                             
-                            String occupancyName = null;
+                        
+                         String occupancyName = fetchEdcrRulesMdms.getOccupancyName(plan);
+                        
         					
        					 String feature = "Balcony";
        						
        						Map<String, Object> params = new HashMap<>();
-       						if(DxfFileConstants.A
-       								.equals(plan.getVirtualBuilding().getMostRestrictiveFarHelper().getType().getCode())){
-       							occupancyName = "Residential";
-       						}
 
        						params.put("feature", feature);
        						params.put("occupancy", occupancyName);

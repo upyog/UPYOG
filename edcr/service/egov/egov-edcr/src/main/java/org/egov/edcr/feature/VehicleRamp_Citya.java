@@ -142,14 +142,12 @@ public class VehicleRamp_Citya extends FeatureProcess {
 		BigDecimal vehicleRampSlopeMinWidthValueTwo = BigDecimal.ZERO;
 		BigDecimal vehicleRampSlopeMinWidthValueThree = BigDecimal.ZERO;
 
-		String occupancyName = null;
+		String occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl);
 		String feature = MdmsFeatureConstants.VEHICLE_RAMP;
 
 		// Determine occupancy type for fetching MDMS rules
 		Map<String, Object> params = new HashMap<>();
-		if(DxfFileConstants.A.equals(pl.getVirtualBuilding().getMostRestrictiveFarHelper().getType().getCode())){
-			occupancyName = "Residential";
-		}
+		
 		params.put("feature", feature);
 		params.put("occupancy", occupancyName);
 

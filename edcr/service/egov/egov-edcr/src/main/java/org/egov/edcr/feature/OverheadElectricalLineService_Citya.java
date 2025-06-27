@@ -129,13 +129,11 @@ public class OverheadElectricalLineService_Citya extends FeatureProcess {
         scrutinyDetail.addColumnHeading(8, STATUS);
 
         // Determine the occupancy type and feature for fetching permissible values
-        String occupancyName = null;
+        String occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl);
         String feature = MdmsFeatureConstants.OVERHEAD_ELECTRICAL_LINE_SERVICE;
 
         Map<String, Object> params = new HashMap<>();
-        if (DxfFileConstants.A.equals(pl.getVirtualBuilding().getMostRestrictiveFarHelper().getType().getCode())) {
-            occupancyName = "Residential"; // Set occupancy type to Residential if condition matches
-        }
+       
 
         // Add feature and occupancy to the parameters map
         params.put("feature", feature);

@@ -132,13 +132,11 @@ public class FireStair_Citya extends FeatureProcess {
         HashMap<String, String> errors = new HashMap<>();
 
         // Determine the occupancy type and feature for fetching permissible values
-        String occupancyName = null;
+        String occupancyName = fetchEdcrRulesMdms.getOccupancyName(plan);
         String feature = "FireStair";
 
         Map<String, Object> params = new HashMap<>();
-        if (DxfFileConstants.A.equals(plan.getVirtualBuilding().getMostRestrictiveFarHelper().getType().getCode())) {
-            occupancyName = "Residential";
-        }
+       
 
         params.put("feature", feature);
         params.put("occupancy", occupancyName);

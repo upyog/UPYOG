@@ -96,6 +96,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
@@ -203,9 +204,7 @@ public class Far_Citya extends FeatureProcess {
 	   
 	        // Set this list to the pl object
 	       pl.setEdcrRulesFeatures(edcrRulesFeatures);
-	       
-	       
-	   
+	      
 		return pl;
 	}
 
@@ -658,6 +657,19 @@ public class Far_Citya extends FeatureProcess {
 		BigDecimal roadWidth = pl.getPlanInformation().getRoadWidth();
 		String feature = "Far";
 
+		if (pl.getVirtualBuilding() != null && !pl.getVirtualBuilding().getOccupancyTypes().isEmpty()) {
+            List<String> occupancies = new ArrayList<>();
+            pl.getVirtualBuilding().getOccupancyTypes().forEach(occ -> {
+                if (occ.getType() != null)
+                    occupancies.add(occ.getType().getName());
+            });
+            Set<String> distinctOccupancies = new HashSet<>(occupancies);
+            pl.getPlanInformation()
+                    .setOccupancy(distinctOccupancies.stream().map(String::new).collect(Collectors.joining(",")));
+        }
+       
+       
+   
 		if (mostRestrictiveOccupancyType != null && StringUtils.isNotBlank(typeOfArea) && roadWidth != null
 				&& !processFarForSpecialOccupancy(pl, mostRestrictiveOccupancyType, providedFar, typeOfArea, roadWidth,
 						errorMsgs)) {

@@ -256,15 +256,12 @@ public class RampService_Citya extends FeatureProcess {
                 scrutinyDetail5.addColumnHeading(6, STATUS);
                 scrutinyDetail5.setKey("Block_" + block.getNumber() + "_" + "Ramp - Maximum Slope");
                 
-                String occupancyName = null;
+                String occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl);
         		
        		 String feature = MdmsFeatureConstants.RAMP_SERVICE;
        			
        			Map<String, Object> params = new HashMap<>();
-       			if(DxfFileConstants.A
-       					.equals(pl.getVirtualBuilding().getMostRestrictiveFarHelper().getType().getCode())){
-       				occupancyName = "Residential";
-       			}
+       			
 
        			params.put("feature", feature);
        			params.put("occupancy", occupancyName);

@@ -134,14 +134,11 @@ public class GovtBuildingDistance_Citya extends FeatureProcess {
         List<Block> blocks = pl.getBlocks();
 
         // Determine the occupancy type and feature for fetching permissible values
-        String occupancyName = null;
+        String occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl);
         String feature = MdmsFeatureConstants.GOVT_BUILDING_DISTANCE;
 
         Map<String, Object> params = new HashMap<>();
-        if (DxfFileConstants.A.equals(pl.getVirtualBuilding().getMostRestrictiveFarHelper().getType().getCode())) {
-            occupancyName = "Residential";
-        }
-
+       
         params.put("feature", feature);
         params.put("occupancy", occupancyName);
 

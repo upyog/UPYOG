@@ -272,12 +272,10 @@ public class BlockDistancesService_Citya extends FeatureProcess {
         BigDecimal blockDistanceServiceValue = BigDecimal.ZERO;
 
         // Fetch permissible values for block distances
-        String occupancyName = null;
+        String occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl);
         String feature = MdmsFeatureConstants.BLOCK_DISTANCES_SERVICE;
         Map<String, Object> params = new HashMap<>();
-        if (DxfFileConstants.A.equals(pl.getVirtualBuilding().getMostRestrictiveFarHelper().getType().getCode())) {
-            occupancyName = "Residential";
-        }
+        
         params.put("feature", feature);
         params.put("occupancy", occupancyName);
 

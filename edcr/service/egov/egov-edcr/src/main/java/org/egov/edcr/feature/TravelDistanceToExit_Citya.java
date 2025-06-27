@@ -109,14 +109,12 @@ public class TravelDistanceToExit_Citya extends FeatureProcess {
     public Plan process(Plan pl) {
         Boolean exemption = Boolean.FALSE;
 
-        String occupancyName = null;
+        String occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl);
         String feature = MdmsFeatureConstants.TRAVEL_DISTANCE_TO_EXIT;
 
         // Determine occupancy type for rule lookup
         Map<String, Object> params = new HashMap<>();
-        if (DxfFileConstants.A.equals(pl.getVirtualBuilding().getMostRestrictiveFarHelper().getType().getCode())) {
-            occupancyName = "Residential";
-        }
+        
 
         params.put("feature", feature);
         params.put("occupancy", occupancyName);

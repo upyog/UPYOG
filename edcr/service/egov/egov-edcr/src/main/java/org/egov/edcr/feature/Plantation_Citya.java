@@ -143,17 +143,14 @@ public class Plantation_Citya extends FeatureProcess {
 //                    pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
 //                }
           //  } else {
-            	String occupancyName = null;
+            	String occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl);
 				
 				 String feature = "plantation";
 				 BigDecimal plantation = BigDecimal.ZERO;
 				 BigDecimal percent;
 					
 					Map<String, Object> params = new HashMap<>();
-					if(DxfFileConstants.A
-							.equals(pl.getVirtualBuilding().getMostRestrictiveFarHelper().getType().getCode())){
-						occupancyName = "Residential";
-					}
+					
 
 					params.put("feature", feature);
 					params.put("occupancy", occupancyName);

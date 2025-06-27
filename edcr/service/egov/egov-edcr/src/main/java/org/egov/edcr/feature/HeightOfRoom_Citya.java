@@ -376,11 +376,7 @@ public class HeightOfRoom_Citya extends FeatureProcess {
 									 String feature = "roomArea";
 										
 										Map<String, Object> params = new HashMap<>();
-										if(DxfFileConstants.A
-												.equals(pl.getVirtualBuilding().getMostRestrictiveFarHelper().getType().getCode())){
-											occupancyName = "Residential";
-										}
-
+										occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl);
 										params.put("feature", feature);
 										params.put("occupancy", occupancyName);
 										
@@ -562,11 +558,9 @@ public class HeightOfRoom_Citya extends FeatureProcess {
 										params.put("feature", feature);
 										
 										
-										if (mostRestrictiveOccupancy != null && mostRestrictiveOccupancy.getType() != null
-												&& (A.equalsIgnoreCase(mostRestrictiveOccupancy.getType().getCode()))){
-														occupancyName = "Residential";
+										 occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl);
 											params.put("occupancy", occupancyName);
-														}
+														
 
 										ArrayList<String> valueFromColumn = new ArrayList<>();
 										valueFromColumn.add("permissibleValue");
@@ -624,12 +618,10 @@ public class HeightOfRoom_Citya extends FeatureProcess {
 										
 										params.put("feature", feature);
 										
+									   occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl);
 										
-										if (mostRestrictiveOccupancy != null && mostRestrictiveOccupancy.getType() != null
-												&& (A.equalsIgnoreCase(mostRestrictiveOccupancy.getType().getCode()))){
-														occupancyName = "Residential";
 											params.put("occupancy", occupancyName);
-														}
+														
 
 
 										ArrayList<String> valueFromColumn = new ArrayList<>();
@@ -878,13 +870,10 @@ public class HeightOfRoom_Citya extends FeatureProcess {
 											Map<String, Object> params = new HashMap<>();
 											String feature = "roomWiseDoorArea";
 											params.put("feature", feature);
-											
-											
-											if (mostRestrictiveOccupancy != null && mostRestrictiveOccupancy.getType() != null
-													&& (A.equalsIgnoreCase(mostRestrictiveOccupancy.getType().getCode()))){
-															occupancyName = "Residential";
+											occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl);
+	
 												params.put("occupancy", occupancyName);
-															}
+															
 
 
 											ArrayList<String> valueFromColumn = new ArrayList<>();

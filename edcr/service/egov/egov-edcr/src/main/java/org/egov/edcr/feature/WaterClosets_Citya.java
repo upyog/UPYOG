@@ -123,15 +123,12 @@ public class WaterClosets_Citya extends FeatureProcess {
 		BigDecimal waterClosetsWidth = BigDecimal.ZERO;
 
 		// Fetch occupancy and feature type
-		String occupancyName = null;
+		String occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl);
 		String feature = MdmsFeatureConstants.WATER_CLOSETS;
 
 		// Set occupancy to "Residential" if the most restrictive FAR is type "A"
 		Map<String, Object> params = new HashMap<>();
-		if (DxfFileConstants.A.equals(pl.getVirtualBuilding().getMostRestrictiveFarHelper().getType().getCode())) {
-			occupancyName = "Residential";
-		}
-
+		
 		params.put("feature", feature);
 		params.put("occupancy", occupancyName);
 

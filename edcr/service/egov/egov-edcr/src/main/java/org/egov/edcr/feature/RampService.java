@@ -59,6 +59,9 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.egov.common.constants.MdmsFeatureConstants;
 import org.egov.common.entity.edcr.Block;
 import org.egov.common.entity.edcr.DARamp;
 import org.egov.common.entity.edcr.Floor;
@@ -70,14 +73,17 @@ import org.egov.common.entity.edcr.Ramp;
 import org.egov.common.entity.edcr.Result;
 import org.egov.common.entity.edcr.ScrutinyDetail;
 import org.egov.edcr.constants.DxfFileConstants;
+import org.egov.edcr.constants.EdcrRulesMdmsConstants;
+import org.egov.edcr.service.FetchEdcrRulesMdms;
 import org.egov.edcr.utility.DcrConstants;
 import org.egov.edcr.utility.Util;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 
 @Service
 public class RampService extends FeatureProcess {
-
+	private static final Logger LOG = LogManager.getLogger(RampService.class);
     private static final String SUBRULE_50_C_4_B = " 50-c-4-b";
     private static final String SUBRULE_40 = "40";
     /*
@@ -97,6 +103,9 @@ public class RampService extends FeatureProcess {
     // private static final String SUBRULE_40_A_3_WIDTH_DESCRIPTION = "Minimum Width of Ramp %s";
     private static final String SUBRULE_50_C_4_B_SLOPE_MAN_DESC = "Slope of DA Ramp";
 
+    @Autowired
+    FetchEdcrRulesMdms fetchEdcrRulesMdms;
+        
     @Override
     public Plan validate(Plan pl) {
         for (Block block : pl.getBlocks()) {
@@ -180,7 +189,18 @@ public class RampService extends FeatureProcess {
     }
 
     @Override
-    public Plan process(Plan pl) {
+    public Plan process(Plan pl) {    	
+    	BigDecimal rampServiceValueOne = BigDecimal.ZERO;
+    	BigDecimal rampServiceExpectedSlopeOne = BigDecimal.ZERO;
+    	BigDecimal rampServiceDivideExpectedSlope = BigDecimal.ZERO;
+    	BigDecimal rampServiceSlopValue = BigDecimal.ZERO;
+    	BigDecimal rampServiceBuildingHeight = BigDecimal.ZERO;
+    	BigDecimal rampServiceTotalLength = BigDecimal.ZERO;
+    	BigDecimal rampServiceExpectedSlopeCompare = BigDecimal.ZERO;
+    	BigDecimal rampServiceExpectedSlopeTwo = BigDecimal.ZERO;
+    	BigDecimal rampServiceExpectedSlopeCompareTrue = BigDecimal.ZERO;
+    	BigDecimal rampServiceExpectedSlopeCompareFalse = BigDecimal.ZERO;
+    	
         validate(pl);
         boolean valid;
         if (pl != null && !pl.getBlocks().isEmpty()) {
@@ -235,6 +255,51 @@ public class RampService extends FeatureProcess {
                 scrutinyDetail5.addColumnHeading(5, PROVIDED);
                 scrutinyDetail5.addColumnHeading(6, STATUS);
                 scrutinyDetail5.setKey("Block_" + block.getNumber() + "_" + "Ramp - Maximum Slope");
+                
+                String occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl);
+        		
+       		 String feature = MdmsFeatureConstants.RAMP_SERVICE;
+       			
+       			Map<String, Object> params = new HashMap<>();
+       			
+
+       			params.put("feature", feature);
+       			params.put("occupancy", occupancyName);
+       			
+
+       			Map<String,List<Map<String,Object>>> edcrRuleList = pl.getEdcrRulesFeatures();
+       			
+       			ArrayList<String> valueFromColumn = new ArrayList<>();
+       			valueFromColumn.add(EdcrRulesMdmsConstants.RAMP_SERVICE_VALUE_ONE);
+       			valueFromColumn.add(EdcrRulesMdmsConstants.RAMP_SERVICE_EXPECTED_SLOPE_ONE);
+       			valueFromColumn.add(EdcrRulesMdmsConstants.RAMP_SERVICE_DIVIDE_EXPECTED_SLOPE);
+       			valueFromColumn.add(EdcrRulesMdmsConstants.RAMP_SERVICE_SLOPE_VALUE);
+       			valueFromColumn.add(EdcrRulesMdmsConstants.RAMP_SERVICE_BUILDING_HEIGHT);
+       			valueFromColumn.add(EdcrRulesMdmsConstants.RAMP_SERVICE_TOTAL_LENGTH);
+       			valueFromColumn.add(EdcrRulesMdmsConstants.RAMP_SERVICE_EXPECTED_SLOPE_COMPARE);
+       			valueFromColumn.add(EdcrRulesMdmsConstants.RAMP_SERVICE_EXPECTED_SLOPE_TWO);
+       			valueFromColumn.add(EdcrRulesMdmsConstants.RAMP_SERVICE_EXPECTED_SLOPE_COMPARE_TRUE);
+       			valueFromColumn.add(EdcrRulesMdmsConstants.RAMP_SERVICE_EXPECTED_SLOPE_COMPARE_FALSE);
+
+       			List<Map<String, Object>> permissibleValue = new ArrayList<>();
+       		
+       			
+       				permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
+       				LOG.info("permissibleValue" + permissibleValue);
+
+
+       			if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey(EdcrRulesMdmsConstants.RAMP_SERVICE_VALUE_ONE)) {
+       				rampServiceValueOne = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.RAMP_SERVICE_VALUE_ONE).toString()));
+       				rampServiceExpectedSlopeOne = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.RAMP_SERVICE_EXPECTED_SLOPE_ONE).toString()));
+       				rampServiceDivideExpectedSlope = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.RAMP_SERVICE_DIVIDE_EXPECTED_SLOPE).toString()));
+       				rampServiceSlopValue = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.RAMP_SERVICE_SLOPE_VALUE).toString()));
+       				rampServiceBuildingHeight = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.RAMP_SERVICE_BUILDING_HEIGHT).toString()));
+       				rampServiceTotalLength = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.RAMP_SERVICE_TOTAL_LENGTH).toString()));
+       				rampServiceExpectedSlopeTwo = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.RAMP_SERVICE_EXPECTED_SLOPE_TWO).toString()));
+       				rampServiceExpectedSlopeCompare = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.RAMP_SERVICE_EXPECTED_SLOPE_COMPARE).toString()));
+       				rampServiceExpectedSlopeCompareTrue = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.RAMP_SERVICE_EXPECTED_SLOPE_COMPARE_TRUE).toString()));
+       				rampServiceExpectedSlopeCompareFalse = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.RAMP_SERVICE_EXPECTED_SLOPE_COMPARE_FALSE).toString()));
+       			}
 
                 OccupancyTypeHelper mostRestrictiveOccupancyType = pl.getVirtualBuilding().getMostRestrictiveFarHelper();
                 if (block.getBuilding() != null && !block.getBuilding().getOccupancies().isEmpty()) {
@@ -259,7 +324,7 @@ public class RampService extends FeatureProcess {
                             boolean isSlopeDefined = false;
                             for (DARamp daRamp : block.getDARamps()) {
                                 if (daRamp != null && daRamp.getSlope() != null
-                                        && daRamp.getSlope().compareTo(BigDecimal.valueOf(0)) > 0) {
+                                        && daRamp.getSlope().compareTo(rampServiceValueOne) > 0) {
                                     isSlopeDefined = true;
                                 }
                             }
@@ -274,11 +339,11 @@ public class RampService extends FeatureProcess {
                             valid = false;
                             if (isSlopeDefined) {
                                 Map<String, String> mapOfRampNumberAndSlopeValues = new HashMap<>();
-                                BigDecimal expectedSlope = BigDecimal.valueOf(1).divide(BigDecimal.valueOf(12), 2,
+                                BigDecimal expectedSlope = rampServiceExpectedSlopeOne.divide(rampServiceDivideExpectedSlope, 2,
                                         RoundingMode.HALF_UP);
                                 for (DARamp daRamp : block.getDARamps()) {
                                     BigDecimal slope = daRamp.getSlope();
-                                    if (slope != null && slope.compareTo(BigDecimal.valueOf(0)) > 0
+                                    if (slope != null && slope.compareTo(rampServiceSlopValue) > 0
                                             && expectedSlope != null) {
                                         if (slope.compareTo(expectedSlope) <= 0) {
                                             valid = true;
@@ -306,7 +371,7 @@ public class RampService extends FeatureProcess {
                         }
                     }
 
-                    if (block.getBuilding().getBuildingHeight().compareTo(new BigDecimal(15)) > 0) {
+                    if (block.getBuilding().getBuildingHeight().compareTo(rampServiceBuildingHeight) > 0) {
                         OccupancyTypeHelper mostRestrictiveFarHelper = pl.getVirtualBuilding() != null
                                 ? pl.getVirtualBuilding().getMostRestrictiveFarHelper()
                                 : null;
@@ -368,7 +433,7 @@ public class RampService extends FeatureProcess {
                                         for (BigDecimal length : rampLengths) {
                                             rampTotalLength = rampTotalLength.add(length);
                                         }
-                                        if (rampTotalLength.compareTo(BigDecimal.valueOf(0)) > 0
+                                        if (rampTotalLength.compareTo(rampServiceTotalLength) > 0
                                                 && ramp.getFloorHeight() != null) {
                                             boolean isTypicalRepititiveFloor = false;
                                             BigDecimal rampSlope = ramp.getFloorHeight().divide(rampTotalLength, 2,
@@ -385,11 +450,11 @@ public class RampService extends FeatureProcess {
                                                                             .equalsIgnoreCase(DxfFileConstants.C_MIP)
                                                                     || mostRestrictiveFarHelper.getSubtype().getCode()
                                                                             .equalsIgnoreCase(DxfFileConstants.C_MOP))))) {
-                                                expectedSlope = BigDecimal.valueOf(0.05);
+                                                expectedSlope = rampServiceExpectedSlopeTwo;
                                             } else {
                                                 expectedSlope = ramp.getFloorHeight()
-                                                        .compareTo(BigDecimal.valueOf(2.4)) > 0 ? BigDecimal.valueOf(0.05)
-                                                                : BigDecimal.valueOf(0.08);
+                                                        .compareTo(rampServiceExpectedSlopeCompare) > 0 ? rampServiceExpectedSlopeCompareTrue
+                                                                : rampServiceExpectedSlopeCompareFalse;
                                             }
                                             valid = false;
                                             Map<String, Object> typicalFloorValues = Util.getTypicalFloorValues(block, floor,

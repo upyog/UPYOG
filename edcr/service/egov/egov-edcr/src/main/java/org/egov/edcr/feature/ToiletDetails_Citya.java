@@ -113,7 +113,7 @@ public class ToiletDetails_Citya extends FeatureProcess {
                                             ? toilet.getToiletVentilation().setScale(2, RoundingMode.HALF_UP)
                                             : BigDecimal.ZERO;
                                     BigDecimal minToiletArea = null;
-                                    String occupancyName = null;
+                                    String occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl);
                                     BigDecimal minToiletWidth = null;
                                     BigDecimal minToiletVentilation = null;
                                     
@@ -121,10 +121,7 @@ public class ToiletDetails_Citya extends FeatureProcess {
                					 String feature = "Toilet";
                						
                						Map<String, Object> params = new HashMap<>();
-               						if(DxfFileConstants.A
-               								.equals(pl.getVirtualBuilding().getMostRestrictiveFarHelper().getType().getCode())){
-               							occupancyName = "Residential";
-               						}
+               						
 
                						params.put("feature", feature);
                						params.put("occupancy", occupancyName);

@@ -48,6 +48,7 @@
 package org.egov.edcr.feature;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -56,32 +57,46 @@ import java.util.Map;
 
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import org.egov.common.constants.MdmsFeatureConstants;
 import org.egov.common.entity.edcr.Block;
 import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.Result;
 import org.egov.common.entity.edcr.ScrutinyDetail;
+import org.egov.edcr.constants.DxfFileConstants;
+import org.egov.edcr.constants.EdcrRulesMdmsConstants;
+import org.egov.edcr.service.FetchEdcrRulesMdms;
 import org.egov.infra.utils.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class SepticTank extends FeatureProcess {
 
 	private static final Logger LOG = LogManager.getLogger(SepticTank.class);
+
+	// Constants for rule number and field descriptions
 	private static final String RULE_45_E = "45-e";
 	public static final String DISTANCE_FROM_WATERSOURCE = "Distance from watersource";
 	public static final String DISTANCE_FROM_BUILDING = "Distance from Building";
 	public static final String MIN_DISTANCE_FROM_GOVTBUILDING_DESC = "Minimum distance fcrom government building";
+
+	// Default minimum distances (fallback values)
 	public static final BigDecimal MIN_DIS_WATERSRC = BigDecimal.valueOf(18);
 	public static final BigDecimal MIN_DIS_BUILDING = BigDecimal.valueOf(6);
 
+	@Autowired
+	FetchEdcrRulesMdms fetchEdcrRulesMdms; // Service to fetch rules from MDMS
+
 	@Override
 	public Plan validate(Plan pl) {
+		// No validation rules implemented here for now
 		return pl;
 	}
 
 	@Override
 	public Plan process(Plan pl) {
 
+		// Setting up scrutiny detail metadata
 		ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
 		scrutinyDetail.setKey("Common_Septic Tank ");
 		scrutinyDetail.addColumnHeading(1, RULE_NO);
@@ -89,36 +104,72 @@ public class SepticTank extends FeatureProcess {
 		scrutinyDetail.addColumnHeading(3, PERMITTED);
 		scrutinyDetail.addColumnHeading(4, PROVIDED);
 		scrutinyDetail.addColumnHeading(5, STATUS);
+
+		// Fetch septic tank details from the plan
 		List<org.egov.common.entity.edcr.SepticTank> septicTanks = pl.getSepticTanks();
 
+    	BigDecimal septicTankMinDisWatersrc = BigDecimal.ZERO;
+    	BigDecimal septicTankMinDisBuilding = BigDecimal.ZERO;
+
+    	String occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl);
+
+		// Define the feature for MDMS lookup
+		String feature = MdmsFeatureConstants.SEPTIC_TANK;
+
+		// Prepare parameters to fetch rules based on occupancy
+		Map<String, Object> params = new HashMap<>();
+		
+		params.put("feature", feature);
+		params.put("occupancy", occupancyName);
+
+		// Fetch available rules data from the plan object (populated from MDMS)
+		Map<String,List<Map<String,Object>>> edcrRuleList = pl.getEdcrRulesFeatures();
+
+		// Define rule keys to fetch values for
+		ArrayList<String> valueFromColumn = new ArrayList<>();
+		valueFromColumn.add(EdcrRulesMdmsConstants.SEPTIC_TANK_MIN_DISTANCE_WATERSRC);
+		valueFromColumn.add(EdcrRulesMdmsConstants.SEPTIC_TANK_MIN_DISTANCE_BUILDING);
+
+		List<Map<String, Object>> permissibleValue = new ArrayList<>();
+
+		// Fetch permissible values from MDMS
+		permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
+		LOG.info("permissibleValue" + permissibleValue);
+
+		// If rules exist, override the default minimum distances
+		if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey(EdcrRulesMdmsConstants.SEPTIC_TANK_MIN_DISTANCE_WATERSRC)) {
+			septicTankMinDisWatersrc = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.SEPTIC_TANK_MIN_DISTANCE_WATERSRC).toString()));
+			septicTankMinDisBuilding = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.SEPTIC_TANK_MIN_DISTANCE_BUILDING).toString()));
+		}
+
+		// Validate each septic tank’s distance from water source and building
 		for (org.egov.common.entity.edcr.SepticTank septicTank : septicTanks) {
 			boolean validWaterSrcDistance = false;
 			boolean validBuildingDistance = false;
 
+			// Validate distance from water source
 			if (!septicTank.getDistanceFromWaterSource().isEmpty()) {
-				BigDecimal minDistWaterSrc = septicTank.getDistanceFromWaterSource().stream().reduce(BigDecimal::min)
-						.get();
-				if (minDistWaterSrc != null && minDistWaterSrc.compareTo(MIN_DIS_WATERSRC) >= 0) {
+				BigDecimal minDistWaterSrc = septicTank.getDistanceFromWaterSource().stream().reduce(BigDecimal::min).get();
+				if (minDistWaterSrc != null && minDistWaterSrc.compareTo(septicTankMinDisWatersrc) >= 0) {
 					validWaterSrcDistance = true;
 				}
-				buildResult(pl, scrutinyDetail, validWaterSrcDistance, DISTANCE_FROM_WATERSOURCE, ">= 18",
-						minDistWaterSrc.toString());
+				buildResult(pl, scrutinyDetail, validWaterSrcDistance, DISTANCE_FROM_WATERSOURCE, ">= " + septicTankMinDisWatersrc.toString(), minDistWaterSrc.toString());
 			}
 
+			// Validate distance from building
 			if (!septicTank.getDistanceFromBuilding().isEmpty()) {
-				BigDecimal minDistBuilding = septicTank.getDistanceFromBuilding().stream().reduce(BigDecimal::min)
-						.get();
-				if (minDistBuilding != null && minDistBuilding.compareTo(MIN_DIS_BUILDING) >= 0) {
+				BigDecimal minDistBuilding = septicTank.getDistanceFromBuilding().stream().reduce(BigDecimal::min).get();
+				if (minDistBuilding != null && minDistBuilding.compareTo(septicTankMinDisBuilding) >= 0) {
 					validBuildingDistance = true;
 				}
-				buildResult(pl, scrutinyDetail, validBuildingDistance, DISTANCE_FROM_BUILDING, ">= 6",
-						minDistBuilding.toString());
+				buildResult(pl, scrutinyDetail, validBuildingDistance, DISTANCE_FROM_BUILDING, ">= " + septicTankMinDisBuilding.toString(), minDistBuilding.toString());
 			}
 		}
 
 		return pl;
 	}
 
+	// Helper method to build scrutiny detail report row
 	private void buildResult(Plan pl, ScrutinyDetail scrutinyDetail, boolean valid, String description, String permited,
 			String provided) {
 		Map<String, String> details = new HashMap<>();
@@ -127,13 +178,16 @@ public class SepticTank extends FeatureProcess {
 		details.put(PERMITTED, permited);
 		details.put(PROVIDED, provided);
 		details.put(STATUS, valid ? Result.Accepted.getResultVal() : Result.Not_Accepted.getResultVal());
+
+		// Add details to the scrutiny detail and attach to the plan report
 		scrutinyDetail.getDetail().add(details);
 		pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
 	}
 
 	@Override
 	public Map<String, Date> getAmendments() {
+		// No amendments applicable for now
 		return new LinkedHashMap<>();
 	}
-
 }
+

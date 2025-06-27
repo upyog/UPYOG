@@ -48,77 +48,142 @@
 package org.egov.edcr.feature;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import org.egov.common.constants.MdmsFeatureConstants;
 import org.egov.common.entity.edcr.Block;
 import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.Result;
 import org.egov.common.entity.edcr.ScrutinyDetail;
+import org.egov.edcr.constants.DxfFileConstants;
+import org.egov.edcr.constants.EdcrRulesMdmsConstants;
+import org.egov.edcr.service.FetchEdcrRulesMdms;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class Chimney extends FeatureProcess {
 
-	private static final Logger LOG = LogManager.getLogger(Chimney.class);
-	private static final String RULE_44_D = "44-d";
-	public static final String CHIMNEY_DESCRIPTION = "Chimney";
+    // Logger for logging information and errors
+    private static final Logger LOG = LogManager.getLogger(Chimney.class);
 
-	@Override
-	public Plan validate(Plan pl) {
+    // Rule identifier and description for chimney scrutiny
+    private static final String RULE_44_D = "44-d";
+    public static final String CHIMNEY_DESCRIPTION = "Chimney";
+    public static final String CHIMNEY_VERIFY_DESCRIPTION = "Verified whether chimney height is <= ";
+    public static final String METERS = " meters";
+    public static final String TO_BUILDING_HEIGHT = ") to building height";
 
-		return pl;
-	}
+    @Autowired
+    FetchEdcrRulesMdms fetchEdcrRulesMdms;
 
-	@Override
-	public Plan process(Plan pl) {
+    /**
+     * Validates the given plan object.
+     * Currently, no specific validation logic is implemented.
+     *
+     * @param pl The plan object to validate.
+     * @return The same plan object without any modifications.
+     */
+    @Override
+    public Plan validate(Plan pl) {
+        return pl;
+    }
 
-		ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
-		scrutinyDetail.setKey("Common_Chimney");
-		scrutinyDetail.addColumnHeading(1, RULE_NO);
-		scrutinyDetail.addColumnHeading(2, DESCRIPTION);
-		scrutinyDetail.addColumnHeading(3, VERIFIED);
-		scrutinyDetail.addColumnHeading(4, ACTION);
-		scrutinyDetail.addColumnHeading(5, STATUS);
+    /**
+     * Processes the given plan to validate chimney height.
+     * Checks whether the chimney height is within permissible limits and updates the scrutiny details.
+     *
+     * @param pl The plan object to process.
+     * @return The processed plan object with scrutiny details added.
+     */
+    @Override
+    public Plan process(Plan pl) {
+        // Initialize scrutiny detail for chimney validation
+        ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
+        scrutinyDetail.setKey("Common_Chimney");
+        scrutinyDetail.addColumnHeading(1, RULE_NO);
+        scrutinyDetail.addColumnHeading(2, DESCRIPTION);
+        scrutinyDetail.addColumnHeading(3, VERIFIED);
+        scrutinyDetail.addColumnHeading(4, ACTION);
+        scrutinyDetail.addColumnHeading(5, STATUS);
 
-		Map<String, String> details = new HashMap<>();
-		details.put(RULE_NO, RULE_44_D);
+        // Map to store rule details
+        Map<String, String> details = new HashMap<>();
+        details.put(RULE_NO, RULE_44_D);
 
-		BigDecimal minHeight = BigDecimal.ZERO;
+        // Variables to store permissible and actual chimney heights
+        BigDecimal minHeight = BigDecimal.ZERO;
+        BigDecimal chimneyVerifiedHeight = BigDecimal.ZERO;
 
-		for (Block b : pl.getBlocks()) {
-			minHeight = BigDecimal.ZERO;
-			if (b.getChimneys() != null && !b.getChimneys().isEmpty()) {
-				minHeight = b.getChimneys().stream().reduce(BigDecimal::min).get();
+        // Determine the occupancy type and feature for fetching permissible values
+        String occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl);
+        String feature = MdmsFeatureConstants.CHIMNEY;
 
-				if (minHeight.compareTo(new BigDecimal(1)) <= 0) {
-					details.put(DESCRIPTION, CHIMNEY_DESCRIPTION);
-					details.put(VERIFIED, "Verified whether chimney height is <= 1 meters");
-					details.put(ACTION, "Not included chimney height(" + minHeight + ") to building height");
-					details.put(STATUS, Result.Accepted.getResultVal());
-					scrutinyDetail.getDetail().add(details);
-					pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
-				} else {
-					details.put(DESCRIPTION, CHIMNEY_DESCRIPTION);
-					details.put(VERIFIED, "Verified whether chimney height is <= 1 meters");
-					details.put(ACTION, "Included chimney height(" + minHeight + ") to building height");
-					details.put(STATUS, Result.Verify.getResultVal());
-					scrutinyDetail.getDetail().add(details);
-					pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
-				}
-			}
+        Map<String, Object> params = new HashMap<>();
+        
 
-		}
-		return pl;
-	}
+        params.put("feature", feature);
+        params.put("occupancy", occupancyName);
 
-	@Override
-	public Map<String, Date> getAmendments() {
-		return new LinkedHashMap<>();
-	}
+        // Fetch permissible values for chimney height
+        Map<String, List<Map<String, Object>>> edcrRuleList = pl.getEdcrRulesFeatures();
+        ArrayList<String> valueFromColumn = new ArrayList<>();
+        valueFromColumn.add(EdcrRulesMdmsConstants.PERMISSIBLE_VALUE);
 
+        List<Map<String, Object>> permissibleValue = new ArrayList<>();
+        permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
+        LOG.info("permissibleValue" + permissibleValue);
+
+        if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey(EdcrRulesMdmsConstants.PERMISSIBLE_VALUE)) {
+            chimneyVerifiedHeight = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.PERMISSIBLE_VALUE).toString()));
+        } else {
+            chimneyVerifiedHeight = BigDecimal.ZERO;
+        }
+
+        // Iterate through all blocks in the plan
+        for (Block b : pl.getBlocks()) {
+            minHeight = BigDecimal.ZERO;
+
+            // Check if chimneys exist in the block
+            if (b.getChimneys() != null && !b.getChimneys().isEmpty()) {
+                // Get the minimum chimney height
+                minHeight = b.getChimneys().stream().reduce(BigDecimal::min).get();
+
+                // Validate chimney height and update scrutiny details
+                if (minHeight.compareTo(chimneyVerifiedHeight) <= 0) {
+                    details.put(DESCRIPTION, CHIMNEY_DESCRIPTION);
+                    details.put(VERIFIED, CHIMNEY_VERIFY_DESCRIPTION + chimneyVerifiedHeight.toString() + METERS);
+                    details.put(ACTION, "Not included chimney height(" + minHeight + TO_BUILDING_HEIGHT);
+                    details.put(STATUS, Result.Accepted.getResultVal());
+                    scrutinyDetail.getDetail().add(details);
+                    pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+                } else {
+                    details.put(DESCRIPTION, CHIMNEY_DESCRIPTION);
+                    details.put(VERIFIED, CHIMNEY_VERIFY_DESCRIPTION + chimneyVerifiedHeight.toString() + METERS);
+                    details.put(ACTION, "Included chimney height(" + minHeight + TO_BUILDING_HEIGHT);
+                    details.put(STATUS, Result.Verify.getResultVal());
+                    scrutinyDetail.getDetail().add(details);
+                    pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+                }
+            }
+        }
+        return pl;
+    }
+
+    /**
+     * Returns an empty map as no amendments are defined for this feature.
+     *
+     * @return An empty map of amendments.
+     */
+    @Override
+    public Map<String, Date> getAmendments() {
+        return new LinkedHashMap<>();
+    }
 }

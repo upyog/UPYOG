@@ -163,15 +163,13 @@ public class RoadWidth_Citya extends FeatureProcess {
     	
     	BigDecimal roadWidthValue = BigDecimal.ZERO; // Default road width value
     	
-        String occupancyName = null;
+    	String occupancyName = fetchEdcrRulesMdms.getOccupancyName(plan);
 		
 		String feature = MdmsFeatureConstants.ROAD_WIDTH;
 
 		// Determine occupancy type from the FAR helper
 		Map<String, Object> params = new HashMap<>();
-		if(DxfFileConstants.A.equals(plan.getVirtualBuilding().getMostRestrictiveFarHelper().getType().getCode())){
-			occupancyName = "Residential";
-		}
+		
 
 		params.put("feature", feature);
 		params.put("occupancy", occupancyName);

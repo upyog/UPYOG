@@ -139,13 +139,11 @@ public class GuardRoom_Citya extends FeatureProcess {
         BigDecimal GuardRoomMinCabinHeightTwo = BigDecimal.ZERO;
 
         // Determine the occupancy type and feature for fetching permissible values
-        String occupancyName = null;
+        String occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl);
         String feature = MdmsFeatureConstants.GUARD_ROOM;
 
         Map<String, Object> params = new HashMap<>();
-        if (DxfFileConstants.A.equals(pl.getVirtualBuilding().getMostRestrictiveFarHelper().getType().getCode())) {
-            occupancyName = "Residential";
-        }
+       
 
         params.put("feature", feature);
         params.put("occupancy", occupancyName);

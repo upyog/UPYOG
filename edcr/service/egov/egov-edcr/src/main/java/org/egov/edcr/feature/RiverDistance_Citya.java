@@ -128,16 +128,13 @@ public class RiverDistance_Citya extends FeatureProcess {
         List<River> subRiver = new ArrayList<>();
         List<River> rivers = pl.getDistanceToExternalEntity().getRivers();
         
-        String occupancyName = null;
+        String occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl);
 
         // Prepare parameters for rule fetching
         String feature = MdmsFeatureConstants.RIVER_DISTANCE;
         Map<String, Object> params = new HashMap<>();
 
-        // Determine occupancy type
-        if(DxfFileConstants.A.equals(pl.getVirtualBuilding().getMostRestrictiveFarHelper().getType().getCode())){
-            occupancyName = "Residential";
-        }
+        
         params.put("feature", feature);
         params.put("occupancy", occupancyName);
 			

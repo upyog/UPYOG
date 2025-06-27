@@ -62,6 +62,7 @@ import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import org.egov.common.constants.MdmsFeatureConstants;
 import org.egov.common.entity.dcr.helper.OccupancyHelperDetail;
 import org.egov.common.entity.edcr.Block;
 import org.egov.common.entity.edcr.Floor;
@@ -73,12 +74,12 @@ import org.egov.common.entity.edcr.SanityDetails;
 import org.egov.common.entity.edcr.SanityHelper;
 import org.egov.common.entity.edcr.ScrutinyDetail;
 import org.egov.edcr.constants.DxfFileConstants;
+import org.egov.edcr.constants.EdcrRulesMdmsConstants;
+import org.egov.edcr.service.FetchEdcrRulesMdms;
 import org.egov.edcr.utility.DcrConstants;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-/**
- * @author mani
- */
 
 @Service
 public class Sanitation extends FeatureProcess {
@@ -100,22 +101,8 @@ public class Sanitation extends FeatureProcess {
     private static final String MINIMUM_SIDE_DIMENSION_VIOLATED = "Minimum Side Dimension of {0} M violated";
     private static final String MINIMUM_AREA_DIMENSION_VIOLATED = "Minimum Area of {0} M violated";
     private static final String DIMESION_DESC_KEY = "msg.sanity.dimension.desc";
-    /*
-     * private static final String DIMESION_DESC_BATH =
-     * "The area of bath-room shall not be less than 1.50 sq.m. with either side not less than 1.1m"; private static final String
-     * DIMESION_DESC_BATH_WC = "The area of combined bathroom and latrine shall be not less than 2.2 square " +
-     * "metres with one side not less than 1. 1 metres";
-     */
     private static final Logger LOG = LogManager.getLogger(Sanitation.class);
-    /*
-     * private static final String RULE_NAME_KEY = "sanitation.rulename"; private static final String RULE_DESCRIPTION_KEY =
-     * "sanitation.description"; private static final String RULE_EXPECTED_KEY = "sanitation.expected"; private static final
-     * String RULE_ACTUAL_KEY = "sanitation.actual";
-     */
     private static final String FEATURE_NAME = "Sanitary Detail";
-    /*
-     * private static final String SIDE = "SIDE"; private static final String AREA = "AREA";
-     */
     private static final String RULE_38_1 = "38-1";
     private static final String NOOFBEDS = "No Of Beds";
     public static final String RULE_55_12 = "55-12";
@@ -126,6 +113,51 @@ public class Sanitation extends FeatureProcess {
     public static final String MINIMUM_AREA_SPWC = "2.625 M2";
     public static final String MINIMUM_DIMENSION_SPWC = "1.5 M";
 
+   
+    
+	public static BigDecimal sanitationMinAreaofSPWC = BigDecimal.ZERO;
+	public static BigDecimal sanitationMinDimensionofSPWC = BigDecimal.ZERO;
+	public static BigDecimal sanitationMinatGroundFloor = BigDecimal.ZERO;
+	public static BigDecimal sanitationFloorMultiplier = BigDecimal.ZERO;
+    
+    @Autowired
+    FetchEdcrRulesMdms fetchEdcrRulesMdms;  
+    
+    private Map<String, BigDecimal> fetchSanitationValues(Plan pl) {
+    	String occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl);
+		String feature = MdmsFeatureConstants.SANITATION;
+        Map<String, Object> params = new HashMap<>();
+       
+
+        params.put("feature", feature);
+        params.put("occupancy", occupancyName);
+
+        Map<String, List<Map<String, Object>>> edcrRuleList = pl.getEdcrRulesFeatures();
+        ArrayList<String> valueFromColumn = new ArrayList<>();
+        valueFromColumn.add(EdcrRulesMdmsConstants.SANITATION_MIN_AREA_SPWC);
+        valueFromColumn.add(EdcrRulesMdmsConstants.SANITATION_MIN_DIMENSION_SPWC);
+
+		List<Map<String, Object>> permissibleValue = new ArrayList<>();
+		
+		permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
+		LOG.info("permissibleValue" + permissibleValue);
+
+        if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey(EdcrRulesMdmsConstants.SANITATION_MIN_AREA_SPWC)) {
+        	sanitationMinAreaofSPWC = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.SANITATION_MIN_AREA_SPWC).toString()));
+        	sanitationMinDimensionofSPWC = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.SANITATION_MIN_DIMENSION_SPWC).toString()));
+        	sanitationMinatGroundFloor = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.SANITATION_MIN_AT_GROUND_FLOOR).toString()));
+        	sanitationFloorMultiplier = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.SANITATION_FLOOR_MULTIPLIER).toString()));
+		}
+        
+        // Return the values as a map
+        Map<String, BigDecimal> sanitationValues = new HashMap<>();
+        sanitationValues.put("sanitationMinAreaofSPWC", sanitationMinAreaofSPWC);
+        sanitationValues.put("sanitationMinDimensionofSPWC", sanitationMinDimensionofSPWC);
+        sanitationValues.put("sanitationMinatGroundFloor", sanitationMinatGroundFloor);
+        sanitationValues.put("sanitationFloorMultiplier", sanitationFloorMultiplier);
+        return sanitationValues;
+    }
+    
     @Override
     public Plan validate(Plan pl) {
 
@@ -333,25 +365,6 @@ public class Sanitation extends FeatureProcess {
 
     private Plan verifyDimesions(Plan pl) {
         validate(pl);
-
-        /*
-         * for (Block b : pl.getBlocks()) { If block is small plot and floors above ground less than or equal to three and
-         * occupancy type of entire block is either Residential or Commercial then sanitation process not require. if
-         * (!Util.checkExemptionConditionForBuildingParts(b) && !Util.checkExemptionConditionForSmallPlotAtBlkLevel(pl.getPlot(),
-         * b)) { SanityDetails sanityDetails = b.getSanityDetails(); ScrutinyDetail scrutinyDetail =
-         * getNewScrutinyDetail(BLOCK_U_S + b.getNumber() + "_" + SANITATION); checkDimension(pl, scrutinyDetail,
-         * sanityDetails.getMaleWaterClosets(), 1d, 1.1d, MALE + BLDG_PART_WATER_CLOSET, DIMESION_DESC_KEY, RULE_38_1);
-         * checkDimension(pl, scrutinyDetail, sanityDetails.getFemaleWaterClosets(), 1d, 1.1d, FEMALE + BLDG_PART_WATER_CLOSET,
-         * DIMESION_DESC_KEY, RULE_38_1); checkDimension(pl, scrutinyDetail, sanityDetails.getUrinals(), 0.6d, 0.5d,
-         * BLDG_PART_URINAL, DIMESION_DESC_KEY, RULE_38_1); checkDimension(pl, scrutinyDetail, sanityDetails.getMaleBathRooms(),
-         * 1.1d, 1.5d, MALE + BLDG_PART_BATHROOM, DIMESION_DESC_KEY, RULE_38_1); checkDimension(pl, scrutinyDetail,
-         * sanityDetails.getFemaleBathRooms(), 1.1d, 1.5d, FEMALE + BLDG_PART_BATHROOM, DIMESION_DESC_KEY, RULE_38_1);
-         * checkDimension(pl, scrutinyDetail, sanityDetails.getMaleRoomsWithWaterCloset(), 1.1d, 2.2d, MALE_BATH_WITH_WC,
-         * DIMESION_DESC_KEY, RULE_38_1); checkDimension(pl, scrutinyDetail, sanityDetails.getMaleRoomsWithWaterCloset(), 1.1,
-         * 2.2d, FEMALE + BLDG_PART_BATHROOM + WITH + BLDG_PART_WATER_CLOSET, DIMESION_DESC_KEY, RULE_38_1); // checkCount(pl); }
-         * }
-         */
-
         return pl;
     }
 
@@ -367,10 +380,18 @@ public class Sanitation extends FeatureProcess {
     }
 
     private void checkCount(Plan pl) {
+    	
+    	
+        // Fetch sanitation values
+        Map<String, BigDecimal> solarValues = fetchSanitationValues(pl);
+        sanitationMinAreaofSPWC = solarValues.get("sanitationMinAreaofSPWC");
+        sanitationMinDimensionofSPWC = solarValues.get("sanitationMinDimensionofSPWC"); 
+        sanitationMinatGroundFloor = solarValues.get("sanitationMinatGroundFloor");
+        sanitationFloorMultiplier = solarValues.get("sanitationFloorMultiplier"); 
 
-        // BigDecimal two=BigDecimal.valueOf(val)
         Boolean allStatus = true;
         Boolean accepted = true;
+       
         for (Block b : pl.getBlocks()) {
             if (!b.getCompletelyExisting()) {
 
@@ -391,8 +412,6 @@ public class Sanitation extends FeatureProcess {
                     if (type.getCarpetArea() != null && type.getCarpetArea().doubleValue() > 0) {
                         carpetArea = type.getCarpetArea().doubleValue();
                     } else {
-//                        pl.addError("Invalid carpet area",
-//                                "Carpet area is not calculated . Some thing wrong with builtup area");
                         return ;
                     }
                     LOG.info(type.getType() + " area" + carpetArea);
@@ -406,11 +425,11 @@ public class Sanitation extends FeatureProcess {
                     case DxfFileConstants.A_AF:
                         if (b.getResidentialBuilding())
                             accepted = processSpecialWaterClosetForResidential(b, helper, scrutinyDetail,
-                                    requiredSpWcMap, providedSpWcMap, failedAreaSpWcMap, failedDimensionSpWcMap);
+                                    requiredSpWcMap, providedSpWcMap, failedAreaSpWcMap, failedDimensionSpWcMap, pl);
                         break;
                     case DxfFileConstants.A_SR:
                         processSpecialWaterCloset(b, requiredSpWcMap, providedSpWcMap, failedAreaSpWcMap,
-                                failedDimensionSpWcMap);
+                                failedDimensionSpWcMap, pl);
                         break;
                     case DxfFileConstants.A_HE:
                         helper.maleWc += carpetArea * 2 / (4.75 * 3 * 10);
@@ -421,7 +440,7 @@ public class Sanitation extends FeatureProcess {
                         helper.maleBath += carpetArea * 2 / (4.75 * 3 * 10);
                         helper.femaleBath += carpetArea / (4.75 * 3 * 10);
                         processSpecialWaterCloset(b, requiredSpWcMap, providedSpWcMap, failedAreaSpWcMap,
-                                failedDimensionSpWcMap);
+                                failedDimensionSpWcMap, pl);
                         helper.ruleNo.add(RULE_54_6);
                         break;
                     case DxfFileConstants.B:
@@ -433,7 +452,7 @@ public class Sanitation extends FeatureProcess {
                         helper.maleWash += carpetArea * 2 / (4.75 * 3 * 40);
                         helper.femaleWash += carpetArea / (4.75 * 3 * 40);
                         processSpecialWaterCloset(b, requiredSpWcMap, providedSpWcMap, failedAreaSpWcMap,
-                                failedDimensionSpWcMap);
+                                failedDimensionSpWcMap, pl);
                         helper.ruleNo.add(RULE_54_6);
                         break;
                     case DxfFileConstants.C_MIP:
@@ -450,7 +469,7 @@ public class Sanitation extends FeatureProcess {
                         helper.femaleBath += noofBeds / 8;
                         helper.abultionTap += helper.maleWc + helper.femaleWc + carpetArea / (4.75 * 3);
                         processSpecialWaterCloset(b, requiredSpWcMap, providedSpWcMap, failedAreaSpWcMap,
-                                failedDimensionSpWcMap);
+                                failedDimensionSpWcMap, pl);
                         helper.ruleNo.add(RULE_55_12);
                         break;
 
@@ -463,7 +482,7 @@ public class Sanitation extends FeatureProcess {
                         // helper.maleBath = carpetArea * 2 / (4.75 * 3 * 10);
                         // helper.femaleBath = carpetArea / (4.75 * 3 * 10);
                         processSpecialWaterCloset(b, requiredSpWcMap, providedSpWcMap, failedAreaSpWcMap,
-                                failedDimensionSpWcMap);
+                                failedDimensionSpWcMap, pl);
                         helper.ruleNo.add(RULE_55_12);
                         break;
 
@@ -495,7 +514,7 @@ public class Sanitation extends FeatureProcess {
 
                         helper.abultionTap += helper.maleWc + helper.femaleWc + carpetArea / (4.75 * 50);
                         processSpecialWaterCloset(b, requiredSpWcMap, providedSpWcMap, failedAreaSpWcMap,
-                                failedDimensionSpWcMap);
+                                failedDimensionSpWcMap, pl);
                         break;
                     case DxfFileConstants.D:
                     case DxfFileConstants.D_AW:
@@ -507,7 +526,7 @@ public class Sanitation extends FeatureProcess {
                         // helper.maleBath += carpetArea * 2 / (4.75 * 3 * 10);
                         // helper.femaleBath += carpetArea / (4.75 * 3 * 10);
                         processSpecialWaterCloset(b, requiredSpWcMap, providedSpWcMap, failedAreaSpWcMap,
-                                failedDimensionSpWcMap);
+                                failedDimensionSpWcMap, pl);
                         helper.ruleNo.add(RULE_55_12);
                         break;
                     case DxfFileConstants.D_BT:
@@ -529,7 +548,7 @@ public class Sanitation extends FeatureProcess {
                         helper.maleWash += 4d;
                         helper.femaleWash += 4d;
                         processSpecialWaterCloset(b, requiredSpWcMap, providedSpWcMap, failedAreaSpWcMap,
-                                failedDimensionSpWcMap);
+                                failedDimensionSpWcMap, pl);
                         // helper.maleBath += carpetArea * 2 / (4.75 * 3 * 10);
                         // helper.femaleBath += carpetArea / (4.75 * 3 * 10);
                         helper.ruleNo.add(RULE_54_6);
@@ -545,7 +564,7 @@ public class Sanitation extends FeatureProcess {
                         helper.ruleDescription = SANITY_RULE_DESC + o.getCode();
                         if ((o.equals(DxfFileConstants.F) || o.equals(DxfFileConstants.F_K)))
                             processSpecialWaterCloset(b, requiredSpWcMap, providedSpWcMap, failedAreaSpWcMap,
-                                    failedDimensionSpWcMap);
+                                    failedDimensionSpWcMap, pl);
 
                         break;
                     case DxfFileConstants.H:
@@ -563,7 +582,7 @@ public class Sanitation extends FeatureProcess {
                         helper.femaleWash += carpetArea / (4.75 * 3 * 100);
                         helper.commonBath += carpetArea * 2 / (4.75 * 100);
                         processSpecialWaterCloset(b, requiredSpWcMap, providedSpWcMap, failedAreaSpWcMap,
-                                failedDimensionSpWcMap);
+                                failedDimensionSpWcMap, pl);
                         // helper.femaleBath += carpetArea / (4.75 * 3 * 10);
                         helper.ruleNo.add(RULE_54_6);
                         break;
@@ -620,33 +639,34 @@ public class Sanitation extends FeatureProcess {
                     helper.failedDimensionSpecialWc += pro.getValue();
                 }
 
+
                 if (helper.requiredSpecialWc > 0) {
                     Set<String> ruleNo = new HashSet<>();
                     ruleNo.add(RULE_40_A_4);
                     if (helper.providedSpecialWc < helper.requiredSpecialWc) {
                         addReportDetail(ruleNo,
                                 BLDG_PART_SPECIAL_WATER_CLOSET
-                                        + " - Minimum one at Ground Floor + Minimum 1 at every floors in multiples of 3, (GF, 3rd, 6th etc)",
+                                        + " - Minimum one at Ground Floor + Minimum " + sanitationMinatGroundFloor.toString() + " at every floors in multiples of " + sanitationFloorMultiplier.toString() + ", (GF, 3rd, 6th etc)",
                                 String.valueOf(helper.requiredSpecialWc.intValue()),
                                 String.valueOf(helper.providedSpecialWc.intValue()), Result.Not_Accepted.getResultVal(),
                                 scrutinyDetail);
                     } else {
                         addReportDetail(ruleNo,
                                 BLDG_PART_SPECIAL_WATER_CLOSET
-                                        + " - Minimum one at Ground Floor + Minimum 1 at every floors in multiples of 3, (GF, 3rd, 6th etc)",
+                                        + " - Minimum one at Ground Floor + Minimum " + sanitationMinatGroundFloor.toString() + " at every floors in multiples of " + sanitationFloorMultiplier.toString() + ", (GF, 3rd, 6th etc)",
                                 String.valueOf(helper.requiredSpecialWc.intValue()),
                                 String.valueOf(helper.providedSpecialWc.intValue()), Result.Accepted.getResultVal(),
                                 scrutinyDetail);
                     }
                     if (helper.failedAreaSpecialWc > 0 && helper.failedAreaSpecialWc <= helper.requiredSpecialWc) {
                         addReportDetail(ruleNo, BLDG_PART_SPECIAL_WATER_CLOSET + " - Minimum Area", MINIMUM_AREA_SPWC,
-                                String.valueOf(helper.failedAreaSpecialWc.intValue()) + " not having area 2.625 M2",
+                                String.valueOf(helper.failedAreaSpecialWc.intValue()) + " not having area " + sanitationMinAreaofSPWC.toString() + " M2",
                                 Result.Not_Accepted.getResultVal(), scrutinyDetail);
                     } else {
                         addReportDetail(ruleNo, BLDG_PART_SPECIAL_WATER_CLOSET + " - Minimum Area", MINIMUM_AREA_SPWC,
                                 String.valueOf(
                                         helper.providedSpecialWc.intValue() - helper.failedAreaSpecialWc.intValue())
-                                        + " having area 2.625 M2",
+                                        + " having area " + sanitationMinAreaofSPWC.toString() + " M2",
                                 Result.Accepted.getResultVal(), scrutinyDetail);
                     }
 
@@ -655,13 +675,13 @@ public class Sanitation extends FeatureProcess {
                         addReportDetail(ruleNo, BLDG_PART_SPECIAL_WATER_CLOSET + " - Minimum Dimension",
                                 MINIMUM_DIMENSION_SPWC,
                                 String.valueOf(helper.failedDimensionSpecialWc.intValue())
-                                        + " not having dimension 1.5M",
+                                        + " not having dimension " + sanitationMinDimensionofSPWC.toString() + "M",
                                 Result.Not_Accepted.getResultVal(), scrutinyDetail);
                     } else {
                         addReportDetail(ruleNo, BLDG_PART_SPECIAL_WATER_CLOSET + " - Minimum Dimension",
                                 MINIMUM_DIMENSION_SPWC,
                                 String.valueOf(helper.providedSpecialWc.intValue()
-                                        - helper.failedDimensionSpecialWc.intValue()) + " having dimension 1.5M",
+                                        - helper.failedDimensionSpecialWc.intValue()) + " having dimension " + sanitationMinDimensionofSPWC.toString() + "M",
                                 Result.Accepted.getResultVal(), scrutinyDetail);
                     }
 
@@ -675,29 +695,9 @@ public class Sanitation extends FeatureProcess {
         }
     }
 
-    /*
-     * private Boolean processSpecialWaterCloset(Block block, SanityHelper helper, ScrutinyDetail detail, Map<Integer, Integer>
-     * spWcMap) { boolean notFound = false; StringBuilder expectedResult = new StringBuilder(); StringBuilder actualResult = new
-     * StringBuilder(); expectedResult.append(
-     * " Minimum one at Ground Floor + Minimum 1 at every floors in multiples of 3, (GF, 3rd, 6th etc)" ); StringBuilder
-     * notFoundFloors = new StringBuilder(); StringBuilder foundFloors = new StringBuilder(); int required = 0; int provided = 0;
-     * for (Floor f : block.getBuilding().getFloors()) { if (f.getNumber().intValue() < 0) continue; if (f.getNumber() % 3 == 0) {
-     * if(spWcMap.containsKey(f.getNumber())) continue; else spWcMap.put(f.getNumber(), 1); required++; if
-     * (f.getSpecialWaterClosets().isEmpty()) { notFound = true; if (notFoundFloors.length() != 0) notFoundFloors.append(", ");
-     * notFoundFloors.append(" Floor " + f.getNumber()); } else { provided++; foundFloors.append(" Floor " + f.getNumber()); } } }
-     * if (notFound) { actualResult.append("Not found at following Mandatory levels " + notFoundFloors);
-     * addReportDetail(RULE_40_A_4, BLDG_PART_SPECIAL_WATER_CLOSET +
-     * " - Minimum one at Ground Floor + Minimum 1 at every floors in multiples of 3, (GF, 3rd, 6th etc)" ,
-     * String.valueOf(required), String.valueOf(provided), Result.Not_Accepted.getResultVal(), detail); } else {
-     * actualResult.append(" found at following Mandatory levels " + foundFloors); addReportDetail(RULE_40_A_4,
-     * BLDG_PART_SPECIAL_WATER_CLOSET +
-     * " - Minimum one at Ground Floor + Minimum 1 at every floors in multiples of 3, (GF, 3rd, 6th etc)" ,
-     * String.valueOf(required), String.valueOf(provided), Result.Accepted.getResultVal(), detail); } return !notFound; }
-     */
-
     private void processSpecialWaterCloset(Block block, Map<Integer, Integer> requiredSpWcMap,
             Map<Integer, Integer> providedSpWcMap, Map<Integer, Integer> failedAreaSpWcMap,
-            Map<Integer, Integer> failedDimensionSpWcMap) {
+            Map<Integer, Integer> failedDimensionSpWcMap, Plan pl) {
         for (Floor f : block.getBuilding().getFloors()) {
             if (f.getNumber().intValue() < 0)
                 continue;
@@ -716,14 +716,14 @@ public class Sanitation extends FeatureProcess {
                 }
 
                 validateDimensionOfSPWC(f.getSpecialWaterClosets(), f.getNumber(), failedAreaSpWcMap,
-                        failedDimensionSpWcMap, providedSpWcMap);
+                        failedDimensionSpWcMap, providedSpWcMap, pl);
             }
         }
     }
 
     private Boolean processSpecialWaterClosetForResidential(Block block, SanityHelper helper, ScrutinyDetail detail,
             Map<Integer, Integer> requiredSpWcMap, Map<Integer, Integer> providedSpWcMap,
-            Map<Integer, Integer> failedAreaSpWcMap, Map<Integer, Integer> failedDimensionSpWcMap) {
+            Map<Integer, Integer> failedAreaSpWcMap, Map<Integer, Integer> failedDimensionSpWcMap, Plan pl) {
         boolean notFound = false;
         StringBuilder expectedResult = new StringBuilder();
         StringBuilder actualResult = new StringBuilder();
@@ -741,7 +741,7 @@ public class Sanitation extends FeatureProcess {
                 }
 
                 validateDimensionOfSPWC(f.getSpecialWaterClosets(), f.getNumber(), failedAreaSpWcMap,
-                        failedDimensionSpWcMap, providedSpWcMap);
+                        failedDimensionSpWcMap, providedSpWcMap, pl);
 
             }
         }
@@ -759,18 +759,6 @@ public class Sanitation extends FeatureProcess {
 
         return !notFound;
     }
-
-    /*
-     * private Boolean processWashBasinsFloorWise(PlanDetail planDetail, Block block, SanityHelper helper, ScrutinyDetail detail,
-     * Occupancy occupancy) { helper.ruleDescription = "" + BLDG_PART_WASHBASIN; Set<String> ruleNo = new HashSet<>();
-     * ruleNo.add(RULE_54_6); boolean found = false; StringBuilder expectedResult = new StringBuilder(); StringBuilder
-     * actualResult = new StringBuilder(); expectedResult.append("Preferably one at each floor "); StringBuilder foundFloors = new
-     * StringBuilder(); for (Floor f : block.getBuilding().getFloors()) { if (f.getNumber().intValue() < 0) continue; if
-     * (!f.getWashBasins().isEmpty()) { found = true; if (foundFloors.length() != 0) foundFloors.append(", ");
-     * foundFloors.append(" Floor " + f.getNumber()); } } if (found) { actualResult.append("Found at " + foundFloors);
-     * addReportDetail(ruleNo, helper.ruleDescription, expectedResult.toString(), actualResult.toString(),
-     * Result.Accepted.getResultVal(), detail); } return found; }
-     */
 
     private Boolean processSanity(Plan pl, Block b, SanityHelper helper, ScrutinyDetail detail) {
 
@@ -894,12 +882,6 @@ public class Sanitation extends FeatureProcess {
                 }
             }
         }
-
-        /*
-         * if (pl.getPlanInformation().getNoOfBeds() != null && OCCUPANCY_C1.equals(occupancy.getType()))
-         * addReportDetail(RULE_55_12, NOOFBEDS, "-", pl.getPlanInformation().getNoOfBeds().toString(),
-         * Result.Accepted.getResultVal(), detail);
-         */
         return accepted;
     }
 
@@ -992,11 +974,16 @@ public class Sanitation extends FeatureProcess {
     }
 
     private void validateDimensionOfSPWC(List<Measurement> spwcs, int flrNo, Map<Integer, Integer> failedAreaSpWcMap,
-            Map<Integer, Integer> failedDimensionSpWcMap, Map<Integer, Integer> providedSpWcMap) {
+            Map<Integer, Integer> failedDimensionSpWcMap, Map<Integer, Integer> providedSpWcMap, Plan pl) {
 
         Integer failedAreaCount = 0;
         Integer failedDimensionCount = 0;
         Integer providedSpecialWc = 0;
+        
+        // Fetch sanitation values
+        Map<String, BigDecimal> solarValues = fetchSanitationValues(pl);
+        sanitationMinAreaofSPWC = solarValues.get("sanitationMinAreaofSPWC");
+        sanitationMinDimensionofSPWC = solarValues.get("sanitationMinDimensionofSPWC"); 
 
         for (Map.Entry<Integer, Integer> pro : providedSpWcMap.entrySet()) {
             providedSpecialWc += pro.getValue();
@@ -1007,11 +994,11 @@ public class Sanitation extends FeatureProcess {
                     DcrConstants.ROUNDMODE_MEASUREMENTS);
             BigDecimal width = spwc.getWidth().setScale(DcrConstants.ONE_DECIMALDIGITS_MEASUREMENTS,
                     DcrConstants.ROUNDMODE_MEASUREMENTS);
-            if (area.compareTo(MINAREAOFSPWC.setScale(DcrConstants.THREE_DECIMALDIGITS_MEASUREMENTS,
+            if (area.compareTo(sanitationMinAreaofSPWC.setScale(DcrConstants.THREE_DECIMALDIGITS_MEASUREMENTS,
                     DcrConstants.ROUNDMODE_MEASUREMENTS)) < 0) {
                 failedAreaCount++;
             }
-            if (width.compareTo(MINDIMENSIONOFSPWC.setScale(DcrConstants.ONE_DECIMALDIGITS_MEASUREMENTS,
+            if (width.compareTo(sanitationMinDimensionofSPWC.setScale(DcrConstants.ONE_DECIMALDIGITS_MEASUREMENTS,
                     DcrConstants.ROUNDMODE_MEASUREMENTS)) < 0) {
                 failedDimensionCount++;
             }

@@ -234,6 +234,16 @@ public class EdcrRulesMdmsConstants {
 	 public static final String SANITATION_MIN_AT_GROUND_FLOOR = "sanitationMinatGroundFloor";
 	 public static final String SANITATION_FLOOR_MULTIPLIER = "sanitationFloorMultiplier";
 	 
+	 public static final String RESIDENTIAL = "Residential";
+	 public static final String COMMERCIAL = "Commercial";
+	 public static final String INDUSTRIAL = "Industrial";
+	 public static final String MEDICAL = "Medical";
+	 public static final String STORAGE = "Storage";
+	 public static final String BUSINESS = "Business";
+	 public static final String HAZARDOUS = "Hazardous";
+	 public static final String EDUCATIONAL = "Educational";
+	 public static final String ASSEMBLY = "Assembly";
+	 
 	 /*
 	 // Todo: SideYardService feature is not using the methods currently, in future when the methods are used, these constants will be needed
 	 public static final String SIDE_YARD_VALUE_ONE = "sideYardValueOne";

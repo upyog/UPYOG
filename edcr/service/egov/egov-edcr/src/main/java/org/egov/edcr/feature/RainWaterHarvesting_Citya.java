@@ -116,14 +116,12 @@ public Plan process(Plan pl) {
             : null;
 
     // Determine the occupancy type
-    String occupancyName = null;
+    String occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl);
     String feature = MdmsFeatureConstants.RAIN_WATER_HARVESTING; // Feature name for rainwater harvesting
 
     // Prepare parameters for fetching MDMS values
     Map<String, Object> params = new HashMap<>();
-    if (DxfFileConstants.A.equals(pl.getVirtualBuilding().getMostRestrictiveFarHelper().getType().getCode())) {
-        occupancyName = "Residential"; // Set occupancy type to Residential if condition matches
-    }
+    
     params.put("feature", feature);
     params.put("occupancy", occupancyName);
 

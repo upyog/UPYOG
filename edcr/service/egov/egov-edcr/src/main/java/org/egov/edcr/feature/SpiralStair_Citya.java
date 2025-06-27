@@ -89,7 +89,7 @@ public class SpiralStair_Citya extends FeatureProcess {
     	BigDecimal spiralStairRadius = BigDecimal.ZERO;
     	BigDecimal spiralStairValue = BigDecimal.ZERO;
 
-        String occupancyName = null;
+    	String occupancyName = fetchEdcrRulesMdms.getOccupancyName(plan);
 		
 		// Set feature name
 		String feature = MdmsFeatureConstants.SPIRAL_STAIR;
@@ -97,10 +97,7 @@ public class SpiralStair_Citya extends FeatureProcess {
 		Map<String, Object> params = new HashMap<>();
 		
 		// Determine occupancy type (currently only "Residential" supported)
-		if(DxfFileConstants.A.equals(plan.getVirtualBuilding().getMostRestrictiveFarHelper().getType().getCode())){
-			occupancyName = "Residential";
-		}
-
+		
 		params.put("feature", feature);
 		params.put("occupancy", occupancyName);
 			

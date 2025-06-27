@@ -111,17 +111,14 @@ public class SepticTank_Citya extends FeatureProcess {
     	BigDecimal septicTankMinDisWatersrc = BigDecimal.ZERO;
     	BigDecimal septicTankMinDisBuilding = BigDecimal.ZERO;
 
-        String occupancyName = null;
+    	String occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl);
 
 		// Define the feature for MDMS lookup
 		String feature = MdmsFeatureConstants.SEPTIC_TANK;
 
 		// Prepare parameters to fetch rules based on occupancy
 		Map<String, Object> params = new HashMap<>();
-		if(DxfFileConstants.A.equals(pl.getVirtualBuilding().getMostRestrictiveFarHelper().getType().getCode())){
-			occupancyName = "Residential";
-		}
-
+		
 		params.put("feature", feature);
 		params.put("occupancy", occupancyName);
 

@@ -48,6 +48,7 @@
 package org.egov.edcr.feature;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -61,8 +62,12 @@ import org.egov.common.entity.edcr.Floor;
 import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.Result;
 import org.egov.common.entity.edcr.ScrutinyDetail;
+import org.egov.edcr.constants.DxfFileConstants;
+import org.egov.edcr.service.EdcrRestService;
+import org.egov.edcr.service.FetchEdcrRulesMdms;
 import org.egov.edcr.utility.DcrConstants;
 import org.egov.edcr.utility.Util;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -71,13 +76,17 @@ public class Balcony extends FeatureProcess {
     private static final String FLOOR = "Floor";
     private static final String RULE45_IV = "4.4.4 (iii)";
     private static final String WIDTH_BALCONY_DESCRIPTION = "Minimum width for balcony %s";
-    private static final BigDecimal ONE_POINTNINEONE = BigDecimal.valueOf(0.91);
+    
+    BigDecimal balconyValue;
 
     @Override
     public Plan validate(Plan plan) {
         return plan;
     }
 
+    
+    @Autowired
+	FetchEdcrRulesMdms fetchEdcrRulesMdms;
     @Override
     public Plan process(Plan plan) {
         for (Block block : plan.getBlocks()) {
@@ -107,7 +116,38 @@ public class Balcony extends FeatureProcess {
                             BigDecimal minWidth = widths.isEmpty() ? BigDecimal.ZERO : widths.stream().reduce(BigDecimal::min).get();
                             minWidth = minWidth.setScale(DcrConstants.DECIMALDIGITS_MEASUREMENTS,
                                     DcrConstants.ROUNDMODE_MEASUREMENTS);
-                            if (minWidth.compareTo(ONE_POINTNINEONE.setScale(DcrConstants.DECIMALDIGITS_MEASUREMENTS,
+                            
+                        
+                         String occupancyName = fetchEdcrRulesMdms.getOccupancyName(plan);
+                        
+        					
+       					 String feature = "Balcony";
+       						
+       						Map<String, Object> params = new HashMap<>();
+
+       						params.put("feature", feature);
+       						params.put("occupancy", occupancyName);
+       						
+
+       						Map<String,List<Map<String,Object>>> edcrRuleList = plan.getEdcrRulesFeatures();
+       						
+       						ArrayList<String> valueFromColumn = new ArrayList<>();
+       						valueFromColumn.add("permissibleValue");
+
+       						List<Map<String, Object>> permissibleValue = new ArrayList<>();
+       					
+       						
+       							permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
+       							LOG.info("permissibleValue" + permissibleValue);
+ 
+
+       						if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey("permissibleValue")) {
+       							balconyValue = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get("permissibleValue").toString()));
+       						}else {
+       							balconyValue = BigDecimal.ZERO;
+       						}
+       			
+                            if (minWidth.compareTo(balconyValue.setScale(DcrConstants.DECIMALDIGITS_MEASUREMENTS,
                                     DcrConstants.ROUNDMODE_MEASUREMENTS)) >= 0) {
                                 isAccepted = true;
                             }
@@ -119,12 +159,12 @@ public class Balcony extends FeatureProcess {
                             if (isAccepted) {
                                 setReportOutputDetailsFloorBalconyWise(plan, RULE45_IV, value,
                                         String.format(WIDTH_BALCONY_DESCRIPTION, balcony.getNumber()),
-                                        ONE_POINTNINEONE.toString(),
+                                        balconyValue.toString(),
                                         String.valueOf(minWidth), Result.Accepted.getResultVal(), scrutinyDetailLanding);
                             } else {
                                 setReportOutputDetailsFloorBalconyWise(plan, RULE45_IV, value,
                                         String.format(WIDTH_BALCONY_DESCRIPTION, balcony.getNumber()),
-                                        ONE_POINTNINEONE.toString(),
+                                        balconyValue.toString(),
                                         String.valueOf(minWidth), Result.Not_Accepted.getResultVal(), scrutinyDetailLanding);
                             }
                         }
