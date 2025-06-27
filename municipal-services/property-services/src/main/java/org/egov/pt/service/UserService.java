@@ -125,6 +125,8 @@ public class UserService {
 		UserDetailResponse userDetailResponse;
 		
 		ownerFromRequest.setId(ownerInfoFromSearch.getId());
+		ownerFromRequest.setName(ownerInfoFromSearch.getName());
+//		setId(ownerInfoFromSearch.getId());
 		ownerFromRequest.setUuid(ownerInfoFromSearch.getUuid());
 		addUserDefaultFields(property.getTenantId(), role, ownerFromRequest);
 
@@ -238,7 +240,7 @@ public class UserService {
 		UserSearchRequest userSearchRequest = getBaseUserSearchRequest(owner.getTenantId(), requestInfo);
 		userSearchRequest.setMobileNumber(owner.getMobileNumber());
 		userSearchRequest.setUserType("CITIZEN");
-		userSearchRequest.setName(owner.getName());
+//		userSearchRequest.setName(owner.getName());
 		
         StringBuilder uri = new StringBuilder(userHost).append(userSearchEndpoint);
         return userCall(userSearchRequest,uri);
