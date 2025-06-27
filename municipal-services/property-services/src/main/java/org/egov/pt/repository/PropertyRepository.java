@@ -357,4 +357,10 @@ public class PropertyRepository {
 		String query = queryBuilder.getStatusBasedCountQuery(totalCountRequest, preparedStmtList);
 		return jdbcTemplate.queryForList(query, preparedStmtList.toArray());
 	}
+	
+	public List<Map<String, Object>> getPropertyMastersStatus(String UlbName) {
+		List<Object> preparedStmtList = new ArrayList<>();
+		String query = queryBuilder.getPropertyMastersStatusQuery(UlbName, preparedStmtList);
+		return jdbcTemplate.queryForList(query, preparedStmtList.toArray());
+	}
 }

@@ -362,4 +362,17 @@ public class PropertyController {
 		return response;
 	}
 	
+	@PostMapping("/_checkMasters")
+	public ResponseEntity<Map<String, Object>> checkMasters(
+			@Valid @RequestBody RequestInfoWrapper requestInfoWrapper, @RequestParam String UlbName) {
+
+		Map<String, Object> result = propertyService.checkMastersStatus(requestInfoWrapper,
+				UlbName);
+		ResponseInfo resInfo = responseInfoFactory.createResponseInfoFromRequestInfo(requestInfoWrapper.getRequestInfo(), true);
+	    Map<String, Object> response = new HashMap<>();
+	    response.put("ResponseInfo", resInfo);
+	    response.put("MasterStatus", result);
+		return new ResponseEntity<>(response, HttpStatus.OK);
+	}
+	
 }
