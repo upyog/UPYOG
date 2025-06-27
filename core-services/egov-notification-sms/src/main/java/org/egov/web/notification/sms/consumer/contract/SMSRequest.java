@@ -8,8 +8,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.egov.web.notification.sms.models.Category;
 import org.egov.web.notification.sms.models.Sms;
 
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 
 @Slf4j
 @Getter

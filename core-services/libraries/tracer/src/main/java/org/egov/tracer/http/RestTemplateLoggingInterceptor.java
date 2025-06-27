@@ -2,6 +2,16 @@ package org.egov.tracer.http;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
+import static org.egov.tracer.constants.TracerConstants.CORRELATION_ID_HEADER;
+import static org.egov.tracer.constants.TracerConstants.CORRELATION_ID_MDC;
+import static org.egov.tracer.constants.TracerConstants.TENANTID_MDC;
+import static org.egov.tracer.constants.TracerConstants.TENANT_ID_HEADER;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+import java.util.List;
 import org.egov.tracer.config.TracerProperties;
 import org.slf4j.MDC;
 import org.springframework.http.HttpMessage;
@@ -10,7 +20,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.client.ClientHttpRequestExecution;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.ClientHttpResponse;
-
+import org.springframework.util.CollectionUtils;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
