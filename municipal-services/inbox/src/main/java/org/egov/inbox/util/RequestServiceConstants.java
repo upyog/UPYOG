@@ -7,6 +7,7 @@ public class RequestServiceConstants {
 	public static final String USERID_PARAM = "userid";
 	public static final String REQUEST_SERVICE_WATER_TANKER = "request-service.water_tanker";
 	public static final String REQUEST_SERVICE_MOBILE_TOILET = "request-service.mobile_toilet";
+	public static final String REQUEST_SERVICE_TREE_PRUNING = "request-service.tree_pruning";
 	public static final String BUSINESS_SERVICE_PARAM = "businessservice";
 	public static final String TENANT_ID_PARAM = "tenantId";
 	public static final String LOCALITY_PARAM = "locality";
@@ -19,6 +20,4 @@ public class RequestServiceConstants {
 	public static final String LIMIT_PARAM = "limit";
 	public static final String SORT_ORDER_PARAM = "sortOrder";
 	public static final String DESC_PARAM = "DESC";
-	public static final String MT_BUSINESS_SERVICE = "mobileToilet";
-	public static final String WT_BUSINESS_SERVICE = "watertanker";
 }

@@ -109,16 +109,6 @@ const WTApplicationDetails = () => {
     window.open(fileStore[fileStoreId], "_blank");
   }
 
-  
-  const { isLoading: auditDataLoading, isError: isAuditError, data: auditResponse } = Digit.Hooks.wt.useTankerSearchAPI(
-    {
-      tenantId,
-      filters: { bookingNo: wtId, audit: true },
-    },
-    {
-      enabled: true,
-    }
-  );
   let dowloadOptions=[];
     dowloadOptions.push({
       label: t("WT_DOWNLOAD_ACKNOWLEDGEMENT"),
@@ -132,7 +122,7 @@ const WTApplicationDetails = () => {
       Digit.Utils.pdf.generate(acknowldgementDataAPI);
     };
 
-  if (isLoading || auditDataLoading) {
+  if (isLoading) {
     return <Loader />;
   }
   if (reciept_data && reciept_data?.Payments.length > 0 && recieptDataLoading == false)

@@ -86,6 +86,15 @@ const inboxConfig = (tenantId, filters) => ({
     fetchFilters: filterFunctions.MT,
     _searchFn: () => MTService.search({ tenantId, filters }),
   },
+  // Tree Pruning (TP) service configuration for inbox workflow management
+  TP: {
+    services: ["treePruning"],
+    searchResponseKey: "treePruningBookingDetail",
+    businessIdsParamForSearch: "bookingNo",
+    businessIdAliasForSearch: "bookingNo",
+    fetchFilters: filterFunctions.TP,
+    _searchFn: () => MTService.search({ tenantId, filters }),
+  },
 
   /**
  * PGRAI Workflow Module Configuration

@@ -151,4 +151,10 @@ public class InboxConfiguration {
 
 	@Value("${egov.searcher.mt.search.desc.path}")
 	private String mtInboxSearcherDescEndpoint;
+
+	@Value("${egov.searcher.tp.search.path}")
+	private String tpInboxSearcherEndpoint;
+
+	@Value("${egov.searcher.tp.search.desc.path}")
+	private String tpInboxSearcherDescEndpoint;
 }

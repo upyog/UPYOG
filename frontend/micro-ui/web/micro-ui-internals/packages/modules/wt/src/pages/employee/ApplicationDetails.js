@@ -23,20 +23,25 @@
       const [showToast, setShowToast] = useState(null);
       const [appDetailsToShow, setAppDetailsToShow] = useState({});
       const [showOptions, setShowOptions] = useState(false);
-
+      const [BusinessService, setBusinessService] = useState("watertanker"); // Default to water tanker service   
   // Determine business service dynamically
-  const isWaterTanker = bookingNo?.startsWith("WT"); // Modify condition as needed
-  const businessService = isWaterTanker ? "watertanker" : "mobileToilet";
+  const isWaterTanker = bookingNo?.startsWith("WT"); // Water Tanker
+  const isTreePruning = bookingNo?.startsWith("TP"); // Tree Pruning
+  const businessService = isWaterTanker ? "watertanker" : (isTreePruning ? "treePruning" : "mobileToilet");
   const user = Digit.UserService.getUser().info;
 
-  sessionStorage.setItem(isWaterTanker ? "wt" : "mt", bookingNo);    // Store the booking number in session storage with key based on whether it's a water tanker or not
+  // Store the booking number in session storage with key based on service type
+  const storageKey = isWaterTanker ? "wt" : (isTreePruning ? "tp" : "mt");
+  sessionStorage.setItem(storageKey, bookingNo);
 
-      // Fetch application details based on whether it's a water tanker or not
+      // Fetch application details based on service type
        const { isLoading, isError, data: applicationDetails, error } = isWaterTanker
         ? Digit.Hooks.wt.useWTApplicationDetail(t, tenantId, bookingNo)
-        : Digit.Hooks.wt.useMTApplicationDetail(t, tenantId, bookingNo);
+        : (isTreePruning 
+           ? Digit.Hooks.wt.useTPApplicationDetail(t, tenantId, bookingNo)
+           : Digit.Hooks.wt.useMTApplicationDetail(t, tenantId, bookingNo));
 
-       // Fetch application action hooks based on whether it's a water tanker or not
+       // Fetch application action hooks based on service type
       const {
         isLoading: updatingApplication,
         isError: updateApplicationError,
@@ -45,14 +50,16 @@
         mutate,
       } = isWaterTanker
           ? Digit.Hooks.wt.useWTApplicationAction(tenantId)
-          : Digit.Hooks.wt.useMTApplicationAction(tenantId);
+          : (isTreePruning
+             ? Digit.Hooks.wt.useTPApplicationAction(tenantId)
+             : Digit.Hooks.wt.useMTApplicationAction(tenantId));
 
       // Fetch workflow details for the application
       let workflowDetails = Digit.Hooks.useWorkflowDetails({
         tenantId: applicationDetails?.applicationData?.tenantId || tenantId,
         id: applicationDetails?.applicationData?.applicationData?.bookingNo,
         moduleCode: businessService,
-       role: isWaterTanker ? ["WT_CEMP"] : ["MT_CEMP"],
+       role: isWaterTanker ? ["WT_CEMP"] : (isTreePruning ? ["TP_CEMP"] : ["MT_CEMP"]),
       });
 
 
@@ -74,7 +81,8 @@
           workflowDetails?.data?.applicationBusinessService &&
           !(
             (workflowDetails?.data?.applicationBusinessService === "watertanker" && businessService === "watertanker") ||
-            (workflowDetails?.data?.applicationBusinessService === "mobileToilet" && businessService === "mobileToilet")
+            (workflowDetails?.data?.applicationBusinessService === "mobileToilet" && businessService === "mobileToilet") ||
+            (workflowDetails?.data?.applicationBusinessService === "treePruning" && businessService === "treePruning")
           )
         ) {
           setBusinessService(workflowDetails?.data?.applicationBusinessService);

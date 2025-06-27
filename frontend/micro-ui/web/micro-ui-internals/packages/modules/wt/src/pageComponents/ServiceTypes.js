@@ -55,7 +55,7 @@ const tenantId=Digit.ULBService.getStateId();
     <Modal
       headerBarMain={<Heading t={t}/>}
       headerBarEnd={<CloseBtn onClick={() => window.history.back()} />}
-      popupStyles={{ backgroundColor: "#fff", position: 'relative', maxHeight: '50vh', width: '50%', overflowY: 'auto' }}
+      popupStyles={{ backgroundColor: "#fff", position: 'relative', maxHeight: '50vh', width: '50%', overflowY: 'visible' }}
       popupModuleMianStyles={{ padding: "10px" }}
       hideSubmit={true}
       headerBarMainStyle={{ position: "sticky", top: 0, backgroundColor: "#f5f5f5" }}

@@ -162,6 +162,27 @@ const inboxSearchFields = {
         },
       },
     ],
+    TP: [
+      {
+        label: "TP_BOOKING_NO",
+        name: "bookingNo",
+        roles: [],
+      },
+      {
+        label: "TP_MOBILE_NUMBER",
+        name: "mobileNumber",
+        type: "mobileNumber",
+        maxLength: 10,
+        minLength: 0,
+        roles: [],
+        pattern: "^$|[6-9][0-9]{9}",
+        errorMessages: {
+          pattern: "",
+          minLength: "",
+          maxLength: "",
+        },
+      },
+    ],
     SV: [
       {
         label: "SV_APPLICATION_NUMBER",

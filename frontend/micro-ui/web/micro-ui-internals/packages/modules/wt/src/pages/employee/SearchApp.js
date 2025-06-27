@@ -65,6 +65,9 @@ const SearchApp = ({path,moduleCode}) => {
     } else if (moduleCode === "MT") {
         ({ isLoading, isSuccess, isError, error, data: { mobileToiletBookingDetails: searchResult = [], Count: count = 0 } = {} } = 
             Digit.Hooks.wt.useMobileToiletSearchAPI({ tenantId, filters: payload }, config));
+    } else if (moduleCode === "TP") {
+        ({ isLoading, isSuccess, isError, error, data: { treePruningBookingDetails: searchResult = [], Count: count = 0 } = {} } = 
+            Digit.Hooks.wt.useTreePruningSearchAPI({ tenantId, filters: payload }, config));
     }
 
     return (
@@ -77,6 +80,7 @@ const SearchApp = ({path,moduleCode}) => {
                 onSubmit={onSubmit} 
                 data={isSuccess && !isLoading ? (searchResult.length > 0 ? searchResult : { display: "ES_COMMON_NO_DATA" }) : ""} 
                 count={count} 
+                moduleCode={moduleCode}
             />
             {showToast && (
                 <Toast

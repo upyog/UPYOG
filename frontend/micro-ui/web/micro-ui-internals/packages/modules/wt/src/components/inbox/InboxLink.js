@@ -29,7 +29,7 @@ const InboxLinks = ({ parentRoute, businessService }) => {
       <span className="logo">
         <CHBIcon />
       </span>{" "}
-      <span className="text">{t("REQUEST_SERVICE")}</span>
+      <span className="text">{t(businessService + "_REQUEST")}</span>
     </div>
   );
 

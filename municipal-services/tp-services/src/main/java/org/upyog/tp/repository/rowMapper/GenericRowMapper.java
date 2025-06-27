@@ -14,6 +14,7 @@ import java.util.Map;
 
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.upyog.tp.web.models.AuditDetails;
+import org.upyog.tp.web.models.DocumentDetail;
 import org.upyog.tp.web.models.treePruning.TreePruningBookingDetail;
 
 import lombok.extern.slf4j.Slf4j;
@@ -79,6 +80,13 @@ public class GenericRowMapper<T> implements ResultSetExtractor<List<T>> {
                     // Audit Details
                     AuditDetails auditDetails = extractAuditDetails(tp);
                     bookingDetail.setAuditDetails(auditDetails);
+                    // Set DocumentDetails
+                    DocumentDetail documentDetail = extractDocumentDetails(tp, bookingDetail);
+                    if (documentDetail != null) {
+                        List<DocumentDetail> documentDetails = new ArrayList<>();
+                        documentDetails.add(documentDetail);
+                        bookingDetail.setDocumentDetails(documentDetails);
+                    }
                 }
                 results.add(instance);
             }
@@ -130,6 +138,23 @@ public class GenericRowMapper<T> implements ResultSetExtractor<List<T>> {
         auditDetails.setLastModifiedTime(tp.getLong("lastmodifiedtime"));
         return auditDetails;
     }
+
+    private DocumentDetail extractDocumentDetails(ResultSet tp, TreePruningBookingDetail bookingDetail) throws SQLException {
+        String documentDetailId = tp.getString("document_detail_id");
+        if (documentDetailId == null) {
+            return null; // No document found
+        }
+
+        // Build and return DocumentDetail with audit details
+        return DocumentDetail.builder()
+                .documentDetailId(documentDetailId)
+                .bookingId(tp.getString("booking_id"))
+                .documentType(tp.getString("document_type"))
+                .fileStoreId(tp.getString("filestore_id"))
+                .auditDetails(bookingDetail.getAuditDetails())
+                .build();
+    }
+
 
 
 

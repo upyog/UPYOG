@@ -20,7 +20,7 @@ const BillDetails = ({ paymentRules, businessService }) => {
   const propertyId = state?.propertyId;
   const applicationNumber = state?.applicationNumber;
   const [Time, setTime ] = useState(0);
-  const skipBillingAndArrears = ["adv-services", "chb-services","request-service.mobile_toilet", "request-service.water_tanker"];
+  const skipBillingAndArrears = ["adv-services", "chb-services","request-service.mobile_toilet", "request-service.water_tanker", "request-service.tree_pruning"];
 
   if (wrkflow === "WNS" && consumerCode.includes("?")) consumerCode = consumerCode.substring(0, consumerCode.indexOf("?"));
   const { data, isLoading } = state?.bill

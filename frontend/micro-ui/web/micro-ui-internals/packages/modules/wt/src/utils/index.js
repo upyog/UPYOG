@@ -125,15 +125,21 @@ export const waterTankerPayload = (data) =>{
   const formdata={
     treePruningBookingDetail: {
         tenantId:data?.tenantId,
-        geoTagLocation: data?.treePruningRequestDetails?.geoTagLocation,
-        reasonOfPruning: data?.treePruningRequestDetails?.reasonOfPruning?.code,
-   
+        latitude: data?.treePruningRequestDetails?.latitude,
+        longitude:data?.treePruningRequestDetails?.longitude,
+        reasonForPruning: data?.treePruningRequestDetails?.reasonOfPruning?.code,
         applicantDetail: {
             name: data?.owner?.applicantName,
             mobileNumber: data?.owner?.mobileNumber,
             alternateNumber: data?.owner?.alternateNumber,
             emailId: data?.owner?.emailId,
         },
+         documentDetails: [
+            {
+                documentType: "Site Photograph",
+                fileStoreId: data?.treePruningRequestDetails?.supportingDocumentFile,
+            }
+        ],
         address: {
             addressType:data?.address?.addressType?.code,
             pincode: data?.address?.pincode,

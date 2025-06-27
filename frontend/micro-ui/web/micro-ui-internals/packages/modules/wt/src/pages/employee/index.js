@@ -47,12 +47,21 @@ const EmployeeApp = ({ path,userType }) => {
     },
   };
 
+  const inboxInitialStateTp = {
+    searchParams: {
+      uuid: { code: "ASSIGNED_TO_ALL", name: "ES_INBOX_ASSIGNED_TO_ALL" },
+      services: ["treePruning"],
+      applicationStatus: [],
+      locality: [],
+
+    },
+  };
+
   const ApplicationDetails = Digit?.ComponentRegistryService?.getComponent("ApplicationDetails");
 
   // const Response = Digit?.ComponentRegistryService?.getComponent("CHBResponse");
   const WTCreate = Digit?.ComponentRegistryService?.getComponent("WTCreate");
   const isNewRegistration = window.location.href.includes("info") || window.location.href.includes("wt/status");
-  console.log("path",path);
   return (
     <Switch>
       <AppContainer>
@@ -89,11 +98,26 @@ const EmployeeApp = ({ path,userType }) => {
               />
             )}
           />
+           <PrivateRoute
+            path={`${path}/tp/inbox`}
+            component={() => (
+              <Inbox
+                useNewInboxAPI={true}
+                parentRoute={path}
+                moduleCode="TP"
+                businessService="treePruning"
+                filterComponent="WT_INBOX_FILTER"
+                initialStates={inboxInitialStateTp}
+                isInbox={true}
+              />
+            )}
+          />
           <PrivateRoute path={`${path}/request-service`} component={WTCreate} />
           <PrivateRoute path={`${path}/booking-details/:id`} component={() => <ApplicationDetails parentRoute={path} />} />
           <PrivateRoute path={`${path}/bookingsearch/booking-details/:id`} component={() => <ApplicationDetails parentRoute={path} />} />
           <PrivateRoute path={`${path}/my-bookings`} component={(props) => <SearchApp {...props} parentRoute={path} moduleCode={"WT"}/>} />
           <PrivateRoute path={`${path}/mt/my-bookings`} component={(props) => <SearchApp {...props} parentRoute={path} moduleCode={"MT"}/>} />
+          <PrivateRoute path={`${path}/tp/my-bookings`} component={(props) => <SearchApp {...props} parentRoute={path} moduleCode={"TP"}/>} />
         </div>
         </React.Fragment>
       </AppContainer>

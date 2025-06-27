@@ -87,7 +87,8 @@ const enabledModules = [
   "WT",
   "VENDOR",
   "MT",
-  "PGRAI"
+  "PGRAI",
+  "TP"
 ];
 
 const initTokens = (stateCode) => {

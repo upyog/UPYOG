@@ -13,10 +13,9 @@ import {
       import { useParams } from "react-router-dom";
       import get from "lodash/get";
       import WFApplicationTimeline from "../../pageComponents/WFApplicationTimeline";
-      import { convertTo12HourFormat, formatDate } from "../../utils";
-      import getMTAcknowledgementData from "../../utils/getMTAcknowledgementData";
+      import getTPAcknowledgementData from "../../utils/getTPAcknowledgementData";
       /**
-       * `MTApplicationDetails` is a React component that fetches and displays detailed information for a specific Mobile Toilet (MT) service application.
+       * `TPApplicationDetails` is a React component that fetches and displays detailed information for a specific Mobile Toilet (MT) service application.
        * It fetches data for the booking using the `useMobileToiletSearchAPI` hook and displays the details in sections such as:
        * - Booking Number
        * - Applicant Information (name, mobile number, email, etc.)
@@ -29,7 +28,7 @@ import {
        * 
        * @returns {JSX.Element} Displays detailed Mobile Toilet application information with applicant details and address.
        */
-      const MTApplicationDetails = () => {
+      const TPApplicationDetails = () => {
         const { t } = useTranslation();
         const { acknowledgementIds, tenantId } = useParams();
         const [showOptions, setShowOptions] = useState(false);
@@ -37,24 +36,25 @@ import {
         const { data: storeData } = Digit.Hooks.useStore.getInitData();
         const { tenants } = storeData || {};
       
-        const { isLoading, data, refetch } = Digit.Hooks.wt.useMobileToiletSearchAPI({
+        const { isLoading, data, refetch } = Digit.Hooks.wt.useTreePruningSearchAPI({
           tenantId,
           filters: { bookingNo: acknowledgementIds },
         });
       
-        const mobileToiletBookingDetail = get(data, "mobileToiletBookingDetails", []);
-        const mtId = get(data, "mobileToiletBookingDetails[0].bookingNo", []);
+        const treePruningBookingDetail = get(data, "treePruningBookingDetails", []);
+        const tpId = get(data, "treePruningBookingDetails[0].bookingNo", []);
       
-        let mt_details = (mobileToiletBookingDetail && mobileToiletBookingDetail.length > 0 && mobileToiletBookingDetail[0]) || {};
-        const application = mt_details;
+        let tp_details = (treePruningBookingDetail && treePruningBookingDetail.length > 0 && treePruningBookingDetail[0]) || {};
+        console .log("tp_details", tp_details);
+        const application = tp_details;
       
-        sessionStorage.setItem("mt", JSON.stringify(application));
+        sessionStorage.setItem("tp", JSON.stringify(application));
 
-        const mutation = Digit.Hooks.wt.useMobileToiletCreateAPI(tenantId,false); 
+        const mutation = Digit.Hooks.wt.useTreePruningCreateAPI(tenantId,false); 
         const { data: reciept_data, isLoading: recieptDataLoading } = Digit.Hooks.useRecieptSearch(
           {
             tenantId: tenantId,
-            businessService: "request-service.mobile_toilet",
+            businessService: "request-service.tree_pruning",
             consumerCodes: acknowledgementIds,
             isEmployee: false,
           },
@@ -66,7 +66,7 @@ import {
        * with the generated receipt's file store ID.
        * 
        * Steps:
-       * 1. Retrieve the first application from `mobileToiletBookingDetail`.
+       * 1. Retrieve the first application from `treePruningBookingDetail`.
        * 2. Check if the `paymentReceiptFilestoreId` already exists in the application.
        *    - If it exists, no further action is taken.
        *    - If it does not exist:
@@ -84,17 +84,17 @@ import {
        * - None (the function performs asynchronous updates and refetches data).
        */
         async function getRecieptSearch({ tenantId, payments, ...params }) {
-          let application = mobileToiletBookingDetail[0] || {};
+          let application = treePruningBookingDetail[0] || {};
           let fileStoreId = application?.paymentReceiptFilestoreId
           if (!fileStoreId) {
           let response = { filestoreIds: [payments?.fileStoreId] };
-          response = await Digit.PaymentService.generatePdf(tenantId, { Payments: [{ ...payments }] }, "request-service.mobile_toilet-receipt");
+          response = await Digit.PaymentService.generatePdf(tenantId, { Payments: [{ ...payments }] }, "request-service.tree_pruning-receipt");
           const updatedApplication = {
             ...application,
             paymentReceiptFilestoreId: response?.filestoreIds[0]
           };
           await mutation.mutateAsync({
-            mobileToiletBookingDetail: updatedApplication
+            treePruningBookingDetail: updatedApplication
           });
           fileStoreId = response?.filestoreIds[0];
           refetch();
@@ -106,7 +106,7 @@ import {
         let dowloadOptions = [];
 
         dowloadOptions.push({
-          label: t("MT_DOWNLOAD_ACKNOWLEDGEMENT"),
+          label: t("TP_DOWNLOAD_ACKNOWLEDGEMENT"),
           onClick: () => getAcknowledgementData(),
         });
       
@@ -116,13 +116,13 @@ import {
 
         if (reciept_data && reciept_data?.Payments.length > 0 && recieptDataLoading == false)
           dowloadOptions.push({
-            label: t("MT_FEE_RECEIPT"),
+            label: t("TP_FEE_RECEIPT"),
             onClick: () => getRecieptSearch({ tenantId: reciept_data?.Payments[0]?.tenantId, payments: reciept_data?.Payments[0] }),
           });
       const getAcknowledgementData = async () => {
         const applications = application || {};
         const tenantInfo = tenants.find((tenant) => tenant.code === applications.tenantId);
-        const acknowldgementDataAPI = await getMTAcknowledgementData({ ...applications }, tenantInfo, t);
+        const acknowldgementDataAPI = await getTPAcknowledgementData({ ...applications }, tenantInfo, t);
         Digit.Utils.pdf.generate(acknowldgementDataAPI);
       };
       
@@ -130,7 +130,7 @@ import {
           <React.Fragment>
             <div>
               <div className="cardHeaderWithOptions" style={{ marginRight: "auto", maxWidth: "960px" }}>
-                <Header styles={{ fontSize: "32px" }}>{t("MT_BOOKING_DETAILS")}</Header>
+                <Header styles={{ fontSize: "32px" }}>{t("TP_BOOKING_DETAILS")}</Header>
                 {dowloadOptions.length > 0 && (
                   <MultiLink
                     className="multilinkWrapper"
@@ -143,38 +143,35 @@ import {
               
               <Card>
                 <StatusTable>
-                  <Row className="border-none" label={t("MT_BOOKING_NO")} text={mt_details?.bookingNo} />
+                  <Row className="border-none" label={t("WT_BOOKING_NO")} text={tp_details?.bookingNo} />
                 </StatusTable>
                 
       
-                <CardSubHeader style={{ fontSize: "24px" }}>{t("MT_APPLICANT_DETAILS")}</CardSubHeader>
+                <CardSubHeader style={{ fontSize: "24px" }}>{t("TP_APPLICANT_DETAILS")}</CardSubHeader>
                 <StatusTable>
-                  <Row className="border-none" label={t("MT_APPLICANT_NAME")} text={mt_details?.applicantDetail?.name || t("CS_NA")} />
-                  <Row className="border-none" label={t("MT_MOBILE_NUMBER")} text={mt_details?.applicantDetail?.mobileNumber || t("CS_NA")} />
-                  <Row className="border-none" label={t("MT_ALT_MOBILE_NUMBER")} text={mt_details?.applicantDetail?.alternateNumber || t("CS_NA")} />
-                  <Row className="border-none" label={t("MT_EMAIL_ID")} text={mt_details?.applicantDetail?.emailId || t("CS_NA")} />
+                  <Row className="border-none" label={t("WT_APPLICANT_NAME")} text={tp_details?.applicantDetail?.name || t("CS_NA")} />
+                  <Row className="border-none" label={t("WT_MOBILE_NUMBER")} text={tp_details?.applicantDetail?.mobileNumber || t("CS_NA")} />
+                  <Row className="border-none" label={t("WT_ALT_MOBILE_NUMBER")} text={tp_details?.applicantDetail?.alternateNumber || t("CS_NA")} />
+                  <Row className="border-none" label={t("WT_EMAIL_ID")} text={tp_details?.applicantDetail?.emailId || t("CS_NA")} />
                 </StatusTable>
       
                 <CardSubHeader style={{ fontSize: "24px" }}>{t("ES_TITLE_ADDRESS_DETAILS")}</CardSubHeader>
                 <StatusTable>
-                  <Row className="border-none" label={t("PINCODE")} text={mt_details?.address?.pincode || t("CS_NA")} />
-                  <Row className="border-none" label={t("CITY")} text={mt_details?.address?.city || t("CS_NA")} />
-                  <Row className="border-none" label={t("LOCALITY")} text={mt_details?.address?.locality || t("CS_NA")} />
-                  <Row className="border-none" label={t("STREET_NAME")} text={mt_details?.address?.streetName || t("CS_NA")} />
-                  <Row className="border-none" label={t("HOUSE_NO")} text={mt_details?.address?.houseNo || t("CS_NA")} />
-                  <Row className="border-none" label={t("ADDRESS_LINE1")} text={mt_details?.address?.addressLine1 || t("CS_NA")} />
-                  <Row className="border-none" label={t("ADDRESS_LINE2")} text={mt_details?.address?.addressLine2 || t("CS_NA")} />
-                  <Row className="border-none" label={t("LANDMARK")} text={mt_details?.address?.landmark || t("CS_NA")} />
+                  <Row className="border-none" label={t("PINCODE")} text={tp_details?.address?.pincode || t("CS_NA")} />
+                  <Row className="border-none" label={t("CITY")} text={tp_details?.address?.city || t("CS_NA")} />
+                  <Row className="border-none" label={t("LOCALITY")} text={tp_details?.address?.locality || t("CS_NA")} />
+                  <Row className="border-none" label={t("STREET_NAME")} text={tp_details?.address?.streetName || t("CS_NA")} />
+                  <Row className="border-none" label={t("HOUSE_NO")} text={tp_details?.address?.houseNo || t("CS_NA")} />
+                  <Row className="border-none" label={t("ADDRESS_LINE1")} text={tp_details?.address?.addressLine1 || t("CS_NA")} />
+                  <Row className="border-none" label={t("ADDRESS_LINE2")} text={tp_details?.address?.addressLine2 || t("CS_NA")} />
+                  <Row className="border-none" label={t("LANDMARK")} text={tp_details?.address?.landmark || t("CS_NA")} />
                 </StatusTable>
       
-                <CardSubHeader style={{ fontSize: "24px" }}>{t("ES_REQUEST_DETAILS")}</CardSubHeader>
+                <CardSubHeader style={{ fontSize: "24px" }}>{t("TP_REQUEST_DETAILS")}</CardSubHeader>
                 <StatusTable>
-                  <Row className="border-none" label={t("MT_NUMBER_OF_MOBILE_TOILETS")} text={mt_details?.noOfMobileToilet || t("CS_NA")} />
-                  <Row className="border-none" label={t("MT_DELIVERY_FROM_DATE")} text={formatDate(mt_details?.deliveryFromDate) || t("CS_NA")} />
-                  <Row className="border-none" label={t("MT_DELIVERY_TO_DATE")} text={formatDate(mt_details?.deliveryToDate) || t("CS_NA")} />
-                  <Row className="border-none" label={t("MT_REQUIREMNENT_FROM_TIME")} text={convertTo12HourFormat(mt_details?.deliveryFromTime) || t("CS_NA")} />
-                  <Row className="border-none" label={t("MT_REQUIREMNENT_TO_TIME")} text={convertTo12HourFormat(mt_details?.deliveryToTime) || t("CS_NA")} />
-                  <Row className="border-none" label={t("MT_SPECIAL_REQUEST")} text={mt_details?.description || t("CS_NA")} />
+                  <Row className="border-none" label={t("REASON_FOR_PRUNING")} text={t(tp_details?.reasonForPruning) || t("CS_NA")} />
+                  <Row className="border-none" label={t("LATITUDE_GEOTAG")} text={tp_details?.latitude || t("CS_NA")} />
+                  <Row className="border-none" label={t("LONGITUDE_GEOTAG")} text={tp_details?.longitude || t("CS_NA")} />
                 </StatusTable>
       
                 <WFApplicationTimeline application={application} id={application?.bookingNo} userType={"citizen"} />
@@ -194,5 +191,5 @@ import {
         );
       };
       
-      export default MTApplicationDetails;
+      export default TPApplicationDetails;
       

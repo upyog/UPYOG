@@ -20,12 +20,14 @@ import WFCaption from "./pageComponents/WFCaption";
 import Inbox from "./pages/employee/Inbox";
 import WTCitizenCard from "./components/WTCitizenCard";
 import MTCard from "./components/MTCard";
+import TPCard from "./components/TPCard";
 import ServiceTypes from "./pageComponents/ServiceTypes";
 import ToiletRequestDetails from "./pageComponents/ToiletRequestDetails";
 import TreePruningRequestDetails from "./pageComponents/TreePruningRequestDetails";
 import MTAcknowledgement from "./pages/citizen/Create/MTAcknowledgement";
 import TPAcknowledgement from "./pages/citizen/Create/TPAcknowledgement";
 import MTApplicationDetails from "./pages/citizen/MTApplicationDetails";
+import TPApplicationDetails from "./pages/citizen/TPApplicationDetails";
 import MTCitizenCard from "./components/MTCitizenCard";
 
 const componentsToRegister = {
@@ -38,6 +40,7 @@ const componentsToRegister = {
     WTAcknowledgement,
     WTApplicationDetails: WTApplicationDetails,
     MTApplicationDetails: MTApplicationDetails,
+    TPApplicationDetails: TPApplicationDetails,
     WTMyApplications: WTMyApplications,
     ApplicationDetails: ApplicationDetails,
     WFApplicationTimeline: WFApplicationTimeline,
@@ -110,6 +113,7 @@ const componentsToRegister = {
     WTCard,
     WTModule,
     MTCard, 
+    TPCard,
     WTLinks,
     WT_INBOX_FILTER: (props) => <InboxFilter {...props} />,
     WTInboxTableConfig: TableConfig,

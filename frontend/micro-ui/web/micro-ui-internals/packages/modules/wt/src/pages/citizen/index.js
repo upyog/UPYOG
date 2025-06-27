@@ -10,6 +10,7 @@ const App = () => {
   const WTCreate = Digit?.ComponentRegistryService?.getComponent("WTCreate");
   const WTApplicationDetails = Digit?.ComponentRegistryService?.getComponent("WTApplicationDetails");
   const MTApplicationDetails = Digit?.ComponentRegistryService?.getComponent("MTApplicationDetails");
+  const TPApplicationDetails = Digit?.ComponentRegistryService?.getComponent("TPApplicationDetails");
   const WTMyApplications = Digit?.ComponentRegistryService?.getComponent("WTMyApplications");
   const Inbox = Digit.ComponentRegistryService.getComponent("WTEmpInbox");
   const WTCard = Digit.ComponentRegistryService.getComponent("WTCitizenCard");
@@ -74,6 +75,7 @@ const App = () => {
           <PrivateRoute path={`${path}/status`} component={WTMyApplications}></PrivateRoute>
           <PrivateRoute path={`${path}/booking/waterTanker/:acknowledgementIds/:tenantId`} component={WTApplicationDetails}></PrivateRoute>
           <PrivateRoute path={`${path}/booking/mobileToilet/:acknowledgementIds/:tenantId`} component={MTApplicationDetails}></PrivateRoute>
+          <PrivateRoute path={`${path}/booking/treePruning/:acknowledgementIds/:tenantId`} component={TPApplicationDetails}></PrivateRoute>
           <PrivateRoute path={`${path}/booking-details/:id`} component={() => <ApplicationDetails parentRoute={path} />} />
           <PrivateRoute path={`${path}/bookingsearch/booking-details/:id`} component={() => <ApplicationDetails parentRoute={path} />} />
           <PrivateRoute path={`${path}/wt-Vendor`} component={() => Digit.UserService.hasAccess(["WT_VENDOR"]) ?  <WTCard parentRoute={path} /> :<Redirect to={{

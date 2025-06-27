@@ -257,6 +257,14 @@ const mtAccess = () => {
   const MT_ACCESS = userRoles?.filter((role) => mtRoles?.includes(role));
   return MT_ACCESS?.length > 0;
 };
+// Checks if the user has access to TP services based on their roles, this is adding role for employee side
+const tpAccess = () => {
+  const userInfo = Digit.UserService.getUser();
+  const userRoles = userInfo?.info?.roles?.map((roleData) => roleData?.code);
+  const tpRoles = ["TP_CEMP","TP_VERIFIER","TP_EXECUTION"];
+  const TP_ACCESS = userRoles?.filter((role) => tpRoles?.includes(role));
+  return TP_ACCESS?.length > 0;
+};
 
 const ptrAccess = () => {
   const userInfo = Digit.UserService.getUser();
@@ -389,6 +397,7 @@ export default {
   adsAccess,
   wtAccess,
   mtAccess,
+  tpAccess,
   ewAccess,
   svAccess,
   vendorAccess,
