@@ -97,10 +97,17 @@ public class GarbageAccountController {
 	}
 	
 	@PostMapping("/_generateGrbgTaxBillReceipt")
-	public ResponseEntity<?> generateGrbgTaxBillReceipt(@Valid @RequestBody RequestInfoWrapper requestInfoWrapper, @RequestParam String grbgId) {
-		ResponseEntity<Resource> response = service.generateGrbgTaxBillReceipt(requestInfoWrapper,grbgId);
+	public ResponseEntity<?> generateGrbgTaxBillReceipt(@Valid @RequestBody RequestInfoWrapper requestInfoWrapper,
+			@RequestParam String grbgId) {
+		ResponseEntity<Resource> response = service.generateGrbgTaxBillReceipt(requestInfoWrapper, grbgId);
 
 		return response;
 
+	}
+	
+	@PostMapping("/_update_status")
+	public ResponseEntity<GarbageAccountResponse> updateStatus(
+			@RequestBody GarbageAccountRequest createGarbageRequest) {
+		return ResponseEntity.ok(service.updateStatus(createGarbageRequest));
 	}
 }

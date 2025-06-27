@@ -1,71 +1,76 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Garbage Collection Bill</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-    }
-    .top-header {
-  width: 100%;
-  border-collapse: collapse;
-  border: none;
-}
-
-.top-header td {
-  padding: 8px;
-  text-align: left;
-  border: none;
-}
-
-
-    .container {
-      width: 80%;
-      margin: auto;
-      border: 1px solid #000;
-      padding: 20px;
-    }
-
-    .header,
-    .section {
-      margin-bottom: 20px;
-    }
-
-    .top-header {
-      width: 100%;
-      border-collapse: collapse;
-    }
-
-    .top-header td {
-      padding: 8px;
-      vertical-align: top;
-    }
-
-    .info-box {
-      border: 2px solid grey;
-      padding: 10px;
-      border-radius: 4px;
-      background-color: #f9f9f9;
-      margin-bottom: 20px;
-    }
-
-    .info-box div {
-      margin-bottom: 12px;
-    }
-    	.hp-govt {
-			width: 180px;
-		}
-			.hp-govt {
-			width: 180px;
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>Garbage Collection Bill</title>
+	<style>
+		body {
+			font-family: Arial, sans-serif;
 		}
 
-    table {
-      width: 100%;
-      border-collapse: collapse;
-    }
-    .citizen-logo-text {
+		.top-header {
+			width: 100%;
+			border-collapse: collapse;
+			border: none;
+		}
+
+		.top-header td {
+			padding: 8px;
+			text-align: left;
+			border: none;
+		}
+
+
+		.container {
+			width: 80%;
+			margin: auto;
+			border: 1px solid #000;
+			padding: 20px;
+		}
+
+		.header,
+		.section {
+			margin-bottom: 20px;
+		}
+
+		.top-header {
+			width: 100%;
+			border-collapse: collapse;
+		}
+
+		.top-header td {
+			padding: 8px;
+			vertical-align: top;
+		}
+
+		.info-box {
+			border: 2px solid grey;
+			padding: 10px;
+			border-radius: 4px;
+			background-color: #f9f9f9;
+			margin-bottom: 20px;
+		}
+
+		.info-box div {
+			margin-bottom: 12px;
+		}
+
+		.hp-govt {
+			width: 180px;
+		}
+
+		.hp-govt {
+			width: 180px;
+		}
+
+		table {
+			width: 100%;
+			border-collapse: collapse;
+		}
+
+		.citizen-logo-text {
 			display: inline;
 			position: absolute;
 			width: 30%;
@@ -73,49 +78,51 @@
 			top: 5%;
 		}
 
-    th,
-    td {
-      border: 1px solid black;
-      padding: 5px;
-      text-align: left;
-    }
+		th,
+		td {
+			border: 1px solid black;
+			padding: 5px;
+			text-align: left;
+		}
 
-    .footer-logo {
-      background-image: url('https://citizenseva.hp.gov.in/hp-udd/user_manual/garbageFooterImage.png');
-      background-size: 100% auto;
-      background-repeat: no-repeat;
-      background-position: bottom center;
-      background-blend-mode: lighten;
-      background-color: rgba(255, 255, 255, 0.8);
-      width: 100%;
-      height: 160px; /* Bottom 60% of 280px */
-      overflow: hidden;
-      margin-top: 20px;
-    }
+		.footer-logo {
+			background-image: url('https://citizenseva.hp.gov.in/hp-udd/user_manual/garbageFooterImage.png');
+			background-size: 100% auto;
+			background-repeat: no-repeat;
+			background-position: bottom center;
+			background-blend-mode: lighten;
+			background-color: rgba(255, 255, 255, 0.8);
+			width: 100%;
+			height: 160px;
+			/* Bottom 60% of 280px */
+			overflow: hidden;
+			margin-top: 20px;
+		}
 
-    .note,
-    .disclaimer {
-      margin-top: 20px;
-    }
+		.note,
+		.disclaimer {
+			margin-top: 20px;
+		}
 
-    .disclaimer ol {
-      padding-left: 20px;
-      margin-top: 0;
-    }
+		.disclaimer ol {
+			padding-left: 20px;
+			margin-top: 0;
+		}
 
-    .sign-line {
-      margin: 20px 0;
-    }
+		.sign-line {
+			margin: 20px 0;
+		}
 
-    .mini-table td {
-      border: none;
-      padding: 5px;
-    }
+		.mini-table td {
+			border: none;
+			padding: 5px;
+		}
 
-    .mini-table td:first-child {
-      border-right: 3px solid grey;
-    }
-    .property-id-td {
+		.mini-table td:first-child {
+			border-right: 3px solid grey;
+		}
+
+		.property-id-td {
 			background-image: url('https://citizenseva.hp.gov.in/hp-udd/user_manual/logo.png');
 			background-size: 350px 350px;
 			background-repeat: no-repeat;
@@ -125,118 +132,146 @@
 			background-color: rgba(255, 255, 255, 0.8);
 
 		}
-
-  </style>
+	</style>
 </head>
-<body >
- 
-  <table class="top-header">
-    <tr>
-      <td style="width: 30%; vertical-align: top; text-align: left;">
-       	<img class="hp-govt" th:src="${hpLogo}" alt="Government of Himachal Pradesh" />
+
+<body>
+
+	<table class="top-header">
+		<tr>
+			<td style="width: 30%; vertical-align: top; text-align: left;">
+				<img class="hp-govt" th:src="${hpLogo}" alt="Government of Himachal Pradesh" />
 				<img class="citizen-logo-text" src="https://citizenseva.hp.gov.in/hp-udd/user_manual/citijanseva.png"
 					alt="Citizen Seva Logo" />
-      </td>
-      <td style="width: 40%; text-align: center;">
-      <h2>Garbage Collection Bill</h2>
-			<h2><span th:text="${ulbType}">NA</span>, <span th:text="${ulbName}">NA</span>, Himachal Pradesh</h2>
-      <!-- <h3>Govt. of Himachal Pradesh</h3> -->
-      </td>
-     	<td>
+			</td>
+			<td style="width: 40%; text-align: center;">
+				<h2>Garbage Collection Bill</h2>
+				<h2><span th:text="${ulbType}">NA</span>, <span th:text="${ulbName}">NA</span>, Himachal Pradesh</h2>
+				<!-- <h3>Govt. of Himachal Pradesh</h3> -->
+			</td>
+			<td>
 				<img class="udd-logo" th:src="${UDDLogo}" alt="Directorate of Urban Development" />
 			</td>
-    </tr>
-  </table>
+		</tr>
+	</table>
 
-    <div class="section">
-      Financial Year: <span th:text="${finYear}">NA</span> Bill No.: <span th:text="${billNo}">NA</span> Dated <span th:text="${date}">NA</span> Period: <span th:text="${from}">NA</span> - <span th:text="${to}">NA</span>
-    </div>
+	<div class="section">
+		Financial Year: <span th:text="${finYear}">NA</span> Bill No.: <span th:text="${billNo}">NA</span> Dated <span
+			th:text="${date}">NA</span> Period: <span th:text="${from}">NA</span> - <span th:text="${to}">NA</span>
+	</div>
 
-    <div class="section info-box">
-      <div><strong>Garbage ID: </strong><span th:text="${grbgId}">NA</span></div>
-      <div><strong>Property ID: </strong><span th:text="${propertyId}">NA</span></div>
-      <div><strong>Name of Owner/Occupier: </strong><span th:text="${ownerOrOccupier}">NA</span></div>
-      <div><strong>Correspondence Address: </strong><span th:text="${address}">NA</span></div>
-    </div>
+	<div class="section info-box">
+		<div><strong>Garbage ID: </strong><span th:text="${grbgId}">NA</span></div>
+		<div><strong>Property ID: </strong><span th:text="${propertyId}">NA</span></div>
+		<div><strong>Name of Owner/Occupier: </strong><span th:text="${ownerOrOccupier}">NA</span></div>
+		<div><strong>Correspondence Address: </strong><span th:text="${address}">NA</span></div>
+	</div>
 
-    <table class="section">
-      <tr>
-        <th colspan="3">Owner/Tenant Name</th>
-        <th>Property Type</th>
-        <th>Units</th>
-        <th colspan="2">Rate</th>
-        <th>Value</th>
-        <th>Arrear</th>
-        <th>Interest</th>
-        <th>Amount</th>
-      </tr>
-      <tr>
-        <th colspan="3">(1)</th><th>(2)</th><th>(3)</th>
-        <th colspan="2">(4)</th><th>(5)</th><th>(6)</th><th>(7)</th><th>(8)</th>
-      </tr>
-      <!-- <tr>
+	<table class="section">
+		<tr>
+			<th colspan="3">Owner/Tenant Name</th>
+			<th>Property Type</th>
+			<th>Units</th>
+			<th colspan="2">Rate</th>
+			<th>Value</th>
+			<th>Arrear</th>
+			<th>Interest</th>
+			<th>Amount</th>
+		</tr>
+		<tr>
+			<th colspan="3">(1)</th>
+			<th>(2)</th>
+			<th>(3)</th>
+			<th colspan="2">(4)</th>
+			<th>(5)</th>
+			<th>(6)</th>
+			<th>(7)</th>
+			<th>(8)</th>
+		</tr>
+		<!-- <tr>
         <td colspan="3"></td><td></td><td></td>
         <td>From <br/><span th:text="${from}">NA</span></td><td>To <br/><span th:text="${to}">NA</span></td><td></td><td></td><td></td><td></td>
       </tr> -->
-      <tr>
-        <td colspan="3"><span th:text="${ownerOrOccupier}">N/A</span></td>
-        <td><span th:text="${unitCategory}">N/A</span></td>
-        <td>1</td>
-        <td><span th:text="${grbgTax}">129</span></td>
-        <td><span th:text="${grbgTax}">142</span></td>
-        <td><span th:text="${grbgTax}">142</span></td>
-        <td><span th:text="${arrear}">Arear</span></td>
-        <td><span th:text="${interest}">142</span></td>
-        <td><span th:text="${grbgTaxPlusArrear}">142</span></td>
-      </tr>
-    </table>
+		<tr>
+			<td colspan="3"><span th:text="${ownerOrOccupier}">N/A</span></td>
+			<td><span th:text="${unitCategory}">N/A</span></td>
+			<td>1</td>
+			<td><span th:text="${grbgTax}">129</span></td>
+			<td><span th:text="${grbgTax}">142</span></td>
+			<td><span th:text="${grbgTax}">142</span></td>
+			<td><span th:text="${arrear}">Arear</span></td>
+			<td><span th:text="${interest}">142</span></td>
+			<td><span th:text="${grbgTaxPlusArrear}">142</span></td>
+		</tr>
+	</table>
 
-    <div class="note">
-      <b>Note:</b><br/>
-      Details of Demand for Garbage Bill for the Year 2025 Period 2025–2026
-    </div>
+	<!-- <div class="note">
+		<b>Note:</b><br />
+		Details of Demand for Garbage Bill for the Year 2025 Period 2025–2026
+	</div> -->
 
-  <table class="background-tag-line">
-  <tr><th>Sr.No.</th><th>Description of Bill</th><th>Amount</th></tr>
-  <tr><td>1</td><td>General Value (Sum of column no 7)</td><td><span th:text="${grbgTax}">142</span></td></tr>
-  <!-- <tr><td>2</td><td>(a) Interest @ 10%</td><td><span th:text="${interest}">142</span></td></tr> -->
-  <tr><td>2</td><td>Previous Arrear Amount (Sum of column no 6) – NA</td><td><span th:text="${arrear}">Arear</span></td></tr>
-  <tr><td>3</td><td>Interest Amount</td><td><span th:text="${interest}">Type</span></td></tr>
-  <!-- <tr><td>5</td><td>Previous Credit</td><td><span th:text="${billNo}">Type</span></td></tr> -->
-  <!-- <tr><td>6</td><td>Balance Credit</td><td><span th:text="${billNo}">Type</span></td></tr> -->
-  <tr><td>4</td><td>Amount Payable on due date</td><td><span th:text="${totalTax}">Type</span></td></tr>
-</table>
+	<table class="background-tag-line">
+		<tr>
+			<th>Sr.No.</th>
+			<th>Description of Bill</th>
+			<th>Amount</th>
+		</tr>
+		<tr>
+			<td>1</td>
+			<td>General Value (Sum of column no 7)</td>
+			<td><span th:text="${grbgTax}">142</span></td>
+		</tr>
+		<!-- <tr><td>2</td><td>(a) Interest @ 10%</td><td><span th:text="${interest}">142</span></td></tr> -->
+		<tr>
+			<td>2</td>
+			<td>Previous Arrear Amount (Sum of column no 6) – NA</td>
+			<td><span th:text="${arrear}">Arear</span></td>
+		</tr>
+		<tr>
+			<td>3</td>
+			<td>Interest Amount</td>
+			<td><span th:text="${interest}">Type</span></td>
+		</tr>
+		<!-- <tr><td>5</td><td>Previous Credit</td><td><span th:text="${billNo}">Type</span></td></tr> -->
+		<!-- <tr><td>6</td><td>Balance Credit</td><td><span th:text="${billNo}">Type</span></td></tr> -->
+		<tr>
+			<td>4</td>
+			<td>Amount Payable on due date</td>
+			<td><span th:text="${totalTax}">Type</span></td>
+		</tr>
+	</table>
 
 
-    <div class="disclaimer">
-      <b>Disclaimer:</b>
-      <ol>
-        <li>1% monthly interest will be charged for late payment (Section 121, HPMC Act, 1994).</li>
-        <li>One-time 10% rebate if annual payment is made in advance (excluding arrears).</li>
-        <li>Legal action will be taken for consistent non-payment.</li>
-      </ol>
-    </div>
+	<!-- <div class="disclaimer">
+		<b>Disclaimer:</b>
+		<ol>
+			<li>1% monthly interest will be charged for late payment (Section 121, HPMC Act, 1994).</li>
+			<li>One-time 10% rebate if annual payment is made in advance (excluding arrears).</li>
+			<li>Legal action will be taken for consistent non-payment.</li>
+		</ol>
+	</div> -->
 
-    <div class="sign-line">
-      _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _  Cashier, MC
-    </div>
+	<!-- <div class="sign-line">
+		_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ Cashier, MC
+	</div> -->
 
-    <table class="section info-box mini-table">
-      <tr>
-        <td><strong>Garbage ID: </strong><span th:text="${grbgId}">NA</span></td>
-        <td><strong>Bill No: </strong><span th:text="${billNo}">NA</span></td>
-      </tr>
-      <tr>
-        <td><strong>Property ID: </strong><span th:text="${propertyId}">NA</span></td>
-        <td><strong>Amount before due date: </strong><span th:text="${totalTax}">NA</span></td>
-      </tr>
-      <tr>
-        <td><strong>Name of Owner/Occupier: </strong><span th:text="${ownerOrOccupier}">NA</span></td>
-        <td><strong>Bill Due Date: </strong><span th:text="${billDueDate}">NA</span></td>
-      </tr>
-    </table>
+	<table class="section info-box mini-table">
+		<tr>
+			<td><strong>Garbage ID: </strong><span th:text="${grbgId}">NA</span></td>
+			<td><strong>Bill No: </strong><span th:text="${billNo}">NA</span></td>
+		</tr>
+		<tr>
+			<td><strong>Property ID: </strong><span th:text="${propertyId}">NA</span></td>
+			<td><strong>Amount before due date: </strong><span th:text="${totalTax}">NA</span></td>
+		</tr>
+		<tr>
+			<td><strong>Name of Owner/Occupier: </strong><span th:text="${ownerOrOccupier}">NA</span></td>
+			<td><strong>Bill Due Date: </strong><span th:text="${billDueDate}">NA</span></td>
+		</tr>
+	</table>
 
-    <div class="footer-logo"></div>
+	<div class="footer-logo"></div>
 
 </body>
+
 </html>

@@ -238,7 +238,7 @@ public class UserService {
 		UserSearchRequest userSearchRequest = getBaseUserSearchRequest(owner.getTenantId(), requestInfo);
 		userSearchRequest.setMobileNumber(owner.getMobileNumber());
 		userSearchRequest.setUserType("CITIZEN");
-		//userSearchRequest.setName(owner.getName());
+		userSearchRequest.setName(owner.getName());
 		
         StringBuilder uri = new StringBuilder(userHost).append(userSearchEndpoint);
         return userCall(userSearchRequest,uri);
@@ -533,8 +533,11 @@ public class UserService {
 
 			UserDetailResponse userDetailResponse = searchedSingleUserExists(owner, requestInfo);
 			StringBuilder uri = new StringBuilder(userHost);
-			 
-				owner.setId(userDetailResponse.getUser().get(0).getId());
+			 	if (null != userDetailResponse && !CollectionUtils.isEmpty(userDetailResponse.getUser())) {
+			 		owner.setId(userDetailResponse.getUser().get(0).getId());
+			 	}else {
+			 		owner.setId(null);
+			 	}
 				uri = uri.append(userContextPath).append(userUpdateEndpoint);
 			
 			userDetailResponse = userCall(new CreateUserRequest(requestInfo, owner), uri);
@@ -551,9 +554,12 @@ public class UserService {
 		
 		UserSearchRequest userSearchRequest = getBaseUserSearchRequest(owner.getTenantId(), requestInfo);
 		userSearchRequest.setUserType("CITIZEN");
-		Set <String> uuids = new HashSet<String>();
-		uuids.add(owner.getUuid());
-		userSearchRequest.setUuid(uuids);
+		//Set <String> uuids = new HashSet<String>();
+		//uuids.add(owner.getUuid());
+		//userSearchRequest.setUuid(uuids);
+		userSearchRequest.setMobileNumber(owner.getMobileNumber());
+		userSearchRequest.setName(owner.getName());;
+		
 		
         StringBuilder uri = new StringBuilder(userHost).append(userSearchEndpoint);
         return userCall(userSearchRequest,uri);

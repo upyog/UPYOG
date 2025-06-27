@@ -361,6 +361,7 @@ serviceMaps:
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         ON CONFLICT (ownerinfouuid) DO UPDATE SET
         name = EXCLUDED.name,
+        userid = EXCLUDED.userid,
         mobile_number = EXCLUDED.mobile_number,
         additionaldetails = EXCLUDED.additionaldetails,
         lastmodifiedby = EXCLUDED.lastmodifiedby,
