@@ -53,13 +53,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-/*
+
 import com.aspose.cad.Color;
 import com.aspose.cad.Image;
 import com.aspose.cad.fileformats.cad.CadDrawTypeMode;
 import com.aspose.cad.imageoptions.CadRasterizationOptions;
 import com.aspose.cad.imageoptions.PdfOptions;
- */
+ 
 
 @Service
 @Transactional(readOnly = true)
@@ -277,7 +277,7 @@ public class EdcrApplicationService {
   * @param pl The Plan object containing the scrutinized data.
   * @param edcrApplication The EdcrApplication object containing the original DXF file.
  */
-  private void updateFile(Plan pl, EdcrApplication edcrApplication) {
+ /* private void updateFile(Plan pl, EdcrApplication edcrApplication) {
   String readFile = readFile(edcrApplication.getSavedDxfFile());
   String replace = readFile.replace("ENTITIES", "ENTITIES\n0\n" + pl.getAdditionsToDxf());
   String newFile = edcrApplication.getDxfFile().getOriginalFilename().replace(".dxf", "_system_scrutinized.dxf");
@@ -292,12 +292,12 @@ public class EdcrApplicationService {
       edcrApplication.getEdcrApplicationDetails().get(0).setScrutinizedDxfFileId(fileStoreMapper);
   } catch (IOException e) {
       LOG.error("Error occurred when reading file!!!!!", e);
-  }
-}
+  } 
+}*/ 
     
 
 // The below function is commented out temporarily as aspose-cad is commented out and run the service without using aspose-cad library
-   /*
+   
     private void updateFile(Plan pl, EdcrApplication edcrApplication) {
         String filePath = edcrApplication.getSavedDxfFile().getAbsolutePath();
         String newFile = edcrApplication.getDxfFile().getOriginalFilename().replace(".dxf", "_system_scrutinized.pdf");
@@ -425,7 +425,7 @@ public class EdcrApplicationService {
             LOG.error("Error occurred when processing PDF!!!!!", e);
         }
     }
-*/
+
 
         @Transactional
     public EdcrApplication createRestEdcr(final EdcrApplication edcrApplication){
