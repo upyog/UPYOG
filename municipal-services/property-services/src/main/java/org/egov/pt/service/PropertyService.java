@@ -64,6 +64,8 @@ import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -188,7 +190,7 @@ public class PropertyService {
 	 * @param request PropertyRequest containing list of properties to be update
 	 * @return List of updated properties
 	 */
-	public Property updateProperty(PropertyRequest request) {
+	public Property updateProperty(PropertyRequest request,Boolean isStatusUpdate) {
 
 		Property propertyFromSearch = unmaskingUtil.getPropertyUnmasked(request);
 		propertyValidator.validateCommonUpdateInformation(request, propertyFromSearch);
@@ -201,7 +203,7 @@ public class PropertyService {
 
 		if (isRequestForOwnerMutation)
 			processOwnerMutation(request, propertyFromSearch);
-		else if (isOwnerUpdate)
+		else if (isOwnerUpdate && isStatusUpdate)
 			processOwnerUpdate(request, propertyFromSearch);
 
 		else {
@@ -280,7 +282,7 @@ public class PropertyService {
 			}
 		}
 
-		return true;
+		return isUpdate;
 	}
 
 	/*
@@ -808,7 +810,7 @@ public class PropertyService {
 		PropertyRequest propertyRequest = PropertyRequest.builder().property(property)
 				.requestInfo(request.getRequestInfo()).build();
 
-		return updateProperty(propertyRequest);
+		return updateProperty(propertyRequest,false);
 	}
 
 	public void setAllCount(List<Property> properties, PropertyResponse response) {
@@ -1009,6 +1011,11 @@ public class PropertyService {
 								node -> config.getStateLevelTenantId() + "." + node.get("ulbName").asText(),
 								node -> node.get("days").asInt())))
 				.orElseGet(HashMap::new);
+	}
+	
+	public Map<String, Object> checkMastersStatus(RequestInfoWrapper requestInfoWrapper, String UlbName) {
+		List<Map<String, Object>> result = repository.getPropertyMastersStatus(UlbName);
+		return result.get(0);
 	}
 
 }

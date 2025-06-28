@@ -134,7 +134,7 @@ public class PropertyController {
 			}
 		}
 
-		Property property = propertyService.updateProperty(propertyRequest);
+		Property property = propertyService.updateProperty(propertyRequest,true);
 		ResponseInfo resInfo = responseInfoFactory.createResponseInfoFromRequestInfo(propertyRequest.getRequestInfo(),
 				true);
 		PropertyResponse response = PropertyResponse.builder().properties(Arrays.asList(property)).responseInfo(resInfo)
@@ -360,6 +360,19 @@ public class PropertyController {
 				propertyId);
 
 		return response;
+	}
+	
+	@PostMapping("/_checkMasters")
+	public ResponseEntity<Map<String, Object>> checkMasters(
+			@Valid @RequestBody RequestInfoWrapper requestInfoWrapper, @RequestParam String UlbName) {
+
+		Map<String, Object> result = propertyService.checkMastersStatus(requestInfoWrapper,
+				UlbName);
+		ResponseInfo resInfo = responseInfoFactory.createResponseInfoFromRequestInfo(requestInfoWrapper.getRequestInfo(), true);
+	    Map<String, Object> response = new HashMap<>();
+	    response.put("ResponseInfo", resInfo);
+	    response.put("MasterStatus", result);
+		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 	
 }

@@ -228,6 +228,37 @@ public class PropertyQueryBuilder {
 			+ "from EG_PT_PROPERTY property";
 	
 	private static final String PROPERTY_OWNERS_SEARCH_QUERY = "select * from eg_pt_owner epo where mobile_number is null limit 500";
+	
+	private static final String CHECK_PROPERTY_MASTER_STATUS_QUERY =
+		      "SELECT "
+		    + "  data->>'ulbName' AS ulb_name, "
+		    + "  MAX(CASE WHEN schemacode = 'ULBS.Zones' THEN 'YES' ELSE 'NO' END) AS \"LocationFactor(F1)\", "
+		    + "  MAX(CASE WHEN schemacode = 'ULBS.BuildingStructure' THEN 'YES' ELSE 'NO' END) AS \"BuildingType(F2)\", "
+		    + "  MAX(CASE WHEN schemacode = 'ULBS.BuildingEstablishmentYear' THEN 'YES' ELSE 'NO' END) AS \"BuildingEstablishment(F3)\", "
+		    + "  MAX(CASE WHEN schemacode = 'ULBS.BuildingPurpose' THEN 'YES' ELSE 'NO' END) AS \"OccupationFactor(F4)\", "
+		    + "  MAX(CASE WHEN schemacode = 'ULBS.BuildingUse' THEN 'YES' ELSE 'NO' END) AS \"UsesOfBuilding(F5)\", "
+		    + "  MAX(CASE WHEN schemacode = 'ULBS.OverAllRebate' THEN 'YES' ELSE 'NO' END) AS \"OverallRebateRate\", "
+		    + "  MAX(CASE WHEN schemacode = 'ULBS.PenaltyRate' THEN 'YES' ELSE 'NO' END) AS \"PenaltyRate\", "
+		    + "  MAX(CASE WHEN schemacode = 'ULBS.EarlyPaymentRebate' THEN 'YES' ELSE 'NO' END) AS \"EarlyPaymentRebate\", "
+		    + "  MAX(CASE WHEN schemacode = 'PropertyTaxRate.PropertyTaxRate' THEN 'YES' ELSE 'NO' END) AS \"PropertyTaxCalculation\", "
+		    + "  CASE "
+		    + "    WHEN COUNT(DISTINCT schemacode) = 9 THEN 'YES' "
+		    + "    ELSE 'NO' "
+		    + "  END AS \"All_Complete\" "
+		    + "FROM eg_mdms_data "
+		    + "WHERE schemacode IN ( "
+		    + "  'ULBS.Zones', "
+		    + "  'ULBS.BuildingEstablishmentYear', "
+		    + "  'ULBS.BuildingStructure', "
+		    + "  'ULBS.BuildingPurpose', "
+		    + "  'ULBS.BuildingUse', "
+		    + "  'ULBS.OverAllRebate', "
+		    + "  'ULBS.PenaltyRate', "
+		    + "  'ULBS.EarlyPaymentRebate', "
+		    + "  'PropertyTaxRate.PropertyTaxRate' "
+		    + ") ";
+		    
+
 
 	private String addPaginationWrapper(String query, List<Object> preparedStmtList, PropertyCriteria criteria) {
 		
@@ -789,6 +820,21 @@ public class PropertyQueryBuilder {
 		builder.append(" AND ");
 		builder.append(" eptct.createdtime <= ? ");
 		preparedStmtList.add(ptTaxCalculatorTrackerSearchCriteria.getEndDateTime());
+
+		return builder.toString();
+	}
+	
+	public String getPropertyMastersStatusQuery(String ulbName, List<Object> preparedStmtList) {
+		StringBuilder builder = new StringBuilder();
+		builder.append(CHECK_PROPERTY_MASTER_STATUS_QUERY);
+//		builder.append(" WHERE 1 = 1 ");
+		if (!StringUtils.isEmpty(ulbName)) {
+			andClauseIfRequired(preparedStmtList, builder);
+			builder.append(" data->>'ulbName' = ? ");
+			preparedStmtList.add(ulbName);
+		}
+		// add group by and 
+		builder.append(" GROUP BY data->>'ulbName' ORDER BY ulb_name;");
 
 		return builder.toString();
 	}
