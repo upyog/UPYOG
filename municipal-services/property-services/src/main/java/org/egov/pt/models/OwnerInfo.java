@@ -36,6 +36,10 @@ public class OwnerInfo extends User {
 	
 	private String propertyId;
 
+    @SafeHtml
+    @JsonProperty("propertyOwnerName")
+    private String propertyOwnerName;
+    
 	@SafeHtml
 	@JsonProperty("gender")
 	private String gender;
@@ -135,7 +139,7 @@ public class OwnerInfo extends User {
 					 Long dob, Long pwdExpiryDate, String locale, String type, String signature, Boolean accountLocked,
 					 List<Role> roles, String fatherOrHusbandName, String bloodGroup, String identificationMark, String photo,
 					 String createdBy, Long createdDate, String lastModifiedBy, Long lastModifiedDate, String tenantId,
-					 String ownerInfoUuid, String mobileNumber2, String gender2, String fatherOrHusbandName2,
+					 String ownerInfoUuid,String propertyOwnerName, String mobileNumber2, String gender2, String fatherOrHusbandName2,
 					 String correspondenceAddress2, Boolean isPrimaryOwner, Double ownerShipPercentage, String ownerType,
 					 String institutionId, Status status, List<Document> documents, Relationship relationship, String alternatemobilenumber, JsonNode additionalDetails) {
 		super(id, uuid, userName, password, salutation, name, gender, mobileNumber, emailId, altContactNumber, pan,
@@ -156,6 +160,8 @@ public class OwnerInfo extends User {
 		this.documents = documents;
 		this.relationship = relationship;
 		this.additionalDetails=additionalDetails;
+		this.propertyOwnerName = propertyOwnerName;
+
 	}
 
 

@@ -237,6 +237,7 @@ public class PropertyRowMapper implements ResultSetExtractor<List<Property>> {
 				.status(Status.fromValue(rs.getString("ownstatus")))
 				.institutionId(rs.getString("owninstitutionid"))
 				.ownerInfoUuid(rs.getString("ownerInfoUuid"))
+				.propertyOwnerName(rs.getString("owname"))
 				.ownerShipPercentage(ownerShipPercentage)
 				.tenantId(rs.getString("owntenantid"))
 				.ownerType(rs.getString("ownerType"))

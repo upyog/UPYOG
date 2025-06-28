@@ -197,16 +197,16 @@ public class PropertyService {
 
 		boolean isRequestForOwnerMutation = CreationReason.MUTATION.equals(request.getProperty().getCreationReason());
 
-		boolean isOwnerUpdate = checkIsRequestForOwnerUpdate(request, propertyFromSearch);
+//		boolean isOwnerUpdate = checkIsRequestForOwnerUpdate(request, propertyFromSearch);
 
 		boolean isRequestForStatusChange = CreationReason.STATUS.equals(request.getProperty().getCreationReason());
 
 		if (isRequestForOwnerMutation)
 			processOwnerMutation(request, propertyFromSearch);
-		else if (isOwnerUpdate && isStatusUpdate)
-			processOwnerUpdate(request, propertyFromSearch);
 
 		else {
+			 if (isStatusUpdate)
+					processOwnerUpdate(request, propertyFromSearch);
 			if (isRequestForStatusChange) {
 				BillResponse billResponse = billingService.fetchBill(request.getProperty(), request.getRequestInfo());
 

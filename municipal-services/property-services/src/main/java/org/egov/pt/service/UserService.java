@@ -125,6 +125,7 @@ public class UserService {
 		UserDetailResponse userDetailResponse;
 		
 		ownerFromRequest.setId(ownerInfoFromSearch.getId());
+		String propertyOwnerName = ownerFromRequest.getName();
 		ownerFromRequest.setName(ownerInfoFromSearch.getName());
 //		setId(ownerInfoFromSearch.getId());
 		ownerFromRequest.setUuid(ownerInfoFromSearch.getUuid());
@@ -135,6 +136,7 @@ public class UserService {
 		if (userDetailResponse.getUser().get(0).getUuid() == null) {
 			throw new CustomException("INVALID USER RESPONSE", "The user updated has uuid as null");
 		}
+		ownerFromRequest.setName(propertyOwnerName);
 		return userDetailResponse;
 	}
     
