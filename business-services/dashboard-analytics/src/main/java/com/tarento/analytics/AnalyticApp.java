@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+
 
 import com.tarento.analytics.constant.Constants;
 
@@ -70,7 +70,7 @@ public class AnalyticApp {
 
 	    @Bean
 	    public WebMvcConfigurer corsConfigurer() {
-	        return new WebMvcConfigurerAdapter() {
+	        return new WebMvcConfigurer() {
 	            @Override
 	            public void addCorsMappings(CorsRegistry registry) {
 	                registry.addMapping("/**").allowedMethods(Constants.GET, Constants.POST,Constants.PUT, Constants.DELETE, Constants.OPTIONS).allowedOrigins("*")
