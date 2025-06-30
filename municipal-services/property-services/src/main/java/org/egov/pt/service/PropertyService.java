@@ -223,10 +223,10 @@ public class PropertyService {
 							"Clear Pending dues before De-Enumerating the property");
 
 				else
-					processPropertyUpdate(request, propertyFromSearch);
+					processPropertyUpdate(request, propertyFromSearch,isStatusUpdate);
 
 			} else {
-				processPropertyUpdate(request, propertyFromSearch);
+				processPropertyUpdate(request, propertyFromSearch,isStatusUpdate);
 			}
 		}
 
@@ -309,7 +309,7 @@ public class PropertyService {
 	 * @param request
 	 * @param propertyFromSearch
 	 */
-	private void processPropertyUpdate(PropertyRequest request, Property propertyFromSearch) {
+	private void processPropertyUpdate(PropertyRequest request, Property propertyFromSearch,Boolean updateOwnerName) {
 
 		propertyValidator.validateRequestForUpdate(request, propertyFromSearch);
 		if (CreationReason.CREATE.equals(request.getProperty().getCreationReason())) {
@@ -370,6 +370,12 @@ public class PropertyService {
 				/*
 				 * If property is In Workflow then continue
 				 */
+					if(!updateOwnerName) {
+						request.getProperty().getOwners().forEach(owner -> {
+							owner.setName(owner.getPropertyOwnerName());
+						});
+					}
+				
 				producer.pushAfterEncrytpion(config.getUpdatePropertyTopic(), request);
 			}
 
