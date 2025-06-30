@@ -43,11 +43,7 @@
 	
 	<dependencies>
 		<!--		Below dependency is commented out to avoid jenkinds build issue -->
-		<dependency>
-			<groupId>com.aspose</groupId>
-			<artifactId>aspose-cad</artifactId>
-		
-		</dependency> 
+	
 
 		<!--<dependency>
 			<groupId>com.aspose</groupId>
