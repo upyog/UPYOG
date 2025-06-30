@@ -48,6 +48,7 @@ import org.egov.finance.report.repository.EgBillregistermisRepository;
 import org.egov.finance.report.repository.FunctionRepository;
 import org.egov.finance.report.repository.FundRepository;
 import org.egov.finance.report.util.CommonUtils;
+import org.egov.finance.report.util.LocalizationSettings;
 import org.egov.finance.report.util.ReportConstants;
 import org.egov.finance.report.util.BudgetReportQueryHelper;
 import org.egov.finance.report.workflow.entity.State;
@@ -160,7 +161,7 @@ public class VoucherReportService {
 		paramMap.put("voucherNumber", Optional.ofNullable(voucher).map(CVoucherHeader::getVoucherNumber).orElse(""));
 
 		paramMap.put("voucherDate", Optional.ofNullable(voucher).map(CVoucherHeader::getVoucherDate)
-				.map(date -> commonUtils.getFormattedDate(date, null)).orElse(""));
+				.map(date -> commonUtils.getFormattedDate(date, LocalizationSettings.datePattern())).orElse(""));
 
 		paramMap.put("voucherDescription", Optional.ofNullable(voucher).map(CVoucherHeader::getDescription).orElse(""));
 
