@@ -210,9 +210,7 @@ public class VoucherReportService {
 			 paramMap.put("budgetDetail", budgetService.getBudgetDetailsForVoucher(voucher));
 			else
 			 paramMap.put("budgetDetail", new ArrayList<>());
-			System.out.println("paramMap-------------------------" + paramMap);
-			
-			System.out.println(paramMap);
+
 		 return paramMap;
 	}
 	
