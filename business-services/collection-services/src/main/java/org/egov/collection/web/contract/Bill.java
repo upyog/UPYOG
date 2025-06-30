@@ -6,10 +6,10 @@ import com.fasterxml.jackson.annotation.JsonValue;
 import com.fasterxml.jackson.databind.JsonNode;
 import lombok.*;
 import org.egov.collection.model.AuditDetails;
-import org.hibernate.validator.constraints.SafeHtml;
+
 import org.springframework.util.CollectionUtils;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,35 +27,28 @@ public class Bill {
     @JsonProperty("id")
     private String id = null;
 
-    @SafeHtml
     @JsonProperty("mobileNumber")
     private String mobileNumber = null;
 
-    @SafeHtml
     @JsonProperty("paidBy")
     private String paidBy = null;
 
-    @SafeHtml
     @JsonProperty("payerName")
     private String payerName = null;
 
-    @SafeHtml
 
     @JsonProperty("payerAddress")
     private String payerAddress = null;
 
-    @SafeHtml
     @JsonProperty("payerEmail")
     private String payerEmail = null;
 
-    @SafeHtml
     @JsonProperty("payerId")
     private String payerId = null;
 
     @JsonProperty("status")
     private StatusEnum status = null;
 
-    @SafeHtml
     @JsonProperty("reasonForCancellation")
     private String reasonForCancellation = null;
 
@@ -69,7 +62,6 @@ public class Bill {
     @Valid
     private List<BillDetail> billDetails = null;
 
-    @SafeHtml
     @JsonProperty("tenantId")
     private String tenantId = null;
 
@@ -88,18 +80,15 @@ public class Bill {
     @JsonProperty("minimumAmountToBePaid")
     private BigDecimal minimumAmountToBePaid = null;
 
-    @SafeHtml
     @JsonProperty("businessService")
     private String businessService = null;
 
     @JsonProperty("totalAmount")
     private BigDecimal totalAmount = null;
 
-    @SafeHtml
     @JsonProperty("consumerCode")
     private String consumerCode = null;
 
-    @SafeHtml
     @JsonProperty("billNumber")
     private String billNumber = null;
 
