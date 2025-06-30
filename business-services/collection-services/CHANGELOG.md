@@ -3,7 +3,7 @@
 # Changelog
 All notable changes to this module will be documented in this file.
 
-## 2.0.0-SNAPSHOT - 2025-06-30
+## 2.0.0 - 2025-06-30
 
 ### Added
 - Added Swagger/OpenAPI documentation using springdoc-openapi-starter-webmvc-ui
