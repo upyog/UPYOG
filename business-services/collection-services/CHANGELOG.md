@@ -2,6 +2,35 @@
 
 # Changelog
 All notable changes to this module will be documented in this file.
+
+## 2.0.0-SNAPSHOT - 2025-06-30
+
+### Added
+- Added Swagger/OpenAPI documentation using springdoc-openapi-starter-webmvc-ui
+- Added Postman collection for API testing and documentation
+
+### Changed
+- Upgraded Spring Boot version to 3.2.2
+- Upgraded Java version to 17
+- Upgraded PostgreSQL driver to version 42.7.1
+- Upgraded Flyway to version 9.22.3
+- Upgraded Joda Time to version 2.12.5
+- Upgraded Hibernate Validator to version 8.0.1.Final
+- Upgraded Jsoup to version 1.17.2
+- Upgraded Jakarta XML Bind API to version 4.0.1
+- Upgraded JAXB Runtime to version 4.0.4
+- Upgraded Jakarta Annotation API to version 2.1.1
+- Upgraded Commons IO to version 2.15.1
+- Upgraded Commons Lang3 to version 3.13.0
+- Upgraded Log4j2 to version 2.21.1
+- Upgraded Lombok to version 1.18.32
+
+### Fixed
+- Resolved compatibility issues with Spring Boot 3.x
+- Fixed Jakarta EE migration issues
+- Resolved dependency conflicts and version mismatches
+- Fixed Maven compiler configuration for Java 17
+
 ## 1.1.7 - 2023-02-02
 
 - Transition from 1.1.7-beta version to 1.1.7 version
