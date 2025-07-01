@@ -92,6 +92,9 @@ public class WaterServiceImpl implements WaterService {
 
 	@Autowired
 	private UnmaskingUtil unmaskingUtil;
+	
+	@Autowired
+	private WaterService waterService;
 
 	/**
 	 *
@@ -118,6 +121,25 @@ public class WaterServiceImpl implements WaterService {
 		    }
 		}
 		
+		
+		String applicationType = waterConnectionRequest.getWaterConnection().getApplicationType();
+		String connectionNo = waterConnectionRequest.getWaterConnection().getConnectionNo();
+
+		
+		if (isMigration && "NEW_WATER_CONNECTION".equalsIgnoreCase(applicationType) && connectionNo != null && !connectionNo.trim().isEmpty()) {
+			    SearchCriteria criteria = new SearchCriteria();
+			    criteria.setConnectionNumber(Collections.singleton(connectionNo));
+			    criteria.setTenantId(waterConnectionRequest.getWaterConnection().getTenantId());
+
+			    List<WaterConnection> existingConnections = waterService.search(
+			        criteria, waterConnectionRequest.getRequestInfo());
+
+			    if (!existingConnections.isEmpty()) {
+			        log.info("Skipping creation: ConnectionNo {} already exists for migrated request.", connectionNo);
+			        return existingConnections;
+			    }
+			}
+		
 		int reqType = WCConstants.CREATE_APPLICATION;
 		Connection.StatusEnum status = waterConnectionRequest.getWaterConnection().getStatus();
 		log.info("isMigration::::" + isMigration);
@@ -134,7 +156,7 @@ public class WaterServiceImpl implements WaterService {
 			validateReconnectionRequest(waterConnectionRequest);
 		}
 
-		else if (wsUtil.isModifyConnectionRequest(waterConnectionRequest) && !isMigration) {
+		else if (wsUtil.isModifyConnectionRequest(waterConnectionRequest)) {
 			List<WaterConnection> previousConnectionsList = getAllWaterApplications(waterConnectionRequest);
 			/*
 			 * if (previousConnectionsList.size() > 0) { for (WaterConnection
