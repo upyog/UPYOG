@@ -19,6 +19,7 @@ import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.kafka.listener.ConcurrentMessageListenerContainer;
 import org.springframework.kafka.listener.ContainerProperties;
 import org.springframework.kafka.listener.KafkaMessageListenerContainer;
+import org.springframework.kafka.listener.SeekToCurrentBatchErrorHandler;
 import org.springframework.kafka.support.serializer.ErrorHandlingDeserializer2;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
 
@@ -94,12 +95,13 @@ public class PersisterConsumerConfig {
 		factory.setConcurrency(Integer.parseInt(concurrency));
 		factory.getContainerProperties().setPollTimeout(Integer.parseInt(pollTime));
 		factory.setErrorHandler(kafkaConsumerErrorHandler);
-
+		
+		factory.getContainerProperties().setAckMode(ContainerProperties.AckMode.MANUAL);
 		log.info("Custom KafkaListenerContainerFactory built...");
 		return factory;
 
 	}
-
+	  
 	@Bean
 	public KafkaMessageListenerContainer<String, String> container() throws Exception {
 		ContainerProperties properties = new ContainerProperties(this.topics.toArray(new String[topics.size()]));
