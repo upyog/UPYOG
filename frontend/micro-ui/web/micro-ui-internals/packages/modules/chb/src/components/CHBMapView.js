@@ -343,7 +343,7 @@ const CHBMapView = () => {
     window.selectHall = (hallCode,hallId) => {
       history.push({
         pathname: `/digit-ui/citizen/chb/bookHall/searchhall`,
-        selectedHallCode: {code: hallCode, value: hallCode, i18nKey: hallCode, communityHallId:hallId},
+        selectedCommunityHall: {code: hallCode, value: hallCode, i18nKey: hallCode, communityHallId:hallId}
       });
     }
       
