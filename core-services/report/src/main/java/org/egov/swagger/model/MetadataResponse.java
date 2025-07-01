@@ -3,10 +3,6 @@ package org.egov.swagger.model;
 import java.util.Objects;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
-
-import javax.validation.constraints.*;
-
 import org.egov.common.contract.response.ResponseInfo;
 
 /**
