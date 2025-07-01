@@ -17,7 +17,6 @@ All notable changes to this module will be documented in this file.
 - Upgraded Joda Time to version 2.12.5
 - Upgraded Hibernate Validator to version 8.0.1.Final
 - Upgraded Jsoup to version 1.17.2
-- Upgraded Jakarta XML Bind API to version 4.0.1
 - Upgraded JAXB Runtime to version 4.0.4
 - Upgraded Jakarta Annotation API to version 2.1.1
 - Upgraded Commons IO to version 2.15.1
