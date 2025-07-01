@@ -318,7 +318,10 @@ public class SewerageServicesUtil {
 	 * @return
 	 */
 	public boolean isModifyConnectionRequest(SewerageConnectionRequest sewerageConnectionRequest) {
-		return !StringUtils.isEmpty(sewerageConnectionRequest.getSewerageConnection().getConnectionNo());
+//		return !StringUtils.isEmpty(sewerageConnectionRequest.getSewerageConnection().getConnectionNo());
+		return !StringUtils.isEmpty(sewerageConnectionRequest.getSewerageConnection().getConnectionNo())
+			    && "MODIFY_SEWERAGE_CONNECTION".equalsIgnoreCase(sewerageConnectionRequest.getSewerageConnection().getApplicationType());
+
 	}
 
 	public boolean isModifyConnectionRequestForNotification(SewerageConnectionRequest sewerageConnectionRequest) {
