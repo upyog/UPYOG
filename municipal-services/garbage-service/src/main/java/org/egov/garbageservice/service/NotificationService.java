@@ -33,6 +33,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class NotificationService {
 
+
 	private static final String SMS_TEMPLATE_BILL_NOTIFICATION = "BILL-NOTIFICATION";
 	private static final String GARBAGE_BILL_EMAIL_TEMPLATE_LOCATION = "templates/GrbgBillEmailTemplate.html";
 
@@ -82,6 +83,9 @@ public class NotificationService {
 	@Value("${kafka.topics.sms.service.topic.name}")
 	private String smsTopic;
 
+	@Autowired
+	private UrlShorteningService urlShorteningService;
+	
 	public void sendSms(String message, String mobileNumber) {
 
 		SMSSentRequest smsRequest = SMSSentRequest.builder().message(message).mobileNumber(mobileNumber)
@@ -155,7 +159,12 @@ public class NotificationService {
 		body = body.replace(AMOUNT_PLACEHOLDER, String.valueOf(bill.getTotalAmount()));
 		body = body.replace(DUE_DATE_PLACEHOLDER, expiryDateStr);
 		body = body.replace(GARBAGE_NO_PLACEHOLDER, garbageAccount.getGrbgApplicationNumber());
-		body = body.replace(GARBAGE_PAY_NOW_BILL_URL_PLACEHOLDER,grbgConfig.getFrontEndBaseUri());
+		String uri = grbgConfig.getFrontEndBaseUri()+"citizen-payment/"+garbageAccount.getUserUuid()+"/"+garbageAccount.getUuid()+"/";
+		String shortUrl = urlShorteningService.getShortUrl(uri,true);
+//		System.out.println(shortUrl);
+//		System.out.println(grbgConfig.getFrontEndBaseUri());
+
+		body = body.replace(GARBAGE_PAY_NOW_BILL_URL_PLACEHOLDER,shortUrl);
 
 //		body = body.replace(GARBAGE_PAY_NOW_BILL_URL_PLACEHOLDER,
 //				grbgConfig.getGrbgServiceHostUrl() + "" + grbgConfig.getGrbgPayNowBillEndpoint() + ""
