@@ -1,6 +1,5 @@
 package org.egov.web.notification.mail.consumer.contract;
 
-import java.util.Map;
 import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
