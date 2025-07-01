@@ -47,7 +47,7 @@ import BookingPopup from "../components/BookingPopup";
  * - A form step component that allows users to search for and select community halls, view booking slot details, and proceed to the next step.
  */
 const CommunityHallSearch = ({ t, onSelect, config, userType, formData }) => {
-  const { pathname: url } = useLocation();
+  const { selectedHallCode } = useLocation();
   let index = 0;
   const [bookingSlotDetails, setBookingSlotDetails] = useState(
     (formData.slotlist && formData.slotlist[index] && formData.slotlist[index].bookingSlotDetails) ||
@@ -56,7 +56,7 @@ const CommunityHallSearch = ({ t, onSelect, config, userType, formData }) => {
   );
   const [selectedHall, setSelectedHall] = useState(
     (formData.slotlist && formData.slotlist[index] && formData.slotlist[index].selectedHall) ||
-    formData?.slotlist?.selectedHall ||
+    formData?.slotlist?.selectedHall || selectedHallCode ||
     ""
   );
   const [Searchdata, setSearchData] = useState(
