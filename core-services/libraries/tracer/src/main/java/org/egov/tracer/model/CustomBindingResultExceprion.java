@@ -1,9 +1,5 @@
 package org.egov.tracer.model;
 
-import java.util.Map;
-
-import org.springframework.validation.BindingResult;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

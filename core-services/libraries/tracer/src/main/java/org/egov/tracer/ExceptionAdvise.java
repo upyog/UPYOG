@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.IOUtils;
 import org.egov.tracer.config.TracerProperties;
 import org.egov.tracer.http.filters.MultiReadRequestWrapper;
 import org.egov.tracer.kafka.ErrorQueueProducer;
@@ -43,7 +42,7 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static org.egov.tracer.constants.TracerConstants.CORRELATION_ID_MDC;
+import static org.egov.tracer.constants.TracerConstants.*;
 
 
 @ControllerAdvice
@@ -73,7 +72,8 @@ public class ExceptionAdvise {
         try {
             if(request instanceof MultiReadRequestWrapper) {
                 ServletInputStream stream = request.getInputStream();
-                body = IOUtils.toString(stream, "UTF-8");
+                //body = IOUtils.toString(stream, "UTF-8");
+                body = new String(stream.readAllBytes(), StandardCharsets.UTF_8);
             } else
                 body = "Unable to retrieve request body";
 
@@ -141,6 +141,8 @@ public class ExceptionAdvise {
 			} else if (ex instanceof ServiceCallException) {
 				ServiceCallException serviceCallException = (ServiceCallException) ex;
 				sendErrorMessage(body, ex, request.getRequestURL().toString(),errorRes, isJsonContentType);
+				if(tracerProperties.isShouldPublishErrorDetailsFlag())
+                    prepareErrorDetailsAndInvokeExceptionHandler(request, ex);
 				DocumentContext documentContext = JsonPath.parse(serviceCallException.getError());
 				LinkedHashMap<Object, Object> linkedHashMap = documentContext.json();
 				return new ResponseEntity<>(linkedHashMap, HttpStatus.BAD_REQUEST);
@@ -165,23 +167,121 @@ public class ExceptionAdvise {
 			}
 
             String exceptionName = ex.getClass().getSimpleName();
-			String exceptionMessage = ex.getMessage();
+            String exceptionMessage = ex.getMessage();
 
-			if (errorRes.getErrors() == null || errorRes.getErrors().size() == 0) {
-				errorRes.setErrors(new ArrayList<>(Collections.singletonList(new Error(exceptionName, "An unhandled exception occurred on the server", exceptionMessage, null))));
-			} else if (provideExceptionInDetails && errorRes.getErrors() != null && errorRes.getErrors().size() > 0) {
+            if (errorRes.getErrors() == null || errorRes.getErrors().size() == 0) {
+                errorRes.setErrors(new ArrayList<>(Collections.singletonList(new Error(exceptionName, "An unhandled exception occurred on the server", exceptionMessage, null))));
+                if(tracerProperties.isShouldPublishErrorDetailsFlag())
+                    prepareErrorDetailsAndInvokeExceptionHandler(request, ex);
+            } else if (provideExceptionInDetails && errorRes.getErrors() != null && errorRes.getErrors().size() > 0) {
                 StringWriter sw = new StringWriter();
                 PrintWriter pw = new PrintWriter(sw);
                 errorRes.getErrors().get(0).setDescription(sw.toString());
             }
 
-			sendErrorMessage(body, ex, request.getRequestURL().toString(),errorRes, isJsonContentType);
-		} catch (Exception tracerException) {
-		    log.error("Error in tracer", tracerException);
-			errorRes.setErrors(new ArrayList<>(Collections.singletonList(new Error("TracerException", "An unhandled exception occurred in tracer handler", null, null))));
-		}
-		return new ResponseEntity<>(errorRes, HttpStatus.BAD_REQUEST);
-	}
+            sendErrorMessage(body, ex, request.getRequestURL().toString(), errorRes, isJsonContentType);
+        } catch (Exception tracerException) {
+            log.error("Error in tracer", tracerException);
+            errorRes.setErrors(new ArrayList<>(Collections.singletonList(new Error("TracerException", "An unhandled exception occurred in tracer handler", null, null))));
+        }
+        return new ResponseEntity<>(errorRes, HttpStatus.BAD_REQUEST);
+    }
+
+    /**
+     * This method is an overloaded sister method of error handling interceptor method
+     * to enable modules to invoke it based on the error details they have prepared
+     * to allow them to store these errors and retry them.
+     *
+     * @param errorDetails
+     */
+    public void exceptionHandler(List<ErrorDetail> errorDetails) {
+
+        // Log incoming errors
+        errorDetails.forEach(errorDetail -> {
+            errorDetail.getErrors().forEach(errorEntity -> {
+                Exception ex = errorEntity.getException();
+                log.error(EXCEPTION_CAUGHT_IN_TRACER_MSG, ex);
+            });
+        });
+
+        // Initialize error details list for indexing
+        List<ErrorDetailDTO> errorDetailsForIndexing = new ArrayList<>();
+
+        // Prepare audit details
+        AuditDetails auditDetails = AuditDetails.builder().createdTime(System.currentTimeMillis()).lastModifiedTime(System.currentTimeMillis()).build();
+
+        // Enrich error uuid and audit details for indexing error details
+        errorDetails.forEach(errorDetail -> {
+            // Initialize error details
+            ErrorDetailDTO errorDetailDTO = new ErrorDetailDTO();
+            BeanUtils.copyProperties(errorDetail, errorDetailDTO);
+
+            // Initialize values for error detail
+            errorDetailDTO.setAuditDetails(auditDetails);
+            errorDetailDTO.setStatus(Status.PENDING);
+
+            // Set uuid and retry count only if errorDetail does not have an id
+            if(ObjectUtils.isEmpty(errorDetailDTO.getApiDetails().getId())) {
+                errorDetailDTO.setUuid(UUID.randomUUID().toString());
+                errorDetailDTO.setRetryCount(0);
+            }else{
+                errorDetailDTO.setUuid(errorDetailDTO.getApiDetails().getId());
+            }
+
+            errorDetailsForIndexing.add(errorDetailDTO);
+        });
+
+        // Send error details for indexing
+        errorQueueProducer.sendErrorDetails(errorDetailsForIndexing);
+
+    }
+
+
+    /**
+     * This method prepares error details in case of unhandled exceptions caught by tracer interceptor
+     * and invokes its sister exceptionHandler method to store it for retry.
+     * @param request
+     * @param ex
+     */
+    private void prepareErrorDetailsAndInvokeExceptionHandler(HttpServletRequest request, Exception ex) {
+        String contentType = request.getContentType();
+        String body = "";
+
+        // Block to parse incoming request for which exception was thrown
+        try {
+            if (request instanceof MultiReadRequestWrapper) {
+                ServletInputStream stream = request.getInputStream();
+               // body = IOUtils.toString(stream, UTF_8_CODE);
+                body = new String(stream.readAllBytes(), StandardCharsets.UTF_8);
+            } else
+                body = UNABLE_TO_RETRIEVE_REQUEST_BODY_MSG;
+
+        } catch (IOException ignored) {
+            body = UNABLE_TO_RETRIEVE_REQUEST_BODY_MSG;
+        }
+
+        // Prepare API Details
+        ApiDetails apiDetails = new ApiDetails();
+        apiDetails.setRequestBody(body);
+        apiDetails.setContentType(contentType);
+        apiDetails.setUrl(request.getRequestURL().toString());
+
+        // Prepare error entity
+        ErrorEntity errorEntity = new ErrorEntity();
+        errorEntity.setErrorType(ErrorType.RECOVERABLE);
+        errorEntity.setErrorMessage(ex.getMessage());
+        errorEntity.setErrorCode(UNHANDLED_EXCEPTION_ERROR_CODE);
+        errorEntity.setException(ex);
+
+        // Prepare error detail
+        ErrorDetail errorDetail = new ErrorDetail();
+        errorDetail.setApiDetails(apiDetails);
+        errorDetail.setErrors(Collections.singletonList(errorEntity));
+
+        // Call exceptionHandler method to persist unhandled errors
+        exceptionHandler(Collections.singletonList(errorDetail));
+    }
+
 
 	private List<Error> getBindingErrors(BindingResult bindingResult, List<Error> errors) {
 
@@ -214,10 +314,41 @@ public class ExceptionAdvise {
 			errors.add(error);
 		}
 
-	}
-		
-	void sendErrorMessage(String body, Exception ex, String source, ErrorRes errorRes, boolean isJsonContentType) {
-		DocumentContext documentContext;
+    }
+
+    void sendErrorMessage(String body, Exception ex, String source, boolean isJsonContentType) {
+        DocumentContext documentContext;
+
+        if (tracerProperties.isErrorsPublish()) {
+            Object requestBody = body;
+            if (isJsonContentType) {
+                try {
+                    documentContext = JsonPath.parse(body);
+                    requestBody = documentContext.json();
+                } catch (Exception exception) {
+                    requestBody = body;
+                }
+            }
+
+            StackTraceElement elements[] = ex.getStackTrace();
+
+            ErrorQueueContract errorQueueContract = ErrorQueueContract.builder()
+                    .id(UUID.randomUUID().toString())
+                    .correlationId(MDC.get(CORRELATION_ID_MDC))
+                    .body(requestBody)
+                    .source(source)
+                    .ts(new Date().getTime())
+                    .exception(Arrays.asList(elements))
+                    .message(ex.getMessage())
+                    .build();
+
+            errorQueueProducer.sendMessage(errorQueueContract);
+        }
+
+    }
+
+    void sendErrorMessage(String body, Exception ex, String source, ErrorRes errorRes, boolean isJsonContentType) {
+        DocumentContext documentContext;
 
         if (tracerProperties.isErrorsPublish()) {
             Object requestBody = body;
