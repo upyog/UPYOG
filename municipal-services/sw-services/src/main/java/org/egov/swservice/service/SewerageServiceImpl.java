@@ -128,11 +128,11 @@ public class SewerageServiceImpl implements SewerageService {
 		        }
 		    }
 		}
-		else if (sewerageConnectionRequest.isReconnectRequest()) {
+		 if (sewerageConnectionRequest.isReconnectRequest()) {
 			reqType = SWConstants.RECONNECTION;
 			validateReconnectionRequest(sewerageConnectionRequest);
 		}
-		else if (sewerageServicesUtil.isModifyConnectionRequest(sewerageConnectionRequest)&& !isMigration) {
+		else if (sewerageServicesUtil.isModifyConnectionRequest(sewerageConnectionRequest)) {
 			List<SewerageConnection> prevSewerageConnectionList = getAllSewerageApplications(sewerageConnectionRequest);
 			/*
 			 * if (prevSewerageConnectionList.size() > 0) { for (SewerageConnection
