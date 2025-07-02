@@ -3,11 +3,7 @@ package org.egov.swagger.model;
 import java.util.Objects;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
-
-
 import java.math.BigDecimal;
-import javax.validation.constraints.*;
 
 /**
  * Collection of audit related fields used by most models
