@@ -575,6 +575,8 @@ public class GarbageAccountService {
 		newGarbageAccount.setId(existingGarbageAccount.getId());
 		newGarbageAccount.setGarbageId(existingGarbageAccount.getGarbageId());
 		newGarbageAccount.setBusinessService(existingGarbageAccount.getBusinessService());
+		newGarbageAccount.setChannel(existingGarbageAccount.getChannel());;
+
 
 		// enrich child accounts
 		if (!CollectionUtils.isEmpty(newGarbageAccount.getChildGarbageAccounts())) {
@@ -601,6 +603,7 @@ public class GarbageAccountService {
 				}
 
 				childAccount.setBusinessService(newGarbageAccount.getBusinessService());
+				childAccount.setChannel(newGarbageAccount.getChannel());
 			});
 		}
 
