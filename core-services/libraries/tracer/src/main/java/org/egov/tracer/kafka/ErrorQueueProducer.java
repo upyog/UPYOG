@@ -27,6 +27,7 @@ public class ErrorQueueProducer {
 
     public void sendMessage(ErrorQueueContract errorQueueContract) {
         try {
+            log.info("Sending message to topic - " + tracerProperties.getErrorsTopic());
             kafkaTemplate.send(tracerProperties.getErrorsTopic(), errorQueueContract);
         } catch (SerializationException serializationException) {
             log.info("SerializationException exception occurred while sending exception to error queue");
@@ -35,6 +36,22 @@ public class ErrorQueueProducer {
                     (errorQueueContract));
             } catch (JsonProcessingException e) {
                 log.info("exception occurred while converting ErrorQueueContract to json string");
+            }
+        } catch (Exception ex) {
+            log.error("exception occurred while sending exception to error queue");
+        }
+    }
+
+    public void sendErrorDetails(List<ErrorDetailDTO> errorDetailList) {
+        try {
+            log.info("Sending message to topic - " + "error-details-indexer-topic");
+            kafkaTemplate.send(tracerProperties.getErrorDetailsTopic(), errorDetailList);
+        } catch (SerializationException serializationException) {
+            log.info("SerializationException exception occurred while sending exception to error queue");
+            try {
+                kafkaTemplate.send(tracerProperties.getErrorDetailsTopic(), objectMapperFactory.getObjectMapper().writeValueAsString(errorDetailList));
+            } catch (JsonProcessingException e) {
+                log.info("exception occurred while converting error details to json string");
             }
         } catch (Exception ex) {
             log.error("exception occurred while sending exception to error queue");
