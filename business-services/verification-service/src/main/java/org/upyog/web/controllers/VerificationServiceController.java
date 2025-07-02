@@ -1,7 +1,7 @@
 package org.upyog.web.controllers;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,29 +15,32 @@ import org.upyog.service.CommonService;
 import org.upyog.web.models.CommonDetails;
 import org.upyog.web.models.CommonModuleResponse;
 import org.upyog.web.models.ResponseInfo;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import digit.models.coremodels.RequestInfoWrapper;
-import io.swagger.annotations.ApiParam;
 
-@javax.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2024-12-07T15:40:06.365+05:30")
+@jakarta.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2024-12-07T15:40:06.365+05:30")
 
 @Controller
 @RequestMapping("/validity")
+@Tag(name = "Verification Service", description = "APIs for verification service operations")
 public class VerificationServiceController {
 
 	@Autowired
 	private CommonService commonService;
 
 	@RequestMapping(value = "/_search", method = RequestMethod.POST)
+	@Operation(summary = "Search application details", description = "Retrieve application details by application number and module")
 	public ResponseEntity<CommonModuleResponse> v1RegistrationSearchPost(
 			@RequestBody RequestInfoWrapper requestInfoWrapper,
-			@ApiParam(value = "tenantId") @Valid @RequestParam(value = "tenantId", required = true) String tenantId,
-			@ApiParam(value = "Unique application number to search") @Valid @RequestParam(value = "applicationNumber", required = true) 
+			 @Valid @RequestParam(value = "tenantId", required = true) String tenantId,
+			 @Valid @RequestParam(value = "applicationNumber", required = true)
 			String applicationNumber,
-			@ApiParam(value = "Module name to search") @Valid @RequestParam(value = "moduleName", required = true) String moduleName) {
-		
+			@Valid @RequestParam(value = "moduleName", required = true) String moduleName) {
+
 		CommonDetails commonDetail = commonService.getApplicationCommonDetails(requestInfoWrapper.getRequestInfo(),moduleName,applicationNumber,tenantId);
 		CommonModuleResponse response = CommonModuleResponse.builder().commonDetail(commonDetail)
 				.responseInfo(new ResponseInfo())

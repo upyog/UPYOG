@@ -1,8 +1,10 @@
 package digit.web.controllers;
 
-import org.junit.Test;
-import org.junit.Ignore;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.upyog.web.controllers.VerificationServiceController;
@@ -22,16 +24,15 @@ import digit.TestConfiguration;
     import java.util.List;
     import java.util.Map;
 
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.when;
+
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
 * API tests for VerificationServiceController
 */
-@Ignore
-@RunWith(SpringRunner.class)
+@Disabled
+@ExtendWith(SpringExtension.class)
 @WebMvcTest(VerificationServiceController.class)
 @Import(TestConfiguration.class)
 public class V1ApiControllerTest {

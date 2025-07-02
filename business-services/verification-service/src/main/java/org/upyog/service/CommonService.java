@@ -1,6 +1,6 @@
 package org.upyog.service;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 
 import org.egov.common.contract.request.RequestInfo;
 import org.upyog.web.models.CommonDetails;

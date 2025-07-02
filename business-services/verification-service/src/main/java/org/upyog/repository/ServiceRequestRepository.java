@@ -11,6 +11,7 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Map;
+import static org.apache.kafka.common.requests.DeleteAclsResponse.log;
 
 @Repository
 @Slf4j
