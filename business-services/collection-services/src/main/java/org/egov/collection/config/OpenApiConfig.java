@@ -19,6 +19,6 @@ public class OpenApiConfig {
                 .info(new Info()
                         .title("Collection Service API")
                         .description("API details of the Collection service")
-                        .version("1.6"));
+                        .version("2.0.0"));
     }
 }
