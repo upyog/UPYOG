@@ -575,6 +575,8 @@ public class GarbageAccountService {
 		newGarbageAccount.setId(existingGarbageAccount.getId());
 		newGarbageAccount.setGarbageId(existingGarbageAccount.getGarbageId());
 		newGarbageAccount.setBusinessService(existingGarbageAccount.getBusinessService());
+		newGarbageAccount.setChannel(existingGarbageAccount.getChannel());;
+
 
 		// enrich child accounts
 		if (!CollectionUtils.isEmpty(newGarbageAccount.getChildGarbageAccounts())) {
@@ -594,6 +596,8 @@ public class GarbageAccountService {
 							.createdDate(matchingChildAccount.get().getAuditDetails().getCreatedDate())
 							.lastModifiedBy(auditDetails.getLastModifiedBy())
 							.lastModifiedDate(auditDetails.getLastModifiedDate()).build());
+					childAccount.setChannel(matchingChildAccount.get().getChannel());
+
 				} else {
 					// create case
 					childAccount.setAuditDetails(AuditDetails.builder().createdBy(auditDetails.getCreatedBy())
