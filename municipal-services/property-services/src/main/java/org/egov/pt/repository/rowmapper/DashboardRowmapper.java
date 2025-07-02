@@ -1,6 +1,7 @@
 package org.egov.pt.repository.rowmapper;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
@@ -30,9 +31,11 @@ public class DashboardRowmapper implements ResultSetExtractor<List<WardwithTanen
 			BigDecimal todayrebategiven=hasColumn(rs, "todayrebategiven")?rs.getBigDecimal("todayrebategiven"):BigDecimal.ZERO;
 			BigDecimal todaypenaltycollection=hasColumn(rs, "todaypenaltycollection")?rs.getBigDecimal("todaypenaltycollection"):BigDecimal.ZERO;
 			BigDecimal todayinterestcollection=hasColumn(rs, "todayinterestcollection")?rs.getBigDecimal("todayinterestcollection"):BigDecimal.ZERO;
+			BigDecimal totalpropertytaxamountpaid=hasColumn(rs, "totalpropertytaxamountpaid")?rs.getBigDecimal("totalpropertytaxamountpaid"):BigDecimal.ZERO;
 			wardwithtanent.add(WardwithTanent.builder().count(count).WardNo(wardNo).Tanentid(tenantid).Action(action)
 					.Financiyalyear(financiyalyear).Usagecategory(usagecategory).TodaysCollection(todayscollection)
-					.Todayrebategiven(todayrebategiven).Todaypenaltycollection(todaypenaltycollection).Todayinterestcollection(todayinterestcollection).build());
+					.Todayrebategiven(todayrebategiven).Todaypenaltycollection(todaypenaltycollection)
+					.Todayinterestcollection(todayinterestcollection).Totalpropertytaxamountpaid(totalpropertytaxamountpaid).build());
 		}
 		return wardwithtanent;
 	}

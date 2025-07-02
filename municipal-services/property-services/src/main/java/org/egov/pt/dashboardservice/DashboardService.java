@@ -77,7 +77,7 @@ public class DashboardService {
 
     public Map<String, String> wardWithPropertyCount() {
         return buildMap(propertyRepository.getTotalpropertyCount(),
-                v -> v.getUsagecategory() + ":" + v.getCount());
+                v -> v.getUsagecategory() + ":" + v.getTotalpropertytaxamountpaid());
     }
 
     public Map<String, String> wardWithRebateGiven() {
