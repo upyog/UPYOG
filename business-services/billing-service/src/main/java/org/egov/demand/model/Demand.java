@@ -9,11 +9,10 @@ import lombok.Builder.Default;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.egov.demand.web.contract.User;
-import org.hibernate.validator.constraints.SafeHtml;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,26 +27,21 @@ import java.util.List;
 @Builder
 public class Demand {
 
-    @SafeHtml
     @JsonProperty("id")
     private String id;
 
-    @SafeHtml
     @NotNull
     @JsonProperty("tenantId")
     private String tenantId;
 
-    @SafeHtml
     @NotNull
     @JsonProperty("consumerCode")
     private String consumerCode;
 
-    @SafeHtml
     @NotNull
     @JsonProperty("consumerType")
     private String consumerType;
 
-    @SafeHtml
     @NotNull
     @JsonProperty("businessService")
     private String businessService;

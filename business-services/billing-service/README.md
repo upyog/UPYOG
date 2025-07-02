@@ -40,3 +40,6 @@ producers are disabled currently
 kafka.topics.save.demand=save-demand
 kafka.topics.update.demand=update-demand
 
+### Swagger URL
+
+http://localhost:8081/billing-service/swagger-ui/index.html

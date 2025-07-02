@@ -39,7 +39,7 @@
  */
 package org.egov.demand.web.controller;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 
 import org.egov.demand.service.TaxPeriodService;
 import org.egov.demand.web.contract.RequestInfoWrapper;

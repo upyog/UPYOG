@@ -42,7 +42,7 @@ package org.egov.demand.web.controller;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 
 import org.egov.common.contract.response.ResponseInfo;
 import org.egov.demand.amendment.model.Amendment;
@@ -112,7 +112,7 @@ public class AmendmentController {
 	public ResponseEntity<?> update(@RequestBody @Valid AmendmentUpdateRequest amendmentUpdateRequest) {
 
 		Amendment amendment = amendmentService.updateAmendment(amendmentUpdateRequest);
-		
+
 		ResponseInfo responseInfo = responseFactory.getResponseInfo(amendmentUpdateRequest.getRequestInfo(), HttpStatus.OK);
 		AmendmentResponse amendmentResponse = AmendmentResponse.builder()
 				.amendments(Arrays.asList(amendment))
