@@ -109,6 +109,8 @@
     "**/babel-loader": "8.2.2",
     "**/@babel/core": "7.14.0",
     "**/@babel/preset-env": "7.14.0",
-    "**/@babel/plugin-transform-modules-commonjs": "7.14.0"
+    "**/@babel/plugin-transform-modules-commonjs": "7.14.0",
+    "minimatch": "9.0.3",
+    "glob":"10.4.5"
   }
 }
