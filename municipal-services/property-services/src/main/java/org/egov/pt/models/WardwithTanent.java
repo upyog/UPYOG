@@ -1,6 +1,7 @@
 package org.egov.pt.models;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 
 import lombok.Builder;
 import lombok.Data;
@@ -18,4 +19,5 @@ public class WardwithTanent {
 	BigDecimal Todayrebategiven;
 	BigDecimal Todaypenaltycollection;
 	BigDecimal Todayinterestcollection;
+	BigDecimal Totalpropertytaxamountpaid;
 }

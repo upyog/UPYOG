@@ -6,6 +6,7 @@
 package org.egov.finance.report.util;
 
 import java.beans.PropertyDescriptor;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -163,13 +164,21 @@ public class CommonUtils {
 	    }
 
 	
-	public  String getFormattedDate(Date date, String pattern) {
+	public String getFormattedDate(Date date, String pattern) {
 	    if (date == null || pattern == null) {
 	        return "";
 	    }
 	    DateTimeFormatter formatter = DateTimeFormatter.ofPattern(pattern);
-	    LocalDateTime localDateTime = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
-	    return formatter.format(localDateTime);
+
+	    if (date instanceof java.sql.Date) {
+	        LocalDate localDate = ((java.sql.Date) date).toLocalDate();
+	        return formatter.format(localDate);
+	    } else {
+	        LocalDateTime localDateTime = date.toInstant()
+	                                          .atZone(ZoneId.systemDefault())
+	                                          .toLocalDateTime();
+	        return formatter.format(localDateTime);
+	    }
 	}
 	
 	public String removeSpecialCharacters(final String str) {
