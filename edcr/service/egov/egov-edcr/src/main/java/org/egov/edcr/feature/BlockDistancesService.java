@@ -55,18 +55,22 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.egov.common.constants.MdmsFeatureConstants;
 import org.egov.common.entity.edcr.Block;
 import org.egov.common.entity.edcr.BlockDistances;
+import org.egov.common.entity.edcr.MdmsFeatureRule;
 import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.Result;
+import org.egov.common.entity.edcr.RuleKey;
 import org.egov.common.entity.edcr.ScrutinyDetail;
 import org.egov.common.entity.edcr.SetBack;
 import org.egov.edcr.constants.DxfFileConstants;
 import org.egov.edcr.constants.EdcrRulesMdmsConstants;
+import org.egov.edcr.service.CacheManagerMdms;
 import org.egov.edcr.service.FetchEdcrRulesMdms;
 import org.egov.edcr.utility.DcrConstants;
 import org.egov.infra.utils.StringUtils;
@@ -96,6 +100,10 @@ public class BlockDistancesService extends FeatureProcess {
 
     @Autowired
     FetchEdcrRulesMdms fetchEdcrRulesMdms;
+    
+    @Autowired
+	CacheManagerMdms cache;
+	
 
     /**
      * Validates the given plan object.
@@ -272,32 +280,56 @@ public class BlockDistancesService extends FeatureProcess {
         BigDecimal blockDistanceServiceValue = BigDecimal.ZERO;
 
         // Fetch permissible values for block distances
-        String occupancyName = null;
+//        String occupancyName = null;
+//        String feature = MdmsFeatureConstants.BLOCK_DISTANCES_SERVICE;
+//        Map<String, Object> params = new HashMap<>();
+//        if (DxfFileConstants.A.equals(pl.getVirtualBuilding().getMostRestrictiveFarHelper().getType().getCode())) {
+//            occupancyName = "Residential";
+//        }
+//        params.put("feature", feature);
+//        params.put("occupancy", occupancyName);
+//
+//        Map<String, List<Map<String, Object>>> edcrRuleList = pl.getEdcrRulesFeatures();
+//        ArrayList<String> valueFromColumn = new ArrayList<>();
+//        valueFromColumn.add(EdcrRulesMdmsConstants.PERMISSIBLE_VALUE);
+//
+//        List<Map<String, Object>> permissibleValue = new ArrayList<>();
+//        try {
+//            permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
+//            LOG.info("permissibleValue" + permissibleValue);
+//        } catch (NullPointerException e) {
+//            LOG.error("Permissible Value for BlockDistancesService not found--------", e);
+//        }
+//
+//        if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey(EdcrRulesMdmsConstants.PERMISSIBLE_VALUE)) {
+//            blockDistanceServiceValue = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.PERMISSIBLE_VALUE).toString()));
+//        } else {
+//            blockDistanceServiceValue = BigDecimal.ZERO;
+//        }
+//        
+       
+        
         String feature = MdmsFeatureConstants.BLOCK_DISTANCES_SERVICE;
-        Map<String, Object> params = new HashMap<>();
-        if (DxfFileConstants.A.equals(pl.getVirtualBuilding().getMostRestrictiveFarHelper().getType().getCode())) {
-            occupancyName = "Residential";
-        }
-        params.put("feature", feature);
-        params.put("occupancy", occupancyName);
+        String occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl).toLowerCase();
+        String tenantId = pl.getTenantId();
+        String zone = pl.getPlanInformation().getZone();
+        String subZone = pl.getPlanInformation().getSubZone();
+        
+        RuleKey key = new RuleKey(EdcrRulesMdmsConstants.STATE, tenantId, zone, subZone, occupancyName, null, feature);
+        List<Object> rules = cache.getRules(tenantId, key);
+		
+        Optional<MdmsFeatureRule> matchedRule = rules.stream()
+        	    .map(obj -> (MdmsFeatureRule) obj)
+        	    .findFirst();
 
-        Map<String, List<Map<String, Object>>> edcrRuleList = pl.getEdcrRulesFeatures();
-        ArrayList<String> valueFromColumn = new ArrayList<>();
-        valueFromColumn.add(EdcrRulesMdmsConstants.PERMISSIBLE_VALUE);
+        	if (matchedRule.isPresent()) {
+        	    MdmsFeatureRule rule = matchedRule.get();
+        	    blockDistanceServiceValue = rule.getPermissible();
+        	} else {
+        	    blockDistanceServiceValue = BigDecimal.ZERO;
+        	}
 
-        List<Map<String, Object>> permissibleValue = new ArrayList<>();
-        try {
-            permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
-            LOG.info("permissibleValue" + permissibleValue);
-        } catch (NullPointerException e) {
-            LOG.error("Permissible Value for BlockDistancesService not found--------", e);
-        }
 
-        if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey(EdcrRulesMdmsConstants.PERMISSIBLE_VALUE)) {
-            blockDistanceServiceValue = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.PERMISSIBLE_VALUE).toString()));
-        } else {
-            blockDistanceServiceValue = BigDecimal.ZERO;
-        }
 
         ArrayList<BigDecimal> setBacksValues = new ArrayList<>();
         setBacksValues.add(blockDistanceServiceValue);

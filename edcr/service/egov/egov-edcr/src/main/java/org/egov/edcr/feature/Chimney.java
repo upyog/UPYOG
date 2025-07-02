@@ -54,16 +54,20 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 import org.egov.common.constants.MdmsFeatureConstants;
 import org.egov.common.entity.edcr.Block;
+import org.egov.common.entity.edcr.MdmsFeatureRule;
 import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.Result;
+import org.egov.common.entity.edcr.RuleKey;
 import org.egov.common.entity.edcr.ScrutinyDetail;
 import org.egov.edcr.constants.DxfFileConstants;
 import org.egov.edcr.constants.EdcrRulesMdmsConstants;
+import org.egov.edcr.service.CacheManagerMdms;
 import org.egov.edcr.service.FetchEdcrRulesMdms;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -83,6 +87,9 @@ public class Chimney extends FeatureProcess {
 
     @Autowired
     FetchEdcrRulesMdms fetchEdcrRulesMdms;
+    
+    @Autowired
+	CacheManagerMdms cache;
 
     /**
      * Validates the given plan object.
@@ -123,29 +130,50 @@ public class Chimney extends FeatureProcess {
         BigDecimal chimneyVerifiedHeight = BigDecimal.ZERO;
 
         // Determine the occupancy type and feature for fetching permissible values
-        String occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl);
-        String feature = MdmsFeatureConstants.CHIMNEY;
+      
+       
 
-        Map<String, Object> params = new HashMap<>();
+//        Map<String, Object> params = new HashMap<>();
+//        
+//
+//        params.put("feature", feature);
+//        params.put("occupancy", occupancyName);
+//
+//        // Fetch permissible values for chimney height
+//        Map<String, List<Map<String, Object>>> edcrRuleList = pl.getEdcrRulesFeatures();
+//        ArrayList<String> valueFromColumn = new ArrayList<>();
+//        valueFromColumn.add(EdcrRulesMdmsConstants.PERMISSIBLE_VALUE);
+//
+//        List<Map<String, Object>> permissibleValue = new ArrayList<>();
+//        permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
+//        LOG.info("permissibleValue" + permissibleValue);
+//
+//        if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey(EdcrRulesMdmsConstants.PERMISSIBLE_VALUE)) {
+//            chimneyVerifiedHeight = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.PERMISSIBLE_VALUE).toString()));
+//        } else {
+//            chimneyVerifiedHeight = BigDecimal.ZERO;
+//        }
         
+        String feature = MdmsFeatureConstants.CHIMNEY;
+        String occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl).toLowerCase();
+        String tenantId = pl.getTenantId();
+        String zone = pl.getPlanInformation().getZone();
+        String subZone = pl.getPlanInformation().getSubZone();
+        
+        RuleKey key = new RuleKey(EdcrRulesMdmsConstants.STATE, tenantId, zone, subZone, occupancyName, null, feature);
+        List<Object> rules = cache.getRules(tenantId, key);
+		
+        Optional<MdmsFeatureRule> matchedRule = rules.stream()
+        	    .map(obj -> (MdmsFeatureRule) obj)
+        	    .findFirst();
 
-        params.put("feature", feature);
-        params.put("occupancy", occupancyName);
+        	if (matchedRule.isPresent()) {
+        	    MdmsFeatureRule rule = matchedRule.get();
+        	    chimneyVerifiedHeight = rule.getPermissible();
+        	} else {
+        		chimneyVerifiedHeight = BigDecimal.ZERO;
+        	}
 
-        // Fetch permissible values for chimney height
-        Map<String, List<Map<String, Object>>> edcrRuleList = pl.getEdcrRulesFeatures();
-        ArrayList<String> valueFromColumn = new ArrayList<>();
-        valueFromColumn.add(EdcrRulesMdmsConstants.PERMISSIBLE_VALUE);
-
-        List<Map<String, Object>> permissibleValue = new ArrayList<>();
-        permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
-        LOG.info("permissibleValue" + permissibleValue);
-
-        if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey(EdcrRulesMdmsConstants.PERMISSIBLE_VALUE)) {
-            chimneyVerifiedHeight = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.PERMISSIBLE_VALUE).toString()));
-        } else {
-            chimneyVerifiedHeight = BigDecimal.ZERO;
-        }
 
         // Iterate through all blocks in the plan
         for (Block b : pl.getBlocks()) {

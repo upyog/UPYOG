@@ -54,19 +54,22 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.egov.common.constants.MdmsFeatureConstants;
 import org.egov.common.entity.edcr.Block;
 import org.egov.common.entity.edcr.Floor;
+import org.egov.common.entity.edcr.MdmsFeatureRule;
 import org.egov.common.entity.edcr.Measurement;
 import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.Result;
 import org.egov.common.entity.edcr.RoomHeight;
+import org.egov.common.entity.edcr.RuleKey;
 import org.egov.common.entity.edcr.ScrutinyDetail;
-import org.egov.edcr.constants.DxfFileConstants;
 import org.egov.edcr.constants.EdcrRulesMdmsConstants;
+import org.egov.edcr.service.CacheManagerMdms;
 import org.egov.edcr.service.FetchEdcrRulesMdms;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -99,6 +102,9 @@ public class BathRoomWaterClosets_Citya extends FeatureProcess {
 
     @Autowired
     FetchEdcrRulesMdms fetchEdcrRulesMdms;
+    
+    @Autowired
+	CacheManagerMdms cache;
 
     /**
      * This method processes the plan to validate bathroom water closets dimensions
@@ -131,37 +137,58 @@ public class BathRoomWaterClosets_Citya extends FeatureProcess {
         BigDecimal bathroomWCRequiredHeight = BigDecimal.ZERO;
 
         // Determine the occupancy type and feature for fetching permissible values
-        String occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl);
-        String feature = MdmsFeatureConstants.BATHROOM_WATER_CLOSETS;
-
-        Map<String, Object> params = new HashMap<>();
-        
-        params.put("feature", feature);
-        params.put("occupancy", occupancyName);
-
-        // Fetch permissible values for bathroom water closets dimensions
-        Map<String, List<Map<String, Object>>> edcrRuleList = pl.getEdcrRulesFeatures();
-        ArrayList<String> valueFromColumn = new ArrayList<>();
-        valueFromColumn.add(EdcrRulesMdmsConstants.BATHROOM_WC_REQUIRED_AREA);
-        valueFromColumn.add(EdcrRulesMdmsConstants.BATHROOM_WC_REQUIRED_WIDTH);
-        valueFromColumn.add(EdcrRulesMdmsConstants.BATHROOM_WC_REQUIRED_HEIGHT);
+       
+//
+//        Map<String, Object> params = new HashMap<>();
+//        
+//        params.put("feature", feature);
+//        params.put("occupancy", occupancyName);
+//
+//        // Fetch permissible values for bathroom water closets dimensions
+//        Map<String, List<Map<String, Object>>> edcrRuleList = pl.getEdcrRulesFeatures();
+//        ArrayList<String> valueFromColumn = new ArrayList<>();
+//        valueFromColumn.add(EdcrRulesMdmsConstants.BATHROOM_WC_REQUIRED_AREA);
+//        valueFromColumn.add(EdcrRulesMdmsConstants.BATHROOM_WC_REQUIRED_WIDTH);
+//        valueFromColumn.add(EdcrRulesMdmsConstants.BATHROOM_WC_REQUIRED_HEIGHT);
 
         List<Map<String, Object>> permissibleValue = new ArrayList<>();
 
-        try {
-            permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
-            LOG.info("permissibleValue" + permissibleValue);
-        } catch (NullPointerException e) {
-            LOG.error("Permissible Value for BathroomWaterClosets not found--------", e);
-            return null;
-        }
+//        try {
+//            permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
+//            LOG.info("permissibleValue" + permissibleValue);
+//        } catch (NullPointerException e) {
+//            LOG.error("Permissible Value for BathroomWaterClosets not found--------", e);
+//            return null;
+//        }
+        
+        String occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl).toLowerCase();
+        String feature = MdmsFeatureConstants.BATHROOM_WATER_CLOSETS;
+        String tenantId = pl.getTenantId();
+        String zone = pl.getPlanInformation().getZone();
+        String subZone = pl.getPlanInformation().getSubZone();
+        
+        RuleKey key = new RuleKey(EdcrRulesMdmsConstants.STATE, tenantId, zone, subZone, occupancyName, null, feature);
+        List<Object> rules = cache.getRules(tenantId, key);
+		
+		Optional<MdmsFeatureRule> matchedRule = rules.stream()
+			    .map(obj -> (MdmsFeatureRule) obj)
+			    .findFirst();
 
-        // Extract permissible values if available
-        if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey(EdcrRulesMdmsConstants.BATHROOM_WC_REQUIRED_AREA)) {
-            bathroomWCRequiredArea = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.BATHROOM_WC_REQUIRED_AREA).toString()));
-            bathroomWCRequiredWidth = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.BATHROOM_WC_REQUIRED_WIDTH).toString()));
-            bathroomWCRequiredHeight = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.BATHROOM_WC_REQUIRED_HEIGHT).toString()));
-        }
+			if (matchedRule.isPresent()) {
+			    MdmsFeatureRule rule = matchedRule.get();
+			    bathroomWCRequiredArea = rule.getBathroomWCRequiredArea();
+			    bathroomWCRequiredWidth = rule.getBathroomWCRequiredWidth();
+			    bathroomWCRequiredHeight = rule.getBathroomWCRequiredHeight();
+			}
+
+		
+		
+//        // Extract permissible values if available
+//        if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey(EdcrRulesMdmsConstants.BATHROOM_WC_REQUIRED_AREA)) {
+//            bathroomWCRequiredArea = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.BATHROOM_WC_REQUIRED_AREA).toString()));
+//            bathroomWCRequiredWidth = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.BATHROOM_WC_REQUIRED_WIDTH).toString()));
+//            bathroomWCRequiredHeight = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.BATHROOM_WC_REQUIRED_HEIGHT).toString()));
+//        }
 
         // Iterate through all blocks in the plan
         for (Block b : pl.getBlocks()) {

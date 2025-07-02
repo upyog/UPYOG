@@ -112,6 +112,9 @@ public class PlanInformation implements Serializable {
     private String revenueWard;
     //Extracted from Plan info. Desam name declared in the plan
     private String desam;
+    
+    private String zone;
+    private String subZone;
     //Extracted from Plan info. Village name declared in the plan
     private String village;
     //Extracted from Plan info. Land Use zone. The value should be standard like RESIDENTIAL,COMMERCIAL,INDUSTRIAL,PUBLICANDSEMIPUBLIC etc.
@@ -199,6 +202,23 @@ public class PlanInformation implements Serializable {
 		this.khasraNo = khasraNo;
 	}
 	
+	
+	 public String getZone() {
+			return zone;
+		}
+
+		public void setZone(String zone) {
+			this.zone = zone;
+		}
+		
+		 public String getSubZone() {
+				return subZone;
+			}
+
+			public void setSubZone(String subZone) {
+				this.subZone = subZone;
+			}	
+		
 	//Extracted from Plan info.Khatuni number.
 	 private String khatuniNo;
 	 

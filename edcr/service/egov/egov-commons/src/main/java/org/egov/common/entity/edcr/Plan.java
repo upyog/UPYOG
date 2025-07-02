@@ -193,6 +193,37 @@ public class Plan implements Serializable {
 	public void setEdcrRulesFeatures(Map<String, List<Map<String, Object>>> edcrRulesFeatures) {
 		this.edcrRulesFeatures = edcrRulesFeatures;
 	}
+	
+    private  Map<String, List<Map<String, Object>>> edcrStateRulesFeatures;
+	    
+	    public Map<String, List<Map<String, Object>>> getEdcrStateRulesFeatures() {
+			return edcrStateRulesFeatures;
+		}
+
+		public void setEdcrStateRulesFeatures(Map<String, List<Map<String, Object>>> edcrStateRulesFeatures) {
+			this.edcrStateRulesFeatures = edcrStateRulesFeatures;
+		}
+		
+		 private  Map<String, List<Map<String, Object>>> edcrCityRulesFeatures;
+		    
+		    public Map<String, List<Map<String, Object>>> getEdcrCityRulesFeatures() {
+				return edcrCityRulesFeatures;
+			}
+
+			public void setEdcrCityRulesFeatures(Map<String, List<Map<String, Object>>> edcrCityRulesFeatures) {
+				this.edcrCityRulesFeatures = edcrCityRulesFeatures;
+			}
+			
+			 private  List<Map<String, Object>> masterConfig;
+			    
+			    public List<Map<String, Object>> getMasterConfig() {
+					return masterConfig;
+				}
+
+				public void setMasterConfig(List<Map<String, Object>> masterConfig) {
+					this.masterConfig = masterConfig;
+				}
+			
 
 	
     // Guard room details
@@ -220,6 +251,8 @@ public class Plan implements Serializable {
     private String dxfFileName;
 
     private List<EdcrPdfDetail> edcrPdfDetails;
+    
+    private String tenantId;
 
     @Transient
     private Boolean strictlyValidateDimension = false;
@@ -517,6 +550,15 @@ public class Plan implements Serializable {
     public void setDxfFileName(String dxfFileName) {
         this.dxfFileName = dxfFileName;
     }
+    
+    public String getTenantId() {
+        return tenantId;
+    }
+
+    public void setTenantId(String tenantId) {
+        this.tenantId = tenantId;
+    }
+
 
     public List<EdcrPdfDetail> getEdcrPdfDetails() {
         return edcrPdfDetails;
@@ -702,5 +744,14 @@ public class Plan implements Serializable {
         this.coreArea = coreArea;
     }
 
+    private List<EdcrMasterConfig> edcrMasterConfig;
+
+    public List<EdcrMasterConfig> getEdcrMasterConfig() {
+        return edcrMasterConfig;
+    }
+
+    public void setEdcrMasterConfig(List<EdcrMasterConfig> edcrMasterConfig) {
+        this.edcrMasterConfig = edcrMasterConfig;
+    }
 
 }

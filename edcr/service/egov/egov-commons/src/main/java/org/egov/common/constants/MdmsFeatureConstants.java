@@ -72,6 +72,7 @@ public class MdmsFeatureConstants {
     public static final String WATER_TANK_CAPACITY = "WaterTankCapacity";
     public static final String SANITATION = "Sanitation";
     public static final String SIDE_YARD_SERVICE = "SideYardService";
+    public static final String EDCR_MASTER_CONFIG = "EdcrMasterConfig";
 
     // Private constructor to prevent instantiation
     private MdmsFeatureConstants() {

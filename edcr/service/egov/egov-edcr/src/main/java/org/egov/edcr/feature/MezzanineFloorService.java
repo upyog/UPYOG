@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -22,12 +23,15 @@ import org.egov.common.entity.edcr.Balcony;
 import org.egov.common.entity.edcr.Block;
 import org.egov.common.entity.edcr.Floor;
 import org.egov.common.entity.edcr.Hall;
+import org.egov.common.entity.edcr.MdmsFeatureRule;
 import org.egov.common.entity.edcr.Occupancy;
 import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.Result;
+import org.egov.common.entity.edcr.RuleKey;
 import org.egov.common.entity.edcr.ScrutinyDetail;
 import org.egov.edcr.constants.DxfFileConstants;
 import org.egov.edcr.constants.EdcrRulesMdmsConstants;
+import org.egov.edcr.service.CacheManagerMdms;
 import org.egov.edcr.service.FetchEdcrRulesMdms;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -46,6 +50,11 @@ public class MezzanineFloorService extends FeatureProcess {
 
     @Autowired
     FetchEdcrRulesMdms fetchEdcrRulesMdms;
+    
+    @Autowired
+	CacheManagerMdms cache;
+	
+	
 
     /**
      * Validates the given plan object.
@@ -80,32 +89,49 @@ public class MezzanineFloorService extends FeatureProcess {
 
         if (pl != null && !pl.getBlocks().isEmpty()) {
             // Determine the occupancy type and feature for fetching permissible values
-        	String occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl);
+        	String occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl).toLowerCase();
             String feature = MdmsFeatureConstants.MEZZANINE_FLOOR_SERVICE;
 
-            Map<String, Object> params = new HashMap<>();
+//            Map<String, Object> params = new HashMap<>();
+//           
+//            params.put("feature", feature);
+//            params.put("occupancy", occupancyName);
+//
+//            // Fetch permissible values for mezzanine floor
+//            Map<String, List<Map<String, Object>>> edcrRuleList = pl.getEdcrRulesFeatures();
+//            ArrayList<String> valueFromColumn = new ArrayList<>();
+//            valueFromColumn.add(EdcrRulesMdmsConstants.MEZZANINE_AREA);
+//            valueFromColumn.add(EdcrRulesMdmsConstants.MEZZANINE_HEIGHT);
+//            valueFromColumn.add(EdcrRulesMdmsConstants.MEZZANINE_BUILT_UP_AREA);
+
+//   			List<Map<String, Object>> permissibleValue = new ArrayList<>();
+//   		
+//   			
+//   				permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
+//            LOG.info("permissibleValue" + permissibleValue);
+//            
+            String tenantId = pl.getTenantId();
+//            String zone = pl.getPl
+            RuleKey key = new RuleKey(EdcrRulesMdmsConstants.STATE, tenantId, "x", "y", occupancyName, null, feature);
+            List<Object> rules = cache.getRules(tenantId, key);
+    		
+    		Optional<MdmsFeatureRule> matchedRule = rules.stream()
+    			    .map(obj -> (MdmsFeatureRule) obj)
+    			    .findFirst();
+
+    			if (matchedRule.isPresent()) {
+    			    MdmsFeatureRule rule = matchedRule.get();
+    			    mezzanineArea = rule.getMezzanineArea();
+    			    mezzanineHeight = rule.getMezzanineHeight();
+    			    mezzanineBuiltUpArea = rule.getMezzanineBuiltUpArea();
+    			}
            
-            params.put("feature", feature);
-            params.put("occupancy", occupancyName);
 
-            // Fetch permissible values for mezzanine floor
-            Map<String, List<Map<String, Object>>> edcrRuleList = pl.getEdcrRulesFeatures();
-            ArrayList<String> valueFromColumn = new ArrayList<>();
-            valueFromColumn.add(EdcrRulesMdmsConstants.MEZZANINE_AREA);
-            valueFromColumn.add(EdcrRulesMdmsConstants.MEZZANINE_HEIGHT);
-            valueFromColumn.add(EdcrRulesMdmsConstants.MEZZANINE_BUILT_UP_AREA);
-
-   			List<Map<String, Object>> permissibleValue = new ArrayList<>();
-   		
-   			
-   				permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
-            LOG.info("permissibleValue" + permissibleValue);
-
-            if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey(EdcrRulesMdmsConstants.MEZZANINE_AREA)) {
-                mezzanineArea = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.MEZZANINE_AREA).toString()));
-                mezzanineHeight = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.MEZZANINE_HEIGHT).toString()));
-                mezzanineBuiltUpArea = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.MEZZANINE_BUILT_UP_AREA).toString()));
-            }
+//            if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey(EdcrRulesMdmsConstants.MEZZANINE_AREA)) {
+//                mezzanineArea = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.MEZZANINE_AREA).toString()));
+//                mezzanineHeight = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.MEZZANINE_HEIGHT).toString()));
+//                mezzanineBuiltUpArea = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.MEZZANINE_BUILT_UP_AREA).toString()));
+//            }
 
             // Iterate through all blocks in the plan
             for (Block block : pl.getBlocks()) {

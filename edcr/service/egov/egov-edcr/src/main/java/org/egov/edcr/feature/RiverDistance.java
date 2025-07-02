@@ -54,17 +54,21 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.egov.common.constants.MdmsFeatureConstants;
+import org.egov.common.entity.edcr.MdmsFeatureRule;
 import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.Result;
 import org.egov.common.entity.edcr.River;
+import org.egov.common.entity.edcr.RuleKey;
 import org.egov.common.entity.edcr.ScrutinyDetail;
 import org.egov.edcr.constants.DxfFileConstants;
 import org.egov.edcr.constants.EdcrRulesMdmsConstants;
+import org.egov.edcr.service.CacheManagerMdms;
 import org.egov.edcr.service.FetchEdcrRulesMdms;
 import org.egov.infra.utils.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -95,6 +99,10 @@ public class RiverDistance extends FeatureProcess {
     
     @Autowired
     FetchEdcrRulesMdms fetchEdcrRulesMdms;
+    
+    @Autowired
+	CacheManagerMdms cache;
+	
 
     @Override
     public Plan process(Plan pl) {
@@ -128,38 +136,55 @@ public class RiverDistance extends FeatureProcess {
         List<River> subRiver = new ArrayList<>();
         List<River> rivers = pl.getDistanceToExternalEntity().getRivers();
         
-        String occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl);
+        String occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl).toLowerCase();
 
         // Prepare parameters for rule fetching
         String feature = MdmsFeatureConstants.RIVER_DISTANCE;
         Map<String, Object> params = new HashMap<>();
-
+//
+//        
+//        params.put("feature", feature);
+//        params.put("occupancy", occupancyName);
+//			
+//        Map<String,List<Map<String,Object>>> edcrRuleList = pl.getEdcrRulesFeatures();
+//			
+//        // Keys for rule values to fetch
+//        ArrayList<String> valueFromColumn = new ArrayList<>();
+//        valueFromColumn.add(EdcrRulesMdmsConstants.RD_MIN_DISTANCE_FROM_PROTECTION_WALL);
+//        valueFromColumn.add(EdcrRulesMdmsConstants.RD_MIN_DISTANCE_FROM_EMBANKMENT);
+//        valueFromColumn.add(EdcrRulesMdmsConstants.RD_MIN_DISTANCE_FROM_MAIN_RIVER_EDGE);
+//        valueFromColumn.add(EdcrRulesMdmsConstants.RD_MIN_DISTANCE_FROM_SUB_RIVER);
+//
+//        List<Map<String, Object>> permissibleValue = new ArrayList<>();
+//		
+//        // Fetch permissible values from MDMS
+//        permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
+//        LOG.info("permissibleValue" + permissibleValue);
+//
+//        // Extract permissible distance values
+//        if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey(EdcrRulesMdmsConstants.RD_MIN_DISTANCE_FROM_PROTECTION_WALL)) {
+//            rDminDistanceFromProtectionWall = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.RD_MIN_DISTANCE_FROM_PROTECTION_WALL).toString()));
+//            rDminDistanceFromEmbankment = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.RD_MIN_DISTANCE_FROM_EMBANKMENT).toString()));
+//            rDminDistanceFromMainRiverEdge = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.RD_MIN_DISTANCE_FROM_MAIN_RIVER_EDGE).toString()));
+//            rDminDistanceFromSubRiver = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.RD_MIN_DISTANCE_FROM_SUB_RIVER).toString()));
+//        }
         
-        params.put("feature", feature);
-        params.put("occupancy", occupancyName);
-			
-        Map<String,List<Map<String,Object>>> edcrRuleList = pl.getEdcrRulesFeatures();
-			
-        // Keys for rule values to fetch
-        ArrayList<String> valueFromColumn = new ArrayList<>();
-        valueFromColumn.add(EdcrRulesMdmsConstants.RD_MIN_DISTANCE_FROM_PROTECTION_WALL);
-        valueFromColumn.add(EdcrRulesMdmsConstants.RD_MIN_DISTANCE_FROM_EMBANKMENT);
-        valueFromColumn.add(EdcrRulesMdmsConstants.RD_MIN_DISTANCE_FROM_MAIN_RIVER_EDGE);
-        valueFromColumn.add(EdcrRulesMdmsConstants.RD_MIN_DISTANCE_FROM_SUB_RIVER);
-
-        List<Map<String, Object>> permissibleValue = new ArrayList<>();
+        String tenantId = pl.getTenantId();
+        RuleKey key = new RuleKey(EdcrRulesMdmsConstants.STATE, tenantId, "x", "y", occupancyName, null, feature);
+        List<Object> rules = cache.getRules(tenantId, key);
 		
-        // Fetch permissible values from MDMS
-        permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
-        LOG.info("permissibleValue" + permissibleValue);
+		Optional<MdmsFeatureRule> matchedRule = rules.stream()
+			    .map(obj -> (MdmsFeatureRule) obj)
+			    .findFirst();
 
-        // Extract permissible distance values
-        if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey(EdcrRulesMdmsConstants.RD_MIN_DISTANCE_FROM_PROTECTION_WALL)) {
-            rDminDistanceFromProtectionWall = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.RD_MIN_DISTANCE_FROM_PROTECTION_WALL).toString()));
-            rDminDistanceFromEmbankment = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.RD_MIN_DISTANCE_FROM_EMBANKMENT).toString()));
-            rDminDistanceFromMainRiverEdge = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.RD_MIN_DISTANCE_FROM_MAIN_RIVER_EDGE).toString()));
-            rDminDistanceFromSubRiver = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.RD_MIN_DISTANCE_FROM_SUB_RIVER).toString()));
-        }
+			if (matchedRule.isPresent()) {
+			    MdmsFeatureRule rule = matchedRule.get();
+			    rDminDistanceFromProtectionWall = rule.getrDminDistanceFromProtectionWall();
+			    rDminDistanceFromEmbankment = rule.getrDminDistanceFromEmbankment();
+			    rDminDistanceFromMainRiverEdge = rule.getrDminDistanceFromMainRiverEdge();
+			    rDminDistanceFromSubRiver = rule.getrDminDistanceFromSubRiver();
+			}
+       
 
         // Split rivers into main and sub river lists based on color code
         if (!rivers.isEmpty()) {

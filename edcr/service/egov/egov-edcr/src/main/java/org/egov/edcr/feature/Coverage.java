@@ -48,11 +48,7 @@
 
 package org.egov.edcr.feature;
 
-import static org.egov.edcr.constants.DxfFileConstants.A;
-import static org.egov.edcr.constants.DxfFileConstants.F;
-
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.EnumSet;
 import java.util.HashMap;
@@ -60,20 +56,24 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.egov.common.entity.edcr.Block;
 import org.egov.common.entity.edcr.Floor;
+import org.egov.common.entity.edcr.MdmsFeatureRule;
 import org.egov.common.entity.edcr.Measurement;
 import org.egov.common.entity.edcr.Occupancy;
 import org.egov.common.entity.edcr.OccupancyType;
 import org.egov.common.entity.edcr.OccupancyTypeHelper;
 import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.Result;
+import org.egov.common.entity.edcr.RuleKey;
 import org.egov.common.entity.edcr.ScrutinyDetail;
-import org.egov.edcr.service.EdcrRestService;
+import org.egov.edcr.constants.EdcrRulesMdmsConstants;
+import org.egov.edcr.service.CacheManagerMdms;
 import org.egov.edcr.service.FetchEdcrRulesMdms;
 import org.egov.edcr.utility.DcrConstants;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -92,9 +92,12 @@ public class Coverage extends FeatureProcess {
 	
 	@Autowired
 	FetchEdcrRulesMdms fetchEdcrRulesMdms;
+	
+	 @Autowired
+	CacheManagerMdms cache;
 //	private static final BigDecimal Thirty = BigDecimal.valueOf(30);
 //	private static final BigDecimal ThirtyFive = BigDecimal.valueOf(35);
-//	private static final BigDecimal Forty = BigDecimal.valueOf(40);
+//	private static final BigDeci mal Forty = BigDecimal.valueOf(40);
 
 	/*
 	 * private static final BigDecimal FortyFive = BigDecimal.valueOf(45); private
@@ -198,7 +201,7 @@ public class Coverage extends FeatureProcess {
 //		}
 //		String occupancyType;
 
-		String occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl);
+		String occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl).toLowerCase();
 		String feature = "Coverage";
 		// get coverage permissible value from method and store in
 		// permissibleCoverageValue
@@ -206,7 +209,7 @@ public class Coverage extends FeatureProcess {
 				) {
 //			occupancyType = mostRestrictiveOccupancy.getType().getCode();
 			
-			permissibleCoverageValue = getPermissibleCoverage(plotArea, feature, occupancyName,
+			permissibleCoverageValue = getPermissibleCoverage(pl, plotArea, feature, occupancyName,
 					pl.getEdcrRulesFeatures());
 		}
 
@@ -265,40 +268,61 @@ public class Coverage extends FeatureProcess {
 	}
 	
 	
-	private BigDecimal getPermissibleCoverage(BigDecimal area,  String feature,
+	private BigDecimal getPermissibleCoverage(Plan pl, BigDecimal area,  String feature,
 			String occupancyName, Map<String, List<Map<String, Object>>> edcrRuleList) {
 		LOG.info("inside getPermissibleCoverage()");
 
 		BigDecimal permissibleCoverage = BigDecimal.ZERO;
 
-		Map<String, Object> params = new HashMap<>();
-		params.put("feature", feature);
-		params.put("occupancy", occupancyName);
-		params.put("plotArea", area);
-		//params.put("developmentZone", developmentZone);
+//		Map<String, Object> params = new HashMap<>();
+//		params.put("feature", feature);
+//		params.put("occupancy", occupancyName);
+//		params.put("plotArea", area);
+//		//params.put("developmentZone", developmentZone);
+//		
+//		
+//		ArrayList<String> valueFromColumn = new ArrayList<>();
+//		valueFromColumn.add("permissibleValue");
+//
+//		List<Map<String, Object>> permissibleValue = new ArrayList<>();
+//
+//		try {
+//			permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
+//			LOG.info("permissibleValue" + permissibleValue);
+//			
+//
+//		} catch (NullPointerException e) {
+//
+//			LOG.error("Permissible Value for Coverage not found--------", e);
+//			return null;
+//		}
+//
+//		if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey("permissibleValue")) {
+//			permissibleCoverage = BigDecimal
+//					.valueOf(Double.valueOf(permissibleValue.get(0).get("permissibleValue").toString()));
+//		}
 		
+
+       
+	
+     String tenantId = pl.getTenantId();
+     String zone = pl.getPlanInformation().getZone();
+     String subZone = pl.getPlanInformation().getSubZone();
+     
+     RuleKey key = new RuleKey(EdcrRulesMdmsConstants.STATE, tenantId, zone, subZone, occupancyName, "low", feature);
+     List<Object> rules = cache.getRules(tenantId, key);
 		
-		ArrayList<String> valueFromColumn = new ArrayList<>();
-		valueFromColumn.add("permissibleValue");
-
-		List<Map<String, Object>> permissibleValue = new ArrayList<>();
-
-		try {
-			permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
-			LOG.info("permissibleValue" + permissibleValue);
-			
-
-		} catch (NullPointerException e) {
-
-			LOG.error("Permissible Value for Coverage not found--------", e);
-			return null;
-		}
-
-		if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey("permissibleValue")) {
-			permissibleCoverage = BigDecimal
-					.valueOf(Double.valueOf(permissibleValue.get(0).get("permissibleValue").toString()));
-		}
-		
+     Optional<MdmsFeatureRule> matchedRule = rules.stream()
+			    .map(obj -> (MdmsFeatureRule) obj)
+			    .filter(rule -> area.compareTo(rule.getFromPlotArea()) >= 0 &&
+			    		area.compareTo(rule.getToPlotArea()) < 0)
+			    .findFirst();
+     	if (matchedRule.isPresent()) {
+     	    MdmsFeatureRule rule = matchedRule.get();
+     	   permissibleCoverage = rule.getPermissible();
+     	} else {
+     		permissibleCoverage = BigDecimal.ZERO;
+     	}
 		return permissibleCoverage;
 		
 		

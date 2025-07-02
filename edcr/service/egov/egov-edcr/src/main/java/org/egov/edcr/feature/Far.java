@@ -65,6 +65,9 @@ import static org.egov.edcr.constants.DxfFileConstants.E_SACA;
 import static org.egov.edcr.constants.DxfFileConstants.E_SFDAP;
 import static org.egov.edcr.constants.DxfFileConstants.E_SFMC;
 import static org.egov.edcr.constants.DxfFileConstants.F;
+import static org.egov.edcr.constants.DxfFileConstants.G;
+import static org.egov.edcr.constants.DxfFileConstants.G_NPHI;
+import static org.egov.edcr.constants.DxfFileConstants.G_PHI;
 import static org.egov.edcr.constants.DxfFileConstants.H_PP;
 import static org.egov.edcr.constants.DxfFileConstants.M_DFPAB;
 import static org.egov.edcr.constants.DxfFileConstants.M_HOTHC;
@@ -79,12 +82,8 @@ import static org.egov.edcr.constants.DxfFileConstants.S_ICC;
 import static org.egov.edcr.constants.DxfFileConstants.S_MCH;
 import static org.egov.edcr.constants.DxfFileConstants.S_SAS;
 import static org.egov.edcr.constants.DxfFileConstants.S_SC;
-import static org.egov.edcr.constants.DxfFileConstants.G;
-import static org.egov.edcr.constants.DxfFileConstants.G_PHI;
-import static org.egov.edcr.constants.DxfFileConstants.G_NPHI;
 import static org.egov.edcr.utility.DcrConstants.DECIMALDIGITS_MEASUREMENTS;
 import static org.egov.edcr.utility.DcrConstants.OBJECTNOTDEFINED;
-import static org.egov.edcr.utility.DcrConstants.PLOT_AREA;
 import static org.egov.edcr.utility.DcrConstants.ROUNDMODE_MEASUREMENTS;
 
 import java.math.BigDecimal;
@@ -95,24 +94,28 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.egov.common.entity.dcr.helper.OccupancyHelperDetail;
 import org.egov.common.entity.edcr.Block;
 import org.egov.common.entity.edcr.Building;
 import org.egov.common.entity.edcr.FarDetails;
 import org.egov.common.entity.edcr.Floor;
+import org.egov.common.entity.edcr.MdmsFeatureRule;
 import org.egov.common.entity.edcr.Measurement;
 import org.egov.common.entity.edcr.Occupancy;
 import org.egov.common.entity.edcr.OccupancyTypeHelper;
 import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.Result;
+import org.egov.common.entity.edcr.RuleKey;
 import org.egov.common.entity.edcr.ScrutinyDetail;
 import org.egov.edcr.constants.DxfFileConstants;
-import org.egov.edcr.service.EdcrRestService;
+import org.egov.edcr.constants.EdcrRulesMdmsConstants;
+import org.egov.edcr.service.CacheManagerMdms;
 import org.egov.edcr.service.FetchEdcrRulesMdms;
 import org.egov.edcr.service.ProcessPrintHelper;
 import org.egov.edcr.utility.DcrConstants;
@@ -190,6 +193,9 @@ public class Far extends FeatureProcess {
 	@Autowired
 	FetchEdcrRulesMdms fetchEdcrRulesMdms;
 	
+	@Autowired
+	CacheManagerMdms cache;
+	
 	
 	@Override
 	public Plan validate(Plan pl) {
@@ -200,11 +206,30 @@ public class Far extends FeatureProcess {
 		}
 		
 		// ArrayList<Map<String, Object>> edcrRulesFeatures = edcrRestService.getEdcrRules();
-		 Map<String, List<Map<String, Object>>> edcrRulesFeatures = fetchEdcrRulesMdms.getEdcrRules();
-	   
-	        // Set this list to the pl object
-	       pl.setEdcrRulesFeatures(edcrRulesFeatures);
-	      
+		// Map<String, List<Map<String, Object>>> edcrRulesFeatures = fetchEdcrRulesMdms.getEdcrRules();
+		
+		cache.getEdcrRulesFromMdms();
+		 
+//		 Map<String, Map<String, List<Map<String, Object>>>> rulesMap = fetchEdcrRulesMdms.getEdcrRules();
+//
+//		 Map<String, List<Map<String, Object>>> mdmsStateData = rulesMap.get("state");
+//		 Map<String, List<Map<String, Object>>> mdmsCityData = rulesMap.get("city");
+//
+//		 
+//		 List<Map<String, Object>> masterConfig = mdmsStateData.get(MdmsFeatureConstants.EDCR_MASTER_CONFIG);
+//		    
+//		    ObjectMapper mapper = new ObjectMapper();
+//
+//		    List<EdcrMasterConfig> masterConfigs = masterConfig.stream()
+//		        .map(entry -> mapper.convertValue(entry, EdcrMasterConfig.class))
+//		        .collect(Collectors.toList());
+//
+//		    // Set this list to the pl object
+//	       pl.setEdcrStateRulesFeatures(mdmsStateData);
+//	       pl.setEdcrCityRulesFeatures(mdmsCityData);
+//	       pl.setMasterConfig(masterConfig);
+//	       pl.setEdcrMasterConfig(masterConfigs);
+//	      
 		return pl;
 	}
 
@@ -1149,26 +1174,47 @@ public class Far extends FeatureProcess {
 	
 		BigDecimal permissibleFar = BigDecimal.ZERO;
 		
-		Map<String, Object> params = new HashMap<>();
+//		Map<String, Object> params = new HashMap<>();
 		
-		params.put("feature", feature);
-		params.put("occupancy", occupancyName);
-		params.put("plotArea", plotArea);
-		
-		System.out.println("Featureeee" + params.get("feature"));
-		ArrayList<String> valueFromColumn = new ArrayList<>();
-		valueFromColumn.add("permissibleValue");
-		
+//		List<EdcrMasterConfig> masteConfig = pl.getEdcrMasterConfig();
+////		
+//		EdcrConfigUtil.ParamsAndColumns result = EdcrConfigUtil.buildParamsAndValues(
+//			    pl, feature, occupancyName, pl.getEdcrMasterConfig());
+//
+//		Map<String, Object> params = result.getParams();
+//		List<String> valueFromColumn = result.getValueFromColumn();
+//
 		List<Map<String, Object>> permissibleValue = new ArrayList<>();
-		System.out.println("listt" + pl.getEdcrRulesFeatures());
-		try {
-		 //permissibleValue = edcrRestService.getPermissibleValue1(pl.getEdcrRulesFeatures(), params, valueFromColumn);
-		 permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(pl.getEdcrRulesFeatures(), params, valueFromColumn);
+		String tenantId = pl.getTenantId();
+//		System.out.println("listt" + pl.getEdcrRulesFeatures());
+//		
+//		
+//		String stateOrCityRule = fetchEdcrRulesMdms.getEdcrRuleSource(feature, masteConfig);
+		occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl).toLowerCase();
+		
+		RuleKey cityaKey = new RuleKey(EdcrRulesMdmsConstants.STATE, tenantId, "x", "y", occupancyName, "low", feature);
+		List<Object> cityaRules = cache.getRules(tenantId, cityaKey);	
+		
+		
+		Optional<MdmsFeatureRule> matchedRule = cityaRules.stream()
+			    .map(obj -> (MdmsFeatureRule) obj)
+			    .filter(rule -> plotArea.compareTo(rule.getFromPlotArea()) >= 0 &&
+			                    plotArea.compareTo(rule.getToPlotArea()) < 0)
+			    .findFirst();
+
+
+		if (matchedRule.isPresent()) {
+		     permissibleFar = matchedRule.get().getPermissible();
+		    System.out.println("Permissible FAR: " + permissibleFar);
+		}
+		
+			try {
+	//	 permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(pl.getEdcrStateRulesFeatures(), params, valueFromColumn);
 
 			LOG.info("permissibleValue" + permissibleValue);
 			System.out.println("permis___+++" + permissibleValue);
 		
-		} catch (NullPointerException e) {
+		}catch (NullPointerException e) {
 			
 			
 			 LOG.error("Permissible Far not found--------", e);
@@ -1178,9 +1224,9 @@ public class Far extends FeatureProcess {
 		boolean isAccepted = false;
 		System.out.println("+++++" + occupancyName + plotArea + permissibleValue);
       
-		if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey("permissibleValue")) {
-		    permissibleFar = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get("permissibleValue").toString())) ;
-		}
+//		if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey("permissibleValue")) {
+//		    permissibleFar = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get("permissibleValue").toString())) ;
+//		}
 
 		System.out.println("farrr+" + permissibleFar);
 		isAccepted = far.compareTo(permissibleFar) <= 0;

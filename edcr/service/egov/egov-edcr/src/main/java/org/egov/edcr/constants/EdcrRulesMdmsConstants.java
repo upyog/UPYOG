@@ -243,6 +243,7 @@ public class EdcrRulesMdmsConstants {
 	 public static final String HAZARDOUS = "Hazardous";
 	 public static final String EDUCATIONAL = "Educational";
 	 public static final String ASSEMBLY = "Assembly";
+	 public static final String STATE = "pg";
 	 
 	 /*
 	 // Todo: SideYardService feature is not using the methods currently, in future when the methods are used, these constants will be needed

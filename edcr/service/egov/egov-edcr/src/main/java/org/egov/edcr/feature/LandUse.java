@@ -54,17 +54,21 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 import org.egov.common.constants.MdmsFeatureConstants;
 import org.egov.common.entity.edcr.Block;
 import org.egov.common.entity.edcr.Floor;
+import org.egov.common.entity.edcr.MdmsFeatureRule;
 import org.egov.common.entity.edcr.Occupancy;
 import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.Result;
+import org.egov.common.entity.edcr.RuleKey;
 import org.egov.edcr.constants.DxfFileConstants;
 import org.egov.edcr.constants.EdcrRulesMdmsConstants;
+import org.egov.edcr.service.CacheManagerMdms;
 import org.egov.edcr.service.FetchEdcrRulesMdms;
 import org.egov.edcr.utility.Util;
 import org.egov.infra.utils.StringUtils;
@@ -86,6 +90,10 @@ public class LandUse extends FeatureProcess {
 
     @Autowired
     FetchEdcrRulesMdms fetchEdcrRulesMdms;
+    
+    @Autowired
+	CacheManagerMdms cache;
+	
 
     /**
      * Validates the given plan object.
@@ -124,32 +132,46 @@ public class LandUse extends FeatureProcess {
      * @param errors The map to store validation errors.
      */
     private void validateCommercialZone(Plan pl, HashMap<String, String> errors) {
-    	String occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl);
+    	String occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl).toLowerCase();
         String feature = MdmsFeatureConstants.LAND_USE;
 
         // Determine the occupancy type for fetching permissible values
-        Map<String, Object> params = new HashMap<>();
-      
+//        Map<String, Object> params = new HashMap<>();
+//      
+//
+//        params.put("feature", feature);
+//        params.put("occupancy", occupancyName);
+//
+//        // Fetch permissible values for road width
+//        Map<String, List<Map<String, Object>>> edcrRuleList = pl.getEdcrRulesFeatures();
+//        ArrayList<String> valueFromColumn = new ArrayList<>();
+//        valueFromColumn.add(EdcrRulesMdmsConstants.PERMISSIBLE_VALUE);
+//
+//				List<Map<String, Object>> permissibleValue = new ArrayList<>();
+//			
+//				
+//					permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
+//        LOG.info("permissibleValue" + permissibleValue);
+//
+//        if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey(EdcrRulesMdmsConstants.PERMISSIBLE_VALUE)) {
+//            RoadWidth = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.PERMISSIBLE_VALUE).toString()));
+//        } else {
+//            RoadWidth = BigDecimal.ZERO;
+//        }
+        
+        String tenantId = pl.getTenantId();
+        RuleKey key = new RuleKey(EdcrRulesMdmsConstants.STATE, tenantId, "x", "y", occupancyName, null, feature);
+        List<Object> rules = cache.getRules(tenantId, key);
+		
+		Optional<MdmsFeatureRule> matchedRule = rules.stream()
+			    .map(obj -> (MdmsFeatureRule) obj)
+			    .findFirst();
 
-        params.put("feature", feature);
-        params.put("occupancy", occupancyName);
-
-        // Fetch permissible values for road width
-        Map<String, List<Map<String, Object>>> edcrRuleList = pl.getEdcrRulesFeatures();
-        ArrayList<String> valueFromColumn = new ArrayList<>();
-        valueFromColumn.add(EdcrRulesMdmsConstants.PERMISSIBLE_VALUE);
-
-				List<Map<String, Object>> permissibleValue = new ArrayList<>();
-			
-				
-					permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
-        LOG.info("permissibleValue" + permissibleValue);
-
-        if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey(EdcrRulesMdmsConstants.PERMISSIBLE_VALUE)) {
-            RoadWidth = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.PERMISSIBLE_VALUE).toString()));
-        } else {
-            RoadWidth = BigDecimal.ZERO;
-        }
+			if (matchedRule.isPresent()) {
+			    MdmsFeatureRule rule = matchedRule.get();
+			    RoadWidth = rule.getPermissible();
+			    
+			}
 
         // Iterate through all blocks in the plan
         for (Block block : pl.getBlocks()) {

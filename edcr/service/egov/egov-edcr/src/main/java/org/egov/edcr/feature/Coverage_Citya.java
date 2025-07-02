@@ -291,7 +291,7 @@ public class Coverage_Citya extends FeatureProcess {
 		} catch (NullPointerException e) {
 
 			LOG.error("Permissible Value for Coverage not found--------", e);
-			return null;
+			return BigDecimal.ZERO;
 		}
 
 		if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey("permissibleValue")) {
