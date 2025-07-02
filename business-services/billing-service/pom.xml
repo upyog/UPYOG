@@ -97,10 +97,6 @@
 			<artifactId>jsoup</artifactId>
 			<version>1.17.2</version>
 		</dependency>
-		<dependency>
-			<groupId>org.hibernate.validator</groupId>
-			<artifactId>hibernate-validator</artifactId>
-		</dependency>
 
 		<!-- SpringDoc OpenAPI for Spring Boot 3.x -->
 		<dependency>
