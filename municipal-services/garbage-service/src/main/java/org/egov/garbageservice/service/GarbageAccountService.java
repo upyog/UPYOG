@@ -596,6 +596,8 @@ public class GarbageAccountService {
 							.createdDate(matchingChildAccount.get().getAuditDetails().getCreatedDate())
 							.lastModifiedBy(auditDetails.getLastModifiedBy())
 							.lastModifiedDate(auditDetails.getLastModifiedDate()).build());
+					childAccount.setChannel(matchingChildAccount.get().getChannel());
+
 				} else {
 					// create case
 					childAccount.setAuditDetails(AuditDetails.builder().createdBy(auditDetails.getCreatedBy())
@@ -603,7 +605,6 @@ public class GarbageAccountService {
 				}
 
 				childAccount.setBusinessService(newGarbageAccount.getBusinessService());
-				childAccount.setChannel(newGarbageAccount.getChannel());
 			});
 		}
 
