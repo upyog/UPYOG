@@ -5,14 +5,13 @@ import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
-import org.egov.swagger.model.ColumnDef;
 
-import javax.validation.constraints.*;
+import jakarta.validation.constraints.NotNull;
 
 /**
  * ColumnDetail
  */
-@javax.annotation.Generated(value = "io.swagger.codegen.languages.SpringCodegen", date = "2017-07-15T07:36:10.744Z")
+//@javax.annotation.Generated(value = "io.swagger.codegen.languages.SpringCodegen", date = "2017-07-15T07:36:10.744Z")
 
 public class ColumnDetail extends ColumnDef {
 

@@ -8,8 +8,6 @@ import java.util.List;
 import org.egov.swagger.model.ReportDefinition;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.stereotype.Component;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 @ConfigurationProperties
