@@ -57,7 +57,8 @@ public class Unit {
 	private String occupancyType;
 
 	@JsonProperty("active")
-	private Boolean active;
+	@Builder.Default
+	private Boolean active = true;
 
 	@JsonProperty("occupancyDate")
 	private Long occupancyDate;
