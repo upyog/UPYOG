@@ -151,10 +151,8 @@ public class EnrichmentService {
 
 				if (unit.getId() == null) {
 					unit.setId(UUID.randomUUID().toString());
-					unit.setActive(true);
-				}else {
-					unit.setActive(true);
 				}
+
 			});
 	    	
 	    	
