@@ -36,6 +36,7 @@ public class PtTaxCalculatorTracker {
 	private String toDateString;
 	private BigDecimal propertyTax;
 	private BigDecimal rebateAmount;
+	private BigDecimal penaltyAmount;
 	private BigDecimal propertyTaxWithoutRebate;
 	private BillStatus billStatus;
 	private AuditDetails auditDetails;

@@ -168,8 +168,8 @@ public class PropertySchedulerService {
 				}
 				for (JsonNode buildingEstablishmentYear : objectMapper.valueToTree(buildingEstablishmentYears)) {
 					if (ulbName.equalsIgnoreCase(buildingEstablishmentYear.get("ulbName").asText())
-							&& buildingEstablishmentYear.get("yearRange").asText()
-									.equalsIgnoreCase(ulbName+"."+unitAdditionalDetails.get("propYearOfCons").asText())) {
+							&& buildingEstablishmentYear.get("yearRange").asText().equalsIgnoreCase(
+									ulbName + "." + unitAdditionalDetails.get("propYearOfCons").asText())) {
 						ageFactor = new BigDecimal(buildingEstablishmentYear.get("rate").asText());
 					}
 				}
@@ -590,8 +590,8 @@ public class PropertySchedulerService {
 
 			Map<String, Demand> demandIdToDemandMap = fetchDemandsByBatch(demandIdToTenantMap, requestInfoWrapper);
 
-			latestTaxCalculatorTrackers.addAll(
-					processTrackers(ptTaxCalculatorTrackers, billIdBillMap, demandIdToDemandMap, requestInfoWrapper));
+			latestTaxCalculatorTrackers.addAll(processTrackers(PTConstants.PROPERTY_CONSTANT_REABATE,
+					ptTaxCalculatorTrackers, billIdBillMap, demandIdToDemandMap, requestInfoWrapper, null));
 		}
 
 		return latestTaxCalculatorTrackers;
@@ -600,6 +600,13 @@ public class PropertySchedulerService {
 	private List<String> getActiveTaxCalculatedTenantIds() {
 		PtTaxCalculatorTrackerSearchCriteria criteria = PtTaxCalculatorTrackerSearchCriteria.builder()
 				.billStatus(Collections.singleton(BillStatus.ACTIVE)).build();
+
+		return propertyService.getTaxCalculatedTenantIds(criteria);
+	}
+
+	private List<String> getNotPaidTaxCalculatedTenantIds() {
+		PtTaxCalculatorTrackerSearchCriteria criteria = PtTaxCalculatorTrackerSearchCriteria.builder()
+				.notInBillStatus(Collections.singleton(BillStatus.PAID)).build();
 
 		return propertyService.getTaxCalculatedTenantIds(criteria);
 	}
@@ -617,6 +624,19 @@ public class PropertySchedulerService {
 				.orElseGet(HashMap::new);
 	}
 
+	public Map<String, Integer> getPenaltyRateMap(MdmsResponse mdmsResponse) {
+		return Optional.ofNullable(mdmsResponse).map(MdmsResponse::getMdmsRes)
+				.map(mdmsRes -> mdmsRes.get(PTConstants.MDMS_MODULE_ULBS)).map(objectMapper::valueToTree)
+				.map(ulbsNode -> {
+					JsonNode jsonNode = (JsonNode) ulbsNode; // explicit cast
+					return jsonNode.get(PTConstants.MDMS_MASTER_DETAILS_PENALTYRATE);
+				}).filter(JsonNode::isArray)
+				.map(rebateDaysNode -> StreamSupport.stream(rebateDaysNode.spliterator(), false)
+						.collect(Collectors.toMap(node -> propertyConfiguration.getStateLevelTenantId() + "."
+								+ node.get("ulbName").asText(), node -> node.get("rate").asInt())))
+				.orElseGet(HashMap::new);
+	}
+
 	private List<PtTaxCalculatorTracker> getTrackersForTenantAndDays(String tenantId, int days) {
 		long startDateTime = LocalDate.now().minusDays(days).atStartOfDay(ZoneId.systemDefault()).toInstant()
 				.toEpochMilli();
@@ -626,6 +646,17 @@ public class PropertySchedulerService {
 		PtTaxCalculatorTrackerSearchCriteria criteria = PtTaxCalculatorTrackerSearchCriteria.builder()
 				.startDateTime(startDateTime).endDateTime(endDateTime).tenantId(tenantId)
 				.billStatus(Collections.singleton(BillStatus.ACTIVE)).build();
+
+		return propertyService.getTaxCalculatedProperties(criteria);
+	}
+
+	private List<PtTaxCalculatorTracker> getTrackersForTenantAndStartDays(String tenantId, int days) {
+		long startDateTime = LocalDate.now().minusDays(days).atStartOfDay(ZoneId.systemDefault()).toInstant()
+				.toEpochMilli();
+
+		PtTaxCalculatorTrackerSearchCriteria criteria = PtTaxCalculatorTrackerSearchCriteria.builder()
+				.startDateTime(startDateTime).tenantId(tenantId).billStatus(Collections.singleton(BillStatus.ACTIVE))
+				.build();
 
 		return propertyService.getTaxCalculatedProperties(criteria);
 	}
@@ -695,17 +726,15 @@ public class PropertySchedulerService {
 		return demandIdToDemandMap;
 	}
 
-	private List<PtTaxCalculatorTracker> processTrackers(List<PtTaxCalculatorTracker> trackers,
+	private List<PtTaxCalculatorTracker> processTrackers(String constantValue, List<PtTaxCalculatorTracker> trackers,
 			Map<String, Bill> billIdBillMap, Map<String, Demand> demandIdToDemandMap,
-			RequestInfoWrapper requestInfoWrapper) {
-
+			RequestInfoWrapper requestInfoWrapper, Map<String, Integer> tenantIdPenaltyRateMap) {
 		List<PtTaxCalculatorTracker> updatedTrackers = new ArrayList<>();
 
 		for (PtTaxCalculatorTracker tracker : trackers) {
-			if (!isValidTracker(tracker))
+			if (!isValidTracker(tracker)) {
 				continue;
-
-			BigDecimal newAmount = tracker.getPropertyTaxWithoutRebate();
+			}
 
 			Bill bill = billIdBillMap.get(tracker.getBillId());
 			if (bill == null || CollectionUtils.isEmpty(bill.getBillDetails())) {
@@ -714,21 +743,42 @@ public class PropertySchedulerService {
 				continue;
 			}
 
-			updateBillAndDemandAmounts(bill, demandIdToDemandMap, newAmount, requestInfoWrapper);
+			BigDecimal penaltyAmount = BigDecimal.ZERO;
+			BigDecimal newAmount = BigDecimal.ZERO;
 
-			// Update tracker
-			tracker.setPropertyTax(newAmount);
-			tracker.setRebateAmount(BigDecimal.ZERO);
+			if (constantValue.equals(PTConstants.PROPERTY_CONSTANT_PENALTY) && tenantIdPenaltyRateMap != null
+					&& tenantIdPenaltyRateMap.containsKey(tracker.getTenantId())) {
+				penaltyAmount = calculatePenalty(tracker, tenantIdPenaltyRateMap.get(tracker.getTenantId()));
+				newAmount = tracker.getPropertyTax().add(penaltyAmount);
 
-			PtTaxCalculatorTrackerRequest updateRequest = enrichmentService
-					.enrichTaxCalculatorTrackerUpdateRequest(tracker, requestInfoWrapper.getRequestInfo());
+				tracker.setPenaltyAmount(
+						(tracker.getPenaltyAmount() != null ? tracker.getPenaltyAmount() : BigDecimal.ZERO)
+								.add(penaltyAmount));
+			} else if (constantValue.equals(PTConstants.PROPERTY_CONSTANT_REABATE)) {
+				newAmount = tracker.getPropertyTaxWithoutRebate();
+				tracker.setRebateAmount(BigDecimal.ZERO);
+			}
 
-			PtTaxCalculatorTracker updatedTracker = propertyService.updatePtTaxCalculatorTracker(updateRequest);
+			if (!newAmount.equals(BigDecimal.ZERO)) {
+				updateBillAndDemandAmounts(bill, demandIdToDemandMap, newAmount, requestInfoWrapper);
 
-			updatedTrackers.add(updatedTracker);
+				tracker.setPropertyTax(newAmount);
+
+				PtTaxCalculatorTrackerRequest updateRequest = enrichmentService
+						.enrichTaxCalculatorTrackerUpdateRequest(tracker, requestInfoWrapper.getRequestInfo());
+
+				PtTaxCalculatorTracker updatedTracker = propertyService.updatePtTaxCalculatorTracker(updateRequest);
+
+				updatedTrackers.add(updatedTracker);
+			}
 		}
 
 		return updatedTrackers;
+	}
+
+	private BigDecimal calculatePenalty(PtTaxCalculatorTracker tracker, int penaltyRatePercent) {
+		return tracker.getPropertyTaxWithoutRebate().multiply(BigDecimal.valueOf(penaltyRatePercent))
+				.divide(BigDecimal.valueOf(100));
 	}
 
 	private boolean isValidTracker(PtTaxCalculatorTracker tracker) {
@@ -766,6 +816,40 @@ public class PropertySchedulerService {
 
 		bill.setTotalAmount(newAmount);
 		billService.updateBill(requestInfoWrapper.getRequestInfo(), Collections.singletonList(bill));
+	}
+
+	public Object updatePenaltyAmount(RequestInfoWrapper requestInfoWrapper) {
+		List<PtTaxCalculatorTracker> latestTaxCalculatorTrackers = new ArrayList<>();
+
+		List<String> taxCalculatedTenantIds = getActiveTaxCalculatedTenantIds();
+
+		if (CollectionUtils.isEmpty(taxCalculatedTenantIds)) {
+			return Collections.emptyList();
+		}
+
+		MdmsResponse mdmsResponse = mdmsService.getPenaltyRateMdmsData(requestInfoWrapper.getRequestInfo(), null);
+
+		Map<String, Integer> tenantIdPenaltyRateMap = getPenaltyRateMap(mdmsResponse);
+
+		for (String tenantId : taxCalculatedTenantIds) {
+			Integer days = 30; // need to change if needed
+
+			List<PtTaxCalculatorTracker> ptTaxCalculatorTrackers = getTrackersForTenantAndStartDays(tenantId, days);
+
+			Set<String> billIds = ptTaxCalculatorTrackers.stream().map(PtTaxCalculatorTracker::getBillId)
+					.filter(Objects::nonNull).collect(Collectors.toSet());
+
+			Map<String, Bill> billIdBillMap = fetchBillsByBatch(billIds, requestInfoWrapper);
+			Map<String, String> demandIdToTenantMap = extractDemandIdToTenantMap(billIdBillMap);
+
+			Map<String, Demand> demandIdToDemandMap = fetchDemandsByBatch(demandIdToTenantMap, requestInfoWrapper);
+
+			latestTaxCalculatorTrackers
+					.addAll(processTrackers(PTConstants.PROPERTY_CONSTANT_PENALTY, ptTaxCalculatorTrackers,
+							billIdBillMap, demandIdToDemandMap, requestInfoWrapper, tenantIdPenaltyRateMap));
+		}
+
+		return latestTaxCalculatorTrackers;
 	}
 
 }
