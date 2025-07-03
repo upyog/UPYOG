@@ -3,7 +3,7 @@ package org.egov.collection.web.contract;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 
 import org.egov.collection.model.AuditDetails;
 
