@@ -395,7 +395,7 @@ public class PropertySchedulerService {
 		Set<String> mobileNumbers = calculateTaxRequest.getMobileNumbers();
 
 		PropertyCriteria propertyCriteria = PropertyCriteria.builder().isSchedulerCall(true)
-				.status(Collections.singleton(Status.APPROVED)).propertyIds(calculateTaxRequest.getPropertyIds())
+				.status(Collections.singleton(Status.APPROVED)).propertyIds(calculateTaxRequest.getPropertyIds()).isActiveUnit(true)
 				.build();
 
 		List<Property> properties = propertyService.searchProperty(propertyCriteria,
