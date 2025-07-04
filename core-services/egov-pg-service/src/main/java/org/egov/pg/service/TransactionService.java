@@ -105,7 +105,6 @@ public class TransactionService {
 				.txnId(transaction.getTxnId())
 				.auditDetails(transaction.getAuditDetails())
 				.build();
-
 		if(validator.skipGateway(transaction)){
 			log.info("transaction inside gateway true::"+transaction);
 			transaction.setTxnStatus(Transaction.TxnStatusEnum.SUCCESS);
