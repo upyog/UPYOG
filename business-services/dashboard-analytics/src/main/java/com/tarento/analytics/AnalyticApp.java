@@ -1,6 +1,7 @@
 package com.tarento.analytics;
 
 import org.cache2k.extra.spring.SpringCache2kCacheManager;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -24,6 +25,7 @@ import java.security.cert.X509Certificate;
 
 @SpringBootApplication
 @EnableCaching
+@Slf4j
 public class AnalyticApp {
 	public static void trustSelfSignedSSL() {
 		try {
@@ -54,6 +56,7 @@ public class AnalyticApp {
 	}
 	 public static void main( String[] args ) {
 		 	trustSelfSignedSSL();
+		    log.info("Dashboard Analytics is running with latest LTS upgrades 2.0.0!");
 	        SpringApplication.run(AnalyticApp.class, args);
 	    }
 
