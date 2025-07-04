@@ -95,7 +95,7 @@ public class PaymentValidator {
                 .offset(0).limit(applicationProperties.getReceiptsSearchDefaultLimit()).billIds(billIds).build();
 
         List<Payment> payments = paymentRepository.fetchPayments(criteria);
-        if (!payments.isEmpty()) {
+        if (!CollectionUtils.isEmpty(payments)) {
             validateIPaymentForBillPresent(payments,errorMap);
         }
 
@@ -144,7 +144,7 @@ public class PaymentValidator {
      * @param errorMap   Map of errors occurred during validations
      */
     private void validateIPaymentForBillPresent(List<Payment> payments, Map<String, String> errorMap) {
-        log.info("receipt present");
+        log.info("receipt present:::"+payments);
         for (Payment payment : payments) {
             String paymentStatus = payment.getInstrumentStatus().toString();
             if (paymentStatus.equalsIgnoreCase(APPROVED.toString())
