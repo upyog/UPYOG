@@ -112,6 +112,7 @@ public class TransactionService {
 			paymentsService.registerPayment(transactionRequest);
 		}
 		else{
+			log.info("transaction inside gateway false::"+transaction);
 			URI uri = gatewayService.initiateTxn(transaction);
 			transaction.setRedirectUrl(uri.toString());
 
