@@ -60,11 +60,12 @@ public class TransactionValidator {
 
 	@Autowired
 	public TransactionValidator(GatewayService gatewayService, TransactionRepository transactionRepository, 
-			PaymentsService paymentsService, AppProperties props) {
+			PaymentsService paymentsService, AppProperties props, CollectionsRepository collectionsRepository) {
 		this.gatewayService = gatewayService;
 		this.transactionRepository = transactionRepository;
 		this.paymentsService = paymentsService;
 		this.props = props;
+		this.collectionsRepository=collectionsRepository;
 	}
 
 	/**
@@ -140,22 +141,12 @@ public class TransactionValidator {
 		if (newStatus.getTxnStatus().equals(Transaction.TxnStatusEnum.SUCCESS)) {
 			if (new BigDecimal(prevStatus.getTxnAmount()).compareTo(new BigDecimal(newStatus.getTxnAmount())) == 0) {
 				
-				PaymentSearchCriteria criteria=new PaymentSearchCriteria();
-				Set<String> bills=new HashSet<String>();
-				bills.add(newStatus.getBillId());
-				criteria.setBillIds(bills);
-				criteria.setTenantId(newStatus.getTenantId());
-				String uri=props.getCollectionServiceHost();
-				uri=uri.concat(props.getPaymentSearchPath());
-				log.info("uri::"+uri);
-				log.info("criteria::"+criteria);
-				PaymentResponse paymentResponse=collectionsRepository.serachPaidBillInEGCL(criteria,uri);
-				log.info("paymentResponse::"+paymentResponse);
-				if(!CollectionUtils.isEmpty(paymentResponse.getPayments()))
-				{
-					if(!StringUtils.isEmpty(paymentResponse.getPayments().get(0).getPaymentDetails().get(0).getBill()))
+				
+				Integer Count=collectionsRepository.getPaymentCountByBillId(newStatus.getBillId());
+				log.info("Count::"+Count);
+
+					if(Count>0)
 						return false;
-				}
 						
 				newStatus.setTxnStatus(Transaction.TxnStatusEnum.SUCCESS);
 				newStatus.setTxnStatusMsg(PgConstants.TXN_SUCCESS);
