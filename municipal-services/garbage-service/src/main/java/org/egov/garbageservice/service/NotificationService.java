@@ -123,11 +123,11 @@ public class NotificationService {
 		emailSubject = populateNotificationPlaceholders(emailSubject, garbageAccount, bill,grbgBillTracker);
 
 		if (!StringUtils.isEmpty(garbageAccount.getEmailId())) {
-			sendEmail(emailBody, Collections.singletonList(garbageAccount.getEmailId()), requestInfo, null,
-					emailSubject);
+//			sendEmail(emailBody, Collections.singletonList(garbageAccount.getEmailId()), requestInfo, null,
+//					emailSubject);
 		}
 		if (!StringUtils.isEmpty(garbageAccount.getMobileNumber())) {
-			sendSms(smsBody, garbageAccount.getMobileNumber());
+//			sendSms(smsBody, garbageAccount.getMobileNumber());
 		}
 
 	}
