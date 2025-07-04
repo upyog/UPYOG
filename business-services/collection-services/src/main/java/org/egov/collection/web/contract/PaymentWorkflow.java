@@ -5,14 +5,13 @@ import com.fasterxml.jackson.annotation.JsonValue;
 import com.fasterxml.jackson.databind.JsonNode;
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.SafeHtml;
 
-import javax.validation.constraints.NotNull;
+
+import jakarta.validation.constraints.NotNull;
 
 @Data
 public class PaymentWorkflow {
 
-    @SafeHtml
     @NotNull
     @Length(min = 1)
     private String paymentId;
@@ -20,12 +19,10 @@ public class PaymentWorkflow {
     @NotNull
     private PaymentAction action;
 
-    @SafeHtml
     @NotNull
     @Length(min = 1)
     private String tenantId;
 
-    @SafeHtml
     private String reason;
 
     private JsonNode additionalDetails;

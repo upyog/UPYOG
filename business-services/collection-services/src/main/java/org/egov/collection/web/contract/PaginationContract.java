@@ -44,7 +44,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.egov.collection.model.Pagination;
 
-import javax.validation.constraints.Max;
+import jakarta.validation.constraints.Max;
 
 @AllArgsConstructor
 @NoArgsConstructor
