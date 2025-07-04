@@ -83,7 +83,7 @@ public class PDFRequestGenerator {
 		ptbr.put("propertyId", property.getPropertyId());
 
 		ptbr.put("ownerOrOccupier",
-				property.getOwners().stream().map(OwnerInfo::getName).collect(Collectors.joining(", ")));
+				property.getOwners().stream().map(OwnerInfo::getPropertyOwnerName).collect(Collectors.joining(", ")));
 
 		ptbr.put("fatherOrHusbandName", property.getOwners().stream().map(owner -> {
 			if (owner.getAdditionalDetails() == null)
