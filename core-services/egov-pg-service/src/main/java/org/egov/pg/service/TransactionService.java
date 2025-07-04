@@ -105,13 +105,13 @@ public class TransactionService {
 				.txnId(transaction.getTxnId())
 				.auditDetails(transaction.getAuditDetails())
 				.build();
-
-		//if(validator.skipGateway(transaction)){
-		if(true){	
+		if(validator.skipGateway(transaction)){
+			log.info("transaction inside gateway true::"+transaction);
 			transaction.setTxnStatus(Transaction.TxnStatusEnum.SUCCESS);
 			paymentsService.registerPayment(transactionRequest);
 		}
 		else{
+			log.info("transaction inside gateway false::"+transaction);
 			URI uri = gatewayService.initiateTxn(transaction);
 			transaction.setRedirectUrl(uri.toString());
 

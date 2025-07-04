@@ -122,6 +122,8 @@ public class TransactionValidator {
 	}
 
 	public boolean shouldGenerateReceipt(Transaction prevStatus, Transaction newStatus) {
+		log.info("prevStatus:::"+prevStatus);
+		log.info("newStatus:::"+newStatus);
 		if(prevStatus.getTxnStatus().equals(Transaction.TxnStatusEnum.SUCCESS) && !isEmpty(prevStatus.getReceipt())) {
 			return false;
 		}
