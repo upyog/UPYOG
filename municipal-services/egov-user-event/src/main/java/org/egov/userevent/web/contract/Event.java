@@ -3,14 +3,13 @@ package org.egov.userevent.web.contract;
 import java.util.Comparator;
 import java.util.List;
 
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 import org.egov.userevent.model.AuditDetails;
 import org.egov.userevent.model.RecepientEvent;
 import org.egov.userevent.model.enums.Source;
 import org.egov.userevent.model.enums.Status;
-import org.hibernate.validator.constraints.SafeHtml;
 import org.springframework.validation.annotation.Validated;
 
 import lombok.AllArgsConstructor;
@@ -32,29 +31,22 @@ import lombok.ToString;
 public class Event {
 
 	@NotNull
-	@SafeHtml
 	private String tenantId;
 
-	@SafeHtml
 	private String id;
 
-	@SafeHtml
 	private String referenceId;
 
 	@NotNull
-	@SafeHtml
 	private String eventType;
 
-	@SafeHtml
 	private String eventCategory;
 
 	@NotNull
-	@SafeHtml
 	@Size(max = 65)
 	private String name;
 
 	@NotNull
-	@SafeHtml
 	@Size(max = 500)
 	private String description;
 
@@ -63,7 +55,6 @@ public class Event {
 	@NotNull
 	private Source source;
 
-	@SafeHtml
 	private String postedBy;
 
 	private Recepient recepient;
