@@ -1,6 +1,7 @@
 package org.upyog.web.models;
 
 import org.springframework.validation.annotation.Validated;
+import org.upyog.validation.SanitizeHtml;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -23,6 +24,7 @@ public class CommonDetails {
 	@JsonProperty("tenantId")
 	private String tenantId = null;
 
+	@SanitizeHtml
 	@JsonProperty("applicationNumber")
 	private String applicationNumber = null;
 
