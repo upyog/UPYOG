@@ -1,0 +1,427 @@
+{
+	"info": {
+		"_postman_id": "1bb8e82b-856e-4cbc-87cf-f258dee2e143",
+		"name": "Collection-Service_postman",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "29823029"
+	},
+	"item": [
+		{
+			"name": "Payment Create",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"RequestInfo\": {\n      \"apiId\": \"Rainmaker\",\n      \"msgId\": \"dummy-msg-id\",\n      \"authToken\": \"dummy-token\",\n      \"userInfo\": {\n        \"id\": 832,\n        \"userName\": \"SVEMP\",\n        \"name\": \"SV\",\n        \"type\": \"EMPLOYEE\",\n        \"mobileNumber\": \"9509935418\",\n        \"roles\": [\n          {\"name\": \"Inspection Officer\", \"code\": \"INSPECTIONOFFICER\", \"tenantId\": \"pg.citya\"}\n        ],\n        \"tenantId\": \"pg.citya\",\n        \"uuid\": \"7f4fd980-628e-4266-a992-40fa629e2f05\"\n      }\n    },\n    \"Payment\": {\n      \"id\": \"dummy-payment-id\",\n      \"tenantId\": \"pg.citya\",\n      \"totalDue\": 1500.00,\n      \"totalAmountPaid\": 1500.00,\n      \"transactionNumber\": \"citya2122215719\",\n      \"transactionDate\": 1750832481241,\n      \"paymentMode\": \"CASH\",\n      \"instrumentDate\": 1750832481241,\n      \"instrumentStatus\": \"APPROVED\",\n      \"paymentDetails\": [\n        {\n          \"id\": \"dummy-payment-detail-id\",\n          \"tenantId\": \"pg.citya\",\n          \"totalDue\": 1500.00,\n          \"totalAmountPaid\": 1500.00,\n          \"receiptNumber\": \"SV/1013/2025-26/001253\",\n          \"receiptDate\": 1750832481171,\n          \"receiptType\": \"BILLBASED\",\n          \"businessService\": \"sv-services\",\n          \"billId\": \"dummy-bill-id\"\n        }\n      ],\n      \"paidBy\": \"OWNER\",\n      \"mobileNumber\": \"7645325127\",\n      \"payerName\": \"a\",\n      \"payerId\": \"f505275a-7a39-46d2-b869-261d82db74cd\",\n      \"paymentStatus\": \"NEW\"\n    }\n  }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8074/collection-services/payments/_create",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8074",
+					"path": [
+						"collection-services",
+						"payments",
+						"_create"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Payment Search",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"Rainmaker\",\n        \"authToken\": \"dummy-token\",\n        \"userInfo\": {\n            \"id\": 243,\n            \"uuid\": \"f8672e56-71e7-4863-b75d-9f3f37d5f742\",\n            \"userName\": \"9999009999\",\n            \"name\": \"Shivank\",\n            \"mobileNumber\": \"9999009999\",\n            \"emailId\": \"shivank@gmail.com\",\n            \"locale\": \"en_IN\",\n            \"type\": \"CITIZEN\",\n            \"roles\": [\n                {\n                    \"name\": \"Citizen\",\n                    \"code\": \"CITIZEN\",\n                    \"tenantId\": \"pg\"\n                }\n            ],\n            \"active\": true,\n            \"tenantId\": \"pg\"\n        }\n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8280/collection-services/payments/_search?tenantId=pg.citya&mobileNumber=7645325127",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8280",
+					"path": [
+						"collection-services",
+						"payments",
+						"_search"
+					],
+					"query": [
+						{
+							"key": "tenantId",
+							"value": "pg.citya"
+						},
+						{
+							"key": "mobileNumber",
+							"value": "7645325127"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "bank account create",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"RequestInfo\": {\n      \"apiId\": \"Rainmaker\",\n      \"authToken\": \"dummy-token\",\n      \"userInfo\": {\n        \"id\": 1,\n        \"uuid\": \"test-uuid\",\n        \"userName\": \"testuser\",\n        \"tenantId\": \"pb.amritsar\",\n        \"type\": \"EMPLOYEE\",\n        \"roles\": [\n          {\n            \"name\": \"Finance Admin\",\n            \"code\": \"FIN_ADMIN\",\n            \"tenantId\": \"pb.amritsar\"\n          }\n        ]\n      }\n    },\n    \"bankAccountServiceMapping\": [\n      {\n        \"tenantId\": \"pb.amritsar\",\n        \"bankAccount\": \"ACC001\",\n        \"businessDetails\": \"BS001\"\n      }\n    ]\n  }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8082/collection-services/bankAccountServiceMapping/_create",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8082",
+					"path": [
+						"collection-services",
+						"bankAccountServiceMapping",
+						"_create"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "bank account search",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"RequestInfo\": {\n      \"apiId\": \"Rainmaker\",\n      \"authToken\": \"dummy-token\",\n      \"userInfo\": {\n        \"id\": 1,\n        \"uuid\": \"test-uuid\",\n        \"userName\": \"testuser\",\n        \"tenantId\": \"pb.amritsar\",\n        \"type\": \"EMPLOYEE\",\n        \"roles\": [\n          {\n            \"name\": \"Finance Admin\",\n            \"code\": \"FIN_ADMIN\",\n            \"tenantId\": \"pb.amritsar\"\n          }\n        ]\n      }\n    }\n  }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8074/collection-services/bankAccountServiceMapping/_search?tenantId=pb.amritsar&bankAccount=ACC001",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8074",
+					"path": [
+						"collection-services",
+						"bankAccountServiceMapping",
+						"_search"
+					],
+					"query": [
+						{
+							"key": "tenantId",
+							"value": "pb.amritsar"
+						},
+						{
+							"key": "bankAccount",
+							"value": "ACC001"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Search Remittance",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"RequestInfo\": {\n      \"apiId\": \"Rainmaker\",\n      \"authToken\": \"dummy-token\",\n      \"userInfo\": {\n        \"id\": 1,\n        \"uuid\": \"test-uuid\",\n        \"userName\": \"testuser\",\n        \"tenantId\": \"pg.citya\",\n        \"type\": \"EMPLOYEE\",\n        \"roles\": [\n          {\n            \"name\": \"Finance Admin\",\n            \"code\": \"FIN_ADMIN\",\n            \"tenantId\": \"pg.citya\"\n          }\n        ]\n      }\n    }\n  }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8074/collection-services/remittances/_search?tenantId=pg.citya",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8074",
+					"path": [
+						"collection-services",
+						"remittances",
+						"_search"
+					],
+					"query": [
+						{
+							"key": "tenantId",
+							"value": "pg.citya"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Remittance",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"RequestInfo\": {\n    \"apiId\": \"Rainmaker\",\n    \"authToken\": \"dummy-token\",\n    \"userInfo\": {\n      \"id\": 1,\n      \"uuid\": \"test-uuid\",\n      \"userName\": \"testuser\",\n      \"tenantId\": \"pg.citya\",\n      \"type\": \"EMPLOYEE\",\n      \"roles\": [\n        {\n          \"name\": \"Finance Admin\",\n          \"code\": \"FIN_ADMIN\",\n          \"tenantId\": \"pg.citya\"\n        }\n      ]\n    }\n  },\n  \"Remittance\": [\n    {\n      \"tenantId\": \"pg.citya\",\n      \"referenceNumber\": \"REF-001\",\n      \"referenceDate\": 1719400000000,\n      \"status\": \"PENDING\",\n      \"bankaccount\": \"000000000001\",\n      \"remittanceDetails\": [\n        {\n          \"chartOfAccount\": \"COA-001\",\n          \"creditAmount\": 1000.0,\n          \"debitAmount\": 0.0\n        }\n      ],\n      \"remittanceInstruments\": [\n        {\n          \"instrument\": \"CHQ-123456\"\n        }\n      ]\n    }\n  ]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8074/collection-services/remittances/_create",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8074",
+					"path": [
+						"collection-services",
+						"remittances",
+						"_create"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Remittance",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"RequestInfo\": {\n      \"apiId\": \"Rainmaker\",\n      \"authToken\": \"dummy-token\",\n      \"userInfo\": {\n        \"id\": 1,\n        \"uuid\": \"test-uuid\",\n        \"userName\": \"testuser\",\n        \"tenantId\": \"pg.citya\",\n        \"type\": \"EMPLOYEE\",\n        \"roles\": [\n          {\n            \"name\": \"Finance Admin\",\n            \"code\": \"FIN_ADMIN\",\n            \"tenantId\": \"pg.citya\"\n          }\n        ]\n      }\n    },\n    \"Remittance\": [\n      {\n        \"tenantId\": \"pg.citya\",\n        \"id\": \"f4b306ae01764ab384b3c5188fb55717\",\n        \"referenceNumber\": \"REF-001\",\n        \"referenceDate\": 1719400000000,\n        \"voucherHeader\": null,\n        \"function\": null,\n        \"fund\": null,\n        \"remarks\": \"Updated remarks\",\n        \"reasonForDelay\": null,\n        \"status\": \"APPROVED\",\n        \"bankaccount\": \"000000000001\",\n        \"auditDetails\": {\n          \"createdBy\": \"1\",\n          \"createdTime\": 1751008018990,\n          \"lastModifiedBy\": \"1\",\n          \"lastModifiedTime\": 1751008018990\n        },\n        \"remittanceReceipts\": [],\n        \"remittanceDetails\": [\n          {\n            \"tenantId\": \"pg.citya\",\n            \"id\": \"4ea449e3f2d64d0e95f1331bc3158e88\",\n            \"remittance\": \"f4b306ae01764ab384b3c5188fb55717\",\n            \"chartOfAccount\": \"COA-001\",\n            \"creditAmount\": 1000.0,\n            \"debitAmount\": 0.0\n          }\n        ],\n        \"remittanceInstruments\": [\n          {\n            \"tenantId\": \"pg.citya\",\n            \"id\": \"4059e8b802834953a982b25b70bc6fe3\",\n            \"remittance\": \"f4b306ae01764ab384b3c5188fb55717\",\n            \"instrument\": \"CHQ-123456\",\n            \"reconciled\": null\n          }\n        ]\n      }\n    ]\n  }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8074/collection-services/remittances/_update",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8074",
+					"path": [
+						"collection-services",
+						"remittances",
+						"_update"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update PreExistingPayments",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8280/collection-services/preexistpayments/_update",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8280",
+					"path": [
+						"collection-services",
+						"preexistpayments",
+						"_update"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Payment Validate",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"Rainmaker\",\n        \"msgId\": \"dummy-msg-id\",\n        \"authToken\": \"dummy-token\",\n        \"userInfo\": {\n            \"id\": 832,\n            \"userName\": \"SVEMP\",\n            \"name\": \"SV\",\n            \"type\": \"EMPLOYEE\",\n            \"mobileNumber\": \"9509935418\",\n            \"roles\": [\n                {\n                    \"name\": \"Inspection Officer\",\n                    \"code\": \"INSPECTIONOFFICER\",\n                    \"tenantId\": \"pg.citya\"\n                }\n            ],\n            \"tenantId\": \"pg.citya\",\n            \"uuid\": \"7f4fd980-628e-4266-a992-40fa629e2f05\"\n        }\n    },\n    \"Payment\": {\n        \"tenantId\": \"pg.citya\",\n        \"totalAmountPaid\": 1500.00,\n        \"paymentMode\": \"CASH\",\n        \"paidBy\": \"OWNER\",\n        \"mobileNumber\": \"7645325127\",\n        \"payerName\": \"a\",\n        \"payerId\": \"f505275a-7a39-46d2-b869-261d82db74cd\",\n        \"paymentStatus\": \"NEW\",\n        \"paymentDetails\": [\n            {\n                \"tenantId\": \"pg.citya\",\n                \"totalAmountPaid\": 1500.00,\n                \"businessService\": \"chb-services\",\n                \"billId\": \"dummy-bill-id-123\"\n            }\n        ]\n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8280/collection-services/payments/_validate",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8280",
+					"path": [
+						"collection-services",
+						"payments",
+						"_validate"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Payment Workflow",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"Rainmaker\",\n        \"msgId\": \"1751434355993|en_IN\",\n        \"authToken\": null,\n        \"correlationId\": \"04c85b84-a8f2-42c7-9ba4-1e57f21cb115\",\n        \"userInfo\": {\n            \"id\": 811,\n            \"userName\": \"8010012414\",\n            \"name\": \"OWNER\",\n            \"type\": \"CITIZEN\",\n            \"mobileNumber\": \"8010012414\",\n            \"emailId\": \"cghvjbnk@gmail.com\",\n            \"roles\": [\n                {\n                    \"name\": \"Citizen\",\n                    \"code\": \"CITIZEN\",\n                    \"tenantId\": \"pg\"\n                }\n            ],\n            \"tenantId\": \"pg\",\n            \"uuid\": \"f789d679-352d-4aec-8198-4d61af1e0566\"\n        }\n    },\n    \"PaymentWorkflows\": [\n        {\n            \"paymentId\": \"10e3ad0f-cbcd-4df0-bb3f-dd92c7fe5a72\",\n            \"action\": \"CANCEL\",\n            \"tenantId\": \"pg.citya\",\n            \"reason\": \"Payment cancellation requested\"\n        }\n    ]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8280/collection-services/payments/adv-services/_workflow",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8280",
+					"path": [
+						"collection-services",
+						"payments",
+						"adv-services",
+						"_workflow"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Payment Migrate",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"RequestInfo\": {\n      \"apiId\": \"Rainmaker\",\n      \"ver\": \".01\",\n      \"ts\": 1703123456789,\n      \"action\": \"POST\",\n      \"msgId\": \"20170310130900|en_IN\",\n      \"userInfo\": {\n        \"id\": 1,\n        \"userName\": \"migration-admin\",\n        \"type\": \"SYSTEM\",\n        \"tenantId\": \"pg.citya\",\n        \"uuid\": \"migration-uuid\"\n      }\n    }\n  }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8280/collection-services/payments/_migrate?batchSize=1&offset=0&tenantId=pg.citya",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8280",
+					"path": [
+						"collection-services",
+						"payments",
+						"_migrate"
+					],
+					"query": [
+						{
+							"key": "batchSize",
+							"value": "1"
+						},
+						{
+							"key": "offset",
+							"value": "0"
+						},
+						{
+							"key": "tenantId",
+							"value": "pg.citya"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
