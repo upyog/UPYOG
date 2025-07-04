@@ -147,6 +147,7 @@ public class TransactionValidator {
 				criteria.setTenantId(newStatus.getTenantId());
 				String uri=props.getCollectionServiceHost();
 				uri=uri.concat(props.getPaymentSearchPath());
+				log.info("uri::"+uri);
 				PaymentResponse paymentResponse=collectionsRepository.serachPaidBillInEGCL(criteria,uri);
 				log.info("paymentResponse::"+paymentResponse);
 				if(!CollectionUtils.isEmpty(paymentResponse.getPayments()))
