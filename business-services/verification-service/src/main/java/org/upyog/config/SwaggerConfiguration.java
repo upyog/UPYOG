@@ -17,6 +17,6 @@ public class SwaggerConfiguration {
                 .info(new Info()
                         .title("Verification Service API")
                         .description("API details of the Verification service")
-                        .version("1.6"));
+                        .version("2.0"));
     }
 }
