@@ -144,6 +144,7 @@ public class TransactionValidator {
 				Set<String> bills=new HashSet<String>();
 				bills.add(newStatus.getBillId());
 				criteria.setBillIds(bills);
+				criteria.setTenantId(newStatus.getTenantId());
 				String uri=props.getCollectionServiceHost();
 				uri=uri.concat(props.getPaymentSearchPath());
 				PaymentResponse paymentResponse=collectionsRepository.serachPaidBillInEGCL(criteria,uri);
