@@ -38,6 +38,7 @@ public class TransactionValidator {
 	private TransactionRepository transactionRepository;
 	private PaymentsService paymentsService;
 	private AppProperties props;
+	//private Collecti
 
 	private final RestTemplate restTemplate = new RestTemplate();
 
@@ -127,6 +128,11 @@ public class TransactionValidator {
 
 		if (newStatus.getTxnStatus().equals(Transaction.TxnStatusEnum.SUCCESS)) {
 			if (new BigDecimal(prevStatus.getTxnAmount()).compareTo(new BigDecimal(newStatus.getTxnAmount())) == 0) {
+				
+				//if(serachPaidBillInEGCL()) {
+					
+				//}
+				
 				newStatus.setTxnStatus(Transaction.TxnStatusEnum.SUCCESS);
 				newStatus.setTxnStatusMsg(PgConstants.TXN_SUCCESS);
 				return true;

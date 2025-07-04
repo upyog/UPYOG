@@ -2,6 +2,8 @@ package org.egov.pg.repository;
 
 import lombok.extern.slf4j.Slf4j;
 import org.egov.pg.config.AppProperties;
+import org.egov.pg.models.PaymentResponse;
+import org.egov.pg.models.PaymentSearchCriteria;
 import org.egov.pg.models.ReceiptReq;
 import org.egov.pg.models.ReceiptRes;
 import org.egov.tracer.model.CustomException;
@@ -51,6 +53,20 @@ public class CollectionsRepository {
     private ReceiptRes fetchReceipt(ReceiptReq receiptReq, String uri){
         try {
             return restTemplate.postForObject(uri, receiptReq, ReceiptRes.class);
+        } catch (HttpClientErrorException e) {
+            log.error("Error occurred during collections API call", e);
+            throw new ServiceCallException(e.getResponseBodyAsString());
+        } catch (Exception e) {
+            log.error("Unknown error occurred during collections API call", e);
+            throw new CustomException("COLLECTION_SERVICE_ERROR", "Unknown error occurred during collections " +
+                    "API call");
+        }
+    }
+    
+    
+    public PaymentResponse serachPaidBillInEGCL(PaymentSearchCriteria paymentSearchCriteria, String uri){
+        try {
+            return restTemplate.postForObject(uri, paymentSearchCriteria, PaymentResponse.class);
         } catch (HttpClientErrorException e) {
             log.error("Error occurred during collections API call", e);
             throw new ServiceCallException(e.getResponseBodyAsString());
