@@ -107,7 +107,7 @@ public class TransactionService {
 				.build();
 
 		if(validator.skipGateway(transaction)){
-		//if(true){	
+			log.info("transaction inside gateway true::"+transaction);
 			transaction.setTxnStatus(Transaction.TxnStatusEnum.SUCCESS);
 			paymentsService.registerPayment(transactionRequest);
 		}
