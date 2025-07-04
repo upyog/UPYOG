@@ -5,16 +5,22 @@ import static org.springframework.util.StringUtils.isEmpty;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 import org.egov.common.contract.request.User;
 import org.egov.pg.config.AppProperties;
 import org.egov.pg.constants.PgConstants;
+import org.egov.pg.models.PaymentResponse;
+import org.egov.pg.models.PaymentSearchCriteria;
 import org.egov.pg.models.TaxAndPayment;
 import org.egov.pg.models.Transaction;
+import org.egov.pg.repository.CollectionsRepository;
 import org.egov.pg.repository.TransactionRepository;
 import org.egov.pg.service.GatewayService;
 import org.egov.pg.service.PaymentsService;
@@ -26,6 +32,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 
 import lombok.extern.slf4j.Slf4j;
@@ -38,7 +46,7 @@ public class TransactionValidator {
 	private TransactionRepository transactionRepository;
 	private PaymentsService paymentsService;
 	private AppProperties props;
-	//private Collecti
+	private CollectionsRepository collectionsRepository;
 
 	private final RestTemplate restTemplate = new RestTemplate();
 
@@ -47,6 +55,7 @@ public class TransactionValidator {
 
 	@Value("${egov.userservice.host}")
 	private String authServiceHost;
+	
 
 
 	@Autowired
@@ -131,10 +140,20 @@ public class TransactionValidator {
 		if (newStatus.getTxnStatus().equals(Transaction.TxnStatusEnum.SUCCESS)) {
 			if (new BigDecimal(prevStatus.getTxnAmount()).compareTo(new BigDecimal(newStatus.getTxnAmount())) == 0) {
 				
-				//if(serachPaidBillInEGCL()) {
-					
-				//}
-				
+				PaymentSearchCriteria criteria=new PaymentSearchCriteria();
+				Set<String> bills=new HashSet<String>();
+				bills.add(newStatus.getBillId());
+				criteria.setBillIds(bills);
+				String uri=props.getCollectionServiceHost();
+				uri=uri.concat(props.getPaymentSearchPath());
+				PaymentResponse paymentResponse=collectionsRepository.serachPaidBillInEGCL(criteria,uri);
+				log.info("paymentResponse::"+paymentResponse);
+				if(!CollectionUtils.isEmpty(paymentResponse.getPayments()))
+				{
+					if(!StringUtils.isEmpty(paymentResponse.getPayments().get(0).getPaymentDetails().get(0).getBill()))
+						return false;
+				}
+						
 				newStatus.setTxnStatus(Transaction.TxnStatusEnum.SUCCESS);
 				newStatus.setTxnStatusMsg(PgConstants.TXN_SUCCESS);
 				return true;
