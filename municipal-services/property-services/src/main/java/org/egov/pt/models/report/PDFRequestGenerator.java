@@ -9,8 +9,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 import org.egov.pt.models.OwnerInfo;
 import org.egov.pt.models.Property;
@@ -106,16 +108,25 @@ public class PDFRequestGenerator {
 		List<String> plinthAreas = new ArrayList<>();
 		BigDecimal plinthAreaTotal = BigDecimal.ZERO;
 
+		JsonNode additionalDetailsNode = ptTaxCalculatorTracker.getAdditionalDetails(); // This is a JsonNode (array)
+
+		Set<String> trackerUnitIds = StreamSupport.stream(additionalDetailsNode.spliterator(), false)
+		    .map(jsonNode -> jsonNode.get("unitId").asText())
+		    .collect(Collectors.toSet());
+		
 		for (Unit unit : property.getUnits()) {
-			JsonNode unitAdditionalDetails = objectMapper.valueToTree(unit.getAdditionalDetails());
-			slNos.add(String.valueOf(conut++));
-			f1Values.add(addressAdditionalDetails.get("zone").asText());
-			f2Values.add(unitAdditionalDetails.get("propBuildingType").asText());
-			f3Values.add(unitAdditionalDetails.get("propYearOfCons").asText());
-			f4Values.add(unitAdditionalDetails.get("propType").asText());
-			f5Values.add(unitAdditionalDetails.get("useOfBuilding").asText());
-			plinthAreas.add(unitAdditionalDetails.get("propArea").asText());
+			if (trackerUnitIds.contains(unit.getId())) { 
+				JsonNode unitAdditionalDetails = objectMapper.valueToTree(unit.getAdditionalDetails());
+				slNos.add(String.valueOf(conut++));
+				f1Values.add(addressAdditionalDetails.get("zone").asText());
+				f2Values.add(unitAdditionalDetails.get("propBuildingType").asText());
+				f3Values.add(unitAdditionalDetails.get("propYearOfCons").asText());
+				f4Values.add(unitAdditionalDetails.get("propType").asText());
+				f5Values.add(unitAdditionalDetails.get("useOfBuilding").asText());
+				plinthAreas.add(unitAdditionalDetails.get("propArea").asText());
+			}
 		}
+			
 
 		Map<String, Object> ptDetailsTableRow = new HashMap<>();
 
