@@ -278,21 +278,23 @@ public class PropertySchedulerService {
 					JsonNode node = objectMapper.createObjectNode();
 
 					((ObjectNode) node).put("propertyType", property.getPropertyType())
-							.put(PTConstants.MDMS_MASTER_DETAILS_ZONES, locationFactor.doubleValue())
+							.put(PTConstants.MDMS_MASTER_DETAILS_ZONES+"(f1)", locationFactor.doubleValue())
 							.put(PTConstants.MDMS_MASTER_DETAILS_OVERALLREBATE, oAndMRebatePercentage.doubleValue())
 							.put(PTConstants.MDMS_MASTER_DETAILS_PROPERTYTAXRATE,
 									propertyTaxRatePercentage.doubleValue())
 							.put("netRateableValue", netRateableValue.doubleValue())
 							.put("propertyArea", unitAdditionalDetails.get("propArea").asText())
 							.put("propertyTaxCalculated", propertyTax.doubleValue())
-							.put("propertyTaxGenerated", propertyTaxGenerated).put("days", days.doubleValue());
+							.put("propertyTaxGenerated", propertyTaxGenerated)
+							.put("days", days.doubleValue())
+							.put("unitId", unit.getId());
 
 					if (property.getPropertyType().equalsIgnoreCase("BUILTUP")) {
 						((ObjectNode) node)
-								.put(PTConstants.MDMS_MASTER_DETAILS_BUILDINGSTRUCTURE, structuralFactor.doubleValue())
-								.put(PTConstants.MDMS_MASTER_DETAILS_BUILDINGESTABLISHMENTYEAR, ageFactor.doubleValue())
-								.put(PTConstants.MDMS_MASTER_DETAILS_BUILDINGPURPOSE, occupancyFactor.doubleValue())
-								.put(PTConstants.MDMS_MASTER_DETAILS_BUILDINGUSE, useFactor.doubleValue());
+								.put(PTConstants.MDMS_MASTER_DETAILS_BUILDINGSTRUCTURE+"(f2)", structuralFactor.doubleValue())
+								.put(PTConstants.MDMS_MASTER_DETAILS_BUILDINGESTABLISHMENTYEAR+"(f3)", ageFactor.doubleValue())
+								.put(PTConstants.MDMS_MASTER_DETAILS_BUILDINGPURPOSE+"(f4)", occupancyFactor.doubleValue())
+								.put(PTConstants.MDMS_MASTER_DETAILS_BUILDINGUSE+"(f5)", useFactor.doubleValue());
 					}
 
 					if (node != null) {

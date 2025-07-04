@@ -555,11 +555,11 @@ public class NotificationService {
 		emailSubject = populateNotificationPlaceholders(emailSubject, propertyTracker, bill);
 	
 		if (!StringUtils.isEmpty(bill.getPayerEmail())) {
-			sendEmailforGenerateBill(emailBody, Collections.singletonList(bill.getPayerEmail()), requestInfo, null,
-					emailSubject);
+//			sendEmailforGenerateBill(emailBody, Collections.singletonList(bill.getPayerEmail()), requestInfo, null,
+//					emailSubject);
 		}
 		if (!StringUtils.isEmpty(bill.getMobileNumber())) {
-			sendSms(smsBody, bill.getMobileNumber());
+//			sendSms(smsBody, bill.getMobileNumber());
 		}
 
 	}
