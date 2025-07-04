@@ -18,6 +18,6 @@ public class SwaggerConfiguration {
                 .info(new Info()
                         .title("dashboard analytics API")
                         .description("API details of the dashboard analytics module")
-                        .version("1.6"));
+                        .version("2.0.0"));
     }
 }
