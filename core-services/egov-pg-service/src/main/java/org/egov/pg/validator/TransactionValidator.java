@@ -148,6 +148,7 @@ public class TransactionValidator {
 				String uri=props.getCollectionServiceHost();
 				uri=uri.concat(props.getPaymentSearchPath());
 				log.info("uri::"+uri);
+				log.info("criteria::"+criteria);
 				PaymentResponse paymentResponse=collectionsRepository.serachPaidBillInEGCL(criteria,uri);
 				log.info("paymentResponse::"+paymentResponse);
 				if(!CollectionUtils.isEmpty(paymentResponse.getPayments()))
