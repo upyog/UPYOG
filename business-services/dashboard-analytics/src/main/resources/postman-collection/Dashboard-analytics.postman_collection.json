@@ -1,0 +1,3199 @@
+{
+	"info": {
+		"_postman_id": "15bae9bd-d084-48ff-8d2a-930a9b5d68b5",
+		"name": "Dashboard-analytics",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "33443245",
+		"_collection_link": "https://ns2222-2134.postman.co/workspace/ns-Workspace~38cacaf9-0511-4c09-8038-1a9fb4900d76/collection/33443245-15bae9bd-d084-48ff-8d2a-930a9b5d68b5?action=share&source=collection_link&creator=33443245"
+	},
+	"item": [
+		{
+			"name": "New Request",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "accept",
+						"value": "application/json, text/plain, */*"
+					},
+					{
+						"key": "accept-language",
+						"value": "en-GB,en-US;q=0.9,en;q=0.8"
+					},
+					{
+						"key": "content-type",
+						"value": "application/json;charset=UTF-8"
+					},
+					{
+						"key": "origin",
+						"value": "https://niuatt.niua.in"
+					},
+					{
+						"key": "priority",
+						"value": "u=1, i"
+					},
+					{
+						"key": "referer",
+						"value": "https://niuatt.niua.in/digit-ui/employee/dss/landing/NURT_DASHBOARD"
+					},
+					{
+						"key": "sec-ch-ua",
+						"value": "\"Google Chrome\";v=\"137\", \"Chromium\";v=\"137\", \"Not/A)Brand\";v=\"24\""
+					},
+					{
+						"key": "sec-ch-ua-mobile",
+						"value": "?0"
+					},
+					{
+						"key": "sec-ch-ua-platform",
+						"value": "\"macOS\""
+					},
+					{
+						"key": "sec-fetch-dest",
+						"value": "empty"
+					},
+					{
+						"key": "sec-fetch-mode",
+						"value": "cors"
+					},
+					{
+						"key": "sec-fetch-site",
+						"value": "same-origin"
+					},
+					{
+						"key": "user-agent",
+						"value": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36"
+					},
+					{
+						"key": "Cookie",
+						"value": "_ga=GA1.1.1498208436.1748421576; _ga_VZ9TNBTB3X=GS2.1.s1748421575$o1$g0$t1748421575$j60$l0$h0; _clck=tkuuq4%7C2%7Cfwa%7C0%7C1974"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"aggregationRequestDto\": {\n        \"visualizationType\": \"METRIC\",\n        \"visualizationCode\": \"nurtOnboardedStates\",\n        \"queryType\": \"\",\n        \"filters\": {},\n        \"moduleLevel\": \"\",\n        \"aggregationFactors\": null,\n        \"requestDate\": {\n            \"startDate\": 1743445800000,\n            \"endDate\": 1751653799999,\n            \"interval\": \"month\",\n            \"title\": \"home\"\n        }\n    },\n    \"headers\": {\n        \"tenantId\": \"pg.citya\"\n    },\n    \"RequestInfo\": {\n        \"apiId\": \"Rainmaker\",\n        \"authToken\": \"e5f7704b-0255-4524-b31f-def7a181f658\",\n        \"msgId\": \"1751607176082|en_IN\",\n        \"plainAccessRequest\": {}\n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://niuatt.niua.in/dashboard-analytics/dashboard/getChartV2?_=1751607176082",
+					"protocol": "https",
+					"host": [
+						"niuatt",
+						"niua",
+						"in"
+					],
+					"path": [
+						"dashboard-analytics",
+						"dashboard",
+						"getChartV2"
+					],
+					"query": [
+						{
+							"key": "_",
+							"value": "1751607176082"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "New Request",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "accept",
+						"value": "application/json, text/plain, */*"
+					},
+					{
+						"key": "accept-language",
+						"value": "en-GB,en-US;q=0.9,en;q=0.8"
+					},
+					{
+						"key": "auth-token",
+						"value": "e5f7704b-0255-4524-b31f-def7a181f658"
+					},
+					{
+						"key": "content-type",
+						"value": "application/json;charset=utf-8"
+					},
+					{
+						"key": "priority",
+						"value": "u=1, i"
+					},
+					{
+						"key": "referer",
+						"value": "https://niuatt.niua.in/digit-ui/employee/dss/landing/NURT_DASHBOARD"
+					},
+					{
+						"key": "sec-ch-ua",
+						"value": "\"Google Chrome\";v=\"137\", \"Chromium\";v=\"137\", \"Not/A)Brand\";v=\"24\""
+					},
+					{
+						"key": "sec-ch-ua-mobile",
+						"value": "?0"
+					},
+					{
+						"key": "sec-ch-ua-platform",
+						"value": "\"macOS\""
+					},
+					{
+						"key": "sec-fetch-dest",
+						"value": "empty"
+					},
+					{
+						"key": "sec-fetch-mode",
+						"value": "cors"
+					},
+					{
+						"key": "sec-fetch-site",
+						"value": "same-origin"
+					},
+					{
+						"key": "user-agent",
+						"value": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36"
+					},
+					{
+						"key": "Cookie",
+						"value": "_ga=GA1.1.1498208436.1748421576; _ga_VZ9TNBTB3X=GS2.1.s1748421575$o1$g0$t1748421575$j60$l0$h0; _clck=tkuuq4%7C2%7Cfwa%7C0%7C1974"
+					}
+				],
+				"url": {
+					"raw": "https://niuatt.niua.in/dashboard-analytics/dashboard/getDashboardConfig/NURT_DASHBOARD?_=1751607175954",
+					"protocol": "https",
+					"host": [
+						"niuatt",
+						"niua",
+						"in"
+					],
+					"path": [
+						"dashboard-analytics",
+						"dashboard",
+						"getDashboardConfig",
+						"NURT_DASHBOARD"
+					],
+					"query": [
+						{
+							"key": "_",
+							"value": "1751607175954"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "New Request",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "accept",
+						"value": "application/json, text/plain, */*"
+					},
+					{
+						"key": "accept-language",
+						"value": "en-GB,en-US;q=0.9,en;q=0.8"
+					},
+					{
+						"key": "content-type",
+						"value": "application/json;charset=UTF-8"
+					},
+					{
+						"key": "origin",
+						"value": "https://niuatt.niua.in"
+					},
+					{
+						"key": "priority",
+						"value": "u=1, i"
+					},
+					{
+						"key": "referer",
+						"value": "https://niuatt.niua.in/digit-ui/employee/dss/landing/NURT_DASHBOARD"
+					},
+					{
+						"key": "sec-ch-ua",
+						"value": "\"Google Chrome\";v=\"137\", \"Chromium\";v=\"137\", \"Not/A)Brand\";v=\"24\""
+					},
+					{
+						"key": "sec-ch-ua-mobile",
+						"value": "?0"
+					},
+					{
+						"key": "sec-ch-ua-platform",
+						"value": "\"macOS\""
+					},
+					{
+						"key": "sec-fetch-dest",
+						"value": "empty"
+					},
+					{
+						"key": "sec-fetch-mode",
+						"value": "cors"
+					},
+					{
+						"key": "sec-fetch-site",
+						"value": "same-origin"
+					},
+					{
+						"key": "user-agent",
+						"value": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36"
+					},
+					{
+						"key": "Cookie",
+						"value": "_ga=GA1.1.1498208436.1748421576; _ga_VZ9TNBTB3X=GS2.1.s1748421575$o1$g0$t1748421575$j60$l0$h0; _clck=tkuuq4%7C2%7Cfwa%7C0%7C1974"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"aggregationRequestDto\":{\"visualizationType\":\"METRIC\",\"visualizationCode\":\"nurtLiveStates\",\"queryType\":\"\",\"filters\":{},\"moduleLevel\":\"\",\"aggregationFactors\":null,\"requestDate\":{\"startDate\":1743445800000,\"endDate\":1751653799999,\"interval\":\"month\",\"title\":\"home\"}},\"headers\":{\"tenantId\":\"pg.citya\"},\"RequestInfo\":{\"apiId\":\"Rainmaker\",\"authToken\":\"e5f7704b-0255-4524-b31f-def7a181f658\",\"msgId\":\"1751607176082|en_IN\",\"plainAccessRequest\":{}}}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://niuatt.niua.in/dashboard-analytics/dashboard/getChartV2?_=1751607176082",
+					"protocol": "https",
+					"host": [
+						"niuatt",
+						"niua",
+						"in"
+					],
+					"path": [
+						"dashboard-analytics",
+						"dashboard",
+						"getChartV2"
+					],
+					"query": [
+						{
+							"key": "_",
+							"value": "1751607176082"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "New Request",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "accept",
+						"value": "application/json, text/plain, */*"
+					},
+					{
+						"key": "accept-language",
+						"value": "en-GB,en-US;q=0.9,en;q=0.8"
+					},
+					{
+						"key": "content-type",
+						"value": "application/json;charset=UTF-8"
+					},
+					{
+						"key": "origin",
+						"value": "https://niuatt.niua.in"
+					},
+					{
+						"key": "priority",
+						"value": "u=1, i"
+					},
+					{
+						"key": "referer",
+						"value": "https://niuatt.niua.in/digit-ui/employee/dss/landing/NURT_DASHBOARD"
+					},
+					{
+						"key": "sec-ch-ua",
+						"value": "\"Google Chrome\";v=\"137\", \"Chromium\";v=\"137\", \"Not/A)Brand\";v=\"24\""
+					},
+					{
+						"key": "sec-ch-ua-mobile",
+						"value": "?0"
+					},
+					{
+						"key": "sec-ch-ua-platform",
+						"value": "\"macOS\""
+					},
+					{
+						"key": "sec-fetch-dest",
+						"value": "empty"
+					},
+					{
+						"key": "sec-fetch-mode",
+						"value": "cors"
+					},
+					{
+						"key": "sec-fetch-site",
+						"value": "same-origin"
+					},
+					{
+						"key": "user-agent",
+						"value": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36"
+					},
+					{
+						"key": "Cookie",
+						"value": "_ga=GA1.1.1498208436.1748421576; _ga_VZ9TNBTB3X=GS2.1.s1748421575$o1$g0$t1748421575$j60$l0$h0; _clck=tkuuq4%7C2%7Cfwa%7C0%7C1974"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"aggregationRequestDto\":{\"visualizationType\":\"METRIC\",\"visualizationCode\":\"nurtLiveUlbs\",\"queryType\":\"\",\"filters\":{},\"moduleLevel\":\"\",\"aggregationFactors\":null,\"requestDate\":{\"startDate\":1743445800000,\"endDate\":1751653799999,\"interval\":\"month\",\"title\":\"home\"}},\"headers\":{\"tenantId\":\"pg.citya\"},\"RequestInfo\":{\"apiId\":\"Rainmaker\",\"authToken\":\"e5f7704b-0255-4524-b31f-def7a181f658\",\"msgId\":\"1751607176082|en_IN\",\"plainAccessRequest\":{}}}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://niuatt.niua.in/dashboard-analytics/dashboard/getChartV2?_=1751607176082",
+					"protocol": "https",
+					"host": [
+						"niuatt",
+						"niua",
+						"in"
+					],
+					"path": [
+						"dashboard-analytics",
+						"dashboard",
+						"getChartV2"
+					],
+					"query": [
+						{
+							"key": "_",
+							"value": "1751607176082"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "New Request",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "accept",
+						"value": "application/json, text/plain, */*"
+					},
+					{
+						"key": "accept-language",
+						"value": "en-GB,en-US;q=0.9,en;q=0.8"
+					},
+					{
+						"key": "content-type",
+						"value": "application/json;charset=UTF-8"
+					},
+					{
+						"key": "origin",
+						"value": "https://niuatt.niua.in"
+					},
+					{
+						"key": "priority",
+						"value": "u=1, i"
+					},
+					{
+						"key": "referer",
+						"value": "https://niuatt.niua.in/digit-ui/employee/dss/landing/NURT_DASHBOARD"
+					},
+					{
+						"key": "sec-ch-ua",
+						"value": "\"Google Chrome\";v=\"137\", \"Chromium\";v=\"137\", \"Not/A)Brand\";v=\"24\""
+					},
+					{
+						"key": "sec-ch-ua-mobile",
+						"value": "?0"
+					},
+					{
+						"key": "sec-ch-ua-platform",
+						"value": "\"macOS\""
+					},
+					{
+						"key": "sec-fetch-dest",
+						"value": "empty"
+					},
+					{
+						"key": "sec-fetch-mode",
+						"value": "cors"
+					},
+					{
+						"key": "sec-fetch-site",
+						"value": "same-origin"
+					},
+					{
+						"key": "user-agent",
+						"value": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36"
+					},
+					{
+						"key": "Cookie",
+						"value": "_ga=GA1.1.1498208436.1748421576; _ga_VZ9TNBTB3X=GS2.1.s1748421575$o1$g0$t1748421575$j60$l0$h0; _clck=tkuuq4%7C2%7Cfwa%7C0%7C1974"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"aggregationRequestDto\":{\"visualizationType\":\"METRIC\",\"visualizationCode\":\"nurtTotalCitzens\",\"queryType\":\"\",\"filters\":{},\"moduleLevel\":\"\",\"aggregationFactors\":null,\"requestDate\":{\"startDate\":1743445800000,\"endDate\":1751653799999,\"interval\":\"month\",\"title\":\"home\"}},\"headers\":{\"tenantId\":\"pg.citya\"},\"RequestInfo\":{\"apiId\":\"Rainmaker\",\"authToken\":\"e5f7704b-0255-4524-b31f-def7a181f658\",\"msgId\":\"1751607176082|en_IN\",\"plainAccessRequest\":{}}}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://niuatt.niua.in/dashboard-analytics/dashboard/getChartV2?_=1751607176082",
+					"protocol": "https",
+					"host": [
+						"niuatt",
+						"niua",
+						"in"
+					],
+					"path": [
+						"dashboard-analytics",
+						"dashboard",
+						"getChartV2"
+					],
+					"query": [
+						{
+							"key": "_",
+							"value": "1751607176082"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "New Request",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "accept",
+						"value": "application/json, text/plain, */*"
+					},
+					{
+						"key": "accept-language",
+						"value": "en-GB,en-US;q=0.9,en;q=0.8"
+					},
+					{
+						"key": "content-type",
+						"value": "application/json;charset=UTF-8"
+					},
+					{
+						"key": "origin",
+						"value": "https://niuatt.niua.in"
+					},
+					{
+						"key": "priority",
+						"value": "u=1, i"
+					},
+					{
+						"key": "referer",
+						"value": "https://niuatt.niua.in/digit-ui/employee/dss/landing/NURT_DASHBOARD"
+					},
+					{
+						"key": "sec-ch-ua",
+						"value": "\"Google Chrome\";v=\"137\", \"Chromium\";v=\"137\", \"Not/A)Brand\";v=\"24\""
+					},
+					{
+						"key": "sec-ch-ua-mobile",
+						"value": "?0"
+					},
+					{
+						"key": "sec-ch-ua-platform",
+						"value": "\"macOS\""
+					},
+					{
+						"key": "sec-fetch-dest",
+						"value": "empty"
+					},
+					{
+						"key": "sec-fetch-mode",
+						"value": "cors"
+					},
+					{
+						"key": "sec-fetch-site",
+						"value": "same-origin"
+					},
+					{
+						"key": "user-agent",
+						"value": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36"
+					},
+					{
+						"key": "Cookie",
+						"value": "_ga=GA1.1.1498208436.1748421576; _ga_VZ9TNBTB3X=GS2.1.s1748421575$o1$g0$t1748421575$j60$l0$h0; _clck=tkuuq4%7C2%7Cfwa%7C0%7C1974"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"aggregationRequestDto\":{\"visualizationType\":\"METRIC\",\"visualizationCode\":\"targetCollectionvOverview\",\"queryType\":\"\",\"filters\":{},\"moduleLevel\":\"\",\"aggregationFactors\":null,\"requestDate\":{\"startDate\":1743445800000,\"endDate\":1751653799999,\"interval\":\"month\",\"title\":\"home\"}},\"headers\":{\"tenantId\":\"pg.citya\"},\"RequestInfo\":{\"apiId\":\"Rainmaker\",\"authToken\":\"e5f7704b-0255-4524-b31f-def7a181f658\",\"msgId\":\"1751607176082|en_IN\",\"plainAccessRequest\":{}}}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://niuatt.niua.in/dashboard-analytics/dashboard/getChartV2?_=1751607176082",
+					"protocol": "https",
+					"host": [
+						"niuatt",
+						"niua",
+						"in"
+					],
+					"path": [
+						"dashboard-analytics",
+						"dashboard",
+						"getChartV2"
+					],
+					"query": [
+						{
+							"key": "_",
+							"value": "1751607176082"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "New Request",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "accept",
+						"value": "application/json, text/plain, */*"
+					},
+					{
+						"key": "accept-language",
+						"value": "en-GB,en-US;q=0.9,en;q=0.8"
+					},
+					{
+						"key": "content-type",
+						"value": "application/json;charset=UTF-8"
+					},
+					{
+						"key": "origin",
+						"value": "https://niuatt.niua.in"
+					},
+					{
+						"key": "priority",
+						"value": "u=1, i"
+					},
+					{
+						"key": "referer",
+						"value": "https://niuatt.niua.in/digit-ui/employee/dss/landing/NURT_DASHBOARD"
+					},
+					{
+						"key": "sec-ch-ua",
+						"value": "\"Google Chrome\";v=\"137\", \"Chromium\";v=\"137\", \"Not/A)Brand\";v=\"24\""
+					},
+					{
+						"key": "sec-ch-ua-mobile",
+						"value": "?0"
+					},
+					{
+						"key": "sec-ch-ua-platform",
+						"value": "\"macOS\""
+					},
+					{
+						"key": "sec-fetch-dest",
+						"value": "empty"
+					},
+					{
+						"key": "sec-fetch-mode",
+						"value": "cors"
+					},
+					{
+						"key": "sec-fetch-site",
+						"value": "same-origin"
+					},
+					{
+						"key": "user-agent",
+						"value": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36"
+					},
+					{
+						"key": "Cookie",
+						"value": "_ga=GA1.1.1498208436.1748421576; _ga_VZ9TNBTB3X=GS2.1.s1748421575$o1$g0$t1748421575$j60$l0$h0; _clck=tkuuq4%7C2%7Cfwa%7C0%7C1974"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"aggregationRequestDto\":{\"visualizationType\":\"METRIC\",\"visualizationCode\":\"totalCollectionOverview\",\"queryType\":\"\",\"filters\":{},\"moduleLevel\":\"\",\"aggregationFactors\":null,\"requestDate\":{\"startDate\":1743445800000,\"endDate\":1751653799999,\"interval\":\"month\",\"title\":\"home\"}},\"headers\":{\"tenantId\":\"pg.citya\"},\"RequestInfo\":{\"apiId\":\"Rainmaker\",\"authToken\":\"e5f7704b-0255-4524-b31f-def7a181f658\",\"msgId\":\"1751607176082|en_IN\",\"plainAccessRequest\":{}}}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://niuatt.niua.in/dashboard-analytics/dashboard/getChartV2?_=1751607176082",
+					"protocol": "https",
+					"host": [
+						"niuatt",
+						"niua",
+						"in"
+					],
+					"path": [
+						"dashboard-analytics",
+						"dashboard",
+						"getChartV2"
+					],
+					"query": [
+						{
+							"key": "_",
+							"value": "1751607176082"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "New Request",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "accept",
+						"value": "application/json, text/plain, */*"
+					},
+					{
+						"key": "accept-language",
+						"value": "en-GB,en-US;q=0.9,en;q=0.8"
+					},
+					{
+						"key": "content-type",
+						"value": "application/json;charset=UTF-8"
+					},
+					{
+						"key": "origin",
+						"value": "https://niuatt.niua.in"
+					},
+					{
+						"key": "priority",
+						"value": "u=1, i"
+					},
+					{
+						"key": "referer",
+						"value": "https://niuatt.niua.in/digit-ui/employee/dss/landing/NURT_DASHBOARD"
+					},
+					{
+						"key": "sec-ch-ua",
+						"value": "\"Google Chrome\";v=\"137\", \"Chromium\";v=\"137\", \"Not/A)Brand\";v=\"24\""
+					},
+					{
+						"key": "sec-ch-ua-mobile",
+						"value": "?0"
+					},
+					{
+						"key": "sec-ch-ua-platform",
+						"value": "\"macOS\""
+					},
+					{
+						"key": "sec-fetch-dest",
+						"value": "empty"
+					},
+					{
+						"key": "sec-fetch-mode",
+						"value": "cors"
+					},
+					{
+						"key": "sec-fetch-site",
+						"value": "same-origin"
+					},
+					{
+						"key": "user-agent",
+						"value": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36"
+					},
+					{
+						"key": "Cookie",
+						"value": "_ga=GA1.1.1498208436.1748421576; _ga_VZ9TNBTB3X=GS2.1.s1748421575$o1$g0$t1748421575$j60$l0$h0; _clck=tkuuq4%7C2%7Cfwa%7C0%7C1974"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"aggregationRequestDto\":{\"visualizationType\":\"METRIC\",\"visualizationCode\":\"targetAchievedOverview\",\"queryType\":\"\",\"filters\":{},\"moduleLevel\":\"\",\"aggregationFactors\":null,\"requestDate\":{\"startDate\":1743445800000,\"endDate\":1751653799999,\"interval\":\"month\",\"title\":\"home\"}},\"headers\":{\"tenantId\":\"pg.citya\"},\"RequestInfo\":{\"apiId\":\"Rainmaker\",\"authToken\":\"e5f7704b-0255-4524-b31f-def7a181f658\",\"msgId\":\"1751607176082|en_IN\",\"plainAccessRequest\":{}}}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://niuatt.niua.in/dashboard-analytics/dashboard/getChartV2?_=1751607176082",
+					"protocol": "https",
+					"host": [
+						"niuatt",
+						"niua",
+						"in"
+					],
+					"path": [
+						"dashboard-analytics",
+						"dashboard",
+						"getChartV2"
+					],
+					"query": [
+						{
+							"key": "_",
+							"value": "1751607176082"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "New Request",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "accept",
+						"value": "application/json, text/plain, */*"
+					},
+					{
+						"key": "accept-language",
+						"value": "en-GB,en-US;q=0.9,en;q=0.8"
+					},
+					{
+						"key": "content-type",
+						"value": "application/json;charset=UTF-8"
+					},
+					{
+						"key": "origin",
+						"value": "https://niuatt.niua.in"
+					},
+					{
+						"key": "priority",
+						"value": "u=1, i"
+					},
+					{
+						"key": "referer",
+						"value": "https://niuatt.niua.in/digit-ui/employee/dss/landing/NURT_DASHBOARD"
+					},
+					{
+						"key": "sec-ch-ua",
+						"value": "\"Google Chrome\";v=\"137\", \"Chromium\";v=\"137\", \"Not/A)Brand\";v=\"24\""
+					},
+					{
+						"key": "sec-ch-ua-mobile",
+						"value": "?0"
+					},
+					{
+						"key": "sec-ch-ua-platform",
+						"value": "\"macOS\""
+					},
+					{
+						"key": "sec-fetch-dest",
+						"value": "empty"
+					},
+					{
+						"key": "sec-fetch-mode",
+						"value": "cors"
+					},
+					{
+						"key": "sec-fetch-site",
+						"value": "same-origin"
+					},
+					{
+						"key": "user-agent",
+						"value": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36"
+					},
+					{
+						"key": "Cookie",
+						"value": "_ga=GA1.1.1498208436.1748421576; _ga_VZ9TNBTB3X=GS2.1.s1748421575$o1$g0$t1748421575$j60$l0$h0; _clck=tkuuq4%7C2%7Cfwa%7C0%7C1974"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"aggregationRequestDto\":{\"visualizationType\":\"METRIC\",\"visualizationCode\":\"StateGDPwiseTotalRevenueCollection\",\"queryType\":\"\",\"filters\":{},\"moduleLevel\":\"\",\"aggregationFactors\":null,\"requestDate\":{\"startDate\":1743445800000,\"endDate\":1751653799999,\"interval\":\"month\",\"title\":\"home\"}},\"headers\":{\"tenantId\":\"pg.citya\"},\"RequestInfo\":{\"apiId\":\"Rainmaker\",\"authToken\":\"e5f7704b-0255-4524-b31f-def7a181f658\",\"msgId\":\"1751607176082|en_IN\",\"plainAccessRequest\":{}}}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://niuatt.niua.in/dashboard-analytics/dashboard/getChartV2?_=1751607176082",
+					"protocol": "https",
+					"host": [
+						"niuatt",
+						"niua",
+						"in"
+					],
+					"path": [
+						"dashboard-analytics",
+						"dashboard",
+						"getChartV2"
+					],
+					"query": [
+						{
+							"key": "_",
+							"value": "1751607176082"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "New Request",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "accept",
+						"value": "application/json, text/plain, */*"
+					},
+					{
+						"key": "accept-language",
+						"value": "en-GB,en-US;q=0.9,en;q=0.8"
+					},
+					{
+						"key": "content-type",
+						"value": "application/json;charset=UTF-8"
+					},
+					{
+						"key": "origin",
+						"value": "https://niuatt.niua.in"
+					},
+					{
+						"key": "priority",
+						"value": "u=1, i"
+					},
+					{
+						"key": "referer",
+						"value": "https://niuatt.niua.in/digit-ui/employee/dss/landing/NURT_DASHBOARD"
+					},
+					{
+						"key": "sec-ch-ua",
+						"value": "\"Google Chrome\";v=\"137\", \"Chromium\";v=\"137\", \"Not/A)Brand\";v=\"24\""
+					},
+					{
+						"key": "sec-ch-ua-mobile",
+						"value": "?0"
+					},
+					{
+						"key": "sec-ch-ua-platform",
+						"value": "\"macOS\""
+					},
+					{
+						"key": "sec-fetch-dest",
+						"value": "empty"
+					},
+					{
+						"key": "sec-fetch-mode",
+						"value": "cors"
+					},
+					{
+						"key": "sec-fetch-site",
+						"value": "same-origin"
+					},
+					{
+						"key": "user-agent",
+						"value": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36"
+					},
+					{
+						"key": "Cookie",
+						"value": "_ga=GA1.1.1498208436.1748421576; _ga_VZ9TNBTB3X=GS2.1.s1748421575$o1$g0$t1748421575$j60$l0$h0; _clck=tkuuq4%7C2%7Cfwa%7C0%7C1974"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"aggregationRequestDto\":{\"visualizationType\":\"METRIC\",\"visualizationCode\":\"NonTaxRevenuePerHousehold\",\"queryType\":\"\",\"filters\":{},\"moduleLevel\":\"\",\"aggregationFactors\":null,\"requestDate\":{\"startDate\":1743445800000,\"endDate\":1751653799999,\"interval\":\"month\",\"title\":\"home\"}},\"headers\":{\"tenantId\":\"pg.citya\"},\"RequestInfo\":{\"apiId\":\"Rainmaker\",\"authToken\":\"e5f7704b-0255-4524-b31f-def7a181f658\",\"msgId\":\"1751607176083|en_IN\",\"plainAccessRequest\":{}}}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://niuatt.niua.in/dashboard-analytics/dashboard/getChartV2?_=1751607176083",
+					"protocol": "https",
+					"host": [
+						"niuatt",
+						"niua",
+						"in"
+					],
+					"path": [
+						"dashboard-analytics",
+						"dashboard",
+						"getChartV2"
+					],
+					"query": [
+						{
+							"key": "_",
+							"value": "1751607176083"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "New Request",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "accept",
+						"value": "application/json, text/plain, */*"
+					},
+					{
+						"key": "accept-language",
+						"value": "en-GB,en-US;q=0.9,en;q=0.8"
+					},
+					{
+						"key": "content-type",
+						"value": "application/json;charset=UTF-8"
+					},
+					{
+						"key": "origin",
+						"value": "https://niuatt.niua.in"
+					},
+					{
+						"key": "priority",
+						"value": "u=1, i"
+					},
+					{
+						"key": "referer",
+						"value": "https://niuatt.niua.in/digit-ui/employee/dss/landing/NURT_DASHBOARD"
+					},
+					{
+						"key": "sec-ch-ua",
+						"value": "\"Google Chrome\";v=\"137\", \"Chromium\";v=\"137\", \"Not/A)Brand\";v=\"24\""
+					},
+					{
+						"key": "sec-ch-ua-mobile",
+						"value": "?0"
+					},
+					{
+						"key": "sec-ch-ua-platform",
+						"value": "\"macOS\""
+					},
+					{
+						"key": "sec-fetch-dest",
+						"value": "empty"
+					},
+					{
+						"key": "sec-fetch-mode",
+						"value": "cors"
+					},
+					{
+						"key": "sec-fetch-site",
+						"value": "same-origin"
+					},
+					{
+						"key": "user-agent",
+						"value": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36"
+					},
+					{
+						"key": "Cookie",
+						"value": "_ga=GA1.1.1498208436.1748421576; _ga_VZ9TNBTB3X=GS2.1.s1748421575$o1$g0$t1748421575$j60$l0$h0; _clck=tkuuq4%7C2%7Cfwa%7C0%7C1974"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"aggregationRequestDto\":{\"visualizationType\":\"METRIC\",\"visualizationCode\":\"nssOverviewCitizenFeedbackScore\",\"queryType\":\"\",\"filters\":{},\"moduleLevel\":\"\",\"aggregationFactors\":null,\"requestDate\":{\"startDate\":1743445800000,\"endDate\":1751653799999,\"interval\":\"month\",\"title\":\"home\"}},\"headers\":{\"tenantId\":\"pg.citya\"},\"RequestInfo\":{\"apiId\":\"Rainmaker\",\"authToken\":\"e5f7704b-0255-4524-b31f-def7a181f658\",\"msgId\":\"1751607176083|en_IN\",\"plainAccessRequest\":{}}}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://niuatt.niua.in/dashboard-analytics/dashboard/getChartV2?_=1751607176083",
+					"protocol": "https",
+					"host": [
+						"niuatt",
+						"niua",
+						"in"
+					],
+					"path": [
+						"dashboard-analytics",
+						"dashboard",
+						"getChartV2"
+					],
+					"query": [
+						{
+							"key": "_",
+							"value": "1751607176083"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "New Request",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "accept",
+						"value": "application/json, text/plain, */*"
+					},
+					{
+						"key": "accept-language",
+						"value": "en-GB,en-US;q=0.9,en;q=0.8"
+					},
+					{
+						"key": "content-type",
+						"value": "application/json;charset=UTF-8"
+					},
+					{
+						"key": "origin",
+						"value": "https://niuatt.niua.in"
+					},
+					{
+						"key": "priority",
+						"value": "u=1, i"
+					},
+					{
+						"key": "referer",
+						"value": "https://niuatt.niua.in/digit-ui/employee/dss/landing/NURT_DASHBOARD"
+					},
+					{
+						"key": "sec-ch-ua",
+						"value": "\"Google Chrome\";v=\"137\", \"Chromium\";v=\"137\", \"Not/A)Brand\";v=\"24\""
+					},
+					{
+						"key": "sec-ch-ua-mobile",
+						"value": "?0"
+					},
+					{
+						"key": "sec-ch-ua-platform",
+						"value": "\"macOS\""
+					},
+					{
+						"key": "sec-fetch-dest",
+						"value": "empty"
+					},
+					{
+						"key": "sec-fetch-mode",
+						"value": "cors"
+					},
+					{
+						"key": "sec-fetch-site",
+						"value": "same-origin"
+					},
+					{
+						"key": "user-agent",
+						"value": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36"
+					},
+					{
+						"key": "Cookie",
+						"value": "_ga=GA1.1.1498208436.1748421576; _ga_VZ9TNBTB3X=GS2.1.s1748421575$o1$g0$t1748421575$j60$l0$h0; _clck=tkuuq4%7C2%7Cfwa%7C0%7C1974"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"aggregationRequestDto\":{\"visualizationType\":\"METRIC\",\"visualizationCode\":\"nssPtCitizenServiceDeliveryIndex\",\"queryType\":\"\",\"filters\":{},\"moduleLevel\":\"\",\"aggregationFactors\":null,\"requestDate\":{\"startDate\":1743445800000,\"endDate\":1751653799999,\"interval\":\"month\",\"title\":\"home\"}},\"headers\":{\"tenantId\":\"pg.citya\"},\"RequestInfo\":{\"apiId\":\"Rainmaker\",\"authToken\":\"e5f7704b-0255-4524-b31f-def7a181f658\",\"msgId\":\"1751607176083|en_IN\",\"plainAccessRequest\":{}}}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://niuatt.niua.in/dashboard-analytics/dashboard/getChartV2?_=1751607176083",
+					"protocol": "https",
+					"host": [
+						"niuatt",
+						"niua",
+						"in"
+					],
+					"path": [
+						"dashboard-analytics",
+						"dashboard",
+						"getChartV2"
+					],
+					"query": [
+						{
+							"key": "_",
+							"value": "1751607176083"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "New Request",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "accept",
+						"value": "application/json, text/plain, */*"
+					},
+					{
+						"key": "accept-language",
+						"value": "en-GB,en-US;q=0.9,en;q=0.8"
+					},
+					{
+						"key": "content-type",
+						"value": "application/json;charset=UTF-8"
+					},
+					{
+						"key": "origin",
+						"value": "https://niuatt.niua.in"
+					},
+					{
+						"key": "priority",
+						"value": "u=1, i"
+					},
+					{
+						"key": "referer",
+						"value": "https://niuatt.niua.in/digit-ui/employee/dss/landing/NURT_DASHBOARD"
+					},
+					{
+						"key": "sec-ch-ua",
+						"value": "\"Google Chrome\";v=\"137\", \"Chromium\";v=\"137\", \"Not/A)Brand\";v=\"24\""
+					},
+					{
+						"key": "sec-ch-ua-mobile",
+						"value": "?0"
+					},
+					{
+						"key": "sec-ch-ua-platform",
+						"value": "\"macOS\""
+					},
+					{
+						"key": "sec-fetch-dest",
+						"value": "empty"
+					},
+					{
+						"key": "sec-fetch-mode",
+						"value": "cors"
+					},
+					{
+						"key": "sec-fetch-site",
+						"value": "same-origin"
+					},
+					{
+						"key": "user-agent",
+						"value": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36"
+					},
+					{
+						"key": "Cookie",
+						"value": "_ga=GA1.1.1498208436.1748421576; _ga_VZ9TNBTB3X=GS2.1.s1748421575$o1$g0$t1748421575$j60$l0$h0; _clck=tkuuq4%7C2%7Cfwa%7C0%7C1974"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"aggregationRequestDto\":{\"visualizationType\":\"METRIC\",\"visualizationCode\":\"nurtProjectStatus\",\"queryType\":\"\",\"filters\":{},\"moduleLevel\":\"\",\"aggregationFactors\":null,\"requestDate\":{\"startDate\":1743445800000,\"endDate\":1751653799999,\"interval\":\"month\",\"title\":\"home\"}},\"headers\":{\"tenantId\":\"pg.citya\"},\"RequestInfo\":{\"apiId\":\"Rainmaker\",\"authToken\":\"e5f7704b-0255-4524-b31f-def7a181f658\",\"msgId\":\"1751607176084|en_IN\",\"plainAccessRequest\":{}}}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://niuatt.niua.in/dashboard-analytics/dashboard/getChartV2?_=1751607176084",
+					"protocol": "https",
+					"host": [
+						"niuatt",
+						"niua",
+						"in"
+					],
+					"path": [
+						"dashboard-analytics",
+						"dashboard",
+						"getChartV2"
+					],
+					"query": [
+						{
+							"key": "_",
+							"value": "1751607176084"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "New Request",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "accept",
+						"value": "application/json, text/plain, */*"
+					},
+					{
+						"key": "accept-language",
+						"value": "en-GB,en-US;q=0.9,en;q=0.8"
+					},
+					{
+						"key": "content-type",
+						"value": "application/json;charset=UTF-8"
+					},
+					{
+						"key": "origin",
+						"value": "https://niuatt.niua.in"
+					},
+					{
+						"key": "priority",
+						"value": "u=1, i"
+					},
+					{
+						"key": "referer",
+						"value": "https://niuatt.niua.in/digit-ui/employee/dss/landing/NURT_DASHBOARD"
+					},
+					{
+						"key": "sec-ch-ua",
+						"value": "\"Google Chrome\";v=\"137\", \"Chromium\";v=\"137\", \"Not/A)Brand\";v=\"24\""
+					},
+					{
+						"key": "sec-ch-ua-mobile",
+						"value": "?0"
+					},
+					{
+						"key": "sec-ch-ua-platform",
+						"value": "\"macOS\""
+					},
+					{
+						"key": "sec-fetch-dest",
+						"value": "empty"
+					},
+					{
+						"key": "sec-fetch-mode",
+						"value": "cors"
+					},
+					{
+						"key": "sec-fetch-site",
+						"value": "same-origin"
+					},
+					{
+						"key": "user-agent",
+						"value": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36"
+					},
+					{
+						"key": "Cookie",
+						"value": "_ga=GA1.1.1498208436.1748421576; _ga_VZ9TNBTB3X=GS2.1.s1748421575$o1$g0$t1748421575$j60$l0$h0; _clck=tkuuq4%7C2%7Cfwa%7C0%7C1974"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"aggregationRequestDto\":{\"visualizationType\":\"BAR\",\"visualizationCode\":\"nurtliveOnboardedUlbs\",\"queryType\":\"\",\"filters\":{},\"moduleLevel\":\"\",\"aggregationFactors\":null,\"requestDate\":{\"startDate\":1743445800000,\"endDate\":1751653799999,\"interval\":\"month\",\"title\":\"home\"}},\"headers\":{\"tenantId\":\"pg.citya\"},\"RequestInfo\":{\"apiId\":\"Rainmaker\",\"authToken\":\"e5f7704b-0255-4524-b31f-def7a181f658\",\"msgId\":\"1751607176084|en_IN\",\"plainAccessRequest\":{}}}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://niuatt.niua.in/dashboard-analytics/dashboard/getChartV2?_=1751607176084",
+					"protocol": "https",
+					"host": [
+						"niuatt",
+						"niua",
+						"in"
+					],
+					"path": [
+						"dashboard-analytics",
+						"dashboard",
+						"getChartV2"
+					],
+					"query": [
+						{
+							"key": "_",
+							"value": "1751607176084"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "New Request",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "accept",
+						"value": "application/json, text/plain, */*"
+					},
+					{
+						"key": "accept-language",
+						"value": "en-GB,en-US;q=0.9,en;q=0.8"
+					},
+					{
+						"key": "content-type",
+						"value": "application/json;charset=UTF-8"
+					},
+					{
+						"key": "origin",
+						"value": "https://niuatt.niua.in"
+					},
+					{
+						"key": "priority",
+						"value": "u=1, i"
+					},
+					{
+						"key": "referer",
+						"value": "https://niuatt.niua.in/digit-ui/employee/dss/landing/NURT_DASHBOARD"
+					},
+					{
+						"key": "sec-ch-ua",
+						"value": "\"Google Chrome\";v=\"137\", \"Chromium\";v=\"137\", \"Not/A)Brand\";v=\"24\""
+					},
+					{
+						"key": "sec-ch-ua-mobile",
+						"value": "?0"
+					},
+					{
+						"key": "sec-ch-ua-platform",
+						"value": "\"macOS\""
+					},
+					{
+						"key": "sec-fetch-dest",
+						"value": "empty"
+					},
+					{
+						"key": "sec-fetch-mode",
+						"value": "cors"
+					},
+					{
+						"key": "sec-fetch-site",
+						"value": "same-origin"
+					},
+					{
+						"key": "user-agent",
+						"value": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36"
+					},
+					{
+						"key": "Cookie",
+						"value": "_ga=GA1.1.1498208436.1748421576; _ga_VZ9TNBTB3X=GS2.1.s1748421575$o1$g0$t1748421575$j60$l0$h0; _clck=tkuuq4%7C2%7Cfwa%7C0%7C1974"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"aggregationRequestDto\":{\"visualizationType\":\"METRIC\",\"visualizationCode\":\"totalCollectionOverview\",\"queryType\":\"\",\"filters\":{},\"moduleLevel\":\"PT\",\"aggregationFactors\":null,\"requestDate\":{\"startDate\":1743445800000,\"endDate\":1751653799999,\"interval\":\"month\",\"title\":\"home\"}},\"headers\":{\"tenantId\":\"pg.citya\"},\"RequestInfo\":{\"apiId\":\"Rainmaker\",\"authToken\":\"e5f7704b-0255-4524-b31f-def7a181f658\",\"msgId\":\"1751607176084|en_IN\",\"plainAccessRequest\":{}}}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://niuatt.niua.in/dashboard-analytics/dashboard/getChartV2?_=1751607176084",
+					"protocol": "https",
+					"host": [
+						"niuatt",
+						"niua",
+						"in"
+					],
+					"path": [
+						"dashboard-analytics",
+						"dashboard",
+						"getChartV2"
+					],
+					"query": [
+						{
+							"key": "_",
+							"value": "1751607176084"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "New Request",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "accept",
+						"value": "application/json, text/plain, */*"
+					},
+					{
+						"key": "accept-language",
+						"value": "en-GB,en-US;q=0.9,en;q=0.8"
+					},
+					{
+						"key": "content-type",
+						"value": "application/json;charset=UTF-8"
+					},
+					{
+						"key": "origin",
+						"value": "https://niuatt.niua.in"
+					},
+					{
+						"key": "priority",
+						"value": "u=1, i"
+					},
+					{
+						"key": "referer",
+						"value": "https://niuatt.niua.in/digit-ui/employee/dss/landing/NURT_DASHBOARD"
+					},
+					{
+						"key": "sec-ch-ua",
+						"value": "\"Google Chrome\";v=\"137\", \"Chromium\";v=\"137\", \"Not/A)Brand\";v=\"24\""
+					},
+					{
+						"key": "sec-ch-ua-mobile",
+						"value": "?0"
+					},
+					{
+						"key": "sec-ch-ua-platform",
+						"value": "\"macOS\""
+					},
+					{
+						"key": "sec-fetch-dest",
+						"value": "empty"
+					},
+					{
+						"key": "sec-fetch-mode",
+						"value": "cors"
+					},
+					{
+						"key": "sec-fetch-site",
+						"value": "same-origin"
+					},
+					{
+						"key": "user-agent",
+						"value": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36"
+					},
+					{
+						"key": "Cookie",
+						"value": "_ga=GA1.1.1498208436.1748421576; _ga_VZ9TNBTB3X=GS2.1.s1748421575$o1$g0$t1748421575$j60$l0$h0; _clck=tkuuq4%7C2%7Cfwa%7C0%7C1974"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"aggregationRequestDto\":{\"visualizationType\":\"METRIC\",\"visualizationCode\":\"propertiesAssessedv3\",\"queryType\":\"\",\"filters\":{},\"moduleLevel\":\"PT\",\"aggregationFactors\":null,\"requestDate\":{\"startDate\":1743445800000,\"endDate\":1751653799999,\"interval\":\"month\",\"title\":\"home\"}},\"headers\":{\"tenantId\":\"pg.citya\"},\"RequestInfo\":{\"apiId\":\"Rainmaker\",\"authToken\":\"e5f7704b-0255-4524-b31f-def7a181f658\",\"msgId\":\"1751607176084|en_IN\",\"plainAccessRequest\":{}}}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://niuatt.niua.in/dashboard-analytics/dashboard/getChartV2?_=1751607176084",
+					"protocol": "https",
+					"host": [
+						"niuatt",
+						"niua",
+						"in"
+					],
+					"path": [
+						"dashboard-analytics",
+						"dashboard",
+						"getChartV2"
+					],
+					"query": [
+						{
+							"key": "_",
+							"value": "1751607176084"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "New Request",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "accept",
+						"value": "application/json, text/plain, */*"
+					},
+					{
+						"key": "accept-language",
+						"value": "en-GB,en-US;q=0.9,en;q=0.8"
+					},
+					{
+						"key": "content-type",
+						"value": "application/json;charset=UTF-8"
+					},
+					{
+						"key": "origin",
+						"value": "https://niuatt.niua.in"
+					},
+					{
+						"key": "priority",
+						"value": "u=1, i"
+					},
+					{
+						"key": "referer",
+						"value": "https://niuatt.niua.in/digit-ui/employee/dss/landing/NURT_DASHBOARD"
+					},
+					{
+						"key": "sec-ch-ua",
+						"value": "\"Google Chrome\";v=\"137\", \"Chromium\";v=\"137\", \"Not/A)Brand\";v=\"24\""
+					},
+					{
+						"key": "sec-ch-ua-mobile",
+						"value": "?0"
+					},
+					{
+						"key": "sec-ch-ua-platform",
+						"value": "\"macOS\""
+					},
+					{
+						"key": "sec-fetch-dest",
+						"value": "empty"
+					},
+					{
+						"key": "sec-fetch-mode",
+						"value": "cors"
+					},
+					{
+						"key": "sec-fetch-site",
+						"value": "same-origin"
+					},
+					{
+						"key": "user-agent",
+						"value": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36"
+					},
+					{
+						"key": "Cookie",
+						"value": "_ga=GA1.1.1498208436.1748421576; _ga_VZ9TNBTB3X=GS2.1.s1748421575$o1$g0$t1748421575$j60$l0$h0; _clck=tkuuq4%7C2%7Cfwa%7C0%7C1974"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"aggregationRequestDto\":{\"visualizationType\":\"METRIC\",\"visualizationCode\":\"totalCollectionOverview\",\"queryType\":\"\",\"filters\":{},\"moduleLevel\":\"TL\",\"aggregationFactors\":null,\"requestDate\":{\"startDate\":1743445800000,\"endDate\":1751653799999,\"interval\":\"month\",\"title\":\"home\"}},\"headers\":{\"tenantId\":\"pg.citya\"},\"RequestInfo\":{\"apiId\":\"Rainmaker\",\"authToken\":\"e5f7704b-0255-4524-b31f-def7a181f658\",\"msgId\":\"1751607176084|en_IN\",\"plainAccessRequest\":{}}}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://niuatt.niua.in/dashboard-analytics/dashboard/getChartV2?_=1751607176084",
+					"protocol": "https",
+					"host": [
+						"niuatt",
+						"niua",
+						"in"
+					],
+					"path": [
+						"dashboard-analytics",
+						"dashboard",
+						"getChartV2"
+					],
+					"query": [
+						{
+							"key": "_",
+							"value": "1751607176084"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "New Request",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "accept",
+						"value": "application/json, text/plain, */*"
+					},
+					{
+						"key": "accept-language",
+						"value": "en-GB,en-US;q=0.9,en;q=0.8"
+					},
+					{
+						"key": "content-type",
+						"value": "application/json;charset=UTF-8"
+					},
+					{
+						"key": "origin",
+						"value": "https://niuatt.niua.in"
+					},
+					{
+						"key": "priority",
+						"value": "u=1, i"
+					},
+					{
+						"key": "referer",
+						"value": "https://niuatt.niua.in/digit-ui/employee/dss/landing/NURT_DASHBOARD"
+					},
+					{
+						"key": "sec-ch-ua",
+						"value": "\"Google Chrome\";v=\"137\", \"Chromium\";v=\"137\", \"Not/A)Brand\";v=\"24\""
+					},
+					{
+						"key": "sec-ch-ua-mobile",
+						"value": "?0"
+					},
+					{
+						"key": "sec-ch-ua-platform",
+						"value": "\"macOS\""
+					},
+					{
+						"key": "sec-fetch-dest",
+						"value": "empty"
+					},
+					{
+						"key": "sec-fetch-mode",
+						"value": "cors"
+					},
+					{
+						"key": "sec-fetch-site",
+						"value": "same-origin"
+					},
+					{
+						"key": "user-agent",
+						"value": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36"
+					},
+					{
+						"key": "Cookie",
+						"value": "_ga=GA1.1.1498208436.1748421576; _ga_VZ9TNBTB3X=GS2.1.s1748421575$o1$g0$t1748421575$j60$l0$h0; _clck=tkuuq4%7C2%7Cfwa%7C0%7C1974"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"aggregationRequestDto\":{\"visualizationType\":\"METRIC\",\"visualizationCode\":\"totalApplicationsOverview\",\"queryType\":\"\",\"filters\":{},\"moduleLevel\":\"TL\",\"aggregationFactors\":null,\"requestDate\":{\"startDate\":1743445800000,\"endDate\":1751653799999,\"interval\":\"month\",\"title\":\"home\"}},\"headers\":{\"tenantId\":\"pg.citya\"},\"RequestInfo\":{\"apiId\":\"Rainmaker\",\"authToken\":\"e5f7704b-0255-4524-b31f-def7a181f658\",\"msgId\":\"1751607176084|en_IN\",\"plainAccessRequest\":{}}}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://niuatt.niua.in/dashboard-analytics/dashboard/getChartV2?_=1751607176084",
+					"protocol": "https",
+					"host": [
+						"niuatt",
+						"niua",
+						"in"
+					],
+					"path": [
+						"dashboard-analytics",
+						"dashboard",
+						"getChartV2"
+					],
+					"query": [
+						{
+							"key": "_",
+							"value": "1751607176084"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "New Request",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "accept",
+						"value": "application/json, text/plain, */*"
+					},
+					{
+						"key": "accept-language",
+						"value": "en-GB,en-US;q=0.9,en;q=0.8"
+					},
+					{
+						"key": "content-type",
+						"value": "application/json;charset=UTF-8"
+					},
+					{
+						"key": "origin",
+						"value": "https://niuatt.niua.in"
+					},
+					{
+						"key": "priority",
+						"value": "u=1, i"
+					},
+					{
+						"key": "referer",
+						"value": "https://niuatt.niua.in/digit-ui/employee/dss/landing/NURT_DASHBOARD"
+					},
+					{
+						"key": "sec-ch-ua",
+						"value": "\"Google Chrome\";v=\"137\", \"Chromium\";v=\"137\", \"Not/A)Brand\";v=\"24\""
+					},
+					{
+						"key": "sec-ch-ua-mobile",
+						"value": "?0"
+					},
+					{
+						"key": "sec-ch-ua-platform",
+						"value": "\"macOS\""
+					},
+					{
+						"key": "sec-fetch-dest",
+						"value": "empty"
+					},
+					{
+						"key": "sec-fetch-mode",
+						"value": "cors"
+					},
+					{
+						"key": "sec-fetch-site",
+						"value": "same-origin"
+					},
+					{
+						"key": "user-agent",
+						"value": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36"
+					},
+					{
+						"key": "Cookie",
+						"value": "_ga=GA1.1.1498208436.1748421576; _ga_VZ9TNBTB3X=GS2.1.s1748421575$o1$g0$t1748421575$j60$l0$h0; _clck=tkuuq4%7C2%7Cfwa%7C0%7C1974"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"aggregationRequestDto\":{\"visualizationType\":\"METRIC\",\"visualizationCode\":\"nationalPgrTotalComplaints\",\"queryType\":\"\",\"filters\":{},\"moduleLevel\":\"PGR\",\"aggregationFactors\":null,\"requestDate\":{\"startDate\":1743445800000,\"endDate\":1751653799999,\"interval\":\"month\",\"title\":\"home\"}},\"headers\":{\"tenantId\":\"pg.citya\"},\"RequestInfo\":{\"apiId\":\"Rainmaker\",\"authToken\":\"e5f7704b-0255-4524-b31f-def7a181f658\",\"msgId\":\"1751607176084|en_IN\",\"plainAccessRequest\":{}}}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://niuatt.niua.in/dashboard-analytics/dashboard/getChartV2?_=1751607176084",
+					"protocol": "https",
+					"host": [
+						"niuatt",
+						"niua",
+						"in"
+					],
+					"path": [
+						"dashboard-analytics",
+						"dashboard",
+						"getChartV2"
+					],
+					"query": [
+						{
+							"key": "_",
+							"value": "1751607176084"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "New Request",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "accept",
+						"value": "application/json, text/plain, */*"
+					},
+					{
+						"key": "accept-language",
+						"value": "en-GB,en-US;q=0.9,en;q=0.8"
+					},
+					{
+						"key": "content-type",
+						"value": "application/json;charset=UTF-8"
+					},
+					{
+						"key": "origin",
+						"value": "https://niuatt.niua.in"
+					},
+					{
+						"key": "priority",
+						"value": "u=1, i"
+					},
+					{
+						"key": "referer",
+						"value": "https://niuatt.niua.in/digit-ui/employee/dss/landing/NURT_DASHBOARD"
+					},
+					{
+						"key": "sec-ch-ua",
+						"value": "\"Google Chrome\";v=\"137\", \"Chromium\";v=\"137\", \"Not/A)Brand\";v=\"24\""
+					},
+					{
+						"key": "sec-ch-ua-mobile",
+						"value": "?0"
+					},
+					{
+						"key": "sec-ch-ua-platform",
+						"value": "\"macOS\""
+					},
+					{
+						"key": "sec-fetch-dest",
+						"value": "empty"
+					},
+					{
+						"key": "sec-fetch-mode",
+						"value": "cors"
+					},
+					{
+						"key": "sec-fetch-site",
+						"value": "same-origin"
+					},
+					{
+						"key": "user-agent",
+						"value": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36"
+					},
+					{
+						"key": "Cookie",
+						"value": "_ga=GA1.1.1498208436.1748421576; _ga_VZ9TNBTB3X=GS2.1.s1748421575$o1$g0$t1748421575$j60$l0$h0; _clck=tkuuq4%7C2%7Cfwa%7C0%7C1974"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"aggregationRequestDto\":{\"visualizationType\":\"METRIC\",\"visualizationCode\":\"nationalPgrSlaAchieved\",\"queryType\":\"\",\"filters\":{},\"moduleLevel\":\"PGR\",\"aggregationFactors\":null,\"requestDate\":{\"startDate\":1743445800000,\"endDate\":1751653799999,\"interval\":\"month\",\"title\":\"home\"}},\"headers\":{\"tenantId\":\"pg.citya\"},\"RequestInfo\":{\"apiId\":\"Rainmaker\",\"authToken\":\"e5f7704b-0255-4524-b31f-def7a181f658\",\"msgId\":\"1751607176084|en_IN\",\"plainAccessRequest\":{}}}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://niuatt.niua.in/dashboard-analytics/dashboard/getChartV2?_=1751607176084",
+					"protocol": "https",
+					"host": [
+						"niuatt",
+						"niua",
+						"in"
+					],
+					"path": [
+						"dashboard-analytics",
+						"dashboard",
+						"getChartV2"
+					],
+					"query": [
+						{
+							"key": "_",
+							"value": "1751607176084"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "New Request",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "accept",
+						"value": "application/json, text/plain, */*"
+					},
+					{
+						"key": "accept-language",
+						"value": "en-GB,en-US;q=0.9,en;q=0.8"
+					},
+					{
+						"key": "content-type",
+						"value": "application/json;charset=UTF-8"
+					},
+					{
+						"key": "origin",
+						"value": "https://niuatt.niua.in"
+					},
+					{
+						"key": "priority",
+						"value": "u=1, i"
+					},
+					{
+						"key": "referer",
+						"value": "https://niuatt.niua.in/digit-ui/employee/dss/landing/NURT_DASHBOARD"
+					},
+					{
+						"key": "sec-ch-ua",
+						"value": "\"Google Chrome\";v=\"137\", \"Chromium\";v=\"137\", \"Not/A)Brand\";v=\"24\""
+					},
+					{
+						"key": "sec-ch-ua-mobile",
+						"value": "?0"
+					},
+					{
+						"key": "sec-ch-ua-platform",
+						"value": "\"macOS\""
+					},
+					{
+						"key": "sec-fetch-dest",
+						"value": "empty"
+					},
+					{
+						"key": "sec-fetch-mode",
+						"value": "cors"
+					},
+					{
+						"key": "sec-fetch-site",
+						"value": "same-origin"
+					},
+					{
+						"key": "user-agent",
+						"value": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36"
+					},
+					{
+						"key": "Cookie",
+						"value": "_ga=GA1.1.1498208436.1748421576; _ga_VZ9TNBTB3X=GS2.1.s1748421575$o1$g0$t1748421575$j60$l0$h0; _clck=tkuuq4%7C2%7Cfwa%7C0%7C1974"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"aggregationRequestDto\":{\"visualizationType\":\"METRIC\",\"visualizationCode\":\"totalCollectionOverview\",\"queryType\":\"\",\"filters\":{},\"moduleLevel\":\"WS\",\"aggregationFactors\":null,\"requestDate\":{\"startDate\":1743445800000,\"endDate\":1751653799999,\"interval\":\"month\",\"title\":\"home\"}},\"headers\":{\"tenantId\":\"pg.citya\"},\"RequestInfo\":{\"apiId\":\"Rainmaker\",\"authToken\":\"e5f7704b-0255-4524-b31f-def7a181f658\",\"msgId\":\"1751607176084|en_IN\",\"plainAccessRequest\":{}}}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://niuatt.niua.in/dashboard-analytics/dashboard/getChartV2?_=1751607176084",
+					"protocol": "https",
+					"host": [
+						"niuatt",
+						"niua",
+						"in"
+					],
+					"path": [
+						"dashboard-analytics",
+						"dashboard",
+						"getChartV2"
+					],
+					"query": [
+						{
+							"key": "_",
+							"value": "1751607176084"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "New Request",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "accept",
+						"value": "application/json, text/plain, */*"
+					},
+					{
+						"key": "accept-language",
+						"value": "en-GB,en-US;q=0.9,en;q=0.8"
+					},
+					{
+						"key": "content-type",
+						"value": "application/json;charset=UTF-8"
+					},
+					{
+						"key": "origin",
+						"value": "https://niuatt.niua.in"
+					},
+					{
+						"key": "priority",
+						"value": "u=1, i"
+					},
+					{
+						"key": "referer",
+						"value": "https://niuatt.niua.in/digit-ui/employee/dss/landing/NURT_DASHBOARD"
+					},
+					{
+						"key": "sec-ch-ua",
+						"value": "\"Google Chrome\";v=\"137\", \"Chromium\";v=\"137\", \"Not/A)Brand\";v=\"24\""
+					},
+					{
+						"key": "sec-ch-ua-mobile",
+						"value": "?0"
+					},
+					{
+						"key": "sec-ch-ua-platform",
+						"value": "\"macOS\""
+					},
+					{
+						"key": "sec-fetch-dest",
+						"value": "empty"
+					},
+					{
+						"key": "sec-fetch-mode",
+						"value": "cors"
+					},
+					{
+						"key": "sec-fetch-site",
+						"value": "same-origin"
+					},
+					{
+						"key": "user-agent",
+						"value": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36"
+					},
+					{
+						"key": "Cookie",
+						"value": "_ga=GA1.1.1498208436.1748421576; _ga_VZ9TNBTB3X=GS2.1.s1748421575$o1$g0$t1748421575$j60$l0$h0; _clck=tkuuq4%7C2%7Cfwa%7C0%7C1974"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"aggregationRequestDto\":{\"visualizationType\":\"METRIC\",\"visualizationCode\":\"nssWsTotalConnection\",\"queryType\":\"\",\"filters\":{},\"moduleLevel\":\"WS\",\"aggregationFactors\":null,\"requestDate\":{\"startDate\":1743445800000,\"endDate\":1751653799999,\"interval\":\"month\",\"title\":\"home\"}},\"headers\":{\"tenantId\":\"pg.citya\"},\"RequestInfo\":{\"apiId\":\"Rainmaker\",\"authToken\":\"e5f7704b-0255-4524-b31f-def7a181f658\",\"msgId\":\"1751607176084|en_IN\",\"plainAccessRequest\":{}}}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://niuatt.niua.in/dashboard-analytics/dashboard/getChartV2?_=1751607176084",
+					"protocol": "https",
+					"host": [
+						"niuatt",
+						"niua",
+						"in"
+					],
+					"path": [
+						"dashboard-analytics",
+						"dashboard",
+						"getChartV2"
+					],
+					"query": [
+						{
+							"key": "_",
+							"value": "1751607176084"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "New Request",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "accept",
+						"value": "application/json, text/plain, */*"
+					},
+					{
+						"key": "accept-language",
+						"value": "en-GB,en-US;q=0.9,en;q=0.8"
+					},
+					{
+						"key": "content-type",
+						"value": "application/json;charset=UTF-8"
+					},
+					{
+						"key": "origin",
+						"value": "https://niuatt.niua.in"
+					},
+					{
+						"key": "priority",
+						"value": "u=1, i"
+					},
+					{
+						"key": "referer",
+						"value": "https://niuatt.niua.in/digit-ui/employee/dss/landing/NURT_DASHBOARD"
+					},
+					{
+						"key": "sec-ch-ua",
+						"value": "\"Google Chrome\";v=\"137\", \"Chromium\";v=\"137\", \"Not/A)Brand\";v=\"24\""
+					},
+					{
+						"key": "sec-ch-ua-mobile",
+						"value": "?0"
+					},
+					{
+						"key": "sec-ch-ua-platform",
+						"value": "\"macOS\""
+					},
+					{
+						"key": "sec-fetch-dest",
+						"value": "empty"
+					},
+					{
+						"key": "sec-fetch-mode",
+						"value": "cors"
+					},
+					{
+						"key": "sec-fetch-site",
+						"value": "same-origin"
+					},
+					{
+						"key": "user-agent",
+						"value": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36"
+					},
+					{
+						"key": "Cookie",
+						"value": "_ga=GA1.1.1498208436.1748421576; _ga_VZ9TNBTB3X=GS2.1.s1748421575$o1$g0$t1748421575$j60$l0$h0; _clck=tkuuq4%7C2%7Cfwa%7C0%7C1974"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"aggregationRequestDto\":{\"visualizationType\":\"METRIC\",\"visualizationCode\":\"totalCollectionOverview\",\"queryType\":\"\",\"filters\":{},\"moduleLevel\":\"OBPS\",\"aggregationFactors\":null,\"requestDate\":{\"startDate\":1743445800000,\"endDate\":1751653799999,\"interval\":\"month\",\"title\":\"home\"}},\"headers\":{\"tenantId\":\"pg.citya\"},\"RequestInfo\":{\"apiId\":\"Rainmaker\",\"authToken\":\"e5f7704b-0255-4524-b31f-def7a181f658\",\"msgId\":\"1751607176084|en_IN\",\"plainAccessRequest\":{}}}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://niuatt.niua.in/dashboard-analytics/dashboard/getChartV2?_=1751607176084",
+					"protocol": "https",
+					"host": [
+						"niuatt",
+						"niua",
+						"in"
+					],
+					"path": [
+						"dashboard-analytics",
+						"dashboard",
+						"getChartV2"
+					],
+					"query": [
+						{
+							"key": "_",
+							"value": "1751607176084"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "New Request",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "accept",
+						"value": "application/json, text/plain, */*"
+					},
+					{
+						"key": "accept-language",
+						"value": "en-GB,en-US;q=0.9,en;q=0.8"
+					},
+					{
+						"key": "content-type",
+						"value": "application/json;charset=UTF-8"
+					},
+					{
+						"key": "origin",
+						"value": "https://niuatt.niua.in"
+					},
+					{
+						"key": "priority",
+						"value": "u=1, i"
+					},
+					{
+						"key": "referer",
+						"value": "https://niuatt.niua.in/digit-ui/employee/dss/landing/NURT_DASHBOARD"
+					},
+					{
+						"key": "sec-ch-ua",
+						"value": "\"Google Chrome\";v=\"137\", \"Chromium\";v=\"137\", \"Not/A)Brand\";v=\"24\""
+					},
+					{
+						"key": "sec-ch-ua-mobile",
+						"value": "?0"
+					},
+					{
+						"key": "sec-ch-ua-platform",
+						"value": "\"macOS\""
+					},
+					{
+						"key": "sec-fetch-dest",
+						"value": "empty"
+					},
+					{
+						"key": "sec-fetch-mode",
+						"value": "cors"
+					},
+					{
+						"key": "sec-fetch-site",
+						"value": "same-origin"
+					},
+					{
+						"key": "user-agent",
+						"value": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36"
+					},
+					{
+						"key": "Cookie",
+						"value": "_ga=GA1.1.1498208436.1748421576; _ga_VZ9TNBTB3X=GS2.1.s1748421575$o1$g0$t1748421575$j60$l0$h0; _clck=tkuuq4%7C2%7Cfwa%7C0%7C1974"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"aggregationRequestDto\":{\"visualizationType\":\"METRIC\",\"visualizationCode\":\"nssOBPSTotalPermitsIssued\",\"queryType\":\"\",\"filters\":{},\"moduleLevel\":\"OBPS\",\"aggregationFactors\":null,\"requestDate\":{\"startDate\":1743445800000,\"endDate\":1751653799999,\"interval\":\"month\",\"title\":\"home\"}},\"headers\":{\"tenantId\":\"pg.citya\"},\"RequestInfo\":{\"apiId\":\"Rainmaker\",\"authToken\":\"e5f7704b-0255-4524-b31f-def7a181f658\",\"msgId\":\"1751607176085|en_IN\",\"plainAccessRequest\":{}}}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://niuatt.niua.in/dashboard-analytics/dashboard/getChartV2?_=1751607176085",
+					"protocol": "https",
+					"host": [
+						"niuatt",
+						"niua",
+						"in"
+					],
+					"path": [
+						"dashboard-analytics",
+						"dashboard",
+						"getChartV2"
+					],
+					"query": [
+						{
+							"key": "_",
+							"value": "1751607176085"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "New Request",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "accept",
+						"value": "application/json, text/plain, */*"
+					},
+					{
+						"key": "accept-language",
+						"value": "en-GB,en-US;q=0.9,en;q=0.8"
+					},
+					{
+						"key": "content-type",
+						"value": "application/json;charset=UTF-8"
+					},
+					{
+						"key": "origin",
+						"value": "https://niuatt.niua.in"
+					},
+					{
+						"key": "priority",
+						"value": "u=1, i"
+					},
+					{
+						"key": "referer",
+						"value": "https://niuatt.niua.in/digit-ui/employee/dss/landing/NURT_DASHBOARD"
+					},
+					{
+						"key": "sec-ch-ua",
+						"value": "\"Google Chrome\";v=\"137\", \"Chromium\";v=\"137\", \"Not/A)Brand\";v=\"24\""
+					},
+					{
+						"key": "sec-ch-ua-mobile",
+						"value": "?0"
+					},
+					{
+						"key": "sec-ch-ua-platform",
+						"value": "\"macOS\""
+					},
+					{
+						"key": "sec-fetch-dest",
+						"value": "empty"
+					},
+					{
+						"key": "sec-fetch-mode",
+						"value": "cors"
+					},
+					{
+						"key": "sec-fetch-site",
+						"value": "same-origin"
+					},
+					{
+						"key": "user-agent",
+						"value": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36"
+					},
+					{
+						"key": "Cookie",
+						"value": "_ga=GA1.1.1498208436.1748421576; _ga_VZ9TNBTB3X=GS2.1.s1748421575$o1$g0$t1748421575$j60$l0$h0; _clck=tkuuq4%7C2%7Cfwa%7C0%7C1974"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"aggregationRequestDto\":{\"visualizationType\":\"METRIC\",\"visualizationCode\":\"totalCollectionOverview\",\"queryType\":\"\",\"filters\":{},\"moduleLevel\":\"FIRENOC\",\"aggregationFactors\":null,\"requestDate\":{\"startDate\":1743445800000,\"endDate\":1751653799999,\"interval\":\"month\",\"title\":\"home\"}},\"headers\":{\"tenantId\":\"pg.citya\"},\"RequestInfo\":{\"apiId\":\"Rainmaker\",\"authToken\":\"e5f7704b-0255-4524-b31f-def7a181f658\",\"msgId\":\"1751607176085|en_IN\",\"plainAccessRequest\":{}}}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://niuatt.niua.in/dashboard-analytics/dashboard/getChartV2?_=1751607176085",
+					"protocol": "https",
+					"host": [
+						"niuatt",
+						"niua",
+						"in"
+					],
+					"path": [
+						"dashboard-analytics",
+						"dashboard",
+						"getChartV2"
+					],
+					"query": [
+						{
+							"key": "_",
+							"value": "1751607176085"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "New Request",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "accept",
+						"value": "application/json, text/plain, */*"
+					},
+					{
+						"key": "accept-language",
+						"value": "en-GB,en-US;q=0.9,en;q=0.8"
+					},
+					{
+						"key": "content-type",
+						"value": "application/json;charset=UTF-8"
+					},
+					{
+						"key": "origin",
+						"value": "https://niuatt.niua.in"
+					},
+					{
+						"key": "priority",
+						"value": "u=1, i"
+					},
+					{
+						"key": "referer",
+						"value": "https://niuatt.niua.in/digit-ui/employee/dss/landing/NURT_DASHBOARD"
+					},
+					{
+						"key": "sec-ch-ua",
+						"value": "\"Google Chrome\";v=\"137\", \"Chromium\";v=\"137\", \"Not/A)Brand\";v=\"24\""
+					},
+					{
+						"key": "sec-ch-ua-mobile",
+						"value": "?0"
+					},
+					{
+						"key": "sec-ch-ua-platform",
+						"value": "\"macOS\""
+					},
+					{
+						"key": "sec-fetch-dest",
+						"value": "empty"
+					},
+					{
+						"key": "sec-fetch-mode",
+						"value": "cors"
+					},
+					{
+						"key": "sec-fetch-site",
+						"value": "same-origin"
+					},
+					{
+						"key": "user-agent",
+						"value": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36"
+					},
+					{
+						"key": "Cookie",
+						"value": "_ga=GA1.1.1498208436.1748421576; _ga_VZ9TNBTB3X=GS2.1.s1748421575$o1$g0$t1748421575$j60$l0$h0; _clck=tkuuq4%7C2%7Cfwa%7C0%7C1974"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"aggregationRequestDto\":{\"visualizationType\":\"METRIC\",\"visualizationCode\":\"totalNocsIssued\",\"queryType\":\"\",\"filters\":{},\"moduleLevel\":\"FIRENOC\",\"aggregationFactors\":null,\"requestDate\":{\"startDate\":1743445800000,\"endDate\":1751653799999,\"interval\":\"month\",\"title\":\"home\"}},\"headers\":{\"tenantId\":\"pg.citya\"},\"RequestInfo\":{\"apiId\":\"Rainmaker\",\"authToken\":\"e5f7704b-0255-4524-b31f-def7a181f658\",\"msgId\":\"1751607176085|en_IN\",\"plainAccessRequest\":{}}}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://niuatt.niua.in/dashboard-analytics/dashboard/getChartV2?_=1751607176085",
+					"protocol": "https",
+					"host": [
+						"niuatt",
+						"niua",
+						"in"
+					],
+					"path": [
+						"dashboard-analytics",
+						"dashboard",
+						"getChartV2"
+					],
+					"query": [
+						{
+							"key": "_",
+							"value": "1751607176085"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "New Request",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "accept",
+						"value": "application/json, text/plain, */*"
+					},
+					{
+						"key": "accept-language",
+						"value": "en-GB,en-US;q=0.9,en;q=0.8"
+					},
+					{
+						"key": "content-type",
+						"value": "application/json;charset=UTF-8"
+					},
+					{
+						"key": "origin",
+						"value": "https://niuatt.niua.in"
+					},
+					{
+						"key": "priority",
+						"value": "u=1, i"
+					},
+					{
+						"key": "referer",
+						"value": "https://niuatt.niua.in/digit-ui/employee/dss/landing/NURT_DASHBOARD"
+					},
+					{
+						"key": "sec-ch-ua",
+						"value": "\"Google Chrome\";v=\"137\", \"Chromium\";v=\"137\", \"Not/A)Brand\";v=\"24\""
+					},
+					{
+						"key": "sec-ch-ua-mobile",
+						"value": "?0"
+					},
+					{
+						"key": "sec-ch-ua-platform",
+						"value": "\"macOS\""
+					},
+					{
+						"key": "sec-fetch-dest",
+						"value": "empty"
+					},
+					{
+						"key": "sec-fetch-mode",
+						"value": "cors"
+					},
+					{
+						"key": "sec-fetch-site",
+						"value": "same-origin"
+					},
+					{
+						"key": "user-agent",
+						"value": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36"
+					},
+					{
+						"key": "Cookie",
+						"value": "_ga=GA1.1.1498208436.1748421576; _ga_VZ9TNBTB3X=GS2.1.s1748421575$o1$g0$t1748421575$j60$l0$h0; _clck=tkuuq4%7C2%7Cfwa%7C0%7C1974"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"aggregationRequestDto\":{\"visualizationType\":\"METRIC\",\"visualizationCode\":\"totalCollectionOverview\",\"queryType\":\"\",\"filters\":{},\"moduleLevel\":\"MCOLLECT\",\"aggregationFactors\":null,\"requestDate\":{\"startDate\":1743445800000,\"endDate\":1751653799999,\"interval\":\"month\",\"title\":\"home\"}},\"headers\":{\"tenantId\":\"pg.citya\"},\"RequestInfo\":{\"apiId\":\"Rainmaker\",\"authToken\":\"e5f7704b-0255-4524-b31f-def7a181f658\",\"msgId\":\"1751607176085|en_IN\",\"plainAccessRequest\":{}}}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://niuatt.niua.in/dashboard-analytics/dashboard/getChartV2?_=1751607176085",
+					"protocol": "https",
+					"host": [
+						"niuatt",
+						"niua",
+						"in"
+					],
+					"path": [
+						"dashboard-analytics",
+						"dashboard",
+						"getChartV2"
+					],
+					"query": [
+						{
+							"key": "_",
+							"value": "1751607176085"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "New Request",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "accept",
+						"value": "application/json, text/plain, */*"
+					},
+					{
+						"key": "accept-language",
+						"value": "en-GB,en-US;q=0.9,en;q=0.8"
+					},
+					{
+						"key": "content-type",
+						"value": "application/json;charset=UTF-8"
+					},
+					{
+						"key": "origin",
+						"value": "https://niuatt.niua.in"
+					},
+					{
+						"key": "priority",
+						"value": "u=1, i"
+					},
+					{
+						"key": "referer",
+						"value": "https://niuatt.niua.in/digit-ui/employee/dss/landing/NURT_DASHBOARD"
+					},
+					{
+						"key": "sec-ch-ua",
+						"value": "\"Google Chrome\";v=\"137\", \"Chromium\";v=\"137\", \"Not/A)Brand\";v=\"24\""
+					},
+					{
+						"key": "sec-ch-ua-mobile",
+						"value": "?0"
+					},
+					{
+						"key": "sec-ch-ua-platform",
+						"value": "\"macOS\""
+					},
+					{
+						"key": "sec-fetch-dest",
+						"value": "empty"
+					},
+					{
+						"key": "sec-fetch-mode",
+						"value": "cors"
+					},
+					{
+						"key": "sec-fetch-site",
+						"value": "same-origin"
+					},
+					{
+						"key": "user-agent",
+						"value": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36"
+					},
+					{
+						"key": "Cookie",
+						"value": "_ga=GA1.1.1498208436.1748421576; _ga_VZ9TNBTB3X=GS2.1.s1748421575$o1$g0$t1748421575$j60$l0$h0; _clck=tkuuq4%7C2%7Cfwa%7C0%7C1974"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"aggregationRequestDto\":{\"visualizationType\":\"METRIC\",\"visualizationCode\":\"mCollectTotalReceiptsv2\",\"queryType\":\"\",\"filters\":{},\"moduleLevel\":\"MCOLLECT\",\"aggregationFactors\":null,\"requestDate\":{\"startDate\":1743445800000,\"endDate\":1751653799999,\"interval\":\"month\",\"title\":\"home\"}},\"headers\":{\"tenantId\":\"pg.citya\"},\"RequestInfo\":{\"apiId\":\"Rainmaker\",\"authToken\":\"e5f7704b-0255-4524-b31f-def7a181f658\",\"msgId\":\"1751607176085|en_IN\",\"plainAccessRequest\":{}}}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://niuatt.niua.in/dashboard-analytics/dashboard/getChartV2?_=1751607176085",
+					"protocol": "https",
+					"host": [
+						"niuatt",
+						"niua",
+						"in"
+					],
+					"path": [
+						"dashboard-analytics",
+						"dashboard",
+						"getChartV2"
+					],
+					"query": [
+						{
+							"key": "_",
+							"value": "1751607176085"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "New Request",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "accept",
+						"value": "application/json, text/plain, */*"
+					},
+					{
+						"key": "accept-language",
+						"value": "en-GB,en-US;q=0.9,en;q=0.8"
+					},
+					{
+						"key": "content-type",
+						"value": "application/json;charset=UTF-8"
+					},
+					{
+						"key": "origin",
+						"value": "https://niuatt.niua.in"
+					},
+					{
+						"key": "priority",
+						"value": "u=1, i"
+					},
+					{
+						"key": "referer",
+						"value": "https://niuatt.niua.in/digit-ui/employee/dss/landing/NURT_DASHBOARD"
+					},
+					{
+						"key": "sec-ch-ua",
+						"value": "\"Google Chrome\";v=\"137\", \"Chromium\";v=\"137\", \"Not/A)Brand\";v=\"24\""
+					},
+					{
+						"key": "sec-ch-ua-mobile",
+						"value": "?0"
+					},
+					{
+						"key": "sec-ch-ua-platform",
+						"value": "\"macOS\""
+					},
+					{
+						"key": "sec-fetch-dest",
+						"value": "empty"
+					},
+					{
+						"key": "sec-fetch-mode",
+						"value": "cors"
+					},
+					{
+						"key": "sec-fetch-site",
+						"value": "same-origin"
+					},
+					{
+						"key": "user-agent",
+						"value": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36"
+					},
+					{
+						"key": "Cookie",
+						"value": "_ga=GA1.1.1498208436.1748421576; _ga_VZ9TNBTB3X=GS2.1.s1748421575$o1$g0$t1748421575$j60$l0$h0; _clck=tkuuq4%7C2%7Cfwa%7C0%7C1974"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"aggregationRequestDto\":{\"visualizationType\":\"METRIC\",\"visualizationCode\":\"nssBNDTotalCollection\",\"queryType\":\"\",\"filters\":{},\"moduleLevel\":\"BIRTH-DEATH\",\"aggregationFactors\":null,\"requestDate\":{\"startDate\":1743445800000,\"endDate\":1751653799999,\"interval\":\"month\",\"title\":\"home\"}},\"headers\":{\"tenantId\":\"pg.citya\"},\"RequestInfo\":{\"apiId\":\"Rainmaker\",\"authToken\":\"e5f7704b-0255-4524-b31f-def7a181f658\",\"msgId\":\"1751607176085|en_IN\",\"plainAccessRequest\":{}}}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://niuatt.niua.in/dashboard-analytics/dashboard/getChartV2?_=1751607176085",
+					"protocol": "https",
+					"host": [
+						"niuatt",
+						"niua",
+						"in"
+					],
+					"path": [
+						"dashboard-analytics",
+						"dashboard",
+						"getChartV2"
+					],
+					"query": [
+						{
+							"key": "_",
+							"value": "1751607176085"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "New Request",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "accept",
+						"value": "application/json, text/plain, */*"
+					},
+					{
+						"key": "accept-language",
+						"value": "en-GB,en-US;q=0.9,en;q=0.8"
+					},
+					{
+						"key": "content-type",
+						"value": "application/json;charset=UTF-8"
+					},
+					{
+						"key": "origin",
+						"value": "https://niuatt.niua.in"
+					},
+					{
+						"key": "priority",
+						"value": "u=1, i"
+					},
+					{
+						"key": "referer",
+						"value": "https://niuatt.niua.in/digit-ui/employee/dss/landing/NURT_DASHBOARD"
+					},
+					{
+						"key": "sec-ch-ua",
+						"value": "\"Google Chrome\";v=\"137\", \"Chromium\";v=\"137\", \"Not/A)Brand\";v=\"24\""
+					},
+					{
+						"key": "sec-ch-ua-mobile",
+						"value": "?0"
+					},
+					{
+						"key": "sec-ch-ua-platform",
+						"value": "\"macOS\""
+					},
+					{
+						"key": "sec-fetch-dest",
+						"value": "empty"
+					},
+					{
+						"key": "sec-fetch-mode",
+						"value": "cors"
+					},
+					{
+						"key": "sec-fetch-site",
+						"value": "same-origin"
+					},
+					{
+						"key": "user-agent",
+						"value": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36"
+					},
+					{
+						"key": "Cookie",
+						"value": "_ga=GA1.1.1498208436.1748421576; _ga_VZ9TNBTB3X=GS2.1.s1748421575$o1$g0$t1748421575$j60$l0$h0; _clck=tkuuq4%7C2%7Cfwa%7C0%7C1974"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"aggregationRequestDto\":{\"visualizationType\":\"METRIC\",\"visualizationCode\":\"nssBNDTotalApplication\",\"queryType\":\"\",\"filters\":{},\"moduleLevel\":\"BIRTH-DEATH\",\"aggregationFactors\":null,\"requestDate\":{\"startDate\":1743445800000,\"endDate\":1751653799999,\"interval\":\"month\",\"title\":\"home\"}},\"headers\":{\"tenantId\":\"pg.citya\"},\"RequestInfo\":{\"apiId\":\"Rainmaker\",\"authToken\":\"e5f7704b-0255-4524-b31f-def7a181f658\",\"msgId\":\"1751607176085|en_IN\",\"plainAccessRequest\":{}}}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://niuatt.niua.in/dashboard-analytics/dashboard/getChartV2?_=1751607176085",
+					"protocol": "https",
+					"host": [
+						"niuatt",
+						"niua",
+						"in"
+					],
+					"path": [
+						"dashboard-analytics",
+						"dashboard",
+						"getChartV2"
+					],
+					"query": [
+						{
+							"key": "_",
+							"value": "1751607176085"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "New Request",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "accept",
+						"value": "application/json, text/plain, */*"
+					},
+					{
+						"key": "accept-language",
+						"value": "en-GB,en-US;q=0.9,en;q=0.8"
+					},
+					{
+						"key": "content-type",
+						"value": "application/json;charset=UTF-8"
+					},
+					{
+						"key": "origin",
+						"value": "https://niuatt.niua.in"
+					},
+					{
+						"key": "priority",
+						"value": "u=1, i"
+					},
+					{
+						"key": "referer",
+						"value": "https://niuatt.niua.in/digit-ui/employee/dss/landing/NURT_DASHBOARD"
+					},
+					{
+						"key": "sec-ch-ua",
+						"value": "\"Google Chrome\";v=\"137\", \"Chromium\";v=\"137\", \"Not/A)Brand\";v=\"24\""
+					},
+					{
+						"key": "sec-ch-ua-mobile",
+						"value": "?0"
+					},
+					{
+						"key": "sec-ch-ua-platform",
+						"value": "\"macOS\""
+					},
+					{
+						"key": "sec-fetch-dest",
+						"value": "empty"
+					},
+					{
+						"key": "sec-fetch-mode",
+						"value": "cors"
+					},
+					{
+						"key": "sec-fetch-site",
+						"value": "same-origin"
+					},
+					{
+						"key": "user-agent",
+						"value": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36"
+					},
+					{
+						"key": "Cookie",
+						"value": "_ga=GA1.1.1498208436.1748421576; _ga_VZ9TNBTB3X=GS2.1.s1748421575$o1$g0$t1748421575$j60$l0$h0; _clck=tkuuq4%7C2%7Cfwa%7C0%7C1974"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"aggregationRequestDto\":{\"visualizationType\":\"METRIC\",\"visualizationCode\":\"fsmtotalCollection\",\"queryType\":\"\",\"filters\":{},\"moduleLevel\":\"FSM\",\"aggregationFactors\":null,\"requestDate\":{\"startDate\":1743445800000,\"endDate\":1751653799999,\"interval\":\"month\",\"title\":\"home\"}},\"headers\":{\"tenantId\":\"pg.citya\"},\"RequestInfo\":{\"apiId\":\"Rainmaker\",\"authToken\":\"e5f7704b-0255-4524-b31f-def7a181f658\",\"msgId\":\"1751607176085|en_IN\",\"plainAccessRequest\":{}}}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://niuatt.niua.in/dashboard-analytics/dashboard/getChartV2?_=1751607176085",
+					"protocol": "https",
+					"host": [
+						"niuatt",
+						"niua",
+						"in"
+					],
+					"path": [
+						"dashboard-analytics",
+						"dashboard",
+						"getChartV2"
+					],
+					"query": [
+						{
+							"key": "_",
+							"value": "1751607176085"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "New Request",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "accept",
+						"value": "application/json, text/plain, */*"
+					},
+					{
+						"key": "accept-language",
+						"value": "en-GB,en-US;q=0.9,en;q=0.8"
+					},
+					{
+						"key": "content-type",
+						"value": "application/json;charset=UTF-8"
+					},
+					{
+						"key": "origin",
+						"value": "https://niuatt.niua.in"
+					},
+					{
+						"key": "priority",
+						"value": "u=1, i"
+					},
+					{
+						"key": "referer",
+						"value": "https://niuatt.niua.in/digit-ui/employee/dss/landing/NURT_DASHBOARD"
+					},
+					{
+						"key": "sec-ch-ua",
+						"value": "\"Google Chrome\";v=\"137\", \"Chromium\";v=\"137\", \"Not/A)Brand\";v=\"24\""
+					},
+					{
+						"key": "sec-ch-ua-mobile",
+						"value": "?0"
+					},
+					{
+						"key": "sec-ch-ua-platform",
+						"value": "\"macOS\""
+					},
+					{
+						"key": "sec-fetch-dest",
+						"value": "empty"
+					},
+					{
+						"key": "sec-fetch-mode",
+						"value": "cors"
+					},
+					{
+						"key": "sec-fetch-site",
+						"value": "same-origin"
+					},
+					{
+						"key": "user-agent",
+						"value": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36"
+					},
+					{
+						"key": "Cookie",
+						"value": "_ga=GA1.1.1498208436.1748421576; _ga_VZ9TNBTB3X=GS2.1.s1748421575$o1$g0$t1748421575$j60$l0$h0; _clck=tkuuq4%7C2%7Cfwa%7C0%7C1974"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"aggregationRequestDto\":{\"visualizationType\":\"METRIC\",\"visualizationCode\":\"fsmtotalrequests\",\"queryType\":\"\",\"filters\":{},\"moduleLevel\":\"FSM\",\"aggregationFactors\":null,\"requestDate\":{\"startDate\":1743445800000,\"endDate\":1751653799999,\"interval\":\"month\",\"title\":\"home\"}},\"headers\":{\"tenantId\":\"pg.citya\"},\"RequestInfo\":{\"apiId\":\"Rainmaker\",\"authToken\":\"e5f7704b-0255-4524-b31f-def7a181f658\",\"msgId\":\"1751607176085|en_IN\",\"plainAccessRequest\":{}}}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://niuatt.niua.in/dashboard-analytics/dashboard/getChartV2?_=1751607176085",
+					"protocol": "https",
+					"host": [
+						"niuatt",
+						"niua",
+						"in"
+					],
+					"path": [
+						"dashboard-analytics",
+						"dashboard",
+						"getChartV2"
+					],
+					"query": [
+						{
+							"key": "_",
+							"value": "1751607176085"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "New Request",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "accept",
+						"value": "application/json, text/plain, */*"
+					},
+					{
+						"key": "accept-language",
+						"value": "en-GB,en-US;q=0.9,en;q=0.8"
+					},
+					{
+						"key": "content-type",
+						"value": "application/json;charset=UTF-8"
+					},
+					{
+						"key": "origin",
+						"value": "https://niuatt.niua.in"
+					},
+					{
+						"key": "priority",
+						"value": "u=1, i"
+					},
+					{
+						"key": "referer",
+						"value": "https://niuatt.niua.in/digit-ui/employee/dss/landing/NURT_DASHBOARD"
+					},
+					{
+						"key": "sec-ch-ua",
+						"value": "\"Google Chrome\";v=\"137\", \"Chromium\";v=\"137\", \"Not/A)Brand\";v=\"24\""
+					},
+					{
+						"key": "sec-ch-ua-mobile",
+						"value": "?0"
+					},
+					{
+						"key": "sec-ch-ua-platform",
+						"value": "\"macOS\""
+					},
+					{
+						"key": "sec-fetch-dest",
+						"value": "empty"
+					},
+					{
+						"key": "sec-fetch-mode",
+						"value": "cors"
+					},
+					{
+						"key": "sec-fetch-site",
+						"value": "same-origin"
+					},
+					{
+						"key": "user-agent",
+						"value": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36"
+					},
+					{
+						"key": "Cookie",
+						"value": "_ga=GA1.1.1498208436.1748421576; _ga_VZ9TNBTB3X=GS2.1.s1748421575$o1$g0$t1748421575$j60$l0$h0; _clck=tkuuq4%7C2%7Cfwa%7C0%7C1974"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"aggregationRequestDto\":{\"visualizationType\":\"METRIC\",\"visualizationCode\":\"svtotalCollection\",\"queryType\":\"\",\"filters\":{},\"moduleLevel\":\"SV\",\"aggregationFactors\":null,\"requestDate\":{\"startDate\":1743445800000,\"endDate\":1751653799999,\"interval\":\"month\",\"title\":\"home\"}},\"headers\":{\"tenantId\":\"pg.citya\"},\"RequestInfo\":{\"apiId\":\"Rainmaker\",\"authToken\":\"e5f7704b-0255-4524-b31f-def7a181f658\",\"msgId\":\"1751607176085|en_IN\",\"plainAccessRequest\":{}}}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://niuatt.niua.in/dashboard-analytics/dashboard/getChartV2?_=1751607176085",
+					"protocol": "https",
+					"host": [
+						"niuatt",
+						"niua",
+						"in"
+					],
+					"path": [
+						"dashboard-analytics",
+						"dashboard",
+						"getChartV2"
+					],
+					"query": [
+						{
+							"key": "_",
+							"value": "1751607176085"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "New Request",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "accept",
+						"value": "application/json, text/plain, */*"
+					},
+					{
+						"key": "accept-language",
+						"value": "en-GB,en-US;q=0.9,en;q=0.8"
+					},
+					{
+						"key": "content-type",
+						"value": "application/json;charset=UTF-8"
+					},
+					{
+						"key": "origin",
+						"value": "https://niuatt.niua.in"
+					},
+					{
+						"key": "priority",
+						"value": "u=1, i"
+					},
+					{
+						"key": "referer",
+						"value": "https://niuatt.niua.in/digit-ui/employee/dss/landing/NURT_DASHBOARD"
+					},
+					{
+						"key": "sec-ch-ua",
+						"value": "\"Google Chrome\";v=\"137\", \"Chromium\";v=\"137\", \"Not/A)Brand\";v=\"24\""
+					},
+					{
+						"key": "sec-ch-ua-mobile",
+						"value": "?0"
+					},
+					{
+						"key": "sec-ch-ua-platform",
+						"value": "\"macOS\""
+					},
+					{
+						"key": "sec-fetch-dest",
+						"value": "empty"
+					},
+					{
+						"key": "sec-fetch-mode",
+						"value": "cors"
+					},
+					{
+						"key": "sec-fetch-site",
+						"value": "same-origin"
+					},
+					{
+						"key": "user-agent",
+						"value": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36"
+					},
+					{
+						"key": "Cookie",
+						"value": "_ga=GA1.1.1498208436.1748421576; _ga_VZ9TNBTB3X=GS2.1.s1748421575$o1$g0$t1748421575$j60$l0$h0; _clck=tkuuq4%7C2%7Cfwa%7C0%7C1974"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"aggregationRequestDto\":{\"visualizationType\":\"METRIC\",\"visualizationCode\":\"dssTotalApplicationOverview\",\"queryType\":\"\",\"filters\":{},\"moduleLevel\":\"SV\",\"aggregationFactors\":null,\"requestDate\":{\"startDate\":1743445800000,\"endDate\":1751653799999,\"interval\":\"month\",\"title\":\"home\"}},\"headers\":{\"tenantId\":\"pg.citya\"},\"RequestInfo\":{\"apiId\":\"Rainmaker\",\"authToken\":\"e5f7704b-0255-4524-b31f-def7a181f658\",\"msgId\":\"1751607176085|en_IN\",\"plainAccessRequest\":{}}}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://niuatt.niua.in/dashboard-analytics/dashboard/getChartV2?_=1751607176085",
+					"protocol": "https",
+					"host": [
+						"niuatt",
+						"niua",
+						"in"
+					],
+					"path": [
+						"dashboard-analytics",
+						"dashboard",
+						"getChartV2"
+					],
+					"query": [
+						{
+							"key": "_",
+							"value": "1751607176085"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
