@@ -16,7 +16,7 @@ import SearchCitizenFilter from "./components/citizen/SearchCitizenFilter";
 import CitizenInbox from "./components/citizen/inbox";
 import CitizenMobileInbox from "./components/citizen/CitizenMobileInbox";
 import CitizenApp from "./pages/citizen";
-import { CitizenHomeCard, CollectionIcon } from "@egovernments/digit-ui-react-components";
+import { CitizenHomeCard, CollectionIcon } from "@upyog/digit-ui-react-components";
 import CancelBills from "./components/CancelBill"; 
 import GroupBills from "./components/GroupBill"; 
 
