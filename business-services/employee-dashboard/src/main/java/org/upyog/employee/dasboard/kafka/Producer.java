@@ -10,6 +10,7 @@ import org.springframework.kafka.core.KafkaTemplate;
 public class Producer {
 
     @Autowired
+    // Changed to standard KafkaTemplate for better Spring Kafka integration and easier maintenance.
     private KafkaTemplate<String, Object> kafkaTemplate;
 
     public void push(String topic, Object value) {

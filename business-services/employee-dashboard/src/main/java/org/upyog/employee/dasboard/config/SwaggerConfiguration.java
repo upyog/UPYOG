@@ -18,6 +18,6 @@ public class SwaggerConfiguration {
                 .info(new Info()
                         .title("Employee Dashboard API")
                         .description("API details of the Employee Dashboard service")
-                        .version("1.0"));
+                        .version("2.0.0"));
     }
 }
