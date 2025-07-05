@@ -39,7 +39,7 @@
  */
 package org.egov.collection.web.contract;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 
 import org.egov.common.contract.request.RequestInfo;
 
