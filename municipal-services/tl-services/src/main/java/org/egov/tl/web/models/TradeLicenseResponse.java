@@ -73,6 +73,9 @@ public class TradeLicenseResponse   {
         
         @JsonProperty("applicationClosed")
         private int applicationClosed;
+        
+        @JsonProperty("applicationReverted")
+        private int applicationReverted;
 
 
         public TradeLicenseResponse addLicensesItem(TradeLicense licensesItem) {
