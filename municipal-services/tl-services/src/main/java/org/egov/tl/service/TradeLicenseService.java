@@ -1156,8 +1156,11 @@ public class TradeLicenseService {
 					.filter(license -> StringUtils.equalsIgnoreCase(STATUS_INITIATED, license.getStatus())).count());
 			response.setApplicationApplied((int) response.getLicenses().stream()
 					.filter(license -> StringUtils.equalsAnyIgnoreCase(license.getStatus(),
-							TLConstants.STATUS_PENDINGFORVERIFICATION, TLConstants.STATUS_PENDINGFORAPPROVAL,
-							TLConstants.STATUS_PENDINGFORMODIFICATION))
+							TLConstants.STATUS_PENDINGFORVERIFICATION, TLConstants.STATUS_PENDINGFORAPPROVAL))
+					.count());
+			response.setApplicationReverted((int) response.getLicenses().stream()
+					.filter(license -> StringUtils.equalsAnyIgnoreCase(license.getStatus(),
+							 TLConstants.STATUS_PENDINGFORMODIFICATION))
 					.count());
 			response.setApplicationPendingForPayment((int) response.getLicenses().stream().filter(
 					license -> StringUtils.equalsIgnoreCase(TLConstants.STATUS_PENDINGFORPAYMENT, license.getStatus()))
