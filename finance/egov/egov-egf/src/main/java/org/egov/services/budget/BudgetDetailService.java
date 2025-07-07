@@ -204,6 +204,10 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
     private static final String BUDGET_STATES_INSERT = "insert into eg_wf_states (ID,TYPE,VALUE,CREATEDBY,CREATEDDATE,LASTMODIFIEDDATE,LASTMODIFIEDBY,DATEINFO,OWNER_POS,STATUS,VERSION) values (:stateId,'Budget','NEW',1,current_date,current_date,1,current_date,1,1,0)";
     private static final String BUDGETDETAIL_STATES_INSERT = "insert into eg_wf_states (ID,TYPE,VALUE,CREATEDBY,CREATEDDATE,LASTMODIFIEDDATE,LASTMODIFIEDBY,DATEINFO,OWNER_POS,STATUS,VERSION) values (:stateId,'BudgetDetail','NEW',1,current_date,current_date,1,current_date,1,1,0)";
 
+    public Date getLastModifiedDateByMaterializedPath(String materializedPath) {
+        return budgetDetailRepository.findLastModifiedDateByMaterializedPath(materializedPath);
+    }
+    
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
     }
