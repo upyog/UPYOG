@@ -329,7 +329,9 @@ public class WaterServicesUtil {
 	}
 	
 	public boolean isModifyConnectionRequest(WaterConnectionRequest waterConnectionRequest) {
-		return !StringUtils.isEmpty(waterConnectionRequest.getWaterConnection().getConnectionNo());
+//		return !StringUtils.isEmpty(waterConnectionRequest.getWaterConnection().getConnectionNo());
+		return !StringUtils.isEmpty(waterConnectionRequest.getWaterConnection().getConnectionNo())
+			    && "MODIFY_WATER_CONNECTION".equalsIgnoreCase(waterConnectionRequest.getWaterConnection().getApplicationType());
 	}
 	
 	public Boolean isBillUnpaid(String connectionNo, String tenantId, RequestInfo request) {

@@ -40,10 +40,31 @@ public class SewerageConnectionValidator {
 	 */
 	public void validateSewerageConnection(SewerageConnectionRequest sewerageConnectionRequest, int reqType) {
 		Map<String, String> errorMap = new HashMap<>();
+		
+		   Boolean isMigration=false;
+		   
+		Object additionalDetailsObj = sewerageConnectionRequest.getSewerageConnection().getAdditionalDetails();
+
+		if (additionalDetailsObj instanceof Map) {
+		    Map<String, Object> additionalDetails = (Map<String, Object>) additionalDetailsObj;
+
+		    if (additionalDetails.containsKey("isMigrated")) {
+		        Object migratedValue = additionalDetails.get("isMigrated");
+
+		     
+				if (migratedValue instanceof Boolean) {
+		            isMigration = (Boolean) migratedValue;
+		        } else if (migratedValue instanceof String) {
+		            isMigration = Boolean.parseBoolean((String) migratedValue);
+		        }
+		    }
+		}
+		if(!isMigration) {
 		if (sewerageConnectionRequest.getSewerageConnection().getProcessInstance() == null || StringUtils
 				.isEmpty(sewerageConnectionRequest.getSewerageConnection().getProcessInstance().getAction())) {
 			errorMap.put("INVALID_ACTION", "Workflow obj can not be null or action can not be empty!!");
 			throw new CustomException(errorMap);
+		}
 		}
 		ValidatorResult isPropertyValidated = propertyValidator.validate(sewerageConnectionRequest, reqType);
 		if (!isPropertyValidated.isStatus()) {
@@ -53,9 +74,10 @@ public class SewerageConnectionValidator {
 		if (!isSewerageFieldValidated.isStatus()) {
 			errorMap.putAll(isSewerageFieldValidated.getErrorMessage());
 		}
+		if(!isMigration) {
 		if(sewerageConnectionRequest.getSewerageConnection().getProcessInstance().getAction().equalsIgnoreCase("PAY"))
 			errorMap.put("INVALID_ACTION","Pay action cannot perform directly");
-
+		}
 		String channel = sewerageConnectionRequest.getSewerageConnection().getChannel();
 		if(channel != null){
 			if(!SWConstants.CHANNEL_VALUES.contains(channel))
