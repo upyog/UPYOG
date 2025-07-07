@@ -519,7 +519,7 @@
                         </div>                                                              
                         <div class="form-group" style="text-align: left; margin-top: 10px;">
                             <label for="beYear" >BE Year(YYYY-YY)</label><br>
-                            <input type="text" id="beYear" name="beYear" class="form-control" style="width: 200px;" readonly/>
+                            <input type="text" id="beYear" name="beYear" class="form-control" style="width: 200px; background: #edeaea;" readonly/>
                         </div>                        
                     </div>
 
@@ -538,7 +538,7 @@
                                     <th style="background-color: #f2851f; color: #fff; padding: 10px; text-align: center; border: 1px solid #ddd;">RE Amount (Rs)</th>
                                     <th style="background-color: #f2851f; color: #fff; padding: 10px; text-align: center; border: 1px solid #ddd;">BE Amount (Rs)</th>
                                     <th style="background-color: #f2851f; color: #fff; padding: 10px; text-align: center; border: 1px solid #ddd;">Last Year Approved Budget</th>
-                                    <th style="background-color: #f2851f; color: #fff; padding: 10px; text-align: center; border: 1px solid #ddd;">Current Approved Budget</th>
+                                    <th style="background-color: #f2851f; color: #fff; padding: 10px; text-align: center; border: 1px solid #ddd;">Current Year Approved Budget</th>
                                     <th style="background-color: #f2851f; color: #fff; padding: 10px; text-align: center; border: 1px solid #ddd;">% Increase / Decrease in Budget Head</th>
                                     <th style="background-color: #f2851f; color: #fff; padding: 10px; text-align: center; border: 1px solid #ddd;">Planning Percentage</th>
                                     <th style="background-color: #f2851f; color: #fff; padding: 10px; text-align: center; border: 1px solid #ddd;">Action</th>
@@ -603,17 +603,17 @@
                                         </select>      
                                     </td>                              
                                     <td style="padding: 8px; border: 1px solid #ddd; text-align: center;">
-                                        <input type="text" id="majorCode" name="budgetData[new].majorCode" class="form-control major-code" style="width: 100px;" readonly />
+                                        <input type="text" id="majorCode" name="budgetData[new].majorCode" class="form-control major-code" style="width: 100px; background:#edeaea;" readonly />
                                     </td>       
-                                    <td>
+                                    <td style="padding: 8px; border: 1px solid #ddd; text-align: center;">
                                         <s:textfield 
                                             name="budgetData[new].minorCode"
                                             class="form-control"
-                                            style="width: 100px;"
+                                            style="width: 100px; background: #edeaea;"
                                             readonly="true"
                                         />
                                     </td>                             
-                                    <td>
+                                    <td style="padding: 8px; border: 1px solid #ddd; text-align: center;">
                                         <s:textfield 
                                             name="budgetData[new].reAmount" 
                                             oninput="this.value=this.value.replace(/[^0-9]/g,'')" 
@@ -631,7 +631,7 @@
                                     </td>
                                     <td style="padding: 8px; border: 1px solid #ddd; text-align: center;"><s:textfield name="budgetData[new].lastYearApproved"  class="form-control" style="width: 100px;" onblur="calculatePercentage(this)" /></td>
                                     <td style="padding: 8px; border: 1px solid #ddd; text-align: center;"><s:textfield name="budgetData[new].currentApproved" class="form-control" onblur="calculatePercentage(this)" /></td>
-                                    <td style="padding: 8px; border: 1px solid #ddd; text-align: center;"><s:textfield name="budgetData[new].percentageChange"  class="form-control" style="width: 100px;" readonly="true"/></td>
+                                    <td style="padding: 8px; border: 1px solid #ddd; text-align: center;"><s:textfield name="budgetData[new].percentageChange"  class="form-control" style="width: 100px; background: #edeaea" readonly="true"/></td>
                                     <td style="padding: 8px; border: 1px solid #ddd; text-align: center;">
                                         <s:textfield 
                                             name="budgetData[new].planningPercentage"
