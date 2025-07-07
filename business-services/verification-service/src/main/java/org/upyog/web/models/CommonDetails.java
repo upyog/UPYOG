@@ -24,7 +24,6 @@ public class CommonDetails {
 	@JsonProperty("tenantId")
 	private String tenantId = null;
 
-	@SanitizeHtml
 	@JsonProperty("applicationNumber")
 	private String applicationNumber = null;
 
