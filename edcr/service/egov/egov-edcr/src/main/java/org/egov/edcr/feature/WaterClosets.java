@@ -48,25 +48,27 @@
 package org.egov.edcr.feature;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.egov.common.constants.MdmsFeatureConstants;
 import org.egov.common.entity.edcr.Block;
 import org.egov.common.entity.edcr.Floor;
+import org.egov.common.entity.edcr.MdmsFeatureRule;
 import org.egov.common.entity.edcr.Measurement;
 import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.Result;
 import org.egov.common.entity.edcr.RoomHeight;
+import org.egov.common.entity.edcr.RuleKey;
 import org.egov.common.entity.edcr.ScrutinyDetail;
-import org.egov.edcr.constants.DxfFileConstants;
 import org.egov.edcr.constants.EdcrRulesMdmsConstants;
+import org.egov.edcr.service.CacheManagerMdms;
 import org.egov.edcr.service.FetchEdcrRulesMdms;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -85,6 +87,9 @@ public class WaterClosets extends FeatureProcess {
 	
 	@Autowired
 	FetchEdcrRulesMdms fetchEdcrRulesMdms;
+	
+	@Autowired
+	CacheManagerMdms cache;
 
 	@Override
 	public Plan process(Plan pl) {
@@ -123,36 +128,58 @@ public class WaterClosets extends FeatureProcess {
 		BigDecimal waterClosetsWidth = BigDecimal.ZERO;
 
 		// Fetch occupancy and feature type
-		String occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl);
+		
 		String feature = MdmsFeatureConstants.WATER_CLOSETS;
+		
+		
+		 String occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl).toLowerCase();
+	        String tenantId = pl.getTenantId();
+	        String zone = pl.getPlanInformation().getZone().toLowerCase();
+	        String subZone = pl.getPlanInformation().getSubZone().toLowerCase();
+	        String riskType = fetchEdcrRulesMdms.getRiskType(pl).toLowerCase();
+	        
+	        RuleKey key = new RuleKey(EdcrRulesMdmsConstants.STATE, tenantId, zone, subZone, occupancyName, null, feature);
+	        List<Object> rules = cache.getRules(tenantId, key);
+			
+	        Optional<MdmsFeatureRule> matchedRule = rules.stream()
+	        	    .map(obj -> (MdmsFeatureRule) obj)
+	        	    .findFirst();
+
+	        	if (matchedRule.isPresent()) {
+	        	    MdmsFeatureRule rule = matchedRule.get();
+	        	    waterClosetsVentilationArea = rule.getWaterClosetsVentilationArea();
+	        	    waterClosetsHeight = rule.getWaterClosetsHeight();
+	        	    waterClosetsArea = rule.getWaterClosetsArea();
+	        	    waterClosetsWidth = rule.getWaterClosetsWidth();
+	        	}
 
 		// Set occupancy to "Residential" if the most restrictive FAR is type "A"
-		Map<String, Object> params = new HashMap<>();
-		
-		params.put("feature", feature);
-		params.put("occupancy", occupancyName);
-
-		// Get list of rules from MDMS
-		Map<String, List<Map<String, Object>>> edcrRuleList = pl.getEdcrRulesFeatures();
-
-		// Columns to fetch from MDMS
-		ArrayList<String> valueFromColumn = new ArrayList<>();
-		valueFromColumn.add(EdcrRulesMdmsConstants.WATER_CLOSETS_VENTILATION_AREA);
-		valueFromColumn.add(EdcrRulesMdmsConstants.WATER_CLOSETS_HEIGHT);
-		valueFromColumn.add(EdcrRulesMdmsConstants.WATER_CLOSETS_AREA);
-		valueFromColumn.add(EdcrRulesMdmsConstants.WATER_CLOSETS_WIDTH);
-
-		// Fetch permissible values for each parameter
-		List<Map<String, Object>> permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
-		LOG.info("permissibleValue" + permissibleValue);
-
-		// If permissible values exist, assign them to local variables
-		if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey(EdcrRulesMdmsConstants.WATER_CLOSETS_VENTILATION_AREA)) {
-			waterClosetsVentilationArea = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.WATER_CLOSETS_VENTILATION_AREA).toString()));
-			waterClosetsHeight = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.WATER_CLOSETS_HEIGHT).toString()));
-			waterClosetsArea = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.WATER_CLOSETS_AREA).toString()));
-			waterClosetsWidth = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.WATER_CLOSETS_WIDTH).toString()));
-		}
+//		Map<String, Object> params = new HashMap<>();
+//		
+//		params.put("feature", feature);
+//		params.put("occupancy", occupancyName);
+//
+//		// Get list of rules from MDMS
+//		Map<String, List<Map<String, Object>>> edcrRuleList = pl.getEdcrRulesFeatures();
+//
+//		// Columns to fetch from MDMS
+//		ArrayList<String> valueFromColumn = new ArrayList<>();
+//		valueFromColumn.add(EdcrRulesMdmsConstants.WATER_CLOSETS_VENTILATION_AREA);
+//		valueFromColumn.add(EdcrRulesMdmsConstants.WATER_CLOSETS_HEIGHT);
+//		valueFromColumn.add(EdcrRulesMdmsConstants.WATER_CLOSETS_AREA);
+//		valueFromColumn.add(EdcrRulesMdmsConstants.WATER_CLOSETS_WIDTH);
+//
+//		// Fetch permissible values for each parameter
+//		List<Map<String, Object>> permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
+//		LOG.info("permissibleValue" + permissibleValue);
+//
+//		// If permissible values exist, assign them to local variables
+//		if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey(EdcrRulesMdmsConstants.WATER_CLOSETS_VENTILATION_AREA)) {
+//			waterClosetsVentilationArea = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.WATER_CLOSETS_VENTILATION_AREA).toString()));
+//			waterClosetsHeight = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.WATER_CLOSETS_HEIGHT).toString()));
+//			waterClosetsArea = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.WATER_CLOSETS_AREA).toString()));
+//			waterClosetsWidth = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.WATER_CLOSETS_WIDTH).toString()));
+//		}
 
 		// Loop through each block and floor in the plan
 		for (Block b : pl.getBlocks()) {

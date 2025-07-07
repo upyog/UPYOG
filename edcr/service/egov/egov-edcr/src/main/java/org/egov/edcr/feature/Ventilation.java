@@ -48,25 +48,27 @@
 package org.egov.edcr.feature;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.egov.common.constants.MdmsFeatureConstants;
 import org.egov.common.entity.edcr.Block;
 import org.egov.common.entity.edcr.Floor;
+import org.egov.common.entity.edcr.MdmsFeatureRule;
 import org.egov.common.entity.edcr.Measurement;
 import org.egov.common.entity.edcr.Occupancy;
 import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.Result;
+import org.egov.common.entity.edcr.RuleKey;
 import org.egov.common.entity.edcr.ScrutinyDetail;
-import org.egov.edcr.constants.DxfFileConstants;
 import org.egov.edcr.constants.EdcrRulesMdmsConstants;
+import org.egov.edcr.service.CacheManagerMdms;
 import org.egov.edcr.service.FetchEdcrRulesMdms;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -85,6 +87,9 @@ public class Ventilation extends FeatureProcess {
 	
 	@Autowired
 	FetchEdcrRulesMdms fetchEdcrRulesMdms;
+	
+	  @Autowired
+  	CacheManagerMdms cache;
 
 	@Override
 	public Plan process(Plan pl) {
@@ -112,34 +117,54 @@ public class Ventilation extends FeatureProcess {
 	        BigDecimal ventilationValueOne = BigDecimal.ZERO;
 	        BigDecimal ventilationValueTwo = BigDecimal.ZERO;
 
-	        String occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl);
+	        
 	        String feature = MdmsFeatureConstants.VENTILATION;
+	        
+	      
+	    	 String occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl).toLowerCase();
+	            String tenantId = pl.getTenantId();
+	            String zone = pl.getPlanInformation().getZone().toLowerCase();
+	            String subZone = pl.getPlanInformation().getSubZone().toLowerCase();
+	            String riskType = fetchEdcrRulesMdms.getRiskType(pl).toLowerCase();
+	            
+	            RuleKey key = new RuleKey(EdcrRulesMdmsConstants.STATE, tenantId, zone, subZone, occupancyName, null, feature);
+	            List<Object> rules = cache.getRules(tenantId, key);
+	    		
+	            Optional<MdmsFeatureRule> matchedRule = rules.stream()
+	            	    .map(obj -> (MdmsFeatureRule) obj)
+	            	    .findFirst();
 
-	        Map<String, Object> params = new HashMap<>();
+	            	if (matchedRule.isPresent()) {
+	            	    MdmsFeatureRule rule = matchedRule.get();
+	            	    ventilationValueOne = rule.getVentilationValueOne();
+	            	    ventilationValueTwo = rule.getVentilationValueTwo();
+	            	} 
+
+	   //     Map<String, Object> params = new HashMap<>();
 
 	        // Identify occupancy type — currently only checking for Residential
 	       
-	        params.put("feature", feature);
-	        params.put("occupancy", occupancyName);
-
-	        // Get permissible values for the ventilation rules from MDMS config
-	        Map<String, List<Map<String, Object>>> edcrRuleList = pl.getEdcrRulesFeatures();
-	        ArrayList<String> valueFromColumn = new ArrayList<>();
-	        valueFromColumn.add(EdcrRulesMdmsConstants.VENTILATION_VALUE_ONE);
-	        valueFromColumn.add(EdcrRulesMdmsConstants.VENTILATION_VALUE_TWO);
-
-	        List<Map<String, Object>> permissibleValue = new ArrayList<>();
-	        permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
-	        LOG.info("permissibleValue" + permissibleValue);
-
-	        // Extract values if they exist
-	        if (!permissibleValue.isEmpty() &&
-	            permissibleValue.get(0).containsKey(EdcrRulesMdmsConstants.VENTILATION_VALUE_ONE)) {
-	            ventilationValueOne = BigDecimal.valueOf(Double.valueOf(
-	                    permissibleValue.get(0).get(EdcrRulesMdmsConstants.VENTILATION_VALUE_ONE).toString()));
-	            ventilationValueTwo = BigDecimal.valueOf(Double.valueOf(
-	                    permissibleValue.get(0).get(EdcrRulesMdmsConstants.VENTILATION_VALUE_TWO).toString()));
-	        }
+//	        params.put("feature", feature);
+//	        params.put("occupancy", occupancyName);
+//
+//	        // Get permissible values for the ventilation rules from MDMS config
+//	        Map<String, List<Map<String, Object>>> edcrRuleList = pl.getEdcrRulesFeatures();
+//	        ArrayList<String> valueFromColumn = new ArrayList<>();
+//	        valueFromColumn.add(EdcrRulesMdmsConstants.VENTILATION_VALUE_ONE);
+//	        valueFromColumn.add(EdcrRulesMdmsConstants.VENTILATION_VALUE_TWO);
+//
+//	        List<Map<String, Object>> permissibleValue = new ArrayList<>();
+//	        permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
+//	        LOG.info("permissibleValue" + permissibleValue);
+//
+//	        // Extract values if they exist
+//	        if (!permissibleValue.isEmpty() &&
+//	            permissibleValue.get(0).containsKey(EdcrRulesMdmsConstants.VENTILATION_VALUE_ONE)) {
+//	            ventilationValueOne = BigDecimal.valueOf(Double.valueOf(
+//	                    permissibleValue.get(0).get(EdcrRulesMdmsConstants.VENTILATION_VALUE_ONE).toString()));
+//	            ventilationValueTwo = BigDecimal.valueOf(Double.valueOf(
+//	                    permissibleValue.get(0).get(EdcrRulesMdmsConstants.VENTILATION_VALUE_TWO).toString()));
+//	        }
 
 	        // Process each floor in the building
 	        if (b.getBuilding() != null && b.getBuilding().getFloors() != null && !b.getBuilding().getFloors().isEmpty()) {

@@ -48,24 +48,26 @@
 package org.egov.edcr.feature;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.egov.common.constants.MdmsFeatureConstants;
 import org.egov.common.entity.edcr.Block;
 import org.egov.common.entity.edcr.Floor;
+import org.egov.common.entity.edcr.MdmsFeatureRule;
 import org.egov.common.entity.edcr.Measurement;
 import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.Result;
+import org.egov.common.entity.edcr.RuleKey;
 import org.egov.common.entity.edcr.ScrutinyDetail;
-import org.egov.edcr.constants.DxfFileConstants;
 import org.egov.edcr.constants.EdcrRulesMdmsConstants;
+import org.egov.edcr.service.CacheManagerMdms;
 import org.egov.edcr.service.FetchEdcrRulesMdms;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -87,6 +89,9 @@ public class Verandah extends FeatureProcess {
 	
 	@Autowired
 	FetchEdcrRulesMdms fetchEdcrRulesMdms;
+	
+	@Autowired
+	CacheManagerMdms cache;
 
 	@Override
 	public Plan process(Plan pl) {
@@ -103,32 +108,51 @@ public class Verandah extends FeatureProcess {
 			BigDecimal verandahWidth = BigDecimal.ZERO;
 			BigDecimal verandahDepth = BigDecimal.ZERO;
 			
-			String occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl);
-			String feature = MdmsFeatureConstants.VERANDAH;
+			
+			    String feature = MdmsFeatureConstants.VERANDAH;
+			    String occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl).toLowerCase();
+		        String tenantId = pl.getTenantId();
+		        String zone = pl.getPlanInformation().getZone().toLowerCase();
+		        String subZone = pl.getPlanInformation().getSubZone().toLowerCase();
+		        String riskType = fetchEdcrRulesMdms.getRiskType(pl).toLowerCase();
+		        
+		        RuleKey key = new RuleKey(EdcrRulesMdmsConstants.STATE, tenantId, zone, subZone, occupancyName, null, feature);
+		        List<Object> rules = cache.getRules(tenantId, key);
+				
+		        Optional<MdmsFeatureRule> matchedRule = rules.stream()
+		        	    .map(obj -> (MdmsFeatureRule) obj)
+		        	    .findFirst();
+
+		        	if (matchedRule.isPresent()) {
+		        	    MdmsFeatureRule rule = matchedRule.get();
+		        	    verandahWidth = rule.getVerandahWidth();
+		        	    verandahDepth = rule.getVerandahDepth();
+		        	} 
+
 
 			// Check occupancy type; only residential is supported for now
-			Map<String, Object> params = new HashMap<>();
-			
-
-			params.put("feature", feature);
-			params.put("occupancy", occupancyName);
-			
-			// Fetch permissible verandah dimension rules from MDMS
-			Map<String,List<Map<String,Object>>> edcrRuleList = pl.getEdcrRulesFeatures();
-			
-			ArrayList<String> valueFromColumn = new ArrayList<>();
-			valueFromColumn.add(EdcrRulesMdmsConstants.VERANDAH_DEPTH);
-			valueFromColumn.add(EdcrRulesMdmsConstants.VERANDAH_WIDTH);
-
-			List<Map<String, Object>> permissibleValue = new ArrayList<>();
-			permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
-			LOG.info("permissibleValue" + permissibleValue);
-
-			// Parse permissible width and depth if values are found
-			if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey(EdcrRulesMdmsConstants.VERANDAH_WIDTH)) {
-				verandahWidth = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.VERANDAH_WIDTH).toString()));
-				verandahDepth = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.VERANDAH_DEPTH).toString()));
-			}
+//			Map<String, Object> params = new HashMap<>();
+//			
+//
+//			params.put("feature", feature);
+//			params.put("occupancy", occupancyName);
+//			
+//			// Fetch permissible verandah dimension rules from MDMS
+//			Map<String,List<Map<String,Object>>> edcrRuleList = pl.getEdcrRulesFeatures();
+//			
+//			ArrayList<String> valueFromColumn = new ArrayList<>();
+//			valueFromColumn.add(EdcrRulesMdmsConstants.VERANDAH_DEPTH);
+//			valueFromColumn.add(EdcrRulesMdmsConstants.VERANDAH_WIDTH);
+//
+//			List<Map<String, Object>> permissibleValue = new ArrayList<>();
+//			permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
+//			LOG.info("permissibleValue" + permissibleValue);
+//
+//			// Parse permissible width and depth if values are found
+//			if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey(EdcrRulesMdmsConstants.VERANDAH_WIDTH)) {
+//				verandahWidth = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.VERANDAH_WIDTH).toString()));
+//				verandahDepth = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.VERANDAH_DEPTH).toString()));
+//			}
 
 			// Loop through each floor and perform width and depth checks
 			if (b.getBuilding() != null && b.getBuilding().getFloors() != null

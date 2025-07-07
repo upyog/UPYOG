@@ -48,28 +48,28 @@
 package org.egov.edcr.feature;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.egov.common.constants.MdmsFeatureConstants;
+import org.egov.common.entity.edcr.MdmsFeatureRule;
 import org.egov.common.entity.edcr.Measurement;
 import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.Result;
+import org.egov.common.entity.edcr.RuleKey;
 import org.egov.common.entity.edcr.ScrutinyDetail;
-import org.egov.edcr.constants.DxfFileConstants;
 import org.egov.edcr.constants.EdcrRulesMdmsConstants;
+import org.egov.edcr.service.CacheManagerMdms;
 import org.egov.edcr.service.FetchEdcrRulesMdms;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import com.ziclix.python.sql.Fetch;
 
 @Service
 public class GuardRoom extends FeatureProcess {
@@ -88,6 +88,9 @@ public class GuardRoom extends FeatureProcess {
 
     @Autowired
     FetchEdcrRulesMdms fetchEdcrRulesMdms;
+    
+    @Autowired
+	CacheManagerMdms cache;
 
     /**
      * Validates the given plan object.
@@ -139,40 +142,62 @@ public class GuardRoom extends FeatureProcess {
         BigDecimal GuardRoomMinCabinHeightTwo = BigDecimal.ZERO;
 
         // Determine the occupancy type and feature for fetching permissible values
-        String occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl);
-        String feature = MdmsFeatureConstants.GUARD_ROOM;
+        
+            String feature = MdmsFeatureConstants.GUARD_ROOM;    
+    	    String occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl).toLowerCase();
+            String tenantId = pl.getTenantId();
+            String zone = pl.getPlanInformation().getZone().toLowerCase();
+            String subZone = pl.getPlanInformation().getSubZone().toLowerCase();
+            String riskType = fetchEdcrRulesMdms.getRiskType(pl).toLowerCase();
+            
+            RuleKey key = new RuleKey(EdcrRulesMdmsConstants.STATE, tenantId, zone, subZone, occupancyName, null, feature);
+            List<Object> rules = cache.getRules(tenantId, key);
+    		
+            Optional<MdmsFeatureRule> matchedRule = rules.stream()
+            	    .map(obj -> (MdmsFeatureRule) obj)
+            	    .findFirst();
 
-        Map<String, Object> params = new HashMap<>();
-       
+            	if (matchedRule.isPresent()) {
+            	    MdmsFeatureRule rule = matchedRule.get();
+            	    GuardRoomMinHeight = rule.getGuardRoomMinHeight();
+            	    GuardRoomMinWidth = rule.getGuardRoomMinWidth();
+            	    GuardRoomMinArea = rule.getGuardRoomMinArea();
+            	    GuardRoomMinCabinHeightOne = rule.getGuardRoomMinCabinHeightOne();
+            	    GuardRoomMinCabinHeightTwo = rule.getGuardRoomMinCabinHeightTwo();
+            	} 
 
-        params.put("feature", feature);
-        params.put("occupancy", occupancyName);
 
-        // Fetch permissible values for guard room properties
-        Map<String, List<Map<String, Object>>> edcrRuleList = pl.getEdcrRulesFeatures();
-        ArrayList<String> valueFromColumn = new ArrayList<>();
-        valueFromColumn.add(EdcrRulesMdmsConstants.GUARD_ROOM_MIN_HEIGHT);
-        valueFromColumn.add(EdcrRulesMdmsConstants.GUARD_ROOM_MIN_WIDTH);
-        valueFromColumn.add(EdcrRulesMdmsConstants.GUARD_ROOM_MIN_AREA);
-        valueFromColumn.add(EdcrRulesMdmsConstants.GUARD_ROOM_MIN_CABIN_HEIGHT_ONE);
-        valueFromColumn.add(EdcrRulesMdmsConstants.GUARD_ROOM_MIN_CABIN_HEIGHT_TWO);
-
-        List<Map<String, Object>> permissibleValue = new ArrayList<>();
-        try {
-            permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
-            LOGGER.info("permissibleValue" + permissibleValue);
-        } catch (NullPointerException e) {
-            LOGGER.error("Permissible Value for GuardRoom not found--------", e);
-            return null;
-        }
-
-        if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey(EdcrRulesMdmsConstants.GUARD_ROOM_MIN_HEIGHT)) {
-            GuardRoomMinHeight = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.GUARD_ROOM_MIN_HEIGHT).toString()));
-            GuardRoomMinWidth = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.GUARD_ROOM_MIN_WIDTH).toString()));
-            GuardRoomMinArea = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.GUARD_ROOM_MIN_AREA).toString()));
-            GuardRoomMinCabinHeightOne = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.GUARD_ROOM_MIN_CABIN_HEIGHT_ONE).toString()));
-            GuardRoomMinCabinHeightTwo = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.GUARD_ROOM_MIN_CABIN_HEIGHT_TWO).toString()));
-        }
+//        Map<String, Object> params = new HashMap<>();
+//       
+//
+//        params.put("feature", feature);
+//        params.put("occupancy", occupancyName);
+//
+//        // Fetch permissible values for guard room properties
+//        Map<String, List<Map<String, Object>>> edcrRuleList = pl.getEdcrRulesFeatures();
+//        ArrayList<String> valueFromColumn = new ArrayList<>();
+//        valueFromColumn.add(EdcrRulesMdmsConstants.GUARD_ROOM_MIN_HEIGHT);
+//        valueFromColumn.add(EdcrRulesMdmsConstants.GUARD_ROOM_MIN_WIDTH);
+//        valueFromColumn.add(EdcrRulesMdmsConstants.GUARD_ROOM_MIN_AREA);
+//        valueFromColumn.add(EdcrRulesMdmsConstants.GUARD_ROOM_MIN_CABIN_HEIGHT_ONE);
+//        valueFromColumn.add(EdcrRulesMdmsConstants.GUARD_ROOM_MIN_CABIN_HEIGHT_TWO);
+//
+//        List<Map<String, Object>> permissibleValue = new ArrayList<>();
+//        try {
+//            permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
+//            LOGGER.info("permissibleValue" + permissibleValue);
+//        } catch (NullPointerException e) {
+//            LOGGER.error("Permissible Value for GuardRoom not found--------", e);
+//            return null;
+//        }
+//
+//        if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey(EdcrRulesMdmsConstants.GUARD_ROOM_MIN_HEIGHT)) {
+//            GuardRoomMinHeight = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.GUARD_ROOM_MIN_HEIGHT).toString()));
+//            GuardRoomMinWidth = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.GUARD_ROOM_MIN_WIDTH).toString()));
+//            GuardRoomMinArea = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.GUARD_ROOM_MIN_AREA).toString()));
+//            GuardRoomMinCabinHeightOne = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.GUARD_ROOM_MIN_CABIN_HEIGHT_ONE).toString()));
+//            GuardRoomMinCabinHeightTwo = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.GUARD_ROOM_MIN_CABIN_HEIGHT_TWO).toString()));
+//        }
 
         // Validate guard room properties
         if (pl.getGuardRoom() != null && !pl.getGuardRoom().getGuardRooms().isEmpty()) {

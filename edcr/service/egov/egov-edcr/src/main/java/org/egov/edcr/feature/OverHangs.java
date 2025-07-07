@@ -48,25 +48,27 @@
 package org.egov.edcr.feature;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.egov.common.constants.MdmsFeatureConstants;
 import org.egov.common.entity.edcr.Block;
 import org.egov.common.entity.edcr.Building;
 import org.egov.common.entity.edcr.Floor;
+import org.egov.common.entity.edcr.MdmsFeatureRule;
 import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.Result;
+import org.egov.common.entity.edcr.RuleKey;
 import org.egov.common.entity.edcr.ScrutinyDetail;
-import org.egov.edcr.constants.DxfFileConstants;
 import org.egov.edcr.constants.EdcrRulesMdmsConstants;
+import org.egov.edcr.service.CacheManagerMdms;
 import org.egov.edcr.service.FetchEdcrRulesMdms;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -87,6 +89,9 @@ public class OverHangs extends FeatureProcess {
     
     @Autowired
     FetchEdcrRulesMdms fetchEdcrRulesMdms;
+    
+    @Autowired
+	CacheManagerMdms cache;
 
     @Override
     public Plan process(Plan pl) {
@@ -101,34 +106,55 @@ public class OverHangs extends FeatureProcess {
         BigDecimal overHangsValue = BigDecimal.ZERO;
 
         // Determine the occupancy type
-        String occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl);
+        
         String feature = MdmsFeatureConstants.OVERHANGS; // Feature name for overhangs
-
-        Map<String, Object> params = new HashMap<>();
        
+    	 String occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl).toLowerCase();
+            String tenantId = pl.getTenantId();
+            String zone = pl.getPlanInformation().getZone().toLowerCase();
+            String subZone = pl.getPlanInformation().getSubZone().toLowerCase();
+            String riskType = fetchEdcrRulesMdms.getRiskType(pl).toLowerCase();
+            
+            RuleKey key = new RuleKey(EdcrRulesMdmsConstants.STATE, tenantId, zone, subZone, occupancyName, null, feature);
+            List<Object> rules = cache.getRules(tenantId, key);
+    		
+            Optional<MdmsFeatureRule> matchedRule = rules.stream()
+            	    .map(obj -> (MdmsFeatureRule) obj)
+            	    .findFirst();
 
-        // Add feature and occupancy to the parameters map
-        params.put("feature", feature);
-        params.put("occupancy", occupancyName);
+            	if (matchedRule.isPresent()) {
+            	    MdmsFeatureRule rule = matchedRule.get();
+            	    overHangsValue = rule.getPermissible();
+            	} else {
+            		overHangsValue = BigDecimal.ZERO;
+            	}
 
-        // Fetch the list of rules from the plan object
-        Map<String, List<Map<String, Object>>> edcrRuleList = pl.getEdcrRulesFeatures();
 
-        // Specify the columns to fetch from the rules
-        ArrayList<String> valueFromColumn = new ArrayList<>();
-        valueFromColumn.add(EdcrRulesMdmsConstants.PERMISSIBLE_VALUE);
-
-        // Initialize a list to store permissible values
-        List<Map<String, Object>> permissibleValue = new ArrayList<>();
-
-        // Fetch permissible values from MDMS
-        permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
-        LOG.info("permissibleValue" + permissibleValue); // Log the fetched permissible values
-
-        // Check if permissible values are available and update the overhangs value
-        if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey(EdcrRulesMdmsConstants.PERMISSIBLE_VALUE)) {
-            overHangsValue = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.PERMISSIBLE_VALUE).toString()));
-        }
+//        Map<String, Object> params = new HashMap<>();
+//       
+//
+//        // Add feature and occupancy to the parameters map
+//        params.put("feature", feature);
+//        params.put("occupancy", occupancyName);
+//
+//        // Fetch the list of rules from the plan object
+//        Map<String, List<Map<String, Object>>> edcrRuleList = pl.getEdcrRulesFeatures();
+//
+//        // Specify the columns to fetch from the rules
+//        ArrayList<String> valueFromColumn = new ArrayList<>();
+//        valueFromColumn.add(EdcrRulesMdmsConstants.PERMISSIBLE_VALUE);
+//
+//        // Initialize a list to store permissible values
+//        List<Map<String, Object>> permissibleValue = new ArrayList<>();
+//
+//        // Fetch permissible values from MDMS
+//        permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
+//        LOG.info("permissibleValue" + permissibleValue); // Log the fetched permissible values
+//
+//        // Check if permissible values are available and update the overhangs value
+//        if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey(EdcrRulesMdmsConstants.PERMISSIBLE_VALUE)) {
+//            overHangsValue = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.PERMISSIBLE_VALUE).toString()));
+//        }
 
         // Iterate through all blocks in the plan
         for (Block b : pl.getBlocks()) {

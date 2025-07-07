@@ -48,24 +48,26 @@
 package org.egov.edcr.feature;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.egov.common.constants.MdmsFeatureConstants;
 import org.egov.common.entity.edcr.Block;
 import org.egov.common.entity.edcr.Floor;
+import org.egov.common.entity.edcr.MdmsFeatureRule;
 import org.egov.common.entity.edcr.Measurement;
 import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.Result;
+import org.egov.common.entity.edcr.RuleKey;
 import org.egov.common.entity.edcr.ScrutinyDetail;
-import org.egov.edcr.constants.DxfFileConstants;
 import org.egov.edcr.constants.EdcrRulesMdmsConstants;
+import org.egov.edcr.service.CacheManagerMdms;
 import org.egov.edcr.service.FetchEdcrRulesMdms;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -98,6 +100,10 @@ public class InteriorOpenSpaceService extends FeatureProcess {
 
     @Autowired
     FetchEdcrRulesMdms fetchEdcrRulesMdms;
+    
+    @Autowired
+	CacheManagerMdms cache;
+	
 
     /**
      * Validates the given plan object.
@@ -121,40 +127,64 @@ public class InteriorOpenSpaceService extends FeatureProcess {
     @Override
     public Plan process(Plan pl) {
        
-        String feature = MdmsFeatureConstants.INTERIOR_OPEN_SPACE_SERVICE;
+	        String feature = MdmsFeatureConstants.INTERIOR_OPEN_SPACE_SERVICE;
+	        String occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl).toLowerCase();
+            String tenantId = pl.getTenantId();
+            String zone = pl.getPlanInformation().getZone().toLowerCase();
+            String subZone = pl.getPlanInformation().getSubZone().toLowerCase();
+            String riskType = fetchEdcrRulesMdms.getRiskType(pl).toLowerCase();
+            
+            RuleKey key = new RuleKey(EdcrRulesMdmsConstants.STATE, tenantId, zone, subZone, occupancyName, null, feature);
+            List<Object> rules = cache.getRules(tenantId, key);
+    		
+            Optional<MdmsFeatureRule> matchedRule = rules.stream()
+            	    .map(obj -> (MdmsFeatureRule) obj)
+            	    .findFirst();
+
+            	if (matchedRule.isPresent()) {
+            	    MdmsFeatureRule rule = matchedRule.get();
+            	    minInteriorAreaValueOne = rule.getMinInteriorAreaValueOne();
+            	    minInteriorAreaValueTwo = rule.getMinInteriorAreaValueTwo();
+            	    minInteriorWidthValueOne = rule.getMinInteriorWidthValueOne();
+            	    minInteriorWidthValueTwo = rule.getMinInteriorWidthValueTwo();
+            	    minVentilationAreaValueOne = rule.getMinVentilationAreaValueOne();
+            	    minVentilationAreaValueTwo = rule.getMinVentilationAreaValueTwo();
+            	    minVentilationWidthValueOne = rule.getMinVentilationWidthValueOne();
+            	    minVentilationWidthValueTwo = rule.getMinVentilationWidthValueOne();
+            	}
 
         // Determine the occupancy type for fetching permissible values
-        Map<String, Object> params = new HashMap<>();
-        String occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl);
-        params.put("feature", feature);
-        params.put("occupancy", occupancyName);
-
-        // Fetch permissible values for interior open spaces
-        Map<String, List<Map<String, Object>>> edcrRuleList = pl.getEdcrRulesFeatures();
-        ArrayList<String> valueFromColumn = new ArrayList<>();
-        valueFromColumn.add(EdcrRulesMdmsConstants.MIN_INTERIOR_AREA_VALUE_ONE);
-        valueFromColumn.add(EdcrRulesMdmsConstants.MIN_INTERIOR_AREA_VALUE_TWO);
-        valueFromColumn.add(EdcrRulesMdmsConstants.MIN_INTERIOR_WIDTH_VALUE_ONE);
-        valueFromColumn.add(EdcrRulesMdmsConstants.MIN_INTERIOR_WIDTH_VALUE_TWO);
-        valueFromColumn.add(EdcrRulesMdmsConstants.MIN_VENTILATION_AREA_VALUE_ONE);
-        valueFromColumn.add(EdcrRulesMdmsConstants.MIN_VENTILATION_AREA_VALUE_TWO);
-        valueFromColumn.add(EdcrRulesMdmsConstants.MIN_VENTILATION_WIDTH_VALUE_ONE);
-        valueFromColumn.add(EdcrRulesMdmsConstants.MIN_VENTILATION_WIDTH_VALUE_TWO);
-
-        List<Map<String, Object>> permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
-        LOG.info("permissibleValue" + permissibleValue);
-
-        if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey(EdcrRulesMdmsConstants.MIN_INTERIOR_AREA_VALUE_ONE)) {
-            minInteriorAreaValueOne = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.MIN_INTERIOR_AREA_VALUE_ONE).toString()));
-            minInteriorAreaValueTwo = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.MIN_INTERIOR_AREA_VALUE_TWO).toString()));
-            minInteriorWidthValueOne = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.MIN_INTERIOR_WIDTH_VALUE_ONE).toString()));
-            minInteriorWidthValueTwo = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.MIN_INTERIOR_WIDTH_VALUE_TWO).toString()));
-            minVentilationAreaValueOne = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.MIN_VENTILATION_AREA_VALUE_ONE).toString()));
-            minVentilationAreaValueTwo = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.MIN_VENTILATION_AREA_VALUE_TWO).toString()));
-            minVentilationWidthValueOne = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.MIN_VENTILATION_WIDTH_VALUE_ONE).toString()));
-            minVentilationWidthValueTwo = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.MIN_VENTILATION_WIDTH_VALUE_TWO).toString()));
-        }
-
+       // Map<String, Object> params = new HashMap<>();
+        
+//        params.put("feature", feature);
+//        params.put("occupancy", occupancyName);
+//
+//        // Fetch permissible values for interior open spaces
+//        Map<String, List<Map<String, Object>>> edcrRuleList = pl.getEdcrRulesFeatures();
+//        ArrayList<String> valueFromColumn = new ArrayList<>();
+//        valueFromColumn.add(EdcrRulesMdmsConstants.MIN_INTERIOR_AREA_VALUE_ONE);
+//        valueFromColumn.add(EdcrRulesMdmsConstants.MIN_INTERIOR_AREA_VALUE_TWO);
+//        valueFromColumn.add(EdcrRulesMdmsConstants.MIN_INTERIOR_WIDTH_VALUE_ONE);
+//        valueFromColumn.add(EdcrRulesMdmsConstants.MIN_INTERIOR_WIDTH_VALUE_TWO);
+//        valueFromColumn.add(EdcrRulesMdmsConstants.MIN_VENTILATION_AREA_VALUE_ONE);
+//        valueFromColumn.add(EdcrRulesMdmsConstants.MIN_VENTILATION_AREA_VALUE_TWO);
+//        valueFromColumn.add(EdcrRulesMdmsConstants.MIN_VENTILATION_WIDTH_VALUE_ONE);
+//        valueFromColumn.add(EdcrRulesMdmsConstants.MIN_VENTILATION_WIDTH_VALUE_TWO);
+//
+//        List<Map<String, Object>> permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
+//        LOG.info("permissibleValue" + permissibleValue);
+//
+//        if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey(EdcrRulesMdmsConstants.MIN_INTERIOR_AREA_VALUE_ONE)) {
+//            minInteriorAreaValueOne = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.MIN_INTERIOR_AREA_VALUE_ONE).toString()));
+//            minInteriorAreaValueTwo = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.MIN_INTERIOR_AREA_VALUE_TWO).toString()));
+//            minInteriorWidthValueOne = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.MIN_INTERIOR_WIDTH_VALUE_ONE).toString()));
+//            minInteriorWidthValueTwo = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.MIN_INTERIOR_WIDTH_VALUE_TWO).toString()));
+//            minVentilationAreaValueOne = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.MIN_VENTILATION_AREA_VALUE_ONE).toString()));
+//            minVentilationAreaValueTwo = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.MIN_VENTILATION_AREA_VALUE_TWO).toString()));
+//            minVentilationWidthValueOne = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.MIN_VENTILATION_WIDTH_VALUE_ONE).toString()));
+//            minVentilationWidthValueTwo = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.MIN_VENTILATION_WIDTH_VALUE_TWO).toString()));
+//        }
+//
         // Iterate through all blocks in the plan
         for (Block b : pl.getBlocks()) {
             ScrutinyDetail scrutinyDetail = new ScrutinyDetail();

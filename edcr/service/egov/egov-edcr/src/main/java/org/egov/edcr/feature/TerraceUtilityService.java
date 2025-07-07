@@ -49,22 +49,24 @@
 package org.egov.edcr.feature;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.egov.common.constants.MdmsFeatureConstants;
 import org.egov.common.entity.edcr.Block;
+import org.egov.common.entity.edcr.MdmsFeatureRule;
 import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.Result;
+import org.egov.common.entity.edcr.RuleKey;
 import org.egov.common.entity.edcr.ScrutinyDetail;
 import org.egov.common.entity.edcr.TerraceUtility;
-import org.egov.edcr.constants.DxfFileConstants;
 import org.egov.edcr.constants.EdcrRulesMdmsConstants;
+import org.egov.edcr.service.CacheManagerMdms;
 import org.egov.edcr.service.FetchEdcrRulesMdms;
 import org.egov.edcr.utility.DcrConstants;
 import org.egov.edcr.utility.Util;
@@ -89,6 +91,9 @@ public class TerraceUtilityService extends FeatureProcess {
     // Autowired service to fetch rules from MDMS
     @Autowired
     FetchEdcrRulesMdms fetchEdcrRulesMdms;
+    
+    @Autowired
+	CacheManagerMdms cache;
 
     // No amendments defined for this rule
     @Override
@@ -109,35 +114,55 @@ public class TerraceUtilityService extends FeatureProcess {
         // Default permissible value set to zero initially
         BigDecimal terraceUtilityValue = BigDecimal.ZERO;
 
-        String occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl);
+        
 
         // Define the feature name for fetching rules
         String feature = MdmsFeatureConstants.TERRACE_UTILITY_SERVICE;
+      
+    	 String occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl).toLowerCase();
+            String tenantId = pl.getTenantId();
+            String zone = pl.getPlanInformation().getZone().toLowerCase();
+            String subZone = pl.getPlanInformation().getSubZone().toLowerCase();
+            String riskType = fetchEdcrRulesMdms.getRiskType(pl).toLowerCase();
+            
+            RuleKey key = new RuleKey(EdcrRulesMdmsConstants.STATE, tenantId, zone, subZone, occupancyName, null, feature);
+            List<Object> rules = cache.getRules(tenantId, key);
+    		
+            Optional<MdmsFeatureRule> matchedRule = rules.stream()
+            	    .map(obj -> (MdmsFeatureRule) obj)
+            	    .findFirst();
+
+            	if (matchedRule.isPresent()) {
+            	    MdmsFeatureRule rule = matchedRule.get();
+            	    terraceUtilityValue = rule.getPermissible();
+            	} else {
+            		terraceUtilityValue = BigDecimal.ZERO;
+            	}
 
         // Prepare parameters for fetching MDMS rules
-        Map<String, Object> params = new HashMap<>();
-        
-        // If occupancy is residential, set the corresponding string
-       
-        params.put("feature", feature);
-        params.put("occupancy", occupancyName);
-
-        // Retrieve all EDCR rules from the plan
-        Map<String, List<Map<String, Object>>> edcrRuleList = pl.getEdcrRulesFeatures();
-
-        // Define the list of columns to retrieve from MDMS
-        ArrayList<String> valueFromColumn = new ArrayList<>();
-        valueFromColumn.add(EdcrRulesMdmsConstants.PERMISSIBLE_VALUE);
-
-        // Fetch permissible value from MDMS using occupancy and feature
-        List<Map<String, Object>> permissibleValue = new ArrayList<>();
-        permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
-        LOG.info("permissibleValue" + permissibleValue);
-
-        // If value is found, extract and convert it to BigDecimal
-        if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey(EdcrRulesMdmsConstants.PERMISSIBLE_VALUE)) {
-            terraceUtilityValue = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.PERMISSIBLE_VALUE).toString()));
-        }
+//        Map<String, Object> params = new HashMap<>();
+//        
+//        // If occupancy is residential, set the corresponding string
+//       
+//        params.put("feature", feature);
+//        params.put("occupancy", occupancyName);
+//
+//        // Retrieve all EDCR rules from the plan
+//        Map<String, List<Map<String, Object>>> edcrRuleList = pl.getEdcrRulesFeatures();
+//
+//        // Define the list of columns to retrieve from MDMS
+//        ArrayList<String> valueFromColumn = new ArrayList<>();
+//        valueFromColumn.add(EdcrRulesMdmsConstants.PERMISSIBLE_VALUE);
+//
+//        // Fetch permissible value from MDMS using occupancy and feature
+//        List<Map<String, Object>> permissibleValue = new ArrayList<>();
+//        permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
+//        LOG.info("permissibleValue" + permissibleValue);
+//
+//        // If value is found, extract and convert it to BigDecimal
+//        if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey(EdcrRulesMdmsConstants.PERMISSIBLE_VALUE)) {
+//            terraceUtilityValue = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.PERMISSIBLE_VALUE).toString()));
+//        }
 
         // Iterate through each block in the plan
         if (pl.getBlocks() != null) {

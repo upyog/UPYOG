@@ -48,22 +48,24 @@
 package org.egov.edcr.feature;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.egov.common.constants.MdmsFeatureConstants;
 import org.egov.common.entity.edcr.Block;
+import org.egov.common.entity.edcr.MdmsFeatureRule;
 import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.Result;
+import org.egov.common.entity.edcr.RuleKey;
 import org.egov.common.entity.edcr.ScrutinyDetail;
-import org.egov.edcr.constants.DxfFileConstants;
 import org.egov.edcr.constants.EdcrRulesMdmsConstants;
+import org.egov.edcr.service.CacheManagerMdms;
 import org.egov.edcr.service.FetchEdcrRulesMdms;
 import org.egov.edcr.utility.Util;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -84,6 +86,9 @@ public class PassageService extends FeatureProcess {
 
     @Autowired
     FetchEdcrRulesMdms fetchEdcrRulesMdms;
+    
+    @Autowired
+	CacheManagerMdms cache;
 
     @Override
     public Plan process(Plan plan) {
@@ -92,35 +97,53 @@ public class PassageService extends FeatureProcess {
         BigDecimal passageMinWidth = BigDecimal.ZERO;
 
         // Determine the occupancy type
-        String occupancyName = fetchEdcrRulesMdms.getOccupancyName(plan);
+       
         String feature = MdmsFeatureConstants.PASSAGE_SERVICE; // Feature name for passage service
+       
+    	 String occupancyName = fetchEdcrRulesMdms.getOccupancyName(plan).toLowerCase();
+            String tenantId = plan.getTenantId();
+            String zone = plan.getPlanInformation().getZone().toLowerCase();
+            String subZone = plan.getPlanInformation().getSubZone().toLowerCase();
+            String riskType = fetchEdcrRulesMdms.getRiskType(plan).toLowerCase();
+            
+            RuleKey key = new RuleKey(EdcrRulesMdmsConstants.STATE, tenantId, zone, subZone, occupancyName, null, feature);
+            List<Object> rules = cache.getRules(tenantId, key);
+    		
+            Optional<MdmsFeatureRule> matchedRule = rules.stream()
+            	    .map(obj -> (MdmsFeatureRule) obj)
+            	    .findFirst();
 
+            	if (matchedRule.isPresent()) {
+            	    MdmsFeatureRule rule = matchedRule.get();
+            	    passageStairMinimumWidth = rule.getPassageServiceValueOne();
+            	    passageMinWidth = rule.getPassageServiceValueTwo();
+            	} 
         // Prepare parameters for fetching MDMS values
-        Map<String, Object> params = new HashMap<>();
-        
-        params.put("feature", feature);
-        params.put("occupancy", occupancyName);
-
-        // Fetch the list of rules from the plan object
-        Map<String, List<Map<String, Object>>> edcrRuleList = plan.getEdcrRulesFeatures();
-
-        // Specify the columns to fetch from the rules
-        ArrayList<String> valueFromColumn = new ArrayList<>();
-        valueFromColumn.add(EdcrRulesMdmsConstants.PASSAGE_SERVICE_VALUE_ONE); // Minimum width of passage
-        valueFromColumn.add(EdcrRulesMdmsConstants.PASSAGE_SERVICE_VALUE_TWO); // Minimum width of passage stair
-
-        // Initialize a list to store permissible values
-        List<Map<String, Object>> permissibleValue = new ArrayList<>();
-
-        // Fetch permissible values from MDMS
-        permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
-        LOG.info("permissibleValue" + permissibleValue); // Log the fetched permissible values
-
-        // Check if permissible values are available and update the passage dimensions
-        if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey(EdcrRulesMdmsConstants.PASSAGE_SERVICE_VALUE_ONE)) {
-            passageStairMinimumWidth = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.PASSAGE_SERVICE_VALUE_ONE).toString()));
-            passageMinWidth = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.PASSAGE_SERVICE_VALUE_TWO).toString()));
-        }
+//        Map<String, Object> params = new HashMap<>();
+//        
+//        params.put("feature", feature);
+//        params.put("occupancy", occupancyName);
+//
+//        // Fetch the list of rules from the plan object
+//        Map<String, List<Map<String, Object>>> edcrRuleList = plan.getEdcrRulesFeatures();
+//
+//        // Specify the columns to fetch from the rules
+//        ArrayList<String> valueFromColumn = new ArrayList<>();
+//        valueFromColumn.add(EdcrRulesMdmsConstants.PASSAGE_SERVICE_VALUE_ONE); // Minimum width of passage
+//        valueFromColumn.add(EdcrRulesMdmsConstants.PASSAGE_SERVICE_VALUE_TWO); // Minimum width of passage stair
+//
+//        // Initialize a list to store permissible values
+//        List<Map<String, Object>> permissibleValue = new ArrayList<>();
+//
+//        // Fetch permissible values from MDMS
+//        permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
+//        LOG.info("permissibleValue" + permissibleValue); // Log the fetched permissible values
+//
+//        // Check if permissible values are available and update the passage dimensions
+//        if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey(EdcrRulesMdmsConstants.PASSAGE_SERVICE_VALUE_ONE)) {
+//            passageStairMinimumWidth = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.PASSAGE_SERVICE_VALUE_ONE).toString()));
+//            passageMinWidth = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.PASSAGE_SERVICE_VALUE_TWO).toString()));
+//        }
 
         // Iterate through all blocks in the plan
         for (Block block : plan.getBlocks()) {

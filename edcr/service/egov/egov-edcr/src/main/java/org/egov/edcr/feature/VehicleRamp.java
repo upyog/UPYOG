@@ -55,6 +55,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -62,12 +63,15 @@ import org.egov.common.constants.MdmsFeatureConstants;
 import org.egov.common.entity.edcr.Block;
 import org.egov.common.entity.edcr.Flight;
 import org.egov.common.entity.edcr.Floor;
+import org.egov.common.entity.edcr.MdmsFeatureRule;
 import org.egov.common.entity.edcr.Measurement;
 import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.Result;
+import org.egov.common.entity.edcr.RuleKey;
 import org.egov.common.entity.edcr.ScrutinyDetail;
 import org.egov.edcr.constants.DxfFileConstants;
 import org.egov.edcr.constants.EdcrRulesMdmsConstants;
+import org.egov.edcr.service.CacheManagerMdms;
 import org.egov.edcr.service.FetchEdcrRulesMdms;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -104,6 +108,9 @@ public class VehicleRamp extends FeatureProcess {
 
 	@Autowired
 	FetchEdcrRulesMdms fetchEdcrRulesMdms;
+	
+	@Autowired
+	CacheManagerMdms cache;
 
 	@Override
 	public Plan process(Plan pl) {
@@ -142,40 +149,62 @@ public class VehicleRamp extends FeatureProcess {
 		BigDecimal vehicleRampSlopeMinWidthValueTwo = BigDecimal.ZERO;
 		BigDecimal vehicleRampSlopeMinWidthValueThree = BigDecimal.ZERO;
 
-		String occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl);
-		String feature = MdmsFeatureConstants.VEHICLE_RAMP;
+		
+		    String feature = MdmsFeatureConstants.VEHICLE_RAMP;
+		    String occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl).toLowerCase();
+	        String tenantId = pl.getTenantId();
+	        String zone = pl.getPlanInformation().getZone().toLowerCase();
+	        String subZone = pl.getPlanInformation().getSubZone().toLowerCase();
+	        String riskType = fetchEdcrRulesMdms.getRiskType(pl).toLowerCase();
+	        
+	        RuleKey key = new RuleKey(EdcrRulesMdmsConstants.STATE, tenantId, zone, subZone, occupancyName, null, feature);
+	        List<Object> rules = cache.getRules(tenantId, key);
+			
+	        Optional<MdmsFeatureRule> matchedRule = rules.stream()
+	        	    .map(obj -> (MdmsFeatureRule) obj)
+	        	    .findFirst();
+
+	        	if (matchedRule.isPresent()) {
+	        	    MdmsFeatureRule rule = matchedRule.get();
+	        	    vehicleRampValue = rule.getPermissible();
+	        	    vehicleRampSlopeValueOne = rule.getVehicleRampSlopeValueOne();
+	        	    vehicleRampSlopeValueTwo = rule.getVehicleRampSlopeValueTwo();
+	        	    vehicleRampSlopeMinWidthValueOne = rule.getVehicleRampSlopeMinWidthValueOne();
+	        	    vehicleRampSlopeMinWidthValueTwo = rule.getVehicleRampSlopeMinWidthValueTwo();
+	        	    vehicleRampSlopeMinWidthValueThree = rule.getVehicleRampSlopeMinWidthValueThree();
+	        	} 
 
 		// Determine occupancy type for fetching MDMS rules
-		Map<String, Object> params = new HashMap<>();
-		
-		params.put("feature", feature);
-		params.put("occupancy", occupancyName);
-
-		Map<String,List<Map<String,Object>>> edcrRuleList = pl.getEdcrRulesFeatures();
-		ArrayList<String> valueFromColumn = new ArrayList<>();
-
-		// Define required rule keys from MDMS
-		valueFromColumn.add(EdcrRulesMdmsConstants.VEHICLE_RAMP_VALUE);
-		valueFromColumn.add(EdcrRulesMdmsConstants.VEHICLE_RAMP_SLOPE_VALUE_ONE);
-		valueFromColumn.add(EdcrRulesMdmsConstants.VEHICLE_RAMP_SLOPE_VALUE_TWO);
-		valueFromColumn.add(EdcrRulesMdmsConstants.VEHICLE_RAMP_SLOPE_MIN_WIDTH_VALUE_ONE);
-		valueFromColumn.add(EdcrRulesMdmsConstants.VEHICLE_RAMP_SLOPE_MIN_WIDTH_VALUE_TWO);
-		valueFromColumn.add(EdcrRulesMdmsConstants.VEHICLE_RAMP_SLOPE_MIN_WIDTH_VALUE_THREE);
-
-		// Fetch permissible values
-		List<Map<String, Object>> permissibleValue = new ArrayList<>();
-		permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
-		LOG.info("permissibleValue" + permissibleValue);
-
-		// Set permissible values if present
-		if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey(EdcrRulesMdmsConstants.VEHICLE_RAMP_VALUE)) {
-			vehicleRampValue = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.VEHICLE_RAMP_VALUE).toString()));
-			vehicleRampSlopeValueOne = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.VEHICLE_RAMP_SLOPE_VALUE_ONE).toString()));
-			vehicleRampSlopeValueTwo = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.VEHICLE_RAMP_SLOPE_VALUE_TWO).toString()));
-			vehicleRampSlopeMinWidthValueOne = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.VEHICLE_RAMP_SLOPE_MIN_WIDTH_VALUE_ONE).toString()));
-			vehicleRampSlopeMinWidthValueTwo = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.VEHICLE_RAMP_SLOPE_MIN_WIDTH_VALUE_TWO).toString()));
-			vehicleRampSlopeMinWidthValueThree = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.VEHICLE_RAMP_SLOPE_MIN_WIDTH_VALUE_THREE).toString()));
-		}
+//		Map<String, Object> params = new HashMap<>();
+//		
+//		params.put("feature", feature);
+//		params.put("occupancy", occupancyName);
+//
+//		Map<String,List<Map<String,Object>>> edcrRuleList = pl.getEdcrRulesFeatures();
+//		ArrayList<String> valueFromColumn = new ArrayList<>();
+//
+//		// Define required rule keys from MDMS
+//		valueFromColumn.add(EdcrRulesMdmsConstants.VEHICLE_RAMP_VALUE);
+//		valueFromColumn.add(EdcrRulesMdmsConstants.VEHICLE_RAMP_SLOPE_VALUE_ONE);
+//		valueFromColumn.add(EdcrRulesMdmsConstants.VEHICLE_RAMP_SLOPE_VALUE_TWO);
+//		valueFromColumn.add(EdcrRulesMdmsConstants.VEHICLE_RAMP_SLOPE_MIN_WIDTH_VALUE_ONE);
+//		valueFromColumn.add(EdcrRulesMdmsConstants.VEHICLE_RAMP_SLOPE_MIN_WIDTH_VALUE_TWO);
+//		valueFromColumn.add(EdcrRulesMdmsConstants.VEHICLE_RAMP_SLOPE_MIN_WIDTH_VALUE_THREE);
+//
+//		// Fetch permissible values
+//		List<Map<String, Object>> permissibleValue = new ArrayList<>();
+//		permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
+//		LOG.info("permissibleValue" + permissibleValue);
+//
+//		// Set permissible values if present
+//		if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey(EdcrRulesMdmsConstants.VEHICLE_RAMP_VALUE)) {
+//			vehicleRampValue = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.VEHICLE_RAMP_VALUE).toString()));
+//			vehicleRampSlopeValueOne = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.VEHICLE_RAMP_SLOPE_VALUE_ONE).toString()));
+//			vehicleRampSlopeValueTwo = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.VEHICLE_RAMP_SLOPE_VALUE_TWO).toString()));
+//			vehicleRampSlopeMinWidthValueOne = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.VEHICLE_RAMP_SLOPE_MIN_WIDTH_VALUE_ONE).toString()));
+//			vehicleRampSlopeMinWidthValueTwo = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.VEHICLE_RAMP_SLOPE_MIN_WIDTH_VALUE_TWO).toString()));
+//			vehicleRampSlopeMinWidthValueThree = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.VEHICLE_RAMP_SLOPE_MIN_WIDTH_VALUE_THREE).toString()));
+//		}
 
 		// If parking area exists, process the vehicle ramp checks
 		if (totalProvidedCarParkArea != null && totalProvidedCarParkArea.compareTo(BigDecimal.ZERO) > 0) {

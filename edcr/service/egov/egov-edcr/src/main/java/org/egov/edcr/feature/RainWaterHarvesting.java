@@ -48,22 +48,25 @@
 package org.egov.edcr.feature;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.egov.common.constants.MdmsFeatureConstants;
+import org.egov.common.entity.edcr.MdmsFeatureRule;
 import org.egov.common.entity.edcr.OccupancyTypeHelper;
 import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.Result;
+import org.egov.common.entity.edcr.RuleKey;
 import org.egov.common.entity.edcr.ScrutinyDetail;
 import org.egov.edcr.constants.DxfFileConstants;
 import org.egov.edcr.constants.EdcrRulesMdmsConstants;
+import org.egov.edcr.service.CacheManagerMdms;
 import org.egov.edcr.service.FetchEdcrRulesMdms;
 import org.egov.edcr.utility.DcrConstants;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -89,6 +92,9 @@ public class RainWaterHarvesting extends FeatureProcess {
     
     @Autowired
     FetchEdcrRulesMdms fetchEdcrRulesMdms;
+    
+    @Autowired
+   	CacheManagerMdms cache;
 @Override
 public Plan process(Plan pl) {
     // Initialize a map to store errors
@@ -116,33 +122,52 @@ public Plan process(Plan pl) {
             : null;
 
     // Determine the occupancy type
-    String occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl);
+   
     String feature = MdmsFeatureConstants.RAIN_WATER_HARVESTING; // Feature name for rainwater harvesting
+    
+   
+	 String occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl).toLowerCase();
+        String tenantId = pl.getTenantId();
+        String zone = pl.getPlanInformation().getZone().toLowerCase();
+        String subZone = pl.getPlanInformation().getSubZone().toLowerCase();
+        String riskType = fetchEdcrRulesMdms.getRiskType(pl).toLowerCase();
+        
+        RuleKey key = new RuleKey(EdcrRulesMdmsConstants.STATE, tenantId, zone, subZone, occupancyName, null, feature);
+        List<Object> rules = cache.getRules(tenantId, key);
+		
+        Optional<MdmsFeatureRule> matchedRule = rules.stream()
+        	    .map(obj -> (MdmsFeatureRule) obj)
+        	    .findFirst();
+
+        	if (matchedRule.isPresent()) {
+        	    MdmsFeatureRule rule = matchedRule.get();
+        	    rainWaterHarvestingPermissibleValue = rule.getPermissible();
+        	} 
 
     // Prepare parameters for fetching MDMS values
-    Map<String, Object> params = new HashMap<>();
-    
-    params.put("feature", feature);
-    params.put("occupancy", occupancyName);
-
-    // Fetch the list of rules from the plan object
-    Map<String, List<Map<String, Object>>> edcrRuleList = pl.getEdcrRulesFeatures();
-
-    // Specify the columns to fetch from the rules
-    ArrayList<String> valueFromColumn = new ArrayList<>();
-    valueFromColumn.add(EdcrRulesMdmsConstants.PERMISSIBLE_VALUE); // Permissible value for rainwater harvesting
-
-    // Initialize a list to store permissible values
-    List<Map<String, Object>> permissibleValue = new ArrayList<>();
-
-    // Fetch permissible values from MDMS
-    permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
-    LOG.info("permissibleValue" + permissibleValue); // Log the fetched permissible values
-
-    // Check if permissible values are available and update the permissible value for rainwater harvesting
-    if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey(EdcrRulesMdmsConstants.PERMISSIBLE_VALUE)) {
-        rainWaterHarvestingPermissibleValue = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.PERMISSIBLE_VALUE).toString()));
-    }
+//    Map<String, Object> params = new HashMap<>();
+//    
+//    params.put("feature", feature);
+//    params.put("occupancy", occupancyName);
+//
+//    // Fetch the list of rules from the plan object
+//    Map<String, List<Map<String, Object>>> edcrRuleList = pl.getEdcrRulesFeatures();
+//
+//    // Specify the columns to fetch from the rules
+//    ArrayList<String> valueFromColumn = new ArrayList<>();
+//    valueFromColumn.add(EdcrRulesMdmsConstants.PERMISSIBLE_VALUE); // Permissible value for rainwater harvesting
+//
+//    // Initialize a list to store permissible values
+//    List<Map<String, Object>> permissibleValue = new ArrayList<>();
+//
+//    // Fetch permissible values from MDMS
+//    permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
+//    LOG.info("permissibleValue" + permissibleValue); // Log the fetched permissible values
+//
+//    // Check if permissible values are available and update the permissible value for rainwater harvesting
+//    if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey(EdcrRulesMdmsConstants.PERMISSIBLE_VALUE)) {
+//        rainWaterHarvestingPermissibleValue = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.PERMISSIBLE_VALUE).toString()));
+//    }
 
     // Validate the plot area and occupancy type for rainwater harvesting
     if (mostRestrictiveFarHelper != null && mostRestrictiveFarHelper.getType() != null) {

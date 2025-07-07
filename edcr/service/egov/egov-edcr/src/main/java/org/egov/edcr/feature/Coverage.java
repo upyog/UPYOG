@@ -306,10 +306,11 @@ public class Coverage extends FeatureProcess {
        
 	
      String tenantId = pl.getTenantId();
-     String zone = pl.getPlanInformation().getZone();
-     String subZone = pl.getPlanInformation().getSubZone();
+     String zone = pl.getPlanInformation().getZone().toLowerCase();
+     String subZone = pl.getPlanInformation().getSubZone().toLowerCase();
+     String riskType = fetchEdcrRulesMdms.getRiskType(pl).toLowerCase();
      
-     RuleKey key = new RuleKey(EdcrRulesMdmsConstants.STATE, tenantId, zone, subZone, occupancyName, "low", feature);
+     RuleKey key = new RuleKey(EdcrRulesMdmsConstants.STATE, tenantId, zone, subZone, occupancyName, riskType, feature);
      List<Object> rules = cache.getRules(tenantId, key);
 		
      Optional<MdmsFeatureRule> matchedRule = rules.stream()
@@ -325,8 +326,6 @@ public class Coverage extends FeatureProcess {
      	}
 		return permissibleCoverage;
 		
-		
-
 	}
 
 

@@ -49,23 +49,25 @@ package org.egov.edcr.feature;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.egov.common.constants.MdmsFeatureConstants;
 import org.egov.common.entity.edcr.ElectricLine;
+import org.egov.common.entity.edcr.MdmsFeatureRule;
 import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.Result;
+import org.egov.common.entity.edcr.RuleKey;
 import org.egov.common.entity.edcr.ScrutinyDetail;
-import org.egov.edcr.constants.DxfFileConstants;
 import org.egov.edcr.constants.EdcrRulesMdmsConstants;
 import org.egov.edcr.entity.blackbox.PlanDetail;
+import org.egov.edcr.service.CacheManagerMdms;
 import org.egov.edcr.service.FetchEdcrRulesMdms;
 import org.egov.edcr.utility.DcrConstants;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -88,6 +90,9 @@ public class OverheadElectricalLineService extends FeatureProcess {
 
     @Autowired
     FetchEdcrRulesMdms fetchEdcrRulesMdms;
+    
+	@Autowired
+	CacheManagerMdms cache;
 
     @Override
     public Plan validate(Plan pl) {
@@ -129,44 +134,68 @@ public class OverheadElectricalLineService extends FeatureProcess {
         scrutinyDetail.addColumnHeading(8, STATUS);
 
         // Determine the occupancy type and feature for fetching permissible values
-        String occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl);
-        String feature = MdmsFeatureConstants.OVERHEAD_ELECTRICAL_LINE_SERVICE;
-
-        Map<String, Object> params = new HashMap<>();
        
+         String feature = MdmsFeatureConstants.OVERHEAD_ELECTRICAL_LINE_SERVICE;
 
-        // Add feature and occupancy to the parameters map
-        params.put("feature", feature);
-        params.put("occupancy", occupancyName);
+		 String occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl).toLowerCase();
+	     String tenantId = pl.getTenantId();
+	     String zone = pl.getPlanInformation().getZone().toLowerCase();
+	     String subZone = pl.getPlanInformation().getSubZone().toLowerCase();
+	     String riskType = fetchEdcrRulesMdms.getRiskType(pl).toLowerCase();
+	     
+	     RuleKey key = new RuleKey(EdcrRulesMdmsConstants.STATE, tenantId, zone, subZone, occupancyName, null, feature);
+	     List<Object> rules = cache.getRules(tenantId, key);
+			
+	     Optional<MdmsFeatureRule> matchedRule = rules.stream()
+	     	    .map(obj -> (MdmsFeatureRule) obj)
+	     	    .findFirst();
+	
+	     	if (matchedRule.isPresent()) {
+	     	    MdmsFeatureRule rule = matchedRule.get();
+	     	   overheadVerticalDistance_11000 = rule.getOverheadVerticalDistance_11000();
+	     	   overheadVerticalDistance_33000 = rule.getOverheadVerticalDistance_33000();
+	     	   overheadHorizontalDistance_11000 = rule.getOverheadHorizontalDistance_11000();
+	     	   overheadHorizontalDistance_33000 = rule.getOverheadHorizontalDistance_33000();
+	     	   overheadVoltage_11000 = rule.getOverheadVoltage_11000();
+	     	   overheadVoltage_33000 = rule.getOverheadVoltage_33000();
+	     	  
+	     	} 
 
-        // Fetch the list of rules from the plan object
-        Map<String, List<Map<String, Object>>> edcrRuleList = pl.getEdcrRulesFeatures();
-
-        // Specify the columns to fetch from the rules
-        ArrayList<String> valueFromColumn = new ArrayList<>();
-        valueFromColumn.add(EdcrRulesMdmsConstants.OVERHEAD_VERTICAL_DISTANCE_11000);
-        valueFromColumn.add(EdcrRulesMdmsConstants.OVERHEAD_VERTICAL_DISTANCE_33000);
-        valueFromColumn.add(EdcrRulesMdmsConstants.OVERHEAD_HORIZONTAL_DISTANCE_11000);
-        valueFromColumn.add(EdcrRulesMdmsConstants.OVERHEAD_HORIZONTAL_DISTANCE_33000);
-        valueFromColumn.add(EdcrRulesMdmsConstants.OVERHEAD_VOLTAGE_11000);
-        valueFromColumn.add(EdcrRulesMdmsConstants.OVERHEAD_VOLTAGE_33000);
-
-        // Initialize a list to store permissible values
-        List<Map<String, Object>> permissibleValue = new ArrayList<>();
-
-        // Fetch permissible values from MDMS
-        permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
-        LOG.info("permissibleValue" + permissibleValue); // Log the fetched permissible values
-
-        // Check if permissible values are available and update the class-level variables
-        if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey(EdcrRulesMdmsConstants.OVERHEAD_VERTICAL_DISTANCE_11000)) {
-            overheadVerticalDistance_11000 = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.OVERHEAD_VERTICAL_DISTANCE_11000).toString()));
-            overheadVerticalDistance_33000 = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.OVERHEAD_VERTICAL_DISTANCE_33000).toString()));
-            overheadHorizontalDistance_11000 = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.OVERHEAD_HORIZONTAL_DISTANCE_11000).toString()));
-            overheadHorizontalDistance_33000 = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.OVERHEAD_HORIZONTAL_DISTANCE_33000).toString()));
-            overheadVoltage_11000 = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.OVERHEAD_VOLTAGE_11000).toString()));
-            overheadVoltage_33000 = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.OVERHEAD_VOLTAGE_33000).toString()));
-        }
+//        Map<String, Object> params = new HashMap<>();
+//       
+//
+//        // Add feature and occupancy to the parameters map
+//        params.put("feature", feature);
+//        params.put("occupancy", occupancyName);
+//
+//        // Fetch the list of rules from the plan object
+//        Map<String, List<Map<String, Object>>> edcrRuleList = pl.getEdcrRulesFeatures();
+//
+//        // Specify the columns to fetch from the rules
+//        ArrayList<String> valueFromColumn = new ArrayList<>();
+//        valueFromColumn.add(EdcrRulesMdmsConstants.OVERHEAD_VERTICAL_DISTANCE_11000);
+//        valueFromColumn.add(EdcrRulesMdmsConstants.OVERHEAD_VERTICAL_DISTANCE_33000);
+//        valueFromColumn.add(EdcrRulesMdmsConstants.OVERHEAD_HORIZONTAL_DISTANCE_11000);
+//        valueFromColumn.add(EdcrRulesMdmsConstants.OVERHEAD_HORIZONTAL_DISTANCE_33000);
+//        valueFromColumn.add(EdcrRulesMdmsConstants.OVERHEAD_VOLTAGE_11000);
+//        valueFromColumn.add(EdcrRulesMdmsConstants.OVERHEAD_VOLTAGE_33000);
+//
+//        // Initialize a list to store permissible values
+//        List<Map<String, Object>> permissibleValue = new ArrayList<>();
+//
+//        // Fetch permissible values from MDMS
+//        permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
+//        LOG.info("permissibleValue" + permissibleValue); // Log the fetched permissible values
+//
+//        // Check if permissible values are available and update the class-level variables
+//        if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey(EdcrRulesMdmsConstants.OVERHEAD_VERTICAL_DISTANCE_11000)) {
+//            overheadVerticalDistance_11000 = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.OVERHEAD_VERTICAL_DISTANCE_11000).toString()));
+//            overheadVerticalDistance_33000 = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.OVERHEAD_VERTICAL_DISTANCE_33000).toString()));
+//            overheadHorizontalDistance_11000 = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.OVERHEAD_HORIZONTAL_DISTANCE_11000).toString()));
+//            overheadHorizontalDistance_33000 = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.OVERHEAD_HORIZONTAL_DISTANCE_33000).toString()));
+//            overheadVoltage_11000 = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.OVERHEAD_VOLTAGE_11000).toString()));
+//            overheadVoltage_33000 = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.OVERHEAD_VOLTAGE_33000).toString()));
+//        }
 
         // Iterate through all electric lines in the plan
         for (ElectricLine electricalLine : pl.getElectricLine()) {

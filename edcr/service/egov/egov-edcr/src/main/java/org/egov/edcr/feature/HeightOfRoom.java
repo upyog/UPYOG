@@ -58,21 +58,27 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.egov.common.constants.MdmsFeatureConstants;
 import org.egov.common.entity.edcr.Block;
 import org.egov.common.entity.edcr.Door;
 import org.egov.common.entity.edcr.Floor;
+import org.egov.common.entity.edcr.MdmsFeatureRule;
 import org.egov.common.entity.edcr.Measurement;
 import org.egov.common.entity.edcr.OccupancyTypeHelper;
 import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.Result;
 import org.egov.common.entity.edcr.Room;
 import org.egov.common.entity.edcr.RoomHeight;
+import org.egov.common.entity.edcr.RuleKey;
 import org.egov.common.entity.edcr.ScrutinyDetail;
 import org.egov.common.entity.edcr.Window;
 import org.egov.edcr.constants.DxfFileConstants;
+import org.egov.edcr.constants.EdcrRulesMdmsConstants;
+import org.egov.edcr.service.CacheManagerMdms;
 import org.egov.edcr.service.FetchEdcrRulesMdms;
 import org.egov.edcr.service.ProcessHelper;
 import org.egov.edcr.utility.DcrConstants;
@@ -126,6 +132,9 @@ public class HeightOfRoom extends FeatureProcess {
 	
 	@Autowired
 	FetchEdcrRulesMdms fetchEdcrRulesMdms;
+	
+	 @Autowired
+	 CacheManagerMdms cache;
 
 	@Override
 	public Plan process(Plan pl) {
@@ -373,43 +382,63 @@ public class HeightOfRoom extends FeatureProcess {
 //							        }
 //							       
 //									
-									 String feature = "roomArea";
-										
-										Map<String, Object> params = new HashMap<>();
-										occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl);
-										params.put("feature", feature);
-										params.put("occupancy", occupancyName);
-										
+									    String feature = "RoomArea";
+									   
+										    occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl).toLowerCase();
+									        String tenantId = pl.getTenantId();
+									        String zone = pl.getPlanInformation().getZone().toLowerCase();
+									        String subZone = pl.getPlanInformation().getSubZone().toLowerCase();
+									        String riskType = fetchEdcrRulesMdms.getRiskType(pl).toLowerCase();
+									        
+									        RuleKey key = new RuleKey(EdcrRulesMdmsConstants.STATE, tenantId, zone, subZone, occupancyName, null, feature);
+									        List<Object> rules = cache.getRules(tenantId, key);
+											
+									        Optional<MdmsFeatureRule> matchedRule = rules.stream()
+									        	    .map(obj -> (MdmsFeatureRule) obj)
+									        	    .findFirst();
 
-										//Map<String,List<Map<String,Object>>> edcrRuleList = pl.getEdcrRulesFeatures1();
-										
-										ArrayList<String> valueFromColumn = new ArrayList<>();
-										valueFromColumn.add("roomArea1");
-										valueFromColumn.add("roomArea2");
-										valueFromColumn.add("roomWidth2");
-										valueFromColumn.add("roomWidth1");
-										
-
-										List<Map<String, Object>> permissibleValue = new ArrayList<>();
-
-										try {
-											permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
-											LOG.info("permissibleValue" + permissibleValue);
-										
-
-										} catch (NullPointerException e) {
-
-											LOG.error("Permissible Value for Room area not found--------", e);
-											return null;
-										}
-
-
-										if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey("roomArea2")) {
-											roomArea2 = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get("roomArea2").toString()));
-											roomArea1 = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get("roomArea1").toString()));
-											roomWidth2 = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get("roomWidth2").toString()));
-											roomWidth1 = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get("roomWidth1").toString()));
-										}
+									        	if (matchedRule.isPresent()) {
+									        	    MdmsFeatureRule rule = matchedRule.get();
+									        	    roomArea1 = rule.getRoomArea1();
+									        	    roomArea2 = rule.getRoomArea2();
+									        	    roomWidth1 = rule.getRoomWidth1();
+									        	    roomWidth2 = rule.getRoomWidth2();
+									        	} 
+//										Map<String, Object> params = new HashMap<>();
+//										occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl);
+//										params.put("feature", feature);
+//										params.put("occupancy", occupancyName);
+//										
+//
+//										//Map<String,List<Map<String,Object>>> edcrRuleList = pl.getEdcrRulesFeatures1();
+//										
+//										ArrayList<String> valueFromColumn = new ArrayList<>();
+//										valueFromColumn.add("roomArea1");
+//										valueFromColumn.add("roomArea2");
+//										valueFromColumn.add("roomWidth2");
+//										valueFromColumn.add("roomWidth1");
+//										
+//
+//										List<Map<String, Object>> permissibleValue = new ArrayList<>();
+//
+//										try {
+//											permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
+//											LOG.info("permissibleValue" + permissibleValue);
+//										
+//
+//										} catch (NullPointerException e) {
+//
+//											LOG.error("Permissible Value for Room area not found--------", e);
+//											return null;
+//										}
+//
+//
+//										if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey("roomArea2")) {
+//											roomArea2 = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get("roomArea2").toString()));
+//											roomArea1 = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get("roomArea1").toString()));
+//											roomWidth2 = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get("roomWidth2").toString()));
+//											roomWidth1 = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get("roomWidth1").toString()));
+//										}
 										if (!roomArea2Satisfied && roomArea.compareTo(roomArea2) >= 0 && roomWidth.compareTo(roomWidth2) >= 0) {
 									        // This is the first room that satisfies roomArea2
 									        roomArea2Satisfied = true;  
@@ -550,38 +579,57 @@ public class HeightOfRoom extends FeatureProcess {
 										// BigDecimal minDoorHeight = BigDecimal.valueOf(2.0);
 										BigDecimal minDoorWidth = BigDecimal.ZERO;
 										
-										String feature = "doors";
+										String feature = "Doors";
 										
 											
-										Map<String, Object> params = new HashMap<>();
+//										Map<String, Object> params = new HashMap<>();
+//										
+//										params.put("feature", feature);
+//										
+//										
+//										 occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl);
+//											params.put("occupancy", occupancyName);
+//														
+//
+//										ArrayList<String> valueFromColumn = new ArrayList<>();
+//										valueFromColumn.add("permissibleValue");
+//
+//										List<Map<String, Object>> permissibleValue = new ArrayList<>();
+//
+//										try {
+//											permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(pl.getEdcrRulesFeatures(), params, valueFromColumn);
+//											LOG.info("permissibleValue" + permissibleValue);
+//											System.out.println("permis___ for doorsd+++" + permissibleValue);
+//
+//										} catch (NullPointerException e) {
+//
+//											LOG.error("Permissible doors not found--------", e);
+//											return null;
+//										}
+//
+//										if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey("permissibleValue")) {
+//											minDoorWidth = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get("permissibleValue").toString()));
+//									
+//										} 
+									    occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl).toLowerCase();
+								        String tenantId = pl.getTenantId();
+								        String zone = pl.getPlanInformation().getZone().toLowerCase();
+								        String subZone = pl.getPlanInformation().getSubZone().toLowerCase();
+								        String riskType = fetchEdcrRulesMdms.getRiskType(pl).toLowerCase();
+								        
+								        RuleKey key = new RuleKey(EdcrRulesMdmsConstants.STATE, tenantId, zone, subZone, occupancyName, null, feature);
+								        List<Object> rules = cache.getRules(tenantId, key);
 										
-										params.put("feature", feature);
-										
-										
-										 occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl);
-											params.put("occupancy", occupancyName);
-														
+								        Optional<MdmsFeatureRule> matchedRule = rules.stream()
+								        	    .map(obj -> (MdmsFeatureRule) obj)
+								        	    .findFirst();
 
-										ArrayList<String> valueFromColumn = new ArrayList<>();
-										valueFromColumn.add("permissibleValue");
-
-										List<Map<String, Object>> permissibleValue = new ArrayList<>();
-
-										try {
-											permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(pl.getEdcrRulesFeatures(), params, valueFromColumn);
-											LOG.info("permissibleValue" + permissibleValue);
-											System.out.println("permis___ for doorsd+++" + permissibleValue);
-
-										} catch (NullPointerException e) {
-
-											LOG.error("Permissible doors not found--------", e);
-											return null;
-										}
-
-										if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey("permissibleValue")) {
-											minDoorWidth = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get("permissibleValue").toString()));
-									
-										} 
+								        	if (matchedRule.isPresent()) {
+								        	    MdmsFeatureRule rule = matchedRule.get();
+								        	    minDoorWidth = rule.getPermissible();
+								        	} else {
+								        		minDoorWidth = BigDecimal.ZERO;
+								        	}
 								      System.out.println("minDoorWidth" + minDoorWidth);
 										subRule = SUBRULE_41_II_B;
 										subRuleDesc = SUBRULE_41_II_B;
@@ -611,43 +659,64 @@ public class HeightOfRoom extends FeatureProcess {
 										
 										subRule = SUBRULE_41_II_B;
 										subRuleDesc = SUBRULE_41_II_B;
-										String feature = "nonHabitationalDoors";
+										String feature = "NonHabitationalDoors";
+										
+										 String tenantId = pl.getTenantId();
+				                         String zone = pl.getPlanInformation().getZone().toLowerCase();
+				                         String subZone = pl.getPlanInformation().getSubZone().toLowerCase();
+				        					
+				       					
+				       					    
+				       					 
+				       			         RuleKey key = new RuleKey(EdcrRulesMdmsConstants.STATE, tenantId, zone, subZone, occupancyName, null, feature);
+				       			         List<Object> rules = cache.getRules(tenantId, key);
+				       					
+				       					 Optional<MdmsFeatureRule> matchedRule = rules.stream()
+				       						    .map(obj -> (MdmsFeatureRule) obj)
+				       						    .findFirst();
+
+				       						if (matchedRule.isPresent()) {
+				       						    MdmsFeatureRule rule = matchedRule.get();
+					       						minDoorWidth = rule.getMinDoorWidth();
+					       						minDoorHeight = rule.getMinDoorHeight();
+				       						    
+				       						}
 										
 										
-										Map<String, Object> params = new HashMap<>();
-										
-										params.put("feature", feature);
-										
-									   occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl);
-										
-											params.put("occupancy", occupancyName);
-														
-
-
-										ArrayList<String> valueFromColumn = new ArrayList<>();
-										valueFromColumn.add("permissibleValue");
-										valueFromColumn.add("minDoorWidth");
-										valueFromColumn.add("minDoorHeight");
-
-										List<Map<String, Object>> permissibleValue = new ArrayList<>();
-										
-
-										try {
-											permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
-											LOG.info("permissibleValue" + permissibleValue);
-											System.out.println("permis___ for nonHabitational doors +++" + permissibleValue);
-
-										} catch (NullPointerException e) {
-
-											LOG.error("Permissible value for nonhabitational doors not found--------", e);
-											return null;
-										}
-
-										if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey("minDoorWidth")) {
-											minDoorWidth = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get("minDoorWidth").toString()));
-											minDoorHeight = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get("minDoorHeight").toString()));
-									
-										} 
+//										Map<String, Object> params = new HashMap<>();
+//										
+//										params.put("feature", feature);
+//										
+//									   occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl);
+//										
+//											params.put("occupancy", occupancyName);
+//														
+//
+//
+//										ArrayList<String> valueFromColumn = new ArrayList<>();
+//										valueFromColumn.add("permissibleValue");
+//										valueFromColumn.add("minDoorWidth");
+//										valueFromColumn.add("minDoorHeight");
+//
+//										List<Map<String, Object>> permissibleValue = new ArrayList<>();
+//										
+//
+//										try {
+//											permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
+//											LOG.info("permissibleValue" + permissibleValue);
+//											System.out.println("permis___ for nonHabitational doors +++" + permissibleValue);
+//
+//										} catch (NullPointerException e) {
+//
+//											LOG.error("Permissible value for nonhabitational doors not found--------", e);
+//											return null;
+//										}
+//
+//										if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey("minDoorWidth")) {
+//											minDoorWidth = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get("minDoorWidth").toString()));
+//											minDoorHeight = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get("minDoorHeight").toString()));
+//									
+//										} 
 								      System.out.println("minDoorWidth" + minDoorWidth);
 
 										if (doorHeight.compareTo(minDoorHeight) >= 0
@@ -704,35 +773,55 @@ public class HeightOfRoom extends FeatureProcess {
 										roomArea = roomArea.add(measurement.getArea());
 									}
 								}
-                               String feature = "roomWiseVentilation";
+                               String feature = MdmsFeatureConstants.ROOM_WISE_VENTILATION;
+                               
+                               occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl).toLowerCase();
+                               String tenantId = pl.getTenantId();
+                               String zone = pl.getPlanInformation().getZone().toLowerCase();
+                               String subZone = pl.getPlanInformation().getSubZone().toLowerCase();
+                               String riskType = fetchEdcrRulesMdms.getRiskType(pl).toLowerCase();
+                               
+                               RuleKey key = new RuleKey(EdcrRulesMdmsConstants.STATE, tenantId, zone, subZone, occupancyName, null, feature);
+                               List<Object> rules = cache.getRules(tenantId, key);
+                       		
+                               Optional<MdmsFeatureRule> matchedRule = rules.stream()
+                               	    .map(obj -> (MdmsFeatureRule) obj)
+                               	    .findFirst();
+
+                               	if (matchedRule.isPresent()) {
+                               	    MdmsFeatureRule rule = matchedRule.get();
+                               	   ventilationPercentage = rule.getPermissible();
+                               	} else {
+                               		ventilationPercentage = BigDecimal.ZERO;
+                               	}
 								
-								Map<String, Object> params = new HashMap<>();
-
-								params.put("feature", feature);
-								params.put("occupancy", occupancyName);
-								
-
-								ArrayList<String> valueFromColumn = new ArrayList<>();
-								valueFromColumn.add("permissibleValue");
-
-								List<Map<String, Object>> permissibleValue = new ArrayList<>();
-
-								try {
-									permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
-									LOG.info("permissibleValue" + permissibleValue);
-								
-
-								} catch (NullPointerException e) {
-
-									LOG.error("Permissible Value for Roomwise ventilation not found--------", e);
-									return null;
-								}
-
-
-								if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey("permissibleValue")) {
-									ventilationPercentage = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get("permissibleValue").toString()));
-								}
-					
+//								Map<String, Object> params = new HashMap<>();
+//
+//								params.put("feature", feature);
+//								params.put("occupancy", occupancyName);
+//								
+//
+//								ArrayList<String> valueFromColumn = new ArrayList<>();
+//								valueFromColumn.add("permissibleValue");
+//
+//								List<Map<String, Object>> permissibleValue = new ArrayList<>();
+//
+//								try {
+//									permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
+//									LOG.info("permissibleValue" + permissibleValue);
+//								
+//
+//								} catch (NullPointerException e) {
+//
+//									LOG.error("Permissible Value for Roomwise ventilation not found--------", e);
+//									return null;
+//								}
+//
+//
+//								if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey("permissibleValue")) {
+//									ventilationPercentage = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get("permissibleValue").toString()));
+//								}
+//					
 
 								// Calculate required ventilation area
 								BigDecimal requiredVentilationArea = roomArea.multiply(ventilationPercentage)
@@ -868,38 +957,58 @@ public class HeightOfRoom extends FeatureProcess {
 											System.out.println("rum number" + room.getNumber());
 											
 											Map<String, Object> params = new HashMap<>();
-											String feature = "roomWiseDoorArea";
+											String feature = "RoomWiseDoorArea";
 											params.put("feature", feature);
-											occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl);
-	
-												params.put("occupancy", occupancyName);
-															
-
-
-											ArrayList<String> valueFromColumn = new ArrayList<>();
 											
-											valueFromColumn.add("minDoorWidth");
-											valueFromColumn.add("minDoorHeight");
-
-											List<Map<String, Object>> permissibleValue = new ArrayList<>();
+											occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl).toLowerCase();
+									        String tenantId = pl.getTenantId();
+									        String zone = pl.getPlanInformation().getZone().toLowerCase();
+									        String subZone = pl.getPlanInformation().getSubZone().toLowerCase();
+									        String riskType = fetchEdcrRulesMdms.getRiskType(pl).toLowerCase();
+									        
+									        RuleKey key = new RuleKey(EdcrRulesMdmsConstants.STATE, tenantId, zone, subZone, occupancyName, null, feature);
+									        List<Object> rules = cache.getRules(tenantId, key);
 											
+									        Optional<MdmsFeatureRule> matchedRule = rules.stream()
+									        	    .map(obj -> (MdmsFeatureRule) obj)
+									        	    .findFirst();
 
-											try {
-												permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
-												LOG.info("permissibleValue" + permissibleValue);
-												System.out.println("permis___ for roomwise doors +++" + permissibleValue);
-
-											} catch (NullPointerException e) {
-
-												LOG.error("Permissible roomwise doors not found--------", e);
-												return null;
-											}
-
-											if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey("minDoorWidth")) {
-												minDoorWidth = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get("minDoorWidth").toString()));
-												minDoorHeight = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get("minDoorHeight").toString()));
-										
-											} 
+									        	if (matchedRule.isPresent()) {
+									        	    MdmsFeatureRule rule = matchedRule.get();
+									        	    minDoorWidth = rule.getMinDoorWidth();
+									        	    minDoorHeight = rule.getMinDoorHeight();									        	} else {
+									        		
+									        	}
+//											occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl);
+//	
+//												params.put("occupancy", occupancyName);
+//															
+//
+//
+//											ArrayList<String> valueFromColumn = new ArrayList<>();
+//											
+//											valueFromColumn.add("minDoorWidth");
+//											valueFromColumn.add("minDoorHeight");
+//
+//											List<Map<String, Object>> permissibleValue = new ArrayList<>();
+//											
+//
+//											try {
+//												permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
+//												LOG.info("permissibleValue" + permissibleValue);
+//												System.out.println("permis___ for roomwise doors +++" + permissibleValue);
+//
+//											} catch (NullPointerException e) {
+//
+//												LOG.error("Permissible roomwise doors not found--------", e);
+//												return null;
+//											}
+//
+//											if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey("minDoorWidth")) {
+//												minDoorWidth = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get("minDoorWidth").toString()));
+//												minDoorHeight = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get("minDoorHeight").toString()));
+//										
+//											} 
 									      System.out.println("minDoorWidth" + minDoorWidth);
 
 

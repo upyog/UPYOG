@@ -53,17 +53,18 @@ import static org.egov.edcr.utility.DcrConstants.SQMTRS;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.egov.common.entity.edcr.Block;
 import org.egov.common.entity.edcr.Floor;
+import org.egov.common.entity.edcr.MdmsFeatureRule;
 import org.egov.common.entity.edcr.Measurement;
 import org.egov.common.entity.edcr.Occupancy;
 import org.egov.common.entity.edcr.OccupancyType;
@@ -72,8 +73,10 @@ import org.egov.common.entity.edcr.ParkingDetails;
 import org.egov.common.entity.edcr.ParkingHelper;
 import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.Result;
+import org.egov.common.entity.edcr.RuleKey;
 import org.egov.common.entity.edcr.ScrutinyDetail;
-import org.egov.edcr.service.EdcrRestService;
+import org.egov.edcr.constants.EdcrRulesMdmsConstants;
+import org.egov.edcr.service.CacheManagerMdms;
 import org.egov.edcr.service.FetchEdcrRulesMdms;
 import org.egov.edcr.utility.DcrConstants;
 import org.egov.edcr.utility.Util;
@@ -144,6 +147,8 @@ public class Parking extends FeatureProcess {
     @Autowired
 	FetchEdcrRulesMdms fetchEdcrRulesMdms;
 
+    @Autowired
+   	CacheManagerMdms cache;
 
     @Override
     public Plan validate(Plan pl) {
@@ -320,72 +325,98 @@ public class Parking extends FeatureProcess {
         validateSpecialParking(pl, helper, totalBuiltupArea);
 
         Double noOfrequiredParking = 0d;
-        String occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl);
+        Double ecs = 0d;
+        String occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl).toLowerCase();
 		String subOccupancyName = null;
 		String featureName = "Parking";
 		if (mostRestrictiveOccupancy != null && A.equals(mostRestrictiveOccupancy.getType().getCode())
 				) {
 			// multi family residential
-			occupancyName = "Residential";
+			occupancyName = "residential";
 			subOccupancyName = "Apartment/Flat";
+		}else {
+			occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl).toLowerCase();
 		}
-        Map<String, Object> params = new HashMap<>();
-		params.put("feature", featureName);
-		params.put("occupancy", occupancyName);
-		params.put("plotArea", plotArea);
-		if (subOccupancyName != null && !subOccupancyName.equals("")) {
-		    params.put("subOccupancy", subOccupancyName);
-		}
-
-		
-		
-
-		ArrayList<String> valueFromColumn = new ArrayList<>();
-		valueFromColumn.add("permissibleValue");
-
-		List<Map<String, Object>> permissibleValue = new ArrayList<>();
-		
-		Map<String, List<Map<String, Object>>> edcrRuleList = pl.getEdcrRulesFeatures();
-		
-		double requiredEcs = 0d;
-		
-		
-		try {
-			permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
-			LOGGER.info("permissibleValue" + permissibleValue);
+       
+	
+	     String tenantId = pl.getTenantId();
+	     String zone = pl.getPlanInformation().getZone().toLowerCase();
+	     String subZone = pl.getPlanInformation().getSubZone().toLowerCase();
+	     String riskType = fetchEdcrRulesMdms.getRiskType(pl).toLowerCase();
+	     
+	     RuleKey key = new RuleKey(EdcrRulesMdmsConstants.STATE, tenantId, zone, subZone, occupancyName, riskType, featureName);
+	     List<Object> rules = cache.getRules(tenantId, key);
 			
+	     Optional<MdmsFeatureRule> matchedRule = rules.stream()
+				    .map(obj -> (MdmsFeatureRule) obj)
+				    .filter(rule -> plotArea.compareTo(rule.getFromPlotArea()) >= 0 &&
+				                    plotArea.compareTo(rule.getToPlotArea()) < 0)
+				    .findFirst();
+	     	if (matchedRule.isPresent()) {
+	     	    MdmsFeatureRule rule = matchedRule.get();
+	     	   noOfrequiredParking = rule.getNoOfParking().doubleValue();
+	     	   ecs = rule.getPermissible().doubleValue();
+	     	} else {
+	     		noOfrequiredParking = BigDecimal.ZERO.doubleValue();
+	     	}
 
-		} catch (NullPointerException e) {
+//        Map<String, Object> params = new HashMap<>();
+//		params.put("feature", featureName);
+//		params.put("occupancy", occupancyName);
+//		params.put("plotArea", plotArea);
+//		if (subOccupancyName != null && !subOccupancyName.equals("")) {
+//		    params.put("subOccupancy", subOccupancyName);
+//		}
 
-			LOGGER.error("Permissible Value for Parking not found--------", e);
-			return;
-		}
+		
+		
+
+//		ArrayList<String> valueFromColumn = new ArrayList<>();
+//		valueFromColumn.add("permissibleValue");
+//
+//		List<Map<String, Object>> permissibleValue = new ArrayList<>();
+//		
+//		Map<String, List<Map<String, Object>>> edcrRuleList = pl.getEdcrRulesFeatures();
+//		
+//		double requiredEcs = 0d;
+//		
+//		
+//		try {
+//			permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
+//			LOGGER.info("permissibleValue" + permissibleValue);
+//			
+//
+//		} catch (NullPointerException e) {
+//
+//			LOGGER.error("Permissible Value for Parking not found--------", e);
+//			return;
+//		}
 
 //		if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey("permissibleValue")) {
 //			noOfrequiredParking = Double.valueOf(permissibleValue.get(0).get("permissibleValue").toString());
 //		}
 
-		//noOfrequiredParking =  BigDecimal.valueOf(noOfrequiredParking).setScale(0, RoundingMode.UP).doubleValue();
+		// noOfrequiredParking =  BigDecimal.valueOf(noOfrequiredParking).setScale(0, RoundingMode.UP).doubleValue();
  
         if (mostRestrictiveOccupancy != null && A.equals(mostRestrictiveOccupancy.getType().getCode())) {
-            if (plotArea != null && plotArea.doubleValue() < 100) {
-                requiredCarParkArea += 2.5;
-            } 
-            else if (plotArea != null && plotArea.doubleValue() >= 100 && plotArea.doubleValue() <= 150) {
-                noOfrequiredParking += 1;
-            } else if (plotArea != null && plotArea.doubleValue() >= 150 && plotArea.doubleValue() <= 200) {
-                noOfrequiredParking +=  2;
-            } else if (plotArea != null && plotArea.doubleValue() >= 200) {
-                noOfrequiredParking +=  3;
-            }
+//            if (plotArea != null && plotArea.doubleValue() < 100) {
+//                requiredCarParkArea += 2.5;
+//            } 
+//            else if (plotArea != null && plotArea.doubleValue() >= 100 && plotArea.doubleValue() <= 150) {
+//                noOfrequiredParking += 1;
+//            } else if (plotArea != null && plotArea.doubleValue() >= 150 && plotArea.doubleValue() <= 200) {
+//                noOfrequiredParking +=  2;
+//            } else if (plotArea != null && plotArea.doubleValue() >= 200) {
+//                noOfrequiredParking +=  3;
+//            }
             if (openParkingArea.doubleValue() > 0) {
-                requiredCarParkArea += OPEN_ECS * noOfrequiredParking;
+                requiredCarParkArea += ecs * noOfrequiredParking;
             } else if (stiltParkingArea.doubleValue() > 0) {
-                requiredCarParkArea += STILT_ECS * noOfrequiredParking;
+                requiredCarParkArea += ecs * noOfrequiredParking;
             } else if (basementParkingArea.doubleValue() > 0) {
-                requiredCarParkArea += BSMNT_ECS * noOfrequiredParking;
+                requiredCarParkArea += ecs * noOfrequiredParking;
             } else if (coverParkingArea.doubleValue() > 0) {
-                requiredCarParkArea += COVER_ECS * noOfrequiredParking;
+                requiredCarParkArea += ecs * noOfrequiredParking;
             }
         }
         

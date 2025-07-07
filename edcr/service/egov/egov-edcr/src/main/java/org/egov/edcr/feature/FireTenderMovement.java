@@ -48,23 +48,25 @@
 package org.egov.edcr.feature;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.egov.common.constants.MdmsFeatureConstants;
 import org.egov.common.entity.edcr.Block;
+import org.egov.common.entity.edcr.MdmsFeatureRule;
 import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.Result;
+import org.egov.common.entity.edcr.RuleKey;
 import org.egov.common.entity.edcr.ScrutinyDetail;
-import org.egov.edcr.constants.DxfFileConstants;
 import org.egov.edcr.constants.EdcrRulesMdmsConstants;
+import org.egov.edcr.service.CacheManagerMdms;
 import org.egov.edcr.service.FetchEdcrRulesMdms;
 import org.egov.edcr.utility.DcrConstants;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -81,6 +83,9 @@ public class FireTenderMovement extends FeatureProcess {
 
     @Autowired
     FetchEdcrRulesMdms fetchEdcrRulesMdms;
+    
+    @Autowired
+	CacheManagerMdms cache;
 
     /**
      * Validates the given plan object.
@@ -111,34 +116,52 @@ public class FireTenderMovement extends FeatureProcess {
         BigDecimal FireTenderMovementValueTwo = BigDecimal.ZERO;
 
         // Determine the occupancy type and feature for fetching permissible values
-        String occupancyName = fetchEdcrRulesMdms.getOccupancyName(plan);
-        String feature = MdmsFeatureConstants.FIRE_TENDER_MOVEMENT;
-
-        Map<String, Object> params = new HashMap<>();
        
+        String feature = MdmsFeatureConstants.FIRE_TENDER_MOVEMENT;
+        
+    	 String occupancyName = fetchEdcrRulesMdms.getOccupancyName(plan).toLowerCase();
+            String tenantId = plan.getTenantId();
+            String zone = plan.getPlanInformation().getZone().toLowerCase();
+            String subZone = plan.getPlanInformation().getSubZone().toLowerCase();
+            String riskType = fetchEdcrRulesMdms.getRiskType(plan).toLowerCase();
+            
+            RuleKey key = new RuleKey(EdcrRulesMdmsConstants.STATE, tenantId, zone, subZone, occupancyName, null, feature);
+            List<Object> rules = cache.getRules(tenantId, key);
+    		
+            Optional<MdmsFeatureRule> matchedRule = rules.stream()
+            	    .map(obj -> (MdmsFeatureRule) obj)
+            	    .findFirst();
 
-        params.put("feature", feature);
-        params.put("occupancy", occupancyName);
-
-        // Fetch permissible values for fire tender movement
-        Map<String, List<Map<String, Object>>> edcrRuleList = plan.getEdcrRulesFeatures();
-        ArrayList<String> valueFromColumn = new ArrayList<>();
-        valueFromColumn.add(EdcrRulesMdmsConstants.FIRE_TENDER_MOVEMENT_VALUE_ONE);
-        valueFromColumn.add(EdcrRulesMdmsConstants.FIRE_TENDER_MOVEMENT_VALUE_TWO);
-
-        List<Map<String, Object>> permissibleValue = new ArrayList<>();
-        try {
-            permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
-            LOG.info("permissibleValue" + permissibleValue);
-        } catch (NullPointerException e) {
-            LOG.error("Permissible Value for FireTenderMovement not found--------", e);
-            return null;
-        }
-
-        if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey(EdcrRulesMdmsConstants.FIRE_TENDER_MOVEMENT_VALUE_ONE)) {
-            FireTenderMovementValueOne = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.FIRE_TENDER_MOVEMENT_VALUE_ONE).toString()));
-            FireTenderMovementValueTwo = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.FIRE_TENDER_MOVEMENT_VALUE_TWO).toString()));
-        }
+            	if (matchedRule.isPresent()) {
+            	    MdmsFeatureRule rule = matchedRule.get();
+            	    FireTenderMovementValueOne = rule.getFireTenderMovementValueOne();
+            	    FireTenderMovementValueTwo = rule.getFireTenderMovementValueTwo();
+            	} 
+//        Map<String, Object> params = new HashMap<>();
+//       
+//
+//        params.put("feature", feature);
+//        params.put("occupancy", occupancyName);
+//
+//        // Fetch permissible values for fire tender movement
+//        Map<String, List<Map<String, Object>>> edcrRuleList = plan.getEdcrRulesFeatures();
+//        ArrayList<String> valueFromColumn = new ArrayList<>();
+//        valueFromColumn.add(EdcrRulesMdmsConstants.FIRE_TENDER_MOVEMENT_VALUE_ONE);
+//        valueFromColumn.add(EdcrRulesMdmsConstants.FIRE_TENDER_MOVEMENT_VALUE_TWO);
+//
+//        List<Map<String, Object>> permissibleValue = new ArrayList<>();
+//        try {
+//            permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
+//            LOG.info("permissibleValue" + permissibleValue);
+//        } catch (NullPointerException e) {
+//            LOG.error("Permissible Value for FireTenderMovement not found--------", e);
+//            return null;
+//        }
+//
+//        if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey(EdcrRulesMdmsConstants.FIRE_TENDER_MOVEMENT_VALUE_ONE)) {
+//            FireTenderMovementValueOne = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.FIRE_TENDER_MOVEMENT_VALUE_ONE).toString()));
+//            FireTenderMovementValueTwo = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.FIRE_TENDER_MOVEMENT_VALUE_TWO).toString()));
+//        }
 
         // Iterate through all blocks in the plan
         for (Block block : plan.getBlocks()) {

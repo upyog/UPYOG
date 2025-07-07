@@ -48,24 +48,24 @@
 package org.egov.edcr.feature;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.egov.common.constants.MdmsFeatureConstants;
-import org.egov.common.entity.edcr.Block;
+import org.egov.common.entity.edcr.MdmsFeatureRule;
 import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.Result;
+import org.egov.common.entity.edcr.RuleKey;
 import org.egov.common.entity.edcr.ScrutinyDetail;
-import org.egov.edcr.constants.DxfFileConstants;
 import org.egov.edcr.constants.EdcrRulesMdmsConstants;
+import org.egov.edcr.service.CacheManagerMdms;
 import org.egov.edcr.service.FetchEdcrRulesMdms;
-import org.egov.infra.utils.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -86,6 +86,9 @@ public class SepticTank extends FeatureProcess {
 
 	@Autowired
 	FetchEdcrRulesMdms fetchEdcrRulesMdms; // Service to fetch rules from MDMS
+	
+	@Autowired
+	CacheManagerMdms cache;
 
 	@Override
 	public Plan validate(Plan pl) {
@@ -111,36 +114,56 @@ public class SepticTank extends FeatureProcess {
     	BigDecimal septicTankMinDisWatersrc = BigDecimal.ZERO;
     	BigDecimal septicTankMinDisBuilding = BigDecimal.ZERO;
 
-    	String occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl);
+    	
 
 		// Define the feature for MDMS lookup
 		String feature = MdmsFeatureConstants.SEPTIC_TANK;
+		
+		
+		 String occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl).toLowerCase();
+	        String tenantId = pl.getTenantId();
+	        String zone = pl.getPlanInformation().getZone().toLowerCase();
+	        String subZone = pl.getPlanInformation().getSubZone().toLowerCase();
+	        String riskType = fetchEdcrRulesMdms.getRiskType(pl).toLowerCase();
+	        
+	        RuleKey key = new RuleKey(EdcrRulesMdmsConstants.STATE, tenantId, zone, subZone, occupancyName, null, feature);
+	        List<Object> rules = cache.getRules(tenantId, key);
+			
+	        Optional<MdmsFeatureRule> matchedRule = rules.stream()
+	        	    .map(obj -> (MdmsFeatureRule) obj)
+	        	    .findFirst();
+
+	        	if (matchedRule.isPresent()) {
+	        	    MdmsFeatureRule rule = matchedRule.get();
+	        	    septicTankMinDisWatersrc = rule.getSepticTankMinDisWatersrc();
+	        	    septicTankMinDisBuilding = rule.getSepticTankMinDisBuilding();
+	        	} 
 
 		// Prepare parameters to fetch rules based on occupancy
-		Map<String, Object> params = new HashMap<>();
-		
-		params.put("feature", feature);
-		params.put("occupancy", occupancyName);
-
-		// Fetch available rules data from the plan object (populated from MDMS)
-		Map<String,List<Map<String,Object>>> edcrRuleList = pl.getEdcrRulesFeatures();
-
-		// Define rule keys to fetch values for
-		ArrayList<String> valueFromColumn = new ArrayList<>();
-		valueFromColumn.add(EdcrRulesMdmsConstants.SEPTIC_TANK_MIN_DISTANCE_WATERSRC);
-		valueFromColumn.add(EdcrRulesMdmsConstants.SEPTIC_TANK_MIN_DISTANCE_BUILDING);
-
-		List<Map<String, Object>> permissibleValue = new ArrayList<>();
-
-		// Fetch permissible values from MDMS
-		permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
-		LOG.info("permissibleValue" + permissibleValue);
-
-		// If rules exist, override the default minimum distances
-		if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey(EdcrRulesMdmsConstants.SEPTIC_TANK_MIN_DISTANCE_WATERSRC)) {
-			septicTankMinDisWatersrc = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.SEPTIC_TANK_MIN_DISTANCE_WATERSRC).toString()));
-			septicTankMinDisBuilding = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.SEPTIC_TANK_MIN_DISTANCE_BUILDING).toString()));
-		}
+//		Map<String, Object> params = new HashMap<>();
+//		
+//		params.put("feature", feature);
+//		params.put("occupancy", occupancyName);
+//
+//		// Fetch available rules data from the plan object (populated from MDMS)
+//		Map<String,List<Map<String,Object>>> edcrRuleList = pl.getEdcrRulesFeatures();
+//
+//		// Define rule keys to fetch values for
+//		ArrayList<String> valueFromColumn = new ArrayList<>();
+//		valueFromColumn.add(EdcrRulesMdmsConstants.SEPTIC_TANK_MIN_DISTANCE_WATERSRC);
+//		valueFromColumn.add(EdcrRulesMdmsConstants.SEPTIC_TANK_MIN_DISTANCE_BUILDING);
+//
+//		List<Map<String, Object>> permissibleValue = new ArrayList<>();
+//
+//		// Fetch permissible values from MDMS
+//		permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
+//		LOG.info("permissibleValue" + permissibleValue);
+//
+//		// If rules exist, override the default minimum distances
+//		if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey(EdcrRulesMdmsConstants.SEPTIC_TANK_MIN_DISTANCE_WATERSRC)) {
+//			septicTankMinDisWatersrc = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.SEPTIC_TANK_MIN_DISTANCE_WATERSRC).toString()));
+//			septicTankMinDisBuilding = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.SEPTIC_TANK_MIN_DISTANCE_BUILDING).toString()));
+//		}
 
 		// Validate each septic tank’s distance from water source and building
 		for (org.egov.common.entity.edcr.SepticTank septicTank : septicTanks) {

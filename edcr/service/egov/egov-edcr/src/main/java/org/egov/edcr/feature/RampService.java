@@ -47,7 +47,6 @@
 
 package org.egov.edcr.feature;
 
-import static org.egov.edcr.constants.DxfFileConstants.A_AF;
 import static org.egov.edcr.constants.DxfFileConstants.A_R;
 
 import java.math.BigDecimal;
@@ -58,6 +57,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -65,15 +65,18 @@ import org.egov.common.constants.MdmsFeatureConstants;
 import org.egov.common.entity.edcr.Block;
 import org.egov.common.entity.edcr.DARamp;
 import org.egov.common.entity.edcr.Floor;
+import org.egov.common.entity.edcr.MdmsFeatureRule;
 import org.egov.common.entity.edcr.Measurement;
 import org.egov.common.entity.edcr.OccupancyType;
 import org.egov.common.entity.edcr.OccupancyTypeHelper;
 import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.Ramp;
 import org.egov.common.entity.edcr.Result;
+import org.egov.common.entity.edcr.RuleKey;
 import org.egov.common.entity.edcr.ScrutinyDetail;
 import org.egov.edcr.constants.DxfFileConstants;
 import org.egov.edcr.constants.EdcrRulesMdmsConstants;
+import org.egov.edcr.service.CacheManagerMdms;
 import org.egov.edcr.service.FetchEdcrRulesMdms;
 import org.egov.edcr.utility.DcrConstants;
 import org.egov.edcr.utility.Util;
@@ -105,6 +108,9 @@ public class RampService extends FeatureProcess {
 
     @Autowired
     FetchEdcrRulesMdms fetchEdcrRulesMdms;
+    
+    @Autowired
+	CacheManagerMdms cache;
         
     @Override
     public Plan validate(Plan pl) {
@@ -256,50 +262,76 @@ public class RampService extends FeatureProcess {
                 scrutinyDetail5.addColumnHeading(6, STATUS);
                 scrutinyDetail5.setKey("Block_" + block.getNumber() + "_" + "Ramp - Maximum Slope");
                 
-                String occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl);
+                
         		
-       		 String feature = MdmsFeatureConstants.RAMP_SERVICE;
+       		    String feature = MdmsFeatureConstants.RAMP_SERVICE;  		
+       		    String occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl).toLowerCase();
+       	        String tenantId = pl.getTenantId();
+       	        String zone = pl.getPlanInformation().getZone().toLowerCase();
+       	        String subZone = pl.getPlanInformation().getSubZone().toLowerCase();
+       	        String riskType = fetchEdcrRulesMdms.getRiskType(pl).toLowerCase();
+       	        
+       	        RuleKey key = new RuleKey(EdcrRulesMdmsConstants.STATE, tenantId, zone, subZone, occupancyName, null, feature);
+       	        List<Object> rules = cache.getRules(tenantId, key);
        			
-       			Map<String, Object> params = new HashMap<>();
+       	        Optional<MdmsFeatureRule> matchedRule = rules.stream()
+       	        	    .map(obj -> (MdmsFeatureRule) obj)
+       	        	    .findFirst();
+
+       	        	if (matchedRule.isPresent()) {
+       	        	    MdmsFeatureRule rule = matchedRule.get();
+       	        	    rampServiceValueOne = rule.getRampServiceValueOne();
+	       	            rampServiceExpectedSlopeOne = rule.getRampServiceExpectedSlopeOne();
+	       	            rampServiceDivideExpectedSlope = rule.getRampServiceDivideExpectedSlope();
+	       	            rampServiceSlopValue = rule.getRampServiceSlopValue();
+	       	            rampServiceBuildingHeight = rule.getRampServiceBuildingHeight();
+	       	            rampServiceTotalLength = rule.getRampServiceTotalLength();
+	       	            rampServiceExpectedSlopeTwo = rule.getRampServiceExpectedSlopeTwo();
+	       	            rampServiceExpectedSlopeCompare = rule.getRampServiceExpectedSlopeCompare();
+	       	            rampServiceExpectedSlopeCompareTrue = rule.getRampServiceExpectedSlopeCompareTrue();
+	       	            rampServiceExpectedSlopeCompareFalse = rule.getRampServiceExpectedSlopeCompareFalse();
+       	        	} 
        			
-
-       			params.put("feature", feature);
-       			params.put("occupancy", occupancyName);
-       			
-
-       			Map<String,List<Map<String,Object>>> edcrRuleList = pl.getEdcrRulesFeatures();
-       			
-       			ArrayList<String> valueFromColumn = new ArrayList<>();
-       			valueFromColumn.add(EdcrRulesMdmsConstants.RAMP_SERVICE_VALUE_ONE);
-       			valueFromColumn.add(EdcrRulesMdmsConstants.RAMP_SERVICE_EXPECTED_SLOPE_ONE);
-       			valueFromColumn.add(EdcrRulesMdmsConstants.RAMP_SERVICE_DIVIDE_EXPECTED_SLOPE);
-       			valueFromColumn.add(EdcrRulesMdmsConstants.RAMP_SERVICE_SLOPE_VALUE);
-       			valueFromColumn.add(EdcrRulesMdmsConstants.RAMP_SERVICE_BUILDING_HEIGHT);
-       			valueFromColumn.add(EdcrRulesMdmsConstants.RAMP_SERVICE_TOTAL_LENGTH);
-       			valueFromColumn.add(EdcrRulesMdmsConstants.RAMP_SERVICE_EXPECTED_SLOPE_COMPARE);
-       			valueFromColumn.add(EdcrRulesMdmsConstants.RAMP_SERVICE_EXPECTED_SLOPE_TWO);
-       			valueFromColumn.add(EdcrRulesMdmsConstants.RAMP_SERVICE_EXPECTED_SLOPE_COMPARE_TRUE);
-       			valueFromColumn.add(EdcrRulesMdmsConstants.RAMP_SERVICE_EXPECTED_SLOPE_COMPARE_FALSE);
-
-       			List<Map<String, Object>> permissibleValue = new ArrayList<>();
-       		
-       			
-       				permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
-       				LOG.info("permissibleValue" + permissibleValue);
-
-
-       			if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey(EdcrRulesMdmsConstants.RAMP_SERVICE_VALUE_ONE)) {
-       				rampServiceValueOne = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.RAMP_SERVICE_VALUE_ONE).toString()));
-       				rampServiceExpectedSlopeOne = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.RAMP_SERVICE_EXPECTED_SLOPE_ONE).toString()));
-       				rampServiceDivideExpectedSlope = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.RAMP_SERVICE_DIVIDE_EXPECTED_SLOPE).toString()));
-       				rampServiceSlopValue = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.RAMP_SERVICE_SLOPE_VALUE).toString()));
-       				rampServiceBuildingHeight = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.RAMP_SERVICE_BUILDING_HEIGHT).toString()));
-       				rampServiceTotalLength = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.RAMP_SERVICE_TOTAL_LENGTH).toString()));
-       				rampServiceExpectedSlopeTwo = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.RAMP_SERVICE_EXPECTED_SLOPE_TWO).toString()));
-       				rampServiceExpectedSlopeCompare = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.RAMP_SERVICE_EXPECTED_SLOPE_COMPARE).toString()));
-       				rampServiceExpectedSlopeCompareTrue = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.RAMP_SERVICE_EXPECTED_SLOPE_COMPARE_TRUE).toString()));
-       				rampServiceExpectedSlopeCompareFalse = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.RAMP_SERVICE_EXPECTED_SLOPE_COMPARE_FALSE).toString()));
-       			}
+//       			Map<String, Object> params = new HashMap<>();
+//       			
+//
+//       			params.put("feature", feature);
+//       			params.put("occupancy", occupancyName);
+//       			
+//
+//       			Map<String,List<Map<String,Object>>> edcrRuleList = pl.getEdcrRulesFeatures();
+//       			
+//       			ArrayList<String> valueFromColumn = new ArrayList<>();
+//       			valueFromColumn.add(EdcrRulesMdmsConstants.RAMP_SERVICE_VALUE_ONE);
+//       			valueFromColumn.add(EdcrRulesMdmsConstants.RAMP_SERVICE_EXPECTED_SLOPE_ONE);
+//       			valueFromColumn.add(EdcrRulesMdmsConstants.RAMP_SERVICE_DIVIDE_EXPECTED_SLOPE);
+//       			valueFromColumn.add(EdcrRulesMdmsConstants.RAMP_SERVICE_SLOPE_VALUE);
+//       			valueFromColumn.add(EdcrRulesMdmsConstants.RAMP_SERVICE_BUILDING_HEIGHT);
+//       			valueFromColumn.add(EdcrRulesMdmsConstants.RAMP_SERVICE_TOTAL_LENGTH);
+//       			valueFromColumn.add(EdcrRulesMdmsConstants.RAMP_SERVICE_EXPECTED_SLOPE_COMPARE);
+//       			valueFromColumn.add(EdcrRulesMdmsConstants.RAMP_SERVICE_EXPECTED_SLOPE_TWO);
+//       			valueFromColumn.add(EdcrRulesMdmsConstants.RAMP_SERVICE_EXPECTED_SLOPE_COMPARE_TRUE);
+//       			valueFromColumn.add(EdcrRulesMdmsConstants.RAMP_SERVICE_EXPECTED_SLOPE_COMPARE_FALSE);
+//
+//       			List<Map<String, Object>> permissibleValue = new ArrayList<>();
+//       		
+//       			
+//       				permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
+//       				LOG.info("permissibleValue" + permissibleValue);
+//
+//
+//       			if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey(EdcrRulesMdmsConstants.RAMP_SERVICE_VALUE_ONE)) {
+//       				rampServiceValueOne = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.RAMP_SERVICE_VALUE_ONE).toString()));
+//       				rampServiceExpectedSlopeOne = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.RAMP_SERVICE_EXPECTED_SLOPE_ONE).toString()));
+//       				rampServiceDivideExpectedSlope = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.RAMP_SERVICE_DIVIDE_EXPECTED_SLOPE).toString()));
+//       				rampServiceSlopValue = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.RAMP_SERVICE_SLOPE_VALUE).toString()));
+//       				rampServiceBuildingHeight = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.RAMP_SERVICE_BUILDING_HEIGHT).toString()));
+//       				rampServiceTotalLength = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.RAMP_SERVICE_TOTAL_LENGTH).toString()));
+//       				rampServiceExpectedSlopeTwo = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.RAMP_SERVICE_EXPECTED_SLOPE_TWO).toString()));
+//       				rampServiceExpectedSlopeCompare = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.RAMP_SERVICE_EXPECTED_SLOPE_COMPARE).toString()));
+//       				rampServiceExpectedSlopeCompareTrue = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.RAMP_SERVICE_EXPECTED_SLOPE_COMPARE_TRUE).toString()));
+//       				rampServiceExpectedSlopeCompareFalse = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.RAMP_SERVICE_EXPECTED_SLOPE_COMPARE_FALSE).toString()));
+//       			}
 
                 OccupancyTypeHelper mostRestrictiveOccupancyType = pl.getVirtualBuilding().getMostRestrictiveFarHelper();
                 if (block.getBuilding() != null && !block.getBuilding().getOccupancies().isEmpty()) {

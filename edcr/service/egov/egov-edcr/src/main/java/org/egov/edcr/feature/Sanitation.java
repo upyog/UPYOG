@@ -56,25 +56,29 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.egov.common.constants.MdmsFeatureConstants;
 import org.egov.common.entity.dcr.helper.OccupancyHelperDetail;
 import org.egov.common.entity.edcr.Block;
 import org.egov.common.entity.edcr.Floor;
+import org.egov.common.entity.edcr.MdmsFeatureRule;
 import org.egov.common.entity.edcr.Measurement;
 import org.egov.common.entity.edcr.Occupancy;
 import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.Result;
+import org.egov.common.entity.edcr.RuleKey;
 import org.egov.common.entity.edcr.SanityDetails;
 import org.egov.common.entity.edcr.SanityHelper;
 import org.egov.common.entity.edcr.ScrutinyDetail;
 import org.egov.edcr.constants.DxfFileConstants;
 import org.egov.edcr.constants.EdcrRulesMdmsConstants;
+import org.egov.edcr.service.CacheManagerMdms;
 import org.egov.edcr.service.FetchEdcrRulesMdms;
 import org.egov.edcr.utility.DcrConstants;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -122,32 +126,55 @@ public class Sanitation extends FeatureProcess {
     
     @Autowired
     FetchEdcrRulesMdms fetchEdcrRulesMdms;  
+    @Autowired
+	CacheManagerMdms cache;
     
     private Map<String, BigDecimal> fetchSanitationValues(Plan pl) {
-    	String occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl);
+    	
 		String feature = MdmsFeatureConstants.SANITATION;
-        Map<String, Object> params = new HashMap<>();
-       
-
-        params.put("feature", feature);
-        params.put("occupancy", occupancyName);
-
-        Map<String, List<Map<String, Object>>> edcrRuleList = pl.getEdcrRulesFeatures();
-        ArrayList<String> valueFromColumn = new ArrayList<>();
-        valueFromColumn.add(EdcrRulesMdmsConstants.SANITATION_MIN_AREA_SPWC);
-        valueFromColumn.add(EdcrRulesMdmsConstants.SANITATION_MIN_DIMENSION_SPWC);
-
-		List<Map<String, Object>> permissibleValue = new ArrayList<>();
 		
-		permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
-		LOG.info("permissibleValue" + permissibleValue);
+		 String occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl).toLowerCase();
+	        String tenantId = pl.getTenantId();
+	        String zone = pl.getPlanInformation().getZone().toLowerCase();
+	        String subZone = pl.getPlanInformation().getSubZone().toLowerCase();
+	        String riskType = fetchEdcrRulesMdms.getRiskType(pl).toLowerCase();
+	        
+	        RuleKey key = new RuleKey(EdcrRulesMdmsConstants.STATE, tenantId, zone, subZone, occupancyName, null, feature);
+	        List<Object> rules = cache.getRules(tenantId, key);
+			
+	        Optional<MdmsFeatureRule> matchedRule = rules.stream()
+	        	    .map(obj -> (MdmsFeatureRule) obj)
+	        	    .findFirst();
 
-        if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey(EdcrRulesMdmsConstants.SANITATION_MIN_AREA_SPWC)) {
-        	sanitationMinAreaofSPWC = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.SANITATION_MIN_AREA_SPWC).toString()));
-        	sanitationMinDimensionofSPWC = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.SANITATION_MIN_DIMENSION_SPWC).toString()));
-        	sanitationMinatGroundFloor = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.SANITATION_MIN_AT_GROUND_FLOOR).toString()));
-        	sanitationFloorMultiplier = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.SANITATION_FLOOR_MULTIPLIER).toString()));
-		}
+	        	if (matchedRule.isPresent()) {
+	        	    MdmsFeatureRule rule = matchedRule.get();
+	        	    sanitationMinAreaofSPWC = rule.getSanitationMinAreaofSPWC();
+	        	    sanitationMinDimensionofSPWC = rule.getSanitationMinDimensionofSPWC();
+	        	    sanitationMinatGroundFloor = rule.getSanitationMinatGroundFloor();
+	        	    sanitationFloorMultiplier = rule.getSanitationFloorMultiplier();
+	        	} 
+//        Map<String, Object> params = new HashMap<>();
+//       
+//
+//        params.put("feature", feature);
+//        params.put("occupancy", occupancyName);
+//
+//        Map<String, List<Map<String, Object>>> edcrRuleList = pl.getEdcrRulesFeatures();
+//        ArrayList<String> valueFromColumn = new ArrayList<>();
+//        valueFromColumn.add(EdcrRulesMdmsConstants.SANITATION_MIN_AREA_SPWC);
+//        valueFromColumn.add(EdcrRulesMdmsConstants.SANITATION_MIN_DIMENSION_SPWC);
+//
+//		List<Map<String, Object>> permissibleValue = new ArrayList<>();
+//		
+//		permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
+//		LOG.info("permissibleValue" + permissibleValue);
+//
+//        if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey(EdcrRulesMdmsConstants.SANITATION_MIN_AREA_SPWC)) {
+//        	sanitationMinAreaofSPWC = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.SANITATION_MIN_AREA_SPWC).toString()));
+//        	sanitationMinDimensionofSPWC = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.SANITATION_MIN_DIMENSION_SPWC).toString()));
+//        	sanitationMinatGroundFloor = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.SANITATION_MIN_AT_GROUND_FLOOR).toString()));
+//        	sanitationFloorMultiplier = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.SANITATION_FLOOR_MULTIPLIER).toString()));
+//		}
         
         // Return the values as a map
         Map<String, BigDecimal> sanitationValues = new HashMap<>();

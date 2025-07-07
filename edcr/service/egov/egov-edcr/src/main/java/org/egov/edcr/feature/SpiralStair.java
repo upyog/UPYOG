@@ -48,25 +48,27 @@
 package org.egov.edcr.feature;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.egov.common.constants.MdmsFeatureConstants;
 import org.egov.common.entity.edcr.Block;
 import org.egov.common.entity.edcr.Circle;
 import org.egov.common.entity.edcr.Floor;
+import org.egov.common.entity.edcr.MdmsFeatureRule;
 import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.Result;
+import org.egov.common.entity.edcr.RuleKey;
 import org.egov.common.entity.edcr.ScrutinyDetail;
-import org.egov.edcr.constants.DxfFileConstants;
 import org.egov.edcr.constants.EdcrRulesMdmsConstants;
+import org.egov.edcr.service.CacheManagerMdms;
 import org.egov.edcr.service.FetchEdcrRulesMdms;
 import org.egov.edcr.utility.Util;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -82,6 +84,9 @@ public class SpiralStair extends FeatureProcess {
 	@Autowired
 	FetchEdcrRulesMdms fetchEdcrRulesMdms;
 	
+	@Autowired
+	CacheManagerMdms cache;
+	
 	@Override
 	public Plan process(Plan plan) {
     	// Initialize default values
@@ -89,38 +94,55 @@ public class SpiralStair extends FeatureProcess {
     	BigDecimal spiralStairRadius = BigDecimal.ZERO;
     	BigDecimal spiralStairValue = BigDecimal.ZERO;
 
-    	String occupancyName = fetchEdcrRulesMdms.getOccupancyName(plan);
-		
-		// Set feature name
-		String feature = MdmsFeatureConstants.SPIRAL_STAIR;
+	    	String occupancyName = fetchEdcrRulesMdms.getOccupancyName(plan).toLowerCase();
+	     	// Set feature name
+			String feature = MdmsFeatureConstants.SPIRAL_STAIR;
+	        String tenantId = plan.getTenantId();
+	        String zone = plan.getPlanInformation().getZone().toLowerCase();
+	        String subZone = plan.getPlanInformation().getSubZone().toLowerCase();
+	        String riskType = fetchEdcrRulesMdms.getRiskType(plan).toLowerCase();
+	        
+	        RuleKey key = new RuleKey(EdcrRulesMdmsConstants.STATE, tenantId, zone, subZone, occupancyName, null, feature);
+	        List<Object> rules = cache.getRules(tenantId, key);
 			
-		Map<String, Object> params = new HashMap<>();
-		
-		// Determine occupancy type (currently only "Residential" supported)
-		
-		params.put("feature", feature);
-		params.put("occupancy", occupancyName);
-			
-		Map<String,List<Map<String,Object>>> edcrRuleList = plan.getEdcrRulesFeatures();
-			
-		// MDMS columns to fetch
-		ArrayList<String> valueFromColumn = new ArrayList<>();
-		valueFromColumn.add(EdcrRulesMdmsConstants.SPIRAL_STAIR_EXPECTED_DIAMETER);
-		valueFromColumn.add(EdcrRulesMdmsConstants.SPIRAL_STAIR_RADIUS);
-		valueFromColumn.add(EdcrRulesMdmsConstants.SPIRAL_STAIR_VALUE);
+	        Optional<MdmsFeatureRule> matchedRule = rules.stream()
+	        	    .map(obj -> (MdmsFeatureRule) obj)
+	        	    .findFirst();
 
-		List<Map<String, Object>> permissibleValue = new ArrayList<>();
-		
-		// Fetch values from MDMS
-		permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
-		LOG.info("permissibleValue" + permissibleValue);
-
-		// Extract values if available
-		if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey(EdcrRulesMdmsConstants.SPIRAL_STAIR_EXPECTED_DIAMETER)) {
-			spiralStairExpectedDiameter = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.SPIRAL_STAIR_EXPECTED_DIAMETER).toString()));
-			spiralStairRadius = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.SPIRAL_STAIR_RADIUS).toString()));
-			spiralStairValue = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.SPIRAL_STAIR_VALUE).toString()));
-		}
+	        	if (matchedRule.isPresent()) {
+	        	    MdmsFeatureRule rule = matchedRule.get();
+	        	    spiralStairExpectedDiameter = rule.getSpiralStairExpectedDiameter();
+	        	    spiralStairRadius = rule.getSpiralStairRadius();
+	        	    spiralStairValue = rule.getSpiralStairValue();
+	        	} 
+			
+//		Map<String, Object> params = new HashMap<>();
+//		
+//		// Determine occupancy type (currently only "Residential" supported)
+//		
+//		params.put("feature", feature);
+//		params.put("occupancy", occupancyName);
+//			
+//		Map<String,List<Map<String,Object>>> edcrRuleList = plan.getEdcrRulesFeatures();
+//			
+//		// MDMS columns to fetch
+//		ArrayList<String> valueFromColumn = new ArrayList<>();
+//		valueFromColumn.add(EdcrRulesMdmsConstants.SPIRAL_STAIR_EXPECTED_DIAMETER);
+//		valueFromColumn.add(EdcrRulesMdmsConstants.SPIRAL_STAIR_RADIUS);
+//		valueFromColumn.add(EdcrRulesMdmsConstants.SPIRAL_STAIR_VALUE);
+//
+//		List<Map<String, Object>> permissibleValue = new ArrayList<>();
+//		
+//		// Fetch values from MDMS
+//		permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
+//		LOG.info("permissibleValue" + permissibleValue);
+//
+//		// Extract values if available
+//		if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey(EdcrRulesMdmsConstants.SPIRAL_STAIR_EXPECTED_DIAMETER)) {
+//			spiralStairExpectedDiameter = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.SPIRAL_STAIR_EXPECTED_DIAMETER).toString()));
+//			spiralStairRadius = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.SPIRAL_STAIR_RADIUS).toString()));
+//			spiralStairValue = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.SPIRAL_STAIR_VALUE).toString()));
+//		}
 		
 		// Iterate through all blocks
 		blk: for (Block block : plan.getBlocks()) {

@@ -48,24 +48,26 @@
 package org.egov.edcr.feature;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.egov.common.constants.MdmsFeatureConstants;
 import org.egov.common.entity.edcr.Block;
+import org.egov.common.entity.edcr.MdmsFeatureRule;
 import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.Result;
+import org.egov.common.entity.edcr.RuleKey;
 import org.egov.common.entity.edcr.ScrutinyDetail;
 import org.egov.edcr.constants.DxfFileConstants;
 import org.egov.edcr.constants.EdcrRulesMdmsConstants;
+import org.egov.edcr.service.CacheManagerMdms;
 import org.egov.edcr.service.FetchEdcrRulesMdms;
-import org.egov.infra.utils.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -80,6 +82,9 @@ public class SegregatedToilet extends FeatureProcess {
 
     @Autowired
     FetchEdcrRulesMdms fetchEdcrRulesMdms;
+    
+    @Autowired
+	CacheManagerMdms cache;
 
     @Override
     public Plan validate(Plan pl) {
@@ -114,42 +119,66 @@ public class SegregatedToilet extends FeatureProcess {
         BigDecimal sTSegregatedToiletRequired = BigDecimal.ZERO;
         BigDecimal sTminDimensionRequired = BigDecimal.ZERO;
 
-        String occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl);
+       
         String feature = MdmsFeatureConstants.SEGREGATED_TOILET;
+      
+    	 String occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl).toLowerCase();
+            String tenantId = pl.getTenantId();
+            String zone = pl.getPlanInformation().getZone().toLowerCase();
+            String subZone = pl.getPlanInformation().getSubZone().toLowerCase();
+            String riskType = fetchEdcrRulesMdms.getRiskType(pl).toLowerCase();
+            
+            RuleKey key = new RuleKey(EdcrRulesMdmsConstants.STATE, tenantId, zone, subZone, occupancyName, null, feature);
+            List<Object> rules = cache.getRules(tenantId, key);
+    		
+            Optional<MdmsFeatureRule> matchedRule = rules.stream()
+            	    .map(obj -> (MdmsFeatureRule) obj)
+            	    .findFirst();
+
+            	if (matchedRule.isPresent()) {
+            	    MdmsFeatureRule rule = matchedRule.get();
+            	    sTValueOne = rule.getSTValueOne();
+            	    sTValueTwo = rule.getSTValueTwo();
+            	    sTValueThree = rule.getSTValueThree();
+            	    sTValueFour = rule.getSTValueFour();
+            	    sTSegregatedToiletRequired = rule.getSTSegregatedToiletRequired();
+            	    sTSegregatedToiletProvided = rule.getSTSegregatedToiletProvided();
+            	    sTminDimensionRequired = rule.getSTminDimensionRequired();
+            	} 
 
         // Determine occupancy based on code (A = Residential)
-        Map<String, Object> params = new HashMap<>();
-       
-        // Add params for MDMS fetch
-        params.put("feature", feature);
-        params.put("occupancy", occupancyName);
-
-        Map<String, List<Map<String, Object>>> edcrRuleList = pl.getEdcrRulesFeatures();
-
-        // List of column names to extract values from
-        ArrayList<String> valueFromColumn = new ArrayList<>();
-        valueFromColumn.add(EdcrRulesMdmsConstants.ST_VALUE_ONE);
-        valueFromColumn.add(EdcrRulesMdmsConstants.ST_VALUE_TWO);
-        valueFromColumn.add(EdcrRulesMdmsConstants.ST_VALUE_THREE);
-        valueFromColumn.add(EdcrRulesMdmsConstants.ST_VALUE_FOUR);
-        valueFromColumn.add(EdcrRulesMdmsConstants.ST_SEGREGATED_TOILET_REQUIRED);
-        valueFromColumn.add(EdcrRulesMdmsConstants.ST_SEGREGATED_TOILET_PROVIDED);
-        valueFromColumn.add(EdcrRulesMdmsConstants.ST_MIN_DIMENSION_REQUIRED);
-
-        // Fetch rule values from MDMS
-        List<Map<String, Object>> permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
-        LOG.info("permissibleValue" + permissibleValue);
-
-        // Extract values from result
-        if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey(EdcrRulesMdmsConstants.ST_VALUE_ONE)) {
-            sTValueOne = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.ST_VALUE_ONE).toString()));
-            sTValueTwo = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.ST_VALUE_TWO).toString()));
-            sTValueThree = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.ST_VALUE_THREE).toString()));
-            sTValueFour = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.ST_VALUE_FOUR).toString()));
-            sTSegregatedToiletRequired = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.ST_SEGREGATED_TOILET_REQUIRED).toString()));
-            sTSegregatedToiletProvided = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.ST_SEGREGATED_TOILET_PROVIDED).toString()));
-            sTminDimensionRequired = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.ST_MIN_DIMENSION_REQUIRED).toString()));
-        }
+//        Map<String, Object> params = new HashMap<>();
+//       
+//        // Add params for MDMS fetch
+//        params.put("feature", feature);
+//        params.put("occupancy", occupancyName);
+//
+//        Map<String, List<Map<String, Object>>> edcrRuleList = pl.getEdcrRulesFeatures();
+//
+//        // List of column names to extract values from
+//        ArrayList<String> valueFromColumn = new ArrayList<>();
+//        valueFromColumn.add(EdcrRulesMdmsConstants.ST_VALUE_ONE);
+//        valueFromColumn.add(EdcrRulesMdmsConstants.ST_VALUE_TWO);
+//        valueFromColumn.add(EdcrRulesMdmsConstants.ST_VALUE_THREE);
+//        valueFromColumn.add(EdcrRulesMdmsConstants.ST_VALUE_FOUR);
+//        valueFromColumn.add(EdcrRulesMdmsConstants.ST_SEGREGATED_TOILET_REQUIRED);
+//        valueFromColumn.add(EdcrRulesMdmsConstants.ST_SEGREGATED_TOILET_PROVIDED);
+//        valueFromColumn.add(EdcrRulesMdmsConstants.ST_MIN_DIMENSION_REQUIRED);
+//
+//        // Fetch rule values from MDMS
+//        List<Map<String, Object>> permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
+//        LOG.info("permissibleValue" + permissibleValue);
+//
+//        // Extract values from result
+//        if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey(EdcrRulesMdmsConstants.ST_VALUE_ONE)) {
+//            sTValueOne = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.ST_VALUE_ONE).toString()));
+//            sTValueTwo = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.ST_VALUE_TWO).toString()));
+//            sTValueThree = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.ST_VALUE_THREE).toString()));
+//            sTValueFour = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.ST_VALUE_FOUR).toString()));
+//            sTSegregatedToiletRequired = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.ST_SEGREGATED_TOILET_REQUIRED).toString()));
+//            sTSegregatedToiletProvided = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.ST_SEGREGATED_TOILET_PROVIDED).toString()));
+//            sTminDimensionRequired = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.ST_MIN_DIMENSION_REQUIRED).toString()));
+//        }
 
         // Find minimum distance from main entrance among all toilets
         if (pl.getSegregatedToilet() != null && !pl.getSegregatedToilet().getDistancesToMainEntrance().isEmpty())

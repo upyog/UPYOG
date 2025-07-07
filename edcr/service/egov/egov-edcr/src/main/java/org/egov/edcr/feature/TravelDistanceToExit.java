@@ -56,23 +56,25 @@ import static org.egov.edcr.constants.DxfFileConstants.H;
 import static org.egov.edcr.constants.DxfFileConstants.I;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.egov.common.constants.MdmsFeatureConstants;
 import org.egov.common.entity.edcr.Block;
+import org.egov.common.entity.edcr.MdmsFeatureRule;
 import org.egov.common.entity.edcr.OccupancyTypeHelper;
 import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.Result;
+import org.egov.common.entity.edcr.RuleKey;
 import org.egov.common.entity.edcr.ScrutinyDetail;
-import org.egov.edcr.constants.DxfFileConstants;
 import org.egov.edcr.constants.EdcrRulesMdmsConstants;
+import org.egov.edcr.service.CacheManagerMdms;
 import org.egov.edcr.service.FetchEdcrRulesMdms;
 import org.egov.edcr.service.ProcessHelper;
 import org.egov.edcr.utility.DcrConstants;
@@ -98,6 +100,9 @@ public class TravelDistanceToExit extends FeatureProcess {
     // Service for fetching rule data from MDMS
     @Autowired
     FetchEdcrRulesMdms fetchEdcrRulesMdms;
+    
+    @Autowired
+	CacheManagerMdms cache;
 
     // No validation logic implemented for this feature
     @Override
@@ -109,33 +114,54 @@ public class TravelDistanceToExit extends FeatureProcess {
     public Plan process(Plan pl) {
         Boolean exemption = Boolean.FALSE;
 
-        String occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl);
+       
         String feature = MdmsFeatureConstants.TRAVEL_DISTANCE_TO_EXIT;
+        
+       
+    	 String occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl).toLowerCase();
+            String tenantId = pl.getTenantId();
+            String zone = pl.getPlanInformation().getZone().toLowerCase();
+            String subZone = pl.getPlanInformation().getSubZone().toLowerCase();
+            String riskType = fetchEdcrRulesMdms.getRiskType(pl).toLowerCase();
+            
+            RuleKey key = new RuleKey(EdcrRulesMdmsConstants.STATE, tenantId, zone, subZone, occupancyName, null, feature);
+            List<Object> rules = cache.getRules(tenantId, key);
+    		
+            Optional<MdmsFeatureRule> matchedRule = rules.stream()
+            	    .map(obj -> (MdmsFeatureRule) obj)
+            	    .findFirst();
+
+            	if (matchedRule.isPresent()) {
+            	    MdmsFeatureRule rule = matchedRule.get();
+            	    travelDistanceToExitValueOne = rule.getTravelDistanceToExitValueOne();
+            	    travelDistanceToExitValueTwo = rule.getTravelDistanceToExitValueTwo();
+            	    travelDistanceToExitValueThree = rule.getTravelDistanceToExitValueThree();
+            	} 
 
         // Determine occupancy type for rule lookup
-        Map<String, Object> params = new HashMap<>();
-        
-
-        params.put("feature", feature);
-        params.put("occupancy", occupancyName);
-
-        // Fetch rules from EDCR MDMS
-        Map<String, List<Map<String, Object>>> edcrRuleList = pl.getEdcrRulesFeatures();
-        ArrayList<String> valueFromColumn = new ArrayList<>();
-        valueFromColumn.add(EdcrRulesMdmsConstants.TRAVEL_DISTANCE_TO_EXIT_VALUE_ONE);
-        valueFromColumn.add(EdcrRulesMdmsConstants.TRAVEL_DISTANCE_TO_EXIT_VALUE_TWO);
-        valueFromColumn.add(EdcrRulesMdmsConstants.TRAVEL_DISTANCE_TO_EXIT_VALUE_THREE);
-
-        List<Map<String, Object>> permissibleValue = new ArrayList<>();
-        permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
-        LOG.info("permissibleValue" + permissibleValue);
-
-        // Parse permissible values from MDMS result
-        if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey(EdcrRulesMdmsConstants.TRAVEL_DISTANCE_TO_EXIT_VALUE_ONE)) {
-            travelDistanceToExitValueOne = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.TRAVEL_DISTANCE_TO_EXIT_VALUE_ONE).toString()));
-            travelDistanceToExitValueTwo = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.TRAVEL_DISTANCE_TO_EXIT_VALUE_TWO).toString()));
-            travelDistanceToExitValueThree = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.TRAVEL_DISTANCE_TO_EXIT_VALUE_THREE).toString()));
-        }
+//        Map<String, Object> params = new HashMap<>();
+//        
+//
+//        params.put("feature", feature);
+//        params.put("occupancy", occupancyName);
+//
+//        // Fetch rules from EDCR MDMS
+//        Map<String, List<Map<String, Object>>> edcrRuleList = pl.getEdcrRulesFeatures();
+//        ArrayList<String> valueFromColumn = new ArrayList<>();
+//        valueFromColumn.add(EdcrRulesMdmsConstants.TRAVEL_DISTANCE_TO_EXIT_VALUE_ONE);
+//        valueFromColumn.add(EdcrRulesMdmsConstants.TRAVEL_DISTANCE_TO_EXIT_VALUE_TWO);
+//        valueFromColumn.add(EdcrRulesMdmsConstants.TRAVEL_DISTANCE_TO_EXIT_VALUE_THREE);
+//
+//        List<Map<String, Object>> permissibleValue = new ArrayList<>();
+//        permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
+//        LOG.info("permissibleValue" + permissibleValue);
+//
+//        // Parse permissible values from MDMS result
+//        if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey(EdcrRulesMdmsConstants.TRAVEL_DISTANCE_TO_EXIT_VALUE_ONE)) {
+//            travelDistanceToExitValueOne = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.TRAVEL_DISTANCE_TO_EXIT_VALUE_ONE).toString()));
+//            travelDistanceToExitValueTwo = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.TRAVEL_DISTANCE_TO_EXIT_VALUE_TWO).toString()));
+//            travelDistanceToExitValueThree = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.TRAVEL_DISTANCE_TO_EXIT_VALUE_THREE).toString()));
+//        }
 
         // Exemption logic for low-rise residential buildings or small plots
         if (pl != null && pl.getVirtualBuilding() != null &&

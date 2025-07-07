@@ -48,22 +48,24 @@
 package org.egov.edcr.feature;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.egov.common.constants.MdmsFeatureConstants;
 import org.egov.common.entity.edcr.Block;
+import org.egov.common.entity.edcr.MdmsFeatureRule;
 import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.Result;
+import org.egov.common.entity.edcr.RuleKey;
 import org.egov.common.entity.edcr.ScrutinyDetail;
-import org.egov.edcr.constants.DxfFileConstants;
 import org.egov.edcr.constants.EdcrRulesMdmsConstants;
+import org.egov.edcr.service.CacheManagerMdms;
 import org.egov.edcr.service.FetchEdcrRulesMdms;
 import org.egov.infra.utils.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -81,6 +83,9 @@ public class MonumentDistance extends FeatureProcess {
 
     @Autowired
     FetchEdcrRulesMdms fetchEdcrRulesMdms;
+    
+    @Autowired
+	CacheManagerMdms cache;
 
     /**
      * Validates the given plan object.
@@ -141,33 +146,53 @@ public class MonumentDistance extends FeatureProcess {
                 minDistanceFromMonument = distancesFromMonument.stream().reduce(BigDecimal::min).get();
 
                 // Fetch permissible values for monument distance
-                String occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl);
-                String feature = MdmsFeatureConstants.MONUMENT_DISTANCE;
+              
+	                String feature = MdmsFeatureConstants.MONUMENT_DISTANCE;        
+	            	String occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl).toLowerCase();
+                    String tenantId = pl.getTenantId();
+                    String zone = pl.getPlanInformation().getZone().toLowerCase();
+                    String subZone = pl.getPlanInformation().getSubZone().toLowerCase();
+                    String riskType = fetchEdcrRulesMdms.getRiskType(pl).toLowerCase();
+                    
+                    RuleKey key = new RuleKey(EdcrRulesMdmsConstants.STATE, tenantId, zone, subZone, occupancyName, null, feature);
+                    List<Object> rules = cache.getRules(tenantId, key);
+            		
+                    Optional<MdmsFeatureRule> matchedRule = rules.stream()
+                    	    .map(obj -> (MdmsFeatureRule) obj)
+                    	    .findFirst();
 
-                Map<String, Object> params = new HashMap<>();
-                
-                params.put("feature", feature);
-                params.put("occupancy", occupancyName);
+                    	if (matchedRule.isPresent()) {
+                    	    MdmsFeatureRule rule = matchedRule.get();
+                    	    monumentDistance_distanceOne = rule.getMonumentDistance_distanceOne();
+                    	    monumentDistance_minDistanceTwo = rule.getMonumentDistance_minDistanceTwo();
+                    	    monumentDistance_maxHeightofbuilding = rule.getMonumentDistance_maxHeightofbuilding();
+                    	    monumentDistance_maxbuildingheightblock = rule.getMonumentDistance_maxbuildingheightblock();
+                    	} 
 
-                Map<String, List<Map<String, Object>>> edcrRuleList = pl.getEdcrRulesFeatures();
-                ArrayList<String> valueFromColumn = new ArrayList<>();
-                valueFromColumn.add(EdcrRulesMdmsConstants.MONUMENT_DISTANCE_ONE);
-                valueFromColumn.add(EdcrRulesMdmsConstants.MONUMENT_DISTANCE_MIN_TWO);
-                valueFromColumn.add(EdcrRulesMdmsConstants.MONUMENT_DISTANCE_MAX_BUILDING_HEIGHT);
-                valueFromColumn.add(EdcrRulesMdmsConstants.MONUMENT_DISTANCE_MAX_BLOCK_HEIGHT);
-
-	      			List<Map<String, Object>> permissibleValue = new ArrayList<>();
-	      		
-	      			
-	      				permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
-                LOG.info("permissibleValue" + permissibleValue);
-
-                if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey(EdcrRulesMdmsConstants.MONUMENT_DISTANCE_ONE)) {
-                    monumentDistance_distanceOne = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.MONUMENT_DISTANCE_ONE).toString()));
-                    monumentDistance_minDistanceTwo = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.MONUMENT_DISTANCE_MIN_TWO).toString()));
-                    monumentDistance_maxHeightofbuilding = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.MONUMENT_DISTANCE_MAX_BUILDING_HEIGHT).toString()));
-                    monumentDistance_maxbuildingheightblock = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.MONUMENT_DISTANCE_MAX_BLOCK_HEIGHT).toString()));
-                }
+//                Map<String, Object> params = new HashMap<>();
+//                
+//                params.put("feature", feature);
+//                params.put("occupancy", occupancyName);
+//
+//                Map<String, List<Map<String, Object>>> edcrRuleList = pl.getEdcrRulesFeatures();
+//                ArrayList<String> valueFromColumn = new ArrayList<>();
+//                valueFromColumn.add(EdcrRulesMdmsConstants.MONUMENT_DISTANCE_ONE);
+//                valueFromColumn.add(EdcrRulesMdmsConstants.MONUMENT_DISTANCE_MIN_TWO);
+//                valueFromColumn.add(EdcrRulesMdmsConstants.MONUMENT_DISTANCE_MAX_BUILDING_HEIGHT);
+//                valueFromColumn.add(EdcrRulesMdmsConstants.MONUMENT_DISTANCE_MAX_BLOCK_HEIGHT);
+//
+//	      			List<Map<String, Object>> permissibleValue = new ArrayList<>();
+//	      		
+//	      			
+//	      				permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
+//                LOG.info("permissibleValue" + permissibleValue);
+//
+//                if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey(EdcrRulesMdmsConstants.MONUMENT_DISTANCE_ONE)) {
+//                    monumentDistance_distanceOne = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.MONUMENT_DISTANCE_ONE).toString()));
+//                    monumentDistance_minDistanceTwo = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.MONUMENT_DISTANCE_MIN_TWO).toString()));
+//                    monumentDistance_maxHeightofbuilding = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.MONUMENT_DISTANCE_MAX_BUILDING_HEIGHT).toString()));
+//                    monumentDistance_maxbuildingheightblock = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.MONUMENT_DISTANCE_MAX_BLOCK_HEIGHT).toString()));
+//                }
 
                 // Check if NOC is provided for construction near the monument
                 if (StringUtils.isNotBlank(pl.getPlanInformation().getNocNearMonument())

@@ -116,6 +116,8 @@ public class BpaMdmsUtil {
         addMasterDetail(bpaMasterDtls, MdmsFeatureConstants.WATER_TANK_CAPACITY);
         addMasterDetail(bpaMasterDtls, MdmsFeatureConstants.SANITATION);
         addMasterDetail(bpaMasterDtls, MdmsFeatureConstants.SIDE_YARD_SERVICE);
+        addMasterDetail(bpaMasterDtls, MdmsFeatureConstants.RISK_TYPE_COMPUTATION);
+        
         
         
         ModuleDetail bpaModuleDtls = new ModuleDetail();

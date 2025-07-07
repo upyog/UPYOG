@@ -48,22 +48,24 @@
 package org.egov.edcr.feature;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.egov.common.entity.edcr.Block;
 import org.egov.common.entity.edcr.Floor;
+import org.egov.common.entity.edcr.MdmsFeatureRule;
 import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.Result;
+import org.egov.common.entity.edcr.RuleKey;
 import org.egov.common.entity.edcr.ScrutinyDetail;
-import org.egov.edcr.constants.DxfFileConstants;
-import org.egov.edcr.service.EdcrRestService;
+import org.egov.edcr.constants.EdcrRulesMdmsConstants;
+import org.egov.edcr.service.CacheManagerMdms;
 import org.egov.edcr.service.FetchEdcrRulesMdms;
 import org.egov.edcr.utility.DcrConstants;
 import org.egov.edcr.utility.Util;
@@ -87,6 +89,9 @@ public class Balcony extends FeatureProcess {
     
     @Autowired
 	FetchEdcrRulesMdms fetchEdcrRulesMdms;
+    
+    @Autowired
+	CacheManagerMdms cache;
     @Override
     public Plan process(Plan plan) {
         for (Block block : plan.getBlocks()) {
@@ -118,35 +123,59 @@ public class Balcony extends FeatureProcess {
                                     DcrConstants.ROUNDMODE_MEASUREMENTS);
                             
                         
-                         String occupancyName = fetchEdcrRulesMdms.getOccupancyName(plan);
+                       
+                         String occupancyName = fetchEdcrRulesMdms.getOccupancyName(plan).toLowerCase();
                         
+                         //get zone, subzone and all the requied params for the feature in balcony
+                         String tenantId = plan.getTenantId();
+                         String zone = plan.getPlanInformation().getZone().toLowerCase();
+                         String subZone = plan.getPlanInformation().getSubZone().toLowerCase();
         					
        					 String feature = "Balcony";
-       						
-       						Map<String, Object> params = new HashMap<>();
-
-       						params.put("feature", feature);
-       						params.put("occupancy", occupancyName);
-       						
-
-       						Map<String,List<Map<String,Object>>> edcrRuleList = plan.getEdcrRulesFeatures();
-       						
-       						ArrayList<String> valueFromColumn = new ArrayList<>();
-       						valueFromColumn.add("permissibleValue");
-
-       						List<Map<String, Object>> permissibleValue = new ArrayList<>();
+       					    
+       					 
+       			         RuleKey key = new RuleKey(EdcrRulesMdmsConstants.STATE, tenantId, zone, subZone, occupancyName, null, feature);
+       			         List<Object> rules = cache.getRules(tenantId, key);
        					
-       						
-       							permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
-       							LOG.info("permissibleValue" + permissibleValue);
- 
+       					 Optional<MdmsFeatureRule> matchedRule = rules.stream()
+       						    .map(obj -> (MdmsFeatureRule) obj)
+       						    .findFirst();
 
-       						if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey("permissibleValue")) {
-       							balconyValue = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get("permissibleValue").toString()));
-       						}else {
-       							balconyValue = BigDecimal.ZERO;
+       						if (matchedRule.isPresent()) {
+       						    MdmsFeatureRule rule = matchedRule.get();
+       						    balconyValue = rule.getPermissible();
+       						    
        						}
-       			
+       					    
+//       					    String stateOrCityRule = fetchEdcrRulesMdms.getEdcrRuleSource(feature, plan.getEdcrMasterConfig()); 
+//       					    
+//       						
+//       						Map<String, Object> params = new HashMap<>();
+//
+//       						params.put("feature", feature);
+//       						params.put("occupancy", occupancyName);
+//       						
+//       						//first fetch the master config for balcony and check whether it is state or city wise then  acc to that get the rules files from mdms
+//
+//       						//citywise it is
+//       						Map<String,List<Map<String,Object>>> edcrRuleList = plan.getEdcrRulesFeatures();
+//       						
+//       						ArrayList<String> valueFromColumn = new ArrayList<>();
+//       						valueFromColumn.add("permissibleValue");
+//
+//       						List<Map<String, Object>> permissibleValue = new ArrayList<>();
+//       					
+//       						//to fetch the permissible values gives the params on it depends and add valuefrom column to know whetehr it has just one permissible value for more
+//       							permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
+//       							LOG.info("permissibleValue" + permissibleValue);
+// 
+//
+//       						if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey("permissibleValue")) {
+//       							balconyValue = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get("permissibleValue").toString()));
+//       						}else {
+//       							balconyValue = BigDecimal.ZERO;
+//       						}
+//       			
                             if (minWidth.compareTo(balconyValue.setScale(DcrConstants.DECIMALDIGITS_MEASUREMENTS,
                                     DcrConstants.ROUNDMODE_MEASUREMENTS)) >= 0) {
                                 isAccepted = true;

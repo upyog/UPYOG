@@ -48,22 +48,24 @@
 package org.egov.edcr.feature;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.egov.common.constants.MdmsFeatureConstants;
 import org.egov.common.entity.edcr.Block;
+import org.egov.common.entity.edcr.MdmsFeatureRule;
 import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.Result;
+import org.egov.common.entity.edcr.RuleKey;
 import org.egov.common.entity.edcr.ScrutinyDetail;
-import org.egov.edcr.constants.DxfFileConstants;
 import org.egov.edcr.constants.EdcrRulesMdmsConstants;
+import org.egov.edcr.service.CacheManagerMdms;
 import org.egov.edcr.service.FetchEdcrRulesMdms;
 import org.egov.infra.utils.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -83,6 +85,9 @@ public class GovtBuildingDistance extends FeatureProcess {
 
     @Autowired
     FetchEdcrRulesMdms fetchEdcrRulesMdms;
+    
+    @Autowired
+	CacheManagerMdms cache;
 
     /**
      * Validates the given plan object.
@@ -134,35 +139,54 @@ public class GovtBuildingDistance extends FeatureProcess {
         List<Block> blocks = pl.getBlocks();
 
         // Determine the occupancy type and feature for fetching permissible values
-        String occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl);
-        String feature = MdmsFeatureConstants.GOVT_BUILDING_DISTANCE;
+        
+            String feature = MdmsFeatureConstants.GOVT_BUILDING_DISTANCE;        
+    	    String occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl).toLowerCase();
+            String tenantId = pl.getTenantId();
+            String zone = pl.getPlanInformation().getZone().toLowerCase();
+            String subZone = pl.getPlanInformation().getSubZone().toLowerCase();
+            String riskType = fetchEdcrRulesMdms.getRiskType(pl).toLowerCase();
+            
+            RuleKey key = new RuleKey(EdcrRulesMdmsConstants.STATE, tenantId, zone, subZone, occupancyName, null, feature);
+            List<Object> rules = cache.getRules(tenantId, key);
+    		
+            Optional<MdmsFeatureRule> matchedRule = rules.stream()
+            	    .map(obj -> (MdmsFeatureRule) obj)
+            	    .findFirst();
 
-        Map<String, Object> params = new HashMap<>();
-       
-        params.put("feature", feature);
-        params.put("occupancy", occupancyName);
+            	if (matchedRule.isPresent()) {
+            	    MdmsFeatureRule rule = matchedRule.get();
+            	    GovtBuildingDistanceValue = rule.getGovtBuildingDistanceValue();
+            	    GovtBuildingDistanceMaxHeight = rule.getGovtBuildingDistanceMaxHeight();
+            	} 
 
-        // Fetch permissible values for government building distance
-        Map<String, List<Map<String, Object>>> edcrRuleList = pl.getEdcrRulesFeatures();
-        ArrayList<String> valueFromColumn = new ArrayList<>();
-        valueFromColumn.add(EdcrRulesMdmsConstants.GOVT_BUILDING_DISTANCE_VALUE);
-        valueFromColumn.add(EdcrRulesMdmsConstants.GOVT_BUILDING_DISTANCE_MIN);
-        valueFromColumn.add(EdcrRulesMdmsConstants.GOVT_BUILDING_DISTANCE_MAX_HEIGHT);
-        valueFromColumn.add(EdcrRulesMdmsConstants.GOVT_BUILDING_DISTANCE_PERMITTED);
 
-        List<Map<String, Object>> permissibleValue = new ArrayList<>();
-        try {
-            permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
-            LOG.info("permissibleValue" + permissibleValue);
-        } catch (NullPointerException e) {
-            LOG.error("Permissible Value for GovtBuildingDistance not found--------", e);
-            return null;
-        }
-
-        if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey(EdcrRulesMdmsConstants.GOVT_BUILDING_DISTANCE_VALUE)) {
-            GovtBuildingDistanceValue = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.GOVT_BUILDING_DISTANCE_VALUE).toString()));
-            GovtBuildingDistanceMaxHeight = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.GOVT_BUILDING_DISTANCE_MAX_HEIGHT).toString()));
-        }
+//        Map<String, Object> params = new HashMap<>();
+//       
+//        params.put("feature", feature);
+//        params.put("occupancy", occupancyName);
+//
+//        // Fetch permissible values for government building distance
+//        Map<String, List<Map<String, Object>>> edcrRuleList = pl.getEdcrRulesFeatures();
+//        ArrayList<String> valueFromColumn = new ArrayList<>();
+//        valueFromColumn.add(EdcrRulesMdmsConstants.GOVT_BUILDING_DISTANCE_VALUE);
+//        valueFromColumn.add(EdcrRulesMdmsConstants.GOVT_BUILDING_DISTANCE_MIN);
+//        valueFromColumn.add(EdcrRulesMdmsConstants.GOVT_BUILDING_DISTANCE_MAX_HEIGHT);
+//        valueFromColumn.add(EdcrRulesMdmsConstants.GOVT_BUILDING_DISTANCE_PERMITTED);
+//
+//        List<Map<String, Object>> permissibleValue = new ArrayList<>();
+//        try {
+//            permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
+//            LOG.info("permissibleValue" + permissibleValue);
+//        } catch (NullPointerException e) {
+//            LOG.error("Permissible Value for GovtBuildingDistance not found--------", e);
+//            return null;
+//        }
+//
+//        if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey(EdcrRulesMdmsConstants.GOVT_BUILDING_DISTANCE_VALUE)) {
+//            GovtBuildingDistanceValue = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.GOVT_BUILDING_DISTANCE_VALUE).toString()));
+//            GovtBuildingDistanceMaxHeight = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.GOVT_BUILDING_DISTANCE_MAX_HEIGHT).toString()));
+//        }
 
         // Validate distances from government buildings
         if (StringUtils.isNotBlank(pl.getPlanInformation().getBuildingNearGovtBuilding())

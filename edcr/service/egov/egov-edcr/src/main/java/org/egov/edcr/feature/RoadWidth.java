@@ -57,22 +57,24 @@ import static org.egov.edcr.constants.DxfFileConstants.F_RT;
 import static org.egov.edcr.constants.DxfFileConstants.G;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.egov.common.constants.MdmsFeatureConstants;
 import org.egov.common.entity.dcr.helper.OccupancyHelperDetail;
+import org.egov.common.entity.edcr.MdmsFeatureRule;
 import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.Result;
+import org.egov.common.entity.edcr.RuleKey;
 import org.egov.common.entity.edcr.ScrutinyDetail;
-import org.egov.edcr.constants.DxfFileConstants;
 import org.egov.edcr.constants.EdcrRulesMdmsConstants;
+import org.egov.edcr.service.CacheManagerMdms;
 import org.egov.edcr.service.FetchEdcrRulesMdms;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -87,6 +89,9 @@ public class RoadWidth extends FeatureProcess {
     
     @Autowired
     FetchEdcrRulesMdms fetchEdcrRulesMdms;
+    
+    @Autowired
+	CacheManagerMdms cache;
 
     @Override
     public Map<String, Date> getAmendments() {
@@ -163,32 +168,53 @@ public class RoadWidth extends FeatureProcess {
     	
     	BigDecimal roadWidthValue = BigDecimal.ZERO; // Default road width value
     	
-    	String occupancyName = fetchEdcrRulesMdms.getOccupancyName(plan);
+    	String occupancyName = fetchEdcrRulesMdms.getOccupancyName(plan).toLowerCase();
 		
 		String feature = MdmsFeatureConstants.ROAD_WIDTH;
+		
+		
+		 
+	        String tenantId = plan.getTenantId();
+	        String zone = plan.getPlanInformation().getZone().toLowerCase();
+	        String subZone = plan.getPlanInformation().getSubZone().toLowerCase();
+	        String riskType = fetchEdcrRulesMdms.getRiskType(plan).toLowerCase();
+	        
+	        RuleKey key = new RuleKey(EdcrRulesMdmsConstants.STATE, tenantId, zone, subZone, occupancyName, null, feature);
+	        List<Object> rules = cache.getRules(tenantId, key);
+			
+	        Optional<MdmsFeatureRule> matchedRule = rules.stream()
+	        	    .map(obj -> (MdmsFeatureRule) obj)
+	        	    .findFirst();
+
+	        	if (matchedRule.isPresent()) {
+	        	    MdmsFeatureRule rule = matchedRule.get();
+	        	    roadWidthValue = rule.getPermissible();
+	        	} else {
+	        		roadWidthValue = BigDecimal.ZERO;
+	        	}
 
 		// Determine occupancy type from the FAR helper
-		Map<String, Object> params = new HashMap<>();
-		
-
-		params.put("feature", feature);
-		params.put("occupancy", occupancyName);
-
-		Map<String,List<Map<String,Object>>> edcrRuleList = plan.getEdcrRulesFeatures();
-
-		ArrayList<String> valueFromColumn = new ArrayList<>();
-		valueFromColumn.add(EdcrRulesMdmsConstants.PERMISSIBLE_VALUE);
-
-		List<Map<String, Object>> permissibleValue = new ArrayList<>();
-
-		// Fetch permissible value using MDMS service
-		permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
-		LOG.info("permissibleValue" + permissibleValue);
-
-		// Extract the road width value if present
-		if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey(EdcrRulesMdmsConstants.PERMISSIBLE_VALUE)) {
-			roadWidthValue = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.PERMISSIBLE_VALUE).toString()));
-		}
+//		Map<String, Object> params = new HashMap<>();
+//		
+//
+//		params.put("feature", feature);
+//		params.put("occupancy", occupancyName);
+//
+//		Map<String,List<Map<String,Object>>> edcrRuleList = plan.getEdcrRulesFeatures();
+//
+//		ArrayList<String> valueFromColumn = new ArrayList<>();
+//		valueFromColumn.add(EdcrRulesMdmsConstants.PERMISSIBLE_VALUE);
+//
+//		List<Map<String, Object>> permissibleValue = new ArrayList<>();
+//
+//		// Fetch permissible value using MDMS service
+//		permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
+//		LOG.info("permissibleValue" + permissibleValue);
+//
+//		// Extract the road width value if present
+//		if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey(EdcrRulesMdmsConstants.PERMISSIBLE_VALUE)) {
+//			roadWidthValue = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.PERMISSIBLE_VALUE).toString()));
+//		}
 
         // Assign retrieved value to all relevant occupancy codes
         Map<String, BigDecimal> roadWidthValues = new HashMap<>();

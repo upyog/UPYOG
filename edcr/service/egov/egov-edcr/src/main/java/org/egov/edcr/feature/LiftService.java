@@ -48,26 +48,28 @@
 package org.egov.edcr.feature;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
+import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.egov.common.constants.MdmsFeatureConstants;
 import org.egov.common.entity.edcr.Block;
 import org.egov.common.entity.edcr.Floor;
 import org.egov.common.entity.edcr.Lift;
+import org.egov.common.entity.edcr.MdmsFeatureRule;
 import org.egov.common.entity.edcr.Measurement;
-import org.egov.common.entity.edcr.OccupancyType;
 import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.Result;
+import org.egov.common.entity.edcr.RuleKey;
 import org.egov.common.entity.edcr.ScrutinyDetail;
 import org.egov.edcr.constants.DxfFileConstants;
-import org.egov.edcr.service.EdcrRestService;
+import org.egov.edcr.constants.EdcrRulesMdmsConstants;
+import org.egov.edcr.service.CacheManagerMdms;
 import org.egov.edcr.service.FetchEdcrRulesMdms;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -77,37 +79,40 @@ public class LiftService extends FeatureProcess {
 
 	@Autowired
 	FetchEdcrRulesMdms fetchEdcrRulesMdms;
-    private static final String SUBRULE_48_DESC = "Minimum number of lifts for block %s";
-    private static final String SUBRULE_48 = "48";
-    private static final String REMARKS = "Remarks";
-    private static final String SUBRULE_48_DESCRIPTION = "Minimum number of lifts";
-    private static final String SUBRULE_40A_3 = "40A-3";
-    private static final String SUBRULE_118 = "118";
-    private static final String SUBRULE_118_DESCRIPTION = "Dimension Of lift";
-    private static final String SUBRULE_118_DESC = "Minimum dimension Of lift";
-    private static final Logger LOG = LogManager.getLogger(LiftService.class);
-  
 
-    @Override
-    public Plan validate(Plan plan) {
-        for (Block block : plan.getBlocks()) {
-            if (block.getBuilding() != null && !block.getBuilding().getFloors().isEmpty()) {
-                for (Floor floor : block.getBuilding().getFloors()) {
-                    List<Lift> lifts = floor.getLifts();
-                    if (lifts != null && !lifts.isEmpty()) {
-                        for (Lift lift : lifts) {
-                            List<Measurement> liftPolyLines = lift.getLifts();
-                            if (liftPolyLines != null && !liftPolyLines.isEmpty()) {
-                                validateDimensions(plan, block.getNumber(), floor.getNumber(),
-                                        lift.getNumber().toString(), liftPolyLines);
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        return plan;
-    }
+	@Autowired
+	CacheManagerMdms cache;
+
+	private static final String SUBRULE_48_DESC = "Minimum number of lifts for block %s";
+	private static final String SUBRULE_48 = "48";
+	private static final String REMARKS = "Remarks";
+	private static final String SUBRULE_48_DESCRIPTION = "Minimum number of lifts";
+	private static final String SUBRULE_40A_3 = "40A-3";
+	private static final String SUBRULE_118 = "118";
+	private static final String SUBRULE_118_DESCRIPTION = "Dimension Of lift";
+	private static final String SUBRULE_118_DESC = "Minimum dimension Of lift";
+	private static final Logger LOG = LogManager.getLogger(LiftService.class);
+
+	@Override
+	public Plan validate(Plan plan) {
+		for (Block block : plan.getBlocks()) {
+			if (block.getBuilding() != null && !block.getBuilding().getFloors().isEmpty()) {
+				for (Floor floor : block.getBuilding().getFloors()) {
+					List<Lift> lifts = floor.getLifts();
+					if (lifts != null && !lifts.isEmpty()) {
+						for (Lift lift : lifts) {
+							List<Measurement> liftPolyLines = lift.getLifts();
+							if (liftPolyLines != null && !liftPolyLines.isEmpty()) {
+								validateDimensions(plan, block.getNumber(), floor.getNumber(),
+										lift.getNumber().toString(), liftPolyLines);
+							}
+						}
+					}
+				}
+			}
+		}
+		return plan;
+	}
 
 	@Override
 	public Plan process(Plan plan) {
@@ -120,7 +125,7 @@ public class LiftService extends FeatureProcess {
 				scrutinyDetail.addColumnHeading(3, REQUIRED);
 				scrutinyDetail.addColumnHeading(4, PROVIDED);
 				scrutinyDetail.addColumnHeading(5, STATUS);
-				//scrutinyDetail.addColumnHeading(6, REMARKS);
+				// scrutinyDetail.addColumnHeading(6, REMARKS);
 				scrutinyDetail.setKey("Block_" + block.getNumber() + "_" + "Lift - Minimum Required");
 
 				ScrutinyDetail scrutinyDetail1 = new ScrutinyDetail();
@@ -129,7 +134,7 @@ public class LiftService extends FeatureProcess {
 				scrutinyDetail1.addColumnHeading(3, REQUIRED);
 				scrutinyDetail1.addColumnHeading(4, PROVIDED);
 				scrutinyDetail1.addColumnHeading(5, STATUS);
-				//scrutinyDetail1.addColumnHeading(6, REMARKS);
+				// scrutinyDetail1.addColumnHeading(6, REMARKS);
 				scrutinyDetail1.setKey("Block_" + block.getNumber() + "_" + "Lift Dimension");
 
 				if (block.getBuilding() != null && !block.getBuilding().getOccupancies().isEmpty()
@@ -145,38 +150,57 @@ public class LiftService extends FeatureProcess {
 					 * occupancy.getType()).collect(Collectors.toList());
 					 */
 					BigDecimal noOfLiftsRqrd = BigDecimal.ZERO;
-					String occupancyName = fetchEdcrRulesMdms.getOccupancyName(plan);
-					
-					 String feature = "lift";
-						
-						Map<String, Object> params = new HashMap<>();
-						
-						params.put("feature", feature);
-						params.put("occupancy", occupancyName);
-						
 
-						Map<String,List<Map<String,Object>>> edcrRuleList = plan.getEdcrRulesFeatures();
-						
-						ArrayList<String> valueFromColumn = new ArrayList<>();
-						valueFromColumn.add("permissibleValue");
+					String feature = MdmsFeatureConstants.LIFT;
 
-						List<Map<String, Object>> permissibleValue = new ArrayList<>();
+					String occupancyName = fetchEdcrRulesMdms.getOccupancyName(plan).toLowerCase();
+					String tenantId = plan.getTenantId();
+					String zone = plan.getPlanInformation().getZone().toLowerCase();
+					String subZone = plan.getPlanInformation().getSubZone().toLowerCase();
+					String riskType = fetchEdcrRulesMdms.getRiskType(plan).toLowerCase();
 
-						try {
-							permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
-							LOG.info("permissibleValue" + permissibleValue);
-							
+					RuleKey key = new RuleKey(EdcrRulesMdmsConstants.STATE, tenantId, zone, subZone, occupancyName,
+							null, feature);
+					List<Object> rules = cache.getRules(tenantId, key);
 
-						} catch (NullPointerException e) {
+					Optional<MdmsFeatureRule> matchedRule = rules.stream().map(obj -> (MdmsFeatureRule) obj)
+							.findFirst();
 
-							LOG.error("Permissible Value for Lift Service not found--------", e);
-							return null;
-						}
+					if (matchedRule.isPresent()) {
+						MdmsFeatureRule rule = matchedRule.get();
+						noOfLiftsRqrd = rule.getPermissible();
+					} else {
+						noOfLiftsRqrd = BigDecimal.ZERO;
+					}
 
-						if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey("permissibleValue")) {
-							noOfLiftsRqrd = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get("permissibleValue").toString()));
-						}
-			
+//						Map<String, Object> params = new HashMap<>();
+//						
+//						params.put("feature", feature);
+//						params.put("occupancy", occupancyName);
+//						
+//
+//						Map<String,List<Map<String,Object>>> edcrRuleList = plan.getEdcrRulesFeatures();
+//						
+//						ArrayList<String> valueFromColumn = new ArrayList<>();
+//						valueFromColumn.add("permissibleValue");
+//
+//						List<Map<String, Object>> permissibleValue = new ArrayList<>();
+//
+//						try {
+//							permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
+//							LOG.info("permissibleValue" + permissibleValue);
+//							
+//
+//						} catch (NullPointerException e) {
+//
+//							LOG.error("Permissible Value for Lift Service not found--------", e);
+//							return null;
+//						}
+//
+//						if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey("permissibleValue")) {
+//							noOfLiftsRqrd = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get("permissibleValue").toString()));
+//						}
+//			
 
 					/*
 					 * To be added Rule 48 Lift shall be provided for buildings above 15 m. height
@@ -205,35 +229,35 @@ public class LiftService extends FeatureProcess {
 									block.getNumberOfLifts(), Result.Accepted.getResultVal(), scrutinyDetail);
 						} else {
 							setReportOutputDetails(plan, SUBRULE_48, SUBRULE_48_DESCRIPTION, noOfLiftsRqrd.toString(),
-									block.getNumberOfLifts(), Result.Not_Accepted.getResultVal(),  scrutinyDetail);
+									block.getNumberOfLifts(), Result.Not_Accepted.getResultVal(), scrutinyDetail);
 						}
 
 					}
-				
-				 BigDecimal liftWidth = BigDecimal.ZERO;
-				   BigDecimal liftHeight = BigDecimal.ZERO;
-				   BigDecimal liftArea = BigDecimal.ZERO;
 
-				if (block.getBuilding() != null && block.getBuilding().getBuildingHeight() != null
-						&& block.getBuilding().getBuildingHeight().intValue() > 0) {
-					if (!block.getBuilding().getFloors().isEmpty()) {
-						Integer floorUnits = 0;
-						// for (Floor floor : block.getBuilding().getFloors())
+					BigDecimal liftWidth = BigDecimal.ZERO;
+					BigDecimal liftHeight = BigDecimal.ZERO;
+					BigDecimal liftArea = BigDecimal.ZERO;
+
+					if (block.getBuilding() != null && block.getBuilding().getBuildingHeight() != null
+							&& block.getBuilding().getBuildingHeight().intValue() > 0) {
+						if (!block.getBuilding().getFloors().isEmpty()) {
+							Integer floorUnits = 0;
+							// for (Floor floor : block.getBuilding().getFloors())
 //                  { floorUnits = floorUnits +
 //                  floor.getUnits().size(); }
 //                  if (floorUnits > 0) 
-						// {
-						boolean validOutside = false;
-						Map<String, String>
+							// {
+							boolean validOutside = false;
+							Map<String, String>
 
-						liftDimensions = new HashMap<>();
-						flr: for (Floor floor : block.getBuilding().getFloors()) {
-							for (Lift lift : floor.getLifts()) {
-								if (lift.getLiftClosed()) {
-									for (Measurement measurement : lift.getLifts()) {
-										liftArea = measurement.getArea().setScale(2, BigDecimal.ROUND_HALF_UP);
-										liftHeight = measurement.getHeight().setScale(2, BigDecimal.ROUND_HALF_UP);
-										liftWidth =	measurement.getWidth().setScale(2, BigDecimal.ROUND_HALF_UP);
+							liftDimensions = new HashMap<>();
+							flr: for (Floor floor : block.getBuilding().getFloors()) {
+								for (Lift lift : floor.getLifts()) {
+									if (lift.getLiftClosed()) {
+										for (Measurement measurement : lift.getLifts()) {
+											liftArea = measurement.getArea().setScale(2, BigDecimal.ROUND_HALF_UP);
+											liftHeight = measurement.getHeight().setScale(2, BigDecimal.ROUND_HALF_UP);
+											liftWidth = measurement.getWidth().setScale(2, BigDecimal.ROUND_HALF_UP);
 //										measurement.setWidth(BigDecimal.valueOf(
 //												Math.round(measurement.getWidth().doubleValue() * 100d) / 100d));
 //										measurement.setHeight(BigDecimal.valueOf(
@@ -253,61 +277,57 @@ public class LiftService extends FeatureProcess {
 							}
 						}
 //						if (validOutside) {
-							setReportOutputDetails(plan, SUBRULE_118,
-									String.format(SUBRULE_118_DESCRIPTION, "",
-											""),
-									"",
-									liftHeight + " * " + liftWidth,
-									Result.Accepted.getResultVal(),
-									scrutinyDetail1);
-						//} else {
+						setReportOutputDetails(plan, SUBRULE_118, String.format(SUBRULE_118_DESCRIPTION, "", ""), "",
+								liftHeight + " * " + liftWidth, Result.Accepted.getResultVal(), scrutinyDetail1);
+						// } else {
 //							setReportOutputDetails(plan, SUBRULE_118, SUBRULE_118_DESC, "2.0 m * 1.10 m",
 //									"None of the lift has minimum dimensions as provided",
 //									Result.Not_Accepted.getResultVal(), "",
 //									scrutinyDetail1);
-						}}
 					}
 				}
-			//}
+			}
+		}
+		// }
 
-		//}
+		// }
 
 		return plan;
 	}
 
-    private void setReportOutputDetails(Plan plan, String ruleNo, String ruleDesc, String expected, String actual,
-            String status, ScrutinyDetail scrutinyDetail) {
-        Map<String, String> details = new HashMap<>();
-        details.put(RULE_NO, ruleNo);
-        details.put(DESCRIPTION, ruleDesc);
-        details.put(REQUIRED, expected);
-        details.put(PROVIDED, actual);
-        details.put(STATUS, status);
-       // details.put(REMARKS, remarks);
-        scrutinyDetail.getDetail().add(details);
-        plan.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
-    }
+	private void setReportOutputDetails(Plan plan, String ruleNo, String ruleDesc, String expected, String actual,
+			String status, ScrutinyDetail scrutinyDetail) {
+		Map<String, String> details = new HashMap<>();
+		details.put(RULE_NO, ruleNo);
+		details.put(DESCRIPTION, ruleDesc);
+		details.put(REQUIRED, expected);
+		details.put(PROVIDED, actual);
+		details.put(STATUS, status);
+		// details.put(REMARKS, remarks);
+		scrutinyDetail.getDetail().add(details);
+		plan.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+	}
 
-    private void validateDimensions(Plan plan, String blockNo, int floorNo, String liftNo,
-            List<Measurement> liftPolylines) {
-        int count = 0;
-        for (Measurement m : liftPolylines) {
-            if (m.getInvalidReason() != null && m.getInvalidReason().length() > 0) {
-                count++;
-               
-            }
-        }
-        if (count > 0) {
-            plan.addError(String.format(DxfFileConstants.LAYER_LIFT_WITH_NO, blockNo, floorNo, liftNo),
-                    count + " number of lift polyline not having only 4 points in layer "
-                            + String.format(DxfFileConstants.LAYER_LIFT_WITH_NO, blockNo, floorNo, liftNo));
+	private void validateDimensions(Plan plan, String blockNo, int floorNo, String liftNo,
+			List<Measurement> liftPolylines) {
+		int count = 0;
+		for (Measurement m : liftPolylines) {
+			if (m.getInvalidReason() != null && m.getInvalidReason().length() > 0) {
+				count++;
 
-        }
-    }
+			}
+		}
+		if (count > 0) {
+			plan.addError(String.format(DxfFileConstants.LAYER_LIFT_WITH_NO, blockNo, floorNo, liftNo),
+					count + " number of lift polyline not having only 4 points in layer "
+							+ String.format(DxfFileConstants.LAYER_LIFT_WITH_NO, blockNo, floorNo, liftNo));
 
-    @Override
-    public Map<String, Date> getAmendments() {
-        return new LinkedHashMap<>();
-    }
+		}
+	}
+
+	@Override
+	public Map<String, Date> getAmendments() {
+		return new LinkedHashMap<>();
+	}
 
 }

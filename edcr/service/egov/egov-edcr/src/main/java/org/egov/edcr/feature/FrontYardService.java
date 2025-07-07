@@ -61,24 +61,27 @@ import static org.egov.edcr.utility.DcrConstants.FRONT_YARD_DESC;
 import static org.egov.edcr.utility.DcrConstants.OBJECTNOTDEFINED;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.egov.common.entity.edcr.Block;
 import org.egov.common.entity.edcr.Building;
+import org.egov.common.entity.edcr.MdmsFeatureRule;
 import org.egov.common.entity.edcr.Occupancy;
 import org.egov.common.entity.edcr.OccupancyTypeHelper;
 import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.Plot;
 import org.egov.common.entity.edcr.Result;
+import org.egov.common.entity.edcr.RuleKey;
 import org.egov.common.entity.edcr.ScrutinyDetail;
 import org.egov.common.entity.edcr.SetBack;
 import org.egov.edcr.constants.DxfFileConstants;
-import org.egov.edcr.service.EdcrRestService;
+import org.egov.edcr.constants.EdcrRulesMdmsConstants;
+import org.egov.edcr.service.CacheManagerMdms;
 import org.egov.edcr.service.FetchEdcrRulesMdms;
 import org.egov.infra.utils.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -143,6 +146,9 @@ public class FrontYardService extends GeneralRule {
 	
 	@Autowired
 	FetchEdcrRulesMdms fetchEdcrRulesMdms;
+	
+	@Autowired
+	CacheManagerMdms cache;
 
 	private class FrontYardResult {
 		String rule;
@@ -355,40 +361,64 @@ public class FrontYardService extends GeneralRule {
 		
 		String feature = "FrontSetBack";
 			
-		Map<String, Object> params = new HashMap<>();
+//		Map<String, Object> params = new HashMap<>();
+//		
+//		params.put("feature", feature);
+//		
+//		params.put("occupancy", occupancyName);
+//		params.put("depthOfPlot", depthOfPlot);
+//		params.put("plotArea", plotArea);
+//		
+//		if(occupancyName.equalsIgnoreCase("Industrial")) {
+//		
+//			
+//			params.put("plotArea", plotArea);
+//		}
+//
+//		ArrayList<String> valueFromColumn = new ArrayList<>();
+//		valueFromColumn.add("permissibleValue");
+//
+//		List<Map<String, Object>> permissibleValue = new ArrayList<>();
+//
+//		try {
+//			permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
+//			LOG.info("permissibleValue" + permissibleValue);
+//		
+//
+//		} catch (NullPointerException e) {
+//
+//			LOG.error("Permissible Value for Front Yard service not found--------", e);
+//			return null;
+//		}
+//
+//		if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey("permissibleValue")) {
+//			meanVal = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get("permissibleValue").toString()));
+//	
+//		} 
 		
-		params.put("feature", feature);
-		
-		params.put("occupancy", occupancyName);
-		params.put("depthOfPlot", depthOfPlot);
-		params.put("plotArea", plotArea);
-		
-		if(occupancyName.equalsIgnoreCase("Industrial")) {
-		
+		    occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl).toLowerCase();
+	        String tenantId = pl.getTenantId();
+	        String zone = pl.getPlanInformation().getZone().toLowerCase();
+	        String subZone = pl.getPlanInformation().getSubZone().toLowerCase();
+	        String riskType = fetchEdcrRulesMdms.getRiskType(pl).toLowerCase();
+	        
+	        RuleKey key = new RuleKey(EdcrRulesMdmsConstants.STATE, tenantId, zone, subZone, occupancyName, riskType, feature);
+	        List<Object> rules = cache.getRules(tenantId, key);
+	        
+	        Optional<MdmsFeatureRule> matchedRule = rules.stream()
+				    .map(obj -> (MdmsFeatureRule) obj)
+				    .filter(ruleMdms -> plotArea.compareTo(ruleMdms.getFromPlotArea()) >= 0 &&
+				                    plotArea.compareTo(ruleMdms.getToPlotArea()) < 0)
+				    .findFirst();
+	        
+	        if (matchedRule.isPresent()) {
+        	    MdmsFeatureRule mdmsRule = matchedRule.get();
+        	    meanVal = mdmsRule.getPermissible();
+        	} else {
+        		meanVal = BigDecimal.ZERO;
+        	}
+
 			
-			params.put("plotArea", plotArea);
-		}
-
-		ArrayList<String> valueFromColumn = new ArrayList<>();
-		valueFromColumn.add("permissibleValue");
-
-		List<Map<String, Object>> permissibleValue = new ArrayList<>();
-
-		try {
-			permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
-			LOG.info("permissibleValue" + permissibleValue);
-		
-
-		} catch (NullPointerException e) {
-
-			LOG.error("Permissible Value for Front Yard service not found--------", e);
-			return null;
-		}
-
-		if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey("permissibleValue")) {
-			meanVal = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get("permissibleValue").toString()));
-	
-		} 
       System.out.println("meanVllll" + meanVal);
 		/*
 		 * if (-1 == level) { rule = BSMT_FRONT_YARD_DESC; subRuleDesc =

@@ -48,22 +48,24 @@
 package org.egov.edcr.feature;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.egov.common.constants.MdmsFeatureConstants;
 import org.egov.common.entity.edcr.Block;
+import org.egov.common.entity.edcr.MdmsFeatureRule;
 import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.Result;
+import org.egov.common.entity.edcr.RuleKey;
 import org.egov.common.entity.edcr.ScrutinyDetail;
-import org.egov.edcr.constants.DxfFileConstants;
 import org.egov.edcr.constants.EdcrRulesMdmsConstants;
+import org.egov.edcr.service.CacheManagerMdms;
 import org.egov.edcr.service.FetchEdcrRulesMdms;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -79,6 +81,9 @@ public class RoofTank extends FeatureProcess {
 
 	@Autowired
 	FetchEdcrRulesMdms fetchEdcrRulesMdms;
+	
+	@Autowired
+	CacheManagerMdms cache;
 	
 	@Override
 	public Plan validate(Plan pl) {
@@ -103,33 +108,54 @@ public class RoofTank extends FeatureProcess {
 
 		BigDecimal minHeight = BigDecimal.ZERO;
 		BigDecimal roofTankValue = BigDecimal.ZERO;
-		String occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl);
+		
 
 		String feature = MdmsFeatureConstants.ROOF_TANK;
-
-		Map<String, Object> params = new HashMap<>();
-
-		// Determine occupancy type based on building type code
 		
-		// Prepare parameters to fetch permissible value from MDMS
-		params.put("feature", feature);
-		params.put("occupancy", occupancyName);
+		
+		 String occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl).toLowerCase();
+	        String tenantId = pl.getTenantId();
+	        String zone = pl.getPlanInformation().getZone().toLowerCase();
+	        String subZone = pl.getPlanInformation().getSubZone().toLowerCase();
+	        String riskType = fetchEdcrRulesMdms.getRiskType(pl).toLowerCase();
+	        
+	        RuleKey key = new RuleKey(EdcrRulesMdmsConstants.STATE, tenantId, zone, subZone, occupancyName, null, feature);
+	        List<Object> rules = cache.getRules(tenantId, key);
+			
+	        Optional<MdmsFeatureRule> matchedRule = rules.stream()
+	        	    .map(obj -> (MdmsFeatureRule) obj)
+	        	    .findFirst();
 
-		Map<String, List<Map<String, Object>>> edcrRuleList = pl.getEdcrRulesFeatures();
+	        	if (matchedRule.isPresent()) {
+	        	    MdmsFeatureRule rule = matchedRule.get();
+	        	    roofTankValue = rule.getPermissible();
+	        	} else {
+	        		roofTankValue = BigDecimal.ZERO;
+	        	}
 
-		ArrayList<String> valueFromColumn = new ArrayList<>();
-		valueFromColumn.add(EdcrRulesMdmsConstants.PERMISSIBLE_VALUE);
-
-		List<Map<String, Object>> permissibleValue = new ArrayList<>();
-
-		// Fetch permissible value using MDMS service
-		permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
-		LOG.info("permissibleValue" + permissibleValue);
-
-		// Extract permissible roof tank height from result
-		if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey(EdcrRulesMdmsConstants.PERMISSIBLE_VALUE)) {
-			roofTankValue = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.PERMISSIBLE_VALUE).toString()));
-		}
+//		Map<String, Object> params = new HashMap<>();
+//
+//		// Determine occupancy type based on building type code
+//		
+//		// Prepare parameters to fetch permissible value from MDMS
+//		params.put("feature", feature);
+//		params.put("occupancy", occupancyName);
+//
+//		Map<String, List<Map<String, Object>>> edcrRuleList = pl.getEdcrRulesFeatures();
+//
+//		ArrayList<String> valueFromColumn = new ArrayList<>();
+//		valueFromColumn.add(EdcrRulesMdmsConstants.PERMISSIBLE_VALUE);
+//
+//		List<Map<String, Object>> permissibleValue = new ArrayList<>();
+//
+//		// Fetch permissible value using MDMS service
+//		permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
+//		LOG.info("permissibleValue" + permissibleValue);
+//
+//		// Extract permissible roof tank height from result
+//		if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey(EdcrRulesMdmsConstants.PERMISSIBLE_VALUE)) {
+//			roofTankValue = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.PERMISSIBLE_VALUE).toString()));
+//		}
 
 		// Loop through each block to evaluate roof tank height
 		for (Block b : pl.getBlocks()) {

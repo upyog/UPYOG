@@ -57,21 +57,23 @@ import static org.egov.edcr.utility.DcrConstants.DECIMALDIGITS_MEASUREMENTS;
 import static org.egov.edcr.utility.DcrConstants.ROUNDMODE_MEASUREMENTS;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.egov.common.entity.edcr.MdmsFeatureRule;
 import org.egov.common.entity.edcr.Measurement;
 import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.Result;
+import org.egov.common.entity.edcr.RuleKey;
 import org.egov.common.entity.edcr.ScrutinyDetail;
-import org.egov.edcr.constants.DxfFileConstants;
-import org.egov.edcr.service.EdcrRestService;
+import org.egov.edcr.constants.EdcrRulesMdmsConstants;
+import org.egov.edcr.service.CacheManagerMdms;
 import org.egov.edcr.service.FetchEdcrRulesMdms;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -90,6 +92,10 @@ public class Plantation extends FeatureProcess {
 
     @Autowired
 	FetchEdcrRulesMdms fetchEdcrRulesMdms;
+    
+    @Autowired
+	CacheManagerMdms cache;
+    
     @Override
     public Plan process(Plan pl) {
         validate(pl);
@@ -143,35 +149,55 @@ public class Plantation extends FeatureProcess {
 //                    pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
 //                }
           //  } else {
-            	String occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl);
+            	
 				
-				 String feature = "plantation";
+				 String feature = "Plantation";
 				 BigDecimal plantation = BigDecimal.ZERO;
 				 BigDecimal percent;
-					
-					Map<String, Object> params = new HashMap<>();
-					
+				 
+				
+					 String occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl).toLowerCase();
+				        String tenantId = pl.getTenantId();
+				        String zone = pl.getPlanInformation().getZone().toLowerCase();
+				        String subZone = pl.getPlanInformation().getSubZone().toLowerCase();
+				        String riskType = fetchEdcrRulesMdms.getRiskType(pl).toLowerCase();
+				        
+				        RuleKey key = new RuleKey(EdcrRulesMdmsConstants.STATE, tenantId, zone, subZone, occupancyName, null, feature);
+				        List<Object> rules = cache.getRules(tenantId, key);
+						
+				        Optional<MdmsFeatureRule> matchedRule = rules.stream()
+				        	    .map(obj -> (MdmsFeatureRule) obj)
+				        	    .findFirst();
 
-					params.put("feature", feature);
-					params.put("occupancy", occupancyName);
-					
-
-					Map<String,List<Map<String,Object>>> edcrRuleList = pl.getEdcrRulesFeatures();
-					
-					ArrayList<String> valueFromColumn = new ArrayList<>();
-					valueFromColumn.add("permissibleValue");
-					valueFromColumn.add("percent");
-
-					List<Map<String, Object>> permissibleValue = new ArrayList<>();
-
-					permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
-					System.out.println("permissibleValue");
-
-					if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey("permissibleValue")) {
-						plantation = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get("permissibleValue").toString()));
-						percent = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get("percent").toString()));
-						System.out.println("perfff" + percent);
-					}
+				        	if (matchedRule.isPresent()) {
+				        	    MdmsFeatureRule rule = matchedRule.get();
+				        	    plantation = rule.getPermissible();
+				        	    percent = rule.getPercent();
+				        	} 
+//					
+//					Map<String, Object> params = new HashMap<>();
+//					
+//
+//					params.put("feature", feature);
+//					params.put("occupancy", occupancyName);
+//					
+//
+//					Map<String,List<Map<String,Object>>> edcrRuleList = pl.getEdcrRulesFeatures();
+//					
+//					ArrayList<String> valueFromColumn = new ArrayList<>();
+//					valueFromColumn.add("permissibleValue");
+//					valueFromColumn.add("percent");
+//
+//					List<Map<String, Object>> permissibleValue = new ArrayList<>();
+//
+//					permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
+//					System.out.println("permissibleValue");
+//
+//					if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey("permissibleValue")) {
+//						plantation = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get("permissibleValue").toString()));
+//						percent = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get("percent").toString()));
+//						System.out.println("perfff" + percent);
+//					}
 		
                 if (plantationPer.compareTo(plantation) >= 0) {
                     details.put(REQUIRED, ">= 5%");
