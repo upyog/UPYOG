@@ -7,20 +7,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.1.0] - 2025-07-01
 
-### Added
-- SpringDoc OpenAPI (Swagger) documentation with starter-webmvc-ui version 2.3.0
-- Jakarta Validation API support (version 3.1.1) replacing javax validation
-
-### Changed
-- Upgraded Java version to 17
-- Updated Spring Boot to version 3.2.2
-- Updated PostgreSQL driver to version 42.7.1
-- Updated Lombok to version 1.18.32
-- Migrated from javax to Jakarta EE annotations
-
----
-
-
 
 ### Added
 - Initial verification service implementation

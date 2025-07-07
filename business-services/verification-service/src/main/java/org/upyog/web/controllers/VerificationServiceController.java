@@ -34,7 +34,6 @@ public class VerificationServiceController {
 			@RequestBody @Valid ModuleSearchRequest request) {
 
 		CommonDetails commonDetail = commonService.getApplicationCommonDetails(request);
-		log.info("----------------input in consodijflskdjnflkdsj :: " + commonDetail);
 		CommonModuleResponse response = CommonModuleResponse.builder()
 				.commonDetail(commonDetail)
 				.responseInfo(new ResponseInfo())
