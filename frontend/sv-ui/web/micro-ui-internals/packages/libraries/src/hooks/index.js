@@ -31,6 +31,10 @@ import useModuleTenants from "./useModuleTenants";
 import useStore from "./useStore";
 import { useTenants } from "./useTenants";
 import { useEvents, useClearNotifications, useNotificationCount } from "./events";
+import useCreateEvent from "./events/useCreateEvent";
+import useUpdateEvent from "./events/useUpdateEvent";
+import useEventInbox from "./events/useEventInbox";
+import useEventDetails from "./events/useEventDetails";
 import useNewInboxGeneral from "./useInboxGeneral/useNewInbox";
 import useDynamicData from "./useDynamicData";
 import useAccessControl from "./useAccessControl";
@@ -67,6 +71,12 @@ const sv = {
   useSVApplicationAction,
   useCreateDemand
 }
+const events = {
+  useInbox: useEventInbox,
+  useCreateEvent,
+  useEventDetails,
+  useUpdateEvent,
+};
 
 const Hooks = {
   useSessionStorage,
@@ -117,7 +127,8 @@ const Hooks = {
   createTokenAPI,
   useCustomBackNavigation,
   useRouteSubscription,
-  sv
+  sv,
+  events
 };
 
 export default Hooks;
