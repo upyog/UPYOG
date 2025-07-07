@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -21,12 +22,14 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.regex.Matcher;
 
+import org.egov.finance.report.entity.Department;
 import org.egov.finance.report.exception.ReportServiceException;
 import org.egov.finance.report.model.MasterDetail;
 import org.egov.finance.report.model.MdmsCriteria;
 import org.egov.finance.report.model.MdmsCriteriaReq;
 import org.egov.finance.report.model.ModuleDetail;
 import org.egov.finance.report.model.RequestInfo;
+import org.egov.finance.report.repository.DepartmentRepository;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,10 +52,12 @@ public class CommonUtils {
 	private String mdmsSearch;
 
 	private RestTemplate restTemplate;
+	private DepartmentRepository departmentRepository;
 
 	@Autowired
-	public CommonUtils(RestTemplate restTemplate) {
+	public CommonUtils(RestTemplate restTemplate, DepartmentRepository departmentRepository) {
 		this.restTemplate = restTemplate;
+		this.departmentRepository = departmentRepository;
 	}
 
 	/*********************** MDMS Utitlity Methods *****************************/
@@ -115,84 +120,114 @@ public class CommonUtils {
 	 * @author bpattanayak
 	 */
 	public List<String> applyNonNullFields(Object source, Object target) {
-	    BeanWrapper srcWrapper = new BeanWrapperImpl(source);
-	    BeanWrapper trgWrapper = new BeanWrapperImpl(target);
-	    List<String> updatedFields = new ArrayList<>();
+		BeanWrapper srcWrapper = new BeanWrapperImpl(source);
+		BeanWrapper trgWrapper = new BeanWrapperImpl(target);
+		List<String> updatedFields = new ArrayList<>();
 
-	    for (PropertyDescriptor propertyDescriptor : srcWrapper.getPropertyDescriptors()) {
-	        String propertyName = propertyDescriptor.getName();
+		for (PropertyDescriptor propertyDescriptor : srcWrapper.getPropertyDescriptors()) {
+			String propertyName = propertyDescriptor.getName();
 
-	        if (!trgWrapper.isWritableProperty(propertyName)) {
-	            continue;
-	        }
+			if (!trgWrapper.isWritableProperty(propertyName)) {
+				continue;
+			}
 
-	        Object sourceValue = srcWrapper.getPropertyValue(propertyName);
-	        Object targetValue = trgWrapper.getPropertyValue(propertyName);
+			Object sourceValue = srcWrapper.getPropertyValue(propertyName);
+			Object targetValue = trgWrapper.getPropertyValue(propertyName);
 
-	        if (!ObjectUtils.isEmpty(sourceValue) && !Objects.equals(sourceValue, targetValue)) {
-	            trgWrapper.setPropertyValue(propertyName, sourceValue);
-	            updatedFields.add(propertyName);
-	        }
-	    }
+			if (!ObjectUtils.isEmpty(sourceValue) && !Objects.equals(sourceValue, targetValue)) {
+				trgWrapper.setPropertyValue(propertyName, sourceValue);
+				updatedFields.add(propertyName);
+			}
+		}
 
-	    return updatedFields;
+		return updatedFields;
 	}
-	
+
 	/**
-     * Safely converts a list of unknown objects (e.g., LinkedHashMap) to a list of the specified target class.
-     *
-     * @param sourceList  the original list (possibly from cache or deserialized JSON)
-     * @param targetClass the class to convert each element to
-     * @param <T>         the type of the target class
-     * @return a list of converted objects
-     * @author bpattanayak
-     */
+	 * Safely converts a list of unknown objects (e.g., LinkedHashMap) to a list of
+	 * the specified target class.
+	 *
+	 * @param sourceList  the original list (possibly from cache or deserialized
+	 *                    JSON)
+	 * @param targetClass the class to convert each element to
+	 * @param <T>         the type of the target class
+	 * @return a list of converted objects
+	 * @author bpattanayak
+	 */
 	public <T> List<T> convertListIfNeeded(Object sourceList, Class<T> targetClass) {
 		final ObjectMapper objectMapper = new ObjectMapper();
-	        if (sourceList instanceof List<?> list && !list.isEmpty()) {
-	            Object first = list.get(0);
-	            if (targetClass.isInstance(first)) {
-	                return (List<T>) list;
-	            } else if (first instanceof LinkedHashMap) {
-	                return objectMapper.convertValue(
-	                    list,
-	                    objectMapper.getTypeFactory().constructCollectionType(List.class, targetClass)
-	                );
-	            }
-	        }
-	        return List.of(); 
-	    }
+		if (sourceList instanceof List<?> list && !list.isEmpty()) {
+			Object first = list.get(0);
+			if (targetClass.isInstance(first)) {
+				return (List<T>) list;
+			} else if (first instanceof LinkedHashMap) {
+				return objectMapper.convertValue(list,
+						objectMapper.getTypeFactory().constructCollectionType(List.class, targetClass));
+			}
+		}
+		return List.of();
+	}
 
-	
 	public String getFormattedDate(Date date, String pattern) {
-	    if (date == null || pattern == null) {
-	        return "";
-	    }
-	    DateTimeFormatter formatter = DateTimeFormatter.ofPattern(pattern);
+		if (date == null || pattern == null) {
+			return "";
+		}
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern(pattern);
 
-	    if (date instanceof java.sql.Date) {
-	        LocalDate localDate = ((java.sql.Date) date).toLocalDate();
-	        return formatter.format(localDate);
-	    } else {
-	        LocalDateTime localDateTime = date.toInstant()
-	                                          .atZone(ZoneId.systemDefault())
-	                                          .toLocalDateTime();
-	        return formatter.format(localDateTime);
-	    }
+		if (date instanceof java.sql.Date) {
+			LocalDate localDate = ((java.sql.Date) date).toLocalDate();
+			return formatter.format(localDate);
+		} else {
+			LocalDateTime localDateTime = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+			return formatter.format(localDateTime);
+		}
 	}
-	
+
 	public String removeSpecialCharacters(final String str) {
-	    if (str == null || str.isEmpty()) {
-	        return "";
-	    }
-	    String sanitized = str.replaceAll("\\s{2,}|\\r?\\n", "<br/>");
-	    sanitized = sanitized.replaceAll("'", Matcher.quoteReplacement("\\'"));
+		if (str == null || str.isEmpty()) {
+			return "";
+		}
+		String sanitized = str.replaceAll("\\s{2,}|\\r?\\n", "<br/>");
+		sanitized = sanitized.replaceAll("'", Matcher.quoteReplacement("\\'"));
 
-	    return sanitized;
+		return sanitized;
+	}
+
+	public String toStr(Object obj) {
+		return obj != null ? obj.toString() : null;
+	}
+
+	public Long toLong(Object obj) {
+		return obj != null ? Long.valueOf(obj.toString()) : null;
+	}
+
+	public Integer toInt(Object obj) {
+		return obj != null ? Integer.valueOf(obj.toString()) : null;
+	}
+
+	public Department getDepartmentByCode(String departmentCode) {
+		//List<Department> cachedDepartments = masterDataCache.get("egi-department");
+		List<Department> cachedDepartments=new ArrayList<Department>();
+		if (cachedDepartments != null) {
+			return cachedDepartments.stream().filter(dept -> departmentCode.equalsIgnoreCase(dept.getCode()))
+					.findFirst().orElseGet(() -> departmentRepository.findByCodeIgnoreCase(departmentCode)
+							.orElseGet(() -> fetchByDepartmentCode(departmentCode)));
+		}
+
+		return departmentRepository.findByCodeIgnoreCase(departmentCode)
+				.orElseGet(() -> fetchByDepartmentCode(departmentCode));
+	}
+
+	private Department fetchByDepartmentCode(String departmentCode) {
+		List<Department> departments = getDepartments(departmentCode);
+		return !departments.isEmpty() ? departments.get(0) : null;
 	}
 	
-	public String toStr(Object obj) { return obj != null ? obj.toString() : null; }
-	public Long toLong(Object obj) { return obj != null ? Long.valueOf(obj.toString()) : null; }
-	public Integer toInt(Object obj) { return obj != null ? Integer.valueOf(obj.toString()) : null; }
+	public List<Department> getDepartments(String codes) {
+	    if (codes == null || codes.isEmpty()) return Collections.emptyList();
+
+	    List<String> codeList = Arrays.asList(codes.split(","));
+	    return departmentRepository.findByCodeIn(codeList);
+	}
 
 }
