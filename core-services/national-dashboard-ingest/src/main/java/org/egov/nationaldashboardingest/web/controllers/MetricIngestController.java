@@ -32,6 +32,16 @@ public class MetricIngestController {
     @Autowired
     private ResponseInfoFactory responseInfoFactory;
 
+    /*
+     * It does the following:
+        Receives a POST request with a JSON body mapped to IngestRequest.
+        Logs the received data.
+        Calls the ingestService.ingestData() method to process the data.
+        Constructs a ResponseInfo using a factory.
+        Builds an IngestResponse containing responseInfo and responseHash.
+        Returns the response to the client.
+     * 
+     */
     @RequestMapping(value="/_ingest", method = RequestMethod.POST)
     public ResponseEntity<IngestResponse> create(@RequestBody @Valid IngestRequest ingestRequest) {
         log.info("Received request: " + ingestRequest.getIngestData().toString());
