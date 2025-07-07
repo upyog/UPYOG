@@ -11,9 +11,13 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface DepartmentRepository extends JpaRepository<Department, Long> , JpaSpecificationExecutor<Department>{
+	
+	Optional<Department> findByCodeIgnoreCase(String code);
+	 List<Department> findByCodeIn(List<String> codes);
    
 
 }

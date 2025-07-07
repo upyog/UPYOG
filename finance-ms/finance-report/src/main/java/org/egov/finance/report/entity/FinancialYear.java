@@ -41,4 +41,6 @@ public class FinancialYear extends AuditDetailswithVersion {
 	private Boolean isActiveForPosting;
 
 	private Boolean isClosed;
+	
+	private Boolean transferClosingBalance;
 }
