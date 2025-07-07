@@ -1,7 +1,6 @@
 
 package com.tarento.analytics.service.impl;
 
-//import static javax.servlet.http.HttpServletRequest.BASIC_AUTH;
 import static org.apache.commons.codec.CharEncoding.US_ASCII;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
