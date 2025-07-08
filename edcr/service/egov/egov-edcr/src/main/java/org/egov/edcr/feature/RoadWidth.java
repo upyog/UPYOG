@@ -113,7 +113,7 @@ public class RoadWidth extends FeatureProcess {
             // Apply rule only for NEW area types
             if (typeOfArea != null && NEW.equalsIgnoreCase(typeOfArea)) {
                 ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
-                scrutinyDetail.setKey("Common_Road Width"); // Setting the scrutiny detail key
+                scrutinyDetail.setKey(Common_Road_Width); // Setting the scrutiny detail key
                 scrutinyDetail.addColumnHeading(1, RULE_NO);
                 scrutinyDetail.addColumnHeading(2, DESCRIPTION);
                 scrutinyDetail.addColumnHeading(3, OCCUPANCY);
@@ -163,69 +163,39 @@ public class RoadWidth extends FeatureProcess {
         return pl;
     }
 
-    // Method to retrieve permissible road width values from MDMS rules
-    public Map<String, BigDecimal> getOccupancyValues(Plan plan) {
-    	
-    	BigDecimal roadWidthValue = BigDecimal.ZERO; // Default road width value
-    	
-    	String occupancyName = fetchEdcrRulesMdms.getOccupancyName(plan).toLowerCase();
-		
+	// Method to retrieve permissible road width values from MDMS rules
+	public Map<String, BigDecimal> getOccupancyValues(Plan plan) {
+
+		BigDecimal roadWidthValue = BigDecimal.ZERO; // Default road width value
+		String occupancyName = fetchEdcrRulesMdms.getOccupancyName(plan).toLowerCase();
 		String feature = MdmsFeatureConstants.ROAD_WIDTH;
-		
-		
-		 
-	        String tenantId = plan.getTenantId();
-	        String zone = plan.getPlanInformation().getZone().toLowerCase();
-	        String subZone = plan.getPlanInformation().getSubZone().toLowerCase();
-	        String riskType = fetchEdcrRulesMdms.getRiskType(plan).toLowerCase();
-	        
-	        RuleKey key = new RuleKey(EdcrRulesMdmsConstants.STATE, tenantId, zone, subZone, occupancyName, null, feature);
-	        List<Object> rules = cache.getRules(tenantId, key);
-			
-	        Optional<MdmsFeatureRule> matchedRule = rules.stream()
-	        	    .map(obj -> (MdmsFeatureRule) obj)
-	        	    .findFirst();
+		String tenantId = plan.getTenantId();
+		String zone = plan.getPlanInformation().getZone().toLowerCase();
+		String subZone = plan.getPlanInformation().getSubZone().toLowerCase();
+		String riskType = fetchEdcrRulesMdms.getRiskType(plan).toLowerCase();
 
-	        	if (matchedRule.isPresent()) {
-	        	    MdmsFeatureRule rule = matchedRule.get();
-	        	    roadWidthValue = rule.getPermissible();
-	        	} else {
-	        		roadWidthValue = BigDecimal.ZERO;
-	        	}
+		RuleKey key = new RuleKey(EdcrRulesMdmsConstants.STATE, tenantId, zone, subZone, occupancyName, null, feature);
+		List<Object> rules = cache.getRules(tenantId, key);
 
-		// Determine occupancy type from the FAR helper
-//		Map<String, Object> params = new HashMap<>();
-//		
-//
-//		params.put("feature", feature);
-//		params.put("occupancy", occupancyName);
-//
-//		Map<String,List<Map<String,Object>>> edcrRuleList = plan.getEdcrRulesFeatures();
-//
-//		ArrayList<String> valueFromColumn = new ArrayList<>();
-//		valueFromColumn.add(EdcrRulesMdmsConstants.PERMISSIBLE_VALUE);
-//
-//		List<Map<String, Object>> permissibleValue = new ArrayList<>();
-//
-//		// Fetch permissible value using MDMS service
-//		permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
-//		LOG.info("permissibleValue" + permissibleValue);
-//
-//		// Extract the road width value if present
-//		if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey(EdcrRulesMdmsConstants.PERMISSIBLE_VALUE)) {
-//			roadWidthValue = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.PERMISSIBLE_VALUE).toString()));
-//		}
+		Optional<MdmsFeatureRule> matchedRule = rules.stream().map(obj -> (MdmsFeatureRule) obj).findFirst();
 
-        // Assign retrieved value to all relevant occupancy codes
-        Map<String, BigDecimal> roadWidthValues = new HashMap<>();
-        roadWidthValues.put(B, roadWidthValue);
-        roadWidthValues.put(D, roadWidthValue);
-        roadWidthValues.put(G, roadWidthValue);
-        roadWidthValues.put(F, roadWidthValue);
-        roadWidthValues.put(F_RT, roadWidthValue);
-        roadWidthValues.put(F_CB, roadWidthValue);
-        return roadWidthValues;
+		if (matchedRule.isPresent()) {
+			MdmsFeatureRule rule = matchedRule.get();
+			roadWidthValue = rule.getPermissible();
+		} else {
+			roadWidthValue = BigDecimal.ZERO;
+		}
 
-    }
+		// Assign retrieved value to all relevant occupancy codes
+		Map<String, BigDecimal> roadWidthValues = new HashMap<>();
+		roadWidthValues.put(B, roadWidthValue);
+		roadWidthValues.put(D, roadWidthValue);
+		roadWidthValues.put(G, roadWidthValue);
+		roadWidthValues.put(F, roadWidthValue);
+		roadWidthValues.put(F_RT, roadWidthValue);
+		roadWidthValues.put(F_CB, roadWidthValue);
+		return roadWidthValues;
+
+	}
 }
 

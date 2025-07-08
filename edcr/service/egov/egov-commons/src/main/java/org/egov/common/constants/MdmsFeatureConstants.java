@@ -74,6 +74,14 @@ public class MdmsFeatureConstants {
     public static final String SIDE_YARD_SERVICE = "SideYardService";
     public static final String EDCR_MASTER_CONFIG = "EdcrMasterConfig";
     public static final String RISK_TYPE_COMPUTATION = "RiskTypeComputation"; 
+    public static final String RESIDENTIAL = "residential"; 
+    public static final String COMMERCIAL = "commercial"; 
+    public static final String APARTMENT_FLAT = "apartment/flat"; 
+    public static final String INDUSTRIAL = "industrial";
+    public static final String WINDOW = "Window";
+    public static final String ROOM_WISE_WINDOW_AREA = "Room Wise Window Area";
+    public static final String DOOR_VENTILATION = "Door Ventilation";
+    public static final String ROOM = "Room";
 
     // Private constructor to prevent instantiation
     private MdmsFeatureConstants() {

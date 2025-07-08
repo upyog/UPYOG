@@ -86,6 +86,15 @@ public abstract class FeatureProcess {
 	public static final String MIN_REQUIRED = "Min Required";
 	public static final String REQUIRED_ECS = "Required ECS";
 	public static final String REQUIRED_AREA = "Required Area";
+	public static final String COMMON_FAR = "Common_FAR";
+	public static final String COMMON_Guard_Room = "COMMON_Guard Room";
+	public static final String Common_Location_Plan = "Common_Location Plan";
+	public static final String Common_OverHead_Electric_Line = "Common_OverHead Electric Line";
+	public static final String Common_Plantation = "Common Plantation";
+	public static final String Common_Plot_Area = "Common_Plot Area";
+	public static final String Common_Rain_Water_Harvesting = "Common_Rain Water Harvesting";
+	public static final String Common_River_Distance = "Common_River Distance";
+	public static final String Common_Road_Width = "ommon_Road Width";
 	
 
 	public abstract Map<String, Date> getAmendments();

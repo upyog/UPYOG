@@ -128,68 +128,37 @@ public class WaterClosets extends FeatureProcess {
 		BigDecimal waterClosetsWidth = BigDecimal.ZERO;
 
 		// Fetch occupancy and feature type
-		
+
 		String feature = MdmsFeatureConstants.WATER_CLOSETS;
-		
-		
-		 String occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl).toLowerCase();
-	        String tenantId = pl.getTenantId();
-	        String zone = pl.getPlanInformation().getZone().toLowerCase();
-	        String subZone = pl.getPlanInformation().getSubZone().toLowerCase();
-	        String riskType = fetchEdcrRulesMdms.getRiskType(pl).toLowerCase();
-	        
-	        RuleKey key = new RuleKey(EdcrRulesMdmsConstants.STATE, tenantId, zone, subZone, occupancyName, null, feature);
-	        List<Object> rules = cache.getRules(tenantId, key);
-			
-	        Optional<MdmsFeatureRule> matchedRule = rules.stream()
-	        	    .map(obj -> (MdmsFeatureRule) obj)
-	        	    .findFirst();
+		String occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl).toLowerCase();
+		String tenantId = pl.getTenantId();
+		String zone = pl.getPlanInformation().getZone().toLowerCase();
+		String subZone = pl.getPlanInformation().getSubZone().toLowerCase();
+		String riskType = fetchEdcrRulesMdms.getRiskType(pl).toLowerCase();
 
-	        	if (matchedRule.isPresent()) {
-	        	    MdmsFeatureRule rule = matchedRule.get();
-	        	    waterClosetsVentilationArea = rule.getWaterClosetsVentilationArea();
-	        	    waterClosetsHeight = rule.getWaterClosetsHeight();
-	        	    waterClosetsArea = rule.getWaterClosetsArea();
-	        	    waterClosetsWidth = rule.getWaterClosetsWidth();
-	        	}
+		RuleKey key = new RuleKey(EdcrRulesMdmsConstants.STATE, tenantId, zone, subZone, occupancyName, null, feature);
+		List<Object> rules = cache.getRules(tenantId, key);
 
-		// Set occupancy to "Residential" if the most restrictive FAR is type "A"
-//		Map<String, Object> params = new HashMap<>();
-//		
-//		params.put("feature", feature);
-//		params.put("occupancy", occupancyName);
-//
-//		// Get list of rules from MDMS
-//		Map<String, List<Map<String, Object>>> edcrRuleList = pl.getEdcrRulesFeatures();
-//
-//		// Columns to fetch from MDMS
-//		ArrayList<String> valueFromColumn = new ArrayList<>();
-//		valueFromColumn.add(EdcrRulesMdmsConstants.WATER_CLOSETS_VENTILATION_AREA);
-//		valueFromColumn.add(EdcrRulesMdmsConstants.WATER_CLOSETS_HEIGHT);
-//		valueFromColumn.add(EdcrRulesMdmsConstants.WATER_CLOSETS_AREA);
-//		valueFromColumn.add(EdcrRulesMdmsConstants.WATER_CLOSETS_WIDTH);
-//
-//		// Fetch permissible values for each parameter
-//		List<Map<String, Object>> permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
-//		LOG.info("permissibleValue" + permissibleValue);
-//
-//		// If permissible values exist, assign them to local variables
-//		if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey(EdcrRulesMdmsConstants.WATER_CLOSETS_VENTILATION_AREA)) {
-//			waterClosetsVentilationArea = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.WATER_CLOSETS_VENTILATION_AREA).toString()));
-//			waterClosetsHeight = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.WATER_CLOSETS_HEIGHT).toString()));
-//			waterClosetsArea = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.WATER_CLOSETS_AREA).toString()));
-//			waterClosetsWidth = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.WATER_CLOSETS_WIDTH).toString()));
-//		}
+		Optional<MdmsFeatureRule> matchedRule = rules.stream().map(obj -> (MdmsFeatureRule) obj).findFirst();
+
+		if (matchedRule.isPresent()) {
+			MdmsFeatureRule rule = matchedRule.get();
+			waterClosetsVentilationArea = rule.getWaterClosetsVentilationArea();
+			waterClosetsHeight = rule.getWaterClosetsHeight();
+			waterClosetsArea = rule.getWaterClosetsArea();
+			waterClosetsWidth = rule.getWaterClosetsWidth();
+		}
+
 
 		// Loop through each block and floor in the plan
 		for (Block b : pl.getBlocks()) {
-			if (b.getBuilding() != null && b.getBuilding().getFloors() != null && !b.getBuilding().getFloors().isEmpty()) {
+			if (b.getBuilding() != null && b.getBuilding().getFloors() != null
+					&& !b.getBuilding().getFloors().isEmpty()) {
 				for (Floor f : b.getBuilding().getFloors()) {
 
 					// Check if floor has water closets with height and room data
 					if (f.getWaterClosets() != null && f.getWaterClosets().getHeights() != null
-							&& !f.getWaterClosets().getHeights().isEmpty()
-							&& f.getWaterClosets().getRooms() != null
+							&& !f.getWaterClosets().getHeights().isEmpty() && f.getWaterClosets().getRooms() != null
 							&& !f.getWaterClosets().getRooms().isEmpty()) {
 
 						// Calculate minimum height from available heights
@@ -218,8 +187,7 @@ public class WaterClosets extends FeatureProcess {
 								&& !f.getWaterClosetVentilation().getMeasurements().isEmpty()) {
 
 							BigDecimal totalVentilationArea = f.getWaterClosetVentilation().getMeasurements().stream()
-									.map(Measurement::getArea)
-									.reduce(BigDecimal.ZERO, BigDecimal::add);
+									.map(Measurement::getArea).reduce(BigDecimal.ZERO, BigDecimal::add);
 
 							if (totalVentilationArea.compareTo(waterClosetsVentilationArea) >= 0) {
 								details1.put(REQUIRED, waterClosetsVentilationArea.toString());
@@ -235,16 +203,19 @@ public class WaterClosets extends FeatureProcess {
 						}
 
 						// Final check: Validate dimensions against permissible values
-						if (minHeight.compareTo(waterClosetsHeight) >= 0
-								&& totalArea.compareTo(waterClosetsArea) >= 0
+						if (minHeight.compareTo(waterClosetsHeight) >= 0 && totalArea.compareTo(waterClosetsArea) >= 0
 								&& minWidth.compareTo(waterClosetsWidth) >= 0) {
 
-							details.put(REQUIRED, "Height >= " + waterClosetsHeight.toString() + ", Total Area >= " + waterClosetsArea.toString() + ", Width >= " + waterClosetsWidth.toString());
-							details.put(PROVIDED, "Height >= " + minHeight + ", Total Area >= " + totalArea + ", Width >= " + minWidth);
+							details.put(REQUIRED, "Height >= " + waterClosetsHeight.toString() + ", Total Area >= "
+									+ waterClosetsArea.toString() + ", Width >= " + waterClosetsWidth.toString());
+							details.put(PROVIDED, "Height >= " + minHeight + ", Total Area >= " + totalArea
+									+ ", Width >= " + minWidth);
 							details.put(STATUS, Result.Accepted.getResultVal());
 						} else {
-							details.put(REQUIRED, "Height >= " + waterClosetsHeight.toString() + ", Total Area >= " + waterClosetsArea.toString() + ", Width >= " + waterClosetsWidth.toString());
-							details.put(PROVIDED, "Height >= " + minHeight + ", Total Area >= " + totalArea + ", Width >= " + minWidth);
+							details.put(REQUIRED, "Height >= " + waterClosetsHeight.toString() + ", Total Area >= "
+									+ waterClosetsArea.toString() + ", Width >= " + waterClosetsWidth.toString());
+							details.put(PROVIDED, "Height >= " + minHeight + ", Total Area >= " + totalArea
+									+ ", Width >= " + minWidth);
 							details.put(STATUS, Result.Not_Accepted.getResultVal());
 						}
 

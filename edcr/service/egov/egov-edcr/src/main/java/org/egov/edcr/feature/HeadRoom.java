@@ -113,9 +113,8 @@ public class HeadRoom extends FeatureProcess {
 
         // Determine the occupancy type and feature for fetching permissible values
        
-        String feature = MdmsFeatureConstants.HEAD_ROOM;
-        
-    	 String occupancyName = fetchEdcrRulesMdms.getOccupancyName(plan).toLowerCase();
+            String feature = MdmsFeatureConstants.HEAD_ROOM; 
+    	    String occupancyName = fetchEdcrRulesMdms.getOccupancyName(plan).toLowerCase();
             String tenantId = plan.getTenantId();
             String zone = plan.getPlanInformation().getZone().toLowerCase();
             String subZone = plan.getPlanInformation().getSubZone().toLowerCase();
@@ -135,25 +134,6 @@ public class HeadRoom extends FeatureProcess {
             		HeadRoomValue = BigDecimal.ZERO;
             	}
 
-//        Map<String, Object> params = new HashMap<>();
-//        
-//        params.put("feature", feature);
-//        params.put("occupancy", occupancyName);
-//
-//        // Fetch permissible values for headroom
-//        Map<String, List<Map<String, Object>>> edcrRuleList = plan.getEdcrRulesFeatures();
-//        ArrayList<String> valueFromColumn = new ArrayList<>();
-//        valueFromColumn.add(EdcrRulesMdmsConstants.PERMISSIBLE_VALUE);
-//
-//        List<Map<String, Object>> permissibleValue = new ArrayList<>();
-//        permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
-//        LOG.info("permissibleValue" + permissibleValue);
-//
-//        if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey(EdcrRulesMdmsConstants.PERMISSIBLE_VALUE)) {
-//            HeadRoomValue = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.PERMISSIBLE_VALUE).toString()));
-//        } else {
-//            HeadRoomValue = BigDecimal.ZERO;
-//        }
 
         // Iterate through all blocks in the plan
         for (Block block : plan.getBlocks()) {

@@ -132,32 +132,7 @@ public class PorticoService extends FeatureProcess {
             	if (matchedRule.isPresent()) {
             	    MdmsFeatureRule rule = matchedRule.get();
             	    porticoServicePermissibleValue = rule.getPermissible();
-            	} 
-
-        // Prepare parameters for fetching MDMS values
-//        Map<String, Object> params = new HashMap<>();
-//        
-//        params.put("feature", feature);
-//        params.put("occupancy", occupancyName);
-//
-//        // Fetch the list of rules from the plan object
-//        Map<String, List<Map<String, Object>>> edcrRuleList = plan.getEdcrRulesFeatures();
-//
-//        // Specify the columns to fetch from the rules
-//        ArrayList<String> valueFromColumn = new ArrayList<>();
-//        valueFromColumn.add(EdcrRulesMdmsConstants.PERMISSIBLE_VALUE); // Permissible value for portico length
-//
-//        // Initialize a list to store permissible values
-//        List<Map<String, Object>> permissibleValue = new ArrayList<>();
-//
-//        // Fetch permissible values from MDMS
-//        permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
-//        LOG.info("permissibleValue" + permissibleValue); // Log the fetched permissible values
-//
-//        // Check if permissible values are available and update the permissible value for portico service
-//        if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey(EdcrRulesMdmsConstants.PERMISSIBLE_VALUE)) {
-//            porticoServicePermissibleValue = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.PERMISSIBLE_VALUE).toString()));
-//        }
+            	}
 
         // Iterate through all blocks in the plan
         for (Block block : plan.getBlocks()) {

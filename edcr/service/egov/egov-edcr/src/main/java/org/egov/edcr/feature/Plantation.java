@@ -66,6 +66,7 @@ import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.egov.common.constants.MdmsFeatureConstants;
 import org.egov.common.entity.edcr.MdmsFeatureRule;
 import org.egov.common.entity.edcr.Measurement;
 import org.egov.common.entity.edcr.Plan;
@@ -96,45 +97,45 @@ public class Plantation extends FeatureProcess {
     @Autowired
 	CacheManagerMdms cache;
     
-    @Override
-    public Plan process(Plan pl) {
-        validate(pl);
-        scrutinyDetail = new ScrutinyDetail();
-        scrutinyDetail.setKey("Common_Plantation");
-        scrutinyDetail.addColumnHeading(1, RULE_NO);
-        scrutinyDetail.addColumnHeading(2, DESCRIPTION);
-        scrutinyDetail.addColumnHeading(3, REQUIRED);
-        scrutinyDetail.addColumnHeading(4, PROVIDED);
-        scrutinyDetail.addColumnHeading(5, STATUS);
-        Map<String, String> details = new HashMap<>();
-        details.put(RULE_NO, RULE_32);
-        details.put(DESCRIPTION, PLANTATION_TREECOVER_DESCRIPTION);
+	@Override
+	public Plan process(Plan pl) {
+		validate(pl);
+		scrutinyDetail = new ScrutinyDetail();
+		scrutinyDetail.setKey(Common_Plantation);
+		scrutinyDetail.addColumnHeading(1, RULE_NO);
+		scrutinyDetail.addColumnHeading(2, DESCRIPTION);
+		scrutinyDetail.addColumnHeading(3, REQUIRED);
+		scrutinyDetail.addColumnHeading(4, PROVIDED);
+		scrutinyDetail.addColumnHeading(5, STATUS);
+		Map<String, String> details = new HashMap<>();
+		details.put(RULE_NO, RULE_32);
+		details.put(DESCRIPTION, PLANTATION_TREECOVER_DESCRIPTION);
 
-        BigDecimal totalArea = BigDecimal.ZERO;
-        BigDecimal plotArea = BigDecimal.ZERO;
-        BigDecimal plantationPer = BigDecimal.ZERO;
-        String type = "";
-        String subType = "";
-        if (pl.getPlantation() != null && pl.getPlantation().getPlantations() != null
-                && !pl.getPlantation().getPlantations().isEmpty()) {
-            for (Measurement m : pl.getPlantation().getPlantations()) {
-                totalArea = totalArea.add(m.getArea());
-            }
+		BigDecimal totalArea = BigDecimal.ZERO;
+		BigDecimal plotArea = BigDecimal.ZERO;
+		BigDecimal plantationPer = BigDecimal.ZERO;
+		String type = "";
+		String subType = "";
+		if (pl.getPlantation() != null && pl.getPlantation().getPlantations() != null
+				&& !pl.getPlantation().getPlantations().isEmpty()) {
+			for (Measurement m : pl.getPlantation().getPlantations()) {
+				totalArea = totalArea.add(m.getArea());
+			}
 
-            if (pl.getPlot() != null)
-                plotArea = pl.getPlot().getArea();
+			if (pl.getPlot() != null)
+				plotArea = pl.getPlot().getArea();
 
-            if (pl.getVirtualBuilding() != null && pl.getVirtualBuilding().getMostRestrictiveFarHelper() != null
-                    && pl.getVirtualBuilding().getMostRestrictiveFarHelper().getSubtype() != null) {
-                type = pl.getVirtualBuilding().getMostRestrictiveFarHelper().getType().getCode();
-                subType = pl.getVirtualBuilding().getMostRestrictiveFarHelper().getSubtype().getCode();
-            }
-            if (totalArea.intValue() > 0 && plotArea != null && plotArea.intValue() > 0)
-                plantationPer = totalArea.divide(plotArea, DECIMALDIGITS_MEASUREMENTS, ROUNDMODE_MEASUREMENTS);
-                
-                 
-            if ( A.equals(type) ||  A_AF.equals(subType)  || A_SA.equals(subType) || B.equals(type) || D.equals(type) || G.equals(type)) {
-            	
+			if (pl.getVirtualBuilding() != null && pl.getVirtualBuilding().getMostRestrictiveFarHelper() != null
+					&& pl.getVirtualBuilding().getMostRestrictiveFarHelper().getSubtype() != null) {
+				type = pl.getVirtualBuilding().getMostRestrictiveFarHelper().getType().getCode();
+				subType = pl.getVirtualBuilding().getMostRestrictiveFarHelper().getSubtype().getCode();
+			}
+			if (totalArea.intValue() > 0 && plotArea != null && plotArea.intValue() > 0)
+				plantationPer = totalArea.divide(plotArea, DECIMALDIGITS_MEASUREMENTS, ROUNDMODE_MEASUREMENTS);
+
+			if (A.equals(type) || A_AF.equals(subType) || A_SA.equals(subType) || B.equals(type) || D.equals(type)
+					|| G.equals(type)) {
+
 //                if (plantationPer.compareTo(new BigDecimal("0.10")) < 0) {
 //                    details.put(REQUIRED, ">= 10%");
 //                    details.put(PROVIDED, plantationPer.multiply(new BigDecimal(100)).toString() + "%");
@@ -148,74 +149,47 @@ public class Plantation extends FeatureProcess {
 //                    scrutinyDetail.getDetail().add(details);
 //                    pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
 //                }
-          //  } else {
-            	
-				
-				 String feature = "Plantation";
-				 BigDecimal plantation = BigDecimal.ZERO;
-				 BigDecimal percent;
-				 
-				
-					 String occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl).toLowerCase();
-				        String tenantId = pl.getTenantId();
-				        String zone = pl.getPlanInformation().getZone().toLowerCase();
-				        String subZone = pl.getPlanInformation().getSubZone().toLowerCase();
-				        String riskType = fetchEdcrRulesMdms.getRiskType(pl).toLowerCase();
-				        
-				        RuleKey key = new RuleKey(EdcrRulesMdmsConstants.STATE, tenantId, zone, subZone, occupancyName, null, feature);
-				        List<Object> rules = cache.getRules(tenantId, key);
-						
-				        Optional<MdmsFeatureRule> matchedRule = rules.stream()
-				        	    .map(obj -> (MdmsFeatureRule) obj)
-				        	    .findFirst();
+				// } else {
 
-				        	if (matchedRule.isPresent()) {
-				        	    MdmsFeatureRule rule = matchedRule.get();
-				        	    plantation = rule.getPermissible();
-				        	    percent = rule.getPercent();
-				        	} 
-//					
-//					Map<String, Object> params = new HashMap<>();
-//					
-//
-//					params.put("feature", feature);
-//					params.put("occupancy", occupancyName);
-//					
-//
-//					Map<String,List<Map<String,Object>>> edcrRuleList = pl.getEdcrRulesFeatures();
-//					
-//					ArrayList<String> valueFromColumn = new ArrayList<>();
-//					valueFromColumn.add("permissibleValue");
-//					valueFromColumn.add("percent");
-//
-//					List<Map<String, Object>> permissibleValue = new ArrayList<>();
-//
-//					permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
-//					System.out.println("permissibleValue");
-//
-//					if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey("permissibleValue")) {
-//						plantation = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get("permissibleValue").toString()));
-//						percent = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get("percent").toString()));
-//						System.out.println("perfff" + percent);
-//					}
-		
-                if (plantationPer.compareTo(plantation) >= 0) {
-                    details.put(REQUIRED, ">= 5%");
-                    details.put(PROVIDED, plantationPer.multiply(new BigDecimal(100)).toString() + "%");
-                    details.put(STATUS, Result.Accepted.getResultVal());
-                    scrutinyDetail.getDetail().add(details);
-                    pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
-                } else {
-                    details.put(REQUIRED, ">= 5%");
-                    details.put(PROVIDED, plantationPer.multiply(new BigDecimal(100)).toString() + "%");
-                    details.put(STATUS, Result.Not_Accepted.getResultVal());
-                    scrutinyDetail.getDetail().add(details);
-                    pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
-                }
-            }
-        }
-        return pl;
-    }
+				String feature = MdmsFeatureConstants.PLANTATION;
+				BigDecimal plantation = BigDecimal.ZERO;
+				BigDecimal percent;
+
+				String occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl).toLowerCase();
+				String tenantId = pl.getTenantId();
+				String zone = pl.getPlanInformation().getZone().toLowerCase();
+				String subZone = pl.getPlanInformation().getSubZone().toLowerCase();
+				String riskType = fetchEdcrRulesMdms.getRiskType(pl).toLowerCase();
+
+				RuleKey key = new RuleKey(EdcrRulesMdmsConstants.STATE, tenantId, zone, subZone, occupancyName, null,
+						feature);
+				List<Object> rules = cache.getRules(tenantId, key);
+
+				Optional<MdmsFeatureRule> matchedRule = rules.stream().map(obj -> (MdmsFeatureRule) obj).findFirst();
+
+				if (matchedRule.isPresent()) {
+					MdmsFeatureRule rule = matchedRule.get();
+					plantation = rule.getPermissible();
+					percent = rule.getPercent();
+				}
+
+				if (plantationPer.compareTo(plantation) >= 0) {
+					details.put(REQUIRED, ">= 5%");
+					details.put(PROVIDED, plantationPer.multiply(new BigDecimal(100)).toString() + "%");
+					details.put(STATUS, Result.Accepted.getResultVal());
+					scrutinyDetail.getDetail().add(details);
+					pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+				} else {
+					details.put(REQUIRED, ">= 5%");
+					details.put(PROVIDED, plantationPer.multiply(new BigDecimal(100)).toString() + "%");
+					details.put(STATUS, Result.Not_Accepted.getResultVal());
+					scrutinyDetail.getDetail().add(details);
+					pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+				}
+			}
+		}
+		return pl;
+	}
 
     @Override
     public Map<String, Date> getAmendments() {

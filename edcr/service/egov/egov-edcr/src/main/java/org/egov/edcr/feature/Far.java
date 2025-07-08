@@ -100,6 +100,7 @@ import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.egov.common.constants.MdmsFeatureConstants;
 import org.egov.common.entity.dcr.helper.OccupancyHelperDetail;
 import org.egov.common.entity.edcr.Block;
 import org.egov.common.entity.edcr.Building;
@@ -204,32 +205,7 @@ public class Far extends FeatureProcess {
 			pl.addError(PLOT_AREA, getLocaleMessage(OBJECTNOTDEFINED, PLOT_AREA));
 			
 		}
-		
-		// ArrayList<Map<String, Object>> edcrRulesFeatures = edcrRestService.getEdcrRules();
-		// Map<String, List<Map<String, Object>>> edcrRulesFeatures = fetchEdcrRulesMdms.getEdcrRules();
-		
-		cache.getEdcrRulesFromMdms();
-		 
-//		 Map<String, Map<String, List<Map<String, Object>>>> rulesMap = fetchEdcrRulesMdms.getEdcrRules();
-//
-//		 Map<String, List<Map<String, Object>>> mdmsStateData = rulesMap.get("state");
-//		 Map<String, List<Map<String, Object>>> mdmsCityData = rulesMap.get("city");
-//
-//		 
-//		 List<Map<String, Object>> masterConfig = mdmsStateData.get(MdmsFeatureConstants.EDCR_MASTER_CONFIG);
-//		    
-//		    ObjectMapper mapper = new ObjectMapper();
-//
-//		    List<EdcrMasterConfig> masterConfigs = masterConfig.stream()
-//		        .map(entry -> mapper.convertValue(entry, EdcrMasterConfig.class))
-//		        .collect(Collectors.toList());
-//
-//		    // Set this list to the pl object
-//	       pl.setEdcrStateRulesFeatures(mdmsStateData);
-//	       pl.setEdcrCityRulesFeatures(mdmsCityData);
-//	       pl.setMasterConfig(masterConfig);
-//	       pl.setEdcrMasterConfig(masterConfigs);
-//	      
+      
 		return pl;
 	}
 
@@ -240,9 +216,9 @@ public class Far extends FeatureProcess {
 		int errors = pl.getErrors().size();
 		System.out.println("hi inside process");
 		validate(pl);
-		
+
 		System.out.println("plotarea" + pl.getPlot().getArea());
-		
+
 		int validatedErrors = pl.getErrors().size();
 		if (validatedErrors > errors) {
 			System.out.println("hi inside error");
@@ -680,52 +656,55 @@ public class Far extends FeatureProcess {
 		pl.getFarDetails().setProvidedFar(providedFar.doubleValue());
 		String typeOfArea = pl.getPlanInformation().getTypeOfArea();
 		BigDecimal roadWidth = pl.getPlanInformation().getRoadWidth();
-		String feature = "Far";
+		String feature = MdmsFeatureConstants.FAR;
 
 		if (pl.getVirtualBuilding() != null && !pl.getVirtualBuilding().getOccupancyTypes().isEmpty()) {
-            List<String> occupancies = new ArrayList<>();
-            pl.getVirtualBuilding().getOccupancyTypes().forEach(occ -> {
-                if (occ.getType() != null)
-                    occupancies.add(occ.getType().getName());
-            });
-            Set<String> distinctOccupancies = new HashSet<>(occupancies);
-            pl.getPlanInformation()
-                    .setOccupancy(distinctOccupancies.stream().map(String::new).collect(Collectors.joining(",")));
-        }
-       
-       
-   
+			List<String> occupancies = new ArrayList<>();
+			pl.getVirtualBuilding().getOccupancyTypes().forEach(occ -> {
+				if (occ.getType() != null)
+					occupancies.add(occ.getType().getName());
+			});
+			Set<String> distinctOccupancies = new HashSet<>(occupancies);
+			pl.getPlanInformation()
+					.setOccupancy(distinctOccupancies.stream().map(String::new).collect(Collectors.joining(",")));
+		}
+
 		if (mostRestrictiveOccupancyType != null && StringUtils.isNotBlank(typeOfArea) && roadWidth != null
 				&& !processFarForSpecialOccupancy(pl, mostRestrictiveOccupancyType, providedFar, typeOfArea, roadWidth,
 						errorMsgs)) {
-			if ((mostRestrictiveOccupancyType.getType() != null
-					&& DxfFileConstants.A.equalsIgnoreCase(mostRestrictiveOccupancyType.getType().getCode()))
-					|| (mostRestrictiveOccupancyType.getSubtype() != null
-							&& (A_R.equalsIgnoreCase(mostRestrictiveOccupancyType.getSubtype().getCode())
-									|| A_AF.equalsIgnoreCase(mostRestrictiveOccupancyType.getSubtype().getCode())))) {
-				// extra parameter added plotArea by Bimal Kumar on 12 March 2024
+			/*
+			 * if ((mostRestrictiveOccupancyType.getType() != null &&
+			 * DxfFileConstants.A.equalsIgnoreCase(mostRestrictiveOccupancyType.getType().
+			 * getCode())) || (mostRestrictiveOccupancyType.getSubtype() != null &&
+			 * (A_R.equalsIgnoreCase(mostRestrictiveOccupancyType.getSubtype().getCode()) ||
+			 * A_AF.equalsIgnoreCase(mostRestrictiveOccupancyType.getSubtype().getCode()))))
+			 * {
+			 */
+			// extra parameter added plotArea by Bimal Kumar on 12 March 2024
 //				processFarResidential(pl, mostRestrictiveOccupancyType, providedFar, typeOfArea, roadWidth, errorMsgs,
 //						plotArea);
-				processFarResidential(pl, mostRestrictiveOccupancyType , providedFar, typeOfArea,
-						 roadWidth,  errorMsgs, feature, mostRestrictiveOccupancyType.getType().getName(), pl.getEdcrRulesFeatures());
-					
-			}
-			if (mostRestrictiveOccupancyType.getType() != null
-					&& (DxfFileConstants.G.equalsIgnoreCase(mostRestrictiveOccupancyType.getType().getCode())
-							|| DxfFileConstants.B.equalsIgnoreCase(mostRestrictiveOccupancyType.getType().getCode())
-							|| DxfFileConstants.D.equalsIgnoreCase(mostRestrictiveOccupancyType.getType().getCode()))) {
-				processFarForGBDOccupancy(pl, mostRestrictiveOccupancyType, providedFar, typeOfArea, roadWidth,
-						errorMsgs);
-			}
-			if (mostRestrictiveOccupancyType.getType() != null
-					&& DxfFileConstants.I.equalsIgnoreCase(mostRestrictiveOccupancyType.getType().getCode())) {
-				processFarHaazardous(pl, mostRestrictiveOccupancyType, providedFar, typeOfArea, roadWidth, errorMsgs);
-			}
-			if (mostRestrictiveOccupancyType.getType() != null
-					&& DxfFileConstants.F.equalsIgnoreCase(mostRestrictiveOccupancyType.getType().getCode())) {
-				processFarNonResidential(pl, mostRestrictiveOccupancyType, providedFar, typeOfArea, roadWidth,
-						errorMsgs);
-			}
+			processFarResidential(pl, mostRestrictiveOccupancyType, providedFar, typeOfArea, roadWidth, errorMsgs,
+					feature, mostRestrictiveOccupancyType.getType().getName());
+
+			// }
+			/*
+			 * if (mostRestrictiveOccupancyType.getType() != null &&
+			 * (DxfFileConstants.G.equalsIgnoreCase(mostRestrictiveOccupancyType.getType().
+			 * getCode()) ||
+			 * DxfFileConstants.B.equalsIgnoreCase(mostRestrictiveOccupancyType.getType().
+			 * getCode()) ||
+			 * DxfFileConstants.D.equalsIgnoreCase(mostRestrictiveOccupancyType.getType().
+			 * getCode()))) { processFarForGBDOccupancy(pl, mostRestrictiveOccupancyType,
+			 * providedFar, typeOfArea, roadWidth, errorMsgs); } if
+			 * (mostRestrictiveOccupancyType.getType() != null &&
+			 * DxfFileConstants.I.equalsIgnoreCase(mostRestrictiveOccupancyType.getType().
+			 * getCode())) { processFarHaazardous(pl, mostRestrictiveOccupancyType,
+			 * providedFar, typeOfArea, roadWidth, errorMsgs); } if
+			 * (mostRestrictiveOccupancyType.getType() != null &&
+			 * DxfFileConstants.F.equalsIgnoreCase(mostRestrictiveOccupancyType.getType().
+			 * getCode())) { processFarNonResidential(pl, mostRestrictiveOccupancyType,
+			 * providedFar, typeOfArea, roadWidth, errorMsgs); }
+			 */
 		}
 		ProcessPrintHelper.print(pl);
 		return pl;
@@ -1162,41 +1141,22 @@ public class Far extends FeatureProcess {
 //	
 	
 	private void processFarResidential(Plan pl, OccupancyTypeHelper occupancyType, BigDecimal far, String typeOfArea,
-			BigDecimal roadWidth, HashMap<String, String> errors, String feature, String occupancyName, Map<String, List<Map<String, Object>>> edcrRuleList) {
+			BigDecimal roadWidth, HashMap<String, String> errors, String feature, String occupancyName) {
 		
-		System.out.println("under processFarResidentoal");
-		System.out.println("+++++" );
-		// occupancyName = occupancyType.getType().getName();
-		System.out.println("+++++" + pl.getPlot().getArea());
-		
-		BigDecimal plotArea = pl.getPlot().getArea();
-		System.out.println("plotarea" + plotArea);
 	
-		BigDecimal permissibleFar = BigDecimal.ZERO;
-		
-//		Map<String, Object> params = new HashMap<>();
-		
-//		List<EdcrMasterConfig> masteConfig = pl.getEdcrMasterConfig();
-////		
-//		EdcrConfigUtil.ParamsAndColumns result = EdcrConfigUtil.buildParamsAndValues(
-//			    pl, feature, occupancyName, pl.getEdcrMasterConfig());
-//
-//		Map<String, Object> params = result.getParams();
-//		List<String> valueFromColumn = result.getValueFromColumn();
-//
-		List<Map<String, Object>> permissibleValue = new ArrayList<>();
+		BigDecimal plotArea = pl.getPlot().getArea();
+		BigDecimal permissibleFar = BigDecimal.ZERO;	
 		String tenantId = pl.getTenantId();
-//		System.out.println("listt" + pl.getEdcrRulesFeatures());
-//		
-//		
-//		String stateOrCityRule = fetchEdcrRulesMdms.getEdcrRuleSource(feature, masteConfig);
 		occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl).toLowerCase();
+		String zone = pl.getPlanInformation().getZone().toLowerCase();
+        String subZone = pl.getPlanInformation().getSubZone().toLowerCase();
+        String riskType = fetchEdcrRulesMdms.getRiskType(pl).toLowerCase();
 		
-		RuleKey cityaKey = new RuleKey(EdcrRulesMdmsConstants.STATE, tenantId, "x", "y", occupancyName, "low", feature);
-		List<Object> cityaRules = cache.getRules(tenantId, cityaKey);	
+		RuleKey key = new RuleKey(EdcrRulesMdmsConstants.STATE, tenantId, zone, subZone, occupancyName, riskType, feature);
+		List<Object> rules = cache.getRules(tenantId, key);	
 		
 		
-		Optional<MdmsFeatureRule> matchedRule = cityaRules.stream()
+		Optional<MdmsFeatureRule> matchedRule = rules.stream()
 			    .map(obj -> (MdmsFeatureRule) obj)
 			    .filter(rule -> plotArea.compareTo(rule.getFromPlotArea()) >= 0 &&
 			                    plotArea.compareTo(rule.getToPlotArea()) < 0)
@@ -1209,26 +1169,18 @@ public class Far extends FeatureProcess {
 		}
 		
 			try {
-	//	 permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(pl.getEdcrStateRulesFeatures(), params, valueFromColumn);
-
-			LOG.info("permissibleValue" + permissibleValue);
-			System.out.println("permis___+++" + permissibleValue);
+			LOG.info("permissibleValue" + permissibleFar);
+			System.out.println("permis___+++" + permissibleFar);
 		
 		}catch (NullPointerException e) {
-			
-			
+		
 			 LOG.error("Permissible Far not found--------", e);
 		}
 		
 		String expectedResult = StringUtils.EMPTY;
 		boolean isAccepted = false;
-		System.out.println("+++++" + occupancyName + plotArea + permissibleValue);
-      
-//		if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey("permissibleValue")) {
-//		    permissibleFar = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get("permissibleValue").toString())) ;
-//		}
+		
 
-		System.out.println("farrr+" + permissibleFar);
 		isAccepted = far.compareTo(permissibleFar) <= 0;
 		pl.getFarDetails().setPermissableFar(permissibleFar.doubleValue());
 		expectedResult = "<= " + permissibleFar;
@@ -1238,8 +1190,7 @@ public class Far extends FeatureProcess {
 		}
 
 	}
-//
-//
+
 	private void processFarNonResidential(Plan pl, OccupancyTypeHelper occupancyType, BigDecimal far, String typeOfArea,
 			BigDecimal roadWidth, HashMap<String, String> errors) {
 
@@ -1439,7 +1390,7 @@ public class Far extends FeatureProcess {
 		scrutinyDetail.addColumnHeading(5, PERMISSIBLE);
 		scrutinyDetail.addColumnHeading(6, PROVIDED);
 		scrutinyDetail.addColumnHeading(7, STATUS);
-		scrutinyDetail.setKey("Common_FAR");
+		scrutinyDetail.setKey(COMMON_FAR);
 
 		String actualResult = far.toString();
 
@@ -1459,8 +1410,8 @@ public class Far extends FeatureProcess {
 	private ScrutinyDetail getFarScrutinyDetail(String key) {
 		ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
 		scrutinyDetail.addColumnHeading(1, RULE_NO);
-		scrutinyDetail.addColumnHeading(2, "Area Type");
-		scrutinyDetail.addColumnHeading(3, "Road Width");
+		scrutinyDetail.addColumnHeading(2, AREA_TYPE);
+		scrutinyDetail.addColumnHeading(3, ROAD_WIDTH);
 		scrutinyDetail.addColumnHeading(4, PERMISSIBLE);
 		scrutinyDetail.addColumnHeading(5, PROVIDED);
 		scrutinyDetail.addColumnHeading(6, STATUS);

@@ -91,162 +91,128 @@ public class SegregatedToilet extends FeatureProcess {
         return pl; // No specific validation logic implemented
     }
 
-    @Override
-    public Plan process(Plan pl) {
+	@Override
+	public Plan process(Plan pl) {
 
-        // Scrutiny setup
-        ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
-        scrutinyDetail.setKey("Common_Segregated Toilet");
-        scrutinyDetail.addColumnHeading(1, RULE_NO);
-        scrutinyDetail.addColumnHeading(2, DESCRIPTION);
-        scrutinyDetail.addColumnHeading(3, REQUIRED);
-        scrutinyDetail.addColumnHeading(4, PROVIDED);
-        scrutinyDetail.addColumnHeading(5, STATUS);
+		// Scrutiny setup
+		ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
+		scrutinyDetail.setKey("Common_Segregated Toilet");
+		scrutinyDetail.addColumnHeading(1, RULE_NO);
+		scrutinyDetail.addColumnHeading(2, DESCRIPTION);
+		scrutinyDetail.addColumnHeading(3, REQUIRED);
+		scrutinyDetail.addColumnHeading(4, PROVIDED);
+		scrutinyDetail.addColumnHeading(5, STATUS);
 
-        Map<String, String> details = new HashMap<>();
-        details.put(RULE_NO, RULE_59_10);
+		Map<String, String> details = new HashMap<>();
+		details.put(RULE_NO, RULE_59_10);
 
-        // Variables for comparison and rules
-        BigDecimal minDimension = BigDecimal.ZERO;
-        BigDecimal maxHeightOfBuilding = BigDecimal.ZERO;
-        BigDecimal maxNumOfFloorsOfBuilding = BigDecimal.ZERO;
+		// Variables for comparison and rules
+		BigDecimal minDimension = BigDecimal.ZERO;
+		BigDecimal maxHeightOfBuilding = BigDecimal.ZERO;
+		BigDecimal maxNumOfFloorsOfBuilding = BigDecimal.ZERO;
 
-        BigDecimal sTValueOne = BigDecimal.ZERO;
-        BigDecimal sTValueTwo = BigDecimal.ZERO;
-        BigDecimal sTValueThree = BigDecimal.ZERO;
-        BigDecimal sTValueFour = BigDecimal.ZERO;
-        BigDecimal sTSegregatedToiletProvided = BigDecimal.ZERO;
-        BigDecimal sTSegregatedToiletRequired = BigDecimal.ZERO;
-        BigDecimal sTminDimensionRequired = BigDecimal.ZERO;
+		BigDecimal sTValueOne = BigDecimal.ZERO;
+		BigDecimal sTValueTwo = BigDecimal.ZERO;
+		BigDecimal sTValueThree = BigDecimal.ZERO;
+		BigDecimal sTValueFour = BigDecimal.ZERO;
+		BigDecimal sTSegregatedToiletProvided = BigDecimal.ZERO;
+		BigDecimal sTSegregatedToiletRequired = BigDecimal.ZERO;
+		BigDecimal sTminDimensionRequired = BigDecimal.ZERO;
 
-       
-        String feature = MdmsFeatureConstants.SEGREGATED_TOILET;
-      
-    	 String occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl).toLowerCase();
-            String tenantId = pl.getTenantId();
-            String zone = pl.getPlanInformation().getZone().toLowerCase();
-            String subZone = pl.getPlanInformation().getSubZone().toLowerCase();
-            String riskType = fetchEdcrRulesMdms.getRiskType(pl).toLowerCase();
-            
-            RuleKey key = new RuleKey(EdcrRulesMdmsConstants.STATE, tenantId, zone, subZone, occupancyName, null, feature);
-            List<Object> rules = cache.getRules(tenantId, key);
-    		
-            Optional<MdmsFeatureRule> matchedRule = rules.stream()
-            	    .map(obj -> (MdmsFeatureRule) obj)
-            	    .findFirst();
+		String feature = MdmsFeatureConstants.SEGREGATED_TOILET;
+		String occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl).toLowerCase();
+		String tenantId = pl.getTenantId();
+		String zone = pl.getPlanInformation().getZone().toLowerCase();
+		String subZone = pl.getPlanInformation().getSubZone().toLowerCase();
+		String riskType = fetchEdcrRulesMdms.getRiskType(pl).toLowerCase();
 
-            	if (matchedRule.isPresent()) {
-            	    MdmsFeatureRule rule = matchedRule.get();
-            	    sTValueOne = rule.getSTValueOne();
-            	    sTValueTwo = rule.getSTValueTwo();
-            	    sTValueThree = rule.getSTValueThree();
-            	    sTValueFour = rule.getSTValueFour();
-            	    sTSegregatedToiletRequired = rule.getSTSegregatedToiletRequired();
-            	    sTSegregatedToiletProvided = rule.getSTSegregatedToiletProvided();
-            	    sTminDimensionRequired = rule.getSTminDimensionRequired();
-            	} 
+		RuleKey key = new RuleKey(EdcrRulesMdmsConstants.STATE, tenantId, zone, subZone, occupancyName, null, feature);
+		List<Object> rules = cache.getRules(tenantId, key);
 
-        // Determine occupancy based on code (A = Residential)
-//        Map<String, Object> params = new HashMap<>();
-//       
-//        // Add params for MDMS fetch
-//        params.put("feature", feature);
-//        params.put("occupancy", occupancyName);
-//
-//        Map<String, List<Map<String, Object>>> edcrRuleList = pl.getEdcrRulesFeatures();
-//
-//        // List of column names to extract values from
-//        ArrayList<String> valueFromColumn = new ArrayList<>();
-//        valueFromColumn.add(EdcrRulesMdmsConstants.ST_VALUE_ONE);
-//        valueFromColumn.add(EdcrRulesMdmsConstants.ST_VALUE_TWO);
-//        valueFromColumn.add(EdcrRulesMdmsConstants.ST_VALUE_THREE);
-//        valueFromColumn.add(EdcrRulesMdmsConstants.ST_VALUE_FOUR);
-//        valueFromColumn.add(EdcrRulesMdmsConstants.ST_SEGREGATED_TOILET_REQUIRED);
-//        valueFromColumn.add(EdcrRulesMdmsConstants.ST_SEGREGATED_TOILET_PROVIDED);
-//        valueFromColumn.add(EdcrRulesMdmsConstants.ST_MIN_DIMENSION_REQUIRED);
-//
-//        // Fetch rule values from MDMS
-//        List<Map<String, Object>> permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
-//        LOG.info("permissibleValue" + permissibleValue);
-//
-//        // Extract values from result
-//        if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey(EdcrRulesMdmsConstants.ST_VALUE_ONE)) {
-//            sTValueOne = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.ST_VALUE_ONE).toString()));
-//            sTValueTwo = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.ST_VALUE_TWO).toString()));
-//            sTValueThree = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.ST_VALUE_THREE).toString()));
-//            sTValueFour = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.ST_VALUE_FOUR).toString()));
-//            sTSegregatedToiletRequired = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.ST_SEGREGATED_TOILET_REQUIRED).toString()));
-//            sTSegregatedToiletProvided = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.ST_SEGREGATED_TOILET_PROVIDED).toString()));
-//            sTminDimensionRequired = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.ST_MIN_DIMENSION_REQUIRED).toString()));
-//        }
+		Optional<MdmsFeatureRule> matchedRule = rules.stream().map(obj -> (MdmsFeatureRule) obj).findFirst();
 
-        // Find minimum distance from main entrance among all toilets
-        if (pl.getSegregatedToilet() != null && !pl.getSegregatedToilet().getDistancesToMainEntrance().isEmpty())
-            minDimension = pl.getSegregatedToilet().getDistancesToMainEntrance().stream().reduce(BigDecimal::min).get();
+		if (matchedRule.isPresent()) {
+			MdmsFeatureRule rule = matchedRule.get();
+			sTValueOne = rule.getSTValueOne();
+			sTValueTwo = rule.getSTValueTwo();
+			sTValueThree = rule.getSTValueThree();
+			sTValueFour = rule.getSTValueFour();
+			sTSegregatedToiletRequired = rule.getSTSegregatedToiletRequired();
+			sTSegregatedToiletProvided = rule.getSTSegregatedToiletProvided();
+			sTminDimensionRequired = rule.getSTminDimensionRequired();
+		}
+		// Find minimum distance from main entrance among all toilets
+		if (pl.getSegregatedToilet() != null && !pl.getSegregatedToilet().getDistancesToMainEntrance().isEmpty())
+			minDimension = pl.getSegregatedToilet().getDistancesToMainEntrance().stream().reduce(BigDecimal::min).get();
 
-        // Find the tallest building and one with the most floors
-        for (Block b : pl.getBlocks()) {
-            if (b.getBuilding().getBuildingHeight() != null && b.getBuilding().getBuildingHeight().compareTo(maxHeightOfBuilding) > 0) {
-                maxHeightOfBuilding = b.getBuilding().getBuildingHeight();
-            }
-            if (b.getBuilding().getFloorsAboveGround() != null
-                    && b.getBuilding().getFloorsAboveGround().compareTo(maxNumOfFloorsOfBuilding) > 0) {
-                maxNumOfFloorsOfBuilding = b.getBuilding().getFloorsAboveGround();
-            }
-        }
+		// Find the tallest building and one with the most floors
+		for (Block b : pl.getBlocks()) {
+			if (b.getBuilding().getBuildingHeight() != null
+					&& b.getBuilding().getBuildingHeight().compareTo(maxHeightOfBuilding) > 0) {
+				maxHeightOfBuilding = b.getBuilding().getBuildingHeight();
+			}
+			if (b.getBuilding().getFloorsAboveGround() != null
+					&& b.getBuilding().getFloorsAboveGround().compareTo(maxNumOfFloorsOfBuilding) > 0) {
+				maxNumOfFloorsOfBuilding = b.getBuilding().getFloorsAboveGround();
+			}
+		}
 
-        // Apply logic only if the rule is applicable based on occupancy type and limits
-        if (pl.getVirtualBuilding() != null && pl.getVirtualBuilding().getMostRestrictiveFarHelper() != null
-                && pl.getVirtualBuilding().getMostRestrictiveFarHelper().getType() != null
-                && (
-                    (DxfFileConstants.A.equals(pl.getVirtualBuilding().getMostRestrictiveFarHelper().getType().getCode())
-                        && maxHeightOfBuilding.compareTo(sTValueOne) >= 0)
-                    || ((DxfFileConstants.I.equals(pl.getVirtualBuilding().getMostRestrictiveFarHelper().getType().getCode())
-                        || DxfFileConstants.A.equals(pl.getVirtualBuilding().getMostRestrictiveFarHelper().getType().getCode())
-                        || DxfFileConstants.E.equals(pl.getVirtualBuilding().getMostRestrictiveFarHelper().getType().getCode()))
-                        && pl.getVirtualBuilding().getTotalBuitUpArea() != null
-                        && pl.getVirtualBuilding().getTotalBuitUpArea().compareTo(sTValueTwo) >= 0
-                        && maxNumOfFloorsOfBuilding.compareTo(sTValueThree) >= 0)
-                    || (DxfFileConstants.C.equals(pl.getVirtualBuilding().getMostRestrictiveFarHelper().getType().getCode())
-                        && pl.getVirtualBuilding().getTotalBuitUpArea() != null
-                        && pl.getVirtualBuilding().getTotalBuitUpArea().compareTo(sTValueFour) >= 0))) {
+		// Apply logic only if the rule is applicable based on occupancy type and limits
+		if (pl.getVirtualBuilding() != null && pl.getVirtualBuilding().getMostRestrictiveFarHelper() != null
+				&& pl.getVirtualBuilding().getMostRestrictiveFarHelper().getType() != null
+				&& ((DxfFileConstants.A
+						.equals(pl.getVirtualBuilding().getMostRestrictiveFarHelper().getType().getCode())
+						&& maxHeightOfBuilding.compareTo(sTValueOne) >= 0)
+						|| ((DxfFileConstants.I
+								.equals(pl.getVirtualBuilding().getMostRestrictiveFarHelper().getType().getCode())
+								|| DxfFileConstants.A.equals(
+										pl.getVirtualBuilding().getMostRestrictiveFarHelper().getType().getCode())
+								|| DxfFileConstants.E.equals(
+										pl.getVirtualBuilding().getMostRestrictiveFarHelper().getType().getCode()))
+								&& pl.getVirtualBuilding().getTotalBuitUpArea() != null
+								&& pl.getVirtualBuilding().getTotalBuitUpArea().compareTo(sTValueTwo) >= 0
+								&& maxNumOfFloorsOfBuilding.compareTo(sTValueThree) >= 0)
+						|| (DxfFileConstants.C
+								.equals(pl.getVirtualBuilding().getMostRestrictiveFarHelper().getType().getCode())
+								&& pl.getVirtualBuilding().getTotalBuitUpArea() != null
+								&& pl.getVirtualBuilding().getTotalBuitUpArea().compareTo(sTValueFour) >= 0))) {
 
-            // Check if segregated toilets are provided
-            if (pl.getSegregatedToilet() != null && pl.getSegregatedToilet().getSegregatedToilets() != null
-                    && !pl.getSegregatedToilet().getSegregatedToilets().isEmpty()) {
-                details.put(DESCRIPTION, SEGREGATEDTOILET_DESCRIPTION);
-                details.put(REQUIRED, sTSegregatedToiletRequired.toString());
-                details.put(PROVIDED, String.valueOf(pl.getSegregatedToilet().getSegregatedToilets().size()));
-                details.put(STATUS, Result.Accepted.getResultVal());
-            } else {
-                details.put(DESCRIPTION, SEGREGATEDTOILET_DESCRIPTION);
-                details.put(REQUIRED, sTSegregatedToiletRequired.toString());
-                details.put(PROVIDED, sTSegregatedToiletProvided.toString());
-                details.put(STATUS, Result.Not_Accepted.getResultVal());
-            }
+			// Check if segregated toilets are provided
+			if (pl.getSegregatedToilet() != null && pl.getSegregatedToilet().getSegregatedToilets() != null
+					&& !pl.getSegregatedToilet().getSegregatedToilets().isEmpty()) {
+				details.put(DESCRIPTION, SEGREGATEDTOILET_DESCRIPTION);
+				details.put(REQUIRED, sTSegregatedToiletRequired.toString());
+				details.put(PROVIDED, String.valueOf(pl.getSegregatedToilet().getSegregatedToilets().size()));
+				details.put(STATUS, Result.Accepted.getResultVal());
+			} else {
+				details.put(DESCRIPTION, SEGREGATEDTOILET_DESCRIPTION);
+				details.put(REQUIRED, sTSegregatedToiletRequired.toString());
+				details.put(PROVIDED, sTSegregatedToiletProvided.toString());
+				details.put(STATUS, Result.Not_Accepted.getResultVal());
+			}
 
-            scrutinyDetail.getDetail().add(details);
-            pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+			scrutinyDetail.getDetail().add(details);
+			pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
 
-            // Check if minimum dimension (distance to entrance) is satisfied
-            if (minDimension != null && minDimension.compareTo(sTminDimensionRequired) >= 0) {
-                details.put(DESCRIPTION, SEGREGATEDTOILET_DIMENSION_DESCRIPTION);
-                details.put(REQUIRED, ">= " + sTminDimensionRequired.toString());
-                details.put(PROVIDED, minDimension.toString());
-                details.put(STATUS, Result.Accepted.getResultVal());
-            } else {
-                details.put(DESCRIPTION, SEGREGATEDTOILET_DIMENSION_DESCRIPTION);
-                details.put(REQUIRED, ">= " + sTminDimensionRequired.toString());
-                details.put(PROVIDED, minDimension.toString());
-                details.put(STATUS, Result.Not_Accepted.getResultVal());
-            }
+			// Check if minimum dimension (distance to entrance) is satisfied
+			if (minDimension != null && minDimension.compareTo(sTminDimensionRequired) >= 0) {
+				details.put(DESCRIPTION, SEGREGATEDTOILET_DIMENSION_DESCRIPTION);
+				details.put(REQUIRED, ">= " + sTminDimensionRequired.toString());
+				details.put(PROVIDED, minDimension.toString());
+				details.put(STATUS, Result.Accepted.getResultVal());
+			} else {
+				details.put(DESCRIPTION, SEGREGATEDTOILET_DIMENSION_DESCRIPTION);
+				details.put(REQUIRED, ">= " + sTminDimensionRequired.toString());
+				details.put(PROVIDED, minDimension.toString());
+				details.put(STATUS, Result.Not_Accepted.getResultVal());
+			}
 
-            scrutinyDetail.getDetail().add(details);
-            pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
-        }
+			scrutinyDetail.getDetail().add(details);
+			pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+		}
 
-        return pl; // Return the processed plan
-    }
+		return pl; // Return the processed plan
+	}
 
     @Override
     public Map<String, Date> getAmendments() {

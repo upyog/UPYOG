@@ -128,32 +128,6 @@ public class Chimney extends FeatureProcess {
         // Variables to store permissible and actual chimney heights
         BigDecimal minHeight = BigDecimal.ZERO;
         BigDecimal chimneyVerifiedHeight = BigDecimal.ZERO;
-
-        // Determine the occupancy type and feature for fetching permissible values
-      
-       
-
-//        Map<String, Object> params = new HashMap<>();
-//        
-//
-//        params.put("feature", feature);
-//        params.put("occupancy", occupancyName);
-//
-//        // Fetch permissible values for chimney height
-//        Map<String, List<Map<String, Object>>> edcrRuleList = pl.getEdcrRulesFeatures();
-//        ArrayList<String> valueFromColumn = new ArrayList<>();
-//        valueFromColumn.add(EdcrRulesMdmsConstants.PERMISSIBLE_VALUE);
-//
-//        List<Map<String, Object>> permissibleValue = new ArrayList<>();
-//        permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
-//        LOG.info("permissibleValue" + permissibleValue);
-//
-//        if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey(EdcrRulesMdmsConstants.PERMISSIBLE_VALUE)) {
-//            chimneyVerifiedHeight = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.PERMISSIBLE_VALUE).toString()));
-//        } else {
-//            chimneyVerifiedHeight = BigDecimal.ZERO;
-//        }
-        
         String feature = MdmsFeatureConstants.CHIMNEY;
         String occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl).toLowerCase();
         String tenantId = pl.getTenantId();

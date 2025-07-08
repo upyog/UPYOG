@@ -124,7 +124,7 @@ public class OverheadElectricalLineService extends FeatureProcess {
 
         // Initialize scrutiny details for the report
         scrutinyDetail = new ScrutinyDetail();
-        scrutinyDetail.setKey("Common_OverHead Electric Line");
+        scrutinyDetail.setKey(Common_OverHead_Electric_Line);
         scrutinyDetail.addColumnHeading(1, RULE_NO);
         scrutinyDetail.addColumnHeading(2, DESCRIPTION);
         scrutinyDetail.addColumnHeading(3, REQUIRED);
@@ -160,42 +160,6 @@ public class OverheadElectricalLineService extends FeatureProcess {
 	     	   overheadVoltage_33000 = rule.getOverheadVoltage_33000();
 	     	  
 	     	} 
-
-//        Map<String, Object> params = new HashMap<>();
-//       
-//
-//        // Add feature and occupancy to the parameters map
-//        params.put("feature", feature);
-//        params.put("occupancy", occupancyName);
-//
-//        // Fetch the list of rules from the plan object
-//        Map<String, List<Map<String, Object>>> edcrRuleList = pl.getEdcrRulesFeatures();
-//
-//        // Specify the columns to fetch from the rules
-//        ArrayList<String> valueFromColumn = new ArrayList<>();
-//        valueFromColumn.add(EdcrRulesMdmsConstants.OVERHEAD_VERTICAL_DISTANCE_11000);
-//        valueFromColumn.add(EdcrRulesMdmsConstants.OVERHEAD_VERTICAL_DISTANCE_33000);
-//        valueFromColumn.add(EdcrRulesMdmsConstants.OVERHEAD_HORIZONTAL_DISTANCE_11000);
-//        valueFromColumn.add(EdcrRulesMdmsConstants.OVERHEAD_HORIZONTAL_DISTANCE_33000);
-//        valueFromColumn.add(EdcrRulesMdmsConstants.OVERHEAD_VOLTAGE_11000);
-//        valueFromColumn.add(EdcrRulesMdmsConstants.OVERHEAD_VOLTAGE_33000);
-//
-//        // Initialize a list to store permissible values
-//        List<Map<String, Object>> permissibleValue = new ArrayList<>();
-//
-//        // Fetch permissible values from MDMS
-//        permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
-//        LOG.info("permissibleValue" + permissibleValue); // Log the fetched permissible values
-//
-//        // Check if permissible values are available and update the class-level variables
-//        if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey(EdcrRulesMdmsConstants.OVERHEAD_VERTICAL_DISTANCE_11000)) {
-//            overheadVerticalDistance_11000 = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.OVERHEAD_VERTICAL_DISTANCE_11000).toString()));
-//            overheadVerticalDistance_33000 = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.OVERHEAD_VERTICAL_DISTANCE_33000).toString()));
-//            overheadHorizontalDistance_11000 = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.OVERHEAD_HORIZONTAL_DISTANCE_11000).toString()));
-//            overheadHorizontalDistance_33000 = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.OVERHEAD_HORIZONTAL_DISTANCE_33000).toString()));
-//            overheadVoltage_11000 = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.OVERHEAD_VOLTAGE_11000).toString()));
-//            overheadVoltage_33000 = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.OVERHEAD_VOLTAGE_33000).toString()));
-//        }
 
         // Iterate through all electric lines in the plan
         for (ElectricLine electricalLine : pl.getElectricLine()) {

@@ -51,30 +51,26 @@ import static org.egov.edcr.utility.DcrConstants.DECIMALDIGITS_MEASUREMENTS;
 import static org.egov.edcr.utility.DcrConstants.ROUNDMODE_MEASUREMENTS;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.egov.common.constants.MdmsFeatureConstants;
+import org.apache.logging.log4j.LogManager;
 import org.egov.common.entity.edcr.Block;
 import org.egov.common.entity.edcr.Floor;
-import org.egov.common.entity.edcr.MdmsFeatureRule;
 import org.egov.common.entity.edcr.OccupancyTypeHelper;
 import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.Result;
-import org.egov.common.entity.edcr.RuleKey;
 import org.egov.common.entity.edcr.ScrutinyDetail;
 import org.egov.common.entity.edcr.SetBack;
 import org.egov.common.entity.edcr.Yard;
 import org.egov.edcr.constants.DxfFileConstants;
-import org.egov.edcr.constants.EdcrRulesMdmsConstants;
-import org.egov.edcr.service.CacheManagerMdms;
+import org.egov.edcr.service.EdcrRestService;
 import org.egov.edcr.service.FetchEdcrRulesMdms;
 import org.egov.edcr.utility.DcrConstants;
 import org.egov.infra.utils.StringUtils;
@@ -84,7 +80,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class AdditionalFeature extends FeatureProcess {
-    private static final Logger LOG = LogManager.getLogger(AdditionalFeature_Citya.class);
+    private static final Logger LOG = LogManager.getLogger(AdditionalFeature.class);
 
     private static final String RULE_38 = "4.4.4 (ii)";
     private static final String RULE_39 = "39";
@@ -174,9 +170,6 @@ public class AdditionalFeature extends FeatureProcess {
 
     @Autowired
 	FetchEdcrRulesMdms fetchEdcrRulesMdms;
-    
-    @Autowired
-	CacheManagerMdms cache;
     
     @Override
     public Plan process(Plan pl) {
@@ -615,54 +608,37 @@ public class AdditionalFeature extends FeatureProcess {
             ScrutinyDetail scrutinyDetail = getNewScrutinyDetail("Block_" + blkNo + "_" + "Plinth");
             List<BigDecimal> plinthHeights = block.getPlinthHeight();
             
-           
+            String occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl);
 			
-			        String feature = MdmsFeatureConstants.PLINTH_HEIGHT;
-				    String occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl).toLowerCase();
-			        String tenantId = pl.getTenantId();
-			        String zone = pl.getPlanInformation().getZone().toLowerCase();
-			        String subZone = pl.getPlanInformation().getSubZone().toLowerCase();
-			        String riskType = fetchEdcrRulesMdms.getRiskType(pl).toLowerCase();
-			        
-			        RuleKey key = new RuleKey(EdcrRulesMdmsConstants.STATE, tenantId, zone, subZone, occupancyName, null, feature);
-			        List<Object> rules = cache.getRules(tenantId, key);
-					
-			        Optional<MdmsFeatureRule> matchedRule = rules.stream()
-			        	    .map(obj -> (MdmsFeatureRule) obj)
-			        	    .findFirst();
-
-			        	if (matchedRule.isPresent()) {
-			        	    MdmsFeatureRule rule = matchedRule.get();
-			        	    plintHeight = rule.getPermissible();
-			        	} 
+			 String feature = "plinthHeight";
 				
-//				Map<String, Object> params = new HashMap<>();
-//				
-//				params.put("feature", feature);
-//				params.put("occupancy", occupancyName);
-//			
-//				ArrayList<String> valueFromColumn = new ArrayList<>();
-//				valueFromColumn.add("permissibleValue");
-//
-//				List<Map<String, Object>> permissibleValue = new ArrayList<>();
-//
-//				Map<String,List<Map<String,Object>>> edcrRuleList = pl.getEdcrRulesFeatures();
-//				try {
-//					permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
-//					LOG.info("permissibleValue" + permissibleValue);
-//				
-//
-//				} catch (NullPointerException e) {
-//
-//					LOG.error("Permissible Value for Plinth height not found--------", e);
-//					return;
-//				}
-//
-//
-//				if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey("permissibleValue")) {
-//					plintHeight = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get("permissibleValue").toString()));
-//				}
-//	
+				Map<String, Object> params = new HashMap<>();
+				
+				params.put("feature", feature);
+				params.put("occupancy", occupancyName);
+			
+				ArrayList<String> valueFromColumn = new ArrayList<>();
+				valueFromColumn.add("permissibleValue");
+
+				List<Map<String, Object>> permissibleValue = new ArrayList<>();
+
+				Map<String,List<Map<String,Object>>> edcrRuleList = pl.getEdcrRulesFeatures();
+				try {
+					permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
+					LOG.info("permissibleValue" + permissibleValue);
+				
+
+				} catch (NullPointerException e) {
+
+					LOG.error("Permissible Value for Plinth height not found--------", e);
+					return;
+				}
+
+
+				if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey("permissibleValue")) {
+					plintHeight = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get("permissibleValue").toString()));
+				}
+	
 
             if (!plinthHeights.isEmpty()) {
                 minPlinthHeight = plinthHeights.stream().reduce(BigDecimal::min).get().setScale(2, BigDecimal.ROUND_HALF_UP);

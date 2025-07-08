@@ -68,6 +68,7 @@ import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.egov.common.constants.MdmsFeatureConstants;
 import org.egov.common.entity.edcr.Block;
 import org.egov.common.entity.edcr.Building;
 import org.egov.common.entity.edcr.MdmsFeatureRule;
@@ -317,67 +318,39 @@ public class RearYardService extends GeneralRule {
 		}
 
 	}
+
 	private Boolean processRearYard1(Plan pl, Block block, Integer level, final BigDecimal min, final BigDecimal mean,
 			final OccupancyTypeHelper mostRestrictiveOccupancy, RearYardResult rearYardResult, String subRule,
 			String rule, BigDecimal minVal, BigDecimal meanVal, BigDecimal depthOfPlot, Boolean valid,
-			String occupancyName,  Map<String, List<Map<String, Object>>>   edcrRuleList) {
-		
-		System.out.println("000" + edcrRuleList);
+			String occupancyName) {
 
-		
-		String feature = "RearSetBack";
-		
-			  occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl).toLowerCase();
-		        String tenantId = pl.getTenantId();
-		        String zone = pl.getPlanInformation().getZone().toLowerCase();
-		        String subZone = pl.getPlanInformation().getSubZone().toLowerCase();
-		        String riskType = fetchEdcrRulesMdms.getRiskType(pl).toLowerCase();
-		        BigDecimal plotArea = pl.getPlot().getArea();
-		        
-		        RuleKey key = new RuleKey(EdcrRulesMdmsConstants.STATE, tenantId, zone, subZone, occupancyName, null, feature);
-		        List<Object> rules = cache.getRules(tenantId, key);
-				
-		        Optional<MdmsFeatureRule> matchedRule = rules.stream()
-					    .map(obj -> (MdmsFeatureRule) obj)
-					    .filter(ruleMdms -> plotArea.compareTo(ruleMdms.getFromPlotArea()) >= 0 &&
-					                    plotArea.compareTo(ruleMdms.getToPlotArea()) < 0)
-					    .findFirst();
-		        
-		        	if (matchedRule.isPresent()) {
-		        	    MdmsFeatureRule mdmsRule = matchedRule.get();
-		        	    meanVal = mdmsRule.getPermissible();
-		        	} else {
-		        		meanVal = BigDecimal.ZERO;
-		        	}
+	
 
-//		Map<String, Object> params = new HashMap<>();
-//		
-//
-//		params.put("feature", feature);
-//		params.put("occupancy", occupancyName);
-//		params.put("depthOfPlot", depthOfPlot);
-//
-//		ArrayList<String> valueFromColumn = new ArrayList<>();
-//		valueFromColumn.add("permissibleValue");
-//
-//		List<Map<String, Object>> permissibleValue = new ArrayList<>();
-//
-//		try {
-//			permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
-//			LOG.info("permissibleValue" + permissibleValue);
-//			System.out.println("permis___ for RearYard+++" + permissibleValue);
-//
-//		} catch (NullPointerException e) {
-//
-//			LOG.error("Permissible Value for Rear Yard service not found--------", e);
-//			return null;
-//		}
-//
-//		if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey("permissibleValue")) {
-//			meanVal = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get("permissibleValue").toString()));
-//
-//		}
-		System.out.println("meanVllll" + meanVal);
+		String feature = MdmsFeatureConstants.REAR_SETBACK;
+
+		occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl).toLowerCase();
+		String tenantId = pl.getTenantId();
+		String zone = pl.getPlanInformation().getZone().toLowerCase();
+		String subZone = pl.getPlanInformation().getSubZone().toLowerCase();
+		String riskType = fetchEdcrRulesMdms.getRiskType(pl).toLowerCase();
+		BigDecimal plotArea = pl.getPlot().getArea();
+
+		RuleKey key = new RuleKey(EdcrRulesMdmsConstants.STATE, tenantId, zone, subZone, occupancyName, null, feature);
+		List<Object> rules = cache.getRules(tenantId, key);
+
+		Optional<MdmsFeatureRule> matchedRule = rules.stream().map(obj -> (MdmsFeatureRule) obj)
+				.filter(ruleMdms -> plotArea.compareTo(ruleMdms.getFromPlotArea()) >= 0
+						&& plotArea.compareTo(ruleMdms.getToPlotArea()) < 0)
+				.findFirst();
+
+		if (matchedRule.isPresent()) {
+			MdmsFeatureRule mdmsRule = matchedRule.get();
+			meanVal = mdmsRule.getPermissible();
+		} else {
+			meanVal = BigDecimal.ZERO;
+		}
+
+
 		/*
 		 * 
 		 * 
@@ -941,7 +914,7 @@ public class RearYardService extends GeneralRule {
 //			   occupancyName = "Government/Semi Government";
 //		}
 		valid = processRearYard1(pl, block, level, min, mean, mostRestrictiveOccupancy, rearYardResult, subRule, rule, minVal,
-				meanVal, depthOfPlot, valid, occupancyName, pl.getEdcrRulesFeatures());
+				meanVal, depthOfPlot, valid, occupancyName);
 		return valid;
 	}
 

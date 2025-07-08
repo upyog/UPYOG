@@ -117,33 +117,6 @@ public class PlantationGreenStrip extends FeatureProcess {
             	    plantationGreenStripMinWidth = rule.getPlantationGreenStripMinWidth();
             	} 
 
-        // Prepare parameters for fetching MDMS values
-//        Map<String, Object> params = new HashMap<>();
-//       
-//        params.put("feature", feature);
-//        params.put("occupancy", occupancyName);
-//
-//        // Fetch the list of rules from the plan object
-//        Map<String, List<Map<String, Object>>> edcrRuleList = pl.getEdcrRulesFeatures();
-//
-//        // Specify the columns to fetch from the rules
-//        ArrayList<String> valueFromColumn = new ArrayList<>();
-//        valueFromColumn.add(EdcrRulesMdmsConstants.PLANTATION_GREEN_STRIP_PLAN_VALUE); // Minimum plot area for plantation
-//        valueFromColumn.add(EdcrRulesMdmsConstants.PLANTATION_GREEN_STRIP_MIN_WIDTH); // Minimum width of plantation strip
-//
-//        // Initialize a list to store permissible values
-//        List<Map<String, Object>> permissibleValue = new ArrayList<>();
-//
-//        // Fetch permissible values from MDMS
-//        permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
-//        LOG.info("permissibleValue" + permissibleValue); // Log the fetched permissible values
-//
-//        // Check if permissible values are available and update the plantation green strip values
-//        if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey(EdcrRulesMdmsConstants.PLANTATION_GREEN_STRIP_PLAN_VALUE)) {
-//            plantationGreenStripPlanValue = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.PLANTATION_GREEN_STRIP_PLAN_VALUE).toString()));
-//            plantationGreenStripMinWidth = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.PLANTATION_GREEN_STRIP_MIN_WIDTH).toString()));
-//        }
-
         // Check if the plot area exceeds the minimum required area for plantation
         if (pl.getPlot() != null && pl.getPlot().getArea().compareTo(plantationGreenStripPlanValue) > 0) {
             // Iterate through all blocks in the plan

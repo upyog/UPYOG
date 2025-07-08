@@ -62,6 +62,7 @@ import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.egov.common.constants.MdmsFeatureConstants;
 import org.egov.common.entity.edcr.Block;
 import org.egov.common.entity.edcr.Floor;
 import org.egov.common.entity.edcr.MdmsFeatureRule;
@@ -328,12 +329,12 @@ public class Parking extends FeatureProcess {
         Double ecs = 0d;
         String occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl).toLowerCase();
 		String subOccupancyName = null;
-		String featureName = "Parking";
+		String featureName = MdmsFeatureConstants.PARKING;
 		if (mostRestrictiveOccupancy != null && A.equals(mostRestrictiveOccupancy.getType().getCode())
 				) {
 			// multi family residential
-			occupancyName = "residential";
-			subOccupancyName = "Apartment/Flat";
+			occupancyName = MdmsFeatureConstants.RESIDENTIAL;
+			subOccupancyName = MdmsFeatureConstants.APARTMENT_FLAT;
 		}else {
 			occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl).toLowerCase();
 		}
@@ -360,46 +361,8 @@ public class Parking extends FeatureProcess {
 	     		noOfrequiredParking = BigDecimal.ZERO.doubleValue();
 	     	}
 
-//        Map<String, Object> params = new HashMap<>();
-//		params.put("feature", featureName);
-//		params.put("occupancy", occupancyName);
-//		params.put("plotArea", plotArea);
-//		if (subOccupancyName != null && !subOccupancyName.equals("")) {
-//		    params.put("subOccupancy", subOccupancyName);
-//		}
-
-		
-		
-
-//		ArrayList<String> valueFromColumn = new ArrayList<>();
-//		valueFromColumn.add("permissibleValue");
-//
-//		List<Map<String, Object>> permissibleValue = new ArrayList<>();
-//		
-//		Map<String, List<Map<String, Object>>> edcrRuleList = pl.getEdcrRulesFeatures();
-//		
-//		double requiredEcs = 0d;
-//		
-//		
-//		try {
-//			permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
-//			LOGGER.info("permissibleValue" + permissibleValue);
-//			
-//
-//		} catch (NullPointerException e) {
-//
-//			LOGGER.error("Permissible Value for Parking not found--------", e);
-//			return;
-//		}
-
-//		if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey("permissibleValue")) {
-//			noOfrequiredParking = Double.valueOf(permissibleValue.get(0).get("permissibleValue").toString());
-//		}
-
-		// noOfrequiredParking =  BigDecimal.valueOf(noOfrequiredParking).setScale(0, RoundingMode.UP).doubleValue();
- 
         if (mostRestrictiveOccupancy != null && A.equals(mostRestrictiveOccupancy.getType().getCode())) {
-//            if (plotArea != null && plotArea.doubleValue() < 100) {
+/*            if (plotArea != null && plotArea.doubleValue() < 100) {
 //                requiredCarParkArea += 2.5;
 //            } 
 //            else if (plotArea != null && plotArea.doubleValue() >= 100 && plotArea.doubleValue() <= 150) {
@@ -408,7 +371,7 @@ public class Parking extends FeatureProcess {
 //                noOfrequiredParking +=  2;
 //            } else if (plotArea != null && plotArea.doubleValue() >= 200) {
 //                noOfrequiredParking +=  3;
-//            }
+          } */
             if (openParkingArea.doubleValue() > 0) {
                 requiredCarParkArea += ecs * noOfrequiredParking;
             } else if (stiltParkingArea.doubleValue() > 0) {

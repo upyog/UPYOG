@@ -118,32 +118,8 @@ public class Solar extends FeatureProcess {
 	        	    solarValueOne = rule.getSolarValueOne();
 	        	    solarValueTwo = rule.getSolarValueTwo();
 	        	} 
-//        Map<String, Object> params = new HashMap<>();
-//        
-//        // Check occupancy type (only A i.e., residential considered here)
-//       
-//        params.put("feature", feature);
-//        params.put("occupancy", occupancyName);
-//
-//        Map<String, List<Map<String, Object>>> edcrRuleList = pl.getEdcrRulesFeatures();
-//
-//        // Define rule fields to fetch
-//        ArrayList<String> valueFromColumn = new ArrayList<>();
-//        valueFromColumn.add(EdcrRulesMdmsConstants.SOLAR_VALUE_ONE);
-//        valueFromColumn.add(EdcrRulesMdmsConstants.SOLAR_VALUE_TWO);
-//
-//		List<Map<String, Object>> permissibleValue = new ArrayList<>();
-//		
-//		// Fetch values from MDMS
-//		permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
-//		LOG.info("permissibleValue" + permissibleValue);
-//
-//        // Extract and assign values if present
-//        if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey(EdcrRulesMdmsConstants.SOLAR_VALUE_ONE)) {
-//        	solarValueOne = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.SOLAR_VALUE_ONE).toString()));
-//        	solarValueTwo = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.SOLAR_VALUE_TWO).toString()));
-//		}
-//        
+
+        
         // Return the values in a map
         Map<String, BigDecimal> solarValues = new HashMap<>();
         solarValues.put("solarValueOne", solarValueOne);

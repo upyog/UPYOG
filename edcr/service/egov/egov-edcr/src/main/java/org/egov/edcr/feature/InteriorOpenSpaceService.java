@@ -153,38 +153,6 @@ public class InteriorOpenSpaceService extends FeatureProcess {
             	    minVentilationWidthValueTwo = rule.getMinVentilationWidthValueOne();
             	}
 
-        // Determine the occupancy type for fetching permissible values
-       // Map<String, Object> params = new HashMap<>();
-        
-//        params.put("feature", feature);
-//        params.put("occupancy", occupancyName);
-//
-//        // Fetch permissible values for interior open spaces
-//        Map<String, List<Map<String, Object>>> edcrRuleList = pl.getEdcrRulesFeatures();
-//        ArrayList<String> valueFromColumn = new ArrayList<>();
-//        valueFromColumn.add(EdcrRulesMdmsConstants.MIN_INTERIOR_AREA_VALUE_ONE);
-//        valueFromColumn.add(EdcrRulesMdmsConstants.MIN_INTERIOR_AREA_VALUE_TWO);
-//        valueFromColumn.add(EdcrRulesMdmsConstants.MIN_INTERIOR_WIDTH_VALUE_ONE);
-//        valueFromColumn.add(EdcrRulesMdmsConstants.MIN_INTERIOR_WIDTH_VALUE_TWO);
-//        valueFromColumn.add(EdcrRulesMdmsConstants.MIN_VENTILATION_AREA_VALUE_ONE);
-//        valueFromColumn.add(EdcrRulesMdmsConstants.MIN_VENTILATION_AREA_VALUE_TWO);
-//        valueFromColumn.add(EdcrRulesMdmsConstants.MIN_VENTILATION_WIDTH_VALUE_ONE);
-//        valueFromColumn.add(EdcrRulesMdmsConstants.MIN_VENTILATION_WIDTH_VALUE_TWO);
-//
-//        List<Map<String, Object>> permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
-//        LOG.info("permissibleValue" + permissibleValue);
-//
-//        if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey(EdcrRulesMdmsConstants.MIN_INTERIOR_AREA_VALUE_ONE)) {
-//            minInteriorAreaValueOne = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.MIN_INTERIOR_AREA_VALUE_ONE).toString()));
-//            minInteriorAreaValueTwo = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.MIN_INTERIOR_AREA_VALUE_TWO).toString()));
-//            minInteriorWidthValueOne = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.MIN_INTERIOR_WIDTH_VALUE_ONE).toString()));
-//            minInteriorWidthValueTwo = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.MIN_INTERIOR_WIDTH_VALUE_TWO).toString()));
-//            minVentilationAreaValueOne = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.MIN_VENTILATION_AREA_VALUE_ONE).toString()));
-//            minVentilationAreaValueTwo = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.MIN_VENTILATION_AREA_VALUE_TWO).toString()));
-//            minVentilationWidthValueOne = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.MIN_VENTILATION_WIDTH_VALUE_ONE).toString()));
-//            minVentilationWidthValueTwo = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.MIN_VENTILATION_WIDTH_VALUE_TWO).toString()));
-//        }
-//
         // Iterate through all blocks in the plan
         for (Block b : pl.getBlocks()) {
             ScrutinyDetail scrutinyDetail = new ScrutinyDetail();

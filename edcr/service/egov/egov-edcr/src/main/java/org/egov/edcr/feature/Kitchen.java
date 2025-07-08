@@ -61,6 +61,7 @@ import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.egov.common.constants.MdmsFeatureConstants;
 import org.egov.common.entity.edcr.Block;
 import org.egov.common.entity.edcr.Floor;
 import org.egov.common.entity.edcr.MdmsFeatureRule;
@@ -204,7 +205,7 @@ public class Kitchen extends FeatureProcess {
                                     
                                     
                 					
-               					    String feature = "Kitchen";
+               					    String feature = MdmsFeatureConstants.KITCHEN;
                					
                					    String occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl).toLowerCase();
                				        String tenantId = pl.getTenantId();
@@ -227,51 +228,6 @@ public class Kitchen extends FeatureProcess {
 	               				        	kitchenStoreArea = rule.getKitchenStoreArea();
 	               				        	kitchenStoreWidth = rule.getKitchenStoreWidth();
                				        	} 
-//               						Map<String, Object> params = new HashMap<>();
-//               						
-//
-//               						params.put("feature", feature);
-//               						params.put("occupancy", occupancyName);
-//               						
-//
-//               						Map<String,List<Map<String,Object>>> edcrRuleList = pl.getEdcrRulesFeatures();
-//               						
-//               						ArrayList<String> valueFromColumn = new ArrayList<>();
-//               						valueFromColumn.add("permissibleValue");
-//               						valueFromColumn.add("kitchenHeight");
-//               						valueFromColumn.add("kitchenArea");
-//               						valueFromColumn.add("kitchenWidth");
-//               						valueFromColumn.add("kitchenStoreArea");
-//               						valueFromColumn.add("kitchenStoreWidth");
-//               						valueFromColumn.add("kitchenDiningWidth");
-//               						valueFromColumn.add("kitchenDiningArea");
-//               						
-//
-//               						List<Map<String, Object>> permissibleValue = new ArrayList<>();
-//
-//               						try {
-//               							permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
-//               							LOG.info("permissibleValue" + permissibleValue);
-//               						
-//
-//               						} catch (NullPointerException e) {
-//
-//               							LOG.error("Permissible Value for Kitchen not found--------", e);
-//               							return null;
-//               						}
-//
-//
-//               						if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey("kitchenHeight")) {
-//               							kitchenHeight = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get("kitchenHeight").toString()));
-//               							kitchenArea = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get("kitchenArea").toString()));
-//               							kitchenWidth = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get("kitchenWidth").toString()));
-//               							kitchenStoreArea = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get("kitchenStoreArea").toString()));
-//               							kitchenStoreWidth = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get("kitchenStoreWidth").toString()));
-//               							kitchenDiningWidth = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get("kitchenDiningWidth").toString()));
-//               							kitchenDiningArea = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get("kitchenDiningArea").toString()));
-//               							
-//               						}
-//               			
 
                                    // minimumHeight = MINIMUM_HEIGHT_2_75;
                                     subRule = SUBRULE_41_III;

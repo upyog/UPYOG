@@ -158,36 +158,7 @@ public class BathRoomWaterClosets extends FeatureProcess {
         	    bathroomWCRequiredWidth = rule.getBathroomWCRequiredWidth();
         	    bathroomWCRequiredHeight = rule.getBathroomWCRequiredHeight();
         	    
-        	} 
-
-//        Map<String, Object> params = new HashMap<>();
-//        
-//        params.put("feature", feature);
-//        params.put("occupancy", occupancyName);
-//
-//        // Fetch permissible values for bathroom water closets dimensions
-//        Map<String, List<Map<String, Object>>> edcrRuleList = pl.getEdcrRulesFeatures();
-//        ArrayList<String> valueFromColumn = new ArrayList<>();
-//        valueFromColumn.add(EdcrRulesMdmsConstants.BATHROOM_WC_REQUIRED_AREA);
-//        valueFromColumn.add(EdcrRulesMdmsConstants.BATHROOM_WC_REQUIRED_WIDTH);
-//        valueFromColumn.add(EdcrRulesMdmsConstants.BATHROOM_WC_REQUIRED_HEIGHT);
-//
-//        List<Map<String, Object>> permissibleValue = new ArrayList<>();
-//
-//        try {
-//            permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
-//            LOG.info("permissibleValue" + permissibleValue);
-//        } catch (NullPointerException e) {
-//            LOG.error("Permissible Value for BathroomWaterClosets not found--------", e);
-//            return null;
-//        }
-//
-//        // Extract permissible values if available
-//        if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey(EdcrRulesMdmsConstants.BATHROOM_WC_REQUIRED_AREA)) {
-//            bathroomWCRequiredArea = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.BATHROOM_WC_REQUIRED_AREA).toString()));
-//            bathroomWCRequiredWidth = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.BATHROOM_WC_REQUIRED_WIDTH).toString()));
-//            bathroomWCRequiredHeight = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.BATHROOM_WC_REQUIRED_HEIGHT).toString()));
-//        }
+        	}
 
         // Iterate through all blocks in the plan
         for (Block b : pl.getBlocks()) {

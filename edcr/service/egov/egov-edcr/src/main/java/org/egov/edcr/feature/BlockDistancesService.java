@@ -278,37 +278,6 @@ public class BlockDistancesService extends FeatureProcess {
         BigDecimal maxHeight = blkHeights.stream().reduce(BigDecimal::max).get();
 
         BigDecimal blockDistanceServiceValue = BigDecimal.ZERO;
-
-        // Fetch permissible values for block distances
-//        String occupancyName = null;
-//        String feature = MdmsFeatureConstants.BLOCK_DISTANCES_SERVICE;
-//        Map<String, Object> params = new HashMap<>();
-//        if (DxfFileConstants.A.equals(pl.getVirtualBuilding().getMostRestrictiveFarHelper().getType().getCode())) {
-//            occupancyName = "Residential";
-//        }
-//        params.put("feature", feature);
-//        params.put("occupancy", occupancyName);
-//
-//        Map<String, List<Map<String, Object>>> edcrRuleList = pl.getEdcrRulesFeatures();
-//        ArrayList<String> valueFromColumn = new ArrayList<>();
-//        valueFromColumn.add(EdcrRulesMdmsConstants.PERMISSIBLE_VALUE);
-//
-//        List<Map<String, Object>> permissibleValue = new ArrayList<>();
-//        try {
-//            permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
-//            LOG.info("permissibleValue" + permissibleValue);
-//        } catch (NullPointerException e) {
-//            LOG.error("Permissible Value for BlockDistancesService not found--------", e);
-//        }
-//
-//        if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey(EdcrRulesMdmsConstants.PERMISSIBLE_VALUE)) {
-//            blockDistanceServiceValue = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.PERMISSIBLE_VALUE).toString()));
-//        } else {
-//            blockDistanceServiceValue = BigDecimal.ZERO;
-//        }
-//        
-       
-        
         String feature = MdmsFeatureConstants.BLOCK_DISTANCES_SERVICE;
         String occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl).toLowerCase();
         String tenantId = pl.getTenantId();
@@ -328,8 +297,6 @@ public class BlockDistancesService extends FeatureProcess {
         	} else {
         	    blockDistanceServiceValue = BigDecimal.ZERO;
         	}
-
-
 
         ArrayList<BigDecimal> setBacksValues = new ArrayList<>();
         setBacksValues.add(blockDistanceServiceValue);

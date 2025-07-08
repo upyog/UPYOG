@@ -48,25 +48,27 @@
 package org.egov.edcr.feature;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.egov.common.constants.MdmsFeatureConstants;
 import org.egov.common.entity.edcr.Block;
 import org.egov.common.entity.edcr.Floor;
+import org.egov.common.entity.edcr.MdmsFeatureRule;
 import org.egov.common.entity.edcr.Measurement;
 import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.Result;
 import org.egov.common.entity.edcr.RoomHeight;
+import org.egov.common.entity.edcr.RuleKey;
 import org.egov.common.entity.edcr.ScrutinyDetail;
-import org.egov.edcr.constants.DxfFileConstants;
 import org.egov.edcr.constants.EdcrRulesMdmsConstants;
+import org.egov.edcr.service.CacheManagerMdms;
 import org.egov.edcr.service.FetchEdcrRulesMdms;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -85,6 +87,9 @@ public class BathRoom extends FeatureProcess {
 
     @Autowired
     FetchEdcrRulesMdms fetchEdcrRulesMdms;
+    
+    @Autowired
+	CacheManagerMdms cache;
 
     @Override
     public Plan validate(Plan pl) {
@@ -118,36 +123,27 @@ public class BathRoom extends FeatureProcess {
             if (b.getBuilding() != null && b.getBuilding().getFloors() != null
                     && !b.getBuilding().getFloors().isEmpty()) {
 
-            	String occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl);
-                String feature = MdmsFeatureConstants.BATHROOM;
+            	
+            																												
+                    String feature = MdmsFeatureConstants.BATHROOM;        
+            	    String occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl).toLowerCase();
+                    String tenantId = pl.getTenantId();
+                    String zone = pl.getPlanInformation().getZone().toLowerCase();
+                    String subZone = pl.getPlanInformation().getSubZone().toLowerCase();
+                    String riskType = fetchEdcrRulesMdms.getRiskType(pl).toLowerCase();
+                    
+                    RuleKey key = new RuleKey(EdcrRulesMdmsConstants.STATE, tenantId, zone, subZone, occupancyName, null, feature);
+                    List<Object> rules = cache.getRules(tenantId, key);
+            		
+                    Optional<MdmsFeatureRule> matchedRule = rules.stream()
+                    	    .map(obj -> (MdmsFeatureRule) obj)
+                    	    .findFirst();
 
-                // Prepare parameters for fetching permissible values
-                Map<String, Object> params = new HashMap<>();
-               
-                params.put("feature", feature);
-                params.put("occupancy", occupancyName);
-
-                // Fetch permissible values for bathroom dimensions
-                Map<String, List<Map<String, Object>>> edcrRuleList = pl.getEdcrRulesFeatures();
-                ArrayList<String> valueFromColumn = new ArrayList<>();
-                valueFromColumn.add(EdcrRulesMdmsConstants.BATHROOM_TOTAL_AREA);
-                valueFromColumn.add(EdcrRulesMdmsConstants.BATHROOM_MIN_WIDTH);
-
-                List<Map<String, Object>> permissibleValue = new ArrayList<>();
-                try {
-                    permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
-                    LOG.info("permissibleValue" + permissibleValue);
-                } catch (NullPointerException e) {
-                    LOG.error("Permissible Value for Bathroom not found--------", e);
-                    return null;
-                }
-
-                // Extract permissible values if available
-                if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey(EdcrRulesMdmsConstants.BATHROOM_TOTAL_AREA)) {
-                    bathroomtotalArea = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.BATHROOM_TOTAL_AREA).toString()));
-                    bathroomMinWidth = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.BATHROOM_MIN_WIDTH).toString()));
-                }
-
+                    	if (matchedRule.isPresent()) {
+                    	    MdmsFeatureRule rule = matchedRule.get();
+                    	    bathroomtotalArea = rule.getBathroomtotalArea();
+                    	    bathroomMinWidth = rule.getBathroomMinWidth();
+                    	}
                 // Iterate through all floors in the block
                 for (Floor f : b.getBuilding().getFloors()) {
                     if (f.getBathRoom() != null && f.getBathRoom().getHeights() != null

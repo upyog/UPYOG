@@ -4,13 +4,16 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.egov.common.entity.edcr.MdmsFeatureRule;
 import org.egov.common.entity.edcr.MdmsResponse;
+import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.RuleKey;
 import org.egov.commons.mdms.BpaMdmsUtil;
+import org.egov.commons.mdms.config.MdmsConfiguration;
 import org.egov.edcr.constants.EdcrRulesMdmsConstants;
 import org.egov.infra.microservice.models.RequestInfo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,50 +29,37 @@ public class CacheManagerMdms {
 
 	@Autowired
 	private BpaMdmsUtil bpaMdmsUtil;
-
+	
 	private static Logger LOG = LogManager.getLogger(CacheManagerMdms.class);
 
 	Map<String, Map<RuleKey, List<Object>>> ruleMap;
 	Map<String, Map<RuleKey, List<Object>>> cityRuleCache = new HashMap<>();
 
-	
-	public void getEdcrRulesFromMdms() {
-		LOG.info("Entered getEdcrRules method");
-		
-		RuleKey cityaKey = new RuleKey("pg", "citya", "x", "y", "commercial", "low", "Far");
-		RuleKey citybKey = new RuleKey("pg", "cityb", "a", "b", "commercial", "low", "Far");
-		RuleKey Key3 = new RuleKey("pg", "citya", null, null, "commercial", "low", "Far");
-		RuleKey Key4 = new RuleKey("pg", "citya", "a", "b", "residential", null, "Balcony");
-		RuleKey Key5 = new RuleKey("pg", "citya", "a", "b", null, null, "Balcony");
-		RuleKey Key6 = new RuleKey("pg", "citya", "a", null, null, null, "Far");
-		RuleKey Key7 = new RuleKey("pg", "citya", "x", "y", "residential", null, "BathroomWaterClosets");
-		 RuleKey key = new RuleKey(EdcrRulesMdmsConstants.STATE, "citya", "x", "y", "residential", null, "MezzanineFloorService");
-        
-		
-
-		List<Object> cityaRules = getRules("citya", cityaKey);	
-		List<Object> citybRules = getRules("cityb", citybKey);
-		List<Object> key3 = getRules("citya", Key3);
-		List<Object> key4 = getRules("citya", Key4);
-		List<Object> key5 = getRules("citya", Key5);
-		List<Object> key6 = getRules("citya", Key6);
-		List<Object> key7 = getRules("citya", Key7);
-		List<Object> key8 = getRules("citya", key);
-		
-	}
-	
+	/**
+	 * Retrieves a list of rules for a given city and rule lookup key.
+	 * <p>
+	 * This method first checks if the rules for the specified city are available in the local cache.
+	 * If not, it performs an MDMS call to fetch the rules, transforms them into a map structure,
+	 * and stores them in the cache for future use. If the rules are still not available after the MDMS call,
+	 * it returns {@code null}. If found, it retrieves and returns the list of rules that match the specified {@link RuleKey}.
+	 * </p>
+	 *
+	 * @param city      The city identifier for which the rules are to be retrieved.
+	 * @param lookupKey The {@link RuleKey} object representing the criteria to fetch matching rules.
+	 * @return A list of matching rule objects if available, or {@code null} if no rules are found.
+	 */
 
 	public List<Object> getRules(String city, RuleKey lookupKey) {
 		Map<RuleKey, List<Object>> cityRules = cityRuleCache.get(city);
-        
+
 		if (cityRules == null) {
 			LOG.info("City [{}] not in cache, calling MDMS...", city);
-			Object mdmsCityData = bpaMdmsUtil.mDMSCall(new RequestInfo(), "pg." + city);
+			Object mdmsCityData = bpaMdmsUtil.mDMSCall(new RequestInfo(), EdcrRulesMdmsConstants.STATE + "." + city);
 			Map<String, Map<RuleKey, List<Object>>> transformed = transformCityLevelRulesByCity(mdmsCityData);
 
 			if (transformed.containsKey(city)) {
 				cityRules = transformed.get(city);
-				cityRuleCache.put(city, cityRules); 
+				cityRuleCache.put(city, cityRules);
 				LOG.info("City [{}] rules added to cache", city);
 			} else {
 				LOG.warn("City [{}] returned no rules from MDMS", city);
@@ -78,11 +68,27 @@ public class CacheManagerMdms {
 		} else {
 			LOG.info("City [{}] rules found in cache", city);
 		}
-		
-		
 
 		return getRuleListForFeature(cityRules, lookupKey);
 	}
+	
+	
+	/**
+	 * Transforms the MDMS city-level rules data into a nested map structure.
+	 * <p>
+	 * This method parses the provided MDMS response object to extract BPA-related rules.
+	 * It organizes the rules in a map, grouped first by city name and then by a {@link RuleKey}
+	 * that uniquely identifies each rule set based on attributes like state, city, zone,
+	 * sub-zone, occupancy, risk type, and feature name.
+	 * Only active rules are included in the resulting map.
+	 * </p>
+	 *
+	 * @param mdmsCityData The raw MDMS data object obtained from the MDMS call.
+	 * @return A map where the key is the city name, and the value is another map
+	 *         mapping {@link RuleKey} to a list of rule objects ({@link MdmsFeatureRule}).
+	 *         Returns an empty map if the input data is null or improperly structured.
+	 */
+
 	
 	public Map<String, Map<RuleKey, List<Object>>> transformCityLevelRulesByCity(Object mdmsCityData) {
 	    Map<String, Map<RuleKey, List<Object>>> cityWiseRuleMap = new HashMap<>();
@@ -93,7 +99,7 @@ public class CacheManagerMdms {
 	    ObjectMapper mapper = new ObjectMapper();
 
 	    MdmsResponse mdmsResponse = mapper.convertValue(mdmsCityData, MdmsResponse.class);
-	    Map<String, JSONArray> bpaModuleMap = mdmsResponse.getMdmsRes().get("BPA");
+	    Map<String, JSONArray> bpaModuleMap = mdmsResponse.getMdmsRes().get(EdcrRulesMdmsConstants.BPA);
 
 	    if (bpaModuleMap == null) return cityWiseRuleMap;
 
@@ -128,7 +134,19 @@ public class CacheManagerMdms {
 
 	    return cityWiseRuleMap;
 	}
-
+	
+	/**
+	 * Retrieves the list of rules for a given feature based on the provided {@link RuleKey}.
+	 * <p>
+	 * This method looks up the rule map for the exact match of the provided key.
+	 * If found, it returns the corresponding list of rules. If no match is found,
+	 * it returns {@code null}.
+	 * </p>
+	 *
+	 * @param ruleMap   A map where keys are {@link RuleKey} objects and values are lists of rules.
+	 * @param lookupKey The key used to look up the rules in the map.
+	 * @return A list of rules associated with the given key, or {@code null} if the key is not present.
+	 */
 
 	public List<Object> getRuleListForFeature(Map<RuleKey, List<Object>> ruleMap, RuleKey lookupKey) {
 		if (ruleMap.containsKey(lookupKey)) {

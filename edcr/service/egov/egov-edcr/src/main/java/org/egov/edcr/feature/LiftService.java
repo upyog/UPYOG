@@ -172,36 +172,6 @@ public class LiftService extends FeatureProcess {
 					} else {
 						noOfLiftsRqrd = BigDecimal.ZERO;
 					}
-
-//						Map<String, Object> params = new HashMap<>();
-//						
-//						params.put("feature", feature);
-//						params.put("occupancy", occupancyName);
-//						
-//
-//						Map<String,List<Map<String,Object>>> edcrRuleList = plan.getEdcrRulesFeatures();
-//						
-//						ArrayList<String> valueFromColumn = new ArrayList<>();
-//						valueFromColumn.add("permissibleValue");
-//
-//						List<Map<String, Object>> permissibleValue = new ArrayList<>();
-//
-//						try {
-//							permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
-//							LOG.info("permissibleValue" + permissibleValue);
-//							
-//
-//						} catch (NullPointerException e) {
-//
-//							LOG.error("Permissible Value for Lift Service not found--------", e);
-//							return null;
-//						}
-//
-//						if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey("permissibleValue")) {
-//							noOfLiftsRqrd = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get("permissibleValue").toString()));
-//						}
-//			
-
 					/*
 					 * To be added Rule 48 Lift shall be provided for buildings above 15 m. height
 					 * in case of apartments, group housing, commercial, institutional and office

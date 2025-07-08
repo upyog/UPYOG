@@ -89,61 +89,31 @@ public class SpiralStair extends FeatureProcess {
 	
 	@Override
 	public Plan process(Plan plan) {
-    	// Initialize default values
-    	BigDecimal spiralStairExpectedDiameter = BigDecimal.ZERO;
-    	BigDecimal spiralStairRadius = BigDecimal.ZERO;
-    	BigDecimal spiralStairValue = BigDecimal.ZERO;
+		// Initialize default values
+		BigDecimal spiralStairExpectedDiameter = BigDecimal.ZERO;
+		BigDecimal spiralStairRadius = BigDecimal.ZERO;
+		BigDecimal spiralStairValue = BigDecimal.ZERO;
 
-	    	String occupancyName = fetchEdcrRulesMdms.getOccupancyName(plan).toLowerCase();
-	     	// Set feature name
-			String feature = MdmsFeatureConstants.SPIRAL_STAIR;
-	        String tenantId = plan.getTenantId();
-	        String zone = plan.getPlanInformation().getZone().toLowerCase();
-	        String subZone = plan.getPlanInformation().getSubZone().toLowerCase();
-	        String riskType = fetchEdcrRulesMdms.getRiskType(plan).toLowerCase();
-	        
-	        RuleKey key = new RuleKey(EdcrRulesMdmsConstants.STATE, tenantId, zone, subZone, occupancyName, null, feature);
-	        List<Object> rules = cache.getRules(tenantId, key);
-			
-	        Optional<MdmsFeatureRule> matchedRule = rules.stream()
-	        	    .map(obj -> (MdmsFeatureRule) obj)
-	        	    .findFirst();
+		String occupancyName = fetchEdcrRulesMdms.getOccupancyName(plan).toLowerCase();
+		// Set feature name
+		String feature = MdmsFeatureConstants.SPIRAL_STAIR;
+		String tenantId = plan.getTenantId();
+		String zone = plan.getPlanInformation().getZone().toLowerCase();
+		String subZone = plan.getPlanInformation().getSubZone().toLowerCase();
+		String riskType = fetchEdcrRulesMdms.getRiskType(plan).toLowerCase();
 
-	        	if (matchedRule.isPresent()) {
-	        	    MdmsFeatureRule rule = matchedRule.get();
-	        	    spiralStairExpectedDiameter = rule.getSpiralStairExpectedDiameter();
-	        	    spiralStairRadius = rule.getSpiralStairRadius();
-	        	    spiralStairValue = rule.getSpiralStairValue();
-	        	} 
-			
-//		Map<String, Object> params = new HashMap<>();
-//		
-//		// Determine occupancy type (currently only "Residential" supported)
-//		
-//		params.put("feature", feature);
-//		params.put("occupancy", occupancyName);
-//			
-//		Map<String,List<Map<String,Object>>> edcrRuleList = plan.getEdcrRulesFeatures();
-//			
-//		// MDMS columns to fetch
-//		ArrayList<String> valueFromColumn = new ArrayList<>();
-//		valueFromColumn.add(EdcrRulesMdmsConstants.SPIRAL_STAIR_EXPECTED_DIAMETER);
-//		valueFromColumn.add(EdcrRulesMdmsConstants.SPIRAL_STAIR_RADIUS);
-//		valueFromColumn.add(EdcrRulesMdmsConstants.SPIRAL_STAIR_VALUE);
-//
-//		List<Map<String, Object>> permissibleValue = new ArrayList<>();
-//		
-//		// Fetch values from MDMS
-//		permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
-//		LOG.info("permissibleValue" + permissibleValue);
-//
-//		// Extract values if available
-//		if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey(EdcrRulesMdmsConstants.SPIRAL_STAIR_EXPECTED_DIAMETER)) {
-//			spiralStairExpectedDiameter = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.SPIRAL_STAIR_EXPECTED_DIAMETER).toString()));
-//			spiralStairRadius = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.SPIRAL_STAIR_RADIUS).toString()));
-//			spiralStairValue = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.SPIRAL_STAIR_VALUE).toString()));
-//		}
-		
+		RuleKey key = new RuleKey(EdcrRulesMdmsConstants.STATE, tenantId, zone, subZone, occupancyName, null, feature);
+		List<Object> rules = cache.getRules(tenantId, key);
+
+		Optional<MdmsFeatureRule> matchedRule = rules.stream().map(obj -> (MdmsFeatureRule) obj).findFirst();
+
+		if (matchedRule.isPresent()) {
+			MdmsFeatureRule rule = matchedRule.get();
+			spiralStairExpectedDiameter = rule.getSpiralStairExpectedDiameter();
+			spiralStairRadius = rule.getSpiralStairRadius();
+			spiralStairValue = rule.getSpiralStairValue();
+		}
+
 		// Iterate through all blocks
 		blk: for (Block block : plan.getBlocks()) {
 			if (block.getBuilding() != null && !block.getBuilding().getOccupancies().isEmpty()) {
@@ -165,7 +135,8 @@ public class SpiralStair extends FeatureProcess {
 					boolean isTypicalRepititiveFloor = false;
 
 					// Get typical floor values for reporting
-					Map<String, Object> typicalFloorValues = Util.getTypicalFloorValues(block, floor, isTypicalRepititiveFloor);
+					Map<String, Object> typicalFloorValues = Util.getTypicalFloorValues(block, floor,
+							isTypicalRepititiveFloor);
 
 					List<org.egov.common.entity.edcr.SpiralStair> spiralStairs = floor.getSpiralStairs();
 

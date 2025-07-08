@@ -54,17 +54,20 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.egov.common.constants.MdmsFeatureConstants;
 import org.egov.common.entity.edcr.Block;
 import org.egov.common.entity.edcr.Floor;
+import org.egov.common.entity.edcr.MdmsFeatureRule;
 import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.Result;
+import org.egov.common.entity.edcr.RuleKey;
 import org.egov.common.entity.edcr.ScrutinyDetail;
-import org.egov.edcr.constants.DxfFileConstants;
 import org.egov.edcr.constants.EdcrRulesMdmsConstants;
+import org.egov.edcr.service.CacheManagerMdms;
 import org.egov.edcr.service.FetchEdcrRulesMdms;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -93,6 +96,9 @@ public class Basement extends FeatureProcess {
     
     @Autowired
     FetchEdcrRulesMdms fetchEdcrRulesMdms;
+    
+    @Autowired
+	CacheManagerMdms cache;
     
     /**
      * Processes the basement-related validation and scrutiny for a given building plan.
@@ -126,41 +132,27 @@ public class Basement extends FeatureProcess {
                 if (b.getBuilding() != null && b.getBuilding().getFloors() != null
                         && !b.getBuilding().getFloors().isEmpty()) {
 
-                	String occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl);
-                    String feature = MdmsFeatureConstants.BASEMENT;
+                	
+                        String feature = MdmsFeatureConstants.BASEMENT;   
+                	    String occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl).toLowerCase();
+                        String tenantId = pl.getTenantId();
+                        String zone = pl.getPlanInformation().getZone().toLowerCase();
+                        String subZone = pl.getPlanInformation().getSubZone().toLowerCase();
+                        String riskType = fetchEdcrRulesMdms.getRiskType(pl).toLowerCase();
+                        
+                        RuleKey key = new RuleKey(EdcrRulesMdmsConstants.STATE, tenantId, zone, subZone, occupancyName, null, feature);
+                        List<Object> rules = cache.getRules(tenantId, key);
+                		
+                        Optional<MdmsFeatureRule> matchedRule = rules.stream()
+                        	    .map(obj -> (MdmsFeatureRule) obj)
+                        	    .findFirst();
 
-                    // Prepare parameters to fetch permissible values
-                    Map<String, Object> params = new HashMap<>();
-                   
-                    params.put("feature", feature);
-                    params.put("occupancy", occupancyName);
-
-                    Map<String, List<Map<String, Object>>> edcrRuleList = pl.getEdcrRulesFeatures();
-
-                    // Define the keys for permissible values to be fetched
-                    ArrayList<String> valueFromColumn = new ArrayList<>();
-                    valueFromColumn.add(EdcrRulesMdmsConstants.PERMISSIBLE_ONE);
-                    valueFromColumn.add(EdcrRulesMdmsConstants.PERMISSIBLE_TWO);
-                    valueFromColumn.add(EdcrRulesMdmsConstants.PERMISSIBLE_THREE);
-
-                    List<Map<String, Object>> permissibleValue = new ArrayList<>();
-
-                    try {
-                        // Fetch permissible values from MDMS rules
-                        permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
-                        LOG.info("permissibleValue" + permissibleValue);
-
-                    } catch (NullPointerException e) {
-                        LOG.error("Permissible Value for Basement not found : ", e);
-                        return null;
-                    }
-
-                    // Extract permissible values if available
-                    if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey(EdcrRulesMdmsConstants.PERMISSIBLE_ONE)) {
-                        basementValue = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.PERMISSIBLE_ONE).toString()));
-                        basementValuetwo = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.PERMISSIBLE_TWO).toString()));
-                        basementValuethree = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.PERMISSIBLE_THREE).toString()));
-                    }
+                        	if (matchedRule.isPresent()) {
+                        	    MdmsFeatureRule rule = matchedRule.get();
+                        	    basementValue = rule.getBasementValue();
+                        	    basementValuetwo = rule.getBasementValuetwo();
+                        	    basementValuethree = rule.getBasementValuethree();
+                        	} 
 
                     // Iterate through each floor to check basement conditions
                     for (Floor f : b.getBuilding().getFloors()) {

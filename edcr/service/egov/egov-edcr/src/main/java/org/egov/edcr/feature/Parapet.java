@@ -136,33 +136,6 @@ public Plan process(Plan pl) {
 	 	  parapetValueTwo = rule.getParapetValueTwo();
 	 	} 
 
-//    Map<String, Object> params = new HashMap<>();
-//   
-//    // Add feature and occupancy to the parameters map
-//    params.put("feature", feature);
-//    params.put("occupancy", occupancyName);
-//
-//    // Fetch the list of rules from the plan object
-//    Map<String, List<Map<String, Object>>> edcrRuleList = pl.getEdcrRulesFeatures();
-//
-//    // Specify the columns to fetch from the rules
-//    ArrayList<String> valueFromColumn = new ArrayList<>();
-//    valueFromColumn.add(EdcrRulesMdmsConstants.PARAPET_VALUE_ONE); // First permissible parapet value
-//    valueFromColumn.add(EdcrRulesMdmsConstants.PARAPET_VALUE_TWO); // Second permissible parapet value
-//
-//    // Initialize a list to store permissible values
-//    List<Map<String, Object>> permissibleValue = new ArrayList<>();
-//
-//    // Fetch permissible values from MDMS
-//    permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
-//    LOG.info("permissibleValue" + permissibleValue); // Log the fetched permissible values
-//
-//    // Check if permissible values are available and update the parapet values
-//    if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey(EdcrRulesMdmsConstants.PARAPET_VALUE_ONE)) {
-//        parapetValueOne = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.PARAPET_VALUE_ONE).toString()));
-//        parapetValueTwo = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.PARAPET_VALUE_TWO).toString()));
-//    }
-
     // Iterate through all blocks in the plan
     for (Block b : pl.getBlocks()) {
         // Check if the block has parapets

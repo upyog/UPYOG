@@ -560,6 +560,13 @@ public class MdmsFeatureRule {
 	    private BigDecimal waterTankCapacityArea;
 	    @JsonProperty("waterTankCapacityExpected")
 	    private BigDecimal waterTankCapacityExpected;
+	    @JsonProperty("basementValue")
+	    private BigDecimal basementValue;
+	    @JsonProperty("basementValuetwo")
+	    private BigDecimal basementValuetwo;
+	    @JsonProperty("basementValuethree")
+	    private BigDecimal basementValuethree;
+
 
 	    public BigDecimal getBathroomtotalArea() { return bathroomtotalArea; }
 	    public void setBathroomtotalArea(BigDecimal bathroomtotalArea) { this.bathroomtotalArea = bathroomtotalArea; }
@@ -901,6 +908,30 @@ public class MdmsFeatureRule {
 	    public void setWaterTankCapacityArea(BigDecimal waterTankCapacityArea) { this.waterTankCapacityArea = waterTankCapacityArea; }
 	    public BigDecimal getWaterTankCapacityExpected() { return waterTankCapacityExpected; }
 	    public void setWaterTankCapacityExpected(BigDecimal waterTankCapacityExpected) { this.waterTankCapacityExpected = waterTankCapacityExpected; }
+	    public BigDecimal getBasementValue() {
+	        return basementValue;
+	    }
+
+	    public void setBasementValue(BigDecimal basementValue) {
+	        this.basementValue = basementValue;
+	    }
+
+	    public BigDecimal getBasementValuetwo() {
+	        return basementValuetwo;
+	    }
+
+	    public void setBasementValuetwo(BigDecimal basementValuetwo) {
+	        this.basementValuetwo = basementValuetwo;
+	    }
+
+	    public BigDecimal getBasementValuethree() {
+	        return basementValuethree;
+	    }
+
+	    public void setBasementValuethree(BigDecimal basementValuethree) {
+	        this.basementValuethree = basementValuethree;
+	    }
+
 
 	    public Boolean getActive() { return active; }
 	    public void setActive(Boolean active) { this.active = active; }
@@ -1109,6 +1140,9 @@ public class MdmsFeatureRule {
 	        if (waterClosetsWidth != null) sb.append("waterClosetsWidth=").append(waterClosetsWidth).append(", ");
 	        if (waterTankCapacityArea != null) sb.append("waterTankCapacityArea=").append(waterTankCapacityArea).append(", ");
 	        if (waterTankCapacityExpected != null) sb.append("waterTankCapacityExpected=").append(waterTankCapacityExpected).append(", ");
+	        if (basementValue != null) sb.append("basementValue=").append(basementValue).append(", ");
+	        if (basementValuetwo != null) sb.append("basementValuetwo=").append(basementValuetwo).append(", ");
+	        if (basementValuethree != null) sb.append("basementValuethree=").append(basementValuethree).append(", ");
 
 	        // Remove last comma and space if present
 	        if (sb.lastIndexOf(", ") == sb.length() - 2) {

@@ -57,6 +57,7 @@ import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.egov.common.constants.MdmsFeatureConstants;
 import org.egov.common.entity.edcr.Block;
 import org.egov.common.entity.edcr.Floor;
 import org.egov.common.entity.edcr.MdmsFeatureRule;
@@ -89,132 +90,94 @@ public class ToiletDetails extends FeatureProcess {
     
     @Autowired
 	CacheManagerMdms cache;
-    @Override
-    public Plan process(Plan pl) {
 
-        ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
-        scrutinyDetail.setKey("Common_Toilet");
-        scrutinyDetail.addColumnHeading(1, RULE_NO);
-        scrutinyDetail.addColumnHeading(2, DESCRIPTION);
-        scrutinyDetail.addColumnHeading(3, FLOOR_NO);
-        scrutinyDetail.addColumnHeading(4, REQUIRED);
-        scrutinyDetail.addColumnHeading(5, PROVIDED);
-        scrutinyDetail.addColumnHeading(6, STATUS);
+	@Override
+	public Plan process(Plan pl) {
 
-        for (Block b : pl.getBlocks()) {
-            if (b.getBuilding() != null && b.getBuilding().getFloors() != null && !b.getBuilding().getFloors().isEmpty()) {
-                for (Floor f : b.getBuilding().getFloors()) {
-                    if (f.getToilet() != null && !f.getToilet().isEmpty()) {
-                        for (Toilet toilet : f.getToilet()) {
-                            if (toilet.getToilets() != null && !toilet.getToilets().isEmpty()) {
-                                for (Measurement toiletMeasurements : toilet.getToilets()) {
-                                    Map<String, String> details = new HashMap<>();
-                                    details.put(RULE_NO, RULE_41_IV);
-                                    details.put(DESCRIPTION, BATHROOM_DESCRIPTION);
-                                    details.put(FLOOR_NO, "" + f.getNumber());
+		ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
+		scrutinyDetail.setKey("Common_Toilet");
+		scrutinyDetail.addColumnHeading(1, RULE_NO);
+		scrutinyDetail.addColumnHeading(2, DESCRIPTION);
+		scrutinyDetail.addColumnHeading(3, FLOOR_NO);
+		scrutinyDetail.addColumnHeading(4, REQUIRED);
+		scrutinyDetail.addColumnHeading(5, PROVIDED);
+		scrutinyDetail.addColumnHeading(6, STATUS);
 
-                                    BigDecimal area = toiletMeasurements.getArea().setScale(2, RoundingMode.HALF_UP);
-                                    BigDecimal width = toiletMeasurements.getWidth().setScale(2, RoundingMode.HALF_UP);
+		for (Block b : pl.getBlocks()) {
+			if (b.getBuilding() != null && b.getBuilding().getFloors() != null
+					&& !b.getBuilding().getFloors().isEmpty()) {
+				for (Floor f : b.getBuilding().getFloors()) {
+					if (f.getToilet() != null && !f.getToilet().isEmpty()) {
+						for (Toilet toilet : f.getToilet()) {
+							if (toilet.getToilets() != null && !toilet.getToilets().isEmpty()) {
+								for (Measurement toiletMeasurements : toilet.getToilets()) {
+									Map<String, String> details = new HashMap<>();
+									details.put(RULE_NO, RULE_41_IV);
+									details.put(DESCRIPTION, BATHROOM_DESCRIPTION);
+									details.put(FLOOR_NO, "" + f.getNumber());
 
-                                    BigDecimal ventilationHeight = toilet.getToiletVentilation() != null 
-                                            ? toilet.getToiletVentilation().setScale(2, RoundingMode.HALF_UP)
-                                            : BigDecimal.ZERO;
-                                    BigDecimal minToiletArea = null;
-                                   
-                                    BigDecimal minToiletWidth = null;
-                                    BigDecimal minToiletVentilation = null;
-                                    
-                					
-               					    String feature = "Toilet";
-               					
-               					 String occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl).toLowerCase();
-               				        String tenantId = pl.getTenantId();
-               				        String zone = pl.getPlanInformation().getZone().toLowerCase();
-               				        String subZone = pl.getPlanInformation().getSubZone().toLowerCase();
-               				        String riskType = fetchEdcrRulesMdms.getRiskType(pl).toLowerCase();
-               				        
-               				        RuleKey key = new RuleKey(EdcrRulesMdmsConstants.STATE, tenantId, zone, subZone, occupancyName, null, feature);
-               				        List<Object> rules = cache.getRules(tenantId, key);
-               						
-               				        Optional<MdmsFeatureRule> matchedRule = rules.stream()
-               				        	    .map(obj -> (MdmsFeatureRule) obj)
-               				        	    .findFirst();
+									BigDecimal area = toiletMeasurements.getArea().setScale(2, RoundingMode.HALF_UP);
+									BigDecimal width = toiletMeasurements.getWidth().setScale(2, RoundingMode.HALF_UP);
 
-               				        	if (matchedRule.isPresent()) {
-               				        	    MdmsFeatureRule rule = matchedRule.get();
-               				        	 minToiletArea = rule.getMinToiletArea();
-               				        	 minToiletWidth = rule.getMinToiletWidth();
-               				        	 minToiletVentilation = rule.getMinToiletVentilation();
-               				        	} 
-               						
-//               						Map<String, Object> params = new HashMap<>();
-//               						
-//
-//               						params.put("feature", feature);
-//               						params.put("occupancy", occupancyName);
-//               						
-//
-//               						Map<String,List<Map<String,Object>>> edcrRuleList = pl.getEdcrRulesFeatures();
-//               						
-//               						ArrayList<String> valueFromColumn = new ArrayList<>();
-//               						valueFromColumn.add("permissibleValue");
-//               						valueFromColumn.add("minToiletArea");
-//               						valueFromColumn.add("minToiletWidth");
-//               						valueFromColumn.add("minToiletVentilation");
-//               						
-//
-//               						List<Map<String, Object>> permissibleValue = new ArrayList<>();
-//
-//               						try {
-//               							permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
-//               							LOG.info("permissibleValue" + permissibleValue);
-//               							
-//
-//               						} catch (NullPointerException e) {
-//
-//               							LOG.error("Permissible Value for ToiletDetails not found--------", e);
-//               							return null;
-//               						}
+									BigDecimal ventilationHeight = toilet.getToiletVentilation() != null
+											? toilet.getToiletVentilation().setScale(2, RoundingMode.HALF_UP)
+											: BigDecimal.ZERO;
+									BigDecimal minToiletArea = null;
 
-//               						if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey("minToiletArea")) {
-//               							minToiletArea = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get("minToiletArea").toString()));
-//               							minToiletWidth = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get("minToiletWidth").toString()));
-//               							minToiletVentilation = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get("minToiletVentilation").toString()));
-//               						}
-//               			
-                                    
+									BigDecimal minToiletWidth = null;
+									BigDecimal minToiletVentilation = null;
 
-                                    if (area.compareTo(minToiletArea) >= 0
-                                            && width.compareTo(minToiletWidth) >= 0
-                                            && ventilationHeight.compareTo(minToiletVentilation) >= 0) {
+									String feature = MdmsFeatureConstants.TOILET;
+									String occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl).toLowerCase();
+									String tenantId = pl.getTenantId();
+									String zone = pl.getPlanInformation().getZone().toLowerCase();
+									String subZone = pl.getPlanInformation().getSubZone().toLowerCase();
+									String riskType = fetchEdcrRulesMdms.getRiskType(pl).toLowerCase();
 
-                                        details.put(REQUIRED, "Total Area >= " + minToiletArea + ", Width >= " + minToiletWidth + ","
-                                        		+ " Ventilation >= " + minToiletVentilation);
-                                        details.put(PROVIDED, "Total Area = " + area
-                                                + ", Width = " + width + ", Ventilation Height = " + ventilationHeight);
-                                        details.put(STATUS, Result.Accepted.getResultVal());
+									RuleKey key = new RuleKey(EdcrRulesMdmsConstants.STATE, tenantId, zone, subZone,
+											occupancyName, null, feature);
+									List<Object> rules = cache.getRules(tenantId, key);
 
-                                    } else {
-                                        details.put(REQUIRED,"Total Area >= " + minToiletArea + ", Width >= " + minToiletWidth + ","
-                                        		+ " Ventilation >= " + minToiletVentilation);
-                                        details.put(PROVIDED, "Total Area = " + area
-                                                + ", Width = " + width + ", Ventilation Height = " + ventilationHeight);
-                                        details.put(STATUS, Result.Not_Accepted.getResultVal());
-                                    }
+									Optional<MdmsFeatureRule> matchedRule = rules.stream()
+											.map(obj -> (MdmsFeatureRule) obj).findFirst();
 
-                                    scrutinyDetail.getDetail().add(details);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
+									if (matchedRule.isPresent()) {
+										MdmsFeatureRule rule = matchedRule.get();
+										minToiletArea = rule.getMinToiletArea();
+										minToiletWidth = rule.getMinToiletWidth();
+										minToiletVentilation = rule.getMinToiletVentilation();
+									}
 
-        pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+									if (area.compareTo(minToiletArea) >= 0 && width.compareTo(minToiletWidth) >= 0
+											&& ventilationHeight.compareTo(minToiletVentilation) >= 0) {
 
-        return pl;
-    }
+										details.put(REQUIRED, "Total Area >= " + minToiletArea + ", Width >= "
+												+ minToiletWidth + "," + " Ventilation >= " + minToiletVentilation);
+										details.put(PROVIDED, "Total Area = " + area + ", Width = " + width
+												+ ", Ventilation Height = " + ventilationHeight);
+										details.put(STATUS, Result.Accepted.getResultVal());
+
+									} else {
+										details.put(REQUIRED, "Total Area >= " + minToiletArea + ", Width >= "
+												+ minToiletWidth + "," + " Ventilation >= " + minToiletVentilation);
+										details.put(PROVIDED, "Total Area = " + area + ", Width = " + width
+												+ ", Ventilation Height = " + ventilationHeight);
+										details.put(STATUS, Result.Not_Accepted.getResultVal());
+									}
+
+									scrutinyDetail.getDetail().add(details);
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+
+		pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+
+		return pl;
+	}
 
     @Override
     public Map<String, Date> getAmendments() {

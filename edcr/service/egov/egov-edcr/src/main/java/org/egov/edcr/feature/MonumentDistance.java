@@ -118,7 +118,7 @@ public class MonumentDistance extends FeatureProcess {
         scrutinyDetail.addColumnHeading(5, PROVIDED);
         scrutinyDetail.addColumnHeading(6, STATUS);
 
-        // Map to store validation errors
+		// Map to store validation errors
         HashMap<String, String> errors = new HashMap<>();
 
         // Map to store rule details
@@ -167,32 +167,7 @@ public class MonumentDistance extends FeatureProcess {
                     	    monumentDistance_minDistanceTwo = rule.getMonumentDistance_minDistanceTwo();
                     	    monumentDistance_maxHeightofbuilding = rule.getMonumentDistance_maxHeightofbuilding();
                     	    monumentDistance_maxbuildingheightblock = rule.getMonumentDistance_maxbuildingheightblock();
-                    	} 
-
-//                Map<String, Object> params = new HashMap<>();
-//                
-//                params.put("feature", feature);
-//                params.put("occupancy", occupancyName);
-//
-//                Map<String, List<Map<String, Object>>> edcrRuleList = pl.getEdcrRulesFeatures();
-//                ArrayList<String> valueFromColumn = new ArrayList<>();
-//                valueFromColumn.add(EdcrRulesMdmsConstants.MONUMENT_DISTANCE_ONE);
-//                valueFromColumn.add(EdcrRulesMdmsConstants.MONUMENT_DISTANCE_MIN_TWO);
-//                valueFromColumn.add(EdcrRulesMdmsConstants.MONUMENT_DISTANCE_MAX_BUILDING_HEIGHT);
-//                valueFromColumn.add(EdcrRulesMdmsConstants.MONUMENT_DISTANCE_MAX_BLOCK_HEIGHT);
-//
-//	      			List<Map<String, Object>> permissibleValue = new ArrayList<>();
-//	      		
-//	      			
-//	      				permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
-//                LOG.info("permissibleValue" + permissibleValue);
-//
-//                if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey(EdcrRulesMdmsConstants.MONUMENT_DISTANCE_ONE)) {
-//                    monumentDistance_distanceOne = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.MONUMENT_DISTANCE_ONE).toString()));
-//                    monumentDistance_minDistanceTwo = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.MONUMENT_DISTANCE_MIN_TWO).toString()));
-//                    monumentDistance_maxHeightofbuilding = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.MONUMENT_DISTANCE_MAX_BUILDING_HEIGHT).toString()));
-//                    monumentDistance_maxbuildingheightblock = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.MONUMENT_DISTANCE_MAX_BLOCK_HEIGHT).toString()));
-//                }
+                    	}
 
                 // Check if NOC is provided for construction near the monument
                 if (StringUtils.isNotBlank(pl.getPlanInformation().getNocNearMonument())

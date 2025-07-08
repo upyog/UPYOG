@@ -91,28 +91,12 @@ public class MezzanineFloorService extends FeatureProcess {
             // Determine the occupancy type and feature for fetching permissible values
         	String occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl).toLowerCase();
             String feature = MdmsFeatureConstants.MEZZANINE_FLOOR_SERVICE;
-
-//            Map<String, Object> params = new HashMap<>();
-//           
-//            params.put("feature", feature);
-//            params.put("occupancy", occupancyName);
-//
-//            // Fetch permissible values for mezzanine floor
-//            Map<String, List<Map<String, Object>>> edcrRuleList = pl.getEdcrRulesFeatures();
-//            ArrayList<String> valueFromColumn = new ArrayList<>();
-//            valueFromColumn.add(EdcrRulesMdmsConstants.MEZZANINE_AREA);
-//            valueFromColumn.add(EdcrRulesMdmsConstants.MEZZANINE_HEIGHT);
-//            valueFromColumn.add(EdcrRulesMdmsConstants.MEZZANINE_BUILT_UP_AREA);
-
-//   			List<Map<String, Object>> permissibleValue = new ArrayList<>();
-//   		
-//   			
-//   				permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
-//            LOG.info("permissibleValue" + permissibleValue);
-//            
             String tenantId = pl.getTenantId();
-//            String zone = pl.getPl
-            RuleKey key = new RuleKey(EdcrRulesMdmsConstants.STATE, tenantId, "x", "y", occupancyName, null, feature);
+            String zone = pl.getPlanInformation().getZone().toLowerCase();
+            String subZone = pl.getPlanInformation().getSubZone().toLowerCase();
+            String riskType = fetchEdcrRulesMdms.getRiskType(pl).toLowerCase();
+
+            RuleKey key = new RuleKey(EdcrRulesMdmsConstants.STATE, tenantId, zone, subZone, occupancyName, null, feature);
             List<Object> rules = cache.getRules(tenantId, key);
     		
     		Optional<MdmsFeatureRule> matchedRule = rules.stream()

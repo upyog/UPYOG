@@ -1,5 +1,5 @@
 /*
- * eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
+2 * eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
 
 
  * accountability and the service delivery of the government  organizations.
@@ -110,7 +110,7 @@ public class PlotArea extends FeatureProcess {
             if (plotArea != null) {
                 // Initialize scrutiny details for the report
                 ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
-                scrutinyDetail.setKey("Common_Plot Area"); // Key for the scrutiny detail
+                scrutinyDetail.setKey(Common_Plot_Area); // Key for the scrutiny detail
                 scrutinyDetail.addColumnHeading(1, RULE_NO); // Column for rule number
                 scrutinyDetail.addColumnHeading(2, DESCRIPTION); // Column for description
                 scrutinyDetail.addColumnHeading(3, OCCUPANCY); // Column for occupancy type
@@ -192,32 +192,7 @@ public class PlotArea extends FeatureProcess {
             	    plotAreaValueOne = rule.getPlotAreaValueOne();
             	    plotAreaValueTwo = rule.getPlotAreaValueTwo();
             	} 
-        // Prepare parameters for fetching MDMS values
-//        Map<String, Object> params = new HashMap<>();
-//       
-//        params.put("feature", feature);
-//        params.put("occupancy", occupancyName);
-//
-//        // Fetch the list of rules from the plan object
-//        Map<String, List<Map<String, Object>>> edcrRuleList = pl.getEdcrRulesFeatures();
-//
-//        // Specify the columns to fetch from the rules
-//        ArrayList<String> valueFromColumn = new ArrayList<>();
-//        valueFromColumn.add(EdcrRulesMdmsConstants.PLOT_AREA_VALUE_ONE); // First permissible plot area value
-//        valueFromColumn.add(EdcrRulesMdmsConstants.PLOT_AREA_VALUE_TWO); // Second permissible plot area value
-//
-//        // Initialize a list to store permissible values
-//        List<Map<String, Object>> permissibleValue = new ArrayList<>();
-//
-//        // Fetch permissible values from MDMS
-//        permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
-//        LOG.info("permissibleValue" + permissibleValue); // Log the fetched permissible values
-//
-//        // Check if permissible values are available and update the plot area values
-//        if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey(EdcrRulesMdmsConstants.PLOT_AREA_VALUE_ONE)) {
-//            plotAreaValueOne = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.PLOT_AREA_VALUE_ONE).toString()));
-//            plotAreaValueTwo = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.PLOT_AREA_VALUE_TWO).toString()));
-//        }
+   
 
         // Map the permissible plot area values to their respective occupancy codes
         Map<String, BigDecimal> plotAreaValues = new HashMap<>();

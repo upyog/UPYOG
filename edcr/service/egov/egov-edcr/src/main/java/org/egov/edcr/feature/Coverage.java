@@ -61,6 +61,7 @@ import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.egov.common.constants.MdmsFeatureConstants;
 import org.egov.common.entity.edcr.Block;
 import org.egov.common.entity.edcr.Floor;
 import org.egov.common.entity.edcr.MdmsFeatureRule;
@@ -202,15 +203,15 @@ public class Coverage extends FeatureProcess {
 //		String occupancyType;
 
 		String occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl).toLowerCase();
-		String feature = "Coverage";
+		String feature = MdmsFeatureConstants.COVERAGE;
 		// get coverage permissible value from method and store in
 		// permissibleCoverageValue
 		if (plotArea.compareTo(BigDecimal.valueOf(0)) > 0 && mostRestrictiveOccupancy != null
 				) {
 //			occupancyType = mostRestrictiveOccupancy.getType().getCode();
 			
-			permissibleCoverageValue = getPermissibleCoverage(pl, plotArea, feature, occupancyName,
-					pl.getEdcrRulesFeatures());
+			permissibleCoverageValue = getPermissibleCoverage(pl, plotArea, feature, occupancyName
+					);
 		}
 
 		if (permissibleCoverageValue.compareTo(BigDecimal.valueOf(0)) > 0) {
@@ -269,42 +270,10 @@ public class Coverage extends FeatureProcess {
 	
 	
 	private BigDecimal getPermissibleCoverage(Plan pl, BigDecimal area,  String feature,
-			String occupancyName, Map<String, List<Map<String, Object>>> edcrRuleList) {
+			String occupancyName) {
 		LOG.info("inside getPermissibleCoverage()");
 
-		BigDecimal permissibleCoverage = BigDecimal.ZERO;
-
-//		Map<String, Object> params = new HashMap<>();
-//		params.put("feature", feature);
-//		params.put("occupancy", occupancyName);
-//		params.put("plotArea", area);
-//		//params.put("developmentZone", developmentZone);
-//		
-//		
-//		ArrayList<String> valueFromColumn = new ArrayList<>();
-//		valueFromColumn.add("permissibleValue");
-//
-//		List<Map<String, Object>> permissibleValue = new ArrayList<>();
-//
-//		try {
-//			permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
-//			LOG.info("permissibleValue" + permissibleValue);
-//			
-//
-//		} catch (NullPointerException e) {
-//
-//			LOG.error("Permissible Value for Coverage not found--------", e);
-//			return null;
-//		}
-//
-//		if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey("permissibleValue")) {
-//			permissibleCoverage = BigDecimal
-//					.valueOf(Double.valueOf(permissibleValue.get(0).get("permissibleValue").toString()));
-//		}
-		
-
-       
-	
+	 BigDecimal permissibleCoverage = BigDecimal.ZERO;
      String tenantId = pl.getTenantId();
      String zone = pl.getPlanInformation().getZone().toLowerCase();
      String subZone = pl.getPlanInformation().getSubZone().toLowerCase();

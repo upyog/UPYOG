@@ -134,33 +134,11 @@ public class LandUse extends FeatureProcess {
     private void validateCommercialZone(Plan pl, HashMap<String, String> errors) {
     	String occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl).toLowerCase();
         String feature = MdmsFeatureConstants.LAND_USE;
-
-        // Determine the occupancy type for fetching permissible values
-//        Map<String, Object> params = new HashMap<>();
-//      
-//
-//        params.put("feature", feature);
-//        params.put("occupancy", occupancyName);
-//
-//        // Fetch permissible values for road width
-//        Map<String, List<Map<String, Object>>> edcrRuleList = pl.getEdcrRulesFeatures();
-//        ArrayList<String> valueFromColumn = new ArrayList<>();
-//        valueFromColumn.add(EdcrRulesMdmsConstants.PERMISSIBLE_VALUE);
-//
-//				List<Map<String, Object>> permissibleValue = new ArrayList<>();
-//			
-//				
-//					permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
-//        LOG.info("permissibleValue" + permissibleValue);
-//
-//        if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey(EdcrRulesMdmsConstants.PERMISSIBLE_VALUE)) {
-//            RoadWidth = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.PERMISSIBLE_VALUE).toString()));
-//        } else {
-//            RoadWidth = BigDecimal.ZERO;
-//        }
-        
         String tenantId = pl.getTenantId();
-        RuleKey key = new RuleKey(EdcrRulesMdmsConstants.STATE, tenantId, "x", "y", occupancyName, null, feature);
+        String zone = pl.getPlanInformation().getZone().toLowerCase();
+        String subZone = pl.getPlanInformation().getSubZone().toLowerCase();
+        String riskType = fetchEdcrRulesMdms.getRiskType(pl).toLowerCase();
+        RuleKey key = new RuleKey(EdcrRulesMdmsConstants.STATE, tenantId, zone, subZone, occupancyName, null, feature);
         List<Object> rules = cache.getRules(tenantId, key);
 		
 		Optional<MdmsFeatureRule> matchedRule = rules.stream()

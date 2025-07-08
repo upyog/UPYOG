@@ -76,7 +76,7 @@ public class LocationPlan extends FeatureProcess {
 	public Plan process(Plan pl) {
 
 		ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
-		scrutinyDetail.setKey("Common_Location Plan");
+		scrutinyDetail.setKey(Common_Location_Plan);
 		scrutinyDetail.addColumnHeading(1, RULE_NO);
 		scrutinyDetail.addColumnHeading(2, DESCRIPTION);
 		scrutinyDetail.addColumnHeading(3, PROVIDED);

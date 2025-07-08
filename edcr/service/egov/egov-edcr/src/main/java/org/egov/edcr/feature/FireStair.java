@@ -163,34 +163,6 @@ public class FireStair extends FeatureProcess {
             	    fireStairRequiredTread = rule.getFireStairRequiredTread();
             	} 
 
-//        Map<String, Object> params = new HashMap<>();
-//       
-//
-//        params.put("feature", feature);
-//        params.put("occupancy", occupancyName);
-//
-//        // Fetch permissible values for fire stair dimensions
-//        Map<String, List<Map<String, Object>>> edcrRuleList = plan.getEdcrRulesFeatures();
-//        ArrayList<String> valueFromColumn = new ArrayList<>();
-//        valueFromColumn.add("fireStairExpectedNoofRise");
-//        valueFromColumn.add("fireStairMinimumWidth");
-//        valueFromColumn.add("fireStairRequiredTread");
-//
-//        List<Map<String, Object>> permissibleValue = new ArrayList<>();
-//        try {
-//            permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
-//            LOG.info("permissibleValue" + permissibleValue);
-//        } catch (NullPointerException e) {
-//            LOG.error("Permissible Value for FireStair not found--------", e);
-//            return null;
-//        }
-//
-//        if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey("fireStairExpectedNoofRise")) {
-//            fireStairExpectedNoofRise = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get("fireStairExpectedNoofRise").toString()));
-//            fireStairMinimumWidth = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get("fireStairMinimumWidth").toString()));
-//            fireStairRequiredTread = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get("fireStairRequiredTread").toString()));
-//        }
-
         // Iterate through all blocks in the plan
         blk: for (Block block : plan.getBlocks()) {
             int fireStairCount = 0;

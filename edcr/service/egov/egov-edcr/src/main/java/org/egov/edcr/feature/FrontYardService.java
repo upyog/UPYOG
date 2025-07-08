@@ -68,6 +68,7 @@ import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.egov.common.constants.MdmsFeatureConstants;
 import org.egov.common.entity.edcr.Block;
 import org.egov.common.entity.edcr.Building;
 import org.egov.common.entity.edcr.MdmsFeatureRule;
@@ -325,18 +326,18 @@ public class FrontYardService extends GeneralRule {
 					&& DxfFileConstants.COMMERCIAL.equalsIgnoreCase(pl.getPlanInformation().getLandUseZone())
 //					&& pl.getPlanInformation().getRoadWidth().compareTo(ROAD_WIDTH_TWELVE_POINTTWO) < 0
 			) {
-				occupancyName = "Commercial";
+				occupancyName = MdmsFeatureConstants.COMMERCIAL;
 				
 			} else {
-				occupancyName = "Residential";
+				occupancyName = MdmsFeatureConstants.RESIDENTIAL;
 				
 			}
 		} else if (F.equalsIgnoreCase(mostRestrictiveOccupancy.getType().getCode())) {
 			
-			occupancyName = "Commercial";
+			occupancyName = MdmsFeatureConstants.COMMERCIAL;
 		
 		} else if (G.equalsIgnoreCase(mostRestrictiveOccupancy.getType().getCode())) {
-			occupancyName = "Industrial";
+			occupancyName = MdmsFeatureConstants.INDUSTRIAL;
 			
 		}else {
 			 occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl);
@@ -346,80 +347,42 @@ public class FrontYardService extends GeneralRule {
 //			   occupancyName = "Government/Semi Government";
 //		}
 		valid = processFrontYardService(blockName, level, min, mean, mostRestrictiveOccupancy, frontYardResult, valid,
-				subRule, rule, minVal, meanVal, depthOfPlot, errors, pl,  occupancyName, pl.getEdcrRulesFeatures()
+				subRule, rule, minVal, meanVal, depthOfPlot, errors, pl,  occupancyName
 				);
 		return valid;
 	}
+
 	private Boolean processFrontYardService(String blockName, Integer level, BigDecimal min, BigDecimal mean,
 			OccupancyTypeHelper mostRestrictiveOccupancy, FrontYardResult frontYardResult, Boolean valid,
 			String subRule, String rule, BigDecimal minVal, BigDecimal meanVal, BigDecimal depthOfPlot,
-			HashMap<String, String> errors, Plan pl, String occupancyName, Map<String,List<Map<String,Object>>> edcrRuleList ) {
+			HashMap<String, String> errors, Plan pl, String occupancyName
+			) {
 
-	   BigDecimal  plotArea = pl.getPlot().getArea();
-		System.out.println("plotarea" + plotArea);
-	
-		
-		String feature = "FrontSetBack";
-			
-//		Map<String, Object> params = new HashMap<>();
-//		
-//		params.put("feature", feature);
-//		
-//		params.put("occupancy", occupancyName);
-//		params.put("depthOfPlot", depthOfPlot);
-//		params.put("plotArea", plotArea);
-//		
-//		if(occupancyName.equalsIgnoreCase("Industrial")) {
-//		
-//			
-//			params.put("plotArea", plotArea);
-//		}
-//
-//		ArrayList<String> valueFromColumn = new ArrayList<>();
-//		valueFromColumn.add("permissibleValue");
-//
-//		List<Map<String, Object>> permissibleValue = new ArrayList<>();
-//
-//		try {
-//			permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
-//			LOG.info("permissibleValue" + permissibleValue);
-//		
-//
-//		} catch (NullPointerException e) {
-//
-//			LOG.error("Permissible Value for Front Yard service not found--------", e);
-//			return null;
-//		}
-//
-//		if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey("permissibleValue")) {
-//			meanVal = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get("permissibleValue").toString()));
-//	
-//		} 
-		
-		    occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl).toLowerCase();
-	        String tenantId = pl.getTenantId();
-	        String zone = pl.getPlanInformation().getZone().toLowerCase();
-	        String subZone = pl.getPlanInformation().getSubZone().toLowerCase();
-	        String riskType = fetchEdcrRulesMdms.getRiskType(pl).toLowerCase();
-	        
-	        RuleKey key = new RuleKey(EdcrRulesMdmsConstants.STATE, tenantId, zone, subZone, occupancyName, riskType, feature);
-	        List<Object> rules = cache.getRules(tenantId, key);
-	        
-	        Optional<MdmsFeatureRule> matchedRule = rules.stream()
-				    .map(obj -> (MdmsFeatureRule) obj)
-				    .filter(ruleMdms -> plotArea.compareTo(ruleMdms.getFromPlotArea()) >= 0 &&
-				                    plotArea.compareTo(ruleMdms.getToPlotArea()) < 0)
-				    .findFirst();
-	        
-	        if (matchedRule.isPresent()) {
-        	    MdmsFeatureRule mdmsRule = matchedRule.get();
-        	    meanVal = mdmsRule.getPermissible();
-        	} else {
-        		meanVal = BigDecimal.ZERO;
-        	}
+		BigDecimal plotArea = pl.getPlot().getArea();
+		String feature = MdmsFeatureConstants.FRONT_SETBACK;
+		occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl).toLowerCase();
+		String tenantId = pl.getTenantId();
+		String zone = pl.getPlanInformation().getZone().toLowerCase();
+		String subZone = pl.getPlanInformation().getSubZone().toLowerCase();
+		String riskType = fetchEdcrRulesMdms.getRiskType(pl).toLowerCase();
 
-			
-      System.out.println("meanVllll" + meanVal);
+		RuleKey key = new RuleKey(EdcrRulesMdmsConstants.STATE, tenantId, zone, subZone, occupancyName, riskType,
+				feature);
+		List<Object> rules = cache.getRules(tenantId, key);
+
+		Optional<MdmsFeatureRule> matchedRule = rules.stream().map(obj -> (MdmsFeatureRule) obj)
+				.filter(ruleMdms -> plotArea.compareTo(ruleMdms.getFromPlotArea()) >= 0
+						&& plotArea.compareTo(ruleMdms.getToPlotArea()) < 0)
+				.findFirst();
+
+		if (matchedRule.isPresent()) {
+			MdmsFeatureRule mdmsRule = matchedRule.get();
+			meanVal = mdmsRule.getPermissible();
+		} else {
+			meanVal = BigDecimal.ZERO;
+		}
+
+		System.out.println("meanVllll" + meanVal);
 		/*
 		 * if (-1 == level) { rule = BSMT_FRONT_YARD_DESC; subRuleDesc =
 		 * SUB_RULE_24_12_DESCRIPTION; subRule = SUB_RULE_24_12; }
