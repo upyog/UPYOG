@@ -12,6 +12,9 @@ class TransactionQueryBuilder {
             "pg.gateway_status_code, pg.gateway_status_msg, pg.receipt, pg.additional_details,  pg.created_by, pg" +
             ".created_time, pg.last_modified_by, pg.last_modified_time " +
             "FROM eg_pg_transactions pg ";
+    
+    public final static String INSERT_PUSHRESPONSE_DATA_LOG = "INSERT INTO pushresponse_data_log"
+			+ "(date,time, request, response, transactionid, transactionammount, status_code)" + "VALUES(?,?,?,?,?,?,?)";
 
     private TransactionQueryBuilder() {
     }
