@@ -501,11 +501,15 @@ public class GarbageAccountService {
 //		}else 
 		if (StringUtils.isNotEmpty(garbageAccount.getUuid())) // update account condition
 		{
+//			log.info("existingAccounts issue. {} {}", existingAccounts,garbageAccount);
+
+			
 			List<GarbageAccount> existingAccounts1 = existingAccounts.stream()
 					.filter(account -> StringUtils.equals(garbageAccount.getUuid(), account.getUuid()))
 					.collect(Collectors.toList());
 
 			if (CollectionUtils.isEmpty(existingAccounts1)) {
+				log.info("existingAccounts issue. {} {}", existingAccounts,garbageAccount);
 				throw new CustomException("GARBAGE_ACCOUNT_NOT_FOUND", "Not able to find garbage account.");
 			} else if (existingAccounts1.size() > 1) {
 				throw new CustomException("DUPLICATE_GARBAGE_ACCOUNT_FOUND", "Duplicate Garbage account found.");
