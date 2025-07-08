@@ -3,6 +3,7 @@ import {PaymentModule} from "@upyog/digit-ui-module-common";
 import { StreetVendingUI } from "@upyog/digit-ui-module-core";
 import { initLibraries } from "@nudmcdgnpm/digit-ui-libraries";
 import { initBillsComponents } from "@upyog/digit-ui-module-bills";
+import { initEngagementComponents } from "@upyog/digit-ui-module-engagement";
 import { SVComponents, SVLinks, SVModule } from "@nudmcdgnpm/upyog-ui-module-sv";
 
 
@@ -11,6 +12,7 @@ initLibraries();
 const enabledModules = [
   "Payment",
   "QuickPayLinks",
+  "Engagement",
   "SV"
 ];
 window.Digit.ComponentRegistryService.setupRegistry({
@@ -22,6 +24,7 @@ window.Digit.ComponentRegistryService.setupRegistry({
 
 
 initBillsComponents();
+initEngagementComponents();
 
 const moduleReducers = (initData) => ({
   // pgr: PGRReducers(initData),
