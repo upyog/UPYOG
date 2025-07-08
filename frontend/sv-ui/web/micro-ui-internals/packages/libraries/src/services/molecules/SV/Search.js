@@ -93,27 +93,23 @@ export const SVSearch = {
           { title: "SV_LANDMARK",value: response?.addressDetails[0]?.landmark},  
         ]),
       },
-
       {
         title: "SV_DOCUMENT_DETAILS_LABEL",
         additionalDetails: {
-          
           documents: [
-            {
-             
-              values: response?.documentDetails
-                ?.map((document) => {
-
-                  return {
-                    title: `${document?.documentType.replace(".", "_")}`,
-                    documentType: document?.documentType,
-                    documentUid: document?.documentUid,
-                    fileStoreId: document?.fileStoreId,
-                    status: document.status,
-                  };
-                }),
-            },
-          ],
+          {
+            values: response?.documentDetails?.filter((document) => document?.documentType !== "NONE") // Add this filter
+              ?.map((document) => {
+                return {
+                  title: `${document?.documentType.replace(".", "_")}`,
+                  documentType: document?.documentType,
+                  documentUid: document?.documentUid,
+                  fileStoreId: document?.fileStoreId,
+                  status: document.status,
+                };
+              }),
+          },
+        ],
         },
       },
     ];

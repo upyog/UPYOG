@@ -5,7 +5,7 @@ export const filterFunctions = {
         const searchFilters = {};
         const workflowFilters = {};
     
-        const { applicationNumber, services, mobileNumber, limit, offset, sortBy, sortOrder, vendingType, vendingZone, applicationStatus, status } = filtersArg || {};
+        const { applicationNumber, services, mobileNumber, limit, offset, sortBy, sortOrder, vendingType, applicationStatus, status } = filtersArg || {};
 
         if (applicationStatus && applicationStatus?.[0]?.applicationStatus) {
           workflowFilters.status = applicationStatus.map((status) => status.uuid);
@@ -28,9 +28,6 @@ export const filterFunctions = {
         }
         if (vendingType) {
           searchFilters.vendingType = vendingType;
-        }
-        if (vendingZone) {
-          searchFilters.vendingZone = vendingZone;
         }
         if (status) {
           searchFilters.applicationStatus = status;

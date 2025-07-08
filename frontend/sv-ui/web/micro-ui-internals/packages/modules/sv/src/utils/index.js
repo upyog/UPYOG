@@ -684,7 +684,7 @@ export function SVDocumnetPreview({documents, titleStyles, isSendBackFlow = fals
         <React.Fragment key={index}>
           <div className="documentWidth" style={{width:"50%"}}>
             <div>
-              {document?.values && document?.values.length > 0 ? document?.values?.map((value, index) => (
+              {document?.title!=="NONE" && document?.values && document?.values.length > 0 ? document?.values?.map((value, index) => (
                 <a target="_" href={value?.url} style={{ minWidth: "80px", marginRight: "10px", maxWidth: "100px", height: "auto", minWidth: "100px" }} key={index}>
                   {/* Remove the centered SVG div from here */}
                   <div style={{ 
@@ -703,11 +703,6 @@ export function SVDocumnetPreview({documents, titleStyles, isSendBackFlow = fals
                     </p>
                     <SvPDFSvg /> {/* SVG now appears on the right */}
                   </div>
-                  {isSendBackFlow ? (
-                    value?.documentType?.includes("NOC") ? 
-                      <p style={{ textAlign: "center" }}>{t(value?.documentType.split(".")[1])}</p> : 
-                      <p style={{ textAlign: "center" }}>{t(value?.documentType)}</p>
-                  ) : ""}
                 </a>
               )) : !(window.location.href.includes("citizen")) && <div><p>{t("SV_NO_DOCUMENTS_UPLOADED_LABEL")}</p></div>}
             </div>

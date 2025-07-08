@@ -7,6 +7,7 @@
     "example",
     "packages/modules/core",
     "packages/modules/common",
+    "packages/modules/engagement",
     "packages/modules/sv"
   ],
   "license": "MIT",
@@ -22,12 +23,14 @@
     "dev:libraries": "cd packages/libraries && yarn start",
     "dev:common": "cd packages/modules/common && yarn start",
     "dev:core": "cd packages/modules/core && yarn start",
+    "dev:engagement": "cd packages/modules/engagement && yarn start",
     "dev:sv": "cd packages/modules/sv && yarn start",
     "dev:example": "cd example && yarn start",
     "build": "run-p build:**",
     "build:libraries": "cd packages/libraries && yarn build",
     "build:common": "cd packages/modules/common && yarn build",
     "build:core": "cd packages/modules/core && yarn build",
+    "build:engagement": "cd packages/modules/engagement && yarn build",
     "build:sv": "cd packages/modules/sv && yarn build",
     "deploy:jenkins": "./scripts/jenkins.sh"
   },
@@ -49,6 +52,8 @@
     "**/babel-loader": "8.2.2",
     "**/@babel/core": "7.14.0",
     "**/@babel/preset-env": "7.14.0",
-    "**/@babel/plugin-transform-modules-commonjs": "7.14.0"
+    "**/@babel/plugin-transform-modules-commonjs": "7.14.0",
+    "minimatch": "^3.1.2",
+    "glob":"7.2.3"
   }
 }

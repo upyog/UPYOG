@@ -311,15 +311,15 @@ const SVApplicantDetails = ({ t, config, onSelect, userType, formData,editdata,p
       lastModifiedBy: "",
       lastModifiedTime: 0
     },
-    dob: fields?.[1]?.spouseDateBirth,
-    userCategory:fields?.[1]?.userCategory?.code,
+    dob: fields?.[0]?.spouseDateBirth,
+    userCategory:fields?.[0]?.userCategory?.code,
     emailId: "",
     isInvolved: fields?.spouseDependentChecked,
     fatherName: "",
     gender: "O",
     id: "",
     mobileNo: "",
-    name: fields?.[1]?.spouseName,
+    name: fields?.[0]?.spouseName,
     relationshipType: "SPOUSE",
     vendorId: null
   });
@@ -332,15 +332,15 @@ const SVApplicantDetails = ({ t, config, onSelect, userType, formData,editdata,p
       lastModifiedBy: "",
       lastModifiedTime: 0
     },
-    dob: fields?.[2]?.dependentDateBirth,
-    userCategory:fields?.[2]?.userCategory?.code,
+    dob: fields?.[0]?.dependentDateBirth,
+    userCategory:fields?.[0]?.userCategory?.code,
     emailId: "",
     isInvolved: fields?.dependentNameChecked,
     fatherName: "",
-    gender: fields?.[2]?.dependentGender?.code.charAt(0),
+    gender: fields?.[0]?.dependentGender?.code.charAt(0),
     id: "",
     mobileNo: "",
-    name: fields?.[2]?.dependentName,
+    name: fields?.[0]?.dependentName,
     relationshipType: "DEPENDENT",
     vendorId: null
   });

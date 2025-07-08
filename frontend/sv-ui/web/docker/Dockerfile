@@ -7,11 +7,12 @@ RUN apk add --no-cache git>2.30.0
 RUN yarn add @nudmcdgnpm/digit-ui-libraries
 RUN yarn add @upyog/digit-ui-module-core
 RUN yarn add @upyog/digit-ui-module-common
+RUN yarn add @upyog/digit-ui-module-engagement
 RUN yarn add @nudmcdgnpm/upyog-ui-module-sv
 
 ARG WORK_DIR
 WORKDIR /app
-ENV NODE_OPTIONS "--max-old-space-size=1792"
+ENV NODE_OPTIONS "--max-old-space-size=2560"
 ENV GENERATE_SOURCEMAP "true"
 
 COPY ${WORK_DIR} .
@@ -20,7 +21,7 @@ RUN ls -lah
 #RUN node web/envs.js
 RUN cd web/ \
     && node envs.js \
-    && node -e 'console.log(v8.getHeapStatistics().heap_size_limit/(1792*1792))' \
+    && node -e 'console.log(v8.getHeapStatistics().heap_size_limit/(2560*2560))' \
     &&  ./install-deps.sh \
     && yarn install \
     && yarn build 
