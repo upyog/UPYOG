@@ -25,7 +25,6 @@ const SVSearchApplication = ({ tenantId, isLoading, t, onSubmit, data, count, se
         }
     })
 
-
     useEffect(() => {
         register("offset", 0)
         register("limit", 10)
@@ -59,24 +58,7 @@ const SVSearchApplication = ({ tenantId, isLoading, t, onSubmit, data, count, se
     let vendingTypeOptions = [];
     vendingTypeData && vendingTypeData.map((vending) => {
         vendingTypeOptions.push({ i18nKey: `${vending.name}`, code: `${vending.code}`, value: `${vending.name}` })
-    })
-
-    /* fetching vending zones from boundary service */
-    const { data: fetchedVendingZones } = Digit.Hooks.useBoundaryLocalities(
-      vendingLocality?.code,
-      "vendingzones",
-      {
-        enabled: !!vendingLocality,
-      },
-      t
-    );
-    
-    let vending_Zone = [];
-    fetchedVendingZones && fetchedVendingZones.map((vendingData) => {
-      vending_Zone.push({ i18nKey: vendingData?.i18nkey, code: vendingData?.code, value: vendingData?.name })
-    })
-
-    const stateId = Digit.ULBService.getStateId();
+    });
 
     const GetCell = (value) => <span className="cell-text">{value}</span>;
 
@@ -218,7 +200,7 @@ const SVSearchApplication = ({ tenantId, isLoading, t, onSubmit, data, count, se
                     />
                 </SearchField>
 
-                                <SearchField>
+                    <SearchField>
                     <label>{t("SV_VENDING_TYPE")}</label>
                     <Controller
                         control={control}
@@ -245,30 +227,9 @@ const SVSearchApplication = ({ tenantId, isLoading, t, onSubmit, data, count, se
                         defaultValue={vendingLocality}
                         render={(props) => (
                             <Dropdown
-                                selected={vendingLocality}
-                                select={(e) => setVendingLocality(e)}
-                                // selected={props.value}
-                                // select={props.onChange}
-                                option={allCities}
-                                optionKey="i18nKey"
-                                t={t}
-                                disable={false}
-                            />
-                        )}
-                    />
-                </SearchField>
-
-                <SearchField>
-                    <label>{t("SV_VENDING_ZONES")}</label>
-                    <Controller
-                        control={control}
-                        name="vendingZone"
-                        render={(props) => (
-                            <Dropdown
                                 selected={props.value}
                                 select={props.onChange}
-                                onBlur={props.onBlur}
-                                option={vending_Zone}
+                                option={allCities}
                                 optionKey="i18nKey"
                                 t={t}
                                 disable={false}
@@ -327,10 +288,15 @@ const SVSearchApplication = ({ tenantId, isLoading, t, onSubmit, data, count, se
                                 toDate: "",
                                 mobileNumber: "",
                                 status: "",
+                                vendingLocality: null,
+                                vendingType: null,     
+                                paymentStatus: null,   
+                                renewalStatus: null, 
                                 offset: 0,
                                 limit: 10,
                                 sortBy: "commencementDate",
-                                sortOrder: "DESC"
+                                sortOrder: "DESC",
+
                             });
                             setShowToast(null);
                             previousPage();
