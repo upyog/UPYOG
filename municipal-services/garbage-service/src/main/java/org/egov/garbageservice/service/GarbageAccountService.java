@@ -509,7 +509,6 @@ public class GarbageAccountService {
 					.collect(Collectors.toList());
 
 			if (CollectionUtils.isEmpty(existingAccounts1)) {
-				log.info("existingAccounts issue. {} {}", existingAccounts,garbageAccount);
 				throw new CustomException("GARBAGE_ACCOUNT_NOT_FOUND", "Not able to find garbage account.");
 			} else if (existingAccounts1.size() > 1) {
 				throw new CustomException("DUPLICATE_GARBAGE_ACCOUNT_FOUND", "Duplicate Garbage account found.");
@@ -1888,6 +1887,7 @@ public class GarbageAccountService {
 
 	public void createUserForGarbage(SearchCriteriaGarbageAccountRequest searchCriteriaGarbageAccountRequest) {
 		// Create GarbageAccountRequest object
+		
 		GarbageAccountRequest createGarbageRequest = buildGarbageAccountRequest(RequestInfoWrapper.builder().requestInfo(searchCriteriaGarbageAccountRequest.getRequestInfo()).build());
 
 		// Fetch garbage accounts if available
@@ -1925,6 +1925,11 @@ public class GarbageAccountService {
 
 		searchCriteriaGarbageAccountRequest.setIsSchedulerCall(true);
 		searchCriteriaGarbageAccountRequest.setIsUserUuidNull(true);
+		SearchCriteriaGarbageAccount searchCriteriaGarbageAccount = new SearchCriteriaGarbageAccount();
+		searchCriteriaGarbageAccount.setIsActiveAccount(true);
+		searchCriteriaGarbageAccount.setIsActiveSubAccount(true);
+		searchCriteriaGarbageAccountRequest.setSearchCriteriaGarbageAccount(searchCriteriaGarbageAccount);;
+
 		GarbageAccountResponse garbageAccountResponse = searchGarbageAccounts(searchCriteriaGarbageAccountRequest);
 
 		if (garbageAccountResponse != null && !CollectionUtils.isEmpty(garbageAccountResponse.getGarbageAccounts())) {
