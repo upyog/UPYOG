@@ -1,7 +1,8 @@
 package org.egov.infra.mdms.utils;
 
-import net.minidev.json.JSONArray;
+
 import org.egov.infra.mdms.model.Mdms;
+import org.json.JSONArray;
 
 import java.util.ArrayList;
 import java.util.HashMap;
