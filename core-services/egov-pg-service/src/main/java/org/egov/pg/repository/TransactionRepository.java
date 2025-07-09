@@ -17,6 +17,7 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Repository
 @Slf4j
@@ -24,6 +25,7 @@ public class TransactionRepository {
 
     private final JdbcTemplate jdbcTemplate;
     private static final TransactionRowMapper rowMapper = new TransactionRowMapper();
+    
 
     @Autowired
     TransactionRepository(JdbcTemplate jdbcTemplate) {
@@ -58,14 +60,14 @@ public class TransactionRepository {
 			
 			@Override
 			public void setValues(PreparedStatement ps) throws SQLException {
-				
-				ps.setString(1, formattedDate);
-				ps.setString(2, timeString);
-				ps.setString(3, msg);
-				ps.setString(4, response);
-				ps.setString(5, transactionId);
-				ps.setString(6, transactionAmmount);
-				ps.setString(7, status_code);
+				ps.setString(1, UUID.randomUUID().toString());
+				ps.setString(2, formattedDate);
+				ps.setString(3, timeString);
+				ps.setString(4, msg);
+				ps.setString(5, response);
+				ps.setString(6, transactionId);
+				ps.setString(7, transactionAmmount);
+				ps.setString(8, status_code);
 				
 			}
 		});

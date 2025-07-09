@@ -14,7 +14,7 @@ class TransactionQueryBuilder {
             "FROM eg_pg_transactions pg ";
     
     public final static String INSERT_PUSHRESPONSE_DATA_LOG = "INSERT INTO pushresponse_data_log"
-			+ "(date,time, request, response, transactionid, transactionammount, status_code)" + "VALUES(?,?,?,?,?,?,?)";
+			+ "(id,date,time, request, response, transactionid, transactionammount, status_code)" + "VALUES(?,?,?,?,?,?,?,?)";
 
     private TransactionQueryBuilder() {
     }
