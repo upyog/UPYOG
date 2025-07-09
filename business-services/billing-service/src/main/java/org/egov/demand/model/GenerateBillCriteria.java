@@ -55,6 +55,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.egov.demand.validation.SanitizeHtml;
 
 @Setter
 @Getter
@@ -64,15 +65,18 @@ import lombok.ToString;
 @ToString
 public class GenerateBillCriteria {
 
+	@SanitizeHtml
 	@NotNull
 	@Size(max = 256)
 	private String tenantId;
 
+	@SanitizeHtml
 	@Size(max = 64)
 	private String demandId;
 	
 	private Set<String> consumerCode;
 
+	@SanitizeHtml
 	@NotNull
 	@Size(max = 256)
 	private String businessService;

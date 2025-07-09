@@ -11,6 +11,7 @@ import lombok.Builder;
 import lombok.Builder.Default;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.egov.demand.validation.SanitizeHtml;
 
 /**
  * A object holds a demand and collection values for a tax head and period.
@@ -22,12 +23,15 @@ import lombok.NoArgsConstructor;
 @Builder
 public class DemandDetail   {
 
+        @SanitizeHtml
         @JsonProperty("id")
         private String id;
 
+        @SanitizeHtml
         @JsonProperty("demandId")
         private String demandId;
 
+        @SanitizeHtml
         @NotNull @JsonProperty("taxHeadMasterCode")
         private String taxHeadMasterCode;
 
@@ -40,9 +44,11 @@ public class DemandDetail   {
         @JsonProperty("additionalDetails")
         private Object additionalDetails;
 
+        @SanitizeHtml
         @JsonProperty("auditDetails")
         private AuditDetails auditDetails;
 
+        @SanitizeHtml
         @JsonProperty("tenantId")
         private String tenantId;
 }

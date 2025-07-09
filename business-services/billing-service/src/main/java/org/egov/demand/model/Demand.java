@@ -8,6 +8,7 @@ import lombok.Builder;
 import lombok.Builder.Default;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.egov.demand.validation.SanitizeHtml;
 import org.egov.demand.web.contract.User;
 
 import jakarta.validation.Valid;
@@ -27,21 +28,26 @@ import java.util.List;
 @Builder
 public class Demand {
 
+    @SanitizeHtml
     @JsonProperty("id")
     private String id;
 
+    @SanitizeHtml
     @NotNull
     @JsonProperty("tenantId")
     private String tenantId;
 
+    @SanitizeHtml
     @NotNull
     @JsonProperty("consumerCode")
     private String consumerCode;
 
+    @SanitizeHtml
     @NotNull
     @JsonProperty("consumerType")
     private String consumerType;
 
+    @SanitizeHtml
     @NotNull
     @JsonProperty("businessService")
     private String businessService;
