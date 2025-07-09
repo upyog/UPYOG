@@ -355,21 +355,16 @@ public class FrontYardService extends GeneralRule {
 	private Boolean processFrontYardService(String blockName, Integer level, BigDecimal min, BigDecimal mean,
 			OccupancyTypeHelper mostRestrictiveOccupancy, FrontYardResult frontYardResult, Boolean valid,
 			String subRule, String rule, BigDecimal minVal, BigDecimal meanVal, BigDecimal depthOfPlot,
-			HashMap<String, String> errors, Plan pl, String occupancyName
-			) {
+			HashMap<String, String> errors, Plan pl, String occupancyName) {
 
 		BigDecimal plotArea = pl.getPlot().getArea();
-		String feature = MdmsFeatureConstants.FRONT_SETBACK;
-		occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl).toLowerCase();
-		String tenantId = pl.getTenantId();
-		String zone = pl.getPlanInformation().getZone().toLowerCase();
-		String subZone = pl.getPlanInformation().getSubZone().toLowerCase();
-		String riskType = fetchEdcrRulesMdms.getRiskType(pl).toLowerCase();
+		
+		// Fetch all rules for the given plan from the cache.
+		// Then, filter to find the first rule where the condition falls within the
+		// defined range.
+		// If a matching rule is found, proceed with its processing.
 
-		RuleKey key = new RuleKey(EdcrRulesMdmsConstants.STATE, tenantId, zone, subZone, occupancyName, riskType,
-				feature);
-		List<Object> rules = cache.getRules(tenantId, key);
-
+		List<Object> rules = cache.getFeatureRules(pl, MdmsFeatureConstants.FRONT_SETBACK, false);
 		Optional<MdmsFeatureRule> matchedRule = rules.stream().map(obj -> (MdmsFeatureRule) obj)
 				.filter(ruleMdms -> plotArea.compareTo(ruleMdms.getFromPlotArea()) >= 0
 						&& plotArea.compareTo(ruleMdms.getToPlotArea()) < 0)

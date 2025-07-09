@@ -30,6 +30,9 @@ public class CacheManagerMdms {
 	@Autowired
 	private BpaMdmsUtil bpaMdmsUtil;
 	
+	@Autowired
+	FetchEdcrRulesMdms fetchEdcrRulesMdms;
+	
 	private static Logger LOG = LogManager.getLogger(CacheManagerMdms.class);
 
 	Map<String, Map<RuleKey, List<Object>>> ruleMap;
@@ -154,6 +157,38 @@ public class CacheManagerMdms {
 		}
 		
 		return null;
+	}
+	
+	/**
+	 * Retrieves MDMS rules for a given feature using plan details and feature name.
+	 *
+	 * @param plan The building plan object
+	 * @param feature The feature name (e.g., "BALCONY", "STAIRCASE", etc.)
+	 * @param includeRiskType Whether to include riskType in the RuleKey
+	 * @return List of rules as List<Object> or null if no rules are found
+	 */
+	
+	public List<Object> getFeatureRules(Plan plan, String feature,
+	                                    boolean includeRiskType
+	                                   ) {
+
+	    String occupancyName = fetchEdcrRulesMdms.getOccupancyName(plan).toLowerCase();
+	    String tenantId = plan.getTenantId();
+	    String zone = plan.getPlanInformation().getZone().toLowerCase();
+	    String subZone = plan.getPlanInformation().getSubZone().toLowerCase();
+	    String riskType = includeRiskType ? fetchEdcrRulesMdms.getRiskType(plan).toLowerCase() : null;
+
+	    RuleKey key = new RuleKey(
+	        EdcrRulesMdmsConstants.STATE,
+	        tenantId,
+	        zone,
+	        subZone,
+	        occupancyName,
+	        riskType,
+	        feature
+	    );
+
+	    return getRules(tenantId, key);
 	}
 	
 }

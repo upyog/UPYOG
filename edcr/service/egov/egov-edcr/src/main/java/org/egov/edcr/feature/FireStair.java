@@ -58,6 +58,7 @@ import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.egov.common.constants.MdmsFeatureConstants;
 import org.egov.common.entity.edcr.Block;
 import org.egov.common.entity.edcr.Flight;
 import org.egov.common.entity.edcr.Floor;
@@ -127,159 +128,161 @@ public class FireStair extends FeatureProcess {
         return plan;
     }
 
-    /**
-     * Processes the given plan to validate fire stair dimensions.
-     * Fetches permissible values for fire stair dimensions and validates them against the plan details.
-     *
-     * @param plan The plan object to process.
-     * @return The processed plan object with scrutiny details added.
-     */
-    @Override
-    public Plan process(Plan plan) {
-        // Initialize a map to store validation errors
-        HashMap<String, String> errors = new HashMap<>();
+	/**
+	 * Processes the given plan to validate fire stair dimensions. Fetches
+	 * permissible values for fire stair dimensions and validates them against the
+	 * plan details.
+	 *
+	 * @param plan The plan object to process.
+	 * @return The processed plan object with scrutiny details added.
+	 */
+	@Override
+	public Plan process(Plan plan) {
+		// Initialize a map to store validation errors
+		HashMap<String, String> errors = new HashMap<>();
 
-        // Determine the occupancy type and feature for fetching permissible values
-     
-         String feature = "FireStair";
-        
-    	 String occupancyName = fetchEdcrRulesMdms.getOccupancyName(plan).toLowerCase();
-            String tenantId = plan.getTenantId();
-            String zone = plan.getPlanInformation().getZone().toLowerCase();
-            String subZone = plan.getPlanInformation().getSubZone().toLowerCase();
-            String riskType = fetchEdcrRulesMdms.getRiskType(plan).toLowerCase();
-            
-            RuleKey key = new RuleKey(EdcrRulesMdmsConstants.STATE, tenantId, zone, subZone, occupancyName, null, feature);
-            List<Object> rules = cache.getRules(tenantId, key);
-    		
-            Optional<MdmsFeatureRule> matchedRule = rules.stream()
-            	    .map(obj -> (MdmsFeatureRule) obj)
-            	    .findFirst();
+		// Determine the occupancy type and feature for fetching permissible values
 
-            	if (matchedRule.isPresent()) {
-            	    MdmsFeatureRule rule = matchedRule.get();
-            	    fireStairExpectedNoofRise = rule.getFireStairExpectedNoofRise();
-            	    fireStairMinimumWidth = rule.getFireStairMinimumWidth();
-            	    fireStairRequiredTread = rule.getFireStairRequiredTread();
-            	} 
+		// Fetch all rules for the given plan from the cache.
+		// Then, filter to find the first rule where the condition falls within the
+		// defined range.
+		// If a matching rule is found, proceed with its processing.
 
-        // Iterate through all blocks in the plan
-        blk: for (Block block : plan.getBlocks()) {
-            int fireStairCount = 0;
-            if (block.getBuilding() != null) {
-                // Initialize scrutiny details for fire stair validation
-                ScrutinyDetail scrutinyDetail2 = new ScrutinyDetail();
-                scrutinyDetail2.addColumnHeading(1, RULE_NO);
-                scrutinyDetail2.addColumnHeading(2, FLOOR);
-                scrutinyDetail2.addColumnHeading(3, DESCRIPTION);
-                scrutinyDetail2.addColumnHeading(4, PERMISSIBLE);
-                scrutinyDetail2.addColumnHeading(5, PROVIDED);
-                scrutinyDetail2.addColumnHeading(6, STATUS);
-                scrutinyDetail2.setKey("Block_" + block.getNumber() + "_" + "Fire Stair - Width");
+		List<Object> rules = cache.getFeatureRules(plan, MdmsFeatureConstants.FIRE_STAIR, false);
 
-                ScrutinyDetail scrutinyDetail3 = new ScrutinyDetail();
-                scrutinyDetail3.addColumnHeading(1, RULE_NO);
-                scrutinyDetail3.addColumnHeading(2, FLOOR);
-                scrutinyDetail3.addColumnHeading(3, DESCRIPTION);
-                scrutinyDetail3.addColumnHeading(4, PERMISSIBLE);
-                scrutinyDetail3.addColumnHeading(5, PROVIDED);
-                scrutinyDetail3.addColumnHeading(6, STATUS);
-                scrutinyDetail3.setKey("Block_" + block.getNumber() + "_" + "Fire Stair - Tread width");
+		Optional<MdmsFeatureRule> matchedRule = rules.stream().map(obj -> (MdmsFeatureRule) obj).findFirst();
 
-                ScrutinyDetail scrutinyDetailRise = new ScrutinyDetail();
-                scrutinyDetailRise.addColumnHeading(1, RULE_NO);
-                scrutinyDetailRise.addColumnHeading(2, FLOOR);
-                scrutinyDetailRise.addColumnHeading(3, DESCRIPTION);
-                scrutinyDetailRise.addColumnHeading(4, PERMISSIBLE);
-                scrutinyDetailRise.addColumnHeading(5, PROVIDED);
-                scrutinyDetailRise.addColumnHeading(6, STATUS);
-                scrutinyDetailRise.setKey("Block_" + block.getNumber() + "_" + "Fire Stair - Number of risers");
+		if (matchedRule.isPresent()) {
+			MdmsFeatureRule rule = matchedRule.get();
+			fireStairExpectedNoofRise = rule.getFireStairExpectedNoofRise();
+			fireStairMinimumWidth = rule.getFireStairMinimumWidth();
+			fireStairRequiredTread = rule.getFireStairRequiredTread();
+		}
 
-                ScrutinyDetail scrutinyDetailLanding = new ScrutinyDetail();
-                scrutinyDetailLanding.addColumnHeading(1, RULE_NO);
-                scrutinyDetailLanding.addColumnHeading(2, FLOOR);
-                scrutinyDetailLanding.addColumnHeading(3, DESCRIPTION);
-                scrutinyDetailLanding.addColumnHeading(4, PERMISSIBLE);
-                scrutinyDetailLanding.addColumnHeading(5, PROVIDED);
-                scrutinyDetailLanding.addColumnHeading(6, STATUS);
-                scrutinyDetailLanding.setKey("Block_" + block.getNumber() + "_" + "Fire Stair - Mid landing");
+		// Iterate through all blocks in the plan
+		blk: for (Block block : plan.getBlocks()) {
+			int fireStairCount = 0;
+			if (block.getBuilding() != null) {
+				// Initialize scrutiny details for fire stair validation
+				ScrutinyDetail scrutinyDetail2 = new ScrutinyDetail();
+				scrutinyDetail2.addColumnHeading(1, RULE_NO);
+				scrutinyDetail2.addColumnHeading(2, FLOOR);
+				scrutinyDetail2.addColumnHeading(3, DESCRIPTION);
+				scrutinyDetail2.addColumnHeading(4, PERMISSIBLE);
+				scrutinyDetail2.addColumnHeading(5, PROVIDED);
+				scrutinyDetail2.addColumnHeading(6, STATUS);
+				scrutinyDetail2.setKey("Block_" + block.getNumber() + "_" + "Fire Stair - Width");
 
-                ScrutinyDetail scrutinyDetailAbutBltUp = new ScrutinyDetail();
-                scrutinyDetailAbutBltUp.addColumnHeading(1, RULE_NO);
-                scrutinyDetailAbutBltUp.addColumnHeading(2, FLOOR);
-                scrutinyDetailAbutBltUp.addColumnHeading(3, DESCRIPTION);
-                scrutinyDetailAbutBltUp.addColumnHeading(4, PROVIDED);
-                scrutinyDetailAbutBltUp.addColumnHeading(5, STATUS);
-                scrutinyDetailAbutBltUp.setKey("Block_" + block.getNumber() + "_" + "Fire Stair - Abutting External Wall");
+				ScrutinyDetail scrutinyDetail3 = new ScrutinyDetail();
+				scrutinyDetail3.addColumnHeading(1, RULE_NO);
+				scrutinyDetail3.addColumnHeading(2, FLOOR);
+				scrutinyDetail3.addColumnHeading(3, DESCRIPTION);
+				scrutinyDetail3.addColumnHeading(4, PERMISSIBLE);
+				scrutinyDetail3.addColumnHeading(5, PROVIDED);
+				scrutinyDetail3.addColumnHeading(6, STATUS);
+				scrutinyDetail3.setKey("Block_" + block.getNumber() + "_" + "Fire Stair - Tread width");
 
-                // int spiralStairCount = 0;
-                OccupancyTypeHelper mostRestrictiveOccupancyType = plan.getVirtualBuilding() != null ? plan.getVirtualBuilding().getMostRestrictiveFarHelper(): null ;
-                /*
-                 * String occupancyType = mostRestrictiveOccupancy != null ? mostRestrictiveOccupancy.getOccupancyType() : null;
-                 */
+				ScrutinyDetail scrutinyDetailRise = new ScrutinyDetail();
+				scrutinyDetailRise.addColumnHeading(1, RULE_NO);
+				scrutinyDetailRise.addColumnHeading(2, FLOOR);
+				scrutinyDetailRise.addColumnHeading(3, DESCRIPTION);
+				scrutinyDetailRise.addColumnHeading(4, PERMISSIBLE);
+				scrutinyDetailRise.addColumnHeading(5, PROVIDED);
+				scrutinyDetailRise.addColumnHeading(6, STATUS);
+				scrutinyDetailRise.setKey("Block_" + block.getNumber() + "_" + "Fire Stair - Number of risers");
 
-                List<Floor> floors = block.getBuilding().getFloors();
-                List<String> fireStairAbsent = new ArrayList<>();
-                // Iterate through all floors in the block
+				ScrutinyDetail scrutinyDetailLanding = new ScrutinyDetail();
+				scrutinyDetailLanding.addColumnHeading(1, RULE_NO);
+				scrutinyDetailLanding.addColumnHeading(2, FLOOR);
+				scrutinyDetailLanding.addColumnHeading(3, DESCRIPTION);
+				scrutinyDetailLanding.addColumnHeading(4, PERMISSIBLE);
+				scrutinyDetailLanding.addColumnHeading(5, PROVIDED);
+				scrutinyDetailLanding.addColumnHeading(6, STATUS);
+				scrutinyDetailLanding.setKey("Block_" + block.getNumber() + "_" + "Fire Stair - Mid landing");
 
-                for (Floor floor : floors) {
-                    if (!floor.getTerrace()) {
-                        boolean isTypicalRepititiveFloor = false;
-                        Map<String, Object> typicalFloorValues = Util.getTypicalFloorValues(block, floor, isTypicalRepititiveFloor);
+				ScrutinyDetail scrutinyDetailAbutBltUp = new ScrutinyDetail();
+				scrutinyDetailAbutBltUp.addColumnHeading(1, RULE_NO);
+				scrutinyDetailAbutBltUp.addColumnHeading(2, FLOOR);
+				scrutinyDetailAbutBltUp.addColumnHeading(3, DESCRIPTION);
+				scrutinyDetailAbutBltUp.addColumnHeading(4, PROVIDED);
+				scrutinyDetailAbutBltUp.addColumnHeading(5, STATUS);
+				scrutinyDetailAbutBltUp
+						.setKey("Block_" + block.getNumber() + "_" + "Fire Stair - Abutting External Wall");
 
-                        List<org.egov.common.entity.edcr.FireStair> fireStairs = floor.getFireStairs();
-                        fireStairCount = fireStairCount + fireStairs.size();
+				// int spiralStairCount = 0;
+				OccupancyTypeHelper mostRestrictiveOccupancyType = plan.getVirtualBuilding() != null
+						? plan.getVirtualBuilding().getMostRestrictiveFarHelper()
+						: null;
+				/*
+				 * String occupancyType = mostRestrictiveOccupancy != null ?
+				 * mostRestrictiveOccupancy.getOccupancyType() : null;
+				 */
 
-                        if (!fireStairs.isEmpty()) {
-                            for (org.egov.common.entity.edcr.FireStair fireStair : fireStairs) {
-                                setReportOutputDetailsBltUp(plan, RULE42_5_II, floor.getNumber().toString(),
-                                        "Fire stair should abut floor external wall",
-                                        fireStair.isAbuttingBltUp() ? "Is abutting external wall" : "Not abutting external wall",
-                                        fireStair.isAbuttingBltUp() ? Result.Accepted.getResultVal()
-                                                : Result.Not_Accepted.getResultVal(),
-                                        scrutinyDetailAbutBltUp);
+				List<Floor> floors = block.getBuilding().getFloors();
+				List<String> fireStairAbsent = new ArrayList<>();
+				// Iterate through all floors in the block
 
-                                validateFlight(plan, errors, block, scrutinyDetail2, scrutinyDetail3,
-                                        scrutinyDetailRise, null, floor, typicalFloorValues, fireStair, fireStairRequiredTread, fireStairExpectedNoofRise);
+				for (Floor floor : floors) {
+					if (!floor.getTerrace()) {
+						boolean isTypicalRepititiveFloor = false;
+						Map<String, Object> typicalFloorValues = Util.getTypicalFloorValues(block, floor,
+								isTypicalRepititiveFloor);
 
-                                List<StairLanding> landings = fireStair.getLandings();
-                                if (!landings.isEmpty()) {
-                                    validateLanding(plan, block, scrutinyDetailLanding, floor, typicalFloorValues,
-                                            fireStair, landings, errors, fireStairMinimumWidth);
-                                } else {
-                                    errors.put(
-                                            "Fire Stair landing not defined in blk " + block.getNumber() + " floor "
-                                                    + floor.getNumber() + " fire stair " + fireStair.getNumber(),
-                                            "Fire Stair landing not defined in blk " + block.getNumber() + " floor "
-                                                    + floor.getNumber() + " fire stair " + fireStair.getNumber());
-                                    plan.addErrors(errors);
-                                }
-                            }
-                        } else {
-                            if (block.getBuilding().getIsHighRise()) {
-                                fireStairAbsent.add("Block " + block.getNumber() + " floor " + floor.getNumber());
-                            }
-                        }
-                    }
-                }
+						List<org.egov.common.entity.edcr.FireStair> fireStairs = floor.getFireStairs();
+						fireStairCount = fireStairCount + fireStairs.size();
 
-                if (!fireStairAbsent.isEmpty()) {
-                    for (String error : fireStairAbsent) {
-                        errors.put("Fire Stair " + error, "Fire stair not defined in " + error);
-                        plan.addErrors(errors);
-                    }
-                }
+						if (!fireStairs.isEmpty()) {
+							for (org.egov.common.entity.edcr.FireStair fireStair : fireStairs) {
+								setReportOutputDetailsBltUp(plan, RULE42_5_II, floor.getNumber().toString(),
+										"Fire stair should abut floor external wall",
+										fireStair.isAbuttingBltUp() ? "Is abutting external wall"
+												: "Not abutting external wall",
+										fireStair.isAbuttingBltUp() ? Result.Accepted.getResultVal()
+												: Result.Not_Accepted.getResultVal(),
+										scrutinyDetailAbutBltUp);
 
-                if (block.getBuilding().getIsHighRise() && fireStairCount == 0) {
-                    errors.put("FireStair not defined in blk " + block.getNumber(), "FireStair not defined in block "
-                            + block.getNumber() + ", it is mandatory for building with height more than 15m.");
-                    plan.addErrors(errors);
-                }
-            }
-        }
+								validateFlight(plan, errors, block, scrutinyDetail2, scrutinyDetail3,
+										scrutinyDetailRise, null, floor, typicalFloorValues, fireStair,
+										fireStairRequiredTread, fireStairExpectedNoofRise);
 
-        return plan;
-    }
+								List<StairLanding> landings = fireStair.getLandings();
+								if (!landings.isEmpty()) {
+									validateLanding(plan, block, scrutinyDetailLanding, floor, typicalFloorValues,
+											fireStair, landings, errors, fireStairMinimumWidth);
+								} else {
+									errors.put(
+											"Fire Stair landing not defined in blk " + block.getNumber() + " floor "
+													+ floor.getNumber() + " fire stair " + fireStair.getNumber(),
+											"Fire Stair landing not defined in blk " + block.getNumber() + " floor "
+													+ floor.getNumber() + " fire stair " + fireStair.getNumber());
+									plan.addErrors(errors);
+								}
+							}
+						} else {
+							if (block.getBuilding().getIsHighRise()) {
+								fireStairAbsent.add("Block " + block.getNumber() + " floor " + floor.getNumber());
+							}
+						}
+					}
+				}
+
+				if (!fireStairAbsent.isEmpty()) {
+					for (String error : fireStairAbsent) {
+						errors.put("Fire Stair " + error, "Fire stair not defined in " + error);
+						plan.addErrors(errors);
+					}
+				}
+
+				if (block.getBuilding().getIsHighRise() && fireStairCount == 0) {
+					errors.put("FireStair not defined in blk " + block.getNumber(), "FireStair not defined in block "
+							+ block.getNumber() + ", it is mandatory for building with height more than 15m.");
+					plan.addErrors(errors);
+				}
+			}
+		}
+
+		return plan;
+	}
 
     /**
      * Validates the landings for a fire stair.

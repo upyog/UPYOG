@@ -269,32 +269,28 @@ public class Coverage extends FeatureProcess {
 	}
 	
 	
-	private BigDecimal getPermissibleCoverage(Plan pl, BigDecimal area,  String feature,
-			String occupancyName) {
+	private BigDecimal getPermissibleCoverage(Plan pl, BigDecimal area, String feature, String occupancyName) {
 		LOG.info("inside getPermissibleCoverage()");
 
-	 BigDecimal permissibleCoverage = BigDecimal.ZERO;
-     String tenantId = pl.getTenantId();
-     String zone = pl.getPlanInformation().getZone().toLowerCase();
-     String subZone = pl.getPlanInformation().getSubZone().toLowerCase();
-     String riskType = fetchEdcrRulesMdms.getRiskType(pl).toLowerCase();
-     
-     RuleKey key = new RuleKey(EdcrRulesMdmsConstants.STATE, tenantId, zone, subZone, occupancyName, riskType, feature);
-     List<Object> rules = cache.getRules(tenantId, key);
-		
-     Optional<MdmsFeatureRule> matchedRule = rules.stream()
-			    .map(obj -> (MdmsFeatureRule) obj)
-			    .filter(rule -> area.compareTo(rule.getFromPlotArea()) >= 0 &&
-			    		area.compareTo(rule.getToPlotArea()) < 0)
-			    .findFirst();
-     	if (matchedRule.isPresent()) {
-     	    MdmsFeatureRule rule = matchedRule.get();
-     	   permissibleCoverage = rule.getPermissible();
-     	} else {
-     		permissibleCoverage = BigDecimal.ZERO;
-     	}
+		BigDecimal permissibleCoverage = BigDecimal.ZERO;
+		// Fetch all rules for the given plan from the cache.
+		// Then, filter to find the first rule where the condition falls within the
+		// defined range.
+		// If a matching rule is found, proceed with its processing.
+
+		List<Object> rules = cache.getFeatureRules(pl, MdmsFeatureConstants.COVERAGE, true);
+
+		Optional<MdmsFeatureRule> matchedRule = rules.stream().map(obj -> (MdmsFeatureRule) obj)
+				.filter(rule -> area.compareTo(rule.getFromPlotArea()) >= 0 && area.compareTo(rule.getToPlotArea()) < 0)
+				.findFirst();
+		if (matchedRule.isPresent()) {
+			MdmsFeatureRule rule = matchedRule.get();
+			permissibleCoverage = rule.getPermissible();
+		} else {
+			permissibleCoverage = BigDecimal.ZERO;
+		}
 		return permissibleCoverage;
-		
+
 	}
 
 

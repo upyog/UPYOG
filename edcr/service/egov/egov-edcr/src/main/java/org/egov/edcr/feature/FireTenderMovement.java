@@ -99,125 +99,94 @@ public class FireTenderMovement extends FeatureProcess {
         return plan;
     }
 
-    /**
-     * Processes the given plan to validate fire tender movement.
-     * Fetches permissible values for fire tender movement and validates them against the plan details.
-     *
-     * @param plan The plan object to process.
-     * @return The processed plan object with scrutiny details added.
-     */
-    @Override
-    public Plan process(Plan plan) {
-        // Map to store validation errors
-        HashMap<String, String> errors = new HashMap<>();
+	/**
+	 * Processes the given plan to validate fire tender movement. Fetches
+	 * permissible values for fire tender movement and validates them against the
+	 * plan details.
+	 *
+	 * @param plan The plan object to process.
+	 * @return The processed plan object with scrutiny details added.
+	 */
+	@Override
+	public Plan process(Plan plan) {
+		// Map to store validation errors
+		HashMap<String, String> errors = new HashMap<>();
 
-        // Variables to store permissible values for fire tender movement
-        BigDecimal FireTenderMovementValueOne = BigDecimal.ZERO;
-        BigDecimal FireTenderMovementValueTwo = BigDecimal.ZERO;
+		// Variables to store permissible values for fire tender movement
+		BigDecimal FireTenderMovementValueOne = BigDecimal.ZERO;
+		BigDecimal FireTenderMovementValueTwo = BigDecimal.ZERO;
 
-        // Determine the occupancy type and feature for fetching permissible values
-       
-        String feature = MdmsFeatureConstants.FIRE_TENDER_MOVEMENT;
-        
-    	 String occupancyName = fetchEdcrRulesMdms.getOccupancyName(plan).toLowerCase();
-            String tenantId = plan.getTenantId();
-            String zone = plan.getPlanInformation().getZone().toLowerCase();
-            String subZone = plan.getPlanInformation().getSubZone().toLowerCase();
-            String riskType = fetchEdcrRulesMdms.getRiskType(plan).toLowerCase();
-            
-            RuleKey key = new RuleKey(EdcrRulesMdmsConstants.STATE, tenantId, zone, subZone, occupancyName, null, feature);
-            List<Object> rules = cache.getRules(tenantId, key);
-    		
-            Optional<MdmsFeatureRule> matchedRule = rules.stream()
-            	    .map(obj -> (MdmsFeatureRule) obj)
-            	    .findFirst();
+		// Fetch all rules for the given plan from the cache.
+		// Then, filter to find the first rule where the condition falls within the
+		// defined range.
+		// If a matching rule is found, proceed with its processing.
 
-            	if (matchedRule.isPresent()) {
-            	    MdmsFeatureRule rule = matchedRule.get();
-            	    FireTenderMovementValueOne = rule.getFireTenderMovementValueOne();
-            	    FireTenderMovementValueTwo = rule.getFireTenderMovementValueTwo();
-            	} 
-//        Map<String, Object> params = new HashMap<>();
-//       
-//
-//        params.put("feature", feature);
-//        params.put("occupancy", occupancyName);
-//
-//        // Fetch permissible values for fire tender movement
-//        Map<String, List<Map<String, Object>>> edcrRuleList = plan.getEdcrRulesFeatures();
-//        ArrayList<String> valueFromColumn = new ArrayList<>();
-//        valueFromColumn.add(EdcrRulesMdmsConstants.FIRE_TENDER_MOVEMENT_VALUE_ONE);
-//        valueFromColumn.add(EdcrRulesMdmsConstants.FIRE_TENDER_MOVEMENT_VALUE_TWO);
-//
-//        List<Map<String, Object>> permissibleValue = new ArrayList<>();
-//        try {
-//            permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
-//            LOG.info("permissibleValue" + permissibleValue);
-//        } catch (NullPointerException e) {
-//            LOG.error("Permissible Value for FireTenderMovement not found--------", e);
-//            return null;
-//        }
-//
-//        if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey(EdcrRulesMdmsConstants.FIRE_TENDER_MOVEMENT_VALUE_ONE)) {
-//            FireTenderMovementValueOne = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.FIRE_TENDER_MOVEMENT_VALUE_ONE).toString()));
-//            FireTenderMovementValueTwo = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.FIRE_TENDER_MOVEMENT_VALUE_TWO).toString()));
-//        }
+		List<Object> rules = cache.getFeatureRules(plan, MdmsFeatureConstants.FIRE_TENDER_MOVEMENT, false);
+		Optional<MdmsFeatureRule> matchedRule = rules.stream().map(obj -> (MdmsFeatureRule) obj).findFirst();
 
-        // Iterate through all blocks in the plan
-        for (Block block : plan.getBlocks()) {
-            // Initialize scrutiny details for fire tender movement validation
-            ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
-            scrutinyDetail.addColumnHeading(1, RULE_NO);
-            scrutinyDetail.addColumnHeading(2, DESCRIPTION);
-            scrutinyDetail.addColumnHeading(3, PERMISSIBLE);
-            scrutinyDetail.addColumnHeading(4, PROVIDED);
-            scrutinyDetail.addColumnHeading(5, STATUS);
-            scrutinyDetail.setKey("Block_" + block.getNumber() + "_" + "Fire Tender Movement");
+		if (matchedRule.isPresent()) {
+			MdmsFeatureRule rule = matchedRule.get();
+			FireTenderMovementValueOne = rule.getFireTenderMovementValueOne();
+			FireTenderMovementValueTwo = rule.getFireTenderMovementValueTwo();
+		}
 
-            // Validate fire tender movement for the block
-            if (block.getBuilding() != null
-                    && block.getBuilding().getBuildingHeight().setScale(DcrConstants.DECIMALDIGITS_MEASUREMENTS,
-                            DcrConstants.ROUNDMODE_MEASUREMENTS).compareTo(FireTenderMovementValueOne) > 0) {
-                org.egov.common.entity.edcr.FireTenderMovement fireTenderMovement = block.getFireTenderMovement();
-                if (fireTenderMovement != null) {
-                    // Get the minimum width of fire tender movement
-                    List<BigDecimal> widths = fireTenderMovement.getFireTenderMovements().stream()
-                            .map(fireTenderMovmnt -> fireTenderMovmnt.getWidth()).collect(Collectors.toList());
-                    BigDecimal minWidth = widths.stream().reduce(BigDecimal::min).get();
-                    BigDecimal providedWidth = minWidth.setScale(DcrConstants.DECIMALDIGITS_MEASUREMENTS,
-                            DcrConstants.ROUNDMODE_MEASUREMENTS);
-                    Boolean isAccepted = providedWidth.compareTo(FireTenderMovementValueTwo) >= 0;
+		// Iterate through all blocks in the plan
+		for (Block block : plan.getBlocks()) {
+			// Initialize scrutiny details for fire tender movement validation
+			ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
+			scrutinyDetail.addColumnHeading(1, RULE_NO);
+			scrutinyDetail.addColumnHeading(2, DESCRIPTION);
+			scrutinyDetail.addColumnHeading(3, PERMISSIBLE);
+			scrutinyDetail.addColumnHeading(4, PROVIDED);
+			scrutinyDetail.addColumnHeading(5, STATUS);
+			scrutinyDetail.setKey("Block_" + block.getNumber() + "_" + "Fire Tender Movement");
 
-                    // Add scrutiny details for fire tender movement
-                    Map<String, String> details = new HashMap<>();
-                    details.put(RULE_NO, RULE_36_3);
-                    details.put(DESCRIPTION, "Width of fire tender movement");
-                    details.put(PERMISSIBLE, ">= " + FireTenderMovementValueTwo.toString());
-                    details.put(PROVIDED, providedWidth.toString());
-                    details.put(STATUS, isAccepted ? Result.Accepted.getResultVal() : Result.Not_Accepted.getResultVal());
-                    scrutinyDetail.getDetail().add(details);
-                    plan.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+			// Validate fire tender movement for the block
+			if (block.getBuilding() != null && block.getBuilding().getBuildingHeight()
+					.setScale(DcrConstants.DECIMALDIGITS_MEASUREMENTS, DcrConstants.ROUNDMODE_MEASUREMENTS)
+					.compareTo(FireTenderMovementValueOne) > 0) {
+				org.egov.common.entity.edcr.FireTenderMovement fireTenderMovement = block.getFireTenderMovement();
+				if (fireTenderMovement != null) {
+					// Get the minimum width of fire tender movement
+					List<BigDecimal> widths = fireTenderMovement.getFireTenderMovements().stream()
+							.map(fireTenderMovmnt -> fireTenderMovmnt.getWidth()).collect(Collectors.toList());
+					BigDecimal minWidth = widths.stream().reduce(BigDecimal::min).get();
+					BigDecimal providedWidth = minWidth.setScale(DcrConstants.DECIMALDIGITS_MEASUREMENTS,
+							DcrConstants.ROUNDMODE_MEASUREMENTS);
+					Boolean isAccepted = providedWidth.compareTo(FireTenderMovementValueTwo) >= 0;
 
-                    // Add errors if fire tender movement is not inside the required setbacks
-                    if (!fireTenderMovement.getErrors().isEmpty()) {
-                        StringBuffer yardNames = new StringBuffer();
-                        for (String yardName : fireTenderMovement.getErrors()) {
-                            yardNames = yardNames.append(yardName).append(", ");
-                        }
-                        errors.put("FTM_SETBACK", "Fire tender movement for block " + block.getNumber() + " is not inside "
-                                + yardNames.toString().substring(0, yardNames.length() - 2) + ".");
-                        plan.addErrors(errors);
-                    }
-                } else {
-                    // Add error if fire tender movement is not defined for the block
-                    errors.put("BLK_FTM_" + block.getNumber(), "Fire tender movement not defined for Block " + block.getNumber());
-                    plan.addErrors(errors);
-                }
-            }
-        }
+					// Add scrutiny details for fire tender movement
+					Map<String, String> details = new HashMap<>();
+					details.put(RULE_NO, RULE_36_3);
+					details.put(DESCRIPTION, "Width of fire tender movement");
+					details.put(PERMISSIBLE, ">= " + FireTenderMovementValueTwo.toString());
+					details.put(PROVIDED, providedWidth.toString());
+					details.put(STATUS,
+							isAccepted ? Result.Accepted.getResultVal() : Result.Not_Accepted.getResultVal());
+					scrutinyDetail.getDetail().add(details);
+					plan.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
 
-        return plan;
-    }
+					// Add errors if fire tender movement is not inside the required setbacks
+					if (!fireTenderMovement.getErrors().isEmpty()) {
+						StringBuffer yardNames = new StringBuffer();
+						for (String yardName : fireTenderMovement.getErrors()) {
+							yardNames = yardNames.append(yardName).append(", ");
+						}
+						errors.put("FTM_SETBACK", "Fire tender movement for block " + block.getNumber()
+								+ " is not inside " + yardNames.toString().substring(0, yardNames.length() - 2) + ".");
+						plan.addErrors(errors);
+					}
+				} else {
+					// Add error if fire tender movement is not defined for the block
+					errors.put("BLK_FTM_" + block.getNumber(),
+							"Fire tender movement not defined for Block " + block.getNumber());
+					plan.addErrors(errors);
+				}
+			}
+		}
+
+		return plan;
+	}
 
     /**
      * Returns an empty map as no amendments are defined for this feature.

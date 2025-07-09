@@ -492,56 +492,54 @@ public class GeneralStair extends FeatureProcess {
 	private BigDecimal getRequiredWidth(Plan pl, Block block, OccupancyTypeHelper mostRestrictiveOccupancyType) {
 //		BigDecimal buildingHeight = block.getBuilding().getHeight();
 
-		String occupancyName = "";
-		String subOccupancyName = "";
-		String featureName = MdmsFeatureConstants.REQUIRED_WIDTH;
+//		String occupancyName = "";
+//		String subOccupancyName = "";
+//		String featureName = MdmsFeatureConstants.REQUIRED_WIDTH;
 
 		BigDecimal value = BigDecimal.ZERO;
 
-		if (mostRestrictiveOccupancyType != null && mostRestrictiveOccupancyType.getType() != null
-				&& DxfFileConstants.A_R.equalsIgnoreCase(mostRestrictiveOccupancyType.getType().getCode())) {
-			occupancyName = "residential";
-			subOccupancyName = "apartment/Flat";
-//			return BigDecimal.valueOf(0.85);
-		} else if (mostRestrictiveOccupancyType != null && mostRestrictiveOccupancyType.getType() != null
-				&& DxfFileConstants.A_AF_GH.equalsIgnoreCase(mostRestrictiveOccupancyType.getType().getCode())) {
-			occupancyName = "residential";
-			subOccupancyName = "";
-//			return BigDecimal.valueOf(0.85);
-		} else if (mostRestrictiveOccupancyType != null && mostRestrictiveOccupancyType.getType() != null
-				&& DxfFileConstants.A.equalsIgnoreCase(mostRestrictiveOccupancyType.getType().getCode())) {
-			occupancyName = "residential";
-//			return BigDecimal.valueOf(0.85);
-		} else if (mostRestrictiveOccupancyType != null && mostRestrictiveOccupancyType.getType() != null
-				&& DxfFileConstants.B.equalsIgnoreCase(mostRestrictiveOccupancyType.getType().getCode())
-				&& block.getBuilding().getBuildingHeight().compareTo(BigDecimal.valueOf(24)) <= 0) {
-			occupancyName = "educational";
-			// return BigDecimal.valueOf(1.5);
-		} else if (mostRestrictiveOccupancyType != null && mostRestrictiveOccupancyType.getType() != null
-				&& DxfFileConstants.B.equalsIgnoreCase(mostRestrictiveOccupancyType.getType().getCode())) {
-			occupancyName = "educational";
-//			return BigDecimal.valueOf(2.0);
-		} else if (mostRestrictiveOccupancyType != null && mostRestrictiveOccupancyType.getType() != null
-				&& DxfFileConstants.C.equalsIgnoreCase(mostRestrictiveOccupancyType.getType().getCode())) {
-			occupancyName = "medical/hospital";
-//			return BigDecimal.valueOf(1.5);
-		} else if (mostRestrictiveOccupancyType != null && mostRestrictiveOccupancyType.getType() != null
-				&& DxfFileConstants.D.equalsIgnoreCase(mostRestrictiveOccupancyType.getType().getCode())) {
-			occupancyName = "assembly";
-//			return BigDecimal.valueOf(1.5);
-		} else {
-			occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl).toLowerCase();
-//			return BigDecimal.valueOf(1.5);
-		}
+//		if (mostRestrictiveOccupancyType != null && mostRestrictiveOccupancyType.getType() != null
+//				&& DxfFileConstants.A_R.equalsIgnoreCase(mostRestrictiveOccupancyType.getType().getCode())) {
+//			occupancyName = "residential";
+//			subOccupancyName = "apartment/Flat";
+////			return BigDecimal.valueOf(0.85);
+//		} else if (mostRestrictiveOccupancyType != null && mostRestrictiveOccupancyType.getType() != null
+//				&& DxfFileConstants.A_AF_GH.equalsIgnoreCase(mostRestrictiveOccupancyType.getType().getCode())) {
+//			occupancyName = "residential";
+//			subOccupancyName = "";
+////			return BigDecimal.valueOf(0.85);
+//		} else if (mostRestrictiveOccupancyType != null && mostRestrictiveOccupancyType.getType() != null
+//				&& DxfFileConstants.A.equalsIgnoreCase(mostRestrictiveOccupancyType.getType().getCode())) {
+//			occupancyName = "residential";
+////			return BigDecimal.valueOf(0.85);
+//		} else if (mostRestrictiveOccupancyType != null && mostRestrictiveOccupancyType.getType() != null
+//				&& DxfFileConstants.B.equalsIgnoreCase(mostRestrictiveOccupancyType.getType().getCode())
+//				&& block.getBuilding().getBuildingHeight().compareTo(BigDecimal.valueOf(24)) <= 0) {
+//			occupancyName = "educational";
+//			// return BigDecimal.valueOf(1.5);
+//		} else if (mostRestrictiveOccupancyType != null && mostRestrictiveOccupancyType.getType() != null
+//				&& DxfFileConstants.B.equalsIgnoreCase(mostRestrictiveOccupancyType.getType().getCode())) {
+//			occupancyName = "educational";
+////			return BigDecimal.valueOf(2.0);
+//		} else if (mostRestrictiveOccupancyType != null && mostRestrictiveOccupancyType.getType() != null
+//				&& DxfFileConstants.C.equalsIgnoreCase(mostRestrictiveOccupancyType.getType().getCode())) {
+//			occupancyName = "medical/hospital";
+////			return BigDecimal.valueOf(1.5);
+//		} else if (mostRestrictiveOccupancyType != null && mostRestrictiveOccupancyType.getType() != null
+//				&& DxfFileConstants.D.equalsIgnoreCase(mostRestrictiveOccupancyType.getType().getCode())) {
+//			occupancyName = "assembly";
+////			return BigDecimal.valueOf(1.5);
+//		} else {
+//			occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl).toLowerCase();
+////			return BigDecimal.valueOf(1.5);
+//		}
 
-		String tenantId = pl.getTenantId();
-		String zone = pl.getPlanInformation().getZone().toLowerCase();
-		String subZone = pl.getPlanInformation().getSubZone().toLowerCase();
-		String riskType = fetchEdcrRulesMdms.getRiskType(pl).toLowerCase();
+		// Fetch all rules for the given plan from the cache.
+		// Then, filter to find the first rule where the condition falls within the
+		// defined range.
+		// If a matching rule is found, proceed with its processing.
 
-		RuleKey key = new RuleKey(EdcrRulesMdmsConstants.STATE, tenantId, zone, subZone, occupancyName, null,
-				featureName);
-		List<Object> rules = cache.getRules(tenantId, key);
+		List<Object> rules = cache.getFeatureRules(pl, MdmsFeatureConstants.REQUIRED_WIDTH, false);
 
 		Optional<MdmsFeatureRule> matchedRule = rules.stream().map(obj -> (MdmsFeatureRule) obj).findFirst();
 
@@ -641,30 +639,15 @@ public class GeneralStair extends FeatureProcess {
 
 	private BigDecimal getRequiredTread(Plan pl, OccupancyTypeHelper mostRestrictiveOccupancyType) {
 
-		String occupancyName = "";
-		String subOccupancyName = "";
-		String featureName = MdmsFeatureConstants.REQUIRED_TREAD;
-
+		
 		BigDecimal value = BigDecimal.ZERO;
 
-		if (mostRestrictiveOccupancyType != null && mostRestrictiveOccupancyType.getSubtype() != null
-				&& DxfFileConstants.A_R.equalsIgnoreCase(mostRestrictiveOccupancyType.getSubtype().getCode())) {
-			occupancyName = MdmsFeatureConstants.RESIDENTIAL;
-			subOccupancyName = MdmsFeatureConstants.APARTMENT_FLAT;
-//			return BigDecimal.valueOf(0.25);
-		} else {
-			occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl).toLowerCase();
-//			return BigDecimal.valueOf(0.3);
-		}
+		// Fetch all rules for the given plan from the cache.
+		// Then, filter to find the first rule where the condition falls within the
+		// defined range.
+		// If a matching rule is found, proceed with its processing.
 
-		String tenantId = pl.getTenantId();
-		String zone = pl.getPlanInformation().getZone().toLowerCase();
-		String subZone = pl.getPlanInformation().getSubZone().toLowerCase();
-		String riskType = fetchEdcrRulesMdms.getRiskType(pl).toLowerCase();
-
-		RuleKey key = new RuleKey(EdcrRulesMdmsConstants.STATE, tenantId, zone, subZone, occupancyName, null,
-				featureName);
-		List<Object> rules = cache.getRules(tenantId, key);
+		List<Object> rules = cache.getFeatureRules(pl, MdmsFeatureConstants.REQUIRED_TREAD, false);
 
 		Optional<MdmsFeatureRule> matchedRule = rules.stream().map(obj -> (MdmsFeatureRule) obj).findFirst();
 
@@ -710,19 +693,16 @@ public class GeneralStair extends FeatureProcess {
 		boolean valid = false;
 
 		if (!(Boolean) typicalFloorValues.get("isTypicalRepititiveFloor")) {
-			String featureName = MdmsFeatureConstants.NO_OF_RISER;
-			// String featureName1 = "noOfRiser";
+			
+		
 			BigDecimal noOfRisersValue = BigDecimal.ZERO;
 
-			String occupancyName = fetchEdcrRulesMdms.getOccupancyName(plan).toLowerCase();
-			String tenantId = plan.getTenantId();
-			String zone = plan.getPlanInformation().getZone().toLowerCase();
-			String subZone = plan.getPlanInformation().getSubZone().toLowerCase();
-			String riskType = fetchEdcrRulesMdms.getRiskType(plan).toLowerCase();
+			// Fetch all rules for the given plan from the cache.
+			// Then, filter to find the first rule where the condition falls within the
+			// defined range.
+			// If a matching rule is found, proceed with its processing.
 
-			RuleKey key = new RuleKey(EdcrRulesMdmsConstants.STATE, tenantId, zone, subZone, occupancyName, null,
-					featureName);
-			List<Object> rules = cache.getRules(tenantId, key);
+			List<Object> rules = cache.getFeatureRules(plan, MdmsFeatureConstants.NO_OF_RISER, false);
 
 			Optional<MdmsFeatureRule> matchedRule = rules.stream().map(obj -> (MdmsFeatureRule) obj).findFirst();
 

@@ -100,131 +100,130 @@ public class Basement extends FeatureProcess {
     @Autowired
 	CacheManagerMdms cache;
     
-    /**
-     * Processes the basement-related validation and scrutiny for a given building plan.
-     * It checks if the basement's height conditions comply with the permissible values
-     * retrieved from the MDMS rules and records the scrutiny results.
-     *
-     * @param pl The building plan to be processed.
-     * @return The processed plan with scrutiny details added.
-     */
-    @Override
-    public Plan process(Plan pl) {
+	/**
+	 * Processes the basement-related validation and scrutiny for a given building
+	 * plan. It checks if the basement's height conditions comply with the
+	 * permissible values retrieved from the MDMS rules and records the scrutiny
+	 * results.
+	 *
+	 * @param pl The building plan to be processed.
+	 * @return The processed plan with scrutiny details added.
+	 */
+	@Override
+	public Plan process(Plan pl) {
 
-        // Initialize scrutiny details for basement verification
-        ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
-        scrutinyDetail.setKey("Common_Basement");
-        scrutinyDetail.addColumnHeading(1, RULE_NO);
-        scrutinyDetail.addColumnHeading(2, DESCRIPTION);
-        scrutinyDetail.addColumnHeading(3, REQUIRED);
-        scrutinyDetail.addColumnHeading(4, PROVIDED);
-        scrutinyDetail.addColumnHeading(5, STATUS);
+		// Initialize scrutiny details for basement verification
+		ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
+		scrutinyDetail.setKey(Common_Basement);
+		scrutinyDetail.addColumnHeading(1, RULE_NO);
+		scrutinyDetail.addColumnHeading(2, DESCRIPTION);
+		scrutinyDetail.addColumnHeading(3, REQUIRED);
+		scrutinyDetail.addColumnHeading(4, PROVIDED);
+		scrutinyDetail.addColumnHeading(5, STATUS);
 
-        Map<String, String> details = new HashMap<>();
-        BigDecimal minLength = BigDecimal.ZERO;
-        BigDecimal basementValue = BigDecimal.ZERO;
-        BigDecimal basementValuetwo = BigDecimal.ZERO;
-        BigDecimal basementValuethree = BigDecimal.ZERO;
+		Map<String, String> details = new HashMap<>();
+		BigDecimal minLength = BigDecimal.ZERO;
+		BigDecimal basementValue = BigDecimal.ZERO;
+		BigDecimal basementValuetwo = BigDecimal.ZERO;
+		BigDecimal basementValuethree = BigDecimal.ZERO;
 
-        // Check if the building plan has blocks
-        if (pl.getBlocks() != null) {
-            for (Block b : pl.getBlocks()) {
-                if (b.getBuilding() != null && b.getBuilding().getFloors() != null
-                        && !b.getBuilding().getFloors().isEmpty()) {
+		// Check if the building plan has blocks
+		if (pl.getBlocks() != null) {
+			for (Block b : pl.getBlocks()) {
+				if (b.getBuilding() != null && b.getBuilding().getFloors() != null
+						&& !b.getBuilding().getFloors().isEmpty()) {
 
-                	
-                        String feature = MdmsFeatureConstants.BASEMENT;   
-                	    String occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl).toLowerCase();
-                        String tenantId = pl.getTenantId();
-                        String zone = pl.getPlanInformation().getZone().toLowerCase();
-                        String subZone = pl.getPlanInformation().getSubZone().toLowerCase();
-                        String riskType = fetchEdcrRulesMdms.getRiskType(pl).toLowerCase();
-                        
-                        RuleKey key = new RuleKey(EdcrRulesMdmsConstants.STATE, tenantId, zone, subZone, occupancyName, null, feature);
-                        List<Object> rules = cache.getRules(tenantId, key);
-                		
-                        Optional<MdmsFeatureRule> matchedRule = rules.stream()
-                        	    .map(obj -> (MdmsFeatureRule) obj)
-                        	    .findFirst();
+					// Fetch all rules for the given plan from the cache.
+					// Then, filter to find the first rule where the condition falls within the
+					// defined range.
+					// If a matching rule is found, proceed with its processing.
 
-                        	if (matchedRule.isPresent()) {
-                        	    MdmsFeatureRule rule = matchedRule.get();
-                        	    basementValue = rule.getBasementValue();
-                        	    basementValuetwo = rule.getBasementValuetwo();
-                        	    basementValuethree = rule.getBasementValuethree();
-                        	} 
+					List<Object> rules = cache.getFeatureRules(pl, MdmsFeatureConstants.BASEMENT, false);
 
-                    // Iterate through each floor to check basement conditions
-                    for (Floor f : b.getBuilding().getFloors()) {
+					Optional<MdmsFeatureRule> matchedRule = rules.stream().map(obj -> (MdmsFeatureRule) obj)
+							.findFirst();
 
-                        // Check if it's a basement floor
-                        if (f.getNumber() == -1) {
+					if (matchedRule.isPresent()) {
+						MdmsFeatureRule rule = matchedRule.get();
+						basementValue = rule.getBasementValue();
+						basementValuetwo = rule.getBasementValuetwo();
+						basementValuethree = rule.getBasementValuethree();
+					}
 
-                            // Validate basement height from floor to ceiling
-                            if (f.getHeightFromTheFloorToCeiling() != null
-                                    && !f.getHeightFromTheFloorToCeiling().isEmpty()) {
+					// Iterate through each floor to check basement conditions
+					for (Floor f : b.getBuilding().getFloors()) {
 
-                                minLength = f.getHeightFromTheFloorToCeiling().stream().reduce(BigDecimal::min).get();
+						// Check if it's a basement floor
+						if (f.getNumber() == -1) {
 
-                                if (minLength.compareTo(basementValue) >= 0) {
-                                    // Acceptable height condition
-                                    details.put(RULE_NO, RULE_46_6A);
-                                    details.put(DESCRIPTION, BASEMENT_DESCRIPTION_ONE);
-                                    details.put(REQUIRED, ">=" + basementValue.toString());
-                                    details.put(PROVIDED, minLength.toString());
-                                    details.put(STATUS, Result.Accepted.getResultVal());
-                                    scrutinyDetail.getDetail().add(details);
-                                } else {
-                                    // Non-compliant height condition
-                                    details = new HashMap<>();
-                                    details.put(RULE_NO, RULE_46_6A);
-                                    details.put(DESCRIPTION, BASEMENT_DESCRIPTION_ONE);
-                                    details.put(REQUIRED, ">=" + basementValue.toString());
-                                    details.put(PROVIDED, minLength.toString());
-                                    details.put(STATUS, Result.Not_Accepted.getResultVal());
-                                    scrutinyDetail.getDetail().add(details);
-                                }
-                            }
+							// Validate basement height from floor to ceiling
+							if (f.getHeightFromTheFloorToCeiling() != null
+									&& !f.getHeightFromTheFloorToCeiling().isEmpty()) {
 
-                            minLength = BigDecimal.ZERO;
+								minLength = f.getHeightFromTheFloorToCeiling().stream().reduce(BigDecimal::min).get();
 
-                            // Validate height of the ceiling of upper basement
-                            if (f.getHeightOfTheCeilingOfUpperBasement() != null
-                                    && !f.getHeightOfTheCeilingOfUpperBasement().isEmpty()) {
+								if (minLength.compareTo(basementValue) >= 0) {
+									// Acceptable height condition
+									details.put(RULE_NO, RULE_46_6A);
+									details.put(DESCRIPTION, BASEMENT_DESCRIPTION_ONE);
+									details.put(REQUIRED, ">=" + basementValue.toString());
+									details.put(PROVIDED, minLength.toString());
+									details.put(STATUS, Result.Accepted.getResultVal());
+									scrutinyDetail.getDetail().add(details);
+								} else {
+									// Non-compliant height condition
+									details = new HashMap<>();
+									details.put(RULE_NO, RULE_46_6A);
+									details.put(DESCRIPTION, BASEMENT_DESCRIPTION_ONE);
+									details.put(REQUIRED, ">=" + basementValue.toString());
+									details.put(PROVIDED, minLength.toString());
+									details.put(STATUS, Result.Not_Accepted.getResultVal());
+									scrutinyDetail.getDetail().add(details);
+								}
+							}
 
-                                minLength = f.getHeightOfTheCeilingOfUpperBasement().stream().reduce(BigDecimal::min).get();
+							minLength = BigDecimal.ZERO;
 
-                                if (minLength.compareTo(basementValuetwo) >= 0
-                                        && minLength.compareTo(basementValuethree) < 0) {
-                                    // Acceptable ceiling height condition
-                                    details = new HashMap<>();
-                                    details.put(RULE_NO, RULE_46_6C);
-                                    details.put(DESCRIPTION, BASEMENT_DESCRIPTION_TWO);
-                                    details.put(REQUIRED, "Between " + basementValuetwo.toString() + " to " + basementValuethree.toString());
-                                    details.put(PROVIDED, minLength.toString());
-                                    details.put(STATUS, Result.Accepted.getResultVal());
-                                    scrutinyDetail.getDetail().add(details);
-                                } else {
-                                    // Non-compliant ceiling height condition
-                                    details = new HashMap<>();
-                                    details.put(RULE_NO, RULE_46_6C);
-                                    details.put(DESCRIPTION, BASEMENT_DESCRIPTION_TWO);
-                                    details.put(REQUIRED, "Between " + basementValuetwo.toString() + " to " + basementValuethree.toString());
-                                    details.put(PROVIDED, minLength.toString());
-                                    details.put(STATUS, Result.Not_Accepted.getResultVal());
-                                    scrutinyDetail.getDetail().add(details);
-                                }
-                            }
+							// Validate height of the ceiling of upper basement
+							if (f.getHeightOfTheCeilingOfUpperBasement() != null
+									&& !f.getHeightOfTheCeilingOfUpperBasement().isEmpty()) {
 
-                            // Add scrutiny details to the report output
-                            pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
-                        }
-                    }
-                }
-            }
-        }
-        return pl;
-    }
+								minLength = f.getHeightOfTheCeilingOfUpperBasement().stream().reduce(BigDecimal::min)
+										.get();
+
+								if (minLength.compareTo(basementValuetwo) >= 0
+										&& minLength.compareTo(basementValuethree) < 0) {
+									// Acceptable ceiling height condition
+									details = new HashMap<>();
+									details.put(RULE_NO, RULE_46_6C);
+									details.put(DESCRIPTION, BASEMENT_DESCRIPTION_TWO);
+									details.put(REQUIRED, "Between " + basementValuetwo.toString() + " to "
+											+ basementValuethree.toString());
+									details.put(PROVIDED, minLength.toString());
+									details.put(STATUS, Result.Accepted.getResultVal());
+									scrutinyDetail.getDetail().add(details);
+								} else {
+									// Non-compliant ceiling height condition
+									details = new HashMap<>();
+									details.put(RULE_NO, RULE_46_6C);
+									details.put(DESCRIPTION, BASEMENT_DESCRIPTION_TWO);
+									details.put(REQUIRED, "Between " + basementValuetwo.toString() + " to "
+											+ basementValuethree.toString());
+									details.put(PROVIDED, minLength.toString());
+									details.put(STATUS, Result.Not_Accepted.getResultVal());
+									scrutinyDetail.getDetail().add(details);
+								}
+							}
+
+							// Add scrutiny details to the report output
+							pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+						}
+					}
+				}
+			}
+		}
+		return pl;
+	}
 
     
     /**

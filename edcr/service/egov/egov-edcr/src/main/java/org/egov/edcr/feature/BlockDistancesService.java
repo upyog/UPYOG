@@ -220,7 +220,7 @@ public class BlockDistancesService extends FeatureProcess {
 
         // Initialize scrutiny details for reporting
         scrutinyDetail = new ScrutinyDetail();
-        scrutinyDetail.setKey("Common_Distance Between Blocks");
+        scrutinyDetail.setKey(Common_Distance_Between_Blocks);
         scrutinyDetail.addColumnHeading(1, RULE_NO);
         scrutinyDetail.addColumnHeading(2, DESCRIPTION);
         scrutinyDetail.addColumnHeading(3, REQUIRED);

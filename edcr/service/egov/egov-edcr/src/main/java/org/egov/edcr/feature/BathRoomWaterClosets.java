@@ -105,125 +105,125 @@ public class BathRoomWaterClosets extends FeatureProcess {
     @Autowired
    	CacheManagerMdms cache;
 
-    /**
-     * This method processes the plan to validate bathroom water closets dimensions
-     * against permissible values. It checks the height, width, and total area of
-     * bathroom water closets in the plan and generates scrutiny details.
-     *
-     * @param pl The plan object to process.
-     * @return The processed plan object with scrutiny details added.
-     */
-    @Override
-    public Plan process(Plan pl) {
-        // Initialize scrutiny detail for bathroom water closets validation
-        ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
-        scrutinyDetail.setKey("Common_Bathroom Water Closets");
-        scrutinyDetail.addColumnHeading(1, RULE_NO);
-        scrutinyDetail.addColumnHeading(2, DESCRIPTION);
-        scrutinyDetail.addColumnHeading(3, REQUIRED);
-        scrutinyDetail.addColumnHeading(4, PROVIDED);
-        scrutinyDetail.addColumnHeading(5, STATUS);
+	/**
+	 * This method processes the plan to validate bathroom water closets dimensions
+	 * against permissible values. It checks the height, width, and total area of
+	 * bathroom water closets in the plan and generates scrutiny details.
+	 *
+	 * @param pl The plan object to process.
+	 * @return The processed plan object with scrutiny details added.
+	 */
+	/**
+	 *
+	 */
+	@Override
+	public Plan process(Plan pl) {
+		// Initialize scrutiny detail for bathroom water closets validation
+		ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
+		scrutinyDetail.setKey("Common_Bathroom Water Closets");
+		scrutinyDetail.addColumnHeading(1, RULE_NO);
+		scrutinyDetail.addColumnHeading(2, DESCRIPTION);
+		scrutinyDetail.addColumnHeading(3, REQUIRED);
+		scrutinyDetail.addColumnHeading(4, PROVIDED);
+		scrutinyDetail.addColumnHeading(5, STATUS);
 
-        // Map to store rule details
-        Map<String, String> details = new HashMap<>();
-        details.put(RULE_NO, RULE_41_IV);
-        details.put(DESCRIPTION, BathroomWaterClosets_DESCRIPTION);
+		// Map to store rule details
+		Map<String, String> details = new HashMap<>();
+		details.put(RULE_NO, RULE_41_IV);
+		details.put(DESCRIPTION, BathroomWaterClosets_DESCRIPTION);
 
-        // Variables to store permissible and actual values
-        BigDecimal minHeight = BigDecimal.ZERO, totalArea = BigDecimal.ZERO, minWidth = BigDecimal.ZERO;
-        BigDecimal bathroomWCRequiredArea = BigDecimal.ZERO;
-        BigDecimal bathroomWCRequiredWidth = BigDecimal.ZERO;
-        BigDecimal bathroomWCRequiredHeight = BigDecimal.ZERO;
+		// Variables to store permissible and actual values
+		BigDecimal minHeight = BigDecimal.ZERO, totalArea = BigDecimal.ZERO, minWidth = BigDecimal.ZERO;
+		BigDecimal bathroomWCRequiredArea = BigDecimal.ZERO;
+		BigDecimal bathroomWCRequiredWidth = BigDecimal.ZERO;
+		BigDecimal bathroomWCRequiredHeight = BigDecimal.ZERO;
 
-        // Determine the occupancy type and feature for fetching permissible values
-       
-        String feature = MdmsFeatureConstants.BATHROOM_WATER_CLOSETS;
-        
-        String occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl).toLowerCase();
-        String tenantId = pl.getTenantId();
-        String zone = pl.getPlanInformation().getZone().toLowerCase();
-        String subZone = pl.getPlanInformation().getSubZone().toLowerCase();
-        String riskType = fetchEdcrRulesMdms.getRiskType(pl).toLowerCase();
-        
-        RuleKey key = new RuleKey(EdcrRulesMdmsConstants.STATE, tenantId, zone, subZone, occupancyName, null, feature);
-        List<Object> rules = cache.getRules(tenantId, key);
-		
-        Optional<MdmsFeatureRule> matchedRule = rules.stream()
-        	    .map(obj -> (MdmsFeatureRule) obj)
-        	    .findFirst();
 
-        	if (matchedRule.isPresent()) {
-        	    MdmsFeatureRule rule = matchedRule.get();
-        	    bathroomWCRequiredArea = rule.getBathroomWCRequiredArea();
-        	    bathroomWCRequiredWidth = rule.getBathroomWCRequiredWidth();
-        	    bathroomWCRequiredHeight = rule.getBathroomWCRequiredHeight();
-        	    
-        	}
+		// Fetch all rules for the given plan from the cache.
+		// Then, filter to find the first rule where the condition falls within the
+		// defined range.
+		// If a matching rule is found, proceed with its processing.
 
-        // Iterate through all blocks in the plan
-        for (Block b : pl.getBlocks()) {
-            if (b.getBuilding() != null && b.getBuilding().getFloors() != null
-                    && !b.getBuilding().getFloors().isEmpty()) {
+		List<Object> rules = cache.getFeatureRules(pl, MdmsFeatureConstants.BATHROOM_WATER_CLOSETS, false);
 
-                // Iterate through all floors in the block
-                for (Floor f : b.getBuilding().getFloors()) {
+		Optional<MdmsFeatureRule> matchedRule = rules.stream().map(obj -> (MdmsFeatureRule) obj).findFirst();
 
-                    // Check if bathroom water closets exist on the floor
-                    if (f.getBathRoomWaterClosets() != null && f.getBathRoomWaterClosets().getHeights() != null
-                            && !f.getBathRoomWaterClosets().getHeights().isEmpty()
-                            && f.getBathRoomWaterClosets().getRooms() != null
-                            && !f.getBathRoomWaterClosets().getRooms().isEmpty()) {
+		if (matchedRule.isPresent()) {
+			MdmsFeatureRule rule = matchedRule.get();
+			bathroomWCRequiredArea = rule.getBathroomWCRequiredArea();
+			bathroomWCRequiredWidth = rule.getBathroomWCRequiredWidth();
+			bathroomWCRequiredHeight = rule.getBathroomWCRequiredHeight();
 
-                        // Calculate minimum height of bathroom water closets
-                        if (f.getBathRoomWaterClosets().getHeights() != null
-                                && !f.getBathRoomWaterClosets().getHeights().isEmpty()) {
-                            minHeight = f.getBathRoomWaterClosets().getHeights().get(0).getHeight();
-                            for (RoomHeight rh : f.getBathRoomWaterClosets().getHeights()) {
-                                if (rh.getHeight().compareTo(minHeight) < 0) {
-                                    minHeight = rh.getHeight();
-                                }
-                            }
-                        }
+		}
 
-                        // Calculate total area and minimum width of bathroom water closets
-                        if (f.getBathRoomWaterClosets().getRooms() != null
-                                && !f.getBathRoomWaterClosets().getRooms().isEmpty()) {
-                            minWidth = f.getBathRoomWaterClosets().getRooms().get(0).getWidth();
-                            for (Measurement m : f.getBathRoomWaterClosets().getRooms()) {
-                                totalArea = totalArea.add(m.getArea());
-                                if (m.getWidth().compareTo(minWidth) < 0) {
-                                    minWidth = m.getWidth();
-                                }
-                            }
-                        }
+		// Iterate through all blocks in the plan
+		for (Block b : pl.getBlocks()) {
+			if (b.getBuilding() != null && b.getBuilding().getFloors() != null
+					&& !b.getBuilding().getFloors().isEmpty()) {
 
-                        // Validate bathroom water closets dimensions against permissible values
-                        if (minHeight.compareTo(bathroomWCRequiredHeight) >= 0
-                                && totalArea.compareTo(bathroomWCRequiredArea) >= 0
-                                && minWidth.compareTo(bathroomWCRequiredWidth) >= 0) {
+				// Iterate through all floors in the block
+				for (Floor f : b.getBuilding().getFloors()) {
 
-                            details.put(REQUIRED, HEIGHT + bathroomWCRequiredHeight.toString() + TOTAL_AREA + bathroomWCRequiredArea.toString() + ", Width >= " + bathroomWCRequiredWidth.toString());
-                            details.put(PROVIDED, HEIGHT + minHeight + TOTAL_AREA + totalArea
-                                    + WIDTH + minWidth);
-                            details.put(STATUS, Result.Accepted.getResultVal());
-                            scrutinyDetail.getDetail().add(details);
-                            pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+					// Check if bathroom water closets exist on the floor
+					if (f.getBathRoomWaterClosets() != null && f.getBathRoomWaterClosets().getHeights() != null
+							&& !f.getBathRoomWaterClosets().getHeights().isEmpty()
+							&& f.getBathRoomWaterClosets().getRooms() != null
+							&& !f.getBathRoomWaterClosets().getRooms().isEmpty()) {
 
-                        } else {
-                            details.put(REQUIRED, HEIGHT + bathroomWCRequiredHeight.toString() + TOTAL_AREA + bathroomWCRequiredArea.toString() + ", Width >= " + bathroomWCRequiredWidth.toString());
-                            details.put(PROVIDED, HEIGHT + minHeight + TOTAL_AREA + totalArea
-                                    + WIDTH + minWidth);
-                            details.put(STATUS, Result.Not_Accepted.getResultVal());
-                            scrutinyDetail.getDetail().add(details);
-                            pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
-                        }
-                    }
-                }
-            }
-        }
+						// Calculate minimum height of bathroom water closets
+						if (f.getBathRoomWaterClosets().getHeights() != null
+								&& !f.getBathRoomWaterClosets().getHeights().isEmpty()) {
+							minHeight = f.getBathRoomWaterClosets().getHeights().get(0).getHeight();
+							for (RoomHeight rh : f.getBathRoomWaterClosets().getHeights()) {
+								if (rh.getHeight().compareTo(minHeight) < 0) {
+									minHeight = rh.getHeight();
+								}
+							}
+						}
 
-        return pl;
-    }
+						// Calculate total area and minimum width of bathroom water closets
+						if (f.getBathRoomWaterClosets().getRooms() != null
+								&& !f.getBathRoomWaterClosets().getRooms().isEmpty()) {
+							minWidth = f.getBathRoomWaterClosets().getRooms().get(0).getWidth();
+							for (Measurement m : f.getBathRoomWaterClosets().getRooms()) {
+								totalArea = totalArea.add(m.getArea());
+								if (m.getWidth().compareTo(minWidth) < 0) {
+									minWidth = m.getWidth();
+								}
+							}
+						}
+
+						// Validate bathroom water closets dimensions against permissible values
+						if (minHeight.compareTo(bathroomWCRequiredHeight) >= 0
+								&& totalArea.compareTo(bathroomWCRequiredArea) >= 0
+								&& minWidth.compareTo(bathroomWCRequiredWidth) >= 0) {
+
+							details.put(REQUIRED,
+									HEIGHT + bathroomWCRequiredHeight.toString() + TOTAL_AREA
+											+ bathroomWCRequiredArea.toString() + ", Width >= "
+											+ bathroomWCRequiredWidth.toString());
+							details.put(PROVIDED, HEIGHT + minHeight + TOTAL_AREA + totalArea + WIDTH + minWidth);
+							details.put(STATUS, Result.Accepted.getResultVal());
+							scrutinyDetail.getDetail().add(details);
+							pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+
+						} else {
+							details.put(REQUIRED,
+									HEIGHT + bathroomWCRequiredHeight.toString() + TOTAL_AREA
+											+ bathroomWCRequiredArea.toString() + ", Width >= "
+											+ bathroomWCRequiredWidth.toString());
+							details.put(PROVIDED, HEIGHT + minHeight + TOTAL_AREA + totalArea + WIDTH + minWidth);
+							details.put(STATUS, Result.Not_Accepted.getResultVal());
+							scrutinyDetail.getDetail().add(details);
+							pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+						}
+					}
+				}
+			}
+		}
+
+		return pl;
+	}
 
     /**
      * This method returns an empty map as no amendments are defined for this feature.

@@ -95,6 +95,9 @@ public abstract class FeatureProcess {
 	public static final String Common_Rain_Water_Harvesting = "Common_Rain Water Harvesting";
 	public static final String Common_River_Distance = "Common_River Distance";
 	public static final String Common_Road_Width = "ommon_Road Width";
+	public static final String Common_Basement = "Common_Basement";
+	public static final String Common_Distance_Between_Blocks = "Common_Distance Between Blocks";
+	public static final String Common_Chimney = "Common_Chimney";
 	
 
 	public abstract Map<String, Date> getAmendments();

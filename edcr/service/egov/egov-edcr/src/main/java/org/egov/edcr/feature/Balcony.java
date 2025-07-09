@@ -93,89 +93,83 @@ public class Balcony extends FeatureProcess {
     
     @Autowired
 	CacheManagerMdms cache;
-    @Override
-    public Plan process(Plan plan) {
-        for (Block block : plan.getBlocks()) {
-            if (block.getBuilding() != null) {
 
-                ScrutinyDetail scrutinyDetailLanding = new ScrutinyDetail();
-                scrutinyDetailLanding.addColumnHeading(1, RULE_NO);
-                scrutinyDetailLanding.addColumnHeading(2, FLOOR);
-                scrutinyDetailLanding.addColumnHeading(3, DESCRIPTION);
-                scrutinyDetailLanding.addColumnHeading(4, PERMISSIBLE);
-                scrutinyDetailLanding.addColumnHeading(5, PROVIDED);
-                scrutinyDetailLanding.addColumnHeading(6, STATUS);
-                scrutinyDetailLanding.setKey("Block_" + block.getNumber() + "_" + MdmsFeatureConstants.BALCONY);
-                List<Floor> floors = block.getBuilding().getFloors();
+	@Override
+	public Plan process(Plan plan) {
+		for (Block block : plan.getBlocks()) {
+			if (block.getBuilding() != null) {
 
-                for (Floor floor : floors) {
-                    boolean isTypicalRepititiveFloor = false;
+				ScrutinyDetail scrutinyDetailLanding = new ScrutinyDetail();
+				scrutinyDetailLanding.addColumnHeading(1, RULE_NO);
+				scrutinyDetailLanding.addColumnHeading(2, FLOOR);
+				scrutinyDetailLanding.addColumnHeading(3, DESCRIPTION);
+				scrutinyDetailLanding.addColumnHeading(4, PERMISSIBLE);
+				scrutinyDetailLanding.addColumnHeading(5, PROVIDED);
+				scrutinyDetailLanding.addColumnHeading(6, STATUS);
+				scrutinyDetailLanding.setKey("Block_" + block.getNumber() + "_" + MdmsFeatureConstants.BALCONY);
+				List<Floor> floors = block.getBuilding().getFloors();
 
-                    Map<String, Object> typicalFloorValues = Util.getTypicalFloorValues(block, floor,
-                            isTypicalRepititiveFloor);
+				for (Floor floor : floors) {
+					boolean isTypicalRepititiveFloor = false;
 
-                    List<org.egov.common.entity.edcr.Balcony> balconies = floor.getBalconies();
-                    if (!balconies.isEmpty()) {
-                        for (org.egov.common.entity.edcr.Balcony balcony : balconies) {
-                            boolean isAccepted = false;
-                            List<BigDecimal> widths = balcony.getWidths();
-                            BigDecimal minWidth = widths.isEmpty() ? BigDecimal.ZERO : widths.stream().reduce(BigDecimal::min).get();
-                            minWidth = minWidth.setScale(DcrConstants.DECIMALDIGITS_MEASUREMENTS,
-                                    DcrConstants.ROUNDMODE_MEASUREMENTS);
-                            
-                        
-                       
-                         String occupancyName = fetchEdcrRulesMdms.getOccupancyName(plan).toLowerCase();
-                         String tenantId = plan.getTenantId();
-                         String zone = plan.getPlanInformation().getZone().toLowerCase();
-                         String subZone = plan.getPlanInformation().getSubZone().toLowerCase();
-                         String riskType = fetchEdcrRulesMdms.getRiskType(plan).toLowerCase();
-       					 String feature = MdmsFeatureConstants.BALCONY;
-       					    
-       					 
-       			         RuleKey key = new RuleKey(EdcrRulesMdmsConstants.STATE, tenantId, zone, subZone, occupancyName, null, feature);
-       			         List<Object> rules = cache.getRules(tenantId, key);
-       					
-       					 Optional<MdmsFeatureRule> matchedRule = rules.stream()
-       						    .map(obj -> (MdmsFeatureRule) obj)
-       						    .findFirst();
+					Map<String, Object> typicalFloorValues = Util.getTypicalFloorValues(block, floor,
+							isTypicalRepititiveFloor);
 
-       						if (matchedRule.isPresent()) {
-       						    MdmsFeatureRule rule = matchedRule.get();
-       						    balconyValue = rule.getPermissible();
-       						    
-       						}
-      			
-                            if (minWidth.compareTo(balconyValue.setScale(DcrConstants.DECIMALDIGITS_MEASUREMENTS,
-                                    DcrConstants.ROUNDMODE_MEASUREMENTS)) >= 0) {
-                                isAccepted = true;
-                            }
+					List<org.egov.common.entity.edcr.Balcony> balconies = floor.getBalconies();
+					if (!balconies.isEmpty()) {
+						for (org.egov.common.entity.edcr.Balcony balcony : balconies) {
+							boolean isAccepted = false;
+							List<BigDecimal> widths = balcony.getWidths();
+							BigDecimal minWidth = widths.isEmpty() ? BigDecimal.ZERO
+									: widths.stream().reduce(BigDecimal::min).get();
+							minWidth = minWidth.setScale(DcrConstants.DECIMALDIGITS_MEASUREMENTS,
+									DcrConstants.ROUNDMODE_MEASUREMENTS);
+							
+							// Fetch all rules for the given plan from the cache.
+							// Then, filter to find the first rule where the condition falls within the
+							// defined range.
+							// If a matching rule is found, proceed with its processing.
 
-                            String value = typicalFloorValues.get("typicalFloors") != null
-                                    ? (String) typicalFloorValues.get("typicalFloors")
-                                    : " floor " + floor.getNumber();
+							List<Object> rules = cache.getFeatureRules(plan, MdmsFeatureConstants.BALCONY, false);
 
-                            if (isAccepted) {
-                                setReportOutputDetailsFloorBalconyWise(plan, RULE45_IV, value,
-                                        String.format(WIDTH_BALCONY_DESCRIPTION, balcony.getNumber()),
-                                        balconyValue.toString(),
-                                        String.valueOf(minWidth), Result.Accepted.getResultVal(), scrutinyDetailLanding);
-                            } else {
-                                setReportOutputDetailsFloorBalconyWise(plan, RULE45_IV, value,
-                                        String.format(WIDTH_BALCONY_DESCRIPTION, balcony.getNumber()),
-                                        balconyValue.toString(),
-                                        String.valueOf(minWidth), Result.Not_Accepted.getResultVal(), scrutinyDetailLanding);
-                            }
-                        }
-                    }
+							Optional<MdmsFeatureRule> matchedRule = rules.stream()
+							        .map(obj -> (MdmsFeatureRule) obj)
+							        .findFirst();
 
-                }
+							if (matchedRule.isPresent()) {
+							    balconyValue = matchedRule.get().getPermissible();
+							}
 
-            }
-        }
+							if (minWidth.compareTo(balconyValue.setScale(DcrConstants.DECIMALDIGITS_MEASUREMENTS,
+									DcrConstants.ROUNDMODE_MEASUREMENTS)) >= 0) {
+								isAccepted = true;
+							}
 
-        return plan;
-    }
+							String value = typicalFloorValues.get("typicalFloors") != null
+									? (String) typicalFloorValues.get("typicalFloors")
+									: " floor " + floor.getNumber();
+
+							if (isAccepted) {
+								setReportOutputDetailsFloorBalconyWise(plan, RULE45_IV, value,
+										String.format(WIDTH_BALCONY_DESCRIPTION, balcony.getNumber()),
+										balconyValue.toString(), String.valueOf(minWidth),
+										Result.Accepted.getResultVal(), scrutinyDetailLanding);
+							} else {
+								setReportOutputDetailsFloorBalconyWise(plan, RULE45_IV, value,
+										String.format(WIDTH_BALCONY_DESCRIPTION, balcony.getNumber()),
+										balconyValue.toString(), String.valueOf(minWidth),
+										Result.Not_Accepted.getResultVal(), scrutinyDetailLanding);
+							}
+						}
+					}
+
+				}
+
+			}
+		}
+
+		return plan;
+	}
 
     private void setReportOutputDetailsFloorBalconyWise(Plan pl, String ruleNo, String floor, String description,
             String expected, String actual, String status, ScrutinyDetail scrutinyDetail) {
