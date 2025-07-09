@@ -5,7 +5,7 @@ import org.egov.dataupload.service.ExcelIO;
 import org.egov.dataupload.service.FileIO;
 import org.junit.Before;
 import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.*;
 import java.util.Arrays;
