@@ -53,10 +53,10 @@ const defaultImage =
 /* 
 Feature :: Citizen Webview sidebar
 */
-const Profile = ({ info, stateName, t }) => (
+const Profile = ({ info, stateName, t, profilePhotoUrl }) => (
   <div className="profile-section">
     <div className="imageloader imageloader-loaded">
-      <img className="img-responsive img-circle img-Profile" src={info?.photo ? info?. photo : defaultImage} />
+      <img className="img-responsive img-circle img-Profile" src={profilePhotoUrl ? profilePhotoUrl : defaultImage} />
     </div>
     <div id="profile-name" className="label-container name-Profile">
       <div className="label-text"> {info?.name} </div>
@@ -108,7 +108,25 @@ const StaticCitizenSideBar = ({ linkData, islinkDataLoading }) => {
   const [isEmployee, setisEmployee] = useState(false);
   const [isSidebarOpen, toggleSidebar] = useState(false);
   const [showDialog, setShowDialog] = useState(false);
+  const tenantId = Digit.ULBService.getCitizenCurrentTenant();
+  const [profilePhotoUrl, setProfilePhotoUrl] = useState(null);
+  useEffect(() => {
+    const fetchPhoto = async () => {
+      const usersResponse = await Digit.UserService.userSearch(user?.info?.tenantId, { uuid: [user?.info?.uuid||user?.user?.[0]?.uuid] }, {});
+      if (usersResponse?.user?.[0]?.photo) {
+        try {
+          const file = await Digit.UploadServices.Filefetch([usersResponse?.user?.[0]?.photo], "pg");
+          if (file?.data?.fileStoreIds?.[0]?.url) {
+            setProfilePhotoUrl(file?.data?.fileStoreIds?.[0]?.url.split(",")[0]);
+          }
+        } catch (err) {
+          console.error("Error fetching profile photo:", err);
+        }
+      }
+    };
 
+    fetchPhoto();
+  }, [user?.info?.photo, tenantId]);
   const handleLogout = () => {
     toggleSidebar(false);
     setShowDialog(true);
@@ -133,7 +151,7 @@ const StaticCitizenSideBar = ({ linkData, islinkDataLoading }) => {
   const showProfilePage = () => {
     history.push("/upyog-ui/citizen/user/profile");
   };
-  const tenantId = Digit.ULBService.getCitizenCurrentTenant();
+  //const tenantId = Digit.ULBService.getCitizenCurrentTenant();
   const filteredTenantContact = storeData?.tenants.filter((e) => e.code === tenantId)[0]?.contactNumber || storeData?.tenants[0]?.contactNumber;
 
   let menuItems = [...SideBarMenu(t, showProfilePage, redirectToLoginPage, isEmployee, storeData, tenantId)];
@@ -175,7 +193,7 @@ const StaticCitizenSideBar = ({ linkData, islinkDataLoading }) => {
   let profileItem;
 
   if (isFetched && user && user.access_token) {
-    profileItem = <Profile info={user?.info} stateName={stateInfo?.name} t={t} />;
+    profileItem = <Profile info={user?.info} stateName={stateInfo?.name} t={t} profilePhotoUrl={profilePhotoUrl}/>;
     menuItems = menuItems.filter((item) => item?.id !== "login-btn" && item?.id !== "help-line");
     menuItems = [
       ...menuItems,

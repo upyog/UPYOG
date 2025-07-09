@@ -32,10 +32,15 @@ const TopBar = ({
     const uuid = userDetails?.info?.uuid;
     if (uuid) {
       const usersResponse = await Digit.UserService.userSearch(tenant, { uuid: [uuid] }, {});
-      if (usersResponse && usersResponse.user && usersResponse.user.length) {
-        const userDetails = usersResponse.user[0];
-        const thumbs = userDetails?.photo?.split(",");
-        setProfilePic(thumbs?.at(0));
+      if (usersResponse?.user?.[0]?.photo) {
+        try {
+          const file = await Digit.UploadServices.Filefetch([usersResponse?.user?.[0]?.photo], "pg");
+          if (file?.data?.fileStoreIds?.[0]?.url) {
+            setProfilePic(file?.data?.fileStoreIds?.[0]?.url.split(",")[0]);
+          }
+        } catch (err) {
+          console.error("Error fetching profile photo:", err);
+        }
       }
     }
   }, [profilePic !== null, userDetails?.info?.uuid]);
