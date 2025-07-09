@@ -45,7 +45,14 @@ public class RequestServieRepositoryImpl implements RequestServiceRepository {
 		WaterTankerBookingDetail waterTankerBookingDetail = waterTankerRequest.getWaterTankerBookingDetail();
 		PersisterWrapper<WaterTankerBookingDetail> persisterWrapper = new PersisterWrapper<WaterTankerBookingDetail>(
 				waterTankerBookingDetail);
-		producer.push(requestServiceConfiguration.getWaterTankerApplicationSaveTopic(), waterTankerRequest);
+		if(requestServiceConfiguration.getIsProfileEnabled()) {
+			producer.push(requestServiceConfiguration.getWaterTankerApplicationSaveTopic(), waterTankerRequest);
+		}
+		else {
+			producer.push(requestServiceConfiguration.getWaterTankerApplicationSaveProfileDisabledTopic(), waterTankerRequest);
+		}
+
+
 	}
 
 
@@ -96,7 +103,12 @@ public class RequestServieRepositoryImpl implements RequestServiceRepository {
 		MobileToiletBookingDetail mobileToiletBookingDetail = mobileToiletRequest.getMobileToiletBookingDetail();
 		PersisterWrapper<MobileToiletBookingDetail> persisterWrapper = new PersisterWrapper<MobileToiletBookingDetail>(
 				mobileToiletBookingDetail);
-		producer.push(requestServiceConfiguration.getMobileToiletApplicationSaveTopic(), mobileToiletRequest);
+		if(requestServiceConfiguration.getIsProfileEnabled()) {
+			producer.push(requestServiceConfiguration.getMobileToiletApplicationSaveTopic(), mobileToiletRequest);
+		}
+		else {
+			producer.push(requestServiceConfiguration.getMobileToiletApplicationSaveProfileDisabledTopic(), mobileToiletRequest);
+		}
 	}
 	
 	@Override

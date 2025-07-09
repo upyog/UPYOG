@@ -90,9 +90,11 @@ public class MobileToiletServiceImpl implements MobileToiletService{
         if (CollectionUtils.isEmpty(applications)) {
             return new ArrayList<>();
         }
-        // Enrich each booking with user details
-        for (MobileToiletBookingDetail booking : applications) {
-            userService.enrichBookingWithUserDetails(booking, mobileToiletBookingSearchCriteria);
+        if (config.getIsProfileEnabled()) {
+            // Enrich each booking with user details
+            for (MobileToiletBookingDetail booking : applications) {
+                userService.enrichBookingWithUserDetails(booking, mobileToiletBookingSearchCriteria);
+            }
         }
 
         return applications;

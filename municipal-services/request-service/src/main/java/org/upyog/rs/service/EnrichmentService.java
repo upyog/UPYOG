@@ -47,28 +47,28 @@ public class EnrichmentService {
 		RequestInfo requestInfo = waterTankerRequest.getRequestInfo();
 		String userUuid = requestInfo.getUserInfo().getUuid();
 		AuditDetails auditDetails = RequestServiceUtil.getAuditDetails(requestInfo.getUserInfo().getUuid(), true);
+		if(config.getIsProfileEnabled()) {
+			// If the mobile number in the request matches the applicant's mobile number, then set the applicantDetailId as userUuid
+			if (UserUtil.isCurrentUserApplicant(waterTankerRequest)) {
+				waterTankerDetail.setApplicantUuid(userUuid);
+			} else {
+				// If the mobile number does not match, set the applicantDetailId to null and addressDetailId to null
+				waterTankerDetail.setApplicantUuid(null);
+				waterTankerDetail.setAddressDetailId(null);
+			}
 
-		// If the mobile number in the request matches the applicant's mobile number, then set the applicantDetailId as userUuid
-		if (UserUtil.isCurrentUserApplicant(waterTankerRequest)) {
-			waterTankerDetail.setApplicantUuid(userUuid);
-		} else {
-			// If the mobile number does not match, set the applicantDetailId to null and addressDetailId to null
-			waterTankerDetail.setApplicantUuid(null);
-			waterTankerDetail.setAddressDetailId(null);
-		}
+			String applicantDetailId = waterTankerDetail.getApplicantUuid();
+			String addressDetailId = waterTankerDetail.getAddressDetailId();
 
-		String applicantDetailId = waterTankerDetail.getApplicantUuid();
-		String addressDetailId = waterTankerDetail.getAddressDetailId();
-
-		if (StringUtils.isBlank(applicantDetailId)) {
-			// Enrich user details for existing user or user details with address for new user
-			enrichUserDetails(waterTankerRequest);
+			if (StringUtils.isBlank(applicantDetailId)) {
+				// Enrich user details for existing user or user details with address for new user
+				enrichUserDetails(waterTankerRequest);
+			}
+			if (StringUtils.isBlank(addressDetailId)) {
+				// Enrich address details only
+				enrichAddressDetails(waterTankerRequest, waterTankerDetail);
+			}
 		}
-		if (StringUtils.isBlank(addressDetailId)) {
-			// Enrich address details only
-			enrichAddressDetails(waterTankerRequest, waterTankerDetail);
-		}
-		
 		waterTankerDetail.setBookingId(bookingId);
 		waterTankerDetail.setApplicationDate(auditDetails.getCreatedTime());
 		waterTankerDetail.setBookingStatus(RequestServiceStatus.valueOf(waterTankerDetail.getBookingStatus()).toString());
@@ -185,27 +185,27 @@ public class EnrichmentService {
 		RequestInfo requestInfo = mobileToiletRequest.getRequestInfo();
 		String userUuid = requestInfo.getUserInfo().getUuid();
 		AuditDetails auditDetails = RequestServiceUtil.getAuditDetails(requestInfo.getUserInfo().getUuid(), true);
+		if(config.getIsProfileEnabled()) {
+			// If the mobile number in the request matches the applicant's mobile number, then set the applicantDetailId as userUuid
+			if (UserUtil.isCurrentUserApplicant(mobileToiletRequest)) {
+				mobileToiletDetail.setApplicantUuid(userUuid);
+			} else {
+				// If the mobile number does not match, set the applicantDetailId to null and addressDetailId to null
+				mobileToiletDetail.setApplicantUuid(null);
+				mobileToiletDetail.setAddressDetailId(null);
+			}
 
-		// If the mobile number in the request matches the applicant's mobile number, then set the applicantDetailId as userUuid
-		if (UserUtil.isCurrentUserApplicant(mobileToiletRequest)) {
-			mobileToiletDetail.setApplicantUuid(userUuid);
-		} else {
-			// If the mobile number does not match, set the applicantDetailId to null and addressDetailId to null
-			mobileToiletDetail.setApplicantUuid(null);
-			mobileToiletDetail.setAddressDetailId(null);
+			String applicantDetailId = mobileToiletDetail.getApplicantUuid();
+			if (StringUtils.isBlank(applicantDetailId)) {
+				// Enrich user details for existing user or user details with address for new user
+				enrichUserDetails(mobileToiletRequest);
+			}
+			String addressDetailId = mobileToiletDetail.getAddressDetailId();
+			if (StringUtils.isBlank(addressDetailId)) {
+				// Enrich address details only
+				enrichAddressDetails(mobileToiletRequest, mobileToiletDetail);
+			}
 		}
-
-		String applicantDetailId = mobileToiletDetail.getApplicantUuid();
-		if (StringUtils.isBlank(applicantDetailId)) {
-			// Enrich user details for existing user or user details with address for new user
-			enrichUserDetails(mobileToiletRequest);
-		}
-		String addressDetailId = mobileToiletDetail.getAddressDetailId();
-		if (StringUtils.isBlank(addressDetailId)) {
-			// Enrich address details only
-			enrichAddressDetails(mobileToiletRequest, mobileToiletDetail);
-		}
-
 		mobileToiletDetail.setBookingId(bookingId);
 		mobileToiletDetail.setApplicationDate(auditDetails.getCreatedTime());
 		mobileToiletDetail.setBookingStatus(RequestServiceStatus.valueOf(mobileToiletDetail.getBookingStatus()).toString());

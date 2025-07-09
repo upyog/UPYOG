@@ -26,6 +26,19 @@ public class RequestServiceQueryBuilder {
                     "ursbd.lastmodifiedtime, ursbd.tenant_id " +
                     "FROM public.upyog_rs_tanker_booking_details ursbd"
     );
+    
+    private static final String WATER_TANKER_BOOKING_DETAILS_SEARCH_QUERY_ISPROFILEDISABLED = (
+            "SELECT ursbd.booking_id, ursbd.booking_no, ursbd.applicant_uuid, ursbd.mobile_number, ursbd.locality_code, ursbd.tanker_type, ursbd.water_type, ursbd.tanker_quantity, ursbd.water_quantity, ursbd.description, " +
+                    "ursbd.delivery_date, ursbd.delivery_time, ursbd.extra_charge, ursbd.vendor_id, ursbd.vehicle_id, ursbd.driver_id, ursbd.vehicle_type, ursbd.payment_receipt_filestore_id, " +
+                    "ursbd.vehicle_capacity, ursbd.address_detail_id, ursbd.booking_status, ursbd.createdby, ursbd.lastModifiedby, ursbd.createdtime, " +
+                    "ursbd.lastmodifiedtime, ursbd.tenant_id, " +
+                    "urad.applicant_id, urad.name, urad.mobile_number as applicant_mobile, urad.email_id, urad.alternate_number, " +
+                    "uraddr.address_id, uraddr.house_no, uraddr.address_line_1, uraddr.address_line_2, uraddr.street_name, " +
+                    "uraddr.landmark, uraddr.city, uraddr.city_code, uraddr.locality, uraddr.locality_code as addr_locality_code, uraddr.pincode " +
+                    "FROM public.upyog_rs_tanker_booking_details ursbd " +
+                    "INNER JOIN public.upyog_rs_tanker_applicant_details urad ON ursbd.booking_id = urad.booking_id " +
+                    "INNER JOIN public.upyog_rs_tanker_address_details uraddr ON urad.applicant_id = uraddr.applicant_id"
+    );
 
     private static final String MOBILE_TOILET_BOOKING_DETAILS_SEARCH_QUERY = (
             "SELECT urmt.booking_id, booking_no, applicant_uuid, no_of_mobile_toilet, mobile_number, locality_code, " +
@@ -33,6 +46,19 @@ public class RequestServiceQueryBuilder {
                     "vehicle_id, driver_id, vehicle_type, vehicle_capacity,address_detail_id, payment_receipt_filestore_id,booking_status, urmt.createdby, " +
                     "urmt.lastModifiedby, urmt.createdtime, urmt.lastmodifiedtime, urmt.tenant_id " +
                     "FROM public.upyog_rs_mobile_toilet_booking_details urmt"
+    );
+    
+    private static final String MOBILE_TOILET_BOOKING_DETAILS_SEARCH_QUERY_ISPROFILEDISABLED = (
+            "SELECT urmt.booking_id, urmt.booking_no, urmt.applicant_uuid, urmt.no_of_mobile_toilet, urmt.mobile_number, urmt.locality_code, " +
+                    "urmt.description, urmt.delivery_from_date, urmt.delivery_to_date, urmt.delivery_from_time, urmt.delivery_to_time, urmt.vendor_id, " +
+                    "urmt.vehicle_id, urmt.driver_id, urmt.vehicle_type, urmt.vehicle_capacity, urmt.address_detail_id, urmt.payment_receipt_filestore_id, urmt.booking_status, urmt.createdby, " +
+                    "urmt.lastModifiedby, urmt.createdtime, urmt.lastmodifiedtime, urmt.tenant_id, " +
+                    "urad.applicant_id, urad.name, urad.mobile_number as applicant_mobile, urad.email_id, urad.alternate_number, " +
+                    "uraddr.address_id, uraddr.house_no, uraddr.address_line_1, uraddr.address_line_2, uraddr.street_name, " +
+                    "uraddr.landmark, uraddr.city, uraddr.city_code, uraddr.locality, uraddr.locality_code as addr_locality_code, uraddr.pincode " +
+                    "FROM public.upyog_rs_mobile_toilet_booking_details urmt " +
+                    "INNER JOIN public.upyog_rs_mobile_toilet_applicant_details urad ON urmt.booking_id = urad.booking_id " +
+                    "INNER JOIN public.upyog_rs_mobile_toilet_address_details uraddr ON urad.applicant_id = uraddr.applicant_id"
     );
 
     private final String paginationWrapper =
@@ -51,7 +77,12 @@ public class RequestServiceQueryBuilder {
         StringBuilder query;
 
         if (!criteria.isCountCall()) {
-            query = new StringBuilder(WATER_TANKER_BOOKING_DETAILS_SEARCH_QUERY);
+            // Use different query based on isProfileEnabled
+            if (requestServiceConfiguration.getIsProfileEnabled()) {
+                query = new StringBuilder(WATER_TANKER_BOOKING_DETAILS_SEARCH_QUERY);
+            } else {
+                query = new StringBuilder(WATER_TANKER_BOOKING_DETAILS_SEARCH_QUERY_ISPROFILEDISABLED);
+            }
         } else {
             query = new StringBuilder(waterTankerBookingCount);
         }
@@ -107,7 +138,12 @@ public class RequestServiceQueryBuilder {
         StringBuilder query;
 
         if (!criteria.isCountCall()) {
-            query = new StringBuilder(MOBILE_TOILET_BOOKING_DETAILS_SEARCH_QUERY);
+            // Use different query based on isProfileEnabled
+            if (requestServiceConfiguration.getIsProfileEnabled()) {
+                query = new StringBuilder(MOBILE_TOILET_BOOKING_DETAILS_SEARCH_QUERY);
+            } else {
+                query = new StringBuilder(MOBILE_TOILET_BOOKING_DETAILS_SEARCH_QUERY_ISPROFILEDISABLED);
+            }
         } else {
             query = new StringBuilder(mobileToiletBookingCount);
         }

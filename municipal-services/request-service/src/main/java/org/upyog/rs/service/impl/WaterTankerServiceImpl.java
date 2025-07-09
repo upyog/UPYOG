@@ -94,12 +94,12 @@ public class WaterTankerServiceImpl implements WaterTankerService {
 		if (CollectionUtils.isEmpty(applications)) {
 			return new ArrayList<>();
 		}
-
-		// Enrich each booking with user details
-		for (WaterTankerBookingDetail booking : applications) {
-			userService.enrichBookingWithUserDetails(booking, waterTankerBookingSearchCriteria);
+		if (config.getIsProfileEnabled()) {
+			// Enrich each booking with user details
+			for (WaterTankerBookingDetail booking : applications) {
+				userService.enrichBookingWithUserDetails(booking, waterTankerBookingSearchCriteria);
+			}
 		}
-
 		// Return retrieved application
 		return applications;
 	}
