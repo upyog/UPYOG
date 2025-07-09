@@ -113,6 +113,8 @@ const EmployeeApp = ({ path,userType }) => {
             )}
           />
           <PrivateRoute path={`${path}/request-service`} component={WTCreate} />
+          <PrivateRoute path={`${path}/mt/request-service`} component={WTCreate} />
+          <PrivateRoute path={`${path}/tp/request-service`} component={WTCreate} />
           <PrivateRoute path={`${path}/booking-details/:id`} component={() => <ApplicationDetails parentRoute={path} />} />
           <PrivateRoute path={`${path}/bookingsearch/booking-details/:id`} component={() => <ApplicationDetails parentRoute={path} />} />
           <PrivateRoute path={`${path}/my-bookings`} component={(props) => <SearchApp {...props} parentRoute={path} moduleCode={"WT"}/>} />
