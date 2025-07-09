@@ -4,7 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import net.minidev.json.JSONArray;
+
+import org.json.JSONArray;
 import org.springframework.validation.annotation.Validated;
 
 import java.util.Map;

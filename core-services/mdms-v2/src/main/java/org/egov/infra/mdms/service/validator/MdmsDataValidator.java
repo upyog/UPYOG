@@ -1,10 +1,10 @@
 package org.egov.infra.mdms.service.validator;
 
 import com.fasterxml.jackson.databind.JsonNode;
+
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.TypeRef;
 import lombok.extern.slf4j.Slf4j;
-import net.minidev.json.JSONArray;
 import org.egov.infra.mdms.model.*;
 import org.egov.infra.mdms.repository.MdmsDataRepository;
 import org.egov.infra.mdms.service.SchemaDefinitionService;
