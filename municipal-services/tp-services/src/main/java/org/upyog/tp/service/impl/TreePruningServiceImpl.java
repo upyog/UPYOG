@@ -88,12 +88,12 @@ public class TreePruningServiceImpl implements TreePruningService {
         if (CollectionUtils.isEmpty(applications)) {
             return new ArrayList<>();
         }
-
-        // Enrich each booking with user details
-        for (TreePruningBookingDetail booking : applications) {
-            userService.enrichBookingWithUserDetails(booking, treePruningBookingSearchCriteria);
-        }
-
+       if(config.getIsProfileEnabled()) {
+           // Enrich each booking with user details
+           for (TreePruningBookingDetail booking : applications) {
+               userService.enrichBookingWithUserDetails(booking, treePruningBookingSearchCriteria);
+           }
+       }
         // Return retrieved application
         return applications;
     }

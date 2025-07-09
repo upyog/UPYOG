@@ -26,6 +26,21 @@ public class TreePruningQueryBuilder {
                     "FROM public.upyog_tp_tree_pruning_booking_detail uptbd " +
                     "LEFT JOIN public.upyog_tp_document_detail doc ON uptbd.booking_id = doc.booking_id"
     );
+    
+    private static final String TREE_PRUNING_BOOKING_DETAILS_SEARCH_QUERY_ISPROFILEDISABLED = (
+            "SELECT uptbd.booking_id, uptbd.booking_no, uptbd.applicant_uuid, uptbd.mobile_number, uptbd.locality_code, uptbd.reason_for_pruning, " +
+                    "uptbd.latitude, uptbd.longitude, uptbd.payment_date, uptbd.application_date, uptbd.payment_receipt_filestore_id, " +
+                    "uptbd.address_detail_id, uptbd.booking_status, uptbd.createdby, uptbd.lastmodifiedby, uptbd.createdtime, " +
+                    "uptbd.lastmodifiedtime, uptbd.tenant_id, " +
+                    "doc.document_detail_id, doc.document_type, doc.filestore_id, " +
+                    "urad.applicant_id, urad.name, urad.mobile_number as applicant_mobile, urad.email_id, urad.alternate_number, " +
+                    "uraddr.address_id, uraddr.house_no, uraddr.address_line_1, uraddr.address_line_2, uraddr.street_name, " +
+                    "uraddr.landmark, uraddr.city, uraddr.city_code, uraddr.locality, uraddr.locality_code as addr_locality_code, uraddr.pincode " +
+                    "FROM public.upyog_tp_tree_pruning_booking_detail uptbd " +
+                    "LEFT JOIN public.upyog_tp_document_detail doc ON uptbd.booking_id = doc.booking_id " +
+                    "INNER JOIN public.upyog_tp_tree_pruning_applicant_details urad ON uptbd.booking_id = urad.booking_id " +
+                    "INNER JOIN public.upyog_tp_tree_pruning_address_details uraddr ON urad.applicant_id = uraddr.applicant_id"
+    );
 
     private final String paginationWrapper =
             "SELECT * FROM (SELECT *, ROW_NUMBER() OVER (ORDER BY createdtime DESC) AS offset_ FROM ({}) result) result_offset " +
@@ -40,7 +55,12 @@ public class TreePruningQueryBuilder {
         StringBuilder query;
 
         if (!criteria.isCountCall()) {
-            query = new StringBuilder(TREE_PRUNING_BOOKING_DETAILS_SEARCH_QUERY);
+            // Use different query based on isProfileEnabled
+            if (treePruningConfiguration.getIsProfileEnabled()) {
+                query = new StringBuilder(TREE_PRUNING_BOOKING_DETAILS_SEARCH_QUERY);
+            } else {
+                query = new StringBuilder(TREE_PRUNING_BOOKING_DETAILS_SEARCH_QUERY_ISPROFILEDISABLED);
+            }
         } else {
             query = new StringBuilder(treePruningBookingCount);
         }

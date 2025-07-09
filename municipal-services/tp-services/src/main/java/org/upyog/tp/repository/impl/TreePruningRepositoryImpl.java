@@ -41,7 +41,11 @@ public class TreePruningRepositoryImpl implements TreePruningRepository {
         TreePruningBookingDetail treePruningBookingDetail = treePruningRequest.getTreePruningBookingDetail();
         PersisterWrapper<TreePruningBookingDetail> persisterWrapper = new PersisterWrapper<TreePruningBookingDetail>(
                 treePruningBookingDetail);
-        producer.push(treePruningConfiguration.getTreePruningApplicationSaveTopic(), treePruningRequest);
+        if(treePruningConfiguration.getIsProfileEnabled()) {
+            producer.push(treePruningConfiguration.getTreePruningApplicationSaveTopic(), treePruningRequest);
+        } else {
+            producer.push(treePruningConfiguration.getTreePruningApplicationSaveProfileDisabledTopic(), treePruningRequest);
+        }
     }
 
 
