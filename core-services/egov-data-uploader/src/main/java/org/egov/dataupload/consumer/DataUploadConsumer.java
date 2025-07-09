@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.kafka.support.KafkaHeaders;
 import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.stereotype.Service;
 
@@ -41,7 +42,7 @@ public class DataUploadConsumer {
 	@KafkaListener(topics = { "${kafka.topics.dataupload}" })
 
 	public void listen(final Map<String, Object> record, @Header(KafkaHeaders.RECEIVED_TOPIC) String topic,
-					   @Header(KafkaHeaders.RECEIVED_MESSAGE_KEY) String key) {
+					   @Header(KafkaHeaders.RECEIVED_KEY) String key) {
 		ObjectMapper mapper = new ObjectMapper();
 		UploaderRequest req=null;
 		try {

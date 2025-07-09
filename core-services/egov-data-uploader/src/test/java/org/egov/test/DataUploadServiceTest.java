@@ -7,23 +7,25 @@ import org.egov.common.contract.request.User;
 import org.egov.dataupload.model.UploadJob;
 import org.egov.dataupload.model.UploaderRequest;
 import org.egov.dataupload.service.DataUploadService;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.Collections;
 
-@RunWith(SpringRunner.class)
+@SpringBootTest
 @ContextConfiguration(classes = {DataUploadApplication.class})
 @Import(TestConfiguration.class)
-@Ignore
+@Disabled
 public class DataUploadServiceTest {
 
     private UploadJob uploadJob;
     private RequestInfo requestInfo;
 
-    @Before
+    @BeforeEach
     public void setup(){
         uploadJob = new UploadJob();
         uploadJob.setRequesterName("xyz");
