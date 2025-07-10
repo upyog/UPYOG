@@ -181,8 +181,8 @@ public class DashboardDataPush implements Job {
 		headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 		headers.set("Authorization", "Basic ZWdvdi11c2VyLWNsaWVudDo=");
 		MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
-		map.add("username", config.getDashbordUserName());
-		map.add("password", config.getDashbordUserPass());
+		map.add("username", "MN_NDA_USER");
+		map.add("password", "upyogTest@123");
 		map.add("grant_type", "password");
 		map.add("scope", "read");
 		map.add("tenantId", "pg");

@@ -463,13 +463,5 @@ public class PropertyConfiguration {
 	//DashBoard Details
 	@Value("${dashboard.user.host}")
 	private String dashbordUserHost;
-	
-	//DashBoard Details
-	@Value("${dashboard.user.username}")
-	private String dashbordUserName;
-	
-	//DashBoard Details
-	@Value("${dashboard.user.pass}")
-	private String dashbordUserPass;
 	    
 }
