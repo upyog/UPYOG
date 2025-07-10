@@ -148,8 +148,7 @@ public class UserService {
 		
 		 if (name == null) return false;
 		    // Regex pattern: Disallow specified special characters
-//		    String regex = "^[^\\\\$\\\"<>?\\\\\\\\~`!@#$%^()+={}\\\\[\\\\]*,:;“”‘’]*$";
-		    String regex = "^[^\\\\$\\\"<>?\\\\\\\\~`!@#$%^()+={}\\\\[\\\\]*,:;“”‘’]{49}$";
+		 	String regex = "^[^\\\\$\\\"<>?\\\\\\\\~`!@#%^()+={}\\[\\]*,:;“”‘’]{1,49}$";
 		    return name.matches(regex);
 	}
 
