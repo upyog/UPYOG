@@ -58,10 +58,14 @@ public class MobileToiletServiceImpl implements MobileToiletService{
         // Get the uuid of User from user registry
         try {
             List<org.upyog.rs.web.models.user.User> user = userService.fetchExistingOrCreateNewUser(mobileToiletRequest);
+            if (user == null || user.isEmpty()) {
+                throw new RuntimeException("User not found for this mobile number: " +
+                        mobileToiletRequest.getMobileToiletBookingDetail().getApplicantDetail().getMobileNumber());
+            }
             mobileToiletRequest.getMobileToiletBookingDetail().setApplicantUuid(user.get(0).getUuid());
             log.info("Applicant or User Uuid: " + user.get(0).getUuid());
         } catch (Exception e) {
-            log.error("Error while creating user: " + e.getMessage(), e);
+            throw new RuntimeException("Failed to fetch/create user: " + e.getMessage(), e);
         }
 
         requestServiceRepository.saveMobileToiletBooking(mobileToiletRequest);
@@ -90,7 +94,7 @@ public class MobileToiletServiceImpl implements MobileToiletService{
         if (CollectionUtils.isEmpty(applications)) {
             return new ArrayList<>();
         }
-        if (config.getIsProfileEnabled()) {
+        if (config.getIsUserProfileEnabled()) {
             // Enrich each booking with user details
             for (MobileToiletBookingDetail booking : applications) {
                 userService.enrichBookingWithUserDetails(booking, mobileToiletBookingSearchCriteria);

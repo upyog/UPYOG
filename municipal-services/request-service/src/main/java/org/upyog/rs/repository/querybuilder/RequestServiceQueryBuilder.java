@@ -27,7 +27,7 @@ public class RequestServiceQueryBuilder {
                     "FROM public.upyog_rs_tanker_booking_details ursbd"
     );
     
-    private static final String WATER_TANKER_BOOKING_DETAILS_SEARCH_QUERY_ISPROFILEDISABLED = (
+    private static final String WATER_TANKER_BOOKING_DETAILS_SEARCH_QUERY_WITH_USER_DETAILS = (
             "SELECT ursbd.booking_id, ursbd.booking_no, ursbd.applicant_uuid, ursbd.mobile_number, ursbd.locality_code, ursbd.tanker_type, ursbd.water_type, ursbd.tanker_quantity, ursbd.water_quantity, ursbd.description, " +
                     "ursbd.delivery_date, ursbd.delivery_time, ursbd.extra_charge, ursbd.vendor_id, ursbd.vehicle_id, ursbd.driver_id, ursbd.vehicle_type, ursbd.payment_receipt_filestore_id, " +
                     "ursbd.vehicle_capacity, ursbd.address_detail_id, ursbd.booking_status, ursbd.createdby, ursbd.lastModifiedby, ursbd.createdtime, " +
@@ -48,7 +48,7 @@ public class RequestServiceQueryBuilder {
                     "FROM public.upyog_rs_mobile_toilet_booking_details urmt"
     );
     
-    private static final String MOBILE_TOILET_BOOKING_DETAILS_SEARCH_QUERY_ISPROFILEDISABLED = (
+    private static final String MOBILE_TOILET_BOOKING_DETAILS_SEARCH_QUERY_WITH_USER_DETAILS = (
             "SELECT urmt.booking_id, urmt.booking_no, urmt.applicant_uuid, urmt.no_of_mobile_toilet, urmt.mobile_number, urmt.locality_code, " +
                     "urmt.description, urmt.delivery_from_date, urmt.delivery_to_date, urmt.delivery_from_time, urmt.delivery_to_time, urmt.vendor_id, " +
                     "urmt.vehicle_id, urmt.driver_id, urmt.vehicle_type, urmt.vehicle_capacity, urmt.address_detail_id, urmt.payment_receipt_filestore_id, urmt.booking_status, urmt.createdby, " +
@@ -78,10 +78,10 @@ public class RequestServiceQueryBuilder {
 
         if (!criteria.isCountCall()) {
             // Use different query based on isProfileEnabled
-            if (requestServiceConfiguration.getIsProfileEnabled()) {
+            if (requestServiceConfiguration.getIsUserProfileEnabled()) {
                 query = new StringBuilder(WATER_TANKER_BOOKING_DETAILS_SEARCH_QUERY);
             } else {
-                query = new StringBuilder(WATER_TANKER_BOOKING_DETAILS_SEARCH_QUERY_ISPROFILEDISABLED);
+                query = new StringBuilder(WATER_TANKER_BOOKING_DETAILS_SEARCH_QUERY_WITH_USER_DETAILS);
             }
         } else {
             query = new StringBuilder(waterTankerBookingCount);
@@ -139,10 +139,10 @@ public class RequestServiceQueryBuilder {
 
         if (!criteria.isCountCall()) {
             // Use different query based on isProfileEnabled
-            if (requestServiceConfiguration.getIsProfileEnabled()) {
+            if (requestServiceConfiguration.getIsUserProfileEnabled()) {
                 query = new StringBuilder(MOBILE_TOILET_BOOKING_DETAILS_SEARCH_QUERY);
             } else {
-                query = new StringBuilder(MOBILE_TOILET_BOOKING_DETAILS_SEARCH_QUERY_ISPROFILEDISABLED);
+                query = new StringBuilder(MOBILE_TOILET_BOOKING_DETAILS_SEARCH_QUERY_WITH_USER_DETAILS);
             }
         } else {
             query = new StringBuilder(mobileToiletBookingCount);

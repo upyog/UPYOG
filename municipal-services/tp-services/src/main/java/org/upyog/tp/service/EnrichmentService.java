@@ -45,7 +45,7 @@ public class EnrichmentService {
         String userUuid = requestInfo.getUserInfo().getUuid();
         AuditDetails auditDetails = TreePruningUtil.getAuditDetails(requestInfo.getUserInfo().getUuid(), true);
 
-        if (config.getIsProfileEnabled()){
+        if (config.getIsUserProfileEnabled()){
             // If the mobile number in the request matches the applicant's mobile number, then set the applicantDetailId as userUuid
             if (UserUtil.isCurrentUserApplicant(treePruningRequest)) {
                 treePruningDetail.setApplicantUuid(userUuid);

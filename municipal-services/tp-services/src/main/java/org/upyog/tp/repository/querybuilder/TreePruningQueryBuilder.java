@@ -27,7 +27,7 @@ public class TreePruningQueryBuilder {
                     "LEFT JOIN public.upyog_tp_document_detail doc ON uptbd.booking_id = doc.booking_id"
     );
     
-    private static final String TREE_PRUNING_BOOKING_DETAILS_SEARCH_QUERY_ISPROFILEDISABLED = (
+    private static final String TREE_PRUNING_BOOKING_DETAILS_SEARCH_QUERY_WITH_USER_DETAILS = (
             "SELECT uptbd.booking_id, uptbd.booking_no, uptbd.applicant_uuid, uptbd.mobile_number, uptbd.locality_code, uptbd.reason_for_pruning, " +
                     "uptbd.latitude, uptbd.longitude, uptbd.payment_date, uptbd.application_date, uptbd.payment_receipt_filestore_id, " +
                     "uptbd.address_detail_id, uptbd.booking_status, uptbd.createdby, uptbd.lastmodifiedby, uptbd.createdtime, " +
@@ -56,10 +56,10 @@ public class TreePruningQueryBuilder {
 
         if (!criteria.isCountCall()) {
             // Use different query based on isProfileEnabled
-            if (treePruningConfiguration.getIsProfileEnabled()) {
+            if (treePruningConfiguration.getIsUserProfileEnabled()) {
                 query = new StringBuilder(TREE_PRUNING_BOOKING_DETAILS_SEARCH_QUERY);
             } else {
-                query = new StringBuilder(TREE_PRUNING_BOOKING_DETAILS_SEARCH_QUERY_ISPROFILEDISABLED);
+                query = new StringBuilder(TREE_PRUNING_BOOKING_DETAILS_SEARCH_QUERY_WITH_USER_DETAILS);
             }
         } else {
             query = new StringBuilder(treePruningBookingCount);

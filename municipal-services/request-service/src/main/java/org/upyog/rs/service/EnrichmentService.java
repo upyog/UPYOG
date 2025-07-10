@@ -47,7 +47,7 @@ public class EnrichmentService {
 		RequestInfo requestInfo = waterTankerRequest.getRequestInfo();
 		String userUuid = requestInfo.getUserInfo().getUuid();
 		AuditDetails auditDetails = RequestServiceUtil.getAuditDetails(requestInfo.getUserInfo().getUuid(), true);
-		if(config.getIsProfileEnabled()) {
+		if(config.getIsUserProfileEnabled()) {
 			// If the mobile number in the request matches the applicant's mobile number, then set the applicantDetailId as userUuid
 			if (UserUtil.isCurrentUserApplicant(waterTankerRequest)) {
 				waterTankerDetail.setApplicantUuid(userUuid);
@@ -185,7 +185,7 @@ public class EnrichmentService {
 		RequestInfo requestInfo = mobileToiletRequest.getRequestInfo();
 		String userUuid = requestInfo.getUserInfo().getUuid();
 		AuditDetails auditDetails = RequestServiceUtil.getAuditDetails(requestInfo.getUserInfo().getUuid(), true);
-		if(config.getIsProfileEnabled()) {
+		if(config.getIsUserProfileEnabled()) {
 			// If the mobile number in the request matches the applicant's mobile number, then set the applicantDetailId as userUuid
 			if (UserUtil.isCurrentUserApplicant(mobileToiletRequest)) {
 				mobileToiletDetail.setApplicantUuid(userUuid);

@@ -92,6 +92,11 @@ public class GenericRowMapper<T> implements ResultSetExtractor<List<T>> {
                     AuditDetails auditDetails = extractAuditDetails(rs);
                     bookingDetail.setAuditDetails(auditDetails);
                     
+                    /*
+                     * Extract applicant and address details only when isUserProfileEnabled=false.
+                     * When user profile is disabled, booking needs complete applicant and address info
+                     * from request payload since user service integration is not available.
+                     */
                     // Extract applicant and address details if available
                     ApplicantDetail applicantDetail = extractApplicantDetails(rs);
                     if (applicantDetail != null) {
@@ -111,10 +116,16 @@ public class GenericRowMapper<T> implements ResultSetExtractor<List<T>> {
                     AuditDetails auditDetails = extractAuditDetails(rs);
                     bookingDetail.setAuditDetails(auditDetails);
                     
+                    /*
+                     * Extract applicant and address details only when isUserProfileEnabled=false.
+                     * When user profile is disabled, booking needs complete applicant and address info
+                     * from request payload since user service integration is not available.
+                     */
                     // Extract applicant and address details if available
                     ApplicantDetail applicantDetail = extractApplicantDetails(rs);
                     if (applicantDetail != null) {
                         bookingDetail.setApplicantDetail(applicantDetail);
+                        bookingDetail.getApplicantDetail().setAuditDetails(auditDetails);
                     }
                     
                     Address address = extractAddressDetails(rs);
@@ -173,6 +184,13 @@ public class GenericRowMapper<T> implements ResultSetExtractor<List<T>> {
         return auditDetails;
     }
     
+    /**
+     * Extracts applicant details from the ResultSet.
+     * Returns null if no applicant details are available.
+     *
+     * @param rs ResultSet containing applicant details
+     * @return ApplicantDetail object or null if not available
+     */
     private ApplicantDetail extractApplicantDetails(ResultSet rs) throws SQLException {
         try {
             String applicantId = rs.getString("applicant_id");
@@ -194,6 +212,13 @@ public class GenericRowMapper<T> implements ResultSetExtractor<List<T>> {
         }
     }
     
+    /**
+     * Extracts address details from the ResultSet.
+     * Returns null if no address details are available.
+     *
+     * @param rs ResultSet containing address details
+     * @return Address object or null if not available
+     */
     private Address extractAddressDetails(ResultSet rs) throws SQLException {
         try {
             Address address = new Address();
