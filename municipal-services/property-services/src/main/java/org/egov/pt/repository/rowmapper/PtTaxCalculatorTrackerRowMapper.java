@@ -36,7 +36,7 @@ public class PtTaxCalculatorTrackerRowMapper implements RowMapper<PtTaxCalculato
 				.fromDate(purseToDate(rs.getString("fromdate"))).toDate(purseToDate(rs.getString("todate")))
 				.propertyTax(rs.getBigDecimal("propertytax")).auditDetails(auditDetails)
 				.additionalDetails(getAdditionalDetail(rs, "additionaldetails")).billId(rs.getString("bill_id"))
-				.rebateAmount(rs.getBigDecimal("rebateamount"))
+				.rebateAmount(rs.getBigDecimal("rebateamount")).penaltyAmount(rs.getBigDecimal("penaltyamount"))
 				.propertyTaxWithoutRebate(rs.getBigDecimal("propertytaxwithoutrebate"))
 				.billStatus(BillStatus.fromValue(rs.getString("bill_status"))).build();
 	}

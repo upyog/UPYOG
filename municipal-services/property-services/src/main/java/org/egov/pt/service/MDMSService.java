@@ -67,11 +67,19 @@ public class MDMSService {
 		MdmsResponse mdmsResponse = getMdmsMasterData(requestInfo, moduleDetails);
 		return mdmsResponse;
 	}
-	
+
 	public MdmsResponse getPropertyReabateDaysMdmsData(RequestInfo requestInfo, String filter) {
 		List<ModuleDetail> moduleDetails = new ArrayList<>();
 
 		moduleDetails.addAll(getModuleDetails(getULBSPropertyReabateDaysMdmsModuleDetails(), filter));
+		MdmsResponse mdmsResponse = getMdmsMasterData(requestInfo, moduleDetails);
+		return mdmsResponse;
+	}
+
+	public MdmsResponse getPenaltyRateMdmsData(RequestInfo requestInfo, String filter) {
+		List<ModuleDetail> moduleDetails = new ArrayList<>();
+
+		moduleDetails.addAll(getModuleDetails(getULBSPenaltyRateMdmsModuleDetails(), filter));
 		MdmsResponse mdmsResponse = getMdmsMasterData(requestInfo, moduleDetails);
 		return mdmsResponse;
 	}
@@ -101,11 +109,19 @@ public class MDMSService {
 
 		return mapOfModulesAndMasters;
 	}
-	
+
 	private Map<String, List<String>> getULBSPropertyReabateDaysMdmsModuleDetails() {
 		Map<String, List<String>> mapOfModulesAndMasters = new HashMap<>();
 
 		mapOfModulesAndMasters.put(PTConstants.MDMS_MODULE_ULBS, getULBSPropertyReabateDaysMdmsMasterDetails());
+
+		return mapOfModulesAndMasters;
+	}
+
+	private Map<String, List<String>> getULBSPenaltyRateMdmsModuleDetails() {
+		Map<String, List<String>> mapOfModulesAndMasters = new HashMap<>();
+
+		mapOfModulesAndMasters.put(PTConstants.MDMS_MODULE_ULBS, getULBSPenaltyRateMdmsMasterDetails());
 
 		return mapOfModulesAndMasters;
 	}
@@ -116,9 +132,13 @@ public class MDMSService {
 				PTConstants.MDMS_MASTER_DETAILS_BUILDINGPURPOSE, PTConstants.MDMS_MASTER_DETAILS_BUILDINGUSE,
 				PTConstants.MDMS_MASTER_DETAILS_OVERALLREBATE, PTConstants.MDMS_MASTER_DETAILS_EARLYPAYMENTREBATE);
 	}
-	
+
 	private List<String> getULBSPropertyReabateDaysMdmsMasterDetails() {
 		return Arrays.asList(PTConstants.MDMS_MASTER_DETAILS_PROPERTYREBATEDAYS);
+	}
+
+	private List<String> getULBSPenaltyRateMdmsMasterDetails() {
+		return Arrays.asList(PTConstants.MDMS_MASTER_DETAILS_PENALTYRATE);
 	}
 
 	private Map<String, List<String>> getPTTaxRateMdmsModuleDetails() {
