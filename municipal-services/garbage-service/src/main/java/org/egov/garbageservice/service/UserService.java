@@ -128,6 +128,7 @@ public class UserService {
 	        allGarbageAccounts.add(garbageAccount);
 	    });
 
+	    log.info("Count "+ allGarbageAccounts.size());
 	    // Step 2: Process accounts in batches of 100 to avoid potential failures
 	    int batchSize = 100;
 	    for (int i = 0; i < allGarbageAccounts.size(); i += batchSize) {
