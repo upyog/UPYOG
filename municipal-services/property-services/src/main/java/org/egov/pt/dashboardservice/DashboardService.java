@@ -46,6 +46,7 @@ public class DashboardService {
     }
 
     public Map<String, String> wardWithApprovedCount() {
+    	//add
         return buildMap(propertyRepository.getTotalapplicationwithPaid(),
                 v -> String.valueOf(v.getCount()));
     }
