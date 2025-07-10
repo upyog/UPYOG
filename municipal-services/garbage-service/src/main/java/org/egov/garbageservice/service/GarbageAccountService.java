@@ -1331,8 +1331,8 @@ public class GarbageAccountService {
 	private SearchCriteriaGarbageAccount createSearchCriteriaByGarbageAccounts(List<GarbageAccount> garbageAccounts) {
 
 		SearchCriteriaGarbageAccount searchCriteriaGarbageAccount = SearchCriteriaGarbageAccount.builder().build();
-		searchCriteriaGarbageAccount.setIsActiveAccount(true);
-		searchCriteriaGarbageAccount.setIsActiveSubAccount(true);
+//		searchCriteriaGarbageAccount.setIsActiveAccount(true);
+//		searchCriteriaGarbageAccount.setIsActiveSubAccount(true);
 //		List<Long> ids = new ArrayList<>();
 		List<Long> garbageIds = new ArrayList<>();
 		List<String> applicationNos = new ArrayList<>();
@@ -1891,7 +1891,7 @@ public class GarbageAccountService {
 		GarbageAccountRequest createGarbageRequest = buildGarbageAccountRequest(RequestInfoWrapper.builder().requestInfo(searchCriteriaGarbageAccountRequest.getRequestInfo()).build());
 
 		// Fetch garbage accounts if available
-//		log.info("updateGarbageUser {}",searchCriteriaGarbageAccountRequest);
+		log.info("updateGarbageUser {}",searchCriteriaGarbageAccountRequest);
 		List<GarbageAccount> garbageAccounts = fetchGarbageAccounts(searchCriteriaGarbageAccountRequest);
 //		log.info("updateGarbageUser {}",garbageAccounts);
 		// Set garbage accounts if available
