@@ -5,16 +5,22 @@ import static org.springframework.util.StringUtils.isEmpty;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 import org.egov.common.contract.request.User;
 import org.egov.pg.config.AppProperties;
 import org.egov.pg.constants.PgConstants;
+import org.egov.pg.models.PaymentResponse;
+import org.egov.pg.models.PaymentSearchCriteria;
 import org.egov.pg.models.TaxAndPayment;
 import org.egov.pg.models.Transaction;
+import org.egov.pg.repository.CollectionsRepository;
 import org.egov.pg.repository.TransactionRepository;
 import org.egov.pg.service.GatewayService;
 import org.egov.pg.service.PaymentsService;
@@ -26,6 +32,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 
 import lombok.extern.slf4j.Slf4j;
@@ -38,6 +46,7 @@ public class TransactionValidator {
 	private TransactionRepository transactionRepository;
 	private PaymentsService paymentsService;
 	private AppProperties props;
+	private CollectionsRepository collectionsRepository;
 
 	private final RestTemplate restTemplate = new RestTemplate();
 
@@ -46,15 +55,17 @@ public class TransactionValidator {
 
 	@Value("${egov.userservice.host}")
 	private String authServiceHost;
+	
 
 
 	@Autowired
 	public TransactionValidator(GatewayService gatewayService, TransactionRepository transactionRepository, 
-			PaymentsService paymentsService, AppProperties props) {
+			PaymentsService paymentsService, AppProperties props, CollectionsRepository collectionsRepository) {
 		this.gatewayService = gatewayService;
 		this.transactionRepository = transactionRepository;
 		this.paymentsService = paymentsService;
 		this.props = props;
+		this.collectionsRepository=collectionsRepository;
 	}
 
 	/**
@@ -121,12 +132,22 @@ public class TransactionValidator {
 	}
 
 	public boolean shouldGenerateReceipt(Transaction prevStatus, Transaction newStatus) {
+		log.info("prevStatus:::"+prevStatus);
+		log.info("newStatus:::"+newStatus);
 		if(prevStatus.getTxnStatus().equals(Transaction.TxnStatusEnum.SUCCESS) && !isEmpty(prevStatus.getReceipt())) {
 			return false;
 		}
 
 		if (newStatus.getTxnStatus().equals(Transaction.TxnStatusEnum.SUCCESS)) {
 			if (new BigDecimal(prevStatus.getTxnAmount()).compareTo(new BigDecimal(newStatus.getTxnAmount())) == 0) {
+				
+				
+				Integer Count=collectionsRepository.getPaymentCountByBillId(newStatus.getBillId());
+				log.info("Count::"+Count);
+
+					if(Count>0)
+						return false;
+						
 				newStatus.setTxnStatus(Transaction.TxnStatusEnum.SUCCESS);
 				newStatus.setTxnStatusMsg(PgConstants.TXN_SUCCESS);
 				return true;

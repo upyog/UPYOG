@@ -64,6 +64,12 @@ import static org.egov.demand.util.Constants.Q2FlatDays;
 import static org.egov.demand.util.Constants.Q3FlatDays;
 import static org.egov.demand.util.Constants.H1FlatDays;
 import static org.egov.demand.util.Constants.InterestPrecentage;
+import static org.egov.demand.util.Constants.PROPERTY_TAX;
+import static org.egov.demand.util.Constants.PROPERTY_TAX_GENERAL_CONSERVANCY;
+import static org.egov.demand.util.Constants.PROPERTY_TAX_STREET_LIGHTING;
+import static org.egov.demand.util.Constants.PROPERTY_TAX_PENALTY;
+import static org.egov.demand.util.Constants.PROPERTY_TAX_INTEREST;
+import static org.egov.demand.util.Constants.ROUND_OFF;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -116,6 +122,7 @@ import org.egov.demand.model.ModeOfPaymentDetails.TxnPeriodEnum;
 import org.egov.demand.model.TaxAndPayment;
 import org.egov.demand.model.TaxHeadMaster;
 import org.egov.demand.model.TaxHeadMasterCriteria;
+import org.egov.demand.model.TaxHeadMasterFinance;
 import org.egov.demand.model.Transaction;
 import org.egov.demand.model.Transaction.TxnStatusEnum;
 import org.egov.demand.model.TransactionCreateResponse;
@@ -128,6 +135,7 @@ import org.egov.demand.producer.Producer;
 import org.egov.demand.repository.BillRepositoryV2;
 import org.egov.demand.repository.IdGenRepo;
 import org.egov.demand.repository.ServiceRequestRepository;
+import org.egov.demand.repository.TaxHeadMasterRepository;
 import org.egov.demand.repository.querybuilder.BillQueryBuilder;
 import org.egov.demand.util.Util;
 import org.egov.demand.web.contract.BillRequestV2;
@@ -206,6 +214,9 @@ public class BillServicev2 {
 
 	@Autowired
 	private RestTemplate restTemplate;
+	
+	@Autowired
+	private TaxHeadMasterRepository taxHeadMasterRepository;
 
 	@Value("${kafka.topics.cancel.bill.topic.name}")
 	private String billCancelTopic;
@@ -752,6 +763,7 @@ public class BillServicev2 {
 		List<ModeOfPaymentDetails> mpdList = null;
 		BigDecimal totalAmountForDemand = BigDecimal.ZERO;
 		BigDecimal pastDue = BigDecimal.ZERO;
+		BigDecimal penalty=BigDecimal.ZERO;
 		boolean billsFound = false;
 
 		/*
@@ -766,12 +778,14 @@ public class BillServicev2 {
 			TaxHeadMaster taxHead = taxHeadMap.get(demandDetail.getTaxHeadMasterCode());
 			BigDecimal amountForAccDeatil = demandDetail.getTaxAmount();// .subtract(demandDetail.getCollectionAmount());
 
-			addOrUpdateBillAccDetailInTaxCodeAccDetailMap(taxCodeAccountdetailMap, demandDetail, taxHead, billDetailId);
+			//addOrUpdateBillAccDetailInTaxCodeAccDetailMap(taxCodeAccountdetailMap, demandDetail, taxHead, billDetailId);
 
 			/* Total tax and collection for the whole demand/bill-detail */
 			totalAmountForDemand = totalAmountForDemand.add(amountForAccDeatil);
 			if (taxHead.getCode().equalsIgnoreCase("PT_PASTDUE_CARRYFORWARD"))
 				pastDue = pastDue.add(demandDetail.getTaxAmount());
+			else if(taxHead.getCode().equalsIgnoreCase("PT_PAST_DUE_PENALTY"))
+				penalty=demandDetail.getTaxAmount();
 		}
 		// totalAmountForDemand = BigDecimal.ZERO;
 		totalAmountForDemand = totalAmountForDemand.setScale(0, RoundingMode.HALF_UP);
@@ -1096,6 +1110,7 @@ public class BillServicev2 {
 				}
 
 				inp = getInterestPenalty( BigDecimal.ZERO,  null, null,null, null , BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,false);
+				addBillAccDetailInTaxCodeAccDetailMap(taxCodeAccountdetailMap,demand, billDetailId, totalAmountForDemand, BigDecimal.ZERO, penalty, requestInfo);
 
 			} else if (q2.contains(cuurentMonth)) {
 
@@ -1202,7 +1217,9 @@ public class BillServicev2 {
 					mpdObj.setRemaingAdvance(advancedBillAmount);
 					mpdList.add(mpdObj);
 				}
-
+				
+				addBillAccDetailInTaxCodeAccDetailMap(taxCodeAccountdetailMap,demand, billDetailId, totalAmountForDemand, totalInterestAmunt, BigDecimal.ZERO, requestInfo);
+				
 			} else if (q3.contains(cuurentMonth)) {
 
 				BigDecimal totalAMountForInterest = BigDecimal.ZERO;
@@ -1340,6 +1357,8 @@ public class BillServicev2 {
 					mpdObj.setRemaingAdvance(advancedBillAmount);
 					mpdList.add(mpdObj);
 				}
+				
+				addBillAccDetailInTaxCodeAccDetailMap(taxCodeAccountdetailMap,demand, billDetailId, totalAmountForDemand, totalInterestAmunt, BigDecimal.ZERO, requestInfo);
 
 			} else if (q4.contains(cuurentMonth)) {
 
@@ -1551,6 +1570,7 @@ public class BillServicev2 {
 					mpdList.add(mpdObj);
 				}
 
+				addBillAccDetailInTaxCodeAccDetailMap(taxCodeAccountdetailMap,demand, billDetailId, totalAmountForDemand, totalInterestAmunt, BigDecimal.ZERO, requestInfo);
 			}
 
 			break;
@@ -1596,7 +1616,8 @@ public class BillServicev2 {
 				}
 
 				inp = getInterestPenalty( BigDecimal.ZERO,  null, null,null, null , BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,false);
-
+				addBillAccDetailInTaxCodeAccDetailMap(taxCodeAccountdetailMap,demand, billDetailId, totalAmountForDemand, BigDecimal.ZERO, penalty, requestInfo);
+				
 			} else if (h2.contains(cuurentMonth)) {
 
 				BigDecimal totalAMountForInterest = BigDecimal.ZERO;
@@ -1715,6 +1736,7 @@ public class BillServicev2 {
 					mpdList.add(mpdObj);
 				}
 
+				addBillAccDetailInTaxCodeAccDetailMap(taxCodeAccountdetailMap,demand, billDetailId, totalAmountForDemand, totalInterestAmunt, BigDecimal.ZERO, requestInfo);
 			}
 
 			break;
@@ -1746,7 +1768,7 @@ public class BillServicev2 {
 
 			inp = getInterestPenalty( BigDecimal.ZERO,  null, null,null, null , BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,false);
 
-
+			addBillAccDetailInTaxCodeAccDetailMap(taxCodeAccountdetailMap,demand, billDetailId, totalAmountForDemand, BigDecimal.ZERO, penalty, requestInfo);
 			break;
 		default:
 			break;
@@ -1963,6 +1985,76 @@ public class BillServicev2 {
 		}
 	}
 
+	private void addBillAccDetailInTaxCodeAccDetailMap(Map<String, BillAccountDetailV2> taxCodeAccDetailMap,
+			Demand demand,String billDetailId,BigDecimal totalAmount,BigDecimal interestAmount,BigDecimal penaltyAmount,RequestInfo requestInfo)
+	{
+		String service="PT";
+		TaxHeadMasterCriteria taxHeadCriteria = TaxHeadMasterCriteria.builder().tenantId("mn").service(service).build();
+		List<TaxHeadMasterFinance> taxHeadMasterFinance = taxHeadMasterRepository.getTaxHeadMasterFinance(requestInfo,taxHeadCriteria);
+		Map<String, String> taxHeadMasterFinanceMap=taxHeadMasterFinance.stream().collect(Collectors.toMap(TaxHeadMasterFinance::getTaxhead,TaxHeadMasterFinance::getGlcode));
+		
+		String glcodePTTAX = taxHeadMasterFinanceMap.get(PROPERTY_TAX);
+		String glcodePTConservancy = taxHeadMasterFinanceMap.get(PROPERTY_TAX_GENERAL_CONSERVANCY);
+		String glcodePTStreetLight = taxHeadMasterFinanceMap.get(PROPERTY_TAX_STREET_LIGHTING);
+		String glcodePTPenalty= taxHeadMasterFinanceMap.get(PROPERTY_TAX_PENALTY);
+		String glcodePTInterest= taxHeadMasterFinanceMap.get(PROPERTY_TAX_INTEREST);
+		String glcodePTRounding = taxHeadMasterFinanceMap.get(ROUND_OFF);
+
+		// Split amount using RATIO 5:2:1
+		BigDecimal amountPaid=totalAmount.subtract(interestAmount).subtract(penaltyAmount);
+		BigDecimal unitAmount = amountPaid.divide(BigDecimal.valueOf(8), 2, RoundingMode.DOWN);
+
+		BigDecimal taxAmount = unitAmount.multiply(BigDecimal.valueOf(5)).setScale(2, RoundingMode.HALF_UP);
+		BigDecimal conservancyAmount = unitAmount.multiply(BigDecimal.valueOf(2)).setScale(2, RoundingMode.HALF_UP);
+		BigDecimal streetLightAmount = unitAmount.multiply(BigDecimal.valueOf(1)).setScale(2, RoundingMode.HALF_UP);
+
+		// Calculate rounding difference
+		BigDecimal total = taxAmount.add(conservancyAmount).add(streetLightAmount).add(interestAmount).add(penaltyAmount);
+		BigDecimal roundingDiff = totalAmount.subtract(total);
+		
+		BillAccountDetailV2 propertytaxaccountDetail = BillAccountDetailV2.builder().demandDetailId(demand.getId())
+				.tenantId(demand.getTenantId()).id(UUID.randomUUID().toString())
+				.adjustedAmount(BigDecimal.ZERO).taxHeadCode(PROPERTY_TAX).amount(taxAmount).glcode(glcodePTTAX)
+				.order(1).billDetailId(billDetailId).build();
+
+		taxCodeAccDetailMap.put(PROPERTY_TAX, propertytaxaccountDetail);
+		
+		BillAccountDetailV2 propertytaxgeneralconservancyaccountDetail = BillAccountDetailV2.builder().demandDetailId(demand.getId())
+				.tenantId(demand.getTenantId()).id(UUID.randomUUID().toString())
+				.adjustedAmount(BigDecimal.ZERO).taxHeadCode(PROPERTY_TAX_GENERAL_CONSERVANCY).amount(conservancyAmount).glcode(glcodePTConservancy)
+				.order(2).billDetailId(billDetailId).build();
+
+		taxCodeAccDetailMap.put(PROPERTY_TAX_GENERAL_CONSERVANCY, propertytaxgeneralconservancyaccountDetail);
+		
+		BillAccountDetailV2 propertytaxstreetlightaccountDetail = BillAccountDetailV2.builder().demandDetailId(demand.getId())
+				.tenantId(demand.getTenantId()).id(UUID.randomUUID().toString())
+				.adjustedAmount(BigDecimal.ZERO).taxHeadCode(PROPERTY_TAX_STREET_LIGHTING).amount(streetLightAmount).glcode(glcodePTStreetLight)
+				.order(3).billDetailId(billDetailId).build();
+
+		taxCodeAccDetailMap.put(PROPERTY_TAX_STREET_LIGHTING, propertytaxstreetlightaccountDetail);
+		
+		BillAccountDetailV2 propertytaxpenaltyaccountDetail = BillAccountDetailV2.builder().demandDetailId(demand.getId())
+				.tenantId(demand.getTenantId()).id(UUID.randomUUID().toString())
+				.adjustedAmount(BigDecimal.ZERO).taxHeadCode(PROPERTY_TAX_PENALTY).amount(penaltyAmount).glcode(glcodePTPenalty)
+				.order(4).billDetailId(billDetailId).build();
+
+		taxCodeAccDetailMap.put(PROPERTY_TAX_PENALTY, propertytaxpenaltyaccountDetail);
+		
+		BillAccountDetailV2 propertytaxinterestaccountDetail = BillAccountDetailV2.builder().demandDetailId(demand.getId())
+				.tenantId(demand.getTenantId()).id(UUID.randomUUID().toString())
+				.adjustedAmount(BigDecimal.ZERO).taxHeadCode(PROPERTY_TAX_INTEREST).amount(interestAmount).glcode(glcodePTInterest)
+				.order(5).billDetailId(billDetailId).build();
+
+		taxCodeAccDetailMap.put(PROPERTY_TAX_INTEREST, propertytaxinterestaccountDetail);
+		
+		BillAccountDetailV2 propertytaxroundingaccountDetail = BillAccountDetailV2.builder().demandDetailId(demand.getId())
+				.tenantId(demand.getTenantId()).id(UUID.randomUUID().toString())
+				.adjustedAmount(BigDecimal.ZERO).taxHeadCode(ROUND_OFF).amount(roundingDiff).glcode(glcodePTRounding)
+				.order(6).billDetailId(billDetailId).build();
+
+		taxCodeAccDetailMap.put(ROUND_OFF, propertytaxroundingaccountDetail);
+		log.info("taxHeadMasterFinance::"+taxHeadMasterFinance);
+	}
 	/**
 	 * Fetches the tax-head master data for the given tax-head codes
 	 * 

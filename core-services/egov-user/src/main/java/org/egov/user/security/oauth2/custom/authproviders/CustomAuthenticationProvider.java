@@ -173,6 +173,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 			 */
 			System.out.println("uuid password valid::"+uuid);
 			//restTemplate.delete(uuid);
+			if (captchaForDev)
 			userService.deleteCaptcha(uuid);
 			List<GrantedAuthority> grantedAuths = new ArrayList<>();
 			grantedAuths.add(new SimpleGrantedAuthority("ROLE_" + user.getType()));
