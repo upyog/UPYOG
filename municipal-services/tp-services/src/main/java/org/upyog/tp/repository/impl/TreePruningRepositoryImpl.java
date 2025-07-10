@@ -41,6 +41,10 @@ public class TreePruningRepositoryImpl implements TreePruningRepository {
         TreePruningBookingDetail treePruningBookingDetail = treePruningRequest.getTreePruningBookingDetail();
         PersisterWrapper<TreePruningBookingDetail> persisterWrapper = new PersisterWrapper<TreePruningBookingDetail>(
                 treePruningBookingDetail);
+        pushTreePruningRequestToKafka(treePruningRequest);
+    }
+
+    private void pushTreePruningRequestToKafka(TreePruningBookingRequest treePruningRequest) {
         if(treePruningConfiguration.getIsUserProfileEnabled()) {
             producer.push(treePruningConfiguration.getTreePruningApplicationSaveUserDetailsTopic(), treePruningRequest);
         } else {

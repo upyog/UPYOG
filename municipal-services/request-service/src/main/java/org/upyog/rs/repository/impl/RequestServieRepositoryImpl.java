@@ -45,6 +45,10 @@ public class RequestServieRepositoryImpl implements RequestServiceRepository {
 		WaterTankerBookingDetail waterTankerBookingDetail = waterTankerRequest.getWaterTankerBookingDetail();
 		PersisterWrapper<WaterTankerBookingDetail> persisterWrapper = new PersisterWrapper<WaterTankerBookingDetail>(
 				waterTankerBookingDetail);
+		pushWaterTankerRequestToKafka(waterTankerRequest);
+	}
+
+	private void pushWaterTankerRequestToKafka(WaterTankerBookingRequest waterTankerRequest) {
 		if(requestServiceConfiguration.getIsUserProfileEnabled()) {
 			producer.push(requestServiceConfiguration.getWaterTankerApplicationSaveUserDetailsTopic(), waterTankerRequest);
 		}
@@ -103,6 +107,10 @@ public class RequestServieRepositoryImpl implements RequestServiceRepository {
 		MobileToiletBookingDetail mobileToiletBookingDetail = mobileToiletRequest.getMobileToiletBookingDetail();
 		PersisterWrapper<MobileToiletBookingDetail> persisterWrapper = new PersisterWrapper<MobileToiletBookingDetail>(
 				mobileToiletBookingDetail);
+		pushMobileToiletRequestToKafka(mobileToiletRequest);
+	}
+
+	private void pushMobileToiletRequestToKafka(MobileToiletBookingRequest mobileToiletRequest) {
 		if(requestServiceConfiguration.getIsUserProfileEnabled()) {
 			producer.push(requestServiceConfiguration.getMobileToiletApplicationSaveUserDetailsTopic(), mobileToiletRequest);
 		}

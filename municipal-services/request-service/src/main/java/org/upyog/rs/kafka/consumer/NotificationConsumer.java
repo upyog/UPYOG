@@ -39,8 +39,8 @@ public class NotificationConsumer {
      */
     
     @KafkaListener(topics = { 
-            "${persister.update.water-tanker.topic}", "${persister.create.water-tanker.topic}",
-            "${persister.update.mobile-toilet.topic}", "${persister.create.mobile-toilet.topic}" 
+            "${persister.update.water-tanker.topic}", "${persister.create.water-tanker.topic}", "${persister.create.water-tanker.with.user.details.topic}",
+            "${persister.update.mobile-toilet.topic}", "${persister.create.mobile-toilet.topic}" , "${persister.create.mobile-toilet.with.user.details.topic}"
     })
     public void listen(final HashMap<String, Object> record, @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
         Object request = null;
