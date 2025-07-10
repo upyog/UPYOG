@@ -148,7 +148,8 @@ public class UserService {
 		
 		 if (name == null) return false;
 		    // Regex pattern: Disallow specified special characters
-		    String regex = "^[^\\\\$\\\"<>?\\\\\\\\~`!@#$%^()+={}\\\\[\\\\]*,:;“”‘’]*$";
+//		    String regex = "^[^\\\\$\\\"<>?\\\\\\\\~`!@#$%^()+={}\\\\[\\\\]*,:;“”‘’]*$";
+		    String regex = "^[^\\\\$\\\"<>?\\\\\\\\~`!@#$%^()+={}\\\\[\\\\]*,:;“”‘’]{49}$";
 		    return name.matches(regex);
 	}
 
@@ -172,10 +173,11 @@ public class UserService {
 	        owner.setUserName(UUID.randomUUID().toString());
 //	    	owner.setName(garbageAccount.getName());
 	        userDetailResponse = createUser(requestInfo, owner);
-	    } else {
-	        // Update existing user if found
-	        updateOrCreateUser(existingUsersFromService, requestInfo, role, owner);
 	    }
+//	    else {
+//	        // Update existing user if found
+//	        updateOrCreateUser(existingUsersFromService, requestInfo, role, owner);
+//	    }
 
 	    // Assign user UUID to the garbage account
 	    if (userDetailResponse != null && !CollectionUtils.isEmpty(userDetailResponse.getUser()) 
