@@ -128,15 +128,13 @@ public class UserService {
 	        allGarbageAccounts.add(garbageAccount);
 	    });
 
-	    log.info("Count "+ allGarbageAccounts.size());
 	    // Step 2: Process accounts in batches of 100 to avoid potential failures
 	    int batchSize = 100;
 	    for (int i = 0; i < allGarbageAccounts.size(); i += batchSize) {
 	        int end = Math.min(i + batchSize, allGarbageAccounts.size());
 	        List<GarbageAccount> batch = allGarbageAccounts.subList(i, end);
-		    log.info("Batch "+ batch + "," + end + ","+i);
 			for (GarbageAccount account : batch) {
-			    log.info("Check "+ (isValidPhoneNumber(account.getMobileNumber()) && isValidUserName(account.getName())));
+			    log.info("Check "+account.getMobileNumber()+" "+ (isValidPhoneNumber(account.getMobileNumber()) && isValidUserName(account.getName())));
 				if (isValidPhoneNumber(account.getMobileNumber()) && isValidUserName(account.getName())) {
 					processGarbageAccount(requestInfo, role, account);
 				}
@@ -150,7 +148,7 @@ public class UserService {
 		
 		 if (name == null) return false;
 		    // Regex pattern: Disallow specified special characters
-		    String regex = "^[^\\\"$<>?\\\\\\\\~`!@#$%^()+={}\\\\[\\\\]*,:;“”‘’]{0,50}$";
+		    String regex = "^[^\\\\$\\\"<>?\\\\\\\\~`!@#$%^()+={}\\\\[\\\\]*,:;“”‘’]*$";
 		    return name.matches(regex);
 	}
 

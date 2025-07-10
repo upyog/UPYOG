@@ -1891,9 +1891,7 @@ public class GarbageAccountService {
 		GarbageAccountRequest createGarbageRequest = buildGarbageAccountRequest(RequestInfoWrapper.builder().requestInfo(searchCriteriaGarbageAccountRequest.getRequestInfo()).build());
 
 		// Fetch garbage accounts if available
-		log.info("updateGarbageUser {}",searchCriteriaGarbageAccountRequest);
 		List<GarbageAccount> garbageAccounts = fetchGarbageAccounts(searchCriteriaGarbageAccountRequest);
-//		log.info("updateGarbageUser {}",garbageAccounts);
 		// Set garbage accounts if available
 		if (!garbageAccounts.isEmpty()) {
 			createGarbageRequest.setGarbageAccounts(garbageAccounts);
