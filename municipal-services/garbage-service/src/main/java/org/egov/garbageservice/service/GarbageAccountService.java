@@ -1926,10 +1926,8 @@ public class GarbageAccountService {
 
 		searchCriteriaGarbageAccountRequest.setIsSchedulerCall(true);
 		searchCriteriaGarbageAccountRequest.setIsUserUuidNull(true);
-//		SearchCriteriaGarbageAccount searchCriteriaGarbageAccount = new SearchCriteriaGarbageAccount();
-//		searchCriteriaGarbageAccount.setIsActiveAccount(true);
-//		searchCriteriaGarbageAccount.setIsActiveSubAccount(true);
-//		searchCriteriaGarbageAccountRequest.setSearchCriteriaGarbageAccount(searchCriteriaGarbageAccount);;
+		searchCriteriaGarbageAccountRequest.getSearchCriteriaGarbageAccount().setIsActiveAccount(true);
+		searchCriteriaGarbageAccountRequest.getSearchCriteriaGarbageAccount().setIsActiveSubAccount(true);
 
 		GarbageAccountResponse garbageAccountResponse = searchGarbageAccounts(searchCriteriaGarbageAccountRequest);
 
