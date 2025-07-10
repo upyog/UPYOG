@@ -1331,8 +1331,8 @@ public class GarbageAccountService {
 	private SearchCriteriaGarbageAccount createSearchCriteriaByGarbageAccounts(List<GarbageAccount> garbageAccounts) {
 
 		SearchCriteriaGarbageAccount searchCriteriaGarbageAccount = SearchCriteriaGarbageAccount.builder().build();
-//		searchCriteriaGarbageAccount.setIsActiveAccount(true);
-//		searchCriteriaGarbageAccount.setIsActiveSubAccount(true);
+		searchCriteriaGarbageAccount.setIsActiveAccount(true);
+		searchCriteriaGarbageAccount.setIsActiveSubAccount(true);
 //		List<Long> ids = new ArrayList<>();
 		List<Long> garbageIds = new ArrayList<>();
 		List<String> applicationNos = new ArrayList<>();
@@ -1926,10 +1926,10 @@ public class GarbageAccountService {
 
 		searchCriteriaGarbageAccountRequest.setIsSchedulerCall(true);
 		searchCriteriaGarbageAccountRequest.setIsUserUuidNull(true);
-		SearchCriteriaGarbageAccount searchCriteriaGarbageAccount = new SearchCriteriaGarbageAccount();
-		searchCriteriaGarbageAccount.setIsActiveAccount(true);
-		searchCriteriaGarbageAccount.setIsActiveSubAccount(true);
-		searchCriteriaGarbageAccountRequest.setSearchCriteriaGarbageAccount(searchCriteriaGarbageAccount);;
+//		SearchCriteriaGarbageAccount searchCriteriaGarbageAccount = new SearchCriteriaGarbageAccount();
+//		searchCriteriaGarbageAccount.setIsActiveAccount(true);
+//		searchCriteriaGarbageAccount.setIsActiveSubAccount(true);
+//		searchCriteriaGarbageAccountRequest.setSearchCriteriaGarbageAccount(searchCriteriaGarbageAccount);;
 
 		GarbageAccountResponse garbageAccountResponse = searchGarbageAccounts(searchCriteriaGarbageAccountRequest);
 
