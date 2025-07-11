@@ -10,7 +10,6 @@ RUN apk add --no-cache git>2.30.0
 RUN yarn add @upyog/digit-ui-libraries@3.0.1
 RUN yarn add @demodigit/digit-ui-module-dss@1.0.0
 RUN yarn add @demodigit/digit-ui-module-pgr@3.0.4
-RUN yarn add @demodigit/digit-ui-module-engagement@3.0.3
 RUN yarn add @demodigit/digit-ui-module-core@1.0.0
 RUN yarn add @demodigit/digit-ui-module-common@1.7.0-beta.5
 RUN yarn add @demodigit/digit-ui-module-ws@3.0.6

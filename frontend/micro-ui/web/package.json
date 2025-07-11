@@ -11,8 +11,7 @@
     "micro-ui-internals/packages/modules/pgr",
     "micro-ui-internals/packages/modules/dss",
     "micro-ui-internals/packages/modules/ws",
-    "micro-ui-internals/packages/modules/asset",
-    "micro-ui-internals/packages/modules/engagement"
+    "micro-ui-internals/packages/modules/asset"
   ],
   "engines": {
     "node": ">=14"
@@ -22,7 +21,6 @@
     "@upyog/digit-ui-libraries": "3.0.1",
     "@demodigit/digit-ui-module-common": "1.7.0-beta.5",
     "@demodigit/digit-ui-module-core": "1.0.0",
-    "@demodigit/digit-ui-module-engagement": "3.0.3",
     "@demodigit/digit-ui-module-dss": "1.0.0",
     "@demodigit/digit-ui-module-commonpt":"3.0.3",
     "@demodigit/digit-ui-module-pgr": "3.0.4",

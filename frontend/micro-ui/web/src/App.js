@@ -12,7 +12,6 @@ import {
 } from "@demodigit/digit-ui-module-common";
 import { DigitUI } from "@demodigit/digit-ui-module-core";
 import { initLibraries } from "@upyog/digit-ui-libraries";
-import { initEngagementComponents } from "@demodigit/digit-ui-module-engagement";
 import { initWSComponents } from "@demodigit/digit-ui-module-ws";
 import { initCustomisationComponents } from "./Customisations";
 import { initCommonPTComponents } from "@demodigit/digit-ui-module-commonpt";
@@ -25,7 +24,6 @@ const enabledModules = [
   "PGR",
   "Payment",
   "DSS",
-  "Engagement",
   "CommonPT",
   "WS",
   "ASSET",
@@ -41,7 +39,6 @@ window.Digit.ComponentRegistryService.setupRegistry({
 
 initPGRComponents();
 initDSSComponents();
-initEngagementComponents();
 initWSComponents();
 initCommonPTComponents();
 // initReportsComponents();
