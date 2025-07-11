@@ -10,7 +10,7 @@ import {
   MobileNumber,
   CheckBox,
   CitizenConsentForm
-} from "@egovernments/digit-ui-react-components";
+} from "@upyog/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 import { useForm } from "react-hook-form";
 import { useParams, useHistory, useLocation } from "react-router-dom";
@@ -108,7 +108,7 @@ const SelectPaymentType = (props) => {
         return <span>
           {/* {index == 0 && "CCF"} */}
           {data?.linkPrefix && <span>{t(`${data?.linkPrefix}_`)}</span>}
-          {data?.link && <span id={data?.linkId} onClick={(e) => { onLinkClick(e) }} style={{ color: "#a82227", cursor: "pointer" }}>{t(`${data?.link}_`)}</span>}
+          {data?.link && <span id={data?.linkId} onClick={(e) => { onLinkClick(e) }} style={{ color: "#0f4f9e", cursor: "pointer" }}>{t(`${data?.link}_`)}</span>}
           {data?.linkPostfix && <span>{t(`${data?.linkPostfix}_`)}</span>}
           {(index == isCCFEnabled?.checkBoxLabels?.length - 1) && t("LABEL")}
         </span>
@@ -178,7 +178,7 @@ const SelectPaymentType = (props) => {
             onSelect={setPaymentType}
             options={[optionFirst, optionSecound]}
             optionsKey="name"
-            inputStyle={{ marginTop: "11px" }}
+            // inputStyle={{ marginTop: "px" }}
             innerStyles={{ display: "flex" }}
           />
           <div style={{ position: "relative" }}>
@@ -211,7 +211,7 @@ const SelectPaymentType = (props) => {
               label={checkLabels()}
               value={isCheckBox}
               checked={isCheckBox}
-              style={{ marginTop: "5px", marginLeft: "55px" }}
+              style={{ marginTop: "-5px", marginLeft: "40px" }}
               styles={{marginBottom: "30px"}}
               onChange={setTermsAndPolicyDetails}
             />

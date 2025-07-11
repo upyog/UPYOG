@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { LabelFieldPair, CardLabel, TextInput, CardLabelError, Dropdown } from "@egovernments/digit-ui-react-components";
+import { LabelFieldPair, CardLabel, TextInput, CardLabelError, Dropdown } from "@upyog/digit-ui-react-components";
 import { useLocation } from "react-router-dom";
 
 const SelectName = ({ t, config, onSelect, formData = {}, userType, register, errors }) => {
