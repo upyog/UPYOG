@@ -64,7 +64,7 @@ console.log("appStateappState",appState)
       {appState.complaints.response && <TextPicker response={appState} />}
      
       {appState.complaints.response?.ServiceWrappers?.[0]?.workflow.action == "RATE" ?"": <div style={{marginBottom:"10px"}}><SubmitBar label={t("PT_DOWNLOAD_ACK_FORM")} onSubmit={(e) =>{handleDownloadPdf(e)}} /></div>}
-      <Link to="/digit-ui/citizen">
+      <Link to="/upyog-ui/citizen">
         <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} />
       </Link>
     </Card>

@@ -96,7 +96,7 @@ const MobileSearchApplication = ({ Controller, register, control, t, reset, prev
         <div>
           <span className="link">
             <Link
-              to={`/digit-ui/employee/ws/connection-details?applicationNumber=${data?.connectionNo}&tenantId=${tenantId}&service=${
+              to={`/upyog-ui/employee/ws/connection-details?applicationNumber=${data?.connectionNo}&tenantId=${tenantId}&service=${
                 getWaterSewerageData(data)
               }`}
             >
@@ -110,7 +110,7 @@ const MobileSearchApplication = ({ Controller, register, control, t, reset, prev
         <div>
           <span className="link">
             <Link
-              to={`/digit-ui/employee/ws/${getFlowUrls(data?.applicationType)}-details?applicationNumber=${data?.applicationNo}&tenantId=${tenantId}&service=${
+              to={`/upyog-ui/employee/ws/${getFlowUrls(data?.applicationType)}-details?applicationNumber=${data?.applicationNo}&tenantId=${tenantId}&service=${
                 getWaterSewerageData(data)
               }`}
             >
@@ -166,7 +166,7 @@ const MobileSearchApplication = ({ Controller, register, control, t, reset, prev
         <DetailsCard
           {...{
             data: propsMobileInboxCards,
-            //linkPrefix: `/digit-ui/employee/ws/application-details/`,
+            //linkPrefix: `/upyog-ui/employee/ws/application-details/`,
             serviceRequestIdKey: t("WS_COMMON_TABLE_COL_APP_NO"),
           }}
         />

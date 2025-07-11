@@ -29,7 +29,7 @@ const ApplicationDetailsBillAmendment = () => {
  
   workflowDetails?.data?.actionState?.nextActions?.forEach((action) => {
     if (action?.action === "RE-SUBMIT") {
-      let pathName = `/digit-ui/employee/ws/bill-amendment?connectionNumber=${applicationDetails?.applicationData?.connectionNo}&tenantId=${tenantId}&isEdit=true`;
+      let pathName = `/upyog-ui/employee/ws/bill-amendment?connectionNumber=${applicationDetails?.applicationData?.connectionNo}&tenantId=${tenantId}&isEdit=true`;
       action.redirectionUrll = {
         action: "RE-SUBMIT-APPLICATION",
         pathname: pathName,

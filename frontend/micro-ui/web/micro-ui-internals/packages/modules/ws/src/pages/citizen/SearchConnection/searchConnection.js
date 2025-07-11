@@ -52,7 +52,7 @@ const SearchConnection = ({ config: propsConfig, formData }) => {
       }
       else {
         history.push(
-          `/digit-ui/citizen/ws/search-results?mobileNumber=${mobileNumber}&consumerNumber=${consumerNumber}&oldconsumerNumber=${oldconsumerNumber}&propertyId=${propertyId}&tenantId=${city.code}&locality=${undefined}`
+          `/upyog-ui/citizen/ws/search-results?mobileNumber=${mobileNumber}&consumerNumber=${consumerNumber}&oldconsumerNumber=${oldconsumerNumber}&propertyId=${propertyId}&tenantId=${city.code}&locality=${undefined}`
         );
       }
     }
@@ -76,7 +76,7 @@ const SearchConnection = ({ config: propsConfig, formData }) => {
         setShowToast({ key: true, label: "Refine your search" });
         else
         history.push(
-          `/digit-ui/citizen/ws/search-results?doorNumber=${doorNumber}&consumerName=${consumerName}&tenantId=${city.code}&locality=${locality.code}`
+          `/upyog-ui/citizen/ws/search-results?doorNumber=${doorNumber}&consumerName=${consumerName}&tenantId=${city.code}&locality=${locality.code}`
         );
         }
     } 

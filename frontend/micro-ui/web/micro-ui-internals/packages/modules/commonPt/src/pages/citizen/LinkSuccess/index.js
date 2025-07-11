@@ -53,7 +53,7 @@ const PropertyLinkSuccess = ({ onSelect }) => {
             <SubmitBar
               submit={false}
               label={t("PT_PROPERTY_CREATE")}
-              onSubmit={() => history.push('/digit-ui/citizen/commonPt/property/new-application')}
+              onSubmit={() => history.push('/upyog-ui/citizen/commonPt/property/new-application')}
             />
           }
         </Card>

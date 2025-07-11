@@ -179,8 +179,8 @@ const NewApplication = () => {
                       onSuccess: async (sewerageUpdateData, variables) => {
                         setAppDetails({ ...appDetails, sewerageConnection: sewerageUpdateData?.SewerageConnections?.[0] });
                         clearSessionFormData();
-                        history.push(`/digit-ui/employee/ws/ws-response?applicationNumber=${waterUpdateData?.WaterConnection?.[0]?.applicationNo}&applicationNumber1=${sewerageUpdateData?.SewerageConnections?.[0]?.applicationNo}`);
-                        // window.location.href = `${window.location.origin}/digit-ui/employee/ws/ws-response?applicationNumber=${waterUpdateData?.WaterConnection?.[0]?.applicationNo}&applicationNumber1=${sewerageUpdateData?.SewerageConnections?.[0]?.applicationNo}`
+                        history.push(`/upyog-ui/employee/ws/ws-response?applicationNumber=${waterUpdateData?.WaterConnection?.[0]?.applicationNo}&applicationNumber1=${sewerageUpdateData?.SewerageConnections?.[0]?.applicationNo}`);
+                        // window.location.href = `${window.location.origin}/upyog-ui/employee/ws/ws-response?applicationNumber=${waterUpdateData?.WaterConnection?.[0]?.applicationNo}&applicationNumber1=${sewerageUpdateData?.SewerageConnections?.[0]?.applicationNo}`
                       },
                     });
                   },
@@ -211,8 +211,8 @@ const NewApplication = () => {
               onSuccess: (data, variables) => {
                 setAppDetails({ ...appDetails, waterConnection: data?.WaterConnection?.[0] });
                 clearSessionFormData();
-                history.push(`/digit-ui/employee/ws/ws-response?applicationNumber=${data?.WaterConnection?.[0]?.applicationNo}`);
-                // window.location.href = `${window.location.origin}/digit-ui/employee/ws/ws-response?applicationNumber=${data?.WaterConnection?.[0]?.applicationNo}`;
+                history.push(`/upyog-ui/employee/ws/ws-response?applicationNumber=${data?.WaterConnection?.[0]?.applicationNo}`);
+                // window.location.href = `${window.location.origin}/upyog-ui/employee/ws/ws-response?applicationNumber=${data?.WaterConnection?.[0]?.applicationNo}`;
               },
             })
           },
@@ -239,8 +239,8 @@ const NewApplication = () => {
               onSuccess: (data, variables) => {
                 setAppDetails({ ...appDetails, sewerageConnection: data?.SewerageConnections?.[0] });
                 clearSessionFormData();
-                history.push(`/digit-ui/employee/ws/ws-response?applicationNumber1=${data?.SewerageConnections?.[0]?.applicationNo}`);
-                // window.location.href = `${window.location.origin}/digit-ui/employee/ws/ws-response?applicationNumber1=${data?.SewerageConnections?.[0]?.applicationNo}`;
+                history.push(`/upyog-ui/employee/ws/ws-response?applicationNumber1=${data?.SewerageConnections?.[0]?.applicationNo}`);
+                // window.location.href = `${window.location.origin}/upyog-ui/employee/ws/ws-response?applicationNumber1=${data?.SewerageConnections?.[0]?.applicationNo}`;
               },
             });
           },
@@ -257,7 +257,7 @@ const NewApplication = () => {
   if (isEnableLoader || isLoading) {
     return <Loader />;
   }
-console.log("configconfig",config)
+
   return (
     <React.Fragment>
       <div style={{ marginLeft: "15px" }}>

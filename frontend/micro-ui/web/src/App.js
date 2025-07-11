@@ -4,7 +4,6 @@ import {
   initPGRComponents,
   PGRReducers,
 } from "@upyog/digit-ui-module-pgr";
-import { initFSMComponents } from "@upyog/digit-ui-module-fsm";
 import {
   PTModule,
   PTLinks,
@@ -23,18 +22,7 @@ import {
   HRMSModule,
   initHRMSComponents,
 } from "@upyog/digit-ui-module-hrms";
-import {
-  TLModule,
-  TLLinks,
-  initTLComponents,
-} from "@upyog/digit-ui-module-tl";
-import {
-  PTRModule,
-  PTRLinks,
-  PTRComponents,
-} from "@upyog-niua/upyog-ui-module-ptr";
 import { initReceiptsComponents, ReceiptsModule } from "@upyog/digit-ui-module-receipts";
-import { initOBPSComponents } from "@upyog/digit-ui-module-obps";
 import { initNOCComponents } from "@upyog/digit-ui-module-noc";
 import { initEngagementComponents } from "@upyog/digit-ui-module-engagement";
 import { initWSComponents } from "@upyog/digit-ui-module-ws";
@@ -48,7 +36,6 @@ initLibraries();
 
 const enabledModules = [
   "PGR",
-  "FSM",
   "Payment",
   "PT",
   "QuickPayLinks",
@@ -56,9 +43,7 @@ const enabledModules = [
   "NDSS",
   "MCollect",
   "HRMS",
-  "TL",
   "Receipts",
-  "OBPS",
   "NOC",
   "Engagement",
   "CommonPT",
@@ -70,7 +55,6 @@ const enabledModules = [
   "FireNoc",
   "Birth",
   "Death",
-  "PTR",
   "ASSET",
 ];
 window.Digit.ComponentRegistryService.setupRegistry({
@@ -83,25 +67,17 @@ window.Digit.ComponentRegistryService.setupRegistry({
   MCollectLinks,
   MCollectModule,
   HRMSModule,
-  TLModule,
-  TLLinks,
   ReceiptsModule,
-  PTRModule,
-  PTRLinks,
-  ...PTRComponents,
   ASSETModule,
   ASSETLinks,
   ...ASSETComponents,
 });
 
 initPGRComponents();
-initFSMComponents();
 initDSSComponents();
 initMCollectComponents();
 initHRMSComponents();
-initTLComponents();
 initReceiptsComponents();
-initOBPSComponents();
 initNOCComponents();
 initEngagementComponents();
 initWSComponents();

@@ -91,6 +91,7 @@ const WSCreate = () => {
 
   // const CheckPage = Digit?.ComponentRegistryService?.getComponent('BPACheckPage') ;
   // const OBPSAcknowledgement = Digit?.ComponentRegistryService?.getComponent('BPAAcknowledgement');
+  console.log("configconfig",config)
   return (
     <Switch>
       {config.map((routeObj, index) => {

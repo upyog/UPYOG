@@ -68,13 +68,13 @@ const PropertySearchNSummary = ({ config, onSelect, userType, formData, setError
     }
     setSearchPropertyId(propertyId);
     if(window.location.pathname.includes("/tl/new-application")){
-      history.push(`/digit-ui/employee/tl/new-application?propertyId=${propertyId}`)
+      history.push(`/upyog-ui/employee/tl/new-application?propertyId=${propertyId}`)
       const scrollConst =  1600 
       setTimeout(() => window.scrollTo(0, scrollConst), 0);
     }
     
     else if (window.location.pathname.includes("/ws/new-application"))
-      history.push(`/digit-ui/employee/ws/new-application?propertyId=${propertyId}`)
+      history.push(`/upyog-ui/employee/ws/new-application?propertyId=${propertyId}`)
   };
 
   if (isEditScreen) {
@@ -102,6 +102,7 @@ const PropertySearchNSummary = ({ config, onSelect, userType, formData, setError
 
   let clns = "";
   if (window.location.href.includes("/ws/")) clns = ":"
+
   return (
     <React.Fragment>
      {(window.location.href.includes("/tl/") ? (!(formData?.tradedetils?.[0]?.structureType?.code === "MOVABLE") && (isEmpNewApplication || isEmpRenewLicense) ) : true) && <div>
@@ -123,15 +124,13 @@ const PropertySearchNSummary = ({ config, onSelect, userType, formData, setError
           </button>
         </div>
       </LabelFieldPair>
-      <span onClick={() => history.push(`/digit-ui/employee/commonpt/search?redirectToUrl=${redirectBackUrl}&${serachParams}`, { ...state })}>
-        <LinkButton label={t("CPT_SEARCH_PROPERTY")} style={{ color: "#162f6a", display: "inline-block" }} />
+      <span onClick={() => history.push(`/upyog-ui/employee/commonpt/search?redirectToUrl=${redirectBackUrl}&${serachParams}`, { ...state })}>
+        <LinkButton label={t("CPT_SEARCH_PROPERTY")} style={{ color: "#a82227", display: "inline-block" }} />
       </span>
-      &nbsp; {window.location.href.includes("/pgr/")?"":"|"}
-       &nbsp;
-      {window.location.href.includes("/pgr/")?"":
-      <span onClick={() => history.push(`/digit-ui/employee/commonpt/new-application?redirectToUrl=${redirectBackUrl}&${serachParams}`, { ...state })}>
-        <LinkButton label={t("CPT_CREATE_PROPERTY")} style={{ color: "#162f6a", display: "inline-block" }} />
-      </span>}
+      &nbsp; | &nbsp;
+      <span onClick={() => history.push(`/upyog-ui/employee/commonpt/new-application?redirectToUrl=${redirectBackUrl}&${serachParams}`, { ...state })}>
+        <LinkButton label={t("CPT_CREATE_PROPERTY")} style={{ color: "#a82227", display: "inline-block" }} />
+      </span>
       {propertyDetails && propertyDetails?.Properties.length ? (
         <React.Fragment>
           <header className="card-section-header" style={{ marginBottom: "5px", marginTop: "20px" }}>
@@ -179,10 +178,10 @@ const PropertySearchNSummary = ({ config, onSelect, userType, formData, setError
               />
             </div>
           </StatusTable>
-            <Link to={`/digit-ui/employee/commonpt/view-property?propertyId=${propertyId}&tenantId=${tenantId}&from=${window.location.pathname?.includes("employee/ws/new-application") ? "ES_COMMON_WS_NEW_CONNECTION" : window.location.pathname?.includes("employee/ws/modify-application") ?"WS_MODIFY_CONNECTION_BUTTON": window.location.pathname?.includes("employee/tl/new-application")
+            <Link to={`/upyog-ui/employee/commonpt/view-property?propertyId=${propertyId}&tenantId=${tenantId}&from=${window.location.pathname?.includes("employee/ws/new-application") ? "ES_COMMON_WS_NEW_CONNECTION" : window.location.pathname?.includes("employee/ws/modify-application") ?"WS_MODIFY_CONNECTION_BUTTON": window.location.pathname?.includes("employee/tl/new-application")
         ?"ES_TITLE_NEW_TRADE_LICESE_APPLICATION"
         :"WF_EMPLOYEE_NEWTL_RENEWAL_SUBMIT_BUTTON"}`}>
-            <LinkButton label={t("CPT_COMPLETE_PROPERTY_DETAILS")} style={{ color: "#162f6a", textAlign: "Left" }} />
+            <LinkButton label={t("CPT_COMPLETE_PROPERTY_DETAILS")} style={{ color: "#a82227", textAlign: "Left" }} />
           </Link>
         </React.Fragment>
       ) : null}

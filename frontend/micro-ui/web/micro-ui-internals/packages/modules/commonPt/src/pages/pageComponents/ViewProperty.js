@@ -38,7 +38,7 @@ const ViewProperty = () => {
     if(sessionStorage.getItem("isCreateEnabledEmployee") === "true")
     {
       sessionStorage.removeItem("isCreateEnabledEmployee");
-      history.replace("/digit-ui/employee");
+      history.replace("/upyog-ui/employee");
     }
     else
     sessionStorage.removeItem("isCreateEnabledEmployee");

@@ -100,7 +100,7 @@ const SearchApplication = ({ tenantId, onSubmit, data, count, resultOk, business
               {row.original["connectionNo"] ? (
                 <span className={"link"}>
                   <Link
-                    to={`/digit-ui/employee/ws/connection-details?applicationNumber=${
+                    to={`/upyog-ui/employee/ws/connection-details?applicationNumber=${
                       row.original["connectionNo"]
                       }&tenantId=${tenantId}&service=${service}&due=${row.original?.due || 0}&from=WS_SEWERAGE_APPLICATION_SEARCH`}
                   >
@@ -147,7 +147,7 @@ const SearchApplication = ({ tenantId, onSubmit, data, count, resultOk, business
               <div>
                 <span className="link">
                   <Link
-                    to={`/digit-ui/employee/ws/${application}-details?applicationNumber=${
+                    to={`/upyog-ui/employee/ws/${application}-details?applicationNumber=${
                       row.original["applicationNo"]
                       }&tenantId=${tenantId}&service=${service}&mode=${"MODIFY"}&from=WS_SEWERAGE_APPLICATION_SEARCH`}
                   >
@@ -167,7 +167,7 @@ const SearchApplication = ({ tenantId, onSubmit, data, count, resultOk, business
               <div>
                 <span className="link">
                   <Link
-                    to={`/digit-ui/employee/ws/${application}-details?applicationNumber=${row.original["applicationNo"]}&tenantId=${tenantId}&service=${service}&from=WS_SEWERAGE_APPLICATION_SEARCH`}
+                    to={`/upyog-ui/employee/ws/${application}-details?applicationNumber=${row.original["applicationNo"]}&tenantId=${tenantId}&service=${service}&from=WS_SEWERAGE_APPLICATION_SEARCH`}
                   >
                     {row.original["applicationNo"]}
                   </Link>

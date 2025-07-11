@@ -94,7 +94,7 @@ const SearchWaterConnection = ({ tenantId, onSubmit, data, count, resultOk, busi
               {row.original["connectionNo"] ? (
                 <span className={"link"}>
                   <Link
-                    to={`/digit-ui/employee/ws/connection-details?applicationNumber=${row.original["connectionNo"]}&tenantId=${tenantId}&service=${
+                    to={`/upyog-ui/employee/ws/connection-details?applicationNumber=${row.original["connectionNo"]}&tenantId=${tenantId}&service=${
                       row.original?.["service"]
                       }&connectionType=${row.original?.["connectionType"]}&due=${row.original?.due || 0}&from=WS_SEWERAGE_CONNECTION_SEARCH_LABEL`}
                   >
@@ -189,7 +189,7 @@ const SearchWaterConnection = ({ tenantId, onSubmit, data, count, resultOk, busi
               {row.original["connectionNo"] ? (
                 <span className={"link"}>
                   <Link
-                    to={`/digit-ui/employee/ws/connection-details?applicationNumber=${row.original["connectionNo"]}&tenantId=${tenantId}&service=${
+                    to={`/upyog-ui/employee/ws/connection-details?applicationNumber=${row.original["connectionNo"]}&tenantId=${tenantId}&service=${
                       row.original?.["service"]
                       }&connectionType=${row.original?.["connectionType"]}&due=${row.original?.due || 0}&from=WS_SEWERAGE_CONNECTION_SEARCH_LABEL`}
                   >
@@ -225,7 +225,7 @@ const SearchWaterConnection = ({ tenantId, onSubmit, data, count, resultOk, busi
         disableSortBy: true,
         Cell: ({ row }) => {
           return GetCell(generateDemand1(row))
-            //return (<div style={{cursor :"pointer", color :"#162f6a"}}>{t(`${"WS_COMMON_COLLECT_DEMAND"}`)} </div>)
+            //return (<div style={{cursor :"pointer", color :"#a82227"}}>{t(`${"WS_COMMON_COLLECT_DEMAND"}`)} </div>)
           } 
       },
     ],
@@ -255,7 +255,7 @@ const SearchWaterConnection = ({ tenantId, onSubmit, data, count, resultOk, busi
     setShowToast({
       label: `${data}`
   })
-    history.push(`/digit-ui/employee/payment/collect/SW/${encodeURIComponent(
+    history.push(`/upyog-ui/employee/payment/collect/SW/${encodeURIComponent(
       row.original?.["connectionNo"])}/${row.original?.["tenantId"]}?tenantId=${row.original?.["tenantId"]}?workflow=WS&ISWSCON`)
 
   }
@@ -272,7 +272,7 @@ const SearchWaterConnection = ({ tenantId, onSubmit, data, count, resultOk, busi
               {row.original?.service === "WATER" ? (
                 <Link
                   to={{
-                    pathname: `/digit-ui/employee/payment/collect/${row.original?.["service"] === "WATER" ? "WS" : "SW"}/${encodeURIComponent(
+                    pathname: `/upyog-ui/employee/payment/collect/${row.original?.["service"] === "WATER" ? "WS" : "SW"}/${encodeURIComponent(
                       row.original?.["connectionNo"]
                     )}/${row.original?.["tenantId"]}?tenantId=${row.original?.["tenantId"]}?workflow=WS&ISWSCON`,
                   }}
@@ -282,7 +282,7 @@ const SearchWaterConnection = ({ tenantId, onSubmit, data, count, resultOk, busi
               ) : (
                 <Link
                   to={{
-                    pathname: `/digit-ui/employee/payment/collect/${row.original?.["service"] === "WATER" ? "WS" : "SW"}/${encodeURIComponent(
+                    pathname: `/upyog-ui/employee/payment/collect/${row.original?.["service"] === "WATER" ? "WS" : "SW"}/${encodeURIComponent(
                       row.original?.["connectionNo"]
                     )}/${row.original?.["tenantId"]}?tenantId=${row.original?.["tenantId"]}?workflow=SW&ISWSCON`,
                   }}

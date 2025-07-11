@@ -7,7 +7,7 @@ import _ from "lodash";
 const TYPE_REGISTER = { type: "register" };
 const TYPE_LOGIN = { type: "login" };
 const DEFAULT_USER = "digit-user";
-const DEFAULT_REDIRECT_URL = "/digit-ui/citizen";
+const DEFAULT_REDIRECT_URL = "/upyog-ui/citizen";
 
 const PropertySearchResults = ({ template, header, actionButtonLabel, isMutation, onSelect, config, clearParams = () => {}, stateCode, redirectToUrl, searchQuery }) => {
   const { t } = useTranslation();
@@ -68,7 +68,7 @@ const PropertySearchResults = ({ template, header, actionButtonLabel, isMutation
   const searchArgs = scity ? { tenantId: scity, filters, auth } : { filters, auth };
   const result = Digit.Hooks.pt.usePropertySearch(searchArgs,{privacy: Digit.Utils.getPrivacyObject()});
   const consumerCode = result?.data?.Properties?.map((a) => a.propertyId).join(",");
-
+console.log("result",result)
   const fetchBillParams = mobileNumber ? { mobileNumber, consumerCode } : { consumerCode };
 
   const paymentDetails = Digit.Hooks.useFetchBillsForBuissnessService(
@@ -82,7 +82,7 @@ const PropertySearchResults = ({ template, header, actionButtonLabel, isMutation
   const history = useHistory();
 
   const proceedToPay = (data) => {
-    history.push(`/digit-ui/citizen/payment/my-bills/PT/${data.property_id}`, { tenantId });
+    history.push(`/upyog-ui/citizen/payment/my-bills/PT/${data.property_id}`, { tenantId });
   };
 
   if (paymentDetails.isLoading || result.isLoading) {
@@ -103,7 +103,7 @@ const PropertySearchResults = ({ template, header, actionButtonLabel, isMutation
       if (Number(data.total_due) > 0) {
         setShowModal(data);
       } else onSelect(config.key, { data, property });
-    } else history.push(`/digit-ui/citizen/payment/my-bills/PT/${data.property_id}`, { tenantId });
+    } else history.push(`/upyog-ui/citizen/payment/my-bills/PT/${data.property_id}`, { tenantId });
   };
 
 
@@ -118,8 +118,8 @@ const PropertySearchResults = ({ template, header, actionButtonLabel, isMutation
     }
   });
 
-  const arr = isMutation ? result?.data?.Properties?.filter((e) => e.status === "ACTIVE") : result?.data?.Properties;
-
+  const arr = result?.data?.Properties?.filter((e) => e.status === "ACTIVE");
+console.log("arrarr",arr)
   const searchResults = arr?.map((property) => {
    
     let addr = property?.address || {};
@@ -176,15 +176,15 @@ const PropertySearchResults = ({ template, header, actionButtonLabel, isMutation
       
       if (!err) {
         // Redirect to props redirect url if exists else to link success page
-        let redirectUrl = '/digit-ui/citizen/commonPt/property/link-success/'+record.property_id;
+        let redirectUrl = '/upyog-ui/citizen/commonPt/property/link-success/'+record.property_id;
         if(redirectToUrl) {
           redirectUrl = redirectToUrl+'?propertyId='+record.property_id+'&tenantId='+tenantId;
         } 
 
-        history.replace(`/digit-ui/citizen/commonPt/property/citizen-otp`, { from: getFromLocation(location.state, searchParams), mobileNumber: record.owner_mobile, redirectBackTo: redirectUrl });
+        history.replace(`/upyog-ui/citizen/commonPt/property/citizen-otp`, { from: getFromLocation(location.state, searchParams), mobileNumber: record.owner_mobile, redirectBackTo: redirectUrl });
         return;
       } else {
-        history.push(`/digit-ui/citizen/`, { from: getFromLocation(location.state, searchParams), data:data });
+        history.push(`/upyog-ui/citizen/`, { from: getFromLocation(location.state, searchParams), data:data });
       }
     }
   };
@@ -248,7 +248,7 @@ const PropertySearchResults = ({ template, header, actionButtonLabel, isMutation
           <div>
             <p style={{ marginLeft: "16px", marginTop: "16px" }}>
               {t("PT_LOAD_MORE_MSG")}{" "}
-              <span className="link">{<Link to={`/digit-ui/citizen/pt/property/search-results?mobileNumber=${mobileNumber || searchQuery.mobileNumber ?mobileNumber || searchQuery?.mobileNumber:""}&propertyIds=${propertyIds || searchQuery?.propertyIds ?propertyIds || searchQuery?.propertyIds:""}&oldPropertyIds=${oldPropertyIds || searchQuery?.oldPropertyIds?oldPropertyIds || searchQuery?.oldPropertyIds:""}&doorNo=${doorNo || searchQuery?.doorNo?doorNo || searchQuery?.doorNo:""}&name=${name || searchQuery?.name?name || searchQuery?.name:""}&city=${city?city:""}&locality=${locality || searchQuery?.locality?locality || searchQuery?.locality:""}&PToffset=${t1}`}>{t("PT_COMMON_CLICK_HERE")}</Link>}</span>
+              <span className="link">{<Link to={`/upyog-ui/citizen/pt/property/search-results?mobileNumber=${mobileNumber || searchQuery.mobileNumber ?mobileNumber || searchQuery?.mobileNumber:""}&propertyIds=${propertyIds || searchQuery?.propertyIds ?propertyIds || searchQuery?.propertyIds:""}&oldPropertyIds=${oldPropertyIds || searchQuery?.oldPropertyIds?oldPropertyIds || searchQuery?.oldPropertyIds:""}&doorNo=${doorNo || searchQuery?.doorNo?doorNo || searchQuery?.doorNo:""}&name=${name || searchQuery?.name?name || searchQuery?.name:""}&city=${city?city:""}&locality=${locality || searchQuery?.locality?locality || searchQuery?.locality:""}&PToffset=${t1}`}>{t("PT_COMMON_CLICK_HERE")}</Link>}</span>
             </p>
           </div>
         )}

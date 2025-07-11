@@ -169,7 +169,7 @@ console.log("disconnectionTypes",disconnectionTypes)
                 },
                 onSuccess: (data, variables) => {
                   Digit.SessionStorage.set("WS_DISCONNECTION", {...applicationData, DisconnectionResponse: data?.WaterConnection?.[0]});
-                  history.push(`/digit-ui/employee/ws/ws-restoration-response?applicationNumber=${data?.WaterConnection?.[0]?.applicationNo}`);                
+                  history.push(`/upyog-ui/employee/ws/ws-restoration-response?applicationNumber=${data?.WaterConnection?.[0]?.applicationNo}`);                
                 },
               })
             },
@@ -204,7 +204,7 @@ console.log("disconnectionTypes",disconnectionTypes)
                 },
                 onSuccess: (data, variables) => {
                   Digit.SessionStorage.set("WS_DISCONNECTION", {...applicationData, DisconnectionResponse: data?.SewerageConnections?.[0]});
-                  history.push(`/digit-ui/employee/ws/ws-restoration-response?applicationNumber=${data?.SewerageConnections?.[0]?.applicationNo}`);              
+                  history.push(`/upyog-ui/employee/ws/ws-restoration-response?applicationNumber=${data?.SewerageConnections?.[0]?.applicationNo}`);              
                 },
               })
             },

@@ -3,7 +3,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 
 const WSPropertyDetails = ({ t, config, onSelect, userType, formData, setError, formState, clearErrors }) => {
-  const redirectBackUrl = `/digit-ui/${userType}/ws/new-application`;
+  const redirectBackUrl = `/upyog-ui/${userType}/ws/new-application`;
   const [propertyId, setPropertyId] = React.useState("");
   const tenantId = Digit.SessionStorage.get("CITIZEN.COMMON.HOME.CITY")?.code;
   const { isLoading: loading, data: propertyDetails } = Digit.Hooks.pt.usePropertySearch(
@@ -51,12 +51,12 @@ const WSPropertyDetails = ({ t, config, onSelect, userType, formData, setError, 
           </button>
         </div>
       </LabelFieldPair>
-      <Link to={`/digit-ui/employee/pt/search`}>
-        <LinkButton label={t("CPT_SEARCH_PROPERTY")} style={{ color: "#162f6a", display: "inline-block" }} />
+      <Link to={`/upyog-ui/employee/pt/search`}>
+        <LinkButton label={t("CPT_SEARCH_PROPERTY")} style={{ color: "#a82227", display: "inline-block" }} />
       </Link>
       &nbsp; | &nbsp;
-      <Link to={`/digit-ui/employee/pt/new-application`}>
-        <LinkButton label={t("CPT_CREATE_PROPERTY")} style={{ color: "#162f6a", display: "inline-block" }} />
+      <Link to={`/upyog-ui/employee/pt/new-application`}>
+        <LinkButton label={t("CPT_CREATE_PROPERTY")} style={{ color: "#a82227", display: "inline-block" }} />
       </Link>
       {propertyDetails && propertyDetails?.Properties.length && (
         <React.Fragment>
@@ -81,8 +81,8 @@ const WSPropertyDetails = ({ t, config, onSelect, userType, formData, setError, 
               <p>{getPropertyAddress()}</p>
             </div>
           </LabelFieldPair>
-          <Link to={`/digit-ui/employee/commonpt/view-property?propertyId=${propertyId}&tenantId=${tenantId}`}>
-            <LinkButton label={t("CPT_COMPLETE_PROPERTY_DETAILS")} style={{ color: "#162f6a" }} />
+          <Link to={`/upyog-ui/employee/commonpt/view-property?propertyId=${propertyId}&tenantId=${tenantId}`}>
+            <LinkButton label={t("CPT_COMPLETE_PROPERTY_DETAILS")} style={{ color: "#a82227" }} />
           </Link>
         </React.Fragment>
       )}

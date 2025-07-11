@@ -122,7 +122,7 @@ export const CreateComplaint = () => {
   };
 
   if (isLoading) return null;
-console.log("configconfig",config)
+
   return (
     <Switch>
       {Object.keys(config.routes).map((route, index) => {

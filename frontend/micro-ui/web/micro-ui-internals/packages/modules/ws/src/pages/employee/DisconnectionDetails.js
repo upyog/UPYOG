@@ -101,7 +101,7 @@ const GetDisconnectionDetails = () => {
 
   workflowDetails?.data?.actionState?.nextActions?.forEach((action) => {
     if (action?.action === "EDIT") {
-      let pathName = `/digit-ui/employee/ws/edit-disconnection-application?applicationNumber=${applicationNumber}&service=${serviceType}`;
+      let pathName = `/upyog-ui/employee/ws/edit-disconnection-application?applicationNumber=${applicationNumber}&service=${serviceType}`;
       const userConfig = servicesMasterData?.["ws-services-masters"]?.WSEditApplicationByConfigUser || [];
       const editApplicationUserRole = userConfig?.[0]?.roles || [];
       const mdmsApplicationStatus = userConfig?.[0]?.status;
@@ -112,7 +112,7 @@ const GetDisconnectionDetails = () => {
         else return true;
       })
       if (isFieldInspector && appStatus === mdmsApplicationStatus) {
-        pathName = `/digit-ui/employee/ws/config-by-disconnection-application?applicationNumber=${applicationNumber}&service=${serviceType}`;
+        pathName = `/upyog-ui/employee/ws/config-by-disconnection-application?applicationNumber=${applicationNumber}&service=${serviceType}`;
       }
       action.redirectionUrll = {
         action: "ACTIVATE_CONNECTION",
@@ -124,7 +124,7 @@ const GetDisconnectionDetails = () => {
       };
     }
     if (action?.action === "RESUBMIT_APPLICATION") {
-      let pathName = `/digit-ui/employee/ws/resubmit-disconnection-application?applicationNumber=${applicationNumber}&service=${serviceType}`;
+      let pathName = `/upyog-ui/employee/ws/resubmit-disconnection-application?applicationNumber=${applicationNumber}&service=${serviceType}`;
       action.redirectionUrll = {
         action: "ACTIVATE_CONNECTION",
         pathname: pathName,
@@ -187,9 +187,13 @@ const GetDisconnectionDetails = () => {
     <Fragment>
       <div>
         <div className={"employee-application-details"} style={{ marginBottom: "15px" }}>
+          <div style={{display:"flex"}}>
+            <div style={{width:"70%"}}>
           <Header>{t("WS_APPLICATION_DETAILS")} </Header>
+          </div>
+          <div style={{width:"30%", zIndex:"10"}}> 
           <MultiLink
-            className="multilinkWrapper employee-mulitlink-main-div"
+            className="multilinkWrapper employee-mulitlink-main-divNew"
             onHeadClick={() => setShowOptions(!showOptions)}
             displayOptions={showOptions}
             options={dowloadOptions}
@@ -197,6 +201,8 @@ const GetDisconnectionDetails = () => {
             optionsClassName={"employee-options-btn-className"}
             ref={menuRef}
           />
+          </div>
+        </div>
         </div>
         <ApplicationDetailsTemplate
           applicationDetails={applicationDetails}
