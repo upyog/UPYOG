@@ -8,7 +8,6 @@ import { initPGRComponents } from "@demodigit/digit-ui-module-pgr";
 import { initDSSComponents } from "@demodigit/digit-ui-module-dss";
 // import { initReportsComponents } from "@upyog/digit-ui-module-reports";
 import { PaymentModule, PaymentLinks, paymentConfigs } from "@demodigit/digit-ui-module-common";
-import { initEngagementComponents } from "@demodigit/digit-ui-module-engagement";
 import { initWSComponents } from "@demodigit/digit-ui-module-ws";
 import { DigitUI } from "@demodigit/digit-ui-module-core";
 import { initCommonPTComponents } from "@demodigit/digit-ui-module-commonpt";
@@ -34,7 +33,6 @@ const enabledModules = [
   "Payment",
   "QuickPayLinks",
   "DSS",
-  "Engagement",
   "WS",
   "CommonPT",
   "ASSET"
@@ -80,7 +78,6 @@ const initDigitUI = () => {
 
   initPGRComponents();
   initDSSComponents();
-  initEngagementComponents();
   initWSComponents();
   initCommonPTComponents();
 

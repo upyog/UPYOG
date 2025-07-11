@@ -12,8 +12,7 @@
     "packages/modules/pgr",
     "packages/modules/dss",
     "packages/modules/ws",
-    "packages/modules/asset",
-    "packages/modules/engagement"
+    "packages/modules/asset"
   ],
   "author": "Abhinav Kushwaha <abhinav.kushwaha@egovernments.org>",
   "license": "MIT",
@@ -36,7 +35,6 @@
     "dev:core": "cd packages/modules/core && yarn start",
     "dev:pgr": "cd packages/modules/pgr && yarn start",
     "dev:dss": "cd packages/modules/dss && yarn start",
-    "dev:engagement": "cd packages/modules/engagement && yarn start",
     "dev:ws": "cd packages/modules/ws && yarn start",
     "dev:example": "cd example && yarn start",
     "build": "run-p build:**",
@@ -48,7 +46,6 @@
     "build:core": "cd packages/modules/core && yarn build",
     "build:pgr": "cd packages/modules/pgr && yarn build",
     "build:dss": "cd packages/modules/dss && yarn build",
-    "build:engagement": "cd packages/modules/engagement && yarn build",
     "build:ws": "cd packages/modules/ws && yarn build",
     "deploy:jenkins": "./scripts/jenkins.sh"
   },
