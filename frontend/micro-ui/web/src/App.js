@@ -41,7 +41,6 @@ window.Digit.ComponentRegistryService.setupRegistry({
 
 initPGRComponents();
 initDSSComponents();
-initMCollectComponents();
 initEngagementComponents();
 initWSComponents();
 initCommonPTComponents();
