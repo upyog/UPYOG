@@ -1,5 +1,5 @@
 import React,{useState,useEffect} from "react";
-import { TextArea ,ButtonSelector,Card,CardHeader,TextInput,UploadFile,Dropdown} from "@upyog/digit-ui-react-components";
+import { TextArea ,ButtonSelector,Card,CardHeader,TextInput,UploadFile,Dropdown} from "@demodigit/digit-ui-react-components";
 import Tesseract from 'tesseract.js';
 import { parse } from 'mrz';
 const SelectName = ({ config, onSelect, t, isDisabled }) => {

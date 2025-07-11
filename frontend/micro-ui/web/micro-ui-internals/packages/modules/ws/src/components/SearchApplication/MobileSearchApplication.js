@@ -1,6 +1,6 @@
 import React, { Fragment, useCallback, useMemo, useReducer } from "react";
 import { Link } from "react-router-dom";
-import { CloseSvg, SearchForm, Table, Card, SearchAction, PopUp, DetailsCard, Loader, Toast } from "@upyog/digit-ui-react-components";
+import { CloseSvg, SearchForm, Table, Card, SearchAction, PopUp, DetailsCard, Loader, Toast } from "@demodigit/digit-ui-react-components";
 import SearchFormFields from "./SearchFields";
 
 const MobileSearchApplication = ({ Controller, register, control, t, reset, previousPage, handleSubmit, tenantId, data, onSubmit, businessService }) => {
@@ -96,7 +96,7 @@ const MobileSearchApplication = ({ Controller, register, control, t, reset, prev
         <div>
           <span className="link">
             <Link
-              to={`/upyog-ui/employee/ws/connection-details?applicationNumber=${data?.connectionNo}&tenantId=${tenantId}&service=${
+              to={`/digit-ui/employee/ws/connection-details?applicationNumber=${data?.connectionNo}&tenantId=${tenantId}&service=${
                 getWaterSewerageData(data)
               }`}
             >
@@ -110,7 +110,7 @@ const MobileSearchApplication = ({ Controller, register, control, t, reset, prev
         <div>
           <span className="link">
             <Link
-              to={`/upyog-ui/employee/ws/${getFlowUrls(data?.applicationType)}-details?applicationNumber=${data?.applicationNo}&tenantId=${tenantId}&service=${
+              to={`/digit-ui/employee/ws/${getFlowUrls(data?.applicationType)}-details?applicationNumber=${data?.applicationNo}&tenantId=${tenantId}&service=${
                 getWaterSewerageData(data)
               }`}
             >
@@ -166,7 +166,7 @@ const MobileSearchApplication = ({ Controller, register, control, t, reset, prev
         <DetailsCard
           {...{
             data: propsMobileInboxCards,
-            //linkPrefix: `/upyog-ui/employee/ws/application-details/`,
+            //linkPrefix: `/digit-ui/employee/ws/application-details/`,
             serviceRequestIdKey: t("WS_COMMON_TABLE_COL_APP_NO"),
           }}
         />

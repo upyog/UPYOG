@@ -1,4 +1,4 @@
-import { BreadCrumb, PrivateRoute } from "@upyog/digit-ui-react-components";
+import { BreadCrumb, PrivateRoute } from "@demodigit/digit-ui-react-components";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { Link, Switch, useLocation } from "react-router-dom";
@@ -15,10 +15,10 @@ const EmployeeApp = ({ path, url, userType }) => {
   const mobileView = innerWidth <= 640;
 
   const breadcrumbObj = {
-    ["/upyog-ui/employee/pt/inbox"]: "ES_TITLE_INBOX",
-    ["/upyog-ui/employee/pt/new-application"]: "ES_TITLE_NEW_PROPERTY_APPLICATION",
-    ["/upyog-ui/employee/pt/search"]: "ES_COMMON_SEARCH",
-    ["/upyog-ui/employee/pt/application-search"]: "ES_COMMON_APPLICATION_SEARCH",
+    ["/digit-ui/employee/pt/inbox"]: "ES_TITLE_INBOX",
+    ["/digit-ui/employee/pt/new-application"]: "ES_TITLE_NEW_PROPERTY_APPLICATION",
+    ["/digit-ui/employee/pt/search"]: "ES_COMMON_SEARCH",
+    ["/digit-ui/employee/pt/application-search"]: "ES_COMMON_APPLICATION_SEARCH",
   };
 
   const getBreadCrumb = () => {
@@ -49,7 +49,7 @@ const EmployeeApp = ({ path, url, userType }) => {
 
   const crumbs = [
     {
-      path: "/upyog-ui/employee",
+      path: "/digit-ui/employee",
       content: t("ES_COMMON_HOME"),
       show: true,
     },
@@ -61,7 +61,7 @@ const EmployeeApp = ({ path, url, userType }) => {
       isredirected: true,
     },
     {
-      path: "/upyog-ui/employee/dss/drilldown",
+      path: "/digit-ui/employee/dss/drilldown",
       content: getBreadCrumb(),
       show: true,
     },
@@ -74,7 +74,7 @@ const EmployeeApp = ({ path, url, userType }) => {
       <React.Fragment>
         <div className="ground-container">
           {/* <p className="breadcrumb" style={{ marginLeft: mobileView ? "2vw" : "12px" }}>
-            <Link to="/upyog-ui/employee" style={{ cursor: "pointer", color: "#666" }}>
+            <Link to="/digit-ui/employee" style={{ cursor: "pointer", color: "#666" }}>
               {t("ES_COMMON_HOME")}
             </Link>{" "}
             / <span>{getBreadCrumb()}</span>

@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { format, isValid } from "date-fns";
-import { Header } from "@upyog/digit-ui-react-components";
+import { Header } from "@demodigit/digit-ui-react-components";
 import DesktopInbox from "../../../../components/Events/DesktopInbox";
 import MobileInbox from "../../../../components/Events/MobileInbox";
 
@@ -41,7 +41,7 @@ const Inbox = ({ tenants, parentRoute }) => {
   const links = [
     {
       text: t("ES_TITLE_NEW_EVENTS"),
-      link: "/upyog-ui/employee/engagement/event/inbox/new-event",
+      link: "/digit-ui/employee/engagement/event/inbox/new-event",
     }
   ]
 

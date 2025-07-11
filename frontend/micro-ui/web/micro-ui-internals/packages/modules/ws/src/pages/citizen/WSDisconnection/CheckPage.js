@@ -1,7 +1,7 @@
 import {
     Card, CardHeader, CardSubHeader, CardText,
     CitizenInfoLabel, LinkButton, Row, StatusTable, SubmitBar, EditIcon, Header, CardSectionHeader, Loader
-  } from "@upyog/digit-ui-react-components";
+  } from "@demodigit/digit-ui-react-components";
   import React, { useState } from "react";
   import { useTranslation } from "react-i18next";
   import { useHistory, useRouteMatch, Link } from "react-router-dom";
@@ -15,9 +15,9 @@ import { convertDateToEpoch, convertEpochToDate, createPayloadOfWSDisconnection,
     const match = useRouteMatch();
     const value = Digit.SessionStorage.get("WS_DISCONNECTION");
     const [documents, setDocuments] = useState( value.WSDisconnectionForm.documents || []);
-    let routeLink = `/upyog-ui/citizen/ws/disconnect-application`;
+    let routeLink = `/digit-ui/citizen/ws/disconnect-application`;
     if(window.location.href.includes("/edit-application/"))
-    routeLink=`/upyog-ui/citizen/ws/edit-disconnect-application`
+    routeLink=`/digit-ui/citizen/ws/edit-disconnect-application`
 
     function routeTo(jumpTo) {
         location.href=jumpTo;
@@ -83,7 +83,7 @@ import { convertDateToEpoch, convertEpochToDate, createPayloadOfWSDisconnection,
                 },
                 onSuccess: (data, variables) => {
                   Digit.SessionStorage.set("WS_DISCONNECTION", {...value, DisconnectionResponse: data?.WaterConnection?.[0]});
-                  history.push(`/upyog-ui/citizen/ws/disconnect-acknowledge`);
+                  history.push(`/digit-ui/citizen/ws/disconnect-acknowledge`);
                 },
               })
             },
@@ -112,7 +112,7 @@ import { convertDateToEpoch, convertEpochToDate, createPayloadOfWSDisconnection,
                 },
                 onSuccess: (data, variables) => {
                   Digit.SessionStorage.set("WS_DISCONNECTION", {...value, DisconnectionResponse: data?.SewerageConnections?.[0]});
-                  history.push(`/upyog-ui/citizen/ws/disconnect-acknowledge`);
+                  history.push(`/digit-ui/citizen/ws/disconnect-acknowledge`);
                 },
               })
             },

@@ -1,4 +1,4 @@
-import { FormComposer, Header, Loader, Toast } from "@upyog/digit-ui-react-components";
+import { FormComposer, Header, Loader, Toast } from "@demodigit/digit-ui-react-components";
 import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useLocation, useHistory } from "react-router-dom";
@@ -75,7 +75,7 @@ const EditModifyApplication = () => {
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      if (isAppDetailsPage) window.location.href = `${window.location.origin}/upyog-ui/employee/ws/application-details?applicationNumber=${sessionFormData?.ConnectionDetails?.[0]?.applicationNo}&service=${sessionFormData?.ConnectionDetails?.[0]?.serviceName?.toUpperCase()}&mode=MODIFY`
+      if (isAppDetailsPage) window.location.href = `${window.location.origin}/digit-ui/employee/ws/application-details?applicationNumber=${sessionFormData?.ConnectionDetails?.[0]?.applicationNo}&service=${sessionFormData?.ConnectionDetails?.[0]?.serviceName?.toUpperCase()}&mode=MODIFY`
     }, 3000);
     return () => clearTimeout(timer);
   }, [isAppDetailsPage]);

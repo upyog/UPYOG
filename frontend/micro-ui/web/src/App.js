@@ -3,32 +3,20 @@ import React from "react";
 import {
   initPGRComponents,
   PGRReducers,
-} from "@upyog/digit-ui-module-pgr";
-import {
-  PTModule,
-  PTLinks,
-  PTComponents,
-} from "@upyog/digit-ui-module-pt";
-import { MCollectModule, MCollectLinks, initMCollectComponents } from "@upyog/digit-ui-module-mcollect";
-import { initDSSComponents } from "@upyog/digit-ui-module-dss";
+} from "@demodigit/digit-ui-module-pgr";
+import { initDSSComponents } from "@demodigit/digit-ui-module-dss";
 import {
   PaymentModule,
   PaymentLinks,
   paymentConfigs,
-} from "@upyog/digit-ui-module-common";
-import { DigitUI } from "@upyog/digit-ui-module-core";
+} from "@demodigit/digit-ui-module-common";
+import { DigitUI } from "@demodigit/digit-ui-module-core";
 import { initLibraries } from "@upyog/digit-ui-libraries";
-import {
-  HRMSModule,
-  initHRMSComponents,
-} from "@upyog/digit-ui-module-hrms";
-import { initReceiptsComponents, ReceiptsModule } from "@upyog/digit-ui-module-receipts";
-import { initEngagementComponents } from "@upyog/digit-ui-module-engagement";
-import { initWSComponents } from "@upyog/digit-ui-module-ws";
+import { initEngagementComponents } from "@demodigit/digit-ui-module-engagement";
+import { initWSComponents } from "@demodigit/digit-ui-module-ws";
 import { initCustomisationComponents } from "./Customisations";
-import { initCommonPTComponents } from "@upyog/digit-ui-module-commonpt";
-import { initBillsComponents } from "@upyog/digit-ui-module-bills";
-import { ASSETComponents, ASSETLinks, ASSETModule } from "@upyog/upyog-ui-module-asset";
+import { initCommonPTComponents } from "@demodigit/digit-ui-module-commonpt";
+import { ASSETComponents, ASSETLinks, ASSETModule } from "@demodigit/upyog-ui-module-asset";
 // import { initReportsComponents } from "@egovernments/digit-ui-module-reports";
 
 initLibraries();
@@ -36,37 +24,16 @@ initLibraries();
 const enabledModules = [
   "PGR",
   "Payment",
-  "PT",
-  "QuickPayLinks",
   "DSS",
-  "NDSS",
-  "MCollect",
-  "HRMS",
-  "Receipts",
-  "NOC",
   "Engagement",
   "CommonPT",
   "WS",
-  "Reports",
-  "Bills",
-  "SW",
-  "BillAmendment",
-  "FireNoc",
-  "Birth",
-  "Death",
   "ASSET",
 ];
 window.Digit.ComponentRegistryService.setupRegistry({
   ...paymentConfigs,
-  PTModule,
-  PTLinks,
   PaymentModule,
   PaymentLinks,
-  ...PTComponents,
-  MCollectLinks,
-  MCollectModule,
-  HRMSModule,
-  ReceiptsModule,
   ASSETModule,
   ASSETLinks,
   ...ASSETComponents,
@@ -75,12 +42,9 @@ window.Digit.ComponentRegistryService.setupRegistry({
 initPGRComponents();
 initDSSComponents();
 initMCollectComponents();
-initHRMSComponents();
-initReceiptsComponents();
 initEngagementComponents();
 initWSComponents();
 initCommonPTComponents();
-initBillsComponents();
 // initReportsComponents();
 initCustomisationComponents();
 

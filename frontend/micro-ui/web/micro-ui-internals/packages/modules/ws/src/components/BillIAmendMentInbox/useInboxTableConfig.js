@@ -35,7 +35,7 @@ const useInboxTableConfig = ({ parentRoute, onPageSizeChange, formState, totalCo
         Cell: ({ row }) => {
           return (
             <div style={{ display: "flex", flexDirection: "column" }}>
-              <Link to={`/upyog-ui/employee/ws/generate-note-bill-amendment?applicationNumber=${row.original["applicationNo"]}`}>
+              <Link to={`/digit-ui/employee/ws/generate-note-bill-amendment?applicationNumber=${row.original["applicationNo"]}`}>
                 <span className="link">{row.original["applicationNo"]}</span>
               </Link>
               {GetCell(t(`BILLAMENDMENT_${row?.original?.amendmentReason}_HEADING`))}

@@ -1,5 +1,5 @@
 import React, { Fragment, useState,useEffect, useCallback, useMemo } from "react";
-import { SearchForm, Table, Card, Loader, Header,Toast } from "@upyog/digit-ui-react-components";
+import { SearchForm, Table, Card, Loader, Header,Toast } from "@demodigit/digit-ui-react-components";
 import { useForm, Controller } from "react-hook-form";
 import SearchFields from "./SearchFields";
 import { useTranslation } from "react-i18next";
@@ -94,7 +94,7 @@ const SearchWaterConnection = ({ tenantId, onSubmit, data, count, resultOk, busi
               {row.original["connectionNo"] ? (
                 <span className={"link"}>
                   <Link
-                    to={`/upyog-ui/employee/ws/connection-details?applicationNumber=${row.original["connectionNo"]}&tenantId=${tenantId}&service=${
+                    to={`/digit-ui/employee/ws/connection-details?applicationNumber=${row.original["connectionNo"]}&tenantId=${tenantId}&service=${
                       row.original?.["service"]
                       }&connectionType=${row.original?.["connectionType"]}&due=${row.original?.due || 0}&from=WS_SEWERAGE_CONNECTION_SEARCH_LABEL`}
                   >
@@ -189,7 +189,7 @@ const SearchWaterConnection = ({ tenantId, onSubmit, data, count, resultOk, busi
               {row.original["connectionNo"] ? (
                 <span className={"link"}>
                   <Link
-                    to={`/upyog-ui/employee/ws/connection-details?applicationNumber=${row.original["connectionNo"]}&tenantId=${tenantId}&service=${
+                    to={`/digit-ui/employee/ws/connection-details?applicationNumber=${row.original["connectionNo"]}&tenantId=${tenantId}&service=${
                       row.original?.["service"]
                       }&connectionType=${row.original?.["connectionType"]}&due=${row.original?.due || 0}&from=WS_SEWERAGE_CONNECTION_SEARCH_LABEL`}
                   >
@@ -255,7 +255,7 @@ const SearchWaterConnection = ({ tenantId, onSubmit, data, count, resultOk, busi
     setShowToast({
       label: `${data}`
   })
-    history.push(`/upyog-ui/employee/payment/collect/SW/${encodeURIComponent(
+    history.push(`/digit-ui/employee/payment/collect/SW/${encodeURIComponent(
       row.original?.["connectionNo"])}/${row.original?.["tenantId"]}?tenantId=${row.original?.["tenantId"]}?workflow=WS&ISWSCON`)
 
   }
@@ -272,7 +272,7 @@ const SearchWaterConnection = ({ tenantId, onSubmit, data, count, resultOk, busi
               {row.original?.service === "WATER" ? (
                 <Link
                   to={{
-                    pathname: `/upyog-ui/employee/payment/collect/${row.original?.["service"] === "WATER" ? "WS" : "SW"}/${encodeURIComponent(
+                    pathname: `/digit-ui/employee/payment/collect/${row.original?.["service"] === "WATER" ? "WS" : "SW"}/${encodeURIComponent(
                       row.original?.["connectionNo"]
                     )}/${row.original?.["tenantId"]}?tenantId=${row.original?.["tenantId"]}?workflow=WS&ISWSCON`,
                   }}
@@ -282,7 +282,7 @@ const SearchWaterConnection = ({ tenantId, onSubmit, data, count, resultOk, busi
               ) : (
                 <Link
                   to={{
-                    pathname: `/upyog-ui/employee/payment/collect/${row.original?.["service"] === "WATER" ? "WS" : "SW"}/${encodeURIComponent(
+                    pathname: `/digit-ui/employee/payment/collect/${row.original?.["service"] === "WATER" ? "WS" : "SW"}/${encodeURIComponent(
                       row.original?.["connectionNo"]
                     )}/${row.original?.["tenantId"]}?tenantId=${row.original?.["tenantId"]}?workflow=SW&ISWSCON`,
                   }}

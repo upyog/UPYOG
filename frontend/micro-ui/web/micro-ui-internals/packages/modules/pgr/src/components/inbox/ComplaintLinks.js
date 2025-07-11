@@ -1,4 +1,4 @@
-import { Card } from "@upyog/digit-ui-react-components";
+import { Card } from "@demodigit/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -7,7 +7,7 @@ const ComplaintsLink = ({ isMobile, data }) => {
   const { t } = useTranslation();
 
   const allLinks = [
-    { text: "ES_PGR_NEW_COMPLAINT", link: "/upyog-ui/employee/pgr/complaint/create", accessTo: ["CSR"] },
+    { text: "ES_PGR_NEW_COMPLAINT", link: "/digit-ui/employee/pgr/complaint/create", accessTo: ["CSR"] },
     // { text: "Reports", link: "/employee" },
     // { text: "Dashboard", link: "/employee" },
   ];

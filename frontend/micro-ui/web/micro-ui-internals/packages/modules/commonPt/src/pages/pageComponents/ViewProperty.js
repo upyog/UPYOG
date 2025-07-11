@@ -1,4 +1,4 @@
-import { Header, ActionBar, SubmitBar } from "@upyog/digit-ui-react-components";
+import { Header, ActionBar, SubmitBar } from "@demodigit/digit-ui-react-components";
 import React, {useEffect} from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
@@ -38,7 +38,7 @@ const ViewProperty = () => {
     if(sessionStorage.getItem("isCreateEnabledEmployee") === "true")
     {
       sessionStorage.removeItem("isCreateEnabledEmployee");
-      history.replace("/upyog-ui/employee");
+      history.replace("/digit-ui/employee");
     }
     else
     sessionStorage.removeItem("isCreateEnabledEmployee");

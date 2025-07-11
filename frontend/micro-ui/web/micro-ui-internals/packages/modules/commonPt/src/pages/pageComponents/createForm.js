@@ -1,4 +1,4 @@
-import { FormComposer, Loader, Dropdown, Localities, Header, Toast } from "@upyog/digit-ui-react-components";
+import { FormComposer, Loader, Dropdown, Localities, Header, Toast } from "@demodigit/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory, useRouteMatch,useLocation } from "react-router-dom";
@@ -60,11 +60,11 @@ const CreatePropertyForm = ({ config, onSelect,value, userType, redirectUrl }) =
           prevState:{...location?.state}
         });
       } else {
-        history.replace(`/upyog-ui/citizen/commonPt/property/citizen-otp`,
+        history.replace(`/digit-ui/citizen/commonPt/property/citizen-otp`,
           {
             // from: getFromLocation(location.state, searchParams),
             mobileNumber: formValue?.owners?.[0]?.mobileNumber,
-            redirectBackTo: '/upyog-ui/citizen/commonPt/property/new-application/save-property',
+            redirectBackTo: '/digit-ui/citizen/commonPt/property/new-application/save-property',
             redirectData: formValue,
           }
         );

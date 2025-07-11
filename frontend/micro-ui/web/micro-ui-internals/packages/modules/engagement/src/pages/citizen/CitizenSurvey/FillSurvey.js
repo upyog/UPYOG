@@ -100,7 +100,7 @@ const FillSurvey = ({ location }) => {
         }
       };
   
-      history.push("/upyog-ui/citizen/engagement/surveys/submit-response", details);
+      history.push("/digit-ui/citizen/engagement/surveys/submit-response", details);
     }
 
     

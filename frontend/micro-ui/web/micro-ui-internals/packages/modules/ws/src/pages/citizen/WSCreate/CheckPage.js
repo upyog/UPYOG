@@ -1,7 +1,7 @@
 import {
     Card, CardHeader, CardSubHeader, CardText,
     CitizenInfoLabel, LinkButton, Row, StatusTable, SubmitBar, EditIcon, Header, CardSectionHeader
-  } from "@upyog/digit-ui-react-components";
+  } from "@demodigit/digit-ui-react-components";
   import React from "react";
   import { useTranslation } from "react-i18next";
   import { useHistory, useRouteMatch, Link } from "react-router-dom";
@@ -14,9 +14,9 @@ import {
     const match = useRouteMatch();
     let isMobile = window.Digit.Utils.browser.isMobile();
     const { ConnectionHolderDetails, plumberPreference, serviceName, waterConectionDetails, sewerageConnectionDetails, documents, cpt } = value;
-    let routeLink = `/upyog-ui/citizen/ws/create-application`;
+    let routeLink = `/digit-ui/citizen/ws/create-application`;
     if(window.location.href.includes("/edit-application/"))
-    routeLink=`/upyog-ui/citizen/ws/edit-application/${value?.tenantId}`
+    routeLink=`/digit-ui/citizen/ws/edit-application/${value?.tenantId}`
 
     function routeTo(jumpTo) {
         location.href=jumpTo;
@@ -59,7 +59,7 @@ import {
         </StatusTable>
         <div style={{ textAlign: "left" }}>
           <Link
-            to={`/upyog-ui/citizen/commonpt/view-property?propertyId=${cpt?.details?.propertyId}&tenantId=${cpt?.details?.tenantId}`}
+            to={`/digit-ui/citizen/commonpt/view-property?propertyId=${cpt?.details?.propertyId}&tenantId=${cpt?.details?.tenantId}`}
           >
             <LinkButton style={{ textAlign: "left" }} label={t("PT_VIEW_PROPERTY")} />
           </Link>

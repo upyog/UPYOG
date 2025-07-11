@@ -1,5 +1,5 @@
 import React, { Fragment, useCallback, useMemo, useReducer } from "react";
-import { InboxComposer, ComplaintIcon, Header, CollectionIcon } from "@upyog/digit-ui-react-components";
+import { InboxComposer, ComplaintIcon, Header, CollectionIcon } from "@demodigit/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 import SearchFormFieldsComponents from "./SearchFormFieldsComponent";
 import FilterFormFieldsComponent from "./FilterFormFieldsComponent";
@@ -140,11 +140,11 @@ const Inbox = ({ parentRoute }) => {
       //UM-5603 As requested by PO
       // {
       //   text: t("ACTION_TEST_REPORTS"),
-      //   link: "/upyog-ui/employee/ws/reports",
+      //   link: "/digit-ui/employee/ws/reports",
       // },
       // {
       //   text: t("ACTION_TEST_DASHBOARD"),
-      //   link: "/upyog-ui/employee/ws/dashboards",
+      //   link: "/digit-ui/employee/ws/dashboards",
       // },
     ],
   };

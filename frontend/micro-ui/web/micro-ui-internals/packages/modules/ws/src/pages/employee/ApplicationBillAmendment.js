@@ -19,7 +19,7 @@ import {
   InfoBannerIcon,
   Toast,
   Table
-} from "@upyog/digit-ui-react-components";
+} from "@demodigit/digit-ui-react-components";
 import React, { Fragment, useEffect, useMemo, useReducer, useState } from "react";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
@@ -214,7 +214,7 @@ const ApplicationBillAmendment = () => {
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      if (goToAppDetailsPage) window.location.href = `${window.location.origin}/upyog-ui/employee/ws/generate-note-bill-amendment?applicationNumber=${state?.data.applicationDetails.amendment.amendmentId}`
+      if (goToAppDetailsPage) window.location.href = `${window.location.origin}/digit-ui/employee/ws/generate-note-bill-amendment?applicationNumber=${state?.data.applicationDetails.amendment.amendmentId}`
     }, 5000);
     return () => clearTimeout(timer);
   }, [goToAppDetailsPage]);
@@ -283,7 +283,7 @@ const ApplicationBillAmendment = () => {
 
             setGoToAppDetailsPage(true)
 
-            // history?.push(`/upyog-ui/employee/ws/application-details-bill-amendment?applicationNumber=${data?.Amendments[0].amendmentId}`)
+            // history?.push(`/digit-ui/employee/ws/application-details-bill-amendment?applicationNumber=${data?.Amendments[0].amendmentId}`)
             return
           }
         },
@@ -291,7 +291,7 @@ const ApplicationBillAmendment = () => {
       return
     }
 
-    history.push("/upyog-ui/employee/ws/response", data);
+    history.push("/digit-ui/employee/ws/response", data);
   };
 
 

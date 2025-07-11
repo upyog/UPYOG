@@ -1,4 +1,4 @@
-import { Banner, Card, CardText, SubmitBar, ActionBar } from "@upyog/digit-ui-react-components";
+import { Banner, Card, CardText, SubmitBar, ActionBar } from "@demodigit/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
@@ -20,7 +20,7 @@ const WSDisconnectionResponse = (props) => {
   };
   
   const onSubmit = () => {
-    history.push(`/upyog-ui/employee`);
+    history.push(`/digit-ui/employee`);
   }
 
   return (

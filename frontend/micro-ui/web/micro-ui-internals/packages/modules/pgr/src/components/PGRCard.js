@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { EmployeeModuleCard } from "@upyog/digit-ui-react-components";
+import { EmployeeModuleCard } from "@demodigit/digit-ui-react-components";
 
 
 const PGRCard = () => {
   const { t } = useTranslation();
 
   const allLinks = [
-    { text: t("ES_PGR_INBOX"), link: "/upyog-ui/employee/pgr/inbox" },
-    { text: t("ES_PGR_NEW_COMPLAINT"), link: "/upyog-ui/employee/pgr/complaint/create", accessTo: ["CSR"] },
+    { text: t("ES_PGR_INBOX"), link: "/digit-ui/employee/pgr/inbox" },
+    { text: t("ES_PGR_NEW_COMPLAINT"), link: "/digit-ui/employee/pgr/complaint/create", accessTo: ["CSR"] },
   ];
 
   if (!Digit.Utils.pgrAccess()) {
@@ -24,7 +24,7 @@ const PGRCard = () => {
   let propsForCSR =[
     {
       label: t("ES_PGR_NEW_COMPLAINT"),
-      link: `/upyog-ui/employee/pgr/complaint/create`,
+      link: `/digit-ui/employee/pgr/complaint/create`,
       role: "CSR"
     }
   ]
@@ -37,17 +37,17 @@ const PGRCard = () => {
     kpis: [
         {
             label: t("TOTAL_PGR"),
-            link: `/upyog-ui/employee/pgr/inbox`
+            link: `/digit-ui/employee/pgr/inbox`
         },
         {
             label: t("TOTAL_NEARING_SLA"),
-            link: `/upyog-ui/employee/pgr/inbox`
+            link: `/digit-ui/employee/pgr/inbox`
         }
     ],
     links: [
     {
         label: t("ES_PGR_INBOX"),
-        link: `/upyog-ui/employee/pgr/inbox`
+        link: `/digit-ui/employee/pgr/inbox`
     },
     ...propsForCSR
     ]

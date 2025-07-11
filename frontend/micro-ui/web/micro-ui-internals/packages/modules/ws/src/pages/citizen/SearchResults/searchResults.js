@@ -1,5 +1,5 @@
 import React from "react";
-import { Header, ResponseComposer, Loader } from "@upyog/digit-ui-react-components";
+import { Header, ResponseComposer, Loader } from "@demodigit/digit-ui-react-components";
 import PropTypes from "prop-types";
 import Axios from "axios";
 import { useHistory, Link } from "react-router-dom";
@@ -51,7 +51,7 @@ const ChallanSearchResults = ({ template, header, actionButtonLabel }) => {
   }
 
   const onSubmit = (data) => {
-    history.push(`/upyog-ui/citizen/payment/my-bills/${data?.ConsumerNumber.split("/")[0]}/${stringReplaceAll(data?.ConsumerNumber,"/","+")}?workflow=WNS&tenantId=${tenantId}&ConsumerName=${data?.ConsumerName}`);
+    history.push(`/digit-ui/citizen/payment/my-bills/${data?.ConsumerNumber.split("/")[0]}/${stringReplaceAll(data?.ConsumerNumber,"/","+")}?workflow=WNS&tenantId=${tenantId}&ConsumerName=${data?.ConsumerName}`);
   };
 
   const payment = {};
@@ -72,14 +72,14 @@ const ChallanSearchResults = ({ template, header, actionButtonLabel }) => {
           <div>
             <p style={{ marginLeft: "16px", marginTop: "16px" }}>
               {t("WS_LOAD_MORE_MSG")}{" "}
-              <span className="link">{<Link to={`/upyog-ui/citizen/ws/search-results?doorNumber=${doorNumber}&consumerName=${consumerName}&tenantId=${tenantId?.split(".")[0]}&locality=${locality.code}&PToffset=${t1}`}>{t("PT_COMMON_CLICK_HERE")}</Link>}</span>
+              <span className="link">{<Link to={`/digit-ui/citizen/ws/search-results?doorNumber=${doorNumber}&consumerName=${consumerName}&tenantId=${tenantId?.split(".")[0]}&locality=${locality.code}&PToffset=${t1}`}>{t("PT_COMMON_CLICK_HERE")}</Link>}</span>
             </p>
           </div>
         )}
         <p style={{ marginLeft: "16px", marginTop: "16px" }}>
         {t("WS_WANT_TO_ADD_NEW_CONNECTION")}{" "}
         <span className="link" style={{ display: "block" }}>
-          <Link to="/upyog-ui/citizen/ws/create-application/search-property">{t("WS_CLICK_HERE_TO_APPLY")}</Link>
+          <Link to="/digit-ui/citizen/ws/create-application/search-property">{t("WS_CLICK_HERE_TO_APPLY")}</Link>
         </span>
         </p>
       </div>

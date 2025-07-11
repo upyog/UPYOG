@@ -1,5 +1,5 @@
 {
-  "name": "@upyog/upyog-ui-module-asset",
+  "name": "@demodigit/upyog-ui-module-asset",
   "version": "3.0.1",
   "license": "MIT",
   "main": "dist/index.js",
@@ -19,7 +19,7 @@
   },
   "dependencies": {
     "@upyog/digit-ui-libraries": "3.0.1",
-    "@upyog/digit-ui-react-components": "3.0.1",
+    "@demodigit/digit-ui-react-components": "1.0.0",
     "exif-js": "^2.3.0",
     "jspdf": "^2.5.1",
     "jspdf-autotable": "^3.8.2",

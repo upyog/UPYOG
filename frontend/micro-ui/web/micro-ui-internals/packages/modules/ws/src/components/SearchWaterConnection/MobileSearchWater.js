@@ -1,6 +1,6 @@
 import React, { Fragment, useCallback, useMemo, useReducer } from "react";
 import { Link } from "react-router-dom";
-import { CloseSvg, SearchForm, Table, Card, SearchAction, PopUp, DetailsCard, Loader, Toast } from "@upyog/digit-ui-react-components";
+import { CloseSvg, SearchForm, Table, Card, SearchAction, PopUp, DetailsCard, Loader, Toast } from "@demodigit/digit-ui-react-components";
 
 import SearchFormFields from "./SearchFields";
 
@@ -75,7 +75,7 @@ const MobileSearchWater = ({ Controller, register, control, t, reset, previousPa
             <span className="link">
               <Link
                 to={{
-                  pathname: `/upyog-ui/employee/payment/collect/${data?.["service"] == "WATER" ? "WS" : "SW"}/${encodeURIComponent(
+                  pathname: `/digit-ui/employee/payment/collect/${data?.["service"] == "WATER" ? "WS" : "SW"}/${encodeURIComponent(
                     data?.["connectionNo"]
                   )}/${data?.["tenantId"]}?tenantId=${data?.["tenantId"]}&ISWSCON`,
                 }}
@@ -94,7 +94,7 @@ const MobileSearchWater = ({ Controller, register, control, t, reset, previousPa
       <div>
         <span className="link">
           <Link
-            to={`/upyog-ui/employee/ws/connection-details?applicationNumber=${value?.connectionNo}&tenantId=${
+            to={`/digit-ui/employee/ws/connection-details?applicationNumber=${value?.connectionNo}&tenantId=${
               value?.tenantId
             }&service=${value?.service}&connectionType=${value?.connectionType}&due=${value?.due || 0}`}
           >

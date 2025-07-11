@@ -1,4 +1,4 @@
-import { CloseSvg, FormComposer, Header, Toast } from "@upyog/digit-ui-react-components";
+import { CloseSvg, FormComposer, Header, Toast } from "@demodigit/digit-ui-react-components";
 import React, { Fragment, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
@@ -127,7 +127,7 @@ const NewSurveys = () => {
         }
         else
         {
-          history.push("/upyog-ui/employee/engagement/surveys/create-response", details)
+          history.push("/digit-ui/employee/engagement/surveys/create-response", details)
         }
       })
     }

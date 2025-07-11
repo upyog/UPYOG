@@ -2,33 +2,26 @@ import React from "react";
 import ReactDOM from "react-dom";
 
 import { initLibraries } from "@upyog/digit-ui-libraries";
-import { PGRReducers } from "@upyog/digit-ui-module-pgr";
-import { PTModule, PTLinks, PTComponents } from "@upyog/digit-ui-module-pt";
-import { MCollectModule, MCollectLinks } from "@upyog/digit-ui-module-mcollect";
+import { PGRReducers } from "@demodigit/digit-ui-module-pgr";
 // import { TLModule, TLLinks } from "@upyog/digit-ui-module-tl";
-import { initPGRComponents } from "@upyog/digit-ui-module-pgr";
-import { initDSSComponents } from "@upyog/digit-ui-module-dss";
-import { initHRMSComponents } from "@upyog/digit-ui-module-hrms";
-import { initReceiptsComponents, ReceiptsModule } from "@upyog/digit-ui-module-receipts";
+import { initPGRComponents } from "@demodigit/digit-ui-module-pgr";
+import { initDSSComponents } from "@demodigit/digit-ui-module-dss";
 // import { initReportsComponents } from "@upyog/digit-ui-module-reports";
-import { initMCollectComponents } from "@upyog/digit-ui-module-mcollect";
-import { PaymentModule, PaymentLinks, paymentConfigs } from "@upyog/digit-ui-module-common";
-import { HRMSModule } from "@upyog/digit-ui-module-hrms";
-import { initEngagementComponents } from "@upyog/digit-ui-module-engagement";
-import { initWSComponents } from "@upyog/digit-ui-module-ws";
-import { DigitUI } from "@upyog/digit-ui-module-core";
-import { initCommonPTComponents } from "@upyog/digit-ui-module-commonpt";
-import { initBillsComponents, BillsModule } from "@upyog/digit-ui-module-bills";
+import { PaymentModule, PaymentLinks, paymentConfigs } from "@demodigit/digit-ui-module-common";
+import { initEngagementComponents } from "@demodigit/digit-ui-module-engagement";
+import { initWSComponents } from "@demodigit/digit-ui-module-ws";
+import { DigitUI } from "@demodigit/digit-ui-module-core";
+import { initCommonPTComponents } from "@demodigit/digit-ui-module-commonpt";
 
 // import {initCustomisationComponents} from "./customisations";
 
-// import { PGRModule, PGRLinks } from "@upyog/digit-ui-module-pgr";
-// import { Body, TopBar } from "@upyog/digit-ui-react-components";
+// import { PGRModule, PGRLinks } from "@demodigit/digit-ui-module-pgr";
+// import { Body, TopBar } from "@demodigit/digit-ui-react-components";
 import "@upyog-niua/upyog-css/example/index.css";
-import { ASSETComponents, ASSETLinks, ASSETModule } from "@upyog/upyog-ui-module-asset";
+import { ASSETComponents, ASSETLinks, ASSETModule } from "@demodigit/upyog-ui-module-asset";
 
 
-// import * as comps from "@upyog/digit-ui-react-components";
+// import * as comps from "@demodigit/digit-ui-react-components";
 
 // import { subFormRegistry } from "@upyog/digit-ui-libraries";
 
@@ -39,22 +32,11 @@ var Digit = window.Digit || {};
 const enabledModules = [
   "PGR",
   "Payment",
-  "PT",
   "QuickPayLinks",
   "DSS",
-  "MCollect",
-  "HRMS",
-  "Receipts",
-  "Reports",
   "Engagement",
   "WS",
   "CommonPT",
-  "NDSS",
-  "Bills",
-  "BillAmendment",
-  "FireNoc",
-  "Birth",
-  "Death",
   "ASSET"
 ];
 
@@ -91,14 +73,6 @@ const initDigitUI = () => {
     PaymentModule,
     ...paymentConfigs,
     PaymentLinks,
-    PTModule,
-    PTLinks,
-    ...PTComponents,
-    MCollectLinks,
-    MCollectModule,
-    HRMSModule,
-    ReceiptsModule,
-    BillsModule,
     ASSETModule,
     ASSETLinks,
     ...ASSETComponents,
@@ -106,13 +80,9 @@ const initDigitUI = () => {
 
   initPGRComponents();
   initDSSComponents();
-  initMCollectComponents();
-  initHRMSComponents();
-  initReceiptsComponents();
   initEngagementComponents();
   initWSComponents();
   initCommonPTComponents();
-  initBillsComponents();
 
   // initCustomisationComponents();
 

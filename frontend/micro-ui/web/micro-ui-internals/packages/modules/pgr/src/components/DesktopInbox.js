@@ -1,7 +1,7 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
-import { Card, Loader } from "@upyog/digit-ui-react-components";
+import { Card, Loader } from "@demodigit/digit-ui-react-components";
 import ComplaintsLink from "./inbox/ComplaintLinks";
 import ComplaintTable from "./inbox/ComplaintTable";
 import Filter from "./inbox/Filter";
@@ -35,7 +35,7 @@ const DesktopInbox = ({
           return (
             <div>
               <span className="link">
-                <Link to={"/upyog-ui/employee/pgr/complaint/details/" + row.original["serviceRequestId"]}>{row.original["serviceRequestId"]}</Link>
+                <Link to={"/digit-ui/employee/pgr/complaint/details/" + row.original["serviceRequestId"]}>{row.original["serviceRequestId"]}</Link>
               </span>
               {/* <a onClick={() => goTo(row.row.original["serviceRequestId"])}>{row.row.original["serviceRequestId"]}</a> */}
               <br />

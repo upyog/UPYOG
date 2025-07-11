@@ -20,7 +20,7 @@ import {
   ActionBar,
   Dropdown,
   InfoIcon
-} from "@upyog/digit-ui-react-components";
+} from "@demodigit/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import { useHistory, useRouteMatch } from "react-router-dom";
 import DisconnectTimeline from "../components/DisconnectTimeline";
@@ -175,7 +175,7 @@ const WSDisconnectionForm = ({ t, config, onSelect, userType }) => {
                 },
                 onSuccess: (data, variables) => {
                   Digit.SessionStorage.set("WS_DISCONNECTION", {...applicationData, DisconnectionResponse: data?.WaterConnection?.[0]});
-                  history.push(`/upyog-ui/employee/ws/ws-disconnection-response?applicationNumber=${data?.WaterConnection?.[0]?.applicationNo}`);                
+                  history.push(`/digit-ui/employee/ws/ws-disconnection-response?applicationNumber=${data?.WaterConnection?.[0]?.applicationNo}`);                
                 },
               })
             },
@@ -204,7 +204,7 @@ const WSDisconnectionForm = ({ t, config, onSelect, userType }) => {
                 },
                 onSuccess: (data, variables) => {
                   Digit.SessionStorage.set("WS_DISCONNECTION", {...applicationData, DisconnectionResponse: data?.SewerageConnections?.[0]});
-                  history.push(`/upyog-ui/employee/ws/ws-disconnection-response?applicationNumber=${data?.SewerageConnections?.[0]?.applicationNo}`);              
+                  history.push(`/digit-ui/employee/ws/ws-disconnection-response?applicationNumber=${data?.SewerageConnections?.[0]?.applicationNo}`);              
                 },
               })
             },

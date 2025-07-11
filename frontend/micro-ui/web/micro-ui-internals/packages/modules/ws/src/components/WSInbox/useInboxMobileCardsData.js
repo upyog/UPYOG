@@ -1,6 +1,6 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { SearchField, RadioButtons } from "@upyog/digit-ui-react-components";
+import { SearchField, RadioButtons } from "@demodigit/digit-ui-react-components";
 import { Controller, useFormContext } from "react-hook-form";
 import { Link } from "react-router-dom";
 
@@ -19,7 +19,7 @@ const useInboxMobileCardsData = ({ parentRoute, table }) => {
     }
     return (
       <div>
-        <Link to={`/upyog-ui/employee/ws/${application}-details?applicationNumber=${value}&tenantId=${tenantId}&service=${service}`}>
+        <Link to={`/digit-ui/employee/ws/${application}-details?applicationNumber=${value}&tenantId=${tenantId}&service=${service}`}>
           {" "}
           <span className="link">{value}</span>
         </Link>

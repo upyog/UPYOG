@@ -1,4 +1,4 @@
-import { Header, Modal, Loader, Toast } from "@upyog/digit-ui-react-components";
+import { Header, Modal, Loader, Toast } from "@demodigit/digit-ui-react-components";
 import React, { Fragment, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams, useHistory } from "react-router-dom";
@@ -251,7 +251,7 @@ const SurveyDetails = ({ location, match }) => {
         }
         else
         {
-          history.push("/upyog-ui/employee/engagement/surveys/update-response", details);
+          history.push("/digit-ui/employee/engagement/surveys/update-response", details);
         }
       })
     }
@@ -263,7 +263,7 @@ const SurveyDetails = ({ location, match }) => {
     // const details = {
     //   SurveyEntity: { ...surveyData, tenantId: tenantId?.code ? tenantId?.code : tenantId },
     // };
-    // history.push("/upyog-ui/employee/engagement/surveys/delete-response", details);
+    // history.push("/digit-ui/employee/engagement/surveys/delete-response", details);
     const details = {
       // SurveyEntity: { ...surveyData,
       //   tenantId,
@@ -284,7 +284,7 @@ const SurveyDetails = ({ location, match }) => {
         
       }
     };
-    history.push("/upyog-ui/employee/engagement/surveys/delete-response", details);
+    history.push("/digit-ui/employee/engagement/surveys/delete-response", details);
   };
 
   //if we don't send tenantId it violates the not null constraint in the backend...
@@ -315,7 +315,7 @@ const SurveyDetails = ({ location, match }) => {
       }
       
     };
-    history.push("/upyog-ui/employee/engagement/surveys/update-response", details);
+    history.push("/digit-ui/employee/engagement/surveys/update-response", details);
   };
 
   const handleMarkInactive = () => {
@@ -341,7 +341,7 @@ const SurveyDetails = ({ location, match }) => {
         id: surveyData.id,
       }
     };
-    history.push("/upyog-ui/employee/engagement/surveys/update-response", details);
+    history.push("/digit-ui/employee/engagement/surveys/update-response", details);
   };
 
   const actionMenuOptions = useMemo(() => {
