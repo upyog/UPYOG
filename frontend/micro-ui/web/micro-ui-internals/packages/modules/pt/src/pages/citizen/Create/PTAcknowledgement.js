@@ -49,7 +49,6 @@ const PTAcknowledgement = ({ data, onSuccess }) => {
     try {
       let tenantId = isPropertyMutation ? data.Property?.address.tenantId : data?.address?.city ? data.address?.city?.code : tenantId;
       data.tenantId = tenantId;
-      console.log("isPropertyMutation",isPropertyMutation,data)
       let formdata = !window.location.href.includes("edit-application")
         ? isPropertyMutation
           ? data
@@ -89,7 +88,7 @@ const PTAcknowledgement = ({ data, onSuccess }) => {
           label={
             <div className="response-download-button">
               <span>
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="#a82227">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="#162f6a">
                   <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z" />
                 </svg>
               </span>

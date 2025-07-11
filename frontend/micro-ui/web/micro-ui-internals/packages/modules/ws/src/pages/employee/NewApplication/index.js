@@ -257,7 +257,7 @@ const NewApplication = () => {
   if (isEnableLoader || isLoading) {
     return <Loader />;
   }
-
+console.log("configconfig",config)
   return (
     <React.Fragment>
       <div style={{ marginLeft: "15px" }}>

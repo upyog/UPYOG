@@ -71,7 +71,7 @@ const UserProfile = ({ stateCode, userType, cityDetails }) => {
   const [windowWidth, setWindowWidth] = React.useState(window.innerWidth);
   const [errors, setErrors] = React.useState({});
   const isMobile = window.Digit.Utils.browser.isMobile();
-  
+
   const getUserInfo = async () => {
     const uuid = userInfo?.uuid;
     if (uuid) {
@@ -124,18 +124,16 @@ const UserProfile = ({ stateCode, userType, cityDetails }) => {
       setErrors({...errors, userName : null})
     }
   }
-  
+
   const setUserEmailAddress = (value) => {
     setEmail(value);
-    const emailPattern=/^[a-zA-Z0-9._%+-]+@[a-z.-]+\.(com|org|in)$/
-    if(value.length && !emailPattern.test(value)){
+    if(value.length && /*!(value.includes("@") && value.includes("."))*/ !(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(value))){
       setErrors({...errors, emailAddress: {type: "pattern", message: t("CORE_COMMON_PROFILE_EMAIL_INVALID")}})
     }else{
-      setEmail(value);
       setErrors({...errors, emailAddress : null})
-      }
+    }
   }
-  
+
   const setUserMobileNumber = (value) => {
     setMobileNo(value);
 
@@ -208,7 +206,7 @@ const UserProfile = ({ stateCode, userType, cityDetails }) => {
         throw JSON.stringify({ type: "error", message: t("CORE_COMMON_PROFILE_MOBILE_NUMBER_INVALID") });
       }
 
-      if (email.length && !(/^[a-zA-Z0-9._%+-]+@gmail\.com$/).test(email)) {
+      if (email.length && !(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email))) {
         throw JSON.stringify({ type: "error", message: t("CORE_COMMON_PROFILE_EMAIL_INVALID") });
       }     
 
@@ -475,7 +473,7 @@ const UserProfile = ({ stateCode, userType, cityDetails }) => {
                 onClick={updateProfile}
                 style={{
                   marginTop: "24px",
-                  backgroundColor: "#a82227",
+                  backgroundColor: "#162f6a",
                   width: "100%",
                   height: "40px",
                   color: "white",
@@ -603,7 +601,7 @@ const UserProfile = ({ stateCode, userType, cityDetails }) => {
 
               <LabelFieldPair>
                 <div>
-                  <a style={{ color: "#a82227", cursor: "default", marginBottom: "5", cursor: "pointer",position:"relative" }} onClick={TogleforPassword}>
+                  <a style={{ color: "#162f6a", cursor: "default", marginBottom: "5", cursor: "pointer",position:"relative" }} onClick={TogleforPassword}>
                     {t("CORE_COMMON_CHANGE_PASSWORD")}
                   </a>
                   {changepassword ? (
@@ -680,7 +678,7 @@ const UserProfile = ({ stateCode, userType, cityDetails }) => {
             onClick={updateProfile}
             style={{
               marginTop: "24px",
-              backgroundColor: "#a82227",
+              backgroundColor: "#162f6a",
               width: windowWidth < 768 ? "100%" : "248px",
               height: "40px",
               float: "right",

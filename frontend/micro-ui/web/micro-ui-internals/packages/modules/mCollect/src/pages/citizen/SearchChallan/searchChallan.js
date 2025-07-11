@@ -22,7 +22,7 @@ const SearchChallan = ({ config: propsConfig, formData }) => {
   const [mobileNumberError, setmobileNumberError] = useState(null);
   // moduleCode, type, config = {}, payload = []
 
-  const { data: Menu, isLoading } = Digit.Hooks.mcollect.useMCollectMDMS(tenantId, "BillingService", "BusinessService", "[?(@.type=='Adhoc' && @.isActive==true)]");
+  const { data: Menu, isLoading } = Digit.Hooks.mcollect.useMCollectMDMS(tenantId, "BillingService", "BusinessService");
   if (isLoading) {
     return <Loader />;
   }
@@ -166,12 +166,12 @@ const SearchChallan = ({ config: propsConfig, formData }) => {
           name="ChallanNo"
           value={challanNo}
           onChange={setchallanNo}
-          {...(validation = {
-            //isRequired: true,
-            pattern: "PG-CH-\\d{4}-\\d{2}-\\d{2}-\\d{6}",
-            //type: "any",
-            title: t("Please enter a valid challan No"),
-          })} 
+          /* {...(validation = {
+            isRequired: true,
+            //pattern: "^[a-zA-Z-.`' ]*$",
+            type: "any",
+            title: t("wrong Challan No."),
+          })} */
         />
       </FormStep>
     </div>

@@ -29,7 +29,7 @@ const DisplayText = (action, isSuccess, isEmployee, t, data) => {
 };
 
 const BannerPicker = (props) => {
-  let actionMessage = props?.action ? props.action : props.data?.fsm?.[0].applicationStatus;
+  let actionMessage = props?.action ? props.action : "CREATE";
   let labelMessage = GetLabel(props.data?.fsm?.[0].applicationStatus || props.action, props.isSuccess, props.isEmployee, props.t);
 
   if (props.errorInfo && props.errorInfo !== null && props.errorInfo !== "" && typeof props.errorInfo === "string" && props.action !== "SCHEDULE") {
@@ -216,7 +216,7 @@ const Response = (props) => {
           label={
             <div className="response-download-button">
               <span>
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="#a82227">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="#162f6a">
                   <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z" />
                 </svg>
               </span>

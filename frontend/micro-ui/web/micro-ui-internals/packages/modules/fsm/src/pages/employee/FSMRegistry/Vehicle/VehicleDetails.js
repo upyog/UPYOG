@@ -118,8 +118,6 @@ const VehicleDetails = (props) => {
         return setShowModal(true);
       case "EDIT":
         return history.push("/digit-ui/employee/fsm/registry/modify-vehicle/" + vehicleNumber);
-      case "HOME":
-        return history.push("/digit-ui/employee/fsm/registry?selectedTabs=VEHICLE");
       default:
         break;
     }
@@ -324,11 +322,11 @@ const VehicleDetails = (props) => {
                         <>
                           <div className={`${index === detail?.values?.length - 1 ? "row last" : "row"} border-none`}>
                             <h2>{t(value.title)}</h2>
-                            <div className="value" style={{ color: "#a82227", display: "flex" }}>
+                            <div className="value" style={{ color: "#162f6a", display: "flex" }}>
                               {t(value.value) || "N/A"}
                               {value.value === "ES_FSM_REGISTRY_DETAILS_ADD_VENDOR" && (
                                 <span onClick={() => onActionSelect("ADD_VENDOR")}>
-                                  <AddIcon className="" fill="#a82227" styles={{ cursor: "pointer", marginLeft: "20px", height: "24px" }} />
+                                  <AddIcon className="" fill="#162f6a" styles={{ cursor: "pointer", marginLeft: "20px", height: "24px" }} />
                                 </span>
                               )}
                               {value.value != "ES_FSM_REGISTRY_DETAILS_ADD_VENDOR" && (
@@ -338,7 +336,7 @@ const VehicleDetails = (props) => {
                               )}
                               {value.value != "ES_FSM_REGISTRY_DETAILS_ADD_VENDOR" && (
                                 <span onClick={() => onActionSelect("DELETE_VENDOR")}>
-                                  <DeleteIcon className="delete" fill="#a82227" style={{ cursor: "pointer", marginLeft: "20px" }} />
+                                  <DeleteIcon className="delete" fill="#162f6a" style={{ cursor: "pointer", marginLeft: "20px" }} />
                                 </span>
                               )}
                             </div>

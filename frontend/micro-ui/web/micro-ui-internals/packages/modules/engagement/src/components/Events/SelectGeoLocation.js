@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 const SelectGeolocation = ({ onSelect, config, formData }) => {
   const { t } = useTranslation();
   const onChange = (pincode, position) => {
+    console.log("positionposition",position)
     onSelect(config?.key, position)
   }
   return (

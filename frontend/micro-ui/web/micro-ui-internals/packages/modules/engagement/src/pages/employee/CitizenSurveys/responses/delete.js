@@ -34,8 +34,7 @@ const Response = (props) => {
   const queryClient = useQueryClient();
   const { t } = useTranslation();
   const tenantId = Digit.ULBService.getCurrentTenantId();
-  // const mutation = Digit.Hooks.survey.useDelete();
-  const mutation = Digit.Hooks.survey.useUpdateSurvey();
+  const mutation = Digit.Hooks.survey.useDelete();
   const { state } = props.location;
 
   useEffect(() => {

@@ -46,18 +46,15 @@ const EngagementCard = () => {
     }
   );
 
-  const ServiceDefinitionCriteria =  {
-    "tenantId": tenantId,
-    "code": [],
-    "module": ["engagement"],
-  }
-
-  const { data: surveysCount, isLoading: isLoadingSurveys } = Digit.Hooks.survey.useCfdefinitionsearch({ServiceDefinitionCriteria});
+  const { data: surveysCount, isLoading: isLoadingSurveys } = Digit.Hooks.survey.useSearch(
+    { tenantIds: tenantId },
+    { select: (data) => data?.TotalCount }
+  );
 
   const totalDocsCount = useMemo(() => (isLoadingDocs ? "-" : documentsCount), [isLoadingDocs, documentsCount]);
   const totalEventsCount = useMemo(() => (isLoadingEvents ? "-" : totalEvents), [isLoadingEvents, totalEvents]);
   const totalMessagesCount = useMemo(() => (isLoadingMessages ? "-" : MessagesCount), [isLoadingMessages, MessagesCount]);
-  const totalSurveysCount = useMemo(() => (isLoadingSurveys ? "-" : surveysCount.TotalCount), [isLoadingSurveys, surveysCount]);
+  const totalSurveysCount = useMemo(() => (isLoadingSurveys ? "-" : surveysCount), [isLoadingSurveys, surveysCount]);
 
   const { t } = useTranslation();
   let result = null;
@@ -154,7 +151,7 @@ const EngagementCard = () => {
     ],
   };
 
-  const engagementSubModulesProps = [propsForDocumentModuleCard, propsForEventsModuleCard, propsForPMBModuleCard, propsForSurveyModuleCard];
+  const engagementSubModulesProps = [ propsForEventsModuleCard];
 
   if (isEmployee)
     result = (

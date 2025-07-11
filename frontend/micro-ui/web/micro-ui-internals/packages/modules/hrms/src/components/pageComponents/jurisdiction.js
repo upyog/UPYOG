@@ -92,7 +92,7 @@ const Jurisdictions = ({ t, config, onSelect, userType, formData }) => {
   let hierarchylist = [];
   let boundaryTypeoption = [];
   const [focusIndex, setFocusIndex] = useState(-1);
-
+console.log("gethierarchylistdatagethierarchylistdata",data)
   function gethierarchylistdata() {
     return data?.MdmsRes?.["egov-location"]["TenantBoundary"].map((ele) => ele.hierarchyType);
   }

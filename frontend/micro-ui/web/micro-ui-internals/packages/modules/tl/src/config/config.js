@@ -195,7 +195,7 @@ export const newConfig = [
         {
             "type": "component",
             "route": "proof",
-            "component": "TLProof",
+            "component": "Proof",
             "withoutLabel": true,
             "texts": {
                 "headerCaption": "TL_OWNERS_DETAILS",
@@ -260,7 +260,7 @@ export const newConfig = [
         type: "component",
         route: "vehicle-type",
         isMandatory: true,
-        component: "TLSelectVehicleType",
+        component: "SelectVehicleType",
         texts: {
           headerCaption: "TL_STRUCTURE_SUBTYPE_CAPTION",
           header: "TL_VEHICLE_TYPE_HEADER",
@@ -386,7 +386,7 @@ export const newConfig = [
         type: "component",
         route: "owner-ship-details",
         isMandatory: true,
-        component: "TLSelectOwnerShipDetails",
+        component: "SelectOwnerShipDetails",
         texts: {
           headerCaption: "TL_TRADE_OWNERSHIP_CAPTION",
           header: "TL_PROVIDE_OWNERSHIP_DETAILS",
@@ -402,7 +402,7 @@ export const newConfig = [
         type: "component",
         route: "owner-details",
         key: "owners",
-        component: "TLSelectOwnerDetails",
+        component: "SelectOwnerDetails",
         texts: {
           headerCaption: "",
           header: "TL_OWNERSHIP_INFO_SUB_HEADER",
@@ -440,7 +440,7 @@ export const newConfig = [
         type: "component",
         route: "proof-of-identity",
         isMandatory: true,
-        component: "TLSelectProofIdentity",
+        component: "SelectProofIdentity",
         texts: {
           headerCaption: "TL_OWNERS_DETAILS",
           header: "TL_PROOF_IDENTITY_HEADER",

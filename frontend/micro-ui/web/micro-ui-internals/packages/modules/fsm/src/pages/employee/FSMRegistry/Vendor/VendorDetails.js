@@ -117,8 +117,6 @@ const VendorDetails = (props) => {
         return setShowModal(true);
       case "EDIT":
         return history.push("/digit-ui/employee/fsm/registry/modify-vendor/" + dsoId);
-      case "HOME":
-        return history.push("/digit-ui/employee/fsm/registry?selectedTabs=VENDOR");
       default:
         break;
     }
@@ -324,10 +322,10 @@ const VendorDetails = (props) => {
                               </h2>
                               <div style={{ display: "flex" }}>
                                 <span onClick={() => onEdit(data, detail.type, data.id)}>
-                                  <EditIcon style={{ cursor: "pointer", marginRight: "20px" }} className="edit" fill="#a82227" />
+                                  <EditIcon style={{ cursor: "pointer", marginRight: "20px" }} className="edit" fill="#162f6a" />
                                 </span>
                                 <span onClick={() => onDelete(data, detail.type, data.id)}>
-                                  <DeleteIcon style={{ cursor: "pointer" }} className="delete" fill="#a82227" />
+                                  <DeleteIcon style={{ cursor: "pointer" }} className="delete" fill="#162f6a" />
                                 </span>
                               </div>
                             </div>
@@ -347,7 +345,7 @@ const VendorDetails = (props) => {
                       })}
                       {detail.type && (
                         <div
-                          style={{ color: "#a82227", cursor: "pointer", marginLeft: "16px" }}
+                          style={{ color: "#162f6a", cursor: "pointer", marginLeft: "16px" }}
                           onClick={() => onActionSelect(detail.type === "ES_FSM_REGISTRY_DETAILS_TYPE_DRIVER" ? "ADD_DRIVER" : "ADD_VEHICLE")}
                         >
                           {t(`${detail.type}_ADD`)}
@@ -390,9 +388,7 @@ const VendorDetails = (props) => {
             />
           )}
           <ActionBar style={{ zIndex: "19" }}>
-            {displayMenu ? (
-              <Menu localeKeyPrefix={"ES_FSM_REGISTRY_ACTION"} options={["EDIT", "DELETE", "HOME"]} t={t} onSelect={onActionSelect} />
-            ) : null}
+            {displayMenu ? <Menu localeKeyPrefix={"ES_FSM_REGISTRY_ACTION"} options={["EDIT", "DELETE"]} t={t} onSelect={onActionSelect} /> : null}
             <SubmitBar label={t("ES_COMMON_TAKE_ACTION")} onSubmit={() => setDisplayMenu(!displayMenu)} />
           </ActionBar>
         </React.Fragment>

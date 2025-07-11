@@ -11,6 +11,7 @@ const PlotDetails = ({ formData, onSelect, config }) => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const checkingFlow = formData?.uiFlow?.flow;
   const state = Digit.ULBService.getStateId();
+  let [isNextDisabled,setIsNextDisabled] =useState(true);
   const { data, isLoading } = Digit.Hooks.obps.useScrutinyDetails(state, formData?.data?.scrutinyNumber)
   
   const handleSubmit = (data) => {
@@ -23,11 +24,18 @@ const PlotDetails = ({ formData, onSelect, config }) => {
     return <Loader />;
   }
 
-
+function onChange(data){
+  if(data.target.name=="boundaryWallLength" && isNaN(parseInt(data.target.value))==false)  {
+    setIsNextDisabled(false);
+  }
+  else if(data.target.name=="boundaryWallLength" && isNaN(parseInt(data.target.value))==true){
+    setIsNextDisabled(true);
+  }
+}
   return (
     <div>
       <Timeline flow= {checkingFlow === "OCBPA" ? "OCBPA" : ""}/>
-      <FormStep config={config} onSelect={handleSubmit} childrenAtTheBottom={false} t={t} _defaultValues={formData?.data} onSkip={onSkip}  >
+      <FormStep config={config} onSelect={handleSubmit} childrenAtTheBottom={false} t={t} _defaultValues={formData?.data} onSkip={onSkip} onChange={onChange} isDisabled={isNextDisabled}>
         <StatusTable>
           <Row className="border-none" label={t(`BPA_PLOT_NUMBER_LABEL`)} text={data?.planDetail?.planInformation?.plotNo} />
           <Row className="border-none" label={t(`BPA_KHATHA_NUMBER_LABEL`)} text={data?.planDetail?.planInformation?.khataNo}/>

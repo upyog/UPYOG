@@ -108,7 +108,7 @@ const SelectPaymentType = (props) => {
         return <span>
           {/* {index == 0 && "CCF"} */}
           {data?.linkPrefix && <span>{t(`${data?.linkPrefix}_`)}</span>}
-          {data?.link && <span id={data?.linkId} onClick={(e) => { onLinkClick(e) }} style={{ color: "#a82227", cursor: "pointer" }}>{t(`${data?.link}_`)}</span>}
+          {data?.link && <span id={data?.linkId} onClick={(e) => { onLinkClick(e) }} style={{ color: "#162f6a", cursor: "pointer" }}>{t(`${data?.link}_`)}</span>}
           {data?.linkPostfix && <span>{t(`${data?.linkPostfix}_`)}</span>}
           {(index == isCCFEnabled?.checkBoxLabels?.length - 1) && t("LABEL")}
         </span>
@@ -144,11 +144,10 @@ const SelectPaymentType = (props) => {
   const onSubmit = () => {
     if(wrkflow === "WNS")
     {
-        let billPayerName=sessionStorage.getItem("payerName")
-        history.push(`/digit-ui/citizen/payment/collect/${businessService}/${consumerCode}?workflow=WNS&consumerCode=${stringReplaceAll(consumerCode, "+", "/")}`, {
+      history.push(`/digit-ui/citizen/payment/collect/${businessService}/${consumerCode}?workflow=WNS&consumerCode=${stringReplaceAll(consumerCode, "+", "/")}`, {
         paymentAmount: paymentAmt,
         tenantId: billDetails.tenantId,
-        name: paymentType?.code !== optionSecound?.code && ConsumerName !== "undefined" ? billPayerName : userInfo ? payersActiveName : payersName,
+        name: paymentType?.code !== optionSecound?.code && ConsumerName !== "undefined" ? ConsumerName : userInfo ? payersActiveName : payersName,
         mobileNumber: paymentType?.code !== optionSecound?.code ? (bill?.mobileNumber?.includes("*") ? userData?.user?.[0]?.mobileNumber : bill?.mobileNumber ) : userInfo ? payersActiveMobileNumber : payersMobileNumber,
       });
     }

@@ -9,10 +9,10 @@ const ApplicationDetail = () => {
   const { id } = useParams();
   const { t } = useTranslation();
   const tenantId = Digit.ULBService.getCurrentTenantId();
-  const stateCode = Digit.ULBService.getStateId();
+  const state = tenantId?.split('.')[0]
   const [showToast, setShowToast] = useState(null);
   const [showOptions, setShowOptions] = useState(false);
-  const { isLoading, data: applicationDetails } = Digit.Hooks.obps.useLicenseDetails(stateCode, { applicationNumber: id, tenantId: stateCode }, {});
+  const { isLoading, data: applicationDetails } = Digit.Hooks.obps.useLicenseDetails(state, { applicationNumber: id, tenantId: state }, {});
   const isMobile = window.Digit.Utils.browser.isMobile();
   const [viewTimeline, setViewTimeline]=useState(false);
   const {
@@ -24,7 +24,7 @@ const ApplicationDetail = () => {
   } = Digit.Hooks.obps.useBPAREGApplicationActions(tenantId);
 
   const workflowDetails = Digit.Hooks.useWorkflowDetails({
-    tenantId: stateCode,
+    tenantId: tenantId?.split('.')[0],
     id: id,
     moduleCode: "BPAREG",
   });
@@ -51,24 +51,22 @@ const ApplicationDetail = () => {
 
   return (
     <div className={"employee-main-application-details"}>
-        <div  className={"employee-application-details"} style={{height:"auto !important", maxHeight:"none !important"}}>
+        <div  className={"employee-application-details"}>
         <Header>{t("CS_TITLE_APPLICATION_DETAILS")}</Header>
-        <div>
-        <div style={{zIndex: "10",  position: "relative"}}>
+        {workflowDetails?.data?.timeline?.length>0 && (
+        <div style={{color:"#A52A2A"}}>
+        <LinkButton label={t("VIEW_TIMELINE")} onClick={handleViewTimeline}></LinkButton>
+        </div>
+        )}
         {applicationDetails?.payments?.length > 0 && 
         <MultiLink
-          className="multilinkWrapper"
+          className="multilinkWrapper employee-mulitlink-main-div"
           onHeadClick={() => setShowOptions(!showOptions)}
           displayOptions={showOptions}
           options={dowloadOptions}
           downloadBtnClassName={"employee-download-btn-className"}
           optionsClassName={"employee-options-btn-className"}
         />}
-        </div>
-        {workflowDetails?.data?.timeline?.length>0 && (
-        <LinkButton label={t("VIEW_TIMELINE")} style={{ color:"#A52A2A"}} onClick={handleViewTimeline}></LinkButton>
-        )}
-        </div>
         </div>
       <ApplicationDetailsTemplate
         applicationDetails={applicationDetails}

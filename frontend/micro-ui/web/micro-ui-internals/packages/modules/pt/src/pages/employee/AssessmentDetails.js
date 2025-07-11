@@ -67,8 +67,8 @@ const AssessmentDetails = () => {
     ptCalculationEstimateMutate({ Assessment: AssessmentData });
     }, []);
     useEffect(()=>{
-      setPenalty(parseInt(ptCalculationEstimateData?.Calculation[0]?.taxHeadEstimates[6]?.estimateAmount))
-      setRebate(parseInt(ptCalculationEstimateData?.Calculation[0]?.taxHeadEstimates[5]?.estimateAmount))
+      setPenalty(parseInt(ptCalculationEstimateData?.Calculation[0].taxHeadEstimates[6].estimateAmount))
+      setRebate(parseInt(ptCalculationEstimateData?.Calculation[0].taxHeadEstimates[5].estimateAmount))
     },[ptCalculationEstimateLoading])
   useEffect(() => {
     if (applicationDetails) setAppDetailsToShow(_.cloneDeep(applicationDetails));
@@ -444,7 +444,7 @@ const Penality_menu=[
                 },
               },
               {
-                belowComponent:()=><LinkLabel onClick={()=>{showPopUp(true)}} style={isMobile ? {color:"#a82227",marginLeft:"0px"} : {color:"#a82227"}}>{t("PT_ADD_REBATE_PENALITY")}</LinkLabel>
+                belowComponent:()=><LinkLabel onClick={()=>{showPopUp(true)}} style={isMobile ? {color:"#162f6a",marginLeft:"0px"} : {color:"#162f6a"}}>{t("PT_ADD_REBATE_PENALITY")}</LinkLabel>
               },
               {
                 title: "PT_ASSESMENT_INFO_SUB_HEADER",

@@ -1,0 +1,117 @@
+.button {
+    min-width: 100px;
+    padding: 8px;
+    background: #ccc;
+    color: #666;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+  }
+  
+  .button.primary {
+    background: #000;
+    color: #fff;
+  }
+  
+  .overlay {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    padding: 0;
+  }
+  
+  .overlay::before {
+    content: "";
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background: #000;
+    opacity: 0.5;
+    z-index: 0;
+  }
+  
+  .viewer-wrapper {
+    width: 100%;
+    height: 100%;
+    max-height: 768px;
+    max-width: 768px;
+    background: #fff;
+    position: relative;
+    z-index: 1;
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+    justify-content: space-between;
+  }
+  
+  .viewer-wrapper > div {
+    display: flex;
+    padding: 15px;
+    width: calc(100% - 30px);
+    margin: 0;
+  }
+  
+  .header {
+    justify-content: space-between;
+    background: #ccc;
+    height: 30px;
+    margin: 0 auto auto auto;
+  }
+  
+  .body {
+    flex-direction: column;
+    height: calc(100% - 80px);
+    align-items: center;
+    margin: auto;
+  }
+  
+  .body.loading {
+    animation-direction: alternate;
+    animation-iteration-count: infinite;
+  }
+  
+  .image-outer {
+    display: flex;
+    position: relative;
+    align-items: center;
+    height: 100%;
+    overflow: auto;
+    margin: auto;
+  }
+  
+  .image-outer .img-inner {
+    flex: 1;
+    position: relative;
+    z-index: 1;
+    width: 100%;
+  }
+  
+  .image-outer .img-inner img {
+    object-fit: cover;
+    max-width: 100%;
+    image-orientation: from-image;
+    transition: all 0.8s ease;
+  }
+  
+  .image-outer::after {
+    content: "";
+    width: 0px;
+    height: var(--image-outer-height);
+    background: red;
+    transition: all 0.8s ease;
+  }
+  
+  .footer {
+    justify-content: space-between;
+    background: #666;
+    margin: auto auto 0 auto;
+    height: 50px;
+  }
+  

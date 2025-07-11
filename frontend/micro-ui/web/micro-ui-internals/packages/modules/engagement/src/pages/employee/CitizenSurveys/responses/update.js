@@ -5,7 +5,10 @@ import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 
 const getMessage = (mutation) => {
-  if (mutation.isSuccess) return mutation.data?.ServiceDefinition?.[0]?.id;
+  if (mutation.isSuccess && mutation?.data?.Surveys?.[0]?.uuid){
+    return mutation?.data?.Surveys?.[0]?.uuid
+  }
+  if (mutation.isSuccess) return mutation.data?.Documents?.[0]?.uuid;
   return "";
 };
 
@@ -13,10 +16,10 @@ const BannerPicker = (props) => {
   const { t } = useTranslation();
   return (
     <Banner
-      message={props.mutation.isSuccess ? t(`ENGAGEMENT_SURVEY_UPDATED`) : t("ENGAGEMENT_SURVEY_UPDATE_FAILURE")}
+      message={props.isSuccess ? t(`ENGAGEMENT_SURVEY_UPDATED`) : t("ENGAGEMENT_SURVEY_UPDATE_FAILURE")}
       applicationNumber={getMessage(props.mutation)}
-      info={props.mutation.isSuccess ? t("SURVEY_FORM_ID") : ""}
-      successful={props.mutation.isSuccess}
+      info={props.isSuccess ? t("SURVEY_FORM_ID") : ""}
+      successful={props.isSuccess}
     />
   );
 };
@@ -25,7 +28,7 @@ const Response = (props) => {
   const queryClient = useQueryClient();
   const { t } = useTranslation();
   const tenantId = Digit.ULBService.getCurrentTenantId();
-  const mutation = Digit.Hooks.survey.useUpdateSurvey();
+  const mutation = Digit.Hooks.survey.useUpdate();
   const { state } = props.location;
 
   useEffect(() => {

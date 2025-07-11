@@ -28,6 +28,7 @@ const SurveyDetailsForms = ({ t, registerRef, controlSurveyForm, surveyFormState
     return false
   }
 
+
   return (
     <div className="surveydetailsform-wrapper">
       <span className="surveyformfield">

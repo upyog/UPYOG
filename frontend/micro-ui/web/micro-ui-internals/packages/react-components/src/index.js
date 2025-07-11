@@ -64,7 +64,6 @@ import { LastRow, MediaRow, Row, StatusTable } from "./atoms/StatusTable";
 import SubmitBar from "./atoms/SubmitBar";
 import StandaloneSearchBar from "./atoms/StandaloneSearchBar";
 import ULBHomeCard from "./atoms/ULBHomeCard";
-import { AdvertisementModuleCard } from "./atoms/AdvertisementModuleCard";
 import {
   AnnouncementIcon,
   ArrowDown,
@@ -173,9 +172,7 @@ import {
   BirthIcon,
   FirenocIcon,
   InfoIcon,
-  LoginIcon,
-  PTRIcon,
-  CHBIcon
+  LoginIcon
 } from "./atoms/svgindex";
 import Table from "./atoms/Table";
 import TelePhone from "./atoms/TelePhone";
@@ -193,6 +190,7 @@ import InboxLinks from "./atoms/InboxLinks";
 import PopupHeadingLabel from "./atoms/PopupHeadingLabel";
 
 import { FormComposer } from "./hoc/FormComposer";
+import { FormComposerNew } from "./hoc/FormComposerNew";
 import Modal from "./hoc/Modal";
 import ResponseComposer from "./hoc/ResponseComposer";
 import InboxComposer from "./hoc/InboxComposer";
@@ -202,7 +200,6 @@ import DashboardBox from "./molecules/DashboardBox";
 import DetailsCard from "./molecules/DetailsCard";
 import FilterAction from "./molecules/FilterAction";
 import FormStep from "./molecules/FormStep";
-import CustomDropdown from "./molecules/CustomDropdown";
 import InputCard from "./molecules/InputCard";
 import Localities from "./molecules/Localities";
 import LocationSearchCard from "./molecules/LocationSearchCard";
@@ -228,8 +225,6 @@ import { DownloadBtnCommon } from "./atoms/svgindex";
 import ToggleSwitch from "./atoms/ToggleSwitch";
 
 import CitizenConsentForm from "./atoms/CitizenConsentForm";
-import AddressDetails from "./molecules/AddressDetails";
-import ApplicantDetails from "./molecules/ApplicantDetails";
 
 export {
   Phone,
@@ -315,7 +310,6 @@ export {
   PopupHeadingLabel,
   ToggleSwitch,
   ULBHomeCard,
-  AdvertisementModuleCard,
   // Icons
   GetApp,
   ArrowLeft,
@@ -356,7 +350,6 @@ export {
   // Molecule
   InputCard,
   FormStep,
-  CustomDropdown,
   RatingCard,
   SearchAction,
   FilterAction,
@@ -375,6 +368,7 @@ export {
   SortAction,
   // hoc
   FormComposer,
+  FormComposerNew,
   ResponseComposer,
   PitDimension,
   Modal,
@@ -464,7 +458,5 @@ export {
   FirenocIcon,
   InfoIcon,
   LoginIcon,
-  CitizenConsentForm,
-  PTRIcon,
-  CHBIcon
+  CitizenConsentForm
 };

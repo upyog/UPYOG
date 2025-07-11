@@ -72,8 +72,8 @@ const LocationSearchCard = ({
         <LocationSearch onChange={isPlaceRequired?onLocationChangewithPlace:onLocationChange} position={position} isPTDefault={isPTDefault} PTdefaultcoord={PTdefaultcoord} isPlaceRequired={isPlaceRequired} />
         {forcedError && <CardLabelError>{t(forcedError)}</CardLabelError>}
       </div>
-      <SubmitBar label={nextText} onSubmit={onSave} disabled={isDisabled} />
-      {skip ? <LinkButton onClick={skip} label={skipAndContinueText} /> : null}
+      {/* <SubmitBar label={nextText} onSubmit={onSave} disabled={isDisabled} />
+      {skip ? <LinkButton onClick={skip} label={skipAndContinueText} /> : null} */}
     </Card>
   );
 };

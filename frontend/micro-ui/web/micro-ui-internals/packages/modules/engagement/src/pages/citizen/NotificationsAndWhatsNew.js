@@ -39,7 +39,7 @@ const NotificationsAndWhatsNew = ({ variant, parentRoute }) => {
 
   if (EventsData?.length === 0) {
     return (
-      <div className="CitizenEngagementNotificationWrapper">
+      <div className="CitizenEngagementNotificationWrapper" style={{overflow:"scroll"}}>
         <Header>{`${t("CS_HEADER_NOTIFICATIONS")}`}</Header>
         <h1>Nothing to show</h1>
       </div>
@@ -64,8 +64,8 @@ const NotificationsAndWhatsNew = ({ variant, parentRoute }) => {
   }
 
   return (
-    <div className="CitizenEngagementNotificationWrapper">
-      <VariantWiseRender />
+    <div className="CitizenEngagementNotificationWrapper" style={{overflow:"scroll"}}>
+      {/* <VariantWiseRender /> */}
       {EventsData?.length ? (
         EventsData.map((DataParamsInEvent) =>
           DataParamsInEvent?.eventType === "EVENTSONGROUND" ? (

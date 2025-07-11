@@ -36,7 +36,7 @@ const getName = (places) => {
 };
 
 const loadGoogleMaps = (callback) => {
-  const key = globalConfigs?.getConfig("GMAPS_API_KEY");
+  const key = "AIzaSyBrWOKWviSRGqTTJMVPIs9FzMhKXSXtZLs";
   const loader = new Loader({
     apiKey: key,
     version: "weekly",
@@ -239,6 +239,7 @@ const setLocationText = (location, onChange, isPlaceRequired=false) => {
 };
 
 const onMarkerDragged = (marker, onChange, isPlaceRequired = false) => {
+  console.log("markermarker",marker)
   if (!marker) return;
   const { latLng } = marker;
   const currLat = latLng.lat();

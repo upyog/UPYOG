@@ -28,6 +28,7 @@ const NewApplication = () => {
     { filters: { propertyIds: propertyId }, tenantId: tenantId },
     { filters: { propertyIds: propertyId }, tenantId: tenantId, enabled: propertyId ? true : false }
   );
+  console.log("pd123", propertyDetails)
 
   useEffect(() => {
     !propertyId && setPropertyId(sessionFormData?.cpt?.details?.propertyId);
@@ -194,7 +195,6 @@ const NewApplication = () => {
       action: "INITIATE",
       applicationType: "NEW",
       workflowCode: "NewTL",
-      applicationDocuments,
       commencementDate,
       financialYear,
       licenseType,
@@ -290,11 +290,6 @@ const NewApplication = () => {
       return head;
     }
   }
-
-
-
-  // configs[1] = configs[0];
-  // configs[6] = configs[0];
 
   return (
     <div>

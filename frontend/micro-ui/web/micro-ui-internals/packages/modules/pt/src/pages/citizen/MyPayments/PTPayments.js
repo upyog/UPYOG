@@ -6,7 +6,6 @@ import { convertEpochToDate, DownloadReceipt } from "../../../utils/index";
 
 const PTPayments = ({ application }) => {
   const { t } = useTranslation();
-  const state = Digit.ULBService.getStateId();
   return (
     <Card>
       <KeyNote
@@ -20,7 +19,7 @@ const PTPayments = ({ application }) => {
       <KeyNote keyValue={t("PT_RECEIPT_NO_LABEL")} note={t(application?.paymentDetails?.[0]?.receiptNumber)} />
       <SubmitBar
         label={t("PT_DOWNLOAD_RECEIPT")}
-        onSubmit={(e) => DownloadReceipt(application?.paymentDetails?.[0]?.bill?.consumerCode, state, "PT",application?.paymentDetails?.[0]?.receiptNumber,application)}
+        onSubmit={(e) => DownloadReceipt(application?.paymentDetails?.[0]?.bill?.consumerCode, application?.tenantId, "PT",application?.paymentDetails?.[0]?.receiptNumber,application)}
       />
     </Card>
   );
