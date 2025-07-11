@@ -1892,7 +1892,6 @@ public class GarbageAccountService {
 
 		// Fetch garbage accounts if available
 		List<GarbageAccount> garbageAccounts = fetchGarbageAccounts(searchCriteriaGarbageAccountRequest);
-		log.info("updateGarbageUser {}",garbageAccounts);
 		// Set garbage accounts if available
 		if (!garbageAccounts.isEmpty()) {
 			createGarbageRequest.setGarbageAccounts(garbageAccounts);
@@ -1925,10 +1924,8 @@ public class GarbageAccountService {
 
 		searchCriteriaGarbageAccountRequest.setIsSchedulerCall(true);
 		searchCriteriaGarbageAccountRequest.setIsUserUuidNull(true);
-		SearchCriteriaGarbageAccount searchCriteriaGarbageAccount = new SearchCriteriaGarbageAccount();
-		searchCriteriaGarbageAccount.setIsActiveAccount(true);
-		searchCriteriaGarbageAccount.setIsActiveSubAccount(true);
-		searchCriteriaGarbageAccountRequest.setSearchCriteriaGarbageAccount(searchCriteriaGarbageAccount);;
+		searchCriteriaGarbageAccountRequest.getSearchCriteriaGarbageAccount().setIsActiveAccount(true);
+		searchCriteriaGarbageAccountRequest.getSearchCriteriaGarbageAccount().setIsActiveSubAccount(true);
 
 		GarbageAccountResponse garbageAccountResponse = searchGarbageAccounts(searchCriteriaGarbageAccountRequest);
 

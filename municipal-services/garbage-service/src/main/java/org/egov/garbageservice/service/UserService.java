@@ -133,8 +133,8 @@ public class UserService {
 	    for (int i = 0; i < allGarbageAccounts.size(); i += batchSize) {
 	        int end = Math.min(i + batchSize, allGarbageAccounts.size());
 	        List<GarbageAccount> batch = allGarbageAccounts.subList(i, end);
-
 			for (GarbageAccount account : batch) {
+			    log.info("Check "+account.getMobileNumber()+" "+ (isValidPhoneNumber(account.getMobileNumber()) && isValidUserName(account.getName())));
 				if (isValidPhoneNumber(account.getMobileNumber()) && isValidUserName(account.getName())) {
 					processGarbageAccount(requestInfo, role, account);
 				}
@@ -148,7 +148,7 @@ public class UserService {
 		
 		 if (name == null) return false;
 		    // Regex pattern: Disallow specified special characters
-		    String regex = "^[^\\\"$<>?\\\\\\\\~`!@#$%^()+={}\\\\[\\\\]*,:;“”‘’]{0,50}$";
+		 	String regex = "^[^\\\\$\\\"<>?\\\\\\\\~`!@#%^()+={}\\[\\]*,:;“”‘’]{1,49}$";
 		    return name.matches(regex);
 	}
 
@@ -172,10 +172,11 @@ public class UserService {
 	        owner.setUserName(UUID.randomUUID().toString());
 //	    	owner.setName(garbageAccount.getName());
 	        userDetailResponse = createUser(requestInfo, owner);
-	    } else {
-	        // Update existing user if found
-	        updateOrCreateUser(existingUsersFromService, requestInfo, role, owner);
 	    }
+//	    else {
+//	        // Update existing user if found
+//	        updateOrCreateUser(existingUsersFromService, requestInfo, role, owner);
+//	    }
 
 	    // Assign user UUID to the garbage account
 	    if (userDetailResponse != null && !CollectionUtils.isEmpty(userDetailResponse.getUser()) 
