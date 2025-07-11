@@ -201,15 +201,22 @@ public class PropertyController {
 //        return new ResponseEntity<>(response, HttpStatus.OK);
     }
     
-    @RequestMapping(value = "/_dashboardDataSearch", method = RequestMethod.POST)
-    public ResponseEntity<DashboardResponse> dashboardDataSearch(@Valid @RequestBody RequestInfoWrapper requestInfoWrapper,
-                                                         @Valid @ModelAttribute DashboardDataSearch dashboardDataSearch) {
-    	
-    	List<DashboardData> dashboardDatas=dashboardDataService.dashboardDatas(dashboardDataSearch);
-    	DashboardResponse dashboardResponse=DashboardResponse.builder().dashboardDatas(dashboardDatas).responseInfo(
-    			responseInfoFactory.createResponseInfoFromRequestInfo(requestInfoWrapper.getRequestInfo(), true)).build();
-    	
-    	return new ResponseEntity<>(dashboardResponse,HttpStatus.OK);
-    }
-
+	/*
+	 * @RequestMapping(value = "/_dashboardDataSearch", method = RequestMethod.POST)
+	 * public ResponseEntity<DashboardResponse>
+	 * dashboardDataSearch(@Valid @RequestBody RequestInfoWrapper
+	 * requestInfoWrapper,
+	 * 
+	 * @Valid @ModelAttribute DashboardDataSearch dashboardDataSearch) {
+	 * 
+	 * List<DashboardData>
+	 * dashboardDatas=dashboardDataService.dashboardDatas(dashboardDataSearch);
+	 * DashboardResponse
+	 * dashboardResponse=DashboardResponse.builder().dashboardDatas(dashboardDatas).
+	 * responseInfo(
+	 * responseInfoFactory.createResponseInfoFromRequestInfo(requestInfoWrapper.
+	 * getRequestInfo(), true)).build();
+	 * 
+	 * return new ResponseEntity<>(dashboardResponse,HttpStatus.OK); }
+	 */
 }
