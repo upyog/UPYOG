@@ -34,7 +34,8 @@ const Response = (props) => {
   const queryClient = useQueryClient();
   const { t } = useTranslation();
   const tenantId = Digit.ULBService.getCurrentTenantId();
-  const mutation = Digit.Hooks.survey.useDelete();
+  // const mutation = Digit.Hooks.survey.useDelete();
+  const mutation = Digit.Hooks.survey.useUpdateSurvey();
   const { state } = props.location;
 
   useEffect(() => {
@@ -59,7 +60,7 @@ const Response = (props) => {
         <BannerPicker t={t} data={mutation.data} mutation={mutation} uuid={state?.DocumentEntity?.uuid} isSuccess={mutation.isSuccess} isLoading={mutation.isIdle || mutation.isLoading} />
       </Card>
       <ActionBar>
-        <Link to={"/digit-ui/employee"}>
+        <Link to={"/upyog-ui/employee"}>
           <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} />
         </Link>
       </ActionBar>

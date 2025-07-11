@@ -16,7 +16,7 @@ const EventDetails = () => {
   if (!Digit.UserService?.getUser()?.access_token) {
     localStorage.clear();
     sessionStorage.clear();
-    return <Redirect to={{ pathname: `/digit-ui/citizen/login`, state: { from: location.pathname + location.search } }} />;
+    return <Redirect to={{ pathname: `/upyog-ui/citizen/login`, state: { from: location.pathname + location.search } }} />;
   }
 
   function onGroundEventCardPropsForEventDetails(DataParamsInEvent) {
@@ -31,7 +31,7 @@ const EventDetails = () => {
 
   if (EventsDataLoading) return <Loader />;
   return (
-    <div className="CitizenEngagementNotificationWrapper" style={{overflow:"scroll",height:"100%"}}>
+    <div className="CitizenEngagementNotificationWrapper">
       <Header>{t("ES_TITLE_APPLICATION_DETAILS")}</Header>
       <OnGroundEventCard {...onGroundEventCardPropsForEventDetails(FilteredEventForThisPage)} />
       <div className="OnGroundEventDetailsCard">

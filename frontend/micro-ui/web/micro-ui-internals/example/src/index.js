@@ -15,7 +15,6 @@ import { initMCollectComponents } from "@upyog/digit-ui-module-mcollect";
 import { PaymentModule, PaymentLinks, paymentConfigs } from "@upyog/digit-ui-module-common";
 import { HRMSModule } from "@upyog/digit-ui-module-hrms";
 import { initEngagementComponents } from "@upyog/digit-ui-module-engagement";
-import { initNOCComponents } from "@upyog/digit-ui-module-noc";
 import { initWSComponents } from "@upyog/digit-ui-module-ws";
 import { DigitUI } from "@upyog/digit-ui-module-core";
 import { initCommonPTComponents } from "@upyog/digit-ui-module-commonpt";
@@ -48,7 +47,6 @@ const enabledModules = [
   "Receipts",
   "Reports",
   "Engagement",
-  "NOC",
   "WS",
   "CommonPT",
   "NDSS",
@@ -112,7 +110,6 @@ const initDigitUI = () => {
   initHRMSComponents();
   initReceiptsComponents();
   initEngagementComponents();
-  initNOCComponents();
   initWSComponents();
   initCommonPTComponents();
   initBillsComponents();

@@ -46,15 +46,18 @@ const EngagementCard = () => {
     }
   );
 
-  const { data: surveysCount, isLoading: isLoadingSurveys } = Digit.Hooks.survey.useSearch(
-    { tenantIds: tenantId },
-    { select: (data) => data?.TotalCount }
-  );
+  const ServiceDefinitionCriteria =  {
+    "tenantId": tenantId,
+    "code": [],
+    "module": ["engagement"],
+  }
+
+  const { data: surveysCount, isLoading: isLoadingSurveys } = Digit.Hooks.survey.useCfdefinitionsearch({ServiceDefinitionCriteria});
 
   const totalDocsCount = useMemo(() => (isLoadingDocs ? "-" : documentsCount), [isLoadingDocs, documentsCount]);
   const totalEventsCount = useMemo(() => (isLoadingEvents ? "-" : totalEvents), [isLoadingEvents, totalEvents]);
   const totalMessagesCount = useMemo(() => (isLoadingMessages ? "-" : MessagesCount), [isLoadingMessages, MessagesCount]);
-  const totalSurveysCount = useMemo(() => (isLoadingSurveys ? "-" : surveysCount), [isLoadingSurveys, surveysCount]);
+  const totalSurveysCount = useMemo(() => (isLoadingSurveys ? "-" : surveysCount.TotalCount), [isLoadingSurveys, surveysCount]);
 
   const { t } = useTranslation();
   let result = null;
@@ -66,18 +69,18 @@ const EngagementCard = () => {
       {
         count: totalSurveysCount,
         label: t("TOTAL_SURVEYS"),
-        link: `/digit-ui/employee/engagement/surveys/inbox`,
+        link: `/upyog-ui/employee/engagement/surveys/inbox`,
       },
     ],
     links: [
       {
         count: totalSurveysCount,
         label: t("ES_TITLE_INBOX"),
-        link: `/digit-ui/employee/engagement/surveys/inbox`,
+        link: `/upyog-ui/employee/engagement/surveys/inbox`,
       },
       {
         label: t("CS_COMMON_NEW_SURVEY"),
-        link: `/digit-ui/employee/engagement/surveys/create`,
+        link: `/upyog-ui/employee/engagement/surveys/create`,
       },
     ],
   };
@@ -89,7 +92,7 @@ const EngagementCard = () => {
       {
         count: totalMessagesCount,
         label: t("TOTAL_MESSAGES"),
-        link: `/digit-ui/employee/engagement/messages/inbox`,
+        link: `/upyog-ui/employee/engagement/messages/inbox`,
       },
     ],
 
@@ -97,11 +100,11 @@ const EngagementCard = () => {
       {
         count: totalMessagesCount,
         label: t("ES_TITLE_INBOX"),
-        link: `/digit-ui/employee/engagement/messages/inbox`,
+        link: `/upyog-ui/employee/engagement/messages/inbox`,
       },
       {
         label: t("NEW_PUBLIC_MESSAGE_BUTTON_LABEL"),
-        link: `/digit-ui/employee/engagement/messages/create`,
+        link: `/upyog-ui/employee/engagement/messages/create`,
       },
     ],
   };
@@ -112,7 +115,7 @@ const EngagementCard = () => {
       {
         count: totalEventsCount,
         label: t("TOTAL_EVENTS"),
-        link: `/digit-ui/employee/engagement/event/inbox`,
+        link: `/upyog-ui/employee/engagement/event/inbox`,
       },
     ],
 
@@ -120,11 +123,11 @@ const EngagementCard = () => {
       {
         count: totalEventsCount,
         label: t("ES_TITLE_INBOX"),
-        link: `/digit-ui/employee/engagement/event/inbox`,
+        link: `/upyog-ui/employee/engagement/event/inbox`,
       },
       {
         label: t("ES_TITLE_NEW_EVENTS"),
-        link: `/digit-ui/employee/engagement/event/new-event`,
+        link: `/upyog-ui/employee/engagement/event/new-event`,
       },
     ],
   };
@@ -135,23 +138,23 @@ const EngagementCard = () => {
       {
         count: totalDocsCount,
         label: t("TOTAL_DOCUMENTS"),
-        link: `/digit-ui/employee/engagement/documents/inbox`,
+        link: `/upyog-ui/employee/engagement/documents/inbox`,
       },
     ],
     links: [
       {
         count: totalDocsCount,
         label: t("ES_TITLE_INBOX"),
-        link: `/digit-ui/employee/engagement/documents/inbox`,
+        link: `/upyog-ui/employee/engagement/documents/inbox`,
       },
       {
         label: t("NEW_DOCUMENT_TEXT"),
-        link: `/digit-ui/employee/engagement/documents/new-doc`,
+        link: `/upyog-ui/employee/engagement/documents/new-doc`,
       },
     ],
   };
 
-  const engagementSubModulesProps = [ propsForEventsModuleCard];
+  const engagementSubModulesProps = [propsForDocumentModuleCard, propsForEventsModuleCard, propsForPMBModuleCard, propsForSurveyModuleCard];
 
   if (isEmployee)
     result = (

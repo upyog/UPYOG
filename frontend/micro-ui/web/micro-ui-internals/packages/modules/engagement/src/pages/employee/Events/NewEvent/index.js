@@ -7,15 +7,9 @@ import { config } from "../../../../config/NewEventConfig";
 const NewEvents = () => {
   const { t } = useTranslation();
   const history = useHistory();
-  
+
   const onSubmit = (data) => {
     const { fromDate, toDate, fromTime, toTime, address, organizer, fees, geoLocation = {} } = data;
-  
-    let selectedSubType=Digit.SessionStorage.get("selectedSubType")
-    let eventType=Digit.SessionStorage.get("eventType")
-    let event=Digit.SessionStorage.get("event")
-    let city =Digit.SessionStorage.get("locality")
-    console.log("datadata",selectedSubType,eventType,event,city,data)
     const details = {
       events: [
         {
@@ -24,24 +18,21 @@ const NewEvents = () => {
           tenantId: data?.tenantId?.code,
           description: data?.description,
           name: data?.name,
-          eventcategory: selectedSubType?.key,
+          eventcategory: data?.eventCategory?.code,
           eventDetails: {
-            fromDate: 1721324760000,
-            toDate: 1721713560000,
-            fromTime:"23:16",
-            toTime: "11:16",
-            address:"231-G",
-            organizer:"MEA",
+            fromDate: new Date(`${fromDate} ${fromTime}`).getTime(),
+            toDate: new Date(`${toDate} ${toTime}`).getTime(),
+            fromTime,
+            toTime,
+            address,
+            organizer,
             fees,
-            eventType,
-            selectedSubType,
-            additionalDetails:{city:city},
             ...geoLocation
           }
         }
       ]
     }
-    history.push("/digit-ui/employee/engagement/event/response", details)
+    history.push("/upyog-ui/employee/engagement/event/response", details)
   }
 
   const [mutationHappened, setMutationHappened, clear] = Digit.Hooks.useSessionStorage("EMPLOYEE_EVENT_MUTATION_HAPPENED", false);
