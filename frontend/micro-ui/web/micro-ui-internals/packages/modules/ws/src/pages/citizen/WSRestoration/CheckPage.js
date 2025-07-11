@@ -15,9 +15,9 @@ import { convertDateToEpoch, convertEpochToDate, createPayloadOfWSDisconnection,
     const match = useRouteMatch();
     const value = Digit.SessionStorage.get("WS_DISCONNECTION");
     const [documents, setDocuments] = useState( value.WSDisconnectionForm.documents || []);
-    let routeLink = `/digit-ui/citizen/ws/restoration-application`;
+    let routeLink = `/upyog-ui/citizen/ws/restoration-application`;
     // if(window.location.href.includes("/edit-application/"))
-    // routeLink=`/digit-ui/citizen/ws/edit-disconnect-application`
+    // routeLink=`/upyog-ui/citizen/ws/edit-disconnect-application`
     const [error, setError] = useState(null);
     function routeTo(jumpTo) {
         location.href=jumpTo;
@@ -88,7 +88,7 @@ import { convertDateToEpoch, convertEpochToDate, createPayloadOfWSDisconnection,
                 },
                 onSuccess: (data, variables) => {
                   Digit.SessionStorage.set("WS_DISCONNECTION", {...value, DisconnectionResponse: data?.WaterConnection?.[0]});
-                  history.push(`/digit-ui/citizen/ws/restoration-acknowledge`);
+                  history.push(`/upyog-ui/citizen/ws/restoration-acknowledge`);
                 },
               })
             },
@@ -122,7 +122,7 @@ import { convertDateToEpoch, convertEpochToDate, createPayloadOfWSDisconnection,
                 },
                 onSuccess: (data, variables) => {
                   Digit.SessionStorage.set("WS_DISCONNECTION", {...value, DisconnectionResponse: data?.SewerageConnections?.[0]});
-                  history.push(`/digit-ui/citizen/ws/restoration-acknowledge`);
+                  history.push(`/upyog-ui/citizen/ws/restoration-acknowledge`);
                 },
               })
             },

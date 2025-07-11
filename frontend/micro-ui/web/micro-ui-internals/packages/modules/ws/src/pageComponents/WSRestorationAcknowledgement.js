@@ -34,7 +34,7 @@ const WSDisconnectAcknowledgement = () => {
         {t('WS_RESTORATION_APPLICATION_SUCC_MSG')}
       </CardText>
       {<SubmitBar label={t("WS_DOWNLOAD_ACK_FORM")} onSubmit={handleDownloadPdf} />}
-      <Link to={`/digit-ui/citizen`}>
+      <Link to={`/upyog-ui/citizen`}>
         <LinkButton label={t("CORE_COMMON_GO_TO_HOME")} onClick={() => Digit.SessionStorage.del("WS_DISCONNECTION")}/>
       </Link>
     </Card>

@@ -58,7 +58,7 @@ const Response = (props) => {
       {appState.complaints.response && <BannerPicker response={appState} />}
       <CardText>{t("ES_COMMON_TRACK_COMPLAINT_TEXT")}</CardText>
       <div className="abc" style={{display:"flex"}}>
-      <Link to="/digit-ui/employee">
+      <Link to="/upyog-ui/employee">
         <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} />
       </Link>
       {appState.complaints.response && <SubmitBar label={t("PT_DOWNLOAD_ACK_FORM")} onSubmit={(e) =>{handleDownloadPdf(e)}} style={{marginLeft:"10px"}}/>}

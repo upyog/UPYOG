@@ -17,7 +17,7 @@ const ResponseBillAmend = () => {
             />
             {!state.status ? null : <CardText>{t("WS_BILL_AMENDMENT_MESSAGE")}</CardText>}
             <ActionBar style={{ display: "flex", justifyContent: "flex-end", alignItems: "baseline" }}>
-                <Link to={`/digit-ui/employee`} style={{ marginRight: "1rem" }}>
+                <Link to={`/upyog-ui/employee`} style={{ marginRight: "1rem" }}>
                     <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} />
                 </Link>
             </ActionBar>

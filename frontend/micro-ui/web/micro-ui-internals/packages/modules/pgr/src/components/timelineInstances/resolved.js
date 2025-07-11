@@ -15,7 +15,7 @@ const Resolved = ({ action, nextActions,complaintDetails, ComplainMaxIdleTime=36
       nextActions.map((action, index) => {
         if (action && action !== "COMMENT") {
           return (
-            <Link key={index} to={`/digit-ui/citizen/pgr/${action.toLowerCase()}/${serviceRequestId}`}>
+            <Link key={index} to={`/upyog-ui/citizen/pgr/${action.toLowerCase()}/${serviceRequestId}`}>
               <ActionLinks>{t(`CS_COMMON_${action}`)}</ActionLinks>
             </Link>
           );
@@ -42,7 +42,7 @@ const Resolved = ({ action, nextActions,complaintDetails, ComplainMaxIdleTime=36
         if (action && action !== "COMMENT") {
           if((action!== "REOPEN" || (action === "REOPEN" && (Date?.now() - complaintDetails?.service?.auditDetails?.lastModifiedTime) < ComplainMaxIdleTime)))
           return (
-            <Link key={index} to={`/digit-ui/citizen/pgr/${action.toLowerCase()}/${serviceRequestId}`}>
+            <Link key={index} to={`/upyog-ui/citizen/pgr/${action.toLowerCase()}/${serviceRequestId}`}>
               <ActionLinks>{t(`CS_COMMON_${action}`)}</ActionLinks>
             </Link>
           );

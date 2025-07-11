@@ -64,17 +64,17 @@ const PropertyDetails = ({ t, config, onSelect, userType, formData }) => {
 
   function getChangePropertyPath() {
     if(window.location.href.includes("/ws/modify-connection/"))
-    return `/digit-ui/citizen/ws/modify-connection/${formData?.tenantId}/search-property`
+    return `/upyog-ui/citizen/ws/modify-connection/${formData?.tenantId}/search-property`
     else if(window.location.href.includes("/ws/edit-application/"))
-    return `/digit-ui/citizen/ws/edit-application/${formData?.tenantId}/search-property`
+    return `/upyog-ui/citizen/ws/edit-application/${formData?.tenantId}/search-property`
     else if(window.location.href.includes("/ws/"))
-    return `/digit-ui/citizen/ws/create-application/search-property`
+    return `/upyog-ui/citizen/ws/create-application/search-property`
     else if(window.location.href.includes("/renew-trade/"))
-    return `/digit-ui/citizen/tl/tradelicence/renew-trade/${formData?.applicationNumber}/${formData?.tenantId}/know-your-property`
+    return `/upyog-ui/citizen/tl/tradelicence/renew-trade/${formData?.applicationNumber}/${formData?.tenantId}/know-your-property`
     else if(window.location.href.includes("/edit-application/"))
-    return `/digit-ui/citizen/tl/tradelicence/edit-application/${formData?.applicationNumber}/${formData?.tenantId}/know-your-property`
+    return `/upyog-ui/citizen/tl/tradelicence/edit-application/${formData?.applicationNumber}/${formData?.tenantId}/know-your-property`
     else
-    return `/digit-ui/citizen/tl/tradelicence/new-application/know-your-property`
+    return `/upyog-ui/citizen/tl/tradelicence/new-application/know-your-property`
   }
 
   return (
@@ -108,7 +108,7 @@ const PropertyDetails = ({ t, config, onSelect, userType, formData }) => {
               <Row className="border-none" label={t(`PT_MUTATION_STATUS`)} text={t(propertyDetails?.Properties[0]?.status)} />
               <div style={{ textAlign: "left" }}>
                 <Link
-                  to={`/digit-ui/citizen/commonpt/view-property?propertyId=${propertyDetails?.Properties[0]?.propertyId}&tenantId=${propertyDetails?.Properties[0]?.tenantId}`}
+                  to={`/upyog-ui/citizen/commonpt/view-property?propertyId=${propertyDetails?.Properties[0]?.propertyId}&tenantId=${propertyDetails?.Properties[0]?.tenantId}`}
                 >
                   <LinkButton style={{ textAlign: "left" }} label={t("PT_VIEW_MORE_DETAILS")} />
                 </Link>

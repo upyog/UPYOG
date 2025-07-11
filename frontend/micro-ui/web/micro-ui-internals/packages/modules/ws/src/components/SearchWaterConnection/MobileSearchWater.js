@@ -75,7 +75,7 @@ const MobileSearchWater = ({ Controller, register, control, t, reset, previousPa
             <span className="link">
               <Link
                 to={{
-                  pathname: `/digit-ui/employee/payment/collect/${data?.["service"] == "WATER" ? "WS" : "SW"}/${encodeURIComponent(
+                  pathname: `/upyog-ui/employee/payment/collect/${data?.["service"] == "WATER" ? "WS" : "SW"}/${encodeURIComponent(
                     data?.["connectionNo"]
                   )}/${data?.["tenantId"]}?tenantId=${data?.["tenantId"]}&ISWSCON`,
                 }}
@@ -94,7 +94,7 @@ const MobileSearchWater = ({ Controller, register, control, t, reset, previousPa
       <div>
         <span className="link">
           <Link
-            to={`/digit-ui/employee/ws/connection-details?applicationNumber=${value?.connectionNo}&tenantId=${
+            to={`/upyog-ui/employee/ws/connection-details?applicationNumber=${value?.connectionNo}&tenantId=${
               value?.tenantId
             }&service=${value?.service}&connectionType=${value?.connectionType}&due=${value?.due || 0}`}
           >

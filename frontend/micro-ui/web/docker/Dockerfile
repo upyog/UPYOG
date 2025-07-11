@@ -9,20 +9,16 @@ RUN apk add --no-cache git>2.30.0
 
 RUN yarn add @upyog/digit-ui-libraries@3.0.1
 RUN yarn add @upyog/digit-ui-module-pt@1.7.0-beta.4
-RUN yarn add @upyog/digit-ui-module-fsm@1.7.0-beta.18
-RUN yarn add @upyog/digit-ui-module-tl@1.7.0-beta.8
 RUN yarn add @upyog/digit-ui-module-dss@1.7.0-beta.4
 RUN yarn add @upyog/digit-ui-module-mcollect@1.7.0-beta.5
-RUN yarn add @upyog/digit-ui-module-pgr@1.8.6
+RUN yarn add @upyog/digit-ui-module-pgr@3.0.4
 RUN yarn add @upyog/digit-ui-module-noc@1.7.0-beta.3
 RUN yarn add @upyog/digit-ui-module-engagement@1.7.0-beta.4
 RUN yarn add @upyog/digit-ui-module-hrms@1.7.0-beta.3
 RUN yarn add @upyog/digit-ui-module-core@1.7.0-beta.3
-RUN yarn add @upyog/digit-ui-module-obps@1.7.0-beta.7
 RUN yarn add @upyog/digit-ui-module-common@1.7.0-beta.5
-RUN yarn add @upyog/digit-ui-module-ws@1.7.0-beta.12
-RUN yarn add @upyog/digit-ui-module-commonpt@1.7.0-beta.4
-RUN yarn add @upyog-niua/upyog-ui-module-ptr@1.0.7
+RUN yarn add @upyog/digit-ui-module-ws@3.0.6
+RUN yarn add @upyog/digit-ui-module-commonpt@3.0.3
 RUN yarn add @upyog/upyog-ui-module-asset@3.0.1
 
 

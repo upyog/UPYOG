@@ -27,7 +27,7 @@ const WSWFApplicationTimeline = (props) => {
     } else if (checkpoint.status === "ACTIVE") {
       return (
         <div>
-          <Link to={`/digit-ui/citizen/commonpt/view-property?propertyId=${props?.application?.propertyId}&tenantId=${props?.application?.tenantId}`}>
+          <Link to={`/upyog-ui/citizen/commonpt/view-property?propertyId=${props?.application?.propertyId}&tenantId=${props?.application?.tenantId}`}>
             <ActionLinks>{t("PT_VIEW_PROPERTY_DETAILS")}</ActionLinks>
           </Link>
         </div>
@@ -36,7 +36,7 @@ const WSWFApplicationTimeline = (props) => {
     // else if (checkpoint.state === "CORRECTIONPENDING") {
     //   return (
     //     <div>
-    //       <Link to={`/digit-ui/citizen/pt/property/properties/${props?.application?.propertyId}`}>
+    //       <Link to={`/upyog-ui/citizen/pt/property/properties/${props?.application?.propertyId}`}>
     //         <ActionLinks>{t("EDIT_PROPERTY")}</ActionLinks>
     //       </Link>
     //     </div>
@@ -69,7 +69,7 @@ const WSWFApplicationTimeline = (props) => {
       { if(props?.paymentbuttonenabled !== false)  return (
           <div style={{ marginTop: "1em", bottom: "0px", width: "100%", marginBottom: "1.2em" }}>
             <Link
-              to={{ pathname: `/digit-ui/citizen/payment/collect/${businessService}/${props.id}?consumerCode=${props.id}&&workflow=WNS`, state: { tenantId: props.application.tenantId } }}
+              to={{ pathname: `/upyog-ui/citizen/payment/collect/${businessService}/${props.id}?consumerCode=${props.id}&&workflow=WNS`, state: { tenantId: props.application.tenantId } }}
             >
               <SubmitBar label={t("CS_APPLICATION_DETAILS_MAKE_PAYMENT")} />
             </Link>
@@ -83,7 +83,7 @@ const WSWFApplicationTimeline = (props) => {
             {businessService != "PT.MUTATION" && (
               <Link
                 to={{
-                  pathname: `/digit-ui/citizen/pt/property/edit-application/action=edit-${businessService}/${props.id}`,
+                  pathname: `/upyog-ui/citizen/pt/property/edit-application/action=edit-${businessService}/${props.id}`,
                   state: { tenantId: props.application.tenantId },
                 }}
               >
@@ -95,7 +95,7 @@ const WSWFApplicationTimeline = (props) => {
       case "SUBMIT_FEEDBACK":
         return (
           <div style={{ marginTop: "24px" }}>
-            <Link to={`/digit-ui/citizen/fsm/rate/${props.id}`}>
+            <Link to={`/upyog-ui/citizen/fsm/rate/${props.id}`}>
               <SubmitBar label={t("CS_APPLICATION_DETAILS_RATE")} />
             </Link>
           </div>

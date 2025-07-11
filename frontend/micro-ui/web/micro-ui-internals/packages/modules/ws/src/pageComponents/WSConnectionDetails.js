@@ -209,7 +209,7 @@ const ConnectionDetails = (_props) => {
               />
             )}
           />
-          {/* <Controller
+          <Controller
             control={control}
             name="sewerage"
             defaultValue={connectionDetail?.sewerage}
@@ -233,7 +233,7 @@ const ConnectionDetails = (_props) => {
               />
 
             )}
-          /> */}
+          />
 
         </div>
         {connectionDetail?.water && (

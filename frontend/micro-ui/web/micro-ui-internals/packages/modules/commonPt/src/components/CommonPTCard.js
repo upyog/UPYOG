@@ -15,7 +15,7 @@ const CommonPTCard = () => {
     links: [
       {
         label: t("PT_SEARCH_AND_PAY"),
-        link: `/digit-ui/employee/commonpt/search`,
+        link: `/upyog-ui/employee/commonpt/search`,
       }
     ],
   };
@@ -24,7 +24,7 @@ const CommonPTCard = () => {
   if (PT_CEMP && !propsForModuleCard.links?.[1]) {
     propsForModuleCard.links.push({
       label: t("PT_CREATE_PROPERTY"),
-      link: `/digit-ui/employee/commonpt/new-application`,
+      link: `/upyog-ui/employee/commonpt/new-application`,
     });
   }
 

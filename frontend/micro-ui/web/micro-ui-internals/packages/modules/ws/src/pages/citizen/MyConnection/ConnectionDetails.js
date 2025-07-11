@@ -187,13 +187,13 @@ const ConnectionDetails = () => {
     }
     else {
         if (paymentDetails?.data?.Bill?.length === 0 ) {
-          let pathname = `/digit-ui/citizen/ws/disconnect-application`;
+          let pathname = `/upyog-ui/citizen/ws/disconnect-application`;
           Digit.SessionStorage.set("WS_DISCONNECTION", {...state, serviceType: isSW ? "SEWERAGE" : "WATER"});
           history.push(`${pathname}`);
         } 
         else if(paymentDetails?.data?.Bill?.[0]?.totalAmount < 0)
         {
-          let pathname = `/digit-ui/citizen/ws/disconnect-application`;
+          let pathname = `/upyog-ui/citizen/ws/disconnect-application`;
           Digit.SessionStorage.set("WS_DISCONNECTION", {...state, serviceType: isSW ? "SEWERAGE" : "WATER"});
           history.push(`${pathname}`);
         }
@@ -219,12 +219,12 @@ const ConnectionDetails = () => {
     else {
         if (paymentDetails?.data?.Bill?.length === 0 ) {
           console.log("Payment",paymentDetails)
-          let pathname = `/digit-ui/citizen/ws/restoration-application`;
+          let pathname = `/upyog-ui/citizen/ws/restoration-application`;
           Digit.SessionStorage.set("WS_DISCONNECTION", {...state, serviceType: isSW ? "SEWERAGE" : "WATER"});
           history.push(`${pathname}`);
         } else if(paymentDetails?.data?.Bill?.[0]?.totalAmount < 0)
         {
-          let pathname = `/digit-ui/citizen/ws/restore-application/restoration-application`;
+          let pathname = `/upyog-ui/citizen/ws/restore-application/restoration-application`;
         Digit.SessionStorage.set("WS_DISCONNECTION", {...state, serviceType: isSW ? "SEWERAGE" : "WATER"});
         history.push(`${pathname}`);
         }
@@ -232,7 +232,7 @@ const ConnectionDetails = () => {
           setshowModal(true);
         }
         else if(paymentDetails?.data?.Bill?.[0]?.totalAmount == 0)
-        {let pathname = `/digit-ui/citizen/ws/restore-application/restoration-application`;
+        {let pathname = `/upyog-ui/citizen/ws/restore-application/restoration-application`;
         Digit.SessionStorage.set("WS_DISCONNECTION", {...state, serviceType: isSW ? "SEWERAGE" : "WATER"});
         history.push(`${pathname}`);
 
@@ -372,7 +372,7 @@ let serviceType = state?.applicationType?.includes("WATER") ? "WATER":"SEWERAGE"
               </div>
             )}
             {state?.connectionType === "Metered" && (
-              <Link to={`/digit-ui/citizen/ws/consumption/details?applicationNo=${state?.connectionNo}`}>
+              <Link to={`/upyog-ui/citizen/ws/consumption/details?applicationNo=${state?.connectionNo}`}>
                 <LinkButton
                   style={{ textAlign: "left", marginBottom: "10px", marginTop: "5px" }}
                   label={t("WS_CONNECTION_DETAILS_VIEW_CONSUMPTION_LABEL")}
@@ -413,7 +413,7 @@ let serviceType = state?.applicationType?.includes("WATER") ? "WATER":"SEWERAGE"
                 },
               }}
             />
-            <Link to={`/digit-ui/citizen/commonpt/view-property?propertyId=${state?.propertyId}&tenantId=${state?.tenantId}`}>
+            <Link to={`/upyog-ui/citizen/commonpt/view-property?propertyId=${state?.propertyId}&tenantId=${state?.tenantId}`}>
               <LinkButton style={{ textAlign: "left", marginBottom: "10px", marginTop: "5px" }} label={t("WS_VIEW_PROPERTY")} />
             </Link>
           </StatusTable>
@@ -611,7 +611,7 @@ let serviceType = state?.applicationType?.includes("WATER") ? "WATER":"SEWERAGE"
               hideSubmit={true}
               actionSingleSubmit={() => {
                 history.push(
-                  `/digit-ui/citizen/payment/collect/${isSW ? "SW" : "WS"}/${encodeURIComponent(
+                  `/upyog-ui/citizen/payment/collect/${isSW ? "SW" : "WS"}/${encodeURIComponent(
                     state?.connectionNo
                   )}/${tenantId}?consumerCode=${state?.connectionNo}&&tenantId=${tenantId}&&workflow=WNS`
                 );

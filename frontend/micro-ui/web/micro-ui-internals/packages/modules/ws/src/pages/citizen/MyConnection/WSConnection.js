@@ -36,7 +36,7 @@ const WSConnection = ({ application }) => {
         },
        }}  />
       <KeyNote keyValue={t("WS_MYCONNECTIONS_STATUS")} note={t(application?.status)} />
-      <Link to={{ pathname: `/digit-ui/citizen/ws/connection/details/${encodeApplicationNo}`, state: { ...application } }}>
+      <Link to={{ pathname: `/upyog-ui/citizen/ws/connection/details/${encodeApplicationNo}`, state: { ...application } }}>
         <SubmitBar label={t("WS_VIEW_DETAILS_LABEL")} />
       </Link>
     </Card>

@@ -51,7 +51,7 @@ const SWCard = () => {
   let links = [
     {
       label: t("WS_APPLY_NEW_CONNECTION_HOME_CARD_LABEL"),
-      link: `/digit-ui/employee/ws/create-application`,
+      link: `/upyog-ui/employee/ws/create-application`,
       roles: ["WS_CEMP", "SW_CEMP"],
     },
   ];
@@ -65,30 +65,30 @@ const SWCard = () => {
       {
         count: isSWInboxLoading ? "-" : totalCount,
         label: t("TOTAL_SW"),
-        link: `/digit-ui/employee/ws/sewerage/inbox`,
+        link: `/upyog-ui/employee/ws/sewerage/inbox`,
       },
       {
         count: isSWInboxLoading ? "-" : swData?.slaCount,
         label: t("TOTAL_NEARING_SLA"),
-        link: `/digit-ui/employee/ws/sewerage/inbox`,
+        link: `/upyog-ui/employee/ws/sewerage/inbox`,
       },
     ],
     links: [
       {
         count: isSWInboxLoading ? "-" : swData?.totalCount,
         label: t("WS_SEWERAGE_INBOX"),
-        link: `/digit-ui/employee/ws/sewerage/inbox`,
+        link: `/upyog-ui/employee/ws/sewerage/inbox`,
         roles: ["SW_CEMP", "SW_APPROVER", "SW_FIELD_INSPECTOR", "SW_DOC_VERIFIER", "SW_CLERK"],
       },
       ...links,
       {
         label: t("WS_SEWERAGE_CONNECTION_SEARCH_LABEL"),
-        link: `/digit-ui/employee/ws/sewerage/search-connection`,
+        link: `/upyog-ui/employee/ws/sewerage/search-connection`,
         roles: ["SW_CEMP", "SW_APPROVER", "SW_FIELD_INSPECTOR", "SW_DOC_VERIFIER", "SW_CLERK"],
       },
       {
         label: t("WS_SEWERAGE_APPLICATION_SEARCH"),
-        link: `/digit-ui/employee/ws/sewerage/search-application`,
+        link: `/upyog-ui/employee/ws/sewerage/search-application`,
         roles: ["SW_CEMP", "SW_APPROVER", "SW_FIELD_INSPECTOR", "SW_DOC_VERIFIER", "SW_CLERK"],
       },
     ],

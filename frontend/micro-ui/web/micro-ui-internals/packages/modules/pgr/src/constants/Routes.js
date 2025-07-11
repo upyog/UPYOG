@@ -1,4 +1,4 @@
-export const PGR_BASE = "/digit-ui/pgr/citizen/";
+export const PGR_BASE = "/upyog-ui/pgr/citizen/";
 
 const CREATE_COMPLAINT_PATH = "/create-complaint/";
 const REOPEN_COMPLAINT_PATH = "/reopen/";
@@ -32,7 +32,7 @@ export const Employee = {
   ComplaintDetails: PGR_EMPLOYEE_COMPLAINT_DETAILS,
   CreateComplaint: PGR_EMPLOYEE_CREATE_COMPLAINT,
   Response: "/response",
-  Home: "/digit-ui/employee",
+  Home: "/upyog-ui/employee",
   EditApplication: "/modify-application"
 };
 

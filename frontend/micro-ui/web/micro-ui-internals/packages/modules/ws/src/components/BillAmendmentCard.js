@@ -66,25 +66,25 @@ const BillAmendmentCard = () => {
       {
         count: isBillAMDInboxLoading ? "-" : totalCount,
         label: t("TOTAL_WS"),
-        link: `/digit-ui/employee/ws/water/bill-amendment/inbox`,
+        link: `/upyog-ui/employee/ws/water/bill-amendment/inbox`,
       },
       {
         count: isBillAMDInboxLoading ? "-" : billData?.slaCount,
         label: t("TOTAL_NEARING_SLA"),
-        link: `/digit-ui/employee/ws/water/bill-amendment/inbox`,
+        link: `/upyog-ui/employee/ws/water/bill-amendment/inbox`,
       }
     ],
     links: [
       {
         count: isBillAMDInboxLoading ? "-" : billData?.totalCount,
         label: t("WS_WATER_INBOX"),
-        link: `/digit-ui/employee/ws/water/bill-amendment/inbox`,
+        link: `/upyog-ui/employee/ws/water/bill-amendment/inbox`,
         roles: ["WS_CEMP", "WS_APPROVER", "WS_FIELD_INSPECTOR", "WS_DOC_VERIFIER", "WS_CLERK"],
       },
       {
         count: isBillAMDInboxLoading ? "-" : swbillData?.totalCount,
         label: t("SW_WATER_INBOX"),
-        link: `/digit-ui/employee/ws/sewerage/bill-amendment/inbox`,
+        link: `/upyog-ui/employee/ws/sewerage/bill-amendment/inbox`,
         roles: ["WS_CEMP", "WS_APPROVER", "WS_FIELD_INSPECTOR", "WS_DOC_VERIFIER", "WS_CLERK"],
       }
     ],

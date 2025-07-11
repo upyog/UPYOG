@@ -25,7 +25,6 @@ import EditApplication from "./pages/employee/EditApplication";
 export const PGRReducers = getRootReducer;
 
 const PGRModule = ({ stateCode, userType, tenants }) => {
-  console.log("PGRModule",PGRModule)
   const moduleCode = "PGR";
   const language = Digit.StoreData.getCurrentLanguage();
   const { isLoading, data: store } = Digit.Services.useStore({ stateCode, moduleCode, language });

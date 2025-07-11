@@ -122,7 +122,7 @@ console.log("errorrrrrr",e)
               {row.original["connectionNo"] ? (
                 <span className={"link"}>
                   <Link
-                    to={`/digit-ui/employee/ws/connection-details?applicationNumber=${row.original["connectionNo"]}&tenantId=${tenantId}&service=${
+                    to={`/upyog-ui/employee/ws/connection-details?applicationNumber=${row.original["connectionNo"]}&tenantId=${tenantId}&service=${
                       row.original?.["service"]
                       }&connectionType=${row.original?.["connectionType"]}&due=${row.original?.due || 0}&from=WS_SEWERAGE_CONNECTION_SEARCH_LABEL`}
                   >
@@ -198,7 +198,7 @@ console.log("errorrrrrr",e)
               {row.original?.service === "WATER" ? (
                 <Link
                   to={{
-                    pathname: `/digit-ui/employee/payment/collect/${row.original?.["service"] === "WATER" ? "WS" : "SW"}/${encodeURIComponent(
+                    pathname: `/upyog-ui/employee/payment/collect/${row.original?.["service"] === "WATER" ? "WS" : "SW"}/${encodeURIComponent(
                       row.original?.["connectionNo"]
                     )}/${row.original?.["tenantId"]}?tenantId=${row.original?.["tenantId"]}?workflow=WS&ISWSCON`,
                   }}
@@ -208,7 +208,7 @@ console.log("errorrrrrr",e)
               ) : (
                 <Link
                   to={{
-                    pathname: `/digit-ui/employee/payment/collect/${row.original?.["service"] === "WATER" ? "WS" : "SW"}/${encodeURIComponent(
+                    pathname: `/upyog-ui/employee/payment/collect/${row.original?.["service"] === "WATER" ? "WS" : "SW"}/${encodeURIComponent(
                       row.original?.["connectionNo"]
                     )}/${row.original?.["tenantId"]}?tenantId=${row.original?.["tenantId"]}?workflow=SW&ISWSCON`,
                   }}
