@@ -10,6 +10,9 @@ import javax.validation.Valid;
 
 import org.egov.common.contract.response.ResponseInfo;
 import org.egov.pt.config.PropertyConfiguration;
+import org.egov.pt.dashboardservice.DashboardDataService;
+import org.egov.pt.models.DashboardData;
+import org.egov.pt.models.DashboardDataSearch;
 import org.egov.pt.models.Property;
 import org.egov.pt.models.PropertyCriteria;
 import org.egov.pt.models.oldProperty.OldPropertyCriteria;
@@ -19,6 +22,7 @@ import org.egov.pt.service.PropertyEncryptionService;
 import org.egov.pt.service.PropertyService;
 import org.egov.pt.util.ResponseInfoFactory;
 import org.egov.pt.validator.PropertyValidator;
+import org.egov.pt.web.contracts.DashboardResponse;
 import org.egov.pt.web.contracts.PropertyRequest;
 import org.egov.pt.web.contracts.PropertyResponse;
 import org.egov.pt.web.contracts.RequestInfoWrapper;
@@ -57,6 +61,9 @@ public class PropertyController {
 
     @Autowired
     PropertyEncryptionService propertyEncryptionService;
+    
+    @Autowired
+    DashboardDataService dashboardDataService;
 
     @PostMapping("/_create")
     public ResponseEntity<PropertyResponse> create(@Valid @RequestBody PropertyRequest propertyRequest) {
@@ -192,6 +199,17 @@ public class PropertyController {
 //                        responseInfoFactory.createResponseInfoFromRequestInfo(requestInfoWrapper.getRequestInfo(), true))
 //                .build();
 //        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+    
+    @RequestMapping(value = "/_dashboardDataSearch", method = RequestMethod.POST)
+    public ResponseEntity<DashboardResponse> dashboardDataSearch(@Valid @RequestBody RequestInfoWrapper requestInfoWrapper,
+                                                         @Valid @ModelAttribute DashboardDataSearch dashboardDataSearch) {
+    	
+    	List<DashboardData> dashboardDatas=dashboardDataService.dashboardDatas(dashboardDataSearch);
+    	DashboardResponse dashboardResponse=DashboardResponse.builder().dashboardDatas(dashboardDatas).responseInfo(
+    			responseInfoFactory.createResponseInfoFromRequestInfo(requestInfoWrapper.getRequestInfo(), true)).build();
+    	
+    	return new ResponseEntity<>(dashboardResponse,HttpStatus.OK);
     }
 
 }
