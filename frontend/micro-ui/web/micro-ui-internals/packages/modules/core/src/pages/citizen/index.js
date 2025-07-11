@@ -105,7 +105,7 @@ console.log("modules",modules)
       <React.Fragment>
         <Route key={index} path={`${path}/${code.toLowerCase()}-home`}>
           <div className="moduleLinkHomePage">
-            <img src={ "https://chstage.blob.core.windows.net/assets/tmp/Untitled-design-1.png"||bannerImage || stateInfo?.bannerUrl} alt="noimagefound" />
+            {/* <img src={ "https://chstage.blob.core.windows.net/assets/tmp/Untitled-design-1.png"||bannerImage || stateInfo?.bannerUrl} alt="noimagefound" /> */}
             <BackButton className="moduleLinkHomePageBackButton" />
            {isMobile? <h4 style={{top: "calc(16vw + 40px)",left:"1.5rem",position:"absolute",color:"white"}}>{t("MODULE_" + code.toUpperCase())}</h4>:<h1>{t("MODULE_" + code.toUpperCase())}</h1>}
             <div className="moduleLinkHomePageModuleLinks">

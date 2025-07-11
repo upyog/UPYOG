@@ -11,7 +11,6 @@
     "packages/modules/core",
     "packages/modules/pgr",
     "packages/modules/dss",
-    "packages/modules/engagement",
     "packages/modules/ws",
     "packages/modules/asset"
   ],
@@ -67,7 +66,7 @@
     "buildD:hrms": "cd packages/modules/hrms && yarn build",
     "buildD:obps": "cd packages/modules/obps && yarn build",
     "buildD:ptr": "cd packages/modules/ptr && yarn build",
-    "build:engagement": "cd packages/modules/engagement && yarn build",
+    "buildD:engagement": "cd packages/modules/engagement && yarn build",
     "buildD:noc": "cd packages/modules/noc && yarn build",
     "build:ws": "cd packages/modules/ws && yarn build",
     "buildD:bills": "cd packages/modules/bills && yarn build",
