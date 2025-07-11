@@ -7,7 +7,7 @@ const EventsListOnGround = ({ variant, parentRoute }) => {
   const { t } = useTranslation();
   const location = useLocation();
   const history = useHistory();
-console.log("variant, parentRoute",variant, parentRoute)
+
   const tenantId = Digit.ULBService.getCitizenCurrentTenant();
   const { data: { unreadCount: preVisitUnseenEventsCount } = {}, isSuccess: preVisitUnseenEventsCountLoaded } = Digit.Hooks.useNotificationCount({
     tenantId,
@@ -21,7 +21,7 @@ console.log("variant, parentRoute",variant, parentRoute)
   if (!Digit.UserService?.getUser()?.access_token) {
     localStorage.clear();
     sessionStorage.clear();
-    return <Redirect to={{ pathname: `/digit-ui/citizen/login`, state: { from: location.pathname + location.search } }} />;
+    return <Redirect to={{ pathname: `/upyog-ui/citizen/login`, state: { from: location.pathname + location.search } }} />;
   }
 
   if (EventsDataLoading || !preVisitUnseenEventsCountLoaded) return <Loader />;
@@ -31,7 +31,7 @@ console.log("variant, parentRoute",variant, parentRoute)
   }
 
   return (
-    <div className="CitizenEngagementNotificationWrapper" style={{overflow:"scroll"}}>
+    <div className="CitizenEngagementNotificationWrapper">
       <Header>{`${t("EVENTS_EVENTS_HEADER")}(${EventsData?.length})`}</Header>
       {EventsData.length ? (
         EventsData.map((DataParamsInEvent) => <OnGroundEventCard onClick={onEventCardClick} {...DataParamsInEvent} />)

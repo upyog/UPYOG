@@ -30,7 +30,8 @@ const Acknowledgement = (props) => {
   const queryClient = useQueryClient();
   const { t } = useTranslation();
   const tenantId = Digit.ULBService.getCurrentTenantId();
-  const mutation = Digit.Hooks.survey.useSubmitResponse();
+  // const mutation = Digit.Hooks.survey.useSubmitResponse();
+  let mutation =  Digit.Hooks.survey.useSubmitSurveyResponse();
   const { state } = props.location;
   const surveyTitlev1 = state?.AnswerEntity?.surveyTitle;
   
@@ -63,7 +64,7 @@ const Acknowledgement = (props) => {
           : null}
       </CardText>
       <ActionBar>
-        <Link to={"/digit-ui/citizen/engagement/surveys/list"}>
+        <Link to={"/upyog-ui/citizen/engagement/surveys/list"}>
           <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} />
         </Link>
       </ActionBar>

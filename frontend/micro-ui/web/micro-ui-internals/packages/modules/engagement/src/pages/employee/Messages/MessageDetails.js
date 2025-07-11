@@ -83,7 +83,7 @@ const MessageDetails = () => {
   function onActionSelect(action) {
     // setSelectedAction(action);
     if (action === "EDIT") {
-      history.push(`/digit-ui/employee/engagement/messages/inbox/edit/${id}`)
+      history.push(`/upyog-ui/employee/engagement/messages/inbox/edit/${id}`)
     }
     if (action === "DELETE") {
       setShowModal(true);
@@ -101,7 +101,7 @@ const MessageDetails = () => {
         },
       ],
     };
-    history.push("/digit-ui/employee/engagement/messages/response?delete=true", details);
+    history.push("/upyog-ui/employee/engagement/messages/response?delete=true", details);
   };
 
   return (

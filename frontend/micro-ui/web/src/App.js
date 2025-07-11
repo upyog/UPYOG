@@ -23,7 +23,6 @@ import {
   initHRMSComponents,
 } from "@upyog/digit-ui-module-hrms";
 import { initReceiptsComponents, ReceiptsModule } from "@upyog/digit-ui-module-receipts";
-import { initNOCComponents } from "@upyog/digit-ui-module-noc";
 import { initEngagementComponents } from "@upyog/digit-ui-module-engagement";
 import { initWSComponents } from "@upyog/digit-ui-module-ws";
 import { initCustomisationComponents } from "./Customisations";
@@ -78,7 +77,6 @@ initDSSComponents();
 initMCollectComponents();
 initHRMSComponents();
 initReceiptsComponents();
-initNOCComponents();
 initEngagementComponents();
 initWSComponents();
 initCommonPTComponents();

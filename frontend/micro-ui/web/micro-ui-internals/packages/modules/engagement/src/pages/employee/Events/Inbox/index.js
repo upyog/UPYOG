@@ -41,7 +41,7 @@ const Inbox = ({ tenants, parentRoute }) => {
   const links = [
     {
       text: t("ES_TITLE_NEW_EVENTS"),
-      link: "/digit-ui/employee/engagement/event/inbox/new-event",
+      link: "/upyog-ui/employee/engagement/event/inbox/new-event",
     }
   ]
 
@@ -128,6 +128,7 @@ const Inbox = ({ tenants, parentRoute }) => {
         totalRecords={data?.totalCount}
         title={"EVENTS_EVENTS_HEADER"}
         iconName={"calender"}
+        links={links}
         currentPage={parseInt(pageOffset / pageSize)}
         onNextPage={fetchNextPage}
         onPrevPage={fetchPrevPage}

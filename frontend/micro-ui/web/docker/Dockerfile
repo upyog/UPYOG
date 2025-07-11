@@ -12,8 +12,7 @@ RUN yarn add @upyog/digit-ui-module-pt@1.7.0-beta.4
 RUN yarn add @upyog/digit-ui-module-dss@1.7.0-beta.4
 RUN yarn add @upyog/digit-ui-module-mcollect@1.7.0-beta.5
 RUN yarn add @upyog/digit-ui-module-pgr@3.0.4
-RUN yarn add @upyog/digit-ui-module-noc@1.7.0-beta.3
-RUN yarn add @upyog/digit-ui-module-engagement@1.7.0-beta.4
+RUN yarn add @upyog/digit-ui-module-engagement@3.0.3
 RUN yarn add @upyog/digit-ui-module-hrms@1.7.0-beta.3
 RUN yarn add @upyog/digit-ui-module-core@1.7.0-beta.3
 RUN yarn add @upyog/digit-ui-module-common@1.7.0-beta.5
