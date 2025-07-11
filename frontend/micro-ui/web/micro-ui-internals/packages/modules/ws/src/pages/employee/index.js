@@ -1,7 +1,7 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { Switch, useLocation } from "react-router-dom";
-import { PrivateRoute, BreadCrumb } from "@upyog/digit-ui-react-components";
+import { PrivateRoute, BreadCrumb } from "@demodigit/digit-ui-react-components";
 
 
 import WSResponse from "./WSResponse";
@@ -29,68 +29,68 @@ const BILLSBreadCrumbs = ({ location }) => {
 
   let crumbs = [
     {
-      path: "/upyog-ui/employee",
+      path: "/digit-ui/employee",
       content: t("ES_COMMON_HOME"),
       show: true,
       style: isMobile ? {width:"20%"} : {},
     },
     {
-      path: "/upyog-ui/employee/ws/create-application",
+      path: "/digit-ui/employee/ws/create-application",
       content: t("ES_COMMON_WS_DOCUMENTS_REQUIRED"),
       show: location.pathname.includes("/create-application") ? true : false,
     },
     {
-      path: "/upyog-ui/employee/water/inbox",
+      path: "/digit-ui/employee/water/inbox",
       content: t("ES_COMMON_BILLS_WATER_INBOX_LABEL"),
       show: location.pathname.includes("/water/inbox") ? true : false,
     },
     {
-      path: "/upyog-ui/employee/ws/water/bill-amendment/inbox",
+      path: "/digit-ui/employee/ws/water/bill-amendment/inbox",
       content: t("ES_COMMON_BILL_AMEND_WATER_INBOX_LABEL"),
       show: location.pathname.includes("/water/bill-amendment/inbox") ? true : false,
     },
     {
-      path: "/upyog-ui/employee/ws/sewerage/bill-amendment/inbox",
+      path: "/digit-ui/employee/ws/sewerage/bill-amendment/inbox",
       content: t("ES_COMMON_BILL_AMEND_SEWERAGE_INBOX_LABEL"),
       show: location.pathname.includes("/sewerage/bill-amendment/inbox") ? true : false,
     },
     {
-      path: "/upyog-ui/employee/ws/water/search-application",
+      path: "/digit-ui/employee/ws/water/search-application",
       content: fromScreen ? `${t(fromScreen)} / ${t("WS_SEARCH_APPLICATIONS")}` : t("WS_SEARCH_APPLICATIONS"),
       show: location.pathname.includes("/water/search-application") ? true : false,
       isBack: fromScreen && true,
     },
     {
-      path: "/upyog-ui/employee/ws/water/search-connection",
+      path: "/digit-ui/employee/ws/water/search-connection",
       content: fromScreen ? `${t(fromScreen)} / ${t("WS_SEARCH_CONNECTION")}` : t("WS_SEARCH_CONNECTION"),
       show: location.pathname.includes("/water/search-connection") ? true : false,
       isBack: fromScreen && true,
     },
     {
-      path: "/upyog-ui/employee/ws/water/wns-search",
+      path: "/digit-ui/employee/ws/water/wns-search",
       content: fromScreen ? `${t(fromScreen)} / ${t("WS_SEARCH_INTEGRATED_BILL")}` : t("WS_SEARCH_INTEGRATED_BILL"),
       show: location.pathname.includes("/water/wns-search") ? true : false,
       isBack: fromScreen && true,
     },
     {
-      path: "/upyog-ui/employee/ws/sewerage/search-application",
+      path: "/digit-ui/employee/ws/sewerage/search-application",
       content: fromScreen ? `${t(fromScreen)} / ${t("WS_SEARCH_APPLICATIONS")}` : t("WS_SEARCH_APPLICATIONS"),
       show: location.pathname.includes("/sewerage/search-application") ? true : false,
       isBack: fromScreen && true,
     },
     {
-      path: "/upyog-ui/employee/ws/sewerage/search-connection",
+      path: "/digit-ui/employee/ws/sewerage/search-connection",
       content: fromScreen ? `${t(fromScreen)} / ${t("WS_SEARCH_CONNECTION")}` : t("WS_SEARCH_CONNECTION"),
       show: location.pathname.includes("/sewerage/search-connection") ? true : false,
       isBack: fromScreen && true,
     },
     {
-      path: "/upyog-ui/employee/sewerage/inbox",
+      path: "/digit-ui/employee/sewerage/inbox",
       content: t("ES_COMMON_BILLS_SEWERAGE_INBOX_LABEL"),
       show: location.pathname.includes("/sewerage/inbox") ? true : false,
     },
     {
-      path: "/upyog-ui/employee/ws/new-application",
+      path: "/digit-ui/employee/ws/new-application",
       content: t("ES_COMMON_WS_NEW_CONNECTION"),
       show: location.pathname.includes("/new-application") ? true : false,
     },
@@ -100,43 +100,43 @@ const BILLSBreadCrumbs = ({ location }) => {
       show: location.pathname.includes("/ws-response") ? true : false,
     },
     {
-      path: "/upyog-ui/employee/ws/consumption-details",
+      path: "/digit-ui/employee/ws/consumption-details",
       content: fromScreen ? `${t(fromScreen)} / ${t("WS_VIEW_CONSUMPTION_DETAIL")}` : t("WS_VIEW_CONSUMPTION_DETAIL"),
       show: location.pathname.includes("/consumption-details") ? true : false,
       isBack: fromScreen && true,
     },
     // {
-    //   path: sessionStorage.getItem("redirectedfromEDIT") === "true"? (applicationNumbercheck?.includes("SW_AP")?  "/upyog-ui/employee/ws/sewerage/search-application" : "/upyog-ui/employee/ws/water/search-application") : "/upyog-ui/employee/ws/application-details",
+    //   path: sessionStorage.getItem("redirectedfromEDIT") === "true"? (applicationNumbercheck?.includes("SW_AP")?  "/digit-ui/employee/ws/sewerage/search-application" : "/digit-ui/employee/ws/water/search-application") : "/digit-ui/employee/ws/application-details",
     //   content: fromScreen ? `${t(fromScreen)} / ${t("WS_APPLICATION_DETAILS_HEADER")}` : t("WS_APPLICATION_DETAILS_HEADER"),
     //   show: location.pathname.includes("/generate-note") ? true : false,
     //   isBack: sessionStorage.getItem("redirectedfromEDIT") !== "true" && fromScreen && true,
     // },
     {
-      path: sessionStorage.getItem("redirectedfromEDIT") === "true"? (applicationNumbercheck?.includes("SW_AP")?  "/upyog-ui/employee/ws/sewerage/search-application" : "/upyog-ui/employee/ws/water/search-application") : "/upyog-ui/employee/ws/application-details",
+      path: sessionStorage.getItem("redirectedfromEDIT") === "true"? (applicationNumbercheck?.includes("SW_AP")?  "/digit-ui/employee/ws/sewerage/search-application" : "/digit-ui/employee/ws/water/search-application") : "/digit-ui/employee/ws/application-details",
       content: fromScreen ? `${t(fromScreen)} / ${t("WS_APPLICATION_DETAILS_HEADER")}` : t("WS_APPLICATION_DETAILS_HEADER"),
       show: location.pathname.includes("/application-details") ? true : false,
       isBack: sessionStorage.getItem("redirectedfromEDIT") !== "true" && fromScreen && true,
     },
     {
-      path: sessionStorage.getItem("redirectedfromEDIT") === "true"? (applicationNumbercheck?.includes("SW_AP")?  "/upyog-ui/employee/ws/sewerage/search-application" : "/upyog-ui/employee/ws/water/search-application") : "/upyog-ui/employee/ws/modify-details",
+      path: sessionStorage.getItem("redirectedfromEDIT") === "true"? (applicationNumbercheck?.includes("SW_AP")?  "/digit-ui/employee/ws/sewerage/search-application" : "/digit-ui/employee/ws/water/search-application") : "/digit-ui/employee/ws/modify-details",
       content: fromScreen ? `${t(fromScreen)} / ${t("WS_APPLICATION_DETAILS_HEADER")}` : t("WS_APPLICATION_DETAILS_HEADER"),
       show: location.pathname.includes("/modify-details") ? true : false,
       isBack: sessionStorage.getItem("redirectedfromEDIT") !== "true" && fromScreen && true,
     },
     {
-      path: "/upyog-ui/employee/ws/disconnection-details",
+      path: "/digit-ui/employee/ws/disconnection-details",
       content: fromScreen ? `${t(fromScreen)} / ${t("WS_APPLICATION_DETAILS_HEADER")}` : t("WS_APPLICATION_DETAILS_HEADER"),
       show: location.pathname.includes("/disconnection-details") ? true : false,
       isBack: fromScreen && true,
     },
     {
-      path: "/upyog-ui/employee/ws/connection-details",
+      path: "/digit-ui/employee/ws/connection-details",
       content: fromScreen ? `${t(fromScreen)} / ${t("WS_COMMON_CONNECTION_DETAIL")}` : t("WS_COMMON_CONNECTION_DETAIL"),
       show: location.pathname.includes("/connection-details") ? true : false,
       isBack: fromScreen && true,
     },
     {
-      path: "/upyog-ui/employee/ws/edit-application",
+      path: "/digit-ui/employee/ws/edit-application",
       content: `${t("WS_APPLICATION_DETAILS_HEADER")} / ${t("WS_APP_FOR_WATER_AND_SEWERAGE_EDIT_LABEL")}`,
       show: location.pathname.includes("/edit-application") ? true : false,
       isBack: true,
@@ -166,12 +166,12 @@ const BILLSBreadCrumbs = ({ location }) => {
       isBack: true,
     },
     {
-      path: `/upyog-ui/employee/ws/new-disconnection/docsrequired`,
+      path: `/digit-ui/employee/ws/new-disconnection/docsrequired`,
       content: t("WS_NEW_DISCONNECTION_DOCS_REQUIRED"),
       show: location.pathname.includes("/new-disconnection/docsrequired") ? true : false,
     },
     {
-      path: `/upyog-ui/employee/ws/new-disconnection/application-form`,
+      path: `/digit-ui/employee/ws/new-disconnection/application-form`,
       content: isMobile ? `${t("WS_NEW_DISCONNECTION_DOCS_REQUIRED")} / ${t("WS_NEW_DISCONNECTION_APPLICATION")}` : `${t("WS_NEW_DISCONNECTION_DOCS_REQUIRED")} / ${t("WS_NEW_DISCONNECTION_APPLICATION")}`,
       show: location.pathname.includes("/new-disconnection/application-form") ? true : false,
       isBack: true
@@ -183,7 +183,7 @@ const BILLSBreadCrumbs = ({ location }) => {
       isBack: true
     },
     // {
-    //   path: "/upyog-ui/employee/sewerage/bill-amendment/inbox",
+    //   path: "/digit-ui/employee/sewerage/bill-amendment/inbox",
     //   content: t("ES_COMMON_BILLS_SEWERAGE_INBOX_LABEL"),
     //   show: location.pathname.includes("/sewerage/bill-amendment/inbox") ? true : false,
     // },
@@ -194,34 +194,34 @@ const BILLSBreadCrumbs = ({ location }) => {
       isBack:true,
     },
     {
-      path: "/upyog-ui/employee/ws/required-documents",
+      path: "/digit-ui/employee/ws/required-documents",
       content: t("ES_COMMON_WS_DOCUMENTS_REQUIRED"),
       show: location.pathname.includes("/required-documents") ? true : false,
     },
     {
-      path: requestParam ? `/upyog-ui/employee/ws/bill-amendment?${requestParam}` : "/upyog-ui/employee/ws/bill-amendment",
+      path: requestParam ? `/digit-ui/employee/ws/bill-amendment?${requestParam}` : "/digit-ui/employee/ws/bill-amendment",
       content: t("WS_BILL_AMEND_APP"),
       show: location.pathname.includes("ws/bill-amendment") && !IsEdit ? true : false,
     },
     {
-      path: "/upyog-ui/employee/ws/bill-amendment",
+      path: "/digit-ui/employee/ws/bill-amendment",
       content: t("WS_BILL_AMEND_EDIT_APP"),
       show: location.pathname.includes("ws/bill-amendment") && IsEdit ? true : false,
     },
     {
-      path: "/upyog-ui/employee/ws/response",
+      path: "/digit-ui/employee/ws/response",
       content: t("WS_ACK_SCREEN"),
       show: location.pathname.includes("/employee/ws/response") ? true : false,
       isclickable : false,
     },
     {
-      path: "/upyog-ui/employee/ws/generate-note-bill-amendment",
+      path: "/digit-ui/employee/ws/generate-note-bill-amendment",
       content: t("CS_TITLE_GENERATE_NOTE"),
       show: location.pathname.includes("/generate-note-bill-amendment") ? true : false,
       //isclickable : false,
     },
     {
-      path: "/upyog-ui/employee/ws/water/bulk-bil",
+      path: "/digit-ui/employee/ws/water/bulk-bil",
       content: t("CS_TITLE_BULK_BILL"),
       show: location.pathname.includes("/ws/water/bulk-bill") ? true : false,
       //isclickable : false,

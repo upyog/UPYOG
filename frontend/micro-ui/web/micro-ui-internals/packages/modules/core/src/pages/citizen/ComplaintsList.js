@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useRouteMatch } from "react-router-dom";
-import { Card, Header, Loader, TextInput, Button, ButtonSelector } from "@upyog/digit-ui-react-components";
+import { Card, Header, Loader, TextInput, Button, ButtonSelector } from "@demodigit/digit-ui-react-components";
 import Complaint from "./Complaint";
 
 export const ComplaintsList = (props) => {

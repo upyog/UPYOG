@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Banner, Card, CardSectionHeader, CardText, LinkButton, SubmitBar, successSvg } from "@upyog/digit-ui-react-components";
+import { Banner, Card, CardSectionHeader, CardText, LinkButton, SubmitBar, successSvg } from "@demodigit/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import { pdfDocumentName, pdfDownloadLink } from "../utils";
@@ -34,7 +34,7 @@ const WSDisconnectAcknowledgement = () => {
         {t('WS_DISCONNECTION_APPLICATION_SUCC_MSG')}
       </CardText>
       {<SubmitBar label={t("WS_DOWNLOAD_ACK_FORM")} onSubmit={handleDownloadPdf} />}
-      <Link to={`/upyog-ui/citizen`}>
+      <Link to={`/digit-ui/citizen`}>
         <LinkButton label={t("CORE_COMMON_GO_TO_HOME")} onClick={() => Digit.SessionStorage.del("WS_DISCONNECTION")}/>
       </Link>
     </Card>

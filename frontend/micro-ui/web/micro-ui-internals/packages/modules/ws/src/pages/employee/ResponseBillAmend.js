@@ -1,4 +1,4 @@
-import { ActionBar, Banner, Card, CardText, Loader, SubmitBar } from "@upyog/digit-ui-react-components"
+import { ActionBar, Banner, Card, CardText, Loader, SubmitBar } from "@demodigit/digit-ui-react-components"
 import React, { useEffect } from "react"
 import { useTranslation } from "react-i18next"
 import { Link, useLocation } from "react-router-dom"
@@ -17,7 +17,7 @@ const ResponseBillAmend = () => {
             />
             {!state.status ? null : <CardText>{t("WS_BILL_AMENDMENT_MESSAGE")}</CardText>}
             <ActionBar style={{ display: "flex", justifyContent: "flex-end", alignItems: "baseline" }}>
-                <Link to={`/upyog-ui/employee`} style={{ marginRight: "1rem" }}>
+                <Link to={`/digit-ui/employee`} style={{ marginRight: "1rem" }}>
                     <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} />
                 </Link>
             </ActionBar>

@@ -1,4 +1,4 @@
-import { TextInput, Dropdown, RemoveableTag, LinkButton,LinkLabel, SearchField,SubmitBar } from "@upyog/digit-ui-react-components"
+import { TextInput, Dropdown, RemoveableTag, LinkButton,LinkLabel, SearchField,SubmitBar } from "@demodigit/digit-ui-react-components"
 import React,{useMemo} from 'react'
 import { useHistory, Link } from "react-router-dom";
 
@@ -36,11 +36,11 @@ const SurveyDetailsView = ({surveyTitle,surveyDesc,t,surveyId}) => {
         {/* <button
           type={"button"}
           style={{ border: "2px solid #a82227", backgroundColor: "white", padding: "8px 8px",width:"200px",marginLeft:"50px",marginTop:"-45px" }}
-          onClick={() => history.push(`/upyog-ui/employee/engagement/surveys/inbox/details/${surveyId}`)}
+          onClick={() => history.push(`/digit-ui/employee/engagement/surveys/inbox/details/${surveyId}`)}
         >
           <header style={{ color:"#a82227"}}>{t("SURVEY_QUESTIONS")}</header>
         </button> */}
-        <LinkLabel  onClick={() => history.push(`/upyog-ui/employee/engagement/surveys/inbox/details/${surveyTitle}`)}>
+        <LinkLabel  onClick={() => history.push(`/digit-ui/employee/engagement/surveys/inbox/details/${surveyTitle}`)}>
         {t("VIEW_SURVEY_QUESTIONS")}
         </LinkLabel>
         

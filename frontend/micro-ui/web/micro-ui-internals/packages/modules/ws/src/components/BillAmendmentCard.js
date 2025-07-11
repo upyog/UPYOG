@@ -1,4 +1,4 @@
-import { EmployeeModuleCard, WSICon } from "@upyog/digit-ui-react-components";
+import { EmployeeModuleCard, WSICon } from "@demodigit/digit-ui-react-components";
 import React, { useState, useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -66,25 +66,25 @@ const BillAmendmentCard = () => {
       {
         count: isBillAMDInboxLoading ? "-" : totalCount,
         label: t("TOTAL_WS"),
-        link: `/upyog-ui/employee/ws/water/bill-amendment/inbox`,
+        link: `/digit-ui/employee/ws/water/bill-amendment/inbox`,
       },
       {
         count: isBillAMDInboxLoading ? "-" : billData?.slaCount,
         label: t("TOTAL_NEARING_SLA"),
-        link: `/upyog-ui/employee/ws/water/bill-amendment/inbox`,
+        link: `/digit-ui/employee/ws/water/bill-amendment/inbox`,
       }
     ],
     links: [
       {
         count: isBillAMDInboxLoading ? "-" : billData?.totalCount,
         label: t("WS_WATER_INBOX"),
-        link: `/upyog-ui/employee/ws/water/bill-amendment/inbox`,
+        link: `/digit-ui/employee/ws/water/bill-amendment/inbox`,
         roles: ["WS_CEMP", "WS_APPROVER", "WS_FIELD_INSPECTOR", "WS_DOC_VERIFIER", "WS_CLERK"],
       },
       {
         count: isBillAMDInboxLoading ? "-" : swbillData?.totalCount,
         label: t("SW_WATER_INBOX"),
-        link: `/upyog-ui/employee/ws/sewerage/bill-amendment/inbox`,
+        link: `/digit-ui/employee/ws/sewerage/bill-amendment/inbox`,
         roles: ["WS_CEMP", "WS_APPROVER", "WS_FIELD_INSPECTOR", "WS_DOC_VERIFIER", "WS_CLERK"],
       }
     ],

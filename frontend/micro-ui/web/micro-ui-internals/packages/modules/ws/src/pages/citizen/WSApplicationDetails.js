@@ -11,7 +11,7 @@ import {
   CardText,
   CardHeader,
   SubmitBar,
-} from "@upyog/digit-ui-react-components";
+} from "@demodigit/digit-ui-react-components";
 import React, { useState, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useLocation } from "react-router-dom";
@@ -392,7 +392,7 @@ let serviceType = data && data?.WaterConnection?.[0] ? "WATER" : "SEWERAGE";
               }}
             />
             <Link
-              to={`/upyog-ui/citizen/commonpt/view-property?propertyId=${
+              to={`/digit-ui/citizen/commonpt/view-property?propertyId=${
                 data?.WaterConnection?.[0]?.propertyId || data?.SewerageConnections?.[0]?.propertyId
               }&tenantId=${data?.WaterConnection?.[0]?.tenantId || data?.SewerageConnections?.[0]?.tenantId}`}
             >
@@ -575,7 +575,7 @@ let serviceType = data && data?.WaterConnection?.[0] ? "WATER" : "SEWERAGE";
                 textStyle={{ whiteSpace: "pre" }}
               />
 
-              <Link to={`/upyog-ui/citizen/ws/connection/additional/${data?.WaterConnection?.[0]?.applicationNo}`}>
+              <Link to={`/digit-ui/citizen/ws/connection/additional/${data?.WaterConnection?.[0]?.applicationNo}`}>
                 <LinkButton style={{ textAlign: "left" }} label={t("WS_ADDITIONAL_DETAILS")} />
               </Link>
             </StatusTable>
@@ -594,7 +594,7 @@ let serviceType = data && data?.WaterConnection?.[0] ? "WATER" : "SEWERAGE";
                 text={data?.SewerageConnections?.[0]?.proposedToilets || t("CS_NA")}
                 textStyle={{ whiteSpace: "pre" }}
               />
-              <Link to={`/upyog-ui/citizen/ws/connection/additional/${data?.SewerageConnections?.[0]?.applicationNo}`}>
+              <Link to={`/digit-ui/citizen/ws/connection/additional/${data?.SewerageConnections?.[0]?.applicationNo}`}>
                 <LinkButton style={{ textAlign: "left" }} label={t("WS_ADDITIONAL_DETAILS")} />
               </Link>
             </StatusTable>
@@ -654,7 +654,7 @@ let serviceType = data && data?.WaterConnection?.[0] ? "WATER" : "SEWERAGE";
           data?.SewerageConnections?.[0]?.applicationStatus === "PENDING_FOR_PAYMENT" ? (
             <Link
               to={{
-                pathname: `/upyog-ui/citizen/payment/my-bills/${
+                pathname: `/digit-ui/citizen/payment/my-bills/${
                   paymentDetails?.data?.Bill?.[0]?.businessService
                 }/${applicationNobyData?.includes("DC") ? (stringReplaceAll(data?.WaterConnection?.[0]?.connectionNo, "/", "+") || stringReplaceAll(data?.SewerageConnections?.[0]?.connectionNo, "/", "+")) :
                   (stringReplaceAll(data?.WaterConnection?.[0]?.applicationNo, "/", "+") ||
@@ -670,7 +670,7 @@ let serviceType = data && data?.WaterConnection?.[0] ? "WATER" : "SEWERAGE";
           (!data?.SewerageConnections?.[0]?.applicationType.includes("DISCONNECT") && data?.SewerageConnections?.[0]?.applicationStatus.includes("PENDING_FOR_CITIZEN_ACTION")) ? (
             <Link
               to={{
-                pathname: `/upyog-ui/citizen/ws/edit-application/${data?.WaterConnection?.[0]?.tenantId || data?.SewerageConnections?.[0]?.tenantId}`,
+                pathname: `/digit-ui/citizen/ws/edit-application/${data?.WaterConnection?.[0]?.tenantId || data?.SewerageConnections?.[0]?.tenantId}`,
                 state: { id: `${data?.WaterConnection?.[0]?.applicationNo || data?.SewerageConnections?.[0]?.applicationNo}` },
               }}
             >
@@ -681,7 +681,7 @@ let serviceType = data && data?.WaterConnection?.[0] ? "WATER" : "SEWERAGE";
           ( data?.SewerageConnections?.[0]?.applicationType.includes("DISCONNECT") && data?.SewerageConnections?.[0]?.applicationStatus.includes("PENDING_FOR_CITIZEN_ACTION")) ? (
             <Link
               to={{
-                pathname: `/upyog-ui/citizen/ws/resubmit-disconnect-application`,
+                pathname: `/digit-ui/citizen/ws/resubmit-disconnect-application`,
                 state: { id: `${data?.WaterConnection?.[0]?.applicationNo || data?.SewerageConnections?.[0]?.applicationNo}` },
               }}
             >

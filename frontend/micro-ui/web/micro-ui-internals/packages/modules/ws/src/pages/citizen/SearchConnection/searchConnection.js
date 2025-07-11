@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { FormComposer, CardLabelDesc, Loader, Menu, CardText } from "@upyog/digit-ui-react-components";
-import { FormStep, CardLabel, RadioButtons, RadioOrSelect, Localities, InfoBannerIcon } from "@upyog/digit-ui-react-components";
-import { TextInput, LabelFieldPair, Dropdown, Toast } from "@upyog/digit-ui-react-components";
+import { FormComposer, CardLabelDesc, Loader, Menu, CardText } from "@demodigit/digit-ui-react-components";
+import { FormStep, CardLabel, RadioButtons, RadioOrSelect, Localities, InfoBannerIcon } from "@demodigit/digit-ui-react-components";
+import { TextInput, LabelFieldPair, Dropdown, Toast } from "@demodigit/digit-ui-react-components";
 import PropTypes from "prop-types";
 import { useHistory } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -52,7 +52,7 @@ const SearchConnection = ({ config: propsConfig, formData }) => {
       }
       else {
         history.push(
-          `/upyog-ui/citizen/ws/search-results?mobileNumber=${mobileNumber}&consumerNumber=${consumerNumber}&oldconsumerNumber=${oldconsumerNumber}&propertyId=${propertyId}&tenantId=${city.code}&locality=${undefined}`
+          `/digit-ui/citizen/ws/search-results?mobileNumber=${mobileNumber}&consumerNumber=${consumerNumber}&oldconsumerNumber=${oldconsumerNumber}&propertyId=${propertyId}&tenantId=${city.code}&locality=${undefined}`
         );
       }
     }
@@ -76,7 +76,7 @@ const SearchConnection = ({ config: propsConfig, formData }) => {
         setShowToast({ key: true, label: "Refine your search" });
         else
         history.push(
-          `/upyog-ui/citizen/ws/search-results?doorNumber=${doorNumber}&consumerName=${consumerName}&tenantId=${city.code}&locality=${locality.code}`
+          `/digit-ui/citizen/ws/search-results?doorNumber=${doorNumber}&consumerName=${consumerName}&tenantId=${city.code}&locality=${locality.code}`
         );
         }
     } 

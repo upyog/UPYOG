@@ -1,5 +1,5 @@
 import React, { Fragment, useCallback, useMemo, useReducer, useEffect } from "react";
-import { InboxComposer, ComplaintIcon, Header, DropIcon } from "@upyog/digit-ui-react-components";
+import { InboxComposer, ComplaintIcon, Header, DropIcon } from "@demodigit/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 import SearchFormFieldsComponents from "./SearchFormFieldsComponent";
 import FilterFormFieldsComponent from "./FilterFormFieldsComponent";
@@ -141,7 +141,7 @@ const WSInbox = ({ parentRoute }) => {
   let links = [
     {
       text: t("WS_APPLY_NEW_CONNECTION_HOME_CARD_LABEL"),
-      link: `/upyog-ui/employee/ws/create-application`,
+      link: `/digit-ui/employee/ws/create-application`,
       roles: ["WS_CEMP", "SW_CEMP"],
     },
   ];
@@ -155,8 +155,8 @@ const WSInbox = ({ parentRoute }) => {
       {
         text: t("WS_SEWERAGE_CONNECTION_SEARCH_LABEL"),
         link: checkPathName
-          ? `/upyog-ui/employee/ws/water/search-connection?from=WS_SEWERAGE_INBOX`
-          : `/upyog-ui/employee/ws/sewerage/search-connection?from=WS_SEWERAGE_INBOX`,
+          ? `/digit-ui/employee/ws/water/search-connection?from=WS_SEWERAGE_INBOX`
+          : `/digit-ui/employee/ws/sewerage/search-connection?from=WS_SEWERAGE_INBOX`,
         roles: checkPathName
           ? ["WS_CEMP", "WS_APPROVER", "WS_FIELD_INSPECTOR", "WS_DOC_VERIFIER", "WS_CLERK"]
           : ["SW_CEMP", "SW_APPROVER", "SW_FIELD_INSPECTOR", "SW_DOC_VERIFIER", "SW_CLERK"],
@@ -164,8 +164,8 @@ const WSInbox = ({ parentRoute }) => {
       {
         text: t("WS_SEWERAGE_APPLICATION_SEARCH"),
         link: checkPathName
-          ? `/upyog-ui/employee/ws/water/search-application?from=WS_SEWERAGE_INBOX`
-          : `/upyog-ui/employee/ws/sewerage/search-application?from=WS_SEWERAGE_INBOX`,
+          ? `/digit-ui/employee/ws/water/search-application?from=WS_SEWERAGE_INBOX`
+          : `/digit-ui/employee/ws/sewerage/search-application?from=WS_SEWERAGE_INBOX`,
         roles: checkPathName
           ? ["WS_CEMP", "WS_APPROVER", "WS_FIELD_INSPECTOR", "WS_DOC_VERIFIER", "WS_CLERK"]
           : ["SW_CEMP", "SW_APPROVER", "SW_FIELD_INSPECTOR", "SW_DOC_VERIFIER", "SW_CLERK"],

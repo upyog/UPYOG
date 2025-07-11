@@ -1,4 +1,4 @@
-import { EmployeeModuleCard, WSICon } from "@upyog/digit-ui-react-components";
+import { EmployeeModuleCard, WSICon } from "@demodigit/digit-ui-react-components";
 import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { checkForEmployee } from "../utils";
@@ -51,7 +51,7 @@ const WSCard = () => {
   let links = [
     {
       label: t("WS_APPLY_NEW_CONNECTION_HOME_CARD_LABEL"),
-      link: `/upyog-ui/employee/ws/create-application`,
+      link: `/digit-ui/employee/ws/create-application`,
       roles: ["WS_CEMP", "SW_CEMP"],
     },
   ];
@@ -65,30 +65,30 @@ const WSCard = () => {
       {
         count: isWSInboxLoading ? "-" : totalCount,
         label: t("TOTAL_WS"),
-        link: `/upyog-ui/employee/ws/water/inbox`,
+        link: `/digit-ui/employee/ws/water/inbox`,
       },
       {
         count: isWSInboxLoading ? "-" : wsData?.slaCount,
         label: t("TOTAL_NEARING_SLA"),
-        link: `/upyog-ui/employee/ws/water/inbox`,
+        link: `/digit-ui/employee/ws/water/inbox`,
       }
     ],
     links: [
       {
         count: isWSInboxLoading ? "-" : wsData?.totalCount,
         label: t("WS_INBOX_HEADER"),
-        link: `/upyog-ui/employee/ws/water/inbox`,
+        link: `/digit-ui/employee/ws/water/inbox`,
         roles: ["WS_CEMP", "WS_APPROVER", "WS_FIELD_INSPECTOR", "WS_DOC_VERIFIER", "WS_CLERK"],
       },
       ...links,
       {
         label: t("WS_WATER_CONNECTION_SEARCH_LABEL"),
-        link: `/upyog-ui/employee/ws/water/search-connection`,
+        link: `/digit-ui/employee/ws/water/search-connection`,
         roles: ["WS_CEMP", "WS_APPROVER", "WS_FIELD_INSPECTOR", "WS_DOC_VERIFIER", "WS_CLERK"],
       },
       {
         label: t("WS_WATER_APPLICATION_SEARCH"),
-        link: `/upyog-ui/employee/ws/water/search-application`,
+        link: `/digit-ui/employee/ws/water/search-application`,
         roles: ["WS_CEMP", "WS_APPROVER", "WS_FIELD_INSPECTOR", "WS_DOC_VERIFIER", "WS_CLERK"],
       },
     ],

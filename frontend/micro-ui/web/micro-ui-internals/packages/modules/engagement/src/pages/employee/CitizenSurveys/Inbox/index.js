@@ -1,5 +1,5 @@
 import React, { Fragment, useCallback, useMemo, useReducer } from "react"
-import { InboxComposer, DocumentIcon } from "@upyog/digit-ui-react-components";
+import { InboxComposer, DocumentIcon } from "@demodigit/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 import FilterFormFieldsComponent from "./FilterFieldsComponent";
 import SearchFormFieldsComponents from "./SearchFieldsComponents";
@@ -176,7 +176,7 @@ const Inbox = ({ parentRoute }) => {
     headerText: "CS_COMMON_SURVEYS",
     links: [{
       text: t("CS_COMMON_NEW_SURVEY"),
-      link: "/upyog-ui/employee/engagement/surveys/inbox/create",
+      link: "/digit-ui/employee/engagement/surveys/inbox/create",
     }]
   }
 

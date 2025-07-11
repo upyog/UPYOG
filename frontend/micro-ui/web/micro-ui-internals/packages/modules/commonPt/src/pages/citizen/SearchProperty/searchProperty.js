@@ -1,4 +1,4 @@
-import { Dropdown, FormComposer, InfoBannerIcon, Loader, Localities, RadioButtons, Toast } from "@upyog/digit-ui-react-components";
+import { Dropdown, FormComposer, InfoBannerIcon, Loader, Localities, RadioButtons, Toast } from "@demodigit/digit-ui-react-components";
 import _ from "lodash";
 import PropTypes from "prop-types";
 import React, { useEffect, useLayoutEffect, useState } from "react";
@@ -594,7 +594,7 @@ setCityCode(city.code);
       // am adding one more condtion for this. 
       if(redirectToUrl || window.location.href.includes("upyog-ui/citizen/commonpt/property/citizen-search")) {
         history.push(
-          `/upyog-ui/citizen/commonPt/property/search-results?${Object.keys(qs)
+          `/digit-ui/citizen/commonPt/property/search-results?${Object.keys(qs)
             .map((key) => `${key}=${qs[key]}`)
             .join("&")}${redirectToUrl ? `&redirectToUrl=${redirectToUrl}` : ''}`
         );
@@ -652,11 +652,11 @@ setCityCode(city.code);
        <div style={{display:"flex"}}>
  
       {window.location.href.includes("/obps/bpa/") ?<span className="link" style={isMobile ? {display:"flex", justifyContent:"center",paddingBottom:"16px"} : {display:"flex", justifyContent:"left",paddingBottom:"16px", marginLeft: "45px"}}>
-        <Link to={"/upyog-ui/citizen/obps/bpa/building_plan_scrutiny/new_construction/location"}>{t("CORE_COMMON_SKIP_CONTINUE")}</Link>
+        <Link to={"/digit-ui/citizen/obps/bpa/building_plan_scrutiny/new_construction/location"}>{t("CORE_COMMON_SKIP_CONTINUE")}</Link>
       </span>:
            <span className="link" style={isMobile ? {display:"flex", justifyContent:"center",paddingBottom:"16px"} : {display:"flex", justifyContent:"left",paddingBottom:"16px", marginLeft: "45px"}}>
        
-           <Link to={window.location.href.includes("/ws/")?"/upyog-ui/citizen/ws/create-application/create-property" : window.location.href.includes("/tl/tradelicence/") ? "/upyog-ui/citizen/tl/tradelicence/new-application/create-property":window.location.href.includes("/fsm/")? "/upyog-ui/citizen/fsm/new-application/create-property":"/upyog-ui/citizen/commonpt/property/new-application"}>{t("CPT_REG_NEW_PROPERTY")}</Link>
+           <Link to={window.location.href.includes("/ws/")?"/digit-ui/citizen/ws/create-application/create-property" : window.location.href.includes("/tl/tradelicence/") ? "/digit-ui/citizen/tl/tradelicence/new-application/create-property":window.location.href.includes("/fsm/")? "/digit-ui/citizen/fsm/new-application/create-property":"/digit-ui/citizen/commonpt/property/new-application"}>{t("CPT_REG_NEW_PROPERTY")}</Link>
          </span>}
       </div>
       {showToast && (

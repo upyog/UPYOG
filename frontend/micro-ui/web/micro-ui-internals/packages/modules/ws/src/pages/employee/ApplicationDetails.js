@@ -13,7 +13,7 @@ import {
   MultiLink,
   LinkButton,
   Toast
-} from "@upyog/digit-ui-react-components";
+} from "@demodigit/digit-ui-react-components";
 import { useParams, useHistory } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import ApplicationDetailsTemplate from "../../../../templates/ApplicationDetails";
@@ -180,12 +180,12 @@ const ApplicationDetails = () => {
     if (action?.action === "ACTIVATE_CONNECTION") {
       action.redirectionUrll = {
         action: "ACTIVATE_CONNECTION",
-        pathname: `/upyog-ui/employee/ws/activate-connection?applicationNumber=${applicationNumber}&service=${serviceType}&action=ACTIVATE_CONNECTION`,
+        pathname: `/digit-ui/employee/ws/activate-connection?applicationNumber=${applicationNumber}&service=${serviceType}&action=ACTIVATE_CONNECTION`,
         state: applicationDetails?.applicationData,
       };
     }
     if (action?.action === "RESUBMIT_APPLICATION") {
-      let pathName = `/upyog-ui/employee/ws/edit-application?applicationNumber=${applicationNumber}&service=${serviceType}&propertyId=${applicationDetails?.propertyDetails?.propertyId}`;
+      let pathName = `/digit-ui/employee/ws/edit-application?applicationNumber=${applicationNumber}&service=${serviceType}&propertyId=${applicationDetails?.propertyDetails?.propertyId}`;
 
       const userConfig = servicesMasterData?.["ws-services-masters"]?.WSEditApplicationByConfigUser || [];
       const editApplicationUserRole = userConfig?.[0]?.roles || [];
@@ -199,7 +199,7 @@ const ApplicationDetails = () => {
       })
 
       if(isFieldInspector && appStatus === mdmsApplicationStatus) {
-        pathName = `/upyog-ui/employee/ws/edit-application-by-config?applicationNumber=${applicationNumber}&service=${serviceType}&propertyId=${applicationDetails?.propertyDetails?.propertyId}`;
+        pathName = `/digit-ui/employee/ws/edit-application-by-config?applicationNumber=${applicationNumber}&service=${serviceType}&propertyId=${applicationDetails?.propertyDetails?.propertyId}`;
       }
 
       action.redirectionUrll = {
@@ -214,7 +214,7 @@ const ApplicationDetails = () => {
     if (action?.action === "SUBMIT_APPLICATION") {
       action.redirectionUrll = {
         action: "ACTIVATE_CONNECTION",
-        pathname: `/upyog-ui/employee/ws/modify-application-edit?applicationNumber=${applicationNumber}&service=${serviceType}&propertyId=${applicationDetails?.propertyDetails?.propertyId}`,
+        pathname: `/digit-ui/employee/ws/modify-application-edit?applicationNumber=${applicationNumber}&service=${serviceType}&propertyId=${applicationDetails?.propertyDetails?.propertyId}`,
         state: applicationDetails,
       };
     }
@@ -235,7 +235,7 @@ const ApplicationDetails = () => {
 
   workflowDetails?.data?.actionState?.nextActions?.forEach((action) => {
     if (action?.action === "EDIT") {
-      let pathName = `/upyog-ui/employee/ws/edit-application?applicationNumber=${applicationNumber}&service=${serviceType}&propertyId=${applicationDetails?.propertyDetails?.propertyId}`;
+      let pathName = `/digit-ui/employee/ws/edit-application?applicationNumber=${applicationNumber}&service=${serviceType}&propertyId=${applicationDetails?.propertyDetails?.propertyId}`;
 
       const userConfig = servicesMasterData?.["ws-services-masters"]?.WSEditApplicationByConfigUser || [];
       const editApplicationUserRole = userConfig?.[0]?.roles || [];
@@ -249,7 +249,7 @@ const ApplicationDetails = () => {
       })
 
       if(isFieldInspector && appStatus === mdmsApplicationStatus) {
-        pathName = `/upyog-ui/employee/ws/edit-application-by-config?applicationNumber=${applicationNumber}&service=${serviceType}&propertyId=${applicationDetails?.propertyDetails?.propertyId}`;
+        pathName = `/digit-ui/employee/ws/edit-application-by-config?applicationNumber=${applicationNumber}&service=${serviceType}&propertyId=${applicationDetails?.propertyDetails?.propertyId}`;
       }
 
       action.redirectionUrll = {

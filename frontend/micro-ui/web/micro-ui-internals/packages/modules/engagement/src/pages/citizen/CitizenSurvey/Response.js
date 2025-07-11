@@ -1,4 +1,4 @@
-import { Banner, Card, Loader, CardText, ActionBar, SubmitBar } from "@upyog/digit-ui-react-components";
+import { Banner, Card, Loader, CardText, ActionBar, SubmitBar } from "@demodigit/digit-ui-react-components";
 import { useQueryClient } from "react-query";
 import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
@@ -64,7 +64,7 @@ const Acknowledgement = (props) => {
           : null}
       </CardText>
       <ActionBar>
-        <Link to={"/upyog-ui/citizen/engagement/surveys/list"}>
+        <Link to={"/digit-ui/citizen/engagement/surveys/list"}>
           <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} />
         </Link>
       </ActionBar>

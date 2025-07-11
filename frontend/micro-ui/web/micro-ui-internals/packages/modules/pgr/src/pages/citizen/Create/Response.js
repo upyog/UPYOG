@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Card, Banner, CardText, SubmitBar } from "@upyog/digit-ui-react-components";
+import { Card, Banner, CardText, SubmitBar } from "@demodigit/digit-ui-react-components";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { PgrRoutes, getRoute } from "../../../constants/Routes";
@@ -61,7 +61,7 @@ const Response = (props) => {
       {appState.complaints.response && <BannerPicker response={appState} />}
       <CardText>{t("CS_COMMON_TRACK_COMPLAINT_TEXT")}</CardText>
       {appState.complaints.response?.ServiceWrappers?.[0]?.workflow.action == "RATE" ?"": <div style={{marginBottom:"10px"}}><SubmitBar label={t("PT_DOWNLOAD_ACK_FORM")} onSubmit={(e) =>{handleDownloadPdf(e)}} /></div>}
-      <Link to="/upyog-ui/citizen">
+      <Link to="/digit-ui/citizen">
         <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} />
       </Link>
 

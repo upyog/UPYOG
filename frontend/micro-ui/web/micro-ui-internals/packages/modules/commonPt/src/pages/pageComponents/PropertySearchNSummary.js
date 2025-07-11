@@ -13,7 +13,7 @@ import {
   Toast,
   StatusTable,
   Row,
-} from "@upyog/digit-ui-react-components";
+} from "@demodigit/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 import _ from "lodash";
 import { useLocation, Link, useHistory } from "react-router-dom";
@@ -68,13 +68,13 @@ const PropertySearchNSummary = ({ config, onSelect, userType, formData, setError
     }
     setSearchPropertyId(propertyId);
     if(window.location.pathname.includes("/tl/new-application")){
-      history.push(`/upyog-ui/employee/tl/new-application?propertyId=${propertyId}`)
+      history.push(`/digit-ui/employee/tl/new-application?propertyId=${propertyId}`)
       const scrollConst =  1600 
       setTimeout(() => window.scrollTo(0, scrollConst), 0);
     }
     
     else if (window.location.pathname.includes("/ws/new-application"))
-      history.push(`/upyog-ui/employee/ws/new-application?propertyId=${propertyId}`)
+      history.push(`/digit-ui/employee/ws/new-application?propertyId=${propertyId}`)
   };
 
   if (isEditScreen) {
@@ -124,11 +124,11 @@ const PropertySearchNSummary = ({ config, onSelect, userType, formData, setError
           </button>
         </div>
       </LabelFieldPair>
-      <span onClick={() => history.push(`/upyog-ui/employee/commonpt/search?redirectToUrl=${redirectBackUrl}&${serachParams}`, { ...state })}>
+      <span onClick={() => history.push(`/digit-ui/employee/commonpt/search?redirectToUrl=${redirectBackUrl}&${serachParams}`, { ...state })}>
         <LinkButton label={t("CPT_SEARCH_PROPERTY")} style={{ color: "#a82227", display: "inline-block" }} />
       </span>
       &nbsp; | &nbsp;
-      <span onClick={() => history.push(`/upyog-ui/employee/commonpt/new-application?redirectToUrl=${redirectBackUrl}&${serachParams}`, { ...state })}>
+      <span onClick={() => history.push(`/digit-ui/employee/commonpt/new-application?redirectToUrl=${redirectBackUrl}&${serachParams}`, { ...state })}>
         <LinkButton label={t("CPT_CREATE_PROPERTY")} style={{ color: "#a82227", display: "inline-block" }} />
       </span>
       {propertyDetails && propertyDetails?.Properties.length ? (
@@ -178,7 +178,7 @@ const PropertySearchNSummary = ({ config, onSelect, userType, formData, setError
               />
             </div>
           </StatusTable>
-            <Link to={`/upyog-ui/employee/commonpt/view-property?propertyId=${propertyId}&tenantId=${tenantId}&from=${window.location.pathname?.includes("employee/ws/new-application") ? "ES_COMMON_WS_NEW_CONNECTION" : window.location.pathname?.includes("employee/ws/modify-application") ?"WS_MODIFY_CONNECTION_BUTTON": window.location.pathname?.includes("employee/tl/new-application")
+            <Link to={`/digit-ui/employee/commonpt/view-property?propertyId=${propertyId}&tenantId=${tenantId}&from=${window.location.pathname?.includes("employee/ws/new-application") ? "ES_COMMON_WS_NEW_CONNECTION" : window.location.pathname?.includes("employee/ws/modify-application") ?"WS_MODIFY_CONNECTION_BUTTON": window.location.pathname?.includes("employee/tl/new-application")
         ?"ES_TITLE_NEW_TRADE_LICESE_APPLICATION"
         :"WF_EMPLOYEE_NEWTL_RENEWAL_SUBMIT_BUTTON"}`}>
             <LinkButton label={t("CPT_COMPLETE_PROPERTY_DETAILS")} style={{ color: "#a82227", textAlign: "Left" }} />

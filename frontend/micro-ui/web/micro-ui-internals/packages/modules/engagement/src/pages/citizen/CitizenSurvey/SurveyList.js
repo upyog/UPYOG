@@ -1,4 +1,4 @@
-import { Header, Loader } from "@upyog/digit-ui-react-components";
+import { Header, Loader } from "@demodigit/digit-ui-react-components";
 import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
@@ -153,16 +153,16 @@ const SurveyList = () => {
 
 
   // const handleCardClick = (details) => {
-  //     history.push("/upyog-ui/citizen/engagement/surveys/fill-survey", details);
+  //     history.push("/digit-ui/citizen/engagement/surveys/fill-survey", details);
   // };
 
   //trying to implement like this-> If user already responded then open ShowSurvey
   const handleCardClick = (details) => {
     
     if (!details.hasResponded) {
-      history.push(`/upyog-ui/citizen/engagement/surveys/fill-survey?applicationNumber=${details?.code}&tenantId=${details?.tenantId}`, details);
+      history.push(`/digit-ui/citizen/engagement/surveys/fill-survey?applicationNumber=${details?.code}&tenantId=${details?.tenantId}`, details);
     } else {
-      history.push("/upyog-ui/citizen/engagement/surveys/show-survey", details);
+      history.push("/digit-ui/citizen/engagement/surveys/show-survey", details);
     }
   };
 

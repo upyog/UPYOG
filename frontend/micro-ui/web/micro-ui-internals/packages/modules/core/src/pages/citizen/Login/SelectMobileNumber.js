@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { CardText,Card, CardHeader,FormStep, CitizenConsentForm, Loader, CheckBox,ButtonSelector,TextInput ,OTPInput} from "@upyog/digit-ui-react-components";
+import { CardText,Card, CardHeader,FormStep, CitizenConsentForm, Loader, CheckBox,ButtonSelector,TextInput ,OTPInput} from "@demodigit/digit-ui-react-components";
 import {useLocation,useHistory } from "react-router-dom";
 const TYPE_LOGIN = { type: "login" };
 const DEFAULT_REDIRECT_URL = "/digit-ui/citizen";

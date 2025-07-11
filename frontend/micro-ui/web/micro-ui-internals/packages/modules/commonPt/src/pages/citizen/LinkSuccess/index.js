@@ -4,7 +4,7 @@ import {
   Row,
   StatusTable,
   SubmitBar,
-} from "@upyog/digit-ui-react-components";
+} from "@demodigit/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory, useParams } from "react-router-dom";
@@ -53,7 +53,7 @@ const PropertyLinkSuccess = ({ onSelect }) => {
             <SubmitBar
               submit={false}
               label={t("PT_PROPERTY_CREATE")}
-              onSubmit={() => history.push('/upyog-ui/citizen/commonPt/property/new-application')}
+              onSubmit={() => history.push('/digit-ui/citizen/commonPt/property/new-application')}
             />
           }
         </Card>

@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Header, ResponseComposer, Loader, Modal, Card, KeyNote, SubmitBar, CitizenInfoLabel } from "@upyog/digit-ui-react-components";
+import { Header, ResponseComposer, Loader, Modal, Card, KeyNote, SubmitBar, CitizenInfoLabel } from "@demodigit/digit-ui-react-components";
 import PropTypes from "prop-types";
 import { useHistory, Link, useLocation, useRouteMatch } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -7,7 +7,7 @@ import _ from "lodash";
 const TYPE_REGISTER = { type: "register" };
 const TYPE_LOGIN = { type: "login" };
 const DEFAULT_USER = "digit-user";
-const DEFAULT_REDIRECT_URL = "/upyog-ui/citizen";
+const DEFAULT_REDIRECT_URL = "/digit-ui/citizen";
 
 const PropertySearchResults = ({ template, header, actionButtonLabel, isMutation, onSelect, config, clearParams = () => {}, stateCode, redirectToUrl, searchQuery }) => {
   const { t } = useTranslation();
@@ -82,7 +82,7 @@ console.log("result",result)
   const history = useHistory();
 
   const proceedToPay = (data) => {
-    history.push(`/upyog-ui/citizen/payment/my-bills/PT/${data.property_id}`, { tenantId });
+    history.push(`/digit-ui/citizen/payment/my-bills/PT/${data.property_id}`, { tenantId });
   };
 
   if (paymentDetails.isLoading || result.isLoading) {
@@ -103,7 +103,7 @@ console.log("result",result)
       if (Number(data.total_due) > 0) {
         setShowModal(data);
       } else onSelect(config.key, { data, property });
-    } else history.push(`/upyog-ui/citizen/payment/my-bills/PT/${data.property_id}`, { tenantId });
+    } else history.push(`/digit-ui/citizen/payment/my-bills/PT/${data.property_id}`, { tenantId });
   };
 
 
@@ -176,15 +176,15 @@ console.log("arrarr",arr)
       
       if (!err) {
         // Redirect to props redirect url if exists else to link success page
-        let redirectUrl = '/upyog-ui/citizen/commonPt/property/link-success/'+record.property_id;
+        let redirectUrl = '/digit-ui/citizen/commonPt/property/link-success/'+record.property_id;
         if(redirectToUrl) {
           redirectUrl = redirectToUrl+'?propertyId='+record.property_id+'&tenantId='+tenantId;
         } 
 
-        history.replace(`/upyog-ui/citizen/commonPt/property/citizen-otp`, { from: getFromLocation(location.state, searchParams), mobileNumber: record.owner_mobile, redirectBackTo: redirectUrl });
+        history.replace(`/digit-ui/citizen/commonPt/property/citizen-otp`, { from: getFromLocation(location.state, searchParams), mobileNumber: record.owner_mobile, redirectBackTo: redirectUrl });
         return;
       } else {
-        history.push(`/upyog-ui/citizen/`, { from: getFromLocation(location.state, searchParams), data:data });
+        history.push(`/digit-ui/citizen/`, { from: getFromLocation(location.state, searchParams), data:data });
       }
     }
   };
@@ -248,7 +248,7 @@ console.log("arrarr",arr)
           <div>
             <p style={{ marginLeft: "16px", marginTop: "16px" }}>
               {t("PT_LOAD_MORE_MSG")}{" "}
-              <span className="link">{<Link to={`/upyog-ui/citizen/pt/property/search-results?mobileNumber=${mobileNumber || searchQuery.mobileNumber ?mobileNumber || searchQuery?.mobileNumber:""}&propertyIds=${propertyIds || searchQuery?.propertyIds ?propertyIds || searchQuery?.propertyIds:""}&oldPropertyIds=${oldPropertyIds || searchQuery?.oldPropertyIds?oldPropertyIds || searchQuery?.oldPropertyIds:""}&doorNo=${doorNo || searchQuery?.doorNo?doorNo || searchQuery?.doorNo:""}&name=${name || searchQuery?.name?name || searchQuery?.name:""}&city=${city?city:""}&locality=${locality || searchQuery?.locality?locality || searchQuery?.locality:""}&PToffset=${t1}`}>{t("PT_COMMON_CLICK_HERE")}</Link>}</span>
+              <span className="link">{<Link to={`/digit-ui/citizen/pt/property/search-results?mobileNumber=${mobileNumber || searchQuery.mobileNumber ?mobileNumber || searchQuery?.mobileNumber:""}&propertyIds=${propertyIds || searchQuery?.propertyIds ?propertyIds || searchQuery?.propertyIds:""}&oldPropertyIds=${oldPropertyIds || searchQuery?.oldPropertyIds?oldPropertyIds || searchQuery?.oldPropertyIds:""}&doorNo=${doorNo || searchQuery?.doorNo?doorNo || searchQuery?.doorNo:""}&name=${name || searchQuery?.name?name || searchQuery?.name:""}&city=${city?city:""}&locality=${locality || searchQuery?.locality?locality || searchQuery?.locality:""}&PToffset=${t1}`}>{t("PT_COMMON_CLICK_HERE")}</Link>}</span>
             </p>
           </div>
         )}

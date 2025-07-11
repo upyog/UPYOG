@@ -1,5 +1,5 @@
 import React from "react";
-import { Header, ResponseComposer, Loader } from "@upyog/digit-ui-react-components";
+import { Header, ResponseComposer, Loader } from "@demodigit/digit-ui-react-components";
 import PropTypes from "prop-types";
 import Axios from "axios";
 import { useHistory, Link, useLocation } from "react-router-dom";
@@ -15,7 +15,7 @@ const WNSMyBills = ({ template, header, actionButtonLabel }) => {
   let { tenantId } = Digit.UserService.getUser()?.info || location?.state || { tenantId: _tenantId } || {};
    tenantId = Digit.SessionStorage.get("CITIZEN.COMMON.HOME.CITY")?.code || Digit.UserService.getUser()?.info?.permanentCity || tenantId
   if (!tenantId && !location?.state?.fromSearchResults) {
-    history.replace(`/upyog-ui/citizen/login`, { from: url });
+    history.replace(`/digit-ui/citizen/login`, { from: url });
   }
   let filters = {};
   const { mobileNumber } = Digit.UserService.getUser()?.info || {};
@@ -37,7 +37,7 @@ const WNSMyBills = ({ template, header, actionButtonLabel }) => {
   }
 
   const onSubmit = (data) => {
-    history.push(`/upyog-ui/citizen/payment/my-bills/${data?.ConsumerNumber.split("/")[0]}/${stringReplaceAll(data?.ConsumerNumber,"/","+")}?workflow=WNS&tenantId=${tenantId}&ConsumerName=${data?.ConsumerName}`);
+    history.push(`/digit-ui/citizen/payment/my-bills/${data?.ConsumerNumber.split("/")[0]}/${stringReplaceAll(data?.ConsumerNumber,"/","+")}?workflow=WNS&tenantId=${tenantId}&ConsumerName=${data?.ConsumerName}`);
   };
 
   const payment = {};

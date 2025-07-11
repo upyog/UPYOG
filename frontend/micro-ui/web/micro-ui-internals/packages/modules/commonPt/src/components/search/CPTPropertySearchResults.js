@@ -1,4 +1,4 @@
-import { DetailsCard, Loader, Table } from "@upyog/digit-ui-react-components";
+import { DetailsCard, Loader, Table } from "@demodigit/digit-ui-react-components";
 import React, { memo, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { useLocation, useHistory } from "react-router-dom";
@@ -36,7 +36,7 @@ const SearchPTID = ({ tenantId, t, payload, showToast, setShowToast, ptSearchCon
                   onClick={() => {
                     //sessionStorage.setItem("propertyDetailsBC",JSON.stringify({...state}))
                     history.push(
-                      `/upyog-ui/employee/commonpt/view-property?propertyId=${row.original["propertyId"]}&tenantId=${tenantId}&redirectToUrl=${redirectToUrl}`,
+                      `/digit-ui/employee/commonpt/view-property?propertyId=${row.original["propertyId"]}&tenantId=${tenantId}&redirectToUrl=${redirectToUrl}`,
                       { ...state }
                     );
                   }}

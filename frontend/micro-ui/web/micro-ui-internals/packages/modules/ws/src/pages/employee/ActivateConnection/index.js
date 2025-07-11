@@ -1,4 +1,4 @@
-import { FormComposer, Header, Loader, Toast } from "@upyog/digit-ui-react-components";
+import { FormComposer, Header, Loader, Toast } from "@demodigit/digit-ui-react-components";
 import cloneDeep from "lodash/cloneDeep";
 import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
@@ -104,7 +104,7 @@ const ActivateConnection = () => {
 
     useEffect(() => {
         const timer = setTimeout(() => {
-            if (isAppDetailsPage) window.location.href = `${window.location.origin}/upyog-ui/employee/ws/application-details?applicationNumber=${filters?.applicationNumber}&service=${filters?.service}`
+            if (isAppDetailsPage) window.location.href = `${window.location.origin}/digit-ui/employee/ws/application-details?applicationNumber=${filters?.applicationNumber}&service=${filters?.service}`
         }, 3000);
         return () => clearTimeout(timer);
       }, [isAppDetailsPage]);
@@ -128,7 +128,7 @@ const ActivateConnection = () => {
 
     const closeToast = () => {
         setShowToast(null);
-        // history.push(`/upyog-ui/employee/ws/application-details?applicationNumber=${filters?.applicationNumber}&service=${filters?.service}`, {});
+        // history.push(`/digit-ui/employee/ws/application-details?applicationNumber=${filters?.applicationNumber}&service=${filters?.service}`, {});
     };
 
     const closeToastOfError = () => { setShowToast(null); };

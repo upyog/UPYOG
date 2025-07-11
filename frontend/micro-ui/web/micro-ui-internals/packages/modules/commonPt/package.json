@@ -1,5 +1,5 @@
 {
-  "name": "@upyog/digit-ui-module-commonpt",
+  "name": "@demodigit/digit-ui-module-commonpt",
   "version": "3.0.3",
   "license": "MIT",
   "description": "Digit PT Light weight Module",
@@ -19,7 +19,7 @@
     "react-router-dom": "5.3.0"
   },
   "dependencies": {
-    "@upyog/digit-ui-react-components": "3.0.1",
+    "@demodigit/digit-ui-react-components": "1.0.0",
     "microbundle-crl": "^0.13.11",
     "lodash.merge": "^4.6.2",
     "react": "17.0.2",

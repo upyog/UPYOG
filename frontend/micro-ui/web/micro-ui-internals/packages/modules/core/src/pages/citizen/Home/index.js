@@ -14,7 +14,7 @@ import {
   WhatsNewCard,
   OBPSIcon,
   WSICon,
-} from "@upyog/digit-ui-react-components";
+} from "@demodigit/digit-ui-react-components";
 
 import ChatBot from "./ChatBot";
 // import ChatBot from "frontend\micro-ui\web\micro-ui-internals\packages\react-components\src\atoms\ChatBot.js"

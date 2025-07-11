@@ -1,5 +1,5 @@
 
-import { ActionBar, SubmitBar } from "@upyog/digit-ui-react-components";
+import { ActionBar, SubmitBar } from "@demodigit/digit-ui-react-components";
 import {  Link } from "react-router-dom";
 import React from "react";
 
@@ -55,7 +55,7 @@ const NoSurveyFoundPage = ({t}) => {
         <h style={{color:"#505A5F", fontWeight:"400", fontFamily:"Roboto", marginLeft:"10%", lineHeight:"3"}}>{t("SURVEY_ENDED_MESSAGE")}</h>
         </div>
         <ActionBar>
-        <Link to={"/upyog-ui/citizen"}>
+        <Link to={"/digit-ui/citizen"}>
           <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} />
         </Link>
         </ActionBar>

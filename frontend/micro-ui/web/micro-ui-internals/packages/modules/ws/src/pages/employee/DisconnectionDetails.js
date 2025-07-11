@@ -1,6 +1,6 @@
 import React, { useEffect, useState, Fragment, useRef } from "react";
 import { useTranslation } from "react-i18next";
-import { Header, MultiLink } from "@upyog/digit-ui-react-components";
+import { Header, MultiLink } from "@demodigit/digit-ui-react-components";
 import ApplicationDetailsTemplate from "../../../../templates/ApplicationDetails";
 import * as func from "../../utils";
 import cloneDeep from "lodash/cloneDeep";
@@ -101,7 +101,7 @@ const GetDisconnectionDetails = () => {
 
   workflowDetails?.data?.actionState?.nextActions?.forEach((action) => {
     if (action?.action === "EDIT") {
-      let pathName = `/upyog-ui/employee/ws/edit-disconnection-application?applicationNumber=${applicationNumber}&service=${serviceType}`;
+      let pathName = `/digit-ui/employee/ws/edit-disconnection-application?applicationNumber=${applicationNumber}&service=${serviceType}`;
       const userConfig = servicesMasterData?.["ws-services-masters"]?.WSEditApplicationByConfigUser || [];
       const editApplicationUserRole = userConfig?.[0]?.roles || [];
       const mdmsApplicationStatus = userConfig?.[0]?.status;
@@ -112,7 +112,7 @@ const GetDisconnectionDetails = () => {
         else return true;
       })
       if (isFieldInspector && appStatus === mdmsApplicationStatus) {
-        pathName = `/upyog-ui/employee/ws/config-by-disconnection-application?applicationNumber=${applicationNumber}&service=${serviceType}`;
+        pathName = `/digit-ui/employee/ws/config-by-disconnection-application?applicationNumber=${applicationNumber}&service=${serviceType}`;
       }
       action.redirectionUrll = {
         action: "ACTIVATE_CONNECTION",
@@ -124,7 +124,7 @@ const GetDisconnectionDetails = () => {
       };
     }
     if (action?.action === "RESUBMIT_APPLICATION") {
-      let pathName = `/upyog-ui/employee/ws/resubmit-disconnection-application?applicationNumber=${applicationNumber}&service=${serviceType}`;
+      let pathName = `/digit-ui/employee/ws/resubmit-disconnection-application?applicationNumber=${applicationNumber}&service=${serviceType}`;
       action.redirectionUrll = {
         action: "ACTIVATE_CONNECTION",
         pathname: pathName,

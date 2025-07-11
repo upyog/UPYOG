@@ -1,5 +1,5 @@
 import React from "react";
-import { ActionLinks, CheckPoint } from "@upyog/digit-ui-react-components";
+import { ActionLinks, CheckPoint } from "@demodigit/digit-ui-react-components";
 import { Link } from "react-router-dom";
 import StarRated from "./StarRated";
 import { useTranslation } from "react-i18next";
@@ -15,7 +15,7 @@ const Rejected = ({ action, nextActions, complaintDetails, ComplainMaxIdleTime=3
       nextActions.map((action, index) => {
         if (action && action !== "COMMENT" && action !== "CANCEL") {
           return (
-            <Link key={index} to={`/upyog-ui/citizen/pgr/${action.toLowerCase()}/${serviceRequestId}`}>
+            <Link key={index} to={`/digit-ui/citizen/pgr/${action.toLowerCase()}/${serviceRequestId}`}>
               <ActionLinks>{t(`CS_COMMON_${action}`)}</ActionLinks>
             </Link>
           );
@@ -42,7 +42,7 @@ const Rejected = ({ action, nextActions, complaintDetails, ComplainMaxIdleTime=3
         if (action && (action !== "COMMENT")&& action !== "CANCEL" ) {
           if((action!== "REOPEN" || (action === "REOPEN" && (Date?.now() - complaintDetails?.service?.auditDetails?.lastModifiedTime) < ComplainMaxIdleTime)))
           return (
-            <Link key={index} to={`/upyog-ui/citizen/pgr/${action.toLowerCase()}/${serviceRequestId}`}>
+            <Link key={index} to={`/digit-ui/citizen/pgr/${action.toLowerCase()}/${serviceRequestId}`}>
               <ActionLinks>{t(`CS_COMMON_${action}`)}</ActionLinks>
             </Link>
           );

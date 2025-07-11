@@ -1,4 +1,4 @@
-import { Card, KeyNote, SubmitBar, Loader } from "@upyog/digit-ui-react-components";
+import { Card, KeyNote, SubmitBar, Loader } from "@demodigit/digit-ui-react-components";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
@@ -61,13 +61,13 @@ const WSApplication = ({ application }) => {
         },
        }}
       /> 
-      <Link to={`/upyog-ui/citizen/ws/connection/application/${encodeApplicationNo}`}>
+      <Link to={`/digit-ui/citizen/ws/connection/application/${encodeApplicationNo}`}>
         <SubmitBar label={t("WS_VIEW_DETAILS_LABEL")} />
       </Link>
       {application?.applicationStatus === "PENDING_FOR_PAYMENT"  ? (
             <Link
               to={{
-                pathname: `/upyog-ui/citizen/payment/my-bills/${
+                pathname: `/digit-ui/citizen/payment/my-bills/${
                   businessService
                 }/${application?.applicationNo?.includes("DC") ? (stringReplaceAll(application?.connectionNo, "/", "+") || stringReplaceAll(application?.connectionNo, "/", "+")) :
                   (stringReplaceAll(application?.applicationNo, "/", "+") ||
