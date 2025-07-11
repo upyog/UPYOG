@@ -1,4 +1,8 @@
 FROM upyogio/alpine-node-builder-14:yarn AS build
+
+RUN apk add --no-cache curl && \
+    curl -fsSL https://nodejs.org/dist/v14.20.0/node-v14.20.0-linux-x64.tar.xz | tar -xJ -C /usr/local --strip-components=1 --no-same-owner && \
+    node -v && npm -v
 #FROM ghcr.io/egovernments/alpine-node-builder-14:yarn AS build
 RUN apk update && apk upgrade
 RUN apk add --no-cache git>2.30.0
