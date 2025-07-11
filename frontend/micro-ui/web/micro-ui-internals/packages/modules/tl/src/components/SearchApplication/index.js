@@ -6,7 +6,7 @@ import { convertEpochToDateDMY } from  "../../utils";
 import SearchFields from "./SearchFields";
 import MobileSearchApplication from "./MobileSearchApplication";
 
-const SearchLicenseApplication = ({tenantId, t, onSubmit, data, count }) => {
+const SearchApplication = ({tenantId, t, onSubmit, data, count }) => {
   const initialValues = Digit.SessionStorage.get("SEARCH_APPLICATION_DETAIL")? {
     ...Digit.SessionStorage.get("SEARCH_APPLICATION_DETAIL"),
     offset: 0,
@@ -126,7 +126,7 @@ const SearchLicenseApplication = ({tenantId, t, onSubmit, data, count }) => {
                 {
                 t(data.display)
                     .split("\\n")
-                    ?.map((text, index) => (
+                    .map((text, index) => (
                     <p key={index} style={{ textAlign: "center" }}>
                         {text}
                     </p>
@@ -159,4 +159,4 @@ const SearchLicenseApplication = ({tenantId, t, onSubmit, data, count }) => {
         </React.Fragment>
 }
 
-export default SearchLicenseApplication
+export default SearchApplication

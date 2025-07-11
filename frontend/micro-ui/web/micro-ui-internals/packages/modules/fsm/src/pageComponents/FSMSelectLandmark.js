@@ -68,10 +68,10 @@ if (property !== "undefined")
         value={landmark}
         onChange={onChange}
         onSelect={(data) => onSelect(config.key, { ...formData[config.key], ...data })}
-        //onSkip={onSkip}
+        onSkip={onSkip}
         t={t}
         forcedError={t(error)}
-        isDisabled={false}
+        isDisabled={landmark ? false : true}
       ></FormStep>
     </React.Fragment>
   );

@@ -1,5 +1,5 @@
 .HomePageWrapper {
-  margin-top: -25px;
+  
 
   .BannerWithSearch {
     margin-bottom: 40px;
@@ -60,15 +60,15 @@
 @media (min-width: 780px) {
   .SideBarStatic {
     width: 219px;
-    background: #ffffff;
-    margin-top: -24px;
+    background: white;
+   
   }
 }
 @media (max-width: 780px) {
   .SideBarStatic {
     width: 219px;
-    background: #ffffff;
-    margin-top: -24px;
+    background: white;
+    
     display: none;
   }
 }

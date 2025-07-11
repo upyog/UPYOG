@@ -1,76 +1,67 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 
 function ChatBot() {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
-  // const [chatHistory,setChatHistory] = useState([])
-  const [isLoading, setIsLoading] = useState(false);
-
-  // Create a ref to track the bottom of messages container
-  const messagesEndRef = useRef(null);
-
-    // Function to scroll to bottom of messages
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
-
-  // Auto-scroll effect - triggers whenever messages array updates
-  useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
-
+  const [langID,setLangID] = useState("en")
+  const [accessToken,setAccessToken] = useState("NA")
   const toggleChatbot = () => {
     setIsOpen(!isOpen);
   };
-
-  const apiEndPoint = 'http://43.205.156.175:8000/chatbot';
 
   const handleMessageSend = async () => {
     if (input.trim() !== "") {
       setMessages([...messages, { sender: "user", text: input }]);
       setInput("");
-      setIsLoading(true);  // Show loading indicator while waiting for response
   
       try {
-        const response = await fetch(apiEndPoint, {
+        const response = await fetch('https://demo.mea-madad.in/chat', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ user_input: input }),
+          body: JSON.stringify({ message: input, chatHistory: messages, lang_id: langID, accessToken: accessToken }),
         });
-        console.log("Response from Await",response);
+        // console.log(body)
+  
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
   
         const data = await response.json();
         const botReply = data.response; 
-  
+        
+        if (data.access_token !== undefined) {
+          setAccessToken(data.access_token)
+        }
+        
         setTimeout(() => {
-          setIsLoading(false);
           setMessages((prevMessages) => [
             ...prevMessages,
-            { sender: "bot", text: botReply },
+            { sender: "bot", text: botReply, lang_id: langID },
           ]);
         }, 1000);
       } catch (error) {
         console.error("Error fetching response:", error);
         // Handle error or fallback message
         setTimeout(() => {
-          setIsLoading(false);
           setMessages((prevMessages) => [
             ...prevMessages,
-            { sender: "bot", text: "Sorry, I'm having trouble understanding you right now." },
+            { sender: "bot", text: "Sorry, I'm having trouble understanding you right now.", lang_id: langID },
           ]);
         }, 1000);
       }
     }
   };
+  
 
   const handleInputChange = (e) => {
     setInput(e.target.value);
+  };
+
+  const handleDropdown = (e) => {
+    setLangID(e.target.value)
   };
 
   const handleChatbotClose = () => {
@@ -82,7 +73,13 @@ function ChatBot() {
       setMessages([
         {
           sender: "bot",
-          text: "Welcome to UPYOG, I am an AI Chatbot, How may I be of assistance",
+          text: "Welcome to Ministry of External Affairs."
+          , lang_id: langID
+        },
+        {
+          sender: "bot",
+          text: "How may I assist you."
+          , lang_id: langID
         },
       ]);
     } else {
@@ -104,7 +101,7 @@ function ChatBot() {
         <button
           style={{
             position: "fixed",
-            bottom: "30px",
+            bottom: "20px",
             right: "20px",
             padding: "10px",
             fontSize: "16px",
@@ -156,7 +153,34 @@ function ChatBot() {
               alignItems: "center",
             }}
           >
-            <span>Connect With Us</span>
+            <span>MEA Sathi</span>
+    
+            <div style={{
+              backgroundColor: "#162f6a",
+              color: "white",
+              padding: "10px",
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}>
+            <div style={{
+              backgroundColor: "white",
+              color: "black",
+              padding: "10px",
+              paddingBottom: "5px",
+              paddingTop: "5px",
+              marginRight: "10px",
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              borderRadius: "10px",
+            }}>
+            <select value={langID} onChange={handleDropdown}>
+              <option value={"en"}>English</option>
+              <option value={"hi"} >Hindi</option>
+              <option value={"te"}>Telugu</option>
+            </select>
+            </div>
             <button
               onClick={handleChatbotClose}
               style={{
@@ -180,6 +204,7 @@ function ChatBot() {
                 />
               </svg>
             </button>
+              </div>
           </div>
           <div
             style={{
@@ -219,37 +244,6 @@ function ChatBot() {
                 </div>
               </div>
             ))}
-            {/* Loading Indicator
-            - Shows three animated dots when isLoading is true
-            - Uses CSS modules for styling
-            - Appears in same style as bot messages for consistency */}
-            {isLoading && (
-              <div style={{ display: "flex", justifyContent: "flex-start", marginBottom: "10px" }}>
-                <div
-                  style={{
-                    maxWidth: "70%",
-                    padding: "10px",
-                    borderRadius: "10px",
-                    backgroundColor: "#e4e6eb",
-                    color: "black",
-                  }}
-                >{/**
-                Each span tag represents one of the three animated dots (...) in the loading indicator. 
-                We use three separate spans because each dot needs to animate independently to 
-                create that nice wave-like motion effect. */}
-                  <div className="typing_indicator">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                  </div>
-                </div>
-              </div>
-            )}
-            {/* Invisible div for auto-scrolling
-            - Referenced by messagesEndRef
-            - Used as target for scrollIntoView
-            - Placed at bottom of message container */}
-            <div ref={messagesEndRef} />
           </div>
           <div
             style={{

@@ -3,7 +3,7 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 
-const TLMyApplications = ({ view }) => {
+const MyApplications = ({ view }) => {
   const { t } = useTranslation();
 
   const { mobileNumber, tenantId } = Digit.UserService.getUser()?.info || {};
@@ -33,8 +33,8 @@ const TLMyApplications = ({ view }) => {
           <div>
             <Card>
               {Object.keys(application)
-                ?.filter((e) => e !== "raw" && application[e] !== null)
-                ?.map((item) => (
+                .filter((e) => e !== "raw" && application[e] !== null)
+                .map((item) => (
                   <KeyNote keyValue={t(item)} note={t(application[item])} />
                 ))}
               <Link to={`/digit-ui/citizen/tl/tradelicence/application/${application?.raw?.applicationNumber}/${application.raw?.tenantId}`}>
@@ -57,4 +57,4 @@ const TLMyApplications = ({ view }) => {
     </React.Fragment>
   );
 };
-export default TLMyApplications;
+export default MyApplications;

@@ -17,7 +17,6 @@ import {
   DropIcon,
   CollectionsBookmarIcons,
   FinanceChartIcon,
-  PTRIcon,
 } from "./svgindex";
 
 const IconsObject = {
@@ -43,7 +42,6 @@ const IconsObject = {
   "insert-chart": <FinanceChartIcon />,
   edcr: <CollectionIcon />,
   collections: <CollectionIcon />,
-  PTRIcon: <PTRIcon />,
 };
 const SubMenu = ({ item, t, isEmployee }) => {
   const [subnav, setSubnav] = useState(false);

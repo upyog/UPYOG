@@ -82,30 +82,15 @@ const SelectTrips = ({ t, config, onSelect, formData = {}, userType, styles, FSM
   }
   //console.log(formdata)
   function setValue(value, input) {
-    value && input && onSelect(config.key, { ...formData[config.key], [input]: value });
+    onSelect(config.key, { ...formData[config.key], [input]: value });
   }
-
   useEffect(() => {
     (async () => {
       if (formData?.tripData?.vehicleType !== vehicle) {
         setVehicle({ label: formData?.tripData?.vehicleType?.capacity });
       }
 
-      if (
-        formData?.address?.propertyLocation?.code === "FROM_GRAM_PANCHAYAT" &&
-        formData.tripData.noOfTrips &&
-        formData.tripData.amountPerTrip
-      ) {
-        setValue({
-          amount: formData.tripData.amountPerTrip * formData.tripData.noOfTrips,
-        });
-      } else if (
-        formData?.propertyType &&
-        formData?.subtype &&
-        formData?.address &&
-        formData?.tripData?.vehicleType?.capacity &&
-        formData?.address?.propertyLocation?.code === "WITHIN_ULB_LIMITS"
-      ) {
+      if (formData?.propertyType && formData?.subtype && formData?.address && formData?.tripData?.vehicleType?.capacity) {
         const capacity = formData?.tripData?.vehicleType.capacity;
         const { slum: slumDetails } = formData.address;
         const slum = slumDetails ? "YES" : "NO";
@@ -117,13 +102,10 @@ const SelectTrips = ({ t, config, onSelect, formData = {}, userType, styles, FSM
 
         const billSlab = billingDetails?.billingSlab?.length && billingDetails?.billingSlab[0];
         if (billSlab?.price || billSlab?.price === 0) {
-          // setValue({
-          //   amountPerTrip: billSlab.price,
-          //   amount: billSlab.price * formData.tripData.noOfTrips,
-          // });
-          // onSelect(config.key, { ...formData[config.key], amount: amount, amountPerTrip: billSlab.price });
-          setValue(billSlab.price,"amountPerTrip");
-          setValue(billSlab.price * formData.tripData.noOfTrips,"amount");
+          setValue({
+            amountPerTrip: billSlab.price,
+            amount: billSlab.price * formData.tripData.noOfTrips,
+          });
           setError(false);
         } else {
           setValue({
@@ -134,9 +116,8 @@ const SelectTrips = ({ t, config, onSelect, formData = {}, userType, styles, FSM
         }
       }
     })();
-  }, [formData?.propertyType, formData?.subtype, formData?.address, formData?.tripData?.vehicleType?.capacity, formData?.tripData?.noOfTrips, formData?.address?.propertyLocation?.code]);
+  }, [formData?.propertyType, formData?.subtype, formData?.address, formData?.tripData?.vehicleType?.capacity, formData?.tripData?.noOfTrips]);
 
-  // console.log(formData,"formData 1111111111")
   return isVehicleMenuLoading && isDsoLoading ? (
     <Loader />
   ) : (

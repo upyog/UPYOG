@@ -89,7 +89,6 @@ const EditVendor = ({ parentUrl, heading }) => {
 
   const onSubmit = (data) => {
     const name = data?.vendorName;
-    const phone = data?.phone;
     const pincode = data?.pincode;
     const street = data?.street?.trim();
     const doorNo = data?.doorNo?.trim();
@@ -142,7 +141,6 @@ const EditVendor = ({ parentUrl, heading }) => {
           gender: gender || dsoDetails.owner?.gender || "OTHER",
           dob: dob,
           emailId: emailId || "abc@egov.com",
-          mobileNumber: phone,
           relationship: dsoDetails.owner?.relationship || "OTHER",
         },
         additionalDetails: {

@@ -142,13 +142,13 @@ const WSApplicationDetails = () => {
   const wsEstimateDownloadObject = {
     order: 1,
     label: t("WS_ESTIMATION_NOTICE"),
-    onClick: () => data?.WaterConnection?.[0] ? getFiles([data?.WaterConnection?.[0]?.additionalDetails?.estimationFileStoreId], tenantId) : getFiles([data?.SewerageConnections?.[0]?.additionalDetails?.estimationFileStoreId], tenantId),
+    onClick: () => data?.WaterConnection?.[0] ? getFiles([data?.WaterConnection?.[0]?.additionalDetails?.estimationFileStoreId], stateCode) : getFiles([data?.SewerageConnections?.[0]?.additionalDetails?.estimationFileStoreId], stateCode),
   };
 
   const sanctionDownloadObject = {
     order: 2,
     label: t("WS_SANCTION_LETTER"),
-    onClick: () => data?.WaterConnection?.[0] ? getFiles([data?.WaterConnection?.[0]?.additionalDetails?.sanctionFileStoreId], tenantId) : getFiles([data?.SewerageConnections?.[0]?.additionalDetails?.sanctionFileStoreId], tenantId),
+    onClick: () => data?.WaterConnection?.[0] ? getFiles([data?.WaterConnection?.[0]?.additionalDetails?.sanctionFileStoreId], stateCode) : getFiles([data?.SewerageConnections?.[0]?.additionalDetails?.sanctionFileStoreId], stateCode),
   };
 
   const applicationDownloadObject = {
@@ -229,12 +229,8 @@ let serviceType = data && data?.WaterConnection?.[0] ? "WATER" : "SEWERAGE";
   //const application = data?.Properties[0];
   sessionStorage.setItem("ApplicationNoState", applicationNobyData);
   return (
-    <React.Fragment>     
-      <div className="cardHeaderWithOptions" style={{ marginRight: "auto", maxWidth: "960px" }}>
-        <Header>{t("WS_APPLICATION_DETAILS_HEADER")}</Header>
-        <div style={{zIndex: "10",display:"flex",flexDirection:"row-reverse",alignItems:"center",marginTop:"-25px"}}>
-       
-        {downloadOptions && downloadOptions.length > 0 && (
+    <React.Fragment>
+      {downloadOptions && downloadOptions.length > 0 && (
         <div ref={menuRef}>
         <MultiLink
         className="multilinkWrapper"
@@ -245,7 +241,10 @@ let serviceType = data && data?.WaterConnection?.[0] ? "WATER" : "SEWERAGE";
         />
         </div>        
         )}
-        <LinkButton label={t("VIEW_TIMELINE")} style={{ color:"#A52A2A"}} onClick={handleViewTimeline}></LinkButton>
+      <div className="cardHeaderWithOptions" style={{ marginRight: "auto", maxWidth: "960px" }}>
+        <Header>{t("WS_APPLICATION_DETAILS_HEADER")}</Header>
+        <div style={{display:"flex", alignItems:"center", color:"#A52A2A"}}>
+        <LinkButton label={t("VIEW_TIMELINE")} onClick={handleViewTimeline}></LinkButton>
         </div>
       </div>
       {checkifPrivacyenabled && <WSInfoLabel t={t} /> }

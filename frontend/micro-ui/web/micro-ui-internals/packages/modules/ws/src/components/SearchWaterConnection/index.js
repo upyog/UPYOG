@@ -225,7 +225,7 @@ const SearchWaterConnection = ({ tenantId, onSubmit, data, count, resultOk, busi
         disableSortBy: true,
         Cell: ({ row }) => {
           return GetCell(generateDemand1(row))
-            //return (<div style={{cursor :"pointer", color :"#a82227"}}>{t(`${"WS_COMMON_COLLECT_DEMAND"}`)} </div>)
+            //return (<div style={{cursor :"pointer", color :"#162f6a"}}>{t(`${"WS_COMMON_COLLECT_DEMAND"}`)} </div>)
           } 
       },
     ],

@@ -17,7 +17,7 @@ const transformDate = (date) => {
 ]
     return {
         day,
-        date:date?`${monthNames[month-1]} ${year}`:date
+        date:`${monthNames[month-1]} ${year}`
     }
     // return (<p>
     //     <strong>{`${monthNames[month-1]} ${year} ${day}`}</strong>
@@ -179,20 +179,20 @@ const displayResult = (ques,ans,type,resCount=0,t) => {
         }
     }
 
-const SurveyResultsView = ({surveyInfo,selecedSurveyresults}) => {
+const SurveyResultsView = ({surveyInfo,responsesInfoMutation}) => {
     
     const { t } = useTranslation();
     const [data,setData]=useState(null);
     const [userInfo,setUserInfo] = useState({})
     const tenant = Digit.ULBService.getCurrentTenantId();
     useEffect( async() => {
-        if(selecedSurveyresults?.answers?.length){
-        const dp = bindQuesWithAns(surveyInfo?.questions,selecedSurveyresults.answers)
+        if(responsesInfoMutation.isSuccess){
+        const dp = bindQuesWithAns(surveyInfo?.questions,responsesInfoMutation.data.answers)
         setData(dp)
-        const ue = await getUserData(selecedSurveyresults.answers,tenant.split(".")[0])
+        const ue = await getUserData(responsesInfoMutation.data.answers,tenant.split(".")[0])
         setUserInfo(ue);
         }
-    },[selecedSurveyresults])
+    },[responsesInfoMutation])
 
     //    const dp = bindQuesWithAns(surveyInfo?.questions,responsesInfoMutation.data.answers);
     //    setData(dp)    
@@ -201,7 +201,7 @@ const SurveyResultsView = ({surveyInfo,selecedSurveyresults}) => {
     const generateExcelObj = (ques,ans) => {
 
         const countResponses = parseInt(ans.length/ques.length)
-        const dp = bindQuesWithAns(surveyInfo?.questions, selecedSurveyresults.answers)
+        const dp = bindQuesWithAns(surveyInfo?.questions, responsesInfoMutation.data.answers)
         
         const result = []
         //now in a loop fill all the sampleObj (3 times) and use it to download report
@@ -232,11 +232,11 @@ const SurveyResultsView = ({surveyInfo,selecedSurveyresults}) => {
     }
 
     const handleReportDownload = () => {
-        const result = generateExcelObj(surveyInfo?.questions, selecedSurveyresults.answers)
-        return Digit.Download.Excel(result, selecedSurveyresults.Service[0].referenceId);
+        const result = generateExcelObj(surveyInfo?.questions, responsesInfoMutation.data.answers)
+        return Digit.Download.Excel(result, responsesInfoMutation.data.title);
     }
 
-    // if(!data) return <Loader />
+    if(!data) return <Loader />
     
     return (
     <div className="custom-group-merge-container">

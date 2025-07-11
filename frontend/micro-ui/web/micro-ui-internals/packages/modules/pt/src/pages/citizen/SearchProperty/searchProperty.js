@@ -39,8 +39,8 @@ const SearchProperty = ({ config: propsConfig, onSelect }) => {
   useEffect(() => {
     if ( !(searchData?.filters?.mobileNumber && Object.keys(searchData?.filters)?.length == 1) && 
       propertyData?.Properties.length > 0 &&
-      ptSearchConfig?.maxResultValidation &&
-      propertyData?.Properties.length > ptSearchConfig?.maxPropertyResult &&
+      ptSearchConfig.maxResultValidation &&
+      propertyData?.Properties.length > ptSearchConfig.maxPropertyResult &&
       !errorShown
     ) {
       setShowToast({ error: true, warning: true, label: "ERR_PLEASE_REFINED_UR_SEARCH" });
@@ -165,7 +165,7 @@ const SearchProperty = ({ config: propsConfig, onSelect }) => {
               {"  "}
               <InfoBannerIcon fill="#0b0c0c" />
               <span className="tooltiptext" style={{ width: "150px", left: "230%", fontSize:"14px" }}>
-                {t(property.description) + " " + "PG-PT-xxxx-xxxxxx"}
+                {t(property.description) + " " + ptSearchConfig?.propertyIdFormat}
               </span>
             </div>
           ),
@@ -313,9 +313,9 @@ const SearchProperty = ({ config: propsConfig, onSelect }) => {
 
   const onPropertySearch = async (data) => {
     if (
-      ptSearchConfig?.maxResultValidation &&
+      ptSearchConfig.maxResultValidation &&
       propertyData?.Properties.length > 0 &&
-      propertyData?.Properties.length > ptSearchConfig?.maxPropertyResult &&
+      propertyData?.Properties.length > ptSearchConfig.maxPropertyResult &&
       errorShown
     ) {
       seterrorShown(true);
@@ -375,9 +375,6 @@ const SearchProperty = ({ config: propsConfig, onSelect }) => {
     delete tempObject.addParam;
     delete tempObject.addParam1;
     delete tempObject.city;
-    if(action == 1 && tempObject?.oldPropertyId){
-      delete tempObject.oldPropertyId;
-    }
     setSearchData({ city: city, filters: tempObject });
     return;
   };
@@ -409,7 +406,7 @@ const SearchProperty = ({ config: propsConfig, onSelect }) => {
     return <Loader />;
   }
 
-  let validation = ptSearchConfig?.maxResultValidation && !(searchData?.filters?.mobileNumber && Object.keys(searchData?.filters)?.length == 1)   ? propertyData?.Properties.length<ptSearchConfig?.maxPropertyResult && (showToast == null || (showToast !== null && !showToast?.error)) : true;
+  let validation = ptSearchConfig.maxResultValidation && !(searchData?.filters?.mobileNumber && Object.keys(searchData?.filters)?.length == 1)   ? propertyData?.Properties.length<ptSearchConfig.maxPropertyResult && (showToast == null || (showToast !== null && !showToast?.error)) : true;
 
   if (propertyData && !propertyDataLoading && !error && validation ) {
     let qs = {};
@@ -420,7 +417,7 @@ const SearchProperty = ({ config: propsConfig, onSelect }) => {
       searchData?.filters?.locality &&
       propertyDataLoading &&
       propertyDataLoading?.Properties?.length &&
-      propertyDataLoading.Properties.length > ptSearchConfig?.ptSearchCount
+      propertyDataLoading.Properties.length > ptSearchConfig.ptSearchCount
     ) {
       !showToast && setShowToast({ error: true, label: "PT_MODIFY_SEARCH_CRITERIA" });
     } else if (propsConfig.action === "MUTATION") {

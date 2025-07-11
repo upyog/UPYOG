@@ -4,9 +4,13 @@ import React from "react";
 export const configPTRApproverApplication = ({
   t,
   action,
+  approvers,
+  selectedApprover,
+  setSelectedApprover,
   selectFile,
   uploadedFile,
   setUploadedFile,
+  assigneeLabel,
   businessService,
 }) => {
   return {

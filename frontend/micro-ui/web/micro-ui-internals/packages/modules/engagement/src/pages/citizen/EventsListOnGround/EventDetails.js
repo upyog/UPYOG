@@ -31,7 +31,7 @@ const EventDetails = () => {
 
   if (EventsDataLoading) return <Loader />;
   return (
-    <div className="CitizenEngagementNotificationWrapper">
+    <div className="CitizenEngagementNotificationWrapper" style={{overflow:"scroll",height:"100%"}}>
       <Header>{t("ES_TITLE_APPLICATION_DETAILS")}</Header>
       <OnGroundEventCard {...onGroundEventCardPropsForEventDetails(FilteredEventForThisPage)} />
       <div className="OnGroundEventDetailsCard">

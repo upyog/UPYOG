@@ -10,7 +10,7 @@ import GenericChart from "./GenericChart";
 import MetricChart from "./MetricChart";
 import MetricChartNew from "./MetricChartNew";
 import Summary from "./Summary";
-
+import LeafletMap from "./MapComponentNew"
 let index = 1;
 
 const showCustomLabel = (title, t) => {
@@ -27,7 +27,7 @@ const Layout = ({ rowData, forHome = false, services, configName }) => {
   const { value } = useContext(FilterContext);
   const [searchQuery, onSearch] = useState("");
   const [chip, updateChip] = useState({});
-  const moduleCode = services?.filter((e) => configName?.includes(e.name))?.[0]?.code;
+  const moduleCode = services.filter((e) => configName?.includes(e.name))?.[0]?.code;
   const renderChart = (chart, title, moduleCode) => {
     switch (chart.chartType) {
       case "table":
@@ -52,7 +52,10 @@ const Layout = ({ rowData, forHome = false, services, configName }) => {
         );
       case "bar":
         return <CustomHorizontalBarChart data={chart} title={title} yAxisLabel={showCustomLabel(title, t)} moduleCode={moduleCode} />;
-      default:
+        case "map":
+          return <LeafletMap />;
+        
+        default:
         return null;
     }
   };
@@ -133,6 +136,7 @@ const Layout = ({ rowData, forHome = false, services, configName }) => {
     });
     updateChip({ ...chipData });
   }, []);
+  console.log("rowData",rowData)
   return (
     <div className="chart-row">
       {rowData.vizArray.map(

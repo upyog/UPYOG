@@ -79,9 +79,9 @@ const BpaApplicationDetail = () => {
        response = { filestoreIds: [payments?.fileStoreId] };      
     }
     else{
-       response = await Digit.PaymentService.generatePdf(stateId, { Payments: [{...payments}] }, "bpa-receipt");
+       response = await Digit.PaymentService.generatePdf(tenantId, { Payments: [{...payments}] }, "bpa-receipt");
     }    
-    const fileStore = await Digit.PaymentService.printReciept(stateId, { fileStoreIds: response.filestoreIds[0] });
+    const fileStore = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: response.filestoreIds[0] });
     window.open(fileStore[response?.filestoreIds[0]], "_blank");
   }
 
@@ -321,22 +321,18 @@ const BpaApplicationDetail = () => {
   return (
     <Fragment>
       <div className={"employee-main-application-details"}>
-      <div className={"employee-application-detailsNew"} style={{marginBottom: "15px",height:"auto !important", maxHeight:"none !important"}}>
+      <div className={"employee-application-details"} style={{marginBottom: "15px"}}>
         <Header styles={{marginLeft:"0px", paddingTop: "10px", fontSize: "32px"}}>{t("CS_TITLE_APPLICATION_DETAILS")}</Header>
-        <div style={{zIndex: "10",display:"flex",flexDirection:"row-reverse",alignItems:"center",marginTop:"-25px"}}>
-               
-        <div style={{zIndex: "10",  position: "relative"}}>
-        {dowloadOptions && dowloadOptions.length>0 && <MultiLink                
-          className="multilinkWrapper"
+        <LinkButton label={t("VIEW_TIMELINE")} onClick={handleViewTimeline}></LinkButton>
+        {dowloadOptions && dowloadOptions.length>0 && <MultiLink
+          className="multilinkWrapper employee-mulitlink-main-div"
           onHeadClick={() => setShowOptions(!showOptions)}
           displayOptions={showOptions}
           options={dowloadOptions}
           downloadBtnClassName={"employee-download-btn-className"}
           optionsClassName={"employee-options-btn-className"}
-          />}  
-        </div>     
-        <LinkButton label={t("VIEW_TIMELINE")} style={{ color:"#A52A2A"}} onClick={handleViewTimeline}></LinkButton>
-        </div>
+        />}
+      </div>
       {data?.applicationData?.status === "FIELDINSPECTION_INPROGRESS" && (userInfo?.info?.roles.filter(role => role.code === "BPA_FIELD_INSPECTOR")).length>0 && <FormComposer
         heading={t("")}
         isDisabled={!canSubmit}
@@ -376,7 +372,6 @@ const BpaApplicationDetail = () => {
         statusAttribute={"state"}
         timelineStatusPrefix={`WF_${workflowDetails?.data?.applicationBusinessService ? workflowDetails?.data?.applicationBusinessService : data?.applicationData?.businessService}_`}
       />
-      </div>
       </div>
     </Fragment>
   )

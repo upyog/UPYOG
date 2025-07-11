@@ -56,6 +56,7 @@ const MutationForm = ({ applicationData, tenantId }) => {
       data?.originalData?.documents?.filter(
         (oldDoc) => !mutationDocs?.PropertyTax?.MutationDocuments.some((mut) => oldDoc.documentType.includes(mut.code))
       ) || [];
+      console.log("data",data)
     const submitData = {
       Property: {
         ...data.originalData,
@@ -98,37 +99,6 @@ const MutationForm = ({ applicationData, tenantId }) => {
           isPropertyUnderGovtPossession: additionalDetails?.isPropertyUnderGovtPossession?.code,
           documentDate: new Date(additionalDetails?.documentDate).getTime(),
           marketValue: Number(additionalDetails?.marketValue),
-          owners: [
-            ...data.originalData?.owners?.map((e) => ({
-              ...e,
-              landlineNumber: data.owners[0].altContactNumber,
-              altContactNumber: data.owners[0].altContactNumber,
-              status: "INACTIVE",
-            })),
-            ...data.owners.map((owner,index) => {
-              let obj = {};
-              let gender = owner.gender.code;
-              let ownerType = owner.ownerType.code;
-              let relationship = owner.relationship.code;
-              let additionalDetails= {ownerSequence:index, ownerName:owner?.name}
-              obj.documents = [data?.documents?.documents?.find((e) => e.documentType?.includes("OWNER.IDENTITYPROOF"))];
-              if (owner.documents) {
-                let { documentUid, documentType } = owner.documents;
-                obj.documents = [...obj.documents, { documentUid, documentType: documentType.code, fileStoreId: documentUid }];
-              }
-              return {
-                ...owner,
-                gender,
-                ownerType,
-                relationship,
-                inistitutetype: owner?.institution?.type?.code,
-                landlineNumber: owner?.altContactNumber,
-                ...obj,
-                status: "ACTIVE",
-                additionalDetails
-              };
-            }),
-          ],
         },
         ownershipCategory: data.ownershipCategory.code,
         documents: [
@@ -150,9 +120,7 @@ const MutationForm = ({ applicationData, tenantId }) => {
         type: data.owners[0].institution.type.code,
       };
     }
-    else {
-      submitData.Property.institution=null;
-    }
+
     history.replace("/digit-ui/employee/pt/response", { Property: submitData.Property, key: "UPDATE", action: "SUBMIT" });
   };
 

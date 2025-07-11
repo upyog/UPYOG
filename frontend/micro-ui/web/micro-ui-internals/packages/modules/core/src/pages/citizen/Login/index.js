@@ -10,7 +10,7 @@ import { subYears, format } from "date-fns";
 const TYPE_REGISTER = { type: "register" };
 const TYPE_LOGIN = { type: "login" };
 const DEFAULT_USER = "digit-user";
-const DEFAULT_REDIRECT_URL = "/digit-ui/citizen";
+const DEFAULT_REDIRECT_URL = "/digit-ui/citizen/pgr-home";
 
 /* set citizen details to enable backward compatiable */
 const setCitizenDetail = (userObject, token, tenantId) => {
@@ -45,7 +45,47 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
   const [canSubmitName, setCanSubmitName] = useState(false);
   const [canSubmitOtp, setCanSubmitOtp] = useState(true);
   const [canSubmitNo, setCanSubmitNo] = useState(true);
-
+  let selectedCity = {
+    "i18nKey": "TENANT_TENANTS_PG_CITYA",
+    "code": "pg.citya",
+    "name": "India",
+    "description": "India",
+    "pincode": [
+        143001,
+        143002,
+        143003,
+        143004,
+        143005
+    ],
+    "logoId": "https://in-egov-assets.s3.ap-south-1.amazonaws.com/in.citya/logo.png",
+    "imageId": null,
+    "domainUrl": "https://www.upyog.niua.org",
+    "type": "CITY",
+    "twitterUrl": null,
+    "facebookUrl": null,
+    "emailId": "citya@gmail.com",
+    "OfficeTimings": {
+        "Mon - Fri": "9.00 AM - 6.00 PM"
+    },
+    "city": {
+        "name": "India",
+        "localName": null,
+        "districtCode": "CITYA",
+        "districtName": null,
+        "districtTenantCode": "pg.citya",
+        "regionName": null,
+        "ulbGrade": "Municipal Corporation",
+        "longitude": 75.5761829,
+        "latitude": 31.3260152,
+        "shapeFileLocation": null,
+        "captcha": null,
+        "code": "IN",
+        "ddrName": "DDR A"
+    },
+    "address": "India Municipal Corporation",
+    "contactNumber": "001-2345876"
+}
+  Digit.SessionStorage.set("CITIZEN.COMMON.HOME.CITY", selectedCity);
   useEffect(() => {
     let errorTimeout;
     if (error) {
@@ -93,7 +133,7 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
     )
   );
 
-  const getUserType = () => "citizen";
+  const getUserType = () => Digit.UserService.getType();
 
   const handleOtpChange = (otp) => {
     setParmas({ ...params, otp });
@@ -110,7 +150,7 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
     const data = {
       ...mobileNumber,
       tenantId: stateCode,
-      userType: "citizen",
+      userType: getUserType(),
     };
     if (isUserRegistered) {
       const [res, err] = await sendOtp({ otp: { ...data, ...TYPE_LOGIN } });
@@ -183,7 +223,8 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
     try {
       setIsOtpValid(true);
       setCanSubmitOtp(false);
-      const { mobileNumber, otp, name } = params;
+      const { mobileNumber, otp, name,username, password,email,passportNumber,gender,address,dob} = params;
+      console.log("paramsparams",isUserRegistered,params)
       if (isUserRegistered) {
         const requestData = {
           username: mobileNumber ? mobileNumber:sessionStorage.getItem("userName"),
@@ -207,13 +248,22 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
 
         setUser({ info, ...tokens });
       } else if (!isUserRegistered) {
-        const requestData = {
-          name,
-          username: mobileNumber,
-          otpReference: otp,
-          tenantId: stateCode,
-        };
+        let dobNew=dob.split("-")
 
+        const requestData = {
+        otpReference: otp,
+        username: username,
+        password: password,
+        mobileNumber: mobileNumber,
+        name: name,
+        emailId: email,
+        passportNo: passportNumber,
+        tenantId: "pg",
+        permanentCity: "pg",
+        permanentAddress:address,
+        gender:"Male",
+        dob:dobNew[2]+"/"+dobNew[1]+"/"+dobNew[0]
+        };
         const { ResponseInfo, UserRequest: info, ...tokens } = await Digit.UserService.registerUser(requestData, stateCode);
 
         if (window?.globalConfigs?.getConfig("ENABLE_SINGLEINSTANCE")) {
@@ -252,15 +302,15 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
   };
 
   return (
-    <div className="citizen-form-wrapper">
+    <div className="citizen-form-wrapper" style={{width:"100%",marginTop:"0px",paddingLeft:"0px",paddingRight:"0px",height:"inherit"}}>
       <Switch>
-        <AppContainer>
-          <BackButton />
+        <AppContainer style={{height: "calc(100% + 25px)"}}>
+          <BackButton /> 
           <Route path={`${path}`} exact>
             <SelectMobileNumber
               onSelect={selectMobileNumber}
               config={stepItems[0]}
-              mobileNumber={params.mobileNumber || ""}
+              mobileNumber={params?.mobileNumber || ""}
               onMobileChange={handleMobileChange}
               canSubmit={canSubmitNo}
               showRegisterLink={isUserRegistered && !location.state?.role}
@@ -269,11 +319,11 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
           </Route>
           <Route path={`${path}/otp`}>
             <SelectOtp
-              config={{ ...stepItems[1], texts: { ...stepItems[1].texts, cardText: `${stepItems[1].texts.cardText} ${params.mobileNumber || ""}` } }}
+              config={{ ...stepItems[1], texts: { ...stepItems[1].texts, cardText: `${stepItems[1].texts.cardText} ${params?.mobileNumber || ""}` } }}
               onOtpChange={handleOtpChange}
               onResend={resendOtp}
               onSelect={selectOtp}
-              otp={params.otp}
+              otp={params?.otp}
               error={isOtpValid}
               canSubmit={canSubmitOtp}
               t={t}

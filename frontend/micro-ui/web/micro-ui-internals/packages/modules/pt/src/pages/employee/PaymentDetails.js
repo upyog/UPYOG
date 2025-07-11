@@ -22,7 +22,6 @@ const convertEpochToDate = dateEpoch => {
 // };
 const printReciept = async (tenantId, payments) => { 
   console.log("payments",payments)
-  const stateTenant = Digit.ULBService.getStateId();
   let response = { filestoreIds: [payments?.fileStoreId] };
   if (!payments?.fileStoreId) {
     let assessmentYear="",assessmentYearForReceipt="";
@@ -210,9 +209,9 @@ taxArray.push(taxRow);
           }
     payments.paymentDetails[0].additionalDetails=details;   
         }
-    response = await Digit.PaymentService.generatePdf(stateTenant, { Payments: [{ ...payments }] }, "property-receipt");
+    response = await Digit.PaymentService.generatePdf(tenantId, { Payments: [{ ...payments }] }, "property-receipt");
   }
-  const fileStore = await Digit.PaymentService.printReciept(stateTenant, { fileStoreIds: response.filestoreIds[0] });
+  const fileStore = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: response.filestoreIds[0] });
   window.open(fileStore[response?.filestoreIds[0]], "_blank");
 };
 const getFormattedDate = (date) => {

@@ -81,26 +81,8 @@ const SelectStreet = ({ t, config, onSelect, userType, formData, formState, setE
   };
 
   useEffect(() => {
-    if(window.location.href.includes("employee/tl/") && formData?.cpt?.details)
-    {
-      setValue("doorNo", formData?.cpt?.details?.address?.doorNo);
-      setValue("street", formData?.cpt?.details?.address?.street);
-    }
-  },[formData])
-  
-  useEffect(() => {
     trigger();
   }, []);
-
-  useEffect(()=>{
-    if(formData?.address?.doorNo) setDoorNo(formData?.address?.doorNo)
-    if(formData?.address?.street) setStreet(formData?.address?.street)
-  },[formData?.address])
-
-  useEffect(() => {
-    if (formData?.address?.doorNo) setDoorNo(formData?.address?.doorNo);
-    if (formData?.address?.street) setStreet(formData?.address?.street);
-  }, [formData?.address]);
 
   useEffect(() => {
     if (formData?.address?.doorNo) setDoorNo(formData?.address?.doorNo);
@@ -220,8 +202,7 @@ const SelectStreet = ({ t, config, onSelect, userType, formData, formState, setE
         _defaultValues={{ street: formData?.address.street, doorNo: formData?.address.doorNo }}
         onChange={handleSkip}
         onSelect={(data) => onSelect(config.key, data)}
-        onSkip={onSkip}
-        isDisabled={doorNo || street ? false : true}
+        isDisabled={doorNo && street ? false : true}
         t={t}
       />
     </React.Fragment>

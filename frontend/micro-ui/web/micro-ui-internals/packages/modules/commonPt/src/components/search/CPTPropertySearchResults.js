@@ -51,7 +51,7 @@ const SearchPTID = ({ tenantId, t, payload, showToast, setShowToast, ptSearchCon
       {
         Header: t("PT_COMMON_TABLE_COL_OWNER_NAME"),
         disableSortBy: true,
-        Cell: ({ row }) => GetCell(row.original.owners.sort((a,b)=>a?.additionalDetails?.ownerSequence-b?.additionalDetails?.ownerSequence).map( o => o.name ). join(",") || "" ),
+        Cell: ({ row }) => GetCell(row.original.owners.sort((a,b)=>a.additionalDetails.ownerSequence-b.additionalDetails.ownerSequence).map( o => o.name ). join(",") || "" ),
       },
 
       {
@@ -122,7 +122,7 @@ const SearchPTID = ({ tenantId, t, payload, showToast, setShowToast, ptSearchCon
   };
 
   const tableData = Object.values(data?.FormattedData || {}) || [];
-  if (ptSearchConfig?.ptSearchCount && payload.locality && tableData && tableData.length > ptSearchConfig?.ptSearchCount) {
+  if (ptSearchConfig?.ptSearchCount && payload.locality && tableData && tableData.length > ptSearchConfig.ptSearchCount) {
     !showToast && setShowToast({ error: true, label: "PT_MODIFY_SEARCH_CRITERIA" });
     return null;
   }

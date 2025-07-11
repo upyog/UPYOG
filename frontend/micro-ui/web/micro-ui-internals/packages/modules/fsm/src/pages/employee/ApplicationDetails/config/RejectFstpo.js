@@ -17,7 +17,7 @@ export const configRejectFstpo = ({ t, rejectMenu, selectReason, reason, action 
             type: "dropdown",
             populators: (
               <Dropdown
-                option={rejectMenu?.sort((a, b) => a.name.localeCompare(b.name))}
+                option={rejectMenu}
                 autoComplete="off"
                 optionKey="i18nKey"
                 id="Reason"

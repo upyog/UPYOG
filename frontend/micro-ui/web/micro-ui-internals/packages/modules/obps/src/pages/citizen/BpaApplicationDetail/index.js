@@ -42,7 +42,7 @@ const BpaApplicationDetail = () => {
   const { data: stakeHolderDetails, isLoading: stakeHolderDetailsLoading } = Digit.Hooks.obps.useMDMS(stateCode, "StakeholderRegistraition", "TradeTypetoRoleMapping");
   const { isLoading: bpaDocsLoading, data: bpaDocs } = Digit.Hooks.obps.useMDMS(stateCode, "BPA", ["DocTypeMapping"]);
   const { data, isLoading } = Digit.Hooks.obps.useBPADetailsPage(tenantId, { applicationNo: id });
-  const { isMdmsLoading, data: mdmsData } = Digit.Hooks.obps.useMDMS(stateCode, "BPA", ["RiskTypeComputation"]);
+  const { isMdmsLoading, data: mdmsData } = Digit.Hooks.obps.useMDMS(tenantId.split(".")[0], "BPA", ["RiskTypeComputation"]);
   const mutation = Digit.Hooks.obps.useObpsAPI(data?.applicationData?.tenantId, false);
   let workflowDetails = Digit.Hooks.useWorkflowDetails({
     tenantId: data?.applicationData?.tenantId,
@@ -113,9 +113,9 @@ const BpaApplicationDetail = () => {
        response = { filestoreIds: [payments?.fileStoreId] };      
     }
     else{
-      response = await Digit.PaymentService.generatePdf(stateCode, { Payments: [{...payments}] }, "bpa-receipt");
+      response = await Digit.PaymentService.generatePdf(tenantId, { Payments: [{...payments}] }, "bpa-receipt");
     }
-    const fileStore = await Digit.PaymentService.printReciept(stateCode, { fileStoreIds: response.filestoreIds[0] });
+    const fileStore = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: response.filestoreIds[0] });
     window.open(fileStore[response?.filestoreIds[0]], "_blank");
   }
 
@@ -227,13 +227,12 @@ const BpaApplicationDetail = () => {
     const userInfo = Digit.UserService.getUser();
     const rolearray = userInfo?.info?.roles;
     if (data?.applicationData?.status == "CITIZEN_APPROVAL_INPROCESS") {
-      if (rolearray?.some(role => role?.code === "CITIZEN")) {
+      if(rolearray?.length == 1 && rolearray?.[0]?.code == "CITIZEN") {
         workflowDetails.data.nextActions = workflowDetails?.data?.nextActions;
       } else {
         workflowDetails.data.nextActions = [];
       }
-    }
-     else if (data?.applicationData?.status == "INPROGRESS") {
+    } else if (data?.applicationData?.status == "INPROGRESS") {
       let isArchitect = false;
       stakeHolderDetails?.StakeholderRegistraition?.TradeTypetoRoleMapping?.map(type => {
         type?.role?.map(role => { roles.push(role); });
@@ -260,10 +259,20 @@ const BpaApplicationDetail = () => {
       isFromSendBack = true;
       const userInfo = Digit.UserService.getUser();
       const rolearray = userInfo?.info?.roles;
-      if (rolearray?.some(role => role?.code === "CITIZEN")) {
-        workflowDetails.data.nextActions = workflowDetails?.data?.nextActions;
-      } else {
-        workflowDetails.data.nextActions = [];
+      if(rolearray?.length !== 1) {
+        workflowDetails = {
+          ...workflowDetails,
+          data: {
+            ...workflowDetails?.data,
+            actionState: {
+              nextActions: [],
+            },
+          },
+          data: {
+            ...workflowDetails?.data,
+            nextActions: []
+          }
+        };
       }
   }
 
@@ -373,7 +382,7 @@ const BpaApplicationDetail = () => {
     return (
       <div>
         <span>{`${t("BPA_I_AGREE_THE_LABEL")} `}</span>
-        <span style={{color: "#a82227", cursor: "pointer"}} onClick={() => setShowTermsModal(!showTermsModal)}>{t(`BPA_TERMS_AND_CONDITIONS_LABEL`)}</span>
+        <span style={{color: "#162f6a", cursor: "pointer"}} onClick={() => setShowTermsModal(!showTermsModal)}>{t(`BPA_TERMS_AND_CONDITIONS_LABEL`)}</span>
       </div>
     )
   }
@@ -401,16 +410,16 @@ const BpaApplicationDetail = () => {
     <Fragment>
       <div className="cardHeaderWithOptions" style={{ marginRight: "auto", maxWidth: "960px" }}>
         <Header styles={{fontSize: "32px", marginLeft: "10px"}}>{t("CS_TITLE_APPLICATION_DETAILS")}</Header>
-        <div >
+        <div style={{display:"flex", alignItems:"center", color:"#A52A2A"}}>
+        <LinkButton label={t("VIEW_TIMELINE")} onClick={handleViewTimeline}></LinkButton>
+        </div>
         {dowloadOptions && dowloadOptions.length > 0 && <MultiLink
           className="multilinkWrapper"
           onHeadClick={() => setShowOptions(!showOptions)}
           displayOptions={showOptions}
           options={dowloadOptions}
+
         />}
-        <LinkButton label={t("VIEW_TIMELINE")} style={{ color:"#A52A2A"}} onClick={handleViewTimeline}></LinkButton>
-        </div>
-        
       </div>
       {data?.applicationDetails?.filter((ob) => Object.keys(ob).length > 0).map((detail, index, arr) => {
 
@@ -426,7 +435,7 @@ const BpaApplicationDetail = () => {
                 {/* to get common values */}
                 {(detail?.isCommon && detail?.values?.length > 0) ? detail?.values?.map((value) => {
                   if (value?.isUnit) return <Row className="border-none" label={t(value?.title)} text={value?.value ? `${getTranslatedValues(value?.value, value?.isNotTranslated)} ${t(value?.isUnit)}` : t("CS_NA")} />
-                  if (value?.isLink) return <Row className="border-none" label={t(value?.title)} text={<div><Link to={value?.to}><span className="link" style={{color: "#a82227"}}>{value?.value}</span></Link></div>} />
+                  if (value?.isLink) return <Row className="border-none" label={t(value?.title)} text={<div><Link to={value?.to}><span className="link" style={{color: "#162f6a"}}>{value?.value}</span></Link></div>} />
                   else return <Row className="border-none" label={t(value?.title)} text={getTranslatedValues(value?.value, value?.isNotTranslated) || t("CS_NA")} />
                 }) : null}
                 {/* to get additional common values */}

@@ -18,8 +18,7 @@ import {
   BirthIcon,
   DeathIcon,
   FirenocIcon,
-  LoginIcon,
-  CHBIcon
+  LoginIcon
 } from "@upyog/digit-ui-react-components";
 import { Link, useLocation } from "react-router-dom";
 import SideBarMenu from "../../../config/sidebar-menu";
@@ -54,19 +53,19 @@ const defaultImage =
 Feature :: Citizen Webview sidebar
 */
 const Profile = ({ info, stateName, t }) => (
-  <div className="profile-section">
+  <div className="profile-section"  style={{backgroundColor:"#162f6a !important"}}>
     <div className="imageloader imageloader-loaded">
       <img className="img-responsive img-circle img-Profile" src={info?.photo ? info?. photo : defaultImage} />
     </div>
     <div id="profile-name" className="label-container name-Profile">
-      <div className="label-text"> {info?.name} </div>
+      <div className="label-text" style={{color:"black"}}> {info?.name} </div>
     </div>
     <div id="profile-location" className="label-container loc-Profile">
-      <div className="label-text"> {info?.mobileNumber} </div>
+      <div className="label-text" style={{color:"black"}}> {info?.mobileNumber} </div>
     </div>
     {info?.emailId && (
       <div id="profile-emailid" className="label-container loc-Profile">
-        <div className="label-text"> {info.emailId} </div>
+        <div className="label-text" style={{color:"black"}}> {info.emailId} </div>
       </div>
     )}
     <div className="profile-divider"></div>
@@ -84,7 +83,6 @@ const IconsObject = {
   FSMIcon: <FSMIcon className="icon" />,
   WSIcon: <WSICon className="icon" />,
   MCollectIcon: <MCollectIcon className="icon" />,
-  CHBIcon:<CHBIcon className="icon" />,
   BillsIcon: <CollectionIcon className="icon" />,
   BirthIcon: <BirthIcon className="icon" />,
   DeathIcon: <DeathIcon className="icon" />,
@@ -152,7 +150,7 @@ const StaticCitizenSideBar = ({ linkData, islinkDataLoading }) => {
     const Item = () => (
       <span className="menu-item" {...item.populators}>
         {leftIcon}
-        <div className="menu-label">{itemComponent}</div>
+        <div className="menu-label" style={{color:"white"}}>{itemComponent}</div>
       </span>
     );
     if (item.type === "external-link") {
@@ -231,7 +229,7 @@ const StaticCitizenSideBar = ({ linkData, islinkDataLoading }) => {
             height: "100%",
             width: "100%",
             top: "0px",
-            backgroundColor: "rgba(0, 0, 0, 0.54)",
+            backgroundColor: "#162f6a",
             pointerzevents: "auto",
           }}
         ></div>
@@ -240,14 +238,15 @@ const StaticCitizenSideBar = ({ linkData, islinkDataLoading }) => {
             display: "flex",
             flexDirection: "column",
             height: isMobile ? "calc(100vh - 56px)" : "auto",
+            backgroundColor: "#162f6a",
             zIndex: "99",
           }}
         >
           {profileItem}
-          <div className="drawer-desktop" style={{"backgroundColor":"white"}}>
+          <div className="drawer-desktop" style={{"backgroundColor":"#162f6a",marginTop:"10px"}}>
             {menuItems?.map((item, index) => (
               <div className={`sidebar-list ${pathname === item?.link || pathname === item?.sidebarURL ? "active" : ""}`} key={index}>
-                <MenuItem item={item} />
+                <MenuItem item={item} style={{color:"white"}}/>
               </div>
             ))}
           </div>

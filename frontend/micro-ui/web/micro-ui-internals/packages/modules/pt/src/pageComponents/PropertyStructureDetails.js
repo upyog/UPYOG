@@ -17,8 +17,7 @@ const PropertyStructureDetails = ({ t, config, onSelect, userType, formData }) =
   let path = window.location.pathname.split("/");
   let currentFloor = Number(path[path.length - 1]);
   let isFloor = window.location.pathname.includes("new-application/units") || window.location.pathname.includes("/edit-application/units");
-  const [fields, setFields] = useState(window.location.pathname.includes("/pt/modify-application/")? formData?.propertyStructureDetails: formData?.propertyStructureDetails ? formData?.propertyStructureDetails:window.location.pathname.includes("/edit-application/PropertyStructureDetails")? {"usageCategory":"","structureType":formData?.additionalDetails?.structureType ,"ageOfProperty":formData?.additionalDetails?.ageOfProperty
-}: {"usageCategory":"","structureType":"","ageOfProperty":""})
+  const [fields, setFields] = useState(window.location.pathname.includes("/pt/modify-application/")? formData.propertyStructureDetails: {"usageCategory":"","structureType":"","ageOfProperty":""})
    
   
 console.log("formaDataPropertyStructureDetails",formData)
@@ -29,7 +28,7 @@ console.log("formaDataPropertyStructureDetails",formData)
     
   };
 
-  const { data: mdmsData, isLoading } = Digit.Hooks.useCommonMDMSV2(
+  const { data: mdmsData, isLoading } = Digit.Hooks.useCommonMDMS(
     Digit.ULBService.getStateId(),
     "PropertyTax",
     ["Floor", "OccupancyType", "UsageCategory"],
@@ -92,13 +91,13 @@ console.log("formaDataPropertyStructureDetails",formData)
      ]
      let structureType =[
       {
-        "i18nKey": "Permanent",
+        "i18nKey": "PERMANENT",
         "name": "Permanent",
         "code": "permanent",
        "active": true
        },
        {
-        "i18nKey": "Temporary",
+        "i18nKey": "TEMPORARY",
         "name": "Temporary",
         "code": "temporary",
        "active": true

@@ -47,8 +47,7 @@ const ApplicationDetails = (props) => {
     showTimeLine = true,
     oldValue,
     isInfoLabel = false,
-    clearDataDetails,
-    isAction=false
+    clearDataDetails
   } = props;
   
   useEffect(() => {
@@ -58,7 +57,6 @@ const ApplicationDetails = (props) => {
   }, [showToast]);
 
   function onActionSelect(action) {
-    sessionStorage.setItem("SELECTED_ACTION", action?.action);
     if (action) {
       if(action?.isToast){
         setShowToast({ key: "error", error: { message: action?.toastMessage } });
@@ -238,7 +236,6 @@ const ApplicationDetails = (props) => {
           ) : null}
           <ApplicationDetailsToast t={t} showToast={showToast} closeToast={closeToast} businessService={businessService} />
           <ApplicationDetailsActionBar
-            isAction={isAction} // isAction is added to enable or disable the action bar
             workflowDetails={workflowDetails}
             displayMenu={displayMenu}
             onActionSelect={onActionSelect}
@@ -247,7 +244,6 @@ const ApplicationDetails = (props) => {
             forcedActionPrefix={forcedActionPrefix}
             ActionBarStyle={ActionBarStyle}
             MenuStyle={MenuStyle}
-            applicationDetails={applicationDetails}
           />
         </React.Fragment>
       ) : (

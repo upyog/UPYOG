@@ -196,6 +196,8 @@ const ApplicationDetails = () => {
       });
   };
 
+
+
   const wfDocs = workflowDetails.data?.timeline?.reduce((acc, { wfDocuments }) => {
     return wfDocuments ? [...acc, ...wfDocuments] : acc;
   }, []);
@@ -230,62 +232,21 @@ const ApplicationDetails = () => {
   const printReciept = async (businessService="TL", consumerCode=applicationDetails?.applicationData?.applicationNumber) => {
     const receiptFile = { filestoreIds: [paymentsHistory.Payments[0]?.fileStoreId] };
     if(receiptFile.filestoreIds[0]!==null){
-      const fileStore = await Digit.PaymentService.printReciept(stateId, { fileStoreIds: receiptFile.filestoreIds[0] });
+      const fileStore = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: receiptFile.filestoreIds[0] });
       window.open(fileStore[receiptFile.filestoreIds[0]], "_blank"); 
     }
     else{
-      const newResponse = await Digit.PaymentService.generatePdf(stateId, { Payments: [paymentsHistory.Payments[0]] }, "tradelicense-receipt");
-      const fileStore = await Digit.PaymentService.printReciept(stateId, { fileStoreIds: newResponse.filestoreIds[0] });
+      const newResponse = await Digit.PaymentService.generatePdf(tenantId, { Payments: [paymentsHistory.Payments[0]] }, "tradelicense-receipt");
+      const fileStore = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: newResponse.filestoreIds[0] });
       window.open(fileStore[newResponse.filestoreIds[0]], "_blank");
     }
   };
 
-  // const printCertificate = async () => {
-  //    let res = await Digit.TLService.TLsearch({ tenantId: applicationDetails?.tenantId, filters: { applicationNumber:applicationDetails?.applicationData?.applicationNumber } });
-  //    const TLcertificatefile = await Digit.PaymentService.generatePdf(tenantId, { Licenses: res?.Licenses }, "tlcertificate");
-  //    const receiptFile = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: TLcertificatefile.filestoreIds[0] });
-  //    window.open(receiptFile[TLcertificatefile.filestoreIds[0]], "_blank");
-  //    setIsDisplayDownloadMenu(false)
-  // }
-
-  const fetchDigiLockerDocuments  = async (file,id,res) => {
-    console.log("res",res)
-   
-          let TokenReq = {
-            pdfUrl:file,
-            tenantId: "pg.citya",
-            module:"TL",
-            redirectUrl:"",
-            "fileStoreId":id,
-            "consumerCode": res?.Licenses?.[0]?.licenseNumber
-          }
-          const res1 = await Digit.DigiLockerService.pdfUrl({TokenReq})
-          console.log("res1res1res1res1res1",res1)
-          window.location.href=res1
-}
   const printCertificate = async () => {
      let res = await Digit.TLService.TLsearch({ tenantId: applicationDetails?.tenantId, filters: { applicationNumber:applicationDetails?.applicationData?.applicationNumber } });
-     let TokenReq = {
-      module:"TL",
-      "consumerCode": res?.Licenses?.[0]?.licenseNumber
-    }
-    const res1 = await Digit.DigiLockerService.fileStoreSearch({TokenReq})
- console.log("res1res1res1",res1)
-    if(res1?.Transaction.length > 0 && res1?.Transaction?.[0]?.signedFilestoreId!==null)
-     {
-      const tenant = Digit.ULBService.getStateId()
-      const resneww = await Digit.UploadServices.Filefetch([res1?.Transaction?.[0]?.signedFilestoreId], tenant);
-    console.log("resneww",resneww)
-    console.log("resneww11",resneww,resneww?.data?.fileStoreIds?.[0]?.url)
-    window.open(resneww?.data?.fileStoreIds?.[0]?.url, "_blank");
-    }
-    else{
-      const TLcertificatefile = await Digit.PaymentService.generatePdf(tenantId, { Licenses: res?.Licenses }, "tlcertificate");
-      const receiptFile = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: TLcertificatefile.filestoreIds[0] });
-      console.log("resres",res)
-      fetchDigiLockerDocuments(receiptFile[TLcertificatefile.filestoreIds[0]],TLcertificatefile.filestoreIds[0],res)
-    }
-     
+     const TLcertificatefile = await Digit.PaymentService.generatePdf(tenantId, { Licenses: res?.Licenses }, "tlcertificate");
+     const receiptFile = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: TLcertificatefile.filestoreIds[0] });
+     window.open(receiptFile[TLcertificatefile.filestoreIds[0]], "_blank");
      setIsDisplayDownloadMenu(false)
   }
   const [isDisplayDownloadMenu, setIsDisplayDownloadMenu] = useState(false);
@@ -318,11 +279,11 @@ const ApplicationDetails = () => {
     <div className={"employee-main-application-details"} >
       <div className={"employee-application-details"} style={{ marginBottom: "15px" }}>
         <Header>{(applicationDetails?.applicationData?.workflowCode == "NewTL" && applicationDetails?.applicationData?.status !== "APPROVED") ? t("TL_TRADE_APPLICATION_DETAILS_LABEL") : t("TL_TRADE_LICENSE_DETAILS_LABEL")}</Header>
-        <div style={{zIndex: "10",display:"flex",flexDirection:"row-reverse",alignItems:"center",marginTop:"-25px"}}>
-         
-        <div style={{zIndex: "10",  position: "relative"}}>
+        <div style={{display:"flex", color:"#A52A2A", alignItems:"center"}}>
+        <LinkButton label={t("VIEW_TIMELINE")} onClick={handleViewTimeline}></LinkButton>
+        </div>
         <MultiLink
-                className="multilinkWrapper"
+                className="multilinkWrapper employee-mulitlink-main-div"
                 onHeadClick={() => setIsDisplayDownloadMenu(!isDisplayDownloadMenu)}
                 displayOptions={isDisplayDownloadMenu}
                 options={dowloadOptions}
@@ -330,9 +291,6 @@ const ApplicationDetails = () => {
                 optionsClassName={"employee-options-btn-className"}
                 optionStyle={{padding: "10px"}}
         />
-        </div>
-        <LinkButton label={t("VIEW_TIMELINE")} style={{color:"#A52A2A"}} onClick={handleViewTimeline}></LinkButton>
-        </div>        
       </div>
       <ApplicationDetailsTemplate
         applicationDetails={applicationDetails}

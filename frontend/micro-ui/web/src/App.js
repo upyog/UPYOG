@@ -28,37 +28,25 @@ import {
   TLLinks,
   initTLComponents,
 } from "@upyog/digit-ui-module-tl";
+import {
+  PTRModule,
+  PTRLinks,
+  PTRComponents,
+} from "@upyog-niua/upyog-ui-module-ptr";
 import { initReceiptsComponents, ReceiptsModule } from "@upyog/digit-ui-module-receipts";
 import { initOBPSComponents } from "@upyog/digit-ui-module-obps";
 import { initNOCComponents } from "@upyog/digit-ui-module-noc";
 import { initEngagementComponents } from "@upyog/digit-ui-module-engagement";
 import { initWSComponents } from "@upyog/digit-ui-module-ws";
-// import { initCustomisationComponents } from "./Customisations";
+import { initCustomisationComponents } from "./Customisations";
 import { initCommonPTComponents } from "@upyog/digit-ui-module-commonpt";
 import { initBillsComponents } from "@upyog/digit-ui-module-bills";
-import {
-  PTRModule,
-  PTRLinks,
-  PTRComponents,
-} from "@upyog/upyog-ui-module-ptr";
 import { ASSETComponents, ASSETLinks, ASSETModule } from "@upyog/upyog-ui-module-asset";
-
-import { 
-  EWModule, 
-  EWLinks, 
-  EWComponents }
-  from "@upyog/upyog-ui-module-ew";
-
-import { SVComponents, SVLinks, SVModule } from "@upyog/upyog-ui-module-sv";
-import {CHBModule,CHBLinks,CHBComponents} from "@upyog/upyog-ui-module-chb";
-import {ADSModule,ADSLinks,ADSComponents} from "@upyog/upyog-ui-module-ads";
-
-// import { initReportsComponents } from "@upyog/digit-ui-module-reports";
+// import { initReportsComponents } from "@egovernments/digit-ui-module-reports";
 
 initLibraries();
 
 const enabledModules = [
-  "Tqm",
   "PGR",
   "FSM",
   "Payment",
@@ -84,10 +72,6 @@ const enabledModules = [
   "Death",
   "PTR",
   "ASSET",
-  "ADS",
-  "SV",
-  "EW",
-  "CHB"
 ];
 window.Digit.ComponentRegistryService.setupRegistry({
   ...paymentConfigs,
@@ -108,18 +92,6 @@ window.Digit.ComponentRegistryService.setupRegistry({
   ASSETModule,
   ASSETLinks,
   ...ASSETComponents,
-  ADSLinks,
-  ADSModule,
-  ...ADSComponents,
-  SVModule,
-  SVLinks,
-  ...SVComponents,
-  EWModule,
-  EWLinks,
-  ...EWComponents,
-  CHBModule,
-  CHBLinks,
-  ...CHBComponents,
 });
 
 initPGRComponents();
@@ -136,7 +108,7 @@ initWSComponents();
 initCommonPTComponents();
 initBillsComponents();
 // initReportsComponents();
-// initCustomisationComponents();
+initCustomisationComponents();
 
 const moduleReducers = (initData) => ({
   pgr: PGRReducers(initData),

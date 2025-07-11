@@ -1,4 +1,4 @@
-import React, { useEffect,useState } from "react";
+import React, { useEffect } from "react";
 import {
   StandaloneSearchBar,
   Loader,
@@ -15,21 +15,36 @@ import {
   OBPSIcon,
   WSICon,
 } from "@upyog/digit-ui-react-components";
+
+import ChatBot from "./ChatBot";
+// import ChatBot from "frontend\micro-ui\web\micro-ui-internals\packages\react-components\src\atoms\ChatBot.js"
+// import ChatBot from "@upyog/digit-ui-react-components/src/atoms/Chatbot";
+
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
 import { CitizenSideBar } from "../../../components/TopBarSideBar/SideBar/CitizenSideBar";
 import StaticCitizenSideBar from "../../../components/TopBarSideBar/SideBar/StaticCitizenSideBar";
-import ChatBot from "./ChatBot";
+// import DonutChart from "./PieChartComponent"
+import DonutChart from 'react-donut-chart';
+
 const Home = () => {
+  const NotificationsOrWhatsNew = Digit.ComponentRegistryService.getComponent("NotificationsAndWhatsNew");
   const { t } = useTranslation();
   const history = useHistory();
   const tenantId = Digit.ULBService.getCitizenCurrentTenant(true);
-  const [user, setUser] = useState(null);
-  const DEFAULT_REDIRECT_URL = "/digit-ui/citizen";
+  const User = Digit.UserService.getUser();
+
+  const mobileNumber = User?.mobileNumber || User?.info?.mobileNumber || User?.info?.userInfo?.mobileNumber;
   const { data: { stateInfo, uiHomePage } = {}, isLoading } = Digit.Hooks.useStore.getInitData();
+  const { data: { unreadCount: unreadNotificationCount } = {}, isSuccess: notificationCountLoaded } = Digit.Hooks.useNotificationCount({
+    tenantId: tenantId,
+    config: {
+      enabled: Digit.UserService?.getUser()?.access_token ? true : false,
+    },
+  });
   let isMobile = window.Digit.Utils.browser.isMobile();
-  if(window.Digit.SessionStorage.get("TL_CREATE_TRADE")) window.Digit.SessionStorage.set("TL_CREATE_TRADE",{})
-   
+  if (window.Digit.SessionStorage.get("TL_CREATE_TRADE")) window.Digit.SessionStorage.set("TL_CREATE_TRADE", {})
+
   const conditionsToDisableNotificationCountTrigger = () => {
     if (Digit.UserService?.getUser()?.info?.type === "EMPLOYEE") return false;
     if (!Digit.UserService?.getUser()?.access_token) return false;
@@ -43,11 +58,11 @@ const Home = () => {
       enabled: conditionsToDisableNotificationCountTrigger(),
     },
   });
-
+  const { error, data: complaint, revalidate } = Digit.Hooks.pgr.useComplaintsListByMobile(tenantId, mobileNumber);
   if (!tenantId) {
     Digit.SessionStorage.get("locale") === null
       ? history.push(`/digit-ui/citizen/select-language`)
-      : history.push(`/digit-ui/citizen/select-location`);
+      : history.push(`/digit-ui/citizen/citizen`);
   }
 
   const appBannerWebObj = uiHomePage?.appBannerDesktop;
@@ -61,51 +76,7 @@ const Home = () => {
   const handleClickOnWhatsAppBanner = (obj) => {
     window.open(obj?.navigationUrl);
   };
-  /* set citizen details to enable backward compatiable */
-const setCitizenDetail = (userObject, token, tenantId) => {
-  let locale = JSON.parse(sessionStorage.getItem("Digit.initData"))?.value?.selectedLanguage;
-  localStorage.setItem("Citizen.tenant-id", tenantId);
-  localStorage.setItem("tenant-id", tenantId);
-  localStorage.setItem("citizen.userRequestObject", JSON.stringify(userObject));
-  localStorage.setItem("locale", locale);
-  localStorage.setItem("Citizen.locale", locale);
-  localStorage.setItem("token", token);
-  localStorage.setItem("Citizen.token", token);
-  localStorage.setItem("user-info", JSON.stringify(userObject));
-  localStorage.setItem("Citizen.user-info", JSON.stringify(userObject));
-};
 
-  useEffect(async () => {
-    //sessionStorage.setItem("DigiLocker.token1","cf87055822e4aa49b0ba74778518dc400a0277e5")
-    if (window.location.href.includes("code")) {
-      let code = window.location.href.split("=")[1].split("&")[0]
-      let TokenReq = {
-        dlReqRef: localStorage.getItem('code_verfier_register'),
-        code: code, module: "SSO"
-
-      }
-      const { ResponseInfo, UserRequest: info, ...tokens } = await Digit.DigiLockerService.token({ TokenReq })
-      setUser({ info, ...tokens });
-      setCitizenDetail(info, tokens?.access_token, info?.tenantId)
-    }
-  }, [])
-useEffect(() => {
-  if (!user) {
-    return;
-  }
-  Digit.SessionStorage.set("citizen.userRequestObject", user);
-  Digit.UserService.setUser(user);
-  setCitizenDetail(user?.info, user?.access_token, "pg");
-  const redirectPath = location.state?.from || DEFAULT_REDIRECT_URL;
-  if (!Digit.ULBService.getCitizenCurrentTenant(true)) {
-    history.replace("/digit-ui/citizen/select-location", {
-      redirectBackTo: redirectPath,
-    });
-  } else {
-    history.replace(redirectPath);
-  }
-}, [user]);
-console.log("citizenServicesObjcitizenServicesObj",citizenServicesObj)
   const allCitizenServicesProps = {
     header: t(citizenServicesObj?.headerLabel),
     sideOption: {
@@ -175,59 +146,265 @@ console.log("citizenServicesObjcitizenServicesObj",citizenServicesObj)
     ],
     styles: { display: "flex", flexWrap: "wrap", justifyContent: "flex-start", width: "100%" },
   };
-  sessionStorage.removeItem("type" );
+  sessionStorage.removeItem("type");
   sessionStorage.removeItem("pincode");
   sessionStorage.removeItem("tenantId");
   sessionStorage.removeItem("localityCode");
-  sessionStorage.removeItem("landmark"); 
+  sessionStorage.removeItem("landmark");
   sessionStorage.removeItem("propertyid");
-
+  let complaints = complaint?.ServiceWrappers
+  const opencomplaints = complaints?.filter((code) => code.service.applicationStatus !== "RESOLVED");
+  const closecomplaints = complaints?.filter((code) => code.service.applicationStatus == "RESOLVED");
+  console.log("opencomplaints", opencomplaints, closecomplaints)
+  //  const data = [
+  //   { label: 'Open Incident', value: opencomplaints?.length ||0 },
+  //   { label: 'Close Incident', value: closecomplaints?.length || 0 }
+  // ];
+  const dataNew = [
+    { label: 'Red', value: 5 },
+    { label: 'Green', value: 4 }
+  ];
+  const data = [
+    { label: 'Open Incident', value: 10 }, // Replace with opencomplaints?.length
+    { label: 'Close Incident', value: 6 } // Replace with closecomplaints?.length
+  ];
+  console.log("vvvv", citizenServicesObj?.props?.[1]?.navigationUrl)
   return isLoading ? (
     <Loader />
   ) : (
-    <div className="HomePageContainer" style={{width:"100%"}}>
+    <div className="HomePageContainer" style={{ width: "100%" }}>
       {/* <div className="SideBarStatic">
         <StaticCitizenSideBar />
       </div> */}
+      <style>
+        {`
+        .logoText {
+            font-size: 26px;
+            color: #0E338A;
+            font-family: 'PoppinsBold';
+            line-height: 25px;
+            transition: all 0.5s ease;
+        }
+        .newlogoWrap h1.logo a .logoText .logoTextSubline {
+          font-size: 18px;
+          font-family: 'PoppinsRegular';
+          color: #323232;
+          line-height: 20px;
+          display: block;
+          transition: all 0.5s ease;
+      }
+      .newlogoWrap h1.logo a {
+        display: flex;
+        text-decoration: none!important;
+        align-items: center;
+    }
+    .incidentBlock{
+      width:100%;
+      height:200px;
+     margin:10px;
+     padding:20px;
+     background-color:white;
+     display:flex;
+     align-items:center;
+     font-size: 22px;
+     font-weight: bold;
+      box-shadow:rgba(0, 0, 0, 0.35) 0px 5px 15px;
+      border-radius:15px;
+      cursor : pointer;
+      border: 4px solid #0e338a;
+
+    }
+    .mydashboard{
+      height: 100%;
+      width: 100%;
+      padding: 25px;
+      font-size: 26px;
+      font-weight: bold;
+    }
+    .dash{
+      border-top-right-radius: 10px;
+    border-top-left-radius: 10px;
+    padding-left:15px;
+    }
+    .charts{
+      height:250px
+    }
+    #chart-container {
+      position: relative;
+      width: 200px;
+      height: 200px;
+  }
+  
+  .donut-chart {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      clip: rect(0, 200px, 200px, 100px); /* clip to the right half */
+  }
+  
+  .inner-circle {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 100px;
+      height: 100px;
+      margin-top: -50px; /* half of the height */
+      margin-left: -50px; /* half of the width */
+      background-color: #f0f0f0;
+      border-radius: 50%;
+      z-index: 1;
+  }
+  .incidentTable{
+    display: flex;
+    flex-direction: column;
+    font-size: 18px;
+    padding: 10px;
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+    margin: 15px;
+  }
+  .donut-chart {
+    position: relative;
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    background: conic-gradient(
+      var(--color, #ddd) calc(var(--offset, 0) * 1%),
+      var(--next-color, #ddd) 0 calc((var(--offset, 0) + var(--value, 0)) * 1%)
+    );
+  }
+  
+  .donut-segment {
+    --next-color: var(--color);
+  }
+  
+  .donut-hole {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 100px;
+    height: 100px;
+    background: #fff;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+  }
+  .donutchart{
+    height: 75% !important;
+    width:  75% !important;
+
+  }
+  
+        `
+        }
+      </style>
       <div className="HomePageWrapper">
-        {<div className="BannerWithSearch">
-          {isMobile ? <img src={"https://nugp-assets.s3.ap-south-1.amazonaws.com/nugp+asset/Banner+UPYOG+%281920x500%29B+%282%29.jpg"} /> : <img src={"https://nugp-assets.s3.ap-south-1.amazonaws.com/nugp+asset/Banner+UPYOG+%281920x500%29A.jpg"} />}
-          {/* <div className="Search">
-            <StandaloneSearchBar placeholder={t("CS_COMMON_SEARCH_PLACEHOLDER")} />
-          </div> */}
-          <div className="ServicesSection">
-          <CardBasedOptions style={{marginTop:"-30px"}} {...allCitizenServicesProps} />
-          <CardBasedOptions style={isMobile ? {marginTop:"-30px"} : {marginTop:"-30px"}} {...allInfoAndUpdatesProps} />
-        </div>
-        </div>}
+        <div style={{ display: "flex", flexDirection: isMobile ? "column" : "row", padding: "25px", width: "100%", marginTop: isMobile ? "10%" : "3%" }}>
+          <div className="incidentBlock" style={{ marginLeft: isMobile ? "0px" : "" }} onClick={() => history.push("/digit-ui/citizen/pgr-home")}>
+            <div style={{ width: "50%", cursor: "pointer" }} >
+              <span>{t("Public Grievance Redressal")}</span>
+            </div>
+            <div style={{ width: "50%", display: "flex", flexDirection: "row-reverse" }}>
+              <div style={{ display: "flex", flexDirection: "row-reverse" }}>
 
 
-        {(whatsAppBannerMobObj || whatsAppBannerWebObj) && (
-          <div className="WhatsAppBanner">
-            {isMobile ? (
-              <img src={"https://nugp-assets.s3.ap-south-1.amazonaws.com/nugp+asset/Banner+UPYOG+%281920x500%29B+%282%29.jpg"} onClick={() => handleClickOnWhatsAppBanner(whatsAppBannerMobObj)} style={{"width":"100%"}}/>
-            ) : (
-              <img src={"https://nugp-assets.s3.ap-south-1.amazonaws.com/nugp+asset/Banner+UPYOG+%281920x500%29B+%282%29.jpg"} onClick={() => handleClickOnWhatsAppBanner(whatsAppBannerWebObj)} style={{"width":"100%"}}/>
-            )}
+                <img src="https://chstage.blob.core.windows.net/assets/tmp/incon1.png" style={{ maxWidth: "65%" }}></img>
+              </div>
+            </div>
           </div>
-        )}
+          <div className="incidentBlock" style={{ marginLeft: isMobile ? "0px" : "" }} onClick={() => history.push("/digit-ui/citizen/ws-home")} >
+            <div style={{ width: "50%", cursor: "pointer" }} >
+              <span>{t("Water Department")}</span>
+            </div>
+            <div style={{ width: "50%", display: "flex", flexDirection: "row-reverse" }}>
+              <div style={{ display: "flex", flexDirection: "row-reverse" }}>
 
-        {conditionsToDisableNotificationCountTrigger() ? (
-          EventsDataLoading ? (
-            <Loader />
-          ) : (
-            <div className="WhatsNewSection">
-              <div className="headSection">
+
+                <img src="https://i.postimg.cc/rFZg3yYG/1739395503649-Picture1.png" style={{ maxWidth: "65%" }}></img>
+              </div>
+            </div>
+          </div>
+          {/* <div className="incidentBlock" style={{marginLeft:isMobile?"0px":"", cursor:"pointer"}}>
+    <div style={{width:"50%"}} onClick={()=> history.push("/digit-ui/citizen/pgr-home")}>
+<span>{t("My Incident")}</span>
+    </div>
+    <div style={{width:"50%",display:"flex",flexDirection:"row-reverse"}}>
+      <div style={{display:"flex",flexDirection:"row-reverse"}}>
+        <img src="https://chstage.blob.core.windows.net/assets/tmp/incon1.png" style={{maxWidth:"65%"}}></img>
+    </div>
+    </div>
+  </div> */}
+
+        </div>
+        <div style={{ display: isMobile ? "" : "flex", height: "66vh", width: isMobile ? "100%" : "" }}>
+
+          <div className="mydashboard" style={{ height: "100%", width: isMobile ? "100%" : "", marginTop: isMobile ? "1%" : "" }}>
+            <div style={{ width: "100%", height: "86%", color: "white" }}>
+              <div className="dash" style={{ padding: "5px", backgroundColor: "#162f6a" }}>Updates</div>
+              <div className="charts" style={{ backgroundColor: "white", height: "100%", overflow: scroll }}>
+                {(whatsAppBannerMobObj || whatsAppBannerWebObj) && (
+                  <div className="WhatsAppBanner">
+                    {/* {isMobile ? (
+              <img src={"https://chstage.blob.core.windows.net/assets/tmp/Untitled-design-1.png"} onClick={() => handleClickOnWhatsAppBanner(whatsAppBannerMobObj)} style={{"width":"100%"}}/>
+            ) : (
+              <img src={"https://chstage.blob.core.windows.net/assets/tmp/Untitled-design-1.png"} onClick={() => handleClickOnWhatsAppBanner(whatsAppBannerWebObj)} style={{"width":"100%"}}/>
+            )} */}
+                  </div>
+                )}
+
+                {conditionsToDisableNotificationCountTrigger() ? (
+                  EventsDataLoading ? (
+                    <Loader />
+                  ) : (
+                    <div className="WhatsNewSection" style={{ height: "100%" }}>
+                      {/* <div className="headSection">
                 <h2>{t(whatsNewSectionObj?.headerLabel)}</h2>
                 <p onClick={() => history.push(whatsNewSectionObj?.sideOption?.navigationUrl)}>{t(whatsNewSectionObj?.sideOption?.name)}</p>
+              </div> */}
+                      {/* <WhatsNewCard {...EventsData?.[0]} /> */}
+                      {Digit.UserService?.getUser()?.access_token ? (
+                        <div className="EventNotificationWrapper" style={{ height: "100%" }}>
+                          {notificationCountLoaded ? (
+                            <div style={{ height: "100%", overflow: "scroll" }}>
+                              {/* <span>
+                  <p>{notificationCountLoaded}</p>
+                </span> */}
+
+                              <NotificationsOrWhatsNew variant="notifications" parentRoute={""} style={{ height: "100%" }} />
+                            </div>
+                          ) : null}
+                        </div>
+                      ) : null}
+                    </div>
+                  )
+                ) : null}
               </div>
-              <WhatsNewCard {...EventsData?.[0]} />
             </div>
-          )
-        ) : null}
-        <ChatBot/>
+          </div>
+        </div>
+
+
       </div>
+
+      <div style={{
+        position: 'fixed',
+        right: '30px',
+        bottom: '30px',
+        zIndex: 1
+      }}>
+        {/* <button style={{
+        backgroundColor: 'blue', 
+        borderRadius: '15px', 
+        color: 'white', 
+        fontSize: 'medium', 
+        padding: '10px 20px', 
+        border: 'none', 
+        cursor: 'pointer' 
+      }}>Chatbot</button>  */}
+        <ChatBot />
+      </div>
+
     </div>
+
   );
 };
 

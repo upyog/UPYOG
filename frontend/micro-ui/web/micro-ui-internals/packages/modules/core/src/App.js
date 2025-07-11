@@ -13,7 +13,7 @@ export const DigitApp = ({ stateCode, modules, appTenants, logoUrl, initData }) 
   const { stateInfo } = storeData || {};
   const DSO = Digit.UserService.hasAccess(["FSM_DSO"]);
   let CITIZEN = userDetails?.info?.type === "CITIZEN" || !window.location.pathname.split("/").includes("employee") ? true : false;
-
+  const selectedLanguage = Digit.StoreData.getCurrentLanguage();
   if (window.location.pathname.split("/").includes("employee")) CITIZEN = false;
 
   useEffect(() => {
@@ -71,7 +71,7 @@ export const DigitApp = ({ stateCode, modules, appTenants, logoUrl, initData }) 
       <Route path="/digit-ui/citizen">
         <CitizenApp {...commonProps} />
       </Route>
-      <Route path="/digit-ui">
+      <Route>
         <Redirect to="/digit-ui/citizen" />
       </Route>
     </Switch>

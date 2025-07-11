@@ -7,7 +7,7 @@ const EventsListOnGround = ({ variant, parentRoute }) => {
   const { t } = useTranslation();
   const location = useLocation();
   const history = useHistory();
-
+console.log("variant, parentRoute",variant, parentRoute)
   const tenantId = Digit.ULBService.getCitizenCurrentTenant();
   const { data: { unreadCount: preVisitUnseenEventsCount } = {}, isSuccess: preVisitUnseenEventsCountLoaded } = Digit.Hooks.useNotificationCount({
     tenantId,
@@ -31,7 +31,7 @@ const EventsListOnGround = ({ variant, parentRoute }) => {
   }
 
   return (
-    <div className="CitizenEngagementNotificationWrapper">
+    <div className="CitizenEngagementNotificationWrapper" style={{overflow:"scroll"}}>
       <Header>{`${t("EVENTS_EVENTS_HEADER")}(${EventsData?.length})`}</Header>
       {EventsData.length ? (
         EventsData.map((DataParamsInEvent) => <OnGroundEventCard onClick={onEventCardClick} {...DataParamsInEvent} />)

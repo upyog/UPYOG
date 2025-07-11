@@ -9,7 +9,7 @@ export const stringReplaceAll = (str = "", searcher = "", replaceWith = "") => {
 export const mdmsData = async (tenantId, t) => {
   const result = await Digit.MDMSService.getMultipleTypes(tenantId, "tenant", ["tenants", "citymodule"]);
 
-  const filteredResult =result && result.tenant.tenants.filter((e) => e.code === tenantId);
+  const filteredResult = result?.tenant.tenants.filter((e) => e.code === tenantId);
 
   const headerLocale = Digit.Utils.locale.getTransformedLocale(tenantId);
   const ulbGrade = filteredResult?.[0]?.city?.ulbGrade.replaceAll(" ", "_");

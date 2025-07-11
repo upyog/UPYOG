@@ -20,7 +20,7 @@ const SelectVehicleType = ({ t, config, onSelect, userType, formData, setValue }
       setSelectedType(...vehicleType);
       setSelectedCapacity(formData?.vehicle?.tankCapacity);
     }
-  }, [vehicleData]);
+  }, [formData?.vehicle, vehicleData]);
 
   useEffect(() => {
     if (selectedModal?.code && selectedModal?.code !== formData?.vehicle?.modal) {
@@ -37,8 +37,6 @@ const SelectVehicleType = ({ t, config, onSelect, userType, formData, setValue }
   useEffect(() => {
     if (vehicleData) {
       const vehicleModals = vehicleData.filter((vehicle) => vehicle.make === undefined);
-      const types = vehicleData.filter((vehicle) => formData?.vehicle?.modal != undefined && vehicle?.make === formData?.vehicle?.modal?.code);
-      setTypes(types);
       setModals(vehicleModals);
     }
   }, [vehicleData]);
@@ -68,7 +66,7 @@ const SelectVehicleType = ({ t, config, onSelect, userType, formData, setValue }
           isMandatory
           selected={selectedModal}
           disable={false}
-          option={modals?.sort((a, b) => a.name.localeCompare(b.name))}
+          option={modals}
           select={selectModal}
           optionKey="name"
           t={t}
@@ -79,15 +77,7 @@ const SelectVehicleType = ({ t, config, onSelect, userType, formData, setValue }
           {t("ES_FSM_REGISTRY_VEHICLE_TYPE")}
           {config.isMandatory ? " * " : null}
         </CardLabel>
-        <Dropdown
-          className="form-field"
-          isMandatory
-          selected={selectedType}
-          option={types?.sort((a, b) => a.name.localeCompare(b.name))}
-          select={selectType}
-          optionKey="name"
-          t={t}
-        />
+        <Dropdown className="form-field" isMandatory selected={selectedType} option={types} select={selectType} optionKey="name" t={t} />
       </LabelFieldPair>
       <LabelFieldPair>
         <CardLabel className="card-label-smaller">

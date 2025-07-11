@@ -32,6 +32,7 @@ const defaultImage =
   "L+RGKCddCGmatiPyPB/+ekO/M/q/7uvbt22kTt3zEnXPzCV13T3Gel4/6NduDu66xRvlPNkM1RjjxUdv+4WhGx6TftD19Q/dfzpwcHO+rE3fAAAAAElFTkSuQmCC";
 const Profile = ({ info, stateName, t }) => {
   const [profilePic, setProfilePic] = React.useState(null);
+  const isMobile = window.Digit.Utils.browser.isMobile();
   React.useEffect(async () => {
     const tenant = Digit.ULBService.getCurrentTenantId();
     const uuid = info?.uuid;
@@ -46,7 +47,24 @@ const Profile = ({ info, stateName, t }) => {
     }
   }, [profilePic !== null]);
   return (
-    <div className="profile-section">
+    <div className="profile-section" style={{backgroundColor:"#162f6a !important", marginTop:isMobile?"15%":""}}>
+      <style>
+        {
+          `
+          .profile-section {
+            background-color: #162f6a !important;
+
+            .label-text{
+              color:white !important
+            }
+            .drawer-desktop .sidebar-list.active .menu-label
+            {
+              color:white !important
+            }
+          `
+
+        }
+      </style>
       <div className="imageloader imageloader-loaded">
         <img
           className="img-responsive img-circle img-Profile"
@@ -55,14 +73,14 @@ const Profile = ({ info, stateName, t }) => {
         />
       </div>
       <div id="profile-name" className="label-container name-Profile">
-        <div className="label-text"> {info?.name} </div>
+        <div className="label-text" style={{color:"white"}}> {info?.name} </div>
       </div>
       <div id="profile-location" className="label-container loc-Profile">
-        <div className="label-text"> {info?.mobileNumber} </div>
+        <div className="label-text" style={{color:"white"}}> {info?.mobileNumber} </div>
       </div>
       {info?.emailId && (
         <div id="profile-emailid" className="label-container loc-Profile">
-          <div className="label-text"> {info.emailId} </div>
+          <div className="label-text" style={{color:"white"}}> {info.emailId} </div>
         </div>
       )}
       <div className="profile-divider"></div>

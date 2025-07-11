@@ -8,9 +8,11 @@ const PTRServiceDoc = ({ t, config, onSelect, userType, formData }) => {
   const stateId = Digit.ULBService.getStateId();
   sessionStorage.removeItem("docReqScreenByBack");
 
+  const docType = config?.isMutation ? ["MutationDocuments"] : "Documents";
+
   
  
-  const { isLoading, data: Documentsob = {} } = Digit.Hooks.ptr.usePetMDMS(stateId, "PetService", "Documents");
+  const { isLoading, data: Documentsob = {} } = Digit.Hooks.ptr.usePetMDMS(stateId, "PetService", docType);
   
   let docs = Documentsob?.PetService?.Documents;
   function onSave() {}

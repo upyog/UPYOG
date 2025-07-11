@@ -142,10 +142,7 @@ const FstpServiceRequest = () => {
 
   let citizenInfo = [];
   tripDetail?.map((vehicle) => {
-    const info = vehicleLog?.find((i) => i?.tripDetails[0]?.referenceNo === vehicle?.applicationNo);
-    if (info !== undefined) {
-      citizenInfo.push(info);
-    }
+    citizenInfo.push(vehicleLog?.find((i) => i?.tripDetails[0]?.referenceNo === vehicle?.applicationNo));
   });
 
   if (isMobile) {

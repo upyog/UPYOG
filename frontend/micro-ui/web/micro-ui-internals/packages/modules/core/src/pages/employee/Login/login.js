@@ -1,4 +1,4 @@
-import { BackButton, Dropdown, FormComposer, Loader, Toast } from "@upyog/digit-ui-react-components";
+import { BackButton, Dropdown, FormComposerNew, Loader, Toast } from "@upyog/digit-ui-react-components";
 import PropTypes from "prop-types";
 import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
@@ -26,7 +26,7 @@ const Login = ({ config: propsConfig, t, isDisabled }) => {
   const [user, setUser] = useState(null);
   const [showToast, setShowToast] = useState(null);
   const [disable, setDisable] = useState(false);
-
+  const isMobile = window.Digit.Utils.browser.isMobile();
   const history = useHistory();
   // const getUserType = () => "EMPLOYEE" || Digit.UserService.getType();
   let   sourceUrl = "https://s3.ap-south-1.amazonaws.com/egov-qa-assets";
@@ -61,17 +61,17 @@ const Login = ({ config: propsConfig, t, isDisabled }) => {
   }, [user]);
 
   const onLogin = async (data) => {
-    if (!data.city) {
-      alert("Please Select City!");
-      return;
-    }
+    // if (!data.city) {
+    //   alert("Please Select City!");
+    //   return;
+    // }
     setDisable(true);
 
     const requestData = {
       ...data,
       userType: "EMPLOYEE",
     };
-    requestData.tenantId = data.city.code;
+    requestData.tenantId = "pg.citya";
     delete requestData.city;
     try {
       const { UserRequest: info, ...tokens } = await Digit.UserService.authenticate(requestData);
@@ -81,7 +81,7 @@ const Login = ({ config: propsConfig, t, isDisabled }) => {
       setShowToast(err?.response?.data?.error_description || "Invalid login credentials!");
       setTimeout(closeToast, 5000);
     }
-    setDisable(false);
+   // setDisable(false);
   };
 
   const closeToast = () => {
@@ -113,27 +113,28 @@ const Login = ({ config: propsConfig, t, isDisabled }) => {
           },
           isMandatory: true,
         },
-        {
-          label: t(city.label),
-          type: city.type,
-          populators: {
-            name: city.name,
-            customProps: {},
-            component: (props, customProps) => (
-              <Dropdown
-                option={cities}
-                className="login-city-dd"
-                optionKey="i18nKey"
-                select={(d) => {
-                  props.onChange(d);
-                }}
-                t={t}
-                {...customProps}
-              />
-            ),
-          },
-          isMandatory: true,
-        },
+        // {
+        //   label: t(city.label),
+        //   type: city.type,
+        //   populators: {
+        //     name: city.name,
+        //     customProps: {},
+        //     component: (props, customProps) => (
+        //       <Dropdown
+        //         option={cities}
+        //         className="login-city-dd"
+        //         optionKey="i18nKey"
+        //         select={(d) => {
+        //           props.onChange(d);
+        //         }}
+        //         t={t}
+        //         style={{borderRadius:"10px",marginTop:"5px",backgroundColor: "White",color:"black",height:"2.5rem !important"}}
+        //         {...customProps}
+        //       />
+        //     ),
+        //   },
+        //   isMandatory: true,
+        // },
       ],
     },
   ];
@@ -141,12 +142,12 @@ const Login = ({ config: propsConfig, t, isDisabled }) => {
   return isLoading || isStoreLoading ? (
     <Loader />
   ) : (
-    <Background>
+    <Background style={{display:"flex", alignItems:"flex-start !important"}}>
       <div className="employeeBackbuttonAlign">
         <BackButton variant="white" style={{ borderBottom: "none" }} />
       </div>
 
-      <FormComposer
+      <FormComposerNew
         onSubmit={onLogin}
         isDisabled={isDisabled || disable}
         noBoxShadow
@@ -158,27 +159,37 @@ const Login = ({ config: propsConfig, t, isDisabled }) => {
         onSecondayActionClick={onForgotPassword}
         heading={propsConfig.texts.header}
         headingStyle={{ textAlign: "center" }}
-        cardStyle={{ margin: "auto", minWidth: "408px" }}
+        cardStyle={{ margin: "auto", minWidth: "408px",borderRadius:"20px" }}
         className="loginFormStyleEmployee"
-        buttonStyle={{ maxWidth: "100%", width: "100%" ,backgroundColor:"#5a1166"}}
+        buttonStyle={{ maxWidth: "100%", width: "100%" ,backgroundColor:"#5a1166",borderRadius:"20px"}}
       >
+       <div style={{display:"flex",padding:"15px",justifyContent:"center"}}>
+          <div>
+      <img className="city" src="https://i.postimg.cc/gc4FYkqX/977a9096-3548-4980-aae8-45a6e4d61263-removalai-preview.png" alt="City Logo"/>
+      </div>
+      <div>
+    <span style={{ display: "flex", alignItems: "center", justifyContent: "space-between", width: "100%",letterSpacing:"1px" }}>
+      <span style={{fontWeight:"bold", display:"flex", flexDirection:"column", marginLeft:"20px", color:"#0e338a", fontSize:isMobile?"16px":"20px"}} className="logoText">
+        Panchayati Raj & Drinking Water Department
+        {/* <span style={{fontWeight:"normal", color:"black", fontSize:isMobile?"14px":"20px",display:"flex",flexDirection:"column"}} className="logoTextSubline"> MINISTRY OF <span style={{fontWeight:"bold",fontSize:isMobile?"14px":"20px"}}>EXTERNAL AFFAIRS</span></span> */}
+      </span>
+      </span>
+      </div>
+      </div>
         {/* <Header /> */}
-      </FormComposer>
+      </FormComposerNew>
       {showToast && <Toast error={true} label={t(showToast)} onClose={closeToast} />}
       <div style={{ width: '100%', position: 'fixed', bottom: 0,backgroundColor:"white",textAlign:"center" }}>
         <div style={{ display: 'flex', justifyContent: 'center', color:"black" }}>
           {/* <span style={{ cursor: "pointer", fontSize: window.Digit.Utils.browser.isMobile()?"12px":"12px", fontWeight: "400"}} onClick={() => { window.open('https://www.digit.org/', '_blank').focus();}} >Powered by DIGIT</span>
           <span style={{ margin: "0 10px" ,fontSize: window.Digit.Utils.browser.isMobile()?"12px":"12px"}}>|</span> */}
-          <a style={{ cursor: "pointer", fontSize: window.Digit.Utils.browser.isMobile()?"12px":"12px", fontWeight: "400"}} href="#" target='_blank'>UPYOG License</a>
-
-          <span  className="upyog-copyright-footer" style={{ margin: "0 10px",fontSize:"12px" }} >|</span>
-          <span  className="upyog-copyright-footer" style={{ cursor: "pointer", fontSize: window.Digit.Utils.browser.isMobile()?"12px":"12px", fontWeight: "400"}} onClick={() => { window.open('https://niua.in/', '_blank').focus();}} >Copyright © 2022 National Institute of Urban Affairs</span>
+          <span  className="upyog-copyright-footer" style={{ cursor: "pointer", fontSize: window.Digit.Utils.browser.isMobile()?"12px":"12px", fontWeight: "400"}} onClick={() => { window.open('', '_blank').focus();}} >Copyright © 2025  Panchayati Raj & Drinking Water Department Govt. of Odisha </span>
           
-          {/* <a style={{ cursor: "pointer", fontSize: "16px", fontWeight: "400"}} href="#" target='_blank'>UPYOG License</a> */}
+          {/* <a style={{ cursor: "pointer", fontSize: "16px", fontWeight: "400"}} href="#" target='_blank'>MEA</a> */}
 
         </div>
         <div className="upyog-copyright-footer-web">
-          <span className="" style={{ cursor: "pointer", fontSize:  window.Digit.Utils.browser.isMobile()?"14px":"16px", fontWeight: "400"}} onClick={() => { window.open('https://niua.in/', '_blank').focus();}} >Copyright © 2022 National Institute of Urban Affairs</span>
+          <span className="" style={{ cursor: "pointer", fontSize:  window.Digit.Utils.browser.isMobile()?"14px":"16px", fontWeight: "400"}} onClick={() => { window.open('', '_blank').focus();}} >Copyright © 2025  Panchayati Raj & Drinking Water Department Govt. of Odisha </span>
           </div>
       </div>
     </Background>
