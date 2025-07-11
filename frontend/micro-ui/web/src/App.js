@@ -17,6 +17,10 @@ import { initCustomisationComponents } from "./Customisations";
 import { initCommonPTComponents } from "@demodigit/digit-ui-module-commonpt";
 import { ASSETComponents, ASSETLinks, ASSETModule } from "@demodigit/upyog-ui-module-asset";
 // import { initReportsComponents } from "@egovernments/digit-ui-module-reports";
+import {
+  HRMSModule,
+  initHRMSComponents,
+} from "@upyog/digit-ui-module-hrms";
 
 initLibraries();
 
@@ -26,6 +30,7 @@ const enabledModules = [
   "DSS",
   "CommonPT",
   "WS",
+  "HRMS",
   "ASSET",
 ];
 window.Digit.ComponentRegistryService.setupRegistry({
@@ -34,6 +39,7 @@ window.Digit.ComponentRegistryService.setupRegistry({
   PaymentLinks,
   ASSETModule,
   ASSETLinks,
+  HRMSModule,
   ...ASSETComponents,
 });
 
@@ -41,6 +47,7 @@ initPGRComponents();
 initDSSComponents();
 initWSComponents();
 initCommonPTComponents();
+initHRMSComponents();
 // initReportsComponents();
 initCustomisationComponents();
 

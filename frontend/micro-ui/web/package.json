@@ -27,6 +27,7 @@
     "@demodigit/digit-ui-module-ws": "3.0.6",
     "@demodigit/digit-ui-react-components" : "1.0.0",
     "@demodigit/upyog-ui-module-asset": "3.0.1",
+    "@upyog/digit-ui-module-hrms": "3.0.1",
     "babel-loader": "8.1.0",
     "react": "17.0.2",
     "react-dom": "17.0.2",

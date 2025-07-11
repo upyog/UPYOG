@@ -11,7 +11,8 @@ import { PaymentModule, PaymentLinks, paymentConfigs } from "@demodigit/digit-ui
 import { initWSComponents } from "@demodigit/digit-ui-module-ws";
 import { DigitUI } from "@demodigit/digit-ui-module-core";
 import { initCommonPTComponents } from "@demodigit/digit-ui-module-commonpt";
-
+import { HRMSModule } from "@upyog/digit-ui-module-hrms";
+import { initHRMSComponents } from "@upyog/digit-ui-module-hrms";
 // import {initCustomisationComponents} from "./customisations";
 
 // import { PGRModule, PGRLinks } from "@demodigit/digit-ui-module-pgr";
@@ -35,7 +36,8 @@ const enabledModules = [
   "DSS",
   "WS",
   "CommonPT",
-  "ASSET"
+  "ASSET",
+  "HRMS"
 ];
 
 const initTokens = (stateCode) => {
@@ -70,6 +72,7 @@ const initDigitUI = () => {
     ...pgrComponents,
     PaymentModule,
     ...paymentConfigs,
+    HRMSModule,
     PaymentLinks,
     ASSETModule,
     ASSETLinks,
@@ -80,7 +83,7 @@ const initDigitUI = () => {
   initDSSComponents();
   initWSComponents();
   initCommonPTComponents();
-
+  initHRMSComponents();
   // initCustomisationComponents();
 
   const moduleReducers = (initData) => ({
