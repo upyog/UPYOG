@@ -9,7 +9,6 @@
     "micro-ui-internals/packages/modules/commonPt",
     "micro-ui-internals/packages/modules/core",
     "micro-ui-internals/packages/modules/pgr",
-    "micro-ui-internals/packages/modules/dss",
     "micro-ui-internals/packages/modules/ws",
     "micro-ui-internals/packages/modules/asset"
   ],
@@ -38,12 +37,7 @@
     "web-vitals": "1.1.2"
   },
   "devDependencies": {
-    "clean-webpack-plugin": "^4.0.0",
-    "html-webpack-plugin": "^5.5.0",
-    "http-proxy-middleware": "1.3.1",
-    "webpack": "5",
-    "webpack-cli": "4",
-    "webpack-dev-server": "4"
+    "http-proxy-middleware": "1.3.1"
   },
   "resolutions": {
     "**/babel-loader": "8.1.0",
@@ -55,9 +49,8 @@
     "minimatch": "3.1.2"
   },
   "scripts": {
-    "start": "webpack serve --mode development --open",
-    "build": "webpack --mode production",
-    "build:debug": "webpack --mode production --env debug=true",
+    "start": "react-scripts start",
+    "build": "GENERATE_SOURCEMAP=false SKIP_PREFLIGHT_CHECK=true react-scripts build",
     "build:prepare": "./build.sh"
   },
   "eslintConfig": {

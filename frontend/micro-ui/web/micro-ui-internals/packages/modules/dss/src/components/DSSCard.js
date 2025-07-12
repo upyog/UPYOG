@@ -33,12 +33,11 @@ const NDSSCard = () => {
   }
 
   let links = Object.values(nationalScreenURLs)
-    .filter((ele) => ele["nActive"] === true)
-    .map((obj) => ({
-      label: t(obj?.label),
-      link: `/digit-ui/employee/dss/dashboard/${obj?.key}`,
-      link: obj?.others?`/digit-ui/employee/dss/${obj?.key}`:`/digit-ui/employee/dss/dashboard/${obj?.key}`,
-    }));
+  .filter((ele) => ele && ele["active"] === true)
+  .map((obj) => ({
+    label: t(obj?.label || ""),
+    link: obj?.active ? `/digit-ui/employee/dss/dashboard/${obj?.stateKey}` : `/employee/integration/dss/${obj?.stateKey}`,
+  }));
 
   const propsForModuleCard = {
     headerStyle: { border: "none", height: "48px" },
@@ -76,7 +75,14 @@ const DSSCard = () => {
     className: "employeeCard card-home customEmployeeCard full-width-card full-employee-card-height",
     links: [...links],
   };
-  return <ModuleCardFullWidth {...propsForModuleCard} styles={{ width: "100%" }} />;
+  try {
+    // DSSCard logic...
+    return <ModuleCardFullWidth {...propsForModuleCard} styles={{ width: "100%" }} />;
+  } catch (e) {
+    console.error("Error rendering DSSCard:", e);
+    return null;
+  }
+  
 };
 
 export { DSSCard, NDSSCard };
