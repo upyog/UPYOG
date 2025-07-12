@@ -17,7 +17,7 @@ import { initHRMSComponents } from "@upyog/digit-ui-module-hrms";
 
 // import { PGRModule, PGRLinks } from "@demodigit/digit-ui-module-pgr";
 // import { Body, TopBar } from "@demodigit/digit-ui-react-components";
-import "@upyog-niua/upyog-css/example/index.css";
+import "@upyog-niua/upyog-css";
 import { ASSETComponents, ASSETLinks, ASSETModule } from "@demodigit/upyog-ui-module-asset";
 
 
@@ -32,12 +32,10 @@ var Digit = window.Digit || {};
 const enabledModules = [
   "PGR",
   "Payment",
-  "QuickPayLinks",
   "DSS",
   "WS",
   "CommonPT",
-  "ASSET",
-  "HRMS"
+  "ASSET"
 ];
 
 const initTokens = (stateCode) => {

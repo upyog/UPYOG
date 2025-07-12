@@ -139,7 +139,7 @@ const ModuleCardFullWidth = ({ moduleName,  links = [], isCitizen = false, class
 };
 const EmployeeModuleCard = ({ Icon, moduleName, kpis = [], links = [], isCitizen = false, className, styles, longModuleName=false }) => {
   const history = useHistory();
-
+console.log("EmployeeModuleCard",moduleName)
   return (
     <div className={className ? className : "employeeCard customEmployeeCard card-home home-action-cards"} style={styles ? {...styles} : {}}>
       <div className="complaint-links-container">

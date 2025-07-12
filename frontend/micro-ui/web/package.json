@@ -17,32 +17,36 @@
     "node": ">=14"
   },
   "dependencies": {
-    "@upyog-niua/upyog-css": "1.0.20",
-    "@upyog/digit-ui-libraries": "3.0.1",
     "@demodigit/digit-ui-module-common": "1.7.0-beta.5",
+    "@demodigit/digit-ui-module-commonpt": "3.0.3",
     "@demodigit/digit-ui-module-core": "1.0.0",
     "@demodigit/digit-ui-module-dss": "1.0.0",
-    "@demodigit/digit-ui-module-commonpt":"3.0.3",
     "@demodigit/digit-ui-module-pgr": "3.0.4",
     "@demodigit/digit-ui-module-ws": "3.0.6",
-    "@demodigit/digit-ui-react-components" : "1.0.0",
+    "@demodigit/digit-ui-react-components": "1.0.0",
     "@demodigit/upyog-ui-module-asset": "3.0.1",
+    "@upyog-niua/upyog-css": "1.0.20",
+    "@upyog/digit-ui-libraries": "3.0.1",
     "@upyog/digit-ui-module-hrms": "3.0.1",
+    "@upyog/digit-ui-react-components": "3.0.1",
     "babel-loader": "8.1.0",
     "react": "17.0.2",
     "react-dom": "17.0.2",
     "react-router-dom": "5.3.0",
     "react-scripts": "4.0.1",
-    "web-vitals": "1.1.2",
-     "terser-brunch": "^4.1.0"
+    "terser-brunch": "^4.1.0",
+    "web-vitals": "1.1.2"
   },
   "devDependencies": {
-    "http-proxy-middleware": "1.3.1"
-   
+    "clean-webpack-plugin": "^4.0.0",
+    "html-webpack-plugin": "^5.5.0",
+    "http-proxy-middleware": "1.3.1",
+    "webpack": "5",
+    "webpack-cli": "4",
+    "webpack-dev-server": "4"
   },
-  
-  "resolutions":  {
-    "**/babel-loader": "8.2.2",
+  "resolutions": {
+    "**/babel-loader": "8.1.0",
     "**/@babel/core": "7.14.0",
     "**/@babel/preset-env": "7.14.0",
     "**/@babel/plugin-transform-modules-commonjs": "7.14.0",
@@ -51,8 +55,9 @@
     "minimatch": "3.1.2"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "GENERATE_SOURCEMAP=false SKIP_PREFLIGHT_CHECK=true react-scripts build",
+    "start": "webpack serve --mode development --open",
+    "build": "webpack --mode production",
+    "build:debug": "webpack --mode production --env debug=true",
     "build:prepare": "./build.sh"
   },
   "eslintConfig": {
@@ -62,7 +67,7 @@
   },
   "browserslist": [
     ">0.2%",
-   "not dead",
-   "not op_mini all"
- ]
+    "not dead",
+    "not op_mini all"
+  ]
 }

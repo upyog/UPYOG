@@ -124,7 +124,7 @@ const CreateEmployee = () => {
   };
 
   const navigateToAcknowledgement = (Employees) => {
-    history.replace("/upyog-ui/employee/hrms/response", { Employees, key: "CREATE", action: "CREATE" });
+    history.replace("/digit-ui/employee/hrms/response", { Employees, key: "CREATE", action: "CREATE" });
   }
 
 

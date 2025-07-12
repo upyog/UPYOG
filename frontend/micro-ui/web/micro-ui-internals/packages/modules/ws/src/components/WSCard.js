@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { checkForEmployee } from "../utils";
 
 const WSCard = () => {
+  console.log("WSCard",WSCard)
   if (!Digit.Utils.wsAccess()) {
     return null;
   }

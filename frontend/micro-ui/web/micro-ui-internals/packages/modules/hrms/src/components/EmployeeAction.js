@@ -127,7 +127,7 @@ const EmployeeAction = ({ t, action, tenantId, closeModal, submitAction, applica
       set(Employees[0], 'deactivationDetails[0].remarks', data?.remarks);
 
       Employees[0].isActive = false;
-      history.replace("/upyog-ui/employee/hrms/response", { Employees, key: "UPDATE", action: "DEACTIVATION" });
+      history.replace("/digit-ui/employee/hrms/response", { Employees, key: "UPDATE", action: "DEACTIVATION" });
     } else {
       if (file) {
         let documents = {
@@ -144,7 +144,7 @@ const EmployeeAction = ({ t, action, tenantId, closeModal, submitAction, applica
       set(Employees[0], 'reactivationDetails[0].remarks', data?.remarks);
       Employees[0].isActive = true;
 
-      history.replace("/upyog-ui/employee/hrms/response", { Employees, key: "UPDATE", action: "ACTIVATION" });
+      history.replace("/digit-ui/employee/hrms/response", { Employees, key: "UPDATE", action: "ACTIVATION" });
     }
   }
 
