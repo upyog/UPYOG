@@ -27,7 +27,6 @@ initLibraries();
 const enabledModules = [
   "PGR",
   "Payment",
-  "DSS",
   "CommonPT",
   "WS",
   "ASSET",

@@ -15,14 +15,6 @@ const WSServiceName = ({ t, config, onSelect, userType, formData }) => {
         {
             i18nKey: "WS_WATER_CONNECTION_ONLY",
             code: "WATER"
-        },
-        {
-            i18nKey: "WS_SEWERAGE_CONNECTION_ONLY",
-            code: "SEWERAGE"
-        },
-        {
-            i18nKey: "WS_BOTH_WATER_AND_SEWERAGE",
-            code: "BOTH"
         }
     ];
 

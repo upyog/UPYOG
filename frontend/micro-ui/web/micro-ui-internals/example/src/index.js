@@ -32,7 +32,6 @@ var Digit = window.Digit || {};
 const enabledModules = [
   "PGR",
   "Payment",
-  "DSS",
   "WS",
   "CommonPT",
   "ASSET"
