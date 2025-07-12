@@ -11,7 +11,8 @@
     "packages/modules/core",
     "packages/modules/pgr",
     "packages/modules/ws",
-    "packages/modules/asset"
+    "packages/modules/asset",
+    "packages/modules/hrms"
   ],
   "author": "Abhinav Kushwaha <abhinav.kushwaha@egovernments.org>",
   "license": "MIT",

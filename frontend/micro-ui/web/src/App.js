@@ -30,6 +30,7 @@ const enabledModules = [
   "CommonPT",
   "WS",
   "ASSET",
+  "HRMS"
 ];
 window.Digit.ComponentRegistryService.setupRegistry({
   ...paymentConfigs,
