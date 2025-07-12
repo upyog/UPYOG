@@ -34,7 +34,8 @@ const enabledModules = [
   "Payment",
   "WS",
   "CommonPT",
-  "ASSET"
+  "ASSET",
+  "HRMS"
 ];
 
 const initTokens = (stateCode) => {
