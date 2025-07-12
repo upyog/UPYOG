@@ -1,145 +1,423 @@
-import React, { useContext, useEffect, useMemo, useState } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import merge from "lodash.merge";
 import { useDispatch } from "react-redux";
-import { createComplaint } from "../../../redux/actions/index";
-import { PGR_CITIZEN_COMPLAINT_CONFIG, PGR_CITIZEN_CREATE_COMPLAINT } from "../../../constants/Citizen";
-import Response from "./Response";
-
-import { config as defaultConfig } from "./defaultConfig";
-import { Redirect, Route, Switch, useHistory, useRouteMatch, useLocation } from "react-router-dom";
+import { Dropdown, Loader,ImageUploadHandler } from "@demodigit/digit-ui-react-components";
+import { useRouteMatch, useHistory } from "react-router-dom";
 import { useQueryClient } from "react-query";
-
-export const CreateComplaint = () => {
-  const ComponentProvider = Digit.Contexts.ComponentProvider;
+import  LocationSearch  from "../../../../../../react-components/src/atoms/LocationSearch";
+import { FormComposer } from "../../../components/FormComposer";
+import { createComplaint } from "../../../redux/actions/index";
+import SelectImages from "./Steps/SelectImages"
+export const CreateComplaint = ({ parentUrl }) => {
+  const cities = Digit.Hooks.pgr.useTenants();
   const { t } = useTranslation();
-  const { pathname } = useLocation();
+console.log("parentUrlparentUrl",parentUrl,cities,Digit.ULBService.getCurrentTenantId(),window.Digit.SessionStorage.get("CITIZEN.COMMON.HOME.CITY")?.code)
+  const getCities = () => cities?.filter((e) => e.code === window.Digit.SessionStorage.get("CITIZEN.COMMON.HOME.CITY")?.code) || [];
+  console.log("getCities",getCities)
+  const propetyData=localStorage.getItem("pgrProperty") 
+  const [complaintType, setComplaintType] = useState(JSON?.parse(sessionStorage.getItem("complaintType")) || {});
+  const [subTypeMenu, setSubTypeMenu] = useState([]);
+  const [subType, setSubType] = useState(JSON?.parse(sessionStorage.getItem("subType")) || {});
+  const [priorityLevel, setPriorityLevel]=useState(JSON?.parse(sessionStorage.getItem("PriorityLevel"))||{})
+  const [pincode, setPincode] = useState("");
+  const [mobileNumber, setMobileNumber] = useState(sessionStorage.getItem("mobileNumber") || "");
+  const [fullName, setFullName] = useState(sessionStorage.getItem("name") || "");
+  const [emailId, setEmail] = useState(sessionStorage.getItem("emailId") || "");
+  const [selectedCity, setSelectedCity] = useState(getCities()[0] ? getCities()[0] : null);
+const [propertyId, setPropertyId]= useState("")
+const [description, setDescription] = useState("")
+  const { data: fetchedLocalities } = Digit.Hooks.useBoundaryLocalities(
+    getCities()[0]?.code,
+    "admin",
+    {
+      enabled: !!getCities()[0],
+    },
+    t
+  );
+
+  const [localities, setLocalities] = useState(fetchedLocalities);
+  const [selectedLocality, setSelectedLocality] = useState(null);
+  const [canSubmit, setSubmitValve] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+  const [property,setPropertyData]=useState(null)
+  const [pincodeNotValid, setPincodeNotValid] = useState(false);
+  const [params, setParams] = useState({});
+  const tenantId = window.Digit.SessionStorage.get("CITIZEN.COMMON.HOME.CITY")?.code;
+  const menu = Digit.Hooks.pgr.useComplaintTypes({ stateCode: "pg" });
+  console.log("menumenu",menu)
+  const [uploadedImagesn, setUploadedImagesIds] = useState("");
+
+
+  const  priorityMenu= 
+  [
+    {
+      "name": "LOW",
+      "code": "LOW",
+      "active": true
+    },
+    {
+      "name": "MEDIUM",
+      "code": "MEDIUM",
+      "active": true
+    },
+    {
+      "name": "HIGH",
+      "code": "HIGH",
+      "active": true
+    }
+
+  ]
+  const dispatch = useDispatch();
   const match = useRouteMatch();
   const history = useHistory();
-  const registry = useContext(ComponentProvider);
-  const dispatch = useDispatch();
-  const { data: storeData, isLoading } = Digit.Hooks.useStore.getInitData();
-  const { stateInfo } = storeData || {};
-  const [params, setParams, clearParams] = Digit.Hooks.useSessionStorage(PGR_CITIZEN_CREATE_COMPLAINT, {});
-  // const [customConfig, setConfig] = Digit.Hooks.useSessionStorage(PGR_CITIZEN_COMPLAINT_CONFIG, {});
-  const config = useMemo(() => defaultConfig);
-  const [paramState, setParamState] = useState(params);
-  const [nextStep, setNextStep] = useState("");
-  const [canSubmit, setCanSubmit] = useState(false);
-
-  const [rerender, setRerender] = useState(0);
+  const serviceDefinitions = Digit.GetServiceDefinitions;
   const client = useQueryClient();
   useEffect(() => {
-    setCanSubmit(false);
-  }, []);
+    if (complaintType?.key && subType?.key && selectedCity?.code && selectedLocality?.code && priorityLevel?.code ) {
+      setSubmitValve(true);
+    } else {
+      setSubmitValve(false);
+    }
+  }, [complaintType, subType, priorityLevel, selectedCity, selectedLocality]);
 
   useEffect(() => {
-    setParamState(params);
-    if (nextStep === null) {
-      wrapperSubmit();
+    setLocalities(fetchedLocalities);
+  }, [fetchedLocalities]);
+  const handleUpload = (ids) => {
+    setUploadedImagesIds(ids);
+    // Digit.SessionStorage.set("PGR_CREATE_IMAGES", ids);
+  };
+  useEffect(() => {
+    const city = cities.find((obj) => obj.pincode?.find((item) => item == pincode));
+    if (city?.code === getCities()[0]?.code) {
+      setPincodeNotValid(false);
+      setSelectedCity(city);
+      setSelectedLocality(null);
+      const __localityList = fetchedLocalities;
+      const __filteredLocalities = __localityList.filter((city) => city["pincode"] == pincode);
+      setLocalities(__filteredLocalities);
+    } else if (pincode === "" || pincode === null) {
+      setPincodeNotValid(false);
+      setLocalities(fetchedLocalities);
     } else {
-      history.push(`${match.path}/${nextStep}`);
+      setPincodeNotValid(true);
     }
-  }, [params, nextStep]);
+  }, [pincode]);
 
-  const goNext = () => {
-    const currentPath = pathname.split("/").pop();
-
-    let { nextStep } = config.routes[currentPath];
-    let compType = Digit.SessionStorage.get(PGR_CITIZEN_CREATE_COMPLAINT);
-    if (nextStep === "sub-type" && compType.complaintType.key === "Others") {
-      setParams({
-        ...params,
-        complaintType: { key: "Others", name: t("SERVICEDEFS.OTHERS") },
-        subType: { key: "Others", name: t("SERVICEDEFS.OTHERS") },
-      });
-      nextStep = config.routes[nextStep].nextStep;
+  async function selectedType(value) {
+    if (value.key !== complaintType.key) {
+      if (value.key === "Others") {
+        setSubType({ name: "" });
+        setComplaintType(value);
+        sessionStorage.setItem("complaintType",JSON.stringify(value))
+        setSubTypeMenu([{ key: "Others", name: t("SERVICEDEFS.OTHERS") }]);
+      } else {
+        setSubType({ name: "" });
+        setComplaintType(value);
+        sessionStorage.setItem("complaintType",JSON.stringify(value))
+        setSubTypeMenu(await serviceDefinitions.getSubMenu(tenantId, value, t));
+      }
     }
-    setNextStep(nextStep);
+  }
+  async function selectedPriorityLevel(value){
+    sessionStorage.setItem("priorityLevel", JSON.stringify(value))
+    setPriorityLevel(value);
+    //setPriorityMenu(await serviceDefinitions.getSubMen)
+  }
+
+  function selectedSubType(value) {
+    sessionStorage.setItem("subType",JSON.stringify(value))
+    setSubType(value);
+  }
+
+  // city locality logic
+  const selectCity = async (city) => {
+    // if (selectedCity?.code !== city.code) {}
+    return;
   };
 
-  const wrapperSubmit = () => {
-    if (!canSubmit) {
-      setCanSubmit(true);
-      submitComplaint();
-    }
+  function selectLocality(locality) {
+    setSelectedLocality(locality);
+  }
+
+  const wrapperSubmit = (data) => {
+    if (!canSubmit) return;
+    setSubmitted(true);
+    !submitted && onSubmit(data);
   };
-  const submitComplaint = async () => {
-    if (paramState?.complaintType) {
-      const { city_complaint, locality_complaint, uploadedImages, complaintType, subType, prioritylevel, details, ...values } = paramState;
-      const { code: cityCode, name: city } = city_complaint;
-      const { code: localityCode, name: localityName } = locality_complaint;
-      const storedpropertyid =sessionStorage.getItem("propertyid")
-      const _uploadImages = uploadedImages?.map((url) => ({
-        documentType: "PHOTO",
-        fileStoreId: url,
-        documentUid: "",
-        additionalDetails: {},
-      }));
-
-      const data = {
-        ...values,
-        complaintType: subType.key,
-        cityCode,
-        city,
-        prioritylevel: prioritylevel ,
-        description: details,
-        district: city,
-        region: city,
-        localityCode,
-        localityName,
-        state: stateInfo.name,
-        uploadedImages: _uploadImages,
-        additionalDetails: {
-          propertyid: storedpropertyid,
-        },
-      };
-
-      await dispatch(createComplaint(data));
-      await client.refetchQueries(["complaintsList"]);
-      history.push(`${match.path}/response`);
-    }
+  //On SUbmit
+  const onSubmit = async (data) => {
+    if (!canSubmit) return;
+    const cityCode = selectedCity.code;
+    const city = selectedCity.city.name;
+    const district = selectedCity.city.name;
+    const region = selectedCity.city.name;
+    const localityCode = selectedLocality.code;
+    const localityName = selectedLocality.name;
+    const landmark = data?.landmark;
+    const { key } = subType;
+    const complaintType = key;
+    //const prioritylevel=priorityLevel.code;
+    const mobileNumber = data?.mobileNumber;
+    const name = data?.name;
+    const uploadedImages = uploadedImagesn?.map((url) => ({
+      documentType: "PHOTO",
+      fileStoreId: url,
+      documentUid: "",
+      additionalDetails: {},
+    }));
+    const emailId=data?.emailId;
+    
+    const formData = { ...data, cityCode, city, district, region, localityCode, localityName, landmark, complaintType, priorityLevel, mobileNumber, name,emailId,uploadedImages};
+    await dispatch(createComplaint(formData));
+    await client.refetchQueries(["fetchInboxData"]);
+    localStorage.removeItem("pgrProperty");
+    history.push(`/digit-ui/citizen/pgr/response`);
   };
 
-  const handleSelect = (data) => {
-    let c = JSON.parse(sessionStorage.getItem("complaintType"))
-    if(data?.subType)
+  const handlePincode = (event) => {
+    const { value } = event.target;
+    setPincode(value);
+    if (!value) {
+      setPincodeNotValid(false);
+    }
+  };
+  const handleMobileNumber = (event) => {
+ 
+    const { value } = event.target;
+    setMobileNumber(value);
+  
+  };
+  const handleName = (event) => {
+    const { value } = event.target;
+    setFullName(value);
+  };
+  const handleEmail = (event) => {
+    const { value } = event.target;
+    setEmail(value);
+  };
+  const handleDescription = (event) => {
+    const { value } = event.target;
+    setDescription(value);
+  };
+  
+  const isPincodeValid = () => !pincodeNotValid;
+
+  const config = [
     {
+      head: t("ES_CREATECOMPLAINT_PROVIDE_COMPLAINANT_DETAILS"),
+      body: [
+        {
+          label: t("ES_CREATECOMPLAINT_MOBILE_NUMBER"),
+          isMandatory: true,
+          type: "text",
+          value:mobileNumber || window.Digit.SessionStorage.get("User")?.info?.mobileNumber,
+          onChange: handleMobileNumber,
+          populators: {
+            name: "mobileNumber",
+            onChange: handleMobileNumber,
+            validation: {
+              required: true,
+              pattern: /^[6-9]\d{9}$/,  
+            },
+            componentInFront: <div className="employee-card-input employee-card-input--front">+91</div>,
+            error: t("CORE_COMMON_MOBILE_ERROR"),
+          },
+        },
+        {
+          label: t("ES_CREATECOMPLAINT_COMPLAINT_NAME"),
+          isMandatory: true,
+          type: "text",
+          value:fullName || window.Digit.SessionStorage.get("User")?.info?.name,
+          populators: {
+            name: "name",
+            onChange: handleName,
+            validation: {
+              required: true,
+              pattern: /^[A-Za-z]/,
+            },
+            error: t("CS_ADDCOMPLAINT_NAME_ERROR"),
+          },
+        },
+        {
+          label: t("ES_MAIL_ID"),
+          isMandatory: false,
+          type: "text",
+          value:emailId || window.Digit.SessionStorage.get("User")?.info?.emailId ,
+          populators: {
+            name: "emailId",
+            onChange: handleEmail,
+            validation: {
+              //required: true,
+              pattern: /[A-Za-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$/,
+            },
+            error: t("CS_ADDCOMPLAINT_EMAIL_ERROR"),
+          },
+        },
+      ],
+    },
+    {
+      head: t("CS_COMPLAINT_DETAILS_COMPLAINT_DETAILS"),
+      body: [
+        {
+          label: t("CS_COMPLAINT_DETAILS_COMPLAINT_TYPE"),
+          isMandatory: true,
+          type: "dropdown",
+          populators: <Dropdown option={menu} optionKey="name" id="complaintType" selected={complaintType} select={selectedType} />,
+        },
+        {
+          label: t("CS_COMPLAINT_DETAILS_COMPLAINT_SUBTYPE"),
+          isMandatory: true,
+          type: "dropdown",
+          menu: { ...subTypeMenu },
+          populators: <Dropdown option={subTypeMenu} optionKey="name" id="complaintSubType" selected={subType} select={selectedSubType} />,
+        },
+        {
+          
+         label: t("CS_COMPLAINT_DETAILS_COMPLAINT_PRIORITY_LEVEL"),
+            isMandatory: true,
+            type: "dropdown",
+            populators: <Dropdown option={priorityMenu} optionKey="name" id="priorityLevel" selected={priorityLevel} select={selectedPriorityLevel} />,
+          
+        },
+        {
+          //label: t("WS_COMMON_PROPERTY_DETAILS"),
+          "isEditConnection": true,
+          "isCreateConnection": true,
+          "isModifyConnection": true,
+          "isEditByConfigConnection": true,
+          "isProperty":subType?.key?.includes("Property")?true:false,
+          component: "CPTPropertySearchNSummary",
+          key: "cpt",
+          type: "component",
+          "body": [
+              {
+                  "component": "CPTPropertySearchNSummary",
+                  "withoutLabel": true,
+                  "key": "cpt",
+                  "type": "component",
+                  "hideInCitizen": true
+              }
+          ]
+        }
+     
+      ],
+    },
+    {
+      head: t("CS_ADDCOMPLAINT_LOCATION"),
+      body: [
+        {
+          label: t("CS_ADDCOMPLAINT_SELECT_GEOLOCATION_TEXT"),
+          type: "custom",
+          populators: (
+            <LocationSearch
+            onChange={(code) => (pincode = code)}
+          />
+          ),
+        },
+        {
+          label: t("CORE_COMMON_PINCODE"),
+          type: "text",
+          populators: {
+            name: "pincode",
+            validation: { pattern: /^[1-9][0-9]{5}$/, validate: isPincodeValid },
+            error: t("CORE_COMMON_PINCODE_INVALID"),
+            onChange: handlePincode,
+          },
+        },
+        {
+          label: t("CS_COMPLAINT_DETAILS_CITY"),
+          isMandatory: true,
+          type: "dropdown",
+          populators: (
+            <Dropdown
+              isMandatory
+              selected={selectedCity}
+              freeze={true}
+              option={getCities()}
+              id="city"
+              select={selectCity}
+              optionKey="i18nKey"
+              t={t}
+            />
+          ),
+        },
+        {
+          label: t("CS_CREATECOMPLAINT_MOHALLA"),
+          type: "dropdown",
+          isMandatory: true,
+          dependency: selectedCity && localities ? true : false,
+          populators: (
+            <Dropdown isMandatory selected={selectedLocality} optionKey="i18nkey" id="locality" option={localities} select={selectLocality} t={t} />
+          ),
+        },
+        {
+          label: t("CS_COMPLAINT_DETAILS_LANDMARK"),
+          type: "textarea",
+          populators: {
+            name: "landmark",
+          },
+        },
+      ],
+    },
+    {
+      head: t("CS_COMPLAINT_DETAILS_ADDITIONAL_DETAILS"),
+      body: [
+        {
+          label: t("CS_COMPLAINT_DETAILS_ADDITIONAL_DETAILS"),
+          type: "textarea",
+          onChange: handleDescription,
+          value:description,
+          populators: {
+            name: "description",
+            onChange: handleDescription,
+          },
+        },
+        {
+          label: t("CS_ADDCOMPLAINT_EVIDENCE"),
+          type: "custom",
+          populators: (
+            <ImageUploadHandler tenantId={tenantId} uploadedImages={uploadedImagesn} onPhotoChange={handleUpload} />
+          ),
+        },
+        
+      ],
+    },
+  ];
+    useEffect(()=>{
+      console.log("heloo world",propetyData )
+      if(propetyData !== "undefined"   && propetyData !== null)
+      {
+       let data =JSON.parse(propetyData)
+       console.log("stp 1",propetyData)
+       setPropertyData(data)
+        setPropertyId(data?.propertyId)
+      }
+    },[])
+  useEffect(()=>{
+    console.log("step 2",propetyData,property,typeof(propetyData))
+    if(property !== "undefined" && property !== null )
+    {
+      let data =property
+     
+      setPincode(data?.address?.pincode || "")
       
-      let data2 ={"complaintType":c}
-      console.log("handleSelect",data,data2)
-      setParams({ ...params, ...data ,...data2 });
-      goNext();
+      let b= localities.filter((item)=>{
+        return item.code === data?.address?.locality?.code
+      })
+      setSelectedLocality(b?.[0])
+      setDescription(data?.propertyId)
+      console.log("pgrProperty",localities,data?.propertyId,data)
     }
-    else {
-      setParams({ ...params, ...data });
-      goNext();
-    }
-  };
-
-  const handleSkip = () => {
-    goNext();
-  };
-
-  if (isLoading) return null;
-
+   
+  },[propertyId])
   return (
-    <Switch>
-      {Object.keys(config.routes).map((route, index) => {
-        const { component, texts, inputs } = config.routes[route];
-        const Component = typeof component === "string" ? Digit.ComponentRegistryService.getComponent(component) : component;
-        return (
-          <Route path={`${match.path}/${route}`} key={index}>
-            <Component config={{ texts, inputs }} onSelect={handleSelect} onSkip={handleSkip} value={params} t={t} />
-          </Route>
-        );
-      })}
-      <Route path={`${match.path}/response`}>
-        <Response match={match} />
-      </Route>
-      <Route>
-        <Redirect to={`${match.path}/${config.indexRoute}`} />
-      </Route>
-    </Switch>
+    <FormComposer
+      heading={t("ES_CREATECOMPLAINT_NEW_COMPLAINT")}
+      config={config}
+      onSubmit={wrapperSubmit}
+      isDisabled={!canSubmit && !submitted}
+      label={t("CS_ADDCOMPLAINT_ADDITIONAL_DETAILS_SUBMIT_COMPLAINT")}
+    />
   );
 };
