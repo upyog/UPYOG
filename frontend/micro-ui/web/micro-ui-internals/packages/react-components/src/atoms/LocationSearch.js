@@ -36,6 +36,7 @@ const getName = (places) => {
 };
 
 const loadGoogleMaps = (callback) => {
+  console.log("loadGoogleMaps",loadGoogleMaps)
   const key = "AIzaSyBrWOKWviSRGqTTJMVPIs9FzMhKXSXtZLs";
   const loader = new Loader({
     apiKey: key,
@@ -347,6 +348,7 @@ const initAutocomplete = (onChange, position, isPlaceRequired=false) => {
 };
 
 const LocationSearch = (props) => {
+  console.log("LocationSearch")
   useEffect(() => {
     async function mapScriptCall() {
       const getLatLng = (position) => {
