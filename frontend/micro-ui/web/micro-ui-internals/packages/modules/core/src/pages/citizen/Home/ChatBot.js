@@ -16,7 +16,7 @@ function ChatBot() {
       setInput("");
   
       try {
-        const response = await fetch('https://demo.mea-madad.in/chat', {
+        const response = await fetch('https://oprwrt-demo.ddns.net/chat', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
