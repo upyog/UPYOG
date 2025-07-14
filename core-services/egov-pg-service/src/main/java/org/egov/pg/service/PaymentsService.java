@@ -2,6 +2,7 @@ package org.egov.pg.service;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -106,7 +107,9 @@ public class PaymentsService {
 		
 		CollectionPaymentModeEnum paymentMode = CollectionPaymentModeEnum.ONLINE;
 		
-		if(request.getTransaction().getGatewayPaymentMode() !=null) {
+		List<String> modes = Arrays.asList("CASH", "ONLINE","CHEQUE","DD","CARD","OFFLINE_NEFT","OFFLINE_RTGS");
+
+		if(request.getTransaction().getGatewayPaymentMode() !=null && modes.contains(request.getTransaction().getGatewayPaymentMode())) {
 			paymentMode = CollectionPaymentModeEnum.valueOf(request.getTransaction().getGatewayPaymentMode());
 		}
 		
