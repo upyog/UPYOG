@@ -7,11 +7,11 @@
     "packages/css",
     "example",
     "packages/react-components",
-    "packages/modules/commonPt",
     "packages/modules/core",
+    "packages/modules/asset",
+    "packages/modules/commonPt",
     "packages/modules/pgr",
     "packages/modules/ws",
-    "packages/modules/asset",
     "packages/modules/hrms"
   ],
   "author": "Abhinav Kushwaha <abhinav.kushwaha@egovernments.org>",

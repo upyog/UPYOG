@@ -11,8 +11,8 @@ import { PaymentModule, PaymentLinks, paymentConfigs } from "@demodigit/digit-ui
 import { initWSComponents } from "@demodigit/digit-ui-module-ws";
 import { DigitUI } from "@demodigit/digit-ui-module-core";
 import { initCommonPTComponents } from "@demodigit/digit-ui-module-commonpt";
-import { HRMSModule } from "@upyog/digit-ui-module-hrms";
-import { initHRMSComponents } from "@upyog/digit-ui-module-hrms";
+import { HRMSModule } from "@demodigit/digit-ui-module-hrms";
+import { initHRMSComponents } from "@demodigit/digit-ui-module-hrms";
 // import {initCustomisationComponents} from "./customisations";
 
 // import { PGRModule, PGRLinks } from "@demodigit/digit-ui-module-pgr";

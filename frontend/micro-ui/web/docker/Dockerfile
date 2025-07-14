@@ -10,18 +10,17 @@ RUN apk add --no-cache git>2.30.0
 RUN yarn add @upyog/digit-ui-libraries@3.0.1
 RUN yarn add @demodigit/digit-ui-module-dss@1.0.0
 RUN yarn add @demodigit/digit-ui-module-pgr@3.0.4
-RUN yarn add @demodigit/digit-ui-module-core@1.0.0
+RUN yarn add @demodigit/digit-ui-module-core@1.0.3
 RUN yarn add @demodigit/digit-ui-module-common@1.7.0-beta.5
 RUN yarn add @demodigit/digit-ui-module-ws@3.0.6
 RUN yarn add @demodigit/digit-ui-module-commonpt@3.0.3
 RUN yarn add @demodigit/upyog-ui-module-asset@3.0.1
-RUN yarn add @demodigit/digit-ui-module-commonpt@3.0.3
-RUN yarn add @upyog/digit-ui-module-hrms@3.0.1
+RUN yarn add @demodigit/digit-ui-module-hrms@3.0.1
 
 
 ARG WORK_DIR
 WORKDIR /app
-ENV NODE_OPTIONS "--max-old-space-size=12288"
+ENV NODE_OPTIONS "--max-old-space-size=16384"
 ENV GENERATE_SOURCEMAP "false"
 
 COPY ${WORK_DIR} .
@@ -30,7 +29,7 @@ RUN ls -lah
 #RUN node web/envs.js
 RUN cd web/ \
     && node envs.js \
-    && node -e 'console.log(v8.getHeapStatistics().heap_size_limit/(12288*12288))' \
+    && node -e 'console.log(v8.getHeapStatistics().heap_size_limit/(16384*16384))' \
     &&  ./install-deps.sh \
     && yarn install \
     && yarn build 

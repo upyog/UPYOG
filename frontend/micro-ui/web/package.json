@@ -6,11 +6,11 @@
   "workspaces": [
     "micro-ui-internals/packages/libraries",
     "micro-ui-internals/packages/react-components",
-    "micro-ui-internals/packages/modules/commonPt",
     "micro-ui-internals/packages/modules/core",
     "micro-ui-internals/packages/modules/pgr",
     "micro-ui-internals/packages/modules/ws",
     "micro-ui-internals/packages/modules/asset",
+    "micro-ui-internals/packages/modules/commonPt",
     "micro-ui-internals/packages/modules/hrms"
   ],
   "engines": {
@@ -19,7 +19,7 @@
   "dependencies": {
     "@demodigit/digit-ui-module-common": "1.7.0-beta.5",
     "@demodigit/digit-ui-module-commonpt": "3.0.3",
-    "@demodigit/digit-ui-module-core": "1.0.0",
+    "@demodigit/digit-ui-module-core": "1.0.3",
     "@demodigit/digit-ui-module-dss": "1.0.0",
     "@demodigit/digit-ui-module-pgr": "3.0.4",
     "@demodigit/digit-ui-module-ws": "3.0.6",
@@ -27,7 +27,7 @@
     "@demodigit/upyog-ui-module-asset": "3.0.1",
     "@upyog-niua/upyog-css": "1.0.20",
     "@upyog/digit-ui-libraries": "3.0.1",
-    "@upyog/digit-ui-module-hrms": "3.0.1",
+    "@demodigit/digit-ui-module-hrms": "3.0.1",
     "@upyog/digit-ui-react-components": "3.0.1",
     "babel-loader": "8.1.0",
     "react": "17.0.2",
