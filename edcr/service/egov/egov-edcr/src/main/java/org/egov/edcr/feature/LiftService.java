@@ -48,12 +48,12 @@
 package org.egov.edcr.feature;
 
 import java.math.BigDecimal;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -65,10 +65,8 @@ import org.egov.common.entity.edcr.MdmsFeatureRule;
 import org.egov.common.entity.edcr.Measurement;
 import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.Result;
-import org.egov.common.entity.edcr.RuleKey;
 import org.egov.common.entity.edcr.ScrutinyDetail;
 import org.egov.edcr.constants.DxfFileConstants;
-import org.egov.edcr.constants.EdcrRulesMdmsConstants;
 import org.egov.edcr.service.CacheManagerMdms;
 import org.egov.edcr.service.FetchEdcrRulesMdms;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -93,207 +91,343 @@ public class LiftService extends FeatureProcess {
 	private static final String SUBRULE_118_DESC = "Minimum dimension Of lift";
 	private static final Logger LOG = LogManager.getLogger(LiftService.class);
 
+//	@Override
+//	public Plan validate(Plan plan) {
+//		for (Block block : plan.getBlocks()) {
+//			if (block.getBuilding() != null && !block.getBuilding().getFloors().isEmpty()) {
+//				for (Floor floor : block.getBuilding().getFloors()) {
+//					List<Lift> lifts = floor.getLifts();
+//					if (lifts != null && !lifts.isEmpty()) {
+//						for (Lift lift : lifts) {
+//							List<Measurement> liftPolyLines = lift.getLifts();
+//							if (liftPolyLines != null && !liftPolyLines.isEmpty()) {
+//								validateDimensions(plan, block.getNumber(), floor.getNumber(),
+//										lift.getNumber().toString(), liftPolyLines);
+//							}
+//						}
+//					}
+//				}
+//			}
+//		}
+//		return plan;
+//	}
+//
+//	@Override
+//	public Plan process(Plan plan) {
+//		// validate(plan);
+//		if (plan != null && !plan.getBlocks().isEmpty()) {
+//			blk: for (Block block : plan.getBlocks()) {
+//				scrutinyDetail = new ScrutinyDetail();
+//				scrutinyDetail.addColumnHeading(1, RULE_NO);
+//				scrutinyDetail.addColumnHeading(2, DESCRIPTION);
+//				scrutinyDetail.addColumnHeading(3, REQUIRED);
+//				scrutinyDetail.addColumnHeading(4, PROVIDED);
+//				scrutinyDetail.addColumnHeading(5, STATUS);
+//				// scrutinyDetail.addColumnHeading(6, REMARKS);
+//				scrutinyDetail.setKey("Block_" + block.getNumber() + "_" + "Lift - Minimum Required");
+//
+//				ScrutinyDetail scrutinyDetail1 = new ScrutinyDetail();
+//				scrutinyDetail1.addColumnHeading(1, RULE_NO);
+//				scrutinyDetail1.addColumnHeading(2, DESCRIPTION);
+//				scrutinyDetail1.addColumnHeading(3, REQUIRED);
+//				scrutinyDetail1.addColumnHeading(4, PROVIDED);
+//				scrutinyDetail1.addColumnHeading(5, STATUS);
+//				// scrutinyDetail1.addColumnHeading(6, REMARKS);
+//				scrutinyDetail1.setKey("Block_" + block.getNumber() + "_" + "Lift Dimension");
+//
+//				if (block.getBuilding() != null && !block.getBuilding().getOccupancies().isEmpty()
+//						&& block.getBuilding().getFloors().stream()
+//								.anyMatch(floor -> floor.getLifts() != null && !floor.getLifts().isEmpty())) {
+//
+//					/*
+//					 * if (Util.checkExemptionConditionForBuildingParts(block)) { continue blk; }
+//					 */
+//					/*
+//					 * List<OccupancyType> occupancyTypeList =
+//					 * block.getBuilding().getOccupancies().stream() .map(occupancy ->
+//					 * occupancy.getType()).collect(Collectors.toList());
+//					 */
+//					BigDecimal noOfLiftsRqrd = BigDecimal.ZERO;
+//
+//					List<Object> rules = cache.getFeatureRules(plan, MdmsFeatureConstants.LIFT, false);
+//			        Optional<MdmsFeatureRule> matchedRule = rules.stream().map(obj -> (MdmsFeatureRule) obj).findFirst();
+//					
+//					if (matchedRule.isPresent()) {
+//						MdmsFeatureRule rule = matchedRule.get();
+//						noOfLiftsRqrd = rule.getPermissible();
+//					} else {
+//						noOfLiftsRqrd = BigDecimal.ZERO;
+//					}
+//					/*
+//					 * To be added Rule 48 Lift shall be provided for buildings above 15 m. height
+//					 * in case of apartments, group housing, commercial, institutional and office
+//					 * buildings
+//					 */
+//					if (
+//					// block.getBuilding().getIsHighRise() &&
+////                            (DxfFileConstants.A_AF
+//					(DxfFileConstants.A
+//							.equals(plan.getVirtualBuilding().getMostRestrictiveFarHelper().getType().getCode())
+//							|| DxfFileConstants.B.equals(
+//									plan.getVirtualBuilding().getMostRestrictiveFarHelper().getSubtype().getCode())
+//							|| DxfFileConstants.E.equals(
+//									plan.getVirtualBuilding().getMostRestrictiveFarHelper().getSubtype().getCode())
+//							|| DxfFileConstants.F.equals(
+//									plan.getVirtualBuilding().getMostRestrictiveFarHelper().getSubtype().getCode()))) {
+////						noOfLiftsRqrd = BigDecimal.valueOf(1);
+//						boolean valid = false;
+//						if (BigDecimal.valueOf(Double.valueOf(block.getNumberOfLifts()))
+//								.compareTo(noOfLiftsRqrd) >= 0) {
+//							valid = true;
+//						}
+//						if (valid) {
+//							setReportOutputDetails(plan, SUBRULE_48, SUBRULE_48_DESCRIPTION, noOfLiftsRqrd.toString(),
+//									block.getNumberOfLifts(), Result.Accepted.getResultVal(), scrutinyDetail);
+//						} else {
+//							setReportOutputDetails(plan, SUBRULE_48, SUBRULE_48_DESCRIPTION, noOfLiftsRqrd.toString(),
+//									block.getNumberOfLifts(), Result.Not_Accepted.getResultVal(), scrutinyDetail);
+//						}
+//
+//					}
+//
+//					BigDecimal liftWidth = BigDecimal.ZERO;
+//					BigDecimal liftHeight = BigDecimal.ZERO;
+//					BigDecimal liftArea = BigDecimal.ZERO;
+//
+//					if (block.getBuilding() != null && block.getBuilding().getBuildingHeight() != null
+//							&& block.getBuilding().getBuildingHeight().intValue() > 0) {
+//						if (!block.getBuilding().getFloors().isEmpty()) {
+//							Integer floorUnits = 0;
+//							// for (Floor floor : block.getBuilding().getFloors())
+////                  { floorUnits = floorUnits +
+////                  floor.getUnits().size(); }
+////                  if (floorUnits > 0) 
+//							// {
+//							boolean validOutside = false;
+//							Map<String, String>
+//
+//							liftDimensions = new HashMap<>();
+//							flr: for (Floor floor : block.getBuilding().getFloors()) {
+//								for (Lift lift : floor.getLifts()) {
+//									if (lift.getLiftClosed()) {
+//										for (Measurement measurement : lift.getLifts()) {
+//											liftArea = measurement.getArea().setScale(2, BigDecimal.ROUND_HALF_UP);
+//											liftHeight = measurement.getHeight().setScale(2, BigDecimal.ROUND_HALF_UP);
+//											liftWidth = measurement.getWidth().setScale(2, BigDecimal.ROUND_HALF_UP);
+////										measurement.setWidth(BigDecimal.valueOf(
+////												Math.round(measurement.getWidth().doubleValue() * 100d) / 100d));
+////										measurement.setHeight(BigDecimal.valueOf(
+////												Math.round(measurement.getHeight().doubleValue() * 100d) / 100d));
+////										
+////										if (liftWidth.compareTo(BigDecimal.valueOf(1.1)) >= 0
+////												&& liftHeight.compareTo(BigDecimal.valueOf(2)) >= 0) {
+////											validOutside = true;
+////											liftDimensions.put("width", measurement.getWidth().toString());
+////											liftDimensions.put("length", measurement.getHeight().toString());
+////											liftDimensions.put("floor", floor.getNumber().toString());
+////											liftDimensions.put("lift", lift.getNumber().toString());
+//											break flr;
+//										}
+//									}
+//								}
+//							}
+//						}
+////						if (validOutside) {
+//						setReportOutputDetails(plan, SUBRULE_118, String.format(SUBRULE_118_DESCRIPTION, "", ""), "",
+//								liftHeight + " * " + liftWidth, Result.Accepted.getResultVal(), scrutinyDetail1);
+//						// } else {
+////							setReportOutputDetails(plan, SUBRULE_118, SUBRULE_118_DESC, "2.0 m * 1.10 m",
+////									"None of the lift has minimum dimensions as provided",
+////									Result.Not_Accepted.getResultVal(), "",
+////									scrutinyDetail1);
+//					}
+//				}
+//			}
+//		}
+//		// }
+//
+//		// }
+//
+//		return plan;
+//	}
+//
+//	private void setReportOutputDetails(Plan plan, String ruleNo, String ruleDesc, String expected, String actual,
+//			String status, ScrutinyDetail scrutinyDetail) {
+//		Map<String, String> details = new HashMap<>();
+//		details.put(RULE_NO, ruleNo);
+//		details.put(DESCRIPTION, ruleDesc);
+//		details.put(REQUIRED, expected);
+//		details.put(PROVIDED, actual);
+//		details.put(STATUS, status);
+//		// details.put(REMARKS, remarks);
+//		scrutinyDetail.getDetail().add(details);
+//		plan.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+//	}
+//
+//	private void validateDimensions(Plan plan, String blockNo, int floorNo, String liftNo,
+//			List<Measurement> liftPolylines) {
+//		int count = 0;
+//		for (Measurement m : liftPolylines) {
+//			if (m.getInvalidReason() != null && m.getInvalidReason().length() > 0) {
+//				count++;
+//
+//			}
+//		}
+//		if (count > 0) {
+//			plan.addError(String.format(DxfFileConstants.LAYER_LIFT_WITH_NO, blockNo, floorNo, liftNo),
+//					count + " number of lift polyline not having only 4 points in layer "
+//							+ String.format(DxfFileConstants.LAYER_LIFT_WITH_NO, blockNo, floorNo, liftNo));
+//
+//		}
+//	}
+	
 	@Override
 	public Plan validate(Plan plan) {
-		for (Block block : plan.getBlocks()) {
-			if (block.getBuilding() != null && !block.getBuilding().getFloors().isEmpty()) {
-				for (Floor floor : block.getBuilding().getFloors()) {
-					List<Lift> lifts = floor.getLifts();
-					if (lifts != null && !lifts.isEmpty()) {
-						for (Lift lift : lifts) {
-							List<Measurement> liftPolyLines = lift.getLifts();
-							if (liftPolyLines != null && !liftPolyLines.isEmpty()) {
-								validateDimensions(plan, block.getNumber(), floor.getNumber(),
-										lift.getNumber().toString(), liftPolyLines);
-							}
-						}
-					}
-				}
-			}
-		}
-		return plan;
+	    for (Block block : plan.getBlocks()) {
+	        if (!hasBuildingWithFloors(block)) continue;
+
+	        for (Floor floor : block.getBuilding().getFloors()) {
+	            for (Lift lift : getLifts(floor)) {
+	                validateDimensions(plan, block.getNumber(), floor.getNumber(), lift.getNumber().toString(), lift.getLifts());
+	            }
+	        }
+	    }
+	    return plan;
 	}
 
 	@Override
 	public Plan process(Plan plan) {
-		// validate(plan);
-		if (plan != null && !plan.getBlocks().isEmpty()) {
-			blk: for (Block block : plan.getBlocks()) {
-				scrutinyDetail = new ScrutinyDetail();
-				scrutinyDetail.addColumnHeading(1, RULE_NO);
-				scrutinyDetail.addColumnHeading(2, DESCRIPTION);
-				scrutinyDetail.addColumnHeading(3, REQUIRED);
-				scrutinyDetail.addColumnHeading(4, PROVIDED);
-				scrutinyDetail.addColumnHeading(5, STATUS);
-				// scrutinyDetail.addColumnHeading(6, REMARKS);
-				scrutinyDetail.setKey("Block_" + block.getNumber() + "_" + "Lift - Minimum Required");
+	    if (plan == null || plan.getBlocks().isEmpty()) return plan;
 
-				ScrutinyDetail scrutinyDetail1 = new ScrutinyDetail();
-				scrutinyDetail1.addColumnHeading(1, RULE_NO);
-				scrutinyDetail1.addColumnHeading(2, DESCRIPTION);
-				scrutinyDetail1.addColumnHeading(3, REQUIRED);
-				scrutinyDetail1.addColumnHeading(4, PROVIDED);
-				scrutinyDetail1.addColumnHeading(5, STATUS);
-				// scrutinyDetail1.addColumnHeading(6, REMARKS);
-				scrutinyDetail1.setKey("Block_" + block.getNumber() + "_" + "Lift Dimension");
+	    for (Block block : plan.getBlocks()) {
+	        if (!isLiftValidationRequired(block)) continue;
 
-				if (block.getBuilding() != null && !block.getBuilding().getOccupancies().isEmpty()
-						&& block.getBuilding().getFloors().stream()
-								.anyMatch(floor -> floor.getLifts() != null && !floor.getLifts().isEmpty())) {
+	        ScrutinyDetail liftCountDetail = createScrutinyDetail("Block_" + block.getNumber() + "_Lift - Minimum Required");
+	        ScrutinyDetail liftDimDetail = createScrutinyDetail("Block_" + block.getNumber() + "_Lift Dimension");
 
-					/*
-					 * if (Util.checkExemptionConditionForBuildingParts(block)) { continue blk; }
-					 */
-					/*
-					 * List<OccupancyType> occupancyTypeList =
-					 * block.getBuilding().getOccupancies().stream() .map(occupancy ->
-					 * occupancy.getType()).collect(Collectors.toList());
-					 */
-					BigDecimal noOfLiftsRqrd = BigDecimal.ZERO;
+	        validateLiftCount(plan, block, liftCountDetail);
+	        validateLiftDimensions(plan, block, liftDimDetail);
+	    }
 
-					String feature = MdmsFeatureConstants.LIFT;
+	    return plan;
+	}
 
-					String occupancyName = fetchEdcrRulesMdms.getOccupancyName(plan).toLowerCase();
-					String tenantId = plan.getTenantId();
-					String zone = plan.getPlanInformation().getZone().toLowerCase();
-					String subZone = plan.getPlanInformation().getSubZone().toLowerCase();
-					String riskType = fetchEdcrRulesMdms.getRiskType(plan).toLowerCase();
+	
 
-					RuleKey key = new RuleKey(EdcrRulesMdmsConstants.STATE, tenantId, zone, subZone, occupancyName,
-							null, feature);
-					List<Object> rules = cache.getRules(tenantId, key);
+	private boolean hasBuildingWithFloors(Block block) {
+	    return block.getBuilding() != null && !block.getBuilding().getFloors().isEmpty();
+	}
 
-					Optional<MdmsFeatureRule> matchedRule = rules.stream().map(obj -> (MdmsFeatureRule) obj)
-							.findFirst();
+	private List<Lift> getLifts(Floor floor) {
+	    return floor.getLifts() != null ? floor.getLifts() : Collections.emptyList();
+	}
 
-					if (matchedRule.isPresent()) {
-						MdmsFeatureRule rule = matchedRule.get();
-						noOfLiftsRqrd = rule.getPermissible();
-					} else {
-						noOfLiftsRqrd = BigDecimal.ZERO;
-					}
-					/*
-					 * To be added Rule 48 Lift shall be provided for buildings above 15 m. height
-					 * in case of apartments, group housing, commercial, institutional and office
-					 * buildings
-					 */
-					if (
-					// block.getBuilding().getIsHighRise() &&
-//                            (DxfFileConstants.A_AF
-					(DxfFileConstants.A
-							.equals(plan.getVirtualBuilding().getMostRestrictiveFarHelper().getType().getCode())
-							|| DxfFileConstants.B.equals(
-									plan.getVirtualBuilding().getMostRestrictiveFarHelper().getSubtype().getCode())
-							|| DxfFileConstants.E.equals(
-									plan.getVirtualBuilding().getMostRestrictiveFarHelper().getSubtype().getCode())
-							|| DxfFileConstants.F.equals(
-									plan.getVirtualBuilding().getMostRestrictiveFarHelper().getSubtype().getCode()))) {
-//						noOfLiftsRqrd = BigDecimal.valueOf(1);
-						boolean valid = false;
-						if (BigDecimal.valueOf(Double.valueOf(block.getNumberOfLifts()))
-								.compareTo(noOfLiftsRqrd) >= 0) {
-							valid = true;
-						}
-						if (valid) {
-							setReportOutputDetails(plan, SUBRULE_48, SUBRULE_48_DESCRIPTION, noOfLiftsRqrd.toString(),
-									block.getNumberOfLifts(), Result.Accepted.getResultVal(), scrutinyDetail);
-						} else {
-							setReportOutputDetails(plan, SUBRULE_48, SUBRULE_48_DESCRIPTION, noOfLiftsRqrd.toString(),
-									block.getNumberOfLifts(), Result.Not_Accepted.getResultVal(), scrutinyDetail);
-						}
+	private boolean isLiftValidationRequired(Block block) {
+	    return block.getBuilding() != null &&
+	           !block.getBuilding().getOccupancies().isEmpty() &&
+	           block.getBuilding().getFloors().stream().anyMatch(floor -> !getLifts(floor).isEmpty());
+	}
 
-					}
+	private void validateLiftCount(Plan plan, Block block, ScrutinyDetail scrutinyDetail) {
+	    BigDecimal requiredLifts = getRequiredLiftCount(plan);
+	    if (!isHighRiseLiftRequired(plan)) return;
 
-					BigDecimal liftWidth = BigDecimal.ZERO;
-					BigDecimal liftHeight = BigDecimal.ZERO;
-					BigDecimal liftArea = BigDecimal.ZERO;
+	    boolean valid = BigDecimal.valueOf(Double.parseDouble(block.getNumberOfLifts())).compareTo(requiredLifts) >= 0;
+	    setReportOutputDetails(plan, SUBRULE_48, SUBRULE_48_DESCRIPTION,
+	            requiredLifts.toString(), block.getNumberOfLifts(),
+	            valid ? Result.Accepted.getResultVal() : Result.Not_Accepted.getResultVal(),
+	            scrutinyDetail);
+	}
 
-					if (block.getBuilding() != null && block.getBuilding().getBuildingHeight() != null
-							&& block.getBuilding().getBuildingHeight().intValue() > 0) {
-						if (!block.getBuilding().getFloors().isEmpty()) {
-							Integer floorUnits = 0;
-							// for (Floor floor : block.getBuilding().getFloors())
-//                  { floorUnits = floorUnits +
-//                  floor.getUnits().size(); }
-//                  if (floorUnits > 0) 
-							// {
-							boolean validOutside = false;
-							Map<String, String>
+	private boolean isHighRiseLiftRequired(Plan plan) {
+	    String farCode = plan.getVirtualBuilding().getMostRestrictiveFarHelper().getType().getCode();
+	    String subTypeCode = plan.getVirtualBuilding().getMostRestrictiveFarHelper().getSubtype().getCode();
+	    return DxfFileConstants.A.equals(farCode) ||
+	           DxfFileConstants.B.equals(subTypeCode) ||
+	           DxfFileConstants.E.equals(subTypeCode) ||
+	           DxfFileConstants.F.equals(subTypeCode);
+	}
 
-							liftDimensions = new HashMap<>();
-							flr: for (Floor floor : block.getBuilding().getFloors()) {
-								for (Lift lift : floor.getLifts()) {
-									if (lift.getLiftClosed()) {
-										for (Measurement measurement : lift.getLifts()) {
-											liftArea = measurement.getArea().setScale(2, BigDecimal.ROUND_HALF_UP);
-											liftHeight = measurement.getHeight().setScale(2, BigDecimal.ROUND_HALF_UP);
-											liftWidth = measurement.getWidth().setScale(2, BigDecimal.ROUND_HALF_UP);
-//										measurement.setWidth(BigDecimal.valueOf(
-//												Math.round(measurement.getWidth().doubleValue() * 100d) / 100d));
-//										measurement.setHeight(BigDecimal.valueOf(
-//												Math.round(measurement.getHeight().doubleValue() * 100d) / 100d));
-//										
-//										if (liftWidth.compareTo(BigDecimal.valueOf(1.1)) >= 0
-//												&& liftHeight.compareTo(BigDecimal.valueOf(2)) >= 0) {
-//											validOutside = true;
-//											liftDimensions.put("width", measurement.getWidth().toString());
-//											liftDimensions.put("length", measurement.getHeight().toString());
-//											liftDimensions.put("floor", floor.getNumber().toString());
-//											liftDimensions.put("lift", lift.getNumber().toString());
-											break flr;
-										}
-									}
-								}
-							}
-						}
-//						if (validOutside) {
-						setReportOutputDetails(plan, SUBRULE_118, String.format(SUBRULE_118_DESCRIPTION, "", ""), "",
-								liftHeight + " * " + liftWidth, Result.Accepted.getResultVal(), scrutinyDetail1);
-						// } else {
-//							setReportOutputDetails(plan, SUBRULE_118, SUBRULE_118_DESC, "2.0 m * 1.10 m",
-//									"None of the lift has minimum dimensions as provided",
-//									Result.Not_Accepted.getResultVal(), "",
-//									scrutinyDetail1);
-					}
-				}
-			}
-		}
-		// }
+	private BigDecimal getRequiredLiftCount(Plan plan) {
+	    List<Object> rules = cache.getFeatureRules(plan, MdmsFeatureConstants.LIFT, false);
+	    return rules.stream()
+	                .map(r -> (MdmsFeatureRule) r)
+	                .findFirst()
+	                .map(MdmsFeatureRule::getPermissible)
+	                .orElse(BigDecimal.ZERO);
+	}
 
-		// }
+	private void validateLiftDimensions(Plan plan, Block block, ScrutinyDetail scrutinyDetail) {
+	    if (!hasValidBuildingHeight(block)) return;
 
-		return plan;
+	    for (Floor floor : block.getBuilding().getFloors()) {
+	        for (Lift lift : getLifts(floor)) {
+	            if (!Boolean.TRUE.equals(lift.getLiftClosed())) continue;
+
+	            for (Measurement measurement : lift.getLifts()) {
+	                BigDecimal area = scale(measurement.getArea());
+	                BigDecimal height = scale(measurement.getHeight());
+	                BigDecimal width = scale(measurement.getWidth());
+
+	                // You can apply min dimension checks here if needed
+	                String provided = height + " * " + width;
+	                setReportOutputDetails(plan, SUBRULE_118, String.format(SUBRULE_118_DESCRIPTION, "", ""), "",
+	                        provided, Result.Accepted.getResultVal(), scrutinyDetail);
+	                return;
+	            }
+	        }
+	    }
+
+	    // No valid lift dimensions found (if required, handle this case too)
+	    // setReportOutputDetails(..., Result.Not_Accepted.getResultVal(), ...);
+	}
+
+	private boolean hasValidBuildingHeight(Block block) {
+	    return block.getBuilding() != null &&
+	           block.getBuilding().getBuildingHeight() != null &&
+	           block.getBuilding().getBuildingHeight().intValue() > 0;
+	}
+
+	private BigDecimal scale(BigDecimal value) {
+	    return value.setScale(2, BigDecimal.ROUND_HALF_UP);
+	}
+
+	private ScrutinyDetail createScrutinyDetail(String key) {
+	    ScrutinyDetail detail = new ScrutinyDetail();
+	    detail.addColumnHeading(1, RULE_NO);
+	    detail.addColumnHeading(2, DESCRIPTION);
+	    detail.addColumnHeading(3, REQUIRED);
+	    detail.addColumnHeading(4, PROVIDED);
+	    detail.addColumnHeading(5, STATUS);
+	    detail.setKey(key);
+	    return detail;
+	}
+
+	private void validateDimensions(Plan plan, String blockNo, int floorNo, String liftNo, List<Measurement> liftPolylines) {
+	    long invalidCount = liftPolylines.stream()
+	    		.filter(m -> m.getInvalidReason() != null && !m.getInvalidReason().toString().isEmpty())
+	            .count();
+
+	    if (invalidCount > 0) {
+	        plan.addError(
+	                String.format(DxfFileConstants.LAYER_LIFT_WITH_NO, blockNo, floorNo, liftNo),
+	                invalidCount + " number of lift polyline not having only 4 points in layer "
+	                        + String.format(DxfFileConstants.LAYER_LIFT_WITH_NO, blockNo, floorNo, liftNo));
+	    }
 	}
 
 	private void setReportOutputDetails(Plan plan, String ruleNo, String ruleDesc, String expected, String actual,
-			String status, ScrutinyDetail scrutinyDetail) {
-		Map<String, String> details = new HashMap<>();
-		details.put(RULE_NO, ruleNo);
-		details.put(DESCRIPTION, ruleDesc);
-		details.put(REQUIRED, expected);
-		details.put(PROVIDED, actual);
-		details.put(STATUS, status);
-		// details.put(REMARKS, remarks);
-		scrutinyDetail.getDetail().add(details);
-		plan.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+	                                     String status, ScrutinyDetail scrutinyDetail) {
+	    Map<String, String> details = new HashMap<>();
+	    details.put(RULE_NO, ruleNo);
+	    details.put(DESCRIPTION, ruleDesc);
+	    details.put(REQUIRED, expected);
+	    details.put(PROVIDED, actual);
+	    details.put(STATUS, status);
+	    scrutinyDetail.getDetail().add(details);
+	    plan.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
 	}
 
-	private void validateDimensions(Plan plan, String blockNo, int floorNo, String liftNo,
-			List<Measurement> liftPolylines) {
-		int count = 0;
-		for (Measurement m : liftPolylines) {
-			if (m.getInvalidReason() != null && m.getInvalidReason().length() > 0) {
-				count++;
-
-			}
-		}
-		if (count > 0) {
-			plan.addError(String.format(DxfFileConstants.LAYER_LIFT_WITH_NO, blockNo, floorNo, liftNo),
-					count + " number of lift polyline not having only 4 points in layer "
-							+ String.format(DxfFileConstants.LAYER_LIFT_WITH_NO, blockNo, floorNo, liftNo));
-
-		}
-	}
 
 	@Override
 	public Map<String, Date> getAmendments() {

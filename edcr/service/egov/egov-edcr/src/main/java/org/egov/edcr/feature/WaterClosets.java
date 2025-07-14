@@ -48,12 +48,12 @@
 package org.egov.edcr.feature;
 
 import java.math.BigDecimal;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -65,11 +65,8 @@ import org.egov.common.entity.edcr.Measurement;
 import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.Result;
 import org.egov.common.entity.edcr.RoomHeight;
-import org.egov.common.entity.edcr.RuleKey;
 import org.egov.common.entity.edcr.ScrutinyDetail;
-import org.egov.edcr.constants.EdcrRulesMdmsConstants;
 import org.egov.edcr.service.CacheManagerMdms;
-import org.egov.edcr.service.FetchEdcrRulesMdms;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -86,148 +83,260 @@ public class WaterClosets extends FeatureProcess {
 	}
 	
 	@Autowired
-	FetchEdcrRulesMdms fetchEdcrRulesMdms;
-	
-	@Autowired
 	CacheManagerMdms cache;
-
+//
+//	@Override
+//	public Plan process(Plan pl) {
+//
+//		// Scrutiny detail for water closets dimensions
+//		ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
+//		scrutinyDetail.setKey("Common_Water Closets");
+//		scrutinyDetail.addColumnHeading(1, RULE_NO);
+//		scrutinyDetail.addColumnHeading(2, DESCRIPTION);
+//		scrutinyDetail.addColumnHeading(3, REQUIRED);
+//		scrutinyDetail.addColumnHeading(4, PROVIDED);
+//		scrutinyDetail.addColumnHeading(5, STATUS);
+//
+//		// Scrutiny detail for water closets ventilation
+//		ScrutinyDetail scrutinyDetail1 = new ScrutinyDetail();
+//		scrutinyDetail1.setKey("Water Closets Ventilation");
+//		scrutinyDetail1.addColumnHeading(1, RULE_NO);
+//		scrutinyDetail1.addColumnHeading(2, DESCRIPTION);
+//		scrutinyDetail1.addColumnHeading(3, REQUIRED);
+//		scrutinyDetail1.addColumnHeading(4, PROVIDED);
+//		scrutinyDetail1.addColumnHeading(5, STATUS);
+//
+//		// Details map for storing rule validation results
+//		Map<String, String> details = new HashMap<>();
+//		Map<String, String> details1 = new HashMap<>();
+//		details.put(RULE_NO, RULE_41_IV);
+//		details.put(DESCRIPTION, WATERCLOSETS_DESCRIPTION);
+//		details1.put(RULE_NO, RULE_41_IV);
+//		details1.put(DESCRIPTION, WATERCLOSETS_DESCRIPTION);
+//
+//		// Variables to store calculated and permissible values
+//		BigDecimal minHeight = BigDecimal.ZERO, totalArea = BigDecimal.ZERO, minWidth = BigDecimal.ZERO;
+//		BigDecimal waterClosetsVentilationArea = BigDecimal.ZERO;
+//		BigDecimal waterClosetsHeight = BigDecimal.ZERO;
+//		BigDecimal waterClosetsArea = BigDecimal.ZERO;
+//		BigDecimal waterClosetsWidth = BigDecimal.ZERO;
+//
+//		
+//		List<Object> rules = cache.getFeatureRules(pl, MdmsFeatureConstants.WATER_CLOSETS, false);
+//
+//		Optional<MdmsFeatureRule> matchedRule = rules.stream().map(obj -> (MdmsFeatureRule) obj).findFirst();
+//
+//		if (matchedRule.isPresent()) {
+//			MdmsFeatureRule rule = matchedRule.get();
+//			waterClosetsVentilationArea = rule.getWaterClosetsVentilationArea();
+//			waterClosetsHeight = rule.getWaterClosetsHeight();
+//			waterClosetsArea = rule.getWaterClosetsArea();
+//			waterClosetsWidth = rule.getWaterClosetsWidth();
+//		}
+//
+//
+//		// Loop through each block and floor in the plan
+//		for (Block b : pl.getBlocks()) {
+//			if (b.getBuilding() != null && b.getBuilding().getFloors() != null
+//					&& !b.getBuilding().getFloors().isEmpty()) {
+//				for (Floor f : b.getBuilding().getFloors()) {
+//
+//					// Check if floor has water closets with height and room data
+//					if (f.getWaterClosets() != null && f.getWaterClosets().getHeights() != null
+//							&& !f.getWaterClosets().getHeights().isEmpty() && f.getWaterClosets().getRooms() != null
+//							&& !f.getWaterClosets().getRooms().isEmpty()) {
+//
+//						// Calculate minimum height from available heights
+//						if (!f.getWaterClosets().getHeights().isEmpty()) {
+//							minHeight = f.getWaterClosets().getHeights().get(0).getHeight();
+//							for (RoomHeight rh : f.getWaterClosets().getHeights()) {
+//								if (rh.getHeight().compareTo(minHeight) < 0) {
+//									minHeight = rh.getHeight();
+//								}
+//							}
+//						}
+//
+//						// Calculate total area and minimum width from room measurements
+//						if (!f.getWaterClosets().getRooms().isEmpty()) {
+//							minWidth = f.getWaterClosets().getRooms().get(0).getWidth();
+//							for (Measurement m : f.getWaterClosets().getRooms()) {
+//								totalArea = totalArea.add(m.getArea());
+//								if (m.getWidth().compareTo(minWidth) < 0) {
+//									minWidth = m.getWidth();
+//								}
+//							}
+//						}
+//
+//						// Validate water closet ventilation area
+//						if (f.getWaterClosetVentilation().getMeasurements() != null
+//								&& !f.getWaterClosetVentilation().getMeasurements().isEmpty()) {
+//
+//							BigDecimal totalVentilationArea = f.getWaterClosetVentilation().getMeasurements().stream()
+//									.map(Measurement::getArea).reduce(BigDecimal.ZERO, BigDecimal::add);
+//
+//							if (totalVentilationArea.compareTo(waterClosetsVentilationArea) >= 0) {
+//								details1.put(REQUIRED, waterClosetsVentilationArea.toString());
+//								details1.put(PROVIDED, " Water Closet Ventilation area " + totalVentilationArea);
+//								details1.put(STATUS, Result.Accepted.getResultVal());
+//							} else {
+//								details1.put(REQUIRED, waterClosetsVentilationArea.toString());
+//								details1.put(PROVIDED, " Water Closet Ventilation area " + totalVentilationArea);
+//								details1.put(STATUS, Result.Not_Accepted.getResultVal());
+//							}
+//							scrutinyDetail1.getDetail().add(details1);
+//							pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail1);
+//						}
+//
+//						// Final check: Validate dimensions against permissible values
+//						if (minHeight.compareTo(waterClosetsHeight) >= 0 && totalArea.compareTo(waterClosetsArea) >= 0
+//								&& minWidth.compareTo(waterClosetsWidth) >= 0) {
+//
+//							details.put(REQUIRED, "Height >= " + waterClosetsHeight.toString() + ", Total Area >= "
+//									+ waterClosetsArea.toString() + ", Width >= " + waterClosetsWidth.toString());
+//							details.put(PROVIDED, "Height >= " + minHeight + ", Total Area >= " + totalArea
+//									+ ", Width >= " + minWidth);
+//							details.put(STATUS, Result.Accepted.getResultVal());
+//						} else {
+//							details.put(REQUIRED, "Height >= " + waterClosetsHeight.toString() + ", Total Area >= "
+//									+ waterClosetsArea.toString() + ", Width >= " + waterClosetsWidth.toString());
+//							details.put(PROVIDED, "Height >= " + minHeight + ", Total Area >= " + totalArea
+//									+ ", Width >= " + minWidth);
+//							details.put(STATUS, Result.Not_Accepted.getResultVal());
+//						}
+//
+//						scrutinyDetail.getDetail().add(details);
+//						pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+//					}
+//				}
+//			}
+//		}
+//
+//		return pl;
+//	}
+	
 	@Override
 	public Plan process(Plan pl) {
+	    ScrutinyDetail dimScrutinyDetail = createScrutinyDetail("Common_Water Closets");
+	    ScrutinyDetail ventScrutinyDetail = createScrutinyDetail("Water Closets Ventilation");
 
-		// Scrutiny detail for water closets dimensions
-		ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
-		scrutinyDetail.setKey("Common_Water Closets");
-		scrutinyDetail.addColumnHeading(1, RULE_NO);
-		scrutinyDetail.addColumnHeading(2, DESCRIPTION);
-		scrutinyDetail.addColumnHeading(3, REQUIRED);
-		scrutinyDetail.addColumnHeading(4, PROVIDED);
-		scrutinyDetail.addColumnHeading(5, STATUS);
+	    MdmsFeatureRule wcRule = getWaterClosetsRule(pl);
 
-		// Scrutiny detail for water closets ventilation
-		ScrutinyDetail scrutinyDetail1 = new ScrutinyDetail();
-		scrutinyDetail1.setKey("Water Closets Ventilation");
-		scrutinyDetail1.addColumnHeading(1, RULE_NO);
-		scrutinyDetail1.addColumnHeading(2, DESCRIPTION);
-		scrutinyDetail1.addColumnHeading(3, REQUIRED);
-		scrutinyDetail1.addColumnHeading(4, PROVIDED);
-		scrutinyDetail1.addColumnHeading(5, STATUS);
+	    if (wcRule == null) return pl;
 
-		// Details map for storing rule validation results
-		Map<String, String> details = new HashMap<>();
-		Map<String, String> details1 = new HashMap<>();
-		details.put(RULE_NO, RULE_41_IV);
-		details.put(DESCRIPTION, WATERCLOSETS_DESCRIPTION);
-		details1.put(RULE_NO, RULE_41_IV);
-		details1.put(DESCRIPTION, WATERCLOSETS_DESCRIPTION);
+	    for (Block block : pl.getBlocks()) {
+	        if (block.getBuilding() == null || block.getBuilding().getFloors() == null) continue;
 
-		// Variables to store calculated and permissible values
-		BigDecimal minHeight = BigDecimal.ZERO, totalArea = BigDecimal.ZERO, minWidth = BigDecimal.ZERO;
-		BigDecimal waterClosetsVentilationArea = BigDecimal.ZERO;
-		BigDecimal waterClosetsHeight = BigDecimal.ZERO;
-		BigDecimal waterClosetsArea = BigDecimal.ZERO;
-		BigDecimal waterClosetsWidth = BigDecimal.ZERO;
+	        for (Floor floor : block.getBuilding().getFloors()) {
+	            if (!hasValidWaterClosets(floor)) continue;
 
-		// Fetch occupancy and feature type
+	            BigDecimal minHeight = getMinHeight(floor.getWaterClosets().getHeights());
+	            BigDecimal minWidth = getMinWidth(floor.getWaterClosets().getRooms());
+	            BigDecimal totalArea = getTotalArea(floor.getWaterClosets().getRooms());
 
-		String feature = MdmsFeatureConstants.WATER_CLOSETS;
-		String occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl).toLowerCase();
-		String tenantId = pl.getTenantId();
-		String zone = pl.getPlanInformation().getZone().toLowerCase();
-		String subZone = pl.getPlanInformation().getSubZone().toLowerCase();
-		String riskType = fetchEdcrRulesMdms.getRiskType(pl).toLowerCase();
+	            // Ventilation validation
+	            if (floor.getWaterClosetVentilation() != null
+	                    && floor.getWaterClosetVentilation().getMeasurements() != null
+	                    && !floor.getWaterClosetVentilation().getMeasurements().isEmpty()) {
 
-		RuleKey key = new RuleKey(EdcrRulesMdmsConstants.STATE, tenantId, zone, subZone, occupancyName, null, feature);
-		List<Object> rules = cache.getRules(tenantId, key);
+	                BigDecimal ventArea = floor.getWaterClosetVentilation().getMeasurements().stream()
+	                        .map(Measurement::getArea).reduce(BigDecimal.ZERO, BigDecimal::add);
+	                Map<String, String> ventDetails = buildVentilationDetails(
+	                	    wcRule.getWaterClosetsVentilationArea(), ventArea
+	                	);
+	                	ventScrutinyDetail.getDetail().add(ventDetails);
 
-		Optional<MdmsFeatureRule> matchedRule = rules.stream().map(obj -> (MdmsFeatureRule) obj).findFirst();
+	            }
 
-		if (matchedRule.isPresent()) {
-			MdmsFeatureRule rule = matchedRule.get();
-			waterClosetsVentilationArea = rule.getWaterClosetsVentilationArea();
-			waterClosetsHeight = rule.getWaterClosetsHeight();
-			waterClosetsArea = rule.getWaterClosetsArea();
-			waterClosetsWidth = rule.getWaterClosetsWidth();
-		}
+	            Map<String, String> dimDetails = buildDimensionDetails(
+	            	    wcRule.getWaterClosetsHeight(), wcRule.getWaterClosetsArea(), wcRule.getWaterClosetsWidth(),
+	            	    minHeight, totalArea, minWidth
+	            	);
+	            	dimScrutinyDetail.getDetail().add(dimDetails);
 
+	        }
+	    }
 
-		// Loop through each block and floor in the plan
-		for (Block b : pl.getBlocks()) {
-			if (b.getBuilding() != null && b.getBuilding().getFloors() != null
-					&& !b.getBuilding().getFloors().isEmpty()) {
-				for (Floor f : b.getBuilding().getFloors()) {
-
-					// Check if floor has water closets with height and room data
-					if (f.getWaterClosets() != null && f.getWaterClosets().getHeights() != null
-							&& !f.getWaterClosets().getHeights().isEmpty() && f.getWaterClosets().getRooms() != null
-							&& !f.getWaterClosets().getRooms().isEmpty()) {
-
-						// Calculate minimum height from available heights
-						if (!f.getWaterClosets().getHeights().isEmpty()) {
-							minHeight = f.getWaterClosets().getHeights().get(0).getHeight();
-							for (RoomHeight rh : f.getWaterClosets().getHeights()) {
-								if (rh.getHeight().compareTo(minHeight) < 0) {
-									minHeight = rh.getHeight();
-								}
-							}
-						}
-
-						// Calculate total area and minimum width from room measurements
-						if (!f.getWaterClosets().getRooms().isEmpty()) {
-							minWidth = f.getWaterClosets().getRooms().get(0).getWidth();
-							for (Measurement m : f.getWaterClosets().getRooms()) {
-								totalArea = totalArea.add(m.getArea());
-								if (m.getWidth().compareTo(minWidth) < 0) {
-									minWidth = m.getWidth();
-								}
-							}
-						}
-
-						// Validate water closet ventilation area
-						if (f.getWaterClosetVentilation().getMeasurements() != null
-								&& !f.getWaterClosetVentilation().getMeasurements().isEmpty()) {
-
-							BigDecimal totalVentilationArea = f.getWaterClosetVentilation().getMeasurements().stream()
-									.map(Measurement::getArea).reduce(BigDecimal.ZERO, BigDecimal::add);
-
-							if (totalVentilationArea.compareTo(waterClosetsVentilationArea) >= 0) {
-								details1.put(REQUIRED, waterClosetsVentilationArea.toString());
-								details1.put(PROVIDED, " Water Closet Ventilation area " + totalVentilationArea);
-								details1.put(STATUS, Result.Accepted.getResultVal());
-							} else {
-								details1.put(REQUIRED, waterClosetsVentilationArea.toString());
-								details1.put(PROVIDED, " Water Closet Ventilation area " + totalVentilationArea);
-								details1.put(STATUS, Result.Not_Accepted.getResultVal());
-							}
-							scrutinyDetail1.getDetail().add(details1);
-							pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail1);
-						}
-
-						// Final check: Validate dimensions against permissible values
-						if (minHeight.compareTo(waterClosetsHeight) >= 0 && totalArea.compareTo(waterClosetsArea) >= 0
-								&& minWidth.compareTo(waterClosetsWidth) >= 0) {
-
-							details.put(REQUIRED, "Height >= " + waterClosetsHeight.toString() + ", Total Area >= "
-									+ waterClosetsArea.toString() + ", Width >= " + waterClosetsWidth.toString());
-							details.put(PROVIDED, "Height >= " + minHeight + ", Total Area >= " + totalArea
-									+ ", Width >= " + minWidth);
-							details.put(STATUS, Result.Accepted.getResultVal());
-						} else {
-							details.put(REQUIRED, "Height >= " + waterClosetsHeight.toString() + ", Total Area >= "
-									+ waterClosetsArea.toString() + ", Width >= " + waterClosetsWidth.toString());
-							details.put(PROVIDED, "Height >= " + minHeight + ", Total Area >= " + totalArea
-									+ ", Width >= " + minWidth);
-							details.put(STATUS, Result.Not_Accepted.getResultVal());
-						}
-
-						scrutinyDetail.getDetail().add(details);
-						pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
-					}
-				}
-			}
-		}
-
-		return pl;
+	    pl.getReportOutput().getScrutinyDetails().add(dimScrutinyDetail);
+	    pl.getReportOutput().getScrutinyDetails().add(ventScrutinyDetail);
+	    return pl;
 	}
+	
+	private ScrutinyDetail createScrutinyDetail(String key) {
+	    ScrutinyDetail detail = new ScrutinyDetail();
+	    detail.setKey(key);
+	    detail.addColumnHeading(1, RULE_NO);
+	    detail.addColumnHeading(2, DESCRIPTION);
+	    detail.addColumnHeading(3, REQUIRED);
+	    detail.addColumnHeading(4, PROVIDED);
+	    detail.addColumnHeading(5, STATUS);
+	    return detail;
+	}
+
+	private MdmsFeatureRule getWaterClosetsRule(Plan pl) {
+	    List<Object> rules = cache.getFeatureRules(pl, MdmsFeatureConstants.WATER_CLOSETS, false);
+	    return rules.stream()
+	            .map(obj -> (MdmsFeatureRule) obj)
+	            .findFirst()
+	            .orElse(null);
+	}
+
+	private boolean hasValidWaterClosets(Floor floor) {
+	    return floor.getWaterClosets() != null
+	            && floor.getWaterClosets().getHeights() != null
+	            && !floor.getWaterClosets().getHeights().isEmpty()
+	            && floor.getWaterClosets().getRooms() != null
+	            && !floor.getWaterClosets().getRooms().isEmpty();
+	}
+
+	private BigDecimal getMinHeight(List<RoomHeight> heights) {
+	    return heights.stream()
+	            .map(RoomHeight::getHeight)
+	            .min(Comparator.naturalOrder())
+	            .orElse(BigDecimal.ZERO);
+	}
+
+	private BigDecimal getMinWidth(List<Measurement> rooms) {
+	    return rooms.stream()
+	            .map(Measurement::getWidth)
+	            .min(Comparator.naturalOrder())
+	            .orElse(BigDecimal.ZERO);
+	}
+
+	private BigDecimal getTotalArea(List<Measurement> rooms) {
+	    return rooms.stream()
+	            .map(Measurement::getArea)
+	            .reduce(BigDecimal.ZERO, BigDecimal::add);
+	}
+
+	private Map<String, String> buildVentilationDetails(BigDecimal requiredVentArea, BigDecimal providedVentArea) {
+	    Map<String, String> ventDetails = new HashMap<>();
+	    ventDetails.put(RULE_NO, RULE_41_IV);
+	    ventDetails.put(DESCRIPTION, WATERCLOSETS_DESCRIPTION);
+	    ventDetails.put(REQUIRED, requiredVentArea.toString());
+	    ventDetails.put(PROVIDED, "Water Closet Ventilation area " + providedVentArea);
+	    ventDetails.put(STATUS, providedVentArea.compareTo(requiredVentArea) >= 0
+	            ? Result.Accepted.getResultVal()
+	            : Result.Not_Accepted.getResultVal());
+	    return ventDetails;
+	}
+
+	private Map<String, String> buildDimensionDetails(BigDecimal requiredHeight, BigDecimal requiredArea, BigDecimal requiredWidth,
+	                                                  BigDecimal providedHeight, BigDecimal providedArea, BigDecimal providedWidth) {
+	    Map<String, String> dimDetails = new HashMap<>();
+	    dimDetails.put(RULE_NO, RULE_41_IV);
+	    dimDetails.put(DESCRIPTION, WATERCLOSETS_DESCRIPTION);
+	    dimDetails.put(REQUIRED, String.format("Height ≥ %s, Area ≥ %s, Width ≥ %s",
+	            requiredHeight, requiredArea, requiredWidth));
+	    dimDetails.put(PROVIDED, String.format("Height = %s, Area = %s, Width = %s",
+	            providedHeight, providedArea, providedWidth));
+	    dimDetails.put(STATUS, (providedHeight.compareTo(requiredHeight) >= 0
+	            && providedArea.compareTo(requiredArea) >= 0
+	            && providedWidth.compareTo(requiredWidth) >= 0)
+	            ? Result.Accepted.getResultVal()
+	            : Result.Not_Accepted.getResultVal());
+	    return dimDetails;
+	}
+
 
 
 	@Override

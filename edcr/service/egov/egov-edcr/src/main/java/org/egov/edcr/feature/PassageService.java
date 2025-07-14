@@ -78,114 +78,182 @@ public class PassageService extends FeatureProcess {
     private static final String RULE39_6 = "39(6)";
     private static final String RULE39_6_DESCRIPTION = "The minimum passage giving access to stair";
     private static final String RULE_41_DESCRIPTION = "The minimum width of corridors/ verandhas";
-
+  
+    @Autowired
+   	CacheManagerMdms cache;
+    
     @Override
     public Plan validate(Plan plan) {
         return plan;
     }
 
-    @Autowired
-    FetchEdcrRulesMdms fetchEdcrRulesMdms;
-    
-    @Autowired
-	CacheManagerMdms cache;
+//	@Override
+//	public Plan process(Plan plan) {
+//		// Initialize variables to store permissible passage dimensions
+//		BigDecimal passageStairMinimumWidth = BigDecimal.ZERO;
+//		BigDecimal passageMinWidth = BigDecimal.ZERO;
+//
+//	
+//		List<Object> rules = cache.getFeatureRules(plan, MdmsFeatureConstants.PASSAGE_SERVICE, false);
+//
+//		Optional<MdmsFeatureRule> matchedRule = rules.stream().map(obj -> (MdmsFeatureRule) obj).findFirst();
+//
+//		if (matchedRule.isPresent()) {
+//			MdmsFeatureRule rule = matchedRule.get();
+//			passageStairMinimumWidth = rule.getPassageServiceValueOne();
+//			passageMinWidth = rule.getPassageServiceValueTwo();
+//		}
+//		// Iterate through all blocks in the plan
+//		for (Block block : plan.getBlocks()) {
+//			if (block.getBuilding() != null) {
+//				// Initialize scrutiny details for passage and passage stair
+//				ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
+//				scrutinyDetail.addColumnHeading(1, RULE_NO);
+//				scrutinyDetail.addColumnHeading(2, REQUIRED);
+//				scrutinyDetail.addColumnHeading(3, PROVIDED);
+//				scrutinyDetail.addColumnHeading(4, STATUS);
+//				scrutinyDetail.setKey("Block_" + block.getNumber() + "_" + "Passage");
+//
+//				ScrutinyDetail scrutinyDetail1 = new ScrutinyDetail();
+//				scrutinyDetail1.addColumnHeading(1, RULE_NO);
+//				scrutinyDetail1.addColumnHeading(2, REQUIRED);
+//				scrutinyDetail1.addColumnHeading(3, PROVIDED);
+//				scrutinyDetail1.addColumnHeading(4, STATUS);
+//				scrutinyDetail1.setKey("Block_" + block.getNumber() + "_" + "Passage Stair");
+//
+//				// Get the passage details from the block
+//				org.egov.common.entity.edcr.Passage passage = block.getBuilding().getPassage();
+//
+//				if (passage != null) {
+//					// Validate passage dimensions
+//					List<BigDecimal> passagePolylines = passage.getPassageDimensions();
+//					List<BigDecimal> passageStairPolylines = passage.getPassageStairDimensions();
+//
+//					if (passagePolylines != null && !passagePolylines.isEmpty()) {
+//						// Find the minimum width of the passage
+//						BigDecimal minPassagePolyLine = passagePolylines.stream().reduce(BigDecimal::min).get();
+//						BigDecimal minWidth = Util.roundOffTwoDecimal(minPassagePolyLine);
+//
+//						// Compare the minimum width with the permissible width
+//						if (minWidth.compareTo(passageMinWidth) >= 0) {
+//							// If the width is within permissible limits, mark as Accepted
+//							setReportOutputDetails(plan, RULE41, RULE_41_DESCRIPTION, passageMinWidth.toString(),
+//									String.valueOf(minWidth), Result.Accepted.getResultVal(), scrutinyDetail);
+//						} else {
+//							// If the width is not within permissible limits, mark as Not Accepted
+//							setReportOutputDetails(plan, RULE41, RULE_41_DESCRIPTION, passageMinWidth.toString(),
+//									String.valueOf(minWidth), Result.Not_Accepted.getResultVal(), scrutinyDetail);
+//						}
+//					}
+//
+//					if (passageStairPolylines != null && !passageStairPolylines.isEmpty()) {
+//						// Find the minimum width of the passage stair
+//						BigDecimal minPassageStairPolyLine = passageStairPolylines.stream().reduce(BigDecimal::min)
+//								.get();
+//						BigDecimal minWidth = Util.roundOffTwoDecimal(minPassageStairPolyLine);
+//
+//						// Compare the minimum width with the permissible width
+//						if (minWidth.compareTo(Util.roundOffTwoDecimal(passageStairMinimumWidth)) >= 0) {
+//							// If the width is within permissible limits, mark as Accepted
+//							setReportOutputDetails(plan, RULE39_6, RULE39_6_DESCRIPTION,
+//									passageStairMinimumWidth.toString(), String.valueOf(minWidth),
+//									Result.Accepted.getResultVal(), scrutinyDetail1);
+//						} else {
+//							// If the width is not within permissible limits, mark as Not Accepted
+//							setReportOutputDetails(plan, RULE39_6, RULE39_6_DESCRIPTION,
+//									passageStairMinimumWidth.toString(), String.valueOf(minWidth),
+//									Result.Not_Accepted.getResultVal(), scrutinyDetail1);
+//						}
+//					}
+//				}
+//			}
+//		}
+//		return plan; // Return the updated plan object
+//	}
+//
+//    private void setReportOutputDetails(Plan pl, String ruleNo, String ruleDesc, String expected, String actual,
+//            String status, ScrutinyDetail scrutinyDetail) {
+//        // Add details to the scrutiny report
+//        Map<String, String> details = new HashMap<>();
+//        details.put(RULE_NO, ruleNo);
+//        details.put(DESCRIPTION, ruleDesc);
+//        details.put(REQUIRED, expected);
+//        details.put(PROVIDED, actual);
+//        details.put(STATUS, status);
+//        scrutinyDetail.getDetail().add(details);
+//        pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+//    }
+    @Override
+    public Plan process(Plan plan) {
+        BigDecimal passageStairMinimumWidth = BigDecimal.ZERO;
+        BigDecimal passageMinWidth = BigDecimal.ZERO;
 
-	@Override
-	public Plan process(Plan plan) {
-		// Initialize variables to store permissible passage dimensions
-		BigDecimal passageStairMinimumWidth = BigDecimal.ZERO;
-		BigDecimal passageMinWidth = BigDecimal.ZERO;
+        List<Object> rules = cache.getFeatureRules(plan, MdmsFeatureConstants.PASSAGE_SERVICE, false);
 
-		// Determine the occupancy type
+        for (Object obj : rules) {
+            MdmsFeatureRule rule = (MdmsFeatureRule) obj;
+            passageStairMinimumWidth = rule.getPassageServiceValueOne();
+            passageMinWidth = rule.getPassageServiceValueTwo();
+            break; 
+        }
 
-		String feature = MdmsFeatureConstants.PASSAGE_SERVICE; // Feature name for passage service
-		String occupancyName = fetchEdcrRulesMdms.getOccupancyName(plan).toLowerCase();
-		String tenantId = plan.getTenantId();
-		String zone = plan.getPlanInformation().getZone().toLowerCase();
-		String subZone = plan.getPlanInformation().getSubZone().toLowerCase();
-		String riskType = fetchEdcrRulesMdms.getRiskType(plan).toLowerCase();
+        for (Block block : plan.getBlocks()) {
+            if (block.getBuilding() == null || block.getBuilding().getPassage() == null) {
+                continue;
+            }
 
-		RuleKey key = new RuleKey(EdcrRulesMdmsConstants.STATE, tenantId, zone, subZone, occupancyName, null, feature);
-		List<Object> rules = cache.getRules(tenantId, key);
+            ScrutinyDetail passageDetail = createScrutinyDetail("Block_" + block.getNumber() + "_Passage");
+            ScrutinyDetail passageStairDetail = createScrutinyDetail("Block_" + block.getNumber() + "_Passage Stair");
 
-		Optional<MdmsFeatureRule> matchedRule = rules.stream().map(obj -> (MdmsFeatureRule) obj).findFirst();
+            org.egov.common.entity.edcr.Passage passage = block.getBuilding().getPassage();
 
-		if (matchedRule.isPresent()) {
-			MdmsFeatureRule rule = matchedRule.get();
-			passageStairMinimumWidth = rule.getPassageServiceValueOne();
-			passageMinWidth = rule.getPassageServiceValueTwo();
-		}
-		// Iterate through all blocks in the plan
-		for (Block block : plan.getBlocks()) {
-			if (block.getBuilding() != null) {
-				// Initialize scrutiny details for passage and passage stair
-				ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
-				scrutinyDetail.addColumnHeading(1, RULE_NO);
-				scrutinyDetail.addColumnHeading(2, REQUIRED);
-				scrutinyDetail.addColumnHeading(3, PROVIDED);
-				scrutinyDetail.addColumnHeading(4, STATUS);
-				scrutinyDetail.setKey("Block_" + block.getNumber() + "_" + "Passage");
+            validatePassageDimension(
+                passage.getPassageDimensions(), 
+                passageMinWidth, 
+                RULE41, 
+                RULE_41_DESCRIPTION, 
+                passageDetail, 
+                plan
+            );
 
-				ScrutinyDetail scrutinyDetail1 = new ScrutinyDetail();
-				scrutinyDetail1.addColumnHeading(1, RULE_NO);
-				scrutinyDetail1.addColumnHeading(2, REQUIRED);
-				scrutinyDetail1.addColumnHeading(3, PROVIDED);
-				scrutinyDetail1.addColumnHeading(4, STATUS);
-				scrutinyDetail1.setKey("Block_" + block.getNumber() + "_" + "Passage Stair");
+            validatePassageDimension(
+                passage.getPassageStairDimensions(), 
+                passageStairMinimumWidth, 
+                RULE39_6, 
+                RULE39_6_DESCRIPTION, 
+                passageStairDetail, 
+                plan
+            );
+        }
 
-				// Get the passage details from the block
-				org.egov.common.entity.edcr.Passage passage = block.getBuilding().getPassage();
+        return plan;
+    }
 
-				if (passage != null) {
-					// Validate passage dimensions
-					List<BigDecimal> passagePolylines = passage.getPassageDimensions();
-					List<BigDecimal> passageStairPolylines = passage.getPassageStairDimensions();
+    private void validatePassageDimension(List<BigDecimal> dimensions, BigDecimal permissibleWidth,
+                                          String ruleNo, String ruleDesc, ScrutinyDetail detail, Plan plan) {
+        if (dimensions != null && !dimensions.isEmpty()) {
+            BigDecimal minWidth = Util.roundOffTwoDecimal(dimensions.stream().reduce(BigDecimal::min).get());
+            String result = minWidth.compareTo(permissibleWidth) >= 0
+                    ? Result.Accepted.getResultVal()
+                    : Result.Not_Accepted.getResultVal();
 
-					if (passagePolylines != null && !passagePolylines.isEmpty()) {
-						// Find the minimum width of the passage
-						BigDecimal minPassagePolyLine = passagePolylines.stream().reduce(BigDecimal::min).get();
-						BigDecimal minWidth = Util.roundOffTwoDecimal(minPassagePolyLine);
+            setReportOutputDetails(plan, ruleNo, ruleDesc, permissibleWidth.toString(),
+                    String.valueOf(minWidth), result, detail);
+        }
+    }
 
-						// Compare the minimum width with the permissible width
-						if (minWidth.compareTo(passageMinWidth) >= 0) {
-							// If the width is within permissible limits, mark as Accepted
-							setReportOutputDetails(plan, RULE41, RULE_41_DESCRIPTION, passageMinWidth.toString(),
-									String.valueOf(minWidth), Result.Accepted.getResultVal(), scrutinyDetail);
-						} else {
-							// If the width is not within permissible limits, mark as Not Accepted
-							setReportOutputDetails(plan, RULE41, RULE_41_DESCRIPTION, passageMinWidth.toString(),
-									String.valueOf(minWidth), Result.Not_Accepted.getResultVal(), scrutinyDetail);
-						}
-					}
-
-					if (passageStairPolylines != null && !passageStairPolylines.isEmpty()) {
-						// Find the minimum width of the passage stair
-						BigDecimal minPassageStairPolyLine = passageStairPolylines.stream().reduce(BigDecimal::min)
-								.get();
-						BigDecimal minWidth = Util.roundOffTwoDecimal(minPassageStairPolyLine);
-
-						// Compare the minimum width with the permissible width
-						if (minWidth.compareTo(Util.roundOffTwoDecimal(passageStairMinimumWidth)) >= 0) {
-							// If the width is within permissible limits, mark as Accepted
-							setReportOutputDetails(plan, RULE39_6, RULE39_6_DESCRIPTION,
-									passageStairMinimumWidth.toString(), String.valueOf(minWidth),
-									Result.Accepted.getResultVal(), scrutinyDetail1);
-						} else {
-							// If the width is not within permissible limits, mark as Not Accepted
-							setReportOutputDetails(plan, RULE39_6, RULE39_6_DESCRIPTION,
-									passageStairMinimumWidth.toString(), String.valueOf(minWidth),
-									Result.Not_Accepted.getResultVal(), scrutinyDetail1);
-						}
-					}
-				}
-			}
-		}
-		return plan; // Return the updated plan object
-	}
+    private ScrutinyDetail createScrutinyDetail(String key) {
+        ScrutinyDetail detail = new ScrutinyDetail();
+        detail.addColumnHeading(1, RULE_NO);
+        detail.addColumnHeading(2, REQUIRED);
+        detail.addColumnHeading(3, PROVIDED);
+        detail.addColumnHeading(4, STATUS);
+        detail.setKey(key);
+        return detail;
+    }
 
     private void setReportOutputDetails(Plan pl, String ruleNo, String ruleDesc, String expected, String actual,
-            String status, ScrutinyDetail scrutinyDetail) {
-        // Add details to the scrutiny report
+                                        String status, ScrutinyDetail scrutinyDetail) {
         Map<String, String> details = new HashMap<>();
         details.put(RULE_NO, ruleNo);
         details.put(DESCRIPTION, ruleDesc);
@@ -195,6 +263,7 @@ public class PassageService extends FeatureProcess {
         scrutinyDetail.getDetail().add(details);
         pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
     }
+
 
     @Override
     public Map<String, Date> getAmendments() {

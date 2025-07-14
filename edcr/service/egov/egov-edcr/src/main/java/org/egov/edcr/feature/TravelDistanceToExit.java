@@ -1,5 +1,5 @@
 /*
- * eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
+ * UPYOG  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  * accountability and the service delivery of the government  organizations.
  *
  *  Copyright (C) <2019>  eGovernments Foundation
@@ -97,9 +97,6 @@ public class TravelDistanceToExit extends FeatureProcess {
 	public static BigDecimal travelDistanceToExitValueTwo = BigDecimal.ZERO;
 	public static BigDecimal travelDistanceToExitValueThree = BigDecimal.ZERO;
 
-	// Service for fetching rule data from MDMS
-	@Autowired
-	FetchEdcrRulesMdms fetchEdcrRulesMdms;
 
 	@Autowired
 	CacheManagerMdms cache;
@@ -110,112 +107,190 @@ public class TravelDistanceToExit extends FeatureProcess {
 		return pl;
 	}
 
+//	@Override
+//	public Plan process(Plan pl) {
+//		Boolean exemption = Boolean.FALSE;
+//
+//		
+//		 List<Object> rules = cache.getFeatureRules(pl, MdmsFeatureConstants.TRAVEL_DISTANCE_TO_EXIT, false);
+//
+//		Optional<MdmsFeatureRule> matchedRule = rules.stream().map(obj -> (MdmsFeatureRule) obj).findFirst();
+//
+//		if (matchedRule.isPresent()) {
+//			MdmsFeatureRule rule = matchedRule.get();
+//			travelDistanceToExitValueOne = rule.getTravelDistanceToExitValueOne();
+//			travelDistanceToExitValueTwo = rule.getTravelDistanceToExitValueTwo();
+//			travelDistanceToExitValueThree = rule.getTravelDistanceToExitValueThree();
+//		}
+//
+//		// Exemption logic for low-rise residential buildings or small plots
+//		if (pl != null && pl.getVirtualBuilding() != null && !pl.getVirtualBuilding().getOccupancyTypes().isEmpty()
+//				&& !pl.getBlocks().isEmpty()) {
+//
+//			boolean floorsAboveGroundLessThanOrEqualTo3ForAllBlks = true;
+//
+//			// Check if all blocks have ≤ 3 floors
+//			for (Block block : pl.getBlocks()) {
+//				if (block.getBuilding() != null && block.getBuilding().getFloorsAboveGround() != null
+//						&& block.getBuilding().getFloorsAboveGround().compareTo(travelDistanceToExitValueThree) > 0) {
+//					floorsAboveGroundLessThanOrEqualTo3ForAllBlks = false;
+//					break;
+//				}
+//			}
+//
+//			// Grant exemption if conditions met
+//			if ((pl.getVirtualBuilding().getResidentialBuilding().equals(Boolean.TRUE)
+//					&& floorsAboveGroundLessThanOrEqualTo3ForAllBlks == true) || (ProcessHelper.isSmallPlot(pl))) {
+//				exemption = Boolean.TRUE;
+//			}
+//		}
+//
+//		// If not exempted, validate travel distance
+//		if (!exemption) {
+//			HashMap<String, String> errors = new HashMap<>();
+//
+//			// Handle missing data case
+//			if (pl != null) {
+//				if (pl.getTravelDistancesToExit().isEmpty()) {
+//					errors.put(DcrConstants.TRAVEL_DIST_EXIT,
+//							edcrMessageSource.getMessage(DcrConstants.OBJECTNOTDEFINED,
+//									new String[] { DcrConstants.TRAVEL_DIST_EXIT }, LocaleContextHolder.getLocale()));
+//					pl.addErrors(errors);
+//					return pl;
+//				}
+//			}
+//
+//			// Prepare scrutiny details for report
+//			String subRule = SUBRULE_42_2;
+//			String subRuleDesc = SUBRULE_42_2_DESC;
+//			scrutinyDetail = new ScrutinyDetail();
+//			scrutinyDetail.setKey("Common_Travel Distance To Emergency Exits");
+//			scrutinyDetail.addColumnHeading(1, RULE_NO);
+//			scrutinyDetail.addColumnHeading(2, REQUIRED);
+//			scrutinyDetail.addColumnHeading(3, PROVIDED);
+//			scrutinyDetail.addColumnHeading(4, STATUS);
+//			scrutinyDetail.setSubHeading(SUBRULE_42_2_DESC);
+//
+//			if (pl != null && pl.getVirtualBuilding() != null) {
+//				// Get the occupancy type to fetch required value
+//				OccupancyTypeHelper mostRestrictiveFarHelper = pl.getVirtualBuilding().getMostRestrictiveFarHelper();
+//				String code = mostRestrictiveFarHelper.getType().getCode();
+//
+//				// Get occupancy-specific permissible distance
+//				Map<String, BigDecimal> occupancyValues = getOccupancyValues(travelDistanceToExitValueOne,
+//						travelDistanceToExitValueTwo);
+//				BigDecimal requiredValue = occupancyValues.get(code);
+//
+//				if (requiredValue != null) {
+//					// Loop through all provided travel distances and validate
+//					for (BigDecimal maximumTravelDistance : pl.getTravelDistancesToExit()) {
+//						boolean valid = false;
+//						if (maximumTravelDistance.compareTo(requiredValue) <= 0) {
+//							valid = true;
+//						}
+//
+//						// Add result to scrutiny report
+//						if (valid) {
+//							setReportOutputDetails(pl, subRule, requiredValue + DcrConstants.IN_METER,
+//									maximumTravelDistance + DcrConstants.IN_METER, Result.Accepted.getResultVal());
+//						} else {
+//							setReportOutputDetails(pl, subRule, requiredValue + DcrConstants.IN_METER,
+//									maximumTravelDistance + DcrConstants.IN_METER, Result.Not_Accepted.getResultVal());
+//						}
+//					}
+//				}
+//			}
+//		}
+//
+//		return pl;
+//	}
+//
+
+//
+//	// No amendments defined for this feature
+
+
+	
 	@Override
 	public Plan process(Plan pl) {
-		Boolean exemption = Boolean.FALSE;
+	    if (pl == null) return pl;
 
-		String feature = MdmsFeatureConstants.TRAVEL_DISTANCE_TO_EXIT;
-		String occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl).toLowerCase();
-		String tenantId = pl.getTenantId();
-		String zone = pl.getPlanInformation().getZone().toLowerCase();
-		String subZone = pl.getPlanInformation().getSubZone().toLowerCase();
-		String riskType = fetchEdcrRulesMdms.getRiskType(pl).toLowerCase();
+	    extractTravelDistanceRules(pl);
 
-		RuleKey key = new RuleKey(EdcrRulesMdmsConstants.STATE, tenantId, zone, subZone, occupancyName, null, feature);
-		List<Object> rules = cache.getRules(tenantId, key);
+	    boolean exemption = isExempted(pl);
+	    if (exemption) return pl;
 
-		Optional<MdmsFeatureRule> matchedRule = rules.stream().map(obj -> (MdmsFeatureRule) obj).findFirst();
+	    if (pl.getTravelDistancesToExit().isEmpty()) {
+	        addMissingTravelDistanceError(pl);
+	        return pl;
+	    }
 
-		if (matchedRule.isPresent()) {
-			MdmsFeatureRule rule = matchedRule.get();
-			travelDistanceToExitValueOne = rule.getTravelDistanceToExitValueOne();
-			travelDistanceToExitValueTwo = rule.getTravelDistanceToExitValueTwo();
-			travelDistanceToExitValueThree = rule.getTravelDistanceToExitValueThree();
-		}
+	    validateTravelDistances(pl);
+	    return pl;
+	}
+	
+	private void extractTravelDistanceRules(Plan pl) {
+	    List<Object> rules = cache.getFeatureRules(pl, MdmsFeatureConstants.TRAVEL_DISTANCE_TO_EXIT, false);
 
-		// Exemption logic for low-rise residential buildings or small plots
-		if (pl != null && pl.getVirtualBuilding() != null && !pl.getVirtualBuilding().getOccupancyTypes().isEmpty()
-				&& !pl.getBlocks().isEmpty()) {
-
-			boolean floorsAboveGroundLessThanOrEqualTo3ForAllBlks = true;
-
-			// Check if all blocks have ≤ 3 floors
-			for (Block block : pl.getBlocks()) {
-				if (block.getBuilding() != null && block.getBuilding().getFloorsAboveGround() != null
-						&& block.getBuilding().getFloorsAboveGround().compareTo(travelDistanceToExitValueThree) > 0) {
-					floorsAboveGroundLessThanOrEqualTo3ForAllBlks = false;
-					break;
-				}
-			}
-
-			// Grant exemption if conditions met
-			if ((pl.getVirtualBuilding().getResidentialBuilding().equals(Boolean.TRUE)
-					&& floorsAboveGroundLessThanOrEqualTo3ForAllBlks == true) || (ProcessHelper.isSmallPlot(pl))) {
-				exemption = Boolean.TRUE;
-			}
-		}
-
-		// If not exempted, validate travel distance
-		if (!exemption) {
-			HashMap<String, String> errors = new HashMap<>();
-
-			// Handle missing data case
-			if (pl != null) {
-				if (pl.getTravelDistancesToExit().isEmpty()) {
-					errors.put(DcrConstants.TRAVEL_DIST_EXIT,
-							edcrMessageSource.getMessage(DcrConstants.OBJECTNOTDEFINED,
-									new String[] { DcrConstants.TRAVEL_DIST_EXIT }, LocaleContextHolder.getLocale()));
-					pl.addErrors(errors);
-					return pl;
-				}
-			}
-
-			// Prepare scrutiny details for report
-			String subRule = SUBRULE_42_2;
-			String subRuleDesc = SUBRULE_42_2_DESC;
-			scrutinyDetail = new ScrutinyDetail();
-			scrutinyDetail.setKey("Common_Travel Distance To Emergency Exits");
-			scrutinyDetail.addColumnHeading(1, RULE_NO);
-			scrutinyDetail.addColumnHeading(2, REQUIRED);
-			scrutinyDetail.addColumnHeading(3, PROVIDED);
-			scrutinyDetail.addColumnHeading(4, STATUS);
-			scrutinyDetail.setSubHeading(SUBRULE_42_2_DESC);
-
-			if (pl != null && pl.getVirtualBuilding() != null) {
-				// Get the occupancy type to fetch required value
-				OccupancyTypeHelper mostRestrictiveFarHelper = pl.getVirtualBuilding().getMostRestrictiveFarHelper();
-				String code = mostRestrictiveFarHelper.getType().getCode();
-
-				// Get occupancy-specific permissible distance
-				Map<String, BigDecimal> occupancyValues = getOccupancyValues(travelDistanceToExitValueOne,
-						travelDistanceToExitValueTwo);
-				BigDecimal requiredValue = occupancyValues.get(code);
-
-				if (requiredValue != null) {
-					// Loop through all provided travel distances and validate
-					for (BigDecimal maximumTravelDistance : pl.getTravelDistancesToExit()) {
-						boolean valid = false;
-						if (maximumTravelDistance.compareTo(requiredValue) <= 0) {
-							valid = true;
-						}
-
-						// Add result to scrutiny report
-						if (valid) {
-							setReportOutputDetails(pl, subRule, requiredValue + DcrConstants.IN_METER,
-									maximumTravelDistance + DcrConstants.IN_METER, Result.Accepted.getResultVal());
-						} else {
-							setReportOutputDetails(pl, subRule, requiredValue + DcrConstants.IN_METER,
-									maximumTravelDistance + DcrConstants.IN_METER, Result.Not_Accepted.getResultVal());
-						}
-					}
-				}
-			}
-		}
-
-		return pl;
+	    rules.stream()
+	        .map(obj -> (MdmsFeatureRule) obj)
+	        .findFirst()
+	        .ifPresent(rule -> {
+	            travelDistanceToExitValueOne = rule.getTravelDistanceToExitValueOne();
+	            travelDistanceToExitValueTwo = rule.getTravelDistanceToExitValueTwo();
+	            travelDistanceToExitValueThree = rule.getTravelDistanceToExitValueThree();
+	        });
 	}
 
-	// Helper to append result details to the scrutiny report
+	private boolean isExempted(Plan pl) {
+	    if (pl.getVirtualBuilding() == null || pl.getVirtualBuilding().getOccupancyTypes().isEmpty() || pl.getBlocks().isEmpty()) {
+	        return false;
+	    }
+
+	    boolean allBlocksWithMax3Floors = pl.getBlocks().stream().allMatch(block ->
+	        block.getBuilding() != null &&
+	        block.getBuilding().getFloorsAboveGround() != null &&
+	        block.getBuilding().getFloorsAboveGround().compareTo(travelDistanceToExitValueThree) <= 0
+	    );
+
+	    boolean isResidential = Boolean.TRUE.equals(pl.getVirtualBuilding().getResidentialBuilding());
+	    return (isResidential && allBlocksWithMax3Floors) || ProcessHelper.isSmallPlot(pl);
+	}
+
+	private void addMissingTravelDistanceError(Plan pl) {
+	    Map<String, String> errors = new HashMap<>();
+	    errors.put(DcrConstants.TRAVEL_DIST_EXIT,
+	        edcrMessageSource.getMessage(DcrConstants.OBJECTNOTDEFINED,
+	            new String[]{DcrConstants.TRAVEL_DIST_EXIT}, LocaleContextHolder.getLocale()));
+	    pl.addErrors(errors);
+	}
+
+	private void validateTravelDistances(Plan pl) {
+	    scrutinyDetail = new ScrutinyDetail();
+	    scrutinyDetail.setKey("Common_Travel Distance To Emergency Exits");
+	    scrutinyDetail.addColumnHeading(1, RULE_NO);
+	    scrutinyDetail.addColumnHeading(2, REQUIRED);
+	    scrutinyDetail.addColumnHeading(3, PROVIDED);
+	    scrutinyDetail.addColumnHeading(4, STATUS);
+	    scrutinyDetail.setSubHeading(SUBRULE_42_2_DESC);
+
+	    OccupancyTypeHelper occupancyHelper = pl.getVirtualBuilding().getMostRestrictiveFarHelper();
+	    String occupancyCode = occupancyHelper.getType().getCode();
+
+	    Map<String, BigDecimal> occupancyValues = getOccupancyValues(travelDistanceToExitValueOne, travelDistanceToExitValueTwo);
+	    BigDecimal requiredValue = occupancyValues.get(occupancyCode);
+
+	    if (requiredValue != null) {
+	        for (BigDecimal providedValue : pl.getTravelDistancesToExit()) {
+	            boolean isAccepted = providedValue.compareTo(requiredValue) <= 0;
+	            setReportOutputDetails(pl, SUBRULE_42_2, requiredValue + DcrConstants.IN_METER,
+	                providedValue + DcrConstants.IN_METER,
+	                isAccepted ? Result.Accepted.getResultVal() : Result.Not_Accepted.getResultVal());
+	        }
+	    }
+	}
+	
+//	// Helper to append result details to the scrutiny report
 	private void setReportOutputDetails(Plan pl, String ruleNo, String expected, String actual, String status) {
 		Map<String, String> details = new HashMap<>();
 		details.put(RULE_NO, ruleNo);
@@ -226,13 +301,7 @@ public class TravelDistanceToExit extends FeatureProcess {
 		pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
 	}
 
-	// No amendments defined for this feature
-	@Override
-	public Map<String, Date> getAmendments() {
-		return new LinkedHashMap<>();
-	}
-
-	// Mapping occupancy types to their respective travel distance limits
+//	// Mapping occupancy types to their respective travel distance limits
 	public Map<String, BigDecimal> getOccupancyValues(BigDecimal valueOne, BigDecimal valueTwo) {
 
 		Map<String, BigDecimal> roadWidthValues = new HashMap<>();
@@ -248,4 +317,10 @@ public class TravelDistanceToExit extends FeatureProcess {
 
 		return roadWidthValues;
 	}
+
+	@Override
+	public Map<String, Date> getAmendments() {
+		return new LinkedHashMap<>();
+	}
+
 }

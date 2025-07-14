@@ -1,5 +1,5 @@
 /*
- * eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
+ * UPYOG  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  * accountability and the service delivery of the government  organizations.
  *
  *  Copyright (C) <2019>  eGovernments Foundation
@@ -54,6 +54,7 @@ import static org.egov.edcr.utility.DcrConstants.RULE109;
 import static org.egov.edcr.utility.DcrConstants.SOLAR_SYSTEM;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -68,11 +69,8 @@ import org.egov.common.entity.edcr.MdmsFeatureRule;
 import org.egov.common.entity.edcr.OccupancyType;
 import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.Result;
-import org.egov.common.entity.edcr.RuleKey;
 import org.egov.common.entity.edcr.ScrutinyDetail;
-import org.egov.edcr.constants.EdcrRulesMdmsConstants;
 import org.egov.edcr.service.CacheManagerMdms;
-import org.egov.edcr.service.FetchEdcrRulesMdms;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
@@ -90,86 +88,192 @@ public class Solar extends FeatureProcess {
     private static BigDecimal solarValueOne = BigDecimal.ZERO;
     private static BigDecimal solarValueTwo = BigDecimal.ZERO;
     
-    @Autowired
-    FetchEdcrRulesMdms fetchEdcrRulesMdms;
     
     @Autowired
 	CacheManagerMdms cache;
 
     // Fetch permissible solar rule values from MDMS
-    private Map<String, BigDecimal> fetchSolarValues(Plan pl) {
-    	
-	    	String occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl).toLowerCase();
-			String feature = MdmsFeatureConstants.SOLAR;
-	        String tenantId = pl.getTenantId();
-	        String zone = pl.getPlanInformation().getZone().toLowerCase();
-	        String subZone = pl.getPlanInformation().getSubZone().toLowerCase();
-	        String riskType = fetchEdcrRulesMdms.getRiskType(pl).toLowerCase();
-	        
-	        RuleKey key = new RuleKey(EdcrRulesMdmsConstants.STATE, tenantId, zone, subZone, occupancyName, null, feature);
-	        List<Object> rules = cache.getRules(tenantId, key);
-			
-	        Optional<MdmsFeatureRule> matchedRule = rules.stream()
-	        	    .map(obj -> (MdmsFeatureRule) obj)
-	        	    .findFirst();
-
-	        	if (matchedRule.isPresent()) {
-	        	    MdmsFeatureRule rule = matchedRule.get();
-	        	    solarValueOne = rule.getSolarValueOne();
-	        	    solarValueTwo = rule.getSolarValueTwo();
-	        	} 
-
-        
-        // Return the values in a map
-        Map<String, BigDecimal> solarValues = new HashMap<>();
-        solarValues.put("solarValueOne", solarValueOne);
-        solarValues.put("solarValueTwo", solarValueTwo);
-        return solarValues;
-    }
-
+//    private Map<String, BigDecimal> fetchSolarValues(Plan pl) {
+//    	
+//    	    List<Object> rules = cache.getFeatureRules(pl, MdmsFeatureConstants.SOLAR, false);
+//			
+//	        Optional<MdmsFeatureRule> matchedRule = rules.stream()
+//	        	    .map(obj -> (MdmsFeatureRule) obj)
+//	        	    .findFirst();
+//
+//	        	if (matchedRule.isPresent()) {
+//	        	    MdmsFeatureRule rule = matchedRule.get();
+//	        	    solarValueOne = rule.getSolarValueOne();
+//	        	    solarValueTwo = rule.getSolarValueTwo();
+//	        	} 
+//
+//        
+//        // Return the values in a map
+//        Map<String, BigDecimal> solarValues = new HashMap<>();
+//        solarValues.put("solarValueOne", solarValueOne);
+//        solarValues.put("solarValueTwo", solarValueTwo);
+//        return solarValues;
+//    }
+//
+//    @Override
+//    public Plan validate(Plan pl) {
+//        HashMap<String, String> errors = new HashMap<>();
+//        
+//        // Fetch rule values before validation
+//        Map<String, BigDecimal> solarValues = fetchSolarValues(pl);
+//        solarValueOne = solarValues.get("solarValueOne");
+//        solarValueTwo = solarValues.get("solarValueTwo"); 
+//
+//        // Validate solar provision based on occupancy and built-up area
+//        if (pl != null && pl.getUtility() != null) {
+//            if (pl.getVirtualBuilding() != null && !pl.getVirtualBuilding().getOccupancies().isEmpty()) {
+//                for (OccupancyType occupancyType : pl.getVirtualBuilding().getOccupancies()) {
+//
+//                    // For A1 occupancy and built-up area > valueOne, solar must be defined
+//                    if (occupancyType.equals(OccupancyType.OCCUPANCY_A1)
+//                            && pl.getVirtualBuilding().getTotalBuitUpArea() != null
+//                            && pl.getVirtualBuilding().getTotalBuitUpArea().compareTo(solarValueOne) > 0
+//                            && pl.getUtility().getSolar().isEmpty()) {
+//
+//                        errors.put(SOLAR_SYSTEM,
+//                                edcrMessageSource.getMessage(OBJECTNOTDEFINED, new String[] {
+//                                        OBJECTNOTDEFINED }, LocaleContextHolder.getLocale()));
+//                        pl.addErrors(errors);
+//                        break;
+//
+//                    // For other specified occupancies and built-up area > valueTwo
+//                    } else if ((occupancyType.equals(OccupancyType.OCCUPANCY_A4)
+//                            || occupancyType.equals(OccupancyType.OCCUPANCY_A2) ||
+//                            occupancyType.equals(OccupancyType.OCCUPANCY_A3) || occupancyType.equals(OccupancyType.OCCUPANCY_C) ||
+//                            occupancyType.equals(OccupancyType.OCCUPANCY_C1) || occupancyType.equals(OccupancyType.OCCUPANCY_C2)
+//                            || occupancyType.equals(OccupancyType.OCCUPANCY_C3) || occupancyType.equals(OccupancyType.OCCUPANCY_D) ||
+//                            occupancyType.equals(OccupancyType.OCCUPANCY_D1) || occupancyType.equals(OccupancyType.OCCUPANCY_D2))
+//                            && pl.getVirtualBuilding().getTotalBuitUpArea() != null
+//                            && pl.getVirtualBuilding().getTotalBuitUpArea().compareTo(solarValueTwo) > 0
+//                            && pl.getUtility().getSolar().isEmpty()) {
+//
+//                        errors.put(SOLAR_SYSTEM,
+//                                edcrMessageSource.getMessage(OBJECTNOTDEFINED, new String[] {
+//                                        SOLAR_SYSTEM }, LocaleContextHolder.getLocale()));
+//                        pl.addErrors(errors);
+//                        break;
+//                    }
+//                }
+//            }
+//        }
+//
+//        return pl;
+//    }
+//
+//    @Override
+//    public Plan process(Plan pl) {
+//        // Run validation first to ensure compliance
+//        validate(pl);
+//
+//        // Setup scrutiny detail columns
+//        scrutinyDetail = new ScrutinyDetail();
+//        scrutinyDetail.addColumnHeading(1, RULE_NO);
+//        scrutinyDetail.addColumnHeading(2, DESCRIPTION);
+//        scrutinyDetail.addColumnHeading(3, REQUIRED);
+//        scrutinyDetail.addColumnHeading(4, PROVIDED);
+//        scrutinyDetail.addColumnHeading(5, STATUS);
+//        scrutinyDetail.setKey("Common_Solar");
+//
+//        // Rule details
+//        String rule = RULE109;
+//        String subRule = SUB_RULE_109_C;
+//        String subRuleDesc = SUB_RULE_109_C_DESCRIPTION;        
+//        
+//        // Fetch rule values again
+//        Map<String, BigDecimal> solarValues = fetchSolarValues(pl);
+//        solarValueOne = solarValues.get("solarValueOne");
+//        solarValueTwo = solarValues.get("solarValueTwo");  
+//
+//        // Add scrutiny detail based on occupancy and built-up area
+//        if (pl.getVirtualBuilding() != null && !pl.getVirtualBuilding().getOccupancies().isEmpty()) {
+//            for (OccupancyType occupancyType : pl.getVirtualBuilding().getOccupancies()) {
+//
+//                // For A1 occupancy
+//                if (occupancyType.equals(OccupancyType.OCCUPANCY_A1)
+//                        && pl.getVirtualBuilding().getTotalBuitUpArea() != null
+//                        && pl.getVirtualBuilding().getTotalBuitUpArea().compareTo(solarValueOne) > 0) {
+//                    processSolar(pl, rule, subRule, subRuleDesc);
+//                    break;
+//
+//                // For other occupancy types
+//                } else if ((occupancyType.equals(OccupancyType.OCCUPANCY_A4) || occupancyType.equals(OccupancyType.OCCUPANCY_A2)
+//                        || occupancyType.equals(OccupancyType.OCCUPANCY_A3) || occupancyType.equals(OccupancyType.OCCUPANCY_C) ||
+//                        occupancyType.equals(OccupancyType.OCCUPANCY_C1) || occupancyType.equals(OccupancyType.OCCUPANCY_C2) ||
+//                        occupancyType.equals(OccupancyType.OCCUPANCY_C3) || occupancyType.equals(OccupancyType.OCCUPANCY_D) ||
+//                        occupancyType.equals(OccupancyType.OCCUPANCY_D1) || occupancyType.equals(OccupancyType.OCCUPANCY_D2))
+//                        && pl.getVirtualBuilding().getTotalBuitUpArea() != null
+//                        && pl.getVirtualBuilding().getTotalBuitUpArea().compareTo(solarValueTwo) > 0) {
+//                    processSolar(pl, rule, subRule, subRuleDesc);
+//                    break;
+//                }
+//            }
+//        }
+//
+//        return pl;
+//    }
+//
+//    // Helper method to generate scrutiny result based on solar presence
+//    private void processSolar(Plan pl, String rule, String subRule, String subRuleDesc) {
+//        if (!pl.getUtility().getSolar().isEmpty()) {
+//            setReportOutputDetailsWithoutOccupancy(pl, subRule, subRuleDesc, "", OBJECTDEFINED_DESC,
+//                    Result.Accepted.getResultVal());
+//            return;
+//        } else {
+//            setReportOutputDetailsWithoutOccupancy(pl, subRule, subRuleDesc, "", OBJECTNOTDEFINED_DESC,
+//                    Result.Not_Accepted.getResultVal());
+//            return;
+//        }
+//    }
+//
+//    // Build and add a scrutiny detail row
+//    private void setReportOutputDetailsWithoutOccupancy(Plan pl, String ruleNo, String ruleDesc, String expected, String actual,
+//            String status) {
+//        Map<String, String> details = new HashMap<>();
+//        details.put(RULE_NO, ruleNo);
+//        details.put(DESCRIPTION, ruleDesc);
+//        details.put(REQUIRED, expected);
+//        details.put(PROVIDED, actual);
+//        details.put(STATUS, status);
+//        scrutinyDetail.getDetail().add(details);
+//        pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+//    }
+    
     @Override
     public Plan validate(Plan pl) {
-        HashMap<String, String> errors = new HashMap<>();
-        
-        // Fetch rule values before validation
+        Map<String, String> errors = new HashMap<>();
+
         Map<String, BigDecimal> solarValues = fetchSolarValues(pl);
-        solarValueOne = solarValues.get("solarValueOne");
-        solarValueTwo = solarValues.get("solarValueTwo"); 
+        BigDecimal solarValueOne = solarValues.get("solarValueOne");
+        BigDecimal solarValueTwo = solarValues.get("solarValueTwo");
 
-        // Validate solar provision based on occupancy and built-up area
-        if (pl != null && pl.getUtility() != null) {
-            if (pl.getVirtualBuilding() != null && !pl.getVirtualBuilding().getOccupancies().isEmpty()) {
-                for (OccupancyType occupancyType : pl.getVirtualBuilding().getOccupancies()) {
+        if (pl != null && pl.getUtility() != null && pl.getVirtualBuilding() != null && !pl.getVirtualBuilding().getOccupancies().isEmpty()) {
+            for (OccupancyType occupancyType : pl.getVirtualBuilding().getOccupancies()) {
+                BigDecimal builtUpArea = pl.getVirtualBuilding().getTotalBuitUpArea();
 
-                    // For A1 occupancy and built-up area > valueOne, solar must be defined
-                    if (occupancyType.equals(OccupancyType.OCCUPANCY_A1)
-                            && pl.getVirtualBuilding().getTotalBuitUpArea() != null
-                            && pl.getVirtualBuilding().getTotalBuitUpArea().compareTo(solarValueOne) > 0
-                            && pl.getUtility().getSolar().isEmpty()) {
+                if (occupancyType.equals(OccupancyType.OCCUPANCY_A1)
+                        && builtUpArea != null
+                        && builtUpArea.compareTo(solarValueOne) > 0
+                        && pl.getUtility().getSolar().isEmpty()) {
 
-                        errors.put(SOLAR_SYSTEM,
-                                edcrMessageSource.getMessage(OBJECTNOTDEFINED, new String[] {
-                                        OBJECTNOTDEFINED }, LocaleContextHolder.getLocale()));
-                        pl.addErrors(errors);
-                        break;
+                    errors.put(SOLAR_SYSTEM, edcrMessageSource.getMessage(OBJECTNOTDEFINED,
+                            new String[]{OBJECTNOTDEFINED}, LocaleContextHolder.getLocale()));
+                    pl.addErrors(errors);
+                    break;
 
-                    // For other specified occupancies and built-up area > valueTwo
-                    } else if ((occupancyType.equals(OccupancyType.OCCUPANCY_A4)
-                            || occupancyType.equals(OccupancyType.OCCUPANCY_A2) ||
-                            occupancyType.equals(OccupancyType.OCCUPANCY_A3) || occupancyType.equals(OccupancyType.OCCUPANCY_C) ||
-                            occupancyType.equals(OccupancyType.OCCUPANCY_C1) || occupancyType.equals(OccupancyType.OCCUPANCY_C2)
-                            || occupancyType.equals(OccupancyType.OCCUPANCY_C3) || occupancyType.equals(OccupancyType.OCCUPANCY_D) ||
-                            occupancyType.equals(OccupancyType.OCCUPANCY_D1) || occupancyType.equals(OccupancyType.OCCUPANCY_D2))
-                            && pl.getVirtualBuilding().getTotalBuitUpArea() != null
-                            && pl.getVirtualBuilding().getTotalBuitUpArea().compareTo(solarValueTwo) > 0
-                            && pl.getUtility().getSolar().isEmpty()) {
+                } else if (isOtherOccupancy(occupancyType)
+                        && builtUpArea != null
+                        && builtUpArea.compareTo(solarValueTwo) > 0
+                        && pl.getUtility().getSolar().isEmpty()) {
 
-                        errors.put(SOLAR_SYSTEM,
-                                edcrMessageSource.getMessage(OBJECTNOTDEFINED, new String[] {
-                                        SOLAR_SYSTEM }, LocaleContextHolder.getLocale()));
-                        pl.addErrors(errors);
-                        break;
-                    }
+                    errors.put(SOLAR_SYSTEM, edcrMessageSource.getMessage(OBJECTNOTDEFINED,
+                            new String[]{SOLAR_SYSTEM}, LocaleContextHolder.getLocale()));
+                    pl.addErrors(errors);
+                    break;
                 }
             }
         }
@@ -179,47 +283,30 @@ public class Solar extends FeatureProcess {
 
     @Override
     public Plan process(Plan pl) {
-        // Run validation first to ensure compliance
-        validate(pl);
+        validate(pl); // Ensure rules are validated before processing
+        initializeScrutinyDetail();
 
-        // Setup scrutiny detail columns
-        scrutinyDetail = new ScrutinyDetail();
-        scrutinyDetail.addColumnHeading(1, RULE_NO);
-        scrutinyDetail.addColumnHeading(2, DESCRIPTION);
-        scrutinyDetail.addColumnHeading(3, REQUIRED);
-        scrutinyDetail.addColumnHeading(4, PROVIDED);
-        scrutinyDetail.addColumnHeading(5, STATUS);
-        scrutinyDetail.setKey("Common_Solar");
-
-        // Rule details
         String rule = RULE109;
         String subRule = SUB_RULE_109_C;
-        String subRuleDesc = SUB_RULE_109_C_DESCRIPTION;        
-        
-        // Fetch rule values again
-        Map<String, BigDecimal> solarValues = fetchSolarValues(pl);
-        solarValueOne = solarValues.get("solarValueOne");
-        solarValueTwo = solarValues.get("solarValueTwo");  
+        String subRuleDesc = SUB_RULE_109_C_DESCRIPTION;
 
-        // Add scrutiny detail based on occupancy and built-up area
+        Map<String, BigDecimal> solarValues = fetchSolarValues(pl);
+        BigDecimal solarValueOne = solarValues.get("solarValueOne");
+        BigDecimal solarValueTwo = solarValues.get("solarValueTwo");
+
         if (pl.getVirtualBuilding() != null && !pl.getVirtualBuilding().getOccupancies().isEmpty()) {
             for (OccupancyType occupancyType : pl.getVirtualBuilding().getOccupancies()) {
+                BigDecimal builtUpArea = pl.getVirtualBuilding().getTotalBuitUpArea();
 
-                // For A1 occupancy
                 if (occupancyType.equals(OccupancyType.OCCUPANCY_A1)
-                        && pl.getVirtualBuilding().getTotalBuitUpArea() != null
-                        && pl.getVirtualBuilding().getTotalBuitUpArea().compareTo(solarValueOne) > 0) {
+                        && builtUpArea != null
+                        && builtUpArea.compareTo(solarValueOne) > 0) {
                     processSolar(pl, rule, subRule, subRuleDesc);
                     break;
 
-                // For other occupancy types
-                } else if ((occupancyType.equals(OccupancyType.OCCUPANCY_A4) || occupancyType.equals(OccupancyType.OCCUPANCY_A2)
-                        || occupancyType.equals(OccupancyType.OCCUPANCY_A3) || occupancyType.equals(OccupancyType.OCCUPANCY_C) ||
-                        occupancyType.equals(OccupancyType.OCCUPANCY_C1) || occupancyType.equals(OccupancyType.OCCUPANCY_C2) ||
-                        occupancyType.equals(OccupancyType.OCCUPANCY_C3) || occupancyType.equals(OccupancyType.OCCUPANCY_D) ||
-                        occupancyType.equals(OccupancyType.OCCUPANCY_D1) || occupancyType.equals(OccupancyType.OCCUPANCY_D2))
-                        && pl.getVirtualBuilding().getTotalBuitUpArea() != null
-                        && pl.getVirtualBuilding().getTotalBuitUpArea().compareTo(solarValueTwo) > 0) {
+                } else if (isOtherOccupancy(occupancyType)
+                        && builtUpArea != null
+                        && builtUpArea.compareTo(solarValueTwo) > 0) {
                     processSolar(pl, rule, subRule, subRuleDesc);
                     break;
                 }
@@ -229,22 +316,60 @@ public class Solar extends FeatureProcess {
         return pl;
     }
 
-    // Helper method to generate scrutiny result based on solar presence
-    private void processSolar(Plan pl, String rule, String subRule, String subRuleDesc) {
-        if (!pl.getUtility().getSolar().isEmpty()) {
-            setReportOutputDetailsWithoutOccupancy(pl, subRule, subRuleDesc, "", OBJECTDEFINED_DESC,
-                    Result.Accepted.getResultVal());
-            return;
-        } else {
-            setReportOutputDetailsWithoutOccupancy(pl, subRule, subRuleDesc, "", OBJECTNOTDEFINED_DESC,
-                    Result.Not_Accepted.getResultVal());
-            return;
+    private Map<String, BigDecimal> fetchSolarValues(Plan pl) {
+        List<Object> rules = cache.getFeatureRules(pl, MdmsFeatureConstants.SOLAR, false);
+        Optional<MdmsFeatureRule> matchedRule = rules.stream()
+                .filter(MdmsFeatureRule.class::isInstance)
+                .map(MdmsFeatureRule.class::cast)
+                .findFirst();
+
+        BigDecimal solarValueOne = BigDecimal.ZERO;
+        BigDecimal solarValueTwo = BigDecimal.ZERO;
+
+        if (matchedRule.isPresent()) {
+            MdmsFeatureRule rule = matchedRule.get();
+            solarValueOne = rule.getSolarValueOne();
+            solarValueTwo = rule.getSolarValueTwo();
         }
+
+        Map<String, BigDecimal> solarValues = new HashMap<>();
+        solarValues.put("solarValueOne", solarValueOne);
+        solarValues.put("solarValueTwo", solarValueTwo);
+        return solarValues;
     }
 
-    // Build and add a scrutiny detail row
-    private void setReportOutputDetailsWithoutOccupancy(Plan pl, String ruleNo, String ruleDesc, String expected, String actual,
-            String status) {
+    private void initializeScrutinyDetail() {
+        scrutinyDetail = new ScrutinyDetail();
+        scrutinyDetail.addColumnHeading(1, RULE_NO);
+        scrutinyDetail.addColumnHeading(2, DESCRIPTION);
+        scrutinyDetail.addColumnHeading(3, REQUIRED);
+        scrutinyDetail.addColumnHeading(4, PROVIDED);
+        scrutinyDetail.addColumnHeading(5, STATUS);
+        scrutinyDetail.setKey(Common_Solar);
+    }
+
+    private boolean isOtherOccupancy(OccupancyType occupancyType) {
+        return Arrays.asList(
+                OccupancyType.OCCUPANCY_A2, OccupancyType.OCCUPANCY_A3, OccupancyType.OCCUPANCY_A4,
+                OccupancyType.OCCUPANCY_C, OccupancyType.OCCUPANCY_C1, OccupancyType.OCCUPANCY_C2,
+                OccupancyType.OCCUPANCY_C3, OccupancyType.OCCUPANCY_D, OccupancyType.OCCUPANCY_D1,
+                OccupancyType.OCCUPANCY_D2
+        ).contains(occupancyType);
+    }
+
+    private void processSolar(Plan pl, String rule, String subRule, String subRuleDesc) {
+        String status = pl.getUtility().getSolar().isEmpty()
+                ? Result.Not_Accepted.getResultVal()
+                : Result.Accepted.getResultVal();
+        String provided = pl.getUtility().getSolar().isEmpty()
+                ? OBJECTNOTDEFINED_DESC
+                : OBJECTDEFINED_DESC;
+
+        setReportOutputDetailsWithoutOccupancy(pl, subRule, subRuleDesc, "", provided, status);
+    }
+
+    private void setReportOutputDetailsWithoutOccupancy(Plan pl, String ruleNo, String ruleDesc, String expected,
+                                                        String actual, String status) {
         Map<String, String> details = new HashMap<>();
         details.put(RULE_NO, ruleNo);
         details.put(DESCRIPTION, ruleDesc);
@@ -254,6 +379,7 @@ public class Solar extends FeatureProcess {
         scrutinyDetail.getDetail().add(details);
         pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
     }
+
 
     @Override
     public Map<String, Date> getAmendments() {

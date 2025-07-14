@@ -49,12 +49,13 @@ package org.egov.edcr.feature;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
@@ -67,22 +68,22 @@ import org.egov.common.entity.edcr.MdmsFeatureRule;
 import org.egov.common.entity.edcr.Measurement;
 import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.Result;
-import org.egov.common.entity.edcr.RuleKey;
 import org.egov.common.entity.edcr.ScrutinyDetail;
 import org.egov.edcr.constants.DxfFileConstants;
-import org.egov.edcr.constants.EdcrRulesMdmsConstants;
 import org.egov.edcr.service.CacheManagerMdms;
-import org.egov.edcr.service.FetchEdcrRulesMdms;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class VehicleRamp extends FeatureProcess {
-    private static final Logger LOG = LogManager.getLogger(VehicleRamp.class);
+	private static final Logger LOG = LogManager.getLogger(VehicleRamp.class);
 	private static final String SUBRULE_40_8 = "40-8";
 	private static final String DESCRIPTION = "Vehicle Ramp";
 	private static final String FLOOR = "Floor";
 	private static final String FLIGHT = "Flight";
+
+	@Autowired
+	CacheManagerMdms cache;
 
 	@Override
 	public Plan validate(Plan pl) {
@@ -104,42 +105,112 @@ public class VehicleRamp extends FeatureProcess {
 			}
 		}
 		return pl;
+
 	}
 
-	@Autowired
-	FetchEdcrRulesMdms fetchEdcrRulesMdms;
-	
-	@Autowired
-	CacheManagerMdms cache;
+//	@Override
+//	public Plan process(Plan pl) {
+//		validate(pl); // Initial validation of ramp geometry
+//
+//		// Initialize parking area aggregators
+//		BigDecimal coverParkingArea = BigDecimal.ZERO;
+//		BigDecimal basementParkingArea = BigDecimal.ZERO;
+//
+//		// Calculate total covered and basement parking areas
+//		for (Block block : pl.getBlocks()) {
+//			for (Floor floor : block.getBuilding().getFloors()) {
+//				coverParkingArea = coverParkingArea.add(floor.getParking().getCoverCars().stream()
+//						.map(Measurement::getArea).reduce(BigDecimal.ZERO, BigDecimal::add));
+//				basementParkingArea = basementParkingArea.add(floor.getParking().getBasementCars().stream()
+//						.map(Measurement::getArea).reduce(BigDecimal.ZERO, BigDecimal::add));
+//			}
+//		}
+//
+//		HashMap<String, String> errors = new HashMap<>();
+//		BigDecimal totalProvidedCarParkArea = coverParkingArea.add(basementParkingArea);
+//
+//		// Initialize slope and width values
+//		BigDecimal vehicleRampTotalLength, vehicleRampSlope, minWidth = BigDecimal.ZERO;
+//		List<BigDecimal> vehicleRampLengths = new ArrayList<>();
+//		boolean valid, valid1, valid2;
+//		Map<String, String> details = new HashMap<>();
+//		details.put(RULE_NO, SUBRULE_40_8);
+//		details.put(DESCRIPTION, DESCRIPTION);
+//
+//		// Rule values from MDMS
+//		BigDecimal vehicleRampValue = BigDecimal.ZERO;
+//		BigDecimal vehicleRampSlopeValueOne = BigDecimal.ZERO;
+//		BigDecimal vehicleRampSlopeValueTwo = BigDecimal.ZERO;
+//		BigDecimal vehicleRampSlopeMinWidthValueOne = BigDecimal.ZERO;
+//		BigDecimal vehicleRampSlopeMinWidthValueTwo = BigDecimal.ZERO;
+//		BigDecimal vehicleRampSlopeMinWidthValueThree = BigDecimal.ZERO;
+//		
+//		List<Object> rules = cache.getFeatureRules(pl, MdmsFeatureConstants.VEHICLE_RAMP, false);
+//
+//		Optional<MdmsFeatureRule> matchedRule = rules.stream().map(obj -> (MdmsFeatureRule) obj).findFirst();
+//
+//		if (matchedRule.isPresent()) {
+//			MdmsFeatureRule rule = matchedRule.get();
+//			vehicleRampValue = rule.getPermissible();
+//			vehicleRampSlopeValueOne = rule.getVehicleRampSlopeValueOne();
+//			vehicleRampSlopeValueTwo = rule.getVehicleRampSlopeValueTwo();
+//			vehicleRampSlopeMinWidthValueOne = rule.getVehicleRampSlopeMinWidthValueOne();
+//			vehicleRampSlopeMinWidthValueTwo = rule.getVehicleRampSlopeMinWidthValueTwo();
+//			vehicleRampSlopeMinWidthValueThree = rule.getVehicleRampSlopeMinWidthValueThree();
+//		}
+//
+//		// If parking area exists, process the vehicle ramp checks
+//		if (totalProvidedCarParkArea != null && totalProvidedCarParkArea.compareTo(BigDecimal.ZERO) > 0) {
+//			if (pl != null && !pl.getBlocks().isEmpty()) {
+//				for (Block block : pl.getBlocks()) {
+//					scrutinyDetail = new ScrutinyDetail();
+//					scrutinyDetail.addColumnHeading(1, RULE_NO);
+//					scrutinyDetail.addColumnHeading(2, DESCRIPTION);
+//					scrutinyDetail.addColumnHeading(3, FLOOR);
+//					scrutinyDetail.addColumnHeading(4, REQUIRED);
+//					scrutinyDetail.addColumnHeading(5, PROVIDED);
+//					scrutinyDetail.addColumnHeading(6, STATUS);
+//					scrutinyDetail.setKey("Vehicle Ramp");
+//
+//					if (block.getBuilding() != null && !block.getBuilding().getFloors().isEmpty()) {
+//						for (Floor floor : block.getBuilding().getFloors()) {
+//							if (!floor.getVehicleRamps().isEmpty()) {
+//								boolean rampWithFlight = false;
+//
+//								// Determine if any ramp on the floor has flights
+//								for (org.egov.common.entity.edcr.VehicleRamp vehRamp : floor.getVehicleRamps()) {
+//									if (!vehRamp.getFlights().isEmpty())
+//										rampWithFlight = true;
+//								}
+//
+//								// Call appropriate process method based on flight existence
+//								if (rampWithFlight)
+//									processRampWitFlights(pl, errors, details, floor, vehicleRampValue,
+//											vehicleRampSlopeValueOne, vehicleRampSlopeValueTwo);
+//								else
+//									processRampWithOutFlights(pl, errors, details, floor,
+//											vehicleRampSlopeMinWidthValueOne, vehicleRampSlopeMinWidthValueTwo,
+//											vehicleRampSlopeMinWidthValueThree);
+//							}
+//						}
+//					}
+//				}
+//			}
+//		}
+//
+//		return pl;
+//	}
 
 	@Override
 	public Plan process(Plan pl) {
 		validate(pl); // Initial validation of ramp geometry
 
-		// Initialize parking area aggregators
-		BigDecimal coverParkingArea = BigDecimal.ZERO;
-		BigDecimal basementParkingArea = BigDecimal.ZERO;
-
-		// Calculate total covered and basement parking areas
-		for (Block block : pl.getBlocks()) {
-			for (Floor floor : block.getBuilding().getFloors()) {
-				coverParkingArea = coverParkingArea.add(floor.getParking().getCoverCars().stream()
-						.map(Measurement::getArea).reduce(BigDecimal.ZERO, BigDecimal::add));
-				basementParkingArea = basementParkingArea.add(floor.getParking().getBasementCars().stream()
-						.map(Measurement::getArea).reduce(BigDecimal.ZERO, BigDecimal::add));
-			}
-		}
-
-		HashMap<String, String> errors = new HashMap<>();
+		BigDecimal coverParkingArea = calculateCoveredParkingArea(pl);
+		BigDecimal basementParkingArea = calculateBasementParkingArea(pl);
 		BigDecimal totalProvidedCarParkArea = coverParkingArea.add(basementParkingArea);
 
-		// Initialize slope and width values
-		BigDecimal vehicleRampTotalLength, vehicleRampSlope, minWidth = BigDecimal.ZERO;
-		List<BigDecimal> vehicleRampLengths = new ArrayList<>();
-		boolean valid, valid1, valid2;
-		Map<String, String> details = new HashMap<>();
-		details.put(RULE_NO, SUBRULE_40_8);
-		details.put(DESCRIPTION, DESCRIPTION);
+		Map<String, String> details = initializeDetails();
+		HashMap<String, String> errors = new HashMap<>();
 
 		// Rule values from MDMS
 		BigDecimal vehicleRampValue = BigDecimal.ZERO;
@@ -149,18 +220,8 @@ public class VehicleRamp extends FeatureProcess {
 		BigDecimal vehicleRampSlopeMinWidthValueTwo = BigDecimal.ZERO;
 		BigDecimal vehicleRampSlopeMinWidthValueThree = BigDecimal.ZERO;
 
-		String feature = MdmsFeatureConstants.VEHICLE_RAMP;
-		String occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl).toLowerCase();
-		String tenantId = pl.getTenantId();
-		String zone = pl.getPlanInformation().getZone().toLowerCase();
-		String subZone = pl.getPlanInformation().getSubZone().toLowerCase();
-		String riskType = fetchEdcrRulesMdms.getRiskType(pl).toLowerCase();
-
-		RuleKey key = new RuleKey(EdcrRulesMdmsConstants.STATE, tenantId, zone, subZone, occupancyName, null, feature);
-		List<Object> rules = cache.getRules(tenantId, key);
-
+		List<Object> rules = cache.getFeatureRules(pl, MdmsFeatureConstants.VEHICLE_RAMP, false);
 		Optional<MdmsFeatureRule> matchedRule = rules.stream().map(obj -> (MdmsFeatureRule) obj).findFirst();
-
 		if (matchedRule.isPresent()) {
 			MdmsFeatureRule rule = matchedRule.get();
 			vehicleRampValue = rule.getPermissible();
@@ -171,287 +232,485 @@ public class VehicleRamp extends FeatureProcess {
 			vehicleRampSlopeMinWidthValueThree = rule.getVehicleRampSlopeMinWidthValueThree();
 		}
 
-		// If parking area exists, process the vehicle ramp checks
 		if (totalProvidedCarParkArea != null && totalProvidedCarParkArea.compareTo(BigDecimal.ZERO) > 0) {
-			if (pl != null && !pl.getBlocks().isEmpty()) {
-				for (Block block : pl.getBlocks()) {
-					scrutinyDetail = new ScrutinyDetail();
-					scrutinyDetail.addColumnHeading(1, RULE_NO);
-					scrutinyDetail.addColumnHeading(2, DESCRIPTION);
-					scrutinyDetail.addColumnHeading(3, FLOOR);
-					scrutinyDetail.addColumnHeading(4, REQUIRED);
-					scrutinyDetail.addColumnHeading(5, PROVIDED);
-					scrutinyDetail.addColumnHeading(6, STATUS);
-					scrutinyDetail.setKey("Vehicle Ramp");
-
-					if (block.getBuilding() != null && !block.getBuilding().getFloors().isEmpty()) {
-						for (Floor floor : block.getBuilding().getFloors()) {
-							if (!floor.getVehicleRamps().isEmpty()) {
-								boolean rampWithFlight = false;
-
-								// Determine if any ramp on the floor has flights
-								for (org.egov.common.entity.edcr.VehicleRamp vehRamp : floor.getVehicleRamps()) {
-									if (!vehRamp.getFlights().isEmpty())
-										rampWithFlight = true;
-								}
-
-								// Call appropriate process method based on flight existence
-								if (rampWithFlight)
-									processRampWitFlights(pl, errors, details, floor, vehicleRampValue,
-											vehicleRampSlopeValueOne, vehicleRampSlopeValueTwo);
-								else
-									processRampWithOutFlights(pl, errors, details, floor,
-											vehicleRampSlopeMinWidthValueOne, vehicleRampSlopeMinWidthValueTwo,
-											vehicleRampSlopeMinWidthValueThree);
-							}
-						}
-					}
-				}
-			}
+			processAllBlocks(pl, errors, details, vehicleRampValue, vehicleRampSlopeValueOne, vehicleRampSlopeValueTwo,
+					vehicleRampSlopeMinWidthValueOne, vehicleRampSlopeMinWidthValueTwo,
+					vehicleRampSlopeMinWidthValueThree);
 		}
 
 		return pl;
 	}
 
-	 /*
-	  * For Each floor vehicle ramp, on each flight, get the length, height and width. 
-	  * Based on color code decide type of flight whether circular or Straight ramp
-	  * Using length and height calculate slope.
-	  */
-	private void processRampWitFlights(Plan pl, HashMap<String, String> errors, Map<String, String> details,
-			Floor floor, BigDecimal vehicleRampValue, BigDecimal vehicleRampSlopeValueOne, BigDecimal vehicleRampSlopeValueTwo) {
-		
+	private BigDecimal calculateCoveredParkingArea(Plan pl) {
+		BigDecimal coverParkingArea = BigDecimal.ZERO;
+		for (Block block : pl.getBlocks()) {
+			for (Floor floor : block.getBuilding().getFloors()) {
+				coverParkingArea = coverParkingArea.add(floor.getParking().getCoverCars().stream()
+						.map(Measurement::getArea).reduce(BigDecimal.ZERO, BigDecimal::add));
+			}
+		}
+		return coverParkingArea;
+	}
 
-		if (floor.getNumber() != 0) {
-			if ((floor.getParking() != null && floor.getParking().getMechanicalLifts() != null
-					&& !floor.getParking().getMechanicalLifts().isEmpty())
-					|| (floor.getVehicleRamps() != null && !floor.getVehicleRamps().isEmpty())) {
+	private BigDecimal calculateBasementParkingArea(Plan pl) {
+		BigDecimal basementParkingArea = BigDecimal.ZERO;
+		for (Block block : pl.getBlocks()) {
+			for (Floor floor : block.getBuilding().getFloors()) {
+				basementParkingArea = basementParkingArea.add(floor.getParking().getBasementCars().stream()
+						.map(Measurement::getArea).reduce(BigDecimal.ZERO, BigDecimal::add));
+			}
+		}
+		return basementParkingArea;
+	}
 
-				if (floor.getParking().getMechanicalLifts() == null
-						|| floor.getParking().getMechanicalLifts().isEmpty()) {
-					for (org.egov.common.entity.edcr.VehicleRamp vehicleRamp : floor.getVehicleRamps()) {
+	private Map<String, String> initializeDetails() {
+		Map<String, String> details = new HashMap<>();
+		details.put(RULE_NO, SUBRULE_40_8);
+		details.put(DESCRIPTION, DESCRIPTION);
+		return details;
+	}
 
-						// Validate width of ramp
-						if (vehicleRamp.getWidth().compareTo(BigDecimal.ZERO) <= 0) {
-							errors.put("Vehicle Ramp width" + vehicleRamp.getNumber(),
-									"Width of vehicle ramp not defined. Pleae check Vehicle Ramp "
-											+ vehicleRamp.getNumber());
+	private void processAllBlocks(Plan pl, HashMap<String, String> errors, Map<String, String> details,
+			BigDecimal vehicleRampValue, BigDecimal vehicleRampSlopeValueOne, BigDecimal vehicleRampSlopeValueTwo,
+			BigDecimal vehicleRampSlopeMinWidthValueOne, BigDecimal vehicleRampSlopeMinWidthValueTwo,
+			BigDecimal vehicleRampSlopeMinWidthValueThree) {
 
+		for (Block block : pl.getBlocks()) {
+			scrutinyDetail = new ScrutinyDetail();
+			scrutinyDetail.addColumnHeading(1, RULE_NO);
+			scrutinyDetail.addColumnHeading(2, DESCRIPTION);
+			scrutinyDetail.addColumnHeading(3, FLOOR);
+			scrutinyDetail.addColumnHeading(4, REQUIRED);
+			scrutinyDetail.addColumnHeading(5, PROVIDED);
+			scrutinyDetail.addColumnHeading(6, STATUS);
+			scrutinyDetail.setKey("Vehicle Ramp");
+
+			if (block.getBuilding() != null && !block.getBuilding().getFloors().isEmpty()) {
+				for (Floor floor : block.getBuilding().getFloors()) {
+					if (!floor.getVehicleRamps().isEmpty()) {
+						boolean rampWithFlight = floor.getVehicleRamps().stream()
+								.anyMatch(vr -> !vr.getFlights().isEmpty());
+
+						if (rampWithFlight) {
+							processRampWitFlights(pl, errors, details, floor, vehicleRampValue,
+									vehicleRampSlopeValueOne, vehicleRampSlopeValueTwo);
 						} else {
-							if (vehicleRamp.getWidth().compareTo(vehicleRampValue) >= 0) {
-								details.put(FLOOR, "Floor " + floor.getNumber());
-								details.put(REQUIRED, "Minimum " + vehicleRampValue.toString() + "m width");
-								details.put(PROVIDED, vehicleRamp.getWidth().toString());
-								details.put(STATUS, Result.Accepted.getResultVal());
-								scrutinyDetail.getDetail().add(details);
-								pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
-							} else {
-								details.put(FLOOR, "Floor " + floor.getNumber());
-								details.put(REQUIRED, "Minimum " + vehicleRampValue.toString() + "m width");
-								details.put(PROVIDED, vehicleRamp.getWidth().toString());
-								details.put(STATUS, Result.Not_Accepted.getResultVal());
-								scrutinyDetail.getDetail().add(details);
-								pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
-							}
-
-						}
-
-						for (Flight flight : vehicleRamp.getFlights()) {
-
-							if (flight.getLength().compareTo(BigDecimal.valueOf(0)) > 0 && flight.getHeight() != null) {
-								BigDecimal vehicleRampSlope = flight.getLength().divide(flight.getHeight(), 2,
-										RoundingMode.HALF_UP);
-
-								if (flight.getColorCode() == 1 || flight.getColorCode() == 2) {
-									if (flight.getColorCode() == 1) {
-										if (vehicleRampSlope.compareTo(vehicleRampSlopeValueOne) >= 0) {
-											details.put(FLOOR, "Flight " + flight.getNumber());
-											details.put(REQUIRED, "Slope 1:" + vehicleRampSlopeValueOne.toString());
-											details.put(PROVIDED, "Slope 1:" + vehicleRampSlope);
-											details.put(STATUS, Result.Accepted.getResultVal());
-											scrutinyDetail.getDetail().add(details);
-											pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
-										} else {
-											details.put(FLOOR, "Flight " + flight.getNumber());
-											details.put(REQUIRED, "Slope 1:" + vehicleRampSlopeValueOne.toString());
-											details.put(PROVIDED, "Slope 1:" + vehicleRampSlope);
-											details.put(STATUS, Result.Not_Accepted.getResultVal());
-											scrutinyDetail.getDetail().add(details);
-											pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
-										}
-									} else if (flight.getColorCode() == 2) {
-										if (vehicleRampSlope.compareTo(vehicleRampSlopeValueTwo) >= 0) {
-											details.put(FLOOR, "Flight " + flight.getNumber());
-											details.put(REQUIRED, "Slope 1:" + vehicleRampSlopeValueTwo.toString());
-											details.put(PROVIDED, "Slope 1:" + vehicleRampSlope);
-											details.put(STATUS, Result.Accepted.getResultVal());
-											scrutinyDetail.getDetail().add(details);
-											pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
-										} else {
-											details.put(FLOOR, "Flight " + flight.getNumber());
-											details.put(REQUIRED, "Slope 1:" + vehicleRampSlopeValueTwo.toString());
-											details.put(PROVIDED, "Slope 1:" + vehicleRampSlope);
-											details.put(STATUS, Result.Not_Accepted.getResultVal());
-											scrutinyDetail.getDetail().add(details);
-											pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
-										}
-									}
-								} else {
-									errors.put("Vehicle Ramp Flight " + flight.getNumber(),
-											" Vehicle ramp polyline should be either 1 or 2. Pleae check Vehicle Ramp flight "
-													+ flight.getNumber());
-
-								}
-							} else {
-								errors.put("Vehicle Ramp Flight " + flight.getNumber(),
-										"Ramp Flight lenght should be in polyline. Eirther flight length or RAMP_HT_M text not defined in vehicle ramp flight "
-												+ flight.getNumber());
-
-							}
+							processRampWithOutFlights(pl, errors, details, floor, vehicleRampSlopeMinWidthValueOne,
+									vehicleRampSlopeMinWidthValueTwo, vehicleRampSlopeMinWidthValueThree);
 						}
 					}
 				}
-
-			} else {
-				errors.put("Vehicle Ramp", "Either ramp or mechanical lift is required");
-				pl.addErrors(errors);
-
 			}
 		}
 	}
-	// This method processes vehicle ramps without intermediate flights for a specific floor
+
+//	 /*
+//	  * For Each floor vehicle ramp, on each flight, get the length, height and width. 
+//	  * Based on color code decide type of flight whether circular or Straight ramp
+//	  * Using length and height calculate slope.
+//	  */
+//	private void processRampWitFlights(Plan pl, HashMap<String, String> errors, Map<String, String> details,
+//			Floor floor, BigDecimal vehicleRampValue, BigDecimal vehicleRampSlopeValueOne, BigDecimal vehicleRampSlopeValueTwo) {
+//		
+//
+//		if (floor.getNumber() != 0) {
+//			if ((floor.getParking() != null && floor.getParking().getMechanicalLifts() != null
+//					&& !floor.getParking().getMechanicalLifts().isEmpty())
+//					|| (floor.getVehicleRamps() != null && !floor.getVehicleRamps().isEmpty())) {
+//
+//				if (floor.getParking().getMechanicalLifts() == null
+//						|| floor.getParking().getMechanicalLifts().isEmpty()) {
+//					for (org.egov.common.entity.edcr.VehicleRamp vehicleRamp : floor.getVehicleRamps()) {
+//
+//						// Validate width of ramp
+//						if (vehicleRamp.getWidth().compareTo(BigDecimal.ZERO) <= 0) {
+//							errors.put("Vehicle Ramp width" + vehicleRamp.getNumber(),
+//									"Width of vehicle ramp not defined. Pleae check Vehicle Ramp "
+//											+ vehicleRamp.getNumber());
+//
+//						} else {
+//							if (vehicleRamp.getWidth().compareTo(vehicleRampValue) >= 0) {
+//								details.put(FLOOR, "Floor " + floor.getNumber());
+//								details.put(REQUIRED, "Minimum " + vehicleRampValue.toString() + "m width");
+//								details.put(PROVIDED, vehicleRamp.getWidth().toString());
+//								details.put(STATUS, Result.Accepted.getResultVal());
+//								scrutinyDetail.getDetail().add(details);
+//								pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+//							} else {
+//								details.put(FLOOR, "Floor " + floor.getNumber());
+//								details.put(REQUIRED, "Minimum " + vehicleRampValue.toString() + "m width");
+//								details.put(PROVIDED, vehicleRamp.getWidth().toString());
+//								details.put(STATUS, Result.Not_Accepted.getResultVal());
+//								scrutinyDetail.getDetail().add(details);
+//								pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+//							}
+//
+//						}
+//
+//						for (Flight flight : vehicleRamp.getFlights()) {
+//
+//							if (flight.getLength().compareTo(BigDecimal.valueOf(0)) > 0 && flight.getHeight() != null) {
+//								BigDecimal vehicleRampSlope = flight.getLength().divide(flight.getHeight(), 2,
+//										RoundingMode.HALF_UP);
+//
+//								if (flight.getColorCode() == 1 || flight.getColorCode() == 2) {
+//									if (flight.getColorCode() == 1) {
+//										if (vehicleRampSlope.compareTo(vehicleRampSlopeValueOne) >= 0) {
+//											details.put(FLOOR, "Flight " + flight.getNumber());
+//											details.put(REQUIRED, "Slope 1:" + vehicleRampSlopeValueOne.toString());
+//											details.put(PROVIDED, "Slope 1:" + vehicleRampSlope);
+//											details.put(STATUS, Result.Accepted.getResultVal());
+//											scrutinyDetail.getDetail().add(details);
+//											pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+//										} else {
+//											details.put(FLOOR, "Flight " + flight.getNumber());
+//											details.put(REQUIRED, "Slope 1:" + vehicleRampSlopeValueOne.toString());
+//											details.put(PROVIDED, "Slope 1:" + vehicleRampSlope);
+//											details.put(STATUS, Result.Not_Accepted.getResultVal());
+//											scrutinyDetail.getDetail().add(details);
+//											pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+//										}
+//									} else if (flight.getColorCode() == 2) {
+//										if (vehicleRampSlope.compareTo(vehicleRampSlopeValueTwo) >= 0) {
+//											details.put(FLOOR, "Flight " + flight.getNumber());
+//											details.put(REQUIRED, "Slope 1:" + vehicleRampSlopeValueTwo.toString());
+//											details.put(PROVIDED, "Slope 1:" + vehicleRampSlope);
+//											details.put(STATUS, Result.Accepted.getResultVal());
+//											scrutinyDetail.getDetail().add(details);
+//											pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+//										} else {
+//											details.put(FLOOR, "Flight " + flight.getNumber());
+//											details.put(REQUIRED, "Slope 1:" + vehicleRampSlopeValueTwo.toString());
+//											details.put(PROVIDED, "Slope 1:" + vehicleRampSlope);
+//											details.put(STATUS, Result.Not_Accepted.getResultVal());
+//											scrutinyDetail.getDetail().add(details);
+//											pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+//										}
+//									}
+//								} else {
+//									errors.put("Vehicle Ramp Flight " + flight.getNumber(),
+//											" Vehicle ramp polyline should be either 1 or 2. Pleae check Vehicle Ramp flight "
+//													+ flight.getNumber());
+//
+//								}
+//							} else {
+//								errors.put("Vehicle Ramp Flight " + flight.getNumber(),
+//										"Ramp Flight lenght should be in polyline. Eirther flight length or RAMP_HT_M text not defined in vehicle ramp flight "
+//												+ flight.getNumber());
+//
+//							}
+//						}
+//					}
+//				}
+//
+//			} else {
+//				errors.put("Vehicle Ramp", "Either ramp or mechanical lift is required");
+//				pl.addErrors(errors);
+//
+//			}
+//		}
+//	}
+	// This method processes vehicle ramps without intermediate flights for a
+	// specific floor
+//	private void processRampWithOutFlights(Plan pl, HashMap<String, String> errors, Map<String, String> details,
+//	        Floor floor, BigDecimal vehicleRampSlopeMinWidthValueOne, BigDecimal vehicleRampSlopeMinWidthValueTwo, BigDecimal vehicleRampSlopeMinWidthValueThree) {
+//
+//	    BigDecimal vehicleRampTotalLength;
+//	    BigDecimal vehicleRampSlope;
+//	    BigDecimal minWidth;
+//	    List<BigDecimal> vehicleRampLengths;
+//	    boolean valid;
+//	    boolean valid1;
+//	    boolean valid2;
+//
+//	    // Calculate slope for each closed vehicle ramp
+//	    for (org.egov.common.entity.edcr.VehicleRamp vehicleRamp : floor.getVehicleRamps()) {
+//	        if (vehicleRamp.getRampClosed()) {
+//	            vehicleRampLengths = new ArrayList<>();
+//	            for (Measurement measurement : vehicleRamp.getRamps()) {
+//	                vehicleRampLengths.add(measurement.getHeight());
+//	            }
+//	            // Sum all ramp segment lengths to get total length
+//	            vehicleRampTotalLength = BigDecimal.ZERO;
+//	            for (BigDecimal length : vehicleRampLengths) {
+//	                vehicleRampTotalLength = vehicleRampTotalLength.add(length);
+//	            }
+//	            // Calculate slope only if total length and floor height are available
+//	            if (vehicleRampTotalLength.compareTo(BigDecimal.valueOf(0)) > 0
+//	                    && vehicleRamp.getFloorHeight() != null) {
+//	                vehicleRampSlope = vehicleRamp.getFloorHeight().divide(vehicleRampTotalLength, 2, RoundingMode.HALF_UP);
+//	                vehicleRamp.setSlope(vehicleRampSlope);
+//	            }
+//	        }
+//	    }
+//
+//	    // Apply validation only for floors other than ground floor
+//	    if (floor.getNumber() != 0) {
+//	        if ((floor.getParking() != null && floor.getParking().getMechanicalLifts() != null
+//	                && !floor.getParking().getMechanicalLifts().isEmpty())
+//	                || (floor.getVehicleRamps() != null && !floor.getVehicleRamps().isEmpty())) {
+//
+//	            // If mechanical lifts are not provided, validate the ramps
+//	            if (floor.getParking().getMechanicalLifts() == null
+//	                    || floor.getParking().getMechanicalLifts().isEmpty()) {
+//
+//	                valid = false;
+//	                valid1 = false;
+//	                valid2 = false;
+//
+//	                for (org.egov.common.entity.edcr.VehicleRamp vehicleRamp : floor.getVehicleRamps()) {
+//	                    minWidth = BigDecimal.ZERO;
+//
+//	                    // Find the minimum width among all ramp segments
+//	                    for (Measurement polyLine : vehicleRamp.getRamps()) {
+//	                        if (polyLine.getWidth().compareTo(minWidth) < 0) {
+//	                            minWidth = polyLine.getWidth();
+//	                        }
+//	                    }
+//
+//	                    // Check if a single ramp satisfies the 1:8 slope and minimum width requirement
+//	                    if (minWidth.compareTo(vehicleRampSlopeMinWidthValueOne) >= 0
+//	                            && vehicleRamp.getSlope() != null
+//	                            && vehicleRamp.getSlope().compareTo(vehicleRampSlopeMinWidthValueTwo) <= 0) {
+//	                        valid = true;
+//	                    }
+//
+//	                    // Check for two ramps satisfying the alternative dimension requirement
+//	                    if (valid1 && minWidth.compareTo(vehicleRampSlopeMinWidthValueThree) >= 0
+//	                            && vehicleRamp.getSlope() != null
+//	                            && vehicleRamp.getSlope().compareTo(vehicleRampSlopeMinWidthValueTwo) <= 0) {
+//	                        valid2 = true;
+//	                    }
+//
+//	                    // Mark one ramp as valid1 to allow second to complete valid2 condition
+//	                    if (!valid1 && minWidth.compareTo(vehicleRampSlopeMinWidthValueThree) >= 0
+//	                            && vehicleRamp.getSlope() != null
+//	                            && vehicleRamp.getSlope().compareTo(vehicleRampSlopeMinWidthValueTwo) <= 0) {
+//	                        valid1 = true;
+//	                    }
+//	                }
+//
+//	                // Add result based on validation outcome
+//	                if (valid || (valid1 && valid2)) {
+//	                    details.put(FLOOR, "Floor " + floor.getNumber());
+//	                    details.put(REQUIRED,
+//	                            "At least two vehicle ramps of minimum " + vehicleRampSlopeMinWidthValueThree.toString()
+//	                                    + " m width or one vehicle ramp of minimum "
+//	                                    + vehicleRampSlopeMinWidthValueOne.toString() + " m width and in maximum 1:8 slope");
+//	                    details.put(PROVIDED,
+//	                            valid ? "Provided vehicle ramp with minimum " + vehicleRampSlopeMinWidthValueOne.toString() + " width"
+//	                                    : "Provided two vehicle ramps of minimum " + vehicleRampSlopeMinWidthValueThree.toString() + " m width");
+//	                    details.put(STATUS, Result.Accepted.getResultVal());
+//	                    scrutinyDetail.getDetail().add(details);
+//	                    pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+//	                } else {
+//	                    details.put(FLOOR, "Floor " + floor.getNumber());
+//	                    details.put(REQUIRED,
+//	                            "At least two vehicle ramps of minimum " + vehicleRampSlopeMinWidthValueThree.toString()
+//	                                    + " m width or one vehicle ramp of minimum "
+//	                                    + vehicleRampSlopeMinWidthValueOne.toString() + " m width and in maximum 1:8 slope");
+//	                    details.put(PROVIDED,
+//	                            "Not Provided vehicle ramp with minimum " + vehicleRampSlopeMinWidthValueOne.toString()
+//	                                    + " width or  two vehicle ramps of minimum " + vehicleRampSlopeMinWidthValueThree.toString() + " m width");
+//	                    details.put(STATUS, Result.Not_Accepted.getResultVal());
+//	                    scrutinyDetail.getDetail().add(details);
+//	                    pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+//	                }
+//	            }
+//
+//	        } else {
+//	            // Neither mechanical lift nor ramp is provided — add to errors
+//	            errors.put("Vehicle Ramp", "Either ramp or mechanical lift is required");
+//	            pl.addErrors(errors);
+//	        }
+//	    }
+//	}
+
+	private void processRampWitFlights(Plan pl, HashMap<String, String> errors, Map<String, String> details,
+			Floor floor, BigDecimal vehicleRampValue, BigDecimal vehicleRampSlopeValueOne,
+			BigDecimal vehicleRampSlopeValueTwo) {
+
+		if (floor.getNumber() == 0)
+			return;
+
+		boolean hasRamps = floor.getVehicleRamps() != null && !floor.getVehicleRamps().isEmpty();
+		boolean hasLifts = floor.getParking() != null && floor.getParking().getMechanicalLifts() != null
+				&& !floor.getParking().getMechanicalLifts().isEmpty();
+
+		if (!hasRamps && !hasLifts) {
+			errors.put("Vehicle Ramp", "Either ramp or mechanical lift is required");
+			pl.addErrors(errors);
+			return;
+		}
+
+		if (hasRamps && (!hasLifts)) {
+			for (org.egov.common.entity.edcr.VehicleRamp vehicleRamp : floor.getVehicleRamps()) {
+				validateRampWidth(vehicleRamp, floor.getNumber(), vehicleRampValue, details, pl, errors);
+				validateRampFlights(vehicleRamp, vehicleRampSlopeValueOne, vehicleRampSlopeValueTwo, pl, errors,
+						details);
+			}
+		}
+	}
+
+	private void validateRampWidth(org.egov.common.entity.edcr.VehicleRamp ramp, int floorNumber,
+			BigDecimal requiredWidth, Map<String, String> details, Plan pl, HashMap<String, String> errors) {
+
+		if (ramp.getWidth().compareTo(BigDecimal.ZERO) <= 0) {
+			errors.put("Vehicle Ramp width" + ramp.getNumber(),
+					"Width of vehicle ramp not defined. Please check Vehicle Ramp " + ramp.getNumber());
+			return;
+		}
+
+		details.put(FLOOR, "Floor " + floorNumber);
+		details.put(REQUIRED, "Minimum " + requiredWidth.toString() + "m width");
+		details.put(PROVIDED, ramp.getWidth().toString());
+
+		if (ramp.getWidth().compareTo(requiredWidth) >= 0) {
+			details.put(STATUS, Result.Accepted.getResultVal());
+		} else {
+			details.put(STATUS, Result.Not_Accepted.getResultVal());
+		}
+
+		scrutinyDetail.getDetail().add(new HashMap<>(details));
+		pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+	}
+
+	private void validateRampFlights(org.egov.common.entity.edcr.VehicleRamp ramp, BigDecimal slopeValue1,
+			BigDecimal slopeValue2, Plan pl, HashMap<String, String> errors, Map<String, String> details) {
+
+		for (Flight flight : ramp.getFlights()) {
+			if (flight.getLength().compareTo(BigDecimal.ZERO) <= 0 || flight.getHeight() == null) {
+				errors.put("Vehicle Ramp Flight " + flight.getNumber(),
+						"Ramp Flight length should be in polyline. Either flight length or RAMP_HT_M text not defined in vehicle ramp flight "
+								+ flight.getNumber());
+				continue;
+			}
+
+			BigDecimal slope = flight.getLength().divide(flight.getHeight(), 2, RoundingMode.HALF_UP);
+
+			details.put(FLOOR, "Flight " + flight.getNumber());
+			details.put(PROVIDED, "Slope 1:" + slope);
+
+			if (flight.getColorCode() == 1) {
+				validateSlope(details, slope, slopeValue1, pl, flight.getNumber());
+			} else if (flight.getColorCode() == 2) {
+				validateSlope(details, slope, slopeValue2, pl, flight.getNumber());
+			} else {
+				errors.put("Vehicle Ramp Flight " + flight.getNumber(),
+						"Vehicle ramp polyline should be either 1 or 2. Please check Vehicle Ramp flight "
+								+ flight.getNumber());
+			}
+		}
+	}
+
+	private void validateSlope(Map<String, String> details, BigDecimal actualSlope, BigDecimal requiredSlope, Plan pl,
+			String flightNumber) {
+
+		details.put(REQUIRED, "Slope 1:" + requiredSlope.toString());
+		details.put(STATUS, actualSlope.compareTo(requiredSlope) >= 0 ? Result.Accepted.getResultVal()
+				: Result.Not_Accepted.getResultVal());
+
+		scrutinyDetail.getDetail().add(new HashMap<>(details));
+		pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+	}
+
 	private void processRampWithOutFlights(Plan pl, HashMap<String, String> errors, Map<String, String> details,
-	        Floor floor, BigDecimal vehicleRampSlopeMinWidthValueOne, BigDecimal vehicleRampSlopeMinWidthValueTwo, BigDecimal vehicleRampSlopeMinWidthValueThree) {
+			Floor floor, BigDecimal minWidthOne, BigDecimal maxSlope, BigDecimal minWidthTwo) {
 
-	    BigDecimal vehicleRampTotalLength;
-	    BigDecimal vehicleRampSlope;
-	    BigDecimal minWidth;
-	    List<BigDecimal> vehicleRampLengths;
-	    boolean valid;
-	    boolean valid1;
-	    boolean valid2;
+		calculateRampSlopes(floor);
 
-	    // Calculate slope for each closed vehicle ramp
-	    for (org.egov.common.entity.edcr.VehicleRamp vehicleRamp : floor.getVehicleRamps()) {
-	        if (vehicleRamp.getRampClosed()) {
-	            vehicleRampLengths = new ArrayList<>();
-	            for (Measurement measurement : vehicleRamp.getRamps()) {
-	                vehicleRampLengths.add(measurement.getHeight());
-	            }
-	            // Sum all ramp segment lengths to get total length
-	            vehicleRampTotalLength = BigDecimal.ZERO;
-	            for (BigDecimal length : vehicleRampLengths) {
-	                vehicleRampTotalLength = vehicleRampTotalLength.add(length);
-	            }
-	            // Calculate slope only if total length and floor height are available
-	            if (vehicleRampTotalLength.compareTo(BigDecimal.valueOf(0)) > 0
-	                    && vehicleRamp.getFloorHeight() != null) {
-	                vehicleRampSlope = vehicleRamp.getFloorHeight().divide(vehicleRampTotalLength, 2, RoundingMode.HALF_UP);
-	                vehicleRamp.setSlope(vehicleRampSlope);
-	            }
-	        }
-	    }
+		if (floor.getNumber() != 0) {
+			boolean hasLifts = floor.getParking() != null && floor.getParking().getMechanicalLifts() != null
+					&& !floor.getParking().getMechanicalLifts().isEmpty();
+			boolean hasRamps = floor.getVehicleRamps() != null && !floor.getVehicleRamps().isEmpty();
 
-	    // Apply validation only for floors other than ground floor
-	    if (floor.getNumber() != 0) {
-	        if ((floor.getParking() != null && floor.getParking().getMechanicalLifts() != null
-	                && !floor.getParking().getMechanicalLifts().isEmpty())
-	                || (floor.getVehicleRamps() != null && !floor.getVehicleRamps().isEmpty())) {
-
-	            // If mechanical lifts are not provided, validate the ramps
-	            if (floor.getParking().getMechanicalLifts() == null
-	                    || floor.getParking().getMechanicalLifts().isEmpty()) {
-
-	                valid = false;
-	                valid1 = false;
-	                valid2 = false;
-
-	                for (org.egov.common.entity.edcr.VehicleRamp vehicleRamp : floor.getVehicleRamps()) {
-	                    minWidth = BigDecimal.ZERO;
-
-	                    // Find the minimum width among all ramp segments
-	                    for (Measurement polyLine : vehicleRamp.getRamps()) {
-	                        if (polyLine.getWidth().compareTo(minWidth) < 0) {
-	                            minWidth = polyLine.getWidth();
-	                        }
-	                    }
-
-	                    // Check if a single ramp satisfies the 1:8 slope and minimum width requirement
-	                    if (minWidth.compareTo(vehicleRampSlopeMinWidthValueOne) >= 0
-	                            && vehicleRamp.getSlope() != null
-	                            && vehicleRamp.getSlope().compareTo(vehicleRampSlopeMinWidthValueTwo) <= 0) {
-	                        valid = true;
-	                    }
-
-	                    // Check for two ramps satisfying the alternative dimension requirement
-	                    if (valid1 && minWidth.compareTo(vehicleRampSlopeMinWidthValueThree) >= 0
-	                            && vehicleRamp.getSlope() != null
-	                            && vehicleRamp.getSlope().compareTo(vehicleRampSlopeMinWidthValueTwo) <= 0) {
-	                        valid2 = true;
-	                    }
-
-	                    // Mark one ramp as valid1 to allow second to complete valid2 condition
-	                    if (!valid1 && minWidth.compareTo(vehicleRampSlopeMinWidthValueThree) >= 0
-	                            && vehicleRamp.getSlope() != null
-	                            && vehicleRamp.getSlope().compareTo(vehicleRampSlopeMinWidthValueTwo) <= 0) {
-	                        valid1 = true;
-	                    }
-	                }
-
-	                // Add result based on validation outcome
-	                if (valid || (valid1 && valid2)) {
-	                    details.put(FLOOR, "Floor " + floor.getNumber());
-	                    details.put(REQUIRED,
-	                            "At least two vehicle ramps of minimum " + vehicleRampSlopeMinWidthValueThree.toString()
-	                                    + " m width or one vehicle ramp of minimum "
-	                                    + vehicleRampSlopeMinWidthValueOne.toString() + " m width and in maximum 1:8 slope");
-	                    details.put(PROVIDED,
-	                            valid ? "Provided vehicle ramp with minimum " + vehicleRampSlopeMinWidthValueOne.toString() + " width"
-	                                    : "Provided two vehicle ramps of minimum " + vehicleRampSlopeMinWidthValueThree.toString() + " m width");
-	                    details.put(STATUS, Result.Accepted.getResultVal());
-	                    scrutinyDetail.getDetail().add(details);
-	                    pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
-	                } else {
-	                    details.put(FLOOR, "Floor " + floor.getNumber());
-	                    details.put(REQUIRED,
-	                            "At least two vehicle ramps of minimum " + vehicleRampSlopeMinWidthValueThree.toString()
-	                                    + " m width or one vehicle ramp of minimum "
-	                                    + vehicleRampSlopeMinWidthValueOne.toString() + " m width and in maximum 1:8 slope");
-	                    details.put(PROVIDED,
-	                            "Not Provided vehicle ramp with minimum " + vehicleRampSlopeMinWidthValueOne.toString()
-	                                    + " width or  two vehicle ramps of minimum " + vehicleRampSlopeMinWidthValueThree.toString() + " m width");
-	                    details.put(STATUS, Result.Not_Accepted.getResultVal());
-	                    scrutinyDetail.getDetail().add(details);
-	                    pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
-	                }
-	            }
-
-	        } else {
-	            // Neither mechanical lift nor ramp is provided — add to errors
-	            errors.put("Vehicle Ramp", "Either ramp or mechanical lift is required");
-	            pl.addErrors(errors);
-	        }
-	    }
+			if (!hasLifts && hasRamps) {
+				validateRampsAndPopulateDetails(pl, details, floor, minWidthOne, maxSlope, minWidthTwo);
+			} else if (!hasLifts && !hasRamps) {
+				errors.put("Vehicle Ramp", "Either ramp or mechanical lift is required");
+				pl.addErrors(errors);
+			}
+		}
 	}
 
-	// This method validates if all polylines of a vehicle ramp have exactly 4 points (rectangle)
+	private void calculateRampSlopes(Floor floor) {
+		for (org.egov.common.entity.edcr.VehicleRamp ramp : floor.getVehicleRamps()) {
+			if (Boolean.TRUE.equals(ramp.getRampClosed())) {
+				BigDecimal totalLength = ramp.getRamps().stream().map(Measurement::getHeight).filter(Objects::nonNull)
+						.reduce(BigDecimal.ZERO, BigDecimal::add);
+
+				if (totalLength.compareTo(BigDecimal.ZERO) > 0 && ramp.getFloorHeight() != null) {
+					BigDecimal slope = ramp.getFloorHeight().divide(totalLength, 2, RoundingMode.HALF_UP);
+					ramp.setSlope(slope);
+				}
+			}
+		}
+	}
+
+	private void validateRampsAndPopulateDetails(Plan pl, Map<String, String> details, Floor floor,
+			BigDecimal minWidthOne, BigDecimal maxSlope, BigDecimal minWidthTwo) {
+		boolean valid = false, valid1 = false, valid2 = false;
+
+		for (org.egov.common.entity.edcr.VehicleRamp ramp : floor.getVehicleRamps()) {
+			BigDecimal minWidth = ramp.getRamps().stream().map(Measurement::getWidth).filter(Objects::nonNull)
+					.min(Comparator.naturalOrder()).orElse(BigDecimal.ZERO);
+
+			boolean isSlopeOk = ramp.getSlope() != null && ramp.getSlope().compareTo(maxSlope) <= 0;
+
+			if (minWidth.compareTo(minWidthOne) >= 0 && isSlopeOk) {
+				valid = true;
+			}
+
+			if (!valid1 && minWidth.compareTo(minWidthTwo) >= 0 && isSlopeOk) {
+				valid1 = true;
+			} else if (valid1 && minWidth.compareTo(minWidthTwo) >= 0 && isSlopeOk) {
+				valid2 = true;
+			}
+		}
+
+		addRampScrutinyDetails(pl, details, floor, valid, valid1 && valid2, minWidthOne, minWidthTwo);
+	}
+
+	private void addRampScrutinyDetails(Plan pl, Map<String, String> details, Floor floor, boolean valid,
+			boolean validPair, BigDecimal minWidthOne, BigDecimal minWidthTwo) {
+		details.put(FLOOR, "Floor " + floor.getNumber());
+		details.put(REQUIRED, "At least two vehicle ramps of minimum " + minWidthTwo
+				+ " m width or one vehicle ramp of minimum " + minWidthOne + " m width and in maximum 1:8 slope");
+
+		if (valid) {
+			details.put(PROVIDED, "Provided vehicle ramp with minimum " + minWidthOne + " width");
+			details.put(STATUS, Result.Accepted.getResultVal());
+		} else if (validPair) {
+			details.put(PROVIDED, "Provided two vehicle ramps of minimum " + minWidthTwo + " m width");
+			details.put(STATUS, Result.Accepted.getResultVal());
+		} else {
+			details.put(PROVIDED, "Not Provided vehicle ramp with minimum " + minWidthOne
+					+ " width or two ramps of minimum " + minWidthTwo + " m width");
+			details.put(STATUS, Result.Not_Accepted.getResultVal());
+		}
+
+		scrutinyDetail.getDetail().add(details);
+		pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+	}
+
+	// This method validates if all polylines of a vehicle ramp have exactly 4
+	// points (rectangle)
 	private void validateDimensions(Plan plan, String blockNo, int floorNo, String rampNo,
-	        List<Measurement> rampPolylines) {
-	    int count = 0;
-	    for (Measurement m : rampPolylines) {
-	        if (m.getInvalidReason() != null && m.getInvalidReason().length() > 0) {
-	            count++;
-	        }
-	    }
+			List<Measurement> rampPolylines) {
+		int count = 0;
+		for (Measurement m : rampPolylines) {
+			if (m.getInvalidReason() != null && m.getInvalidReason().length() > 0) {
+				count++;
+			}
+		}
 
-	    // If any invalid polyline is found, add an error message
-	    if (count > 0) {
-	        plan.addError(String.format(DxfFileConstants.LAYER_VEHICLE_RAMP_WITH_NO, blockNo, floorNo, rampNo),
-	                count + " number of vehicle ramp polyline not having only 4 points in layer "
-	                        + String.format(DxfFileConstants.LAYER_VEHICLE_RAMP_WITH_NO, blockNo, floorNo, rampNo));
-	    }
+		// If any invalid polyline is found, add an error message
+		if (count > 0) {
+			plan.addError(String.format(DxfFileConstants.LAYER_VEHICLE_RAMP_WITH_NO, blockNo, floorNo, rampNo),
+					count + " number of vehicle ramp polyline not having only 4 points in layer "
+							+ String.format(DxfFileConstants.LAYER_VEHICLE_RAMP_WITH_NO, blockNo, floorNo, rampNo));
+		}
 	}
-
 
 	@Override
 	public Map<String, Date> getAmendments() {

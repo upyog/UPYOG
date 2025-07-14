@@ -1,5 +1,5 @@
 /*
- * eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
+ * UPYOG  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  * accountability and the service delivery of the government  organizations.
  *
  *  Copyright (C) <2019>  eGovernments Foundation
@@ -83,9 +83,7 @@ public class StairCover extends FeatureProcess {
 	public static final String STAIRCOVER_HEIGHT_DESC = "Verified whether stair cover height is <= ";
 	public static final String MTS = " meters";
 
-    // Autowired service to fetch MDMS rule values
-    @Autowired
-    FetchEdcrRulesMdms fetchEdcrRulesMdms;
+    
     
     @Autowired
 	CacheManagerMdms cache;
@@ -96,79 +94,124 @@ public class StairCover extends FeatureProcess {
         return pl;
     }
 
-	@Override
-	public Plan process(Plan pl) {
+//	@Override
+//	public Plan process(Plan pl) {
+//
+//		// Initialize scrutiny report object with appropriate columns
+//		ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
+//		scrutinyDetail.setKey("Common_Mumty"); // Key used in report output
+//		scrutinyDetail.addColumnHeading(1, RULE_NO);
+//		scrutinyDetail.addColumnHeading(2, DESCRIPTION);
+//		scrutinyDetail.addColumnHeading(3, VERIFIED);
+//		scrutinyDetail.addColumnHeading(4, ACTION);
+//		scrutinyDetail.addColumnHeading(5, STATUS);
+//
+//		Map<String, String> details = new HashMap<>();
+//		details.put(RULE_NO, RULE_44_C);
+//
+//		BigDecimal minHeight = BigDecimal.ZERO; // Will hold the minimum stair cover height in a block
+//		BigDecimal stairCoverValue = BigDecimal.ZERO; // Permissible stair cover height from MDMS
+//
+//	
+//		 List<Object> rules = cache.getFeatureRules(pl, MdmsFeatureConstants.STAIR_COVER, false);
+//
+//		Optional<MdmsFeatureRule> matchedRule = rules.stream().map(obj -> (MdmsFeatureRule) obj).findFirst();
+//
+//		if (matchedRule.isPresent()) {
+//			MdmsFeatureRule rule = matchedRule.get();
+//			stairCoverValue = rule.getPermissible();
+//		} else {
+//			stairCoverValue = BigDecimal.ZERO;
+//		}
+//
+//		// Loop through all blocks of the plan
+//		for (Block b : pl.getBlocks()) {
+//			minHeight = BigDecimal.ZERO;
+//
+//			// Check if the block has stair cover data
+//			if (b.getStairCovers() != null && !b.getStairCovers().isEmpty()) {
+//
+//				// Find the minimum height among all stair covers in the block
+//				minHeight = b.getStairCovers().stream().reduce(BigDecimal::min).get();
+//
+//				// Compare the stair cover height to the permissible value
+//				if (minHeight.compareTo(stairCoverValue) <= 0) {
+//					// If height is within permissible limit, it is excluded from total building
+//					// height
+//					details.put(DESCRIPTION, STAIRCOVER_DESCRIPTION);
+//					details.put(VERIFIED, STAIRCOVER_HEIGHT_DESC + stairCoverValue.toString() + MTS);
+//					details.put(ACTION, "Not included stair cover height(" + minHeight + ") to building height");
+//					details.put(STATUS, Result.Accepted.getResultVal());
+//					scrutinyDetail.getDetail().add(details);
+//					pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+//				} else {
+//					// If height exceeds permissible limit, it must be included in total building
+//					// height
+//					details.put(DESCRIPTION, STAIRCOVER_DESCRIPTION);
+//					details.put(VERIFIED, STAIRCOVER_HEIGHT_DESC + stairCoverValue.toString() + MTS);
+//					details.put(ACTION, "Included stair cover height(" + minHeight + ") to building height");
+//					details.put(STATUS, Result.Verify.getResultVal());
+//					scrutinyDetail.getDetail().add(details);
+//					pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+//				}
+//			}
+//		}
+//		return pl;
+//	}
+    
+    @Override
+    public Plan process(Plan pl) {
+        ScrutinyDetail scrutinyDetail = initializeScrutinyDetail();
+        BigDecimal stairCoverValue = getStairCoverPermissibleValue(pl);
 
-		// Initialize scrutiny report object with appropriate columns
-		ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
-		scrutinyDetail.setKey("Common_Mumty"); // Key used in report output
-		scrutinyDetail.addColumnHeading(1, RULE_NO);
-		scrutinyDetail.addColumnHeading(2, DESCRIPTION);
-		scrutinyDetail.addColumnHeading(3, VERIFIED);
-		scrutinyDetail.addColumnHeading(4, ACTION);
-		scrutinyDetail.addColumnHeading(5, STATUS);
+        for (Block block : pl.getBlocks()) {
+            processBlockStairCovers(block, stairCoverValue, scrutinyDetail, pl);
+        }
 
-		Map<String, String> details = new HashMap<>();
-		details.put(RULE_NO, RULE_44_C);
+        return pl;
+    }
 
-		BigDecimal minHeight = BigDecimal.ZERO; // Will hold the minimum stair cover height in a block
-		BigDecimal stairCoverValue = BigDecimal.ZERO; // Permissible stair cover height from MDMS
+    private ScrutinyDetail initializeScrutinyDetail() {
+        ScrutinyDetail detail = new ScrutinyDetail();
+        detail.setKey("Common_Mumty");
+        detail.addColumnHeading(1, RULE_NO);
+        detail.addColumnHeading(2, DESCRIPTION);
+        detail.addColumnHeading(3, VERIFIED);
+        detail.addColumnHeading(4, ACTION);
+        detail.addColumnHeading(5, STATUS);
+        return detail;
+    }
 
-		// Feature key used to fetch related values from MDMS
-		String feature = MdmsFeatureConstants.STAIR_COVER;
+    private BigDecimal getStairCoverPermissibleValue(Plan pl) {
+        List<Object> rules = cache.getFeatureRules(pl, MdmsFeatureConstants.STAIR_COVER, false);
+        Optional<MdmsFeatureRule> matchedRule = rules.stream()
+                .map(obj -> (MdmsFeatureRule) obj)
+                .findFirst();
 
-		String occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl).toLowerCase();
-		String tenantId = pl.getTenantId();
-		String zone = pl.getPlanInformation().getZone().toLowerCase();
-		String subZone = pl.getPlanInformation().getSubZone().toLowerCase();
-		String riskType = fetchEdcrRulesMdms.getRiskType(pl).toLowerCase();
+        return matchedRule.map(MdmsFeatureRule::getPermissible).orElse(BigDecimal.ZERO);
+    }
 
-		RuleKey key = new RuleKey(EdcrRulesMdmsConstants.STATE, tenantId, zone, subZone, occupancyName, null, feature);
-		List<Object> rules = cache.getRules(tenantId, key);
+    private void processBlockStairCovers(Block block, BigDecimal permissibleHeight, ScrutinyDetail scrutinyDetail, Plan plan) {
+        if (block.getStairCovers() != null && !block.getStairCovers().isEmpty()) {
+            BigDecimal minHeight = block.getStairCovers().stream().reduce(BigDecimal::min).get();
+            Map<String, String> details = new HashMap<>();
+            details.put(RULE_NO, RULE_44_C);
+            details.put(DESCRIPTION, STAIRCOVER_DESCRIPTION);
+            details.put(VERIFIED, STAIRCOVER_HEIGHT_DESC + permissibleHeight + MTS);
 
-		Optional<MdmsFeatureRule> matchedRule = rules.stream().map(obj -> (MdmsFeatureRule) obj).findFirst();
+            if (minHeight.compareTo(permissibleHeight) <= 0) {
+                details.put(ACTION, "Not included stair cover height(" + minHeight + ") to building height");
+                details.put(STATUS, Result.Accepted.getResultVal());
+            } else {
+                details.put(ACTION, "Included stair cover height(" + minHeight + ") to building height");
+                details.put(STATUS, Result.Verify.getResultVal());
+            }
 
-		if (matchedRule.isPresent()) {
-			MdmsFeatureRule rule = matchedRule.get();
-			stairCoverValue = rule.getPermissible();
-		} else {
-			stairCoverValue = BigDecimal.ZERO;
-		}
+            scrutinyDetail.getDetail().add(details);
+            plan.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+        }
+    }
 
-		// Loop through all blocks of the plan
-		for (Block b : pl.getBlocks()) {
-			minHeight = BigDecimal.ZERO;
-
-			// Check if the block has stair cover data
-			if (b.getStairCovers() != null && !b.getStairCovers().isEmpty()) {
-
-				// Find the minimum height among all stair covers in the block
-				minHeight = b.getStairCovers().stream().reduce(BigDecimal::min).get();
-
-				// Compare the stair cover height to the permissible value
-				if (minHeight.compareTo(stairCoverValue) <= 0) {
-					// If height is within permissible limit, it is excluded from total building
-					// height
-					details.put(DESCRIPTION, STAIRCOVER_DESCRIPTION);
-					details.put(VERIFIED, STAIRCOVER_HEIGHT_DESC + stairCoverValue.toString() + MTS);
-					details.put(ACTION, "Not included stair cover height(" + minHeight + ") to building height");
-					details.put(STATUS, Result.Accepted.getResultVal());
-					scrutinyDetail.getDetail().add(details);
-					pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
-				} else {
-					// If height exceeds permissible limit, it must be included in total building
-					// height
-					details.put(DESCRIPTION, STAIRCOVER_DESCRIPTION);
-					details.put(VERIFIED, STAIRCOVER_HEIGHT_DESC + stairCoverValue.toString() + MTS);
-					details.put(ACTION, "Included stair cover height(" + minHeight + ") to building height");
-					details.put(STATUS, Result.Verify.getResultVal());
-					scrutinyDetail.getDetail().add(details);
-					pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
-				}
-			}
-		}
-		return pl;
-	}
 
     // No amendments implemented currently
     @Override

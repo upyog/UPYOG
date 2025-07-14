@@ -78,124 +78,275 @@ public class SetBackService extends FeatureProcess {
     
     private static final BigDecimal TWO_HUNDRED = BigDecimal.valueOf(200);
 
+//    @Override
+//    public Plan validate(Plan pl) {
+//        HashMap<String, String> errors = new HashMap<>();
+//        // Assumption: if height of one level, should be less than next level. this condition not validated.as in each level user
+//        // can define different height.
+//        BigDecimal heightOfBuilding = BigDecimal.ZERO;
+//        for (Block block : pl.getBlocks()) {
+//            heightOfBuilding = block.getBuilding().getBuildingHeight();
+//            int i = 0;
+//            if (!block.getCompletelyExisting()) {
+//                for (SetBack setback : block.getSetBacks()) {
+//                	if(pl.getCoreArea().equalsIgnoreCase("No")) {
+//                    i++;
+//                    // if height not defined other than 0 level , then throw error.
+//                    if (setback.getLevel() == 0) {
+//                        // for level 0, all the yards are mandatory. Else throw error.
+//                        if (setback.getFrontYard() == null)
+//                            errors.put("frontyardNodeDefined",
+//                                    getLocaleMessage(OBJECTNOTDEFINED, " Front SetBack of " + block.getName() + "  at level zero "));
+//                        if( pl.getPlot().getArea().compareTo(TWO_HUNDRED) > 0) {
+//                        if (setback.getRearYard() == null
+//                                && !pl.getPlanInformation().getNocToAbutRearDesc().equalsIgnoreCase(DcrConstants.YES))
+//                            errors.put("rearyardNodeDefined",
+//                                    getLocaleMessage(OBJECTNOTDEFINED, " Rear Setback of  " + block.getName() + "  at level zero "));
+////                        if (setback.getSideYard1() == null)
+////                            errors.put("side1yardNodeDefined", getLocaleMessage(OBJECTNOTDEFINED,
+////                                    " Side Setback 1 of block " + block.getName() + " at level zero"));
+////                        if (setback.getSideYard2() == null
+////                                && !pl.getPlanInformation().getNocToAbutSideDesc().equalsIgnoreCase(DcrConstants.YES))
+////                            errors.put("side2yardNodeDefined", getLocaleMessage(OBJECTNOTDEFINED,
+////                                    " Side Setback 2 of block " + block.getName() + " at level zero "));
+//                        } } else if (setback.getLevel() > 0) {
+//                        // height defined in level other than zero must contain height
+//                        if (setback.getFrontYard() != null && setback.getFrontYard().getHeight() == null)
+//                            errors.put("frontyardnotDefinedHeight", getLocaleMessage(HEIGHTNOTDEFINED, "Front Setback ",
+//                                    block.getName(), setback.getLevel().toString()));
+//                        if (setback.getRearYard() != null && setback.getRearYard().getHeight() == null)
+//                            errors.put("rearyardnotDefinedHeight", getLocaleMessage(HEIGHTNOTDEFINED, "Rear Setback ",
+//                                    block.getName(), setback.getLevel().toString()));
+////                        if (setback.getSideYard1() != null && setback.getSideYard1().getHeight() == null)
+////                            errors.put("side1yardnotDefinedHeight", getLocaleMessage(HEIGHTNOTDEFINED, "Side Setback 1 ",
+////                                    block.getName(), setback.getLevel().toString()));
+////                        if (setback.getSideYard2() != null && setback.getSideYard2().getHeight() == null)
+////                            errors.put("side2yardnotDefinedHeight", getLocaleMessage(HEIGHTNOTDEFINED, "Side Setback 2 ",
+////                                    block.getName(), setback.getLevel().toString()));
+//                    }
+//                    
+//                   
+//
+//
+//                    // if height of setback greater than building height ?
+//                    // last level height should match with building height.
+//
+//                    if (setback.getLevel() > 0 && block.getSetBacks().size() == i) {
+//                        if (setback.getFrontYard() != null && setback.getFrontYard().getHeight() != null
+//                                && setback.getFrontYard().getHeight().compareTo(heightOfBuilding) != 0)
+//                            errors.put("frontyardDefinedWrongHeight", getLocaleMessage(WRONGHEIGHTDEFINED, "Front Setback ",
+//                                    block.getName(), setback.getLevel().toString(), heightOfBuilding.toString()));
+//                        if (setback.getRearYard() != null && setback.getRearYard().getHeight() != null
+//                                && setback.getRearYard().getHeight().compareTo(heightOfBuilding) != 0)
+//                            errors.put("rearyardDefinedWrongHeight", getLocaleMessage(WRONGHEIGHTDEFINED, "Rear Setback ",
+//                                    block.getName(), setback.getLevel().toString(), heightOfBuilding.toString()));
+////                        if (setback.getSideYard1() != null && setback.getSideYard1().getHeight() != null
+////                                && setback.getSideYard1().getHeight().compareTo(heightOfBuilding) != 0)
+////                            errors.put("side1yardDefinedWrongHeight", getLocaleMessage(WRONGHEIGHTDEFINED, "Side Setback 1 ",
+////                                    block.getName(), setback.getLevel().toString(), heightOfBuilding.toString()));
+////                        if (setback.getSideYard2() != null && setback.getSideYard2().getHeight() != null
+////                                && setback.getSideYard2().getHeight().compareTo(heightOfBuilding) != 0)
+////                            errors.put("side2yardDefinedWrongHeight", getLocaleMessage(WRONGHEIGHTDEFINED, "Side Setback 2 ",
+////                                    block.getName(), setback.getLevel().toString(), heightOfBuilding.toString()));
+//                    }
+//                   
+//                }
+//            }
+//            }
+//        }
+//        if (errors.size() > 0)
+//            pl.addErrors(errors);
+//
+//        return pl;
+//    }
+//
+//    @Override
+//    public Plan process(Plan pl) {
+//        validate(pl);HashMap<String, String> errors = new HashMap<>();
+//		BigDecimal depthOfPlot = pl.getPlanInformation().getDepthOfPlot();
+//		if (depthOfPlot != null && depthOfPlot.compareTo(BigDecimal.ZERO) > 0) {
+//			frontYardService.processFrontYard(pl);
+////			  if( pl.getPlot().getArea().compareTo(TWO_HUNDRED) > 0) {
+////			rearYardService.processRearYard(pl);
+////			  }
+//			 if (pl.getRoadReserveRear() != BigDecimal.ZERO && pl.getCoreArea().equalsIgnoreCase("No")){
+//				 for (Block block : pl.getBlocks()) {
+//				 for (SetBack setback : block.getSetBacks()) {
+//                 // Rear yard call is mandatory if reserve is not null, irrespective of plot area
+//                 if (setback.getRearYard() == null) {
+//                     // Throw an error if rear yard is not present
+//                 	errors.put("rearyardNodeDefined",
+//                             getLocaleMessage(OBJECTNOTDEFINED, " Rear Setback of  " + block.getName()  + 
+//                 	"Rear setback is mandatory when rear road width is present."));
+//                 }
+//                 rearYardService.processRearYard(pl);
+//             }}} else if (pl.getPlot().getArea().compareTo(TWO_HUNDRED) > 0 &&
+//            		 pl.getCoreArea().equalsIgnoreCase("No")) {
+//                 // Process rear yard only if roadreserverear is null and plot area is greater than 200
+//                 rearYardService.processRearYard(pl);
+//             }
+//			
+//
+//		}
+//		
+////		BigDecimal widthOfPlot = pl.getPlanInformation().getWidthOfPlot();
+////		if (widthOfPlot != null && widthOfPlot.compareTo(BigDecimal.ZERO) > 0) {
+////			sideYardService.processSideYard(pl);
+////		}
+//
+//        return pl;
+//    }
+    
     @Override
     public Plan validate(Plan pl) {
-        HashMap<String, String> errors = new HashMap<>();
-        // Assumption: if height of one level, should be less than next level. this condition not validated.as in each level user
-        // can define different height.
-        BigDecimal heightOfBuilding = BigDecimal.ZERO;
+        Map<String, String> errors = new HashMap<>();
+
         for (Block block : pl.getBlocks()) {
-            heightOfBuilding = block.getBuilding().getBuildingHeight();
-            int i = 0;
-            if (!block.getCompletelyExisting()) {
-                for (SetBack setback : block.getSetBacks()) {
-                	if(pl.getCoreArea().equalsIgnoreCase("No")) {
-                    i++;
-                    // if height not defined other than 0 level , then throw error.
-                    if (setback.getLevel() == 0) {
-                        // for level 0, all the yards are mandatory. Else throw error.
-                        if (setback.getFrontYard() == null)
-                            errors.put("frontyardNodeDefined",
-                                    getLocaleMessage(OBJECTNOTDEFINED, " Front SetBack of " + block.getName() + "  at level zero "));
-                        if( pl.getPlot().getArea().compareTo(TWO_HUNDRED) > 0) {
-                        if (setback.getRearYard() == null
-                                && !pl.getPlanInformation().getNocToAbutRearDesc().equalsIgnoreCase(DcrConstants.YES))
-                            errors.put("rearyardNodeDefined",
-                                    getLocaleMessage(OBJECTNOTDEFINED, " Rear Setback of  " + block.getName() + "  at level zero "));
-//                        if (setback.getSideYard1() == null)
-//                            errors.put("side1yardNodeDefined", getLocaleMessage(OBJECTNOTDEFINED,
-//                                    " Side Setback 1 of block " + block.getName() + " at level zero"));
-//                        if (setback.getSideYard2() == null
-//                                && !pl.getPlanInformation().getNocToAbutSideDesc().equalsIgnoreCase(DcrConstants.YES))
-//                            errors.put("side2yardNodeDefined", getLocaleMessage(OBJECTNOTDEFINED,
-//                                    " Side Setback 2 of block " + block.getName() + " at level zero "));
-                        } } else if (setback.getLevel() > 0) {
-                        // height defined in level other than zero must contain height
-                        if (setback.getFrontYard() != null && setback.getFrontYard().getHeight() == null)
-                            errors.put("frontyardnotDefinedHeight", getLocaleMessage(HEIGHTNOTDEFINED, "Front Setback ",
-                                    block.getName(), setback.getLevel().toString()));
-                        if (setback.getRearYard() != null && setback.getRearYard().getHeight() == null)
-                            errors.put("rearyardnotDefinedHeight", getLocaleMessage(HEIGHTNOTDEFINED, "Rear Setback ",
-                                    block.getName(), setback.getLevel().toString()));
-//                        if (setback.getSideYard1() != null && setback.getSideYard1().getHeight() == null)
-//                            errors.put("side1yardnotDefinedHeight", getLocaleMessage(HEIGHTNOTDEFINED, "Side Setback 1 ",
-//                                    block.getName(), setback.getLevel().toString()));
-//                        if (setback.getSideYard2() != null && setback.getSideYard2().getHeight() == null)
-//                            errors.put("side2yardnotDefinedHeight", getLocaleMessage(HEIGHTNOTDEFINED, "Side Setback 2 ",
-//                                    block.getName(), setback.getLevel().toString()));
-                    }
-                    
-                   
+            if (block.getCompletelyExisting()) continue;
 
+            BigDecimal buildingHeight = block.getBuilding().getBuildingHeight();
+            int setbackIndex = 0;
 
-                    // if height of setback greater than building height ?
-                    // last level height should match with building height.
+            for (SetBack setback : block.getSetBacks()) {
+                if (!"No".equalsIgnoreCase(pl.getCoreArea())) continue;
 
-                    if (setback.getLevel() > 0 && block.getSetBacks().size() == i) {
-                        if (setback.getFrontYard() != null && setback.getFrontYard().getHeight() != null
-                                && setback.getFrontYard().getHeight().compareTo(heightOfBuilding) != 0)
-                            errors.put("frontyardDefinedWrongHeight", getLocaleMessage(WRONGHEIGHTDEFINED, "Front Setback ",
-                                    block.getName(), setback.getLevel().toString(), heightOfBuilding.toString()));
-                        if (setback.getRearYard() != null && setback.getRearYard().getHeight() != null
-                                && setback.getRearYard().getHeight().compareTo(heightOfBuilding) != 0)
-                            errors.put("rearyardDefinedWrongHeight", getLocaleMessage(WRONGHEIGHTDEFINED, "Rear Setback ",
-                                    block.getName(), setback.getLevel().toString(), heightOfBuilding.toString()));
-//                        if (setback.getSideYard1() != null && setback.getSideYard1().getHeight() != null
-//                                && setback.getSideYard1().getHeight().compareTo(heightOfBuilding) != 0)
-//                            errors.put("side1yardDefinedWrongHeight", getLocaleMessage(WRONGHEIGHTDEFINED, "Side Setback 1 ",
-//                                    block.getName(), setback.getLevel().toString(), heightOfBuilding.toString()));
-//                        if (setback.getSideYard2() != null && setback.getSideYard2().getHeight() != null
-//                                && setback.getSideYard2().getHeight().compareTo(heightOfBuilding) != 0)
-//                            errors.put("side2yardDefinedWrongHeight", getLocaleMessage(WRONGHEIGHTDEFINED, "Side Setback 2 ",
-//                                    block.getName(), setback.getLevel().toString(), heightOfBuilding.toString()));
-                    }
-                   
+                setbackIndex++;
+
+                if (setback.getLevel() == 0) {
+                    validateMandatoryYardsAtZeroLevel(pl, block, setback, errors);
+                } else {
+                    validateHeightsAboveZeroLevel(block, setback, errors);
+                }
+
+                if (setback.getLevel() > 0 && isLastSetback(block, setbackIndex)) {
+                    validateSetbackHeightsAgainstBuildingHeight(block, setback, buildingHeight, errors);
                 }
             }
-            }
         }
-        if (errors.size() > 0)
+
+        if (!errors.isEmpty()) {
             pl.addErrors(errors);
+        }
 
         return pl;
     }
 
+    private void validateMandatoryYardsAtZeroLevel(Plan pl, Block block, SetBack setback, Map<String, String> errors) {
+        String blockName = block.getName();
+        
+        if (setback.getFrontYard() == null) {
+            errors.put("frontyardNodeDefined", getLocaleMessage(OBJECTNOTDEFINED, "Front SetBack of " + blockName + " at level zero"));
+        }
+
+        if (pl.getPlot().getArea().compareTo(TWO_HUNDRED) > 0) {
+            if (setback.getRearYard() == null &&
+                !"Yes".equalsIgnoreCase(pl.getPlanInformation().getNocToAbutRearDesc())) {
+                errors.put("rearyardNodeDefined", getLocaleMessage(OBJECTNOTDEFINED, "Rear Setback of " + blockName + " at level zero"));
+            }
+
+            // Uncomment and use these if side yard validation is needed
+//            if (setback.getSideYard1() == null) {
+//                errors.put("side1yardNodeDefined", getLocaleMessage(OBJECTNOTDEFINED, "Side Setback 1 of block " + blockName + " at level zero"));
+//            }
+//            if (setback.getSideYard2() == null &&
+//                !"Yes".equalsIgnoreCase(pl.getPlanInformation().getNocToAbutSideDesc())) {
+//                errors.put("side2yardNodeDefined", getLocaleMessage(OBJECTNOTDEFINED, "Side Setback 2 of block " + blockName + " at level zero"));
+//            }
+        }
+    }
+
+    private void validateHeightsAboveZeroLevel(Block block, SetBack setback, Map<String, String> errors) {
+        String blockName = block.getName();
+        String level = setback.getLevel().toString();
+
+        if (setback.getFrontYard() != null && setback.getFrontYard().getHeight() == null) {
+            errors.put("frontyardnotDefinedHeight", getLocaleMessage(HEIGHTNOTDEFINED, "Front Setback ", blockName, level));
+        }
+        if (setback.getRearYard() != null && setback.getRearYard().getHeight() == null) {
+            errors.put("rearyardnotDefinedHeight", getLocaleMessage(HEIGHTNOTDEFINED, "Rear Setback ", blockName, level));
+        }
+
+        // Uncomment and use these if side yard height validation is needed
+//        if (setback.getSideYard1() != null && setback.getSideYard1().getHeight() == null) {
+//            errors.put("side1yardnotDefinedHeight", getLocaleMessage(HEIGHTNOTDEFINED, "Side Setback 1 ", blockName, level));
+//        }
+//        if (setback.getSideYard2() != null && setback.getSideYard2().getHeight() == null) {
+//            errors.put("side2yardnotDefinedHeight", getLocaleMessage(HEIGHTNOTDEFINED, "Side Setback 2 ", blockName, level));
+//        }
+    }
+
+    private void validateSetbackHeightsAgainstBuildingHeight(Block block, SetBack setback, BigDecimal buildingHeight, Map<String, String> errors) {
+        String blockName = block.getName();
+        String level = setback.getLevel().toString();
+        String expectedHeight = buildingHeight.toString();
+
+        if (setback.getFrontYard() != null && heightMismatch(setback.getFrontYard().getHeight(), buildingHeight)) {
+            errors.put("frontyardDefinedWrongHeight", getLocaleMessage(WRONGHEIGHTDEFINED, "Front Setback ", blockName, level, expectedHeight));
+        }
+        if (setback.getRearYard() != null && heightMismatch(setback.getRearYard().getHeight(), buildingHeight)) {
+            errors.put("rearyardDefinedWrongHeight", getLocaleMessage(WRONGHEIGHTDEFINED, "Rear Setback ", blockName, level, expectedHeight));
+        }
+
+        // Uncomment and use these if side yard height comparison is needed
+//        if (setback.getSideYard1() != null && heightMismatch(setback.getSideYard1().getHeight(), buildingHeight)) {
+//            errors.put("side1yardDefinedWrongHeight", getLocaleMessage(WRONGHEIGHTDEFINED, "Side Setback 1 ", blockName, level, expectedHeight));
+//        }
+//        if (setback.getSideYard2() != null && heightMismatch(setback.getSideYard2().getHeight(), buildingHeight)) {
+//            errors.put("side2yardDefinedWrongHeight", getLocaleMessage(WRONGHEIGHTDEFINED, "Side Setback 2 ", blockName, level, expectedHeight));
+//        }
+    }
+
+    private boolean isLastSetback(Block block, int index) {
+        return block.getSetBacks().size() == index;
+    }
+
+    private boolean heightMismatch(BigDecimal actual, BigDecimal expected) {
+        return actual != null && actual.compareTo(expected) != 0;
+    }
     @Override
     public Plan process(Plan pl) {
-        validate(pl);HashMap<String, String> errors = new HashMap<>();
-		BigDecimal depthOfPlot = pl.getPlanInformation().getDepthOfPlot();
-		if (depthOfPlot != null && depthOfPlot.compareTo(BigDecimal.ZERO) > 0) {
-			frontYardService.processFrontYard(pl);
-//			  if( pl.getPlot().getArea().compareTo(TWO_HUNDRED) > 0) {
-//			rearYardService.processRearYard(pl);
-//			  }
-			 if (pl.getRoadReserveRear() != BigDecimal.ZERO && pl.getCoreArea().equalsIgnoreCase("No")){
-				 for (Block block : pl.getBlocks()) {
-				 for (SetBack setback : block.getSetBacks()) {
-                 // Rear yard call is mandatory if reserve is not null, irrespective of plot area
-                 if (setback.getRearYard() == null) {
-                     // Throw an error if rear yard is not present
-                 	errors.put("rearyardNodeDefined",
-                             getLocaleMessage(OBJECTNOTDEFINED, " Rear Setback of  " + block.getName()  + 
-                 	"Rear setback is mandatory when rear road width is present."));
-                 }
-                 rearYardService.processRearYard(pl);
-             }}} else if (pl.getPlot().getArea().compareTo(TWO_HUNDRED) > 0 &&
-            		 pl.getCoreArea().equalsIgnoreCase("No")) {
-                 // Process rear yard only if roadreserverear is null and plot area is greater than 200
-                 rearYardService.processRearYard(pl);
-             }
-			
+        validate(pl);
+        Map<String, String> errors = new HashMap<>();
 
-		}
-		
-//		BigDecimal widthOfPlot = pl.getPlanInformation().getWidthOfPlot();
-//		if (widthOfPlot != null && widthOfPlot.compareTo(BigDecimal.ZERO) > 0) {
-//			sideYardService.processSideYard(pl);
-//		}
+        BigDecimal depthOfPlot = pl.getPlanInformation().getDepthOfPlot();
+        if (depthOfPlot != null && depthOfPlot.compareTo(BigDecimal.ZERO) > 0) {
+            frontYardService.processFrontYard(pl);
+
+            if ("No".equalsIgnoreCase(pl.getCoreArea())) {
+                boolean rearRoadReservePresent = pl.getRoadReserveRear() != null && pl.getRoadReserveRear().compareTo(BigDecimal.ZERO) > 0;
+                boolean largePlot = pl.getPlot().getArea().compareTo(TWO_HUNDRED) > 0;
+
+                if (rearRoadReservePresent) {
+                    for (Block block : pl.getBlocks()) {
+                        for (SetBack setback : block.getSetBacks()) {
+                            if (setback.getRearYard() == null) {
+                                errors.put("rearyardNodeDefined", getLocaleMessage(
+                                        OBJECTNOTDEFINED,
+                                        "Rear Setback of " + block.getName() + " - Rear setback is mandatory when rear road width is present."
+                                ));
+                            }
+                        }
+                    }
+                    rearYardService.processRearYard(pl);
+                } else if (largePlot) {
+                    rearYardService.processRearYard(pl);
+                }
+            }
+        }
+
+        // Uncomment if side yard processing is needed
+//        BigDecimal widthOfPlot = pl.getPlanInformation().getWidthOfPlot();
+//        if (widthOfPlot != null && widthOfPlot.compareTo(BigDecimal.ZERO) > 0) {
+//            sideYardService.processSideYard(pl);
+//        }
+
+        if (!errors.isEmpty()) {
+            pl.addErrors(errors);
+        }
 
         return pl;
     }
+   
 
     @Override
     public Map<String, Date> getAmendments() {

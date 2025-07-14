@@ -1,5 +1,5 @@
 /*
- * eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
+ * UPYOG  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  * accountability and the service delivery of the government  organizations.
  *
  *  Copyright (C) <2019>  eGovernments Foundation
@@ -96,116 +96,155 @@ public class SepticTank extends FeatureProcess {
 		return pl;
 	}
 
+//	@Override
+//	public Plan process(Plan pl) {
+//
+//		// Setting up scrutiny detail metadata
+//		ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
+//		scrutinyDetail.setKey("Common_Septic Tank ");
+//		scrutinyDetail.addColumnHeading(1, RULE_NO);
+//		scrutinyDetail.addColumnHeading(2, DESCRIPTION);
+//		scrutinyDetail.addColumnHeading(3, PERMITTED);
+//		scrutinyDetail.addColumnHeading(4, PROVIDED);
+//		scrutinyDetail.addColumnHeading(5, STATUS);
+//
+//		// Fetch septic tank details from the plan
+//		List<org.egov.common.entity.edcr.SepticTank> septicTanks = pl.getSepticTanks();
+//
+//    	BigDecimal septicTankMinDisWatersrc = BigDecimal.ZERO;
+//    	BigDecimal septicTankMinDisBuilding = BigDecimal.ZERO;
+//   
+//	        List<Object> rules = cache.getFeatureRules(pl, MdmsFeatureConstants.SEPTIC_TANK, false);
+//			
+//	        Optional<MdmsFeatureRule> matchedRule = rules.stream()
+//	        	    .map(obj -> (MdmsFeatureRule) obj)
+//	        	    .findFirst();
+//
+//	        	if (matchedRule.isPresent()) {
+//	        	    MdmsFeatureRule rule = matchedRule.get();
+//	        	    septicTankMinDisWatersrc = rule.getSepticTankMinDisWatersrc();
+//	        	    septicTankMinDisBuilding = rule.getSepticTankMinDisBuilding();
+//	        	} 
+//	
+//		// Validate each septic tank’s distance from water source and building
+//		for (org.egov.common.entity.edcr.SepticTank septicTank : septicTanks) {
+//			boolean validWaterSrcDistance = false;
+//			boolean validBuildingDistance = false;
+//
+//			// Validate distance from water source
+//			if (!septicTank.getDistanceFromWaterSource().isEmpty()) {
+//				BigDecimal minDistWaterSrc = septicTank.getDistanceFromWaterSource().stream().reduce(BigDecimal::min).get();
+//				if (minDistWaterSrc != null && minDistWaterSrc.compareTo(septicTankMinDisWatersrc) >= 0) {
+//					validWaterSrcDistance = true;
+//				}
+//				buildResult(pl, scrutinyDetail, validWaterSrcDistance, DISTANCE_FROM_WATERSOURCE, ">= " + septicTankMinDisWatersrc.toString(), minDistWaterSrc.toString());
+//			}
+//
+//			// Validate distance from building
+//			if (!septicTank.getDistanceFromBuilding().isEmpty()) {
+//				BigDecimal minDistBuilding = septicTank.getDistanceFromBuilding().stream().reduce(BigDecimal::min).get();
+//				if (minDistBuilding != null && minDistBuilding.compareTo(septicTankMinDisBuilding) >= 0) {
+//					validBuildingDistance = true;
+//				}
+//				buildResult(pl, scrutinyDetail, validBuildingDistance, DISTANCE_FROM_BUILDING, ">= " + septicTankMinDisBuilding.toString(), minDistBuilding.toString());
+//			}
+//		}
+//
+//		return pl;
+//	}
+//
+//	// Helper method to build scrutiny detail report row
+//	private void buildResult(Plan pl, ScrutinyDetail scrutinyDetail, boolean valid, String description, String permited,
+//			String provided) {
+//		Map<String, String> details = new HashMap<>();
+//		details.put(RULE_NO, RULE_45_E);
+//		details.put(DESCRIPTION, description);
+//		details.put(PERMITTED, permited);
+//		details.put(PROVIDED, provided);
+//		details.put(STATUS, valid ? Result.Accepted.getResultVal() : Result.Not_Accepted.getResultVal());
+//
+//		// Add details to the scrutiny detail and attach to the plan report
+//		scrutinyDetail.getDetail().add(details);
+//		pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+//	}
+	
 	@Override
 	public Plan process(Plan pl) {
+	    ScrutinyDetail scrutinyDetail = createScrutinyDetail();
 
-		// Setting up scrutiny detail metadata
-		ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
-		scrutinyDetail.setKey("Common_Septic Tank ");
-		scrutinyDetail.addColumnHeading(1, RULE_NO);
-		scrutinyDetail.addColumnHeading(2, DESCRIPTION);
-		scrutinyDetail.addColumnHeading(3, PERMITTED);
-		scrutinyDetail.addColumnHeading(4, PROVIDED);
-		scrutinyDetail.addColumnHeading(5, STATUS);
+	    List<org.egov.common.entity.edcr.SepticTank> septicTanks = pl.getSepticTanks();
+	    if (septicTanks == null || septicTanks.isEmpty()) {
+	        return pl;
+	    }
 
-		// Fetch septic tank details from the plan
-		List<org.egov.common.entity.edcr.SepticTank> septicTanks = pl.getSepticTanks();
+	    BigDecimal septicTankMinDisWatersrc = BigDecimal.ZERO;
+	    BigDecimal septicTankMinDisBuilding = BigDecimal.ZERO;
 
-    	BigDecimal septicTankMinDisWatersrc = BigDecimal.ZERO;
-    	BigDecimal septicTankMinDisBuilding = BigDecimal.ZERO;
+	    Optional<MdmsFeatureRule> matchedRule = getMatchedSepticTankRule(pl);
+	    if (matchedRule.isPresent()) {
+	        septicTankMinDisWatersrc = matchedRule.get().getSepticTankMinDisWatersrc();
+	        septicTankMinDisBuilding = matchedRule.get().getSepticTankMinDisBuilding();
+	    }
 
-    	
+	    validateSepticTanks(pl, scrutinyDetail, septicTanks, septicTankMinDisWatersrc, septicTankMinDisBuilding);
 
-		// Define the feature for MDMS lookup
-		String feature = MdmsFeatureConstants.SEPTIC_TANK;
-		
-		
-		 String occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl).toLowerCase();
-	        String tenantId = pl.getTenantId();
-	        String zone = pl.getPlanInformation().getZone().toLowerCase();
-	        String subZone = pl.getPlanInformation().getSubZone().toLowerCase();
-	        String riskType = fetchEdcrRulesMdms.getRiskType(pl).toLowerCase();
-	        
-	        RuleKey key = new RuleKey(EdcrRulesMdmsConstants.STATE, tenantId, zone, subZone, occupancyName, null, feature);
-	        List<Object> rules = cache.getRules(tenantId, key);
-			
-	        Optional<MdmsFeatureRule> matchedRule = rules.stream()
-	        	    .map(obj -> (MdmsFeatureRule) obj)
-	        	    .findFirst();
-
-	        	if (matchedRule.isPresent()) {
-	        	    MdmsFeatureRule rule = matchedRule.get();
-	        	    septicTankMinDisWatersrc = rule.getSepticTankMinDisWatersrc();
-	        	    septicTankMinDisBuilding = rule.getSepticTankMinDisBuilding();
-	        	} 
-
-		// Prepare parameters to fetch rules based on occupancy
-//		Map<String, Object> params = new HashMap<>();
-//		
-//		params.put("feature", feature);
-//		params.put("occupancy", occupancyName);
-//
-//		// Fetch available rules data from the plan object (populated from MDMS)
-//		Map<String,List<Map<String,Object>>> edcrRuleList = pl.getEdcrRulesFeatures();
-//
-//		// Define rule keys to fetch values for
-//		ArrayList<String> valueFromColumn = new ArrayList<>();
-//		valueFromColumn.add(EdcrRulesMdmsConstants.SEPTIC_TANK_MIN_DISTANCE_WATERSRC);
-//		valueFromColumn.add(EdcrRulesMdmsConstants.SEPTIC_TANK_MIN_DISTANCE_BUILDING);
-//
-//		List<Map<String, Object>> permissibleValue = new ArrayList<>();
-//
-//		// Fetch permissible values from MDMS
-//		permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
-//		LOG.info("permissibleValue" + permissibleValue);
-//
-//		// If rules exist, override the default minimum distances
-//		if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey(EdcrRulesMdmsConstants.SEPTIC_TANK_MIN_DISTANCE_WATERSRC)) {
-//			septicTankMinDisWatersrc = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.SEPTIC_TANK_MIN_DISTANCE_WATERSRC).toString()));
-//			septicTankMinDisBuilding = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.SEPTIC_TANK_MIN_DISTANCE_BUILDING).toString()));
-//		}
-
-		// Validate each septic tank’s distance from water source and building
-		for (org.egov.common.entity.edcr.SepticTank septicTank : septicTanks) {
-			boolean validWaterSrcDistance = false;
-			boolean validBuildingDistance = false;
-
-			// Validate distance from water source
-			if (!septicTank.getDistanceFromWaterSource().isEmpty()) {
-				BigDecimal minDistWaterSrc = septicTank.getDistanceFromWaterSource().stream().reduce(BigDecimal::min).get();
-				if (minDistWaterSrc != null && minDistWaterSrc.compareTo(septicTankMinDisWatersrc) >= 0) {
-					validWaterSrcDistance = true;
-				}
-				buildResult(pl, scrutinyDetail, validWaterSrcDistance, DISTANCE_FROM_WATERSOURCE, ">= " + septicTankMinDisWatersrc.toString(), minDistWaterSrc.toString());
-			}
-
-			// Validate distance from building
-			if (!septicTank.getDistanceFromBuilding().isEmpty()) {
-				BigDecimal minDistBuilding = septicTank.getDistanceFromBuilding().stream().reduce(BigDecimal::min).get();
-				if (minDistBuilding != null && minDistBuilding.compareTo(septicTankMinDisBuilding) >= 0) {
-					validBuildingDistance = true;
-				}
-				buildResult(pl, scrutinyDetail, validBuildingDistance, DISTANCE_FROM_BUILDING, ">= " + septicTankMinDisBuilding.toString(), minDistBuilding.toString());
-			}
-		}
-
-		return pl;
+	    return pl;
 	}
 
-	// Helper method to build scrutiny detail report row
+	private ScrutinyDetail createScrutinyDetail() {
+	    ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
+	    scrutinyDetail.setKey(Common_Septic_Tank);
+	    scrutinyDetail.addColumnHeading(1, RULE_NO);
+	    scrutinyDetail.addColumnHeading(2, DESCRIPTION);
+	    scrutinyDetail.addColumnHeading(3, PERMITTED);
+	    scrutinyDetail.addColumnHeading(4, PROVIDED);
+	    scrutinyDetail.addColumnHeading(5, STATUS);
+	    return scrutinyDetail;
+	}
+
+	private Optional<MdmsFeatureRule> getMatchedSepticTankRule(Plan pl) {
+	    List<Object> rules = cache.getFeatureRules(pl, MdmsFeatureConstants.SEPTIC_TANK, false);
+	    return rules.stream()
+	                .filter(MdmsFeatureRule.class::isInstance)
+	                .map(obj -> (MdmsFeatureRule) obj)
+	                .findFirst();
+	}
+
+	private void validateSepticTanks(Plan pl, ScrutinyDetail scrutinyDetail, List<org.egov.common.entity.edcr.SepticTank> septicTanks,
+	                                  BigDecimal minDisWaterSrc, BigDecimal minDisBuilding) {
+	    for (org.egov.common.entity.edcr.SepticTank septicTank : septicTanks) {
+	        validateDistance(pl, scrutinyDetail, septicTank.getDistanceFromWaterSource(), minDisWaterSrc,
+	                DISTANCE_FROM_WATERSOURCE);
+	        validateDistance(pl, scrutinyDetail, septicTank.getDistanceFromBuilding(), minDisBuilding,
+	                DISTANCE_FROM_BUILDING);
+	    }
+	}
+
+	private void validateDistance(Plan pl, ScrutinyDetail scrutinyDetail, List<BigDecimal> distances, BigDecimal minPermittedDistance,
+	                              String description) {
+	    if (distances == null || distances.isEmpty()) return;
+
+	    BigDecimal minProvided = distances.stream().reduce(BigDecimal::min).orElse(null);
+	    if (minProvided == null) return;
+
+	    boolean isValid = minProvided.compareTo(minPermittedDistance) >= 0;
+	    buildResult(pl, scrutinyDetail, isValid, description,
+	            ">= " + minPermittedDistance.toString(), minProvided.toString());
+	}
+
 	private void buildResult(Plan pl, ScrutinyDetail scrutinyDetail, boolean valid, String description, String permited,
-			String provided) {
-		Map<String, String> details = new HashMap<>();
-		details.put(RULE_NO, RULE_45_E);
-		details.put(DESCRIPTION, description);
-		details.put(PERMITTED, permited);
-		details.put(PROVIDED, provided);
-		details.put(STATUS, valid ? Result.Accepted.getResultVal() : Result.Not_Accepted.getResultVal());
+	                         String provided) {
+	    Map<String, String> details = new HashMap<>();
+	    details.put(RULE_NO, RULE_45_E);
+	    details.put(DESCRIPTION, description);
+	    details.put(PERMITTED, permited);
+	    details.put(PROVIDED, provided);
+	    details.put(STATUS, valid ? Result.Accepted.getResultVal() : Result.Not_Accepted.getResultVal());
 
-		// Add details to the scrutiny detail and attach to the plan report
-		scrutinyDetail.getDetail().add(details);
-		pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+	    scrutinyDetail.getDetail().add(details);
+	    pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
 	}
+
 
 	@Override
 	public Map<String, Date> getAmendments() {

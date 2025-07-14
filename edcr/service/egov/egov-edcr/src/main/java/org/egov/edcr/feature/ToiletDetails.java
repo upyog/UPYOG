@@ -86,98 +86,171 @@ public class ToiletDetails extends FeatureProcess {
     }
 
     @Autowired
-	FetchEdcrRulesMdms fetchEdcrRulesMdms;
-    
-    @Autowired
 	CacheManagerMdms cache;
 
-	@Override
-	public Plan process(Plan pl) {
+//	@Override
+//	public Plan process(Plan pl) {
+//
+//		ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
+//		scrutinyDetail.setKey(Common_Toilet);
+//		scrutinyDetail.addColumnHeading(1, RULE_NO);
+//		scrutinyDetail.addColumnHeading(2, DESCRIPTION);
+//		scrutinyDetail.addColumnHeading(3, FLOOR_NO);
+//		scrutinyDetail.addColumnHeading(4, REQUIRED);
+//		scrutinyDetail.addColumnHeading(5, PROVIDED);
+//		scrutinyDetail.addColumnHeading(6, STATUS);
+//
+//		for (Block b : pl.getBlocks()) {
+//			if (b.getBuilding() != null && b.getBuilding().getFloors() != null
+//					&& !b.getBuilding().getFloors().isEmpty()) {
+//				for (Floor f : b.getBuilding().getFloors()) {
+//					if (f.getToilet() != null && !f.getToilet().isEmpty()) {
+//						for (Toilet toilet : f.getToilet()) {
+//							if (toilet.getToilets() != null && !toilet.getToilets().isEmpty()) {
+//								for (Measurement toiletMeasurements : toilet.getToilets()) {
+//									Map<String, String> details = new HashMap<>();
+//									details.put(RULE_NO, RULE_41_IV);
+//									details.put(DESCRIPTION, BATHROOM_DESCRIPTION);
+//									details.put(FLOOR_NO, "" + f.getNumber());
+//
+//									BigDecimal area = toiletMeasurements.getArea().setScale(2, RoundingMode.HALF_UP);
+//									BigDecimal width = toiletMeasurements.getWidth().setScale(2, RoundingMode.HALF_UP);
+//
+//									BigDecimal ventilationHeight = toilet.getToiletVentilation() != null
+//											? toilet.getToiletVentilation().setScale(2, RoundingMode.HALF_UP)
+//											: BigDecimal.ZERO;
+//									BigDecimal minToiletArea = null;
+//
+//									BigDecimal minToiletWidth = null;
+//									BigDecimal minToiletVentilation = null;
+//									
+//									List<Object> rules = cache.getFeatureRules(pl, MdmsFeatureConstants.TOILET, false);
+//
+//									Optional<MdmsFeatureRule> matchedRule = rules.stream()
+//											.map(obj -> (MdmsFeatureRule) obj).findFirst();
+//
+//									if (matchedRule.isPresent()) {
+//										MdmsFeatureRule rule = matchedRule.get();
+//										minToiletArea = rule.getMinToiletArea();
+//										minToiletWidth = rule.getMinToiletWidth();
+//										minToiletVentilation = rule.getMinToiletVentilation();
+//									}
+//
+//									if (area.compareTo(minToiletArea) >= 0 && width.compareTo(minToiletWidth) >= 0
+//											&& ventilationHeight.compareTo(minToiletVentilation) >= 0) {
+//
+//										details.put(REQUIRED, "Total Area >= " + minToiletArea + ", Width >= "
+//												+ minToiletWidth + "," + " Ventilation >= " + minToiletVentilation);
+//										details.put(PROVIDED, "Total Area = " + area + ", Width = " + width
+//												+ ", Ventilation Height = " + ventilationHeight);
+//										details.put(STATUS, Result.Accepted.getResultVal());
+//
+//									} else {
+//										details.put(REQUIRED, "Total Area >= " + minToiletArea + ", Width >= "
+//												+ minToiletWidth + "," + " Ventilation >= " + minToiletVentilation);
+//										details.put(PROVIDED, "Total Area = " + area + ", Width = " + width
+//												+ ", Ventilation Height = " + ventilationHeight);
+//										details.put(STATUS, Result.Not_Accepted.getResultVal());
+//									}
+//
+//									scrutinyDetail.getDetail().add(details);
+//								}
+//							}
+//						}
+//					}
+//				}
+//			}
+//		}
+//
+//		pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+//
+//		return pl;
+//	}
+    
+    @Override
+    public Plan process(Plan pl) {
+        ScrutinyDetail scrutinyDetail = createToiletScrutinyDetail();
 
-		ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
-		scrutinyDetail.setKey("Common_Toilet");
-		scrutinyDetail.addColumnHeading(1, RULE_NO);
-		scrutinyDetail.addColumnHeading(2, DESCRIPTION);
-		scrutinyDetail.addColumnHeading(3, FLOOR_NO);
-		scrutinyDetail.addColumnHeading(4, REQUIRED);
-		scrutinyDetail.addColumnHeading(5, PROVIDED);
-		scrutinyDetail.addColumnHeading(6, STATUS);
+        for (Block block : pl.getBlocks()) {
+            processBlockToilets(pl, block, scrutinyDetail);
+        }
 
-		for (Block b : pl.getBlocks()) {
-			if (b.getBuilding() != null && b.getBuilding().getFloors() != null
-					&& !b.getBuilding().getFloors().isEmpty()) {
-				for (Floor f : b.getBuilding().getFloors()) {
-					if (f.getToilet() != null && !f.getToilet().isEmpty()) {
-						for (Toilet toilet : f.getToilet()) {
-							if (toilet.getToilets() != null && !toilet.getToilets().isEmpty()) {
-								for (Measurement toiletMeasurements : toilet.getToilets()) {
-									Map<String, String> details = new HashMap<>();
-									details.put(RULE_NO, RULE_41_IV);
-									details.put(DESCRIPTION, BATHROOM_DESCRIPTION);
-									details.put(FLOOR_NO, "" + f.getNumber());
+        pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+        return pl;
+    }
 
-									BigDecimal area = toiletMeasurements.getArea().setScale(2, RoundingMode.HALF_UP);
-									BigDecimal width = toiletMeasurements.getWidth().setScale(2, RoundingMode.HALF_UP);
+    private ScrutinyDetail createToiletScrutinyDetail() {
+        ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
+        scrutinyDetail.setKey(Common_Toilet);
+        scrutinyDetail.addColumnHeading(1, RULE_NO);
+        scrutinyDetail.addColumnHeading(2, DESCRIPTION);
+        scrutinyDetail.addColumnHeading(3, FLOOR_NO);
+        scrutinyDetail.addColumnHeading(4, REQUIRED);
+        scrutinyDetail.addColumnHeading(5, PROVIDED);
+        scrutinyDetail.addColumnHeading(6, STATUS);
+        return scrutinyDetail;
+    }
 
-									BigDecimal ventilationHeight = toilet.getToiletVentilation() != null
-											? toilet.getToiletVentilation().setScale(2, RoundingMode.HALF_UP)
-											: BigDecimal.ZERO;
-									BigDecimal minToiletArea = null;
+    private void processBlockToilets(Plan pl, Block block, ScrutinyDetail scrutinyDetail) {
+        if (block.getBuilding() == null || block.getBuilding().getFloors() == null) return;
 
-									BigDecimal minToiletWidth = null;
-									BigDecimal minToiletVentilation = null;
+        for (Floor floor : block.getBuilding().getFloors()) {
+            if (floor.getToilet() == null || floor.getToilet().isEmpty()) continue;
 
-									String feature = MdmsFeatureConstants.TOILET;
-									String occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl).toLowerCase();
-									String tenantId = pl.getTenantId();
-									String zone = pl.getPlanInformation().getZone().toLowerCase();
-									String subZone = pl.getPlanInformation().getSubZone().toLowerCase();
-									String riskType = fetchEdcrRulesMdms.getRiskType(pl).toLowerCase();
+            for (Toilet toilet : floor.getToilet()) {
+                if (toilet.getToilets() == null || toilet.getToilets().isEmpty()) continue;
 
-									RuleKey key = new RuleKey(EdcrRulesMdmsConstants.STATE, tenantId, zone, subZone,
-											occupancyName, null, feature);
-									List<Object> rules = cache.getRules(tenantId, key);
+                for (Measurement toiletMeasurement : toilet.getToilets()) {
+                    evaluateToiletMeasurement(pl, floor, toilet, toiletMeasurement, scrutinyDetail);
+                }
+            }
+        }
+    }
 
-									Optional<MdmsFeatureRule> matchedRule = rules.stream()
-											.map(obj -> (MdmsFeatureRule) obj).findFirst();
+    private void evaluateToiletMeasurement(Plan pl, Floor floor, Toilet toilet, Measurement measurement,
+                                           ScrutinyDetail scrutinyDetail) {
+        Map<String, String> details = new HashMap<>();
+        details.put(RULE_NO, RULE_41_IV);
+        details.put(DESCRIPTION, BATHROOM_DESCRIPTION);
+        details.put(FLOOR_NO, String.valueOf(floor.getNumber()));
 
-									if (matchedRule.isPresent()) {
-										MdmsFeatureRule rule = matchedRule.get();
-										minToiletArea = rule.getMinToiletArea();
-										minToiletWidth = rule.getMinToiletWidth();
-										minToiletVentilation = rule.getMinToiletVentilation();
-									}
+        BigDecimal area = measurement.getArea().setScale(2, RoundingMode.HALF_UP);
+        BigDecimal width = measurement.getWidth().setScale(2, RoundingMode.HALF_UP);
+        BigDecimal ventilationHeight = toilet.getToiletVentilation() != null
+                ? toilet.getToiletVentilation().setScale(2, RoundingMode.HALF_UP)
+                : BigDecimal.ZERO;
 
-									if (area.compareTo(minToiletArea) >= 0 && width.compareTo(minToiletWidth) >= 0
-											&& ventilationHeight.compareTo(minToiletVentilation) >= 0) {
+        MdmsFeatureRule toiletRule = getToiletRule(pl);
+        if (toiletRule == null) return;
 
-										details.put(REQUIRED, "Total Area >= " + minToiletArea + ", Width >= "
-												+ minToiletWidth + "," + " Ventilation >= " + minToiletVentilation);
-										details.put(PROVIDED, "Total Area = " + area + ", Width = " + width
-												+ ", Ventilation Height = " + ventilationHeight);
-										details.put(STATUS, Result.Accepted.getResultVal());
+        BigDecimal minArea = toiletRule.getMinToiletArea();
+        BigDecimal minWidth = toiletRule.getMinToiletWidth();
+        BigDecimal minVentilation = toiletRule.getMinToiletVentilation();
 
-									} else {
-										details.put(REQUIRED, "Total Area >= " + minToiletArea + ", Width >= "
-												+ minToiletWidth + "," + " Ventilation >= " + minToiletVentilation);
-										details.put(PROVIDED, "Total Area = " + area + ", Width = " + width
-												+ ", Ventilation Height = " + ventilationHeight);
-										details.put(STATUS, Result.Not_Accepted.getResultVal());
-									}
+        String required = "Total Area >= " + minArea + ", Width >= " + minWidth + ", Ventilation >= " + minVentilation;
+        String provided = "Total Area = " + area + ", Width = " + width + ", Ventilation Height = " + ventilationHeight;
 
-									scrutinyDetail.getDetail().add(details);
-								}
-							}
-						}
-					}
-				}
-			}
-		}
+        details.put(REQUIRED, required);
+        details.put(PROVIDED, provided);
 
-		pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+        if (area.compareTo(minArea) >= 0 && width.compareTo(minWidth) >= 0 && ventilationHeight.compareTo(minVentilation) >= 0) {
+            details.put(STATUS, Result.Accepted.getResultVal());
+        } else {
+            details.put(STATUS, Result.Not_Accepted.getResultVal());
+        }
 
-		return pl;
-	}
+        scrutinyDetail.getDetail().add(details);
+    }
+
+    private MdmsFeatureRule getToiletRule(Plan pl) {
+        List<Object> rules = cache.getFeatureRules(pl, MdmsFeatureConstants.TOILET, false);
+        return rules.stream()
+                .filter(MdmsFeatureRule.class::isInstance)
+                .map(MdmsFeatureRule.class::cast)
+                .findFirst()
+                .orElse(null);
+    }
+
 
     @Override
     public Map<String, Date> getAmendments() {

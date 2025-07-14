@@ -79,144 +79,241 @@ public class Ventilation extends FeatureProcess {
 	private static final Logger LOG = LogManager.getLogger(Ventilation.class);
 	private static final String RULE_43 = "43";
 	public static final String LIGHT_VENTILATION_DESCRIPTION = "Light and Ventilation";
+	
+	 @Autowired
+	 CacheManagerMdms cache;
 
 	@Override
 	public Plan validate(Plan pl) {
 		return pl;
 	}
 	
-	@Autowired
-	FetchEdcrRulesMdms fetchEdcrRulesMdms;
 	
-	  @Autowired
-  	CacheManagerMdms cache;
-
+//	
+//
+//	@Override
+//	public Plan process(Plan pl) {
+//		for (Block b : pl.getBlocks()) {
+//
+//			// Create scrutiny detail for common room ventilation
+//			ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
+//			scrutinyDetail.setKey("Common_Ventilation");
+//			scrutinyDetail.addColumnHeading(1, RULE_NO);
+//			scrutinyDetail.addColumnHeading(2, DESCRIPTION);
+//			scrutinyDetail.addColumnHeading(3, REQUIRED);
+//			scrutinyDetail.addColumnHeading(4, PROVIDED);
+//			scrutinyDetail.addColumnHeading(5, STATUS);
+//
+//			// Create scrutiny detail for bathroom ventilation
+//			ScrutinyDetail scrutinyDetail1 = new ScrutinyDetail();
+//			scrutinyDetail1.setKey("Bath_Ventilation");
+//			scrutinyDetail1.addColumnHeading(1, RULE_NO);
+//			scrutinyDetail1.addColumnHeading(2, DESCRIPTION);
+//			scrutinyDetail1.addColumnHeading(3, REQUIRED);
+//			scrutinyDetail1.addColumnHeading(4, PROVIDED);
+//			scrutinyDetail1.addColumnHeading(5, STATUS);
+//
+//			// Initialize ventilation requirements
+//			BigDecimal ventilationValueOne = BigDecimal.ZERO;
+//			BigDecimal ventilationValueTwo = BigDecimal.ZERO;
+//			
+//
+//			List<Object> rules = cache.getFeatureRules(pl, MdmsFeatureConstants.VENTILATION, false);
+//
+//			Optional<MdmsFeatureRule> matchedRule = rules.stream().map(obj -> (MdmsFeatureRule) obj).findFirst();
+//
+//			if (matchedRule.isPresent()) {
+//				MdmsFeatureRule rule = matchedRule.get();
+//				ventilationValueOne = rule.getVentilationValueOne();
+//				ventilationValueTwo = rule.getVentilationValueTwo();
+//			}
+//
+//			// Process each floor in the building
+//			if (b.getBuilding() != null && b.getBuilding().getFloors() != null
+//					&& !b.getBuilding().getFloors().isEmpty()) {
+//				for (Floor f : b.getBuilding().getFloors()) {
+//
+//					// Details map for general ventilation
+//					Map<String, String> details = new HashMap<>();
+//					details.put(RULE_NO, RULE_43);
+//					details.put(DESCRIPTION, LIGHT_VENTILATION_DESCRIPTION);
+//
+//					// Details map for bath ventilation
+//					Map<String, String> details1 = new HashMap<>();
+//					details1.put(RULE_NO, RULE_43);
+//					details1.put(DESCRIPTION, LIGHT_VENTILATION_DESCRIPTION);
+//
+//					// Check general (room) ventilation
+//					if (f.getLightAndVentilation() != null && f.getLightAndVentilation().getMeasurements() != null
+//							&& !f.getLightAndVentilation().getMeasurements().isEmpty()) {
+//
+//						// Sum ventilation areas and carpet areas
+//						BigDecimal totalVentilationArea = f.getLightAndVentilation().getMeasurements().stream()
+//								.map(Measurement::getArea).reduce(BigDecimal.ZERO, BigDecimal::add);
+//
+//						BigDecimal totalCarpetArea = f.getOccupancies().stream().map(Occupancy::getCarpetArea)
+//								.reduce(BigDecimal.ZERO, BigDecimal::add);
+//
+//						// Validation: Check if ventilation is at least 1/N of carpet area
+//						if (totalVentilationArea.compareTo(BigDecimal.ZERO) > 0) {
+//							BigDecimal requiredVentilation = totalCarpetArea.divide(ventilationValueOne, 2,
+//									BigDecimal.ROUND_HALF_UP);
+//							if (totalVentilationArea.compareTo(requiredVentilation) >= 0) {
+//								details.put(REQUIRED, "Minimum 1/" + ventilationValueOne + "th of the floor area ");
+//								details.put(PROVIDED, "Ventilation area " + totalVentilationArea + " of Carpet Area "
+//										+ totalCarpetArea + " at floor " + f.getNumber());
+//								details.put(STATUS, Result.Accepted.getResultVal());
+//							} else {
+//								details.put(REQUIRED, "Minimum 1/" + ventilationValueOne + "th of the floor area ");
+//								details.put(PROVIDED, "Ventilation area " + totalVentilationArea + " of Carpet Area "
+//										+ totalCarpetArea + " at floor " + f.getNumber());
+//								details.put(STATUS, Result.Not_Accepted.getResultVal());
+//							}
+//
+//							scrutinyDetail.getDetail().add(details);
+//							pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+//						}
+//					}
+//
+//					// Check bathroom ventilation
+//					/*
+//					 * if (f.getBathVentilaion() != null && f.getBathVentilaion().getMeasurements()
+//					 * != null && !f.getBathVentilaion().getMeasurements().isEmpty()) {
+//					 * 
+//					 * BigDecimal totalVentilationArea =
+//					 * f.getBathVentilaion().getMeasurements().stream() .map(Measurement::getArea)
+//					 * .reduce(BigDecimal.ZERO, BigDecimal::add);
+//					 * 
+//					 * // Validate against required area if
+//					 * (totalVentilationArea.compareTo(ventilationValueTwo) >= 0) {
+//					 * details1.put(REQUIRED, ventilationValueTwo.toString());
+//					 * details1.put(PROVIDED, "Bath Ventilation area " + totalVentilationArea +
+//					 * " at floor " + f.getNumber()); details1.put(STATUS,
+//					 * Result.Accepted.getResultVal()); } else { details1.put(REQUIRED,
+//					 * ventilationValueTwo.toString()); details1.put(PROVIDED,
+//					 * "Bath Ventilation area " + totalVentilationArea + " at floor " +
+//					 * f.getNumber()); details1.put(STATUS, Result.Not_Accepted.getResultVal()); }
+//					 * 
+//					 * scrutinyDetail1.getDetail().add(details1);
+//					 * pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail1);
+//					 * 
+//					 * } else { // If no bathroom ventilation measurements defined
+//					 * details1.put(REQUIRED, ventilationValueTwo.toString());
+//					 * details1.put(PROVIDED, "Bath Ventilation area not defined in floor " +
+//					 * f.getNumber()); details1.put(STATUS, Result.Not_Accepted.getResultVal());
+//					 * scrutinyDetail1.getDetail().add(details1);
+//					 * pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail1); }
+//					 */
+//				}
+//			}
+//		}
+//
+//		return pl;
+//	}
+	
 	@Override
 	public Plan process(Plan pl) {
-		for (Block b : pl.getBlocks()) {
+	    for (Block b : pl.getBlocks()) {
+	        BigDecimal[] ventilationValues = extractVentilationRules(pl);
+	        ScrutinyDetail generalScrutiny = createScrutinyDetail("Common_Ventilation");
+	        ScrutinyDetail bathScrutiny = createScrutinyDetail("Bath_Ventilation");
 
-			// Create scrutiny detail for common room ventilation
-			ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
-			scrutinyDetail.setKey("Common_Ventilation");
-			scrutinyDetail.addColumnHeading(1, RULE_NO);
-			scrutinyDetail.addColumnHeading(2, DESCRIPTION);
-			scrutinyDetail.addColumnHeading(3, REQUIRED);
-			scrutinyDetail.addColumnHeading(4, PROVIDED);
-			scrutinyDetail.addColumnHeading(5, STATUS);
+	        if (b.getBuilding() != null && b.getBuilding().getFloors() != null) {
+	            for (Floor f : b.getBuilding().getFloors()) {
+	                processGeneralVentilation(f, ventilationValues[0], generalScrutiny, pl);
+	                // processBathroomVentilation(f, ventilationValues[1], bathScrutiny, pl); // Uncomment if needed
+	            }
+	        }
+	    }
+	    return pl;
+	}
+	
+	private BigDecimal[] extractVentilationRules(Plan pl) {
+	    BigDecimal ventilationValueOne = BigDecimal.ZERO;
+	    BigDecimal ventilationValueTwo = BigDecimal.ZERO;
 
-			// Create scrutiny detail for bathroom ventilation
-			ScrutinyDetail scrutinyDetail1 = new ScrutinyDetail();
-			scrutinyDetail1.setKey("Bath_Ventilation");
-			scrutinyDetail1.addColumnHeading(1, RULE_NO);
-			scrutinyDetail1.addColumnHeading(2, DESCRIPTION);
-			scrutinyDetail1.addColumnHeading(3, REQUIRED);
-			scrutinyDetail1.addColumnHeading(4, PROVIDED);
-			scrutinyDetail1.addColumnHeading(5, STATUS);
+	    List<Object> rules = cache.getFeatureRules(pl, MdmsFeatureConstants.VENTILATION, false);
+	    Optional<MdmsFeatureRule> matchedRule = rules.stream().map(obj -> (MdmsFeatureRule) obj).findFirst();
 
-			// Initialize ventilation requirements
-			BigDecimal ventilationValueOne = BigDecimal.ZERO;
-			BigDecimal ventilationValueTwo = BigDecimal.ZERO;
-			String feature = MdmsFeatureConstants.VENTILATION;
-			String occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl).toLowerCase();
-			String tenantId = pl.getTenantId();
-			String zone = pl.getPlanInformation().getZone().toLowerCase();
-			String subZone = pl.getPlanInformation().getSubZone().toLowerCase();
-			String riskType = fetchEdcrRulesMdms.getRiskType(pl).toLowerCase();
+	    if (matchedRule.isPresent()) {
+	        MdmsFeatureRule rule = matchedRule.get();
+	        ventilationValueOne = rule.getVentilationValueOne();
+	        ventilationValueTwo = rule.getVentilationValueTwo();
+	    }
 
-			RuleKey key = new RuleKey(EdcrRulesMdmsConstants.STATE, tenantId, zone, subZone, occupancyName, null,
-					feature);
-			List<Object> rules = cache.getRules(tenantId, key);
+	    return new BigDecimal[]{ventilationValueOne, ventilationValueTwo};
+	}
 
-			Optional<MdmsFeatureRule> matchedRule = rules.stream().map(obj -> (MdmsFeatureRule) obj).findFirst();
+	private ScrutinyDetail createScrutinyDetail(String key) {
+	    ScrutinyDetail detail = new ScrutinyDetail();
+	    detail.setKey(key);
+	    detail.addColumnHeading(1, RULE_NO);
+	    detail.addColumnHeading(2, DESCRIPTION);
+	    detail.addColumnHeading(3, REQUIRED);
+	    detail.addColumnHeading(4, PROVIDED);
+	    detail.addColumnHeading(5, STATUS);
+	    return detail;
+	}
 
-			if (matchedRule.isPresent()) {
-				MdmsFeatureRule rule = matchedRule.get();
-				ventilationValueOne = rule.getVentilationValueOne();
-				ventilationValueTwo = rule.getVentilationValueTwo();
-			}
+	private void processGeneralVentilation(Floor floor, BigDecimal ventilationRatio,
+	                                       ScrutinyDetail scrutinyDetail, Plan pl) {
+	    if (floor.getLightAndVentilation() != null &&
+	        floor.getLightAndVentilation().getMeasurements() != null &&
+	        !floor.getLightAndVentilation().getMeasurements().isEmpty()) {
 
-			// Process each floor in the building
-			if (b.getBuilding() != null && b.getBuilding().getFloors() != null
-					&& !b.getBuilding().getFloors().isEmpty()) {
-				for (Floor f : b.getBuilding().getFloors()) {
+	        BigDecimal totalVentilationArea = floor.getLightAndVentilation().getMeasurements().stream()
+	            .map(Measurement::getArea).reduce(BigDecimal.ZERO, BigDecimal::add);
 
-					// Details map for general ventilation
-					Map<String, String> details = new HashMap<>();
-					details.put(RULE_NO, RULE_43);
-					details.put(DESCRIPTION, LIGHT_VENTILATION_DESCRIPTION);
+	        BigDecimal totalCarpetArea = floor.getOccupancies().stream()
+	            .map(Occupancy::getCarpetArea).reduce(BigDecimal.ZERO, BigDecimal::add);
 
-					// Details map for bath ventilation
-					Map<String, String> details1 = new HashMap<>();
-					details1.put(RULE_NO, RULE_43);
-					details1.put(DESCRIPTION, LIGHT_VENTILATION_DESCRIPTION);
+	        if (totalVentilationArea.compareTo(BigDecimal.ZERO) > 0) {
+	            BigDecimal requiredVentilation = totalCarpetArea.divide(ventilationRatio, 2, BigDecimal.ROUND_HALF_UP);
+	            Map<String, String> detail = new HashMap<>();
+	            detail.put(RULE_NO, RULE_43);
+	            detail.put(DESCRIPTION, LIGHT_VENTILATION_DESCRIPTION);
+	            detail.put(REQUIRED, "Minimum 1/" + ventilationRatio + "th of the floor area ");
+	            detail.put(PROVIDED, "Ventilation area " + totalVentilationArea +
+	                " of Carpet Area " + totalCarpetArea + " at floor " + floor.getNumber());
 
-					// Check general (room) ventilation
-					if (f.getLightAndVentilation() != null && f.getLightAndVentilation().getMeasurements() != null
-							&& !f.getLightAndVentilation().getMeasurements().isEmpty()) {
+	            detail.put(STATUS, totalVentilationArea.compareTo(requiredVentilation) >= 0
+	                ? Result.Accepted.getResultVal() : Result.Not_Accepted.getResultVal());
 
-						// Sum ventilation areas and carpet areas
-						BigDecimal totalVentilationArea = f.getLightAndVentilation().getMeasurements().stream()
-								.map(Measurement::getArea).reduce(BigDecimal.ZERO, BigDecimal::add);
+	            scrutinyDetail.getDetail().add(detail);
+	            pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+	        }
+	    }
+	}
 
-						BigDecimal totalCarpetArea = f.getOccupancies().stream().map(Occupancy::getCarpetArea)
-								.reduce(BigDecimal.ZERO, BigDecimal::add);
-
-						// Validation: Check if ventilation is at least 1/N of carpet area
-						if (totalVentilationArea.compareTo(BigDecimal.ZERO) > 0) {
-							BigDecimal requiredVentilation = totalCarpetArea.divide(ventilationValueOne, 2,
-									BigDecimal.ROUND_HALF_UP);
-							if (totalVentilationArea.compareTo(requiredVentilation) >= 0) {
-								details.put(REQUIRED, "Minimum 1/" + ventilationValueOne + "th of the floor area ");
-								details.put(PROVIDED, "Ventilation area " + totalVentilationArea + " of Carpet Area "
-										+ totalCarpetArea + " at floor " + f.getNumber());
-								details.put(STATUS, Result.Accepted.getResultVal());
-							} else {
-								details.put(REQUIRED, "Minimum 1/" + ventilationValueOne + "th of the floor area ");
-								details.put(PROVIDED, "Ventilation area " + totalVentilationArea + " of Carpet Area "
-										+ totalCarpetArea + " at floor " + f.getNumber());
-								details.put(STATUS, Result.Not_Accepted.getResultVal());
-							}
-
-							scrutinyDetail.getDetail().add(details);
-							pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
-						}
-					}
-
-					// Check bathroom ventilation
-					/*
-					 * if (f.getBathVentilaion() != null && f.getBathVentilaion().getMeasurements()
-					 * != null && !f.getBathVentilaion().getMeasurements().isEmpty()) {
-					 * 
-					 * BigDecimal totalVentilationArea =
-					 * f.getBathVentilaion().getMeasurements().stream() .map(Measurement::getArea)
-					 * .reduce(BigDecimal.ZERO, BigDecimal::add);
-					 * 
-					 * // Validate against required area if
-					 * (totalVentilationArea.compareTo(ventilationValueTwo) >= 0) {
-					 * details1.put(REQUIRED, ventilationValueTwo.toString());
-					 * details1.put(PROVIDED, "Bath Ventilation area " + totalVentilationArea +
-					 * " at floor " + f.getNumber()); details1.put(STATUS,
-					 * Result.Accepted.getResultVal()); } else { details1.put(REQUIRED,
-					 * ventilationValueTwo.toString()); details1.put(PROVIDED,
-					 * "Bath Ventilation area " + totalVentilationArea + " at floor " +
-					 * f.getNumber()); details1.put(STATUS, Result.Not_Accepted.getResultVal()); }
-					 * 
-					 * scrutinyDetail1.getDetail().add(details1);
-					 * pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail1);
-					 * 
-					 * } else { // If no bathroom ventilation measurements defined
-					 * details1.put(REQUIRED, ventilationValueTwo.toString());
-					 * details1.put(PROVIDED, "Bath Ventilation area not defined in floor " +
-					 * f.getNumber()); details1.put(STATUS, Result.Not_Accepted.getResultVal());
-					 * scrutinyDetail1.getDetail().add(details1);
-					 * pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail1); }
-					 */
-				}
-			}
+			private void processBathroomVentilation(Floor floor, BigDecimal requiredArea,
+		            ScrutinyDetail scrutinyDetail, Plan pl) {
+		Map<String, String> detail = new HashMap<>();
+		detail.put(RULE_NO, RULE_43);
+		detail.put(DESCRIPTION, LIGHT_VENTILATION_DESCRIPTION);
+		
+		if (floor.getBathVentilaion() != null &&
+		floor.getBathVentilaion().getMeasurements() != null &&
+		!floor.getBathVentilaion().getMeasurements().isEmpty()) {
+		
+		BigDecimal totalVentilationArea = floor.getBathVentilaion().getMeasurements().stream()
+		.map(Measurement::getArea).reduce(BigDecimal.ZERO, BigDecimal::add);
+		
+		detail.put(REQUIRED, requiredArea.toString());
+		detail.put(PROVIDED, "Bath Ventilation area " + totalVentilationArea + " at floor " + floor.getNumber());
+		detail.put(STATUS, totalVentilationArea.compareTo(requiredArea) >= 0
+		? Result.Accepted.getResultVal() : Result.Not_Accepted.getResultVal());
+		
+		} else {
+		detail.put(REQUIRED, requiredArea.toString());
+		detail.put(PROVIDED, "Bath Ventilation area not defined in floor " + floor.getNumber());
+		detail.put(STATUS, Result.Not_Accepted.getResultVal());
+		}
+		
+		scrutinyDetail.getDetail().add(detail);
+		pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
 		}
 
-		return pl;
-	}
+
 
 
 	@Override

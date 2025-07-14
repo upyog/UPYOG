@@ -85,16 +85,16 @@ public class RainWaterHarvesting extends FeatureProcess {
     private static final String RWH_DECLARATION_ERROR = DxfFileConstants.RWH_DECLARED
             + " in PLAN_INFO layer must be declared as YES for plot area greater than 100 sqm.";
 
+    
+    @Autowired
+   	CacheManagerMdms cache;
+    
     @Override
     public Plan validate(Plan pl) {
         return pl;
     }
     
-    @Autowired
-    FetchEdcrRulesMdms fetchEdcrRulesMdms;
-    
-    @Autowired
-   	CacheManagerMdms cache;
+  
 @Override
 public Plan process(Plan pl) {
     // Initialize a map to store errors
@@ -121,18 +121,9 @@ public Plan process(Plan pl) {
             ? pl.getVirtualBuilding().getMostRestrictiveFarHelper()
             : null;
 
-    // Determine the occupancy type
+  
    
-        String feature = MdmsFeatureConstants.RAIN_WATER_HARVESTING; // Feature name for rainwater harvesting
-	    String occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl).toLowerCase();
-        String tenantId = pl.getTenantId();
-        String zone = pl.getPlanInformation().getZone().toLowerCase();
-        String subZone = pl.getPlanInformation().getSubZone().toLowerCase();
-        String riskType = fetchEdcrRulesMdms.getRiskType(pl).toLowerCase();
-        
-        RuleKey key = new RuleKey(EdcrRulesMdmsConstants.STATE, tenantId, zone, subZone, occupancyName, null, feature);
-        List<Object> rules = cache.getRules(tenantId, key);
-		
+        List<Object> rules = cache.getFeatureRules(pl, MdmsFeatureConstants.RAIN_WATER_HARVESTING, false);
         Optional<MdmsFeatureRule> matchedRule = rules.stream()
         	    .map(obj -> (MdmsFeatureRule) obj)
         	    .findFirst();

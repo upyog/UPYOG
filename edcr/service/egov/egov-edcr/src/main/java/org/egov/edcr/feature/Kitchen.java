@@ -52,12 +52,14 @@ import static org.egov.edcr.constants.DxfFileConstants.F;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -70,12 +72,9 @@ import org.egov.common.entity.edcr.OccupancyTypeHelper;
 import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.Result;
 import org.egov.common.entity.edcr.RoomHeight;
-import org.egov.common.entity.edcr.RuleKey;
 import org.egov.common.entity.edcr.ScrutinyDetail;
 import org.egov.edcr.constants.DxfFileConstants;
-import org.egov.edcr.constants.EdcrRulesMdmsConstants;
 import org.egov.edcr.service.CacheManagerMdms;
-import org.egov.edcr.service.FetchEdcrRulesMdms;
 import org.egov.edcr.service.ProcessHelper;
 import org.egov.edcr.utility.DcrConstants;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -111,224 +110,327 @@ public class Kitchen extends FeatureProcess {
         return pl;
     }
 
-    @Autowired
-	FetchEdcrRulesMdms fetchEdcrRulesMdms;
-    
+   
     @Autowired
 	CacheManagerMdms cache;
     
+//	@Override
+//	public Plan process(Plan pl) {
+//		Map<String, Integer> heightOfRoomFeaturesColor = pl.getSubFeatureColorCodesMaster().get("HeightOfRoom");
+//		validate(pl);
+//		HashMap<String, String> errors = new HashMap<>();
+//		if (pl != null && pl.getBlocks() != null) {
+//			OccupancyTypeHelper mostRestrictiveOccupancy = pl.getVirtualBuilding() != null
+//					? pl.getVirtualBuilding().getMostRestrictiveFarHelper()
+//					: null;
+//			if (mostRestrictiveOccupancy != null && mostRestrictiveOccupancy.getSubtype() != null
+//					&& (A.equalsIgnoreCase(mostRestrictiveOccupancy.getType().getCode())
+//							|| F.equalsIgnoreCase(mostRestrictiveOccupancy.getType().getCode()))) {
+//				blk: for (Block block : pl.getBlocks()) {
+//					if (block.getBuilding() != null && !block.getBuilding().getFloors().isEmpty()) {
+//						scrutinyDetail = new ScrutinyDetail();
+//						scrutinyDetail.addColumnHeading(1, RULE_NO);
+//						scrutinyDetail.addColumnHeading(2, DESCRIPTION);
+//						scrutinyDetail.addColumnHeading(3, FLOOR);
+//						scrutinyDetail.addColumnHeading(4, REQUIRED);
+//						scrutinyDetail.addColumnHeading(5, PROVIDED);
+//						scrutinyDetail.addColumnHeading(6, STATUS);
+//						scrutinyDetail.setKey("Block_" + block.getNumber() + "_" + "Kitchen");
+//
+//						for (Floor floor : block.getBuilding().getFloors()) {
+//							List<BigDecimal> kitchenAreas = new ArrayList<>();
+//							List<BigDecimal> kitchenStoreAreas = new ArrayList<>();
+//							List<BigDecimal> kitchenDiningAreas = new ArrayList<>();
+//							List<BigDecimal> kitchenWidths = new ArrayList<>();
+//							List<BigDecimal> kitchenStoreWidths = new ArrayList<>();
+//							List<BigDecimal> kitchenDiningWidths = new ArrayList<>();
+//
+//							BigDecimal kitchenHeight = BigDecimal.ZERO;
+//							BigDecimal kitchenArea = BigDecimal.ZERO;
+//							BigDecimal kitchenWidth = BigDecimal.ZERO;
+//							BigDecimal kitchenStoreArea = BigDecimal.ZERO;
+//							BigDecimal kitchenStoreWidth = BigDecimal.ZERO;
+//							BigDecimal kitchenDiningWidth = BigDecimal.ZERO;
+//							BigDecimal kitchenDiningArea = BigDecimal.ZERO;
+//
+//							BigDecimal totalArea = BigDecimal.ZERO;
+//							BigDecimal minWidth = BigDecimal.ZERO;
+//							String subRule = null;
+//							String subRuleDesc = null;
+//							String kitchenRoomColor = "";
+//							String kitchenStoreRoomColor = "";
+//							String kitchenDiningRoomColor = "";
+//
+//							if (A.equalsIgnoreCase(mostRestrictiveOccupancy.getType().getCode())) {
+//								kitchenRoomColor = DxfFileConstants.RESIDENTIAL_KITCHEN_ROOM_COLOR;
+//								kitchenStoreRoomColor = DxfFileConstants.RESIDENTIAL_KITCHEN_STORE_ROOM_COLOR;
+//								kitchenDiningRoomColor = DxfFileConstants.RESIDENTIAL_KITCHEN_DINING_ROOM_COLOR;
+//							} else {
+//								kitchenRoomColor = DxfFileConstants.COMMERCIAL_KITCHEN_ROOM_COLOR;
+//								kitchenStoreRoomColor = DxfFileConstants.COMMERCIAL_KITCHEN_STORE_ROOM_COLOR;
+//								kitchenDiningRoomColor = DxfFileConstants.COMMERCIAL_KITCHEN_DINING_ROOM_COLOR;
+//							}
+//
+//							if (floor.getKitchen() != null) {
+//								List<BigDecimal> kitchenHeights = new ArrayList<>();
+//								List<RoomHeight> heights = floor.getKitchen().getHeights();
+//								List<Measurement> kitchenRooms = floor.getKitchen().getRooms();
+//
+//								for (RoomHeight roomHeight : heights) {
+//									kitchenHeights.add(roomHeight.getHeight());
+//								}
+//
+//								for (Measurement kitchen : kitchenRooms) {
+//									if (heightOfRoomFeaturesColor.get(kitchenRoomColor) == kitchen.getColorCode()) {
+//										kitchenAreas.add(kitchen.getArea());
+//										kitchenWidths.add(kitchen.getWidth());
+//									}
+//									if (heightOfRoomFeaturesColor.get(kitchenStoreRoomColor) == kitchen
+//											.getColorCode()) {
+//										kitchenStoreAreas.add(kitchen.getArea());
+//										kitchenStoreWidths.add(kitchen.getWidth());
+//									}
+//									if (heightOfRoomFeaturesColor.get(kitchenDiningRoomColor) == kitchen
+//											.getColorCode()) {
+//										kitchenDiningAreas.add(kitchen.getArea());
+//										kitchenDiningWidths.add(kitchen.getWidth());
+//									}
+//								}
+//
+//								if (!kitchenHeights.isEmpty()) {
+//									BigDecimal minHeight = kitchenHeights.stream().reduce(BigDecimal::min).get()
+//											.setScale(2, BigDecimal.ROUND_HALF_UP);
+//
+//									// Fetch all rules for the given plan from the cache.
+//									// Then, filter to find the first rule where the condition falls within the
+//									// defined range.
+//									// If a matching rule is found, proceed with its processing.
+//
+//									List<Object> rules = cache.getFeatureRules(pl, MdmsFeatureConstants.KITCHEN, false);
+//
+//									Optional<MdmsFeatureRule> matchedRule = rules.stream()
+//											.map(obj -> (MdmsFeatureRule) obj).findFirst();
+//
+//									if (matchedRule.isPresent()) {
+//										MdmsFeatureRule rule = matchedRule.get();
+//										kitchenHeight = rule.getKitchenHeight();
+//										kitchenArea = rule.getKitchenArea();
+//										kitchenWidth = rule.getKitchenWidth();
+//										kitchenStoreArea = rule.getKitchenStoreArea();
+//										kitchenStoreWidth = rule.getKitchenStoreWidth();
+//									}
+//
+//									// minimumHeight = MINIMUM_HEIGHT_2_75;
+//									subRule = SUBRULE_41_III;
+//									subRuleDesc = SUBRULE_41_III_DESC;
+//
+//									boolean valid = false;
+//									boolean isTypicalRepititiveFloor = false;
+//									Map<String, Object> typicalFloorValues = ProcessHelper.getTypicalFloorValues(block,
+//											floor, isTypicalRepititiveFloor);
+//									buildResult(pl, floor, kitchenHeight, subRule, subRuleDesc, minHeight, valid,
+//											typicalFloorValues);
+//								} else {
+//									String layerName = String.format(LAYER_ROOM_HEIGHT, block.getNumber(),
+//											floor.getNumber(), "KITCHEN");
+//									errors.put(layerName, ROOM_HEIGHT_NOTDEFINED + layerName);
+//									pl.addErrors(errors);
+//								}
+//
+//							}
+//							subRule = SUBRULE_41_III;
+//
+//							if (!kitchenAreas.isEmpty()) {
+//								totalArea = kitchenAreas.stream().reduce(BigDecimal.ZERO, BigDecimal::add).setScale(2,
+//										BigDecimal.ROUND_HALF_UP);
+//								// kitchenArea = MINIMUM_AREA_5;
+//								subRuleDesc = String.format(SUBRULE_41_III_AREA_DESC, KITCHEN);
+//
+//								boolean valid = false;
+//								boolean isTypicalRepititiveFloor = false;
+//								Map<String, Object> typicalFloorValues = ProcessHelper.getTypicalFloorValues(block,
+//										floor, isTypicalRepititiveFloor);
+//								buildResult(pl, floor, kitchenArea, subRule, subRuleDesc, totalArea, valid,
+//										typicalFloorValues);
+//
+//							}
+//
+//							if (!kitchenWidths.isEmpty()) {
+//								boolean valid = false;
+//								boolean isTypicalRepititiveFloor = false;
+//								Map<String, Object> typicalFloorValues = ProcessHelper.getTypicalFloorValues(block,
+//										floor, isTypicalRepititiveFloor);
+//								BigDecimal minRoomWidth = kitchenWidths.stream().reduce(BigDecimal::min).get()
+//										.setScale(2, BigDecimal.ROUND_HALF_UP);
+//								// minWidth = MINIMUM_WIDTH_1_8;
+//								subRuleDesc = String.format(SUBRULE_41_III_TOTAL_WIDTH, KITCHEN);
+//								buildResult(pl, floor, kitchenWidth, subRule, subRuleDesc, minRoomWidth, valid,
+//										typicalFloorValues);
+//							}
+//
+//							if (!kitchenStoreAreas.isEmpty()) {
+//								totalArea = kitchenStoreAreas.stream().reduce(BigDecimal.ZERO, BigDecimal::add);
+//								// minimumHeight = MINIMUM_AREA_4_5;
+//								subRuleDesc = String.format(SUBRULE_41_III_AREA_DESC, KITCHEN_STORE);
+//
+//								boolean valid = false;
+//								boolean isTypicalRepititiveFloor = false;
+//								Map<String, Object> typicalFloorValues = ProcessHelper.getTypicalFloorValues(block,
+//										floor, isTypicalRepititiveFloor);
+//								buildResult(pl, floor, kitchenStoreArea, subRule, subRuleDesc, totalArea, valid,
+//										typicalFloorValues);
+//
+//							}
+//
+//							if (!kitchenStoreWidths.isEmpty()) {
+//								boolean valid = false;
+//								boolean isTypicalRepititiveFloor = false;
+//								Map<String, Object> typicalFloorValues = ProcessHelper.getTypicalFloorValues(block,
+//										floor, isTypicalRepititiveFloor);
+//								BigDecimal minRoomWidth = kitchenStoreWidths.stream().reduce(BigDecimal::min).get();
+//								// minWidth = MINIMUM_WIDTH_1_8;
+//								subRuleDesc = String.format(SUBRULE_41_III_TOTAL_WIDTH, KITCHEN_STORE);
+//								buildResult(pl, floor, kitchenStoreWidth, subRule, subRuleDesc, minRoomWidth, valid,
+//										typicalFloorValues);
+//							}
+//
+//							if (!kitchenDiningAreas.isEmpty()) {
+//								totalArea = kitchenDiningAreas.stream().reduce(BigDecimal.ZERO, BigDecimal::add);
+//								// minimumHeight = MINIMUM_AREA_7_5;
+//								subRuleDesc = String.format(SUBRULE_41_III_AREA_DESC, KITCHEN_DINING);
+//
+//								boolean valid = false;
+//								boolean isTypicalRepititiveFloor = false;
+//								Map<String, Object> typicalFloorValues = ProcessHelper.getTypicalFloorValues(block,
+//										floor, isTypicalRepititiveFloor);
+//								buildResult(pl, floor, kitchenDiningArea, subRule, subRuleDesc, totalArea, valid,
+//										typicalFloorValues);
+//
+//							}
+//
+//							if (!kitchenDiningWidths.isEmpty()) {
+//								boolean valid = false;
+//								boolean isTypicalRepititiveFloor = false;
+//								Map<String, Object> typicalFloorValues = ProcessHelper.getTypicalFloorValues(block,
+//										floor, isTypicalRepititiveFloor);
+//								BigDecimal minRoomWidth = kitchenDiningWidths.stream().reduce(BigDecimal::min).get();
+//								// minWidth = MINIMUM_WIDTH_2_1;
+//								subRuleDesc = String.format(SUBRULE_41_III_TOTAL_WIDTH, KITCHEN_DINING);
+//								buildResult(pl, floor, kitchenDiningWidth, subRule, subRuleDesc, minRoomWidth, valid,
+//										typicalFloorValues);
+//							}
+//						}
+//					}
+//				}
+//			}
+//		}
+//		return pl;
+//
+//	}
+    
     @Override
     public Plan process(Plan pl) {
-        Map<String, Integer> heightOfRoomFeaturesColor = pl.getSubFeatureColorCodesMaster().get("HeightOfRoom");
         validate(pl);
-        HashMap<String, String> errors = new HashMap<>();
-        if (pl != null && pl.getBlocks() != null) {
-            OccupancyTypeHelper mostRestrictiveOccupancy = pl.getVirtualBuilding() != null
-                    ? pl.getVirtualBuilding().getMostRestrictiveFarHelper()
-                    : null;
-            if (mostRestrictiveOccupancy != null && mostRestrictiveOccupancy.getSubtype() != null
-                    && (A.equalsIgnoreCase(mostRestrictiveOccupancy.getType().getCode())
-                            || F.equalsIgnoreCase(mostRestrictiveOccupancy.getType().getCode()))) {
-                blk: for (Block block : pl.getBlocks()) {
-                    if (block.getBuilding() != null && !block.getBuilding().getFloors().isEmpty()) {
-                        scrutinyDetail = new ScrutinyDetail();
-                        scrutinyDetail.addColumnHeading(1, RULE_NO);
-                        scrutinyDetail.addColumnHeading(2, DESCRIPTION);
-                        scrutinyDetail.addColumnHeading(3, FLOOR);
-                        scrutinyDetail.addColumnHeading(4, REQUIRED);
-                        scrutinyDetail.addColumnHeading(5, PROVIDED);
-                        scrutinyDetail.addColumnHeading(6, STATUS);
+        Map<String, Integer> heightOfRoomFeaturesColor = pl.getSubFeatureColorCodesMaster().get("HeightOfRoom");
 
-                        scrutinyDetail.setKey("Block_" + block.getNumber() + "_" + "Kitchen");
+        if (pl == null || pl.getBlocks() == null) return pl;
 
-                        for (Floor floor : block.getBuilding().getFloors()) {
-                            List<BigDecimal> kitchenAreas = new ArrayList<>();
-                            List<BigDecimal> kitchenStoreAreas = new ArrayList<>();
-                            List<BigDecimal> kitchenDiningAreas = new ArrayList<>();
-                            List<BigDecimal> kitchenWidths = new ArrayList<>();
-                            List<BigDecimal> kitchenStoreWidths = new ArrayList<>();
-                            List<BigDecimal> kitchenDiningWidths = new ArrayList<>();
-                            
-                            BigDecimal kitchenHeight = BigDecimal.ZERO;
-                            BigDecimal kitchenArea = BigDecimal.ZERO;
-                            BigDecimal kitchenWidth = BigDecimal.ZERO;
-                            BigDecimal kitchenStoreArea = BigDecimal.ZERO;
-                            BigDecimal kitchenStoreWidth = BigDecimal.ZERO;
-                            BigDecimal kitchenDiningWidth = BigDecimal.ZERO;
-                            BigDecimal kitchenDiningArea = BigDecimal.ZERO;
-                           
-                            
-                            BigDecimal totalArea = BigDecimal.ZERO;
-                            BigDecimal minWidth = BigDecimal.ZERO;
-                            String subRule = null;
-                            String subRuleDesc = null;
-                            String kitchenRoomColor = "";
-                            String kitchenStoreRoomColor = "";
-                            String kitchenDiningRoomColor = "";
+        OccupancyTypeHelper mostRestrictiveOccupancy = pl.getVirtualBuilding() != null
+                ? pl.getVirtualBuilding().getMostRestrictiveFarHelper()
+                : null;
 
-                            if (A.equalsIgnoreCase(mostRestrictiveOccupancy.getType().getCode())) {
-                                kitchenRoomColor = DxfFileConstants.RESIDENTIAL_KITCHEN_ROOM_COLOR;
-                                kitchenStoreRoomColor = DxfFileConstants.RESIDENTIAL_KITCHEN_STORE_ROOM_COLOR;
-                                kitchenDiningRoomColor = DxfFileConstants.RESIDENTIAL_KITCHEN_DINING_ROOM_COLOR;
-                            } else {
-                                kitchenRoomColor = DxfFileConstants.COMMERCIAL_KITCHEN_ROOM_COLOR;
-                                kitchenStoreRoomColor = DxfFileConstants.COMMERCIAL_KITCHEN_STORE_ROOM_COLOR;
-                                kitchenDiningRoomColor = DxfFileConstants.COMMERCIAL_KITCHEN_DINING_ROOM_COLOR;
-                            }
+        if (mostRestrictiveOccupancy == null || mostRestrictiveOccupancy.getSubtype() == null)
+            return pl;
 
-                            if (floor.getKitchen() != null) {
-                                List<BigDecimal> kitchenHeights = new ArrayList<>();
-                                List<RoomHeight> heights = floor.getKitchen().getHeights();
-                                List<Measurement> kitchenRooms = floor.getKitchen().getRooms();
+        String occupancyCode = mostRestrictiveOccupancy.getType().getCode();
+        if (!(A.equalsIgnoreCase(occupancyCode) || F.equalsIgnoreCase(occupancyCode)))
+            return pl;
 
-                                for (RoomHeight roomHeight : heights) {
-                                    kitchenHeights.add(roomHeight.getHeight());
-                                }
+        for (Block block : pl.getBlocks()) {
+            processKitchenForBlock(block, pl, mostRestrictiveOccupancy, heightOfRoomFeaturesColor);
+        }
 
-                                for (Measurement kitchen : kitchenRooms) {
-                                    if (heightOfRoomFeaturesColor.get(kitchenRoomColor) == kitchen.getColorCode()) {
-                                        kitchenAreas.add(kitchen.getArea());
-                                        kitchenWidths.add(kitchen.getWidth());
-                                    }
-                                    if (heightOfRoomFeaturesColor.get(kitchenStoreRoomColor) == kitchen.getColorCode()) {
-                                        kitchenStoreAreas.add(kitchen.getArea());
-                                        kitchenStoreWidths.add(kitchen.getWidth());
-                                    }
-                                    if (heightOfRoomFeaturesColor.get(kitchenDiningRoomColor) == kitchen.getColorCode()) {
-                                        kitchenDiningAreas.add(kitchen.getArea());
-                                        kitchenDiningWidths.add(kitchen.getWidth());
-                                    }
-                                }
+        return pl;
+    }
 
-                                if (!kitchenHeights.isEmpty()) {
-                                    BigDecimal minHeight = kitchenHeights.stream().reduce(BigDecimal::min).get().setScale(2, BigDecimal.ROUND_HALF_UP);
-                                    
-                                    
-                					
-               					    String feature = MdmsFeatureConstants.KITCHEN;
-               					
-               					    String occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl).toLowerCase();
-               				        String tenantId = pl.getTenantId();
-               				        String zone = pl.getPlanInformation().getZone().toLowerCase();
-               				        String subZone = pl.getPlanInformation().getSubZone().toLowerCase();
-               				        String riskType = fetchEdcrRulesMdms.getRiskType(pl).toLowerCase();
-               				        
-               				        RuleKey key = new RuleKey(EdcrRulesMdmsConstants.STATE, tenantId, zone, subZone, occupancyName, null, feature);
-               				        List<Object> rules = cache.getRules(tenantId, key);
-               						
-               				        Optional<MdmsFeatureRule> matchedRule = rules.stream()
-               				        	    .map(obj -> (MdmsFeatureRule) obj)
-               				        	    .findFirst();
+    private void processKitchenForBlock(Block block, Plan pl, OccupancyTypeHelper occupancy, Map<String, Integer> heightColors) {
+        if (block.getBuilding() == null || block.getBuilding().getFloors().isEmpty()) return;
 
-               				        	if (matchedRule.isPresent()) {
-               				        	    MdmsFeatureRule rule = matchedRule.get();
-	               				        	kitchenHeight = rule.getKitchenHeight();
-	               				        	kitchenArea = rule.getKitchenArea();
-	               				        	kitchenWidth = rule.getKitchenWidth();
-	               				        	kitchenStoreArea = rule.getKitchenStoreArea();
-	               				        	kitchenStoreWidth = rule.getKitchenStoreWidth();
-               				        	} 
+        scrutinyDetail = new ScrutinyDetail();
+        scrutinyDetail.addColumnHeading(1, RULE_NO);
+        scrutinyDetail.addColumnHeading(2, DESCRIPTION);
+        scrutinyDetail.addColumnHeading(3, FLOOR);
+        scrutinyDetail.addColumnHeading(4, REQUIRED);
+        scrutinyDetail.addColumnHeading(5, PROVIDED);
+        scrutinyDetail.addColumnHeading(6, STATUS);
+        scrutinyDetail.setKey("Block_" + block.getNumber() + "_Kitchen");
 
-                                   // minimumHeight = MINIMUM_HEIGHT_2_75;
-                                    subRule = SUBRULE_41_III;
-                                    subRuleDesc = SUBRULE_41_III_DESC;
+        for (Floor floor : block.getBuilding().getFloors()) {
+            processKitchenForFloor(floor, block, pl, occupancy, heightColors);
+        }
 
-                                    boolean valid = false;
-                                    boolean isTypicalRepititiveFloor = false;
-                                    Map<String, Object> typicalFloorValues = ProcessHelper.getTypicalFloorValues(block, floor,
-                                            isTypicalRepititiveFloor);
-                                    buildResult(pl, floor, kitchenHeight, subRule, subRuleDesc, minHeight, valid,
-                                            typicalFloorValues);
-                                } else {
-                                    String layerName = String.format(LAYER_ROOM_HEIGHT, block.getNumber(), floor.getNumber(),
-                                            "KITCHEN");
-                                    errors.put(layerName,
-                                            ROOM_HEIGHT_NOTDEFINED + layerName);
-                                    pl.addErrors(errors);
-                                }
+        pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+    }
 
-                            }
-                            subRule = SUBRULE_41_III;
+    private void processKitchenForFloor(Floor floor, Block block, Plan pl, OccupancyTypeHelper occupancy, Map<String, Integer> heightColors) {
+        if (floor.getKitchen() == null) return;
 
-                            if (!kitchenAreas.isEmpty()) {
-                                totalArea = kitchenAreas.stream().reduce(BigDecimal.ZERO, BigDecimal::add).setScale(2, BigDecimal.ROUND_HALF_UP);
-                                //kitchenArea = MINIMUM_AREA_5;
-                                subRuleDesc = String.format(SUBRULE_41_III_AREA_DESC, KITCHEN);
+        // Room Color Codes
+        String occ = occupancy.getType().getCode();
+        String kitchenColor = A.equalsIgnoreCase(occ) ? DxfFileConstants.RESIDENTIAL_KITCHEN_ROOM_COLOR : DxfFileConstants.COMMERCIAL_KITCHEN_ROOM_COLOR;
+        String kitchenStoreColor = A.equalsIgnoreCase(occ) ? DxfFileConstants.RESIDENTIAL_KITCHEN_STORE_ROOM_COLOR : DxfFileConstants.COMMERCIAL_KITCHEN_STORE_ROOM_COLOR;
+        String kitchenDiningColor = A.equalsIgnoreCase(occ) ? DxfFileConstants.RESIDENTIAL_KITCHEN_DINING_ROOM_COLOR : DxfFileConstants.COMMERCIAL_KITCHEN_DINING_ROOM_COLOR;
 
-                                boolean valid = false;
-                                boolean isTypicalRepititiveFloor = false;
-                                Map<String, Object> typicalFloorValues = ProcessHelper.getTypicalFloorValues(block, floor,
-                                        isTypicalRepititiveFloor);
-                                buildResult(pl, floor, kitchenArea, subRule, subRuleDesc, totalArea, valid, typicalFloorValues);
+        // Extract rooms and heights
+        List<Measurement> rooms = floor.getKitchen().getRooms();
+        List<RoomHeight> heights = floor.getKitchen().getHeights();
+        List<BigDecimal> kitchenHeights = heights.stream().map(RoomHeight::getHeight).collect(Collectors.toList());
 
-                            }
+        // Extract feature rules
+        List<Object> rules = cache.getFeatureRules(pl, MdmsFeatureConstants.KITCHEN, false);
+        Optional<MdmsFeatureRule> matchedRule = rules.stream().map(obj -> (MdmsFeatureRule) obj).findFirst();
+        if (!matchedRule.isPresent()) return;
+        MdmsFeatureRule rule = matchedRule.get();
 
-                            if (!kitchenWidths.isEmpty()) {
-                                boolean valid = false;
-                                boolean isTypicalRepititiveFloor = false;
-                                Map<String, Object> typicalFloorValues = ProcessHelper.getTypicalFloorValues(block, floor,
-                                        isTypicalRepititiveFloor);
-                                BigDecimal minRoomWidth = kitchenWidths.stream().reduce(BigDecimal::min).get().setScale(2, BigDecimal.ROUND_HALF_UP);
-                               // minWidth = MINIMUM_WIDTH_1_8;
-                                subRuleDesc = String.format(SUBRULE_41_III_TOTAL_WIDTH, KITCHEN);
-                                buildResult(pl, floor, kitchenWidth, subRule, subRuleDesc, minRoomWidth, valid, typicalFloorValues);
-                            }
+        // Validate height
+        if (!kitchenHeights.isEmpty()) {
+            BigDecimal minHeight = kitchenHeights.stream().min(Comparator.naturalOrder()).get().setScale(2, BigDecimal.ROUND_HALF_UP);
+            buildResult(pl, floor, rule.getKitchenHeight(), SUBRULE_41_III, SUBRULE_41_III_DESC, minHeight, false, ProcessHelper.getTypicalFloorValues(block, floor, false));
+        } else {
+            String layerName = String.format(LAYER_ROOM_HEIGHT, block.getNumber(), floor.getNumber(), "KITCHEN");
+            pl.addError(layerName, ROOM_HEIGHT_NOTDEFINED + layerName);
+        }
 
-                            if (!kitchenStoreAreas.isEmpty()) {
-                                totalArea = kitchenStoreAreas.stream().reduce(BigDecimal.ZERO, BigDecimal::add);
-                               // minimumHeight = MINIMUM_AREA_4_5;
-                                subRuleDesc = String.format(SUBRULE_41_III_AREA_DESC, KITCHEN_STORE);
+        // Process Room Types
+        processRoomType(rooms, heightColors, kitchenColor, rule.getKitchenArea(), rule.getKitchenWidth(), KITCHEN, floor, block, pl);
+        processRoomType(rooms, heightColors, kitchenStoreColor, rule.getKitchenStoreArea(), rule.getKitchenStoreWidth(), KITCHEN_STORE, floor, block, pl);
+        processRoomType(rooms, heightColors, kitchenDiningColor, rule.getKitchenDiningArea(), rule.getKitchenDiningWidth(), KITCHEN_DINING, floor, block, pl);
+    }
 
-                                boolean valid = false;
-                                boolean isTypicalRepititiveFloor = false;
-                                Map<String, Object> typicalFloorValues = ProcessHelper.getTypicalFloorValues(block, floor,
-                                        isTypicalRepititiveFloor);
-                                buildResult(pl, floor, kitchenStoreArea, subRule, subRuleDesc, totalArea, valid, typicalFloorValues);
+    private void processRoomType(List<Measurement> rooms, Map<String, Integer> heightColors, String color, BigDecimal minArea,
+                                 BigDecimal minWidth, String roomName, Floor floor, Block block, Plan pl) {
 
-                            }
+        List<BigDecimal> areas = new ArrayList<>();
+        List<BigDecimal> widths = new ArrayList<>();
 
-                            if (!kitchenStoreWidths.isEmpty()) {
-                                boolean valid = false;
-                                boolean isTypicalRepititiveFloor = false;
-                                Map<String, Object> typicalFloorValues = ProcessHelper.getTypicalFloorValues(block, floor,
-                                        isTypicalRepititiveFloor);
-                                BigDecimal minRoomWidth = kitchenStoreWidths.stream().reduce(BigDecimal::min).get();
-                               // minWidth = MINIMUM_WIDTH_1_8;
-                                subRuleDesc = String.format(SUBRULE_41_III_TOTAL_WIDTH, KITCHEN_STORE);
-                                buildResult(pl, floor, kitchenStoreWidth, subRule, subRuleDesc, minRoomWidth, valid, typicalFloorValues);
-                            }
-
-                            if (!kitchenDiningAreas.isEmpty()) {
-                                totalArea = kitchenDiningAreas.stream().reduce(BigDecimal.ZERO, BigDecimal::add);
-                               // minimumHeight = MINIMUM_AREA_7_5;
-                                subRuleDesc = String.format(SUBRULE_41_III_AREA_DESC, KITCHEN_DINING);
-
-                                boolean valid = false;
-                                boolean isTypicalRepititiveFloor = false;
-                                Map<String, Object> typicalFloorValues = ProcessHelper.getTypicalFloorValues(block, floor,
-                                        isTypicalRepititiveFloor);
-                                buildResult(pl, floor, kitchenDiningArea, subRule, subRuleDesc, totalArea, valid, typicalFloorValues);
-
-                            }
-
-                            if (!kitchenDiningWidths.isEmpty()) {
-                                boolean valid = false;
-                                boolean isTypicalRepititiveFloor = false;
-                                Map<String, Object> typicalFloorValues = ProcessHelper.getTypicalFloorValues(block, floor,
-                                        isTypicalRepititiveFloor);
-                                BigDecimal minRoomWidth = kitchenDiningWidths.stream().reduce(BigDecimal::min).get();
-                                //minWidth = MINIMUM_WIDTH_2_1;
-                                subRuleDesc = String.format(SUBRULE_41_III_TOTAL_WIDTH, KITCHEN_DINING);
-                                buildResult(pl, floor, kitchenDiningWidth, subRule, subRuleDesc, minRoomWidth, valid, typicalFloorValues);
-                            }
-                        }
-                    }
-                }
+        for (Measurement room : rooms) {
+            if (heightColors.get(color) != null && heightColors.get(color) == room.getColorCode()) {
+                areas.add(room.getArea());
+                widths.add(room.getWidth());
             }
         }
-        return pl;
 
+        if (!areas.isEmpty()) {
+            BigDecimal totalArea = areas.stream().reduce(BigDecimal.ZERO, BigDecimal::add).setScale(2, BigDecimal.ROUND_HALF_UP);
+            buildResult(pl, floor, minArea, SUBRULE_41_III, String.format(SUBRULE_41_III_AREA_DESC, roomName), totalArea, false, ProcessHelper.getTypicalFloorValues(block, floor, false));
+        }
+
+        if (!widths.isEmpty()) {
+            BigDecimal minRoomWidth = widths.stream().min(Comparator.naturalOrder()).get().setScale(2, BigDecimal.ROUND_HALF_UP);
+            buildResult(pl, floor, minWidth, SUBRULE_41_III, String.format(SUBRULE_41_III_TOTAL_WIDTH, roomName), minRoomWidth, false, ProcessHelper.getTypicalFloorValues(block, floor, false));
+        }
     }
+
 
     private void buildResult(Plan pl, Floor floor, BigDecimal expected, String subRule, String subRuleDesc,
             BigDecimal actual, boolean valid, Map<String, Object> typicalFloorValues) {

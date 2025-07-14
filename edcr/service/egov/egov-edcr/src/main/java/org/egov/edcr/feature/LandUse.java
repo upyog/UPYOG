@@ -102,115 +102,207 @@ public class LandUse extends FeatureProcess {
      * @param pl The plan object to validate.
      * @return The same plan object without any modifications.
      */
+//    @Override
+//    public Plan validate(Plan pl) {
+//        return pl;
+//    }
+//
+//    /**
+//     * Processes the given plan to validate land use zones.
+//     * Fetches permissible values for road width and validates them against the plan details.
+//     *
+//     * @param pl The plan object to process.
+//     * @return The processed plan object with scrutiny details added.
+//     */
+//    @Override
+//    public Plan process(Plan pl) {
+//        // Map to store validation errors
+//        HashMap<String, String> errors = new HashMap<>();
+//
+//        // Validate commercial zones in the plan
+//        validateCommercialZone(pl, errors);
+//        return pl;
+//    }
+//
+//    /**
+//     * Validates the commercial zone for the given plan.
+//     * Checks if the road width and land use zone meet the required conditions.
+//     *
+//     * @param pl The plan object to validate.
+//     * @param errors The map to store validation errors.
+//     */
+//    private void validateCommercialZone(Plan pl, HashMap<String, String> errors) {
+//    	List<Object> rules = cache.getFeatureRules(pl, MdmsFeatureConstants.LAND_USE, false);
+//        Optional<MdmsFeatureRule> matchedRule = rules.stream()
+//                .map(obj -> (MdmsFeatureRule) obj)
+//                .findFirst();
+//		
+//		
+//			if (matchedRule.isPresent()) {
+//			    MdmsFeatureRule rule = matchedRule.get();
+//			    RoadWidth = rule.getPermissible();
+//			    
+//			}
+//
+//        // Iterate through all blocks in the plan
+//        for (Block block : pl.getBlocks()) {
+//            StringBuffer floorNos = new StringBuffer();
+//            boolean isAccepted = false;
+//            String blkNo = block.getNumber();
+//
+//            // Initialize scrutiny detail for land use validation
+//            scrutinyDetail.addColumnHeading(1, RULE_NO);
+//            scrutinyDetail.addColumnHeading(2, DESCRIPTION);
+//            scrutinyDetail.addColumnHeading(3, ROAD_WIDTH);
+//            scrutinyDetail.addColumnHeading(4, REQUIRED);
+//            scrutinyDetail.addColumnHeading(5, PROVIDED);
+//            scrutinyDetail.addColumnHeading(6, STATUS);
+//            scrutinyDetail.setKey("Block_" + blkNo + "_" + "Land Use");
+//
+//            // Validate road width and land use zone
+//            BigDecimal roadWidth = pl.getPlanInformation().getRoadWidth();
+//            if (pl.getPlanInformation() != null && roadWidth != null
+//                    && StringUtils.isNotBlank(pl.getPlanInformation().getLandUseZone())
+//                    && DxfFileConstants.COMMERCIAL.equalsIgnoreCase(pl.getPlanInformation().getLandUseZone())
+//                    && Util.roundOffTwoDecimal(roadWidth).compareTo(RoadWidth) >= 0) {
+//
+//                List<Floor> floors = block.getBuilding().getFloors();
+//
+//                // Check if at least one floor is commercial
+//                for (Floor floor : floors) {
+//                    List<Occupancy> occupancies = floor.getOccupancies();
+//                    List<String> occupancyTypes = new ArrayList<>();
+//
+//                    for (Occupancy occupancy : occupancies) {
+//                        if (occupancy.getTypeHelper() != null && occupancy.getTypeHelper().getType() != null) {
+//                            occupancyTypes.add(occupancy.getTypeHelper().getType().getCode());
+//                        }
+//
+//                        if (occupancy.getTypeHelper() != null && occupancy.getTypeHelper().getSubtype() != null) {
+//                            occupancyTypes.add(occupancy.getTypeHelper().getSubtype().getCode());
+//                        }
+//                    }
+//
+//                    if (occupancyTypes.size() > 0) {
+//                        if (occupancyTypes.contains(DxfFileConstants.F)) {
+//                            floorNos.append(floor.getNumber()).append(",");
+//                        }
+//                    }
+//                }
+//
+//                // Add scrutiny details for land use validation
+//                Map<String, String> details = new HashMap<>();
+//                details.put(RULE_NO, RULE_28);
+//                details.put(DESCRIPTION, "Land use Zone");
+//                details.put(ROAD_WIDTH, pl.getPlanInformation().getRoadWidth().toString());
+//                details.put(REQUIRED, "At least one floor should be commercial");
+//                details.put(PROVIDED, floorNos.length() == 0 ? "Commercial floor is not present"
+//                        : floorNos.toString().substring(0, floorNos.length() - 1) + " floors are commercial");
+//                details.put(STATUS, isAccepted ? Result.Accepted.getResultVal() : Result.Not_Accepted.getResultVal());
+//                scrutinyDetail.getDetail().add(details);
+//                pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+//            }
+//        }
+//    }
+    
     @Override
     public Plan validate(Plan pl) {
         return pl;
     }
 
-    /**
-     * Processes the given plan to validate land use zones.
-     * Fetches permissible values for road width and validates them against the plan details.
-     *
-     * @param pl The plan object to process.
-     * @return The processed plan object with scrutiny details added.
-     */
     @Override
     public Plan process(Plan pl) {
-        // Map to store validation errors
-        HashMap<String, String> errors = new HashMap<>();
-
-        // Validate commercial zones in the plan
+        Map<String, String> errors = new HashMap<>();
         validateCommercialZone(pl, errors);
         return pl;
     }
 
-    /**
-     * Validates the commercial zone for the given plan.
-     * Checks if the road width and land use zone meet the required conditions.
-     *
-     * @param pl The plan object to validate.
-     * @param errors The map to store validation errors.
-     */
-    private void validateCommercialZone(Plan pl, HashMap<String, String> errors) {
-    	String occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl).toLowerCase();
-        String feature = MdmsFeatureConstants.LAND_USE;
-        String tenantId = pl.getTenantId();
-        String zone = pl.getPlanInformation().getZone().toLowerCase();
-        String subZone = pl.getPlanInformation().getSubZone().toLowerCase();
-        String riskType = fetchEdcrRulesMdms.getRiskType(pl).toLowerCase();
-        RuleKey key = new RuleKey(EdcrRulesMdmsConstants.STATE, tenantId, zone, subZone, occupancyName, null, feature);
-        List<Object> rules = cache.getRules(tenantId, key);
-		
-		Optional<MdmsFeatureRule> matchedRule = rules.stream()
-			    .map(obj -> (MdmsFeatureRule) obj)
-			    .findFirst();
+    private void validateCommercialZone(Plan pl, Map<String, String> errors) {
+        Optional<MdmsFeatureRule> matchedRule = fetchCommercialZoneRule(pl);
+        if (!matchedRule.isPresent()) return;
 
-			if (matchedRule.isPresent()) {
-			    MdmsFeatureRule rule = matchedRule.get();
-			    RoadWidth = rule.getPermissible();
-			    
-			}
+        BigDecimal permissibleRoadWidth = matchedRule.get().getPermissible();
 
-        // Iterate through all blocks in the plan
         for (Block block : pl.getBlocks()) {
-            StringBuffer floorNos = new StringBuffer();
-            boolean isAccepted = false;
-            String blkNo = block.getNumber();
-
-            // Initialize scrutiny detail for land use validation
-            scrutinyDetail.addColumnHeading(1, RULE_NO);
-            scrutinyDetail.addColumnHeading(2, DESCRIPTION);
-            scrutinyDetail.addColumnHeading(3, ROAD_WIDTH);
-            scrutinyDetail.addColumnHeading(4, REQUIRED);
-            scrutinyDetail.addColumnHeading(5, PROVIDED);
-            scrutinyDetail.addColumnHeading(6, STATUS);
-            scrutinyDetail.setKey("Block_" + blkNo + "_" + "Land Use");
-
-            // Validate road width and land use zone
-            BigDecimal roadWidth = pl.getPlanInformation().getRoadWidth();
-            if (pl.getPlanInformation() != null && roadWidth != null
-                    && StringUtils.isNotBlank(pl.getPlanInformation().getLandUseZone())
-                    && DxfFileConstants.COMMERCIAL.equalsIgnoreCase(pl.getPlanInformation().getLandUseZone())
-                    && Util.roundOffTwoDecimal(roadWidth).compareTo(RoadWidth) >= 0) {
-
-                List<Floor> floors = block.getBuilding().getFloors();
-
-                // Check if at least one floor is commercial
-                for (Floor floor : floors) {
-                    List<Occupancy> occupancies = floor.getOccupancies();
-                    List<String> occupancyTypes = new ArrayList<>();
-
-                    for (Occupancy occupancy : occupancies) {
-                        if (occupancy.getTypeHelper() != null && occupancy.getTypeHelper().getType() != null) {
-                            occupancyTypes.add(occupancy.getTypeHelper().getType().getCode());
-                        }
-
-                        if (occupancy.getTypeHelper() != null && occupancy.getTypeHelper().getSubtype() != null) {
-                            occupancyTypes.add(occupancy.getTypeHelper().getSubtype().getCode());
-                        }
-                    }
-
-                    if (occupancyTypes.size() > 0) {
-                        if (occupancyTypes.contains(DxfFileConstants.F)) {
-                            floorNos.append(floor.getNumber()).append(",");
-                        }
-                    }
-                }
-
-                // Add scrutiny details for land use validation
-                Map<String, String> details = new HashMap<>();
-                details.put(RULE_NO, RULE_28);
-                details.put(DESCRIPTION, "Land use Zone");
-                details.put(ROAD_WIDTH, pl.getPlanInformation().getRoadWidth().toString());
-                details.put(REQUIRED, "At least one floor should be commercial");
-                details.put(PROVIDED, floorNos.length() == 0 ? "Commercial floor is not present"
-                        : floorNos.toString().substring(0, floorNos.length() - 1) + " floors are commercial");
-                details.put(STATUS, isAccepted ? Result.Accepted.getResultVal() : Result.Not_Accepted.getResultVal());
-                scrutinyDetail.getDetail().add(details);
-                pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
-            }
+            validateBlockCommercialZone(pl, block, permissibleRoadWidth);
         }
     }
+
+    private Optional<MdmsFeatureRule> fetchCommercialZoneRule(Plan pl) {
+        List<Object> rules = cache.getFeatureRules(pl, MdmsFeatureConstants.LAND_USE, false);
+        return rules.stream().map(obj -> (MdmsFeatureRule) obj).findFirst();
+    }
+
+    private void validateBlockCommercialZone(Plan pl, Block block, BigDecimal permissibleRoadWidth) {
+        BigDecimal roadWidth = pl.getPlanInformation().getRoadWidth();
+        String landUseZone = pl.getPlanInformation().getLandUseZone();
+
+        if (pl.getPlanInformation() == null || roadWidth == null || 
+            StringUtils.isBlank(landUseZone) || 
+            !DxfFileConstants.COMMERCIAL.equalsIgnoreCase(landUseZone) || 
+            Util.roundOffTwoDecimal(roadWidth).compareTo(permissibleRoadWidth) < 0) {
+            return;
+        }
+
+        String blkNo = block.getNumber();
+        StringBuffer commercialFloors = getCommercialFloors(block);
+        boolean isAccepted = commercialFloors.length() > 0;
+
+        initializeScrutinyHeader("Block_" + blkNo + "_Land Use");
+        Map<String, String> details = buildScrutinyDetails(pl, commercialFloors, isAccepted);
+        scrutinyDetail.getDetail().add(details);
+        pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+    }
+
+    private StringBuffer getCommercialFloors(Block block) {
+        StringBuffer floorNos = new StringBuffer();
+        for (Floor floor : block.getBuilding().getFloors()) {
+            if (isFloorCommercial(floor)) {
+                floorNos.append(floor.getNumber()).append(",");
+            }
+        }
+        return floorNos;
+    }
+
+    private boolean isFloorCommercial(Floor floor) {
+        for (Occupancy occupancy : floor.getOccupancies()) {
+            if (occupancy.getTypeHelper() != null) {
+                String type = occupancy.getTypeHelper().getType() != null 
+                              ? occupancy.getTypeHelper().getType().getCode() : null;
+                String subtype = occupancy.getTypeHelper().getSubtype() != null 
+                                 ? occupancy.getTypeHelper().getSubtype().getCode() : null;
+
+                if (DxfFileConstants.F.equalsIgnoreCase(type) || DxfFileConstants.F.equalsIgnoreCase(subtype)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private void initializeScrutinyHeader(String key) {
+        scrutinyDetail.addColumnHeading(1, RULE_NO);
+        scrutinyDetail.addColumnHeading(2, DESCRIPTION);
+        scrutinyDetail.addColumnHeading(3, ROAD_WIDTH);
+        scrutinyDetail.addColumnHeading(4, REQUIRED);
+        scrutinyDetail.addColumnHeading(5, PROVIDED);
+        scrutinyDetail.addColumnHeading(6, STATUS);
+        scrutinyDetail.setKey(key);
+    }
+
+    private Map<String, String> buildScrutinyDetails(Plan pl, StringBuffer commercialFloors, boolean isAccepted) {
+        Map<String, String> details = new HashMap<>();
+        details.put(RULE_NO, RULE_28);
+        details.put(DESCRIPTION, "Land use Zone");
+        details.put(ROAD_WIDTH, pl.getPlanInformation().getRoadWidth().toString());
+        details.put(REQUIRED, "At least one floor should be commercial");
+        details.put(PROVIDED, commercialFloors.length() == 0 
+            ? "Commercial floor is not present"
+            : commercialFloors.substring(0, commercialFloors.length() - 1) + " floors are commercial");
+        details.put(STATUS, isAccepted ? Result.Accepted.getResultVal() : Result.Not_Accepted.getResultVal());
+        return details;
+    }
+
 
     /**
      * Returns an empty map as no amendments are defined for this feature.

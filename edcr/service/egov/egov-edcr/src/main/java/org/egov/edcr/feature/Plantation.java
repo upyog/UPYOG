@@ -86,110 +86,208 @@ public class Plantation extends FeatureProcess {
     private static final String RULE_32 = "4.4.4 (XI)";
     public static final String PLANTATION_TREECOVER_DESCRIPTION = "Plantation tree cover";
 
+    @Autowired
+  	CacheManagerMdms cache;
+    
     @Override
     public Plan validate(Plan pl) {
         return null;
     }
 
-    @Autowired
-	FetchEdcrRulesMdms fetchEdcrRulesMdms;
     
-    @Autowired
-	CacheManagerMdms cache;
+//	@Override
+//	public Plan process(Plan pl) {
+//		validate(pl);
+//		scrutinyDetail = new ScrutinyDetail();
+//		scrutinyDetail.setKey(Common_Plantation);
+//		scrutinyDetail.addColumnHeading(1, RULE_NO);
+//		scrutinyDetail.addColumnHeading(2, DESCRIPTION);
+//		scrutinyDetail.addColumnHeading(3, REQUIRED);
+//		scrutinyDetail.addColumnHeading(4, PROVIDED);
+//		scrutinyDetail.addColumnHeading(5, STATUS);
+//		Map<String, String> details = new HashMap<>();
+//		details.put(RULE_NO, RULE_32);
+//		details.put(DESCRIPTION, PLANTATION_TREECOVER_DESCRIPTION);
+//
+//		BigDecimal totalArea = BigDecimal.ZERO;
+//		BigDecimal plotArea = BigDecimal.ZERO;
+//		BigDecimal plantationPer = BigDecimal.ZERO;
+//		String type = "";
+//		String subType = "";
+//		if (pl.getPlantation() != null && pl.getPlantation().getPlantations() != null
+//				&& !pl.getPlantation().getPlantations().isEmpty()) {
+//			for (Measurement m : pl.getPlantation().getPlantations()) {
+//				totalArea = totalArea.add(m.getArea());
+//			}
+//
+//			if (pl.getPlot() != null)
+//				plotArea = pl.getPlot().getArea();
+//
+//			if (pl.getVirtualBuilding() != null && pl.getVirtualBuilding().getMostRestrictiveFarHelper() != null
+//					&& pl.getVirtualBuilding().getMostRestrictiveFarHelper().getSubtype() != null) {
+//				type = pl.getVirtualBuilding().getMostRestrictiveFarHelper().getType().getCode();
+//				subType = pl.getVirtualBuilding().getMostRestrictiveFarHelper().getSubtype().getCode();
+//			}
+//			if (totalArea.intValue() > 0 && plotArea != null && plotArea.intValue() > 0)
+//				plantationPer = totalArea.divide(plotArea, DECIMALDIGITS_MEASUREMENTS, ROUNDMODE_MEASUREMENTS);
+//
+//			if (A.equals(type) || A_AF.equals(subType) || A_SA.equals(subType) || B.equals(type) || D.equals(type)
+//					|| G.equals(type)) {
+//
+////                if (plantationPer.compareTo(new BigDecimal("0.10")) < 0) {
+////                    details.put(REQUIRED, ">= 10%");
+////                    details.put(PROVIDED, plantationPer.multiply(new BigDecimal(100)).toString() + "%");
+////                    details.put(STATUS, Result.Not_Accepted.getResultVal());
+////                    scrutinyDetail.getDetail().add(details);
+////                    pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+////                } else {
+////                    details.put(REQUIRED, ">= 10%");
+////                    details.put(PROVIDED, plantationPer.multiply(new BigDecimal(100)).toString() + "%");
+////                    details.put(STATUS, Result.Accepted.getResultVal());
+////                    scrutinyDetail.getDetail().add(details);
+////                    pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+////                }
+//				// } else {
+//
+//				BigDecimal plantation = BigDecimal.ZERO;
+//				BigDecimal percent;
+//
+//				List<Object> rules = cache.getFeatureRules(pl, MdmsFeatureConstants.PLANTATION, false);
+//
+//				Optional<MdmsFeatureRule> matchedRule = rules.stream().map(obj -> (MdmsFeatureRule) obj).findFirst();
+//
+//				if (matchedRule.isPresent()) {
+//					MdmsFeatureRule rule = matchedRule.get();
+//					plantation = rule.getPermissible();
+//					percent = rule.getPercent();
+//				}
+//
+//				if (plantationPer.compareTo(plantation) >= 0) {
+//					details.put(REQUIRED, ">= 5%");
+//					details.put(PROVIDED, plantationPer.multiply(new BigDecimal(100)).toString() + "%");
+//					details.put(STATUS, Result.Accepted.getResultVal());
+//					scrutinyDetail.getDetail().add(details);
+//					pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+//				} else {
+//					details.put(REQUIRED, ">= 5%");
+//					details.put(PROVIDED, plantationPer.multiply(new BigDecimal(100)).toString() + "%");
+//					details.put(STATUS, Result.Not_Accepted.getResultVal());
+//					scrutinyDetail.getDetail().add(details);
+//					pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+//				}
+//			}
+//		}
+//		return pl;
+//	}
     
-	@Override
-	public Plan process(Plan pl) {
-		validate(pl);
-		scrutinyDetail = new ScrutinyDetail();
-		scrutinyDetail.setKey(Common_Plantation);
-		scrutinyDetail.addColumnHeading(1, RULE_NO);
-		scrutinyDetail.addColumnHeading(2, DESCRIPTION);
-		scrutinyDetail.addColumnHeading(3, REQUIRED);
-		scrutinyDetail.addColumnHeading(4, PROVIDED);
-		scrutinyDetail.addColumnHeading(5, STATUS);
-		Map<String, String> details = new HashMap<>();
-		details.put(RULE_NO, RULE_32);
-		details.put(DESCRIPTION, PLANTATION_TREECOVER_DESCRIPTION);
+    @Override
+    public Plan process(Plan pl) {
+    	validate(pl);
+    	ScrutinyDetail scrutinyDetail = createScrutinyDetail();
+    	Map<String, String> details = createInitialDetails();
 
-		BigDecimal totalArea = BigDecimal.ZERO;
-		BigDecimal plotArea = BigDecimal.ZERO;
-		BigDecimal plantationPer = BigDecimal.ZERO;
-		String type = "";
-		String subType = "";
-		if (pl.getPlantation() != null && pl.getPlantation().getPlantations() != null
-				&& !pl.getPlantation().getPlantations().isEmpty()) {
-			for (Measurement m : pl.getPlantation().getPlantations()) {
-				totalArea = totalArea.add(m.getArea());
-			}
+    	BigDecimal totalArea = getTotalPlantationArea(pl);
+    	BigDecimal plotArea = getPlotArea(pl);
+    	String type = getOccupancyType(pl);
+    	String subType = getOccupancySubType(pl);
 
-			if (pl.getPlot() != null)
-				plotArea = pl.getPlot().getArea();
+    	BigDecimal plantationPer = calculatePlantationPercentage(totalArea, plotArea);
 
-			if (pl.getVirtualBuilding() != null && pl.getVirtualBuilding().getMostRestrictiveFarHelper() != null
-					&& pl.getVirtualBuilding().getMostRestrictiveFarHelper().getSubtype() != null) {
-				type = pl.getVirtualBuilding().getMostRestrictiveFarHelper().getType().getCode();
-				subType = pl.getVirtualBuilding().getMostRestrictiveFarHelper().getSubtype().getCode();
-			}
-			if (totalArea.intValue() > 0 && plotArea != null && plotArea.intValue() > 0)
-				plantationPer = totalArea.divide(plotArea, DECIMALDIGITS_MEASUREMENTS, ROUNDMODE_MEASUREMENTS);
+    	if (isRelevantOccupancyType(type, subType) && plantationPer.compareTo(BigDecimal.ZERO) > 0) {
+    		processPlantationRule(pl, plantationPer, scrutinyDetail, details);
+    	}
 
-			if (A.equals(type) || A_AF.equals(subType) || A_SA.equals(subType) || B.equals(type) || D.equals(type)
-					|| G.equals(type)) {
+    	return pl;
+    }
 
-//                if (plantationPer.compareTo(new BigDecimal("0.10")) < 0) {
-//                    details.put(REQUIRED, ">= 10%");
-//                    details.put(PROVIDED, plantationPer.multiply(new BigDecimal(100)).toString() + "%");
-//                    details.put(STATUS, Result.Not_Accepted.getResultVal());
-//                    scrutinyDetail.getDetail().add(details);
-//                    pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
-//                } else {
-//                    details.put(REQUIRED, ">= 10%");
-//                    details.put(PROVIDED, plantationPer.multiply(new BigDecimal(100)).toString() + "%");
-//                    details.put(STATUS, Result.Accepted.getResultVal());
-//                    scrutinyDetail.getDetail().add(details);
-//                    pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
-//                }
-				// } else {
+    private ScrutinyDetail createScrutinyDetail() {
+    	ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
+    	scrutinyDetail.setKey(Common_Plantation);
+    	scrutinyDetail.addColumnHeading(1, RULE_NO);
+    	scrutinyDetail.addColumnHeading(2, DESCRIPTION);
+    	scrutinyDetail.addColumnHeading(3, REQUIRED);
+    	scrutinyDetail.addColumnHeading(4, PROVIDED);
+    	scrutinyDetail.addColumnHeading(5, STATUS);
+    	return scrutinyDetail;
+    }
 
-				String feature = MdmsFeatureConstants.PLANTATION;
-				BigDecimal plantation = BigDecimal.ZERO;
-				BigDecimal percent;
+    private Map<String, String> createInitialDetails() {
+    	Map<String, String> details = new HashMap<>();
+    	details.put(RULE_NO, RULE_32);
+    	details.put(DESCRIPTION, PLANTATION_TREECOVER_DESCRIPTION);
+    	return details;
+    }
 
-				String occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl).toLowerCase();
-				String tenantId = pl.getTenantId();
-				String zone = pl.getPlanInformation().getZone().toLowerCase();
-				String subZone = pl.getPlanInformation().getSubZone().toLowerCase();
-				String riskType = fetchEdcrRulesMdms.getRiskType(pl).toLowerCase();
+    private BigDecimal getTotalPlantationArea(Plan pl) {
+    	BigDecimal totalArea = BigDecimal.ZERO;
+    	if (pl.getPlantation() != null && pl.getPlantation().getPlantations() != null) {
+    		for (Measurement m : pl.getPlantation().getPlantations()) {
+    			totalArea = totalArea.add(m.getArea());
+    		}
+    	}
+    	return totalArea;
+    }
 
-				RuleKey key = new RuleKey(EdcrRulesMdmsConstants.STATE, tenantId, zone, subZone, occupancyName, null,
-						feature);
-				List<Object> rules = cache.getRules(tenantId, key);
+    private BigDecimal getPlotArea(Plan pl) {
+    	return (pl.getPlot() != null) ? pl.getPlot().getArea() : BigDecimal.ZERO;
+    }
 
-				Optional<MdmsFeatureRule> matchedRule = rules.stream().map(obj -> (MdmsFeatureRule) obj).findFirst();
+    private String getOccupancyType(Plan pl) {
+    	if (pl.getVirtualBuilding() != null &&
+    			pl.getVirtualBuilding().getMostRestrictiveFarHelper() != null &&
+    			pl.getVirtualBuilding().getMostRestrictiveFarHelper().getType() != null) {
+    		return pl.getVirtualBuilding().getMostRestrictiveFarHelper().getType().getCode();
+    	}
+    	return "";
+    }
 
-				if (matchedRule.isPresent()) {
-					MdmsFeatureRule rule = matchedRule.get();
-					plantation = rule.getPermissible();
-					percent = rule.getPercent();
-				}
+    private String getOccupancySubType(Plan pl) {
+    	if (pl.getVirtualBuilding() != null &&
+    			pl.getVirtualBuilding().getMostRestrictiveFarHelper() != null &&
+    			pl.getVirtualBuilding().getMostRestrictiveFarHelper().getSubtype() != null) {
+    		return pl.getVirtualBuilding().getMostRestrictiveFarHelper().getSubtype().getCode();
+    	}
+    	return "";
+    }
 
-				if (plantationPer.compareTo(plantation) >= 0) {
-					details.put(REQUIRED, ">= 5%");
-					details.put(PROVIDED, plantationPer.multiply(new BigDecimal(100)).toString() + "%");
-					details.put(STATUS, Result.Accepted.getResultVal());
-					scrutinyDetail.getDetail().add(details);
-					pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
-				} else {
-					details.put(REQUIRED, ">= 5%");
-					details.put(PROVIDED, plantationPer.multiply(new BigDecimal(100)).toString() + "%");
-					details.put(STATUS, Result.Not_Accepted.getResultVal());
-					scrutinyDetail.getDetail().add(details);
-					pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
-				}
-			}
-		}
-		return pl;
-	}
+    private BigDecimal calculatePlantationPercentage(BigDecimal totalArea, BigDecimal plotArea) {
+    	if (plotArea != null && plotArea.compareTo(BigDecimal.ZERO) > 0) {
+    		return totalArea.divide(plotArea, DECIMALDIGITS_MEASUREMENTS, ROUNDMODE_MEASUREMENTS);
+    	}
+    	return BigDecimal.ZERO;
+    }
+
+    private boolean isRelevantOccupancyType(String type, String subType) {
+    	return A.equals(type) || B.equals(type) || D.equals(type) || G.equals(type)
+    			|| A_AF.equals(subType) || A_SA.equals(subType);
+    }
+
+    private void processPlantationRule(Plan pl, BigDecimal plantationPer, ScrutinyDetail scrutinyDetail, Map<String, String> details) {
+    	BigDecimal plantation = BigDecimal.ZERO;
+    	BigDecimal percent;
+
+    	List<Object> rules = cache.getFeatureRules(pl, MdmsFeatureConstants.PLANTATION, false);
+    	Optional<MdmsFeatureRule> matchedRule = rules.stream().map(obj -> (MdmsFeatureRule) obj).findFirst();
+
+    	if (matchedRule.isPresent()) {
+    		MdmsFeatureRule rule = matchedRule.get();
+    		plantation = rule.getPermissible();
+    		percent = rule.getPercent();
+    	}
+
+    	if (plantationPer.compareTo(plantation) >= 0) {
+    		details.put(REQUIRED, ">= 5%");
+    		details.put(PROVIDED, plantationPer.multiply(new BigDecimal(100)).toString() + "%");
+    		details.put(STATUS, Result.Accepted.getResultVal());
+    	} else {
+    		details.put(REQUIRED, ">= 5%");
+    		details.put(PROVIDED, plantationPer.multiply(new BigDecimal(100)).toString() + "%");
+    		details.put(STATUS, Result.Not_Accepted.getResultVal());
+    	}
+
+    	scrutinyDetail.getDetail().add(details);
+    	pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+    }
 
     @Override
     public Map<String, Date> getAmendments() {

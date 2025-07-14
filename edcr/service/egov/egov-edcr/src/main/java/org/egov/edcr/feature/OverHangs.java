@@ -65,11 +65,8 @@ import org.egov.common.entity.edcr.Floor;
 import org.egov.common.entity.edcr.MdmsFeatureRule;
 import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.Result;
-import org.egov.common.entity.edcr.RuleKey;
 import org.egov.common.entity.edcr.ScrutinyDetail;
-import org.egov.edcr.constants.EdcrRulesMdmsConstants;
 import org.egov.edcr.service.CacheManagerMdms;
-import org.egov.edcr.service.FetchEdcrRulesMdms;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -81,106 +78,178 @@ public class OverHangs extends FeatureProcess {
     public static final String OVERHANGS_DESCRIPTION = "Minimum width of chajja";
     private static final String FLOOR = "Floor";
 
+    @Autowired
+   	CacheManagerMdms cache;
+    
     @Override
     public Plan validate(Plan pl) {
 
         return pl;
     }
     
-    @Autowired
-    FetchEdcrRulesMdms fetchEdcrRulesMdms;
+//   
+//
+//    @Override
+//    public Plan process(Plan pl) {
+//
+//        // Initialize a map to store rule details
+//        Map<String, String> details = new HashMap<>();
+//        details.put(RULE_NO, RULE_45); // Rule number for overhangs
+//        details.put(DESCRIPTION, OVERHANGS_DESCRIPTION); // Description of the rule
+//
+//        // Initialize variables to store minimum width and permissible overhang value
+//        BigDecimal minWidth = BigDecimal.ZERO;
+//        BigDecimal overHangsValue = BigDecimal.ZERO;
+//
+//        
+//        
+//            List<Object> rules = cache.getFeatureRules(pl, MdmsFeatureConstants.LIFT, false);	
+//            Optional<MdmsFeatureRule> matchedRule = rules.stream()
+//            	    .map(obj -> (MdmsFeatureRule) obj)
+//            	    .findFirst();
+//
+//            	if (matchedRule.isPresent()) {
+//            	    MdmsFeatureRule rule = matchedRule.get();
+//            	    overHangsValue = rule.getPermissible();
+//            	} else {
+//            		overHangsValue = BigDecimal.ZERO;
+//            	}
+//
+//        // Iterate through all blocks in the plan
+//        for (Block b : pl.getBlocks()) {
+//
+//            // Initialize scrutiny details for the block
+//            ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
+//            scrutinyDetail.setKey("Block_" + b.getNumber() + "_" + "Chajja");
+//            scrutinyDetail.addColumnHeading(1, RULE_NO);
+//            scrutinyDetail.addColumnHeading(2, FLOOR);
+//            scrutinyDetail.addColumnHeading(3, DESCRIPTION);
+//            scrutinyDetail.addColumnHeading(4, PERMISSIBLE);
+//            scrutinyDetail.addColumnHeading(5, PROVIDED);
+//            scrutinyDetail.addColumnHeading(6, STATUS);
+//
+//            // Get the building object from the block
+//            Building building = b.getBuilding();
+//            if (building != null) {
+//                // Iterate through all floors in the building
+//                for (Floor floor : building.getFloors()) {
+//                    // Check if the floor has overhangs
+//                    if (floor.getOverHangs() != null && !floor.getOverHangs().isEmpty()) {
+//                        // Collect the widths of all overhangs
+//                        List<BigDecimal> widths = floor.getOverHangs().stream().map(overhang -> overhang.getWidth())
+//                                .collect(Collectors.toList());
+//
+//                        // Find the minimum width among the overhangs
+//                        minWidth = widths.stream().reduce(BigDecimal::min).get();
+//
+//                        // Compare the minimum width with the permissible overhang value
+//                        if (minWidth.compareTo(overHangsValue) > 0) {
+//                            // If the minimum width is greater than the permissible value, mark as Accepted
+//                            details.put(FLOOR, floor.getNumber().toString());
+//                            details.put(PERMISSIBLE, ">" + overHangsValue.toString());
+//                            details.put(PROVIDED, minWidth.toString());
+//                            details.put(STATUS, Result.Accepted.getResultVal());
+//                            scrutinyDetail.getDetail().add(details);
+//                            pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+//                        } else {
+//                            // If the minimum width is less than or equal to the permissible value, mark as Not Accepted
+//                            details.put(FLOOR, floor.getNumber().toString());
+//                            details.put(PERMISSIBLE, ">" + overHangsValue.toString());
+//                            details.put(PROVIDED, minWidth.toString());
+//                            details.put(STATUS, Result.Not_Accepted.getResultVal());
+//                            scrutinyDetail.getDetail().add(details);
+//                            pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//        return pl; // Return the updated plan object
+//    }
     
-    @Autowired
-	CacheManagerMdms cache;
-
     @Override
     public Plan process(Plan pl) {
+        Map<String, String> details = initializeRuleDetails();
+        BigDecimal overHangsValue = getOverhangPermissibleValue(pl);
 
-        // Initialize a map to store rule details
-        Map<String, String> details = new HashMap<>();
-        details.put(RULE_NO, RULE_45); // Rule number for overhangs
-        details.put(DESCRIPTION, OVERHANGS_DESCRIPTION); // Description of the rule
-
-        // Initialize variables to store minimum width and permissible overhang value
-        BigDecimal minWidth = BigDecimal.ZERO;
-        BigDecimal overHangsValue = BigDecimal.ZERO;
-
-        // Determine the occupancy type
-        
-        String feature = MdmsFeatureConstants.OVERHANGS; // Feature name for overhangs
-       
-    	 String occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl).toLowerCase();
-            String tenantId = pl.getTenantId();
-            String zone = pl.getPlanInformation().getZone().toLowerCase();
-            String subZone = pl.getPlanInformation().getSubZone().toLowerCase();
-            String riskType = fetchEdcrRulesMdms.getRiskType(pl).toLowerCase();
-            
-            RuleKey key = new RuleKey(EdcrRulesMdmsConstants.STATE, tenantId, zone, subZone, occupancyName, null, feature);
-            List<Object> rules = cache.getRules(tenantId, key);
-    		
-            Optional<MdmsFeatureRule> matchedRule = rules.stream()
-            	    .map(obj -> (MdmsFeatureRule) obj)
-            	    .findFirst();
-
-            	if (matchedRule.isPresent()) {
-            	    MdmsFeatureRule rule = matchedRule.get();
-            	    overHangsValue = rule.getPermissible();
-            	} else {
-            		overHangsValue = BigDecimal.ZERO;
-            	}
-
-        // Iterate through all blocks in the plan
-        for (Block b : pl.getBlocks()) {
-
-            // Initialize scrutiny details for the block
-            ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
-            scrutinyDetail.setKey("Block_" + b.getNumber() + "_" + "Chajja");
-            scrutinyDetail.addColumnHeading(1, RULE_NO);
-            scrutinyDetail.addColumnHeading(2, FLOOR);
-            scrutinyDetail.addColumnHeading(3, DESCRIPTION);
-            scrutinyDetail.addColumnHeading(4, PERMISSIBLE);
-            scrutinyDetail.addColumnHeading(5, PROVIDED);
-            scrutinyDetail.addColumnHeading(6, STATUS);
-
-            // Get the building object from the block
-            Building building = b.getBuilding();
-            if (building != null) {
-                // Iterate through all floors in the building
-                for (Floor floor : building.getFloors()) {
-                    // Check if the floor has overhangs
-                    if (floor.getOverHangs() != null && !floor.getOverHangs().isEmpty()) {
-                        // Collect the widths of all overhangs
-                        List<BigDecimal> widths = floor.getOverHangs().stream().map(overhang -> overhang.getWidth())
-                                .collect(Collectors.toList());
-
-                        // Find the minimum width among the overhangs
-                        minWidth = widths.stream().reduce(BigDecimal::min).get();
-
-                        // Compare the minimum width with the permissible overhang value
-                        if (minWidth.compareTo(overHangsValue) > 0) {
-                            // If the minimum width is greater than the permissible value, mark as Accepted
-                            details.put(FLOOR, floor.getNumber().toString());
-                            details.put(PERMISSIBLE, ">" + overHangsValue.toString());
-                            details.put(PROVIDED, minWidth.toString());
-                            details.put(STATUS, Result.Accepted.getResultVal());
-                            scrutinyDetail.getDetail().add(details);
-                            pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
-                        } else {
-                            // If the minimum width is less than or equal to the permissible value, mark as Not Accepted
-                            details.put(FLOOR, floor.getNumber().toString());
-                            details.put(PERMISSIBLE, ">" + overHangsValue.toString());
-                            details.put(PROVIDED, minWidth.toString());
-                            details.put(STATUS, Result.Not_Accepted.getResultVal());
-                            scrutinyDetail.getDetail().add(details);
-                            pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
-                        }
-                    }
-                }
-            }
+        for (Block block : pl.getBlocks()) {
+            processBlock(block, pl, overHangsValue, details);
         }
-        return pl; // Return the updated plan object
+
+        return pl;
     }
 
+    private Map<String, String> initializeRuleDetails() {
+        Map<String, String> details = new HashMap<>();
+        details.put(RULE_NO, RULE_45);
+        details.put(DESCRIPTION, OVERHANGS_DESCRIPTION);
+        return details;
+    }
+
+    private BigDecimal getOverhangPermissibleValue(Plan pl) {
+        List<Object> rules = cache.getFeatureRules(pl, MdmsFeatureConstants.OVERHANGS, false);
+        Optional<MdmsFeatureRule> matchedRule = rules.stream()
+                .map(obj -> (MdmsFeatureRule) obj)
+                .findFirst();
+
+        return matchedRule.map(MdmsFeatureRule::getPermissible).orElse(BigDecimal.ZERO);
+    }
+
+    private void processBlock(Block block, Plan pl, BigDecimal overHangsValue, Map<String, String> detailsTemplate) {
+        ScrutinyDetail scrutinyDetail = initializeScrutinyDetail(block);
+
+        Building building = block.getBuilding();
+        if (building != null) {
+            for (Floor floor : building.getFloors()) {
+                processFloor(floor, scrutinyDetail, overHangsValue, detailsTemplate);
+            }
+        }
+
+        if (!scrutinyDetail.getDetail().isEmpty()) {
+            pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+        }
+    }
+
+    private ScrutinyDetail initializeScrutinyDetail(Block block) {
+        ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
+        scrutinyDetail.setKey("Block_" + block.getNumber() + "_Chajja");
+        scrutinyDetail.addColumnHeading(1, RULE_NO);
+        scrutinyDetail.addColumnHeading(2, FLOOR);
+        scrutinyDetail.addColumnHeading(3, DESCRIPTION);
+        scrutinyDetail.addColumnHeading(4, PERMISSIBLE);
+        scrutinyDetail.addColumnHeading(5, PROVIDED);
+        scrutinyDetail.addColumnHeading(6, STATUS);
+        return scrutinyDetail;
+    }
+
+    private void processFloor(Floor floor, ScrutinyDetail scrutinyDetail, BigDecimal overHangsValue, Map<String, String> detailsTemplate) {
+        if (floor.getOverHangs() == null || floor.getOverHangs().isEmpty()) {
+            return;
+        }
+
+        List<BigDecimal> widths = floor.getOverHangs().stream()
+        	    .map(overhang -> overhang.getWidth())
+        	    .collect(Collectors.toList());
+
+
+        BigDecimal minWidth = widths.stream().reduce(BigDecimal::min).get();
+
+        Map<String, String> details = new HashMap<>(detailsTemplate);
+        details.put(FLOOR, floor.getNumber().toString());
+        details.put(PERMISSIBLE, ">" + overHangsValue.toString());
+        details.put(PROVIDED, minWidth.toString());
+
+        if (minWidth.compareTo(overHangsValue) > 0) {
+            details.put(STATUS, Result.Accepted.getResultVal());
+        } else {
+            details.put(STATUS, Result.Not_Accepted.getResultVal());
+        }
+
+        scrutinyDetail.getDetail().add(details);
+    }
+
+    
+   
     @Override
     public Map<String, Date> getAmendments() {
         return new LinkedHashMap<>();

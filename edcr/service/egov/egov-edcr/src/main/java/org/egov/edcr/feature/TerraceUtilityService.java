@@ -108,84 +108,135 @@ public class TerraceUtilityService extends FeatureProcess {
     }
 
 	// Main logic for processing terrace utility service validations
-	@Override
-	public Plan process(Plan pl) {
+//	@Override
+//	public Plan process(Plan pl) {
+//
+//		// Default permissible value set to zero initially
+//		BigDecimal terraceUtilityValue = BigDecimal.ZERO;
+//		
+//		List<Object> rules = cache.getFeatureRules(pl, MdmsFeatureConstants.TERRACE_UTILITY_SERVICE, false);
+//
+//		Optional<MdmsFeatureRule> matchedRule = rules.stream().map(obj -> (MdmsFeatureRule) obj).findFirst();
+//
+//		if (matchedRule.isPresent()) {
+//			MdmsFeatureRule rule = matchedRule.get();
+//			terraceUtilityValue = rule.getPermissible();
+//		} else {
+//			terraceUtilityValue = BigDecimal.ZERO;
+//		}
+//
+//		// Iterate through each block in the plan
+//		if (pl.getBlocks() != null) {
+//			for (Block block : pl.getBlocks()) {
+//
+//				// Create scrutiny detail object to hold validation report per block
+//				ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
+//				scrutinyDetail.setKey("Block_" + block.getNumber() + "_" + "Terrace Utility");
+//
+//				// Define column headers for scrutiny output
+//				scrutinyDetail.addColumnHeading(1, RULE_NO);
+//				scrutinyDetail.addColumnHeading(2, DESCRIPTION);
+//				scrutinyDetail.addColumnHeading(3, PERMITTED);
+//				scrutinyDetail.addColumnHeading(4, PROVIDED);
+//				scrutinyDetail.addColumnHeading(5, STATUS);
+//
+//				// Iterate through terrace utilities for the block
+//				for (TerraceUtility terraceUtility : block.getTerraceUtilities()) {
+//
+//					// Prepare the result map for each utility
+//					Map<String, String> details = new HashMap<>();
+//					details.put(RULE_NO, RULE_34);
+//
+//					// Get the minimum distance of the terrace utility from the edge
+//					BigDecimal minDistance = terraceUtility.getDistances().stream().reduce(BigDecimal::min).get();
+//
+//					// Set utility name in description
+//					details.put(DESCRIPTION, terraceUtility.getName());
+//
+//					// Compare provided distance with required distance and record results
+//					if (Util.roundOffTwoDecimal(minDistance).compareTo(terraceUtilityValue) >= 0) {
+//						details.put(PERMITTED, terraceUtilityValue + DcrConstants.IN_METER);
+//						details.put(PROVIDED, minDistance + DcrConstants.IN_METER);
+//						details.put(STATUS, Result.Accepted.getResultVal());
+//						scrutinyDetail.getDetail().add(details);
+//						pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+//					} else {
+//						details.put(PERMITTED, terraceUtilityValue + DcrConstants.IN_METER);
+//						details.put(PROVIDED, minDistance + DcrConstants.IN_METER);
+//						details.put(STATUS, Result.Not_Accepted.getResultVal());
+//						scrutinyDetail.getDetail().add(details);
+//						pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+//					}
+//
+//				}
+//
+//			}
+//
+//		}
+//
+//		// Return the updated plan after processing
+//		return pl;
+//	}
+    
+    @Override
+    public Plan process(Plan pl) {
 
-		// Default permissible value set to zero initially
-		BigDecimal terraceUtilityValue = BigDecimal.ZERO;
+        BigDecimal terraceUtilityValue = getTerraceUtilityPermissibleValue(pl);
 
-		// Define the feature name for fetching rules
-		String feature = MdmsFeatureConstants.TERRACE_UTILITY_SERVICE;
+        if (pl.getBlocks() != null) {
+            for (Block block : pl.getBlocks()) {
+                ScrutinyDetail scrutinyDetail = createScrutinyDetailForBlock(block);
+                processTerraceUtilitiesForBlock(block, terraceUtilityValue, scrutinyDetail, pl);
+            }
+        }
 
-		String occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl).toLowerCase();
-		String tenantId = pl.getTenantId();
-		String zone = pl.getPlanInformation().getZone().toLowerCase();
-		String subZone = pl.getPlanInformation().getSubZone().toLowerCase();
-		String riskType = fetchEdcrRulesMdms.getRiskType(pl).toLowerCase();
+        return pl;
+    }
 
-		RuleKey key = new RuleKey(EdcrRulesMdmsConstants.STATE, tenantId, zone, subZone, occupancyName, null, feature);
-		List<Object> rules = cache.getRules(tenantId, key);
+    private BigDecimal getTerraceUtilityPermissibleValue(Plan pl) {
+        List<Object> rules = cache.getFeatureRules(pl, MdmsFeatureConstants.TERRACE_UTILITY_SERVICE, false);
+        Optional<MdmsFeatureRule> matchedRule = rules.stream()
+                .map(obj -> (MdmsFeatureRule) obj)
+                .findFirst();
 
-		Optional<MdmsFeatureRule> matchedRule = rules.stream().map(obj -> (MdmsFeatureRule) obj).findFirst();
+        return matchedRule.map(MdmsFeatureRule::getPermissible).orElse(BigDecimal.ZERO);
+    }
 
-		if (matchedRule.isPresent()) {
-			MdmsFeatureRule rule = matchedRule.get();
-			terraceUtilityValue = rule.getPermissible();
-		} else {
-			terraceUtilityValue = BigDecimal.ZERO;
-		}
+    private ScrutinyDetail createScrutinyDetailForBlock(Block block) {
+        ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
+        scrutinyDetail.setKey("Block_" + block.getNumber() + "_Terrace Utility");
+        scrutinyDetail.addColumnHeading(1, RULE_NO);
+        scrutinyDetail.addColumnHeading(2, DESCRIPTION);
+        scrutinyDetail.addColumnHeading(3, PERMITTED);
+        scrutinyDetail.addColumnHeading(4, PROVIDED);
+        scrutinyDetail.addColumnHeading(5, STATUS);
+        return scrutinyDetail;
+    }
 
-		// Iterate through each block in the plan
-		if (pl.getBlocks() != null) {
-			for (Block block : pl.getBlocks()) {
+    private void processTerraceUtilitiesForBlock(Block block, BigDecimal permissibleDistance,
+                                                 ScrutinyDetail scrutinyDetail, Plan pl) {
+        for (TerraceUtility terraceUtility : block.getTerraceUtilities()) {
 
-				// Create scrutiny detail object to hold validation report per block
-				ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
-				scrutinyDetail.setKey("Block_" + block.getNumber() + "_" + "Terrace Utility");
+            Map<String, String> details = new HashMap<>();
+            details.put(RULE_NO, RULE_34);
+            details.put(DESCRIPTION, terraceUtility.getName());
 
-				// Define column headers for scrutiny output
-				scrutinyDetail.addColumnHeading(1, RULE_NO);
-				scrutinyDetail.addColumnHeading(2, DESCRIPTION);
-				scrutinyDetail.addColumnHeading(3, PERMITTED);
-				scrutinyDetail.addColumnHeading(4, PROVIDED);
-				scrutinyDetail.addColumnHeading(5, STATUS);
+            BigDecimal minDistance = terraceUtility.getDistances().stream().reduce(BigDecimal::min).get();
+            BigDecimal roundedDistance = Util.roundOffTwoDecimal(minDistance);
 
-				// Iterate through terrace utilities for the block
-				for (TerraceUtility terraceUtility : block.getTerraceUtilities()) {
+            details.put(PERMITTED, permissibleDistance + DcrConstants.IN_METER);
+            details.put(PROVIDED, roundedDistance + DcrConstants.IN_METER);
 
-					// Prepare the result map for each utility
-					Map<String, String> details = new HashMap<>();
-					details.put(RULE_NO, RULE_34);
+            if (roundedDistance.compareTo(permissibleDistance) >= 0) {
+                details.put(STATUS, Result.Accepted.getResultVal());
+            } else {
+                details.put(STATUS, Result.Not_Accepted.getResultVal());
+            }
 
-					// Get the minimum distance of the terrace utility from the edge
-					BigDecimal minDistance = terraceUtility.getDistances().stream().reduce(BigDecimal::min).get();
+            scrutinyDetail.getDetail().add(details);
+            pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+        }
+    }
 
-					// Set utility name in description
-					details.put(DESCRIPTION, terraceUtility.getName());
-
-					// Compare provided distance with required distance and record results
-					if (Util.roundOffTwoDecimal(minDistance).compareTo(terraceUtilityValue) >= 0) {
-						details.put(PERMITTED, terraceUtilityValue + DcrConstants.IN_METER);
-						details.put(PROVIDED, minDistance + DcrConstants.IN_METER);
-						details.put(STATUS, Result.Accepted.getResultVal());
-						scrutinyDetail.getDetail().add(details);
-						pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
-					} else {
-						details.put(PERMITTED, terraceUtilityValue + DcrConstants.IN_METER);
-						details.put(PROVIDED, minDistance + DcrConstants.IN_METER);
-						details.put(STATUS, Result.Not_Accepted.getResultVal());
-						scrutinyDetail.getDetail().add(details);
-						pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
-					}
-
-				}
-
-			}
-
-		}
-
-		// Return the updated plan after processing
-		return pl;
-	}
 }
 

@@ -52,235 +52,352 @@ public class GeneralStair extends FeatureProcess {
 	private static final String WIDTH_LANDING_DESCRIPTION = "Minimum width for general stair %s mid landing %s";
 	private static final String FLIGHT_NOT_DEFINED_DESCRIPTION = "General stair flight is not defined in block %s floor %s";
 
+	@Autowired
+	CacheManagerMdms cache;
+	
 	@Override
 	public Plan validate(Plan plan) {
 		return plan;
 	}
 
-	@Autowired
-	FetchEdcrRulesMdms fetchEdcrRulesMdms;
 
-	@Autowired
-	CacheManagerMdms cache;
 
+//	@Override
+//	public Plan process(Plan plan) {
+//
+//		// validate(planDetail);
+//		HashMap<String, String> errors = new HashMap<>();
+//		blk: for (Block block : plan.getBlocks()) {
+//			int generalStairCount = 0;
+//			int totalLandings = 0;
+//			int totalFlights = 0;
+//			BigDecimal riserHeigt = BigDecimal.ZERO;
+//			BigDecimal flrHt = BigDecimal.ZERO;
+//			BigDecimal totalLandingWidth = BigDecimal.ZERO;
+//			BigDecimal totalFlightWidth = BigDecimal.ZERO;
+//			BigDecimal totalRisers = BigDecimal.ZERO;
+//			BigDecimal totalSteps = BigDecimal.ZERO;
+//
+//			if (block.getBuilding() != null) {
+//				/*
+//				 * if (Util.checkExemptionConditionForBuildingParts(block) ||
+//				 * Util.checkExemptionConditionForSmallPlotAtBlkLevel(planDetail.getPlot(),
+//				 * block)) { continue blk; }
+//				 */
+//				ScrutinyDetail scrutinyDetail2 = new ScrutinyDetail();
+//				scrutinyDetail2.addColumnHeading(1, RULE_NO);
+//				scrutinyDetail2.addColumnHeading(2, FLOOR);
+//				scrutinyDetail2.addColumnHeading(3, DESCRIPTION);
+//				scrutinyDetail2.addColumnHeading(4, PERMISSIBLE);
+//				scrutinyDetail2.addColumnHeading(5, PROVIDED);
+//				scrutinyDetail2.addColumnHeading(6, STATUS);
+//				scrutinyDetail2.setKey("Block_" + block.getNumber() + "_" + "General Stair - Width");
+//
+//				ScrutinyDetail scrutinyDetail3 = new ScrutinyDetail();
+//				scrutinyDetail3.addColumnHeading(1, RULE_NO);
+//				scrutinyDetail3.addColumnHeading(2, FLOOR);
+//				scrutinyDetail3.addColumnHeading(3, DESCRIPTION);
+//				scrutinyDetail3.addColumnHeading(4, PERMISSIBLE);
+//				scrutinyDetail3.addColumnHeading(5, PROVIDED);
+//				scrutinyDetail3.addColumnHeading(6, STATUS);
+//				scrutinyDetail3.setKey("Block_" + block.getNumber() + "_" + "General Stair - Tread width");
+//
+//				ScrutinyDetail scrutinyDetailRise = new ScrutinyDetail();
+//				scrutinyDetailRise.addColumnHeading(1, RULE_NO);
+//				scrutinyDetailRise.addColumnHeading(2, FLOOR);
+//				scrutinyDetailRise.addColumnHeading(3, DESCRIPTION);
+//				scrutinyDetailRise.addColumnHeading(4, PERMISSIBLE);
+//				scrutinyDetailRise.addColumnHeading(5, PROVIDED);
+//				scrutinyDetailRise.addColumnHeading(6, STATUS);
+//				scrutinyDetailRise.setKey("Block_" + block.getNumber() + "_" + "General Stair - Number of risers");
+//
+//				ScrutinyDetail scrutinyDetailLanding = new ScrutinyDetail();
+//				scrutinyDetailLanding.addColumnHeading(1, RULE_NO);
+//				scrutinyDetailLanding.addColumnHeading(2, FLOOR);
+//				scrutinyDetailLanding.addColumnHeading(3, DESCRIPTION);
+//				scrutinyDetailLanding.addColumnHeading(4, PERMISSIBLE);
+//				scrutinyDetailLanding.addColumnHeading(5, PROVIDED);
+//				scrutinyDetailLanding.addColumnHeading(6, STATUS);
+//				scrutinyDetailLanding.setKey("Block_" + block.getNumber() + "_" + "General Stair - Mid landing");
+//
+//				ScrutinyDetail scrutinyDetail4 = new ScrutinyDetail();
+//				scrutinyDetail4.addColumnHeading(1, RULE_NO);
+//				scrutinyDetail4.addColumnHeading(2, FLOOR);
+//				scrutinyDetail4.addColumnHeading(3, DESCRIPTION);
+//				scrutinyDetail4.addColumnHeading(4, PERMISSIBLE);
+//				scrutinyDetail4.addColumnHeading(5, PROVIDED);
+//				scrutinyDetail4.addColumnHeading(6, STATUS);
+//				scrutinyDetail4.setKey("Block_" + block.getNumber() + "_" + "General Stair - Riser Height");
+//
+//				OccupancyTypeHelper mostRestrictiveOccupancyType = block.getBuilding() != null
+//						? block.getBuilding().getMostRestrictiveFarHelper()
+//						: null;
+//
+//				/*
+//				 * String occupancyType = mostRestrictiveOccupancy != null ?
+//				 * mostRestrictiveOccupancy.getOccupancyType() : null;
+//				 */
+//
+//				List<Floor> floors = block.getBuilding().getFloors();
+//				List<String> stairAbsent = new ArrayList<>();
+//				// BigDecimal floorSize = block.getBuilding().getFloorsAboveGround();
+//				for (Floor floor : floors) {
+//					if (!floor.getTerrace()) {
+//
+//						boolean isTypicalRepititiveFloor = false;
+//						Map<String, Object> typicalFloorValues = Util.getTypicalFloorValues(block, floor,
+//								isTypicalRepititiveFloor);
+//
+//						List<org.egov.common.entity.edcr.GeneralStair> generalStairs = floor.getGeneralStairs();
+//
+//						int size = generalStairs.size();
+//						generalStairCount = generalStairCount + size;
+//
+//						if (!generalStairs.isEmpty()) {
+//							for (org.egov.common.entity.edcr.GeneralStair generalStair : generalStairs) {
+//
+//								flrHt = generalStair.getFloorHeight();
+//								System.out.println("flrHt___" + flrHt);
+//								List<StairLanding> landings1 = generalStair.getLandings();
+//								totalLandings += landings1.size();
+//
+//								List<Flight> flights = generalStair.getFlights();
+//								totalFlights += flights.size();
+//
+//								for (Flight flight : flights) {
+//
+//									BigDecimal risers = flight.getNoOfRises();
+//									totalRisers = totalRisers.add(risers);
+//								}
+//								System.out.println("total totalRisers " + totalRisers);
+//
+//								// Sum the landing widths
+//								for (StairLanding landing : landings1) {
+//									List<BigDecimal> widths = landing.getWidths();
+//									if (!widths.isEmpty()) {
+//										BigDecimal landingWidth = widths.stream().reduce(BigDecimal::min).get();
+//										totalLandingWidth = totalLandingWidth.add(landingWidth); // Add to total
+//									}
+//								}
+//
+//								System.out.println("total landings " + totalLandingWidth);
+//
+//								totalSteps = totalRisers.add(totalLandingWidth);
+//
+//								System.out.println("total totalSteps " + totalSteps);
+//
+//								{
+//									validateFlight(plan, errors, block, scrutinyDetail2, scrutinyDetail3,
+//											scrutinyDetailRise, mostRestrictiveOccupancyType, floor, typicalFloorValues,
+//											generalStair, generalStairCount);
+//
+//									List<StairLanding> landings = generalStair.getLandings();
+//									if (!landings.isEmpty()) {
+//										validateLanding(plan, block, scrutinyDetailLanding,
+//												mostRestrictiveOccupancyType, floor, typicalFloorValues, generalStair,
+//												landings, errors);
+//									} else {
+//										if (floor.getNumber() != generalStairCount - 1) // This condition because in top
+//																						// most floor stairs are not
+//																						// mandatory for punjab,
+//											// so removing the error if stairs are not defined in top mist floor
+//											errors.put(
+//													"General Stair landing not defined in block " + block.getNumber()
+//															+ " floor " + floor.getNumber() + " stair "
+//															+ generalStair.getNumber(),
+//													"General Stair landing not defined in block " + block.getNumber()
+//															+ " floor " + floor.getNumber() + " stair "
+//															+ generalStair.getNumber());
+//										plan.addErrors(errors);
+//									}
+//
+//								}
+//
+//							}
+//
+//						} else {
+//							if (floor.getNumber() != generalStairCount) {
+//								stairAbsent.add("Block " + block.getNumber() + " floor " + floor.getNumber());
+//							}
+//						}
+//
+//					}
+//				}
+//
+//				
+//
+//				BigDecimal value = BigDecimal.ZERO;
+//
+//				// Fetch all rules for the given plan from the cache.
+//				// Then, filter to find the first rule where the condition falls within the
+//				// defined range.
+//				// If a matching rule is found, proceed with its processing.
+//
+//				List<Object> rules = cache.getFeatureRules(plan, MdmsFeatureConstants.RISER_HEIGHT, false);
+//				Optional<MdmsFeatureRule> matchedRule = rules.stream().map(obj -> (MdmsFeatureRule) obj).findFirst();
+//
+//				if (matchedRule.isPresent()) {
+//					MdmsFeatureRule rule = matchedRule.get();
+//					value = rule.getPermissible();
+//				} else {
+//					value = BigDecimal.ZERO;
+//				}
+//
+//				if (flrHt != null) {
+//					BigDecimal riserHeight = flrHt.divide(totalSteps, 2, RoundingMode.HALF_UP);
+//
+//					if (riserHeight.compareTo(value) <= 0) {
+//						setReportOutputDetailsFloorStairWise(plan, RULE, "", "", "" + value, "" + riserHeight,
+//
+//								Result.Accepted.getResultVal(), scrutinyDetail4);
+//					} else {
+//						setReportOutputDetailsFloorStairWise(plan, RULE, "", "", "" + value, "" + riserHeight,
+//								Result.Not_Accepted.getResultVal(), scrutinyDetail4);
+//					}
+//				}
+//
+//				if (!stairAbsent.isEmpty()) {
+//					for (String error : stairAbsent) {
+//						errors.put("General Stair " + error, "General stair not defined in " + error);
+//						plan.addErrors(errors);
+//					}
+//				}
+//
+//				if (generalStairCount == 0) {
+//					errors.put("General Stair not defined in blk " + block.getNumber(),
+//							"General Stair not defined in block " + block.getNumber()
+//									+ ", it is mandatory for building with floors more than one.");
+//					plan.addErrors(errors);
+//				}
+//			}
+//		}
+//
+//		return plan;
+//	}
+	
 	@Override
 	public Plan process(Plan plan) {
-
-		// validate(planDetail);
 		HashMap<String, String> errors = new HashMap<>();
-		blk: for (Block block : plan.getBlocks()) {
-			int generalStairCount = 0;
-			int totalLandings = 0;
-			int totalFlights = 0;
-			BigDecimal riserHeigt = BigDecimal.ZERO;
-			BigDecimal flrHt = BigDecimal.ZERO;
-			BigDecimal totalLandingWidth = BigDecimal.ZERO;
-			BigDecimal totalFlightWidth = BigDecimal.ZERO;
-			BigDecimal totalRisers = BigDecimal.ZERO;
-			BigDecimal totalSteps = BigDecimal.ZERO;
+		for (Block block : plan.getBlocks()) {
+			processBlock(plan, block, errors);
+		}
+		return plan;
+	}
 
-			if (block.getBuilding() != null) {
-				/*
-				 * if (Util.checkExemptionConditionForBuildingParts(block) ||
-				 * Util.checkExemptionConditionForSmallPlotAtBlkLevel(planDetail.getPlot(),
-				 * block)) { continue blk; }
-				 */
-				ScrutinyDetail scrutinyDetail2 = new ScrutinyDetail();
-				scrutinyDetail2.addColumnHeading(1, RULE_NO);
-				scrutinyDetail2.addColumnHeading(2, FLOOR);
-				scrutinyDetail2.addColumnHeading(3, DESCRIPTION);
-				scrutinyDetail2.addColumnHeading(4, PERMISSIBLE);
-				scrutinyDetail2.addColumnHeading(5, PROVIDED);
-				scrutinyDetail2.addColumnHeading(6, STATUS);
-				scrutinyDetail2.setKey("Block_" + block.getNumber() + "_" + "General Stair - Width");
+	private void processBlock(Plan plan, Block block, HashMap<String, String> errors) {
+		int generalStairCount = 0;
+		BigDecimal flrHt = BigDecimal.ZERO;
+		BigDecimal totalLandingWidth = BigDecimal.ZERO;
+		BigDecimal totalRisers = BigDecimal.ZERO;
+		BigDecimal totalSteps = BigDecimal.ZERO;
 
-				ScrutinyDetail scrutinyDetail3 = new ScrutinyDetail();
-				scrutinyDetail3.addColumnHeading(1, RULE_NO);
-				scrutinyDetail3.addColumnHeading(2, FLOOR);
-				scrutinyDetail3.addColumnHeading(3, DESCRIPTION);
-				scrutinyDetail3.addColumnHeading(4, PERMISSIBLE);
-				scrutinyDetail3.addColumnHeading(5, PROVIDED);
-				scrutinyDetail3.addColumnHeading(6, STATUS);
-				scrutinyDetail3.setKey("Block_" + block.getNumber() + "_" + "General Stair - Tread width");
+		if (block.getBuilding() == null) return;
 
-				ScrutinyDetail scrutinyDetailRise = new ScrutinyDetail();
-				scrutinyDetailRise.addColumnHeading(1, RULE_NO);
-				scrutinyDetailRise.addColumnHeading(2, FLOOR);
-				scrutinyDetailRise.addColumnHeading(3, DESCRIPTION);
-				scrutinyDetailRise.addColumnHeading(4, PERMISSIBLE);
-				scrutinyDetailRise.addColumnHeading(5, PROVIDED);
-				scrutinyDetailRise.addColumnHeading(6, STATUS);
-				scrutinyDetailRise.setKey("Block_" + block.getNumber() + "_" + "General Stair - Number of risers");
+		ScrutinyDetail scrutinyDetail2 = createScrutinyDetail(block, "General Stair - Width");
+		ScrutinyDetail scrutinyDetail3 = createScrutinyDetail(block, "General Stair - Tread width");
+		ScrutinyDetail scrutinyDetailRise = createScrutinyDetail(block, "General Stair - Number of risers");
+		ScrutinyDetail scrutinyDetailLanding = createScrutinyDetail(block, "General Stair - Mid landing");
+		ScrutinyDetail scrutinyDetail4 = createScrutinyDetail(block, "General Stair - Riser Height");
 
-				ScrutinyDetail scrutinyDetailLanding = new ScrutinyDetail();
-				scrutinyDetailLanding.addColumnHeading(1, RULE_NO);
-				scrutinyDetailLanding.addColumnHeading(2, FLOOR);
-				scrutinyDetailLanding.addColumnHeading(3, DESCRIPTION);
-				scrutinyDetailLanding.addColumnHeading(4, PERMISSIBLE);
-				scrutinyDetailLanding.addColumnHeading(5, PROVIDED);
-				scrutinyDetailLanding.addColumnHeading(6, STATUS);
-				scrutinyDetailLanding.setKey("Block_" + block.getNumber() + "_" + "General Stair - Mid landing");
+		OccupancyTypeHelper mostRestrictiveOccupancyType = block.getBuilding().getMostRestrictiveFarHelper();
+		List<Floor> floors = block.getBuilding().getFloors();
+		List<String> stairAbsent = new ArrayList<>();
 
-				ScrutinyDetail scrutinyDetail4 = new ScrutinyDetail();
-				scrutinyDetail4.addColumnHeading(1, RULE_NO);
-				scrutinyDetail4.addColumnHeading(2, FLOOR);
-				scrutinyDetail4.addColumnHeading(3, DESCRIPTION);
-				scrutinyDetail4.addColumnHeading(4, PERMISSIBLE);
-				scrutinyDetail4.addColumnHeading(5, PROVIDED);
-				scrutinyDetail4.addColumnHeading(6, STATUS);
-				scrutinyDetail4.setKey("Block_" + block.getNumber() + "_" + "General Stair - Riser Height");
+		for (Floor floor : floors) {
+			if (!floor.getTerrace()) {
+				Map<String, Object> typicalFloorValues = Util.getTypicalFloorValues(block, floor, false);
+				List<org.egov.common.entity.edcr.GeneralStair> generalStairs = floor.getGeneralStairs();
 
-				OccupancyTypeHelper mostRestrictiveOccupancyType = block.getBuilding() != null
-						? block.getBuilding().getMostRestrictiveFarHelper()
-						: null;
+				generalStairCount += generalStairs.size();
+				if (!generalStairs.isEmpty()) {
+					for (org.egov.common.entity.edcr.GeneralStair generalStair : generalStairs) {
+						flrHt = generalStair.getFloorHeight();
+						totalRisers = updateTotalRisers(generalStair, totalRisers);
+						totalLandingWidth = updateLandingWidths(generalStair, totalLandingWidth);
+						totalSteps = totalRisers.add(totalLandingWidth);
 
-				/*
-				 * String occupancyType = mostRestrictiveOccupancy != null ?
-				 * mostRestrictiveOccupancy.getOccupancyType() : null;
-				 */
+						validateFlight(plan, errors, block, scrutinyDetail2, scrutinyDetail3, scrutinyDetailRise,
+								mostRestrictiveOccupancyType, floor, typicalFloorValues, generalStair, generalStairCount);
 
-				List<Floor> floors = block.getBuilding().getFloors();
-				List<String> stairAbsent = new ArrayList<>();
-				// BigDecimal floorSize = block.getBuilding().getFloorsAboveGround();
-				for (Floor floor : floors) {
-					if (!floor.getTerrace()) {
-
-						boolean isTypicalRepititiveFloor = false;
-						Map<String, Object> typicalFloorValues = Util.getTypicalFloorValues(block, floor,
-								isTypicalRepititiveFloor);
-
-						List<org.egov.common.entity.edcr.GeneralStair> generalStairs = floor.getGeneralStairs();
-
-						int size = generalStairs.size();
-						generalStairCount = generalStairCount + size;
-
-						if (!generalStairs.isEmpty()) {
-							for (org.egov.common.entity.edcr.GeneralStair generalStair : generalStairs) {
-
-								flrHt = generalStair.getFloorHeight();
-								System.out.println("flrHt___" + flrHt);
-								List<StairLanding> landings1 = generalStair.getLandings();
-								totalLandings += landings1.size();
-
-								List<Flight> flights = generalStair.getFlights();
-								totalFlights += flights.size();
-
-								for (Flight flight : flights) {
-
-									BigDecimal risers = flight.getNoOfRises();
-									totalRisers = totalRisers.add(risers);
-								}
-								System.out.println("total totalRisers " + totalRisers);
-
-								// Sum the landing widths
-								for (StairLanding landing : landings1) {
-									List<BigDecimal> widths = landing.getWidths();
-									if (!widths.isEmpty()) {
-										BigDecimal landingWidth = widths.stream().reduce(BigDecimal::min).get();
-										totalLandingWidth = totalLandingWidth.add(landingWidth); // Add to total
-									}
-								}
-
-								System.out.println("total landings " + totalLandingWidth);
-
-								totalSteps = totalRisers.add(totalLandingWidth);
-
-								System.out.println("total totalSteps " + totalSteps);
-
-								{
-									validateFlight(plan, errors, block, scrutinyDetail2, scrutinyDetail3,
-											scrutinyDetailRise, mostRestrictiveOccupancyType, floor, typicalFloorValues,
-											generalStair, generalStairCount);
-
-									List<StairLanding> landings = generalStair.getLandings();
-									if (!landings.isEmpty()) {
-										validateLanding(plan, block, scrutinyDetailLanding,
-												mostRestrictiveOccupancyType, floor, typicalFloorValues, generalStair,
-												landings, errors);
-									} else {
-										if (floor.getNumber() != generalStairCount - 1) // This condition because in top
-																						// most floor stairs are not
-																						// mandatory for punjab,
-											// so removing the error if stairs are not defined in top mist floor
-											errors.put(
-													"General Stair landing not defined in block " + block.getNumber()
-															+ " floor " + floor.getNumber() + " stair "
-															+ generalStair.getNumber(),
-													"General Stair landing not defined in block " + block.getNumber()
-															+ " floor " + floor.getNumber() + " stair "
-															+ generalStair.getNumber());
-										plan.addErrors(errors);
-									}
-
-								}
-
-							}
-
-						} else {
-							if (floor.getNumber() != generalStairCount) {
-								stairAbsent.add("Block " + block.getNumber() + " floor " + floor.getNumber());
-							}
+						List<StairLanding> landings = generalStair.getLandings();
+						if (!landings.isEmpty()) {
+							validateLanding(plan, block, scrutinyDetailLanding, mostRestrictiveOccupancyType, floor,
+									typicalFloorValues, generalStair, landings, errors);
+						} else if (floor.getNumber() != generalStairCount - 1) {
+							errors.put("General Stair landing not defined in block " + block.getNumber() + " floor " + floor.getNumber() + " stair " + generalStair.getNumber(),
+									"General Stair landing not defined in block " + block.getNumber() + " floor " + floor.getNumber() + " stair " + generalStair.getNumber());
+							plan.addErrors(errors);
 						}
-
 					}
-				}
-
-				String occupancyName = "";
-
-				String featureName = MdmsFeatureConstants.RISER_HEIGHT;
-
-				BigDecimal value = BigDecimal.ZERO;
-
-				occupancyName = fetchEdcrRulesMdms.getOccupancyName(plan).toLowerCase();
-				String tenantId = plan.getTenantId();
-				String zone = plan.getPlanInformation().getZone().toLowerCase();
-				String subZone = plan.getPlanInformation().getSubZone().toLowerCase();
-				String riskType = fetchEdcrRulesMdms.getRiskType(plan).toLowerCase();
-
-				RuleKey key = new RuleKey(EdcrRulesMdmsConstants.STATE, tenantId, zone, subZone, occupancyName, null,
-						featureName);
-				List<Object> rules = cache.getRules(tenantId, key);
-
-				Optional<MdmsFeatureRule> matchedRule = rules.stream().map(obj -> (MdmsFeatureRule) obj).findFirst();
-
-				if (matchedRule.isPresent()) {
-					MdmsFeatureRule rule = matchedRule.get();
-					value = rule.getPermissible();
 				} else {
-					value = BigDecimal.ZERO;
-				}
-
-				if (flrHt != null) {
-					BigDecimal riserHeight = flrHt.divide(totalSteps, 2, RoundingMode.HALF_UP);
-
-					if (riserHeight.compareTo(value) <= 0) {
-						setReportOutputDetailsFloorStairWise(plan, RULE, "", "", "" + value, "" + riserHeight,
-
-								Result.Accepted.getResultVal(), scrutinyDetail4);
-					} else {
-						setReportOutputDetailsFloorStairWise(plan, RULE, "", "", "" + value, "" + riserHeight,
-								Result.Not_Accepted.getResultVal(), scrutinyDetail4);
+					if (floor.getNumber() != generalStairCount) {
+						stairAbsent.add("Block " + block.getNumber() + " floor " + floor.getNumber());
 					}
-				}
-
-				if (!stairAbsent.isEmpty()) {
-					for (String error : stairAbsent) {
-						errors.put("General Stair " + error, "General stair not defined in " + error);
-						plan.addErrors(errors);
-					}
-				}
-
-				if (generalStairCount == 0) {
-					errors.put("General Stair not defined in blk " + block.getNumber(),
-							"General Stair not defined in block " + block.getNumber()
-									+ ", it is mandatory for building with floors more than one.");
-					plan.addErrors(errors);
 				}
 			}
 		}
 
-		return plan;
+		validateRiserHeight(plan, block, flrHt, totalSteps, scrutinyDetail4);
+		handleStairErrors(plan, block, stairAbsent, generalStairCount, errors);
 	}
+
+	private ScrutinyDetail createScrutinyDetail(Block block, String title) {
+		ScrutinyDetail detail = new ScrutinyDetail();
+		detail.addColumnHeading(1, RULE_NO);
+		detail.addColumnHeading(2, FLOOR);
+		detail.addColumnHeading(3, DESCRIPTION);
+		detail.addColumnHeading(4, PERMISSIBLE);
+		detail.addColumnHeading(5, PROVIDED);
+		detail.addColumnHeading(6, STATUS);
+		detail.setKey("Block_" + block.getNumber() + "_" + title);
+		return detail;
+	}
+
+	private BigDecimal updateTotalRisers(org.egov.common.entity.edcr.GeneralStair stair, BigDecimal totalRisers) {
+		for (Flight flight : stair.getFlights()) {
+			totalRisers = totalRisers.add(flight.getNoOfRises());
+		}
+		return totalRisers;
+	}
+
+	private BigDecimal updateLandingWidths(org.egov.common.entity.edcr.GeneralStair stair, BigDecimal totalLandingWidth) {
+		for (StairLanding landing : stair.getLandings()) {
+			List<BigDecimal> widths = landing.getWidths();
+			if (!widths.isEmpty()) {
+				BigDecimal landingWidth = widths.stream().reduce(BigDecimal::min).get();
+				totalLandingWidth = totalLandingWidth.add(landingWidth);
+			}
+		}
+		return totalLandingWidth;
+	}
+
+	private void validateRiserHeight(Plan plan, Block block, BigDecimal flrHt, BigDecimal totalSteps, ScrutinyDetail scrutinyDetail4) {
+		BigDecimal value = getPermissibleRiserHeight(plan);
+		if (flrHt != null) {
+			BigDecimal riserHeight = flrHt.divide(totalSteps, 2, RoundingMode.HALF_UP);
+			String result = (riserHeight.compareTo(value) <= 0) ? Result.Accepted.getResultVal() : Result.Not_Accepted.getResultVal();
+			setReportOutputDetailsFloorStairWise(plan, RULE, "", "", "" + value, "" + riserHeight, result, scrutinyDetail4);
+		}
+	}
+
+	private BigDecimal getPermissibleRiserHeight(Plan plan) {
+		List<Object> rules = cache.getFeatureRules(plan, MdmsFeatureConstants.RISER_HEIGHT, false);
+		Optional<MdmsFeatureRule> matchedRule = rules.stream().map(obj -> (MdmsFeatureRule) obj).findFirst();
+		return matchedRule.map(MdmsFeatureRule::getPermissible).orElse(BigDecimal.ZERO);
+	}
+
+	private void handleStairErrors(Plan plan, Block block, List<String> stairAbsent, int generalStairCount, HashMap<String, String> errors) {
+		for (String error : stairAbsent) {
+			errors.put("General Stair " + error, "General stair not defined in " + error);
+			plan.addErrors(errors);
+		}
+		if (generalStairCount == 0) {
+			errors.put("General Stair not defined in blk " + block.getNumber(),
+					"General Stair not defined in block " + block.getNumber() + ", it is mandatory for building with floors more than one.");
+			plan.addErrors(errors);
+		}
+	}
+
 
 	private void validateLanding(Plan plan, Block block, ScrutinyDetail scrutinyDetailLanding,
 			OccupancyTypeHelper mostRestrictiveOccupancyType, Floor floor, Map<String, Object> typicalFloorValues,
@@ -333,99 +450,203 @@ public class GeneralStair extends FeatureProcess {
 
 	}
 
+//	private void validateFlight(Plan plan, HashMap<String, String> errors, Block block, ScrutinyDetail scrutinyDetail2,
+//			ScrutinyDetail scrutinyDetail3, ScrutinyDetail scrutinyDetailRise,
+//			OccupancyTypeHelper mostRestrictiveOccupancyType, Floor floor, Map<String, Object> typicalFloorValues,
+//			org.egov.common.entity.edcr.GeneralStair generalStair, int generalStairCount) {
+//		if (!generalStair.getFlights().isEmpty()) {
+//
+//			for (Flight flight : generalStair.getFlights()) {
+//
+//				List<Measurement> flightPolyLines = flight.getFlights();
+//				List<BigDecimal> flightLengths = flight.getLengthOfFlights();
+//				List<BigDecimal> flightWidths = flight.getWidthOfFlights();
+//				BigDecimal noOfRises = flight.getNoOfRises();
+//				Boolean flightPolyLineClosed = flight.getFlightClosed();
+//
+//				// flight.getNumber();
+//				BigDecimal minTread = BigDecimal.ZERO;
+//				BigDecimal minFlightWidth = BigDecimal.ZERO;
+//				String flightLayerName = String.format(DxfFileConstants.LAYER_STAIR_FLIGHT, block.getNumber(),
+//						floor.getNumber(), generalStair.getNumber(), flight.getNumber());
+//
+//				if (flightPolyLines != null && flightPolyLines.size() > 0) {
+//					if (flightPolyLineClosed) {
+//						if (flightWidths != null && flightWidths.size() > 0) {
+//							minFlightWidth = validateWidth(plan, scrutinyDetail2, floor, block, typicalFloorValues,
+//									generalStair, flight, flightWidths, minFlightWidth, mostRestrictiveOccupancyType);
+//
+//						} else {
+//							errors.put("Flight PolyLine width" + flightLayerName,
+//									FLIGHT_WIDTH_DEFINED_DESCRIPTION + flightLayerName);
+//							plan.addErrors(errors);
+//						}
+//
+//						/*
+//						 * (Total length of polygons in layer BLK_n_FLR_i_STAIR_k_FLIGHT) / (Number of
+//						 * rises - number of polygons in layer BLK_n_FLR_i_STAIR_k_FLIGHT - number of
+//						 * lines in layer BLK_n_FLR_i_STAIR_k_FLIGHT)
+//						 */
+//
+//						if (flightLengths != null && flightLengths.size() > 0) {
+//							try {
+//								minTread = validateTread(plan, errors, block, scrutinyDetail3, floor,
+//										typicalFloorValues, generalStair, flight, flightLengths, minTread,
+//										mostRestrictiveOccupancyType);
+//							} catch (ArithmeticException e) {
+//								LOG.info("Denominator is zero");
+//							}
+//						} else {
+//
+//							errors.put("Flight PolyLine length" + flightLayerName,
+//									FLIGHT_LENGTH_DEFINED_DESCRIPTION + flightLayerName);
+//							plan.addErrors(errors);
+//
+//						}
+//
+//						if (noOfRises.compareTo(BigDecimal.ZERO) > 0) {
+//							try {
+//								validateNoOfRises(plan, errors, block, scrutinyDetailRise, floor, typicalFloorValues,
+//										generalStair, flight, noOfRises);
+//							} catch (ArithmeticException e) {
+//								LOG.info("Denominator is zero");
+//							}
+//						} else {
+//							/*
+//							 * String layerName = String.format( DxfFileConstants.LAYER_STAIR_FLIGHT,
+//							 * block.getNumber(), floor.getNumber(), generalStair.getNumber(),
+//							 * flight.getNumber());
+//							 */
+//							errors.put("noofRise" + flightLayerName,
+//									edcrMessageSource.getMessage(DcrConstants.OBJECTNOTDEFINED,
+//											new String[] { NO_OF_RISERS + flightLayerName },
+//											LocaleContextHolder.getLocale()));
+//							plan.addErrors(errors);
+//						}
+//
+//					}
+//				} else {
+//					errors.put("Flight PolyLine " + flightLayerName,
+//							FLIGHT_POLYLINE_NOT_DEFINED_DESCRIPTION + flightLayerName);
+//					plan.addErrors(errors);
+//				}
+//
+//			}
+//
+//		} else {
+////        	if(floor.getNumber() != generalStairCount - 1) 
+//			{ // This condition because in top most floor stairs are not mandatory for punjab,
+//				// so removing the error if stairs are not defined in top mist floor
+//				String error = String.format(FLIGHT_NOT_DEFINED_DESCRIPTION, block.getNumber(), floor.getNumber());
+//				errors.put(error, error);
+//				plan.addErrors(errors);
+//			}
+//		}
+//	}
+	
 	private void validateFlight(Plan plan, HashMap<String, String> errors, Block block, ScrutinyDetail scrutinyDetail2,
-			ScrutinyDetail scrutinyDetail3, ScrutinyDetail scrutinyDetailRise,
-			OccupancyTypeHelper mostRestrictiveOccupancyType, Floor floor, Map<String, Object> typicalFloorValues,
-			org.egov.common.entity.edcr.GeneralStair generalStair, int generalStairCount) {
-		if (!generalStair.getFlights().isEmpty()) {
+	        ScrutinyDetail scrutinyDetail3, ScrutinyDetail scrutinyDetailRise, OccupancyTypeHelper mostRestrictiveOccupancyType,
+	        Floor floor, Map<String, Object> typicalFloorValues, org.egov.common.entity.edcr.GeneralStair generalStair,
+	        int generalStairCount) {
 
-			for (Flight flight : generalStair.getFlights()) {
-
-				List<Measurement> flightPolyLines = flight.getFlights();
-				List<BigDecimal> flightLengths = flight.getLengthOfFlights();
-				List<BigDecimal> flightWidths = flight.getWidthOfFlights();
-				BigDecimal noOfRises = flight.getNoOfRises();
-				Boolean flightPolyLineClosed = flight.getFlightClosed();
-
-				// flight.getNumber();
-				BigDecimal minTread = BigDecimal.ZERO;
-				BigDecimal minFlightWidth = BigDecimal.ZERO;
-				String flightLayerName = String.format(DxfFileConstants.LAYER_STAIR_FLIGHT, block.getNumber(),
-						floor.getNumber(), generalStair.getNumber(), flight.getNumber());
-
-				if (flightPolyLines != null && flightPolyLines.size() > 0) {
-					if (flightPolyLineClosed) {
-						if (flightWidths != null && flightWidths.size() > 0) {
-							minFlightWidth = validateWidth(plan, scrutinyDetail2, floor, block, typicalFloorValues,
-									generalStair, flight, flightWidths, minFlightWidth, mostRestrictiveOccupancyType);
-
-						} else {
-							errors.put("Flight PolyLine width" + flightLayerName,
-									FLIGHT_WIDTH_DEFINED_DESCRIPTION + flightLayerName);
-							plan.addErrors(errors);
-						}
-
-						/*
-						 * (Total length of polygons in layer BLK_n_FLR_i_STAIR_k_FLIGHT) / (Number of
-						 * rises - number of polygons in layer BLK_n_FLR_i_STAIR_k_FLIGHT - number of
-						 * lines in layer BLK_n_FLR_i_STAIR_k_FLIGHT)
-						 */
-
-						if (flightLengths != null && flightLengths.size() > 0) {
-							try {
-								minTread = validateTread(plan, errors, block, scrutinyDetail3, floor,
-										typicalFloorValues, generalStair, flight, flightLengths, minTread,
-										mostRestrictiveOccupancyType);
-							} catch (ArithmeticException e) {
-								LOG.info("Denominator is zero");
-							}
-						} else {
-
-							errors.put("Flight PolyLine length" + flightLayerName,
-									FLIGHT_LENGTH_DEFINED_DESCRIPTION + flightLayerName);
-							plan.addErrors(errors);
-
-						}
-
-						if (noOfRises.compareTo(BigDecimal.ZERO) > 0) {
-							try {
-								validateNoOfRises(plan, errors, block, scrutinyDetailRise, floor, typicalFloorValues,
-										generalStair, flight, noOfRises);
-							} catch (ArithmeticException e) {
-								LOG.info("Denominator is zero");
-							}
-						} else {
-							/*
-							 * String layerName = String.format( DxfFileConstants.LAYER_STAIR_FLIGHT,
-							 * block.getNumber(), floor.getNumber(), generalStair.getNumber(),
-							 * flight.getNumber());
-							 */
-							errors.put("noofRise" + flightLayerName,
-									edcrMessageSource.getMessage(DcrConstants.OBJECTNOTDEFINED,
-											new String[] { NO_OF_RISERS + flightLayerName },
-											LocaleContextHolder.getLocale()));
-							plan.addErrors(errors);
-						}
-
-					}
-				} else {
-					errors.put("Flight PolyLine " + flightLayerName,
-							FLIGHT_POLYLINE_NOT_DEFINED_DESCRIPTION + flightLayerName);
-					plan.addErrors(errors);
-				}
-
-			}
-
-		} else {
-//        	if(floor.getNumber() != generalStairCount - 1) 
-			{ // This condition because in top most floor stairs are not mandatory for punjab,
-				// so removing the error if stairs are not defined in top mist floor
-				String error = String.format(FLIGHT_NOT_DEFINED_DESCRIPTION, block.getNumber(), floor.getNumber());
-				errors.put(error, error);
-				plan.addErrors(errors);
-			}
-		}
+	    if (!generalStair.getFlights().isEmpty()) {
+	        for (Flight flight : generalStair.getFlights()) {
+	            validateSingleFlight(plan, errors, block, scrutinyDetail2, scrutinyDetail3, scrutinyDetailRise,
+	                    mostRestrictiveOccupancyType, floor, typicalFloorValues, generalStair, flight);
+	        }
+	    } else {
+	        handleMissingFlights(plan, errors, block, floor);
+	    }
 	}
+	private void validateSingleFlight(Plan plan, HashMap<String, String> errors, Block block,
+	        ScrutinyDetail scrutinyDetail2, ScrutinyDetail scrutinyDetail3, ScrutinyDetail scrutinyDetailRise,
+	        OccupancyTypeHelper mostRestrictiveOccupancyType, Floor floor, Map<String, Object> typicalFloorValues,
+	        org.egov.common.entity.edcr.GeneralStair generalStair, Flight flight) {
+
+	    List<Measurement> flightPolyLines = flight.getFlights();
+	    List<BigDecimal> flightLengths = flight.getLengthOfFlights();
+	    List<BigDecimal> flightWidths = flight.getWidthOfFlights();
+	    BigDecimal noOfRises = flight.getNoOfRises();
+	    Boolean flightPolyLineClosed = flight.getFlightClosed();
+
+	    BigDecimal minTread = BigDecimal.ZERO;
+	    BigDecimal minFlightWidth = BigDecimal.ZERO;
+
+	    String flightLayerName = String.format(DxfFileConstants.LAYER_STAIR_FLIGHT, block.getNumber(),
+	            floor.getNumber(), generalStair.getNumber(), flight.getNumber());
+
+	    if (flightPolyLines != null && !flightPolyLines.isEmpty()) {
+	        if (flightPolyLineClosed) {
+	            validateFlightWidth(plan, errors, scrutinyDetail2, floor, block, typicalFloorValues,
+	                    generalStair, flight, flightWidths, mostRestrictiveOccupancyType, flightLayerName);
+
+	            validateFlightTread(plan, errors, block, scrutinyDetail3, floor, typicalFloorValues,
+	                    generalStair, flight, flightLengths, mostRestrictiveOccupancyType, flightLayerName);
+
+	            validateFlightRises(plan, errors, block, scrutinyDetailRise, floor, typicalFloorValues,
+	                    generalStair, flight, noOfRises, flightLayerName);
+	        }
+	    } else {
+	        errors.put("Flight PolyLine " + flightLayerName,
+	                FLIGHT_POLYLINE_NOT_DEFINED_DESCRIPTION + flightLayerName);
+	        plan.addErrors(errors);
+	    }
+	}
+	private void validateFlightWidth(Plan plan, HashMap<String, String> errors, ScrutinyDetail scrutinyDetail2,
+	        Floor floor, Block block, Map<String, Object> typicalFloorValues, org.egov.common.entity.edcr.GeneralStair generalStair,
+	        Flight flight, List<BigDecimal> flightWidths, OccupancyTypeHelper mostRestrictiveOccupancyType, String flightLayerName) {
+
+	    if (flightWidths != null && !flightWidths.isEmpty()) {
+	        validateWidth(plan, scrutinyDetail2, floor, block, typicalFloorValues,
+	                generalStair, flight, flightWidths, BigDecimal.ZERO, mostRestrictiveOccupancyType);
+	    } else {
+	        errors.put("Flight PolyLine width" + flightLayerName,
+	                FLIGHT_WIDTH_DEFINED_DESCRIPTION + flightLayerName);
+	        plan.addErrors(errors);
+	    }
+	}
+	private void validateFlightTread(Plan plan, HashMap<String, String> errors, Block block, ScrutinyDetail scrutinyDetail3,
+	        Floor floor, Map<String, Object> typicalFloorValues, org.egov.common.entity.edcr.GeneralStair generalStair,
+	        Flight flight, List<BigDecimal> flightLengths, OccupancyTypeHelper mostRestrictiveOccupancyType, String flightLayerName) {
+
+	    if (flightLengths != null && !flightLengths.isEmpty()) {
+	        try {
+	            validateTread(plan, errors, block, scrutinyDetail3, floor, typicalFloorValues,
+	                    generalStair, flight, flightLengths, BigDecimal.ZERO, mostRestrictiveOccupancyType);
+	        } catch (ArithmeticException e) {
+	            LOG.info("Denominator is zero");
+	        }
+	    } else {
+	        errors.put("Flight PolyLine length" + flightLayerName,
+	                FLIGHT_LENGTH_DEFINED_DESCRIPTION + flightLayerName);
+	        plan.addErrors(errors);
+	    }
+	}
+	private void validateFlightRises(Plan plan, HashMap<String, String> errors, Block block, ScrutinyDetail scrutinyDetailRise,
+	        Floor floor, Map<String, Object> typicalFloorValues, org.egov.common.entity.edcr.GeneralStair generalStair,
+	        Flight flight, BigDecimal noOfRises, String flightLayerName) {
+
+	    if (noOfRises != null && noOfRises.compareTo(BigDecimal.ZERO) > 0) {
+	        try {
+	            validateNoOfRises(plan, errors, block, scrutinyDetailRise, floor, typicalFloorValues,
+	                    generalStair, flight, noOfRises);
+	        } catch (ArithmeticException e) {
+	            LOG.info("Denominator is zero");
+	        }
+	    } else {
+	        errors.put("noofRise" + flightLayerName,
+	                edcrMessageSource.getMessage(DcrConstants.OBJECTNOTDEFINED,
+	                        new String[]{NO_OF_RISERS + flightLayerName},
+	                        LocaleContextHolder.getLocale()));
+	        plan.addErrors(errors);
+	    }
+	}
+	private void handleMissingFlights(Plan plan, HashMap<String, String> errors, Block block, Floor floor) {
+	    String error = String.format(FLIGHT_NOT_DEFINED_DESCRIPTION, block.getNumber(), floor.getNumber());
+	    errors.put(error, error);
+	    plan.addErrors(errors);
+	}
+
 
 	private BigDecimal validateWidth(Plan plan, ScrutinyDetail scrutinyDetail2, Floor floor, Block block,
 			Map<String, Object> typicalFloorValues, org.egov.common.entity.edcr.GeneralStair generalStair,
@@ -562,68 +783,130 @@ public class GeneralStair extends FeatureProcess {
 		}
 	}
 
+//	private BigDecimal validateTread(Plan plan, HashMap<String, String> errors, Block block,
+//			ScrutinyDetail scrutinyDetail3, Floor floor, Map<String, Object> typicalFloorValues,
+//			org.egov.common.entity.edcr.GeneralStair generalStair, Flight flight, List<BigDecimal> flightLengths,
+//			BigDecimal minTread, OccupancyTypeHelper mostRestrictiveOccupancyType) {
+//		BigDecimal totalLength = flightLengths.stream().reduce(BigDecimal.ZERO, BigDecimal::add);
+//		// Map<String, List<Map<String, Object>>> edcrRuleList =
+//		// plan.getEdcrRulesFeatures();
+//
+//		totalLength = Util.roundOffTwoDecimal(totalLength);
+//
+//		BigDecimal requiredTread = getRequiredTread(plan, mostRestrictiveOccupancyType);
+//
+//		if (flight.getNoOfRises() != null) {
+//			/*
+//			 * BigDecimal denominator =
+//			 * fireStair.getNoOfRises().subtract(BigDecimal.valueOf(flightLengths.size()))
+//			 * .subtract(BigDecimal.valueOf(fireStair.getLinesInFlightLayer().size()));
+//			 */
+//			BigDecimal noOfFlights = BigDecimal.valueOf(flightLengths.size());
+//
+//			if (flight.getNoOfRises().compareTo(noOfFlights) > 0) {
+//				BigDecimal denominator = flight.getNoOfRises().subtract(noOfFlights);
+//
+//				minTread = totalLength.divide(denominator, DcrConstants.DECIMALDIGITS_MEASUREMENTS,
+//						DcrConstants.ROUNDMODE_MEASUREMENTS);
+//
+//				boolean valid = false;
+//
+//				if (!(Boolean) typicalFloorValues.get("isTypicalRepititiveFloor")) {
+//
+//					if (Util.roundOffTwoDecimal(minTread).compareTo(Util.roundOffTwoDecimal(requiredTread)) >= 0) {
+//						valid = true;
+//					}
+//
+//					String value = typicalFloorValues.get("typicalFloors") != null
+//							? (String) typicalFloorValues.get("typicalFloors")
+//							: " floor " + floor.getNumber();
+//					if (valid) {
+//						setReportOutputDetailsFloorStairWise(plan, RULETREAD, value,
+//								String.format(TREAD_DESCRIPTION, generalStair.getNumber(), flight.getNumber()),
+//								requiredTread.toString(), String.valueOf(minTread), Result.Accepted.getResultVal(),
+//								scrutinyDetail3);
+//					} else {
+//						setReportOutputDetailsFloorStairWise(plan, RULETREAD, value,
+//								String.format(TREAD_DESCRIPTION, generalStair.getNumber(), flight.getNumber()),
+//								requiredTread.toString(), String.valueOf(minTread), Result.Not_Accepted.getResultVal(),
+//								scrutinyDetail3);
+//					}
+//				}
+//			} else {
+//				if (flight.getNoOfRises().compareTo(BigDecimal.ZERO) > 0) {
+//					String flightLayerName = String.format(DxfFileConstants.LAYER_STAIR_FLIGHT, block.getNumber(),
+//							floor.getNumber(), generalStair.getNumber(), flight.getNumber());
+//					errors.put("NoOfRisesCount" + flightLayerName,
+//							"Number of risers count should be greater than the count of length of flight dimensions defined in layer "
+//									+ flightLayerName);
+//					plan.addErrors(errors);
+//				}
+//			}
+//		}
+//		return minTread;
+//	}
+	
 	private BigDecimal validateTread(Plan plan, HashMap<String, String> errors, Block block,
-			ScrutinyDetail scrutinyDetail3, Floor floor, Map<String, Object> typicalFloorValues,
-			org.egov.common.entity.edcr.GeneralStair generalStair, Flight flight, List<BigDecimal> flightLengths,
-			BigDecimal minTread, OccupancyTypeHelper mostRestrictiveOccupancyType) {
-		BigDecimal totalLength = flightLengths.stream().reduce(BigDecimal.ZERO, BigDecimal::add);
-		// Map<String, List<Map<String, Object>>> edcrRuleList =
-		// plan.getEdcrRulesFeatures();
+	        ScrutinyDetail scrutinyDetail3, Floor floor, Map<String, Object> typicalFloorValues,
+	        org.egov.common.entity.edcr.GeneralStair generalStair, Flight flight, List<BigDecimal> flightLengths,
+	        BigDecimal minTread, OccupancyTypeHelper mostRestrictiveOccupancyType) {
 
-		totalLength = Util.roundOffTwoDecimal(totalLength);
+	    BigDecimal totalLength = calculateTotalFlightLength(flightLengths);
+	    BigDecimal requiredTread = getRequiredTread(plan, mostRestrictiveOccupancyType);
 
-		BigDecimal requiredTread = getRequiredTread(plan, mostRestrictiveOccupancyType);
+	    if (flight.getNoOfRises() != null) {
+	        BigDecimal noOfFlights = BigDecimal.valueOf(flightLengths.size());
 
-		if (flight.getNoOfRises() != null) {
-			/*
-			 * BigDecimal denominator =
-			 * fireStair.getNoOfRises().subtract(BigDecimal.valueOf(flightLengths.size()))
-			 * .subtract(BigDecimal.valueOf(fireStair.getLinesInFlightLayer().size()));
-			 */
-			BigDecimal noOfFlights = BigDecimal.valueOf(flightLengths.size());
+	        if (flight.getNoOfRises().compareTo(noOfFlights) > 0) {
+	            BigDecimal denominator = flight.getNoOfRises().subtract(noOfFlights);
+	            minTread = totalLength.divide(denominator, DcrConstants.DECIMALDIGITS_MEASUREMENTS,
+	                    DcrConstants.ROUNDMODE_MEASUREMENTS);
 
-			if (flight.getNoOfRises().compareTo(noOfFlights) > 0) {
-				BigDecimal denominator = flight.getNoOfRises().subtract(noOfFlights);
+	            if (!(Boolean) typicalFloorValues.get("isTypicalRepititiveFloor")) {
+	                validateTreadAgainstRequired(plan, scrutinyDetail3, floor, typicalFloorValues,
+	                        generalStair, flight, requiredTread, minTread);
+	            }
 
-				minTread = totalLength.divide(denominator, DcrConstants.DECIMALDIGITS_MEASUREMENTS,
-						DcrConstants.ROUNDMODE_MEASUREMENTS);
+	        } else if (flight.getNoOfRises().compareTo(BigDecimal.ZERO) > 0) {
+	            addNoOfRisesError(plan, errors, block, floor, generalStair, flight);
+	        }
+	    }
 
-				boolean valid = false;
-
-				if (!(Boolean) typicalFloorValues.get("isTypicalRepititiveFloor")) {
-
-					if (Util.roundOffTwoDecimal(minTread).compareTo(Util.roundOffTwoDecimal(requiredTread)) >= 0) {
-						valid = true;
-					}
-
-					String value = typicalFloorValues.get("typicalFloors") != null
-							? (String) typicalFloorValues.get("typicalFloors")
-							: " floor " + floor.getNumber();
-					if (valid) {
-						setReportOutputDetailsFloorStairWise(plan, RULETREAD, value,
-								String.format(TREAD_DESCRIPTION, generalStair.getNumber(), flight.getNumber()),
-								requiredTread.toString(), String.valueOf(minTread), Result.Accepted.getResultVal(),
-								scrutinyDetail3);
-					} else {
-						setReportOutputDetailsFloorStairWise(plan, RULETREAD, value,
-								String.format(TREAD_DESCRIPTION, generalStair.getNumber(), flight.getNumber()),
-								requiredTread.toString(), String.valueOf(minTread), Result.Not_Accepted.getResultVal(),
-								scrutinyDetail3);
-					}
-				}
-			} else {
-				if (flight.getNoOfRises().compareTo(BigDecimal.ZERO) > 0) {
-					String flightLayerName = String.format(DxfFileConstants.LAYER_STAIR_FLIGHT, block.getNumber(),
-							floor.getNumber(), generalStair.getNumber(), flight.getNumber());
-					errors.put("NoOfRisesCount" + flightLayerName,
-							"Number of risers count should be greater than the count of length of flight dimensions defined in layer "
-									+ flightLayerName);
-					plan.addErrors(errors);
-				}
-			}
-		}
-		return minTread;
+	    return minTread;
 	}
+	private BigDecimal calculateTotalFlightLength(List<BigDecimal> flightLengths) {
+	    BigDecimal totalLength = flightLengths.stream().reduce(BigDecimal.ZERO, BigDecimal::add);
+	    return Util.roundOffTwoDecimal(totalLength);
+	}
+	private void validateTreadAgainstRequired(Plan plan, ScrutinyDetail scrutinyDetail3, Floor floor,
+	        Map<String, Object> typicalFloorValues, org.egov.common.entity.edcr.GeneralStair generalStair,
+	        Flight flight, BigDecimal requiredTread, BigDecimal minTread) {
+
+	    boolean isValid = Util.roundOffTwoDecimal(minTread)
+	            .compareTo(Util.roundOffTwoDecimal(requiredTread)) >= 0;
+
+	    String value = typicalFloorValues.get("typicalFloors") != null
+	            ? (String) typicalFloorValues.get("typicalFloors")
+	            : " floor " + floor.getNumber();
+
+	    String description = String.format(TREAD_DESCRIPTION, generalStair.getNumber(), flight.getNumber());
+
+	    setReportOutputDetailsFloorStairWise(plan, RULETREAD, value, description,
+	            requiredTread.toString(), minTread.toString(),
+	            isValid ? Result.Accepted.getResultVal() : Result.Not_Accepted.getResultVal(), scrutinyDetail3);
+	}
+	private void addNoOfRisesError(Plan plan, HashMap<String, String> errors, Block block, Floor floor,
+	        org.egov.common.entity.edcr.GeneralStair generalStair, Flight flight) {
+
+	    String flightLayerName = String.format(DxfFileConstants.LAYER_STAIR_FLIGHT, block.getNumber(),
+	            floor.getNumber(), generalStair.getNumber(), flight.getNumber());
+
+	    errors.put("NoOfRisesCount" + flightLayerName,
+	            "Number of risers count should be greater than the count of length of flight dimensions defined in layer "
+	                    + flightLayerName);
+	    plan.addErrors(errors);
+	}
+
 
 //	private BigDecimal getRequiredTread(OccupancyTypeHelper mostRestrictiveOccupancyType) {
 //        if (mostRestrictiveOccupancyType != null
