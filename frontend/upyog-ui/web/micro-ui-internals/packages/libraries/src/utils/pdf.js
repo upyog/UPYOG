@@ -439,77 +439,77 @@ const jsPdfGeneratorv1 = async ({ breakPageLimit = null, tenantId, logo, name, e
       },
       {
         text:t("TERMS_AND_CONDITIONS1"),
-        fontSize:8,
-        margin:[10, 10, 10, 0]
+        fontSize:8.5,
+        margin:[15, 10, 10, 0]
       },
       {
         text:t("TERMS_AND_CONDITIONS2"),
-        fontSize:8,
-        margin:[10, 2, 10, 0]
+        fontSize:8.5,
+        margin:[15, 2, 10, 0]
       },
       {
         text:t("TERMS_AND_CONDITIONS3"),
-        fontSize:8,
-        margin:[10, 2, 10, 0] 
+        fontSize:8.5,
+        margin:[15, 2, 10, 0] 
       },
       {
         text:t("TERMS_AND_CONDITIONS4"),
-        fontSize:8,
-        margin:[10, 2, 10, 0] 
+        fontSize:8.5,
+        margin:[15, 2, 10, 0] 
       },
       {
         text:t("TERMS_AND_CONDITIONS5"),
-        fontSize:8,
-        margin:[10, 2, 10, 0] 
+        fontSize:8.5,
+        margin:[15, 2, 10, 0] 
       },
       {
         text:t("TERMS_AND_CONDITIONS6"),
-        fontSize:8,
-        margin:[10, 2, 10, 0] 
+        fontSize:8.5,
+        margin:[15, 2, 10, 0] 
       },
       {
         text:t("TERMS_AND_CONDITIONS7"),
-        fontSize:8,
-        margin:[10, 2, 10, 0] 
+        fontSize:8.5,
+        margin:[15, 2, 10, 0] 
       },
 
       {
         text:t("TERMS_AND_CONDITIONS8"),
-        fontSize:8,
-        margin:[10, 2, 10, 0] 
+        fontSize:8.5,
+        margin:[15, 2, 10, 0] 
       },
 
       {
         text:t("TERMS_AND_CONDITIONS9"),
-        fontSize:8,
-        margin:[10, 2, 10, 0] 
+        fontSize:8.5,
+        margin:[15, 2, 10, 0] 
       },
 
       {
         text:t("TERMS_AND_CONDITIONS10"),
-        fontSize:8,
-        margin:[10, 2, 10, 0] 
+        fontSize:8.5,
+        margin:[15, 2, 10, 0] 
       },
       {
         text:t("TERMS_AND_CONDITIONS11"),
-        fontSize:8,
-        margin:[10, 2, 10, 0] 
+        fontSize:8.5,
+        margin:[15, 2, 10, 0] 
       },
       {
         text:t("TERMS_AND_CONDITIONS12"),
-        fontSize:8,
-        margin:[10, 2, 10, 0] 
+        fontSize:8.5,
+        margin:[15, 2, 10, 0] 
       },
       {
         text:t("TERMS_AND_CONDITIONS13"),
-        fontSize:8,
-        margin:[10, 2, 10, 0] 
+        fontSize:8.5,
+        margin:[15, 2, 10, 0] 
       },
 
       {
         text:t("TERMS_AND_CONDITIONS14"),
-        fontSize:8,
-        margin:[10, 2, 10, 0] 
+        fontSize:8.5,
+        margin:[15, 2, 10, 0] 
       },
     ],
     defaultStyle: {
