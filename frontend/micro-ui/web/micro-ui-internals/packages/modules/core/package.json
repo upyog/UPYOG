@@ -1,6 +1,6 @@
 {
   "name": "@demodigit/digit-ui-module-core",
-  "version": "1.0.0",
+  "version": "1.0.3",
   "license": "MIT",
   "description": "Digit App Core Module contains all core components",
   "main": "dist/index.js",

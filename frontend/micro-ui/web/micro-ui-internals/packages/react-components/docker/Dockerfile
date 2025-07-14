@@ -9,8 +9,8 @@ RUN yarn add @demodigit/digit-ui-module-dss@1.0.0
 RUN yarn add @upyog/digit-ui-module-mcollect
 RUN yarn add @demodigit/digit-ui-module-pgr@3.0.4
 RUN yarn add @demodigit/digit-ui-module-engagement@3.0.3
-RUN yarn add @upyog/digit-ui-module-hrms
-RUN yarn add @demodigit/digit-ui-module-core@1.7.0-beta.3
+RUN yarn add @demodigit/digit-ui-module-hrms
+RUN yarn add @demodigit/digit-ui-module-core@1.0.3
 RUN yarn add @upyog/digit-ui-module-obps
 RUN yarn add @demodigit/digit-ui-module-common
 RUN yarn add @demodigit/digit-ui-module-ws

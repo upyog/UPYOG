@@ -20,7 +20,7 @@ import { ASSETComponents, ASSETLinks, ASSETModule } from "@demodigit/upyog-ui-mo
 import {
   HRMSModule,
   initHRMSComponents,
-} from "@upyog/digit-ui-module-hrms";
+} from "@demodigit/digit-ui-module-hrms";
 
 initLibraries();
 

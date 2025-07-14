@@ -108,7 +108,59 @@ const Home = () => {
       ? history.push(`/digit-ui/citizen/select-language`)
       : history.push(`/digit-ui/citizen/login`);
   }
-
+  useEffect(() => {
+    if (!tenantId) {
+      console.log("tenantId", tenantId, "User", User);
+      Digit.SessionStorage.set("locale", "en_IN");
+      const selectedCityNew =  {
+        "i18nKey": "TENANT_TENANTS_PG_CITYA",
+        "code": "pg.citya",
+        "name": "Kamaladiha",
+        "description": "City A",
+        "pincode": [
+            143001,
+            143002,
+            143003,
+            143004,
+            143005
+        ],
+        "logoId": "https://in-egov-assets.s3.ap-south-1.amazonaws.com/in.citya/logo.png",
+        "imageId": null,
+        "domainUrl": "https://www.upyog.niua.org",
+        "type": "CITY",
+        "twitterUrl": null,
+        "facebookUrl": null,
+        "emailId": "citya@gmail.com",
+        "OfficeTimings": {
+            "Mon - Fri": "9.00 AM - 6.00 PM"
+        },
+        "isPopular": true,
+        "city": {
+            "name": "City A",
+            "localName": null,
+            "districtCode": "CUTTACK",
+            "districtName": "Cuttack",
+            "districtTenantCode": "pg.citya",
+            "blockname": "Narasinghpur",
+            "regionName": null,
+            "ulbGrade": "Gram Panchayat",
+            "longitude": 75.5761829,
+            "latitude": 31.3260152,
+            "shapeFileLocation": null,
+            "captcha": null,
+            "code": "1013",
+            "ddrName": "DDR A"
+        },
+        "address": "City A Gram Panchayat",
+        "contactNumber": "001-2345876"
+    }
+      Digit.SessionStorage.set("CITIZEN.COMMON.HOME.CITY", selectedCityNew);
+      Digit.SessionStorage.get("locale") === null
+        ? history.push(`/digit-ui/citizen/select-language`)
+        : history.push(`/digit-ui/citizen/login`);
+    }
+  }, []);
+  
   const appBannerWebObj = uiHomePage?.appBannerDesktop;
   const appBannerMobObj = uiHomePage?.appBannerMobile;
   const citizenServicesObj = uiHomePage?.citizenServicesCard;
