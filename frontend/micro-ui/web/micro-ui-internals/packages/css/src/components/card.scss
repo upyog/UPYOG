@@ -168,7 +168,7 @@
 
 .submit-bar-disabled {
   @apply h-10 bg-primary-main text-center w-full outline-none opacity-50;
-  background-color: #dd2f03 !important;
+  background-color: #2494d4 !important;
 
   &:focus {
     @apply outline-none;
@@ -184,7 +184,7 @@
   .submit-bar,
   .submit-bar-disabled {
     width: 240px;
-    background-color: #dd2f03 !important;
+    background-color: #2494d4 !important;
     height: 2rem !important
   }
 
@@ -396,7 +396,7 @@
 }
 
 .language-selector .submit-bar, .submit-bar-disabled{
-  background-color: #dd2f03 !important;
+  background-color: #2494d4 !important;
 }
 
 .owner-details{

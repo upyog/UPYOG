@@ -175,7 +175,7 @@ const EmployeeSideBar = () => {
   };
 
   return (
-    <div className="sidebar" ref={sidebarRef} onMouseOver={expandNav} onMouseLeave={collapseNav} style={{display:window.location.href.includes("main-dashboard-landing")?"none":"",backgroundColor:"#162f6a"}}>
+    <div className="sidebar" ref={sidebarRef} onMouseOver={expandNav} onMouseLeave={collapseNav} style={{display:window.location.href.includes("main-dashboard-landing")?"none":"",backgroundColor:"#0a97d5"}}>
       {renderSearch()}
       {splitKeyValue()}
     </div>

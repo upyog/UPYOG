@@ -97,43 +97,106 @@ const ForgotPassword = ({ config: propsConfig, t }) => {
   }
 
   return (
-    <Background>
-      <div className="employeeBackbuttonAlign">
-        <BackButton variant="white" style={{ borderBottom: "none" }} />
-      </div>
-      <FormComposer
-        onSubmit={onForgotPassword}
-        noBoxShadow
-        inline
-        submitInForm
-        config={config}
-        label={propsConfig.texts.submitButtonLabel}
-        secondaryActionLabel={propsConfig.texts.secondaryButtonLabel}
-        onSecondayActionClick={navigateToLogin}
-        heading={propsConfig.texts.header}
-        description={propsConfig.texts.description}
-        headingStyle={{ textAlign: "center" }}
-        cardStyle={{ maxWidth: "408px", margin: "auto" }}
-        className="employeeForgotPassword"
-      >
-        <Header />
-      </FormComposer>
-      {showToast && <Toast error={true} label={t(showToast)} onClose={closeToast} />}
-
-      <div style={{ width: '100%', position: 'fixed', bottom: 0,backgroundColor:"white",textAlign:"center" }}>
-        <div style={{ display: 'flex', justifyContent: 'center', color:"black" }}>
-          {/* <span style={{ cursor: "pointer", fontSize: window.Digit.Utils.browser.isMobile()?"12px":"12px", fontWeight: "400"}} onClick={() => { window.open('https://www.digit.org/', '_blank').focus();}} >Powered by DIGIT</span>
-          <span style={{ margin: "0 10px" ,fontSize: window.Digit.Utils.browser.isMobile()?"12px":"12px"}}>|</span> */}
-          <span  className="upyog-copyright-footer" style={{ cursor: "pointer", fontSize: window.Digit.Utils.browser.isMobile()?"12px":"12px", fontWeight: "400"}} onClick={() => { window.open('https://niua.in/', '_blank').focus();}} >Copyright © 2025  Panchayati Raj & Drinking Water Department Govt. of Odisha </span>
-          
-          {/* <a style={{ cursor: "pointer", fontSize: "16px", fontWeight: "400"}} href="#" target='_blank'>MEA</a> */}
-
+      <Background style={{ display: "flex", alignItems: "flex-start !important" }}>
+        <div className="employeeBackbuttonAlign">
+          <BackButton variant="white" style={{ borderBottom: "none" }} />
         </div>
-        <div className="upyog-copyright-footer-web">
-          <span className="" style={{ cursor: "pointer", fontSize:  window.Digit.Utils.browser.isMobile()?"14px":"16px", fontWeight: "400"}} onClick={() => { window.open('', '_blank').focus();}} >Copyright © 2025  Panchayati Raj & Drinking Water Department Govt. of Odisha </span>
+    
+        <FormComposer
+          onSubmit={onForgotPassword}
+          noBoxShadow
+          inline
+          submitInForm
+          config={config}
+          label={propsConfig.texts.submitButtonLabel}
+          secondaryActionLabel={propsConfig.texts.secondaryButtonLabel}
+          onSecondayActionClick={navigateToLogin}
+          heading={propsConfig.texts.header}
+          headingStyle={{ textAlign: "center" }}
+          cardStyle={{ margin: "auto", minWidth: "408px", borderRadius: "20px" }}
+          className="loginFormStyleEmployee"
+          buttonStyle={{ maxWidth: "100%", width: "100%", borderRadius: "20px" }}
+        >
+          {/* Logo and Department Text Block (same as Login) */}
+          <div style={{ display: "flex", padding: "15px", justifyContent: "center" }}>
+            <div>
+              <img
+                className="city"
+                src="https://i.postimg.cc/gc4FYkqX/977a9096-3548-4980-aae8-45a6e4d61263-removalai-preview.png"
+                alt="City Logo"
+              />
+            </div>
+            <div>
+              <span
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  width: "100%",
+                  letterSpacing: "1px",
+                }}
+              >
+                <span
+                  style={{
+                    fontWeight: "bold",
+                    display: "flex",
+                    flexDirection: "column",
+                    marginLeft: "20px",
+                    color: "#0a97d5",
+                    fontSize: window.Digit.Utils.browser.isMobile() ? "16px" : "20px",
+                  }}
+                  className="logoText"
+                >
+                  Panchayati Raj & Drinking Water Department
+                </span>
+              </span>
+            </div>
           </div>
-      </div>
-    </Background>
+        </FormComposer>
+    
+        {showToast && <Toast error={true} label={t(showToast)} onClose={closeToast} />}
+    
+        <div
+          style={{
+            width: "100%",
+            position: "fixed",
+            bottom: 0,
+            backgroundColor: "white",
+            textAlign: "center",
+          }}
+        >
+          <div style={{ display: "flex", justifyContent: "center", color: "black" }}>
+            <span
+              className="upyog-copyright-footer"
+              style={{
+                cursor: "pointer",
+                fontSize: window.Digit.Utils.browser.isMobile() ? "12px" : "12px",
+                fontWeight: "400",
+              }}
+              onClick={() => {
+                window.open("https://niua.in/", "_blank").focus();
+              }}
+            >
+              Copyright © 2025 Panchayati Raj & Drinking Water Department Govt. of Odisha
+            </span>
+          </div>
+          <div className="upyog-copyright-footer-web">
+            <span
+              style={{
+                cursor: "pointer",
+                fontSize: window.Digit.Utils.browser.isMobile() ? "14px" : "16px",
+                fontWeight: "400",
+              }}
+              onClick={() => {
+                window.open("", "_blank").focus();
+              }}
+            >
+              Copyright © 2025 Panchayati Raj & Drinking Water Department Govt. of Odisha
+            </span>
+          </div>
+        </div>
+      </Background>
+    
   );
 };
 

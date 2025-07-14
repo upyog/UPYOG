@@ -110,7 +110,7 @@ const mapStyles = [
     elementType: "labels.text.fill",
     stylers: [
       {
-        color: "#757575",
+        color: "#f47738",
       },
     ],
   },
@@ -146,7 +146,7 @@ const mapStyles = [
     elementType: "labels.text.fill",
     stylers: [
       {
-        color: "#757575",
+        color: "#f47738",
       },
     ],
   },

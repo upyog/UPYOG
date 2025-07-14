@@ -6,7 +6,7 @@ const DonutChart = ({ data }) => {
   }
 
   const total = data.reduce((sum, item) => sum + item.value, 0);
-  const colors = ['#dd2f03', '#198754']; // Define colors for the two segments
+  const colors = ['#2494d4', '#198754']; // Define colors for the two segments
 
   return (
     <div className="donut-chart">

@@ -73,7 +73,7 @@ function ChatBot() {
       setMessages([
         {
           sender: "bot",
-          text: "Welcome to Ministry of External Affairs."
+          text: "Welcome to Drinking and Water Department"
           , lang_id: langID
         },
         {
@@ -106,7 +106,7 @@ function ChatBot() {
             padding: "10px",
             fontSize: "16px",
             cursor: "pointer",
-            backgroundColor: "#162f6a",
+            backgroundColor: "#0a97d5",
             color: "white",
             border: "none",
             borderRadius: "50%",
@@ -145,7 +145,7 @@ function ChatBot() {
         >
           <div
             style={{
-              backgroundColor: "#162f6a",
+              backgroundColor: "#0a97d5",
               color: "white",
               padding: "10px",
               display: "flex",
@@ -153,10 +153,10 @@ function ChatBot() {
               alignItems: "center",
             }}
           >
-            <span>MEA Sathi</span>
+            <span>PRDAWD</span>
     
             <div style={{
-              backgroundColor: "#162f6a",
+              backgroundColor: "#0a97d5",
               color: "white",
               padding: "10px",
               display: "flex",
@@ -178,7 +178,6 @@ function ChatBot() {
             <select value={langID} onChange={handleDropdown}>
               <option value={"en"}>English</option>
               <option value={"hi"} >Hindi</option>
-              <option value={"te"}>Telugu</option>
             </select>
             </div>
             <button
@@ -230,7 +229,7 @@ function ChatBot() {
                     padding: "10px",
                     borderRadius: "10px",
                     backgroundColor:
-                      message.sender === "user" ? "#162f6a" : "#e4e6eb",
+                      message.sender === "user" ? "#0a97d5" : "#e4e6eb",
                     color: message.sender === "user" ? "white" : "black",
                     whiteSpace: "pre-wrap",
                     wordWrap: "break-word",
@@ -275,7 +274,7 @@ function ChatBot() {
               style={{
                 marginLeft: "10px",
                 padding: "15px",
-                backgroundColor: "#162f6a",
+                backgroundColor: "#0a97d5",
                 color: "white",
                 border: "none",
                 borderRadius: "50%",

@@ -30,13 +30,12 @@ const TopBar = ({
   //   }
   // };
   return (
-    <div className="navbar" style={{background:"white",color:"white"}}>
+    <div className="navbar" style={{background:"#fef5e7",color:"white"}}>
       <style>
         {
           `
           .navbar {
-            padding:0px;
-            background-color: white !important;
+            background-color: #fef5e7 !important;
           }
           .navbar img {
             display: inline-block;
@@ -45,23 +44,23 @@ const TopBar = ({
             min-width: 40px;
         }
         .RightMostTopBarOptions .select-wrap svg{
-          fill:#162f6a
+          fill:white
         }
           `
         }
       </style>
-      <div className="center-container back-wrapper" style={{display:"flex",paddingRight:"2rem",paddingLeft:"2rem",justifyContent:"space-between",backgroundColor:"white"}}>
+      <div className="center-container back-wrapper" style={{display:"flex",paddingRight:"2rem",paddingLeft:"2rem",justifyContent:"space-between",backgroundColor:"#fef5e7"}}>
         <div className="hambuger-back-wrapper" style={{display:"flex", alignItems:"center"}}>
           {window.innerWidth <= 660  && <Hamburger handleClick={toggleSidebar} />}
           <div style={{display:"flex",padding:"5px",justifyContent:"center"}}>
           <div>
-      <img className="city" src="https://i.postimg.cc/3RK7wnrX/Screenshot-2025-07-10-at-11-17-17-AM.png" alt="City Logo"  style={{width:"40px"}}/>
+      <img className="city" src="https://i.postimg.cc/gc4FYkqX/977a9096-3548-4980-aae8-45a6e4d61263-removalai-preview.png" alt="City Logo"  style={{width:"40px"}}/>
       </div>
       <div>
     <span style={{ display: "flex", alignItems: "center", justifyContent: "space-between", width: "100%",letterSpacing:"1px" }}>
-      <span style={{fontWeight:"bold", display:"flex", flexDirection:"column", marginLeft:"20px", color:"#0e338a", fontSize:isMobile?"16px":"20px"}} className="logoText">
+      <span style={{fontWeight:"bold", display:"flex", flexDirection:"column", marginLeft:"20px", color:"#2394d4", fontSize:isMobile?"16px":"20px"}} className="logoText">
         Panchayati Raj & Drinking Water Department
-        <span style={{fontWeight:"normal", color:"black",  fontSize:isMobile?"16px":"20px",display:"flex",flexDirection:"column"}} className="logoTextSubline"> Government of Odisha</span>
+        <span style={{fontWeight:"bold", color:"black",  fontSize:isMobile?"16px":"20px",display:"flex",flexDirection:"column"}} className="logoTextSubline"> Government of Odisha</span>
       </span>
       </span>
       </div>
@@ -86,7 +85,7 @@ const TopBar = ({
           {/* <img
           className="city"
           id="topbar-logo" 
-          src={"https://i.postimg.cc/3RK7wnrX/Screenshot-2025-07-10-at-11-17-17-AM.png"}
+          src={"https://i.postimg.cc/gc4FYkqX/977a9096-3548-4980-aae8-45a6e4d61263-removalai-preview.png"}
           alt="mSeva"
           style={{marginLeft:"10px",minWidth:"40px", height:"60px"}}
         /> */}

@@ -66,7 +66,7 @@ const SelectMobileNumber = ({ t, onSelect, showRegisterLink, mobileNumber, onMob
         return <span>
           {/* {index == 0 && "CCF"} */}
           {data?.linkPrefix && <span>{t(`${data?.linkPrefix}_`)}</span>}
-          {data?.link && <span id={data?.linkId} onClick={(e) => { onLinkClick(e) }} style={{ color: "#162f6a", cursor: "pointer" }}>{t(`${data?.link}_`)}</span>}
+          {data?.link && <span id={data?.linkId} onClick={(e) => { onLinkClick(e) }} style={{ color: "#0a97d5", cursor: "pointer" }}>{t(`${data?.link}_`)}</span>}
           {data?.linkPostfix && <span>{t(`${data?.linkPostfix}_`)}</span>}
           {(index == isCCFEnabled?.checkBoxLabels?.length - 1) && t("LABEL")}
         </span>
@@ -216,11 +216,11 @@ const SelectMobileNumber = ({ t, onSelect, showRegisterLink, mobileNumber, onMob
       <Card style={{width:isMobile?"":"25%",borderRadius:"5%",minWidth:"380px",padding:"20px 20px",minWidth:"420px"}}>
         <div style={{display:"flex",padding:"15px",justifyContent:"center"}}>
           <div style={{width:"50%"}}>
-      <img className="city" src="https://i.postimg.cc/3RK7wnrX/Screenshot-2025-07-10-at-11-17-17-AM.png" alt="City Logo" />
+      <img className="city" src="https://i.postimg.cc/gc4FYkqX/977a9096-3548-4980-aae8-45a6e4d61263-removalai-preview.png" alt="City Logo" />
       </div>
       <div>
     <span style={{ display: "flex", alignItems: "center", justifyContent: "space-between", width: "100%",letterSpacing:"1px" }}>
-      <span style={{fontWeight:"bold", display:"flex", flexDirection:"column", marginLeft:"20px", color:"#0e338a", fontSize:"20px"}} className="logoText">
+      <span style={{fontWeight:"bold", display:"flex", flexDirection:"column", marginLeft:"20px", color:"#0a97d5", fontSize:"20px"}} className="logoText">
       Panchayati Raj & Drinking Water Department <span>Government of Odisha</span>
         {/* <span style={{fontWeight:"normal", color:"black", fontSize:"18px",display:"flex",flexDirection:"column"}} className="logoTextSubline"> MINISTRY OF <span style={{fontWeight:"bold"}}>EXTERNAL AFFAIRS</span></span> */}
       </span>
@@ -240,7 +240,7 @@ const SelectMobileNumber = ({ t, onSelect, showRegisterLink, mobileNumber, onMob
         </div>
           {isOtpLogin ? (
             <div style={{marginBottom:"10px"}}>
-              <label>{t("Mobile No")}</label>
+              <label style={{color:"#ff9800"}}>{t("Mobile No")}</label>
               <TextInput
                 required
                 id="mobile"
@@ -251,16 +251,16 @@ const SelectMobileNumber = ({ t, onSelect, showRegisterLink, mobileNumber, onMob
                 onChange={handleChange}
                 fullWidth
                 margin="normal"
-                style={{borderRadius:"10px",marginTop:"5px",backgroundColor: "#162f6a",color:"white",height:"2.5rem !important"}}
+                style={{borderRadius:"10px",marginTop:"5px",backgroundColor: "white",color:"#08519c",height:"2.5rem !important",fontWeight:"bold"}}
               />
               {!isOtpSent ? (
-                <span onClick={handleSendOtp} style={{color:"#162f6a",cursor:"pointer"}}>Send OTP</span>
+                <span onClick={handleSendOtp} style={{color:"#ff9800",cursor:"pointer"}}>Send OTP</span>
                 
 
               ) : (
                 <div>
                   <label>{t("OTP")}</label>
-                  <OTPInput length={6} onChange={handleChangeOTP} value={formValues.otp} />
+                  <OTPInput length={6} onChange={handleChangeOTP} value={formValues.otp} style={{color:"#08519c",fontWeight:"bold"}}/>
                 </div>
               )}
             </div>
@@ -278,7 +278,7 @@ const SelectMobileNumber = ({ t, onSelect, showRegisterLink, mobileNumber, onMob
                 fullWidth
                 margin="normal"
                 placeholder={t("Enter Username")}
-                style={{borderRadius:"10px",marginTop:"5px",backgroundColor: "#162f6a",color:"white",height:"2.5rem !important"}}
+                style={{borderRadius:"10px",marginTop:"5px",backgroundColor: "#0a97d5",color:"white",height:"2.5rem !important"}}
               />
               <label>{t("Password")}</label>
               <TextInput
@@ -293,15 +293,15 @@ const SelectMobileNumber = ({ t, onSelect, showRegisterLink, mobileNumber, onMob
                 fullWidth
                 margin="normal"
                 placeholder={t("Enter Password")}
-                style={{borderRadius:"10px",marginTop:"5px",backgroundColor: "#162f6a",color:"white",height:"2.5rem !important"}}
+                style={{borderRadius:"10px",marginTop:"5px",backgroundColor: "#0a97d5",color:"white",height:"2.5rem !important"}}
               />
             </div>
           )}
           <div>
-          <ButtonSelector type="button" onSubmit={(e) =>handleSubmit(e) }style={{marginLeft: "0px", width:"100%",height:"2.5rem", borderRadius:"10px",backgroundColor:"#162f6a !important",color:"white",marginTop:"10px" }} label= {t("Login")}  isDisabled ={isOtpLogin? !isOtpSent ?true : false:false}/>
+          <ButtonSelector type="button" onSubmit={(e) =>handleSubmit(e) }style={{marginLeft: "0px", width:"100%",height:"2.5rem", borderRadius:"10px",backgroundColor:"#0a97d5 !important",color:"white",marginTop:"10px" }} label= {t("Login")}  isDisabled ={isOtpLogin? !isOtpSent ?true : false:false}/>
            <div style={{display:"flex",flexDirection:"column",alignItems:"center",marginTop:"10px",lineHeight:"40px"}}>
-          {/* <span  onClick={() => window.location.href= window.location.href.split("login")[0] + "register/name"} style={{marginLeft: "10px",cursor:"pointer", color:"#162f6a" }}><span>{t("New User ?")}</span> {t("Register Here")}</span>
-          <span onClick={() => window.location.href= window.location.href.split("login")[0] + "complaints"}  style={{marginLeft: "10px", cursor:"pointer", color:"#162f6a" }}>{t("Check Incident Status")}</span>
+          {/* <span  onClick={() => window.location.href= window.location.href.split("login")[0] + "register/name"} style={{marginLeft: "10px",cursor:"pointer", color:"#0a97d5" }}><span>{t("New User ?")}</span> {t("Register Here")}</span>
+          <span onClick={() => window.location.href= window.location.href.split("login")[0] + "complaints"}  style={{marginLeft: "10px", cursor:"pointer", color:"#0a97d5" }}>{t("Check Incident Status")}</span>
          */}
          </div>
           </div>

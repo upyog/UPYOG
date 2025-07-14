@@ -107,7 +107,7 @@ console.log("modules",modules)
           <div className="moduleLinkHomePage">
             {/* <img src={ "https://chstage.blob.core.windows.net/assets/tmp/Untitled-design-1.png"||bannerImage || stateInfo?.bannerUrl} alt="noimagefound" /> */}
             <BackButton className="moduleLinkHomePageBackButton" />
-           {isMobile? <h4 style={{top: "calc(16vw + 40px)",left:"1.5rem",position:"absolute",color:"white"}}>{t("MODULE_" + code.toUpperCase())}</h4>:<h1>{t("MODULE_" + code.toUpperCase())}</h1>}
+           {/* {isMobile? <h4 style={{top: "calc(16vw + 40px)",left:"1.5rem",position:"absolute",color:"white"}}>{t("MODULE_" + code.toUpperCase())}</h4>:<h1>{t("MODULE_" + code.toUpperCase())}</h1>} */}
             <div className="moduleLinkHomePageModuleLinks">
               {mdmsDataObj && (
                 <CitizenHomeCard
@@ -161,7 +161,7 @@ console.log("modules",modules)
 
       <div className={`main center-container citizen-home-container mb-25`} style={{justifyContent:isMobile?"center":window.location.href.includes("register/name") || window.location.href.includes("login") || window.location.href.includes("select-location") || window.location.href.includes("select-language")?"center":"", paddingTop:"74px"}}>
         {hideSidebar ? null : (
-          <div className="SideBarStatic" style={{marginBottom:"-40px",backgroundColor:"#162f6a"}}>
+          <div className="SideBarStatic" style={{marginBottom:"-40px",backgroundColor:"#0a97d5"}}>
             <StaticCitizenSideBar linkData={linkData} islinkDataLoading={islinkDataLoading} />
           </div>
         )}
@@ -174,9 +174,9 @@ console.log("modules",modules)
           <PrivateRoute path={`${path}/feedback`} component={CitizenFeedback}></PrivateRoute>
           <PrivateRoute path={`${path}/feedback-acknowledgement`} component={AcknowledgementCF}></PrivateRoute>
 
-          <Route exact path={`${path}/select-language`}>
+          {/* <Route exact path={`${path}/select-language`}>
             <LanguageSelection />
-          </Route>
+          </Route> */}
 
           <Route exact path={`${path}/select-location`}>
             <LocationSelection />

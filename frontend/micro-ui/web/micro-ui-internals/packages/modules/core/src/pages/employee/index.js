@@ -109,9 +109,9 @@ const EmployeeApp = ({
                   }}
                 />
               </Route>
-              <Route path={`${path}/user/language-selection`}>
+              {/* <Route path={`${path}/user/language-selection`}>
                 <LanguageSelection />
-              </Route>
+              </Route> */}
               <Route>
                 <Redirect to={`${path}/user/language-selection`} />
               </Route>

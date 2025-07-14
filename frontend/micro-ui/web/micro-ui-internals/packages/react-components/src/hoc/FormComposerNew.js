@@ -336,7 +336,7 @@ export const FormComposerNew = (props) => {
     <form onSubmit={handleSubmit(onSubmit)} onKeyDown={(e) => checkKeyDown(e)} id={props.formId} className={props.className}>
       <Card style={getCardStyles()} className={props?.cardClassName ? props.cardClassName : ""}>
         {!props.childrenAtTheBottom && props.children}
-        <div className="formComposerNew" style={{backgroundColor:"#162f6a",padding:"5%",borderRadius:"20px"}}>
+        <div className="formComposerNew" style={{backgroundColor:"#21639c",padding:"5%",borderRadius:"20px"}}>
         {props.heading && <CardSubHeader style={{ ...props.headingStyle,color:"white" }}> {props.heading} </CardSubHeader>}
         
         {props.description && <CardLabelDesc className={"repos"}> {props.description} </CardLabelDesc>}

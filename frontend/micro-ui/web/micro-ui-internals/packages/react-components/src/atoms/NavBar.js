@@ -151,7 +151,7 @@ const NavBar = ({ open, toggleSidebar, profileItem, menuItems, onClose, Footer, 
           {
             `
             .drawer-list{
-              background-color: #162f6a;
+              background-color: white;
             }
             `
           }
@@ -183,7 +183,7 @@ const NavBar = ({ open, toggleSidebar, profileItem, menuItems, onClose, Footer, 
             top: 0,
             left: 0,
             transition: "transform 0.3s ease-in-out",
-            backgroundColor: "#162f6a",
+            backgroundColor: "white",
             zIndex: "1999",
             width: "280px",
             transform: `${open ? "translateX(0)" : "translateX(-450px)"}`,
@@ -191,7 +191,7 @@ const NavBar = ({ open, toggleSidebar, profileItem, menuItems, onClose, Footer, 
           }}
         >
           {profileItem}
-          <div className="drawer-list" id="sideBarMenu" style={{paddingTop:isMobile?"22%":"",backgroundColor:"#162f6a !important"}}>
+          <div className="drawer-list" id="sideBarMenu" style={{paddingTop:isMobile?"22%":"",backgroundColor:"#0a97d5 !important"}}>
             {isEmployee ? renderSearch() : null}
             {menuItems?.map((item, index) => (
               <div className={`sidebar-list ${pathname === item.link ? "active" : ""}`} key={index}>
