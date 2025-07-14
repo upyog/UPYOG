@@ -1,7 +1,7 @@
 .selector-button-primary {
-  background-color: #dd2f03 !important;
+  background-color: #2494d4 !important;
   @apply h-8 bg-primary-main text-center border-b-2 border-input-border border-solid outline-none px-lg;
-  background-color: #dd2f03 !important;
+  background-color: #2494d4 !important;
   &:focus {
     @apply outline-none;
   }
@@ -36,7 +36,7 @@
 }
 
 .selector-button-primary-disabled {
-  background-color: #dd2f03 !important;
+  background-color: #2494d4 !important;
   @apply h-8 bg-primary-main text-center border-b-2 border-input-border border-solid outline-none px-lg opacity-50;
 
   &:focus {

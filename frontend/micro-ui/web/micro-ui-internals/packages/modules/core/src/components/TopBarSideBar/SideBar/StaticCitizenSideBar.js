@@ -53,7 +53,7 @@ const defaultImage =
 Feature :: Citizen Webview sidebar
 */
 const Profile = ({ info, stateName, t }) => (
-  <div className="profile-section"  style={{backgroundColor:"#162f6a !important"}}>
+  <div className="profile-section"  style={{backgroundColor:"#0a97d5 !important"}}>
     <div className="imageloader imageloader-loaded">
       <img className="img-responsive img-circle img-Profile" src={info?.photo ? info?. photo : defaultImage} />
     </div>
@@ -229,7 +229,7 @@ const StaticCitizenSideBar = ({ linkData, islinkDataLoading }) => {
             height: "100%",
             width: "100%",
             top: "0px",
-            backgroundColor: "#162f6a",
+            backgroundColor: "#0a97d5",
             pointerzevents: "auto",
           }}
         ></div>
@@ -238,12 +238,12 @@ const StaticCitizenSideBar = ({ linkData, islinkDataLoading }) => {
             display: "flex",
             flexDirection: "column",
             height: isMobile ? "calc(100vh - 56px)" : "auto",
-            backgroundColor: "#162f6a",
+            backgroundColor: "#0a97d5",
             zIndex: "99",
           }}
         >
           {profileItem}
-          <div className="drawer-desktop" style={{"backgroundColor":"#162f6a",marginTop:"10px"}}>
+          <div className="drawer-desktop" style={{"backgroundColor":"#0a97d5",marginTop:"10px"}}>
             {menuItems?.map((item, index) => (
               <div className={`sidebar-list ${pathname === item?.link || pathname === item?.sidebarURL ? "active" : ""}`} key={index}>
                 <MenuItem item={item} style={{color:"white"}}/>

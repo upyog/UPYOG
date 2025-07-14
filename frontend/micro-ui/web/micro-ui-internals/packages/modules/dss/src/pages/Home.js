@@ -239,11 +239,11 @@ const renderLegend = (value) => {
             <CartesianGrid stroke="#f5f5f5" strokeDasharray="3 3" />
             <XAxis dataKey={"name"} type={"category"} tick={{ fontSize: "14px", fill: "#505A5F" }} tickCount={12} />
             <YAxis yAxisId="left"  type={"number"} orientation="left" stroke="#54d140" tickCount={10} domain={[0, 600]}/>
-            <YAxis yAxisId="right" type={"number"} orientation="right" stroke="#162f6a" tickCount={10} />
+            <YAxis yAxisId="right" type={"number"} orientation="right" stroke="#0a97d5" tickCount={10} />
             <Tooltip cursor={false} formatter={tooltipFormatter}/>
              <Legend formatter={renderLegend} iconType="circle" />
             <Bar yAxisId="left" dataKey="TotalCollection" fill="#54d140" />
-            <Line yAxisId="right" type="monotone" dataKey="liveUlbsCount" stroke="#162f6a" />
+            <Line yAxisId="right" type="monotone" dataKey="liveUlbsCount" stroke="#0a97d5" />
           </ComposedChart>
       )}
     </ResponsiveContainer>
@@ -506,7 +506,7 @@ console.log("dashboardConfig",dashboardConfig)
                             style={{
                               float: "right",
                               textAlign: "right",
-                              color: "#162f6a",
+                              color: "#0a97d5",
                               fontSize: 16,
                               fontWeight: "bold",
                               display: "flex",

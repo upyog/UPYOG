@@ -59,9 +59,54 @@ const Home = () => {
   });
   const { error, data: complaint, revalidate } = Digit.Hooks.pgr.useComplaintsListByMobile(tenantId, mobileNumber);
   if (!tenantId) {
+    console.log("tenantIdtenantId",tenantId,Digit.SessionStorage.get("locale"))
+    Digit.SessionStorage.set("locale", "en_IN");
+    const selectedCity =  {
+      "i18nKey": "TENANT_TENANTS_PG_CITYA",
+      "code": "pg.citya",
+      "name": "Kamaladiha",
+      "description": "City A",
+      "pincode": [
+          143001,
+          143002,
+          143003,
+          143004,
+          143005
+      ],
+      "logoId": "https://in-egov-assets.s3.ap-south-1.amazonaws.com/in.citya/logo.png",
+      "imageId": null,
+      "domainUrl": "https://www.upyog.niua.org",
+      "type": "CITY",
+      "twitterUrl": null,
+      "facebookUrl": null,
+      "emailId": "citya@gmail.com",
+      "OfficeTimings": {
+          "Mon - Fri": "9.00 AM - 6.00 PM"
+      },
+      "isPopular": true,
+      "city": {
+          "name": "City A",
+          "localName": null,
+          "districtCode": "CUTTACK",
+          "districtName": "Cuttack",
+          "districtTenantCode": "pg.citya",
+          "blockname": "Narasinghpur",
+          "regionName": null,
+          "ulbGrade": "Gram Panchayat",
+          "longitude": 75.5761829,
+          "latitude": 31.3260152,
+          "shapeFileLocation": null,
+          "captcha": null,
+          "code": "1013",
+          "ddrName": "DDR A"
+      },
+      "address": "City A Gram Panchayat",
+      "contactNumber": "001-2345876"
+  }
+    Digit.SessionStorage.set("CITIZEN.COMMON.HOME.CITY", selectedCity);
     Digit.SessionStorage.get("locale") === null
       ? history.push(`/digit-ui/citizen/select-language`)
-      : history.push(`/digit-ui/citizen/citizen`);
+      : history.push(`/digit-ui/citizen/login`);
   }
 
   const appBannerWebObj = uiHomePage?.appBannerDesktop;
@@ -179,7 +224,7 @@ const Home = () => {
         {`
         .logoText {
             font-size: 26px;
-            color: #0E338A;
+            color: #0a97d5;
             font-family: 'PoppinsBold';
             line-height: 25px;
             transition: all 0.5s ease;
@@ -210,7 +255,7 @@ const Home = () => {
       box-shadow:rgba(0, 0, 0, 0.35) 0px 5px 15px;
       border-radius:15px;
       cursor : pointer;
-      border: 4px solid #0e338a;
+      border: 4px solid #0a97d5;
 
     }
     .mydashboard{
@@ -293,6 +338,9 @@ const Home = () => {
 
   }
   
+  .HomePageContainer {background-color: #ebf1fb;
+    background-image: url(https://jaljeevanmission.gov.in//themes/edutheme/images/header-bg.png);
+  }
         `
         }
       </style>
@@ -336,49 +384,7 @@ const Home = () => {
         </div>
         <div style={{ display: isMobile ? "" : "flex", height: "66vh", width: isMobile ? "100%" : "" }}>
 
-          <div className="mydashboard" style={{ height: "100%", width: isMobile ? "100%" : "", marginTop: isMobile ? "1%" : "" }}>
-            <div style={{ width: "100%", height: "86%", color: "white" }}>
-              <div className="dash" style={{ padding: "5px", backgroundColor: "#162f6a" }}>Updates</div>
-              <div className="charts" style={{ backgroundColor: "white", height: "100%", overflow: scroll }}>
-                {(whatsAppBannerMobObj || whatsAppBannerWebObj) && (
-                  <div className="WhatsAppBanner">
-                    {/* {isMobile ? (
-              <img src={"https://chstage.blob.core.windows.net/assets/tmp/Untitled-design-1.png"} onClick={() => handleClickOnWhatsAppBanner(whatsAppBannerMobObj)} style={{"width":"100%"}}/>
-            ) : (
-              <img src={"https://chstage.blob.core.windows.net/assets/tmp/Untitled-design-1.png"} onClick={() => handleClickOnWhatsAppBanner(whatsAppBannerWebObj)} style={{"width":"100%"}}/>
-            )} */}
-                  </div>
-                )}
 
-                {conditionsToDisableNotificationCountTrigger() ? (
-                  EventsDataLoading ? (
-                    <Loader />
-                  ) : (
-                    <div className="WhatsNewSection" style={{ height: "100%" }}>
-                      {/* <div className="headSection">
-                <h2>{t(whatsNewSectionObj?.headerLabel)}</h2>
-                <p onClick={() => history.push(whatsNewSectionObj?.sideOption?.navigationUrl)}>{t(whatsNewSectionObj?.sideOption?.name)}</p>
-              </div> */}
-                      {/* <WhatsNewCard {...EventsData?.[0]} /> */}
-                      {Digit.UserService?.getUser()?.access_token ? (
-                        <div className="EventNotificationWrapper" style={{ height: "100%" }}>
-                          {notificationCountLoaded ? (
-                            <div style={{ height: "100%", overflow: "scroll" }}>
-                              {/* <span>
-                  <p>{notificationCountLoaded}</p>
-                </span> */}
-
-                              <NotificationsOrWhatsNew variant="notifications" parentRoute={""} style={{ height: "100%" }} />
-                            </div>
-                          ) : null}
-                        </div>
-                      ) : null}
-                    </div>
-                  )
-                ) : null}
-              </div>
-            </div>
-          </div>
         </div>
 
 

@@ -71,7 +71,7 @@ const Login = ({ config: propsConfig, t, isDisabled }) => {
       ...data,
       userType: "EMPLOYEE",
     };
-    requestData.tenantId = "pg.citya";
+    requestData.tenantId =  data.city.code;;
     delete requestData.city;
     try {
       const { UserRequest: info, ...tokens } = await Digit.UserService.authenticate(requestData);
@@ -113,28 +113,28 @@ const Login = ({ config: propsConfig, t, isDisabled }) => {
           },
           isMandatory: true,
         },
-        // {
-        //   label: t(city.label),
-        //   type: city.type,
-        //   populators: {
-        //     name: city.name,
-        //     customProps: {},
-        //     component: (props, customProps) => (
-        //       <Dropdown
-        //         option={cities}
-        //         className="login-city-dd"
-        //         optionKey="i18nKey"
-        //         select={(d) => {
-        //           props.onChange(d);
-        //         }}
-        //         t={t}
-        //         style={{borderRadius:"10px",marginTop:"5px",backgroundColor: "White",color:"black",height:"2.5rem !important"}}
-        //         {...customProps}
-        //       />
-        //     ),
-        //   },
-        //   isMandatory: true,
-        // },
+        {
+          label: t(city.label),
+          type: city.type,
+          populators: {
+            name: city.name,
+            customProps: {},
+            component: (props, customProps) => (
+              <Dropdown
+                option={cities}
+                className="login-city-dd"
+                optionKey="i18nKey"
+                select={(d) => {
+                  props.onChange(d);
+                }}
+                t={t}
+                style={{borderRadius:"10px",marginTop:"5px",backgroundColor: "White",color:"black",height:"2.5rem !important"}}
+                {...customProps}
+              />
+            ),
+          },
+          isMandatory: true,
+        },
       ],
     },
   ];
@@ -161,7 +161,7 @@ const Login = ({ config: propsConfig, t, isDisabled }) => {
         headingStyle={{ textAlign: "center" }}
         cardStyle={{ margin: "auto", minWidth: "408px",borderRadius:"20px" }}
         className="loginFormStyleEmployee"
-        buttonStyle={{ maxWidth: "100%", width: "100%" ,backgroundColor:"#5a1166",borderRadius:"20px"}}
+        buttonStyle={{ maxWidth: "100%", width: "100%" ,backgroundColor:"",borderRadius:"20px"}}
       >
        <div style={{display:"flex",padding:"15px",justifyContent:"center"}}>
           <div>
@@ -169,7 +169,7 @@ const Login = ({ config: propsConfig, t, isDisabled }) => {
       </div>
       <div>
     <span style={{ display: "flex", alignItems: "center", justifyContent: "space-between", width: "100%",letterSpacing:"1px" }}>
-      <span style={{fontWeight:"bold", display:"flex", flexDirection:"column", marginLeft:"20px", color:"#0e338a", fontSize:isMobile?"16px":"20px"}} className="logoText">
+      <span style={{fontWeight:"bold", display:"flex", flexDirection:"column", marginLeft:"20px", color:"#0a97d5", fontSize:isMobile?"16px":"20px"}} className="logoText">
         Panchayati Raj & Drinking Water Department
         {/* <span style={{fontWeight:"normal", color:"black", fontSize:isMobile?"14px":"20px",display:"flex",flexDirection:"column"}} className="logoTextSubline"> MINISTRY OF <span style={{fontWeight:"bold",fontSize:isMobile?"14px":"20px"}}>EXTERNAL AFFAIRS</span></span> */}
       </span>

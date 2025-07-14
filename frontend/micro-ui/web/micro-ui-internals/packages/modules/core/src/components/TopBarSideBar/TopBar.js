@@ -109,9 +109,9 @@ const TopBar = ({
             display: flex;
             align-items: center;
             padding: 10px 20px;
-            background-color: #fff;
+            background-color: #fef5e7 !important;
             box-shadow:inset 0 0px 0px #b1b4b6 !important;
-            background: url("") no-repeat center bottom, linear-gradient(to bottom, #fff 90%, transparent 90%) !important;
+            // background: url("") no-repeat center bottom, linear-gradient(to bottom, #fff 90%, transparent 90%) !important;
            
           }
         
@@ -120,12 +120,12 @@ const TopBar = ({
         }
       </style>
     {mobileView ? <Hamburger handleClick={toggleSidebar} color="#9E9E9E" /> : null}
-    <img className="city" src="https://i.postimg.cc/3RK7wnrX/Screenshot-2025-07-10-at-11-17-17-AM.png" alt="City Logo" />
+    <img className="city" src="https://i.postimg.cc/gc4FYkqX/977a9096-3548-4980-aae8-45a6e4d61263-removalai-preview.png" alt="City Logo" />
     <span style={{ display: "flex", alignItems: "center", justifyContent: "space-between", width: "100%" }}>
     <span style={{ display: "flex", alignItems: "center", justifyContent: "space-between", width: "100%",letterSpacing:"1px" }}>
-      <span style={{fontWeight:"bold", display:"flex", flexDirection:"column", marginLeft:"20px", color:"#0e338a", fontSize:mobileView?"16px":"20px"}} className="logoText">
+      <span style={{fontWeight:"bold", display:"flex", flexDirection:"column", marginLeft:"20px", color:"#0a97d5", fontSize:mobileView?"16px":"20px"}} className="logoText">
         Panchayati Raj & Drinking Water Department
-        <span style={{fontWeight:"normal", color:"black",  fontSize:mobileView?"16px":"20px",display:"flex",flexDirection:"column"}} className="logoTextSubline"> Government of Odisha</span>
+        <span style={{fontWeight:"bold", color:"black",  fontSize:mobileView?"16px":"20px",display:"flex",flexDirection:"column"}} className="logoTextSubline"> Government of Odisha</span>
       </span>
       </span>
       {!loggedin && (

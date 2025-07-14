@@ -47,12 +47,12 @@ const Profile = ({ info, stateName, t }) => {
     }
   }, [profilePic !== null]);
   return (
-    <div className="profile-section" style={{backgroundColor:"#162f6a !important", marginTop:isMobile?"15%":""}}>
+    <div className="profile-section" style={{backgroundColor:"#0a97d5 !important", marginTop:isMobile?"15%":""}}>
       <style>
         {
           `
           .profile-section {
-            background-color: #162f6a !important;
+            background-color: #0a97d5 !important;
 
             .label-text{
               color:white !important
