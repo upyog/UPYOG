@@ -764,6 +764,7 @@ public class BillServicev2 {
 		BigDecimal totalAmountForDemand = BigDecimal.ZERO;
 		BigDecimal pastDue = BigDecimal.ZERO;
 		BigDecimal penalty=BigDecimal.ZERO;
+		BigDecimal timePenalty=BigDecimal.ZERO;
 		boolean billsFound = false;
 
 		/*
@@ -784,9 +785,13 @@ public class BillServicev2 {
 			totalAmountForDemand = totalAmountForDemand.add(amountForAccDeatil);
 			if (taxHead.getCode().equalsIgnoreCase("PT_PASTDUE_CARRYFORWARD"))
 				pastDue = pastDue.add(demandDetail.getTaxAmount());
-			else if(taxHead.getCode().equalsIgnoreCase("PT_PAST_DUE_PENALTY"))
+			if(taxHead.getCode().equalsIgnoreCase("PT_PAST_DUE_PENALTY"))
 				penalty=demandDetail.getTaxAmount();
+			if(taxHead.getCode().equalsIgnoreCase("PT_TIME_PENALTY"))
+				timePenalty=demandDetail.getTaxAmount();
 		}
+		
+		penalty = penalty.add(timePenalty);
 		// totalAmountForDemand = BigDecimal.ZERO;
 		totalAmountForDemand = totalAmountForDemand.setScale(0, RoundingMode.HALF_UP);
 		if (totalAmountForDemand.compareTo(new BigDecimal(0)) == 0) {
@@ -1063,6 +1068,10 @@ public class BillServicev2 {
 			BigDecimal amountwithpastdue = BigDecimal.ZERO;
 			BigDecimal allquaterammount = BigDecimal.ZERO;
 			BigDecimal quaterlyammount = BigDecimal.ZERO;
+			BigDecimal quaterPenalty = BigDecimal.ZERO;
+			if(penalty.compareTo(BigDecimal.ZERO)>0) {
+				quaterPenalty= penalty.divide(new BigDecimal(4));
+			}
 			/*
 			 * for(BigDecimal failedquatervalue:failedtransactionMapForQuater.values()) {
 			 * failedquaterammount=failedquaterammount.add(failedquatervalue); }
@@ -1108,9 +1117,9 @@ public class BillServicev2 {
 					mpdObj.setPastAmount(pastDue);
 					mpdList.add(mpdObj);
 				}
-
+				
 				inp = getInterestPenalty( BigDecimal.ZERO,  null, null,null, null , BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,false);
-				addBillAccDetailInTaxCodeAccDetailMap(taxCodeAccountdetailMap,demand, billDetailId, totalAmountForDemand, BigDecimal.ZERO, penalty, requestInfo);
+				addBillAccDetailInTaxCodeAccDetailMap(taxCodeAccountdetailMap,demand, billDetailId, totalAmountForDemand, BigDecimal.ZERO, quaterPenalty, requestInfo);
 
 			} else if (q2.contains(cuurentMonth)) {
 
@@ -1218,7 +1227,7 @@ public class BillServicev2 {
 					mpdList.add(mpdObj);
 				}
 				
-				addBillAccDetailInTaxCodeAccDetailMap(taxCodeAccountdetailMap,demand, billDetailId, totalAmountForDemand, totalInterestAmunt, BigDecimal.ZERO, requestInfo);
+				addBillAccDetailInTaxCodeAccDetailMap(taxCodeAccountdetailMap,demand, billDetailId, totalAmountForDemand, totalInterestAmunt, quaterPenalty, requestInfo);
 				
 			} else if (q3.contains(cuurentMonth)) {
 
@@ -1358,7 +1367,7 @@ public class BillServicev2 {
 					mpdList.add(mpdObj);
 				}
 				
-				addBillAccDetailInTaxCodeAccDetailMap(taxCodeAccountdetailMap,demand, billDetailId, totalAmountForDemand, totalInterestAmunt, BigDecimal.ZERO, requestInfo);
+				addBillAccDetailInTaxCodeAccDetailMap(taxCodeAccountdetailMap,demand, billDetailId, totalAmountForDemand, totalInterestAmunt, quaterPenalty, requestInfo);
 
 			} else if (q4.contains(cuurentMonth)) {
 
@@ -1570,7 +1579,7 @@ public class BillServicev2 {
 					mpdList.add(mpdObj);
 				}
 
-				addBillAccDetailInTaxCodeAccDetailMap(taxCodeAccountdetailMap,demand, billDetailId, totalAmountForDemand, totalInterestAmunt, BigDecimal.ZERO, requestInfo);
+				addBillAccDetailInTaxCodeAccDetailMap(taxCodeAccountdetailMap,demand, billDetailId, totalAmountForDemand, totalInterestAmunt,quaterPenalty, requestInfo);
 			}
 
 			break;
@@ -1579,6 +1588,10 @@ public class BillServicev2 {
 			// calcualtion of all halfyearly ammount
 			BigDecimal halfyearlyammount = BigDecimal.ZERO;
 			BigDecimal amountwithpastduehalf = BigDecimal.ZERO;
+			BigDecimal halfPenalty = BigDecimal.ZERO;
+			if(penalty.compareTo(BigDecimal.ZERO)>0) {
+				halfPenalty= penalty.divide(new BigDecimal(4));
+			}
 
 			if (h1.contains(cuurentMonth)) {
 				paymentPeriod = H1;
@@ -1616,7 +1629,7 @@ public class BillServicev2 {
 				}
 
 				inp = getInterestPenalty( BigDecimal.ZERO,  null, null,null, null , BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,false);
-				addBillAccDetailInTaxCodeAccDetailMap(taxCodeAccountdetailMap,demand, billDetailId, totalAmountForDemand, BigDecimal.ZERO, penalty, requestInfo);
+				addBillAccDetailInTaxCodeAccDetailMap(taxCodeAccountdetailMap,demand, billDetailId, totalAmountForDemand, halfPenalty, penalty, requestInfo);
 				
 			} else if (h2.contains(cuurentMonth)) {
 
@@ -1736,7 +1749,7 @@ public class BillServicev2 {
 					mpdList.add(mpdObj);
 				}
 
-				addBillAccDetailInTaxCodeAccDetailMap(taxCodeAccountdetailMap,demand, billDetailId, totalAmountForDemand, totalInterestAmunt, BigDecimal.ZERO, requestInfo);
+				addBillAccDetailInTaxCodeAccDetailMap(taxCodeAccountdetailMap,demand, billDetailId, totalAmountForDemand, totalInterestAmunt, halfPenalty, requestInfo);
 			}
 
 			break;

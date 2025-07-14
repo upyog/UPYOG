@@ -210,11 +210,14 @@ public class TransactionService {
 		requestInfo = new RequestInfo();
 		requestInfo.setUserInfo(userInfo);
 		String response="200|Y|SUCCESSFUL";
+		String transactionId="";
+		String transactionAmmount="";
+		String message="";
 		try {
 
 			Map<String, String> requestParams = new TreeMap<>() ;
 
-			String message=req.getParameter("msg");
+			message=req.getParameter("msg");
 			String auth=req.getParameter("auth");
 
 			//Set Fixed token For Authentication
@@ -225,8 +228,7 @@ public class TransactionService {
 
 			//Chek transactionid location accrding to flag for S its 4 For F check the message
 
-			String transactionId="";
-			String transactionAmmount="";
+			
 			if(message.split("[|]")[0].equalsIgnoreCase("S")) {
 				transactionId= message.split("[|]")[4];
 				transactionAmmount=message.split("[|]")[6];
@@ -333,8 +335,8 @@ public class TransactionService {
 
 
 		// For failed given from merchant 
-
-
+		
+		transactionRepository.savePushresponseLog(message, response, transactionId, transactionAmmount);
 		return response;
 
 		// return Collections.singletonList(newTxn);
