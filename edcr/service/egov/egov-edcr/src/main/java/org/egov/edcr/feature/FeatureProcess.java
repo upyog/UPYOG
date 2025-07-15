@@ -1,5 +1,5 @@
 /*
- * eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
+ * UPYOG  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  * accountability and the service delivery of the government  organizations.
  *
  *  Copyright (C) <2019>  eGovernments Foundation
@@ -98,6 +98,14 @@ public abstract class FeatureProcess {
 	public static final String Common_Basement = "Common_Basement";
 	public static final String Common_Distance_Between_Blocks = "Common_Distance Between Blocks";
 	public static final String Common_Chimney = "Common_Chimney";
+	public static final String Common_Bathroom = "Common_Bathroom";
+	public static final String Common_Bathroom_Water_Closets = "Common_Bathroom Water Closets";
+	public static final String Common_Segregated_Toilet = "Common_Segregated Toilet";
+	public static final String Common_Septic_Tank = "Common_Septic Tank";
+	public static final String Common_Solar = "Common_Solar";
+	public static final String Common_Toilet = "Common_Toilet";
+	public static final String Common_Verandah = "Common_Verandah";
+	
 	
 
 	public abstract Map<String, Date> getAmendments();

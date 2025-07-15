@@ -57,12 +57,15 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import org.egov.common.constants.MdmsFeatureConstants;
 import org.egov.common.entity.edcr.Block;
 import org.egov.common.entity.edcr.Floor;
+import org.egov.common.entity.edcr.MdmsFeatureRule;
 import org.egov.common.entity.edcr.OccupancyTypeHelper;
 import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.Result;
@@ -70,6 +73,7 @@ import org.egov.common.entity.edcr.ScrutinyDetail;
 import org.egov.common.entity.edcr.SetBack;
 import org.egov.common.entity.edcr.Yard;
 import org.egov.edcr.constants.DxfFileConstants;
+import org.egov.edcr.service.CacheManagerMdms;
 import org.egov.edcr.service.EdcrRestService;
 import org.egov.edcr.service.FetchEdcrRulesMdms;
 import org.egov.edcr.utility.DcrConstants;
@@ -168,9 +172,9 @@ public class AdditionalFeature extends FeatureProcess {
         return pl;
     }
 
-    @Autowired
-	FetchEdcrRulesMdms fetchEdcrRulesMdms;
-    
+	@Autowired
+	CacheManagerMdms cache;
+	
     @Override
     public Plan process(Plan pl) {
     	
@@ -608,37 +612,16 @@ public class AdditionalFeature extends FeatureProcess {
             ScrutinyDetail scrutinyDetail = getNewScrutinyDetail("Block_" + blkNo + "_" + "Plinth");
             List<BigDecimal> plinthHeights = block.getPlinthHeight();
             
-            String occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl);
-			
-			 String feature = "plinthHeight";
-				
-				Map<String, Object> params = new HashMap<>();
-				
-				params.put("feature", feature);
-				params.put("occupancy", occupancyName);
-			
-				ArrayList<String> valueFromColumn = new ArrayList<>();
-				valueFromColumn.add("permissibleValue");
+            List<Object> rules = cache.getFeatureRules(pl, MdmsFeatureConstants.PLINTH_HEIGHT, false);
+    	    Optional<MdmsFeatureRule> matchedRule = rules.stream()
+    	            .map(obj -> (MdmsFeatureRule) obj)
+    	            .findFirst();
 
-				List<Map<String, Object>> permissibleValue = new ArrayList<>();
-
-				Map<String,List<Map<String,Object>>> edcrRuleList = pl.getEdcrRulesFeatures();
-				try {
-					permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
-					LOG.info("permissibleValue" + permissibleValue);
-				
-
-				} catch (NullPointerException e) {
-
-					LOG.error("Permissible Value for Plinth height not found--------", e);
-					return;
-				}
-
-
-				if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey("permissibleValue")) {
-					plintHeight = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get("permissibleValue").toString()));
-				}
-	
+    	    if (matchedRule.isPresent()) {
+    	    	plintHeight = matchedRule.get().getPermissible();
+    	    } else {
+    	    	plintHeight = BigDecimal.ZERO;
+    	    }
 
             if (!plinthHeights.isEmpty()) {
                 minPlinthHeight = plinthHeights.stream().reduce(BigDecimal::min).get().setScale(2, BigDecimal.ROUND_HALF_UP);
