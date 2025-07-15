@@ -1,5 +1,5 @@
 /*
- * eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
+ * UPYOG  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  * accountability and the service delivery of the government  organizations.
  *
  *  Copyright (C) <2019>  eGovernments Foundation
@@ -86,9 +86,7 @@ public class GuardRoom extends FeatureProcess {
     public static final String AREA = "Area";
     public static final String DIMENSION = "Dimension";
 
-    @Autowired
-    FetchEdcrRulesMdms fetchEdcrRulesMdms;
-    
+   
     @Autowired
 	CacheManagerMdms cache;
 
@@ -112,142 +110,123 @@ public class GuardRoom extends FeatureProcess {
 	 * @param pl The plan object to process.
 	 * @return The processed plan object with scrutiny details added.
 	 */
-	@Override
-	public Plan process(Plan pl) {
-		// Validate the plan object
-		validate(pl);
 
-		// Initialize scrutiny detail for guard room validation
-		scrutinyDetail = new ScrutinyDetail();
-		scrutinyDetail.setKey(COMMON_Guard_Room);
-		scrutinyDetail.addColumnHeading(1, RULE_NO);
-		scrutinyDetail.addColumnHeading(2, DESCRIPTION);
-		scrutinyDetail.addColumnHeading(3, REQUIRED);
-		scrutinyDetail.addColumnHeading(4, PROVIDED);
-		scrutinyDetail.addColumnHeading(5, STATUS);
+    
+    @Override
+    public Plan process(Plan pl) {
+    	validate(pl);
+    	initializeScrutinyDetail();
 
-		// Map to store rule details and validation errors
-		Map<String, String> details = new HashMap<>();
-		HashMap<String, String> errors = new HashMap<>();
+    	Map<String, String> details = new HashMap<>();
+    	HashMap<String, String> errors = new HashMap<>();
 
-		// Variables to store permissible and actual values
-		BigDecimal minHeight = BigDecimal.ZERO;
-		BigDecimal minWidth = BigDecimal.ZERO;
-		BigDecimal minArea = BigDecimal.ZERO;
-		BigDecimal minCabinHeight = BigDecimal.ZERO;
+    	BigDecimal minHeight = BigDecimal.ZERO;
+    	BigDecimal minWidth = BigDecimal.ZERO;
+    	BigDecimal minArea = BigDecimal.ZERO;
+    	BigDecimal minCabinHeight = BigDecimal.ZERO;
 
-		BigDecimal GuardRoomMinHeight = BigDecimal.ZERO;
-		BigDecimal GuardRoomMinWidth = BigDecimal.ZERO;
-		BigDecimal GuardRoomMinArea = BigDecimal.ZERO;
-		BigDecimal GuardRoomMinCabinHeightOne = BigDecimal.ZERO;
-		BigDecimal GuardRoomMinCabinHeightTwo = BigDecimal.ZERO;
+    	BigDecimal GuardRoomMinHeight = BigDecimal.ZERO;
+    	BigDecimal GuardRoomMinWidth = BigDecimal.ZERO;
+    	BigDecimal GuardRoomMinArea = BigDecimal.ZERO;
+    	BigDecimal GuardRoomMinCabinHeightOne = BigDecimal.ZERO;
+    	BigDecimal GuardRoomMinCabinHeightTwo = BigDecimal.ZERO;
 
-		// Determine the occupancy type and feature for fetching permissible values
+    	List<Object> rules = cache.getFeatureRules(pl, MdmsFeatureConstants.GUARD_ROOM, false);
+    	Optional<MdmsFeatureRule> matchedRule = rules.stream().map(obj -> (MdmsFeatureRule) obj).findFirst();
 
-		String feature = MdmsFeatureConstants.GUARD_ROOM;
-		String occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl).toLowerCase();
-		String tenantId = pl.getTenantId();
-		String zone = pl.getPlanInformation().getZone().toLowerCase();
-		String subZone = pl.getPlanInformation().getSubZone().toLowerCase();
-		String riskType = fetchEdcrRulesMdms.getRiskType(pl).toLowerCase();
+    	if (matchedRule.isPresent()) {
+    		MdmsFeatureRule rule = matchedRule.get();
+    		GuardRoomMinHeight = rule.getGuardRoomMinHeight();
+    		GuardRoomMinWidth = rule.getGuardRoomMinWidth();
+    		GuardRoomMinArea = rule.getGuardRoomMinArea();
+    		GuardRoomMinCabinHeightOne = rule.getGuardRoomMinCabinHeightOne();
+    		GuardRoomMinCabinHeightTwo = rule.getGuardRoomMinCabinHeightTwo();
+    	}
 
-		RuleKey key = new RuleKey(EdcrRulesMdmsConstants.STATE, tenantId, zone, subZone, occupancyName, null, feature);
-		List<Object> rules = cache.getRules(tenantId, key);
+    	if (pl.getGuardRoom() != null && !pl.getGuardRoom().getGuardRooms().isEmpty()) {
+    		List<BigDecimal> heightList = pl.getGuardRoom().getGuardRooms().stream().map(Measurement::getHeight).collect(Collectors.toList());
+    		List<BigDecimal> widthList = pl.getGuardRoom().getGuardRooms().stream().map(Measurement::getWidth).collect(Collectors.toList());
+    		List<BigDecimal> areaList = pl.getGuardRoom().getGuardRooms().stream().map(Measurement::getArea).collect(Collectors.toList());
+    		List<BigDecimal> cabinHeightList = pl.getGuardRoom().getCabinHeights();
 
-		Optional<MdmsFeatureRule> matchedRule = rules.stream().map(obj -> (MdmsFeatureRule) obj).findFirst();
+    		if (cabinHeightList != null && !cabinHeightList.isEmpty()) {
+    			minHeight = heightList.stream().reduce(BigDecimal::min).get();
+    			minWidth = widthList.stream().reduce(BigDecimal::min).get();
+    			minArea = areaList.stream().reduce(BigDecimal::min).get();
+    			minCabinHeight = cabinHeightList.stream().reduce(BigDecimal::min).get();
 
-		if (matchedRule.isPresent()) {
-			MdmsFeatureRule rule = matchedRule.get();
-			GuardRoomMinHeight = rule.getGuardRoomMinHeight();
-			GuardRoomMinWidth = rule.getGuardRoomMinWidth();
-			GuardRoomMinArea = rule.getGuardRoomMinArea();
-			GuardRoomMinCabinHeightOne = rule.getGuardRoomMinCabinHeightOne();
-			GuardRoomMinCabinHeightTwo = rule.getGuardRoomMinCabinHeightTwo();
-		}
-		// Validate guard room properties
-		if (pl.getGuardRoom() != null && !pl.getGuardRoom().getGuardRooms().isEmpty()) {
-			List<BigDecimal> heightList = pl.getGuardRoom().getGuardRooms().stream().map(Measurement::getHeight)
-					.collect(Collectors.toList());
-			List<BigDecimal> widthList = pl.getGuardRoom().getGuardRooms().stream().map(Measurement::getWidth)
-					.collect(Collectors.toList());
-			List<BigDecimal> areaList = pl.getGuardRoom().getGuardRooms().stream().map(Measurement::getArea)
-					.collect(Collectors.toList());
-			List<BigDecimal> cabinHeightList = pl.getGuardRoom().getCabinHeights();
+    			validateDimensions(minHeight, minWidth, GuardRoomMinHeight, GuardRoomMinWidth);
+    			validateArea(minArea, GuardRoomMinArea);
+    			validateCabinHeight(minCabinHeight, GuardRoomMinCabinHeightOne, GuardRoomMinCabinHeightTwo);
 
-			if (cabinHeightList != null && !cabinHeightList.isEmpty()) {
-				minHeight = heightList.stream().reduce(BigDecimal::min).get();
-				minWidth = widthList.stream().reduce(BigDecimal::min).get();
-				minArea = areaList.stream().reduce(BigDecimal::min).get();
-				minCabinHeight = cabinHeightList.stream().reduce(BigDecimal::min).get();
+    			pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+    		} else {
+    			errors.put("Distance_Guard Room", "Cabin heights are not provided in layer GUARD_ROOM");
+    			pl.addErrors(errors);
+    		}
+    	}
 
-				// Validate dimensions
-				if (minHeight.compareTo(GuardRoomMinHeight) >= 0 && minWidth.compareTo(GuardRoomMinWidth) >= 0) {
-					details.put(RULE_NO, RULE_48_A);
-					details.put(DESCRIPTION, GUARD_ROOM_DIMENSION_DESCRIPTION);
-					details.put(REQUIRED,
-							DIMENSION + " > " + GuardRoomMinHeight.toString() + "x" + GuardRoomMinWidth.toString());
-					details.put(PROVIDED, DIMENSION + ": " + minWidth + "x" + minHeight);
-					details.put(STATUS, Result.Accepted.getResultVal());
-					scrutinyDetail.getDetail().add(details);
-				} else {
-					details = new HashMap<>();
-					details.put(RULE_NO, RULE_48_A);
-					details.put(DESCRIPTION, GUARD_ROOM_DIMENSION_DESCRIPTION);
-					details.put(REQUIRED,
-							DIMENSION + " > " + GuardRoomMinHeight.toString() + "x" + GuardRoomMinWidth.toString());
-					details.put(PROVIDED, DIMENSION + ": " + minWidth + "x" + minHeight);
-					details.put(STATUS, Result.Not_Accepted.getResultVal());
-					scrutinyDetail.getDetail().add(details);
-				}
+    	return pl;
+    }
 
-				// Validate area
-				if (minArea.compareTo(GuardRoomMinArea) <= 0) {
-					details = new HashMap<>();
-					details.put(RULE_NO, RULE_48_A);
-					details.put(DESCRIPTION, GUARD_ROOM_AREA_DESCRIPTION);
-					details.put(REQUIRED, AREA + " <= " + GuardRoomMinArea.toString());
-					details.put(PROVIDED, AREA + ": " + minArea);
-					details.put(STATUS, Result.Accepted.getResultVal());
-					scrutinyDetail.getDetail().add(details);
-				} else {
-					details = new HashMap<>();
-					details.put(RULE_NO, RULE_48_A);
-					details.put(DESCRIPTION, GUARD_ROOM_AREA_DESCRIPTION);
-					details.put(REQUIRED, AREA + " <= " + GuardRoomMinArea.toString());
-					details.put(PROVIDED, AREA + ": " + minArea);
-					details.put(STATUS, Result.Not_Accepted.getResultVal());
-					scrutinyDetail.getDetail().add(details);
-				}
+    private void initializeScrutinyDetail() {
+    	scrutinyDetail = new ScrutinyDetail();
+    	scrutinyDetail.setKey(COMMON_Guard_Room);
+    	scrutinyDetail.addColumnHeading(1, RULE_NO);
+    	scrutinyDetail.addColumnHeading(2, DESCRIPTION);
+    	scrutinyDetail.addColumnHeading(3, REQUIRED);
+    	scrutinyDetail.addColumnHeading(4, PROVIDED);
+    	scrutinyDetail.addColumnHeading(5, STATUS);
+    }
 
-				// Validate cabin height
-				if (minCabinHeight.compareTo(GuardRoomMinCabinHeightOne) >= 0
-						&& minCabinHeight.compareTo(GuardRoomMinCabinHeightTwo) <= 0) {
-					details = new HashMap<>();
-					details.put(RULE_NO, RULE_48_A);
-					details.put(DESCRIPTION, GUARD_ROOM_HEIGHT_DESCRIPTION);
-					details.put(REQUIRED, HEIGHT + " >= " + GuardRoomMinCabinHeightOne.toString() + " and <= "
-							+ GuardRoomMinCabinHeightTwo.toString());
-					details.put(PROVIDED, HEIGHT + ": " + minCabinHeight + "m");
-					details.put(STATUS, Result.Accepted.getResultVal());
-					scrutinyDetail.getDetail().add(details);
-				} else {
-					details = new HashMap<>();
-					details.put(RULE_NO, RULE_48_A);
-					details.put(DESCRIPTION, GUARD_ROOM_HEIGHT_DESCRIPTION);
-					details.put(REQUIRED, HEIGHT + " >= " + GuardRoomMinCabinHeightOne.toString() + " and <= "
-							+ GuardRoomMinCabinHeightTwo.toString());
-					details.put(PROVIDED, HEIGHT + ": " + minCabinHeight + "m");
-					details.put(STATUS, Result.Not_Accepted.getResultVal());
-					scrutinyDetail.getDetail().add(details);
-				}
-				pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
-			} else {
-				errors.put("Distance_Guard Room", "Cabin heights are not provided in layer GUARD_ROOM");
-				pl.addErrors(errors);
-			}
-		}
-		return pl;
-	}
+    private void validateDimensions(BigDecimal minHeight, BigDecimal minWidth, BigDecimal requiredHeight, BigDecimal requiredWidth) {
+    	Map<String, String> details = new HashMap<>();
+    	details.put(RULE_NO, RULE_48_A);
+    	details.put(DESCRIPTION, GUARD_ROOM_DIMENSION_DESCRIPTION);
+    	details.put(REQUIRED, DIMENSION + " > " + requiredHeight.toString() + "x" + requiredWidth.toString());
+    	details.put(PROVIDED, DIMENSION + ": " + minWidth + "x" + minHeight);
+
+    	if (minHeight.compareTo(requiredHeight) >= 0 && minWidth.compareTo(requiredWidth) >= 0) {
+    		details.put(STATUS, Result.Accepted.getResultVal());
+    	} else {
+    		details.put(STATUS, Result.Not_Accepted.getResultVal());
+    	}
+
+    	scrutinyDetail.getDetail().add(details);
+    }
+
+    private void validateArea(BigDecimal minArea, BigDecimal requiredArea) {
+    	Map<String, String> details = new HashMap<>();
+    	details.put(RULE_NO, RULE_48_A);
+    	details.put(DESCRIPTION, GUARD_ROOM_AREA_DESCRIPTION);
+    	details.put(REQUIRED, AREA + " <= " + requiredArea.toString());
+    	details.put(PROVIDED, AREA + ": " + minArea);
+
+    	if (minArea.compareTo(requiredArea) <= 0) {
+    		details.put(STATUS, Result.Accepted.getResultVal());
+    	} else {
+    		details.put(STATUS, Result.Not_Accepted.getResultVal());
+    	}
+
+    	scrutinyDetail.getDetail().add(details);
+    }
+
+    private void validateCabinHeight(BigDecimal minCabinHeight, BigDecimal minHeightAllowed, BigDecimal maxHeightAllowed) {
+    	Map<String, String> details = new HashMap<>();
+    	details.put(RULE_NO, RULE_48_A);
+    	details.put(DESCRIPTION, GUARD_ROOM_HEIGHT_DESCRIPTION);
+    	details.put(REQUIRED, HEIGHT + " >= " + minHeightAllowed.toString() + " and <= " + maxHeightAllowed.toString());
+    	details.put(PROVIDED, HEIGHT + ": " + minCabinHeight + "m");
+
+    	if (minCabinHeight.compareTo(minHeightAllowed) >= 0 && minCabinHeight.compareTo(maxHeightAllowed) <= 0) {
+    		details.put(STATUS, Result.Accepted.getResultVal());
+    	} else {
+    		details.put(STATUS, Result.Not_Accepted.getResultVal());
+    	}
+
+    	scrutinyDetail.getDetail().add(details);
+    }
+
 
     /**
      * Returns an empty map as no amendments are defined for this feature.

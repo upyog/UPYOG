@@ -1,5 +1,5 @@
 /*
- * eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
+ * UPYOG  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  * accountability and the service delivery of the government  organizations.
  *
  *  Copyright (C) <2019>  eGovernments Foundation
@@ -102,109 +102,7 @@ public class LandUse extends FeatureProcess {
      * @param pl The plan object to validate.
      * @return The same plan object without any modifications.
      */
-//    @Override
-//    public Plan validate(Plan pl) {
-//        return pl;
-//    }
-//
-//    /**
-//     * Processes the given plan to validate land use zones.
-//     * Fetches permissible values for road width and validates them against the plan details.
-//     *
-//     * @param pl The plan object to process.
-//     * @return The processed plan object with scrutiny details added.
-//     */
-//    @Override
-//    public Plan process(Plan pl) {
-//        // Map to store validation errors
-//        HashMap<String, String> errors = new HashMap<>();
-//
-//        // Validate commercial zones in the plan
-//        validateCommercialZone(pl, errors);
-//        return pl;
-//    }
-//
-//    /**
-//     * Validates the commercial zone for the given plan.
-//     * Checks if the road width and land use zone meet the required conditions.
-//     *
-//     * @param pl The plan object to validate.
-//     * @param errors The map to store validation errors.
-//     */
-//    private void validateCommercialZone(Plan pl, HashMap<String, String> errors) {
-//    	List<Object> rules = cache.getFeatureRules(pl, MdmsFeatureConstants.LAND_USE, false);
-//        Optional<MdmsFeatureRule> matchedRule = rules.stream()
-//                .map(obj -> (MdmsFeatureRule) obj)
-//                .findFirst();
-//		
-//		
-//			if (matchedRule.isPresent()) {
-//			    MdmsFeatureRule rule = matchedRule.get();
-//			    RoadWidth = rule.getPermissible();
-//			    
-//			}
-//
-//        // Iterate through all blocks in the plan
-//        for (Block block : pl.getBlocks()) {
-//            StringBuffer floorNos = new StringBuffer();
-//            boolean isAccepted = false;
-//            String blkNo = block.getNumber();
-//
-//            // Initialize scrutiny detail for land use validation
-//            scrutinyDetail.addColumnHeading(1, RULE_NO);
-//            scrutinyDetail.addColumnHeading(2, DESCRIPTION);
-//            scrutinyDetail.addColumnHeading(3, ROAD_WIDTH);
-//            scrutinyDetail.addColumnHeading(4, REQUIRED);
-//            scrutinyDetail.addColumnHeading(5, PROVIDED);
-//            scrutinyDetail.addColumnHeading(6, STATUS);
-//            scrutinyDetail.setKey("Block_" + blkNo + "_" + "Land Use");
-//
-//            // Validate road width and land use zone
-//            BigDecimal roadWidth = pl.getPlanInformation().getRoadWidth();
-//            if (pl.getPlanInformation() != null && roadWidth != null
-//                    && StringUtils.isNotBlank(pl.getPlanInformation().getLandUseZone())
-//                    && DxfFileConstants.COMMERCIAL.equalsIgnoreCase(pl.getPlanInformation().getLandUseZone())
-//                    && Util.roundOffTwoDecimal(roadWidth).compareTo(RoadWidth) >= 0) {
-//
-//                List<Floor> floors = block.getBuilding().getFloors();
-//
-//                // Check if at least one floor is commercial
-//                for (Floor floor : floors) {
-//                    List<Occupancy> occupancies = floor.getOccupancies();
-//                    List<String> occupancyTypes = new ArrayList<>();
-//
-//                    for (Occupancy occupancy : occupancies) {
-//                        if (occupancy.getTypeHelper() != null && occupancy.getTypeHelper().getType() != null) {
-//                            occupancyTypes.add(occupancy.getTypeHelper().getType().getCode());
-//                        }
-//
-//                        if (occupancy.getTypeHelper() != null && occupancy.getTypeHelper().getSubtype() != null) {
-//                            occupancyTypes.add(occupancy.getTypeHelper().getSubtype().getCode());
-//                        }
-//                    }
-//
-//                    if (occupancyTypes.size() > 0) {
-//                        if (occupancyTypes.contains(DxfFileConstants.F)) {
-//                            floorNos.append(floor.getNumber()).append(",");
-//                        }
-//                    }
-//                }
-//
-//                // Add scrutiny details for land use validation
-//                Map<String, String> details = new HashMap<>();
-//                details.put(RULE_NO, RULE_28);
-//                details.put(DESCRIPTION, "Land use Zone");
-//                details.put(ROAD_WIDTH, pl.getPlanInformation().getRoadWidth().toString());
-//                details.put(REQUIRED, "At least one floor should be commercial");
-//                details.put(PROVIDED, floorNos.length() == 0 ? "Commercial floor is not present"
-//                        : floorNos.toString().substring(0, floorNos.length() - 1) + " floors are commercial");
-//                details.put(STATUS, isAccepted ? Result.Accepted.getResultVal() : Result.Not_Accepted.getResultVal());
-//                scrutinyDetail.getDetail().add(details);
-//                pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
-//            }
-//        }
-//    }
-    
+
     @Override
     public Plan validate(Plan pl) {
         return pl;

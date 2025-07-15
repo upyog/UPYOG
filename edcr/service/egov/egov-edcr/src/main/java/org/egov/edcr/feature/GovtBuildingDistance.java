@@ -1,5 +1,5 @@
 /*
- * eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
+ * UPYOG  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  * accountability and the service delivery of the government  organizations.
  *
  *  Copyright (C) <2019>  eGovernments Foundation
@@ -109,98 +109,7 @@ public class GovtBuildingDistance extends FeatureProcess {
 	 * @param pl The plan object to process.
 	 * @return The processed plan object with scrutiny details added.
 	 */
-//	@Override
-//	public Plan process(Plan pl) {
-//		// Initialize scrutiny detail for government building distance validation
-//		ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
-//		scrutinyDetail.setKey("Common_Government Building Distance");
-//		scrutinyDetail.addColumnHeading(1, RULE_NO);
-//		scrutinyDetail.addColumnHeading(2, DESCRIPTION);
-//		scrutinyDetail.addColumnHeading(3, DISTANCE);
-//		scrutinyDetail.addColumnHeading(4, PERMITTED);
-//		scrutinyDetail.addColumnHeading(5, PROVIDED);
-//		scrutinyDetail.addColumnHeading(6, STATUS);
-//
-//		// Map to store validation errors
-//		HashMap<String, String> errors = new HashMap<>();
-//
-//		// Map to store rule details
-//		Map<String, String> details = new HashMap<>();
-//		details.put(RULE_NO, RULE_21);
-//		details.put(DESCRIPTION, GOVTBUILDING_DESCRIPTION);
-//
-//		// Variables to store permissible and actual values
-//		BigDecimal minDistanceFromGovtBuilding = BigDecimal.ZERO;
-//		BigDecimal maxHeightOfBuilding = BigDecimal.ZERO;
-//		BigDecimal GovtBuildingDistanceValue = BigDecimal.ZERO;
-//		BigDecimal GovtBuildingDistanceMaxHeight = BigDecimal.ZERO;
-//
-//		// Fetch distances from government buildings and blocks in the plan
-//		List<BigDecimal> distancesFromGovtBuilding = pl.getDistanceToExternalEntity().getGovtBuildings();
-//		List<Block> blocks = pl.getBlocks();
-//
-//		// Determine the occupancy type and feature for fetching permissible values
-//
-//		// Fetch all rules for the given plan from the cache.
-//		// Then, filter to find the first rule where the condition falls within the
-//		// defined range.
-//		// If a matching rule is found, proceed with its processing.
-//
-//		List<Object> rules = cache.getFeatureRules(pl, MdmsFeatureConstants.REQUIRED_WIDTH, false);
-//		Optional<MdmsFeatureRule> matchedRule = rules.stream().map(obj -> (MdmsFeatureRule) obj).findFirst();
-//
-//		if (matchedRule.isPresent()) {
-//			MdmsFeatureRule rule = matchedRule.get();
-//			GovtBuildingDistanceValue = rule.getGovtBuildingDistanceValue();
-//			GovtBuildingDistanceMaxHeight = rule.getGovtBuildingDistanceMaxHeight();
-//		}
-//
-//		// Validate distances from government buildings
-//		if (StringUtils.isNotBlank(pl.getPlanInformation().getBuildingNearGovtBuilding())
-//				&& "YES".equalsIgnoreCase(pl.getPlanInformation().getBuildingNearGovtBuilding())) {
-//			if (!distancesFromGovtBuilding.isEmpty()) {
-//				minDistanceFromGovtBuilding = distancesFromGovtBuilding.stream().reduce(BigDecimal::min).get();
-//
-//				// Get the maximum height of buildings in the plan
-//				for (Block b : blocks) {
-//					if (b.getBuilding().getBuildingHeight().compareTo(maxHeightOfBuilding) > 0) {
-//						maxHeightOfBuilding = b.getBuilding().getBuildingHeight();
-//					}
-//				}
-//
-//				// Validate the minimum distance and building height
-//				if (minDistanceFromGovtBuilding.compareTo(GovtBuildingDistanceValue) > 0) {
-//					details.put(DISTANCE, ">" + GovtBuildingDistanceValue.toString());
-//					details.put(PERMITTED, "ALL");
-//					details.put(PROVIDED, minDistanceFromGovtBuilding.toString());
-//					details.put(STATUS, Result.Accepted.getResultVal());
-//					scrutinyDetail.getDetail().add(details);
-//					pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
-//				} else {
-//					if (maxHeightOfBuilding.compareTo(GovtBuildingDistanceMaxHeight) <= 0) {
-//						details.put(DISTANCE, "<=" + GovtBuildingDistanceValue);
-//						details.put(PERMITTED, BUILDING_HEIGHT + GovtBuildingDistanceMaxHeight.toString() + MT);
-//						details.put(PROVIDED, BUILDING_HEIGHT + maxHeightOfBuilding + MT);
-//						details.put(STATUS, Result.Accepted.getResultVal());
-//						scrutinyDetail.getDetail().add(details);
-//						pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
-//					} else {
-//						details.put(DISTANCE, "<=" + GovtBuildingDistanceValue);
-//						details.put(PERMITTED, BUILDING_HEIGHT + GovtBuildingDistanceMaxHeight.toString() + MT);
-//						details.put(PROVIDED, BUILDING_HEIGHT + maxHeightOfBuilding + MT);
-//						details.put(STATUS, Result.Not_Accepted.getResultVal());
-//						scrutinyDetail.getDetail().add(details);
-//						pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
-//					}
-//				}
-//			} else {
-//				errors.put("Distance_From_Govt_Building", "No distance is provided from government building");
-//				pl.addErrors(errors);
-//			}
-//		}
-//		return pl;
-//	}
-    
+
     @Override
     public Plan process(Plan plan) {
         if (!isGovtBuildingNearby(plan)) {

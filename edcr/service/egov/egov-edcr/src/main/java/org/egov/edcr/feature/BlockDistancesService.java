@@ -1,5 +1,5 @@
 /*
- * eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
+ * UPYOG  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  * accountability and the service delivery of the government  organizations.
  *
  *  Copyright (C) <2019>  eGovernments Foundation
@@ -98,9 +98,7 @@ public class BlockDistancesService extends FeatureProcess {
     public static final String MINIMUM_DISTANCE_SETBACK = "Minimum distance should not be less than setback of tallest building or 3m";
     public static final String MINIMUM_DISTANCE_BUILDING = "Minimum distance should not be less than 1/3 of height of tallest building or 18m";
 
-    @Autowired
-    FetchEdcrRulesMdms fetchEdcrRulesMdms;
-    
+
     @Autowired
 	CacheManagerMdms cache;
 	
@@ -124,101 +122,79 @@ public class BlockDistancesService extends FeatureProcess {
      * @param pl The plan object to process.
      * @return The processed plan object with scrutiny details added.
      */
+
     @Override
     public Plan process(Plan pl) {
         processDistanceBetweenBlocks(pl);
         return pl;
     }
 
-    /**
-     * Validates the distances between blocks in the given plan.
-     * Checks if the required distances are defined and throws errors if not.
-     *
-     * @param pl The plan object to validate.
-     */
     public void validateDistanceBetweenBlocks(Plan pl) {
         HashMap<String, String> errors = new HashMap<>();
         List<String> sourceBlockNumbers = new ArrayList<>();
 
-        // Iterate through all blocks in the plan
         for (Block sourceBlock : pl.getBlocks()) {
-            // Validate building height and occupancies for the source block
-            if (sourceBlock.getBuilding() != null) {
-                if (sourceBlock.getBuilding().getBuildingHeight().compareTo(BigDecimal.ZERO) == 0) {
-                    errors.put(String.format(DcrConstants.BLOCK_BUILDING_HEIGHT, sourceBlock.getNumber()),
-                            edcrMessageSource.getMessage(
-                                    DcrConstants.OBJECTNOTDEFINED, new String[]{String
-                                            .format(DcrConstants.BLOCK_BUILDING_HEIGHT, sourceBlock.getNumber())},
-                                    LocaleContextHolder.getLocale()));
-                    pl.addErrors(errors);
-                }
-                if (sourceBlock.getBuilding().getOccupancies().isEmpty()) {
-                    errors.put(String.format(DcrConstants.BLOCK_BUILDING_OCCUPANCY, sourceBlock.getNumber()),
-                            edcrMessageSource.getMessage(
-                                    DcrConstants.OBJECTNOTDEFINED, new String[]{String
-                                            .format(DcrConstants.BLOCK_BUILDING_OCCUPANCY, sourceBlock.getNumber())},
-                                    LocaleContextHolder.getLocale()));
-                    pl.addErrors(errors);
-                }
-            }
-
-            // Add the source block to the list of processed blocks
+            validateSourceBlock(pl, sourceBlock, errors);
             sourceBlockNumbers.add(sourceBlock.getNumber());
+            validateDistancesBetweenBlockPairs(pl, sourceBlock, sourceBlockNumbers, errors);
+        }
+    }
 
-            // Validate distances between the source block and other blocks
-            for (Block destinationBlock : pl.getBlocks()) {
-                if (!sourceBlockNumbers.contains(destinationBlock.getNumber())) {
-                    List<BigDecimal> distanceBetBlocks = new ArrayList<>();
-                    List<BigDecimal> distanceBtwBlocks = new ArrayList<>();
+    private void validateSourceBlock(Plan pl, Block sourceBlock, HashMap<String, String> errors) {
+        if (sourceBlock.getBuilding() != null) {
+            if (sourceBlock.getBuilding().getBuildingHeight().compareTo(BigDecimal.ZERO) == 0) {
+                errors.put(String.format(DcrConstants.BLOCK_BUILDING_HEIGHT, sourceBlock.getNumber()),
+                        edcrMessageSource.getMessage(
+                                DcrConstants.OBJECTNOTDEFINED,
+                                new String[]{String.format(DcrConstants.BLOCK_BUILDING_HEIGHT, sourceBlock.getNumber())},
+                                LocaleContextHolder.getLocale()));
+                pl.addErrors(errors);
+            }
+            if (sourceBlock.getBuilding().getOccupancies().isEmpty()) {
+                errors.put(String.format(DcrConstants.BLOCK_BUILDING_OCCUPANCY, sourceBlock.getNumber()),
+                        edcrMessageSource.getMessage(
+                                DcrConstants.OBJECTNOTDEFINED,
+                                new String[]{String.format(DcrConstants.BLOCK_BUILDING_OCCUPANCY, sourceBlock.getNumber())},
+                                LocaleContextHolder.getLocale()));
+                pl.addErrors(errors);
+            }
+        }
+    }
 
-                    // Check distances from source to destination block
-                    if (!sourceBlock.getDistanceBetweenBlocks().isEmpty()) {
-                        for (BlockDistances distanceBetweenBlock : sourceBlock.getDistanceBetweenBlocks()) {
-                            if (distanceBetweenBlock.getBlockNumber().equals(destinationBlock.getNumber())) {
-                                distanceBetBlocks = distanceBetweenBlock.getDistances();
-                            }
-                        }
-                    }
+    private void validateDistancesBetweenBlockPairs(Plan pl, Block sourceBlock, List<String> sourceBlockNumbers,
+                                                    HashMap<String, String> errors) {
+        for (Block destinationBlock : pl.getBlocks()) {
+            if (!sourceBlockNumbers.contains(destinationBlock.getNumber())) {
+                List<BigDecimal> distanceBetBlocks = getDistancesBetween(sourceBlock, destinationBlock.getNumber());
+                List<BigDecimal> distanceBtwBlocks = getDistancesBetween(destinationBlock, sourceBlock.getNumber());
 
-                    // Check distances from destination to source block
-                    if (!destinationBlock.getDistanceBetweenBlocks().isEmpty()) {
-                        for (BlockDistances distanceBetweenBlock : destinationBlock.getDistanceBetweenBlocks()) {
-                            if (distanceBetweenBlock.getBlockNumber().equals(sourceBlock.getNumber())) {
-                                distanceBtwBlocks = distanceBetweenBlock.getDistances();
-                            }
-                        }
-                    }
-
-                    // Throw error if no distances are found between the blocks
-                    if (distanceBetBlocks.isEmpty() && distanceBtwBlocks.isEmpty()) {
-                        errors.put(
-                                String.format(DcrConstants.BLOCKS_DISTANCE, sourceBlock.getNumber(),
-                                        destinationBlock.getNumber()),
-                                edcrMessageSource.getMessage(DcrConstants.OBJECTNOTDEFINED,
-                                        new String[]{String.format(DcrConstants.BLOCKS_DISTANCE,
-                                                sourceBlock.getNumber(), destinationBlock.getNumber())},
-                                        LocaleContextHolder.getLocale()));
-                        pl.addErrors(errors);
-                    }
+                if (distanceBetBlocks.isEmpty() && distanceBtwBlocks.isEmpty()) {
+                    errors.put(String.format(DcrConstants.BLOCKS_DISTANCE, sourceBlock.getNumber(), destinationBlock.getNumber()),
+                            edcrMessageSource.getMessage(DcrConstants.OBJECTNOTDEFINED,
+                                    new String[]{String.format(DcrConstants.BLOCKS_DISTANCE,
+                                            sourceBlock.getNumber(), destinationBlock.getNumber())},
+                                    LocaleContextHolder.getLocale()));
+                    pl.addErrors(errors);
                 }
             }
         }
     }
 
-    /**
-     * Processes the distances between blocks in the given plan.
-     * Validates the distances and calculates the minimum required distances.
-     *
-     * @param pl The plan object to process.
-     */
-    public void processDistanceBetweenBlocks(Plan pl) {
-        if (pl.getBlocks().isEmpty())
-            return;
+    private List<BigDecimal> getDistancesBetween(Block block, String targetBlockNumber) {
+        List<BigDecimal> distances = new ArrayList<>();
+        for (BlockDistances distance : block.getDistanceBetweenBlocks()) {
+            if (distance.getBlockNumber().equals(targetBlockNumber)) {
+                distances = distance.getDistances();
+            }
+        }
+        return distances;
+    }
 
-        // Validate distances between blocks
+    public void processDistanceBetweenBlocks(Plan pl) {
+        if (pl.getBlocks().isEmpty()) return;
+
         validateDistanceBetweenBlocks(pl);
 
-        // Initialize scrutiny details for reporting
         scrutinyDetail = new ScrutinyDetail();
         scrutinyDetail.setKey(Common_Distance_Between_Blocks);
         scrutinyDetail.addColumnHeading(1, RULE_NO);
@@ -227,94 +203,47 @@ public class BlockDistancesService extends FeatureProcess {
         scrutinyDetail.addColumnHeading(4, PROVIDED);
         scrutinyDetail.addColumnHeading(5, STATUS);
 
-        // Iterate through all blocks to calculate distances
         for (Block b : pl.getBlocks()) {
             for (Block block : pl.getBlocks()) {
                 if (b.getNumber() != block.getNumber()) {
-                    if (!b.getDistanceBetweenBlocks().isEmpty()) {
-                        for (BlockDistances distanceBetweenBlock : b.getDistanceBetweenBlocks()) {
-                            if (distanceBetweenBlock.getBlockNumber().equals(block.getNumber())) {
-                                BigDecimal minimumDistance;
-                                boolean valid1 = false;
-                                boolean valid2 = false;
-
-                                // Calculate the minimum distance between blocks
-                                if (!distanceBetweenBlock.getDistances().isEmpty()) {
-                                    minimumDistance = distanceBetweenBlock.getDistances().get(0);
-                                    for (BigDecimal distance : distanceBetweenBlock.getDistances()) {
-                                        if (distance.compareTo(minimumDistance) < 0) {
-                                            minimumDistance = distance;
-                                        }
-                                    }
-                                    validateMinimumDistance(pl, minimumDistance, b, block, valid1, valid2);
-                                }
-                            }
-                        }
-                    }
+                    processBlockPairDistance(pl, b, block);
                 }
             }
         }
     }
 
-    /**
-     * Validates the minimum distance between two blocks.
-     * Checks if the distance meets the required conditions based on height and setbacks.
-     *
-     * @param pl             The plan object.
-     * @param actualDistance The actual distance between the blocks.
-     * @param b              The source block.
-     * @param block          The destination block.
-     * @param valid1         Validation flag for height-based distance.
-     * @param valid2         Validation flag for setback-based distance.
-     */
-    private void validateMinimumDistance(Plan pl, BigDecimal actualDistance, Block b, Block block, Boolean valid1,
-                                         Boolean valid2) {
+    private void processBlockPairDistance(Plan pl, Block b, Block block) {
+        for (BlockDistances distanceBetweenBlock : b.getDistanceBetweenBlocks()) {
+            if (distanceBetweenBlock.getBlockNumber().equals(block.getNumber())) {
+                if (!distanceBetweenBlock.getDistances().isEmpty()) {
+                    BigDecimal minimumDistance = distanceBetweenBlock.getDistances().get(0);
+                    for (BigDecimal distance : distanceBetweenBlock.getDistances()) {
+                        if (distance.compareTo(minimumDistance) < 0) {
+                            minimumDistance = distance;
+                        }
+                    }
+                    validateMinimumDistance(pl, minimumDistance, b, block, false, false);
+                }
+            }
+        }
+    }
+
+    private void validateMinimumDistance(Plan pl, BigDecimal actualDistance, Block b, Block block, Boolean valid1, Boolean valid2) {
         BigDecimal bHeight = b.getBuilding().getBuildingHeight();
         BigDecimal blockHeight = block.getBuilding().getBuildingHeight();
         HashMap<BigDecimal, Block> blockMap = new HashMap<>();
         blockMap.put(bHeight, b);
         blockMap.put(blockHeight, block);
+
         List<BigDecimal> blkHeights = Arrays.asList(bHeight, blockHeight);
         BigDecimal maxHeight = blkHeights.stream().reduce(BigDecimal::max).get();
 
-        BigDecimal blockDistanceServiceValue = BigDecimal.ZERO;
-        String feature = MdmsFeatureConstants.BLOCK_DISTANCES_SERVICE;
-        String occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl).toLowerCase();
-        String tenantId = pl.getTenantId();
-        String zone = pl.getPlanInformation().getZone();
-        String subZone = pl.getPlanInformation().getSubZone();
-        
-        RuleKey key = new RuleKey(EdcrRulesMdmsConstants.STATE, tenantId, zone, subZone, occupancyName, null, feature);
-        List<Object> rules = cache.getRules(tenantId, key);
-		
-        Optional<MdmsFeatureRule> matchedRule = rules.stream()
-        	    .map(obj -> (MdmsFeatureRule) obj)
-        	    .findFirst();
-
-        	if (matchedRule.isPresent()) {
-        	    MdmsFeatureRule rule = matchedRule.get();
-        	    blockDistanceServiceValue = rule.getPermissible();
-        	} else {
-        	    blockDistanceServiceValue = BigDecimal.ZERO;
-        	}
-
-        ArrayList<BigDecimal> setBacksValues = new ArrayList<>();
-        setBacksValues.add(blockDistanceServiceValue);
-        List<SetBack> setBacks = block.getSetBacks();
-        for (SetBack setback : setBacks) {
-            if (setback.getRearYard() != null)
-                setBacksValues.add(setback.getRearYard().getHeight());
-            if (setback.getSideYard1() != null)
-                setBacksValues.add(setback.getSideYard1().getHeight());
-            if (setback.getSideYard2() != null)
-                setBacksValues.add(setback.getSideYard2().getHeight());
-        }
+        BigDecimal blockDistanceServiceValue = getServiceBlockDistance(pl);
+        ArrayList<BigDecimal> setBacksValues = collectSetBackValues(block, blockDistanceServiceValue);
 
         BigDecimal dividedHeight = maxHeight.divide(blockDistanceServiceValue, DcrConstants.DECIMALDIGITS_MEASUREMENTS,
                 DcrConstants.ROUNDMODE_MEASUREMENTS);
-
-        List<BigDecimal> heights = Arrays.asList(dividedHeight, BigDecimal.valueOf(18));
-        BigDecimal minHeight = heights.stream().reduce(BigDecimal::min).get();
+        BigDecimal minHeight = Arrays.asList(dividedHeight, BigDecimal.valueOf(18)).stream().reduce(BigDecimal::min).get();
 
         if (actualDistance.compareTo(minHeight) >= 0) {
             valid1 = true;
@@ -325,25 +254,40 @@ public class BlockDistancesService extends FeatureProcess {
             valid2 = true;
         }
 
-        if (valid1) {
-            setReportOutputDetails(pl, SUBRULE_37_1, String.format(SUB_RULE_DES, b.getNumber(), block.getNumber()),
-                    StringUtils.EMPTY, MINIMUM_DISTANCE_BUILDING, actualDistance.toString() + DcrConstants.IN_METER,
-                    Result.Accepted.getResultVal());
-        } else {
-            setReportOutputDetails(pl, SUBRULE_37_1, String.format(SUB_RULE_DES, b.getNumber(), block.getNumber()),
-                    StringUtils.EMPTY, MINIMUM_DISTANCE_BUILDING, actualDistance.toString() + DcrConstants.IN_METER,
-                    Result.Not_Accepted.getResultVal());
-        }
+        setReportOutputDetails(pl, SUBRULE_37_1,
+                String.format(SUB_RULE_DES, b.getNumber(), block.getNumber()),
+                StringUtils.EMPTY, MINIMUM_DISTANCE_BUILDING,
+                actualDistance.toString() + DcrConstants.IN_METER,
+                valid1 ? Result.Accepted.getResultVal() : Result.Not_Accepted.getResultVal());
 
-        if (valid2) {
-            setReportOutputDetails(pl, SUBRULE_37_1, String.format(SUB_RULE_DES, b.getNumber(), block.getNumber()),
-                    StringUtils.EMPTY, MINIMUM_DISTANCE_SETBACK, actualDistance.toString() + DcrConstants.IN_METER,
-                    Result.Accepted.getResultVal());
-        } else {
-            setReportOutputDetails(pl, SUBRULE_37_1, String.format(SUB_RULE_DES, b.getNumber(), block.getNumber()),
-                    StringUtils.EMPTY, MINIMUM_DISTANCE_SETBACK, actualDistance.toString() + DcrConstants.IN_METER,
-                    Result.Not_Accepted.getResultVal());
+        setReportOutputDetails(pl, SUBRULE_37_1,
+                String.format(SUB_RULE_DES, b.getNumber(), block.getNumber()),
+                StringUtils.EMPTY, MINIMUM_DISTANCE_SETBACK,
+                actualDistance.toString() + DcrConstants.IN_METER,
+                valid2 ? Result.Accepted.getResultVal() : Result.Not_Accepted.getResultVal());
+    }
+
+    private BigDecimal getServiceBlockDistance(Plan pl) {
+        List<Object> rules = cache.getFeatureRules(pl, MdmsFeatureConstants.BLOCK_DISTANCES_SERVICE, false);
+        Optional<MdmsFeatureRule> matchedRule = rules.stream()
+                .map(obj -> (MdmsFeatureRule) obj)
+                .findFirst();
+        return matchedRule.map(MdmsFeatureRule::getPermissible).orElse(BigDecimal.ZERO);
+    }
+
+    private ArrayList<BigDecimal> collectSetBackValues(Block block, BigDecimal defaultValue) {
+        ArrayList<BigDecimal> setBacksValues = new ArrayList<>();
+        setBacksValues.add(defaultValue);
+        List<SetBack> setBacks = block.getSetBacks();
+        for (SetBack setback : setBacks) {
+            if (setback.getRearYard() != null)
+                setBacksValues.add(setback.getRearYard().getHeight());
+            if (setback.getSideYard1() != null)
+                setBacksValues.add(setback.getSideYard1().getHeight());
+            if (setback.getSideYard2() != null)
+                setBacksValues.add(setback.getSideYard2().getHeight());
         }
+        return setBacksValues;
     }
 
     /**

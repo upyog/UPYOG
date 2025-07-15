@@ -700,14 +700,4 @@ public class Plan implements Serializable {
         this.coreArea = coreArea;
     }
 
-    private List<EdcrMasterConfig> edcrMasterConfig;
-
-    public List<EdcrMasterConfig> getEdcrMasterConfig() {
-        return edcrMasterConfig;
-    }
-
-    public void setEdcrMasterConfig(List<EdcrMasterConfig> edcrMasterConfig) {
-        this.edcrMasterConfig = edcrMasterConfig;
-    }
-
 }

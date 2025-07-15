@@ -1,5 +1,5 @@
 /*
- * eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
+ * UPYOG  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  * accountability and the service delivery of the government  organizations.
  *
  *  Copyright (C) <2019>  eGovernments Foundation
@@ -325,18 +325,9 @@ public class RearYardService extends GeneralRule {
 			String occupancyName) {
 
 	
-
-		String feature = MdmsFeatureConstants.REAR_SETBACK;
-
-		occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl).toLowerCase();
-		String tenantId = pl.getTenantId();
-		String zone = pl.getPlanInformation().getZone().toLowerCase();
-		String subZone = pl.getPlanInformation().getSubZone().toLowerCase();
-		String riskType = fetchEdcrRulesMdms.getRiskType(pl).toLowerCase();
 		BigDecimal plotArea = pl.getPlot().getArea();
 
-		RuleKey key = new RuleKey(EdcrRulesMdmsConstants.STATE, tenantId, zone, subZone, occupancyName, null, feature);
-		List<Object> rules = cache.getRules(tenantId, key);
+		List<Object> rules = cache.getFeatureRules(pl, MdmsFeatureConstants.REAR_SETBACK, false);
 
 		Optional<MdmsFeatureRule> matchedRule = rules.stream().map(obj -> (MdmsFeatureRule) obj)
 				.filter(ruleMdms -> plotArea.compareTo(ruleMdms.getFromPlotArea()) >= 0
@@ -350,11 +341,6 @@ public class RearYardService extends GeneralRule {
 			meanVal = BigDecimal.ZERO;
 		}
 
-
-		/*
-		 * 
-		 * 
-		 */
 		valid = validateMinimumAndMeanValue(min, mean, minVal, meanVal);
 
 		/*

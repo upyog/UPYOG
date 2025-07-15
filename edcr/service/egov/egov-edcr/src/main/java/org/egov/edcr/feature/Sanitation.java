@@ -130,7 +130,7 @@ public class Sanitation extends FeatureProcess {
 	CacheManagerMdms cache;
     
 	private Map<String, BigDecimal> fetchSanitationValues(Plan pl) {
-String feature = MdmsFeatureConstants.SANITATION;
+
 		List<Object> rules = cache.getFeatureRules(pl, MdmsFeatureConstants.SANITATION, false);
 
 		Optional<MdmsFeatureRule> matchedRule = rules.stream().map(obj -> (MdmsFeatureRule) obj).findFirst();

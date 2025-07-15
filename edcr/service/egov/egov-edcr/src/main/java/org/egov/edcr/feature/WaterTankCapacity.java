@@ -1,5 +1,5 @@
 /*
- * eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
+ * UPYOG  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  * accountability and the service delivery of the government  organizations.
  *
  *  Copyright (C) <2019>  eGovernments Foundation
@@ -88,106 +88,7 @@ public class WaterTankCapacity extends FeatureProcess {
 
     @Autowired
 	CacheManagerMdms cache;
-//
-//	@Override
-//	public Plan process(Plan pl) {
-//		// Initialize ScrutinyDetail for reporting the rule check
-//		scrutinyDetail = new ScrutinyDetail();
-//		scrutinyDetail.addColumnHeading(1, RULE_NO);
-//		scrutinyDetail.addColumnHeading(2, DESCRIPTION);
-//		scrutinyDetail.addColumnHeading(3, REQUIRED);
-//		scrutinyDetail.addColumnHeading(4, PROVIDED);
-//		scrutinyDetail.addColumnHeading(5, STATUS);
-//		scrutinyDetail.setKey("Common_Water tank capacity");
-//
-//		// Rule metadata
-//		String subRule = RULE_59_10_vii;
-//		String subRuleDesc = RULE_59_10_vii_DESCRIPTION;
-//
-//		// Default expected values
-//		BigDecimal expectedWaterTankCapacity = BigDecimal.ZERO;
-//		BigDecimal waterTankCapacityArea = BigDecimal.ZERO;
-//		BigDecimal waterTankCapacityExpected = BigDecimal.ZERO;
-//
-//		List<Object> rules = cache.getFeatureRules(pl, MdmsFeatureConstants.WATER_TANK_CAPACITY, false);
-//
-//		Optional<MdmsFeatureRule> matchedRule = rules.stream().map(obj -> (MdmsFeatureRule) obj).findFirst();
-//
-//		if (matchedRule.isPresent()) {
-//			MdmsFeatureRule rule = matchedRule.get();
-//			waterTankCapacityArea = rule.getWaterTankCapacityArea();
-//			waterTankCapacityExpected = rule.getWaterTankCapacityExpected();
-//		}
-//
-//		// Proceed if water tank capacity is available in plan
-//		if (pl.getUtility() != null && pl.getVirtualBuilding() != null
-//				&& pl.getUtility().getWaterTankCapacity() != null) {
-//
-//			Boolean valid = false;
-//
-//			// Calculate number of persons = total built-up area / permissible area per
-//			// person
-//			BigDecimal totalBuitUpArea = pl.getVirtualBuilding().getTotalBuitUpArea();
-//			BigDecimal noOfPersons = totalBuitUpArea.divide(waterTankCapacityArea,
-//					DcrConstants.DECIMALDIGITS_MEASUREMENTS, DcrConstants.ROUNDMODE_MEASUREMENTS);
-//
-//			// Required tank capacity = expected liters * number of persons
-//			expectedWaterTankCapacity = waterTankCapacityExpected
-//					.multiply(noOfPersons.setScale(0, BigDecimal.ROUND_HALF_UP));
-//			expectedWaterTankCapacity = expectedWaterTankCapacity.setScale(DcrConstants.DECIMALDIGITS_MEASUREMENTS,
-//					DcrConstants.ROUNDMODE_MEASUREMENTS);
-//
-//			// Get provided tank capacity from plan
-//			BigDecimal providedWaterTankCapacity = pl.getUtility().getWaterTankCapacity();
-//			providedWaterTankCapacity = providedWaterTankCapacity.setScale(DcrConstants.DECIMALDIGITS_MEASUREMENTS,
-//					DcrConstants.ROUNDMODE_MEASUREMENTS);
-//
-//			// Validate whether provided capacity meets the requirement
-//			if (providedWaterTankCapacity.compareTo(expectedWaterTankCapacity) >= 0) {
-//				valid = true;
-//			}
-//
-//			// Process result and update scrutiny report
-//			processWaterTankCapacity(pl, "", subRule, subRuleDesc, expectedWaterTankCapacity, valid);
-//		}
-//
-//		return pl;
-//	}
-//
-//    /**
-//     * Add the rule check result to scrutiny report based on validation
-//     */
-//    private void processWaterTankCapacity(Plan plan, String rule, String subRule, String subRuleDesc,
-//            BigDecimal expectedWaterTankCapacity, Boolean valid) {
-//        if (expectedWaterTankCapacity.compareTo(BigDecimal.valueOf(0)) > 0) {
-//            if (valid) {
-//                setReportOutputDetails(plan, subRule, WATER_TANK_CAPACITY,
-//                        expectedWaterTankCapacity.toString(),
-//                        plan.getUtility().getWaterTankCapacity().toString(),
-//                        Result.Accepted.getResultVal());
-//            } else {
-//                setReportOutputDetails(plan, subRule, WATER_TANK_CAPACITY,
-//                        expectedWaterTankCapacity.toString() + IN_LITRE,
-//                        plan.getUtility().getWaterTankCapacity().toString() + IN_LITRE,
-//                        Result.Not_Accepted.getResultVal());
-//            }
-//        }
-//    }
-//
-//    /**
-//     * Helper method to populate scrutiny report
-//     */
-//    private void setReportOutputDetails(Plan pl, String ruleNo, String ruleDesc, String expected, String actual,
-//            String status) {
-//        Map<String, String> details = new HashMap<>();
-//        details.put(RULE_NO, ruleNo);
-//        details.put(DESCRIPTION, ruleDesc);
-//        details.put(REQUIRED, expected);
-//        details.put(PROVIDED, actual);
-//        details.put(STATUS, status);
-//        scrutinyDetail.getDetail().add(details);
-//        pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
-//    }
+
 
     @Override
     public Plan process(Plan pl) {

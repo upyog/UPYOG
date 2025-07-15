@@ -1,5 +1,5 @@
 /*
- * eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
+ * UPYOG  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  * accountability and the service delivery of the government  organizations.
  *
  *  Copyright (C) <2019>  eGovernments Foundation
@@ -110,69 +110,6 @@ public class Chimney extends FeatureProcess {
 	 * @param pl The plan object to process.
 	 * @return The processed plan object with scrutiny details added.
 	 */
-//	@Override
-//	public Plan process(Plan pl) {
-//		// Initialize scrutiny detail for chimney validation
-//		ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
-//		scrutinyDetail.setKey(Common_Chimney);
-//		scrutinyDetail.addColumnHeading(1, RULE_NO);
-//		scrutinyDetail.addColumnHeading(2, DESCRIPTION);
-//		scrutinyDetail.addColumnHeading(3, VERIFIED);
-//		scrutinyDetail.addColumnHeading(4, ACTION);
-//		scrutinyDetail.addColumnHeading(5, STATUS);
-//
-//		// Map to store rule details
-//		Map<String, String> details = new HashMap<>();
-//		details.put(RULE_NO, RULE_44_D);
-//
-//		// Variables to store permissible and actual chimney heights
-//		BigDecimal minHeight = BigDecimal.ZERO;
-//		BigDecimal chimneyVerifiedHeight = BigDecimal.ZERO;
-//		// Fetch all rules for the given plan from the cache.
-//		// Then, filter to find the first rule where the condition falls within the
-//		// defined range.
-//		// If a matching rule is found, proceed with its processing.
-//
-//		List<Object> rules = cache.getFeatureRules(pl, MdmsFeatureConstants.CHIMNEY, false);
-//
-//		Optional<MdmsFeatureRule> matchedRule = rules.stream().map(obj -> (MdmsFeatureRule) obj).findFirst();
-//
-//		if (matchedRule.isPresent()) {
-//			MdmsFeatureRule rule = matchedRule.get();
-//			chimneyVerifiedHeight = rule.getPermissible();
-//		} else {
-//			chimneyVerifiedHeight = BigDecimal.ZERO;
-//		}
-//
-//		// Iterate through all blocks in the plan
-//		for (Block b : pl.getBlocks()) {
-//			minHeight = BigDecimal.ZERO;
-//
-//			// Check if chimneys exist in the block
-//			if (b.getChimneys() != null && !b.getChimneys().isEmpty()) {
-//				// Get the minimum chimney height
-//				minHeight = b.getChimneys().stream().reduce(BigDecimal::min).get();
-//
-//				// Validate chimney height and update scrutiny details
-//				if (minHeight.compareTo(chimneyVerifiedHeight) <= 0) {
-//					details.put(DESCRIPTION, CHIMNEY_DESCRIPTION);
-//					details.put(VERIFIED, CHIMNEY_VERIFY_DESCRIPTION + chimneyVerifiedHeight.toString() + METERS);
-//					details.put(ACTION, "Not included chimney height(" + minHeight + TO_BUILDING_HEIGHT);
-//					details.put(STATUS, Result.Accepted.getResultVal());
-//					scrutinyDetail.getDetail().add(details);
-//					pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
-//				} else {
-//					details.put(DESCRIPTION, CHIMNEY_DESCRIPTION);
-//					details.put(VERIFIED, CHIMNEY_VERIFY_DESCRIPTION + chimneyVerifiedHeight.toString() + METERS);
-//					details.put(ACTION, "Included chimney height(" + minHeight + TO_BUILDING_HEIGHT);
-//					details.put(STATUS, Result.Verify.getResultVal());
-//					scrutinyDetail.getDetail().add(details);
-//					pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
-//				}
-//			}
-//		}
-//		return pl;
-//	}
 	
 	 @Override
 	    public Plan process(Plan pl) {

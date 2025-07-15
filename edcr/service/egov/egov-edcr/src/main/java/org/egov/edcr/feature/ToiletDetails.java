@@ -1,5 +1,5 @@
 /*
- * eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
+ * UPYOG  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  * accountability and the service delivery of the government  organizations.
  *
  *  Copyright (C) <2019>  eGovernments Foundation
@@ -88,85 +88,6 @@ public class ToiletDetails extends FeatureProcess {
     @Autowired
 	CacheManagerMdms cache;
 
-//	@Override
-//	public Plan process(Plan pl) {
-//
-//		ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
-//		scrutinyDetail.setKey(Common_Toilet);
-//		scrutinyDetail.addColumnHeading(1, RULE_NO);
-//		scrutinyDetail.addColumnHeading(2, DESCRIPTION);
-//		scrutinyDetail.addColumnHeading(3, FLOOR_NO);
-//		scrutinyDetail.addColumnHeading(4, REQUIRED);
-//		scrutinyDetail.addColumnHeading(5, PROVIDED);
-//		scrutinyDetail.addColumnHeading(6, STATUS);
-//
-//		for (Block b : pl.getBlocks()) {
-//			if (b.getBuilding() != null && b.getBuilding().getFloors() != null
-//					&& !b.getBuilding().getFloors().isEmpty()) {
-//				for (Floor f : b.getBuilding().getFloors()) {
-//					if (f.getToilet() != null && !f.getToilet().isEmpty()) {
-//						for (Toilet toilet : f.getToilet()) {
-//							if (toilet.getToilets() != null && !toilet.getToilets().isEmpty()) {
-//								for (Measurement toiletMeasurements : toilet.getToilets()) {
-//									Map<String, String> details = new HashMap<>();
-//									details.put(RULE_NO, RULE_41_IV);
-//									details.put(DESCRIPTION, BATHROOM_DESCRIPTION);
-//									details.put(FLOOR_NO, "" + f.getNumber());
-//
-//									BigDecimal area = toiletMeasurements.getArea().setScale(2, RoundingMode.HALF_UP);
-//									BigDecimal width = toiletMeasurements.getWidth().setScale(2, RoundingMode.HALF_UP);
-//
-//									BigDecimal ventilationHeight = toilet.getToiletVentilation() != null
-//											? toilet.getToiletVentilation().setScale(2, RoundingMode.HALF_UP)
-//											: BigDecimal.ZERO;
-//									BigDecimal minToiletArea = null;
-//
-//									BigDecimal minToiletWidth = null;
-//									BigDecimal minToiletVentilation = null;
-//									
-//									List<Object> rules = cache.getFeatureRules(pl, MdmsFeatureConstants.TOILET, false);
-//
-//									Optional<MdmsFeatureRule> matchedRule = rules.stream()
-//											.map(obj -> (MdmsFeatureRule) obj).findFirst();
-//
-//									if (matchedRule.isPresent()) {
-//										MdmsFeatureRule rule = matchedRule.get();
-//										minToiletArea = rule.getMinToiletArea();
-//										minToiletWidth = rule.getMinToiletWidth();
-//										minToiletVentilation = rule.getMinToiletVentilation();
-//									}
-//
-//									if (area.compareTo(minToiletArea) >= 0 && width.compareTo(minToiletWidth) >= 0
-//											&& ventilationHeight.compareTo(minToiletVentilation) >= 0) {
-//
-//										details.put(REQUIRED, "Total Area >= " + minToiletArea + ", Width >= "
-//												+ minToiletWidth + "," + " Ventilation >= " + minToiletVentilation);
-//										details.put(PROVIDED, "Total Area = " + area + ", Width = " + width
-//												+ ", Ventilation Height = " + ventilationHeight);
-//										details.put(STATUS, Result.Accepted.getResultVal());
-//
-//									} else {
-//										details.put(REQUIRED, "Total Area >= " + minToiletArea + ", Width >= "
-//												+ minToiletWidth + "," + " Ventilation >= " + minToiletVentilation);
-//										details.put(PROVIDED, "Total Area = " + area + ", Width = " + width
-//												+ ", Ventilation Height = " + ventilationHeight);
-//										details.put(STATUS, Result.Not_Accepted.getResultVal());
-//									}
-//
-//									scrutinyDetail.getDetail().add(details);
-//								}
-//							}
-//						}
-//					}
-//				}
-//			}
-//		}
-//
-//		pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
-//
-//		return pl;
-//	}
-    
     @Override
     public Plan process(Plan pl) {
         ScrutinyDetail scrutinyDetail = createToiletScrutinyDetail();

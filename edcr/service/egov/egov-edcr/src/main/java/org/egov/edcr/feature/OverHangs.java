@@ -1,5 +1,5 @@
 /*
- * eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
+ * UPYOG  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  * accountability and the service delivery of the government  organizations.
  *
  *  Copyright (C) <2019>  eGovernments Foundation
@@ -86,87 +86,7 @@ public class OverHangs extends FeatureProcess {
 
         return pl;
     }
-    
-//   
-//
-//    @Override
-//    public Plan process(Plan pl) {
-//
-//        // Initialize a map to store rule details
-//        Map<String, String> details = new HashMap<>();
-//        details.put(RULE_NO, RULE_45); // Rule number for overhangs
-//        details.put(DESCRIPTION, OVERHANGS_DESCRIPTION); // Description of the rule
-//
-//        // Initialize variables to store minimum width and permissible overhang value
-//        BigDecimal minWidth = BigDecimal.ZERO;
-//        BigDecimal overHangsValue = BigDecimal.ZERO;
-//
-//        
-//        
-//            List<Object> rules = cache.getFeatureRules(pl, MdmsFeatureConstants.LIFT, false);	
-//            Optional<MdmsFeatureRule> matchedRule = rules.stream()
-//            	    .map(obj -> (MdmsFeatureRule) obj)
-//            	    .findFirst();
-//
-//            	if (matchedRule.isPresent()) {
-//            	    MdmsFeatureRule rule = matchedRule.get();
-//            	    overHangsValue = rule.getPermissible();
-//            	} else {
-//            		overHangsValue = BigDecimal.ZERO;
-//            	}
-//
-//        // Iterate through all blocks in the plan
-//        for (Block b : pl.getBlocks()) {
-//
-//            // Initialize scrutiny details for the block
-//            ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
-//            scrutinyDetail.setKey("Block_" + b.getNumber() + "_" + "Chajja");
-//            scrutinyDetail.addColumnHeading(1, RULE_NO);
-//            scrutinyDetail.addColumnHeading(2, FLOOR);
-//            scrutinyDetail.addColumnHeading(3, DESCRIPTION);
-//            scrutinyDetail.addColumnHeading(4, PERMISSIBLE);
-//            scrutinyDetail.addColumnHeading(5, PROVIDED);
-//            scrutinyDetail.addColumnHeading(6, STATUS);
-//
-//            // Get the building object from the block
-//            Building building = b.getBuilding();
-//            if (building != null) {
-//                // Iterate through all floors in the building
-//                for (Floor floor : building.getFloors()) {
-//                    // Check if the floor has overhangs
-//                    if (floor.getOverHangs() != null && !floor.getOverHangs().isEmpty()) {
-//                        // Collect the widths of all overhangs
-//                        List<BigDecimal> widths = floor.getOverHangs().stream().map(overhang -> overhang.getWidth())
-//                                .collect(Collectors.toList());
-//
-//                        // Find the minimum width among the overhangs
-//                        minWidth = widths.stream().reduce(BigDecimal::min).get();
-//
-//                        // Compare the minimum width with the permissible overhang value
-//                        if (minWidth.compareTo(overHangsValue) > 0) {
-//                            // If the minimum width is greater than the permissible value, mark as Accepted
-//                            details.put(FLOOR, floor.getNumber().toString());
-//                            details.put(PERMISSIBLE, ">" + overHangsValue.toString());
-//                            details.put(PROVIDED, minWidth.toString());
-//                            details.put(STATUS, Result.Accepted.getResultVal());
-//                            scrutinyDetail.getDetail().add(details);
-//                            pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
-//                        } else {
-//                            // If the minimum width is less than or equal to the permissible value, mark as Not Accepted
-//                            details.put(FLOOR, floor.getNumber().toString());
-//                            details.put(PERMISSIBLE, ">" + overHangsValue.toString());
-//                            details.put(PROVIDED, minWidth.toString());
-//                            details.put(STATUS, Result.Not_Accepted.getResultVal());
-//                            scrutinyDetail.getDetail().add(details);
-//                            pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
-//                        }
-//                    }
-//                }
-//            }
-//        }
-//        return pl; // Return the updated plan object
-//    }
-    
+
     @Override
     public Plan process(Plan pl) {
         Map<String, String> details = initializeRuleDetails();

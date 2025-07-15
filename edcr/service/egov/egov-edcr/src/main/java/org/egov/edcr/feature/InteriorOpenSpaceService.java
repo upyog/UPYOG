@@ -1,5 +1,5 @@
 /*
- * eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
+ * UPYOG  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  * accountability and the service delivery of the government  organizations.
  *
  *  Copyright (C) <2019>  eGovernments Foundation
@@ -124,168 +124,104 @@ public class InteriorOpenSpaceService extends FeatureProcess {
      * @param pl The plan object to process.
      * @return The processed plan object with scrutiny details added.
      */
+
+
+    
     @Override
     public Plan process(Plan pl) {
-       
-	        String feature = MdmsFeatureConstants.INTERIOR_OPEN_SPACE_SERVICE;
-	        String occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl).toLowerCase();
-            String tenantId = pl.getTenantId();
-            String zone = pl.getPlanInformation().getZone().toLowerCase();
-            String subZone = pl.getPlanInformation().getSubZone().toLowerCase();
-            String riskType = fetchEdcrRulesMdms.getRiskType(pl).toLowerCase();
-            
-            RuleKey key = new RuleKey(EdcrRulesMdmsConstants.STATE, tenantId, zone, subZone, occupancyName, null, feature);
-            List<Object> rules = cache.getRules(tenantId, key);
-    		
-            Optional<MdmsFeatureRule> matchedRule = rules.stream()
-            	    .map(obj -> (MdmsFeatureRule) obj)
-            	    .findFirst();
-
-            	if (matchedRule.isPresent()) {
-            	    MdmsFeatureRule rule = matchedRule.get();
-            	    minInteriorAreaValueOne = rule.getMinInteriorAreaValueOne();
-            	    minInteriorAreaValueTwo = rule.getMinInteriorAreaValueTwo();
-            	    minInteriorWidthValueOne = rule.getMinInteriorWidthValueOne();
-            	    minInteriorWidthValueTwo = rule.getMinInteriorWidthValueTwo();
-            	    minVentilationAreaValueOne = rule.getMinVentilationAreaValueOne();
-            	    minVentilationAreaValueTwo = rule.getMinVentilationAreaValueTwo();
-            	    minVentilationWidthValueOne = rule.getMinVentilationWidthValueOne();
-            	    minVentilationWidthValueTwo = rule.getMinVentilationWidthValueOne();
-            	}
-
-        // Iterate through all blocks in the plan
-        for (Block b : pl.getBlocks()) {
-            ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
-            scrutinyDetail.setKey("Common_Interior Open Space");
-            scrutinyDetail.addColumnHeading(1, RULE_NO);
-            scrutinyDetail.addColumnHeading(2, DESCRIPTION);
-            scrutinyDetail.addColumnHeading(3, REQUIRED);
-            scrutinyDetail.addColumnHeading(4, PROVIDED);
-            scrutinyDetail.addColumnHeading(5, STATUS);
-
-            if (b.getBuilding() != null && b.getBuilding().getFloors() != null && !b.getBuilding().getFloors().isEmpty()) {
-                for (Floor f : b.getBuilding().getFloors()) {
-                    processVentilationShaft(pl, scrutinyDetail, f, minVentilationAreaValueOne, minVentilationAreaValueTwo, minVentilationWidthValueOne, minVentilationWidthValueTwo);
-                    processInteriorCourtYard(pl, scrutinyDetail, f, minInteriorAreaValueOne, minInteriorAreaValueTwo, minInteriorWidthValueOne, minInteriorWidthValueTwo);
-                }
-            }
-        }
+        setMinValuesFromMatchedRule(pl);
+        processInteriorOpenSpaces(pl);
         return pl;
     }
 
-    /**
-     * Processes and validates the interior courtyard for a given floor.
-     *
-     * @param pl The plan object.
-     * @param scrutinyDetail The scrutiny detail object to update.
-     * @param f The floor object to process.
-     */
-    private void processInteriorCourtYard(Plan pl, ScrutinyDetail scrutinyDetail, Floor f, BigDecimal minInteriorAreaValueOne, BigDecimal minInteriorAreaValueTwo, BigDecimal minInteriorWidthValueOne, BigDecimal minInteriorWidthValueTwo) {
-        if (f.getInteriorOpenSpace() != null && f.getInteriorOpenSpace().getInnerCourtYard() != null
-                && f.getInteriorOpenSpace().getInnerCourtYard().getMeasurements() != null
-                && !f.getInteriorOpenSpace().getInnerCourtYard().getMeasurements().isEmpty()) {
+    private void setMinValuesFromMatchedRule(Plan pl) {
+        List<Object> rules = cache.getFeatureRules(pl, MdmsFeatureConstants.INTERIOR_OPEN_SPACE_SERVICE, false);
+        Optional<MdmsFeatureRule> matchedRule = rules.stream()
+            .map(obj -> (MdmsFeatureRule) obj)
+            .findFirst();
 
-            BigDecimal minInteriorCourtYardArea = f.getInteriorOpenSpace().getInnerCourtYard().getMeasurements()
-                    .stream().map(Measurement::getArea).reduce(BigDecimal::min).get();
-            BigDecimal minInteriorCourtYardWidth = f.getInteriorOpenSpace().getInnerCourtYard().getMeasurements()
-                    .stream().map(Measurement::getWidth).reduce(BigDecimal::min).get();
-
-            // Validate area
-            if (minInteriorCourtYardArea.compareTo(minInteriorAreaValueOne) > 0) {
-                Map<String, String> details = new HashMap<>();
-                details.put(RULE_NO, RULE_43);
-                details.put(DESCRIPTION, INTERNALCOURTYARD_DESCRIPTION);
-
-                if (minInteriorCourtYardArea.compareTo(minInteriorAreaValueTwo) >= 0) {
-                    details.put(REQUIRED, "Minimum area " + minInteriorAreaValueTwo.toString() + " Sq. M  ");
-                    details.put(PROVIDED, "Area " + minInteriorCourtYardArea + " at floor " + f.getNumber());
-                    details.put(STATUS, Result.Accepted.getResultVal());
-                } else {
-                    details.put(REQUIRED, "Minimum area " + minInteriorAreaValueTwo.toString() + " Sq. M  ");
-                    details.put(PROVIDED, "Area " + minInteriorCourtYardArea + " at floor " + f.getNumber());
-                    details.put(STATUS, Result.Not_Accepted.getResultVal());
-                }
-                scrutinyDetail.getDetail().add(details);
-                pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
-            }
-
-            // Validate width
-            if (minInteriorCourtYardWidth.compareTo(minInteriorWidthValueOne) > 0) {
-                Map<String, String> details = new HashMap<>();
-                details.put(RULE_NO, RULE_43A);
-                details.put(DESCRIPTION, INTERNALCOURTYARD_DESCRIPTION);
-
-                if (minInteriorCourtYardWidth.compareTo(minInteriorWidthValueTwo) >= 0) {
-                    details.put(REQUIRED, "Minimum width " + minInteriorWidthValueTwo.toString() + " M ");
-					details.put(PROVIDED, "Area  " + minInteriorCourtYardWidth + " at floor " + f.getNumber());
-                    details.put(STATUS, Result.Accepted.getResultVal());
-                } else {
-                    details.put(REQUIRED, "Minimum width " + minInteriorWidthValueTwo.toString() + " M ");
-					details.put(PROVIDED, "Area  " + minInteriorCourtYardWidth + " at floor " + f.getNumber());
-                    details.put(STATUS, Result.Not_Accepted.getResultVal());
-                }
-                scrutinyDetail.getDetail().add(details);
-                pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
-            }
+        if (matchedRule.isPresent()) {
+            MdmsFeatureRule rule = matchedRule.get();
+            minInteriorAreaValueOne = rule.getMinInteriorAreaValueOne();
+            minInteriorAreaValueTwo = rule.getMinInteriorAreaValueTwo();
+            minInteriorWidthValueOne = rule.getMinInteriorWidthValueOne();
+            minInteriorWidthValueTwo = rule.getMinInteriorWidthValueTwo();
+            minVentilationAreaValueOne = rule.getMinVentilationAreaValueOne();
+            minVentilationAreaValueTwo = rule.getMinVentilationAreaValueTwo();
+            minVentilationWidthValueOne = rule.getMinVentilationWidthValueOne();
+            minVentilationWidthValueTwo = rule.getMinVentilationWidthValueOne(); // as in original code
         }
     }
 
-    /**
-     * Processes and validates the ventilation shaft for a given floor.
-     *
-     * @param pl The plan object.
-     * @param scrutinyDetail The scrutiny detail object to update.
-     * @param f The floor object to process.
-     */
-    private void processVentilationShaft(Plan pl, ScrutinyDetail scrutinyDetail, Floor f, BigDecimal minVentilationAreaValueOne, BigDecimal minVentilationAreaValueTwo, BigDecimal minVentilationWidthValueOne, BigDecimal minVentilationWidthValueTwo) {
-        if (f.getInteriorOpenSpace() != null && f.getInteriorOpenSpace().getVentilationShaft() != null
-                && f.getInteriorOpenSpace().getVentilationShaft().getMeasurements() != null
-                && !f.getInteriorOpenSpace().getVentilationShaft().getMeasurements().isEmpty()) {
+	private void processInteriorOpenSpaces(Plan pl) {
+		for (Block b : pl.getBlocks()) {
+			ScrutinyDetail scrutinyDetail = createScrutinyDetail();
+			if (b.getBuilding() != null && b.getBuilding().getFloors() != null
+					&& !b.getBuilding().getFloors().isEmpty()) {
+				for (Floor f : b.getBuilding().getFloors()) {
+					processOpenSpaceComponent(pl, scrutinyDetail, f,
+							f.getInteriorOpenSpace().getVentilationShaft().getMeasurements(),
+							minVentilationAreaValueOne, minVentilationAreaValueTwo, minVentilationWidthValueOne,
+							minVentilationWidthValueTwo, RULE_43, RULE_43A, VENTILATIONSHAFT_DESCRIPTION);
+					processOpenSpaceComponent(pl, scrutinyDetail, f,
+							f.getInteriorOpenSpace().getInnerCourtYard().getMeasurements(), minInteriorAreaValueOne,
+							minInteriorAreaValueTwo, minInteriorWidthValueOne, minInteriorWidthValueTwo, RULE_43,
+							RULE_43A, INTERNALCOURTYARD_DESCRIPTION);
+				}
+			}
+		}
+	}
 
-            BigDecimal minVentilationShaftArea = f.getInteriorOpenSpace().getVentilationShaft().getMeasurements()
-                    .stream().map(Measurement::getArea).reduce(BigDecimal::min).get();
-            BigDecimal minVentilationShaftWidth = f.getInteriorOpenSpace().getVentilationShaft().getMeasurements()
-                    .stream().map(Measurement::getWidth).reduce(BigDecimal::min).get();
+	private void processOpenSpaceComponent(Plan pl, ScrutinyDetail scrutinyDetail, Floor f,
+			List<Measurement> measurements, BigDecimal areaValueOne, BigDecimal areaValueTwo, BigDecimal widthValueOne,
+			BigDecimal widthValueTwo, String ruleNoArea, String ruleNoWidth, String description) {
+		if (measurements != null && !measurements.isEmpty()) {
+			BigDecimal minArea = measurements.stream().map(Measurement::getArea).reduce(BigDecimal::min)
+					.orElse(BigDecimal.ZERO);
+			BigDecimal minWidth = measurements.stream().map(Measurement::getWidth).reduce(BigDecimal::min)
+					.orElse(BigDecimal.ZERO);
 
-            // Validate area
-            if (minVentilationShaftArea.compareTo(minVentilationAreaValueOne) > 0) {
-                Map<String, String> details = new HashMap<>();
-                details.put(RULE_NO, RULE_43);
-                details.put(DESCRIPTION, VENTILATIONSHAFT_DESCRIPTION);
+// Area validation
+			if (minArea.compareTo(areaValueOne) > 0) {
+				Map<String, String> details = new HashMap<>();
+				details.put(RULE_NO, ruleNoArea);
+				details.put(DESCRIPTION, description);
+				details.put(REQUIRED, MINIMUM_AREA + areaValueTwo.toString() + " Sq. M  ");
+				details.put(PROVIDED, AREA + minArea + AT_FLOOR + f.getNumber());
+				details.put(STATUS, minArea.compareTo(areaValueTwo) >= 0 ? Result.Accepted.getResultVal()
+						: Result.Not_Accepted.getResultVal());
 
-                if (minVentilationShaftArea.compareTo(minVentilationAreaValueTwo) >= 0) {
-                    details.put(REQUIRED, MINIMUM_AREA + minVentilationAreaValueTwo.toString() + " Sq. M  ");
-                    details.put(PROVIDED, AREA + minVentilationShaftArea + AT_FLOOR + f.getNumber());
-                    details.put(STATUS, Result.Accepted.getResultVal());
-                } else {
-                    details.put(REQUIRED, MINIMUM_AREA + minVentilationAreaValueTwo.toString() + " Sq. M  ");
-                    details.put(PROVIDED, AREA + minVentilationShaftArea + AT_FLOOR + f.getNumber());
-                    details.put(STATUS, Result.Not_Accepted.getResultVal());
-                }
-                scrutinyDetail.getDetail().add(details);
-                pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
-            }
+				scrutinyDetail.getDetail().add(details);
+				pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+			}
 
-            // Validate width
-            if (minVentilationShaftWidth.compareTo(minVentilationWidthValueOne) > 0) {
-                Map<String, String> details = new HashMap<>();
-                details.put(RULE_NO, RULE_43A);
-                details.put(DESCRIPTION, VENTILATIONSHAFT_DESCRIPTION);
+// Width validation
+			if (minWidth.compareTo(widthValueOne) > 0) {
+				Map<String, String> details = new HashMap<>();
+				details.put(RULE_NO, ruleNoWidth);
+				details.put(DESCRIPTION, description);
+				details.put(REQUIRED, MINIMUM_WIDTH + widthValueTwo.toString() + " M ");
+				details.put(PROVIDED, AREA + minWidth + AT_FLOOR + f.getNumber());
+				details.put(STATUS, minWidth.compareTo(widthValueTwo) >= 0 ? Result.Accepted.getResultVal()
+						: Result.Not_Accepted.getResultVal());
 
-                if (minVentilationShaftWidth.compareTo(minVentilationWidthValueTwo) >= 0) {
-                    details.put(REQUIRED, MINIMUM_WIDTH + minVentilationWidthValueTwo.toString() + " M ");
-					details.put(PROVIDED, AREA + minVentilationShaftWidth + AT_FLOOR + f.getNumber());
-                    details.put(STATUS, Result.Accepted.getResultVal());
-                } else {
-                    details.put(REQUIRED, MINIMUM_WIDTH + minVentilationWidthValueTwo.toString() + " M ");
-					details.put(PROVIDED, AREA + minVentilationShaftWidth + AT_FLOOR + f.getNumber());
-                    details.put(STATUS, Result.Not_Accepted.getResultVal());
-                }
-                scrutinyDetail.getDetail().add(details);
-                pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
-            }
-        }
+				scrutinyDetail.getDetail().add(details);
+				pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+			}
+		}
+	}
+
+    private ScrutinyDetail createScrutinyDetail() {
+        ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
+        scrutinyDetail.setKey("Common_Interior Open Space");
+        scrutinyDetail.addColumnHeading(1, RULE_NO);
+        scrutinyDetail.addColumnHeading(2, DESCRIPTION);
+        scrutinyDetail.addColumnHeading(3, REQUIRED);
+        scrutinyDetail.addColumnHeading(4, PROVIDED);
+        scrutinyDetail.addColumnHeading(5, STATUS);
+        return scrutinyDetail;
     }
+
 
     /**
      * Returns an empty map as no amendments are defined for this feature.

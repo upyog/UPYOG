@@ -1,5 +1,5 @@
 /*
- * eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
+ * UPYOG  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  * accountability and the service delivery of the government  organizations.
  *
  *  Copyright (C) <2019>  eGovernments Foundation
@@ -84,90 +84,7 @@ public class PlantationGreenStrip extends FeatureProcess {
     public Plan validate(Plan pl) {
         return null; // Validation logic is not implemented
     }
-//
-//    @Override
-//    public Plan process(Plan pl) {
-//        // Initialize variables to store permissible values for plantation green strip
-//        BigDecimal plantationGreenStripPlanValue = BigDecimal.ZERO;
-//        BigDecimal plantationGreenStripMinWidth = BigDecimal.ZERO;
-//
-//      
-//       
-//        List<Object> rules = cache.getFeatureRules(pl, MdmsFeatureConstants.PLANTATION_GREEN_STRIP, false);
-//    		
-//            Optional<MdmsFeatureRule> matchedRule = rules.stream()
-//            	    .map(obj -> (MdmsFeatureRule) obj)
-//            	    .findFirst();
-//
-//            	if (matchedRule.isPresent()) {
-//            	    MdmsFeatureRule rule = matchedRule.get();
-//            	    plantationGreenStripPlanValue = rule.getPlantationGreenStripPlanValue();
-//            	    plantationGreenStripMinWidth = rule.getPlantationGreenStripMinWidth();
-//            	} 
-//
-//        // Check if the plot area exceeds the minimum required area for plantation
-//        if (pl.getPlot() != null && pl.getPlot().getArea().compareTo(plantationGreenStripPlanValue) > 0) {
-//            // Iterate through all blocks in the plan
-//            for (Block block : pl.getBlocks()) {
-//
-//                // Initialize scrutiny details for the block
-//                ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
-//                scrutinyDetail.addColumnHeading(1, RULE_NO);
-//                scrutinyDetail.addColumnHeading(2, DESCRIPTION);
-//                scrutinyDetail.addColumnHeading(3, PERMISSIBLE);
-//                scrutinyDetail.addColumnHeading(4, PROVIDED);
-//                scrutinyDetail.addColumnHeading(5, STATUS);
-//                scrutinyDetail.setKey("Block_" + block.getNumber() + "_" + "Continuous Green Planting Strip");
-//
-//                boolean isWidthAccepted = false; // Flag to track if the width is acceptable
-//                BigDecimal minWidth = BigDecimal.ZERO; // Minimum width of the plantation strip
-//
-//                // Collect the widths of all plantation green strips in the block
-//                List<BigDecimal> widths = block.getPlantationGreenStripes().stream()
-//                        .map(greenStrip -> greenStrip.getWidth()).collect(Collectors.toList());
-//
-//                // Check if widths are available
-//                if (!widths.isEmpty()) {
-//                    // Find the minimum width among the plantation strips
-//                    minWidth = widths.stream().reduce(BigDecimal::min).get();
-//
-//                    // Validate the minimum width against the permissible width
-//                    if (minWidth.compareTo(plantationGreenStripMinWidth) >= 0) {
-//                        isWidthAccepted = true; // Mark as accepted if the width is within permissible limits
-//                    }
-//
-//                    // Add the result to the scrutiny report
-//                    buildResult(pl, scrutinyDetail, isWidthAccepted, "Width of continuous plantation green strip",
-//                            ">= " + plantationGreenStripMinWidth.toString(),
-//                            minWidth.setScale(DcrConstants.DECIMALDIGITS_MEASUREMENTS, DcrConstants.ROUNDMODE_MEASUREMENTS)
-//                                    .toString());
-//                }
-//            }
-//        }
-//        return pl; // Return the updated plan object
-//    }
-//
-//    /**
-//     * Adds the result of the validation to the scrutiny report.
-//     *
-//     * @param pl The plan object
-//     * @param scrutinyDetail The scrutiny detail object
-//     * @param valid Whether the validation passed or failed
-//     * @param description Description of the validation
-//     * @param permited The permissible value
-//     * @param provided The provided value
-//     */
-//    private void buildResult(Plan pl, ScrutinyDetail scrutinyDetail, boolean valid, String description, String permited,
-//            String provided) {
-//        Map<String, String> details = new HashMap<>();
-//        details.put(RULE_NO, RULE_37_6); // Rule number for plantation green strip
-//        details.put(DESCRIPTION, description); // Description of the validation
-//        details.put(PERMISSIBLE, permited); // Permissible value
-//        details.put(PROVIDED, provided); // Provided value
-//        details.put(STATUS, valid ? Result.Accepted.getResultVal() : Result.Not_Accepted.getResultVal()); // Validation status
-//        scrutinyDetail.getDetail().add(details); // Add details to scrutiny detail
-//        pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail); // Add scrutiny detail to the plan's report output
-//    }
+
 
     @Override
     public Plan process(Plan pl) {

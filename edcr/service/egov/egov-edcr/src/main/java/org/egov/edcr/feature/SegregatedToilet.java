@@ -1,5 +1,5 @@
 /*
- * eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
+ * UPYOG  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  * accountability and the service delivery of the government  organizations.
  *
  *  Copyright (C) <2019>  eGovernments Foundation
@@ -91,120 +91,6 @@ public class SegregatedToilet extends FeatureProcess {
         return pl; // No specific validation logic implemented
     }
 
-//	@Override
-//	public Plan process(Plan pl) {
-//
-//		// Scrutiny setup
-//		ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
-//		scrutinyDetail.setKey(Common_Segregated_Toilet);
-//		scrutinyDetail.addColumnHeading(1, RULE_NO);
-//		scrutinyDetail.addColumnHeading(2, DESCRIPTION);
-//		scrutinyDetail.addColumnHeading(3, REQUIRED);
-//		scrutinyDetail.addColumnHeading(4, PROVIDED);
-//		scrutinyDetail.addColumnHeading(5, STATUS);
-//
-//		Map<String, String> details = new HashMap<>();
-//		details.put(RULE_NO, RULE_59_10);
-//
-//		// Variables for comparison and rules
-//		BigDecimal minDimension = BigDecimal.ZERO;
-//		BigDecimal maxHeightOfBuilding = BigDecimal.ZERO;
-//		BigDecimal maxNumOfFloorsOfBuilding = BigDecimal.ZERO;
-//
-//		BigDecimal sTValueOne = BigDecimal.ZERO;
-//		BigDecimal sTValueTwo = BigDecimal.ZERO;
-//		BigDecimal sTValueThree = BigDecimal.ZERO;
-//		BigDecimal sTValueFour = BigDecimal.ZERO;
-//		BigDecimal sTSegregatedToiletProvided = BigDecimal.ZERO;
-//		BigDecimal sTSegregatedToiletRequired = BigDecimal.ZERO;
-//		BigDecimal sTminDimensionRequired = BigDecimal.ZERO;
-//
-//		List<Object> rules = cache.getFeatureRules(pl, MdmsFeatureConstants.SEGREGATED_TOILET, false);
-//		Optional<MdmsFeatureRule> matchedRule = rules.stream().map(obj -> (MdmsFeatureRule) obj).findFirst();
-//
-//		if (matchedRule.isPresent()) {
-//			MdmsFeatureRule rule = matchedRule.get();
-//			sTValueOne = rule.getSTValueOne();
-//			sTValueTwo = rule.getSTValueTwo();
-//			sTValueThree = rule.getSTValueThree();
-//			sTValueFour = rule.getSTValueFour();
-//			sTSegregatedToiletRequired = rule.getSTSegregatedToiletRequired();
-//			sTSegregatedToiletProvided = rule.getSTSegregatedToiletProvided();
-//			sTminDimensionRequired = rule.getSTminDimensionRequired();
-//		}
-//		// Find minimum distance from main entrance among all toilets
-//		if (pl.getSegregatedToilet() != null && !pl.getSegregatedToilet().getDistancesToMainEntrance().isEmpty())
-//			minDimension = pl.getSegregatedToilet().getDistancesToMainEntrance().stream().reduce(BigDecimal::min).get();
-//
-//		// Find the tallest building and one with the most floors
-//		for (Block b : pl.getBlocks()) {
-//			if (b.getBuilding().getBuildingHeight() != null
-//					&& b.getBuilding().getBuildingHeight().compareTo(maxHeightOfBuilding) > 0) {
-//				maxHeightOfBuilding = b.getBuilding().getBuildingHeight();
-//			}
-//			if (b.getBuilding().getFloorsAboveGround() != null
-//					&& b.getBuilding().getFloorsAboveGround().compareTo(maxNumOfFloorsOfBuilding) > 0) {
-//				maxNumOfFloorsOfBuilding = b.getBuilding().getFloorsAboveGround();
-//			}
-//		}
-//
-//		// Apply logic only if the rule is applicable based on occupancy type and limits
-//		if (pl.getVirtualBuilding() != null && pl.getVirtualBuilding().getMostRestrictiveFarHelper() != null
-//				&& pl.getVirtualBuilding().getMostRestrictiveFarHelper().getType() != null
-//				&& ((DxfFileConstants.A
-//						.equals(pl.getVirtualBuilding().getMostRestrictiveFarHelper().getType().getCode())
-//						&& maxHeightOfBuilding.compareTo(sTValueOne) >= 0)
-//						|| ((DxfFileConstants.I
-//								.equals(pl.getVirtualBuilding().getMostRestrictiveFarHelper().getType().getCode())
-//								|| DxfFileConstants.A.equals(
-//										pl.getVirtualBuilding().getMostRestrictiveFarHelper().getType().getCode())
-//								|| DxfFileConstants.E.equals(
-//										pl.getVirtualBuilding().getMostRestrictiveFarHelper().getType().getCode()))
-//								&& pl.getVirtualBuilding().getTotalBuitUpArea() != null
-//								&& pl.getVirtualBuilding().getTotalBuitUpArea().compareTo(sTValueTwo) >= 0
-//								&& maxNumOfFloorsOfBuilding.compareTo(sTValueThree) >= 0)
-//						|| (DxfFileConstants.C
-//								.equals(pl.getVirtualBuilding().getMostRestrictiveFarHelper().getType().getCode())
-//								&& pl.getVirtualBuilding().getTotalBuitUpArea() != null
-//								&& pl.getVirtualBuilding().getTotalBuitUpArea().compareTo(sTValueFour) >= 0))) {
-//
-//			// Check if segregated toilets are provided
-//			if (pl.getSegregatedToilet() != null && pl.getSegregatedToilet().getSegregatedToilets() != null
-//					&& !pl.getSegregatedToilet().getSegregatedToilets().isEmpty()) {
-//				details.put(DESCRIPTION, SEGREGATEDTOILET_DESCRIPTION);
-//				details.put(REQUIRED, sTSegregatedToiletRequired.toString());
-//				details.put(PROVIDED, String.valueOf(pl.getSegregatedToilet().getSegregatedToilets().size()));
-//				details.put(STATUS, Result.Accepted.getResultVal());
-//			} else {
-//				details.put(DESCRIPTION, SEGREGATEDTOILET_DESCRIPTION);
-//				details.put(REQUIRED, sTSegregatedToiletRequired.toString());
-//				details.put(PROVIDED, sTSegregatedToiletProvided.toString());
-//				details.put(STATUS, Result.Not_Accepted.getResultVal());
-//			}
-//
-//			scrutinyDetail.getDetail().add(details);
-//			pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
-//
-//			// Check if minimum dimension (distance to entrance) is satisfied
-//			if (minDimension != null && minDimension.compareTo(sTminDimensionRequired) >= 0) {
-//				details.put(DESCRIPTION, SEGREGATEDTOILET_DIMENSION_DESCRIPTION);
-//				details.put(REQUIRED, ">= " + sTminDimensionRequired.toString());
-//				details.put(PROVIDED, minDimension.toString());
-//				details.put(STATUS, Result.Accepted.getResultVal());
-//			} else {
-//				details.put(DESCRIPTION, SEGREGATEDTOILET_DIMENSION_DESCRIPTION);
-//				details.put(REQUIRED, ">= " + sTminDimensionRequired.toString());
-//				details.put(PROVIDED, minDimension.toString());
-//				details.put(STATUS, Result.Not_Accepted.getResultVal());
-//			}
-//
-//			scrutinyDetail.getDetail().add(details);
-//			pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
-//		}
-//
-//		return pl; // Return the processed plan
-//	}
-    
     @Override
     public Plan process(Plan pl) {
 

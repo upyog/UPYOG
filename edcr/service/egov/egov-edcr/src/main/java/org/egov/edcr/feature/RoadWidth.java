@@ -1,5 +1,5 @@
 /*
- * eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
+ * UPYOG  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
 
 
  * accountability and the service delivery of the government  organizations.
@@ -101,94 +101,6 @@ public class RoadWidth extends FeatureProcess {
         return pl; // No validation logic currently implemented
     }
 
-//    @Override
-//    public Plan process(Plan pl) {
-//        // Check if road width is provided in plan information
-//        if (pl.getPlanInformation() != null && pl.getPlanInformation().getRoadWidth() != null) {
-//            BigDecimal roadWidth = pl.getPlanInformation().getRoadWidth();
-//            String typeOfArea = pl.getPlanInformation().getTypeOfArea();
-//
-//            // Apply rule only for NEW area types
-//            if (typeOfArea != null && NEW.equalsIgnoreCase(typeOfArea)) {
-//                ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
-//                scrutinyDetail.setKey(Common_Road_Width); // Setting the scrutiny detail key
-//                scrutinyDetail.addColumnHeading(1, RULE_NO);
-//                scrutinyDetail.addColumnHeading(2, DESCRIPTION);
-//                scrutinyDetail.addColumnHeading(3, OCCUPANCY);
-//                scrutinyDetail.addColumnHeading(4, PERMITTED);
-//                scrutinyDetail.addColumnHeading(5, PROVIDED);
-//                scrutinyDetail.addColumnHeading(6, STATUS);
-//
-//                Map<String, String> details = new HashMap<>();
-//                details.put(RULE_NO, RULE_34);
-//                details.put(DESCRIPTION, ROADWIDTH_DESCRIPTION);
-//
-//                // Get permissible road width values for the occupancy
-//                Map<String, BigDecimal> occupancyValuesMap = getOccupancyValues(pl);
-//
-//                // Fetch occupancy type from the most restrictive FAR helper
-//                if (pl.getVirtualBuilding() != null && pl.getVirtualBuilding().getMostRestrictiveFarHelper() != null) {
-//                    OccupancyHelperDetail occupancyType = pl.getVirtualBuilding().getMostRestrictiveFarHelper()
-//                            .getSubtype() != null
-//                                    ? pl.getVirtualBuilding().getMostRestrictiveFarHelper().getSubtype()
-//                                    : pl.getVirtualBuilding().getMostRestrictiveFarHelper().getType();
-//
-//                    if (occupancyType != null) {
-//                        details.put(OCCUPANCY, occupancyType.getName());
-//
-//                        // Fetch the required road width for this occupancy type
-//                        BigDecimal roadWidthRequired = occupancyValuesMap.get(occupancyType.getCode());
-//                        if (roadWidthRequired != null) {
-//                            // Check if provided road width is acceptable
-//                            if (roadWidth.compareTo(roadWidthRequired) >= 0) {
-//                                details.put(PERMITTED, String.valueOf(roadWidthRequired) + "m");
-//                                details.put(PROVIDED, roadWidth.toString() + "m");
-//                                details.put(STATUS, Result.Accepted.getResultVal());
-//                                scrutinyDetail.getDetail().add(details);
-//                                pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
-//                            } else {
-//                                details.put(PERMITTED, String.valueOf(roadWidthRequired) + "m");
-//                                details.put(PROVIDED, roadWidth.toString() + "m");
-//                                details.put(STATUS, Result.Not_Accepted.getResultVal());
-//                                scrutinyDetail.getDetail().add(details);
-//                                pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
-//                            }
-//                        }
-//                    }
-//                }
-//            }
-//        }
-//        return pl;
-//    }
-//
-//	// Method to retrieve permissible road width values from MDMS rules
-//	public Map<String, BigDecimal> getOccupancyValues(Plan plan) {
-//
-//		BigDecimal roadWidthValue = BigDecimal.ZERO; 
-//
-//		List<Object> rules = cache.getFeatureRules(plan, MdmsFeatureConstants.RIVER_DISTANCE, false);
-//
-//		Optional<MdmsFeatureRule> matchedRule = rules.stream().map(obj -> (MdmsFeatureRule) obj).findFirst();
-//
-//		if (matchedRule.isPresent()) {
-//			MdmsFeatureRule rule = matchedRule.get();
-//			roadWidthValue = rule.getPermissible();
-//		} else {
-//			roadWidthValue = BigDecimal.ZERO;
-//		}
-//
-//		// Assign retrieved value to all relevant occupancy codes
-//		Map<String, BigDecimal> roadWidthValues = new HashMap<>();
-//		roadWidthValues.put(B, roadWidthValue);
-//		roadWidthValues.put(D, roadWidthValue);
-//		roadWidthValues.put(G, roadWidthValue);
-//		roadWidthValues.put(F, roadWidthValue);
-//		roadWidthValues.put(F_RT, roadWidthValue);
-//		roadWidthValues.put(F_CB, roadWidthValue);
-//		return roadWidthValues;
-//
-//	}
-    
     @Override
     public Plan process(Plan pl) {
         if (pl.getPlanInformation() == null || pl.getPlanInformation().getRoadWidth() == null) {

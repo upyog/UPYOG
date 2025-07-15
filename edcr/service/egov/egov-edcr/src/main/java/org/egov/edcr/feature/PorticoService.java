@@ -1,5 +1,5 @@
 /*
- * eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
+ * UPYOG  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  * accountability and the service delivery of the government  organizations.
  *
  *  Copyright (C) <2019>  eGovernments Foundation
@@ -104,87 +104,6 @@ public class PorticoService extends FeatureProcess {
         return plan;
     }
 
-//    @Override
-//    public Plan process(Plan plan) {
-//        // Initialize permissible value for portico service
-//        BigDecimal porticoServicePermissibleValue = BigDecimal.ZERO;
-//
-//        // Validate the plan for portico compliance
-//        validate(plan);
-//
-//        
-//        List<Object> rules = cache.getFeatureRules(plan, MdmsFeatureConstants.PORTICO_SERVICE, false);
-//    		
-//            Optional<MdmsFeatureRule> matchedRule = rules.stream()
-//            	    .map(obj -> (MdmsFeatureRule) obj)
-//            	    .findFirst();
-//
-//            	if (matchedRule.isPresent()) {
-//            	    MdmsFeatureRule rule = matchedRule.get();
-//            	    porticoServicePermissibleValue = rule.getPermissible();
-//            	}
-//
-//        // Iterate through all blocks in the plan
-//        for (Block block : plan.getBlocks()) {
-//			// Iterate through all porticos in the block
-//            for (Portico portico : block.getPorticos()) {
-//                // Initialize scrutiny details for the portico
-//                scrutinyDetail = new ScrutinyDetail();
-//                scrutinyDetail.addColumnHeading(1, RULE_NO); // Column for rule number
-//                scrutinyDetail.addColumnHeading(2, DESCRIPTION); // Column for description
-//                scrutinyDetail.addColumnHeading(3, REQUIRED); // Column for required values
-//                scrutinyDetail.addColumnHeading(4, PROVIDED); // Column for provided values
-//                scrutinyDetail.addColumnHeading(5, STATUS); // Column for status (Accepted/Not Accepted)
-//                scrutinyDetail.setKey("Block_" + block.getNumber() + "_" + "Portico"); // Key for the scrutiny detail
-//
-//                // Check if the portico length is provided
-//                if (portico.getLength() != null) {
-//                    // Compare the portico length with the permissible value
-//                    if (portico.getLength().compareTo(porticoServicePermissibleValue) >= 0) {
-//                        // If the portico length is within permissible limits, mark as Accepted
-//                        setReportOutputDetails(plan, SUBRULE_PORTICO,
-//                                String.format(SUBRULE_PORTICO_MAX_LENGTHDESCRIPTION, portico.getName()),
-//                                "Max " + porticoServicePermissibleValue.toString() + " Mtr.",
-//                                portico.getLength() + " Mtr.", Result.Accepted.getResultVal(), scrutinyDetail);
-//                    } else {
-//                        // If the portico length is not within permissible limits, mark as Not Accepted
-//                        setReportOutputDetails(plan, SUBRULE_PORTICO,
-//                                String.format(SUBRULE_PORTICO_MAX_LENGTHDESCRIPTION, portico.getName()),
-//                                "Max " + porticoServicePermissibleValue.toString() + " Mtr.",
-//                                portico.getLength() + " Mtr.", Result.Not_Accepted.getResultVal(), scrutinyDetail);
-//                    }
-//                }
-//            }
-//        }
-//
-//        return plan; // Return the updated plan object
-//    }
-//
-//    /**
-//     * Adds the result of the validation to the scrutiny report.
-//     *
-//     * @param pl The plan object
-//     * @param ruleNo The rule number
-//     * @param ruleDesc The rule description
-//     * @param expected The expected value
-//     * @param actual The actual value
-//     * @param status The validation status (Accepted/Not Accepted)
-//     * @param scrutinyDetail The scrutiny detail object
-//     */
-//    private void setReportOutputDetails(Plan pl, String ruleNo, String ruleDesc, String expected, String actual, String status,
-//            ScrutinyDetail scrutinyDetail) {
-//        // Initialize a map to store rule details
-//        Map<String, String> details = new HashMap<>();
-//        details.put(RULE_NO, ruleNo); // Rule number
-//        details.put(DESCRIPTION, ruleDesc); // Rule description
-//        details.put(REQUIRED, expected); // Expected value
-//        details.put(PROVIDED, actual); // Actual value
-//        details.put(STATUS, status); // Validation status
-//        scrutinyDetail.getDetail().add(details); // Add details to scrutiny detail
-//        pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail); // Add scrutiny detail to the plan's report output
-//    }
-
-    
     @Override
     public Plan process(Plan plan) {
         validate(plan); 

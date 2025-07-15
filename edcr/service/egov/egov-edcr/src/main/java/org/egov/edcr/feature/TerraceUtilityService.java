@@ -1,5 +1,5 @@
 /*
- * eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency
+ * UPYOG  SmartCity eGovernance suite aims to improve the internal efficiency,transparency
 ,
  * accountability and the service delivery of the government  organizations.
  *
@@ -107,77 +107,6 @@ public class TerraceUtilityService extends FeatureProcess {
         return pl;
     }
 
-	// Main logic for processing terrace utility service validations
-//	@Override
-//	public Plan process(Plan pl) {
-//
-//		// Default permissible value set to zero initially
-//		BigDecimal terraceUtilityValue = BigDecimal.ZERO;
-//		
-//		List<Object> rules = cache.getFeatureRules(pl, MdmsFeatureConstants.TERRACE_UTILITY_SERVICE, false);
-//
-//		Optional<MdmsFeatureRule> matchedRule = rules.stream().map(obj -> (MdmsFeatureRule) obj).findFirst();
-//
-//		if (matchedRule.isPresent()) {
-//			MdmsFeatureRule rule = matchedRule.get();
-//			terraceUtilityValue = rule.getPermissible();
-//		} else {
-//			terraceUtilityValue = BigDecimal.ZERO;
-//		}
-//
-//		// Iterate through each block in the plan
-//		if (pl.getBlocks() != null) {
-//			for (Block block : pl.getBlocks()) {
-//
-//				// Create scrutiny detail object to hold validation report per block
-//				ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
-//				scrutinyDetail.setKey("Block_" + block.getNumber() + "_" + "Terrace Utility");
-//
-//				// Define column headers for scrutiny output
-//				scrutinyDetail.addColumnHeading(1, RULE_NO);
-//				scrutinyDetail.addColumnHeading(2, DESCRIPTION);
-//				scrutinyDetail.addColumnHeading(3, PERMITTED);
-//				scrutinyDetail.addColumnHeading(4, PROVIDED);
-//				scrutinyDetail.addColumnHeading(5, STATUS);
-//
-//				// Iterate through terrace utilities for the block
-//				for (TerraceUtility terraceUtility : block.getTerraceUtilities()) {
-//
-//					// Prepare the result map for each utility
-//					Map<String, String> details = new HashMap<>();
-//					details.put(RULE_NO, RULE_34);
-//
-//					// Get the minimum distance of the terrace utility from the edge
-//					BigDecimal minDistance = terraceUtility.getDistances().stream().reduce(BigDecimal::min).get();
-//
-//					// Set utility name in description
-//					details.put(DESCRIPTION, terraceUtility.getName());
-//
-//					// Compare provided distance with required distance and record results
-//					if (Util.roundOffTwoDecimal(minDistance).compareTo(terraceUtilityValue) >= 0) {
-//						details.put(PERMITTED, terraceUtilityValue + DcrConstants.IN_METER);
-//						details.put(PROVIDED, minDistance + DcrConstants.IN_METER);
-//						details.put(STATUS, Result.Accepted.getResultVal());
-//						scrutinyDetail.getDetail().add(details);
-//						pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
-//					} else {
-//						details.put(PERMITTED, terraceUtilityValue + DcrConstants.IN_METER);
-//						details.put(PROVIDED, minDistance + DcrConstants.IN_METER);
-//						details.put(STATUS, Result.Not_Accepted.getResultVal());
-//						scrutinyDetail.getDetail().add(details);
-//						pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
-//					}
-//
-//				}
-//
-//			}
-//
-//		}
-//
-//		// Return the updated plan after processing
-//		return pl;
-//	}
-    
     @Override
     public Plan process(Plan pl) {
 
