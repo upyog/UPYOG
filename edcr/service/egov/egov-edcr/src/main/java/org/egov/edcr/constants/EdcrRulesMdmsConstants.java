@@ -245,6 +245,7 @@ public class EdcrRulesMdmsConstants {
 	 public static final String ASSEMBLY = "Assembly";
 	 public static final String STATE = "pg";
 	 public static final String BPA = "BPA";
+	 public static final String RISK_TYPE_COMPUTATION = "RiskTypeComputation";
 	 
 	 /*
 	 // Todo: SideYardService feature is not using the methods currently, in future when the methods are used, these constants will be needed

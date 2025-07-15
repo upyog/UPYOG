@@ -83,9 +83,9 @@ public class FetchEdcrRulesMdms {
 	    if (riskTypeRules.isEmpty()) {
 	        ObjectMapper mapper = new ObjectMapper();
 
-	        Object mdmsData = bpaMdmsUtil.mDMSCall(new RequestInfo(), "pg");
+	        Object mdmsData = bpaMdmsUtil.mDMSCall(new RequestInfo(), EdcrRulesMdmsConstants.STATE);
 	        MdmsResponse mdmsResponse = mapper.convertValue(mdmsData, MdmsResponse.class);
-	        JSONArray jsonArray = mdmsResponse.getMdmsRes().get("BPA").get("RiskTypeComputation");
+	        JSONArray jsonArray = mdmsResponse.getMdmsRes().get(EdcrRulesMdmsConstants.BPA).get(EdcrRulesMdmsConstants.RISK_TYPE_COMPUTATION);
 
 	        for (int i = 0; i < jsonArray.size(); i++) {
 	            @SuppressWarnings("unchecked")
@@ -113,114 +113,5 @@ public class FetchEdcrRulesMdms {
 
 	    return null;
 	}
-
-
-
-	
-//	    public String getEdcrRuleSource(String featureName) {
-//	        List<Map<String, Object>> configs = masterConfigList.get(MdmsFeatureConstants.EDCR_MASTER_CONFIG);
-//
-//	        if (configs == null || configs.isEmpty()) return "city"; // default to city
-//
-//	        for (Map<String, Object> config : configs) {
-//	            if (featureName.equalsIgnoreCase((String) config.get("featureName"))) {
-//	                boolean hasZone = "yes".equalsIgnoreCase((String) config.getOrDefault("zone", "no"));
-//	                boolean hasSubZone = "yes".equalsIgnoreCase((String) config.getOrDefault("subZone", "no"));
-//	                boolean hasPlotArea = "yes".equalsIgnoreCase((String) config.getOrDefault("plotArea", "no"));
-//	                boolean hasRoadWidth = "yes".equalsIgnoreCase((String) config.getOrDefault("roadWidth", "no"));
-//
-//	                if (hasZone || hasSubZone || hasPlotArea || hasRoadWidth) {
-//	                    return "state";
-//	                } else {
-//	                    return "city";
-//	                }
-//	            }
-//	        }
-//	        return "city"; // default fallback
-//	    }
-//
-
-	public Map<RuleKey, List<Object>> transformCityLevelRules(Object mdmsCityData) {
-		Map<RuleKey, List<Object>> ruleMap = new HashMap<>();
-
-		if (mdmsCityData == null)
-			return ruleMap;
-
-		ObjectMapper mapper = new ObjectMapper();
-		Map<String, Object> mdmsMap = mapper.convertValue(mdmsCityData, new TypeReference<Map<String, Object>>() {
-		});
-		Map<String, Object> mdmsResMap = (Map<String, Object>) mdmsMap.get("MdmsRes");
-
-		Map<String, Object> bpaModuleMap = (Map<String, Object>) mdmsResMap.get("BPA");
-
-		if (bpaModuleMap == null)
-			return ruleMap;
-
-		for (Map.Entry<String, Object> featureEntry : bpaModuleMap.entrySet()) {
-			String featureName = featureEntry.getKey();
-			List<Map<String, Object>> rules = (List<Map<String, Object>>) featureEntry.getValue();
-
-			for (Map<String, Object> rule : rules) {
-				if (!Boolean.TRUE.equals(rule.get("active")))
-					continue;
-
-				RuleKey key = new RuleKey((String) rule.get("state"), (String) rule.get("city"),
-						(String) rule.get("zone"), (String) rule.get("subZone"), (String) rule.get("occupancy"),
-						(String) rule.get("riskType"), featureName);
-
-				ruleMap.computeIfAbsent(key, k -> new ArrayList<>()).add(rule);
-			}
-		}
-
-		return ruleMap;
-	}
-
-//	public List<Object> getRuleListForFeature(Map<RuleKey, List<Object>> ruleMap, String state, String city,
-//			String zone, String subZone, String occupancy, String riskType, String featureName) {
-//
-//		RuleKey lookupKey = new RuleKey(state, city, zone, subZone, occupancy, riskType, featureName);
-//
-//// Try exact match
-//		if (ruleMap.containsKey(lookupKey)) {
-//			return ruleMap.get(lookupKey);
-//		}
-//
-//// Fallback: Try partial match (e.g., if zone or subZone is null in keys)
-//		for (Map.Entry<RuleKey, List<Object>> entry : ruleMap.entrySet()) {
-//			RuleKey key = entry.getKey();
-//			if (Objects.equals(key.getState(), state) && Objects.equals(key.getCity(), city)
-//					&& Objects.equals(key.getZone(), zone) && Objects.equals(key.getSubZone(), subZone)
-//					&& Objects.equals(key.getOccupancy(), occupancy) && Objects.equals(key.getRiskType(), riskType)
-//					&& Objects.equals(key.getFeatureName(), featureName)) {
-//				return entry.getValue();
-//			}
-//		}
-//
-//// Fallback to null if nothing matches
-//		return null;
-//	}
-	
-	public List<Object> getRuleListForFeature(Map<RuleKey, List<Object>> ruleMap, RuleKey lookupKey) {
-	    if (ruleMap.containsKey(lookupKey)) {
-	        return ruleMap.get(lookupKey);
-	    }
-
-	    for (Map.Entry<RuleKey, List<Object>> entry : ruleMap.entrySet()) {
-	        RuleKey key = entry.getKey();
-	        if (Objects.equals(key.getState(), lookupKey.getState()) &&
-	            Objects.equals(key.getCity(), lookupKey.getCity()) &&
-	            Objects.equals(key.getZone(), lookupKey.getZone()) &&
-	            Objects.equals(key.getSubZone(), lookupKey.getSubZone()) &&
-	            Objects.equals(key.getOccupancy(), lookupKey.getOccupancy()) &&
-	            Objects.equals(key.getRiskType(), lookupKey.getRiskType()) &&
-	            Objects.equals(key.getFeatureName(), lookupKey.getFeatureName())) {
-	            return entry.getValue();
-	        }
-	    }
-
-	    return null;
-	}
-
-	
 
 }
