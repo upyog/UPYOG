@@ -1,28 +1,24 @@
 package org.egov.collection.consumer;
 
-import org.apache.kafka.common.serialization.Deserializer;
-import org.springframework.kafka.support.converter.DefaultJackson2JavaRecordMessageConverter;
-import org.springframework.messaging.Message;
-import org.springframework.messaging.support.MessageBuilder;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.util.Map;
+import org.junit.jupiter.api.Test;
+import org.springframework.kafka.support.mapping.DefaultJackson2JavaTypeMapper;
+import org.springframework.kafka.support.mapping.Jackson2JavaTypeMapper;
 
-public class HashMapDeserializer implements Deserializer<Map<String, Object>> {
-
-    private final DefaultJackson2JavaRecordMessageConverter converter;
-
-    public HashMapDeserializer() {
-        this.converter = new DefaultJackson2JavaRecordMessageConverter();
-    }
-
-    @Override
-    public Map<String, Object> deserialize(String topic, byte[] data) {
-        Message<byte[]> message = MessageBuilder.withPayload(data).build();
-        Object result = converter.fromMessage(message, Map.class);
-        return (Map<String, Object>) result;
-    }
-
-    public DefaultJackson2JavaRecordMessageConverter getConverter() {
-        return this.converter;
+class HashMapDeserializerTest {
+    /**
+     * Method under test: default or parameterless constructor of {@link HashMapDeserializer}
+     */
+    @Test
+    void testConstructor() {
+        Jackson2JavaTypeMapper typeMapper = (new HashMapDeserializer()).getTypeMapper();
+        assertTrue(typeMapper instanceof DefaultJackson2JavaTypeMapper);
+        assertEquals("__TypeId__", ((DefaultJackson2JavaTypeMapper) typeMapper).getClassIdFieldName());
+        assertEquals(Jackson2JavaTypeMapper.TypePrecedence.TYPE_ID, typeMapper.getTypePrecedence());
+        assertEquals("__KeyTypeId__", ((DefaultJackson2JavaTypeMapper) typeMapper).getKeyClassIdFieldName());
+        assertTrue(((DefaultJackson2JavaTypeMapper) typeMapper).getIdClassMapping().isEmpty());
+        assertEquals("__ContentTypeId__", ((DefaultJackson2JavaTypeMapper) typeMapper).getContentClassIdFieldName());
     }
 }
