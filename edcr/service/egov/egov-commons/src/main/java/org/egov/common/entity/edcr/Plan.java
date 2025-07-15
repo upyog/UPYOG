@@ -181,51 +181,7 @@ public class Plan implements Serializable {
     private transient List<SepticTank> septicTanks = new ArrayList<>();
     // Trees and plant defined in the plan
     private transient Plantation plantation;
-    
   
-    
-    private  Map<String, List<Map<String, Object>>> edcrRulesFeatures;
-    
-    public Map<String, List<Map<String, Object>>> getEdcrRulesFeatures() {
-		return edcrRulesFeatures;
-	}
-
-	public void setEdcrRulesFeatures(Map<String, List<Map<String, Object>>> edcrRulesFeatures) {
-		this.edcrRulesFeatures = edcrRulesFeatures;
-	}
-	
-    private  Map<String, List<Map<String, Object>>> edcrStateRulesFeatures;
-	    
-	    public Map<String, List<Map<String, Object>>> getEdcrStateRulesFeatures() {
-			return edcrStateRulesFeatures;
-		}
-
-		public void setEdcrStateRulesFeatures(Map<String, List<Map<String, Object>>> edcrStateRulesFeatures) {
-			this.edcrStateRulesFeatures = edcrStateRulesFeatures;
-		}
-		
-		 private  Map<String, List<Map<String, Object>>> edcrCityRulesFeatures;
-		    
-		    public Map<String, List<Map<String, Object>>> getEdcrCityRulesFeatures() {
-				return edcrCityRulesFeatures;
-			}
-
-			public void setEdcrCityRulesFeatures(Map<String, List<Map<String, Object>>> edcrCityRulesFeatures) {
-				this.edcrCityRulesFeatures = edcrCityRulesFeatures;
-			}
-			
-			 private  List<Map<String, Object>> masterConfig;
-			    
-			    public List<Map<String, Object>> getMasterConfig() {
-					return masterConfig;
-				}
-
-				public void setMasterConfig(List<Map<String, Object>> masterConfig) {
-					this.masterConfig = masterConfig;
-				}
-			
-
-	
     // Guard room details
     private transient GuardRoom guardRoom;
     // Segregated toilet facilities for visitors in Public Buildings (within the premises of the building, but outside the
