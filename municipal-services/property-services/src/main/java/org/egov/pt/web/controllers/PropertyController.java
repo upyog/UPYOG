@@ -10,6 +10,7 @@ import javax.validation.Valid;
 
 import org.egov.common.contract.response.ResponseInfo;
 import org.egov.pt.config.PropertyConfiguration;
+import org.egov.pt.config.scheduler.DashboardDataPush;
 import org.egov.pt.dashboardservice.DashboardDataService;
 import org.egov.pt.models.DashboardData;
 import org.egov.pt.models.DashboardDataSearch;
@@ -64,6 +65,9 @@ public class PropertyController {
     
     @Autowired
     DashboardDataService dashboardDataService;
+    
+    @Autowired
+    DashboardDataPush dashBoardIngestService;
 
     @PostMapping("/_create")
     public ResponseEntity<PropertyResponse> create(@Valid @RequestBody PropertyRequest propertyRequest) {
@@ -201,22 +205,28 @@ public class PropertyController {
 //        return new ResponseEntity<>(response, HttpStatus.OK);
     }
     
-	/*
-	 * @RequestMapping(value = "/_dashboardDataSearch", method = RequestMethod.POST)
-	 * public ResponseEntity<DashboardResponse>
-	 * dashboardDataSearch(@Valid @RequestBody RequestInfoWrapper
-	 * requestInfoWrapper,
-	 * 
-	 * @Valid @ModelAttribute DashboardDataSearch dashboardDataSearch) {
-	 * 
-	 * List<DashboardData>
-	 * dashboardDatas=dashboardDataService.dashboardDatas(dashboardDataSearch);
-	 * DashboardResponse
-	 * dashboardResponse=DashboardResponse.builder().dashboardDatas(dashboardDatas).
-	 * responseInfo(
-	 * responseInfoFactory.createResponseInfoFromRequestInfo(requestInfoWrapper.
-	 * getRequestInfo(), true)).build();
-	 * 
-	 * return new ResponseEntity<>(dashboardResponse,HttpStatus.OK); }
-	 */
+	
+	@RequestMapping(value = "/_dashboardDataSearch", method = RequestMethod.POST)
+	public ResponseEntity<DashboardResponse> dashboardDataSearch(
+			@Valid @RequestBody RequestInfoWrapper requestInfoWrapper,
+
+			@Valid @ModelAttribute DashboardDataSearch dashboardDataSearch) {
+
+		List<DashboardData> dashboardDatas = dashboardDataService.dashboardDatas(dashboardDataSearch);
+		DashboardResponse dashboardResponse = DashboardResponse.builder().dashboardDatas(dashboardDatas).responseInfo(
+				responseInfoFactory.createResponseInfoFromRequestInfo(requestInfoWrapper.getRequestInfo(), true))
+				.build();
+
+		return new ResponseEntity<>(dashboardResponse, HttpStatus.OK);
+	}
+	 
+    
+    
+    //IT SHOULD OPENENDPOINT WILL HIT ONLY ONCE 
+	@RequestMapping(value = "/_dashboardIngestForLegacy", method = RequestMethod.POST)
+	public ResponseEntity<?> dashboardDataSearch(){
+
+		return new ResponseEntity<>(dashBoardIngestService.datapushFromAPi(), HttpStatus.OK);
+	}
+	 
 }

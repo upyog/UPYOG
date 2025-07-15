@@ -35,6 +35,7 @@ import org.egov.pt.models.user.UserDetailResponse;
 import org.egov.pt.models.user.UserSearchRequest;
 import org.egov.pt.models.PropertyAudit;
 import org.egov.pt.models.PropertyBifurcation;
+import org.egov.pt.repository.builder.DashboardWithDateQueries;
 import org.egov.pt.repository.builder.PropertyQueryBuilder;
 import org.egov.pt.repository.rowmapper.AppealRowMapper;
 import org.egov.pt.repository.rowmapper.DashboardRowmapper;
@@ -494,5 +495,68 @@ public class PropertyRepository {
 		System.out.println("query::"+query);
 
 		return jdbcTemplate.query(query, preparedStmtList.toArray(), appealRowMapper);
+	}
+	
+	/////////////////////////////QUERY FOR LEGACY////////////////////////////////
+	
+	public List<WardwithTanent> getTotalapplicationwithwardWithDate(Long startDate, Long endDate)
+	{
+		
+		return jdbcTemplate.query(DashboardWithDateQueries.TOTAL_APPLICATION_COUNT_WITH_WARD, new Object[]{startDate, endDate},new DashboardRowmapper());
+	}
+	
+	public List<WardwithTanent> getTotalapplicationwitAssessmentWithDate(Long startDate, Long endDate)
+	{
+		return jdbcTemplate.query(PropertyQueryBuilder.TOTAL_ASSESMENT_COUNT_WITH_WARD, new DashboardRowmapper());
+	}
+	
+	public List<WardwithTanent> getTotalapplicationwitClosedWithDate(Long startDate, Long endDate)
+	{
+		return jdbcTemplate.query(DashboardWithDateQueries.TOTAL_PROPERTY_CLOSED_COUNT_WITH_WARD, new Object[]{startDate, endDate}, new DashboardRowmapper());
+	}
+	
+	public List<WardwithTanent> getTotalapplicationwithPaidWithDate(Long startDate, Long endDate)
+	{
+		return jdbcTemplate.query(PropertyQueryBuilder.TOTAL_PROPERTY_PAID_COUNT_WITH_WARD, new DashboardRowmapper());
+	}
+	public List<WardwithTanent> getTotalapplicationApprovedWithDate(Long startDate, Long endDate)
+	{
+		return jdbcTemplate.query(PropertyQueryBuilder.TOTAL_PROPERTY_APPROVED_WITH_WARD, new DashboardRowmapper());
+	}
+	public List<WardwithTanent> getTotalapplicationwithMovedWithDate(Long startDate, Long endDate)
+	{
+		return jdbcTemplate.query(PropertyQueryBuilder.TOTAL_MOVED_APPLICATION_COUNT_WITH_WARD, new DashboardRowmapper());
+	}
+	public List<WardwithTanent> getTotalpropertyRegisteredWithDate(Long startDate, Long endDate)
+	{
+		return jdbcTemplate.query(PropertyQueryBuilder.TOTAL_PROPERTY_REGISTERED_COUNT_WITH_WARD, new DashboardRowmapper());
+	}
+	public List<WardwithTanent> getTotalAssedpropertiesWithDate(Long startDate, Long endDate)
+	{
+		return jdbcTemplate.query(PropertyQueryBuilder.TOTAL_ASSEDPROPERTIES_COUNT_WITH_WARD, new DashboardRowmapper());
+	}
+	public List<WardwithTanent> getTotaltransactionCountWithDate(Long startDate, Long endDate)
+	{
+		return jdbcTemplate.query(PropertyQueryBuilder.TOTAL_TRANSACTIONS_COUNT_WITH_WARD, new DashboardRowmapper());
+	}
+	public List<WardwithTanent> getTotaltodaysCollectionWithDate(Long startDate, Long endDate)
+	{
+		return jdbcTemplate.query(PropertyQueryBuilder.TOTAL_TODAYS_COLLECTION_WITH_WARD, new DashboardRowmapper());
+	}
+	public List<WardwithTanent> getTotalpropertyCountWithDate(Long startDate, Long endDate)
+	{
+		return jdbcTemplate.query(DashboardWithDateQueries.TOTAL_PROPERTY_COUNT_WITH_WARD,new Object[]{startDate, endDate}, new DashboardRowmapper());
+	}
+	public List<WardwithTanent> getTotalrebateCollectionWithDate(Long startDate, Long endDate)
+	{
+		return jdbcTemplate.query(DashboardWithDateQueries.TOTAL_REBATE_COLLECTION_WITH_WARD,new Object[]{startDate, endDate, startDate, endDate, startDate, endDate}, new DashboardRowmapper());
+	}
+	public List<WardwithTanent> getTotalpenaltyCollectionWithDate(Long startDate, Long endDate)
+	{
+		return jdbcTemplate.query(PropertyQueryBuilder.TOTAL_PENALTY_COLLECTED_WITH_WARD, new DashboardRowmapper());
+	}
+	public List<WardwithTanent> getTotalinterestCollectionWithDate(Long startDate, Long endDate)
+	{
+		return jdbcTemplate.query(PropertyQueryBuilder.TOTAL_INTEREST_COLLECTED_WITH_WARD, new DashboardRowmapper());
 	}
 }
