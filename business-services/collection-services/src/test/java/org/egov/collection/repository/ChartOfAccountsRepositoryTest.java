@@ -5,6 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,15 +39,13 @@ class ChartOfAccountsRepositoryTest {
         ArrayList<ChartOfAccount> chartOfAccountList = new ArrayList<>();
         chartOfAccountsResponse.setChartOfAccounts(chartOfAccountList);
         chartOfAccountsResponse.setResponseInfo(new ResponseInfo());
-        when(this.restTemplate.postForObject((String) any(), (Object) any(), (Class<ChartOfAccountsResponse>) any(),
-                (Object[]) any())).thenReturn(chartOfAccountsResponse);
+        when(this.restTemplate.postForObject(anyString(), any(), eq(ChartOfAccountsResponse.class), any(), any())).thenReturn(chartOfAccountsResponse);
         ArrayList<String> accountCodes = new ArrayList<>();
         List<ChartOfAccount> actualChartOfAccounts = this.chartOfAccountsRepository.getChartOfAccounts(accountCodes, "42",
                 new RequestInfo());
         assertSame(chartOfAccountList, actualChartOfAccounts);
         assertTrue(actualChartOfAccounts.isEmpty());
-        verify(this.restTemplate).postForObject((String) any(), (Object) any(), (Class<ChartOfAccountsResponse>) any(),
-                (Object[]) any());
+        verify(this.restTemplate).postForObject(anyString(), any(), eq(ChartOfAccountsResponse.class), any(), any());
     }
 }
 
