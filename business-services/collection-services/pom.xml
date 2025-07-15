@@ -65,7 +65,8 @@
     </dependency>
     <dependency>
       <groupId>org.springframework.kafka</groupId>
-      <artifactId>spring-kafka</artifactId>      
+      <artifactId>spring-kafka</artifactId>
+      <version>2.7.0</version>	    
     </dependency>
     <dependency>
       <groupId>org.apache.commons</groupId>
