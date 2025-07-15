@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.tarento</groupId>
 	<artifactId>analytics</artifactId>
-	<version>1.1.8-SNAPSHOT</version>
+	<version>2.9.0-SNAPSHOT</version>
 
 	<name>Analytic Service</name>
 	<description>Project for handling the data for analytics visualization</description>
@@ -11,14 +11,14 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.2.6.RELEASE</version>
+		<version>3.2.2</version>
 		<relativePath></relativePath>
 	</parent>
 	<properties>
-		<log4j2.version>2.17.1</log4j2.version>
+		<log4j2.version>2.21.1</log4j2.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-		<java.version>1.8</java.version>
+		<java.version>17</java.version>
 		<cxf.version>3.4.2</cxf.version>
 	</properties>
 
@@ -26,13 +26,13 @@
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>3.8.1</version>
+			<version>4.13.2</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.egov.services</groupId>
 			<artifactId>tracer</artifactId>
-			<version>2.0.0-SNAPSHOT</version>
+			<version>2.9.0-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -41,51 +41,50 @@
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-beans</artifactId>
-			<version>5.2.20.RELEASE</version>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-jdbc -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-jdbc</artifactId>
-			<version>2.0.0.RELEASE</version>
 		</dependency>
 		<dependency>
 			<groupId>org.cache2k</groupId>
 			<artifactId>cache2k-spring</artifactId>
-			<version>1.2.0.Final</version>
+			<version>2.6.1.Final</version>
 			<scope>compile</scope>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/com.google.code.gson/gson -->
 		<dependency>
 			<groupId>com.google.code.gson</groupId>
 			<artifactId>gson</artifactId>
-			<version>2.8.0</version>
+			<version>2.13.1</version>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-jersey -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-jersey</artifactId>
-			<version>1.2.0.RELEASE</version>
 		</dependency>
 
 		<dependency>
 			<groupId>com.fasterxml.jackson.dataformat</groupId>
 			<artifactId>jackson-dataformat-xml</artifactId>
+			<version>2.16.0</version>
 		</dependency>
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
+			<version>1.18.38</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.poi</groupId>
 			<artifactId>poi-ooxml</artifactId>
-			<version>3.10-FINAL</version>
+			<version>5.4.1</version>
 		</dependency>
 
 		<dependency>
-			<groupId>javax.ws.rs</groupId>
-			<artifactId>jsr311-api</artifactId>
-			<version>1.1.1</version>
+			<groupId>jakarta.ws.rs</groupId>
+			<artifactId>jakarta.ws.rs-api</artifactId>
+			<version>3.1.0</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.cxf</groupId>
@@ -110,11 +109,10 @@
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>
-			<version>3.4</version>
 		</dependency>
 
-		<!-- <dependency> <groupId>org.flywaydb</groupId> <artifactId>flyway-core</artifactId> 
-			<version>4.1.0</version> </dependency> -->
+		<!-- <dependency> <groupId>org.flywaydb</groupId> <artifactId>flyway-core</artifactId>
+            <version>9.22.3</version> </dependency> -->
 		<dependency>
 			<groupId>org.elasticsearch.client</groupId>
 			<artifactId>elasticsearch-rest-high-level-client</artifactId>
@@ -134,26 +132,37 @@
 		<dependency>
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
-			<version>2.6</version>
+			<version>2.15.1</version>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/org.json/json -->
 		<dependency>
     		<groupId>org.json</groupId>
     		<artifactId>json</artifactId>
-    		<version>20180813</version>
+    		<version>20231013</version>
 		</dependency>
-        <dependency>
-            <groupId>com.googlecode.json-simple</groupId>
-            <artifactId>json-simple</artifactId>
-            <version>1.1</version>
-        </dependency>
+		<dependency>
+			<groupId>com.googlecode.json-simple</groupId>
+			<artifactId>json-simple</artifactId>
+			<version>1.1.1</version>
+		</dependency>
 		<dependency>
 			<groupId>com.amazonaws</groupId>
 			<artifactId>aws-java-sdk</artifactId>
-			<version>1.11.550</version>
+			<version>1.12.600</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.retry</groupId>
+			<artifactId>spring-retry</artifactId>
 		</dependency>
 
-    </dependencies>
+		<!-- SpringDoc OpenAPI for Spring Boot 3.x -->
+		<dependency>
+			<groupId>org.springdoc</groupId>
+			<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+			<version>2.3.0</version>
+		</dependency>
+
+	</dependencies>
 	<build>
 		<plugins>
 			<plugin><!-- Include if you want to make an executable jar[FAT JAR which 
