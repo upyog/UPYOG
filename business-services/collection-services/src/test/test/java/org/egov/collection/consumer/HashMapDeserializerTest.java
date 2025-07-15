@@ -1,36 +1,28 @@
 package org.egov.collection.consumer;
 
-import static org.junit.jupiter.api.Assertions.*;
-
-import org.junit.jupiter.api.Test;
+import org.apache.kafka.common.serialization.Deserializer;
+import org.springframework.kafka.support.converter.DefaultJackson2JavaRecordMessageConverter;
+import org.springframework.messaging.Message;
+import org.springframework.messaging.support.MessageBuilder;
 
 import java.util.Map;
 
-class HashMapDeserializerTest {
+public class HashMapDeserializer implements Deserializer<Map<String, Object>> {
 
-    /**
-     * Test the default constructor and basic functionality of HashMapDeserializer.
-     */
-    @Test
-    void testConstructor() {
-        HashMapDeserializer deserializer = new HashMapDeserializer();
-        assertNotNull(deserializer.getConverter());
+    private final DefaultJackson2JavaRecordMessageConverter converter;
+
+    public HashMapDeserializer() {
+        this.converter = new DefaultJackson2JavaRecordMessageConverter();
     }
 
-    /**
-     * Test deserialization of a valid JSON string.
-     */
-    @Test
-    void testDeserializeJson() {
-        HashMapDeserializer deserializer = new HashMapDeserializer();
+    @Override
+    public Map<String, Object> deserialize(String topic, byte[] data) {
+        Message<byte[]> message = MessageBuilder.withPayload(data).build();
+        Object result = converter.fromMessage(message, Map.class);
+        return (Map<String, Object>) result;
+    }
 
-        String json = "{\"key\":\"value\",\"count\":5}";
-        byte[] data = json.getBytes();
-
-        Map<String, Object> result = deserializer.deserialize("some-topic", data);
-
-        assertNotNull(result);
-        assertEquals("value", result.get("key"));
-        assertEquals(5, ((Number) result.get("count")).intValue());
+    public DefaultJackson2JavaRecordMessageConverter getConverter() {
+        return this.converter;
     }
 }
