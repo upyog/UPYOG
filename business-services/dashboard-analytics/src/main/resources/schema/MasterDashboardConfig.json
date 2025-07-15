@@ -11065,10 +11065,10 @@
               "id": 411,
               "name": "DSS_FINANCE_OVERVIEW",
               "dimensions": {
-                "height": 200,
-                "width": 12
+                "height": 350,
+                "width": 5
               },
-              "vizType": "collection",
+              "vizType": "metric-collection",
               "label": "DSS_FINANCE_OVERVIEW",
               "noUnit": true,
               "isCollapsible": false,
@@ -11082,20 +11082,66 @@
                   "headers": []
                 },
                 {
-                  "id": "financeTotalBillAmount",
-                  "name": "DSS_FINANCE_TOTAL_BILL_AMOUNT",
+                  "id": "financeTotalRegisteredULBs",
+                  "name": "DSS_FINANCE_TOTAL_REGISTERED_ULBS",
                   "code": "",
                   "chartType": "metric",
                   "filter": "",
                   "headers": []
                 },
                 {
-                  "id": "financeTotalPaidAmount",
-                  "name": "DSS_FINANCE_TOTAL_PAID_AMOUNT",
+                  "id": "financeTotalIncome",
+                  "name": "DSS_FINANCE_TOTAL_INCOME",
                   "code": "",
                   "chartType": "metric",
                   "filter": "",
                   "headers": []
+                },
+                {
+                  "id": "financeTotalExpenditure",
+                  "name": "DSS_FINANCE_TOTAL_EXPENDITURE",
+                  "code": "",
+                  "chartType": "metric",
+                  "filter": "",
+                  "headers": []
+                },
+                {
+                  "id": "financeTotalBillCreated",
+                  "name": "DSS_FINANCE_TOTAL_BILL_CREATED",
+                  "code": "",
+                  "chartType": "metric",
+                  "filter": "",
+                  "headers": []
+                },
+                {
+                  "id": "financeNumberOfBillsPaid",
+                  "name": "DSS_FINANCE_TOTAL_BILL_PAYMENT",
+                  "code": "",
+                  "chartType": "metric",
+                  "filter": "",
+                  "headers": []
+                },
+                {
+                  "id": 450,
+                  "name": "Total Cumulative Collection",
+                  "dimensions": {
+                    "height": 350,
+                    "width": 7
+                  },
+                  "vizType": "chart",
+                  "label": "",
+                  "noUnit": true,
+                  "isCollapsible": false,
+                  "charts": [
+                    {
+                      "id": "financeIncomeExpenditureForLines",
+                      "name": "Monthly",
+                      "code": "",
+                      "chartType": "line",
+                      "filter": "",
+                      "headers": []
+                    }
+                  ]
                 }
               ]
             }
