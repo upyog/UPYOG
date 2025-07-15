@@ -94,7 +94,24 @@ public class RainWaterHarvesting extends FeatureProcess {
         return pl;
     }
     
-  
+    /**
+     * Processes the given {@link Plan} object to evaluate and validate compliance 
+     * with rainwater harvesting requirements based on occupancy type and plot area.
+     * 
+     * <p>
+     * This method performs the following:
+     * <ul>
+     *   <li>Initializes scrutiny detail columns for reporting.</li>
+     *   <li>Fetches the most restrictive FAR (Floor Area Ratio) occupancy type for the virtual building.</li>
+     *   <li>Retrieves permissible rainwater harvesting values from MDMS feature rules.</li>
+     *   <li>Checks if the occupancy type and plot area require rainwater harvesting compliance.</li>
+     *   <li>If conditions are met, it adds compliance details to the report output.</li>
+     * </ul>
+     * </p>
+     *
+     * @param pl The {@link Plan} object that includes plot and building details.
+     * @return The updated {@link Plan} object with any added scrutiny or error details.
+     */
 @Override
 public Plan process(Plan pl) {
     // Initialize a map to store errors

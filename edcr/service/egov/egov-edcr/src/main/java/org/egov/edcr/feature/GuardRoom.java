@@ -169,6 +169,11 @@ public class GuardRoom extends FeatureProcess {
     	return pl;
     }
 
+    /**
+     * Initializes the {@link ScrutinyDetail} object with predefined key and column headings
+     * specific to guard room scrutiny.
+     * This method sets up the structure used to store and report the results of rule validations.
+     */
     private void initializeScrutinyDetail() {
     	scrutinyDetail = new ScrutinyDetail();
     	scrutinyDetail.setKey(COMMON_Guard_Room);
@@ -179,6 +184,14 @@ public class GuardRoom extends FeatureProcess {
     	scrutinyDetail.addColumnHeading(5, STATUS);
     }
 
+    /**
+     * Validates the dimensions (height and width) of a guard room against the required minimum dimensions.
+     *
+     * @param minHeight       The minimum height provided in the plan.
+     * @param minWidth        The minimum width provided in the plan.
+     * @param requiredHeight  The required minimum height as per rule.
+     * @param requiredWidth   The required minimum width as per rule.
+     */
     private void validateDimensions(BigDecimal minHeight, BigDecimal minWidth, BigDecimal requiredHeight, BigDecimal requiredWidth) {
     	Map<String, String> details = new HashMap<>();
     	details.put(RULE_NO, RULE_48_A);
@@ -195,6 +208,12 @@ public class GuardRoom extends FeatureProcess {
     	scrutinyDetail.getDetail().add(details);
     }
 
+    /**
+     * Validates the area of the guard room against the maximum permissible area.
+     *
+     * @param minArea        The area provided in the plan.
+     * @param requiredArea   The maximum allowed area as per the rule.
+     */
     private void validateArea(BigDecimal minArea, BigDecimal requiredArea) {
     	Map<String, String> details = new HashMap<>();
     	details.put(RULE_NO, RULE_48_A);
@@ -211,6 +230,13 @@ public class GuardRoom extends FeatureProcess {
     	scrutinyDetail.getDetail().add(details);
     }
 
+    /**
+     * Validates the height of the guard cabin against the specified minimum and maximum allowed heights.
+     *
+     * @param minCabinHeight     The height of the cabin as provided in the plan.
+     * @param minHeightAllowed   The minimum height allowed as per rule.
+     * @param maxHeightAllowed   The maximum height allowed as per rule.
+     */
     private void validateCabinHeight(BigDecimal minCabinHeight, BigDecimal minHeightAllowed, BigDecimal maxHeightAllowed) {
     	Map<String, String> details = new HashMap<>();
     	details.put(RULE_NO, RULE_48_A);

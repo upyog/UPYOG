@@ -166,6 +166,23 @@ public class FrontYardService extends GeneralRule {
 	}
 
 
+	/**
+	 * Validates the front yard setbacks based on occupancy type, plot details, and MDMS rules.
+	 *
+	 * @param pl                        The current Plan object being processed.
+	 * @param building                 The building object associated with the block.
+	 * @param blockName                The name of the block.
+	 * @param level                    The level/floor being validated.
+	 * @param plot                     The plot object from the plan.
+	 * @param frontYardFieldName       The descriptor for the front yard field (used in reporting).
+	 * @param min                      The minimum distance provided in the front yard.
+	 * @param mean                     The mean distance provided in the front yard.
+	 * @param mostRestrictiveOccupancy The most restrictive occupancy type applicable to this block.
+	 * @param frontYardResult          The result object to store front yard validation outcome.
+	 * @param errors                   A map to store error messages if any rule is violated.
+	 * @return                         True if the front yard is valid, false otherwise.
+	 */
+
 	private Boolean checkFrontYard(Plan pl, Building building, String blockName, Integer level, Plot plot,
 			String frontYardFieldName, BigDecimal min, BigDecimal mean, OccupancyTypeHelper mostRestrictiveOccupancy,
 			FrontYardResult frontYardResult, HashMap<String, String> errors) {
@@ -213,7 +230,13 @@ public class FrontYardService extends GeneralRule {
 		return valid;
 	}
 	
-	
+	/**
+	 * Processes the front yard validation for each block in the plan.
+	 * Initiates validation and rule matching for the front yard setbacks.
+	 *
+	 * @param pl The Plan object containing plot and block information.
+	 */
+
 
 	public void processFrontYard(Plan pl) {
 	    if (pl == null || pl.getPlot() == null || pl.getBlocks().isEmpty()) return;
@@ -224,6 +247,15 @@ public class FrontYardService extends GeneralRule {
 	        processBlockFrontYard(pl, block);
 	    }
 	}
+	
+	/**
+	 * Processes front yard validation for a specific block.
+	 * Extracts setback values, height, occupancy, and initiates rule validation.
+	 *
+	 * @param pl    The complete Plan object.
+	 * @param block The specific block for which front yard is being validated.
+	 */
+
 	private void processBlockFrontYard(Plan pl, Block block) {
 	    ScrutinyDetail scrutinyDetail = createScrutinyDetail(block.getName());
 	    FrontYardResult frontYardResult = new FrontYardResult();
@@ -253,6 +285,14 @@ public class FrontYardService extends GeneralRule {
 	        }
 	    }
 	}
+	
+	/**
+	 * Creates a ScrutinyDetail object for recording front yard validation results.
+	 *
+	 * @param blockName The name of the block for which the scrutiny detail is being generated.
+	 * @return          A ScrutinyDetail object with initialized headings.
+	 */
+
 
 	private ScrutinyDetail createScrutinyDetail(String blockName) {
 	    ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
@@ -268,6 +308,16 @@ public class FrontYardService extends GeneralRule {
 	    return scrutinyDetail;
 	}
 
+	
+	/**
+	 * Determines the building height for validation.
+	 * Uses height from front yard if available; otherwise, uses building's total height.
+	 *
+	 * @param block   The block whose building height is being queried.
+	 * @param setback The setback object which may contain yard-specific height.
+	 * @return        The height to be used for validation.
+	 */
+
 	private BigDecimal getBuildingHeight(Block block, SetBack setback) {
 	    if (setback.getFrontYard().getHeight() != null && 
 	        setback.getFrontYard().getHeight().compareTo(BigDecimal.ZERO) > 0) {
@@ -275,6 +325,13 @@ public class FrontYardService extends GeneralRule {
 	    }
 	    return block.getBuilding().getBuildingHeight();
 	}
+
+	/**
+	 * Builds a map of scrutiny details for a single front yard validation.
+	 *
+	 * @param result The result object containing comparison values and status.
+	 * @return       A map with headings and values used in the scrutiny report.
+	 */
 
 	private Map<String, String> buildScrutinyDetailMap(FrontYardResult result) {
 	    Map<String, String> detailMap = new HashMap<>();
@@ -287,6 +344,29 @@ public class FrontYardService extends GeneralRule {
 	    detailMap.put(STATUS, result.status ? Result.Accepted.getResultVal() : Result.Not_Accepted.getResultVal());
 	    return detailMap;
 	}
+
+	
+	/**
+	 * Processes front yard validation logic by fetching applicable MDMS rules
+	 * and comparing against provided values.
+	 *
+	 * @param blockName                Name of the block being processed.
+	 * @param level                    Level/floor of the block.
+	 * @param min                      Minimum distance from input/setback.
+	 * @param mean                     Mean distance from input/setback.
+	 * @param mostRestrictiveOccupancy The most restrictive occupancy type.
+	 * @param frontYardResult          Object that will store result of the comparison.
+	 * @param valid                    Initial validity flag, may be updated.
+	 * @param subRule                  Sub-rule identifier used in reporting.
+	 * @param rule                     Rule identifier used in reporting.
+	 * @param minVal                   Minimum permissible value from MDMS.
+	 * @param meanVal                  Mean permissible value from MDMS.
+	 * @param depthOfPlot              The depth of the plot from Plan.
+	 * @param errors                   A map to store any errors encountered.
+	 * @param pl                       The Plan object being processed.
+	 * @param occupancyName            The resolved occupancy name string.
+	 * @return                         True if validation passes, false otherwise.
+	 */
 
 	private Boolean processFrontYardService(String blockName, Integer level, BigDecimal min, BigDecimal mean,
 			OccupancyTypeHelper mostRestrictiveOccupancy, FrontYardResult frontYardResult, Boolean valid,

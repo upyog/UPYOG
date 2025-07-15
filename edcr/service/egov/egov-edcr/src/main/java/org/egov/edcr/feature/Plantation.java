@@ -94,6 +94,12 @@ public class Plantation extends FeatureProcess {
         return null;
     }
 
+    /**
+     * Validates and processes plantation area compliance based on occupancy type and subtype.
+     *
+     * @param pl The plan object containing plantation and plot details.
+     * @return The updated plan object after processing plantation scrutiny.
+     */
     @Override
     public Plan process(Plan pl) {
     	validate(pl);
@@ -114,6 +120,11 @@ public class Plantation extends FeatureProcess {
     	return pl;
     }
 
+    /**
+     * Creates and returns an initialized ScrutinyDetail object for plantation scrutiny.
+     *
+     * @return A ScrutinyDetail object with predefined column headings and key.
+     */
     private ScrutinyDetail createScrutinyDetail() {
     	ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
     	scrutinyDetail.setKey(Common_Plantation);
@@ -125,6 +136,11 @@ public class Plantation extends FeatureProcess {
     	return scrutinyDetail;
     }
 
+    /**
+     * Creates and returns a map containing initial rule number and description for plantation.
+     *
+     * @return A map with rule number and rule description.
+     */
     private Map<String, String> createInitialDetails() {
     	Map<String, String> details = new HashMap<>();
     	details.put(RULE_NO, RULE_32);
@@ -132,6 +148,12 @@ public class Plantation extends FeatureProcess {
     	return details;
     }
 
+    /**
+     * Calculates and returns the total plantation area from the plan.
+     *
+     * @param pl The plan containing plantation measurements.
+     * @return The total area of plantation as BigDecimal.
+     */
     private BigDecimal getTotalPlantationArea(Plan pl) {
     	BigDecimal totalArea = BigDecimal.ZERO;
     	if (pl.getPlantation() != null && pl.getPlantation().getPlantations() != null) {
@@ -142,10 +164,22 @@ public class Plantation extends FeatureProcess {
     	return totalArea;
     }
 
+    /**
+     * Returns the plot area from the plan.
+     *
+     * @param pl The plan object.
+     * @return Plot area as BigDecimal, or ZERO if not available.
+     */
     private BigDecimal getPlotArea(Plan pl) {
     	return (pl.getPlot() != null) ? pl.getPlot().getArea() : BigDecimal.ZERO;
     }
 
+    /**
+     * Retrieves the occupancy type code from the plan's most restrictive FAR helper.
+     *
+     * @param pl The plan object.
+     * @return Occupancy type code as String, or empty string if not available.
+     */
     private String getOccupancyType(Plan pl) {
     	if (pl.getVirtualBuilding() != null &&
     			pl.getVirtualBuilding().getMostRestrictiveFarHelper() != null &&
@@ -155,6 +189,12 @@ public class Plantation extends FeatureProcess {
     	return "";
     }
 
+    /**
+     * Retrieves the occupancy subtype code from the plan's most restrictive FAR helper.
+     *
+     * @param pl The plan object.
+     * @return Occupancy subtype code as String, or empty string if not available.
+     */
     private String getOccupancySubType(Plan pl) {
     	if (pl.getVirtualBuilding() != null &&
     			pl.getVirtualBuilding().getMostRestrictiveFarHelper() != null &&
@@ -164,6 +204,13 @@ public class Plantation extends FeatureProcess {
     	return "";
     }
 
+    /**
+     * Calculates the plantation percentage with respect to the plot area.
+     *
+     * @param totalArea Total plantation area.
+     * @param plotArea  Total plot area.
+     * @return Plantation percentage as BigDecimal (0 if plot area is zero or null).
+     */
     private BigDecimal calculatePlantationPercentage(BigDecimal totalArea, BigDecimal plotArea) {
     	if (plotArea != null && plotArea.compareTo(BigDecimal.ZERO) > 0) {
     		return totalArea.divide(plotArea, DECIMALDIGITS_MEASUREMENTS, ROUNDMODE_MEASUREMENTS);
@@ -171,11 +218,26 @@ public class Plantation extends FeatureProcess {
     	return BigDecimal.ZERO;
     }
 
+    /**
+     * Checks if the given occupancy type and subtype are relevant for plantation rules.
+     *
+     * @param type    Occupancy type code.
+     * @param subType Occupancy subtype code.
+     * @return True if the type/subtype qualifies for plantation check, false otherwise.
+     */
     private boolean isRelevantOccupancyType(String type, String subType) {
     	return A.equals(type) || B.equals(type) || D.equals(type) || G.equals(type)
     			|| A_AF.equals(subType) || A_SA.equals(subType);
     }
 
+    /**
+     * Processes plantation rule comparison and adds the result to scrutiny details.
+     *
+     * @param pl              The plan object.
+     * @param plantationPer   Calculated plantation percentage.
+     * @param scrutinyDetail  ScrutinyDetail object to be updated.
+     * @param details         Initial rule details map to be filled.
+     */
     private void processPlantationRule(Plan pl, BigDecimal plantationPer, ScrutinyDetail scrutinyDetail, Map<String, String> details) {
     	BigDecimal plantation = BigDecimal.ZERO;
     	BigDecimal percent;

@@ -99,23 +99,17 @@ public class BathRoomWaterClosets extends FeatureProcess {
         return pl;
     }
 
-    @Autowired
-    FetchEdcrRulesMdms fetchEdcrRulesMdms;
-    
+
     @Autowired
    	CacheManagerMdms cache;
 
-	/**
-	 * This method processes the plan to validate bathroom water closets dimensions
-	 * against permissible values. It checks the height, width, and total area of
-	 * bathroom water closets in the plan and generates scrutiny details.
-	 *
-	 * @param pl The plan object to process.
-	 * @return The processed plan object with scrutiny details added.
-	 */
-	/**
-	 *
-	 */
+    /**
+     * Processes the given {@link Plan} to validate bathroom water closet areas, widths, and heights
+     * based on feature rules defined in MDMS.
+     *
+     * @param pl the plan to process
+     * @return the processed plan with scrutiny details added if validation results are present
+     */
 
     @Override
     public Plan process(Plan pl) {
@@ -141,6 +135,17 @@ public class BathRoomWaterClosets extends FeatureProcess {
 
         return pl;
     }
+    
+    /**
+     * Processes each block in the plan and validates the bathroom water closet dimensions for each floor.
+     *
+     * @param plan           the plan containing the block
+     * @param block          the block to process
+     * @param reqArea        required minimum area for bathroom WC
+     * @param reqWidth       required minimum width for bathroom WC
+     * @param reqHeight      required minimum height for bathroom WC
+     * @param scrutinyDetail the scrutiny detail object to collect validation results
+     */
 
     private void processBlock(Plan plan, Block block, BigDecimal reqArea, BigDecimal reqWidth, BigDecimal reqHeight,
                               ScrutinyDetail scrutinyDetail) {
@@ -151,6 +156,17 @@ public class BathRoomWaterClosets extends FeatureProcess {
         }
     }
 
+    
+    /**
+     * Processes each floor of a block and validates bathroom WC measurements.
+     *
+     * @param plan           the plan object
+     * @param floor          the floor being processed
+     * @param reqArea        required minimum area
+     * @param reqWidth       required minimum width
+     * @param reqHeight      required minimum height
+     * @param scrutinyDetail the scrutiny detail to collect validation output
+     */
     private void processFloor(Plan plan, Floor floor, BigDecimal reqArea, BigDecimal reqWidth, BigDecimal reqHeight,
                               ScrutinyDetail scrutinyDetail) {
         org.egov.common.entity.edcr.Room bathWC = floor.getBathRoomWaterClosets();
@@ -160,6 +176,19 @@ public class BathRoomWaterClosets extends FeatureProcess {
         validateBathroomWaterCloset(plan, floor, bathWC.getRooms(), bathWC.getHeights(), reqArea, reqWidth, reqHeight, scrutinyDetail);
     }
 
+    /**
+     * Validates the area, width, and height of bathroom water closets on a given floor.
+     * Collects validation results and populates the scrutiny detail.
+     *
+     * @param plan           the plan object
+     * @param floor          the floor being validated
+     * @param rooms          list of measurements for bathroom WCs
+     * @param heights        list of height measurements
+     * @param reqArea        required minimum area
+     * @param reqWidth       required minimum width
+     * @param reqHeight      required minimum height
+     * @param scrutinyDetail the scrutiny detail to record results
+     */
     private void validateBathroomWaterCloset(Plan plan, Floor floor, List<Measurement> rooms, List<RoomHeight> heights,
                                              BigDecimal reqArea, BigDecimal reqWidth, BigDecimal reqHeight,
                                              ScrutinyDetail scrutinyDetail) {
@@ -189,6 +218,11 @@ public class BathRoomWaterClosets extends FeatureProcess {
         scrutinyDetail.getDetail().add(resultRow);
     }
 
+    /**
+     * Creates and initializes a {@link ScrutinyDetail} object for bathroom water closet validation.
+     *
+     * @return a new scrutiny detail instance with column headings set
+     */
     private ScrutinyDetail createScrutinyDetail() {
         ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
         scrutinyDetail.setKey(Common_Bathroom_Water_Closets);
@@ -200,6 +234,19 @@ public class BathRoomWaterClosets extends FeatureProcess {
         return scrutinyDetail;
     }
 
+    /**
+     * Creates a result row map containing the outcome of bathroom water closet validation for a given floor.
+     *
+     * @param floor      the floor being validated
+     * @param reqArea    required area
+     * @param reqWidth   required width
+     * @param reqHeight  required height
+     * @param totalArea  total area provided
+     * @param minWidth   minimum width provided
+     * @param minHeight  minimum height provided
+     * @param isAccepted whether the validation passed
+     * @return a map representing one row of validation result
+     */
     private Map<String, String> createResultRow(Floor floor, BigDecimal reqArea, BigDecimal reqWidth, BigDecimal reqHeight,
                                                 BigDecimal totalArea, BigDecimal minWidth, BigDecimal minHeight, boolean isAccepted) {
         Map<String, String> resultRow = new HashMap<>();

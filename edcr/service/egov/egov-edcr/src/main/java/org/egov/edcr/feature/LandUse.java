@@ -88,8 +88,6 @@ public class LandUse extends FeatureProcess {
     // Variable to store permissible road width
     public static BigDecimal RoadWidth = BigDecimal.ZERO;
 
-    @Autowired
-    FetchEdcrRulesMdms fetchEdcrRulesMdms;
     
     @Autowired
 	CacheManagerMdms cache;
@@ -107,6 +105,13 @@ public class LandUse extends FeatureProcess {
     public Plan validate(Plan pl) {
         return pl;
     }
+    
+    /**
+     * Processes the given Plan object to validate commercial zone requirements.
+     * 
+     * @param pl the Plan object to be processed
+     * @return the processed Plan with any scrutiny details added
+     */
 
     @Override
     public Plan process(Plan pl) {
@@ -115,6 +120,12 @@ public class LandUse extends FeatureProcess {
         return pl;
     }
 
+    /**
+     * Validates whether the commercial zone requirements are met for the given Plan.
+     *
+     * @param pl the Plan object containing zoning and building details
+     * @param errors a map to capture validation errors (currently unused)
+     */
     private void validateCommercialZone(Plan pl, Map<String, String> errors) {
         Optional<MdmsFeatureRule> matchedRule = fetchCommercialZoneRule(pl);
         if (!matchedRule.isPresent()) return;
@@ -126,11 +137,24 @@ public class LandUse extends FeatureProcess {
         }
     }
 
+    /**
+     * Fetches the commercial zone rule from the MDMS feature rules.
+     *
+     * @param pl the Plan object used to extract rule context
+     * @return an Optional containing the first matched commercial zone rule if present
+     */
     private Optional<MdmsFeatureRule> fetchCommercialZoneRule(Plan pl) {
         List<Object> rules = cache.getFeatureRules(pl, MdmsFeatureConstants.LAND_USE, false);
         return rules.stream().map(obj -> (MdmsFeatureRule) obj).findFirst();
     }
 
+    /**
+     * Validates a specific block in the plan against commercial zone rules.
+     *
+     * @param pl the Plan object
+     * @param block the block within the plan to validate
+     * @param permissibleRoadWidth the minimum road width required for commercial zoning
+     */
     private void validateBlockCommercialZone(Plan pl, Block block, BigDecimal permissibleRoadWidth) {
         BigDecimal roadWidth = pl.getPlanInformation().getRoadWidth();
         String landUseZone = pl.getPlanInformation().getLandUseZone();
@@ -152,6 +176,12 @@ public class LandUse extends FeatureProcess {
         pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
     }
 
+    /**
+     * Retrieves the floor numbers marked as commercial in a block.
+     *
+     * @param block the block to analyze
+     * @return a comma-separated StringBuffer of commercial floor numbers
+     */
     private StringBuffer getCommercialFloors(Block block) {
         StringBuffer floorNos = new StringBuffer();
         for (Floor floor : block.getBuilding().getFloors()) {
@@ -162,6 +192,12 @@ public class LandUse extends FeatureProcess {
         return floorNos;
     }
 
+    /**
+     * Checks if a floor is used for commercial occupancy based on type or subtype.
+     *
+     * @param floor the floor to check
+     * @return true if commercial occupancy is found, false otherwise
+     */
     private boolean isFloorCommercial(Floor floor) {
         for (Occupancy occupancy : floor.getOccupancies()) {
             if (occupancy.getTypeHelper() != null) {
@@ -178,6 +214,11 @@ public class LandUse extends FeatureProcess {
         return false;
     }
 
+    /**
+     * Initializes the scrutiny detail header for a specific block zone validation.
+     *
+     * @param key the unique key identifying the scrutiny header
+     */
     private void initializeScrutinyHeader(String key) {
         scrutinyDetail.addColumnHeading(1, RULE_NO);
         scrutinyDetail.addColumnHeading(2, DESCRIPTION);
@@ -188,6 +229,14 @@ public class LandUse extends FeatureProcess {
         scrutinyDetail.setKey(key);
     }
 
+    /**
+     * Builds the scrutiny detail map that will be added to the report.
+     *
+     * @param pl the Plan object
+     * @param commercialFloors the string buffer containing commercial floor numbers
+     * @param isAccepted indicates whether the commercial zoning is valid
+     * @return a map of scrutiny detail values
+     */
     private Map<String, String> buildScrutinyDetails(Plan pl, StringBuffer commercialFloors, boolean isAccepted) {
         Map<String, String> details = new HashMap<>();
         details.put(RULE_NO, RULE_28);

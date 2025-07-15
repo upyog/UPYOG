@@ -85,153 +85,233 @@ public class LiftService extends FeatureProcess {
 	private static final String SUBRULE_118 = "118";
 	private static final String SUBRULE_118_DESCRIPTION = "Dimension Of lift";
 	
-
-	@Override
-	public Plan validate(Plan plan) {
-	    for (Block block : plan.getBlocks()) {
-	        if (!hasBuildingWithFloors(block)) continue;
-
-	        for (Floor floor : block.getBuilding().getFloors()) {
-	            for (Lift lift : getLifts(floor)) {
-	                validateDimensions(plan, block.getNumber(), floor.getNumber(), lift.getNumber().toString(), lift.getLifts());
-	            }
-	        }
-	    }
-	    return plan;
-	}
-
-	@Override
-	public Plan process(Plan plan) {
-	    if (plan == null || plan.getBlocks().isEmpty()) return plan;
-
-	    for (Block block : plan.getBlocks()) {
-	        if (!isLiftValidationRequired(block)) continue;
-
-	        ScrutinyDetail liftCountDetail = createScrutinyDetail("Block_" + block.getNumber() + "_Lift - Minimum Required");
-	        ScrutinyDetail liftDimDetail = createScrutinyDetail("Block_" + block.getNumber() + "_Lift Dimension");
-
-	        validateLiftCount(plan, block, liftCountDetail);
-	        validateLiftDimensions(plan, block, liftDimDetail);
-	    }
-
-	    return plan;
-	}
-
+	/**
+	 * Validates the lift dimensions and counts for each block and floor in the plan.
+	 * @param plan the Plan object to validate
+	 * @return the validated Plan object
+	 */
+		@Override
+		public Plan validate(Plan plan) {
+		    for (Block block : plan.getBlocks()) {
+		        if (!hasBuildingWithFloors(block)) continue;
 	
-
-	private boolean hasBuildingWithFloors(Block block) {
-	    return block.getBuilding() != null && !block.getBuilding().getFloors().isEmpty();
-	}
-
-	private List<Lift> getLifts(Floor floor) {
-	    return floor.getLifts() != null ? floor.getLifts() : Collections.emptyList();
-	}
-
-	private boolean isLiftValidationRequired(Block block) {
-	    return block.getBuilding() != null &&
-	           !block.getBuilding().getOccupancies().isEmpty() &&
-	           block.getBuilding().getFloors().stream().anyMatch(floor -> !getLifts(floor).isEmpty());
-	}
-
-	private void validateLiftCount(Plan plan, Block block, ScrutinyDetail scrutinyDetail) {
-	    BigDecimal requiredLifts = getRequiredLiftCount(plan);
-	    if (!isHighRiseLiftRequired(plan)) return;
-
-	    boolean valid = BigDecimal.valueOf(Double.parseDouble(block.getNumberOfLifts())).compareTo(requiredLifts) >= 0;
-	    setReportOutputDetails(plan, SUBRULE_48, SUBRULE_48_DESCRIPTION,
-	            requiredLifts.toString(), block.getNumberOfLifts(),
-	            valid ? Result.Accepted.getResultVal() : Result.Not_Accepted.getResultVal(),
-	            scrutinyDetail);
-	}
-
-	private boolean isHighRiseLiftRequired(Plan plan) {
-	    String farCode = plan.getVirtualBuilding().getMostRestrictiveFarHelper().getType().getCode();
-	    String subTypeCode = plan.getVirtualBuilding().getMostRestrictiveFarHelper().getSubtype().getCode();
-	    return DxfFileConstants.A.equals(farCode) ||
-	           DxfFileConstants.B.equals(subTypeCode) ||
-	           DxfFileConstants.E.equals(subTypeCode) ||
-	           DxfFileConstants.F.equals(subTypeCode);
-	}
-
-	private BigDecimal getRequiredLiftCount(Plan plan) {
-	    List<Object> rules = cache.getFeatureRules(plan, MdmsFeatureConstants.LIFT, false);
-	    return rules.stream()
-	                .map(r -> (MdmsFeatureRule) r)
-	                .findFirst()
-	                .map(MdmsFeatureRule::getPermissible)
-	                .orElse(BigDecimal.ZERO);
-	}
-
-	private void validateLiftDimensions(Plan plan, Block block, ScrutinyDetail scrutinyDetail) {
-	    if (!hasValidBuildingHeight(block)) return;
-
-	    for (Floor floor : block.getBuilding().getFloors()) {
-	        for (Lift lift : getLifts(floor)) {
-	            if (!Boolean.TRUE.equals(lift.getLiftClosed())) continue;
-
-	            for (Measurement measurement : lift.getLifts()) {
-	                BigDecimal area = scale(measurement.getArea());
-	                BigDecimal height = scale(measurement.getHeight());
-	                BigDecimal width = scale(measurement.getWidth());
-
-	                // You can apply min dimension checks here if needed
-	                String provided = height + " * " + width;
-	                setReportOutputDetails(plan, SUBRULE_118, String.format(SUBRULE_118_DESCRIPTION, "", ""), "",
-	                        provided, Result.Accepted.getResultVal(), scrutinyDetail);
-	                return;
-	            }
-	        }
-	    }
-
-	    // No valid lift dimensions found (if required, handle this case too)
-	    // setReportOutputDetails(..., Result.Not_Accepted.getResultVal(), ...);
-	}
-
-	private boolean hasValidBuildingHeight(Block block) {
-	    return block.getBuilding() != null &&
-	           block.getBuilding().getBuildingHeight() != null &&
-	           block.getBuilding().getBuildingHeight().intValue() > 0;
-	}
-
-	private BigDecimal scale(BigDecimal value) {
-	    return value.setScale(2, BigDecimal.ROUND_HALF_UP);
-	}
-
-	private ScrutinyDetail createScrutinyDetail(String key) {
-	    ScrutinyDetail detail = new ScrutinyDetail();
-	    detail.addColumnHeading(1, RULE_NO);
-	    detail.addColumnHeading(2, DESCRIPTION);
-	    detail.addColumnHeading(3, REQUIRED);
-	    detail.addColumnHeading(4, PROVIDED);
-	    detail.addColumnHeading(5, STATUS);
-	    detail.setKey(key);
-	    return detail;
-	}
-
-	private void validateDimensions(Plan plan, String blockNo, int floorNo, String liftNo, List<Measurement> liftPolylines) {
-	    long invalidCount = liftPolylines.stream()
-	    		.filter(m -> m.getInvalidReason() != null && !m.getInvalidReason().toString().isEmpty())
-	            .count();
-
-	    if (invalidCount > 0) {
-	        plan.addError(
-	                String.format(DxfFileConstants.LAYER_LIFT_WITH_NO, blockNo, floorNo, liftNo),
-	                invalidCount + " number of lift polyline not having only 4 points in layer "
-	                        + String.format(DxfFileConstants.LAYER_LIFT_WITH_NO, blockNo, floorNo, liftNo));
-	    }
-	}
-
-	private void setReportOutputDetails(Plan plan, String ruleNo, String ruleDesc, String expected, String actual,
-	                                     String status, ScrutinyDetail scrutinyDetail) {
-	    Map<String, String> details = new HashMap<>();
-	    details.put(RULE_NO, ruleNo);
-	    details.put(DESCRIPTION, ruleDesc);
-	    details.put(REQUIRED, expected);
-	    details.put(PROVIDED, actual);
-	    details.put(STATUS, status);
-	    scrutinyDetail.getDetail().add(details);
-	    plan.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
-	}
+		        for (Floor floor : block.getBuilding().getFloors()) {
+		            for (Lift lift : getLifts(floor)) {
+		                validateDimensions(plan, block.getNumber(), floor.getNumber(), lift.getNumber().toString(), lift.getLifts());
+		            }
+		        }
+		    }
+		    return plan;
+		}
+	
+		/**
+		 * Processes lift-related scrutiny details like count and dimensions per block.
+		 * @param plan the Plan object to process
+		 * @return the updated Plan object with scrutiny details
+		 */
+		@Override
+		public Plan process(Plan plan) {
+		    if (plan == null || plan.getBlocks().isEmpty()) return plan;
+	
+		    for (Block block : plan.getBlocks()) {
+		        if (!isLiftValidationRequired(block)) continue;
+	
+		        ScrutinyDetail liftCountDetail = createScrutinyDetail("Block_" + block.getNumber() + "_Lift - Minimum Required");
+		        ScrutinyDetail liftDimDetail = createScrutinyDetail("Block_" + block.getNumber() + "_Lift Dimension");
+	
+		        validateLiftCount(plan, block, liftCountDetail);
+		        validateLiftDimensions(plan, block, liftDimDetail);
+		    }
+	
+		    return plan;
+		}
+	
+		
+	
+		/**
+		 * Checks if the given block has a building with floors.
+		 * @param block the block to check
+		 * @return true if the building has at least one floor; false otherwise
+		 */
+		private boolean hasBuildingWithFloors(Block block) {
+		    return block.getBuilding() != null && !block.getBuilding().getFloors().isEmpty();
+		}
+	
+		/**
+		 * Retrieves the list of lifts from a floor.
+		 * @param floor the floor object
+		 * @return list of Lift objects or empty list if null
+		 */
+		private List<Lift> getLifts(Floor floor) {
+		    return floor.getLifts() != null ? floor.getLifts() : Collections.emptyList();
+		}
+	
+		/**
+		 * Checks whether lift validation is needed for a block.
+		 * @param block the block to evaluate
+		 * @return true if at least one floor has lifts; false otherwise
+		 */	
+		private boolean isLiftValidationRequired(Block block) {
+		    return block.getBuilding() != null &&
+		           !block.getBuilding().getOccupancies().isEmpty() &&
+		           block.getBuilding().getFloors().stream().anyMatch(floor -> !getLifts(floor).isEmpty());
+		}
+	
+		/**
+		 * Validates whether the number of lifts in a block meets the required minimum.
+		 * @param plan the plan object
+		 * @param block the block being validated
+		 * @param scrutinyDetail the scrutiny detail object to populate
+		 */
+		private void validateLiftCount(Plan plan, Block block, ScrutinyDetail scrutinyDetail) {
+		    BigDecimal requiredLifts = getRequiredLiftCount(plan);
+		    if (!isHighRiseLiftRequired(plan)) return;
+	
+		    boolean valid = BigDecimal.valueOf(Double.parseDouble(block.getNumberOfLifts())).compareTo(requiredLifts) >= 0;
+		    setReportOutputDetails(plan, SUBRULE_48, SUBRULE_48_DESCRIPTION,
+		            requiredLifts.toString(), block.getNumberOfLifts(),
+		            valid ? Result.Accepted.getResultVal() : Result.Not_Accepted.getResultVal(),
+		            scrutinyDetail);
+		}
+	
+		/**
+		 * Checks if high-rise lift rules apply based on FAR or subtype code.
+		 * @param plan the plan object
+		 * @return true if high-rise lift validation is required
+		 */
+		private boolean isHighRiseLiftRequired(Plan plan) {
+		    String farCode = plan.getVirtualBuilding().getMostRestrictiveFarHelper().getType().getCode();
+		    String subTypeCode = plan.getVirtualBuilding().getMostRestrictiveFarHelper().getSubtype().getCode();
+		    return DxfFileConstants.A.equals(farCode) ||
+		           DxfFileConstants.B.equals(subTypeCode) ||
+		           DxfFileConstants.E.equals(subTypeCode) ||
+		           DxfFileConstants.F.equals(subTypeCode);
+		}
+	
+		/**
+		 * Fetches the required number of lifts from feature rules (MDMS).
+		 * @param plan the plan object
+		 * @return required number of lifts as BigDecimal
+		 */
+		private BigDecimal getRequiredLiftCount(Plan plan) {
+		    List<Object> rules = cache.getFeatureRules(plan, MdmsFeatureConstants.LIFT, false);
+		    return rules.stream()
+		                .map(r -> (MdmsFeatureRule) r)
+		                .findFirst()
+		                .map(MdmsFeatureRule::getPermissible)
+		                .orElse(BigDecimal.ZERO);
+		}
+	
+		/**
+		 * Validates dimensions (height & width) of lifts for a given block.
+		 * @param plan the plan object
+		 * @param block the block being validated
+		 * @param scrutinyDetail the scrutiny detail object to populate
+		 */
+		private void validateLiftDimensions(Plan plan, Block block, ScrutinyDetail scrutinyDetail) {
+		    if (!hasValidBuildingHeight(block)) return;
+	
+		    for (Floor floor : block.getBuilding().getFloors()) {
+		        for (Lift lift : getLifts(floor)) {
+		            if (!Boolean.TRUE.equals(lift.getLiftClosed())) continue;
+	
+		            for (Measurement measurement : lift.getLifts()) {
+		                BigDecimal area = scale(measurement.getArea());
+		                BigDecimal height = scale(measurement.getHeight());
+		                BigDecimal width = scale(measurement.getWidth());
+	
+		                // You can apply min dimension checks here if needed
+		                String provided = height + " * " + width;
+		                setReportOutputDetails(plan, SUBRULE_118, String.format(SUBRULE_118_DESCRIPTION, "", ""), "",
+		                        provided, Result.Accepted.getResultVal(), scrutinyDetail);
+		                return;
+		            }
+		        }
+		    }
+	
+		    // No valid lift dimensions found (if required, handle this case too)
+		    // setReportOutputDetails(..., Result.Not_Accepted.getResultVal(), ...);
+		}
+	
+		/**
+		 * Checks whether the building has a valid (non-zero) height.
+		 * @param block the block being checked
+		 * @return true if height is set and > 0
+		 */
+		private boolean hasValidBuildingHeight(Block block) {
+		    return block.getBuilding() != null &&
+		           block.getBuilding().getBuildingHeight() != null &&
+		           block.getBuilding().getBuildingHeight().intValue() > 0;
+		}
+	
+		/**
+		 * Rounds a BigDecimal to two decimal places using HALF_UP rounding mode.
+		 * @param value the value to round
+		 * @return rounded BigDecimal
+		 */
+		private BigDecimal scale(BigDecimal value) {
+		    return value.setScale(2, BigDecimal.ROUND_HALF_UP);
+		}
+	
+		/**
+		 * Creates a ScrutinyDetail object with standard column headings.
+		 * @param key the unique scrutiny detail key
+		 * @return initialized ScrutinyDetail object
+		 */
+		private ScrutinyDetail createScrutinyDetail(String key) {
+		    ScrutinyDetail detail = new ScrutinyDetail();
+		    detail.addColumnHeading(1, RULE_NO);
+		    detail.addColumnHeading(2, DESCRIPTION);
+		    detail.addColumnHeading(3, REQUIRED);
+		    detail.addColumnHeading(4, PROVIDED);
+		    detail.addColumnHeading(5, STATUS);
+		    detail.setKey(key);
+		    return detail;
+		}
+	
+		/**
+		 * Validates if lift geometry has correct polyline configuration (i.e., 4 points).
+		 * Adds error if lift polyline is invalid.
+		 * @param plan the Plan object
+		 * @param blockNo block number
+		 * @param floorNo floor number
+		 * @param liftNo lift number
+		 * @param liftPolylines list of Measurement objects (lift shapes)
+		 */
+		private void validateDimensions(Plan plan, String blockNo, int floorNo, String liftNo, List<Measurement> liftPolylines) {
+		    long invalidCount = liftPolylines.stream()
+		    		.filter(m -> m.getInvalidReason() != null && !m.getInvalidReason().toString().isEmpty())
+		            .count();
+	
+		    if (invalidCount > 0) {
+		        plan.addError(
+		                String.format(DxfFileConstants.LAYER_LIFT_WITH_NO, blockNo, floorNo, liftNo),
+		                invalidCount + " number of lift polyline not having only 4 points in layer "
+		                        + String.format(DxfFileConstants.LAYER_LIFT_WITH_NO, blockNo, floorNo, liftNo));
+		    }
+		}
+	
+		/**
+		 * Populates a scrutiny detail map with rule metadata and adds it to the plan's report.
+		 * @param plan the Plan object
+		 * @param ruleNo the rule number
+		 * @param ruleDesc the rule description
+		 * @param expected the expected value
+		 * @param actual the provided value
+		 * @param status the validation result
+		 * @param scrutinyDetail the scrutiny detail object to update
+		 */
+		private void setReportOutputDetails(Plan plan, String ruleNo, String ruleDesc, String expected, String actual,
+		                                     String status, ScrutinyDetail scrutinyDetail) {
+		    Map<String, String> details = new HashMap<>();
+		    details.put(RULE_NO, ruleNo);
+		    details.put(DESCRIPTION, ruleDesc);
+		    details.put(REQUIRED, expected);
+		    details.put(PROVIDED, actual);
+		    details.put(STATUS, status);
+		    scrutinyDetail.getDetail().add(details);
+		    plan.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+		}
 
 
 	@Override

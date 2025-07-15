@@ -125,6 +125,12 @@ public class Coverage extends FeatureProcess {
 	}
 
 
+	/**
+	 * Processes the Plan object to calculate and validate the coverage area.
+	 *
+	 * @param pl the Plan object containing plot, blocks, occupancy, etc.
+	 * @return updated Plan object with coverage details set
+	 */
 	@Override
 	public Plan process(Plan pl) {
 	    LOG.info("inside Coverage process()");
@@ -153,6 +159,13 @@ public class Coverage extends FeatureProcess {
 
 	    return pl;
 	}
+	
+	/**
+	 * Extracts all unique OccupancyTypeHelpers from the floors of all blocks in the plan.
+	 *
+	 * @param pl the Plan object
+	 * @return a set of OccupancyTypeHelper extracted from the plan
+	 */
 	private Set<OccupancyTypeHelper> extractOccupancyList(Plan pl) {
 	    Set<OccupancyTypeHelper> occupancyList = new HashSet<>();
 	    for (Block block : pl.getBlocks()) {
@@ -167,6 +180,13 @@ public class Coverage extends FeatureProcess {
 	    return occupancyList;
 	}
 
+	/**
+	 * Calculates the total coverage area by summing up net coverage areas of all blocks.
+	 *
+	 * @param pl the Plan object
+	 * @param plotArea the total plot area
+	 * @return total net coverage area across all blocks
+	 */
 	private BigDecimal calculateCoverageAreas(Plan pl, BigDecimal plotArea) {
 	    BigDecimal totalCoverageArea = BigDecimal.ZERO;
 
@@ -197,6 +217,13 @@ public class Coverage extends FeatureProcess {
 	    return totalCoverageArea;
 	}
 
+	/**
+	 * Calculates the percentage of total coverage area with respect to plot area.
+	 *
+	 * @param plotArea total plot area
+	 * @param totalCoverageArea total area covered by buildings
+	 * @return coverage percentage
+	 */
 	private BigDecimal calculateTotalCoverage(BigDecimal plotArea, BigDecimal totalCoverageArea) {
 	    if (plotArea.compareTo(BigDecimal.ZERO) > 0) {
 	        return totalCoverageArea.multiply(BigDecimal.valueOf(100))
@@ -205,6 +232,14 @@ public class Coverage extends FeatureProcess {
 	    return BigDecimal.ZERO;
 	}
 
+	/**
+	 * Retrieves the permissible coverage based on plot area and most restrictive occupancy.
+	 *
+	 * @param pl the Plan object
+	 * @param plotArea the plot area
+	 * @param mostRestrictiveOccupancy the occupancy considered most restrictive
+	 * @return permissible coverage in percentage
+	 */
 	private BigDecimal getPermissibleCoverageIfApplicable(Plan pl, BigDecimal plotArea, OccupancyTypeHelper mostRestrictiveOccupancy) {
 	    if (plotArea.compareTo(BigDecimal.ZERO) > 0 && mostRestrictiveOccupancy != null) {
 	        String occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl).toLowerCase();
@@ -215,7 +250,15 @@ public class Coverage extends FeatureProcess {
 	}
 
 	
-	
+	/**
+	 * Fetches the permissible coverage from cached rules based on plot area and occupancy name.
+	 *
+	 * @param pl the Plan object
+	 * @param area the plot area
+	 * @param feature the feature for which rule is being fetched (e.g., "Coverage")
+	 * @param occupancyName the name of the occupancy
+	 * @return permissible coverage value
+	 */
 	private BigDecimal getPermissibleCoverage(Plan pl, BigDecimal area, String feature, String occupancyName) {
 		LOG.info("inside getPermissibleCoverage()");
 
@@ -331,6 +374,14 @@ public class Coverage extends FeatureProcess {
 	}
 
 
+	/**
+	 * Adds coverage scrutiny details to the plan report.
+	 *
+	 * @param pl the Plan object
+	 * @param occupancy occupancy name
+	 * @param coverage the actual coverage percentage
+	 * @param upperLimit the permissible coverage limit
+	 */
 	private void processCoverage(Plan pl, String occupancy, BigDecimal coverage, BigDecimal upperLimit) {
 	    LOG.info("inside processCoverage()");
 	    

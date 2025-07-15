@@ -125,8 +125,6 @@ public class InteriorOpenSpaceService extends FeatureProcess {
      * @return The processed plan object with scrutiny details added.
      */
 
-
-    
     @Override
     public Plan process(Plan pl) {
         setMinValuesFromMatchedRule(pl);
@@ -134,6 +132,12 @@ public class InteriorOpenSpaceService extends FeatureProcess {
         return pl;
     }
 
+    /**
+     * Retrieves the matched rule for interior open space service feature from cache,
+     * and sets the corresponding minimum area and width values for interior and ventilation spaces.
+     *
+     * @param pl the plan containing the details to fetch relevant feature rules
+     */
     private void setMinValuesFromMatchedRule(Plan pl) {
         List<Object> rules = cache.getFeatureRules(pl, MdmsFeatureConstants.INTERIOR_OPEN_SPACE_SERVICE, false);
         Optional<MdmsFeatureRule> matchedRule = rules.stream()
@@ -153,6 +157,13 @@ public class InteriorOpenSpaceService extends FeatureProcess {
         }
     }
 
+    /**
+     * Processes all interior open space components such as ventilation shafts and inner courtyards
+     * for each floor in each block of the plan. Performs validation checks based on area and width
+     * against pre-defined rule values.
+     *
+     * @param pl the plan containing blocks and floors with interior open spaces
+     */
 	private void processInteriorOpenSpaces(Plan pl) {
 		for (Block b : pl.getBlocks()) {
 			ScrutinyDetail scrutinyDetail = createScrutinyDetail();
@@ -172,6 +183,22 @@ public class InteriorOpenSpaceService extends FeatureProcess {
 		}
 	}
 
+	/**
+	 * Validates a list of open space measurements (area and width) for a specific floor
+	 * against given minimum values. Adds the result to the scrutiny report with details.
+	 *
+	 * @param pl the plan being evaluated
+	 * @param scrutinyDetail the scrutiny detail object to which results will be appended
+	 * @param f the floor being processed
+	 * @param measurements the list of open space measurements for the component
+	 * @param areaValueOne the threshold to consider checking for area
+	 * @param areaValueTwo the minimum permissible area
+	 * @param widthValueOne the threshold to consider checking for width
+	 * @param widthValueTwo the minimum permissible width
+	 * @param ruleNoArea the rule number to refer for area validation
+	 * @param ruleNoWidth the rule number to refer for width validation
+	 * @param description the description of the open space component
+	 */
 	private void processOpenSpaceComponent(Plan pl, ScrutinyDetail scrutinyDetail, Floor f,
 			List<Measurement> measurements, BigDecimal areaValueOne, BigDecimal areaValueTwo, BigDecimal widthValueOne,
 			BigDecimal widthValueTwo, String ruleNoArea, String ruleNoWidth, String description) {
@@ -211,6 +238,12 @@ public class InteriorOpenSpaceService extends FeatureProcess {
 		}
 	}
 
+	/**
+	 * Creates and initializes a {@link ScrutinyDetail} object with the required column headings
+	 * for reporting interior open space validation.
+	 *
+	 * @return a new {@link ScrutinyDetail} object with headers set
+	 */
     private ScrutinyDetail createScrutinyDetail() {
         ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
         scrutinyDetail.setKey("Common_Interior Open Space");

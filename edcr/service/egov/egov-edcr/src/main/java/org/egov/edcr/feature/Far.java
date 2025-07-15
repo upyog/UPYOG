@@ -193,14 +193,16 @@ public class Far extends FeatureProcess {
 	BigDecimal totalCarpetArea = BigDecimal.ZERO;
 	BigDecimal totalExistingCarpetArea = BigDecimal.ZERO;// Use an appropriate
 																									// upper bound
-
-	@Autowired
-	FetchEdcrRulesMdms fetchEdcrRulesMdms;
-	
 	@Autowired
 	CacheManagerMdms cache;
 	
 	
+	/**
+	 * Validates the given Plan object to ensure the plot area is defined and greater than zero.
+	 *
+	 * @param pl The Plan object to validate.
+	 * @return The validated Plan object with any validation errors added.
+	 */
 	@Override
 	public Plan validate(Plan pl) {
 		if (pl.getPlot() == null || (pl.getPlot() != null
@@ -212,6 +214,13 @@ public class Far extends FeatureProcess {
 		return pl;
 	}
 
+	/**
+	 * Processes the given Plan object to calculate various building metrics like FAR,
+	 * total built-up area, carpet area, etc., and populate the plan details accordingly.
+	 *
+	 * @param pl The Plan object to be processed.
+	 * @return The updated Plan object with computed values and any processing errors.
+	 */
 	@Override
 	public Plan process(Plan pl) {
 		decideNocIsRequired(pl);
@@ -256,6 +265,13 @@ public class Far extends FeatureProcess {
 		return pl;
 	}
 
+	/**
+	 * Checks if any new validation errors have been added since the initial error count.
+	 *
+	 * @param pl The Plan object to check for errors.
+	 * @param initialErrorCount The count of errors before validation.
+	 * @return true if new errors were added; false otherwise.
+	 */
 	private boolean validationFailed(Plan pl, int initialErrorCount) {
 		int validatedErrors = pl.getErrors().size();
 		if (validatedErrors > initialErrorCount) {
@@ -266,6 +282,12 @@ public class Far extends FeatureProcess {
 		return false;
 	}
 
+	/**
+	 * Collects all distinct occupancy types used across all blocks in the plan.
+	 *
+	 * @param pl The Plan object.
+	 * @return A set of unique OccupancyTypeHelper objects found in the plan.
+	 */
 	private Set<OccupancyTypeHelper> collectDistinctOccupancyTypes(Plan pl) {
 		List<OccupancyTypeHelper> plotWiseOccupancyTypes = new ArrayList<>();
 		for (Block block : pl.getBlocks()) {
@@ -277,6 +299,11 @@ public class Far extends FeatureProcess {
 		return new HashSet<>(plotWiseOccupancyTypes);
 	}
 
+	/**
+	 * Populates the Plan's occupancy information based on virtual building occupancy types.
+	 *
+	 * @param pl The Plan object to update.
+	 */
 	private void processOccupancyInformation(Plan pl) {
 		if (pl.getVirtualBuilding() != null && !pl.getVirtualBuilding().getOccupancyTypes().isEmpty()) {
 			List<String> occupancies = new ArrayList<>();
@@ -290,6 +317,12 @@ public class Far extends FeatureProcess {
 		}
 	}
 
+	/**
+	 * Calculates the total surrender road area for the plan.
+	 *
+	 * @param pl The Plan object.
+	 * @return The total surrender road area.
+	 */
 	private BigDecimal calculateSurrenderRoadArea(Plan pl) {
 		BigDecimal surrenderRoadArea = BigDecimal.ZERO;
 		if (!pl.getSurrenderRoads().isEmpty()) {
@@ -300,10 +333,24 @@ public class Far extends FeatureProcess {
 		return surrenderRoadArea;
 	}
 
+	/**
+	 * Calculates the total plot area including surrender road area.
+	 *
+	 * @param pl The Plan object.
+	 * @param surrenderRoadArea The surrender road area.
+	 * @return The total plot area.
+	 */
 	private BigDecimal calculateTotalPlotArea(Plan pl, BigDecimal surrenderRoadArea) {
 		return pl.getPlot() != null ? pl.getPlot().getArea().add(surrenderRoadArea) : BigDecimal.ZERO;
 	}
 
+	/**
+	 * Calculates the provided Floor Area Ratio (FAR) based on total floor area and plot area.
+	 *
+	 * @param pl The Plan object.
+	 * @param plotArea The total plot area.
+	 * @return The calculated FAR.
+	 */
 	private BigDecimal calculateProvidedFar(Plan pl, BigDecimal plotArea) {
 		if (plotArea.doubleValue() > 0) {
 			return pl.getVirtualBuilding().getTotalFloorArea().divide(plotArea,
@@ -312,6 +359,14 @@ public class Far extends FeatureProcess {
 		return BigDecimal.ZERO;
 	}
 
+	/**
+	 * Computes and validates the FAR for the given plan based on occupancy, area type, and road width.
+	 *
+	 * @param pl The Plan object.
+	 * @param providedFar The FAR provided.
+	 * @param plotArea The total plot area.
+	 * @param errorMsgs A map to capture validation errors.
+	 */
 	private void processFarComputation(Plan pl, BigDecimal providedFar, BigDecimal plotArea, HashMap<String, String> errorMsgs) {
 		OccupancyTypeHelper mostRestrictiveOccupancyType = pl.getVirtualBuilding() != null
 				? pl.getVirtualBuilding().getMostRestrictiveFarHelper()
@@ -329,6 +384,11 @@ public class Far extends FeatureProcess {
 		}
 	}
 
+	/**
+	 * Iterates over all blocks in the plan and processes each block's occupancy details.
+	 *
+	 * @param pl The Plan object.
+	 */
 	private void processAllBlockOccupancies(Plan pl) {
 	    Set<OccupancyTypeHelper> distinctOccupancyTypesHelper = new HashSet<>();
 
@@ -337,6 +397,13 @@ public class Far extends FeatureProcess {
 	    }
 	}
 
+	
+	/**
+	 * Processes occupancy details for a specific block and updates the Plan totals.
+	 *
+	 * @param pl The Plan object.
+	 * @param blk The block to process.
+	 */
 	private void processBlockOccupancies(Plan pl, Block blk) {
 	    BigDecimal flrArea = BigDecimal.ZERO;
 	    BigDecimal bltUpArea = BigDecimal.ZERO;
@@ -380,6 +447,11 @@ public class Far extends FeatureProcess {
 	    processBlockOccupancyTypes(blk);
 	}
 
+	/**
+	 * Processes and categorizes occupancy types block-wise and computes their aggregated areas.
+	 *
+	 * @param blk The block whose occupancy types are to be processed.
+	 */
 	private void processBlockOccupancyTypes(Block blk) {
 	    Set<OccupancyTypeHelper> occupancyByBlock = new HashSet<>();
 	    for (Floor flr : blk.getBuilding().getFloors()) {
@@ -435,6 +507,14 @@ public class Far extends FeatureProcess {
 	    buildOccupancyListForBlock(blk, listOfOccupancyTypes, listOfMapOfAllDtls);
 	}
 
+	/**
+	 * Checks if the given {@link Occupancy} matches the specified {@link OccupancyTypeHelper}
+	 * based on non-null type codes.
+	 *
+	 * @param type the occupancy type helper to compare
+	 * @param occ the occupancy object to match
+	 * @return true if type codes match and none are null; false otherwise
+	 */
 	private boolean occupancyTypeMatches(OccupancyTypeHelper type, Occupancy occ) {
 	    return type.getType() != null && type.getType().getCode() != null
 	            && occ.getTypeHelper() != null && occ.getTypeHelper().getType() != null
@@ -442,6 +522,15 @@ public class Far extends FeatureProcess {
 	            && occ.getTypeHelper().getType().getCode().equals(type.getType().getCode());
 	}
 
+	/**
+	 * Builds a list of {@link Occupancy} objects for the given block using
+	 * the distinct {@link OccupancyTypeHelper}s and their corresponding area values
+	 * extracted from the details map.
+	 *
+	 * @param blk the block for which occupancies are being built
+	 * @param listOfOccupancyTypes list of distinct occupancy type helpers
+	 * @param listOfMapOfAllDtls list of maps containing area details for each occupancy
+	 */
 	private void buildOccupancyListForBlock(Block blk, List<OccupancyTypeHelper> listOfOccupancyTypes,
 	        List<Map<String, Object>> listOfMapOfAllDtls) {
 	    Set<OccupancyTypeHelper> setOfOccupancyTypes = new HashSet<>(listOfOccupancyTypes);
@@ -481,6 +570,13 @@ public class Far extends FeatureProcess {
 	    classifyBlock(blk, listOfOccupanciesOfAParticularblock);
 	}
 
+	/**
+	 * Classifies the block as a single-family, residential, or residential/commercial
+	 * based on the types of occupancies present.
+	 *
+	 * @param blk the block to classify
+	 * @param listOfOccupancies the list of occupancies for the block
+	 */
 	private void classifyBlock(Block blk, List<Occupancy> listOfOccupancies) {
 	    if (listOfOccupancies.isEmpty()) return;
 
@@ -502,6 +598,14 @@ public class Far extends FeatureProcess {
 	    blk.setResidentialOrCommercialBuilding(isOnlyOfType(listOfOccupancies, A, F));
 	}
 
+	
+	/**
+	 * Checks whether the given occupancies only belong to the specified allowed type codes.
+	 *
+	 * @param occupancies the list of occupancies to check
+	 * @param allowedTypes the allowed type codes
+	 * @return true if all occupancies are of allowed types, false otherwise
+	 */
 	private boolean isOnlyOfType(List<Occupancy> occupancies, String... allowedTypes) {
 	    Set<String> allowed = new HashSet<>(Arrays.asList(allowedTypes));
 	    for (Occupancy occ : occupancies) {
@@ -513,6 +617,13 @@ public class Far extends FeatureProcess {
 	}
 
 	
+	/**
+	 * Processes all blocks in the given plan:
+	 * - Identifies most restrictive FAR for each block
+	 * - Validates floor areas against carpet and built-up areas
+	 *
+	 * @param pl the plan containing all blocks to process
+	 */
 	private void processBlocks(Plan pl) {
 		for (Block blk : pl.getBlocks()) {
 			Building building = blk.getBuilding();
@@ -526,6 +637,13 @@ public class Far extends FeatureProcess {
 		}
 	}
 
+	/**
+	 * Extracts the set of distinct {@link OccupancyTypeHelper}s used within the
+	 * building’s list of occupancies.
+	 *
+	 * @param building the building whose occupancies will be processed
+	 * @return a set of distinct occupancy type helpers
+	 */
 	private Set<OccupancyTypeHelper> processBlockOccupancies(Building building) {
 		List<OccupancyTypeHelper> blockWiseOccupancyTypes = new ArrayList<>();
 		for (Occupancy occupancy : building.getOccupancies()) {
@@ -536,6 +654,15 @@ public class Far extends FeatureProcess {
 		return new HashSet<>(blockWiseOccupancyTypes);
 	}
 
+	/**
+	 * Validates the floor area, carpet area, and built-up area of a floor against the
+	 * most restrictive FAR subtype. Adds errors to the plan if validation fails.
+	 *
+	 * @param pl the plan to which validation errors are to be added
+	 * @param blk the block containing the floor
+	 * @param flr the floor being validated
+	 * @param mostRestrictiveFar the most restrictive occupancy type helper for the block
+	 */
 	private void validateFloorAreas(Plan pl, Block blk, Floor flr, OccupancyTypeHelper mostRestrictiveFar) {
 		BigDecimal flrArea = BigDecimal.ZERO;
 		BigDecimal existingFlrArea = BigDecimal.ZERO;
@@ -588,6 +715,14 @@ public class Far extends FeatureProcess {
 		}
 	}
 
+	/**
+	 * Collects and aggregates occupancy details for the given plan from the provided set of distinct occupancy types.
+	 *
+	 * @param setOfDistinctOccupancyTypes a set of distinct occupancy type helpers used in the plan
+	 * @param pl the {@link Plan} object representing the building plan
+	 * @return a list of {@link Occupancy} objects corresponding to the occupancy types in the plan
+	 */
+
 	private List<Occupancy> collectOccupanciesForPlan(Set<OccupancyTypeHelper> setOfDistinctOccupancyTypes, Plan pl) {
 	    List<Occupancy> occupanciesForPlan = new ArrayList<>();
 	    for (OccupancyTypeHelper occupancyType : setOfDistinctOccupancyTypes) {
@@ -598,6 +733,19 @@ public class Far extends FeatureProcess {
 	    return occupanciesForPlan;
 	}
 	
+	/**
+	 * Populates the plan object and its virtual building with calculated occupancy and area details.
+	 *
+	 * @param pl the {@link Plan} object to populate
+	 * @param setOfDistinctOccupancyTypes all distinct occupancy types used in the plan
+	 * @param distinctOccupancyTypesHelper filtered set of occupancy types used for type-specific validations
+	 * @param totalFloorArea total floor area for all blocks
+	 * @param totalCarpetArea total carpet area for all blocks
+	 * @param totalExistingBuiltUpArea total existing built-up area
+	 * @param totalExistingFloorArea total existing floor area
+	 * @param totalExistingCarpetArea total existing carpet area
+	 * @param totalBuiltUpArea total built-up area for the proposed construction
+	 */
 	private void populatePlanAndVirtualBuildingDetails(Plan pl, Set<OccupancyTypeHelper> setOfDistinctOccupancyTypes,
 	        Set<OccupancyTypeHelper> distinctOccupancyTypesHelper, BigDecimal totalFloorArea,
 	        BigDecimal totalCarpetArea, BigDecimal totalExistingBuiltUpArea, BigDecimal totalExistingFloorArea,
@@ -610,6 +758,20 @@ public class Far extends FeatureProcess {
 	    updateBuildingTypeFlags(pl, distinctOccupancyTypesHelper);
 	}
 
+	
+	/**
+	 * Sets occupancies and area-related attributes in the {@link Plan} and its virtual building.
+	 *
+	 * @param pl the {@link Plan} object being processed
+	 * @param setOfDistinctOccupancyTypes set of distinct occupancy types in the plan
+	 * @param distinctOccupancyTypesHelper helper set of distinct occupancy types
+	 * @param totalFloorArea total floor area for all occupancies
+	 * @param totalCarpetArea total carpet area for all occupancies
+	 * @param totalExistingBuiltUpArea total existing built-up area
+	 * @param totalExistingFloorArea total existing floor area
+	 * @param totalExistingCarpetArea total existing carpet area
+	 * @param totalBuiltUpArea total proposed built-up area
+	 */
 	private void setOccupanciesAndAreas(Plan pl, Set<OccupancyTypeHelper> setOfDistinctOccupancyTypes,
 	        Set<OccupancyTypeHelper> distinctOccupancyTypesHelper, BigDecimal totalFloorArea,
 	        BigDecimal totalCarpetArea, BigDecimal totalExistingBuiltUpArea, BigDecimal totalExistingFloorArea,
@@ -628,6 +790,12 @@ public class Far extends FeatureProcess {
 	    pl.getVirtualBuilding().setMostRestrictiveFarHelper(getMostRestrictiveFar(setOfDistinctOccupancyTypes));
 	}
 
+	/**
+	 * Updates flags in the virtual building of the plan indicating whether the building is residential or commercial.
+	 *
+	 * @param pl the {@link Plan} object
+	 * @param distinctOccupancyTypesHelper the set of distinct occupancy types used to determine the building type
+	 */
 	private void updateBuildingTypeFlags(Plan pl, Set<OccupancyTypeHelper> distinctOccupancyTypesHelper) {
 	    if (!distinctOccupancyTypesHelper.isEmpty()) {
 	        boolean isAllResidential = areAllResidential(distinctOccupancyTypesHelper);
@@ -638,6 +806,12 @@ public class Far extends FeatureProcess {
 	    }
 	}
 
+	/**
+	 * Checks if all occupancy types are residential.
+	 *
+	 * @param occupancyTypes set of occupancy types to check
+	 * @return {@code true} if all types are residential (type code "A"), otherwise {@code false}
+	 */
 	private boolean areAllResidential(Set<OccupancyTypeHelper> occupancyTypes) {
 	    for (OccupancyTypeHelper occupancy : occupancyTypes) {
 	        LOG.info("occupancy :" + occupancy);
@@ -648,6 +822,12 @@ public class Far extends FeatureProcess {
 	    return true;
 	}
 
+	/**
+	 * Checks if all occupancy types are either residential (code "A") or commercial (code "F").
+	 *
+	 * @param occupancyTypes set of occupancy types to check
+	 * @return {@code true} if all types are residential or commercial, otherwise {@code false}
+	 */
 	private boolean areAllResidentialOrCommercial(Set<OccupancyTypeHelper> occupancyTypes) {
 	    for (OccupancyTypeHelper occupancy : occupancyTypes) {
 	        if (occupancy.getType() == null || !(A.equals(occupancy.getType().getCode()) || F.equals(occupancy.getType().getCode()))) {
@@ -658,6 +838,13 @@ public class Far extends FeatureProcess {
 	}
 
 
+	/**
+	 * Aggregates area details (built-up, floor, carpet) across all blocks for a specific occupancy type.
+	 *
+	 * @param occupancyType the {@link OccupancyTypeHelper} to aggregate for
+	 * @param pl the {@link Plan} object containing the blocks and occupancies
+	 * @return an {@link Occupancy} object with aggregated values for the specified type
+	 */ 	
 	private Occupancy aggregateOccupancyForType(OccupancyTypeHelper occupancyType, Plan pl) {
 	    BigDecimal totalFloorAreaForAllBlks = BigDecimal.ZERO;
 	    BigDecimal totalBuiltUpAreaForAllBlks = BigDecimal.ZERO;
@@ -691,6 +878,16 @@ public class Far extends FeatureProcess {
 	}
 
 
+	/**
+	 * Determines if NOC (No Objection Certificate) is required for the plan based on height, coverage,
+	 * or proximity to a monument, and updates the plan information accordingly.
+	 *
+	 * Sets:
+	 * - NOC from Fire Department if building height > 5m or coverage > 500 sq.m.
+	 * - NOC near Monument if distance from monument > 300m.
+	 *
+	 * @param pl the {@link Plan} object to evaluate
+	 */
 	private void decideNocIsRequired(Plan pl) {
 		Boolean isHighRise = false;
 		for (Block b : pl.getBlocks()) {
@@ -723,6 +920,15 @@ public class Far extends FeatureProcess {
 
 	}
 
+	/**
+	 * Validates occupancy data for a specific block and floor, checking for negative built-up, floor, or existing areas.
+	 * Adds validation errors to the plan if any area values are negative.
+	 *
+	 * @param pl the {@link Plan} to record errors in
+	 * @param blk the {@link Block} being validated
+	 * @param flr the {@link Floor} under validation
+	 * @param occupancy the {@link Occupancy} object being checked
+	 */
 	private void validate2(Plan pl, Block blk, Floor flr, Occupancy occupancy) {
 		String occupancyTypeHelper = StringUtils.EMPTY;
 		if (occupancy.getTypeHelper() != null) {
@@ -761,6 +967,13 @@ public class Far extends FeatureProcess {
 		}
 	}
 
+	/**
+	 * Identifies and returns the most restrictive FAR (Floor Area Ratio) type among the given occupancy types
+	 * based on a predefined order of precedence.
+	 *
+	 * @param distinctOccupancyTypes set of distinct occupancy types to evaluate
+	 * @return the {@link OccupancyTypeHelper} with the most restrictive FAR requirement
+	 */
 	protected OccupancyTypeHelper getMostRestrictiveFar(Set<OccupancyTypeHelper> distinctOccupancyTypes) {
 		Set<String> codes = new HashSet<>();
 		Map<String, OccupancyTypeHelper> codesMap = new HashMap<>();
@@ -935,6 +1148,27 @@ public class Far extends FeatureProcess {
 		return false;
 	}
 
+	/**
+	 * Processes and validates the Floor Area Ratio (FAR) for residential occupancy based on plot area,
+	 * road width, and permissible FAR rules fetched from the cache.
+	 *
+	 * <p>This method:
+	 * <ul>
+	 *   <li>Fetches applicable FAR rules for residential occupancy from the MDMS feature rule cache.</li>
+	 *   <li>Determines the permissible FAR by matching the plot area range with the rules.</li>
+	 *   <li>Compares the actual FAR with the permissible FAR to check if it's compliant.</li>
+	 *   <li>Updates the {@link Plan} with the permissible FAR and builds the result if valid.</li>
+	 * </ul>
+	 *
+	 * @param pl the {@link Plan} object containing details of the plot and FAR to validate
+	 * @param occupancyType the {@link OccupancyTypeHelper} representing the current occupancy type
+	 * @param far the actual FAR value for the given occupancy
+	 * @param typeOfArea a string indicating the type of area being evaluated (e.g., "Built-up", "Floor", etc.)
+	 * @param roadWidth the width of the road adjacent to the plot
+	 * @param errors a map of validation errors, to which any issues found during validation may be added
+	 * @param feature the feature name (e.g., FAR) used to query rules from the cache
+	 * @param occupancyName the name of the occupancy type being evaluated (e.g., "Residential")
+	 */
 	private void processFarResidential(Plan pl, OccupancyTypeHelper occupancyType, BigDecimal far, String typeOfArea,
 			BigDecimal roadWidth, HashMap<String, String> errors, String feature, String occupancyName) {
 

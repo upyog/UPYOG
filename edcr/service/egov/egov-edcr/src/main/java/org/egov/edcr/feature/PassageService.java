@@ -82,11 +82,26 @@ public class PassageService extends FeatureProcess {
     @Autowired
    	CacheManagerMdms cache;
     
+    /**
+     * Validates the given plan for passage-related checks.
+     * Currently, no specific validation logic is implemented.
+     *
+     * @param plan the plan object containing passage details
+     * @return the same plan object, unchanged
+     */
     @Override
     public Plan validate(Plan plan) {
         return plan;
     }
 
+    /**
+     * Processes the plan to validate passage and passage stair widths against
+     * minimum permissible values defined in MDMS rules. Appends scrutiny results
+     * to the plan's report output.
+     *
+     * @param plan the plan object containing building blocks and passage data
+     * @return the plan object updated with passage scrutiny details
+     */
     @Override
     public Plan process(Plan plan) {
         BigDecimal passageStairMinimumWidth = BigDecimal.ZERO;
@@ -133,6 +148,17 @@ public class PassageService extends FeatureProcess {
         return plan;
     }
 
+    /**
+     * Validates whether the minimum passage or passage stair width from the provided dimensions
+     * meets or exceeds the permissible width. Adds the result to the scrutiny report.
+     *
+     * @param dimensions list of width dimensions for passage or passage stair
+     * @param permissibleWidth the required minimum width from MDMS rules
+     * @param ruleNo the rule number to be displayed in the report
+     * @param ruleDesc the description of the rule
+     * @param detail the scrutiny detail to which results are appended
+     * @param plan the plan to which scrutiny details are added
+     */
     private void validatePassageDimension(List<BigDecimal> dimensions, BigDecimal permissibleWidth,
                                           String ruleNo, String ruleDesc, ScrutinyDetail detail, Plan plan) {
         if (dimensions != null && !dimensions.isEmpty()) {
@@ -146,6 +172,12 @@ public class PassageService extends FeatureProcess {
         }
     }
 
+    /**
+     * Creates a new {@link ScrutinyDetail} instance with a specified key and predefined column headings.
+     *
+     * @param key the key used to identify the scrutiny section
+     * @return a new ScrutinyDetail object with standard headings
+     */
     private ScrutinyDetail createScrutinyDetail(String key) {
         ScrutinyDetail detail = new ScrutinyDetail();
         detail.addColumnHeading(1, RULE_NO);
@@ -156,6 +188,17 @@ public class PassageService extends FeatureProcess {
         return detail;
     }
 
+    /**
+     * Populates and appends a scrutiny detail entry to the plan report.
+     *
+     * @param pl the plan to which the scrutiny detail is added
+     * @param ruleNo the rule number being enforced
+     * @param ruleDesc the rule description
+     * @param expected the required value as per the rule
+     * @param actual the actual value from the plan
+     * @param status the result of the validation (Accepted/Not Accepted)
+     * @param scrutinyDetail the scrutiny detail section where the result is recorded
+     */
     private void setReportOutputDetails(Plan pl, String ruleNo, String ruleDesc, String expected, String actual,
                                         String status, ScrutinyDetail scrutinyDetail) {
         Map<String, String> details = new HashMap<>();

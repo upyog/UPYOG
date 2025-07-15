@@ -52,30 +52,79 @@ public class CacheManagerMdms {
 	 * @return A list of matching rule objects if available, or {@code null} if no rules are found.
 	 */
 
+//	public List<Object> getRules(String city, RuleKey lookupKey) {
+//		Map<RuleKey, List<Object>> cityRules = cityRuleCache.get(city);
+//
+//		if (cityRules == null) {
+//			LOG.info("City [{}] not in cache, calling MDMS...", city);
+//			Object mdmsCityData = bpaMdmsUtil.mDMSCall(new RequestInfo(), EdcrRulesMdmsConstants.STATE + "." + city);
+//			Map<String, Map<RuleKey, List<Object>>> transformed = transformCityLevelRulesByCity(mdmsCityData);
+//
+//			if (transformed.containsKey(city)) {
+//				cityRules = transformed.get(city);
+//				cityRuleCache.put(city, cityRules);
+//				LOG.info("City [{}] rules added to cache", city);
+//			} else {
+//				LOG.warn("City [{}] returned no rules from MDMS", city);
+//				return null;
+//			}
+//		} else {
+//			LOG.info("City [{}] rules found in cache", city);
+//		}
+//
+//		return getRuleListForFeature(cityRules, lookupKey);
+//	}
+//	
+	
 	public List<Object> getRules(String city, RuleKey lookupKey) {
-		Map<RuleKey, List<Object>> cityRules = cityRuleCache.get(city);
+	    Map<RuleKey, List<Object>> rulesToUse = cityRuleCache.get(city);
 
-		if (cityRules == null) {
-			LOG.info("City [{}] not in cache, calling MDMS...", city);
-			Object mdmsCityData = bpaMdmsUtil.mDMSCall(new RequestInfo(), EdcrRulesMdmsConstants.STATE + "." + city);
-			Map<String, Map<RuleKey, List<Object>>> transformed = transformCityLevelRulesByCity(mdmsCityData);
+	    if (rulesToUse == null) {
+	        LOG.info("City [{}] not in cache, calling MDMS...", city);
+	        Object mdmsCityData = bpaMdmsUtil.mDMSCall(new RequestInfo(), EdcrRulesMdmsConstants.STATE + "." + city);
 
-			if (transformed.containsKey(city)) {
-				cityRules = transformed.get(city);
-				cityRuleCache.put(city, cityRules);
-				LOG.info("City [{}] rules added to cache", city);
-			} else {
-				LOG.warn("City [{}] returned no rules from MDMS", city);
-				return null;
-			}
-		} else {
-			LOG.info("City [{}] rules found in cache", city);
-		}
+	        boolean isEmptyMdms = mdmsCityData == null ||
+	                (mdmsCityData instanceof Map && ((Map<?, ?>) mdmsCityData).isEmpty()) ||
+	                (mdmsCityData instanceof List && ((List<?>) mdmsCityData).isEmpty()) ||
+	                (mdmsCityData instanceof String && ((String) mdmsCityData).trim().isEmpty());
 
-		return getRuleListForFeature(cityRules, lookupKey);
+	        if (!isEmptyMdms) {
+	            Map<String, Map<RuleKey, List<Object>>> transformed = transformCityLevelRulesByCity(mdmsCityData);
+
+	            if (transformed != null && transformed.containsKey(city)) {
+	                rulesToUse = transformed.get(city);
+	                cityRuleCache.put(city, rulesToUse);
+	                LOG.info("City [{}] rules added to cache", city);
+	            }
+	        }
+
+	        if (rulesToUse == null) {
+	            LOG.warn("City [{}] rules not found, falling back to STATE level", city);
+	            String stateKey = EdcrRulesMdmsConstants.STATE;
+	            rulesToUse = cityRuleCache.get(stateKey);
+
+	            if (rulesToUse == null) {
+	                Object mdmsStateData = bpaMdmsUtil.mDMSCall(new RequestInfo(), stateKey);
+	                Map<String, Map<RuleKey, List<Object>>> stateTransformed = transformCityLevelRulesByCity(mdmsStateData);
+
+	                if (stateTransformed != null && stateTransformed.containsKey(stateKey)) {
+	                    rulesToUse = stateTransformed.get(stateKey);
+	                    cityRuleCache.put(stateKey, rulesToUse);
+	                    LOG.info("State-level rules added to cache under [{}]", stateKey);
+	                } else {
+	                    LOG.error("State [{}] rules not found in MDMS", stateKey);
+	                    return null;
+	                }
+	            }
+	        }
+	    } else {
+	        LOG.info("City [{}] rules found in cache", city);
+	    }
+
+	    return getRuleListForFeature(rulesToUse, lookupKey);
 	}
-	
-	
+
+
 	/**
 	 * Transforms the MDMS city-level rules data into a nested map structure.
 	 * <p>

@@ -92,6 +92,12 @@ public class OverheadElectricalLineService extends FeatureProcess {
 	@Autowired
 	CacheManagerMdms cache;
 
+	/**
+	 * Validates the presence of required attributes in electric lines.
+	 *
+	 * @param pl The plan object containing electric line data.
+	 * @return The updated plan object with validation errors (if any) added.
+	 */
 	@Override
 	public Plan validate(Plan pl) {
 	    HashMap<String, String> errors = new HashMap<>();
@@ -109,6 +115,13 @@ public class OverheadElectricalLineService extends FeatureProcess {
 	    pl.addErrors(errors);
 	    return pl;
 	}
+	
+	/**
+	 * Processes overhead electric line scrutiny by validating clearances and setting report details.
+	 *
+	 * @param pl The plan object to be processed.
+	 * @return The updated plan object with scrutiny results added.
+	 */
 
 	@Override
 	public Plan process(Plan pl) {
@@ -164,6 +177,10 @@ public class OverheadElectricalLineService extends FeatureProcess {
 	    return pl;
 	}
 
+
+/**
+ * Initializes the scrutiny detail section for overhead electric line processing.
+ */
 	private void setupScrutinyDetail() {
 	    scrutinyDetail = new ScrutinyDetail();
 	    scrutinyDetail.setKey(Common_OverHead_Electric_Line);
@@ -176,6 +193,11 @@ public class OverheadElectricalLineService extends FeatureProcess {
 	    scrutinyDetail.addColumnHeading(8, STATUS);
 	}
 
+	/**
+	 * Loads the permissible threshold values for electric line voltage and distance from rule cache.
+	 *
+	 * @param pl The plan object used to fetch the rules.
+	 */
 	private void loadOverheadRules(Plan pl) {
 	    List<Object> rules = cache.getFeatureRules(pl, MdmsFeatureConstants.OVERHEAD_ELECTRICAL_LINE_SERVICE, false);
 	    Optional<MdmsFeatureRule> matched = rules.stream().map(obj -> (MdmsFeatureRule) obj).findFirst();
@@ -191,10 +213,22 @@ public class OverheadElectricalLineService extends FeatureProcess {
 	    }
 	}
 
+	/**
+	 * Computes the expected horizontal clearance for a given voltage as a formatted string.
+	 *
+	 * @param voltage The voltage of the electric line.
+	 * @return A string representing the required clearance in meters.
+	 */
 	private String getExpectedHorizontalDistance(BigDecimal voltage) {
 	    return getHorizontalThreshold(voltage).toString() + DcrConstants.IN_METER;
 	}
 
+	/**
+	 * Returns the horizontal clearance threshold based on the given voltage.
+	 *
+	 * @param voltage The voltage of the electric line.
+	 * @return The minimum permissible horizontal clearance.
+	 */
 	private BigDecimal getHorizontalThreshold(BigDecimal voltage) {
 	    if (voltage.compareTo(overheadVoltage_11000) < 0) {
 	        return overheadHorizontalDistance_11000;
@@ -208,6 +242,18 @@ public class OverheadElectricalLineService extends FeatureProcess {
 	}
 	
 
+	/**
+	 * Adds the scrutiny result for an electric line check to the report output.
+	 *
+	 * @param pl       The plan object to add the report output to.
+	 * @param ruleNo   Rule number under which the check falls.
+	 * @param ruleDesc Description of the rule/check performed.
+	 * @param expected The expected (permissible) value.
+	 * @param actual   The actual provided value from the plan.
+	 * @param status   Status of the check (e.g., Accepted, Not Accepted).
+	 * @param remarks  Any additional remarks or required action.
+	 * @param voltage  Voltage level of the electric line.
+	 */
 	
   private void setReportOutputDetails(Plan pl, String ruleNo, String ruleDesc, String expected, String actual, String status, String remarks, String voltage) {
   Map<String, String> details = new HashMap<>();

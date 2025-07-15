@@ -327,6 +327,13 @@ public class HeightOfRoom extends FeatureProcess {
 
 	}
 	
+	/**
+	 * Evaluates all doors on a floor for minimum width compliance.
+	 *
+	 * @param pl              The plan being evaluated.
+	 * @param floor           The floor object containing door details.
+	 * @param scrutinyDetail  The scrutiny detail to which results are recorded.
+	 */
 	private void evaluateDoorsForFloor(Plan pl, Floor floor, ScrutinyDetail scrutinyDetail) {
 	    if (floor.getDoors() == null || floor.getDoors().isEmpty()) return;
 
@@ -336,6 +343,15 @@ public class HeightOfRoom extends FeatureProcess {
 	        }
 	    }
 	}
+	
+	/**
+	 * Evaluates a single door for compliance with minimum width rules.
+	 *
+	 * @param pl              The plan being evaluated.
+	 * @param floor           The floor the door belongs to.
+	 * @param door            The door object to evaluate.
+	 * @param scrutinyDetail  The scrutiny detail to record the result.
+	 */
 	private void evaluateSingleDoor(Plan pl, Floor floor, Door door, ScrutinyDetail scrutinyDetail) {
 	    BigDecimal doorWidth = door.getDoorWidth();
 	    BigDecimal minDoorWidth = getMinimumDoorWidth(pl);
@@ -353,6 +369,13 @@ public class HeightOfRoom extends FeatureProcess {
 	    setReportOutputDetails(pl, subRule, subRuleDesc, floor.getNumber().toString(), requirement, provided, "", result, scrutinyDetail);
 	}
 
+	
+	/**
+	 * Calculates the total area of a room by summing up areas of its measurements.
+	 *
+	 * @param room The room object containing measurements.
+	 * @return     The total area of the room.
+	 */
 	private BigDecimal calculateRoomArea(Room room) {
 	    BigDecimal roomArea = BigDecimal.ZERO;
 	    if (room.getRooms() != null) {
@@ -363,11 +386,24 @@ public class HeightOfRoom extends FeatureProcess {
 	    return roomArea;
 	}
 
+	/**
+	 * Calculates the required ventilation area based on room area and ventilation percentage.
+	 *
+	 * @param roomArea              The area of the room.
+	 * @param ventilationPercentage The required ventilation percentage.
+	 * @return                      The required ventilation area.
+	 */
 	private BigDecimal getRequiredVentilationArea(BigDecimal roomArea, BigDecimal ventilationPercentage) {
 	    return roomArea.multiply(ventilationPercentage)
 	            .divide(BigDecimal.valueOf(100), 2, BigDecimal.ROUND_HALF_UP);
 	}
 
+	/**
+	 * Calculates total area of all doors in a room.
+	 *
+	 * @param room The room object containing doors.
+	 * @return     The total door area.
+	 */
 	private BigDecimal calculateTotalDoorArea(Room room) {
 	    BigDecimal totalDoorArea = BigDecimal.ZERO;
 	    if (room.getDoors() != null) {
@@ -379,6 +415,17 @@ public class HeightOfRoom extends FeatureProcess {
 	    }
 	    return totalDoorArea;
 	}
+	
+	/**
+	 * Evaluates each door in a room for compliance with minimum height and width rules.
+	 *
+	 * @param pl                    The plan being evaluated.
+	 * @param room                  The room containing doors.
+	 * @param floor                 The floor the room belongs to.
+	 * @param requiredVentilationArea Required ventilation area for the room.
+	 * @param totalDoorArea         Total area of all doors in the room.
+	 * @param scrutinyDetail8       The scrutiny detail to record the result.
+	 */
 
 	private void evaluateDoorDimensions(Plan pl, Room room, Floor floor, BigDecimal requiredVentilationArea,
 			BigDecimal totalDoorArea, ScrutinyDetail scrutinyDetail8) {
@@ -413,6 +460,12 @@ public class HeightOfRoom extends FeatureProcess {
 		}
 	}
 
+	/**
+	 * Fetches the minimum permissible door width from feature rules.
+	 *
+	 * @param pl The plan being evaluated.
+	 * @return   The minimum permissible door width.
+	 */
 	private BigDecimal getMinimumDoorWidth(Plan pl) {
 	    List<Object> rules = cache.getFeatureRules(pl, MdmsFeatureConstants.DOORS, false);
 
@@ -423,6 +476,13 @@ public class HeightOfRoom extends FeatureProcess {
 	            .orElse(BigDecimal.ZERO);
 	}
 
+	/**
+	 * Evaluates all windows on a floor for basic dimension compliance.
+	 *
+	 * @param pl              The plan being evaluated.
+	 * @param floor           The floor containing windows.
+	 * @param scrutinyDetail  The scrutiny detail to record the results.
+	 */
 	private void evaluateWindows(Plan pl, Floor floor, ScrutinyDetail scrutinyDetail) {
 	    if (floor.getWindows() == null || floor.getWindows().isEmpty()) return;
 
@@ -433,6 +493,16 @@ public class HeightOfRoom extends FeatureProcess {
 	    }
 	}
 	
+	/**
+	 * Evaluates room ventilation by calculating required ventilation and comparing with actual provided area.
+	 * Also validates individual window dimensions.
+	 *
+	 * @param pl               The plan being evaluated.
+	 * @param floor            The floor containing the room.
+	 * @param room             The room to be evaluated.
+	 * @param ventilationDetail Scrutiny detail for ventilation compliance.
+	 * @param windowDetail      Scrutiny detail for individual window checks.
+	 */
 	private void evaluateRoomVentilation(Plan pl, Floor floor, Room room, ScrutinyDetail ventilationDetail,
 			ScrutinyDetail windowDetail) {
 
@@ -458,6 +528,12 @@ public class HeightOfRoom extends FeatureProcess {
 		validateIndividualWindows(pl, floor, room, windowDetail);
 	}
 
+	/**
+	 * Retrieves the ventilation percentage required from the feature rules.
+	 *
+	 * @param pl The plan being evaluated.
+	 * @return   The ventilation percentage.
+	 */
 	private BigDecimal getVentilationPercentage(Plan pl) {
 	    List<Object> rules = cache.getFeatureRules(pl, MdmsFeatureConstants.ROOM_WISE_VENTILATION, false);
 	    Optional<MdmsFeatureRule> matchedRule = rules.stream()
@@ -465,6 +541,13 @@ public class HeightOfRoom extends FeatureProcess {
 	            .findFirst();
 	    return matchedRule.map(MdmsFeatureRule::getPermissible).orElse(BigDecimal.ZERO);
 	}
+	
+	/**
+	 * Calculates the total area of all windows in a room.
+	 *
+	 * @param room The room object containing windows.
+	 * @return     The total window area.
+	 */
 	private BigDecimal calculateWindowArea(Room room) {
 	    BigDecimal area = BigDecimal.ZERO;
 	    if (room.getWindows() != null) {
@@ -476,6 +559,13 @@ public class HeightOfRoom extends FeatureProcess {
 	    }
 	    return area;
 	}
+	
+	/**
+	 * Calculates the total area of all doors in a room.
+	 *
+	 * @param room The room object containing doors.
+	 * @return     The total door area.
+	 */
 	private BigDecimal calculateDoorArea(Room room) {
 	    BigDecimal area = BigDecimal.ZERO;
 	    if (room.getDoors() != null) {
@@ -488,6 +578,15 @@ public class HeightOfRoom extends FeatureProcess {
 	    return area;
 	}
 
+	
+	/**
+	 * Validates individual window dimensions in a room.
+	 *
+	 * @param pl              The plan being evaluated.
+	 * @param floor           The floor containing the room.
+	 * @param room            The room to evaluate.
+	 * @param scrutinyDetail  The scrutiny detail to record the result.
+	 */
 	private void validateIndividualWindows(Plan pl, Floor floor, Room room, ScrutinyDetail scrutinyDetail) {
 		if (room.getWindows() == null)
 			return;
@@ -504,6 +603,14 @@ public class HeightOfRoom extends FeatureProcess {
 	}
 
 
+	/**
+	 * Evaluates a single window for minimum height and width compliance.
+	 *
+	 * @param pl              The plan being evaluated.
+	 * @param floor           The floor the window belongs to.
+	 * @param window          The window to evaluate.
+	 * @param scrutinyDetail  The scrutiny detail to record the result.
+	 */
 	private void evaluateSingleWindow(Plan pl, Floor floor, Window window, ScrutinyDetail scrutinyDetail) {
 	    BigDecimal windowHeight = window.getWindowHeight().setScale(2, BigDecimal.ROUND_HALF_UP);
 	    BigDecimal windowWidth = window.getWindowWidth().setScale(2, BigDecimal.ROUND_HALF_UP);
@@ -525,6 +632,17 @@ public class HeightOfRoom extends FeatureProcess {
 	}
 
 
+	/**
+	 * Evaluates the first room in a list for compliance with area and width rules.
+	 *
+	 * @param pl              The plan being evaluated.
+	 * @param floor           The floor the room belongs to.
+	 * @param roomAreas       List of room areas on the floor.
+	 * @param roomWidths      List of room widths on the floor.
+	 * @param subRule         The subrule reference.
+	 * @param subRuleDesc     The subrule description.
+	 * @param scrutinyDetail  The scrutiny detail to record the result.
+	 */
 	private void evaluateFirstRoomDetails(Plan pl, Floor floor, List<BigDecimal> roomAreas, List<BigDecimal> roomWidths,
 			String subRule, String subRuleDesc, ScrutinyDetail scrutinyDetail) {
 
@@ -548,6 +666,18 @@ public class HeightOfRoom extends FeatureProcess {
 		}
 	}
 
+	/**
+	 * Evaluates remaining room details (other than the first room) on a floor.
+	 * Checks if area and width are within permissible limits and records results in scrutiny.
+	 *
+	 * @param pl              the Plan object being validated
+	 * @param floor           the floor containing the rooms
+	 * @param roomAreas       list of room areas
+	 * @param roomWidths      list of room widths
+	 * @param subRule         sub-rule number being applied
+	 * @param subRuleDesc     description of the sub-rule
+	 * @param scrutinyDetail  scrutiny details where results are to be recorded
+	 */
 	private void evaluateRemainingRoomDetails(Plan pl, Floor floor, List<BigDecimal> roomAreas,
 			List<BigDecimal> roomWidths, String subRule, String subRuleDesc, ScrutinyDetail scrutinyDetail) {
 
@@ -571,6 +701,14 @@ public class HeightOfRoom extends FeatureProcess {
 		}
 	}
 	
+	/**
+	 * Evaluates non-habitational doors present on the given floor.
+	 * Delegates evaluation to a method for each individual door.
+	 *
+	 * @param pl              the Plan object
+	 * @param floor           the floor being evaluated
+	 * @param scrutinyDetail  scrutiny object to collect validation results
+	 */
 	private void evaluateNonHabitationalDoors(Plan pl, Floor floor, ScrutinyDetail scrutinyDetail) {
 	    if (floor.getNonaHabitationalDoors() == null || floor.getNonaHabitationalDoors().isEmpty()) return;
 
@@ -581,6 +719,15 @@ public class HeightOfRoom extends FeatureProcess {
 	    }
 	}
 
+	/**
+	 * Evaluates a single non-habitational door against minimum width and height.
+	 * The requirements are fetched from MDMS feature rules.
+	 *
+	 * @param pl              the Plan object
+	 * @param floor           the floor containing the door
+	 * @param door            the Door object to evaluate
+	 * @param scrutinyDetail  scrutiny object to record the results
+	 */
 	private void evaluateSingleNonHabitationalDoor(Plan pl, Floor floor, Door door,  ScrutinyDetail scrutinyDetail) {
 	    BigDecimal doorHeight = door.getNonHabitationDoorHeight().setScale(2, BigDecimal.ROUND_HALF_UP);
 	    BigDecimal doorWidth = door.getNonHabitationDoorWidth().setScale(2, BigDecimal.ROUND_HALF_UP);
@@ -614,6 +761,20 @@ public class HeightOfRoom extends FeatureProcess {
 	}
 
 
+	/**
+	 * Processes AC rooms on the floor by collecting their height and area details.
+	 * Validates the minimum height based on occupancy type and stores results or errors.
+	 *
+	 * @param floor                      the floor to process
+	 * @param block                      the block to which the floor belongs
+	 * @param color                      color code used for identification
+	 * @param mostRestrictiveOccupancy  most restrictive occupancy type
+	 * @param heightOfRoomFeaturesColor map linking feature types to color codes
+	 * @param roomAreas                  list to store collected room areas
+	 * @param roomWidths                 list to store collected room widths
+	 * @param pl                         the Plan object
+	 * @param errors                     map to record any processing errors
+	 */
 	private void processAcRooms(Floor floor, Block block, String color, OccupancyTypeHelper mostRestrictiveOccupancy,
 			Map<String, Integer> heightOfRoomFeaturesColor, List<BigDecimal> roomAreas, List<BigDecimal> roomWidths,
 			Plan pl, Map<String, String> errors) {
@@ -670,6 +831,19 @@ public class HeightOfRoom extends FeatureProcess {
 		}
 	}
 
+	/**
+	 * Processes regular rooms on a floor by validating their area, width, and height
+	 * against rules from MDMS. Builds scrutiny results accordingly.
+	 *
+	 * @param pl                         the Plan object
+	 * @param floor                      the floor containing the rooms
+	 * @param block                      block that includes the floor
+	 * @param color                      color code used to identify elements
+	 * @param mostRestrictiveOccupancy  occupancy type used for validation
+	 * @param heightOfRoomFeaturesColor map of feature type to color codes
+	 * @param scrutinyDetail             scrutiny detail to store validation output
+	 * @param errors                     map to record processing errors
+	 */
 	private void processRegularRooms(Plan pl, Floor floor, Block block, String color, OccupancyTypeHelper mostRestrictiveOccupancy,
 			Map<String, Integer> heightOfRoomFeaturesColor, ScrutinyDetail scrutinyDetail, Map<String, String> errors) {
 
@@ -725,6 +899,13 @@ public class HeightOfRoom extends FeatureProcess {
 		buildRoomHeightResult(pl, floor, block, mostRestrictiveOccupancy, residentialRoomHeights, heightOfRoomFeaturesColor, color, errors);
 	}
 
+	/**
+	 * Collects room heights and room measurements from regular rooms on the floor.
+	 *
+	 * @param floor  the floor containing regular rooms
+	 * @param heights output list to collect RoomHeight objects
+	 * @param rooms   output list to collect Measurement objects (room area/width)
+	 */
 	private void collectHeightsAndRoomsFromRegularRooms(Floor floor, List<RoomHeight> heights,
 			List<Measurement> rooms) {
 		for (Room room : floor.getRegularRooms()) {
@@ -735,6 +916,11 @@ public class HeightOfRoom extends FeatureProcess {
 		}
 	}
 
+	/**
+	 * Populates room numbers for each Measurement object inside rooms.
+	 *
+	 * @param rooms list of Room objects whose measurements will be updated
+	 */
 	private void populateRoomNumberForMeasurements(List<Room> rooms) {
 		for (Room room : rooms) {
 			for (Measurement m : room.getRooms()) {
@@ -743,6 +929,19 @@ public class HeightOfRoom extends FeatureProcess {
 		}
 	}
 
+	
+	/**
+	 * Validates a room against minimum area and width requirements and records result.
+	 *
+	 * @param pl             the Plan object
+	 * @param floor          the floor containing the room
+	 * @param room           the Measurement object representing the room
+	 * @param scrutinyDetail object used to record results
+	 * @param minArea        minimum permissible area
+	 * @param minWidth       minimum permissible width
+	 * @param roomArea       actual room area
+	 * @param roomWidth      actual room width
+	 */
 	private void validateAndReportRoom(Plan pl, Floor floor, Measurement room, ScrutinyDetail scrutinyDetail,
 			BigDecimal minArea, BigDecimal minWidth, BigDecimal roomArea, BigDecimal roomWidth) {
 
@@ -755,6 +954,21 @@ public class HeightOfRoom extends FeatureProcess {
 				"Area = " + roomArea + ", Width = " + roomWidth, result, scrutinyDetail);
 	}
 
+	
+	/**
+	 * Builds the scrutiny result for room height validation.
+	 * If heights are available, evaluates them against required height
+	 * based on occupancy type. Otherwise, records an error.
+	 *
+	 * @param pl                         the Plan object
+	 * @param floor                      the floor being processed
+	 * @param block                      the block containing the floor
+	 * @param mostRestrictiveOccupancy  occupancy type affecting validation
+	 * @param residentialRoomHeights     list of collected room heights
+	 * @param heightOfRoomFeaturesColor  map linking feature types to color codes
+	 * @param color                      color code to match against
+	 * @param errors                     map to record any errors during processing
+	 */
 	private void buildRoomHeightResult(Plan pl, Floor floor, Block block, OccupancyTypeHelper mostRestrictiveOccupancy, List<BigDecimal> residentialRoomHeights,
 			Map<String, Integer> heightOfRoomFeaturesColor, String color, Map<String, String> errors) {
 

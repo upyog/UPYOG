@@ -129,6 +129,17 @@ public class FireTenderMovement extends FeatureProcess {
 		return plan;
 	}
     
+	/**
+	 * Processes a single block to validate fire tender movement requirements based on the building height.
+	 * If the building height exceeds the required threshold, it validates the fire tender movement width
+	 * and adds scrutiny results or errors to the plan accordingly.
+	 *
+	 * @param plan               the building plan being processed
+	 * @param block              the specific block within the plan to process
+	 * @param minRequiredHeight  the minimum building height above which fire tender movement is mandatory
+	 * @param minRequiredWidth   the minimum required width for fire tender movement
+	 * @param errors             a map to collect and store error messages if validation fails
+	 */
 	private void processBlockForFireTender(Plan plan, Block block, BigDecimal minRequiredHeight,
 			BigDecimal minRequiredWidth, Map<String, String> errors) {
 
@@ -155,40 +166,64 @@ public class FireTenderMovement extends FeatureProcess {
 		validateFireTenderWidth(plan, block, fireTenderMovement, minRequiredWidth, scrutinyDetail, errors);
 	}
 
-    
-private void validateFireTenderWidth(Plan plan, Block block,
-		org.egov.common.entity.edcr.FireTenderMovement fireTenderMovement, BigDecimal minRequiredWidth,
-		ScrutinyDetail scrutinyDetail, Map<String, String> errors) {
+	/**
+	 * Validates whether the provided width for fire tender movement meets the
+	 * minimum required width. If validation passes or fails, a scrutiny detail is
+	 * created and added to the plan's report output. Also collects any errors found
+	 * in the fire tender movement configuration (e.g., invalid yard locations).
+	 *
+	 * @param plan               the building plan containing the block and fire
+	 *                           tender details
+	 * @param block              the block being validated
+	 * @param fireTenderMovement the fire tender movement object containing movement
+	 *                           paths and widths
+	 * @param minRequiredWidth   the minimum width required for fire tender movement
+	 * @param scrutinyDetail     the scrutiny detail object used to log validation
+	 *                           results
+	 * @param errors             a map to collect and store error messages if
+	 *                           validation fails
+	 */
+	private void validateFireTenderWidth(Plan plan, Block block,
+			org.egov.common.entity.edcr.FireTenderMovement fireTenderMovement, BigDecimal minRequiredWidth,
+			ScrutinyDetail scrutinyDetail, Map<String, String> errors) {
 
-	List<BigDecimal> widths = fireTenderMovement.getFireTenderMovements().stream().map(ftm -> ftm.getWidth())
-			.collect(Collectors.toList());
+		List<BigDecimal> widths = fireTenderMovement.getFireTenderMovements().stream().map(ftm -> ftm.getWidth())
+				.collect(Collectors.toList());
 
-	if (widths.isEmpty())
-		return;
+		if (widths.isEmpty())
+			return;
 
-	BigDecimal providedWidth = widths.stream().reduce(BigDecimal::min).orElse(BigDecimal.ZERO)
-			.setScale(DcrConstants.DECIMALDIGITS_MEASUREMENTS, DcrConstants.ROUNDMODE_MEASUREMENTS);
+		BigDecimal providedWidth = widths.stream().reduce(BigDecimal::min).orElse(BigDecimal.ZERO)
+				.setScale(DcrConstants.DECIMALDIGITS_MEASUREMENTS, DcrConstants.ROUNDMODE_MEASUREMENTS);
 
-	boolean isAccepted = providedWidth.compareTo(minRequiredWidth) >= 0;
+		boolean isAccepted = providedWidth.compareTo(minRequiredWidth) >= 0;
 
-	Map<String, String> details = new HashMap<>();
-	details.put(RULE_NO, RULE_36_3);
-	details.put(DESCRIPTION, "Width of fire tender movement");
-	details.put(PERMISSIBLE, ">= " + minRequiredWidth.toPlainString());
-	details.put(PROVIDED, providedWidth.toPlainString());
-	details.put(STATUS, isAccepted ? Result.Accepted.getResultVal() : Result.Not_Accepted.getResultVal());
-	scrutinyDetail.getDetail().add(details);
+		Map<String, String> details = new HashMap<>();
+		details.put(RULE_NO, RULE_36_3);
+		details.put(DESCRIPTION, "Width of fire tender movement");
+		details.put(PERMISSIBLE, ">= " + minRequiredWidth.toPlainString());
+		details.put(PROVIDED, providedWidth.toPlainString());
+		details.put(STATUS, isAccepted ? Result.Accepted.getResultVal() : Result.Not_Accepted.getResultVal());
+		scrutinyDetail.getDetail().add(details);
 
-	plan.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+		plan.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
 
-	if (!fireTenderMovement.getErrors().isEmpty()) {
-		String yardNames = String.join(", ", fireTenderMovement.getErrors());
-		errors.put("FTM_SETBACK",
-				"Fire tender movement for block " + block.getNumber() + " is not inside " + yardNames + ".");
-		plan.addErrors(errors);
+		if (!fireTenderMovement.getErrors().isEmpty()) {
+			String yardNames = String.join(", ", fireTenderMovement.getErrors());
+			errors.put("FTM_SETBACK",
+					"Fire tender movement for block " + block.getNumber() + " is not inside " + yardNames + ".");
+			plan.addErrors(errors);
+		}
 	}
-}
 
+   /**
+    * Creates and returns a new {@link ScrutinyDetail} object with column headings pre-set for rule validation.
+    * The key is constructed using the block number and the feature being validated (e.g., "Fire Tender Movement").
+    *
+    * @param string   the block number or identifier
+    * @param feature  the feature being scrutinized (e.g., "Fire Tender Movement")
+    * @return a {@link ScrutinyDetail} instance with initialized column headings and key
+    */
     private ScrutinyDetail createScrutinyDetail(String string, String feature) {
         ScrutinyDetail sd = new ScrutinyDetail();
         sd.setKey("Block_" + string + "_" + feature);

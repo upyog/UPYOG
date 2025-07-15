@@ -101,15 +101,14 @@ public class GovtBuildingDistance extends FeatureProcess {
         return pl;
     }
 
-	/**
-	 * Processes the given plan to validate the distance from government buildings.
-	 * Fetches permissible values for distances and validates them against the plan
-	 * details.
-	 *
-	 * @param pl The plan object to process.
-	 * @return The processed plan object with scrutiny details added.
-	 */
-
+	
+    /**
+     * Processes the given plan to validate the distance from nearby government buildings
+     * and the corresponding permissible building height.
+     *
+     * @param plan the building plan to be validated
+     * @return the updated plan with validation results and errors (if any)
+     */
     @Override
     public Plan process(Plan plan) {
         if (!isGovtBuildingNearby(plan)) {
@@ -142,11 +141,22 @@ public class GovtBuildingDistance extends FeatureProcess {
         return plan;
     }
     
+    /**
+     * Checks whether the plan indicates proximity to a government building.
+     *
+     * @param plan the plan to check
+     * @return true if the building is near a government building; false otherwise
+     */
     private boolean isGovtBuildingNearby(Plan plan) {
         String nearGovtBuilding = plan.getPlanInformation().getBuildingNearGovtBuilding();
         return StringUtils.isNotBlank(nearGovtBuilding) && "YES".equalsIgnoreCase(nearGovtBuilding);
     }
 
+    /**
+     * Creates and initializes a {@link ScrutinyDetail} object for reporting.
+     *
+     * @return a populated ScrutinyDetail instance
+     */
     private ScrutinyDetail createScrutinyDetail() {
         ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
         scrutinyDetail.setKey("Common_Government Building Distance");
@@ -159,6 +169,11 @@ public class GovtBuildingDistance extends FeatureProcess {
         return scrutinyDetail;
     }
 
+    /**
+     * Creates a map with the initial rule metadata (e.g., rule number and description).
+     *
+     * @return a map of rule metadata
+     */
     private Map<String, String> createInitialRuleDetails() {
         Map<String, String> details = new HashMap<>();
         details.put(RULE_NO, RULE_21);
@@ -166,10 +181,23 @@ public class GovtBuildingDistance extends FeatureProcess {
         return details;
     }
 
+    
+    /**
+     * Returns the minimum distance from the list of provided distances.
+     *
+     * @param distances list of distances from government buildings
+     * @return the minimum distance, or 0 if list is empty
+     */
     private BigDecimal getMinimumDistance(List<BigDecimal> distances) {
         return distances.stream().reduce(BigDecimal::min).orElse(BigDecimal.ZERO);
     }
 
+    /**
+     * Calculates the maximum building height from all blocks in the plan.
+     *
+     * @param blocks list of blocks in the plan
+     * @return the highest building height among the blocks
+     */
     private BigDecimal getMaxBuildingHeight(List<Block> blocks) {
         return blocks.stream()
                      .filter(b -> b.getBuilding() != null)
@@ -177,6 +205,12 @@ public class GovtBuildingDistance extends FeatureProcess {
                      .reduce(BigDecimal.ZERO, BigDecimal::max);
     }
 
+    /**
+     * Retrieves the applicable rule from the MDMS cache for validating government building distance.
+     *
+     * @param plan the plan for which the rule needs to be fetched
+     * @return the matching {@link MdmsFeatureRule} or null if not found
+     */
     private MdmsFeatureRule getApplicableRule(Plan plan) {
         List<Object> rules = cache.getFeatureRules(plan, MdmsFeatureConstants.GOVT_BUILDING_DISTANCE, false);
         return rules.stream()
@@ -185,6 +219,15 @@ public class GovtBuildingDistance extends FeatureProcess {
                     .orElse(null);
     }
 
+    
+    /**
+     * Validates the distance from the government building and compares it with the maximum allowed building height.
+     * Adds the result into the scrutiny details.
+     *
+     * @param minDistance the minimum distance from a government building
+     * @param maxHeight the maximum height of the building in the plan
+     * @param rule the applicable MDMS 
+     * */
     private void validateDistanceAndHeight(BigDecimal minDistance, BigDecimal maxHeight,
                                            MdmsFeatureRule rule, Map<String, String> details,
                                            ScrutinyDetail scrutinyDetail) {

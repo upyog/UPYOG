@@ -140,14 +140,32 @@ public class MonumentDistance extends FeatureProcess {
         return pl;
     }
     
+    /**
+     * Checks whether the building is located near a monument based on plan information.
+     *
+     * @param pl the {@link Plan} object containing plan information.
+     * @return true if the building is near a monument, false otherwise.
+     */
     private boolean isNearMonument(Plan pl) {
         return "YES".equalsIgnoreCase(pl.getPlanInformation().getBuildingNearMonument());
     }
 
+    /**
+     * Checks whether the required NOC is available for buildings near monuments.
+     *
+     * @param pl the {@link Plan} object containing plan information.
+     * @return true if NOC is present for proximity to monument, false otherwise.
+     */
     private boolean hasNocNearMonument(Plan pl) {
         return "YES".equalsIgnoreCase(pl.getPlanInformation().getNocNearMonument());
     }
 
+    /**
+     * Initializes and returns a {@link ScrutinyDetail} object with standard headings
+     * for monument distance validation.
+     *
+     * @return initialized {@link ScrutinyDetail} object.
+     */
     private ScrutinyDetail initScrutinyDetail() {
         ScrutinyDetail sd = new ScrutinyDetail();
         sd.setKey("Common_Monument Distance");
@@ -160,6 +178,12 @@ public class MonumentDistance extends FeatureProcess {
         return sd;
     }
 
+    /**
+     * Initializes and returns a map containing rule number and description
+     * for monument distance regulations.
+     *
+     * @return a {@link Map} with keys {@code RULE_NO} and {@code DESCRIPTION}.
+     */
     private Map<String, String> initRuleDetails() {
         Map<String, String> details = new HashMap<>();
         details.put(RULE_NO, RULE_20);
@@ -167,6 +191,19 @@ public class MonumentDistance extends FeatureProcess {
         return details;
     }
 
+    /**
+     * Validates construction conditions when no NOC is provided and the building is near a monument.
+     * It applies different validation logic based on the distance from the monument.
+     *
+     * @param pl the {@link Plan} object representing the full building plan.
+     * @param sd the {@link ScrutinyDetail} object to add validation results to.
+     * @param details the rule details map containing description and rule number.
+     * @param minDist actual minimum distance from monument.
+     * @param distanceOne threshold distance for applying stricter rules.
+     * @param minDistTwo the absolute minimum distance where construction is not allowed.
+     * @param maxHeightAllowed maximum permissible height in the restricted zone.
+     * @param maxFloorsAllowed maximum permissible floors in the restricted zone.
+     */
     private void handleWithoutNoc(Plan pl, ScrutinyDetail sd, Map<String, String> details,
                                    BigDecimal minDist, BigDecimal distanceOne, BigDecimal minDistTwo,
                                    BigDecimal maxHeightAllowed, BigDecimal maxFloorsAllowed) {
@@ -199,6 +236,16 @@ public class MonumentDistance extends FeatureProcess {
         }
     }
 
+    /**
+     * Adds a single row of monument scrutiny result to the {@link ScrutinyDetail} object.
+     *
+     * @param sd the scrutiny detail object to update.
+     * @param details map containing rule number and description.
+     * @param distance actual distance from the monument as a string.
+     * @param permitted permitted construction condition based on distance.
+     * @param provided actual construction parameters provided in plan.
+     * @param status result of validation (Accepted or Not Accepted).
+     */
     private void addScrutinyDetail(ScrutinyDetail sd, Map<String, String> details,
                                    String distance, String permitted, String provided, String status) {
         Map<String, String> row = new HashMap<>(details);

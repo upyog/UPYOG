@@ -80,12 +80,18 @@ public class PorticoService extends FeatureProcess {
     private static final String SUBRULE_PORTICO_MAX_LENGTHDESCRIPTION = "Maximum Portico length for portico %s ";
     public static final String PORTICO_DISTANCETO_EXTERIORWALL = "Block %s Portico %s Portico distance to exteriorwall";
 
-    @Autowired
-    FetchEdcrRulesMdms fetchEdcrRulesMdms;
-    
+   
     @Autowired
 	CacheManagerMdms cache;
 
+    /**
+     * Validates the Portico elements in each block of the provided plan.
+     * Checks if the distance to the exterior wall is defined for each portico.
+     * If not defined, it adds an appropriate error message to the plan.
+     *
+     * @param plan The plan object containing building blocks and portico details.
+     * @return The same plan object with errors populated if validation fails.
+     */
     @Override
     public Plan validate(Plan plan) {
         HashMap<String, String> errors = new HashMap<>();
@@ -104,6 +110,14 @@ public class PorticoService extends FeatureProcess {
         return plan;
     }
 
+    /**
+     * Processes the portico data within the provided plan.
+     * Performs validation and evaluates each portico against permissible length rules.
+     * Adds the result to the report output.
+     *
+     * @param plan The plan object containing building block and portico data.
+     * @return The processed plan with scrutiny details populated.
+     */
     @Override
     public Plan process(Plan plan) {
         validate(plan); 
@@ -117,6 +131,12 @@ public class PorticoService extends FeatureProcess {
         return plan;
     }
     
+    /**
+     * Fetches the permissible maximum length value for a portico from the feature rules cache.
+     *
+     * @param plan The plan object used to retrieve feature-specific rules.
+     * @return A BigDecimal representing the permissible portico length. Defaults to zero if no rule is found.
+     */
     private BigDecimal fetchPermissiblePorticoLength(Plan plan) {
         List<Object> rules = cache.getFeatureRules(plan, MdmsFeatureConstants.PORTICO_SERVICE, false);
 
@@ -127,6 +147,14 @@ public class PorticoService extends FeatureProcess {
             .orElse(BigDecimal.ZERO);
     }
 
+    /**
+     * Iterates over all porticos in a block and compares each portico's length to the permissible value.
+     * Populates scrutiny details based on the compliance status.
+     *
+     * @param plan             The plan object to update with scrutiny output.
+     * @param block            The block containing porticos to be validated.
+     * @param permissibleValue The permissible length value for porticos.
+     */
 	private void processBlockPorticos(Plan plan, Block block, BigDecimal permissibleValue) {
 		for (Portico portico : block.getPorticos()) {
 			ScrutinyDetail scrutinyDetail = createScrutinyDetail(block.getNumber());
@@ -142,6 +170,12 @@ public class PorticoService extends FeatureProcess {
 		}
 	}
 
+	/**
+	 * Creates and initializes a ScrutinyDetail object for a specific block and sets column headings.
+	 *
+	 * @param blockNumber The number of the block for which scrutiny details are created.
+	 * @return A new ScrutinyDetail object with headings and key set.
+	 */
 	private ScrutinyDetail createScrutinyDetail(String blockNumber) {
 		ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
 		scrutinyDetail.addColumnHeading(1, RULE_NO);
@@ -153,6 +187,17 @@ public class PorticoService extends FeatureProcess {
 		return scrutinyDetail;
 	}
     
+	/**
+	 * Populates and adds the scrutiny report details to the provided plan.
+	 *
+	 * @param pl             The plan object containing report output.
+	 * @param ruleNo         The rule number being checked.
+	 * @param ruleDesc       A description of the rule.
+	 * @param expected       The permissible or required value.
+	 * @param actual         The actual value found in the plan.
+	 * @param status         The validation result (Accepted/Not Accepted).
+	 * @param scrutinyDetail The scrutiny detail object to which the row will be added.
+	 */
 		  private void setReportOutputDetails(Plan pl, String ruleNo, String ruleDesc, String expected, String actual, String status,
 		  ScrutinyDetail scrutinyDetail) {
 		// Initialize a map to store rule details

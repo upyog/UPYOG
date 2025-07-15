@@ -104,11 +104,11 @@ public class BlockDistancesService extends FeatureProcess {
 	
 
     /**
-     * Validates the given plan object.
-     * Currently, no specific validation logic is implemented.
+     * Validates the given Plan object.
+     * Currently acts as a pass-through returning the same Plan without any modification.
      *
-     * @param pl The plan object to validate.
-     * @return The same plan object without any modifications.
+     * @param pl The Plan to validate.
+     * @return The validated Plan (unchanged in this implementation).
      */
     @Override
     public Plan validate(Plan pl) {
@@ -116,19 +116,23 @@ public class BlockDistancesService extends FeatureProcess {
     }
 
     /**
-     * Processes the given plan to validate and calculate distances between blocks.
-     * Calls the `processDistanceBetweenBlocks` method to handle the logic.
+     * Processes the given Plan object by validating and evaluating distances between blocks.
      *
-     * @param pl The plan object to process.
-     * @return The processed plan object with scrutiny details added.
+     * @param pl The Plan to process.
+     * @return The processed Plan with scrutiny details added.
      */
-
     @Override
     public Plan process(Plan pl) {
         processDistanceBetweenBlocks(pl);
         return pl;
     }
 
+    /**
+     * Validates whether distances between each pair of blocks are defined in the Plan.
+     * Also ensures that required building attributes (height and occupancies) are present.
+     *
+     * @param pl The Plan to validate.
+     */
     public void validateDistanceBetweenBlocks(Plan pl) {
         HashMap<String, String> errors = new HashMap<>();
         List<String> sourceBlockNumbers = new ArrayList<>();
@@ -140,6 +144,14 @@ public class BlockDistancesService extends FeatureProcess {
         }
     }
 
+
+	/**
+	 * Validates required fields (building height and occupancies) for a given source block.
+	 *
+	 * @param pl     The Plan being validated.
+	 * @param sourceBlock The block to validate.
+	 * @param errors A map of validation errors to be added to.
+	 */
     private void validateSourceBlock(Plan pl, Block sourceBlock, HashMap<String, String> errors) {
         if (sourceBlock.getBuilding() != null) {
             if (sourceBlock.getBuilding().getBuildingHeight().compareTo(BigDecimal.ZERO) == 0) {
@@ -161,6 +173,15 @@ public class BlockDistancesService extends FeatureProcess {
         }
     }
 
+    /**
+     * Checks that distances are defined between a source block and all other destination blocks.
+     * Adds an error if the distance is missing in both directions.
+     *
+     * @param pl                 The Plan being validated.
+     * @param sourceBlock        The block used as source for checking distance.
+     * @param sourceBlockNumbers List of block numbers already validated.
+     * @param errors             A map of validation errors to be added to.
+     */
     private void validateDistancesBetweenBlockPairs(Plan pl, Block sourceBlock, List<String> sourceBlockNumbers,
                                                     HashMap<String, String> errors) {
         for (Block destinationBlock : pl.getBlocks()) {
@@ -180,6 +201,13 @@ public class BlockDistancesService extends FeatureProcess {
         }
     }
 
+    /**
+     * Retrieves the list of distances from the given block to the target block number.
+     *
+     * @param block            The source block.
+     * @param targetBlockNumber The number of the target block.
+     * @return A list of BigDecimal distances.
+     */
     private List<BigDecimal> getDistancesBetween(Block block, String targetBlockNumber) {
         List<BigDecimal> distances = new ArrayList<>();
         for (BlockDistances distance : block.getDistanceBetweenBlocks()) {
@@ -190,6 +218,12 @@ public class BlockDistancesService extends FeatureProcess {
         return distances;
     }
 
+    /**
+     * Validates and processes the minimum distances between all block pairs in the Plan.
+     * Populates the scrutiny details for reporting.
+     *
+     * @param pl The Plan object containing blocks and distances.
+     */
     public void processDistanceBetweenBlocks(Plan pl) {
         if (pl.getBlocks().isEmpty()) return;
 
@@ -212,6 +246,14 @@ public class BlockDistancesService extends FeatureProcess {
         }
     }
 
+
+	/**
+	 * Processes a pair of blocks to calculate the minimum distance between them and validate it.
+	 *
+	 * @param pl    The Plan containing the blocks.
+	 * @param b     The first block.
+	 * @param block The second block.
+	 */
     private void processBlockPairDistance(Plan pl, Block b, Block block) {
         for (BlockDistances distanceBetweenBlock : b.getDistanceBetweenBlocks()) {
             if (distanceBetweenBlock.getBlockNumber().equals(block.getNumber())) {
@@ -228,6 +270,19 @@ public class BlockDistancesService extends FeatureProcess {
         }
     }
 
+    /**
+     * Validates the actual minimum distance between two blocks against:
+     * 1. The derived minimum required distance based on building height.
+     * 2. The maximum of the relevant setback heights.
+     * Adds scrutiny report entries based on validation results.
+     *
+     * @param pl             The Plan under validation.
+     * @param actualDistance The actual minimum distance measured between the blocks.
+     * @param b              The first block.
+     * @param block          The second block.
+     * @param valid1         Flag indicating whether height-based requirement is met.
+     * @param valid2         Flag indicating whether setback-based requirement is met.
+     */
     private void validateMinimumDistance(Plan pl, BigDecimal actualDistance, Block b, Block block, Boolean valid1, Boolean valid2) {
         BigDecimal bHeight = b.getBuilding().getBuildingHeight();
         BigDecimal blockHeight = block.getBuilding().getBuildingHeight();
@@ -267,6 +322,12 @@ public class BlockDistancesService extends FeatureProcess {
                 valid2 ? Result.Accepted.getResultVal() : Result.Not_Accepted.getResultVal());
     }
 
+    /**
+     * Fetches the minimum permissible service distance for blocks from the feature rule cache.
+     *
+     * @param pl The Plan for which service block distance is needed.
+     * @return The permissible block distance value.
+     */
     private BigDecimal getServiceBlockDistance(Plan pl) {
         List<Object> rules = cache.getFeatureRules(pl, MdmsFeatureConstants.BLOCK_DISTANCES_SERVICE, false);
         Optional<MdmsFeatureRule> matchedRule = rules.stream()
@@ -275,6 +336,14 @@ public class BlockDistancesService extends FeatureProcess {
         return matchedRule.map(MdmsFeatureRule::getPermissible).orElse(BigDecimal.ZERO);
     }
 
+    /**
+     * Collects all setback height values from a block including side yards and rear yard.
+     * Defaults to service distance value if specific setbacks are not defined.
+     *
+     * @param block         The Block to collect setbacks from.
+     * @param defaultValue  Default value to include if setbacks are not present.
+     * @return A list of BigDecimal setback values.
+     */
     private ArrayList<BigDecimal> collectSetBackValues(Block block, BigDecimal defaultValue) {
         ArrayList<BigDecimal> setBacksValues = new ArrayList<>();
         setBacksValues.add(defaultValue);

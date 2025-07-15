@@ -91,6 +91,18 @@ public class Balcony extends FeatureProcess {
 	    return plan;
 	}
 
+	/**
+	 * Processes the given {@link Plan} by validating balcony widths block-wise.
+	 * <p>
+	 * For each block in the plan, if the block contains a building, it invokes
+	 * {@code processBlockBalconies} to validate balconies floor-wise, gather
+	 * scrutiny details, and append them to the plan's report output.
+	 * </p>
+	 *
+	 * @param plan the {@link Plan} object containing building blocks and their details
+	 * @return the modified {@link Plan} object with updated scrutiny report
+	 */
+	
 	@Override
 	public Plan process(Plan plan) {
 	    for (Block block : plan.getBlocks()) {
@@ -101,7 +113,17 @@ public class Balcony extends FeatureProcess {
 	    return plan;
 	}
 
-	// 1. Process balconies block-wise
+	/**
+	 * Processes all balconies for a given block and prepares scrutiny details.
+	 * <p>
+	 * Iterates over each floor of the block's building and delegates balcony validation
+	 * to {@code processFloorBalconies}. Appends the collected scrutiny details to
+	 * the plan's report output.
+	 * </p>
+	 *
+	 * @param plan  the plan being processed
+	 * @param block the block whose balconies are to be processed
+	 */
 	private void processBlockBalconies(Plan plan, Block block) {
 	    ScrutinyDetail scrutinyDetail = createScrutinyDetail("Block_" + block.getNumber() + "_" + MdmsFeatureConstants.BALCONY,
 	            RULE_NO, FLOOR, DESCRIPTION, PERMISSIBLE, PROVIDED, STATUS);
@@ -113,7 +135,18 @@ public class Balcony extends FeatureProcess {
 	    plan.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
 	}
 
-	// 2. Process each floor's balconies
+	/**
+	 * Processes all balconies on a given floor of a block.
+	 * <p>
+	 * Retrieves the list of balconies from the floor and validates each one
+	 * using {@code validateBalcony}. Also handles typical floor logic.
+	 * </p>
+	 *
+	 * @param plan           the plan being processed
+	 * @param block          the block containing the floor
+	 * @param floor          the floor to process
+	 * @param scrutinyDetail the scrutiny detail object to which validation results are added
+	 */
 	private void processFloorBalconies(Plan plan, Block block, Floor floor, ScrutinyDetail scrutinyDetail) {
 	    boolean isTypicalRepititiveFloor = false;
 
@@ -127,7 +160,19 @@ public class Balcony extends FeatureProcess {
 	    }
 	}
 
-	// 3. Validate individual balcony and add to scrutiny
+	/**
+	 * Validates the width of a single balcony against MDMS rules and adds the result to scrutiny.
+	 * <p>
+	 * Compares the minimum width of the balcony with the permissible value obtained from
+	 * MDMS rules. Based on the comparison, a result row is created and added to the scrutiny detail.
+	 * </p>
+	 *
+	 * @param plan              the plan being processed
+	 * @param floor             the floor containing the balcony
+	 * @param balcony           the balcony to validate
+	 * @param typicalFloorValues a map containing details about typical floors, if applicable
+	 * @param scrutinyDetail    the scrutiny detail object to which the validation result is added
+	 */
 	private void validateBalcony(Plan plan, Floor floor, org.egov.common.entity.edcr.Balcony balcony,
 	                              Map<String, Object> typicalFloorValues, ScrutinyDetail scrutinyDetail) {
 
@@ -176,7 +221,13 @@ public class Balcony extends FeatureProcess {
 	    return detail;
 	}
 
-	// Method to create result row
+	/**
+	 * Creates a new {@link ScrutinyDetail} instance with the specified key and column headings.
+	 *
+	 * @param key      the unique key identifying the scrutiny detail
+	 * @param headings the column headings to be used in the scrutiny report
+	 * @return a new {@link ScrutinyDetail} populated with the specified headings
+	 */
 	private Map<String, String> createResultRow(String ruleNo, String description, String permissible,
 	                                            BigDecimal provided, boolean accepted) {
 	    Map<String, String> details = new HashMap<>();

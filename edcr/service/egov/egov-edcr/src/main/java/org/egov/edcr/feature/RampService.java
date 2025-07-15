@@ -111,6 +111,12 @@ public class RampService extends FeatureProcess {
     @Autowired
 	CacheManagerMdms cache;
  
+    /**
+     * Validates the given Plan object for ramp and DA ramp requirements.
+     *
+     * @param pl the Plan object to validate
+     * @return the validated Plan object with errors added if any
+     */
     @Override
     public Plan validate(Plan pl) {
         validateRampMeasurements(pl);
@@ -118,6 +124,11 @@ public class RampService extends FeatureProcess {
         return pl;
     }
 
+    /**
+     * Validates ramp measurements for each floor of every block in the plan.
+     *
+     * @param pl the Plan object containing blocks and floors to validate ramps
+     */
     private void validateRampMeasurements(Plan pl) {
         for (Block block : pl.getBlocks()) {
             if (block.getBuilding() != null && !block.getBuilding().getFloors().isEmpty()) {
@@ -135,6 +146,12 @@ public class RampService extends FeatureProcess {
             }
         }
     }
+    
+    /**
+     * Validates the presence and slope of DA (Differently Abled) ramps in each block of the plan.
+     *
+     * @param pl the Plan object containing blocks and occupancy information
+     */
 
     private void validateDARamps(Plan pl) {
         HashMap<String, String> errors = new HashMap<>();
@@ -153,6 +170,15 @@ public class RampService extends FeatureProcess {
             }
         }
     }
+    
+    /**
+     * Determines if the DA ramp validation should be performed for a given block based on occupancy and plot conditions.
+     *
+     * @param pl the Plan object
+     * @param block the Block to be checked
+     * @param mostRestrictiveOccupancyType the most restrictive occupancy type in the plan
+     * @return true if validation should be performed; false otherwise
+     */
 
     private boolean shouldValidateDARamps(Plan pl, Block block, OccupancyTypeHelper mostRestrictiveOccupancyType) {
         return pl.getPlot() != null
@@ -162,6 +188,13 @@ public class RampService extends FeatureProcess {
                 && !A_R.equalsIgnoreCase(mostRestrictiveOccupancyType.getSubtype().getCode());
     }
 
+    /**
+     * Validates the slope values for DA ramps in a block and adds errors to the plan if not defined.
+     *
+     * @param pl the Plan object to add errors to
+     * @param block the Block containing DA ramps
+     * @param errors map of errors to be added
+     */
     private void validateSlopeForDARamps(Plan pl, Block block, Map<String, String> errors) {
         boolean isSlopeDefined = false;
         for (DARamp daRamp : block.getDARamps()) {
@@ -178,6 +211,13 @@ public class RampService extends FeatureProcess {
         }
     }
 
+    /**
+     * Adds an error to the Plan indicating the absence of a required DA ramp in the block.
+     *
+     * @param pl the Plan object to add errors to
+     * @param block the Block missing the DA ramp
+     * @param errors map of errors to be added
+     */
     private void addMissingDARampError(Plan pl, Block block, Map<String, String> errors) {
         errors.put(String.format("DA Ramp", block.getNumber()),
                 edcrMessageSource.getMessage(DcrConstants.OBJECTNOTDEFINED,
@@ -186,6 +226,12 @@ public class RampService extends FeatureProcess {
         pl.addErrors(errors);
     }
 
+    /**
+     * Checks if a given occupancy type is one for which ramps are required.
+     *
+     * @param occupancyType the OccupancyType to check
+     * @return true if the occupancy type requires ramps; false otherwise
+     */
 
     private boolean getOccupanciesForRamp(OccupancyType occupancyType) {
         return occupancyType.equals(OccupancyType.OCCUPANCY_A2) ||
@@ -201,6 +247,14 @@ public class RampService extends FeatureProcess {
                 occupancyType.equals(OccupancyType.OCCUPANCY_F4);
     }
 
+    
+    /**
+     * Processes the Plan object for compliance with ramp and DA ramp rules,
+     * performing validations and adding scrutiny details.
+     *
+     * @param pl the Plan object to process
+     * @return the processed Plan with scrutiny details
+     */
     @Override
     public Plan process(Plan pl) {
         BigDecimal rampServiceValueOne = BigDecimal.ZERO;
@@ -251,6 +305,15 @@ public class RampService extends FeatureProcess {
 
         return pl;
     }
+    
+    /**
+     * Creates a ScrutinyDetail object with given parameters.
+     *
+     * @param keySuffix suffix to be used in the scrutiny detail key
+     * @param blockNumber the number of the block being validated
+     * @param hasFloorColumn whether floor column should be added
+     * @return the constructed ScrutinyDetail object
+     */
 
     private ScrutinyDetail createScrutinyDetail(String keySuffix, String blockNumber, boolean hasFloorColumn) {
         ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
@@ -269,6 +332,19 @@ public class RampService extends FeatureProcess {
         }
         return scrutinyDetail;
     }
+    
+    /**
+     * Performs validation of DA ramp slope for the given block using specified slope values and adds scrutiny details.
+     *
+     * @param pl the Plan object
+     * @param block the Block containing the DA ramps
+     * @param rampServiceValueOne base value to check if slope is defined
+     * @param rampServiceExpectedSlopeOne numerator of expected slope calculation
+     * @param rampServiceDivideExpectedSlope denominator of expected slope calculation
+     * @param rampServiceSlopValue minimum allowed slope value
+     * @param scrutinyDetail1 scrutiny detail for slope definition
+     * @param scrutinyDetail2 scrutiny detail for slope compliance
+     */
 
     private void processRampSlopeValidation(Plan pl, Block block, BigDecimal rampServiceValueOne,
             BigDecimal rampServiceExpectedSlopeOne, BigDecimal rampServiceDivideExpectedSlope,
@@ -298,6 +374,13 @@ public class RampService extends FeatureProcess {
         }
     }
 
+    /**
+     * Checks if any DA ramp in the block has a slope defined above a specified threshold.
+     *
+     * @param block the Block to check
+     * @param rampServiceValueOne minimum slope value to consider as defined
+     * @return true if a valid slope is defined; false otherwise
+     */
     private boolean isSlopeDefined(Block block, BigDecimal rampServiceValueOne) {
         for (DARamp daRamp : block.getDARamps()) {
             if (daRamp != null && daRamp.getSlope() != null
@@ -307,6 +390,17 @@ public class RampService extends FeatureProcess {
         }
         return false;
     }
+    
+    /**
+     * Validates that DA ramp slopes in the block fall within the allowed maximum slope.
+     *
+     * @param pl the Plan object
+     * @param block the Block containing DA ramps
+     * @param expectedSlopeOne numerator for slope validation
+     * @param divideExpectedSlope denominator for slope calculation
+     * @param rampServiceSlopValue maximum allowed slope
+     * @param scrutinyDetail2 scrutiny detail to report results
+     */
 
     private void validateRampSlopes(Plan pl, Block block, BigDecimal expectedSlopeOne,
             BigDecimal divideExpectedSlope, BigDecimal rampServiceSlopValue,

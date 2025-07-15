@@ -86,6 +86,21 @@ public class Basement extends FeatureProcess {
 	    return pl;
 	}
 
+	/**
+	 * Processes the basement floor of each block in the plan to validate height-related rules.
+	 * <p>
+	 * This method performs the following steps:
+	 * <ul>
+	 *     <li>Retrieves applicable MDMS rules for basement floors.</li>
+	 *     <li>Iterates over each block and validates the basement (floor number -1) heights:</li>
+	 *     <li> - Floor to ceiling height against {@code permissibleOne}</li>
+	 *     <li> - Ceiling height of upper basement between {@code permissibleTwo} and {@code permissibleThree}</li>
+	 *     <li>Adds the validation results to the scrutiny report.</li>
+	 * </ul>
+	 *
+	 * @param pl the plan to process
+	 * @return the modified plan with scrutiny details added
+	 */
 	@Override
 	public Plan process(Plan pl) {
 	    if (pl.getBlocks() == null) return pl;
@@ -115,17 +130,35 @@ public class Basement extends FeatureProcess {
 	    return pl;
 	}
 
+	/**
+	 * Checks whether the given block has a valid building with at least one floor.
+	 *
+	 * @param block the block to check
+	 * @return {@code true} if the building and its floors are non-null and non-empty, {@code false} otherwise
+	 */
 	private boolean hasValidFloors(Block block) {
 	    return block.getBuilding() != null
 	            && block.getBuilding().getFloors() != null
 	            && !block.getBuilding().getFloors().isEmpty();
 	}
 
+	/**
+	 * Fetches the first applicable MDMS rule for the basement feature from the cache.
+	 *
+	 * @param pl the plan for which the rules are to be fetched
+	 * @return an {@code Optional<MdmsFeatureRule>} containing the basement rule, if available
+	 */
 	private Optional<MdmsFeatureRule> fetchBasementRule(Plan pl) {
 	    List<Object> rules = cache.getFeatureRules(pl, MdmsFeatureConstants.BASEMENT, false);
 	    return rules.stream().map(obj -> (MdmsFeatureRule) obj).findFirst();
 	}
 
+	
+	/**
+	 * Creates and initializes a new {@link ScrutinyDetail} for basement rule validations.
+	 *
+	 * @return a {@link ScrutinyDetail} instance with appropriate column headings and key
+	 */
 	private ScrutinyDetail createScrutinyDetail() {
 	    ScrutinyDetail detail = new ScrutinyDetail();
 	    detail.setKey(Common_Basement);
@@ -136,6 +169,14 @@ public class Basement extends FeatureProcess {
 	    detail.addColumnHeading(5, STATUS);
 	    return detail;
 	}
+	
+	/**
+	 * Validates that the minimum height from the basement floor to the ceiling meets the required value.
+	 *
+	 * @param floor          the basement floor to validate
+	 * @param basementValue  the minimum required floor-to-ceiling height
+	 * @param detail         the scrutiny detail where results will be added
+	 */
 
 	private void validateHeightFromFloorToCeiling(Floor floor, BigDecimal basementValue, ScrutinyDetail detail) {
 	    List<BigDecimal> heights = floor.getHeightFromTheFloorToCeiling();
@@ -153,6 +194,14 @@ public class Basement extends FeatureProcess {
 	    ));
 	}
 
+	/**
+	 * Validates that the minimum ceiling height of the upper basement lies within the specified range.
+	 *
+	 * @param floor      the basement floor to validate
+	 * @param minValue   the minimum allowable ceiling height
+	 * @param maxValue   the maximum allowable ceiling height (exclusive)
+	 * @param detail     the scrutiny detail where results will be added
+	 */
 	private void validateUpperBasementCeilingHeight(Floor floor, BigDecimal minValue, BigDecimal maxValue, ScrutinyDetail detail) {
 	    List<BigDecimal> ceilingHeights = floor.getHeightOfTheCeilingOfUpperBasement();
 	    if (ceilingHeights == null || ceilingHeights.isEmpty()) return;
@@ -169,6 +218,16 @@ public class Basement extends FeatureProcess {
 	    ));
 	}
 
+	/**
+	 * Creates a result row for the scrutiny report with the specified parameters.
+	 *
+	 * @param ruleNo      the rule number being validated
+	 * @param description a brief description of the rule
+	 * @param required    the required/permissible value as a string
+	 * @param provided    the actual provided value
+	 * @param accepted    whether the validation passed or failed
+	 * @return a map representing a row in the scrutiny report
+	 */
 	private Map<String, String> createResultRow(String ruleNo, String description, String required, BigDecimal provided, boolean accepted) {
 	    Map<String, String> details = new HashMap<>();
 	    details.put(RULE_NO, ruleNo);

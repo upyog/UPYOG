@@ -82,12 +82,26 @@ public class Parapet extends FeatureProcess {
 	@Autowired
 	CacheManagerMdms cache;
 
+	/**
+	 * Validates the parapet-related details in the given Plan.
+	 *
+	 * @param pl the plan object containing all architectural data.
+	 * @return the same plan object, optionally enriched with validation errors (currently no validation logic here).
+	 */
 	@Override
 	public Plan validate(Plan pl) {
 
 		return pl;
 	}
 
+	/**
+	 * Processes the parapet height for each block in the plan, 
+	 * compares it against permissible values from the MDMS rule,
+	 * and adds scrutiny details to the plan's report output.
+	 *
+	 * @param pl the plan containing block-wise parapet details
+	 * @return the plan object enriched with parapet scrutiny results
+	 */
 	public Plan process(Plan pl) {
 	    ScrutinyDetail scrutinyDetail = initializeScrutinyDetail();
 	    Map<String, String> details = initializeRuleDetails();
@@ -113,6 +127,12 @@ public class Parapet extends FeatureProcess {
 	    return pl;
 	}
 
+	/**
+	 * Initializes a {@link ScrutinyDetail} object with predefined headings 
+	 * for parapet height scrutiny.
+	 *
+	 * @return the initialized scrutiny detail object
+	 */
 	private ScrutinyDetail initializeScrutinyDetail() {
 	    ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
 	    scrutinyDetail.setKey("Common_Parapet");
@@ -123,6 +143,12 @@ public class Parapet extends FeatureProcess {
 	    scrutinyDetail.addColumnHeading(5, STATUS);
 	    return scrutinyDetail;
 	}
+	/**
+	 * Initializes rule metadata such as rule number and description
+	 * for parapet validation reporting.
+	 *
+	 * @return a map containing initial rule details
+	 */
 
 	private Map<String, String> initializeRuleDetails() {
 	    Map<String, String> details = new HashMap<>();
@@ -131,10 +157,27 @@ public class Parapet extends FeatureProcess {
 	    return details;
 	}
 
+	/**
+	 * Computes the minimum parapet height from the list of parapets in a block.
+	 *
+	 * @param block the block containing parapet height values
+	 * @return the minimum parapet height value in the block
+	 */
 	private BigDecimal getMinimumParapetHeight(Block block) {
 	    return block.getParapets().stream().reduce(BigDecimal::min).get();
 	}
 
+	/**
+	 * Validates whether the given minimum parapet height falls within the permissible range.
+	 * Appends the result (accepted/rejected) to the plan's report output.
+	 *
+	 * @param minHeight the minimum parapet height found in a block
+	 * @param parapetValueOne the lower bound of permissible height
+	 * @param parapetValueTwo the upper bound of permissible height
+	 * @param details the map containing rule metadata and validation outcome
+	 * @param scrutinyDetail the scrutiny detail object to which results are appended
+	 * @param pl the plan to which scrutiny details are added
+	 */
 	private void validateParapetHeight(BigDecimal minHeight, BigDecimal parapetValueOne, BigDecimal parapetValueTwo,
 	                                   Map<String, String> details, ScrutinyDetail scrutinyDetail, Plan pl) {
 	    String required = HEIGHT + parapetValueOne + AND_HEIGHT + parapetValueTwo;

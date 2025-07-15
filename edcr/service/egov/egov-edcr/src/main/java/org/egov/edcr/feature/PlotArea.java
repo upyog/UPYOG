@@ -96,100 +96,13 @@ public class PlotArea extends FeatureProcess {
    
     @Autowired
 	CacheManagerMdms cache;
-//
-//    @Override
-//    public Plan process(Plan pl) {
-//        // Check if the plot object is not null
-//        if (pl.getPlot() != null) {
-//            // Get the area of the plot
-//            BigDecimal plotArea = pl.getPlot().getArea();
-//            if (plotArea != null) {
-//                // Initialize scrutiny details for the report
-//                ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
-//                scrutinyDetail.setKey(Common_Plot_Area); // Key for the scrutiny detail
-//                scrutinyDetail.addColumnHeading(1, RULE_NO); // Column for rule number
-//                scrutinyDetail.addColumnHeading(2, DESCRIPTION); // Column for description
-//                scrutinyDetail.addColumnHeading(3, OCCUPANCY); // Column for occupancy type
-//                scrutinyDetail.addColumnHeading(4, PERMITTED); // Column for permitted plot area
-//                scrutinyDetail.addColumnHeading(5, PROVIDED); // Column for provided plot area
-//                scrutinyDetail.addColumnHeading(6, STATUS); // Column for status (Accepted/Not Accepted)
-//
-//                // Initialize a map to store rule details
-//                Map<String, String> details = new HashMap<>();
-//                details.put(RULE_NO, RULE_34); // Rule number for plot area
-//                details.put(DESCRIPTION, PLOTAREA_DESCRIPTION); // Description of the rule
-//
-//                // Fetch permissible plot area values based on occupancy
-//                Map<String, BigDecimal> occupancyValuesMap = getOccupancyValues(pl);
-//
-//                // Check if the virtual building and its most restrictive FAR helper are not null
-//                if (pl.getVirtualBuilding() != null && pl.getVirtualBuilding().getMostRestrictiveFarHelper() != null) {
-//                    // Get the occupancy type (subtype or type)
-//                    OccupancyHelperDetail occupancyType = pl.getVirtualBuilding().getMostRestrictiveFarHelper()
-//                            .getSubtype() != null
-//                                    ? pl.getVirtualBuilding().getMostRestrictiveFarHelper().getSubtype()
-//                                    : pl.getVirtualBuilding().getMostRestrictiveFarHelper().getType();
-//
-//                    if (occupancyType != null) {
-//                        // Add occupancy type to the details map
-//                        details.put(OCCUPANCY, occupancyType.getName());
-//
-//                        // Fetch the permissible plot area value for the occupancy type
-//                        BigDecimal occupancyValues = occupancyValuesMap.get(occupancyType.getCode());
-//                        if (occupancyValues != null) {
-//                            // Compare the provided plot area with the permissible value
-//                            if (plotArea.compareTo(occupancyValues) >= 0) {
-//                                // If the plot area is within permissible limits, mark as Accepted
-//                                details.put(PERMITTED, String.valueOf(occupancyValues) + "m2");
-//                                details.put(PROVIDED, plotArea.toString() + "m2");
-//                                details.put(STATUS, Result.Accepted.getResultVal());
-//                                scrutinyDetail.getDetail().add(details);
-//                                pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
-//                            } else {
-//                                // If the plot area is not within permissible limits, mark as Not Accepted
-//                                details.put(PERMITTED, String.valueOf(occupancyValues) + "m2");
-//                                details.put(PROVIDED, plotArea.toString() + "m2");
-//                                details.put(STATUS, Result.Not_Accepted.getResultVal());
-//                                scrutinyDetail.getDetail().add(details);
-//                                pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
-//                            }
-//                        }
-//                    }
-//                }
-//            }
-//        }
-//        return pl; // Return the updated plan object
-//    }
-//
-//    public Map<String, BigDecimal> getOccupancyValues(Plan pl) {
-//        // Initialize variables to store permissible plot area values
-//        BigDecimal plotAreaValueOne = BigDecimal.ZERO;
-//        BigDecimal plotAreaValueTwo = BigDecimal.ZERO;
-//
-//       
-//        List<Object> rules = cache.getFeatureRules(pl, MdmsFeatureConstants.PLOT_AREA, false);
-//    		
-//            Optional<MdmsFeatureRule> matchedRule = rules.stream()
-//            	    .map(obj -> (MdmsFeatureRule) obj)
-//            	    .findFirst();
-//
-//            	if (matchedRule.isPresent()) {
-//            	    MdmsFeatureRule rule = matchedRule.get();
-//            	    plotAreaValueOne = rule.getPlotAreaValueOne();
-//            	    plotAreaValueTwo = rule.getPlotAreaValueTwo();
-//            	} 
-//   
-//
-//        // Map the permissible plot area values to their respective occupancy codes
-//        Map<String, BigDecimal> plotAreaValues = new HashMap<>();
-//        plotAreaValues.put(F_RT, plotAreaValueOne);
-//        plotAreaValues.put(M_NAPI, plotAreaValueOne);
-//        plotAreaValues.put(F_CB, plotAreaValueOne);
-//        plotAreaValues.put(S_MCH, plotAreaValueTwo);
-//        plotAreaValues.put(E_PS, plotAreaValueOne);
-//
-//        return plotAreaValues; // Return the map of permissible plot area values
-//    }
+
+    /**
+     * Processes the Plan to validate the plot area against permissible values based on occupancy.
+     *
+     * @param pl the Plan object containing plot and occupancy information
+     * @return the updated Plan object with scrutiny details added
+     */
     
     @Override
     public Plan process(Plan pl) {
@@ -216,6 +129,11 @@ public class PlotArea extends FeatureProcess {
 
         return pl;
     }
+    /**
+     * Builds the base ScrutinyDetail object for capturing plot area validation results.
+     *
+     * @return the ScrutinyDetail object with headings initialized
+     */
 
     private ScrutinyDetail buildScrutinyDetail() {
         ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
@@ -229,6 +147,14 @@ public class PlotArea extends FeatureProcess {
         return scrutinyDetail;
     }
 
+    /**
+     * Builds a row of scrutiny detail containing rule info, occupancy, permissible and provided plot areas, and status.
+     *
+     * @param occupancyType the occupancy type being validated
+     * @param plotArea the provided plot area
+     * @param permissibleArea the permissible plot area from rules
+     * @return a Map representing one row in the scrutiny detail
+     */
     private Map<String, String> buildScrutinyDetailRow(OccupancyHelperDetail occupancyType,
                                                        BigDecimal plotArea,
                                                        BigDecimal permissibleArea) {
@@ -247,11 +173,24 @@ public class PlotArea extends FeatureProcess {
         return details;
     }
 
+    /**
+     * Retrieves the permissible plot area based on the given occupancy code.
+     *
+     * @param pl the Plan object
+     * @param occupancyCode the occupancy type code
+     * @return the permissible plot area for the given occupancy type, or null if not found
+     */
     private BigDecimal getPermissiblePlotArea(Plan pl, String occupancyCode) {
         Map<String, BigDecimal> occupancyValuesMap = getOccupancyValues(pl);
         return occupancyValuesMap.get(occupancyCode);
     }
     
+    /**
+     * Constructs a mapping of occupancy codes to their corresponding permissible plot areas from the feature rule.
+     *
+     * @param pl the Plan object
+     * @return a Map of occupancy codes to permissible plot areas
+     */
     public Map<String, BigDecimal> getOccupancyValues(Plan pl) {
         BigDecimal plotAreaValueOne = BigDecimal.ZERO;
         BigDecimal plotAreaValueTwo = BigDecimal.ZERO;
@@ -273,6 +212,13 @@ public class PlotArea extends FeatureProcess {
         return plotAreaValues;
     }
     
+    /**
+     * Retrieves the feature rule from MDMS for the given feature name.
+     *
+     * @param pl the Plan object
+     * @param featureName the name of the feature to fetch the rule for
+     * @return an Optional containing the MdmsFeatureRule if found
+     */
     private Optional<MdmsFeatureRule> getFeatureRule(Plan pl, String featureName) {
         List<Object> rules = cache.getFeatureRules(pl, featureName, false);
         return rules.stream()
@@ -280,6 +226,12 @@ public class PlotArea extends FeatureProcess {
                     .findFirst();
     }
 
+    /**
+     * Retrieves the most restrictive occupancy type used in the FAR calculation.
+     *
+     * @param pl the Plan object
+     * @return the most restrictive OccupancyHelperDetail, or null if not found
+     */
     private OccupancyHelperDetail getMostRestrictiveOccupancy(Plan pl) {
         if (pl.getVirtualBuilding() == null || pl.getVirtualBuilding().getMostRestrictiveFarHelper() == null)
             return null;

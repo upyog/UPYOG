@@ -69,6 +69,15 @@ public class GeneralStair extends FeatureProcess {
 		return plan;
 	}
 
+	/**
+	 * Processes general stair information for a specific block in the plan.
+	 * It validates stair attributes like width, tread width, number of risers,
+	 * landing width, riser height, and accumulates errors if any.
+	 *
+	 * @param plan   The overall building plan.
+	 * @param block  The block for which general stair information needs to be validated.
+	 * @param errors The map to collect validation errors.
+	 */
 	private void processBlock(Plan plan, Block block, HashMap<String, String> errors) {
 		int generalStairCount = 0;
 		BigDecimal flrHt = BigDecimal.ZERO;
@@ -126,6 +135,13 @@ public class GeneralStair extends FeatureProcess {
 		handleStairErrors(plan, block, stairAbsent, generalStairCount, errors);
 	}
 
+	/**
+	 * Creates a ScrutinyDetail object with appropriate column headings and a unique key for a given block and title.
+	 *
+	 * @param block The block to which this scrutiny detail belongs.
+	 * @param title The title for the scrutiny detail.
+	 * @return A configured ScrutinyDetail instance.
+	 */
 	private ScrutinyDetail createScrutinyDetail(Block block, String title) {
 		ScrutinyDetail detail = new ScrutinyDetail();
 		detail.addColumnHeading(1, RULE_NO);
@@ -138,6 +154,13 @@ public class GeneralStair extends FeatureProcess {
 		return detail;
 	}
 
+	/**
+	 * Updates and returns the total number of risers for the given general stair.
+	 *
+	 * @param stair        The GeneralStair entity to evaluate.
+	 * @param totalRisers  The running total of risers.
+	 * @return Updated total number of risers including the given stair's flights.
+	 */
 	private BigDecimal updateTotalRisers(org.egov.common.entity.edcr.GeneralStair stair, BigDecimal totalRisers) {
 		for (Flight flight : stair.getFlights()) {
 			totalRisers = totalRisers.add(flight.getNoOfRises());
@@ -145,6 +168,13 @@ public class GeneralStair extends FeatureProcess {
 		return totalRisers;
 	}
 
+	/**
+	 * Calculates and returns the total landing width for the given general stair.
+	 *
+	 * @param stair              The GeneralStair entity to evaluate.
+	 * @param totalLandingWidth  The running total of landing widths.
+	 * @return Updated total landing width.
+	 */
 	private BigDecimal updateLandingWidths(org.egov.common.entity.edcr.GeneralStair stair, BigDecimal totalLandingWidth) {
 		for (StairLanding landing : stair.getLandings()) {
 			List<BigDecimal> widths = landing.getWidths();
@@ -156,6 +186,16 @@ public class GeneralStair extends FeatureProcess {
 		return totalLandingWidth;
 	}
 
+	/**
+	 * Validates the riser height for a stair based on floor height and total steps.
+	 * Adds the result to the scrutiny report.
+	 *
+	 * @param plan             The building plan.
+	 * @param block            The block being evaluated.
+	 * @param flrHt            The floor height.
+	 * @param totalSteps       The total number of steps including landings.
+	 * @param scrutinyDetail4  ScrutinyDetail object for riser height validation.
+	 */
 	private void validateRiserHeight(Plan plan, Block block, BigDecimal flrHt, BigDecimal totalSteps, ScrutinyDetail scrutinyDetail4) {
 		BigDecimal value = getPermissibleRiserHeight(plan);
 		if (flrHt != null) {
@@ -165,12 +205,27 @@ public class GeneralStair extends FeatureProcess {
 		}
 	}
 
+	/**
+	 * Retrieves the permissible riser height from the rule cache.
+	 *
+	 * @param plan The building plan.
+	 * @return The permissible riser height value.
+	 */
 	private BigDecimal getPermissibleRiserHeight(Plan plan) {
 		List<Object> rules = cache.getFeatureRules(plan, MdmsFeatureConstants.RISER_HEIGHT, false);
 		Optional<MdmsFeatureRule> matchedRule = rules.stream().map(obj -> (MdmsFeatureRule) obj).findFirst();
 		return matchedRule.map(MdmsFeatureRule::getPermissible).orElse(BigDecimal.ZERO);
 	}
 
+	/**
+	 * Handles stair-related errors and appends them to the plan.
+	 *
+	 * @param plan               The building plan.
+	 * @param block              The block being evaluated.
+	 * @param stairAbsent        List of floors missing stair definitions.
+	 * @param generalStairCount  The total number of general stairs found.
+	 * @param errors             Map to collect error messages.
+	 */
 	private void handleStairErrors(Plan plan, Block block, List<String> stairAbsent, int generalStairCount, HashMap<String, String> errors) {
 		for (String error : stairAbsent) {
 			errors.put("General Stair " + error, "General stair not defined in " + error);
@@ -183,6 +238,19 @@ public class GeneralStair extends FeatureProcess {
 		}
 	}
 
+	/**
+	 * Validates the width of each landing for the general stair and adds the result to scrutiny report.
+	 *
+	 * @param plan                      The building plan.
+	 * @param block                     The block containing the stair.
+	 * @param scrutinyDetailLanding     ScrutinyDetail for landing width.
+	 * @param mostRestrictiveOccupancyType Most restrictive occupancy type of the block.
+	 * @param floor                     The floor under validation.
+	 * @param typicalFloorValues        Map of values used for typical floor validation.
+	 * @param generalStair              The stair to be validated.
+	 * @param landings                  List of landings in the stair.
+	 * @param errors                    Map to collect validation errors.
+	 */
 
 	private void validateLanding(Plan plan, Block block, ScrutinyDetail scrutinyDetailLanding,
 			OccupancyTypeHelper mostRestrictiveOccupancyType, Floor floor, Map<String, Object> typicalFloorValues,
@@ -235,7 +303,26 @@ public class GeneralStair extends FeatureProcess {
 
 	}
 
-
+	/**
+	 * Validates the flights associated with a general stair in a specific floor and block of the plan.
+	 * <p>
+	 * It ensures each flight has proper dimensions, including width, tread, and number of rises,
+	 * as per the rules defined for the most restrictive occupancy type.
+	 * <p>
+	 * If flights are missing, an appropriate error is added to the plan.
+	 *
+	 * @param plan                        the building plan being validated
+	 * @param errors                      map containing validation errors
+	 * @param block                       the block in which the flight is located
+	 * @param scrutinyDetail2            scrutiny details for width validation
+	 * @param scrutinyDetail3            scrutiny details for tread validation
+	 * @param scrutinyDetailRise         scrutiny details for rise validation
+	 * @param mostRestrictiveOccupancyType the most restrictive occupancy type for rule evaluation
+	 * @param floor                       the floor where the general stair is present
+	 * @param typicalFloorValues         map containing typical floor information
+	 * @param generalStair               the general stair object containing flights
+	 * @param generalStairCount          the index or count of general stairs being validated
+	 */
 	
 	private void validateFlight(Plan plan, HashMap<String, String> errors, Block block, ScrutinyDetail scrutinyDetail2,
 	        ScrutinyDetail scrutinyDetail3, ScrutinyDetail scrutinyDetailRise, OccupancyTypeHelper mostRestrictiveOccupancyType,
@@ -251,6 +338,23 @@ public class GeneralStair extends FeatureProcess {
 	        handleMissingFlights(plan, errors, block, floor);
 	    }
 	}
+	
+	/**
+	 * Validates a single flight object by checking its width, tread, and number of rises.
+	 *
+	 * @param plan                        the building plan
+	 * @param errors                      map of error messages
+	 * @param block                       the block in the plan
+	 * @param scrutinyDetail2            scrutiny details for flight width
+	 * @param scrutinyDetail3            scrutiny details for flight tread
+	 * @param scrutinyDetailRise         scrutiny details for flight rises
+	 * @param mostRestrictiveOccupancyType the most restrictive occupancy type
+	 * @param floor                       the floor containing the flight
+	 * @param typicalFloorValues         map containing values related to typical floor repetition
+	 * @param generalStair               the stair object to which this flight belongs
+	 * @param flight                      the flight object to be validated
+	 */
+
 	private void validateSingleFlight(Plan plan, HashMap<String, String> errors, Block block,
 	        ScrutinyDetail scrutinyDetail2, ScrutinyDetail scrutinyDetail3, ScrutinyDetail scrutinyDetailRise,
 	        OccupancyTypeHelper mostRestrictiveOccupancyType, Floor floor, Map<String, Object> typicalFloorValues,
@@ -285,6 +389,23 @@ public class GeneralStair extends FeatureProcess {
 	        plan.addErrors(errors);
 	    }
 	}
+	
+	/**
+	 * Validates the width of the flight against required rules.
+	 *
+	 * @param plan             the plan object
+	 * @param errors           error map
+	 * @param scrutinyDetail2  scrutiny details for reporting
+	 * @param floor            current floor
+	 * @param block            current block
+	 * @param typicalFloorValues map with typical floor repetition details
+	 * @param generalStair     the general stair object
+	 * @param flight           the flight being validated
+	 * @param flightWidths     list of measured flight widths
+	 * @param mostRestrictiveOccupancyType the most restrictive occupancy type
+	 * @param flightLayerName  layer name of the flight
+	 */
+
 	private void validateFlightWidth(Plan plan, HashMap<String, String> errors, ScrutinyDetail scrutinyDetail2,
 	        Floor floor, Block block, Map<String, Object> typicalFloorValues, org.egov.common.entity.edcr.GeneralStair generalStair,
 	        Flight flight, List<BigDecimal> flightWidths, OccupancyTypeHelper mostRestrictiveOccupancyType, String flightLayerName) {
@@ -298,6 +419,23 @@ public class GeneralStair extends FeatureProcess {
 	        plan.addErrors(errors);
 	    }
 	}
+	
+	/**
+	 * Validates the tread (length of step) of the flight.
+	 *
+	 * @param plan             the plan object
+	 * @param errors           map containing error messages
+	 * @param block            the block in which validation is occurring
+	 * @param scrutinyDetail3  scrutiny details for treads
+	 * @param floor            current floor
+	 * @param typicalFloorValues map with typical floor repetition info
+	 * @param generalStair     stair object that includes the flight
+	 * @param flight           flight being validated
+	 * @param flightLengths    list of tread lengths
+	 * @param mostRestrictiveOccupancyType the occupancy type used for rule checks
+	 * @param flightLayerName  layer name of the flight
+	 */
+
 	private void validateFlightTread(Plan plan, HashMap<String, String> errors, Block block, ScrutinyDetail scrutinyDetail3,
 	        Floor floor, Map<String, Object> typicalFloorValues, org.egov.common.entity.edcr.GeneralStair generalStair,
 	        Flight flight, List<BigDecimal> flightLengths, OccupancyTypeHelper mostRestrictiveOccupancyType, String flightLayerName) {
@@ -315,6 +453,22 @@ public class GeneralStair extends FeatureProcess {
 	        plan.addErrors(errors);
 	    }
 	}
+	
+	/**
+	 * Validates the number of rises in the flight.
+	 *
+	 * @param plan             the plan object
+	 * @param errors           error map
+	 * @param block            block in which validation occurs
+	 * @param scrutinyDetailRise scrutiny detail for number of rises
+	 * @param floor            current floor
+	 * @param typicalFloorValues map with floor repetition info
+	 * @param generalStair     stair object containing the flight
+	 * @param flight           the flight to be validated
+	 * @param noOfRises        number of rises in the flight
+	 * @param flightLayerName  name of the flight layer
+	 */
+
 	private void validateFlightRises(Plan plan, HashMap<String, String> errors, Block block, ScrutinyDetail scrutinyDetailRise,
 	        Floor floor, Map<String, Object> typicalFloorValues, org.egov.common.entity.edcr.GeneralStair generalStair,
 	        Flight flight, BigDecimal noOfRises, String flightLayerName) {
@@ -334,12 +488,38 @@ public class GeneralStair extends FeatureProcess {
 	        plan.addErrors(errors);
 	    }
 	}
+	
+	/**
+	 * Adds error to the plan if no flight is defined for a given stair in a floor and block.
+	 *
+	 * @param plan   the plan object
+	 * @param errors map of error messages
+	 * @param block  current block
+	 * @param floor  current floor
+	 */
+
 	private void handleMissingFlights(Plan plan, HashMap<String, String> errors, Block block, Floor floor) {
 	    String error = String.format(FLIGHT_NOT_DEFINED_DESCRIPTION, block.getNumber(), floor.getNumber());
 	    errors.put(error, error);
 	    plan.addErrors(errors);
 	}
 
+
+	/**
+	 * Compares measured flight width with required width and adds result to the scrutiny report.
+	 *
+	 * @param plan                        the plan object
+	 * @param scrutinyDetail2            scrutiny detail for width
+	 * @param floor                       current floor
+	 * @param block                       current block
+	 * @param typicalFloorValues         typical floor repetition info
+	 * @param generalStair               the stair object
+	 * @param flight                     the flight object
+	 * @param flightWidths               measured widths of the flight
+	 * @param minFlightWidth             minimum measured width (may be recalculated)
+	 * @param mostRestrictiveOccupancyType the occupancy type for determining rule applicability
+	 * @return the minimum flight width used in validation
+	 */
 
 	private BigDecimal validateWidth(Plan plan, ScrutinyDetail scrutinyDetail2, Floor floor, Block block,
 			Map<String, Object> typicalFloorValues, org.egov.common.entity.edcr.GeneralStair generalStair,
@@ -375,6 +555,15 @@ public class GeneralStair extends FeatureProcess {
 	}
 
 
+	/**
+	 * Fetches the required minimum flight width from cached feature rules based on plan and occupancy.
+	 *
+	 * @param pl                         the plan object
+	 * @param block                      current block
+	 * @param mostRestrictiveOccupancyType the most restrictive occupancy type
+	 * @return permissible flight width as per rules or BigDecimal.ZERO if not found
+	 */
+
 	private BigDecimal getRequiredWidth(Plan pl, Block block, OccupancyTypeHelper mostRestrictiveOccupancyType) {
 
 
@@ -398,6 +587,15 @@ public class GeneralStair extends FeatureProcess {
 		return value;
 	}
 
+	/**
+	 * Returns the required landing width based on occupancy type.
+	 * Residential (code "A") requires 0.76m; others require 1.5m.
+	 *
+	 * @param block                      the block object (not used here but kept for consistency)
+	 * @param mostRestrictiveOccupancyType occupancy type to determine landing width
+	 * @return required landing width in meters
+	 */
+
 	private BigDecimal getRequiredLandingWidth(Block block, OccupancyTypeHelper mostRestrictiveOccupancyType) {
 
 		if (mostRestrictiveOccupancyType != null && mostRestrictiveOccupancyType.getType() != null
@@ -408,7 +606,27 @@ public class GeneralStair extends FeatureProcess {
 		}
 	}
 
-	
+	/**
+	 * Validates the tread of a stair flight by calculating the minimum tread based on 
+	 * the total length of all flight segments and the number of risers. If the number 
+	 * of risers is greater than the number of flights, the tread is calculated. 
+	 * Additionally, it validates the calculated tread against the required tread 
+	 * value based on occupancy type.
+	 *
+	 * @param plan                  The building plan object containing all plan-level details.
+	 * @param errors                Map to collect validation errors.
+	 * @param block                 The block to which the stair flight belongs.
+	 * @param scrutinyDetail3       Object to capture scrutiny details for reporting.
+	 * @param floor                 The floor on which the flight is located.
+	 * @param typicalFloorValues    Map containing typical floor configuration details.
+	 * @param generalStair          Staircase entity containing stair number and other info.
+	 * @param flight                The flight being validated.
+	 * @param flightLengths         List of lengths of all segments of the flight.
+	 * @param minTread              The minimum tread value, to be calculated or reused.
+	 * @param mostRestrictiveOccupancyType Occupancy type used to determine required tread rule.
+	 *
+	 * @return The calculated minimum tread value for the flight.
+	 */
 	private BigDecimal validateTread(Plan plan, HashMap<String, String> errors, Block block,
 	        ScrutinyDetail scrutinyDetail3, Floor floor, Map<String, Object> typicalFloorValues,
 	        org.egov.common.entity.edcr.GeneralStair generalStair, Flight flight, List<BigDecimal> flightLengths,
@@ -437,10 +655,32 @@ public class GeneralStair extends FeatureProcess {
 
 	    return minTread;
 	}
+	
+	/**
+	 * Calculates the total length of a stair flight by summing up all its segment lengths
+	 * and rounding the result to two decimal places.
+	 *
+	 * @param flightLengths List of individual flight segment lengths.
+	 * @return The total flight length, rounded to two decimal places.
+	 */
 	private BigDecimal calculateTotalFlightLength(List<BigDecimal> flightLengths) {
 	    BigDecimal totalLength = flightLengths.stream().reduce(BigDecimal.ZERO, BigDecimal::add);
 	    return Util.roundOffTwoDecimal(totalLength);
 	}
+	
+	/**
+	 * Compares the calculated minimum tread value with the required tread value and
+	 * records the result in the scrutiny report. Only runs validation for non-typical floors.
+	 *
+	 * @param plan               The building plan being processed.
+	 * @param scrutinyDetail3    Scrutiny detail for recording results.
+	 * @param floor              The floor on which the tread is being validated.
+	 * @param typicalFloorValues Map containing information about typical floor configuration.
+	 * @param generalStair       Stair entity associated with the tread.
+	 * @param flight             The flight being validated.
+	 * @param requiredTread      The tread value as per applicable rules.
+	 * @param minTread           The calculated minimum tread value.
+	 */
 	private void validateTreadAgainstRequired(Plan plan, ScrutinyDetail scrutinyDetail3, Floor floor,
 	        Map<String, Object> typicalFloorValues, org.egov.common.entity.edcr.GeneralStair generalStair,
 	        Flight flight, BigDecimal requiredTread, BigDecimal minTread) {
@@ -458,6 +698,18 @@ public class GeneralStair extends FeatureProcess {
 	            requiredTread.toString(), minTread.toString(),
 	            isValid ? Result.Accepted.getResultVal() : Result.Not_Accepted.getResultVal(), scrutinyDetail3);
 	}
+	
+	/**
+	 * Adds an error to the plan if the number of risers in the flight is less than or 
+	 * equal to the number of defined flight segments.
+	 *
+	 * @param plan         The plan where the error is to be recorded.
+	 * @param errors       Map to collect errors.
+	 * @param block        The block in which the error occurred.
+	 * @param floor        The floor containing the problematic flight.
+	 * @param generalStair The stair associated with the flight.
+	 * @param flight       The flight which has incorrect number of risers.
+	 */
 	private void addNoOfRisesError(Plan plan, HashMap<String, String> errors, Block block, Floor floor,
 	        org.egov.common.entity.edcr.GeneralStair generalStair, Flight flight) {
 
@@ -471,6 +723,14 @@ public class GeneralStair extends FeatureProcess {
 	}
 
 
+	/**
+	 * Retrieves the required tread value from the feature rules cache based on the 
+	 * most restrictive occupancy type.
+	 *
+	 * @param pl                           The plan from which rules are derived.
+	 * @param mostRestrictiveOccupancyType The most restrictive occupancy type used to find applicable rules.
+	 * @return The permissible tread value as per rule, or zero if no rule matches.
+	 */
 	private BigDecimal getRequiredTread(Plan pl, OccupancyTypeHelper mostRestrictiveOccupancyType) {
 
 		
@@ -494,6 +754,20 @@ public class GeneralStair extends FeatureProcess {
 		return value;
 	}
 
+	/**
+	 * Validates the number of risers in a flight against the permissible value 
+	 * from the rules. Adds the result to the scrutiny report for non-typical floors.
+	 *
+	 * @param plan               The plan being validated.
+	 * @param errors             Map to collect any validation errors.
+	 * @param block              The block containing the flight.
+	 * @param scrutinyDetail3    Object for collecting scrutiny output.
+	 * @param floor              The floor containing the flight.
+	 * @param typicalFloorValues Map with details of typical floors.
+	 * @param generalStair       Stair entity containing stair number info.
+	 * @param flight             The flight for which riser count is validated.
+	 * @param noOfRises          The actual number of risers in the flight.
+	 */
 	private void validateNoOfRises(Plan plan, HashMap<String, String> errors, Block block,
 			ScrutinyDetail scrutinyDetail3, Floor floor, Map<String, Object> typicalFloorValues,
 			org.egov.common.entity.edcr.GeneralStair generalStair, Flight flight, BigDecimal noOfRises) {

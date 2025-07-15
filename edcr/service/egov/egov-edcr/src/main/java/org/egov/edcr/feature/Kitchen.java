@@ -116,6 +116,14 @@ public class Kitchen extends FeatureProcess {
 
   
  
+    /**
+     * Processes the given Plan to validate kitchen room requirements like height, area, and width 
+     * based on occupancy type and rules defined in MDMS. Applies checks only for Residential (A) and 
+     * Commercial (F) occupancy types.
+     *
+     * @param pl The Plan object containing blocks, buildings, and room measurements.
+     * @return The updated Plan object after processing and applying kitchen validations.
+     */
     @Override
     public Plan process(Plan pl) {
         validate(pl);
@@ -141,6 +149,15 @@ public class Kitchen extends FeatureProcess {
         return pl;
     }
 
+    /**
+     * Processes kitchen requirements for all floors in a given block. Initializes the scrutiny detail
+     * report and validates kitchen-related room parameters for each floor.
+     *
+     * @param block         The Block object representing a section of the building.
+     * @param pl            The complete Plan object.
+     * @param occupancy     The most restrictive occupancy type applicable to the Plan.
+     * @param heightColors  Map of room height feature names to their corresponding color codes.
+     */
     private void processKitchenForBlock(Block block, Plan pl, OccupancyTypeHelper occupancy, Map<String, Integer> heightColors) {
         if (block.getBuilding() == null || block.getBuilding().getFloors().isEmpty()) return;
 
@@ -160,6 +177,16 @@ public class Kitchen extends FeatureProcess {
         pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
     }
 
+    /**
+     * Validates and processes kitchen rooms on a specific floor. It checks kitchen height, area, 
+     * and width against the expected values defined in MDMS feature rules.
+     *
+     * @param floor         The Floor object to be validated.
+     * @param block         The block that the floor belongs to.
+     * @param pl            The Plan object.
+     * @param occupancy     The most restrictive occupancy type.
+     * @param heightColors  Map of height feature color codes for different room types.
+     */
     private void processKitchenForFloor(Floor floor, Block block, Plan pl, OccupancyTypeHelper occupancy, Map<String, Integer> heightColors) {
         if (floor.getKitchen() == null) return;
 
@@ -195,6 +222,20 @@ public class Kitchen extends FeatureProcess {
         processRoomType(rooms, heightColors, kitchenDiningColor, rule.getKitchenDiningArea(), rule.getKitchenDiningWidth(), KITCHEN_DINING, floor, block, pl);
     }
 
+    /**
+     * Filters rooms based on the specified color code and validates each room type (kitchen, kitchen store,
+     * kitchen dining) for minimum required area and width. Adds the result to the report.
+     *
+     * @param rooms         List of room measurements on the floor.
+     * @param heightColors  Map of feature color names and their respective integer codes.
+     * @param color         The specific color code for the room type.
+     * @param minArea       Minimum required area for the room type.
+     * @param minWidth      Minimum required width for the room type.
+     * @param roomName      Name of the room type being validated.
+     * @param floor         The floor where the rooms are located.
+     * @param block         The block that the floor belongs to.
+     * @param pl            The Plan object.
+     */
     private void processRoomType(List<Measurement> rooms, Map<String, Integer> heightColors, String color, BigDecimal minArea,
                                  BigDecimal minWidth, String roomName, Floor floor, Block block, Plan pl) {
 
@@ -220,6 +261,19 @@ public class Kitchen extends FeatureProcess {
     }
 
 
+    /**
+     * Builds the validation result for a given parameter (height, area, width) and appends it to the 
+     * scrutiny detail report. Checks if the actual value meets or exceeds the expected value.
+     *
+     * @param pl                   The Plan object to which the result is added.
+     * @param floor                The floor for which the rule is being validated.
+     * @param expected             The expected value for the parameter (height/area/width).
+     * @param subRule              Sub-rule identifier from the regulations.
+     * @param subRuleDesc          Description of the sub-rule being checked.
+     * @param actual               Actual value extracted from the Plan.
+     * @param valid                Boolean flag representing whether the value is valid.
+     * @param typicalFloorValues   Map containing information about typical floor applicability.
+     */
     private void buildResult(Plan pl, Floor floor, BigDecimal expected, String subRule, String subRuleDesc,
             BigDecimal actual, boolean valid, Map<String, Object> typicalFloorValues) {
         if (!(Boolean) typicalFloorValues.get("isTypicalRepititiveFloor")
@@ -243,6 +297,17 @@ public class Kitchen extends FeatureProcess {
         }
     }
 
+    /**
+     * Populates a single scrutiny detail entry and appends it to the report output of the Plan.
+     *
+     * @param pl         The Plan object that contains the report.
+     * @param ruleNo     Rule number being validated.
+     * @param ruleDesc   Description of the rule.
+     * @param floor      Floor number or name where the rule is applied.
+     * @param expected   Expected value of the parameter (height, area, width).
+     * @param actual     Actual value found in the Plan.
+     * @param status     Result of the validation ("Accepted" or "Not Accepted").
+     */
     private void setReportOutputDetails(Plan pl, String ruleNo, String ruleDesc, String floor, String expected, String actual,
             String status) {
         Map<String, String> details = new HashMap<>();

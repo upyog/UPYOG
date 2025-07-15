@@ -92,6 +92,14 @@ public class BathRoom extends FeatureProcess {
         return pl;
     }
     
+    /**
+     * Processes the given {@link Plan} object to validate bathroom dimensions (area and width) on each floor of all blocks,
+     * based on the rules retrieved from MDMS configuration. Adds scrutiny details to the report if validations are performed.
+     *
+     * @param pl The plan to be processed.
+     * @return The processed plan with scrutiny details updated.
+     */
+    
     @Override
     public Plan process(Plan pl) {
         ScrutinyDetail scrutinyDetail = createScrutinyDetail();
@@ -107,6 +115,14 @@ public class BathRoom extends FeatureProcess {
         return pl;
     }
 
+    /**
+     * Processes an individual block within the plan to validate bathroom rules.
+     *
+     * @param plan            The plan containing the block.
+     * @param block           The block to be processed.
+     * @param scrutinyDetail  The scrutiny detail to which validation results will be added.
+     */
+    
     private void processBlock(Plan plan, Block block, ScrutinyDetail scrutinyDetail) {
         if (block.getBuilding() == null || block.getBuilding().getFloors() == null) return;
 
@@ -126,6 +142,16 @@ public class BathRoom extends FeatureProcess {
         }
     }
 
+    /**
+     * Processes an individual floor to extract bathroom measurements and perform validations.
+     *
+     * @param plan              The overall plan context.
+     * @param floor             The floor to process.
+     * @param permittedArea     The minimum required area for a bathroom.
+     * @param permittedMinWidth The minimum required width for a bathroom.
+     * @param scrutinyDetail    The scrutiny detail object to populate with validation results.
+     */
+    
     private void processFloor(Plan plan, Floor floor, BigDecimal permittedArea, BigDecimal permittedMinWidth,
                               ScrutinyDetail scrutinyDetail) {
         Room bathRoom = floor.getBathRoom();
@@ -139,6 +165,19 @@ public class BathRoom extends FeatureProcess {
         validateBathroom(plan, floor, rooms, heights, permittedArea, permittedMinWidth, scrutinyDetail);
     }
 
+    
+    /**
+     * Validates the area, width, and height of bathroom rooms on a floor against the permitted values.
+     * Adds the result to the scrutiny detail.
+     *
+     * @param plan              The plan context.
+     * @param floor             The floor under validation.
+     * @param rooms             The list of bathroom room measurements.
+     * @param heights           The list of bathroom room heights.
+     * @param permittedArea     The minimum permissible total bathroom area.
+     * @param permittedMinWidth The minimum permissible bathroom width.
+     * @param scrutinyDetail    The scrutiny detail object to update.
+     */
     private void validateBathroom(Plan plan, Floor floor, List<Measurement> rooms, List<RoomHeight> heights,
                                   BigDecimal permittedArea, BigDecimal permittedMinWidth, ScrutinyDetail scrutinyDetail) {
 
@@ -164,6 +203,12 @@ public class BathRoom extends FeatureProcess {
         scrutinyDetail.getDetail().add(resultRow);
     }
 
+    
+    /**
+     * Creates a new {@link ScrutinyDetail} object and initializes it with column headings.
+     *
+     * @return A new ScrutinyDetail instance with predefined column headers.
+     */
     private ScrutinyDetail createScrutinyDetail() {
         ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
         scrutinyDetail.setKey(Common_Bathroom);
@@ -175,6 +220,18 @@ public class BathRoom extends FeatureProcess {
         return scrutinyDetail;
     }
 
+    
+    /**
+     * Creates a map representing a single row of bathroom validation results for a floor.
+     *
+     * @param floor             The floor being validated.
+     * @param permittedArea     The required minimum bathroom area.
+     * @param permittedMinWidth The required minimum bathroom width.
+     * @param totalArea         The actual total bathroom area found.
+     * @param minWidth          The actual minimum bathroom width found.
+     * @param isAccepted        The result of the validation (true if passed).
+     * @return A map containing all details of the result row.
+     */
     private Map<String, String> createResultRow(Floor floor, BigDecimal permittedArea, BigDecimal permittedMinWidth,
                                                 BigDecimal totalArea, BigDecimal minWidth, boolean isAccepted) {
         Map<String, String> resultRow = new HashMap<>();

@@ -87,6 +87,12 @@ public class OverHangs extends FeatureProcess {
         return pl;
     }
 
+    /**
+     * Processes the given plan to validate overhangs for each block and floor.
+     *
+     * @param pl the plan object containing building data
+     * @return the updated plan with scrutiny results for overhangs
+     */
     @Override
     public Plan process(Plan pl) {
         Map<String, String> details = initializeRuleDetails();
@@ -99,6 +105,11 @@ public class OverHangs extends FeatureProcess {
         return pl;
     }
 
+    /**
+     * Initializes the rule details for overhang scrutiny.
+     *
+     * @return a map containing the rule number and description for overhangs
+     */
     private Map<String, String> initializeRuleDetails() {
         Map<String, String> details = new HashMap<>();
         details.put(RULE_NO, RULE_45);
@@ -106,6 +117,12 @@ public class OverHangs extends FeatureProcess {
         return details;
     }
 
+    /**
+     * Retrieves the permissible overhang width from MDMS rules.
+     *
+     * @param pl the plan object
+     * @return the permissible overhang value, or zero if not defined
+     */
     private BigDecimal getOverhangPermissibleValue(Plan pl) {
         List<Object> rules = cache.getFeatureRules(pl, MdmsFeatureConstants.OVERHANGS, false);
         Optional<MdmsFeatureRule> matchedRule = rules.stream()
@@ -115,6 +132,14 @@ public class OverHangs extends FeatureProcess {
         return matchedRule.map(MdmsFeatureRule::getPermissible).orElse(BigDecimal.ZERO);
     }
 
+    /**
+     * Processes a single block within the plan for overhang validations.
+     *
+     * @param block the block to process
+     * @param pl the parent plan object
+     * @param overHangsValue the permissible overhang value
+     * @param detailsTemplate the template map for rule details
+     */
     private void processBlock(Block block, Plan pl, BigDecimal overHangsValue, Map<String, String> detailsTemplate) {
         ScrutinyDetail scrutinyDetail = initializeScrutinyDetail(block);
 
@@ -130,6 +155,12 @@ public class OverHangs extends FeatureProcess {
         }
     }
 
+    /**
+     * Initializes the scrutiny detail structure for the given block.
+     *
+     * @param block the block for which scrutiny detail is created
+     * @return a new {@link ScrutinyDetail} instance with column headers set
+     */
     private ScrutinyDetail initializeScrutinyDetail(Block block) {
         ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
         scrutinyDetail.setKey("Block_" + block.getNumber() + "_Chajja");
@@ -142,6 +173,14 @@ public class OverHangs extends FeatureProcess {
         return scrutinyDetail;
     }
 
+    /**
+     * Processes a single floor to validate the overhang width against the permissible value.
+     *
+     * @param floor the floor to validate
+     * @param scrutinyDetail the scrutiny detail object to record the result
+     * @param overHangsValue the permissible overhang width
+     * @param detailsTemplate the rule details template
+     */
     private void processFloor(Floor floor, ScrutinyDetail scrutinyDetail, BigDecimal overHangsValue, Map<String, String> detailsTemplate) {
         if (floor.getOverHangs() == null || floor.getOverHangs().isEmpty()) {
             return;

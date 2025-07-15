@@ -111,6 +111,13 @@ public class HeadRoom extends FeatureProcess {
 		return new LinkedHashMap<>();
 	}
 
+	/**
+	 * Processes the headroom validation for each block in the plan.
+	 * It checks whether the provided headroom dimensions meet the permissible values defined in the feature rules.
+	 *
+	 * @param plan The plan object containing building blocks and headroom details.
+	 * @return The modified plan object with scrutiny results added.
+	 */
 	@Override
 	public Plan process(Plan plan) {
 		BigDecimal permissibleHeadroom = fetchPermissibleHeadroom(plan);
@@ -124,6 +131,12 @@ public class HeadRoom extends FeatureProcess {
 		return plan;
 	}
 
+	/**
+	 * Fetches the permissible headroom value defined under the HEAD_ROOM feature rules.
+	 *
+	 * @param plan The plan from which occupancy and context are used to filter applicable feature rules.
+	 * @return The permissible headroom value, or {@code BigDecimal.ZERO} if not found.
+	 */
 	private BigDecimal fetchPermissibleHeadroom(Plan plan) {
 		List<Object> rules = cache.getFeatureRules(plan, MdmsFeatureConstants.HEAD_ROOM, false);
 
@@ -131,6 +144,14 @@ public class HeadRoom extends FeatureProcess {
 				.orElse(BigDecimal.ZERO);
 	}
 
+	/**
+	 * Validates the minimum headroom provided in a block against the permissible limit.
+	 * If headroom dimensions are found, the result is added to the scrutiny detail of the plan.
+	 *
+	 * @param plan                The plan object to which the scrutiny results will be added.
+	 * @param block               The block being validated for headroom dimensions.
+	 * @param permissibleHeadroom The minimum permissible headroom as per rules.
+	 */
 	private void processHeadroomForBlock(Plan plan, Block block, BigDecimal permissibleHeadroom) {
 		org.egov.common.entity.edcr.HeadRoom headRoom = block.getBuilding().getHeadRoom();
 		if (headRoom == null || headRoom.getHeadRoomDimensions() == null
@@ -151,6 +172,12 @@ public class HeadRoom extends FeatureProcess {
 				minWidth.toString(), resultStatus);
 	}
 
+	/**
+	 * Creates a {@link ScrutinyDetail} object with predefined column headings for headroom validation.
+	 *
+	 * @param key The key identifying the scrutiny section (e.g., for a particular block).
+	 * @return A {@link ScrutinyDetail} object initialized with standard columns.
+	 */
 	private ScrutinyDetail createScrutinyDetail(String key) {
 		ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
 		scrutinyDetail.setKey(key);
@@ -162,6 +189,17 @@ public class HeadRoom extends FeatureProcess {
 		return scrutinyDetail;
 	}
 
+	/**
+	 * Adds a result row to the given scrutiny detail and appends it to the plan’s report output.
+	 *
+	 * @param plan         The plan object to which scrutiny details are appended.
+	 * @param scrutinyDetail The detail object to store rule evaluation results.
+	 * @param ruleNo       The rule number being evaluated.
+	 * @param ruleDesc     A short description of the rule.
+	 * @param expected     The expected value as per the rule.
+	 * @param actual       The actual value found in the plan.
+	 * @param status       The result of the evaluation (e.g., Accepted or Not Accepted).
+	 */
 	private void addScrutinyResult(Plan plan, ScrutinyDetail scrutinyDetail, String ruleNo, String ruleDesc,
 			String expected, String actual, String status) {
 		Map<String, String> details = new HashMap<>();

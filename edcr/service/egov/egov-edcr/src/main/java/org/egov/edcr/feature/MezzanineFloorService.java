@@ -92,6 +92,12 @@ public class MezzanineFloorService extends FeatureProcess {
         return pl;
     }
 
+    /**
+     * Retrieves the permissible rule values for mezzanine floors from the cached feature rules.
+     *
+     * @param pl the {@link Plan} object containing plan details
+     * @return a {@link MezzanineRuleValues} object containing permissible area, height, and built-up area ratio
+     */
     private MezzanineRuleValues getPermissibleMezzanineRuleValues(Plan pl) {
         BigDecimal area = BigDecimal.ZERO;
         BigDecimal height = BigDecimal.ZERO;
@@ -112,6 +118,15 @@ public class MezzanineFloorService extends FeatureProcess {
         return new MezzanineRuleValues(area, height, builtUp);
     }
 
+    /**
+     * Processes all mezzanine floors within a given block of the plan by validating each floor
+     * against the provided rule values and adding the results to the scrutiny report.
+     *
+     * @param pl the {@link Plan} object
+     * @param block the {@link Block} to process
+     * @param subRule the rule number or reference
+     * @param ruleValues the permissible rule values for mezzanine floors
+     */
     private void processBlockMezzanineFloors(Plan pl, Block block, String subRule, MezzanineRuleValues ruleValues) {
         scrutinyDetail = new ScrutinyDetail();
         scrutinyDetail.addColumnHeading(1, RULE_NO);
@@ -131,6 +146,15 @@ public class MezzanineFloorService extends FeatureProcess {
         pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
     }
 
+    /**
+     * Validates mezzanine floors on a given floor of a block against the permissible rule values.
+     *
+     * @param pl the {@link Plan} object
+     * @param block the {@link Block} that contains the floor
+     * @param floor the {@link Floor} to validate
+     * @param subRule the rule number or reference
+     * @param ruleValues the permissible rule values for mezzanine floors
+     */
     private void validateMezzanineFloors(Plan pl, Block block, Floor floor, String subRule, MezzanineRuleValues ruleValues) {
         BigDecimal builtUpArea = floor.getOccupancies().stream()
             .filter(occ -> !occ.getIsMezzanine() && occ.getBuiltUpArea() != null)
@@ -159,6 +183,17 @@ public class MezzanineFloorService extends FeatureProcess {
         }
     }
 
+    /**
+     * Validates the height of the given mezzanine floor against the permissible height rule.
+     *
+     * @param pl the {@link Plan} object
+     * @param mezzanine the {@link Occupancy} representing the mezzanine
+     * @param block the {@link Block} in which the mezzanine is located
+     * @param floor the {@link Floor} the mezzanine belongs to
+     * @param subRule the rule number or reference
+     * @param ruleValues the permissible rule values
+     * @param floorNo the floor number as a string for reporting
+     */
     private void validateMezzanineHeight(Plan pl, Occupancy mezzanine, Block block, Floor floor,
             String subRule, MezzanineRuleValues ruleValues, String floorNo) {
 
@@ -177,6 +212,15 @@ public class MezzanineFloorService extends FeatureProcess {
         }
     }
 
+    /**
+     * Validates the minimum built-up area of the mezzanine against the permissible minimum area rule.
+     *
+     * @param pl the {@link Plan} object
+     * @param mezzanine the {@link Occupancy} representing the mezzanine
+     * @param ruleValues the permissible rule values
+     * @param subRule the rule number or reference
+     * @param floorNo the floor number as a string for reporting
+     */	
     private void validateMezzanineMinArea(Plan pl, Occupancy mezzanine, MezzanineRuleValues ruleValues,
             String subRule, String floorNo) {
 
@@ -188,6 +232,17 @@ public class MezzanineFloorService extends FeatureProcess {
             ruleValues.area + SQMTRS, actual + SQMTRS, status);
     }
 
+    /**
+     * Validates the maximum permissible area for a mezzanine, which should not exceed 1/3 of the built-up area.
+     *
+     * @param pl the {@link Plan} object
+     * @param mezzanine the {@link Occupancy} representing the mezzanine
+     * @param mezzArea the net area of the mezzanine after deduction
+     * @param builtUpArea the total built-up area of the floor
+     * @param ruleValues the permissible rule values
+     * @param subRule the rule number or reference
+     * @param floorNo the floor number as a string for reporting
+     */
     private void validateMezzanineMaxArea(Plan pl, Occupancy mezzanine, BigDecimal mezzArea, BigDecimal builtUpArea,
             MezzanineRuleValues ruleValues, String subRule, String floorNo) {
 
@@ -199,7 +254,10 @@ public class MezzanineFloorService extends FeatureProcess {
             oneThirdBuiltUp + SQMTRS, mezzArea + SQMTRS, status);
     }
 
-    // Holds permissible values
+
+/**
+ * Holds the permissible rule values for mezzanine floor validation.
+ */
     private static class MezzanineRuleValues {
         BigDecimal area, height, builtUp;
 
@@ -210,17 +268,17 @@ public class MezzanineFloorService extends FeatureProcess {
         }
     }
     
-//  /**
-//  * Sets the scrutiny details for mezzanine floor validation.
-//  *
-//  * @param pl The plan object.
-//  * @param ruleNo The rule number.
-//  * @param ruleDesc The rule description.
-//  * @param floor The floor being validated.
-//  * @param expected The expected value.
-//  * @param actual The actual value provided.
-//  * @param status The validation status.
-//  */
+  /**
+  * Sets the scrutiny details for mezzanine floor validation.
+  *
+  * @param pl The plan object.
+  * @param ruleNo The rule number.
+  * @param ruleDesc The rule description.
+  * @param floor The floor being validated.
+  * @param expected The expected value.
+  * @param actual The actual value provided.
+  * @param status The validation status.
+  */
  private void setReportOutputDetails(Plan pl, String ruleNo, String ruleDesc, String floor, String expected, String actual,
          String status) {
      Map<String, String> details = new HashMap<>();

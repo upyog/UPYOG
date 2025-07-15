@@ -80,11 +80,25 @@ public class PlantationGreenStrip extends FeatureProcess {
     @Autowired
   	CacheManagerMdms cache;
     
+    /**
+     * Validates the given plan.
+     * 
+     * @param pl The plan to be validated.
+     * @return Currently returns null as the validation logic is not implemented.
+     */
     @Override
     public Plan validate(Plan pl) {
         return null; // Validation logic is not implemented
     }
 
+    /**
+     * Processes the plantation green strip rules for the given plan.
+     * Checks if plantation green strip width conditions are met for each block,
+     * based on the permissible width and area threshold defined in the rule.
+     *
+     * @param pl The plan to be processed.
+     * @return The updated plan after plantation green strip scrutiny.
+     */
 
     @Override
     public Plan process(Plan pl) {
@@ -104,6 +118,12 @@ public class PlantationGreenStrip extends FeatureProcess {
         return pl;
     }
 
+    /**
+     * Retrieves the plantation green strip rule from MDMS for the given plan.
+     *
+     * @param pl The plan containing feature and configuration context.
+     * @return An Optional containing the first matched {@link MdmsFeatureRule}, if available.
+     */
     private Optional<MdmsFeatureRule> getPlantationGreenStripRule(Plan pl) {
         List<Object> rules = cache.getFeatureRules(pl, MdmsFeatureConstants.PLANTATION_GREEN_STRIP, false);
         return rules.stream()
@@ -112,10 +132,25 @@ public class PlantationGreenStrip extends FeatureProcess {
     }
 
 
+    /**
+     * Checks whether the plot area in the plan is greater than the given permissible value.
+     *
+     * @param pl               The plan containing the plot information.
+     * @param permissibleValue The threshold area value to compare against.
+     * @return true if plot area is greater than permissible value, false otherwise.
+     */
     private boolean isPlotAreaGreaterThanPermissible(Plan pl, BigDecimal permissibleValue) {
         return pl.getPlot() != null && pl.getPlot().getArea().compareTo(permissibleValue) > 0;
     }
 
+    /**
+     * Processes a single block in the plan to evaluate plantation green strip widths.
+     * Builds and adds scrutiny details based on the minimum green strip width found in the block.
+     *
+     * @param pl                          The plan being processed.
+     * @param block                       The block to be evaluated.
+     * @param plantationGreenStripMinWidth The minimum required width for plantation green strips.
+     */
     private void processBlock(Plan pl, Block block, BigDecimal plantationGreenStripMinWidth) {
         ScrutinyDetail scrutinyDetail = createScrutinyDetailForBlock(block);
 
@@ -141,6 +176,12 @@ public class PlantationGreenStrip extends FeatureProcess {
         }
     }
 
+    /**
+     * Creates a {@link ScrutinyDetail} object for the specified block for plantation green strip width check.
+     *
+     * @param block The block for which scrutiny details are to be created.
+     * @return A configured {@link ScrutinyDetail} object with column headings.
+     */
     private ScrutinyDetail createScrutinyDetailForBlock(Block block) {
         ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
         scrutinyDetail.addColumnHeading(1, RULE_NO);
@@ -152,6 +193,16 @@ public class PlantationGreenStrip extends FeatureProcess {
         return scrutinyDetail;
     }
 
+    /**
+     * Builds a result entry and appends it to the plan's scrutiny report output.
+     *
+     * @param pl         The plan to which the scrutiny detail will be added.
+     * @param scrutinyDetail The scrutiny detail being populated.
+     * @param valid      Whether the validation passed.
+     * @param description Description of the validation being checked.
+     * @param permited   Permissible value as per rule.
+     * @param provided   Provided value in the plan.
+     */
     private void buildResult(Plan pl, ScrutinyDetail scrutinyDetail, boolean valid, String description, String permited,
                              String provided) {
         Map<String, String> details = new HashMap<>();
