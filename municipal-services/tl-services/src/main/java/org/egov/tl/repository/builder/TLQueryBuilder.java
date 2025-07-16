@@ -3,6 +3,7 @@ package org.egov.tl.repository.builder;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.egov.tl.config.TLConfiguration;
 import org.egov.tl.util.TLConstants;
@@ -142,11 +143,31 @@ public class TLQueryBuilder {
             }
 
             if (criteria.getApplicationNumber() != null) {
-                String searchPattern="%" + criteria.getApplicationNumber().toLowerCase() + "%";
-                addClauseIfRequired(preparedStmtList, builder);
-                builder.append(" LOWER(tl.applicationnumber) like ? ");
-                preparedStmtList.add(searchPattern);
+                String applicationNumberStr = criteria.getApplicationNumber().trim();
+
+                if (applicationNumberStr.contains(",")) {
+                    // Handle multiple application numbers
+                    List<String> applicationNumbers = Arrays.asList(applicationNumberStr.split(","));
+                    applicationNumbers = applicationNumbers.stream()
+                                        .map(String::trim)
+                                        .filter(s -> !s.isEmpty())
+                                        .map(String::toLowerCase)
+                                        .collect(Collectors.toList());
+
+                    addClauseIfRequired(preparedStmtList, builder);
+                    builder.append(" LOWER(tl.applicationnumber) IN (")
+                           .append(createQuery(applicationNumbers))
+                           .append(") ");
+                    addToPreparedStatement(preparedStmtList, applicationNumbers);
+                } else {
+                    // Handle single application number with LIKE
+                    String searchPattern = "%" + applicationNumberStr.toLowerCase() + "%";
+                    addClauseIfRequired(preparedStmtList, builder);
+                    builder.append(" LOWER(tl.applicationnumber) LIKE ? ");
+                    preparedStmtList.add(searchPattern);
+                }
             }
+
 
             List<String> status = criteria.getStatus();
             if (!CollectionUtils.isEmpty(status)) {
