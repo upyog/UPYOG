@@ -95,4 +95,22 @@ public class DashboardService {
         return buildMap(propertyRepository.getTotalinterestCollection(),
                 v -> v.getUsagecategory() + ":" + v.getTodayinterestcollection());
     }
+    
+    ////////////////////WITH DATE//////////////////
+    
+    public Map<String, String> wardWithTanentListDate(Long startDate,Long endDate) {
+        return buildMap(propertyRepository.getTotalapplicationwithwardWithDate(startDate,endDate),
+                v -> String.valueOf(v.getCount()));
+    }
+    
+    public Map<String, String> wardWithClosedCountDate(Long startDate,Long endDate) {
+        return buildMap(propertyRepository.getTotalapplicationwitClosedWithDate( startDate, endDate),
+                v -> String.valueOf(v.getCount()));
+    }
+    
+    public Map<String, String> wardWithPropertyCountDate(Long startDate,Long endDate) {
+        return buildMap(propertyRepository.getTotalpropertyCountWithDate(startDate, endDate),
+                v -> v.getUsagecategory() + ":" + v.getTotalpropertytaxamountpaid());
+    }
+    /////////////////////////////////////DATE////////////////////////////////////////////////
 }
