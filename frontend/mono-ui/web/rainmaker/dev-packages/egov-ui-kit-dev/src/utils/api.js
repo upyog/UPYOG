@@ -165,7 +165,52 @@ export const httpRequest = async (
   // unhandled error
   throw new Error(apiError);
 };
+export const httpRequestNew = async (
+  endPoint,
+  action,
+  queryObject = [],
+  requestBody = {},
+  headers = [],
+  customRequestInfo = {},
+  ignoreTenantId = false,
+  isGetMethod = false
+) => {
+  let apiError = "Api Error";
+  if (headers)
+    instance.defaults = Object.assign(instance.defaults, {
+      headers,
+    });
 
+  try {
+    if (isGetMethod) {
+      const getResponse = await instance.get(endPoint, wrapRequestBody(requestBody, action, customRequestInfo));
+      const getResponseStatus = parseInt(getResponse.status, 10);
+      if (getResponseStatus === 200 || getResponseStatus === 201) {
+        return getResponse.data;
+      }
+    } else {
+      console.log("getTenantId",getTenantId())
+      const response = await instance.post("/user/_search?tenantId=pg.citya", wrapRequestBody(JSON.parse(JSON.stringify(requestBody)), "post", customRequestInfo));
+      const responseStatus = parseInt(response.status, 10);
+      if (responseStatus === 200 || responseStatus === 201) {
+        return response.data;
+      }
+    }
+  } catch (error) {
+    const { data, status } = error.response;
+    if (hasTokenExpired(status, data)) {
+      apiError = "INVALID_TOKEN";
+    } else {
+      apiError =
+        (data.hasOwnProperty("Errors") && data.Errors && data.Errors.length && data.Errors[0].message) ||
+        (data.hasOwnProperty("error") && data.error.fields && data.error.fields.length && data.error.fields[0].message) ||
+        (data.hasOwnProperty("error_description") && data.error_description) ||
+        apiError;
+    }
+  }
+  // unhandled error
+  throw new Error(apiError);
+};
 export const uploadFile = async (endPoint, module, file, ulbLevel) => {
   // Bad idea to fetch from local storage, change as feasible
   const tenantId = getTenantId() ? (ulbLevel ? commonConfig.tenantId : commonConfig.tenantId) : "";

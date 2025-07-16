@@ -10,7 +10,7 @@ import ClickAwayListener from "@material-ui/core/ClickAwayListener";
 import { connect } from "react-redux";
 import get from "lodash/get";
 import { setRoute, setLocalizationLabels } from "egov-ui-kit/redux/app/actions";
-
+import { httpRequestNew } from "../../../../../utils/api";
 import "./index.css";
 
 class UserSettings extends Component {
@@ -20,6 +20,7 @@ class UserSettings extends Component {
     tenantSelected: getTenantId(),
     tempTenantSelected: getTenantId(),
     open: false,
+    photoUrl : ""
   };
   style = {
     baseStyle: {
@@ -62,7 +63,42 @@ class UserSettings extends Component {
     this.setState({ ...this.state, languageSelected: value });
     this.props.fetchLocalizationLabel(value);
   };
-
+  componentDidMount() {
+    this.checkk();
+  }
+checkk = async ()=>{
+  const {userInfo} =this.props;
+    let payload = await httpRequestNew(
+      "post",
+      `/user/_search?tenantId=${userInfo.tenantId}`,
+      "_search",
+      {
+        tenantId: userInfo.tenantId,
+        uuid: [userInfo.uuid]
+      }
+    );
+    if (payload && payload.user && payload.user.hasOwnProperty("length")) {
+      if (payload.user.length === 0) {
+        dispatch(
+          toggleSnackbar(
+            true,
+            {
+              labelName: "This mobile number is not registered !",
+              labelKey: "ERR_MOBILE_NUMBER_NOT_REGISTERED"
+            },
+            "info"
+          )
+        );
+      } else {
+ if(payload.user[0].photo !== "")
+ {
+  this.setState({photoUrl:payload.user[0].photo})
+ }
+      }
+    }
+  
+}
+   
   handleTenantChange = () => {
     let tenantSelected = this.state.tempTenantSelected;
     this.setState({ ...this.state, tenantSelected: tenantSelected });
@@ -131,6 +167,7 @@ class UserSettings extends Component {
     /**
      * Get All tenant id's from (user info -> roles) to populate dropdown
      */
+    console.log("userInfouserInfo",userInfo,userInfo.photo)
     let tenantIdsList = get(userInfo, "roles", []).map((role) => {
       return role.tenantId;
     });
@@ -195,7 +232,7 @@ class UserSettings extends Component {
             }}
             className="userSettingsInnerContainer"
           >
-            <Image width={"33px"} circular={true} source={userInfo.photo || emptyFace} />
+            <Image width={"33px"} circular={true} source={this.state.photoUrl || ""} />
             <Icon action="navigation" name="arrow-drop-down" color="#767676" style={style.arrowIconStyle} />
 
             <div className="user-acc-info">
