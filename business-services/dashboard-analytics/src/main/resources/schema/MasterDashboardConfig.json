@@ -11120,28 +11120,29 @@
                   "chartType": "metric",
                   "filter": "",
                   "headers": []
-                },
+                }
+               
+              ]
+            },
+            {
+              "id": 450,
+              "name": "Total Cumulative Collection",
+              "dimensions": {
+                "height": 350,
+                "width": 7
+              },
+              "vizType": "chart",
+              "label": "",
+              "noUnit": true,
+              "isCollapsible": false,
+              "charts": [
                 {
-                  "id": 450,
-                  "name": "Total Cumulative Collection",
-                  "dimensions": {
-                    "height": 350,
-                    "width": 7
-                  },
-                  "vizType": "chart",
-                  "label": "",
-                  "noUnit": true,
-                  "isCollapsible": false,
-                  "charts": [
-                    {
-                      "id": "financeIncomeExpenditureForLines",
-                      "name": "Monthly",
-                      "code": "",
-                      "chartType": "line",
-                      "filter": "",
-                      "headers": []
-                    }
-                  ]
+                  "id": "financeIncomeExpenditureForLines",
+                  "name": "Monthly",
+                  "code": "",
+                  "chartType": "line",
+                  "filter": "",
+                  "headers": []
                 }
               ]
             }
