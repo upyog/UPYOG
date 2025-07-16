@@ -3,6 +3,7 @@ package org.egov.collection.model;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
 import lombok.*;
+import org.egov.collection.validation.SanitizeHtml;
 import org.egov.collection.web.contract.Bill;
 
 
@@ -25,6 +26,7 @@ public class PaymentDetail {
     @Size(max=64)
     private String paymentId;
 
+    @SanitizeHtml
     @Size(max=64)
     @JsonProperty("tenantId")
     private String tenantId;
@@ -40,6 +42,7 @@ public class PaymentDetail {
     @JsonProperty("receiptNumber")
     private String receiptNumber;
 
+    @SanitizeHtml
     @Size(max=64)
     @JsonProperty("manualReceiptNumber")
     private String manualReceiptNumber;
@@ -50,9 +53,11 @@ public class PaymentDetail {
     @JsonProperty("receiptDate")
     private Long receiptDate = null;
 
+    @SanitizeHtml
     @JsonProperty("receiptType")
     private String receiptType = null;
 
+    @SanitizeHtml
     @JsonProperty("businessService")
     private String businessService;
 

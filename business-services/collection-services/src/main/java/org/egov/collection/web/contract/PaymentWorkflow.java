@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 import com.fasterxml.jackson.databind.JsonNode;
 import lombok.Data;
+import org.egov.collection.validation.SanitizeHtml;
 import org.hibernate.validator.constraints.Length;
 
 
@@ -12,6 +13,7 @@ import jakarta.validation.constraints.NotNull;
 @Data
 public class PaymentWorkflow {
 
+    @SanitizeHtml
     @NotNull
     @Length(min = 1)
     private String paymentId;
@@ -19,10 +21,12 @@ public class PaymentWorkflow {
     @NotNull
     private PaymentAction action;
 
+    @SanitizeHtml
     @NotNull
     @Length(min = 1)
     private String tenantId;
 
+    @SanitizeHtml
     private String reason;
 
     private JsonNode additionalDetails;
