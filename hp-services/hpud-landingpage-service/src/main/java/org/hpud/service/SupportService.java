@@ -45,6 +45,7 @@ public class SupportService {
 	public String support(int limit) {
 		
 		List<String> duplicateMobileNumber = userRepo.getDuplicateMobiles(limit);
+		log.info("duplicateMobile {}",duplicateMobileNumber);
 		RequestInfo requestInfo = userService.createDefaultRequestInfo();
 		UserSearchRequest request = UserSearchRequest.builder().tenantId("hp").requestInfo(requestInfo).build();
 		int chunkSize = 100;
