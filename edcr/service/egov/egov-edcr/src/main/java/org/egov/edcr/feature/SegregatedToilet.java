@@ -91,6 +91,15 @@ public class SegregatedToilet extends FeatureProcess {
         return pl; // No specific validation logic implemented
     }
 
+    
+    /**
+     * Processes the segregated toilet rules for a given plan.
+     * Initializes scrutiny details, retrieves rule values, evaluates whether rules are applicable,
+     * and applies validations for required segregated toilets and minimum dimension.
+     *
+     * @param pl the {@link Plan} object to be processed
+     * @return the updated {@link Plan} object with scrutiny results
+     */
     @Override
     public Plan process(Plan pl) {
 
@@ -110,6 +119,11 @@ public class SegregatedToilet extends FeatureProcess {
         return pl;
     }
 
+    /**
+     * Initializes the scrutiny detail with headers specific to segregated toilet checks.
+     *
+     * @return an initialized {@link ScrutinyDetail} object
+     */
     private ScrutinyDetail initializeScrutinyDetail() {
         ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
         scrutinyDetail.setKey(Common_Segregated_Toilet);
@@ -121,12 +135,23 @@ public class SegregatedToilet extends FeatureProcess {
         return scrutinyDetail;
     }
 
+    /**
+     * Initializes and returns rule-related details including the rule number.
+     *
+     * @return a map containing rule details
+     */
     private Map<String, String> initializeDetails() {
         Map<String, String> details = new HashMap<>();
         details.put(RULE_NO, RULE_59_10);
         return details;
     }
 
+    /**
+     * Fetches segregated toilet rule values from the feature rules for the given plan.
+     *
+     * @param pl the plan object
+     * @return an object containing segregated toilet rule thresholds and requirements
+     */
     private SegregatedToiletRuleValues getSegregatedToiletRuleValues(Plan pl) {
         List<Object> rules = cache.getFeatureRules(pl, MdmsFeatureConstants.SEGREGATED_TOILET, false);
         Optional<MdmsFeatureRule> matchedRule = rules.stream().map(obj -> (MdmsFeatureRule) obj).findFirst();
@@ -145,6 +170,12 @@ public class SegregatedToilet extends FeatureProcess {
         return values;
     }
 
+    /**
+     * Finds the minimum distance from any segregated toilet to the main entrance in the plan.
+     *
+     * @param pl the plan object
+     * @return the minimum distance as {@link BigDecimal}; returns zero if not applicable
+     */
     private BigDecimal findMinimumDistanceToEntrance(Plan pl) {
         if (pl.getSegregatedToilet() != null && !pl.getSegregatedToilet().getDistancesToMainEntrance().isEmpty()) {
             return pl.getSegregatedToilet().getDistancesToMainEntrance().stream().reduce(BigDecimal::min).orElse(BigDecimal.ZERO);
@@ -152,6 +183,12 @@ public class SegregatedToilet extends FeatureProcess {
         return BigDecimal.ZERO;
     }
 
+    /**
+     * Determines the maximum building height among all blocks in the plan.
+     *
+     * @param pl the plan object
+     * @return the maximum building height
+     */
     private BigDecimal getMaxBuildingHeight(Plan pl) {
         BigDecimal max = BigDecimal.ZERO;
         for (Block b : pl.getBlocks()) {
@@ -162,6 +199,12 @@ public class SegregatedToilet extends FeatureProcess {
         return max;
     }
 
+    /**
+     * Determines the maximum number of floors above ground among all blocks in the plan.
+     *
+     * @param pl the plan object
+     * @return the maximum number of floors above ground
+     */
     private BigDecimal getMaxFloorsAboveGround(Plan pl) {
         BigDecimal max = BigDecimal.ZERO;
         for (Block b : pl.getBlocks()) {
@@ -172,6 +215,15 @@ public class SegregatedToilet extends FeatureProcess {
         return max;
     }
 
+    /**
+     * Evaluates whether the segregated toilet rule is applicable based on building type, height, built-up area, and floors.
+     *
+     * @param pl the plan object
+     * @param vals the rule values to compare against
+     * @param maxHeight the maximum height of the building
+     * @param maxFloors the maximum number of floors above ground
+     * @return true if the rule is applicable, false otherwise
+     */
     private boolean isRuleApplicable(Plan pl, SegregatedToiletRuleValues vals, BigDecimal maxHeight, BigDecimal maxFloors) {
         if (pl.getVirtualBuilding() == null || pl.getVirtualBuilding().getMostRestrictiveFarHelper() == null
                 || pl.getVirtualBuilding().getMostRestrictiveFarHelper().getType() == null)
@@ -188,6 +240,14 @@ public class SegregatedToilet extends FeatureProcess {
                     && totalBuiltUp != null && totalBuiltUp.compareTo(vals.sTValueFour) >= 0);
     }
 
+    /**
+     * Validates and adds scrutiny details for the segregated toilet requirement based on availability in the plan.
+     *
+     * @param pl the plan object
+     * @param scrutinyDetail the scrutiny detail to update
+     * @param details the rule metadata details
+     * @param vals the rule values
+     */
     private void processSegregatedToilet(Plan pl, ScrutinyDetail scrutinyDetail, Map<String, String> details, SegregatedToiletRuleValues vals) {
         if (pl.getSegregatedToilet() != null && pl.getSegregatedToilet().getSegregatedToilets() != null
                 && !pl.getSegregatedToilet().getSegregatedToilets().isEmpty()) {
@@ -206,6 +266,15 @@ public class SegregatedToilet extends FeatureProcess {
         pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
     }
 
+    /**
+     * Validates and adds scrutiny details for the minimum dimension requirement for segregated toilets.
+     *
+     * @param pl the plan object
+     * @param scrutinyDetail the scrutiny detail to update
+     * @param details the rule metadata details
+     * @param vals the rule values
+     * @param minDimension the minimum measured dimension
+     */
     private void processMinimumDimension(Plan pl, ScrutinyDetail scrutinyDetail, Map<String, String> details,
                                          SegregatedToiletRuleValues vals, BigDecimal minDimension) {
 
@@ -223,7 +292,10 @@ public class SegregatedToilet extends FeatureProcess {
         pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
     }
 
-    // Helper class to encapsulate rule values
+
+/**
+ * Helper class to encapsulate segregated toilet rule values fetched from MDMS.
+ */
     private static class SegregatedToiletRuleValues {
         BigDecimal sTValueOne = BigDecimal.ZERO;
         BigDecimal sTValueTwo = BigDecimal.ZERO;

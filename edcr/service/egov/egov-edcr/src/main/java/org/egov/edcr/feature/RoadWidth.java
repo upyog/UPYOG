@@ -96,11 +96,26 @@ public class RoadWidth extends FeatureProcess {
         return new LinkedHashMap<>(); // No amendments defined for this feature
     }
 
+    /**
+     * Validates the provided Plan object.
+     * No specific validation logic is implemented for road width in this method.
+     *
+     * @param pl the Plan object to validate
+     * @return the same Plan object without modifications
+     */
     @Override
     public Plan validate(Plan pl) {
         return pl; // No validation logic currently implemented
     }
 
+    /**
+     * Processes the Plan object to verify if the provided road width meets
+     * the required minimum width for the most restrictive occupancy type.
+     * Adds appropriate scrutiny detail entries to the report.
+     *
+     * @param pl the Plan object to process
+     * @return the modified Plan object with road width scrutiny results
+     */
     @Override
     public Plan process(Plan pl) {
         if (pl.getPlanInformation() == null || pl.getPlanInformation().getRoadWidth() == null) {
@@ -153,6 +168,13 @@ public class RoadWidth extends FeatureProcess {
 
         return pl;
     }
+    /**
+     * Retrieves the permissible road width values for various occupancy types from the MDMS feature rules.
+     * These values are used to validate the provided road width against the expected requirement.
+     *
+     * @param plan the Plan object for which rules are fetched
+     * @return a map of occupancy codes to their respective permissible road width values
+     */
     public Map<String, BigDecimal> getOccupancyValues(Plan plan) {
         BigDecimal roadWidthValue = BigDecimal.ZERO;
 
@@ -177,6 +199,13 @@ public class RoadWidth extends FeatureProcess {
         return roadWidthValues;
     }
     
+
+/**
+ * Constructs a ScrutinyDetail object pre-populated with column headers
+ * relevant for road width validation.
+ *
+ * @return a configured ScrutinyDetail object ready to store validation results
+ */
     private ScrutinyDetail buildRoadWidthScrutinyDetail() {
         ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
         scrutinyDetail.setKey(Common_Road_Width);

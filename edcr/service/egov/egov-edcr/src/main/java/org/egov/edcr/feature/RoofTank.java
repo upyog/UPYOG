@@ -83,11 +83,25 @@ public class RoofTank extends FeatureProcess {
 	@Autowired
 	CacheManagerMdms cache;
 	
+	/**
+	 * Validates the provided Plan object.
+	 * Currently, no validation logic is applied for roof tank height feature.
+	 *
+	 * @param pl the Plan object to validate
+	 * @return the same Plan object without modifications
+	 */
 	@Override
 	public Plan validate(Plan pl) {
 		return pl; // No validation logic defined for this feature
 	}
 
+	/**
+	 * Processes the Plan object to evaluate roof tank height compliance.
+	 * It adds scrutiny details to the report output for each block in the plan.
+	 *
+	 * @param pl the Plan object to process
+	 * @return the modified Plan object with scrutiny results
+	 */
 	@Override
 	public Plan process(Plan pl) {
 	    ScrutinyDetail scrutinyDetail = createScrutinyDetail();
@@ -102,6 +116,12 @@ public class RoofTank extends FeatureProcess {
 	    return pl;
 	}
 
+	/**
+	 * Creates and initializes a ScrutinyDetail object with appropriate column headings
+	 * for the roof tank feature.
+	 *
+	 * @return a new ScrutinyDetail object
+	 */
 	private ScrutinyDetail createScrutinyDetail() {
 	    ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
 	    scrutinyDetail.setKey("Common_Roof Tanks");
@@ -113,12 +133,23 @@ public class RoofTank extends FeatureProcess {
 	    return scrutinyDetail;
 	}
 
+	/**
+	 * Initializes the result details map with rule number for roof tank validation.
+	 *
+	 * @return a map containing initial result details
+	 */
 	private Map<String, String> initializeResultDetails() {
 	    Map<String, String> details = new HashMap<>();
 	    details.put(RULE_NO, RULE_44_A);
 	    return details;
 	}
 
+	/**
+	 * Fetches the permissible roof tank height value from the MDMS rules for the plan.
+	 *
+	 * @param pl the Plan object
+	 * @return the permissible roof tank height as BigDecimal, or BigDecimal.ZERO if not found
+	 */
 	private BigDecimal getPermissibleRoofTankValue(Plan pl) {
 	    List<Object> rules = cache.getFeatureRules(pl, MdmsFeatureConstants.ROOF_TANK, false);
 	    Optional<MdmsFeatureRule> matchedRule = rules.stream()
@@ -128,6 +159,16 @@ public class RoofTank extends FeatureProcess {
 	    return matchedRule.map(MdmsFeatureRule::getPermissible).orElse(BigDecimal.ZERO);
 	}
 
+	/**
+	 * Processes a single block in the plan to evaluate roof tank height against the permissible value.
+	 * Adds appropriate scrutiny detail entries based on compliance.
+	 *
+	 * @param pl              the Plan object
+	 * @param block           the Block to process
+	 * @param roofTankValue   the permissible height for roof tanks
+	 * @param scrutinyDetail  the ScrutinyDetail object to which results are added
+	 * @param details         a map of result details used for reporting
+	 */
 	private void processBlockForRoofTank(Plan pl, Block block, BigDecimal roofTankValue,
 	                                     ScrutinyDetail scrutinyDetail, Map<String, String> details) {
 	    BigDecimal minHeight = BigDecimal.ZERO;

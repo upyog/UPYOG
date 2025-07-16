@@ -97,6 +97,17 @@ public class RiverDistance extends FeatureProcess {
         return pl;
     }
 
+    /**
+     * Processes the given {@link Plan} object to evaluate minimum required distances
+     * from river-related features (e.g., protection wall, embankment, river edges),
+     * and adds scrutiny details accordingly.
+     *
+     * <p>The method uses river proximity information from the plan and checks compliance
+     * with applicable MDMS rules. Scrutiny results are added to the report output.
+     *
+     * @param pl the plan to be processed
+     * @return the processed {@link Plan} object with river distance scrutiny results added
+     */
     @Override
     public Plan process(Plan pl) {
         ScrutinyDetail scrutinyDetail = createRiverScrutinyDetail();
@@ -176,6 +187,12 @@ public class RiverDistance extends FeatureProcess {
 
   
 
+    /**
+     * Creates and initializes a {@link ScrutinyDetail} object specifically for river distance scrutiny.
+     * Adds standard column headings such as rule number, description, permitted, provided, and status.
+     *
+     * @return the initialized {@link ScrutinyDetail} object for river distance reporting
+     */
     private ScrutinyDetail createRiverScrutinyDetail() {
         ScrutinyDetail detail = new ScrutinyDetail();
         detail.setKey(Common_River_Distance);
@@ -187,10 +204,28 @@ public class RiverDistance extends FeatureProcess {
         return detail;
     }
 
+    /**
+     * Returns the minimum value from a list of {@link BigDecimal} values.
+     * If the list is empty, returns {@link BigDecimal#ZERO}.
+     *
+     * @param values a list of BigDecimal distances
+     * @return the minimum distance or BigDecimal.ZERO if list is empty
+     */
     private BigDecimal getMin(List<BigDecimal> values) {
         return values.stream().reduce(BigDecimal::min).orElse(BigDecimal.ZERO);
     }
 
+
+	/**
+	 * Builds and returns a details map representing the result of a river distance check.
+	 * Includes rule number, description, permitted value (with comparison symbol), provided value, and status.
+	 *
+	 * @param ruleNo the rule number being applied
+	 * @param description the description of the check
+	 * @param permitted the permitted distance as per rules
+	 * @param provided the actual distance provided in the plan
+	 * @return a map of result details for scrutiny
+	 */
     private Map<String, String> buildDetails(String ruleNo, String description, BigDecimal permitted, BigDecimal provided) {
         Map<String, String> detail = new HashMap<>();
         detail.put(RULE_NO, ruleNo);
