@@ -319,15 +319,16 @@ public class PetRegistrationService {
 		String lastVaccineDate = null; // Declare outside the try block
 
 		try {
-		    // Define the input format of the String (example: yyyy-MM-dd)
-		    SimpleDateFormat inputDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+			if (lastVaccineDateStr != null) {
+			    SimpleDateFormat inputDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+			    Date lastVaccineDateObj = inputDateFormat.parse(lastVaccineDateStr);
 
-		    // Parse the String into a Date object
-		    Date lastVaccineDateObj = inputDateFormat.parse(lastVaccineDateStr);
-
-		    // Format the Date object into the desired format (example: dd-MM-yyyy)
-		    SimpleDateFormat outputDateFormat = new SimpleDateFormat("dd-MM-yyyy");
-		    lastVaccineDate = outputDateFormat.format(lastVaccineDateObj);
+			    SimpleDateFormat outputDateFormat = new SimpleDateFormat("dd-MM-yyyy");
+			    lastVaccineDate = outputDateFormat.format(lastVaccineDateObj);
+			} 
+//			else {
+//			    lastVaccineDate = null; // or assign a default value if needed
+//			}
 
 		} catch (Exception e) {
 		    System.err.println("Error parsing last vaccine date: " + e.getMessage());
@@ -418,7 +419,7 @@ public class PetRegistrationService {
 			    || StringUtils.isEmpty(petRegistrationApplication.getPetDetails().getBreedType())
 			    || StringUtils.isEmpty(petRegistrationApplication.getAddress().getAddressLine1())
 			    || null == petRegistrationApplication.getAuditDetails().getCreatedTime()
-			    || StringUtils.isEmpty(petRegistrationApplication.getPetDetails().getLastVaccineDate())
+//			    || StringUtils.isEmpty(petRegistrationApplication.getPetDetails().getLastVaccineDate())
 			    || StringUtils.isEmpty(petRegistrationApplication.getApplicantName())
 			    || StringUtils.isEmpty(petRegistrationApplication.getMobileNumber())) {
 			    

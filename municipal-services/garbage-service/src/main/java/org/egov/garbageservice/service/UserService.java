@@ -134,7 +134,7 @@ public class UserService {
 	        int end = Math.min(i + batchSize, allGarbageAccounts.size());
 	        List<GarbageAccount> batch = allGarbageAccounts.subList(i, end);
 			for (GarbageAccount account : batch) {
-			    log.info("Check "+account.getMobileNumber()+" "+ (isValidPhoneNumber(account.getMobileNumber()) && isValidUserName(account.getName())));
+//			    log.info("Check "+account.getMobileNumber()+" "+ (isValidPhoneNumber(account.getMobileNumber()) && isValidUserName(account.getName())));
 				if (isValidPhoneNumber(account.getMobileNumber()) && isValidUserName(account.getName())) {
 					processGarbageAccount(requestInfo, role, account);
 				}
