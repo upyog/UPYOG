@@ -41,7 +41,22 @@ class Profile extends Component {
     return (
       <Screen loading={loading} className="employee-profile-screen">
         <div className="profile-container">
-          <ProfileFormHOC onClickAddPic={onClickAddPic} img={img} profilePic={profilePic} />
+        <ProfileFormHOC
+  onClickAddPic={onClickAddPic}
+  img={img}
+  profilePic={profilePic}
+  submit={{
+    label: "Save",
+    id: "profile-save-action",
+    type: "submit",
+    onClick: async () => {
+      // You may want to trigger validation or submit logic here
+      // If it's already saved through redux-form, you can reload
+      window.location.reload();
+    },
+  }}
+/>
+
         </div>
         {openUploadSlide && (
           <UploadDrawer removeFile={removeProfilePic} setProfilePic={setProfilePic} onClickAddPic={onClickAddPic} openUploadSlide={openUploadSlide} />
