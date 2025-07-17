@@ -1,6 +1,7 @@
 package org.egov.pt.repository.builder;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -163,16 +164,16 @@ public class DashboardDataQueryBuilder {
 		if (!StringUtils.isEmpty(dashboardDataSearch.getFromDate())
 				&& !StringUtils.isEmpty(dashboardDataSearch.getToDate())) {
 
-			fromEpoch = convertDateToEpochMillis(dashboardDataSearch.getFromDate());
-			toEpoch = convertDateToEpochMillis(dashboardDataSearch.getToDate());
+			fromEpoch = getStartOfDayEpochMillis(dashboardDataSearch.getFromDate());
+			toEpoch = getEndOfDayEpochMillis(dashboardDataSearch.getToDate());
 		} else {
-			fromEpoch = convertDateToEpochMillis("01-04-2025");
+			fromEpoch = getStartOfDayEpochMillis("01-04-2025");
 
 			LocalDate currentDate = LocalDate.now();
 			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
 			String formattedDate = currentDate.format(formatter);
 
-			toEpoch = convertDateToEpochMillis(formattedDate);
+			toEpoch = getEndOfDayEpochMillis(formattedDate);
 		}
 		stringBuilder.append(" AND epp.createdtime BETWEEN ").append(fromEpoch).append(" AND ").append(toEpoch);
 
@@ -185,7 +186,6 @@ public class DashboardDataQueryBuilder {
 		} else {
 			stringBuilder.append(" AND epa.ward_no != ''");
 		}
-
 		return stringBuilder.toString();
 	}
 
@@ -195,12 +195,12 @@ public class DashboardDataQueryBuilder {
 	   
 	    long fromEpoch, toEpoch;
 	    if (StringUtils.hasText(dashboardDataSearch.getFromDate()) && StringUtils.hasText(dashboardDataSearch.getToDate())) {
-	        fromEpoch = convertDateToEpochMillis(dashboardDataSearch.getFromDate());
-	        toEpoch = convertDateToEpochMillis(dashboardDataSearch.getToDate());
+	        fromEpoch = getStartOfDayEpochMillis(dashboardDataSearch.getFromDate());
+	        toEpoch = getEndOfDayEpochMillis(dashboardDataSearch.getToDate());
 	    } else {
-	        fromEpoch = convertDateToEpochMillis("01-04-2025");
+	        fromEpoch = getStartOfDayEpochMillis("01-04-2025");
 	        String today = LocalDate.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));
-	        toEpoch = convertDateToEpochMillis(today);
+	        toEpoch = getEndOfDayEpochMillis(today);
 	    }
 	    filterBuilder.append(" AND ewpv.lastmodifiedtime BETWEEN ").append(fromEpoch).append(" AND ").append(toEpoch);
 
@@ -230,16 +230,16 @@ public class DashboardDataQueryBuilder {
 		if (!StringUtils.isEmpty(dashboardDataSearch.getFromDate())
 				&& !StringUtils.isEmpty(dashboardDataSearch.getToDate())) {
 
-			fromEpoch = convertDateToEpochMillis(dashboardDataSearch.getFromDate());
-			toEpoch = convertDateToEpochMillis(dashboardDataSearch.getToDate());
+			fromEpoch = getStartOfDayEpochMillis(dashboardDataSearch.getFromDate());
+			toEpoch = getEndOfDayEpochMillis(dashboardDataSearch.getToDate());
 		} else {
-			fromEpoch = convertDateToEpochMillis("01-04-2025");
+			fromEpoch = getStartOfDayEpochMillis("01-04-2025");
 
 			LocalDate currentDate = LocalDate.now();
 			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
 			String formattedDate = currentDate.format(formatter);
 
-			toEpoch = convertDateToEpochMillis(formattedDate);
+			toEpoch = getEndOfDayEpochMillis(formattedDate);
 		}
 		stringBuilder.append(" AND ewpv.lastmodifiedtime BETWEEN ").append(fromEpoch).append(" AND ").append(toEpoch);
 
@@ -264,16 +264,16 @@ public class DashboardDataQueryBuilder {
 		if (!StringUtils.isEmpty(dashboardDataSearch.getFromDate())
 				&& !StringUtils.isEmpty(dashboardDataSearch.getToDate())) {
 
-			fromEpoch = convertDateToEpochMillis(dashboardDataSearch.getFromDate());
-			toEpoch = convertDateToEpochMillis(dashboardDataSearch.getToDate());
+			fromEpoch = getStartOfDayEpochMillis(dashboardDataSearch.getFromDate());
+			toEpoch = getEndOfDayEpochMillis(dashboardDataSearch.getToDate());
 		} else {
-			fromEpoch = convertDateToEpochMillis("01-04-2025");
+			fromEpoch = getStartOfDayEpochMillis("01-04-2025");
 
 			LocalDate currentDate = LocalDate.now();
 			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
 			String formattedDate = currentDate.format(formatter);
 
-			toEpoch = convertDateToEpochMillis(formattedDate);
+			toEpoch = getEndOfDayEpochMillis(formattedDate);
 		}
 		stringBuilder.append(" AND epaa.createdtime BETWEEN ").append(fromEpoch).append(" AND ").append(toEpoch);
 
@@ -298,16 +298,16 @@ public class DashboardDataQueryBuilder {
 		if (!StringUtils.isEmpty(dashboardDataSearch.getFromDate())
 				&& !StringUtils.isEmpty(dashboardDataSearch.getToDate())) {
 
-			fromEpoch = convertDateToEpochMillis(dashboardDataSearch.getFromDate());
-			toEpoch = convertDateToEpochMillis(dashboardDataSearch.getToDate());
+			fromEpoch = getStartOfDayEpochMillis(dashboardDataSearch.getFromDate());
+			toEpoch = getEndOfDayEpochMillis(dashboardDataSearch.getToDate());
 		} else {
-			fromEpoch = convertDateToEpochMillis("01-04-2025");
+			fromEpoch = getStartOfDayEpochMillis("01-04-2025");
 
 			LocalDate currentDate = LocalDate.now();
 			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
 			String formattedDate = currentDate.format(formatter);
 
-			toEpoch = convertDateToEpochMillis(formattedDate);
+			toEpoch = getEndOfDayEpochMillis(formattedDate);
 		}
 		stringBuilder.append(" AND epp.createdtime BETWEEN ").append(fromEpoch).append(" AND ").append(toEpoch);
 
@@ -332,16 +332,16 @@ public class DashboardDataQueryBuilder {
 		if (!StringUtils.isEmpty(dashboardDataSearch.getFromDate())
 				&& !StringUtils.isEmpty(dashboardDataSearch.getToDate())) {
 
-			fromEpoch = convertDateToEpochMillis(dashboardDataSearch.getFromDate());
-			toEpoch = convertDateToEpochMillis(dashboardDataSearch.getToDate());
+			fromEpoch = getStartOfDayEpochMillis(dashboardDataSearch.getFromDate());
+			toEpoch = getEndOfDayEpochMillis(dashboardDataSearch.getToDate());
 		} else {
-			fromEpoch = convertDateToEpochMillis("01-04-2025");
+			fromEpoch = getStartOfDayEpochMillis("01-04-2025");
 
 			LocalDate currentDate = LocalDate.now();
 			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
 			String formattedDate = currentDate.format(formatter);
 
-			toEpoch = convertDateToEpochMillis(formattedDate);
+			toEpoch = getEndOfDayEpochMillis(formattedDate);
 		}
 		stringBuilder.append(" AND ep.createdtime BETWEEN ").append(fromEpoch).append(" AND ").append(toEpoch);
 
@@ -366,16 +366,16 @@ public class DashboardDataQueryBuilder {
 		if (!StringUtils.isEmpty(dashboardDataSearch.getFromDate())
 				&& !StringUtils.isEmpty(dashboardDataSearch.getToDate())) {
 
-			fromEpoch = convertDateToEpochMillis(dashboardDataSearch.getFromDate());
-			toEpoch = convertDateToEpochMillis(dashboardDataSearch.getToDate());
+			fromEpoch = getStartOfDayEpochMillis(dashboardDataSearch.getFromDate());
+			toEpoch = getEndOfDayEpochMillis(dashboardDataSearch.getToDate());
 		} else {
-			fromEpoch = convertDateToEpochMillis("01-04-2025");
+			fromEpoch = getStartOfDayEpochMillis("01-04-2025");
 
 			LocalDate currentDate = LocalDate.now();
 			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
 			String formattedDate = currentDate.format(formatter);
 
-			toEpoch = convertDateToEpochMillis(formattedDate);
+			toEpoch = getEndOfDayEpochMillis(formattedDate);
 		}
 		stringBuilder.append(" AND ewpv.createdtime BETWEEN ").append(fromEpoch).append(" AND ").append(toEpoch);
 
@@ -400,16 +400,16 @@ public class DashboardDataQueryBuilder {
 		if (!StringUtils.isEmpty(dashboardDataSearch.getFromDate())
 				&& !StringUtils.isEmpty(dashboardDataSearch.getToDate())) {
 
-			fromEpoch = convertDateToEpochMillis(dashboardDataSearch.getFromDate());
-			toEpoch = convertDateToEpochMillis(dashboardDataSearch.getToDate());
+			fromEpoch = getStartOfDayEpochMillis(dashboardDataSearch.getFromDate());
+			toEpoch = getEndOfDayEpochMillis(dashboardDataSearch.getToDate());
 		} else {
-			fromEpoch = convertDateToEpochMillis("01-04-2025");
+			fromEpoch = getStartOfDayEpochMillis("01-04-2025");
 
 			LocalDate currentDate = LocalDate.now();
 			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
 			String formattedDate = currentDate.format(formatter);
 
-			toEpoch = convertDateToEpochMillis(formattedDate);
+			toEpoch = getEndOfDayEpochMillis(formattedDate);
 		}
 		stringBuilder.append(" AND ewpv.createdtime BETWEEN ").append(fromEpoch).append(" AND ").append(toEpoch);
 
@@ -434,16 +434,16 @@ public class DashboardDataQueryBuilder {
 		if (!StringUtils.isEmpty(dashboardDataSearch.getFromDate())
 				&& !StringUtils.isEmpty(dashboardDataSearch.getToDate())) {
 
-			fromEpoch = convertDateToEpochMillis(dashboardDataSearch.getFromDate());
-			toEpoch = convertDateToEpochMillis(dashboardDataSearch.getToDate());
+			fromEpoch = getStartOfDayEpochMillis(dashboardDataSearch.getFromDate());
+			toEpoch = getEndOfDayEpochMillis(dashboardDataSearch.getToDate());
 		} else {
-			fromEpoch = convertDateToEpochMillis("01-04-2025");
+			fromEpoch = getStartOfDayEpochMillis("01-04-2025");
 
 			LocalDate currentDate = LocalDate.now();
 			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
 			String formattedDate = currentDate.format(formatter);
 
-			toEpoch = convertDateToEpochMillis(formattedDate);
+			toEpoch = getEndOfDayEpochMillis(formattedDate);
 		}
 		stringBuilder.append(" AND ep.createdtime BETWEEN ").append(fromEpoch).append(" AND ").append(toEpoch);
 
@@ -468,16 +468,16 @@ public class DashboardDataQueryBuilder {
 		if (!StringUtils.isEmpty(dashboardDataSearch.getFromDate())
 				&& !StringUtils.isEmpty(dashboardDataSearch.getToDate())) {
 
-			fromEpoch = convertDateToEpochMillis(dashboardDataSearch.getFromDate());
-			toEpoch = convertDateToEpochMillis(dashboardDataSearch.getToDate());
+			fromEpoch = getStartOfDayEpochMillis(dashboardDataSearch.getFromDate());
+			toEpoch = getEndOfDayEpochMillis(dashboardDataSearch.getToDate());
 		} else {
-			fromEpoch = convertDateToEpochMillis("01-04-2025");
+			fromEpoch = getStartOfDayEpochMillis("01-04-2025");
 
 			LocalDate currentDate = LocalDate.now();
 			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
 			String formattedDate = currentDate.format(formatter);
 
-			toEpoch = convertDateToEpochMillis(formattedDate);
+			toEpoch = getEndOfDayEpochMillis(formattedDate);
 		}
 		stringBuilder.append(" AND ep.createdtime BETWEEN ").append(fromEpoch).append(" AND ").append(toEpoch);
 
@@ -501,11 +501,11 @@ public class DashboardDataQueryBuilder {
 	    long fromEpoch, toEpoch;
 	    if (!StringUtils.isEmpty(dashboardDataSearch.getFromDate()) &&
 	        !StringUtils.isEmpty(dashboardDataSearch.getToDate())) {
-	        fromEpoch = convertDateToEpochMillis(dashboardDataSearch.getFromDate());
-	        toEpoch = convertDateToEpochMillis(dashboardDataSearch.getToDate());
+	        fromEpoch = getStartOfDayEpochMillis(dashboardDataSearch.getFromDate());
+	        toEpoch = getEndOfDayEpochMillis(dashboardDataSearch.getToDate());
 	    } else {
-	        fromEpoch = convertDateToEpochMillis("01-04-2025");
-	        toEpoch = convertDateToEpochMillis(LocalDate.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy")));
+	        fromEpoch = getStartOfDayEpochMillis("01-04-2025");
+	        toEpoch = getEndOfDayEpochMillis(LocalDate.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy")));
 	    }
 
 	    String dateFilter = " AND pay.createdtime BETWEEN " + fromEpoch + " AND " + toEpoch;
@@ -529,16 +529,16 @@ public class DashboardDataQueryBuilder {
 		if (!StringUtils.isEmpty(dashboardDataSearch.getFromDate())
 				&& !StringUtils.isEmpty(dashboardDataSearch.getToDate())) {
 
-			fromEpoch = convertDateToEpochMillis(dashboardDataSearch.getFromDate());
-			toEpoch = convertDateToEpochMillis(dashboardDataSearch.getToDate());
+			fromEpoch = getStartOfDayEpochMillis(dashboardDataSearch.getFromDate());
+			toEpoch = getEndOfDayEpochMillis(dashboardDataSearch.getToDate());
 		} else {
-			fromEpoch = convertDateToEpochMillis("01-04-2025");
+			fromEpoch = getStartOfDayEpochMillis("01-04-2025");
 
 			LocalDate currentDate = LocalDate.now();
 			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
 			String formattedDate = currentDate.format(formatter);
 
-			toEpoch = convertDateToEpochMillis(formattedDate);
+			toEpoch = getEndOfDayEpochMillis(formattedDate);
 		}
 		stringBuilder.append(" AND pay.createdtime BETWEEN ").append(fromEpoch).append(" AND ").append(toEpoch);
 
@@ -563,16 +563,16 @@ public class DashboardDataQueryBuilder {
 		if (!StringUtils.isEmpty(dashboardDataSearch.getFromDate())
 				&& !StringUtils.isEmpty(dashboardDataSearch.getToDate())) {
 
-			fromEpoch = convertDateToEpochMillis(dashboardDataSearch.getFromDate());
-			toEpoch = convertDateToEpochMillis(dashboardDataSearch.getToDate());
+			fromEpoch = getStartOfDayEpochMillis(dashboardDataSearch.getFromDate());
+			toEpoch = getEndOfDayEpochMillis(dashboardDataSearch.getToDate());
 		} else {
-			fromEpoch = convertDateToEpochMillis("01-04-2025");
+			fromEpoch = getStartOfDayEpochMillis("01-04-2025");
 
 			LocalDate currentDate = LocalDate.now();
 			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
 			String formattedDate = currentDate.format(formatter);
 
-			toEpoch = convertDateToEpochMillis(formattedDate);
+			toEpoch = getEndOfDayEpochMillis(formattedDate);
 		}
 		stringBuilder.append(" AND pay.createdtime BETWEEN ").append(fromEpoch).append(" AND ").append(toEpoch);
 
@@ -589,11 +589,19 @@ public class DashboardDataQueryBuilder {
 		return stringBuilder.toString();
 	}
 
-	public static long convertDateToEpochMillis(String dateStr) {
+	public static long getStartOfDayEpochMillis(String dateStr) {
 	    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
 	    LocalDate localDate = LocalDate.parse(dateStr, formatter);
-	    ZonedDateTime zonedDateTime = localDate.atStartOfDay(ZoneId.of("UTC"));
-	    return zonedDateTime.toInstant().toEpochMilli();
+	    ZonedDateTime startOfDay = localDate.atStartOfDay(ZoneId.of("UTC"));
+	    return startOfDay.toInstant().toEpochMilli();
 	}
+
+	public static long getEndOfDayEpochMillis(String dateStr) {
+	    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+	    LocalDate localDate = LocalDate.parse(dateStr, formatter);
+	    ZonedDateTime endOfDay = localDate.atTime(LocalTime.MAX).atZone(ZoneId.of("UTC"));
+	    return endOfDay.toInstant().toEpochMilli();
+	}
+
 
 }
