@@ -1,4 +1,4 @@
-import { CardLabel, CitizenInfoLabel, FormStep, Loader, TextInput } from "@egovernments/digit-ui-react-components";
+import { CardLabel, CitizenInfoLabel, FormStep, Loader, TextInput } from "@upyog/digit-ui-react-components";
 import React, { useState, useEffect } from "react";
 import Timeline from "../components/TLTimeline";
 import { currentFinancialYear } from "../utils";

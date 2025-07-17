@@ -1,4 +1,4 @@
-import { Loader } from "@egovernments/digit-ui-react-components";
+import { Loader } from "@upyog/digit-ui-react-components";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { pdfDocumentName, pdfDownloadLink } from "../utils";
@@ -27,10 +27,10 @@ function PropertyDocument({ property = {} }) {
           {documents?.map((document, index) => {
             let documentLink = pdfDownloadLink(data.pdfFiles, document?.fileStoreId);
             return (
-              <a target="_" href={documentLink} style={{ minWidth: "160px" }} key={index}>
+              document && document.documentType ? <a target="_" href={documentLink} style={{ minWidth: "160px" }} key={index}>
                 <PDFSvg width={85} height={100} style={{ background: "#f6f6f6", padding: "8px" }} />
                 <p style={{ marginTop: "8px" }}>{t(`PT_${document?.documentType.replace(".","_")}`)}</p>
-              </a>
+              </a> : ''
             );
           })}
         </div>

@@ -30,7 +30,7 @@
               svg{
                   height: 20px;
                   width: 20px;
-                  fill: #a82227;
+                  fill: #0f4f9e;
                   margin: auto;
               }
           }
@@ -51,14 +51,14 @@
 }
 .citizen .ServicesSection .CardBasedOptions:nth-child(odd){
   .employeeCustomCard{
-    background-image: url("https://in-egov-assets.s3.ap-south-1.amazonaws.com/images/top-red-card.png");
-    background-size: cover
+    background-size: cover;
+    background-color: #0f4f9e !important;
   }
 }
 .citizen .ServicesSection .CardBasedOptions:nth-child(even){
   .employeeCustomCard{
-background-image: url("https://in-egov-assets.s3.ap-south-1.amazonaws.com/images/top-green-card.png");
-background-size: cover
+background-size: cover;
+background-color: #20878f !important;
   }
 }
 .citizen .employeeCustomCard {

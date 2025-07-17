@@ -1,7 +1,7 @@
 import React, { useState, Fragment, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { Card, CardSectionHeader, CardLabel } from "@egovernments/digit-ui-react-components";
-import { Modal, Dropdown, Row, StatusTable, TextInput, Toast } from "@egovernments/digit-ui-react-components";
+import { Card, CardSectionHeader, CardLabel } from "@upyog/digit-ui-react-components";
+import { Modal, Dropdown, Row, StatusTable, TextInput, Toast } from "@upyog/digit-ui-react-components";
 import cloneDeep from "lodash/cloneDeep";
 
 const Penality_menu = [
@@ -81,7 +81,7 @@ const WSFeeEstimation = ({ wsAdditionalDetails, workflowDetails }) => {
     };
 
     const Close = () => (
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#FFFFFF">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="red">
             <path d="M0 0h24v24H0V0z" fill="none" />
             <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z" />
         </svg>
@@ -196,7 +196,7 @@ const WSFeeEstimation = ({ wsAdditionalDetails, workflowDetails }) => {
                         </div>
                         <hr style={{ border: "1px solid #D6D5D4", color: "#D6D5D4", margin: "16px 0px" }}></hr>
                         <div>
-                            <Row className="border-none" key={`WS_COMMON_TOTAL_AMT`} label={`${t(`WS_COMMON_TOTAL_AMT`)}`} text={<span>&#8377;{billDetails?.totalAmount || 0}</span>} textStyle={{fontSize: "24px", fontWeight: "700"}}/>
+                            <Row className="border-none" key={`WS_COMMON_TOTAL_AMT`} label={`${t(`WS_COMMON_TOTAL_AMT`)}`} text={<span>&#8377;{billDetails?.totalAmount || 0}</span>} textStyle={{fontSize: "16px", fontWeight: "700"}}/>
                             <Row className="border-none" key={`CS_INBOX_STATUS_FILTER`} label={`${t(`CS_INBOX_STATUS_FILTER`)}`} text={isPaid ? t("WS_COMMON_PAID_LABEL") : t("WS_COMMON_NOT_PAID")} textStyle={!isPaid ? { color: "#D4351C" } : { color: "#00703C" }} />
                         </div>
                     </StatusTable>}
@@ -206,7 +206,7 @@ const WSFeeEstimation = ({ wsAdditionalDetails, workflowDetails }) => {
                             showPopUp(true)
                         }}
                     >
-                        <span style={{ cursor: "pointer", color: "#a82227" }}>{t("WS_PAYMENT_ADD_REBATE_PENALTY")}</span>
+                        <span style={{ cursor: "pointer", color: "#0f4f9e" }}>{t("WS_PAYMENT_ADD_REBATE_PENALTY")}</span>
                     </div> : null
                 }
                 {popup &&

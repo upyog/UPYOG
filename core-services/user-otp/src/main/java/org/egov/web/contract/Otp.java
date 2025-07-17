@@ -15,6 +15,7 @@ public class Otp {
     private static final String USER_REGISTRATION = "register";
     private static final String PASSWORD_RESET = "passwordreset";
     private static final String USER_LOGIN = "login";
+    private static final String OWNER_VALIDATE = "owner_validate";
     private String mobileNumber;
     private String tenantId;
     private String type;
@@ -32,6 +33,9 @@ public class Otp {
             return OtpRequestType.LOGIN;
         } else if (PASSWORD_RESET.equalsIgnoreCase(type)) {
             return OtpRequestType.PASSWORD_RESET;
+        }
+        else if (OWNER_VALIDATE.equalsIgnoreCase(type)) {
+        	return OtpRequestType.OWNER_VALIDATE;
         }
         return null;
     }

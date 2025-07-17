@@ -2,6 +2,7 @@ package org.egov.domain.service;
 
 import static org.apache.commons.lang3.RandomStringUtils.randomNumeric;
 
+import java.util.List;
 import java.util.UUID;
 
 import org.egov.domain.exception.TokenValidationFailureException;
@@ -13,6 +14,7 @@ import org.egov.domain.model.ValidateRequest;
 import org.egov.persistence.repository.TokenRepository;
 import org.egov.web.util.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.*;
 import org.springframework.security.crypto.password.*;
 import org.springframework.stereotype.Service;
@@ -28,6 +30,9 @@ public class TokenService {
     private OtpConfiguration otpConfiguration;
 
     private PasswordEncoder passwordEncoder;
+    
+    @Value("${egov.resend.otp.ttl}")
+    private String resendOtpttl;
 
     @Autowired
     public TokenService(TokenRepository tokenRepository, PasswordEncoder passwordEncoder, OtpConfiguration otpConfiguration) {
@@ -75,5 +80,14 @@ public class TokenService {
 
     public Token search(TokenSearchCriteria searchCriteria) {
         return tokenRepository.findBy(searchCriteria);
+    }
+    
+    public Token checkResend(TokenRequest tokenRequest) {
+        return tokenRepository.findByIdentity(tokenRequest);
+    }
+    
+    
+    public List<Token> checkResendCount(TokenRequest tokenRequest) {
+        return tokenRepository.findByIdentityAndTenantIdForLimitCount(tokenRequest);
     }
 }

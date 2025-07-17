@@ -1,0 +1,165 @@
+/**
+ * Created on Jun 9, 2025.
+ * 
+ * @author bdhal
+ */
+package org.egov.finance.inbox.validation;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+
+import org.egov.finance.inbox.entity.Function;
+import org.egov.finance.inbox.exception.InboxServiceException;
+import org.egov.finance.inbox.model.FunctionModel;
+import org.egov.finance.inbox.model.FundModel;
+import org.egov.finance.inbox.repository.FunctionRepository;
+import org.egov.finance.inbox.util.CommonUtils;
+import org.egov.finance.inbox.util.InboxConstants;
+import org.egov.finance.inbox.util.SpecificationHelper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
+import org.springframework.util.ObjectUtils;
+
+@Component
+public class FunctionValidation {
+	
+	@Autowired
+	CommonUtils commonUtils;
+	@Autowired
+	FunctionRepository functionRespository;
+
+	public Function modelToEntity(FunctionModel model) {
+
+		Function f = new Function();
+		f.setId(model.getId() != null ? model.getId() : null);
+		f.setIsActive(null != model.getIsActive() && model.getIsActive() ? true : false);
+		f.setName(null != model.getName() ? model.getName() : null);
+		f.setIsNotLeaf(model.getIsNotLeaf() ? true : false);
+		f.setCode(null != model.getCode() ? model.getCode() : null);
+		f.setLlevel(null != model.getLlevel() ? model.getLlevel() : null);
+		f.setType(null!=model.getType()?model.getType():null);
+		return f;
+	}
+
+	public FunctionModel entityTOModel(Function entity) {
+		FunctionModel f = new FunctionModel();
+		f.setId(entity.getId() != null ? entity.getId() : null);
+		f.setIsActive(entity.getIsActive() ? true : false);
+		f.setName(null != entity.getName() ? entity.getName() : null);
+		f.setIsNotLeaf(entity.getIsNotLeaf() ? true : false);
+		f.setCode(null != entity.getCode() ? entity.getCode() : null);
+		f.setParentId(null != entity.getParentId() ? entity.getParentId().getId() : null);
+		f.setLlevel(null != entity.getLlevel() ? entity.getLlevel() : null);
+		f.setType(null != entity.getType() ? entity.getType() : null);
+		f.setCreatedBy(null != entity.getCreatedBy() ? entity.getCreatedBy() : null);
+		f.setCreatedDate(null != entity.getCreatedDate() ? entity.getCreatedDate() : null);
+		f.setLastModifiedBy(null != entity.getLastModifiedBy() ? entity.getLastModifiedBy() : null);
+		f.setLastModifiedDate(null != entity.getLastModifiedDate() ? entity.getLastModifiedDate() : null);
+		
+		return f;
+	}
+
+	public void functionCreateNameAndCodeValidation(FunctionModel funcM) {
+		Map<String, String> errorMap = new HashMap<>();
+		
+			if(null==funcM.getName()||funcM.getName().isEmpty() || 
+				null==funcM.getCode()|| funcM.getCode().isEmpty()) {
+			errorMap.put(InboxConstants.INVALID_PARAMETERS, InboxConstants.INVALID_PARAMETERS_MSG);
+		}
+		if(errorMap.isEmpty()) {
+			Specification<Function> spec = Specification
+					.where(SpecificationHelper.<Function,String>equal("name", funcM.getName()))
+					.or(SpecificationHelper.<Function,String>equal("code", funcM.getCode()));
+			if (!functionRespository.findAll(spec).isEmpty())
+				errorMap.put(InboxConstants.CODE_NAME_NOT_UNIQUE, InboxConstants.CODE_NAME_NOT_UNIQUE_MSG);
+			}
+		if (!CollectionUtils.isEmpty(errorMap))
+			throw new InboxServiceException(errorMap);
+	}
+	
+	public void validateCreateRequestModel(FunctionModel funcM) {
+		Map<String, String> errorMap = new HashMap<>();
+		
+		if (!ObjectUtils.isEmpty(funcM.getId())) {
+			errorMap.put(InboxConstants.INVALID_ID_PASSED, InboxConstants.ID_CANNOT_BE_PASSED_IN_CREATION_MSG);
+		}
+		
+		if(ObjectUtils.isEmpty(funcM.getCode())) {
+			errorMap.put(InboxConstants.INVALID_CODE, InboxConstants.INVALID_CODE_MSG);
+			
+		}
+		if(ObjectUtils.isEmpty(funcM.getName())) {
+			errorMap.put(InboxConstants.INVALID_NAME, InboxConstants.INVALID_NAME_MSG);
+			
+		}
+		if(!errorMap.isEmpty())
+			throw new InboxServiceException(errorMap);
+	}
+	
+	public void validateUpdateRequestModel(FunctionModel funcM) {
+		Map<String, String> errorMap = new HashMap<>();
+		
+		if (ObjectUtils.isEmpty(funcM.getId())) {
+			errorMap.put(InboxConstants.INVALID_ID_PASSED, InboxConstants.INVALID_ID_PASSED_MESSAGE);
+		}
+		
+		if(ObjectUtils.isEmpty(funcM.getCode())) {
+			errorMap.put(InboxConstants.INVALID_CODE, InboxConstants.INVALID_CODE_MSG);
+			
+		}
+		if(ObjectUtils.isEmpty(funcM.getName())) {
+			errorMap.put(InboxConstants.INVALID_NAME, InboxConstants.INVALID_NAME_MSG);
+			
+		}
+		if(!errorMap.isEmpty())
+			throw new InboxServiceException(errorMap);
+	}
+	
+	
+	public void functionCodeNameValidationForUpdate(FunctionModel funcM,Set<String> updatedSet) {
+		Map<String, String> errorMap = new HashMap<>();
+		
+		if (updatedSet.contains("code") && !updatedSet.contains("name")){
+            Specification<Function> spec = Specification
+            		.where(SpecificationHelper.<Function,String>equal("code", funcM.getCode()));
+			functionRespository.findAll(spec).stream()
+			.filter(x->!x.getId().equals(funcM.getId()))
+			.findFirst()
+			.ifPresent(x->{
+				errorMap.put(InboxConstants.CODE_NOT_UNIQUE, InboxConstants.CODE_IS_ALREADY_EXISTS_MSG);
+			});	
+		}	
+		if (updatedSet.contains("name")&&!updatedSet.contains("code")) {
+				Specification<Function> spec =Specification
+						.where(SpecificationHelper.<Function, String>equal("name", funcM.getName()));
+			functionRespository.findAll(spec).stream()
+			.filter(x->!x.getId().equals(funcM.getId()))
+			.findFirst()
+			.ifPresent(x->{
+				errorMap.put(InboxConstants.NAME_NOT_UNIQUE, InboxConstants.NAME_IS_ALREADY_EXISTS_MSG);
+			});
+			
+		}
+		else  if(updatedSet.contains("name")&&updatedSet.contains("code")){
+			
+			Specification<Function> spec = Specification.where(
+				    SpecificationHelper.<Function, String>equal("name", funcM.getName())
+				).or(
+				    SpecificationHelper.<Function, String>equal("code", funcM.getCode())
+				);
+			functionRespository.findAll(spec).stream()
+			.filter(x->!x.getId().equals(funcM.getId()))
+			.findFirst()
+			.ifPresent(x->{
+				errorMap.put(InboxConstants.CODE_NAME_NOT_UNIQUE, InboxConstants.CODE_NAME_NOT_UNIQUE_MSG);
+			});
+		}
+			
+		if (!CollectionUtils.isEmpty(errorMap))
+			throw new InboxServiceException(errorMap);
+	}
+}
+

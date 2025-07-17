@@ -1,4 +1,4 @@
-import { CardLabel, CardLabelError, Dropdown, FormStep, LabelFieldPair, RadioOrSelect } from "@egovernments/digit-ui-react-components";
+import { CardLabel, CardLabelError, Dropdown, FormStep, LabelFieldPair, RadioOrSelect } from "@upyog/digit-ui-react-components";
 import _ from "lodash";
 import React, { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
@@ -21,9 +21,13 @@ const PTSelectAddress = ({ t, config, onSelect, userType, formData, setError, cl
       : pincode
       ? allCities.filter((city) => city?.pincode?.some((pin) => pin == pincode))
       : allCities;
-
+  console.log("cities==",cities,allCities)
   const [selectedCity, setSelectedCity] = useState(() => {
     return formData?.address?.city || null;
+  });
+
+  const [selectedDistrict, setSelectedDistrict] = useState(() => {
+    return formData?.address?.district || null;
   });
 
   const { data: fetchedLocalities } = Digit.Hooks.useBoundaryLocalities(
@@ -38,6 +42,24 @@ const PTSelectAddress = ({ t, config, onSelect, userType, formData, setError, cl
   const [localities, setLocalities] = useState();
 
   const [selectedLocality, setSelectedLocality] = useState();
+
+  const { data: mdmsData, isLoading } = Digit.Hooks.useCommonMDMS(
+    Digit.ULBService.getStateId(),
+    "PropertyTax",
+    ["District"],
+    {
+      select: (data) => {
+        return {
+          District: data?.PropertyTax?.Floor?.filter((dist) => dist.active)?.map((dist) => ({
+            i18nKey: `PROPERTYTAX_DISTRICT_${dist.code}`,
+            code: dist.code,
+          }))
+        };
+      },
+      retry: false,
+      enable: false,
+    }
+  );
 
   useEffect(() => {
     if (userType === "employee" && presentInModifyApplication && localities?.length) {
@@ -79,6 +101,9 @@ const PTSelectAddress = ({ t, config, onSelect, userType, formData, setError, cl
     }
   }, [selectedCity, formData?.address?.pincode, fetchedLocalities]);
 
+  function selectDistrict(district) {
+    setSelectedCity(district);
+  }
   function selectCity(city) {
     setSelectedLocality(null);
     setLocalities(null);
@@ -176,6 +201,7 @@ const PTSelectAddress = ({ t, config, onSelect, userType, formData, setError, cl
       </div>
     );
   }
+  console.log("selectedCity && localities==",selectedCity , localities)
   return (
     <React.Fragment>
       {window.location.href.includes("/citizen") ? (
@@ -187,6 +213,20 @@ const PTSelectAddress = ({ t, config, onSelect, userType, formData, setError, cl
       ) : null}
       <FormStep config={config} onSelect={onSubmit} t={t} isDisabled={selectedLocality ? false : true}>
         <div>
+        {/* <CardLabel>{`District`}</CardLabel>
+          <span className={"form-pt-dropdown-only"}>
+            <RadioOrSelect
+              options={mdmsData?.District}
+              selectedOption={selectedDistrict}
+              optionKey="i18nKey"
+              onSelect={selectDistrict}
+              t={t}
+              isPTFlow={true}
+              isDependent={true}
+              labelKey="TENANT_TENANTS"
+              disabled={isEditProperty}
+            />
+          </span> */}
           <CardLabel>{`${t("MYCITY_CODE_LABEL")} `}</CardLabel>
           <span className={"form-pt-dropdown-only"}>
             <RadioOrSelect
