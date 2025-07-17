@@ -251,6 +251,7 @@ public class DashboardDataPush implements Job {
             	List<Data> datas = dataPushWithDate(startEpochMillis,endEpochMillis,date);
             	if(!datas.isEmpty())
             	{
+            		dataPushToNIUA(datas);
             		propertyTaxFinalPayloads.addAll(datas);
             	}
     		}
@@ -358,7 +359,28 @@ public class DashboardDataPush implements Job {
 		addBucketData(metrics::setInterest, dashboardService.wardWithInterestCollectedDate(startDate, endDate), key, PTConstants.DASHBOARD_USAGE_CATEGORY,
 				Interest::new);
 	}
-
+	
+	
+	
+private void dataPushToNIUA(List<Data> datas) {
+	RequestInfo requestInfo = new RequestInfo();
+	authenticationdetails(requestInfo);
+	DashboardDataRequest dashboardDataRequest = DashboardDataRequest.builder().requestInfo(requestInfo).datas(datas)
+			.build();
+	Object response = "No Response";
+	try {
+		if (!CollectionUtils.isEmpty(datas)) {
+			response = restTemplate
+					.postForEntity(config.getDashbordUserHost() + "/national-dashboard/metric/_ingest",
+							dashboardDataRequest, Map.class)
+					.getBody();
+		}
+		propertyRepository.savedashbordDatalog(dashboardDataRequest, response, null);
+	} catch (Exception e) {
+		propertyRepository.savedashbordDatalog(dashboardDataRequest, response, e.getLocalizedMessage());
+	}
+	
+}
 	
 	
 	
