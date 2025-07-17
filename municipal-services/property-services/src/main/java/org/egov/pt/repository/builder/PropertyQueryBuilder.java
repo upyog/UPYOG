@@ -190,7 +190,7 @@ public class PropertyQueryBuilder {
 			+ "    WHEN epp.usagecategory IN ('OWNER_COMMERCIAL', 'TENANT_COMMERCIAL', 'AGRICULTURAL_COMMERCIAL_USE') THEN 'Commercial'\r\n"
 			+ "    WHEN epp.usagecategory IN ('OWNER_MIXED', 'TENANT_MIXED') THEN 'Mixed Use'\r\n"
 			+ "    WHEN epp.usagecategory IN ('USE_BY_STATE_GOVT', 'USE_BY_CENTRAL_GOVT') THEN 'Institutional'\r\n"
-			+ "  END;\r\n" + "";
+			+ "  END\r\n" + "";
 	public final static String TOTAL_PROPERTY_COUNT_WITH_WARD = "SELECT \r\n" + "  CASE\r\n"
 			+ "    WHEN epp.usagecategory IN (\r\n" + "      'OWNER_RESIDENTIAL', 'TENANT_RESIDENTIAL', \r\n"
 			+ "      'AGRICULTURAL_WITHOUT_USE', 'APPURTENENT_LAND'\r\n" + "    ) THEN 'Residential'\r\n"
