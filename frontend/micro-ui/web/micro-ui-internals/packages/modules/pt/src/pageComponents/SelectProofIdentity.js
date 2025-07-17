@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { FormStep, UploadFile, CardLabelDesc, Dropdown, CardLabel } from "@upyog/digit-ui-react-components";
+import { UploadFile, CardLabelDesc, Dropdown, CardLabel } from "@upyog/digit-ui-react-components";
 import { stringReplaceAll } from "../utils";
 import { useLocation } from "react-router-dom";
 import Timeline from "../components/TLTimeline";
+import FormStep from "../../../../react-components/src/molecules/FormStep"
 
-const SelectProofIdentity = ({ t, config, onSelect, userType, formData, ownerIndex = 0, addNewOwner }) => {
+const SelectProofIdentity = ({ t, config, onSelect, userType, formData, ownerIndex = 0, addNewOwner, isMandatory }) => {
   const { pathname: url } = useLocation();
   // const editScreen = url.includes("/modify-application/");
   const isMutation = url.includes("property-mutation");
@@ -143,6 +144,7 @@ const SelectProofIdentity = ({ t, config, onSelect, userType, formData, ownerInd
         config={config}
         onSelect={handleSubmit}
         onSkip={onSkip}
+        isMandatory={isMandatory}
         forcedError={t(multipleownererror)}
         isDisabled={isUpdateProperty || isEditProperty ? false : multipleownererror || !uploadedFile || !dropdownValue || error}
         onAdd={onAdd}

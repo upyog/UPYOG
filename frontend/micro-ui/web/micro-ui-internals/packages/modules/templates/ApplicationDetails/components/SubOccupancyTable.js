@@ -54,13 +54,13 @@ const SubOccupancyTable = ({ edcrDetails, applicationData }) => {
     let floors = [];
     block?.building?.floors.map((ob) => {
       floors.push({
-        Floor: t(`BPA_FLOOR_NAME_${ob.number}`),
-        Level: ob.number,
-        Occupancy: t(`${ob.occupancies?.[0]?.type}`),
-        BuildupArea: ob.occupancies?.[0]?.builtUpArea,
-        FloorArea: ob.occupancies?.[0]?.floorArea || 0,
-        CarpetArea: ob.occupancies?.[0]?.CarpetArea || 0,
-        key: t(`BPA_FLOOR_NAME_${ob.number}`),
+        Floor: ob?.floorName||t(`BPA_FLOOR_NAME_${ob.number}`),
+        Level: ob?.number || ob?.floorNo,
+        Occupancy:t(`${applicationData?.businessService==="BPA-PAP"?"Residential": ob.occupancies?.[0]?.type}`)||"NA",
+        BuildupArea: ob?.occupancies?.[0]?.builtUpArea || ob?.builtUpArea,
+        FloorArea: ob?.occupancies?.[0]?.floorArea || ob?.builtUpArea,
+        CarpetArea: ob?.occupancies?.[0]?.carpetArea || 0,
+        key: ob?.floorName||t(`BPA_FLOOR_NAME_${ob.number}`),
       });
     });
     return floors;
@@ -99,6 +99,27 @@ const SubOccupancyTable = ({ edcrDetails, applicationData }) => {
 
         {edcrDetails?.subOccupancyTableDetails?.[0]?.value?.planDetail?.blocks.map((block, index) => (
           <div key={index} style={edcrDetails?.subOccupancyTableDetails?.[0]?.value?.planDetail?.blocks?.length > 0 ? {marginBottom: "30px", background: "#FAFAFA", border: "1px solid #D6D5D4", padding: "8px", borderRadius: "4px", maxWidth: "950px", minWidth: "280px"} : {marginBottom: "30px"}}>
+            <CardSubHeader style={{ marginBottom: "8px", paddingBottom: "9px", color: "#0B0C0C", fontSize: "18px", lineHeight: "19px" }}>{t("BPA_BLOCK_SUBHEADER")} {index + 1}</CardSubHeader>
+            <StatusTable>
+              <Row className="border-none" textStyle={{wordBreak:"break-word"}} label={`${t("BPA_SUB_OCCUPANCY_LABEL")}`} text={getSubOccupancyValues(index)}></Row>
+            </StatusTable>
+            <div style={window.location.href.includes("citizen") || isMobile?{overflow:"scroll"}:{ maxWidth: "950px", maxHeight: "280px" }}>
+              <Table
+                className="customTable table-fixed-first-column table-border-style"
+                t={t}
+                disableSort={false}
+                autoSort={true}
+                manualPagination={false}
+                isPaginationRequired={false}
+                initSortId="S N "
+                data={getFloorData(block)}
+                columns={tableColumns}
+                getCellProps={(cellInfo) => { return { style: {} } }}
+              />
+            </div>
+          </div>))}
+          {edcrDetails?.subOccupancyTableDetails?.[0]?.value?.drawingDetail?.blocks.map((block, index) => (
+          <div key={index} style={edcrDetails?.subOccupancyTableDetails?.[0]?.value?.drawingDetail?.blocks?.length > 0 ? {marginBottom: "30px", background: "#FAFAFA", border: "1px solid #D6D5D4", padding: "8px", borderRadius: "4px", maxWidth: "950px", minWidth: "280px"} : {marginBottom: "30px"}}>
             <CardSubHeader style={{ marginBottom: "8px", paddingBottom: "9px", color: "#0B0C0C", fontSize: "18px", lineHeight: "19px" }}>{t("BPA_BLOCK_SUBHEADER")} {index + 1}</CardSubHeader>
             <StatusTable>
               <Row className="border-none" textStyle={{wordBreak:"break-word"}} label={`${t("BPA_SUB_OCCUPANCY_LABEL")}`} text={getSubOccupancyValues(index)}></Row>

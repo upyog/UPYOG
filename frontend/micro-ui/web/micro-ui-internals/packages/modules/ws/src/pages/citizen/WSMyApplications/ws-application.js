@@ -28,7 +28,7 @@ const WSApplication = ({ application }) => {
     { filters: { propertyIds: application?.propertyId } },
     { filters: { propertyIds: application?.propertyId }, privacy: Digit.Utils.getPrivacyObject() }
   );
-  const businessService = application?.applicationNo?.includes("SW") ? (application?.applicationNo?.includes("DC") ? "SW" : application?.processInstance?.businessService==="SWReconnection" ? application?.processInstance?.businessService : "SW.ONE_TIME_FEE") : application?.applicationNo.includes("WS") ? application?.processInstance?.businessService==="WSReconnection" ? application?.processInstance?.businessService: application?.applicationNo.includes("DC") ? "WS" : "WS.ONE_TIME_FEE":"";
+  const businessService = application?.applicationNo?.includes("SW") ? (application?.applicationNo?.includes("DC") ? "SW" : "SW.ONE_TIME_FEE") : (application?.applicationNo?.includes("DC")? "WS" :"WS.ONE_TIME_FEE")
   const fetchBillParams = { consumerCode: application?.applicationNo?.includes("DC") ? application?.connectionNo : application?.connectionNo };
   if (isLoading) {
     return <Loader />;
