@@ -251,6 +251,7 @@ public class DashboardDataPush implements Job {
             	List<Data> datas = dataPushWithDate(startEpochMillis,endEpochMillis,date);
             	if(!datas.isEmpty())
             	{
+            		dataPushToNIUA(datas);
             		propertyTaxFinalPayloads.addAll(datas);
             	}
     		}
@@ -275,19 +276,19 @@ public class DashboardDataPush implements Job {
                                " | EndEpoch: " + endDate);
             
             parentMap.putAll(dashboardService.wardWithTanentListDate(startDate,endDate));
-    		//parentMap.putAll(dashboardService.wardWithAssessment());
+    		parentMap.putAll(dashboardService.wardWithAssessmentDate(startDate, endDate));
     		parentMap.putAll(dashboardService.wardWithClosedCountDate(startDate,endDate));
-    		//parentMap.putAll(dashboardService.wardWithPaidCount());
-    		//parentMap.putAll(dashboardService.wardWithApprovedCount());
-    		//parentMap.putAll(dashboardService.wardWithMovedCount());
-    		//parentMap.putAll(dashboardService.wardWithPropertyRegistered());
-    		//parentMap.putAll(dashboardService.wardWithPropertyAssessed());
-    		//parentMap.putAll(dashboardService.wardWithTransactionCount());
-    		//parentMap.putAll(dashboardService.wardWithTodaysCollection());
+    		parentMap.putAll(dashboardService.wardWithPaidCountDate(startDate, endDate));
+    		parentMap.putAll(dashboardService.wardWithApprovedCountDate(startDate, endDate));
+    		parentMap.putAll(dashboardService.wardWithMovedCountDate(startDate, endDate));
+    		parentMap.putAll(dashboardService.wardWithPropertyRegisteredDate(startDate, endDate));
+    		parentMap.putAll(dashboardService.wardWithPropertyAssessedDate(startDate, endDate));
+    		parentMap.putAll(dashboardService.wardWithTransactionCountDate(startDate, endDate));
+    		parentMap.putAll(dashboardService.wardWithTodaysCollectionDate(startDate, endDate));
     		parentMap.putAll(dashboardService.wardWithPropertyCountDate(startDate,endDate));
-    		//parentMap.putAll(dashboardService.wardWithRebateGiven());
-    		//parentMap.putAll(dashboardService.wardWithPenaltyCollected());
-    		//parentMap.putAll(dashboardService.wardWithInterestCollected());
+    		parentMap.putAll(dashboardService.wardWithRebateGivenDate(startDate, endDate));
+    		parentMap.putAll(dashboardService.wardWithPenaltyCollectedDate(startDate, endDate));
+    		parentMap.putAll(dashboardService.wardWithInterestCollectedDate(startDate, endDate));
     		
     		
     		//
@@ -327,38 +328,59 @@ public class DashboardDataPush implements Job {
 	
 	
 	private void populateSimpleMetricsWithDate(Metrics metrics, String key,Long startDate, Long endDate) {
-		if (dashboardService.wardWithAssessment().containsKey(key))
-			metrics.setAssessments(new BigInteger(dashboardService.wardWithAssessment().get(key)));
+		if (dashboardService.wardWithAssessmentDate(startDate, endDate).containsKey(key))
+			metrics.setAssessments(new BigInteger(dashboardService.wardWithAssessmentDate(startDate, endDate).get(key)));
 		if (dashboardService.wardWithTanentListDate(startDate,endDate).containsKey(key)) 
 			metrics.setTodaysTotalApplications(new BigInteger(dashboardService.wardWithTanentListDate(startDate,endDate).get(key)));
 		if (dashboardService.wardWithClosedCountDate( startDate,  endDate).containsKey(key))
 			metrics.setTodaysClosedApplications(new BigInteger(dashboardService.wardWithClosedCountDate( startDate, endDate).get(key)));
-		if (dashboardService.wardWithPaidCount().containsKey(key))
-			metrics.setNoOfPropertiesPaidToday(new BigInteger(dashboardService.wardWithPaidCount().get(key)));
-		if (dashboardService.wardWithApprovedCount().containsKey(key))
-			metrics.setTodaysApprovedApplications(new BigInteger(dashboardService.wardWithApprovedCount().get(key)));
+		if (dashboardService.wardWithPaidCountDate(startDate, endDate).containsKey(key))
+			metrics.setNoOfPropertiesPaidToday(new BigInteger(dashboardService.wardWithPaidCountDate(startDate, endDate).get(key)));
+		if (dashboardService.wardWithApprovedCountDate(startDate, endDate).containsKey(key))
+			metrics.setTodaysApprovedApplications(new BigInteger(dashboardService.wardWithApprovedCountDate(startDate, endDate).get(key)));
 	}
 
 	private void populateBucketMetricsWithDate(Metrics metrics, String key,Long startDate, Long endDate) {
-		addBucketData(metrics::setTodaysMovedApplications, dashboardService.wardWithMovedCount(), key,
+		addBucketData(metrics::setTodaysMovedApplications, dashboardService.wardWithMovedCountDate(startDate, endDate), key,
 				PTConstants.DASHBOARD_APPLICATION_STATUS, TodaysMovedApplications::new);
-		addBucketData(metrics::setPropertiesRegistered, dashboardService.wardWithPropertyRegistered(), key,
+		addBucketData(metrics::setPropertiesRegistered, dashboardService.wardWithPropertyRegisteredDate(startDate, endDate), key,
 				PTConstants.DASHBOARD_FINANCIAL_YEAR, PropertiesRegistered::new);
-		addBucketData(metrics::setAssessedProperties, dashboardService.wardWithPropertyAssessed(), key, PTConstants.DASHBOARD_USAGE_CATEGORY,
+		addBucketData(metrics::setAssessedProperties, dashboardService.wardWithPropertyAssessedDate(startDate, endDate), key, PTConstants.DASHBOARD_USAGE_CATEGORY,
 				AssessedProperties::new);
-		addBucketData(metrics::setTransactions, dashboardService.wardWithTransactionCount(), key, PTConstants.DASHBOARD_USAGE_CATEGORY,
+		addBucketData(metrics::setTransactions, dashboardService.wardWithTransactionCountDate(startDate, endDate), key, PTConstants.DASHBOARD_USAGE_CATEGORY,
 				Transactions::new);
-		addBucketData(metrics::setTodaysCollection, dashboardService.wardWithTodaysCollection(), key, PTConstants.DASHBOARD_USAGE_CATEGORY,
+		addBucketData(metrics::setTodaysCollection, dashboardService.wardWithTodaysCollectionDate(startDate, endDate), key, PTConstants.DASHBOARD_USAGE_CATEGORY,
 				TodaysCollection::new);
-		addBucketData(metrics::setPropertyTax, dashboardService.wardWithPropertyCount(), key,PTConstants.DASHBOARD_USAGE_CATEGORY,
+		addBucketData(metrics::setPropertyTax, dashboardService.wardWithPropertyCountDate(startDate, endDate), key,PTConstants.DASHBOARD_USAGE_CATEGORY,
 				PropertyTax::new);
-		addBucketData(metrics::setRebate, dashboardService.wardWithRebateGiven(), key, PTConstants.DASHBOARD_USAGE_CATEGORY, Rebate::new);
-		addBucketData(metrics::setPenalty, dashboardService.wardWithPenaltyCollected(), key, PTConstants.DASHBOARD_USAGE_CATEGORY,
+		addBucketData(metrics::setRebate, dashboardService.wardWithRebateGivenDate(startDate, endDate), key, PTConstants.DASHBOARD_USAGE_CATEGORY, Rebate::new);
+		addBucketData(metrics::setPenalty, dashboardService.wardWithPenaltyCollectedDate(startDate, endDate), key, PTConstants.DASHBOARD_USAGE_CATEGORY,
 				Penalty::new);
-		addBucketData(metrics::setInterest, dashboardService.wardWithInterestCollected(), key, PTConstants.DASHBOARD_USAGE_CATEGORY,
+		addBucketData(metrics::setInterest, dashboardService.wardWithInterestCollectedDate(startDate, endDate), key, PTConstants.DASHBOARD_USAGE_CATEGORY,
 				Interest::new);
 	}
-
+	
+	
+	
+private void dataPushToNIUA(List<Data> datas) {
+	RequestInfo requestInfo = new RequestInfo();
+	authenticationdetails(requestInfo);
+	DashboardDataRequest dashboardDataRequest = DashboardDataRequest.builder().requestInfo(requestInfo).datas(datas)
+			.build();
+	Object response = "No Response";
+	try {
+		if (!CollectionUtils.isEmpty(datas)) {
+			response = restTemplate
+					.postForEntity(config.getDashbordUserHost() + "/national-dashboard/metric/_ingest",
+							dashboardDataRequest, Map.class)
+					.getBody();
+		}
+		propertyRepository.savedashbordDatalog(dashboardDataRequest, response, null);
+	} catch (Exception e) {
+		propertyRepository.savedashbordDatalog(dashboardDataRequest, response, e.getLocalizedMessage());
+	}
+	
+}
 	
 	
 	
