@@ -44,7 +44,6 @@ public class DemandDetail   {
         @JsonProperty("additionalDetails")
         private Object additionalDetails;
 
-        @SanitizeHtml
         @JsonProperty("auditDetails")
         private AuditDetails auditDetails;
 
