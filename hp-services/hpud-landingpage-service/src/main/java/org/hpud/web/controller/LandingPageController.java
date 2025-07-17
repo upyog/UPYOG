@@ -5,6 +5,7 @@ import org.hpud.model.LandingPageRequest;
 import org.hpud.model.RegistrationRequest;
 import org.hpud.model.RegistrationResponse;
 import org.hpud.service.LandingPageService;
+import org.hpud.service.SupportService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,8 +13,12 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 
 import lombok.extern.slf4j.Slf4j;
@@ -27,6 +32,9 @@ public class LandingPageController {
 	
 	@Autowired
 	LandingPageService service;
+	
+	@Autowired
+	SupportService supportService;
 	
 	@PostMapping(value = "/getLandingPageCount")
 	@ResponseBody
@@ -75,6 +83,17 @@ public class LandingPageController {
 			return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
 		}
 		return new ResponseEntity<>(response, HttpStatus.OK);
+	}
+	
+	@PostMapping(value = "/supprtEndPoint")
+	
+	public ResponseEntity<String> SupportEndpoint(@RequestParam(defaultValue = "1000") int limit) {
+		
+		RegistrationResponse response = new RegistrationResponse();
+		String DuplicateMobileNumber = supportService.support(limit);
+		response.setStatus("SUCCESS");
+		response.setMsg("Landing Page count Fetched successfully!!!");
+		return new ResponseEntity<>(DuplicateMobileNumber, HttpStatus.OK);
 	}
 
 }
