@@ -103,6 +103,7 @@ public class EnrichmentService {
 
         treePruningDetail.getApplicantDetail().setBookingId(bookingId);
         treePruningDetail.getApplicantDetail().setApplicantId(TreePruningUtil.getRandonUUID());
+        treePruningDetail.getAddress().setAddressId(TreePruningUtil.getRandonUUID());
         treePruningDetail.getApplicantDetail().setAuditDetails(auditDetails);
         treePruningDetail.getAddress().setApplicantId(treePruningDetail.getApplicantDetail().getApplicantId());
 

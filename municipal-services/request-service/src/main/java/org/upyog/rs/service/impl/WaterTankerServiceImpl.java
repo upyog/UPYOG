@@ -67,9 +67,15 @@ public class WaterTankerServiceImpl implements WaterTankerService {
 				throw new RuntimeException("User not found for this mobile number: " +
 						waterTankerRequest.getWaterTankerBookingDetail().getApplicantDetail().getMobileNumber());
 			}
-			waterTankerRequest.getWaterTankerBookingDetail().setApplicantUuid(user.get(0).getUuid());
+			if(config.getIsUserProfileEnabled()) {
+				waterTankerRequest.getWaterTankerBookingDetail().setApplicantUuid(user.get(0).getUuid());
+			} else{
+				// If user profile is not enabled, set the applicantUuid null
+				waterTankerRequest.getWaterTankerBookingDetail().setApplicantUuid(null);
+			}
 			log.info("Applicant or User Uuid: " + user.get(0).getUuid());
 		} catch (Exception e) {
+			log.error("Error fetching or creating user: " + e.getMessage(), e);
 			throw new RuntimeException("Failed to fetch/create user: " + e.getMessage(), e);
 		}
 

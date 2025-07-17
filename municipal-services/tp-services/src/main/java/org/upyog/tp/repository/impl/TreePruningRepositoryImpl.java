@@ -46,7 +46,7 @@ public class TreePruningRepositoryImpl implements TreePruningRepository {
 
     private void pushTreePruningRequestToKafka(TreePruningBookingRequest treePruningRequest) {
         if(treePruningConfiguration.getIsUserProfileEnabled()) {
-            producer.push(treePruningConfiguration.getTreePruningApplicationSaveUserDetailsTopic(), treePruningRequest);
+            producer.push(treePruningConfiguration.getTreePruningApplicationWithProfileSaveTopic(), treePruningRequest);
         } else {
             producer.push(treePruningConfiguration.getTreePruningApplicationSaveTopic(), treePruningRequest);
         }

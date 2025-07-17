@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS public.upyog_tp_tree_pruning_applicant_details (
+CREATE TABLE IF NOT EXISTS public.upyog_rs_tree_pruning_applicant_details (
     applicant_id         VARCHAR(64) PRIMARY KEY,
     booking_id           VARCHAR(64),
     name                 VARCHAR(100) NOT NULL,
@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS public.upyog_tp_tree_pruning_applicant_details (
     lastmodifiedtime     BIGINT
 );
 
-CREATE TABLE IF NOT EXISTS public.upyog_tp_tree_pruning_address_details (
+CREATE TABLE IF NOT EXISTS public.upyog_rs_tree_pruning_address_details (
     address_id           VARCHAR(64),
     applicant_id         VARCHAR(64),
     house_no             VARCHAR(100) NOT NULL,
@@ -26,6 +26,6 @@ CREATE TABLE IF NOT EXISTS public.upyog_tp_tree_pruning_address_details (
     pincode              VARCHAR(12) NOT NULL,
     CONSTRAINT fk_applicant_id
         FOREIGN KEY (applicant_id)
-        REFERENCES public.upyog_tp_tree_pruning_applicant_details(applicant_id)
+        REFERENCES public.upyog_rs_tree_pruning_applicant_details(applicant_id)
         ON DELETE CASCADE
 );

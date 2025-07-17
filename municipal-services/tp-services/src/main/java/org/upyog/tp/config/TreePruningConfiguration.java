@@ -50,8 +50,8 @@ public class TreePruningConfiguration {
     @Value("${persister.create.tree-pruning.topic}")
     private String treePruningApplicationSaveTopic;
 
-    @Value("${persister.create.tree-pruning.with.user.details.topic}")
-    private String treePruningApplicationSaveUserDetailsTopic;
+    @Value("${persister.create.tree-pruning.with.profile.topic}")
+    private String treePruningApplicationWithProfileSaveTopic;
 
     @Value("${isUserProfileEnabled}")
     private Boolean isUserProfileEnabled;

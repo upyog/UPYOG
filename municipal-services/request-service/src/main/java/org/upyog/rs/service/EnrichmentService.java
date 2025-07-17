@@ -99,6 +99,7 @@ public class EnrichmentService {
 		
 		waterTankerDetail.getApplicantDetail().setBookingId(bookingId);
 		waterTankerDetail.getApplicantDetail().setApplicantId(RequestServiceUtil.getRandonUUID());
+		waterTankerDetail.getAddress().setAddressId(RequestServiceUtil.getRandonUUID());
 		waterTankerDetail.getApplicantDetail().setAuditDetails(auditDetails);
 		waterTankerDetail.getAddress().setApplicantId(waterTankerDetail.getApplicantDetail().getApplicantId());
 		
@@ -235,6 +236,7 @@ public class EnrichmentService {
 
 		mobileToiletDetail.getApplicantDetail().setBookingId(bookingId);
 		mobileToiletDetail.getApplicantDetail().setApplicantId(RequestServiceUtil.getRandonUUID());
+		mobileToiletDetail.getAddress().setAddressId(RequestServiceUtil.getRandonUUID());
 		mobileToiletDetail.getApplicantDetail().setAuditDetails(auditDetails);
 		mobileToiletDetail.getAddress().setApplicantId(mobileToiletDetail.getApplicantDetail().getApplicantId());
 

@@ -62,10 +62,16 @@ public class TreePruningServiceImpl implements TreePruningService {
                 throw new RuntimeException("User not found for this mobile number: " +
                         treePruningRequest.getTreePruningBookingDetail().getApplicantDetail().getMobileNumber());
             }
-
+            if(config.getIsUserProfileEnabled()){
             treePruningRequest.getTreePruningBookingDetail().setApplicantUuid(user.get(0).getUuid());
             log.info("Applicant or User Uuid: " + user.get(0).getUuid());
+            } else {
+                // If user profile is not enabled, set the applicantUuid to null
+                treePruningRequest.getTreePruningBookingDetail().setApplicantUuid(null);
+                log.info("User profile is not enabled, setting applicantUuid to null");
+            }
         } catch (Exception e) {
+            log.error("Error fetching user: " + e.getMessage(), e);
             throw new RuntimeException("Failed to fetching user: " + e.getMessage(), e);
         }
 

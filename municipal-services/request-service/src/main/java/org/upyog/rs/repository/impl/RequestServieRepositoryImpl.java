@@ -50,7 +50,7 @@ public class RequestServieRepositoryImpl implements RequestServiceRepository {
 
 	private void pushWaterTankerRequestToKafka(WaterTankerBookingRequest waterTankerRequest) {
 		if(requestServiceConfiguration.getIsUserProfileEnabled()) {
-			producer.push(requestServiceConfiguration.getWaterTankerApplicationSaveUserDetailsTopic(), waterTankerRequest);
+			producer.push(requestServiceConfiguration.getWaterTankerApplicationWithProfileSaveTopic(), waterTankerRequest);
 		}
 		else {
 			producer.push(requestServiceConfiguration.getWaterTankerApplicationSaveTopic(), waterTankerRequest);
@@ -112,7 +112,7 @@ public class RequestServieRepositoryImpl implements RequestServiceRepository {
 
 	private void pushMobileToiletRequestToKafka(MobileToiletBookingRequest mobileToiletRequest) {
 		if(requestServiceConfiguration.getIsUserProfileEnabled()) {
-			producer.push(requestServiceConfiguration.getMobileToiletApplicationSaveUserDetailsTopic(), mobileToiletRequest);
+			producer.push(requestServiceConfiguration.getMobileToiletApplicationWithProfileSaveTopic(), mobileToiletRequest);
 		}
 		else {
 			producer.push(requestServiceConfiguration.getMobileToiletApplicationSaveTopic(), mobileToiletRequest);

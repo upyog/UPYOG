@@ -57,11 +57,11 @@ public class RequestServiceConfiguration {
 	@Value("${persister.create.water-tanker.topic}")
 	private String waterTankerApplicationSaveTopic;
 
-	@Value("${persister.create.water-tanker.with.user.details.topic}")
-	private String waterTankerApplicationSaveUserDetailsTopic;
+	@Value("${persister.create.water-tanker.with.profile.topic}")
+	private String waterTankerApplicationWithProfileSaveTopic;
 
-	@Value("${persister.create.mobile-toilet.with.user.details.topic}")
-	private String mobileToiletApplicationSaveUserDetailsTopic;
+	@Value("${persister.create.mobile-toilet.with.profile.topic}")
+	private String mobileToiletApplicationWithProfileSaveTopic;
 
 	// Kafka topics for saving Mobile Toilet data
 	@Value("${persister.create.mobile-toilet.topic}")

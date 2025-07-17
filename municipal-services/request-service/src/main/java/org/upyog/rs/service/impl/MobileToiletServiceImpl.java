@@ -62,9 +62,16 @@ public class MobileToiletServiceImpl implements MobileToiletService{
                 throw new RuntimeException("User not found for this mobile number: " +
                         mobileToiletRequest.getMobileToiletBookingDetail().getApplicantDetail().getMobileNumber());
             }
-            mobileToiletRequest.getMobileToiletBookingDetail().setApplicantUuid(user.get(0).getUuid());
-            log.info("Applicant or User Uuid: " + user.get(0).getUuid());
+            if(config.getIsUserProfileEnabled()) {
+                mobileToiletRequest.getMobileToiletBookingDetail().setApplicantUuid(user.get(0).getUuid());
+                log.info("Applicant or User Uuid: " + user.get(0).getUuid());
+            } else{
+                // If user profile is not enabled, set the applicantUuid null
+                mobileToiletRequest.getMobileToiletBookingDetail().setApplicantUuid(null);
+            }
+
         } catch (Exception e) {
+            log.error("Error fetching or creating user: " + e.getMessage(), e);
             throw new RuntimeException("Failed to fetch/create user: " + e.getMessage(), e);
         }
 
