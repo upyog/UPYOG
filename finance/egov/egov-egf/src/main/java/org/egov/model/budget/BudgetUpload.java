@@ -72,8 +72,23 @@ public class BudgetUpload  {
     private String functionCode;
 
     private String budgetHead;
+    
+    private String minorCode;
+    
+    private String majorCode;
 
-    private String narration;
+	private String lastYearApproved;
+    
+    private String currentApproved;
+    
+    private String percentageChange;
+    
+
+	public static long getSerialversionuid() {
+		return serialVersionUID;
+	}
+
+	private String narration;
 
     private String oldACCode;
 
@@ -258,7 +273,46 @@ public class BudgetUpload  {
     public void setBudgetInXls(MultipartFile budgetInXls) {
         this.budgetInXls = budgetInXls;
     }
-
     
+    public String getMinorCode() {
+		return minorCode;
+	}
+
+	public void setMinorCode(String minorCode) {
+		this.minorCode = minorCode;
+	}
+
+
+	public String getLastYearApproved() {
+		return lastYearApproved;
+	}
+
+	public void setLastYearApproved(String lastYearApproved) {
+		this.lastYearApproved = lastYearApproved;
+	}
+
+	public String getCurrentApproved() {
+		return currentApproved;
+	}
+
+	public void setCurrentApproved(String currentApproved) {
+		this.currentApproved = currentApproved;
+	}
+
+	public String getPercentageChange() {
+		return percentageChange;
+	}
+
+	public void setPercentageChange(String percentageChange) {
+		this.percentageChange = percentageChange;
+	}
+
+	public String getMajorCode() {
+		return majorCode;
+	}
+	
+	public void setMajorCode(String majorCode) {
+		this.majorCode = majorCode;
+	}    
 
 }

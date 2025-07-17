@@ -68,26 +68,34 @@
 					</div>
 					<div class="panel-body">
 						<div class="form-group">
-							<label class="col-sm-3 control-label text-right"><spring:message
-									code="lbl.budget" text="Budget"/> <span class="mandatory1">*</span></label>
-							<div class="col-sm-3 add-margin">
+							
+							<label class="col-sm-2 control-label text-right">
+								<spring:message code="lbl.budgetRE" text="Budget" /> <span class="mandatory1">*</span>
+							</label>
+							<div class="col-sm-2 add-margin">
 								<form:select path="reBudget.id" required="required"
-									id="reBudget" cssClass="form-control"
-									cssErrorClass="form-control error">
+											 id="reBudget" cssClass="form-control" cssErrorClass="form-control error">
 									<form:option value="">
 										<spring:message code="lbl.select" text="Select"/>
 									</form:option>
-									<form:options items="${budgets}" itemValue="id"
-										itemLabel="name" />
+									<form:options items="${budgets}" itemValue="id" itemLabel="name" />
 								</form:select>
-								<form:errors path="reBudget" cssClass="error-msg" />
 							</div>
-							<label class="col-sm-2 control-label text-right"><spring:message
-									code="lbl.referenceBudget" text="Reference Budget"/> </label>
-							<div class="col-sm-3 add-margin">
-								<div id="referenceBudget"></div>
+						
+							<label class="col-sm-2 control-label text-right">
+								<spring:message code="lbl.referenceBudgetBE" text="Reference Budget" />
+							</label>
+							<div class="col-sm-2 add-margin">
+								<input type="text" id="referenceBudget" name="beBudgetName" class="form-control" readonly="readonly" placeholder="Not Available" />
 							</div>
-						</div>
+						
+							<label class="col-sm-2 control-label text-right">
+								<spring:message code="lbl.uploadedTime" text="Uploaded Time" />
+							</label>
+							<div class="col-sm-2 add-margin">
+								<input type="text" id="uploadedTime" name="uploadedTime" class="form-control" readonly="readonly" placeholder="Not Available" />
+							</div>
+						</div>						
 						<div class="form-group">
 							<div class="text-center">
 								<button type='submit' class='btn btn-primary' id="btnsearch">
@@ -104,6 +112,28 @@
 	</div>
 </form:form>
 <script>
+	$('#reBudget').change(function () {
+		const budgetId = $(this).val();
+		if (budgetId) {
+			$.ajax({
+				url: './getBudgetMeta',
+				method: 'GET',
+				data: { budgetId: budgetId },
+				success: function (data) {
+					$('#referenceBudget').val(data.referenceBudget || 'Not Available');
+					$('#uploadedTime').val(data.uploadedTime || 'Not Available');
+				},
+				error: function () {
+					$('#referenceBudget').val('Error');
+					$('#uploadedTime').val('Error');
+				}
+			});
+		} else {
+			$('#referenceBudget').val('');
+			$('#uploadedTime').val('');
+		}
+	});
+
 	$('#btnsearch').click(function(e) {
 		if ($('form').valid()) {
 		} else {
