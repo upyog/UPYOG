@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import lombok.*;
 import org.egov.collection.model.AuditDetails;
 
+import org.egov.collection.validation.SanitizeHtml;
 import org.springframework.util.CollectionUtils;
 
 import jakarta.validation.Valid;
@@ -27,22 +28,27 @@ public class Bill {
     @JsonProperty("id")
     private String id = null;
 
+    @SanitizeHtml
     @JsonProperty("mobileNumber")
     private String mobileNumber = null;
 
+    @SanitizeHtml
     @JsonProperty("paidBy")
     private String paidBy = null;
 
+    @SanitizeHtml
     @JsonProperty("payerName")
     private String payerName = null;
 
-
+    @SanitizeHtml
     @JsonProperty("payerAddress")
     private String payerAddress = null;
 
+    @SanitizeHtml
     @JsonProperty("payerEmail")
     private String payerEmail = null;
 
+    @SanitizeHtml
     @JsonProperty("payerId")
     private String payerId = null;
 
@@ -62,6 +68,7 @@ public class Bill {
     @Valid
     private List<BillDetail> billDetails = null;
 
+    @SanitizeHtml
     @JsonProperty("tenantId")
     private String tenantId = null;
 
@@ -80,15 +87,18 @@ public class Bill {
     @JsonProperty("minimumAmountToBePaid")
     private BigDecimal minimumAmountToBePaid = null;
 
+    @SanitizeHtml
     @JsonProperty("businessService")
     private String businessService = null;
 
     @JsonProperty("totalAmount")
     private BigDecimal totalAmount = null;
 
+    @SanitizeHtml
     @JsonProperty("consumerCode")
     private String consumerCode = null;
 
+    @SanitizeHtml
     @JsonProperty("billNumber")
     private String billNumber = null;
 
