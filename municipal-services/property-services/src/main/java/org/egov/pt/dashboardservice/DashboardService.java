@@ -46,7 +46,6 @@ public class DashboardService {
     }
 
     public Map<String, String> wardWithApprovedCount() {
-    	//add
         return buildMap(propertyRepository.getTotalapplicationwithPaid(),
                 v -> String.valueOf(v.getCount()));
     }
@@ -103,14 +102,69 @@ public class DashboardService {
                 v -> String.valueOf(v.getCount()));
     }
     
+    public Map<String, String> wardWithAssessmentDate(Long startDate,Long endDate) {
+        return buildMap(propertyRepository.getTotalapplicationwitAssessmentWithDate(startDate,endDate),
+                v -> String.valueOf(v.getCount()));
+    }
+    
     public Map<String, String> wardWithClosedCountDate(Long startDate,Long endDate) {
         return buildMap(propertyRepository.getTotalapplicationwitClosedWithDate( startDate, endDate),
                 v -> String.valueOf(v.getCount()));
     }
     
+    public Map<String, String> wardWithPaidCountDate(Long startDate,Long endDate) {
+        return buildMap(propertyRepository.getTotalapplicationApprovedWithDate(startDate, endDate),
+                v -> String.valueOf(v.getCount()));
+    }
+
+    public Map<String, String> wardWithApprovedCountDate(Long startDate,Long endDate) {
+        return buildMap(propertyRepository.getTotalapplicationwithPaidWithDate(startDate, endDate),
+                v -> String.valueOf(v.getCount()));
+    }
+    
+    public Map<String, String> wardWithMovedCountDate(Long startDate,Long endDate) {
+        return buildMap(propertyRepository.getTotalapplicationwithMovedWithDate(startDate, endDate),
+                v -> v.getAction() + ":" + v.getCount());
+    }
+    
+    public Map<String, String> wardWithPropertyRegisteredDate(Long startDate,Long endDate) {
+        return buildMap(propertyRepository.getTotalpropertyRegisteredWithDate(startDate, endDate),
+                v -> v.getFinanciyalyear() + ":" + v.getCount());
+    }
+    
+    public Map<String, String> wardWithPropertyAssessedDate(Long startDate,Long endDate) {
+        return buildMap(propertyRepository.getTotalAssedpropertiesWithDate(startDate, endDate),
+                v -> v.getUsagecategory() + ":" + v.getCount());
+    }
+    
+    public Map<String, String> wardWithTransactionCountDate(Long startDate,Long endDate) {
+        return buildMap(propertyRepository.getTotaltransactionCountWithDate(startDate, endDate),
+                v -> v.getUsagecategory() + ":" + v.getCount());
+    }
+    
+    public Map<String, String> wardWithTodaysCollectionDate(Long startDate,Long endDate) {
+        return buildMap(propertyRepository.getTotaltodaysCollectionWithDate(startDate, endDate),
+                v -> v.getUsagecategory() + ":" + v.getTodaysCollection());
+    }
+    
     public Map<String, String> wardWithPropertyCountDate(Long startDate,Long endDate) {
         return buildMap(propertyRepository.getTotalpropertyCountWithDate(startDate, endDate),
                 v -> v.getUsagecategory() + ":" + v.getTotalpropertytaxamountpaid());
+    }
+    
+    public Map<String, String> wardWithRebateGivenDate(Long startDate,Long endDate) {
+        return buildMap(propertyRepository.getTotalrebateCollectionWithDate(startDate, endDate),
+                v -> v.getUsagecategory() + ":" + v.getTodayrebategiven().negate());
+    }
+    
+    public Map<String, String> wardWithPenaltyCollectedDate(Long startDate,Long endDate) {
+        return buildMap(propertyRepository.getTotalpenaltyCollectionWithDate(startDate, endDate),
+                v -> v.getUsagecategory() + ":" + v.getTodaypenaltycollection());
+    }
+
+    public Map<String, String> wardWithInterestCollectedDate(Long startDate,Long endDate) {
+        return buildMap(propertyRepository.getTotalinterestCollectionWithDate(startDate, endDate),
+                v -> v.getUsagecategory() + ":" + v.getTodayinterestcollection());
     }
     /////////////////////////////////////DATE////////////////////////////////////////////////
 }
