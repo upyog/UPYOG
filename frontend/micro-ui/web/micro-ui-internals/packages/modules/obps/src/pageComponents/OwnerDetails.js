@@ -18,20 +18,29 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
     const [ownershipCategory, setOwnershipCategory] = useState(formData?.owners?.ownershipCategory);
     const [name, setName] = useState(formData?.owners?.name || "");
     const [isPrimaryOwner, setisPrimaryOwner] = useState(false);
-    const [gender, setGender] = useState(formData?.owners?.gender);
+    const [gender, setGender] = useState(!formData?.owners?.gender?.i18nKey ? {
+        code: formData?.owners?.gender || "", 
+        active: formData?.owners?.gender ? true : false, 
+        i18nKey: formData?.owners?.gender ? `COMMON_GENDER_${formData?.owners?.gender}` : ""
+    }:formData?.owners?.gender);
     const [mobileNumber, setMobileNumber] = useState(formData?.owners?.mobileNumber || "");
     const [emailId, setEmail] = useState(formData?.owners?.emailId || "");
     const [showToast, setShowToast] = useState(null);
     const [isDisable, setIsDisable] = useState(false);
     const [ownerRoleCheck, setownerRoleCheck] = useState({});
     let Webview = !Digit.Utils.browser.isMobile();
+    const checkingFlow = formData?.uiFlow?.flow ? formData?.uiFlow?.flow :formData?.selectedPlot||formData?.businessService==="BPA-PAP"    ? "PRE_APPROVE":"";
     const ismultiple = ownershipCategory?.code.includes("MULTIPLEOWNERS") ? true : false;
     formData?.owners?.owners?.forEach(owner => {
         if(owner.isPrimaryOwner == "false" ) owner.isPrimaryOwner = false
     })
-    let [fields, setFeilds] = useState(
-        (formData?.owners && formData?.owners?.owners) || [{ name: "", gender: "", mobileNumber: null, isPrimaryOwner: true }]
-    );
+    let [fields, setFeilds] = useState(() => {
+        const owners = formData?.owners?.owners || [{ name: "", gender: "", mobileNumber: null, isPrimaryOwner: true }];
+        return owners.map(owner => ({
+          ...owner,
+          gender: typeof owner.gender === 'object' ? owner.gender : { value: owner.gender }
+        }));
+      });
 
     useEffect(() => {
         var flag=0;
@@ -335,6 +344,9 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
             const usersResponse = await Digit.UserService.userSearch(Digit.ULBService.getStateId(), { userName: field?.mobileNumber }, {});
             if(usersResponse?.user?.[0]?.dob){ 
                 usersResponse.user[0].dob = convertDateToEpoch(usersResponse?.user?.[0]?.dob);}
+            if(usersResponse?.user?.[0]?.gender===null ||usersResponse?.user?.[0]?.gender===undefined){
+                usersResponse.user[0].gender=gender;
+            }
             if (usersResponse?.user?.[0]?.createdDate) {
                     usersResponse.user[0].createdDate = convertDateTimeToEpoch(usersResponse?.user?.[0]?.createdDate);
                     usersResponse.user[0].lastModifiedDate = convertDateTimeToEpoch(usersResponse?.user?.[0]?.lastModifiedDate);
@@ -344,7 +356,9 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
             }
             let owner = formData.owners;
             let ownerStep;
+            
             ownerStep = { ...owner, owners: userData, ownershipCategory: ownershipCategory };
+            
             if (!formData?.id) {
                 setIsDisable(true);
                 //for owners conversion
@@ -355,7 +369,7 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
                         active:true,
                         name: owner.name,
                         mobileNumber: owner.mobileNumber,
-                        isPrimaryOwner: owner.isPrimaryOwner,
+                        isPrimaryOwner: ownerStep?.owners.length>1 ?owner.isPrimaryOwner:true,
                         gender: owner.gender?.code || owner.gender,
                         emailId:owner.emailId!==null?owner.emailId:emailId,
                         fatherOrHusbandName: "NAME"
@@ -396,8 +410,8 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
                       }
                     })) || [],
                     //Property.additionalDetails.owners=Property.owners;
-                    Property.landArea=formData?.data?.edcrDetails?.planDetail?.blocks?.[0]?.building?.totalBuitUpArea.toFixed(2);
-                    Property.noOfFloors=formData?.data?.edcrDetails?.planDetail?.blocks?.[0]?.building?.totalFloors;
+                    Property.landArea=formData?.data?.edcrDetails?.planDetail?.blocks?.[0]?.building?.totalBuitUpArea.toFixed(2)||formData?.data?.edcrDetails?.drawingDetail?.totalBuitUpArea;
+                    Property.noOfFloors=formData?.data?.edcrDetails?.planDetail?.blocks?.[0]?.building?.totalFloors||formData?.data?.edcrDetails?.drawingDetail?.blocks?.[0]?.building?.totalFloors;
                     Property.additionalDetails= {
                       isRainwaterHarvesting:false,
                       owners:conversionOwners?.map((owner, index)=>({
@@ -417,7 +431,7 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
                      createdProp = await PTService.create({Property, tenantId})
               }
                 let payload = {};
-                payload.edcrNumber = formData?.edcrNumber?.edcrNumber ? formData?.edcrNumber?.edcrNumber :formData?.data?.scrutinyNumber?.edcrNumber;
+                payload.edcrNumber = formData?.edcrNumber?.edcrNumber ? formData?.edcrNumber?.edcrNumber :formData?.data?.scrutinyNumber?.edcrNumber ||formData?.data?.scrutinyNumber;
                 payload.riskType = formData?.data?.riskType;
                 payload.applicationType = formData?.data?.applicationType;
                 payload.serviceType = formData?.data?.serviceType;
@@ -431,10 +445,11 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
 
                 // Additonal details
                 payload.additionalDetails = {GISPlaceName:formData?.address?.placeName};
-                if (formData?.data?.holdingNumber) payload.additionalDetails.holdingNo = formData?.data?.holdingNumber;
-                if (formData?.data?.registrationDetails) payload.additionalDetails.registrationDetails = formData?.data?.registrationDetails;
+                if (formData?.data?.holdingNumber||formData?.holdingNumber) payload.additionalDetails.holdingNo = formData?.holdingNumber||formData?.data?.holdingNumber;
+                if (formData?.data?.registrationDetails||formData?.registrationDetails) payload.additionalDetails.registrationDetails = formData?.registrationDetails||formData?.data?.registrationDetails;
                 if (formData?.data?.applicationType) payload.additionalDetails.applicationType = formData?.data?.applicationType;
                 if (formData?.data?.serviceType) payload.additionalDetails.serviceType = formData?.data?.serviceType;
+                payload.additionalDetails.isPreApproved = formData?.selectedPlot||formData?.businessService==="BPA-PAP" ? true : false;
                 //For LandInfo
                 payload.landInfo = {};
                 //For Address
@@ -449,7 +464,7 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
                 payload.landInfo.owners = conversionOwners;
                 payload.landInfo.ownershipCategory = ownershipCategory.code;
                 payload.landInfo.tenantId = formData?.address?.city?.code;
-
+                formData?.estimate ? payload.businessService = "BPA-PAP":"";
                 //for units
                 const blockOccupancyDetails = formData;
                 payload.landInfo.unit = getUnitsForAPI(blockOccupancyDetails);
@@ -457,7 +472,9 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
                 let nameOfAchitect = sessionStorage.getItem("BPA_ARCHITECT_NAME");
                 let parsedArchitectName = nameOfAchitect ? JSON.parse(nameOfAchitect) : "ARCHITECT";
                 payload.additionalDetails.typeOfArchitect = parsedArchitectName;
-                // create BPA call
+                payload.additionalDetails.plotNo = formData?.data?.edcrDetails?.planDetail?.planInformation.plotNo||formData?.plotNo;
+                payload.additionalDetails.khataNo = formData?.data?.edcrDetails?.planDetail?.planInformation?.khataNo||formData?.khataNo;
+                payload.additionalDetails.applicantName = formData?.data?.applicantName
                 Digit.OBPSService.create({ BPA: payload }, tenantId)
                     .then((result, err) => {
                         if (result?.BPA?.length > 0) {
@@ -506,7 +523,7 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
             if(flag !== 1 && (!ob?.name || !ob?.mobileNumber || !ob?.gender?.code) )
             flag = 1;
         })
-        console.log("flag",flag)
+        
         if(flag == 0)
         return false;
         else
@@ -564,7 +581,7 @@ useEffect(()=>{
 
     return (
         <div>
-        <Timeline currentStep={2} />
+        <Timeline currentStep={checkingFlow === "OCBPA"  ? 2 : checkingFlow==="PRE_APPROVE"? 6 : 1 } flow={checkingFlow}/>
         <FormStep config={config} onSelect={goNext} onSkip={onSkip} t={t} isDisabled={canmovenext || getCanMoveNextMultiple() || !ownershipCategory || isDisable || showToast} forcedError={t(error)}>   
             {!isLoading ?
                 <div style={{marginBottom: "10px"}}>
