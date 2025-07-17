@@ -2,7 +2,7 @@ package org.egov.demand.web.contract;
 
 import lombok.*;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 
 import org.egov.demand.model.enums.PeriodCycle;
 
