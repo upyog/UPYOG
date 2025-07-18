@@ -2,56 +2,56 @@ const { createProxyMiddleware } = require("http-proxy-middleware");
 
 const createProxy = createProxyMiddleware({
   //target: process.env.REACT_APP_PROXY_API || "https://uat.digit.org",
-  // target: process.env.REACT_APP_PROXY_API || "https://mnptapp.manipurpropertytax.org",
-  target: process.env.REACT_APP_PROXY_API || "https://mnptapp.manipurpropertytax.org",
+  // target: process.env.REACT_APP_PROXY_API || "https://mnptstage.manipurpropertytax.org",
+  target: process.env.REACT_APP_PROXY_API || "https://mnptstage.manipurpropertytax.org",
   changeOrigin: true,
 });
 const assetsProxy = createProxyMiddleware({
-  target: process.env.REACT_APP_PROXY_ASSETS || "https://mnptapp.manipurpropertytax.org",
+  target: process.env.REACT_APP_PROXY_ASSETS || "https://mnptstage.manipurpropertytax.org",
   changeOrigin: true,
 });
 const assetsProxyMdms = createProxyMiddleware({
-  target: process.env.REACT_APP_PROXY_API_MDMS || "https://mnptapp.manipurpropertytax.org",
+  target: process.env.REACT_APP_PROXY_API_MDMS || "https://mnptstage.manipurpropertytax.org",
   changeOrigin: true,
 });
 const assetsProxyLocalisation = createProxyMiddleware({
-  target: process.env.REACT_APP_PROXY_API_LOCALISATION || "https://mnptapp.manipurpropertytax.org",
+  target: process.env.REACT_APP_PROXY_API_LOCALISATION || "https://mnptstage.manipurpropertytax.org",
   changeOrigin: true,
 });
 const assetsProxyPropertyService = createProxyMiddleware({
-  target: process.env.REACT_APP_PROXY_API_PROPERTY_SERVICE || "https://mnptapp.manipurpropertytax.org",
+  target: process.env.REACT_APP_PROXY_API_PROPERTY_SERVICE || "https://mnptstage.manipurpropertytax.org",
   changeOrigin: true,
 });
 const assetsProxyEgovLocation = createProxyMiddleware({
-  target: process.env.REACT_APP_PROXY_API_LOCATION_SERVICE || "https://mnptapp.manipurpropertytax.org",
+  target: process.env.REACT_APP_PROXY_API_LOCATION_SERVICE || "https://mnptstage.manipurpropertytax.org",
   changeOrigin: true,
 });
 const assetsProxyBillingService = createProxyMiddleware({
-  target: process.env.REACT_APP_PROXY_API_BILLING_SERVICE || "https://mnptapp.manipurpropertytax.org",
+  target: process.env.REACT_APP_PROXY_API_BILLING_SERVICE || "https://mnptstage.manipurpropertytax.org",
   changeOrigin: true,
 });
 const assetsProxyUserService = createProxyMiddleware({
-  target: process.env.REACT_APP_PROXY_API_USER_SERVICE || "https://mnptapp.manipurpropertytax.org",
+  target: process.env.REACT_APP_PROXY_API_USER_SERVICE || "https://mnptstage.manipurpropertytax.org",
   changeOrigin: true,
 });
 const assetsProxyUserPortService = createProxyMiddleware({
-  target: process.env.REACT_APP_PROXY_API_USER_OTP_SERVICE || "https://mnptapp.manipurpropertytax.org",
+  target: process.env.REACT_APP_PROXY_API_USER_OTP_SERVICE || "https://mnptstage.manipurpropertytax.org",
   changeOrigin: true,
 });
 const assetsProxyPTCalculatorService = createProxyMiddleware({
-  target: process.env.REACT_APP_PROXY_API_PT_CALCULATOR_SERVICE || "https://mnptapp.manipurpropertytax.org",
+  target: process.env.REACT_APP_PROXY_API_PT_CALCULATOR_SERVICE || "https://mnptstage.manipurpropertytax.org",
   changeOrigin: true,
 });
 const assetsProxyWorkflowService = createProxyMiddleware({
-  target: process.env.REACT_APP_PROXY_API_WORKFLOW_SERVICE || "https://mnptapp.manipurpropertytax.org",
+  target: process.env.REACT_APP_PROXY_API_WORKFLOW_SERVICE || "https://mnptstage.manipurpropertytax.org",
   changeOrigin: true,
 });
 const assetsAccessControlService = createProxyMiddleware({
-  target: process.env.REACT_APP_PROXY_API_ACCESS_SERVICE || "https://mnptapp.manipurpropertytax.org",
+  target: process.env.REACT_APP_PROXY_API_ACCESS_SERVICE || "https://mnptstage.manipurpropertytax.org",
   changeOrigin: true,
 });
 const assetsUserEventService = createProxyMiddleware({
-  target: process.env.REACT_APP_PROXY_API_USER_EVENT_SERVICE || "https://mnptapp.manipurpropertytax.org",
+  target: process.env.REACT_APP_PROXY_API_USER_EVENT_SERVICE || "https://mnptstage.manipurpropertytax.org",
   changeOrigin: true,
 });
 const assetsFileStoreService = createProxyMiddleware({
