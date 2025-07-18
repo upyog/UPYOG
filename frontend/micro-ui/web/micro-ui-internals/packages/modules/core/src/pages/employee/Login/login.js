@@ -92,52 +92,84 @@ const Login = ({ config: propsConfig, t, isDisabled }) => {
     sessionStorage.getItem("User") && sessionStorage.removeItem("User")
     history.push("/digit-ui/employee/user/forgot-password");
   };
+  // const loadForm = () => {
+    if(cities && cities?.length>0) {
+      let isAdmin = cities.some((e)=> e.code === 'mn')
+      if(!isAdmin){
+        cities.unshift({i18nKey: 'TENANT_TENANTS_MN', code: 'mn', name: 'Admin', description: 'Admin'})
+      }
+    }
+      
+  
+    const config = [
+      {
+        body: [
+          {
+            label: t(userId.label),
+            type: userId.type,
+            populators: {
+              name: userId.name,
+            },
+            isMandatory: true,
+          },
+          {
+            label: t(password.label),
+            type: password.type,
+            populators: {
+              name: password.name,
+            },
+            isMandatory: true,
+          },
+          {
+            label: t(city.label),
+            type: city.type,
+            populators: {
+              name: city.name,
+              customProps: {},
+              component: (props, customProps) => (
+               <Dropdown
+                  option={cities}
+                  className="login-city-dd"
+                  optionKey="i18nKey"
+                  select={(d) => {
+                    props.onChange(d);
+                  }}
+                  t={t}
+                  {...customProps}
+                />
+              ),
+            },
+            isMandatory: true,
+          },
+          {
+            label: t(captchaTxt.label),
+            type: captchaTxt.type,
+            populators: {
+              name: captchaTxt.name,
+            },
+            captchaTxt: captcha,
+            isMandatory: true,
+          },
+          {
+            label: t(captchaField?.label),
+            type: captchaField.type,
+            populators: {
+              name: captchaField.name,
+            },
+            isMandatory: true,
+          },
+          
+        ],
+      },
+    ];
+  //   setConfig(config)
+  // }
 
-  const [userId, password, city] = propsConfig.inputs;
-  const config = [
-    {
-      body: [
-        {
-          label: t(userId.label),
-          type: userId.type,
-          populators: {
-            name: userId.name,
-          },
-          isMandatory: true,
-        },
-        {
-          label: t(password.label),
-          type: password.type,
-          populators: {
-            name: password.name,
-          },
-          isMandatory: true,
-        },
-        {
-          label: t(city.label),
-          type: city.type,
-          populators: {
-            name: city.name,
-            customProps: {},
-            component: (props, customProps) => (
-              <Dropdown
-                option={cities}
-                className="login-city-dd"
-                optionKey="i18nKey"
-                select={(d) => {
-                  props.onChange(d);
-                }}
-                t={t}
-                {...customProps}
-              />
-            ),
-          },
-          isMandatory: true,
-        },
-      ],
-    },
-  ];
+  const onCaptchaRefresh = ()=> {
+    fetchCaptcha()
+  }
 
+  
   return isLoading || isStoreLoading ? (
     <Loader />
   ) : (

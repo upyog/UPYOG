@@ -14,6 +14,7 @@ import {
 } from "@upyog/digit-ui-react-components";
 import React from "react";
 import { useTranslation } from "react-i18next";
+import  EmployeeDashboard  from "@upyog/digit-ui-module-pt/src/pages/employee/EmployeeDashboard";
 
 /* 
 Feature :: Citizen All service screen cards
@@ -142,9 +143,17 @@ const EmployeeHome = ({ modules }) => {
   );
 };
 
-export const AppHome = ({ userType, modules, getCitizenMenu, fetchedCitizen, isLoading }) => {
+export const AppHome = ({ userType, modules, userInfo, getCitizenMenu, fetchedCitizen, isLoading }) => {
+  // console.log("AppHome==",modules,userType,userInfo)
+  let userRole = userInfo?.roles && userInfo?.roles?.length>0 ? userInfo?.roles.find((e)=> e?.code === "MANIPUR_LEADER" || e?.code === "MNPTB_DIRECTOR") : null;
   if (userType === "citizen") {
     return <CitizenHome modules={modules} getCitizenMenu={getCitizenMenu} fetchedCitizen={fetchedCitizen} isLoading={isLoading} />;
   }
-  return <EmployeeHome modules={modules} />;
+  if(userType === "employee") {
+    if(userRole && (userRole?.code === 'MANIPUR_LEADER' || userRole?.code ==="MNPTB_DIRECTOR")) {
+      return <EmployeeDashboard modules={modules} />;
+    }
+    return <EmployeeHome modules={modules} />;
+  }
+  
 };
