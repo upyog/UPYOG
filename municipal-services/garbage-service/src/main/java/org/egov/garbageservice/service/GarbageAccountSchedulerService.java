@@ -60,6 +60,7 @@ public class GarbageAccountSchedulerService {
 
 		List<GarbageAccount> garbageAccounts = getGarbageAccounts(generateBillRequest);
 		garbageAccounts = removeAlreadyBillCalculatedGarbageAccounts(garbageAccounts, generateBillRequest);
+		log.info("Accounts {}",garbageAccounts);
 
 		// create demand and bill for every account
 		if (null != garbageAccounts && !CollectionUtils.isEmpty(garbageAccounts)) {
@@ -81,8 +82,10 @@ public class GarbageAccountSchedulerService {
 						grbgBillTrackers.add(grbgBillTracker);
 
 						// triggerNotifications
-						notificationService.triggerNotificationsGenerateBill(garbageAccount, billResponse.getBill().get(0),
-								generateBillRequest.getRequestInfo(),grbgBillTracker);
+//						notificationService.triggerNotificationsGenerateBill(garbageAccount, billResponse.getBill().get(0),
+//								generateBillRequest.getRequestInfo(),grbgBillTracker);
+					}else {
+						log.info("bill cant be generated {} {} {}",generateBillRequest,garbageAccount,billResponse);
 					}
 				}
 			});
