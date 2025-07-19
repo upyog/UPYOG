@@ -4,6 +4,11 @@ import {
   initPGRComponents,
   PGRReducers,
 } from "@demodigit/digit-ui-module-pgr";
+import { initFSMComponents } from "@upyog/digit-ui-module-fsm";
+import {
+  PTComponents,
+} from "@upyog/digit-ui-module-pt";
+import { MCollectModule, MCollectLinks, initMCollectComponents } from "@upyog/digit-ui-module-mcollect";
 import { initDSSComponents } from "@demodigit/digit-ui-module-dss";
 import {
   PaymentModule,
@@ -21,34 +26,56 @@ import {
   HRMSModule,
   initHRMSComponents,
 } from "@demodigit/digit-ui-module-hrms";
+import {
+  initTLComponents,
+} from "@upyog/digit-ui-module-tl";
+import { initOBPSComponents } from "@upyog/digit-ui-module-obps";
+import { initNOCComponents } from "@upyog/digit-ui-module-noc";
+
+
+
+
+
+// import { initReportsComponents } from "@upyog/digit-ui-module-reports";
 
 initLibraries();
 
 const enabledModules = [
   "PGR",
+  "FSM",
   "Payment",
   "CommonPT",
   "WS",
   "ASSET",
-  "HRMS"
+  "HRMS",
+  "MCollect",
+  "PT",
+  "TL",
+  "OBPS",
 ];
 window.Digit.ComponentRegistryService.setupRegistry({
   ...paymentConfigs,
   PaymentModule,
   PaymentLinks,
+  ...PTComponents,
+  MCollectLinks,
+  MCollectModule,
   ASSETModule,
   ASSETLinks,
-  HRMSModule,
   ...ASSETComponents,
 });
 
 initPGRComponents();
+initFSMComponents();
 initDSSComponents();
+initMCollectComponents();
+initTLComponents();
+initOBPSComponents();
+initNOCComponents();
 initWSComponents();
 initCommonPTComponents();
-initHRMSComponents();
 // initReportsComponents();
-initCustomisationComponents();
+// initCustomisationComponents();
 
 const moduleReducers = (initData) => ({
   pgr: PGRReducers(initData),

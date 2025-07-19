@@ -94,6 +94,7 @@ const IconsObject = {
   LoginIcon: <LoginIcon className="icon" />,
 };
 const StaticCitizenSideBar = ({ linkData, islinkDataLoading }) => {
+  console.log("linkData",linkData)
   const { t } = useTranslation();
   const history = useHistory();
   const location = useLocation();

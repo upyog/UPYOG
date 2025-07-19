@@ -1,4 +1,4 @@
-import { BackButton, WhatsappIcon, Card, CitizenHomeCard, CitizenInfoLabel, PrivateRoute } from "@demodigit/digit-ui-react-components";
+import { BackButton, WhatsappIcon, Card, CitizenInfoLabel, PrivateRoute } from "@demodigit/digit-ui-react-components";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { Route, Switch, useRouteMatch, useHistory, Link } from "react-router-dom";
@@ -7,6 +7,7 @@ import { AppHome, processLinkData } from "../../components/Home";
 import TopBarSideBar from "../../components/TopBarSideBar";
 import StaticCitizenSideBar from "../../components/TopBarSideBar/SideBar/StaticCitizenSideBar";
 import CitizenHome from "./Home";
+import CitizenHomeCard from "../../../../../react-components/src/atoms/CitizenHomeCard"
 import LanguageSelection from "./Home/LanguageSelection";
 import LocationSelection from "./Home/LocationSelection";
 import Login from "./Login";
@@ -106,7 +107,7 @@ console.log("modules",modules)
         <Route key={index} path={`${path}/${code.toLowerCase()}-home`}>
           <div className="moduleLinkHomePage">
             {/* <img src={ "https://chstage.blob.core.windows.net/assets/tmp/Untitled-design-1.png"||bannerImage || stateInfo?.bannerUrl} alt="noimagefound" /> */}
-            <BackButton className="moduleLinkHomePageBackButton" />
+            <BackButton style={{marginTop:"20px", color:"black"}}className="moduleLinkHomePageBackButton" />
            {/* {isMobile? <h4 style={{top: "calc(16vw + 40px)",left:"1.5rem",position:"absolute",color:"white"}}>{t("MODULE_" + code.toUpperCase())}</h4>:<h1>{t("MODULE_" + code.toUpperCase())}</h1>} */}
             <div className="moduleLinkHomePageModuleLinks">
               {mdmsDataObj && (
@@ -237,13 +238,13 @@ console.log("modules",modules)
         <div style={{ display: 'flex', justifyContent: 'center', color:"black" }}>
           {/* <span style={{ cursor: "pointer", fontSize: window.Digit.Utils.browser.isMobile()?"12px":"14px", fontWeight: "400"}} onClick={() => { window.open('https://www.digit.org/', '_blank').focus();}} >Powered by DIGIT</span>
           <span style={{ margin: "0 10px" ,fontSize: window.Digit.Utils.browser.isMobile()?"12px":"14px"}}>|</span> */}
-          <span  className="upyog-copyright-footer" style={{ cursor: "pointer", fontSize: window.Digit.Utils.browser.isMobile()?"12px":"14px", fontWeight: "400"}} onClick={() => { window.open('', '_blank').focus();}} >Copyright © 2025  Panchayati Raj & Drinking Water Department Govt. of Odisha </span>
+          <span  className="upyog-copyright-footer" style={{ cursor: "pointer", fontSize: window.Digit.Utils.browser.isMobile()?"12px":"14px", fontWeight: "400"}} onClick={() => { window.open('', '_blank').focus();}} >Copyright © 2025  Nashik Municipal Corporation </span>
           
           {/* <a style={{ cursor: "pointer", fontSize: "16px", fontWeight: "400"}} href="#" target='_blank'>MEA</a> */}
 
         </div>
         <div className="upyog-copyright-footer-web">
-          <span className="" style={{ cursor: "pointer", fontSize:  window.Digit.Utils.browser.isMobile()?"12px":"14px", fontWeight: "400"}} onClick={() => { window.open('https://niua.in/', '_blank').focus();}} >Copyright © 2025  Panchayati Raj & Drinking Water Department Govt. of Odisha </span>
+          <span className="" style={{ cursor: "pointer", fontSize:  window.Digit.Utils.browser.isMobile()?"12px":"14px", fontWeight: "400"}} onClick={() => { window.open('https://niua.in/', '_blank').focus();}} >Copyright © 2025  Nashik Municipal Corporation </span>
           </div>
       </div>
     </div>

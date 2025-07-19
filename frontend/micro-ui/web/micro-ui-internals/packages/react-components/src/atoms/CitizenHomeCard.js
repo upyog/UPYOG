@@ -14,6 +14,46 @@ const CitizenHomeCard = ({ header, links = [], state, Icon, Info, isInfo = false
       { label: "payment", img: "https://i.postimg.cc/cL70JR3d/icons8-payments-96.png" },
       { label: "audit", img: "https://i.postimg.cc/FHxXv9tR/icons8-audit-96.png" },
       { label: "faq", img: "https://i.postimg.cc/1tqW9HgH/icons8-faq-100.png" },
+      {label: "Create Property", img:"https://i.postimg.cc/FHCG3q3p/icons8-form-50.png"}
+    ];
+  }
+  else if(links[0].name.includes("PT"))
+  {
+     linksNew = [
+      { label: "My Properties", img: "https://i.postimg.cc/WbX7cKWV/icons8-search-bar-100.png" },
+      { label: "water connection", img: "https://i.postimg.cc/X7fYZ6SM/icons8-water-96.png" },
+      { label: "new connection", img: "https://i.postimg.cc/25Bdv5zj/icons8-tap-90.png" },
+      { label: "application", img: "https://i.postimg.cc/FHCG3q3p/icons8-form-50.png" },
+      { label: "payment", img: "https://i.postimg.cc/cL70JR3d/icons8-payments-96.png" },
+      { label: "audit", img: "https://i.postimg.cc/FHxXv9tR/icons8-audit-96.png" },
+      { label: "faq", img: "https://i.postimg.cc/1tqW9HgH/icons8-faq-100.png" },
+      {label: "Create Property", img:"https://i.postimg.cc/FHCG3q3p/icons8-form-50.png"}
+    ];
+  }
+  else if(links[0].name.includes("TL"))
+  {
+     linksNew = [
+      { label: "My Properties", img: "https://i.postimg.cc/WbX7cKWV/icons8-search-bar-100.png" },
+      { label: "water connection", img: "https://i.postimg.cc/X7fYZ6SM/icons8-water-96.png" },
+      { label: "new connection", img: "https://i.postimg.cc/25Bdv5zj/icons8-tap-90.png" },
+      { label: "application", img: "https://i.postimg.cc/FHCG3q3p/icons8-form-50.png" },
+      { label: "payment", img: "https://i.postimg.cc/cL70JR3d/icons8-payments-96.png" },
+      { label: "audit", img: "https://i.postimg.cc/FHxXv9tR/icons8-audit-96.png" },
+      { label: "faq", img: "https://i.postimg.cc/1tqW9HgH/icons8-faq-100.png" },
+      {label: "Create Property", img:"https://i.postimg.cc/FHCG3q3p/icons8-form-50.png"}
+    ];
+  }
+  else if(links[0].name.includes("mCollect"))
+  {
+     linksNew = [
+      { label: "My Properties", img: "https://i.postimg.cc/WbX7cKWV/icons8-search-bar-100.png" },
+      { label: "water connection", img: "https://i.postimg.cc/X7fYZ6SM/icons8-water-96.png" },
+      { label: "new connection", img: "https://i.postimg.cc/25Bdv5zj/icons8-tap-90.png" },
+      { label: "application", img: "https://i.postimg.cc/FHCG3q3p/icons8-form-50.png" },
+      { label: "payment", img: "https://i.postimg.cc/cL70JR3d/icons8-payments-96.png" },
+      { label: "audit", img: "https://i.postimg.cc/FHxXv9tR/icons8-audit-96.png" },
+      { label: "MCOLLECT_FAQ_S", img: "https://i.postimg.cc/1tqW9HgH/icons8-faq-100.png" },
+      {label: "Create Property", img:"https://i.postimg.cc/FHCG3q3p/icons8-form-50.png"}
     ];
   }
   else

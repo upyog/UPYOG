@@ -1,7 +1,6 @@
 import {
   BackButton,
   BillsIcon,
-  CitizenHomeCard,
   CitizenInfoLabel,
   FSMIcon,
   Loader,
@@ -14,6 +13,7 @@ import {
 } from "@demodigit/digit-ui-react-components";
 import React from "react";
 import { useTranslation } from "react-i18next";
+import CitizenHomeCard from "../../../../react-components/src/atoms/CitizenHomeCard"
 
 /* 
 Feature :: Citizen All service screen cards

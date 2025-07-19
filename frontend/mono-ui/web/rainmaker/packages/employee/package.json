@@ -81,7 +81,9 @@
     "**/datatables.net-responsive-dt":"2.3.0",
     "**/datatables.net-responsive":"2.2.9",
     "**/datatables.net-buttons-bs":"2.0.0",
-    "**/datatables.net-buttons": "2.2.2"
+    "**/datatables.net-buttons": "2.2.2",
+    "glob": "7.2.3",
+    "minimatch": "3.1.2"
   },
   "scripts": {
     "build-css": "node-sass-chokidar src/ -o src/",
