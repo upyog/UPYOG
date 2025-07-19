@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { AppContainer, BackButton, Toast } from "@demodigit/digit-ui-react-components";
+import { AppContainer, Toast } from "@demodigit/digit-ui-react-components";
+import BackButton from "../../../../../../react-components/src/atoms/BackButton";
 import { Route, Switch, useHistory, useRouteMatch, useLocation } from "react-router-dom";
 import { loginSteps } from "./config";
 import SelectMobileNumber from "./SelectMobileNumber";

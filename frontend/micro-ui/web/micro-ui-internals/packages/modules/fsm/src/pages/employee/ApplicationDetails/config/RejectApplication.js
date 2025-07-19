@@ -1,0 +1,40 @@
+import React from "react";
+import { Dropdown } from "@upyog/digit-ui-react-components";
+
+export const configRejectApplication = ({ t, rejectMenu, setReason, reason, action }) => {
+  return {
+    label: {
+      heading: `ES_FSM_ACTION_TITLE_${action}`,
+      submit: `CS_COMMON_${action}`,
+      cancel: "CS_COMMON_CLOSE",
+    },
+    form: [
+      {
+        body: [
+          {
+            label: t(`ES_FSM_ACTION_${action.toUpperCase()}_REASON`),
+            type: "dropdown",
+            populators: (
+              <Dropdown
+                t={t}
+                option={rejectMenu?.sort((a, b) => a.name.localeCompare(b.name))}
+                id="reason"
+                optionKey="i18nKey"
+                selected={reason}
+                select={setReason}
+              />
+            ),
+            isMandatory: true,
+          },
+          {
+            label: t("ES_FSM_ACTION_COMMENTS"),
+            type: "textarea",
+            populators: {
+              name: "comments",
+            },
+          },
+        ],
+      },
+    ],
+  };
+};

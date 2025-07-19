@@ -11,7 +11,12 @@
     "micro-ui-internals/packages/modules/ws",
     "micro-ui-internals/packages/modules/asset",
     "micro-ui-internals/packages/modules/commonPt",
-    "micro-ui-internals/packages/modules/hrms"
+    "micro-ui-internals/packages/modules/hrms",
+    "micro-ui-internals/packages/modules/pt",
+    "micro-ui-internals/packages/modules/tl",
+    "micro-ui-internals/packages/modules/mCollect",
+    "micro-ui-internals/packages/modules/obps",
+    "micro-ui-internals/packages/modules/fsm"
   ],
   "engines": {
     "node": ">=14"
@@ -22,6 +27,11 @@
     "@demodigit/digit-ui-module-core": "1.0.3",
     "@demodigit/digit-ui-module-dss": "1.0.0",
     "@demodigit/digit-ui-module-pgr": "3.0.4",
+    "@upyog/digit-ui-module-pt": "3.0.6",
+    "@upyog/digit-ui-module-tl": "3.0.7",
+    "@upyog/digit-ui-module-obps":"3.0.4",
+    "@upyog/digit-ui-module-mcollect":"3.0.3",
+    "@upyog/digit-ui-module-fsm":"3.0.4",
     "@demodigit/digit-ui-module-ws": "3.0.6",
     "@demodigit/digit-ui-react-components": "1.0.0",
     "@demodigit/upyog-ui-module-asset": "3.0.1",

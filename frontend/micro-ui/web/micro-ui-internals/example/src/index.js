@@ -13,6 +13,13 @@ import { DigitUI } from "@demodigit/digit-ui-module-core";
 import { initCommonPTComponents } from "@demodigit/digit-ui-module-commonpt";
 import { HRMSModule } from "@demodigit/digit-ui-module-hrms";
 import { initHRMSComponents } from "@demodigit/digit-ui-module-hrms";
+import { PTComponents} from "@upyog/digit-ui-module-pt";
+import { MCollectModule, MCollectLinks, initMCollectComponents } from "@upyog/digit-ui-module-mcollect";
+import { initFSMComponents } from "@upyog/digit-ui-module-fsm";
+import {
+  initTLComponents,
+} from "@upyog/digit-ui-module-tl";
+import { initOBPSComponents } from "@upyog/digit-ui-module-obps";
 // import {initCustomisationComponents} from "./customisations";
 
 // import { PGRModule, PGRLinks } from "@demodigit/digit-ui-module-pgr";
@@ -35,7 +42,12 @@ const enabledModules = [
   "WS",
   "CommonPT",
   "ASSET",
-  "HRMS"
+  "HRMS",
+  "OBPS",
+  "TL",
+  "PT",
+  "FSM",
+  "MCollect",
 ];
 
 const initTokens = (stateCode) => {
@@ -75,14 +87,19 @@ const initDigitUI = () => {
     ASSETModule,
     ASSETLinks,
     ...ASSETComponents,
+    
+    ...PTComponents,
+    MCollectLinks,
+    MCollectModule,
   });
-
+  initFSMComponents();
   initPGRComponents();
-  initDSSComponents();
+  initMCollectComponents();
+  initHRMSComponents();
+  initTLComponents();
+  initOBPSComponents();
   initWSComponents();
   initCommonPTComponents();
-  initHRMSComponents();
-  // initCustomisationComponents();
 
   const moduleReducers = (initData) => ({
     pgr: PGRReducers(initData),

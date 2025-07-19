@@ -16,6 +16,11 @@ RUN yarn add @demodigit/digit-ui-module-ws@3.0.6
 RUN yarn add @demodigit/digit-ui-module-commonpt@3.0.3
 RUN yarn add @demodigit/upyog-ui-module-asset@3.0.1
 RUN yarn add @demodigit/digit-ui-module-hrms@3.0.1
+RUN yarn add @upyog/digit-ui-module-pt@3.0.6
+RUN yarn add @upyog/digit-ui-module-tl@3.0.7
+RUN yarn add @upyog/digit-ui-module-obps@3.0.4
+RUN yarn add @upyog/digit-ui-module-mcollect@3.0.3
+RUN yarn add @upyog/digit-ui-module-fsm@3.0.4
 
 
 ARG WORK_DIR

@@ -12,7 +12,12 @@
     "packages/modules/commonPt",
     "packages/modules/pgr",
     "packages/modules/ws",
-    "packages/modules/hrms"
+    "packages/modules/hrms",
+    "packages/modules/pt",
+    "packages/modules/tl",
+    "packages/modules/mCollect",
+    "packages/modules/obps",
+    "packages/modules/fsm"
   ],
   "author": "Abhinav Kushwaha <abhinav.kushwaha@egovernments.org>",
   "license": "MIT",
@@ -37,6 +42,11 @@
     "dev:pgr": "cd packages/modules/pgr && yarn start",
     "dev:dss": "cd packages/modules/dss && yarn start",
     "dev:ws": "cd packages/modules/ws && yarn start",
+    "dev:tl": "cd packages/modules/tl && yarn start",
+    "dev:pt": "cd packages/modules/pt && yarn start",
+    "dev:obps": "cd packages/modules/obps && yarn start",
+    "dev:fsm": "cd packages/modules/fsm && yarn start",
+    "dev:mcollect": "cd packages/modules/mCollect && yarn start",
     "dev:example": "cd example && yarn start",
     "build": "run-p build:**",
     "build:libraries": "cd packages/libraries && yarn build",
@@ -49,6 +59,11 @@
     "build:hrms": "cd packages/modules/hrms && yarn build",
     "buildD:dss": "cd packages/modules/dss && yarn build",
     "build:ws": "cd packages/modules/ws && yarn build",
+    "build:pt": "cd packages/modules/pt && yarn build",
+    "build:tl": "cd packages/modules/tl && yarn build",
+    "build:obps": "cd packages/modules/obps && yarn build",
+    "build:mcollect": "cd packages/modules/mCollect && yarn build",
+    "build:fsm": "cd packages/modules/fsm && yarn build",
     "deploy:jenkins": "./scripts/jenkins.sh"
   },
   "devDependencies": {
