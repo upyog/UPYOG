@@ -36,7 +36,8 @@ const getName = (places) => {
 };
 
 const loadGoogleMaps = (callback) => {
-  const key = globalConfigs?.getConfig("GMAPS_API_KEY");
+  console.log("loadGoogleMaps",loadGoogleMaps)
+  const key = "AIzaSyBrWOKWviSRGqTTJMVPIs9FzMhKXSXtZLs";
   const loader = new Loader({
     apiKey: key,
     version: "weekly",
@@ -109,7 +110,7 @@ const mapStyles = [
     elementType: "labels.text.fill",
     stylers: [
       {
-        color: "#757575",
+        color: "#f47738",
       },
     ],
   },
@@ -145,7 +146,7 @@ const mapStyles = [
     elementType: "labels.text.fill",
     stylers: [
       {
-        color: "#757575",
+        color: "#f47738",
       },
     ],
   },
@@ -239,6 +240,7 @@ const setLocationText = (location, onChange, isPlaceRequired=false) => {
 };
 
 const onMarkerDragged = (marker, onChange, isPlaceRequired = false) => {
+  console.log("markermarker",marker)
   if (!marker) return;
   const { latLng } = marker;
   const currLat = latLng.lat();
@@ -346,6 +348,7 @@ const initAutocomplete = (onChange, position, isPlaceRequired=false) => {
 };
 
 const LocationSearch = (props) => {
+  console.log("LocationSearch")
   useEffect(() => {
     async function mapScriptCall() {
       const getLatLng = (position) => {

@@ -1,5 +1,5 @@
 .HomePageWrapper {
-  margin-top: -25px;
+  
 
   .BannerWithSearch {
     margin-bottom: 40px;
@@ -60,15 +60,15 @@
 @media (min-width: 780px) {
   .SideBarStatic {
     width: 219px;
-    background: #ffffff;
-    margin-top: -24px;
+    background: white;
+   
   }
 }
 @media (max-width: 780px) {
   .SideBarStatic {
     width: 219px;
-    background: #ffffff;
-    margin-top: -24px;
+    background: white;
+    
     display: none;
   }
 }
@@ -151,7 +151,7 @@
       left: 15.8rem;
     }
     .moduleLinkHomePageBackButton {
-      top: calc(10vw + 16px);
+      top: calc(7vw + 16px);
       @apply ml-md;
     }
   }

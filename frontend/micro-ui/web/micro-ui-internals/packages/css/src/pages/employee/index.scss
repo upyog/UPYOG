@@ -54,7 +54,7 @@
       margin-top: 12px;
 
       .user-img-txt {
-        background: #a82227;
+        background: #0a97d5;
         padding: 10px 15px;
         border-radius: 50%;
         color: white;
@@ -178,7 +178,7 @@
 }
 .citizen {
   .main {
-    padding-top: 82px;
+    padding-top:72px;
     min-height: calc(100vh - 48px);
     display: flex !important;
   }
@@ -196,7 +196,6 @@
     white-space: nowrap;
     height: calc(100vh - 36px);
     padding-bottom: 5rem;
-    background-image: url(https://in-egov-assets.s3.ap-south-1.amazonaws.com/images/top-green-card.png), url(https://in-egov-assets.s3.ap-south-1.amazonaws.com/images/top-red-card.png);
     background-blend-mode: lighten;
     background-size: cover;
 
@@ -226,11 +225,11 @@
       padding: 20px;
       font-size: 14px;
       &.active {
-        color: #a82227 !important;
+        color: #0a97d5 !important;
 
-        border-right: 4px solid #a82227;
+        border-right: 4px solid #0a97d5;
         svg {
-          fill: #a82227 !important;
+          fill: #0a97d5 !important;
         }
       }
       .employee-search-input {
@@ -256,12 +255,12 @@
       }
 
       &:hover {
-        color: #a82227 !important;
+        color: #0a97d5 !important;
         background-color: #486480;
 
         cursor: pointer;
         svg {
-          fill: #a82227 !important;
+          fill: #0a97d5 !important;
         }
       }
       .search-icon-wrapper {
@@ -303,11 +302,11 @@
         }
       }
       &.active {
-        color: #a82227 !important;
+        color: #0a97d5 !important;
 
-        border-right: 4px solid #a82227;
+        border-right: 4px solid #0a97d5;
         svg {
-          fill: #a82227 !important;
+          fill: #0a97d5 !important;
         }
       }
     }
@@ -515,7 +514,7 @@
     .main {
       display: flex;
       flex-direction: column;
-      padding-top: 80px;
+      padding-top: 72px;
       margin-left: 64px;
       width: calc(100%-83px);
     }
@@ -533,7 +532,7 @@
   .citizen {
     .main {
       width: 100%;
-      padding-top: 80px;
+      padding-top: 72px;
       min-height: calc(100vh - 48px);
       margin-bottom: 18px !important;
       display: flex !important;

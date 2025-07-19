@@ -3,7 +3,7 @@ import {
     FormStep,
     RadioOrSelect,
     CardLabel
-} from "@upyog/digit-ui-react-components";
+} from "@demodigit/digit-ui-react-components";
 import Timeline from "../components/Timeline";
 
 const WSServiceName = ({ t, config, onSelect, userType, formData }) => {
@@ -15,14 +15,6 @@ const WSServiceName = ({ t, config, onSelect, userType, formData }) => {
         {
             i18nKey: "WS_WATER_CONNECTION_ONLY",
             code: "WATER"
-        },
-        {
-            i18nKey: "WS_SEWERAGE_CONNECTION_ONLY",
-            code: "SEWERAGE"
-        },
-        {
-            i18nKey: "WS_BOTH_WATER_AND_SEWERAGE",
-            code: "BOTH"
         }
     ];
 

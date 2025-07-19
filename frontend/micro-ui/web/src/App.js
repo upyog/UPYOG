@@ -3,140 +3,52 @@ import React from "react";
 import {
   initPGRComponents,
   PGRReducers,
-} from "@upyog/digit-ui-module-pgr";
-import { initFSMComponents } from "@upyog/digit-ui-module-fsm";
-import {
-  PTModule,
-  PTLinks,
-  PTComponents,
-} from "@upyog/digit-ui-module-pt";
-import { MCollectModule, MCollectLinks, initMCollectComponents } from "@upyog/digit-ui-module-mcollect";
-import { initDSSComponents } from "@upyog/digit-ui-module-dss";
+} from "@demodigit/digit-ui-module-pgr";
+import { initDSSComponents } from "@demodigit/digit-ui-module-dss";
 import {
   PaymentModule,
   PaymentLinks,
   paymentConfigs,
-} from "@upyog/digit-ui-module-common";
-import { DigitUI } from "@upyog/digit-ui-module-core";
+} from "@demodigit/digit-ui-module-common";
+import { DigitUI } from "@demodigit/digit-ui-module-core";
 import { initLibraries } from "@upyog/digit-ui-libraries";
+import { initWSComponents } from "@demodigit/digit-ui-module-ws";
+import { initCustomisationComponents } from "./Customisations";
+import { initCommonPTComponents } from "@demodigit/digit-ui-module-commonpt";
+import { ASSETComponents, ASSETLinks, ASSETModule } from "@demodigit/upyog-ui-module-asset";
+// import { initReportsComponents } from "@egovernments/digit-ui-module-reports";
 import {
   HRMSModule,
   initHRMSComponents,
-} from "@upyog/digit-ui-module-hrms";
-import {
-  TLModule,
-  TLLinks,
-  initTLComponents,
-} from "@upyog/digit-ui-module-tl";
-import { initReceiptsComponents, ReceiptsModule } from "@upyog/digit-ui-module-receipts";
-import { initOBPSComponents } from "@upyog/digit-ui-module-obps";
-import { initNOCComponents } from "@upyog/digit-ui-module-noc";
-import { initEngagementComponents } from "@upyog/digit-ui-module-engagement";
-import { initWSComponents } from "@upyog/digit-ui-module-ws";
-// import { initCustomisationComponents } from "./Customisations";
-import { initCommonPTComponents } from "@upyog/digit-ui-module-commonpt";
-import { initBillsComponents } from "@upyog/digit-ui-module-bills";
-import {
-  PTRModule,
-  PTRLinks,
-  PTRComponents,
-} from "@upyog/upyog-ui-module-ptr";
-import { ASSETComponents, ASSETLinks, ASSETModule } from "@upyog/upyog-ui-module-asset";
-
-import { 
-  EWModule, 
-  EWLinks, 
-  EWComponents }
-  from "@upyog/upyog-ui-module-ew";
-
-import { SVComponents, SVLinks, SVModule } from "@upyog/upyog-ui-module-sv";
-import {CHBModule,CHBLinks,CHBComponents} from "@upyog/upyog-ui-module-chb";
-import {ADSModule,ADSLinks,ADSComponents} from "@upyog/upyog-ui-module-ads";
-
-// import { initReportsComponents } from "@upyog/digit-ui-module-reports";
+} from "@demodigit/digit-ui-module-hrms";
 
 initLibraries();
 
 const enabledModules = [
-  "Tqm",
   "PGR",
-  "FSM",
   "Payment",
-  "PT",
-  "QuickPayLinks",
-  "DSS",
-  "NDSS",
-  "MCollect",
-  "HRMS",
-  "TL",
-  "Receipts",
-  "OBPS",
-  "NOC",
-  "Engagement",
   "CommonPT",
   "WS",
-  "Reports",
-  "Bills",
-  "SW",
-  "BillAmendment",
-  "FireNoc",
-  "Birth",
-  "Death",
-  "PTR",
   "ASSET",
-  "ADS",
-  "SV",
-  "EW",
-  "CHB"
+  "HRMS"
 ];
 window.Digit.ComponentRegistryService.setupRegistry({
   ...paymentConfigs,
-  PTModule,
-  PTLinks,
   PaymentModule,
   PaymentLinks,
-  ...PTComponents,
-  MCollectLinks,
-  MCollectModule,
-  HRMSModule,
-  TLModule,
-  TLLinks,
-  ReceiptsModule,
-  PTRModule,
-  PTRLinks,
-  ...PTRComponents,
   ASSETModule,
   ASSETLinks,
+  HRMSModule,
   ...ASSETComponents,
-  ADSLinks,
-  ADSModule,
-  ...ADSComponents,
-  SVModule,
-  SVLinks,
-  ...SVComponents,
-  EWModule,
-  EWLinks,
-  ...EWComponents,
-  CHBModule,
-  CHBLinks,
-  ...CHBComponents,
 });
 
 initPGRComponents();
-initFSMComponents();
 initDSSComponents();
-initMCollectComponents();
-initHRMSComponents();
-initTLComponents();
-initReceiptsComponents();
-initOBPSComponents();
-initNOCComponents();
-initEngagementComponents();
 initWSComponents();
 initCommonPTComponents();
-initBillsComponents();
+initHRMSComponents();
 // initReportsComponents();
-// initCustomisationComponents();
+initCustomisationComponents();
 
 const moduleReducers = (initData) => ({
   pgr: PGRReducers(initData),

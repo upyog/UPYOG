@@ -5,11 +5,3 @@ export const stringReplaceAll = (str = "", searcher = "", replaceWith = "") => {
     }
     return str;
   };
-
-  export const timerEnabledForBusinessService = (businessService) =>{
-  const timerEnabledBusinessServices =  ["adv-services", "chb-services"];
-      if(timerEnabledBusinessServices.includes(businessService)){
-        return true;
-      }
-      return false;
-  };

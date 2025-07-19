@@ -1,4 +1,5 @@
 .navbar {
+  background-color: #0a97d5 !important;
   @apply text-white bg-secondary p-md w-full;
   position: fixed;
   z-index: 9999;
@@ -36,7 +37,7 @@
   flex-direction: column;
   align-items: center;
   padding-top: 30px;
-  background-color: #ffffff;
+  background-color: #ffffff !important;
 
   img {
     width: 89px;
@@ -111,12 +112,12 @@
     padding-right: 16px;
     padding-left: 16px;
     &.active {
-      border-left: 5px solid #a82227;
+      border-left: 5px solid #0a97d5;
       .menu-label {
-        color: #a82227;
+        color: #000000;
       }
       .icon {
-        fill: #a82227;
+        fill: #000000;
       }
     }
 
@@ -219,13 +220,13 @@
       padding-right: 16px;
       padding-left: 16px;
       &.active {
-        border-left: 5px solid #a82227;
+        border-left: 5px solid #2494d4;
         padding-left: 11px;
         .menu-label {
-          color: #a82227;
+          color: #000000;
         }
         .icon {
-          fill: #a82227;
+          fill: #000000;
         }
       }
 

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { EmployeeModuleCard } from "@upyog/digit-ui-react-components";
-
+import { EmployeeModuleCard } from "@demodigit/digit-ui-react-components";
+//import {EmployeeModuleCard} from "../../../../react-components/src/atoms/EmployeeModuleCard"
 const ASSETCard = () => {
   const { t } = useTranslation();
 

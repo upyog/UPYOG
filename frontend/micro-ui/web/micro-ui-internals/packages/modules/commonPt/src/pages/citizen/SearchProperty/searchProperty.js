@@ -1,4 +1,4 @@
-import { Dropdown, FormComposer, InfoBannerIcon, Loader, Localities, RadioButtons, Toast } from "@upyog/digit-ui-react-components";
+import { Dropdown, FormComposer, InfoBannerIcon, Loader, Localities, RadioButtons, Toast } from "@demodigit/digit-ui-react-components";
 import _ from "lodash";
 import PropTypes from "prop-types";
 import React, { useEffect, useLayoutEffect, useState } from "react";
@@ -592,7 +592,7 @@ setCityCode(city.code);
       // beacuse of this commit 
       // https://github.com/egovernments/DIGIT-Dev/commit/2bae1c36dd1f8242bca30366da80c88d46b6aaaa#diff-3c34510e8b422f53eb9633d014f50024496ad79f952849e1b42fd61877562c4cR385
       // am adding one more condtion for this. 
-      if(redirectToUrl || window.location.href.includes("digit-ui/citizen/commonpt/property/citizen-search")) {
+      if(redirectToUrl || window.location.href.includes("upyog-ui/citizen/commonpt/property/citizen-search")) {
         history.push(
           `/digit-ui/citizen/commonPt/property/search-results?${Object.keys(qs)
             .map((key) => `${key}=${qs[key]}`)

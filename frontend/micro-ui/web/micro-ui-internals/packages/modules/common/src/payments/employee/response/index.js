@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Banner, Card, CardText, SubmitBar, ActionBar, DownloadPrefixIcon, Loader, Menu } from "@upyog/digit-ui-react-components";
+import { Banner, Card, CardText, SubmitBar, ActionBar, DownloadPrefixIcon, Loader, Menu } from "@demodigit/digit-ui-react-components";
 import { useHistory, useParams, Link, LinkLabel } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useQueryClient } from "react-query";
@@ -23,17 +23,15 @@ export const SuccessfulPayment = (props) => {
   const { addParams, clearParams } = props;
   const { t } = useTranslation();
   const queryClient = useQueryClient();
-  const tenantId = Digit.ULBService.getCurrentTenantId();
   const { IsDisconnectionFlow } = Digit.Hooks.useQueryParams();
   const [displayMenu, setDisplayMenu] = useState(false);
   const [selectedAction, setSelectedAction] = useState(null);
   const isFSMResponse = location?.pathname?.includes("payment/success/FSM.TRIP_CHARGES");
   const combineResponseFSM = isFSMResponse ? `${t("PAYMENT_COLLECT_LABEL")} / ${t("PAYMENT_COLLECT")}` : t("PAYMENT_LOCALIZATION_RESPONSE");
-  const mutation = Digit.Hooks.chb.useChbCreateAPI(tenantId, false);
-  const AdvertisementCreateApi = Digit.Hooks.ads.useADSCreateAPI(tenantId, false);
+
   props.setLink(combineResponseFSM);
   let { consumerCode, receiptNumber, businessService } = useParams();
- 
+  const tenantId = Digit.ULBService.getCurrentTenantId();
   receiptNumber = receiptNumber.replace(/%2F/g, "/");
   const { data = {}, isLoading: isBpaSearchLoading, isSuccess: isBpaSuccess, error: bpaerror } = Digit.Hooks.obps.useOBPSSearch(
     "",
@@ -69,9 +67,9 @@ export const SuccessfulPayment = (props) => {
   useEffect(() => {
     switch (selectedAction) {
       case "GO_TO_HOME":
-        return history.push("/upyog-ui/employee");
+        return history.push("/digit-ui/employee");
       case "ASSIGN_TO_DSO":
-        return history.push(`/upyog-ui/employee/fsm/application-details/${consumerCode}`);
+        return history.push(`/digit-ui/employee/fsm/application-details/${consumerCode}`);
       default:
         return null;
     }
@@ -195,12 +193,12 @@ export const SuccessfulPayment = (props) => {
 
     if (!payments.Payments[0]?.fileStoreId) {
       let assessmentYear="",assessmentYearForReceipt="";
-      let businessServ=payments.Payments[0].paymentDetails[0].businessService;
       let count=0;
       let toDate,fromDate;
-	  if(payments.Payments[0].paymentDetails[0].businessService=="PT" || payments.Payments[0].paymentDetails[0].businessService=="PT.MUTATION"){
+	  if(payments.Payments[0].paymentDetails[0].businessService=="PT"){
        
-          payments.Payments[0].paymentDetails[0].bill.billDetails.map(element => {
+      payments.Payments[0].paymentDetails[0].bill.billDetails.map(element => {
+
           if(element.amount >0 || element.amountPaid>0)
           { count=count+1;
             toDate=convertEpochToDate(element.toPeriod).split("/")[2];
@@ -208,6 +206,7 @@ export const SuccessfulPayment = (props) => {
             assessmentYear=assessmentYear==""?fromDate+"-"+toDate+"(Rs."+element.amountPaid+")":assessmentYear+","+fromDate+"-"+toDate+"(Rs."+element.amountPaid+")";
             assessmentYearForReceipt=fromDate+"-"+toDate;
           }
+    
           });
   
           if(count==0)
@@ -224,30 +223,7 @@ export const SuccessfulPayment = (props) => {
             payments.Payments[0].paymentDetails[0].additionalDetails=details; 
             printRecieptNew(payments)
         }
-        else if(businessServ.includes("BPA")){
-          let queryObj = { applicationNo: payments.Payments[0].paymentDetails[0]?.bill?.consumerCode };
-          const paymentData=payments.Payments[0];
-          let bpaResponse = await Digit.OBPSService.BPASearch( payments.Payments[0].tenantId, queryObj);
-          const formattedStakeholderType=bpaResponse?.BPA[0]?.additionalDetails?.typeOfArchitect
-          const updatedpayments={
-            ...paymentData,
-           
-                paymentDetails:[
-                  {
-                    ...paymentData.paymentDetails?.[0],
-                    additionalDetails:{
-                      ...paymentData.paymentDetails[0].additionalDetails,
-                      "propertyID":bpaResponse?.BPA[0]?.additionalDetails?.propertyID,
-                      "stakeholderType":formattedStakeholderType.charAt(0).toUpperCase()+formattedStakeholderType.slice(1).toLowerCase()
-                    },
-                  },
-                ],  
-             
-          }
-          response = await Digit.PaymentService.generatePdf(state, { Payments: [{...updatedpayments}] }, generatePdfKey);
-        }
         else {
-          
           response = await Digit.PaymentService.generatePdf(state, { Payments: payments.Payments }, generatePdfKey);
         }
       
@@ -262,26 +238,17 @@ export const SuccessfulPayment = (props) => {
     await Digit.Utils.downloadReceipt(consumercode, businessService, "consolidatedreceipt", tenantid);
   }
   const printRecieptNew = async (payment) => {
-   
+    console.log("paymentpayment",payment,payment.Payments[0].paymentDetails[0].receiptNumber,payment.Payments[0])
     const tenantId = Digit.ULBService.getCurrentTenantId();
     const state = Digit.ULBService.getStateId();
     let paymentArray=[];
-    let payments
-    if(payment.Payments[0].paymentDetails[0].businessService == "PT.MUTATION")
-    {
-       payments = await Digit.PaymentService.getReciept(tenantId, "PT.MUTATION", { receiptNumbers: payment.Payments[0].paymentDetails[0].receiptNumber });
-    }
-    else {
-       payments = await Digit.PaymentService.getReciept(tenantId, "PT", { receiptNumbers: payment.Payments[0].paymentDetails[0].receiptNumber });
-    }
-   // const payments = await Digit.PaymentService.getReciept(tenantId, "PT", { receiptNumbers: payment.Payments[0].paymentDetails[0].receiptNumber });
+    const payments = await Digit.PaymentService.getReciept(tenantId, "PT", { receiptNumbers: payment.Payments[0].paymentDetails[0].receiptNumber });
     let response = { filestoreIds: [payments.Payments[0]?.fileStoreId] };
-
     if (true) {
       let assessmentYear="",assessmentYearForReceipt="";
       let count=0;
       let toDate,fromDate;
-    if(payments.Payments[0].paymentDetails[0].businessService=="PT" || payments.Payments[0].paymentDetails[0].businessService=="PT.MUTATION"){
+    if(payments.Payments[0].paymentDetails[0].businessService=="PT"){
        let arrearRow={};  let arrearArray=[];
           let taxRow={};  let taxArray=[];
          
@@ -467,140 +434,14 @@ export const SuccessfulPayment = (props) => {
         }
     
          paymentArray[0]=payments.Payments[0]
-       
-        if(payment.Payments[0].paymentDetails[0].businessService == "PT.MUTATION")
-        {
-          response = await Digit.PaymentService.generatePdf(state, { Payments: paymentArray }, "pt-receipt");
-        }
-        else {
-          response = await Digit.PaymentService.generatePdf(state, { Payments: paymentArray }, generatePdfKey);
-        }
-      
+        console.log("payments",payments)
+      response = await Digit.PaymentService.generatePdf(state, { Payments: paymentArray }, generatePdfKey);
+      console.log("responseresponse",response)
     }
     const fileStore = await Digit.PaymentService.printReciept(state, { fileStoreIds: response.filestoreIds[0] });
     window.open(fileStore[response.filestoreIds[0]], "_blank");
   };
   if (businessService?.includes("BPA") && isBpaSearchLoading) return <Loader />;
-
-
-
-  const svCertificate = async () => {
-    //const tenantId = Digit.ULBService.getCurrentTenantId();
-    const state = tenantId;
-    const applicationDetails = await Digit.SVService.search({tenantId, filters: { applicationNumber: consumerCode,isDraftApplication:false } });
-    const generatePdfKeyForTL = "svcertificate";
-
-    if (applicationDetails) {
-      let response = await Digit.PaymentService.generatePdf(state, { SVDetail: [applicationDetails?.SVDetail?.[0]] }, generatePdfKeyForTL);
-      const fileStore = await Digit.PaymentService.printReciept(state, { fileStoreIds: response.filestoreIds[0] });
-      window.open(fileStore[response.filestoreIds[0]], "_blank");
-    }
-  };
-
-  const svIdCard= async () => {
-    //const tenantId = Digit.ULBService.getCurrentTenantId();
-    const state = tenantId;
-    const applicationDetails = await Digit.SVService.search({tenantId, filters: { applicationNumber: consumerCode,isDraftApplication:false } });
-    const generatePdfKeyForTL = "svidentitycard";
-
-    if (applicationDetails) {
-      let response = await Digit.PaymentService.generatePdf(state, { SVDetail: [applicationDetails?.SVDetail?.[0]] }, generatePdfKeyForTL);
-      const fileStore = await Digit.PaymentService.printReciept(state, { fileStoreIds: response.filestoreIds[0] });
-      window.open(fileStore[response.filestoreIds[0]], "_blank");
-    }
-  };
-
-  const printPermissionLetter = async () => {
-    const applicationDetails = await Digit.CHBServices.search({  tenantId,
-      filters: { bookingNo: consumerCode }});
-    let fileStoreId = applicationDetails?.hallsBookingApplication?.[0]?.permissionLetterFilestoreId;
-    const generatePdfKeyForTL = "chbpermissionletter";
-    if (!fileStoreId) {
-      const response = await Digit.PaymentService.generatePdf(tenantId, { hallsBookingApplication: [applicationDetails?.hallsBookingApplication[0]] }, generatePdfKeyForTL);
-      const updatedApplication = {
-        ...applicationDetails?.hallsBookingApplication[0],
-        permissionLetterFilestoreId: response?.filestoreIds[0]
-      };
-      await mutation.mutateAsync({
-        hallsBookingApplication: updatedApplication
-      });
-      fileStoreId = response?.filestoreIds[0];
-    }
-    const fileStore = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: fileStoreId });
-    window.open(fileStore[fileStoreId], "_blank");
-  };
-  const printADSPermissionLetter = async () => {
-    const applicationDetails = await Digit.ADSServices.search({  tenantId,
-      filters: { bookingNo: consumerCode }});
-    let fileStoreId = applicationDetails?.bookingApplication?.[0]?.permissionLetterFilestoreId;
-    const generatePdfKeyForTL = "advpermissionletter";
-    if (!fileStoreId) {
-      const response = await Digit.PaymentService.generatePdf(tenantId, { bookingApplication: [applicationDetails?.bookingApplication[0]] }, generatePdfKeyForTL);
-      const updatedApplication = {
-        ...applicationDetails?.bookingApplication[0],
-        permissionLetterFilestoreId: response?.filestoreIds[0]
-      };
-      await AdvertisementCreateApi.mutateAsync({
-        bookingApplication: updatedApplication
-      });
-      fileStoreId = response?.filestoreIds[0];
-    }
-    const fileStore = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: fileStoreId });
-    window.open(fileStore[fileStoreId], "_blank");
-  };
-
-  const petCertificate = async () => {
-    //const tenantId = Digit.ULBService.getCurrentTenantId();
-    const state = tenantId;
-    const applicationDetails = await Digit.PTRService.search({tenantId, filters: { applicationNumber: consumerCode } });
-    const generatePdfKeyForTL = "petservicecertificate";
-
-    if (applicationDetails) {
-      let response = await Digit.PaymentService.generatePdf(state, { PetRegistrationApplications: [applicationDetails?.PetRegistrationApplications?.[0]] }, generatePdfKeyForTL);
-      const fileStore = await Digit.PaymentService.printReciept(state, { fileStoreIds: response.filestoreIds[0] });
-      window.open(fileStore[response.filestoreIds[0]], "_blank");
-    }
-  };
-
-  const printADSReceipt = async () => {
-    const applicationDetails = await Digit.ADSServices.search({  tenantId,filters: { bookingNo: consumerCode }});
-    let fileStoreId = applicationDetails?.bookingApplication?.[0]?.paymentReceiptFilestoreId;
-    if (!fileStoreId) {
-      const payments = await Digit.PaymentService.getReciept(tenantId, businessService, { receiptNumbers: receiptNumber });
-      let response = { filestoreIds: [payments.Payments[0]?.fileStoreId]};
-      response = await Digit.PaymentService.generatePdf(tenantId, {Payments: payments.Payments} , "advservice-receipt");
-      const updatedApplication = {
-        ...applicationDetails?.bookingApplication[0],
-        paymentReceiptFilestoreId: response?.filestoreIds[0]
-      };
-      await AdvertisementCreateApi.mutateAsync({
-        bookingApplication: updatedApplication
-      });
-      fileStoreId = response?.filestoreIds[0];
-    }
-    const fileStore = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: fileStoreId });
-    window.open(fileStore[fileStoreId], "_blank");
-}
-
-  const printCHBReceipt = async () => {
-      const applicationDetails = await Digit.CHBServices.search({  tenantId,filters: { bookingNo: consumerCode }});
-      let fileStoreId = applicationDetails?.hallsBookingApplication?.[0]?.paymentReceiptFilestoreId;
-      if (!fileStoreId) {
-        const payments = await Digit.PaymentService.getReciept(tenantId, businessService, { receiptNumbers: receiptNumber });
-        let response = { filestoreIds: [payments.Payments[0]?.fileStoreId]};
-        response = await Digit.PaymentService.generatePdf(tenantId, {Payments: payments.Payments} , "chbservice-receipt");
-        const updatedApplication = {
-          ...applicationDetails?.hallsBookingApplication[0],
-          paymentReceiptFilestoreId: response?.filestoreIds[0]
-        };
-        await mutation.mutateAsync({
-          hallsBookingApplication: updatedApplication
-        });
-        fileStoreId = response?.filestoreIds[0];
-      }
-      const fileStore = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: fileStoreId });
-      window.open(fileStore[fileStoreId], "_blank");
-  }
 
   return (
     <React.Fragment>
@@ -609,14 +450,13 @@ export const SuccessfulPayment = (props) => {
         <CardText>{getCardText()}</CardText>
         {generatePdfKey ? (
           <div style={{ display: "flex" }}>
-            {businessService !== "chb-services" && businessService !=="adv-services" && businessService!=="sv-services" && businessService!=="pet-services" &&(
             <div className="primary-label-btn d-grid" style={{ marginLeft: "unset", marginRight: "20px" }} onClick={IsDisconnectionFlow === "true"? printDisconnectionRecipet : printReciept}>
               <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24">
                 <path d="M0 0h24v24H0z" fill="none" />
                 <path d="M19 8H5c-1.66 0-3 1.34-3 3v6h4v4h12v-4h4v-6c0-1.66-1.34-3-3-3zm-3 11H8v-5h8v5zm3-7c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm-1-9H6v4h12V3z" />
               </svg>
               {t("CS_COMMON_PRINT_RECEIPT")}
-            </div>)}
+            </div>
             {businessService == "TL" ? (
               <div className="primary-label-btn d-grid" style={{ marginLeft: "unset" }} onClick={printCertificate}>
                 <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24">
@@ -634,87 +474,6 @@ export const SuccessfulPayment = (props) => {
               >
                 <DownloadPrefixIcon />
                 {t("BPA_OC_CERTIFICATE")}
-              </div>
-            ) : null}
-            {businessService == "sv-services" ? (
-              <div className="primary-label-btn d-grid" style={{ marginLeft: "unset", marginRight: "20px", marginTop:"15px",marginBottom:"15px" }} onClick={printReciept}>
-                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#a82227">
-                  <path d="M0 0h24v24H0V0z" fill="none" />
-                  <path d="M19 9h-4V3H9v6H5l7 7 7-7zm-8 2V5h2v6h1.17L12 13.17 9.83 11H11zm-6 7h14v2H5z" />
-                </svg>
-                {t("SV_FEE_RECIEPT")}
-              </div>
-            ) : null}
-            {businessService == "sv-services" ? (
-              <div className="primary-label-btn d-grid" style={{ marginLeft: "unset", marginRight: "20px", marginTop:"15px",marginBottom:"15px" }} onClick={svCertificate}>
-                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#a82227">
-                  <path d="M0 0h24v24H0V0z" fill="none" />
-                  <path d="M19 9h-4V3H9v6H5l7 7 7-7zm-8 2V5h2v6h1.17L12 13.17 9.83 11H11zm-6 7h14v2H5z" />
-                </svg>
-                {t("SV_CERTIFICATE")}
-              </div>
-            ) : null}
-            {businessService == "sv-services" ? (
-              <div className="primary-label-btn d-grid" style={{ marginLeft: "unset", marginRight: "20px", marginTop:"15px",marginBottom:"15px" }} onClick={svIdCard}>
-                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#a82227">
-                  <path d="M0 0h24v24H0V0z" fill="none" />
-                  <path d="M19 9h-4V3H9v6H5l7 7 7-7zm-8 2V5h2v6h1.17L12 13.17 9.83 11H11zm-6 7h14v2H5z" />
-                </svg>
-                {t("SV_ID_CARD")}
-              </div>
-            ) : null}
-            {businessService == "pet-services" ? (
-              <div className="primary-label-btn d-grid" style={{ marginLeft: "unset", marginRight: "20px", marginTop:"15px",marginBottom:"15px" }} onClick={printReciept}>
-                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#a82227">
-                  <path d="M0 0h24v24H0V0z" fill="none" />
-                  <path d="M19 9h-4V3H9v6H5l7 7 7-7zm-8 2V5h2v6h1.17L12 13.17 9.83 11H11zm-6 7h14v2H5z" />
-                </svg>
-                {t("PTR_FEE_RECEIPT")}
-              </div>
-            ) : null}
-            {businessService == "pet-services" ? (
-              <div className="primary-label-btn d-grid" style={{ marginLeft: "unset", marginRight: "20px", marginTop:"15px",marginBottom:"15px" }} onClick={petCertificate}>
-                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#a82227">
-                  <path d="M0 0h24v24H0V0z" fill="none" />
-                  <path d="M19 9h-4V3H9v6H5l7 7 7-7zm-8 2V5h2v6h1.17L12 13.17 9.83 11H11zm-6 7h14v2H5z" />
-                </svg>
-                {t("PTR_CERTIFICATE")}
-              </div>
-            ) : null}
-            {businessService == "chb-services" ? (
-              <div  style={{ display: 'flex', justifyContent: 'flex-end', gap: '20px', marginRight: "20px", marginTop: "15px", marginBottom: "15px" }}>
-              <div className="primary-label-btn d-grid" onClick={printCHBReceipt}>
-              <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24">
-                <path d="M0 0h24v24H0z" fill="none" />
-                <path d="M19 8H5c-1.66 0-3 1.34-3 3v6h4v4h12v-4h4v-6c0-1.66-1.34-3-3-3zm-3 11H8v-5h8v5zm3-7c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm-1-9H6v4h12V3z" />
-              </svg>
-                {t("CHB_FEE_RECEIPT")}
-              </div>
-              <div className="primary-label-btn d-grid" onClick={printPermissionLetter}>
-              <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24">
-                <path d="M0 0h24v24H0z" fill="none" />
-                <path d="M19 8H5c-1.66 0-3 1.34-3 3v6h4v4h12v-4h4v-6c0-1.66-1.34-3-3-3zm-3 11H8v-5h8v5zm3-7c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm-1-9H6v4h12V3z" />
-              </svg>
-                  {t("CHB_PERMISSION_LETTER")}
-                </div>
-              </div>
-            ) : null}
-            {businessService == "adv-services" ? (
-              <div  style={{ display: 'flex', justifyContent: 'flex-end', gap: '20px', marginRight: "20px", marginTop: "15px", marginBottom: "15px" }}>
-              <div className="primary-label-btn d-grid" onClick={printADSReceipt}>
-              <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24">
-                <path d="M0 0h24v24H0z" fill="none" />
-                <path d="M19 8H5c-1.66 0-3 1.34-3 3v6h4v4h12v-4h4v-6c0-1.66-1.34-3-3-3zm-3 11H8v-5h8v5zm3-7c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm-1-9H6v4h12V3z" />
-              </svg>
-                {t("ADS_FEE_RECEIPT")}
-              </div>
-              <div className="primary-label-btn d-grid" onClick={printADSPermissionLetter}>
-              <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24">
-                <path d="M0 0h24v24H0z" fill="none" />
-                <path d="M19 8H5c-1.66 0-3 1.34-3 3v6h4v4h12v-4h4v-6c0-1.66-1.34-3-3-3zm-3 11H8v-5h8v5zm3-7c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm-1-9H6v4h12V3z" />
-              </svg>
-                  {t("ADS_PERMISSION_LETTER")}
-                </div>
               </div>
             ) : null}
             {data?.[0]?.businessService === "BPA_LOW" ? (
@@ -750,7 +509,7 @@ export const SuccessfulPayment = (props) => {
         </ActionBar>
       ) : (
         <ActionBar style={{ display: "flex", justifyContent: "flex-end", alignItems: "baseline" }}>
-          <Link to="/upyog-ui/employee">
+          <Link to="/digit-ui/employee">
             <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} />
           </Link>
         </ActionBar>
@@ -773,7 +532,7 @@ export const FailedPayment = (props) => {
         <CardText>{t("ES_PAYMENT_FAILED_DETAILS")}</CardText>
       </Card>
       <ActionBar style={{ display: "flex", justifyContent: "flex-end", alignItems: "baseline" }}>
-        <Link to="/upyog-ui/employee">
+        <Link to="/digit-ui/employee">
           <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} />
         </Link>
       </ActionBar>

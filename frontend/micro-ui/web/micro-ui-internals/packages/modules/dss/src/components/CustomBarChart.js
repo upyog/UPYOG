@@ -1,4 +1,4 @@
-import { Loader } from "@upyog/digit-ui-react-components";
+import { Loader } from "@demodigit/digit-ui-react-components";
 import React, { Fragment, useContext, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
@@ -13,13 +13,8 @@ const formatValue = (value, symbol,type) => {
     const Pformatter = new Intl.NumberFormat("en-IN", { maximumSignificantDigits: 3 });
     return `${Pformatter.format(Number(value).toFixed(2))}`;
     */
-   if(type == "others" && value >100)
-   {
-    return `${Number(100).toFixed()}`;
-   }
-    else {
-      return `${Number(value).toFixed()}`;
-    }
+   
+    return `${Number(value).toFixed()}`;
   }
   else if(type =="revenue")
   {
@@ -253,7 +248,7 @@ const CustomBarChart = ({
       </ResponsiveContainer>
       {chartData?.length > 3 && showDrillDown && (
         <p className="showMore" onClick={goToDrillDownCharts}>
-          {window.location.href.includes("fsm") ? "" : t("DSS_SHOW_MORE")}
+          {t("DSS_SHOW_MORE")}
         </p>
       )}
     </Fragment>

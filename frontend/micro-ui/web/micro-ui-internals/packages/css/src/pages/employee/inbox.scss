@@ -28,14 +28,14 @@
     .link {
       @apply p-sm text-primary-main items-center;
       display: flex !important;
-      color: #a82227 !important;
+      color: #0a97d5 !important;
     }
 
     .inbox-total {
       padding: 4px;
       display: table;
       @apply whitespace-normal text-center text-white w-8 h-8 bg-primary-main rounded-full ml-xs;
-      background-color: #a82227 !important;
+      background-color: #0a97d5 !important;
     }
   }
 
@@ -44,7 +44,7 @@
     .link {
       padding: 0 !important;
       padding-bottom: 4px !important;
-      color: #a82227 !important;
+      color: #0a97d5 !important;
       svg {
         @apply ml-sm;
       }
@@ -217,7 +217,7 @@
       margin-left: 46px;
 
       .link {
-        color:#a82227 !important;
+        color:#0a97d5 !important;
         @apply p-sm text-primary-main;
       }
     }
@@ -233,7 +233,7 @@
         @apply bg-white;
         svg {
           path {
-            fill: #a82227;
+            fill: #0a97d5;
           }
         }
       }
@@ -439,7 +439,7 @@
 @screen dt {
   .complaint-links-container .header .removeBorderRadiusLogo {
     border-radius: 2px !important;
-    background-color: #a82227
+    background-color: #0a97d5
   }
 }
 @screen dt {
@@ -450,7 +450,7 @@
   }
 }
 .employeeTotalLink{
-  color: #a82227;
+  color: #0a97d5;
   
   font-size: 12px;
 }
@@ -467,7 +467,7 @@
           margin-right: 1rem;
           svg {
             path {
-              fill: #a82227;
+              fill: #0a97d5;
             }
           }
         }
@@ -475,7 +475,7 @@
           font-size: 24px;
           line-height: 28px;
           font-weight: 400;
-          color: #a82227;
+          color: #0a97d5;
         }
       }
     }
@@ -519,7 +519,7 @@
           margin-right: 1rem;
           svg {
             path {
-              fill: #a82227;
+              fill: #0a97d5;
             }
           }
         }
@@ -527,7 +527,7 @@
           font-size: 24px;
           line-height: 28px;
           font-weight: 400;
-          color: #a82227;
+          color: #0a97d5;
         }
       }
     }
@@ -563,19 +563,17 @@
   margin: 0 !important;
 }
 .complaint-links-container .body .link{
-  color: #a82227 !important;
+  color: #0a97d5 !important;
 }
 
 .employee .customEmployeeCard:nth-child(odd){
   .employeeCustomCard{
-    background-image: url("https://in-egov-assets.s3.ap-south-1.amazonaws.com/images/top-red-card.png");
-    background-size: cover
+    background-color:#0a97d5 ;
   }
 }
 .employee .customEmployeeCard:nth-child(even){
   .employeeCustomCard{
-background-image: url("https://in-egov-assets.s3.ap-south-1.amazonaws.com/images/top-green-card.png");
-background-size: cover
+background-color: white;
   }
 }
 .employee .employeeCustomCard {
@@ -586,14 +584,10 @@ background-size: cover
 }
 .employee-card-banner{
     background-color: white;
-    width: 88%;
+    width: 100%;
     margin: 0 auto;
     bottom: 0px;
     position: absolute;
-    margin-bottom: -10%;
-    left: 6%;
-    box-shadow: 1px 5px 6px 0px #e3e4e3;
-    border-radius: 10px;
 }
 .text-employee-card{
   font-size: 1.5rem;

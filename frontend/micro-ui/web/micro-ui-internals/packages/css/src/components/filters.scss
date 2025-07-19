@@ -20,8 +20,8 @@
       display: none;
 
       &:checked ~ label {
-        border-color: #a82227;
-        color: #a82227;
+        border-color: #0a97d5;
+        color: #0a97d5;
       }
     }
 
@@ -73,7 +73,7 @@
   .clearText {
     display: block;
     text-align: right;
-    color: #a82227;
+    color: #0a97d5;
     margin-top: 20px;
     margin-left: 10px;
   }

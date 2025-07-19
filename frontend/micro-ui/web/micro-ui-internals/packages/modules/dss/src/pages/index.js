@@ -8,7 +8,7 @@ import {
   RemoveableTag,
   ShareIcon,
   WhatsappIcon,
-} from "@upyog/digit-ui-react-components";
+} from "@demodigit/digit-ui-react-components";
 import { format } from "date-fns";
 import React, { useEffect, Fragment, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -177,7 +177,329 @@ const DashBoard = ({ stateCode }) => {
     handleFilters({ ...filters, moduleLevel: "" });
   };
 
-  const dashboardConfig = response?.responseData;
+  let dashboardConfig = response?.responseData;
+  if (dashboardConfig?.[0]?.id == "pgr")
+  {
+    dashboardConfig = [
+      {
+          "name": "DSS_PGR_DASHBOARD",
+          "id": "pgr",
+          "title": "From Apr 01, 2023 to Jul 04, 2024",
+          "visualizations": [
+              {
+                  "row": 1,
+                  "name": "DSS_SERVICE",
+                  "vizArray": [
+                      {
+                          "id": 412,
+                          "name": "DSS_OVERVIEW",
+                          "dimensions": {
+                              "height": 350,
+                              "width": 5
+                          },
+                          "vizType": "metric-collection",
+                          "label": "DSS_OVERVIEW",
+                          "noUnit": true,
+                          "isCollapsible": false,
+                          "charts": [
+                              {
+                                  "id": "totalComplaints",
+                                  "name": "DSS_PGR_TOTAL_COMPLAINTS",
+                                  "code": "",
+                                  "chartType": "metric",
+                                  "filter": "",
+                                  "headers": []
+                              },
+                              {
+                                  "id": "closedComplaints",
+                                  "name": "DSS_PGR_CLOSED_COMPLAINTS",
+                                  "code": "",
+                                  "chartType": "metric",
+                                  "filter": "",
+                                  "headers": []
+                              },
+                              {
+                                  "id": "slaAchieved",
+                                  "name": "DSS_SLA_ACHIEVED",
+                                  "code": "",
+                                  "chartType": "metric",
+                                  "filter": "",
+                                  "headers": []
+                              },
+                              {
+                                  "id": "completionRate",
+                                  "name": "DSS_PGR_COMPLETION_RATE",
+                                  "code": "",
+                                  "chartType": "metric",
+                                  "filter": "",
+                                  "headers": []
+                              },
+                              {
+                                  "id": "pgrAverageResolutionTime",
+                                  "name": "NATIONAL_DSS_PGR_AVERAGE_RESOLUTION_TIME",
+                                  "code": "",
+                                  "chartType": "metric",
+                                  "filter": "",
+                                  "headers": []
+                              }
+                          ]
+                      },
+                      {
+                          "id": 412,
+                          "name": "DSS_TOTAL_CUMULATIVE_CLOSED_COMPLAINTS",
+                          "dimensions": {
+                              "height": 350,
+                              "width": 7
+                          },
+                          "vizType": "chart",
+                          "isCollapsible": false,
+                          "label": "",
+                          "charts": [
+                              {
+                                  "id": "mapChart",
+                                  "name": "Monthly",
+                                  "code": "",
+                                  "chartType": "map",
+                                  "filter": "",
+                                  "headers": []
+                              }
+                          ]
+                      }
+                  ]
+              },
+              {
+                  "row": 2,
+                  "name": "DSS_SERVICE",
+                  "vizArray": [
+                      {
+                          "id": 412,
+                          "name": "DSS_TOTAL_COMPLAINTS_BY_SOURCE",
+                          "dimensions": {
+                              "height": 350,
+                              "width": 7
+                          },
+                          "vizType": "chart",
+                          "isCollapsible": false,
+                          "label": "",
+                          "charts": [
+                              {
+                                  "id": "totalComplaintsbySource",
+                                  "name": "Monthly",
+                                  "code": "",
+                                  "chartType": "line",
+                                  "filter": "",
+                                  "headers": []
+                              }
+                          ]
+                      },
+                      {
+                          "id": 413,
+                          "name": "DSS_TOTAL_COMPLAINTS_STATUS",
+                          "dimensions": {
+                              "height": 350,
+                              "width": 7
+                          },
+                          "vizType": "chart",
+                          "isCollapsible": false,
+                          "label": "",
+                          "charts": [
+                              {
+                                  "id": "totalComplaintsbyStatus",
+                                  "name": "",
+                                  "code": "",
+                                  "chartType": "bar",
+                                  "filter": "",
+                                  "headers": []
+                              }
+                          ]
+                      }
+                  ]
+              },
+              {
+                  "row": 3,
+                  "name": "DSS_SERVICE",
+                  "vizArray": [
+                      {
+                          "id": 421,
+                          "name": "DSS_PGR_COMPLAINTS_BY_STATUS",
+                          "dimensions": {
+                              "height": 250,
+                              "width": 7
+                          },
+                          "vizType": "chart",
+                          "isCollapsible": false,
+                          "label": "",
+                          "charts": [
+                              {
+                                  "id": "complaintsByStatus",
+                                  "name": "DSS_PGR_COMPLAINTS_BY_STATUS",
+                                  "code": "",
+                                  "chartType": "donut",
+                                  "filter": "",
+                                  "headers": []
+                              }
+                          ]
+                      },
+                      {
+                          "id": 423,
+                          "name": "DSS_PGR_COMPLAINTS_BY_DEPARTMENT",
+                          "dimensions": {
+                              "height": 250,
+                              "width": 7
+                          },
+                          "vizType": "chart",
+                          "isCollapsible": false,
+                          "charts": [
+                              {
+                                  "id": "complaintsByDepartment",
+                                  "name": "DSS_PGR_COMPLAINTS_BY_DEPARTMENT",
+                                  "code": "",
+                                  "chartType": "donut",
+                                  "filter": "",
+                                  "headers": []
+                              }
+                          ]
+                      }
+                  ]
+              },
+              {
+                  "row": 4,
+                  "name": "DSS_SERVICE",
+                  "vizArray": [
+                      {
+                          "id": 423,
+                          "name": "DSS_PGR_COMPLAINTS_BY_CHANNEL",
+                          "dimensions": {
+                              "height": 250,
+                              "width": 7
+                          },
+                          "vizType": "chart",
+                          "isCollapsible": false,
+                          "charts": [
+                              {
+                                  "id": "complaintsByChannel",
+                                  "name": "DSS_PGR_COMPLAINTS_BY_CHANNEL",
+                                  "code": "",
+                                  "chartType": "donut",
+                                  "filter": "",
+                                  "headers": []
+                              }
+                          ]
+                      },
+                      {
+                          "id": 412,
+                          "name": "DSS_EVENT_DURATION_GRAPH",
+                          "dimensions": {
+                              "height": 350,
+                              "width": 7
+                          },
+                          "vizType": "chart",
+                          "isCollapsible": false,
+                          "label": "",
+                          "charts": [
+                              {
+                                  "id": "eventDurationGraph",
+                                  "name": "Monthly",
+                                  "code": "",
+                                  "chartType": "line",
+                                  "filter": "",
+                                  "headers": []
+                              }
+                          ]
+                      }
+                  ]
+              },
+              {
+                  "row": 5,
+                  "name": "DSS_SERVICE",
+                  "vizArray": [
+                      {
+                          "id": 421,
+                          "name": "DSS_PGR_CITIZENS",
+                          "dimensions": {
+                              "height": 250,
+                              "width": 4
+                          },
+                          "vizType": "chart",
+                          "isCollapsible": false,
+                          "label": "",
+                          "charts": [
+                              {
+                                  "id": "pgrCitizenOnDateRange",
+                                  "name": "DSS_PGR_CITIZENS",
+                                  "code": "",
+                                  "chartType": "line",
+                                  "filter": "",
+                                  "headers": []
+                              }
+                          ]
+                      },
+                      {
+                          "id": 424,
+                          "name": "DSS_PGR_TOP_COMPLAINTS",
+                          "dimensions": {
+                              "height": 250,
+                              "width": 4
+                          },
+                          "vizType": "chart",
+                          "isCollapsible": false,
+                          "charts": [
+                              {
+                                  "id": "topFiveComplaints",
+                                  "name": "DSS_PGR_TOP_COMPLAINTS",
+                                  "code": "",
+                                  "chartType": "horizontalBar",
+                                  "filter": "",
+                                  "headers": []
+                              }
+                          ]
+                      }
+                  ]
+              },
+              {
+                  "row": 6,
+                  "name": "DSS_SERVICE",
+                  "vizArray": [
+                      {
+                          "id": 431,
+                          "name": "DSS_PGR_STATUS_BY_TENANT",
+                          "dimensions": {
+                              "height": 350,
+                              "width": 12
+                          },
+                          "vizType": "chart",
+                          "label": "",
+                          "noUnit": false,
+                          "isCollapsible": true,
+                          "charts": [
+                              {
+                                  "id": "xpgrStatusByDDR",
+                                  "name": "DSS_PGR_STATUS_BY_TENANT",
+                                  "code": "",
+                                  "chartType": "table",
+                                  "filter": "",
+                                  "headers": [],
+                                  "tabName": "Boundary"
+                              },
+                              {
+                                  "id": "xpgrStatusByDept",
+                                  "name": "DSS_PGR_STATUS_BY_DEPARTMENT",
+                                  "code": "",
+                                  "chartType": "table",
+                                  "filter": "",
+                                  "headers": [],
+                                  "tabName": "Department"
+                              }
+                          ]
+                      }
+                  ]
+              }
+          ],
+          "roleId": 6,
+          "roleName": "Admin"
+      }
+  ]
+  }
   let tabArrayObj =
     dashboardConfig?.[0]?.visualizations?.reduce((curr, acc) => {
       curr[acc.name] = 0;
@@ -262,6 +584,7 @@ const DashBoard = ({ stateCode }) => {
   if (isLoading || isUlbLoading || localizationLoading || isMdmsLoading || isLoadingNAT || isServicesLoading) {
     return <Loader />;
   }
+  console.log("dashboardConfig",dashboardConfig)
   return (
     <FilterContext.Provider value={provided}>
       <div ref={fullPageRef} id="divToPrint">

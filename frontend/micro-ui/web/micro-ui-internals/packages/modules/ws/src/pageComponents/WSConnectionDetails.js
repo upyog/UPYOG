@@ -1,4 +1,4 @@
-import { CardLabel, Dropdown, LabelFieldPair, Loader, TextInput, CardLabelError, CheckBox } from "@upyog/digit-ui-react-components";
+import { CardLabel, Dropdown, LabelFieldPair, Loader, TextInput, CardLabelError, CheckBox } from "@demodigit/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import { getPattern } from "../utils";
 import { useForm, Controller } from "react-hook-form";
@@ -209,7 +209,7 @@ const ConnectionDetails = (_props) => {
               />
             )}
           />
-          <Controller
+          {/* <Controller
             control={control}
             name="sewerage"
             defaultValue={connectionDetail?.sewerage}
@@ -233,7 +233,7 @@ const ConnectionDetails = (_props) => {
               />
 
             )}
-          />
+          /> */}
 
         </div>
         {connectionDetail?.water && (

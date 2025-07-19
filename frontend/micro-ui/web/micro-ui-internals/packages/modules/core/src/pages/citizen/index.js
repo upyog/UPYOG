@@ -1,4 +1,4 @@
-import { BackButton, WhatsappIcon, Card, CitizenHomeCard, CitizenInfoLabel, PrivateRoute,AdvertisementModuleCard } from "@upyog/digit-ui-react-components";
+import { BackButton, WhatsappIcon, Card, CitizenHomeCard, CitizenInfoLabel, PrivateRoute } from "@demodigit/digit-ui-react-components";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { Route, Switch, useRouteMatch, useHistory, Link } from "react-router-dom";
@@ -19,16 +19,15 @@ import AcknowledgementCF from "../../components/AcknowledgementCF";
 import CitizenFeedback from "../../components/CitizenFeedback";
 import Search from "./SearchApp";
 import QRCode from "./QRCode";
-import VSearchCertificate from "./CMSearchCertificate";
-import AssetsQRCode from "./AssetsQRCode";
 import ChallanQRCode from "./ChallanQRCode";
+import { ComplaintsList } from "./ComplaintsList";
+import ComplaintDetailsPage from "./ComplaintDetails";
 const sidebarHiddenFor = [
   "digit-ui/citizen/register/name",
   "/digit-ui/citizen/select-language",
   "/digit-ui/citizen/select-location",
   "/digit-ui/citizen/login",
   "/digit-ui/citizen/register/otp",
-  "/digit-ui/citizen/verificationsearch-home" // route for verificationsearch component
 ];
 
 const getTenants = (codes, tenants) => {
@@ -82,7 +81,7 @@ const Home = ({
   const handleClickOnWhatsApp = (obj) => {
     window.open(obj);
   };
-
+console.log("modules",modules)
   const hideSidebar = sidebarHiddenFor.some((e) => window.location.href.includes(e));
   const appRoutes = modules.map(({ code, tenants }, index) => {
     const Module = Digit.ComponentRegistryService.getComponent(`${code}Module`);
@@ -92,16 +91,6 @@ const Home = ({
       </Route>
     ) : null;
   });
-  // for showing advertisement image and its detail in first page
-  const { data: advertisement } = Digit.Hooks.useCustomMDMS(Digit.ULBService.getStateId(), "Advertisement", [{ name: "Unipole_12_8" }], {
-    select: (data) => {
-      const formattedData = data?.["Advertisement"]?.["Unipole_12_8"].map((details) => {
-        return { imageSrc: `${details.imageSrc}`, light: `${details.light}`, title: `${details.title}`, location: `${details.location}`, poleNo:`${details.poleNo}`,price:`${details.price}`,adtype:`${details.adtype}`,faceArea:`${details.faceArea}` };
-      });
-      return formattedData;
-    },
-  });
-  const Advertisement=advertisement||[];
 
   const ModuleLevelLinkHomePages = modules.map(({ code, bannerImage }, index) => {
     let Links = Digit.ComponentRegistryService.getComponent(`${code}Links`) || (() => <React.Fragment />);
@@ -116,9 +105,9 @@ const Home = ({
       <React.Fragment>
         <Route key={index} path={`${path}/${code.toLowerCase()}-home`}>
           <div className="moduleLinkHomePage">
-            <img src={ "https://nugp-assets.s3.ap-south-1.amazonaws.com/nugp+asset/Banner+UPYOG+%281920x500%29B+%282%29.jpg"||bannerImage || stateInfo?.bannerUrl} alt="noimagefound" />
+            {/* <img src={ "https://chstage.blob.core.windows.net/assets/tmp/Untitled-design-1.png"||bannerImage || stateInfo?.bannerUrl} alt="noimagefound" /> */}
             <BackButton className="moduleLinkHomePageBackButton" />
-           {isMobile? <h4 style={{top: "calc(16vw + 40px)",left:"1.5rem",position:"absolute",color:"white"}}>{t("MODULE_" + code.toUpperCase())}</h4>:<h1>{t("MODULE_" + code.toUpperCase())}</h1>}
+           {/* {isMobile? <h4 style={{top: "calc(16vw + 40px)",left:"1.5rem",position:"absolute",color:"white"}}>{t("MODULE_" + code.toUpperCase())}</h4>:<h1>{t("MODULE_" + code.toUpperCase())}</h1>} */}
             <div className="moduleLinkHomePageModuleLinks">
               {mdmsDataObj && (
                 <CitizenHomeCard
@@ -141,23 +130,6 @@ const Home = ({
               )}
               {/* <Links key={index} matchPath={`/digit-ui/citizen/${code.toLowerCase()}`} userType={"citizen"} /> */}
             </div>
-            {code?.toUpperCase()==="ADS" && (
-              <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "space-between" }}>
-              {Advertisement.map((ad) => (
-                <AdvertisementModuleCard
-                  imageSrc={ad.imageSrc} 
-                  poleNo={ad.poleNo} 
-                  light={ad.light} 
-                  title={ad.title} 
-                  location={ad.location} 
-                  price={ad.price} 
-                  path={`${path}/${code.toLowerCase()}/`}
-                  adType={ad.adtype}
-                  faceArea={ad.faceArea}
-                />
-              ))}
-            </div>
-            )}
             <StaticDynamicCard moduleCode={code?.toUpperCase()}/>
           </div>
         </Route>
@@ -187,9 +159,9 @@ const Home = ({
         islinkDataLoading={islinkDataLoading}
       />
 
-      <div className={`main center-container citizen-home-container mb-25`}>
+      <div className={`main center-container citizen-home-container mb-25`} style={{justifyContent:isMobile?"center":window.location.href.includes("register/name") || window.location.href.includes("login") || window.location.href.includes("select-location") || window.location.href.includes("select-language")?"center":"", paddingTop:"74px"}}>
         {hideSidebar ? null : (
-          <div className="SideBarStatic">
+          <div className="SideBarStatic" style={{marginBottom:"-40px",backgroundColor:"#0a97d5"}}>
             <StaticCitizenSideBar linkData={linkData} islinkDataLoading={islinkDataLoading} />
           </div>
         )}
@@ -202,9 +174,9 @@ const Home = ({
           <PrivateRoute path={`${path}/feedback`} component={CitizenFeedback}></PrivateRoute>
           <PrivateRoute path={`${path}/feedback-acknowledgement`} component={AcknowledgementCF}></PrivateRoute>
 
-          <Route exact path={`${path}/select-language`}>
+          {/* <Route exact path={`${path}/select-language`}>
             <LanguageSelection />
-          </Route>
+          </Route> */}
 
           <Route exact path={`${path}/select-location`}>
             <LocationSelection />
@@ -243,16 +215,16 @@ const Home = ({
             <Search/>
           </Route>
           <Route path={`${path}/payment/verification`}>
-            <QRCode></QRCode>
-          </Route>
-          <Route path={`${path}/assets/services`}>
-            <AssetsQRCode></AssetsQRCode>
-          </Route>
-          <Route path={`${path}/verificationsearch-home`}>
-            <VSearchCertificate/>
+         <QRCode></QRCode>
           </Route>
           <Route path={`${path}/challan/details`}>
          <ChallanQRCode></ChallanQRCode>
+          </Route>
+          <Route exact path={`${path}/complaints`}>
+        <ComplaintsList />
+          </Route>
+          <Route path={`${path}/complaints/inc/:id`}>
+        <ComplaintDetailsPage />
           </Route>
           <ErrorBoundary initData={initData}>
             {appRoutes}
@@ -265,16 +237,13 @@ const Home = ({
         <div style={{ display: 'flex', justifyContent: 'center', color:"black" }}>
           {/* <span style={{ cursor: "pointer", fontSize: window.Digit.Utils.browser.isMobile()?"12px":"14px", fontWeight: "400"}} onClick={() => { window.open('https://www.digit.org/', '_blank').focus();}} >Powered by DIGIT</span>
           <span style={{ margin: "0 10px" ,fontSize: window.Digit.Utils.browser.isMobile()?"12px":"14px"}}>|</span> */}
-          <a style={{ cursor: "pointer", fontSize: window.Digit.Utils.browser.isMobile()?"12px":"14px", fontWeight: "400"}} href="#" target='_blank'>UPYOG License</a>
-
-          <span  className="upyog-copyright-footer" style={{ margin: "0 10px",fontSize: window.Digit.Utils.browser.isMobile()?"12px":"14px" }} >|</span>
-          <span  className="upyog-copyright-footer" style={{ cursor: "pointer", fontSize: window.Digit.Utils.browser.isMobile()?"12px":"14px", fontWeight: "400"}} onClick={() => { window.open('https://niua.in/', '_blank').focus();}} >Copyright © 2022 National Institute of Urban Affairs</span>
+          <span  className="upyog-copyright-footer" style={{ cursor: "pointer", fontSize: window.Digit.Utils.browser.isMobile()?"12px":"14px", fontWeight: "400"}} onClick={() => { window.open('', '_blank').focus();}} >Copyright © 2025  Panchayati Raj & Drinking Water Department Govt. of Odisha </span>
           
-          {/* <a style={{ cursor: "pointer", fontSize: "16px", fontWeight: "400"}} href="#" target='_blank'>UPYOG License</a> */}
+          {/* <a style={{ cursor: "pointer", fontSize: "16px", fontWeight: "400"}} href="#" target='_blank'>MEA</a> */}
 
         </div>
         <div className="upyog-copyright-footer-web">
-          <span className="" style={{ cursor: "pointer", fontSize:  window.Digit.Utils.browser.isMobile()?"12px":"14px", fontWeight: "400"}} onClick={() => { window.open('https://niua.in/', '_blank').focus();}} >Copyright © 2022 National Institute of Urban Affairs</span>
+          <span className="" style={{ cursor: "pointer", fontSize:  window.Digit.Utils.browser.isMobile()?"12px":"14px", fontWeight: "400"}} onClick={() => { window.open('https://niua.in/', '_blank').focus();}} >Copyright © 2025  Panchayati Raj & Drinking Water Department Govt. of Odisha </span>
           </div>
       </div>
     </div>

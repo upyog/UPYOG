@@ -13,8 +13,7 @@ import {
   BirthIcon,
   DeathIcon,
   FirenocIcon,
-  PTRIcon
-} from "@upyog/digit-ui-react-components";
+} from "@demodigit/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 
 const CitizenSubMenuSideBar = ({ item }) => {
@@ -37,7 +36,6 @@ const CitizenSubMenuSideBar = ({ item }) => {
     FirenocIcon: <FirenocIcon className="icon" />,
     MCollectIcon: <MCollectIcon />,
     BillsIcon: <CollectionIcon />,
-    PTRIcon: <PTRIcon />
   };
 
   const leftIconArray = item.icon;

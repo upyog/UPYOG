@@ -2,47 +2,26 @@ import React from "react";
 import ReactDOM from "react-dom";
 
 import { initLibraries } from "@upyog/digit-ui-libraries";
-import { PGRReducers } from "@upyog/digit-ui-module-pgr";
-import { PTModule, PTLinks, PTComponents } from "@upyog/digit-ui-module-pt";
-import { MCollectModule, MCollectLinks } from "@upyog/digit-ui-module-mcollect";
+import { PGRReducers } from "@demodigit/digit-ui-module-pgr";
 // import { TLModule, TLLinks } from "@upyog/digit-ui-module-tl";
-import { initFSMComponents } from "@upyog/digit-ui-module-fsm";
-import { initPGRComponents } from "@upyog/digit-ui-module-pgr";
-import { initDSSComponents } from "@upyog/digit-ui-module-dss";
-import { initHRMSComponents } from "@upyog/digit-ui-module-hrms";
-import { initReceiptsComponents, ReceiptsModule } from "@upyog/digit-ui-module-receipts";
+import { initPGRComponents } from "@demodigit/digit-ui-module-pgr";
+import { initDSSComponents } from "@demodigit/digit-ui-module-dss";
 // import { initReportsComponents } from "@upyog/digit-ui-module-reports";
-import { initMCollectComponents } from "@upyog/digit-ui-module-mcollect";
-import { initTLComponents } from "@upyog/digit-ui-module-tl";
-import { PaymentModule, PaymentLinks, paymentConfigs } from "@upyog/digit-ui-module-common";
-import { HRMSModule } from "@upyog/digit-ui-module-hrms";
-import { initOBPSComponents } from "@upyog/digit-ui-module-obps";
-import { initEngagementComponents } from "@upyog/digit-ui-module-engagement";
-import { initNOCComponents } from "@upyog/digit-ui-module-noc";
-import { initWSComponents } from "@upyog/digit-ui-module-ws";
-import { DigitUI } from "@upyog/digit-ui-module-core";
-import { initCommonPTComponents } from "@upyog/digit-ui-module-commonpt";
-import { initBillsComponents, BillsModule } from "@upyog/digit-ui-module-bills";
-
+import { PaymentModule, PaymentLinks, paymentConfigs } from "@demodigit/digit-ui-module-common";
+import { initWSComponents } from "@demodigit/digit-ui-module-ws";
+import { DigitUI } from "@demodigit/digit-ui-module-core";
+import { initCommonPTComponents } from "@demodigit/digit-ui-module-commonpt";
+import { HRMSModule } from "@demodigit/digit-ui-module-hrms";
+import { initHRMSComponents } from "@demodigit/digit-ui-module-hrms";
 // import {initCustomisationComponents} from "./customisations";
 
-// import { PGRModule, PGRLinks } from "@upyog/digit-ui-module-pgr";
-// import { Body, TopBar } from "@upyog/digit-ui-react-components";
-import "@nudmcdgnpm/upyog-css";
+// import { PGRModule, PGRLinks } from "@demodigit/digit-ui-module-pgr";
+// import { Body, TopBar } from "@demodigit/digit-ui-react-components";
+import "@upyog-niua/upyog-css";
+import { ASSETComponents, ASSETLinks, ASSETModule } from "@demodigit/upyog-ui-module-asset";
 
-import { PTRModule, PTRLinks, PTRComponents } from "@upyog/upyog-ui-module-ptr";
-import { ASSETComponents, ASSETLinks, ASSETModule } from "@upyog/upyog-ui-module-asset";
 
-import { 
-  EWModule, 
-  EWLinks, 
-  EWComponents }
-  from "@upyog/upyog-ui-module-ew";
-
-import { SVComponents, SVLinks, SVModule } from "@upyog/upyog-ui-module-sv";
-import {CHBModule,CHBLinks,CHBComponents} from "@upyog/upyog-ui-module-chb";
-import {ADSModule,ADSLinks,ADSComponents} from "@upyog/upyog-ui-module-ads";
-// import * as comps from "@upyog/digit-ui-react-components";
+// import * as comps from "@demodigit/digit-ui-react-components";
 
 // import { subFormRegistry } from "@upyog/digit-ui-libraries";
 
@@ -51,40 +30,21 @@ import { pgrCustomizations, pgrComponents } from "./pgr";
 var Digit = window.Digit || {};
 
 const enabledModules = [
-  "Tqm",
   "PGR",
-  "FSM",
   "Payment",
-  "PT",
-  "QuickPayLinks",
-  "DSS",
-  "MCollect",
-  "HRMS",
-  "TL",
-  "Receipts",
-  "Reports",
-  "OBPS",
-  "Engagement",
-  "NOC",
   "WS",
   "CommonPT",
-  "NDSS",
-  "Bills",
-  "SW",
-  "BillAmendment",
-  "FireNoc",
-  "Birth",
-  "Death",
-  "PTR",
+  "ASSET",
+  "HRMS"
 ];
 
 const initTokens = (stateCode) => {
   const userType = window.sessionStorage.getItem("userType") || process.env.REACT_APP_USER_TYPE || "CITIZEN";
 
-  const token = window.localStorage.getItem("token") || process.env[`REACT_APP_${userType}_TOKEN`];
-
-  const citizenInfo = window.localStorage.getItem("Citizen.user-info");
-
+  const token = window.localStorage.getItem("token")|| process.env[`REACT_APP_${userType}_TOKEN`];
+ 
+  const citizenInfo = window.localStorage.getItem("Citizen.user-info")
+ 
   const citizenTenantId = window.localStorage.getItem("Citizen.tenant-id") || stateCode;
 
   const employeeInfo = window.localStorage.getItem("Employee.user-info");
@@ -110,52 +70,18 @@ const initDigitUI = () => {
     ...pgrComponents,
     PaymentModule,
     ...paymentConfigs,
-    PaymentLinks,
-    PTModule,
-    PTLinks,
-    ...PTComponents,
-    MCollectLinks,
-    MCollectModule,
     HRMSModule,
-    ReceiptsModule,
-    BillsModule,
-    PTRModule,
-    PTRLinks,
-    ...PTRComponents,
-    // TLModule,
-    // TLLinks,
+    PaymentLinks,
     ASSETModule,
     ASSETLinks,
     ...ASSETComponents,
-    ADSLinks,
-  ADSModule,
-  ...ADSComponents,
-  SVModule,
-  SVLinks,
-  ...SVComponents,
-  EWModule,
-  EWLinks,
-  ...EWComponents,
-  CHBModule,
-  CHBLinks,
-  ...CHBComponents
   });
 
-  initFSMComponents();
   initPGRComponents();
   initDSSComponents();
-  initMCollectComponents();
-  initHRMSComponents();
-  initTLComponents();
-  initReceiptsComponents();
-  // initReportsComponents();
-  initOBPSComponents();
-  initEngagementComponents();
-  initNOCComponents();
   initWSComponents();
   initCommonPTComponents();
-  initBillsComponents();
-
+  initHRMSComponents();
   // initCustomisationComponents();
 
   const moduleReducers = (initData) => ({
@@ -163,12 +89,7 @@ const initDigitUI = () => {
   });
 
   window.Digit.Customizations = {
-    PGR: pgrCustomizations,
-    TL: {
-      customiseCreateFormData: (formData, licenceObject) => licenceObject,
-      customiseRenewalCreateFormData: (formData, licenceObject) => licenceObject,
-      customiseSendbackFormData: (formData, licenceObject) => licenceObject,
-    },
+    PGR: pgrCustomizations
   };
 
   const stateCode = window?.globalConfigs?.getConfig("STATE_LEVEL_TENANT_ID") || "pb";

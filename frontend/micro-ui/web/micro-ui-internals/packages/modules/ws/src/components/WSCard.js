@@ -1,9 +1,10 @@
-import { EmployeeModuleCard, WSICon } from "@upyog/digit-ui-react-components";
+import { EmployeeModuleCard, WSICon } from "@demodigit/digit-ui-react-components";
 import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { checkForEmployee } from "../utils";
 
 const WSCard = () => {
+  console.log("WSCard",WSCard)
   if (!Digit.Utils.wsAccess()) {
     return null;
   }
@@ -41,12 +42,12 @@ const WSCard = () => {
     filters: { ...formInitValue },
   });
 
-  useEffect(() => {
-    if (!isWSInboxLoading) {
-      const waterCount = wsData?.totalCount ? wsData?.totalCount : 0;
-      setTotalCount(waterCount);
-    }
-  }, [wsData]);
+  // useEffect(() => {
+  //   if (!isWSInboxLoading) {
+  //     const waterCount = wsData?.totalCount ? wsData?.totalCount : 0;
+  //     setTotalCount(waterCount);
+  //   }
+  // }, [wsData]);
 
   let links = [
     {
@@ -63,7 +64,7 @@ const WSCard = () => {
     moduleName: t("ACTION_TEST_WATER"),
     kpis: [
       {
-        count: isWSInboxLoading ? "-" : totalCount,
+        // count: isWSInboxLoading ? "-" : totalCount,
         label: t("TOTAL_WS"),
         link: `/digit-ui/employee/ws/water/inbox`,
       },
@@ -75,7 +76,7 @@ const WSCard = () => {
     ],
     links: [
       {
-        count: isWSInboxLoading ? "-" : wsData?.totalCount,
+        // count: isWSInboxLoading ? "-" : wsData?.totalCount,
         label: t("WS_INBOX_HEADER"),
         link: `/digit-ui/employee/ws/water/inbox`,
         roles: ["WS_CEMP", "WS_APPROVER", "WS_FIELD_INSPECTOR", "WS_DOC_VERIFIER", "WS_CLERK"],

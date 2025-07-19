@@ -1,4 +1,4 @@
-import { BackButton, CardHeader, CardLabelError, PageBasedInput, SearchOnRadioButtons } from "@upyog/digit-ui-react-components";
+import { BackButton, CardHeader, CardLabelError, PageBasedInput, SearchOnRadioButtons,Loader } from "@demodigit/digit-ui-react-components";
 import React, { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory, useLocation } from "react-router-dom";
@@ -37,7 +37,8 @@ const LocationSelection = () => {
 
   function onSubmit() {
     if (selectedCity) {
-      Digit.SessionStorage.set("CITIZEN.COMMON.HOME.CITY", selectedCity);
+      console.log("selectedCity",selectedCity)
+
       const redirectBackTo = location.state?.redirectBackTo;
       if (redirectBackTo) {
         history.replace(redirectBackTo);
@@ -48,7 +49,7 @@ const LocationSelection = () => {
   }
 
   return isLoading ? (
-    <loader />
+    <Loader />
   ) : (
     <div className="selection-card-wrapper">
       <BackButton />

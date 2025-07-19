@@ -5,13 +5,14 @@ body {
 .body-container {
   @apply bg-grey-bg h-full min-h-screen overflow-x-hidden;
   position: relative !important;
-
+  background-image: url("https://jaljeevanmission.gov.in//themes/edutheme/images/header-bg.png")
 
 }
 
 .navbar {
   @apply text-white bg-secondary p-md w-full mb-md;
-  background: linear-gradient(to right, #feeee7, #a82227,#feeee7) !important;
+  background: #0a97d5 !important;
+  color: #0b0c0c !important;
   img {
     height: 24px;
   }

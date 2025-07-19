@@ -25,8 +25,7 @@ import {
   LogoutIcon,
   EditPencilIcon,
   LanguageIcon,
-  LoginIcon,
-  PTRIcon
+  LoginIcon
 } from "./svgindex";
 import { BirthIcon, DeathIcon, FirenocIcon } from "..";
 
@@ -62,14 +61,14 @@ const IconsObject = {
   LogoutIcon: <LogoutIcon className="icon" />,
   Phone: <Phone className="icon" />,
   LanguageIcon: <LanguageIcon className="icon" />,
-  LoginIcon: <LoginIcon className="icon" />,
-  PTRIcon: <PTRIcon />
+  LoginIcon: <LoginIcon className="icon" />
 };
 const NavBar = ({ open, toggleSidebar, profileItem, menuItems, onClose, Footer, isEmployee, search, setSearch,isSideBarScroll }) => {
   const node = useRef();
   const location = useLocation();
   const { pathname } = location;
   const { t } = useTranslation();
+  const isMobile = window.Digit.Utils.browser.isMobile();
   Digit.Hooks.useClickOutside(node, open ? onClose : null, open);
 
   if(isSideBarScroll &&  !Digit.clikOusideFired)
@@ -89,7 +88,7 @@ const NavBar = ({ open, toggleSidebar, profileItem, menuItems, onClose, Footer, 
     const Item = () => (
       <span className="menu-item" {...item.populators}>
         {leftIcon}
-        <div className="menu-label">{itemComponent}</div>
+        <div className="menu-label" style={{color:"white"}}>{itemComponent}</div>
       </span>
     );
 
@@ -148,6 +147,15 @@ const NavBar = ({ open, toggleSidebar, profileItem, menuItems, onClose, Footer, 
   return (
     <React.Fragment>
       <div>
+        <style>
+          {
+            `
+            .drawer-list{
+              background-color: white;
+            }
+            `
+          }
+        </style>
         <div
           style={{
             position: "fixed",
@@ -175,7 +183,7 @@ const NavBar = ({ open, toggleSidebar, profileItem, menuItems, onClose, Footer, 
             top: 0,
             left: 0,
             transition: "transform 0.3s ease-in-out",
-            background: "#fff",
+            backgroundColor: "white",
             zIndex: "1999",
             width: "280px",
             transform: `${open ? "translateX(0)" : "translateX(-450px)"}`,
@@ -183,7 +191,7 @@ const NavBar = ({ open, toggleSidebar, profileItem, menuItems, onClose, Footer, 
           }}
         >
           {profileItem}
-          <div className="drawer-list" id="sideBarMenu">
+          <div className="drawer-list" id="sideBarMenu" style={{paddingTop:isMobile?"22%":"",backgroundColor:"#0a97d5 !important"}}>
             {isEmployee ? renderSearch() : null}
             {menuItems?.map((item, index) => (
               <div className={`sidebar-list ${pathname === item.link ? "active" : ""}`} key={index}>

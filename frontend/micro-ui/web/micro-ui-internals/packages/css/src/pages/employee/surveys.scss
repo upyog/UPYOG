@@ -200,8 +200,8 @@ border-left-width: calc(2px * calc(1 - var(--tw-divide-x-reverse)));
       }
 
       .radio-btn-checkmark {
-        height: 1.5rem;
-        width: 1.5rem;
+        height: 1.75rem;
+        width: 1.75rem;
         --border-opacity: 1;
         border: 1px solid #464646;
         border-color: rgba(70, 70, 70, var(--border-opacity));
@@ -212,9 +212,9 @@ border-left-width: calc(2px * calc(1 - var(--tw-divide-x-reverse)));
       .radio-wrap .radio-btn-wrap input:checked ~ .radio-btn-checkmark:after {
         display: block;
         --bg-opacity: 1;
-        background-color: #a82227;
-        height: 1rem;
-        width: 1rem;
+        background-color: #2494d4;
+        height: 1.25rem;
+        width: 1.25rem;
         border-radius: 9999px;
         position: absolute;
         top: 4px;
