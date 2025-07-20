@@ -16,7 +16,8 @@
     "micro-ui-internals/packages/modules/tl",
     "micro-ui-internals/packages/modules/mCollect",
     "micro-ui-internals/packages/modules/obps",
-    "micro-ui-internals/packages/modules/fsm"
+    "micro-ui-internals/packages/modules/fsm",
+    "micro-ui-internals/packages/modules/noc"
   ],
   "engines": {
     "node": ">=14"
@@ -27,9 +28,10 @@
     "@demodigit/digit-ui-module-core": "1.0.3",
     "@demodigit/digit-ui-module-dss": "1.0.0",
     "@demodigit/digit-ui-module-pgr": "3.0.4",
-    "@upyog/digit-ui-module-pt": "3.0.6",
+    "@demodigit/digit-ui-module-pt": "3.0.6",
     "@upyog/digit-ui-module-tl": "3.0.7",
     "@upyog/digit-ui-module-obps":"3.0.4",
+    "@upyog/digit-ui-module-noc":"3.0.4",
     "@upyog/digit-ui-module-mcollect":"3.0.3",
     "@upyog/digit-ui-module-fsm":"3.0.4",
     "@demodigit/digit-ui-module-ws": "3.0.6",
@@ -38,7 +40,6 @@
     "@upyog-niua/upyog-css": "1.0.20",
     "@upyog/digit-ui-libraries": "3.0.1",
     "@demodigit/digit-ui-module-hrms": "3.0.1",
-    "@upyog/digit-ui-react-components": "3.0.1",
     "babel-loader": "8.1.0",
     "react": "17.0.2",
     "react-dom": "17.0.2",

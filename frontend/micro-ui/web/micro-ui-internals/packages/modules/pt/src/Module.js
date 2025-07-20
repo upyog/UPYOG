@@ -1,4 +1,4 @@
-import { Header,  PTIcon } from "@upyog/digit-ui-react-components";
+import { Header,  PTIcon } from "@demodigit/digit-ui-react-components";
 import CitizenHomeCard from "../../../react-components/src/atoms/CitizenHomeCard";
 import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";

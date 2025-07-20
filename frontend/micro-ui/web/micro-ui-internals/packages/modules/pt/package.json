@@ -1,5 +1,5 @@
 {
-  "name": "@upyog/digit-ui-module-pt",
+  "name": "@demodigit/digit-ui-module-pt",
   "version": "3.0.6",
   "license": "MIT",
   "main": "dist/index.js",
@@ -19,7 +19,7 @@
   },
   "dependencies": {
     "axios": "0.21.1",
-    "@upyog/digit-ui-react-components": "3.0.1",
+    "@demodigit/digit-ui-react-components": "1.0.0",
     "microbundle-crl": "0.13.11",
     "lodash.merge": "^4.6.2",
     "react": "17.0.2",

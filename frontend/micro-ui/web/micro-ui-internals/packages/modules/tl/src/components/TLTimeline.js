@@ -1,6 +1,6 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { TickMark } from "@upyog/digit-ui-react-components";
+import { TickMark } from "@demodigit/digit-ui-react-components";
 
 let actions = [];
 
