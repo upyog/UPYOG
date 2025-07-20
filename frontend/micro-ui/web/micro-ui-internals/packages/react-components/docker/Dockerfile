@@ -7,9 +7,10 @@ RUN yarn add @demodigit/digit-ui-module-pgr@3.0.4
 RUN yarn add @demodigit/digit-ui-module-engagement@3.0.3
 RUN yarn add @demodigit/digit-ui-module-hrms
 RUN yarn add @demodigit/digit-ui-module-core@1.0.3
-RUN yarn add @upyog/digit-ui-module-pt@3.0.6
+RUN yarn add @demodigit/digit-ui-module-pt@3.0.6
 RUN yarn add @upyog/digit-ui-module-tl@3.0.7
 RUN yarn add @upyog/digit-ui-module-obps@3.0.4
+RUN yarn add @upyog/digit-ui-module-noc@3.0.4
 RUN yarn add @upyog/digit-ui-module-mcollect@3.0.3
 RUN yarn add @upyog/digit-ui-module-fsm@3.0.4
 RUN yarn add @demodigit/digit-ui-module-common

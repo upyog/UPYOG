@@ -18,7 +18,7 @@ import {
 
 import ChatBot from "./ChatBot";
 // import ChatBot from "frontend\micro-ui\web\micro-ui-internals\packages\react-components\src\atoms\ChatBot.js"
-// import ChatBot from "@upyog/digit-ui-react-components/src/atoms/Chatbot";
+// import ChatBot from "@demodigit/digit-ui-react-components/src/atoms/Chatbot";
 
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";

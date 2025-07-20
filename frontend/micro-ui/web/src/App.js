@@ -5,9 +5,7 @@ import {
   PGRReducers,
 } from "@demodigit/digit-ui-module-pgr";
 import { initFSMComponents } from "@upyog/digit-ui-module-fsm";
-import {
-  PTComponents,
-} from "@upyog/digit-ui-module-pt";
+import { PTComponents } from "@demodigit/digit-ui-module-pt";
 import { MCollectModule, MCollectLinks, initMCollectComponents } from "@upyog/digit-ui-module-mcollect";
 import { initDSSComponents } from "@demodigit/digit-ui-module-dss";
 import {

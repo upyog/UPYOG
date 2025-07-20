@@ -44,6 +44,7 @@
     "dev:ws": "cd packages/modules/ws && yarn start",
     "dev:tl": "cd packages/modules/tl && yarn start",
     "dev:pt": "cd packages/modules/pt && yarn start",
+    "dev:noc": "cd packages/modules/noc && yarn start",
     "dev:obps": "cd packages/modules/obps && yarn start",
     "dev:fsm": "cd packages/modules/fsm && yarn start",
     "dev:mcollect": "cd packages/modules/mCollect && yarn start",
@@ -62,6 +63,7 @@
     "build:pt": "cd packages/modules/pt && yarn build",
     "build:tl": "cd packages/modules/tl && yarn build",
     "build:obps": "cd packages/modules/obps && yarn build",
+    "build:noc": "cd packages/modules/noc && yarn build",
     "build:mcollect": "cd packages/modules/mCollect && yarn build",
     "build:fsm": "cd packages/modules/fsm && yarn build",
     "deploy:jenkins": "./scripts/jenkins.sh"

@@ -189,7 +189,7 @@ import EventCalendarView from "./atoms/EventCalendarView";
 import InboxLinks from "./atoms/InboxLinks";
 import PopupHeadingLabel from "./atoms/PopupHeadingLabel";
 
-import { FormComposer } from "./hoc/FormComposer";
+import FormComposer from "./hoc/FormComposer";
 import { FormComposerNew } from "./hoc/FormComposerNew";
 import Modal from "./hoc/Modal";
 import ResponseComposer from "./hoc/ResponseComposer";

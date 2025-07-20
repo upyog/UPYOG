@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Toast, Header, Loader,FormComposer } from "@upyog/digit-ui-react-components";
+import { Toast, Header, Loader,FormComposer } from "@demodigit/digit-ui-react-components";
 //import { FormComposerV2 } from "../../../../../../../react-components/src";
 
 import { useHistory } from "react-router-dom";

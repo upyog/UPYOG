@@ -13,13 +13,14 @@ import { DigitUI } from "@demodigit/digit-ui-module-core";
 import { initCommonPTComponents } from "@demodigit/digit-ui-module-commonpt";
 import { HRMSModule } from "@demodigit/digit-ui-module-hrms";
 import { initHRMSComponents } from "@demodigit/digit-ui-module-hrms";
-import { PTComponents} from "@upyog/digit-ui-module-pt";
+import { PTComponents} from "@demodigit/digit-ui-module-pt";
 import { MCollectModule, MCollectLinks, initMCollectComponents } from "@upyog/digit-ui-module-mcollect";
 import { initFSMComponents } from "@upyog/digit-ui-module-fsm";
 import {
   initTLComponents,
 } from "@upyog/digit-ui-module-tl";
 import { initOBPSComponents } from "@upyog/digit-ui-module-obps";
+import {initNOCComponents} from "@upyog/digit-ui-module-noc"
 // import {initCustomisationComponents} from "./customisations";
 
 // import { PGRModule, PGRLinks } from "@demodigit/digit-ui-module-pgr";
@@ -98,6 +99,7 @@ const initDigitUI = () => {
   initHRMSComponents();
   initTLComponents();
   initOBPSComponents();
+  initNOCComponents();
   initWSComponents();
   initCommonPTComponents();
 
