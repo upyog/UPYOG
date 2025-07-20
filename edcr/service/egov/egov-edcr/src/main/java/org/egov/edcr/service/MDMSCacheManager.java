@@ -1,0 +1,159 @@
+package org.egov.edcr.service;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.egov.common.entity.edcr.FeatureRuleKey;
+import org.egov.common.entity.edcr.MdmsFeatureRule;
+import org.egov.common.entity.edcr.MdmsResponse;
+import org.egov.common.entity.edcr.Plan;
+import org.egov.commons.mdms.BpaMdmsUtil;
+import org.egov.edcr.constants.EdcrRulesMdmsConstants;
+import org.egov.infra.microservice.models.RequestInfo;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import net.minidev.json.JSONArray;
+
+@Service
+public class MDMSCacheManager {
+
+	@Autowired
+	private BpaMdmsUtil bpaMdmsUtil;
+
+	@Autowired
+	FetchEdcrRulesMdms fetchEdcrRulesMdms;
+
+	private static final Logger LOG = LogManager.getLogger(MDMSCacheManager.class);
+	/**
+	 * Cache to store MDMS rules for different features and cities. The key is the
+	 * city or state, and the value is a map of FeatureRuleKey to list of rules.
+	 */
+	Map<String, Map<FeatureRuleKey, List<Object>>> featureRuleCache = new HashMap<>();
+	Map<String, Map<FeatureRuleKey, List<Object>>> featureRuleCache1 = new HashMap<>();
+
+	/**
+	 * Retrieves applicable BPA rules from cache or MDMS for a given lookup key.
+	 *
+	 * @param lookupKey The composite key representing city, zone, occupancy, etc.
+	 * @return List of rules (if any), or an empty list if none are found
+	 */
+	public List<Object> getRules(FeatureRuleKey lookupKey) {
+		String city = lookupKey.getCity();
+		String state = lookupKey.getState();
+
+		// Use city if available; otherwise, fallback to state
+		String cacheKey = city != null ? city : state;
+
+		LOG.info("Fetching rules for FeatureRuleKey: {}", lookupKey);
+
+		// Try fetching from in-memory cache
+		Map<FeatureRuleKey, List<Object>> cityRules = featureRuleCache.get(cacheKey);
+
+		// If not found, fetch from MDMS and populate cache
+		if (cityRules == null) {
+			LOG.info("Cache miss for key: '{}'. Initiating MDMS fetch...", cacheKey);
+
+			// Construct tenantId (state or state.city format)
+			String tenantId = city != null ? state + "." + city : state;
+			LOG.info("Constructed tenantId for MDMS request: '{}'", tenantId);
+
+			try {
+				Object mdmsCityData = bpaMdmsUtil.mDMSCall(new RequestInfo(), tenantId);
+				if (mdmsCityData != null) {
+					transformCityRules(mdmsCityData);
+					LOG.info("MDMS rules transformed and cached successfully for tenantId: '{}'", tenantId);
+				} else {
+					LOG.warn("MDMS response was null for tenantId: '{}'", tenantId);
+				}
+			} catch (Exception e) {
+				LOG.error("Error occurred while fetching or transforming MDMS rules for tenantId: '{}'", tenantId, e);
+				return Collections.emptyList(); // Fail-safe
+			}
+
+			// Retry fetching from cache after transformation
+			cityRules = featureRuleCache.get(cacheKey);
+		}
+
+		// Fetch rules for the exact FeatureRuleKey
+		List<Object> rules = cityRules != null ? cityRules.get(lookupKey) : null;
+
+		if (rules == null || rules.isEmpty()) {
+			LOG.info("No rules found for key: '{}' under cache entry: '{}'", lookupKey, cacheKey);
+			return Collections.emptyList();
+		}
+
+		LOG.info("Returning {} rule(s) for lookupKey: '{}'", rules.size(), lookupKey);
+		return rules;
+	}
+
+	/**
+	 * Transforms MDMS raw JSON data into structured in-memory rule cache. This
+	 * method parses and groups the rules based on FeatureRuleKey.
+	 *
+	 * @param mdmsCityData Raw response from MDMS containing rules
+	 */
+	private void transformCityRules(Object mdmsCityData) {
+		ObjectMapper mapper = new ObjectMapper();
+
+		// Convert generic response to domain-specific MdmsResponse
+		MdmsResponse mdmsResponse = mapper.convertValue(mdmsCityData, MdmsResponse.class);
+		Map<String, JSONArray> bpaModuleMap = mdmsResponse.getMdmsRes().getOrDefault(EdcrRulesMdmsConstants.BPA,
+				Collections.emptyMap());
+
+		if (bpaModuleMap.isEmpty()) {
+			LOG.warn("No BPA module data found in MDMS response.");
+			return;
+		}
+
+		// Iterate over all features like "PlantationGreenStrip", "SetBack", etc.
+		for (Map.Entry<String, JSONArray> featureEntry : bpaModuleMap.entrySet()) {
+			String featureName = featureEntry.getKey();
+			JSONArray ruleArray = featureEntry.getValue();
+
+			// Convert raw array to list of rules
+			List<MdmsFeatureRule> rules = mapper.convertValue(ruleArray, new TypeReference<List<MdmsFeatureRule>>() {
+			});
+
+			// Group and cache rules by city and FeatureRuleKey
+			for (MdmsFeatureRule rule : rules) {
+				if (!Boolean.TRUE.equals(rule.getActive()))
+					continue;
+
+				// Use city for cache if present; fallback to state
+				String cityKey = rule.getCity() != null ? rule.getCity() : rule.getState();
+
+				FeatureRuleKey key = new FeatureRuleKey(rule.getState(), rule.getCity(), rule.getZone(),
+						rule.getSubZone(), rule.getOccupancy(), rule.getRiskType(), featureName);
+
+				// Cache structure: Map<City, Map<FeatureRuleKey, List<Rule>>>
+				featureRuleCache.computeIfAbsent(cityKey, k -> new HashMap<>())
+						.computeIfAbsent(key, k -> new ArrayList<>()).add(rule);
+			}
+
+			LOG.debug("Processed feature '{}': {} active rules", featureName, rules.size());
+		}
+	}
+
+	public List<Object> getFeatureRules(Plan plan, String feature, boolean includeRiskType) {
+
+		String occupancyName = fetchEdcrRulesMdms.getOccupancyName(plan).toLowerCase();
+		String tenantId = plan.getTenantId();
+		String zone = plan.getPlanInformation().getZone().toLowerCase();
+		String subZone = plan.getPlanInformation().getSubZone().toLowerCase();
+		String riskType = includeRiskType ? fetchEdcrRulesMdms.getRiskType(plan).toLowerCase() : null;
+
+		FeatureRuleKey key = new FeatureRuleKey("pg", tenantId, zone, subZone, occupancyName, riskType, feature);
+
+		return getRules(key);
+	}
+
+}
