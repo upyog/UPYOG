@@ -14,6 +14,7 @@ import org.egov.pt.config.scheduler.DashboardDataPush;
 import org.egov.pt.dashboardservice.DashboardDataService;
 import org.egov.pt.models.DashboardData;
 import org.egov.pt.models.DashboardDataSearch;
+import org.egov.pt.models.DashboardReport;
 import org.egov.pt.models.Property;
 import org.egov.pt.models.PropertyCriteria;
 import org.egov.pt.models.oldProperty.OldPropertyCriteria;
@@ -225,5 +226,20 @@ public class PropertyController {
 
 		return new ResponseEntity<>(dashBoardIngestService.datapushFromAPi(), HttpStatus.OK);
 	}
+	
+	
+	  @RequestMapping(value = "/_dashboardDataSearchProperties", method = RequestMethod.POST)
+	    public ResponseEntity<?> dashboardDataSearchProperties(@Valid @RequestBody DashboardRequest dashboardRequest) {
+	    	
+	    	DashboardReport dashboardDatas=dashboardDataService.dashboardDatasWithProperties(dashboardRequest);
+	    	//DashboardResponse dashboardResponse=DashboardResponse.builder().dashboardDatas(dashboardDatas).responseInfo(
+//	    		/	responseInfoFactory.createResponseInfoFromRequestInfo(dashboardRequest.getRequestInfo(), true)).build();
+	    	
+	    	return new ResponseEntity<>(dashboardDatas,HttpStatus.OK);
+	    }
+		 
+	
+	
+	
 	 
 }
