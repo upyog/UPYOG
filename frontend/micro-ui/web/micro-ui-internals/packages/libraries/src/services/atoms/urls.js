@@ -6,6 +6,7 @@ const Urls = {
   location: {
     localities: `/egov-location/location/v11/boundarys/_search?hierarchyTypeCode=ADMIN&boundaryType=Locality`,
     revenue_localities: `/egov-location/location/v11/boundarys/_search?hierarchyTypeCode=REVENUE&boundaryType=Locality`,
+    blocks: `/egov-location/location/v11/boundarys/_search?hierarchyTypeCode=REVENUE&boundaryType=Block`,
   },
 
   pgr_search: `/pgr-services/v2/request/_search`,
@@ -91,6 +92,7 @@ const Urls = {
     appeal_update: "/property-services/appeal/_update",
     notice_save: "/property-services/notice/_save",
     notice_search: "/property-services/notice/_search",
+    dashboard_search: "/property-services/property/_dashboardDataSearch",
   },
 
   dss: {

@@ -80,6 +80,13 @@ const PTCard = () => {
       image: "https://mnptapp-terraform.s3.ap-south-1.amazonaws.com/images/Property-Transfer.png",
     },
   ]
+  if(userRole && userRole=='EXECUTING_OFFICER') {
+    links.push({
+      label: t("Dashboard"),
+      link: `/digit-ui/employee/pt/dashboard`,
+      image: "https://mnptapp-terraform.s3.ap-south-1.amazonaws.com/images/MyApplication2.png",
+    })
+  }
   const PT_CEMP = Digit.UserService.hasAccess(["PT_CEMP"]) || false;
   const propsForModuleCard = {
     Icon: <PropertyHouse />,

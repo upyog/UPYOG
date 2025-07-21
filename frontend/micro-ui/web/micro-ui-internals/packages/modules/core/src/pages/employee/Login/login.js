@@ -207,7 +207,14 @@ const decryptCaptcha = (encryptedText) => {
     history.push("/digit-ui/employee/user/forgot-password");
   };
   // const loadForm = () => {
-  //   console.log("loadForm==",captcha)
+    if(cities && cities?.length>0) {
+      let isAdmin = cities.some((e)=> e.code === 'mn')
+      if(!isAdmin){
+        cities.unshift({i18nKey: 'TENANT_TENANTS_MN', code: 'mn', name: 'Admin', description: 'Admin'})
+      }
+    }
+      
+  
     const config = [
       {
         body: [
@@ -234,7 +241,7 @@ const decryptCaptcha = (encryptedText) => {
               name: city.name,
               customProps: {},
               component: (props, customProps) => (
-                <Dropdown
+               <Dropdown
                   option={cities}
                   className="login-city-dd"
                   optionKey="i18nKey"
@@ -275,8 +282,8 @@ const decryptCaptcha = (encryptedText) => {
   const onCaptchaRefresh = ()=> {
     fetchCaptcha()
   }
-  
 
+  
   return isLoading || isStoreLoading ? (
     <Loader />
   ) : (
