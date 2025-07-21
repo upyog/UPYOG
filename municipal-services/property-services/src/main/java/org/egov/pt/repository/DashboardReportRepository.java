@@ -74,11 +74,21 @@ public class DashboardReportRepository {
 		return result != null ? result : BigInteger.ZERO;
 	}
 	
-	public BigInteger getTotalPropertySelfassessedCount(DashboardDataSearch dashboardDataSearch)
+	public List<Property> getTotalPropertySelfassessedCount(DashboardRequest dashboardRequest)
 	{
-		String query=reportQueryBuilder.getTotalPropertySelfassessedQuery(dashboardDataSearch);
-		BigInteger result = jdbcTemplate.queryForObject(query, BigInteger.class);
-		return result != null ? result : BigInteger.ZERO;
+		String query=reportQueryBuilder.getTotalPropertySelfassessedQuery(dashboardRequest.getDashboardDataSearch());
+		List<String> propertyIdList = jdbcTemplate.query(
+			    query,
+			    (rs, rowNum) -> rs.getString("propertyid")  
+			);
+		Set<String> propertyIds = new HashSet<>(propertyIdList);
+		PropertyCriteria criteria = new PropertyCriteria();
+		criteria.setPropertyIds(propertyIds);
+		List<Property> properties=new ArrayList<>();
+		if(!CollectionUtils.isEmpty(propertyIds))
+			properties =propertyService.searchProperty(criteria, dashboardRequest.getRequestInfo());
+		
+		return properties;
 	}
 	
 	public BigInteger getTotalPropertyPendingselfAssessedCount(DashboardDataSearch dashboardDataSearch)
