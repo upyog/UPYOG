@@ -59,15 +59,17 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.egov.common.constants.MdmsFeatureConstants;
 import org.egov.common.entity.edcr.Block;
+import org.egov.common.entity.edcr.FeatureEnum;
 import org.egov.common.entity.edcr.Floor;
+import org.egov.common.entity.edcr.InteriorOpenSpaceServiceRequirement;
 import org.egov.common.entity.edcr.MdmsFeatureRule;
 import org.egov.common.entity.edcr.Measurement;
 import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.Result;
-import org.egov.common.entity.edcr.RuleKey;
+import org.egov.common.entity.edcr.FeatureRuleKey;
 import org.egov.common.entity.edcr.ScrutinyDetail;
 import org.egov.edcr.constants.EdcrRulesMdmsConstants;
-import org.egov.edcr.service.CacheManagerMdms;
+import org.egov.edcr.service.MDMSCacheManager;
 import org.egov.edcr.service.FetchEdcrRulesMdms;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -102,7 +104,7 @@ public class InteriorOpenSpaceService extends FeatureProcess {
     FetchEdcrRulesMdms fetchEdcrRulesMdms;
     
     @Autowired
-	CacheManagerMdms cache;
+	MDMSCacheManager cache;
 	
 
     /**
@@ -139,13 +141,13 @@ public class InteriorOpenSpaceService extends FeatureProcess {
      * @param pl the plan containing the details to fetch relevant feature rules
      */
     private void setMinValuesFromMatchedRule(Plan pl) {
-        List<Object> rules = cache.getFeatureRules(pl, MdmsFeatureConstants.INTERIOR_OPEN_SPACE_SERVICE, false);
-        Optional<MdmsFeatureRule> matchedRule = rules.stream()
-            .map(obj -> (MdmsFeatureRule) obj)
+    	List<Object> rules = cache.getFeatureRules(pl, FeatureEnum.INTERIOR_OPEN_SPACE_SERVICE.getValue(), false);
+        Optional<InteriorOpenSpaceServiceRequirement> matchedRule = rules.stream()
+            .filter(InteriorOpenSpaceServiceRequirement.class::isInstance)
+            .map(InteriorOpenSpaceServiceRequirement.class::cast)
             .findFirst();
-
         if (matchedRule.isPresent()) {
-            MdmsFeatureRule rule = matchedRule.get();
+        	InteriorOpenSpaceServiceRequirement rule = matchedRule.get();
             minInteriorAreaValueOne = rule.getMinInteriorAreaValueOne();
             minInteriorAreaValueTwo = rule.getMinInteriorAreaValueTwo();
             minInteriorWidthValueOne = rule.getMinInteriorWidthValueOne();

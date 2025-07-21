@@ -60,19 +60,18 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.egov.common.constants.MdmsFeatureConstants;
 import org.egov.common.entity.edcr.Block;
+import org.egov.common.entity.edcr.FeatureEnum;
+import org.egov.common.entity.edcr.FireStairRequirement;
 import org.egov.common.entity.edcr.Flight;
 import org.egov.common.entity.edcr.Floor;
-import org.egov.common.entity.edcr.MdmsFeatureRule;
 import org.egov.common.entity.edcr.Measurement;
 import org.egov.common.entity.edcr.OccupancyTypeHelper;
 import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.Result;
-import org.egov.common.entity.edcr.RuleKey;
 import org.egov.common.entity.edcr.ScrutinyDetail;
 import org.egov.common.entity.edcr.StairLanding;
 import org.egov.edcr.constants.DxfFileConstants;
-import org.egov.edcr.constants.EdcrRulesMdmsConstants;
-import org.egov.edcr.service.CacheManagerMdms;
+import org.egov.edcr.service.MDMSCacheManager;
 import org.egov.edcr.service.FetchEdcrRulesMdms;
 import org.egov.edcr.utility.DcrConstants;
 import org.egov.edcr.utility.Util;
@@ -114,7 +113,7 @@ public class FireStair extends FeatureProcess {
 	FetchEdcrRulesMdms fetchEdcrRulesMdms;
 
 	@Autowired
-	CacheManagerMdms cache;
+	MDMSCacheManager cache;
 
 	/**
 	 * Validates the given plan object. Currently, no specific validation logic is
@@ -161,9 +160,11 @@ public class FireStair extends FeatureProcess {
 	 * @param plan the building plan for which the fire stair rules are to be loaded
 	 */
 	private void loadFireStairRuleValues(Plan plan) {
-		List<Object> rules = cache.getFeatureRules(plan, MdmsFeatureConstants.FIRE_STAIR, false);
-		Optional<MdmsFeatureRule> matchedRule = rules.stream().map(obj -> (MdmsFeatureRule) obj).findFirst();
-
+		 List<Object> rules = cache.getFeatureRules(plan, FeatureEnum.FIRE_STAIR.getValue(), false);
+	        Optional<FireStairRequirement> matchedRule = rules.stream()
+	            .filter(FireStairRequirement.class::isInstance)
+	            .map(FireStairRequirement.class::cast)
+	            .findFirst();
 		matchedRule.ifPresent(rule -> {
 			fireStairExpectedNoofRise = rule.getFireStairExpectedNoofRise();
 			fireStairMinimumWidth = rule.getFireStairMinimumWidth();

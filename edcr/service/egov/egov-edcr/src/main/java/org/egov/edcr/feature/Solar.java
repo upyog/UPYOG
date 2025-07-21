@@ -64,13 +64,13 @@ import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.egov.common.constants.MdmsFeatureConstants;
-import org.egov.common.entity.edcr.MdmsFeatureRule;
+import org.egov.common.entity.edcr.FeatureEnum;
 import org.egov.common.entity.edcr.OccupancyType;
 import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.Result;
 import org.egov.common.entity.edcr.ScrutinyDetail;
-import org.egov.edcr.service.CacheManagerMdms;
+import org.egov.common.entity.edcr.SolarRequirement;
+import org.egov.edcr.service.MDMSCacheManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
@@ -90,7 +90,7 @@ public class Solar extends FeatureProcess {
     
     
     @Autowired
-	CacheManagerMdms cache;
+	MDMSCacheManager cache;
 
     @Override
     public Plan validate(Plan pl) {
@@ -166,17 +166,17 @@ public class Solar extends FeatureProcess {
     }
 
     private Map<String, BigDecimal> fetchSolarValues(Plan pl) {
-        List<Object> rules = cache.getFeatureRules(pl, MdmsFeatureConstants.SOLAR, false);
-        Optional<MdmsFeatureRule> matchedRule = rules.stream()
-                .filter(MdmsFeatureRule.class::isInstance)
-                .map(MdmsFeatureRule.class::cast)
-                .findFirst();
+    	List<Object> rules = cache.getFeatureRules(pl, FeatureEnum.SOLAR.getValue(), false);
+        Optional<SolarRequirement> matchedRule = rules.stream()
+            .filter(SolarRequirement.class::isInstance)
+            .map(SolarRequirement.class::cast)
+            .findFirst();
 
         BigDecimal solarValueOne = BigDecimal.ZERO;
         BigDecimal solarValueTwo = BigDecimal.ZERO;
 
         if (matchedRule.isPresent()) {
-            MdmsFeatureRule rule = matchedRule.get();
+        	SolarRequirement rule = matchedRule.get();
             solarValueOne = rule.getSolarValueOne();
             solarValueTwo = rule.getSolarValueTwo();
         }

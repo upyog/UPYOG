@@ -62,10 +62,10 @@ import org.egov.common.entity.edcr.Block;
 import org.egov.common.entity.edcr.MdmsFeatureRule;
 import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.Result;
-import org.egov.common.entity.edcr.RuleKey;
+import org.egov.common.entity.edcr.FeatureRuleKey;
 import org.egov.common.entity.edcr.ScrutinyDetail;
 import org.egov.edcr.constants.EdcrRulesMdmsConstants;
-import org.egov.edcr.service.CacheManagerMdms;
+import org.egov.edcr.service.MDMSCacheManager;
 import org.egov.edcr.service.FetchEdcrRulesMdms;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -81,7 +81,7 @@ public class RoofTank extends FeatureProcess {
 
 	
 	@Autowired
-	CacheManagerMdms cache;
+	MDMSCacheManager cache;
 	
 	/**
 	 * Validates the provided Plan object.

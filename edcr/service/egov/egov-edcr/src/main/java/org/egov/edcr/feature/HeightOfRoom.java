@@ -65,21 +65,24 @@ import org.apache.logging.log4j.Logger;
 import org.egov.common.constants.MdmsFeatureConstants;
 import org.egov.common.entity.edcr.Block;
 import org.egov.common.entity.edcr.Door;
+import org.egov.common.entity.edcr.DoorsRequirement;
+import org.egov.common.entity.edcr.FeatureEnum;
 import org.egov.common.entity.edcr.Floor;
+import org.egov.common.entity.edcr.GuardRoomRequirement;
 import org.egov.common.entity.edcr.MdmsFeatureRule;
 import org.egov.common.entity.edcr.Measurement;
+import org.egov.common.entity.edcr.NonHabitationalDoorsRequirement;
 import org.egov.common.entity.edcr.OccupancyTypeHelper;
 import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.Result;
 import org.egov.common.entity.edcr.Room;
+import org.egov.common.entity.edcr.RoomAreaRequirement;
 import org.egov.common.entity.edcr.RoomHeight;
-import org.egov.common.entity.edcr.RuleKey;
+import org.egov.common.entity.edcr.RoomWiseDoorAreaRequirement;
 import org.egov.common.entity.edcr.ScrutinyDetail;
 import org.egov.common.entity.edcr.Window;
 import org.egov.edcr.constants.DxfFileConstants;
-import org.egov.edcr.constants.EdcrRulesMdmsConstants;
-import org.egov.edcr.service.CacheManagerMdms;
-import org.egov.edcr.service.FetchEdcrRulesMdms;
+import org.egov.edcr.service.MDMSCacheManager;
 import org.egov.edcr.service.ProcessHelper;
 import org.egov.edcr.utility.DcrConstants;
 import org.jfree.util.Log;
@@ -141,7 +144,7 @@ public class HeightOfRoom extends FeatureProcess {
 	}
 
 	@Autowired
-	CacheManagerMdms cache;
+	MDMSCacheManager cache;
 
 	@Override
 	public Plan process(Plan pl) {
@@ -354,7 +357,12 @@ public class HeightOfRoom extends FeatureProcess {
 	 */
 	private void evaluateSingleDoor(Plan pl, Floor floor, Door door, ScrutinyDetail scrutinyDetail) {
 	    BigDecimal doorWidth = door.getDoorWidth();
-	    BigDecimal minDoorWidth = getMinimumDoorWidth(pl);
+	    Optional<DoorsRequirement> matchedRule = getMinimumDoorWidth(pl);
+	    
+	    if (matchedRule.isPresent()) {
+	    	DoorsRequirement rule = matchedRule.get();
+	    	minDoorWidth = rule.getPermissible();		
+    	}
 
 	    String subRule = SUBRULE_41_II_B;
 	    String subRuleDesc = SUBRULE_41_II_B;
@@ -437,11 +445,14 @@ public class HeightOfRoom extends FeatureProcess {
 			minDoorWidth = BigDecimal.ZERO;
 			String subRule = "4.4.4";
 
-			List<Object> rules = cache.getFeatureRules(pl, MdmsFeatureConstants.ROOM_WISE_DOOR_AREA, false);
-			Optional<MdmsFeatureRule> matchedRule = rules.stream().map(obj -> (MdmsFeatureRule) obj).findFirst();
+			List<Object> rules = cache.getFeatureRules(pl, FeatureEnum.ROOM_WISE_DOOR_AREA.getValue(), false);
+	        Optional<RoomWiseDoorAreaRequirement> matchedRule = rules.stream()
+	            .filter(RoomWiseDoorAreaRequirement.class::isInstance)
+	            .map(RoomWiseDoorAreaRequirement.class::cast)
+	            .findFirst();
 
 			if (matchedRule.isPresent()) {
-				MdmsFeatureRule rule = matchedRule.get();
+				RoomWiseDoorAreaRequirement rule = matchedRule.get();
 				minDoorHeight = rule.getMinDoorHeight();
 				minDoorWidth = rule.getMinDoorWidth();
 			}
@@ -466,14 +477,14 @@ public class HeightOfRoom extends FeatureProcess {
 	 * @param pl The plan being evaluated.
 	 * @return   The minimum permissible door width.
 	 */
-	private BigDecimal getMinimumDoorWidth(Plan pl) {
-	    List<Object> rules = cache.getFeatureRules(pl, MdmsFeatureConstants.DOORS, false);
+	private Optional<DoorsRequirement> getMinimumDoorWidth(Plan pl) {
+		List<Object> rules = cache.getFeatureRules(pl, FeatureEnum.DOORS.getValue(), false);
+       return rules.stream()
+            .filter(DoorsRequirement.class::isInstance)
+            .map(DoorsRequirement.class::cast)
+            .findFirst();
 
-	    return rules.stream()
-	            .map(obj -> (MdmsFeatureRule) obj)
-	            .findFirst()
-	            .map(MdmsFeatureRule::getPermissible)
-	            .orElse(BigDecimal.ZERO);
+
 	}
 
 	/**
@@ -535,7 +546,7 @@ public class HeightOfRoom extends FeatureProcess {
 	 * @return   The ventilation percentage.
 	 */
 	private BigDecimal getVentilationPercentage(Plan pl) {
-	    List<Object> rules = cache.getFeatureRules(pl, MdmsFeatureConstants.ROOM_WISE_VENTILATION, false);
+	    List<Object> rules = cache.getFeatureRules(pl, FeatureEnum.ROOM_WISE_VENTILATION.getValue(), false);
 	    Optional<MdmsFeatureRule> matchedRule = rules.stream()
 	            .map(obj -> (MdmsFeatureRule) obj)
 	            .findFirst();
@@ -736,13 +747,13 @@ public class HeightOfRoom extends FeatureProcess {
 	    BigDecimal minDoorHeight = BigDecimal.ZERO;
 
 	    List<Object> rules = cache.getFeatureRules(pl, MdmsFeatureConstants.NON_HABITATIONAL_DOORS, false);
-
-	    Optional<MdmsFeatureRule> matchedRule = rules.stream()
-	            .map(obj -> (MdmsFeatureRule) obj)
-	            .findFirst();
+        Optional<NonHabitationalDoorsRequirement> matchedRule = rules.stream()
+            .filter(NonHabitationalDoorsRequirement.class::isInstance)
+            .map(NonHabitationalDoorsRequirement.class::cast)
+            .findFirst();
 
 	    if (matchedRule.isPresent()) {
-	        MdmsFeatureRule rule = matchedRule.get();
+	    	NonHabitationalDoorsRequirement rule = matchedRule.get();
 	        minDoorWidth = rule.getMinDoorWidth();
 	        minDoorHeight = rule.getMinDoorHeight();
 	    }
@@ -867,10 +878,13 @@ public class HeightOfRoom extends FeatureProcess {
 		BigDecimal roomArea1 = BigDecimal.ZERO, roomArea2 = BigDecimal.ZERO;
 		BigDecimal roomWidth1 = BigDecimal.ZERO, roomWidth2 = BigDecimal.ZERO;
 
-		List<Object> rules = cache.getFeatureRules(pl, MdmsFeatureConstants.ROOM_AREA, false);
-		Optional<MdmsFeatureRule> matchedRule = rules.stream().map(obj -> (MdmsFeatureRule) obj).findFirst();
+		List<Object> rules = cache.getFeatureRules(pl, FeatureEnum.ROOM_AREA.getValue(), false);
+        Optional<RoomAreaRequirement> matchedRule = rules.stream()
+            .filter(RoomAreaRequirement.class::isInstance)
+            .map(RoomAreaRequirement.class::cast)
+            .findFirst();
 		if (matchedRule.isPresent()) {
-			MdmsFeatureRule rule = matchedRule.get();
+			RoomAreaRequirement rule = matchedRule.get();
 			roomArea1 = rule.getRoomArea1();
 			roomArea2 = rule.getRoomArea2();
 			roomWidth1 = rule.getRoomWidth1();

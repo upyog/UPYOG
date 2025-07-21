@@ -63,10 +63,12 @@ import org.egov.common.constants.MdmsFeatureConstants;
 import org.egov.common.entity.edcr.MdmsFeatureRule;
 import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.Result;
-import org.egov.common.entity.edcr.RuleKey;
+import org.egov.common.entity.edcr.FeatureEnum;
+import org.egov.common.entity.edcr.FeatureRuleKey;
 import org.egov.common.entity.edcr.ScrutinyDetail;
+import org.egov.common.entity.edcr.WaterTankCapacityRequirement;
 import org.egov.edcr.constants.EdcrRulesMdmsConstants;
-import org.egov.edcr.service.CacheManagerMdms;
+import org.egov.edcr.service.MDMSCacheManager;
 import org.egov.edcr.service.FetchEdcrRulesMdms;
 import org.egov.edcr.utility.DcrConstants;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -87,17 +89,17 @@ public class WaterTankCapacity extends FeatureProcess {
     }
 
     @Autowired
-	CacheManagerMdms cache;
+	MDMSCacheManager cache;
 
 
     @Override
     public Plan process(Plan pl) {
         initializeScrutinyDetail();
 
-        Optional<MdmsFeatureRule> matchedRule = getWaterTankRule(pl);
+        Optional<WaterTankCapacityRequirement> matchedRule = getWaterTankRule(pl);
         if (!matchedRule.isPresent()) return pl;
 
-        MdmsFeatureRule rule = matchedRule.get();
+        WaterTankCapacityRequirement rule = matchedRule.get();
 
         if (pl.getUtility() != null && pl.getVirtualBuilding() != null
                 && pl.getUtility().getWaterTankCapacity() != null) {
@@ -125,12 +127,15 @@ public class WaterTankCapacity extends FeatureProcess {
         scrutinyDetail.setKey("Common_Water tank capacity");
     }
 
-    private Optional<MdmsFeatureRule> getWaterTankRule(Plan pl) {
-        List<Object> rules = cache.getFeatureRules(pl, MdmsFeatureConstants.WATER_TANK_CAPACITY, false);
-        return rules.stream().map(obj -> (MdmsFeatureRule) obj).findFirst();
+    private Optional<WaterTankCapacityRequirement> getWaterTankRule(Plan pl) {
+    	 List<Object> rules = cache.getFeatureRules(pl, FeatureEnum.WATER_TANK_CAPACITY.toString(), false);
+        return rules.stream()
+             .filter(WaterTankCapacityRequirement.class::isInstance)
+             .map(WaterTankCapacityRequirement.class::cast)
+             .findFirst();
     }
 
-    private BigDecimal calculateExpectedTankCapacity(Plan pl, MdmsFeatureRule rule) {
+    private BigDecimal calculateExpectedTankCapacity(Plan pl, WaterTankCapacityRequirement rule) {
         BigDecimal builtUpArea = pl.getVirtualBuilding().getTotalBuitUpArea();
         BigDecimal waterTankCapacityArea = rule.getWaterTankCapacityArea();
         BigDecimal waterTankCapacityExpected = rule.getWaterTankCapacityExpected();

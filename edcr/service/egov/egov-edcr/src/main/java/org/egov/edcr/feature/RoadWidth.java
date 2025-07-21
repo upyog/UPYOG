@@ -70,11 +70,14 @@ import org.egov.common.constants.MdmsFeatureConstants;
 import org.egov.common.entity.dcr.helper.OccupancyHelperDetail;
 import org.egov.common.entity.edcr.MdmsFeatureRule;
 import org.egov.common.entity.edcr.Plan;
+import org.egov.common.entity.edcr.PlantationRequirement;
 import org.egov.common.entity.edcr.Result;
-import org.egov.common.entity.edcr.RuleKey;
+import org.egov.common.entity.edcr.RoadWidthRequirement;
+import org.egov.common.entity.edcr.FeatureEnum;
+import org.egov.common.entity.edcr.FeatureRuleKey;
 import org.egov.common.entity.edcr.ScrutinyDetail;
 import org.egov.edcr.constants.EdcrRulesMdmsConstants;
-import org.egov.edcr.service.CacheManagerMdms;
+import org.egov.edcr.service.MDMSCacheManager;
 import org.egov.edcr.service.FetchEdcrRulesMdms;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -89,7 +92,7 @@ public class RoadWidth extends FeatureProcess {
     
    
     @Autowired
-	CacheManagerMdms cache;
+	MDMSCacheManager cache;
 
     @Override
     public Map<String, Date> getAmendments() {
@@ -178,12 +181,11 @@ public class RoadWidth extends FeatureProcess {
     public Map<String, BigDecimal> getOccupancyValues(Plan plan) {
         BigDecimal roadWidthValue = BigDecimal.ZERO;
 
-        List<Object> rules = cache.getFeatureRules(plan, MdmsFeatureConstants.ROAD_WIDTH, false);
-
-        Optional<MdmsFeatureRule> matchedRule = rules.stream()
-                .map(obj -> (MdmsFeatureRule) obj)
-                .findFirst();
-
+    	List<Object> rules = cache.getFeatureRules(plan, FeatureEnum.ROAD_WIDTH.getValue(), false);
+        Optional<RoadWidthRequirement> matchedRule = rules.stream()
+            .filter(RoadWidthRequirement.class::isInstance)
+            .map(RoadWidthRequirement.class::cast)
+            .findFirst();
         if (matchedRule.isPresent()) {
             roadWidthValue = matchedRule.get().getPermissible();
         }

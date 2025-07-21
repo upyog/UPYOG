@@ -53,20 +53,16 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.egov.common.constants.MdmsFeatureConstants;
 import org.egov.common.entity.edcr.Block;
-import org.egov.common.entity.edcr.MdmsFeatureRule;
+import org.egov.common.entity.edcr.FeatureEnum;
+import org.egov.common.entity.edcr.PassageRequirement;
 import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.Result;
-import org.egov.common.entity.edcr.RuleKey;
 import org.egov.common.entity.edcr.ScrutinyDetail;
-import org.egov.edcr.constants.EdcrRulesMdmsConstants;
-import org.egov.edcr.service.CacheManagerMdms;
-import org.egov.edcr.service.FetchEdcrRulesMdms;
+import org.egov.edcr.service.MDMSCacheManager;
 import org.egov.edcr.utility.Util;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -80,7 +76,7 @@ public class PassageService extends FeatureProcess {
     private static final String RULE_41_DESCRIPTION = "The minimum width of corridors/ verandhas";
   
     @Autowired
-   	CacheManagerMdms cache;
+   	MDMSCacheManager cache;
     
     /**
      * Validates the given plan for passage-related checks.
@@ -107,10 +103,14 @@ public class PassageService extends FeatureProcess {
         BigDecimal passageStairMinimumWidth = BigDecimal.ZERO;
         BigDecimal passageMinWidth = BigDecimal.ZERO;
 
-        List<Object> rules = cache.getFeatureRules(plan, MdmsFeatureConstants.PASSAGE_SERVICE, false);
+        List<Object> rules = cache.getFeatureRules(plan, FeatureEnum.PASSAGE_SERVICE.getValue(), false);
+       rules.stream()
+            .filter(PassageRequirement.class::isInstance)
+            .map(PassageRequirement.class::cast)
+            .findFirst();
 
         for (Object obj : rules) {
-            MdmsFeatureRule rule = (MdmsFeatureRule) obj;
+        	PassageRequirement rule = (PassageRequirement) obj;
             passageStairMinimumWidth = rule.getPassageServiceValueOne();
             passageMinWidth = rule.getPassageServiceValueTwo();
             break; 

@@ -54,19 +54,16 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.egov.common.constants.MdmsFeatureConstants;
 import org.egov.common.entity.edcr.Block;
-import org.egov.common.entity.edcr.MdmsFeatureRule;
+import org.egov.common.entity.edcr.FeatureEnum;
+import org.egov.common.entity.edcr.MonumentDistanceRequirement;
 import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.Result;
 import org.egov.common.entity.edcr.ScrutinyDetail;
-import org.egov.edcr.service.CacheManagerMdms;
-import org.egov.edcr.service.FetchEdcrRulesMdms;
-import org.egov.infra.utils.StringUtils;
+import org.egov.edcr.service.MDMSCacheManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -81,7 +78,7 @@ public class MonumentDistance extends FeatureProcess {
     public static final String MONUMENT_DESCRIPTION = "Distance from monument";
 
     @Autowired
-	CacheManagerMdms cache;
+	MDMSCacheManager cache;
 
     /**
      * Validates the given plan object.
@@ -119,10 +116,13 @@ public class MonumentDistance extends FeatureProcess {
         BigDecimal minDistance = distances.stream().min(Comparator.naturalOrder()).get();
 
         
-        List<Object> rules = cache.getFeatureRules(pl, MdmsFeatureConstants.MONUMENT_DISTANCE, false);
-        if (rules.isEmpty()) return pl;
+        List<Object> rules = cache.getFeatureRules(pl, FeatureEnum.MONUMENT_DISTANCE.getValue(), false);
+         rules.stream()
+            .filter(MonumentDistanceRequirement.class::isInstance)
+            .map(MonumentDistanceRequirement.class::cast)
+            .findFirst();
 
-        MdmsFeatureRule rule = (MdmsFeatureRule) rules.get(0);
+        MonumentDistanceRequirement rule = (MonumentDistanceRequirement) rules.get(0);
         BigDecimal distanceOne = rule.getMonumentDistance_distanceOne();
         BigDecimal minDistanceTwo = rule.getMonumentDistance_minDistanceTwo();
         BigDecimal maxHeightAllowed = rule.getMonumentDistance_maxHeightofbuilding();

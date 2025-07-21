@@ -67,12 +67,14 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.egov.common.constants.MdmsFeatureConstants;
 import org.egov.common.entity.dcr.helper.OccupancyHelperDetail;
+import org.egov.common.entity.edcr.FeatureEnum;
 import org.egov.common.entity.edcr.MdmsFeatureRule;
 import org.egov.common.entity.edcr.OccupancyTypeHelper;
 import org.egov.common.entity.edcr.Plan;
+import org.egov.common.entity.edcr.PlotAreaRequirement;
 import org.egov.common.entity.edcr.Result;
 import org.egov.common.entity.edcr.ScrutinyDetail;
-import org.egov.edcr.service.CacheManagerMdms;
+import org.egov.edcr.service.MDMSCacheManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -95,7 +97,7 @@ public class PlotArea extends FeatureProcess {
 
    
     @Autowired
-	CacheManagerMdms cache;
+	MDMSCacheManager cache;
 
     /**
      * Processes the Plan to validate the plot area against permissible values based on occupancy.
@@ -195,9 +197,13 @@ public class PlotArea extends FeatureProcess {
         BigDecimal plotAreaValueOne = BigDecimal.ZERO;
         BigDecimal plotAreaValueTwo = BigDecimal.ZERO;
 
-        Optional<MdmsFeatureRule> matchedRule = getFeatureRule(pl, MdmsFeatureConstants.PLOT_AREA);
+        List<Object> rules = cache.getFeatureRules(pl, FeatureEnum.PLOT_AREA.getValue(), false);
+        Optional<PlotAreaRequirement> matchedRule = rules.stream()
+            .filter(PlotAreaRequirement.class::isInstance)
+            .map(PlotAreaRequirement.class::cast)
+            .findFirst();
         if (matchedRule.isPresent()) {
-            MdmsFeatureRule rule = matchedRule.get();
+        	PlotAreaRequirement rule = matchedRule.get();
             plotAreaValueOne = rule.getPlotAreaValueOne();
             plotAreaValueTwo = rule.getPlotAreaValueTwo();
         }

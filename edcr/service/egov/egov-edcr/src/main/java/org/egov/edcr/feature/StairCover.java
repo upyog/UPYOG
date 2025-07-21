@@ -59,13 +59,16 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.egov.common.constants.MdmsFeatureConstants;
 import org.egov.common.entity.edcr.Block;
+import org.egov.common.entity.edcr.FeatureEnum;
 import org.egov.common.entity.edcr.MdmsFeatureRule;
 import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.Result;
-import org.egov.common.entity.edcr.RuleKey;
+import org.egov.common.entity.edcr.FeatureRuleKey;
 import org.egov.common.entity.edcr.ScrutinyDetail;
+import org.egov.common.entity.edcr.SolarRequirement;
+import org.egov.common.entity.edcr.StairCoverRequirement;
 import org.egov.edcr.constants.EdcrRulesMdmsConstants;
-import org.egov.edcr.service.CacheManagerMdms;
+import org.egov.edcr.service.MDMSCacheManager;
 import org.egov.edcr.service.FetchEdcrRulesMdms;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -86,7 +89,7 @@ public class StairCover extends FeatureProcess {
     
     
     @Autowired
-	CacheManagerMdms cache;
+	MDMSCacheManager cache;
     
     // Placeholder validate method (not performing any logic here)
     @Override
@@ -118,10 +121,11 @@ public class StairCover extends FeatureProcess {
     }
 
     private BigDecimal getStairCoverPermissibleValue(Plan pl) {
-        List<Object> rules = cache.getFeatureRules(pl, MdmsFeatureConstants.STAIR_COVER, false);
-        Optional<MdmsFeatureRule> matchedRule = rules.stream()
-                .map(obj -> (MdmsFeatureRule) obj)
-                .findFirst();
+    	List<Object> rules = cache.getFeatureRules(pl, FeatureEnum.STAIR_COVER.getValue(), false);
+        Optional<StairCoverRequirement> matchedRule = rules.stream()
+            .filter(StairCoverRequirement.class::isInstance)
+            .map(StairCoverRequirement.class::cast)
+            .findFirst();
 
         return matchedRule.map(MdmsFeatureRule::getPermissible).orElse(BigDecimal.ZERO);
     }

@@ -63,10 +63,10 @@ import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.egov.common.constants.MdmsFeatureConstants;
 import org.egov.common.entity.edcr.Block;
+import org.egov.common.entity.edcr.FeatureEnum;
 import org.egov.common.entity.edcr.Floor;
-import org.egov.common.entity.edcr.MdmsFeatureRule;
+import org.egov.common.entity.edcr.KitchenRequirement;
 import org.egov.common.entity.edcr.Measurement;
 import org.egov.common.entity.edcr.OccupancyTypeHelper;
 import org.egov.common.entity.edcr.Plan;
@@ -74,7 +74,7 @@ import org.egov.common.entity.edcr.Result;
 import org.egov.common.entity.edcr.RoomHeight;
 import org.egov.common.entity.edcr.ScrutinyDetail;
 import org.egov.edcr.constants.DxfFileConstants;
-import org.egov.edcr.service.CacheManagerMdms;
+import org.egov.edcr.service.MDMSCacheManager;
 import org.egov.edcr.service.ProcessHelper;
 import org.egov.edcr.utility.DcrConstants;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -107,7 +107,7 @@ public class Kitchen extends FeatureProcess {
 
     
     @Autowired
-	CacheManagerMdms cache;
+	MDMSCacheManager cache;
     
     @Override
     public Plan validate(Plan pl) {
@@ -202,10 +202,13 @@ public class Kitchen extends FeatureProcess {
         List<BigDecimal> kitchenHeights = heights.stream().map(RoomHeight::getHeight).collect(Collectors.toList());
 
         // Extract feature rules
-        List<Object> rules = cache.getFeatureRules(pl, MdmsFeatureConstants.KITCHEN, false);
-        Optional<MdmsFeatureRule> matchedRule = rules.stream().map(obj -> (MdmsFeatureRule) obj).findFirst();
+        List<Object> rules = cache.getFeatureRules(pl, FeatureEnum.KITCHEN.getValue(), false);
+        Optional<KitchenRequirement> matchedRule = rules.stream()
+            .filter(KitchenRequirement.class::isInstance)
+            .map(KitchenRequirement.class::cast)
+            .findFirst();
         if (!matchedRule.isPresent()) return;
-        MdmsFeatureRule rule = matchedRule.get();
+        KitchenRequirement rule = matchedRule.get();
 
         // Validate height
         if (!kitchenHeights.isEmpty()) {

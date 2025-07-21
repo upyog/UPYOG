@@ -8,6 +8,7 @@ import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.egov.common.entity.edcr.FeatureEnum;
 import org.egov.common.entity.edcr.FeatureRuleKey;
 import org.egov.common.entity.edcr.MdmsFeatureRule;
 import org.egov.common.entity.edcr.MdmsResponse;
@@ -18,8 +19,9 @@ import org.egov.infra.microservice.models.RequestInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import net.minidev.json.JSONArray;
 
@@ -38,7 +40,6 @@ public class MDMSCacheManager {
 	 * city or state, and the value is a map of FeatureRuleKey to list of rules.
 	 */
 	Map<String, Map<FeatureRuleKey, List<Object>>> featureRuleCache = new HashMap<>();
-	Map<String, Map<FeatureRuleKey, List<Object>>> featureRuleCache1 = new HashMap<>();
 
 	/**
 	 * Retrieves applicable BPA rules from cache or MDMS for a given lookup key.
@@ -120,8 +121,25 @@ public class MDMSCacheManager {
 			JSONArray ruleArray = featureEntry.getValue();
 
 			// Convert raw array to list of rules
-			List<MdmsFeatureRule> rules = mapper.convertValue(ruleArray, new TypeReference<List<MdmsFeatureRule>>() {
-			});
+			FeatureEnum featureEnum = getFeatureEnumFromString(featureName);
+	        Class<? extends MdmsFeatureRule> ruleClass = fetchEdcrRulesMdms.getRuleClassForFeature(featureEnum != null ? featureEnum : null);
+	        List<MdmsFeatureRule> rules = new ArrayList<>();
+
+	        for (int i = 0; i < ruleArray.size(); i++) {
+	            try {
+	                JsonNode jsonNode = mapper.valueToTree(ruleArray.get(i));
+	                if (jsonNode instanceof ObjectNode) {
+	                    ((ObjectNode) jsonNode).put("featureName", featureName);
+
+	                    MdmsFeatureRule rule = mapper.treeToValue(jsonNode, ruleClass);
+	                    if (Boolean.TRUE.equals(rule.getActive())) {
+	                        rules.add(rule);
+	                    }
+	                }
+	            } catch (Exception e) {
+	                LOG.error("Failed to deserialize rule for feature [{}]: {}", featureName, e.getMessage(), e);
+	            }
+	        }
 
 			// Group and cache rules by city and FeatureRuleKey
 			for (MdmsFeatureRule rule : rules) {
@@ -135,14 +153,34 @@ public class MDMSCacheManager {
 						rule.getSubZone(), rule.getOccupancy(), rule.getRiskType(), featureName);
 
 				// Cache structure: Map<City, Map<FeatureRuleKey, List<Rule>>>
-				featureRuleCache.computeIfAbsent(cityKey, k -> new HashMap<>())
-						.computeIfAbsent(key, k -> new ArrayList<>()).add(rule);
+
+				    //Added this because it was giving duplicate etries 
+					List<Object> existing = featureRuleCache
+					.computeIfAbsent(cityKey, k -> new HashMap<>())
+					.computeIfAbsent(key, k -> new ArrayList<>());
+
+				if (!existing.contains(rule)) {
+					existing.add(rule);
+				}
+				// featureRuleCache.computeIfAbsent(cityKey, k -> new HashMap<>())
+				// 		.computeIfAbsent(key, k -> new ArrayList<>()).add(rule);
 			}
 
 			LOG.debug("Processed feature '{}': {} active rules", featureName, rules.size());
 		}
 	}
 
+	/**
+	 * Retrieves a list of feature rules for a given plan and feature name, based on occupancy,
+	 * zone, sub-zone, and optionally risk type. Constructs a {@link FeatureRuleKey} and uses it
+	 * to fetch the corresponding rules from the in-memory or MDMS-backed cache.
+	 *
+	 * @param plan             The {@link Plan} object containing zone, sub-zone, occupancy, and tenant information.
+	 * @param feature          The name of the feature for which rules are to be retrieved.
+	 * @param includeRiskType  Whether to include risk type as part of the rule key for filtering rules.
+	 * @return A list of applicable rules for the given feature and plan context. Returns an empty list if no rules match.
+	 */
+	
 	public List<Object> getFeatureRules(Plan plan, String feature, boolean includeRiskType) {
 
 		String occupancyName = fetchEdcrRulesMdms.getOccupancyName(plan).toLowerCase();
@@ -154,6 +192,23 @@ public class MDMSCacheManager {
 		FeatureRuleKey key = new FeatureRuleKey("pg", tenantId, zone, subZone, occupancyName, riskType, feature);
 
 		return getRules(key);
+	}
+	
+	/**
+	 * Converts a feature name string to its corresponding {@link FeatureEnum} constant.
+	 * Matching is case-insensitive.
+	 *
+	 * @param featureName The name of the feature to be matched.
+	 * @return The matching {@link FeatureEnum} value, or {@code null} if no match is found.
+	 */
+
+	private FeatureEnum getFeatureEnumFromString(String featureName) {
+	    for (FeatureEnum feature : FeatureEnum.values()) {
+	        if (feature.getValue().equalsIgnoreCase(featureName)) {
+	            return feature;
+	        }
+	    }
+	    return null; // or throw exception or return a default
 	}
 
 }

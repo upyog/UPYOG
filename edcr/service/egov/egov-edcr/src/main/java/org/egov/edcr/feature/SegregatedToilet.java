@@ -57,17 +57,15 @@ import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.egov.common.constants.MdmsFeatureConstants;
 import org.egov.common.entity.edcr.Block;
-import org.egov.common.entity.edcr.MdmsFeatureRule;
+import org.egov.common.entity.edcr.FeatureEnum;
 import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.Result;
-import org.egov.common.entity.edcr.RuleKey;
 import org.egov.common.entity.edcr.ScrutinyDetail;
+import org.egov.common.entity.edcr.SegregatedToiletRequirement;
 import org.egov.edcr.constants.DxfFileConstants;
-import org.egov.edcr.constants.EdcrRulesMdmsConstants;
-import org.egov.edcr.service.CacheManagerMdms;
 import org.egov.edcr.service.FetchEdcrRulesMdms;
+import org.egov.edcr.service.MDMSCacheManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -84,7 +82,7 @@ public class SegregatedToilet extends FeatureProcess {
     FetchEdcrRulesMdms fetchEdcrRulesMdms;
     
     @Autowired
-	CacheManagerMdms cache;
+	MDMSCacheManager cache;
 
     @Override
     public Plan validate(Plan pl) {
@@ -153,19 +151,22 @@ public class SegregatedToilet extends FeatureProcess {
      * @return an object containing segregated toilet rule thresholds and requirements
      */
     private SegregatedToiletRuleValues getSegregatedToiletRuleValues(Plan pl) {
-        List<Object> rules = cache.getFeatureRules(pl, MdmsFeatureConstants.SEGREGATED_TOILET, false);
-        Optional<MdmsFeatureRule> matchedRule = rules.stream().map(obj -> (MdmsFeatureRule) obj).findFirst();
+    	List<Object> rules = cache.getFeatureRules(pl, FeatureEnum.SEGREGATED_TOILET.getValue(), false);
+        Optional<SegregatedToiletRequirement> matchedRule = rules.stream()
+            .filter(SegregatedToiletRequirement.class::isInstance)
+            .map(SegregatedToiletRequirement.class::cast)
+            .findFirst();
 
         SegregatedToiletRuleValues values = new SegregatedToiletRuleValues();
         if (matchedRule.isPresent()) {
-            MdmsFeatureRule rule = matchedRule.get();
-            values.sTValueOne = rule.getSTValueOne();
-            values.sTValueTwo = rule.getSTValueTwo();
-            values.sTValueThree = rule.getSTValueThree();
-            values.sTValueFour = rule.getSTValueFour();
-            values.sTSegregatedToiletRequired = rule.getSTSegregatedToiletRequired();
-            values.sTSegregatedToiletProvided = rule.getSTSegregatedToiletProvided();
-            values.sTminDimensionRequired = rule.getSTminDimensionRequired();
+        	SegregatedToiletRequirement rule = matchedRule.get();
+            values.sTValueOne = rule.getsTValueOne();
+            values.sTValueTwo = rule.getsTValueTwo();
+            values.sTValueThree = rule.getsTValueThree();
+            values.sTValueFour = rule.getsTValueFour();
+            values.sTSegregatedToiletRequired = rule.getsTSegregatedToiletRequired();
+            values.sTSegregatedToiletProvided = rule.getsTSegregatedToiletProvided();
+            values.sTminDimensionRequired = rule.getsTminDimensionRequired();
         }
         return values;
     }

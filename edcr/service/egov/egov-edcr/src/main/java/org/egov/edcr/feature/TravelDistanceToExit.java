@@ -65,17 +65,13 @@ import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.egov.common.constants.MdmsFeatureConstants;
-import org.egov.common.entity.edcr.Block;
-import org.egov.common.entity.edcr.MdmsFeatureRule;
+import org.egov.common.entity.edcr.FeatureEnum;
 import org.egov.common.entity.edcr.OccupancyTypeHelper;
 import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.Result;
-import org.egov.common.entity.edcr.RuleKey;
 import org.egov.common.entity.edcr.ScrutinyDetail;
-import org.egov.edcr.constants.EdcrRulesMdmsConstants;
-import org.egov.edcr.service.CacheManagerMdms;
-import org.egov.edcr.service.FetchEdcrRulesMdms;
+import org.egov.common.entity.edcr.TravelDistanceToExitRequirement;
+import org.egov.edcr.service.MDMSCacheManager;
 import org.egov.edcr.service.ProcessHelper;
 import org.egov.edcr.utility.DcrConstants;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -99,7 +95,7 @@ public class TravelDistanceToExit extends FeatureProcess {
 
 
 	@Autowired
-	CacheManagerMdms cache;
+	MDMSCacheManager cache;
 
 	// No validation logic implemented for this feature
 	@Override
@@ -126,16 +122,16 @@ public class TravelDistanceToExit extends FeatureProcess {
 	}
 	
 	private void extractTravelDistanceRules(Plan pl) {
-	    List<Object> rules = cache.getFeatureRules(pl, MdmsFeatureConstants.TRAVEL_DISTANCE_TO_EXIT, false);
-
-	    rules.stream()
-	        .map(obj -> (MdmsFeatureRule) obj)
-	        .findFirst()
-	        .ifPresent(rule -> {
-	            travelDistanceToExitValueOne = rule.getTravelDistanceToExitValueOne();
-	            travelDistanceToExitValueTwo = rule.getTravelDistanceToExitValueTwo();
-	            travelDistanceToExitValueThree = rule.getTravelDistanceToExitValueThree();
-	        });
+		 List<Object> rules = cache.getFeatureRules(pl, FeatureEnum.TRAVEL_DISTANCE_TO_EXIT.getValue(), false);
+	         rules.stream()
+	            .filter(TravelDistanceToExitRequirement.class::isInstance)
+	            .map(TravelDistanceToExitRequirement.class::cast)
+	            .findFirst()
+	            .ifPresent(rule -> {
+		            travelDistanceToExitValueOne = rule.getTravelDistanceToExitValueOne();
+		            travelDistanceToExitValueTwo = rule.getTravelDistanceToExitValueTwo();
+		            travelDistanceToExitValueThree = rule.getTravelDistanceToExitValueThree();
+		        });
 	}
 
 	private boolean isExempted(Plan pl) {

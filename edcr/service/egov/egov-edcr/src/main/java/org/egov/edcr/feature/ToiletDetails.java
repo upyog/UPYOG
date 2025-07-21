@@ -59,16 +59,19 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.egov.common.constants.MdmsFeatureConstants;
 import org.egov.common.entity.edcr.Block;
+import org.egov.common.entity.edcr.FeatureEnum;
 import org.egov.common.entity.edcr.Floor;
 import org.egov.common.entity.edcr.MdmsFeatureRule;
 import org.egov.common.entity.edcr.Measurement;
 import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.Result;
-import org.egov.common.entity.edcr.RuleKey;
+import org.egov.common.entity.edcr.FeatureRuleKey;
 import org.egov.common.entity.edcr.ScrutinyDetail;
+import org.egov.common.entity.edcr.SolarRequirement;
 import org.egov.common.entity.edcr.Toilet;
+import org.egov.common.entity.edcr.ToiletRequirement;
 import org.egov.edcr.constants.EdcrRulesMdmsConstants;
-import org.egov.edcr.service.CacheManagerMdms;
+import org.egov.edcr.service.MDMSCacheManager;
 import org.egov.edcr.service.FetchEdcrRulesMdms;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -86,7 +89,7 @@ public class ToiletDetails extends FeatureProcess {
     }
 
     @Autowired
-	CacheManagerMdms cache;
+	MDMSCacheManager cache;
 
     @Override
     public Plan process(Plan pl) {
@@ -141,12 +144,12 @@ public class ToiletDetails extends FeatureProcess {
                 ? toilet.getToiletVentilation().setScale(2, RoundingMode.HALF_UP)
                 : BigDecimal.ZERO;
 
-        MdmsFeatureRule toiletRule = getToiletRule(pl);
+        Optional<ToiletRequirement> toiletRule = getToiletRule(pl);
         if (toiletRule == null) return;
-
-        BigDecimal minArea = toiletRule.getMinToiletArea();
-        BigDecimal minWidth = toiletRule.getMinToiletWidth();
-        BigDecimal minVentilation = toiletRule.getMinToiletVentilation();
+        ToiletRequirement rule = toiletRule.get();
+        BigDecimal minArea = rule.getMinToiletArea();
+        BigDecimal minWidth = rule.getMinToiletWidth();
+        BigDecimal minVentilation = rule.getMinToiletVentilation();
 
         String required = "Total Area >= " + minArea + ", Width >= " + minWidth + ", Ventilation >= " + minVentilation;
         String provided = "Total Area = " + area + ", Width = " + width + ", Ventilation Height = " + ventilationHeight;
@@ -163,13 +166,12 @@ public class ToiletDetails extends FeatureProcess {
         scrutinyDetail.getDetail().add(details);
     }
 
-    private MdmsFeatureRule getToiletRule(Plan pl) {
-        List<Object> rules = cache.getFeatureRules(pl, MdmsFeatureConstants.TOILET, false);
-        return rules.stream()
-                .filter(MdmsFeatureRule.class::isInstance)
-                .map(MdmsFeatureRule.class::cast)
-                .findFirst()
-                .orElse(null);
+    private Optional<ToiletRequirement> getToiletRule(Plan pl) {
+    	List<Object> rules = cache.getFeatureRules(pl, FeatureEnum.TOILET.getValue(), false);
+       return rules.stream()
+            .filter(ToiletRequirement.class::isInstance)
+            .map(ToiletRequirement.class::cast)
+            .findFirst();
     }
 
 

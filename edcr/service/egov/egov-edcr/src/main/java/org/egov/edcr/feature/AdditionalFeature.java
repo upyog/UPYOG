@@ -64,16 +64,19 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 import org.egov.common.constants.MdmsFeatureConstants;
 import org.egov.common.entity.edcr.Block;
+import org.egov.common.entity.edcr.FarRequirement;
+import org.egov.common.entity.edcr.FeatureEnum;
 import org.egov.common.entity.edcr.Floor;
 import org.egov.common.entity.edcr.MdmsFeatureRule;
 import org.egov.common.entity.edcr.OccupancyTypeHelper;
 import org.egov.common.entity.edcr.Plan;
+import org.egov.common.entity.edcr.PlinthHeightRequirement;
 import org.egov.common.entity.edcr.Result;
 import org.egov.common.entity.edcr.ScrutinyDetail;
 import org.egov.common.entity.edcr.SetBack;
 import org.egov.common.entity.edcr.Yard;
 import org.egov.edcr.constants.DxfFileConstants;
-import org.egov.edcr.service.CacheManagerMdms;
+import org.egov.edcr.service.MDMSCacheManager;
 import org.egov.edcr.service.EdcrRestService;
 import org.egov.edcr.service.FetchEdcrRulesMdms;
 import org.egov.edcr.utility.DcrConstants;
@@ -173,7 +176,7 @@ public class AdditionalFeature extends FeatureProcess {
     }
 
 	@Autowired
-	CacheManagerMdms cache;
+	MDMSCacheManager cache;
 	
     @Override
     public Plan process(Plan pl) {
@@ -612,10 +615,11 @@ public class AdditionalFeature extends FeatureProcess {
             ScrutinyDetail scrutinyDetail = getNewScrutinyDetail("Block_" + blkNo + "_" + "Plinth");
             List<BigDecimal> plinthHeights = block.getPlinthHeight();
             
-            List<Object> rules = cache.getFeatureRules(pl, MdmsFeatureConstants.PLINTH_HEIGHT, false);
-    	    Optional<MdmsFeatureRule> matchedRule = rules.stream()
-    	            .map(obj -> (MdmsFeatureRule) obj)
-    	            .findFirst();
+            List<Object> rules = cache.getFeatureRules(pl, FeatureEnum.PLINTH_HEIGHT.getValue(), false);
+	        Optional<PlinthHeightRequirement> matchedRule = rules.stream()
+	            .filter(PlinthHeightRequirement.class::isInstance)
+	            .map(PlinthHeightRequirement.class::cast)
+	            .findFirst();
 
     	    if (matchedRule.isPresent()) {
     	    	plintHeight = matchedRule.get().getPermissible();

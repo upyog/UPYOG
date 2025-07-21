@@ -8,7 +8,6 @@ import static org.egov.edcr.utility.DcrConstants.ROUNDMODE_MEASUREMENTS;
 import static org.egov.edcr.utility.DcrConstants.SQMTRS;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -18,20 +17,15 @@ import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.egov.common.constants.MdmsFeatureConstants;
-import org.egov.common.entity.edcr.Balcony;
 import org.egov.common.entity.edcr.Block;
+import org.egov.common.entity.edcr.FeatureEnum;
 import org.egov.common.entity.edcr.Floor;
-import org.egov.common.entity.edcr.Hall;
-import org.egov.common.entity.edcr.MdmsFeatureRule;
+import org.egov.common.entity.edcr.MezzanineFloorServiceRequirement;
 import org.egov.common.entity.edcr.Occupancy;
 import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.Result;
-import org.egov.common.entity.edcr.RuleKey;
 import org.egov.common.entity.edcr.ScrutinyDetail;
-import org.egov.edcr.constants.DxfFileConstants;
-import org.egov.edcr.constants.EdcrRulesMdmsConstants;
-import org.egov.edcr.service.CacheManagerMdms;
+import org.egov.edcr.service.MDMSCacheManager;
 import org.egov.edcr.service.FetchEdcrRulesMdms;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -52,7 +46,7 @@ public class MezzanineFloorService extends FeatureProcess {
     FetchEdcrRulesMdms fetchEdcrRulesMdms;
     
     @Autowired
-	CacheManagerMdms cache;
+	MDMSCacheManager cache;
 	
 	
 
@@ -103,13 +97,14 @@ public class MezzanineFloorService extends FeatureProcess {
         BigDecimal height = BigDecimal.ZERO;
         BigDecimal builtUp = BigDecimal.ONE; // prevent divide by zero
 
-        List<Object> rules = cache.getFeatureRules(pl, MdmsFeatureConstants.MEZZANINE_FLOOR_SERVICE, false);
-        Optional<MdmsFeatureRule> matchedRule = rules.stream()
-            .map(obj -> (MdmsFeatureRule) obj)
+        List<Object> rules = cache.getFeatureRules(pl, FeatureEnum.MEZZANINE_FLOOR_SERVICE.getValue(), false);
+        Optional<MezzanineFloorServiceRequirement> matchedRule = rules.stream()
+            .filter(MezzanineFloorServiceRequirement.class::isInstance)
+            .map(MezzanineFloorServiceRequirement.class::cast)
             .findFirst();
 
         if (matchedRule.isPresent()) {
-            MdmsFeatureRule rule = matchedRule.get();
+        	MezzanineFloorServiceRequirement rule = matchedRule.get();
             area = rule.getMezzanineArea();
             height = rule.getMezzanineHeight();
             builtUp = rule.getMezzanineBuiltUpArea();

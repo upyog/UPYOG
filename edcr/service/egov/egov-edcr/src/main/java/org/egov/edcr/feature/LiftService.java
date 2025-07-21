@@ -54,21 +54,22 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.egov.common.constants.MdmsFeatureConstants;
 import org.egov.common.entity.edcr.Block;
+import org.egov.common.entity.edcr.FeatureEnum;
 import org.egov.common.entity.edcr.Floor;
+import org.egov.common.entity.edcr.GuardRoomRequirement;
 import org.egov.common.entity.edcr.Lift;
+import org.egov.common.entity.edcr.LiftRequirement;
 import org.egov.common.entity.edcr.MdmsFeatureRule;
 import org.egov.common.entity.edcr.Measurement;
 import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.Result;
 import org.egov.common.entity.edcr.ScrutinyDetail;
 import org.egov.edcr.constants.DxfFileConstants;
-import org.egov.edcr.service.CacheManagerMdms;
-import org.egov.edcr.service.FetchEdcrRulesMdms;
+import org.egov.edcr.service.MDMSCacheManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -77,7 +78,7 @@ public class LiftService extends FeatureProcess {
 
 
 	@Autowired
-	CacheManagerMdms cache;
+	MDMSCacheManager cache;
 
 	
 	private static final String SUBRULE_48 = "48";	
@@ -164,7 +165,10 @@ public class LiftService extends FeatureProcess {
 		 * @param scrutinyDetail the scrutiny detail object to populate
 		 */
 		private void validateLiftCount(Plan plan, Block block, ScrutinyDetail scrutinyDetail) {
-		    BigDecimal requiredLifts = getRequiredLiftCount(plan);
+		    Optional<LiftRequirement> matchedRule = getRequiredLiftCount(plan);
+		    if (matchedRule.isPresent()) {
+		    	LiftRequirement rule = matchedRule.get();
+		    	BigDecimal requiredLifts = rule.getPermissible();
 		    if (!isHighRiseLiftRequired(plan)) return;
 	
 		    boolean valid = BigDecimal.valueOf(Double.parseDouble(block.getNumberOfLifts())).compareTo(requiredLifts) >= 0;
@@ -173,7 +177,7 @@ public class LiftService extends FeatureProcess {
 		            valid ? Result.Accepted.getResultVal() : Result.Not_Accepted.getResultVal(),
 		            scrutinyDetail);
 		}
-	
+		}
 		/**
 		 * Checks if high-rise lift rules apply based on FAR or subtype code.
 		 * @param plan the plan object
@@ -193,13 +197,12 @@ public class LiftService extends FeatureProcess {
 		 * @param plan the plan object
 		 * @return required number of lifts as BigDecimal
 		 */
-		private BigDecimal getRequiredLiftCount(Plan plan) {
-		    List<Object> rules = cache.getFeatureRules(plan, MdmsFeatureConstants.LIFT, false);
-		    return rules.stream()
-		                .map(r -> (MdmsFeatureRule) r)
-		                .findFirst()
-		                .map(MdmsFeatureRule::getPermissible)
-		                .orElse(BigDecimal.ZERO);
+		private Optional<LiftRequirement> getRequiredLiftCount(Plan plan) {
+			List<Object> rules = cache.getFeatureRules(plan, FeatureEnum.LIFT.getValue(), false);
+	       return rules.stream()
+	            .filter(LiftRequirement.class::isInstance)
+	            .map(LiftRequirement.class::cast)
+	            .findFirst();
 		}
 	
 		/**

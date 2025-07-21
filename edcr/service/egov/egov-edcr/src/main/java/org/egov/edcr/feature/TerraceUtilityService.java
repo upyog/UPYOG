@@ -59,14 +59,17 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.egov.common.constants.MdmsFeatureConstants;
 import org.egov.common.entity.edcr.Block;
+import org.egov.common.entity.edcr.FeatureEnum;
 import org.egov.common.entity.edcr.MdmsFeatureRule;
 import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.Result;
-import org.egov.common.entity.edcr.RuleKey;
+import org.egov.common.entity.edcr.FeatureRuleKey;
 import org.egov.common.entity.edcr.ScrutinyDetail;
+import org.egov.common.entity.edcr.StairCoverRequirement;
 import org.egov.common.entity.edcr.TerraceUtility;
+import org.egov.common.entity.edcr.TerraceUtilityServiceRequirement;
 import org.egov.edcr.constants.EdcrRulesMdmsConstants;
-import org.egov.edcr.service.CacheManagerMdms;
+import org.egov.edcr.service.MDMSCacheManager;
 import org.egov.edcr.service.FetchEdcrRulesMdms;
 import org.egov.edcr.utility.DcrConstants;
 import org.egov.edcr.utility.Util;
@@ -93,7 +96,7 @@ public class TerraceUtilityService extends FeatureProcess {
     FetchEdcrRulesMdms fetchEdcrRulesMdms;
     
     @Autowired
-	CacheManagerMdms cache;
+	MDMSCacheManager cache;
 
     // No amendments defined for this rule
     @Override
@@ -123,10 +126,11 @@ public class TerraceUtilityService extends FeatureProcess {
     }
 
     private BigDecimal getTerraceUtilityPermissibleValue(Plan pl) {
-        List<Object> rules = cache.getFeatureRules(pl, MdmsFeatureConstants.TERRACE_UTILITY_SERVICE, false);
-        Optional<MdmsFeatureRule> matchedRule = rules.stream()
-                .map(obj -> (MdmsFeatureRule) obj)
-                .findFirst();
+    	List<Object> rules = cache.getFeatureRules(pl, FeatureEnum.TERRACE_UTILITY_SERVICE.getValue(), false);
+        Optional<TerraceUtilityServiceRequirement> matchedRule = rules.stream()
+            .filter(TerraceUtilityServiceRequirement.class::isInstance)
+            .map(TerraceUtilityServiceRequirement.class::cast)
+            .findFirst();
 
         return matchedRule.map(MdmsFeatureRule::getPermissible).orElse(BigDecimal.ZERO);
     }

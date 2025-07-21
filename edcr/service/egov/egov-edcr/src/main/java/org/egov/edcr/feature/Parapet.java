@@ -57,16 +57,13 @@ import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.egov.common.constants.MdmsFeatureConstants;
 import org.egov.common.entity.edcr.Block;
-import org.egov.common.entity.edcr.MdmsFeatureRule;
+import org.egov.common.entity.edcr.FeatureEnum;
+import org.egov.common.entity.edcr.ParapetRequirement;
 import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.Result;
-import org.egov.common.entity.edcr.RuleKey;
 import org.egov.common.entity.edcr.ScrutinyDetail;
-import org.egov.edcr.constants.EdcrRulesMdmsConstants;
-import org.egov.edcr.service.CacheManagerMdms;
-import org.egov.edcr.service.FetchEdcrRulesMdms;
+import org.egov.edcr.service.MDMSCacheManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -80,7 +77,7 @@ public class Parapet extends FeatureProcess {
 	public static final String AND_HEIGHT = " and height <= ";
 
 	@Autowired
-	CacheManagerMdms cache;
+	MDMSCacheManager cache;
 
 	/**
 	 * Validates the parapet-related details in the given Plan.
@@ -106,8 +103,11 @@ public class Parapet extends FeatureProcess {
 	    ScrutinyDetail scrutinyDetail = initializeScrutinyDetail();
 	    Map<String, String> details = initializeRuleDetails();
 
-	    List<Object> rules = cache.getFeatureRules(pl, MdmsFeatureConstants.PARAPET, false);
-	    Optional<MdmsFeatureRule> matchedRule = rules.stream().map(obj -> (MdmsFeatureRule) obj).findFirst();
+	    List<Object> rules = cache.getFeatureRules(pl, FeatureEnum.PARAPET.getValue(), false);
+        Optional<ParapetRequirement> matchedRule = rules.stream()
+            .filter(ParapetRequirement.class::isInstance)
+            .map(ParapetRequirement.class::cast)
+            .findFirst();
 
 	    BigDecimal parapetValueOne = BigDecimal.ZERO;
 	    BigDecimal parapetValueTwo = BigDecimal.ZERO;

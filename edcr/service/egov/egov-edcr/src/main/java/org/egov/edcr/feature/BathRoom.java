@@ -57,17 +57,17 @@ import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.egov.common.constants.MdmsFeatureConstants;
+import org.egov.common.entity.edcr.BathroomRequirement;
 import org.egov.common.entity.edcr.Block;
+import org.egov.common.entity.edcr.FeatureEnum;
 import org.egov.common.entity.edcr.Floor;
-import org.egov.common.entity.edcr.MdmsFeatureRule;
 import org.egov.common.entity.edcr.Measurement;
 import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.Result;
 import org.egov.common.entity.edcr.Room;
 import org.egov.common.entity.edcr.RoomHeight;
 import org.egov.common.entity.edcr.ScrutinyDetail;
-import org.egov.edcr.service.CacheManagerMdms;
+import org.egov.edcr.service.MDMSCacheManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -84,7 +84,7 @@ public class BathRoom extends FeatureProcess {
     public static final String WIDTH = ", Width >= ";
 
     @Autowired
-	CacheManagerMdms cache;
+	MDMSCacheManager cache;
 
     @Override
     public Plan validate(Plan pl) {
@@ -126,14 +126,15 @@ public class BathRoom extends FeatureProcess {
     private void processBlock(Plan plan, Block block, ScrutinyDetail scrutinyDetail) {
         if (block.getBuilding() == null || block.getBuilding().getFloors() == null) return;
 
-        List<Object> rules = cache.getFeatureRules(plan, MdmsFeatureConstants.BATHROOM, false);
-        Optional<MdmsFeatureRule> matchedRule = rules.stream()
-                .map(obj -> (MdmsFeatureRule) obj)
-                .findFirst();
+        List<Object> rules = cache.getFeatureRules(plan, FeatureEnum.BATHROOM.getValue(), false);
+        Optional<BathroomRequirement> matchedRule = rules.stream()
+            .filter(BathroomRequirement.class::isInstance)
+            .map(BathroomRequirement.class::cast)
+            .findFirst();
 
         if (!matchedRule.isPresent()) return;
 
-        MdmsFeatureRule rule = matchedRule.get();
+        BathroomRequirement rule = matchedRule.get();
         BigDecimal permittedArea = rule.getBathroomtotalArea() != null ? rule.getBathroomtotalArea() : BigDecimal.ZERO;
         BigDecimal permittedMinWidth = rule.getBathroomMinWidth() != null ? rule.getBathroomMinWidth() : BigDecimal.ZERO;
 

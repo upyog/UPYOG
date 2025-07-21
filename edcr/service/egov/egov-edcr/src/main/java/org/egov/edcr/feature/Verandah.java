@@ -60,13 +60,15 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.egov.common.constants.MdmsFeatureConstants;
 import org.egov.common.entity.edcr.Block;
+import org.egov.common.entity.edcr.FeatureEnum;
 import org.egov.common.entity.edcr.Floor;
 import org.egov.common.entity.edcr.MdmsFeatureRule;
 import org.egov.common.entity.edcr.Measurement;
 import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.Result;
 import org.egov.common.entity.edcr.ScrutinyDetail;
-import org.egov.edcr.service.CacheManagerMdms;
+import org.egov.common.entity.edcr.VerandahRequirement;
+import org.egov.edcr.service.MDMSCacheManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -86,106 +88,14 @@ public class Verandah extends FeatureProcess {
 	}
 	
 	@Autowired
-	CacheManagerMdms cache;
-//
-//	@Override
-//	public Plan process(Plan pl) {
-//		for (Block b : pl.getBlocks()) {
-//			// Create a scrutiny detail to hold verandah rule checks
-//			ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
-//			scrutinyDetail.setKey(Common_Verandah);
-//			scrutinyDetail.addColumnHeading(1, RULE_NO);
-//			scrutinyDetail.addColumnHeading(2, DESCRIPTION);
-//			scrutinyDetail.addColumnHeading(3, REQUIRED);
-//			scrutinyDetail.addColumnHeading(4, PROVIDED);
-//			scrutinyDetail.addColumnHeading(5, STATUS);
-//
-//			BigDecimal verandahWidth = BigDecimal.ZERO;
-//			BigDecimal verandahDepth = BigDecimal.ZERO;
-//
-//			
-//			List<Object> rules = cache.getFeatureRules(pl, MdmsFeatureConstants.VERANDAH, false);
-//
-//			Optional<MdmsFeatureRule> matchedRule = rules.stream().map(obj -> (MdmsFeatureRule) obj).findFirst();
-//
-//			if (matchedRule.isPresent()) {
-//				MdmsFeatureRule rule = matchedRule.get();
-//				verandahWidth = rule.getVerandahWidth();
-//				verandahDepth = rule.getVerandahDepth();
-//			}
-//			// Loop through each floor and perform width and depth checks
-//			if (b.getBuilding() != null && b.getBuilding().getFloors() != null
-//					&& !b.getBuilding().getFloors().isEmpty()) {
-//
-//				for (Floor f : b.getBuilding().getFloors()) {
-//
-//					// Check if verandah data exists
-//					if (f.getVerandah() != null && f.getVerandah().getMeasurements() != null
-//							&& !f.getVerandah().getMeasurements().isEmpty()) {
-//
-//						// Find minimum verandah width
-//						BigDecimal minVerandaWidth = f.getVerandah().getMeasurements().stream()
-//								.map(Measurement::getWidth).reduce(BigDecimal::min).get();
-//
-//						// Find minimum verandah depth (heightOrDepth list)
-//						BigDecimal minVerandDepth = f.getVerandah().getHeightOrDepth().stream().reduce(BigDecimal::min)
-//								.get();
-//
-//						// Width check against permissible value
-//						if (minVerandaWidth.compareTo(BigDecimal.ZERO) > 0) {
-//							Map<String, String> details = new HashMap<>();
-//							details.put(RULE_NO, RULE_43);
-//							details.put(DESCRIPTION, VERANDAH_DESCRIPTION);
-//
-//							if (minVerandaWidth.compareTo(verandahWidth) >= 0) {
-//								details.put(REQUIRED, "Minimum width " + verandahWidth.toString() + "m   ");
-//								details.put(PROVIDED, "Width area " + minVerandaWidth + " at floor " + f.getNumber());
-//								details.put(STATUS, Result.Accepted.getResultVal());
-//								scrutinyDetail.getDetail().add(details);
-//								pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
-//							} else {
-//								details.put(REQUIRED, "Minimum width " + verandahWidth.toString() + "m   ");
-//								details.put(PROVIDED, "Width area " + minVerandaWidth + " at floor " + f.getNumber());
-//								details.put(STATUS, Result.Not_Accepted.getResultVal());
-//								scrutinyDetail.getDetail().add(details);
-//								pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
-//							}
-//						}
-//
-//						// Depth check against permissible value
-//						if (minVerandDepth.compareTo(BigDecimal.ZERO) > 0) {
-//							Map<String, String> details = new HashMap<>();
-//							details.put(RULE_NO, RULE_43A);
-//							details.put(DESCRIPTION, VERANDAH_DESCRIPTION);
-//
-//							if (minVerandDepth.compareTo(verandahDepth) <= 0) {
-//								details.put(REQUIRED,
-//										"Minimum depth not more than " + verandahDepth.toString() + " m ");
-//								details.put(PROVIDED, " Depth area  " + minVerandDepth + " at floor " + f.getNumber());
-//								details.put(STATUS, Result.Accepted.getResultVal());
-//								scrutinyDetail.getDetail().add(details);
-//								pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
-//							} else {
-//								details.put(REQUIRED,
-//										"Minimum depth not more than " + verandahDepth.toString() + " m ");
-//								details.put(PROVIDED, " Depth area  " + minVerandDepth + " at floor " + f.getNumber());
-//								details.put(STATUS, Result.Not_Accepted.getResultVal());
-//								scrutinyDetail.getDetail().add(details);
-//								pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
-//							}
-//						}
-//					}
-//				}
-//			}
-//		}
-//		return pl;
-//	}
+	MDMSCacheManager cache;
+
 
 	@Override
 	public Plan process(Plan pl) {
 	    for (Block block : pl.getBlocks()) {
 	        ScrutinyDetail scrutinyDetail = createScrutinyDetail();
-	        MdmsFeatureRule verandahRule = getVerandahRule(pl);
+	        VerandahRequirement verandahRule = getVerandahRule(pl);
 
 	        if (verandahRule == null) {
 	            continue;
@@ -220,10 +130,11 @@ public class Verandah extends FeatureProcess {
 	    return detail;
 	}
 
-	private MdmsFeatureRule getVerandahRule(Plan pl) {
-	    List<Object> rules = cache.getFeatureRules(pl, MdmsFeatureConstants.VERANDAH, false);
-	    Optional<MdmsFeatureRule> matchedRule = rules.stream()
-	            .map(obj -> (MdmsFeatureRule) obj)
+	private VerandahRequirement getVerandahRule(Plan pl) {
+		 List<Object> rules = cache.getFeatureRules(pl, FeatureEnum.VERANDAH.getValue(), false);
+	        Optional<VerandahRequirement> matchedRule = rules.stream()
+	            .filter(VerandahRequirement.class::isInstance)
+	            .map(VerandahRequirement.class::cast)
 	            .findFirst();
 	    return matchedRule.orElse(null);
 	}

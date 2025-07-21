@@ -14,10 +14,74 @@ import java.util.Set;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.egov.common.constants.MdmsFeatureConstants;
+import org.egov.common.entity.edcr.BalconyRequirement;
+import org.egov.common.entity.edcr.BasementRequirement;
+import org.egov.common.entity.edcr.BathroomRequirement;
+import org.egov.common.entity.edcr.BathroomWCRequirement;
+import org.egov.common.entity.edcr.BlockDistancesServiceRequirement;
+import org.egov.common.entity.edcr.ChimneyRequirement;
+import org.egov.common.entity.edcr.CoverageRequirement;
+import org.egov.common.entity.edcr.DoorsRequirement;
 import org.egov.common.entity.edcr.EdcrMasterConfig;
+import org.egov.common.entity.edcr.ExitWidthRequirement;
+import org.egov.common.entity.edcr.FarRequirement;
+import org.egov.common.entity.edcr.FeatureEnum;
 import org.egov.common.entity.edcr.MdmsResponse;
+import org.egov.common.entity.edcr.MezzanineFloorServiceRequirement;
+import org.egov.common.entity.edcr.MonumentDistanceRequirement;
+import org.egov.common.entity.edcr.NoOfRiserRequirement;
+import org.egov.common.entity.edcr.NonHabitationalDoorsRequirement;
+import org.egov.common.entity.edcr.OverHangsRequirement;
+import org.egov.common.entity.edcr.OverheadElectricalLineServiceRequirement;
+import org.egov.common.entity.edcr.ParapetRequirement;
+import org.egov.common.entity.edcr.ParkingRequirement;
+import org.egov.common.entity.edcr.PassageRequirement;
 import org.egov.common.entity.edcr.Plan;
-import org.egov.common.entity.edcr.RuleKey;
+import org.egov.common.entity.edcr.PlantationGreenStripRequirement;
+import org.egov.common.entity.edcr.PlantationRequirement;
+import org.egov.common.entity.edcr.PlinthHeightRequirement;
+import org.egov.common.entity.edcr.PlotAreaRequirement;
+import org.egov.common.entity.edcr.PorticoServiceRequirement;
+import org.egov.common.entity.edcr.RainWaterHarvestingRequirement;
+import org.egov.common.entity.edcr.RampServiceRequirement;
+import org.egov.common.entity.edcr.RearSetBackRequirement;
+import org.egov.common.entity.edcr.RequiredTreadRequirement;
+import org.egov.common.entity.edcr.RequiredWidthRequirement;
+import org.egov.common.entity.edcr.RiserHeightRequirement;
+import org.egov.common.entity.edcr.RiverDistanceRequirement;
+import org.egov.common.entity.edcr.RoadWidthRequirement;
+import org.egov.common.entity.edcr.RoofTankRequirement;
+import org.egov.common.entity.edcr.RoomAreaRequirement;
+import org.egov.common.entity.edcr.RoomWiseDoorAreaRequirement;
+import org.egov.common.entity.edcr.RoomWiseVentilationRequirement;
+import org.egov.common.entity.edcr.SanitationRequirement;
+import org.egov.common.entity.edcr.SegregatedToiletRequirement;
+import org.egov.common.entity.edcr.SepticTankRequirement;
+import org.egov.common.entity.edcr.SideYardServiceRequirement;
+import org.egov.common.entity.edcr.SolarRequirement;
+import org.egov.common.entity.edcr.SpiralStairRequirement;
+import org.egov.common.entity.edcr.StairCoverRequirement;
+import org.egov.common.entity.edcr.TerraceUtilityServiceRequirement;
+import org.egov.common.entity.edcr.ToiletRequirement;
+import org.egov.common.entity.edcr.TravelDistanceToExitRequirement;
+import org.egov.common.entity.edcr.VehicleRampRequirement;
+import org.egov.common.entity.edcr.VentilationRequirement;
+import org.egov.common.entity.edcr.VerandahRequirement;
+import org.egov.common.entity.edcr.WaterClosetsRequirement;
+import org.egov.common.entity.edcr.WaterTankCapacityRequirement;
+import org.egov.common.entity.edcr.FeatureRuleKey;
+import org.egov.common.entity.edcr.FireStairRequirement;
+import org.egov.common.entity.edcr.FireTenderMovementRequirement;
+import org.egov.common.entity.edcr.FrontSetBackRequirement;
+import org.egov.common.entity.edcr.GovtBuildingDistanceRequirement;
+import org.egov.common.entity.edcr.GuardRoomRequirement;
+import org.egov.common.entity.edcr.HeadRoomRequirement;
+import org.egov.common.entity.edcr.InteriorOpenSpaceServiceRequirement;
+import org.egov.common.entity.edcr.KitchenRequirement;
+import org.egov.common.entity.edcr.LandUseRequirement;
+import org.egov.common.entity.edcr.LandingRequirement;
+import org.egov.common.entity.edcr.LiftRequirement;
+import org.egov.common.entity.edcr.MdmsFeatureRule;
 import org.egov.commons.mdms.BpaMdmsUtil;
 import org.egov.edcr.constants.EdcrRulesMdmsConstants;
 //import org.egov.infra.mdms.controller.MDMSController;
@@ -40,7 +104,7 @@ public class FetchEdcrRulesMdms {
 	private BpaMdmsUtil bpaMdmsUtil;
 
 	private static Logger LOG = LogManager.getLogger(EdcrApplicationService.class);
-	private Map<RuleKey, List<Object>> ruleMap = new HashMap<>();
+	private Map<FeatureRuleKey, List<Object>> ruleMap = new HashMap<>();
 	private boolean isMdmsReloaded = false; // to track if fallback MDMS call was already done
 
 
@@ -113,5 +177,151 @@ public class FetchEdcrRulesMdms {
 
 	    return null;
 	}
+	
+
+	/**
+	 * Returns the specific subclass of {@link MdmsFeatureRule} associated with the given {@link FeatureEnum}.
+	 * This method is used to determine the appropriate rule class type for a feature, so that
+	 * MDMS rule data can be deserialized into the correct Java object.
+	 *
+	 * @param featureName The feature enum for which the rule class is to be determined.
+	 * @return The corresponding subclass of {@link MdmsFeatureRule} for the provided feature.
+	 *         If the feature is null or not explicitly handled, {@link MdmsFeatureRule} is returned as a fallback.
+	 */
+	public Class<? extends MdmsFeatureRule> getRuleClassForFeature(FeatureEnum featureName) {
+	    if (featureName == null) return MdmsFeatureRule.class;
+
+	    switch (featureName) {
+	        case BATHROOM_WATER_CLOSETS:
+	            return BathroomWCRequirement.class;
+	        case BALCONY:
+	            return BalconyRequirement.class;
+	        case BATHROOM:
+	            return BathroomRequirement.class;
+	        case BASEMENT:
+	            return BasementRequirement.class;
+	        case FAR:
+	            return FarRequirement.class;
+	        case SOLAR:
+	            return SolarRequirement.class;
+	        case STAIR_COVER:
+	            return StairCoverRequirement.class;
+	        case SEPTIC_TANK:
+	            return SepticTankRequirement.class;
+	        case VENTILATION:
+	            return VentilationRequirement.class;
+	        case FIRE_TENDER_MOVEMENT:
+	            return FireTenderMovementRequirement.class;
+	        case ROOM_AREA:
+	            return RoomAreaRequirement.class;
+	        case BLOCK_DISTANCES_SERVICE:
+	            return BlockDistancesServiceRequirement.class;
+	        case CHIMNEY:
+	            return ChimneyRequirement.class;
+	        case COVERAGE:
+	            return CoverageRequirement.class;
+	        case DOORS:
+	            return DoorsRequirement.class;
+	        case EXIT_WIDTH:
+	            return ExitWidthRequirement.class;
+	        case FIRE_STAIR:
+	            return FireStairRequirement.class;
+	        case FRONT_SET_BACK:
+	            return FrontSetBackRequirement.class;
+	        case GOVT_BUILDING_DISTANCE:
+	            return GovtBuildingDistanceRequirement.class;
+	        case GUARD_ROOM:
+	            return GuardRoomRequirement.class;
+	        case HEAD_ROOM:
+	            return HeadRoomRequirement.class;
+	        case INTERIOR_OPEN_SPACE_SERVICE:
+	            return InteriorOpenSpaceServiceRequirement.class;
+	        case KITCHEN:
+	            return KitchenRequirement.class;
+	        case LANDING:
+	            return LandingRequirement.class;
+	        case LAND_USE:
+	            return LandUseRequirement.class;
+	        case LIFT:
+	            return LiftRequirement.class;
+	        case MEZZANINE_FLOOR_SERVICE:
+	            return MezzanineFloorServiceRequirement.class;
+	        case MONUMENT_DISTANCE:
+	            return MonumentDistanceRequirement.class;
+	        case NON_HABITATIONAL_DOORS:
+	            return NonHabitationalDoorsRequirement.class;
+	        case NO_OF_RISER:
+	            return NoOfRiserRequirement.class;
+	        case OVERHANGS:
+	            return OverHangsRequirement.class;
+	        case OVERHEAD_ELECTRICAL_LINE_SERVICE:
+	            return OverheadElectricalLineServiceRequirement.class;
+	        case PARAPET:
+	            return ParapetRequirement.class;
+	        case PARKING:
+	            return ParkingRequirement.class;
+	        case PASSAGE_SERVICE:
+	            return PassageRequirement.class;
+	        case PLANTATION:
+	            return PlantationRequirement.class;
+	        case PLANTATION_GREEN_STRIP:
+	            return PlantationGreenStripRequirement.class;
+	        case PLINTH_HEIGHT:
+	            return PlinthHeightRequirement.class;
+	        case PLOT_AREA:
+	            return PlotAreaRequirement.class;
+	        case PORTICO_SERVICE:
+	            return PorticoServiceRequirement.class;
+	        case RAIN_WATER_HARVESTING:
+	            return RainWaterHarvestingRequirement.class;
+	        case RAMP_SERVICE:
+	            return RampServiceRequirement.class;
+	        case REAR_SET_BACK:
+	            return RearSetBackRequirement.class;
+	        case REQUIRED_TREAD:
+	            return RequiredTreadRequirement.class;
+	        case REQUIRED_WIDTH:
+	            return RequiredWidthRequirement.class;
+	        case RISER_HEIGHT:
+	            return RiserHeightRequirement.class;
+	        case RIVER_DISTANCE:
+	            return RiverDistanceRequirement.class;
+	        case ROAD_WIDTH:
+	            return RoadWidthRequirement.class;
+	        case ROOF_TANK:
+	            return RoofTankRequirement.class;
+	        case ROOM_WISE_DOOR_AREA:
+	            return RoomWiseDoorAreaRequirement.class;
+	        case ROOM_WISE_VENTILATION:
+	            return RoomWiseVentilationRequirement.class;
+	        case SANITATION:
+	            return SanitationRequirement.class;
+	        case SEGREGATED_TOILET:
+	            return SegregatedToiletRequirement.class;
+	        case SIDE_YARD_SERVICE:
+	            return SideYardServiceRequirement.class;
+	        case SPIRAL_STAIR:
+	            return SpiralStairRequirement.class;
+	        case TERRACE_UTILITY_SERVICE:
+	            return TerraceUtilityServiceRequirement.class;
+	        case TOILET:
+	            return ToiletRequirement.class;
+	        case TRAVEL_DISTANCE_TO_EXIT:
+	            return TravelDistanceToExitRequirement.class;
+	        case VEHICLE_RAMP:
+	            return VehicleRampRequirement.class;
+	        case VERANDAH:
+	            return VerandahRequirement.class;
+	        case WATER_CLOSETS:
+	            return WaterClosetsRequirement.class;
+	        case WATER_TANK_CAPACITY:
+	            return WaterTankCapacityRequirement.class;
+
+	        default:
+	            return MdmsFeatureRule.class; // Fallback
+	    }
+	}
+
+	
 
 }

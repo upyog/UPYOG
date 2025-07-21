@@ -48,7 +48,6 @@
 package org.egov.edcr.feature;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -56,19 +55,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
-import org.egov.common.constants.MdmsFeatureConstants;
+import org.apache.logging.log4j.Logger;
 import org.egov.common.entity.edcr.Block;
-import org.egov.common.entity.edcr.MdmsFeatureRule;
+import org.egov.common.entity.edcr.ChimneyRequirement;
+import org.egov.common.entity.edcr.FeatureEnum;
 import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.Result;
-import org.egov.common.entity.edcr.RuleKey;
 import org.egov.common.entity.edcr.ScrutinyDetail;
-import org.egov.edcr.constants.DxfFileConstants;
-import org.egov.edcr.constants.EdcrRulesMdmsConstants;
-import org.egov.edcr.service.CacheManagerMdms;
-import org.egov.edcr.service.FetchEdcrRulesMdms;
+import org.egov.edcr.service.MDMSCacheManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -86,7 +81,7 @@ public class Chimney extends FeatureProcess {
     public static final String TO_BUILDING_HEIGHT = ") to building height";
     
     @Autowired
-	CacheManagerMdms cache;
+	MDMSCacheManager cache;
 
     /**
      * Validates the given plan object.
@@ -109,9 +104,12 @@ public class Chimney extends FeatureProcess {
 	 */
 	@Override
 	public Plan process(Plan pl) {
-		List<Object> rules = cache.getFeatureRules(pl, MdmsFeatureConstants.CHIMNEY, false);
-		Optional<MdmsFeatureRule> matchedRule = rules.stream().map(obj -> (MdmsFeatureRule) obj).findFirst();
-		BigDecimal permissibleHeight = matchedRule.map(MdmsFeatureRule::getPermissible).orElse(BigDecimal.ZERO);
+		 List<Object> rules = cache.getFeatureRules(pl, FeatureEnum.CHIMNEY.getValue(), false);
+	        Optional<ChimneyRequirement> matchedRule = rules.stream()
+	            .filter(ChimneyRequirement.class::isInstance)
+	            .map(ChimneyRequirement.class::cast)
+	            .findFirst();
+		BigDecimal permissibleHeight = matchedRule.map(ChimneyRequirement::getPermissible).orElse(BigDecimal.ZERO);
 
 		for (Block block : pl.getBlocks()) {
 			processBlock(pl, block, permissibleHeight);

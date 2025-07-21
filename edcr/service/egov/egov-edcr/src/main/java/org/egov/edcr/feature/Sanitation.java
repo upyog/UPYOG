@@ -66,19 +66,21 @@ import org.apache.logging.log4j.Logger;
 import org.egov.common.constants.MdmsFeatureConstants;
 import org.egov.common.entity.dcr.helper.OccupancyHelperDetail;
 import org.egov.common.entity.edcr.Block;
+import org.egov.common.entity.edcr.FeatureEnum;
 import org.egov.common.entity.edcr.Floor;
 import org.egov.common.entity.edcr.MdmsFeatureRule;
 import org.egov.common.entity.edcr.Measurement;
 import org.egov.common.entity.edcr.Occupancy;
 import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.Result;
-import org.egov.common.entity.edcr.RuleKey;
+import org.egov.common.entity.edcr.SanitationRequirement;
+import org.egov.common.entity.edcr.FeatureRuleKey;
 import org.egov.common.entity.edcr.SanityDetails;
 import org.egov.common.entity.edcr.SanityHelper;
 import org.egov.common.entity.edcr.ScrutinyDetail;
 import org.egov.edcr.constants.DxfFileConstants;
 import org.egov.edcr.constants.EdcrRulesMdmsConstants;
-import org.egov.edcr.service.CacheManagerMdms;
+import org.egov.edcr.service.MDMSCacheManager;
 import org.egov.edcr.service.FetchEdcrRulesMdms;
 import org.egov.edcr.utility.DcrConstants;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -127,16 +129,17 @@ public class Sanitation extends FeatureProcess {
     @Autowired
     FetchEdcrRulesMdms fetchEdcrRulesMdms;  
     @Autowired
-	CacheManagerMdms cache;
+	MDMSCacheManager cache;
     
 	private Map<String, BigDecimal> fetchSanitationValues(Plan pl) {
 
-		List<Object> rules = cache.getFeatureRules(pl, MdmsFeatureConstants.SANITATION, false);
-
-		Optional<MdmsFeatureRule> matchedRule = rules.stream().map(obj -> (MdmsFeatureRule) obj).findFirst();
-
+		List<Object> rules = cache.getFeatureRules(pl, FeatureEnum.SANITATION.getValue(), false);
+        Optional<SanitationRequirement> matchedRule = rules.stream()
+            .filter(SanitationRequirement.class::isInstance)
+            .map(SanitationRequirement.class::cast)
+            .findFirst();
 		if (matchedRule.isPresent()) {
-			MdmsFeatureRule rule = matchedRule.get();
+			SanitationRequirement rule = matchedRule.get();
 			sanitationMinAreaofSPWC = rule.getSanitationMinAreaofSPWC();
 			sanitationMinDimensionofSPWC = rule.getSanitationMinDimensionofSPWC();
 			sanitationMinatGroundFloor = rule.getSanitationMinatGroundFloor();

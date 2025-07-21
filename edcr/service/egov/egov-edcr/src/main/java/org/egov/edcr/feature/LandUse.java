@@ -48,7 +48,6 @@
 package org.egov.edcr.feature;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -56,20 +55,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
-import org.egov.common.constants.MdmsFeatureConstants;
+import org.apache.logging.log4j.Logger;
 import org.egov.common.entity.edcr.Block;
+import org.egov.common.entity.edcr.FeatureEnum;
 import org.egov.common.entity.edcr.Floor;
+import org.egov.common.entity.edcr.GuardRoomRequirement;
+import org.egov.common.entity.edcr.LandUseRequirement;
 import org.egov.common.entity.edcr.MdmsFeatureRule;
 import org.egov.common.entity.edcr.Occupancy;
 import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.Result;
-import org.egov.common.entity.edcr.RuleKey;
 import org.egov.edcr.constants.DxfFileConstants;
-import org.egov.edcr.constants.EdcrRulesMdmsConstants;
-import org.egov.edcr.service.CacheManagerMdms;
-import org.egov.edcr.service.FetchEdcrRulesMdms;
+import org.egov.edcr.service.MDMSCacheManager;
 import org.egov.edcr.utility.Util;
 import org.egov.infra.utils.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -90,7 +88,7 @@ public class LandUse extends FeatureProcess {
 
     
     @Autowired
-	CacheManagerMdms cache;
+	MDMSCacheManager cache;
 	
 
     /**
@@ -127,7 +125,7 @@ public class LandUse extends FeatureProcess {
      * @param errors a map to capture validation errors (currently unused)
      */
     private void validateCommercialZone(Plan pl, Map<String, String> errors) {
-        Optional<MdmsFeatureRule> matchedRule = fetchCommercialZoneRule(pl);
+        Optional<LandUseRequirement> matchedRule = fetchCommercialZoneRule(pl);
         if (!matchedRule.isPresent()) return;
 
         BigDecimal permissibleRoadWidth = matchedRule.get().getPermissible();
@@ -143,9 +141,13 @@ public class LandUse extends FeatureProcess {
      * @param pl the Plan object used to extract rule context
      * @return an Optional containing the first matched commercial zone rule if present
      */
-    private Optional<MdmsFeatureRule> fetchCommercialZoneRule(Plan pl) {
-        List<Object> rules = cache.getFeatureRules(pl, MdmsFeatureConstants.LAND_USE, false);
-        return rules.stream().map(obj -> (MdmsFeatureRule) obj).findFirst();
+    private Optional<LandUseRequirement> fetchCommercialZoneRule(Plan pl) {
+    	List<Object> rules = cache.getFeatureRules(pl, FeatureEnum.LAND_USE.getValue(), false);
+       return rules.stream()
+            .filter(LandUseRequirement.class::isInstance)
+            .map(LandUseRequirement.class::cast)
+            .findFirst();
+        
     }
 
     /**

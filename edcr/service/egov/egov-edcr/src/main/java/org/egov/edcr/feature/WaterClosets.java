@@ -54,11 +54,14 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.egov.common.constants.MdmsFeatureConstants;
+import org.egov.common.entity.edcr.BathroomWCRequirement;
 import org.egov.common.entity.edcr.Block;
+import org.egov.common.entity.edcr.FeatureEnum;
 import org.egov.common.entity.edcr.Floor;
 import org.egov.common.entity.edcr.MdmsFeatureRule;
 import org.egov.common.entity.edcr.Measurement;
@@ -66,7 +69,9 @@ import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.Result;
 import org.egov.common.entity.edcr.RoomHeight;
 import org.egov.common.entity.edcr.ScrutinyDetail;
-import org.egov.edcr.service.CacheManagerMdms;
+import org.egov.common.entity.edcr.SolarRequirement;
+import org.egov.common.entity.edcr.WaterClosetsRequirement;
+import org.egov.edcr.service.MDMSCacheManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -83,14 +88,16 @@ public class WaterClosets extends FeatureProcess {
 	}
 	
 	@Autowired
-	CacheManagerMdms cache;
+	MDMSCacheManager cache;
 
 	@Override
 	public Plan process(Plan pl) {
 	    ScrutinyDetail dimScrutinyDetail = createScrutinyDetail("Common_Water Closets");
 	    ScrutinyDetail ventScrutinyDetail = createScrutinyDetail("Water Closets Ventilation");
 
-	    MdmsFeatureRule wcRule = getWaterClosetsRule(pl);
+	    Optional<WaterClosetsRequirement> matchedRule = getWaterClosetsRule(pl);
+	    
+	    WaterClosetsRequirement wcRule = matchedRule.get();
 
 	    if (wcRule == null) return pl;
 
@@ -143,12 +150,12 @@ public class WaterClosets extends FeatureProcess {
 	    return detail;
 	}
 
-	private MdmsFeatureRule getWaterClosetsRule(Plan pl) {
-	    List<Object> rules = cache.getFeatureRules(pl, MdmsFeatureConstants.WATER_CLOSETS, false);
-	    return rules.stream()
-	            .map(obj -> (MdmsFeatureRule) obj)
-	            .findFirst()
-	            .orElse(null);
+	private Optional<WaterClosetsRequirement> getWaterClosetsRule(Plan pl) {
+		 List<Object> rules = cache.getFeatureRules(pl, FeatureEnum.WATER_CLOSETS.getValue(), false);
+	         return rules.stream()
+	            .filter(WaterClosetsRequirement.class::isInstance)
+	            .map(WaterClosetsRequirement.class::cast)
+	            .findFirst();
 	}
 
 	private boolean hasValidWaterClosets(Floor floor) {

@@ -59,17 +59,17 @@ import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.egov.common.constants.MdmsFeatureConstants;
 import org.egov.common.entity.edcr.Block;
+import org.egov.common.entity.edcr.FeatureEnum;
 import org.egov.common.entity.edcr.Flight;
 import org.egov.common.entity.edcr.Floor;
-import org.egov.common.entity.edcr.MdmsFeatureRule;
 import org.egov.common.entity.edcr.Measurement;
 import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.Result;
 import org.egov.common.entity.edcr.ScrutinyDetail;
+import org.egov.common.entity.edcr.VehicleRampRequirement;
 import org.egov.edcr.constants.DxfFileConstants;
-import org.egov.edcr.service.CacheManagerMdms;
+import org.egov.edcr.service.MDMSCacheManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -82,7 +82,7 @@ public class VehicleRamp extends FeatureProcess {
 	private static final String FLIGHT = "Flight";
 
 	@Autowired
-	CacheManagerMdms cache;
+	MDMSCacheManager cache;
 
 	@Override
 	public Plan validate(Plan pl) {
@@ -126,10 +126,13 @@ public class VehicleRamp extends FeatureProcess {
 		BigDecimal vehicleRampSlopeMinWidthValueTwo = BigDecimal.ZERO;
 		BigDecimal vehicleRampSlopeMinWidthValueThree = BigDecimal.ZERO;
 
-		List<Object> rules = cache.getFeatureRules(pl, MdmsFeatureConstants.VEHICLE_RAMP, false);
-		Optional<MdmsFeatureRule> matchedRule = rules.stream().map(obj -> (MdmsFeatureRule) obj).findFirst();
+		 List<Object> rules = cache.getFeatureRules(pl, FeatureEnum.VEHICLE_RAMP.getValue(), false);
+	        Optional<VehicleRampRequirement> matchedRule = rules.stream()
+	            .filter(VehicleRampRequirement.class::isInstance)
+	            .map(VehicleRampRequirement.class::cast)
+	            .findFirst();
 		if (matchedRule.isPresent()) {
-			MdmsFeatureRule rule = matchedRule.get();
+			VehicleRampRequirement rule = matchedRule.get();
 			vehicleRampValue = rule.getPermissible();
 			vehicleRampSlopeValueOne = rule.getVehicleRampSlopeValueOne();
 			vehicleRampSlopeValueTwo = rule.getVehicleRampSlopeValueTwo();

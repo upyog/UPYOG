@@ -58,18 +58,15 @@ import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.egov.common.constants.MdmsFeatureConstants;
 import org.egov.common.entity.edcr.Block;
 import org.egov.common.entity.edcr.Circle;
+import org.egov.common.entity.edcr.FeatureEnum;
 import org.egov.common.entity.edcr.Floor;
-import org.egov.common.entity.edcr.MdmsFeatureRule;
 import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.Result;
-import org.egov.common.entity.edcr.RuleKey;
 import org.egov.common.entity.edcr.ScrutinyDetail;
-import org.egov.edcr.constants.EdcrRulesMdmsConstants;
-import org.egov.edcr.service.CacheManagerMdms;
-import org.egov.edcr.service.FetchEdcrRulesMdms;
+import org.egov.common.entity.edcr.SpiralStairRequirement;
+import org.egov.edcr.service.MDMSCacheManager;
 import org.egov.edcr.utility.Util;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -82,7 +79,7 @@ public class SpiralStair extends FeatureProcess {
 	private static final String DIAMETER_DESCRIPTION = "Minimum diameter for spiral fire stair %s";
 
 	@Autowired
-	CacheManagerMdms cache;
+	MDMSCacheManager cache;
 	
 
 	@Override
@@ -96,13 +93,13 @@ public class SpiralStair extends FeatureProcess {
 	    BigDecimal radiusMultiplier = BigDecimal.ZERO;
 	    BigDecimal maxBuildingHeightForSpiral = BigDecimal.ZERO;
 
-	    Optional<MdmsFeatureRule> matchedRule = cache.getFeatureRules(plan, MdmsFeatureConstants.SPIRAL_STAIR, false)
-	                                                 .stream()
-	                                                 .map(obj -> (MdmsFeatureRule) obj)
-	                                                 .findFirst();
-
+	    List<Object> rules = cache.getFeatureRules(plan, FeatureEnum.SPIRAL_STAIR.getValue(), false);
+        Optional<SpiralStairRequirement> matchedRule = rules.stream()
+            .filter(SpiralStairRequirement.class::isInstance)
+            .map(SpiralStairRequirement.class::cast)
+            .findFirst();
 	    if (matchedRule.isPresent()) {
-	        MdmsFeatureRule rule = matchedRule.get();
+	    	SpiralStairRequirement rule = matchedRule.get();
 	        expectedDiameter = rule.getSpiralStairExpectedDiameter();
 	        radiusMultiplier = rule.getSpiralStairRadius();
 	        maxBuildingHeightForSpiral = rule.getSpiralStairValue();

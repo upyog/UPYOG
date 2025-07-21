@@ -51,7 +51,6 @@ import static org.egov.edcr.constants.DxfFileConstants.A_R;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -61,23 +60,20 @@ import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.egov.common.constants.MdmsFeatureConstants;
 import org.egov.common.entity.edcr.Block;
 import org.egov.common.entity.edcr.DARamp;
+import org.egov.common.entity.edcr.FeatureEnum;
 import org.egov.common.entity.edcr.Floor;
-import org.egov.common.entity.edcr.MdmsFeatureRule;
 import org.egov.common.entity.edcr.Measurement;
 import org.egov.common.entity.edcr.OccupancyType;
 import org.egov.common.entity.edcr.OccupancyTypeHelper;
 import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.Ramp;
+import org.egov.common.entity.edcr.RampServiceRequirement;
 import org.egov.common.entity.edcr.Result;
-import org.egov.common.entity.edcr.RuleKey;
 import org.egov.common.entity.edcr.ScrutinyDetail;
 import org.egov.edcr.constants.DxfFileConstants;
-import org.egov.edcr.constants.EdcrRulesMdmsConstants;
-import org.egov.edcr.service.CacheManagerMdms;
-import org.egov.edcr.service.FetchEdcrRulesMdms;
+import org.egov.edcr.service.MDMSCacheManager;
 import org.egov.edcr.utility.DcrConstants;
 import org.egov.edcr.utility.Util;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -109,7 +105,7 @@ public class RampService extends FeatureProcess {
     
     
     @Autowired
-	CacheManagerMdms cache;
+	MDMSCacheManager cache;
  
     /**
      * Validates the given Plan object for ramp and DA ramp requirements.
@@ -279,11 +275,14 @@ public class RampService extends FeatureProcess {
                 ScrutinyDetail scrutinyDetail4 = createScrutinyDetail("Ramp - Minimum Width", block.getNumber(), true);
                 ScrutinyDetail scrutinyDetail5 = createScrutinyDetail("Ramp - Maximum Slope", block.getNumber(), true);
 
-                List<Object> rules = cache.getFeatureRules(pl, MdmsFeatureConstants.RAMP_SERVICE, false);
-                Optional<MdmsFeatureRule> matchedRule = rules.stream().map(obj -> (MdmsFeatureRule) obj).findFirst();
+                List<Object> rules = cache.getFeatureRules(pl, FeatureEnum.RAMP_SERVICE.getValue(), false);
+                Optional<RampServiceRequirement> matchedRule = rules.stream()
+                    .filter(RampServiceRequirement.class::isInstance)
+                    .map(RampServiceRequirement.class::cast)
+                    .findFirst();
 
                 if (matchedRule.isPresent()) {
-                    MdmsFeatureRule rule = matchedRule.get();
+                	RampServiceRequirement rule = matchedRule.get();
                     rampServiceValueOne = rule.getRampServiceValueOne();
                     rampServiceExpectedSlopeOne = rule.getRampServiceExpectedSlopeOne();
                     rampServiceDivideExpectedSlope = rule.getRampServiceDivideExpectedSlope();

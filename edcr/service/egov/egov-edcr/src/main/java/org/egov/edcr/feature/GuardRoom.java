@@ -58,16 +58,13 @@ import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.egov.common.constants.MdmsFeatureConstants;
-import org.egov.common.entity.edcr.MdmsFeatureRule;
+import org.egov.common.entity.edcr.FeatureEnum;
+import org.egov.common.entity.edcr.GuardRoomRequirement;
 import org.egov.common.entity.edcr.Measurement;
 import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.Result;
-import org.egov.common.entity.edcr.RuleKey;
 import org.egov.common.entity.edcr.ScrutinyDetail;
-import org.egov.edcr.constants.EdcrRulesMdmsConstants;
-import org.egov.edcr.service.CacheManagerMdms;
-import org.egov.edcr.service.FetchEdcrRulesMdms;
+import org.egov.edcr.service.MDMSCacheManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -88,7 +85,7 @@ public class GuardRoom extends FeatureProcess {
 
    
     @Autowired
-	CacheManagerMdms cache;
+	MDMSCacheManager cache;
 
     /**
      * Validates the given plan object.
@@ -131,11 +128,14 @@ public class GuardRoom extends FeatureProcess {
     	BigDecimal GuardRoomMinCabinHeightOne = BigDecimal.ZERO;
     	BigDecimal GuardRoomMinCabinHeightTwo = BigDecimal.ZERO;
 
-    	List<Object> rules = cache.getFeatureRules(pl, MdmsFeatureConstants.GUARD_ROOM, false);
-    	Optional<MdmsFeatureRule> matchedRule = rules.stream().map(obj -> (MdmsFeatureRule) obj).findFirst();
+    	List<Object> rules = cache.getFeatureRules(pl, FeatureEnum.GUARD_ROOM.getValue(), false);
+        Optional<GuardRoomRequirement> matchedRule = rules.stream()
+            .filter(GuardRoomRequirement.class::isInstance)
+            .map(GuardRoomRequirement.class::cast)
+            .findFirst();
 
     	if (matchedRule.isPresent()) {
-    		MdmsFeatureRule rule = matchedRule.get();
+    		GuardRoomRequirement rule = matchedRule.get();
     		GuardRoomMinHeight = rule.getGuardRoomMinHeight();
     		GuardRoomMinWidth = rule.getGuardRoomMinWidth();
     		GuardRoomMinArea = rule.getGuardRoomMinArea();

@@ -58,13 +58,17 @@ import java.util.Optional;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.egov.common.constants.MdmsFeatureConstants;
+import org.egov.common.entity.edcr.BalconyRequirement;
+import org.egov.common.entity.edcr.BasementRequirement;
+import org.egov.common.entity.edcr.BathroomWCRequirement;
 import org.egov.common.entity.edcr.Block;
+import org.egov.common.entity.edcr.FeatureEnum;
 import org.egov.common.entity.edcr.Floor;
 import org.egov.common.entity.edcr.MdmsFeatureRule;
 import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.Result;
 import org.egov.common.entity.edcr.ScrutinyDetail;
-import org.egov.edcr.service.CacheManagerMdms;
+import org.egov.edcr.service.MDMSCacheManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -79,7 +83,7 @@ public class Basement extends FeatureProcess {
 	public static final String BASEMENT_DESCRIPTION_TWO = "Minimum height of the ceiling of upper basement above ground level";
 
 	@Autowired
-	private CacheManagerMdms cache;
+	private MDMSCacheManager cache;
 
 	@Override
 	public Plan validate(Plan pl) {
@@ -106,11 +110,11 @@ public class Basement extends FeatureProcess {
 	    if (pl.getBlocks() == null) return pl;
 
 	    ScrutinyDetail scrutinyDetail = createScrutinyDetail();
-	    Optional<MdmsFeatureRule> matchedRule = fetchBasementRule(pl);
+	    Optional<BasementRequirement> matchedRule = fetchBasementRule(pl);
 
 	    if (!matchedRule.isPresent()) return pl;
 
-	    MdmsFeatureRule rule = matchedRule.get();
+	    BasementRequirement rule = matchedRule.get();
 	    BigDecimal basementValue = rule.getPermissibleOne();
 	    BigDecimal basementValuetwo = rule.getPermissibleTwo();
 	    BigDecimal basementValuethree = rule.getPermissibleThree();
@@ -148,10 +152,17 @@ public class Basement extends FeatureProcess {
 	 * @param pl the plan for which the rules are to be fetched
 	 * @return an {@code Optional<MdmsFeatureRule>} containing the basement rule, if available
 	 */
-	private Optional<MdmsFeatureRule> fetchBasementRule(Plan pl) {
-	    List<Object> rules = cache.getFeatureRules(pl, MdmsFeatureConstants.BASEMENT, false);
-	    return rules.stream().map(obj -> (MdmsFeatureRule) obj).findFirst();
+	private Optional<BasementRequirement> fetchBasementRule(Plan pl) {
+	    List<Object> rules = cache.getFeatureRules(pl, FeatureEnum.BASEMENT.getValue(), false);
+
+	    return rules.stream()
+	        .filter(BasementRequirement.class::isInstance)
+	        .map(BasementRequirement.class::cast)
+	        .findFirst();
 	}
+
+	
+
 
 	
 	/**

@@ -60,13 +60,15 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.egov.common.constants.MdmsFeatureConstants;
 import org.egov.common.entity.edcr.Block;
+import org.egov.common.entity.edcr.FeatureEnum;
 import org.egov.common.entity.edcr.MdmsFeatureRule;
 import org.egov.common.entity.edcr.Plan;
+import org.egov.common.entity.edcr.PlantationGreenStripRequirement;
 import org.egov.common.entity.edcr.Result;
-import org.egov.common.entity.edcr.RuleKey;
+import org.egov.common.entity.edcr.FeatureRuleKey;
 import org.egov.common.entity.edcr.ScrutinyDetail;
 import org.egov.edcr.constants.EdcrRulesMdmsConstants;
-import org.egov.edcr.service.CacheManagerMdms;
+import org.egov.edcr.service.MDMSCacheManager;
 import org.egov.edcr.service.FetchEdcrRulesMdms;
 import org.egov.edcr.utility.DcrConstants;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -78,7 +80,7 @@ public class PlantationGreenStrip extends FeatureProcess {
     private static final String RULE_37_6 = "37-6";
 
     @Autowired
-  	CacheManagerMdms cache;
+  	MDMSCacheManager cache;
     
     /**
      * Validates the given plan.
@@ -102,11 +104,11 @@ public class PlantationGreenStrip extends FeatureProcess {
 
     @Override
     public Plan process(Plan pl) {
-        Optional<MdmsFeatureRule> ruleOpt = getPlantationGreenStripRule(pl);
+        Optional<PlantationGreenStripRequirement> ruleOpt = getPlantationGreenStripRule(pl);
 
-        BigDecimal plantationGreenStripPlanValue = ruleOpt.map(MdmsFeatureRule::getPlantationGreenStripPlanValue)
+        BigDecimal plantationGreenStripPlanValue = ruleOpt.map(PlantationGreenStripRequirement::getPlantationGreenStripPlanValue)
                                                            .orElse(BigDecimal.ZERO);
-        BigDecimal plantationGreenStripMinWidth = ruleOpt.map(MdmsFeatureRule::getPlantationGreenStripMinWidth)
+        BigDecimal plantationGreenStripMinWidth = ruleOpt.map(PlantationGreenStripRequirement::getPlantationGreenStripMinWidth)
                                                           .orElse(BigDecimal.ZERO);
 
         if (isPlotAreaGreaterThanPermissible(pl, plantationGreenStripPlanValue)) {
@@ -124,11 +126,12 @@ public class PlantationGreenStrip extends FeatureProcess {
      * @param pl The plan containing feature and configuration context.
      * @return An Optional containing the first matched {@link MdmsFeatureRule}, if available.
      */
-    private Optional<MdmsFeatureRule> getPlantationGreenStripRule(Plan pl) {
-        List<Object> rules = cache.getFeatureRules(pl, MdmsFeatureConstants.PLANTATION_GREEN_STRIP, false);
+    private Optional<PlantationGreenStripRequirement> getPlantationGreenStripRule(Plan pl) {
+    	List<Object> rules = cache.getFeatureRules(pl, FeatureEnum.PLANTATION_GREEN_STRIP.getValue(), false);
         return rules.stream()
-                .map(obj -> (MdmsFeatureRule) obj)
-                .findFirst();
+            .filter(PlantationGreenStripRequirement.class::isInstance)
+            .map(PlantationGreenStripRequirement.class::cast)
+            .findFirst();
     }
 
 

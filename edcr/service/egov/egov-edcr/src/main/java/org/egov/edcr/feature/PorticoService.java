@@ -59,14 +59,18 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.egov.common.constants.MdmsFeatureConstants;
 import org.egov.common.entity.edcr.Block;
+import org.egov.common.entity.edcr.FeatureEnum;
 import org.egov.common.entity.edcr.MdmsFeatureRule;
+import org.egov.common.entity.edcr.ParkingRequirement;
 import org.egov.common.entity.edcr.Plan;
+import org.egov.common.entity.edcr.PlantationRequirement;
 import org.egov.common.entity.edcr.Portico;
+import org.egov.common.entity.edcr.PorticoServiceRequirement;
 import org.egov.common.entity.edcr.Result;
-import org.egov.common.entity.edcr.RuleKey;
+import org.egov.common.entity.edcr.FeatureRuleKey;
 import org.egov.common.entity.edcr.ScrutinyDetail;
 import org.egov.edcr.constants.EdcrRulesMdmsConstants;
-import org.egov.edcr.service.CacheManagerMdms;
+import org.egov.edcr.service.MDMSCacheManager;
 import org.egov.edcr.service.FetchEdcrRulesMdms;
 import org.egov.edcr.utility.DcrConstants;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -82,7 +86,7 @@ public class PorticoService extends FeatureProcess {
 
    
     @Autowired
-	CacheManagerMdms cache;
+	MDMSCacheManager cache;
 
     /**
      * Validates the Portico elements in each block of the provided plan.
@@ -122,11 +126,14 @@ public class PorticoService extends FeatureProcess {
     public Plan process(Plan plan) {
         validate(plan); 
 
-        BigDecimal permissibleValue = fetchPermissiblePorticoLength(plan);
+        Optional<PorticoServiceRequirement> matchedRule = fetchPermissiblePorticoLength(plan);
+        if (matchedRule.isPresent()) {
+        	PorticoServiceRequirement rule = matchedRule.get();
+        	BigDecimal permissibleValue = rule.getPermissible();
 
         for (Block block : plan.getBlocks()) {
             processBlockPorticos(plan, block, permissibleValue);
-        }
+        }}
 
         return plan;
     }
@@ -137,14 +144,12 @@ public class PorticoService extends FeatureProcess {
      * @param plan The plan object used to retrieve feature-specific rules.
      * @return A BigDecimal representing the permissible portico length. Defaults to zero if no rule is found.
      */
-    private BigDecimal fetchPermissiblePorticoLength(Plan plan) {
-        List<Object> rules = cache.getFeatureRules(plan, MdmsFeatureConstants.PORTICO_SERVICE, false);
-
-        return rules.stream()
-            .map(obj -> (MdmsFeatureRule) obj)
-            .map(MdmsFeatureRule::getPermissible)
-            .findFirst()
-            .orElse(BigDecimal.ZERO);
+    private Optional<PorticoServiceRequirement> fetchPermissiblePorticoLength(Plan plan) {
+    	List<Object> rules = cache.getFeatureRules(plan, FeatureEnum.PORTICO_SERVICE.getValue(), false);
+       return rules.stream()
+            .filter(PorticoServiceRequirement.class::isInstance)
+            .map(PorticoServiceRequirement.class::cast)
+            .findFirst();
     }
 
     /**

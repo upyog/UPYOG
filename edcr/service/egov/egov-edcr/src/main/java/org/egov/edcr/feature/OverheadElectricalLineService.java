@@ -58,17 +58,13 @@ import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.egov.common.constants.MdmsFeatureConstants;
 import org.egov.common.entity.edcr.ElectricLine;
-import org.egov.common.entity.edcr.MdmsFeatureRule;
+import org.egov.common.entity.edcr.FeatureEnum;
+import org.egov.common.entity.edcr.OverheadElectricalLineServiceRequirement;
 import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.Result;
-import org.egov.common.entity.edcr.RuleKey;
 import org.egov.common.entity.edcr.ScrutinyDetail;
-import org.egov.edcr.constants.EdcrRulesMdmsConstants;
-import org.egov.edcr.entity.blackbox.PlanDetail;
-import org.egov.edcr.service.CacheManagerMdms;
-import org.egov.edcr.service.FetchEdcrRulesMdms;
+import org.egov.edcr.service.MDMSCacheManager;
 import org.egov.edcr.utility.DcrConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -90,7 +86,7 @@ public class OverheadElectricalLineService extends FeatureProcess {
 
    
 	@Autowired
-	CacheManagerMdms cache;
+	MDMSCacheManager cache;
 
 	/**
 	 * Validates the presence of required attributes in electric lines.
@@ -199,11 +195,13 @@ public class OverheadElectricalLineService extends FeatureProcess {
 	 * @param pl The plan object used to fetch the rules.
 	 */
 	private void loadOverheadRules(Plan pl) {
-	    List<Object> rules = cache.getFeatureRules(pl, MdmsFeatureConstants.OVERHEAD_ELECTRICAL_LINE_SERVICE, false);
-	    Optional<MdmsFeatureRule> matched = rules.stream().map(obj -> (MdmsFeatureRule) obj).findFirst();
-
-	    if (matched.isPresent()) {
-	        MdmsFeatureRule rule = matched.get();
+		List<Object> rules = cache.getFeatureRules(pl, FeatureEnum.OVERHEAD_ELECTRICAL_LINE_SERVICE.getValue(), false);
+        Optional<OverheadElectricalLineServiceRequirement> matchedRule = rules.stream()
+            .filter(OverheadElectricalLineServiceRequirement.class::isInstance)
+            .map(OverheadElectricalLineServiceRequirement.class::cast)
+            .findFirst();
+	    if (matchedRule.isPresent()) {
+	    	OverheadElectricalLineServiceRequirement rule = matchedRule.get();
 	        overheadVerticalDistance_11000 = rule.getOverheadVerticalDistance_11000();
 	        overheadVerticalDistance_33000 = rule.getOverheadVerticalDistance_33000();
 	        overheadHorizontalDistance_11000 = rule.getOverheadHorizontalDistance_11000();

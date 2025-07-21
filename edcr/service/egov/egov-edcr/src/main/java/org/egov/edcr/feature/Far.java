@@ -102,9 +102,12 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.egov.common.constants.MdmsFeatureConstants;
 import org.egov.common.entity.dcr.helper.OccupancyHelperDetail;
+import org.egov.common.entity.edcr.BathroomWCRequirement;
 import org.egov.common.entity.edcr.Block;
 import org.egov.common.entity.edcr.Building;
 import org.egov.common.entity.edcr.FarDetails;
+import org.egov.common.entity.edcr.FarRequirement;
+import org.egov.common.entity.edcr.FeatureEnum;
 import org.egov.common.entity.edcr.Floor;
 import org.egov.common.entity.edcr.MdmsFeatureRule;
 import org.egov.common.entity.edcr.Measurement;
@@ -113,8 +116,7 @@ import org.egov.common.entity.edcr.OccupancyTypeHelper;
 import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.Result;
 import org.egov.common.entity.edcr.ScrutinyDetail;
-import org.egov.edcr.service.CacheManagerMdms;
-import org.egov.edcr.service.FetchEdcrRulesMdms;
+import org.egov.edcr.service.MDMSCacheManager;
 import org.egov.edcr.service.ProcessPrintHelper;
 import org.egov.edcr.utility.DcrConstants;
 import org.egov.infra.utils.StringUtils;
@@ -194,7 +196,7 @@ public class Far extends FeatureProcess {
 	BigDecimal totalExistingCarpetArea = BigDecimal.ZERO;// Use an appropriate
 																									// upper bound
 	@Autowired
-	CacheManagerMdms cache;
+	MDMSCacheManager cache;
 	
 	
 	/**
@@ -1179,11 +1181,12 @@ public class Far extends FeatureProcess {
 		// defined range.
 		// If a matching rule is found, proceed with its processing.
 
-		List<Object> rules = cache.getFeatureRules(pl, MdmsFeatureConstants.FAR, true);
-
-		Optional<MdmsFeatureRule> matchedRule = rules.stream().map(obj -> (MdmsFeatureRule) obj).filter(
-				rule -> plotArea.compareTo(rule.getFromPlotArea()) >= 0 && plotArea.compareTo(rule.getToPlotArea()) < 0)
-				.findFirst();
+		 List<Object> rules = cache.getFeatureRules(pl, FeatureEnum.FAR.getValue(), true);
+	        Optional<FarRequirement> matchedRule = rules.stream()
+	            .filter(FarRequirement.class::isInstance)
+	            .map(FarRequirement.class::cast)
+	            .filter(rule -> plotArea.compareTo(rule.getFromPlotArea()) >= 0 && plotArea.compareTo(rule.getToPlotArea()) < 0)
+	            .findFirst();
 
 		if (matchedRule.isPresent()) {
 			permissibleFar = matchedRule.get().getPermissible();

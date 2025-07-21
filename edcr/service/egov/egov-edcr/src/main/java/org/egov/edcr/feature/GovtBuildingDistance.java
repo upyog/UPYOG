@@ -53,19 +53,17 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.egov.common.constants.MdmsFeatureConstants;
 import org.egov.common.entity.edcr.Block;
+import org.egov.common.entity.edcr.FeatureEnum;
+import org.egov.common.entity.edcr.GovtBuildingDistanceRequirement;
 import org.egov.common.entity.edcr.MdmsFeatureRule;
 import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.Result;
-import org.egov.common.entity.edcr.RuleKey;
 import org.egov.common.entity.edcr.ScrutinyDetail;
-import org.egov.edcr.constants.EdcrRulesMdmsConstants;
-import org.egov.edcr.service.CacheManagerMdms;
+import org.egov.edcr.service.MDMSCacheManager;
 import org.egov.edcr.service.FetchEdcrRulesMdms;
 import org.egov.infra.utils.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -87,7 +85,7 @@ public class GovtBuildingDistance extends FeatureProcess {
     FetchEdcrRulesMdms fetchEdcrRulesMdms;
     
     @Autowired
-	CacheManagerMdms cache;
+	MDMSCacheManager cache;
 
     /**
      * Validates the given plan object.
@@ -129,7 +127,7 @@ public class GovtBuildingDistance extends FeatureProcess {
         BigDecimal minDistance = getMinimumDistance(distances);
         BigDecimal maxHeight = getMaxBuildingHeight(plan.getBlocks());
 
-        MdmsFeatureRule rule = getApplicableRule(plan);
+        GovtBuildingDistanceRequirement rule = getApplicableRule(plan);
         if (rule == null) {
             errors.put("RULE_FETCH", "No applicable rule found for Govt Building Distance validation.");
             plan.addErrors(errors);
@@ -211,10 +209,14 @@ public class GovtBuildingDistance extends FeatureProcess {
      * @param plan the plan for which the rule needs to be fetched
      * @return the matching {@link MdmsFeatureRule} or null if not found
      */
-    private MdmsFeatureRule getApplicableRule(Plan plan) {
-        List<Object> rules = cache.getFeatureRules(plan, MdmsFeatureConstants.GOVT_BUILDING_DISTANCE, false);
-        return rules.stream()
-                    .map(obj -> (MdmsFeatureRule) obj)
+    private GovtBuildingDistanceRequirement getApplicableRule(Plan plan) {
+    	List<Object> rules = cache.getFeatureRules(plan, FeatureEnum.GOVT_BUILDING_DISTANCE.getValue(), false);
+        rules.stream()
+            .filter(GovtBuildingDistanceRequirement.class::isInstance)
+            .map(GovtBuildingDistanceRequirement.class::cast)
+            .findFirst();
+            return rules.stream()
+                    .map(obj -> (GovtBuildingDistanceRequirement) obj)
                     .findFirst()
                     .orElse(null);
     }
@@ -229,7 +231,7 @@ public class GovtBuildingDistance extends FeatureProcess {
      * @param rule the applicable MDMS 
      * */
     private void validateDistanceAndHeight(BigDecimal minDistance, BigDecimal maxHeight,
-                                           MdmsFeatureRule rule, Map<String, String> details,
+    		GovtBuildingDistanceRequirement rule, Map<String, String> details,
                                            ScrutinyDetail scrutinyDetail) {
 
         BigDecimal allowedDistance = rule.getGovtBuildingDistanceValue();

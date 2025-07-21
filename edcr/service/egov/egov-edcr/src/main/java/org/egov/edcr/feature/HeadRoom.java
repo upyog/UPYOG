@@ -57,15 +57,16 @@ import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.egov.common.constants.MdmsFeatureConstants;
 import org.egov.common.entity.edcr.Block;
+import org.egov.common.entity.edcr.FeatureEnum;
+import org.egov.common.entity.edcr.FireStairRequirement;
+import org.egov.common.entity.edcr.GuardRoomRequirement;
+import org.egov.common.entity.edcr.HeadRoomRequirement;
 import org.egov.common.entity.edcr.MdmsFeatureRule;
 import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.Result;
-import org.egov.common.entity.edcr.RuleKey;
 import org.egov.common.entity.edcr.ScrutinyDetail;
-import org.egov.edcr.constants.EdcrRulesMdmsConstants;
-import org.egov.edcr.service.CacheManagerMdms;
+import org.egov.edcr.service.MDMSCacheManager;
 import org.egov.edcr.service.FetchEdcrRulesMdms;
 import org.egov.edcr.utility.Util;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -85,7 +86,7 @@ public class HeadRoom extends FeatureProcess {
 	FetchEdcrRulesMdms fetchEdcrRulesMdms;
 
 	@Autowired
-	CacheManagerMdms cache;
+	MDMSCacheManager cache;
 
 	/**
 	 * Validates the given plan object. Currently, no specific validation logic is
@@ -120,13 +121,16 @@ public class HeadRoom extends FeatureProcess {
 	 */
 	@Override
 	public Plan process(Plan plan) {
-		BigDecimal permissibleHeadroom = fetchPermissibleHeadroom(plan);
+		Optional<HeadRoomRequirement> matchedRule = fetchPermissibleHeadroom(plan);
+		if (matchedRule.isPresent()) {
+			HeadRoomRequirement rule = matchedRule.get();
+		    BigDecimal permissibleHeadroom = rule.getPermissible();
 
 		for (Block block : plan.getBlocks()) {
 			if (block.getBuilding() != null) {
 				processHeadroomForBlock(plan, block, permissibleHeadroom);
 			}
-		}
+		}}
 
 		return plan;
 	}
@@ -137,11 +141,13 @@ public class HeadRoom extends FeatureProcess {
 	 * @param plan The plan from which occupancy and context are used to filter applicable feature rules.
 	 * @return The permissible headroom value, or {@code BigDecimal.ZERO} if not found.
 	 */
-	private BigDecimal fetchPermissibleHeadroom(Plan plan) {
-		List<Object> rules = cache.getFeatureRules(plan, MdmsFeatureConstants.HEAD_ROOM, false);
+	private Optional<HeadRoomRequirement> fetchPermissibleHeadroom(Plan plan) {
+		 List<Object> rules = cache.getFeatureRules(plan, FeatureEnum.HEAD_ROOM.getValue(), false);
+		 return rules.stream()
+	            .filter(HeadRoomRequirement.class::isInstance)
+	            .map(HeadRoomRequirement.class::cast)
+	            .findFirst();
 
-		return rules.stream().map(obj -> (MdmsFeatureRule) obj).findFirst().map(MdmsFeatureRule::getPermissible)
-				.orElse(BigDecimal.ZERO);
 	}
 
 	/**

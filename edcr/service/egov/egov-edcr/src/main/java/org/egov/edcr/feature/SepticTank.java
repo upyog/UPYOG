@@ -57,15 +57,13 @@ import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.egov.common.constants.MdmsFeatureConstants;
-import org.egov.common.entity.edcr.MdmsFeatureRule;
+import org.egov.common.entity.edcr.FeatureEnum;
 import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.Result;
-import org.egov.common.entity.edcr.RuleKey;
 import org.egov.common.entity.edcr.ScrutinyDetail;
-import org.egov.edcr.constants.EdcrRulesMdmsConstants;
-import org.egov.edcr.service.CacheManagerMdms;
+import org.egov.common.entity.edcr.SepticTankRequirement;
 import org.egov.edcr.service.FetchEdcrRulesMdms;
+import org.egov.edcr.service.MDMSCacheManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -88,7 +86,7 @@ public class SepticTank extends FeatureProcess {
 	FetchEdcrRulesMdms fetchEdcrRulesMdms; // Service to fetch rules from MDMS
 	
 	@Autowired
-	CacheManagerMdms cache;
+	MDMSCacheManager cache;
 
 	@Override
 	public Plan validate(Plan pl) {
@@ -109,7 +107,7 @@ public class SepticTank extends FeatureProcess {
 	    BigDecimal septicTankMinDisWatersrc = BigDecimal.ZERO;
 	    BigDecimal septicTankMinDisBuilding = BigDecimal.ZERO;
 
-	    Optional<MdmsFeatureRule> matchedRule = getMatchedSepticTankRule(pl);
+	    Optional<SepticTankRequirement> matchedRule = getMatchedSepticTankRule(pl);
 	    if (matchedRule.isPresent()) {
 	        septicTankMinDisWatersrc = matchedRule.get().getSepticTankMinDisWatersrc();
 	        septicTankMinDisBuilding = matchedRule.get().getSepticTankMinDisBuilding();
@@ -131,12 +129,13 @@ public class SepticTank extends FeatureProcess {
 	    return scrutinyDetail;
 	}
 
-	private Optional<MdmsFeatureRule> getMatchedSepticTankRule(Plan pl) {
-	    List<Object> rules = cache.getFeatureRules(pl, MdmsFeatureConstants.SEPTIC_TANK, false);
-	    return rules.stream()
-	                .filter(MdmsFeatureRule.class::isInstance)
-	                .map(obj -> (MdmsFeatureRule) obj)
-	                .findFirst();
+	private Optional<SepticTankRequirement> getMatchedSepticTankRule(Plan pl) {
+		List<Object> rules = cache.getFeatureRules(pl, FeatureEnum.SEPTIC_TANK.getValue(), false);
+       return rules.stream()
+            .filter(SepticTankRequirement.class::isInstance)
+            .map(SepticTankRequirement.class::cast)
+            .findFirst();
+	
 	}
 
 	private void validateSepticTanks(Plan pl, ScrutinyDetail scrutinyDetail, List<org.egov.common.entity.edcr.SepticTank> septicTanks,

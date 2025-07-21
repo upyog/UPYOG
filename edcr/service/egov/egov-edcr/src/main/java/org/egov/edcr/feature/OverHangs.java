@@ -59,14 +59,17 @@ import java.util.stream.Collectors;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.egov.common.constants.MdmsFeatureConstants;
+import org.egov.common.entity.edcr.BalconyRequirement;
 import org.egov.common.entity.edcr.Block;
 import org.egov.common.entity.edcr.Building;
+import org.egov.common.entity.edcr.FeatureEnum;
 import org.egov.common.entity.edcr.Floor;
 import org.egov.common.entity.edcr.MdmsFeatureRule;
+import org.egov.common.entity.edcr.OverHangsRequirement;
 import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.Result;
 import org.egov.common.entity.edcr.ScrutinyDetail;
-import org.egov.edcr.service.CacheManagerMdms;
+import org.egov.edcr.service.MDMSCacheManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -79,7 +82,7 @@ public class OverHangs extends FeatureProcess {
     private static final String FLOOR = "Floor";
 
     @Autowired
-   	CacheManagerMdms cache;
+   	MDMSCacheManager cache;
     
     @Override
     public Plan validate(Plan pl) {
@@ -124,10 +127,11 @@ public class OverHangs extends FeatureProcess {
      * @return the permissible overhang value, or zero if not defined
      */
     private BigDecimal getOverhangPermissibleValue(Plan pl) {
-        List<Object> rules = cache.getFeatureRules(pl, MdmsFeatureConstants.OVERHANGS, false);
-        Optional<MdmsFeatureRule> matchedRule = rules.stream()
-                .map(obj -> (MdmsFeatureRule) obj)
-                .findFirst();
+    	 List<Object> rules = cache.getFeatureRules(pl, FeatureEnum.OVERHANGS.getValue(), false);
+         Optional<OverHangsRequirement> matchedRule = rules.stream()
+             .filter(OverHangsRequirement.class::isInstance)
+             .map(OverHangsRequirement.class::cast)
+             .findFirst();
 
         return matchedRule.map(MdmsFeatureRule::getPermissible).orElse(BigDecimal.ZERO);
     }

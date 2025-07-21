@@ -57,19 +57,16 @@ import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.egov.common.constants.MdmsFeatureConstants;
+import org.egov.common.entity.edcr.BathroomWCRequirement;
 import org.egov.common.entity.edcr.Block;
+import org.egov.common.entity.edcr.FeatureEnum;
 import org.egov.common.entity.edcr.Floor;
-import org.egov.common.entity.edcr.MdmsFeatureRule;
 import org.egov.common.entity.edcr.Measurement;
 import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.Result;
 import org.egov.common.entity.edcr.RoomHeight;
-import org.egov.common.entity.edcr.RuleKey;
 import org.egov.common.entity.edcr.ScrutinyDetail;
-import org.egov.edcr.constants.EdcrRulesMdmsConstants;
-import org.egov.edcr.service.CacheManagerMdms;
-import org.egov.edcr.service.FetchEdcrRulesMdms;
+import org.egov.edcr.service.MDMSCacheManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -101,7 +98,7 @@ public class BathRoomWaterClosets extends FeatureProcess {
 
 
     @Autowired
-   	CacheManagerMdms cache;
+   	MDMSCacheManager cache;
 
     /**
      * Processes the given {@link Plan} to validate bathroom water closet areas, widths, and heights
@@ -115,15 +112,58 @@ public class BathRoomWaterClosets extends FeatureProcess {
     public Plan process(Plan pl) {
         ScrutinyDetail scrutinyDetail = createScrutinyDetail();
 
-        List<Object> rules = cache.getFeatureRules(pl, MdmsFeatureConstants.BATHROOM_WATER_CLOSETS, false);
-        Optional<MdmsFeatureRule> matchedRule = rules.stream().map(obj -> (MdmsFeatureRule) obj).findFirst();
+//        List<Object> rules = cache.getFeatureRules(pl, MdmsFeatureConstants.BATHROOM_WATER_CLOSETS, false);
+//        Optional<MdmsFeatureRule> matchedRule = rules.stream().map(obj -> (MdmsFeatureRule) obj).findFirst();
+//
+//        if (!matchedRule.isPresent()) return pl;
+//
+//        MdmsFeatureRule rule = matchedRule.get();
+//        BigDecimal reqArea = rule.getBathroomWCRequiredArea() != null ? rule.getBathroomWCRequiredArea() : BigDecimal.ZERO;
+//        BigDecimal reqWidth = rule.getBathroomWCRequiredWidth() != null ? rule.getBathroomWCRequiredWidth() : BigDecimal.ZERO;
+//        BigDecimal reqHeight = rule.getBathroomWCRequiredHeight() != null ? rule.getBathroomWCRequiredHeight() : BigDecimal.ZERO;
+        
+//        List<Object> rule = cache.getFeatureRules1(pl, MdmsFeatureConstants.BATHROOM_WATER_CLOSETS, false);
+//        Optional<BathroomWCRule> matchedRule = rules.stream()
+//            .filter(obj -> obj instanceof BathroomWCRule)
+//            .map(obj -> (BathroomWCRule) obj)
+//            .findFirst();
 
+       
+//        
+//        List<BathroomWCRule> rules = cache.getFeatureRules1(
+//        	    pl,
+//        	    MdmsFeatureConstants.BATHROOM_WATER_CLOSETS,
+//        	    false,
+//        	    BathroomWCRule.class
+//        	);
+        // Now safely filter for BathroomWCRule
+//        Optional<BathroomWCRule> matchedRule = rules.stream()
+//            .filter(r -> r instanceof BathroomWCRule)
+//            .map(r -> (BathroomWCRule) r)
+//            .findFirst();
+      
+//
+//        BigDecimal reqArea   = rule.getBathroomWCRequiredArea() != null ? rule.getBathroomWCRequiredArea() : BigDecimal.ZERO;
+//        BigDecimal reqWidth  = rule.getBathroomWCRequiredWidth() != null ? rule.getBathroomWCRequiredWidth() : BigDecimal.ZERO;
+//        BigDecimal reqHeight = rule.getBathroomWCRequiredHeight() != null ? rule.getBathroomWCRequiredHeight() : BigDecimal.ZERO;
+        
+        List<Object> rules = cache.getFeatureRules(pl, FeatureEnum.BATHROOM_WATER_CLOSETS.getValue(), false);
+        Optional<BathroomWCRequirement> matchedRule = rules.stream()
+            .filter(BathroomWCRequirement.class::isInstance)
+            .map(BathroomWCRequirement.class::cast)
+            .findFirst();
+        
         if (!matchedRule.isPresent()) return pl;
 
-        MdmsFeatureRule rule = matchedRule.get();
-        BigDecimal reqArea = rule.getBathroomWCRequiredArea() != null ? rule.getBathroomWCRequiredArea() : BigDecimal.ZERO;
-        BigDecimal reqWidth = rule.getBathroomWCRequiredWidth() != null ? rule.getBathroomWCRequiredWidth() : BigDecimal.ZERO;
-        BigDecimal reqHeight = rule.getBathroomWCRequiredHeight() != null ? rule.getBathroomWCRequiredHeight() : BigDecimal.ZERO;
+            BathroomWCRequirement rule = matchedRule.get();
+            BigDecimal reqArea = rule.getBathroomWCRequiredArea();
+            BigDecimal reqWidth = rule.getBathroomWCRequiredWidth();
+            BigDecimal reqHeight = rule.getBathroomWCRequiredHeight();
+       
+
+
+        // Use these values accordingly
+
 
         for (Block block : pl.getBlocks()) {
             processBlock(pl, block, reqArea, reqWidth, reqHeight, scrutinyDetail);

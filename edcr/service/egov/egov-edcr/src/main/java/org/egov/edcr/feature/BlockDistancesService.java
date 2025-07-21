@@ -59,19 +59,17 @@ import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.egov.common.constants.MdmsFeatureConstants;
+import org.egov.common.entity.edcr.BathroomRequirement;
 import org.egov.common.entity.edcr.Block;
 import org.egov.common.entity.edcr.BlockDistances;
+import org.egov.common.entity.edcr.BlockDistancesServiceRequirement;
+import org.egov.common.entity.edcr.FeatureEnum;
 import org.egov.common.entity.edcr.MdmsFeatureRule;
 import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.Result;
-import org.egov.common.entity.edcr.RuleKey;
 import org.egov.common.entity.edcr.ScrutinyDetail;
 import org.egov.common.entity.edcr.SetBack;
-import org.egov.edcr.constants.DxfFileConstants;
-import org.egov.edcr.constants.EdcrRulesMdmsConstants;
-import org.egov.edcr.service.CacheManagerMdms;
-import org.egov.edcr.service.FetchEdcrRulesMdms;
+import org.egov.edcr.service.MDMSCacheManager;
 import org.egov.edcr.utility.DcrConstants;
 import org.egov.infra.utils.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -100,7 +98,7 @@ public class BlockDistancesService extends FeatureProcess {
 
 
     @Autowired
-	CacheManagerMdms cache;
+	MDMSCacheManager cache;
 	
 
     /**
@@ -329,10 +327,12 @@ public class BlockDistancesService extends FeatureProcess {
      * @return The permissible block distance value.
      */
     private BigDecimal getServiceBlockDistance(Plan pl) {
-        List<Object> rules = cache.getFeatureRules(pl, MdmsFeatureConstants.BLOCK_DISTANCES_SERVICE, false);
-        Optional<MdmsFeatureRule> matchedRule = rules.stream()
-                .map(obj -> (MdmsFeatureRule) obj)
-                .findFirst();
+    	  List<Object> rules = cache.getFeatureRules(pl, FeatureEnum.BLOCK_DISTANCES_SERVICE.getValue(), false);
+          Optional<BlockDistancesServiceRequirement> matchedRule = rules.stream()
+              .filter(BlockDistancesServiceRequirement.class::isInstance)
+              .map(BlockDistancesServiceRequirement.class::cast)
+              .findFirst();
+
         return matchedRule.map(MdmsFeatureRule::getPermissible).orElse(BigDecimal.ZERO);
     }
 

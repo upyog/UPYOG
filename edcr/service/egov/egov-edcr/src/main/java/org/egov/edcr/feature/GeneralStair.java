@@ -14,19 +14,26 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.egov.common.constants.MdmsFeatureConstants;
 import org.egov.common.entity.edcr.Block;
+import org.egov.common.entity.edcr.FeatureEnum;
 import org.egov.common.entity.edcr.Flight;
 import org.egov.common.entity.edcr.Floor;
+import org.egov.common.entity.edcr.FrontSetBackRequirement;
 import org.egov.common.entity.edcr.MdmsFeatureRule;
 import org.egov.common.entity.edcr.Measurement;
+import org.egov.common.entity.edcr.NoOfRiserRequirement;
 import org.egov.common.entity.edcr.OccupancyTypeHelper;
 import org.egov.common.entity.edcr.Plan;
+import org.egov.common.entity.edcr.RequiredTreadRequirement;
+import org.egov.common.entity.edcr.RequiredWidthRequirement;
 import org.egov.common.entity.edcr.Result;
-import org.egov.common.entity.edcr.RuleKey;
+import org.egov.common.entity.edcr.RiserHeightRequirement;
+import org.egov.common.entity.edcr.FeatureRuleKey;
+import org.egov.common.entity.edcr.FireStairRequirement;
 import org.egov.common.entity.edcr.ScrutinyDetail;
 import org.egov.common.entity.edcr.StairLanding;
 import org.egov.edcr.constants.DxfFileConstants;
 import org.egov.edcr.constants.EdcrRulesMdmsConstants;
-import org.egov.edcr.service.CacheManagerMdms;
+import org.egov.edcr.service.MDMSCacheManager;
 import org.egov.edcr.service.FetchEdcrRulesMdms;
 import org.egov.edcr.utility.DcrConstants;
 import org.egov.edcr.utility.Util;
@@ -53,7 +60,7 @@ public class GeneralStair extends FeatureProcess {
 	private static final String FLIGHT_NOT_DEFINED_DESCRIPTION = "General stair flight is not defined in block %s floor %s";
 
 	@Autowired
-	CacheManagerMdms cache;
+	MDMSCacheManager cache;
 	
 	@Override
 	public Plan validate(Plan plan) {
@@ -212,8 +219,11 @@ public class GeneralStair extends FeatureProcess {
 	 * @return The permissible riser height value.
 	 */
 	private BigDecimal getPermissibleRiserHeight(Plan plan) {
-		List<Object> rules = cache.getFeatureRules(plan, MdmsFeatureConstants.RISER_HEIGHT, false);
-		Optional<MdmsFeatureRule> matchedRule = rules.stream().map(obj -> (MdmsFeatureRule) obj).findFirst();
+		List<Object> rules = cache.getFeatureRules(plan, FeatureEnum.RISER_HEIGHT.getValue(), false);
+        Optional<RiserHeightRequirement> matchedRule = rules.stream()
+            .filter(RiserHeightRequirement.class::isInstance)
+            .map(RiserHeightRequirement.class::cast)
+            .findFirst();
 		return matchedRule.map(MdmsFeatureRule::getPermissible).orElse(BigDecimal.ZERO);
 	}
 
@@ -574,12 +584,14 @@ public class GeneralStair extends FeatureProcess {
 		// defined range.
 		// If a matching rule is found, proceed with its processing.
 
-		List<Object> rules = cache.getFeatureRules(pl, MdmsFeatureConstants.REQUIRED_WIDTH, false);
-
-		Optional<MdmsFeatureRule> matchedRule = rules.stream().map(obj -> (MdmsFeatureRule) obj).findFirst();
+		 List<Object> rules = cache.getFeatureRules(pl, FeatureEnum.REQUIRED_WIDTH.getValue(), false);
+	        Optional<RequiredWidthRequirement> matchedRule = rules.stream()
+	            .filter(RequiredWidthRequirement.class::isInstance)
+	            .map(RequiredWidthRequirement.class::cast)
+	            .findFirst();
 
 		if (matchedRule.isPresent()) {
-			MdmsFeatureRule rule = matchedRule.get();
+			RequiredWidthRequirement rule = matchedRule.get();
 			value = rule.getPermissible();
 		} else {
 			value = BigDecimal.ZERO;
@@ -741,12 +753,14 @@ public class GeneralStair extends FeatureProcess {
 		// defined range.
 		// If a matching rule is found, proceed with its processing.
 
-		List<Object> rules = cache.getFeatureRules(pl, MdmsFeatureConstants.REQUIRED_TREAD, false);
-
-		Optional<MdmsFeatureRule> matchedRule = rules.stream().map(obj -> (MdmsFeatureRule) obj).findFirst();
+		 List<Object> rules = cache.getFeatureRules(pl, FeatureEnum.REQUIRED_TREAD.getValue(), false);
+	        Optional<RequiredTreadRequirement> matchedRule = rules.stream()
+	            .filter(RequiredTreadRequirement.class::isInstance)
+	            .map(RequiredTreadRequirement.class::cast)
+	            .findFirst();
 
 		if (matchedRule.isPresent()) {
-			MdmsFeatureRule rule = matchedRule.get();
+			RequiredTreadRequirement rule = matchedRule.get();
 			value = rule.getPermissible();
 		} else {
 			value = BigDecimal.ZERO;
@@ -783,12 +797,14 @@ public class GeneralStair extends FeatureProcess {
 			// defined range.
 			// If a matching rule is found, proceed with its processing.
 
-			List<Object> rules = cache.getFeatureRules(plan, MdmsFeatureConstants.NO_OF_RISER, false);
-
-			Optional<MdmsFeatureRule> matchedRule = rules.stream().map(obj -> (MdmsFeatureRule) obj).findFirst();
+			 List<Object> rules = cache.getFeatureRules(plan, FeatureEnum.NO_OF_RISER.getValue(), false);
+		        Optional<NoOfRiserRequirement> matchedRule = rules.stream()
+		            .filter(NoOfRiserRequirement.class::isInstance)
+		            .map(NoOfRiserRequirement.class::cast)
+		            .findFirst();
 
 			if (matchedRule.isPresent()) {
-				MdmsFeatureRule rule = matchedRule.get();
+				NoOfRiserRequirement rule = matchedRule.get();
 				noOfRisersValue = rule.getPermissible();
 			} else {
 				noOfRisersValue = BigDecimal.ZERO;

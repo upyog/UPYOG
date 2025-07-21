@@ -66,16 +66,13 @@ import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.egov.common.constants.MdmsFeatureConstants;
-import org.egov.common.entity.edcr.MdmsFeatureRule;
+import org.egov.common.entity.edcr.FeatureEnum;
 import org.egov.common.entity.edcr.Measurement;
 import org.egov.common.entity.edcr.Plan;
+import org.egov.common.entity.edcr.PlantationRequirement;
 import org.egov.common.entity.edcr.Result;
-import org.egov.common.entity.edcr.RuleKey;
 import org.egov.common.entity.edcr.ScrutinyDetail;
-import org.egov.edcr.constants.EdcrRulesMdmsConstants;
-import org.egov.edcr.service.CacheManagerMdms;
-import org.egov.edcr.service.FetchEdcrRulesMdms;
+import org.egov.edcr.service.MDMSCacheManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -87,7 +84,7 @@ public class Plantation extends FeatureProcess {
     public static final String PLANTATION_TREECOVER_DESCRIPTION = "Plantation tree cover";
 
     @Autowired
-  	CacheManagerMdms cache;
+  	MDMSCacheManager cache;
     
     @Override
     public Plan validate(Plan pl) {
@@ -242,11 +239,14 @@ public class Plantation extends FeatureProcess {
     	BigDecimal plantation = BigDecimal.ZERO;
     	BigDecimal percent;
 
-    	List<Object> rules = cache.getFeatureRules(pl, MdmsFeatureConstants.PLANTATION, false);
-    	Optional<MdmsFeatureRule> matchedRule = rules.stream().map(obj -> (MdmsFeatureRule) obj).findFirst();
+    	List<Object> rules = cache.getFeatureRules(pl, FeatureEnum.PLANTATION.getValue(), false);
+        Optional<PlantationRequirement> matchedRule = rules.stream()
+            .filter(PlantationRequirement.class::isInstance)
+            .map(PlantationRequirement.class::cast)
+            .findFirst();
 
     	if (matchedRule.isPresent()) {
-    		MdmsFeatureRule rule = matchedRule.get();
+    		PlantationRequirement rule = matchedRule.get();
     		plantation = rule.getPermissible();
     		percent = rule.getPercent();
     	}

@@ -63,18 +63,17 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.egov.common.constants.MdmsFeatureConstants;
 import org.egov.common.entity.edcr.Block;
+import org.egov.common.entity.edcr.CoverageRequirement;
+import org.egov.common.entity.edcr.FeatureEnum;
 import org.egov.common.entity.edcr.Floor;
-import org.egov.common.entity.edcr.MdmsFeatureRule;
 import org.egov.common.entity.edcr.Measurement;
 import org.egov.common.entity.edcr.Occupancy;
 import org.egov.common.entity.edcr.OccupancyType;
 import org.egov.common.entity.edcr.OccupancyTypeHelper;
 import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.Result;
-import org.egov.common.entity.edcr.RuleKey;
 import org.egov.common.entity.edcr.ScrutinyDetail;
-import org.egov.edcr.constants.EdcrRulesMdmsConstants;
-import org.egov.edcr.service.CacheManagerMdms;
+import org.egov.edcr.service.MDMSCacheManager;
 import org.egov.edcr.service.FetchEdcrRulesMdms;
 import org.egov.edcr.utility.DcrConstants;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -95,7 +94,7 @@ public class Coverage extends FeatureProcess {
 	FetchEdcrRulesMdms fetchEdcrRulesMdms;
 	
 	 @Autowired
-	CacheManagerMdms cache;
+	MDMSCacheManager cache;
 
 
 	/*
@@ -268,13 +267,16 @@ public class Coverage extends FeatureProcess {
 		// defined range.
 		// If a matching rule is found, proceed with its processing.
 
-		List<Object> rules = cache.getFeatureRules(pl, MdmsFeatureConstants.COVERAGE, true);
+		List<Object> rules = cache.getFeatureRules(pl, FeatureEnum.COVERAGE.getValue(), true);
 
-		Optional<MdmsFeatureRule> matchedRule = rules.stream().map(obj -> (MdmsFeatureRule) obj)
-				.filter(rule -> area.compareTo(rule.getFromPlotArea()) >= 0 && area.compareTo(rule.getToPlotArea()) < 0)
-				.findFirst();
+		Optional<CoverageRequirement> matchedRule = rules.stream()
+		    .filter(CoverageRequirement.class::isInstance)
+		    .map(CoverageRequirement.class::cast)
+		    .filter(rule -> area.compareTo(rule.getFromPlotArea()) >= 0 && area.compareTo(rule.getToPlotArea()) < 0)
+		    .findFirst();
+
 		if (matchedRule.isPresent()) {
-			MdmsFeatureRule rule = matchedRule.get();
+			CoverageRequirement rule = matchedRule.get();
 			permissibleCoverage = rule.getPermissible();
 		} else {
 			permissibleCoverage = BigDecimal.ZERO;

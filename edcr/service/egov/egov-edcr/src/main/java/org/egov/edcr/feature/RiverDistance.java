@@ -60,12 +60,14 @@ import java.util.stream.Collectors;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.egov.common.constants.MdmsFeatureConstants;
+import org.egov.common.entity.edcr.FeatureEnum;
 import org.egov.common.entity.edcr.MdmsFeatureRule;
 import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.Result;
 import org.egov.common.entity.edcr.River;
+import org.egov.common.entity.edcr.RiverDistanceRequirement;
 import org.egov.common.entity.edcr.ScrutinyDetail;
-import org.egov.edcr.service.CacheManagerMdms;
+import org.egov.edcr.service.MDMSCacheManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -89,7 +91,7 @@ public class RiverDistance extends FeatureProcess {
     private static final Integer SUB_RIVER = 2;
     
     @Autowired
-  	CacheManagerMdms cache;
+  	MDMSCacheManager cache;
   	
     // Validation method (currently returns the plan as is)
     @Override
@@ -129,13 +131,13 @@ public class RiverDistance extends FeatureProcess {
         List<River> mainRiver = new ArrayList<>();
         List<River> subRiver = new ArrayList<>();
 
-        List<Object> rules = cache.getFeatureRules(pl, MdmsFeatureConstants.RIVER_DISTANCE, false);
-        Optional<MdmsFeatureRule> matchedRule = rules.stream()
-            .map(obj -> (MdmsFeatureRule) obj)
+        List<Object> rules = cache.getFeatureRules(pl, FeatureEnum.RIVER_DISTANCE.getValue(), false);
+        Optional<RiverDistanceRequirement> matchedRule = rules.stream()
+            .filter(RiverDistanceRequirement.class::isInstance)
+            .map(RiverDistanceRequirement.class::cast)
             .findFirst();
-
         if (matchedRule.isPresent()) {
-            MdmsFeatureRule rule = matchedRule.get();
+        	RiverDistanceRequirement rule = matchedRule.get();
             rDminDistanceFromProtectionWall = rule.getrDminDistanceFromProtectionWall();
             rDminDistanceFromEmbankment = rule.getrDminDistanceFromEmbankment();
             rDminDistanceFromMainRiverEdge = rule.getrDminDistanceFromMainRiverEdge();

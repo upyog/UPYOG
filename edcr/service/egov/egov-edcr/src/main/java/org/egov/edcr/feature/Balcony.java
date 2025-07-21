@@ -58,16 +58,14 @@ import java.util.Optional;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.egov.common.constants.MdmsFeatureConstants;
+import org.egov.common.entity.edcr.BalconyRequirement;
 import org.egov.common.entity.edcr.Block;
+import org.egov.common.entity.edcr.FeatureEnum;
 import org.egov.common.entity.edcr.Floor;
-import org.egov.common.entity.edcr.MdmsFeatureRule;
 import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.Result;
-import org.egov.common.entity.edcr.RuleKey;
 import org.egov.common.entity.edcr.ScrutinyDetail;
-import org.egov.edcr.constants.EdcrRulesMdmsConstants;
-import org.egov.edcr.service.CacheManagerMdms;
-import org.egov.edcr.service.FetchEdcrRulesMdms;
+import org.egov.edcr.service.MDMSCacheManager;
 import org.egov.edcr.utility.DcrConstants;
 import org.egov.edcr.utility.Util;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -84,7 +82,7 @@ public class Balcony extends FeatureProcess {
 	BigDecimal balconyValue;
 	
 	@Autowired
-	CacheManagerMdms cache;
+	MDMSCacheManager cache;
 
 	@Override
 	public Plan validate(Plan plan) {
@@ -181,16 +179,31 @@ public class Balcony extends FeatureProcess {
 	            : widths.stream().reduce(BigDecimal::min).get();
 	    minWidth = minWidth.setScale(DcrConstants.DECIMALDIGITS_MEASUREMENTS, DcrConstants.ROUNDMODE_MEASUREMENTS);
 
-	    List<Object> rules = cache.getFeatureRules(plan, MdmsFeatureConstants.BALCONY, false);
-	    Optional<MdmsFeatureRule> matchedRule = rules.stream()
-	            .map(obj -> (MdmsFeatureRule) obj)
-	            .findFirst();
+//	    List<Object> rules = cache.getFeatureRules(plan, MdmsFeatureConstants.BALCONY, false);
+//	    Optional<MdmsFeatureRule> matchedRule = rules.stream()
+//	            .map(obj -> (MdmsFeatureRule) obj)
+//	            .findFirst();
+	    
+	    List<Object> rules = cache.getFeatureRules(plan, FeatureEnum.BALCONY.getValue(), false);
+        Optional<BalconyRequirement> matchedRule = rules.stream()
+            .filter(BalconyRequirement.class::isInstance)
+            .map(BalconyRequirement.class::cast)
+            .findFirst();
 
 	    if (matchedRule.isPresent()) {
 	        balconyValue = matchedRule.get().getPermissible();
 	    } else {
 	        balconyValue = BigDecimal.ZERO;
 	    }
+	    
+//	    List<BalconyRule> rules = cache.getFeatureRules(plan, MdmsFeatureConstants.BALCONY, false, BalconyRule.class);
+//
+//	    BigDecimal balconyValue = rules.stream()
+//	        .findFirst()
+//	        .map(BalconyRule::getPermissible)
+//	        .orElse(BigDecimal.ZERO);
+//
+
 
 	    boolean isAccepted = minWidth.compareTo(balconyValue.setScale(DcrConstants.DECIMALDIGITS_MEASUREMENTS,
 	            DcrConstants.ROUNDMODE_MEASUREMENTS)) >= 0;

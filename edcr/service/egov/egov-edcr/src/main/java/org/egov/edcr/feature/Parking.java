@@ -64,6 +64,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.egov.common.constants.MdmsFeatureConstants;
 import org.egov.common.entity.edcr.Block;
+import org.egov.common.entity.edcr.FeatureEnum;
 import org.egov.common.entity.edcr.Floor;
 import org.egov.common.entity.edcr.MdmsFeatureRule;
 import org.egov.common.entity.edcr.Measurement;
@@ -72,12 +73,13 @@ import org.egov.common.entity.edcr.OccupancyType;
 import org.egov.common.entity.edcr.OccupancyTypeHelper;
 import org.egov.common.entity.edcr.ParkingDetails;
 import org.egov.common.entity.edcr.ParkingHelper;
+import org.egov.common.entity.edcr.ParkingRequirement;
 import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.Result;
-import org.egov.common.entity.edcr.RuleKey;
+import org.egov.common.entity.edcr.FeatureRuleKey;
 import org.egov.common.entity.edcr.ScrutinyDetail;
 import org.egov.edcr.constants.EdcrRulesMdmsConstants;
-import org.egov.edcr.service.CacheManagerMdms;
+import org.egov.edcr.service.MDMSCacheManager;
 import org.egov.edcr.service.FetchEdcrRulesMdms;
 import org.egov.edcr.utility.DcrConstants;
 import org.egov.edcr.utility.Util;
@@ -145,7 +147,7 @@ public class Parking extends FeatureProcess {
     private static final String PARKING_AREA_DIM = "1.5 M x 2 M";
 
     @Autowired
-   	CacheManagerMdms cache;
+   	MDMSCacheManager cache;
 
     @Override
     public Plan validate(Plan pl) {
@@ -352,15 +354,13 @@ public class Parking extends FeatureProcess {
     }
 
     private ParkingRuleResult fetchApplicableRule(Plan pl, BigDecimal plotArea) {
-        List<Object> rules = cache.getFeatureRules(pl, MdmsFeatureConstants.PARKING, true);
-        Optional<MdmsFeatureRule> matched = rules.stream()
-                .map(obj -> (MdmsFeatureRule) obj)
-                .filter(rule -> plotArea.compareTo(rule.getFromPlotArea()) >= 0
-                        && plotArea.compareTo(rule.getToPlotArea()) < 0)
-                .findFirst();
-
-        if (matched.isPresent()) {
-            MdmsFeatureRule rule = matched.get();
+    	List<Object> rules = cache.getFeatureRules(pl, FeatureEnum.PARKING.getValue(), false);
+        Optional<ParkingRequirement> matchedRule = rules.stream()
+            .filter(ParkingRequirement.class::isInstance)
+            .map(ParkingRequirement.class::cast)
+            .findFirst();
+        if (matchedRule.isPresent()) {
+        	ParkingRequirement rule = matchedRule.get();
             return new ParkingRuleResult(rule.getNoOfParking().doubleValue(), rule.getPermissible().doubleValue());
         }
         return new ParkingRuleResult(0d, 0d);

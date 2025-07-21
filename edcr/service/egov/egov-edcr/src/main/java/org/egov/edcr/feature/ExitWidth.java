@@ -64,20 +64,18 @@ import java.util.TreeSet;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.egov.common.constants.MdmsFeatureConstants;
 import org.egov.common.entity.dcr.helper.OccupancyHelperDetail;
 import org.egov.common.entity.edcr.Block;
+import org.egov.common.entity.edcr.ExitWidthRequirement;
+import org.egov.common.entity.edcr.FeatureEnum;
 import org.egov.common.entity.edcr.Floor;
-import org.egov.common.entity.edcr.MdmsFeatureRule;
 import org.egov.common.entity.edcr.Occupancy;
 import org.egov.common.entity.edcr.OccupancyTypeHelper;
 import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.Result;
-import org.egov.common.entity.edcr.RuleKey;
 import org.egov.common.entity.edcr.ScrutinyDetail;
 import org.egov.edcr.constants.DxfFileConstants;
-import org.egov.edcr.constants.EdcrRulesMdmsConstants;
-import org.egov.edcr.service.CacheManagerMdms;
+import org.egov.edcr.service.MDMSCacheManager;
 import org.egov.edcr.service.FetchEdcrRulesMdms;
 import org.egov.edcr.service.ProcessHelper;
 import org.egov.edcr.utility.DcrConstants;
@@ -135,7 +133,7 @@ public class ExitWidth extends FeatureProcess {
     FetchEdcrRulesMdms fetchEdcrRulesMdms;
     
     @Autowired
-	CacheManagerMdms cache;
+	MDMSCacheManager cache;
 
 	/**
 	 * Processes the given plan to validate exit width dimensions. Fetches
@@ -190,12 +188,13 @@ public class ExitWidth extends FeatureProcess {
 		// defined range.
 		// If a matching rule is found, proceed with its processing.
 
-		List<Object> rules = cache.getFeatureRules(pl, MdmsFeatureConstants.EXIT_WIDTH, false);
-
-		Optional<MdmsFeatureRule> matchedRule = rules.stream().map(obj -> (MdmsFeatureRule) obj).findFirst();
-
+		List<Object> rules = cache.getFeatureRules(pl, FeatureEnum.EXIT_WIDTH.getValue(), false);
+        Optional<ExitWidthRequirement> matchedRule = rules.stream()
+            .filter(ExitWidthRequirement.class::isInstance)
+            .map(ExitWidthRequirement.class::cast)
+            .findFirst();
 		if (matchedRule.isPresent()) {
-			MdmsFeatureRule mdmsRule = matchedRule.get();
+			ExitWidthRequirement mdmsRule = matchedRule.get();
 			exitWidthOccupancyTypeHandlerVal = mdmsRule.getExitWidthOccupancyTypeHandlerVal();
 			exitWidthNotOccupancyTypeHandlerVal = mdmsRule.getExitWidthNotOccupancyTypeHandlerVal();
 			exitWidth_A_occupantLoadDivisonFactor = mdmsRule.getExitWidth_A_occupantLoadDivisonFactor();

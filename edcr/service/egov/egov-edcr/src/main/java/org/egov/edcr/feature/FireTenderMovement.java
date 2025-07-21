@@ -58,16 +58,13 @@ import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.egov.common.constants.MdmsFeatureConstants;
 import org.egov.common.entity.edcr.Block;
-import org.egov.common.entity.edcr.MdmsFeatureRule;
+import org.egov.common.entity.edcr.FeatureEnum;
+import org.egov.common.entity.edcr.FireTenderMovementRequirement;
 import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.Result;
-import org.egov.common.entity.edcr.RuleKey;
 import org.egov.common.entity.edcr.ScrutinyDetail;
-import org.egov.edcr.constants.EdcrRulesMdmsConstants;
-import org.egov.edcr.service.CacheManagerMdms;
-import org.egov.edcr.service.FetchEdcrRulesMdms;
+import org.egov.edcr.service.MDMSCacheManager;
 import org.egov.edcr.utility.DcrConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -82,7 +79,7 @@ public class FireTenderMovement extends FeatureProcess {
     private static final String RULE_36_3 = "36-3";
     
     @Autowired
-	CacheManagerMdms cache;
+	MDMSCacheManager cache;
 
     /**
      * Validates the given plan object.
@@ -110,14 +107,17 @@ public class FireTenderMovement extends FeatureProcess {
 		HashMap<String, String> errors = new HashMap<>();
 
 		// Fetch permissible values from rules
-		List<Object> rules = cache.getFeatureRules(plan, MdmsFeatureConstants.FIRE_TENDER_MOVEMENT, false);
-		Optional<MdmsFeatureRule> matchedRule = rules.stream().map(obj -> (MdmsFeatureRule) obj).findFirst();
+		 List<Object> rules = cache.getFeatureRules(plan, FeatureEnum.FIRE_TENDER_MOVEMENT.getValue(), false);
+	        Optional<FireTenderMovementRequirement> matchedRule = rules.stream()
+	            .filter(FireTenderMovementRequirement.class::isInstance)
+	            .map(FireTenderMovementRequirement.class::cast)
+	            .findFirst();
 
 		BigDecimal fireTenderValueOne = BigDecimal.ZERO;
 		BigDecimal fireTenderValueTwo = BigDecimal.ZERO;
 
 		if (matchedRule.isPresent()) {
-			MdmsFeatureRule rule = matchedRule.get();
+			FireTenderMovementRequirement rule = matchedRule.get();
 			fireTenderValueOne = rule.getFireTenderMovementValueOne();
 			fireTenderValueTwo = rule.getFireTenderMovementValueTwo();
 		}
