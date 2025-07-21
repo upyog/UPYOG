@@ -7,6 +7,7 @@ RUN apk add --no-cache curl && \
     tar -xJ -C /usr/local --strip-components=1 --no-same-owner && \
     node -v && npm -v
 
+
 # Update packages and install Git (ensure git > 2.30.0)
 RUN apk update && apk upgrade && \
     apk add --no-cache git>2.30.0
