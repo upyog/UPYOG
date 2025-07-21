@@ -83,16 +83,23 @@ public class UserService{
                 }
                 if (owner.getUuid() == null) {
                     addUserDefaultFields(tradeLicense.getTenantId(), role, owner, businessService);
-                    //  UserDetailResponse userDetailResponse = userExists(owner,requestInfo);
-                    StringBuilder uri = new StringBuilder(config.getUserHost())
-                            .append(config.getUserContextPath())
-                            .append(config.getUserCreateEndpoint());
-                    setUserName(owner,businessService);
+//                   UserDetailResponse userDetailResponse = userExists(owner,requestInfo);
+                     UserDetailResponse userDetailResponse = searchByMobileNumber(owner.getMobileNumber(), getStateLevelTenant(tradeLicense.getTenantId()));
+//                     if(!userDetailResponse.getUser().isEmpty()) {
+//                    	 // case should not arise if arises code needs to be written
+//                     }
+                     if(userDetailResponse.getUser().isEmpty()) {
+                    	 // case should not arise
+                    	 StringBuilder uri = new StringBuilder(config.getUserHost())
+                                 .append(config.getUserContextPath())
+                                 .append(config.getUserCreateEndpoint());
+                         setUserName(owner,businessService);
 
-                    UserDetailResponse userDetailResponse = userCall(new CreateUserRequest(requestInfo, owner), uri);
-                    if (userDetailResponse.getUser().get(0).getUuid() == null) {
-                        throw new CustomException("INVALID USER RESPONSE", "The user created has uuid as null");
-                    }
+                          userDetailResponse = userCall(new CreateUserRequest(requestInfo, owner), uri);
+                         if (userDetailResponse.getUser().get(0).getUuid() == null) {
+                             throw new CustomException("INVALID USER RESPONSE", "The user created has uuid as null");
+                         }
+                     }
                     log.info("owner created --> " + userDetailResponse.getUser().get(0).getUuid());
                     setOwnerFields(owner, userDetailResponse, requestInfo);
                 }
@@ -401,6 +408,17 @@ public class UserService{
         UserSearchRequest userSearchRequest = new UserSearchRequest();
         userSearchRequest.setUserType("CITIZEN");
         userSearchRequest.setUserName(userName);
+        userSearchRequest.setTenantId(tenantId);
+        StringBuilder uri = new StringBuilder(config.getUserHost()).append(config.getUserSearchEndpoint());
+        return userCall(userSearchRequest,uri);
+
+    }
+    
+    private UserDetailResponse searchByMobileNumber(String userName,String tenantId){
+        UserSearchRequest userSearchRequest = new UserSearchRequest();
+        userSearchRequest.setUserType("CITIZEN");
+//        userSearchRequest.setUserName(userName);
+        userSearchRequest.setMobileNumber(userName);
         userSearchRequest.setTenantId(tenantId);
         StringBuilder uri = new StringBuilder(config.getUserHost()).append(config.getUserSearchEndpoint());
         return userCall(userSearchRequest,uri);
