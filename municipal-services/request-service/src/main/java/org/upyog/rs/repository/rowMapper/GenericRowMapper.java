@@ -13,6 +13,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.jdbc.core.ResultSetExtractor;
+import org.upyog.rs.web.models.Address;
+import org.upyog.rs.web.models.ApplicantDetail;
 import org.upyog.rs.web.models.AuditDetails;
 import org.upyog.rs.web.models.mobileToilet.MobileToiletBookingDetail;
 import org.upyog.rs.web.models.waterTanker.WaterTankerBookingDetail;
@@ -89,6 +91,23 @@ public class GenericRowMapper<T> implements ResultSetExtractor<List<T>> {
                     // Audit Details
                     AuditDetails auditDetails = extractAuditDetails(rs);
                     bookingDetail.setAuditDetails(auditDetails);
+                    
+                    /*
+                     * Extract applicant and address details only when isUserProfileEnabled=false.
+                     * When user profile is disabled, booking needs complete applicant and address info
+                     * from request payload since user service integration is not available.
+                     */
+                    // Extract applicant and address details if available
+                    ApplicantDetail applicantDetail = extractApplicantDetails(rs);
+                    if (applicantDetail != null) {
+                        bookingDetail.setApplicantDetail(applicantDetail);
+                        bookingDetail.getApplicantDetail().setAuditDetails(auditDetails);
+                    }
+                    
+                    Address address = extractAddressDetails(rs);
+                    if (address != null) {
+                        bookingDetail.setAddress(address);
+                    }
                 }
                 
                 if (instance instanceof MobileToiletBookingDetail) {
@@ -96,6 +115,23 @@ public class GenericRowMapper<T> implements ResultSetExtractor<List<T>> {
                     // Audit Details
                     AuditDetails auditDetails = extractAuditDetails(rs);
                     bookingDetail.setAuditDetails(auditDetails);
+                    
+                    /*
+                     * Extract applicant and address details only when isUserProfileEnabled=false.
+                     * When user profile is disabled, booking needs complete applicant and address info
+                     * from request payload since user service integration is not available.
+                     */
+                    // Extract applicant and address details if available
+                    ApplicantDetail applicantDetail = extractApplicantDetails(rs);
+                    if (applicantDetail != null) {
+                        bookingDetail.setApplicantDetail(applicantDetail);
+                        bookingDetail.getApplicantDetail().setAuditDetails(auditDetails);
+                    }
+                    
+                    Address address = extractAddressDetails(rs);
+                    if (address != null) {
+                        bookingDetail.setAddress(address);
+                    }
                 }
                 results.add(instance);
             }
@@ -146,6 +182,62 @@ public class GenericRowMapper<T> implements ResultSetExtractor<List<T>> {
         auditDetails.setLastModifiedBy(rs.getString("lastmodifiedby"));
         auditDetails.setLastModifiedTime(rs.getLong("lastmodifiedtime"));
         return auditDetails;
+    }
+    
+    /**
+     * Extracts applicant details from the ResultSet.
+     * Returns null if no applicant details are available.
+     *
+     * @param rs ResultSet containing applicant details
+     * @return ApplicantDetail object or null if not available
+     */
+    private ApplicantDetail extractApplicantDetails(ResultSet rs) throws SQLException {
+        try {
+            String applicantId = rs.getString("applicant_id");
+            if (applicantId == null) {
+                return null; // No applicant details available
+            }
+            
+            ApplicantDetail applicantDetail = new ApplicantDetail();
+            applicantDetail.setApplicantId(applicantId);
+            applicantDetail.setName(rs.getString("name"));
+            applicantDetail.setMobileNumber(rs.getString("mobile_number"));
+            applicantDetail.setEmailId(rs.getString("email_id"));
+            applicantDetail.setBookingId(rs.getString("booking_id"));
+            applicantDetail.setAlternateNumber(rs.getString("alternate_number"));
+            return applicantDetail;
+        } catch (SQLException e) {
+            // Column not found, return null
+            return null;
+        }
+    }
+    
+    /**
+     * Extracts address details from the ResultSet.
+     * Returns null if no address details are available.
+     *
+     * @param rs ResultSet containing address details
+     * @return Address object or null if not available
+     */
+    private Address extractAddressDetails(ResultSet rs) throws SQLException {
+        try {
+            Address address = new Address();
+            address.setApplicantId(rs.getString("applicant_id"));
+            address.setHouseNo(rs.getString("house_no"));
+            address.setAddressLine1(rs.getString("address_line_1"));
+            address.setAddressLine2(rs.getString("address_line_2"));
+            address.setStreetName(rs.getString("street_name"));
+            address.setLandmark(rs.getString("landmark"));
+            address.setCity(rs.getString("city"));
+            address.setCityCode(rs.getString("city_code"));
+            address.setLocality(rs.getString("locality"));
+            address.setLocalityCode(rs.getString("locality_code"));
+            address.setPincode(rs.getString("pincode"));
+            return address;
+        } catch (SQLException e) {
+            // Column not found, return null
+            return null;
+        }
     }
 
 

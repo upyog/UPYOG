@@ -57,6 +57,12 @@ public class RequestServiceConfiguration {
 	@Value("${persister.create.water-tanker.topic}")
 	private String waterTankerApplicationSaveTopic;
 
+	@Value("${persister.create.water-tanker.with.profile.topic}")
+	private String waterTankerApplicationWithProfileSaveTopic;
+
+	@Value("${persister.create.mobile-toilet.with.profile.topic}")
+	private String mobileToiletApplicationWithProfileSaveTopic;
+
 	// Kafka topics for saving Mobile Toilet data
 	@Value("${persister.create.mobile-toilet.topic}")
 	private String mobileToiletApplicationSaveTopic;
@@ -216,6 +222,9 @@ public class RequestServiceConfiguration {
 
 	@Value("${rs.module.name}")
 	private String moduleName;
+
+	@Value("${isUserProfileEnabled}")
+	private Boolean isUserProfileEnabled;
 
 	@Value("${rs.mt.module.name}")
 	private String mtModuleName;
