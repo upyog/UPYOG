@@ -28,7 +28,7 @@ const NewAsset = ({ t, config, onSelect, formData }) => {
   const stateTenantId = Digit.ULBService.getStateId();
 
   //  This call with tenantId (Get city-level data)
-  const cityResponseObject = Digit.Hooks.useCustomMDMSV2(tenantId, "ASSET", [{ name: "AssetParentCategoryFields" }], {
+  const cityResponseObject = Digit.Hooks.useEnabledMDMS(tenantId, "ASSET", [{ name: "AssetParentCategoryFields" }], {
     select: (data) => {
       const formattedData = data?.["ASSET"]?.["AssetParentCategoryFields"];
       return formattedData;
@@ -36,7 +36,7 @@ const NewAsset = ({ t, config, onSelect, formData }) => {
   });
 
   // This call with stateTenantId (Get state-level data)
-  const stateResponseObject = Digit.Hooks.useCustomMDMSV2(stateTenantId, "ASSET", [{ name: "AssetParentCategoryFields" }], {
+  const stateResponseObject = Digit.Hooks.useEnabledMDMS(stateTenantId, "ASSET", [{ name: "AssetParentCategoryFields" }], {
     select: (data) => {
       const formattedData = data?.["ASSET"]?.["AssetParentCategoryFields"];
       return formattedData;
@@ -181,7 +181,7 @@ useEffect(() => {
   //Dropdown get data form masters
   const dropDownData = (masterName) => {
     const trimmedName = masterName ? masterName.trim() : "";
-    const { data: masterDropdown } = Digit.Hooks.useCustomMDMSV2(Digit.ULBService.getStateId(), "ASSET", [{ name: trimmedName }], {
+    const { data: masterDropdown } = Digit.Hooks.useEnabledMDMS(Digit.ULBService.getStateId(), "ASSET", [{ name: trimmedName }], {
       select: (data) => {
         const formattedData = data?.["ASSET"]?.[trimmedName];
         return formattedData;
