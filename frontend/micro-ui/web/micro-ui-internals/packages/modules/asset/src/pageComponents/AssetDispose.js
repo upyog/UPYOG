@@ -102,7 +102,7 @@ const OwnerForm = (_props) => {
     const [applicationData, setApplicationData] = useState({});
     const { data: applicationDetails } = Digit.Hooks.asset.useAssetApplicationDetail(t, tenantId, applicationNo);
 
-    const { data: assetDisposalMDMS } = Digit.Hooks.useCustomMDMSV2(Digit.ULBService.getStateId(), "ASSET", [{ name: "AssetDisposalType" }], {
+    const { data: assetDisposalMDMS } = Digit.Hooks.useEnabledMDMS(Digit.ULBService.getStateId(), "ASSET", [{ name: "AssetDisposalType" }], {
         select: (data) => {
             const formattedData = data?.["ASSET"]?.["AssetDisposalType"];
             const activeData = formattedData?.filter((item) => item.active === true);

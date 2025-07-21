@@ -297,7 +297,7 @@ public class UserService {
 				.landmark(addressV2.getLandmark())
 				.houseNo(addressV2.getHouseNumber())
 				.locality(addressV2.getLocality())
-				.addressId(addressV2.getId())
+				.addressId(addressV2.getId().toString())
 				.addressType(addressV2.getType())
 				.applicantId(applicantUuid)
 				.build();

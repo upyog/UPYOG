@@ -37,7 +37,7 @@ public class NotificationConsumer {
      */
 
     @KafkaListener(topics = {
-            "${persister.update.tree-pruning.topic}", "${persister.create.tree-pruning.topic}"
+            "${persister.update.tree-pruning.topic}", "${persister.create.tree-pruning.topic}, ${persister.create.tree-pruning.with.profile.topic}"
     })
     public void listen(final HashMap<String, Object> record, @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
         Object request = null;
