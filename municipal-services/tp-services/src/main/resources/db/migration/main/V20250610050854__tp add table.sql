@@ -2,7 +2,7 @@ CREATE TABLE IF NOT EXISTS upyog_rs_tree_pruning_booking_detail (
     booking_id VARCHAR(64) PRIMARY KEY,
     booking_no VARCHAR(30) UNIQUE,
     tenant_id VARCHAR(64) NOT NULL,
-    applicant_uuid VARCHAR(64) NOT NULL,
+    applicant_uuid VARCHAR(64),
     reason_for_pruning VARCHAR(255) NOT NULL,
     latitude NUMERIC(10, 8), -- e.g., 12.971598
     longitude NUMERIC(11, 8), -- e.g., 77.594566
@@ -24,7 +24,7 @@ CREATE TABLE IF NOT EXISTS upyog_rs_tree_pruning_booking_detail_audit (
     booking_id VARCHAR(64),
     booking_no VARCHAR(30),
     tenant_id VARCHAR(64) NOT NULL,
-    applicant_uuid VARCHAR(64) NOT NULL,
+    applicant_uuid VARCHAR(64),
     reason_for_pruning VARCHAR(255) NOT NULL,
     latitude NUMERIC(10, 8), -- e.g., 12.971598
     longitude NUMERIC(11, 8), -- e.g., 77.594566
