@@ -3,7 +3,7 @@ import ReactDOM from "react-dom";
 
 import { initLibraries } from "@upyog/digit-ui-libraries";
 import { PGRReducers } from "@demodigit/digit-ui-module-pgr";
-// import { TLModule, TLLinks } from "@upyog/digit-ui-module-tl";
+// import { TLModule, TLLinks } from "@demodigit/digit-ui-module-tl";
 import { initPGRComponents } from "@demodigit/digit-ui-module-pgr";
 import { initDSSComponents } from "@demodigit/digit-ui-module-dss";
 // import { initReportsComponents } from "@upyog/digit-ui-module-reports";
@@ -14,13 +14,13 @@ import { initCommonPTComponents } from "@demodigit/digit-ui-module-commonpt";
 import { HRMSModule } from "@demodigit/digit-ui-module-hrms";
 import { initHRMSComponents } from "@demodigit/digit-ui-module-hrms";
 import { PTComponents} from "@demodigit/digit-ui-module-pt";
-import { MCollectModule, MCollectLinks, initMCollectComponents } from "@upyog/digit-ui-module-mcollect";
-import { initFSMComponents } from "@upyog/digit-ui-module-fsm";
+import { MCollectModule, MCollectLinks, initMCollectComponents } from "@demodigit/digit-ui-module-mcollect";
+import { initFSMComponents } from "@demodigit/digit-ui-module-fsm";
 import {
   initTLComponents,
-} from "@upyog/digit-ui-module-tl";
-import { initOBPSComponents } from "@upyog/digit-ui-module-obps";
-import {initNOCComponents} from "@upyog/digit-ui-module-noc"
+} from "@demodigit/digit-ui-module-tl";
+import { initOBPSComponents } from "@demodigit/digit-ui-module-obps";
+import {initNOCComponents} from "@demodigit/digit-ui-module-noc"
 // import {initCustomisationComponents} from "./customisations";
 
 // import { PGRModule, PGRLinks } from "@demodigit/digit-ui-module-pgr";

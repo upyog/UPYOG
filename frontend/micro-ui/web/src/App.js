@@ -4,9 +4,9 @@ import {
   initPGRComponents,
   PGRReducers,
 } from "@demodigit/digit-ui-module-pgr";
-import { initFSMComponents } from "@upyog/digit-ui-module-fsm";
+import { initFSMComponents } from "@demodigit/digit-ui-module-fsm";
 import { PTComponents } from "@demodigit/digit-ui-module-pt";
-import { MCollectModule, MCollectLinks, initMCollectComponents } from "@upyog/digit-ui-module-mcollect";
+import { MCollectModule, MCollectLinks, initMCollectComponents } from "@demodigit/digit-ui-module-mcollect";
 import { initDSSComponents } from "@demodigit/digit-ui-module-dss";
 import {
   PaymentModule,
@@ -26,9 +26,9 @@ import {
 } from "@demodigit/digit-ui-module-hrms";
 import {
   initTLComponents,
-} from "@upyog/digit-ui-module-tl";
-import { initOBPSComponents } from "@upyog/digit-ui-module-obps";
-import { initNOCComponents } from "@upyog/digit-ui-module-noc";
+} from "@demodigit/digit-ui-module-tl";
+import { initOBPSComponents } from "@demodigit/digit-ui-module-obps";
+import { initNOCComponents } from "@demodigit/digit-ui-module-noc";
 
 
 
