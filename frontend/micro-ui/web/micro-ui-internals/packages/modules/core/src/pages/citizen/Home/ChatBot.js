@@ -6,6 +6,7 @@ function ChatBot() {
   const [input, setInput] = useState("");
   const [langID,setLangID] = useState("en")
   const [accessToken,setAccessToken] = useState("NA")
+  const {uuid}=Digit.UserService.getUser()?.info;
   const toggleChatbot = () => {
     setIsOpen(!isOpen);
   };
@@ -21,7 +22,7 @@ function ChatBot() {
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ message: input, chatHistory: messages, lang_id: langID, accessToken: accessToken }),
+          body: JSON.stringify({ message: input, chatHistory: messages, lang_id: langID, accessToken: uuid }),
         });
         // console.log(body)
   
