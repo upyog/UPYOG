@@ -7,8 +7,10 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
 import org.egov.pt.models.DashboardDataSearch;
+import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
+@Component
 public class DashboardReportQueryBuilder {
 
 	public static final String TOTAL_PROPERTIES_REGISTERED = "select epp.propertyid from eg_pt_property epp join eg_pt_address epa on epp.id=epa.propertyid where 1=1";

@@ -12,10 +12,15 @@ import org.egov.common.contract.request.RequestInfo;
 import org.egov.pt.config.PropertyConfiguration;
 import org.egov.pt.models.DashboardData;
 import org.egov.pt.models.DashboardDataSearch;
+import org.egov.pt.models.DashboardReport;
+import org.egov.pt.models.Property;
 import org.egov.pt.models.Revenue;
+import org.egov.pt.models.ServiceWithProperties;
 import org.egov.pt.models.Services;
 import org.egov.pt.repository.DashboardDataRepository;
+import org.egov.pt.repository.DashboardReportRepository;
 import org.egov.pt.util.PropertyUtil;
+import org.egov.pt.web.contracts.DashboardRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -25,6 +30,8 @@ public class DashboardDataService {
 	
 	@Autowired
 	DashboardDataRepository dashboardDataRepository;
+	@Autowired
+	DashboardReportRepository dashboardReportRepository;
 	
 	@Autowired
 	PropertyUtil propertyutil;
@@ -94,6 +101,64 @@ public class DashboardDataService {
 		dashboardData.setRevenue(revenue);
 		dashboardDatas.add(dashboardData);
 		return dashboardDatas;
+	}
+	
+	
+	
+	public DashboardReport dashboardDatasWithProperties(DashboardRequest dashboardRequest)
+	{
+		List<ServiceWithProperties> service = null;
+		List<ServiceWithProperties> revenue = null;
+		List<DashboardData> dashboardDatas=new ArrayList<DashboardData>();
+		DashboardReport dashboardData=new DashboardReport();
+		List<Property> properities =null;
+		LocalDate currentDate = LocalDate.now();
+		String formattedDate = currentDate.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));
+		dashboardData.setState("MANIPUR");
+		dashboardData.setModule("PT");
+		if(!StringUtils.isEmpty(dashboardRequest.getDashboardDataSearch().getFromDate()) && !StringUtils.isEmpty(dashboardRequest.getDashboardDataSearch().getToDate()))
+		{
+			dashboardData.setFromdate(dashboardRequest.getDashboardDataSearch().getFromDate());
+			dashboardData.setTodate(dashboardRequest.getDashboardDataSearch().getToDate());
+		}
+		else
+		{
+			dashboardData.setFromdate("01-04-2025");
+			dashboardData.setTodate(formattedDate);
+		}
+		if(!StringUtils.isEmpty(dashboardRequest.getDashboardDataSearch().getTenantid()))
+		{
+			dashboardData.setUlb(dashboardRequest.getDashboardDataSearch().getTenantid());
+			RequestInfo requestInfo = new RequestInfo();
+			List<String> masterNames = Collections.singletonList("tenants");
+			Map<String, List<String>> regionName = propertyutil.getAttributeValues(config.getStateLevelTenantId(),
+					"tenant", masterNames,
+					"[?(@.city.districtTenantCode== '" + dashboardData.getUlb() + "')].city.name",
+					"$.MdmsRes.tenant", requestInfo);
+			dashboardData.setRegion(regionName.get("tenants").get(0));
+		}
+		else
+		{
+			dashboardData.setUlb("MN");
+			dashboardData.setRegion("MN");
+		}
+		if(!StringUtils.isEmpty(dashboardRequest.getDashboardDataSearch().getWard()))
+			dashboardData.setWard(dashboardRequest.getDashboardDataSearch().getWard());
+		else
+			dashboardData.setWard("MN");
+		
+		ServiceWithProperties propertiesRegistered = new ServiceWithProperties();
+		properities  = dashboardReportRepository.getTotalPropertyRegisteredCount(dashboardRequest);
+		propertiesRegistered.setTotal(properities.size());
+		propertiesRegistered.setType("totalPropertiesRegistered");
+		propertiesRegistered.setProperties(properities);
+		
+		
+		
+		dashboardData.setServices(service);
+		dashboardData.setRevenue(revenue);
+	
+		return dashboardData;
 	}
 
 }
