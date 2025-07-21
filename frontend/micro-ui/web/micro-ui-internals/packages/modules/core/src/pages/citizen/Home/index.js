@@ -482,7 +482,7 @@ const Home = () => {
               <div style={{ display: "flex", flexDirection: "row-reverse" }}>
 
 
-                <img src="https://i.postimg.cc/bNKLL8ZZ/PT-removebg-preview.png" style={{ maxWidth: "65%", height:"150px" }}></img>
+                <img src="https://i.postimg.cc/FRhbfH7L/Adobe-Express-file.png" style={{ maxWidth: "65%", height:"150px" }}></img>
               </div>
             </div>
           </div>
