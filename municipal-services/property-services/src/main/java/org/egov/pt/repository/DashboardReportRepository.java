@@ -20,7 +20,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.CollectionUtils;
-import org.springframework.util.StringUtils;
 
 @Repository
 public class DashboardReportRepository {
@@ -40,7 +39,7 @@ public class DashboardReportRepository {
 
 		List<String> propertyIdList = jdbcTemplate.query(
 		    query,
-		    (rs, rowNum) -> rs.getString("propertyid")  // or the correct column name
+		    (rs, rowNum) -> rs.getString("propertyid")  
 		);
 
 		Set<String> propertyIds = new HashSet<>(propertyIdList);
@@ -54,15 +53,15 @@ public class DashboardReportRepository {
 		
 	}
 	
-	public Map<String, BigInteger> getPropertiesPendingWithCount(DashboardDataSearch dashboardDataSearch) {
-	    String query = reportQueryBuilder.getTotalPropertyPendingWithQuery(dashboardDataSearch);
+	public Map<String, String> getPropertiesPendingWithCount(DashboardRequest dashboardRequest) {
+	    String query = reportQueryBuilder.getTotalPropertyPendingWithQuery(dashboardRequest.getDashboardDataSearch());
 
 	    return jdbcTemplate.query(query, rs -> {
-	        Map<String, BigInteger> resultMap = new HashMap<>();
+	        Map<String, String> resultMap = new HashMap<>();
 	        while (rs.next()) {
 	            String action = rs.getString("action_st");
-	            BigInteger count = rs.getBigDecimal("count").toBigInteger();
-	            resultMap.put(action, count);
+	            String propertyids = rs.getString("property_ids");
+	            resultMap.put(action, propertyids);
 	        }
 	        return resultMap;
 	    });

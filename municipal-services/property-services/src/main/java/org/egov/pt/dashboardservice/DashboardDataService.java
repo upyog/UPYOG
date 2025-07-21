@@ -4,9 +4,14 @@ import java.math.BigInteger;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.pt.config.PropertyConfiguration;
@@ -14,15 +19,18 @@ import org.egov.pt.models.DashboardData;
 import org.egov.pt.models.DashboardDataSearch;
 import org.egov.pt.models.DashboardReport;
 import org.egov.pt.models.Property;
+import org.egov.pt.models.PropertyCriteria;
 import org.egov.pt.models.Revenue;
 import org.egov.pt.models.ServiceWithProperties;
 import org.egov.pt.models.Services;
 import org.egov.pt.repository.DashboardDataRepository;
 import org.egov.pt.repository.DashboardReportRepository;
+import org.egov.pt.service.PropertyService;
 import org.egov.pt.util.PropertyUtil;
 import org.egov.pt.web.contracts.DashboardRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 @Service
@@ -30,8 +38,12 @@ public class DashboardDataService {
 	
 	@Autowired
 	DashboardDataRepository dashboardDataRepository;
+	
 	@Autowired
 	DashboardReportRepository dashboardReportRepository;
+	
+	@Autowired
+	PropertyService propertyService;
 	
 	@Autowired
 	PropertyUtil propertyutil;
@@ -107,11 +119,10 @@ public class DashboardDataService {
 	
 	public DashboardReport dashboardDatasWithProperties(DashboardRequest dashboardRequest)
 	{
-		List<ServiceWithProperties> service = null;
-		List<ServiceWithProperties> revenue = null;
-		List<DashboardData> dashboardDatas=new ArrayList<DashboardData>();
+		List<ServiceWithProperties> service = new ArrayList<ServiceWithProperties>();
+		List<ServiceWithProperties> revenue = new ArrayList<ServiceWithProperties>();
 		DashboardReport dashboardData=new DashboardReport();
-		List<Property> properities =null;
+		List<Property> properities =new ArrayList<Property>();
 		LocalDate currentDate = LocalDate.now();
 		String formattedDate = currentDate.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));
 		dashboardData.setState("MANIPUR");
@@ -153,7 +164,37 @@ public class DashboardDataService {
 		propertiesRegistered.setType("totalPropertiesRegistered");
 		propertiesRegistered.setProperties(properities);
 		
+		Map<String, String> pendingwithDV=new HashMap<String, String>();
+		pendingwithDV=dashboardReportRepository.getPropertiesPendingWithCount(dashboardRequest);
+		Set<String> propertyIds = new HashSet<>();
+		String propertyIdsPDV =pendingwithDV.getOrDefault("PENDINGWITHDOCVERIFIER", null);
+		if(!StringUtils.isEmpty(propertyIdsPDV))
+			propertyIds.addAll(
+				    Arrays.stream(propertyIdsPDV.split(","))
+				          .map(String::trim)
+				          .collect(Collectors.toSet()));
 		
+		PropertyCriteria criteria = new PropertyCriteria();
+		criteria.setPropertyIds(propertyIds);
+		ServiceWithProperties propertiesPWDV = new ServiceWithProperties();
+		if(!CollectionUtils.isEmpty(propertyIds))
+		{
+			properities=propertyService.searchProperty(criteria, dashboardRequest.getRequestInfo());
+			propertiesPWDV.setTotal(properities.size());
+			propertiesPWDV.setType("propertiesPendingWithDocVerifier");
+			propertiesPWDV.setProperties(properities);
+		}
+		else
+		{
+			propertiesPWDV.setTotal(0);
+			propertiesPWDV.setType("propertiesPendingWithDocVerifier");
+			propertiesPWDV.setProperties(null);
+		}
+			
+		
+		
+		service.add(propertiesRegistered);
+		service.add(propertiesPWDV);
 		
 		dashboardData.setServices(service);
 		dashboardData.setRevenue(revenue);

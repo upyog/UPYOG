@@ -24,6 +24,7 @@ import org.egov.pt.service.PropertyEncryptionService;
 import org.egov.pt.service.PropertyService;
 import org.egov.pt.util.ResponseInfoFactory;
 import org.egov.pt.validator.PropertyValidator;
+import org.egov.pt.web.contracts.DashboardReportResponse;
 import org.egov.pt.web.contracts.DashboardRequest;
 import org.egov.pt.web.contracts.DashboardResponse;
 import org.egov.pt.web.contracts.PropertyRequest;
@@ -229,13 +230,14 @@ public class PropertyController {
 	
 	
 	  @RequestMapping(value = "/_dashboardDataSearchProperties", method = RequestMethod.POST)
-	    public ResponseEntity<?> dashboardDataSearchProperties(@Valid @RequestBody DashboardRequest dashboardRequest) {
+	    public ResponseEntity<DashboardReportResponse> dashboardDataSearchProperties(@Valid @RequestBody DashboardRequest dashboardRequest) {
 	    	
 	    	DashboardReport dashboardDatas=dashboardDataService.dashboardDatasWithProperties(dashboardRequest);
-	    	//DashboardResponse dashboardResponse=DashboardResponse.builder().dashboardDatas(dashboardDatas).responseInfo(
-//	    		/	responseInfoFactory.createResponseInfoFromRequestInfo(dashboardRequest.getRequestInfo(), true)).build();
 	    	
-	    	return new ResponseEntity<>(dashboardDatas,HttpStatus.OK);
+	    	DashboardReportResponse dashboardReportResponse=DashboardReportResponse.builder().dashboardReport(dashboardDatas).
+	    			responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(dashboardRequest.getRequestInfo(), true)).build();
+	    	
+	    	return new ResponseEntity<>(dashboardReportResponse,HttpStatus.OK);
 	    }
 		 
 	
