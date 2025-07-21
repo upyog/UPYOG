@@ -6,7 +6,7 @@ function ChatBot() {
   const [input, setInput] = useState("");
   const [langID,setLangID] = useState("en")
   const [accessToken,setAccessToken] = useState("NA")
-  const {uuid}=Digit.UserService.getUser()?.info;
+  const {access_token}=Digit.UserService.getUser();
   const toggleChatbot = () => {
     setIsOpen(!isOpen);
   };
@@ -17,12 +17,12 @@ function ChatBot() {
       setInput("");
   
       try {
-        const response = await fetch('https://oprwrt-demo.ddns.net/chat', {
+        const response = await fetch('https://nmc-demo.ddns.net/chat', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ message: input, chatHistory: messages, lang_id: langID, accessToken: uuid }),
+          body: JSON.stringify({ message: input, chatHistory: messages, lang_id: langID, accessToken: access_token }),
         });
         // console.log(body)
   
