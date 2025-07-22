@@ -49,7 +49,7 @@ const PTCard = () => {
   const PT_CEMP = Digit.UserService.hasAccess(["PT_CEMP"]) || false;
   const propsForModuleCard = {
     Icon: <PropertyHouse />,
-    moduleName: t("ES_TITLE_PROPERTY_TAX11"),
+    moduleName: t("ES_TITLE_PROPERTY_TAX"),
     kpis: [
       {
         count: total?.totalCount,
