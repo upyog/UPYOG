@@ -14,6 +14,7 @@ import org.egov.pt.config.scheduler.DashboardDataPush;
 import org.egov.pt.dashboardservice.DashboardDataService;
 import org.egov.pt.models.DashboardData;
 import org.egov.pt.models.DashboardDataSearch;
+import org.egov.pt.models.DashboardReport;
 import org.egov.pt.models.Property;
 import org.egov.pt.models.PropertyCriteria;
 import org.egov.pt.models.oldProperty.OldPropertyCriteria;
@@ -23,6 +24,7 @@ import org.egov.pt.service.PropertyEncryptionService;
 import org.egov.pt.service.PropertyService;
 import org.egov.pt.util.ResponseInfoFactory;
 import org.egov.pt.validator.PropertyValidator;
+import org.egov.pt.web.contracts.DashboardReportResponse;
 import org.egov.pt.web.contracts.DashboardRequest;
 import org.egov.pt.web.contracts.DashboardResponse;
 import org.egov.pt.web.contracts.PropertyRequest;
@@ -225,5 +227,21 @@ public class PropertyController {
 
 		return new ResponseEntity<>(dashBoardIngestService.datapushFromAPi(), HttpStatus.OK);
 	}
+	
+	
+	  @RequestMapping(value = "/_dashboardDataSearchProperties", method = RequestMethod.POST)
+	    public ResponseEntity<DashboardReportResponse> dashboardDataSearchProperties(@Valid @RequestBody DashboardRequest dashboardRequest) {
+	    	
+	    	DashboardReport dashboardDatas=dashboardDataService.dashboardDatasWithProperties(dashboardRequest);
+	    	
+	    	DashboardReportResponse dashboardReportResponse=DashboardReportResponse.builder().dashboardReport(dashboardDatas).
+	    			responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(dashboardRequest.getRequestInfo(), true)).build();
+	    	
+	    	return new ResponseEntity<>(dashboardReportResponse,HttpStatus.OK);
+	    }
+		 
+	
+	
+	
 	 
 }
