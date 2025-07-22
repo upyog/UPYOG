@@ -139,12 +139,6 @@
 						}
 					},
 					{
-						"variable": "interest",
-						"value": {
-							"path": "$.interest"
-						}
-					},
-					{
 						"variable": "penalty",
 						"value": {
 							"path": "$.penalty"

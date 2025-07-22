@@ -44,4 +44,13 @@ public class PropertySchedulerController {
 //		return ResponseEntity.ok(service.reverseRebateAmount(requestInfoWrapper));
 	}
 
+	@PostMapping("/update-penalty-amount")
+	public ResponseEntity<?> updatePenaltyAmount(@RequestBody RequestInfoWrapper requestInfoWrapper) {
+
+		service.updatePenaltyAmount(requestInfoWrapper);
+
+		return ResponseEntity.ok("Penalty amount updated successfully!!!");
+//		return ResponseEntity.ok(service.updatePenaltyAmount(requestInfoWrapper)); 
+	}
+
 }

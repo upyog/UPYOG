@@ -126,5 +126,13 @@ public class Scheduler {
 		propertyService.reverseRebateAmount(requestInfo);
 		log.info("reverseRebateAmount CRON JOB Ends");
 	}
+	
+	@Scheduled(cron = "${cron.job.default.property.tracker.penalty.amount.updater}", zone = "IST")
+	public void updatePenaltyAmount() {
+		log.info("updatePenaltyAmount CRON JOB Starts");
+		RequestInfo requestInfo = requestInfoUtils.getSystemRequestInfo();
+		propertyService.updatePenaltyAmount(requestInfo);
+		log.info("updatePenaltyAmount CRON JOB Ends");
+	}
 
 }
