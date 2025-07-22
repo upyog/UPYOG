@@ -359,6 +359,7 @@ public class GarbageAccountRowMapper implements ResultSetExtractor<List<GarbageA
                 .name(rs.getString(prefix + "name"))
                 .mobileNumber(rs.getString(prefix + "mobile_number"))
                 .gender(rs.getString(prefix + "gender"))
+                .grbgApplicationNumber(rs.getString("sub_app_application_no"))
                 .emailId(rs.getString(prefix + "email_id"))
                 .isOwner(rs.getBoolean(prefix + "is_owner"))
                 .userUuid(rs.getString(prefix + "user_uuid"))

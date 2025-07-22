@@ -51,6 +51,12 @@ public class PropertyConfiguration {
     
     @Value("${persister.save.property.topic}")
     private String savePropertyTopic;
+    
+    @Value("${persister.save.billfailure.topic}")
+    private String saveBillFailureTopic;
+    
+    @Value("${persister.remove.billfailure.topic}")
+    private String removeBillFailureTopic;
 
     @Value("${persister.save.property.fuzzy.topic}")
     private String savePropertyFuzzyTopic;

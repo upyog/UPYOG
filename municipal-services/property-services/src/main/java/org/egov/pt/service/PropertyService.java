@@ -24,6 +24,7 @@ import org.egov.mdms.model.MdmsResponse;
 import org.egov.pt.config.PropertyConfiguration;
 import org.egov.pt.models.OwnerInfo;
 import org.egov.pt.models.Property;
+import org.egov.pt.models.PropertyBillFailure;
 import org.egov.pt.models.PropertyBookingDetail;
 import org.egov.pt.models.PropertyCriteria;
 import org.egov.pt.models.PropertySearchRequest;
@@ -31,6 +32,8 @@ import org.egov.pt.models.PropertySearchResponse;
 import org.egov.pt.models.PtTaxCalculatorTracker;
 import org.egov.pt.models.PtTaxCalculatorTrackerSearchCriteria;
 import org.egov.pt.models.bill.BillSearchCriteria;
+import org.egov.pt.models.bill.Demand;
+import org.egov.pt.models.bill.GenerateBillCriteria;
 import org.egov.pt.models.collection.Bill;
 import org.egov.pt.models.collection.BillDetail;
 import org.egov.pt.models.collection.BillResponse;
@@ -44,6 +47,7 @@ import org.egov.pt.models.user.UserSearchRequest;
 import org.egov.pt.models.workflow.BusinessServiceResponse;
 import org.egov.pt.models.workflow.State;
 import org.egov.pt.producer.PropertyProducer;
+import org.egov.pt.repository.DemandRepository;
 import org.egov.pt.repository.OwnersRepository;
 import org.egov.pt.repository.PropertyRepository;
 import org.egov.pt.util.EncryptionDecryptionUtil;
@@ -52,6 +56,7 @@ import org.egov.pt.util.PropertyUtil;
 import org.egov.pt.util.ResponseInfoFactory;
 import org.egov.pt.util.UnmaskingUtil;
 import org.egov.pt.validator.PropertyValidator;
+import org.egov.pt.web.contracts.GenrateArrearRequest;
 import org.egov.pt.web.contracts.PropertyRequest;
 import org.egov.pt.web.contracts.PropertyResponse;
 import org.egov.pt.web.contracts.PropertyStatusUpdateRequest;
@@ -139,6 +144,9 @@ public class PropertyService {
 	
 	@Autowired
 	private MDMSService mdmsService;
+	
+	@Autowired
+	private DemandRepository demandRepository;
 
 	/**
 	 * Enriches the Request and pushes to the Queue
@@ -1022,6 +1030,33 @@ public class PropertyService {
 	public Map<String, Object> checkMastersStatus(RequestInfoWrapper requestInfoWrapper, String UlbName) {
 		List<Map<String, Object>> result = repository.getPropertyMastersStatus(UlbName);
 		return result.get(0);
+	}
+	
+	public void generateArrear(GenrateArrearRequest genrateArrearRequest) {
+		
+		List<Demand> savedDemands = demandRepository.saveDemand(genrateArrearRequest.getRequestInfo(), genrateArrearRequest.getDemands());
+		
+		if (CollectionUtils.isEmpty(savedDemands)) {
+			throw new CustomException("INVALID_CONSUMERCODE",
+					"Bill not generated due to no Demand found for the given consumerCode");
+		}
+		
+		GenerateBillCriteria billCriteria = GenerateBillCriteria.builder().tenantId(genrateArrearRequest.getDemands().get(0).getTenantId())
+				.businessService(PTConstants.MODULE_PROPERTY).demandId(savedDemands.get(0).getId()).consumerCode(genrateArrearRequest.getDemands().get(0).getConsumerCode()).build();
+
+		BillResponse billResponse = billService.generateBill(genrateArrearRequest.getRequestInfo(), billCriteria);
+		
+		
+	
+
+	}
+	
+	public void saveToPtBillFailure(PropertyBillFailure propertyBillFailure) {
+		producer.push(config.getSaveBillFailureTopic(), propertyBillFailure);
+	}
+	
+	public void removePtBillFailure(PropertyBillFailure propertyBillFailure) {
+		producer.push(config.getRemoveBillFailureTopic(), propertyBillFailure);
 	}
 
 }

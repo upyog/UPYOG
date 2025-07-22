@@ -48,7 +48,10 @@ public class BillRepository {
         uri = uri.concat("?consumerCode=").concat(billCriteria.getConsumerCode());
         uri = uri.concat("&tenantId=").concat(billCriteria.getTenantId());
         uri = uri.concat("&businessService=").concat(billCriteria.getBusinessService());
-        uri = uri.concat("&mobileNumber=").concat(billCriteria.getMobileNumber());
+        if(billCriteria.getMobileNumber() != null)
+        	uri = uri.concat("&mobileNumber=").concat(billCriteria.getMobileNumber());
+        if(billCriteria.getDemandId() != null)
+        	uri = uri.concat("&demandId=").concat(billCriteria.getDemandId());
         if(null !=billCriteria.getEmail()) {
             uri = uri.concat("&email=").concat(billCriteria.getEmail());
         }

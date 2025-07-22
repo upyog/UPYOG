@@ -3,20 +3,24 @@ package org.egov.pt.service;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.pt.models.collection.BillResponse;
 import org.egov.pt.config.PropertyConfiguration;
 import org.egov.pt.models.AuditDetails;
 import org.egov.pt.models.CalculateTaxRequest;
 import org.egov.pt.models.Institution;
 import org.egov.pt.models.OwnerInfo;
 import org.egov.pt.models.Property;
+import org.egov.pt.models.PropertyBillFailure;
 import org.egov.pt.models.PropertyCriteria;
 import org.egov.pt.models.PtTaxCalculatorTracker;
 import org.egov.pt.models.Unit;
@@ -414,6 +418,36 @@ public class EnrichmentService {
 
 		return PtTaxCalculatorTrackerRequest.builder().requestInfo(requestInfo)
 				.ptTaxCalculatorTracker(ptTaxCalculatorTracker).build();
+	}
+	
+	public PropertyBillFailure enrichPtBillFailure(Property property,CalculateTaxRequest generateBillRequest, BillResponse billResponse,Map<String, Set<String>> errorMap) {
+		SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+		ObjectMapper mapper = new ObjectMapper();
+		JsonNode response_payload = mapper.valueToTree(billResponse);
+		JsonNode request_payload = mapper.valueToTree(generateBillRequest);
+		JsonNode error_json = mapper.valueToTree(errorMap);
+		String failure_reason = null;
+		if(!CollectionUtils.isEmpty(errorMap)) 
+			failure_reason = "PROPERTY CONFIGURATION ISSUE";
+		else
+//			(billResponse == null) 
+			failure_reason = "ISSUE WITH BILLING SERVICE";
+		PropertyBillFailure ptBillFailure = PropertyBillFailure.builder()
+							.consumer_code(property.getPropertyId())
+							.tenant_id(property.getTenantId())
+							.from_date(null != generateBillRequest.getFromDate() ? dateFormat.format(generateBillRequest.getFromDate()): null)
+							.id(UUID.randomUUID())
+							.module_name("PROPERTY")
+							.failure_reason(failure_reason)
+							.error_json(error_json)
+							.request_payload(request_payload)
+							.response_payload(response_payload)
+							.status_code("400")
+							.created_time(new Date().getTime())
+							.last_modified_time(new Date().getTime())
+							.to_date(null != generateBillRequest.getToDate() ? dateFormat.format(generateBillRequest.getToDate()): null)
+							.year(generateBillRequest.getFinancialYear()).build();
+		return ptBillFailure;
 	}
 
 }

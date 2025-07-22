@@ -21,6 +21,7 @@ import org.egov.garbageservice.contract.bill.GenerateBillCriteria;
 import org.egov.garbageservice.model.GarbageAccount;
 import org.egov.garbageservice.model.GarbageAccountResponse;
 import org.egov.garbageservice.model.GenerateBillRequest;
+import org.egov.garbageservice.model.GrbgBillFailure;
 import org.egov.garbageservice.model.GrbgBillTracker;
 import org.egov.garbageservice.model.GrbgBillTrackerRequest;
 import org.egov.garbageservice.model.GrbgBillTrackerResponse;
@@ -82,13 +83,27 @@ public class GarbageAccountSchedulerService {
 						GrbgBillTracker grbgBillTracker = garbageAccountService
 								.saveToGarbageBillTracker(grbgBillTrackerRequest);
 						grbgBillTrackers.add(grbgBillTracker);
+						
+						//remove bill if failure exists
+						GrbgBillFailure grbgBillFailure	= garbageAccountService
+								.enrichGrbgBillFailure(garbageAccount, generateBillRequest,billResponse,false);
+						garbageAccountService.removeGarbageBillFailure(grbgBillFailure);
 
 						// triggerNotifications
 //						notificationService.triggerNotificationsGenerateBill(garbageAccount, billResponse.getBill().get(0),
 //								generateBillRequest.getRequestInfo(),grbgBillTracker);
 					}else {
+						GrbgBillFailure grbgBillFailure	= garbageAccountService
+								.enrichGrbgBillFailure(garbageAccount, generateBillRequest,billResponse,false);
+						garbageAccountService.saveToGarbageBillFailure(grbgBillFailure);
 						log.info("bill cant be generated {} {} {}",generateBillRequest,garbageAccount,billResponse);
 					}
+				}
+				else {
+					GrbgBillFailure grbgBillFailure	= garbageAccountService
+							.enrichGrbgBillFailure(garbageAccount, generateBillRequest,null,true);
+					garbageAccountService.saveToGarbageBillFailure(grbgBillFailure);
+					log.info("bill cant be generated {} {} {}",generateBillRequest,garbageAccount,null);
 				}
 			});
 		}
@@ -171,7 +186,12 @@ public class GarbageAccountSchedulerService {
 
 		if (null != garbageAccountResponse && !CollectionUtils.isEmpty(garbageAccountResponse.getGarbageAccounts())) {
 			garbageAccounts = garbageAccountResponse.getGarbageAccounts();
+			if(generateBillRequest.getGrbgApplicationNumbers() != null) {
+				if(!garbageAccountResponse.getGarbageAccounts().get(0).getChildGarbageAccounts().isEmpty())
+					garbageAccounts.addAll(garbageAccountResponse.getGarbageAccounts().get(0).getChildGarbageAccounts());
+			}
 		}
+		
 		if (!CollectionUtils.isEmpty(ulbNames)) {
 			garbageAccounts = garbageAccounts.stream()
 					.filter(garbageAccount -> !CollectionUtils.isEmpty(garbageAccount.getAddresses())
@@ -208,7 +228,8 @@ public class GarbageAccountSchedulerService {
 			GenerateBillCriteria billCriteria = GenerateBillCriteria.builder().tenantId(garbageAccount.getTenantId())
 					.businessService("GB")
 					.consumerCode(garbageAccount.getGrbgApplicationNumber())
-					.mobileNumber(garbageAccount.getMobileNumber())
+					.demandId(savedDemands.get(0).getId())
+//					.mobileNumber(garbageAccount.getMobileNumber())
 //					.email(garbageAccount.getEmailId())
 					.build();
 			BillResponse billResponse = billService.generateBill(generateBillRequest.getRequestInfo(), billCriteria);
