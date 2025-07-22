@@ -53,6 +53,7 @@ import org.egov.garbageservice.model.GarbageAccountResponse;
 import org.egov.garbageservice.model.GenerateBillRequest;
 import org.egov.garbageservice.model.GrbgAddress;
 import org.egov.garbageservice.model.GrbgApplication;
+import org.egov.garbageservice.model.GrbgBillFailure;
 import org.egov.garbageservice.model.GrbgBillTracker;
 import org.egov.garbageservice.model.GrbgBillTrackerRequest;
 import org.egov.garbageservice.model.GrbgBillTrackerSearchCriteria;
@@ -83,6 +84,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.extern.slf4j.Slf4j;
@@ -1873,10 +1876,43 @@ public class GarbageAccountService {
 		return GrbgBillTrackerRequest.builder().requestInfo(generateBillRequest.getRequestInfo())
 				.grbgBillTracker(grbgBillTracker).build();
 	}
+	
+	public GrbgBillFailure enrichGrbgBillFailure(GarbageAccount garbageAccount,
+			GenerateBillRequest generateBillRequest, BillResponse billResponse,Boolean isUserNull) {
+		SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+		ObjectMapper mapper = new ObjectMapper();
+		JsonNode response_payload = mapper.valueToTree(billResponse);
+		JsonNode request_payload = mapper.valueToTree(generateBillRequest);
+		String failure_reason = null;
+		if(isUserNull == true) 
+			failure_reason = "USER - UUID - NULL";
+		if(billResponse == null) 
+			failure_reason = "ISSUE IN BILLING SERVICE";
+		GrbgBillFailure grbgBillFailure = GrbgBillFailure.builder()
+							.consumer_code(garbageAccount.getGrbgApplicationNumber())
+							.tenant_id(garbageAccount.getTenantId())
+							.from_date(null != generateBillRequest.getFromDate() ? dateFormat.format(generateBillRequest.getFromDate()): null)
+							.id(UUID.randomUUID())
+							.module_name("GB")
+							.failure_reason(failure_reason)
+							.month(null != generateBillRequest.getMonth() ? generateBillRequest.getMonth().toUpperCase() : null)
+							.request_payload(request_payload)
+							.response_payload(response_payload)
+							.status_code("400")
+							.created_time(new Date().getTime())
+							.last_modified_time(new Date().getTime())
+							.to_date(null != generateBillRequest.getToDate() ? dateFormat.format(generateBillRequest.getToDate()): null)
+							.year(generateBillRequest.getYear()).build();
+		return grbgBillFailure;
+	}
 
 	public GrbgBillTracker saveToGarbageBillTracker(GrbgBillTrackerRequest grbgBillTrackerRequest) {
 
 		return garbageBillTrackerRepository.createTracker(grbgBillTrackerRequest.getGrbgBillTracker());
+	}
+	public GrbgBillFailure saveToGarbageBillFailure(GrbgBillFailure grbgBillFailureRequest) {
+
+		return garbageBillTrackerRepository.createBillFailure(grbgBillFailureRequest);
 	}
 
 	public List<GrbgBillTracker> getBillCalculatedGarbageAccounts(
@@ -2207,6 +2243,11 @@ public class GarbageAccountService {
 		}
 
 		return processInstanceResponse;
+	}
+	
+	public void removeGarbageBillFailure(GrbgBillFailure grbgBillFailureRequest) {
+
+		 garbageBillTrackerRepository.removeBillFailure(grbgBillFailureRequest);
 	}
 	
 }
