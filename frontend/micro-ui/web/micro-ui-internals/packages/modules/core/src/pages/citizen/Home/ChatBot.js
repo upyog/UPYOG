@@ -74,7 +74,7 @@ function ChatBot() {
       setMessages([
         {
           sender: "bot",
-          text: "Welcome to Drinking and Water Department"
+          text: "Welcome to Nashik Municipal Corporation"
           , lang_id: langID
         },
         {
@@ -154,7 +154,7 @@ function ChatBot() {
               alignItems: "center",
             }}
           >
-            <span>PRDAWD</span>
+            <span>NMC</span>
     
             <div style={{
               backgroundColor: "#0a97d5",
@@ -179,6 +179,7 @@ function ChatBot() {
             <select value={langID} onChange={handleDropdown}>
               <option value={"en"}>English</option>
               <option value={"hi"} >Hindi</option>
+              <option value={"mn"} >Marathi</option>
             </select>
             </div>
             <button

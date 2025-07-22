@@ -215,10 +215,10 @@ const SelectMobileNumber = ({ t, onSelect, showRegisterLink, mobileNumber, onMob
         <div style={{display:"flex", justifyContent:isMobile?"":"right", height:isMobile?"":"80%",paddingRight:isMobile?"":"50px", alignItems:isMobile?"center":"center",justifyContent:isMobile?"center":"",flexDirection:isMobile?"":"row-reverse"}}>
       <Card style={{width:isMobile?"":"25%",borderRadius:"5%",minWidth:"380px",padding:"20px 20px",minWidth:"420px"}}>
         <div style={{display:"flex",padding:"15px",justifyContent:"center"}}>
-          <div style={{width:"50%"}}>
+          <div style={{width:"90px"}}>
       <img className="city" src="https://i.postimg.cc/3x8jtRKJ/nashik-logo.png" alt="City Logo" />
       </div>
-      <div>
+      <div style={{display:"flex"}}>
     <span style={{ display: "flex", alignItems: "center", justifyContent: "space-between", width: "100%",letterSpacing:"1px" }}>
       <span style={{fontWeight:"bold", display:"flex", flexDirection:"column", marginLeft:"20px", color:"#0a97d5", fontSize:"20px"}} className="logoText">
       Nashik Municipal Corporation <span></span>

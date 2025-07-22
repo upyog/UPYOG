@@ -320,7 +320,7 @@ export const FormComposerNew = (props) => {
     }
   };
   return (
-    <div style={{width:isMobile?"":"100%"}}>    <div style={{width:isMobile?"":"370px",marginLeft:"5%"}}>
+    <div style={{width:isMobile?"":"100%"}}>    <div style={{display:"flex",justifyContent:"space-around"}}>
       <style>
         {
           `

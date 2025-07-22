@@ -160,7 +160,7 @@ console.log("modules",modules)
         islinkDataLoading={islinkDataLoading}
       />
 
-      <div className={`main center-container citizen-home-container mb-25`} style={{justifyContent:isMobile?"center":window.location.href.includes("register/name") || window.location.href.includes("login") || window.location.href.includes("select-location") || window.location.href.includes("select-language")?"center":"", paddingTop:"74px"}}>
+      <div className={`main center-container citizen-home-container mb-25`} style={{justifyContent:isMobile?"center":window.location.href.includes("register/name") || window.location.href.includes("login") || window.location.href.includes("select-location") || window.location.href.includes("select-language")?"center":"", paddingTop:"60px"}}>
         {hideSidebar ? null : (
           <div className="SideBarStatic" style={{marginBottom:"-40px",backgroundColor:"#0a97d5"}}>
             <StaticCitizenSideBar linkData={linkData} islinkDataLoading={islinkDataLoading} />

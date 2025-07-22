@@ -3,7 +3,7 @@ import { InfoBannerIcon } from "./svgindex";
 
 const CitizenInfoLabel = ({ info, text, style, textStyle, showInfo = true, className }) => {
   return (
-    <div className={`info-banner-wrap ${className ? className : ""}`} style={style}>
+    <div className={`info-banner-wrap ${className ? className : ""}`} style={{marginTop:"20px",maxWidth:"100%"}}>
       {showInfo && <div>
         <InfoBannerIcon />
         <h2>{info}</h2>
