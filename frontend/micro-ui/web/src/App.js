@@ -60,6 +60,7 @@ window.Digit.ComponentRegistryService.setupRegistry({
   MCollectModule,
   ASSETModule,
   ASSETLinks,
+  HRMSModule,
   ...ASSETComponents,
 });
 
@@ -72,6 +73,7 @@ initOBPSComponents();
 initNOCComponents();
 initWSComponents();
 initCommonPTComponents();
+initHRMSComponents();
 // initReportsComponents();
 // initCustomisationComponents();
 
