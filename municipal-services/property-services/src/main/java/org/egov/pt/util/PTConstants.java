@@ -486,11 +486,15 @@ public class PTConstants {
 	
 	public static final String MDMS_MASTER_DETAILS_PROPERTYREBATEDAYS = "PropertyReabateDays";
 	
+	public static final String MDMS_MASTER_DETAILS_PENALTYRATE = "PenaltyRate";
+	
 	public static final String MDMS_MASTER_DETAILS_PROPERTYTAXRATE = "PropertyTaxRate";
 
 	public static final String MDMS_MODULE_ACTIVE_FILTER = "[?(@.active == true)]";
 	
 	public static final String PROPERTY_TAX_HEAD_MASTER_CODE = "LCF.Property_Tax_Collection_Fee";
 	
+	public static final String PROPERTY_CONSTANT_REABATE = "REABATE";
+	public static final String PROPERTY_CONSTANT_PENALTY = "PENALTY";
 }
 

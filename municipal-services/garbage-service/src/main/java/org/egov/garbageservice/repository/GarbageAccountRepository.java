@@ -206,7 +206,7 @@ public class GarbageAccountRepository {
 		//generate search query
     	searchQuery = getSearchQueryByCriteria(searchQuery, searchCriteriaGarbageAccount, preparedStatementValues, garbageCriteriaMap);
         
-        log.debug("### search garbage account: "+searchQuery.toString());
+        log.info("### search garbage account: "+searchQuery.toString() + " {}",preparedStatementValues);
 
         List<GarbageAccount> garbageAccounts = jdbcTemplate.query(searchQuery.toString(), preparedStatementValues.toArray(), garbageAccountRowMapper);
 

@@ -335,7 +335,7 @@ public class PropertyRepository {
 				preparedStmtList);
 		if (!Objects.isNull(ptTaxCalculatorTrackerSearchCriteria.getStartDateTime())
 				&& !Objects.isNull(ptTaxCalculatorTrackerSearchCriteria.getEndDateTime())) {
-			query = queryBuilder.checkLastUpdatedTime(ptTaxCalculatorTrackerSearchCriteria, query, preparedStmtList);
+			query = queryBuilder.checkLastCreatedTime(ptTaxCalculatorTrackerSearchCriteria, query, preparedStmtList);
 		}
 		query = queryBuilder.getLimitAndOrderByUpdatedTimeDesc(ptTaxCalculatorTrackerSearchCriteria, query,
 				preparedStmtList);

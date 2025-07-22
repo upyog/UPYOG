@@ -767,6 +767,14 @@ public class PropertyQueryBuilder {
 			builder.append(" eptct.bill_status IN (").append(createQuery(billStatus)).append(")");
 			addToPreparedStatement(preparedStmtList, billStatus);
 		}
+		
+		if (!CollectionUtils.isEmpty(criteria.getNotInBillStatus())) {
+			andClauseIfRequired(preparedStmtList, builder);
+			Set<String> notInBillStatus = criteria.getNotInBillStatus().stream().map(BillStatus::name)
+					.collect(Collectors.toSet());
+			builder.append(" eptct.bill_status NOT IN (").append(createQuery(notInBillStatus)).append(")");
+			addToPreparedStatement(preparedStmtList, notInBillStatus);
+		}
 
 		return builder.toString();
 	}
@@ -806,7 +814,7 @@ public class PropertyQueryBuilder {
 		return queryBuilder.toString();
 	}
 
-	public String checkLastUpdatedTime(PtTaxCalculatorTrackerSearchCriteria ptTaxCalculatorTrackerSearchCriteria,
+	public String checkLastCreatedTime(PtTaxCalculatorTrackerSearchCriteria ptTaxCalculatorTrackerSearchCriteria,
 			String query, List<Object> preparedStmtList) {
 		StringBuilder builder = new StringBuilder(query);
 
@@ -817,9 +825,11 @@ public class PropertyQueryBuilder {
 
 		builder.append(" eptct.createdtime >= ? ");
 		preparedStmtList.add(ptTaxCalculatorTrackerSearchCriteria.getStartDateTime());
-		builder.append(" AND ");
-		builder.append(" eptct.createdtime <= ? ");
-		preparedStmtList.add(ptTaxCalculatorTrackerSearchCriteria.getEndDateTime());
+		if (null != ptTaxCalculatorTrackerSearchCriteria.getEndDateTime()) {
+			builder.append(" AND ");
+			builder.append(" eptct.createdtime <= ? ");
+			preparedStmtList.add(ptTaxCalculatorTrackerSearchCriteria.getEndDateTime());
+		}
 
 		return builder.toString();
 	}

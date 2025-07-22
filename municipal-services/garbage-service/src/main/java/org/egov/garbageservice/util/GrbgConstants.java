@@ -178,6 +178,15 @@ public class GrbgConstants {
 
 	@Value("${egov.user.search.endpoint}")
 	private String userSearchEndpoint;
+	
+	@Value("${egov.url.shortning.host}")
+	private String urlShortningHost;
+	
+	@Value("${egov.url.shortning.context.path}")
+	private String urlShortningContextPath;
+	
+	@Value("${egov.url.shortning.endpoint}")
+	private String urlShortenEndpoint;
 
 	public static String generateApplicationNumberFormat(String id, String ulbName, String district) {
 		String appNo = null;

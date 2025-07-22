@@ -501,6 +501,9 @@ public class GarbageAccountService {
 //		}else 
 		if (StringUtils.isNotEmpty(garbageAccount.getUuid())) // update account condition
 		{
+//			log.info("existingAccounts issue. {} {}", existingAccounts,garbageAccount);
+
+			
 			List<GarbageAccount> existingAccounts1 = existingAccounts.stream()
 					.filter(account -> StringUtils.equals(garbageAccount.getUuid(), account.getUuid()))
 					.collect(Collectors.toList());
@@ -575,6 +578,8 @@ public class GarbageAccountService {
 		newGarbageAccount.setId(existingGarbageAccount.getId());
 		newGarbageAccount.setGarbageId(existingGarbageAccount.getGarbageId());
 		newGarbageAccount.setBusinessService(existingGarbageAccount.getBusinessService());
+		newGarbageAccount.setChannel(existingGarbageAccount.getChannel());;
+
 
 		// enrich child accounts
 		if (!CollectionUtils.isEmpty(newGarbageAccount.getChildGarbageAccounts())) {
@@ -594,6 +599,8 @@ public class GarbageAccountService {
 							.createdDate(matchingChildAccount.get().getAuditDetails().getCreatedDate())
 							.lastModifiedBy(auditDetails.getLastModifiedBy())
 							.lastModifiedDate(auditDetails.getLastModifiedDate()).build());
+					childAccount.setChannel(matchingChildAccount.get().getChannel());
+
 				} else {
 					// create case
 					childAccount.setAuditDetails(AuditDetails.builder().createdBy(auditDetails.getCreatedBy())
@@ -1880,11 +1887,11 @@ public class GarbageAccountService {
 
 	public void createUserForGarbage(SearchCriteriaGarbageAccountRequest searchCriteriaGarbageAccountRequest) {
 		// Create GarbageAccountRequest object
+		
 		GarbageAccountRequest createGarbageRequest = buildGarbageAccountRequest(RequestInfoWrapper.builder().requestInfo(searchCriteriaGarbageAccountRequest.getRequestInfo()).build());
 
 		// Fetch garbage accounts if available
 		List<GarbageAccount> garbageAccounts = fetchGarbageAccounts(searchCriteriaGarbageAccountRequest);
-
 		// Set garbage accounts if available
 		if (!garbageAccounts.isEmpty()) {
 			createGarbageRequest.setGarbageAccounts(garbageAccounts);
@@ -1917,6 +1924,9 @@ public class GarbageAccountService {
 
 		searchCriteriaGarbageAccountRequest.setIsSchedulerCall(true);
 		searchCriteriaGarbageAccountRequest.setIsUserUuidNull(true);
+		searchCriteriaGarbageAccountRequest.getSearchCriteriaGarbageAccount().setIsActiveAccount(true);
+		searchCriteriaGarbageAccountRequest.getSearchCriteriaGarbageAccount().setIsActiveSubAccount(true);
+
 		GarbageAccountResponse garbageAccountResponse = searchGarbageAccounts(searchCriteriaGarbageAccountRequest);
 
 		if (garbageAccountResponse != null && !CollectionUtils.isEmpty(garbageAccountResponse.getGarbageAccounts())) {
