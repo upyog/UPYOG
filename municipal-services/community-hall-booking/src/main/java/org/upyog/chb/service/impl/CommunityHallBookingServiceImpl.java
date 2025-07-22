@@ -166,14 +166,8 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 		// 3.Update workflow of the application
 		workflowService.updateWorkflow(communityHallsBookingRequest);
 
-		demandService.createDemand(communityHallsBookingRequest, mdmsData, true);
 
-		// fetch/create bill
-		GenerateBillCriteria billCriteria = GenerateBillCriteria.builder()
-				.tenantId(communityHallsBookingRequest.getHallsBookingApplication().getTenantId())
-				.businessService("chb-services")
-				.consumerCode(communityHallsBookingRequest.getHallsBookingApplication().getBookingNo()).build();
-		billingService.generateBill(communityHallsBookingRequest.getRequestInfo(), billCriteria);
+
 
 		// 4.Persist the request using persister service
 		bookingRepository.saveCommunityHallBooking(communityHallsBookingRequest);
@@ -235,10 +229,29 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 			PaymentDetail paymentDetail, BookingStatusEnum status) {
 		String bookingNo = communityHallsBookingRequest.getHallsBookingApplication().getBookingNo();
 		log.info("Updating booking for booking no : " + bookingNo);
+		
+	String tenantId = communityHallsBookingRequest.getHallsBookingApplication().getTenantId().split("\\.")[0];
+		
+		Object mdmsData = mdmsUtil.mDMSCall(communityHallsBookingRequest.getRequestInfo(), tenantId);
+		
+		if (StringUtils.equalsIgnoreCase(
+		        CommunityHallBookingConstants.ACTION_RETURN_TO_INITIATOR_FOR_PAYMENT,
+		        communityHallsBookingRequest.getHallsBookingApplication().getWorkflow().getAction())) {
+		    demandService.createDemand(communityHallsBookingRequest, mdmsData, true);
+		    
+			// fetch/create bill
+			GenerateBillCriteria billCriteria = GenerateBillCriteria.builder()
+					.tenantId(communityHallsBookingRequest.getHallsBookingApplication().getTenantId())
+					.businessService("chb-services")
+					.consumerCode(communityHallsBookingRequest.getHallsBookingApplication().getBookingNo()).build();
+			billingService.generateBill(communityHallsBookingRequest.getRequestInfo(), billCriteria);
+		}
+
 		if (bookingNo == null) {
 			return null;
 		}
 		setRelatedAssetData(communityHallsBookingRequest);
+		
 		if (status != BookingStatusEnum.BOOKED) {
 			CommunityHallBookingSearchCriteria bookingSearchCriteria = CommunityHallBookingSearchCriteria.builder()
 					.bookingNo(bookingNo).build();
@@ -253,8 +266,17 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 
 		}
 		else {
-			createCertificate(communityHallsBookingRequest);
+			if (StringUtils.equalsIgnoreCase(CommunityHallBookingConstants.ACTION_APPROVE,
+					communityHallsBookingRequest.getHallsBookingApplication().getWorkflow().getAction())) {
+
+				createCertificate(communityHallsBookingRequest);
+
+			}
 		}
+
+	
+
+
 
 		enrichmentService.enrichUpdateBookingRequest(communityHallsBookingRequest, status);
 
@@ -581,7 +603,6 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 			@Valid CommunityHallBookingUpdateStatusRequest communityHallBookingUpdateStatusRequest) {
 		// TODO Auto-generated method stub
 		String bookingNo = communityHallBookingUpdateStatusRequest.getBookingNo();
-		log.info("Updating booking for booking no : " + bookingNo);
 		if (bookingNo == null) {
 			return null;
 		}

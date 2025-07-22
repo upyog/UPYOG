@@ -29,6 +29,8 @@ import org.upyog.chb.web.models.billing.DemandDetail;
 import com.google.common.base.Optional;
 
 import lombok.extern.slf4j.Slf4j;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 
 @Service
 @Slf4j
@@ -69,7 +71,29 @@ public class DemandService {
 		
 		User owner = User.builder().name(user.getName()).emailId(user.getEmailId())
 				.mobileNumber(user.getMobileNumber()).tenantId(bookingDetail.getTenantId()).build();
-		Map<String, Object> detailMap = (Map<String, Object>) bookingRequest.getHallsBookingApplication().getAdditionaldetail();
+		
+
+		Object additionalDetail = bookingRequest.getHallsBookingApplication().getAdditionaldetail();
+		Map<String, Object> detailMap = null;
+
+		if (additionalDetail != null) {
+		    try {
+		        if (additionalDetail instanceof String) {
+		            ObjectMapper objectMapper = new ObjectMapper();
+		            detailMap = objectMapper.readValue((String) additionalDetail, Map.class);
+		        } else if (additionalDetail instanceof Map) {
+		            detailMap = (Map<String, Object>) additionalDetail;
+		        } else {
+		            log.warn("Unexpected type for additionalDetail: {}", additionalDetail.getClass().getName());
+		        }
+		    } catch (Exception e) {
+		        log.error("Error while parsing additionalDetail", e);
+		        throw new CustomException("PARSING_ERROR", "Unable to parse additionalDetail");
+		    }
+		}
+
+		
+		//Map<String, Object> detailMap = (Map<String, Object>) bookingRequest.getHallsBookingApplication().getAdditionaldetail();
 		String bookingFor = (String) detailMap.get("bookingFor");
 		Map<String, Object> AssetParentCategoryDetails = mdmsUtil.getCHBAssetParentCategoryDetails(bookingRequest.getRequestInfo(), tenantId,bookingFor,bookingRequest.getHallsBookingApplication().getCommunityHallCode());
 		
