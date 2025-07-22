@@ -272,220 +272,175 @@ const Home = () => {
       {/* <div className="SideBarStatic">
         <StaticCitizenSideBar />
       </div> */}
-      <style>
-        {`
-        .logoText {
-            font-size: 26px;
-            color: #0a97d5;
-            font-family: 'PoppinsBold';
-            line-height: 25px;
-            transition: all 0.5s ease;
-        }
-        .newlogoWrap h1.logo a .logoText .logoTextSubline {
-          font-size: 18px;
-          font-family: 'PoppinsRegular';
-          color: #323232;
-          line-height: 20px;
-          display: block;
-          transition: all 0.5s ease;
-      }
-      .newlogoWrap h1.logo a {
-        display: flex;
-        text-decoration: none!important;
-        align-items: center;
-    }
-    .cardContainer {
+<style>
+{`
+.HomePageContainer {
+  background-color: #ebf1fb;
+  background-image: url(https://jaljeevanmission.gov.in/themes/edutheme/images/header-bg.png);
+  background-size: cover;
+  background-position: center;
+}
+
+.HomePageWrapper {
+  padding: 40px 20px;
+  background: linear-gradient(135deg, #f4f7fb 0%, #e9f1f9 100%);
+  min-height: 100vh;
+}
+
+.HomePageWrapper h1 {
+  text-align: center;
+  font-size: 2.3rem;
+  font-weight: 700;
+  color: #004080;
+  margin-bottom: 10px;
+}
+
+.HomePageWrapper p {
+  text-align: center;
+  font-size: 1.05rem;
+  color: #444;
+  margin-bottom: 30px;
+  max-width: 700px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.cardContainer {
   display: flex;
   flex-wrap: wrap;
-  justify-content: space-between;
-  padding: 25px;
-  gap: 20px;
+  gap: 30px;
+  justify-content: center;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
 .incidentBlock {
-  width: calc(33.33% - 20px);
-  background-color: white;
-  padding: 20px;
-  margin: 0;
-  height: 200px;
+  background: white;
+  border-radius: 16px;
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: space-between;
-  font-size: 22px;
-  font-weight: bold;
-  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
-  border-radius: 15px;
+  justify-content: center;
+  width: 250px;
+  height: 160px;
+  padding: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
   cursor: pointer;
-  border: 4px solid #0a97d5;
-  box-sizing: border-box;
 }
 
+.incidentBlock:hover {
+  transform: scale(1.09);
+  box-shadow: 0px 20px 20px rgba(0, 0, 0, 0.15);
+  filter: brightness(1.05);
+}
+
+.incidentBlock img {
+  width: 64px;
+  height: 64px;
+  object-fit: contain;
+  margin-bottom: 12px;
+}
+
+.incidentBlock span {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #002b60;
+  text-align: center;
+  line-height: 1.4;
+}
+
+/* Responsive Fixes */
 @media (max-width: 768px) {
   .incidentBlock {
     width: 100%;
+    height: auto;
+    padding: 20px;
+  }
+
+  .incidentBlock img {
+    width: 56px;
+    height: 56px;
+  }
+
+  .incidentBlock span {
+    font-size: 0.95rem;
+  }
+
+  .HomePageWrapper h1 {
+    font-size: 1.8rem;
+  }
+
+  .HomePageWrapper p {
+    font-size: 0.95rem;
   }
 }
+`}
+</style>
 
-    .mydashboard{
-      height: 100%;
-      width: 100%;
-      padding: 25px;
-      font-size: 26px;
-      font-weight: bold;
-    }
-    .dash{
-      border-top-right-radius: 10px;
-    border-top-left-radius: 10px;
-    padding-left:15px;
-    }
-    .charts{
-      height:250px
-    }
-    #chart-container {
-      position: relative;
-      width: 200px;
-      height: 200px;
-  }
-  
-  .donut-chart {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      border-radius: 50%;
-      clip: rect(0, 200px, 200px, 100px); /* clip to the right half */
-  }
-  
-  .inner-circle {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      width: 100px;
-      height: 100px;
-      margin-top: -50px; /* half of the height */
-      margin-left: -50px; /* half of the width */
-      background-color: #f0f0f0;
-      border-radius: 50%;
-      z-index: 1;
-  }
-  .incidentTable{
-    display: flex;
-    flex-direction: column;
-    font-size: 18px;
-    padding: 10px;
-    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
-    margin: 15px;
-  }
-  .donut-chart {
-    position: relative;
-    width: 200px;
-    height: 200px;
-    border-radius: 50%;
-    background: conic-gradient(
-      var(--color, #ddd) calc(var(--offset, 0) * 1%),
-      var(--next-color, #ddd) 0 calc((var(--offset, 0) + var(--value, 0)) * 1%)
-    );
-  }
-  
-  .donut-segment {
-    --next-color: var(--color);
-  }
-  
-  .donut-hole {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 100px;
-    height: 100px;
-    background: #fff;
-    border-radius: 50%;
-    transform: translate(-50%, -50%);
-  }
-  .donutchart{
-    height: 75% !important;
-    width:  75% !important;
 
-  }
-  
-  .HomePageContainer {background-color: #ebf1fb;
-    background-image: url(https://jaljeevanmission.gov.in//themes/edutheme/images/header-bg.png);
-  }
-        `
-        }
-      </style>
       <div className="HomePageWrapper">
+      <h1>Welcome to Nashik Municipal Corporation</h1>
+<p>Access essential municipal services with ease and transparency.</p>
+
       <div className="cardContainer">
-          <div className="incidentBlock" style={{ marginLeft: isMobile ? "0px" : "" }} onClick={() => history.push("/digit-ui/citizen/pgr-home")}>
-            <div style={{ width: "50%", cursor: "pointer" }} >
-              <span>{t("Public Grievance Redressal")}</span>
-            </div>
-            <div style={{ width: "50%", display: "flex", flexDirection: "row-reverse" }}>
-              <div style={{ display: "flex", flexDirection: "row-reverse" }}>
+      <div className="incidentBlock" onClick={() => history.push("/digit-ui/citizen/pgr-home")}>
+  <img src="https://i.postimg.cc/Hkyd4wHn/icons8-complaints-96-1.png" alt="Public Grievance Redressal" />
+  <span>{t("ACTION_TEST_PGR")}</span>
+</div>
+
+<div className="incidentBlock" onClick={() => history.push("/digit-ui/citizen/ws-home")}>
+  <img src="https://i.postimg.cc/rFZg3yYG/1739395503649-Picture1.png" alt="Water Department" />
+  <span>{t("ACTION_TEST_WATER_AND_SEWERAGE")}</span>
+</div>
+
+<div className="incidentBlock" onClick={() => history.push("/digit-ui/citizen/pt-home")}>
+  <img src="https://i.postimg.cc/NFsRRGHG/icons8-property-100-1.png" alt="Property Tax Assessment" />
+  <span>{t("ACTION_TEST_PT")}</span>
+</div>
+
+<div className="incidentBlock" onClick={() => history.push("/digit-ui/citizen/obps-home")}>
+  <img src="https://i.postimg.cc/2664rXqp/BPA-removebg-preview.png" alt="Building Plan Approval" />
+  <span>{t("ACTION_TEST_OBPS")}</span>
+</div>
+
+<div className="incidentBlock" onClick={() => history.push("/digit-ui/citizen/mcollect-home")}>
+  <img src="https://i.postimg.cc/wvVmxKbC/icons8-mail-open-100.png" alt="Miscellaneous Collection" />
+  <span>{t("ACTION_TEST_MCOLLECT")}</span>
+</div>
+
+<div className="incidentBlock" onClick={() => history.push("/digit-ui/citizen/tl-home")}>
+  <img src="https://i.postimg.cc/gk562HN2/icons8-license-100.pngg" alt="Trade License" />
+  <span>{t("ACTION_TEST_TL")}</span>
+</div>
+
+<div className="incidentBlock" onClick={() => history.push("")}>
+  <img src="https://i.postimg.cc/59wr3Hdp/icons8-recycle-bin-100.png" alt="Solid Waste Management" />
+  <span>{t("ACTION_TEST_SWM")}</span>
+</div>
+
+<div className="incidentBlock" onClick={() => history.push("/digit-ui/citizen/fsm-home")}>
+  <img src="https://i.postimg.cc/vZ5560YX/icons8-truck-100.png" alt="Solid Waste Management" />
+  <span>{t("ACTION_TEST_FSM")}</span>
+</div>
+<div className="incidentBlock" onClick={() => history.push("")}>
+  <img src="https://i.postimg.cc/k5FQGY1d/icons8-fire-100.png" alt="Solid Waste Management" />
+  <span>{t("ACTION_TEST_FIRE_NOC")}</span>
+</div>
+<div className="incidentBlock" onClick={() => history.push("")}>
+  <img src="https://i.postimg.cc/Pr125wyY/icons8-vending-machine-100.png" alt="Solid Waste Management" />
+  <span>{t("Street Vending")}</span>
+</div>
+<div className="incidentBlock" onClick={() => history.push("")}>
+  <img src="https://i.postimg.cc/RFrzz9hR/icons8-baby-100.png" alt="Solid Waste Management" />
+  <span>{t("ACTION_TEST_BIRTH")}</span>
+</div>
+<div className="incidentBlock" onClick={() => history.push("")}>
+  <img src="https://i.postimg.cc/CKhqsTSc/icons8-death-100-1.png" alt="Solid Waste Management" />
+  <span>{t("ACTION_TEST_DEATH")}</span>
+</div>
 
 
-                <img src="https://chstage.blob.core.windows.net/assets/tmp/incon1.png" style={{ maxWidth: "65%" }}></img>
-              </div>
-            </div>
-          </div>
-          <div className="incidentBlock" style={{ marginLeft: isMobile ? "0px" : "" }} onClick={() => history.push("/digit-ui/citizen/ws-home")} >
-            <div style={{ width: "50%", cursor: "pointer" }} >
-              <span>{t("Water Department")}</span>
-            </div>
-            <div style={{ width: "50%", display: "flex", flexDirection: "row-reverse" }}>
-              <div style={{ display: "flex", flexDirection: "row-reverse" }}>
-
-
-                <img src="https://i.postimg.cc/rFZg3yYG/1739395503649-Picture1.png" style={{ maxWidth: "65%" }}></img>
-              </div>
-            </div>
-          </div>
-          <div className="incidentBlock" style={{ marginLeft: isMobile ? "0px" : "" }} onClick={() => history.push("/digit-ui/citizen/pt-home")} >
-            <div style={{ width: "50%", cursor: "pointer" }} >
-              <span>{t("Propert Tax Assessment")}</span>
-            </div>
-            <div style={{ width: "50%", display: "flex", flexDirection: "row-reverse" }}>
-              <div style={{ display: "flex", flexDirection: "row-reverse" }}>
-
-
-                <img src="https://i.postimg.cc/bNKLL8ZZ/PT-removebg-preview.png" style={{ maxWidth: "65%" , height:"150px"}}></img>
-              </div>
-            </div>
-          </div>
-          <div className="incidentBlock" style={{ marginLeft: isMobile ? "0px" : "" }} onClick={() => history.push("/digit-ui/citizen/obps-home")} >
-            <div style={{ width: "50%", cursor: "pointer" }} >
-              <span>{t("Building Plan Approval")}</span>
-            </div>
-            <div style={{ width: "50%", display: "flex", flexDirection: "row-reverse" }}>
-              <div style={{ display: "flex", flexDirection: "row-reverse" }}>
-
-
-                <img src="https://i.postimg.cc/2664rXqp/BPA-removebg-preview.png" style={{ maxWidth: "65%", height:"150px" }}></img>
-              </div>
-            </div>
-          </div>
-          <div className="incidentBlock" style={{ marginLeft: isMobile ? "0px" : "" }} onClick={() => history.push("/digit-ui/citizen/mcollect-home")} >
-            <div style={{ width: "50%", cursor: "pointer" }} >
-              <span>{t("Miscallenous Collection")}</span>
-            </div>
-            <div style={{ width: "50%", display: "flex", flexDirection: "row-reverse" }}>
-              <div style={{ display: "flex", flexDirection: "row-reverse" }}>
-
-
-                <img src="https://i.postimg.cc/mkGc5XGW/MCS.png" style={{ maxWidth: "65%", height:"150px" }}></img>
-              </div>
-            </div>
-          </div>
-          <div className="incidentBlock" style={{ marginLeft: isMobile ? "0px" : "" }} onClick={() => history.push("/digit-ui/citizen/tl-home")} >
-            <div style={{ width: "50%", cursor: "pointer" }} >
-              <span>{t("Trade License")}</span>
-            </div>
-            <div style={{ width: "50%", display: "flex", flexDirection: "row-reverse" }}>
-              <div style={{ display: "flex", flexDirection: "row-reverse" }}>
-
-
-                <img src="https://i.postimg.cc/FRhbfH7L/Adobe-Express-file.png" style={{ maxWidth: "65%", height:"150px" }}></img>
-              </div>
-            </div>
-          </div>
           {/* <div className="incidentBlock" style={{marginLeft:isMobile?"0px":"", cursor:"pointer"}}>
     <div style={{width:"50%"}} onClick={()=> history.push("/digit-ui/citizen/pgr-home")}>
 <span>{t("My Incident")}</span>

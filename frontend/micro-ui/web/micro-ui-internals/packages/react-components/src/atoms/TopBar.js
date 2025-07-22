@@ -36,6 +36,8 @@ const TopBar = ({
           `
           .navbar {
             background-color: #fef5e7 !important;
+            box-shadow: 0px 6px 8px 0px rgb(0 0 0 / 37%);
+            padding: 10px;
           }
           .navbar img {
             display: inline-block;
@@ -56,7 +58,7 @@ const TopBar = ({
           <div>
       <img className="city" src="https://i.postimg.cc/3x8jtRKJ/nashik-logo.png" alt="City Logo"  style={{width:"40px"}}/>
       </div>
-      <div>
+      <div style={{display: "flex"}}>
     <span style={{ display: "flex", alignItems: "center", justifyContent: "space-between", width: "100%",letterSpacing:"1px" }}>
       <span style={{fontWeight:"bold", display:"flex", flexDirection:"column", marginLeft:"20px", color:"#2394d4", fontSize:isMobile?"16px":"20px"}} className="logoText">
         Nashik Municipal Corporation

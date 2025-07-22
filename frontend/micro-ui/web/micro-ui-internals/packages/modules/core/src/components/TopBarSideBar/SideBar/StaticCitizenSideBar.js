@@ -150,6 +150,21 @@ const StaticCitizenSideBar = ({ linkData, islinkDataLoading }) => {
     }
     const Item = () => (
       <span className="menu-item" {...item.populators}>
+        <style>
+          {
+            `
+            .drawer-desktop .menu-item .icon {
+              display: block;
+              color: #f47738;
+              fill: #f47738;
+              height: 21px !important;
+              width: 21px !important;
+              float: left;
+              margin-top: 12px;
+          }
+            `
+          }
+        </style>
         {leftIcon}
         <div className="menu-label" style={{color:"white"}}>{itemComponent}</div>
       </span>
