@@ -207,13 +207,21 @@ const SelectMobileNumber = ({ t, onSelect, showRegisterLink, mobileNumber, onMob
             width: 100%;
             height:2.5rem !important
 }
+.mainDivtwo{
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  flex-wrap: wrap;
+  align-content: space-around;
+  height: 100%;
+}
           `
         }
       </style>
       <div className="loginHomePage" style={{ marginTop:"-40px",height:"100%",backgroundImage:"url(https://i.postimg.cc/3xf8zSH0/photo-1694667509674-676629c9d069-4.jpg)",backgroundSize:"cover",backgroundSize:"100% 100%"}}>
         {/* <div style={{textAlign:"center",fontSize:isMobile? "2.2rem":"3rem", fontWeight:"bold",letterSpacing:"1px",color:"white", paddingTop:isMobile?"7%":"5%",margin:isMobile? "5%": ""}}>{t("Welcome to Nashik Municipal Corporation ")}</div> */}
-        <div style={{display:"flex", justifyContent:isMobile?"":"right", height:isMobile?"":"80%",paddingRight:isMobile?"":"50px", alignItems:isMobile?"center":"center",justifyContent:isMobile?"center":"",flexDirection:isMobile?"":"row-reverse"}}>
-      <Card style={{width:isMobile?"":"25%",borderRadius:"5%",minWidth:"380px",padding:"20px 20px",minWidth:"420px"}}>
+        <div className="mainDivtwo" style={{}}>
+      <Card style={{width:isMobile?"":"25%",borderRadius:"5%",minWidth:"380px",padding:"20px 20px",minWidth:isMobile?"300px":"420px"}}>
         <div style={{display:"flex",padding:"15px",justifyContent:"center"}}>
           <div style={{width:"90px"}}>
       <img className="city" src="https://i.postimg.cc/3x8jtRKJ/nashik-logo.png" alt="City Logo" />

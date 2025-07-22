@@ -45,7 +45,7 @@ const [description, setDescription] = useState("")
   const tenantId = window.Digit.SessionStorage.get("CITIZEN.COMMON.HOME.CITY")?.code;
   const menu = Digit.Hooks.pgr.useComplaintTypes({ stateCode: "pg" });
   console.log("menumenu",menu)
-  const [uploadedImagesn, setUploadedImagesIds] = useState("");
+  const [uploadedImagesn, setUploadedImagesIds] = useState([]);
 
 
   const  priorityMenu= 
