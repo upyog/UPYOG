@@ -216,6 +216,8 @@ public class PayGovGateway implements Gateway {
         ObjectMapper mapper = new ObjectMapper();
         try {
             urlData= mapper.writeValueAsString(queryMap);
+	    System.out.println("URLDATA::::::::::::::::::::"+urlData);
+            System.out.println("QUERY:::::::::::::::::::::::::::::::::::::MAP:---->>>>"+queryMap);
         } catch (Exception e) {
             // TODO Auto-generated catch block
             log.error("PAYGOV URL generation failed", e);
