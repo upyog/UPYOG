@@ -243,57 +243,55 @@ serviceMaps:
        - jsonPath: $.Asset.*.id
 
 
+    - query: UPDATE eg_asset_addressdetails	SET tenantid=?, doorno=?, latitude=?, longitude=?, addressnumber=?, type=?, addressline1=?, addressline2=?, landmark=?, city=?, pincode=?, detail=?, buildingname=?, street=?, locality_code=?, locality_name=?, locality_label=?, locality_latitude=?, locality_longitude=?, locality_children=?, locality_materializedpath=? WHERE addressid=?;
 
-#    - query: UPDATE eg_asset_addressdetails	SET tenantid=?, doorno=?, latitude=?, longitude=?, addressnumber=?, type=?, addressline1=?, addressline2=?, landmark=?, city=?, pincode=?, detail=?, buildingname=?, street=?, locality_code=?, locality_name=?, locality_label=?, locality_latitude=?, locality_longitude=?, locality_children=?, locality_materializedpath=? WHERE addressid=?;
-#
-#
-#      basePath: Asset.*.addressDetails
-#      jsonMaps:
-#
-#        - jsonPath: $.Asset.*.addressDetails.tenantId
-#
-#        - jsonPath: $.Asset.*.addressDetails.doorNo
-#
-#        - jsonPath: $.Asset.*.addressDetails.latitude
-#
-#        - jsonPath: $.Asset.*.addressDetails.longitude
-#
-#        - jsonPath: $.Asset.*.addressDetails.addressNumber
-#
-#        - jsonPath: $.Asset.*.addressDetails.type
-#
-#        - jsonPath: $.Asset.*.addressDetails.addressLine1
-#
-#        - jsonPath: $.Asset.*.addressDetails.addressLine2
-#
-#        - jsonPath: $.Asset.*.addressDetails.landmark
-#
-#        - jsonPath: $.Asset.*.addressDetails.city
-#
-#        - jsonPath: $.Asset.addressDetails.pincode
-#
-#        - jsonPath: $.Asset.*.addressDetails.detail
-#
-#        - jsonPath: $.Asset.*.addressDetails.buildingName
-#
-#        - jsonPath: $.Asset.*.addressDetails.street
-#
-#        - jsonPath: $.Asset.*.addressDetails.locality.code
-#
-#        - jsonPath: $.Asset.*.addressDetails.locality.name
-#
-#        - jsonPath: $.Asset.*.addressDetails.locality.label
-#
-#        - jsonPath: $.Asset.*.addressDetails.locality.latitude
-#
-#        - jsonPath: $.Asset.*.addressDetails.locality.longitude
-#
-#        - jsonPath: $.Asset.*.addressDetails.locality.children
-#
-#        - jsonPath: $.Asset.*.addressDetails.locality.materializedPath
-#
-#        - jsonPath: $.Asset.*.addressDetails.addressId
 
+      basePath: Asset.*.addressDetails
+      jsonMaps:
+
+        - jsonPath: $.Asset.*.addressDetails.tenantId
+
+        - jsonPath: $.Asset.*.addressDetails.doorNo
+
+        - jsonPath: $.Asset.*.addressDetails.latitude
+
+        - jsonPath: $.Asset.*.addressDetails.longitude
+
+        - jsonPath: $.Asset.*.addressDetails.addressNumber
+
+        - jsonPath: $.Asset.*.addressDetails.type
+
+        - jsonPath: $.Asset.*.addressDetails.addressLine1
+
+        - jsonPath: $.Asset.*.addressDetails.addressLine2
+
+        - jsonPath: $.Asset.*.addressDetails.landmark
+
+        - jsonPath: $.Asset.*.addressDetails.city
+
+        - jsonPath: $.Asset.*.addressDetails.pincode
+
+        - jsonPath: $.Asset.*.addressDetails.detail
+
+        - jsonPath: $.Asset.*.addressDetails.buildingName
+
+        - jsonPath: $.Asset.*.addressDetails.street
+
+        - jsonPath: $.Asset.*.addressDetails.locality.code
+
+        - jsonPath: $.Asset.*.addressDetails.locality.name
+
+        - jsonPath: $.Asset.*.addressDetails.locality.label
+
+        - jsonPath: $.Asset.*.addressDetails.locality.latitude
+
+        - jsonPath: $.Asset.*.addressDetails.locality.longitude
+
+        - jsonPath: $.Asset.*.addressDetails.locality.children
+
+        - jsonPath: $.Asset.*.addressDetails.locality.materializedPath
+
+        - jsonPath: $.Asset.*.addressDetails.addressId
 
 
     - query: UPDATE eg_asset_auditdetails SET  bookrefno=?, name=?, description=?, classification=?, parentcategory=?, category=?, subcategory=?, department=?, applicationno=?, approvalno=?, tenantid=?, status=?, action=?, additionaldetails=?::JSONB, createdtime=?, lastmodifiedtime=?, approvaldate=?, applicationdate=?, accountid=?, createdby=?, lastmodifiedby=?, financialyear=?, sourceoffinance=? WHERE id=?;
