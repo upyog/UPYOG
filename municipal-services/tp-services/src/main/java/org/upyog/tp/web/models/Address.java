@@ -26,7 +26,7 @@ import lombok.Setter;
 @Builder
 public class Address {
 
-	private Long addressId;
+	private String addressId;
 
 	private String applicantId;
 

@@ -63,10 +63,20 @@ public class WaterTankerServiceImpl implements WaterTankerService {
 		// Get the uuid of User from user registry
 		try {
 			List<org.upyog.rs.web.models.user.User> user = userService.fetchExistingOrCreateNewUser(waterTankerRequest);
-			waterTankerRequest.getWaterTankerBookingDetail().setApplicantUuid(user.get(0).getUuid());
+			if (user == null || user.isEmpty()) {
+				throw new RuntimeException("User not found for this mobile number: " +
+						waterTankerRequest.getWaterTankerBookingDetail().getApplicantDetail().getMobileNumber());
+			}
+			if(config.getIsUserProfileEnabled()) {
+				waterTankerRequest.getWaterTankerBookingDetail().setApplicantUuid(user.get(0).getUuid());
+			} else{
+				// If user profile is not enabled, set the applicantUuid null
+				waterTankerRequest.getWaterTankerBookingDetail().setApplicantUuid(null);
+			}
 			log.info("Applicant or User Uuid: " + user.get(0).getUuid());
 		} catch (Exception e) {
-			log.error("Error while creating user: " + e.getMessage(), e);
+			log.error("Error fetching or creating user: " + e.getMessage(), e);
+			throw new RuntimeException("Failed to fetch/create user: " + e.getMessage(), e);
 		}
 
 		requestServiceRepository.saveWaterTankerBooking(waterTankerRequest);
@@ -94,12 +104,12 @@ public class WaterTankerServiceImpl implements WaterTankerService {
 		if (CollectionUtils.isEmpty(applications)) {
 			return new ArrayList<>();
 		}
-
-		// Enrich each booking with user details
-		for (WaterTankerBookingDetail booking : applications) {
-			userService.enrichBookingWithUserDetails(booking, waterTankerBookingSearchCriteria);
+		if (config.getIsUserProfileEnabled()) {
+			// Enrich each booking with user details
+			for (WaterTankerBookingDetail booking : applications) {
+				userService.enrichBookingWithUserDetails(booking, waterTankerBookingSearchCriteria);
+			}
 		}
-
 		// Return retrieved application
 		return applications;
 	}
