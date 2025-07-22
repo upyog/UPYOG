@@ -123,6 +123,7 @@ public class DashboardDataService {
 		List<ServiceWithProperties> revenue = new ArrayList<ServiceWithProperties>();
 		DashboardReport dashboardData=new DashboardReport();
 		List<Property> properities =new ArrayList<Property>();
+		List<Property> emptyProperities =new ArrayList<Property>();
 		LocalDate currentDate = LocalDate.now();
 		String formattedDate = currentDate.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));
 		dashboardData.setState("MANIPUR");
@@ -163,38 +164,153 @@ public class DashboardDataService {
 		propertiesRegistered.setTotal(properities.size());
 		propertiesRegistered.setType("totalPropertiesRegistered");
 		propertiesRegistered.setProperties(properities);
+		service.add(propertiesRegistered);
 		
-		Map<String, String> pendingwithDV=new HashMap<String, String>();
-		pendingwithDV=dashboardReportRepository.getPropertiesPendingWithCount(dashboardRequest);
+		Map<String, String> pendingwith=new HashMap<String, String>();
+		PropertyCriteria criteria = new PropertyCriteria();
+		pendingwith=dashboardReportRepository.getPropertiesPendingWithCount(dashboardRequest);
 		Set<String> propertyIds = new HashSet<>();
-		String propertyIdsPDV =pendingwithDV.getOrDefault("PENDINGWITHDOCVERIFIER", null);
-		if(!StringUtils.isEmpty(propertyIdsPDV))
+		String propertyIdstring =pendingwith.getOrDefault("PENDINGWITHDOCVERIFIER", null);
+		if(!StringUtils.isEmpty(propertyIdstring))
 			propertyIds.addAll(
-				    Arrays.stream(propertyIdsPDV.split(","))
+				    Arrays.stream(propertyIdstring.split(","))
 				          .map(String::trim)
 				          .collect(Collectors.toSet()));
 		
-		PropertyCriteria criteria = new PropertyCriteria();
+		
 		criteria.setPropertyIds(propertyIds);
-		ServiceWithProperties propertiesPWDV = new ServiceWithProperties();
+		propertiesRegistered = new ServiceWithProperties();
 		if(!CollectionUtils.isEmpty(propertyIds))
 		{
 			properities=propertyService.searchProperty(criteria, dashboardRequest.getRequestInfo());
-			propertiesPWDV.setTotal(properities.size());
-			propertiesPWDV.setType("propertiesPendingWithDocVerifier");
-			propertiesPWDV.setProperties(properities);
+			propertiesRegistered.setTotal(properities.size());
+			propertiesRegistered.setType("propertiesPendingWithDocVerifier");
+			propertiesRegistered.setProperties(properities);
 		}
 		else
 		{
-			propertiesPWDV.setTotal(0);
-			propertiesPWDV.setType("propertiesPendingWithDocVerifier");
-			propertiesPWDV.setProperties(null);
+			propertiesRegistered.setTotal(0);
+			propertiesRegistered.setType("propertiesPendingWithDocVerifier");
+			propertiesRegistered.setProperties(emptyProperities);
 		}
-			
-		
-		
 		service.add(propertiesRegistered);
-		service.add(propertiesPWDV);
+		
+		pendingwith=dashboardReportRepository.getPropertiesPendingWithCount(dashboardRequest);
+		propertyIds = new HashSet<>();
+		criteria = new PropertyCriteria();
+		propertiesRegistered = new ServiceWithProperties();
+		propertyIdstring =pendingwith.getOrDefault("PENDINGWITHFILEDVERIFIER", null);
+		if(!StringUtils.isEmpty(propertyIdstring))
+			propertyIds.addAll(
+				    Arrays.stream(propertyIdstring.split(","))
+				          .map(String::trim)
+				          .collect(Collectors.toSet()));
+		
+		criteria.setPropertyIds(propertyIds);
+		if(!CollectionUtils.isEmpty(propertyIds))
+		{
+			properities=propertyService.searchProperty(criteria, dashboardRequest.getRequestInfo());
+			propertiesRegistered.setTotal(properities.size());
+			propertiesRegistered.setType("propertiesPendingWithFieldInspector");
+			propertiesRegistered.setProperties(properities);
+		}
+		else
+		{
+			propertiesRegistered.setTotal(0);
+			propertiesRegistered.setType("propertiesPendingWithFieldInspector");
+			propertiesRegistered.setProperties(emptyProperities);
+		}
+		service.add(propertiesRegistered);
+		
+		pendingwith=dashboardReportRepository.getPropertiesPendingWithCount(dashboardRequest);
+		propertyIds = new HashSet<>();
+		criteria = new PropertyCriteria();
+		propertiesRegistered = new ServiceWithProperties();
+		propertyIdstring =pendingwith.getOrDefault("PENDINGWITHAPPROVER", null);
+		if(!StringUtils.isEmpty(propertyIdstring))
+			propertyIds.addAll(
+				    Arrays.stream(propertyIdstring.split(","))
+				          .map(String::trim)
+				          .collect(Collectors.toSet()));
+		
+		criteria.setPropertyIds(propertyIds);
+		if(!CollectionUtils.isEmpty(propertyIds))
+		{
+			properities=propertyService.searchProperty(criteria, dashboardRequest.getRequestInfo());
+			propertiesRegistered.setTotal(properities.size());
+			propertiesRegistered.setType("propertiesPendingWithApprover");
+			propertiesRegistered.setProperties(properities);
+		}
+		else
+		{
+			propertiesRegistered.setTotal(0);
+			propertiesRegistered.setType("propertiesPendingWithApprover");
+			propertiesRegistered.setProperties(emptyProperities);
+		}
+		service.add(propertiesRegistered);
+		
+		pendingwith=dashboardReportRepository.getPropertiesPendingWithCount(dashboardRequest);
+		propertyIds = new HashSet<>();
+		criteria = new PropertyCriteria();
+		propertiesRegistered = new ServiceWithProperties();
+		propertyIdstring =pendingwith.getOrDefault("APPROVED", null);
+		if(!StringUtils.isEmpty(propertyIdstring))
+			propertyIds.addAll(
+				    Arrays.stream(propertyIdstring.split(","))
+				          .map(String::trim)
+				          .collect(Collectors.toSet()));
+		
+		criteria.setPropertyIds(propertyIds);
+		if(!CollectionUtils.isEmpty(propertyIds))
+		{
+			properities=propertyService.searchProperty(criteria, dashboardRequest.getRequestInfo());
+			propertiesRegistered.setTotal(properities.size());
+			propertiesRegistered.setType("propertiesApproved");
+			propertiesRegistered.setProperties(properities);
+		}
+		else
+		{
+			propertiesRegistered.setTotal(0);
+			propertiesRegistered.setType("propertiesApproved");
+			propertiesRegistered.setProperties(emptyProperities);
+		}
+		service.add(propertiesRegistered);
+		
+		pendingwith=dashboardReportRepository.getPropertiesPendingWithCount(dashboardRequest);
+		propertyIds = new HashSet<>();
+		criteria = new PropertyCriteria();
+		propertiesRegistered = new ServiceWithProperties();
+		propertyIdstring =pendingwith.getOrDefault("REJECTED", null);
+		if(!StringUtils.isEmpty(propertyIdstring))
+			propertyIds.addAll(
+				    Arrays.stream(propertyIdstring.split(","))
+				          .map(String::trim)
+				          .collect(Collectors.toSet()));
+		
+		criteria.setPropertyIds(propertyIds);
+		if(!CollectionUtils.isEmpty(propertyIds))
+		{
+			properities=propertyService.searchProperty(criteria, dashboardRequest.getRequestInfo());
+			propertiesRegistered.setTotal(properities.size());
+			propertiesRegistered.setType("propertiesRejected");
+			propertiesRegistered.setProperties(properities);
+		}
+		else
+		{
+			propertiesRegistered.setTotal(0);
+			propertiesRegistered.setType("propertiesRejected");
+			propertiesRegistered.setProperties(emptyProperities);
+		}
+		service.add(propertiesRegistered);
+		
+		propertiesRegistered = new ServiceWithProperties();
+		properities  = dashboardReportRepository.getTotalPropertySelfassessedCount(dashboardRequest);
+		propertiesRegistered.setTotal(properities.size());
+		propertiesRegistered.setType("propertiesSelfAssessed");
+		propertiesRegistered.setProperties(properities);
+		service.add(propertiesRegistered);
+		
+		
 		
 		dashboardData.setServices(service);
 		dashboardData.setRevenue(revenue);
