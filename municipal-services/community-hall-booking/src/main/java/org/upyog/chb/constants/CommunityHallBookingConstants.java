@@ -121,10 +121,5 @@ public class CommunityHallBookingConstants {
 	public static final String BOOKING_AVAILABLE_STATUS = "AVAILABLE";
 	
 	public static final String BOOKING_BOOKED_STATUS = "BOOKED";
-	
-    public static final String ACTION_RETURN_TO_INITIATOR_FOR_PAYMENT = "RETURN_TO_INITIATOR_FOR_PAYMENT";
-    
-    public static final String ACTION_APPROVE = "APPROVE";
-
 
 }
