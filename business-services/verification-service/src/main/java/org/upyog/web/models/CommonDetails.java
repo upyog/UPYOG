@@ -2,7 +2,6 @@ package org.upyog.web.models;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.validation.annotation.Validated;
-import org.upyog.validation.SanitizeHtml;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
