@@ -121,9 +121,11 @@ public class RequestEnrichmentFilter extends ZuulFilter {
             logger.info(SKIPPED_BODY_ENRICHMENT_DUE_TO_NO_KNOWN_FIELD_MESSAGE);
             return;
         }
+        logger.info("Before update: "+requestInfo.toString());
         setUserInfo(requestInfo);
         setCorrelationId(requestInfo);
         requestBodyInspector.updateRequestInfo(requestInfo);
+        logger.info("After update: "+requestInfo.toString());
         CustomRequestWrapper requestWrapper = new CustomRequestWrapper(ctx.getRequest());
         requestWrapper.setPayload(objectMapper.writeValueAsString(requestBodyInspector.getRequestBody()));
         logger.info(BODY_ENRICHED_MESSAGE);
