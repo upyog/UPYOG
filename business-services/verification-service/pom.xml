@@ -6,14 +6,14 @@
     <name>verification-service</name>
     <version>1.0.0</version>
     <properties>
-    <java.version>1.8</java.version>
+    <java.version>17</java.version>
     <maven.compiler.source>${java.version}</maven.compiler.source>
     <maven.compiler.target>${java.version}</maven.compiler.target>
 </properties>
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.2.6.RELEASE</version>
+        <version>3.2.2</version>
     </parent>
     <build>
         <sourceDirectory>src/main/java</sourceDirectory>
@@ -36,10 +36,12 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-jdbc</artifactId>
         </dependency>
+
         <dependency>
            <groupId>org.postgresql</groupId>
            <artifactId>postgresql</artifactId>
@@ -51,16 +53,12 @@
             <scope>test</scope>
         </dependency>
 
-        <dependency>
-            <groupId>io.swagger</groupId>
-            <artifactId>swagger-core</artifactId>
-            <version>1.5.18</version>
-        </dependency>
+
         <!-- Egov dependencies -->
         <dependency>
             <groupId>org.egov.services</groupId>
             <artifactId>tracer</artifactId>
-            <version>2.0.0-SNAPSHOT</version>
+            <version>2.9.0-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.egov.services</groupId>
@@ -70,23 +68,47 @@
         <dependency>
           <groupId>org.egov</groupId>
           <artifactId>mdms-client</artifactId>
-          <version>0.0.2-SNAPSHOT</version>
+          <version>2.9.0-SNAPSHOT</version>
           <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <optional>true</optional>
+            <version>1.18.32</version> <!-- latest -->
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>com.fasterxml.jackson.datatype</groupId>
             <artifactId>jackson-datatype-jsr310</artifactId>
         </dependency>
-    <!-- Bean Validation API support -->
+
+        <!-- Bean Validation API support -->
         <dependency>
-            <groupId>javax.validation</groupId>
-            <artifactId>validation-api</artifactId>
+            <groupId>jakarta.validation</groupId>
+            <artifactId>jakarta.validation-api</artifactId>
+            <version>3.1.1</version>
+        </dependency>
+        
+        <!-- Spring Boot Validation Starter -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-validation</artifactId>
+        </dependency>
+
+
+        <!-- SpringDoc OpenAPI for Spring Boot 3.x -->
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+            <version>2.3.0</version>
+        </dependency>
+
+        <!-- OWASP HTML Sanitizer for Java 17 -->
+        <dependency>
+            <groupId>com.googlecode.owasp-java-html-sanitizer</groupId>
+            <artifactId>owasp-java-html-sanitizer</artifactId>
+            <version>20240325.1</version>
         </dependency>
     </dependencies>
     <repositories>
