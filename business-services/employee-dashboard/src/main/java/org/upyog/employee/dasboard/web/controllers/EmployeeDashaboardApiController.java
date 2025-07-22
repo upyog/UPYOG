@@ -1,6 +1,6 @@
 package org.upyog.employee.dasboard.web.controllers;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -13,12 +13,12 @@ import org.upyog.employee.dasboard.service.EmployeeDashboardService;
 import org.upyog.employee.dasboard.web.models.EmployeeDashboardRequest;
 import org.upyog.employee.dasboard.web.models.EmployeeDashboardResponse;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiParam;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Parameter;
 
 
 @RestController
-@Api(value = "Employee Dashboard Controller", description = "Operations related to Employee Dashboard")
+@Tag(name = "Employee Dashboard Controller", description = "Operations related to Employee Dashboard")
 public class EmployeeDashaboardApiController {
 
 	@Autowired
@@ -27,7 +27,7 @@ public class EmployeeDashaboardApiController {
 
 	@PostMapping("/_search")
 	public ResponseEntity<EmployeeDashboardResponse> getDashboardData(
-			@ApiParam(value = "Details of the Employee Dasboard for All the modules", required = true)
+			@Parameter(description = "Details of the Employee Dasboard for All the modules", required = true)
 			@Valid @RequestBody EmployeeDashboardRequest employeeDashboardRequest
 			) {
 

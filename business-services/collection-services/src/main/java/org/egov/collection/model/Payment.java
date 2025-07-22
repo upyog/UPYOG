@@ -12,6 +12,8 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
+import org.egov.collection.validation.SanitizeHtml;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -39,6 +41,7 @@ public class Payment {
     @JsonProperty("totalAmountPaid")
     private BigDecimal totalAmountPaid;
 
+    @SanitizeHtml
     @Size(max=128)
     @JsonProperty("transactionNumber")
     private String transactionNumber;
@@ -54,6 +57,7 @@ public class Payment {
     @JsonProperty("instrumentDate")
     private Long instrumentDate;
 
+    @SanitizeHtml
     @Size(max=128)
     @JsonProperty("instrumentNumber")
     private String instrumentNumber;
@@ -61,6 +65,7 @@ public class Payment {
     @JsonProperty("instrumentStatus")
     private InstrumentStatusEnum instrumentStatus;
 
+    @SanitizeHtml
     @Size(max=64)
     @JsonProperty("ifscCode")
     private String ifscCode;
@@ -75,31 +80,37 @@ public class Payment {
     @Valid
     private List<PaymentDetail> paymentDetails;
 
+    @SanitizeHtml
     @Size(max=128)
     @NotNull
     @Pattern(regexp = "^[a-zA-Z]+(([_\\-'`\\. ][a-zA-Z ])?[a-zA-Z]*)*$", message = "Invalid name. Only alphabets and special characters -, ',`, ., _")
     @JsonProperty("paidBy")
     private String paidBy = null;
 
+    @SanitizeHtml
     @Size(max=64)
     @Pattern(regexp = "^[6-9][0-9]{9}$", message = "Invalid mobile number")
     @JsonProperty("mobileNumber")
     private String mobileNumber = null;
 
+    @SanitizeHtml
     @Size(max=128)
     @Pattern(regexp = "^[a-zA-Z ]+(([_\\-'`\\. ][a-zA-Z ])?[a-zA-Z]*)*$", message = "Invalid name. Only alphabets and special characters -, ',`, ., _")
     @JsonProperty("payerName")
     private String payerName = null;
 
+    @SanitizeHtml
     @Size(max=1024)
     @JsonProperty("payerAddress")
     private String payerAddress = null;
 
+    @SanitizeHtml
     @Size(max=64)
     @Pattern(regexp = "^$|^(?=^.{1,64}$)((([^<>()\\[\\]\\\\.,;:\\s$*@'\"]+(\\.[^<>()\\[\\]\\\\.,;:\\s@'\"]+)*)|(\".+\"))@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\])|(([a-zA-Z\\-0-9]+\\.)+[a-zA-Z]{2,})))$", message = "Invalid emailId")
     @JsonProperty("payerEmail")
     private String payerEmail = null;
 
+    @SanitizeHtml
     @Size(max=64)
     @JsonProperty("payerId")
     private String payerId = null;
@@ -107,6 +118,7 @@ public class Payment {
     @JsonProperty("paymentStatus")
     private PaymentStatusEnum paymentStatus;
 
+    @SanitizeHtml
     @JsonProperty("fileStoreId")
     private String fileStoreId;
 

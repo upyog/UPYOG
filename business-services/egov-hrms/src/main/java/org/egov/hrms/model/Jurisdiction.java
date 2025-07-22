@@ -42,10 +42,10 @@ package org.egov.hrms.model;
 
 import lombok.*;
 
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
-import org.hibernate.validator.constraints.SafeHtml;
+import org.egov.hrms.validation.SanitizeHtml;
 import org.springframework.validation.annotation.Validated;
 
 @Validated
@@ -58,25 +58,25 @@ import org.springframework.validation.annotation.Validated;
 @ToString
 public class Jurisdiction {
 
-    @SafeHtml
+    @SanitizeHtml
     private String id;
 
-    @SafeHtml
+    @SanitizeHtml
     @NotNull
     @Size(min=2, max=100)
     private String hierarchy;
 
-    @SafeHtml
+    @SanitizeHtml
     @NotNull
     @Size(min=2, max=100)
     private String boundary;
 
-    @SafeHtml
+    @SanitizeHtml
     @NotNull
     @Size(max=256)
     private String boundaryType;
 
-    @SafeHtml
+    @SanitizeHtml
     private String tenantId;
 
     private AuditDetails auditDetails;
