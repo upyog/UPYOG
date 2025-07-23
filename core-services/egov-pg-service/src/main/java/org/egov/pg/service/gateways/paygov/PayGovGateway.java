@@ -159,8 +159,8 @@ public class PayGovGateway implements Gateway {
         queryMap.put(REQUEST_DATE_TIME_KEY, format.format(currentDate));
         String returnUrl = transaction.getCallbackUrl().replace(CITIZEN_URL, "");
 
-       // queryMap.put(SERVICE_ID_KEY, getModuleCode(transaction));
-        queryMap.put(SERVICE_ID_KEY,"MMPTBTEST01");
+        queryMap.put(SERVICE_ID_KEY, getModuleCode(transaction));
+        //queryMap.put(SERVICE_ID_KEY,"MMPTBTEST01");
         String domainName =  returnUrl.replaceAll("http(s)?://|www\\.|/.*", "");
         String citizenReturnURL = returnUrl.split(domainName)[1];
        // citizenReturnURL = EGOV_SERVER_HOSTNAME+citizenReturnURL;
@@ -216,6 +216,8 @@ public class PayGovGateway implements Gateway {
         ObjectMapper mapper = new ObjectMapper();
         try {
             urlData= mapper.writeValueAsString(queryMap);
+            System.out.println("URLDATA::::::::::::::::::::"+urlData);
+            System.out.println("QUERY:::::::::::::::::::::::::::::::::::::MAP:---->>>>"+queryMap);
         } catch (Exception e) {
             // TODO Auto-generated catch block
             log.error("PAYGOV URL generation failed", e);
