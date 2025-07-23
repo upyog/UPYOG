@@ -59,6 +59,7 @@ public class AuthFilter extends ZuulFilter {
         String authToken = (String) ctx.get(AUTH_TOKEN_KEY);
         try {
             User user = getUser(authToken, ctx);
+            logger.info("AuthFilter user: "+user.toString());
             ctx.set(USER_INFO_KEY, user);
         } catch (HttpClientErrorException ex) {
             logger.error(RETRIEVING_USER_FAILED_MESSAGE, ex);
