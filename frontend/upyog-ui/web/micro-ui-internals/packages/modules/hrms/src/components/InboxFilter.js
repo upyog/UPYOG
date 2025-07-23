@@ -41,6 +41,11 @@ const Filter = ({ searchParams, onFilterChange, onSearch, removeParam, ...props 
     "egov-hrms",
     "HRMSRolesandDesignation"
   );
+  let roleOptions = [];
+    data &&
+    data?.MdmsRes["ACCESSCONTROL-ROLES"]?.roles.map((one) => {
+      roleOptions.push({ i18text: `${one.code}`, code: `${t(one.code)}`, name: `${one.name}`, description:`${one.description}` });
+  });
   const [departments, setDepartments] = useState(() => {
     return { departments: null };
   });
@@ -182,10 +187,10 @@ const Filter = ({ searchParams, onFilterChange, onSearch, removeParam, ...props 
               <div>
                 {GetSelectOptions(
                   t("HR_COMMON_TABLE_COL_ROLE"),
-                  Digit.Utils.locale.convertToLocaleData(data?.MdmsRes["ACCESSCONTROL-ROLES"]?.roles, 'ACCESSCONTROL_ROLES_ROLES', t),
+                  roleOptions,
                   selectedRoles,
                   onSelectRoles,
-                  "i18text",
+                  "code",
                   onRemove,
                   "role"
                 )}
