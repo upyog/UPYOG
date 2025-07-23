@@ -11,7 +11,8 @@
     "packages/modules/core",
     "packages/modules/commonPt",
     "packages/modules/common",
-    "packages/modules/dss"
+    "packages/modules/dss",
+    "packages/modules/tl"
   ],
   "license": "MIT",
   "private": true,
