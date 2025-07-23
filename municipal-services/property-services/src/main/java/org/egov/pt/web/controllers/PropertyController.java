@@ -32,6 +32,7 @@ import org.egov.pt.service.PropertyService;
 import org.egov.pt.util.PTConstants;
 import org.egov.pt.util.ResponseInfoFactory;
 import org.egov.pt.validator.PropertyValidator;
+import org.egov.pt.web.contracts.GenrateArrearRequest;
 import org.egov.pt.web.contracts.PropertyRequest;
 import org.egov.pt.web.contracts.PropertyResponse;
 import org.egov.pt.web.contracts.PropertyStatusUpdateRequest;
@@ -373,6 +374,17 @@ public class PropertyController {
 	    response.put("ResponseInfo", resInfo);
 	    response.put("MasterStatus", result);
 		return new ResponseEntity<>(response, HttpStatus.OK);
+	}
+	
+	@PostMapping("/_createArear")
+	public ResponseEntity<Map<String, Object>> createArear(@Valid @RequestBody GenrateArrearRequest genrateArrearRequest) {
+
+		 propertyService.generateArrear(genrateArrearRequest);
+//		ResponseInfo resInfo = responseInfoFactory.createResponseInfoFromRequestInfo(requestInfoWrapper.getRequestInfo(), true);
+//	    Map<String, Object> response = new HashMap<>();
+//	    response.put("ResponseInfo", resInfo);
+//	    response.put("MasterStatus", result);
+		return new ResponseEntity<>(null, HttpStatus.OK);
 	}
 	
 }
