@@ -91,66 +91,156 @@ public class DashboardReportRepository {
 		return properties;
 	}
 	
-	public BigInteger getTotalPropertyPendingselfAssessedCount(DashboardDataSearch dashboardDataSearch)
+	public List<Property> getTotalPropertyPendingselfAssessedCount(DashboardRequest dashboardRequest)
 	{
-		String query=reportQueryBuilder.getTotalPropertyPendingselfAssessmentQuery(dashboardDataSearch);
-		BigInteger result = jdbcTemplate.queryForObject(query, BigInteger.class);
-		return result != null ? result : BigInteger.ZERO;
+		String query=reportQueryBuilder.getTotalPropertyPendingselfAssessmentQuery(dashboardRequest.getDashboardDataSearch());
+		List<String> propertyIdList = jdbcTemplate.query(
+			    query,
+			    (rs, rowNum) -> rs.getString("propertyid")  
+			);
+		Set<String> propertyIds = new HashSet<>(propertyIdList);
+		PropertyCriteria criteria = new PropertyCriteria();
+		criteria.setPropertyIds(propertyIds);
+		List<Property> properties=new ArrayList<>();
+		if(!CollectionUtils.isEmpty(propertyIds))
+			properties =propertyService.searchProperty(criteria, dashboardRequest.getRequestInfo());
+		
+		return properties;
 	}
 	
-	public BigInteger getTotalPropertyPaidCount(DashboardDataSearch dashboardDataSearch)
+	public List<Property> getTotalPropertyPaidCount(DashboardRequest dashboardRequest)
 	{
-		String query=reportQueryBuilder.getTotalPropertyPaidQuery(dashboardDataSearch);
-		BigInteger result = jdbcTemplate.queryForObject(query, BigInteger.class);
-		return result != null ? result : BigInteger.ZERO;
+		String query=reportQueryBuilder.getTotalPropertyPaidQuery(dashboardRequest.getDashboardDataSearch());
+		List<String> propertyIdList = jdbcTemplate.query(
+			    query,
+			    (rs, rowNum) -> rs.getString("propertyid")  
+			);
+		Set<String> propertyIds = new HashSet<>(propertyIdList);
+		PropertyCriteria criteria = new PropertyCriteria();
+		criteria.setPropertyIds(propertyIds);
+		List<Property> properties=new ArrayList<>();
+		if(!CollectionUtils.isEmpty(propertyIds))
+			properties =propertyService.searchProperty(criteria, dashboardRequest.getRequestInfo());
+		
+		return properties;
 	}
 	
-	public BigInteger getTotalPropertyAppealSubmitedCount(DashboardDataSearch dashboardDataSearch)
+	public List<Property> getTotalPropertyAppealSubmitedCount(DashboardRequest dashboardRequest)
 	{
-		String query=reportQueryBuilder.getTotalPropertyAppealSubmitedQuery(dashboardDataSearch);
-		BigInteger result = jdbcTemplate.queryForObject(query, BigInteger.class);
-		return result != null ? result : BigInteger.ZERO;
+		String query=reportQueryBuilder.getTotalPropertyAppealSubmitedQuery(dashboardRequest.getDashboardDataSearch());
+		List<String> propertyIdList = jdbcTemplate.query(
+			    query,
+			    (rs, rowNum) -> rs.getString("propertyid")  
+			);
+		Set<String> propertyIds = new HashSet<>(propertyIdList);
+		PropertyCriteria criteria = new PropertyCriteria();
+		criteria.setPropertyIds(propertyIds);
+		List<Property> properties=new ArrayList<>();
+		if(!CollectionUtils.isEmpty(propertyIds))
+			properties =propertyService.searchProperty(criteria, dashboardRequest.getRequestInfo());
+		
+		return properties;
 	}
 	
-	public BigInteger getTotalPropertyAppealPendingCount(DashboardDataSearch dashboardDataSearch)
+	public List<Property> getTotalPropertyAppealPendingCount(DashboardRequest dashboardRequest)
 	{
-		String query=reportQueryBuilder.getTotalPropertyAppealPendingQuery(dashboardDataSearch);
-		BigInteger result = jdbcTemplate.queryForObject(query, BigInteger.class);
-		return result != null ? result : BigInteger.ZERO;
+		String query=reportQueryBuilder.getTotalPropertyAppealPendingQuery(dashboardRequest.getDashboardDataSearch());
+		List<String> propertyIdList = jdbcTemplate.query(
+			    query,
+			    (rs, rowNum) -> rs.getString("propertyid")  
+			);
+		Set<String> propertyIds = new HashSet<>(propertyIdList);
+		PropertyCriteria criteria = new PropertyCriteria();
+		criteria.setPropertyIds(propertyIds);
+		List<Property> properties=new ArrayList<>();
+		if(!CollectionUtils.isEmpty(propertyIds))
+			properties =propertyService.searchProperty(criteria, dashboardRequest.getRequestInfo());
+		
+		return properties;
 	}
 	
-	public BigDecimal getTotalTaxCollectedAmount(DashboardDataSearch dashboardDataSearch)
+	public List<Property> getTotalTaxCollectedAmount(DashboardRequest dashboardRequest)
 	{
-		String query=reportQueryBuilder.getTotalTaxCollectedQuery(dashboardDataSearch);
-		BigDecimal result = jdbcTemplate.queryForObject(query, BigDecimal.class);
-		return result != null ? result : BigDecimal.ZERO;
+		String query=reportQueryBuilder.getTotalTaxCollectedQuery(dashboardRequest.getDashboardDataSearch());
+		List<String> propertyIdList = jdbcTemplate.query(
+			    query,
+			    (rs, rowNum) -> rs.getString("propertyid")  
+			);
+		Set<String> propertyIds = new HashSet<>(propertyIdList);
+		PropertyCriteria criteria = new PropertyCriteria();
+		criteria.setPropertyIds(propertyIds);
+		List<Property> properties=new ArrayList<>();
+		if(!CollectionUtils.isEmpty(propertyIds))
+			properties =propertyService.searchProperty(criteria, dashboardRequest.getRequestInfo());
+		
+		return properties;
 	}
 	
-	public BigDecimal getPropertyTaxShareAmount(DashboardDataSearch dashboardDataSearch) {
-	    String query = reportQueryBuilder.getPropertyTaxShareQuery(dashboardDataSearch);
-	    BigDecimal result = jdbcTemplate.queryForObject(query, BigDecimal.class);
-	    return result != null ? result.setScale(2, RoundingMode.HALF_UP) : BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP);
+	public List<Property> getPropertyTaxShareAmount(DashboardRequest dashboardRequest) {
+	    String query = reportQueryBuilder.getPropertyTaxShareQuery(dashboardRequest.getDashboardDataSearch());
+	    List<String> propertyIdList = jdbcTemplate.query(
+			    query,
+			    (rs, rowNum) -> rs.getString("propertyid")  
+			);
+		Set<String> propertyIds = new HashSet<>(propertyIdList);
+		PropertyCriteria criteria = new PropertyCriteria();
+		criteria.setPropertyIds(propertyIds);
+		List<Property> properties=new ArrayList<>();
+		if(!CollectionUtils.isEmpty(propertyIds))
+			properties =propertyService.searchProperty(criteria, dashboardRequest.getRequestInfo());
+		
+		return properties;
 	}
 
 
-	public BigDecimal getPenaltyShareAmount(DashboardDataSearch dashboardDataSearch)
+	public List<Property> getPenaltyShareAmount(DashboardRequest dashboardRequest)
 	{
-		String query=reportQueryBuilder.getPenaltyShareQuery(dashboardDataSearch);
-		BigDecimal result = jdbcTemplate.queryForObject(query, BigDecimal.class);
-		return result != null ? result : BigDecimal.ZERO;
+		String query=reportQueryBuilder.getPenaltyShareQuery(dashboardRequest.getDashboardDataSearch());
+		 List<String> propertyIdList = jdbcTemplate.query(
+				    query,
+				    (rs, rowNum) -> rs.getString("consumercode")  
+				);
+			Set<String> propertyIds = new HashSet<>(propertyIdList);
+			PropertyCriteria criteria = new PropertyCriteria();
+			criteria.setPropertyIds(propertyIds);
+			List<Property> properties=new ArrayList<>();
+			if(!CollectionUtils.isEmpty(propertyIds))
+				properties =propertyService.searchProperty(criteria, dashboardRequest.getRequestInfo());
+			
+			return properties;
 	}
 	
-	public BigDecimal getInterestShareAmount(DashboardDataSearch dashboardDataSearch)
+	public List<Property> getInterestShareAmount(DashboardRequest dashboardRequest)
 	{
-		String query=reportQueryBuilder.getInterestShareQuery(dashboardDataSearch);
-		BigDecimal result = jdbcTemplate.queryForObject(query, BigDecimal.class);
-		return result != null ? result : BigDecimal.ZERO;
+		String query=reportQueryBuilder.getInterestShareQuery(dashboardRequest.getDashboardDataSearch());
+		List<String> propertyIdList = jdbcTemplate.query(
+			    query,
+			    (rs, rowNum) -> rs.getString("consumercode")  
+			);
+		Set<String> propertyIds = new HashSet<>(propertyIdList);
+		PropertyCriteria criteria = new PropertyCriteria();
+		criteria.setPropertyIds(propertyIds);
+		List<Property> properties=new ArrayList<>();
+		if(!CollectionUtils.isEmpty(propertyIds))
+			properties =propertyService.searchProperty(criteria, dashboardRequest.getRequestInfo());
+		
+		return properties;
 	}
 	
-	public BigDecimal getAdvanceShareAmount(DashboardDataSearch dashboardDataSearch)
+	public List<Property> getAdvanceShareAmount(DashboardRequest dashboardRequest)
 	{
-		String query=reportQueryBuilder.getAdvanceShareQuery(dashboardDataSearch);
-		BigDecimal result = jdbcTemplate.queryForObject(query, BigDecimal.class);
-		return result != null ? result : BigDecimal.ZERO;
+		String query=reportQueryBuilder.getAdvanceShareQuery(dashboardRequest.getDashboardDataSearch());
+		List<String> propertyIdList = jdbcTemplate.query(
+			    query,
+			    (rs, rowNum) -> rs.getString("propertyid")  
+			);
+		Set<String> propertyIds = new HashSet<>(propertyIdList);
+		PropertyCriteria criteria = new PropertyCriteria();
+		criteria.setPropertyIds(propertyIds);
+		List<Property> properties=new ArrayList<>();
+		if(!CollectionUtils.isEmpty(propertyIds))
+			properties =propertyService.searchProperty(criteria, dashboardRequest.getRequestInfo());
+		
+		return properties;
 	}
 }

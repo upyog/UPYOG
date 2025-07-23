@@ -45,10 +45,22 @@ public class DashboardDataQueryBuilder {
 		    "GROUP BY action_st";
 
 
-	public static final String PROPERTIES_APPROVED = "SELECT count(ewpv.businessid) ,ep.tenantid,epadd.ward_no\r\n"
-			+ "FROM eg_wf_processinstance_v2 ewpv\r\n"
-			+ "JOIN eg_pt_property ep ON ep.acknowldgementnumber = ewpv.businessid\r\n"
-			+ "JOIN eg_pt_address epadd ON ep.id = epadd.propertyid\r\n" + "WHERE ewpv.\"action\" ='APPROVE'\r\n";
+	public static final String PROPERTIES_APPROVED = "WITH approved AS (\r\n"
+			+ "  SELECT \r\n"
+			+ "    COUNT(ewpv.businessid) AS approved_count,\r\n"
+			+ "    ep.tenantid,\r\n"
+			+ "    epadd.ward_no\r\n"
+			+ "  FROM eg_wf_processinstance_v2 ewpv\r\n"
+			+ "  JOIN eg_pt_property ep \r\n"
+			+ "    ON ep.acknowldgementnumber = ewpv.businessid\r\n"
+			+ "  JOIN eg_pt_address epadd \r\n"
+			+ "    ON ep.id = epadd.propertyid\r\n"
+			+ "  WHERE ewpv.\"action\" = 'APPROVE' \r\n"
+			+ "  /*FILTER_CONDITIONS*/\n" 
+			+ "  GROUP BY ep.tenantid, epadd.ward_no\r\n"
+			+ ")\r\n"
+			+ "SELECT SUM(approved.approved_count) AS total_approved_count\r\n"
+			+ "FROM approved";
 
 	public static final String PROPERTIES_SELF_ASSESSED = "select COUNT(epp.propertyid) AS count\r\n"
 			+ "FROM eg_pt_asmt_assessment epaa\r\n" + "JOIN eg_pt_property epp ON epaa.propertyid = epp.propertyid\r\n"
@@ -252,8 +264,10 @@ public class DashboardDataQueryBuilder {
 		} else {
 			stringBuilder.append(" AND epa.ward_no != ''");
 		}
-
-		return stringBuilder.toString();
+		
+		String finalQuery = PROPERTIES_APPROVED.replace("/*FILTER_CONDITIONS*/", stringBuilder.toString());
+		System.out.println("finalQuery::"+finalQuery);
+		return finalQuery;
 	}
 	
 	public String getTotalPropertySelfassessedQuery(DashboardDataSearch dashboardDataSearch) {

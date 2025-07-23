@@ -310,6 +310,83 @@ public class DashboardDataService {
 		propertiesRegistered.setProperties(properities);
 		service.add(propertiesRegistered);
 		
+		propertiesRegistered = new ServiceWithProperties();
+		properities  = dashboardReportRepository.getTotalPropertyPendingselfAssessedCount(dashboardRequest);
+		propertiesRegistered.setTotal(properities.size());
+		propertiesRegistered.setType("propertiesPendingSelfAssessment");
+		propertiesRegistered.setProperties(properities);
+		service.add(propertiesRegistered);
+		
+		propertiesRegistered = new ServiceWithProperties();
+		properities  = dashboardReportRepository.getTotalPropertyPaidCount(dashboardRequest);
+		propertiesRegistered.setTotal(properities.size());
+		propertiesRegistered.setType("propertiesPaid");
+		propertiesRegistered.setProperties(properities);
+		service.add(propertiesRegistered);
+		
+		propertiesRegistered = new ServiceWithProperties();
+		properities  = dashboardReportRepository.getTotalPropertyAppealSubmitedCount(dashboardRequest);
+		propertiesRegistered.setTotal(properities.size());
+		propertiesRegistered.setType("propertiesWithAppealSubmitted");
+		propertiesRegistered.setProperties(properities);
+		service.add(propertiesRegistered);
+		
+		propertiesRegistered = new ServiceWithProperties();
+		properities  = dashboardReportRepository.getTotalPropertyAppealPendingCount(dashboardRequest);
+		propertiesRegistered.setTotal(properities.size());
+		propertiesRegistered.setType("appealsPending");
+		propertiesRegistered.setProperties(properities);
+		service.add(propertiesRegistered);
+		
+		propertiesRegistered = new ServiceWithProperties();
+		properities  = dashboardReportRepository.getTotalTaxCollectedAmount(dashboardRequest);
+		propertiesRegistered.setTotal(properities.size());
+		propertiesRegistered.setType("totalTaxCollected");
+		propertiesRegistered.setProperties(properities);
+		revenue.add(propertiesRegistered);
+		
+		propertiesRegistered = new ServiceWithProperties();
+		properities  = dashboardReportRepository.getTotalTaxCollectedAmount(dashboardRequest);
+		propertiesRegistered.setTotal(properities.size());
+		propertiesRegistered.setType("propertyTax");
+		propertiesRegistered.setProperties(properities);
+		revenue.add(propertiesRegistered);
+		
+		propertiesRegistered = new ServiceWithProperties();
+		properities  = dashboardReportRepository.getTotalTaxCollectedAmount(dashboardRequest);
+		propertiesRegistered.setTotal(emptyProperities.size());
+		propertiesRegistered.setType("refund");
+		propertiesRegistered.setProperties(emptyProperities);
+		revenue.add(propertiesRegistered);
+		
+		propertiesRegistered = new ServiceWithProperties();
+		properities  = dashboardReportRepository.getPenaltyShareAmount(dashboardRequest);
+		propertiesRegistered.setTotal(properities.size());
+		propertiesRegistered.setType("penalty");
+		propertiesRegistered.setProperties(properities);
+		revenue.add(propertiesRegistered);
+		
+		propertiesRegistered = new ServiceWithProperties();
+		properities  = dashboardReportRepository.getInterestShareAmount(dashboardRequest);
+		propertiesRegistered.setTotal(properities.size());
+		propertiesRegistered.setType("interest");
+		propertiesRegistered.setProperties(properities);
+		revenue.add(propertiesRegistered);
+		
+		propertiesRegistered = new ServiceWithProperties();
+		properities  = dashboardReportRepository.getAdvanceShareAmount(dashboardRequest);
+		propertiesRegistered.setTotal(properities.size());
+		propertiesRegistered.setType("advance");
+		propertiesRegistered.setProperties(properities);
+		revenue.add(propertiesRegistered);
+		
+		propertiesRegistered = new ServiceWithProperties();
+		properities  = dashboardReportRepository.getTotalTaxCollectedAmount(dashboardRequest);
+		propertiesRegistered.setTotal(emptyProperities.size());
+		propertiesRegistered.setType("arrears");
+		propertiesRegistered.setProperties(emptyProperities);
+		revenue.add(propertiesRegistered);
+		
 		
 		
 		dashboardData.setServices(service);
