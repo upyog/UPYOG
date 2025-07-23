@@ -13,6 +13,7 @@ import java.util.List;
 public class KeyRepository {
 
     private JdbcTemplate jdbcTemplate;
+    private final AuditRepository auditRepository;
 
     private static final String selectSymmetricKeyQuery = "SELECT * FROM eg_enc_symmetric_keys";
     private static final String selectAsymmetricKeyQuery = "SELECT * FROM eg_enc_asymmetric_keys";
@@ -34,44 +35,99 @@ public class KeyRepository {
 
 
     @Autowired
-    public KeyRepository(JdbcTemplate jdbcTemplate) {
+    public KeyRepository(JdbcTemplate jdbcTemplate, AuditRepository auditRepository) {
         this.jdbcTemplate = jdbcTemplate;
+        this.auditRepository = auditRepository;
     }
 
     public int insertSymmetricKey(SymmetricKey symmetricKey) {
-        return jdbcTemplate.update(insertSymmetricKeyQuery,
+        long now = java.time.Instant.now().toEpochMilli();
+        int result = jdbcTemplate.update(
+                "INSERT INTO eg_enc_symmetric_keys (key_id, secret_key, initial_vector, active, tenant_id, createdtime, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?)",
                 symmetricKey.getKeyId(),
                 symmetricKey.getSecretKey(),
                 symmetricKey.getInitialVector(),
                 symmetricKey.isActive(),
-                symmetricKey.getTenantId()
+                symmetricKey.getTenantId(),
+                now,
+                now
         );
+        if (result == 1) {
+            auditRepository.insertSymmetricKeyAudit(
+                    "INSERT",
+                    symmetricKey.getTenantId(),
+                    null,
+                    symmetricKey,
+                    new java.sql.Timestamp(now)
+            );
+        }
+        return result;
     }
 
     public int insertAsymmetricKey(AsymmetricKey asymmetricKey) {
-        return jdbcTemplate.update(insertAsymmetricKeyQuery,
+        long now = java.time.Instant.now().toEpochMilli();
+        int result = jdbcTemplate.update(
+                "INSERT INTO eg_enc_asymmetric_keys (key_id, public_key, private_key, active, tenant_id, createdtime, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?)",
                 asymmetricKey.getKeyId(),
                 asymmetricKey.getPublicKey(),
                 asymmetricKey.getPrivateKey(),
                 asymmetricKey.isActive(),
-                asymmetricKey.getTenantId()
+                asymmetricKey.getTenantId(),
+                now,
+                now
         );
+        if (result == 1) {
+            auditRepository.insertAsymmetricKeyAudit(
+                    "INSERT",
+                    asymmetricKey.getTenantId(),
+                    null,
+                    asymmetricKey,
+                    new java.sql.Timestamp(now)
+            );
+        }
+        return result;
     }
 
     public int deactivateSymmetricKeyForGivenTenant(String tenantId) {
-        return jdbcTemplate.update(deactivateSymmetricKeyForGivenTenantQuery, tenantId);
+        long now = java.time.Instant.now().toEpochMilli();
+        return auditRepository.auditDeactivateSymmetricKeyForTenant(
+                tenantId,
+                now,
+                () -> jdbcTemplate.update(
+                        "UPDATE eg_enc_symmetric_keys SET active='false', lastmodifiedtime=? WHERE active='true' AND tenant_id=?",
+                        now, tenantId)
+        );
     }
 
     public int deactivateAsymmetricKeyForGivenTenant(String tenantId) {
-        return jdbcTemplate.update(deactivateAsymmetricKeyForGivenTenantQuery, tenantId);
+        long now = java.time.Instant.now().toEpochMilli();
+        return auditRepository.auditDeactivateAsymmetricKeyForTenant(
+                tenantId,
+                now,
+                () -> jdbcTemplate.update(
+                        "UPDATE eg_enc_asymmetric_keys SET active='false', lastmodifiedtime=? WHERE active='true' AND tenant_id=?",
+                        now, tenantId)
+        );
     }
 
     public int deactivateSymmetricKeys() {
-        return jdbcTemplate.update(deactivateSymmetricKeyQuery);
+        long now = java.time.Instant.now().toEpochMilli();
+        return auditRepository.auditDeactivateAllSymmetricKeys(
+                now,
+                () -> jdbcTemplate.update(
+                        "UPDATE eg_enc_symmetric_keys SET active='false', lastmodifiedtime=? WHERE active='true'",
+                        now)
+        );
     }
 
     public int deactivateAsymmetricKeys() {
-        return jdbcTemplate.update(deactivateAsymmetricKeyQuery);
+        long now = java.time.Instant.now().toEpochMilli();
+        return auditRepository.auditDeactivateAllAsymmetricKeys(
+                now,
+                () -> jdbcTemplate.update(
+                        "UPDATE eg_enc_asymmetric_keys SET active='false', lastmodifiedtime=? WHERE active='true'",
+                        now)
+        );
     }
 
     public List<SymmetricKey> fetchSymmetricKeys() {

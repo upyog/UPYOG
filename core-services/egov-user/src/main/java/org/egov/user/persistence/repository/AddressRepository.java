@@ -10,6 +10,7 @@ import org.egov.user.domain.model.Address;
 import org.egov.user.domain.model.AddressSearchCriteria;
 import org.egov.user.domain.model.enums.AddressType;
 import org.egov.user.domain.service.utils.UserConstants;
+import org.egov.user.persistence.repository.AuditRepository;
 import org.egov.user.repository.builder.AddressQueryBuilder;
 import org.egov.user.repository.rowmapper.AddressRowMapper;
 import org.egov.user.repository.rowmapper.AddressRowMapperV2;
@@ -33,12 +34,14 @@ public class AddressRepository {
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
     private JdbcTemplate jdbcTemplate;
     private AddressQueryBuilder addressQueryBuilder;
+    private AuditRepository auditRepository;
 
     public AddressRepository(NamedParameterJdbcTemplate namedParameterJdbcTemplate, JdbcTemplate jdbcTemplate,
-                             AddressQueryBuilder addressQueryBuilder) {
+                             AddressQueryBuilder addressQueryBuilder, AuditRepository auditRepository) {
         this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
         this.jdbcTemplate = jdbcTemplate;
         this.addressQueryBuilder =  addressQueryBuilder;
+        this.auditRepository = auditRepository;
     }
 
     /**
@@ -66,6 +69,8 @@ public class AddressRepository {
         addressInputs.put("status", UserConstants.ADDRESS_ACTIVE_STATUS); // Set status to active
 
         namedParameterJdbcTemplate.update(INSERT_ADDRESS_BYUSERID, addressInputs);
+        // Create audit record for address creation
+        auditRepository.auditAddress(addressInputs, userId != null ? userId.toString() : null);
         return address;
     }
 
@@ -160,6 +165,8 @@ public class AddressRepository {
         addressInputs.put("lastmodifiedby", userId);
 
         namedParameterJdbcTemplate.update(UPDATE_ADDRESS_BYIDAND_TENANTID, addressInputs);
+        // Create audit record for address update
+        auditRepository.auditAddress(addressInputs, userId != null ? userId.toString() : null);
     }
 
     private Map<String, Address> toMap(List<Address> entityAddresses) {
@@ -263,6 +270,8 @@ public class AddressRepository {
         }
         address.setUserId(userId);
         address.setId(addressId);
+        // Create audit record for address v2 creation
+        auditRepository.auditAddress(addressInputs, userId != null ? userId.toString() : null);
         return address;
     }
 

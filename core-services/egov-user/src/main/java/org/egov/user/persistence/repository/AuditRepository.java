@@ -3,6 +3,7 @@ package org.egov.user.persistence.repository;
 import static java.util.Objects.isNull;
 import static org.springframework.util.StringUtils.isEmpty;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -19,6 +20,16 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+/**
+ * Repository class responsible for creating audit records for user service operations.
+ * 
+ * This repository handles audit trail creation for various user-related entities including:
+ * - User information changes
+ * - Address modifications
+ * - User role assignments
+ * 
+ * All audit records include timestamp and user identifier information for tracking purposes.
+ */
 @Repository
 public class AuditRepository {
 	
@@ -26,6 +37,18 @@ public class AuditRepository {
             + "type,guardian,guardianrelation,signature,accountlocked,bloodgroup,photo,identificationmark,auditcreatedby,auditcreatedtime) values (:id,:uuid,:tenantid,:salutation,"
             + ":dob,:locale,:username,:password,:pwdexpirydate,:mobilenumber,:alternatemobilenumber,:emailid,:active,:name,:gender,:pan,:aadhaarnumber,:type,:guardian,:guardianrelation,:signature,"
             + ":accountlocked,:bloodgroup,:photo,:identificationmark,:auditcreatedby,:auditcreatedtime) ";
+
+    /**
+     * SQL query to insert audit records into the user address audit table.
+     * Captures all address-related changes for audit trail purposes.
+     */
+    public static final String INSERT_ADDRESS_AUDIT_DETAILS = "insert into eg_user_address_audit (id, version, createddate, lastmodifieddate, createdby, lastmodifiedby, type, address, city, pincode, userid, tenantid, auditcreatedby, auditcreatedtime) values (:id, :version, :createddate, :lastmodifieddate, :createdby, :lastmodifiedby, :type, :address, :city, :pincode, :userid, :tenantid, :auditcreatedby, :auditcreatedtime) ";
+    
+    /**
+     * SQL query to insert audit records into the user role v1 audit table.
+     * Captures user role assignments and changes for audit trail purposes.
+     */
+    public static final String INSERT_USERROLE_V1_AUDIT_DETAILS = "insert into eg_userrole_v1_audit (role_code, role_tenantid, user_id, user_tenantid, lastmodifieddate, auditcreatedby, auditcreatedtime) values (:role_code, :role_tenantid, :user_id, :user_tenantid, :lastmodifieddate, :auditcreatedby, :auditcreatedtime) ";
 
 	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
     private JdbcTemplate jdbcTemplate;
@@ -41,7 +64,7 @@ public class AuditRepository {
 
     	
     	auditInputs.put("auditcreatedby", uuid);
-    	auditInputs.put("auditcreatedtime", System.currentTimeMillis() );
+    	auditInputs.put("auditcreatedtime", Instant.now().toEpochMilli());
     	
     	auditInputs.put("id", oldUser.getId());
         auditInputs.put("uuid", oldUser.getUuid());
@@ -154,4 +177,36 @@ public class AuditRepository {
     	
 	}
 
+    /**
+     * Creates an audit record for user address changes.
+     * 
+     * This method captures address modifications by inserting a record into the 
+     * eg_user_address_audit table with the current timestamp and user identifier.
+     * 
+     * @param address Map containing address data to be audited
+     * @param uuid User identifier who performed the action (can be null)
+     */
+    public void auditAddress(Map<String, Object> address, String uuid) {
+        Map<String, Object> auditInputs = new HashMap<>(address);
+        auditInputs.put("auditcreatedby", uuid);
+        auditInputs.put("auditcreatedtime", Instant.now().toEpochMilli());
+        namedParameterJdbcTemplate.update(INSERT_ADDRESS_AUDIT_DETAILS, auditInputs);
+    }
+
+    /**
+     * Creates an audit record for user role v1 changes.
+     * 
+     * This method captures user role assignments and modifications by inserting 
+     * a record into the eg_userrole_v1_audit table with the current timestamp 
+     * and user identifier.
+     * 
+     * @param userroleV1 Map containing user role v1 data to be audited
+     * @param uuid User identifier who performed the action (can be null)
+     */
+    public void auditUserRoleV1(Map<String, Object> userroleV1, String uuid) {
+        Map<String, Object> auditInputs = new HashMap<>(userroleV1);
+        auditInputs.put("auditcreatedby", uuid);
+        auditInputs.put("auditcreatedtime", Instant.now().toEpochMilli());
+        namedParameterJdbcTemplate.update(INSERT_USERROLE_V1_AUDIT_DETAILS, auditInputs);
+    }
 }

@@ -450,15 +450,18 @@ public class UserRepository {
      */
     private void saveUserRoles(User entityUser) {
         List<Map<String, Object>> batchValues = new ArrayList<>(entityUser.getRoles().size());
-
         for (Role role : entityUser.getRoles()) {
-            batchValues.add(
-                    new MapSqlParameterSource("role_code", role.getCode())
-                            .addValue("role_tenantid", role.getTenantId())
-                            .addValue("user_id", entityUser.getId())
-                            .addValue("user_tenantid", entityUser.getTenantId())
-                            .addValue("lastmodifieddate", new Date())
-                            .getValues());
+            Map<String, Object> userRoleData = new MapSqlParameterSource("role_code", role.getCode())
+                    .addValue("role_tenantid", role.getTenantId())
+                    .addValue("user_id", entityUser.getId())
+                    .addValue("user_tenantid", entityUser.getTenantId())
+                    .addValue("lastmodifieddate", new Date())
+                    .getValues();
+            
+            batchValues.add(userRoleData);
+            
+            // Create audit record for user role v1 assignment
+            auditRepository.auditUserRoleV1(userRoleData, entityUser.getLoggedInUserId() != null ? entityUser.getLoggedInUserId().toString() : null);
         }
         namedParameterJdbcTemplate.batchUpdate(RoleQueryBuilder.INSERT_USER_ROLES,
                 batchValues.toArray(new Map[entityUser.getRoles().size()]));
