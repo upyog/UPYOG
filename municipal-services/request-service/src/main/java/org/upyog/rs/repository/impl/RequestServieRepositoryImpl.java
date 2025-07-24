@@ -45,7 +45,18 @@ public class RequestServieRepositoryImpl implements RequestServiceRepository {
 		WaterTankerBookingDetail waterTankerBookingDetail = waterTankerRequest.getWaterTankerBookingDetail();
 		PersisterWrapper<WaterTankerBookingDetail> persisterWrapper = new PersisterWrapper<WaterTankerBookingDetail>(
 				waterTankerBookingDetail);
-		producer.push(requestServiceConfiguration.getWaterTankerApplicationSaveTopic(), waterTankerRequest);
+		pushWaterTankerRequestToKafka(waterTankerRequest);
+	}
+
+	private void pushWaterTankerRequestToKafka(WaterTankerBookingRequest waterTankerRequest) {
+		if(requestServiceConfiguration.getIsUserProfileEnabled()) {
+			producer.push(requestServiceConfiguration.getWaterTankerApplicationWithProfileSaveTopic(), waterTankerRequest);
+		}
+		else {
+			producer.push(requestServiceConfiguration.getWaterTankerApplicationSaveTopic(), waterTankerRequest);
+		}
+
+
 	}
 
 
@@ -96,7 +107,16 @@ public class RequestServieRepositoryImpl implements RequestServiceRepository {
 		MobileToiletBookingDetail mobileToiletBookingDetail = mobileToiletRequest.getMobileToiletBookingDetail();
 		PersisterWrapper<MobileToiletBookingDetail> persisterWrapper = new PersisterWrapper<MobileToiletBookingDetail>(
 				mobileToiletBookingDetail);
-		producer.push(requestServiceConfiguration.getMobileToiletApplicationSaveTopic(), mobileToiletRequest);
+		pushMobileToiletRequestToKafka(mobileToiletRequest);
+	}
+
+	private void pushMobileToiletRequestToKafka(MobileToiletBookingRequest mobileToiletRequest) {
+		if(requestServiceConfiguration.getIsUserProfileEnabled()) {
+			producer.push(requestServiceConfiguration.getMobileToiletApplicationWithProfileSaveTopic(), mobileToiletRequest);
+		}
+		else {
+			producer.push(requestServiceConfiguration.getMobileToiletApplicationSaveTopic(), mobileToiletRequest);
+		}
 	}
 	
 	@Override

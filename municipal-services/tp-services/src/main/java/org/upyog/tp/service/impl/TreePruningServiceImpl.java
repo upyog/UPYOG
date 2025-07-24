@@ -57,10 +57,22 @@ public class TreePruningServiceImpl implements TreePruningService {
         // Get the uuid of User from user registry
         try {
             List<org.upyog.tp.web.models.user.User> user = userService.fetchExistingOrCreateNewUser(treePruningRequest);
+
+            if (user == null || user.isEmpty()) {
+                throw new RuntimeException("User not found for this mobile number: " +
+                        treePruningRequest.getTreePruningBookingDetail().getApplicantDetail().getMobileNumber());
+            }
+            if(config.getIsUserProfileEnabled()){
             treePruningRequest.getTreePruningBookingDetail().setApplicantUuid(user.get(0).getUuid());
             log.info("Applicant or User Uuid: " + user.get(0).getUuid());
+            } else {
+                // If user profile is not enabled, set the applicantUuid to null
+                treePruningRequest.getTreePruningBookingDetail().setApplicantUuid(null);
+                log.info("User profile is not enabled, setting applicantUuid to null");
+            }
         } catch (Exception e) {
-            log.error("Error while creating user: " + e.getMessage(), e);
+            log.error("Error fetching user: " + e.getMessage(), e);
+            throw new RuntimeException("Failed to fetching user: " + e.getMessage(), e);
         }
 
         treePruningRepository.saveTreePruningBooking(treePruningRequest);
@@ -88,12 +100,12 @@ public class TreePruningServiceImpl implements TreePruningService {
         if (CollectionUtils.isEmpty(applications)) {
             return new ArrayList<>();
         }
-
-        // Enrich each booking with user details
-        for (TreePruningBookingDetail booking : applications) {
-            userService.enrichBookingWithUserDetails(booking, treePruningBookingSearchCriteria);
-        }
-
+       if(config.getIsUserProfileEnabled()) {
+           // Enrich each booking with user details
+           for (TreePruningBookingDetail booking : applications) {
+               userService.enrichBookingWithUserDetails(booking, treePruningBookingSearchCriteria);
+           }
+       }
         // Return retrieved application
         return applications;
     }

@@ -112,7 +112,7 @@ const OwnerForm = (_props) => {
     const tenantId = Digit.ULBService.getCurrentTenantId();
     const { data: applicationDetails } = Digit.Hooks.asset.useAssetApplicationDetail(t, tenantId, applicationNo);
 
-    const { data: maintainenceTypeMDMS } = Digit.Hooks.useCustomMDMSV2(Digit.ULBService.getStateId(), "ASSET", [{ name: "AssetMaintenanceType" }], {
+    const { data: maintainenceTypeMDMS } = Digit.Hooks.useEnabledMDMS(Digit.ULBService.getStateId(), "ASSET", [{ name: "AssetMaintenanceType" }], {
         select: (data) => {
             const formattedData = data?.["ASSET"]?.["AssetMaintenanceType"];
             const activeData = formattedData?.filter((item) => item.active === true);
@@ -127,7 +127,7 @@ const OwnerForm = (_props) => {
             maintenanceOpt.push({ i18nKey: `AST_${maintainenceType.code}`, code: `${maintainenceType.code}`, value: `${maintainenceType.name}` });
         });
 
-    const { data: paymentTypeOptMDMS } = Digit.Hooks.useCustomMDMSV2(Digit.ULBService.getStateId(), "ASSET", [{ name: "AssetPaymentType" }], {
+    const { data: paymentTypeOptMDMS } = Digit.Hooks.useEnabledMDMS(Digit.ULBService.getStateId(), "ASSET", [{ name: "AssetPaymentType" }], {
         select: (data) => {
             const formattedData = data?.["ASSET"]?.["AssetPaymentType"];
             const activeData = formattedData?.filter((item) => item.active === true);
@@ -142,7 +142,7 @@ const OwnerForm = (_props) => {
             paymentTypeOpt.push({ i18nKey: `AST_${row.code}`, code: `${row.code}`, value: `${row.name}` });
         });
 
-    const { data: maintenanceCycleOptMDMS } = Digit.Hooks.useCustomMDMSV2(Digit.ULBService.getStateId(), "ASSET", [{ name: "AssetMaintenanceCycle" }], {
+    const { data: maintenanceCycleOptMDMS } = Digit.Hooks.useEnabledMDMS(Digit.ULBService.getStateId(), "ASSET", [{ name: "AssetMaintenanceCycle" }], {
         select: (data) => {
             const formattedData = data?.["ASSET"]?.["AssetMaintenanceCycle"];
             const activeData = formattedData?.filter((item) => item.active === true);

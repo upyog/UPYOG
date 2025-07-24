@@ -13,6 +13,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.jdbc.core.ResultSetExtractor;
+import org.upyog.tp.web.models.Address;
+import org.upyog.tp.web.models.ApplicantDetail;
 import org.upyog.tp.web.models.AuditDetails;
 import org.upyog.tp.web.models.DocumentDetail;
 import org.upyog.tp.web.models.treePruning.TreePruningBookingDetail;
@@ -87,6 +89,23 @@ public class GenericRowMapper<T> implements ResultSetExtractor<List<T>> {
                         documentDetails.add(documentDetail);
                         bookingDetail.setDocumentDetails(documentDetails);
                     }
+                    
+                    /*
+                     * Extract applicant and address details only when isUserProfileEnabled=false.
+                     * When user profile is disabled, booking needs complete applicant and address info
+                     * from request payload since user service integration is not available.
+                     */
+                    // Extract applicant and address details if available
+                    ApplicantDetail applicantDetail = extractApplicantDetails(tp);
+                    if (applicantDetail != null) {
+                        bookingDetail.setApplicantDetail(applicantDetail);
+                        bookingDetail.getApplicantDetail().setAuditDetails(auditDetails);
+                    }
+                    
+                    Address address = extractAddressDetails(tp);
+                    if (address != null) {
+                        bookingDetail.setAddress(address);
+                    }
                 }
                 results.add(instance);
             }
@@ -153,6 +172,62 @@ public class GenericRowMapper<T> implements ResultSetExtractor<List<T>> {
                 .fileStoreId(tp.getString("filestore_id"))
                 .auditDetails(bookingDetail.getAuditDetails())
                 .build();
+    }
+    
+    /**
+     * Extracts applicant details from the ResultSet.
+     * Returns null if no applicant details are available.
+     *
+     * @param tp ResultSet containing applicant details
+     * @return ApplicantDetail object or null if not available
+     */
+    private ApplicantDetail extractApplicantDetails(ResultSet tp) throws SQLException {
+        try {
+            String applicantId = tp.getString("applicant_id");
+            if (applicantId == null) {
+                return null; // No applicant details available
+            }
+            
+            ApplicantDetail applicantDetail = new ApplicantDetail();
+            applicantDetail.setApplicantId(applicantId);
+            applicantDetail.setName(tp.getString("name"));
+            applicantDetail.setBookingId(tp.getString("booking_id"));
+            applicantDetail.setMobileNumber(tp.getString("mobile_number"));
+            applicantDetail.setEmailId(tp.getString("email_id"));
+            applicantDetail.setAlternateNumber(tp.getString("alternate_number"));
+            return applicantDetail;
+        } catch (SQLException e) {
+            // Column not found, return null
+            return null;
+        }
+    }
+    
+    /**
+     * Extracts address details from the ResultSet.
+     * Returns null if no address details are available.
+     *
+     * @param tp ResultSet containing address details
+     * @return Address object or null if not available
+     */
+    private Address extractAddressDetails(ResultSet tp) throws SQLException {
+        try {
+            Address address = new Address();
+            address.setApplicantId(tp.getString("applicant_id"));
+            address.setHouseNo(tp.getString("house_no"));
+            address.setAddressLine1(tp.getString("address_line_1"));
+            address.setAddressLine2(tp.getString("address_line_2"));
+            address.setStreetName(tp.getString("street_name"));
+            address.setLandmark(tp.getString("landmark"));
+            address.setCity(tp.getString("city"));
+            address.setCityCode(tp.getString("city_code"));
+            address.setLocality(tp.getString("locality"));
+            address.setLocalityCode(tp.getString("locality_code"));
+            address.setPincode(tp.getString("pincode"));
+            return address;
+        } catch (SQLException e) {
+            // Column not found, return null
+            return null;
+        }
     }
 
 
