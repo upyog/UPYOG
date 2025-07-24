@@ -11090,14 +11090,6 @@
                   "headers": []
                 },
                 {
-                  "id": "financeTotalIncome",
-                  "name": "DSS_FINANCE_TOTAL_INCOME",
-                  "code": "",
-                  "chartType": "metric",
-                  "filter": "",
-                  "headers": []
-                },
-                {
                   "id": "financeTotalPaidAmount",
                   "name": "DSS_FINANCE_TOTAL_PAID_AMOUNT",
                   "code": "",
@@ -11105,7 +11097,7 @@
                   "filter": "",
                   "headers": []
                 }
-               
+
               ]
             
             }
