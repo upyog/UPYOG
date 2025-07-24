@@ -229,7 +229,7 @@ public class PropertyController {
 	}
 	
 	
-	  @RequestMapping(value = "/_dashboardDataSearchProperties", method = RequestMethod.POST)
+	  @RequestMapping(value = "/_dashboardPropertyReports", method = RequestMethod.POST)
 	    public ResponseEntity<DashboardReportResponse> dashboardDataSearchProperties(@Valid @RequestBody DashboardRequest dashboardRequest) {
 	    	
 	    	DashboardReport dashboardDatas=dashboardDataService.dashboardDatasWithProperties(dashboardRequest);

@@ -18,12 +18,31 @@ public class DashboardWithDateQueries {
 			+ "  group by ep.tenantid,epa.ward_no";
 
 		public static final String TOTAL_PROPERTY_COUNT_WITH_WARD =
-		    "SELECT COUNT(ep.propertyid), epa.ward_no, ep.tenantid " +
-		    "FROM eg_pt_property ep " +
-		    "JOIN eg_pt_address epa ON ep.id = epa.propertyid " +
-		    "WHERE epa.ward_no IS NOT NULL AND epa.ward_no != '' " +
-		    "AND ep.lastmodifiedtime BETWEEN ? AND ? " +
-		    "GROUP BY ep.tenantid, epa.ward_no";
+				"SELECT \r\n" + "  CASE\r\n"
+						+ "    WHEN epp.usagecategory IN (\r\n" + "      'OWNER_RESIDENTIAL', 'TENANT_RESIDENTIAL', \r\n"
+						+ "      'AGRICULTURAL_WITHOUT_USE', 'APPURTENENT_LAND'\r\n" + "    ) THEN 'Residential'\r\n"
+						+ "    WHEN epp.usagecategory IN (\r\n" + "      'OWNER_COMMERCIAL', 'TENANT_COMMERCIAL', \r\n"
+						+ "      'AGRICULTURAL_COMMERCIAL_USE'\r\n" + "    ) THEN 'Commercial'\r\n"
+						+ "    WHEN epp.usagecategory IN (\r\n" + "      'OWNER_MIXED', 'TENANT_MIXED'\r\n"
+						+ "    ) THEN 'Mixed Use'\r\n" + "    WHEN epp.usagecategory IN (\r\n"
+						+ "      'USE_BY_STATE_GOVT', 'USE_BY_CENTRAL_GOVT'\r\n" + "    ) THEN 'Institutional'\r\n"
+						+ "  END AS usagecategory,\r\n" + "  sum(ep.totalamountpaid)::BIGINT AS totalpropertytaxamountpaid,\r\n"
+						+ "  epp.tenantid,\r\n" + "  epa.ward_no\r\n" + "FROM eg_pt_property epp\r\n"
+						+ "JOIN eg_pt_address epa ON epp.id = epa.propertyid\r\n"
+						+ "join eg_pg_transactions ept on epp.propertyid =ept.consumer_code \r\n"
+						+ "join egcl_payment ep on ep.transactionnumber =ept.txn_id \r\n" + "WHERE epa.ward_no != ''\r\n"
+						+ "  AND epp.usagecategory != ''\r\n" + "  AND ep.createdtime BETWEEN \r\n"
+						+ "      ? AND \r\n"
+						+ "      ? \r\n"
+						+ "GROUP BY \r\n" + "  epp.tenantid,\r\n" + "  epa.ward_no,\r\n" + "  CASE\r\n"
+						+ "    WHEN epp.usagecategory IN (\r\n" + "      'OWNER_RESIDENTIAL', 'TENANT_RESIDENTIAL', \r\n"
+						+ "      'AGRICULTURAL_WITHOUT_USE', 'APPURTENENT_LAND'\r\n" + "    ) THEN 'Residential'\r\n"
+						+ "    WHEN epp.usagecategory IN (\r\n" + "      'OWNER_COMMERCIAL', 'TENANT_COMMERCIAL', \r\n"
+						+ "      'AGRICULTURAL_COMMERCIAL_USE'\r\n" + "    ) THEN 'Commercial'\r\n"
+						+ "    WHEN epp.usagecategory IN (\r\n" + "      'OWNER_MIXED', 'TENANT_MIXED'\r\n"
+						+ "    ) THEN 'Mixed Use'\r\n" + "    WHEN epp.usagecategory IN (\r\n"
+						+ "      'USE_BY_STATE_GOVT', 'USE_BY_CENTRAL_GOVT'\r\n" + "    ) THEN 'Institutional'\r\n" + "  END\r\n"
+						+ "";
 		
 		public final static String TOTAL_PROPERTY_APPROVED_WITH_WARD = "SELECT count(ewpv.businessid) ,ep.tenantid,epadd.ward_no\r\n"
 				+ "FROM eg_wf_processinstance_v2 ewpv\r\n"
