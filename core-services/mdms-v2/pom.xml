@@ -40,13 +40,8 @@
         <dependency>
             <groupId>org.egov.services</groupId>
             <artifactId>tracer</artifactId>
-            <version>2.9.0-SNAPSHOT</version>
+            <version>2.9.1-SNAPSHOT</version>
         </dependency>
-        <dependency>
-      	<groupId>jakarta.validation</groupId>
-      <artifactId>jakarta.validation-api</artifactId>
-      <version>3.0.2</version>
-    </dependency>
         <!-- https://mvnrepository.com/artifact/org.everit.json/org.everit.json.schema -->
         <dependency>
             <groupId>org.everit.json</groupId>
@@ -68,8 +63,15 @@
         </dependency>
 
         <dependency>
+            <groupId>net.minidev</groupId>
+            <artifactId>json-smart</artifactId>
+            <version>2.5.0</version>
+        </dependency>
+
+        <dependency>
             <groupId>org.flywaydb</groupId>
             <artifactId>flyway-core</artifactId>
+            <version>9.22.3</version>
         </dependency>
 
         <!-- Database dependency-->
