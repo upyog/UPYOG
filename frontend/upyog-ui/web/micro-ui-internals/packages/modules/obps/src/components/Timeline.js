@@ -12,6 +12,18 @@ const getAction = (flow) => {
     case "OCBPA":
       actions = ["BPA_BASIC_AND_PLOT_DETAILS_LABEL", "BPA_SCRUTINY_DETAILS", "BPA_DOCUMENT_AND_NOC_DETAILS_LABEL", "BPA_STEPPER_SUMMARY_HEADER"];
       break;
+    case "PRE_APPROVE":
+      actions = [
+        "BPA_STEPPER_PRE_APPROVE_DETAILS",
+        "BPA_BASIC_DETAILS",
+        "BPA_PLOT_DETAILS",
+        "BPA_PLAN_DETAILS",
+        "BPA_LOCATION_DETAILS",
+        "BPA_OWNER_DETAILS",
+        "BPA_DOCUMENT_DETAILS",
+        "BPA_STEPPER_SUMMARY_HEADER",
+      ]
+      break;
     default:
       actions = [
         "BPA_STEPPER_SCRUTINY_DETAILS_HEADER",

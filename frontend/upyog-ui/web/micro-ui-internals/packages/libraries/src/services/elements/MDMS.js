@@ -1165,7 +1165,22 @@ const getTradeTypeRoleCriteria = (tenantId, moduleCode, type) => ({
     ],
   },
 });
-
+const getDisclaimerCriteria = (tenantId, moduleCode, type) => ({
+  type,
+  details: {
+    tenantId,
+    moduleDetails: [
+      {
+        moduleName: moduleCode,
+        masterDetails: [
+          {
+            name: "Disclaimer",
+          },
+        ],
+      },
+    ],
+  },
+});
 const getFSTPORejectionReasonCriteria = (tenantId, moduleCode, type) => ({
   type,
   details: {
@@ -2394,6 +2409,9 @@ export const MdmsService = {
 
   getTradeTypeRoleTypes: (tenantId, moduleCode, type) => {
     return MdmsService.getDataByCriteria(tenantId, getTradeTypeRoleCriteria(tenantId, moduleCode, type), moduleCode);
+  },
+  getDisclaimer : (tenantId, moduleCode, type) => {
+    return MdmsService.getDataByCriteria(tenantId, getDisclaimerCriteria(tenantId, moduleCode, type), moduleCode);
   },
 
   getFSMGenderType: (tenantId, moduleCode, type) => {

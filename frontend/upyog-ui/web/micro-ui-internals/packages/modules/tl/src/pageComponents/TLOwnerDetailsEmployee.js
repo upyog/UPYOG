@@ -410,19 +410,21 @@ const OwnerForm = (_props) => {
                       control={control}
                       name={"name"}
                       defaultValue={owner?.name}
-                      rules={{ required: t("REQUIRED_FIELD"), validate: { pattern: (val) => (/^\w+( +\w+)*$/.test(val) ? true : t("INVALID_NAME")) } }}
+                      rules={{ required: t("REQUIRED_FIELD"), validate: { pattern: (val) => (/^[A-Za-z]+( [A-Za-z]+)*$/.test(val) ? true : t("INVALID_NAME")) } }}
                       render={(props) => (
                         <TextInput
                           value={props.value}
                           autoFocus={focusIndex.index === owner?.key && focusIndex.type === "name"}
                           errorStyle={localFormState.touched.name && errors?.name?.message ? true : false}
                           onChange={(e) => {
-                            if (e.target.value != owner?.name && isRenewal)
+                          const ownerNameValidation = e.target.value.replace(/[^A-Za-z ]/g, "");
+                          if (ownerNameValidation !== owner?.name && isRenewal) {
                               setPreviousLicenseDetails({ ...previousLicenseDetails, checkForRenewal: true });
-                            props.onChange(e.target.value);
+                          }
+                            props.onChange(ownerNameValidation);
                             // props.onChange(e);
                             setFocusIndex({ index: owner.key, type: "name" });
-                          }}
+                        }}
                           onBlur={(e) => {
                             setFocusIndex({ index: -1 });
                             props.onBlur(e);
@@ -473,16 +475,18 @@ const OwnerForm = (_props) => {
                       control={control}
                       name={"fatherOrHusbandName"}
                       defaultValue={owner?.fatherOrHusbandName}
-                      rules={{ required: "NAME_REQUIRED", validate: { pattern: (val) => (/^\w+( +\w+)*$/.test(val) ? true : t("INVALID_NAME")) } }}
+                      rules={{ required: "NAME_REQUIRED", validate: { pattern: (val) => (/^[A-Za-z]+( [A-Za-z]+)*$/.test(val) ? true : t("INVALID_NAME")) } }}
                       render={(props) => (
                         <TextInput
                           value={props.value}
                           autoFocus={focusIndex.index === owner?.key && focusIndex.type === "fatherOrHusbandName"}
                           errorStyle={localFormState.touched.fatherOrHusbandName && errors?.fatherOrHusbandName?.message ? true : false}
                           onChange={(e) => {
-                            if (e.target.value != owner?.fatherOrHusbandName && isRenewal)
+                          const guardianNameValidation = e.target.value.replace(/[^A-Za-z ]/g, "");
+                          if (guardianNameValidation !== owner?.fatherOrHusbandName && isRenewal) {
                               setPreviousLicenseDetails({ ...previousLicenseDetails, checkForRenewal: true });
-                            props.onChange(e.target.value);
+                          }
+                            props.onChange(guardianNameValidation);
                             // props.onChange(e);
                             setFocusIndex({ index: owner.key, type: "fatherOrHusbandName" });
                           }}

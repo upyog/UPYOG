@@ -1165,7 +1165,22 @@ const getTradeTypeRoleCriteria = (tenantId, moduleCode, type) => ({
     ],
   },
 });
-
+const getDisclaimerCriteria = (tenantId, moduleCode, type) => ({
+  type,
+  details: {
+    tenantId,
+    moduleDetails: [
+      {
+        moduleName: moduleCode,
+        masterDetails: [
+          {
+            name: "Disclaimer",
+          },
+        ],
+      },
+    ],
+  },
+});
 const getFSTPORejectionReasonCriteria = (tenantId, moduleCode, type) => ({
   type,
   details: {
@@ -2395,6 +2410,9 @@ export const MdmsService = {
   getTradeTypeRoleTypes: (tenantId, moduleCode, type) => {
     return MdmsService.getDataByCriteria(tenantId, getTradeTypeRoleCriteria(tenantId, moduleCode, type), moduleCode);
   },
+  getDisclaimer : (tenantId, moduleCode, type) => {
+    return MdmsService.getDataByCriteria(tenantId, getDisclaimerCriteria(tenantId, moduleCode, type), moduleCode);
+  },
 
   getFSMGenderType: (tenantId, moduleCode, type) => {
     return MdmsService.getDataByCriteria(tenantId, getGenderTypeList(tenantId, moduleCode, type), moduleCode);
@@ -2444,37 +2462,5 @@ export const MdmsService = {
   },
   getStaticDataJSON: (tenantId) => {
     return MdmsService.call(tenantId, getStaticData());
-  },
-  getSVDocuments: (tenantId, moduleCode) => {
-    return MdmsService.getDataByCriteria(tenantId, getSVDocumentsCategory(tenantId, moduleCode), moduleCode);
-  },
-  getADSDocuments: (tenantId, moduleCode) => {
-    return MdmsService.getDataByCriteria(tenantId, getADSDocumentsCategory(tenantId, moduleCode), moduleCode);
-  },
-  EWProductPrice: (tenantId, moduleCode, type) => {
-    return MdmsService.getDataByCriteria(tenantId, getProductPriceList(tenantId, moduleCode, type), moduleCode);
-  },
-  EWVendor: (tenantId, moduleCode, type) => {
-    return MdmsService.getDataByCriteria(tenantId, getVendorDetailsList(tenantId, moduleCode, type), moduleCode);
-  },
-  getChbSpecialCategory: (tenantId, moduleCode, type) => {
-    return MdmsService.getDataByCriteria(tenantId, getChbSpecialCategoryList(tenantId, moduleCode, type), moduleCode);
-  },
-  getChbCommunityHalls: (tenantId, moduleCode, type) => {
-    return MdmsService.getDataByCriteria(tenantId, getChbCommunityHallsList(tenantId, moduleCode, type), moduleCode);
-  },
-  getChbResidentType: (tenantId, moduleCode, type) => {
-    return MdmsService.getDataByCriteria(tenantId, getChbResidentTypeList(tenantId, moduleCode, type), moduleCode);
-  },
-  getChbHallCode: (tenantId, moduleCode, type) => {
-    return MdmsService.getDataByCriteria(tenantId, getChbHallCodeList(tenantId, moduleCode, type), moduleCode);
-  },
-
-  getChbPurpose: (tenantId, moduleCode, type) => {
-    return MdmsService.getDataByCriteria(tenantId, getChbPurposeList(tenantId, moduleCode, type), moduleCode);
-  },
-
-  getChbDocuments: (tenantId, moduleCode) => {
-    return MdmsService.getDataByCriteria(tenantId, getChbDocumentsCategory(tenantId, moduleCode), moduleCode);
-  },
+  }
 };

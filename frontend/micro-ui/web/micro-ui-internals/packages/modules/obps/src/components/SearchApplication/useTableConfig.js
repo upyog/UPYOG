@@ -50,6 +50,11 @@ const useSearchApplicationTableConfig = ({t}) => {
             },
         },
         {
+          Header: t("BPA_IS_PREAPPROVED"),
+          disableSortBy: true,
+          accessor: (row) => GetCell(t(row?.additionalDetails?.isPreApproved ? row?.additionalDetails?.isPreApproved : row?.businessService === "BPA-PAP" ? true : false)),
+      },
+        {
             Header: t("BPA_BASIC_DETAILS_SERVICE_TYPE_LABEL"),
             disableSortBy: true,
             accessor: (row) => GetCell(t(row.additionalDetails?.serviceType || t(`TRADELICENSE_TRADETYPE_${row?.tradeLicenseDetail?.tradeUnits?.[0]?.tradeType?.split(".")[0]}`) || "-")),

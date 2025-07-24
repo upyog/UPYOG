@@ -23,10 +23,11 @@ const LocationDetails = ({ t, config, onSelect, userType, formData, ownerIndex =
   const [street, setStreet] = useState(formData?.address?.street || propertyData?.address.street||"");
   const [landmark, setLandmark] = useState(formData?.address?.landmark || formData?.address?.Landmark || propertyData?.address.landmark|| "");
   const [placeName, setplaceName] = useState(formData?.address?.placeName || formData?.placeName || "");
+  const checkingFlow = formData?.uiFlow?.flow ? formData?.uiFlow?.flow :formData?.selectedPlot||formData?.businessService==="BPA-PAP" ? "PRE_APPROVE":"";
   //const { isLoading, data: citymodules } = Digit.Hooks.obps.useMDMS(stateId, "tenant", ["citymodule"]);
   let [cities, setcitiesopetions] = useState(allCities);
   let validation = { };
-  let cityCode = formData?.data?.edcrDetails?.tenantId;
+  let cityCode = !(formData?.selectedPlot) ? formData?.data?.edcrDetails?.tenantId :  Digit.ULBService.getCitizenCurrentTenant(true);
   formData = { address: { ...formData?.address } };
   const isMobile = window.Digit.Utils.browser.isMobile();
   useEffect(() => {
@@ -85,15 +86,15 @@ const LocationDetails = ({ t, config, onSelect, userType, formData, ownerIndex =
 
   const [localities, setLocalities] = useState();
 
-  const [selectedLocality, setSelectedLocality] = useState(propertyData?.address.locality ||null);
+  const [selectedLocality, setSelectedLocality] = useState(formData?.address?.locality||propertyData?.address.locality ||null);
   
 
   useEffect(() => {
-    console.log("HEUUUU")
+    
     if (selectedCity && fetchedLocalities  && !Pinerror) {
       let __localityList = fetchedLocalities;
       let filteredLocalityList = [];
-      console.log("fetchedLocalities",fetchedLocalities)
+      
       if (formData?.address?.locality && formData?.address?.locality?.code === selectedLocality?.code) {
         setSelectedLocality(formData.address.locality);
       }
@@ -104,7 +105,7 @@ const LocationDetails = ({ t, config, onSelect, userType, formData, ownerIndex =
       }
       if(!localities || (filteredLocalityList.length > 0 && localities.length !== filteredLocalityList.length) || (filteredLocalityList.length <=0 && localities && localities.length !==__localityList.length))
       {
-        console.log("filteredLocalityList",filteredLocalityList)
+        
         setLocalities(() => (filteredLocalityList.length > 0 ? filteredLocalityList : __localityList));
       }
       if (filteredLocalityList.length === 1 && ((selectedLocality == null) || (selectedLocality && filteredLocalityList[0]?.code !== selectedLocality?.code))) {
@@ -204,7 +205,7 @@ const LocationDetails = ({ t, config, onSelect, userType, formData, ownerIndex =
 
   return (
     <div>
-      {!isOpen && <Timeline />}
+      {!isOpen && <Timeline currentStep={checkingFlow === "OCBPA" ? 2 : checkingFlow==="PRE_APPROVE"? 5: 1 } flow={checkingFlow}/>}
       {isOpen && <GIS t={t} onSelect={onSelect} formData={formData} handleRemove={handleRemove} onSave={onSave} />}   
     {!isOpen && <FormStep
       t={t}
@@ -255,7 +256,7 @@ const LocationDetails = ({ t, config, onSelect, userType, formData, ownerIndex =
       />}
       <CardLabel>{`${t("BPA_CITY_LABEL")}*`}</CardLabel>
       {!isOpen && <RadioOrSelect
-        options={cities.sort((a, b) => a.name.localeCompare(b.name))}
+        options={cities}
         selectedOption={selectedCity}
         optionKey="code"
         onSelect={selectCity}

@@ -134,6 +134,7 @@ const ApplicationDetails = (props) => {
           return;
         }
       }
+      sessionStorage.setItem("updateData",JSON.stringify(data))
       if (mutate) {
         setIsEnableLoader(true);
         mutate(data, {
@@ -146,11 +147,11 @@ const ApplicationDetails = (props) => {
             sessionStorage.removeItem("WS_SESSION_APPLICATION_DETAILS");
             setIsEnableLoader(false);
             if (isOBPS?.bpa) {
-              data.selectedAction = selectedAction;
+             // data.selectedAction = selectedAction;
               history.replace(`/digit-ui/employee/obps/response`, { data: data });
             }
             if (isOBPS?.isStakeholder) {
-              data.selectedAction = selectedAction;
+             // data.selectedAction = selectedAction;
               history.push(`/digit-ui/employee/obps/stakeholder-response`, { data: data });
             }
             if (isOBPS?.isNoc) {
@@ -173,7 +174,7 @@ const ApplicationDetails = (props) => {
               }
               return
             }
-            setShowToast({ key: "success", action: selectedAction });
+            //setShowToast({ key: "success", action: selectedAction });
             clearDataDetails && setTimeout(clearDataDetails, 3000);
             setTimeout(closeToast, 5000);
             queryClient.clear();

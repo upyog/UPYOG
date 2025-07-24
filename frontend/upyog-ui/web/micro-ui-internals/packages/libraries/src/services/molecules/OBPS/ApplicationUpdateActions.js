@@ -24,6 +24,14 @@ const ApplicationUpdateActions = async (applicationData, tenantId) => {
                 PTAction=action
             }
         }
+        else if(BPAWorkflowStatus==="APPROVAL_INPROGRESS"){
+          if(action==="FORWARD"){
+            PTAction="NEW ASSESSMENT"
+          }
+          else{
+            PTAction=action
+          }
+        }
         else{
             PTAction=action
         }
