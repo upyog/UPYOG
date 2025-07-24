@@ -1,8 +1,7 @@
 package org.egov.infra.mdms.repository;
 
-
+import net.minidev.json.JSONArray;
 import org.egov.infra.mdms.model.*;
-import org.json.JSONArray;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;

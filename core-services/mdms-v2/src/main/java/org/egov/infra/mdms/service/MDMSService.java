@@ -11,12 +11,12 @@ import org.egov.infra.mdms.service.enrichment.MdmsDataEnricher;
 import org.egov.infra.mdms.service.validator.MdmsDataValidator;
 import org.egov.infra.mdms.utils.FallbackUtil;
 import org.egov.infra.mdms.utils.SchemaUtil;
-import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import lombok.extern.slf4j.Slf4j;
+import net.minidev.json.JSONArray;
 import org.springframework.util.ObjectUtils;
 
 import static org.egov.infra.mdms.utils.MDMSConstants.*;
