@@ -24,10 +24,10 @@ const Filter = ({ searchParams, onFilterChange, onSearch, removeParam, ...props 
   };
 
   useEffect(() => {
-    if (filters.role.length > 1) {
-      onSelectFilterRolessetSelectedRole({ name: `${filters.role.length} selected` });
-    } else {
+    if (filters.role.length === 1) {
       onSelectFilterRolessetSelectedRole(filters.role[0]);
+    } else {
+      onSelectFilterRolessetSelectedRole(null);
     }
   }, [filters.role]);
   const [tenantId, settenantId] = useState(() => {
@@ -41,11 +41,6 @@ const Filter = ({ searchParams, onFilterChange, onSearch, removeParam, ...props 
     "egov-hrms",
     "HRMSRolesandDesignation"
   );
-  let roleOptions = [];
-    data &&
-    data?.MdmsRes["ACCESSCONTROL-ROLES"]?.roles.map((one) => {
-      roleOptions.push({ i18text: `${one.code}`, code: `${t(one.code)}`, name: `${one.name}`, description:`${one.description}` });
-  });
   const [departments, setDepartments] = useState(() => {
     return { departments: null };
   });
@@ -113,7 +108,7 @@ const Filter = ({ searchParams, onFilterChange, onSearch, removeParam, ...props 
   };
 
   const GetSelectOptions = (lable, options, selected, select, optionKey, onRemove, key) => {
-    selected = selected || { [optionKey]: " ", code: "" };
+    selected = selected || null;
     return (
       <div>
         <div className="filter-label">{lable}</div>
@@ -187,10 +182,10 @@ const Filter = ({ searchParams, onFilterChange, onSearch, removeParam, ...props 
               <div>
                 {GetSelectOptions(
                   t("HR_COMMON_TABLE_COL_ROLE"),
-                  roleOptions,
+                  Digit.Utils.locale.convertToLocaleData(data?.MdmsRes["ACCESSCONTROL-ROLES"]?.roles, 'ACCESSCONTROL_ROLES_ROLES', t),
                   selectedRoles,
                   onSelectRoles,
-                  "code",
+                  "i18text",
                   onRemove,
                   "role"
                 )}
