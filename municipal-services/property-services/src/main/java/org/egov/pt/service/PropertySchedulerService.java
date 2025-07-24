@@ -693,6 +693,7 @@ public class PropertySchedulerService {
 
 			BillSearchCriteria searchCriteria = BillSearchCriteria.builder().billId(batch).skipValidation(true).build();
 
+			log.info("search criteria {}",searchCriteria);
 			BillResponse billResponse = billService.searchBill(searchCriteria, requestInfoWrapper.getRequestInfo());
 
 			if (billResponse != null && !CollectionUtils.isEmpty(billResponse.getBill())) {
