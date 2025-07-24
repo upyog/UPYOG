@@ -21,6 +21,9 @@ import org.springframework.util.StringUtils;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @Component
 public class BillValidator {
 	
@@ -50,6 +53,8 @@ public class BillValidator {
 	}
 
 	public void validateBillSearchCriteria(BillSearchCriteria billCriteria, RequestInfo requestInfo) {
+
+		log.info("billCriteria criteria {}",billCriteria);
 
 		if(!billCriteria.getSkipValidation()) {
 			util.validateTenantIdForUserType(billCriteria.getTenantId(), requestInfo);
