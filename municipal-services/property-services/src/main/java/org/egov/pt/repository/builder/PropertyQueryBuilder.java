@@ -214,7 +214,7 @@ public class PropertyQueryBuilder {
 			+ "      'AGRICULTURAL_COMMERCIAL_USE'\r\n" + "    ) THEN 'Commercial'\r\n"
 			+ "    WHEN epp.usagecategory IN (\r\n" + "      'OWNER_MIXED', 'TENANT_MIXED'\r\n"
 			+ "    ) THEN 'Mixed Use'\r\n" + "    WHEN epp.usagecategory IN (\r\n"
-			+ "      'USE_BY_STATE_GOVT', 'USE_BY_CENTRAL_GOVT'\r\n" + "    ) THEN 'Institutional'\r\n" + "  END;\r\n"
+			+ "      'USE_BY_STATE_GOVT', 'USE_BY_CENTRAL_GOVT'\r\n" + "    ) THEN 'Institutional'\r\n" + "  END\r\n"
 			+ "";
 	public final static String TOTAL_REBATE_COLLECTION_WITH_WARD = "WITH paid_bills AS (\r\n"
 			+ "    SELECT \r\n"
