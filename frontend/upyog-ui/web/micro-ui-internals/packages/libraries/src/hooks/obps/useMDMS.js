@@ -9,6 +9,9 @@ const useMDMS = (tenantId, moduleCode, type, config = {}, payload = []) => {
   const useTradeTypetoRoleMapping = () => {
     return useQuery("ROLE_DOCUMENT_MAPPING", () => MdmsService.getTradeTypeRoleTypes(tenantId, moduleCode, type), queryConfig);
   };
+  const useDisclaimer = () => {
+    return useQuery([tenantId, moduleCode, type], () => MdmsService.getDisclaimer(tenantId, moduleCode, type), config);
+  };
   const _default = () => {
     return useQuery([tenantId, moduleCode, type], () => MdmsService.getMultipleTypes(tenantId, moduleCode, type), config);
   };
@@ -18,6 +21,8 @@ const useMDMS = (tenantId, moduleCode, type, config = {}, payload = []) => {
       return useDocumentMapping();
     case "TradeTypetoRoleMapping":
       return useTradeTypetoRoleMapping();
+    case "Disclaimer":
+      return useDisclaimer();
     default:
       return _default();
   }

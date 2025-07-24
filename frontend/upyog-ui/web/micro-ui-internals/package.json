@@ -12,7 +12,12 @@
     "packages/modules/commonPt",
     "packages/modules/common",
     "packages/modules/dss",
-    "packages/modules/tl"
+    "packages/modules/tl",
+    "packages/modules/hrms",
+    "packages/modules/obps",
+    "packages/modules/pt",
+    "packages/modules/tl",
+    "packages/modules/ws"
   ],
   "license": "MIT",
   "private": true,

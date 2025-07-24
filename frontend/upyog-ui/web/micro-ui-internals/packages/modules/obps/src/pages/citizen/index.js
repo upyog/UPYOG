@@ -34,6 +34,7 @@ const App = ({ path }) => {
   const NewBuildingPermit = Digit?.ComponentRegistryService?.getComponent("ObpsNewBuildingPermit");
   const OCBuildingPermit = Digit?.ComponentRegistryService?.getComponent("ObpsOCBuildingPermit");
   const StakeholderRegistration = Digit?.ComponentRegistryService?.getComponent("ObpsStakeholderRegistration");
+  const PreApprovedPlan=Digit?.ComponentRegistryService?.getComponent("ObpsPreApprovedPlan")
   const EdcrInbox = Digit?.ComponentRegistryService?.getComponent("ObpsEdcrInbox");
   const BpaApplicationDetail = Digit?.ComponentRegistryService?.getComponent("ObpsCitizenBpaApplicationDetail");
   const BPASendToArchitect = Digit?.ComponentRegistryService?.getComponent("ObpsBPASendToArchitect");
@@ -54,6 +55,7 @@ const App = ({ path }) => {
         <PrivateRoute path={`${path}/bpa/:applicationType/:serviceType`} component={NewBuildingPermit} />
         <PrivateRoute path={`${path}/ocbpa/:applicationType/:serviceType`} component={OCBuildingPermit}/>
         <PrivateRoute path={`${path}/stakeholder/apply`} component={StakeholderRegistration} />
+        <PrivateRoute path={`${path}/preApprovedPlan`} component={PreApprovedPlan} />
         <Route path={`${path}/openlink/stakeholder/apply`} component={StakeholderRegistration} />
         <PrivateRoute path={`${path}/my-applications`} component={MyApplication} />
         <PrivateRoute path={`${path}/bpa/inbox`} component={(props) => <Inbox {...props} parentRoute={path} />} />

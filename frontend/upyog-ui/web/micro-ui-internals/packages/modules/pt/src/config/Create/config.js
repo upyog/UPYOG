@@ -80,6 +80,7 @@ export const newConfig =[
               "route": "proof",
               "component": "Proof",
               "withoutLabel": true,
+              "isMandatory": true,
               "texts": {
                   "headerCaption": "PT_PROPERTY_LOCATION_CAPTION",
                   "header": "PT_PROOF_OF_ADDRESS_HEADER",

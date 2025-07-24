@@ -157,7 +157,10 @@ const Urls = {
   edcr: {
     create: "/edcr/rest/dcr/scrutinize",
   },
-
+  preApproved:{
+    search: "/bpa-services/v1/preapprovedplan/_search",
+    estimate: "/bpa-calculator/_estimate",
+  },
   events: {
     search: "/egov-user-event/v1/events/_search",
     update: "/egov-user-event/v1/events/lat/_update",
