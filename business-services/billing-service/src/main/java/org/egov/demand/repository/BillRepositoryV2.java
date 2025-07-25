@@ -247,7 +247,6 @@ public class BillRepositoryV2 {
 	public void updateBill(BillRequestV2 billRequest) {
 
 		List<BillV2> bills = billRequest.getBills();
-		log.info("billllls {}",bills);
 
 		if (bills == null || bills.isEmpty()) {
 			throw new IllegalArgumentException("No bills provided to update.");
