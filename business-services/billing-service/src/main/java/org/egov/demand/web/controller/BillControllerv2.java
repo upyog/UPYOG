@@ -50,8 +50,8 @@ public class BillControllerv2 {
 	
     @PostMapping("_search")
 	@ResponseBody
-	public ResponseEntity<?> search(@RequestBody @Valid final RequestInfoWrapper requestInfoWrapper,
-			@ModelAttribute @Valid final BillSearchCriteria billCriteria) {
+	public ResponseEntity<?> search(@RequestBody final RequestInfoWrapper requestInfoWrapper,
+			@ModelAttribute final BillSearchCriteria billCriteria) {
 
 		RequestInfo requestInfo = requestInfoWrapper.getRequestInfo();
 		billValidator.validateBillSearchCriteria(billCriteria, requestInfo);
