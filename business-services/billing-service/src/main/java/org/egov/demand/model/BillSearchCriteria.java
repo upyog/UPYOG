@@ -20,7 +20,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class BillSearchCriteria {
 
-	@Size(max = 256)
 	private String tenantId;
 
 	private String payerId;
