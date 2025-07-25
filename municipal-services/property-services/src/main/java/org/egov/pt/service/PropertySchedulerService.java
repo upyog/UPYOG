@@ -26,6 +26,7 @@ import org.egov.pt.models.CalculateTaxRequest;
 import org.egov.pt.models.CalculateTaxResponse;
 import org.egov.pt.models.OwnerInfo;
 import org.egov.pt.models.Property;
+import org.egov.pt.models.PropertyBillFailure;
 import org.egov.pt.models.PropertyCriteria;
 import org.egov.pt.models.PtTaxCalculatorTracker;
 import org.egov.pt.models.PtTaxCalculatorTrackerSearchCriteria;
@@ -231,7 +232,7 @@ public class PropertySchedulerService {
 					errorSet.add("PropertyType issue factor value" + " is missing in mdms");
 				}
 
-				if (!BigDecimal.ZERO.equals(totalRateableValue)) {
+					if (!BigDecimal.ZERO.equals(totalRateableValue)) {
 					oAndMRebateAmount = totalRateableValue
 							.multiply(oAndMRebatePercentage.divide(BigDecimal.valueOf(100)));
 					netRateableValue = totalRateableValue.subtract(oAndMRebateAmount);
@@ -303,9 +304,8 @@ public class PropertySchedulerService {
 				}
 			}
 
-			if (!CollectionUtils.isEmpty(errorMap)) {
-				log.error(errorMap.toString());
-			}
+//			if (!CollectionUtils.isEmpty(errorMap)) {
+//			}
 
 			if (!errorMap.containsKey(property.getPropertyId()) && !BigDecimal.ZERO.equals(totalPropertyTax)) {
 
@@ -335,15 +335,34 @@ public class PropertySchedulerService {
 									trackeradditionalDetails, billResponse.getBill(), rebateAmount,
 									propertyTaxWithoutRebate);
 
+					PropertyBillFailure propertyBillFailure	= enrichmentService.enrichPtBillFailure(property, calculateTaxRequest,billResponse,null);
+					propertyService.removePtBillFailure(propertyBillFailure);
+
 					PtTaxCalculatorTracker ptTaxCalculatorTracker = propertyService
 							.saveToPtTaxCalculatorTracker(ptTaxCalculatorTrackerRequest);
-
+					
 					taxCalculatorTrackers.add(ptTaxCalculatorTracker);
 
 					// notification calls
 					notificationService.triggerNotificationsGenerateBill(ptTaxCalculatorTracker,
 							billResponse.getBill().get(0), ptTaxCalculatorTrackerRequest.getRequestInfo());
 				}
+				else {
+					//failure case one
+					PropertyBillFailure propertyBillFailure	= enrichmentService.enrichPtBillFailure(property, calculateTaxRequest,billResponse,null);
+					propertyService.saveToPtBillFailure(propertyBillFailure);
+//					log.info("bill cant be generated {} {} {}",generateBillRequest,garbageAccount,null);
+				}
+			}
+			else 
+			{
+				//failure case 
+				//failure case one
+				PropertyBillFailure propertyBillFailure	= enrichmentService.enrichPtBillFailure(property, calculateTaxRequest,null,errorMap);
+				propertyService.saveToPtBillFailure(propertyBillFailure);
+//				log.info("bill cant be generated {} {} {}",generateBillRequest,garbageAccount,null);
+//				log.error(billResponse.toString());
+				log.error(errorMap.toString());
 			}
 
 		}
@@ -674,6 +693,7 @@ public class PropertySchedulerService {
 
 			BillSearchCriteria searchCriteria = BillSearchCriteria.builder().billId(batch).skipValidation(true).build();
 
+			log.info("search criteria {}",searchCriteria);
 			BillResponse billResponse = billService.searchBill(searchCriteria, requestInfoWrapper.getRequestInfo());
 
 			if (billResponse != null && !CollectionUtils.isEmpty(billResponse.getBill())) {

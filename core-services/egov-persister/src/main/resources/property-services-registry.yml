@@ -636,3 +636,59 @@ serviceMaps:
       - jsonPath: $.ptTaxCalculatorTracker.auditDetails.lastModifiedBy
       - jsonPath: $.ptTaxCalculatorTracker.auditDetails.lastModifiedTime
       - jsonPath: $.ptTaxCalculatorTracker.uuid
+
+  - version: 1.0
+    description: insert into eg_bill-failure
+    fromTopic: save-bill-failure
+    isTransaction: true
+    queryMaps:
+    - query: INSERT INTO eg_bill_failure (id, consumer_code,module_name,tenant_id, failure_reason,
+              month,year,from_date,to_date,request_payload,response_payload,status_code,created_time,
+              last_modified_time,error_json) VALUES (?::UUID,?,?,?,?,?,?,?,?,?,?, ?,?,?,?) 
+              ON CONFLICT (consumer_code, from_date, to_date) DO UPDATE SET module_name = EXCLUDED.module_name,
+              tenant_id = EXCLUDED.tenant_id,failure_reason = EXCLUDED.failure_reason,month = EXCLUDED.month,
+              year = EXCLUDED.year,request_payload = EXCLUDED.request_payload ::JSON,
+              response_payload = EXCLUDED.response_payload ::JSON,status_code = EXCLUDED.status_code,
+              last_modified_time = EXCLUDED.last_modified_time,
+              error_json = EXCLUDED.error_json
+      basePath: $
+      jsonMaps:
+      - jsonPath: $.id
+        type: UUID
+        dbType: UUID
+      - jsonPath: $.consumer_code
+      - jsonPath: $.module_name
+      - jsonPath: $.tenant_id
+      - jsonPath: $.failure_reason
+      - jsonPath: $.month
+      - jsonPath: $.year
+      - jsonPath: $.from_date
+      - jsonPath: $.to_date
+      - jsonPath: $.request_payload
+        type: JSON
+        dbType: JSONB
+      - jsonPath: $.response_payload
+        type: JSON
+        dbType: JSONB
+      - jsonPath: $.status_code
+      - jsonPath: $.created_time
+      - jsonPath: $.last_modified_time
+      - jsonPath: $.error_json
+        type: JSON
+        dbType: JSONB
+      
+  - version: 1.0
+    description: delete from eg_bill_failure by unique constraint
+    fromTopic: delete-bill-failure
+    isTransaction: true
+    queryMaps:
+    - query: DELETE FROM eg_bill_failure 
+             WHERE consumer_code = ? 
+             AND from_date = ? 
+             AND to_date = ?
+      basePath: $
+      jsonMaps:
+      - jsonPath: $.consumer_code
+      - jsonPath: $.from_date
+      - jsonPath: $.to_date
+      

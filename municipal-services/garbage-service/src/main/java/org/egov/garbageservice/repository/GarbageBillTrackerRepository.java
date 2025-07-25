@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
+import org.egov.garbageservice.model.GrbgBillFailure;
 import org.egov.garbageservice.model.GrbgBillTracker;
 import org.egov.garbageservice.model.GrbgBillTrackerSearchCriteria;
 import org.egov.garbageservice.repository.rowmapper.GrbgBillTrackerRowMapper;
@@ -15,6 +16,9 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.CollectionUtils;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -30,6 +34,9 @@ public class GarbageBillTrackerRepository {
 
 	@Autowired
 	private GrbgBillTrackerRowMapper grbgBillTrackerRowMapper;
+	
+	@Autowired
+	private ObjectMapper objectMapper;
 
 	private static final String GRBG_BILL_TRACKER_SEARCH_QUERY = "SELECT * FROM eg_grbg_bill_tracker egbt";
 
@@ -37,6 +44,42 @@ public class GarbageBillTrackerRepository {
 			+ "to_date, grbg_bill_amount, created_by, created_time, last_modified_by, last_modified_time,ward,bill_id) VALUES "
 			+ "(:uuid, :grbgApplicationId, :tenantId, :month, :year, :fromDate, :toDate, :grbgBillAmount, :createdBy, :createdDate, :lastModifiedBy, :lastModifiedDate,:ward,:billId)";
 
+//	private static final String INSERT_BILL_FAILURE = "INSERT INTO eg_bill_failure (id, consumer_code, module_name, tenant_id, failure_reason,month, year, from_date, "
+//			+ "to_date, request_payload, response_payload, status_code) VALUES "
+//			+ "(:id, :consumer_code,:module_name, :tenant_id, failure_reason,:month, :year, :from_date, :to_date, :request_payload, :response_payload, :status_code)";
+//	
+	private static final String INSERT_BILL_FAILURE = "INSERT INTO eg_bill_failure (id, consumer_code,module_name,tenant_id, failure_reason,month,year,from_date,to_date,request_payload,response_payload,status_code,created_time,last_modified_time)"
+			+ "VALUES ("
+			+ "    :id,"
+			+ "    :consumer_code,"
+			+ "    :module_name,"
+			+ "    :tenant_id,"
+			+ "    :failure_reason,"
+			+ "    :month,"
+			+ "    :year,"
+			+ "    :from_date,"
+			+ "    :to_date,"
+			+ "    :request_payload :: JSONB,"
+			+ "    :response_payload :: JSONB,"
+			+ "    :status_code,"
+			+ "    :created_time,"
+			+ "    :last_modified_time"
+			+ ")"
+			+ "ON CONFLICT (consumer_code, from_date, to_date)"
+			+ "DO UPDATE SET"
+			+ "    module_name = EXCLUDED.module_name,"
+			+ "    tenant_id = EXCLUDED.tenant_id,"
+			+ "    failure_reason = EXCLUDED.failure_reason,month = EXCLUDED.month,year = EXCLUDED.year,"
+			+ "    request_payload = EXCLUDED.request_payload :: JSONB,"
+			+ "    response_payload = EXCLUDED.response_payload :: JSONB,"
+			+ "    status_code = EXCLUDED.status_code,"
+			+ "    last_modified_time = EXCLUDED.last_modified_time;";
+	
+	private static final String DELETE_BILL_FAILURE = "DELETE FROM eg_bill_failure"
+			+ " WHERE consumer_code = :consumer_code"
+			+ "  AND from_date = :from_date"
+			+ "  AND to_date = :to_date;";
+	
 	public GrbgBillTracker createTracker(GrbgBillTracker grbgBillTracker) {
 
 		Map<String, Object> billTrackerInputs = new HashMap<>();
@@ -58,6 +101,29 @@ public class GarbageBillTrackerRepository {
 		namedParameterJdbcTemplate.update(INSERT_BILL_TRACKER, billTrackerInputs);
 
 		return grbgBillTracker;
+	}
+	
+	public GrbgBillFailure createBillFailure(GrbgBillFailure GrbgBillFailureReq) {
+		Map<String, Object> billFailureInputs = new HashMap<>();
+		billFailureInputs.put("id", GrbgBillFailureReq.getId());
+		billFailureInputs.put("consumer_code", GrbgBillFailureReq.getConsumer_code());
+		billFailureInputs.put("module_name", GrbgBillFailureReq.getModule_name());
+		billFailureInputs.put("failure_reason", GrbgBillFailureReq.getFailure_reason());
+		billFailureInputs.put("tenant_id", GrbgBillFailureReq.getTenant_id());
+		billFailureInputs.put("month", GrbgBillFailureReq.getMonth());
+		billFailureInputs.put("year", GrbgBillFailureReq.getYear());
+		billFailureInputs.put("from_date", GrbgBillFailureReq.getFrom_date());
+		billFailureInputs.put("to_date", GrbgBillFailureReq.getTo_date());
+//		billTrackerInputs.put("ward", GrbgBillFailureReq.getWard());
+		billFailureInputs.put("response_payload", GrbgBillFailureReq.getResponse_payload().isNull() ? null : objectMapper.convertValue(GrbgBillFailureReq.getResponse_payload(), ObjectNode.class).toString());
+		billFailureInputs.put("request_payload", GrbgBillFailureReq.getRequest_payload().isNull() ? null : objectMapper.convertValue(GrbgBillFailureReq.getRequest_payload(), ObjectNode.class).toString());
+		billFailureInputs.put("status_code", GrbgBillFailureReq.getStatus_code());
+		billFailureInputs.put("module_name", GrbgBillFailureReq.getModule_name());
+		billFailureInputs.put("created_time",GrbgBillFailureReq.getCreated_time());
+		billFailureInputs.put("last_modified_time",GrbgBillFailureReq.getLast_modified_time());
+
+		namedParameterJdbcTemplate.update(INSERT_BILL_FAILURE, billFailureInputs);
+		return GrbgBillFailureReq;
 	}
 
 	public List<GrbgBillTracker> getBillTracker(GrbgBillTrackerSearchCriteria grbgBillTrackerSearchCriteria) {
@@ -142,5 +208,13 @@ public class GarbageBillTrackerRepository {
 
 	private static void andClauseIfRequired(List<Object> values, StringBuilder queryString) {
 		queryString.append(" AND");
+	}
+	
+	public void removeBillFailure(GrbgBillFailure grbgBillFailureRequest) {
+		Map<String, Object> params = new HashMap<>();
+		params.put("consumer_code", grbgBillFailureRequest.getConsumer_code());
+		params.put("from_date", grbgBillFailureRequest.getFrom_date());
+		params.put("to_date", grbgBillFailureRequest.getTo_date());
+		namedParameterJdbcTemplate.update(DELETE_BILL_FAILURE, params);
 	}
 }
