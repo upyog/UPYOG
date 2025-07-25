@@ -860,6 +860,7 @@ public class PropertyService {
 	public PtTaxCalculatorTracker updatePtTaxCalculatorTracker(
 			PtTaxCalculatorTrackerRequest ptTaxCalculatorTrackerRequest) {
 
+		log.info("propertyId tracker update {}",ptTaxCalculatorTrackerRequest);
 		producer.push(config.getUpdatePropertyTaxCalculatorTrackerTopic(), ptTaxCalculatorTrackerRequest);
 
 		return ptTaxCalculatorTrackerRequest.getPtTaxCalculatorTracker();
