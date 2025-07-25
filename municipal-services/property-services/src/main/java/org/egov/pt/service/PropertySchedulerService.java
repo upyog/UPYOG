@@ -693,7 +693,7 @@ public class PropertySchedulerService {
 
 			BillSearchCriteria searchCriteria = BillSearchCriteria.builder().billId(batch).skipValidation(true).build();
 
-			log.info("search criteria {}",searchCriteria);
+//			log.info("search criteria {}",searchCriteria);
 			BillResponse billResponse = billService.searchBill(searchCriteria, requestInfoWrapper.getRequestInfo());
 
 			if (billResponse != null && !CollectionUtils.isEmpty(billResponse.getBill())) {
@@ -782,16 +782,20 @@ public class PropertySchedulerService {
 			}
 
 			if (!newAmount.equals(BigDecimal.ZERO)) {
-				updateBillAndDemandAmounts(bill, demandIdToDemandMap, newAmount, requestInfoWrapper);
+				try {
+					updateBillAndDemandAmounts(bill, demandIdToDemandMap, newAmount, requestInfoWrapper);
 
-				tracker.setPropertyTax(newAmount);
+					tracker.setPropertyTax(newAmount);
 
-				PtTaxCalculatorTrackerRequest updateRequest = enrichmentService
-						.enrichTaxCalculatorTrackerUpdateRequest(tracker, requestInfoWrapper.getRequestInfo());
+					PtTaxCalculatorTrackerRequest updateRequest = enrichmentService
+							.enrichTaxCalculatorTrackerUpdateRequest(tracker, requestInfoWrapper.getRequestInfo());
 
-				PtTaxCalculatorTracker updatedTracker = propertyService.updatePtTaxCalculatorTracker(updateRequest);
+					PtTaxCalculatorTracker updatedTracker = propertyService.updatePtTaxCalculatorTracker(updateRequest);
 
-				updatedTrackers.add(updatedTracker);
+					updatedTrackers.add(updatedTracker);	
+				}catch(Exception e) {
+					log.error(e.getMessage());
+				}
 			}
 		}
 
