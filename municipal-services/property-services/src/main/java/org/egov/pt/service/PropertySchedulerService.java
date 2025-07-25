@@ -691,7 +691,7 @@ public class PropertySchedulerService {
 			int end = Math.min(start + batchSize, billIdList.size());
 			Set<String> batch = new HashSet<>(billIdList.subList(start, end));
 
-			BillSearchCriteria searchCriteria = BillSearchCriteria.builder().tenantId("hp.Bhota").billId(batch).skipValidation(true).build();
+			BillSearchCriteria searchCriteria = BillSearchCriteria.builder().billId(batch).skipValidation(true).build();
 
 			log.info("search criteria {}",searchCriteria);
 			BillResponse billResponse = billService.searchBill(searchCriteria, requestInfoWrapper.getRequestInfo());
