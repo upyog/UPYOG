@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { CardLabel, Dropdown, LabelFieldPair, TextInput } from "@egovernments/digit-ui-react-components";
+import { CardLabel, Dropdown, LabelFieldPair, TextInput } from "@upyog/digit-ui-react-components";
 
 const SelectVehicleType = ({ t, config, onSelect, userType, formData, setValue }) => {
   const stateId = Digit.ULBService.getStateId();
