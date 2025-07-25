@@ -85,7 +85,6 @@ public class BillRepository {
 
 		uriBuilder.append(hasQueryParam ? "&" : "?").append("retrieveAll=").append("true");
 
-		log.error(uriBuilder.toString() + " urifor search");
 		Object result = restCallRepository.fetchResult(uriBuilder,
 				RequestInfoWrapper.builder().requestInfo(requestInfo).build());
 
