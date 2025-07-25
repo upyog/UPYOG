@@ -2656,36 +2656,6 @@
                   "headers": []
                 }
               ]
-            },
-            {
-              "id": 153,
-              "name": "DSS_FINANCE",
-              "vizType": "module",
-              "moduleLevel": "FINANCE",
-              "ref": {
-                "url": "finance",
-                "logoUrl": "",
-                "type": "internal"
-              },
-              "label": "",
-              "charts": [
-                {
-                  "id": "financeTotalBillsGenerated",
-                  "name": "DSS_FINANCE_TOTAL_BILLS_GENERATED",
-                  "code": "",
-                  "chartType": "metric",
-                  "filter": "",
-                  "headers": []
-                },
-                {
-                  "id": "financeTotalPayments",
-                  "name": "DSS_FINANCE_TOTAL_PAYMENTS",
-                  "code": "",
-                  "chartType": "metric",
-                  "filter": "",
-                  "headers": []
-                }
-              ]
             }
           ]
         }
@@ -10070,6 +10040,36 @@
                   "headers": []
                 }
               ]
+            },
+            {
+              "id": 208,
+              "name": "DSS_FINANCE",
+              "vizType": "module",
+              "moduleLevel": "FINANCE",
+              "ref": {
+                "url": "national-finance",
+                "logoUrl": "",
+                "type": "internal"
+              },
+              "label": "",
+              "charts": [
+                {
+                  "id": "financeTotalBillsGenerated",
+                  "name": "DSS_FINANCE_TOTAL_BILLS_GENERATED",
+                  "code": "",
+                  "chartType": "metric",
+                  "filter": "",
+                  "headers": []
+                },
+                {
+                  "id": "financeTotalPayments",
+                  "name": "DSS_FINANCE_TOTAL_PAYMENTS",
+                  "code": "",
+                  "chartType": "metric",
+                  "filter": "",
+                  "headers": []
+                }
+              ]
             }
           ]
         }
@@ -11053,7 +11053,7 @@
     },
     {
       "name": "DSS_FINANCE_DASHBOARD",
-      "id": "finance",
+      "id": "national-finance",
       "isActive": "",
       "style": "linear",
       "visualizations": [
@@ -11065,10 +11065,10 @@
               "id": 411,
               "name": "DSS_FINANCE_OVERVIEW",
               "dimensions": {
-                "height": 200,
-                "width": 12
+                "height": 350,
+                "width": 5
               },
-              "vizType": "collection",
+              "vizType": "metric-collection",
               "label": "DSS_FINANCE_OVERVIEW",
               "noUnit": true,
               "isCollapsible": false,
@@ -11082,51 +11082,66 @@
                   "headers": []
                 },
                 {
-                  "id": "financeTotalBillAmount",
-                  "name": "DSS_FINANCE_TOTAL_BILL_AMOUNT",
+                  "id": "financeTotalRegisteredULBs",
+                  "name": "Total Registered ULB's",
                   "code": "",
                   "chartType": "metric",
                   "filter": "",
                   "headers": []
                 },
                 {
-                  "id": "financeTotalPaidAmount",
-                  "name": "DSS_FINANCE_TOTAL_PAID_AMOUNT",
+                  "id": "financeTotalIncome",
+                  "name": "DSS_FINANCE_TOTAL_INCOME",
+                  "code": "",
+                  "chartType": "metric",
+                  "filter": "",
+                  "headers": []
+                },
+                {
+                  "id": "financeTotalExpenditure",
+                  "name": "DSS_FINANCE_TOTAL_EXPENDITURE",
+                  "code": "",
+                  "chartType": "metric",
+                  "filter": "",
+                  "headers": []
+                },
+                {
+                  "id": "financeTotalBillCreated",
+                  "name": "DSS_FINANCE_TOTAL_BILL_CREATED",
+                  "code": "",
+                  "chartType": "metric",
+                  "filter": "",
+                  "headers": []
+                },
+                {
+                  "id": "financeNumberOfBillsPaid",
+                  "name": "Total Payments",
                   "code": "",
                   "chartType": "metric",
                   "filter": "",
                   "headers": []
                 }
               ]
-            }
-          ]
-        },
-        {
-          "row": 2,
-          "name": "DSS_FINANCE",
-          "vizArray": [
+            },
             {
-              "id": 423,
-              "name": "DSS_FINANCE_INSIGHTS",
+              "id": 412,
+              "name": "Total Cumulative Collection",
               "dimensions": {
                 "height": 350,
-                "width": 12
+                "width": 7
               },
               "vizType": "chart",
               "label": "",
-              "noUnit": false,
+              "noUnit": true,
               "isCollapsible": false,
               "charts": [
                 {
-
-                  "id": "financeInsights",
-                  "name": "DSS_FINANCE_BOUNDARY",
+                  "id": "financeIncomeExpenditureForLines",
+                  "name": "Monthly",
                   "code": "",
-                  "chartType": "table",
+                  "chartType": "line",
                   "filter": "",
-                  "headers": [],
-                  "tabName": "Boundary"
-
+                  "headers": []
                 }
               ]
             }
