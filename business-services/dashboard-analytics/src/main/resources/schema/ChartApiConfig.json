@@ -78,6 +78,156 @@
     "_comment": " "
   },
   "_comment": "National PGR charts below-----------------------------------------------------------------------",
+  "financeTotalRegisteredULBs": {
+    "chartName": "DSS_FINANCE_TOTAL_REGISTERED_ULBS",
+    "queries": [
+      {
+        "module": "FINANCE",
+        "dateRefField": "timestamp",
+        "requestQueryMap": "{\"tenantId\" : \"ulb.keyword\"}",
+        "indexName": "dss-finance-dashboard",
+        "queryVariables": ["tenantId"],
+        "aggrQuery": "{\"aggs\":{\"AGGR\":{\"filter\":{\"bool\":{\"must\":[]}},\"aggs\":{\"Total Registered ULBs\":{\"sum\":{\"field\":\"financeTotalRegisteredULBs\"}}}}}}"
+      }
+    ],
+    "chartType": "metric",
+    "valueType": "number",
+    "drillChart": "none",
+    "documentType": "_doc",
+    "action": "",
+    "aggregationPaths": ["Total Registered ULBs"],
+    "insight": {}
+  },
+  "financeTotalCollection": {
+    "chartName": "DSS_FINANCE_TOTAL_COLLECTION",
+    "queries": [
+      {
+        "module": "FINANCE",
+        "dateRefField": "timestamp",
+        "requestQueryMap": "{\"region\" : \"regionname.keyword\",\"district\" : \"districtname.keyword\", \"tenantId\" : \"ulbname.keyword\"}",
+        "indexName": "dss-finance-dashboard",
+        "aggrQuery": "{\"aggs\":{\"AGGR\":{\"filter\":{\"bool\":{\"must_not\":[],\"must\":[]}},\"aggs\":{\"Total Collection\":{\"sum\":{\"field\":\"financeTotalCollection\"}}}}}}"
+      }
+    ],
+    "chartType": "metric",
+    "valueType": "amount",
+    "drillChart": "none",
+    "documentType": "_doc",
+    "action": "",
+    "aggregationPaths": [
+      "Total Collection"
+    ],
+    "insight": {}
+  },
+
+  "financeTotalIncome": {
+    "chartName": "DSS_FINANCE_TOTAL_INCOME",
+    "queries": [
+      {
+        "module": "FINANCE",
+        "dateRefField": "timestamp",
+        "requestQueryMap": "{\"region\" : \"regionname.keyword\",\"district\" : \"districtname.keyword\", \"tenantId\" : \"ulbname.keyword\"}",
+        "indexName": "dss-finance-dashboard",
+        "aggrQuery": "{\"aggs\":{\"AGGR\":{\"filter\":{\"bool\":{\"must_not\":[],\"must\":[]}},\"aggs\":{\"Total Income\":{\"sum\":{\"field\":\"financeTotalIncome\"}}}}}}"
+      }
+    ],
+    "chartType": "metric",
+    "valueType": "amount",
+    "drillChart": "none",
+    "documentType": "_doc",
+    "action": "",
+    "aggregationPaths": [
+      "Total Income"
+    ],
+    "insight": {}
+  },
+  "financeTotalExpenditure": {
+    "chartName": "DSS_FINANCE_TOTAL_EXPENDITURE",
+    "queries": [
+      {
+        "module": "FINANCE",
+        "dateRefField": "timestamp",
+        "requestQueryMap": "{\"region\" : \"regionname.keyword\",\"district\" : \"districtname.keyword\", \"tenantId\" : \"ulbname.keyword\"}",
+        "indexName": "dss-finance-dashboard",
+        "aggrQuery": "{\"aggs\":{\"AGGR\":{\"filter\":{\"bool\":{\"must_not\":[],\"must\":[]}},\"aggs\":{\"Total Expenditure\":{\"sum\":{\"field\":\"financeTotalExpenditure\"}}}}}}"
+      }
+    ],
+    "chartType": "metric",
+    "valueType": "amount",
+    "drillChart": "none",
+    "documentType": "_doc",
+    "action": "",
+    "aggregationPaths": [
+      "Total Expenditure"
+    ],
+    "insight": {}
+  },
+  "financeTotalBillCreated": {
+    "chartName": "DSS_FINANCE_TOTAL_BILL_CREATED",
+    "queries": [
+      {
+        "module": "FINANCE",
+        "dateRefField": "timestamp",
+        "requestQueryMap": "{\"region\" : \"regionname.keyword\",\"district\" : \"districtname.keyword\", \"tenantId\" : \"ulbname.keyword\"}",
+        "indexName": "dss-finance-dashboard",
+        "aggrQuery": "{\"aggs\":{\"AGGR\":{\"filter\":{\"bool\":{\"must_not\":[],\"must\":[]}},\"aggs\":{\"Total Bill Created\":{\"sum\":{\"field\":\"financeTotalBillCreated\"}}}}}}"
+      }
+    ],
+    "chartType": "metric",
+    "valueType": "number",
+    "drillChart": "none",
+    "documentType": "_doc",
+    "action": "",
+    "aggregationPaths": [
+      "Total Bill Created"
+    ],
+    "insight": {}
+  },
+  "financeNumberOfBillsPaid": {
+    "chartName": "DSS_FINANCE_TOTAL_BILL_PAYMENT",
+    "queries": [
+      {
+        "module": "FINANCE",
+        "dateRefField": "timestamp",
+        "requestQueryMap": "{\"region\" : \"regionname.keyword\",\"district\" : \"districtname.keyword\", \"tenantId\" : \"ulbname.keyword\"}",
+        "indexName": "dss-finance-dashboard",
+        "aggrQuery": "{\"aggs\":{\"AGGR\":{\"filter\":{\"bool\":{\"must_not\":[],\"must\":[]}},\"aggs\":{\"Total Bill Payment\":{\"sum\":{\"field\":\"financeNumberOfBillsPaid\"}}}}}}"
+      }
+    ],
+    "chartType": "metric",
+    "valueType": "number",
+    "drillChart": "none",
+    "documentType": "_doc",
+    "action": "",
+    "aggregationPaths": [
+      "Total Bill Payment"
+    ],
+    "insight": {}
+  },
+  "financeIncomeExpenditureForLines": {
+    "chartName": "DSS_FINANCE_INCOME_EXPENDITURE",
+    "queries": [
+      {
+        "module": "FINANCE",
+        "dateRefField": "timestamp",
+        "requestQueryMap": "{\"region\" : \"regionname.keyword\",\"district\" : \"districtname.keyword\", \"tenantId\" : \"ulbname.keyword\"}",
+        "indexName": "dss-finance-dashboard",
+        "aggrQuery": "{\"aggs\":{\"Income\":{\"date_histogram\":{\"field\":\"timestamp\",\"calendar_interval\":\"month\"},\"aggs\":{\"Sum\":{\"sum\":{\"field\":\"financeIncomeAmount\"}}}},\"Expenditure\":{\"date_histogram\":{\"field\":\"timestamp\",\"calendar_interval\":\"month\"},\"aggs\":{\"Sum\":{\"sum\":{\"field\":\"financeExpenditureAmount\"}}}}}}"
+      }
+    ],
+    "chartType": "line",
+    "valueType": "amount",
+    "action": "",
+    "drillChart": "none",
+    "documentType": "_doc",
+    "aggregationPaths": [
+      "Income",
+      "Expenditure"
+    ],
+    "isCumulative": true,
+    "interval": "month",
+    "insight": {}
+  },
   "todaysCollection": {
     "chartName": "DSS_TOTAL_COLLECTION",
     "queries": [
@@ -677,6 +827,13 @@
         "indexName": "sv-national-dashboard",
         "requestQueryMap": "{\"wardId\" : \"ward\", \"district\" : \"district\", \"tenantId\" : \"ulb\"}",
         "aggrQuery": "{\"aggs\":{\"AGGR\":{\"filter\":{\"bool\":{\"must_not\":[{\"term\":{\"state.keyword\":\"pg.testing\"}}]}},\"aggs\":{\"Total Application\":{\"sum\":{\"field\":\"totalStreetVendingLicenseApplied\"}}}}}}",
+        "dateRefField": "timestamp"
+      },
+      {
+        "module": "FINANCE",
+        "indexName": "dss-finance-dashboard",
+        "requestQueryMap": "{\"wardId\" : \"ward\", \"district\" : \"district\", \"tenantId\" : \"ulb\"}",
+        "aggrQuery": "{\"aggs\":{\"AGGR\":{\"filter\":{\"bool\":{\"must_not\":[{\"term\":{\"state.keyword\":\"pg.testing\"}}]}},\"aggs\":{\"Total Collection\":{\"sum\":{\"field\":\"financeTotalCollection\"}}}}}}",
         "dateRefField": "timestamp"
       }
     ],
@@ -18867,37 +19024,6 @@
     },
     "_comment": " "
   },
-  "financeTotalCollection": {
-    "chartName": "DSS_FINANCE_TOTAL_COLLECTION",
-    "queries": [
-      {
-        "module": "FINANCE",
-        "dateRefField": "",
-        "requestQueryMap": "{\"region\" : \"regionname.keyword\",\"district\" : \"districtname.keyword\", \"tenantId\" : \"ulbname.keyword\"}",
-        "indexName": "financeindex-v1",
-        "aggrQuery": "{\"aggs\":{\"AGGR\":{\"filter\":{\"bool\":{\"must_not\":[],\"must\":[]}},\"aggs\":{\"Total Collection\":{\"sum\":{\"field\":\"totalreceiptvoucheramounts\"}}}}}}"
-      }
-    ],
-    "translateTenantCode": true,
-    "chartType": "metric",
-    "valueType": "amount",
-    "drillChart": "none",
-    "documentType": "_doc",
-    "action": "",
-    "aggregationPaths": [
-      "Total Collection"
-    ],
-    "insight": {
-      "chartResponseMap": "financeTotalCollection",
-      "action": "differenceOfNumbers",
-      "upwardIndicator": "positive",
-      "downwardIndicator": "negative",
-      "textMessage": "$indicator$value% than last $insightInterval",
-      "colorCode": "#228B22",
-      "insightInterval": "month"
-    },
-    "_comment": " "
-  },
   "financeTotalBillAmount": {
     "chartName": "DSS_FINANCE_TOTAL_BILL_AMOUNT",
     "queries": [
@@ -18965,10 +19091,10 @@
     "queries": [
       {
         "module": "FINANCE",
-        "dateRefField": "",
+        "dateRefField": "timestamp",
         "requestQueryMap": "{\"region\" : \"regionname.keyword\",\"district\" : \"districtname.keyword\", \"tenantId\" : \"ulbname.keyword\"}",
-        "indexName": "financeindex-v1",
-        "aggrQuery": "{\"aggs\":{\"AGGR\":{\"filter\":{\"bool\":{\"must_not\":[],\"must\":[]}},\"aggs\":{\"Bills Generated\":{\"sum\":{\"field\":\"numberofbills\"}}}}}}"
+        "indexName": "dss-finance-dashboard",
+        "aggrQuery": "{\"aggs\":{\"AGGR\":{\"filter\":{\"bool\":{\"must_not\":[],\"must\":[]}},\"aggs\":{\"Bills Generated\":{\"sum\":{\"field\":\"financeTotalBillCreated\"}}}}}}"
       }
     ],
     "chartType": "metric",
@@ -18997,8 +19123,8 @@
         "module": "FINANCE",
         "dateRefField": "",
         "requestQueryMap": "{\"region\" : \"regionname.keyword\",\"district\" : \"districtname.keyword\", \"tenantId\" : \"ulbname.keyword\"}",
-        "indexName": "financeindex-v1",
-        "aggrQuery": "{\"aggs\":{\"AGGR\":{\"filter\":{\"bool\":{\"must_not\":[],\"must\":[]}},\"aggs\":{\"Total Payments\":{\"sum\":{\"field\":\"numberofpayments\"}}}}}}"
+        "indexName": "dss-finance-dashboard",
+        "aggrQuery": "{\"aggs\":{\"AGGR\":{\"filter\":{\"bool\":{\"must_not\":[],\"must\":[]}},\"aggs\":{\"Total Payments\":{\"sum\":{\"field\":\"financeNumberOfBillsPaid\"}}}}}}"
       }
     ],
     "chartType": "metric",

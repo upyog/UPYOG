@@ -119,7 +119,7 @@ const NewGrievance = ({ t, config, onSelect, userType, formData }) => {
         },
         city: {
           name:addressData.city?.name,
-          district:addressData.city?.code.split(".")[0]
+          district: addressData.city?.code?.split(".")[0]
         },
         pincode: addressData.pincode,
         landmark: addressData.landmark,
@@ -130,11 +130,11 @@ const NewGrievance = ({ t, config, onSelect, userType, formData }) => {
       const formattedAddress = [
         addressData.houseNo,
         addressData.streetName,
-        addressData.locality?.name || addressData.locality,
+        addressData.locality?.name || addressData.locality?.i18nKey,
         addressData.city?.name || addressData.city,
         addressData.pincode,
       ]
-        .filter(Boolean)
+        .filter(item => item && typeof item === 'string')
         .join(", ");
       setAddress(formattedAddress);
     }
