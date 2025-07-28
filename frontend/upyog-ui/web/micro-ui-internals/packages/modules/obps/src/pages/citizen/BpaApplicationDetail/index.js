@@ -14,7 +14,7 @@ import cloneDeep from "lodash/cloneDeep";
 import DocumentsPreview from "../../../../../templates/ApplicationDetails/components/DocumentsPreview";
 import ScruntinyDetails from "../../../../../templates/ApplicationDetails/components/ScruntinyDetails";
 import { Link } from "react-router-dom";
-
+import useBPADetailsPage from "../../../../../../libraries/src/hooks/obps/useBPADetailsPage";
 const BpaApplicationDetail = () => {
   const { id } = useParams();
   const { t } = useTranslation();
@@ -41,7 +41,7 @@ const BpaApplicationDetail = () => {
   let isFromSendBack = false;
   const { data: stakeHolderDetails, isLoading: stakeHolderDetailsLoading } = Digit.Hooks.obps.useMDMS(stateCode, "StakeholderRegistraition", "TradeTypetoRoleMapping");
   const { isLoading: bpaDocsLoading, data: bpaDocs } = Digit.Hooks.obps.useMDMS(stateCode, "BPA", ["DocTypeMapping"]);
-  const { data, isLoading } = Digit.Hooks.obps.useBPADetailsPage(tenantId, { applicationNo: id });
+  const { data, isLoading } = useBPADetailsPage(tenantId, { applicationNo: id });
   const { isMdmsLoading, data: mdmsData } = Digit.Hooks.obps.useMDMS(stateCode, "BPA", ["RiskTypeComputation"]);
   const mutation = Digit.Hooks.obps.useObpsAPI(data?.applicationData?.tenantId, false);
   let workflowDetails = Digit.Hooks.useWorkflowDetails({
@@ -113,7 +113,27 @@ const BpaApplicationDetail = () => {
        response = { filestoreIds: [payments?.fileStoreId] };      
     }
     else{
-      response = await Digit.PaymentService.generatePdf(stateCode, { Payments: [{...payments}] }, "bpa-receipt");
+      const formattedStakeholderType=data?.applicationData?.additionalDetails?.typeOfArchitect
+            const stakeholderType=formattedStakeholderType.charAt(0).toUpperCase()+formattedStakeholderType.slice(1).toLowerCase()
+      const updatedpayments={
+        ...payments,
+       
+            paymentDetails:[
+              {
+                ...payments.paymentDetails?.[0],
+                additionalDetails:{
+                  ...payments.paymentDetails[0].additionalDetails,
+                  "propertyID":data?.applicationData?.additionalDetails?.propertyID,
+                  "stakeholderType":stakeholderType,
+                  "contact":data?.applicationData?.businessService==="BPA-PAP"? t("APPLICANT_CONTACT") : `${stakeholderType} Contact`,
+                  "idType":data?.applicationData?.businessService==="BPA-PAP" ? t("APPLICATION_NUMBER"):`${stakeholderType} ID`,
+                  "name":data?.applicationData?.businessService==="BPA-PAP" ? t("APPLICANT_NAME"):`${stakeholderType} Name`,
+                },
+              },
+            ],  
+         
+      }
+      response = await Digit.PaymentService.generatePdf(stateCode, { Payments: [{...updatedpayments}] }, "bpa-receipt");
     }
     const fileStore = await Digit.PaymentService.printReciept(stateCode, { fileStoreIds: response.filestoreIds[0] });
     window.open(fileStore[response?.filestoreIds[0]], "_blank");
@@ -331,7 +351,7 @@ const BpaApplicationDetail = () => {
       onClick: () => getRevocationPDFSearch({tenantId: data?.applicationData?.tenantId}),
     });
     
-  } else if(data && data?.applicationData?.businessService === "BPA" && data?.collectionBillDetails?.length > 0) {
+  } else if(data && (data?.applicationData?.businessService === "BPA"||data?.applicationData?.businessService === "BPA-PAP") && data?.collectionBillDetails?.length > 0) {
     if(data?.applicationData?.status==="APPROVED"){
     dowloadOptions.push({
       order: 3,

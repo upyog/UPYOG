@@ -24,7 +24,8 @@ const FormStep = ({
   isMultipleAllow = false,
   showErrorBelowChildren = false,
   childrenAtTheBottom = true,
-  textInputStyle
+  textInputStyle,
+  isMandatory
 }) => {
   const { register, watch, errors, handleSubmit } = useForm({
     defaultValues: _defaultValues,
@@ -102,7 +103,7 @@ const FormStep = ({
   return (
     <form onSubmit={handleSubmit(goNext)}>
       <InputCard
-        {...{ isDisable: isDisable, isMultipleAllow: isMultipleAllow }}
+        {...{ isDisable: isDisable, isMultipleAllow: isMultipleAllow , isMandatory:isMandatory}}
         {...config}
         cardStyle={cardStyle}
         submit

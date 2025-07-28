@@ -410,7 +410,7 @@ const OwnerForm = (_props) => {
                       control={control}
                       name={"name"}
                       defaultValue={owner?.name}
-                      rules={{ required: t("REQUIRED_FIELD"), validate: { pattern: (val) => (/^[A-Za-z ]+$/.test(val) ? true : t("INVALID_NAME")) } }}
+                      rules={{ required: t("REQUIRED_FIELD"), validate: { pattern: (val) => (/^\w+( +\w+)*$/.test(val) ? true : t("INVALID_NAME")) } }}
                       render={(props) => (
                         <TextInput
                           value={props.value}
@@ -473,7 +473,7 @@ const OwnerForm = (_props) => {
                       control={control}
                       name={"fatherOrHusbandName"}
                       defaultValue={owner?.fatherOrHusbandName}
-                      rules={{ required: "NAME_REQUIRED", validate: { pattern: (val) => (/^[A-Za-z ]+$/.test(val) ? true : t("INVALID_NAME")) } }}
+                      rules={{ required: "NAME_REQUIRED", validate: { pattern: (val) => (/^\w+( +\w+)*$/.test(val) ? true : t("INVALID_NAME")) } }}
                       render={(props) => (
                         <TextInput
                           value={props.value}
