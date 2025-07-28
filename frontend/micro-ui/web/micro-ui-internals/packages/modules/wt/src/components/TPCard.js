@@ -45,6 +45,10 @@ const TPCard = () => {
     {
       label: t("ES_COMMON_APPLICATION_SEARCH"),
       link: `${APPLICATION_PATH}/employee/wt/tp/my-bookings`,
+    },
+    {
+      label: t("ES_COMMON_APPLICATION_CREATE"),
+      link: `${APPLICATION_PATH}/employee/wt/tp/request-service`,
     }
   ]
   const TP_CEMP = Digit.UserService.hasAccess(["TP_CEMP"]) || false;

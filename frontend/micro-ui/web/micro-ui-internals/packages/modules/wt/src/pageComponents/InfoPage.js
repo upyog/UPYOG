@@ -14,7 +14,7 @@ const InfoPage = ({ t, onSelect, formData, config, userType }) => {
     TREE_PRUNING: "TREE_PRUNING",
   };
 
-  const code = formData?.serviceType?.serviceType.code;
+  const code = formData?.serviceType?.serviceType?.code;
   const moduleKey = moduleMap[code];
 
   const handleOpenModal = () => {
