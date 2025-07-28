@@ -339,6 +339,7 @@ public class PropertyRepository {
 		}
 		query = queryBuilder.getLimitAndOrderByUpdatedTimeDesc(ptTaxCalculatorTrackerSearchCriteria, query,
 				preparedStmtList);
+		log.info("query params {} {}",query,preparedStmtList);
 		List<PtTaxCalculatorTracker> ptTaxCalculatorTrackers = jdbcTemplate.query(query, preparedStmtList.toArray(),
 				ptTaxCalculatorTrackerRowMapper);
 		return ptTaxCalculatorTrackers;

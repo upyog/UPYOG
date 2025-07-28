@@ -824,7 +824,7 @@ public class PropertySchedulerService {
 
 		for (BillDetail billDetail : bill.getBillDetails()) {
 			Demand demand = demandIdToDemandMap.get(billDetail.getDemandId());
-
+			log.info("demand consumer code "+ demand.getConsumerCode()+" demand id "+demand.getId());
 			if (demand != null) {
 				demand.setMinimumAmountPayable(newAmount);
 				if (demand.getDemandDetails() != null) {

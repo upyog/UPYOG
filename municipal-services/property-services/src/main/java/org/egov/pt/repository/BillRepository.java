@@ -96,10 +96,13 @@ public class BillRepository {
 		StringBuilder url = new StringBuilder(config.getBillHost());
 		url.append(config.getUpdateBillEndpoint());
 		BillRequest request = new BillRequest(requestInfo, bills);
+		log.info("billEndpoin "+ url + " request {}" ,request);
 		Object result = restCallRepository.fetchResult(url, request);
 		BillResponse response = null;
 		try {
 			response = objectMapper.convertValue(result, BillResponse.class);
+			log.info("billupdateresponse "+ " response {}" ,response);
+
 		} catch (IllegalArgumentException e) {
 			throw new CustomException("PARSING ERROR", "Failed to parse response of update bill");
 		}
