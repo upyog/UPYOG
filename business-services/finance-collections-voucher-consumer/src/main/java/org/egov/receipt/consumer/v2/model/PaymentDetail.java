@@ -42,8 +42,8 @@ package org.egov.receipt.consumer.v2.model;
 
 import java.math.BigDecimal;
 
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 import org.egov.receipt.consumer.model.AuditDetails;
 import org.egov.receipt.consumer.model.Bill;
