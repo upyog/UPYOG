@@ -1,17 +1,13 @@
 package org.egov.web.controllers;
 
-
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.egov.service.ApportionService;
-import org.egov.service.ApportionServiceV2;
 import org.egov.util.ResponseInfoFactory;
 import org.egov.web.models.ApportionRequest;
 import org.egov.web.models.ApportionResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.swagger.annotations.*;
-import org.egov.web.models.AuditDetails;
 import org.egov.web.models.Bill;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,12 +18,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.*;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 
-@javax.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2019-02-25T15:07:36.183+05:30")
+@jakarta.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2019-02-25T15:07:36.183+05:30")
 
 @Controller
 @RequestMapping("/v1")
+@Tag(name = "apportion service v1")
 public class ApportionController {
 
     private final ObjectMapper objectMapper;
@@ -51,6 +48,7 @@ public class ApportionController {
      * @return Apportioned Bills
      */
     @RequestMapping(value="/_apportion", method = RequestMethod.POST)
+    @Operation(summary = "/_apportion")
     public ResponseEntity<ApportionResponse> apportionPost(@Valid @RequestBody ApportionRequest apportionRequest){
         List<Bill> billInfos = apportionService.apportionBills(apportionRequest);
         ApportionResponse response = ApportionResponse.builder()
