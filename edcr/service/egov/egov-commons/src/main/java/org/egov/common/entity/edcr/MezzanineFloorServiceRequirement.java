@@ -25,7 +25,8 @@ public class MezzanineFloorServiceRequirement extends MdmsFeatureRule {
 	@Override
 	public String toString() {
 		return "MezzanineFloorServiceRequirement [mezzanineArea=" + mezzanineArea + ", mezzanineHeight="
-				+ mezzanineHeight + ", mezzanineBuiltUpArea=" + mezzanineBuiltUpArea + "]";
+				+ mezzanineHeight + ", mezzanineBuiltUpArea=" + mezzanineBuiltUpArea + ", minMezzanineHeight="
+				+ minMezzanineHeight + ", maxMezzanineHeight=" + maxMezzanineHeight + "]";
 	}
 
 	public BigDecimal getMezzanineBuiltUpArea() {
@@ -42,7 +43,30 @@ public class MezzanineFloorServiceRequirement extends MdmsFeatureRule {
 	    @JsonProperty("mezzanineHeight")
 	    private BigDecimal mezzanineHeight;
 	    
-	    @JsonProperty("mezzanineBuiltUpArea")
+	    public BigDecimal getMinMezzanineHeight() {
+			return minMezzanineHeight;
+		}
+
+		public void setMinMezzanineHeight(BigDecimal minMezzanineHeight) {
+			this.minMezzanineHeight = minMezzanineHeight;
+		}
+
+		@JsonProperty("mezzanineBuiltUpArea")
 	    private BigDecimal mezzanineBuiltUpArea;
+	    
+	    @JsonProperty("minMezzanineHeight")
+	    private BigDecimal minMezzanineHeight;
+
+	    
+	    @JsonProperty("maxMezzanineHeight")
+	    private BigDecimal maxMezzanineHeight;
+
+		public BigDecimal getMaxMezzanineHeight() {
+			return maxMezzanineHeight;
+		}
+
+		public void setMaxMezzanineHeight(BigDecimal maxMezzanineHeight) {
+			this.maxMezzanineHeight = maxMezzanineHeight;
+		}
 
 }

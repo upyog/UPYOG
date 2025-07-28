@@ -130,8 +130,12 @@ public class MDMSCacheManager {
 	                JsonNode jsonNode = mapper.valueToTree(ruleArray.get(i));
 	                if (jsonNode instanceof ObjectNode) {
 	                    ((ObjectNode) jsonNode).put("featureName", featureName);
+	                    ((ObjectNode) jsonNode).put("state", "pg");
 
 	                    MdmsFeatureRule rule = mapper.treeToValue(jsonNode, ruleClass);
+	  
+	                    LOG.info("Parsed rule: {}, State: {}", rule, rule.getState());
+
 	                    if (Boolean.TRUE.equals(rule.getActive())) {
 	                        rules.add(rule);
 	                    }
@@ -185,11 +189,17 @@ public class MDMSCacheManager {
 
 		String occupancyName = fetchEdcrRulesMdms.getOccupancyName(plan).toLowerCase();
 		String tenantId = plan.getTenantId();
-		String zone = plan.getPlanInformation().getZone().toLowerCase();
-		String subZone = plan.getPlanInformation().getSubZone().toLowerCase();
+		String zone = plan.getPlanInformation().getZone() != null
+	            ? plan.getPlanInformation().getZone().toLowerCase()
+	            : null;
+
+	    String subZone = plan.getPlanInformation().getSubZone() != null
+	            ? plan.getPlanInformation().getSubZone().toLowerCase()
+	            : null;
+
 		String riskType = includeRiskType ? fetchEdcrRulesMdms.getRiskType(plan).toLowerCase() : null;
 
-		FeatureRuleKey key = new FeatureRuleKey("pg", tenantId, zone, subZone, occupancyName, riskType, feature);
+		FeatureRuleKey key = new FeatureRuleKey("pg", null, zone, subZone, occupancyName, riskType, feature);
 
 		return getRules(key);
 	}

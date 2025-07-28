@@ -10,6 +10,12 @@ public class KitchenRequirement extends MdmsFeatureRule {
 	    private BigDecimal kitchenHeight;
 	    @JsonProperty("kitchenArea")
 	    private BigDecimal kitchenArea;
+	    
+	    @JsonProperty("kitchenDiningVentilationArea")
+	    private BigDecimal kitchenDiningVentilationArea;
+	    
+	    @JsonProperty("kitchenDiningVentilationWidth")
+	    private BigDecimal kitchenDiningVentilationWidth;
 
 		public BigDecimal getKitchenHeight() {
 			return kitchenHeight;
@@ -23,6 +29,18 @@ public class KitchenRequirement extends MdmsFeatureRule {
 		}
 		public void setKitchenHeight(BigDecimal kitchenHeight) {
 			this.kitchenHeight = kitchenHeight;
+		}
+		public BigDecimal getKitchenDiningVentilationArea() {
+			return kitchenDiningVentilationArea;
+		}
+		public void setKitchenDiningVentilationArea(BigDecimal kitchenDiningVentilationArea) {
+			this.kitchenDiningVentilationArea = kitchenDiningVentilationArea;
+		}
+		public BigDecimal getKitchenDiningVentilationWidth() {
+			return kitchenDiningVentilationWidth;
+		}
+		public void setKitchenDiningVentilationWidth(BigDecimal kitchenDiningVentilationWidth) {
+			this.kitchenDiningVentilationWidth = kitchenDiningVentilationWidth;
 		}
 		public BigDecimal getKitchenArea() {
 			return kitchenArea;

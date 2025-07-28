@@ -34,12 +34,64 @@ public class MdmsFeatureRule {
 
 	    @JsonProperty("occupancy")
 	    private String occupancy;
+	    
+	    @JsonProperty("fromPlotDepth")
+	    private BigDecimal fromPlotDepth;
+
+	    @JsonProperty("toPlotDepth")
+	    private BigDecimal toPlotDepth;
+	    
+	    @JsonProperty("fromBuildingHeight")
+	    private BigDecimal fromBuildingHeight;
+
+	    @JsonProperty("toBuildingHeigh")
+	    private BigDecimal toBuildingHeight;
+	    
+	    public BigDecimal getFromBuildingHeight() {
+			return fromBuildingHeight;
+		}
+		public void setFromBuildingHeight(BigDecimal fromBuildingHeight) {
+			this.fromBuildingHeight = fromBuildingHeight;
+		}
+		public BigDecimal getToBuildingHeight() {
+			return toBuildingHeight;
+		}
+		public void setToBuildingHeight(BigDecimal toBuildingHeight) {
+			this.toBuildingHeight = toBuildingHeight;
+		}
+		public BigDecimal getFromPlotDepth() {
+			return fromPlotDepth;
+		}
+		public void setFromPlotDepth(BigDecimal fromPlotDepth) {
+			this.fromPlotDepth = fromPlotDepth;
+		}
+		public BigDecimal getToPlotDepth() {
+			return toPlotDepth;
+		}
+		public void setToPlotDepth(BigDecimal toPlotDepth) {
+			this.toPlotDepth = toPlotDepth;
+		}
+		public String getSubOccupancy() {
+			return subOccupancy;
+		}
+		public void setSubOccupancy(String subOccupancy) {
+			this.subOccupancy = subOccupancy;
+		}
+
+		@JsonProperty("subOccupancy")
+	    private String subOccupancy;
 
 	    @JsonProperty("riskType")
 	    private String riskType;
 
 	    @JsonProperty("permissible")
 	    private BigDecimal permissible;
+	    
+	    @JsonProperty("fromRoadWidth")
+	    private BigDecimal fromRoadWidth;
+
+	    @JsonProperty("toRoadWidth")
+	    private BigDecimal toRoadWidth;
 
 //	    @JsonProperty("permissibleone")
 //	    private BigDecimal permissibleOne;
@@ -83,6 +135,12 @@ public class MdmsFeatureRule {
 
 	    public BigDecimal getFromPlotArea() { return fromPlotArea; }
 	    public void setFromPlotArea(BigDecimal fromPlotArea) { this.fromPlotArea = fromPlotArea; }
+	    
+	    public BigDecimal getFromRoadWidth() { return fromRoadWidth; }
+	    public void setFromRoadWidth(BigDecimal fromRoadWidth) { this.fromRoadWidth = fromRoadWidth; }
+	    
+	    public BigDecimal getToRoadWidth() { return toRoadWidth; }
+	    public void setToRoadWidth(BigDecimal toRoadWidth) { this.toRoadWidth = toRoadWidth; }
 
 	    public BigDecimal getToPlotArea() { return toPlotArea; }
 	    public void setToPlotArea(BigDecimal toPlotArea) { this.toPlotArea = toPlotArea; }
@@ -946,6 +1004,8 @@ public class MdmsFeatureRule {
 	        if (id != null) sb.append("id=").append(id).append(", ");
 	        if (fromPlotArea != null) sb.append("fromPlotArea=").append(fromPlotArea).append(", ");
 	        if (toPlotArea != null) sb.append("toPlotArea=").append(toPlotArea).append(", ");
+	        if (fromRoadWidth != null) sb.append("fromRoadWidth=").append(fromRoadWidth).append(", ");
+	        if (toRoadWidth != null) sb.append("toRoadWidth=").append(toRoadWidth).append(", ");
 	        if (state != null) sb.append("state=").append(state).append(", ");
 	        if (city != null) sb.append("city=").append(city).append(", ");
 	        if (zone != null) sb.append("zone=").append(zone).append(", ");

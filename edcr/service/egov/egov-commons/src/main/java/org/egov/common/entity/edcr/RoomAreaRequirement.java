@@ -14,6 +14,51 @@ public class RoomAreaRequirement extends MdmsFeatureRule {
 	    private BigDecimal roomWidth2;
 	    @JsonProperty("roomWidth1")
 	    private BigDecimal roomWidth1;
+	    @JsonProperty("acRoomHeight")
+	    private BigDecimal acRoomHeight;
+	    
+	    @JsonProperty("roomHeight")
+	    private BigDecimal roomHeight;
+	    
+	    @JsonProperty("hillyRoomHeight")
+	    private BigDecimal hillyRoomHeight;
+
+	    @JsonProperty("commercialGFheight")
+	    private BigDecimal  commercialGFheight;
+	    
+	    @JsonProperty("commercialACroomHeight")
+	    private BigDecimal  commercialACroomHeight;
+	 
+		public BigDecimal getCommercialACroomHeight() {
+			return commercialACroomHeight;
+		}
+		public void setCommercialACroomHeight(BigDecimal commercialACroomHeight) {
+			this.commercialACroomHeight = commercialACroomHeight;
+		}
+		public BigDecimal getCommercialGFheight() {
+			return commercialGFheight;
+		}
+		public void setCommercialGFheight(BigDecimal commercialGFheight) {
+			this.commercialGFheight = commercialGFheight;
+		}
+		public BigDecimal getHillyRoomHeight() {
+			return hillyRoomHeight;
+		}
+		public void setHillyRoomHeight(BigDecimal hillyRoomHeight) {
+			this.hillyRoomHeight = hillyRoomHeight;
+		}
+		public BigDecimal getRoomHeight() {
+			return roomHeight;
+		}
+		public void setRoomHeight(BigDecimal roomHeight) {
+			this.roomHeight = roomHeight;
+		}
+		public BigDecimal getAcRoomHeight() {
+			return acRoomHeight;
+		}
+		public void setAcRoomHeight(BigDecimal acRoomHeight) {
+			this.acRoomHeight = acRoomHeight;
+		}
 		public BigDecimal getRoomArea2() {
 			return roomArea2;
 		}
@@ -41,7 +86,8 @@ public class RoomAreaRequirement extends MdmsFeatureRule {
 		@Override
 		public String toString() {
 			return "RoomAreaRequirement [roomArea2=" + roomArea2 + ", roomArea1=" + roomArea1 + ", roomWidth2="
-					+ roomWidth2 + ", roomWidth1=" + roomWidth1 + "]";
+					+ roomWidth2 + ", roomWidth1=" + roomWidth1 + ", acRoomHeight=" + acRoomHeight + ", roomHeight="
+					+ roomHeight + ", hillyRoomHeight=" + hillyRoomHeight + "]";
 		}
-
+	
 }
