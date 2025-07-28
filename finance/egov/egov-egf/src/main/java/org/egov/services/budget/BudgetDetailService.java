@@ -204,6 +204,10 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
     private static final String BUDGET_STATES_INSERT = "insert into eg_wf_states (ID,TYPE,VALUE,CREATEDBY,CREATEDDATE,LASTMODIFIEDDATE,LASTMODIFIEDBY,DATEINFO,OWNER_POS,STATUS,VERSION) values (:stateId,'Budget','NEW',1,current_date,current_date,1,current_date,1,1,0)";
     private static final String BUDGETDETAIL_STATES_INSERT = "insert into eg_wf_states (ID,TYPE,VALUE,CREATEDBY,CREATEDDATE,LASTMODIFIEDDATE,LASTMODIFIEDBY,DATEINFO,OWNER_POS,STATUS,VERSION) values (:stateId,'BudgetDetail','NEW',1,current_date,current_date,1,current_date,1,1,0)";
 
+    public Date getLastModifiedDateByMaterializedPath(String materializedPath) {
+        return budgetDetailRepository.findLastModifiedDateByMaterializedPath(materializedPath);
+    }
+    
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
     }
@@ -2062,7 +2066,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
 
     @Transactional
     public List<BudgetUpload> loadBudget(List<BudgetUpload> budgetUploadList, final CFinancialYear reFYear,
-            final CFinancialYear beFYear) {
+            final CFinancialYear beFYear,final boolean isManualEntry) {
 
         try {
 
@@ -2077,9 +2081,9 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
 
                 deptList.addAll(deptSet);
                 final EgwStatus budgetStatus = egwStatusDAO.getStatusByModuleAndCode("BUDGET", "Created");
-                createRootBudget(RE, beFYear, reFYear, deptList, budgetStatus);
+                createRootBudget(RE, beFYear, reFYear, deptList, budgetStatus,isManualEntry);
 
-                createRootBudget(BE, beFYear, reFYear, deptList, budgetStatus);
+                createRootBudget(BE, beFYear, reFYear, deptList, budgetStatus,isManualEntry);
 
             }
             final EgwStatus budgetDetailStatus = egwStatusDAO.getStatusByModuleAndCode("BUDGETDETAIL", "Created");
@@ -2143,6 +2147,11 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
                     budgetDetail.setFund(budgetUpload.getFund());
                     budgetDetail.setFunction(budgetUpload.getFunction());
                     budgetDetail.setExecutingDepartment(budgetUpload.getDeptCode());
+                    budgetDetail.setMajorCode(budgetUpload.getMajorCode());
+                    budgetDetail.setMinorCode(budgetUpload.getMinorCode());     
+                    budgetDetail.setLastYearApproved(new BigDecimal(budgetUpload.getLastYearApproved()) );   
+                    budgetDetail.setCurrentApproved(new  BigDecimal(budgetUpload.getCurrentApproved()) );   
+                    budgetDetail.setPercentageChange(new BigDecimal(budgetUpload.getPercentageChange()) );   
                     budgetDetail.setAnticipatoryAmount(BigDecimal.ZERO);
                     budgetDetail.setPlanningPercent(BigDecimal.valueOf(budgetUpload.getPlanningPercentage()));
                     if (budgetType.equalsIgnoreCase(RE)) {
@@ -2261,7 +2270,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
 
     @Transactional
     public void createRootBudget(final String budgetType, final CFinancialYear beFYear, final CFinancialYear reFYear,
-            final List<String> deptList, final EgwStatus status) {
+            final List<String> deptList, final EgwStatus status,final boolean isManualEntry) {
         String budgetName, budgetDes;
         CFinancialYear budgetFinancialYear;
         String rootmaterial;
@@ -2308,10 +2317,10 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
             }
 
             createCapitalOrRevenueBudget(budget, "Capital", rootmaterial + ".1", budgetType, beFYear, reFYear, deptList,
-                    status);
+                    status,isManualEntry);
 
             createCapitalOrRevenueBudget(budget, "Revenue", rootmaterial + ".2", budgetType, beFYear, reFYear, deptList,
-                    status);
+                    status,isManualEntry);
 
         } catch (final ValidationException e) {
             throw new ValidationException(Arrays
@@ -2329,6 +2338,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
                 .createSQLQuery("select count(*)+1 from egf_budget where parent is null");
 
         rootmaterial = query.uniqueResult().toString();
+        //persistenceService.getSession().close();
         return rootmaterial;
     }
 
@@ -2353,7 +2363,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
     @Transactional
     public void createCapitalOrRevenueBudget(final Budget parent, final String capitalOrRevenue,
             final String rootmaterial, final String budgetType, final CFinancialYear beFYear,
-            final CFinancialYear reFYear, final List<String> deptList, final EgwStatus status) {
+            final CFinancialYear reFYear, final List<String> deptList, final EgwStatus status,final boolean isManualEntry) {
         String budgetName, budgetDes;
         CFinancialYear budgetFinancialYear;
         Budget budget = new Budget();
@@ -2399,7 +2409,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
             }
 
             createDeptBudgetHeads(budget, capitalOrRevenue, budgetType, beFYear, reFYear,
-                    capitalOrRevenue.substring(0, 3), deptList, status);
+                    capitalOrRevenue.substring(0, 3), deptList, status,isManualEntry);
         } catch (final ValidationException e) {
             throw new ValidationException(Arrays
                     .asList(new ValidationError(e.getErrors().get(0).getMessage(), e.getErrors().get(0).getMessage())));
@@ -2412,78 +2422,78 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
 
     @Transactional
     public void createDeptBudgetHeads(final Budget parent, final String capitalOrRevenue, final String budgetType,
-            final CFinancialYear beFYear, final CFinancialYear reFYear, final String revOrCap,
-            final List<String> deptList, final EgwStatus status) {
-        String budgetName, budgetDes, rootmaterial;
-        CFinancialYear budgetFinancialYear;
-        rootmaterial = parent.getMaterializedPath() + ".";
-        String materialPath = rootmaterial;
-        try {
-            final Query query = persistenceService.getSession()
-                    .createSQLQuery(
-                            "select count(*)+1 from egf_budget c,egf_budget p where c.parent = p.id and p.name = :parentName")
-                    .setString("parentName", parent.getName());
+                                   final CFinancialYear beFYear, final CFinancialYear reFYear, final String revOrCap,
+                                   final List<String> deptList, final EgwStatus status, final boolean isManualEntry) {
+    String budgetName, budgetDes, rootmaterial;
+    CFinancialYear budgetFinancialYear;
+    rootmaterial = parent.getMaterializedPath() + ".";
+    String materialPath = rootmaterial;
 
-            final String count = query.uniqueResult().toString();
-            Integer capOrRevCount = Integer.valueOf(count);
-            for (final String deptCode : deptList) {
-                Budget budget = new Budget();
+    try {
+        final Query query = persistenceService.getSession()
+                .createSQLQuery("select count(*)+1 from egf_budget c, egf_budget p where c.parent = p.id and p.name = :parentName")
+                .setString("parentName", parent.getName());
+        //persistenceService.getSession().close();
+        final String count = query.uniqueResult().toString();
+        Integer capOrRevCount = Integer.valueOf(count);
 
-                if (budgetType.equalsIgnoreCase(BE)) {
-                    budgetName = deptCode + "-" + budgetType + "-" + revOrCap + "-" + beFYear.getFinYearRange();
+        for (final String deptCode : deptList) {
+
+            if (deptCode == null || deptCode.trim().isEmpty())
+                continue;
+
+            Budget budget = new Budget();
+
+            if (budgetType.equalsIgnoreCase("BE")) {
+                budgetName = deptCode + "-" + budgetType + "-" + revOrCap + "-" + beFYear.getFinYearRange();
+                budgetFinancialYear = beFYear;
+
+                if (!isManualEntry) {
                     budgetDes = microserviceUtils.getDepartmentByCode(deptCode).getName() + " " + budgetType + " "
-                            + capitalOrRevenue + "Budget for the year " + beFYear.getFinYearRange();
-                    budgetFinancialYear = beFYear;
+                            + capitalOrRevenue + " Budget for the year " + beFYear.getFinYearRange();
                 } else {
-                    budgetName = deptCode + "-" + budgetType + "-" + revOrCap + "-" + reFYear.getFinYearRange();
-                    budgetDes = microserviceUtils.getDepartmentByCode(deptCode).getName() + " " + budgetType + " "
-                            + capitalOrRevenue + "Budget for the year " + reFYear.getFinYearRange();
-                    budgetFinancialYear = reFYear;
+                    budgetDes = deptCode + " " + budgetType + " " + capitalOrRevenue + " Budget for the year " + beFYear.getFinYearRange();
                 }
-                if (budgetService.getByName(budgetName) == null) {
-                    materialPath = rootmaterial + capOrRevCount++;
 
-                    if (budgetType.equalsIgnoreCase(BE)) {
-                        final Budget refBudget = budgetService
-                                .getByName(deptCode + "-RE-" + revOrCap + "-" + reFYear.getFinYearRange());
-                        budget.setName(budgetName);
-                        budget.setDescription(budgetDes);
-                        budget.setFinancialYear(budgetFinancialYear);
-                        budget.setIsActiveBudget(true);
-                        budget.setIsPrimaryBudget(true);
-                        // budget = setBudgetState(budget);
-                        budget.setStatus(status);
-                        budget.setIsbere(budgetType);
-                        budget.setMaterializedPath(materialPath);
-                        budget.setReferenceBudget(refBudget);
-                        budget.setParent(parent);
-                        budgetService.applyAuditing(budget);
-                        budget = budgetService.persist(budget);
-                    } else {
-                        budget.setName(budgetName);
-                        budget.setDescription(budgetDes);
-                        budget.setFinancialYear(budgetFinancialYear);
-                        budget.setIsActiveBudget(true);
-                        budget.setIsPrimaryBudget(true);
-                        // budget = setBudgetState(budget);
-                        budget.setStatus(status);
-                        budget.setIsbere(budgetType);
-                        budget.setMaterializedPath(materialPath);
-                        budget.setParent(parent);
-                        budgetService.applyAuditing(budget);
-                        budget = budgetService.persist(budget);
-                    }
+            } else {
+                budgetName = deptCode + "-" + budgetType + "-" + revOrCap + "-" + reFYear.getFinYearRange();
+                budgetFinancialYear = reFYear;
+
+                if (!isManualEntry) {
+                    budgetDes = microserviceUtils.getDepartmentByCode(deptCode).getName() + " " + budgetType + " "
+                            + capitalOrRevenue + " Budget for the year " + reFYear.getFinYearRange();
+                } else {
+                    budgetDes = deptCode + " " + budgetType + " " + capitalOrRevenue + " Budget for the year " + reFYear.getFinYearRange();
                 }
             }
-        } catch (final ValidationException e) {
-            throw new ValidationException(Arrays
-                    .asList(new ValidationError(e.getErrors().get(0).getMessage(), e.getErrors().get(0).getMessage())));
-        } /*
-           * catch (final Exception e) { throw new
-           * ValidationException(Arrays.asList(new
-           * ValidationError(e.getMessage(), e.getMessage()))); }
-           */
+
+            if (budgetService.getByName(budgetName) == null) {
+                materialPath = rootmaterial + capOrRevCount++;
+
+                budget.setName(budgetName);
+                budget.setDescription(budgetDes);
+                budget.setFinancialYear(budgetFinancialYear);
+                budget.setIsActiveBudget(true);
+                budget.setIsPrimaryBudget(true);
+                budget.setStatus(status);
+                budget.setIsbere(budgetType);
+                budget.setMaterializedPath(materialPath);
+                budget.setParent(parent);
+
+                if (budgetType.equalsIgnoreCase("BE")) {
+                    final Budget refBudget = budgetService
+                            .getByName(deptCode + "-RE-" + revOrCap + "-" + reFYear.getFinYearRange());
+                    budget.setReferenceBudget(refBudget);
+                }
+
+                budgetService.applyAuditing(budget);
+                budget = budgetService.persist(budget);
+            }
+        }
+    } catch (Exception e) {
+        throw new RuntimeException("Error while creating department-wise budget heads: " + e.getMessage(), e);
     }
+}
 
 	public BudgetDetail getBudgetDetail(final Long fundId, final Long functionId, final String deptCode,
 			final Long glCodeId, final CFinancialYear fYear, final String budgetType) {

@@ -100,6 +100,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import org.egov.model.budget.ManualWrapper;
+import org.egov.model.budget.BudgetUploadManual;
+import org.egov.utils.Constants;
+import org.egov.utils.BudgetDetailConfig;
+import org.egov.model.budget.Budget;
+import org.egov.model.budget.BudgetGroup;
+import java.util.Collections;
+import org.egov.utils.BudgetDetailHelper;
+import java.util.Comparator;
+
 @ParentPackage("egov")
 @Results({
         @Result(name = "upload", location = "budgetLoad-upload.jsp"),
@@ -119,9 +131,15 @@ public class BudgetLoadAction extends BaseFormAction {
     private static final int DEPARTMENTCODE_CELL_INDEX = 1;
     private static final int FUNCTIONCODE_CELL_INDEX = 2;
     private static final int GLCODE_CELL_INDEX = 3;
-    private static final int REAMOUNT_CELL_INDEX = 4;
-    private static final int BEAMOUNT_CELL_INDEX = 5;
-    private static final int PLANNINGPERCENTAGE_CELL_INDEX = 6;
+    private static final int REAMOUNT_CELL_INDEX = 6;
+    private static final int BEAMOUNT_CELL_INDEX = 7;
+    private static final int PLANNINGPERCENTAGE_CELL_INDEX = 11;
+    private static final int MAJORCODE_CELL_INDEX = 4;
+    private static final int MINORCODE_CELL_INDEX = 5;
+    private static final int LASTYEARBUDGET_CELL_INDEX = 8;
+    private static final int CURRENTBUDGET_CELL_INDEX = 9;
+    private static final int PERCENTAGECHANGE_CELL_INDEX = 10;
+
     private boolean errorInMasterData = false;
     private boolean isBudgetUploadFileEmpty = true;
     private MultipartFile[] originalFile = new MultipartFile[1];
@@ -133,6 +151,29 @@ public class BudgetLoadAction extends BaseFormAction {
     private String budgetOutPutFileName;
     private String timeStamp;
     private String budgetUploadError = "Upload the Budget Data as shown in the Download Template format";
+    private boolean isManualEntry=false;
+    private String budgetData; 
+    boolean errorMessage = true;
+    protected String mode;
+    protected List<String> headerFields = new ArrayList<String>();
+    protected List<String> gridFields = new ArrayList<String>();
+    protected List<String> mandatoryFields = new ArrayList<String>();
+    BudgetDetailHelper budgetDetailHelper;
+    protected Long financialYear;
+
+    public boolean getIsManualEntry() {
+        return isManualEntry;
+    }
+    
+    public String getBudgetData() {
+        return budgetData;
+    }
+
+    public void setBudgetData(String budgetData) {
+        this.budgetData = budgetData;
+    }
+
+
     @Autowired
     private FinancialYearDAO financialYearDAO;
 
@@ -163,18 +204,98 @@ public class BudgetLoadAction extends BaseFormAction {
     @Qualifier("masterDataCache")
     private EgovMasterDataCaching masterDataCache;
 
-    @Override
-    @SuppressWarnings("unchecked")
-    public void prepare()
-    {
+    // @Override
+    // @SuppressWarnings("unchecked")
+    // public void prepare()
+    // {
 
-    }
+    // }
+    @Autowired
+    protected BudgetDetailConfig budgetDetailConfig;
 
     @Override
     public Object getModel() {
         return null;
     }
 
+    public boolean isErrorMessage() {
+        return errorMessage;
+    }
+
+    @Override
+    public String execute() throws Exception {
+        if (parameters.containsKey(Constants.MODE))
+            setMode(parameters.get(Constants.MODE)[0]);
+        errorMessage = false;
+        return Constants.LIST;
+    }
+
+    public String getMode() {
+        return mode;
+    }
+
+    public void setMode(final String mode) {
+        this.mode = mode;
+    }
+
+    public final boolean shouldShowHeaderField(final String field) {
+        return headerFields.isEmpty() || headerFields.contains(field);
+    }
+
+     public final boolean shouldShowGridField(final String field) {
+        return gridFields.isEmpty() || gridFields.contains(field);
+    }
+
+    public final boolean shouldShowField(final String field) {
+        if (headerFields.isEmpty() && gridFields.isEmpty())
+            return true;
+        return shouldShowHeaderField(field) || shouldShowGridField(field);
+    }
+
+    public void prepare() {
+        super.prepare();
+        headerFields = budgetDetailConfig.getHeaderFields();
+        gridFields = budgetDetailConfig.getGridFields();
+        mandatoryFields = budgetDetailConfig.getMandatoryFields();
+        addRelatedEntity("budget", Budget.class);
+        addRelatedEntity("budgetGroup", BudgetGroup.class);
+        if (shouldShowField(Constants.FUNCTION))
+            addRelatedEntity(Constants.FUNCTION, CFunction.class);
+        if (shouldShowField(Constants.FUND))
+            addRelatedEntity(Constants.FUND, Fund.class);
+        if (shouldShowField(Constants.CHARTOFACCOUNTS))
+            addRelatedEntity(Constants.CHARTOFACCOUNTS, CChartOfAccounts.class);
+        if (!parameters.containsKey("skipPrepare")) {
+            headerFields = budgetDetailConfig.getHeaderFields();
+            gridFields = budgetDetailConfig.getGridFields();
+            if (LOGGER.isDebugEnabled())
+                LOGGER.debug("done findApprovedBudgetsForFY");
+            dropdownData.put("financialYearList", persistenceService.findAllBy("from CFinancialYear where isActive=true order by finYearRange desc"));
+            if (shouldShowField(Constants.FUND))
+                dropdownData.put("fundList",persistenceService.findAllBy("from Fund where isActive=true and isnotleaf=false ORDER BY name ASC "));
+            if (shouldShowField(Constants.EXECUTING_DEPARTMENT)) {
+                List<Department> departmentList = (List<Department>) masterDataCache.get("egi-department");
+                if (departmentList != null) {
+                    departmentList.sort(Comparator.comparing(
+                        Department::getName,
+                        Comparator.nullsLast(String.CASE_INSENSITIVE_ORDER)
+                    ));
+                }
+                dropdownData.put("executingDepartmentList", departmentList);
+            }
+            if (shouldShowField(Constants.FUNCTION))
+                dropdownData.put("functionList", persistenceService.findAllBy("from CFunction where isactive=true and isnotleaf=false ORDER BY name ASC"));
+            // if (shouldShowField(Constants.FUNCTION))
+            //     dropdownData.put("functionList", masterDataCache.get("egi-function"));
+            System.out.println("shouldShowField(CHARTOFACCOUNTS): " + shouldShowField(Constants.CHARTOFACCOUNTS));
+            if (shouldShowField(Constants.CHARTOFACCOUNTS))
+            dropdownData.put("chartOfAccountList",persistenceService.findAllBy("from CChartOfAccounts where isActiveForPosting=true ORDER BY id ASC"));
+            
+            LOGGER.info("Dropdown Data: " + dropdownData);
+            LOGGER.info("-----------------------------");
+        }
+    }
+    
     @Action(value = "/budget/budgetLoad-beforeUpload")
     public String beforeUpload()
     {
@@ -251,7 +372,7 @@ public class BudgetLoadAction extends BaseFormAction {
 
             budgetUploadList = removeEmptyRows(budgetUploadList);
 
-            budgetUploadList = budgetDetailService.loadBudget(budgetUploadList, reFYear, beFYear);
+            budgetUploadList = budgetDetailService.loadBudget(budgetUploadList, reFYear, beFYear,isManualEntry);
 
             fsIP.close();
             prepareOutPutFileWithFinalStatus(budgetUploadList);
@@ -280,6 +401,154 @@ public class BudgetLoadAction extends BaseFormAction {
         return "result";
     }
 
+
+    private List<BudgetUpload> convertManualToBudgetUpload(List<BudgetUploadManual> manualList, String reYear, String beYear) {
+    List<BudgetUpload> convertedList = new ArrayList<>();
+
+    for (BudgetUploadManual manual : manualList) {
+        BudgetUpload upload = new BudgetUpload();
+
+        upload.setFundCode(manual.getFundCode());
+        upload.setDeptCode(manual.getDepartmentCode());
+        upload.setFunctionCode(manual.getFunctionCode());
+        upload.setBudgetHead(manual.getChartOfAccountCode());
+        upload.setMajorCode(manual.getMajorCode());
+        upload.setMinorCode(manual.getMinorCode());
+        upload.setLastYearApproved(manual.getLastYearApproved());
+        upload.setCurrentApproved(manual.getCurrentApproved());
+        upload.setPercentageChange(manual.getPercentageChange());
+        upload.setReFinYear(reYear);
+        upload.setBeFinYear(beYear);
+
+        // Parse RE Amount
+        upload.setReAmount(parseBigDecimal(manual.getReAmount()));
+
+        // Parse BE Amount
+        upload.setBeAmount(parseBigDecimal(manual.getBeAmount()));
+
+        // Parse Planning Percentage
+        upload.setPlanningPercentage(parseLong(manual.getPlanningPercentage()));
+
+        convertedList.add(upload);
+    }
+
+    return convertedList;
+    }
+
+    // Utility method to parse BigDecimal safely
+	private BigDecimal parseBigDecimal(String value) {
+	    try {
+	        return (value != null && !value.trim().isEmpty()) ? new BigDecimal(value.trim()) : BigDecimal.ZERO;
+	    } catch (NumberFormatException e) {
+	        return BigDecimal.ZERO;
+	    }
+	}
+	
+	// Utility method to parse Long safely
+	private Long parseLong(String value) {
+	    try {
+	        return (value != null && !value.trim().isEmpty()) ? Long.parseLong(value.trim()) : 0L;
+	    } catch (NumberFormatException e) {
+	        return 0L;
+	    }
+	}
+
+	@Action(value = "/budget/budgetLoad-manualSubmit")
+	public String manualSubmit() {
+		
+	    LOG.info("---------------Inside manualSubmit------------------------------");
+	    isManualEntry = true;
+	    ManualWrapper manualWrapper;
+
+	    // Step 1: Parse JSON
+	    try {
+	        ObjectMapper mapper = new ObjectMapper();
+	        manualWrapper = mapper.readValue(budgetData, ManualWrapper.class);
+	    } catch (IOException e) {
+	        LOG.error("Failed to parse budgetData JSON", e);
+	        addActionError("Error reading submitted data. Please ensure the format is correct.");
+	        return "result";
+	    }
+
+	    // Step 2: Get Manual Budget Rows
+	    List<BudgetUploadManual> manualList = manualWrapper.getBudgetRows();
+	    LOG.info("----------manualList created using manualwrapper func-------------------");
+	    if (manualList == null || manualList.isEmpty()) {
+	        addActionError("No budget records found. Please check the input.");
+	        return "result";
+	    }
+
+	    // Step 3: Convert Manual to Domain
+	    List<BudgetUpload> budgetUploadList;
+	    try {
+	        budgetUploadList = convertManualToBudgetUpload(
+	            manualList,
+	            manualWrapper.getReYear(),
+	            manualWrapper.getBeYear()
+	        );
+	    } catch (Exception e) {
+	        LOG.error("Error converting manual data to domain object", e);
+	        addActionError("Error processing budget data. Please verify the year or record details.");
+	        return "result";
+	    }
+	    LOG.info("-----------conversion of manual to budget upload done-----------------");
+
+	    // Step 4: Validate against Master Data
+	    try {
+	        budgetUploadList = validateMasterData(budgetUploadList);
+	    } catch (Exception e) {
+	        LOG.error("Error during master data validation", e);
+	        addActionError("Validation failed due to missing or incorrect master data.");
+	        return "result";
+	    }
+	    LOG.info("---------------------validating data againt master data done-----------------");
+
+	    if (errorInMasterData) {
+	        addActionError("Error at validating MasterData");
+	        return "result";
+	    }
+
+	    // Step 5: Validate Duplicates
+	    try {
+	        budgetUploadList = validateDuplicateData(budgetUploadList);
+	    } catch (Exception e) {
+	        LOG.error("Error checking for duplicates", e);
+	        addActionError("Error at validating Duplicate Data");
+	        return "result";
+	    }
+
+	    // Step 6: Remove Empty Rows
+	    try {
+	        budgetUploadList = removeEmptyRows(budgetUploadList);
+	    } catch (Exception e) {
+	        LOG.error("Error removing empty rows", e);
+	        addActionError("Unable to process data. Please ensure all rows are correctly filled");
+	        return "result";
+	    }
+	    LOG.info("------validating duplicate data and removal of empty rows done----");
+
+	    // Step 7: Load Budget
+	    try {
+	        String reFinYearRange = manualWrapper.getReYear();
+	        String beFinYearRange = manualWrapper.getBeYear();
+
+	        CFinancialYear reFYear = financialYearDAO.getFinancialYearByFinYearRange(reFinYearRange);
+	        CFinancialYear beFYear = financialYearDAO.getNextFinancialYearByDate(reFYear.getStartingDate());
+
+	        budgetUploadList = budgetDetailService.loadBudget(budgetUploadList, reFYear, beFYear, isManualEntry);
+	    } catch (Exception e) {
+	        LOG.error("Error during budget upload", e);
+	        addActionError("Error during budget upload");
+	        return "result";
+	    }
+	    LOG.info("-----------loadBudget done-------------");
+
+	    addActionMessage(getText("budget.load.sucessful"));
+	    return "result";
+	}
+
+
+
     private void prepareOutPutFileWithErrors(List<BudgetUpload> budgetUploadList) {
         FileInputStream fsIP;
         try {
@@ -290,7 +559,7 @@ public class BudgetLoadAction extends BaseFormAction {
             wb.getNumberOfSheets();
             final HSSFSheet sheet = wb.getSheetAt(0);
             HSSFRow row = sheet.getRow(3);
-            HSSFCell cell = row.createCell(7);
+            HSSFCell cell = row.createCell(12);
             cell.setCellValue("Error Reason");
             cell.setAsActiveCell();
             HSSFCellStyle cellStyle = wb.createCellStyle();
@@ -305,7 +574,7 @@ public class BudgetLoadAction extends BaseFormAction {
             for (int i = DATA_STARTING_ROW_INDEX; i <= sheet.getLastRowNum(); i++) {
                 HSSFRow errorRow = sheet.getRow(i);
                 if(!isRowEmpty(errorRow)){
-                    HSSFCell errorCell = errorRow.createCell(7);
+                    HSSFCell errorCell = errorRow.createCell(12);
                     String fundCode = getStrValue(sheet.getRow(i).getCell(FUNDCODE_CELL_INDEX));
                     fundCode = fundCode != null ? fundCode : "";
                     String funcCode = getStrValue(sheet.getRow(i).getCell(FUNCTIONCODE_CELL_INDEX));
@@ -369,7 +638,7 @@ public class BudgetLoadAction extends BaseFormAction {
             Map<String, String> finalStatusMap = new HashMap<String, String>();
 
             HSSFRow row = sheet.getRow(3);
-            HSSFCell cell = row.createCell(7);
+            HSSFCell cell = row.createCell(12);
             cell.setCellValue("Status");
 
             for (BudgetUpload budget : budgetUploadList)
@@ -379,7 +648,7 @@ public class BudgetLoadAction extends BaseFormAction {
 
             for (int i = DATA_STARTING_ROW_INDEX; i <= sheet.getLastRowNum(); i++) {
                 HSSFRow finalStatusRow = sheet.getRow(i);
-                HSSFCell finalStatusCell = finalStatusRow.createCell(7);
+                HSSFCell finalStatusCell = finalStatusRow.createCell(12);
                 finalStatusCell.setCellValue(finalStatusMap.get((getStrValue(sheet.getRow(i).getCell(FUNDCODE_CELL_INDEX)) + "-"
                         + getStrValue(sheet.getRow(i).getCell(FUNCTIONCODE_CELL_INDEX)) + "-"
                         + getStrValue(sheet.getRow(i).getCell(DEPARTMENTCODE_CELL_INDEX)) + "-" + getStrValue(sheet.getRow(i)
@@ -591,6 +860,16 @@ public class BudgetLoadAction extends BaseFormAction {
                         .getCell(FUNCTIONCODE_CELL_INDEX)));
                 budget.setBudgetHead(getStrValue(row.getCell(GLCODE_CELL_INDEX)) == null ? "" : getStrValue(row
                         .getCell(GLCODE_CELL_INDEX)));
+                budget.setMajorCode(getStrValue(row.getCell(MAJORCODE_CELL_INDEX)) == null ? "" : getStrValue(row
+                        .getCell(MAJORCODE_CELL_INDEX)));
+                budget.setMinorCode(getStrValue(row.getCell(MINORCODE_CELL_INDEX)) == null ? "" : getStrValue(row
+                        .getCell(MINORCODE_CELL_INDEX)));
+                budget.setLastYearApproved(getStrValue(row.getCell(LASTYEARBUDGET_CELL_INDEX)) == null ? "" : getStrValue(row
+                        .getCell(LASTYEARBUDGET_CELL_INDEX)));
+                budget.setCurrentApproved(getStrValue(row.getCell(CURRENTBUDGET_CELL_INDEX)) == null ? "" : getStrValue(row
+                        .getCell(CURRENTBUDGET_CELL_INDEX)));
+                budget.setPercentageChange(getStrValue(row.getCell(PERCENTAGECHANGE_CELL_INDEX)) == null ? "" : getStrValue(row
+                        .getCell(PERCENTAGECHANGE_CELL_INDEX)));                
                 budget.setReAmount(BigDecimal.valueOf(Long.valueOf(getStrValue(row.getCell(REAMOUNT_CELL_INDEX)) == null ? "0"
                         : getStrValue(row.getCell(REAMOUNT_CELL_INDEX)))));
                 budget.setBeAmount(BigDecimal.valueOf(Long.valueOf(getStrValue(row.getCell(BEAMOUNT_CELL_INDEX)) == null ? "0"

@@ -87,6 +87,7 @@
 			</span>
 			<span style="color: green"><s:actionmessage /></span>
 			<center>
+			    <s:if test="%{!isManualEntry}">
 				<table align="center" width="100%">
 					<tr align="center">
 						<th style="width: 2%; text-align: center" align="center"><a
@@ -96,19 +97,22 @@
 
 					</tr>
 					<tr align="center">
-
 						<th style="width: 2%; text-align: center" align="center"><a
 							href="#"
 							onclick="urlLoad('<s:property value="%{outPutFileStoreId}" />');"
 							id="sourceLink" /><s:text name="lbl.download.output.file"/> </a></th>
 					</tr>
 				</table>
+				</s:if>
 
 				<div class="buttonbottom" id="buttondiv">
 					<table>
 						<tr>
-							<td><input type="button" value="<s:text name='lbl.close'/>"
-								onclick="window.parent.postMessage('close','*');window.close();" class="buttonsubmit" /></td>
+							<!-- <td><input type="button" value="<s:text name='lbl.close'/>"
+								onclick="window.parent.postMessage('close','*');window.close();" class="buttonsubmit" /></td> -->
+							<!-- <td><input type="button" value="Close"
+								onclick="window.history.back();" class="buttonsubmit" /></td> -->
+							<td><input type="button" value="Close" onclick="window.location.reload();" class="buttonsubmit" /></td>						
 						</tr>
 					</table>
 				</div>

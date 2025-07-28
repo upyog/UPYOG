@@ -128,8 +128,66 @@ public class BudgetDetail extends StateAware {
     @Column(name = "executing_department")
     @SafeHtml
     private String executingDepartment;
+    
+    @Column(name = "majorcode")
+    @SafeHtml
+    private String majorCode;
+    
+    @Column(name = "minorcode")
+    @SafeHtml
+    private String minorCode;
+    
+    @Column(name = "lastyearapproved")
+    private BigDecimal lastYearApproved;
+    
+    @Column(name = "currentapproved")
+    private BigDecimal currentApproved;
+    
+    @Column(name = "percentagechange")
+    private BigDecimal percentageChange;
+    
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    public String getMajorCode() {
+		return majorCode;
+	}
+
+	public void setMajorCode(String majorCode) {
+		this.majorCode = majorCode;
+	}
+
+	public String getMinorCode() {
+		return minorCode;
+	}
+
+	public void setMinorCode(String minorCode) {
+		this.minorCode = minorCode;
+	}
+
+	public BigDecimal getLastYearApproved() {
+		return lastYearApproved;
+	}
+
+	public void setLastYearApproved(BigDecimal lastYearApproved) {
+		this.lastYearApproved = lastYearApproved;
+	}
+
+	public BigDecimal getCurrentApproved() {
+		return currentApproved;
+	}
+
+	public void setCurrentApproved(BigDecimal currentApproved) {
+		this.currentApproved = currentApproved;
+	}
+
+	public BigDecimal getPercentageChange() {
+		return percentageChange;
+	}
+
+	public void setPercentageChange(BigDecimal percentageChange) {
+		this.percentageChange = percentageChange;
+	}
+
+	@ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "function")
     private CFunction function;
 
