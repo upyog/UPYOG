@@ -1,6 +1,7 @@
 package org.egov.infra.mdms.repository.impl;
 
 import lombok.extern.slf4j.Slf4j;
+import net.minidev.json.JSONArray;
 import org.egov.infra.mdms.config.ApplicationConfig;
 import org.egov.infra.mdms.model.Mdms;
 import org.egov.infra.mdms.model.MdmsCriteria;
@@ -12,7 +13,6 @@ import org.egov.infra.mdms.repository.querybuilder.MdmsDataQueryBuilder;
 import org.egov.infra.mdms.repository.querybuilder.MdmsDataQueryBuilderV2;
 import org.egov.infra.mdms.repository.rowmapper.MdmsDataRowMapper;
 import org.egov.infra.mdms.repository.rowmapper.MdmsDataRowMapperV2;
-import org.json.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
