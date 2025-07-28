@@ -94,7 +94,9 @@ module.exports = function (app) {
     "/verification-service/validity/_search",
     "/asset-services/v1/assets/depreciation/_process",
     "/asset-services/v1/assets/depreciation/list",
-    "/asset-services/v1/disposal/_create"
+    "/asset-services/v1/disposal/_create",
+    "/bpa-services/v1/preapprovedplan/_search",
+    "/bpa-calculator/_estimate"
   ].forEach((location) => app.use(location, createProxy));
   ["/pb-egov-assets"].forEach((location) => app.use(location, assetsProxy));
 };
