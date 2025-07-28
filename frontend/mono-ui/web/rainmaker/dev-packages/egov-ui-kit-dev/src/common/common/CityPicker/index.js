@@ -32,8 +32,10 @@ class CityPickerDialog extends Component {
       mappedResult.key = result.key;
       mappedResult.primaryText = this.getLocalizedLabel(`TENANT_TENANTS_${result.key.toUpperCase().replace(/[.:-\s\/]/g, "_")}`);
       mappedResult.id = result.key;
+      console.log("resultsresultswwwww",mappedResult)
       return mappedResult;
     })
+    console.log("resultsresults",results)
     return results.sort((e1, e2) => {
       if (e1 && e1.primaryText && typeof e1.primaryText == 'string') {
         return e1 && e1.primaryText && e1.primaryText.localeCompare && e1.primaryText.localeCompare(e2 && e2.primaryText && e2.primaryText || '');
@@ -67,9 +69,11 @@ class CityPickerDialog extends Component {
 
   autoSuggestCallback = (results = [] ,searchTerm) => {
     const {cities} = this.props;
+    console.log("searchTermsearchTerm",searchTerm)
     if(searchTerm){
       const filteredCities = cities && cities.filter(item => {
-        return item.key.includes(searchTerm.toLowerCase())
+        console.log("filteredCities",item)
+        return item.text.toLowerCase().includes(searchTerm.toLowerCase());
       });
       if (results.length === 0) {
         results.push({ key: "", text: "No City Found" });
