@@ -12,6 +12,7 @@ import org.upyog.mapper.CommonDetailsMapper;
 import org.upyog.mapper.CommonDetailsMapperFactory;
 import org.upyog.repository.ServiceRequestRepository;
 import org.upyog.web.models.CommonDetails;
+import org.upyog.web.models.ModuleSearchRequest;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -48,8 +49,11 @@ public class CommonServiceImpl implements CommonService {
 	}
 
 	@Override
-	public CommonDetails getApplicationCommonDetails(RequestInfo requestInfo, String moduleName,
-			String applicationNumber, String tenantId) {
+	public CommonDetails getApplicationCommonDetails(ModuleSearchRequest request) {
+		RequestInfo requestInfo = request.getRequestInfo();
+		String moduleName = request.getModuleSearchCriteria().getModuleName();
+		String applicationNumber = request.getModuleSearchCriteria().getApplicationNumber();
+		String tenantId = request.getModuleSearchCriteria().getTenantId();
 		String host = moduleHosts.get(moduleName);
 		if (host == null) {
 			throw new IllegalArgumentException("Invalid module name or host not configured: " + moduleName);
