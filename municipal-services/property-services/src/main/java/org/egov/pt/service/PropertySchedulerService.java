@@ -693,7 +693,6 @@ public class PropertySchedulerService {
 
 			BillSearchCriteria searchCriteria = BillSearchCriteria.builder().billId(batch).skipValidation(true).build();
 
-//			log.info("search criteria {}",searchCriteria);
 			BillResponse billResponse = billService.searchBill(searchCriteria, requestInfoWrapper.getRequestInfo());
 
 			if (billResponse != null && !CollectionUtils.isEmpty(billResponse.getBill())) {
@@ -824,7 +823,6 @@ public class PropertySchedulerService {
 
 		for (BillDetail billDetail : bill.getBillDetails()) {
 			Demand demand = demandIdToDemandMap.get(billDetail.getDemandId());
-
 			if (demand != null) {
 				demand.setMinimumAmountPayable(newAmount);
 				if (demand.getDemandDetails() != null) {

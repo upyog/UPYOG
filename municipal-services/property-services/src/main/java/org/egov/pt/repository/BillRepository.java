@@ -100,6 +100,7 @@ public class BillRepository {
 		BillResponse response = null;
 		try {
 			response = objectMapper.convertValue(result, BillResponse.class);
+
 		} catch (IllegalArgumentException e) {
 			throw new CustomException("PARSING ERROR", "Failed to parse response of update bill");
 		}
