@@ -1,4 +1,4 @@
-import React from "react";
+import React, { use } from "react";
 import { useTranslation } from "react-i18next";
 import { useQueryClient } from "react-query";
 import { Redirect, Route, Switch, useHistory, useLocation, useRouteMatch } from "react-router-dom";
@@ -15,6 +15,41 @@ const WTCreate = () => {
 
   let config = [];
   const [params, setParams, clearParams] = Digit.Hooks.useSessionStorage("WT_Create", {});
+
+  // Sets the serviceType in case of employee side for WT, MT, and TP
+  if ((!params.serviceType || Object.keys(params.serviceType).length === 0) && pathname.includes("employee")) {
+    if (pathname.includes("mt")) {
+      console.log("MT Create");
+      setParams({
+        "serviceType": {
+          "serviceType": {
+            "code": "MobileToilet",
+            "i18nKey": "Mobile Toilet",
+            "value": "Mobile Toilet"
+          }
+        }
+      })
+    } else if (pathname.includes("tp")) {
+      setParams({
+        "serviceType": {
+          "serviceType": {
+            "code": "TREE_PRUNING",
+            "i18nKey": "Tree Pruning",
+            "value": "Tree Pruning"
+          }
+        }
+      })
+    }
+    else {
+      setParams({
+        "serviceType": {
+          "serviceType": {
+            "code": "WT", "i18nKey": "Water Tanker", "value": "Water Tanker"
+          }
+        }
+      })
+    }
+  }
 
   const goNext = (skipStep, index, isAddMultiple, key) => {
     let currentPath = pathname.split("/").pop(),
@@ -116,7 +151,8 @@ const WTCreate = () => {
     config = config.concat(obj.body.filter((a) => !a.hideInCitizen));
   });
 
-  config.indexRoute = "service-type";
+  // Changes the indexRoute based on the pathname
+  config.indexRoute = pathname.includes("citizen")? "service-type" : "info";
 
   const CheckPage = Digit?.ComponentRegistryService?.getComponent("WTCheckPage");
   const WTAcknowledgement = Digit?.ComponentRegistryService?.getComponent("WTAcknowledgement");

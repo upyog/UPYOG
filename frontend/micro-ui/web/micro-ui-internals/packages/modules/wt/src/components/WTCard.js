@@ -45,6 +45,10 @@ const WTCard = () => {
     {
       label: t("ES_COMMON_APPLICATION_SEARCH"),
       link: `${APPLICATION_PATH}/employee/wt/my-bookings`,
+    },
+    {
+      label: t("ES_COMMON_APPLICATION_CREATE"),
+      link: `${APPLICATION_PATH}/employee/wt/request-service`,
     }
   ]
   const WT_CEMP = Digit.UserService.hasAccess(["WT_CEMP"]) || false;
