@@ -9,7 +9,7 @@
     "start": "react-scripts start"
   },
   "devDependencies": {
-    "@upyog/digit-ui-module-bills": "3.0.1",
+    "@upyog/digit-ui-module-bills": "3.0.2",
     "@upyog/digit-ui-module-common": "3.0.5",
     "@upyog/digit-ui-module-engagement": "3.0.3",
     "@upyog/digit-ui-module-fsm": "3.0.4",

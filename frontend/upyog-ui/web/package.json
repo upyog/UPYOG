@@ -14,7 +14,6 @@
     "micro-ui-internals/packages/modules/tl",
     "micro-ui-internals/packages/modules/hrms",
     "micro-ui-internals/packages/modules/obps",
-    "micro-ui-internals/packages/modules/tl",
     "micro-ui-internals/packages/modules/ws",
     "micro-ui-internals/packages/modules/pt"
   ],
@@ -25,7 +24,7 @@
     "@nudmcdgnpm/digit-ui-libraries": "1.2.1",
     "@nudmcdgnpm/upyog-css": "1.2.8",
     "@upyog/digit-ui-libraries": "3.0.1",
-    "@upyog/digit-ui-module-bills": "3.0.1",
+    "@upyog/digit-ui-module-bills": "3.0.2",
     "@upyog/digit-ui-module-common": "3.0.5",
     "@upyog/digit-ui-module-commonpt": "3.0.3",
     "@upyog/digit-ui-module-core": "3.0.3",
