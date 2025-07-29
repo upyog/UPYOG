@@ -3,7 +3,6 @@ package org.egov.user.persistence.repository;
 import static java.util.Objects.isNull;
 import static org.springframework.util.StringUtils.isEmpty;
 
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -20,49 +19,41 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
-/**
- * Repository class responsible for creating audit records for user service operations.
- * 
- * This repository handles audit trail creation for user information changes.
- * All audit records include timestamp and user identifier information for tracking purposes.
- */
 @Repository
 public class AuditRepository {
-	
-	public static final String INSERT_AUDIT_DETAILS = "insert into eg_user_audit_table (id,uuid,tenantid,salutation,dob,locale,username,password,pwdexpirydate,mobilenumber,altcontactnumber,emailid,active,name,gender,pan,aadhaarnumber,"
+
+    public static final String INSERT_AUDIT_DETAILS = "insert into eg_user_audit_table (id,uuid,tenantid,salutation,dob,locale,username,password,pwdexpirydate,mobilenumber,altcontactnumber,emailid,active,name,gender,pan,aadhaarnumber,"
             + "type,guardian,guardianrelation,signature,accountlocked,bloodgroup,photo,identificationmark,auditcreatedby,auditcreatedtime) values (:id,:uuid,:tenantid,:salutation,"
             + ":dob,:locale,:username,:password,:pwdexpirydate,:mobilenumber,:alternatemobilenumber,:emailid,:active,:name,:gender,:pan,:aadhaarnumber,:type,:guardian,:guardianrelation,:signature,"
             + ":accountlocked,:bloodgroup,:photo,:identificationmark,:auditcreatedby,:auditcreatedtime) ";
 
-
-
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+    private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
     private JdbcTemplate jdbcTemplate;
 
     public AuditRepository(NamedParameterJdbcTemplate namedParameterJdbcTemplate, JdbcTemplate jdbcTemplate) {
         this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
         this.jdbcTemplate = jdbcTemplate;
-    }    
+    }
 
-	public void auditUser(User oldUser, long userId, String uuid) {
-			
-		Map<String, Object> auditInputs = new HashMap<String, Object>();
+    public void auditUser(User oldUser, long userId, String uuid) {
 
-    	
-    	auditInputs.put("auditcreatedby", uuid);
-    	auditInputs.put("auditcreatedtime", Instant.now().toEpochMilli());
-    	
-    	auditInputs.put("id", oldUser.getId());
+        Map<String, Object> auditInputs = new HashMap<String, Object>();
+
+
+        auditInputs.put("auditcreatedby", uuid);
+        auditInputs.put("auditcreatedtime", System.currentTimeMillis() );
+
+        auditInputs.put("id", oldUser.getId());
         auditInputs.put("uuid", oldUser.getUuid());
-    	
-    	auditInputs.put("username", oldUser.getUsername());
+
+        auditInputs.put("username", oldUser.getUsername());
         auditInputs.put("type", oldUser.getType().toString());
         auditInputs.put("tenantid", oldUser.getTenantId());
         auditInputs.put("aadhaarnumber", oldUser.getAadhaarNumber());
 
         auditInputs.put("accountlocked", oldUser.getAccountLocked());
         auditInputs.put("accountlockeddate", oldUser.getAccountLockedDate());
-        
+
 
         auditInputs.put("active", oldUser.getActive());
         auditInputs.put("altcontactnumber", oldUser.getAltContactNumber());
@@ -78,9 +69,9 @@ public class AuditRepository {
             auditInputs.put("bloodgroup", "");
         }
 
-        
+
         auditInputs.put("dob", oldUser.getDob());
-        
+
         auditInputs.put("emailid", oldUser.getEmailId());
 
         if (oldUser.getGender() != null) {
@@ -91,7 +82,7 @@ public class AuditRepository {
             } else if (Gender.OTHERS.toString().equals(oldUser.getGender().toString())) {
                 auditInputs.put("gender", 3);
             } else if (Gender.TRANSGENDER.toString().equals(oldUser.getGender().toString())) {
-                auditInputs.put("gender", 4); 
+                auditInputs.put("gender", 4);
             } else {
                 auditInputs.put("gender", 0);
             }
@@ -107,7 +98,7 @@ public class AuditRepository {
             else {
                 auditInputs.put("guardianrelation", "");
             }
-            
+
         } else {
             auditInputs.put("guardianrelation", "");
         }
@@ -122,20 +113,20 @@ public class AuditRepository {
         if (!isEmpty(oldUser.getPassword()))
             auditInputs.put("password", oldUser.getPassword());
         else {
-        	auditInputs.put("password", "");
+            auditInputs.put("password", "");
         }
-        
+
 
         if ( oldUser.getPhoto() != null && oldUser.getPhoto().contains("http")) {
             auditInputs.put("photo", oldUser.getPhoto());
         }
         else {
-        	auditInputs.put("photo", "");
+            auditInputs.put("photo", "");
         }
 
-        
+
         auditInputs.put("pwdexpirydate", oldUser.getPasswordExpiryDate());
-        
+
         auditInputs.put("salutation", oldUser.getSalutation());
         auditInputs.put("signature", oldUser.getSignature());
         auditInputs.put("title", oldUser.getTitle());
@@ -152,16 +143,15 @@ public class AuditRepository {
         else {
             auditInputs.put("type", "");
         }
-        
+
 
         auditInputs.put("alternatemobilenumber", oldUser.getAlternateMobileNumber());
 
-        
-        
-    	
-        namedParameterJdbcTemplate.update(INSERT_AUDIT_DETAILS, auditInputs); 
-    	
-	}
 
+
+
+        namedParameterJdbcTemplate.update(INSERT_AUDIT_DETAILS, auditInputs);
+
+    }
 
 }
