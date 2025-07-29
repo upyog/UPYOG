@@ -90,7 +90,7 @@
         },
         {
           "name": "Finance",
-          "id": "finance"
+          "id": "national-finance"
         },
         {
           "name": "National Birth Death",
@@ -152,6 +152,9 @@
         },
         {
           "id": "ulb-sv"
+        },
+        {
+          "id": "ulb-finance"
         }
       ]
     }
