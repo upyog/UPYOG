@@ -16,7 +16,6 @@
     "packages/modules/hrms",
     "packages/modules/obps",
     "packages/modules/pt",
-    "packages/modules/tl",
     "packages/modules/ws"
   ],
   "license": "MIT",
