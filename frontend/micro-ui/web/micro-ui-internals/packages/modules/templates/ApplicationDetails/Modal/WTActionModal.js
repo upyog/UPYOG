@@ -1,5 +1,6 @@
 import { Loader, Modal, FormComposer } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useState, useEffect } from "react";
+import { useHistory } from "react-router-dom";
 
 import { configWTApproverApplication } from "../config/WTApproverApplication";
 /*
@@ -103,7 +104,7 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
   const [selectedVendor, setSelectedVendor] = useState(null);
   const [selectVehicle, setSelectVehicle] = useState(null);
   const [comment, setComment] = useState("");
-
+  const history = useHistory();
 
 
   useEffect(() => {
@@ -175,6 +176,26 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
 
   useEffect(() => {
     if (action) {
+      if (action.action === "PAY") {
+        const bookingPrefix = applicationData.bookingNo?.split("-")[0];
+        let servicePath = "";
+        switch (bookingPrefix) {
+          case "WT":
+            servicePath = "request-service.water_tanker";
+            break;
+          case "MT":
+            servicePath = "request-service.mobile_toilet";
+            break;
+          case "TP":
+            servicePath = "request-service.tree_pruning";
+            break;
+          default:
+            console.error("Unknown booking prefix:", bookingPrefix);
+            return; // Or handle as needed
+        }
+      
+        return history.push(`/digit-ui/employee/payment/collect/${servicePath}/${applicationData.bookingNo}`);
+      }
       setConfig(
         configWTApproverApplication({
           t,
