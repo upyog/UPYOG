@@ -28,4 +28,9 @@ ALTER TABLE eg_enc_symmetric_keys
 -- Add createdtime and lastmodifiedtime columns to asymmetric keys table
 ALTER TABLE eg_enc_asymmetric_keys
     ADD COLUMN IF NOT EXISTS createdtime BIGINT,
-    ADD COLUMN IF NOT EXISTS lastmodifiedtime BIGINT; 
+    ADD COLUMN IF NOT EXISTS lastmodifiedtime BIGINT;
+
+-- Add indexes on audit tables for better query performance
+-- Index on tenant_id for efficient tenant-based queries
+CREATE INDEX IF NOT EXISTS idx_symmetric_keys_audit_tenant_id ON eg_enc_symmetric_keys_audit (tenant_id);
+CREATE INDEX IF NOT EXISTS idx_asymmetric_keys_audit_tenant_id ON eg_enc_asymmetric_keys_audit (tenant_id);

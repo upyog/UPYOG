@@ -38,7 +38,6 @@ import static org.springframework.util.StringUtils.isEmpty;
 public class UserRepository {
 
     private AddressRepository addressRepository;
-    private AuditRepository auditRepository;
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
     private JdbcTemplate jdbcTemplate;
     private UserTypeQueryBuilder userTypeQueryBuilder;
@@ -54,14 +53,13 @@ public class UserRepository {
     UserRepository(RoleRepository roleRepository, UserTypeQueryBuilder userTypeQueryBuilder,
                    AddressRepository addressRepository, UserResultSetExtractor userResultSetExtractor,
                    JdbcTemplate jdbcTemplate,
-                   NamedParameterJdbcTemplate namedParameterJdbcTemplate, AuditRepository auditRepository) {
+                   NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
         this.addressRepository = addressRepository;
         this.roleRepository = roleRepository;
         this.userTypeQueryBuilder = userTypeQueryBuilder;
         this.userResultSetExtractor = userResultSetExtractor;
         this.jdbcTemplate = jdbcTemplate;
         this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
-        this.auditRepository = auditRepository;
     }
 
     /**
@@ -460,8 +458,7 @@ public class UserRepository {
             
             batchValues.add(userRoleData);
             
-            // Create audit record for user role v1 assignment
-            auditRepository.auditUserRoleV1(userRoleData, entityUser.getLoggedInUserId() != null ? entityUser.getLoggedInUserId().toString() : null);
+
         }
         namedParameterJdbcTemplate.batchUpdate(RoleQueryBuilder.INSERT_USER_ROLES,
                 batchValues.toArray(new Map[entityUser.getRoles().size()]));
@@ -604,8 +601,7 @@ public class UserRepository {
 
 	
 	private void updateAuditDetails(User oldUser, long userId, String uuid) {
-		auditRepository.auditUser(oldUser,userId,uuid);
-		
+		// Audit functionality removed
 	}
 
     /**
