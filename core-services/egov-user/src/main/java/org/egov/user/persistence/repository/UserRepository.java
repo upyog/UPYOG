@@ -176,8 +176,8 @@ public class UserRepository {
      * api will update the user details.
      *
      * @param user
-     * @param uuid
-     * @param
+     * @param uuid 
+     * @param  
      * @return
      */
     public void update(final User user, User oldUser, long userId, String uuid) {
@@ -235,7 +235,7 @@ public class UserRepository {
             } else if (Gender.OTHERS.toString().equals(user.getGender().toString())) {
                 updateuserInputs.put("Gender", 3);
             } else if (Gender.TRANSGENDER.toString().equals(user.getGender().toString())) {
-                updateuserInputs.put("Gender", 4);
+                updateuserInputs.put("Gender", 4); 
             } else {
                 updateuserInputs.put("Gender", 0);
             }
@@ -251,7 +251,7 @@ public class UserRepository {
             else {
                 updateuserInputs.put("GuardianRelation", "");
             }
-
+            
         } else {
             updateuserInputs.put("GuardianRelation", "");
         }
@@ -299,7 +299,7 @@ public class UserRepository {
 
         updateuserInputs.put("LastModifiedDate", new Date());
         updateuserInputs.put("LastModifiedBy", userId );
-
+        
         updateAuditDetails(oldUser, userId, uuid);
 
         namedParameterJdbcTemplate.update(userTypeQueryBuilder.getUpdateUserQuery(), updateuserInputs);
@@ -319,7 +319,7 @@ public class UserRepository {
         }
     }
 
-    public void fetchFailedLoginAttemptsByUser(String uuid) {
+	public void fetchFailedLoginAttemptsByUser(String uuid) {
         fetchFailedAttemptsByUserAndTime(uuid, 0L);
     }
 
@@ -599,11 +599,11 @@ public class UserRepository {
         return tenantId.split("\\.")[0];
     }
 
-
-    private void updateAuditDetails(User oldUser, long userId, String uuid) {
-        auditRepository.auditUser(oldUser,userId,uuid);
-
-    }
+	
+	private void updateAuditDetails(User oldUser, long userId, String uuid) {
+		auditRepository.auditUser(oldUser,userId,uuid);
+		
+	}
 
     /**
      * this method will create the user with address part of v2.

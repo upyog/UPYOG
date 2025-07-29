@@ -4,7 +4,7 @@ CREATE TABLE IF NOT EXISTS eg_enc_symmetric_keys_audit (
     audit_id SERIAL PRIMARY KEY,
     operation VARCHAR(10) NOT NULL,
     tenant_id VARCHAR(128),
-    changed_at TIMESTAMP DEFAULT now(),
+    changed_at BIGINT,
     old_row JSONB,
     new_row JSONB
 );
@@ -15,7 +15,7 @@ CREATE TABLE IF NOT EXISTS eg_enc_asymmetric_keys_audit (
     audit_id SERIAL PRIMARY KEY,
     operation VARCHAR(10) NOT NULL,
     tenant_id VARCHAR(128),
-    changed_at TIMESTAMP DEFAULT now(),
+    changed_at BIGINT,
     old_row JSONB,
     new_row JSONB
 );

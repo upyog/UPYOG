@@ -49,21 +49,21 @@ public class AuditRepository {
      * Batch inserts audit records for symmetric key operations.
      *
      * @param auditData List of audit data objects containing operation, tenantId, oldRow, and newRow
+     * @param timestamp The timestamp to use for all audit records (should match main table timestamp)
      */
-    public void insertSymmetricKeyAuditBatch(List<AuditData> auditData) {
+    public void insertSymmetricKeyAuditBatch(List<AuditData> auditData, long timestamp) {
         if (auditData == null || auditData.isEmpty()) {
             return;
         }
 
         try {
-            LocalDateTime changedAtDateTime = DateTimeUtil.getCurrentLocalDateTime();
             jdbcTemplate.batchUpdate(insertSymmetricKeyAuditQuery, new BatchPreparedStatementSetter() {
                 @Override
                 public void setValues(PreparedStatement ps, int i) throws SQLException {
                     AuditData data = auditData.get(i);
                     ps.setString(1, data.getOperation());
                     ps.setString(2, data.getTenantId());
-                    ps.setObject(3, changedAtDateTime);
+                    ps.setLong(3, timestamp);
                     ps.setString(4, data.getOldRowJson());
                     ps.setString(5, data.getNewRowJson());
                 }
@@ -83,22 +83,22 @@ public class AuditRepository {
      * Batch inserts audit records for asymmetric key operations.
      *
      * @param auditData List of audit data objects containing operation, tenantId, oldRow, and newRow
+     * @param timestamp The timestamp to use for all audit records (should match main table timestamp)
      */
-    public void insertAsymmetricKeyAuditBatch(List<AuditData> auditData) {
+    public void insertAsymmetricKeyAuditBatch(List<AuditData> auditData, long timestamp) {
         if (auditData == null || auditData.isEmpty()) {
             log.warn("No audit data provided for asymmetric key batch insertion");
             return;
         }
 
         try {
-            LocalDateTime changedAtDateTime = DateTimeUtil.getCurrentLocalDateTime();
             jdbcTemplate.batchUpdate(insertAsymmetricKeyAuditQuery, new BatchPreparedStatementSetter() {
                 @Override
                 public void setValues(PreparedStatement ps, int i) throws SQLException {
                     AuditData data = auditData.get(i);
                     ps.setString(1, data.getOperation());
                     ps.setString(2, data.getTenantId());
-                    ps.setObject(3, changedAtDateTime);
+                    ps.setLong(3, timestamp);
                     ps.setString(4, data.getOldRowJson());
                     ps.setString(5, data.getNewRowJson());
                 }
@@ -123,22 +123,23 @@ public class AuditRepository {
      *
      * @param tenantId        The tenant ID
      * @param updateOperation The update operation to perform (should return the update count)
+     * @param timestamp       The timestamp to use for audit records (should match main table timestamp)
      * @return The update count
      */
-    public int auditDeactivateSymmetricKeyForTenant(String tenantId, Supplier<Integer> updateOperation) {
+    public int auditDeactivateSymmetricKeyForTenant(String tenantId, Supplier<Integer> updateOperation, long timestamp) {
         try {
-            List<SymmetricKey> oldKeys = jdbcTemplate.query(selectActiveSymmetricKeysByTenantQuery, new BeanPropertyRowMapper<>(SymmetricKey.class), tenantId);
+        List<SymmetricKey> oldKeys = jdbcTemplate.query(selectActiveSymmetricKeysByTenantQuery, new BeanPropertyRowMapper<>(SymmetricKey.class), tenantId);
             if (oldKeys.isEmpty()) {
                 log.warn("No active symmetric key found for tenant: {}", tenantId);
                 return 0;
             }
 
             SymmetricKey oldKey = oldKeys.get(0);
-            int result = updateOperation.get();
-            if (result > 0) {
+        int result = updateOperation.get();
+        if (result > 0) {
                 log.info("Symmetric key deactivation audit for tenant: {}, keyId: {}", tenantId, oldKey.getKeyId());
                 try {
-                    SymmetricKey newKey = jdbcTemplate.queryForObject(selectSymmetricKeyByIdQuery, new BeanPropertyRowMapper<>(SymmetricKey.class), oldKey.getKeyId());
+                SymmetricKey newKey = jdbcTemplate.queryForObject(selectSymmetricKeyByIdQuery, new BeanPropertyRowMapper<>(SymmetricKey.class), oldKey.getKeyId());
                     String oldRowJson = objectMapper.writeValueAsString(oldKey);
                     String newRowJson = objectMapper.writeValueAsString(newKey);
                     
@@ -150,7 +151,7 @@ public class AuditRepository {
                             .newRowJson(newRowJson)
                             .build());
                     
-                    insertSymmetricKeyAuditBatch(auditDataList);
+                    insertSymmetricKeyAuditBatch(auditDataList, timestamp);
                 } catch (Exception e) {
                     log.error("Failed to create audit data for symmetric key - keyId: {}, tenantId: {}", oldKey.getKeyId(), oldKey.getTenantId(), e);
                     throw new RuntimeException("Symmetric key audit data creation failed", e);
@@ -172,22 +173,23 @@ public class AuditRepository {
      *
      * @param tenantId        The tenant ID
      * @param updateOperation The update operation to perform (should return the update count)
+     * @param timestamp       The timestamp to use for audit records (should match main table timestamp)
      * @return The update count
      */
-    public int auditDeactivateAsymmetricKeyForTenant(String tenantId, Supplier<Integer> updateOperation) {
+    public int auditDeactivateAsymmetricKeyForTenant(String tenantId, Supplier<Integer> updateOperation, long timestamp) {
         try {
-            List<AsymmetricKey> oldKeys = jdbcTemplate.query(selectActiveAsymmetricKeysByTenantQuery, new BeanPropertyRowMapper<>(AsymmetricKey.class), tenantId);
+        List<AsymmetricKey> oldKeys = jdbcTemplate.query(selectActiveAsymmetricKeysByTenantQuery, new BeanPropertyRowMapper<>(AsymmetricKey.class), tenantId);
             if (oldKeys.isEmpty()) {
                 log.warn("No active asymmetric key found for tenant: {}", tenantId);
                 return 0;
             }
 
             AsymmetricKey oldKey = oldKeys.get(0);
-            int result = updateOperation.get();
-            if (result > 0) {
+        int result = updateOperation.get();
+        if (result > 0) {
                 log.info("Asymmetric key deactivation audit for tenant: {}, keyId: {}", tenantId, oldKey.getKeyId());
                 try {
-                    AsymmetricKey newKey = jdbcTemplate.queryForObject(selectAsymmetricKeyByIdQuery, new BeanPropertyRowMapper<>(AsymmetricKey.class), oldKey.getKeyId());
+                AsymmetricKey newKey = jdbcTemplate.queryForObject(selectAsymmetricKeyByIdQuery, new BeanPropertyRowMapper<>(AsymmetricKey.class), oldKey.getKeyId());
                     String oldRowJson = objectMapper.writeValueAsString(oldKey);
                     String newRowJson = objectMapper.writeValueAsString(newKey);
                     
@@ -199,7 +201,7 @@ public class AuditRepository {
                             .newRowJson(newRowJson)
                             .build());
                     
-                    insertAsymmetricKeyAuditBatch(auditDataList);
+                    insertAsymmetricKeyAuditBatch(auditDataList, timestamp);
                 } catch (Exception e) {
                     log.error("Failed to create audit data for asymmetric key - keyId: {}, tenantId: {}", oldKey.getKeyId(), oldKey.getTenantId(), e);
                     throw new RuntimeException("Asymmetric key audit data creation failed", e);
@@ -220,23 +222,24 @@ public class AuditRepository {
      * - Inserts audit records for each affected key using batch operation
      *
      * @param updateOperation The update operation to perform (should return the update count)
+     * @param timestamp       The timestamp to use for audit records (should match main table timestamp)
      * @return The update count
      */
-    public int auditDeactivateAllSymmetricKeys(Supplier<Integer> updateOperation) {
+    public int auditDeactivateAllSymmetricKeys(Supplier<Integer> updateOperation, long timestamp) {
         try {
-            List<SymmetricKey> oldKeys = jdbcTemplate.query(selectActiveSymmetricKeysQuery, new BeanPropertyRowMapper<>(SymmetricKey.class));
+        List<SymmetricKey> oldKeys = jdbcTemplate.query(selectActiveSymmetricKeysQuery, new BeanPropertyRowMapper<>(SymmetricKey.class));
             if (oldKeys.isEmpty()) {
                 log.warn("No active symmetric keys found for deactivation");
                 return 0;
             }
             
-            int result = updateOperation.get();
-            if (result > 0) {
+        int result = updateOperation.get();
+        if (result > 0) {
                 log.info("Deactivating Symmetric keys is successful");
                 List<AuditData> auditDataList = new ArrayList<>();
-                for (SymmetricKey oldKey : oldKeys) {
+            for (SymmetricKey oldKey : oldKeys) {
                     try {
-                        SymmetricKey newKey = jdbcTemplate.queryForObject(selectSymmetricKeyByIdQuery, new BeanPropertyRowMapper<>(SymmetricKey.class), oldKey.getKeyId());
+                SymmetricKey newKey = jdbcTemplate.queryForObject(selectSymmetricKeyByIdQuery, new BeanPropertyRowMapper<>(SymmetricKey.class), oldKey.getKeyId());
                         String oldRowJson = objectMapper.writeValueAsString(oldKey);
                         String newRowJson = objectMapper.writeValueAsString(newKey);
                         auditDataList.add(AuditData.builder()
@@ -251,7 +254,7 @@ public class AuditRepository {
                     }
                 }
                 log.info("Size of AuditDataList: {}", auditDataList.size());
-                insertSymmetricKeyAuditBatch(auditDataList);
+                insertSymmetricKeyAuditBatch(auditDataList, timestamp);
             }
             return result;
         } catch (Exception e) {
@@ -268,23 +271,24 @@ public class AuditRepository {
      * - Inserts audit records for each affected key using batch operation
      *
      * @param updateOperation The update operation to perform (should return the update count)
+     * @param timestamp       The timestamp to use for audit records (should match main table timestamp)
      * @return The update count
      */
-    public int auditDeactivateAllAsymmetricKeys(Supplier<Integer> updateOperation) {
+    public int auditDeactivateAllAsymmetricKeys(Supplier<Integer> updateOperation, long timestamp) {
         try {
-            List<AsymmetricKey> oldKeys = jdbcTemplate.query(selectActiveAsymmetricKeysQuery, new BeanPropertyRowMapper<>(AsymmetricKey.class));
+        List<AsymmetricKey> oldKeys = jdbcTemplate.query(selectActiveAsymmetricKeysQuery, new BeanPropertyRowMapper<>(AsymmetricKey.class));
             if (oldKeys.isEmpty()) {
                 log.warn("No active asymmetric keys found for deactivation");
                 return 0;
             }
             
-            int result = updateOperation.get();
-            if (result > 0) {
+        int result = updateOperation.get();
+        if (result > 0) {
                 log.info("Deactivating Asymmetric keys is successful");
                 List<AuditData> auditDataList = new ArrayList<>();
-                for (AsymmetricKey oldKey : oldKeys) {
+            for (AsymmetricKey oldKey : oldKeys) {
                     try {
-                        AsymmetricKey newKey = jdbcTemplate.queryForObject(selectAsymmetricKeyByIdQuery, new BeanPropertyRowMapper<>(AsymmetricKey.class), oldKey.getKeyId());
+                AsymmetricKey newKey = jdbcTemplate.queryForObject(selectAsymmetricKeyByIdQuery, new BeanPropertyRowMapper<>(AsymmetricKey.class), oldKey.getKeyId());
                         String oldRowJson = objectMapper.writeValueAsString(oldKey);
                         String newRowJson = objectMapper.writeValueAsString(newKey);
                         auditDataList.add(AuditData.builder()
@@ -299,7 +303,7 @@ public class AuditRepository {
                     }
                 }
                 log.info("Size of AuditDataList: {}", auditDataList.size());
-                insertAsymmetricKeyAuditBatch(auditDataList);
+                insertAsymmetricKeyAuditBatch(auditDataList, timestamp);
             }
             return result;
         } catch (Exception e) {

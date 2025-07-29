@@ -71,7 +71,7 @@ public class KeyRepository {
                         .oldRowJson(null)
                         .newRowJson(newRowJson)
                         .build());
-                auditRepository.insertSymmetricKeyAuditBatch(auditDataList);
+                auditRepository.insertSymmetricKeyAuditBatch(auditDataList, now);
             } catch (Exception e) {
                 log.error("Failed to create audit data for symmetric key insert - keyId: {}, tenantId: {}", symmetricKey.getKeyId(), symmetricKey.getTenantId(), e);
                 throw new RuntimeException("Symmetric key insert audit data creation failed", e);
@@ -103,7 +103,7 @@ public class KeyRepository {
                         .oldRowJson(null)
                         .newRowJson(newRowJson)
                         .build());
-                auditRepository.insertAsymmetricKeyAuditBatch(auditDataList);
+                auditRepository.insertAsymmetricKeyAuditBatch(auditDataList, now);
             } catch (Exception e) {
                 log.error("Failed to create audit data for asymmetric key insert - keyId: {}, tenantId: {}", asymmetricKey.getKeyId(), asymmetricKey.getTenantId(), e);
                 throw new RuntimeException("Asymmetric key insert audit data creation failed", e);
@@ -118,7 +118,8 @@ public class KeyRepository {
                 tenantId,
                 () -> jdbcTemplate.update(
                         "UPDATE eg_enc_symmetric_keys SET active='false', lastmodifiedtime=? WHERE active='true' AND tenant_id=?",
-                        now, tenantId)
+                        now, tenantId),
+                now
         );
     }
 
@@ -128,7 +129,8 @@ public class KeyRepository {
                 tenantId,
                 () -> jdbcTemplate.update(
                         "UPDATE eg_enc_asymmetric_keys SET active='false', lastmodifiedtime=? WHERE active='true' AND tenant_id=?",
-                        now, tenantId)
+                        now, tenantId),
+                now
         );
     }
 
@@ -137,7 +139,8 @@ public class KeyRepository {
         return auditRepository.auditDeactivateAllSymmetricKeys(
                 () -> jdbcTemplate.update(
                         "UPDATE eg_enc_symmetric_keys SET active='false', lastmodifiedtime=? WHERE active='true'",
-                        now)
+                        now),
+                now
         );
     }
 
@@ -146,7 +149,8 @@ public class KeyRepository {
         return auditRepository.auditDeactivateAllAsymmetricKeys(
                 () -> jdbcTemplate.update(
                         "UPDATE eg_enc_asymmetric_keys SET active='false', lastmodifiedtime=? WHERE active='true'",
-                        now)
+                        now),
+                now
         );
     }
 
