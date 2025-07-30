@@ -2,6 +2,7 @@ package org.egov.advertisementcanopy.service;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -15,7 +16,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.BooleanUtils;
@@ -44,13 +44,13 @@ import org.egov.advertisementcanopy.model.SiteCreationData;
 import org.egov.advertisementcanopy.model.SiteSearchData;
 import org.egov.advertisementcanopy.model.SiteSearchRequest;
 import org.egov.advertisementcanopy.model.SiteUpdateRequest;
+import org.egov.advertisementcanopy.model.Idgen.IdResponse;
 import org.egov.advertisementcanopy.producer.Producer;
+import org.egov.advertisementcanopy.repository.IdGenRepository;
 import org.egov.advertisementcanopy.repository.SiteBookingRepository;
 import org.egov.advertisementcanopy.repository.SiteRepository;
-import org.egov.advertisementcanopy.repository.IdGenRepository;
 import org.egov.advertisementcanopy.util.AdvtConstants;
 import org.egov.advertisementcanopy.util.ResponseInfoFactory;
-import org.egov.advertisementcanopy.model.Idgen.IdResponse;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.Role;
 import org.egov.tracer.model.CustomException;
@@ -114,7 +114,7 @@ public class SiteBookingService {
 		validateCreateBooking(siteBookingRequest);
 
 		// validate site occupancy
-		Map<String, SiteCreationData> siteMap = searchValidateSiteAndEnrichSiteBooking(siteBookingRequest);
+		Map<String, SiteCreationData> siteMap = searchValidateSiteAndEnrichSiteBooking(siteBookingRequest,true);
 		
 		// enrich create request
 		enrichCreateBooking(siteBookingRequest);
@@ -165,7 +165,7 @@ public class SiteBookingService {
 			Long toDateInMillis = booking.getToDate() * 1000;
 			Long differenceInMillis = Math.abs(toDateInMillis - fromDateInMillis);
 	        Long numberOfDays = differenceInMillis / (1000 * 60 * 60 * 24);
-	        
+	        numberOfDays = numberOfDays + 1; 
 			booking.setPeriodInDays(numberOfDays);
 			
 			booking.setUuid(UUID.randomUUID().toString());
@@ -245,7 +245,7 @@ public class SiteBookingService {
 		
 	}
 
-	private Map<String, SiteCreationData> searchValidateSiteAndEnrichSiteBooking(SiteBookingRequest siteBookingRequest) {
+	private Map<String, SiteCreationData> searchValidateSiteAndEnrichSiteBooking(SiteBookingRequest siteBookingRequest , Boolean checkStatus) {
 		
 		List<String> siteUuids = siteBookingRequest.getSiteBookings().stream()
 //				.filter(siteBooking -> BooleanUtils.isFalse(siteBooking.getIsOnlyWorkflowCall()))
@@ -268,8 +268,11 @@ public class SiteBookingService {
 			if(null == tempSite) {
 				throw new CustomException("SITE_NOT_FOUND","Site not found for given site uuid: "+booking.getSiteUuid());
 			}
-			if(!StringUtils.equalsIgnoreCase(tempSite.getStatus(), "AVAILABLE")) {
-				throw new CustomException("SITE_CANT_BE_BOOKED","Site "+ tempSite.getSiteName() +" is not Available.");
+			if (checkStatus && !"AVAILABLE".equalsIgnoreCase(tempSite.getStatus())) {
+			    throw new CustomException(
+			        "SITE_CANT_BE_BOOKED",
+			        "Site " + tempSite.getSiteName() + " is not available for booking."
+			    );
 			}
 			// enrich tenant from site to booking
 			booking.setTenantId(tempSite.getTenantId());
@@ -673,11 +676,18 @@ public class SiteBookingService {
 		siteBookingRequest.getSiteBookings().stream().forEach(booking -> {
 			SiteBooking existingSiteBooking = appNoToSiteBookingMap.get(booking.getApplicationNo());
 			
+			
 			// validate existence
 			if(null == existingSiteBooking) {
 				throw new CustomException("BOOKING_NOT_FOUND","Booking id not found: "+booking.getApplicationNo());
 			}
 			
+			Long fromDateInMillis = existingSiteBooking.getFromDate() * 1000;
+			Long toDateInMillis = existingSiteBooking.getToDate() * 1000;
+			Long differenceInMillis = Math.abs(toDateInMillis - fromDateInMillis);
+	        Long numberOfDays = differenceInMillis / (1000 * 60 * 60 * 24);
+	        numberOfDays = numberOfDays + 1; 
+			booking.setPeriodInDays(numberOfDays);
 			if(!booking.getIsOnlyWorkflowCall()) {
 				// enrich some existing data in request
 				booking.setApplicationNo(existingSiteBooking.getApplicationNo());
@@ -740,7 +750,7 @@ public class SiteBookingService {
 				.getSiteBookings().stream().filter(site -> BooleanUtils.isTrue(site.getIsActive()) && BooleanUtils.isFalse(site.getIsOnlyWorkflowCall())).collect(Collectors.toList()));
 		
 		if (!CollectionUtils.isEmpty(activeSiteBookingRequest.getSiteBookings())) {
-			searchValidateSiteAndEnrichSiteBooking(activeSiteBookingRequest);
+			searchValidateSiteAndEnrichSiteBooking(activeSiteBookingRequest,false);
 		}
 
 	}
@@ -806,7 +816,8 @@ public class SiteBookingService {
 			String fromDate = dateFormat.format(new Date(fromDateInMillis));
 			String toDate = dateFormat.format(new Date(toDateInMillis));
 			Long differenceInMillis = Math.abs(toDateInMillis - fromDateInMillis);
-	        Long numberOfDays = differenceInMillis / (1000 * 60 * 60 * 24); 
+	        Long numberOfDays = differenceInMillis / (1000 * 60 * 60 * 24);
+	        numberOfDays = numberOfDays + 1;
 			SiteBookingDetail siteBookingDetail = SiteBookingDetail.builder().applicationNumber(booking.getApplicationNo())
 													.tax(booking.getSiteCreationData().getAdditionalDetail().get("gstPercnetage").asText())
 													.securityAmount(booking.getSiteCreationData().getSecurityAmount())
@@ -855,7 +866,7 @@ public class SiteBookingService {
 												.multiply(new BigDecimal(cost.get()))
 												.add(BigDecimal.valueOf(booking.getSiteCreationData().getSecurityAmount() != null 
 										                ? booking.getSiteCreationData().getSecurityAmount() 
-										                        : 0.0));
+										                        : 0.0)).setScale(2, RoundingMode.HALF_UP);
 				siteBookingDetail.setTotalPayableAmount(totalPayableAmount);
 				siteBookingDetail.setFeeCalculationFormula("From Date: (<b>"+fromDate+"</b>), To Date: "
 						+ "(<b>"+toDate+"</b>) = Number Of Days (<b>"+numberOfDays+"</b>) * Cost per day: (<b>"
