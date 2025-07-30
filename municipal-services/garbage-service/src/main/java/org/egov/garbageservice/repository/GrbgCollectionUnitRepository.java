@@ -46,10 +46,10 @@ public class GrbgCollectionUnitRepository {
                 grbgCollectionUnit.getSubCategory(),
                 grbgCollectionUnit.getSubCategoryType(),
                 grbgCollectionUnit.getIsActive(),
-                grbgCollectionUnit.getUuid(),
                 grbgCollectionUnit.getIsbplunit(),
                 grbgCollectionUnit.getIsbulkgeneration(),
-                grbgCollectionUnit.getIsvariablecalculation());
+                grbgCollectionUnit.getIsvariablecalculation(),
+                grbgCollectionUnit.getUuid());
     }
 
 
