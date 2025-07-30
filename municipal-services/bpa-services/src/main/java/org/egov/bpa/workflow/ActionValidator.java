@@ -1,6 +1,7 @@
 package org.egov.bpa.workflow;
 
 import java.util.HashMap;
+
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -18,7 +19,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Component
 public class ActionValidator {
 
@@ -71,12 +74,14 @@ public class ActionValidator {
 			List<Action> actions = state.getActions();
 			List<Role> roles = requestInfo.getUserInfo().getRoles();
 			List<String> validActions = new LinkedList<>();
-			
+			log.info("roles are" +roles);
+			log.info("Actions are" +actions);
 			roles.forEach(role -> {
 				actions.forEach(action -> {
 					if (action.getRoles().contains(role.getCode())) {
 						validActions.add(action.getAction());
 					}
+					log.info("validActions are" +validActions);
 				});
 			});
 

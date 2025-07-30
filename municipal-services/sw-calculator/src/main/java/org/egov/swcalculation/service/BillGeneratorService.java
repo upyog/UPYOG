@@ -114,4 +114,9 @@ public class BillGeneratorService {
 
 		return billGeneratorDao.getBillGenerationDetails(criteria);
 	}
+	
+	public List<BillScheduler> getBillGenerationGroup(BillGenerationSearchCriteria criteria) {
+
+		return billGeneratorDao.getBillGenerationGroup(criteria);
+	}
 }

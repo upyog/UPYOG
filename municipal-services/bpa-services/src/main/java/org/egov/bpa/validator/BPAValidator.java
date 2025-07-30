@@ -54,16 +54,10 @@ public class BPAValidator {
 	private NocService nocService;
 	
 	public void validateCreate(BPARequest bpaRequest, Object mdmsData, Map<String, String> values) {
-        @SuppressWarnings("unchecked")
-		Map<String, String> additionalDetails = bpaRequest.getBPA().getAdditionalDetails() != null
-                ? (Map<String, String>) bpaRequest.getBPA().getAdditionalDetails()
-                : new HashMap<String, String>();
 		mdmsValidator.validateMdmsData(bpaRequest, mdmsData);
-		validateApplicationDocuments(bpaRequest, mdmsData, null, values);		
-        if (bpaRequest.getBPA().getRiskType() != null) {
-            additionalDetails.put(BPAConstants.RISKTYPE, bpaRequest.getBPA().getRiskType());
-        }
-		
+		validateApplicationDocuments(bpaRequest, mdmsData, null, values);
+		if(!bpaRequest.getBPA().getApplicationType().equalsIgnoreCase("BUILDING_OC_PLAN_SCRUTINY"))
+				validateApplication(bpaRequest);
 	}
 
 
@@ -289,6 +283,7 @@ public class BPAValidator {
 		bpaRequest.getBPA().getAuditDetails()
 				.setCreatedTime(idToBPAFromSearch.get(bpaRequest.getBPA().getId()).getAuditDetails().getCreatedTime());
 		bpaRequest.getBPA().setStatus(idToBPAFromSearch.get(bpaRequest.getBPA().getId()).getStatus());
+
 	}
 
 
@@ -336,7 +331,7 @@ public class BPAValidator {
 		Map<String, String> edcrResponse = edcrService.getEDCRDetails(bpaRequest.getRequestInfo(), bpaRequest.getBPA());
 		log.debug("applicationType is " + edcrResponse.get(BPAConstants.APPLICATIONTYPE));
         log.debug("serviceType is " + edcrResponse.get(BPAConstants.SERVICETYPE));
-        
+
 		validateQuestions(mdmsData, bpa, wfState, edcrResponse);
 		validateFIDocTypes(mdmsData, bpa, wfState, edcrResponse);
 	}
@@ -368,6 +363,7 @@ public class BPAValidator {
 			if (!CollectionUtils.isEmpty(mdmsQns)) {
 				if (bpa.getAdditionalDetails() != null) {
 					List checkListFromReq = (List) ((Map) bpa.getAdditionalDetails()).get(wfState.toLowerCase());
+					
 					if (!CollectionUtils.isEmpty(checkListFromReq)) {
 						for (int i = 0; i < checkListFromReq.size(); i++) {
 							// MultiItem framework adding isDeleted object to
@@ -418,9 +414,10 @@ public class BPAValidator {
 										BPAErrorConstants.BPA_UNKNOWN_QUESTIONS_MSG);
 							}
 						}
-					} else {
-						throw new CustomException(BPAErrorConstants.BPA_UNKNOWN_QUESTIONS, BPAErrorConstants.BPA_UNKNOWN_QUESTIONS_MSG);
-					}
+					} 
+//					else {
+//						throw new CustomException(BPAErrorConstants.BPA_UNKNOWN_QUESTIONS, BPAErrorConstants.BPA_UNKNOWN_QUESTIONS_MSG);
+//					}
 				} else {
 					throw new CustomException(BPAErrorConstants.BPA_UNKNOWN_QUESTIONS, BPAErrorConstants.BPA_UNKNOWN_QUESTIONS_MSG);
 				}
@@ -511,9 +508,10 @@ public class BPAValidator {
 								throw new CustomException(BPAErrorConstants.BPA_UNKNOWN_DOCS, BPAErrorConstants.BPA_UNKNOWN_DOCS_MSG);
 							}
 						}
-					} else {
-						throw new CustomException(BPAErrorConstants.BPA_UNKNOWN_DOCS, BPAErrorConstants.BPA_UNKNOWN_DOCS_MSG);
-					}
+					} 
+//					else {
+////						throw new CustomException(BPAErrorConstants.BPA_UNKNOWN_DOCS, BPAErrorConstants.BPA_UNKNOWN_DOCS_MSG);
+////					}
 				} else {
 					throw new CustomException(BPAErrorConstants.BPA_UNKNOWN_DOCS, BPAErrorConstants.BPA_UNKNOWN_DOCS_MSG);
 				}
@@ -622,6 +620,35 @@ public class BPAValidator {
 					log.debug("No NOC record found to validate with sourceRefId " + bpa.getApplicationNo());
 				}
 			}
+		}
+	}
+	
+	
+	public void validateApplication(BPARequest bpaRequest)
+	{
+		@SuppressWarnings("unchecked")
+		Map<String,String> obj=(Map<String, String>)bpaRequest.getBPA().getAdditionalDetails();
+		
+		if(!obj.containsKey("boundaryWallLength") || !obj.containsKey("area") ||  !obj.containsKey("usage") || !obj.containsKey("height") || !obj.containsKey("typeOfArchitect") || !obj.containsKey("isSelfCertificationRequired") )
+		throw new CustomException(null,"Additional Details should have boundary wall length, height, area, stakeholderType , usage and self certification status to process further!!");
+		Boolean b=Boolean.valueOf(obj.get("isSelfCertificationRequired"));
+		if(b &&  obj.get("usage").toString().equalsIgnoreCase("Residential"))
+		{
+			BigDecimal height=new BigDecimal(obj.get("height").toString());
+			//convert area to sq yard for validation
+			BigDecimal area=new BigDecimal(obj.get("area").toString()).multiply(BigDecimal.valueOf(1.19599));
+			if(height.intValue()>15)
+				throw new CustomException(null,"Height should not be more than 15 metres");
+		
+			if((obj.get("typeOfArchitect").toString().equalsIgnoreCase("ARCHITECT") || obj.get("typeOfArchitect").toString().equalsIgnoreCase("ENGINEER")) && area.intValue()>500)
+				throw new CustomException(null,"Architect/Engineer can apply for area less then 500 sq. yards. in self declaration");
+			if((obj.get("typeOfArchitect").toString().equalsIgnoreCase("DESIGNER") || obj.get("typeOfArchitect").toString().equalsIgnoreCase("SUPERVISOR")) && area.intValue()>250)
+				throw new CustomException(null,"Designer/Supervisor can apply for area less then 500 sq. yards. in self declaration");
+			
+		}
+		if (obj.get("riskType")!= null )
+		{
+			obj.put("riskType", bpaRequest.getBPA().getRiskType());
 		}
 	}
 }

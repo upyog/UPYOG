@@ -418,7 +418,7 @@ public class WSCalculatorQueryBuilder {
 
 		if (groups != null) {
 	        addClauseIfRequired(preparedStatement, query);
-	        query.append(" conn.additionaldetails->>'group' = ? ");
+	        query.append(" conn.additionaldetails->>'groups' = ? ");
 	        preparedStatement.add(groups); // Exact match
 	    }
 		// Getting only non exempted connection to generate bill
@@ -908,6 +908,51 @@ StringBuilder query = new StringBuilder(connectionNoListQueryUpdate);
 			query.append(" egbs_bill_v1.id = egbs_billdetail_v1.billid");
 			
 	        return query.toString();
-}	
 
+}
+	public String searchBillGenerationSchedulerQuery(BillGenerationSearchCriteria criteria,
+			List<Object> preparedStatement) {
+		StringBuilder query = new StringBuilder(billGenerationSchedulerSearchQuery);
+		query.append("egws inner join eg_bndry_mohalla egbm on egws.locality = egbm.localitycode ");
+		if(!StringUtils.isEmpty(criteria.getTenantId())) {
+			addClauseIfRequired(preparedStatement, query);
+			query.append(" egws.tenantid= ? ");
+			preparedStatement.add(criteria.getTenantId());
+		}
+		
+		if (criteria.getStatus() != null) {
+			addClauseIfRequired(preparedStatement, query);
+			query.append(" egws.status = ? ");
+			preparedStatement.add(criteria.getStatus());
+		}
+		
+		if (criteria.getBatch() != null) {
+			addClauseIfRequired(preparedStatement, query);
+			query.append(" egbm.blockcode = ? ");
+			preparedStatement.add(criteria.getBatch());
+		}
+		query.append(" ORDER BY egws.createdtime ");
+		return query.toString();
+	}
+	
+	
+	
+	public String searchBillGenerationSchedulerQuerys(BillGenerationSearchCriteria criteria,
+			List<Object> preparedStatement) {
+		StringBuilder query = new StringBuilder(billGenerationSchedulerSearchQuery);
+		if(!StringUtils.isEmpty(criteria.getTenantId())) {
+			addClauseIfRequired(preparedStatement, query);
+			query.append(" tenantid= ? ");
+			preparedStatement.add(criteria.getTenantId());
+		}
+		
+		if (criteria.getStatus() != null) {
+			addClauseIfRequired(preparedStatement, query);
+			query.append(" status = ? ");
+			preparedStatement.add(criteria.getStatus());
+		}
+		query.append(" and groups is not null ");
+		query.append(" ORDER BY createdtime ");
+		return query.toString();
+	}
 }

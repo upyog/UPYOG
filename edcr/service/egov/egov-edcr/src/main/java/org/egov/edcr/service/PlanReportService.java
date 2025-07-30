@@ -791,6 +791,7 @@ public class PlanReportService {
                 ScrutinyDetail side = null;
 
                 for (String blkFeature : blocks.get(blkName)) {
+                	  LOG.info("Generate Report......."+blkFeature);
                     if (blkFeature.equals(FRONT_YARD_DESC) || blkFeature.equals(REAR_YARD_DESC)
                             || blkFeature.equals(SIDE_YARD_DESC)) {
 
@@ -979,16 +980,20 @@ public class PlanReportService {
                 }
 
             }
-
-            if (finalReportStatus)
-                for (String cmnFeature : common) {
-                    for (Map<String, String> commonStatus : allMap.get(cmnFeature).getDetail()) {
-                        if (commonStatus.get(STATUS).equalsIgnoreCase(Result.Not_Accepted.getResultVal())) {
-                            finalReportStatus = false;
-                        }
-                    }
-                }
-
+            
+            try {
+		            if (finalReportStatus)
+		                for (String cmnFeature : common) {
+		                    for (Map<String, String> commonStatus : allMap.get(cmnFeature).getDetail()) {
+		                        if (commonStatus.get(STATUS).equalsIgnoreCase(Result.Not_Accepted.getResultVal())) {
+		                            finalReportStatus = false;
+		                        }
+		                    }
+		                }
+			}catch (Exception ex) {
+				ex.printStackTrace();
+			}
+            
             if (finalReportStatus)
                 for (String blkName : blocks.keySet()) {
                     for (String blkFeature : blocks.get(blkName)) {

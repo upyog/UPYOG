@@ -48,14 +48,23 @@ public class BillGeneratorDao {
 
 	public List<BillScheduler> getBillGenerationDetails(BillGenerationSearchCriteria criteria) {
 		List<Object> preparedStatement = new ArrayList<>();
-
-		String query = queryBuilder.getBillGenerationSchedulerQuery(criteria, preparedStatement);
+		String query = queryBuilder.searchBillGenerationSchedulerQuery(criteria, preparedStatement);
 		if (query == null)
 			return Collections.emptyList();
 		log.debug("Prepared Statement" + preparedStatement.toString());
 		return jdbcTemplate.query(query, preparedStatement.toArray(), billGenerateSchedulerRowMapper);
 	}
 	
+	
+	
+	public List<BillScheduler> getBillGenerationGroup(BillGenerationSearchCriteria criteria) {
+		List<Object> preparedStatement = new ArrayList<>();
+		String query = queryBuilder.searchBillGenerationSchedulerQuerys(criteria, preparedStatement);
+		if (query == null)
+			return Collections.emptyList();
+		log.debug("Prepared Statement" + preparedStatement.toString());
+		return jdbcTemplate.query(query, preparedStatement.toArray(), billGenerateSchedulerRowMapper);
+	}
 	/**
 	 * executes query to update bill scheduler status 
 	 * @param billIds

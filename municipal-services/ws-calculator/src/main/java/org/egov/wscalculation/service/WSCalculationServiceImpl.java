@@ -548,8 +548,29 @@ public class WSCalculationServiceImpl implements WSCalculationService {
 
 		BillGenerationSearchCriteria criteria = new BillGenerationSearchCriteria();
 		criteria.setStatus(WSCalculationConstant.INITIATED_CONST);
+		
+/* Previously, we fetched all localities without filtering by status. Now, we are updating the logic to pick only those localities where the status is "INITIATED".
+Additionally, from the group-based list for Patiala, we now pick only those entries where: The group is not configured (i.e., group is null or empty), and The status is also "INITIATED".
+So, both lists are now filtered to include only records with INITIATED status, with an extra condition for Patiala that the group should not be present.  */		
+  
+		List<BillScheduler> billSchedularLocality = billGeneratorService.getBillGenerationDetails(criteria);
+		List<BillScheduler> billSchedulargrouplist = billGeneratorService.getBillGenerationGroup(criteria);
+		List<BillScheduler> billSchedularList = new ArrayList<>();
 
-		List<BillScheduler> billSchedularList = billGeneratorService.getBillGenerationDetails(criteria);
+		Set<String> seenIds = new HashSet<>();
+
+		for (BillScheduler scheduler : billSchedularLocality) {
+		    if (scheduler.getId() != null && seenIds.add(scheduler.getId())) {
+		        billSchedularList.add(scheduler);
+		    }
+		}
+
+		for (BillScheduler scheduler : billSchedulargrouplist) {
+		    if (scheduler.getId() != null && seenIds.add(scheduler.getId())) {
+		        billSchedularList.add(scheduler);
+		    }
+		}
+		
 		if (billSchedularList.isEmpty())
 			return;
 		log.info("billSchedularList count : " + billSchedularList.size());
@@ -563,12 +584,22 @@ public class WSCalculationServiceImpl implements WSCalculationService {
 						: requestInfo.getUserInfo().getTenantId());
 				RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(requestInfo).build();
 				
-				if (billSchedular.getTenantId().equalsIgnoreCase("pb.patiala"))
-					connectionNos = wSCalculationDao.getConnectionsNoByGroups(billSchedular.getTenantId(),
-							WSCalculationConstant.nonMeterdConnection, billSchedular.getGrup());
-				else
-					connectionNos = wSCalculationDao.getConnectionsNoByLocality(billSchedular.getTenantId(),
-							WSCalculationConstant.nonMeterdConnection, billSchedular.getLocality());
+				if ("pb.patiala".equalsIgnoreCase(billSchedular.getTenantId()) &&
+					    billSchedular.getGrup() != null && !billSchedular.getGrup().isEmpty()) {
+					    
+					    connectionNos = wSCalculationDao.getConnectionsNoByGroups(
+					        billSchedular.getTenantId(),
+					        WSCalculationConstant.nonMeterdConnection,
+					        billSchedular.getGrup()
+					    );
+
+					} else {
+					    connectionNos = wSCalculationDao.getConnectionsNoByLocality(
+					        billSchedular.getTenantId(),
+					        WSCalculationConstant.nonMeterdConnection,
+					        billSchedular.getLocality()
+					    );
+					}
 				// connectionNos.add("0603000002");
 				// connectionNos.add("0603009718");
 				// connectionNos.add("0603000001");

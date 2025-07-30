@@ -142,7 +142,7 @@ public class RoadWidth extends FeatureProcess {
                                 details.put(PROVIDED, roadWidth.toString() + "m");
 //                                details.put(STATUS, Result.Accepted.getResultVal());
                                 scrutinyDetail.getDetail().add(details);
-                                pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+                              //  pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
 //                            } else {
 //                                details.put(PERMITTED, String.valueOf(roadWidthRequired) + "m");
 //                                details.put(PROVIDED, roadWidth.toString() + "m");

@@ -102,8 +102,10 @@ public class ApplicationCoreFilter implements Filter {
     @Value("${client.id}")
     private String clientId;
 
-    @Value("${app.version}_${app.build.no}")
-    private String applicationRelease;
+//    @Value("${app.version}_${app.build.no}")
+//    private String applicationRelease;
+    
+    private String applicationRelease = "2.1.2-SNAPSHOT";
 
     private static final Logger LOG = LoggerFactory.getLogger(ApplicationCoreFilter.class);
 

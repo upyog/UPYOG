@@ -1,6 +1,5 @@
 package org.egov.bpa.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -14,15 +13,12 @@ import org.egov.bpa.web.model.landInfo.OwnerInfo;
 import org.egov.bpa.web.model.user.UserDetailResponse;
 import org.egov.bpa.web.model.user.UserSearchRequest;
 import org.egov.common.contract.request.RequestInfo;
-import org.egov.common.utils.MultiStateInstanceUtil;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.*;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Service
 public class UserService {
@@ -35,9 +31,6 @@ public class UserService {
 
 	@Autowired
 	private ObjectMapper mapper;
-
-	@Autowired
-	private MultiStateInstanceUtil centralInstanceUtil;
 
 	public UserDetailResponse getUsersForBpas(List<BPA> bpas) {
 		UserSearchRequest userSearchRequest = new UserSearchRequest();
@@ -158,7 +151,7 @@ public class UserService {
 	private UserSearchRequest getUserSearchRequest(BPASearchCriteria criteria, RequestInfo requestInfo) {
 		UserSearchRequest userSearchRequest = new UserSearchRequest();
 		userSearchRequest.setRequestInfo(requestInfo);
-		userSearchRequest.setTenantId(centralInstanceUtil.getStateLevelTenant(criteria.getTenantId()));
+		userSearchRequest.setTenantId(criteria.getTenantId().split("\\.")[0]);
 		userSearchRequest.setMobileNumber(criteria.getMobileNumber());
 		userSearchRequest.setActive(true);
 		userSearchRequest.setUserType(BPAConstants.CITIZEN);
@@ -178,7 +171,7 @@ public class UserService {
     }
 	
 	private String getStateLevelTenant(String tenantId){
-        return centralInstanceUtil.getStateLevelTenant(tenantId);
+        return tenantId.split("\\.")[0];
     }
 
 	/**

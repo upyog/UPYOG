@@ -29,6 +29,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+
 public class BPA   {
   @SafeHtml
   @JsonProperty("id")
@@ -49,7 +50,7 @@ public class BPA   {
   @SafeHtml
   @JsonProperty("edcrNumber")
   private String edcrNumber = null;
-
+  
   @SafeHtml
   @JsonProperty("applicationType")
   private String applicationType = null;
@@ -436,6 +437,7 @@ public class BPA   {
     this.additionalDetails = additionalDetails;
   }
 
+  
 
   @Override
   public boolean equals(java.lang.Object o) {

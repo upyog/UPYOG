@@ -72,6 +72,7 @@ const popolateSearchResponse = result => {
     billingSlab.renew_percentage = rowData.renew_percentage;
     billingSlab.provisional_percentage = rowData.provisional_percentage;
     billingSlab.slab_description = rowData.slab_description;
+    billingSlab.validityyears = rowData.validityyears
 
     // billingSlab.id = '0ce2dd8789d3aa634c4e81599824822b';
     // billingSlab.isActive = 1;
@@ -94,7 +95,7 @@ const popolateSearchResponse = result => {
     // billingSlab.renew_percentage = 50;
     // billingSlab.provisional_percentage = 50;
     // billingSlab.slab_description = 'Rs. 20000 lumpsum';
-   
+   console.log("billingSlab",billingSlab)
     BillingSlabs.push(billingSlab);
   });
   return BillingSlabs;

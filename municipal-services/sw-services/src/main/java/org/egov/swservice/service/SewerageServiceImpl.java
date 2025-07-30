@@ -48,6 +48,13 @@ public class SewerageServiceImpl implements SewerageService {
 
 	@Autowired
 	ValidateProperty validateProperty;
+	
+	@Autowired
+	private EODBredirect eodbRedirect;
+	
+	@Autowired
+	private SewerageService sewarageService;
+
 
 	@Autowired
 	MDMSValidator mDMSValidator;
@@ -99,6 +106,7 @@ public class SewerageServiceImpl implements SewerageService {
 	@Override
 	public List<SewerageConnection> createFullUpdateSewerageConnection(SewerageConnectionRequest sewerageConnectionRequest) {
 		int reqType = SWConstants.CREATE_APPLICATION;
+		Connection.StatusEnum status = sewerageConnectionRequest.getSewerageConnection().getStatus();
 
 		Boolean isMigration=false;
 
@@ -108,15 +116,46 @@ public class SewerageServiceImpl implements SewerageService {
 			validateDisconnectionRequest(sewerageConnectionRequest);
 		}
 		
-		if(sewerageConnectionRequest.getSewerageConnection().getAdditionalDetails().toString().contains("isMigrated"))
-		{
-			isMigration=true;
+		Object additionalDetailsObj = sewerageConnectionRequest.getSewerageConnection().getAdditionalDetails();
+
+		if (additionalDetailsObj instanceof Map) {
+		    Map<String, Object> additionalDetails = (Map<String, Object>) additionalDetailsObj;
+
+		    if (additionalDetails.containsKey("isMigrated")) {
+		        Object migratedValue = additionalDetails.get("isMigrated");
+
+		        if (migratedValue instanceof Boolean) {
+		            isMigration = (Boolean) migratedValue;
+		        } else if (migratedValue instanceof String) {
+		            isMigration = Boolean.parseBoolean((String) migratedValue);
+		        }
+		    }
 		}
-		else if (sewerageConnectionRequest.isReconnectRequest()) {
+		
+		
+		String applicationType = sewerageConnectionRequest.getSewerageConnection().getApplicationType();
+		String connectionNo = sewerageConnectionRequest.getSewerageConnection().getConnectionNo();
+
+		
+		if (isMigration && "NEW_SEWERAGE_CONNECTION".equalsIgnoreCase(applicationType) && connectionNo != null && !connectionNo.trim().isEmpty()) {
+			    SearchCriteria criteria = new SearchCriteria();
+			    criteria.setConnectionNumber(Collections.singleton(connectionNo));
+			    criteria.setTenantId(sewerageConnectionRequest.getSewerageConnection().getTenantId());
+
+			    List<SewerageConnection> existingConnections = sewarageService.search(
+			        criteria, sewerageConnectionRequest.getRequestInfo());
+
+			    if (!existingConnections.isEmpty()) {
+			        log.info("Skipping creation: ConnectionNo {} already exists for migrated request.", connectionNo);
+			        return existingConnections;
+			    }
+			}
+		
+		 if (sewerageConnectionRequest.isReconnectRequest()) {
 			reqType = SWConstants.RECONNECTION;
 			validateReconnectionRequest(sewerageConnectionRequest);
 		}
-		else if (sewerageServicesUtil.isModifyConnectionRequest(sewerageConnectionRequest)&& !isMigration) {
+		else if (sewerageServicesUtil.isModifyConnectionRequest(sewerageConnectionRequest)) {
 			List<SewerageConnection> prevSewerageConnectionList = getAllSewerageApplications(sewerageConnectionRequest);
 			/*
 			 * if (prevSewerageConnectionList.size() > 0) { for (SewerageConnection
@@ -160,7 +199,15 @@ public class SewerageServiceImpl implements SewerageService {
 		sewerageConnectionRequest.setSewerageConnection(encryptConnectionDetails(sewerageConnectionRequest.getSewerageConnection()));
 		/* encrypt here for connection holder details */
 		sewerageConnectionRequest.setSewerageConnection(encryptConnectionHolderDetails(sewerageConnectionRequest.getSewerageConnection()));
+		
+		if (isMigration) {
+			if (sewerageConnectionRequest.getSewerageConnection() != null
+					&& sewerageConnectionRequest.getSewerageConnection().getStatus() != null
+					&& !sewerageConnectionRequest.getSewerageConnection().getStatus().toString().isEmpty()) {
 
+				sewerageConnectionRequest.getSewerageConnection().setStatus(status);
+			}
+		}
 		sewerageDao.saveSewerageConnection(sewerageConnectionRequest);
 		if (!isMigration)
 		{
@@ -178,6 +225,7 @@ public class SewerageServiceImpl implements SewerageService {
 		else
 		{
 			log.info("Skipping Update for migrated connection");
+			  
 		}
 		return Arrays.asList(sewerageConnectionRequest.getSewerageConnection());
 	}
@@ -297,6 +345,8 @@ public class SewerageServiceImpl implements SewerageService {
 	@Override
 	public List<SewerageConnection> updateSewerageConnection(SewerageConnectionRequest sewerageConnectionRequest) {
 
+		
+		boolean eodbPushed = false;
 		if(sewerageConnectionRequest.isDisconnectRequest() || sewerageConnectionRequest.getSewerageConnection().getApplicationType().equalsIgnoreCase(SWConstants.DISCONNECT_SEWERAGE_CONNECTION)) {
 			return updateSewerageConnectionForDisconnectFlow(sewerageConnectionRequest);
 		}
@@ -360,6 +410,24 @@ public class SewerageServiceImpl implements SewerageService {
 
 		/* decrypt here */
 		sewerageConnectionRequest.setSewerageConnection(decryptConnectionDetails(sewerageConnectionRequest.getSewerageConnection(), sewerageConnectionRequest.getRequestInfo()));
+	
+		try {
+		    String channel = sewerageConnectionRequest.getSewerageConnection().getChannel();
+		    String thirdPartyCode = null;
+		    Object additionalDetailsObj = sewerageConnectionRequest.getSewerageConnection().getAdditionalDetails();
+		    if (additionalDetailsObj instanceof Map) {
+		        Map<String, Object> additionalDetails = (Map<String, Object>) additionalDetailsObj;
+		        Object isavail = additionalDetails.get("thirdPartyCode");
+		        thirdPartyCode = isavail != null ? isavail.toString() : null;
+		    }
+
+		    if ("EODB".equalsIgnoreCase(channel) || "EODB".equalsIgnoreCase(thirdPartyCode)) {
+		        eodbPushed = eodbRedirect.runEodbFlow(sewerageConnectionRequest);
+		    }
+		} catch (Exception e) {
+		    log.error("EODB push failed", e);
+		}
+		log.info("EODB push status: {}", eodbPushed ? "SUCCESS" : "SKIPPED OR FAILED");
 
 		return Arrays.asList(sewerageConnectionRequest.getSewerageConnection());
 	}
