@@ -65,9 +65,12 @@ import org.egov.common.entity.edcr.Result;
 import org.egov.common.entity.edcr.ScrutinyDetail;
 import org.egov.edcr.service.MDMSCacheManager;
 import org.egov.edcr.service.FetchEdcrRulesMdms;
+import org.egov.edcr.utility.DcrConstants;
 import org.egov.infra.utils.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import static org.egov.edcr.constants.CommonFeatureConstants.*;
 
 @Service
 public class GovtBuildingDistance extends FeatureProcess {
@@ -119,7 +122,7 @@ public class GovtBuildingDistance extends FeatureProcess {
 
         List<BigDecimal> distances = plan.getDistanceToExternalEntity().getGovtBuildings();
         if (distances == null || distances.isEmpty()) {
-            errors.put("Distance_From_Govt_Building", "No distance is provided from government building");
+            errors.put(DISTANCE_FROM_GOVT_BUILDING, NO_DISTANCE_PROVIDED);
             plan.addErrors(errors);
             return plan;
         }
@@ -129,7 +132,7 @@ public class GovtBuildingDistance extends FeatureProcess {
 
         GovtBuildingDistanceRequirement rule = getApplicableRule(plan);
         if (rule == null) {
-            errors.put("RULE_FETCH", "No applicable rule found for Govt Building Distance validation.");
+            errors.put(RULE_FETCH, NO_APPLICABLE_RULE);
             plan.addErrors(errors);
             return plan;
         }
@@ -147,7 +150,7 @@ public class GovtBuildingDistance extends FeatureProcess {
      */
     private boolean isGovtBuildingNearby(Plan plan) {
         String nearGovtBuilding = plan.getPlanInformation().getBuildingNearGovtBuilding();
-        return StringUtils.isNotBlank(nearGovtBuilding) && "YES".equalsIgnoreCase(nearGovtBuilding);
+        return StringUtils.isNotBlank(nearGovtBuilding) && DcrConstants.YES.equalsIgnoreCase(nearGovtBuilding);
     }
 
     /**
@@ -157,7 +160,7 @@ public class GovtBuildingDistance extends FeatureProcess {
      */
     private ScrutinyDetail createScrutinyDetail() {
         ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
-        scrutinyDetail.setKey("Common_Government Building Distance");
+        scrutinyDetail.setKey(COMMON_GOVT_BUILDING_DISTANCE);
         scrutinyDetail.addColumnHeading(1, RULE_NO);
         scrutinyDetail.addColumnHeading(2, DESCRIPTION);
         scrutinyDetail.addColumnHeading(3, DISTANCE);
@@ -238,12 +241,12 @@ public class GovtBuildingDistance extends FeatureProcess {
         BigDecimal maxAllowedHeight = rule.getGovtBuildingDistanceMaxHeight();
 
         if (minDistance.compareTo(allowedDistance) > 0) {
-            details.put(DISTANCE, ">" + allowedDistance);
-            details.put(PERMITTED, "ALL");
+            details.put(DISTANCE, GREATER_THAN + allowedDistance);
+            details.put(PERMITTED, ALL);
             details.put(PROVIDED, minDistance.toString());
             details.put(STATUS, Result.Accepted.getResultVal());
         } else {
-            details.put(DISTANCE, "<=" + allowedDistance);
+            details.put(DISTANCE, LESS_THAN_EQUAL_TO + allowedDistance);
             details.put(PERMITTED, BUILDING_HEIGHT + maxAllowedHeight + MT);
             details.put(PROVIDED, BUILDING_HEIGHT + maxHeight + MT);
             details.put(STATUS, maxHeight.compareTo(maxAllowedHeight) <= 0

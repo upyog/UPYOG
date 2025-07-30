@@ -73,6 +73,9 @@ import org.egov.edcr.service.MDMSCacheManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import static org.egov.edcr.constants.CommonFeatureConstants.*;
+import static org.egov.edcr.constants.CommonKeyConstants.*;
+
 @Service
 public class LiftService extends FeatureProcess {
 
@@ -117,8 +120,8 @@ public class LiftService extends FeatureProcess {
 		    for (Block block : plan.getBlocks()) {
 		        if (!isLiftValidationRequired(block)) continue;
 	
-		        ScrutinyDetail liftCountDetail = createScrutinyDetail("Block_" + block.getNumber() + "_Lift - Minimum Required");
-		        ScrutinyDetail liftDimDetail = createScrutinyDetail("Block_" + block.getNumber() + "_Lift Dimension");
+		        ScrutinyDetail liftCountDetail = createScrutinyDetail(BLOCK + block.getNumber() + LIFT_MINIMUM_REQUIRED);
+		        ScrutinyDetail liftDimDetail = createScrutinyDetail(BLOCK + block.getNumber() + LIFT_DIMENSION);
 	
 		        validateLiftCount(plan, block, liftCountDetail);
 		        validateLiftDimensions(plan, block, liftDimDetail);
@@ -225,7 +228,7 @@ public class LiftService extends FeatureProcess {
 	
 		                // You can apply min dimension checks here if needed
 		                String provided = height + " * " + width;
-		                setReportOutputDetails(plan, SUBRULE_118, String.format(SUBRULE_118_DESCRIPTION, "", ""), "",
+		                setReportOutputDetails(plan, SUBRULE_118, String.format(SUBRULE_118_DESCRIPTION, EMPTY_STRING, EMPTY_STRING), EMPTY_STRING,
 		                        provided, Result.Accepted.getResultVal(), scrutinyDetail);
 		                return;
 		            }
@@ -289,7 +292,7 @@ public class LiftService extends FeatureProcess {
 		    if (invalidCount > 0) {
 		        plan.addError(
 		                String.format(DxfFileConstants.LAYER_LIFT_WITH_NO, blockNo, floorNo, liftNo),
-		                invalidCount + " number of lift polyline not having only 4 points in layer "
+		                invalidCount + INVALID_LIFT_POLYLINE
 		                        + String.format(DxfFileConstants.LAYER_LIFT_WITH_NO, blockNo, floorNo, liftNo));
 		    }
 		}

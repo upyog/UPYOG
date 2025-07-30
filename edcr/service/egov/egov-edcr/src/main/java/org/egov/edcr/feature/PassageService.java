@@ -67,6 +67,8 @@ import org.egov.edcr.utility.Util;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import static org.egov.edcr.constants.CommonKeyConstants.*;
+
 @Service
 public class PassageService extends FeatureProcess {
     private static final Logger LOG = LogManager.getLogger(PassageService.class);
@@ -74,7 +76,7 @@ public class PassageService extends FeatureProcess {
     private static final String RULE39_6 = "39(6)";
     private static final String RULE39_6_DESCRIPTION = "The minimum passage giving access to stair";
     private static final String RULE_41_DESCRIPTION = "The minimum width of corridors/ verandhas";
-  
+
     @Autowired
    	MDMSCacheManager cache;
     
@@ -121,8 +123,8 @@ public class PassageService extends FeatureProcess {
                 continue;
             }
 
-            ScrutinyDetail passageDetail = createScrutinyDetail("Block_" + block.getNumber() + "_Passage");
-            ScrutinyDetail passageStairDetail = createScrutinyDetail("Block_" + block.getNumber() + "_Passage Stair");
+            ScrutinyDetail passageDetail = createScrutinyDetail(BLOCK + block.getNumber() + PASSAGE_SUFFIX);
+            ScrutinyDetail passageStairDetail = createScrutinyDetail(BLOCK + block.getNumber() + PASSAGE_STAIR_SUFFIX);
 
             org.egov.common.entity.edcr.Passage passage = block.getBuilding().getPassage();
 

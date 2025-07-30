@@ -47,6 +47,7 @@
 
 package org.egov.edcr.feature;
 
+import static org.egov.edcr.constants.CommonFeatureConstants.*;
 import static org.egov.edcr.constants.DxfFileConstants.A;
 import static org.egov.edcr.constants.DxfFileConstants.A_AF;
 import static org.egov.edcr.constants.DxfFileConstants.A_SA;
@@ -252,12 +253,12 @@ public class Plantation extends FeatureProcess {
     	}
 
     	if (plantationPer.compareTo(plantation) >= 0) {
-    		details.put(REQUIRED, ">= 5%");
-    		details.put(PROVIDED, plantationPer.multiply(new BigDecimal(100)).toString() + "%");
+    		details.put(REQUIRED, GREATER_THAN_EQUAL_TO_FIVE + PERCENTAGE_SYMBOL);
+    		details.put(PROVIDED, plantationPer.multiply(new BigDecimal(100)).toString() + PERCENTAGE_SYMBOL);
     		details.put(STATUS, Result.Accepted.getResultVal());
     	} else {
-    		details.put(REQUIRED, ">= 5%");
-    		details.put(PROVIDED, plantationPer.multiply(new BigDecimal(100)).toString() + "%");
+    		details.put(REQUIRED, GREATER_THAN_EQUAL_TO_FIVE + PERCENTAGE_SYMBOL);
+    		details.put(PROVIDED, plantationPer.multiply(new BigDecimal(100)).toString() + PERCENTAGE_SYMBOL);
     		details.put(STATUS, Result.Not_Accepted.getResultVal());
     	}
 

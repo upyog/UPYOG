@@ -79,6 +79,8 @@ import org.egov.edcr.utility.DcrConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import static org.egov.edcr.constants.CommonFeatureConstants.*;
+
 @Service
 public class Coverage extends FeatureProcess {
 	// private static final String OCCUPANCY2 = "OCCUPANCY";
@@ -89,7 +91,7 @@ public class Coverage extends FeatureProcess {
 	private static final String RULE_DESCRIPTION_KEY = "coverage.description";
 	private static final String RULE_EXPECTED_KEY = "coverage.expected";
 	private static final String RULE_ACTUAL_KEY = "coverage.actual";
-	
+
 	@Autowired
 	FetchEdcrRulesMdms fetchEdcrRulesMdms;
 	
@@ -116,8 +118,8 @@ public class Coverage extends FeatureProcess {
 	public Plan validate(Plan pl) {
 		for (Block block : pl.getBlocks()) {
 			if (block.getCoverage().isEmpty()) {
-				pl.addError("coverageArea" + block.getNumber(),
-						"Coverage Area for block " + block.getNumber() + " not Provided");
+				pl.addError(COVERAGE_AREA + block.getNumber(),
+						COVERAGE_AREA_BLOCK + block.getNumber() + NOT_PROVIDED);
 			}
 		}
 		return pl;
@@ -397,8 +399,8 @@ public class Coverage extends FeatureProcess {
 
 	private ScrutinyDetail createCoverageScrutinyDetail(String occupancy) {
 	    ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
-	    scrutinyDetail.setKey("Common_Coverage");
-	    scrutinyDetail.setHeading("Coverage in Percentage");
+	    scrutinyDetail.setKey(COMMON_COVERAGE);
+	    scrutinyDetail.setHeading(COVERAGE_HEADING);
 	    
 	    scrutinyDetail.addColumnHeading(1, RULE_NO);
 	    scrutinyDetail.addColumnHeading(2, OCCUPANCY);
@@ -436,7 +438,7 @@ public class Coverage extends FeatureProcess {
 	}
 
 	private boolean isResidentialOrCommercial(String occupancy) {
-	    return "Residential".equalsIgnoreCase(occupancy) || "Mercantile / Commercial".equalsIgnoreCase(occupancy);
+	    return RESIDENTIAL.equalsIgnoreCase(occupancy) || COMMERCIAL.equalsIgnoreCase(occupancy);
 	}
 
 

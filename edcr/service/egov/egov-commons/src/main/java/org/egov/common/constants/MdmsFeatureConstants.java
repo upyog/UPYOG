@@ -81,6 +81,8 @@ public class MdmsFeatureConstants {
     public static final String ROOM_WISE_WINDOW_AREA = "Room Wise Window Area";
     public static final String DOOR_VENTILATION = "Door Ventilation";
     public static final String ROOM = "Room";
+    public static final String ADDITIONAL_FEATURE = "AdditionalFeature";
+    public static final String BPA = "BPA";
 
     // Private constructor to prevent instantiation
     private MdmsFeatureConstants() {

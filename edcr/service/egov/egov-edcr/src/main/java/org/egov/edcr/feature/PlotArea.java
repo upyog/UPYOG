@@ -49,6 +49,7 @@
 
 package org.egov.edcr.feature;
 
+import static org.egov.edcr.constants.CommonFeatureConstants.SQUARE_METER;
 import static org.egov.edcr.constants.DxfFileConstants.E_PS;
 import static org.egov.edcr.constants.DxfFileConstants.F_CB;
 import static org.egov.edcr.constants.DxfFileConstants.F_RT;
@@ -164,8 +165,8 @@ public class PlotArea extends FeatureProcess {
         details.put(RULE_NO, RULE_34);
         details.put(DESCRIPTION, PLOTAREA_DESCRIPTION);
         details.put(OCCUPANCY, occupancyType.getName());
-        details.put(PERMITTED, permissibleArea + "m2");
-        details.put(PROVIDED, plotArea + "m2");
+        details.put(PERMITTED, permissibleArea + SQUARE_METER);
+        details.put(PROVIDED, plotArea + SQUARE_METER);
 
         String status = plotArea.compareTo(permissibleArea) >= 0
                 ? Result.Accepted.getResultVal()

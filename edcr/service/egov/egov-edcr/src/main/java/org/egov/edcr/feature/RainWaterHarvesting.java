@@ -75,6 +75,8 @@ import org.egov.edcr.utility.DcrConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import static org.egov.edcr.constants.CommonFeatureConstants.*;
+
 @Service
 public class RainWaterHarvesting extends FeatureProcess {
 	private static final Logger LOG = LogManager.getLogger(RainWaterHarvesting.class);
@@ -201,12 +203,12 @@ private void addReportOutput(Plan pl, String subRule, String subRuleDesc) {
         if (pl.getUtility().getRainWaterHarvest() != null && !pl.getUtility().getRainWaterHarvest().isEmpty()) {
             // Add report output if rainwater harvesting is defined
             setReportOutputDetails(pl, subRule, subRuleDesc, null,
-                    "Capacity - " + pl.getUtility().getRainWaterHarvestingTankCapacity(),
+                    CAPACITY_PREFIX + pl.getUtility().getRainWaterHarvestingTankCapacity(),
                     Result.Verify.getResultVal());
         } else {
             // Add report output if rainwater harvesting is not defined
             setReportOutputDetails(pl, subRule, subRuleDesc, null,
-                    "Not Defined in the plan",
+                    NOT_DEFINED_IN_PLAN,
                     Result.Not_Accepted.getResultVal());
         }
     }

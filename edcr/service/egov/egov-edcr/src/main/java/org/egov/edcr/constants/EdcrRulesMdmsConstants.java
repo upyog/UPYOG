@@ -234,15 +234,15 @@ public class EdcrRulesMdmsConstants {
 	 public static final String SANITATION_MIN_AT_GROUND_FLOOR = "sanitationMinatGroundFloor";
 	 public static final String SANITATION_FLOOR_MULTIPLIER = "sanitationFloorMultiplier";
 	 
-	 public static final String RESIDENTIAL = "Residential";
-	 public static final String COMMERCIAL = "Commercial";
-	 public static final String INDUSTRIAL = "Industrial";
-	 public static final String MEDICAL = "Medical";
-	 public static final String STORAGE = "Storage";
-	 public static final String BUSINESS = "Business";
-	 public static final String HAZARDOUS = "Hazardous";
-	 public static final String EDUCATIONAL = "Educational";
-	 public static final String ASSEMBLY = "Assembly";
+	 public static final String RESIDENTIAL = "residential";
+	 public static final String COMMERCIAL = "commercial";
+	 public static final String INDUSTRIAL = "industrial";
+	 public static final String MEDICAL = "medical";
+	 public static final String STORAGE = "storage";
+	 public static final String BUSINESS = "business";
+	 public static final String HAZARDOUS = "hazardous";
+	 public static final String EDUCATIONAL = "educational";
+	 public static final String ASSEMBLY = "assembly";
 	 public static final String STATE = "pg";
 	 public static final String BPA = "BPA";
 	 public static final String RISK_TYPE_COMPUTATION = "RiskTypeComputation";

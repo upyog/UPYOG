@@ -47,6 +47,8 @@
 
 package org.egov.edcr.feature;
 
+import static org.egov.edcr.constants.CommonFeatureConstants.EMPTY_STRING;
+import static org.egov.edcr.constants.CommonKeyConstants.COMMON_WATER_TANK_CAPACITY;
 import static org.egov.edcr.utility.DcrConstants.IN_LITRE;
 
 import java.math.BigDecimal;
@@ -82,6 +84,13 @@ public class WaterTankCapacity extends FeatureProcess {
     private static final String RULE_59_10_vii_DESCRIPTION = "Water tank capacity";
     private static final String WATER_TANK_CAPACITY = "Minimum capacity of Water tank";
 
+    /**
+     * Validates the building plan for water tank capacity requirements.
+     * Currently performs no validation and returns the plan as-is.
+     *
+     * @param pl The building plan to validate
+     * @return The unmodified plan
+     */
     @Override
     public Plan validate(Plan pl) {
         // No specific validation logic added; returning the input plan as-is.
@@ -91,7 +100,15 @@ public class WaterTankCapacity extends FeatureProcess {
     @Autowired
 	MDMSCacheManager cache;
 
-
+    /**
+     * Processes water tank capacity requirements for the building plan.
+     * Initializes scrutiny details, fetches water tank rules from MDMS,
+     * calculates expected tank capacity based on built-up area, and validates
+     * against provided capacity.
+     *
+     * @param pl The building plan to process
+     * @return The processed plan with scrutiny details added
+     */
     @Override
     public Plan process(Plan pl) {
         initializeScrutinyDetail();
@@ -110,13 +127,17 @@ public class WaterTankCapacity extends FeatureProcess {
 
             boolean isValid = providedTankCapacity.compareTo(expectedWaterTankCapacity) >= 0;
 
-            processWaterTankCapacity(pl, "", RULE_59_10_vii, RULE_59_10_vii_DESCRIPTION,
+            processWaterTankCapacity(pl, EMPTY_STRING, RULE_59_10_vii, RULE_59_10_vii_DESCRIPTION,
                     expectedWaterTankCapacity, isValid);
         }
 
         return pl;
     }
 
+    /**
+     * Initializes the scrutiny detail object for water tank capacity validation reporting.
+     * Sets up column headings and key for the water tank capacity scrutiny report.
+     */
     private void initializeScrutinyDetail() {
         scrutinyDetail = new ScrutinyDetail();
         scrutinyDetail.addColumnHeading(1, RULE_NO);
@@ -124,9 +145,16 @@ public class WaterTankCapacity extends FeatureProcess {
         scrutinyDetail.addColumnHeading(3, REQUIRED);
         scrutinyDetail.addColumnHeading(4, PROVIDED);
         scrutinyDetail.addColumnHeading(5, STATUS);
-        scrutinyDetail.setKey("Common_Water tank capacity");
+        scrutinyDetail.setKey(COMMON_WATER_TANK_CAPACITY);
     }
 
+    /**
+     * Retrieves water tank capacity requirement rules from MDMS cache.
+     * Fetches the first matching water tank capacity requirement rule based on plan configuration.
+     *
+     * @param pl The building plan containing configuration details
+     * @return Optional containing WaterTankCapacityRequirement rule if found, empty otherwise
+     */
     private Optional<WaterTankCapacityRequirement> getWaterTankRule(Plan pl) {
     	 List<Object> rules = cache.getFeatureRules(pl, FeatureEnum.WATER_TANK_CAPACITY.toString(), false);
         return rules.stream()
@@ -135,6 +163,15 @@ public class WaterTankCapacity extends FeatureProcess {
              .findFirst();
     }
 
+    /**
+     * Calculates the expected water tank capacity based on built-up area and occupancy.
+     * Uses the formula: (built-up area / area per person) * capacity per person
+     * to determine minimum required tank capacity.
+     *
+     * @param pl The building plan containing built-up area information
+     * @param rule The water tank capacity requirement rule containing calculation parameters
+     * @return Expected minimum water tank capacity in liters
+     */
     private BigDecimal calculateExpectedTankCapacity(Plan pl, WaterTankCapacityRequirement rule) {
         BigDecimal builtUpArea = pl.getVirtualBuilding().getTotalBuitUpArea();
         BigDecimal waterTankCapacityArea = rule.getWaterTankCapacityArea();
@@ -149,6 +186,18 @@ public class WaterTankCapacity extends FeatureProcess {
         return expectedCapacity.setScale(DcrConstants.DECIMALDIGITS_MEASUREMENTS, DcrConstants.ROUNDMODE_MEASUREMENTS);
     }
 
+    /**
+     * Processes water tank capacity validation and generates scrutiny details.
+     * Compares expected capacity with provided capacity and creates appropriate
+     * scrutiny report entries with compliance status.
+     *
+     * @param plan The building plan
+     * @param rule The main rule identifier (currently unused)
+     * @param subRule The specific sub-rule identifier
+     * @param subRuleDesc The sub-rule description
+     * @param expectedWaterTankCapacity The calculated minimum required capacity
+     * @param valid Whether the provided capacity meets requirements
+     */
     private void processWaterTankCapacity(Plan plan, String rule, String subRule, String subRuleDesc,
                                           BigDecimal expectedWaterTankCapacity, Boolean valid) {
         if (expectedWaterTankCapacity.compareTo(BigDecimal.ZERO) > 0) {
@@ -159,6 +208,18 @@ public class WaterTankCapacity extends FeatureProcess {
         }
     }
 
+    /**
+     * Adds water tank capacity validation results to the scrutiny report.
+     * Creates a detailed report entry with rule information, requirements,
+     * and compliance status.
+     *
+     * @param pl The building plan
+     * @param ruleNo The rule number being validated
+     * @param ruleDesc The rule description
+     * @param expected The expected/required capacity value
+     * @param actual The actual/provided capacity value
+     * @param status The compliance status (Accepted/Not_Accepted)
+     */
     private void setReportOutputDetails(Plan pl, String ruleNo, String ruleDesc, String expected, String actual,
                                          String status) {
         Map<String, String> details = new HashMap<>();
@@ -171,7 +232,12 @@ public class WaterTankCapacity extends FeatureProcess {
         pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
     }
 
-
+    /**
+     * Returns amendment dates for water tank capacity rules.
+     * Currently returns an empty map as no amendments are defined.
+     *
+     * @return Empty LinkedHashMap of amendment dates
+     */
     @Override
     public Map<String, Date> getAmendments() {
         return new LinkedHashMap<>();

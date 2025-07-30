@@ -47,6 +47,7 @@
 
 package org.egov.edcr.feature;
 
+import static org.egov.edcr.constants.CommonKeyConstants.COM_TRAVEL_DIS_EMERGENCY_EXIT;
 import static org.egov.edcr.constants.DxfFileConstants.A;
 import static org.egov.edcr.constants.DxfFileConstants.B;
 import static org.egov.edcr.constants.DxfFileConstants.D;
@@ -97,12 +98,27 @@ public class TravelDistanceToExit extends FeatureProcess {
 	@Autowired
 	MDMSCacheManager cache;
 
+	/**
+	 * Validates the building plan for travel distance to exit requirements.
+	 * Currently performs no validation and returns the plan as-is.
+	 *
+	 * @param pl The building plan to validate
+	 * @return The unmodified plan
+	 */
 	// No validation logic implemented for this feature
 	@Override
 	public Plan validate(Plan pl) {
 		return pl;
 	}
 
+	/**
+	 * Processes travel distance to exit requirements for the building plan.
+	 * Extracts rules from MDMS, checks for exemptions, validates missing travel distances,
+	 * and generates scrutiny details for compliance verification.
+	 *
+	 * @param pl The building plan to process
+	 * @return The processed plan with scrutiny details or errors added
+	 */
 	@Override
 	public Plan process(Plan pl) {
 	    if (pl == null) return pl;
@@ -120,7 +136,14 @@ public class TravelDistanceToExit extends FeatureProcess {
 	    validateTravelDistances(pl);
 	    return pl;
 	}
-	
+
+	/**
+	 * Extracts travel distance requirement rules from MDMS cache.
+	 * Fetches and sets the three travel distance values used for different
+	 * occupancy type validations.
+	 *
+	 * @param pl The building plan containing configuration details
+	 */
 	private void extractTravelDistanceRules(Plan pl) {
 		 List<Object> rules = cache.getFeatureRules(pl, FeatureEnum.TRAVEL_DISTANCE_TO_EXIT.getValue(), false);
 	         rules.stream()
@@ -134,6 +157,14 @@ public class TravelDistanceToExit extends FeatureProcess {
 		        });
 	}
 
+	/**
+	 * Checks if the building plan is exempted from travel distance requirements.
+	 * Exemptions apply to residential buildings with max 3 floors above ground
+	 * or buildings on small plots.
+	 *
+	 * @param pl The building plan to check for exemptions
+	 * @return true if exempted from travel distance requirements, false otherwise
+	 */
 	private boolean isExempted(Plan pl) {
 	    if (pl.getVirtualBuilding() == null || pl.getVirtualBuilding().getOccupancyTypes().isEmpty() || pl.getBlocks().isEmpty()) {
 	        return false;
@@ -149,6 +180,12 @@ public class TravelDistanceToExit extends FeatureProcess {
 	    return (isResidential && allBlocksWithMax3Floors) || ProcessHelper.isSmallPlot(pl);
 	}
 
+	/**
+	 * Adds validation error when travel distance measurements are missing from the plan.
+	 * Creates an error message indicating that travel distance to exit is not defined.
+	 *
+	 * @param pl The building plan to add the error to
+	 */
 	private void addMissingTravelDistanceError(Plan pl) {
 	    Map<String, String> errors = new HashMap<>();
 	    errors.put(DcrConstants.TRAVEL_DIST_EXIT,
@@ -157,9 +194,16 @@ public class TravelDistanceToExit extends FeatureProcess {
 	    pl.addErrors(errors);
 	}
 
+	/**
+	 * Validates actual travel distances against required limits based on occupancy type.
+	 * Creates scrutiny details comparing provided distances with occupancy-specific
+	 * maximum allowable travel distances.
+	 *
+	 * @param pl The building plan containing travel distance measurements
+	 */
 	private void validateTravelDistances(Plan pl) {
 	    scrutinyDetail = new ScrutinyDetail();
-	    scrutinyDetail.setKey("Common_Travel Distance To Emergency Exits");
+	    scrutinyDetail.setKey(COM_TRAVEL_DIS_EMERGENCY_EXIT);
 	    scrutinyDetail.addColumnHeading(1, RULE_NO);
 	    scrutinyDetail.addColumnHeading(2, REQUIRED);
 	    scrutinyDetail.addColumnHeading(3, PROVIDED);
@@ -181,7 +225,18 @@ public class TravelDistanceToExit extends FeatureProcess {
 	        }
 	    }
 	}
-	
+
+	/**
+	 * Adds a single validation result entry to the scrutiny report.
+	 * Creates a detailed report entry with rule information, requirements,
+	 * and compliance status.
+	 *
+	 * @param pl The building plan
+	 * @param ruleNo The rule number being validated
+	 * @param expected The required/maximum allowable value
+	 * @param actual The actual/provided value
+	 * @param status The compliance status (Accepted/Not_Accepted)
+	 */
 //	// Helper to append result details to the scrutiny report
 	private void setReportOutputDetails(Plan pl, String ruleNo, String expected, String actual, String status) {
 		Map<String, String> details = new HashMap<>();
@@ -193,6 +248,15 @@ public class TravelDistanceToExit extends FeatureProcess {
 		pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
 	}
 
+	/**
+	 * Maps occupancy type codes to their respective maximum travel distance limits.
+	 * Returns a map with occupancy codes as keys and their corresponding
+	 * maximum allowable travel distances as values.
+	 *
+	 * @param valueOne Travel distance limit for occupancy types D, G, F, H
+	 * @param valueTwo Travel distance limit for occupancy types A, I, B
+	 * @return Map of occupancy codes to their maximum travel distance limits
+	 */
 //	// Mapping occupancy types to their respective travel distance limits
 	public Map<String, BigDecimal> getOccupancyValues(BigDecimal valueOne, BigDecimal valueTwo) {
 
@@ -210,6 +274,12 @@ public class TravelDistanceToExit extends FeatureProcess {
 		return roadWidthValues;
 	}
 
+	/**
+	 * Returns amendment dates for travel distance to exit rules.
+	 * Currently returns an empty map as no amendments are defined.
+	 *
+	 * @return Empty LinkedHashMap of amendment dates
+	 */
 	@Override
 	public Map<String, Date> getAmendments() {
 		return new LinkedHashMap<>();

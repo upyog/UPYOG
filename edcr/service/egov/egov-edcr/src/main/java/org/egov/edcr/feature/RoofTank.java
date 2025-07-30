@@ -70,6 +70,9 @@ import org.egov.edcr.service.FetchEdcrRulesMdms;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import static org.egov.edcr.constants.CommonFeatureConstants.*;
+import static org.egov.edcr.constants.CommonKeyConstants.COMMON_ROOF_TANKS;
+
 @Service
 public class RoofTank extends FeatureProcess {
 
@@ -124,7 +127,7 @@ public class RoofTank extends FeatureProcess {
 	 */
 	private ScrutinyDetail createScrutinyDetail() {
 	    ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
-	    scrutinyDetail.setKey("Common_Roof Tanks");
+	    scrutinyDetail.setKey(COMMON_ROOF_TANKS);
 	    scrutinyDetail.addColumnHeading(1, RULE_NO);
 	    scrutinyDetail.addColumnHeading(2, DESCRIPTION);
 	    scrutinyDetail.addColumnHeading(3, VERIFIED);
@@ -179,12 +182,12 @@ public class RoofTank extends FeatureProcess {
 	        if (minHeight.compareTo(roofTankValue) <= 0) {
 	            details.put(DESCRIPTION, ROOFTANK_DESCRIPTION);
 	            details.put(VERIFIED, ROOFTANK_HEIGHT_DESC + roofTankValue + MTS);
-	            details.put(ACTION, "Not included roof tank height(" + minHeight + ") to building height");
+	            details.put(ACTION, NOT_INCLUDED_ROOF_TANK_HEIGHT + minHeight + TO_BUILDING_HEIGHT);
 	            details.put(STATUS, Result.Accepted.getResultVal());
 	        } else {
 	            details.put(DESCRIPTION, ROOFTANK_DESCRIPTION);
 	            details.put(VERIFIED, ROOFTANK_HEIGHT_DESC + roofTankValue + MTS);
-	            details.put(ACTION, "Included roof tank height(" + minHeight + ") to building height");
+	            details.put(ACTION, INCLUDED_ROOF_TANK_HEIGHT + minHeight + TO_BUILDING_HEIGHT);
 	            details.put(STATUS, Result.Verify.getResultVal());
 	        }
 

@@ -47,6 +47,9 @@
 
 package org.egov.edcr.feature;
 
+import static org.egov.edcr.constants.CommonFeatureConstants.EMPTY_STRING;
+import static org.egov.edcr.constants.EdcrRulesMdmsConstants.SOLAR_VALUE_ONE;
+import static org.egov.edcr.constants.EdcrRulesMdmsConstants.SOLAR_VALUE_TWO;
 import static org.egov.edcr.utility.DcrConstants.OBJECTDEFINED_DESC;
 import static org.egov.edcr.utility.DcrConstants.OBJECTNOTDEFINED;
 import static org.egov.edcr.utility.DcrConstants.OBJECTNOTDEFINED_DESC;
@@ -92,13 +95,21 @@ public class Solar extends FeatureProcess {
     @Autowired
 	MDMSCacheManager cache;
 
+    /**
+     * Validates solar system requirements based on building occupancy type and built-up area.
+     * Checks if solar systems are mandatory for buildings exceeding specified area thresholds
+     * and adds validation errors if requirements are not met.
+     *
+     * @param pl The building plan to validate
+     * @return The validated plan with any errors added
+     */
     @Override
     public Plan validate(Plan pl) {
         Map<String, String> errors = new HashMap<>();
 
         Map<String, BigDecimal> solarValues = fetchSolarValues(pl);
-        BigDecimal solarValueOne = solarValues.get("solarValueOne");
-        BigDecimal solarValueTwo = solarValues.get("solarValueTwo");
+        BigDecimal solarValueOne = solarValues.get(SOLAR_VALUE_ONE);
+        BigDecimal solarValueTwo = solarValues.get(SOLAR_VALUE_TWO);
 
         if (pl != null && pl.getUtility() != null && pl.getVirtualBuilding() != null && !pl.getVirtualBuilding().getOccupancies().isEmpty()) {
             for (OccupancyType occupancyType : pl.getVirtualBuilding().getOccupancies()) {
@@ -130,6 +141,14 @@ public class Solar extends FeatureProcess {
         return pl;
     }
 
+    /**
+     * Processes solar system requirements and generates scrutiny details for the report.
+     * Validates the plan first, then checks occupancy types and built-up areas to determine
+     * if solar system processing is required.
+     *
+     * @param pl The building plan to process
+     * @return The processed plan with scrutiny details added
+     */
     @Override
     public Plan process(Plan pl) {
         validate(pl); // Ensure rules are validated before processing
@@ -140,8 +159,8 @@ public class Solar extends FeatureProcess {
         String subRuleDesc = SUB_RULE_109_C_DESCRIPTION;
 
         Map<String, BigDecimal> solarValues = fetchSolarValues(pl);
-        BigDecimal solarValueOne = solarValues.get("solarValueOne");
-        BigDecimal solarValueTwo = solarValues.get("solarValueTwo");
+        BigDecimal solarValueOne = solarValues.get(SOLAR_VALUE_ONE);
+        BigDecimal solarValueTwo = solarValues.get(SOLAR_VALUE_TWO);
 
         if (pl.getVirtualBuilding() != null && !pl.getVirtualBuilding().getOccupancies().isEmpty()) {
             for (OccupancyType occupancyType : pl.getVirtualBuilding().getOccupancies()) {
@@ -165,6 +184,14 @@ public class Solar extends FeatureProcess {
         return pl;
     }
 
+    /**
+     * Fetches solar requirement values from MDMS cache based on plan configuration.
+     * Retrieves threshold values for different occupancy types that determine when
+     * solar systems become mandatory.
+     *
+     * @param pl The building plan containing configuration details
+     * @return Map containing solarValueOne and solarValueTwo threshold values
+     */
     private Map<String, BigDecimal> fetchSolarValues(Plan pl) {
     	List<Object> rules = cache.getFeatureRules(pl, FeatureEnum.SOLAR.getValue(), false);
         Optional<SolarRequirement> matchedRule = rules.stream()
@@ -182,11 +209,15 @@ public class Solar extends FeatureProcess {
         }
 
         Map<String, BigDecimal> solarValues = new HashMap<>();
-        solarValues.put("solarValueOne", solarValueOne);
-        solarValues.put("solarValueTwo", solarValueTwo);
+        solarValues.put(SOLAR_VALUE_ONE, solarValueOne);
+        solarValues.put(SOLAR_VALUE_TWO, solarValueTwo);
         return solarValues;
     }
 
+    /**
+     * Initializes the scrutiny detail object with column headings for solar system reporting.
+     * Sets up the report structure with rule number, description, required, provided, and status columns.
+     */
     private void initializeScrutinyDetail() {
         scrutinyDetail = new ScrutinyDetail();
         scrutinyDetail.addColumnHeading(1, RULE_NO);
@@ -197,6 +228,13 @@ public class Solar extends FeatureProcess {
         scrutinyDetail.setKey(Common_Solar);
     }
 
+    /**
+     * Checks if the given occupancy type falls under "other occupancies" category.
+     * Returns true for occupancy types A2, A3, A4, C, C1, C2, C3, D, D1, D2.
+     *
+     * @param occupancyType The occupancy type to check
+     * @return true if occupancy type is in the other occupancies list, false otherwise
+     */
     private boolean isOtherOccupancy(OccupancyType occupancyType) {
         return Arrays.asList(
                 OccupancyType.OCCUPANCY_A2, OccupancyType.OCCUPANCY_A3, OccupancyType.OCCUPANCY_A4,
@@ -206,6 +244,15 @@ public class Solar extends FeatureProcess {
         ).contains(occupancyType);
     }
 
+    /**
+     * Processes solar system requirements and adds results to scrutiny details.
+     * Determines compliance status based on whether solar systems are defined in the plan.
+     *
+     * @param pl The building plan being processed
+     * @param rule The main rule identifier
+     * @param subRule The specific sub-rule identifier
+     * @param subRuleDesc The description of the sub-rule
+     */
     private void processSolar(Plan pl, String rule, String subRule, String subRuleDesc) {
         String status = pl.getUtility().getSolar().isEmpty()
                 ? Result.Not_Accepted.getResultVal()
@@ -214,9 +261,20 @@ public class Solar extends FeatureProcess {
                 ? OBJECTNOTDEFINED_DESC
                 : OBJECTDEFINED_DESC;
 
-        setReportOutputDetailsWithoutOccupancy(pl, subRule, subRuleDesc, "", provided, status);
+        setReportOutputDetailsWithoutOccupancy(pl, subRule, subRuleDesc, EMPTY_STRING, provided, status);
     }
 
+    /**
+     * Adds solar system validation results to the scrutiny report without occupancy details.
+     * Creates a detailed report entry with rule information, requirements, and compliance status.
+     *
+     * @param pl The building plan
+     * @param ruleNo The rule number
+     * @param ruleDesc The rule description
+     * @param expected The expected requirement (empty for solar)
+     * @param actual The actual provision status
+     * @param status The compliance status (Accepted/Not_Accepted)
+     */
     private void setReportOutputDetailsWithoutOccupancy(Plan pl, String ruleNo, String ruleDesc, String expected,
                                                         String actual, String status) {
         Map<String, String> details = new HashMap<>();
@@ -229,7 +287,12 @@ public class Solar extends FeatureProcess {
         pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
     }
 
-
+    /**
+     * Returns amendment dates for solar system rules.
+     * Currently returns an empty map as no amendments are defined.
+     *
+     * @return Empty LinkedHashMap of amendment dates
+     */
     @Override
     public Map<String, Date> getAmendments() {
         // No amendments defined

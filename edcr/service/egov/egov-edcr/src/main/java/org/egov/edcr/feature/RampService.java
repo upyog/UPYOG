@@ -47,6 +47,8 @@
 
 package org.egov.edcr.feature;
 
+import static org.egov.edcr.constants.CommonFeatureConstants.*;
+import static org.egov.edcr.constants.CommonKeyConstants.*;
 import static org.egov.edcr.constants.DxfFileConstants.A_R;
 
 import java.math.BigDecimal;
@@ -199,9 +201,9 @@ public class RampService extends FeatureProcess {
             }
         }
         if (!isSlopeDefined) {
-            errors.put(String.format(DcrConstants.RAMP_SLOPE, "", block.getNumber()),
+            errors.put(String.format(DcrConstants.RAMP_SLOPE, EMPTY_STRING, block.getNumber()),
                     edcrMessageSource.getMessage(DcrConstants.OBJECTNOTDEFINED,
-                            new String[]{String.format(DcrConstants.RAMP_SLOPE, "", block.getNumber())},
+                            new String[]{String.format(DcrConstants.RAMP_SLOPE, EMPTY_STRING, block.getNumber())},
                             LocaleContextHolder.getLocale()));
             pl.addErrors(errors);
         }
@@ -215,9 +217,9 @@ public class RampService extends FeatureProcess {
      * @param errors map of errors to be added
      */
     private void addMissingDARampError(Plan pl, Block block, Map<String, String> errors) {
-        errors.put(String.format("DA Ramp", block.getNumber()),
+        errors.put(String.format(DA_RAMP, block.getNumber()),
                 edcrMessageSource.getMessage(DcrConstants.OBJECTNOTDEFINED,
-                        new String[]{String.format("DA Ramp", block.getNumber())},
+                        new String[]{String.format(DA_RAMP, block.getNumber())},
                         LocaleContextHolder.getLocale()));
         pl.addErrors(errors);
     }
@@ -268,12 +270,12 @@ public class RampService extends FeatureProcess {
 
         if (pl != null && !pl.getBlocks().isEmpty()) {
             for (Block block : pl.getBlocks()) {
-                ScrutinyDetail scrutinyDetail = createScrutinyDetail("DA Ramp - Defined or not", block.getNumber(), false);
-                ScrutinyDetail scrutinyDetail1 = createScrutinyDetail("DA Ramp - Slope width", block.getNumber(), false);
-                ScrutinyDetail scrutinyDetail2 = createScrutinyDetail("DA Ramp - Maximum Slope", block.getNumber(), false);
-                ScrutinyDetail scrutinyDetail3 = createScrutinyDetail("DA Room", block.getNumber(), true);
-                ScrutinyDetail scrutinyDetail4 = createScrutinyDetail("Ramp - Minimum Width", block.getNumber(), true);
-                ScrutinyDetail scrutinyDetail5 = createScrutinyDetail("Ramp - Maximum Slope", block.getNumber(), true);
+                ScrutinyDetail scrutinyDetail = createScrutinyDetail(DA_RAMP_DEFINED, block.getNumber(), false);
+                ScrutinyDetail scrutinyDetail1 = createScrutinyDetail(DA_RAMP_SLOPE, block.getNumber(), false);
+                ScrutinyDetail scrutinyDetail2 = createScrutinyDetail(DA_RAMP_MAX_SLOPE, block.getNumber(), false);
+                ScrutinyDetail scrutinyDetail3 = createScrutinyDetail(DA_ROOM, block.getNumber(), true);
+                ScrutinyDetail scrutinyDetail4 = createScrutinyDetail(RAMP_MIN_WIDTH, block.getNumber(), true);
+                ScrutinyDetail scrutinyDetail5 = createScrutinyDetail(RAMP_MAX_SLOPE, block.getNumber(), true);
 
                 List<Object> rules = cache.getFeatureRules(pl, FeatureEnum.RAMP_SERVICE.getValue(), false);
                 Optional<RampServiceRequirement> matchedRule = rules.stream()
@@ -325,9 +327,9 @@ public class RampService extends FeatureProcess {
         scrutinyDetail.addColumnHeading(columnIndex++, REQUIRED);
         scrutinyDetail.addColumnHeading(columnIndex++, PROVIDED);
         scrutinyDetail.addColumnHeading(columnIndex, STATUS);
-        scrutinyDetail.setKey("Block_" + blockNumber + "_" + keySuffix);
-        if (keySuffix.equals("DA Room")) {
-            scrutinyDetail.setSubHeading("Minimum number of da rooms");
+        scrutinyDetail.setKey(BLOCK + blockNumber + UNDERSCORE + keySuffix);
+        if (keySuffix.equals(DA_ROOM)) {
+            scrutinyDetail.setSubHeading(MIN_NUMBER_DA_ROOMS);
         }
         return scrutinyDetail;
     }
@@ -360,7 +362,7 @@ public class RampService extends FeatureProcess {
             if (!block.getDARamps().isEmpty()) {
                 boolean isSlopeDefined = isSlopeDefined(block, rampServiceValueOne);
 
-                setReportOutputDetails(pl, SUBRULE_50_C_4_B, SUBRULE_50_C_4_B_SLOPE_MAN_DESC, "",
+                setReportOutputDetails(pl, SUBRULE_50_C_4_B, SUBRULE_50_C_4_B_SLOPE_MAN_DESC, EMPTY_STRING,
                         isSlopeDefined ? DcrConstants.OBJECTDEFINED_DESC : DcrConstants.OBJECTNOTDEFINED_DESC,
                         isSlopeDefined ? Result.Accepted.getResultVal() : Result.Not_Accepted.getResultVal(),
                         scrutinyDetail1);
@@ -414,8 +416,8 @@ public class RampService extends FeatureProcess {
             if (slope != null && slope.compareTo(rampServiceSlopValue) > 0 && expectedSlope != null) {
                 if (slope.compareTo(expectedSlope) <= 0) {
                     valid = true;
-                    mapOfRampNumberAndSlopeValues.put("daRampNumber", daRamp.getNumber().toString());
-                    mapOfRampNumberAndSlopeValues.put("slope", slope.toString());
+                    mapOfRampNumberAndSlopeValues.put(DA_RAMP_NUMBER, daRamp.getNumber().toString());
+                    mapOfRampNumberAndSlopeValues.put(SLOPE_STRING, slope.toString());
                     break;
                 }
             }
@@ -424,14 +426,14 @@ public class RampService extends FeatureProcess {
         if (valid) {
             setReportOutputDetails(pl, SUBRULE_50_C_4_B,
                     String.format(SUBRULE_50_C_4_B_SLOPE_DESCRIPTION,
-                            mapOfRampNumberAndSlopeValues.get("daRampNumber")),
+                            mapOfRampNumberAndSlopeValues.get(DA_RAMP_NUMBER)),
                     expectedSlope.toString(),
-                    mapOfRampNumberAndSlopeValues.get("slope"),
+                    mapOfRampNumberAndSlopeValues.get(SLOPE_STRING),
                     Result.Accepted.getResultVal(), scrutinyDetail2);
         } else {
             setReportOutputDetails(pl, SUBRULE_50_C_4_B,
-                    String.format(SUBRULE_50_C_4_B_SLOPE_DESCRIPTION, ""),
-                    expectedSlope.toString(), "Less than 0.08 for all da ramps",
+                    String.format(SUBRULE_50_C_4_B_SLOPE_DESCRIPTION, EMPTY_STRING),
+                    expectedSlope.toString(), LESS_THAN_SLOPE,
                     Result.Not_Accepted.getResultVal(), scrutinyDetail2);
         }
     }
@@ -488,7 +490,7 @@ public class RampService extends FeatureProcess {
         }
         if (count > 0) {
             plan.addError(String.format(DxfFileConstants.LAYER_RAMP_WITH_NO, blockNo, floorNo, rampNo),
-                    count + " number of ramp polyline not having only 4 points in layer "
+                    count + RAMP_POLYLINE_ERROR
                             + String.format(DxfFileConstants.LAYER_RAMP_WITH_NO, blockNo, floorNo, rampNo));
 
         }

@@ -47,6 +47,8 @@
 
 package org.egov.edcr.feature;
 
+import static org.egov.edcr.constants.CommonFeatureConstants.*;
+import static org.egov.edcr.constants.CommonKeyConstants.BLOCK;
 import static org.egov.edcr.constants.DxfFileConstants.A;
 import static org.egov.edcr.constants.DxfFileConstants.A_AF;
 import static org.egov.edcr.constants.DxfFileConstants.A_PO;
@@ -82,6 +84,7 @@ import org.egov.common.entity.edcr.Result;
 import org.egov.common.entity.edcr.ScrutinyDetail;
 import org.egov.common.entity.edcr.SetBack;
 import org.egov.edcr.constants.DxfFileConstants;
+import org.egov.edcr.constants.EdcrRulesMdmsConstants;
 import org.egov.edcr.service.FetchEdcrRulesMdms;
 import org.egov.edcr.service.MDMSCacheManager;
 import org.egov.infra.utils.StringUtils;
@@ -169,7 +172,7 @@ public class RearYardService extends GeneralRule {
 			for (Block block : pl.getBlocks()) { // for each block
 
 				scrutinyDetail = new ScrutinyDetail();
-				scrutinyDetail.setKey("Block_" + block.getName() + "_" + "Rear Setback");
+				scrutinyDetail.setKey(BLOCK + block.getName() + UNDERSCORE + REAR_SETBACK_SUFFIX);
 				scrutinyDetail.addColumnHeading(1, RULE_NO);
 				scrutinyDetail.addColumnHeading(2, LEVEL);
 				scrutinyDetail.addColumnHeading(3, OCCUPANCY);
@@ -394,7 +397,7 @@ public class RearYardService extends GeneralRule {
 		// Set minVal based on plot area
 		if (plotArea.compareTo(MIN_PLOT_AREA) <= 0) {
 			// Plot area is less than zero
-			errors.put("Plot Area Error:", "Plot area cannot be less than " + MIN_PLOT_AREA);
+			errors.put(PLOT_AREA_ERROR, PLOT_AREA_CANNOT_BE_LESS_THAN + MIN_PLOT_AREA);
 		} else if (plotArea.compareTo(PLOT_AREA_100_SQM) <= 0) {
 			minVal = MIN_VAL_100_SQM;
 		} else if (plotArea.compareTo(PLOT_AREA_150_SQM) <= 0) {
@@ -420,8 +423,8 @@ public class RearYardService extends GeneralRule {
 //		    }
 		if (!valid) {
 			LOG.info("Rear Yard Service: min value validity False: " + minVal+"/"+min);
-			errors.put("Minimum and Mean Value Validation",
-					"Minimum value is less than the required minimum " + minVal+ "/"+min);
+			errors.put(MIN_AND_MEAN_VALUE_VALIDATION,
+					MIN_VALUE_LESS_THAN_REQUIRED_MIN + minVal+ SLASH +min);
 
 		} else {
 			LOG.info("Rear Yard Service: min value validity True: " + minVal+"/"+min);
@@ -607,8 +610,7 @@ public class RearYardService extends GeneralRule {
 			HashMap<String, String> errors, Plan pl) {
 
 		if (depthOfPlot.compareTo(BigDecimal.valueOf(10)) <= 0) {
-			errors.put("uptoTwelveHeightUptoTenDepthRearYard",
-					"No construction shall be permitted if depth of plot is less than 10 and building height less than 12 having floors upto G+2.");
+			errors.put(TWELVE_HEIGHT_TEN_DEPTH_REAR_YARD, NO_CONST_PERMIT_DEPTH_LESS_10_BUILDING_HEIGHT_12);
 			pl.addErrors(errors);
 		} else if (depthOfPlot.compareTo(BigDecimal.valueOf(10)) > 0
 				&& depthOfPlot.compareTo(BigDecimal.valueOf(15)) <= 0) {
@@ -726,8 +728,7 @@ public class RearYardService extends GeneralRule {
 			String rule, BigDecimal minVal, BigDecimal meanVal, BigDecimal depthOfPlot, Boolean valid,
 			HashMap<String, String> errors, Plan pl) {
 		if (depthOfPlot.compareTo(BigDecimal.valueOf(10)) <= 0) {
-			errors.put("uptoSixteenHeightUptoTenDepthRearYard",
-					"No construction shall be permitted if depth of plot is less than 10 and building height less than 16 having floors upto G+4.");
+			errors.put(SIXTEEN_HEIGHT_TEN_DEPTH_REAR_YARD, NO_CONST_PERMIT_DEPTH_10_BUILDING_HEIGHT_16);
 			pl.addErrors(errors);
 		} else if (depthOfPlot.compareTo(BigDecimal.valueOf(10)) > 0
 				&& depthOfPlot.compareTo(BigDecimal.valueOf(15)) <= 0) {
@@ -881,14 +882,14 @@ public class RearYardService extends GeneralRule {
 					&& DxfFileConstants.COMMERCIAL.equalsIgnoreCase(pl.getPlanInformation().getLandUseZone())
 //					&& pl.getPlanInformation().getRoadWidth().compareTo(ROAD_WIDTH_TWELVE_POINTTWO) < 0
 			) {
-				occupancyName = "commercial";
+				occupancyName = EdcrRulesMdmsConstants.COMMERCIAL;
 			} else {
-				occupancyName = "residential";
+				occupancyName = EdcrRulesMdmsConstants.RESIDENTIAL;
 			}
 
 		} else if (F.equalsIgnoreCase(mostRestrictiveOccupancy.getType().getCode())) {
 			
-			occupancyName = "commercial";
+			occupancyName = EdcrRulesMdmsConstants.COMMERCIAL;
 		}else {
 			 occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl).toLowerCase();
 		}
@@ -982,7 +983,7 @@ public class RearYardService extends GeneralRule {
 				if (!rearYardDefined && !pl.getPlanInformation().getNocToAbutRearDesc().equalsIgnoreCase(YES)) {
 					HashMap<String, String> errors = new HashMap<>();
 					errors.put(REAR_YARD_DESC,
-							prepareMessage(OBJECTNOTDEFINED, REAR_YARD_DESC + " for Block " + block.getName()));
+							prepareMessage(OBJECTNOTDEFINED, REAR_YARD_DESC + FOR_BLOCK + block.getName()));
 					pl.addErrors(errors);
 				}
 			}
@@ -1001,9 +1002,9 @@ public class RearYardService extends GeneralRule {
 			occupancyName = mostRestrictiveOccupancy.getType().getName();
 		if (minVal.compareTo(rearYardResult.expectedminimumDistance) >= 0) {
 			if (minVal.compareTo(rearYardResult.expectedminimumDistance) == 0) {
-				rearYardResult.rule = rearYardResult.rule != null ? rearYardResult.rule + "," + rule : rule;
+				rearYardResult.rule = rearYardResult.rule != null ? rearYardResult.rule + COMMA + rule : rule;
 				rearYardResult.occupancy = rearYardResult.occupancy != null
-						? rearYardResult.occupancy + "," + occupancyName
+						? rearYardResult.occupancy + COMMA + occupancyName
 						: occupancyName;
 
 				if (meanVal.compareTo(rearYardResult.expectedmeanDistance) >= 0) {

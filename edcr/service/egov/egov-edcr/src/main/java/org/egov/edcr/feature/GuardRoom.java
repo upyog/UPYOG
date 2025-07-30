@@ -68,6 +68,8 @@ import org.egov.edcr.service.MDMSCacheManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import static org.egov.edcr.constants.CommonFeatureConstants.*;
+
 @Service
 public class GuardRoom extends FeatureProcess {
 
@@ -161,7 +163,7 @@ public class GuardRoom extends FeatureProcess {
 
     			pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
     		} else {
-    			errors.put("Distance_Guard Room", "Cabin heights are not provided in layer GUARD_ROOM");
+    			errors.put(DISTANCE_GUARD_ROOM, CABIN_HEIGHTS_NOT_PROVIDED);
     			pl.addErrors(errors);
     		}
     	}
@@ -196,8 +198,8 @@ public class GuardRoom extends FeatureProcess {
     	Map<String, String> details = new HashMap<>();
     	details.put(RULE_NO, RULE_48_A);
     	details.put(DESCRIPTION, GUARD_ROOM_DIMENSION_DESCRIPTION);
-    	details.put(REQUIRED, DIMENSION + " > " + requiredHeight.toString() + "x" + requiredWidth.toString());
-    	details.put(PROVIDED, DIMENSION + ": " + minWidth + "x" + minHeight);
+    	details.put(REQUIRED, DIMENSION + GREATER_THAN + requiredHeight.toString() + MULTIPLY + requiredWidth.toString());
+    	details.put(PROVIDED, DIMENSION + COLUMN + minWidth + MULTIPLY + minHeight);
 
     	if (minHeight.compareTo(requiredHeight) >= 0 && minWidth.compareTo(requiredWidth) >= 0) {
     		details.put(STATUS, Result.Accepted.getResultVal());
@@ -218,8 +220,8 @@ public class GuardRoom extends FeatureProcess {
     	Map<String, String> details = new HashMap<>();
     	details.put(RULE_NO, RULE_48_A);
     	details.put(DESCRIPTION, GUARD_ROOM_AREA_DESCRIPTION);
-    	details.put(REQUIRED, AREA + " <= " + requiredArea.toString());
-    	details.put(PROVIDED, AREA + ": " + minArea);
+    	details.put(REQUIRED, AREA + LESS_THAN_EQUAL_TO + requiredArea.toString());
+    	details.put(PROVIDED, AREA + COLUMN + minArea);
 
     	if (minArea.compareTo(requiredArea) <= 0) {
     		details.put(STATUS, Result.Accepted.getResultVal());
@@ -241,8 +243,8 @@ public class GuardRoom extends FeatureProcess {
     	Map<String, String> details = new HashMap<>();
     	details.put(RULE_NO, RULE_48_A);
     	details.put(DESCRIPTION, GUARD_ROOM_HEIGHT_DESCRIPTION);
-    	details.put(REQUIRED, HEIGHT + " >= " + minHeightAllowed.toString() + " and <= " + maxHeightAllowed.toString());
-    	details.put(PROVIDED, HEIGHT + ": " + minCabinHeight + "m");
+    	details.put(REQUIRED, HEIGHT + GREATER_THAN_EQUAL + minHeightAllowed.toString() + AND_STRING + LESS_THAN_EQUAL_TO + maxHeightAllowed.toString());
+    	details.put(PROVIDED, HEIGHT + COLUMN + minCabinHeight + METER);
 
     	if (minCabinHeight.compareTo(minHeightAllowed) >= 0 && minCabinHeight.compareTo(maxHeightAllowed) <= 0) {
     		details.put(STATUS, Result.Accepted.getResultVal());

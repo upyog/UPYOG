@@ -73,6 +73,9 @@ import org.egov.edcr.service.FetchEdcrRulesMdms;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import static org.egov.edcr.constants.CommonFeatureConstants.*;
+import static org.egov.edcr.constants.CommonKeyConstants.COMMON_MUMTY;
+
 @Service
 public class StairCover extends FeatureProcess {
 
@@ -90,13 +93,28 @@ public class StairCover extends FeatureProcess {
     
     @Autowired
 	MDMSCacheManager cache;
-    
+
+    /**
+     * Validates the building plan for stair cover requirements.
+     * Currently performs no validation and returns the plan as-is.
+     *
+     * @param pl The building plan to validate
+     * @return The unmodified plan
+     */
     // Placeholder validate method (not performing any logic here)
     @Override
     public Plan validate(Plan pl) {
         return pl;
     }
 
+    /**
+     * Processes stair cover (mumty) requirements for all blocks in the building plan.
+     * Initializes scrutiny details, fetches permissible height values from MDMS,
+     * and validates each block's stair covers against the requirements.
+     *
+     * @param pl The building plan to process
+     * @return The processed plan with scrutiny details added
+     */
     @Override
     public Plan process(Plan pl) {
         ScrutinyDetail scrutinyDetail = initializeScrutinyDetail();
@@ -109,9 +127,15 @@ public class StairCover extends FeatureProcess {
         return pl;
     }
 
+    /**
+     * Initializes the scrutiny detail object for stair cover validation reporting.
+     * Sets up column headings and key for the mumty (stair cover) scrutiny report.
+     *
+     * @return Configured ScrutinyDetail object with appropriate headings and key
+     */
     private ScrutinyDetail initializeScrutinyDetail() {
         ScrutinyDetail detail = new ScrutinyDetail();
-        detail.setKey("Common_Mumty");
+        detail.setKey(COMMON_MUMTY);
         detail.addColumnHeading(1, RULE_NO);
         detail.addColumnHeading(2, DESCRIPTION);
         detail.addColumnHeading(3, VERIFIED);
@@ -120,6 +144,14 @@ public class StairCover extends FeatureProcess {
         return detail;
     }
 
+    /**
+     * Retrieves the permissible stair cover height value from MDMS cache.
+     * Fetches stair cover requirements based on plan configuration and returns
+     * the permissible height limit.
+     *
+     * @param pl The building plan containing configuration details
+     * @return The permissible stair cover height, or BigDecimal.ZERO if not found
+     */
     private BigDecimal getStairCoverPermissibleValue(Plan pl) {
     	List<Object> rules = cache.getFeatureRules(pl, FeatureEnum.STAIR_COVER.getValue(), false);
         Optional<StairCoverRequirement> matchedRule = rules.stream()
@@ -130,6 +162,16 @@ public class StairCover extends FeatureProcess {
         return matchedRule.map(MdmsFeatureRule::getPermissible).orElse(BigDecimal.ZERO);
     }
 
+    /**
+     * Processes stair covers for a specific building block and generates scrutiny results.
+     * Compares minimum stair cover height against permissible limits and determines
+     * whether the height should be included in building height calculations.
+     *
+     * @param block The building block containing stair covers
+     * @param permissibleHeight The maximum allowed stair cover height
+     * @param scrutinyDetail The scrutiny detail object to add results to
+     * @param plan The building plan for adding scrutiny details to report
+     */
     private void processBlockStairCovers(Block block, BigDecimal permissibleHeight, ScrutinyDetail scrutinyDetail, Plan plan) {
         if (block.getStairCovers() != null && !block.getStairCovers().isEmpty()) {
             BigDecimal minHeight = block.getStairCovers().stream().reduce(BigDecimal::min).get();
@@ -139,10 +181,10 @@ public class StairCover extends FeatureProcess {
             details.put(VERIFIED, STAIRCOVER_HEIGHT_DESC + permissibleHeight + MTS);
 
             if (minHeight.compareTo(permissibleHeight) <= 0) {
-                details.put(ACTION, "Not included stair cover height(" + minHeight + ") to building height");
+                details.put(ACTION, NOT_INCLUDED_STAIR_COVER_HEIGHT + minHeight + TO_BUILDING_HEIGHT);
                 details.put(STATUS, Result.Accepted.getResultVal());
             } else {
-                details.put(ACTION, "Included stair cover height(" + minHeight + ") to building height");
+                details.put(ACTION, INCLUDED_STAIR_COVER_HEIGHT + minHeight + TO_BUILDING_HEIGHT);
                 details.put(STATUS, Result.Verify.getResultVal());
             }
 
@@ -151,7 +193,12 @@ public class StairCover extends FeatureProcess {
         }
     }
 
-
+    /**
+     * Returns amendment dates for stair cover rules.
+     * Currently returns an empty map as no amendments are defined.
+     *
+     * @return Empty LinkedHashMap of amendment dates
+     */
     // No amendments implemented currently
     @Override
     public Map<String, Date> getAmendments() {

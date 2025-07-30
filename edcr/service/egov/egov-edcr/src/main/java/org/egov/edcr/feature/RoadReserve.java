@@ -64,6 +64,8 @@ import org.egov.edcr.utility.DcrConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import static org.egov.edcr.constants.CommonFeatureConstants.*;
+
 @Service
 public class RoadReserve extends FeatureProcess {
 
@@ -84,12 +86,12 @@ public class RoadReserve extends FeatureProcess {
 			//scrutinyDetail8.addColumnHeading(4, REQUIRED);
 			scrutinyDetail8.addColumnHeading(2, PROVIDED);
 			scrutinyDetail8.addColumnHeading(3, STATUS);
-			scrutinyDetail8.setKey("Common_" + "Road Reserve ");
+			scrutinyDetail8.setKey(COMMON_ROAD_RESERVE);
         System.out.println("ii" + pl.getRoadReserveFront() +  pl.getRoadReserveRear());
          
         if(pl.getRoadReserveFront() != BigDecimal.ZERO &&  pl.getRoadReserveRear() != BigDecimal.ZERO) {
-     	setReportOutputDetails(pl, "Road Width Front And Rear",
-				"" + pl.getRoadReserveFront() + "m" +  " & " +  pl.getRoadReserveRear() +"m", "", scrutinyDetail8);
+     	setReportOutputDetails(pl, ROAD_WIDTH_FRONT_AND_REAR,
+				"" + pl.getRoadReserveFront() + METER +  AND_SPECIAL_CHAR +  pl.getRoadReserveRear() + METER, EMPTY_STRING, scrutinyDetail8);
 		//LOG.info("Room Height Validation True: (Expected/Actual) " + "" + "/" + "");
         // setReportOutputDetails(pl, "Road Width Rear", "" + pl.getRoadReserveRear(), scrutinyDetail);
     

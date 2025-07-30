@@ -47,6 +47,7 @@
 
 package org.egov.edcr.feature;
 
+import static org.egov.edcr.constants.CommonFeatureConstants.EMPTY_STRING;
 import static org.egov.edcr.constants.DxfFileConstants.COLOUR_CODE_LEACHPIT_TO_PLOT_BNDRY;
 import static org.egov.edcr.utility.DcrConstants.IN_METER;
 import static org.egov.edcr.utility.DcrConstants.OBJECTDEFINED_DESC;
@@ -77,6 +78,14 @@ public class WasteDisposal extends FeatureProcess {
     private static final String SUB_RULE_104_4_WD = "104-4";
     private static final String SUB_RULE_104_4_PLOT_DESCRIPTION_WD = "Minimum distance from waste treatment facility like: leach pit,soak pit etc to nearest point on the plot boundary";
 
+    /**
+     * Validates the building plan for waste disposal requirements.
+     * Currently commented out - would check if waste disposal units or liquid waste
+     * treatment plants are defined and add errors if missing.
+     *
+     * @param pl The building plan to validate
+     * @return The unmodified plan
+     */
     @Override
     public Plan validate(Plan pl) {
         /*
@@ -88,7 +97,14 @@ public class WasteDisposal extends FeatureProcess {
          */
         return pl;
     }
-
+    /**
+     * Processes waste disposal requirements for the building plan.
+     * Currently commented out - would validate waste disposal units, check distances
+     * from boundaries, and generate scrutiny details for compliance verification.
+     *
+     * @param pl The building plan to process
+     * @return The unmodified plan
+     */
     @Override
     public Plan process(Plan pl) {/*
                                    * validate(pl); scrutinyDetail = new ScrutinyDetail(); scrutinyDetail.addColumnHeading(1,
@@ -108,7 +124,18 @@ public class WasteDisposal extends FeatureProcess {
                                    */
         return pl;
     }
-
+    /**
+     * Adds waste disposal validation results to the scrutiny report.
+     * Creates a detailed report entry with rule information, requirements,
+     * and compliance status without occupancy-specific details.
+     *
+     * @param pl The building plan
+     * @param ruleNo The rule number being validated
+     * @param ruleDesc The rule description
+     * @param expected The expected/required value
+     * @param actual The actual/provided value
+     * @param status The compliance status (Accepted/Not_Accepted)
+     */
     private void setReportOutputDetailsWithoutOccupancy(Plan pl, String ruleNo, String ruleDesc, String expected, String actual,
             String status) {
         Map<String, String> details = new HashMap<>();
@@ -120,7 +147,13 @@ public class WasteDisposal extends FeatureProcess {
         scrutinyDetail.getDetail().add(details);
         pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
     }
-
+    /**
+     * Processes proposed waste disposal units and validates distance requirements.
+     * Iterates through well distances and validates minimum distance requirements
+     * for waste disposal facilities like leach pits from plot boundaries.
+     *
+     * @param pl The building plan containing waste disposal information
+     */
     private void printOutputForProposedWasteDisposal(Plan pl) {
         String subRule;
         String subRuleDesc;
@@ -138,7 +171,18 @@ public class WasteDisposal extends FeatureProcess {
 
         }
     }
-
+    /**
+     * Generates scrutiny report output for waste disposal distance validation.
+     * Validates actual distances against minimum requirements and creates
+     * appropriate scrutiny details or error messages.
+     *
+     * @param pl The building plan
+     * @param subRule The specific sub-rule identifier
+     * @param subRuleDesc The sub-rule description
+     * @param valid Whether the validation passed
+     * @param roadOutput The road/distance output containing measurement data
+     * @param minimumDistance The minimum required distance
+     */
     private void printReportOutput(Plan pl, String subRule, String subRuleDesc, boolean valid, RoadOutput roadOutput,
             BigDecimal minimumDistance) {
         HashMap<String, String> errors = new HashMap<>();
@@ -146,7 +190,7 @@ public class WasteDisposal extends FeatureProcess {
             errors.put(WASTE_DISPOSAL_DISTANCE_FROMBOUNDARY,
                     getLocaleMessage(WASTE_DISPOSAL_ERROR_COLOUR_CODE_DISTANCE_FROMBOUNDARY,
                             roadOutput.distance != null ? roadOutput.distance.toString()
-                                    : ""));
+                                    : EMPTY_STRING));
             pl.addErrors(errors);
         } else {
             if (roadOutput.distance != null &&
@@ -167,7 +211,12 @@ public class WasteDisposal extends FeatureProcess {
     private boolean checkConditionForLeachPitToBoundary(RoadOutput roadOutput) {
         return Integer.valueOf(roadOutput.colourCode) == COLOUR_CODE_LEACHPIT_TO_PLOT_BNDRY;
     }
-
+    /**
+     * Returns amendment dates for waste disposal rules.
+     * Currently returns an empty map as no amendments are defined.
+     *
+     * @return Empty LinkedHashMap of amendment dates
+     */
     @Override
     public Map<String, Date> getAmendments() {
         return new LinkedHashMap<>();

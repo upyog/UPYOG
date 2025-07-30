@@ -49,6 +49,7 @@
 
 package org.egov.edcr.feature;
 
+import static org.egov.edcr.constants.CommonFeatureConstants.METER;
 import static org.egov.edcr.constants.DxfFileConstants.B;
 import static org.egov.edcr.constants.DxfFileConstants.D;
 import static org.egov.edcr.constants.DxfFileConstants.F;
@@ -157,8 +158,8 @@ public class RoadWidth extends FeatureProcess {
 
         BigDecimal roadWidthRequired = occupancyValuesMap.get(occupancyType.getCode());
         if (roadWidthRequired != null) {
-            details.put(PERMITTED, roadWidthRequired + "m");
-            details.put(PROVIDED, roadWidth + "m");
+            details.put(PERMITTED, roadWidthRequired + METER);
+            details.put(PROVIDED, roadWidth + METER);
 
             String status = roadWidth.compareTo(roadWidthRequired) >= 0
                     ? Result.Accepted.getResultVal()

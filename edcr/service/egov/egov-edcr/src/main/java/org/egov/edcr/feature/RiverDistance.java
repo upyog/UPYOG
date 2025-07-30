@@ -68,10 +68,14 @@ import org.egov.common.entity.edcr.River;
 import org.egov.common.entity.edcr.RiverDistanceRequirement;
 import org.egov.common.entity.edcr.ScrutinyDetail;
 import org.egov.edcr.service.MDMSCacheManager;
+import org.egov.edcr.utility.DcrConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
+
+import static org.egov.edcr.constants.CommonFeatureConstants.GREATER_THAN;
+import static org.egov.edcr.constants.CommonFeatureConstants.LESS_THAN_EQUAL_TO;
 
 
 @Service
@@ -159,7 +163,7 @@ public class RiverDistance extends FeatureProcess {
         List<BigDecimal> distancesFromSubRiver = subRiver.isEmpty() ? new ArrayList<>() : subRiver.get(0).getDistancesFromProtectionWall();
 
         if (StringUtils.hasText(pl.getPlanInformation().getBuildingNearToRiver()) &&
-            "YES".equalsIgnoreCase(pl.getPlanInformation().getBuildingNearToRiver())) {
+                DcrConstants.YES.equalsIgnoreCase(pl.getPlanInformation().getBuildingNearToRiver())) {
 
             if (!distancesFromRiverProtectionWall.isEmpty()) {
                 minDistanceFromProtectionWall = getMin(distancesFromRiverProtectionWall);
@@ -232,7 +236,7 @@ public class RiverDistance extends FeatureProcess {
         Map<String, String> detail = new HashMap<>();
         detail.put(RULE_NO, ruleNo);
         detail.put(DESCRIPTION, description);
-        detail.put(PERMITTED, (provided.compareTo(permitted) > 0 ? ">" : "<=") + permitted);
+        detail.put(PERMITTED, (provided.compareTo(permitted) > 0 ? GREATER_THAN : LESS_THAN_EQUAL_TO) + permitted);
         detail.put(PROVIDED, provided.toString());
         detail.put(STATUS, provided.compareTo(permitted) > 0 ? Result.Accepted.getResultVal() : Result.Not_Accepted.getResultVal());
         return detail;

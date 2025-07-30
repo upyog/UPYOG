@@ -72,6 +72,8 @@ import org.egov.edcr.utility.Util;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import static org.egov.edcr.constants.CommonKeyConstants.*;
+
 @Service
 public class HeadRoom extends FeatureProcess {
 
@@ -169,7 +171,7 @@ public class HeadRoom extends FeatureProcess {
 				.orElse(BigDecimal.ZERO);
 		BigDecimal minWidth = Util.roundOffTwoDecimal(minHeadRoom);
 
-		ScrutinyDetail scrutinyDetail = createScrutinyDetail("Block_" + block.getNumber() + "_Stair Headroom");
+		ScrutinyDetail scrutinyDetail = createScrutinyDetail(BLOCK + block.getNumber() + STAIR_HEADROOM_SUFFIX);
 
 		String resultStatus = minWidth.compareTo(permissibleHeadroom) >= 0 ? Result.Accepted.getResultVal()
 				: Result.Not_Accepted.getResultVal();

@@ -60,6 +60,9 @@ import org.egov.common.entity.edcr.ScrutinyDetail;
 import org.egov.infra.utils.StringUtils;
 import org.springframework.stereotype.Service;
 
+import static org.egov.edcr.constants.CommonFeatureConstants.*;
+import static org.egov.edcr.constants.CommonKeyConstants.*;
+
 @Service
 public class NorthDirection extends FeatureProcess {
 
@@ -77,7 +80,7 @@ public class NorthDirection extends FeatureProcess {
 	public Plan process(Plan pl) {
 
 		ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
-		scrutinyDetail.setKey("Common_North Direction");
+		scrutinyDetail.setKey(COMMON_NORTH_DIRECTION);
 		scrutinyDetail.addColumnHeading(1, RULE_NO);
 		scrutinyDetail.addColumnHeading(2, DESCRIPTION);
 		scrutinyDetail.addColumnHeading(3, PROVIDED);
@@ -88,21 +91,21 @@ public class NorthDirection extends FeatureProcess {
 		details.put(RULE_NO, RULE);
 		details.put(DESCRIPTION, NORTH_DIRECTION_DESCRIPTION);
 		if (pl.getDrawingPreference().getNorthDirection() == null) {
-			errors.put("NORTH_DIRECTION", "NORTH_DIRECTION layer is not provided");
+			errors.put(NORTH_DIRECTION, NORTH_DIRECTION_LAYER_NOT_PROVIDED);
 			pl.addErrors(errors);
 		} else if (pl.getDrawingPreference().getNorthDirection().getDirections() != null && !pl.getDrawingPreference().getNorthDirection().getDirections().isEmpty()
 				&& StringUtils.isNotBlank(pl.getDrawingPreference().getNorthDirection().getDirection())
-				&& pl.getDrawingPreference().getNorthDirection().getDirection().contains("N")) {
-			details.put(PROVIDED, "North directions provided");
+				&& pl.getDrawingPreference().getNorthDirection().getDirection().contains(N_CHARACTER)) {
+			details.put(PROVIDED, NORTH_DIRECTIONS_PROVIDED);
 			details.put(STATUS, Result.Accepted.getResultVal());
 			scrutinyDetail.getDetail().add(details);
 			pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
 		} else {
 			if (StringUtils.isBlank(pl.getDrawingPreference().getNorthDirection().getDirection())
-					|| !pl.getDrawingPreference().getNorthDirection().getDirection().contains("N"))
-				details.put(PROVIDED, "Mtext in NORTH_DIRECTION layer does not contains 'N' character");
+					|| !pl.getDrawingPreference().getNorthDirection().getDirection().contains(N_CHARACTER))
+				details.put(PROVIDED, MTEXT_NO_N_CHARACTER);
 			else
-				details.put(PROVIDED, "PolyLine is not defined in NORTH_DIRECTION layer");
+				details.put(PROVIDED, POLYLINE_NOT_DEFINED_NORTH_DIRECTION);
 			details.put(STATUS, Result.Not_Accepted.getResultVal());
 			scrutinyDetail.getDetail().add(details);
 			pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);

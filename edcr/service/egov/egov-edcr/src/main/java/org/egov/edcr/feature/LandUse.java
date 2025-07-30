@@ -73,6 +73,9 @@ import org.egov.infra.utils.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import static org.egov.edcr.constants.CommonFeatureConstants.*;
+import static org.egov.edcr.constants.CommonKeyConstants.*;
+
 @Service
 public class LandUse extends FeatureProcess {
 
@@ -172,7 +175,7 @@ public class LandUse extends FeatureProcess {
         StringBuffer commercialFloors = getCommercialFloors(block);
         boolean isAccepted = commercialFloors.length() > 0;
 
-        initializeScrutinyHeader("Block_" + blkNo + "_Land Use");
+        initializeScrutinyHeader(BLOCK + blkNo + U_LANDUSE);
         Map<String, String> details = buildScrutinyDetails(pl, commercialFloors, isAccepted);
         scrutinyDetail.getDetail().add(details);
         pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
@@ -242,12 +245,12 @@ public class LandUse extends FeatureProcess {
     private Map<String, String> buildScrutinyDetails(Plan pl, StringBuffer commercialFloors, boolean isAccepted) {
         Map<String, String> details = new HashMap<>();
         details.put(RULE_NO, RULE_28);
-        details.put(DESCRIPTION, "Land use Zone");
+        details.put(DESCRIPTION, LAND_USE_ZONE);
         details.put(ROAD_WIDTH, pl.getPlanInformation().getRoadWidth().toString());
-        details.put(REQUIRED, "At least one floor should be commercial");
+        details.put(REQUIRED, AT_LEAST_ONE_COMMERCIAL);
         details.put(PROVIDED, commercialFloors.length() == 0 
-            ? "Commercial floor is not present"
-            : commercialFloors.substring(0, commercialFloors.length() - 1) + " floors are commercial");
+            ? NO_COMMERCIAL_FLOOR
+            : commercialFloors.substring(0, commercialFloors.length() - 1) + FLOORS_ARE_COMMERCIAL);
         details.put(STATUS, isAccepted ? Result.Accepted.getResultVal() : Result.Not_Accepted.getResultVal());
         return details;
     }

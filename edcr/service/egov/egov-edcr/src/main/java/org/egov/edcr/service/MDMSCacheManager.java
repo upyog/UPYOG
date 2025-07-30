@@ -14,6 +14,7 @@ import org.egov.common.entity.edcr.MdmsFeatureRule;
 import org.egov.common.entity.edcr.MdmsResponse;
 import org.egov.common.entity.edcr.Plan;
 import org.egov.commons.mdms.BpaMdmsUtil;
+import org.egov.edcr.config.EdcrConfigProperties;
 import org.egov.edcr.constants.EdcrRulesMdmsConstants;
 import org.egov.infra.microservice.models.RequestInfo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import net.minidev.json.JSONArray;
+
+import static org.egov.edcr.constants.CommonFeatureConstants.*;
 
 @Service
 public class MDMSCacheManager {
@@ -40,6 +43,8 @@ public class MDMSCacheManager {
 	 * city or state, and the value is a map of FeatureRuleKey to list of rules.
 	 */
 	Map<String, Map<FeatureRuleKey, List<Object>>> featureRuleCache = new HashMap<>();
+    @Autowired
+    private EdcrConfigProperties edcrConfigProperties;
 
 	/**
 	 * Retrieves applicable BPA rules from cache or MDMS for a given lookup key.
@@ -129,8 +134,8 @@ public class MDMSCacheManager {
 	            try {
 	                JsonNode jsonNode = mapper.valueToTree(ruleArray.get(i));
 	                if (jsonNode instanceof ObjectNode) {
-	                    ((ObjectNode) jsonNode).put("featureName", featureName);
-	                    ((ObjectNode) jsonNode).put("state", "pg");
+	                    ((ObjectNode) jsonNode).put(FEATURE_NAME_STRING, featureName);
+	                    ((ObjectNode) jsonNode).put(STATE_STRING, edcrConfigProperties.getDefaultState());
 
 	                    MdmsFeatureRule rule = mapper.treeToValue(jsonNode, ruleClass);
 	  
@@ -199,7 +204,8 @@ public class MDMSCacheManager {
 
 		String riskType = includeRiskType ? fetchEdcrRulesMdms.getRiskType(plan).toLowerCase() : null;
 
-		FeatureRuleKey key = new FeatureRuleKey("pg", null, zone, subZone, occupancyName, riskType, feature);
+		String checkedTenantId = edcrConfigProperties.getIsStateWise() ? null : tenantId;
+		FeatureRuleKey key = new FeatureRuleKey(edcrConfigProperties.getDefaultState(), checkedTenantId, zone, subZone, occupancyName, riskType, feature);
 
 		return getRules(key);
 	}

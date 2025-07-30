@@ -70,27 +70,44 @@ import org.egov.edcr.service.MDMSCacheManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import static org.egov.edcr.constants.CommonFeatureConstants.*;
+
 @Service
 public class Ventilation extends FeatureProcess {
 
 	private static final Logger LOG = LogManager.getLogger(Ventilation.class);
 	private static final String RULE_43 = "43";
 	public static final String LIGHT_VENTILATION_DESCRIPTION = "Light and Ventilation";
-	
+
 	 @Autowired
 	 MDMSCacheManager cache;
 
+	/**
+	 * Validates the building plan for ventilation requirements.
+	 * Currently performs no validation and returns the plan as-is.
+	 *
+	 * @param pl The building plan to validate
+	 * @return The unmodified plan
+	 */
 	@Override
 	public Plan validate(Plan pl) {
 		return pl;
 	}
 
+	/**
+	 * Processes ventilation requirements for all blocks and floors in the building plan.
+	 * Extracts ventilation rules from MDMS, creates scrutiny details, and validates
+	 * general ventilation requirements for each floor.
+	 *
+	 * @param pl The building plan to process
+	 * @return The processed plan with scrutiny details added
+	 */
 	@Override
 	public Plan process(Plan pl) {
 	    for (Block b : pl.getBlocks()) {
 	        BigDecimal[] ventilationValues = extractVentilationRules(pl);
-	        ScrutinyDetail generalScrutiny = createScrutinyDetail("Common_Ventilation");
-	        ScrutinyDetail bathScrutiny = createScrutinyDetail("Bath_Ventilation");
+	        ScrutinyDetail generalScrutiny = createScrutinyDetail(COMMON_VENTILATION);
+	        ScrutinyDetail bathScrutiny = createScrutinyDetail(BATH_VENTILATION);
 
 	        if (b.getBuilding() != null && b.getBuilding().getFloors() != null) {
 	            for (Floor f : b.getBuilding().getFloors()) {
@@ -101,7 +118,14 @@ public class Ventilation extends FeatureProcess {
 	    }
 	    return pl;
 	}
-	
+
+	/**
+	 * Extracts ventilation requirement values from MDMS cache.
+	 * Fetches ventilation ratio values used for calculating minimum required ventilation areas.
+	 *
+	 * @param pl The building plan containing configuration details
+	 * @return Array containing ventilationValueOne and ventilationValueTwo
+	 */
 	private BigDecimal[] extractVentilationRules(Plan pl) {
 	    BigDecimal ventilationValueOne = BigDecimal.ZERO;
 	    BigDecimal ventilationValueTwo = BigDecimal.ZERO;
@@ -120,6 +144,13 @@ public class Ventilation extends FeatureProcess {
 	    return new BigDecimal[]{ventilationValueOne, ventilationValueTwo};
 	}
 
+	/**
+	 * Creates and initializes a scrutiny detail object for ventilation reporting.
+	 * Sets up column headings and key for the specified ventilation type.
+	 *
+	 * @param key The key identifier for the scrutiny detail (e.g., COMMON_VENTILATION)
+	 * @return Configured ScrutinyDetail object with appropriate headings and key
+	 */
 	private ScrutinyDetail createScrutinyDetail(String key) {
 	    ScrutinyDetail detail = new ScrutinyDetail();
 	    detail.setKey(key);
@@ -131,6 +162,16 @@ public class Ventilation extends FeatureProcess {
 	    return detail;
 	}
 
+	/**
+	 * Processes general light and ventilation requirements for a specific floor.
+	 * Calculates total ventilation area and carpet area, compares against required ratios,
+	 * and generates scrutiny details for compliance verification.
+	 *
+	 * @param floor The floor containing ventilation measurements
+	 * @param ventilationRatio The required ventilation ratio (e.g., 1/10th of floor area)
+	 * @param scrutinyDetail The scrutiny detail object to add results to
+	 * @param pl The building plan for adding scrutiny details to report
+	 */
 	private void processGeneralVentilation(Floor floor, BigDecimal ventilationRatio,
 	                                       ScrutinyDetail scrutinyDetail, Plan pl) {
 	    if (floor.getLightAndVentilation() != null &&
@@ -148,9 +189,9 @@ public class Ventilation extends FeatureProcess {
 	            Map<String, String> detail = new HashMap<>();
 	            detail.put(RULE_NO, RULE_43);
 	            detail.put(DESCRIPTION, LIGHT_VENTILATION_DESCRIPTION);
-	            detail.put(REQUIRED, "Minimum 1/" + ventilationRatio + "th of the floor area ");
-	            detail.put(PROVIDED, "Ventilation area " + totalVentilationArea +
-	                " of Carpet Area " + totalCarpetArea + " at floor " + floor.getNumber());
+	            detail.put(REQUIRED, MINIMUM_PREFIX_1 + ventilationRatio + TH_OF_FLOOR_AREA);
+	            detail.put(PROVIDED, VENTILATION_AREA + totalVentilationArea +
+	                OF_CARPET_AREA + totalCarpetArea + AT_FLOOR + floor.getNumber());
 
 	            detail.put(STATUS, totalVentilationArea.compareTo(requiredVentilation) >= 0
 	                ? Result.Accepted.getResultVal() : Result.Not_Accepted.getResultVal());
@@ -161,6 +202,16 @@ public class Ventilation extends FeatureProcess {
 	    }
 	}
 
+	/**
+	 * Processes bathroom ventilation requirements for a specific floor.
+	 * Validates bathroom ventilation area against minimum requirements and generates
+	 * scrutiny details with compliance status.
+	 *
+	 * @param floor The floor containing bathroom ventilation measurements
+	 * @param requiredArea The minimum required bathroom ventilation area
+	 * @param scrutinyDetail The scrutiny detail object to add results to
+	 * @param pl The building plan for adding scrutiny details to report
+	 */
 			private void processBathroomVentilation(Floor floor, BigDecimal requiredArea,
 		            ScrutinyDetail scrutinyDetail, Plan pl) {
 		Map<String, String> detail = new HashMap<>();
@@ -175,13 +226,13 @@ public class Ventilation extends FeatureProcess {
 		.map(Measurement::getArea).reduce(BigDecimal.ZERO, BigDecimal::add);
 		
 		detail.put(REQUIRED, requiredArea.toString());
-		detail.put(PROVIDED, "Bath Ventilation area " + totalVentilationArea + " at floor " + floor.getNumber());
+		detail.put(PROVIDED, BATH_VENTILATION_AREA + totalVentilationArea + AT_FLOOR + floor.getNumber());
 		detail.put(STATUS, totalVentilationArea.compareTo(requiredArea) >= 0
 		? Result.Accepted.getResultVal() : Result.Not_Accepted.getResultVal());
 		
 		} else {
 		detail.put(REQUIRED, requiredArea.toString());
-		detail.put(PROVIDED, "Bath Ventilation area not defined in floor " + floor.getNumber());
+		detail.put(PROVIDED, BATH_VENTILATION_NOT_DEFINED + floor.getNumber());
 		detail.put(STATUS, Result.Not_Accepted.getResultVal());
 		}
 		
@@ -189,9 +240,12 @@ public class Ventilation extends FeatureProcess {
 		pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
 		}
 
-
-
-
+	/**
+	 * Returns amendment dates for ventilation rules.
+	 * Currently returns an empty map as no amendments are defined.
+	 *
+	 * @return Empty LinkedHashMap of amendment dates
+	 */
 	@Override
 	public Map<String, Date> getAmendments() {
 		return new LinkedHashMap<>();

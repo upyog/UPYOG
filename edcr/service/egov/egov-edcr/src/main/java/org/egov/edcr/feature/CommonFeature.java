@@ -17,6 +17,7 @@ import org.egov.common.entity.edcr.Result;
 import org.egov.common.entity.edcr.ScrutinyDetail;
 import org.egov.edcr.utility.Util;
 import org.springframework.stereotype.Service;
+import static org.egov.edcr.constants.CommonKeyConstants.*;
 
 @Service
 public class CommonFeature extends FeatureProcess {
@@ -78,13 +79,13 @@ public class CommonFeature extends FeatureProcess {
     private void processRule42_5_V_NotAccepted(Block block, Floor floor, Plan plan, String value) {
         setReportOutputDetails(plan, SUBRULE_42_5_V, value, String.valueOf(1),
                 String.valueOf(0),
-                Result.Not_Accepted.getResultVal(), "Lift or ramp not defined on this floor");
+                Result.Not_Accepted.getResultVal(), LIFT_OR_RAMP_NOT_DEFINED);
     }
 
     private void processRule42_5_V_Accepted(Block block, Floor floor, Plan plan, String value) {
         setReportOutputDetails(plan, SUBRULE_42_5_V, value, String.valueOf(1),
                 String.valueOf(floor.getLifts().size()),
-                Result.Accepted.getResultVal(), "Lift required as ramp not defined on this floor");
+                Result.Accepted.getResultVal(), LIFT_REQUIRED);
     }
 
     private Boolean checkRampDefinedOrNot(Floor floor) {

@@ -58,11 +58,9 @@ import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.egov.common.constants.MdmsFeatureConstants;
 import org.egov.common.entity.edcr.Block;
 import org.egov.common.entity.edcr.FeatureEnum;
 import org.egov.common.entity.edcr.Floor;
-import org.egov.common.entity.edcr.MdmsFeatureRule;
 import org.egov.common.entity.edcr.Measurement;
 import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.Result;
@@ -71,6 +69,8 @@ import org.egov.common.entity.edcr.VerandahRequirement;
 import org.egov.edcr.service.MDMSCacheManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import static org.egov.edcr.constants.CommonFeatureConstants.*;
 
 @Service
 public class Verandah extends FeatureProcess {
@@ -81,6 +81,13 @@ public class Verandah extends FeatureProcess {
 
 	public static final String VERANDAH_DESCRIPTION = "Verandah";
 
+	/**
+	 * Validates the building plan for verandah requirements.
+	 * Currently performs no validation and returns the plan as-is.
+	 *
+	 * @param pl The building plan to validate
+	 * @return The unmodified plan
+	 */
 	@Override
 	public Plan validate(Plan pl) {
 		// Currently no validation logic required for Verandah feature
@@ -91,6 +98,14 @@ public class Verandah extends FeatureProcess {
 	MDMSCacheManager cache;
 
 
+	/**
+	 * Processes verandah requirements for all blocks and floors in the building plan.
+	 * Fetches verandah rules from MDMS, creates scrutiny details, and validates
+	 * verandah width and depth against permissible limits for each floor.
+	 *
+	 * @param pl The building plan to process
+	 * @return The processed plan with scrutiny details added
+	 */
 	@Override
 	public Plan process(Plan pl) {
 	    for (Block block : pl.getBlocks()) {
@@ -119,6 +134,12 @@ public class Verandah extends FeatureProcess {
 	    return pl;
 	}
 
+	/**
+	 * Creates and initializes a scrutiny detail object for verandah validation reporting.
+	 * Sets up column headings and key for the verandah scrutiny report.
+	 *
+	 * @return Configured ScrutinyDetail object with appropriate headings and key
+	 */
 	private ScrutinyDetail createScrutinyDetail() {
 	    ScrutinyDetail detail = new ScrutinyDetail();
 	    detail.setKey(Common_Verandah);
@@ -130,6 +151,13 @@ public class Verandah extends FeatureProcess {
 	    return detail;
 	}
 
+	/**
+	 * Retrieves verandah requirement rules from MDMS cache.
+	 * Fetches the first matching verandah requirement rule based on plan configuration.
+	 *
+	 * @param pl The building plan containing configuration details
+	 * @return VerandahRequirement rule if found, null otherwise
+	 */
 	private VerandahRequirement getVerandahRule(Plan pl) {
 		 List<Object> rules = cache.getFeatureRules(pl, FeatureEnum.VERANDAH.getValue(), false);
 	        Optional<VerandahRequirement> matchedRule = rules.stream()
@@ -139,6 +167,16 @@ public class Verandah extends FeatureProcess {
 	    return matchedRule.orElse(null);
 	}
 
+	/**
+	 * Evaluates verandah width against minimum width requirements for a specific floor.
+	 * Finds the minimum width among all verandah measurements and validates against
+	 * the permissible minimum width, generating scrutiny details for compliance.
+	 *
+	 * @param pl The building plan
+	 * @param scrutinyDetail The scrutiny detail object to add results to
+	 * @param floor The floor containing verandah measurements
+	 * @param permissibleWidth The minimum required verandah width
+	 */
 	private void evaluateVerandahWidth(Plan pl, ScrutinyDetail scrutinyDetail, Floor floor, BigDecimal permissibleWidth) {
 	    Optional<BigDecimal> minWidthOpt = floor.getVerandah().getMeasurements().stream()
 	            .map(Measurement::getWidth)
@@ -149,8 +187,8 @@ public class Verandah extends FeatureProcess {
 	        Map<String, String> details = new HashMap<>();
 	        details.put(RULE_NO, RULE_43);
 	        details.put(DESCRIPTION, VERANDAH_DESCRIPTION);
-	        details.put(REQUIRED, "Minimum width " + permissibleWidth + "m");
-	        details.put(PROVIDED, "Width area " + minWidth + " at floor " + floor.getNumber());
+	        details.put(REQUIRED, MIN_WIDTH + permissibleWidth + METER);
+	        details.put(PROVIDED, WIDTH_AREA + minWidth + AT_FLOOR + floor.getNumber());
 	        details.put(STATUS, minWidth.compareTo(permissibleWidth) >= 0 ?
 	                Result.Accepted.getResultVal() : Result.Not_Accepted.getResultVal());
 
@@ -159,6 +197,16 @@ public class Verandah extends FeatureProcess {
 	    }
 	}
 
+	/**
+	 * Evaluates verandah depth against maximum depth restrictions for a specific floor.
+	 * Finds the minimum depth among all verandah measurements and validates against
+	 * the permissible maximum depth, generating scrutiny details for compliance.
+	 *
+	 * @param pl The building plan
+	 * @param scrutinyDetail The scrutiny detail object to add results to
+	 * @param floor The floor containing verandah measurements
+	 * @param permissibleDepth The maximum allowed verandah depth
+	 */
 	private void evaluateVerandahDepth(Plan pl, ScrutinyDetail scrutinyDetail, Floor floor, BigDecimal permissibleDepth) {
 	    Optional<BigDecimal> minDepthOpt = floor.getVerandah().getHeightOrDepth().stream()
 	            .min(Comparator.naturalOrder());
@@ -168,8 +216,8 @@ public class Verandah extends FeatureProcess {
 	        Map<String, String> details = new HashMap<>();
 	        details.put(RULE_NO, RULE_43A);
 	        details.put(DESCRIPTION, VERANDAH_DESCRIPTION);
-	        details.put(REQUIRED, "Minimum depth not more than " + permissibleDepth + " m");
-	        details.put(PROVIDED, "Depth area " + minDepth + " at floor " + floor.getNumber());
+	        details.put(REQUIRED, MIN_DEPTH_NOT_MORE_THAN + permissibleDepth + METER);
+	        details.put(PROVIDED, DEPTH_AREA + minDepth + AT_FLOOR + floor.getNumber());
 	        details.put(STATUS, minDepth.compareTo(permissibleDepth) <= 0 ?
 	                Result.Accepted.getResultVal() : Result.Not_Accepted.getResultVal());
 
@@ -178,6 +226,12 @@ public class Verandah extends FeatureProcess {
 	    }
 	}
 
+	/**
+	 * Returns amendment dates for verandah rules.
+	 * Currently returns an empty map as no amendments are defined.
+	 *
+	 * @return Empty LinkedHashMap of amendment dates
+	 */
 	@Override
 	public Map<String, Date> getAmendments() {
 		// No amendments for this feature as of now

@@ -71,22 +71,39 @@ import org.egov.edcr.utility.Util;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import static org.egov.edcr.constants.CommonFeatureConstants.*;
+import static org.egov.edcr.constants.CommonKeyConstants.*;
+
 @Service
 public class SpiralStair extends FeatureProcess {
 	private static final Logger LOG = LogManager.getLogger(SpiralStair.class);
-	private static final String FLOOR = "Floor";
 	private static final String RULE42_5_IV = "42-5-iv";
 	private static final String DIAMETER_DESCRIPTION = "Minimum diameter for spiral fire stair %s";
 
+
 	@Autowired
 	MDMSCacheManager cache;
-	
 
+	/**
+	 * Validates the building plan for spiral stair requirements.
+	 * Currently performs no validation and returns the plan as-is.
+	 *
+	 * @param pl The building plan to validate
+	 * @return The unmodified plan
+	 */
 	@Override
 	public Plan validate(Plan pl) {
 		return pl;
 	}
 
+	/**
+	 * Processes spiral stair requirements for all blocks in the building plan.
+	 * Fetches spiral stair rules from MDMS cache, validates diameter requirements,
+	 * checks building height restrictions, and generates scrutiny details for compliance.
+	 *
+	 * @param plan The building plan to process
+	 * @return The processed plan with scrutiny details added
+	 */
 	@Override
 	public Plan process(Plan plan) {
 	    BigDecimal expectedDiameter = BigDecimal.ZERO;
@@ -118,12 +135,12 @@ public class SpiralStair extends FeatureProcess {
 
 	            if (spiralStairs.isEmpty()) continue;
 
-	            boolean isTypicalFloor = (Boolean) typicalFloorValues.get("isTypicalRepititiveFloor");
+	            boolean isTypicalFloor = (Boolean) typicalFloorValues.get(IS_TYPICAL_REP_FLOOR);
 	            if (isTypicalFloor) continue;
 
-	            String floorLabel = typicalFloorValues.get("typicalFloors") != null
-	                              ? (String) typicalFloorValues.get("typicalFloors")
-	                              : " floor " + floor.getNumber();
+	            String floorLabel = typicalFloorValues.get(TYPICAL_FLOOR) != null
+	                              ? (String) typicalFloorValues.get(TYPICAL_FLOOR)
+	                              : FLOOR_SPACED + floor.getNumber();
 
 	            for (org.egov.common.entity.edcr.SpiralStair stair : spiralStairs) {
 	                List<Circle> circles = stair.getCircles();
@@ -132,9 +149,9 @@ public class SpiralStair extends FeatureProcess {
 	                BigDecimal buildingHeight = Util.roundOffTwoDecimal(block.getBuilding().getBuildingHeight());
 	                if (buildingHeight.compareTo(Util.roundOffTwoDecimal(maxBuildingHeightForSpiral)) > 0) {
 	                    setReportOutputDetailsFloorStairWise(plan, RULE42_5_IV, floorLabel,
-	                            stair.getNumber(), "",
-	                            "spiral stair of fire stair not allowed for building with height > 9 for block "
-	                                    + block.getNumber() + " " + floorLabel,
+	                            stair.getNumber(), EMPTY_STRING,
+	                            SPIRAL_STAIR_NOT_ALLOWED
+	                                    + block.getNumber() + SINGLE_SPACE_STRING + floorLabel,
 	                            Result.Not_Accepted.getResultVal(), scrutinyDetail);
 	                    continue;
 	                }
@@ -159,7 +176,13 @@ public class SpiralStair extends FeatureProcess {
 	    return plan;
 	}
 
-	
+	/**
+	 * Initializes scrutiny detail object for spiral stair validation reporting.
+	 * Sets up column headings and key for the specific block being processed.
+	 *
+	 * @param block The building block for which scrutiny detail is being initialized
+	 * @return Configured ScrutinyDetail object with appropriate headings and key
+	 */
 	private ScrutinyDetail initializeScrutinyDetailForSpiralStair(Block block) {
 	    ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
 	    scrutinyDetail.addColumnHeading(1, RULE_NO);
@@ -168,10 +191,24 @@ public class SpiralStair extends FeatureProcess {
 	    scrutinyDetail.addColumnHeading(4, REQUIRED);
 	    scrutinyDetail.addColumnHeading(5, PERMISSIBLE);
 	    scrutinyDetail.addColumnHeading(6, STATUS);
-	    scrutinyDetail.setKey("Block_" + block.getNumber() + "_" + "Spiral Fire Stair");
+	    scrutinyDetail.setKey(BLOCK + block.getNumber() + SPIRAL_FIRE_STAIR_SUFFIX);
 	    return scrutinyDetail;
 	}
 
+	/**
+	 * Adds a single entry to the scrutiny detail for spiral stair validation results.
+	 * Creates a detailed report entry with rule information, floor details, requirements,
+	 * and compliance status.
+	 *
+	 * @param pl The building plan
+	 * @param ruleNo The rule number being validated
+	 * @param floor The floor identifier
+	 * @param description Description of the requirement being checked
+	 * @param expected The expected/required value
+	 * @param actual The actual/provided value
+	 * @param status The compliance status (Accepted/Not_Accepted)
+	 * @param scrutinyDetail The scrutiny detail object to add the entry to
+	 */
 	// Method to add one entry in scrutiny detail
 	private void setReportOutputDetailsFloorStairWise(Plan pl, String ruleNo, String floor, String description,
 			String expected, String actual, String status, ScrutinyDetail scrutinyDetail) {
@@ -186,7 +223,12 @@ public class SpiralStair extends FeatureProcess {
 		pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
 	}
 
-
+	/**
+	 * Returns amendment dates for spiral stair rules.
+	 * Currently returns an empty map as no amendments are defined.
+	 *
+	 * @return Empty LinkedHashMap of amendment dates
+	 */
 	@Override
 	public Map<String, Date> getAmendments() {
         return new LinkedHashMap<>();

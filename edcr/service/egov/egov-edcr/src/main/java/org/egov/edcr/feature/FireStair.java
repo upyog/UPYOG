@@ -79,6 +79,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 
+import static org.egov.edcr.constants.CommonFeatureConstants.UNDERSCORE;
+import static org.egov.edcr.constants.CommonKeyConstants.*;
+
 /*
  * This class is responsible for validating and processing fire stair dimensions
  * in building plans. It ensures compliance with predefined rules for fire stair
@@ -185,11 +188,11 @@ public class FireStair extends FeatureProcess {
 		int fireStairCount = 0;
 		List<String> fireStairAbsent = new ArrayList<>();
 
-		ScrutinyDetail scrutinyDetailWidth = createScrutinyDetail(block, "Fire Stair - Width");
-		ScrutinyDetail scrutinyDetailTread = createScrutinyDetail(block, "Fire Stair - Tread width");
-		ScrutinyDetail scrutinyDetailRise = createScrutinyDetail(block, "Fire Stair - Number of risers");
-		ScrutinyDetail scrutinyDetailLanding = createScrutinyDetail(block, "Fire Stair - Mid landing");
-		ScrutinyDetail scrutinyDetailAbutWall = createScrutinyDetail(block, "Fire Stair - Abutting External Wall");
+		ScrutinyDetail scrutinyDetailWidth = createScrutinyDetail(block, FIRE_STAIR_WIDTH);
+		ScrutinyDetail scrutinyDetailTread = createScrutinyDetail(block, FIRE_STAIR_TREAD);
+		ScrutinyDetail scrutinyDetailRise = createScrutinyDetail(block, FIRE_STAIR_RISERS);
+		ScrutinyDetail scrutinyDetailLanding = createScrutinyDetail(block, FIRE_STAIR_LANDING);
+		ScrutinyDetail scrutinyDetailAbutWall = createScrutinyDetail(block, FIRE_STAIR_ABUTTING);
 
 		for (Floor floor : block.getBuilding().getFloors()) {
 			if (!floor.getTerrace()) {
@@ -205,21 +208,21 @@ public class FireStair extends FeatureProcess {
 								scrutinyDetailTread, scrutinyDetailRise, scrutinyDetailLanding, scrutinyDetailAbutWall);
 					}
 				} else if (block.getBuilding().getIsHighRise()) {
-					fireStairAbsent.add("Block " + block.getNumber() + " floor " + floor.getNumber());
+					fireStairAbsent.add(BLOCK + block.getNumber() + FLOOR_SPACED + floor.getNumber());
 				}
 			}
 		}
 
 		if (!fireStairAbsent.isEmpty()) {
 			for (String error : fireStairAbsent) {
-				errors.put("Fire Stair " + error, "Fire stair not defined in " + error);
+				errors.put(FIRE_STAIR_C + error, FIRE_STAIR_NOT_DEFINED + error);
 			}
 			plan.addErrors(errors);
 		}
 
 		if (block.getBuilding().getIsHighRise() && fireStairCount == 0) {
-			errors.put("FireStair not defined in blk " + block.getNumber(), "FireStair not defined in block "
-					+ block.getNumber() + ", it is mandatory for building with height more than 15m.");
+			errors.put(FIRE_STAIR_NOT_DEFINED_BLK + block.getNumber(), FIRE_STAIR_NOT_DEFINED_BLOCK
+					+ block.getNumber() + MANDATORY_BUILDING_HEIGHT_15M);
 			plan.addErrors(errors);
 		}
 	}
@@ -245,8 +248,8 @@ public class FireStair extends FeatureProcess {
 			ScrutinyDetail sdTread, ScrutinyDetail sdRise, ScrutinyDetail sdLanding, ScrutinyDetail sdAbutWall) {
 
 		setReportOutputDetailsBltUp(plan, RULE42_5_II, floor.getNumber().toString(),
-				"Fire stair should abut floor external wall",
-				fireStair.isAbuttingBltUp() ? "Is abutting external wall" : "Not abutting external wall",
+				FIRE_STAIR_ABUT_DESC,
+				fireStair.isAbuttingBltUp() ? FIRE_STAIR_ABUT_PROVIDED_YES : FIRE_STAIR_ABUT_PROVIDED_NO,
 				fireStair.isAbuttingBltUp() ? Result.Accepted.getResultVal() : Result.Not_Accepted.getResultVal(),
 				sdAbutWall);
 
@@ -259,8 +262,8 @@ public class FireStair extends FeatureProcess {
 			validateLanding(plan, block, sdLanding, floor, typicalFloorValues, fireStair, landings,
 					(HashMap<String, String>) errors, fireStairMinimumWidth);
 		} else {
-			String errorMsg = "Fire Stair landing not defined in blk " + block.getNumber() + " floor "
-					+ floor.getNumber() + " fire stair " + fireStair.getNumber();
+			String errorMsg = FIRE_STAIR_LANDING_NOT_DEFINED_BLK + block.getNumber() + FLOOR_SPACED
+					+ floor.getNumber() + FIRE_STAIR + fireStair.getNumber();
 			errors.put(errorMsg, errorMsg);
 			plan.addErrors(errors);
 		}
@@ -281,7 +284,7 @@ public class FireStair extends FeatureProcess {
 		sd.addColumnHeading(4, PERMISSIBLE);
 		sd.addColumnHeading(5, PROVIDED);
 		sd.addColumnHeading(6, STATUS);
-		sd.setKey("Block_" + block.getNumber() + "_" + keySuffix);
+		sd.setKey(BLOCK + block.getNumber() + UNDERSCORE + keySuffix);
 		return sd;
 	}
 
@@ -309,15 +312,15 @@ public class FireStair extends FeatureProcess {
 				BigDecimal minWidth = BigDecimal.ZERO;
 				boolean valid = false;
 
-				if (!(Boolean) typicalFloorValues.get("isTypicalRepititiveFloor")) {
+				if (!(Boolean) typicalFloorValues.get(IS_TYPICAL_REP_FLOOR)) {
 					minWidth = Util.roundOffTwoDecimal(landingWidth);
 
 					if (minWidth.compareTo(fireStairMinimumWidth) >= 0) {
 						valid = true;
 					}
-					String value = typicalFloorValues.get("typicalFloors") != null
-							? (String) typicalFloorValues.get("typicalFloors")
-							: " floor " + floor.getNumber();
+					String value = typicalFloorValues.get(TYPICAL_FLOOR) != null
+							? (String) typicalFloorValues.get(TYPICAL_FLOOR)
+							: FLOOR_SPACED + floor.getNumber();
 
 					if (valid) {
 						setReportOutputDetailsFloorStairWise(plan, RULE42_5_II, value,
@@ -333,10 +336,10 @@ public class FireStair extends FeatureProcess {
 				}
 			} else {
 				errors.put(
-						"Fire Stair landing width not defined in blk " + block.getNumber() + " floor "
-								+ floor.getNumber() + " fire stair " + fireStair.getNumber(),
-						"Fire Stair landing width not defined in blk " + block.getNumber() + " floor "
-								+ floor.getNumber() + " fire stair " + fireStair.getNumber());
+						FIRE_STAIR_LANDING_WIDTH_NOT_DEFINED_BLK + block.getNumber() + FLOOR_SPACED
+								+ floor.getNumber() + FIRE_STAIR + fireStair.getNumber(),
+						FIRE_STAIR_LANDING_WIDTH_NOT_DEFINED_BLK + block.getNumber() + FLOOR_SPACED
+								+ floor.getNumber() + FIRE_STAIR + fireStair.getNumber());
 				plan.addErrors(errors);
 			}
 		}
@@ -386,7 +389,7 @@ public class FireStair extends FeatureProcess {
 										fireStair, flight, flightWidths, minFlightWidth, mostRestrictiveOccupancyType);
 
 							} else {
-								errors.put("Flight PolyLine width" + flightLayerName,
+								errors.put(FLIGHT_POLYLINE_WIDTH + flightLayerName,
 										FLIGHT_WIDTH_DEFINED_DESCRIPTION + flightLayerName);
 								plan.addErrors(errors);
 							}
@@ -406,7 +409,7 @@ public class FireStair extends FeatureProcess {
 									LOG.info("Denominator is zero");
 								}
 							} else {
-								errors.put("Flight PolyLine length" + flightLayerName,
+								errors.put(FLIGHT_POLYLINE_LENGTH + flightLayerName,
 										FLIGHT_LENGTH_DEFINED_DESCRIPTION + flightLayerName);
 								plan.addErrors(errors);
 
@@ -423,7 +426,7 @@ public class FireStair extends FeatureProcess {
 							} else {
 								String layerName = String.format(DxfFileConstants.LAYER_FIRESTAIR_FLIGHT,
 										block.getNumber(), floor.getNumber(), fireStair.getNumber());
-								errors.put("noofRise" + layerName,
+								errors.put(NO_OF_RISE + layerName,
 										edcrMessageSource.getMessage(DcrConstants.OBJECTNOTDEFINED,
 												new String[] { NO_OF_RISERS + layerName },
 												LocaleContextHolder.getLocale()));
@@ -432,7 +435,7 @@ public class FireStair extends FeatureProcess {
 
 						}
 					} else {
-						errors.put("Flight PolyLine " + flightLayerName,
+						errors.put(FLIGHT_POLYLINE + flightLayerName,
 								FLIGHT_POLYLINE_NOT_DEFINED_DESCRIPTION + flightLayerName);
 						plan.addErrors(errors);
 					}
@@ -497,15 +500,15 @@ public class FireStair extends FeatureProcess {
 
 		boolean valid = false;
 
-		if (!(Boolean) typicalFloorValues.get("isTypicalRepititiveFloor")) {
+		if (!(Boolean) typicalFloorValues.get(IS_TYPICAL_REP_FLOOR)) {
 			minFlightWidth = Util.roundOffTwoDecimal(flightPolyLine);
 
 			if (minFlightWidth.compareTo(fireStairMinimumWidth) >= 0) {
 				valid = true;
 			}
-			String value = typicalFloorValues.get("typicalFloors") != null
-					? (String) typicalFloorValues.get("typicalFloors")
-					: " floor " + floor.getNumber();
+			String value = typicalFloorValues.get(TYPICAL_FLOOR) != null
+					? (String) typicalFloorValues.get(TYPICAL_FLOOR)
+					: FLOOR_SPACED + floor.getNumber();
 
 			if (valid) {
 				setReportOutputDetailsFloorStairWise(plan, RULE42_5_II, value,
@@ -571,16 +574,16 @@ public class FireStair extends FeatureProcess {
 
 				boolean valid = false;
 
-				if (!(Boolean) typicalFloorValues.get("isTypicalRepititiveFloor")) {
+				if (!(Boolean) typicalFloorValues.get(IS_TYPICAL_REP_FLOOR)) {
 
 					if (Util.roundOffTwoDecimal(minTread)
 							.compareTo(Util.roundOffTwoDecimal(fireStairRequiredTread)) >= 0) {
 						valid = true;
 					}
 
-					String value = typicalFloorValues.get("typicalFloors") != null
-							? (String) typicalFloorValues.get("typicalFloors")
-							: " floor " + floor.getNumber();
+					String value = typicalFloorValues.get(TYPICAL_FLOOR) != null
+							? (String) typicalFloorValues.get(TYPICAL_FLOOR)
+							: FLOOR_SPACED + floor.getNumber();
 					if (valid) {
 						setReportOutputDetailsFloorStairWise(plan, RULE42_5_II, value,
 								String.format(TREAD_DESCRIPTION, fireStair.getNumber(), flight.getNumber()),
@@ -597,8 +600,8 @@ public class FireStair extends FeatureProcess {
 				if (flight.getNoOfRises().compareTo(BigDecimal.ZERO) > 0) {
 					String flightLayerName = String.format(DxfFileConstants.LAYER_FIRESTAIR_FLIGHT, block.getNumber(),
 							floor.getNumber(), fireStair.getNumber(), flight.getNumber());
-					errors.put("NoOfRisesCount" + flightLayerName,
-							"Number of risers count should be greater than the count of length of flight dimensions defined in layer "
+					errors.put(NO_OF_RISES_COUNT + flightLayerName,
+							NO_OF_RISERS_GREATER_THAN_LENGTH_FLIGHT_DIMENSIONS
 									+ flightLayerName);
 					plan.addErrors(errors);
 				}
@@ -622,14 +625,14 @@ public class FireStair extends FeatureProcess {
 			BigDecimal fireStairExpectedNoofRise) {
 		boolean valid = false;
 
-		if (!(Boolean) typicalFloorValues.get("isTypicalRepititiveFloor")) {
+		if (!(Boolean) typicalFloorValues.get(IS_TYPICAL_REP_FLOOR)) {
 			if (Util.roundOffTwoDecimal(noOfRises).compareTo(Util.roundOffTwoDecimal(fireStairExpectedNoofRise)) <= 0) {
 				valid = true;
 			}
 
-			String value = typicalFloorValues.get("typicalFloors") != null
-					? (String) typicalFloorValues.get("typicalFloors")
-					: " floor " + floor.getNumber();
+			String value = typicalFloorValues.get(TYPICAL_FLOOR) != null
+					? (String) typicalFloorValues.get(TYPICAL_FLOOR)
+					: FLOOR_SPACED + floor.getNumber();
 			if (valid) {
 				setReportOutputDetailsFloorStairWise(plan, RULE42_5_II, value,
 						String.format(NO_OF_RISER_DESCRIPTION, fireStair.getNumber(), flight.getNumber()),

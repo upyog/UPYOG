@@ -61,6 +61,10 @@ import org.egov.common.entity.edcr.Result;
 import org.egov.common.entity.edcr.ScrutinyDetail;
 import org.springframework.stereotype.Service;
 
+import static org.egov.edcr.constants.CommonFeatureConstants.DEF_IN_THE_PLAN;
+import static org.egov.edcr.constants.CommonFeatureConstants.NOT_DEF_PLAN_VERIFY_REQ_DEF_BUSINESS;
+import static org.egov.edcr.constants.CommonKeyConstants.COM_COL_DISPOSAL_SOLID_LIQUID_WASTE;
+
 @Service
 public class SolidLiquidWasteTreatment extends FeatureProcess {
 
@@ -68,11 +72,25 @@ public class SolidLiquidWasteTreatment extends FeatureProcess {
 
     private static final String SUBRULE_55_11 = "55-11";
 
+    /**
+     * Validates the building plan for solid and liquid waste treatment requirements.
+     * Currently performs no validation and returns the plan as-is.
+     *
+     * @param pl The building plan to validate
+     * @return The unmodified plan
+     */
     @Override
     public Plan validate(Plan pl) {
         return pl;
     }
 
+    /**
+     * Processes solid and liquid waste treatment requirements for the building plan.
+     * Currently commented out and returns the plan without processing.
+     *
+     * @param pl The building plan to process
+     * @return The unmodified plan
+     */
     @Override
     public Plan process(Plan pl) {
         /*
@@ -81,6 +99,14 @@ public class SolidLiquidWasteTreatment extends FeatureProcess {
         return pl;
     }
 
+    /**
+     * Processes solid and liquid waste treatment requirements for business occupancy buildings.
+     * Checks if any floor units have OCCUPANCY_E (business) type and validates whether
+     * solid liquid waste treatment facilities are defined in the plan.
+     * Generates scrutiny details with verification status based on findings.
+     *
+     * @param pl The building plan to process for waste treatment requirements
+     */
     private void processSolidLiquidWasteTreat(Plan pl) {
         validate(pl);
         scrutinyDetail = new ScrutinyDetail();
@@ -88,7 +114,7 @@ public class SolidLiquidWasteTreatment extends FeatureProcess {
         scrutinyDetail.addColumnHeading(2, DESCRIPTION);
         scrutinyDetail.addColumnHeading(3, FIELDVERIFIED);
         scrutinyDetail.addColumnHeading(4, STATUS);
-        scrutinyDetail.setKey("Common_Collection and disposal of Solid and Liquid Waste");
+        scrutinyDetail.setKey(COM_COL_DISPOSAL_SOLID_LIQUID_WASTE);
         if (pl != null && !pl.getBlocks().isEmpty()) {
             Boolean isFound = false;
             for (Block b : pl.getBlocks()) {
@@ -109,7 +135,7 @@ public class SolidLiquidWasteTreatment extends FeatureProcess {
                  * Marked as verify. As per rule, This rule applicable for wedding hall. There is no colour code specific to
                  * identify business. For other type of business, this might not mandatory.
                  */
-                details.put(FIELDVERIFIED, "Not Defined in plan. Verify whether required for defined Business.");
+                details.put(FIELDVERIFIED, NOT_DEF_PLAN_VERIFY_REQ_DEF_BUSINESS);
                 details.put(STATUS, Result.Verify.getResultVal());
                 scrutinyDetail.getDetail().add(details);
                 pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
@@ -118,7 +144,7 @@ public class SolidLiquidWasteTreatment extends FeatureProcess {
                 Map<String, String> details = new HashMap<>();
                 details.put(RULE_NO, SUBRULE_55_11);
                 details.put(DESCRIPTION, SUBRULE_55_11_DESC);
-                details.put(FIELDVERIFIED, "Defined in the Plan.");
+                details.put(FIELDVERIFIED, DEF_IN_THE_PLAN);
                 details.put(STATUS, Result.Accepted.getResultVal());
                 scrutinyDetail.getDetail().add(details);
                 pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
@@ -127,6 +153,12 @@ public class SolidLiquidWasteTreatment extends FeatureProcess {
         }
     }
 
+    /**
+     * Returns amendment dates for solid and liquid waste treatment rules.
+     * Currently returns an empty map as no amendments are defined.
+     *
+     * @return Empty LinkedHashMap of amendment dates
+     */
     @Override
     public Map<String, Date> getAmendments() {
         return new LinkedHashMap<>();

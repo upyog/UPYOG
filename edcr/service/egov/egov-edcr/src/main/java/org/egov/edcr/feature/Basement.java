@@ -72,6 +72,8 @@ import org.egov.edcr.service.MDMSCacheManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import static org.egov.edcr.constants.CommonFeatureConstants.*;
+
 @Service
 public class Basement extends FeatureProcess {
 
@@ -199,7 +201,7 @@ public class Basement extends FeatureProcess {
 	    detail.getDetail().add(createResultRow(
 	            RULE_46_6A,
 	            BASEMENT_DESCRIPTION_ONE,
-	            ">=" + basementValue,
+	            GREATER_THAN_EQUAL + basementValue,
 	            minHeight,
 	            accepted
 	    ));
@@ -223,7 +225,7 @@ public class Basement extends FeatureProcess {
 	    detail.getDetail().add(createResultRow(
 	            RULE_46_6C,
 	            BASEMENT_DESCRIPTION_TWO,
-	            "Between " + minValue + " to " + maxValue,
+	            BETWEEN + minValue + TO + maxValue,
 	            minCeilingHeight,
 	            accepted
 	    ));

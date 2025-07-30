@@ -47,6 +47,7 @@
 
 package org.egov.edcr.feature;
 
+import static org.egov.edcr.constants.CommonKeyConstants.*;
 import static org.egov.edcr.constants.DxfFileConstants.A;
 import static org.egov.edcr.constants.DxfFileConstants.F;
 
@@ -127,7 +128,7 @@ public class Kitchen extends FeatureProcess {
     @Override
     public Plan process(Plan pl) {
         validate(pl);
-        Map<String, Integer> heightOfRoomFeaturesColor = pl.getSubFeatureColorCodesMaster().get("HeightOfRoom");
+        Map<String, Integer> heightOfRoomFeaturesColor = pl.getSubFeatureColorCodesMaster().get(HEIGHT_OF_ROOM);
 
         if (pl == null || pl.getBlocks() == null) return pl;
 
@@ -168,7 +169,7 @@ public class Kitchen extends FeatureProcess {
         scrutinyDetail.addColumnHeading(4, REQUIRED);
         scrutinyDetail.addColumnHeading(5, PROVIDED);
         scrutinyDetail.addColumnHeading(6, STATUS);
-        scrutinyDetail.setKey("Block_" + block.getNumber() + "_Kitchen");
+        scrutinyDetail.setKey(BLOCK + block.getNumber() + U_KITCHEN);
 
         for (Floor floor : block.getBuilding().getFloors()) {
             processKitchenForFloor(floor, block, pl, occupancy, heightColors);
@@ -279,15 +280,15 @@ public class Kitchen extends FeatureProcess {
      */
     private void buildResult(Plan pl, Floor floor, BigDecimal expected, String subRule, String subRuleDesc,
             BigDecimal actual, boolean valid, Map<String, Object> typicalFloorValues) {
-        if (!(Boolean) typicalFloorValues.get("isTypicalRepititiveFloor")
+        if (!(Boolean) typicalFloorValues.get(IS_TYPICAL_REP_FLOOR)
                 && expected.compareTo(BigDecimal.valueOf(0)) > 0 &&
                 subRule != null && subRuleDesc != null) {
             if (actual.compareTo(expected) >= 0) {
                 valid = true;
             }
-            String value = typicalFloorValues.get("typicalFloors") != null
-                    ? (String) typicalFloorValues.get("typicalFloors")
-                    : " floor " + floor.getNumber();
+            String value = typicalFloorValues.get(TYPICAL_FLOOR) != null
+                    ? (String) typicalFloorValues.get(TYPICAL_FLOOR)
+                    : FLOOR_SPACED + floor.getNumber();
             if (valid) {
                 setReportOutputDetails(pl, subRule, subRuleDesc, value,
                         expected + DcrConstants.IN_METER,

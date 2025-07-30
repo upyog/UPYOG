@@ -64,8 +64,12 @@ import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.Result;
 import org.egov.common.entity.edcr.ScrutinyDetail;
 import org.egov.edcr.service.MDMSCacheManager;
+import org.egov.edcr.utility.DcrConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import static org.egov.edcr.constants.CommonFeatureConstants.*;
+import static org.egov.edcr.constants.CommonKeyConstants.DISTANCE_FROM_MONUMENT;
 
 @Service
 public class MonumentDistance extends FeatureProcess {
@@ -106,7 +110,7 @@ public class MonumentDistance extends FeatureProcess {
 
         List<BigDecimal> distances = pl.getDistanceToExternalEntity().getMonuments();
         if (distances.isEmpty()) {
-            pl.addError("Distance_From_Monument", "No distance is provided from monument");
+            pl.addError(DISTANCE_FROM_MONUMENT, NO_DISTANCE_PROVIDED);
             return pl;
         }
 
@@ -129,8 +133,8 @@ public class MonumentDistance extends FeatureProcess {
         BigDecimal maxFloorsAllowed = rule.getMonumentDistance_maxbuildingheightblock();
 
         if (hasNocNearMonument(pl)) {
-            addScrutinyDetail(scrutinyDetail, details, ">" + distanceOne,
-                    "Permitted with NOC", minDistance + " with NOC", Result.Accepted.getResultVal());
+            addScrutinyDetail(scrutinyDetail, details, GREATER_THAN + distanceOne,
+                    PERMITTED_WITH_NOC, minDistance + WITH_NOC, Result.Accepted.getResultVal());
         } else {
             handleWithoutNoc(pl, scrutinyDetail, details, minDistance, distanceOne, minDistanceTwo,
                     maxHeightAllowed, maxFloorsAllowed);
@@ -147,7 +151,7 @@ public class MonumentDistance extends FeatureProcess {
      * @return true if the building is near a monument, false otherwise.
      */
     private boolean isNearMonument(Plan pl) {
-        return "YES".equalsIgnoreCase(pl.getPlanInformation().getBuildingNearMonument());
+        return DcrConstants.YES.equalsIgnoreCase(pl.getPlanInformation().getBuildingNearMonument());
     }
 
     /**
@@ -157,7 +161,7 @@ public class MonumentDistance extends FeatureProcess {
      * @return true if NOC is present for proximity to monument, false otherwise.
      */
     private boolean hasNocNearMonument(Plan pl) {
-        return "YES".equalsIgnoreCase(pl.getPlanInformation().getNocNearMonument());
+        return DcrConstants.YES.equalsIgnoreCase(pl.getPlanInformation().getNocNearMonument());
     }
 
     /**
@@ -168,7 +172,7 @@ public class MonumentDistance extends FeatureProcess {
      */
     private ScrutinyDetail initScrutinyDetail() {
         ScrutinyDetail sd = new ScrutinyDetail();
-        sd.setKey("Common_Monument Distance");
+        sd.setKey(COMMON_MONUMENT_DISTANCE);
         sd.addColumnHeading(1, RULE_NO);
         sd.addColumnHeading(2, DESCRIPTION);
         sd.addColumnHeading(3, DISTANCE);
@@ -218,20 +222,20 @@ public class MonumentDistance extends FeatureProcess {
         BigDecimal actualFloors = maxBlock.getBuilding().getFloorsAboveGround();
 
         if (minDist.compareTo(distanceOne) > 0) {
-            addScrutinyDetail(sd, details, ">" + distanceOne, "ALL", minDist.toString(), Result.Accepted.getResultVal());
+            addScrutinyDetail(sd, details, GREATER_THAN + distanceOne, ALL, minDist.toString(), Result.Accepted.getResultVal());
         } else if (minDist.compareTo(minDistTwo) <= 0) {
-            addScrutinyDetail(sd, details, ">" + distanceOne,
-                    "No Construction is allowed within 100 mts from monument",
+            addScrutinyDetail(sd, details, GREATER_THAN + distanceOne,
+                    NO_CONSTRUCTION_ALLOWED,
                     minDist.toString(), Result.Not_Accepted.getResultVal());
         } else {
-            String permitted = String.format("Building Height: %smt, No of floors: %s", maxHeightAllowed, maxFloorsAllowed);
-            String provided = String.format("Building Height: %smt, No of floors: %s", actualHeight, actualFloors);
+            String permitted = String.format(BUILDING_HEIGHT_FORMAT, maxHeightAllowed, maxFloorsAllowed);
+            String provided = String.format(BUILDING_HEIGHT_FORMAT, actualHeight, actualFloors);
 
             String status = (actualHeight.compareTo(maxHeightAllowed) <= 0 && actualFloors.compareTo(maxFloorsAllowed) <= 0)
                     ? Result.Accepted.getResultVal()
                     : Result.Not_Accepted.getResultVal();
 
-            String range = String.format("From %s to %s", minDistTwo, distanceOne);
+            String range = String.format(FROM_TO_FORMAT, minDistTwo, distanceOne);
             addScrutinyDetail(sd, details, range, permitted, provided, status);
         }
     }

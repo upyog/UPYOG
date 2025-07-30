@@ -292,7 +292,7 @@ public class BathRoomWaterClosets extends FeatureProcess {
         Map<String, String> resultRow = new HashMap<>();
         resultRow.put(RULE_NO, RULE_41_IV);
         resultRow.put(DESCRIPTION, BathroomWaterClosets_DESCRIPTION);
-        resultRow.put(REQUIRED, HEIGHT + reqHeight + TOTAL_AREA + reqArea + ", Width >= " + reqWidth);
+        resultRow.put(REQUIRED, HEIGHT + reqHeight + TOTAL_AREA + reqArea + WIDTH + reqWidth);
         resultRow.put(PROVIDED, HEIGHT + minHeight + TOTAL_AREA + totalArea + WIDTH + minWidth);
         resultRow.put(STATUS, isAccepted ? Result.Accepted.getResultVal() : Result.Not_Accepted.getResultVal());
         return resultRow;

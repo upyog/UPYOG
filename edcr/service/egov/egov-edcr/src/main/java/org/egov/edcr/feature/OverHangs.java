@@ -73,6 +73,9 @@ import org.egov.edcr.service.MDMSCacheManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import static org.egov.edcr.constants.CommonFeatureConstants.GREATER_THAN;
+import static org.egov.edcr.constants.CommonKeyConstants.*;
+
 @Service
 public class OverHangs extends FeatureProcess {
 
@@ -167,7 +170,7 @@ public class OverHangs extends FeatureProcess {
      */
     private ScrutinyDetail initializeScrutinyDetail(Block block) {
         ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
-        scrutinyDetail.setKey("Block_" + block.getNumber() + "_Chajja");
+        scrutinyDetail.setKey(BLOCK + block.getNumber() + CHAJJA_SUFFIX);
         scrutinyDetail.addColumnHeading(1, RULE_NO);
         scrutinyDetail.addColumnHeading(2, FLOOR);
         scrutinyDetail.addColumnHeading(3, DESCRIPTION);
@@ -199,7 +202,7 @@ public class OverHangs extends FeatureProcess {
 
         Map<String, String> details = new HashMap<>(detailsTemplate);
         details.put(FLOOR, floor.getNumber().toString());
-        details.put(PERMISSIBLE, ">" + overHangsValue.toString());
+        details.put(PERMISSIBLE, GREATER_THAN + overHangsValue.toString());
         details.put(PROVIDED, minWidth.toString());
 
         if (minWidth.compareTo(overHangsValue) > 0) {

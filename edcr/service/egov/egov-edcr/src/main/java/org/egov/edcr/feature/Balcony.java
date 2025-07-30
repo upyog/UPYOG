@@ -71,6 +71,9 @@ import org.egov.edcr.utility.Util;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import static org.egov.edcr.constants.CommonFeatureConstants.UNDERSCORE;
+import static org.egov.edcr.constants.CommonKeyConstants.*;
+
 @Service
 public class Balcony extends FeatureProcess {
 
@@ -120,10 +123,10 @@ public class Balcony extends FeatureProcess {
 	 * </p>
 	 *
 	 * @param plan  the plan being processed
-	 * @param block the block whose balconies are to be processed
+	 * @param block the block whose balconies are to be processed"Block_"
 	 */
 	private void processBlockBalconies(Plan plan, Block block) {
-	    ScrutinyDetail scrutinyDetail = createScrutinyDetail("Block_" + block.getNumber() + "_" + MdmsFeatureConstants.BALCONY,
+	    ScrutinyDetail scrutinyDetail = createScrutinyDetail(BLOCK + block.getNumber() + UNDERSCORE + MdmsFeatureConstants.BALCONY,
 	            RULE_NO, FLOOR, DESCRIPTION, PERMISSIBLE, PROVIDED, STATUS);
 
 	    for (Floor floor : block.getBuilding().getFloors()) {
@@ -208,9 +211,9 @@ public class Balcony extends FeatureProcess {
 	    boolean isAccepted = minWidth.compareTo(balconyValue.setScale(DcrConstants.DECIMALDIGITS_MEASUREMENTS,
 	            DcrConstants.ROUNDMODE_MEASUREMENTS)) >= 0;
 
-	    String floorLabel = typicalFloorValues.get("typicalFloors") != null
-	            ? (String) typicalFloorValues.get("typicalFloors")
-	            : "floor " + floor.getNumber();
+	    String floorLabel = typicalFloorValues.get(TYPICAL_FLOOR) != null
+	            ? (String) typicalFloorValues.get(TYPICAL_FLOOR)
+	            : FLOOR_SPACED + floor.getNumber();
 
 	    Map<String, String> resultRow = createResultRow(
 	            RULE45_IV,

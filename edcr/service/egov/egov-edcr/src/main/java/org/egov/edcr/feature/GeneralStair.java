@@ -12,12 +12,10 @@ import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.egov.common.constants.MdmsFeatureConstants;
 import org.egov.common.entity.edcr.Block;
 import org.egov.common.entity.edcr.FeatureEnum;
 import org.egov.common.entity.edcr.Flight;
 import org.egov.common.entity.edcr.Floor;
-import org.egov.common.entity.edcr.FrontSetBackRequirement;
 import org.egov.common.entity.edcr.MdmsFeatureRule;
 import org.egov.common.entity.edcr.Measurement;
 import org.egov.common.entity.edcr.NoOfRiserRequirement;
@@ -27,24 +25,21 @@ import org.egov.common.entity.edcr.RequiredTreadRequirement;
 import org.egov.common.entity.edcr.RequiredWidthRequirement;
 import org.egov.common.entity.edcr.Result;
 import org.egov.common.entity.edcr.RiserHeightRequirement;
-import org.egov.common.entity.edcr.FeatureRuleKey;
-import org.egov.common.entity.edcr.FireStairRequirement;
 import org.egov.common.entity.edcr.ScrutinyDetail;
 import org.egov.common.entity.edcr.StairLanding;
 import org.egov.edcr.constants.DxfFileConstants;
-import org.egov.edcr.constants.EdcrRulesMdmsConstants;
 import org.egov.edcr.service.MDMSCacheManager;
-import org.egov.edcr.service.FetchEdcrRulesMdms;
 import org.egov.edcr.utility.DcrConstants;
 import org.egov.edcr.utility.Util;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 
+import static org.egov.edcr.constants.CommonFeatureConstants.*;
+import static org.egov.edcr.constants.CommonKeyConstants.*;
 @Service
 public class GeneralStair extends FeatureProcess {
 	private static final Logger LOG = LogManager.getLogger(GeneralStair.class);
-	private static final String FLOOR = "Floor";
 	private static final String RULE = "4.4.4";
 	private static final String RULERISER = "5.15.4.1";
 	private static final String RULETREAD = "5.15.3";
@@ -94,11 +89,11 @@ public class GeneralStair extends FeatureProcess {
 
 		if (block.getBuilding() == null) return;
 
-		ScrutinyDetail scrutinyDetail2 = createScrutinyDetail(block, "General Stair - Width");
-		ScrutinyDetail scrutinyDetail3 = createScrutinyDetail(block, "General Stair - Tread width");
-		ScrutinyDetail scrutinyDetailRise = createScrutinyDetail(block, "General Stair - Number of risers");
-		ScrutinyDetail scrutinyDetailLanding = createScrutinyDetail(block, "General Stair - Mid landing");
-		ScrutinyDetail scrutinyDetail4 = createScrutinyDetail(block, "General Stair - Riser Height");
+		ScrutinyDetail scrutinyDetail2 = createScrutinyDetail(block, GENERAL_STAIR_WIDTH);
+		ScrutinyDetail scrutinyDetail3 = createScrutinyDetail(block, GENERAL_STAIR_TREAD_WIDTH);
+		ScrutinyDetail scrutinyDetailRise = createScrutinyDetail(block, GENERAL_STAIR_NUMBER_OF_RISERS);
+		ScrutinyDetail scrutinyDetailLanding = createScrutinyDetail(block, GENERAL_STAIR_MID_LANDING);
+		ScrutinyDetail scrutinyDetail4 = createScrutinyDetail(block, GENERAL_STAIR_RISER_HEIGHT);
 
 		OccupancyTypeHelper mostRestrictiveOccupancyType = block.getBuilding().getMostRestrictiveFarHelper();
 		List<Floor> floors = block.getBuilding().getFloors();
@@ -125,14 +120,14 @@ public class GeneralStair extends FeatureProcess {
 							validateLanding(plan, block, scrutinyDetailLanding, mostRestrictiveOccupancyType, floor,
 									typicalFloorValues, generalStair, landings, errors);
 						} else if (floor.getNumber() != generalStairCount - 1) {
-							errors.put("General Stair landing not defined in block " + block.getNumber() + " floor " + floor.getNumber() + " stair " + generalStair.getNumber(),
-									"General Stair landing not defined in block " + block.getNumber() + " floor " + floor.getNumber() + " stair " + generalStair.getNumber());
+							errors.put(GENERAL_STAIR_LANDING_NOT_DEFINED + block.getNumber() + FLOOR_SPACED + floor.getNumber() + STAIR_PREFIX + generalStair.getNumber(),
+									GENERAL_STAIR_LANDING_NOT_DEFINED + block.getNumber() + FLOOR_SPACED + floor.getNumber() + STAIR_PREFIX + generalStair.getNumber());
 							plan.addErrors(errors);
 						}
 					}
 				} else {
 					if (floor.getNumber() != generalStairCount) {
-						stairAbsent.add("Block " + block.getNumber() + " floor " + floor.getNumber());
+						stairAbsent.add(BLOCK_PREFIX + block.getNumber() + FLOOR_SPACED + floor.getNumber());
 					}
 				}
 			}
@@ -157,7 +152,7 @@ public class GeneralStair extends FeatureProcess {
 		detail.addColumnHeading(4, PERMISSIBLE);
 		detail.addColumnHeading(5, PROVIDED);
 		detail.addColumnHeading(6, STATUS);
-		detail.setKey("Block_" + block.getNumber() + "_" + title);
+		detail.setKey(BLOCK + block.getNumber() + "_" + title);
 		return detail;
 	}
 
@@ -208,7 +203,7 @@ public class GeneralStair extends FeatureProcess {
 		if (flrHt != null) {
 			BigDecimal riserHeight = flrHt.divide(totalSteps, 2, RoundingMode.HALF_UP);
 			String result = (riserHeight.compareTo(value) <= 0) ? Result.Accepted.getResultVal() : Result.Not_Accepted.getResultVal();
-			setReportOutputDetailsFloorStairWise(plan, RULE, "", "", "" + value, "" + riserHeight, result, scrutinyDetail4);
+			setReportOutputDetailsFloorStairWise(plan, RULE, EMPTY_STRING, EMPTY_STRING, EMPTY_STRING + value, EMPTY_STRING + riserHeight, result, scrutinyDetail4);
 		}
 	}
 
@@ -238,12 +233,12 @@ public class GeneralStair extends FeatureProcess {
 	 */
 	private void handleStairErrors(Plan plan, Block block, List<String> stairAbsent, int generalStairCount, HashMap<String, String> errors) {
 		for (String error : stairAbsent) {
-			errors.put("General Stair " + error, "General stair not defined in " + error);
+			errors.put(GENERAL_STAIR + error, GENERAL_STAIR_NOT_DEFINED + error);
 			plan.addErrors(errors);
 		}
 		if (generalStairCount == 0) {
-			errors.put("General Stair not defined in blk " + block.getNumber(),
-					"General Stair not defined in block " + block.getNumber() + ", it is mandatory for building with floors more than one.");
+			errors.put(GENERAL_STAIR_MANDATORY + "blk " + block.getNumber(),
+					GENERAL_STAIR_MANDATORY + block.getNumber() + GENERAL_STAIR_MANDATORY_SUFFIX);
 			plan.addErrors(errors);
 		}
 	}
@@ -275,16 +270,16 @@ public class GeneralStair extends FeatureProcess {
 				// Map<String, List<Map<String, Object>>> edcrRuleList =
 				// plan.getEdcrRulesFeatures();
 
-				if (!(Boolean) typicalFloorValues.get("isTypicalRepititiveFloor")) {
+				if (!(Boolean) typicalFloorValues.get(IS_TYPICAL_REP_FLOOR)) {
 					minWidth = Util.roundOffTwoDecimal(landingWidth);
 					BigDecimal minimumWidth = getRequiredWidth(plan, block, mostRestrictiveOccupancyType);
 
 					if (minWidth.compareTo(minimumWidth) >= 0) {
 						valid = true;
 					}
-					String value = typicalFloorValues.get("typicalFloors") != null
-							? (String) typicalFloorValues.get("typicalFloors")
-							: " floor " + floor.getNumber();
+					String value = typicalFloorValues.get(TYPICAL_FLOOR) != null
+							? (String) typicalFloorValues.get(TYPICAL_FLOOR)
+							: FLOOR_SPACED + floor.getNumber();
 
 					if (valid) {
 						setReportOutputDetailsFloorStairWise(plan, RULE, value,
@@ -301,10 +296,10 @@ public class GeneralStair extends FeatureProcess {
 				System.out.println("minn" + minWidth);
 			} else {
 				errors.put(
-						"General Stair landing width not defined in block " + block.getNumber() + " floor "
-								+ floor.getNumber() + " stair " + generalStair.getNumber(),
-						"General Stair landing width not defined in block " + block.getNumber() + " floor "
-								+ floor.getNumber() + " stair " + generalStair.getNumber());
+						GENERAL_STAIR_LANDING_WIDTH_NOT_DEFINED + block.getNumber() + FLOOR_SPACED
+								+ floor.getNumber() + STAIR_PREFIX + generalStair.getNumber(),
+						GENERAL_STAIR_LANDING_WIDTH_NOT_DEFINED + block.getNumber() + FLOOR_SPACED
+								+ floor.getNumber() + STAIR_PREFIX + generalStair.getNumber());
 				plan.addErrors(errors);
 
 			}
@@ -394,7 +389,7 @@ public class GeneralStair extends FeatureProcess {
 	                    generalStair, flight, noOfRises, flightLayerName);
 	        }
 	    } else {
-	        errors.put("Flight PolyLine " + flightLayerName,
+	        errors.put(FLIGHT_POLYLINE + flightLayerName,
 	                FLIGHT_POLYLINE_NOT_DEFINED_DESCRIPTION + flightLayerName);
 	        plan.addErrors(errors);
 	    }
@@ -424,7 +419,7 @@ public class GeneralStair extends FeatureProcess {
 	        validateWidth(plan, scrutinyDetail2, floor, block, typicalFloorValues,
 	                generalStair, flight, flightWidths, BigDecimal.ZERO, mostRestrictiveOccupancyType);
 	    } else {
-	        errors.put("Flight PolyLine width" + flightLayerName,
+	        errors.put(FLIGHT_POLYLINE_WIDTH + flightLayerName,
 	                FLIGHT_WIDTH_DEFINED_DESCRIPTION + flightLayerName);
 	        plan.addErrors(errors);
 	    }
@@ -458,7 +453,7 @@ public class GeneralStair extends FeatureProcess {
 	            LOG.info("Denominator is zero");
 	        }
 	    } else {
-	        errors.put("Flight PolyLine length" + flightLayerName,
+	        errors.put(FLIGHT_POLYLINE_LENGTH + flightLayerName,
 	                FLIGHT_LENGTH_DEFINED_DESCRIPTION + flightLayerName);
 	        plan.addErrors(errors);
 	    }
@@ -491,7 +486,7 @@ public class GeneralStair extends FeatureProcess {
 	            LOG.info("Denominator is zero");
 	        }
 	    } else {
-	        errors.put("noofRise" + flightLayerName,
+	        errors.put(NO_OF_RISE + flightLayerName,
 	                edcrMessageSource.getMessage(DcrConstants.OBJECTNOTDEFINED,
 	                        new String[]{NO_OF_RISERS + flightLayerName},
 	                        LocaleContextHolder.getLocale()));
@@ -538,16 +533,16 @@ public class GeneralStair extends FeatureProcess {
 		BigDecimal flightPolyLine = flightWidths.stream().reduce(BigDecimal::min).get();
 		boolean valid = false;
 
-		if (!(Boolean) typicalFloorValues.get("isTypicalRepititiveFloor")) {
+		if (!(Boolean) typicalFloorValues.get(IS_TYPICAL_REP_FLOOR)) {
 			minFlightWidth = Util.roundOffTwoDecimal(flightPolyLine);
 			BigDecimal minimumWidth = getRequiredWidth(plan, block, mostRestrictiveOccupancyType);
 
 			if (minFlightWidth.compareTo(minimumWidth) >= 0) {
 				valid = true;
 			}
-			String value = typicalFloorValues.get("typicalFloors") != null
-					? (String) typicalFloorValues.get("typicalFloors")
-					: " floor " + floor.getNumber();
+			String value = typicalFloorValues.get(TYPICAL_FLOOR) != null
+					? (String) typicalFloorValues.get(TYPICAL_FLOOR)
+					: FLOOR_SPACED + floor.getNumber();
 
 			if (valid) {
 				setReportOutputDetailsFloorStairWise(plan, RULE, value,
@@ -655,7 +650,7 @@ public class GeneralStair extends FeatureProcess {
 	            minTread = totalLength.divide(denominator, DcrConstants.DECIMALDIGITS_MEASUREMENTS,
 	                    DcrConstants.ROUNDMODE_MEASUREMENTS);
 
-	            if (!(Boolean) typicalFloorValues.get("isTypicalRepititiveFloor")) {
+	            if (!(Boolean) typicalFloorValues.get(IS_TYPICAL_REP_FLOOR)) {
 	                validateTreadAgainstRequired(plan, scrutinyDetail3, floor, typicalFloorValues,
 	                        generalStair, flight, requiredTread, minTread);
 	            }
@@ -700,9 +695,9 @@ public class GeneralStair extends FeatureProcess {
 	    boolean isValid = Util.roundOffTwoDecimal(minTread)
 	            .compareTo(Util.roundOffTwoDecimal(requiredTread)) >= 0;
 
-	    String value = typicalFloorValues.get("typicalFloors") != null
-	            ? (String) typicalFloorValues.get("typicalFloors")
-	            : " floor " + floor.getNumber();
+	    String value = typicalFloorValues.get(TYPICAL_FLOOR) != null
+	            ? (String) typicalFloorValues.get(TYPICAL_FLOOR)
+	            : FLOOR_SPACED + floor.getNumber();
 
 	    String description = String.format(TREAD_DESCRIPTION, generalStair.getNumber(), flight.getNumber());
 
@@ -728,9 +723,8 @@ public class GeneralStair extends FeatureProcess {
 	    String flightLayerName = String.format(DxfFileConstants.LAYER_STAIR_FLIGHT, block.getNumber(),
 	            floor.getNumber(), generalStair.getNumber(), flight.getNumber());
 
-	    errors.put("NoOfRisesCount" + flightLayerName,
-	            "Number of risers count should be greater than the count of length of flight dimensions defined in layer "
-	                    + flightLayerName);
+	    errors.put(NO_OF_RISES_COUNT + flightLayerName,
+	            NO_OF_RISES_COUNT_ERROR + flightLayerName);
 	    plan.addErrors(errors);
 	}
 
@@ -787,7 +781,7 @@ public class GeneralStair extends FeatureProcess {
 			org.egov.common.entity.edcr.GeneralStair generalStair, Flight flight, BigDecimal noOfRises) {
 		boolean valid = false;
 
-		if (!(Boolean) typicalFloorValues.get("isTypicalRepititiveFloor")) {
+		if (!(Boolean) typicalFloorValues.get(IS_TYPICAL_REP_FLOOR)) {
 			
 		
 			BigDecimal noOfRisersValue = BigDecimal.ZERO;
@@ -813,18 +807,18 @@ public class GeneralStair extends FeatureProcess {
 				valid = true;
 			}
 			valid = true;
-			String value = typicalFloorValues.get("typicalFloors") != null
-					? (String) typicalFloorValues.get("typicalFloors")
-					: " floor " + floor.getNumber();
+			String value = typicalFloorValues.get(TYPICAL_FLOOR) != null
+					? (String) typicalFloorValues.get(TYPICAL_FLOOR)
+					: FLOOR_SPACED + floor.getNumber();
 			if (valid) {
 				setReportOutputDetailsFloorStairWise(plan, RULERISER, value,
 						String.format(NO_OF_RISER_DESCRIPTION, generalStair.getNumber(), flight.getNumber()),
-						"" + noOfRisersValue, String.valueOf(noOfRises), Result.Accepted.getResultVal(),
+						EMPTY_STRING + noOfRisersValue, String.valueOf(noOfRises), Result.Accepted.getResultVal(),
 						scrutinyDetail3);
 			} else {
 				setReportOutputDetailsFloorStairWise(plan, RULERISER, value,
 						String.format(NO_OF_RISER_DESCRIPTION, generalStair.getNumber(), flight.getNumber()),
-						"" + noOfRisersValue, String.valueOf(noOfRises), Result.Not_Accepted.getResultVal(),
+						EMPTY_STRING + noOfRisersValue, String.valueOf(noOfRises), Result.Not_Accepted.getResultVal(),
 						scrutinyDetail3);
 			}
 		}

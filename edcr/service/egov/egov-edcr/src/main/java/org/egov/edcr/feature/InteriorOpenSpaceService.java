@@ -74,6 +74,9 @@ import org.egov.edcr.service.FetchEdcrRulesMdms;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import static org.egov.edcr.constants.CommonFeatureConstants.*;
+import static org.egov.edcr.constants.CommonKeyConstants.COMMON_INTERIOR_OPEN_SPACE;
+
 @Service
 public class InteriorOpenSpaceService extends FeatureProcess {
 
@@ -215,7 +218,7 @@ public class InteriorOpenSpaceService extends FeatureProcess {
 				Map<String, String> details = new HashMap<>();
 				details.put(RULE_NO, ruleNoArea);
 				details.put(DESCRIPTION, description);
-				details.put(REQUIRED, MINIMUM_AREA + areaValueTwo.toString() + " Sq. M  ");
+				details.put(REQUIRED, MINIMUM_AREA + areaValueTwo.toString() + SQ_M);
 				details.put(PROVIDED, AREA + minArea + AT_FLOOR + f.getNumber());
 				details.put(STATUS, minArea.compareTo(areaValueTwo) >= 0 ? Result.Accepted.getResultVal()
 						: Result.Not_Accepted.getResultVal());
@@ -229,7 +232,7 @@ public class InteriorOpenSpaceService extends FeatureProcess {
 				Map<String, String> details = new HashMap<>();
 				details.put(RULE_NO, ruleNoWidth);
 				details.put(DESCRIPTION, description);
-				details.put(REQUIRED, MINIMUM_WIDTH + widthValueTwo.toString() + " M ");
+				details.put(REQUIRED, MINIMUM_WIDTH + widthValueTwo.toString() + M);
 				details.put(PROVIDED, AREA + minWidth + AT_FLOOR + f.getNumber());
 				details.put(STATUS, minWidth.compareTo(widthValueTwo) >= 0 ? Result.Accepted.getResultVal()
 						: Result.Not_Accepted.getResultVal());
@@ -248,7 +251,7 @@ public class InteriorOpenSpaceService extends FeatureProcess {
 	 */
     private ScrutinyDetail createScrutinyDetail() {
         ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
-        scrutinyDetail.setKey("Common_Interior Open Space");
+        scrutinyDetail.setKey(COMMON_INTERIOR_OPEN_SPACE);
         scrutinyDetail.addColumnHeading(1, RULE_NO);
         scrutinyDetail.addColumnHeading(2, DESCRIPTION);
         scrutinyDetail.addColumnHeading(3, REQUIRED);

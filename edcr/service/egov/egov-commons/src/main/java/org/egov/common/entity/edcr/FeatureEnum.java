@@ -73,8 +73,8 @@ public enum FeatureEnum {
 	    TOILET("Toilet"),   
 	    COVERAGE("Coverage"), 
 	    DOORS("Doors"), 
-	    FRONT_SET_BACK("FrontSetBack");
-
+	    FRONT_SET_BACK("FrontSetBack"),
+	    ADDITIONAL_FEATURE("AdditionalFeature");
 
 	    private final String value;
 

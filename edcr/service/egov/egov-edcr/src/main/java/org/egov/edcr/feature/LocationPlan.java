@@ -59,6 +59,9 @@ import org.egov.common.entity.edcr.Result;
 import org.egov.common.entity.edcr.ScrutinyDetail;
 import org.springframework.stereotype.Service;
 
+import static org.egov.edcr.constants.CommonFeatureConstants.*;
+import static org.egov.edcr.constants.CommonKeyConstants.*;
+
 @Service
 public class LocationPlan extends FeatureProcess {
 
@@ -87,15 +90,15 @@ public class LocationPlan extends FeatureProcess {
 		details.put(RULE_NO, RULE);
 		details.put(DESCRIPTION, LOCATION_PLAN_DESCRIPTION);
 		if (pl.getDrawingPreference().getLocationPlans() == null) {
-			errors.put("LOCATION_PLAN", "LOCATION_PLAN layer is not provided");
+			errors.put(LOCATION_PLAN, LOCATION_PLAN_LAYER_NOT_PROVIDED);
 			pl.addErrors(errors);
 		} else if (!pl.getDrawingPreference().getLocationPlans().isEmpty()) {
-			details.put(PROVIDED, "Location plans provided");
+			details.put(PROVIDED, LOCATION_PLANS_PROVIDED);
 			details.put(STATUS, Result.Accepted.getResultVal());
 			scrutinyDetail.getDetail().add(details);
 			pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
 		} else {
-			details.put(PROVIDED, "PolyLine is not defined in LOCATION_PLAN layer");
+			details.put(PROVIDED, POLYLINE_NOT_DEFINED);
 			details.put(STATUS, Result.Not_Accepted.getResultVal());
 			scrutinyDetail.getDetail().add(details);
 			pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);

@@ -76,6 +76,9 @@ import org.egov.edcr.service.FetchEdcrRulesMdms;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import static org.egov.edcr.constants.CommonFeatureConstants.*;
+
+
 @Service
 public class ToiletDetails extends FeatureProcess {
 
@@ -83,6 +86,13 @@ public class ToiletDetails extends FeatureProcess {
     private static final String RULE_41_IV = "5.5.2";
     public static final String BATHROOM_DESCRIPTION = "Toilet";
 
+    /**
+     * Validates the building plan for toilet requirements.
+     * Currently performs no validation and returns the plan as-is.
+     *
+     * @param pl The building plan to validate
+     * @return The unmodified plan
+     */
     @Override
     public Plan validate(Plan pl) {
         return pl;
@@ -91,6 +101,14 @@ public class ToiletDetails extends FeatureProcess {
     @Autowired
 	MDMSCacheManager cache;
 
+    /**
+     * Processes toilet requirements for all blocks in the building plan.
+     * Creates scrutiny details and validates each block's toilet specifications
+     * against minimum area, width, and ventilation requirements.
+     *
+     * @param pl The building plan to process
+     * @return The processed plan with scrutiny details added
+     */
     @Override
     public Plan process(Plan pl) {
         ScrutinyDetail scrutinyDetail = createToiletScrutinyDetail();
@@ -103,6 +121,12 @@ public class ToiletDetails extends FeatureProcess {
         return pl;
     }
 
+    /**
+     * Creates and initializes a scrutiny detail object for toilet validation reporting.
+     * Sets up column headings and key for the toilet scrutiny report.
+     *
+     * @return Configured ScrutinyDetail object with appropriate headings and key
+     */
     private ScrutinyDetail createToiletScrutinyDetail() {
         ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
         scrutinyDetail.setKey(Common_Toilet);
@@ -115,6 +139,15 @@ public class ToiletDetails extends FeatureProcess {
         return scrutinyDetail;
     }
 
+    /**
+     * Processes all toilets within a specific building block.
+     * Iterates through floors and toilet measurements to validate each toilet
+     * against the required specifications.
+     *
+     * @param pl The building plan
+     * @param block The building block containing toilets
+     * @param scrutinyDetail The scrutiny detail object to add results to
+     */
     private void processBlockToilets(Plan pl, Block block, ScrutinyDetail scrutinyDetail) {
         if (block.getBuilding() == null || block.getBuilding().getFloors() == null) return;
 
@@ -131,6 +164,17 @@ public class ToiletDetails extends FeatureProcess {
         }
     }
 
+    /**
+     * Evaluates a single toilet measurement against minimum requirements.
+     * Validates area, width, and ventilation height against MDMS rules and
+     * generates compliance status for the scrutiny report.
+     *
+     * @param pl The building plan
+     * @param floor The floor containing the toilet
+     * @param toilet The toilet object being evaluated
+     * @param measurement The specific toilet measurement to validate
+     * @param scrutinyDetail The scrutiny detail object to add results to
+     */
     private void evaluateToiletMeasurement(Plan pl, Floor floor, Toilet toilet, Measurement measurement,
                                            ScrutinyDetail scrutinyDetail) {
         Map<String, String> details = new HashMap<>();
@@ -151,8 +195,8 @@ public class ToiletDetails extends FeatureProcess {
         BigDecimal minWidth = rule.getMinToiletWidth();
         BigDecimal minVentilation = rule.getMinToiletVentilation();
 
-        String required = "Total Area >= " + minArea + ", Width >= " + minWidth + ", Ventilation >= " + minVentilation;
-        String provided = "Total Area = " + area + ", Width = " + width + ", Ventilation Height = " + ventilationHeight;
+        String required = TOTAL_AREA_STRING + GREATER_THAN_EQUAL + minArea + WIDTH_STRING + GREATER_THAN_EQUAL + minWidth + VENTILATION_STRING + GREATER_THAN_EQUAL + minVentilation;
+        String provided = TOTAL_AREA_STRING + IS_EQUAL_TO + area + WIDTH_STRING + IS_EQUAL_TO + width + VENTILATION_HEIGHT_STRING + ventilationHeight;
 
         details.put(REQUIRED, required);
         details.put(PROVIDED, provided);
@@ -166,6 +210,13 @@ public class ToiletDetails extends FeatureProcess {
         scrutinyDetail.getDetail().add(details);
     }
 
+    /**
+     * Retrieves toilet requirement rules from MDMS cache.
+     * Fetches the first matching toilet requirement rule based on plan configuration.
+     *
+     * @param pl The building plan containing configuration details
+     * @return Optional containing ToiletRequirement rule if found, empty otherwise
+     */
     private Optional<ToiletRequirement> getToiletRule(Plan pl) {
     	List<Object> rules = cache.getFeatureRules(pl, FeatureEnum.TOILET.getValue(), false);
        return rules.stream()
@@ -174,7 +225,12 @@ public class ToiletDetails extends FeatureProcess {
             .findFirst();
     }
 
-
+    /**
+     * Returns amendment dates for toilet requirement rules.
+     * Currently returns an empty map as no amendments are defined.
+     *
+     * @return Empty LinkedHashMap of amendment dates
+     */
     @Override
     public Map<String, Date> getAmendments() {
         return new LinkedHashMap<>();

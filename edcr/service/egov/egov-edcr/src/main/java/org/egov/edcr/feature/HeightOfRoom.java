@@ -47,9 +47,12 @@
 
 package org.egov.edcr.feature;
 
+import static org.egov.edcr.constants.CommonFeatureConstants.*;
+import static org.egov.edcr.constants.CommonKeyConstants.*;
 import static org.egov.edcr.constants.DxfFileConstants.A;
 import static org.egov.edcr.constants.DxfFileConstants.F;
 import static org.egov.edcr.constants.DxfFileConstants.G;
+import static org.egov.edcr.constants.RuleKeyConstants.FOUR_P_FOUR_P_FOUR;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -149,14 +152,14 @@ public class HeightOfRoom extends FeatureProcess {
 	@Override
 	public Plan process(Plan pl) {
 
-		Map<String, Integer> heightOfRoomFeaturesColor = pl.getSubFeatureColorCodesMaster().get("HeightOfRoom");
+		Map<String, Integer> heightOfRoomFeaturesColor = pl.getSubFeatureColorCodesMaster().get(HEIGHT_OF_ROOM);
 		validate(pl);
 		HashMap<String, String> errors = new HashMap<>();
 		if (pl != null && pl.getBlocks() != null) {
 			OccupancyTypeHelper mostRestrictiveOccupancy = pl.getVirtualBuilding() != null
 					? pl.getVirtualBuilding().getMostRestrictiveFarHelper()
 					: null;
-			String occupancyName = "";
+			String occupancyName = EMPTY_STRING;
 			if (mostRestrictiveOccupancy != null && mostRestrictiveOccupancy.getType() != null
 					&& (A.equalsIgnoreCase(mostRestrictiveOccupancy.getType().getCode())
 							|| (G.equalsIgnoreCase(mostRestrictiveOccupancy.getType().getCode())
@@ -172,7 +175,7 @@ public class HeightOfRoom extends FeatureProcess {
 						scrutinyDetail.addColumnHeading(6, PROVIDED);
 						scrutinyDetail.addColumnHeading(7, STATUS);
 
-						scrutinyDetail.setKey("Block_" + block.getNumber() + "_" + MdmsFeatureConstants.ROOM);
+						scrutinyDetail.setKey(BLOCK + block.getNumber() + UNDERSCORE + MdmsFeatureConstants.ROOM);
 
 						ScrutinyDetail scrutinyDetail1 = new ScrutinyDetail();
 						scrutinyDetail.addColumnHeading(1, RULE_NO);
@@ -182,7 +185,7 @@ public class HeightOfRoom extends FeatureProcess {
 						scrutinyDetail.addColumnHeading(5, REQUIRED);
 						scrutinyDetail.addColumnHeading(6, PROVIDED);
 						scrutinyDetail.addColumnHeading(7, STATUS);
-						scrutinyDetail.setKey("Block_" + block.getNumber() + "_" + MdmsFeatureConstants.ROOM_AREA);
+						scrutinyDetail.setKey(BLOCK + block.getNumber() + UNDERSCORE + MdmsFeatureConstants.ROOM_AREA);
 
 						ScrutinyDetail scrutinyDetail2 = new ScrutinyDetail();
 						scrutinyDetail2.addColumnHeading(1, RULE_NO);
@@ -192,7 +195,7 @@ public class HeightOfRoom extends FeatureProcess {
 						scrutinyDetail2.addColumnHeading(5, REQUIRED);
 						scrutinyDetail2.addColumnHeading(6, PROVIDED);
 						scrutinyDetail2.addColumnHeading(7, STATUS);
-						scrutinyDetail2.setKey("Block_" + block.getNumber() + "_" + MdmsFeatureConstants.DOORS);
+						scrutinyDetail2.setKey(BLOCK + block.getNumber() + UNDERSCORE + MdmsFeatureConstants.DOORS);
 
 						ScrutinyDetail scrutinyDetail5 = new ScrutinyDetail();
 						scrutinyDetail5.addColumnHeading(1, RULE_NO);
@@ -203,7 +206,7 @@ public class HeightOfRoom extends FeatureProcess {
 						scrutinyDetail5.addColumnHeading(6, PROVIDED);
 						scrutinyDetail5.addColumnHeading(7, STATUS);
 						scrutinyDetail5.setKey(
-								"Block_" + block.getNumber() + "_" + MdmsFeatureConstants.NON_HABITATIONAL_DOORS);
+								BLOCK + block.getNumber() + UNDERSCORE + MdmsFeatureConstants.NON_HABITATIONAL_DOORS);
 
 						ScrutinyDetail scrutinyDetail3 = new ScrutinyDetail();
 						scrutinyDetail3.addColumnHeading(1, RULE_NO);
@@ -213,7 +216,7 @@ public class HeightOfRoom extends FeatureProcess {
 						scrutinyDetail3.addColumnHeading(5, REQUIRED);
 						scrutinyDetail3.addColumnHeading(6, PROVIDED);
 						scrutinyDetail3.addColumnHeading(7, STATUS);
-						scrutinyDetail3.setKey("Block_" + block.getNumber() + "_" + MdmsFeatureConstants.WINDOW);
+						scrutinyDetail3.setKey(BLOCK + block.getNumber() + UNDERSCORE + MdmsFeatureConstants.WINDOW);
 
 						ScrutinyDetail scrutinyDetail4 = new ScrutinyDetail();
 						scrutinyDetail4.addColumnHeading(1, RULE_NO);
@@ -223,8 +226,8 @@ public class HeightOfRoom extends FeatureProcess {
 						scrutinyDetail4.addColumnHeading(5, REQUIRED);
 						scrutinyDetail4.addColumnHeading(6, PROVIDED);
 						scrutinyDetail4.addColumnHeading(7, STATUS);
-						scrutinyDetail4.setKey("Block_" + block.getNumber() + "_"
-								+ MdmsFeatureConstants.ROOM_WISE_VENTILATION + " Doors and Windows)");
+						scrutinyDetail4.setKey(BLOCK + block.getNumber() + UNDERSCORE
+								+ MdmsFeatureConstants.ROOM_WISE_VENTILATION + DOORS_AND_WINDOWS);
 
 						ScrutinyDetail scrutinyDetail6 = new ScrutinyDetail();
 						scrutinyDetail6.addColumnHeading(1, RULE_NO);
@@ -235,7 +238,7 @@ public class HeightOfRoom extends FeatureProcess {
 						scrutinyDetail6.addColumnHeading(6, PROVIDED);
 						scrutinyDetail6.addColumnHeading(7, STATUS);
 						scrutinyDetail6.setKey(
-								"Block_" + block.getNumber() + "_" + MdmsFeatureConstants.ROOM_WISE_WINDOW_AREA);
+								BLOCK + block.getNumber() + UNDERSCORE + MdmsFeatureConstants.ROOM_WISE_WINDOW_AREA);
 
 						ScrutinyDetail scrutinyDetail7 = new ScrutinyDetail();
 						scrutinyDetail7.addColumnHeading(1, RULE_NO);
@@ -246,7 +249,7 @@ public class HeightOfRoom extends FeatureProcess {
 						scrutinyDetail7.addColumnHeading(6, PROVIDED);
 						scrutinyDetail7.addColumnHeading(7, STATUS);
 						scrutinyDetail7
-								.setKey("Block_" + block.getNumber() + "_" + MdmsFeatureConstants.DOOR_VENTILATION);
+								.setKey(BLOCK + block.getNumber() + UNDERSCORE + MdmsFeatureConstants.DOOR_VENTILATION);
 
 						ScrutinyDetail scrutinyDetail8 = new ScrutinyDetail();
 						scrutinyDetail8.addColumnHeading(1, RULE_NO);
@@ -257,7 +260,7 @@ public class HeightOfRoom extends FeatureProcess {
 						scrutinyDetail8.addColumnHeading(6, PROVIDED);
 						scrutinyDetail8.addColumnHeading(7, STATUS);
 						scrutinyDetail8
-								.setKey("Block_" + block.getNumber() + "_" + MdmsFeatureConstants.ROOM_WISE_DOOR_AREA);
+								.setKey(BLOCK + block.getNumber() + UNDERSCORE + MdmsFeatureConstants.ROOM_WISE_DOOR_AREA);
 
 						for (Floor floor : block.getBuilding().getFloors()) {
 							List<BigDecimal> roomAreas = new ArrayList<>();
@@ -266,8 +269,8 @@ public class HeightOfRoom extends FeatureProcess {
 							BigDecimal totalArea = BigDecimal.ZERO;
 							BigDecimal minWidth = BigDecimal.ZERO;
 							BigDecimal maxArea = BigDecimal.ZERO;
-							String subRule = "4.4.4";
-							String color = "";
+							String subRule = FOUR_P_FOUR_P_FOUR;
+							String color = EMPTY_STRING;
 						
 							if (A.equalsIgnoreCase(mostRestrictiveOccupancy.getType().getCode()))
 								color = DxfFileConstants.COLOR_RESIDENTIAL_ROOM;
@@ -374,7 +377,7 @@ public class HeightOfRoom extends FeatureProcess {
 	            ? Result.Accepted.getResultVal()
 	            : Result.Not_Accepted.getResultVal();
 
-	    setReportOutputDetails(pl, subRule, subRuleDesc, floor.getNumber().toString(), requirement, provided, "", result, scrutinyDetail);
+	    setReportOutputDetails(pl, subRule, subRuleDesc, floor.getNumber().toString(), requirement, provided, EMPTY_STRING, result, scrutinyDetail);
 	}
 
 	
@@ -531,7 +534,7 @@ public class HeightOfRoom extends FeatureProcess {
 			String result = combinedArea.compareTo(requiredVentilationArea) >= 0 ? Result.Accepted.getResultVal()
 					: Result.Not_Accepted.getResultVal();
 
-			setReportOutputDetails(pl, RULE1, subRuleDesc1, floor.getNumber().toString(), "" + room.getNumber(),
+			setReportOutputDetails(pl, RULE1, subRuleDesc1, floor.getNumber().toString(), EMPTY_STRING + room.getNumber(),
 					"Ventilation Required >= " + requiredVentilationArea, "Area provided = " + combinedArea, result,
 					ventilationDetail);
 		}
@@ -608,7 +611,7 @@ public class HeightOfRoom extends FeatureProcess {
 			BigDecimal height = window.getWindowHeight().setScale(2, BigDecimal.ROUND_HALF_UP);
 			BigDecimal width = window.getWindowWidth().setScale(2, BigDecimal.ROUND_HALF_UP);
 
-			setReportOutputDetails(pl, subRule, subRuleDesc2, floor.getNumber().toString(), room.getNumber(), "",
+			setReportOutputDetails(pl, subRule, subRuleDesc2, floor.getNumber().toString(), room.getNumber(), EMPTY_STRING,
 					"Height = " + height + ", Width = " + width, Result.Accepted.getResultVal(), scrutinyDetail);
 		}
 	}
@@ -639,7 +642,7 @@ public class HeightOfRoom extends FeatureProcess {
 	            ? Result.Accepted.getResultVal()
 	            : Result.Not_Accepted.getResultVal();
 
-	    setReportOutputDetails(pl, "", subRuleDesc3, floor.getNumber().toString(), "-", requirement, provided, result, scrutinyDetail);
+	    setReportOutputDetails(pl, EMPTY_STRING, subRuleDesc3, floor.getNumber().toString(), "-", requirement, provided, result, scrutinyDetail);
 	}
 
 
@@ -672,7 +675,7 @@ public class HeightOfRoom extends FeatureProcess {
 					&& width.compareTo(minWidth) >= 0) ? Result.Accepted.getResultVal()
 							: Result.Not_Accepted.getResultVal();
 
-			setReportOutputDetails(pl, subRule, subRuleDesc, floor.getNumber().toString(), "", requirement, provided,
+			setReportOutputDetails(pl, subRule, subRuleDesc, floor.getNumber().toString(), EMPTY_STRING, requirement, provided,
 					result, scrutinyDetail);
 		}
 	}
@@ -707,7 +710,7 @@ public class HeightOfRoom extends FeatureProcess {
 					&& width.compareTo(minWidth) >= 0) ? Result.Accepted.getResultVal()
 							: Result.Not_Accepted.getResultVal();
 
-			setReportOutputDetails(pl, subRule, subRuleDesc, floor.getNumber().toString(), "", requirement, provided,
+			setReportOutputDetails(pl, subRule, subRuleDesc, floor.getNumber().toString(), EMPTY_STRING, requirement, provided,
 					result, scrutinyDetail);
 		}
 	}
@@ -1021,11 +1024,11 @@ public class HeightOfRoom extends FeatureProcess {
 					? (String) typicalFloorValues.get("typicalFloors")
 					: " floor " + floor.getNumber();
 			if (valid) {
-				setReportOutputDetails(pl, subRule, subRuleDesc, value, "", expected + DcrConstants.IN_METER,
+				setReportOutputDetails(pl, subRule, subRuleDesc, value, EMPTY_STRING, expected + DcrConstants.IN_METER,
 						actual + DcrConstants.IN_METER, Result.Accepted.getResultVal(), scrutinyDetail);
 				LOG.info("Room Height Validation True: (Expected/Actual) " + expected + "/" + actual);
 			} else {
-				setReportOutputDetails(pl, subRule, subRuleDesc, value, "", expected + DcrConstants.IN_METER,
+				setReportOutputDetails(pl, subRule, subRuleDesc, value, EMPTY_STRING, expected + DcrConstants.IN_METER,
 						actual + DcrConstants.IN_METER, Result.Not_Accepted.getResultVal(), scrutinyDetail);
 				LOG.info("Room Height Validation False: (Expected/Actual) " + expected + "/" + actual);
 			}

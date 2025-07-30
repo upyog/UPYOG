@@ -14,74 +14,7 @@ import java.util.Set;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.egov.common.constants.MdmsFeatureConstants;
-import org.egov.common.entity.edcr.BalconyRequirement;
-import org.egov.common.entity.edcr.BasementRequirement;
-import org.egov.common.entity.edcr.BathroomRequirement;
-import org.egov.common.entity.edcr.BathroomWCRequirement;
-import org.egov.common.entity.edcr.BlockDistancesServiceRequirement;
-import org.egov.common.entity.edcr.ChimneyRequirement;
-import org.egov.common.entity.edcr.CoverageRequirement;
-import org.egov.common.entity.edcr.DoorsRequirement;
-import org.egov.common.entity.edcr.EdcrMasterConfig;
-import org.egov.common.entity.edcr.ExitWidthRequirement;
-import org.egov.common.entity.edcr.FarRequirement;
-import org.egov.common.entity.edcr.FeatureEnum;
-import org.egov.common.entity.edcr.MdmsResponse;
-import org.egov.common.entity.edcr.MezzanineFloorServiceRequirement;
-import org.egov.common.entity.edcr.MonumentDistanceRequirement;
-import org.egov.common.entity.edcr.NoOfRiserRequirement;
-import org.egov.common.entity.edcr.NonHabitationalDoorsRequirement;
-import org.egov.common.entity.edcr.OverHangsRequirement;
-import org.egov.common.entity.edcr.OverheadElectricalLineServiceRequirement;
-import org.egov.common.entity.edcr.ParapetRequirement;
-import org.egov.common.entity.edcr.ParkingRequirement;
-import org.egov.common.entity.edcr.PassageRequirement;
-import org.egov.common.entity.edcr.Plan;
-import org.egov.common.entity.edcr.PlantationGreenStripRequirement;
-import org.egov.common.entity.edcr.PlantationRequirement;
-import org.egov.common.entity.edcr.PlinthHeightRequirement;
-import org.egov.common.entity.edcr.PlotAreaRequirement;
-import org.egov.common.entity.edcr.PorticoServiceRequirement;
-import org.egov.common.entity.edcr.RainWaterHarvestingRequirement;
-import org.egov.common.entity.edcr.RampServiceRequirement;
-import org.egov.common.entity.edcr.RearSetBackRequirement;
-import org.egov.common.entity.edcr.RequiredTreadRequirement;
-import org.egov.common.entity.edcr.RequiredWidthRequirement;
-import org.egov.common.entity.edcr.RiserHeightRequirement;
-import org.egov.common.entity.edcr.RiverDistanceRequirement;
-import org.egov.common.entity.edcr.RoadWidthRequirement;
-import org.egov.common.entity.edcr.RoofTankRequirement;
-import org.egov.common.entity.edcr.RoomAreaRequirement;
-import org.egov.common.entity.edcr.RoomWiseDoorAreaRequirement;
-import org.egov.common.entity.edcr.RoomWiseVentilationRequirement;
-import org.egov.common.entity.edcr.SanitationRequirement;
-import org.egov.common.entity.edcr.SegregatedToiletRequirement;
-import org.egov.common.entity.edcr.SepticTankRequirement;
-import org.egov.common.entity.edcr.SideYardServiceRequirement;
-import org.egov.common.entity.edcr.SolarRequirement;
-import org.egov.common.entity.edcr.SpiralStairRequirement;
-import org.egov.common.entity.edcr.StairCoverRequirement;
-import org.egov.common.entity.edcr.TerraceUtilityServiceRequirement;
-import org.egov.common.entity.edcr.ToiletRequirement;
-import org.egov.common.entity.edcr.TravelDistanceToExitRequirement;
-import org.egov.common.entity.edcr.VehicleRampRequirement;
-import org.egov.common.entity.edcr.VentilationRequirement;
-import org.egov.common.entity.edcr.VerandahRequirement;
-import org.egov.common.entity.edcr.WaterClosetsRequirement;
-import org.egov.common.entity.edcr.WaterTankCapacityRequirement;
-import org.egov.common.entity.edcr.FeatureRuleKey;
-import org.egov.common.entity.edcr.FireStairRequirement;
-import org.egov.common.entity.edcr.FireTenderMovementRequirement;
-import org.egov.common.entity.edcr.FrontSetBackRequirement;
-import org.egov.common.entity.edcr.GovtBuildingDistanceRequirement;
-import org.egov.common.entity.edcr.GuardRoomRequirement;
-import org.egov.common.entity.edcr.HeadRoomRequirement;
-import org.egov.common.entity.edcr.InteriorOpenSpaceServiceRequirement;
-import org.egov.common.entity.edcr.KitchenRequirement;
-import org.egov.common.entity.edcr.LandUseRequirement;
-import org.egov.common.entity.edcr.LandingRequirement;
-import org.egov.common.entity.edcr.LiftRequirement;
-import org.egov.common.entity.edcr.MdmsFeatureRule;
+import org.egov.common.entity.edcr.*;
 import org.egov.commons.mdms.BpaMdmsUtil;
 import org.egov.edcr.constants.EdcrRulesMdmsConstants;
 //import org.egov.infra.mdms.controller.MDMSController;
@@ -114,33 +47,32 @@ public class FetchEdcrRulesMdms {
 		}
 
 		String occupancyName = pl.getPlanInformation().getOccupancy();
-
 		Log.info("Occupancy Name : " + occupancyName);
 
-		if (occupancyName.equalsIgnoreCase(EdcrRulesMdmsConstants.RESIDENTIAL)) {
-			return EdcrRulesMdmsConstants.RESIDENTIAL;
-		} else if (occupancyName.equalsIgnoreCase(EdcrRulesMdmsConstants.INDUSTRIAL)) {
-			return EdcrRulesMdmsConstants.INDUSTRIAL;
-		} else if (occupancyName.equalsIgnoreCase(EdcrRulesMdmsConstants.COMMERCIAL)) {
-			return EdcrRulesMdmsConstants.COMMERCIAL;
-		} else if (occupancyName.equalsIgnoreCase(EdcrRulesMdmsConstants.STORAGE)) {
-			return EdcrRulesMdmsConstants.STORAGE;
-		} else if (occupancyName.equalsIgnoreCase(EdcrRulesMdmsConstants.ASSEMBLY)) {
-			return EdcrRulesMdmsConstants.ASSEMBLY;
-		} else if (occupancyName.equalsIgnoreCase(EdcrRulesMdmsConstants.BUSINESS)) {
-			return EdcrRulesMdmsConstants.BUSINESS;
-		} else if (occupancyName.equalsIgnoreCase(EdcrRulesMdmsConstants.HAZARDOUS)) {
-			return EdcrRulesMdmsConstants.HAZARDOUS;
-		} else if (occupancyName.equalsIgnoreCase(EdcrRulesMdmsConstants.EDUCATIONAL)) {
-			return EdcrRulesMdmsConstants.EDUCATIONAL;
-		} else if (occupancyName.equalsIgnoreCase(EdcrRulesMdmsConstants.MEDICAL)) {
-			return EdcrRulesMdmsConstants.MEDICAL;
-		}
-
-		return occupancyName;
+		switch (occupancyName.toLowerCase()) {
+	    case EdcrRulesMdmsConstants.RESIDENTIAL:
+	        return EdcrRulesMdmsConstants.RESIDENTIAL;
+	    case EdcrRulesMdmsConstants.INDUSTRIAL:
+	        return EdcrRulesMdmsConstants.INDUSTRIAL;
+	    case EdcrRulesMdmsConstants.COMMERCIAL:
+	        return EdcrRulesMdmsConstants.COMMERCIAL;
+	    case EdcrRulesMdmsConstants.STORAGE:
+	        return EdcrRulesMdmsConstants.STORAGE;
+	    case EdcrRulesMdmsConstants.ASSEMBLY:
+	        return EdcrRulesMdmsConstants.ASSEMBLY;
+	    case EdcrRulesMdmsConstants.BUSINESS:
+	        return EdcrRulesMdmsConstants.BUSINESS;
+	    case EdcrRulesMdmsConstants.HAZARDOUS:
+	        return EdcrRulesMdmsConstants.HAZARDOUS;
+	    case EdcrRulesMdmsConstants.EDUCATIONAL:
+	        return EdcrRulesMdmsConstants.EDUCATIONAL;
+	    case EdcrRulesMdmsConstants.MEDICAL:
+	        return EdcrRulesMdmsConstants.MEDICAL;
+	    default:
+	        return occupancyName;
 	}
-	
-	
+	}
+
 	private List<Map<String, Object>> riskTypeRules = new ArrayList<>();
 
 	public String getRiskType(Plan pl) {
@@ -159,7 +91,7 @@ public class FetchEdcrRulesMdms {
 	    }
 
 	    BigDecimal plotArea = pl.getPlot().getArea();
-	    BigDecimal height = pl.getVirtualBuilding().getBuildingHeight();
+		BigDecimal height = pl.getBlocks().get(0).getBuilding().getBuildingHeight();
 
 	    for (Map<String, Object> rule : riskTypeRules) {
 	        BigDecimal fromPlotArea = new BigDecimal(rule.get("fromPlotArea").toString());
@@ -168,16 +100,15 @@ public class FetchEdcrRulesMdms {
 	        BigDecimal toHeight = new BigDecimal(rule.get("toBuildingHeight").toString());
 
 	        boolean plotAreaInRange = plotArea.compareTo(fromPlotArea) >= 0 && plotArea.compareTo(toPlotArea) < 0;
-	        //boolean heightInRange = height.compareTo(fromHeight) >= 0 && height.compareTo(toHeight) < 0;
+	        boolean heightInRange = height.compareTo(fromHeight) >= 0 && height.compareTo(toHeight) < 0;
 
-	        if (plotAreaInRange) { //add height if required
+	        if (plotAreaInRange || heightInRange) { //add height if required
 	            return rule.get("riskType").toString();
 	        }
 	    }
 
 	    return null;
 	}
-	
 
 	/**
 	 * Returns the specific subclass of {@link MdmsFeatureRule} associated with the given {@link FeatureEnum}.
@@ -316,12 +247,14 @@ public class FetchEdcrRulesMdms {
 	            return WaterClosetsRequirement.class;
 	        case WATER_TANK_CAPACITY:
 	            return WaterTankCapacityRequirement.class;
+			case ADDITIONAL_FEATURE:
+				return AdditionalFeatureRequirement.class;
 
 	        default:
 	            return MdmsFeatureRule.class; // Fallback
 	    }
 	}
 
-	
+
 
 }

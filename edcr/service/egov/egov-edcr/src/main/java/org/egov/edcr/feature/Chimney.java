@@ -67,6 +67,8 @@ import org.egov.edcr.service.MDMSCacheManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import static org.egov.edcr.constants.CommonKeyConstants.*;
+
 @Service
 public class Chimney extends FeatureProcess {
 
@@ -78,7 +80,6 @@ public class Chimney extends FeatureProcess {
     public static final String CHIMNEY_DESCRIPTION = "Chimney";
     public static final String CHIMNEY_VERIFY_DESCRIPTION = "Verified whether chimney height is <= ";
     public static final String METERS = " meters";
-    public static final String TO_BUILDING_HEIGHT = ") to building height";
     
     @Autowired
 	MDMSCacheManager cache;
@@ -190,8 +191,8 @@ public class Chimney extends FeatureProcess {
 	        details.put(RULE_NO, RULE_NO);
 	        details.put(DESCRIPTION, CHIMNEY_DESCRIPTION);
 	        details.put(VERIFIED, CHIMNEY_VERIFY_DESCRIPTION + permissibleHeight + METERS);
-	        details.put(ACTION, (includedInBuildingHeight ? "Included" : "Not included") +
-	                " chimney height (" + actualHeight + ") to building height");
+	        details.put(ACTION, (includedInBuildingHeight ? INCLUDED : NOT_INCLUDED) +
+	                CHIMNEY_HEIGHT + actualHeight + TO_BUILDING_HEIGHT);
 	        details.put(STATUS, status);
 	        return details;
 	    }

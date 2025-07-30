@@ -74,6 +74,9 @@ import org.egov.edcr.utility.DcrConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import static org.egov.edcr.constants.CommonFeatureConstants.*;
+import static org.egov.edcr.constants.CommonKeyConstants.BLOCK;
+
 @Service
 public class PlantationGreenStrip extends FeatureProcess {
     private static final Logger LOG = LogManager.getLogger(PlantationGreenStrip.class);
@@ -172,8 +175,8 @@ public class PlantationGreenStrip extends FeatureProcess {
             }
 
             buildResult(pl, scrutinyDetail, isWidthAccepted,
-                    "Width of continuous plantation green strip",
-                    ">= " + plantationGreenStripMinWidth.toString(),
+                    WIDTH_OF_CONTINUOUS_PLANTATION_GREEN_STRIP,
+                    GREATER_THAN_EQUAL + plantationGreenStripMinWidth.toString(),
                     minWidth.setScale(DcrConstants.DECIMALDIGITS_MEASUREMENTS, DcrConstants.ROUNDMODE_MEASUREMENTS)
                             .toString());
         }
@@ -192,7 +195,7 @@ public class PlantationGreenStrip extends FeatureProcess {
         scrutinyDetail.addColumnHeading(3, PERMISSIBLE);
         scrutinyDetail.addColumnHeading(4, PROVIDED);
         scrutinyDetail.addColumnHeading(5, STATUS);
-        scrutinyDetail.setKey("Block_" + block.getNumber() + "_" + "Continuous Green Planting Strip");
+        scrutinyDetail.setKey(BLOCK + block.getNumber() + CONTINUOUS_GREEN_PLANTING_STRIP);
         return scrutinyDetail;
     }
 

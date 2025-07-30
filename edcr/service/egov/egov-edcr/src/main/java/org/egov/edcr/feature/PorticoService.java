@@ -77,6 +77,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 
+import static org.egov.edcr.constants.CommonFeatureConstants.*;
+import static org.egov.edcr.constants.CommonKeyConstants.BLOCK;
+
 @Service
 public class PorticoService extends FeatureProcess {
     private static final Logger LOG = LogManager.getLogger(PorticoService.class);
@@ -170,7 +173,7 @@ public class PorticoService extends FeatureProcess {
 
 				setReportOutputDetails(plan, SUBRULE_PORTICO,
 						String.format(SUBRULE_PORTICO_MAX_LENGTHDESCRIPTION, portico.getName()),
-						"Max " + permissibleValue + " Mtr.", portico.getLength() + " Mtr.", status, scrutinyDetail);
+						MAX_PREFIX + permissibleValue + MTR_SUFFIX, portico.getLength() + MTR_SUFFIX, status, scrutinyDetail);
 			}
 		}
 	}
@@ -188,7 +191,7 @@ public class PorticoService extends FeatureProcess {
 		scrutinyDetail.addColumnHeading(3, REQUIRED);
 		scrutinyDetail.addColumnHeading(4, PROVIDED);
 		scrutinyDetail.addColumnHeading(5, STATUS);
-		scrutinyDetail.setKey("Block_" + blockNumber + "_Portico");
+		scrutinyDetail.setKey(BLOCK + blockNumber + PORTICO_SUFFIX);
 		return scrutinyDetail;
 	}
     

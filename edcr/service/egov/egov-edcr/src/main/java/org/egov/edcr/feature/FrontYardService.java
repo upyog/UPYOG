@@ -48,6 +48,8 @@
 
 package org.egov.edcr.feature;
 
+import static org.egov.edcr.constants.CommonFeatureConstants.*;
+import static org.egov.edcr.constants.CommonKeyConstants.*;
 import static org.egov.edcr.constants.DxfFileConstants.A;
 import static org.egov.edcr.constants.DxfFileConstants.A_AF;
 import static org.egov.edcr.constants.DxfFileConstants.A_PO;
@@ -297,7 +299,7 @@ public class FrontYardService extends GeneralRule {
 
 	private ScrutinyDetail createScrutinyDetail(String blockName) {
 	    ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
-	    scrutinyDetail.setKey("Block_" + blockName + "_" + FRONT_YARD_DESC);
+	    scrutinyDetail.setKey(BLOCK + blockName + UNDERSCORE + FRONT_YARD_DESC);
 	    scrutinyDetail.setHeading(FRONT_YARD_DESC);
 	    scrutinyDetail.addColumnHeading(1, RULE_NO);
 	    scrutinyDetail.addColumnHeading(2, LEVEL);
@@ -337,7 +339,7 @@ public class FrontYardService extends GeneralRule {
 	private Map<String, String> buildScrutinyDetailMap(FrontYardResult result) {
 	    Map<String, String> detailMap = new HashMap<>();
 	    detailMap.put(RULE_NO, result.subRule);
-	    detailMap.put(LEVEL, result.level != null ? result.level.toString() : "");
+	    detailMap.put(LEVEL, result.level != null ? result.level.toString() : EMPTY_STRING);
 	    detailMap.put(OCCUPANCY, result.occupancy);
 	    detailMap.put(FIELDVERIFIED, MINIMUMLABEL);
 	    detailMap.put(PERMISSIBLE, result.expectedmeanDistance.toString());
@@ -448,7 +450,7 @@ public class FrontYardService extends GeneralRule {
 	    // Set minVal based on plot area
 	    if (plotArea.compareTo(MIN_PLOT_AREA) <= 0) {
 	        // Plot area is less than zero
-	    	errors.put("Plot Area Error:", "Plot area cannot be less than "+MIN_PLOT_AREA);
+	    	errors.put(PLOT_AREA_ERROR, PLOT_AREA_CANNOT_BE_LESS +MIN_PLOT_AREA);
 	    }else if (plotArea.compareTo(PLOT_AREA_100_SQM) <= 0) {
 	        minVal = MIN_VAL_100_SQM;
 	    } else if (plotArea.compareTo(PLOT_AREA_150_SQM) <= 0) {
@@ -474,7 +476,7 @@ public class FrontYardService extends GeneralRule {
 //	    }
 	    if(!valid) {
 	    	LOG.info("Front Yard Service: min value validity False: "+minVal+"/"+min);
-	    	errors.put("Minimum and Mean Value Validation", "Minimum value is less than the required minimum " + minVal+"/"+min);
+	    	errors.put(MIN_AND_MEAN_VALUE, MIN_LESS_REQ_MIN + minVal+ SLASH +min);
 	    	
 	    }
 	    else {
@@ -503,7 +505,7 @@ public class FrontYardService extends GeneralRule {
 				if (!frontYardDefined) {
 					HashMap<String, String> errors = new HashMap<>();
 					errors.put(FRONT_YARD_DESC,
-							prepareMessage(OBJECTNOTDEFINED, FRONT_YARD_DESC + " for Block " + block.getName()));
+							prepareMessage(OBJECTNOTDEFINED, FRONT_YARD_DESC + FOR_BLOCK + block.getName()));
 					pl.addErrors(errors);
 				}
 			}
@@ -550,8 +552,7 @@ public class FrontYardService extends GeneralRule {
 			String subRule, String rule, BigDecimal minVal, BigDecimal meanVal, BigDecimal depthOfPlot,
 			HashMap<String, String> errors, Plan pl) {
 		if (depthOfPlot.compareTo(BigDecimal.valueOf(10)) <= 0) {
-			errors.put("uptoSixteenHeightUptoTenDepthFrontYard",
-					"No construction shall be permitted if depth of plot is less than 10 and building height less than 16 having floors upto G+4.");
+			errors.put(SIXTEEN_HEIGHT_TEN_DEPTH_FRONTE_YARD, NOT_PERMITTED_DEPTH_LESS_10_HEIGHT_16);
 			pl.addErrors(errors);
 		} else if (depthOfPlot.compareTo(BigDecimal.valueOf(10)) > 0
 				&& depthOfPlot.compareTo(BigDecimal.valueOf(15)) <= 0) {
@@ -877,8 +878,7 @@ public class FrontYardService extends GeneralRule {
 			String subRule, String rule, BigDecimal minVal, BigDecimal meanVal, BigDecimal depthOfPlot,
 			HashMap<String, String> errors, Plan pl) {
 		if (depthOfPlot.compareTo(BigDecimal.valueOf(10)) <= 0) {
-			errors.put("uptoTwelveHeightUptoTenDepthFrontYard",
-					"No construction shall be permitted if depth of plot is less than 10 and building height less than 12 having floors upto G+2.");
+			errors.put(TWELVE_HEIGHT_TEN_DEPTH_FRONT_YARD, NOT_PERMITTED_DEPTH_LESS_10_HEIGHT_12);
 			pl.addErrors(errors);
 		} else if (depthOfPlot.compareTo(BigDecimal.valueOf(10)) > 0
 				&& depthOfPlot.compareTo(BigDecimal.valueOf(15)) <= 0) {

@@ -69,6 +69,9 @@ import org.egov.edcr.utility.DcrConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import static org.egov.edcr.constants.CommonFeatureConstants.*;
+import static org.egov.edcr.constants.CommonKeyConstants.*;
+
 @Service
 public class FireTenderMovement extends FeatureProcess {
 
@@ -152,13 +155,13 @@ public class FireTenderMovement extends FeatureProcess {
 		if (buildingHeight.compareTo(minRequiredHeight) <= 0)
 			return;
 
-		ScrutinyDetail scrutinyDetail = createScrutinyDetail(block.getNumber(), "Fire Tender Movement");
+		ScrutinyDetail scrutinyDetail = createScrutinyDetail(block.getNumber(), FIRE_TENDER_MOVEMENT);
 
 		org.egov.common.entity.edcr.FireTenderMovement fireTenderMovement = block.getFireTenderMovement();
 
 		if (fireTenderMovement == null) {
-			errors.put("BLK_FTM_" + block.getNumber(),
-					"Fire tender movement not defined for Block " + block.getNumber());
+			errors.put(BLK_FTM_ + block.getNumber(),
+					FTM_NOT_DEFINED + block.getNumber());
 			plan.addErrors(errors);
 			return;
 		}
@@ -200,8 +203,8 @@ public class FireTenderMovement extends FeatureProcess {
 
 		Map<String, String> details = new HashMap<>();
 		details.put(RULE_NO, RULE_36_3);
-		details.put(DESCRIPTION, "Width of fire tender movement");
-		details.put(PERMISSIBLE, ">= " + minRequiredWidth.toPlainString());
+		details.put(DESCRIPTION, WIDTH_DESCRIPTION);
+		details.put(PERMISSIBLE, GREATER_THAN_EQUAL + minRequiredWidth.toPlainString());
 		details.put(PROVIDED, providedWidth.toPlainString());
 		details.put(STATUS, isAccepted ? Result.Accepted.getResultVal() : Result.Not_Accepted.getResultVal());
 		scrutinyDetail.getDetail().add(details);
@@ -209,9 +212,9 @@ public class FireTenderMovement extends FeatureProcess {
 		plan.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
 
 		if (!fireTenderMovement.getErrors().isEmpty()) {
-			String yardNames = String.join(", ", fireTenderMovement.getErrors());
-			errors.put("FTM_SETBACK",
-					"Fire tender movement for block " + block.getNumber() + " is not inside " + yardNames + ".");
+			String yardNames = String.join(COMMA, fireTenderMovement.getErrors());
+			errors.put(FTM_SETBACK,
+					FTM_NOT_INSIDE + block.getNumber() + IS_NOT_INSIDE + yardNames + DOT);
 			plan.addErrors(errors);
 		}
 	}
@@ -226,7 +229,7 @@ public class FireTenderMovement extends FeatureProcess {
     */
     private ScrutinyDetail createScrutinyDetail(String string, String feature) {
         ScrutinyDetail sd = new ScrutinyDetail();
-        sd.setKey("Block_" + string + "_" + feature);
+        sd.setKey(BLOCK + string + UNDERSCORE + feature);
         sd.addColumnHeading(1, RULE_NO);
         sd.addColumnHeading(2, DESCRIPTION);
         sd.addColumnHeading(3, PERMISSIBLE);

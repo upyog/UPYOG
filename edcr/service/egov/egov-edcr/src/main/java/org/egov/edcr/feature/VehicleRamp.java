@@ -73,6 +73,9 @@ import org.egov.edcr.service.MDMSCacheManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import static org.egov.common.constants.MdmsFeatureConstants.*;
+import static org.egov.edcr.constants.CommonFeatureConstants.*;
+
 @Service
 public class VehicleRamp extends FeatureProcess {
 	private static final Logger LOG = LogManager.getLogger(VehicleRamp.class);
@@ -84,6 +87,14 @@ public class VehicleRamp extends FeatureProcess {
 	@Autowired
 	MDMSCacheManager cache;
 
+	/**
+	 * Validates vehicle ramp dimensions and geometry for all blocks and floors in the plan.
+	 * Loops through blocks, floors, and vehicle ramps to validate ramp polyline dimensions
+	 * and ensures proper geometric specifications are met.
+	 *
+	 * @param pl The building plan to validate
+	 * @return The validated plan with any validation errors added
+	 */
 	@Override
 	public Plan validate(Plan pl) {
 		// Loop through all blocks and floors to validate the vehicle ramp dimensions
@@ -107,6 +118,14 @@ public class VehicleRamp extends FeatureProcess {
 
 	}
 
+	/**
+	 * Processes vehicle ramp requirements based on parking area and MDMS rules.
+	 * Calculates covered and basement parking areas, fetches vehicle ramp requirements
+	 * from MDMS cache, and validates ramp specifications against the requirements.
+	 *
+	 * @param pl The building plan to process
+	 * @return The processed plan with scrutiny details added
+	 */
 	@Override
 	public Plan process(Plan pl) {
 		validate(pl); // Initial validation of ramp geometry
@@ -150,6 +169,13 @@ public class VehicleRamp extends FeatureProcess {
 		return pl;
 	}
 
+	/**
+	 * Calculates the total covered parking area across all blocks and floors.
+	 * Sums up the areas of all covered car parking measurements in the building plan.
+	 *
+	 * @param pl The building plan containing parking information
+	 * @return Total covered parking area as BigDecimal
+	 */
 	private BigDecimal calculateCoveredParkingArea(Plan pl) {
 		BigDecimal coverParkingArea = BigDecimal.ZERO;
 		for (Block block : pl.getBlocks()) {
@@ -161,6 +187,13 @@ public class VehicleRamp extends FeatureProcess {
 		return coverParkingArea;
 	}
 
+	/**
+	 * Calculates the total basement parking area across all blocks and floors.
+	 * Sums up the areas of all basement car parking measurements in the building plan.
+	 *
+	 * @param pl The building plan containing parking information
+	 * @return Total basement parking area as BigDecimal
+	 */
 	private BigDecimal calculateBasementParkingArea(Plan pl) {
 		BigDecimal basementParkingArea = BigDecimal.ZERO;
 		for (Block block : pl.getBlocks()) {
@@ -172,6 +205,12 @@ public class VehicleRamp extends FeatureProcess {
 		return basementParkingArea;
 	}
 
+	/**
+	 * Initializes the basic details map with rule number and description.
+	 * Creates a HashMap with common scrutiny detail fields for vehicle ramp validation.
+	 *
+	 * @return Map containing initialized rule number and description
+	 */
 	private Map<String, String> initializeDetails() {
 		Map<String, String> details = new HashMap<>();
 		details.put(RULE_NO, SUBRULE_40_8);
@@ -179,6 +218,20 @@ public class VehicleRamp extends FeatureProcess {
 		return details;
 	}
 
+	/**
+	 * Processes vehicle ramp requirements for all blocks in the building plan.
+	 * Sets up scrutiny details and validates ramps based on whether they have flights or not.
+	 *
+	 * @param pl The building plan
+	 * @param errors Map to collect validation errors
+	 * @param details Map containing basic scrutiny details
+	 * @param vehicleRampValue Required vehicle ramp width value
+	 * @param vehicleRampSlopeValueOne First slope requirement value
+	 * @param vehicleRampSlopeValueTwo Second slope requirement value
+	 * @param vehicleRampSlopeMinWidthValueOne First minimum width value
+	 * @param vehicleRampSlopeMinWidthValueTwo Second minimum width value
+	 * @param vehicleRampSlopeMinWidthValueThree Third minimum width value
+	 */
 	private void processAllBlocks(Plan pl, HashMap<String, String> errors, Map<String, String> details,
 			BigDecimal vehicleRampValue, BigDecimal vehicleRampSlopeValueOne, BigDecimal vehicleRampSlopeValueTwo,
 			BigDecimal vehicleRampSlopeMinWidthValueOne, BigDecimal vehicleRampSlopeMinWidthValueTwo,
@@ -192,7 +245,7 @@ public class VehicleRamp extends FeatureProcess {
 			scrutinyDetail.addColumnHeading(4, REQUIRED);
 			scrutinyDetail.addColumnHeading(5, PROVIDED);
 			scrutinyDetail.addColumnHeading(6, STATUS);
-			scrutinyDetail.setKey("Vehicle Ramp");
+			scrutinyDetail.setKey(VEHICLE_RAMP);
 
 			if (block.getBuilding() != null && !block.getBuilding().getFloors().isEmpty()) {
 				for (Floor floor : block.getBuilding().getFloors()) {
@@ -213,6 +266,18 @@ public class VehicleRamp extends FeatureProcess {
 		}
 	}
 
+	/**
+	 * Processes vehicle ramps that have flight segments with specific slope requirements.
+	 * Validates ramp width and flight slopes for floors above ground level.
+	 *
+	 * @param pl The building plan
+	 * @param errors Map to collect validation errors
+	 * @param details Map containing basic scrutiny details
+	 * @param floor The floor containing vehicle ramps
+	 * @param vehicleRampValue Required vehicle ramp width
+	 * @param vehicleRampSlopeValueOne First slope requirement
+	 * @param vehicleRampSlopeValueTwo Second slope requirement
+	 */
 	private void processRampWitFlights(Plan pl, HashMap<String, String> errors, Map<String, String> details,
 			Floor floor, BigDecimal vehicleRampValue, BigDecimal vehicleRampSlopeValueOne,
 			BigDecimal vehicleRampSlopeValueTwo) {
@@ -225,7 +290,7 @@ public class VehicleRamp extends FeatureProcess {
 				&& !floor.getParking().getMechanicalLifts().isEmpty();
 
 		if (!hasRamps && !hasLifts) {
-			errors.put("Vehicle Ramp", "Either ramp or mechanical lift is required");
+			errors.put(VEHICLE_RAMP, EITHER_RAMP_OR_MECH_LIFT_RQD);
 			pl.addErrors(errors);
 			return;
 		}
@@ -239,17 +304,28 @@ public class VehicleRamp extends FeatureProcess {
 		}
 	}
 
+	/**
+	 * Validates vehicle ramp width against minimum requirements.
+	 * Checks if ramp width meets the required specifications and adds results to scrutiny details.
+	 *
+	 * @param ramp The vehicle ramp to validate
+	 * @param floorNumber The floor number containing the ramp
+	 * @param requiredWidth The minimum required width
+	 * @param details Map containing scrutiny details
+	 * @param pl The building plan
+	 * @param errors Map to collect validation errors
+	 */
 	private void validateRampWidth(org.egov.common.entity.edcr.VehicleRamp ramp, int floorNumber,
 			BigDecimal requiredWidth, Map<String, String> details, Plan pl, HashMap<String, String> errors) {
 
 		if (ramp.getWidth().compareTo(BigDecimal.ZERO) <= 0) {
-			errors.put("Vehicle Ramp width" + ramp.getNumber(),
-					"Width of vehicle ramp not defined. Please check Vehicle Ramp " + ramp.getNumber());
+			errors.put(VEHICLE_RAMP_WIDTH_PREFIX + ramp.getNumber(),
+					WIDTH_NOT_DEFINED + ramp.getNumber());
 			return;
 		}
 
-		details.put(FLOOR, "Floor " + floorNumber);
-		details.put(REQUIRED, "Minimum " + requiredWidth.toString() + "m width");
+		details.put(FLOOR, FLOOR + SINGLE_SPACE_STRING + floorNumber);
+		details.put(REQUIRED, MINIMUM_PREFIX + requiredWidth.toString() + WIDTH_SUFFIX);
 		details.put(PROVIDED, ramp.getWidth().toString());
 
 		if (ramp.getWidth().compareTo(requiredWidth) >= 0) {
@@ -262,38 +338,57 @@ public class VehicleRamp extends FeatureProcess {
 		pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
 	}
 
+	/**
+	 * Validates vehicle ramp flight slopes against maximum allowable slopes.
+	 * Checks each flight's slope based on color code and validates against requirements.
+	 *
+	 * @param ramp The vehicle ramp containing flights
+	 * @param slopeValue1 Maximum slope for color code 1 flights
+	 * @param slopeValue2 Maximum slope for color code 2 flights
+	 * @param pl The building plan
+	 * @param errors Map to collect validation errors
+	 * @param details Map containing scrutiny details
+	 */
 	private void validateRampFlights(org.egov.common.entity.edcr.VehicleRamp ramp, BigDecimal slopeValue1,
 			BigDecimal slopeValue2, Plan pl, HashMap<String, String> errors, Map<String, String> details) {
 
 		for (Flight flight : ramp.getFlights()) {
 			if (flight.getLength().compareTo(BigDecimal.ZERO) <= 0 || flight.getHeight() == null) {
-				errors.put("Vehicle Ramp Flight " + flight.getNumber(),
-						"Ramp Flight length should be in polyline. Either flight length or RAMP_HT_M text not defined in vehicle ramp flight "
-								+ flight.getNumber());
+				errors.put(VEHICLE_RAMP_FLIGHT_PREFIX + flight.getNumber(),
+						FLIGHT_LENGTH_ERROR + flight.getNumber());
 				continue;
 			}
 
 			BigDecimal slope = flight.getLength().divide(flight.getHeight(), 2, RoundingMode.HALF_UP);
 
-			details.put(FLOOR, "Flight " + flight.getNumber());
-			details.put(PROVIDED, "Slope 1:" + slope);
+			details.put(FLOOR, FLIGHT_PREFIX + flight.getNumber());
+			details.put(PROVIDED, SLOPE_PREFIX + slope);
 
 			if (flight.getColorCode() == 1) {
 				validateSlope(details, slope, slopeValue1, pl, flight.getNumber());
 			} else if (flight.getColorCode() == 2) {
 				validateSlope(details, slope, slopeValue2, pl, flight.getNumber());
 			} else {
-				errors.put("Vehicle Ramp Flight " + flight.getNumber(),
-						"Vehicle ramp polyline should be either 1 or 2. Please check Vehicle Ramp flight "
-								+ flight.getNumber());
+				errors.put(VEHICLE_RAMP_FLIGHT_PREFIX + flight.getNumber(),
+						FLIGHT_COLOR_ERROR + flight.getNumber());
 			}
 		}
 	}
 
+	/**
+	 * Validates individual flight slope against required slope value.
+	 * Compares actual slope with required slope and adds result to scrutiny details.
+	 *
+	 * @param details Map containing scrutiny details
+	 * @param actualSlope The calculated slope of the flight
+	 * @param requiredSlope The maximum allowable slope
+	 * @param pl The building plan
+	 * @param flightNumber The flight identifier
+	 */
 	private void validateSlope(Map<String, String> details, BigDecimal actualSlope, BigDecimal requiredSlope, Plan pl,
 			String flightNumber) {
 
-		details.put(REQUIRED, "Slope 1:" + requiredSlope.toString());
+		details.put(REQUIRED, SLOPE_PREFIX + requiredSlope.toString());
 		details.put(STATUS, actualSlope.compareTo(requiredSlope) >= 0 ? Result.Accepted.getResultVal()
 				: Result.Not_Accepted.getResultVal());
 
@@ -301,6 +396,18 @@ public class VehicleRamp extends FeatureProcess {
 		pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
 	}
 
+	/**
+	 * Processes vehicle ramps without flight segments.
+	 * Validates ramps based on width and slope requirements, checking for alternatives like lifts.
+	 *
+	 * @param pl The building plan
+	 * @param errors Map to collect validation errors
+	 * @param details Map containing scrutiny details
+	 * @param floor The floor containing vehicle ramps
+	 * @param minWidthOne First minimum width requirement
+	 * @param maxSlope Maximum allowable slope
+	 * @param minWidthTwo Second minimum width requirement
+	 */
 	private void processRampWithOutFlights(Plan pl, HashMap<String, String> errors, Map<String, String> details,
 			Floor floor, BigDecimal minWidthOne, BigDecimal maxSlope, BigDecimal minWidthTwo) {
 
@@ -314,12 +421,18 @@ public class VehicleRamp extends FeatureProcess {
 			if (!hasLifts && hasRamps) {
 				validateRampsAndPopulateDetails(pl, details, floor, minWidthOne, maxSlope, minWidthTwo);
 			} else if (!hasLifts && !hasRamps) {
-				errors.put("Vehicle Ramp", "Either ramp or mechanical lift is required");
+				errors.put(VEHICLE_RAMP, RAMP_OR_LIFT_REQUIRED);
 				pl.addErrors(errors);
 			}
 		}
 	}
 
+	/**
+	 * Calculates slopes for vehicle ramps based on floor height and ramp length.
+	 * Sets the calculated slope value for each closed ramp in the floor.
+	 *
+	 * @param floor The floor containing vehicle ramps
+	 */
 	private void calculateRampSlopes(Floor floor) {
 		for (org.egov.common.entity.edcr.VehicleRamp ramp : floor.getVehicleRamps()) {
 			if (Boolean.TRUE.equals(ramp.getRampClosed())) {
@@ -334,6 +447,17 @@ public class VehicleRamp extends FeatureProcess {
 		}
 	}
 
+	/**
+	 * Validates vehicle ramps and populates scrutiny details based on width and slope requirements.
+	 * Checks if ramps meet single wide ramp or dual narrow ramp requirements.
+	 *
+	 * @param pl The building plan
+	 * @param details Map containing scrutiny details
+	 * @param floor The floor containing vehicle ramps
+	 * @param minWidthOne Minimum width for single ramp
+	 * @param maxSlope Maximum allowable slope
+	 * @param minWidthTwo Minimum width for dual ramps
+	 */
 	private void validateRampsAndPopulateDetails(Plan pl, Map<String, String> details, Floor floor,
 			BigDecimal minWidthOne, BigDecimal maxSlope, BigDecimal minWidthTwo) {
 		boolean valid = false, valid1 = false, valid2 = false;
@@ -358,21 +482,33 @@ public class VehicleRamp extends FeatureProcess {
 		addRampScrutinyDetails(pl, details, floor, valid, valid1 && valid2, minWidthOne, minWidthTwo);
 	}
 
+	/**
+	 * Adds vehicle ramp validation results to scrutiny details.
+	 * Creates detailed report entries based on validation outcomes for single or dual ramp configurations.
+	 *
+	 * @param pl The building plan
+	 * @param details Map containing scrutiny details
+	 * @param floor The floor being validated
+	 * @param valid Whether single wide ramp requirement is met
+	 * @param validPair Whether dual narrow ramp requirement is met
+	 * @param minWidthOne Minimum width for single ramp
+	 * @param minWidthTwo Minimum width for dual ramps
+	 */
 	private void addRampScrutinyDetails(Plan pl, Map<String, String> details, Floor floor, boolean valid,
 			boolean validPair, BigDecimal minWidthOne, BigDecimal minWidthTwo) {
-		details.put(FLOOR, "Floor " + floor.getNumber());
-		details.put(REQUIRED, "At least two vehicle ramps of minimum " + minWidthTwo
-				+ " m width or one vehicle ramp of minimum " + minWidthOne + " m width and in maximum 1:8 slope");
+		details.put(FLOOR, FLOOR + SINGLE_SPACE_STRING + floor.getNumber());
+		details.put(REQUIRED, AT_LEAST_TWO_VEHICLE_RAMPS + minWidthTwo
+				+ OR_ONE_VEHICLE_RAMP + minWidthOne + AND_MAX_SLOPE);
 
 		if (valid) {
-			details.put(PROVIDED, "Provided vehicle ramp with minimum " + minWidthOne + " width");
+			details.put(PROVIDED, PROVIDED_VEHICLE_RAMP_WITH_MIN + minWidthOne + " width");
 			details.put(STATUS, Result.Accepted.getResultVal());
 		} else if (validPair) {
-			details.put(PROVIDED, "Provided two vehicle ramps of minimum " + minWidthTwo + " m width");
+			details.put(PROVIDED, PROVIDED_TWO_VEHICLE_RAMPS + minWidthTwo + WIDTH_SUFFIX);
 			details.put(STATUS, Result.Accepted.getResultVal());
 		} else {
-			details.put(PROVIDED, "Not Provided vehicle ramp with minimum " + minWidthOne
-					+ " width or two ramps of minimum " + minWidthTwo + " m width");
+			details.put(PROVIDED, NOT_PROVIDED_VEHICLE_RAMP + minWidthOne
+					+ OR_TWO_RAMPS + minWidthTwo + WIDTH_SUFFIX);
 			details.put(STATUS, Result.Not_Accepted.getResultVal());
 		}
 
@@ -380,6 +516,16 @@ public class VehicleRamp extends FeatureProcess {
 		pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
 	}
 
+	/**
+	 * Validates vehicle ramp polyline geometry to ensure proper rectangular shape.
+	 * Checks if all polylines have exactly 4 points and adds errors for invalid geometries.
+	 *
+	 * @param plan The building plan
+	 * @param blockNo The block number
+	 * @param floorNo The floor number
+	 * @param rampNo The ramp number
+	 * @param rampPolylines List of ramp polyline measurements
+	 */
 	// This method validates if all polylines of a vehicle ramp have exactly 4
 	// points (rectangle)
 	private void validateDimensions(Plan plan, String blockNo, int floorNo, String rampNo,
@@ -394,11 +540,17 @@ public class VehicleRamp extends FeatureProcess {
 		// If any invalid polyline is found, add an error message
 		if (count > 0) {
 			plan.addError(String.format(DxfFileConstants.LAYER_VEHICLE_RAMP_WITH_NO, blockNo, floorNo, rampNo),
-					count + " number of vehicle ramp polyline not having only 4 points in layer "
+					count + VEHICLE_RAMP_POLYLINE_ERROR
 							+ String.format(DxfFileConstants.LAYER_VEHICLE_RAMP_WITH_NO, blockNo, floorNo, rampNo));
 		}
 	}
 
+	/**
+	 * Returns amendment dates for vehicle ramp rules.
+	 * Currently returns an empty map as no amendments are defined.
+	 *
+	 * @return Empty LinkedHashMap of amendment dates
+	 */
 	@Override
 	public Map<String, Date> getAmendments() {
 		return new LinkedHashMap<>();

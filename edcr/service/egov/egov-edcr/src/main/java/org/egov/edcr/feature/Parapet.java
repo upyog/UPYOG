@@ -67,6 +67,8 @@ import org.egov.edcr.service.MDMSCacheManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import static org.egov.edcr.constants.CommonKeyConstants.COMMON_PARAPET;
+
 @Service
 public class Parapet extends FeatureProcess {
 
@@ -135,7 +137,7 @@ public class Parapet extends FeatureProcess {
 	 */
 	private ScrutinyDetail initializeScrutinyDetail() {
 	    ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
-	    scrutinyDetail.setKey("Common_Parapet");
+	    scrutinyDetail.setKey(COMMON_PARAPET);
 	    scrutinyDetail.addColumnHeading(1, RULE_NO);
 	    scrutinyDetail.addColumnHeading(2, DESCRIPTION);
 	    scrutinyDetail.addColumnHeading(3, REQUIRED);

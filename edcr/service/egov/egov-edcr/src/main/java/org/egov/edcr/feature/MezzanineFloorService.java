@@ -1,5 +1,7 @@
 package org.egov.edcr.feature;
 
+import static org.egov.edcr.constants.CommonFeatureConstants.*;
+import static org.egov.edcr.constants.CommonKeyConstants.*;
 import static org.egov.edcr.utility.DcrConstants.DECIMALDIGITS_MEASUREMENTS;
 import static org.egov.edcr.utility.DcrConstants.HEIGHTNOTDEFINED;
 import static org.egov.edcr.utility.DcrConstants.IN_METER;
@@ -39,7 +41,6 @@ public class MezzanineFloorService extends FeatureProcess {
     private static final String RULE46_DIM_DESC = "Minimum height of mezzanine floor";
     public static final String SUB_RULE_55_7_DESC = "Maximum allowed area of balcony";
     public static final String SUB_RULE_55_7 = "55-7";
-    private static final String FLOOR = "Floor";
     public static final String HALL_NUMBER = "Hall Number";
 
     @Autowired
@@ -130,7 +131,7 @@ public class MezzanineFloorService extends FeatureProcess {
         scrutinyDetail.addColumnHeading(4, REQUIRED);
         scrutinyDetail.addColumnHeading(5, PROVIDED);
         scrutinyDetail.addColumnHeading(6, STATUS);
-        scrutinyDetail.setKey("Block_" + block.getNumber() + "_" + "Mezzanine Floor");
+        scrutinyDetail.setKey(BLOCK + block.getNumber() + UNDERSCORE + MEZZANINE_FLOOR);
 
         if (block.getBuilding() != null && !block.getBuilding().getFloors().isEmpty()) {
             for (Floor floor : block.getBuilding().getFloors()) {
@@ -159,7 +160,7 @@ public class MezzanineFloorService extends FeatureProcess {
         for (Occupancy mezzanine : floor.getOccupancies()) {
             if (!mezzanine.getIsMezzanine() || floor.getNumber() == 0) continue;
 
-            String floorNo = " floor " + floor.getNumber();
+            String floorNo = FLOOR_SPACED + floor.getNumber();
             String mezzNo = mezzanine.getMezzanineNumber();
 
             if (mezzanine.getBuiltUpArea() != null && mezzanine.getBuiltUpArea().doubleValue() > 0
@@ -197,12 +198,12 @@ public class MezzanineFloorService extends FeatureProcess {
 
         if (height.compareTo(BigDecimal.ZERO) == 0) {
             pl.addError(RULE46_DIM_DESC,
-                getLocaleMessage(HEIGHTNOTDEFINED, "Mezzanine floor " + mezzNo, block.getName(), String.valueOf(floor.getNumber())));
+                getLocaleMessage(HEIGHTNOTDEFINED, MEZZANINE_FLOOR + SINGLE_SPACE_STRING + mezzNo, block.getName(), String.valueOf(floor.getNumber())));
         } else if (height.compareTo(ruleValues.height) >= 0) {
-            setReportOutputDetails(pl, subRule, RULE46_DIM_DESC + " " + mezzNo, floorNo,
+            setReportOutputDetails(pl, subRule, RULE46_DIM_DESC + SINGLE_SPACE_STRING + mezzNo, floorNo,
                 ruleValues.height + IN_METER, height + IN_METER, Result.Accepted.getResultVal());
         } else {
-            setReportOutputDetails(pl, subRule, RULE46_DIM_DESC + " " + mezzNo, floorNo,
+            setReportOutputDetails(pl, subRule, RULE46_DIM_DESC + SINGLE_SPACE_STRING + mezzNo, floorNo,
                 ruleValues.height + IN_METER, height + IN_METER, Result.Not_Accepted.getResultVal());
         }
     }
@@ -223,7 +224,7 @@ public class MezzanineFloorService extends FeatureProcess {
         BigDecimal actual = mezzanine.getBuiltUpArea();
 
         String status = (actual.compareTo(ruleValues.area) >= 0) ? Result.Accepted.getResultVal() : Result.Not_Accepted.getResultVal();
-        setReportOutputDetails(pl, subRule, RULE46_MINAREA_DESC + " " + mezzNo, floorNo,
+        setReportOutputDetails(pl, subRule, RULE46_MINAREA_DESC + SINGLE_SPACE_STRING + mezzNo, floorNo,
             ruleValues.area + SQMTRS, actual + SQMTRS, status);
     }
 
@@ -245,7 +246,7 @@ public class MezzanineFloorService extends FeatureProcess {
         BigDecimal oneThirdBuiltUp = builtUpArea.divide(ruleValues.builtUp, DECIMALDIGITS_MEASUREMENTS, ROUNDMODE_MEASUREMENTS);
         String status = (mezzArea.compareTo(oneThirdBuiltUp) <= 0) ? Result.Accepted.getResultVal() : Result.Not_Accepted.getResultVal();
 
-        setReportOutputDetails(pl, subRule, RULE46_MAXAREA_DESC + " " + mezzNo, floorNo,
+        setReportOutputDetails(pl, subRule, RULE46_MAXAREA_DESC + SINGLE_SPACE_STRING + mezzNo, floorNo,
             oneThirdBuiltUp + SQMTRS, mezzArea + SQMTRS, status);
     }
 
