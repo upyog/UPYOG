@@ -60,10 +60,8 @@ public class GarbageAccountSchedulerService {
 		setFromDateToDate(generateBillRequest);
 
 		List<GarbageAccount> garbageAccounts = getGarbageAccounts(generateBillRequest);
-		log.info("Accounts in query {}",garbageAccounts);
 
 		garbageAccounts = removeAlreadyBillCalculatedGarbageAccounts(garbageAccounts, generateBillRequest);
-		log.info("Accounts after removing {}",garbageAccounts);
 
 		// create demand and bill for every account
 		if (null != garbageAccounts && !CollectionUtils.isEmpty(garbageAccounts)) {
@@ -89,21 +87,19 @@ public class GarbageAccountSchedulerService {
 								.enrichGrbgBillFailure(garbageAccount, generateBillRequest,billResponse,false);
 						garbageAccountService.removeGarbageBillFailure(grbgBillFailure);
 
-						// triggerNotifications
-//						notificationService.triggerNotificationsGenerateBill(garbageAccount, billResponse.getBill().get(0),
-//								generateBillRequest.getRequestInfo(),grbgBillTracker);
+//						 triggerNotifications
+						notificationService.triggerNotificationsGenerateBill(garbageAccount, billResponse.getBill().get(0),
+								generateBillRequest.getRequestInfo(),grbgBillTracker);
 					}else {
 						GrbgBillFailure grbgBillFailure	= garbageAccountService
 								.enrichGrbgBillFailure(garbageAccount, generateBillRequest,billResponse,false);
 						garbageAccountService.saveToGarbageBillFailure(grbgBillFailure);
-						log.info("bill cant be generated {} {} {}",generateBillRequest,garbageAccount,billResponse);
 					}
 				}
 				else {
 					GrbgBillFailure grbgBillFailure	= garbageAccountService
 							.enrichGrbgBillFailure(garbageAccount, generateBillRequest,null,true);
 					garbageAccountService.saveToGarbageBillFailure(grbgBillFailure);
-					log.info("bill cant be generated {} {} {}",generateBillRequest,garbageAccount,null);
 				}
 			});
 		}

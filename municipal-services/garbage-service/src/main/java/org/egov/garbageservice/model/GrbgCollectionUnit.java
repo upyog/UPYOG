@@ -25,4 +25,8 @@ public class GrbgCollectionUnit {
     private String subCategory;
     private String subCategoryType;
     private Boolean isActive;
+    private Boolean isbplunit;
+    private Boolean isvariablecalculation;
+    private Boolean isbulkgeneration;
+
 }

@@ -27,7 +27,10 @@ public class GrbgCollectionUnitRepository {
                 grbgCollectionUnit.getUnitType(),
                 grbgCollectionUnit.getCategory(),
                 grbgCollectionUnit.getSubCategory(),
-                grbgCollectionUnit.getSubCategoryType());
+                grbgCollectionUnit.getSubCategoryType(),
+                grbgCollectionUnit.getIsbplunit(),
+                grbgCollectionUnit.getIsvariablecalculation(),
+                grbgCollectionUnit.getIsbulkgeneration());
     }
 
 
@@ -43,7 +46,10 @@ public class GrbgCollectionUnitRepository {
                 grbgCollectionUnit.getSubCategory(),
                 grbgCollectionUnit.getSubCategoryType(),
                 grbgCollectionUnit.getIsActive(),
-                grbgCollectionUnit.getUuid());
+                grbgCollectionUnit.getUuid(),
+                grbgCollectionUnit.getIsbplunit(),
+                grbgCollectionUnit.getIsbulkgeneration(),
+                grbgCollectionUnit.getIsvariablecalculation());
     }
 
 

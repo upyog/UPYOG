@@ -1884,9 +1884,9 @@ public class GarbageAccountService {
 		JsonNode response_payload = mapper.valueToTree(billResponse);
 		JsonNode request_payload = mapper.valueToTree(generateBillRequest);
 		String failure_reason = null;
-		if(isUserNull == true) 
+		if(isUserNull == true && billResponse == null) 
 			failure_reason = "USER - UUID - NULL";
-		if(billResponse == null) 
+		else
 			failure_reason = "ISSUE IN BILLING SERVICE";
 		GrbgBillFailure grbgBillFailure = GrbgBillFailure.builder()
 							.consumer_code(garbageAccount.getGrbgApplicationNumber())
