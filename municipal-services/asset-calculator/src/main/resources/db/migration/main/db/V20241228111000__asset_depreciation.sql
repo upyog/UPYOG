@@ -17,6 +17,6 @@ CREATE TABLE IF NOT EXISTS public.eg_asset_depreciation_details
     created_at bigint DEFAULT ((EXTRACT(epoch FROM now()) * (1000)::numeric))::bigint,
     updated_at bigint DEFAULT ((EXTRACT(epoch FROM now()) * (1000)::numeric))::bigint,
     CONSTRAINT eg_asset_depreciation_details_pkey PRIMARY KEY (id),
-    CONSTRAINT eg_asset_depreciation_details_pkey PRIMARY KEY (id),
-    CONSTRAINT unique_asset_depreciation UNIQUE (asset_id, from_date, to_date)
-)
+    CONSTRAINT unique_asset_depreciation UNIQUE (asset_id, from_date, to_date),
+    CONSTRAINT unique_asset_period UNIQUE (asset_id, from_date, to_date)
+    )
