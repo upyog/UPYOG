@@ -19,4 +19,4 @@ CREATE TABLE IF NOT EXISTS public.eg_asset_depreciation_details
     CONSTRAINT eg_asset_depreciation_details_pkey PRIMARY KEY (id),
     CONSTRAINT unique_asset_depreciation UNIQUE (asset_id, from_date, to_date),
     CONSTRAINT unique_asset_period UNIQUE (asset_id, from_date, to_date)
-    )
+)
