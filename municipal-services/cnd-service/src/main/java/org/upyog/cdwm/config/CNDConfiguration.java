@@ -44,6 +44,12 @@ public class CNDConfiguration {
     @Value("${persister.create.cnd.service.topic}")
     private String cndApplicationSaveTopic;
     
+    @Value("${persister.create.cnd.service.with.profile.topic}")
+    private String cndApplicationWithProfileSaveTopic;
+
+    @Value("${isUserProfileEnabled}")
+    private Boolean isUserProfileEnabled;
+
     @Value("${persister.save.cnd.waste.document.topic}")
     private String saveWasteDocumentApplicationTopic;
    

@@ -55,9 +55,17 @@ public class CNDServiceRepositoryImpl implements CNDServiceRepository {
     public void saveCNDApplicationDetail(CNDApplicationRequest cndApplicationRequest) {
         log.info("Saving CND application request for application no: {}",
                 cndApplicationRequest.getCndApplication().getApplicationNumber());
-        producer.push(config.getCndApplicationSaveTopic(), cndApplicationRequest);
+        pushCNDApplicationToKafka(cndApplicationRequest);
     }
 
+    private void pushCNDApplicationToKafka(CNDApplicationRequest cndApplicationRequest) {
+        if(config.getIsUserProfileEnabled()) {
+            producer.push(config.getCndApplicationWithProfileSaveTopic(), cndApplicationRequest);
+        }
+        else {
+            producer.push(config.getCndApplicationSaveTopic(), cndApplicationRequest);
+        }
+    }
     /**
      * Retrieves CND application details based on the search criteria.
      * 

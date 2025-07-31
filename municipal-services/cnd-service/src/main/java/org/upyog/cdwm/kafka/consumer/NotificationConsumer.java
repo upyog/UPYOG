@@ -45,7 +45,7 @@ public class NotificationConsumer {
      * - Extracts the appropriate action from the workflow and processes the notification.
      */
 	
-	@KafkaListener(topics = { "${persister.update.cnd.service.topic}", "${persister.create.cnd.service.topic}" })
+	@KafkaListener(topics = { "${persister.update.cnd.service.topic}", "${persister.create.cnd.service.topic}","${persister.create.cnd.service.with.profile.topic}" })
 	public void listen(final HashMap<String, Object> record, @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
 
 		CNDApplicationRequest cndRequest = new CNDApplicationRequest();
