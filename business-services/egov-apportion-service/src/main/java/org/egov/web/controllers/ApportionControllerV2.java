@@ -1,6 +1,8 @@
 package org.egov.web.controllers;
 
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.egov.service.ApportionServiceV2;
 import org.egov.util.ResponseInfoFactory;
 import org.egov.web.models.*;
@@ -16,12 +18,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.*;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 
-@javax.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2019-02-25T15:07:36.183+05:30")
+@jakarta.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2019-02-25T15:07:36.183+05:30")
 
 @Controller
 @RequestMapping("/v2")
+@Tag(name= "apportion Service v2", description = "apportions service v2")
 public class ApportionControllerV2 {
 
     private final ObjectMapper objectMapper;
@@ -38,15 +41,13 @@ public class ApportionControllerV2 {
         this.responseInfoFactory = responseInfoFactory;
     }
 
-
-
-
     /**
      * Executes the apportioning process on the given bills
      * @param apportionRequest The ApportionRequest containing the bill to be apportioned
      * @return Apportioned Bills
      */
     @RequestMapping(value="/bill/_apportion", method = RequestMethod.POST)
+    @Operation(summary = "bill")
     public ResponseEntity<ApportionResponse> apportionPost(@Valid @RequestBody ApportionRequest apportionRequest){
         List<Bill> billInfos = apportionService.apportionBills(apportionRequest);
         ApportionResponse response = ApportionResponse.builder()
@@ -58,6 +59,7 @@ public class ApportionControllerV2 {
     }
 
     @RequestMapping(value="/demand/_apportion", method = RequestMethod.POST)
+    @Operation(summary = "demand")
     public ResponseEntity<ApportionDemandResponse> apportionPost(@Valid @RequestBody DemandApportionRequest apportionRequest){
         List<Demand> demands = apportionService.apportionDemands(apportionRequest);
         ApportionDemandResponse response = ApportionDemandResponse.builder()
