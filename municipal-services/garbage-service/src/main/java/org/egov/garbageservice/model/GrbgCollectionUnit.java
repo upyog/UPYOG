@@ -25,8 +25,13 @@ public class GrbgCollectionUnit {
     private String subCategory;
     private String subCategoryType;
     private Boolean isActive;
-    private Boolean isbplunit;
-    private Boolean isvariablecalculation;
-    private Boolean isbulkgeneration;
+    @Builder.Default
+    private Boolean isbplunit = false;
+    @Builder.Default
+    private Boolean isvariablecalculation = false;
+    @Builder.Default
+    private Boolean isbulkgeneration = false;
+    @Builder.Default
+    private Number no_of_units = 0;
 
 }
