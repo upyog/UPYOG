@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.upyog.cdwm.config.CNDConfiguration;
 import org.upyog.cdwm.constants.CNDConstants;
 import org.upyog.cdwm.repository.impl.CNDServiceRepositoryImpl;
 import org.upyog.cdwm.service.CNDService;
@@ -54,6 +55,9 @@ public class CNDServiceImpl implements CNDService {
 
 	@Autowired
 	private UserService userService;
+
+	@Autowired
+	private CNDConfiguration config;
 	
     /**
      * Creates a new Construction and Demolition (CND) application request.
@@ -95,7 +99,7 @@ public class CNDServiceImpl implements CNDService {
         List<CNDApplicationDetail> applications = cndApplicationRepository.getCNDApplicationDetail(cndServiceSearchCriteria);
 
         // Enrich only if isUserDetailRequired is true
-        if (!CollectionUtils.isEmpty(applications) && Boolean.TRUE.equals(cndServiceSearchCriteria.getIsUserDetailRequired())) {
+        if (!CollectionUtils.isEmpty(applications) && Boolean.TRUE.equals(cndServiceSearchCriteria.getIsUserDetailRequired() && config.getIsUserProfileEnabled())) {
             log.info("Enriching CND applications with user, address, waste, and document details for applications: {}", applications);
 
             // Fetch waste, document and deposit center details
@@ -125,7 +129,10 @@ public class CNDServiceImpl implements CNDService {
                 
                 User user = userService.getUser(application.getApplicantDetailId(), application.getAddressDetailId() ,application.getTenantId(), requestInfo);
                 application.setApplicantDetail(userService.convertUserToApplicantDetail(user));
+				application.getApplicantDetail().setAuditDetails(application.getAuditDetails());
+				application.getApplicantDetail().setApplicationId(application.getApplicationId());
                 application.setAddressDetail(userService.convertUserAddressToAddressDetail(user.getAddresses()));
+				application.getAddressDetail().setApplicationId(application.getApplicationId());
             }
         }
 
