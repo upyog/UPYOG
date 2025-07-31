@@ -11,10 +11,7 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.stereotype.Component;
 import org.upyog.cdwm.util.CNDServiceUtil;
-import org.upyog.cdwm.web.models.CNDApplicationDetail;
-import org.upyog.cdwm.web.models.DocumentDetail;
-import org.upyog.cdwm.web.models.FacilityCenterDetail;
-import org.upyog.cdwm.web.models.WasteTypeDetail;
+import org.upyog.cdwm.web.models.*;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -102,6 +99,36 @@ public class CNDApplicationDetailRowmapper implements ResultSetExtractor<List<CN
                             .documentDetails(new ArrayList<>())
                             .auditDetails(CNDServiceUtil.getAuditDetails(rs))
                             .build();
+                    if(currentApplication.getApplicantDetailId() == null) {
+                        // Create and populate Applicant Detail
+                        CNDApplicantDetail applicantDetail = null;
+                        if (applicationId != null) {
+                            applicantDetail = new CNDApplicantDetail();
+                            applicantDetail.setApplicationId(applicationId);
+                            applicantDetail.setNameOfApplicant(rs.getString("name_of_applicant"));
+                            applicantDetail.setMobileNumber(rs.getString("mobile_number"));
+                            applicantDetail.setEmailId(rs.getString("email_id"));
+                            applicantDetail.setAlternateMobileNumber(rs.getString("alternate_mobile_number"));
+                        }
+
+                        // Create and populate Address Detail
+                        CNDAddressDetail addressDetail = null;
+                        if (applicationId != null) {
+                            addressDetail = new CNDAddressDetail();
+                            addressDetail.setApplicationId(applicationId);
+                            addressDetail.setHouseNumber(rs.getString("house_number"));
+                            addressDetail.setAddressLine1(rs.getString("address_line_1"));
+                            addressDetail.setAddressLine2(rs.getString("address_line_2"));
+                            addressDetail.setLandmark(rs.getString("landmark"));
+                            addressDetail.setCity(rs.getString("city"));
+                            addressDetail.setLocality(rs.getString("locality"));
+                            addressDetail.setPinCode(rs.getString("pincode"));
+                        }
+                        // Add applicant and address details into the application
+                        currentApplication.setApplicantDetail(applicantDetail);
+                        currentApplication.getApplicantDetail().setAuditDetails(CNDServiceUtil.getAuditDetails(rs));
+                        currentApplication.setAddressDetail(addressDetail);
+                    }
 
                     applicationDetailMap.put(applicationId, currentApplication);
                     

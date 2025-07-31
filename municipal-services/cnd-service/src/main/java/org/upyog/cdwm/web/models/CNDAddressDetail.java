@@ -9,7 +9,7 @@ import org.upyog.cdwm.web.models.user.enums.AddressType;
 @Builder
 @AllArgsConstructor
 public class CNDAddressDetail {
-
+    private String applicationId;
     private String houseNumber;
     private String addressLine1;
     private String addressLine2;
