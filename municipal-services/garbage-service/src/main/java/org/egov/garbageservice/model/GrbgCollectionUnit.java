@@ -32,6 +32,6 @@ public class GrbgCollectionUnit {
     @Builder.Default
     private Boolean isbulkgeneration = false;
     @Builder.Default
-    private Number no_of_units = 0;
+    private Integer no_of_units = 0;
 
 }

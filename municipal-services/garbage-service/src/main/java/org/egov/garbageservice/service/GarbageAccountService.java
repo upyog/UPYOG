@@ -1252,6 +1252,12 @@ public class GarbageAccountService {
 				garbageAccountRepository.update(child);
 				// update application
 				grbgApplicationRepository.update(child.getGrbgApplication());
+				
+				if (!CollectionUtils.isEmpty(child.getGrbgCollectionUnits())) {
+					child.getGrbgCollectionUnits().stream().forEach(unit -> {
+						grbgCollectionUnitRepository.update(unit);
+					});
+				}
 			});
 		}
 	}
