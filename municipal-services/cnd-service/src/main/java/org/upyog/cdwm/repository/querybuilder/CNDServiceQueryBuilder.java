@@ -108,15 +108,6 @@ public class CNDServiceQueryBuilder {
             preparedStmtList.add("%" + criteria.getTenantId() + "%");
         }
         
-        if (cndServiceConfiguration.getIsUserProfileEnabled()) {
-            addClauseIfRequired(query, preparedStmtList);
-            query.append(" ucad.applicant_detail_id IS NOT NULL ");
-        } else {
-            // If user profile is not enabled, we don't need to filter by applicant UUID
-            addClauseIfRequired(query, preparedStmtList);
-            query.append(" ucad.applicant_detail_id IS NULL ");
-        }
-        
         if (!ObjectUtils.isEmpty(criteria.getApplicationNumber())) {
             addClauseIfRequired(query, preparedStmtList);
             
@@ -149,6 +140,20 @@ public class CNDServiceQueryBuilder {
         // If count query, return directly
         if (criteria.isCountCall()) {
             return query.toString();
+        }
+        
+        /*
+         * Added at the end to filter results based on user profile setting.
+         * If enabled → fetch records with applicant_detail_id.
+         * If disabled → fetch records without applicant_detail_id.
+         */
+        if (cndServiceConfiguration.getIsUserProfileEnabled()) {
+            addClauseIfRequired(query, preparedStmtList);
+            query.append(" ucad.applicant_detail_id IS NOT NULL ");
+        } else {
+            // If user profile is not enabled, we don't need to filter by applicant UUID
+            addClauseIfRequired(query, preparedStmtList);
+            query.append(" ucad.applicant_detail_id IS NULL ");
         }
         
         // Apply pagination for non-count queries
