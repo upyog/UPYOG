@@ -14,6 +14,7 @@ import org.upyog.cdwm.util.CNDServiceUtil;
 import org.upyog.cdwm.web.models.*;
 
 import lombok.extern.slf4j.Slf4j;
+import org.upyog.cdwm.web.models.user.enums.AddressType;
 
 /**
  * RowMapper class to extract data from the ResultSet and map it to a list of
@@ -87,6 +88,7 @@ public class CNDApplicationDetailRowmapper implements ResultSetExtractor<List<CN
                             .noOfTrips(rs.getObject("no_of_trips") != null ? rs.getInt("no_of_trips") : 0)
                             .vehicleId(rs.getString("vehicle_id"))
                             .vehicleType(rs.getString("vehicle_type"))
+                            .createdByUserType(rs.getString("created_by_usertype"))
                             .vendorId(rs.getString("vendor_id"))
                             .pickupDate(rs.getDate("pickup_date") != null
                                     ? rs.getDate("pickup_date").toLocalDate()
@@ -119,6 +121,8 @@ public class CNDApplicationDetailRowmapper implements ResultSetExtractor<List<CN
                             addressDetail.setHouseNumber(rs.getString("house_number"));
                             addressDetail.setAddressLine1(rs.getString("address_line_1"));
                             addressDetail.setAddressLine2(rs.getString("address_line_2"));
+                            addressDetail.setFloorNumber(rs.getString("floor_number"));
+                            addressDetail.setAddressType(AddressType.fromValue(rs.getString("address_type")));
                             addressDetail.setLandmark(rs.getString("landmark"));
                             addressDetail.setCity(rs.getString("city"));
                             addressDetail.setLocality(rs.getString("locality"));

@@ -25,7 +25,7 @@ public class CNDServiceQueryBuilder {
     	    "construction_from_date, construction_to_date, property_type, total_waste_quantity, no_of_trips, ucad.vehicle_id, " +
     	    "vendor_id, pickup_date, completed_on, ucad.created_by, ucad.last_modified_by, ucad.created_time, " +
     	    "ucad.last_modified_time, ucad.tenant_id, ucad.applicant_detail_id, ucad.address_detail_id, " +
-    	    "ucad.applicant_mobile_number " +
+    	    "ucad.applicant_mobile_number, created_by_usertype " +
     	    "FROM ug_cnd_application_details ucad";
 
     private static final String CND_APPLICATION_DETAILS_QUERY =
@@ -34,7 +34,7 @@ public class CNDServiceQueryBuilder {
                     "construction_from_date, construction_to_date, property_type, total_waste_quantity, no_of_trips, ucad.vehicle_id, " +
                     "vendor_id, pickup_date, completed_on, ucad.created_by, ucad.last_modified_by, ucad.created_time, " +
                     "ucad.last_modified_time, ucad.tenant_id, ucad.applicant_detail_id, ucad.address_detail_id, " +
-                    "ucad.applicant_mobile_number, " +
+                    "ucad.applicant_mobile_number, created_by_usertype, " +
                     "uad.name_of_applicant, uad.mobile_number, uad.email_id, uad.alternate_mobile_number, " +
                     "uad.createdby AS applicant_created_by, uad.lastmodifiedby AS applicant_last_modified_by, " +
                     "uad.createdtime AS applicant_created_time, uad.lastmodifiedtime AS applicant_last_modified_time, " +
