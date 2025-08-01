@@ -94,7 +94,7 @@ public class EnrichmentService {
         cndApplicationDetails.getAddressDetail().setApplicationId(applicationId);
         // Copy mobile number from applicant details to a separate field to save in application table
         cndApplicationDetails.setApplicantMobileNumber(cndApplicationDetails.getApplicantDetail().getMobileNumber());
-
+        cndApplicationDetails.setCreatedByUserType(requestInfo.getUserInfo().getType().toString());
 
         List<WasteTypeDetail> wasteTypeDetails = cndApplicationDetails.getWasteTypeDetails();
         if (wasteTypeDetails != null) {
