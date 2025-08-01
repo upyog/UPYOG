@@ -84,6 +84,8 @@ public class CNDApplicationDetail {
 
     private String vendorId;
 
+    private String createdByUserType;
+
     @JsonFormat(pattern = CNDServiceUtil.DATE_FORMAT)
     private LocalDate pickupDate;
 
