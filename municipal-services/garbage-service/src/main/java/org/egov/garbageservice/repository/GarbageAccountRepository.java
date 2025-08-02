@@ -40,7 +40,7 @@ public class GarbageAccountRepository {
 	@Autowired
 	private ObjectMapper objectMapper;
 
-	private static final String SELECT_GRBG_ACC = " SELECT * FROM eg_grbg_account acc"
+	private static final String SELECT_GRBG_ACC = " SELECT acc.* FROM eg_grbg_account acc"
 			+ " JOIN eg_grbg_old_details old_dtl ON old_dtl.garbage_id = acc.garbage_id"
 			+ " JOIN eg_grbg_collection_unit unit ON unit.garbage_id = acc.garbage_id"
 			+ " JOIN eg_grbg_address address ON address.garbage_id = acc.garbage_id"
