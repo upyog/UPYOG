@@ -49,8 +49,6 @@ package org.egov.edcr.feature;
 
 import static org.egov.edcr.constants.CommonFeatureConstants.EMPTY_STRING;
 import static org.egov.edcr.constants.EdcrReportConstants.*;
-import static org.egov.edcr.constants.EdcrRulesMdmsConstants.SOLAR_VALUE_ONE;
-import static org.egov.edcr.constants.EdcrRulesMdmsConstants.SOLAR_VALUE_TWO;
 import static org.egov.edcr.service.FeatureUtil.addScrutinyDetailtoPlan;
 import static org.egov.edcr.service.FeatureUtil.mapReportDetails;
 import static org.egov.edcr.utility.DcrConstants.OBJECTDEFINED_DESC;

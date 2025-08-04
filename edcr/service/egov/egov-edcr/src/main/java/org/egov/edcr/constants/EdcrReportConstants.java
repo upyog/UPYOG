@@ -629,4 +629,9 @@ public class EdcrReportConstants {
 
     public static final BigDecimal three = BigDecimal.valueOf(3);
     public static final BigDecimal ONE_ANDHALF_MTR = BigDecimal.valueOf(1.5);
+
+    // Solar constants
+    public static final String SOLAR_VALUE_ONE = "solarValueOne";
+    public static final String SOLAR_VALUE_TWO = "solarValueTwo";
+
 }

@@ -151,10 +151,6 @@ public class Basement extends FeatureProcess {
 	        .map(BasementRequirement.class::cast)
 	        .findFirst();
 	}
-
-	
-
-
 	
 	/**
 	 * Creates and initializes a new {@link ScrutinyDetail} for basement rule validations.
