@@ -19,16 +19,31 @@ public class CNDServiceQueryBuilder {
     private CNDConfiguration cndServiceConfiguration;
 
     
-    private static final String CND_APPLICATION_DETAILS_QUERY =
+    private static final String CND_APPLICATION_DETAILS_QUERY_WITH_PROFILE =
     	    "SELECT ucad.application_id, application_number, application_type, vehicle_type, locality, type_of_construction, deposit_centre_details, " +
     	    "applicant_detail_id, requested_pickup_date, application_status, additional_details, house_area, " +
     	    "construction_from_date, construction_to_date, property_type, total_waste_quantity, no_of_trips, ucad.vehicle_id, " +
     	    "vendor_id, pickup_date, completed_on, ucad.created_by, ucad.last_modified_by, ucad.created_time, " +
     	    "ucad.last_modified_time, ucad.tenant_id, ucad.applicant_detail_id, ucad.address_detail_id, " +
-    	    "ucad.applicant_mobile_number " +
+    	    "ucad.applicant_mobile_number, created_by_usertype " +
     	    "FROM ug_cnd_application_details ucad";
 
-    
+    private static final String CND_APPLICATION_DETAILS_QUERY =
+            "SELECT ucad.application_id, application_number, application_type, vehicle_type, ucad.locality, type_of_construction, deposit_centre_details, " +
+                    "applicant_detail_id, requested_pickup_date, application_status, additional_details, house_area, " +
+                    "construction_from_date, construction_to_date, property_type, total_waste_quantity, no_of_trips, ucad.vehicle_id, " +
+                    "vendor_id, pickup_date, completed_on, ucad.created_by, ucad.last_modified_by, ucad.created_time, " +
+                    "ucad.last_modified_time, ucad.tenant_id, ucad.applicant_detail_id, ucad.address_detail_id, " +
+                    "ucad.applicant_mobile_number, created_by_usertype, " +
+                    "uad.name_of_applicant, uad.mobile_number, uad.email_id, uad.alternate_mobile_number, " +
+                    "uad.createdby AS applicant_created_by, uad.lastmodifiedby AS applicant_last_modified_by, " +
+                    "uad.createdtime AS applicant_created_time, uad.lastmodifiedtime AS applicant_last_modified_time, " +
+                    "uaddr.house_number, uaddr.address_line_1, uaddr.address_line_2, uaddr.landmark, uaddr.floor_number, " +
+                    "uaddr.city, uaddr.locality, uaddr.pincode, uaddr.address_type " +
+                    "FROM ug_cnd_application_details ucad " +
+                    "LEFT JOIN ug_cnd_applicant_details uad ON ucad.application_id = uad.application_id " +
+                    "LEFT JOIN ug_cnd_address_details uaddr ON ucad.application_id = uaddr.application_id";
+
     private static final String WASTE_DETAIL_SELECT_QUERY =
     	    "SELECT wd.application_id as wasteDetailApplicationId, " +
     	    "waste_type_id as wasteTypeId, " +
@@ -77,7 +92,11 @@ public class CNDServiceQueryBuilder {
         
     	StringBuilder query;
     	if (!criteria.isCountCall()) {
-    	    query = new StringBuilder(CND_APPLICATION_DETAILS_QUERY);
+            if( cndServiceConfiguration.getIsUserProfileEnabled()) {
+                query = new StringBuilder(CND_APPLICATION_DETAILS_QUERY_WITH_PROFILE);
+            } else {
+                query = new StringBuilder(CND_APPLICATION_DETAILS_QUERY);
+            }
     	} else {
     	    query = new StringBuilder(APPLICATIONS_COUNT_QUERY);
     	}
@@ -121,6 +140,20 @@ public class CNDServiceQueryBuilder {
         // If count query, return directly
         if (criteria.isCountCall()) {
             return query.toString();
+        }
+        
+        /*
+         * Added at the end to filter results based on user profile setting.
+         * If enabled → fetch records with applicant_detail_id.
+         * If disabled → fetch records without applicant_detail_id.
+         */
+        if (cndServiceConfiguration.getIsUserProfileEnabled()) {
+            addClauseIfRequired(query, preparedStmtList);
+            query.append(" ucad.applicant_detail_id IS NOT NULL ");
+        } else {
+            // If user profile is not enabled, we don't need to filter by applicant UUID
+            addClauseIfRequired(query, preparedStmtList);
+            query.append(" ucad.applicant_detail_id IS NULL ");
         }
         
         // Apply pagination for non-count queries

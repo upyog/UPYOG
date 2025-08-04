@@ -56,36 +56,46 @@ public class EnrichmentService {
         String userUuid = requestInfo.getUserInfo().getUuid();
         AuditDetails auditDetails = CNDServiceUtil.getAuditDetails(userUuid, true);
 
-        // If the mobile number in the request matches the applicant's mobile number, then set the applicantDetailId as userUuid
-        if (CNDServiceUtil.isCurrentUserApplicant(cndApplicationRequest)) {
-            cndApplicationDetails.setApplicantDetailId(userUuid);
-        } else { // If the mobile number does not match, set the applicantDetailId to null and addressDetailId to null
+        if(config.getIsUserProfileEnabled()) {
+            // If the mobile number in the request matches the applicant's mobile number, then set the applicantDetailId as userUuid
+            if (CNDServiceUtil.isCurrentUserApplicant(cndApplicationRequest)) {
+                cndApplicationDetails.setApplicantDetailId(userUuid);
+            } else { // If the mobile number does not match, set the applicantDetailId to null and addressDetailId to null
+                cndApplicationDetails.setApplicantDetailId(null);
+                cndApplicationDetails.setAddressDetailId(null);
+            }
+
+            String applicantDetailId = cndApplicationDetails.getApplicantDetailId();
+
+            if (StringUtils.isBlank(applicantDetailId)) {
+                // Enrich user details for existing user or user details with address for new user
+                enrichUserDetails(cndApplicationRequest);
+            }
+            String addressDetailId = cndApplicationDetails.getAddressDetailId();
+            if (StringUtils.isBlank(addressDetailId)) {
+                // Enrich address details only
+                enrichAddressDetails(cndApplicationRequest, cndApplicationDetails);
+            }
+        }
+        else{
+            // If user profile is not enabled, set applicantDetailId and addressDetailId to null
             cndApplicationDetails.setApplicantDetailId(null);
             cndApplicationDetails.setAddressDetailId(null);
+            log.info("User profile is not enabled, setting applicantDetailId and addressDetailId to null");
         }
-
-        String applicantDetailId = cndApplicationDetails.getApplicantDetailId();
-
-        if (StringUtils.isBlank(applicantDetailId)) {
-            // Enrich user details for existing user or user details with address for new user
-            enrichUserDetails(cndApplicationRequest);
-        }
-        String addressDetailId = cndApplicationDetails.getAddressDetailId();
-        if (StringUtils.isBlank(addressDetailId)) {
-            // Enrich address details only
-            enrichAddressDetails(cndApplicationRequest, cndApplicationDetails);
-        }
-
 
         // Set application details
         cndApplicationDetails.setApplicationId(applicationId);
         cndApplicationDetails.setApplicationStatus(CNDStatus.valueOf(cndApplicationDetails.getApplicationStatus()).toString());
         cndApplicationDetails.setAuditDetails(auditDetails);
         cndApplicationDetails.setTenantId(cndApplicationDetails.getTenantId());
-
+        cndApplicationDetails.getApplicantDetail().setApplicationId(applicationId);
+        cndApplicationDetails.getApplicantDetail().setAuditDetails(auditDetails);
+        cndApplicationDetails.getAddressDetail().setApplicationId(applicationId);
+        cndApplicationDetails.setLocality(cndApplicationDetails.getAddressDetail().getLocality());
         // Copy mobile number from applicant details to a separate field to save in application table
         cndApplicationDetails.setApplicantMobileNumber(cndApplicationDetails.getApplicantDetail().getMobileNumber());
-
+        cndApplicationDetails.setCreatedByUserType(requestInfo.getUserInfo().getType().toString());
 
         List<WasteTypeDetail> wasteTypeDetails = cndApplicationDetails.getWasteTypeDetails();
         if (wasteTypeDetails != null) {
