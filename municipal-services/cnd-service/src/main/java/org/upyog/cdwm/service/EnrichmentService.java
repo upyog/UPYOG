@@ -79,6 +79,9 @@ public class EnrichmentService {
         }
         else{
             // If user profile is not enabled, set applicantDetailId and addressDetailId to null
+            if (!CNDServiceUtil.isCurrentUserApplicant(cndApplicationRequest)) {
+                enrichUserDetails(cndApplicationRequest);
+            }
             cndApplicationDetails.setApplicantDetailId(null);
             cndApplicationDetails.setAddressDetailId(null);
             log.info("User profile is not enabled, setting applicantDetailId and addressDetailId to null");

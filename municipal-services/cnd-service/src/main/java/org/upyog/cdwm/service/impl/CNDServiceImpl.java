@@ -99,7 +99,7 @@ public class CNDServiceImpl implements CNDService {
         List<CNDApplicationDetail> applications = cndApplicationRepository.getCNDApplicationDetail(cndServiceSearchCriteria);
 
         // Enrich only if isUserDetailRequired is true
-        if (!CollectionUtils.isEmpty(applications) && Boolean.TRUE.equals(cndServiceSearchCriteria.getIsUserDetailRequired() && config.getIsUserProfileEnabled())) {
+        if (!CollectionUtils.isEmpty(applications) && Boolean.TRUE.equals(cndServiceSearchCriteria.getIsUserDetailRequired())) {
             log.info("Enriching CND applications with user, address, waste, and document details for applications: {}", applications);
 
             // Fetch waste, document and deposit center details
@@ -127,12 +127,14 @@ public class CNDServiceImpl implements CNDService {
                     application.setFacilityCenterDetail(facilityDetails.get(0));
                 }
                 
-                User user = userService.getUser(application.getApplicantDetailId(), application.getAddressDetailId() ,application.getTenantId(), requestInfo);
-                application.setApplicantDetail(userService.convertUserToApplicantDetail(user));
 				application.getApplicantDetail().setAuditDetails(application.getAuditDetails());
 				application.getApplicantDetail().setApplicationId(application.getApplicationId());
-                application.setAddressDetail(userService.convertUserAddressToAddressDetail(user.getAddresses()));
 				application.getAddressDetail().setApplicationId(application.getApplicationId());
+				if(config.getIsUserProfileEnabled()){
+					User user = userService.getUser(application.getApplicantDetailId(), application.getAddressDetailId() ,application.getTenantId(), requestInfo);
+					application.setApplicantDetail(userService.convertUserToApplicantDetail(user));
+					application.setAddressDetail(userService.convertUserAddressToAddressDetail(user.getAddresses()));
+				}
             }
         }
 
