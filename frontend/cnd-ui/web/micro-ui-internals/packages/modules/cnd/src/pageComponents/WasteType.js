@@ -272,14 +272,15 @@ const WasteType = ({ t, config, onSelect, formData }) => {
               onAddWasteType={handleAddWasteType}
             />)
           :
-         (<MultiSelectDropdown 
-          options={common} 
-          selectedValues={wasteMaterialType} 
-          onChange={setwasteMaterialType} 
-          optionKey="i18nKey" 
-          t={t} 
-          style={{inputStyles}}
-          />
+         (<div style={{ width: userType === "EMPLOYEE" ? "86%" : "100%" }}> 
+            <MultiSelectDropdown 
+              options={common} 
+              selectedValues={wasteMaterialType} 
+              onChange={setwasteMaterialType} 
+              optionKey="i18nKey" 
+              t={t}
+            />
+          </div>
           )}
          
           <div style={isInPickupProgress?cndStyles.containerStyleInProgress:cndStyles.containerStyleNotInProgress}>
