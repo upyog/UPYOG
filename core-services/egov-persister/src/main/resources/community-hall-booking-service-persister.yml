@@ -102,8 +102,8 @@ serviceMaps:
               applicant_detail_id, booking_id, applicant_name, applicant_email_id,
               applicant_mobile_no, applicant_alternate_mobile_no, account_no, ifsc_code,
               bank_name, bank_branch_name, account_holder_name, createdby,
-              lastmodifiedby, createdtime, lastmodifiedtime
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+              lastmodifiedby, createdtime, lastmodifiedtime, additionaldetail
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
           basePath: hallsBookingApplication.applicantDetail
           jsonMaps:
             - jsonPath: $.hallsBookingApplication.applicantDetail.applicantDetailId
@@ -121,7 +121,10 @@ serviceMaps:
             - jsonPath: $.hallsBookingApplication.applicantDetail.auditDetails.lastModifiedBy
             - jsonPath: $.hallsBookingApplication.applicantDetail.auditDetails.createdTime
             - jsonPath: $.hallsBookingApplication.applicantDetail.auditDetails.lastModifiedTime
-
+            - jsonPath: $.hallsBookingApplication.applicantDetail.additionalDetails
+              type: JSON
+              dbType: JSONB
+            
         - query: >
             INSERT INTO public.eg_chb_address_detail(
               address_id, applicant_detail_id, door_no, house_no, address_line_1,
