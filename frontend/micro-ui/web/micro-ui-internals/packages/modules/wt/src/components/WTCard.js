@@ -47,7 +47,7 @@ const WTCard = () => {
       link: `${APPLICATION_PATH}/employee/wt/my-bookings`,
     },
     {
-      label: t("ES_COMMON_APPLICATION_CREATE"),
+      label: t("WT_APPLICATION_CREATE"),
       link: `${APPLICATION_PATH}/employee/wt/request-service`,
     }
   ]

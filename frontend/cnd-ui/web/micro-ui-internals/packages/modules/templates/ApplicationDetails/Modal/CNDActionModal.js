@@ -123,6 +123,9 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
     else if (action?.action==="COMPLETE_REQUEST"){
       history.push(`/cnd-ui/employee/cnd/cnd-service/facility-centre/`+ `${applicationData?.applicationNumber}`);
     }
+    else if (action.action === "PAY") {
+      return history.push(`/cnd-ui/employee/payment/collect/cnd-service/${applicationData.applicationNumber}`);
+    }
     else{
     setConfig(
         configCNDApproverApplication({
