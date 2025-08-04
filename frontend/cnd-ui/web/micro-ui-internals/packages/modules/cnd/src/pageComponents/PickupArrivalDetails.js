@@ -26,7 +26,7 @@ const pickupDetails = () => ({
 
 const PickupArrivalDetails = ({ config, onSelect, formData, setError, clearErrors }) => {
   const { t } = useTranslation();
-  const isEmployee =  window.location.href.includes("/employee");
+  const isEmployee = window.location.href.includes("/employee/cnd/cnd-service/edit");
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const applicationDetails = isEmployee ? useApplicationDetails():null;
   const [pickup, setpickup] = useState(formData?.pickup || [pickupDetails()]);

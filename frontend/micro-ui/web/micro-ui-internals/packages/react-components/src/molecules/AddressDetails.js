@@ -52,7 +52,7 @@ const AddressDetails = ({t, config, onSelect, formData, isEdit}) => {
   const location = useLocation();
   const usedAddressTypes = location.state?.usedAddressTypes || [];
 
-  const inputStyles = {width:user.type === "EMPLOYEE" ? "50%" : "86%"};
+  const inputStyles = {width:user.type === "EMPLOYEE" ? "50%" : "100%"};
   
   const availableAddressTypeOptions = useMemo(() => {
     const allOptions = [
@@ -121,7 +121,7 @@ const AddressDetails = ({t, config, onSelect, formData, isEdit}) => {
       optionCardStyles={{ overflowY: "auto", maxHeight: "300px" }}
       optionKey="i18nKey"
       t={t}
-      style={{ width: "100%" }} 
+      style={inputStyles} 
       placeholder={"Select Address Type"}
     />
     <CardLabel>{`${t("HOUSE_NO")}`} <span className="check-page-link-button">*</span></CardLabel>
@@ -132,7 +132,7 @@ const AddressDetails = ({t, config, onSelect, formData, isEdit}) => {
         optionKey="i18nKey"
         name="houseNo"
         value={houseNo}
-        style={{width: "100%"}}
+        style={inputStyles}
         placeholder={"Enter House No"}
         onChange={(e) => {
             setHouseNo(e.target.value);
@@ -154,7 +154,7 @@ const AddressDetails = ({t, config, onSelect, formData, isEdit}) => {
         optionKey="i18nKey"
         name="streetName"
         value={streetName}
-        style={{width: "100%"}}
+        style={inputStyles}
         placeholder={"Enter Street Name"}
         onChange={(e) => {
           setstreetName(e.target.value);
@@ -175,7 +175,7 @@ const AddressDetails = ({t, config, onSelect, formData, isEdit}) => {
         optionKey="i18nKey"
         name="addressLine1"
         value={addressLine1}
-        style={{width: "100%"}}
+        style={inputStyles}
         placeholder={"Enter Address"}
         onChange={(e) => {
           setAddressLine1(e.target.value);
@@ -197,7 +197,7 @@ const AddressDetails = ({t, config, onSelect, formData, isEdit}) => {
         optionKey="i18nKey"
         name="addressLine2"
         value={addressLine2}
-        style={{width: "100%"}}
+        style={inputStyles}
         placeholder={"Enter Address"}
         onChange={(e) => {
          setAddressLine2(e.target.value);
@@ -219,7 +219,7 @@ const AddressDetails = ({t, config, onSelect, formData, isEdit}) => {
         optionKey="i18nKey"
         name="landmark"
         value={landmark}
-        style={{width: "100%"}}
+        style={inputStyles}
         placeholder={"Enter Landmark"}
         onChange={(e) => {
           setLandmark(e.target.value);
@@ -248,7 +248,7 @@ const AddressDetails = ({t, config, onSelect, formData, isEdit}) => {
             optionCardStyles={{ overflowY: "auto", maxHeight: "300px" }}
             optionKey="i18nKey"
             t={t}
-            style={{ width: "100%" }}
+            style={inputStyles}
             placeholder={"Select"}
           />
         )}
@@ -269,7 +269,7 @@ const AddressDetails = ({t, config, onSelect, formData, isEdit}) => {
             optionCardStyles={{ overflowY: "auto", maxHeight: "300px" }}
             optionKey="i18nKey"
             t={t}
-            style={{ width: "100%" }}
+            style={inputStyles}
             placeholder={"Select"}
           />
         )}
@@ -286,7 +286,7 @@ const AddressDetails = ({t, config, onSelect, formData, isEdit}) => {
         onChange={(e) => {
             setPincode(e.target.value);
           }}
-        style={{width: "100%"}}
+        style={inputStyles}
         placeholder="Enter Pincode"
         ValidationRequired={true}
         validation={{

@@ -14,7 +14,7 @@ import { cndStyles } from "../utils/cndStyles";
 */
 const PropertyNature = ({ t, config, onSelect, formData }) => {
   let validation = {};
-  const isEmployee =  window.location.href.includes("/employee");
+  const isEmployee = window.location.href.includes("/employee/cnd/cnd-service/edit");
   const applicationDetails = isEmployee ? useApplicationDetails():null;
   const userType = Digit.UserService.getUser().info.type;
   const { control, watch, trigger } = useForm();

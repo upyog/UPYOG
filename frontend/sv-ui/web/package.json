@@ -19,7 +19,7 @@
     "@upyog/digit-ui-module-bills": "1.8.0",
     "@upyog/digit-ui-module-common": "1.8.12",
     "@upyog/digit-ui-module-core": "1.8.2",
-    "@nudmcdgnpm/digit-ui-react-components": "1.2.11",
+    "@nudmcdgnpm/digit-ui-react-components": "1.2.14",
     "@upyog/digit-ui-module-engagement": "1.8.0",
     "@nudmcdgnpm/upyog-ui-module-sv":"1.2.10",
     "babel-loader": "8.1.0",

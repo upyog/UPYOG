@@ -38,6 +38,10 @@ const CNDCard = () => {
       link: `/cnd-ui/employee/cnd/inbox`,
     },
     {
+      label: t("CND_APPLY"),
+      link: `/cnd-ui/employee/cnd/apply`,
+    },
+    {
       label: t("CND_MY_REQUEST"),
       link: `/cnd-ui/employee/cnd/my-request`,
     },

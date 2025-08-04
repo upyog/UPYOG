@@ -18,7 +18,7 @@
     "@upyog/digit-ui-module-bills": "1.8.0",
     "@upyog/digit-ui-module-common": "1.8.12",
     "@upyog/digit-ui-module-core": "1.8.2",
-    "@nudmcdgnpm/digit-ui-react-components": "1.2.11",
+    "@nudmcdgnpm/digit-ui-react-components": "1.2.14",
     "@nudmcdgnpm/upyog-ui-module-cnd":"1.0.1",
     "babel-loader": "8.1.0",
     "react": "17.0.2",
@@ -37,7 +37,9 @@
     "**/babel-loader": "8.2.2",
     "**/@babel/core": "7.14.0",
     "**/@babel/preset-env": "7.14.0",
-    "**/@babel/plugin-transform-modules-commonjs": "7.14.0"
+    "**/@babel/plugin-transform-modules-commonjs": "7.14.0",
+     "minimatch": "^3.1.2",
+    "glob":"7.2.3"
   },
   "scripts": {
     "start": "react-scripts start",

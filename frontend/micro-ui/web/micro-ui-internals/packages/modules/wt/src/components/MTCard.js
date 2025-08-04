@@ -47,7 +47,7 @@ const MTCard = () => {
       link: `${APPLICATION_PATH}/employee/wt/mt/my-bookings`,
     },
     {
-      label: t("ES_COMMON_APPLICATION_CREATE"),
+      label: t("MT_APPLICATION_CREATE"),
       link: `${APPLICATION_PATH}/employee/wt/mt/request-service`,
     }
   ]

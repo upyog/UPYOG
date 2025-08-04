@@ -26,6 +26,7 @@ const EmployeeApp = () => {
   const EditResponse = Digit?.ComponentRegistryService?.getComponent("EditSubmissionResponse");
   const FacilityCentreCreationDetails = Digit?.ComponentRegistryService?.getComponent("FacilityCentreCreationDetails");
   const FacilitySubmissionResponse = Digit?.ComponentRegistryService?.getComponent("FacilitySubmissionResponse");
+  const CndCreate = Digit?.ComponentRegistryService?.getComponent("CndCreate");
 
   return (
     <span className={"cnd-citizen"} style={cndStyles.wasteQuantityCitizen}>
@@ -45,6 +46,7 @@ const EmployeeApp = () => {
               />
             )}
           />
+          <PrivateRoute path={`${path}/apply`} component={CndCreate} />
           <PrivateRoute path={`${path}/application-details/:id`} component={() => <ApplicationDetails parentRoute={path} />} />
           <PrivateRoute path={`${path}/applicationsearch/application-details/:id`} component={() => <ApplicationDetails parentRoute={path} />} />
           <PrivateRoute path={`${path}/cnd-service/edit/:id`} component={() => <EditCreate parentUrl={url} />} />

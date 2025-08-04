@@ -22,6 +22,7 @@ const Address = ({t, config, formData, onSelect}) => {
   const [addresses, setAddresses] = useState([]);
   const [selectedAddressStatement, setSelectedAddressStatement] = useState(formData?.addressDetails?.selectedAddressStatement || "");
   const stateId = Digit.ULBService.getStateId();
+  const userType= Digit.UserService.getUser().info?.type;
   useEffect(() => {
     const fetchUserDetails = async () => {
       if (userUUID) {
@@ -56,7 +57,7 @@ const Address = ({t, config, formData, onSelect}) => {
         <div style={cndStyles.addButtonMargin}>
         <Link
           to={{
-            pathname: "/cnd-ui/citizen/cnd/apply/address-details",
+            pathname: `/cnd-ui/${userType === "EMPLOYEE" ? "employee" : "citizen"}/cnd/apply/address-details`,
             state: { usedAddressTypes: addresses.map(a => a.addressType) }
           }}
         >

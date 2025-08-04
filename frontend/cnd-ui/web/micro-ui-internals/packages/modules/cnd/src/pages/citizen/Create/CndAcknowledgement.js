@@ -37,7 +37,7 @@ const BannerPicker = (props) => {
 
 const CndAcknowledgement = ({ data, onSuccess }) => {
   const { t } = useTranslation();
-  const tenantId = Digit.ULBService.getCitizenCurrentTenant(true);
+  const tenantId = Digit.ULBService.getCitizenCurrentTenant(true) || Digit.ULBService.getCurrentTenantId();
   const user = Digit.UserService.getUser().info;
   const mutation = Digit.Hooks.cnd.useCndCreateApi(tenantId); 
   const { data: storeData } = Digit.Hooks.useStore.getInitData();
@@ -83,14 +83,9 @@ const CndAcknowledgement = ({ data, onSuccess }) => {
         )}
       </StatusTable>
       {mutation.isSuccess && <SubmitBar label={t("CND_ACKNOWLEDGEMENT")} onSubmit={handleDownloadPdf} />}
-      {user?.type==="CITIZEN"?
-      <Link to={`/digit-ui/citizen`}>
-        <LinkButton label={t("CORE_COMMON_GO_TO_HOME")} />
+      <Link to={`/cnd-ui/${user?.type === "CITIZEN" ? "citizen" : "employee"}`}>
+          <LinkButton label={t("CORE_COMMON_GO_TO_HOME")} />
       </Link>
-      :
-      <Link to={`/digit-ui/employee`}>
-        <LinkButton label={t("CORE_COMMON_GO_TO_HOME")} />
-      </Link>}
     </Card>
   );
 };
