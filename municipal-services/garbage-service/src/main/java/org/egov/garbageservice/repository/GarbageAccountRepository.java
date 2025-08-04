@@ -40,6 +40,12 @@ public class GarbageAccountRepository {
 	@Autowired
 	private ObjectMapper objectMapper;
 
+	private static final String SELECT_GRBG_ACC = " SELECT acc.* FROM eg_grbg_account acc"
+			+ " JOIN eg_grbg_old_details old_dtl ON old_dtl.garbage_id = acc.garbage_id"
+			+ " JOIN eg_grbg_collection_unit unit ON unit.garbage_id = acc.garbage_id"
+			+ " JOIN eg_grbg_address address ON address.garbage_id = acc.garbage_id"
+			+ " JOIN eg_grbg_application app ON app.garbage_id = acc.garbage_id";
+			
 	private static final String SELECT_QUERY_ACCOUNT = "SELECT acc.* "
 			+ ", old_dtl.uuid as old_dtl_uuid, old_dtl.garbage_id as old_dtl_garbage_id, old_dtl.old_garbage_id as old_dtl_old_garbage_id"
 			+ ", address.uuid as address_uuid, address.address_type as address_address_type, address.address1 as address_address1, address.address2 as address_address2, address.city as address_city, address.state as address_state, address.pincode as address_pincode, address.is_active as address_is_active, address.zone as address_zone, address.ulb_name as address_ulb_name, address.ulb_type as address_ulb_type, address.ward_name as address_ward_name, address.additional_detail as address_additional_detail, address.garbage_id as address_garbage_id"
@@ -101,6 +107,11 @@ public class GarbageAccountRepository {
 			+ ", :type, :grbgAccountDetails, (SELECT extract(epoch from now())))";
 	
 	public static final String SELECT_NEXT_GARBAGE_ID = "select nextval('seq_eg_grbg_account_id')";
+	
+	public static final String WITH_SUB_QUERY = " WITH eg_grbg_account AS ({replace}) "
+			+ SELECT_QUERY_ACCOUNT;
+
+	public static final String REPLACE_STRING =  "{replace}";
     
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
     private JdbcTemplate jdbcTemplate;
@@ -238,7 +249,9 @@ public class GarbageAccountRepository {
 			SearchCriteriaGarbageAccount searchCriteriaGarbageAccount, List<Object> preparedStatementValues,
 			Map<Integer, SearchCriteriaGarbageAccount> garbageCriteriaMap) {
 
-		searchQuery = new StringBuilder(SELECT_QUERY_ACCOUNT);
+//		searchQuery = new StringBuilder(SELECT_QUERY_ACCOUNT);
+
+		searchQuery = new StringBuilder(SELECT_GRBG_ACC);
 
 		searchQuery.append(" WHERE");
 		searchQuery.append(" 1=1 ");
@@ -260,9 +273,14 @@ public class GarbageAccountRepository {
 
 		searchQuery.append(whereClause);
 
-		searchQuery = addOrderByClause(searchQuery, searchCriteriaGarbageAccount);
+		String withClauseQuery = WITH_SUB_QUERY.replace(REPLACE_STRING, searchQuery);
+
+		StringBuilder sb = new StringBuilder(withClauseQuery);
+
+		searchQuery = addOrderByClause(sb, searchCriteriaGarbageAccount);
+
 		if (!searchCriteriaGarbageAccount.getIsSchedulerCall()) {
-			searchQuery = addPaginationWrapper(searchQuery, preparedStatementValues, searchCriteriaGarbageAccount);
+			searchQuery = addPaginationWrapper(sb, preparedStatementValues, searchCriteriaGarbageAccount);
 		}
 		return searchQuery;
 	}
