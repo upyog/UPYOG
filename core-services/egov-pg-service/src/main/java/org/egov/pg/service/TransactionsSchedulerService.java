@@ -72,9 +72,12 @@ public class TransactionsSchedulerService {
 
 		List<Transaction> transactions = transactionService.getTransactions(transactionCriteria);
 
+		log.info("transactions {}",transactions);
 		if (!CollectionUtils.isEmpty(transactions)) {
 			tenantIds = transactions.stream().map(Transaction::getTenantId).collect(Collectors.toSet());
 		}
+
+		log.info("tenantIds {}",tenantIds);
 
 		if (!CollectionUtils.isEmpty(tenantIds)) {
 			BankAccountSearchCriteria bankAccountSearchCriteria = BankAccountSearchCriteria.builder()
@@ -82,6 +85,8 @@ public class TransactionsSchedulerService {
 			// fetch all bank account
 			bankAccountResponse = bankAccountService.searchBankAccount(bankAccountSearchCriteria);
 		}
+
+		log.info("bankAccountResponse {}",bankAccountResponse);
 
 		if (null != bankAccountResponse && !CollectionUtils.isEmpty(bankAccountResponse.getBankAccounts())) {
 			// filter if payTo is null or empty
