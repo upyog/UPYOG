@@ -19,6 +19,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import digit.models.coremodels.RequestInfoWrapper;
 import digit.models.coremodels.UserDetailResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.upyog.web.models.ModuleSearchRequest;
 
 @Service
 @Slf4j
@@ -48,8 +49,11 @@ public class CommonServiceImpl implements CommonService {
 	}
 
 	@Override
-	public CommonDetails getApplicationCommonDetails(RequestInfo requestInfo, String moduleName,
-			String applicationNumber, String tenantId) {
+	public CommonDetails getApplicationCommonDetails(ModuleSearchRequest request) {
+		RequestInfo requestInfo = request.getRequestInfo();
+		String moduleName = request.getModuleSearchCriteria().getModuleName();
+		String applicationNumber = request.getModuleSearchCriteria().getApplicationNumber();
+		String tenantId = request.getModuleSearchCriteria().getTenantId();
 		String host = moduleHosts.get(moduleName);
 		if (host == null) {
 			throw new IllegalArgumentException("Invalid module name or host not configured: " + moduleName);
@@ -90,13 +94,12 @@ public class CommonServiceImpl implements CommonService {
 	 * Retrieves the system user’s RequestInfo based on a predefined system
 	 * username.
 	 * 
-	 * @param userService The UserService instance used to fetch user details.
 	 * @return A RequestInfo object containing the system user’s details.
 	 * @throws IllegalStateException if the system user is not found.
 	 */
 	private RequestInfo getSystemUserDetails() {
 		UserDetailResponse userDetailResponse = userService.searchByUserName(
-				VerificationSearchConstants.SYSTEM_CITIZEN_USERNAME, VerificationSearchConstants.VS_TENANTID);
+				VerificationSearchConstants.INTERNALMICROSERVICEUSER_USERNAME, VerificationSearchConstants.VS_TENANTID);
 
 		if (userDetailResponse == null || userDetailResponse.getUser().isEmpty()) {
 			throw new IllegalStateException(
@@ -105,7 +108,7 @@ public class CommonServiceImpl implements CommonService {
 
 		RequestInfo systemRequestInfo = RequestInfo.builder().userInfo(userDetailResponse.getUser().get(0)).build();
 
-		log.info("RequestInfo of system User: " + systemRequestInfo);
+		log.info("RequestInfo of System User: " + systemRequestInfo);
 		return systemRequestInfo;
 	}
 }
