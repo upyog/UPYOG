@@ -27,7 +27,7 @@ public class TransactionRepository {
     public List<Transaction> fetchTransactions(TransactionCriteria transactionCriteria) {
         List<Object> params = new ArrayList<>();
         String query = TransactionQueryBuilder.getPaymentSearchQueryByCreatedTimeRange(transactionCriteria, params);
-        log.debug(query);
+        log.info("Query:",query);
         return jdbcTemplate.query(query, params.toArray(), rowMapper);
     }
     
