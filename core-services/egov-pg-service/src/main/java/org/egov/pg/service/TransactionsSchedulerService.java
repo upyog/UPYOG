@@ -63,6 +63,7 @@ public class TransactionsSchedulerService {
 		TransactionCriteria transactionCriteria = TransactionCriteria.builder().isSchedulerCall(true)
 				.txnStatus(TxnStatusEnum.SUCCESS)
 				.gateway("RAZORPAY")
+				.tenantId("hp.Bilaspur")
 				.startDateTime(
 						LocalDate.now().minusDays(1).atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli())
 				.endDateTime(LocalDate.now().minusDays(1).atTime(23, 59, 59, 999_999_999).atZone(ZoneId.systemDefault())
@@ -115,9 +116,11 @@ public class TransactionsSchedulerService {
 
 								Object settlementAmountResponse = null;
 								try {
+									log.info("Transfer request: ",transferWrapper);
+									log.info("GATEWAY: ",transaction.getGateway());
 									// call settlement api
-									settlementAmountResponse = gatewayService.settlementAmount(transaction,
-											transferWrapper);
+									//settlementAmountResponse = gatewayService.settlementAmount(transaction,
+										//	transferWrapper);
 								} catch (Exception e) {
 									log.error("Error while transfering amount for the getway transaction id: "
 											+ transaction.getGatewayTxnId());
@@ -131,7 +134,7 @@ public class TransactionsSchedulerService {
 										.build();
 
 								// update transaction
-								producer.push(appProperties.getUpdateTxnTopic(), transactionRequest);
+								//producer.push(appProperties.getUpdateTxnTopic(), transactionRequest);
 
 								transferList.add(transfer);
 							}));

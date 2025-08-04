@@ -17,6 +17,9 @@ import org.upyog.chb.web.models.BookingPurpose;
 import org.upyog.chb.web.models.CommunityHallBookingDetail;
 import org.upyog.chb.web.models.SpecialCategory;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 @Component
 public class CommunityHallBookingRowmapper implements ResultSetExtractor<List<CommunityHallBookingDetail>> {
 
@@ -38,11 +41,23 @@ public class CommunityHallBookingRowmapper implements ResultSetExtractor<List<Co
 
 				BookingPurpose bookingPurpose = BookingPurpose.builder().purpose(rs.getString("purpose")).build();
 				
+				ObjectMapper mapper = new ObjectMapper();
+				Map<String, Object> details = null;
+
+				try {
+				    String jsonString = rs.getString("ecbd_additionaldetail");
+				    if (jsonString != null) {
+				        details = mapper.readValue(jsonString, new TypeReference<Map<String, Object>>() {});
+				    }
+				} catch (Exception e) {
+				    e.printStackTrace(); // handle or log properly
+				}
+				
 				currentBooking = CommunityHallBookingDetail.builder().bookingId(bookingId).bookingNo(bookingNo)
 						.applicationDate(rs.getLong("application_date"))
 						.tenantId(tenantId)
 						//TODO : check payment_date
-						.additionaldetail(rs.getString("additionaldetail"))
+						.additionaldetail(details)
 						.communityHallCode(rs.getString("community_hall_code"))
 						.bookingStatus(rs.getString("booking_status"))
 						.specialCategory(specialCategory).purpose(bookingPurpose)
@@ -76,6 +91,18 @@ public class CommunityHallBookingRowmapper implements ResultSetExtractor<List<Co
 	
 	private ApplicantDetail addApplicantDetail(ResultSet rs) throws SQLException {
 		
+		ObjectMapper mapper = new ObjectMapper();
+		Map<String, Object> details = null;
+
+		try {
+		    String jsonString = rs.getString("appp_addetail");
+		    if (jsonString != null) {
+		        details = mapper.readValue(jsonString, new TypeReference<Map<String, Object>>() {});
+		    }
+		} catch (Exception e) {
+		    e.printStackTrace(); // handle or log properly
+		}
+		
 		ApplicantDetail applicantDetail = ApplicantDetail.builder().applicantDetailId(rs.getString("applicant_detail_id"))
 				.bookingId(rs.getString("booking_id"))
 				.applicantName(rs.getString("applicant_name"))
@@ -86,7 +113,9 @@ public class CommunityHallBookingRowmapper implements ResultSetExtractor<List<Co
 				.ifscCode(rs.getString("ifsc_code")).bankName(rs.getString("bank_name"))
 				.bankBranchName(rs.getString("bank_branch_name"))
 				.accountHolderName(rs.getString("account_holder_name"))
-				.auditDetails(CommunityHallBookingUtil.getAuditDetails(rs)).build();
+				.auditDetails(CommunityHallBookingUtil.getAuditDetails(rs))
+				.additionalDetails(details)
+				.build();
 		
 
 		
@@ -101,6 +130,18 @@ public class CommunityHallBookingRowmapper implements ResultSetExtractor<List<Co
 	landmark, city, pincode, street_name, locality_code
 		 */
 		
+    	ObjectMapper mapper = new ObjectMapper();
+		Map<String, Object> details = null;
+
+		try {
+		    String jsonString = rs.getString("add_additionaldetail");
+		    if (jsonString != null) {
+		        details = mapper.readValue(jsonString, new TypeReference<Map<String, Object>>() {});
+		    }
+		} catch (Exception e) {
+		    e.printStackTrace(); // handle or log properly
+		}
+		
 		Address address = Address.builder()
 				.addressId(rs.getString("address_id"))
 				.applicantDetailId(rs.getString("applicant_detail_id"))
@@ -114,7 +155,7 @@ public class CommunityHallBookingRowmapper implements ResultSetExtractor<List<Co
 				.streetName(rs.getString("street_name"))
 				.locality(rs.getString("locality"))
 				.localityCode(rs.getString("locality_code"))
-				.additionalDetails(rs.getString("additionaldetail"))
+				.additionalDetails(details)
 				.build();
 		
 		return address;
