@@ -57,12 +57,7 @@ import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.egov.common.entity.edcr.Block;
-import org.egov.common.entity.edcr.FeatureEnum;
-import org.egov.common.entity.edcr.MonumentDistanceRequirement;
-import org.egov.common.entity.edcr.Plan;
-import org.egov.common.entity.edcr.Result;
-import org.egov.common.entity.edcr.ScrutinyDetail;
+import org.egov.common.entity.edcr.*;
 import org.egov.edcr.service.MDMSCacheManager;
 import org.egov.edcr.utility.DcrConstants;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,16 +65,14 @@ import org.springframework.stereotype.Service;
 
 import static org.egov.edcr.constants.CommonFeatureConstants.*;
 import static org.egov.edcr.constants.CommonKeyConstants.DISTANCE_FROM_MONUMENT;
+import static org.egov.edcr.constants.EdcrReportConstants.*;
+import static org.egov.edcr.service.FeatureUtil.mapReportDetails;
 
 @Service
 public class MonumentDistance extends FeatureProcess {
 
     // Logger for logging information and errors
     private static final Logger LOG = LogManager.getLogger(MonumentDistance.class);
-
-    // Constants for rule identifiers and descriptions
-    private static final String RULE_20 = "20";
-    public static final String MONUMENT_DESCRIPTION = "Distance from monument";
 
     @Autowired
 	MDMSCacheManager cache;
@@ -115,7 +108,7 @@ public class MonumentDistance extends FeatureProcess {
         }
 
         ScrutinyDetail scrutinyDetail = initScrutinyDetail();
-        Map<String, String> details = initRuleDetails();
+        ReportScrutinyDetail details = initRuleDetails();
 
         BigDecimal minDistance = distances.stream().min(Comparator.naturalOrder()).get();
 
@@ -188,11 +181,11 @@ public class MonumentDistance extends FeatureProcess {
      *
      * @return a {@link Map} with keys {@code RULE_NO} and {@code DESCRIPTION}.
      */
-    private Map<String, String> initRuleDetails() {
-        Map<String, String> details = new HashMap<>();
-        details.put(RULE_NO, RULE_20);
-        details.put(DESCRIPTION, MONUMENT_DESCRIPTION);
-        return details;
+    private ReportScrutinyDetail initRuleDetails() {
+        ReportScrutinyDetail detail = new ReportScrutinyDetail();
+        detail.setRuleNo(RULE_20);
+        detail.setDescription(MONUMENT_DESCRIPTION);
+        return detail;
     }
 
     /**
@@ -208,7 +201,7 @@ public class MonumentDistance extends FeatureProcess {
      * @param maxHeightAllowed maximum permissible height in the restricted zone.
      * @param maxFloorsAllowed maximum permissible floors in the restricted zone.
      */
-    private void handleWithoutNoc(Plan pl, ScrutinyDetail sd, Map<String, String> details,
+    private void handleWithoutNoc(Plan pl, ScrutinyDetail sd, ReportScrutinyDetail details,
                                    BigDecimal minDist, BigDecimal distanceOne, BigDecimal minDistTwo,
                                    BigDecimal maxHeightAllowed, BigDecimal maxFloorsAllowed) {
 
@@ -244,20 +237,20 @@ public class MonumentDistance extends FeatureProcess {
      * Adds a single row of monument scrutiny result to the {@link ScrutinyDetail} object.
      *
      * @param sd the scrutiny detail object to update.
-     * @param details map containing rule number and description.
+     * @param detail map containing rule number and description.
      * @param distance actual distance from the monument as a string.
      * @param permitted permitted construction condition based on distance.
      * @param provided actual construction parameters provided in plan.
      * @param status result of validation (Accepted or Not Accepted).
      */
-    private void addScrutinyDetail(ScrutinyDetail sd, Map<String, String> details,
+    private void addScrutinyDetail(ScrutinyDetail sd, ReportScrutinyDetail detail,
                                    String distance, String permitted, String provided, String status) {
-        Map<String, String> row = new HashMap<>(details);
-        row.put(DISTANCE, distance);
-        row.put(PERMITTED, permitted);
-        row.put(PROVIDED, provided);
-        row.put(STATUS, status);
-        sd.getDetail().add(row);
+        detail.setDistance(distance);
+        detail.setPermitted(permitted);
+        detail.setProvided(provided);
+        detail.setStatus(status);
+        Map<String, String> details = mapReportDetails(detail);
+        sd.getDetail().add(details);
     }
 
 

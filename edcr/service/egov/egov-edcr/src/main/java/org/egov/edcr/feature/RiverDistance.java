@@ -60,13 +60,7 @@ import java.util.stream.Collectors;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.egov.common.constants.MdmsFeatureConstants;
-import org.egov.common.entity.edcr.FeatureEnum;
-import org.egov.common.entity.edcr.MdmsFeatureRule;
-import org.egov.common.entity.edcr.Plan;
-import org.egov.common.entity.edcr.Result;
-import org.egov.common.entity.edcr.River;
-import org.egov.common.entity.edcr.RiverDistanceRequirement;
-import org.egov.common.entity.edcr.ScrutinyDetail;
+import org.egov.common.entity.edcr.*;
 import org.egov.edcr.service.MDMSCacheManager;
 import org.egov.edcr.utility.DcrConstants;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -76,24 +70,14 @@ import org.springframework.util.StringUtils;
 
 import static org.egov.edcr.constants.CommonFeatureConstants.GREATER_THAN;
 import static org.egov.edcr.constants.CommonFeatureConstants.LESS_THAN_EQUAL_TO;
+import static org.egov.edcr.constants.EdcrReportConstants.*;
+import static org.egov.edcr.service.FeatureUtil.mapReportDetails;
 
 
 @Service
 public class RiverDistance extends FeatureProcess {
 	private static final Logger LOG = LogManager.getLogger(RiverDistance.class);
-    
-    // Rule number and description constants
-    private static final String RULE_22 = "22";
-    public static final String MAIN_RIVER_DESCRIPTION = "Distance from main river";
-    public static final String SUB_RIVER_DESCRIPTION = "Distance from sub river";
-    public static final String MAIN_RIVER_PROTECTION_WALL_DESCRIPTION = "Distance from main river protection wall";
-    public static final String MAIN_RIVER_EMBANKMENT_DESCRIPTION = "Distance from main river embankment";
-    public static final String NO_DISTANCT_MENTIONED = "No distance is provided from protection wall embankment/river main edge or sub river";
-    
-    // Color codes for river types
-    private static final Integer MAIN_RIVER = 1;
-    private static final Integer SUB_RIVER = 2;
-    
+
     @Autowired
   	MDMSCacheManager cache;
   	
@@ -233,13 +217,13 @@ public class RiverDistance extends FeatureProcess {
 	 * @return a map of result details for scrutiny
 	 */
     private Map<String, String> buildDetails(String ruleNo, String description, BigDecimal permitted, BigDecimal provided) {
-        Map<String, String> detail = new HashMap<>();
-        detail.put(RULE_NO, ruleNo);
-        detail.put(DESCRIPTION, description);
-        detail.put(PERMITTED, (provided.compareTo(permitted) > 0 ? GREATER_THAN : LESS_THAN_EQUAL_TO) + permitted);
-        detail.put(PROVIDED, provided.toString());
-        detail.put(STATUS, provided.compareTo(permitted) > 0 ? Result.Accepted.getResultVal() : Result.Not_Accepted.getResultVal());
-        return detail;
+        ReportScrutinyDetail detail = new ReportScrutinyDetail();
+        detail.setRuleNo(ruleNo);
+        detail.setDescription(description);
+        detail.setPermitted((provided.compareTo(permitted) > 0 ? GREATER_THAN : LESS_THAN_EQUAL_TO) + permitted);
+        detail.setProvided(provided.toString());
+        detail.setStatus(provided.compareTo(permitted) > 0 ? Result.Accepted.getResultVal() : Result.Not_Accepted.getResultVal());
+        return mapReportDetails(detail);
     }
 
 

@@ -1,7 +1,11 @@
 package org.egov.edcr.feature;
 
 import static org.egov.edcr.constants.CommonFeatureConstants.*;
+import static org.egov.edcr.constants.CommonFeatureConstants.FLOOR;
 import static org.egov.edcr.constants.CommonKeyConstants.*;
+import static org.egov.edcr.constants.EdcrReportConstants.*;
+import static org.egov.edcr.service.FeatureUtil.addScrutinyDetailtoPlan;
+import static org.egov.edcr.service.FeatureUtil.mapReportDetails;
 import static org.egov.edcr.utility.DcrConstants.DECIMALDIGITS_MEASUREMENTS;
 import static org.egov.edcr.utility.DcrConstants.HEIGHTNOTDEFINED;
 import static org.egov.edcr.utility.DcrConstants.IN_METER;
@@ -19,14 +23,7 @@ import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.egov.common.entity.edcr.Block;
-import org.egov.common.entity.edcr.FeatureEnum;
-import org.egov.common.entity.edcr.Floor;
-import org.egov.common.entity.edcr.MezzanineFloorServiceRequirement;
-import org.egov.common.entity.edcr.Occupancy;
-import org.egov.common.entity.edcr.Plan;
-import org.egov.common.entity.edcr.Result;
-import org.egov.common.entity.edcr.ScrutinyDetail;
+import org.egov.common.entity.edcr.*;
 import org.egov.edcr.service.MDMSCacheManager;
 import org.egov.edcr.service.FetchEdcrRulesMdms;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,13 +32,6 @@ import org.springframework.stereotype.Service;
 @Service
 public class MezzanineFloorService extends FeatureProcess {
     private static final Logger LOG = LogManager.getLogger(MezzanineFloorService.class);
-    private static final String SUBRULE_46 = "46";
-    private static final String RULE46_MAXAREA_DESC = "Maximum allowed area of mezzanine floor";
-    private static final String RULE46_MINAREA_DESC = "Minimum area of mezzanine floor";
-    private static final String RULE46_DIM_DESC = "Minimum height of mezzanine floor";
-    public static final String SUB_RULE_55_7_DESC = "Maximum allowed area of balcony";
-    public static final String SUB_RULE_55_7 = "55-7";
-    public static final String HALL_NUMBER = "Hall Number";
 
     @Autowired
     FetchEdcrRulesMdms fetchEdcrRulesMdms;
@@ -277,15 +267,16 @@ public class MezzanineFloorService extends FeatureProcess {
   */
  private void setReportOutputDetails(Plan pl, String ruleNo, String ruleDesc, String floor, String expected, String actual,
          String status) {
-     Map<String, String> details = new HashMap<>();
-     details.put(RULE_NO, ruleNo);
-     details.put(DESCRIPTION, ruleDesc);
-     details.put(FLOOR, floor);
-     details.put(REQUIRED, expected);
-     details.put(PROVIDED, actual);
-     details.put(STATUS, status);
-     scrutinyDetail.getDetail().add(details);
-     pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+     ReportScrutinyDetail detail = new ReportScrutinyDetail();
+     detail.setRuleNo(ruleNo);
+     detail.setDescription(ruleDesc);
+     detail.setFloorNo(floor);
+     detail.setRequired(expected);
+     detail.setProvided(actual);
+     detail.setStatus(status);
+
+     Map<String, String> details = mapReportDetails(detail);
+     addScrutinyDetailtoPlan(scrutinyDetail, pl, details);
  }
 
     /**

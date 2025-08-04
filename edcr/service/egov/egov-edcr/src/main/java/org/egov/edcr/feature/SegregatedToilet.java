@@ -57,26 +57,22 @@ import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.egov.common.entity.edcr.Block;
-import org.egov.common.entity.edcr.FeatureEnum;
-import org.egov.common.entity.edcr.Plan;
-import org.egov.common.entity.edcr.Result;
-import org.egov.common.entity.edcr.ScrutinyDetail;
-import org.egov.common.entity.edcr.SegregatedToiletRequirement;
+import org.egov.common.entity.edcr.*;
 import org.egov.edcr.constants.DxfFileConstants;
 import org.egov.edcr.service.FetchEdcrRulesMdms;
 import org.egov.edcr.service.MDMSCacheManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import static org.egov.edcr.constants.CommonFeatureConstants.GREATER_THAN_EQUAL;
+import static org.egov.edcr.constants.EdcrReportConstants.*;
+import static org.egov.edcr.service.FeatureUtil.addScrutinyDetailtoPlan;
+import static org.egov.edcr.service.FeatureUtil.mapReportDetails;
+
 @Service
 public class SegregatedToilet extends FeatureProcess {
 
     private static final Logger LOG = LogManager.getLogger(SegregatedToilet.class);
-    
-    private static final String RULE_59_10  = "59-10-i";
-    public static final String SEGREGATEDTOILET_DESCRIPTION = "Num. of segregated toilets";
-    public static final String SEGREGATEDTOILET_DIMENSION_DESCRIPTION = "Segregated toilet distance from main entrance";
 
     @Autowired
     FetchEdcrRulesMdms fetchEdcrRulesMdms;
@@ -102,7 +98,7 @@ public class SegregatedToilet extends FeatureProcess {
     public Plan process(Plan pl) {
 
         ScrutinyDetail scrutinyDetail = initializeScrutinyDetail();
-        Map<String, String> details = initializeDetails();
+        ReportScrutinyDetail details = initializeDetails();
 
         SegregatedToiletRuleValues ruleValues = getSegregatedToiletRuleValues(pl);
         BigDecimal minDimension = findMinimumDistanceToEntrance(pl);
@@ -138,10 +134,10 @@ public class SegregatedToilet extends FeatureProcess {
      *
      * @return a map containing rule details
      */
-    private Map<String, String> initializeDetails() {
-        Map<String, String> details = new HashMap<>();
-        details.put(RULE_NO, RULE_59_10);
-        return details;
+    private ReportScrutinyDetail initializeDetails() {
+        ReportScrutinyDetail detail = new ReportScrutinyDetail();
+        detail.setRuleNo(RULE_59_10);
+        return detail;
     }
 
     /**
@@ -246,25 +242,24 @@ public class SegregatedToilet extends FeatureProcess {
      *
      * @param pl the plan object
      * @param scrutinyDetail the scrutiny detail to update
-     * @param details the rule metadata details
+     * @param detail the rule metadata details
      * @param vals the rule values
      */
-    private void processSegregatedToilet(Plan pl, ScrutinyDetail scrutinyDetail, Map<String, String> details, SegregatedToiletRuleValues vals) {
+    private void processSegregatedToilet(Plan pl, ScrutinyDetail scrutinyDetail, ReportScrutinyDetail detail, SegregatedToiletRuleValues vals) {
+        detail.setDescription(SEGREGATEDTOILET_DESCRIPTION);
+        detail.setRequired(vals.sTSegregatedToiletRequired.toString());
+
         if (pl.getSegregatedToilet() != null && pl.getSegregatedToilet().getSegregatedToilets() != null
                 && !pl.getSegregatedToilet().getSegregatedToilets().isEmpty()) {
-            details.put(DESCRIPTION, SEGREGATEDTOILET_DESCRIPTION);
-            details.put(REQUIRED, vals.sTSegregatedToiletRequired.toString());
-            details.put(PROVIDED, String.valueOf(pl.getSegregatedToilet().getSegregatedToilets().size()));
-            details.put(STATUS, Result.Accepted.getResultVal());
+            detail.setProvided(String.valueOf(pl.getSegregatedToilet().getSegregatedToilets().size()));
+            detail.setStatus(Result.Accepted.getResultVal());
         } else {
-            details.put(DESCRIPTION, SEGREGATEDTOILET_DESCRIPTION);
-            details.put(REQUIRED, vals.sTSegregatedToiletRequired.toString());
-            details.put(PROVIDED, vals.sTSegregatedToiletProvided.toString());
-            details.put(STATUS, Result.Not_Accepted.getResultVal());
+            detail.setProvided(vals.sTSegregatedToiletProvided.toString());
+            detail.setStatus(Result.Not_Accepted.getResultVal());
         }
 
-        scrutinyDetail.getDetail().add(new HashMap<>(details));
-        pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+        Map<String, String> details = mapReportDetails(detail);
+        addScrutinyDetailtoPlan(scrutinyDetail, pl, details);
     }
 
     /**
@@ -272,25 +267,24 @@ public class SegregatedToilet extends FeatureProcess {
      *
      * @param pl the plan object
      * @param scrutinyDetail the scrutiny detail to update
-     * @param details the rule metadata details
+     * @param detail the rule metadata details
      * @param vals the rule values
      * @param minDimension the minimum measured dimension
      */
-    private void processMinimumDimension(Plan pl, ScrutinyDetail scrutinyDetail, Map<String, String> details,
+    private void processMinimumDimension(Plan pl, ScrutinyDetail scrutinyDetail, ReportScrutinyDetail detail,
                                          SegregatedToiletRuleValues vals, BigDecimal minDimension) {
 
-        details.put(DESCRIPTION, SEGREGATEDTOILET_DIMENSION_DESCRIPTION);
-        details.put(REQUIRED, ">= " + vals.sTminDimensionRequired.toString());
-        details.put(PROVIDED, minDimension.toString());
-
+        detail.setDescription(SEGREGATEDTOILET_DIMENSION_DESCRIPTION);
+        detail.setRequired(GREATER_THAN_EQUAL + vals.sTminDimensionRequired.toString());
+        detail.setProvided(minDimension.toString());
         if (minDimension != null && minDimension.compareTo(vals.sTminDimensionRequired) >= 0) {
-            details.put(STATUS, Result.Accepted.getResultVal());
+            detail.setStatus(Result.Accepted.getResultVal());
         } else {
-            details.put(STATUS, Result.Not_Accepted.getResultVal());
+            detail.setStatus(Result.Not_Accepted.getResultVal());
         }
 
-        scrutinyDetail.getDetail().add(new HashMap<>(details));
-        pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+        Map<String, String> details = mapReportDetails(detail);
+        addScrutinyDetailtoPlan(scrutinyDetail, pl, details);
     }
 
 

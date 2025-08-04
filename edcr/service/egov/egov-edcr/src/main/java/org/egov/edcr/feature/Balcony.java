@@ -48,39 +48,28 @@
 package org.egov.edcr.feature;
 
 import java.math.BigDecimal;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.egov.common.constants.MdmsFeatureConstants;
-import org.egov.common.entity.edcr.BalconyRequirement;
-import org.egov.common.entity.edcr.Block;
-import org.egov.common.entity.edcr.FeatureEnum;
-import org.egov.common.entity.edcr.Floor;
-import org.egov.common.entity.edcr.Plan;
-import org.egov.common.entity.edcr.Result;
-import org.egov.common.entity.edcr.ScrutinyDetail;
+import org.egov.common.entity.edcr.*;
 import org.egov.edcr.service.MDMSCacheManager;
 import org.egov.edcr.utility.DcrConstants;
 import org.egov.edcr.utility.Util;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import static org.egov.edcr.constants.CommonFeatureConstants.FLOOR;
 import static org.egov.edcr.constants.CommonFeatureConstants.UNDERSCORE;
 import static org.egov.edcr.constants.CommonKeyConstants.*;
+import static org.egov.edcr.constants.EdcrReportConstants.*;
+import static org.egov.edcr.service.FeatureUtil.mapReportDetails;
 
 @Service
 public class Balcony extends FeatureProcess {
 
-	private static final Logger LOG = LogManager.getLogger(Balcony.class);
-	private static final String FLOOR = "Floor";
-	private static final String RULE45_IV = "4.4.4 (iii)";
-	private static final String WIDTH_BALCONY_DESCRIPTION = "Minimum width for balcony %s";
+	private static final Logger log = LogManager.getLogger(Balcony.class);
 
 	BigDecimal balconyValue;
 	
@@ -181,11 +170,6 @@ public class Balcony extends FeatureProcess {
 	    BigDecimal minWidth = widths.isEmpty() ? BigDecimal.ZERO
 	            : widths.stream().reduce(BigDecimal::min).get();
 	    minWidth = minWidth.setScale(DcrConstants.DECIMALDIGITS_MEASUREMENTS, DcrConstants.ROUNDMODE_MEASUREMENTS);
-
-//	    List<Object> rules = cache.getFeatureRules(plan, MdmsFeatureConstants.BALCONY, false);
-//	    Optional<MdmsFeatureRule> matchedRule = rules.stream()
-//	            .map(obj -> (MdmsFeatureRule) obj)
-//	            .findFirst();
 	    
 	    List<Object> rules = cache.getFeatureRules(plan, FeatureEnum.BALCONY.getValue(), false);
         Optional<BalconyRequirement> matchedRule = rules.stream()
@@ -215,16 +199,16 @@ public class Balcony extends FeatureProcess {
 	            ? (String) typicalFloorValues.get(TYPICAL_FLOOR)
 	            : FLOOR_SPACED + floor.getNumber();
 
-	    Map<String, String> resultRow = createResultRow(
-	            RULE45_IV,
-	            String.format(WIDTH_BALCONY_DESCRIPTION, balcony.getNumber()),
-	            balconyValue.toString(),
-	            minWidth,
-	            isAccepted
-	    );
-	    resultRow.put(FLOOR, floorLabel);
+		ReportScrutinyDetail detail = new ReportScrutinyDetail();
+		detail.setRuleNo(RULE45_IV);
+		detail.setDescription(String.format(WIDTH_BALCONY_DESCRIPTION, balcony.getNumber()));
+		detail.setPermissible(balconyValue.toString());
+		detail.setProvided(minWidth.toString());
+		detail.setStatus(isAccepted ? Result.Accepted.getResultVal() : Result.Not_Accepted.getResultVal());
+		detail.setFloorNo(floorLabel);
 
-	    scrutinyDetail.getDetail().add(resultRow);
+		Map<String, String> details = mapReportDetails(detail);
+	    scrutinyDetail.getDetail().add(details);
 	}
 
 	// Method to create ScrutinyDetail
@@ -235,24 +219,6 @@ public class Balcony extends FeatureProcess {
 	        detail.addColumnHeading(i + 1, headings[i]);
 	    }
 	    return detail;
-	}
-
-	/**
-	 * Creates a new {@link ScrutinyDetail} instance with the specified key and column headings.
-	 *
-	 * @param key      the unique key identifying the scrutiny detail
-	 * @param headings the column headings to be used in the scrutiny report
-	 * @return a new {@link ScrutinyDetail} populated with the specified headings
-	 */
-	private Map<String, String> createResultRow(String ruleNo, String description, String permissible,
-	                                            BigDecimal provided, boolean accepted) {
-	    Map<String, String> details = new HashMap<>();
-	    details.put(RULE_NO, ruleNo);
-	    details.put(DESCRIPTION, description);
-	    details.put(PERMISSIBLE, permissible);
-	    details.put(PROVIDED, provided.toString());
-	    details.put(STATUS, accepted ? Result.Accepted.getResultVal() : Result.Not_Accepted.getResultVal());
-	    return details;
 	}
 
 	@Override

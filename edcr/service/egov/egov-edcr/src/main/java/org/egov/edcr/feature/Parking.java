@@ -51,6 +51,7 @@ import static org.egov.edcr.constants.CommonFeatureConstants.*;
 import static org.egov.edcr.constants.CommonKeyConstants.COMMON_PARKING;
 import static org.egov.edcr.constants.DxfFileConstants.A;
 import static org.egov.edcr.constants.DxfFileConstants.PARKING_SLOT;
+import static org.egov.edcr.constants.EdcrReportConstants.*;
 import static org.egov.edcr.constants.RuleKeyConstants.FOUR_P_TWO_P_ONE;
 import static org.egov.edcr.utility.DcrConstants.SQMTRS;
 
@@ -93,62 +94,7 @@ import org.springframework.stereotype.Service;
 public class Parking extends FeatureProcess {
 
     private static final Logger LOGGER = LogManager.getLogger(Parking.class);
-
-    private static final String OUT_OF = "Out of ";
-    private static final String SLOT_HAVING_GT_4_PTS = " number of polygon not having only 4 points.";
-    private static final String LOADING_UNLOADING_DESC = "Minimum required Loading/Unloading area";
-    private static final String MINIMUM_AREA_OF_EACH_DA_PARKING = " Minimum width of Each Special parking";
-    private static final String SP_PARKING_SLOT_AREA = "Special Parking Area";
-    private static final String NO_VIOLATION_OF_AREA = "No violation of area in ";
-    private static final String MIN_AREA_EACH_CAR_PARKING = " Minimum Area of Each ECS parking";
-    private static final String PARKING_VIOLATED_MINIMUM_AREA = " parking violated minimum area.";
-    private static final String PARKING = " parking ";
-    private static final String NUMBERS = " Numbers ";
-    private static final String MECHANICAL_PARKING = "Mechanical parking";
-    private static final String MAX_ALLOWED_MECH_PARK = "Maximum allowed mechanical parking";
-    private static final String TWO_WHEELER_PARK_AREA = "Two Wheeler Parking Area";
-    private static final String LOADING_UNLOADING_AREA = "Loading Unloading Area";
-    private static final String SP_PARKING = "Special parking";
-    private static final String SUB_RULE_34_1_DESCRIPTION = "Parking Slots Area";
-    private static final String SUB_RULE_34_2 = "34-2";
-    private static final String SUB_RULE_40_8 = "40-8";
-    private static final String RULE = "Table 4.4.4";
-    private static final String PARKING_MIN_AREA = "5 M x 2 M";
-    private static final double PARKING_SLOT_WIDTH = 2;
-    private static final double PARKING_SLOT_HEIGHT = 5;
-    private static final double SP_PARK_SLOT_MIN_SIDE = 3.6;
-    private static final String DA_PARKING_MIN_AREA = " 3.60 M ";
-    public static final String NO_OF_UNITS = "No of apartment units";
-    private static final double TWO_WHEEL_PARKING_AREA_WIDTH = 1.5;
-    private static final double TWO_WHEEL_PARKING_AREA_HEIGHT = 2.0;
-    private static final double MECH_PARKING_WIDTH = 2.7;
-    private static final double MECH_PARKING_HEIGHT = 5.5;
-
-    private static final double OPEN_ECS = 22.15;
-    private static final double COVER_ECS = 27.17;
-    private static final double BSMNT_ECS = 38.5;
-    private static final double STILT_ECS = 32.5;
-    private static final double PARK_A = 0.25;
-    private static final double PARK_F = 0.30;
-    private static final double PARK_VISITOR = 0.15;
-    private static final String SUB_RULE_40 = "40";
-    private static final String RULE_ = "4.2.1";
-    private static final String RULE__DESCRIPTION = "Parking space";
-    private static final String SUB_RULE_40_10 = "40-10";
-    private static final String SUB_RULE_40_10_DESCRIPTION = "Visitor’s Parking";
-    public static final String OPEN_PARKING_DIM_DESC = "Open parking ECS dimension ";
-    public static final String COVER_PARKING_DIM_DESC = "Cover parking ECS dimension ";
-    public static final String BSMNT_PARKING_DIM_DESC = "Basement parking ECS dimension ";
-    public static final String VISITOR_PARKING = "Visitor parking";
-    public static final String SPECIAL_PARKING_DIM_DESC = "Special parking ECS dimension ";
-    public static final String TWO_WHEELER_DIM_DESC = "Two wheeler parking dimension ";
-    public static final String MECH_PARKING_DESC = "Mechanical parking dimension ";
-    public static final String MECH_PARKING_DIM_DESC = "All Mechanical parking polylines should have dimension 2.7*5.5 m²";
-    public static final String MECH_PARKING_DIM_DESC_NA = " mechanical parking polyines does not have dimensions 2.7*5.5 m²";
     
-    private static final String PARKING_VIOLATED_DIM = " parking violated dimension.";
-    private static final String PARKING_AREA_DIM = "1.5 M x 2 M";
-
     @Autowired
    	MDMSCacheManager cache;
 
@@ -483,16 +429,16 @@ public class Parking extends FeatureProcess {
         if (maxHeightOfBuilding.compareTo(new BigDecimal(15)) >= 0
                 || (pl.getPlot() != null && pl.getPlot().getArea().compareTo(new BigDecimal(500)) > 0)) {
             if (pl.getParkingDetails().getValidSpecialSlots() == 0) {
-               // pl.addError(RULE, getLocaleMessage(DcrConstants.OBJECTNOTDEFINED, SP_PARKING));
+               // pl.addError(T_RULE, getLocaleMessage(DcrConstants.OBJECTNOTDEFINED, SP_PARKING));
             } else {
                 for (Measurement m : pl.getParkingDetails().getSpecial()) {
                     if (m.getMinimumSide().compareTo(new BigDecimal(0)) > 0
                             && m.getMinimumSide().compareTo(new BigDecimal(3.6)) >= 0) {
-                        setReportOutputDetails(pl, RULE, SP_PARKING, 1 + NUMBERS,
+                        setReportOutputDetails(pl, T_RULE, SP_PARKING, 1 + NUMBERS,
                                 pl.getParkingDetails().getValidSpecialSlots() + NUMBERS,
                                 Result.Accepted.getResultVal());
                     } else if (m.getMinimumSide().compareTo(new BigDecimal(0)) > 0) {
-                        setReportOutputDetails(pl, RULE, SP_PARKING, 1 + NUMBERS,
+                        setReportOutputDetails(pl, T_RULE, SP_PARKING, 1 + NUMBERS,
                                 pl.getParkingDetails().getValidSpecialSlots() + NUMBERS,
                                 Result.Not_Accepted.getResultVal());
                     }

@@ -57,17 +57,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.egov.common.constants.MdmsFeatureConstants;
-import org.egov.common.entity.edcr.Block;
-import org.egov.common.entity.edcr.FeatureEnum;
-import org.egov.common.entity.edcr.Floor;
-import org.egov.common.entity.edcr.GuardRoomRequirement;
-import org.egov.common.entity.edcr.Lift;
-import org.egov.common.entity.edcr.LiftRequirement;
-import org.egov.common.entity.edcr.MdmsFeatureRule;
-import org.egov.common.entity.edcr.Measurement;
-import org.egov.common.entity.edcr.Plan;
-import org.egov.common.entity.edcr.Result;
-import org.egov.common.entity.edcr.ScrutinyDetail;
+import org.egov.common.entity.edcr.*;
 import org.egov.edcr.constants.DxfFileConstants;
 import org.egov.edcr.service.MDMSCacheManager;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -75,20 +65,16 @@ import org.springframework.stereotype.Service;
 
 import static org.egov.edcr.constants.CommonFeatureConstants.*;
 import static org.egov.edcr.constants.CommonKeyConstants.*;
+import static org.egov.edcr.constants.EdcrReportConstants.*;
+import static org.egov.edcr.service.FeatureUtil.addScrutinyDetailtoPlan;
+import static org.egov.edcr.service.FeatureUtil.mapReportDetails;
 
 @Service
 public class LiftService extends FeatureProcess {
 
-
 	@Autowired
 	MDMSCacheManager cache;
 
-	
-	private static final String SUBRULE_48 = "48";	
-	private static final String SUBRULE_48_DESCRIPTION = "Minimum number of lifts";
-	private static final String SUBRULE_118 = "118";
-	private static final String SUBRULE_118_DESCRIPTION = "Dimension Of lift";
-	
 	/**
 	 * Validates the lift dimensions and counts for each block and floor in the plan.
 	 * @param plan the Plan object to validate
@@ -309,14 +295,15 @@ public class LiftService extends FeatureProcess {
 		 */
 		private void setReportOutputDetails(Plan plan, String ruleNo, String ruleDesc, String expected, String actual,
 		                                     String status, ScrutinyDetail scrutinyDetail) {
-		    Map<String, String> details = new HashMap<>();
-		    details.put(RULE_NO, ruleNo);
-		    details.put(DESCRIPTION, ruleDesc);
-		    details.put(REQUIRED, expected);
-		    details.put(PROVIDED, actual);
-		    details.put(STATUS, status);
-		    scrutinyDetail.getDetail().add(details);
-		    plan.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+			ReportScrutinyDetail detail = new ReportScrutinyDetail();
+			detail.setRuleNo(ruleNo);
+			detail.setDescription(ruleDesc);
+			detail.setRequired(expected);
+			detail.setProvided(actual);
+			detail.setStatus(status);
+
+			Map<String, String> details = mapReportDetails(detail);
+			addScrutinyDetailtoPlan(scrutinyDetail, plan, details);
 		}
 
 

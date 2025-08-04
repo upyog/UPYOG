@@ -47,9 +47,13 @@
 
 package org.egov.edcr.feature;
 
+import static org.egov.edcr.constants.CommonFeatureConstants.FLOOR;
 import static org.egov.edcr.constants.CommonKeyConstants.*;
 import static org.egov.edcr.constants.DxfFileConstants.A;
 import static org.egov.edcr.constants.DxfFileConstants.F;
+import static org.egov.edcr.constants.EdcrReportConstants.*;
+import static org.egov.edcr.service.FeatureUtil.addScrutinyDetailtoPlan;
+import static org.egov.edcr.service.FeatureUtil.mapReportDetails;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -64,16 +68,7 @@ import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.egov.common.entity.edcr.Block;
-import org.egov.common.entity.edcr.FeatureEnum;
-import org.egov.common.entity.edcr.Floor;
-import org.egov.common.entity.edcr.KitchenRequirement;
-import org.egov.common.entity.edcr.Measurement;
-import org.egov.common.entity.edcr.OccupancyTypeHelper;
-import org.egov.common.entity.edcr.Plan;
-import org.egov.common.entity.edcr.Result;
-import org.egov.common.entity.edcr.RoomHeight;
-import org.egov.common.entity.edcr.ScrutinyDetail;
+import org.egov.common.entity.edcr.*;
 import org.egov.edcr.constants.DxfFileConstants;
 import org.egov.edcr.service.MDMSCacheManager;
 import org.egov.edcr.service.ProcessHelper;
@@ -84,29 +79,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class Kitchen extends FeatureProcess {
 
-    private static final String SUBRULE_41_III = "5.4.1";
+    public static final Logger LOG = LogManager.getLogger(Kitchen.class);
 
-    private static final String SUBRULE_41_III_DESC = "Minimum height of kitchen";
-    private static final String SUBRULE_41_III_AREA_DESC = "Total area of %s";
-    private static final String SUBRULE_41_III_TOTAL_WIDTH = "Minimum Width of %s";
-
-    public static final BigDecimal MINIMUM_HEIGHT_2_75 = BigDecimal.valueOf(2.75);
-    public static final BigDecimal MINIMUM_HEIGHT_2_4 = BigDecimal.valueOf(2.4);
-    public static final BigDecimal MINIMUM_AREA_4_5 = BigDecimal.valueOf(4.5);
-    public static final BigDecimal MINIMUM_AREA_7_5 = BigDecimal.valueOf(7.5);
-    public static final BigDecimal MINIMUM_AREA_5 = BigDecimal.valueOf(5);
-
-    public static final BigDecimal MINIMUM_WIDTH_1_8 = BigDecimal.valueOf(1.8);
-    public static final BigDecimal MINIMUM_WIDTH_2_1 = BigDecimal.valueOf(2.1);
-    private static final String FLOOR = "Floor";
-    private static final String ROOM_HEIGHT_NOTDEFINED = "Kitchen height is not defined in layer ";
-    private static final String LAYER_ROOM_HEIGHT = "BLK_%s_FLR_%s_%s";
-    private static final String KITCHEN = "kitchen";
-    private static final String KITCHEN_STORE = "kitchen with store room";
-    private static final String KITCHEN_DINING = "kitchen with dining hall";
-    private static final Logger LOG = LogManager.getLogger(Kitchen.class);
-
-    
     @Autowired
 	MDMSCacheManager cache;
     
@@ -314,15 +288,16 @@ public class Kitchen extends FeatureProcess {
      */
     private void setReportOutputDetails(Plan pl, String ruleNo, String ruleDesc, String floor, String expected, String actual,
             String status) {
-        Map<String, String> details = new HashMap<>();
-        details.put(RULE_NO, ruleNo);
-        details.put(DESCRIPTION, ruleDesc);
-        details.put(FLOOR, floor);
-        details.put(REQUIRED, expected);
-        details.put(PROVIDED, actual);
-        details.put(STATUS, status);
-        scrutinyDetail.getDetail().add(details);
-        pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+        ReportScrutinyDetail detail = new ReportScrutinyDetail();
+        detail.setRuleNo(ruleNo);
+        detail.setDescription(ruleDesc);
+        detail.setFloorNo(floor);
+        detail.setRequired(expected);
+        detail.setProvided(actual);
+        detail.setStatus(status);
+
+        Map<String, String> details = mapReportDetails(detail);
+        addScrutinyDetailtoPlan(scrutinyDetail, pl, details);
     }
 
     @Override

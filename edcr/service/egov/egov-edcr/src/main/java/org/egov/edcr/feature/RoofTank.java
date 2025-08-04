@@ -72,17 +72,13 @@ import org.springframework.stereotype.Service;
 
 import static org.egov.edcr.constants.CommonFeatureConstants.*;
 import static org.egov.edcr.constants.CommonKeyConstants.COMMON_ROOF_TANKS;
+import static org.egov.edcr.constants.EdcrReportConstants.*;
 
 @Service
 public class RoofTank extends FeatureProcess {
 
 	private static final Logger LOG = LogManager.getLogger(RoofTank.class);
-	private static final String RULE_44_A = "44-A";
-	public static final String ROOFTANK_DESCRIPTION = "Roof Tanks";
-	public static final String ROOFTANK_HEIGHT_DESC = "Verified whether roof tank height is <= ";
-	public static final String MTS = " meters";
 
-	
 	@Autowired
 	MDMSCacheManager cache;
 	

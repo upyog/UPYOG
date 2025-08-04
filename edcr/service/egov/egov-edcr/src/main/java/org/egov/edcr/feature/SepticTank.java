@@ -57,32 +57,21 @@ import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.egov.common.entity.edcr.FeatureEnum;
-import org.egov.common.entity.edcr.Plan;
-import org.egov.common.entity.edcr.Result;
-import org.egov.common.entity.edcr.ScrutinyDetail;
-import org.egov.common.entity.edcr.SepticTankRequirement;
+import org.egov.common.entity.edcr.*;
 import org.egov.edcr.service.FetchEdcrRulesMdms;
 import org.egov.edcr.service.MDMSCacheManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import static org.egov.edcr.constants.CommonFeatureConstants.GREATER_THAN_EQUAL;
+import static org.egov.edcr.constants.EdcrReportConstants.*;
+import static org.egov.edcr.service.FeatureUtil.addScrutinyDetailtoPlan;
+import static org.egov.edcr.service.FeatureUtil.mapReportDetails;
 
 @Service
 public class SepticTank extends FeatureProcess {
 
 	private static final Logger LOG = LogManager.getLogger(SepticTank.class);
-
-	// Constants for rule number and field descriptions
-	private static final String RULE_45_E = "45-e";
-	public static final String DISTANCE_FROM_WATERSOURCE = "Distance from watersource";
-	public static final String DISTANCE_FROM_BUILDING = "Distance from Building";
-	public static final String MIN_DISTANCE_FROM_GOVTBUILDING_DESC = "Minimum distance fcrom government building";
-
-	// Default minimum distances (fallback values)
-	public static final BigDecimal MIN_DIS_WATERSRC = BigDecimal.valueOf(18);
-	public static final BigDecimal MIN_DIS_BUILDING = BigDecimal.valueOf(6);
 
 	@Autowired
 	FetchEdcrRulesMdms fetchEdcrRulesMdms; // Service to fetch rules from MDMS
@@ -113,7 +102,6 @@ public class SepticTank extends FeatureProcess {
 	@Override
 	public Plan process(Plan pl) {
 	    ScrutinyDetail scrutinyDetail = createScrutinyDetail();
-
 	    List<org.egov.common.entity.edcr.SepticTank> septicTanks = pl.getSepticTanks();
 	    if (septicTanks == null || septicTanks.isEmpty()) {
 	        return pl;
@@ -127,9 +115,7 @@ public class SepticTank extends FeatureProcess {
 	        septicTankMinDisWatersrc = matchedRule.get().getSepticTankMinDisWatersrc();
 	        septicTankMinDisBuilding = matchedRule.get().getSepticTankMinDisBuilding();
 	    }
-
 	    validateSepticTanks(pl, scrutinyDetail, septicTanks, septicTankMinDisWatersrc, septicTankMinDisBuilding);
-
 	    return pl;
 	}
 
@@ -221,15 +207,15 @@ public class SepticTank extends FeatureProcess {
 	 */
 	private void buildResult(Plan pl, ScrutinyDetail scrutinyDetail, boolean valid, String description, String permited,
 	                         String provided) {
-	    Map<String, String> details = new HashMap<>();
-	    details.put(RULE_NO, RULE_45_E);
-	    details.put(DESCRIPTION, description);
-	    details.put(PERMITTED, permited);
-	    details.put(PROVIDED, provided);
-	    details.put(STATUS, valid ? Result.Accepted.getResultVal() : Result.Not_Accepted.getResultVal());
+		ReportScrutinyDetail detail = new ReportScrutinyDetail();
+		detail.setRuleNo(RULE_45_E);
+		detail.setDescription(description);
+		detail.setPermitted(permited);
+		detail.setProvided(provided);
+		detail.setStatus(valid ? Result.Accepted.getResultVal() : Result.Not_Accepted.getResultVal());
 
-	    scrutinyDetail.getDetail().add(details);
-	    pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+		Map<String, String> details = mapReportDetails(detail);
+		addScrutinyDetailtoPlan(scrutinyDetail, pl, details);
 	}
 
 

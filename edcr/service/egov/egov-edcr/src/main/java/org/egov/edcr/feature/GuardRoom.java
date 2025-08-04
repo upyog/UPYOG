@@ -58,33 +58,21 @@ import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.egov.common.entity.edcr.FeatureEnum;
-import org.egov.common.entity.edcr.GuardRoomRequirement;
-import org.egov.common.entity.edcr.Measurement;
-import org.egov.common.entity.edcr.Plan;
-import org.egov.common.entity.edcr.Result;
-import org.egov.common.entity.edcr.ScrutinyDetail;
+import org.egov.common.entity.edcr.*;
 import org.egov.edcr.service.MDMSCacheManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import static org.egov.edcr.constants.CommonFeatureConstants.*;
+import static org.egov.edcr.constants.EdcrReportConstants.*;
+import static org.egov.edcr.constants.EdcrReportConstants.AREA;
+import static org.egov.edcr.service.FeatureUtil.mapReportDetails;
 
 @Service
 public class GuardRoom extends FeatureProcess {
 
     // Logger for logging information and errors
     private static final Logger LOGGER = LogManager.getLogger(GuardRoom.class);
-
-    // Rule identifier and descriptions for guard room scrutiny
-    private static final String RULE_48_A = "48-A";
-    public static final String GUARD_ROOM_DIMENSION_DESCRIPTION = "Guard Room Dimension";
-    public static final String GUARD_ROOM_AREA_DESCRIPTION = "Guard Room Area";
-    public static final String GUARD_ROOM_HEIGHT_DESCRIPTION = "Guard Room Height";
-    public static final String HEIGHT = "Height";
-    public static final String AREA = "Area";
-    public static final String DIMENSION = "Dimension";
-
    
     @Autowired
 	MDMSCacheManager cache;
@@ -195,18 +183,18 @@ public class GuardRoom extends FeatureProcess {
      * @param requiredWidth   The required minimum width as per rule.
      */
     private void validateDimensions(BigDecimal minHeight, BigDecimal minWidth, BigDecimal requiredHeight, BigDecimal requiredWidth) {
-    	Map<String, String> details = new HashMap<>();
-    	details.put(RULE_NO, RULE_48_A);
-    	details.put(DESCRIPTION, GUARD_ROOM_DIMENSION_DESCRIPTION);
-    	details.put(REQUIRED, DIMENSION + GREATER_THAN + requiredHeight.toString() + MULTIPLY + requiredWidth.toString());
-    	details.put(PROVIDED, DIMENSION + COLUMN + minWidth + MULTIPLY + minHeight);
+		ReportScrutinyDetail detail = new ReportScrutinyDetail();
+		detail.setRuleNo(RULE_48_A);
+		detail.setDescription(GUARD_ROOM_DIMENSION_DESCRIPTION);
+		detail.setRequired(DIMENSION + GREATER_THAN + requiredHeight.toString() + MULTIPLY + requiredWidth.toString());
+		detail.setProvided(DIMENSION + COLUMN + minWidth + MULTIPLY + minHeight);
+		if (minHeight.compareTo(requiredHeight) >= 0 && minWidth.compareTo(requiredWidth) >= 0) {
+			detail.setStatus(Result.Accepted.getResultVal());
+		} else {
+			detail.setStatus(Result.Not_Accepted.getResultVal());
+		}
 
-    	if (minHeight.compareTo(requiredHeight) >= 0 && minWidth.compareTo(requiredWidth) >= 0) {
-    		details.put(STATUS, Result.Accepted.getResultVal());
-    	} else {
-    		details.put(STATUS, Result.Not_Accepted.getResultVal());
-    	}
-
+		Map<String, String> details = mapReportDetails(detail);
     	scrutinyDetail.getDetail().add(details);
     }
 
@@ -217,18 +205,18 @@ public class GuardRoom extends FeatureProcess {
      * @param requiredArea   The maximum allowed area as per the rule.
      */
     private void validateArea(BigDecimal minArea, BigDecimal requiredArea) {
-    	Map<String, String> details = new HashMap<>();
-    	details.put(RULE_NO, RULE_48_A);
-    	details.put(DESCRIPTION, GUARD_ROOM_AREA_DESCRIPTION);
-    	details.put(REQUIRED, AREA + LESS_THAN_EQUAL_TO + requiredArea.toString());
-    	details.put(PROVIDED, AREA + COLUMN + minArea);
+		ReportScrutinyDetail detail = new ReportScrutinyDetail();
+		detail.setRuleNo(RULE_48_A);
+		detail.setDescription(GUARD_ROOM_HEIGHT_DESCRIPTION);
+		detail.setRequired(AREA + LESS_THAN_EQUAL_TO + requiredArea.toString());
+		detail.setProvided(AREA + COLUMN + minArea);
+		if (minArea.compareTo(requiredArea) <= 0) {
+			detail.setStatus(Result.Accepted.getResultVal());
+		} else {
+			detail.setStatus(Result.Not_Accepted.getResultVal());
+		}
 
-    	if (minArea.compareTo(requiredArea) <= 0) {
-    		details.put(STATUS, Result.Accepted.getResultVal());
-    	} else {
-    		details.put(STATUS, Result.Not_Accepted.getResultVal());
-    	}
-
+		Map<String, String> details = mapReportDetails(detail);
     	scrutinyDetail.getDetail().add(details);
     }
 
@@ -240,20 +228,20 @@ public class GuardRoom extends FeatureProcess {
      * @param maxHeightAllowed   The maximum height allowed as per rule.
      */
     private void validateCabinHeight(BigDecimal minCabinHeight, BigDecimal minHeightAllowed, BigDecimal maxHeightAllowed) {
-    	Map<String, String> details = new HashMap<>();
-    	details.put(RULE_NO, RULE_48_A);
-    	details.put(DESCRIPTION, GUARD_ROOM_HEIGHT_DESCRIPTION);
-    	details.put(REQUIRED, HEIGHT + GREATER_THAN_EQUAL + minHeightAllowed.toString() + AND_STRING + LESS_THAN_EQUAL_TO + maxHeightAllowed.toString());
-    	details.put(PROVIDED, HEIGHT + COLUMN + minCabinHeight + METER);
-
-    	if (minCabinHeight.compareTo(minHeightAllowed) >= 0 && minCabinHeight.compareTo(maxHeightAllowed) <= 0) {
-    		details.put(STATUS, Result.Accepted.getResultVal());
-    	} else {
-    		details.put(STATUS, Result.Not_Accepted.getResultVal());
-    	}
-
-    	scrutinyDetail.getDetail().add(details);
-    }
+		ReportScrutinyDetail detail = new ReportScrutinyDetail();
+		detail.setRuleNo(RULE_48_A);
+		detail.setDescription(GUARD_ROOM_HEIGHT_DESCRIPTION);
+		detail.setRequired(HEIGHT_UNSPACED + GREATER_THAN_EQUAL + minHeightAllowed.toString() + AND_STRING + LESS_THAN_EQUAL_TO + maxHeightAllowed.toString());
+		detail.setProvided(HEIGHT_UNSPACED + COLUMN + minCabinHeight + METER);
+		if (minCabinHeight.compareTo(minHeightAllowed) >= 0 && minCabinHeight.compareTo(maxHeightAllowed) <= 0) {
+			detail.setStatus(Result.Accepted.getResultVal());
+		} else {
+			detail.setStatus(Result.Not_Accepted.getResultVal());
+		}
+		
+		Map<String, String> details = mapReportDetails(detail);
+		scrutinyDetail.getDetail().add(details);
+	}
 
 
     /**

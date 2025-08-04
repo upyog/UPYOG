@@ -59,17 +59,7 @@ import java.util.Optional;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.egov.common.constants.MdmsFeatureConstants;
-import org.egov.common.entity.edcr.Block;
-import org.egov.common.entity.edcr.FeatureEnum;
-import org.egov.common.entity.edcr.FireStairRequirement;
-import org.egov.common.entity.edcr.Flight;
-import org.egov.common.entity.edcr.Floor;
-import org.egov.common.entity.edcr.Measurement;
-import org.egov.common.entity.edcr.OccupancyTypeHelper;
-import org.egov.common.entity.edcr.Plan;
-import org.egov.common.entity.edcr.Result;
-import org.egov.common.entity.edcr.ScrutinyDetail;
-import org.egov.common.entity.edcr.StairLanding;
+import org.egov.common.entity.edcr.*;
 import org.egov.edcr.constants.DxfFileConstants;
 import org.egov.edcr.service.MDMSCacheManager;
 import org.egov.edcr.service.FetchEdcrRulesMdms;
@@ -79,8 +69,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 
-import static org.egov.edcr.constants.CommonFeatureConstants.UNDERSCORE;
+import static org.egov.edcr.constants.CommonFeatureConstants.*;
 import static org.egov.edcr.constants.CommonKeyConstants.*;
+import static org.egov.edcr.constants.EdcrReportConstants.*;
+import static org.egov.edcr.service.FeatureUtil.addScrutinyDetailtoPlan;
+import static org.egov.edcr.service.FeatureUtil.mapReportDetails;
 
 /*
  * This class is responsible for validating and processing fire stair dimensions
@@ -93,19 +86,6 @@ public class FireStair extends FeatureProcess {
 
 	// Logger for logging information and errors
 	private static final Logger LOG = LogManager.getLogger(FireStair.class);
-
-	// Constants for rule identifiers and descriptions
-	private static final String FLOOR = "Floor";
-	private static final String RULE42_5_II = "42-5-iii-f";
-	private static final String NO_OF_RISER_DESCRIPTION = "Maximum no of risers required per flight for fire stair %s flight %s";
-	private static final String WIDTH_DESCRIPTION = "Minimum width for fire stair %s flight %s";
-	private static final String TREAD_DESCRIPTION = "Minimum tread for fire stair %s flight %s";
-	private static final String NO_OF_RISERS = "Number of risers ";
-	private static final String FLIGHT_POLYLINE_NOT_DEFINED_DESCRIPTION = "Flight polyline is not defined in layer ";
-	private static final String FLIGHT_LENGTH_DEFINED_DESCRIPTION = "Flight polyline length is not defined in layer ";
-	private static final String FLIGHT_WIDTH_DEFINED_DESCRIPTION = "Flight polyline width is not defined in layer ";
-	private static final String WIDTH_LANDING_DESCRIPTION = "Minimum width for fire stair %s mid landing %s";
-	private static final String FLIGHT_NOT_DEFINED_DESCRIPTION = "Fire stair flight is not defined in block %s floor %s";
 
 	// Variables to store permissible values for fire stair dimensions
 	private static BigDecimal fireStairExpectedNoofRise = BigDecimal.ZERO;
@@ -512,12 +492,12 @@ public class FireStair extends FeatureProcess {
 
 			if (valid) {
 				setReportOutputDetailsFloorStairWise(plan, RULE42_5_II, value,
-						String.format(WIDTH_DESCRIPTION, fireStair.getNumber(), flight.getNumber()),
+						String.format(WIDTH_DESCRIPTION_FIRE_STAIR, fireStair.getNumber(), flight.getNumber()),
 						fireStairMinimumWidth.toString(), String.valueOf(minFlightWidth),
 						Result.Accepted.getResultVal(), scrutinyDetail2);
 			} else {
 				setReportOutputDetailsFloorStairWise(plan, RULE42_5_II, value,
-						String.format(WIDTH_DESCRIPTION, fireStair.getNumber(), flight.getNumber()),
+						String.format(WIDTH_DESCRIPTION_FIRE_STAIR, fireStair.getNumber(), flight.getNumber()),
 						fireStairMinimumWidth.toString(), String.valueOf(minFlightWidth),
 						Result.Not_Accepted.getResultVal(), scrutinyDetail2);
 			}
@@ -659,27 +639,29 @@ public class FireStair extends FeatureProcess {
 
 	private void setReportOutputDetailsFloorStairWise(Plan pl, String ruleNo, String floor, String description,
 			String expected, String actual, String status, ScrutinyDetail scrutinyDetail) {
-		Map<String, String> details = new HashMap<>();
-		details.put(RULE_NO, ruleNo);
-		details.put(FLOOR, floor);
-		details.put(DESCRIPTION, description);
-		details.put(PERMISSIBLE, expected);
-		details.put(PROVIDED, actual);
-		details.put(STATUS, status);
-		scrutinyDetail.getDetail().add(details);
-		pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+		ReportScrutinyDetail detail = new ReportScrutinyDetail();
+		detail.setRuleNo(ruleNo);
+		detail.setDescription(description);
+		detail.setFloorNo(floor);
+		detail.setPermissible(expected);
+		detail.setProvided(actual);
+		detail.setStatus(status);
+
+		Map<String, String> details = mapReportDetails(detail);
+		addScrutinyDetailtoPlan(scrutinyDetail, pl, details);
 	}
 
 	private void setReportOutputDetailsBltUp(Plan pl, String ruleNo, String floor, String description, String actual,
 			String status, ScrutinyDetail scrutinyDetail) {
-		Map<String, String> details = new HashMap<>();
-		details.put(RULE_NO, ruleNo);
-		details.put(FLOOR, floor);
-		details.put(DESCRIPTION, description);
-		details.put(PROVIDED, actual);
-		details.put(STATUS, status);
-		scrutinyDetail.getDetail().add(details);
-		pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+		ReportScrutinyDetail detail = new ReportScrutinyDetail();
+		detail.setRuleNo(ruleNo);
+		detail.setDescription(description);
+		detail.setFloorNo(floor);
+		detail.setProvided(actual);
+		detail.setStatus(status);
+
+		Map<String, String> details = mapReportDetails(detail);
+		addScrutinyDetailtoPlan(scrutinyDetail, pl, details);
 	}
 
 	/*

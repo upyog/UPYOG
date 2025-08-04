@@ -49,40 +49,10 @@ package org.egov.edcr.feature;
 
 import static org.egov.edcr.constants.CommonFeatureConstants.*;
 import static org.egov.edcr.constants.CommonKeyConstants.*;
-import static org.egov.edcr.constants.DxfFileConstants.A;
-import static org.egov.edcr.constants.DxfFileConstants.A2;
-import static org.egov.edcr.constants.DxfFileConstants.A_FH;
-import static org.egov.edcr.constants.DxfFileConstants.A_R;
-import static org.egov.edcr.constants.DxfFileConstants.A_SA;
-import static org.egov.edcr.constants.DxfFileConstants.B2;
-import static org.egov.edcr.constants.DxfFileConstants.D_A;
-import static org.egov.edcr.constants.DxfFileConstants.D_B;
-import static org.egov.edcr.constants.DxfFileConstants.D_C;
-import static org.egov.edcr.constants.DxfFileConstants.E_CLG;
-import static org.egov.edcr.constants.DxfFileConstants.E_EARC;
-import static org.egov.edcr.constants.DxfFileConstants.E_NS;
-import static org.egov.edcr.constants.DxfFileConstants.E_PS;
-import static org.egov.edcr.constants.DxfFileConstants.E_SACA;
-import static org.egov.edcr.constants.DxfFileConstants.E_SFDAP;
-import static org.egov.edcr.constants.DxfFileConstants.E_SFMC;
-import static org.egov.edcr.constants.DxfFileConstants.F;
-import static org.egov.edcr.constants.DxfFileConstants.G;
-import static org.egov.edcr.constants.DxfFileConstants.G_NPHI;
-import static org.egov.edcr.constants.DxfFileConstants.G_PHI;
-import static org.egov.edcr.constants.DxfFileConstants.H_PP;
-import static org.egov.edcr.constants.DxfFileConstants.M_DFPAB;
-import static org.egov.edcr.constants.DxfFileConstants.M_HOTHC;
-import static org.egov.edcr.constants.DxfFileConstants.M_NAPI;
-import static org.egov.edcr.constants.DxfFileConstants.M_OHF;
-import static org.egov.edcr.constants.DxfFileConstants.M_VH;
-import static org.egov.edcr.constants.DxfFileConstants.S_BH;
-import static org.egov.edcr.constants.DxfFileConstants.S_CA;
-import static org.egov.edcr.constants.DxfFileConstants.S_CRC;
-import static org.egov.edcr.constants.DxfFileConstants.S_ECFG;
-import static org.egov.edcr.constants.DxfFileConstants.S_ICC;
-import static org.egov.edcr.constants.DxfFileConstants.S_MCH;
-import static org.egov.edcr.constants.DxfFileConstants.S_SAS;
-import static org.egov.edcr.constants.DxfFileConstants.S_SC;
+import static org.egov.edcr.constants.DxfFileConstants.*;
+import static org.egov.edcr.constants.EdcrReportConstants.*;
+import static org.egov.edcr.service.FeatureUtil.addScrutinyDetailtoPlan;
+import static org.egov.edcr.service.FeatureUtil.mapReportDetails;
 import static org.egov.edcr.utility.DcrConstants.DECIMALDIGITS_MEASUREMENTS;
 import static org.egov.edcr.utility.DcrConstants.OBJECTNOTDEFINED;
 import static org.egov.edcr.utility.DcrConstants.ROUNDMODE_MEASUREMENTS;
@@ -104,18 +74,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.egov.common.constants.MdmsFeatureConstants;
 import org.egov.common.entity.dcr.helper.OccupancyHelperDetail;
-import org.egov.common.entity.edcr.Block;
-import org.egov.common.entity.edcr.Building;
-import org.egov.common.entity.edcr.FarDetails;
-import org.egov.common.entity.edcr.FarRequirement;
-import org.egov.common.entity.edcr.FeatureEnum;
-import org.egov.common.entity.edcr.Floor;
-import org.egov.common.entity.edcr.Measurement;
-import org.egov.common.entity.edcr.Occupancy;
-import org.egov.common.entity.edcr.OccupancyTypeHelper;
-import org.egov.common.entity.edcr.Plan;
-import org.egov.common.entity.edcr.Result;
-import org.egov.common.entity.edcr.ScrutinyDetail;
+import org.egov.common.entity.edcr.*;
 import org.egov.edcr.service.MDMSCacheManager;
 import org.egov.edcr.service.ProcessPrintHelper;
 import org.egov.edcr.utility.DcrConstants;
@@ -125,79 +84,16 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class Far extends FeatureProcess {
-
 	private static final Logger LOG = LogManager.getLogger(Far.class);
-
-	private static final String VALIDATION_NEGATIVE_FLOOR_AREA = "msg.error.negative.floorarea.occupancy.floor";
-	private static final String VALIDATION_NEGATIVE_EXISTING_FLOOR_AREA = "msg.error.negative.existing.floorarea.occupancy.floor";
-	private static final String VALIDATION_NEGATIVE_BUILTUP_AREA = "msg.error.negative.builtuparea.occupancy.floor";
-	private static final String VALIDATION_NEGATIVE_EXISTING_BUILTUP_AREA = "msg.error.negative.existing.builtuparea.occupancy.floor";
-	public static final String RULE_31_1 = "31-1";
-	public static final String RULE_38 = "38";
-
-	private static final BigDecimal POINTTWO = BigDecimal.valueOf(0.2);
-	private static final BigDecimal POINTFOUR = BigDecimal.valueOf(0.4);
-	private static final BigDecimal POINTFIVE = BigDecimal.valueOf(0.5);
-	private static final BigDecimal POINTSIX = BigDecimal.valueOf(0.6);
-	private static final BigDecimal POINTSEVEN = BigDecimal.valueOf(0.7);
-	private static final BigDecimal ONE = BigDecimal.valueOf(1);
-	private static final BigDecimal ONE_POINTTWO = BigDecimal.valueOf(1.2);
-	private static final BigDecimal ONE_POINTFIVE = BigDecimal.valueOf(1.5);
-	private static final BigDecimal ONE_POINTEIGHT = BigDecimal.valueOf(1.8);
-	private static final BigDecimal TWO = BigDecimal.valueOf(2);
-	private static final BigDecimal TWO_POINTFIVE = BigDecimal.valueOf(2.5);
-	private static final BigDecimal THREE = BigDecimal.valueOf(3);
-	private static final BigDecimal THREE_POINTTWOFIVE = BigDecimal.valueOf(3.25);
-	private static final BigDecimal THREE_POINTFIVE = BigDecimal.valueOf(3.5);
-	private static final BigDecimal FIFTEEN = BigDecimal.valueOf(15);
-
-	private static final BigDecimal ROAD_WIDTH_TWO_POINTFOUR = BigDecimal.valueOf(2.4);
-	private static final BigDecimal ROAD_WIDTH_TWO_POINTFOURFOUR = BigDecimal.valueOf(2.44);
-	private static final BigDecimal ROAD_WIDTH_THREE_POINTSIX = BigDecimal.valueOf(3.6);
-	private static final BigDecimal ROAD_WIDTH_FOUR_POINTEIGHT = BigDecimal.valueOf(4.8);
-	private static final BigDecimal ROAD_WIDTH_SIX_POINTONE = BigDecimal.valueOf(6.1);
-	private static final BigDecimal ROAD_WIDTH_NINE_POINTONE = BigDecimal.valueOf(9.1);
-	private static final BigDecimal ROAD_WIDTH_TWELVE_POINTTWO = BigDecimal.valueOf(12.2);
-
-	private static final BigDecimal ROAD_WIDTH_EIGHTEEN_POINTTHREE = BigDecimal.valueOf(18.3);
-	private static final BigDecimal ROAD_WIDTH_TWENTYFOUR_POINTFOUR = BigDecimal.valueOf(24.4);
-	private static final BigDecimal ROAD_WIDTH_TWENTYSEVEN_POINTFOUR = BigDecimal.valueOf(27.4);
-	private static final BigDecimal ROAD_WIDTH_THIRTY_POINTFIVE = BigDecimal.valueOf(30.5);
-
-	public static final String OLD = "OLD";
-	public static final String NEW = "NEW";
-	public static final String OLD_AREA_ERROR = "road width old area";
-	public static final String NEW_AREA_ERROR = "road width new area";
-	public static final String OLD_AREA_ERROR_MSG = "No construction shall be permitted if the road width is less than 2.4m for old area.";
-	public static final String NEW_AREA_ERROR_MSG = "No construction shall be permitted if the road width is less than 6.1m for new area.";
-
-	// Constants for Residential FAR Added by Bimal Kumar
-	public static final BigDecimal FAR_UP_TO_2_00 = new BigDecimal("2.00");
-	public static final BigDecimal FAR_UP_TO_1_90 = new BigDecimal("1.90");
-	public static final BigDecimal FAR_UP_TO_1_75 = new BigDecimal("1.75");
-	public static final BigDecimal FAR_UP_TO_1_65 = new BigDecimal("1.65");
-	public static final BigDecimal FAR_UP_TO_1_50 = new BigDecimal("1.50");
-	public static final BigDecimal FAR_UP_TO_1_25 = new BigDecimal("1.25");
-
-	// Plot Area Categories (Integer Values) Added by Bimal Kumar on 11 March 2024
-	// for residential far updation
-	public static final BigDecimal PLOT_AREA_UP_TO_100_SQM = new BigDecimal("100");
-	public static final BigDecimal PLOT_AREA_100_150_SQM = new BigDecimal("150");
-	public static final BigDecimal PLOT_AREA_150_200_SQM = new BigDecimal("200");
-	public static final BigDecimal PLOT_AREA_200_300_SQM = new BigDecimal("300");
-	public static final BigDecimal PLOT_AREA_300_500_SQM = new BigDecimal("500");
-	public static final BigDecimal PLOT_AREA_500_1000_SQM = new BigDecimal("1000");
-	public static final BigDecimal PLOT_AREA_ABOVE_1000_SQM = new BigDecimal(Integer.MAX_VALUE);
 	BigDecimal totalExistingBuiltUpArea = BigDecimal.ZERO;
 	BigDecimal totalExistingFloorArea = BigDecimal.ZERO;
 	BigDecimal totalBuiltUpArea = BigDecimal.ZERO;
 	BigDecimal totalFloorArea = BigDecimal.ZERO;
 	BigDecimal totalCarpetArea = BigDecimal.ZERO;
-	BigDecimal totalExistingCarpetArea = BigDecimal.ZERO;// Use an appropriate
-																									// upper bound
+	BigDecimal totalExistingCarpetArea = BigDecimal.ZERO;// Use an appropriate																// upper bound
+
 	@Autowired
 	MDMSCacheManager cache;
-	
 	
 	/**
 	 * Validates the given Plan object to ensure the plot area is defined and greater than zero.
@@ -1418,17 +1314,17 @@ public class Far extends FeatureProcess {
 
 		String actualResult = far.toString();
 
-		Map<String, String> details = new HashMap<>();
-		details.put(RULE_NO, RULE_38);
-		details.put(OCCUPANCY, occupancyName);
-		details.put(AREA_TYPE, typeOfArea);
-		details.put(ROAD_WIDTH, roadWidth.toString());
-		details.put(PERMISSIBLE, expectedResult);
-		details.put(PROVIDED, actualResult);
-		details.put(STATUS, isAccepted ? Result.Accepted.getResultVal() : Result.Not_Accepted.getResultVal());
+		ReportScrutinyDetail detail = new ReportScrutinyDetail();
+		detail.setRuleNo(RULE_38);
+		detail.setOccupancy(occupancyName);
+		detail.setAreaType(typeOfArea);
+		detail.setRoadWidth(roadWidth.toString());
+		detail.setPermissible(expectedResult);
+		detail.setProvided(actualResult);
+		detail.setStatus(isAccepted ? Result.Accepted.getResultVal() : Result.Not_Accepted.getResultVal());
 
-		scrutinyDetail.getDetail().add(details);
-		pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+		Map<String, String> details = mapReportDetails(detail);
+		addScrutinyDetailtoPlan(scrutinyDetail, pl, details);
 	}
 
 	private ScrutinyDetail getFarScrutinyDetail(String key) {

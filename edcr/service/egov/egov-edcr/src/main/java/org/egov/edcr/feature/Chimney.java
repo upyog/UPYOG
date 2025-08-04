@@ -57,29 +57,20 @@ import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.egov.common.entity.edcr.Block;
-import org.egov.common.entity.edcr.ChimneyRequirement;
-import org.egov.common.entity.edcr.FeatureEnum;
-import org.egov.common.entity.edcr.Plan;
-import org.egov.common.entity.edcr.Result;
-import org.egov.common.entity.edcr.ScrutinyDetail;
+import org.egov.common.entity.edcr.*;
 import org.egov.edcr.service.MDMSCacheManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import static org.egov.edcr.constants.CommonKeyConstants.*;
+import static org.egov.edcr.constants.EdcrReportConstants.*;
+import static org.egov.edcr.service.FeatureUtil.mapReportDetails;
 
 @Service
 public class Chimney extends FeatureProcess {
 
     // Logger for logging information and errors
     private static final Logger LOG = LogManager.getLogger(Chimney.class);
-
-    // Rule identifier and description for chimney scrutiny
-    private static final String RULE_44_D = "44-d";
-    public static final String CHIMNEY_DESCRIPTION = "Chimney";
-    public static final String CHIMNEY_VERIFY_DESCRIPTION = "Verified whether chimney height is <= ";
-    public static final String METERS = " meters";
     
     @Autowired
 	MDMSCacheManager cache;
@@ -187,13 +178,14 @@ public class Chimney extends FeatureProcess {
 	     * @return A map representing one row of the scrutiny detail.
 	     */
 	    private Map<String, String> createResultRow(String status, BigDecimal permissibleHeight, BigDecimal actualHeight, boolean includedInBuildingHeight) {
-	        Map<String, String> details = new HashMap<>();
-	        details.put(RULE_NO, RULE_NO);
-	        details.put(DESCRIPTION, CHIMNEY_DESCRIPTION);
-	        details.put(VERIFIED, CHIMNEY_VERIFY_DESCRIPTION + permissibleHeight + METERS);
-	        details.put(ACTION, (includedInBuildingHeight ? INCLUDED : NOT_INCLUDED) +
-	                CHIMNEY_HEIGHT + actualHeight + TO_BUILDING_HEIGHT);
-	        details.put(STATUS, status);
+			ReportScrutinyDetail detail = new ReportScrutinyDetail();
+			detail.setRuleNo(RULE_NO);
+			detail.setDescription(CHIMNEY_DESCRIPTION);
+			detail.setVerified(CHIMNEY_VERIFY_DESCRIPTION + permissibleHeight + METERS);
+			detail.setAction((includedInBuildingHeight ? INCLUDED : NOT_INCLUDED) +	CHIMNEY_HEIGHT + actualHeight + TO_BUILDING_HEIGHT);
+			detail.setStatus(status);
+
+			Map<String, String> details = mapReportDetails(detail);
 	        return details;
 	    }
 

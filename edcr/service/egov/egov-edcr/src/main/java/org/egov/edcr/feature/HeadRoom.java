@@ -57,15 +57,7 @@ import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.egov.common.entity.edcr.Block;
-import org.egov.common.entity.edcr.FeatureEnum;
-import org.egov.common.entity.edcr.FireStairRequirement;
-import org.egov.common.entity.edcr.GuardRoomRequirement;
-import org.egov.common.entity.edcr.HeadRoomRequirement;
-import org.egov.common.entity.edcr.MdmsFeatureRule;
-import org.egov.common.entity.edcr.Plan;
-import org.egov.common.entity.edcr.Result;
-import org.egov.common.entity.edcr.ScrutinyDetail;
+import org.egov.common.entity.edcr.*;
 import org.egov.edcr.service.MDMSCacheManager;
 import org.egov.edcr.service.FetchEdcrRulesMdms;
 import org.egov.edcr.utility.Util;
@@ -73,16 +65,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import static org.egov.edcr.constants.CommonKeyConstants.*;
+import static org.egov.edcr.constants.EdcrReportConstants.*;
+import static org.egov.edcr.service.FeatureUtil.addScrutinyDetailtoPlan;
+import static org.egov.edcr.service.FeatureUtil.mapReportDetails;
 
 @Service
 public class HeadRoom extends FeatureProcess {
 
 	// Logger for logging information and errors
 	private static final Logger LOG = LogManager.getLogger(HeadRoom.class);
-
-	// Constants for rule identifiers and descriptions
-	private static final String RULE42_5_ii = "42-5-ii";
-	private static final String RULE_42_5_ii_DESCRIPTION = "Minimum clear of stair head-room";
 
 	@Autowired
 	FetchEdcrRulesMdms fetchEdcrRulesMdms;
@@ -210,14 +201,15 @@ public class HeadRoom extends FeatureProcess {
 	 */
 	private void addScrutinyResult(Plan plan, ScrutinyDetail scrutinyDetail, String ruleNo, String ruleDesc,
 			String expected, String actual, String status) {
-		Map<String, String> details = new HashMap<>();
-		details.put(RULE_NO, ruleNo);
-		details.put(DESCRIPTION, ruleDesc);
-		details.put(REQUIRED, expected);
-		details.put(PROVIDED, actual);
-		details.put(STATUS, status);
-		scrutinyDetail.getDetail().add(details);
-		plan.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+		ReportScrutinyDetail detail = new ReportScrutinyDetail();
+		detail.setRuleNo(ruleNo);
+		detail.setDescription(ruleDesc);
+		detail.setRequired(expected);
+		detail.setProvided(actual);
+		detail.setStatus(status);
+
+		Map<String, String> details = mapReportDetails(detail);
+		addScrutinyDetailtoPlan(scrutinyDetail, plan, details);
 	}
 
 }

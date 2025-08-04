@@ -65,19 +65,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.egov.common.constants.MdmsFeatureConstants;
 import org.egov.common.entity.dcr.helper.OccupancyHelperDetail;
-import org.egov.common.entity.edcr.Block;
-import org.egov.common.entity.edcr.FeatureEnum;
-import org.egov.common.entity.edcr.Floor;
-import org.egov.common.entity.edcr.MdmsFeatureRule;
-import org.egov.common.entity.edcr.Measurement;
-import org.egov.common.entity.edcr.Occupancy;
-import org.egov.common.entity.edcr.Plan;
-import org.egov.common.entity.edcr.Result;
-import org.egov.common.entity.edcr.SanitationRequirement;
-import org.egov.common.entity.edcr.FeatureRuleKey;
-import org.egov.common.entity.edcr.SanityDetails;
-import org.egov.common.entity.edcr.SanityHelper;
-import org.egov.common.entity.edcr.ScrutinyDetail;
+import org.egov.common.entity.edcr.*;
 import org.egov.edcr.constants.DxfFileConstants;
 import org.egov.edcr.constants.EdcrRulesMdmsConstants;
 import org.egov.edcr.service.MDMSCacheManager;
@@ -88,44 +76,16 @@ import org.springframework.stereotype.Service;
 
 import static org.egov.edcr.constants.CommonFeatureConstants.*;
 import static org.egov.edcr.constants.CommonKeyConstants.*;
+import static org.egov.edcr.constants.EdcrReportConstants.*;
 import static org.egov.edcr.constants.RuleKeyConstants.*;
+import static org.egov.edcr.service.FeatureUtil.mapReportDetails;
 
 
 @Service
 public class Sanitation extends FeatureProcess {
-    public static final String MSG_ERROR_MANDATORY = "msg.error.mandatory.object.not.defined";
-    public static final String FEMALE = "Female ";
-    public static final String MALE = "Male ";
-    public static final String BLOCK = "Block ";
-    public static final String SANITY_RULE_DESC = "Sanity facility for Occupancy ";
-    public static final String NEWLINE = "\n";
-    public static final String SANITATION = "Sanitation";
-    public static final String BLOCK_U_S = "Block_";
-    private static final String WITH = " with ";
-    private static final String BLDG_PART_WATER_CLOSET = "Water Closet";
-    private static final String BLDG_PART_SPECIAL_WATER_CLOSET = "Special Water Closet";
-    private static final String BLDG_PART_URINAL = "Urinal";
-    private static final String BLDG_PART_BATHROOM = "Bath Room";
-    private static final String MALE_BATH_WITH_WC = BLDG_PART_BATHROOM + WITH + BLDG_PART_WATER_CLOSET;
-    private static final String BLDG_PART_WASHBASIN = "Wash Basin";
-    private static final String MINIMUM_SIDE_DIMENSION_VIOLATED = "Minimum Side Dimension of {0} M violated";
-    private static final String MINIMUM_AREA_DIMENSION_VIOLATED = "Minimum Area of {0} M violated";
-    private static final String DIMESION_DESC_KEY = "msg.sanity.dimension.desc";
-    private static final Logger LOG = LogManager.getLogger(Sanitation.class);
-    private static final String FEATURE_NAME = "Sanitary Detail";
-    private static final String RULE_38_1 = "38-1";
-    private static final String NOOFBEDS = "No Of Beds";
-    public static final String RULE_55_12 = "55-12";
-    public static final String RULE_40_A_4 = "40A-4";
-    public static final String RULE_54_6 = "54-6";
-    public static final BigDecimal MINAREAOFSPWC = BigDecimal.valueOf(2.625);
-    public static final BigDecimal MINDIMENSIONOFSPWC = BigDecimal.valueOf(1.5);
-    public static final String MINIMUM_AREA_SPWC = "2.625 M2";
-    public static final String MINIMUM_DIMENSION_SPWC = "1.5 M";
+    public static final Logger LOG = LogManager.getLogger(Sanitation.class);
 
-   
-    
-	public static BigDecimal sanitationMinAreaofSPWC = BigDecimal.ZERO;
+    public static BigDecimal sanitationMinAreaofSPWC = BigDecimal.ZERO;
 	public static BigDecimal sanitationMinDimensionofSPWC = BigDecimal.ZERO;
 	public static BigDecimal sanitationMinatGroundFloor = BigDecimal.ZERO;
 	public static BigDecimal sanitationFloorMultiplier = BigDecimal.ZERO;
@@ -1051,18 +1011,19 @@ public class Sanitation extends FeatureProcess {
      * @param expected Expected value
      * @param actual Actual value
      * @param status Acceptance status
-     * @param detail The scrutiny detail to add to
+     * @param scdetail The scrutiny detail to add to
      */
     private void addReportDetail(Set<String> ruleNo, String ruleDesc, String expected, String actual, String status,
-            ScrutinyDetail detail) {
-        Map<String, String> details = new HashMap<>();
-        details.put(RULE_NO, ruleNo.stream().map(String::new).collect(Collectors.joining(",")));
-        details.put(DESCRIPTION, ruleDesc);
-        details.put(REQUIRED, expected);
-        details.put(PROVIDED, actual);
-        details.put(STATUS, status);
-        detail.getDetail().add(details);
+            ScrutinyDetail scdetail) {
+        ReportScrutinyDetail detail = new ReportScrutinyDetail();
+        detail.setRuleNo(ruleNo.stream().map(String::new).collect(Collectors.joining(",")));
+        detail.setDescription(ruleDesc);
+        detail.setRequired(expected);
+        detail.setProvided(actual);
+        detail.setStatus(status);
 
+        Map<String, String> details = mapReportDetails(detail);
+        scdetail.getDetail().add(details);
     }
 
     /**

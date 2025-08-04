@@ -58,33 +58,27 @@ import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.egov.common.entity.edcr.ElectricLine;
-import org.egov.common.entity.edcr.FeatureEnum;
-import org.egov.common.entity.edcr.OverheadElectricalLineServiceRequirement;
-import org.egov.common.entity.edcr.Plan;
-import org.egov.common.entity.edcr.Result;
-import org.egov.common.entity.edcr.ScrutinyDetail;
+import org.egov.common.entity.edcr.*;
 import org.egov.edcr.service.MDMSCacheManager;
 import org.egov.edcr.utility.DcrConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 
+import static org.egov.edcr.constants.EdcrReportConstants.*;
+import static org.egov.edcr.service.FeatureUtil.addScrutinyDetailtoPlan;
+import static org.egov.edcr.service.FeatureUtil.mapReportDetails;
+
 @Service
 public class OverheadElectricalLineService extends FeatureProcess {
     private static final Logger LOG = LogManager.getLogger(OverheadElectricalLineService.class);
-    private static final String SUB_RULE_31 = "31";
+	public static BigDecimal overheadVerticalDistance_11000 = BigDecimal.ZERO;
+	public static BigDecimal overheadVerticalDistance_33000 = BigDecimal.ZERO;
+	public static BigDecimal overheadHorizontalDistance_11000 = BigDecimal.ZERO;
+	public static BigDecimal overheadHorizontalDistance_33000 = BigDecimal.ZERO;
+	public static BigDecimal overheadVoltage_11000 = BigDecimal.ZERO;
+	public static BigDecimal overheadVoltage_33000 = BigDecimal.ZERO;
 
-    private static BigDecimal overheadVerticalDistance_11000 = BigDecimal.ZERO;
-    private static BigDecimal overheadVerticalDistance_33000 = BigDecimal.ZERO;
-    private static BigDecimal overheadHorizontalDistance_11000 = BigDecimal.ZERO;
-    private static BigDecimal overheadHorizontalDistance_33000 = BigDecimal.ZERO;
-    private static BigDecimal overheadVoltage_11000 = BigDecimal.ZERO;
-    private static BigDecimal overheadVoltage_33000 = BigDecimal.ZERO;
-    private static final String REMARKS = "Remarks";
-    private static final String VOLTAGE = "Voltage";
-
-   
 	@Autowired
 	MDMSCacheManager cache;
 
@@ -254,16 +248,17 @@ public class OverheadElectricalLineService extends FeatureProcess {
 	 */
 	
   private void setReportOutputDetails(Plan pl, String ruleNo, String ruleDesc, String expected, String actual, String status, String remarks, String voltage) {
-  Map<String, String> details = new HashMap<>();
-  details.put(RULE_NO, ruleNo);
-  details.put(DESCRIPTION, ruleDesc);
-  details.put(REQUIRED, expected);
-  details.put(PROVIDED, actual);
-  details.put(REMARKS, remarks);
-  details.put(VOLTAGE, voltage);
-  details.put(STATUS, status);
-  scrutinyDetail.getDetail().add(details);
-  pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+	  ReportScrutinyDetail detail = new ReportScrutinyDetail();
+	  detail.setRuleNo(ruleNo);
+	  detail.setDescription(ruleDesc);
+	  detail.setRemarks(remarks);
+	  detail.setRequired(expected);
+	  detail.setProvided(actual);
+	  detail.setStatus(status);
+	  detail.setVoltage(voltage);
+
+	  Map<String, String> details = mapReportDetails(detail);
+	  addScrutinyDetailtoPlan(scrutinyDetail, pl, details);
 }
 
 

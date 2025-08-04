@@ -57,6 +57,7 @@ import static org.egov.edcr.constants.DxfFileConstants.B;
 import static org.egov.edcr.constants.DxfFileConstants.D;
 import static org.egov.edcr.constants.DxfFileConstants.F;
 import static org.egov.edcr.constants.DxfFileConstants.I;
+import static org.egov.edcr.constants.EdcrReportConstants.*;
 import static org.egov.edcr.utility.DcrConstants.FRONT_YARD_DESC;
 import static org.egov.edcr.utility.DcrConstants.OBJECTNOTDEFINED;
 import static org.egov.edcr.utility.DcrConstants.REAR_YARD_DESC;
@@ -94,51 +95,6 @@ import org.springframework.stereotype.Service;
 @Service
 public class RearYardService extends GeneralRule {
 	private static final Logger LOG = LogManager.getLogger(RearYardService.class);
-	private static final String RULE = "4.4.4";
-	private static final String RULE_36 = "36";
-	private static final String RULE_37_TWO_A = "37-2-A";
-	private static final String RULE_37_TWO_B = "37-2-B";
-	private static final String RULE_37_TWO_C = "37-2-C";
-	private static final String RULE_37_TWO_D = "37-2-D";
-	private static final String RULE_37_TWO_G = "37-2-G";
-	private static final String RULE_37_TWO_H = "37-2-H";
-	private static final String RULE_37_TWO_I = "37-2-I";
-	private static final String RULE_47 = "47";
-
-	private static final String MINIMUMLABEL = "Minimum distance ";
-	// Added by Bimal 18-March-2924 for method processRearYardResidential
-	private static final BigDecimal MIN_PLOT_AREA = BigDecimal.valueOf(30);
-	private static final BigDecimal MIN_VAL_100_SQM = BigDecimal.valueOf(1.54);
-	private static final BigDecimal MIN_VAL_150_SQM = BigDecimal.valueOf(1.8);
-	private static final BigDecimal MIN_VAL_200_SQM = BigDecimal.valueOf(2.16);
-	private static final BigDecimal MIN_VAL_300_PlUS_SQM = BigDecimal.valueOf(3.0);
-	private static final BigDecimal PLOT_AREA_100_SQM = BigDecimal.valueOf(100);
-	private static final BigDecimal PLOT_AREA_150_SQM = BigDecimal.valueOf(150);
-	private static final BigDecimal PLOT_AREA_200_SQM = BigDecimal.valueOf(200);
-	private static final BigDecimal PLOT_AREA_300_SQM = BigDecimal.valueOf(300);
-	private static final BigDecimal PLOT_AREA_500_SQM = BigDecimal.valueOf(500);
-	private static final BigDecimal PLOT_AREA_1000_SQM = BigDecimal.valueOf(1000);
-
-	private static final BigDecimal REARYARDMINIMUM_DISTANCE_0_9 = BigDecimal.valueOf(0.9);
-	private static final BigDecimal REARYARDMINIMUM_DISTANCE_1_2 = BigDecimal.valueOf(1.2);
-	private static final BigDecimal REARYARDMINIMUM_DISTANCE_1_5 = BigDecimal.valueOf(1.5);
-	private static final BigDecimal REARYARDMINIMUM_DISTANCE_1_8 = BigDecimal.valueOf(1.8);
-	private static final BigDecimal REARYARDMINIMUM_DISTANCE_2 = BigDecimal.valueOf(2);
-	private static final BigDecimal REARYARDMINIMUM_DISTANCE_2_5 = BigDecimal.valueOf(2.5);
-	private static final BigDecimal REARYARDMINIMUM_DISTANCE_3 = BigDecimal.valueOf(3);
-	private static final BigDecimal REARYARDMINIMUM_DISTANCE_3_6 = BigDecimal.valueOf(3.6);
-	private static final BigDecimal REARYARDMINIMUM_DISTANCE_4 = BigDecimal.valueOf(4);
-	private static final BigDecimal REARYARDMINIMUM_DISTANCE_4_5 = BigDecimal.valueOf(4.5);
-	private static final BigDecimal REARYARDMINIMUM_DISTANCE_5 = BigDecimal.valueOf(5);
-	private static final BigDecimal REARYARDMINIMUM_DISTANCE_6 = BigDecimal.valueOf(6);
-	private static final BigDecimal REARYARDMINIMUM_DISTANCE_7 = BigDecimal.valueOf(7);
-	private static final BigDecimal REARYARDMINIMUM_DISTANCE_8 = BigDecimal.valueOf(8);
-	private static final BigDecimal REARYARDMINIMUM_DISTANCE_9 = BigDecimal.valueOf(9);
-	private static final BigDecimal REARYARDMINIMUM_DISTANCE_12 = BigDecimal.valueOf(12);
-
-	public static final String BSMT_REAR_YARD_DESC = "Basement Rear Setback";
-	private static final int PLOTAREA_300 = 300;
-	public static final BigDecimal ROAD_WIDTH_TWELVE_POINTTWO = BigDecimal.valueOf(12.2);
 
 	private class RearYardResult {
 		String rule;
@@ -364,7 +320,7 @@ public class RearYardService extends GeneralRule {
 			OccupancyTypeHelper mostRestrictiveOccupancy, RearYardResult rearYardResult,
 			HashMap<String, String> errors) {
 		Boolean valid = false;
-		String subRule = RULE;
+		String subRule = RULE_4_4_4_I;
 		String rule = FRONT_YARD_DESC;
 		BigDecimal meanVal = BigDecimal.ZERO;
 		BigDecimal depthOfPlot = pl.getPlanInformation().getDepthOfPlot();
@@ -460,7 +416,7 @@ public class RearYardService extends GeneralRule {
 			final Plot plot, final String rearYardFieldName, final BigDecimal min, final BigDecimal mean,
 			final OccupancyTypeHelper mostRestrictiveOccupancy, RearYardResult rearYardResult,
 			BigDecimal buildingHeight) {
-		String subRule = RULE;
+		String subRule = RULE_4_4_4_I;
 		String rule = REAR_YARD_DESC;
 		Boolean valid = false;
 		BigDecimal minVal = BigDecimal.valueOf(0);
@@ -558,7 +514,7 @@ public class RearYardService extends GeneralRule {
 			Integer level, final Plot plot, final String rearYardFieldName, final BigDecimal min, final BigDecimal mean,
 			final OccupancyTypeHelper mostRestrictiveOccupancy, RearYardResult rearYardResult,
 			HashMap<String, String> errors) {
-		String subRule = RULE;
+		String subRule = RULE_4_4_4_I;
 		String rule = REAR_YARD_DESC;
 		Boolean valid = false;
 		BigDecimal minVal = BigDecimal.valueOf(0);
@@ -591,7 +547,7 @@ public class RearYardService extends GeneralRule {
 	private Boolean checkRearYardForIndustrial(SetBack setback, Building building, final Plan pl, Block block,
 			Integer level, final Plot plot, final String rearYardFieldName, final BigDecimal min, final BigDecimal mean,
 			final OccupancyTypeHelper mostRestrictiveOccupancy, RearYardResult rearYardResult) {
-		String subRule = RULE;
+		String subRule = RULE_4_4_4_I;
 		String rule = REAR_YARD_DESC;
 		Boolean valid = false;
 		BigDecimal minVal = BigDecimal.valueOf(0);
@@ -694,7 +650,7 @@ public class RearYardService extends GeneralRule {
 			Integer level, final Plot plot, final String rearYardFieldName, final BigDecimal min, final BigDecimal mean,
 			final OccupancyTypeHelper mostRestrictiveOccupancy, RearYardResult rearYardResult,
 			HashMap<String, String> errors) {
-		String subRule = RULE;
+		String subRule = RULE_4_4_4_I;
 		String rule = REAR_YARD_DESC;
 		Boolean valid = false;
 		BigDecimal minVal = BigDecimal.valueOf(0);

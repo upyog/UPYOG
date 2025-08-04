@@ -58,15 +58,7 @@ import java.util.Optional;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.egov.common.constants.MdmsFeatureConstants;
-import org.egov.common.entity.edcr.MdmsFeatureRule;
-import org.egov.common.entity.edcr.OccupancyTypeHelper;
-import org.egov.common.entity.edcr.Plan;
-import org.egov.common.entity.edcr.PlantationRequirement;
-import org.egov.common.entity.edcr.RainWaterHarvestingRequirement;
-import org.egov.common.entity.edcr.Result;
-import org.egov.common.entity.edcr.FeatureEnum;
-import org.egov.common.entity.edcr.FeatureRuleKey;
-import org.egov.common.entity.edcr.ScrutinyDetail;
+import org.egov.common.entity.edcr.*;
 import org.egov.edcr.constants.DxfFileConstants;
 import org.egov.edcr.constants.EdcrRulesMdmsConstants;
 import org.egov.edcr.service.MDMSCacheManager;
@@ -76,21 +68,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import static org.egov.edcr.constants.CommonFeatureConstants.*;
+import static org.egov.edcr.constants.EdcrReportConstants.*;
+import static org.egov.edcr.service.FeatureUtil.addScrutinyDetailtoPlan;
+import static org.egov.edcr.service.FeatureUtil.mapReportDetails;
 
 @Service
 public class RainWaterHarvesting extends FeatureProcess {
 	private static final Logger LOG = LogManager.getLogger(RainWaterHarvesting.class);
-    private static final String RULE_51 = "10.3";
-    /*
-     * private static final String RULE_51_DESCRIPTION = "RainWater Storage Arrangement "; private static final String
-     * RAINWATER_HARVESTING_TANK_CAPACITY = "Minimum capacity of Rain Water Harvesting Tank";
-     */
-    private static final String RULE_51_DESCRIPTION = "Rain Water Harvesting";
-    // private static final String RAINWATER_HARVESTING_TANK_CAPACITY = "Minimum capacity of Rain Water Harvesting Tank";
-    private static final String RWH_DECLARATION_ERROR = DxfFileConstants.RWH_DECLARED
-            + " in PLAN_INFO layer must be declared as YES for plot area greater than 100 sqm.";
 
-    
     @Autowired
    	MDMSCacheManager cache;
     
@@ -226,13 +211,14 @@ private void addReportOutput(Plan pl, String subRule, String subRuleDesc) {
  */
 private void setReportOutputDetails(Plan pl, String ruleNo, String ruleDesc, String expected, String actual,
         String status) {
-    Map<String, String> details = new HashMap<>();
-    details.put(RULE_NO, ruleNo); // Rule number
-    details.put(DESCRIPTION, ruleDesc); // Rule description
-    details.put(PROVIDED, actual); // Actual value
-    details.put(STATUS, status); // Validation status
-    scrutinyDetail.getDetail().add(details); // Add details to scrutiny detail
-    pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail); // Add scrutiny detail to the plan's report output
+    ReportScrutinyDetail detail = new ReportScrutinyDetail();
+    detail.setRuleNo(ruleNo);
+    detail.setDescription(ruleDesc);
+    detail.setProvided(actual);
+    detail.setStatus(status);
+
+    Map<String, String> details = mapReportDetails(detail);
+    addScrutinyDetailtoPlan(scrutinyDetail, pl, details);
 }
 
 @Override

@@ -59,31 +59,20 @@ import java.util.Optional;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.egov.common.constants.MdmsFeatureConstants;
-import org.egov.common.entity.edcr.BathroomWCRequirement;
-import org.egov.common.entity.edcr.Block;
-import org.egov.common.entity.edcr.FeatureEnum;
-import org.egov.common.entity.edcr.Floor;
-import org.egov.common.entity.edcr.MdmsFeatureRule;
-import org.egov.common.entity.edcr.Measurement;
-import org.egov.common.entity.edcr.Plan;
-import org.egov.common.entity.edcr.Result;
-import org.egov.common.entity.edcr.RoomHeight;
-import org.egov.common.entity.edcr.ScrutinyDetail;
-import org.egov.common.entity.edcr.SolarRequirement;
-import org.egov.common.entity.edcr.WaterClosetsRequirement;
+import org.egov.common.entity.edcr.*;
 import org.egov.edcr.service.MDMSCacheManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import static org.egov.edcr.constants.CommonFeatureConstants.*;
 import static org.egov.edcr.constants.CommonKeyConstants.*;
+import static org.egov.edcr.constants.EdcrReportConstants.*;
+import static org.egov.edcr.service.FeatureUtil.mapReportDetails;
 
 @Service
 public class WaterClosets extends FeatureProcess {
 
 	private static final Logger LOG = LogManager.getLogger(WaterClosets.class);
-	private static final String RULE_41_IV = "41-iv";
-	public static final String WATERCLOSETS_DESCRIPTION = "Water Closets";
 
 	/**
 	 * Validates the building plan for water closet requirements.
@@ -248,15 +237,15 @@ public class WaterClosets extends FeatureProcess {
 	 * @return Map containing ventilation validation details
 	 */
 	private Map<String, String> buildVentilationDetails(BigDecimal requiredVentArea, BigDecimal providedVentArea) {
-	    Map<String, String> ventDetails = new HashMap<>();
-	    ventDetails.put(RULE_NO, RULE_41_IV);
-	    ventDetails.put(DESCRIPTION, WATERCLOSETS_DESCRIPTION);
-	    ventDetails.put(REQUIRED, requiredVentArea.toString());
-	    ventDetails.put(PROVIDED, WATER_CLOSET_VENTILATION_AREA + providedVentArea);
-	    ventDetails.put(STATUS, providedVentArea.compareTo(requiredVentArea) >= 0
-	            ? Result.Accepted.getResultVal()
-	            : Result.Not_Accepted.getResultVal());
-	    return ventDetails;
+		ReportScrutinyDetail detail = new ReportScrutinyDetail();
+		detail.setRuleNo(RULE_41_IV);
+		detail.setDescription(WATERCLOSETS_DESCRIPTION);
+		detail.setRequired(requiredVentArea.toString());
+		detail.setProvided(WATER_CLOSET_VENTILATION_AREA + providedVentArea);
+		detail.setStatus(providedVentArea.compareTo(requiredVentArea) >= 0
+				? Result.Accepted.getResultVal()
+				: Result.Not_Accepted.getResultVal());
+		return mapReportDetails(detail);
 	}
 	/**
 	 * Builds dimension validation details for scrutiny reporting.
@@ -273,19 +262,18 @@ public class WaterClosets extends FeatureProcess {
 	 */
 	private Map<String, String> buildDimensionDetails(BigDecimal requiredHeight, BigDecimal requiredArea, BigDecimal requiredWidth,
 	                                                  BigDecimal providedHeight, BigDecimal providedArea, BigDecimal providedWidth) {
-	    Map<String, String> dimDetails = new HashMap<>();
-	    dimDetails.put(RULE_NO, RULE_41_IV);
-	    dimDetails.put(DESCRIPTION, WATERCLOSETS_DESCRIPTION);
-	    dimDetails.put(REQUIRED, String.format(HEIGHT_AREA_WIDTH_GREATER_THAN_S,
-	            requiredHeight, requiredArea, requiredWidth));
-	    dimDetails.put(PROVIDED, String.format(HEIGHT_AREA_WIDTH_EQUAL_TO_S,
-	            providedHeight, providedArea, providedWidth));
-	    dimDetails.put(STATUS, (providedHeight.compareTo(requiredHeight) >= 0
-	            && providedArea.compareTo(requiredArea) >= 0
-	            && providedWidth.compareTo(requiredWidth) >= 0)
-	            ? Result.Accepted.getResultVal()
-	            : Result.Not_Accepted.getResultVal());
-	    return dimDetails;
+		ReportScrutinyDetail detail = new ReportScrutinyDetail();
+		detail.setRuleNo(RULE_41_IV);
+		detail.setDescription(WATERCLOSETS_DESCRIPTION);
+		detail.setRequired(String.format(HEIGHT_AREA_WIDTH_GREATER_THAN_S,
+				requiredHeight, requiredArea, requiredWidth));
+		detail.setProvided(String.format(HEIGHT_AREA_WIDTH_EQUAL_TO_S, providedHeight, providedArea, providedWidth));
+		detail.setStatus((providedHeight.compareTo(requiredHeight) >= 0
+				&& providedArea.compareTo(requiredArea) >= 0
+				&& providedWidth.compareTo(requiredWidth) >= 0)
+				? Result.Accepted.getResultVal()
+				: Result.Not_Accepted.getResultVal());
+		return mapReportDetails(detail);
 	}
 
 	/**

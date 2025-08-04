@@ -58,6 +58,9 @@ import static org.egov.edcr.constants.DxfFileConstants.F;
 import static org.egov.edcr.constants.DxfFileConstants.G;
 import static org.egov.edcr.constants.DxfFileConstants.I;
 import static org.egov.edcr.constants.DxfFileConstants.A_PO;
+import static org.egov.edcr.constants.EdcrReportConstants.*;
+import static org.egov.edcr.service.FeatureUtil.addScrutinyDetailtoPlan;
+import static org.egov.edcr.service.FeatureUtil.mapReportDetails;
 import static org.egov.edcr.utility.DcrConstants.OBJECTNOTDEFINED;
 import static org.egov.edcr.utility.DcrConstants.SIDE_YARD1_DESC;
 import static org.egov.edcr.utility.DcrConstants.SIDE_YARD2_DESC;
@@ -69,72 +72,14 @@ import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.egov.common.entity.edcr.Block;
-import org.egov.common.entity.edcr.Building;
-import org.egov.common.entity.edcr.Occupancy;
-import org.egov.common.entity.edcr.OccupancyTypeHelper;
-import org.egov.common.entity.edcr.Plan;
-import org.egov.common.entity.edcr.Plot;
-import org.egov.common.entity.edcr.Result;
-import org.egov.common.entity.edcr.ScrutinyDetail;
-import org.egov.common.entity.edcr.SetBack;
-import org.egov.common.entity.edcr.Yard;
+import org.egov.common.entity.edcr.*;
 import org.egov.edcr.constants.DxfFileConstants;
 import org.egov.infra.utils.StringUtils;
 import org.springframework.stereotype.Service;
 
 @Service
 public class SideYardService extends GeneralRule {
-
-    private static final BigDecimal SIDEVALUE_ONE = BigDecimal.valueOf(1);
-    private static final BigDecimal SIDEVALUE_ONE_TWO = BigDecimal.valueOf(1.2);
-    private static final BigDecimal SIDEVALUE_ONEPOINTFIVE = BigDecimal.valueOf(1.5);
-    private static final BigDecimal SIDEVALUE_ONEPOINTEIGHT = BigDecimal.valueOf(1.8);
-    private static final BigDecimal SIDEVALUE_TWO = BigDecimal.valueOf(2);
-    private static final BigDecimal SIDEVALUE_TWOPOINTFIVE = BigDecimal.valueOf(2.5);
-    private static final BigDecimal SIDEVALUE_THREE = BigDecimal.valueOf(3);
-    private static final BigDecimal SIDEVALUE_THREEPOINTSIX = BigDecimal.valueOf(3.66);
-    private static final BigDecimal SIDEVALUE_FOUR = BigDecimal.valueOf(4);
-    private static final BigDecimal SIDEVALUE_FOURPOINTFIVE = BigDecimal.valueOf(4.5);
-    private static final BigDecimal SIDEVALUE_FIVE = BigDecimal.valueOf(5);
-    private static final BigDecimal SIDEVALUE_SIX = BigDecimal.valueOf(6);
-    private static final BigDecimal SIDEVALUE_SEVEN = BigDecimal.valueOf(7);
-    private static final BigDecimal SIDEVALUE_SEVENTYFIVE = BigDecimal.valueOf(0.75);
-    private static final BigDecimal SIDEVALUE_EIGHT = BigDecimal.valueOf(8);
-    private static final BigDecimal SIDEVALUE_NINE = BigDecimal.valueOf(9);
-    private static final BigDecimal SIDEVALUE_TEN = BigDecimal.valueOf(10);
-
-    private static final String SIDENUMBER = "Side Number";
-    private static final String MINIMUMLABEL = "Minimum distance ";
-
-    private static final String RULE_35 = "35 Table-9";
-    private static final String RULE_36 = "36";
-    private static final String RULE_37_TWO_A = "37-2-A";
-    private static final String RULE_37_TWO_B = "37-2-B";
-    private static final String RULE_37_TWO_C = "37-2-C";
-    private static final String RULE_37_TWO_D = "37-2-D";
-    private static final String RULE_37_TWO_G = "37-2-G";
-    private static final String RULE_37_TWO_H = "37-2-H";
-    private static final String RULE_37_TWO_I = "37-2-I";
-    private static final String RULE_47 = "47";
-    private static final String SIDE_YARD_2_NOTDEFINED = "side2yardNodeDefined";
-    private static final String SIDE_YARD_1_NOTDEFINED = "side1yardNodeDefined";
-
-    public static final String BSMT_SIDE_YARD_DESC = "Basement Side Yard";
-    private static final int PLOTAREA_300 = 300;
-    public static final BigDecimal ROAD_WIDTH_TWELVE_POINTTWO = BigDecimal.valueOf(12.2);
     
-    // Added by Bimal 18-March-2924 for method processSideYardResidential
-    private static final BigDecimal MIN_PLOT_AREA = BigDecimal.valueOf(30);
-    private static final BigDecimal PLOT_AREA_100_SQM = BigDecimal.valueOf(100);
-	private static final BigDecimal PLOT_AREA_150_SQM = BigDecimal.valueOf(150);
-	private static final BigDecimal PLOT_AREA_200_SQM = BigDecimal.valueOf(200);
-	private static final BigDecimal PLOT_AREA_300_SQM = BigDecimal.valueOf(300);
-	private static final BigDecimal PLOT_AREA_500_SQM = BigDecimal.valueOf(500);
-	private static final BigDecimal PLOT_AREA_1000_SQM = BigDecimal.valueOf(1000);
-    private static final double FIVE_MTR = 5;
-    private static final double TWO_MTR = 2.0;
-    private static final double THREE_MTR = 3.0;
     private static final Logger LOG = LogManager.getLogger(SideYardService.class);
 
     private class SideYardResult {
@@ -336,7 +281,7 @@ public class SideYardService extends GeneralRule {
 
     	BigDecimal plotArea = pl.getPlot().getArea();
         String rule = SIDE_YARD_DESC;
-        String subRule = RULE_35;
+        String subRule = RULE_35_T9;
 //        Boolean valid2 = false;
 //        Boolean valid1 = false;
 //        BigDecimal side2val = BigDecimal.ZERO;
@@ -513,49 +458,42 @@ public class SideYardService extends GeneralRule {
     private void addSideYardResult(final Plan pl, HashMap<String, String> errors, SideYardResult sideYard1Result,
             SideYardResult sideYard2Result) {
         if (sideYard1Result != null) {
-            Map<String, String> details = new HashMap<>();
-            details.put(RULE_NO, sideYard1Result.subRule);
-            details.put(LEVEL,
-                    sideYard1Result.level != null ? sideYard1Result.level.toString() : EMPTY_STRING);
-            details.put(OCCUPANCY, sideYard1Result.occupancy);
-
-            details.put(FIELDVERIFIED, MINIMUMLABEL);
-            details.put(PERMISSIBLE, sideYard1Result.expectedDistance.toString());
-            details.put(PROVIDED, sideYard1Result.actualDistance.toString());
-
-            details.put(SIDENUMBER, SIDE_YARD1_DESC);
-
+            ReportScrutinyDetail detail = new ReportScrutinyDetail();
+            detail.setRuleNo(sideYard1Result.subRule);
+            detail.setLevel(sideYard1Result.level != null ? sideYard1Result.level.toString() : EMPTY_STRING);
+            detail.setOccupancy(sideYard1Result.occupancy);
+            detail.setFieldVerified(MINIMUMLABEL);
+            detail.setPermissible(sideYard1Result.expectedDistance.toString());
+            detail.setProvided(sideYard1Result.actualDistance.toString());
+            detail.setSideNumber(SIDE_YARD1_DESC);
             if (sideYard1Result.status) {
-                details.put(STATUS, Result.Accepted.getResultVal());
+                detail.setStatus(Result.Accepted.getResultVal());
             } else {
-                details.put(STATUS, Result.Not_Accepted.getResultVal());
+                detail.setStatus(Result.Not_Accepted.getResultVal());
             }
 
-            scrutinyDetail.getDetail().add(details);
-            pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+            Map<String, String> details = mapReportDetails(detail);
+            addScrutinyDetailtoPlan(scrutinyDetail, pl, details);
         }
 
         if (errors.isEmpty()) {
             if (sideYard2Result != null) {
-                Map<String, String> detailsSideYard2 = new HashMap<>();
-                detailsSideYard2.put(RULE_NO, sideYard2Result.subRule);
-                detailsSideYard2.put(LEVEL,
-                        sideYard2Result.level != null ? sideYard2Result.level.toString() : EMPTY_STRING);
-                detailsSideYard2.put(OCCUPANCY, sideYard2Result.occupancy);
-                detailsSideYard2.put(SIDENUMBER, SIDE_YARD2_DESC);
-
-                detailsSideYard2.put(FIELDVERIFIED, MINIMUMLABEL);
-                detailsSideYard2.put(PERMISSIBLE, sideYard2Result.expectedDistance.toString());
-                detailsSideYard2.put(PROVIDED, sideYard2Result.actualDistance.toString());
-                // }
+                ReportScrutinyDetail detail2 = new ReportScrutinyDetail();
+                detail2.setRuleNo(sideYard2Result.subRule);
+                detail2.setLevel(sideYard2Result.level != null ? sideYard2Result.level.toString() : EMPTY_STRING);
+                detail2.setOccupancy(sideYard2Result.occupancy);
+                detail2.setFieldVerified(MINIMUMLABEL);
+                detail2.setPermissible(sideYard2Result.expectedDistance.toString());
+                detail2.setProvided(sideYard2Result.actualDistance.toString());
+                detail2.setSideNumber(SIDE_YARD2_DESC);
                 if (sideYard2Result.status) {
-                    detailsSideYard2.put(STATUS, Result.Accepted.getResultVal());
+                    detail2.setStatus(Result.Accepted.getResultVal());
                 } else {
-                    detailsSideYard2.put(STATUS, Result.Not_Accepted.getResultVal());
+                    detail2.setStatus(Result.Not_Accepted.getResultVal());
                 }
 
-                scrutinyDetail.getDetail().add(detailsSideYard2);
-                pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+                Map<String, String> details = mapReportDetails(detail2);
+                addScrutinyDetailtoPlan(scrutinyDetail, pl, details);
             }
         }
     }
@@ -600,10 +538,10 @@ public class SideYardService extends GeneralRule {
             }
 
             compareSideYard2Result(block.getName(), BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO,
-                    BigDecimal.ZERO, occupancy.getTypeHelper(), sideYard2Result, true, RULE_35, SIDE_YARD_DESC,
+                    BigDecimal.ZERO, occupancy.getTypeHelper(), sideYard2Result, true, RULE_35_T9, SIDE_YARD_DESC,
                     0);
             compareSideYard1Result(block.getName(), BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO,
-                    BigDecimal.ZERO, occupancy.getTypeHelper(), sideYard1Result, true, RULE_35, SIDE_YARD_DESC,
+                    BigDecimal.ZERO, occupancy.getTypeHelper(), sideYard1Result, true, RULE_35_T9, SIDE_YARD_DESC,
                     0);
         }
     }
@@ -634,7 +572,7 @@ public class SideYardService extends GeneralRule {
             SideYardResult sideYard2Result) {
 
         String rule = SIDE_YARD_DESC;
-        String subRule = RULE_35;
+        String subRule = RULE_35_T9;
         Boolean valid2 = false;
         Boolean valid1 = false;
         BigDecimal side2val = BigDecimal.ZERO;
@@ -816,7 +754,7 @@ public class SideYardService extends GeneralRule {
             SideYardResult sideYard2Result) {
 
         String rule = SIDE_YARD_DESC;
-        String subRule = RULE_35;
+        String subRule = RULE_35_T9;
         Boolean valid2 = false;
         Boolean valid1 = false;
         BigDecimal side2val = BigDecimal.ZERO;
@@ -898,7 +836,7 @@ public class SideYardService extends GeneralRule {
             SideYardResult sideYard2Result) {
 
         String rule = SIDE_YARD_DESC;
-        String subRule = RULE_35;
+        String subRule = RULE_35_T9;
         Boolean valid2 = false;
         Boolean valid1 = false;
         BigDecimal side2val = BigDecimal.ZERO;
@@ -980,7 +918,7 @@ public class SideYardService extends GeneralRule {
             SideYardResult sideYard2Result, HashMap<String, String> errors) {
 
         String rule = SIDE_YARD_DESC;
-        String subRule = RULE_35;
+        String subRule = RULE_35_T9;
         Boolean valid2 = false;
         Boolean valid1 = false;
         BigDecimal side2val = BigDecimal.ZERO;
@@ -1105,7 +1043,7 @@ public class SideYardService extends GeneralRule {
             SideYardResult sideYard2Result, HashMap<String, String> errors) {
 
         String rule = SIDE_YARD_DESC;
-        String subRule = RULE_35;
+        String subRule = RULE_35_T9;
         Boolean valid2 = false;
         Boolean valid1 = false;
         BigDecimal side2val = SIDEVALUE_ONE;

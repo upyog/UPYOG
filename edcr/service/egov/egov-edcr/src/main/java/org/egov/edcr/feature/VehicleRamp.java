@@ -75,14 +75,12 @@ import org.springframework.stereotype.Service;
 
 import static org.egov.common.constants.MdmsFeatureConstants.*;
 import static org.egov.edcr.constants.CommonFeatureConstants.*;
+import static org.egov.edcr.constants.EdcrReportConstants.SUBRULE_40_8;
 
 @Service
 public class VehicleRamp extends FeatureProcess {
 	private static final Logger LOG = LogManager.getLogger(VehicleRamp.class);
-	private static final String SUBRULE_40_8 = "40-8";
-	private static final String DESCRIPTION = "Vehicle Ramp";
-	private static final String FLOOR = "Floor";
-	private static final String FLIGHT = "Flight";
+
 
 	@Autowired
 	MDMSCacheManager cache;

@@ -281,7 +281,8 @@ public class CommonFeatureConstants {
     public static final String NOT_DEF_PLAN_VERIFY_REQ_DEF_BUSINESS = "Not Defined in plan. Verify whether required for defined Business.";
     public static final String DEF_IN_THE_PLAN = "Defined in the Plan.";
     public static final String TOTAL_AREA_STRING = "Total Area ";
-    public static final String WIDTH_STRING = ", Width ";
+    public static final String COMMA_WIDTH_STRING = ", Width ";
+    public static final String WIDTH_STRING = " Width ";
     public static final String VENTILATION_STRING = ", Ventilation ";
     public static final String VENTILATION_HEIGHT_STRING = ", Ventilation Height = ";
     public static final String MIN_WIDTH = "Minimum width ";
@@ -295,5 +296,14 @@ public class CommonFeatureConstants {
 
     public static final String FEATURE_NAME_STRING = "featureName";
     public static final String STATE_STRING = "state";
+    public static final String HEIGHT_STRING = " height";
+    public static final String AREA = "Area";
+
+    public static final String SUB_RULE_DESC_1 = "Room Wise Ventialtion";
+    public static final String SUB_RULE_DESC_2 = "Room Wise Window Area";
+    public static final String SUB_RULE_DESC_3 = "Window Area";
+    public static final String SUB_RULE_DESC_6 = "Door Area";
+    public static final String AC_ROOM = "AC_ROOM";
+    public static final String REGULAR_ROOM = "REGULAR_ROOM";
 
 }

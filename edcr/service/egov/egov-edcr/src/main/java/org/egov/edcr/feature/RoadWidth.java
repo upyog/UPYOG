@@ -56,6 +56,9 @@ import static org.egov.edcr.constants.DxfFileConstants.F;
 import static org.egov.edcr.constants.DxfFileConstants.F_CB;
 import static org.egov.edcr.constants.DxfFileConstants.F_RT;
 import static org.egov.edcr.constants.DxfFileConstants.G;
+import static org.egov.edcr.constants.EdcrReportConstants.*;
+import static org.egov.edcr.service.FeatureUtil.addScrutinyDetailtoPlan;
+import static org.egov.edcr.service.FeatureUtil.mapReportDetails;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -69,14 +72,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.egov.common.constants.MdmsFeatureConstants;
 import org.egov.common.entity.dcr.helper.OccupancyHelperDetail;
-import org.egov.common.entity.edcr.MdmsFeatureRule;
-import org.egov.common.entity.edcr.Plan;
-import org.egov.common.entity.edcr.PlantationRequirement;
-import org.egov.common.entity.edcr.Result;
-import org.egov.common.entity.edcr.RoadWidthRequirement;
-import org.egov.common.entity.edcr.FeatureEnum;
-import org.egov.common.entity.edcr.FeatureRuleKey;
-import org.egov.common.entity.edcr.ScrutinyDetail;
+import org.egov.common.entity.edcr.*;
 import org.egov.edcr.constants.EdcrRulesMdmsConstants;
 import org.egov.edcr.service.MDMSCacheManager;
 import org.egov.edcr.service.FetchEdcrRulesMdms;
@@ -87,11 +83,7 @@ import org.springframework.stereotype.Service;
 public class RoadWidth extends FeatureProcess {
 
     private static final Logger LOG = LogManager.getLogger(RoadWidth.class);
-    private static final String RULE_34 = "34-1";
-    public static final String ROADWIDTH_DESCRIPTION = "Minimum Road Width";
-    public static final String NEW = "NEW";
-    
-   
+
     @Autowired
 	MDMSCacheManager cache;
 
@@ -135,9 +127,9 @@ public class RoadWidth extends FeatureProcess {
 
         ScrutinyDetail scrutinyDetail = buildRoadWidthScrutinyDetail();
 
-        Map<String, String> details = new HashMap<>();
-        details.put(RULE_NO, RULE_34);
-        details.put(DESCRIPTION, ROADWIDTH_DESCRIPTION);
+        ReportScrutinyDetail detail = new ReportScrutinyDetail();
+        detail.setRuleNo(RULE_34);
+        detail.setDescription(ROADWIDTH_DESCRIPTION);
 
         Map<String, BigDecimal> occupancyValuesMap = getOccupancyValues(pl);
 
@@ -154,20 +146,19 @@ public class RoadWidth extends FeatureProcess {
             return pl;
         }
 
-        details.put(OCCUPANCY, occupancyType.getName());
+        detail.setOccupancy(occupancyType.getName());
 
         BigDecimal roadWidthRequired = occupancyValuesMap.get(occupancyType.getCode());
         if (roadWidthRequired != null) {
-            details.put(PERMITTED, roadWidthRequired + METER);
-            details.put(PROVIDED, roadWidth + METER);
-
+            detail.getPermitted(roadWidthRequired + METER);
+            detail.getProvided(roadWidth + METER);
             String status = roadWidth.compareTo(roadWidthRequired) >= 0
                     ? Result.Accepted.getResultVal()
                     : Result.Not_Accepted.getResultVal();
-
-            details.put(STATUS, status);
-            scrutinyDetail.getDetail().add(details);
-            pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+            detail.setProvided(roadWidth + METER);
+            detail.setStatus(status);
+            Map<String, String> details = mapReportDetails(detail);
+            addScrutinyDetailtoPlan(scrutinyDetail, pl, details);
         }
 
         return pl;

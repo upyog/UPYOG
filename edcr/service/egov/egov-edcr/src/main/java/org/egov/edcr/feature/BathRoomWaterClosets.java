@@ -57,18 +57,13 @@ import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.egov.common.entity.edcr.BathroomWCRequirement;
-import org.egov.common.entity.edcr.Block;
-import org.egov.common.entity.edcr.FeatureEnum;
-import org.egov.common.entity.edcr.Floor;
-import org.egov.common.entity.edcr.Measurement;
-import org.egov.common.entity.edcr.Plan;
-import org.egov.common.entity.edcr.Result;
-import org.egov.common.entity.edcr.RoomHeight;
-import org.egov.common.entity.edcr.ScrutinyDetail;
+import org.egov.common.entity.edcr.*;
 import org.egov.edcr.service.MDMSCacheManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import static org.egov.edcr.constants.EdcrReportConstants.*;
+import static org.egov.edcr.service.FeatureUtil.mapReportDetails;
 
 @Service
 public class BathRoomWaterClosets extends FeatureProcess {
@@ -76,14 +71,6 @@ public class BathRoomWaterClosets extends FeatureProcess {
     // Logger for logging information and errors
     private static final Logger LOG = LogManager.getLogger(BathRoomWaterClosets.class);
 
-    // Rule identifier and description for bathroom water closets scrutiny
-    private static final String RULE_41_IV = "41-iv";
-    public static final String BathroomWaterClosets_DESCRIPTION = "Bathroom Water Closets";
-    public static final String TOTAL_AREA = ", Total Area >= ";
-    public static final String WIDTH = ", Width >= ";
-    public static final String HEIGHT = "Height >= ";
-
-    
     /**
      * This method is used to validate the plan object.
      * Currently, no validation logic is implemented.
@@ -289,13 +276,13 @@ public class BathRoomWaterClosets extends FeatureProcess {
      */
     private Map<String, String> createResultRow(Floor floor, BigDecimal reqArea, BigDecimal reqWidth, BigDecimal reqHeight,
                                                 BigDecimal totalArea, BigDecimal minWidth, BigDecimal minHeight, boolean isAccepted) {
-        Map<String, String> resultRow = new HashMap<>();
-        resultRow.put(RULE_NO, RULE_41_IV);
-        resultRow.put(DESCRIPTION, BathroomWaterClosets_DESCRIPTION);
-        resultRow.put(REQUIRED, HEIGHT + reqHeight + TOTAL_AREA + reqArea + WIDTH + reqWidth);
-        resultRow.put(PROVIDED, HEIGHT + minHeight + TOTAL_AREA + totalArea + WIDTH + minWidth);
-        resultRow.put(STATUS, isAccepted ? Result.Accepted.getResultVal() : Result.Not_Accepted.getResultVal());
-        return resultRow;
+        ReportScrutinyDetail detail = new ReportScrutinyDetail();
+        detail.setRuleNo(RULE_41_IV);
+        detail.setDescription(BathroomWaterClosets_DESCRIPTION);
+        detail.setRequired(HEIGHT + reqHeight + TOTAL_AREA + reqArea + WIDTH + reqWidth);
+        detail.setProvided(HEIGHT + minHeight + TOTAL_AREA + totalArea + WIDTH + minWidth);
+        detail.setStatus(isAccepted ? Result.Accepted.getResultVal() : Result.Not_Accepted.getResultVal());
+        return mapReportDetails(detail);
     }
 
 

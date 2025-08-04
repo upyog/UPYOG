@@ -59,6 +59,8 @@ import static org.egov.edcr.constants.DxfFileConstants.D;
 import static org.egov.edcr.constants.DxfFileConstants.F;
 import static org.egov.edcr.constants.DxfFileConstants.G;
 import static org.egov.edcr.constants.DxfFileConstants.I;
+import static org.egov.edcr.constants.EdcrReportConstants.*;
+import static org.egov.edcr.service.FeatureUtil.mapReportDetails;
 import static org.egov.edcr.utility.DcrConstants.FRONT_YARD_DESC;
 import static org.egov.edcr.utility.DcrConstants.OBJECTNOTDEFINED;
 
@@ -71,19 +73,7 @@ import java.util.Optional;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.egov.common.constants.MdmsFeatureConstants;
-import org.egov.common.entity.edcr.Block;
-import org.egov.common.entity.edcr.Building;
-import org.egov.common.entity.edcr.FeatureEnum;
-import org.egov.common.entity.edcr.FireStairRequirement;
-import org.egov.common.entity.edcr.FrontSetBackRequirement;
-import org.egov.common.entity.edcr.MdmsFeatureRule;
-import org.egov.common.entity.edcr.Occupancy;
-import org.egov.common.entity.edcr.OccupancyTypeHelper;
-import org.egov.common.entity.edcr.Plan;
-import org.egov.common.entity.edcr.Plot;
-import org.egov.common.entity.edcr.Result;
-import org.egov.common.entity.edcr.ScrutinyDetail;
-import org.egov.common.entity.edcr.SetBack;
+import org.egov.common.entity.edcr.*;
 import org.egov.edcr.constants.DxfFileConstants;
 import org.egov.edcr.service.MDMSCacheManager;
 import org.egov.edcr.service.FetchEdcrRulesMdms;
@@ -95,58 +85,7 @@ import org.springframework.stereotype.Service;
 public class FrontYardService extends GeneralRule {
 	
 	private static final Logger LOG = LogManager.getLogger(FrontYardService.class);
-	private static final String RULE_35 = "35 Table-8";
-	private static final String RULE_36 = "36";
-	private static final String RULE_37_TWO_A = "37-2-A";
-	private static final String RULE_37_TWO_B = "37-2-B";
-	private static final String RULE_37_TWO_C = "37-2-C";
-	private static final String RULE_37_TWO_D = "37-2-D";
-	private static final String RULE_37_TWO_G = "37-2-G";
-	private static final String RULE_37_TWO_H = "37-2-H";
-	private static final String RULE_37_TWO_I = "37-2-I";
-	private static final String RULE = "4.4.4";
-
-	private static final String MINIMUMLABEL = "Minimum distance ";
 	String occupancyName = "";
-	
-	// Added by Bimal 18-March-2924 for method processFrontYardResidential
-	private static final BigDecimal MIN_PLOT_AREA = BigDecimal.valueOf(30);
-	private static final BigDecimal MIN_VAL_100_SQM = BigDecimal.valueOf(1.54);
-	private static final BigDecimal MIN_VAL_150_SQM = BigDecimal.valueOf(1.8);
-	private static final BigDecimal MIN_VAL_200_SQM = BigDecimal.valueOf(2.16);
-	private static final BigDecimal MIN_VAL_300_PlUS_SQM = BigDecimal.valueOf(3.0);
-	private static final BigDecimal PLOT_AREA_100_SQM = BigDecimal.valueOf(100);
-	private static final BigDecimal PLOT_AREA_150_SQM = BigDecimal.valueOf(150);
-	private static final BigDecimal PLOT_AREA_200_SQM = BigDecimal.valueOf(200);
-	private static final BigDecimal PLOT_AREA_300_SQM = BigDecimal.valueOf(300);
-	private static final BigDecimal PLOT_AREA_500_SQM = BigDecimal.valueOf(500);
-	private static final BigDecimal PLOT_AREA_1000_SQM = BigDecimal.valueOf(1000);
-
-	private static final BigDecimal FRONTYARDMINIMUM_DISTANCE_1_5 = BigDecimal.valueOf(1.5);
-	private static final BigDecimal FRONTYARDMINIMUM_DISTANCE_1_8 = BigDecimal.valueOf(1.8);
-	private static final BigDecimal FRONTYARDMINIMUM_DISTANCE_2_5 = BigDecimal.valueOf(2.5);
-	private static final BigDecimal FRONTYARDMINIMUM_DISTANCE_3 = BigDecimal.valueOf(3);
-	private static final BigDecimal FRONTYARDMINIMUM_DISTANCE_3_6 = BigDecimal.valueOf(3.6);
-	private static final BigDecimal FRONTYARDMINIMUM_DISTANCE_4 = BigDecimal.valueOf(4);
-	private static final BigDecimal FRONTYARDMINIMUM_DISTANCE_4_5 = BigDecimal.valueOf(4.5);
-	private static final BigDecimal FRONTYARDMINIMUM_DISTANCE_5 = BigDecimal.valueOf(5);
-	private static final BigDecimal FRONTYARDMINIMUM_DISTANCE_5_5 = BigDecimal.valueOf(5.5);
-	private static final BigDecimal FRONTYARDMINIMUM_DISTANCE_6 = BigDecimal.valueOf(6);
-	private static final BigDecimal FRONTYARDMINIMUM_DISTANCE_6_5 = BigDecimal.valueOf(6.5);
-	private static final BigDecimal FRONTYARDMINIMUM_DISTANCE_7 = BigDecimal.valueOf(7);
-	private static final BigDecimal FRONTYARDMINIMUM_DISTANCE_7_5 = BigDecimal.valueOf(7.5);
-	private static final BigDecimal FRONTYARDMINIMUM_DISTANCE_8 = BigDecimal.valueOf(8);
-	private static final BigDecimal FRONTYARDMINIMUM_DISTANCE_9 = BigDecimal.valueOf(9);
-	private static final BigDecimal FRONTYARDMINIMUM_DISTANCE_10 = BigDecimal.valueOf(10);
-	private static final BigDecimal FRONTYARDMINIMUM_DISTANCE_11 = BigDecimal.valueOf(11);
-	private static final BigDecimal FRONTYARDMINIMUM_DISTANCE_12 = BigDecimal.valueOf(12);
-	private static final BigDecimal FRONTYARDMINIMUM_DISTANCE_13 = BigDecimal.valueOf(13);
-	private static final BigDecimal FRONTYARDMINIMUM_DISTANCE_14 = BigDecimal.valueOf(14);
-	private static final BigDecimal FRONTYARDMINIMUM_DISTANCE_15 = BigDecimal.valueOf(15);
-	public static final BigDecimal ROAD_WIDTH_TWELVE_POINTTWO = BigDecimal.valueOf(12.2);
-
-	public static final String BSMT_FRONT_YARD_DESC = "Basement Front Yard";
-	private static final int PLOTAREA_300 = 300;
 
 	@Autowired
 	FetchEdcrRulesMdms fetchEdcrRulesMdms;
@@ -337,15 +276,16 @@ public class FrontYardService extends GeneralRule {
 	 */
 
 	private Map<String, String> buildScrutinyDetailMap(FrontYardResult result) {
-	    Map<String, String> detailMap = new HashMap<>();
-	    detailMap.put(RULE_NO, result.subRule);
-	    detailMap.put(LEVEL, result.level != null ? result.level.toString() : EMPTY_STRING);
-	    detailMap.put(OCCUPANCY, result.occupancy);
-	    detailMap.put(FIELDVERIFIED, MINIMUMLABEL);
-	    detailMap.put(PERMISSIBLE, result.expectedmeanDistance.toString());
-	    detailMap.put(PROVIDED, result.actualMinDistance.toString());
-	    detailMap.put(STATUS, result.status ? Result.Accepted.getResultVal() : Result.Not_Accepted.getResultVal());
-	    return detailMap;
+		ReportScrutinyDetail detail = new ReportScrutinyDetail();
+		detail.setRuleNo(result.subRule);
+		detail.setOccupancy(result.occupancy);
+		detail.setLevel(result.level != null ? result.level.toString() : EMPTY_STRING);
+		detail.setFieldVerified(MINIMUMLABEL);
+		detail.setPermissible(result.expectedmeanDistance.toString());
+		detail.setProvided(result.actualMinDistance.toString());
+		detail.setStatus(result.status ? Result.Accepted.getResultVal() : Result.Not_Accepted.getResultVal());
+
+	    return mapReportDetails(detail);
 	}
 
 	
@@ -418,7 +358,7 @@ public class FrontYardService extends GeneralRule {
 			OccupancyTypeHelper mostRestrictiveOccupancy, FrontYardResult frontYardResult,
 			HashMap<String, String> errors) {
 		Boolean valid = false;
-		String subRule = RULE;
+		String subRule = RULE_4_4_4_I;
 		String rule = FRONT_YARD_DESC;
 		BigDecimal meanVal = BigDecimal.ZERO;
 		BigDecimal depthOfPlot = pl.getPlanInformation().getDepthOfPlot();
@@ -519,7 +459,7 @@ public class FrontYardService extends GeneralRule {
 			OccupancyTypeHelper mostRestrictiveOccupancy, FrontYardResult frontYardResult,
 			HashMap<String, String> errors) {
 		Boolean valid = false;
-		String subRule = RULE;
+		String subRule = RULE_4_4_4_I;
 		String rule = FRONT_YARD_DESC;
 		BigDecimal minVal = BigDecimal.ZERO;
 		BigDecimal meanVal = BigDecimal.ZERO;
@@ -721,7 +661,7 @@ public class FrontYardService extends GeneralRule {
 			String frontYardFieldName, BigDecimal min, BigDecimal mean, OccupancyTypeHelper mostRestrictiveOccupancy,
 			FrontYardResult frontYardResult) {
 		Boolean valid = false;
-		String subRule = RULE;
+		String subRule = RULE_4_4_4_I;
 		String rule = FRONT_YARD_DESC;
 		BigDecimal minVal = BigDecimal.ZERO;
 		BigDecimal meanVal = BigDecimal.ZERO;

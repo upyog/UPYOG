@@ -59,14 +59,7 @@ import java.util.stream.Collectors;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.egov.common.constants.MdmsFeatureConstants;
-import org.egov.common.entity.edcr.Block;
-import org.egov.common.entity.edcr.FeatureEnum;
-import org.egov.common.entity.edcr.MdmsFeatureRule;
-import org.egov.common.entity.edcr.Plan;
-import org.egov.common.entity.edcr.PlantationGreenStripRequirement;
-import org.egov.common.entity.edcr.Result;
-import org.egov.common.entity.edcr.FeatureRuleKey;
-import org.egov.common.entity.edcr.ScrutinyDetail;
+import org.egov.common.entity.edcr.*;
 import org.egov.edcr.constants.EdcrRulesMdmsConstants;
 import org.egov.edcr.service.MDMSCacheManager;
 import org.egov.edcr.service.FetchEdcrRulesMdms;
@@ -76,11 +69,13 @@ import org.springframework.stereotype.Service;
 
 import static org.egov.edcr.constants.CommonFeatureConstants.*;
 import static org.egov.edcr.constants.CommonKeyConstants.BLOCK;
+import static org.egov.edcr.constants.EdcrReportConstants.RULE_37_6;
+import static org.egov.edcr.service.FeatureUtil.addScrutinyDetailtoPlan;
+import static org.egov.edcr.service.FeatureUtil.mapReportDetails;
 
 @Service
 public class PlantationGreenStrip extends FeatureProcess {
     private static final Logger LOG = LogManager.getLogger(PlantationGreenStrip.class);
-    private static final String RULE_37_6 = "37-6";
 
     @Autowired
   	MDMSCacheManager cache;
@@ -211,14 +206,15 @@ public class PlantationGreenStrip extends FeatureProcess {
      */
     private void buildResult(Plan pl, ScrutinyDetail scrutinyDetail, boolean valid, String description, String permited,
                              String provided) {
-        Map<String, String> details = new HashMap<>();
-        details.put(RULE_NO, RULE_37_6);
-        details.put(DESCRIPTION, description);
-        details.put(PERMISSIBLE, permited);
-        details.put(PROVIDED, provided);
-        details.put(STATUS, valid ? Result.Accepted.getResultVal() : Result.Not_Accepted.getResultVal());
-        scrutinyDetail.getDetail().add(details);
-        pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+        ReportScrutinyDetail detail = new ReportScrutinyDetail();
+        detail.setRuleNo(RULE_37_6);
+        detail.setDescription(description);
+        detail.setPermissible(permited);
+        detail.setProvided(provided);
+        detail.setStatus(valid ? Result.Accepted.getResultVal() : Result.Not_Accepted.getResultVal());
+
+        Map<String, String> details = mapReportDetails(detail);
+        addScrutinyDetailtoPlan(scrutinyDetail, pl, details);
     }
 
     

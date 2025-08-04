@@ -58,15 +58,7 @@ import java.util.Optional;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.egov.common.constants.MdmsFeatureConstants;
-import org.egov.common.entity.edcr.Block;
-import org.egov.common.entity.edcr.FeatureEnum;
-import org.egov.common.entity.edcr.MdmsFeatureRule;
-import org.egov.common.entity.edcr.Plan;
-import org.egov.common.entity.edcr.Result;
-import org.egov.common.entity.edcr.FeatureRuleKey;
-import org.egov.common.entity.edcr.ScrutinyDetail;
-import org.egov.common.entity.edcr.SolarRequirement;
-import org.egov.common.entity.edcr.StairCoverRequirement;
+import org.egov.common.entity.edcr.*;
 import org.egov.edcr.constants.EdcrRulesMdmsConstants;
 import org.egov.edcr.service.MDMSCacheManager;
 import org.egov.edcr.service.FetchEdcrRulesMdms;
@@ -75,22 +67,15 @@ import org.springframework.stereotype.Service;
 
 import static org.egov.edcr.constants.CommonFeatureConstants.*;
 import static org.egov.edcr.constants.CommonKeyConstants.COMMON_MUMTY;
+import static org.egov.edcr.constants.EdcrReportConstants.*;
+import static org.egov.edcr.service.FeatureUtil.addScrutinyDetailtoPlan;
+import static org.egov.edcr.service.FeatureUtil.mapReportDetails;
 
 @Service
 public class StairCover extends FeatureProcess {
 
     private static final Logger LOG = LogManager.getLogger(StairCover.class);
 
-    // Rule identifier as per building code
-    private static final String RULE_44_C = "44-c";
-
-    // Description used in scrutiny reports
-    public static final String STAIRCOVER_DESCRIPTION = "Mumty";
-	public static final String STAIRCOVER_HEIGHT_DESC = "Verified whether stair cover height is <= ";
-	public static final String MTS = " meters";
-
-    
-    
     @Autowired
 	MDMSCacheManager cache;
 
@@ -175,21 +160,20 @@ public class StairCover extends FeatureProcess {
     private void processBlockStairCovers(Block block, BigDecimal permissibleHeight, ScrutinyDetail scrutinyDetail, Plan plan) {
         if (block.getStairCovers() != null && !block.getStairCovers().isEmpty()) {
             BigDecimal minHeight = block.getStairCovers().stream().reduce(BigDecimal::min).get();
-            Map<String, String> details = new HashMap<>();
-            details.put(RULE_NO, RULE_44_C);
-            details.put(DESCRIPTION, STAIRCOVER_DESCRIPTION);
-            details.put(VERIFIED, STAIRCOVER_HEIGHT_DESC + permissibleHeight + MTS);
+            ReportScrutinyDetail detail = new ReportScrutinyDetail();
+            detail.setRuleNo(RULE_44_C);
+            detail.setDescription(STAIRCOVER_DESCRIPTION);
+            detail.setVerified(STAIRCOVER_HEIGHT_DESC + permissibleHeight + MTS);
 
             if (minHeight.compareTo(permissibleHeight) <= 0) {
-                details.put(ACTION, NOT_INCLUDED_STAIR_COVER_HEIGHT + minHeight + TO_BUILDING_HEIGHT);
-                details.put(STATUS, Result.Accepted.getResultVal());
+                detail.setAction(NOT_INCLUDED_STAIR_COVER_HEIGHT + minHeight + TO_BUILDING_HEIGHT);
+                detail.setStatus(Result.Accepted.getResultVal());
             } else {
-                details.put(ACTION, INCLUDED_STAIR_COVER_HEIGHT + minHeight + TO_BUILDING_HEIGHT);
-                details.put(STATUS, Result.Verify.getResultVal());
+                detail.setAction(INCLUDED_STAIR_COVER_HEIGHT + minHeight + TO_BUILDING_HEIGHT);
+                detail.setStatus(Result.Verify.getResultVal());
             }
-
-            scrutinyDetail.getDetail().add(details);
-            plan.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+            Map<String, String> details = mapReportDetails(detail);
+            addScrutinyDetailtoPlan(scrutinyDetail, plan, details);
         }
     }
 

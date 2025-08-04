@@ -57,27 +57,21 @@ import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.egov.common.entity.edcr.Block;
-import org.egov.common.entity.edcr.FeatureEnum;
-import org.egov.common.entity.edcr.Floor;
-import org.egov.common.entity.edcr.Measurement;
-import org.egov.common.entity.edcr.Occupancy;
-import org.egov.common.entity.edcr.Plan;
-import org.egov.common.entity.edcr.Result;
-import org.egov.common.entity.edcr.ScrutinyDetail;
-import org.egov.common.entity.edcr.VentilationRequirement;
+import org.egov.common.entity.edcr.*;
 import org.egov.edcr.service.MDMSCacheManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import static org.egov.edcr.constants.CommonFeatureConstants.*;
+import static org.egov.edcr.constants.CommonFeatureConstants.AT_FLOOR;
+import static org.egov.edcr.constants.EdcrReportConstants.*;
+import static org.egov.edcr.service.FeatureUtil.addScrutinyDetailtoPlan;
+import static org.egov.edcr.service.FeatureUtil.mapReportDetails;
 
 @Service
 public class Ventilation extends FeatureProcess {
 
 	private static final Logger LOG = LogManager.getLogger(Ventilation.class);
-	private static final String RULE_43 = "43";
-	public static final String LIGHT_VENTILATION_DESCRIPTION = "Light and Ventilation";
 
 	 @Autowired
 	 MDMSCacheManager cache;
@@ -186,18 +180,15 @@ public class Ventilation extends FeatureProcess {
 
 	        if (totalVentilationArea.compareTo(BigDecimal.ZERO) > 0) {
 	            BigDecimal requiredVentilation = totalCarpetArea.divide(ventilationRatio, 2, BigDecimal.ROUND_HALF_UP);
-	            Map<String, String> detail = new HashMap<>();
-	            detail.put(RULE_NO, RULE_43);
-	            detail.put(DESCRIPTION, LIGHT_VENTILATION_DESCRIPTION);
-	            detail.put(REQUIRED, MINIMUM_PREFIX_1 + ventilationRatio + TH_OF_FLOOR_AREA);
-	            detail.put(PROVIDED, VENTILATION_AREA + totalVentilationArea +
-	                OF_CARPET_AREA + totalCarpetArea + AT_FLOOR + floor.getNumber());
+				ReportScrutinyDetail detail = new ReportScrutinyDetail();
+				detail.setRuleNo(RULE_43);
+				detail.setDescription(LIGHT_VENTILATION_DESCRIPTION);
+				detail.setRequired(MINIMUM_PREFIX_1 + ventilationRatio + TH_OF_FLOOR_AREA);
+				detail.setProvided(VENTILATION_AREA + totalVentilationArea + OF_CARPET_AREA + totalCarpetArea + AT_FLOOR + floor.getNumber());
+				detail.setStatus(totalVentilationArea.compareTo(requiredVentilation) >= 0 ? Result.Accepted.getResultVal() : Result.Not_Accepted.getResultVal());
 
-	            detail.put(STATUS, totalVentilationArea.compareTo(requiredVentilation) >= 0
-	                ? Result.Accepted.getResultVal() : Result.Not_Accepted.getResultVal());
-
-	            scrutinyDetail.getDetail().add(detail);
-	            pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+				Map<String, String> details = mapReportDetails(detail);
+				addScrutinyDetailtoPlan(scrutinyDetail, pl, details);
 	        }
 	    }
 	}
@@ -212,32 +203,27 @@ public class Ventilation extends FeatureProcess {
 	 * @param scrutinyDetail The scrutiny detail object to add results to
 	 * @param pl The building plan for adding scrutiny details to report
 	 */
-			private void processBathroomVentilation(Floor floor, BigDecimal requiredArea,
+	private void processBathroomVentilation(Floor floor, BigDecimal requiredArea,
 		            ScrutinyDetail scrutinyDetail, Plan pl) {
-		Map<String, String> detail = new HashMap<>();
-		detail.put(RULE_NO, RULE_43);
-		detail.put(DESCRIPTION, LIGHT_VENTILATION_DESCRIPTION);
-		
+		ReportScrutinyDetail detail = new ReportScrutinyDetail();
+		detail.setRuleNo(RULE_43);
+		detail.setDescription(LIGHT_VENTILATION_DESCRIPTION);
 		if (floor.getBathVentilaion() != null &&
 		floor.getBathVentilaion().getMeasurements() != null &&
 		!floor.getBathVentilaion().getMeasurements().isEmpty()) {
-		
-		BigDecimal totalVentilationArea = floor.getBathVentilaion().getMeasurements().stream()
-		.map(Measurement::getArea).reduce(BigDecimal.ZERO, BigDecimal::add);
-		
-		detail.put(REQUIRED, requiredArea.toString());
-		detail.put(PROVIDED, BATH_VENTILATION_AREA + totalVentilationArea + AT_FLOOR + floor.getNumber());
-		detail.put(STATUS, totalVentilationArea.compareTo(requiredArea) >= 0
-		? Result.Accepted.getResultVal() : Result.Not_Accepted.getResultVal());
-		
+			BigDecimal totalVentilationArea = floor.getBathVentilaion().getMeasurements().stream()
+			.map(Measurement::getArea).reduce(BigDecimal.ZERO, BigDecimal::add);
+			detail.setRequired(requiredArea.toString());
+			detail.setProvided(BATH_VENTILATION_AREA + totalVentilationArea + AT_FLOOR + floor.getNumber());
+			detail.setStatus(totalVentilationArea.compareTo(requiredArea) >= 0 ? Result.Accepted.getResultVal() : Result.Not_Accepted.getResultVal());
 		} else {
-		detail.put(REQUIRED, requiredArea.toString());
-		detail.put(PROVIDED, BATH_VENTILATION_NOT_DEFINED + floor.getNumber());
-		detail.put(STATUS, Result.Not_Accepted.getResultVal());
+			detail.setRequired(requiredArea.toString());
+			detail.setProvided(BATH_VENTILATION_NOT_DEFINED + floor.getNumber());
+			detail.setStatus(Result.Not_Accepted.getResultVal());
 		}
-		
-		scrutinyDetail.getDetail().add(detail);
-		pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+
+		Map<String, String> details = mapReportDetails(detail);
+		addScrutinyDetailtoPlan(scrutinyDetail, pl, details);
 		}
 
 	/**

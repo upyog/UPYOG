@@ -58,16 +58,7 @@ import java.util.Optional;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.egov.common.constants.MdmsFeatureConstants;
-import org.egov.common.entity.edcr.Block;
-import org.egov.common.entity.edcr.FeatureEnum;
-import org.egov.common.entity.edcr.Floor;
-import org.egov.common.entity.edcr.InteriorOpenSpaceServiceRequirement;
-import org.egov.common.entity.edcr.MdmsFeatureRule;
-import org.egov.common.entity.edcr.Measurement;
-import org.egov.common.entity.edcr.Plan;
-import org.egov.common.entity.edcr.Result;
-import org.egov.common.entity.edcr.FeatureRuleKey;
-import org.egov.common.entity.edcr.ScrutinyDetail;
+import org.egov.common.entity.edcr.*;
 import org.egov.edcr.constants.EdcrRulesMdmsConstants;
 import org.egov.edcr.service.MDMSCacheManager;
 import org.egov.edcr.service.FetchEdcrRulesMdms;
@@ -76,22 +67,17 @@ import org.springframework.stereotype.Service;
 
 import static org.egov.edcr.constants.CommonFeatureConstants.*;
 import static org.egov.edcr.constants.CommonKeyConstants.COMMON_INTERIOR_OPEN_SPACE;
+import static org.egov.edcr.constants.EdcrReportConstants.*;
+import static org.egov.edcr.constants.EdcrReportConstants.AREA;
+import static org.egov.edcr.constants.EdcrReportConstants.AT_FLOOR;
+import static org.egov.edcr.service.FeatureUtil.addScrutinyDetailtoPlan;
+import static org.egov.edcr.service.FeatureUtil.mapReportDetails;
 
 @Service
 public class InteriorOpenSpaceService extends FeatureProcess {
 
     // Logger for logging information and errors
     private static Logger LOG = LogManager.getLogger(InteriorOpenSpaceService.class);
-
-    // Constants for rule identifiers and descriptions
-    private static final String RULE_43A = "43A";
-    private static final String RULE_43 = "43";
-    public static final String INTERNALCOURTYARD_DESCRIPTION = "Internal Courtyard";
-    public static final String VENTILATIONSHAFT_DESCRIPTION = "Ventilation Shaft";
-    public static final String AREA = "Area  ";
-    public static final String MINIMUM_AREA = "Minimum area ";
-    public static final String MINIMUM_WIDTH = "Minimum width ";
-    public static final String AT_FLOOR = " at floor ";
 
     // Variables to store permissible values for interior open spaces
     public static BigDecimal minInteriorAreaValueOne = BigDecimal.ZERO;
@@ -215,30 +201,28 @@ public class InteriorOpenSpaceService extends FeatureProcess {
 
 // Area validation
 			if (minArea.compareTo(areaValueOne) > 0) {
-				Map<String, String> details = new HashMap<>();
-				details.put(RULE_NO, ruleNoArea);
-				details.put(DESCRIPTION, description);
-				details.put(REQUIRED, MINIMUM_AREA + areaValueTwo.toString() + SQ_M);
-				details.put(PROVIDED, AREA + minArea + AT_FLOOR + f.getNumber());
-				details.put(STATUS, minArea.compareTo(areaValueTwo) >= 0 ? Result.Accepted.getResultVal()
-						: Result.Not_Accepted.getResultVal());
+				ReportScrutinyDetail detail = new ReportScrutinyDetail();
+				detail.setRuleNo(ruleNoWidth);
+				detail.setDescription(description);
+				detail.setRequired(MINIMUM_WIDTH + areaValueTwo.toString() + SQ_M);
+				detail.setProvided(AREA + minArea + AT_FLOOR + f.getNumber());
+				detail.setStatus(minArea.compareTo(areaValueTwo) >= 0 ? Result.Accepted.getResultVal() : Result.Not_Accepted.getResultVal());
 
-				scrutinyDetail.getDetail().add(details);
-				pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+				Map<String, String> details = mapReportDetails(detail);
+				addScrutinyDetailtoPlan(scrutinyDetail, pl, details);
 			}
 
 // Width validation
 			if (minWidth.compareTo(widthValueOne) > 0) {
-				Map<String, String> details = new HashMap<>();
-				details.put(RULE_NO, ruleNoWidth);
-				details.put(DESCRIPTION, description);
-				details.put(REQUIRED, MINIMUM_WIDTH + widthValueTwo.toString() + M);
-				details.put(PROVIDED, AREA + minWidth + AT_FLOOR + f.getNumber());
-				details.put(STATUS, minWidth.compareTo(widthValueTwo) >= 0 ? Result.Accepted.getResultVal()
-						: Result.Not_Accepted.getResultVal());
+				ReportScrutinyDetail detail = new ReportScrutinyDetail();
+				detail.setRuleNo(ruleNoWidth);
+				detail.setDescription(description);
+				detail.setRequired(MINIMUM_WIDTH + widthValueTwo.toString() + M);
+				detail.setProvided(AREA + minWidth + AT_FLOOR + f.getNumber());
+				detail.setStatus(minWidth.compareTo(widthValueTwo) >= 0 ? Result.Accepted.getResultVal() : Result.Not_Accepted.getResultVal());
 
-				scrutinyDetail.getDetail().add(details);
-				pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+				Map<String, String> details = mapReportDetails(detail);
+				addScrutinyDetailtoPlan(scrutinyDetail, pl, details);
 			}
 		}
 	}

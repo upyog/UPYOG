@@ -50,6 +50,9 @@ package org.egov.edcr.feature;
 import static org.egov.edcr.constants.CommonFeatureConstants.*;
 import static org.egov.edcr.constants.CommonKeyConstants.*;
 import static org.egov.edcr.constants.DxfFileConstants.A_R;
+import static org.egov.edcr.constants.EdcrReportConstants.*;
+import static org.egov.edcr.service.FeatureUtil.addScrutinyDetailtoPlan;
+import static org.egov.edcr.service.FeatureUtil.mapReportDetails;
 import static org.egov.edcr.utility.DcrConstants.DECIMALDIGITS_MEASUREMENTS;
 import static org.egov.edcr.utility.DcrConstants.ROUNDMODE_MEASUREMENTS;
 
@@ -67,15 +70,7 @@ import java.util.TreeSet;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.egov.common.entity.dcr.helper.OccupancyHelperDetail;
-import org.egov.common.entity.edcr.Block;
-import org.egov.common.entity.edcr.ExitWidthRequirement;
-import org.egov.common.entity.edcr.FeatureEnum;
-import org.egov.common.entity.edcr.Floor;
-import org.egov.common.entity.edcr.Occupancy;
-import org.egov.common.entity.edcr.OccupancyTypeHelper;
-import org.egov.common.entity.edcr.Plan;
-import org.egov.common.entity.edcr.Result;
-import org.egov.common.entity.edcr.ScrutinyDetail;
+import org.egov.common.entity.edcr.*;
 import org.egov.edcr.constants.DxfFileConstants;
 import org.egov.edcr.service.MDMSCacheManager;
 import org.egov.edcr.service.FetchEdcrRulesMdms;
@@ -90,11 +85,6 @@ import org.springframework.stereotype.Service;
 public class ExitWidth extends FeatureProcess {
 	
 	private static final Logger LOG = LogManager.getLogger(ExitWidth.class);
-    private static final String EXIT_WIDTH_DESC = "Exit Width";
-    private static final String SUBRULE_42_3 = "42-3";
-    private static final String OCCUPANCY = "Occupancy";
-    private static final String EXIT_WIDTH = "Exit Width";
-    private static final String FLOOR = "Floor";
 
     /**
      * Validates the given plan object for exit width compliance.
@@ -248,7 +238,7 @@ public class ExitWidth extends FeatureProcess {
 //				scrutinyDetail = new ScrutinyDetail();
 //				scrutinyDetail.addColumnHeading(1, RULE_NO);
 //				scrutinyDetail.addColumnHeading(2, FLOOR_SPACED);
-//				scrutinyDetail.addColumnHeading(3, OCCUPANCY);
+//				scrutinyDetail.addColumnHeading(3, E_OCCUPANCY);
 //				scrutinyDetail.addColumnHeading(4, REQUIRED);
 //				scrutinyDetail.addColumnHeading(5, PROVIDED);
 //				scrutinyDetail.addColumnHeading(6, STATUS);
@@ -294,7 +284,7 @@ public class ExitWidth extends FeatureProcess {
 //									value = exitWidthNotOccupancyTypeHandlerVal;
 //								}
 //								if (occupancyHelperDetail != null)
-//									occupancyTypeValueMap.put(OCCUPANCY, occupancyHelperDetail.getName());
+//									occupancyTypeValueMap.put(E_OCCUPANCY, occupancyHelperDetail.getName());
 //								occupancyTypeValueMap.put(EXIT_WIDTH, value);
 //								occupancyTypeValueListMap.add(occupancyTypeValueMap);
 //							}
@@ -309,18 +299,18 @@ public class ExitWidth extends FeatureProcess {
 //								for (Map<String, Object> occupancyValueMap : occupancyTypeValueListMap) {
 //									if (((BigDecimal) occupancyValueMap.get(EXIT_WIDTH)).compareTo(
 //											(BigDecimal) mostRestrictiveOccupancyAndMaxValueMap.get(EXIT_WIDTH)) == 0) {
-//										if (mostRestrictiveOccupancyAndMaxValueMap.get(OCCUPANCY) != null
-//												&& !(occupancyValueMap.get(OCCUPANCY)).equals(
-//														mostRestrictiveOccupancyAndMaxValueMap.get(OCCUPANCY))) {
+//										if (mostRestrictiveOccupancyAndMaxValueMap.get(E_OCCUPANCY) != null
+//												&& !(occupancyValueMap.get(E_OCCUPANCY)).equals(
+//														mostRestrictiveOccupancyAndMaxValueMap.get(E_OCCUPANCY))) {
 //											SortedSet<String> uniqueOccupancies = new TreeSet<>();
-//											String[] occupancyString = (occupancyValueMap.get(OCCUPANCY) + " , "
-//													+ mostRestrictiveOccupancyAndMaxValueMap.get(OCCUPANCY))
+//											String[] occupancyString = (occupancyValueMap.get(E_OCCUPANCY) + " , "
+//													+ mostRestrictiveOccupancyAndMaxValueMap.get(E_OCCUPANCY))
 //													.split(" , ");
 //											for (String str : occupancyString) {
 //												uniqueOccupancies.add(str);
 //											}
 //											String occupancyStr = removeDuplicates(uniqueOccupancies);
-//											mostRestrictiveOccupancyAndMaxValueMap.put(OCCUPANCY, occupancyStr);
+//											mostRestrictiveOccupancyAndMaxValueMap.put(E_OCCUPANCY, occupancyStr);
 //										}
 //										continue;
 //									}
@@ -331,7 +321,7 @@ public class ExitWidth extends FeatureProcess {
 //								}
 //								validateExitWidth(flr, pl, subRule, rule, block,
 //										(BigDecimal) mostRestrictiveOccupancyAndMaxValueMap.get(EXIT_WIDTH),
-//										(String) mostRestrictiveOccupancyAndMaxValueMap.get(OCCUPANCY));
+//										(String) mostRestrictiveOccupancyAndMaxValueMap.get(E_OCCUPANCY));
 //							}
 //						}
 //						for (Occupancy occupancy : flr.getOccupancies()) {
@@ -607,7 +597,7 @@ public class ExitWidth extends FeatureProcess {
 				}
 
 				if (occupancyHelperDetail != null)
-					occupancyTypeValueMap.put(OCCUPANCY, occupancyHelperDetail.getName());
+					occupancyTypeValueMap.put(E_OCCUPANCY, occupancyHelperDetail.getName());
 				occupancyTypeValueMap.put(EXIT_WIDTH, value);
 				occupancyTypeValueListMap.add(occupancyTypeValueMap);
 			}
@@ -629,18 +619,18 @@ public class ExitWidth extends FeatureProcess {
 		for (Map<String, Object> occupancyValueMap : occupancyTypeValueListMap) {
 			if (((BigDecimal) occupancyValueMap.get(EXIT_WIDTH)).compareTo(
 					(BigDecimal) mostRestrictiveOccupancyAndMaxValueMap.get(EXIT_WIDTH)) == 0) {
-				if (mostRestrictiveOccupancyAndMaxValueMap.get(OCCUPANCY) != null
-						&& !(occupancyValueMap.get(OCCUPANCY)).equals(
-						mostRestrictiveOccupancyAndMaxValueMap.get(OCCUPANCY))) {
+				if (mostRestrictiveOccupancyAndMaxValueMap.get(E_OCCUPANCY) != null
+						&& !(occupancyValueMap.get(E_OCCUPANCY)).equals(
+						mostRestrictiveOccupancyAndMaxValueMap.get(E_OCCUPANCY))) {
 					SortedSet<String> uniqueOccupancies = new TreeSet<>();
-					String[] occupancyString = (occupancyValueMap.get(OCCUPANCY) + " , "
-							+ mostRestrictiveOccupancyAndMaxValueMap.get(OCCUPANCY))
+					String[] occupancyString = (occupancyValueMap.get(E_OCCUPANCY) + " , "
+							+ mostRestrictiveOccupancyAndMaxValueMap.get(E_OCCUPANCY))
 							.split(" , ");
 					for (String str : occupancyString) {
 						uniqueOccupancies.add(str);
 					}
 					String occupancyStr = removeDuplicates(uniqueOccupancies);
-					mostRestrictiveOccupancyAndMaxValueMap.put(OCCUPANCY, occupancyStr);
+					mostRestrictiveOccupancyAndMaxValueMap.put(E_OCCUPANCY, occupancyStr);
 				}
 				continue;
 			}
@@ -751,7 +741,7 @@ public class ExitWidth extends FeatureProcess {
 			Map<String, Object> mostRestrictiveOccupancyAndMaxValueMap = findMostRestrictiveOccupancy(occupancyTypeValueListMap);
 			validateExitWidth(flr, pl, subRule, rule, block,
 					(BigDecimal) mostRestrictiveOccupancyAndMaxValueMap.get(EXIT_WIDTH),
-					(String) mostRestrictiveOccupancyAndMaxValueMap.get(OCCUPANCY));
+					(String) mostRestrictiveOccupancyAndMaxValueMap.get(E_OCCUPANCY));
 		}
 
 		// Calculate occupant loads and maximum occupants allowed
@@ -781,7 +771,7 @@ public class ExitWidth extends FeatureProcess {
 		scrutinyDetail = new ScrutinyDetail();
 		scrutinyDetail.addColumnHeading(1, RULE_NO);
 		scrutinyDetail.addColumnHeading(2, FLOOR);
-		scrutinyDetail.addColumnHeading(3, OCCUPANCY);
+		scrutinyDetail.addColumnHeading(3, E_OCCUPANCY);
 		scrutinyDetail.addColumnHeading(4, REQUIRED);
 		scrutinyDetail.addColumnHeading(5, PROVIDED);
 		scrutinyDetail.addColumnHeading(6, STATUS);
@@ -816,7 +806,7 @@ public class ExitWidth extends FeatureProcess {
      * @param pl The plan object.
      * @param block The block containing the floor.
      * @param floor The floor being validated.
-     * @param scrutinyDetail The scrutiny detail object for validation.
+     * @param scrutinyDetail2 The scrutiny detail object for validation.
      */
     private void validateRuleOccupantLoad(String rule, String subRule, BigDecimal occupantLoadInAFlr,
             BigDecimal maxOccupantsAllowedThrghExits, Plan pl, Block block, Floor floor, ScrutinyDetail scrutinyDetail2) {
@@ -960,15 +950,16 @@ public class ExitWidth extends FeatureProcess {
  */
     private void setReportOutputDetails(Plan pl, String ruleNo, String floor, String occupancy, String expected, String actual,
             String status) {
-        Map<String, String> details = new HashMap<>();
-        details.put(RULE_NO, ruleNo);
-        details.put(FLOOR, floor);
-        details.put(OCCUPANCY, occupancy);
-        details.put(REQUIRED, expected);
-        details.put(PROVIDED, actual);
-        details.put(STATUS, status);
-        scrutinyDetail.getDetail().add(details);
-        pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+		ReportScrutinyDetail detail = new ReportScrutinyDetail();
+		detail.setRuleNo(ruleNo);
+		detail.setFloorNo(floor);
+		detail.setOccupancy(occupancy);
+		detail.setRequired(expected);
+		detail.setProvided(actual);
+		detail.setStatus(status);
+
+		Map<String, String> details = mapReportDetails(detail);
+		addScrutinyDetailtoPlan(scrutinyDetail, pl, details);
     }
 
 /**
@@ -984,14 +975,15 @@ public class ExitWidth extends FeatureProcess {
  */
     private void setReportOutputDetailsWithoutOccupancy(Plan pl, String ruleNo, String floor, String expected, String actual,
             String status, ScrutinyDetail scrutinyDetail2) {
-        Map<String, String> details = new HashMap<>();
-        details.put(RULE_NO, ruleNo);
-        details.put(FLOOR, floor);
-        details.put(REQUIRED, expected);
-        details.put(PROVIDED, actual);
-        details.put(STATUS, status);
-        scrutinyDetail2.getDetail().add(details);
-        pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail2);
+		ReportScrutinyDetail detail = new ReportScrutinyDetail();
+		detail.setRuleNo(ruleNo);
+		detail.setFloorNo(floor);
+		detail.setRequired(expected);
+		detail.setProvided(actual);
+		detail.setStatus(status);
+
+		Map<String, String> details = mapReportDetails(detail);
+		addScrutinyDetailtoPlan(scrutinyDetail2, pl, details);
     }
 
 /**

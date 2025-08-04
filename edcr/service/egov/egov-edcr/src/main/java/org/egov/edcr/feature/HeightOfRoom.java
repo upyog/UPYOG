@@ -48,11 +48,16 @@
 package org.egov.edcr.feature;
 
 import static org.egov.edcr.constants.CommonFeatureConstants.*;
+import static org.egov.edcr.constants.CommonFeatureConstants.AREA;
 import static org.egov.edcr.constants.CommonKeyConstants.*;
 import static org.egov.edcr.constants.DxfFileConstants.A;
 import static org.egov.edcr.constants.DxfFileConstants.F;
 import static org.egov.edcr.constants.DxfFileConstants.G;
+import static org.egov.edcr.constants.EdcrReportConstants.*;
 import static org.egov.edcr.constants.RuleKeyConstants.FOUR_P_FOUR_P_FOUR;
+import static org.egov.edcr.constants.RuleKeyConstants.SIX_FOUR_ONE;
+import static org.egov.edcr.service.FeatureUtil.addScrutinyDetailtoPlan;
+import static org.egov.edcr.service.FeatureUtil.mapReportDetails;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -66,24 +71,7 @@ import java.util.Optional;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.egov.common.constants.MdmsFeatureConstants;
-import org.egov.common.entity.edcr.Block;
-import org.egov.common.entity.edcr.Door;
-import org.egov.common.entity.edcr.DoorsRequirement;
-import org.egov.common.entity.edcr.FeatureEnum;
-import org.egov.common.entity.edcr.Floor;
-import org.egov.common.entity.edcr.GuardRoomRequirement;
-import org.egov.common.entity.edcr.MdmsFeatureRule;
-import org.egov.common.entity.edcr.Measurement;
-import org.egov.common.entity.edcr.NonHabitationalDoorsRequirement;
-import org.egov.common.entity.edcr.OccupancyTypeHelper;
-import org.egov.common.entity.edcr.Plan;
-import org.egov.common.entity.edcr.Result;
-import org.egov.common.entity.edcr.Room;
-import org.egov.common.entity.edcr.RoomAreaRequirement;
-import org.egov.common.entity.edcr.RoomHeight;
-import org.egov.common.entity.edcr.RoomWiseDoorAreaRequirement;
-import org.egov.common.entity.edcr.ScrutinyDetail;
-import org.egov.common.entity.edcr.Window;
+import org.egov.common.entity.edcr.*;
 import org.egov.edcr.constants.DxfFileConstants;
 import org.egov.edcr.service.MDMSCacheManager;
 import org.egov.edcr.service.ProcessHelper;
@@ -94,52 +82,11 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class HeightOfRoom extends FeatureProcess {
-
-	private static final String RULE = "4.4.4";
-	private static final String RULE1 = "4.4.4 (ix)";
-	private static final String SUBRULE_41_II_B = "41-ii-b";
-
-	private static final String RULE_AC_DESC = "Minimum height of ac room";
-	private static final String RULE_REGULAR_DESC = "Minimum height of regular room";
-	private static final String SUBRULE_41_II_B_AREA_DESC = "Total area of rooms";
-	private static final String SUBRULE_41_II_B_TOTAL_WIDTH = "Minimum Width of room";
-
-	public static final BigDecimal MINIMUM_HEIGHT_3_6 = BigDecimal.valueOf(3.6);
-	public static final BigDecimal MINIMUM_HEIGHT_3 = BigDecimal.valueOf(3);
-	public static final BigDecimal MINIMUM_HEIGHT_2_75 = BigDecimal.valueOf(2.75);
-	public static final BigDecimal MINIMUM_HEIGHT_2_4 = BigDecimal.valueOf(2.4);
-	public static final BigDecimal MINIMUM_AREA_9_5 = BigDecimal.valueOf(9.5);
-	public static final BigDecimal MINIMUM_AREA_9_2 = BigDecimal.valueOf(9.2);
-	public static final BigDecimal MINIMUM_WIDTH_2_4 = BigDecimal.valueOf(2.4);
-	public static final BigDecimal MINIMUM_WIDTH_2_7 = BigDecimal.valueOf(2.7);
-	public static final BigDecimal MINIMUM_WIDTH_2_1 = BigDecimal.valueOf(2.1);
-	public static final BigDecimal MINIMUM_AREA_7_5 = BigDecimal.valueOf(7.5);
-	public static final BigDecimal MAXIMUM_AREA_46_45 = BigDecimal.valueOf(46.45);
-	private static final BigDecimal VENTILATION_PERCENTAGE = BigDecimal.valueOf(20); // 20% ventilation requirement
-	private static final String FLOOR = "Floor";
-	private static final String ROOM_HEIGHT_NOTDEFINED = "Room height is not defined in layer ";
-	private static final String LAYER_ROOM_HEIGHT = "BLK_%s_FLR_%s_%s";
-
-	private static final BigDecimal MIN_WINDOW_HEIGHT = BigDecimal.valueOf(0.50);
-	private static final BigDecimal MIN_DOOR_HEIGHT = BigDecimal.valueOf(2.0);
-	private static final BigDecimal MIN_WINDOW_WIDTH = BigDecimal.valueOf(0.50);
-	private static final BigDecimal MIN_DOOR_WIDTH = BigDecimal.valueOf(1.0);
-	private static final BigDecimal MIN_NON_HABITATIONAL_DOOR_WIDTH = BigDecimal.valueOf(0.76);
-	BigDecimal ventilationPercentage = BigDecimal.ZERO;
-	BigDecimal minDoorWidth = BigDecimal.ZERO;
-	BigDecimal minDoorHeight = BigDecimal.ZERO;
-	
-	String subRuleDoor = "6.4.1";
-	String subRuleDesc = "Minimum Area and Width of Room";
-	String subRuleDesc1 = "Room Wise Ventialtion";
-	String subRuleDesc5 = "Door Ventialtion";
-	String subRuleDesc2 = "Room Wise Window Area";
-	String subRuleDesc3 = "Window Area";
-	String subRuleDesc4 = "Room wise Door Area";
-	String subRuleDesc6 = "Door Area";
-	private BigDecimal minimumHeight;
-
 	private static final Logger LOG = LogManager.getLogger(HeightOfRoom.class);
+	public static BigDecimal minDoorWidth = BigDecimal.ZERO;
+	public static BigDecimal minDoorHeight = BigDecimal.ZERO;
+	public static BigDecimal ventilationPercentage = BigDecimal.ZERO;
+	public static BigDecimal minimumHeight;
 
 	@Override
 	public Plan validate(Plan pl) {
@@ -370,8 +317,8 @@ public class HeightOfRoom extends FeatureProcess {
 	    String subRule = SUBRULE_41_II_B;
 	    String subRuleDesc = SUBRULE_41_II_B;
 
-	    String requirement = " Width >=" + minDoorWidth;
-	    String provided = " Width = " + doorWidth + DcrConstants.IN_METER;
+	    String requirement = WIDTH_STRING + GREATER_THAN_EQUAL + minDoorWidth;
+	    String provided = WIDTH_STRING + IS_EQUAL_TO + doorWidth + DcrConstants.IN_METER;
 
 	    String result = (doorWidth != null && doorWidth.compareTo(minDoorWidth) >= 0)
 	            ? Result.Accepted.getResultVal()
@@ -446,7 +393,7 @@ public class HeightOfRoom extends FeatureProcess {
 
 			minDoorHeight = BigDecimal.ZERO;
 			minDoorWidth = BigDecimal.ZERO;
-			String subRule = "4.4.4";
+			String subRule = RULE_4_4_4_I;
 
 			List<Object> rules = cache.getFeatureRules(pl, FeatureEnum.ROOM_WISE_DOOR_AREA.getValue(), false);
 	        Optional<RoomWiseDoorAreaRequirement> matchedRule = rules.stream()
@@ -462,13 +409,13 @@ public class HeightOfRoom extends FeatureProcess {
 
 			if (doorHeight.compareTo(minDoorHeight) >= 0 && doorWidth.compareTo(minDoorWidth) >= 0) {
 				setReportOutputDetails(pl, subRuleDoor, subRuleDesc4, floor.getNumber().toString(), room.getNumber(),
-						"Height >= " + minDoorHeight + ", Width >= " + minDoorWidth,
-						"Height = " + doorHeight + ", Width = " + doorWidth, Result.Accepted.getResultVal(),
+						HEIGHT + minDoorHeight + COMMA_WIDTH_STRING + GREATER_THAN_EQUAL + minDoorWidth,
+						HEIGHT_STRING + IS_EQUAL_TO + doorHeight + COMMA_WIDTH_STRING + IS_EQUAL_TO + doorWidth, Result.Accepted.getResultVal(),
 						scrutinyDetail8);
 			} else {
 				setReportOutputDetails(pl, subRule, subRuleDesc4, floor.getNumber().toString(), room.getNumber(),
-						"Height >= " + minDoorHeight + ", Width >= " + minDoorWidth,
-						"Height = " + doorHeight + ", Width = " + doorWidth, Result.Not_Accepted.getResultVal(),
+						HEIGHT + minDoorHeight + COMMA_WIDTH_STRING + GREATER_THAN_EQUAL + minDoorWidth,
+						HEIGHT_STRING + IS_EQUAL_TO + doorHeight + COMMA_WIDTH_STRING + IS_EQUAL_TO + doorWidth, Result.Not_Accepted.getResultVal(),
 						scrutinyDetail8);
 			}
 		}
@@ -524,7 +471,7 @@ public class HeightOfRoom extends FeatureProcess {
 		BigDecimal ventilationPercentage = getVentilationPercentage(pl);
 		BigDecimal requiredVentilationArea = roomArea.multiply(ventilationPercentage).divide(BigDecimal.valueOf(100))
 				.setScale(2, BigDecimal.ROUND_HALF_UP);
-		String subRuleDesc1 = "Room Wise Ventialtion";
+		String subRuleDesc1 = SUB_RULE_DESC_1;
 
 		BigDecimal totalWindowArea = calculateWindowArea(room);
 		BigDecimal totalDoorArea = calculateDoorArea(room);
@@ -534,8 +481,8 @@ public class HeightOfRoom extends FeatureProcess {
 			String result = combinedArea.compareTo(requiredVentilationArea) >= 0 ? Result.Accepted.getResultVal()
 					: Result.Not_Accepted.getResultVal();
 
-			setReportOutputDetails(pl, RULE1, subRuleDesc1, floor.getNumber().toString(), EMPTY_STRING + room.getNumber(),
-					"Ventilation Required >= " + requiredVentilationArea, "Area provided = " + combinedArea, result,
+			setReportOutputDetails(pl, RULE9, subRuleDesc1, floor.getNumber().toString(), EMPTY_STRING + room.getNumber(),
+					VENTILATION_REQUIRED + GREATER_THAN_EQUAL + requiredVentilationArea, AREA_PROVIDED + combinedArea, result,
 					ventilationDetail);
 		}
 
@@ -604,15 +551,15 @@ public class HeightOfRoom extends FeatureProcess {
 	private void validateIndividualWindows(Plan pl, Floor floor, Room room, ScrutinyDetail scrutinyDetail) {
 		if (room.getWindows() == null)
 			return;
-		String subRuleDesc2 = "Room Wise Window Area";
-		String subRule = "4.4.4";
+		String subRuleDesc2 = SUB_RULE_DESC_2;
+		String subRule = RULE_4_4_4_I;
 
 		for (Window window : room.getWindows()) {
 			BigDecimal height = window.getWindowHeight().setScale(2, BigDecimal.ROUND_HALF_UP);
 			BigDecimal width = window.getWindowWidth().setScale(2, BigDecimal.ROUND_HALF_UP);
 
 			setReportOutputDetails(pl, subRule, subRuleDesc2, floor.getNumber().toString(), room.getNumber(), EMPTY_STRING,
-					"Height = " + height + ", Width = " + width, Result.Accepted.getResultVal(), scrutinyDetail);
+					HEIGHT_STRING + IS_EQUAL_TO + height + COMMA_WIDTH_STRING + IS_EQUAL_TO + width, Result.Accepted.getResultVal(), scrutinyDetail);
 		}
 	}
 
@@ -633,10 +580,10 @@ public class HeightOfRoom extends FeatureProcess {
 	    BigDecimal minWindowWidth = BigDecimal.valueOf(0.50);
 
 	   
-	    String subRuleDesc3 = "Window Area";
+	    String subRuleDesc3 = SUB_RULE_DESC_3;
 
-	    String requirement = "Height >= " + minWindowHeight + ", Width >= " + minWindowWidth;
-	    String provided = "Height = " + windowHeight + ", Width = " + windowWidth;
+	    String requirement = HEIGHT + minWindowHeight + COMMA_WIDTH_STRING + GREATER_THAN_EQUAL + minWindowWidth;
+	    String provided = HEIGHT_STRING + IS_EQUAL_TO + windowHeight + COMMA_WIDTH_STRING + IS_EQUAL_TO + windowWidth;
 
 	    String result = (windowHeight.compareTo(minWindowHeight) >= 0 && windowWidth.compareTo(minWindowWidth) >= 0)
 	            ? Result.Accepted.getResultVal()
@@ -668,8 +615,8 @@ public class HeightOfRoom extends FeatureProcess {
 			BigDecimal area = roomAreas.get(0);
 			BigDecimal width = roomWidths.get(0);
 
-			String requirement = "Area >= " + minimumArea + ", Width >=" + minWidth;
-			String provided = "Area = " + area + ", Width = " + width + DcrConstants.IN_METER;
+			String requirement = AREA + GREATER_THAN_EQUAL + minimumArea + COMMA_WIDTH_STRING + GREATER_THAN_EQUAL + minWidth;
+			String provided = AREA + IS_EQUAL_TO+ area + COMMA_WIDTH_STRING + IS_EQUAL_TO + width + DcrConstants.IN_METER;
 
 			String result = (area.compareTo(maxArea) <= 0 && area.compareTo(minimumArea) >= 0
 					&& width.compareTo(minWidth) >= 0) ? Result.Accepted.getResultVal()
@@ -703,8 +650,8 @@ public class HeightOfRoom extends FeatureProcess {
 			BigDecimal area = roomAreas.get(i);
 			BigDecimal width = roomWidths.get(i);
 
-			String requirement = "Area >= " + minimumArea + ", Width >=" + minWidth;
-			String provided = "Area = " + area + ", Width = " + width + DcrConstants.IN_METER;
+			String requirement = AREA + GREATER_THAN_EQUAL + minimumArea + COMMA_WIDTH_STRING + GREATER_THAN_EQUAL + minWidth;
+			String provided = AREA + IS_EQUAL_TO+ area + COMMA_WIDTH_STRING + IS_EQUAL_TO + width + DcrConstants.IN_METER;
 
 			String result = (area.compareTo(maxArea) <= 0 && area.compareTo(minimumArea) >= 0
 					&& width.compareTo(minWidth) >= 0) ? Result.Accepted.getResultVal()
@@ -761,11 +708,11 @@ public class HeightOfRoom extends FeatureProcess {
 	        minDoorHeight = rule.getMinDoorHeight();
 	    }
 
-		String subRuleDoor = "6.4.1";
-		String subRuleDesc6 = "Door Area";
+		String subRuleDoor = SIX_FOUR_ONE;
+		String subRuleDesc6 = SUB_RULE_DESC_6;
 
-	    String requirement = "Height >= " + minDoorHeight + ", Width >= " + minDoorWidth;
-	    String provided = "Height = " + doorHeight + ", Width = " + doorWidth;
+	    String requirement = HEIGHT + minDoorHeight + COMMA_WIDTH_STRING + GREATER_THAN_EQUAL + minDoorWidth;
+	    String provided = HEIGHT_STRING + IS_EQUAL_TO + doorHeight + COMMA_WIDTH_STRING + IS_EQUAL_TO + doorWidth;
 
 	    String result = (doorHeight.compareTo(minDoorHeight) >= 0 && doorWidth.compareTo(minDoorWidth) >= 0)
 	            ? Result.Accepted.getResultVal()
@@ -821,14 +768,14 @@ public class HeightOfRoom extends FeatureProcess {
 			BigDecimal minHeight = residentialAcRoomHeights.stream().reduce(BigDecimal::min).get();
 			BigDecimal minimumHeight;
 
-			if (!"A".equalsIgnoreCase(mostRestrictiveOccupancy.getType().getCode())) {
+			if (!A.equalsIgnoreCase(mostRestrictiveOccupancy.getType().getCode())) {
 				minimumHeight = MINIMUM_HEIGHT_2_75;
 				Log.info("Minimum Residential AC Room Height required is set to++++++ : " + MINIMUM_HEIGHT_2_75);
 			} else {
 				minimumHeight = MINIMUM_HEIGHT_3;
 			}
 
-			String subRule = RULE;
+			String subRule = RULE_4_4_4_I;
 			String subRuleDesc = RULE_AC_DESC;
 
 			boolean valid = false;
@@ -839,7 +786,7 @@ public class HeightOfRoom extends FeatureProcess {
 			buildResult(pl, floor, minimumHeight, subRule, subRuleDesc, minHeight, valid, typicalFloorValues);
 
 		} else {
-			String layerName = String.format(LAYER_ROOM_HEIGHT, block.getNumber(), floor.getNumber(), "AC_ROOM");
+			String layerName = String.format(LAYER_ROOM_HEIGHT, block.getNumber(), floor.getNumber(), AC_ROOM);
 			errors.put(layerName, ROOM_HEIGHT_NOTDEFINED + layerName);
 			pl.addErrors(errors);
 		}
@@ -966,9 +913,9 @@ public class HeightOfRoom extends FeatureProcess {
 				? Result.Accepted.getResultVal()
 				: Result.Not_Accepted.getResultVal();
 
-		setReportOutputDetails(pl, RULE, RULE_REGULAR_DESC, floor.getNumber().toString(),
-				String.valueOf(room.getRoomNumber()), "Area >= " + minArea + ", Width >= " + minWidth,
-				"Area = " + roomArea + ", Width = " + roomWidth, result, scrutinyDetail);
+		setReportOutputDetails(pl, RULE_4_4_4_I, RULE_REGULAR_DESC, floor.getNumber().toString(),
+				String.valueOf(room.getRoomNumber()), AREA + GREATER_THAN_EQUAL + minArea + COMMA_WIDTH_STRING + GREATER_THAN_EQUAL + minWidth,
+				AREA + IS_EQUAL_TO+ roomArea + COMMA_WIDTH_STRING + IS_EQUAL_TO + roomWidth, result, scrutinyDetail);
 	}
 
 	
@@ -1004,10 +951,10 @@ public class HeightOfRoom extends FeatureProcess {
 			Map<String, Object> typicalFloorValues = ProcessHelper.getTypicalFloorValues(block, floor,
 					isTypicalRepititiveFloor);
 
-			buildResult(pl, floor, minimumHeight, RULE, RULE_REGULAR_DESC, minHeight, valid, typicalFloorValues);
+			buildResult(pl, floor, minimumHeight, RULE_4_4_4_I, RULE_REGULAR_DESC, minHeight, valid, typicalFloorValues);
 
 		} else {
-			String layerName = String.format(LAYER_ROOM_HEIGHT, block.getNumber(), floor.getNumber(), "REGULAR_ROOM");
+			String layerName = String.format(LAYER_ROOM_HEIGHT, block.getNumber(), floor.getNumber(), REGULAR_ROOM);
 			errors.put(layerName, ROOM_HEIGHT_NOTDEFINED + layerName);
 			pl.addErrors(errors);
 		}
@@ -1015,14 +962,14 @@ public class HeightOfRoom extends FeatureProcess {
 
 	private void buildResult(Plan pl, Floor floor, BigDecimal expected, String subRule, String subRuleDesc,
 			BigDecimal actual, boolean valid, Map<String, Object> typicalFloorValues) {
-		if (!(Boolean) typicalFloorValues.get("isTypicalRepititiveFloor")
+		if (!(Boolean) typicalFloorValues.get(IS_TYPICAL_REP_FLOOR)
 				&& expected.compareTo(BigDecimal.valueOf(0)) > 0 && subRule != null && subRuleDesc != null) {
 			if (actual.compareTo(expected) >= 0) {
 				valid = true;
 			}
-			String value = typicalFloorValues.get("typicalFloors") != null
-					? (String) typicalFloorValues.get("typicalFloors")
-					: " floor " + floor.getNumber();
+			String value = typicalFloorValues.get(TYPICAL_FLOOR) != null
+					? (String) typicalFloorValues.get(TYPICAL_FLOOR)
+					: FLOOR_SPACED + floor.getNumber();
 			if (valid) {
 				setReportOutputDetails(pl, subRule, subRuleDesc, value, EMPTY_STRING, expected + DcrConstants.IN_METER,
 						actual + DcrConstants.IN_METER, Result.Accepted.getResultVal(), scrutinyDetail);
@@ -1037,16 +984,17 @@ public class HeightOfRoom extends FeatureProcess {
 
 	private void setReportOutputDetails(Plan pl, String ruleNo, String ruleDesc, String floor, String room,
 			String expected, String actual, String status, ScrutinyDetail scrutinyDetail) {
-		Map<String, String> details = new HashMap<>();
-		details.put(RULE_NO, ruleNo);
-		details.put(DESCRIPTION, ruleDesc);
-		details.put(FLOOR, floor);
-		details.put(Room, room);
-		details.put(REQUIRED, expected);
-		details.put(PROVIDED, actual);
-		details.put(STATUS, status);
-		scrutinyDetail.getDetail().add(details);
-		pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+		ReportScrutinyDetail detail = new ReportScrutinyDetail();
+		detail.setRuleNo(ruleNo);
+		detail.setDescription(ruleDesc);
+		detail.setFloorNo(floor);
+		detail.setRoom(room);
+		detail.setRequired(expected);
+		detail.setProvided(actual);
+		detail.setStatus(status);
+
+		Map<String, String> details = mapReportDetails(detail);
+		addScrutinyDetailtoPlan(scrutinyDetail, pl, details);
 	}
 
 	@Override

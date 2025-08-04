@@ -58,12 +58,7 @@ import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.egov.common.entity.edcr.Block;
-import org.egov.common.entity.edcr.FeatureEnum;
-import org.egov.common.entity.edcr.FireTenderMovementRequirement;
-import org.egov.common.entity.edcr.Plan;
-import org.egov.common.entity.edcr.Result;
-import org.egov.common.entity.edcr.ScrutinyDetail;
+import org.egov.common.entity.edcr.*;
 import org.egov.edcr.service.MDMSCacheManager;
 import org.egov.edcr.utility.DcrConstants;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,6 +66,9 @@ import org.springframework.stereotype.Service;
 
 import static org.egov.edcr.constants.CommonFeatureConstants.*;
 import static org.egov.edcr.constants.CommonKeyConstants.*;
+import static org.egov.edcr.constants.EdcrReportConstants.RULE_36_3;
+import static org.egov.edcr.service.FeatureUtil.addScrutinyDetailtoPlan;
+import static org.egov.edcr.service.FeatureUtil.mapReportDetails;
 
 @Service
 public class FireTenderMovement extends FeatureProcess {
@@ -78,9 +76,6 @@ public class FireTenderMovement extends FeatureProcess {
     // Logger for logging information and errors
     private static final Logger LOG = LogManager.getLogger(FireTenderMovement.class);
 
-    // Rule identifier for fire tender movement
-    private static final String RULE_36_3 = "36-3";
-    
     @Autowired
 	MDMSCacheManager cache;
 
@@ -201,15 +196,15 @@ public class FireTenderMovement extends FeatureProcess {
 
 		boolean isAccepted = providedWidth.compareTo(minRequiredWidth) >= 0;
 
-		Map<String, String> details = new HashMap<>();
-		details.put(RULE_NO, RULE_36_3);
-		details.put(DESCRIPTION, WIDTH_DESCRIPTION);
-		details.put(PERMISSIBLE, GREATER_THAN_EQUAL + minRequiredWidth.toPlainString());
-		details.put(PROVIDED, providedWidth.toPlainString());
-		details.put(STATUS, isAccepted ? Result.Accepted.getResultVal() : Result.Not_Accepted.getResultVal());
-		scrutinyDetail.getDetail().add(details);
+		ReportScrutinyDetail detail = new ReportScrutinyDetail();
+		detail.setRuleNo(RULE_36_3);
+		detail.setDescription(WIDTH_DESCRIPTION);
+		detail.setPermissible(GREATER_THAN_EQUAL + minRequiredWidth.toPlainString());
+		detail.setProvided(providedWidth.toPlainString());
+		detail.setStatus(isAccepted ? Result.Accepted.getResultVal() : Result.Not_Accepted.getResultVal());
 
-		plan.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+		Map<String, String> details = mapReportDetails(detail);
+		addScrutinyDetailtoPlan(scrutinyDetail, plan, details);
 
 		if (!fireTenderMovement.getErrors().isEmpty()) {
 			String yardNames = String.join(COMMA, fireTenderMovement.getErrors());

@@ -57,31 +57,19 @@ import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.egov.common.entity.edcr.BathroomRequirement;
-import org.egov.common.entity.edcr.Block;
-import org.egov.common.entity.edcr.FeatureEnum;
-import org.egov.common.entity.edcr.Floor;
-import org.egov.common.entity.edcr.Measurement;
-import org.egov.common.entity.edcr.Plan;
-import org.egov.common.entity.edcr.Result;
-import org.egov.common.entity.edcr.Room;
-import org.egov.common.entity.edcr.RoomHeight;
-import org.egov.common.entity.edcr.ScrutinyDetail;
+import org.egov.common.entity.edcr.*;
 import org.egov.edcr.service.MDMSCacheManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import static org.egov.edcr.constants.EdcrReportConstants.*;
+import static org.egov.edcr.service.FeatureUtil.mapReportDetails;
 
 @Service
 public class BathRoom extends FeatureProcess {
 
     // Logger for logging information and errors
     private static final Logger LOG = LogManager.getLogger(BathRoom.class);
-
-    // Rule identifier and description for bathroom scrutiny
-    private static final String RULE_41_IV = "41-iv";
-    public static final String BATHROOM_DESCRIPTION = "Bathroom";
-    public static final String TOTAL_AREA = "Total Area >= ";
-    public static final String WIDTH = ", Width >= ";
 
     @Autowired
 	MDMSCacheManager cache;
@@ -235,15 +223,22 @@ public class BathRoom extends FeatureProcess {
      */
     private Map<String, String> createResultRow(Floor floor, BigDecimal permittedArea, BigDecimal permittedMinWidth,
                                                 BigDecimal totalArea, BigDecimal minWidth, boolean isAccepted) {
-        Map<String, String> resultRow = new HashMap<>();
-        resultRow.put(RULE_NO, RULE_41_IV);
-        resultRow.put(DESCRIPTION, BATHROOM_DESCRIPTION);
-        resultRow.put(REQUIRED, TOTAL_AREA + permittedArea.toString() + WIDTH + permittedMinWidth.toString());
-        resultRow.put(PROVIDED, TOTAL_AREA + totalArea.toString() + WIDTH + minWidth.toString());
-        resultRow.put(STATUS, isAccepted ? Result.Accepted.getResultVal() : Result.Not_Accepted.getResultVal());
-        return resultRow;
+        ReportScrutinyDetail detail = new ReportScrutinyDetail();
+        detail.setRuleNo(RULE_41_IV);
+        detail.setDescription(BATHROOM_DESCRIPTION);
+        detail.setRequired(TOTAL_AREA + permittedArea.toString() + WIDTH + permittedMinWidth.toString());
+        detail.setProvided(TOTAL_AREA + totalArea.toString() + WIDTH + minWidth.toString());
+        detail.setStatus(isAccepted ? Result.Accepted.getResultVal() : Result.Not_Accepted.getResultVal());
+        return mapReportDetails(detail);
     }
-    
+
+    /**
+     * Retrieves a new Amendment object instance.
+     * This method creates and returns a fresh Amendment entity that can be used
+     * for processing amendment-related operations in the EDCR system.
+     *
+     * @return A new Amendment object with default initialization
+     */
   @Override
   public Map<String, Date> getAmendments() {
       // Return an empty map as no amendments are defined

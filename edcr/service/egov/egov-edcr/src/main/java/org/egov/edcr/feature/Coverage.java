@@ -62,17 +62,7 @@ import java.util.Set;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.egov.common.constants.MdmsFeatureConstants;
-import org.egov.common.entity.edcr.Block;
-import org.egov.common.entity.edcr.CoverageRequirement;
-import org.egov.common.entity.edcr.FeatureEnum;
-import org.egov.common.entity.edcr.Floor;
-import org.egov.common.entity.edcr.Measurement;
-import org.egov.common.entity.edcr.Occupancy;
-import org.egov.common.entity.edcr.OccupancyType;
-import org.egov.common.entity.edcr.OccupancyTypeHelper;
-import org.egov.common.entity.edcr.Plan;
-import org.egov.common.entity.edcr.Result;
-import org.egov.common.entity.edcr.ScrutinyDetail;
+import org.egov.common.entity.edcr.*;
 import org.egov.edcr.service.MDMSCacheManager;
 import org.egov.edcr.service.FetchEdcrRulesMdms;
 import org.egov.edcr.utility.DcrConstants;
@@ -80,17 +70,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import static org.egov.edcr.constants.CommonFeatureConstants.*;
+import static org.egov.edcr.constants.EdcrReportConstants.*;
+import static org.egov.edcr.service.FeatureUtil.mapReportDetails;
 
 @Service
 public class Coverage extends FeatureProcess {
 	// private static final String OCCUPANCY2 = "OCCUPANCY";
 
 	private static final Logger LOG = LogManager.getLogger(Coverage.class);
-
-	// private static final String RULE_NAME_KEY = "coverage.rulename";
-	private static final String RULE_DESCRIPTION_KEY = "coverage.description";
-	private static final String RULE_EXPECTED_KEY = "coverage.expected";
-	private static final String RULE_ACTUAL_KEY = "coverage.actual";
 
 	@Autowired
 	FetchEdcrRulesMdms fetchEdcrRulesMdms;
@@ -391,7 +378,7 @@ public class Coverage extends FeatureProcess {
 	    
 	    ScrutinyDetail scrutinyDetail = createCoverageScrutinyDetail(occupancy);
 
-	    Map<String, String> details = createCoverageDetails(occupancy, coverage, upperLimit);
+	    Map<String, String> details = createCoverageDetails(occupancy, coverage, upperLimit, pl);
 	    
 	    scrutinyDetail.getDetail().add(details);
 	    pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
@@ -415,26 +402,23 @@ public class Coverage extends FeatureProcess {
 	    return scrutinyDetail;
 	}
 	
-	private Map<String, String> createCoverageDetails(String occupancy, BigDecimal coverage, BigDecimal upperLimit) {
-	    Map<String, String> details = new HashMap<>();
-
+	private Map<String, String> createCoverageDetails(String occupancy, BigDecimal coverage, BigDecimal upperLimit, Plan pl) {
 	    String desc = getLocaleMessage(RULE_DESCRIPTION_KEY, upperLimit.toString());
-	    String actualResult = getLocaleMessage(RULE_ACTUAL_KEY, coverage.toString());
-	    String expectedResult = getLocaleMessage(RULE_EXPECTED_KEY, upperLimit.toString());
-
+	    String actualResult = getLocaleMessage(COVERAGE_RULE_ACTUAL_KEY, coverage.toString());
+	    String expectedResult = getLocaleMessage(COVERAGE_RULE_EXPECTED_KEY, upperLimit.toString());
 	    boolean isCompliant = coverage.compareTo(upperLimit) <= 0 || isResidentialOrCommercial(occupancy);
 
-	    details.put(RULE_NO, RULE);
-	    details.put(OCCUPANCY, occupancy);
-	    details.put(PERMISSIBLE, expectedResult);
-	    details.put(PROVIDED, actualResult);
-	    details.put(STATUS, isCompliant ? Result.Accepted.getResultVal() : Result.Not_Accepted.getResultVal());
-
-	    if (!isResidentialOrCommercial(occupancy)) {
-	        details.put(DESCRIPTION, desc);
-	    }
-
-	    return details;
+		ReportScrutinyDetail detail = new ReportScrutinyDetail();
+		detail.setRuleNo(RULE);
+		detail.setOccupancy(occupancy);
+		detail.setPermissible(expectedResult);
+		detail.setProvided(actualResult);
+		detail.setStatus(isCompliant ? Result.Accepted.getResultVal() : Result.Not_Accepted.getResultVal());
+		if (!isResidentialOrCommercial(occupancy)) {
+			detail.setDescription(desc);
+		}
+		Map<String, String> details = mapReportDetails(detail);
+		return details;
 	}
 
 	private boolean isResidentialOrCommercial(String occupancy) {

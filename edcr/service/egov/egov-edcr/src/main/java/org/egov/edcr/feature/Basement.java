@@ -58,31 +58,20 @@ import java.util.Optional;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.egov.common.constants.MdmsFeatureConstants;
-import org.egov.common.entity.edcr.BalconyRequirement;
-import org.egov.common.entity.edcr.BasementRequirement;
-import org.egov.common.entity.edcr.BathroomWCRequirement;
-import org.egov.common.entity.edcr.Block;
-import org.egov.common.entity.edcr.FeatureEnum;
-import org.egov.common.entity.edcr.Floor;
-import org.egov.common.entity.edcr.MdmsFeatureRule;
-import org.egov.common.entity.edcr.Plan;
-import org.egov.common.entity.edcr.Result;
-import org.egov.common.entity.edcr.ScrutinyDetail;
+import org.egov.common.entity.edcr.*;
 import org.egov.edcr.service.MDMSCacheManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import static org.egov.edcr.constants.CommonFeatureConstants.*;
+import static org.egov.edcr.constants.EdcrReportConstants.*;
+import static org.egov.edcr.service.FeatureUtil.mapReportDetails;
 
 @Service
 public class Basement extends FeatureProcess {
 
 
 	private static final Logger LOG = LogManager.getLogger(Basement.class);
-	private static final String RULE_46_6A = "46-6a";
-	private static final String RULE_46_6C = "46-6c";
-	public static final String BASEMENT_DESCRIPTION_ONE = "Height from the floor to the soffit of the roof slab or ceiling";
-	public static final String BASEMENT_DESCRIPTION_TWO = "Minimum height of the ceiling of upper basement above ground level";
 
 	@Autowired
 	private MDMSCacheManager cache;
@@ -242,13 +231,15 @@ public class Basement extends FeatureProcess {
 	 * @return a map representing a row in the scrutiny report
 	 */
 	private Map<String, String> createResultRow(String ruleNo, String description, String required, BigDecimal provided, boolean accepted) {
-	    Map<String, String> details = new HashMap<>();
-	    details.put(RULE_NO, ruleNo);
-	    details.put(DESCRIPTION, description);
-	    details.put(REQUIRED, required);
-	    details.put(PROVIDED, provided.toString());
-	    details.put(STATUS, accepted ? Result.Accepted.getResultVal() : Result.Not_Accepted.getResultVal());
-	    return details;
+		ReportScrutinyDetail detail = new ReportScrutinyDetail();
+		detail.setRuleNo(ruleNo);
+		detail.setDescription(description);
+		detail.setRequired(required);
+		detail.setProvided(provided.toString());
+		detail.setStatus(accepted ? Result.Accepted.getResultVal() : Result.Not_Accepted.getResultVal());
+
+		Map<String, String> details = mapReportDetails(detail);
+		return details;
 	}
 
 	@Override

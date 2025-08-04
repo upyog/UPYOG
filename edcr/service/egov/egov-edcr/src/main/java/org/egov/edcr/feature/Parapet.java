@@ -68,15 +68,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import static org.egov.edcr.constants.CommonKeyConstants.COMMON_PARAPET;
+import static org.egov.edcr.constants.EdcrReportConstants.*;
 
 @Service
 public class Parapet extends FeatureProcess {
 
 	private static final Logger LOG = LogManager.getLogger(Parapet.class);
-	private static final String RULE_41_V = "41-v";
-	public static final String PARAPET_DESCRIPTION = "Parapet";
-	public static final String HEIGHT = "Height >= ";
-	public static final String AND_HEIGHT = " and height <= ";
 
 	@Autowired
 	MDMSCacheManager cache;

@@ -54,6 +54,9 @@ import static org.egov.edcr.constants.DxfFileConstants.A_SA;
 import static org.egov.edcr.constants.DxfFileConstants.B;
 import static org.egov.edcr.constants.DxfFileConstants.D;
 import static org.egov.edcr.constants.DxfFileConstants.G;
+import static org.egov.edcr.constants.EdcrReportConstants.*;
+import static org.egov.edcr.service.FeatureUtil.addScrutinyDetailtoPlan;
+import static org.egov.edcr.service.FeatureUtil.mapReportDetails;
 import static org.egov.edcr.utility.DcrConstants.DECIMALDIGITS_MEASUREMENTS;
 import static org.egov.edcr.utility.DcrConstants.ROUNDMODE_MEASUREMENTS;
 
@@ -67,12 +70,7 @@ import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.egov.common.entity.edcr.FeatureEnum;
-import org.egov.common.entity.edcr.Measurement;
-import org.egov.common.entity.edcr.Plan;
-import org.egov.common.entity.edcr.PlantationRequirement;
-import org.egov.common.entity.edcr.Result;
-import org.egov.common.entity.edcr.ScrutinyDetail;
+import org.egov.common.entity.edcr.*;
 import org.egov.edcr.service.MDMSCacheManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -81,8 +79,6 @@ import org.springframework.stereotype.Service;
 public class Plantation extends FeatureProcess {
 
     private static final Logger LOGGER = LogManager.getLogger(Plantation.class);
-    private static final String RULE_32 = "4.4.4 (XI)";
-    public static final String PLANTATION_TREECOVER_DESCRIPTION = "Plantation tree cover";
 
     @Autowired
   	MDMSCacheManager cache;
@@ -102,7 +98,7 @@ public class Plantation extends FeatureProcess {
     public Plan process(Plan pl) {
     	validate(pl);
     	ScrutinyDetail scrutinyDetail = createScrutinyDetail();
-    	Map<String, String> details = createInitialDetails();
+    	ReportScrutinyDetail details = createInitialDetails();
 
     	BigDecimal totalArea = getTotalPlantationArea(pl);
     	BigDecimal plotArea = getPlotArea(pl);
@@ -139,12 +135,12 @@ public class Plantation extends FeatureProcess {
      *
      * @return A map with rule number and rule description.
      */
-    private Map<String, String> createInitialDetails() {
-    	Map<String, String> details = new HashMap<>();
-    	details.put(RULE_NO, RULE_32);
-    	details.put(DESCRIPTION, PLANTATION_TREECOVER_DESCRIPTION);
-    	return details;
-    }
+    private ReportScrutinyDetail createInitialDetails() {
+		ReportScrutinyDetail detail = new ReportScrutinyDetail();
+		detail.setRuleNo(RULE_32);
+		detail.setDescription(PLANTATION_TREECOVER_DESCRIPTION);
+		return detail;
+	}
 
     /**
      * Calculates and returns the total plantation area from the plan.
@@ -234,37 +230,34 @@ public class Plantation extends FeatureProcess {
      * @param pl              The plan object.
      * @param plantationPer   Calculated plantation percentage.
      * @param scrutinyDetail  ScrutinyDetail object to be updated.
-     * @param details         Initial rule details map to be filled.
+     * @param detail         Initial rule details map to be filled.
      */
-    private void processPlantationRule(Plan pl, BigDecimal plantationPer, ScrutinyDetail scrutinyDetail, Map<String, String> details) {
-    	BigDecimal plantation = BigDecimal.ZERO;
-    	BigDecimal percent;
+    private void processPlantationRule(Plan pl, BigDecimal plantationPer, ScrutinyDetail scrutinyDetail, ReportScrutinyDetail detail) {
+		BigDecimal plantation = BigDecimal.ZERO;
+		BigDecimal percent;
 
-    	List<Object> rules = cache.getFeatureRules(pl, FeatureEnum.PLANTATION.getValue(), false);
-        Optional<PlantationRequirement> matchedRule = rules.stream()
+		List<Object> rules = cache.getFeatureRules(pl, FeatureEnum.PLANTATION.getValue(), false);
+		Optional<PlantationRequirement> matchedRule = rules.stream()
             .filter(PlantationRequirement.class::isInstance)
             .map(PlantationRequirement.class::cast)
             .findFirst();
 
-    	if (matchedRule.isPresent()) {
-    		PlantationRequirement rule = matchedRule.get();
-    		plantation = rule.getPermissible();
-    		percent = rule.getPercent();
-    	}
+		if (matchedRule.isPresent()) {
+			PlantationRequirement rule = matchedRule.get();
+			plantation = rule.getPermissible();
+			percent = rule.getPercent();
+		}
+		detail.setRequired(GREATER_THAN_EQUAL_TO_FIVE + PERCENTAGE_SYMBOL);
+		detail.setProvided(plantationPer.multiply(new BigDecimal(100)).toString() + PERCENTAGE_SYMBOL);
 
-    	if (plantationPer.compareTo(plantation) >= 0) {
-    		details.put(REQUIRED, GREATER_THAN_EQUAL_TO_FIVE + PERCENTAGE_SYMBOL);
-    		details.put(PROVIDED, plantationPer.multiply(new BigDecimal(100)).toString() + PERCENTAGE_SYMBOL);
-    		details.put(STATUS, Result.Accepted.getResultVal());
-    	} else {
-    		details.put(REQUIRED, GREATER_THAN_EQUAL_TO_FIVE + PERCENTAGE_SYMBOL);
-    		details.put(PROVIDED, plantationPer.multiply(new BigDecimal(100)).toString() + PERCENTAGE_SYMBOL);
-    		details.put(STATUS, Result.Not_Accepted.getResultVal());
-    	}
-
-    	scrutinyDetail.getDetail().add(details);
-    	pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
-    }
+		if (plantationPer.compareTo(plantation) >= 0) {
+			detail.setStatus(Result.Accepted.getResultVal());
+		} else {
+			detail.setStatus(Result.Not_Accepted.getResultVal());
+		}
+		Map<String, String> details = mapReportDetails(detail);
+		addScrutinyDetailtoPlan(scrutinyDetail, pl, details);
+	}
 
     @Override
     public Map<String, Date> getAmendments() {

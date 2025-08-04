@@ -57,15 +57,7 @@ import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.egov.common.entity.edcr.Block;
-import org.egov.common.entity.edcr.FeatureEnum;
-import org.egov.common.entity.edcr.Floor;
-import org.egov.common.entity.edcr.GuardRoomRequirement;
-import org.egov.common.entity.edcr.LandUseRequirement;
-import org.egov.common.entity.edcr.MdmsFeatureRule;
-import org.egov.common.entity.edcr.Occupancy;
-import org.egov.common.entity.edcr.Plan;
-import org.egov.common.entity.edcr.Result;
+import org.egov.common.entity.edcr.*;
 import org.egov.edcr.constants.DxfFileConstants;
 import org.egov.edcr.service.MDMSCacheManager;
 import org.egov.edcr.utility.Util;
@@ -75,16 +67,14 @@ import org.springframework.stereotype.Service;
 
 import static org.egov.edcr.constants.CommonFeatureConstants.*;
 import static org.egov.edcr.constants.CommonKeyConstants.*;
+import static org.egov.edcr.constants.EdcrReportConstants.*;
+import static org.egov.edcr.service.FeatureUtil.mapReportDetails;
 
 @Service
 public class LandUse extends FeatureProcess {
 
     // Logger for logging information and errors
     private static final Logger LOG = LogManager.getLogger(LandUse.class);
-
-    // Constants for rule identifiers and descriptions
-    private static final String RULE_28 = "28";
-    private static final String ROAD_WIDTH = "Road Width";
 
     // Variable to store permissible road width
     public static BigDecimal RoadWidth = BigDecimal.ZERO;
@@ -243,16 +233,17 @@ public class LandUse extends FeatureProcess {
      * @return a map of scrutiny detail values
      */
     private Map<String, String> buildScrutinyDetails(Plan pl, StringBuffer commercialFloors, boolean isAccepted) {
-        Map<String, String> details = new HashMap<>();
-        details.put(RULE_NO, RULE_28);
-        details.put(DESCRIPTION, LAND_USE_ZONE);
-        details.put(ROAD_WIDTH, pl.getPlanInformation().getRoadWidth().toString());
-        details.put(REQUIRED, AT_LEAST_ONE_COMMERCIAL);
-        details.put(PROVIDED, commercialFloors.length() == 0 
-            ? NO_COMMERCIAL_FLOOR
-            : commercialFloors.substring(0, commercialFloors.length() - 1) + FLOORS_ARE_COMMERCIAL);
-        details.put(STATUS, isAccepted ? Result.Accepted.getResultVal() : Result.Not_Accepted.getResultVal());
-        return details;
+        ReportScrutinyDetail detail = new ReportScrutinyDetail();
+        detail.setRuleNo(RULE_28);
+        detail.setDescription(LAND_USE_ZONE);
+        detail.setRoadWidth(pl.getPlanInformation().getRoadWidth().toString());
+        detail.setRequired(AT_LEAST_ONE_COMMERCIAL);
+        detail.setProvided(commercialFloors.length() == 0
+                ? NO_COMMERCIAL_FLOOR
+                : commercialFloors.substring(0, commercialFloors.length() - 1) + FLOORS_ARE_COMMERCIAL);
+        detail.setStatus(isAccepted ? Result.Accepted.getResultVal() : Result.Not_Accepted.getResultVal());
+
+        return mapReportDetails(detail);
     }
 
 

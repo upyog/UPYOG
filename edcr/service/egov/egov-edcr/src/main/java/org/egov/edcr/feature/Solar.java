@@ -48,8 +48,11 @@
 package org.egov.edcr.feature;
 
 import static org.egov.edcr.constants.CommonFeatureConstants.EMPTY_STRING;
+import static org.egov.edcr.constants.EdcrReportConstants.*;
 import static org.egov.edcr.constants.EdcrRulesMdmsConstants.SOLAR_VALUE_ONE;
 import static org.egov.edcr.constants.EdcrRulesMdmsConstants.SOLAR_VALUE_TWO;
+import static org.egov.edcr.service.FeatureUtil.addScrutinyDetailtoPlan;
+import static org.egov.edcr.service.FeatureUtil.mapReportDetails;
 import static org.egov.edcr.utility.DcrConstants.OBJECTDEFINED_DESC;
 import static org.egov.edcr.utility.DcrConstants.OBJECTNOTDEFINED;
 import static org.egov.edcr.utility.DcrConstants.OBJECTNOTDEFINED_DESC;
@@ -67,12 +70,7 @@ import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.egov.common.entity.edcr.FeatureEnum;
-import org.egov.common.entity.edcr.OccupancyType;
-import org.egov.common.entity.edcr.Plan;
-import org.egov.common.entity.edcr.Result;
-import org.egov.common.entity.edcr.ScrutinyDetail;
-import org.egov.common.entity.edcr.SolarRequirement;
+import org.egov.common.entity.edcr.*;
 import org.egov.edcr.service.MDMSCacheManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -83,10 +81,6 @@ public class Solar extends FeatureProcess {
 
 	private static final Logger LOG = LogManager.getLogger(Solar.class);
 
-	// Constants for rule descriptions and identifiers
-    private static final String SUB_RULE_109_C_DESCRIPTION = "Solar Assisted Water Heating / Lighting system ";
-    private static final String SUB_RULE_109_C = "109-C";
-    
     // Static variables to hold rule values
     private static BigDecimal solarValueOne = BigDecimal.ZERO;
     private static BigDecimal solarValueTwo = BigDecimal.ZERO;
@@ -277,14 +271,15 @@ public class Solar extends FeatureProcess {
      */
     private void setReportOutputDetailsWithoutOccupancy(Plan pl, String ruleNo, String ruleDesc, String expected,
                                                         String actual, String status) {
-        Map<String, String> details = new HashMap<>();
-        details.put(RULE_NO, ruleNo);
-        details.put(DESCRIPTION, ruleDesc);
-        details.put(REQUIRED, expected);
-        details.put(PROVIDED, actual);
-        details.put(STATUS, status);
-        scrutinyDetail.getDetail().add(details);
-        pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+        ReportScrutinyDetail detail = new ReportScrutinyDetail();
+        detail.setRuleNo(ruleNo);
+        detail.setDescription(ruleDesc);
+        detail.setRequired(expected);
+        detail.setProvided(actual);
+        detail.setStatus(status);
+
+        Map<String, String> details = mapReportDetails(detail);
+        addScrutinyDetailtoPlan(scrutinyDetail, pl, details);
     }
 
     /**

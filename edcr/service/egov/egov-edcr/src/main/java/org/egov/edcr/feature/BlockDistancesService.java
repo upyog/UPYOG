@@ -59,16 +59,7 @@ import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.egov.common.entity.edcr.BathroomRequirement;
-import org.egov.common.entity.edcr.Block;
-import org.egov.common.entity.edcr.BlockDistances;
-import org.egov.common.entity.edcr.BlockDistancesServiceRequirement;
-import org.egov.common.entity.edcr.FeatureEnum;
-import org.egov.common.entity.edcr.MdmsFeatureRule;
-import org.egov.common.entity.edcr.Plan;
-import org.egov.common.entity.edcr.Result;
-import org.egov.common.entity.edcr.ScrutinyDetail;
-import org.egov.common.entity.edcr.SetBack;
+import org.egov.common.entity.edcr.*;
 import org.egov.edcr.service.MDMSCacheManager;
 import org.egov.edcr.utility.DcrConstants;
 import org.egov.infra.utils.StringUtils;
@@ -76,26 +67,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 
+import static org.egov.edcr.constants.EdcrReportConstants.*;
+import static org.egov.edcr.service.FeatureUtil.addScrutinyDetailtoPlan;
+import static org.egov.edcr.service.FeatureUtil.mapReportDetails;
+
 @Service
 public class BlockDistancesService extends FeatureProcess {
     private static final Logger LOG = LogManager.getLogger(BlockDistancesService.class);
-
-    // Constants for subrules and other configurations
-    public static final String SUBRULE_54_3 = "54-3";
-    public static final String SUBRULE_55_2 = "55-2";
-    public static final String SUBRULE_57_4 = "57-4";
-    public static final String SUBRULE_58_3_A = "58-3-a";
-    public static final String SUBRULE_59_3 = "59-3";
-    public static final String SUBRULE_117_3 = "117-3";
-    public static final String BLK_NUMBER = "blkNumber";
-    public static final String SUBRULE = "subrule";
-    public static final String MIN_DISTANCE = "minimumDistance";
-    public static final String OCCUPANCY = "occupancy";
-    private static final String SUBRULE_37_1 = "37-1";
-    private static final String SUB_RULE_DES = "Minimum distance between blocks %s and %s";
-    public static final String MINIMUM_DISTANCE_SETBACK = "Minimum distance should not be less than setback of tallest building or 3m";
-    public static final String MINIMUM_DISTANCE_BUILDING = "Minimum distance should not be less than 1/3 of height of tallest building or 18m";
-
 
     @Autowired
 	MDMSCacheManager cache;
@@ -372,14 +350,15 @@ public class BlockDistancesService extends FeatureProcess {
      */
     private void setReportOutputDetails(Plan pl, String ruleNo, String ruleDesc, String occupancy, String expected,
                                         String actual, String status) {
-        Map<String, String> details = new HashMap<>();
-        details.put(RULE_NO, ruleNo);
-        details.put(DESCRIPTION, ruleDesc);
-        details.put(REQUIRED, expected);
-        details.put(PROVIDED, actual);
-        details.put(STATUS, status);
-        scrutinyDetail.getDetail().add(details);
-        pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+        ReportScrutinyDetail detail = new ReportScrutinyDetail();
+        detail.setRuleNo(ruleNo);
+        detail.setDescription(ruleDesc);
+        detail.setRequired(expected);
+        detail.setProvided(actual);
+        detail.setStatus(status);
+
+        Map<String, String> details = mapReportDetails(detail);
+        addScrutinyDetailtoPlan(scrutinyDetail, pl, details);
     }
 
     /**

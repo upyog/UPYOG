@@ -58,16 +58,7 @@ import java.util.Optional;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.egov.common.constants.MdmsFeatureConstants;
-import org.egov.common.entity.edcr.Block;
-import org.egov.common.entity.edcr.FeatureEnum;
-import org.egov.common.entity.edcr.MdmsFeatureRule;
-import org.egov.common.entity.edcr.Plan;
-import org.egov.common.entity.edcr.Result;
-import org.egov.common.entity.edcr.FeatureRuleKey;
-import org.egov.common.entity.edcr.ScrutinyDetail;
-import org.egov.common.entity.edcr.StairCoverRequirement;
-import org.egov.common.entity.edcr.TerraceUtility;
-import org.egov.common.entity.edcr.TerraceUtilityServiceRequirement;
+import org.egov.common.entity.edcr.*;
 import org.egov.edcr.constants.EdcrRulesMdmsConstants;
 import org.egov.edcr.service.MDMSCacheManager;
 import org.egov.edcr.service.FetchEdcrRulesMdms;
@@ -78,21 +69,15 @@ import org.springframework.stereotype.Service;
 
 import static org.egov.edcr.constants.CommonKeyConstants.BLOCK;
 import static org.egov.edcr.constants.CommonKeyConstants.TERRACE_UTILITY_SUFFIX;
+import static org.egov.edcr.constants.EdcrReportConstants.RULE_43_1;
+import static org.egov.edcr.service.FeatureUtil.addScrutinyDetailtoPlan;
+import static org.egov.edcr.service.FeatureUtil.mapReportDetails;
 
 @Service
 public class TerraceUtilityService extends FeatureProcess {
 
     // Logger to log important info for debugging or monitoring
     private static final Logger LOG = LogManager.getLogger(TerraceUtilityService.class);
-
-    // Rule identifier for terrace utility check
-    private static final String RULE_34 = "43-1";
-
-    // Feature key used in MDMS and for internal processing
-    public static final String TERRACEUTILITIESDISTANCE = "TerraceUtilitiesDistance";
-
-    // Error message key (not used in this version but defined for standardization)
-    public static final String ERROR_MSG = "Minimum_distance";
 
     // Autowired service to fetch rules from MDMS
     @Autowired
@@ -198,25 +183,21 @@ public class TerraceUtilityService extends FeatureProcess {
     private void processTerraceUtilitiesForBlock(Block block, BigDecimal permissibleDistance,
                                                  ScrutinyDetail scrutinyDetail, Plan pl) {
         for (TerraceUtility terraceUtility : block.getTerraceUtilities()) {
-
-            Map<String, String> details = new HashMap<>();
-            details.put(RULE_NO, RULE_34);
-            details.put(DESCRIPTION, terraceUtility.getName());
-
             BigDecimal minDistance = terraceUtility.getDistances().stream().reduce(BigDecimal::min).get();
             BigDecimal roundedDistance = Util.roundOffTwoDecimal(minDistance);
 
-            details.put(PERMITTED, permissibleDistance + DcrConstants.IN_METER);
-            details.put(PROVIDED, roundedDistance + DcrConstants.IN_METER);
-
+            ReportScrutinyDetail detail = new ReportScrutinyDetail();
+            detail.setRuleNo(RULE_43_1);
+            detail.setDescription(terraceUtility.getName());
+            detail.setPermitted(permissibleDistance + DcrConstants.IN_METER);
+            detail.setProvided(roundedDistance + DcrConstants.IN_METER);
             if (roundedDistance.compareTo(permissibleDistance) >= 0) {
-                details.put(STATUS, Result.Accepted.getResultVal());
+                detail.setStatus(Result.Accepted.getResultVal());
             } else {
-                details.put(STATUS, Result.Not_Accepted.getResultVal());
+                detail.setStatus(Result.Not_Accepted.getResultVal());
             }
-
-            scrutinyDetail.getDetail().add(details);
-            pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+            Map<String, String> details = mapReportDetails(detail);
+            addScrutinyDetailtoPlan(scrutinyDetail, pl, details);
         }
     }
 

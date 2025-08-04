@@ -16,6 +16,7 @@ import org.apache.logging.log4j.Logger;
 import org.egov.common.constants.MdmsFeatureConstants;
 import org.egov.common.entity.edcr.*;
 import org.egov.commons.mdms.BpaMdmsUtil;
+import org.egov.edcr.config.EdcrConfigProperties;
 import org.egov.edcr.constants.EdcrRulesMdmsConstants;
 //import org.egov.infra.mdms.controller.MDMSController;
 import org.egov.infra.microservice.models.RequestInfo;
@@ -35,6 +36,9 @@ public class FetchEdcrRulesMdms {
 
 	@Autowired
 	private BpaMdmsUtil bpaMdmsUtil;
+
+	@Autowired
+	private EdcrConfigProperties edcrConfigProperties;
 
 	private static Logger LOG = LogManager.getLogger(EdcrApplicationService.class);
 	private Map<FeatureRuleKey, List<Object>> ruleMap = new HashMap<>();
@@ -79,7 +83,7 @@ public class FetchEdcrRulesMdms {
 	    if (riskTypeRules.isEmpty()) {
 	        ObjectMapper mapper = new ObjectMapper();
 
-	        Object mdmsData = bpaMdmsUtil.mDMSCall(new RequestInfo(), EdcrRulesMdmsConstants.STATE);
+	        Object mdmsData = bpaMdmsUtil.mDMSCall(new RequestInfo(), edcrConfigProperties.getDefaultState());
 	        MdmsResponse mdmsResponse = mapper.convertValue(mdmsData, MdmsResponse.class);
 	        JSONArray jsonArray = mdmsResponse.getMdmsRes().get(EdcrRulesMdmsConstants.BPA).get(EdcrRulesMdmsConstants.RISK_TYPE_COMPUTATION);
 
@@ -94,16 +98,16 @@ public class FetchEdcrRulesMdms {
 		BigDecimal height = pl.getBlocks().get(0).getBuilding().getBuildingHeight();
 
 	    for (Map<String, Object> rule : riskTypeRules) {
-	        BigDecimal fromPlotArea = new BigDecimal(rule.get("fromPlotArea").toString());
-	        BigDecimal toPlotArea = new BigDecimal(rule.get("toPlotArea").toString());
-	        BigDecimal fromHeight = new BigDecimal(rule.get("fromBuildingHeight").toString());
-	        BigDecimal toHeight = new BigDecimal(rule.get("toBuildingHeight").toString());
+	        BigDecimal fromPlotArea = new BigDecimal(rule.get(EdcrRulesMdmsConstants.FROM_PLOT_AREA).toString());
+	        BigDecimal toPlotArea = new BigDecimal(rule.get(EdcrRulesMdmsConstants.TO_PLOT_AREA).toString());
+	        BigDecimal fromHeight = new BigDecimal(rule.get(EdcrRulesMdmsConstants.FROM_BUILDING_HEIGHT).toString());
+	        BigDecimal toHeight = new BigDecimal(rule.get(EdcrRulesMdmsConstants.TO_BUILDING_HEIGHT).toString());
 
 	        boolean plotAreaInRange = plotArea.compareTo(fromPlotArea) >= 0 && plotArea.compareTo(toPlotArea) < 0;
 	        boolean heightInRange = height.compareTo(fromHeight) >= 0 && height.compareTo(toHeight) < 0;
 
 	        if (plotAreaInRange || heightInRange) { //add height if required
-	            return rule.get("riskType").toString();
+	            return rule.get(EdcrRulesMdmsConstants.RISK_TYPE).toString();
 	        }
 	    }
 

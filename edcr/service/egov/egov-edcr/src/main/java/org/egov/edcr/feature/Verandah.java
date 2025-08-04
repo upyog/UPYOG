@@ -58,28 +58,21 @@ import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.egov.common.entity.edcr.Block;
-import org.egov.common.entity.edcr.FeatureEnum;
-import org.egov.common.entity.edcr.Floor;
-import org.egov.common.entity.edcr.Measurement;
-import org.egov.common.entity.edcr.Plan;
-import org.egov.common.entity.edcr.Result;
-import org.egov.common.entity.edcr.ScrutinyDetail;
-import org.egov.common.entity.edcr.VerandahRequirement;
+import org.egov.common.entity.edcr.*;
 import org.egov.edcr.service.MDMSCacheManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import static org.egov.edcr.constants.CommonFeatureConstants.*;
+import static org.egov.edcr.constants.EdcrReportConstants.*;
+import static org.egov.edcr.constants.EdcrReportConstants.AT_FLOOR;
+import static org.egov.edcr.service.FeatureUtil.addScrutinyDetailtoPlan;
+import static org.egov.edcr.service.FeatureUtil.mapReportDetails;
 
 @Service
 public class Verandah extends FeatureProcess {
 
 	private static final Logger LOG = LogManager.getLogger(Verandah.class);
-	private static final String RULE_43A = "43A";
-	private static final String RULE_43 = "43";
-
-	public static final String VERANDAH_DESCRIPTION = "Verandah";
 
 	/**
 	 * Validates the building plan for verandah requirements.
@@ -184,16 +177,15 @@ public class Verandah extends FeatureProcess {
 
 	    if (minWidthOpt.isPresent() && minWidthOpt.get().compareTo(BigDecimal.ZERO) > 0) {
 	        BigDecimal minWidth = minWidthOpt.get();
-	        Map<String, String> details = new HashMap<>();
-	        details.put(RULE_NO, RULE_43);
-	        details.put(DESCRIPTION, VERANDAH_DESCRIPTION);
-	        details.put(REQUIRED, MIN_WIDTH + permissibleWidth + METER);
-	        details.put(PROVIDED, WIDTH_AREA + minWidth + AT_FLOOR + floor.getNumber());
-	        details.put(STATUS, minWidth.compareTo(permissibleWidth) >= 0 ?
-	                Result.Accepted.getResultVal() : Result.Not_Accepted.getResultVal());
+			ReportScrutinyDetail detail = new ReportScrutinyDetail();
+			detail.setRuleNo(RULE_43);
+			detail.setDescription(VERANDAH_DESCRIPTION);
+			detail.setRequired(MIN_WIDTH + permissibleWidth + METER);
+			detail.setProvided(WIDTH_AREA + minWidth + AT_FLOOR + floor.getNumber());
+			detail.setStatus(minWidth.compareTo(permissibleWidth) >= 0 ? Result.Accepted.getResultVal() : Result.Not_Accepted.getResultVal());
 
-	        scrutinyDetail.getDetail().add(details);
-	        pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+			Map<String, String> details = mapReportDetails(detail);
+			addScrutinyDetailtoPlan(scrutinyDetail, pl, details);
 	    }
 	}
 
@@ -213,16 +205,15 @@ public class Verandah extends FeatureProcess {
 
 	    if (minDepthOpt.isPresent() && minDepthOpt.get().compareTo(BigDecimal.ZERO) > 0) {
 	        BigDecimal minDepth = minDepthOpt.get();
-	        Map<String, String> details = new HashMap<>();
-	        details.put(RULE_NO, RULE_43A);
-	        details.put(DESCRIPTION, VERANDAH_DESCRIPTION);
-	        details.put(REQUIRED, MIN_DEPTH_NOT_MORE_THAN + permissibleDepth + METER);
-	        details.put(PROVIDED, DEPTH_AREA + minDepth + AT_FLOOR + floor.getNumber());
-	        details.put(STATUS, minDepth.compareTo(permissibleDepth) <= 0 ?
-	                Result.Accepted.getResultVal() : Result.Not_Accepted.getResultVal());
+			ReportScrutinyDetail detail = new ReportScrutinyDetail();
+			detail.setRuleNo(RULE_43A);
+			detail.setDescription(VERANDAH_DESCRIPTION);
+			detail.setRequired(MIN_DEPTH_NOT_MORE_THAN + permissibleDepth + METER);
+			detail.setProvided(DEPTH_AREA + minDepth + AT_FLOOR + floor.getNumber());
+			detail.setStatus(minDepth.compareTo(permissibleDepth) <= 0 ? Result.Accepted.getResultVal() : Result.Not_Accepted.getResultVal());
 
-	        scrutinyDetail.getDetail().add(details);
-	        pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+			Map<String, String> details = mapReportDetails(detail);
+			addScrutinyDetailtoPlan(scrutinyDetail, pl, details);
 	    }
 	}
 

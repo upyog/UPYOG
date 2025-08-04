@@ -58,18 +58,7 @@ import java.util.Optional;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.egov.common.constants.MdmsFeatureConstants;
-import org.egov.common.entity.edcr.Block;
-import org.egov.common.entity.edcr.FeatureEnum;
-import org.egov.common.entity.edcr.Floor;
-import org.egov.common.entity.edcr.MdmsFeatureRule;
-import org.egov.common.entity.edcr.Measurement;
-import org.egov.common.entity.edcr.Plan;
-import org.egov.common.entity.edcr.Result;
-import org.egov.common.entity.edcr.FeatureRuleKey;
-import org.egov.common.entity.edcr.ScrutinyDetail;
-import org.egov.common.entity.edcr.SolarRequirement;
-import org.egov.common.entity.edcr.Toilet;
-import org.egov.common.entity.edcr.ToiletRequirement;
+import org.egov.common.entity.edcr.*;
 import org.egov.edcr.constants.EdcrRulesMdmsConstants;
 import org.egov.edcr.service.MDMSCacheManager;
 import org.egov.edcr.service.FetchEdcrRulesMdms;
@@ -77,14 +66,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import static org.egov.edcr.constants.CommonFeatureConstants.*;
+import static org.egov.edcr.constants.EdcrReportConstants.*;
+import static org.egov.edcr.service.FeatureUtil.mapReportDetails;
 
 
 @Service
 public class ToiletDetails extends FeatureProcess {
 
     private static final Logger LOG = LogManager.getLogger(ToiletDetails.class);
-    private static final String RULE_41_IV = "5.5.2";
-    public static final String BATHROOM_DESCRIPTION = "Toilet";
 
     /**
      * Validates the building plan for toilet requirements.
@@ -177,16 +166,16 @@ public class ToiletDetails extends FeatureProcess {
      */
     private void evaluateToiletMeasurement(Plan pl, Floor floor, Toilet toilet, Measurement measurement,
                                            ScrutinyDetail scrutinyDetail) {
-        Map<String, String> details = new HashMap<>();
-        details.put(RULE_NO, RULE_41_IV);
-        details.put(DESCRIPTION, BATHROOM_DESCRIPTION);
-        details.put(FLOOR_NO, String.valueOf(floor.getNumber()));
-
         BigDecimal area = measurement.getArea().setScale(2, RoundingMode.HALF_UP);
         BigDecimal width = measurement.getWidth().setScale(2, RoundingMode.HALF_UP);
         BigDecimal ventilationHeight = toilet.getToiletVentilation() != null
                 ? toilet.getToiletVentilation().setScale(2, RoundingMode.HALF_UP)
                 : BigDecimal.ZERO;
+
+        ReportScrutinyDetail detail = new ReportScrutinyDetail();
+        detail.setRuleNo(RULE_41_5_5);
+        detail.setDescription(TOILET_DESCRIPTION);
+        detail.setFloorNo(String.valueOf(floor.getNumber()));
 
         Optional<ToiletRequirement> toiletRule = getToiletRule(pl);
         if (toiletRule == null) return;
@@ -195,18 +184,18 @@ public class ToiletDetails extends FeatureProcess {
         BigDecimal minWidth = rule.getMinToiletWidth();
         BigDecimal minVentilation = rule.getMinToiletVentilation();
 
-        String required = TOTAL_AREA_STRING + GREATER_THAN_EQUAL + minArea + WIDTH_STRING + GREATER_THAN_EQUAL + minWidth + VENTILATION_STRING + GREATER_THAN_EQUAL + minVentilation;
-        String provided = TOTAL_AREA_STRING + IS_EQUAL_TO + area + WIDTH_STRING + IS_EQUAL_TO + width + VENTILATION_HEIGHT_STRING + ventilationHeight;
+        String required = TOTAL_AREA_STRING + GREATER_THAN_EQUAL + minArea + COMMA_WIDTH_STRING + GREATER_THAN_EQUAL + minWidth + VENTILATION_STRING + GREATER_THAN_EQUAL + minVentilation;
+        String provided = TOTAL_AREA_STRING + IS_EQUAL_TO + area + COMMA_WIDTH_STRING + IS_EQUAL_TO + width + VENTILATION_HEIGHT_STRING + ventilationHeight;
 
-        details.put(REQUIRED, required);
-        details.put(PROVIDED, provided);
-
+        detail.setRequired(required);
+        detail.setProvided(provided);
         if (area.compareTo(minArea) >= 0 && width.compareTo(minWidth) >= 0 && ventilationHeight.compareTo(minVentilation) >= 0) {
-            details.put(STATUS, Result.Accepted.getResultVal());
+            detail.setStatus(Result.Accepted.getResultVal());
         } else {
-            details.put(STATUS, Result.Not_Accepted.getResultVal());
+            detail.setStatus(Result.Not_Accepted.getResultVal());
         }
 
+        Map<String, String> details = mapReportDetails(detail);
         scrutinyDetail.getDetail().add(details);
     }
 

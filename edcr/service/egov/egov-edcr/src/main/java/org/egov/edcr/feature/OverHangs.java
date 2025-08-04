@@ -59,30 +59,21 @@ import java.util.stream.Collectors;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.egov.common.constants.MdmsFeatureConstants;
-import org.egov.common.entity.edcr.BalconyRequirement;
-import org.egov.common.entity.edcr.Block;
-import org.egov.common.entity.edcr.Building;
-import org.egov.common.entity.edcr.FeatureEnum;
-import org.egov.common.entity.edcr.Floor;
-import org.egov.common.entity.edcr.MdmsFeatureRule;
-import org.egov.common.entity.edcr.OverHangsRequirement;
-import org.egov.common.entity.edcr.Plan;
-import org.egov.common.entity.edcr.Result;
-import org.egov.common.entity.edcr.ScrutinyDetail;
+import org.egov.common.entity.edcr.*;
 import org.egov.edcr.service.MDMSCacheManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import static org.egov.edcr.constants.CommonFeatureConstants.FLOOR;
 import static org.egov.edcr.constants.CommonFeatureConstants.GREATER_THAN;
 import static org.egov.edcr.constants.CommonKeyConstants.*;
+import static org.egov.edcr.constants.EdcrReportConstants.*;
+import static org.egov.edcr.service.FeatureUtil.mapReportDetails;
 
 @Service
 public class OverHangs extends FeatureProcess {
 
     private static final Logger LOG = LogManager.getLogger(OverHangs.class);
-    private static final String RULE_45 = "45";
-    public static final String OVERHANGS_DESCRIPTION = "Minimum width of chajja";
-    private static final String FLOOR = "Floor";
 
     @Autowired
    	MDMSCacheManager cache;
@@ -101,7 +92,7 @@ public class OverHangs extends FeatureProcess {
      */
     @Override
     public Plan process(Plan pl) {
-        Map<String, String> details = initializeRuleDetails();
+        ReportScrutinyDetail details = initializeRuleDetails();
         BigDecimal overHangsValue = getOverhangPermissibleValue(pl);
 
         for (Block block : pl.getBlocks()) {
@@ -116,11 +107,11 @@ public class OverHangs extends FeatureProcess {
      *
      * @return a map containing the rule number and description for overhangs
      */
-    private Map<String, String> initializeRuleDetails() {
-        Map<String, String> details = new HashMap<>();
-        details.put(RULE_NO, RULE_45);
-        details.put(DESCRIPTION, OVERHANGS_DESCRIPTION);
-        return details;
+    private ReportScrutinyDetail initializeRuleDetails() {
+        ReportScrutinyDetail detail = new ReportScrutinyDetail();
+        detail.setRuleNo(RULE_45);
+        detail.setDescription(OVERHANGS_DESCRIPTION);
+        return detail;
     }
 
     /**
@@ -147,7 +138,7 @@ public class OverHangs extends FeatureProcess {
      * @param overHangsValue the permissible overhang value
      * @param detailsTemplate the template map for rule details
      */
-    private void processBlock(Block block, Plan pl, BigDecimal overHangsValue, Map<String, String> detailsTemplate) {
+    private void processBlock(Block block, Plan pl, BigDecimal overHangsValue, ReportScrutinyDetail detailsTemplate) {
         ScrutinyDetail scrutinyDetail = initializeScrutinyDetail(block);
 
         Building building = block.getBuilding();
@@ -186,9 +177,9 @@ public class OverHangs extends FeatureProcess {
      * @param floor the floor to validate
      * @param scrutinyDetail the scrutiny detail object to record the result
      * @param overHangsValue the permissible overhang width
-     * @param detailsTemplate the rule details template
+     * @param detail the rule details template
      */
-    private void processFloor(Floor floor, ScrutinyDetail scrutinyDetail, BigDecimal overHangsValue, Map<String, String> detailsTemplate) {
+    private void processFloor(Floor floor, ScrutinyDetail scrutinyDetail, BigDecimal overHangsValue, ReportScrutinyDetail detail) {
         if (floor.getOverHangs() == null || floor.getOverHangs().isEmpty()) {
             return;
         }
@@ -197,19 +188,16 @@ public class OverHangs extends FeatureProcess {
         	    .map(overhang -> overhang.getWidth())
         	    .collect(Collectors.toList());
 
-
         BigDecimal minWidth = widths.stream().reduce(BigDecimal::min).get();
-
-        Map<String, String> details = new HashMap<>(detailsTemplate);
-        details.put(FLOOR, floor.getNumber().toString());
-        details.put(PERMISSIBLE, GREATER_THAN + overHangsValue.toString());
-        details.put(PROVIDED, minWidth.toString());
-
+        detail.setPermissible(GREATER_THAN + overHangsValue.toString());
+        detail.setFloorNo(floor.getNumber().toString());
+        detail.setProvided(minWidth.toString());
         if (minWidth.compareTo(overHangsValue) > 0) {
-            details.put(STATUS, Result.Accepted.getResultVal());
+            detail.setStatus(Result.Accepted.getResultVal());
         } else {
-            details.put(STATUS, Result.Not_Accepted.getResultVal());
+            detail.setStatus(Result.Not_Accepted.getResultVal());
         }
+        Map<String, String> details = mapReportDetails(detail);
 
         scrutinyDetail.getDetail().add(details);
     }

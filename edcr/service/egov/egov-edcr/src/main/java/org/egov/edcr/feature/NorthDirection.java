@@ -55,6 +55,7 @@ import java.util.Map;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 import org.egov.common.entity.edcr.Plan;
+import org.egov.common.entity.edcr.ReportScrutinyDetail;
 import org.egov.common.entity.edcr.Result;
 import org.egov.common.entity.edcr.ScrutinyDetail;
 import org.egov.infra.utils.StringUtils;
@@ -62,13 +63,15 @@ import org.springframework.stereotype.Service;
 
 import static org.egov.edcr.constants.CommonFeatureConstants.*;
 import static org.egov.edcr.constants.CommonKeyConstants.*;
+import static org.egov.edcr.constants.EdcrReportConstants.NORTH_DIRECTION_DESCRIPTION;
+import static org.egov.edcr.constants.EdcrReportConstants.RULE_4_4_4_I;
+import static org.egov.edcr.service.FeatureUtil.addScrutinyDetailtoPlan;
+import static org.egov.edcr.service.FeatureUtil.mapReportDetails;
 
 @Service
 public class NorthDirection extends FeatureProcess {
 
 	private static final Logger LOG = LogManager.getLogger(NorthDirection.class);
-	private static final String RULE = "4.4.4";
-	public static final String NORTH_DIRECTION_DESCRIPTION = "North Direction";
 
 	@Override
 	public Plan validate(Plan pl) {
@@ -86,29 +89,35 @@ public class NorthDirection extends FeatureProcess {
 		scrutinyDetail.addColumnHeading(3, PROVIDED);
 		scrutinyDetail.addColumnHeading(4, STATUS);
 
+		ReportScrutinyDetail detail = new ReportScrutinyDetail();
 		HashMap<String, String> errors = new HashMap<>();
-		Map<String, String> details = new HashMap<>();
-		details.put(RULE_NO, RULE);
-		details.put(DESCRIPTION, NORTH_DIRECTION_DESCRIPTION);
+		detail.setRuleNo(RULE_4_4_4_I);
+		detail.setDescription(NORTH_DIRECTION_DESCRIPTION);
+
 		if (pl.getDrawingPreference().getNorthDirection() == null) {
 			errors.put(NORTH_DIRECTION, NORTH_DIRECTION_LAYER_NOT_PROVIDED);
 			pl.addErrors(errors);
 		} else if (pl.getDrawingPreference().getNorthDirection().getDirections() != null && !pl.getDrawingPreference().getNorthDirection().getDirections().isEmpty()
 				&& StringUtils.isNotBlank(pl.getDrawingPreference().getNorthDirection().getDirection())
 				&& pl.getDrawingPreference().getNorthDirection().getDirection().contains(N_CHARACTER)) {
-			details.put(PROVIDED, NORTH_DIRECTIONS_PROVIDED);
-			details.put(STATUS, Result.Accepted.getResultVal());
-			scrutinyDetail.getDetail().add(details);
-			pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+
+			detail.setProvided(NORTH_DIRECTIONS_PROVIDED);
+			detail.setStatus(Result.Accepted.getResultVal());
+
+			Map<String, String> details = mapReportDetails(detail);
+			addScrutinyDetailtoPlan(scrutinyDetail, pl, details);
 		} else {
 			if (StringUtils.isBlank(pl.getDrawingPreference().getNorthDirection().getDirection())
 					|| !pl.getDrawingPreference().getNorthDirection().getDirection().contains(N_CHARACTER))
-				details.put(PROVIDED, MTEXT_NO_N_CHARACTER);
-			else
-				details.put(PROVIDED, POLYLINE_NOT_DEFINED_NORTH_DIRECTION);
-			details.put(STATUS, Result.Not_Accepted.getResultVal());
-			scrutinyDetail.getDetail().add(details);
-			pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+				detail.setProvided(MTEXT_NO_N_CHARACTER);
+
+			else {
+				detail.setProvided(POLYLINE_NOT_DEFINED_NORTH_DIRECTION);
+				detail.setStatus(Result.Not_Accepted.getResultVal());
+
+				Map<String, String> details = mapReportDetails(detail);
+				addScrutinyDetailtoPlan(scrutinyDetail, pl, details);
+			}
 		}
 
 		return pl;

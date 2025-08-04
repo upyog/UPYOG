@@ -55,6 +55,8 @@ import static org.egov.edcr.constants.DxfFileConstants.F_CB;
 import static org.egov.edcr.constants.DxfFileConstants.F_RT;
 import static org.egov.edcr.constants.DxfFileConstants.M_NAPI;
 import static org.egov.edcr.constants.DxfFileConstants.S_MCH;
+import static org.egov.edcr.constants.EdcrReportConstants.*;
+import static org.egov.edcr.service.FeatureUtil.mapReportDetails;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -68,13 +70,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.egov.common.constants.MdmsFeatureConstants;
 import org.egov.common.entity.dcr.helper.OccupancyHelperDetail;
-import org.egov.common.entity.edcr.FeatureEnum;
-import org.egov.common.entity.edcr.MdmsFeatureRule;
-import org.egov.common.entity.edcr.OccupancyTypeHelper;
-import org.egov.common.entity.edcr.Plan;
-import org.egov.common.entity.edcr.PlotAreaRequirement;
-import org.egov.common.entity.edcr.Result;
-import org.egov.common.entity.edcr.ScrutinyDetail;
+import org.egov.common.entity.edcr.*;
 import org.egov.edcr.service.MDMSCacheManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -83,8 +79,6 @@ import org.springframework.stereotype.Service;
 public class PlotArea extends FeatureProcess {
 
     private static final Logger LOG = LogManager.getLogger(PlotArea.class);
-    private static final String RULE_34 = "34-1";
-    public static final String PLOTAREA_DESCRIPTION = "Minimum Plot Area";
 
     @Override
     public Map<String, Date> getAmendments() {
@@ -161,20 +155,19 @@ public class PlotArea extends FeatureProcess {
     private Map<String, String> buildScrutinyDetailRow(OccupancyHelperDetail occupancyType,
                                                        BigDecimal plotArea,
                                                        BigDecimal permissibleArea) {
-        Map<String, String> details = new HashMap<>();
-        details.put(RULE_NO, RULE_34);
-        details.put(DESCRIPTION, PLOTAREA_DESCRIPTION);
-        details.put(OCCUPANCY, occupancyType.getName());
-        details.put(PERMITTED, permissibleArea + SQUARE_METER);
-        details.put(PROVIDED, plotArea + SQUARE_METER);
 
-        String status = plotArea.compareTo(permissibleArea) >= 0
+        ReportScrutinyDetail detail = new ReportScrutinyDetail();
+        detail.setRuleNo(RULE_34);
+        detail.setDescription(PLOTAREA_DESCRIPTION);
+        detail.setOccupancy(occupancyType.getName());
+        detail.setPermitted(permissibleArea + SQUARE_METER);
+        detail.setProvided(plotArea + SQUARE_METER);
+        detail.setStatus(plotArea.compareTo(permissibleArea) >= 0
                 ? Result.Accepted.getResultVal()
-                : Result.Not_Accepted.getResultVal();
+                : Result.Not_Accepted.getResultVal());
 
-        details.put(STATUS, status);
-        return details;
-    }
+        return mapReportDetails(detail);
+        }
 
     /**
      * Retrieves the permissible plot area based on the given occupancy code.

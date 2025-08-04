@@ -49,28 +49,23 @@ package org.egov.edcr.feature;
 
 import static org.egov.edcr.constants.CommonFeatureConstants.*;
 import static org.egov.edcr.constants.CommonKeyConstants.*;
+import static org.egov.edcr.constants.EdcrReportConstants.*;
 import static org.egov.edcr.constants.RuleKeyConstants.*;
+import static org.egov.edcr.service.FeatureUtil.addScrutinyDetailtoPlan;
+import static org.egov.edcr.service.FeatureUtil.mapReportDetails;
 import static org.egov.edcr.utility.DcrConstants.*;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
-import org.egov.common.constants.MdmsFeatureConstants;
 import org.egov.common.entity.edcr.*;
 import org.egov.edcr.constants.CommonKeyConstants;
 import org.egov.edcr.constants.DxfFileConstants;
+import org.egov.edcr.service.FeatureUtil;
 import org.egov.edcr.service.MDMSCacheManager;
-import org.egov.edcr.service.EdcrRestService;
-import org.egov.edcr.service.FetchEdcrRulesMdms;
 import org.egov.edcr.utility.DcrConstants;
 import org.egov.infra.utils.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -80,68 +75,15 @@ import org.springframework.stereotype.Service;
 @Service
 public class AdditionalFeature extends FeatureProcess {
     private static final Logger LOG = LogManager.getLogger(AdditionalFeature.class);
+    public static BigDecimal additionalFeatureMinRequiredFloorHeight = BigDecimal.ZERO;
+    public static BigDecimal additionalFeatureMaxPermissibleFloorHeight = BigDecimal.ZERO;
 
-    private static final String RULE_38 = "4.4.4 (ii)";
-    private static final String RULE_39 = "39";
-    private static final String RULE = "5.2.1";
-    private static final String RULE_41_I_B = "41-i-b";
-    private static final String RULE_47 = "47";
-    private static final String RULE_50 = "50";
-    private static final String RULE_56 = "56";
-    private static final BigDecimal TWO = BigDecimal.valueOf(2);
-    private static final BigDecimal ONE_POINTFIVE = BigDecimal.valueOf(1.5);
-    private static final BigDecimal THREE = BigDecimal.valueOf(3);
-    private static final BigDecimal FOUR = BigDecimal.valueOf(4);
-    private static final BigDecimal SIX = BigDecimal.valueOf(6);
-    private static final BigDecimal SEVEN = BigDecimal.valueOf(7);
-    private static final BigDecimal TEN = BigDecimal.valueOf(10);
-    private static final BigDecimal TWELVE = BigDecimal.valueOf(12);
-    private static final BigDecimal NINETEEN = BigDecimal.valueOf(19);
-
-    private static final BigDecimal ROAD_WIDTH_TWO_POINTFOUR = BigDecimal.valueOf(2.4);
-    private static final BigDecimal ROAD_WIDTH_TWO_POINTFOURFOUR = BigDecimal.valueOf(2.44);
-    private static final BigDecimal ROAD_WIDTH_THREE_POINTSIX = BigDecimal.valueOf(3.6);
-    private static final BigDecimal ROAD_WIDTH_FOUR_POINTEIGHT = BigDecimal.valueOf(4.8);
-    private static final BigDecimal ROAD_WIDTH_SIX_POINTONE = BigDecimal.valueOf(6.1);
-    private static final BigDecimal ROAD_WIDTH_NINE_POINTONE = BigDecimal.valueOf(9.1);
-    private static final BigDecimal ROAD_WIDTH_TWELVE_POINTTWO = BigDecimal.valueOf(12.2);
-
-    private static final int PLOTAREA_100 = 100;
-    private static final int PLOTAREA_300 = 300;
-    private static final int PLOTAREA_500 = 500;
-    private static final int PLOTAREA_1000 = 1000;
-    private static final int PLOTAREA_3000 = 3000;
     /*
      * private static final BigDecimal ROAD_WIDTH_EIGHTEEN_POINTTHREE = BigDecimal.valueOf(18.3); private static final BigDecimal
      * ROAD_WIDTH_TWENTYFOUR_POINTFOUR = BigDecimal.valueOf(24.4); private static final BigDecimal
      * ROAD_WIDTH_TWENTYSEVEN_POINTFOUR = BigDecimal.valueOf(27.4); private static final BigDecimal ROAD_WIDTH_THIRTY_POINTFIVE =
      * BigDecimal.valueOf(30.5);
      */
-
-    public static final String OLD = "OLD";
-    public static final String NEW = "NEW";
-    public static final String OLD_AREA_ERROR = "road width old area";
-    public static final String NEW_AREA_ERROR = "road width new area";
-    public static final String OLD_AREA_ERROR_MSG = "No construction shall be permitted if the road width is less than 2.4m for old area.";
-    public static final String NEW_AREA_ERROR_MSG = "No construction shall be permitted if the road width is less than 6.1m for new area.";
-    public static final String NO_OF_FLOORS = "Maximum number of floors allowed";
-    public static final String HEIGHT_BUILDING = "Maximum height of building allowed";
-//    public static final String MIN_PLINTH_HEIGHT = " >= 0.45";
-    
-    public static final String MIN_PLINTH_HEIGHT_DESC = "Minimum plinth height";
-    public static final String MAX_BSMNT_CELLAR = "Number of basement/cellar allowed";
-    public static final String MIN_INT_COURT_YARD = "0.15";
-    public static final String MIN_INT_COURT_YARD_DESC = "Minimum interior courtyard";
-    public static final String BARRIER_FREE_ACCESS_FOR_PHYSICALLY_CHALLENGED_PEOPLE_DESC = "Barrier free access for physically challenged people";
-    public static final String GREEN_BUILDINGS_AND_SUSTAINABILITY_PROVISIONS_ERROR_CODE = "Green buildings and sustainability provisions";
-    public static final String GREEN_BUILDINGS_AND_SUSTAINABILITY_PROVISIONS_ERROR_MSG = "Green buildings and sustainability provision should be YES";
-    public static final String GREEN_BUILDINGS_AND_SUSTAINABILITY = "Green buildings and sustainability provisions";
-    public static final String FIRE_PROTECTION_AND_FIRE_SAFETY_REQUIREMENTS_DESC = "Fire Protection And Fire Safety Requirements";
-
-
-    private static BigDecimal additionalFeatureMinRequiredFloorHeight = BigDecimal.ZERO;
-    private static BigDecimal additionalFeatureMaxPermissibleFloorHeight = BigDecimal.ZERO;
-
 
     @Override
     public Plan validate(Plan pl) {
@@ -219,26 +161,22 @@ public class AdditionalFeature extends FeatureProcess {
             for (Block b : pl.getBlocks()) {
                 if (b.getBuilding() != null && (b.getBuilding().getIsHighRise()
                         || isCommercialAbv750sqm(pl, mostRestrictiveOccupancyType)))
-                    if (pl.getPlanInformation() != null
-                            && !pl.getPlanInformation().getFireProtectionAndFireSafetyRequirements().isEmpty()) {
-                        Map<String, String> details = new HashMap<>();
-                        details.put(RULE_NO, RULE_56);
-                        details.put(DESCRIPTION, FIRE_PROTECTION_AND_FIRE_SAFETY_REQUIREMENTS_DESC);
-                        details.put(PERMISSIBLE, YES_NO_NA);
-                        details.put(PROVIDED, pl.getPlanInformation().getFireProtectionAndFireSafetyRequirements());
-                        details.put(STATUS, Result.Accepted.getResultVal());
-                        scrutinyDetail.getDetail().add(details);
-                        pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+                {
+                    ReportScrutinyDetail detail = new ReportScrutinyDetail();
+                    detail.setRuleNo(RULE_56);
+                    detail.setDescription(FIRE_PROTECTION_AND_FIRE_SAFETY_REQUIREMENTS_DESC);
+                    detail.setPermissible(YES_NO_NA);
+                    detail.setProvided(pl.getPlanInformation().getFireProtectionAndFireSafetyRequirements());
+                    
+                    if (pl.getPlanInformation() != null && !pl.getPlanInformation().getFireProtectionAndFireSafetyRequirements().isEmpty()) {
+                        detail.setStatus(Result.Accepted.getResultVal());
                     } else {
-                        Map<String, String> details = new HashMap<>();
-                        details.put(RULE_NO, RULE_56);
-                        details.put(DESCRIPTION, FIRE_PROTECTION_AND_FIRE_SAFETY_REQUIREMENTS_DESC);
-                        details.put(PERMISSIBLE, YES_NO_NA);
-                        details.put(PROVIDED, pl.getPlanInformation().getFireProtectionAndFireSafetyRequirements());
-                        details.put(STATUS, Result.Not_Accepted.getResultVal());
-                        scrutinyDetail.getDetail().add(details);
-                        pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+                        detail.setStatus(Result.Not_Accepted.getResultVal());
                     }
+                    
+                    Map<String, String> details = mapReportDetails(detail);
+                    addScrutinyDetailtoPlan(scrutinyDetail, pl, details);
+                }
             }
         }
 
@@ -258,29 +196,23 @@ public class AdditionalFeature extends FeatureProcess {
                         .equals(pl.getVirtualBuilding().getMostRestrictiveFarHelper().getSubtype().getCode())
                 && pl.getPlot() != null && pl.getPlot().getArea().compareTo(new BigDecimal(2000)) > 0) {
 
+            ReportScrutinyDetail detail = new ReportScrutinyDetail();
+            detail.setRuleNo(RULE_50);
+            detail.setDescription(BARRIER_FREE_ACCESS_FOR_PHYSICALLY_CHALLENGED_PEOPLE_DESC);
+            detail.setPermissible(DcrConstants.YES);
+            
             if (pl.getPlanInformation() != null
                     && !pl.getPlanInformation().getBarrierFreeAccessForPhyChlngdPpl().isEmpty()
                     && DcrConstants.YES.equals(pl.getPlanInformation().getBarrierFreeAccessForPhyChlngdPpl())) {
-
-                Map<String, String> details = new HashMap<>();
-                details.put(RULE_NO, RULE_50);
-                details.put(DESCRIPTION, BARRIER_FREE_ACCESS_FOR_PHYSICALLY_CHALLENGED_PEOPLE_DESC);
-                details.put(PERMISSIBLE, DcrConstants.YES);
-                details.put(PROVIDED, DcrConstants.YES);
-                details.put(STATUS, Result.Accepted.getResultVal());
-                scrutinyDetail.getDetail().add(details);
-                pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
-
+                detail.setProvided(DcrConstants.YES);
+                detail.setStatus(Result.Accepted.getResultVal());
             } else {
-                Map<String, String> details = new HashMap<>();
-                details.put(RULE_NO, RULE_50);
-                details.put(DESCRIPTION, BARRIER_FREE_ACCESS_FOR_PHYSICALLY_CHALLENGED_PEOPLE_DESC);
-                details.put(PERMISSIBLE, DcrConstants.YES);
-                details.put(PROVIDED, pl.getPlanInformation().getBarrierFreeAccessForPhyChlngdPpl());
-                details.put(STATUS, Result.Not_Accepted.getResultVal());
-                scrutinyDetail.getDetail().add(details);
-                pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+                detail.setProvided(pl.getPlanInformation().getBarrierFreeAccessForPhyChlngdPpl());
+                detail.setStatus(Result.Not_Accepted.getResultVal());
             }
+            
+            Map<String, String> details = mapReportDetails(detail);
+            addScrutinyDetailtoPlan(scrutinyDetail, pl, details);
         }
 
     }
@@ -360,16 +292,17 @@ public class AdditionalFeature extends FeatureProcess {
             }
 
             if (errors.isEmpty() && StringUtils.isNotBlank(requiredFloorCount)) {
-                Map<String, String> details = new HashMap<>();
-                details.put(RULE_NO, RULE_38);
-                details.put(DESCRIPTION, NO_OF_FLOORS);
-                details.put(DxfFileConstants.AREA_TYPE, typeOfArea);
-                details.put(DxfFileConstants.ROAD_WIDTH, roadWidth.toString());
-                details.put(PERMISSIBLE, requiredFloorCount);
-                details.put(PROVIDED, String.valueOf(block.getBuilding().getFloorsAboveGround()));
-                details.put(STATUS, isAccepted ? Result.Accepted.getResultVal() : Result.Not_Accepted.getResultVal());
-                scrutinyDetail.getDetail().add(details);
-                pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+                ReportScrutinyDetail detail = new ReportScrutinyDetail();
+                detail.setRuleNo(RULE_4_4_4);
+                detail.setDescription(NO_OF_FLOORS);
+                detail.setAreaType(typeOfArea);
+                detail.setRoadWidth(roadWidth.toString());
+                detail.setPermissible(requiredFloorCount);
+                detail.setProvided(String.valueOf(block.getBuilding().getFloorsAboveGround()));
+                detail.setStatus(isAccepted ? Result.Accepted.getResultVal() : Result.Not_Accepted.getResultVal());
+
+                Map<String, String> details = mapReportDetails(detail);
+                addScrutinyDetailtoPlan(scrutinyDetail, pl, details);
             }
         }
     }
@@ -431,7 +364,7 @@ public class AdditionalFeature extends FeatureProcess {
 //					if (floorHeight.compareTo(BigDecimal.valueOf(6.0)) >= 0) {
 //						/*
 //						 * Map<String, String> details = new HashMap<>(); details.put(FLOOR_NO,
-//						 * String.valueOf(floorNumber)); details.put(RULE_NO, RULE_38);
+//						 * String.valueOf(floorNumber)); details.put(RULE_NO, RULE_4_4_4);
 //						 * details.put(MIN_REQUIRED, minRequiredFloorHeight + DcrConstants.IN_METER);
 //						 * details.put(MAX_PERMISSIBLE, "-"); details.put(PROVIDED,
 //						 * floorHeight.toString() + DcrConstants.IN_METER); details.put(STATUS,
@@ -443,7 +376,7 @@ public class AdditionalFeature extends FeatureProcess {
 //					} else {
 //						/*
 //						 * Map<String, String> details = new HashMap<>(); details.put(FLOOR_NO,
-//						 * String.valueOf(floorNumber)); details.put(RULE_NO, RULE_38);
+//						 * String.valueOf(floorNumber)); details.put(RULE_NO, RULE_4_4_4);
 //						 * details.put(MIN_REQUIRED, minRequiredFloorHeight + DcrConstants.IN_METER);
 //						 * details.put(MAX_PERMISSIBLE, "-"); details.put(PROVIDED,
 //						 * floorHeight.toString() + DcrConstants.IN_METER); details.put(STATUS,
@@ -472,21 +405,20 @@ public class AdditionalFeature extends FeatureProcess {
 //						isAccepted = true;
 //					}
 				//}
-//				addFloorHeightDetails(pl, scrutinyDetail, String.valueOf(floorNumber), RULE_38,
+//				addFloorHeightDetails(pl, scrutinyDetail, String.valueOf(floorNumber), RULE_4_4_4,
 //						minRequiredFloorHeight + DcrConstants.IN_METER, maxPermissibleFloorHeight,
 //						floorHeight.toString() + DcrConstants.IN_METER, status);
 				if (errors.isEmpty() && StringUtils.isNotBlank(minRequiredFloorHeight)
 						&& StringUtils.isNotBlank(maxPermissibleFloorHeight)) {
-					Map<String, String> details = new HashMap<>();
-					details.put(FLOOR_NO, String.valueOf(floorNumber));
-					details.put(RULE_NO, RULE_38);
-					details.put(MIN_REQUIRED, minRequiredFloorHeight);
-					//details.put(MAX_PERMISSIBLE, maxPermissibleFloorHeight);
-					details.put(PROVIDED, floorHeight.toString() + DcrConstants.IN_METER);
-					details.put(STATUS,
-							isAccepted ? Result.Accepted.getResultVal() : Result.Not_Accepted.getResultVal());
-					scrutinyDetail.getDetail().add(details);
-					pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+                    ReportScrutinyDetail detail = new ReportScrutinyDetail();
+                    detail.setRuleNo(RULE_4_4_4);
+                    detail.setFloorNo(String.valueOf(floorNumber));
+                    detail.setMinRequired(minRequiredFloorHeight);
+                    detail.setProvided(floorHeight.toString() + DcrConstants.IN_METER);
+                    detail.setStatus(isAccepted ? Result.Accepted.getResultVal() : Result.Not_Accepted.getResultVal());
+
+                    Map<String, String> details = mapReportDetails(detail);
+                    addScrutinyDetailtoPlan(scrutinyDetail, pl, details);
 
 				}
 			}
@@ -501,7 +433,7 @@ public class AdditionalFeature extends FeatureProcess {
         for (Block block : pl.getBlocks()) {
 
             boolean isAccepted = false;
-            String ruleNo = RULE_38;
+            String ruleNo = RULE_4_4_4;
             ScrutinyDetail scrutinyDetail = getNewScrutinyDetailRoadArea(
                     BLOCK + block.getNumber() + UNDERSCORE + HEIGHT_OF_BUILDING);
             String requiredBuildingHeight = StringUtils.EMPTY;
@@ -585,16 +517,17 @@ public class AdditionalFeature extends FeatureProcess {
             }
 
             if (errors.isEmpty() && StringUtils.isNotBlank(requiredBuildingHeight)) {
-                Map<String, String> details = new HashMap<>();
-                details.put(RULE_NO, ruleNo);
-                details.put(DESCRIPTION, HEIGHT_BUILDING);
-                details.put(DxfFileConstants.AREA_TYPE, typeOfArea);
-                details.put(DxfFileConstants.ROAD_WIDTH, roadWidth.toString());
-                details.put(PERMISSIBLE, requiredBuildingHeight);
-                details.put(PROVIDED, String.valueOf(buildingHeight));
-                details.put(STATUS, isAccepted ? Result.Accepted.getResultVal() : Result.Not_Accepted.getResultVal());
-                scrutinyDetail.getDetail().add(details);
-                pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+                ReportScrutinyDetail detail = new ReportScrutinyDetail();
+                detail.setRuleNo(ruleNo);
+                detail.setDescription(HEIGHT_BUILDING);
+                detail.setAreaType(typeOfArea);
+                detail.setRoadWidth(roadWidth.toString());
+                detail.setPermissible(requiredBuildingHeight);
+                detail.setProvided(String.valueOf(buildingHeight));
+                detail.setStatus(isAccepted ? Result.Accepted.getResultVal() : Result.Not_Accepted.getResultVal());
+                
+                Map<String, String> details = mapReportDetails(detail);
+                addScrutinyDetailtoPlan(scrutinyDetail, pl, details);
             }
         }
     }
@@ -648,14 +581,15 @@ public class AdditionalFeature extends FeatureProcess {
             }
 
             if (errors.isEmpty()) {
-                Map<String, String> details = new HashMap<>();
-                details.put(RULE_NO, RULE);
-                details.put(DESCRIPTION, MIN_PLINTH_HEIGHT_DESC);
-                details.put(PERMISSIBLE, EMPTY_STRING + plintHeight);
-                details.put(PROVIDED, String.valueOf(minPlinthHeight));
-                details.put(STATUS, isAccepted ? Result.Accepted.getResultVal() : Result.Not_Accepted.getResultVal());
-                scrutinyDetail.getDetail().add(details);
-                pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+                ReportScrutinyDetail detail = new ReportScrutinyDetail();
+                detail.setRuleNo(RULE);
+                detail.setDescription(MIN_PLINTH_HEIGHT_DESC);
+                detail.setPermissible(EMPTY_STRING + plintHeight);
+                detail.setProvided(String.valueOf(minPlinthHeight));
+                detail.setStatus(isAccepted ? Result.Accepted.getResultVal() : Result.Not_Accepted.getResultVal());
+
+                Map<String, String> details = mapReportDetails(detail);
+                addScrutinyDetailtoPlan(scrutinyDetail, pl, details);
             }
         }
     }
@@ -694,14 +628,15 @@ public class AdditionalFeature extends FeatureProcess {
                     allowedBsmnt = INT_TWO;
                 }
 
-                Map<String, String> details = new HashMap<>();
-                details.put(RULE_NO, RULE_47);
-                details.put(DESCRIPTION, MAX_BSMNT_CELLAR);
-                details.put(PERMISSIBLE, allowedBsmnt);
-                details.put(PROVIDED, String.valueOf(basementSetbacks.size()));
-                details.put(STATUS, isAccepted ? Result.Accepted.getResultVal() : Result.Not_Accepted.getResultVal());
-                scrutinyDetail.getDetail().add(details);
-                pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+                ReportScrutinyDetail detail = new ReportScrutinyDetail();
+                detail.setRuleNo(RULE_47);
+                detail.setDescription(MAX_BSMNT_CELLAR);
+                detail.setPermissible(allowedBsmnt);
+                detail.setProvided(String.valueOf(basementSetbacks.size()));
+                detail.setStatus(isAccepted ? Result.Accepted.getResultVal() : Result.Not_Accepted.getResultVal());
+
+                Map<String, String> details = mapReportDetails(detail);
+                addScrutinyDetailtoPlan(scrutinyDetail, pl, details);
             }
         }
     }
@@ -866,12 +801,15 @@ public class AdditionalFeature extends FeatureProcess {
 
     private void addDetails(ScrutinyDetail scrutinyDetail, String rule, String description, String required,
             String provided, String status) {
-        Map<String, String> details = new HashMap<>();
-        details.put(RULE_NO, rule);
-        details.put(DESCRIPTION, description);
-        details.put(REQUIRED, required);
-        details.put(PROVIDED, provided);
-        details.put(STATUS, status);
+
+        ReportScrutinyDetail detail = new ReportScrutinyDetail();
+        detail.setRuleNo(rule);
+        detail.setDescription(description);
+        detail.setRequired(required);
+        detail.setProvided(provided);
+        detail.setStatus(status);
+        Map<String, String> details = mapReportDetails(detail);
+        
         scrutinyDetail.getDetail().add(details);
     }
 

@@ -55,6 +55,10 @@ import static org.egov.edcr.constants.DxfFileConstants.F;
 import static org.egov.edcr.constants.DxfFileConstants.G;
 import static org.egov.edcr.constants.DxfFileConstants.H;
 import static org.egov.edcr.constants.DxfFileConstants.I;
+import static org.egov.edcr.constants.EdcrReportConstants.SUBRULE_42_2;
+import static org.egov.edcr.constants.EdcrReportConstants.SUBRULE_42_2_DESC;
+import static org.egov.edcr.service.FeatureUtil.addScrutinyDetailtoPlan;
+import static org.egov.edcr.service.FeatureUtil.mapReportDetails;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -66,12 +70,7 @@ import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.egov.common.entity.edcr.FeatureEnum;
-import org.egov.common.entity.edcr.OccupancyTypeHelper;
-import org.egov.common.entity.edcr.Plan;
-import org.egov.common.entity.edcr.Result;
-import org.egov.common.entity.edcr.ScrutinyDetail;
-import org.egov.common.entity.edcr.TravelDistanceToExitRequirement;
+import org.egov.common.entity.edcr.*;
 import org.egov.edcr.service.MDMSCacheManager;
 import org.egov.edcr.service.ProcessHelper;
 import org.egov.edcr.utility.DcrConstants;
@@ -84,10 +83,6 @@ public class TravelDistanceToExit extends FeatureProcess {
 
 	// Logger for logging important information
 	private static final Logger LOG = LogManager.getLogger(TravelDistanceToExit.class);
-
-	// Rule identifier and description for reporting
-	private static final String SUBRULE_42_2 = "42-2";
-	private static final String SUBRULE_42_2_DESC = "Maximum travel distance to emergency exit";
 
 	// Permissible travel distances fetched from MDMS
 	public static BigDecimal travelDistanceToExitValueOne = BigDecimal.ZERO;
@@ -239,13 +234,14 @@ public class TravelDistanceToExit extends FeatureProcess {
 	 */
 //	// Helper to append result details to the scrutiny report
 	private void setReportOutputDetails(Plan pl, String ruleNo, String expected, String actual, String status) {
-		Map<String, String> details = new HashMap<>();
-		details.put(RULE_NO, ruleNo);
-		details.put(REQUIRED, expected);
-		details.put(PROVIDED, actual);
-		details.put(STATUS, status);
-		scrutinyDetail.getDetail().add(details);
-		pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+		ReportScrutinyDetail detail = new ReportScrutinyDetail();
+		detail.setRuleNo(ruleNo);
+		detail.setRequired(expected);
+		detail.setProvided(actual);
+		detail.setStatus(status);
+
+		Map<String, String> details = mapReportDetails(detail);
+		addScrutinyDetailtoPlan(scrutinyDetail, pl, details);
 	}
 
 	/**
