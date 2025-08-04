@@ -11,6 +11,7 @@ const TreePruningRequestDetails = ({ t, config, onSelect, userType, formData }) 
   const [isUploading, setIsUploading] = useState(false);
   const [uploadError, setUploadError] = useState("");
   const tenantId = Digit.ULBService.getStateId();
+  const inputStyles = { width: user.type === "EMPLOYEE" ? "50%" : "100%" };
 
   const { data: ReasonOfPruningType} = Digit.Hooks.useCustomMDMS(tenantId, "request-service", [{ name: "ReasonPruningType" }], {
     select: (data) => {
@@ -99,14 +100,14 @@ const TreePruningRequestDetails = ({ t, config, onSelect, userType, formData }) 
           placeholder={"Select Reason"}
           select={setReasonOfPruning}
           option={ReasonOfPruningType}
-          style={{ width: "100%" }}
+          style={inputStyles}
           optionKey="code"
           t={t}
         />
         <CardLabel>
           {t("LOCATION_GEOTAG")}
         </CardLabel>
-        <div style={{ display: "flex", alignItems: "stretch", gap: "8px" }}>
+        <div style={{ display: "flex", alignItems: "stretch", gap: "8px", width: user.type === "EMPLOYEE" ? "53%" : "100%" }}>
           <TextInput
             t={t}
             type={"text"}
@@ -140,7 +141,7 @@ const TreePruningRequestDetails = ({ t, config, onSelect, userType, formData }) 
         <CardLabel>
           {t("UPLOAD_THE_SITE_PHOTOGRAPH")} <span className="check-page-link-button">*</span>
         </CardLabel>
-        <div style={{ marginBottom: "16px" }}>
+        <div style={{ marginBottom: "16px", ...inputStyles }}>
           <UploadFile
             id="supportingDocument"
             onUpload={(e) => handleFileUpload(e, setSupportingDocumentFile)}

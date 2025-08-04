@@ -47,7 +47,7 @@ const TPCard = () => {
       link: `${APPLICATION_PATH}/employee/wt/tp/my-bookings`,
     },
     {
-      label: t("ES_COMMON_APPLICATION_CREATE"),
+      label: t("TP_APPLICATION_CREATE"),
       link: `${APPLICATION_PATH}/employee/wt/tp/request-service`,
     }
   ]

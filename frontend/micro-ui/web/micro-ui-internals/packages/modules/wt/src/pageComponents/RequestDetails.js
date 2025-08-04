@@ -20,6 +20,7 @@ const RequestDetails = ({ t, config, onSelect, userType, formData }) => {
   const [deliveryTime, setdeliveryTime] = useState(formData?.requestDetails?.deliveryTime || "");
   const [extraCharge, setextraCharge] = useState(formData?.requestDetails?.extraCharge || false);
   const tenantId=Digit.ULBService.getStateId();
+  const inputStyles = {width:user.type === "EMPLOYEE" ? "50%" : "100%"};
   
   // Fetch VehicleType data from MDMS
   const { data: VehicleType } = Digit.Hooks.useCustomMDMS(tenantId, "request-service", [{ name: "VehicleType" }], {
@@ -101,6 +102,7 @@ const RequestDetails = ({ t, config, onSelect, userType, formData }) => {
         <TextInput
           type="time"
           value={deliveryTime}
+          style={inputStyles}
           onChange={(e) => setdeliveryTime(e.target.value)}
           min="06:00"
           max="23:59"
@@ -163,7 +165,7 @@ const RequestDetails = ({ t, config, onSelect, userType, formData }) => {
               placeholder={t("WT_SELECT_WATER_TYPE")}
               select={setWaterType}
               option={WaterType}
-              style={{ width: "100%" }}
+              style={inputStyles}
               optionKey="i18nKey"
               t={t}
             />
@@ -174,7 +176,7 @@ const RequestDetails = ({ t, config, onSelect, userType, formData }) => {
               placeholder={"Select Water Quantity"}
               select={setwaterQuantity}
               option={VehicleDetails}
-              style={{width:"100%"}}
+              style={inputStyles}
               optionKey="i18nKey"
               t={t}
             />
@@ -185,7 +187,7 @@ const RequestDetails = ({ t, config, onSelect, userType, formData }) => {
                 placeholder={"Select Tanker Quantity"}
                 select={settankerQuantity}
                 option={tankerDetails}
-                style={{width:"100%"}}
+                style={inputStyles}
                 optionKey="i18nKey"
                 t={t}
               />
@@ -196,6 +198,7 @@ const RequestDetails = ({ t, config, onSelect, userType, formData }) => {
             isMandatory={false}
             optionKey="i18nKey"
             name="deliveryDate"
+            style={inputStyles}
             value={deliveryDate}
             onChange={setDeliveryDate}
             min={new Date().toISOString().split('T')[0]}
@@ -217,6 +220,7 @@ const RequestDetails = ({ t, config, onSelect, userType, formData }) => {
             name="description"
             value={description}
             onChange={setDescription}
+            style={inputStyles}
             ValidationRequired={true}
             {...(validation = {
               isRequired: true,
