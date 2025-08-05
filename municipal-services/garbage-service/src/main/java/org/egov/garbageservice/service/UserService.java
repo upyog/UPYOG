@@ -338,5 +338,12 @@ public class UserService {
 
 		return Role.builder().code("CITIZEN").name("Citizen").build();
 	}
+	
+	public List<OwnerInfo> userSearch(UserSearchRequest userSearchRequest) {
+
+		StringBuilder uri = new StringBuilder(grbgConfig.getUserServiceHostUrl())
+				.append(grbgConfig.getUserSearchEndpoint());
+		return userCall(userSearchRequest, uri).getUser();
+	}
 
 }
