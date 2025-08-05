@@ -1,5 +1,5 @@
 /*
- * eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
+ * UPYOG  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  * accountability and the service delivery of the government  organizations.
  *
  *  Copyright (C) <2019>  eGovernments Foundation
@@ -49,299 +49,219 @@ package org.egov.edcr.feature;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.egov.common.constants.MdmsFeatureConstants;
-import org.egov.common.entity.edcr.ElectricLine;
-import org.egov.common.entity.edcr.Plan;
-import org.egov.common.entity.edcr.Result;
-import org.egov.common.entity.edcr.ScrutinyDetail;
-import org.egov.edcr.constants.DxfFileConstants;
-import org.egov.edcr.constants.EdcrRulesMdmsConstants;
-import org.egov.edcr.entity.blackbox.PlanDetail;
-import org.egov.edcr.service.FetchEdcrRulesMdms;
+import org.egov.common.entity.edcr.*;
+import org.egov.edcr.service.MDMSCacheManager;
 import org.egov.edcr.utility.DcrConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 
+import static org.egov.edcr.constants.EdcrReportConstants.*;
+import static org.egov.edcr.service.FeatureUtil.addScrutinyDetailtoPlan;
+import static org.egov.edcr.service.FeatureUtil.mapReportDetails;
+
 @Service
 public class OverheadElectricalLineService extends FeatureProcess {
     private static final Logger LOG = LogManager.getLogger(OverheadElectricalLineService.class);
-    private static final String SUB_RULE_31 = "31";
+	public static BigDecimal overheadVerticalDistance_11000 = BigDecimal.ZERO;
+	public static BigDecimal overheadVerticalDistance_33000 = BigDecimal.ZERO;
+	public static BigDecimal overheadHorizontalDistance_11000 = BigDecimal.ZERO;
+	public static BigDecimal overheadHorizontalDistance_33000 = BigDecimal.ZERO;
+	public static BigDecimal overheadVoltage_11000 = BigDecimal.ZERO;
+	public static BigDecimal overheadVoltage_33000 = BigDecimal.ZERO;
 
-    private static BigDecimal overheadVerticalDistance_11000 = BigDecimal.ZERO;
-    private static BigDecimal overheadVerticalDistance_33000 = BigDecimal.ZERO;
-    private static BigDecimal overheadHorizontalDistance_11000 = BigDecimal.ZERO;
-    private static BigDecimal overheadHorizontalDistance_33000 = BigDecimal.ZERO;
-    private static BigDecimal overheadVoltage_11000 = BigDecimal.ZERO;
-    private static BigDecimal overheadVoltage_33000 = BigDecimal.ZERO;
-    private static final String REMARKS = "Remarks";
-    private static final String VOLTAGE = "Voltage";
+	@Autowired
+	MDMSCacheManager cache;
 
-    @Autowired
-    FetchEdcrRulesMdms fetchEdcrRulesMdms;
+	/**
+	 * Validates the presence of required attributes in electric lines.
+	 *
+	 * @param pl The plan object containing electric line data.
+	 * @return The updated plan object with validation errors (if any) added.
+	 */
+	@Override
+	public Plan validate(Plan pl) {
+	    HashMap<String, String> errors = new HashMap<>();
+	    for (ElectricLine el : pl.getElectricLine()) {
+	        if (el.getPresentInDxf()) {
+	            if (el.getVoltage() == null) {
+	                errors.put(DcrConstants.VOLTAGE, edcrMessageSource.getMessage(DcrConstants.OBJECTNOTDEFINED,
+	                        new String[]{DcrConstants.VOLTAGE}, LocaleContextHolder.getLocale()));
+	            } else if (el.getHorizontalDistance() == null && el.getVerticalDistance() == null) {
+	                errors.put(DcrConstants.ELECTRICLINE_DISTANCE, edcrMessageSource.getMessage(DcrConstants.OBJECTNOTDEFINED,
+	                        new String[]{DcrConstants.ELECTRICLINE_DISTANCE}, LocaleContextHolder.getLocale()));
+	            }
+	        }
+	    }
+	    pl.addErrors(errors);
+	    return pl;
+	}
+	
+	/**
+	 * Processes overhead electric line scrutiny by validating clearances and setting report details.
+	 *
+	 * @param pl The plan object to be processed.
+	 * @return The updated plan object with scrutiny results added.
+	 */
 
-    @Override
-    public Plan validate(Plan pl) {
-        HashMap<String, String> errors = new HashMap<>();
-        for (ElectricLine electricalLine : pl.getElectricLine()) {
-            if (electricalLine.getPresentInDxf()) {
-                if (electricalLine.getVoltage() == null) {
-                    errors.put(DcrConstants.VOLTAGE,
-                            edcrMessageSource.getMessage(DcrConstants.OBJECTNOTDEFINED,
-                                    new String[]{DcrConstants.VOLTAGE}, LocaleContextHolder.getLocale()));
-                    pl.addErrors(errors);
-                }
-                if (electricalLine.getVoltage() != null && (electricalLine.getHorizontalDistance() == null
-                        && electricalLine.getVerticalDistance() == null)) {
-                    errors.put(DcrConstants.ELECTRICLINE_DISTANCE,
-                            edcrMessageSource.getMessage(DcrConstants.OBJECTNOTDEFINED,
-                                    new String[]{DcrConstants.ELECTRICLINE_DISTANCE}, LocaleContextHolder.getLocale()));
-                    pl.addErrors(errors);
-                }
-            }
-        }
-        return pl;
-    }
+	@Override
+	public Plan process(Plan pl) {
+	    validate(pl);
+	    setupScrutinyDetail();
 
-    @Override
-    public Plan process(Plan pl) {
-        // Validate the plan for overhead electrical line compliance
-        validate(pl);
+	    loadOverheadRules(pl);
 
-        // Initialize scrutiny details for the report
-        scrutinyDetail = new ScrutinyDetail();
-        scrutinyDetail.setKey("Common_OverHead Electric Line");
-        scrutinyDetail.addColumnHeading(1, RULE_NO);
-        scrutinyDetail.addColumnHeading(2, DESCRIPTION);
-        scrutinyDetail.addColumnHeading(3, REQUIRED);
-        scrutinyDetail.addColumnHeading(4, PROVIDED);
-        scrutinyDetail.addColumnHeading(6, VOLTAGE);
-        scrutinyDetail.addColumnHeading(7, REMARKS);
-        scrutinyDetail.addColumnHeading(8, STATUS);
+	    for (ElectricLine el : pl.getElectricLine()) {
+	        if (el.getPresentInDxf() && el.getVoltage() != null && el.getVoltage().compareTo(BigDecimal.ZERO) > 0 &&
+	                (el.getHorizontalDistance() != null || el.getVerticalDistance() != null)) {
 
-        // Determine the occupancy type and feature for fetching permissible values
-        String occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl);
-        String feature = MdmsFeatureConstants.OVERHEAD_ELECTRICAL_LINE_SERVICE;
+	            boolean horizontalPassed = false;
+	            String expected = "", actual = "";
 
-        Map<String, Object> params = new HashMap<>();
-       
+	            if (el.getHorizontalDistance() != null) {
+	                actual = el.getHorizontalDistance() + DcrConstants.IN_METER;
+	                expected = getExpectedHorizontalDistance(el.getVoltage());
 
-        // Add feature and occupancy to the parameters map
-        params.put("feature", feature);
-        params.put("occupancy", occupancyName);
+	                BigDecimal expectedVal = getHorizontalThreshold(el.getVoltage());
+	                if (el.getHorizontalDistance().compareTo(expectedVal) >= 0) {
+	                    horizontalPassed = true;
+	                }
+	            }
 
-        // Fetch the list of rules from the plan object
-        Map<String, List<Map<String, Object>>> edcrRuleList = pl.getEdcrRulesFeatures();
+	            if (horizontalPassed) {
+	                setReportOutputDetails(pl, SUB_RULE_31,
+	                        DcrConstants.HORIZONTAL_ELECTRICLINE_DISTANCE + el.getNumber(),
+	                        expected, actual,
+	                        Result.Accepted.getResultVal(), "", el.getVoltage() + DcrConstants.IN_KV);
+	            } else {
+//	                boolean verticalPassed = processVerticalDistance(el, pl, "", "", overheadVoltage_11000,
+//	                        overheadVerticalDistance_11000, overheadVoltage_33000);
 
-        // Specify the columns to fetch from the rules
-        ArrayList<String> valueFromColumn = new ArrayList<>();
-        valueFromColumn.add(EdcrRulesMdmsConstants.OVERHEAD_VERTICAL_DISTANCE_11000);
-        valueFromColumn.add(EdcrRulesMdmsConstants.OVERHEAD_VERTICAL_DISTANCE_33000);
-        valueFromColumn.add(EdcrRulesMdmsConstants.OVERHEAD_HORIZONTAL_DISTANCE_11000);
-        valueFromColumn.add(EdcrRulesMdmsConstants.OVERHEAD_HORIZONTAL_DISTANCE_33000);
-        valueFromColumn.add(EdcrRulesMdmsConstants.OVERHEAD_VOLTAGE_11000);
-        valueFromColumn.add(EdcrRulesMdmsConstants.OVERHEAD_VOLTAGE_33000);
+//	                String result = verticalPassed ? Result.Verify.getResultVal() : Result.Not_Accepted.getResultVal();
+//	                String remarks = verticalPassed
+//	                        ? String.format(DcrConstants.HORIZONTAL_ELINE_DISTANCE_NOC, el.getNumber())
+//	                        : "";
+//
+//	                setReportOutputDetails(pl, SUB_RULE_31,
+//	                        DcrConstants.HORIZONTAL_ELECTRICLINE_DISTANCE + el.getNumber(),
+//	                        expected, actual, result, remarks, el.getVoltage() + DcrConstants.IN_KV);
+//
+//	                if (verticalPassed) {
+//	                    HashMap<String, String> noc = new HashMap<>();
+//	                    noc.put(DcrConstants.HORIZONTAL_ELECTRICLINE_DISTANCE + el.getNumber(),
+//	                            DcrConstants.HORIZONTAL_ELECTRICLINE_DISTANCE_NOC);
+//	                    pl.addNocs(noc);
+//	                }
+	            }
+	        }
+	    }
+	    return pl;
+	}
 
-        // Initialize a list to store permissible values
-        List<Map<String, Object>> permissibleValue = new ArrayList<>();
 
-        // Fetch permissible values from MDMS
-        permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
-        LOG.info("permissibleValue" + permissibleValue); // Log the fetched permissible values
+/**
+ * Initializes the scrutiny detail section for overhead electric line processing.
+ */
+	private void setupScrutinyDetail() {
+	    scrutinyDetail = new ScrutinyDetail();
+	    scrutinyDetail.setKey(Common_OverHead_Electric_Line);
+	    scrutinyDetail.addColumnHeading(1, RULE_NO);
+	    scrutinyDetail.addColumnHeading(2, DESCRIPTION);
+	    scrutinyDetail.addColumnHeading(3, REQUIRED);
+	    scrutinyDetail.addColumnHeading(4, PROVIDED);
+	    scrutinyDetail.addColumnHeading(6, VOLTAGE);
+	    scrutinyDetail.addColumnHeading(7, REMARKS);
+	    scrutinyDetail.addColumnHeading(8, STATUS);
+	}
 
-        // Check if permissible values are available and update the class-level variables
-        if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey(EdcrRulesMdmsConstants.OVERHEAD_VERTICAL_DISTANCE_11000)) {
-            overheadVerticalDistance_11000 = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.OVERHEAD_VERTICAL_DISTANCE_11000).toString()));
-            overheadVerticalDistance_33000 = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.OVERHEAD_VERTICAL_DISTANCE_33000).toString()));
-            overheadHorizontalDistance_11000 = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.OVERHEAD_HORIZONTAL_DISTANCE_11000).toString()));
-            overheadHorizontalDistance_33000 = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.OVERHEAD_HORIZONTAL_DISTANCE_33000).toString()));
-            overheadVoltage_11000 = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.OVERHEAD_VOLTAGE_11000).toString()));
-            overheadVoltage_33000 = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.OVERHEAD_VOLTAGE_33000).toString()));
-        }
+	/**
+	 * Loads the permissible threshold values for electric line voltage and distance from rule cache.
+	 *
+	 * @param pl The plan object used to fetch the rules.
+	 */
+	private void loadOverheadRules(Plan pl) {
+		List<Object> rules = cache.getFeatureRules(pl, FeatureEnum.OVERHEAD_ELECTRICAL_LINE_SERVICE.getValue(), false);
+        Optional<OverheadElectricalLineServiceRequirement> matchedRule = rules.stream()
+            .filter(OverheadElectricalLineServiceRequirement.class::isInstance)
+            .map(OverheadElectricalLineServiceRequirement.class::cast)
+            .findFirst();
+	    if (matchedRule.isPresent()) {
+	    	OverheadElectricalLineServiceRequirement rule = matchedRule.get();
+	        overheadVerticalDistance_11000 = rule.getOverheadVerticalDistance_11000();
+	        overheadVerticalDistance_33000 = rule.getOverheadVerticalDistance_33000();
+	        overheadHorizontalDistance_11000 = rule.getOverheadHorizontalDistance_11000();
+	        overheadHorizontalDistance_33000 = rule.getOverheadHorizontalDistance_33000();
+	        overheadVoltage_11000 = rule.getOverheadVoltage_11000();
+	        overheadVoltage_33000 = rule.getOverheadVoltage_33000();
+	    }
+	}
 
-        // Iterate through all electric lines in the plan
-        for (ElectricLine electricalLine : pl.getElectricLine()) {
-            if (electricalLine.getPresentInDxf()) {
-                // Check if voltage and distances are provided
-                if (electricalLine.getVoltage() != null && electricalLine.getVoltage().compareTo(BigDecimal.ZERO) > 0
-                        && (electricalLine.getHorizontalDistance() != null || electricalLine.getVerticalDistance() != null)) {
+	/**
+	 * Computes the expected horizontal clearance for a given voltage as a formatted string.
+	 *
+	 * @param voltage The voltage of the electric line.
+	 * @return A string representing the required clearance in meters.
+	 */
+	private String getExpectedHorizontalDistance(BigDecimal voltage) {
+	    return getHorizontalThreshold(voltage).toString() + DcrConstants.IN_METER;
+	}
 
-                    boolean horizontalDistancePassed = false;
+	/**
+	 * Returns the horizontal clearance threshold based on the given voltage.
+	 *
+	 * @param voltage The voltage of the electric line.
+	 * @return The minimum permissible horizontal clearance.
+	 */
+	private BigDecimal getHorizontalThreshold(BigDecimal voltage) {
+	    if (voltage.compareTo(overheadVoltage_11000) < 0) {
+	        return overheadHorizontalDistance_11000;
+	    } else if (voltage.compareTo(overheadVoltage_33000) <= 0) {
+	        return overheadHorizontalDistance_33000;
+	    } else {
+	        double increment = 0.3 * Math.ceil(voltage.subtract(overheadVoltage_33000)
+	                .divide(overheadVoltage_33000, 2, RoundingMode.HALF_UP).doubleValue());
+	        return BigDecimal.valueOf(overheadHorizontalDistance_33000.doubleValue() + increment);
+	    }
+	}
+	
 
-                    // Validate horizontal distance
-                    if (electricalLine.getHorizontalDistance() != null) {
-                        String expectedResult = "";
-                        String actualResult = electricalLine.getHorizontalDistance().toString() + DcrConstants.IN_METER;
+	/**
+	 * Adds the scrutiny result for an electric line check to the report output.
+	 *
+	 * @param pl       The plan object to add the report output to.
+	 * @param ruleNo   Rule number under which the check falls.
+	 * @param ruleDesc Description of the rule/check performed.
+	 * @param expected The expected (permissible) value.
+	 * @param actual   The actual provided value from the plan.
+	 * @param status   Status of the check (e.g., Accepted, Not Accepted).
+	 * @param remarks  Any additional remarks or required action.
+	 * @param voltage  Voltage level of the electric line.
+	 */
+	
+  private void setReportOutputDetails(Plan pl, String ruleNo, String ruleDesc, String expected, String actual, String status, String remarks, String voltage) {
+	  ReportScrutinyDetail detail = new ReportScrutinyDetail();
+	  detail.setRuleNo(ruleNo);
+	  detail.setDescription(ruleDesc);
+	  detail.setRemarks(remarks);
+	  detail.setRequired(expected);
+	  detail.setProvided(actual);
+	  detail.setStatus(status);
+	  detail.setVoltage(voltage);
 
-                        // Check horizontal distance based on voltage
-                        if (electricalLine.getVoltage().compareTo(overheadVoltage_11000) < 0) {
-                            expectedResult = overheadHorizontalDistance_11000.toString() + DcrConstants.IN_METER;
-                            if (electricalLine.getHorizontalDistance().compareTo(overheadHorizontalDistance_11000) >= 0)
-                                horizontalDistancePassed = true;
+	  Map<String, String> details = mapReportDetails(detail);
+	  addScrutinyDetailtoPlan(scrutinyDetail, pl, details);
+}
 
-                        } else if (electricalLine.getVoltage().compareTo(overheadVoltage_11000) >= 0
-                                && electricalLine.getVoltage().compareTo(overheadVoltage_33000) <= 0) {
-                            expectedResult = overheadHorizontalDistance_33000.toString() + DcrConstants.IN_METER;
-                            if (electricalLine.getHorizontalDistance().compareTo(overheadHorizontalDistance_33000) >= 0)
-                                horizontalDistancePassed = true;
 
-                        } else if (electricalLine.getVoltage().compareTo(overheadVoltage_33000) > 0) {
-                            Double totalHorizontalOHE = overheadHorizontalDistance_33000.doubleValue() + 0.3 *
-                                    Math.ceil(electricalLine.getVoltage().subtract(overheadVoltage_33000)
-                                            .divide(overheadVoltage_33000, 2, RoundingMode.HALF_UP).doubleValue());
-                            expectedResult = totalHorizontalOHE + DcrConstants.IN_METER;
-                            if (electricalLine.getHorizontalDistance().compareTo(BigDecimal.valueOf(totalHorizontalOHE)) >= 0) {
-                                horizontalDistancePassed = true;
-                            }
-                        }
-
-                        // Add scrutiny details based on validation results
-                        if (horizontalDistancePassed) {
-                            setReportOutputDetails(pl, SUB_RULE_31, DcrConstants.HORIZONTAL_ELECTRICLINE_DISTANCE +
-                                            electricalLine.getNumber(), expectedResult, actualResult,
-                                    Result.Accepted.getResultVal(), "", electricalLine.getVoltage().toString() + DcrConstants.IN_KV);
-                        } else {
-                            boolean verticalDistancePassed = processVerticalDistance(electricalLine, pl, "", "",
-                                    overheadVoltage_11000, overheadVerticalDistance_11000, overheadVoltage_33000);
-                            if (verticalDistancePassed) {
-                                setReportOutputDetails(pl, SUB_RULE_31, DcrConstants.HORIZONTAL_ELECTRICLINE_DISTANCE +
-                                                electricalLine.getNumber(), expectedResult, actualResult,
-                                        Result.Verify.getResultVal(), String.format(DcrConstants.HORIZONTAL_ELINE_DISTANCE_NOC, electricalLine.getNumber()),
-                                        electricalLine.getVoltage().toString() + DcrConstants.IN_KV);
-                            } else {
-                                setReportOutputDetails(pl, SUB_RULE_31, DcrConstants.HORIZONTAL_ELECTRICLINE_DISTANCE +
-                                                electricalLine.getNumber(), expectedResult, actualResult,
-                                        Result.Not_Accepted.getResultVal(), "", electricalLine.getVoltage().toString() + DcrConstants.IN_KV);
-                            }
-
-                            // Add NOC if vertical distance passed but horizontal distance failed
-                            if (verticalDistancePassed) {
-                                HashMap<String, String> noc = new HashMap<>();
-                                noc.put(DcrConstants.HORIZONTAL_ELECTRICLINE_DISTANCE + electricalLine.getNumber(),
-                                        DcrConstants.HORIZONTAL_ELECTRICLINE_DISTANCE_NOC);
-                                pl.addNocs(noc);
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        return pl; // Return the updated plan object
-    }
-
-    private boolean processVerticalDistance(ElectricLine electricalLine, Plan pl, String remarks1, String remarks2, BigDecimal overheadVoltage_11000, BigDecimal overheadVerticalDistance_11000, BigDecimal overheadVoltage_33000) {
-
-        boolean verticalDistancePassed = false;
-
-        if (electricalLine.getVerticalDistance() != null) {
-            String actualResult = electricalLine.getVerticalDistance().toString() + DcrConstants.IN_METER;
-            String expectedResult = "";
-
-            if (electricalLine.getVoltage().compareTo(overheadVoltage_11000) < 0) {
-
-                expectedResult = overheadVerticalDistance_11000.toString() + DcrConstants.IN_METER;
-                if (electricalLine.getVerticalDistance().compareTo(overheadVerticalDistance_11000) >= 0)
-                    verticalDistancePassed = true;
-
-            } else if (electricalLine.getVoltage().compareTo(overheadVoltage_11000) >= 0
-                    && electricalLine.getVoltage().compareTo(overheadVoltage_33000) <= 0) {
-
-                expectedResult = overheadVerticalDistance_33000.toString() + DcrConstants.IN_METER;
-                if (electricalLine.getVerticalDistance().compareTo(overheadVerticalDistance_33000) >= 0)
-                    verticalDistancePassed = true;
-
-            } else if (electricalLine.getVoltage().compareTo(overheadVoltage_33000) > 0) {
-
-                Double totalVertficalOHE = overheadVerticalDistance_33000.doubleValue() + 0.3 *
-                        Math.ceil(
-                                electricalLine.getVoltage().subtract(overheadVoltage_33000)
-                                        .divide(overheadVoltage_33000, 2, RoundingMode.HALF_UP)
-                                        .doubleValue());
-                expectedResult = totalVertficalOHE + DcrConstants.IN_METER;
-                if (electricalLine.getVerticalDistance()
-                        .compareTo(BigDecimal.valueOf(totalVertficalOHE)) >= 0) {
-                    verticalDistancePassed = true;
-                }
-            }
-            if (verticalDistancePassed) {
-                setReportOutputDetails(pl, SUB_RULE_31, DcrConstants.VERTICAL_ELECTRICLINE_DISTANCE + electricalLine.getNumber(), expectedResult,
-                        actualResult, Result.Accepted.getResultVal(), remarks1, electricalLine.getVoltage().toString() + DcrConstants.IN_KV);
-            } else {
-                setReportOutputDetails(pl, SUB_RULE_31, DcrConstants.VERTICAL_ELECTRICLINE_DISTANCE + electricalLine.getNumber(), expectedResult,
-                        actualResult, Result.Not_Accepted.getResultVal(), remarks2, electricalLine.getVoltage().toString() + DcrConstants.IN_KV);
-            }
-
-        }
-        return verticalDistancePassed;
-    }
-
-    private boolean processVerticalDistance(ElectricLine electricalLine, PlanDetail planDetail, String remarks1, String remarks2) {
-
-        boolean verticalDistancePassed = false;
-
-        if (electricalLine.getVerticalDistance() != null) {
-            String actualResult = electricalLine.getVerticalDistance().toString() + DcrConstants.IN_METER;
-            String expectedResult = "";
-
-            if (electricalLine.getVoltage().compareTo(overheadVoltage_11000) < 0) {
-
-                expectedResult = overheadVerticalDistance_11000.toString() + DcrConstants.IN_METER;
-                if (electricalLine.getVerticalDistance().compareTo(overheadVerticalDistance_11000) >= 0)
-                    verticalDistancePassed = true;
-
-            } else if (electricalLine.getVoltage().compareTo(overheadVoltage_11000) >= 0
-                    && electricalLine.getVoltage().compareTo(overheadVoltage_33000) <= 0) {
-
-                expectedResult = overheadVerticalDistance_33000.toString() + DcrConstants.IN_METER;
-                if (electricalLine.getVerticalDistance().compareTo(overheadVerticalDistance_33000) >= 0)
-                    verticalDistancePassed = true;
-
-            } else if (electricalLine.getVoltage().compareTo(overheadVoltage_33000) > 0) {
-
-                Double totalVertficalOHE = overheadVerticalDistance_33000.doubleValue() + 0.3 *
-                        Math.ceil(
-                                electricalLine.getVoltage().subtract(overheadVoltage_33000)
-                                        .divide(overheadVoltage_33000, 2, RoundingMode.HALF_UP)
-                                        .doubleValue());
-                expectedResult = totalVertficalOHE + DcrConstants.IN_METER;
-                if (electricalLine.getVerticalDistance()
-                        .compareTo(BigDecimal.valueOf(totalVertficalOHE)) >= 0) {
-                    verticalDistancePassed = true;
-                }
-            }
-            if (verticalDistancePassed) {
-                setReportOutputDetails(planDetail, SUB_RULE_31, DcrConstants.VERTICAL_ELECTRICLINE_DISTANCE + electricalLine.getNumber(), expectedResult,
-                        actualResult, Result.Accepted.getResultVal(), remarks1, electricalLine.getVoltage().toString() + DcrConstants.IN_KV);
-            } else {
-                setReportOutputDetails(planDetail, SUB_RULE_31, DcrConstants.VERTICAL_ELECTRICLINE_DISTANCE + electricalLine.getNumber(), expectedResult,
-                        actualResult, Result.Not_Accepted.getResultVal(), remarks2, electricalLine.getVoltage().toString() + DcrConstants.IN_KV);
-            }
-
-        }
-        return verticalDistancePassed;
-    }
-
-    private void setReportOutputDetails(Plan pl, String ruleNo, String ruleDesc, String expected, String actual, String status, String remarks, String voltage) {
-        Map<String, String> details = new HashMap<>();
-        details.put(RULE_NO, ruleNo);
-        details.put(DESCRIPTION, ruleDesc);
-        details.put(REQUIRED, expected);
-        details.put(PROVIDED, actual);
-        details.put(REMARKS, remarks);
-        details.put(VOLTAGE, voltage);
-        details.put(STATUS, status);
-        scrutinyDetail.getDetail().add(details);
-        pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
-    }
 
     @Override
     public Map<String, Date> getAmendments() {

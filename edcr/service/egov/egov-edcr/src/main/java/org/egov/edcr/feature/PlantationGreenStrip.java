@@ -1,5 +1,5 @@
 /*
- * eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
+ * UPYOG  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  * accountability and the service delivery of the government  organizations.
  *
  *  Copyright (C) <2019>  eGovernments Foundation
@@ -48,142 +48,176 @@
 package org.egov.edcr.feature;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.egov.common.constants.MdmsFeatureConstants;
-import org.egov.common.entity.edcr.Block;
-import org.egov.common.entity.edcr.Plan;
-import org.egov.common.entity.edcr.Result;
-import org.egov.common.entity.edcr.ScrutinyDetail;
-import org.egov.edcr.constants.DxfFileConstants;
+import org.egov.common.entity.edcr.*;
 import org.egov.edcr.constants.EdcrRulesMdmsConstants;
+import org.egov.edcr.service.MDMSCacheManager;
 import org.egov.edcr.service.FetchEdcrRulesMdms;
 import org.egov.edcr.utility.DcrConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import static org.egov.edcr.constants.CommonFeatureConstants.*;
+import static org.egov.edcr.constants.CommonKeyConstants.BLOCK;
+import static org.egov.edcr.constants.EdcrReportConstants.RULE_37_6;
+import static org.egov.edcr.service.FeatureUtil.addScrutinyDetailtoPlan;
+import static org.egov.edcr.service.FeatureUtil.mapReportDetails;
+
 @Service
 public class PlantationGreenStrip extends FeatureProcess {
     private static final Logger LOG = LogManager.getLogger(PlantationGreenStrip.class);
-    private static final String RULE_37_6 = "37-6";
 
+    @Autowired
+  	MDMSCacheManager cache;
+    
+    /**
+     * Validates the given plan.
+     * 
+     * @param pl The plan to be validated.
+     * @return Currently returns null as the validation logic is not implemented.
+     */
     @Override
     public Plan validate(Plan pl) {
         return null; // Validation logic is not implemented
     }
 
-    @Autowired
-    FetchEdcrRulesMdms fetchEdcrRulesMdms;
+    /**
+     * Processes the plantation green strip rules for the given plan.
+     * Checks if plantation green strip width conditions are met for each block,
+     * based on the permissible width and area threshold defined in the rule.
+     *
+     * @param pl The plan to be processed.
+     * @return The updated plan after plantation green strip scrutiny.
+     */
 
     @Override
     public Plan process(Plan pl) {
-        // Initialize variables to store permissible values for plantation green strip
-        BigDecimal plantationGreenStripPlanValue = BigDecimal.ZERO;
-        BigDecimal plantationGreenStripMinWidth = BigDecimal.ZERO;
+        Optional<PlantationGreenStripRequirement> ruleOpt = getPlantationGreenStripRule(pl);
 
-        // Determine the occupancy type
-        String occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl);
-        String feature = MdmsFeatureConstants.PLANTATION_GREEN_STRIP; // Feature name for plantation green strip
+        BigDecimal plantationGreenStripPlanValue = ruleOpt.map(PlantationGreenStripRequirement::getPlantationGreenStripPlanValue)
+                                                           .orElse(BigDecimal.ZERO);
+        BigDecimal plantationGreenStripMinWidth = ruleOpt.map(PlantationGreenStripRequirement::getPlantationGreenStripMinWidth)
+                                                          .orElse(BigDecimal.ZERO);
 
-        // Prepare parameters for fetching MDMS values
-        Map<String, Object> params = new HashMap<>();
-       
-        params.put("feature", feature);
-        params.put("occupancy", occupancyName);
-
-        // Fetch the list of rules from the plan object
-        Map<String, List<Map<String, Object>>> edcrRuleList = pl.getEdcrRulesFeatures();
-
-        // Specify the columns to fetch from the rules
-        ArrayList<String> valueFromColumn = new ArrayList<>();
-        valueFromColumn.add(EdcrRulesMdmsConstants.PLANTATION_GREEN_STRIP_PLAN_VALUE); // Minimum plot area for plantation
-        valueFromColumn.add(EdcrRulesMdmsConstants.PLANTATION_GREEN_STRIP_MIN_WIDTH); // Minimum width of plantation strip
-
-        // Initialize a list to store permissible values
-        List<Map<String, Object>> permissibleValue = new ArrayList<>();
-
-        // Fetch permissible values from MDMS
-        permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
-        LOG.info("permissibleValue" + permissibleValue); // Log the fetched permissible values
-
-        // Check if permissible values are available and update the plantation green strip values
-        if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey(EdcrRulesMdmsConstants.PLANTATION_GREEN_STRIP_PLAN_VALUE)) {
-            plantationGreenStripPlanValue = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.PLANTATION_GREEN_STRIP_PLAN_VALUE).toString()));
-            plantationGreenStripMinWidth = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.PLANTATION_GREEN_STRIP_MIN_WIDTH).toString()));
-        }
-
-        // Check if the plot area exceeds the minimum required area for plantation
-        if (pl.getPlot() != null && pl.getPlot().getArea().compareTo(plantationGreenStripPlanValue) > 0) {
-            // Iterate through all blocks in the plan
+        if (isPlotAreaGreaterThanPermissible(pl, plantationGreenStripPlanValue)) {
             for (Block block : pl.getBlocks()) {
-
-                // Initialize scrutiny details for the block
-                ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
-                scrutinyDetail.addColumnHeading(1, RULE_NO);
-                scrutinyDetail.addColumnHeading(2, DESCRIPTION);
-                scrutinyDetail.addColumnHeading(3, PERMISSIBLE);
-                scrutinyDetail.addColumnHeading(4, PROVIDED);
-                scrutinyDetail.addColumnHeading(5, STATUS);
-                scrutinyDetail.setKey("Block_" + block.getNumber() + "_" + "Continuous Green Planting Strip");
-
-                boolean isWidthAccepted = false; // Flag to track if the width is acceptable
-                BigDecimal minWidth = BigDecimal.ZERO; // Minimum width of the plantation strip
-
-                // Collect the widths of all plantation green strips in the block
-                List<BigDecimal> widths = block.getPlantationGreenStripes().stream()
-                        .map(greenStrip -> greenStrip.getWidth()).collect(Collectors.toList());
-
-                // Check if widths are available
-                if (!widths.isEmpty()) {
-                    // Find the minimum width among the plantation strips
-                    minWidth = widths.stream().reduce(BigDecimal::min).get();
-
-                    // Validate the minimum width against the permissible width
-                    if (minWidth.compareTo(plantationGreenStripMinWidth) >= 0) {
-                        isWidthAccepted = true; // Mark as accepted if the width is within permissible limits
-                    }
-
-                    // Add the result to the scrutiny report
-                    buildResult(pl, scrutinyDetail, isWidthAccepted, "Width of continuous plantation green strip",
-                            ">= " + plantationGreenStripMinWidth.toString(),
-                            minWidth.setScale(DcrConstants.DECIMALDIGITS_MEASUREMENTS, DcrConstants.ROUNDMODE_MEASUREMENTS)
-                                    .toString());
-                }
+                processBlock(pl, block, plantationGreenStripMinWidth);
             }
         }
-        return pl; // Return the updated plan object
+
+        return pl;
     }
 
     /**
-     * Adds the result of the validation to the scrutiny report.
+     * Retrieves the plantation green strip rule from MDMS for the given plan.
      *
-     * @param pl The plan object
-     * @param scrutinyDetail The scrutiny detail object
-     * @param valid Whether the validation passed or failed
-     * @param description Description of the validation
-     * @param permited The permissible value
-     * @param provided The provided value
+     * @param pl The plan containing feature and configuration context.
+     * @return An Optional containing the first matched {@link MdmsFeatureRule}, if available.
      */
-    private void buildResult(Plan pl, ScrutinyDetail scrutinyDetail, boolean valid, String description, String permited,
-            String provided) {
-        Map<String, String> details = new HashMap<>();
-        details.put(RULE_NO, RULE_37_6); // Rule number for plantation green strip
-        details.put(DESCRIPTION, description); // Description of the validation
-        details.put(PERMISSIBLE, permited); // Permissible value
-        details.put(PROVIDED, provided); // Provided value
-        details.put(STATUS, valid ? Result.Accepted.getResultVal() : Result.Not_Accepted.getResultVal()); // Validation status
-        scrutinyDetail.getDetail().add(details); // Add details to scrutiny detail
-        pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail); // Add scrutiny detail to the plan's report output
+    private Optional<PlantationGreenStripRequirement> getPlantationGreenStripRule(Plan pl) {
+    	List<Object> rules = cache.getFeatureRules(pl, FeatureEnum.PLANTATION_GREEN_STRIP.getValue(), false);
+        return rules.stream()
+            .filter(PlantationGreenStripRequirement.class::isInstance)
+            .map(PlantationGreenStripRequirement.class::cast)
+            .findFirst();
     }
 
+
+    /**
+     * Checks whether the plot area in the plan is greater than the given permissible value.
+     *
+     * @param pl               The plan containing the plot information.
+     * @param permissibleValue The threshold area value to compare against.
+     * @return true if plot area is greater than permissible value, false otherwise.
+     */
+    private boolean isPlotAreaGreaterThanPermissible(Plan pl, BigDecimal permissibleValue) {
+        return pl.getPlot() != null && pl.getPlot().getArea().compareTo(permissibleValue) > 0;
+    }
+
+    /**
+     * Processes a single block in the plan to evaluate plantation green strip widths.
+     * Builds and adds scrutiny details based on the minimum green strip width found in the block.
+     *
+     * @param pl                          The plan being processed.
+     * @param block                       The block to be evaluated.
+     * @param plantationGreenStripMinWidth The minimum required width for plantation green strips.
+     */
+    private void processBlock(Plan pl, Block block, BigDecimal plantationGreenStripMinWidth) {
+        ScrutinyDetail scrutinyDetail = createScrutinyDetailForBlock(block);
+
+        boolean isWidthAccepted = false;
+        BigDecimal minWidth = BigDecimal.ZERO;
+
+        List<BigDecimal> widths = block.getPlantationGreenStripes().stream()
+                .map(greenStrip -> greenStrip.getWidth())
+                .collect(Collectors.toList());
+
+        if (!widths.isEmpty()) {
+            minWidth = widths.stream().reduce(BigDecimal::min).get();
+
+            if (minWidth.compareTo(plantationGreenStripMinWidth) >= 0) {
+                isWidthAccepted = true;
+            }
+
+            buildResult(pl, scrutinyDetail, isWidthAccepted,
+                    WIDTH_OF_CONTINUOUS_PLANTATION_GREEN_STRIP,
+                    GREATER_THAN_EQUAL + plantationGreenStripMinWidth.toString(),
+                    minWidth.setScale(DcrConstants.DECIMALDIGITS_MEASUREMENTS, DcrConstants.ROUNDMODE_MEASUREMENTS)
+                            .toString());
+        }
+    }
+
+    /**
+     * Creates a {@link ScrutinyDetail} object for the specified block for plantation green strip width check.
+     *
+     * @param block The block for which scrutiny details are to be created.
+     * @return A configured {@link ScrutinyDetail} object with column headings.
+     */
+    private ScrutinyDetail createScrutinyDetailForBlock(Block block) {
+        ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
+        scrutinyDetail.addColumnHeading(1, RULE_NO);
+        scrutinyDetail.addColumnHeading(2, DESCRIPTION);
+        scrutinyDetail.addColumnHeading(3, PERMISSIBLE);
+        scrutinyDetail.addColumnHeading(4, PROVIDED);
+        scrutinyDetail.addColumnHeading(5, STATUS);
+        scrutinyDetail.setKey(BLOCK + block.getNumber() + CONTINUOUS_GREEN_PLANTING_STRIP);
+        return scrutinyDetail;
+    }
+
+    /**
+     * Builds a result entry and appends it to the plan's scrutiny report output.
+     *
+     * @param pl         The plan to which the scrutiny detail will be added.
+     * @param scrutinyDetail The scrutiny detail being populated.
+     * @param valid      Whether the validation passed.
+     * @param description Description of the validation being checked.
+     * @param permited   Permissible value as per rule.
+     * @param provided   Provided value in the plan.
+     */
+    private void buildResult(Plan pl, ScrutinyDetail scrutinyDetail, boolean valid, String description, String permited,
+                             String provided) {
+        ReportScrutinyDetail detail = new ReportScrutinyDetail();
+        detail.setRuleNo(RULE_37_6);
+        detail.setDescription(description);
+        detail.setPermissible(permited);
+        detail.setProvided(provided);
+        detail.setStatus(valid ? Result.Accepted.getResultVal() : Result.Not_Accepted.getResultVal());
+
+        Map<String, String> details = mapReportDetails(detail);
+        addScrutinyDetailtoPlan(scrutinyDetail, pl, details);
+    }
+
+    
     @Override
     public Map<String, Date> getAmendments() {
         return new LinkedHashMap<>(); // Return an empty map for amendments

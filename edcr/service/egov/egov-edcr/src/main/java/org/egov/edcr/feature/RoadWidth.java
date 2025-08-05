@@ -1,5 +1,5 @@
 /*
- * eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
+ * UPYOG  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
 
 
  * accountability and the service delivery of the government  organizations.
@@ -49,30 +49,32 @@
 
 package org.egov.edcr.feature;
 
+import static org.egov.edcr.constants.CommonFeatureConstants.METER;
 import static org.egov.edcr.constants.DxfFileConstants.B;
 import static org.egov.edcr.constants.DxfFileConstants.D;
 import static org.egov.edcr.constants.DxfFileConstants.F;
 import static org.egov.edcr.constants.DxfFileConstants.F_CB;
 import static org.egov.edcr.constants.DxfFileConstants.F_RT;
 import static org.egov.edcr.constants.DxfFileConstants.G;
+import static org.egov.edcr.constants.EdcrReportConstants.*;
+import static org.egov.edcr.service.FeatureUtil.addScrutinyDetailtoPlan;
+import static org.egov.edcr.service.FeatureUtil.mapReportDetails;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.egov.common.constants.MdmsFeatureConstants;
 import org.egov.common.entity.dcr.helper.OccupancyHelperDetail;
-import org.egov.common.entity.edcr.Plan;
-import org.egov.common.entity.edcr.Result;
-import org.egov.common.entity.edcr.ScrutinyDetail;
-import org.egov.edcr.constants.DxfFileConstants;
+import org.egov.common.entity.edcr.*;
 import org.egov.edcr.constants.EdcrRulesMdmsConstants;
+import org.egov.edcr.service.MDMSCacheManager;
 import org.egov.edcr.service.FetchEdcrRulesMdms;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -81,116 +83,105 @@ import org.springframework.stereotype.Service;
 public class RoadWidth extends FeatureProcess {
 
     private static final Logger LOG = LogManager.getLogger(RoadWidth.class);
-    private static final String RULE_34 = "34-1";
-    public static final String ROADWIDTH_DESCRIPTION = "Minimum Road Width";
-    public static final String NEW = "NEW";
-    
+
     @Autowired
-    FetchEdcrRulesMdms fetchEdcrRulesMdms;
+	MDMSCacheManager cache;
 
     @Override
     public Map<String, Date> getAmendments() {
         return new LinkedHashMap<>(); // No amendments defined for this feature
     }
 
+    /**
+     * Validates the provided Plan object.
+     * No specific validation logic is implemented for road width in this method.
+     *
+     * @param pl the Plan object to validate
+     * @return the same Plan object without modifications
+     */
     @Override
     public Plan validate(Plan pl) {
         return pl; // No validation logic currently implemented
     }
 
+    /**
+     * Processes the Plan object to verify if the provided road width meets
+     * the required minimum width for the most restrictive occupancy type.
+     * Adds appropriate scrutiny detail entries to the report.
+     *
+     * @param pl the Plan object to process
+     * @return the modified Plan object with road width scrutiny results
+     */
     @Override
     public Plan process(Plan pl) {
-        // Check if road width is provided in plan information
-        if (pl.getPlanInformation() != null && pl.getPlanInformation().getRoadWidth() != null) {
-            BigDecimal roadWidth = pl.getPlanInformation().getRoadWidth();
-            String typeOfArea = pl.getPlanInformation().getTypeOfArea();
-
-            // Apply rule only for NEW area types
-            if (typeOfArea != null && NEW.equalsIgnoreCase(typeOfArea)) {
-                ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
-                scrutinyDetail.setKey("Common_Road Width"); // Setting the scrutiny detail key
-                scrutinyDetail.addColumnHeading(1, RULE_NO);
-                scrutinyDetail.addColumnHeading(2, DESCRIPTION);
-                scrutinyDetail.addColumnHeading(3, OCCUPANCY);
-                scrutinyDetail.addColumnHeading(4, PERMITTED);
-                scrutinyDetail.addColumnHeading(5, PROVIDED);
-                scrutinyDetail.addColumnHeading(6, STATUS);
-
-                Map<String, String> details = new HashMap<>();
-                details.put(RULE_NO, RULE_34);
-                details.put(DESCRIPTION, ROADWIDTH_DESCRIPTION);
-
-                // Get permissible road width values for the occupancy
-                Map<String, BigDecimal> occupancyValuesMap = getOccupancyValues(pl);
-
-                // Fetch occupancy type from the most restrictive FAR helper
-                if (pl.getVirtualBuilding() != null && pl.getVirtualBuilding().getMostRestrictiveFarHelper() != null) {
-                    OccupancyHelperDetail occupancyType = pl.getVirtualBuilding().getMostRestrictiveFarHelper()
-                            .getSubtype() != null
-                                    ? pl.getVirtualBuilding().getMostRestrictiveFarHelper().getSubtype()
-                                    : pl.getVirtualBuilding().getMostRestrictiveFarHelper().getType();
-
-                    if (occupancyType != null) {
-                        details.put(OCCUPANCY, occupancyType.getName());
-
-                        // Fetch the required road width for this occupancy type
-                        BigDecimal roadWidthRequired = occupancyValuesMap.get(occupancyType.getCode());
-                        if (roadWidthRequired != null) {
-                            // Check if provided road width is acceptable
-                            if (roadWidth.compareTo(roadWidthRequired) >= 0) {
-                                details.put(PERMITTED, String.valueOf(roadWidthRequired) + "m");
-                                details.put(PROVIDED, roadWidth.toString() + "m");
-                                details.put(STATUS, Result.Accepted.getResultVal());
-                                scrutinyDetail.getDetail().add(details);
-                                pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
-                            } else {
-                                details.put(PERMITTED, String.valueOf(roadWidthRequired) + "m");
-                                details.put(PROVIDED, roadWidth.toString() + "m");
-                                details.put(STATUS, Result.Not_Accepted.getResultVal());
-                                scrutinyDetail.getDetail().add(details);
-                                pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
-                            }
-                        }
-                    }
-                }
-            }
+        if (pl.getPlanInformation() == null || pl.getPlanInformation().getRoadWidth() == null) {
+            return pl;
         }
+
+        BigDecimal roadWidth = pl.getPlanInformation().getRoadWidth();
+        String typeOfArea = pl.getPlanInformation().getTypeOfArea();
+
+        if (!NEW.equalsIgnoreCase(typeOfArea)) {
+            return pl;
+        }
+
+        ScrutinyDetail scrutinyDetail = buildRoadWidthScrutinyDetail();
+
+        ReportScrutinyDetail detail = new ReportScrutinyDetail();
+        detail.setRuleNo(RULE_34);
+        detail.setDescription(ROADWIDTH_DESCRIPTION);
+
+        Map<String, BigDecimal> occupancyValuesMap = getOccupancyValues(pl);
+
+        if (pl.getVirtualBuilding() == null || pl.getVirtualBuilding().getMostRestrictiveFarHelper() == null) {
+            return pl;
+        }
+
+        OccupancyHelperDetail occupancyType = pl.getVirtualBuilding().getMostRestrictiveFarHelper().getSubtype();
+        if (occupancyType == null) {
+            occupancyType = pl.getVirtualBuilding().getMostRestrictiveFarHelper().getType();
+        }
+
+        if (occupancyType == null) {
+            return pl;
+        }
+
+        detail.setOccupancy(occupancyType.getName());
+
+        BigDecimal roadWidthRequired = occupancyValuesMap.get(occupancyType.getCode());
+        if (roadWidthRequired != null) {
+            detail.getPermitted(roadWidthRequired + METER);
+            detail.getProvided(roadWidth + METER);
+            String status = roadWidth.compareTo(roadWidthRequired) >= 0
+                    ? Result.Accepted.getResultVal()
+                    : Result.Not_Accepted.getResultVal();
+            detail.setProvided(roadWidth + METER);
+            detail.setStatus(status);
+            Map<String, String> details = mapReportDetails(detail);
+            addScrutinyDetailtoPlan(scrutinyDetail, pl, details);
+        }
+
         return pl;
     }
-
-    // Method to retrieve permissible road width values from MDMS rules
+    /**
+     * Retrieves the permissible road width values for various occupancy types from the MDMS feature rules.
+     * These values are used to validate the provided road width against the expected requirement.
+     *
+     * @param plan the Plan object for which rules are fetched
+     * @return a map of occupancy codes to their respective permissible road width values
+     */
     public Map<String, BigDecimal> getOccupancyValues(Plan plan) {
-    	
-    	BigDecimal roadWidthValue = BigDecimal.ZERO; // Default road width value
-    	
-    	String occupancyName = fetchEdcrRulesMdms.getOccupancyName(plan);
-		
-		String feature = MdmsFeatureConstants.ROAD_WIDTH;
+        BigDecimal roadWidthValue = BigDecimal.ZERO;
 
-		// Determine occupancy type from the FAR helper
-		Map<String, Object> params = new HashMap<>();
-		
+    	List<Object> rules = cache.getFeatureRules(plan, FeatureEnum.ROAD_WIDTH.getValue(), false);
+        Optional<RoadWidthRequirement> matchedRule = rules.stream()
+            .filter(RoadWidthRequirement.class::isInstance)
+            .map(RoadWidthRequirement.class::cast)
+            .findFirst();
+        if (matchedRule.isPresent()) {
+            roadWidthValue = matchedRule.get().getPermissible();
+        }
 
-		params.put("feature", feature);
-		params.put("occupancy", occupancyName);
-
-		Map<String,List<Map<String,Object>>> edcrRuleList = plan.getEdcrRulesFeatures();
-
-		ArrayList<String> valueFromColumn = new ArrayList<>();
-		valueFromColumn.add(EdcrRulesMdmsConstants.PERMISSIBLE_VALUE);
-
-		List<Map<String, Object>> permissibleValue = new ArrayList<>();
-
-		// Fetch permissible value using MDMS service
-		permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
-		LOG.info("permissibleValue" + permissibleValue);
-
-		// Extract the road width value if present
-		if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey(EdcrRulesMdmsConstants.PERMISSIBLE_VALUE)) {
-			roadWidthValue = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.PERMISSIBLE_VALUE).toString()));
-		}
-
-        // Assign retrieved value to all relevant occupancy codes
         Map<String, BigDecimal> roadWidthValues = new HashMap<>();
         roadWidthValues.put(B, roadWidthValue);
         roadWidthValues.put(D, roadWidthValue);
@@ -198,8 +189,29 @@ public class RoadWidth extends FeatureProcess {
         roadWidthValues.put(F, roadWidthValue);
         roadWidthValues.put(F_RT, roadWidthValue);
         roadWidthValues.put(F_CB, roadWidthValue);
-        return roadWidthValues;
 
+        return roadWidthValues;
     }
+    
+
+/**
+ * Constructs a ScrutinyDetail object pre-populated with column headers
+ * relevant for road width validation.
+ *
+ * @return a configured ScrutinyDetail object ready to store validation results
+ */
+    private ScrutinyDetail buildRoadWidthScrutinyDetail() {
+        ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
+        scrutinyDetail.setKey(Common_Road_Width);
+        scrutinyDetail.addColumnHeading(1, RULE_NO);
+        scrutinyDetail.addColumnHeading(2, DESCRIPTION);
+        scrutinyDetail.addColumnHeading(3, OCCUPANCY);
+        scrutinyDetail.addColumnHeading(4, PERMITTED);
+        scrutinyDetail.addColumnHeading(5, PROVIDED);
+        scrutinyDetail.addColumnHeading(6, STATUS);
+        return scrutinyDetail;
+    }
+
+
 }
 

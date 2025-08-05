@@ -54,15 +54,17 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.egov.common.entity.edcr.Plan;
+import org.egov.common.entity.edcr.ReportScrutinyDetail;
 import org.egov.common.entity.edcr.Result;
 import org.egov.common.entity.edcr.ScrutinyDetail;
 import org.egov.edcr.utility.DcrConstants;
 import org.springframework.stereotype.Service;
 
+import static org.egov.edcr.service.FeatureUtil.addScrutinyDetailtoPlan;
+import static org.egov.edcr.service.FeatureUtil.mapReportDetails;
+
 @Service
 public class DepthCuttingService extends FeatureProcess {
-	private static final String SUBRULE_11_A_DESC = "Maximum depth of cutting from ground level";
-	private static final String SUBRULE_11_A = "11-A";
 
 	@Override
 	public Plan validate(Plan pl) {
@@ -88,14 +90,15 @@ public class DepthCuttingService extends FeatureProcess {
 
 	private void setReportOutputDetails(Plan pl, String ruleNo, String ruleDescription, String expected, String actual,
 			String status) {
-		Map<String, String> details = new HashMap<>();
-		details.put(RULE_NO, ruleNo);
-		details.put(DESCRIPTION, ruleDescription);
-		details.put(REQUIRED, expected);
-		details.put(PROVIDED, actual);
-		details.put(STATUS, status);
-		scrutinyDetail.getDetail().add(details);
-		pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+		ReportScrutinyDetail detail = new ReportScrutinyDetail();
+		detail.setRuleNo(ruleNo);
+		detail.setDescription(ruleDescription);
+		detail.setRequired(expected);
+		detail.setProvided(actual);
+		detail.setStatus(status);
+
+		Map<String, String> details = mapReportDetails(detail);
+		addScrutinyDetailtoPlan(scrutinyDetail, pl, details);
 	}
 
 	@Override

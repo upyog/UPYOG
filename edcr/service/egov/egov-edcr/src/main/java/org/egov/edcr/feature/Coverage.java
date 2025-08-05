@@ -1,5 +1,5 @@
 /*
- * eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
+ * UPYOG  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  * accountability and the service delivery of the government  organizations.
  *
  *  Copyright (C) <2019>  eGovernments Foundation
@@ -48,11 +48,7 @@
 
 package org.egov.edcr.feature;
 
-import static org.egov.edcr.constants.DxfFileConstants.A;
-import static org.egov.edcr.constants.DxfFileConstants.F;
-
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.EnumSet;
 import java.util.HashMap;
@@ -60,24 +56,22 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.egov.common.entity.edcr.Block;
-import org.egov.common.entity.edcr.Floor;
-import org.egov.common.entity.edcr.Measurement;
-import org.egov.common.entity.edcr.Occupancy;
-import org.egov.common.entity.edcr.OccupancyType;
-import org.egov.common.entity.edcr.OccupancyTypeHelper;
-import org.egov.common.entity.edcr.Plan;
-import org.egov.common.entity.edcr.Result;
-import org.egov.common.entity.edcr.ScrutinyDetail;
-import org.egov.edcr.service.EdcrRestService;
+import org.egov.common.constants.MdmsFeatureConstants;
+import org.egov.common.entity.edcr.*;
+import org.egov.edcr.service.MDMSCacheManager;
 import org.egov.edcr.service.FetchEdcrRulesMdms;
 import org.egov.edcr.utility.DcrConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import static org.egov.edcr.constants.CommonFeatureConstants.*;
+import static org.egov.edcr.constants.EdcrReportConstants.*;
+import static org.egov.edcr.service.FeatureUtil.mapReportDetails;
 
 @Service
 public class Coverage extends FeatureProcess {
@@ -85,16 +79,12 @@ public class Coverage extends FeatureProcess {
 
 	private static final Logger LOG = LogManager.getLogger(Coverage.class);
 
-	// private static final String RULE_NAME_KEY = "coverage.rulename";
-	private static final String RULE_DESCRIPTION_KEY = "coverage.description";
-	private static final String RULE_EXPECTED_KEY = "coverage.expected";
-	private static final String RULE_ACTUAL_KEY = "coverage.actual";
-	
 	@Autowired
 	FetchEdcrRulesMdms fetchEdcrRulesMdms;
-//	private static final BigDecimal Thirty = BigDecimal.valueOf(30);
-//	private static final BigDecimal ThirtyFive = BigDecimal.valueOf(35);
-//	private static final BigDecimal Forty = BigDecimal.valueOf(40);
+	
+	 @Autowired
+	MDMSCacheManager cache;
+
 
 	/*
 	 * private static final BigDecimal FortyFive = BigDecimal.valueOf(45); private
@@ -110,198 +100,177 @@ public class Coverage extends FeatureProcess {
 	public static final String RULE_38 = "38";
 	public static final String RULE_7_C_1 = "Table 7-C-1";
 	public static final String RULE = "4.4.4";
-	private static final BigDecimal ROAD_WIDTH_TWELVE_POINTTWO = BigDecimal.valueOf(12.2);
-	private static final BigDecimal ROAD_WIDTH_THIRTY_POINTFIVE = BigDecimal.valueOf(30.5);
-
+	
 	@Override
 	public Plan validate(Plan pl) {
 		for (Block block : pl.getBlocks()) {
 			if (block.getCoverage().isEmpty()) {
-				pl.addError("coverageArea" + block.getNumber(),
-						"Coverage Area for block " + block.getNumber() + " not Provided");
+				pl.addError(COVERAGE_AREA + block.getNumber(),
+						COVERAGE_AREA_BLOCK + block.getNumber() + NOT_PROVIDED);
 			}
 		}
 		return pl;
 	}
 
+
+	/**
+	 * Processes the Plan object to calculate and validate the coverage area.
+	 *
+	 * @param pl the Plan object containing plot, blocks, occupancy, etc.
+	 * @return updated Plan object with coverage details set
+	 */
 	@Override
 	public Plan process(Plan pl) {
-		LOG.info("inside Coverage process()");
-		validate(pl);
-		System.out.println("coverage corearea" + pl.getCoreArea());
-		BigDecimal totalCoverage = BigDecimal.ZERO;
-		BigDecimal totalCoverageArea = BigDecimal.ZERO;
-//		BigDecimal area = pl.getPlot().getArea(); // add for get total plot area
-		BigDecimal plotArea = pl.getPlot().getArea(); // add for get total plot area
+	    LOG.info("inside Coverage process()");
+	    validate(pl);
+	    LOG.debug("coverage corearea: {}", pl.getCoreArea());
 
-		String coreArea = pl.getCoreArea();
-		int noOfFloors = 0;
-		Set<OccupancyTypeHelper> occupancyList = new HashSet<>();
-		// add for getting OccupancyType
-		OccupancyTypeHelper mostRestrictiveOccupancy = pl.getVirtualBuilding().getMostRestrictiveFarHelper();
-//		String a=mostRestrictiveOccupancy.getType().getCode();
-		// add for getting OccupancyType
-//		OccupancyType mostRestrictiveOccupancy = getMostRestrictiveCoverage(pl.getVirtualBuilding().getOccupancies());
-		for (Block block : pl.getBlocks()) {
+	    BigDecimal plotArea = pl.getPlot().getArea();
+	    String coreArea = pl.getCoreArea();
+	    int noOfFloors = 0;
 
-			for (Floor flr : block.getBuilding().getFloors()) {
-				for (Occupancy occupancy : flr.getOccupancies()) {
-					if (occupancy.getTypeHelper() != null && occupancy.getTypeHelper().getType() != null)
-						occupancyList.add(occupancy.getTypeHelper());
-				}
-			}
+	    Set<OccupancyTypeHelper> occupancyList = extractOccupancyList(pl);
+	    OccupancyTypeHelper mostRestrictiveOccupancy = pl.getVirtualBuilding().getMostRestrictiveFarHelper();
 
-			BigDecimal coverageAreaWithoutDeduction = BigDecimal.ZERO;
-			BigDecimal coverageDeductionArea = BigDecimal.ZERO;
+	    BigDecimal totalCoverageArea = calculateCoverageAreas(pl, plotArea);
+	    BigDecimal totalCoverage = calculateTotalCoverage(plotArea, totalCoverageArea);
 
-			noOfFloors = block.getBuilding().getFloors().size();
+	    pl.setCoverage(totalCoverage);
+	    if (pl.getVirtualBuilding() != null) {
+	        pl.getVirtualBuilding().setTotalCoverageArea(totalCoverageArea);
+	    }
 
-			for (Measurement coverage : block.getCoverage()) {
-				coverageAreaWithoutDeduction = coverageAreaWithoutDeduction.add(coverage.getArea());
-			}
-			for (Measurement deduct : block.getCoverageDeductions()) {
-				coverageDeductionArea = coverageDeductionArea.add(deduct.getArea());
-			}
-			if (block.getBuilding() != null) {
-				block.getBuilding().setCoverageArea(coverageAreaWithoutDeduction.subtract(coverageDeductionArea));
-				BigDecimal coverage = BigDecimal.ZERO;
-				if (pl.getPlot().getPlotBndryArea().doubleValue() > 0)
-					coverage = block.getBuilding().getCoverageArea().multiply(BigDecimal.valueOf(100)).divide(
-							plotArea, DcrConstants.DECIMALDIGITS_MEASUREMENTS,
-							DcrConstants.ROUNDMODE_MEASUREMENTS);
+	    BigDecimal permissibleCoverageValue = getPermissibleCoverageIfApplicable(pl, plotArea, mostRestrictiveOccupancy);
+	    if (permissibleCoverageValue.compareTo(BigDecimal.ZERO) > 0) {
+	        processCoverage(pl, mostRestrictiveOccupancy.getType().getName(), totalCoverage, permissibleCoverageValue);
+	    }
 
-				block.getBuilding().setCoverage(coverage);
-
-				totalCoverageArea = totalCoverageArea.add(block.getBuilding().getCoverageArea());
-				// totalCoverage =
-				// totalCoverage.add(block.getBuilding().getCoverage());
-			}
-
-		}
-
-		// pl.setCoverageArea(totalCoverageArea);
-		// use plotArea
-		if (pl.getPlot() != null && pl.getPlot().getArea().doubleValue() > 0)
-			totalCoverage = totalCoverageArea.multiply(BigDecimal.valueOf(100)).divide(plotArea,
-					DcrConstants.DECIMALDIGITS_MEASUREMENTS, DcrConstants.ROUNDMODE_MEASUREMENTS);
-		pl.setCoverage(totalCoverage);
-		if (pl.getVirtualBuilding() != null) {
-			pl.getVirtualBuilding().setTotalCoverageArea(totalCoverageArea);
-		}
-
-		BigDecimal roadWidth = pl.getPlanInformation().getRoadWidth();
-//		String areaCategory = pl.getAreaCategory();
-		BigDecimal permissibleCoverageValue = BigDecimal.ZERO;
-		//String developmentZone = pl.getPlanInformation().getDevelopmentZone(); //
-//		if (developmentZone == null) {
-//			pl.addError(getLocaleMessage(OBJECTNOTDEFINED, DEVELOPMENT_ZONE + " of PLAN_INFO layer"));
-//		}
-//		String occupancyType;
-
-		String occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl);
-		String feature = "Coverage";
-		// get coverage permissible value from method and store in
-		// permissibleCoverageValue
-		if (plotArea.compareTo(BigDecimal.valueOf(0)) > 0 && mostRestrictiveOccupancy != null
-				) {
-//			occupancyType = mostRestrictiveOccupancy.getType().getCode();
-			
-			permissibleCoverageValue = getPermissibleCoverage(plotArea, feature, occupancyName,
-					pl.getEdcrRulesFeatures());
-		}
-
-		if (permissibleCoverageValue.compareTo(BigDecimal.valueOf(0)) > 0) {
-			processCoverage(pl, mostRestrictiveOccupancy.getType().getName(), totalCoverage, permissibleCoverageValue
-					);
-		}
-//		if (plotArea.compareTo(BigDecimal.valueOf(0)) > 0 && mostRestrictiveOccupancy != null &&
-//				A.equals(mostRestrictiveOccupancy.getType().getCode())
-//				) {
-////			occupancyType = mostRestrictiveOccupancy.getType().getCode();
-//			permissibleCoverageValue = getPermissibleCoverageForResidential(plotArea, coreArea);
-//		}
-				//permissibleCoverageValue = getPermissibleCoverageForMix(plotArea);
-//			} else if (A.equals(mostRestrictiveOccupancy.getType().getCode())) { // if
-//				permissibleCoverageValue = getPermissibleCoverageForResidential(plotArea);
-//			} else if (F.equals(mostRestrictiveOccupancy.getType().getCode())) { // if
-//				permissibleCoverageValue = getPermissibleCoverageForCommercial(plotArea, developmentZone, noOfFloors);
-//			} else if (J.equals(mostRestrictiveOccupancy.getType().getCode())) { // if
-//				permissibleCoverageValue = getPermissibleCoverageForGovernment(plotArea, developmentZone,
-//						noOfFloors);
-//			} else if (G.equals(mostRestrictiveOccupancy.getType().getCode())) { // if
-//				permissibleCoverageValue = getPermissibleCoverageForIndustrial();
-//			}
-		
-		
-//		permissibleCoverageValue = getPermissibleCoverage(plotArea, feature, occupancyName,
-//				pl.getEdcrRulesFeatures());
-//		if (permissibleCoverageValue.compareTo(BigDecimal.valueOf(0)) > 0
-//				&& A.equals(mostRestrictiveOccupancy.getType().getCode())
-//				) {
-//			//if (occupancyList != null && occupancyList.size() > 1) {
-//				processCoverage(pl,mostRestrictiveOccupancy.getType().getName(), totalCoverage, permissibleCoverageValue);
-//		//	}
-//
-//				if (A.equals(mostRestrictiveOccupancy.getType().getCode())) { // if
-//					occupancyName = "Residential";
-//
-//				} else if (F.equals(mostRestrictiveOccupancy.getType().getCode())) { // if
-//
-//					occupancyName = "Commercial";
-//
-//				}
-
-//				
-//			}
-		//}
-
-//		if (roadWidth != null && roadWidth.compareTo(ROAD_WIDTH_TWELVE_POINTTWO) >= 0
-//				&& roadWidth.compareTo(ROAD_WIDTH_THIRTY_POINTFIVE) <= 0) {
-//
-//			processCoverage(pl, StringUtils.EMPTY, totalCoverage, permissibleCoverageValue);
-//		}
-
-		return pl;
+	    return pl;
 	}
 	
+	/**
+	 * Extracts all unique OccupancyTypeHelpers from the floors of all blocks in the plan.
+	 *
+	 * @param pl the Plan object
+	 * @return a set of OccupancyTypeHelper extracted from the plan
+	 */
+	private Set<OccupancyTypeHelper> extractOccupancyList(Plan pl) {
+	    Set<OccupancyTypeHelper> occupancyList = new HashSet<>();
+	    for (Block block : pl.getBlocks()) {
+	        for (Floor flr : block.getBuilding().getFloors()) {
+	            for (Occupancy occupancy : flr.getOccupancies()) {
+	                if (occupancy.getTypeHelper() != null && occupancy.getTypeHelper().getType() != null) {
+	                    occupancyList.add(occupancy.getTypeHelper());
+	                }
+	            }
+	        }
+	    }
+	    return occupancyList;
+	}
+
+	/**
+	 * Calculates the total coverage area by summing up net coverage areas of all blocks.
+	 *
+	 * @param pl the Plan object
+	 * @param plotArea the total plot area
+	 * @return total net coverage area across all blocks
+	 */
+	private BigDecimal calculateCoverageAreas(Plan pl, BigDecimal plotArea) {
+	    BigDecimal totalCoverageArea = BigDecimal.ZERO;
+
+	    for (Block block : pl.getBlocks()) {
+	        BigDecimal coverageAreaWithoutDeduction = BigDecimal.ZERO;
+	        BigDecimal coverageDeductionArea = BigDecimal.ZERO;
+
+	        for (Measurement coverage : block.getCoverage()) {
+	            coverageAreaWithoutDeduction = coverageAreaWithoutDeduction.add(coverage.getArea());
+	        }
+	        for (Measurement deduct : block.getCoverageDeductions()) {
+	            coverageDeductionArea = coverageDeductionArea.add(deduct.getArea());
+	        }
+
+	        BigDecimal netCoverageArea = coverageAreaWithoutDeduction.subtract(coverageDeductionArea);
+	        if (block.getBuilding() != null) {
+	            block.getBuilding().setCoverageArea(netCoverageArea);
+	            if (plotArea.doubleValue() > 0) {
+	                BigDecimal coveragePercentage = netCoverageArea.multiply(BigDecimal.valueOf(100))
+	                        .divide(plotArea, DcrConstants.DECIMALDIGITS_MEASUREMENTS, DcrConstants.ROUNDMODE_MEASUREMENTS);
+	                block.getBuilding().setCoverage(coveragePercentage);
+	            }
+	        }
+
+	        totalCoverageArea = totalCoverageArea.add(netCoverageArea);
+	    }
+
+	    return totalCoverageArea;
+	}
+
+	/**
+	 * Calculates the percentage of total coverage area with respect to plot area.
+	 *
+	 * @param plotArea total plot area
+	 * @param totalCoverageArea total area covered by buildings
+	 * @return coverage percentage
+	 */
+	private BigDecimal calculateTotalCoverage(BigDecimal plotArea, BigDecimal totalCoverageArea) {
+	    if (plotArea.compareTo(BigDecimal.ZERO) > 0) {
+	        return totalCoverageArea.multiply(BigDecimal.valueOf(100))
+	                .divide(plotArea, DcrConstants.DECIMALDIGITS_MEASUREMENTS, DcrConstants.ROUNDMODE_MEASUREMENTS);
+	    }
+	    return BigDecimal.ZERO;
+	}
+
+	/**
+	 * Retrieves the permissible coverage based on plot area and most restrictive occupancy.
+	 *
+	 * @param pl the Plan object
+	 * @param plotArea the plot area
+	 * @param mostRestrictiveOccupancy the occupancy considered most restrictive
+	 * @return permissible coverage in percentage
+	 */
+	private BigDecimal getPermissibleCoverageIfApplicable(Plan pl, BigDecimal plotArea, OccupancyTypeHelper mostRestrictiveOccupancy) {
+	    if (plotArea.compareTo(BigDecimal.ZERO) > 0 && mostRestrictiveOccupancy != null) {
+	        String occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl).toLowerCase();
+	        String feature = MdmsFeatureConstants.COVERAGE;
+	        return getPermissibleCoverage(pl, plotArea, feature, occupancyName);
+	    }
+	    return BigDecimal.ZERO;
+	}
+
 	
-	private BigDecimal getPermissibleCoverage(BigDecimal area,  String feature,
-			String occupancyName, Map<String, List<Map<String, Object>>> edcrRuleList) {
+	/**
+	 * Fetches the permissible coverage from cached rules based on plot area and occupancy name.
+	 *
+	 * @param pl the Plan object
+	 * @param area the plot area
+	 * @param feature the feature for which rule is being fetched (e.g., "Coverage")
+	 * @param occupancyName the name of the occupancy
+	 * @return permissible coverage value
+	 */
+	private BigDecimal getPermissibleCoverage(Plan pl, BigDecimal area, String feature, String occupancyName) {
 		LOG.info("inside getPermissibleCoverage()");
 
 		BigDecimal permissibleCoverage = BigDecimal.ZERO;
+		// Fetch all rules for the given plan from the cache.
+		// Then, filter to find the first rule where the condition falls within the
+		// defined range.
+		// If a matching rule is found, proceed with its processing.
 
-		Map<String, Object> params = new HashMap<>();
-		params.put("feature", feature);
-		params.put("occupancy", occupancyName);
-		params.put("plotArea", area);
-		//params.put("developmentZone", developmentZone);
-		
-		
-		ArrayList<String> valueFromColumn = new ArrayList<>();
-		valueFromColumn.add("permissibleValue");
+		List<Object> rules = cache.getFeatureRules(pl, FeatureEnum.COVERAGE.getValue(), true);
 
-		List<Map<String, Object>> permissibleValue = new ArrayList<>();
+		Optional<CoverageRequirement> matchedRule = rules.stream()
+		    .filter(CoverageRequirement.class::isInstance)
+		    .map(CoverageRequirement.class::cast)
+		    .filter(rule -> area.compareTo(rule.getFromPlotArea()) >= 0 && area.compareTo(rule.getToPlotArea()) < 0)
+		    .findFirst();
 
-		try {
-			permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
-			LOG.info("permissibleValue" + permissibleValue);
-			
-
-		} catch (NullPointerException e) {
-
-			LOG.error("Permissible Value for Coverage not found--------", e);
-			return null;
+		if (matchedRule.isPresent()) {
+			CoverageRequirement rule = matchedRule.get();
+			permissibleCoverage = rule.getPermissible();
+		} else {
+			permissibleCoverage = BigDecimal.ZERO;
 		}
-
-		if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey("permissibleValue")) {
-			permissibleCoverage = BigDecimal
-					.valueOf(Double.valueOf(permissibleValue.get(0).get("permissibleValue").toString()));
-		}
-		
 		return permissibleCoverage;
-		
-		
 
 	}
 
@@ -395,65 +364,67 @@ public class Coverage extends FeatureProcess {
 		return permissibleCoverage;
 	}
 
-	private void processCoverage(Plan pl, String occupancy, BigDecimal coverage, BigDecimal upperLimit
-			) {
-		LOG.info("inside processCoverage()");
-		ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
-		scrutinyDetail.setKey("Common_Coverage");
-		scrutinyDetail.setHeading("Coverage in Percentage");
-		scrutinyDetail.addColumnHeading(1, RULE_NO);
-	   // scrutinyDetail.addColumnHeading(2, DEVELOPMENT_ZONE);
 
-		scrutinyDetail.addColumnHeading(2, OCCUPANCY);
-		  scrutinyDetail.addColumnHeading(3, PERMISSIBLE);
-		scrutinyDetail.addColumnHeading(4, PROVIDED);
-		scrutinyDetail.addColumnHeading(5, STATUS);
+	/**
+	 * Adds coverage scrutiny details to the plan report.
+	 *
+	 * @param pl the Plan object
+	 * @param occupancy occupancy name
+	 * @param coverage the actual coverage percentage
+	 * @param upperLimit the permissible coverage limit
+	 */
+	private void processCoverage(Plan pl, String occupancy, BigDecimal coverage, BigDecimal upperLimit) {
+	    LOG.info("inside processCoverage()");
+	    
+	    ScrutinyDetail scrutinyDetail = createCoverageScrutinyDetail(occupancy);
 
-		if (!(occupancy.equalsIgnoreCase("Residential") || occupancy.equalsIgnoreCase("Mercantile / Commercial"))) {
-			scrutinyDetail.addColumnHeading(6, DESCRIPTION);
-			//scrutinyDetail.addColumnHeading(5, PERMISSIBLE);
-		}
-
-		String desc = getLocaleMessage(RULE_DESCRIPTION_KEY, upperLimit.toString());
-		String actualResult = getLocaleMessage(RULE_ACTUAL_KEY, coverage.toString());
-		String expectedResult = getLocaleMessage(RULE_EXPECTED_KEY, upperLimit.toString());
-		if (coverage.doubleValue() <= upperLimit.doubleValue() || occupancy.equalsIgnoreCase("Residential")
-				|| occupancy.equalsIgnoreCase("Mercantile / Commercial")) {
-			Map<String, String> details = new HashMap<>();
-			details.put(RULE_NO, RULE);
-		//	details.put(DEVELOPMENT_ZONE, developmentZone);
-
-			details.put(OCCUPANCY, occupancy);
-			details.put(PERMISSIBLE, expectedResult);
-			details.put(PROVIDED, actualResult);
-			details.put(STATUS, Result.Accepted.getResultVal());
-
-			if (!(occupancy.equalsIgnoreCase("Residential") || occupancy.equalsIgnoreCase("Mercantile / Commercial"))) {
-				details.put(DESCRIPTION, desc);
-				//details.put(PERMISSIBLE, expectedResult);
-			}
-			scrutinyDetail.getDetail().add(details);
-			pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
-
-		} else {
-			Map<String, String> details = new HashMap<>();
-			details.put(RULE_NO, RULE);
-		//	details.put(DEVELOPMENT_ZONE, developmentZone);
-			details.put(OCCUPANCY, occupancy);
-			details.put(PERMISSIBLE, expectedResult);
-			details.put(PROVIDED, actualResult);
-			details.put(STATUS, Result.Not_Accepted.getResultVal());
-
-			if (!(occupancy.equalsIgnoreCase("Residential") || occupancy.equalsIgnoreCase("Mercantile / Commercial"))) {
-				details.put(DESCRIPTION, desc);
-				//details.put(PERMISSIBLE, expectedResult);
-			}
-			scrutinyDetail.getDetail().add(details);
-			pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
-
-		}
-
+	    Map<String, String> details = createCoverageDetails(occupancy, coverage, upperLimit, pl);
+	    
+	    scrutinyDetail.getDetail().add(details);
+	    pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
 	}
+
+	private ScrutinyDetail createCoverageScrutinyDetail(String occupancy) {
+	    ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
+	    scrutinyDetail.setKey(COMMON_COVERAGE);
+	    scrutinyDetail.setHeading(COVERAGE_HEADING);
+	    
+	    scrutinyDetail.addColumnHeading(1, RULE_NO);
+	    scrutinyDetail.addColumnHeading(2, OCCUPANCY);
+	    scrutinyDetail.addColumnHeading(3, PERMISSIBLE);
+	    scrutinyDetail.addColumnHeading(4, PROVIDED);
+	    scrutinyDetail.addColumnHeading(5, STATUS);
+	    
+	    if (!isResidentialOrCommercial(occupancy)) {
+	        scrutinyDetail.addColumnHeading(6, DESCRIPTION);
+	    }
+	    
+	    return scrutinyDetail;
+	}
+	
+	private Map<String, String> createCoverageDetails(String occupancy, BigDecimal coverage, BigDecimal upperLimit, Plan pl) {
+	    String desc = getLocaleMessage(RULE_DESCRIPTION_KEY, upperLimit.toString());
+	    String actualResult = getLocaleMessage(COVERAGE_RULE_ACTUAL_KEY, coverage.toString());
+	    String expectedResult = getLocaleMessage(COVERAGE_RULE_EXPECTED_KEY, upperLimit.toString());
+	    boolean isCompliant = coverage.compareTo(upperLimit) <= 0 || isResidentialOrCommercial(occupancy);
+
+		ReportScrutinyDetail detail = new ReportScrutinyDetail();
+		detail.setRuleNo(RULE);
+		detail.setOccupancy(occupancy);
+		detail.setPermissible(expectedResult);
+		detail.setProvided(actualResult);
+		detail.setStatus(isCompliant ? Result.Accepted.getResultVal() : Result.Not_Accepted.getResultVal());
+		if (!isResidentialOrCommercial(occupancy)) {
+			detail.setDescription(desc);
+		}
+		Map<String, String> details = mapReportDetails(detail);
+		return details;
+	}
+
+	private boolean isResidentialOrCommercial(String occupancy) {
+	    return RESIDENTIAL.equalsIgnoreCase(occupancy) || COMMERCIAL.equalsIgnoreCase(occupancy);
+	}
+
 
 	protected OccupancyType getMostRestrictiveCoverage(EnumSet<OccupancyType> distinctOccupancyTypes) {
 
