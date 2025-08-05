@@ -102,7 +102,7 @@ const SearchChallan = ({ config: propsConfig, formData }) => {
         //onSkip={onSkip}
         t={t}
       >
-        <CardLabel>{`${t("UC_CITY_LABEL")}*`}</CardLabel>
+        <CardLabel>{`${t("UC_CITY_LABEL")}`}<span className="check-page-link-button"> *</span></CardLabel>
         <RadioOrSelect
              className="form-field"
              isMandatory={true}
@@ -118,7 +118,7 @@ const SearchChallan = ({ config: propsConfig, formData }) => {
                 title: t("UC_CITY_MANDATORY"),
               })}
           />
-        <CardLabel>{`${t("UC_SERVICE_CATEGORY_LABEL")}*`}</CardLabel>
+        <CardLabel>{`${t("UC_SERVICE_CATEGORY_LABEL")}`}<span className="check-page-link-button"> *</span></CardLabel>
         {Menu && (
           <RadioOrSelect
             t={t}

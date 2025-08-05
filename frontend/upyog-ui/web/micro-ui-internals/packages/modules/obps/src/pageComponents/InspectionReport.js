@@ -263,7 +263,7 @@ const InspectionReportForm = (_props) => {
                     {questionList && questionList.map((ob, ind) => (
                         <div key={ind} className="fieldInsepctionInsideWrapper" style={{ maxWidth: "100%" }}>
                             <LabelFieldPair style={{width :"100%"}}>
-                                <CardLabel style={{ marginRight: "30px", width :"100%" }} className="card-label-smaller">{`${t(ob.question)}*`}</CardLabel>
+                                <CardLabel style={{ marginRight: "30px", width :"100%" }} className="card-label-smaller">{`${t(ob.question)}`}<span className="check-page-link-button"> *</span></CardLabel>
                                 <div className="field" style={{ width: "100%" }}>
                                     <Controller
                                         control={control}

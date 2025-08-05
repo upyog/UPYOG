@@ -210,7 +210,7 @@ const TLSelectAddress = ({ t, config, onSelect, userType, formData, setError, fo
     <React.Fragment>
     {window.location.href.includes("/citizen") ? <Timeline currentStep={2}/> : null}
     <FormStep config={config} onSelect={onSubmit} t={t} isDisabled={selectedLocality ? false : true}>
-      <CardLabel>{`${t("MYCITY_CODE_LABEL")}*`}</CardLabel>
+      <CardLabel>{`${t("MYCITY_CODE_LABEL")}`}<span className="check-page-link-button"> *</span></CardLabel>
       <span className={"form-pt-dropdown-only"}>
         <RadioOrSelect
           options={cities.sort((a, b) => a.name.localeCompare(b.name))}

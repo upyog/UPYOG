@@ -368,7 +368,7 @@ const ConnectionDetails = (_props) => {
       {!sameAsOwnerDetails ? (
         <div>
           <LabelFieldPair>
-            <CardLabel style={isMobile && isEmployee ? {fontWeight: "700", width:"100%"} : { marginTop: "-5px", fontWeight: "700" }} className="card-label-smaller">{`${t("WS_OWN_DETAIL_NAME")}*`}</CardLabel>
+            <CardLabel style={isMobile && isEmployee ? {fontWeight: "700", width:"100%"} : { marginTop: "-5px", fontWeight: "700" }} className="card-label-smaller">{`${t("WS_OWN_DETAIL_NAME")}`}<span className="check-page-link-button"> *</span></CardLabel>
             <div className="field">
               <Controller
                 control={control}
@@ -438,7 +438,7 @@ const ConnectionDetails = (_props) => {
           <LabelFieldPair>
             <CardLabel style={isMobile && isEmployee ? {fontWeight: "700", width:"100%"} : { marginTop: "-5px", fontWeight: "700" }} className="card-label-smaller">{`${t(
               "WS_CONN_HOLDER_OWN_DETAIL_GENDER_LABEL"
-            )}*`}</CardLabel>
+            )}`}<span className="check-page-link-button"> *</span></CardLabel>
             <div className="field">
               <Controller
                 control={control}
@@ -507,7 +507,7 @@ const ConnectionDetails = (_props) => {
           <LabelFieldPair>
             <CardLabel style={isMobile && isEmployee ? {fontWeight: "700", width:"100%"} : { marginTop: "-5px", fontWeight: "700"}} className="card-label-smaller">{`${t(
               "CORE_COMMON_MOBILE_NUMBER"
-            )}*`}</CardLabel>
+            )}`}<span className="check-page-link-button"> *</span></CardLabel>
             <div className="field">
               <Controller
                 control={control}
@@ -588,7 +588,7 @@ const ConnectionDetails = (_props) => {
           <LabelFieldPair>
             <CardLabel style={isMobile && isEmployee ? {fontWeight: "700", width:"100%"} : { marginTop: "-5px", fontWeight: "700" }} className="card-label-smaller">{`${t(
               "WS_OWN_DETAIL_GUARDIAN_LABEL"
-            )}*`}</CardLabel>
+            )}`}<span className="check-page-link-button"> *</span></CardLabel>
             <div className="field">
               <Controller
                 control={control}
@@ -662,7 +662,7 @@ const ConnectionDetails = (_props) => {
           <LabelFieldPair>
             <CardLabel style={isMobile && isEmployee ? {fontWeight: "700", width:"100%"} : { marginTop: "-5px", fontWeight: "700" }} className="card-label-smaller">{`${t(
               "WS_CONN_HOLDER_OWN_DETAIL_RELATION_LABEL"
-            )}*`}</CardLabel>
+            )}`}<span className="check-page-link-button"> *</span></CardLabel>
             <div className="field">
               <Controller
                 control={control}
@@ -731,7 +731,7 @@ const ConnectionDetails = (_props) => {
           <LabelFieldPair>
             <CardLabel style={isMobile && isEmployee ? {fontWeight: "700", width:"100%"} : { marginTop: "-5px", fontWeight: "700" }} className="card-label-smaller">{`${t(
               "WS_CORRESPONDANCE_ADDRESS_LABEL"
-            )}*`}</CardLabel>
+            )}`}<span className="check-page-link-button"> *</span></CardLabel>
             <div className="field">
               <Controller
                 control={control}
@@ -805,7 +805,7 @@ const ConnectionDetails = (_props) => {
           <LabelFieldPair>
             <CardLabel style={isMobile && isEmployee ? {fontWeight: "700", width:"100%"} : { marginTop: "-5px", fontWeight: "700" }} className="card-label-smaller">{`${t(
               "WS_OWNER_SPECIAL_CATEGORY"
-            )}*`}</CardLabel>
+            )}`}<span className="check-page-link-button"> *</span></CardLabel>
             <div className="field">
               <Controller
                 control={control}

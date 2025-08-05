@@ -195,7 +195,7 @@ const PropertyOwnerDetails = ({ t, config, onSelect, userType, formData, formSta
   return (
     <div>
       <LabelFieldPair>
-        <CardLabel className="">{`${t("TL_NEW_OWNER_DETAILS_OWNERSHIP_TYPE_LABEL")}*`}</CardLabel>
+        <CardLabel className="">{`${t("TL_NEW_OWNER_DETAILS_OWNERSHIP_TYPE_LABEL")}`}<span className="check-page-link-button"> *</span></CardLabel>
         <Controller
           name="ownershipCategory"
           defaultValue={ownershipCategory}
@@ -253,7 +253,7 @@ const PropertyOwnerDetails = ({ t, config, onSelect, userType, formData, formSta
                 <React.Fragment>
 
                   <LabelFieldPair>
-                    <CardLabel>{`${t("PT_INSTITUTION_NAME")}*`}</CardLabel>
+                    <CardLabel>{`${t("PT_INSTITUTION_NAME")}`}<span className="check-page-link-button"> *</span></CardLabel>
                     <div className="form-field">
                       <Controller
                         key={"institutionName" + index}
@@ -288,7 +288,7 @@ const PropertyOwnerDetails = ({ t, config, onSelect, userType, formData, formSta
                   <CardLabelError style={errorStyle}>{touched?.["institutionName" + index] ? errors?.["institutionName" + index]?.message : ""}</CardLabelError>
 
                   <LabelFieldPair>
-                    <CardLabel className="">{`${t("PT_INSTITUTION_TYPE")}*`}</CardLabel>
+                    <CardLabel className="">{`${t("PT_INSTITUTION_TYPE")}`}<span className="check-page-link-button"> *</span></CardLabel>
                     <div className="form-field">
                       <Controller
                         key={"institutionType" + index}
@@ -318,7 +318,7 @@ const PropertyOwnerDetails = ({ t, config, onSelect, userType, formData, formSta
                   <CardLabelError style={errorStyle}>{touched?.["institutionType" + index] ? errors?.["institutionType" + index]?.message : ""}</CardLabelError>
                   <CardSectionHeader>{t("TL_AUTHORIZED_PERSON_DETAILS")}</CardSectionHeader>
                   <LabelFieldPair>
-                    <CardLabel>{`${t("PT_OWNER_NAME")}*`}</CardLabel>
+                    <CardLabel>{`${t("PT_OWNER_NAME")}`}<span className="check-page-link-button"> *</span></CardLabel>
                     <div className="form-field">
                       <Controller
                         key={"name" + index}
@@ -353,7 +353,7 @@ const PropertyOwnerDetails = ({ t, config, onSelect, userType, formData, formSta
                   <CardLabelError style={errorStyle}>{touched?.["name" + index] ? errors?.["name" + index]?.message : ""}</CardLabelError>
 
                   <LabelFieldPair>
-                    <CardLabel>{`${t("PT_LANDLINE_NUMBER_FLOATING_LABEL")}*`}</CardLabel>
+                    <CardLabel>{`${t("PT_LANDLINE_NUMBER_FLOATING_LABEL")}`}<span className="check-page-link-button"> *</span></CardLabel>
                     <div className="form-field">
                       <Controller
                         key={"altContactNumber" + index}
@@ -386,7 +386,7 @@ const PropertyOwnerDetails = ({ t, config, onSelect, userType, formData, formSta
                   <CardLabelError style={errorStyle}>{touched?.["altContactNumber" + index] ? errors?.["altContactNumber" + index]?.message : ""}</CardLabelError>
 
                   <LabelFieldPair>
-                    <CardLabel>{`${t("PT_FORM3_MOBILE_NUMBER")}*`}</CardLabel>
+                    <CardLabel>{`${t("PT_FORM3_MOBILE_NUMBER")}`}<span className="check-page-link-button"> *</span></CardLabel>
 
                     <div className="form-field">
                       <Controller
@@ -430,7 +430,7 @@ const PropertyOwnerDetails = ({ t, config, onSelect, userType, formData, formSta
                   <CardLabelError style={errorStyle}>{touched?.["mobileNumber" + index] ? errors?.["mobileNumber" + index]?.message : ""}</CardLabelError>
 
                   <LabelFieldPair>
-                    <CardLabel>{`${t("TL_NEW_DESIG_OWNER_LABEL")}*`}</CardLabel>
+                    <CardLabel>{`${t("TL_NEW_DESIG_OWNER_LABEL")}`}<span className="check-page-link-button"> *</span></CardLabel>
                     <div className="form-field">
                       <Controller
                         key={"designation" + index}
@@ -495,7 +495,7 @@ const PropertyOwnerDetails = ({ t, config, onSelect, userType, formData, formSta
                 </ React.Fragment> :
                 <React.Fragment>
                   <LabelFieldPair>
-                    <CardLabel>{`${t("PT_FORM3_MOBILE_NUMBER")}*`}</CardLabel>
+                    <CardLabel>{`${t("PT_FORM3_MOBILE_NUMBER")}`}<span className="check-page-link-button"> *</span></CardLabel>
 
                     <div className="form-field">
                       <Controller
@@ -539,7 +539,7 @@ const PropertyOwnerDetails = ({ t, config, onSelect, userType, formData, formSta
                   <CardLabelError style={errorStyle}>{touched?.["mobileNumber" + index] ? errors?.["mobileNumber" + index]?.message : ""}</CardLabelError>
 
                   <LabelFieldPair>
-                    <CardLabel>{`${t("PT_OWNER_NAME")}*`}</CardLabel>
+                    <CardLabel>{`${t("PT_OWNER_NAME")}`}<span className="check-page-link-button"> *</span></CardLabel>
                     <div className="form-field">
                       <Controller
                         key={"name" + index}
@@ -574,7 +574,7 @@ const PropertyOwnerDetails = ({ t, config, onSelect, userType, formData, formSta
                   <CardLabelError style={errorStyle}>{touched?.["name" + index] ? errors?.["name" + index]?.message : ""}</CardLabelError>
 
                   <LabelFieldPair>
-                    <CardLabel>{`${t("PT_FORM3_GENDER")}*`}</CardLabel>
+                    <CardLabel>{`${t("PT_FORM3_GENDER")}`}<span className="check-page-link-button"> *</span></CardLabel>
                     <div className="form-field">
                       <Controller
                         key={"gender" + index}
@@ -606,7 +606,7 @@ const PropertyOwnerDetails = ({ t, config, onSelect, userType, formData, formSta
                   <CardLabelError style={errorStyle}>{touched?.["gender" + index] ? errors?.["gender" + index]?.message : ""}</CardLabelError>
 
                   <LabelFieldPair>
-                    <CardLabel>{`${t("PT_FORM3_GUARDIAN_NAME")}*`}</CardLabel>
+                    <CardLabel>{`${t("PT_FORM3_GUARDIAN_NAME")}`}<span className="check-page-link-button"> *</span></CardLabel>
                     <div className="form-field">
                       <Controller
                         key={"fatherOrHusbandName" + index}
@@ -641,7 +641,7 @@ const PropertyOwnerDetails = ({ t, config, onSelect, userType, formData, formSta
                   </CardLabelError>
 
                   <LabelFieldPair>
-                    <CardLabel>{`${t("PT_FORM3_RELATIONSHIP")}*`}</CardLabel>
+                    <CardLabel>{`${t("PT_FORM3_RELATIONSHIP")}`}<span className="check-page-link-button"> *</span></CardLabel>
                     <div className="form-field">
                       <Controller
                         key={"relationship" + index}
@@ -673,7 +673,7 @@ const PropertyOwnerDetails = ({ t, config, onSelect, userType, formData, formSta
                   <CardLabelError style={errorStyle}>{touched?.["relationship" + index] ? errors?.["relationship" + index]?.message : ""}</CardLabelError>
 
                   <LabelFieldPair>
-                    <CardLabel className="">{`${t("PT_SPECIAL_APPLICANT_CATEGORY")}*`}</CardLabel>
+                    <CardLabel className="">{`${t("PT_SPECIAL_APPLICANT_CATEGORY")}`}<span className="check-page-link-button"> *</span></CardLabel>
                     <div className="form-field">
                       <Controller
                         key={"ownerType" + index}

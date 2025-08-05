@@ -42,7 +42,7 @@ export const newConfig =[
               },
               "key": "address",
               "nextStep": "street",
-              "isMandatory": true,
+             
               "type": "component"
           },
           {
@@ -204,7 +204,7 @@ export const newConfig =[
                 {
                     "type": "component",
                     "route": "PropertyStructureDetails",
-                    "isMandatory": true,
+                  
                     "component": "PropertyStructureDetails",
                     "key": "propertyStructureDetails",
                     "withoutLabel": true,
@@ -219,7 +219,7 @@ export const newConfig =[
                 {
                     "type": "component",
                     "route": "uid",
-                    "isMandatory": true,
+                    
                     "component": "UID",
                     "texts": {
                         "headerCaption": "",
@@ -237,7 +237,7 @@ export const newConfig =[
           },
           {
               "type": "component",
-              "isMandatory": true,
+             
               "component": "Area",
               "key": "landarea",
               "withoutLabel": true
@@ -261,7 +261,7 @@ export const newConfig =[
           {
               "type": "component",
               "route": "landarea",
-              "isMandatory": true,
+              
               "component": "PTLandArea",
               "texts": {
                   "headerCaption": "",
@@ -373,7 +373,7 @@ export const newConfig =[
           {
               "type": "component",
               "route": "units",
-              "isMandatory": true,
+              
               "component": "SelectPTUnits",
               "texts": {
                   "headerCaption": "",

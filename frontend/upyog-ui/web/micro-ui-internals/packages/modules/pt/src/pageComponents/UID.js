@@ -95,7 +95,7 @@ const UID = ({ t, config, onSelect, value, userType, formData, setError: setForm
       return (
         <React.Fragment>
           <LabelFieldPair key={index}>
-            <CardLabel className="card-label-smaller">{t(input.label) + " *"}</CardLabel>
+            <CardLabel className="card-label-smaller">{t(input.label)}<span className="check-page-link-button"> *</span></CardLabel>
             <div className="field">
 
               <TextInput
@@ -137,7 +137,7 @@ const UID = ({ t, config, onSelect, value, userType, formData, setError: setForm
         isDisabled={uid.length===15 ? false:true}
         showErrorBelowChildren={true}
       >
-        <CardLabel>{`${t("PT_ELECTRICITY_UID")}`}</CardLabel>
+        <CardLabel>{`${t("PT_ELECTRICITY_UID")}`}<span className="check-page-link-button"> *</span></CardLabel>
         <TextInput
           t={t}
           type={"text"}
