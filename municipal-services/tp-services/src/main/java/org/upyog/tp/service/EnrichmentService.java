@@ -71,6 +71,8 @@ public class EnrichmentService {
                 // Enrich user details for existing user or user details with address for new user
                 enrichUserDetails(treePruningRequest);
             }
+            treePruningDetail.setApplicantUuid(null);
+            treePruningDetail.setAddressDetailId(null);
         }
         treePruningDetail.setBookingId(bookingId);
         treePruningDetail.setApplicationDate(auditDetails.getCreatedTime());

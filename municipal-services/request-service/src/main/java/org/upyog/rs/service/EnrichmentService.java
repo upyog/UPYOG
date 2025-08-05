@@ -73,6 +73,9 @@ public class EnrichmentService {
 				// Enrich user details for existing user or user details with address for new user
 				enrichUserDetails(waterTankerRequest);
 			}
+			waterTankerDetail.setApplicantUuid(null);
+			waterTankerDetail.setAddressDetailId(null);
+			log.info("User profile is not enabled, setting applicantDetailId and addressDetailId to null");
 		}
 		waterTankerDetail.setBookingId(bookingId);
 		waterTankerDetail.setApplicationDate(auditDetails.getCreatedTime());
@@ -216,6 +219,8 @@ public class EnrichmentService {
 				// Enrich user details for existing user or user details with address for new user
 				enrichUserDetails(mobileToiletRequest);
 			}
+			mobileToiletDetail.setApplicantUuid(null);
+			mobileToiletDetail.setAddressDetailId(null);
 		}
 		mobileToiletDetail.setBookingId(bookingId);
 		mobileToiletDetail.setApplicationDate(auditDetails.getCreatedTime());
