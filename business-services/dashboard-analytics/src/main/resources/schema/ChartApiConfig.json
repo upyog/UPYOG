@@ -683,7 +683,7 @@
         "module": "FINANCE",
         "indexName": "dss-finance-dashboard",
         "requestQueryMap": "{\"wardId\" : \"ward\", \"district\" : \"district\", \"tenantId\" : \"ulb\"}",
-        "aggrQuery": "{\"aggs\":{\"AGGR\":{\"filter\":{\"bool\":{\"must_not\":[{\"term\":{\"state.keyword\":\"pg.testing\"}}]}},\"aggs\":{\"Total Collection\":{\"sum\":{\"field\":\"financeTotalCollection\"}}}}}}",
+        "aggrQuery": "{\"aggs\":{\"AGGR\":{\"filter\":{\"bool\":{\"must_not\":[{\"term\":{\"state.keyword\":\"pg.testing\"}}]}},\"aggs\":{\"Total Collection\":{\"sum\":{\"field\":\"financeTotalIncome\"}}}}}}",
         "dateRefField": "timestamp"
       }
     ],
@@ -24171,28 +24171,6 @@
     "aggregationPaths": ["Total Registered ULBs"],
     "insight": {}
   },
-  "financeTotalCollection": {
-    "chartName": "DSS_FINANCE_TOTAL_COLLECTION",
-    "queries": [
-      {
-        "module": "FINANCE",
-        "dateRefField": "date",
-        "requestQueryMap": "{\"region\" : \"regionname.keyword\",\"district\" : \"districtname.keyword\", \"tenantId\" : \"ulbname.keyword\"}",
-        "indexName": "dss-finance-dashboard",
-        "aggrQuery": "{\"aggs\":{\"AGGR\":{\"filter\":{\"bool\":{\"must_not\":[],\"must\":[]}},\"aggs\":{\"Total Collection\":{\"sum\":{\"field\":\"financeTotalCollection\"}}}}}}"
-      }
-    ],
-    "chartType": "metric",
-    "valueType": "amount",
-    "drillChart": "none",
-    "documentType": "_doc",
-    "action": "",
-    "aggregationPaths": [
-      "Total Collection"
-    ],
-    "insight": {}
-  },
-
   "financeTotalIncome": {
     "chartName": "DSS_FINANCE_TOTAL_INCOME",
     "queries": [
@@ -24285,7 +24263,7 @@
         "dateRefField": "date",
         "requestQueryMap": "{\"region\" : \"regionname.keyword\",\"district\" : \"districtname.keyword\", \"tenantId\" : \"ulbname.keyword\"}",
         "indexName": "dss-finance-dashboard",
-        "aggrQuery": "{\"aggs\":{\"Income\":{\"date_histogram\":{\"field\":\"date\",\"calendar_interval\":\"month\",\"min_doc_count\":1},\"aggs\":{\"Sum\":{\"sum\":{\"field\":\"financeIncomeAmount\"}}}},\"Expenditure\":{\"date_histogram\":{\"field\":\"date\",\"calendar_interval\":\"month\",\"min_doc_count\":1},\"aggs\":{\"Sum\":{\"sum\":{\"field\":\"financeExpenditureAmount\"}}}}}}"
+        "aggrQuery": "{\"aggs\":{\"Income\":{\"date_histogram\":{\"field\":\"date\",\"calendar_interval\":\"month\",\"min_doc_count\":1},\"aggs\":{\"Sum\":{\"sum\":{\"field\":\"financeTotalIncome\"}}}},\"Expenditure\":{\"date_histogram\":{\"field\":\"date\",\"calendar_interval\":\"month\",\"min_doc_count\":1},\"aggs\":{\"Sum\":{\"sum\":{\"field\":\"financeTotalExpenditure\"}}}}}}"
       }
     ],
     "chartType": "line",
