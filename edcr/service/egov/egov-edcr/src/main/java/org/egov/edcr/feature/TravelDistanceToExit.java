@@ -1,5 +1,5 @@
 /*
- * eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
+ * UPYOG  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  * accountability and the service delivery of the government  organizations.
  *
  *  Copyright (C) <2019>  eGovernments Foundation
@@ -47,6 +47,7 @@
 
 package org.egov.edcr.feature;
 
+import static org.egov.edcr.constants.CommonKeyConstants.COM_TRAVEL_DIS_EMERGENCY_EXIT;
 import static org.egov.edcr.constants.DxfFileConstants.A;
 import static org.egov.edcr.constants.DxfFileConstants.B;
 import static org.egov.edcr.constants.DxfFileConstants.D;
@@ -54,26 +55,23 @@ import static org.egov.edcr.constants.DxfFileConstants.F;
 import static org.egov.edcr.constants.DxfFileConstants.G;
 import static org.egov.edcr.constants.DxfFileConstants.H;
 import static org.egov.edcr.constants.DxfFileConstants.I;
+import static org.egov.edcr.constants.EdcrReportConstants.SUBRULE_42_2;
+import static org.egov.edcr.constants.EdcrReportConstants.SUBRULE_42_2_DESC;
+import static org.egov.edcr.service.FeatureUtil.addScrutinyDetailtoPlan;
+import static org.egov.edcr.service.FeatureUtil.mapReportDetails;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.egov.common.constants.MdmsFeatureConstants;
-import org.egov.common.entity.edcr.Block;
-import org.egov.common.entity.edcr.OccupancyTypeHelper;
-import org.egov.common.entity.edcr.Plan;
-import org.egov.common.entity.edcr.Result;
-import org.egov.common.entity.edcr.ScrutinyDetail;
-import org.egov.edcr.constants.DxfFileConstants;
-import org.egov.edcr.constants.EdcrRulesMdmsConstants;
-import org.egov.edcr.service.FetchEdcrRulesMdms;
+import org.egov.common.entity.edcr.*;
+import org.egov.edcr.service.MDMSCacheManager;
 import org.egov.edcr.service.ProcessHelper;
 import org.egov.edcr.utility.DcrConstants;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -83,173 +81,204 @@ import org.springframework.stereotype.Service;
 @Service
 public class TravelDistanceToExit extends FeatureProcess {
 
-    // Logger for logging important information
-    private static final Logger LOG = LogManager.getLogger(TravelDistanceToExit.class);
+	// Logger for logging important information
+	private static final Logger LOG = LogManager.getLogger(TravelDistanceToExit.class);
 
-    // Rule identifier and description for reporting
-    private static final String SUBRULE_42_2 = "42-2";
-    private static final String SUBRULE_42_2_DESC = "Maximum travel distance to emergency exit";
+	// Permissible travel distances fetched from MDMS
+	public static BigDecimal travelDistanceToExitValueOne = BigDecimal.ZERO;
+	public static BigDecimal travelDistanceToExitValueTwo = BigDecimal.ZERO;
+	public static BigDecimal travelDistanceToExitValueThree = BigDecimal.ZERO;
 
-    // Permissible travel distances fetched from MDMS
-    public static BigDecimal travelDistanceToExitValueOne = BigDecimal.ZERO;
-    public static BigDecimal travelDistanceToExitValueTwo = BigDecimal.ZERO;
-    public static BigDecimal travelDistanceToExitValueThree = BigDecimal.ZERO;
 
-    // Service for fetching rule data from MDMS
-    @Autowired
-    FetchEdcrRulesMdms fetchEdcrRulesMdms;
+	@Autowired
+	MDMSCacheManager cache;
 
-    // No validation logic implemented for this feature
-    @Override
-    public Plan validate(Plan pl) {
-        return pl;
-    }
+	/**
+	 * Validates the building plan for travel distance to exit requirements.
+	 * Currently performs no validation and returns the plan as-is.
+	 *
+	 * @param pl The building plan to validate
+	 * @return The unmodified plan
+	 */
+	// No validation logic implemented for this feature
+	@Override
+	public Plan validate(Plan pl) {
+		return pl;
+	}
 
-    @Override
-    public Plan process(Plan pl) {
-        Boolean exemption = Boolean.FALSE;
+	/**
+	 * Processes travel distance to exit requirements for the building plan.
+	 * Extracts rules from MDMS, checks for exemptions, validates missing travel distances,
+	 * and generates scrutiny details for compliance verification.
+	 *
+	 * @param pl The building plan to process
+	 * @return The processed plan with scrutiny details or errors added
+	 */
+	@Override
+	public Plan process(Plan pl) {
+	    if (pl == null) return pl;
 
-        String occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl);
-        String feature = MdmsFeatureConstants.TRAVEL_DISTANCE_TO_EXIT;
+	    extractTravelDistanceRules(pl);
 
-        // Determine occupancy type for rule lookup
-        Map<String, Object> params = new HashMap<>();
-        
+	    boolean exemption = isExempted(pl);
+	    if (exemption) return pl;
 
-        params.put("feature", feature);
-        params.put("occupancy", occupancyName);
+	    if (pl.getTravelDistancesToExit().isEmpty()) {
+	        addMissingTravelDistanceError(pl);
+	        return pl;
+	    }
 
-        // Fetch rules from EDCR MDMS
-        Map<String, List<Map<String, Object>>> edcrRuleList = pl.getEdcrRulesFeatures();
-        ArrayList<String> valueFromColumn = new ArrayList<>();
-        valueFromColumn.add(EdcrRulesMdmsConstants.TRAVEL_DISTANCE_TO_EXIT_VALUE_ONE);
-        valueFromColumn.add(EdcrRulesMdmsConstants.TRAVEL_DISTANCE_TO_EXIT_VALUE_TWO);
-        valueFromColumn.add(EdcrRulesMdmsConstants.TRAVEL_DISTANCE_TO_EXIT_VALUE_THREE);
+	    validateTravelDistances(pl);
+	    return pl;
+	}
 
-        List<Map<String, Object>> permissibleValue = new ArrayList<>();
-        permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
-        LOG.info("permissibleValue" + permissibleValue);
+	/**
+	 * Extracts travel distance requirement rules from MDMS cache.
+	 * Fetches and sets the three travel distance values used for different
+	 * occupancy type validations.
+	 *
+	 * @param pl The building plan containing configuration details
+	 */
+	private void extractTravelDistanceRules(Plan pl) {
+		 List<Object> rules = cache.getFeatureRules(pl, FeatureEnum.TRAVEL_DISTANCE_TO_EXIT.getValue(), false);
+	         rules.stream()
+	            .filter(TravelDistanceToExitRequirement.class::isInstance)
+	            .map(TravelDistanceToExitRequirement.class::cast)
+	            .findFirst()
+	            .ifPresent(rule -> {
+		            travelDistanceToExitValueOne = rule.getTravelDistanceToExitValueOne();
+		            travelDistanceToExitValueTwo = rule.getTravelDistanceToExitValueTwo();
+		            travelDistanceToExitValueThree = rule.getTravelDistanceToExitValueThree();
+		        });
+	}
 
-        // Parse permissible values from MDMS result
-        if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey(EdcrRulesMdmsConstants.TRAVEL_DISTANCE_TO_EXIT_VALUE_ONE)) {
-            travelDistanceToExitValueOne = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.TRAVEL_DISTANCE_TO_EXIT_VALUE_ONE).toString()));
-            travelDistanceToExitValueTwo = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.TRAVEL_DISTANCE_TO_EXIT_VALUE_TWO).toString()));
-            travelDistanceToExitValueThree = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.TRAVEL_DISTANCE_TO_EXIT_VALUE_THREE).toString()));
-        }
+	/**
+	 * Checks if the building plan is exempted from travel distance requirements.
+	 * Exemptions apply to residential buildings with max 3 floors above ground
+	 * or buildings on small plots.
+	 *
+	 * @param pl The building plan to check for exemptions
+	 * @return true if exempted from travel distance requirements, false otherwise
+	 */
+	private boolean isExempted(Plan pl) {
+	    if (pl.getVirtualBuilding() == null || pl.getVirtualBuilding().getOccupancyTypes().isEmpty() || pl.getBlocks().isEmpty()) {
+	        return false;
+	    }
 
-        // Exemption logic for low-rise residential buildings or small plots
-        if (pl != null && pl.getVirtualBuilding() != null &&
-                !pl.getVirtualBuilding().getOccupancyTypes().isEmpty() && !pl.getBlocks().isEmpty()) {
+	    boolean allBlocksWithMax3Floors = pl.getBlocks().stream().allMatch(block ->
+	        block.getBuilding() != null &&
+	        block.getBuilding().getFloorsAboveGround() != null &&
+	        block.getBuilding().getFloorsAboveGround().compareTo(travelDistanceToExitValueThree) <= 0
+	    );
 
-            boolean floorsAboveGroundLessThanOrEqualTo3ForAllBlks = true;
+	    boolean isResidential = Boolean.TRUE.equals(pl.getVirtualBuilding().getResidentialBuilding());
+	    return (isResidential && allBlocksWithMax3Floors) || ProcessHelper.isSmallPlot(pl);
+	}
 
-            // Check if all blocks have ≤ 3 floors
-            for (Block block : pl.getBlocks()) {
-                if (block.getBuilding() != null && block.getBuilding().getFloorsAboveGround() != null &&
-                        block.getBuilding().getFloorsAboveGround().compareTo(travelDistanceToExitValueThree) > 0) {
-                    floorsAboveGroundLessThanOrEqualTo3ForAllBlks = false;
-                    break;
-                }
-            }
+	/**
+	 * Adds validation error when travel distance measurements are missing from the plan.
+	 * Creates an error message indicating that travel distance to exit is not defined.
+	 *
+	 * @param pl The building plan to add the error to
+	 */
+	private void addMissingTravelDistanceError(Plan pl) {
+	    Map<String, String> errors = new HashMap<>();
+	    errors.put(DcrConstants.TRAVEL_DIST_EXIT,
+	        edcrMessageSource.getMessage(DcrConstants.OBJECTNOTDEFINED,
+	            new String[]{DcrConstants.TRAVEL_DIST_EXIT}, LocaleContextHolder.getLocale()));
+	    pl.addErrors(errors);
+	}
 
-            // Grant exemption if conditions met
-            if ((pl.getVirtualBuilding().getResidentialBuilding().equals(Boolean.TRUE) &&
-                    floorsAboveGroundLessThanOrEqualTo3ForAllBlks == true) || (ProcessHelper.isSmallPlot(pl))) {
-                exemption = Boolean.TRUE;
-            }
-        }
+	/**
+	 * Validates actual travel distances against required limits based on occupancy type.
+	 * Creates scrutiny details comparing provided distances with occupancy-specific
+	 * maximum allowable travel distances.
+	 *
+	 * @param pl The building plan containing travel distance measurements
+	 */
+	private void validateTravelDistances(Plan pl) {
+	    scrutinyDetail = new ScrutinyDetail();
+	    scrutinyDetail.setKey(COM_TRAVEL_DIS_EMERGENCY_EXIT);
+	    scrutinyDetail.addColumnHeading(1, RULE_NO);
+	    scrutinyDetail.addColumnHeading(2, REQUIRED);
+	    scrutinyDetail.addColumnHeading(3, PROVIDED);
+	    scrutinyDetail.addColumnHeading(4, STATUS);
+	    scrutinyDetail.setSubHeading(SUBRULE_42_2_DESC);
 
-        // If not exempted, validate travel distance
-        if (!exemption) {
-            HashMap<String, String> errors = new HashMap<>();
+	    OccupancyTypeHelper occupancyHelper = pl.getVirtualBuilding().getMostRestrictiveFarHelper();
+	    String occupancyCode = occupancyHelper.getType().getCode();
 
-            // Handle missing data case
-            if (pl != null) {
-                if (pl.getTravelDistancesToExit().isEmpty()) {
-                    errors.put(DcrConstants.TRAVEL_DIST_EXIT,
-                            edcrMessageSource.getMessage(DcrConstants.OBJECTNOTDEFINED, new String[] {
-                                    DcrConstants.TRAVEL_DIST_EXIT }, LocaleContextHolder.getLocale()));
-                    pl.addErrors(errors);
-                    return pl;
-                }
-            }
+	    Map<String, BigDecimal> occupancyValues = getOccupancyValues(travelDistanceToExitValueOne, travelDistanceToExitValueTwo);
+	    BigDecimal requiredValue = occupancyValues.get(occupancyCode);
 
-            // Prepare scrutiny details for report
-            String subRule = SUBRULE_42_2;
-            String subRuleDesc = SUBRULE_42_2_DESC;
-            scrutinyDetail = new ScrutinyDetail();
-            scrutinyDetail.setKey("Common_Travel Distance To Emergency Exits");
-            scrutinyDetail.addColumnHeading(1, RULE_NO);
-            scrutinyDetail.addColumnHeading(2, REQUIRED);
-            scrutinyDetail.addColumnHeading(3, PROVIDED);
-            scrutinyDetail.addColumnHeading(4, STATUS);
-            scrutinyDetail.setSubHeading(SUBRULE_42_2_DESC);
+	    if (requiredValue != null) {
+	        for (BigDecimal providedValue : pl.getTravelDistancesToExit()) {
+	            boolean isAccepted = providedValue.compareTo(requiredValue) <= 0;
+	            setReportOutputDetails(pl, SUBRULE_42_2, requiredValue + DcrConstants.IN_METER,
+	                providedValue + DcrConstants.IN_METER,
+	                isAccepted ? Result.Accepted.getResultVal() : Result.Not_Accepted.getResultVal());
+	        }
+	    }
+	}
 
-            if (pl != null && pl.getVirtualBuilding() != null) {
-                // Get the occupancy type to fetch required value
-                OccupancyTypeHelper mostRestrictiveFarHelper = pl.getVirtualBuilding().getMostRestrictiveFarHelper();
-                String code = mostRestrictiveFarHelper.getType().getCode();
+	/**
+	 * Adds a single validation result entry to the scrutiny report.
+	 * Creates a detailed report entry with rule information, requirements,
+	 * and compliance status.
+	 *
+	 * @param pl The building plan
+	 * @param ruleNo The rule number being validated
+	 * @param expected The required/maximum allowable value
+	 * @param actual The actual/provided value
+	 * @param status The compliance status (Accepted/Not_Accepted)
+	 */
+//	// Helper to append result details to the scrutiny report
+	private void setReportOutputDetails(Plan pl, String ruleNo, String expected, String actual, String status) {
+		ReportScrutinyDetail detail = new ReportScrutinyDetail();
+		detail.setRuleNo(ruleNo);
+		detail.setRequired(expected);
+		detail.setProvided(actual);
+		detail.setStatus(status);
 
-                // Get occupancy-specific permissible distance
-                Map<String, BigDecimal> occupancyValues = getOccupancyValues(travelDistanceToExitValueOne, travelDistanceToExitValueTwo);
-                BigDecimal requiredValue = occupancyValues.get(code);
+		Map<String, String> details = mapReportDetails(detail);
+		addScrutinyDetailtoPlan(scrutinyDetail, pl, details);
+	}
 
-                if (requiredValue != null) {
-                    // Loop through all provided travel distances and validate
-                    for (BigDecimal maximumTravelDistance : pl.getTravelDistancesToExit()) {
-                        boolean valid = false;
-                        if (maximumTravelDistance.compareTo(requiredValue) <= 0) {
-                            valid = true;
-                        }
+	/**
+	 * Maps occupancy type codes to their respective maximum travel distance limits.
+	 * Returns a map with occupancy codes as keys and their corresponding
+	 * maximum allowable travel distances as values.
+	 *
+	 * @param valueOne Travel distance limit for occupancy types D, G, F, H
+	 * @param valueTwo Travel distance limit for occupancy types A, I, B
+	 * @return Map of occupancy codes to their maximum travel distance limits
+	 */
+//	// Mapping occupancy types to their respective travel distance limits
+	public Map<String, BigDecimal> getOccupancyValues(BigDecimal valueOne, BigDecimal valueTwo) {
 
-                        // Add result to scrutiny report
-                        if (valid) {
-                            setReportOutputDetails(pl, subRule, requiredValue + DcrConstants.IN_METER, maximumTravelDistance +
-                                    DcrConstants.IN_METER, Result.Accepted.getResultVal());
-                        } else {
-                            setReportOutputDetails(pl,
-                                    subRule, requiredValue + DcrConstants.IN_METER, maximumTravelDistance + DcrConstants.IN_METER,
-                                    Result.Not_Accepted.getResultVal());
-                        }
-                    }
-                }
-            }
-        }
+		Map<String, BigDecimal> roadWidthValues = new HashMap<>();
 
-        return pl;
-    }
+		roadWidthValues.put(D, valueOne);
+		roadWidthValues.put(G, valueOne);
+		roadWidthValues.put(F, valueOne);
+		roadWidthValues.put(H, valueOne);
 
-    // Helper to append result details to the scrutiny report
-    private void setReportOutputDetails(Plan pl, String ruleNo, String expected, String actual, String status) {
-        Map<String, String> details = new HashMap<>();
-        details.put(RULE_NO, ruleNo);
-        details.put(REQUIRED, expected);
-        details.put(PROVIDED, actual);
-        details.put(STATUS, status);
-        scrutinyDetail.getDetail().add(details);
-        pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
-    }
+		roadWidthValues.put(A, valueTwo);
+		roadWidthValues.put(I, valueTwo);
+		roadWidthValues.put(B, valueTwo);
 
-    // No amendments defined for this feature
-    @Override
-    public Map<String, Date> getAmendments() {
-        return new LinkedHashMap<>();
-    }
+		return roadWidthValues;
+	}
 
-    // Mapping occupancy types to their respective travel distance limits
-    public Map<String, BigDecimal> getOccupancyValues(BigDecimal valueOne, BigDecimal valueTwo) {
+	/**
+	 * Returns amendment dates for travel distance to exit rules.
+	 * Currently returns an empty map as no amendments are defined.
+	 *
+	 * @return Empty LinkedHashMap of amendment dates
+	 */
+	@Override
+	public Map<String, Date> getAmendments() {
+		return new LinkedHashMap<>();
+	}
 
-        Map<String, BigDecimal> roadWidthValues = new HashMap<>();
-
-        roadWidthValues.put(D, valueOne);
-        roadWidthValues.put(G, valueOne);
-        roadWidthValues.put(F, valueOne);
-        roadWidthValues.put(H, valueOne);
-
-        roadWidthValues.put(A, valueTwo);
-        roadWidthValues.put(I, valueTwo);
-        roadWidthValues.put(B, valueTwo);
-
-        return roadWidthValues;
-    }
 }

@@ -1,5 +1,5 @@
 /*
- * eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
+ * UPYOG  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  * accountability and the service delivery of the government  organizations.
  *
  *  Copyright (C) <2019>  eGovernments Foundation
@@ -48,159 +48,168 @@
 package org.egov.edcr.feature;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.egov.common.constants.MdmsFeatureConstants;
-import org.egov.common.entity.edcr.Block;
-import org.egov.common.entity.edcr.Plan;
-import org.egov.common.entity.edcr.Result;
-import org.egov.common.entity.edcr.ScrutinyDetail;
-import org.egov.edcr.constants.DxfFileConstants;
-import org.egov.edcr.constants.EdcrRulesMdmsConstants;
+import org.egov.common.entity.edcr.*;
+import org.egov.edcr.service.MDMSCacheManager;
 import org.egov.edcr.service.FetchEdcrRulesMdms;
 import org.egov.edcr.utility.Util;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import static org.egov.edcr.constants.CommonKeyConstants.*;
+import static org.egov.edcr.constants.EdcrReportConstants.*;
+import static org.egov.edcr.service.FeatureUtil.addScrutinyDetailtoPlan;
+import static org.egov.edcr.service.FeatureUtil.mapReportDetails;
+
 @Service
 public class HeadRoom extends FeatureProcess {
 
-    // Logger for logging information and errors
-    private static final Logger LOG = LogManager.getLogger(HeadRoom.class);
+	// Logger for logging information and errors
+	private static final Logger LOG = LogManager.getLogger(HeadRoom.class);
 
-    // Constants for rule identifiers and descriptions
-    private static final String RULE42_5_ii = "42-5-ii";
-    private static final String RULE_42_5_ii_DESCRIPTION = "Minimum clear of stair head-room";
+	@Autowired
+	FetchEdcrRulesMdms fetchEdcrRulesMdms;
 
-    @Autowired
-    FetchEdcrRulesMdms fetchEdcrRulesMdms;
+	@Autowired
+	MDMSCacheManager cache;
 
-    /**
-     * Validates the given plan object.
-     * Currently, no specific validation logic is implemented.
-     *
-     * @param plan The plan object to validate.
-     * @return The same plan object without any modifications.
-     */
-    @Override
-    public Plan validate(Plan plan) {
-        return plan;
-    }
+	/**
+	 * Validates the given plan object. Currently, no specific validation logic is
+	 * implemented.
+	 *
+	 * @param plan The plan object to validate.
+	 * @return The same plan object without any modifications.
+	 */
+	@Override
+	public Plan validate(Plan plan) {
+		return plan;
+	}
 
-    /**
-     * Processes the given plan to validate the headroom dimensions.
-     * Fetches permissible values for headroom and validates them against the plan details.
-     *
-     * @param plan The plan object to process.
-     * @return The processed plan object with scrutiny details added.
-     */
-    @Override
-    public Plan process(Plan plan) {
-        // Variable to store permissible headroom value
-        BigDecimal HeadRoomValue = BigDecimal.ZERO;
 
-        // Determine the occupancy type and feature for fetching permissible values
-        String occupancyName = fetchEdcrRulesMdms.getOccupancyName(plan);
-        String feature = MdmsFeatureConstants.HEAD_ROOM;
 
-        Map<String, Object> params = new HashMap<>();
-        
-        params.put("feature", feature);
-        params.put("occupancy", occupancyName);
+	/**
+	 * Returns an empty map as no amendments are defined for this feature.
+	 *
+	 * @return An empty map of amendments.
+	 */
+	@Override
+	public Map<String, Date> getAmendments() {
+		return new LinkedHashMap<>();
+	}
 
-        // Fetch permissible values for headroom
-        Map<String, List<Map<String, Object>>> edcrRuleList = plan.getEdcrRulesFeatures();
-        ArrayList<String> valueFromColumn = new ArrayList<>();
-        valueFromColumn.add(EdcrRulesMdmsConstants.PERMISSIBLE_VALUE);
+	/**
+	 * Processes the headroom validation for each block in the plan.
+	 * It checks whether the provided headroom dimensions meet the permissible values defined in the feature rules.
+	 *
+	 * @param plan The plan object containing building blocks and headroom details.
+	 * @return The modified plan object with scrutiny results added.
+	 */
+	@Override
+	public Plan process(Plan plan) {
+		Optional<HeadRoomRequirement> matchedRule = fetchPermissibleHeadroom(plan);
+		if (matchedRule.isPresent()) {
+			HeadRoomRequirement rule = matchedRule.get();
+		    BigDecimal permissibleHeadroom = rule.getPermissible();
 
-        List<Map<String, Object>> permissibleValue = new ArrayList<>();
-        permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
-        LOG.info("permissibleValue" + permissibleValue);
+		for (Block block : plan.getBlocks()) {
+			if (block.getBuilding() != null) {
+				processHeadroomForBlock(plan, block, permissibleHeadroom);
+			}
+		}}
 
-        if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey(EdcrRulesMdmsConstants.PERMISSIBLE_VALUE)) {
-            HeadRoomValue = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.PERMISSIBLE_VALUE).toString()));
-        } else {
-            HeadRoomValue = BigDecimal.ZERO;
-        }
+		return plan;
+	}
 
-        // Iterate through all blocks in the plan
-        for (Block block : plan.getBlocks()) {
-            if (block.getBuilding() != null) {
-                // Initialize scrutiny detail for headroom validation
-                ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
-                scrutinyDetail.addColumnHeading(1, RULE_NO);
-                scrutinyDetail.addColumnHeading(2, DESCRIPTION);
-                scrutinyDetail.addColumnHeading(3, REQUIRED);
-                scrutinyDetail.addColumnHeading(4, PROVIDED);
-                scrutinyDetail.addColumnHeading(5, STATUS);
-                scrutinyDetail.setKey("Block_" + block.getNumber() + "_" + "Stair Headroom");
+	/**
+	 * Fetches the permissible headroom value defined under the HEAD_ROOM feature rules.
+	 *
+	 * @param plan The plan from which occupancy and context are used to filter applicable feature rules.
+	 * @return The permissible headroom value, or {@code BigDecimal.ZERO} if not found.
+	 */
+	private Optional<HeadRoomRequirement> fetchPermissibleHeadroom(Plan plan) {
+		 List<Object> rules = cache.getFeatureRules(plan, FeatureEnum.HEAD_ROOM.getValue(), false);
+		 return rules.stream()
+	            .filter(HeadRoomRequirement.class::isInstance)
+	            .map(HeadRoomRequirement.class::cast)
+	            .findFirst();
 
-                // Get headroom details for the block
-                org.egov.common.entity.edcr.HeadRoom headRoom = block.getBuilding().getHeadRoom();
+	}
 
-                if (headRoom != null) {
-                    List<BigDecimal> headRoomDimensions = headRoom.getHeadRoomDimensions();
+	/**
+	 * Validates the minimum headroom provided in a block against the permissible limit.
+	 * If headroom dimensions are found, the result is added to the scrutiny detail of the plan.
+	 *
+	 * @param plan                The plan object to which the scrutiny results will be added.
+	 * @param block               The block being validated for headroom dimensions.
+	 * @param permissibleHeadroom The minimum permissible headroom as per rules.
+	 */
+	private void processHeadroomForBlock(Plan plan, Block block, BigDecimal permissibleHeadroom) {
+		org.egov.common.entity.edcr.HeadRoom headRoom = block.getBuilding().getHeadRoom();
+		if (headRoom == null || headRoom.getHeadRoomDimensions() == null
+				|| headRoom.getHeadRoomDimensions().isEmpty()) {
+			return;
+		}
 
-                    if (headRoomDimensions != null && !headRoomDimensions.isEmpty()) {
-                        // Get the minimum headroom dimension
-                        BigDecimal minHeadRoomDimension = headRoomDimensions.stream().reduce(BigDecimal::min).get();
-                        BigDecimal minWidth = Util.roundOffTwoDecimal(minHeadRoomDimension);
+		BigDecimal minHeadRoom = headRoom.getHeadRoomDimensions().stream().reduce(BigDecimal::min)
+				.orElse(BigDecimal.ZERO);
+		BigDecimal minWidth = Util.roundOffTwoDecimal(minHeadRoom);
 
-                        // Validate headroom dimensions
-                        if (minWidth.compareTo(HeadRoomValue) >= 0) {
-                            setReportOutputDetails(plan, RULE42_5_ii, RULE_42_5_ii_DESCRIPTION,
-                                    String.valueOf(HeadRoomValue), String.valueOf(minWidth), Result.Accepted.getResultVal(),
-                                    scrutinyDetail);
-                        } else {
-                            setReportOutputDetails(plan, RULE42_5_ii, RULE_42_5_ii_DESCRIPTION,
-                                    String.valueOf(HeadRoomValue), String.valueOf(minWidth), Result.Not_Accepted.getResultVal(),
-                                    scrutinyDetail);
-                        }
-                    }
-                }
-            }
-        }
-        return plan;
-    }
+		ScrutinyDetail scrutinyDetail = createScrutinyDetail(BLOCK + block.getNumber() + STAIR_HEADROOM_SUFFIX);
 
-    /**
-     * Sets the scrutiny details for the headroom validation.
-     *
-     * @param pl The plan object.
-     * @param ruleNo The rule number.
-     * @param ruleDesc The rule description.
-     * @param expected The expected headroom value.
-     * @param actual The actual headroom value provided.
-     * @param status The validation status.
-     * @param scrutinyDetail The scrutiny detail object to update.
-     */
-    private void setReportOutputDetails(Plan pl, String ruleNo, String ruleDesc, String expected, String actual,
-            String status, ScrutinyDetail scrutinyDetail) {
-        Map<String, String> details = new HashMap<>();
-        details.put(RULE_NO, ruleNo);
-        details.put(DESCRIPTION, ruleDesc);
-        details.put(REQUIRED, expected);
-        details.put(PROVIDED, actual);
-        details.put(STATUS, status);
-        scrutinyDetail.getDetail().add(details);
-        pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
-    }
+		String resultStatus = minWidth.compareTo(permissibleHeadroom) >= 0 ? Result.Accepted.getResultVal()
+				: Result.Not_Accepted.getResultVal();
 
-    /**
-     * Returns an empty map as no amendments are defined for this feature.
-     *
-     * @return An empty map of amendments.
-     */
-    @Override
-    public Map<String, Date> getAmendments() {
-        return new LinkedHashMap<>();
-    }
+		addScrutinyResult(plan, scrutinyDetail, RULE42_5_ii, RULE_42_5_ii_DESCRIPTION, permissibleHeadroom.toString(),
+				minWidth.toString(), resultStatus);
+	}
+
+	/**
+	 * Creates a {@link ScrutinyDetail} object with predefined column headings for headroom validation.
+	 *
+	 * @param key The key identifying the scrutiny section (e.g., for a particular block).
+	 * @return A {@link ScrutinyDetail} object initialized with standard columns.
+	 */
+	private ScrutinyDetail createScrutinyDetail(String key) {
+		ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
+		scrutinyDetail.setKey(key);
+		scrutinyDetail.addColumnHeading(1, RULE_NO);
+		scrutinyDetail.addColumnHeading(2, DESCRIPTION);
+		scrutinyDetail.addColumnHeading(3, REQUIRED);
+		scrutinyDetail.addColumnHeading(4, PROVIDED);
+		scrutinyDetail.addColumnHeading(5, STATUS);
+		return scrutinyDetail;
+	}
+
+	/**
+	 * Adds a result row to the given scrutiny detail and appends it to the plan’s report output.
+	 *
+	 * @param plan         The plan object to which scrutiny details are appended.
+	 * @param scrutinyDetail The detail object to store rule evaluation results.
+	 * @param ruleNo       The rule number being evaluated.
+	 * @param ruleDesc     A short description of the rule.
+	 * @param expected     The expected value as per the rule.
+	 * @param actual       The actual value found in the plan.
+	 * @param status       The result of the evaluation (e.g., Accepted or Not Accepted).
+	 */
+	private void addScrutinyResult(Plan plan, ScrutinyDetail scrutinyDetail, String ruleNo, String ruleDesc,
+			String expected, String actual, String status) {
+		ReportScrutinyDetail detail = new ReportScrutinyDetail();
+		detail.setRuleNo(ruleNo);
+		detail.setDescription(ruleDesc);
+		detail.setRequired(expected);
+		detail.setProvided(actual);
+		detail.setStatus(status);
+
+		Map<String, String> details = mapReportDetails(detail);
+		addScrutinyDetailtoPlan(scrutinyDetail, plan, details);
+	}
 
 }

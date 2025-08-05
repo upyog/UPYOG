@@ -1,5 +1,5 @@
 /*
- * eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
+ * UPYOG  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  * accountability and the service delivery of the government  organizations.
  *
  *  Copyright (C) <2019>  eGovernments Foundation
@@ -48,202 +48,200 @@
 package org.egov.edcr.feature;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.egov.common.constants.MdmsFeatureConstants;
-import org.egov.common.entity.edcr.Block;
-import org.egov.common.entity.edcr.Floor;
-import org.egov.common.entity.edcr.Plan;
-import org.egov.common.entity.edcr.Result;
-import org.egov.common.entity.edcr.ScrutinyDetail;
-import org.egov.edcr.constants.DxfFileConstants;
-import org.egov.edcr.constants.EdcrRulesMdmsConstants;
-import org.egov.edcr.service.FetchEdcrRulesMdms;
+import org.egov.common.entity.edcr.*;
+import org.egov.edcr.service.MDMSCacheManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import static org.egov.edcr.constants.CommonFeatureConstants.*;
+import static org.egov.edcr.constants.EdcrReportConstants.*;
+import static org.egov.edcr.service.FeatureUtil.mapReportDetails;
 
 @Service
 public class Basement extends FeatureProcess {
 
-    private static final Logger LOG = LogManager.getLogger(Basement.class);
-    private static final String RULE_46_6A = "46-6a";
-    private static final String RULE_46_6C = "46-6c";
-    public static final String BASEMENT_DESCRIPTION_ONE = "Height from the floor to the soffit of the roof slab or ceiling";
-    public static final String BASEMENT_DESCRIPTION_TWO = "Minimum height of the ceiling of upper basement above ground level";
-    
-    /**
-     * Validates the provided building plan.
-     * Currently, this method does not perform any validation and simply returns the plan.
-     *
-     * @param pl The building plan to be validated.
-     * @return The unchanged building plan.
-     */
-    @Override
-    public Plan validate(Plan pl) {
 
-        return pl;
-    }
-    
-    @Autowired
-    FetchEdcrRulesMdms fetchEdcrRulesMdms;
-    
-    /**
-     * Processes the basement-related validation and scrutiny for a given building plan.
-     * It checks if the basement's height conditions comply with the permissible values
-     * retrieved from the MDMS rules and records the scrutiny results.
-     *
-     * @param pl The building plan to be processed.
-     * @return The processed plan with scrutiny details added.
-     */
-    @Override
-    public Plan process(Plan pl) {
+	private static final Logger LOG = LogManager.getLogger(Basement.class);
 
-        // Initialize scrutiny details for basement verification
-        ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
-        scrutinyDetail.setKey("Common_Basement");
-        scrutinyDetail.addColumnHeading(1, RULE_NO);
-        scrutinyDetail.addColumnHeading(2, DESCRIPTION);
-        scrutinyDetail.addColumnHeading(3, REQUIRED);
-        scrutinyDetail.addColumnHeading(4, PROVIDED);
-        scrutinyDetail.addColumnHeading(5, STATUS);
+	@Autowired
+	private MDMSCacheManager cache;
 
-        Map<String, String> details = new HashMap<>();
-        BigDecimal minLength = BigDecimal.ZERO;
-        BigDecimal basementValue = BigDecimal.ZERO;
-        BigDecimal basementValuetwo = BigDecimal.ZERO;
-        BigDecimal basementValuethree = BigDecimal.ZERO;
+	@Override
+	public Plan validate(Plan pl) {
+	    return pl;
+	}
 
-        // Check if the building plan has blocks
-        if (pl.getBlocks() != null) {
-            for (Block b : pl.getBlocks()) {
-                if (b.getBuilding() != null && b.getBuilding().getFloors() != null
-                        && !b.getBuilding().getFloors().isEmpty()) {
+	/**
+	 * Processes the basement floor of each block in the plan to validate height-related rules.
+	 * <p>
+	 * This method performs the following steps:
+	 * <ul>
+	 *     <li>Retrieves applicable MDMS rules for basement floors.</li>
+	 *     <li>Iterates over each block and validates the basement (floor number -1) heights:</li>
+	 *     <li> - Floor to ceiling height against {@code permissibleOne}</li>
+	 *     <li> - Ceiling height of upper basement between {@code permissibleTwo} and {@code permissibleThree}</li>
+	 *     <li>Adds the validation results to the scrutiny report.</li>
+	 * </ul>
+	 *
+	 * @param pl the plan to process
+	 * @return the modified plan with scrutiny details added
+	 */
+	@Override
+	public Plan process(Plan pl) {
+	    if (pl.getBlocks() == null) return pl;
 
-                	String occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl);
-                    String feature = MdmsFeatureConstants.BASEMENT;
+	    ScrutinyDetail scrutinyDetail = createScrutinyDetail();
+	    Optional<BasementRequirement> matchedRule = fetchBasementRule(pl);
 
-                    // Prepare parameters to fetch permissible values
-                    Map<String, Object> params = new HashMap<>();
-                   
-                    params.put("feature", feature);
-                    params.put("occupancy", occupancyName);
+	    if (!matchedRule.isPresent()) return pl;
 
-                    Map<String, List<Map<String, Object>>> edcrRuleList = pl.getEdcrRulesFeatures();
+	    BasementRequirement rule = matchedRule.get();
+	    BigDecimal basementValue = rule.getPermissibleOne();
+	    BigDecimal basementValuetwo = rule.getPermissibleTwo();
+	    BigDecimal basementValuethree = rule.getPermissibleThree();
 
-                    // Define the keys for permissible values to be fetched
-                    ArrayList<String> valueFromColumn = new ArrayList<>();
-                    valueFromColumn.add(EdcrRulesMdmsConstants.PERMISSIBLE_ONE);
-                    valueFromColumn.add(EdcrRulesMdmsConstants.PERMISSIBLE_TWO);
-                    valueFromColumn.add(EdcrRulesMdmsConstants.PERMISSIBLE_THREE);
+	    for (Block block : pl.getBlocks()) {
+	        if (!hasValidFloors(block)) continue;
 
-                    List<Map<String, Object>> permissibleValue = new ArrayList<>();
+	        for (Floor floor : block.getBuilding().getFloors()) {
+	            if (floor.getNumber() != -1) continue; // Only basement floor
 
-                    try {
-                        // Fetch permissible values from MDMS rules
-                        permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
-                        LOG.info("permissibleValue" + permissibleValue);
+	            validateHeightFromFloorToCeiling(floor, basementValue, scrutinyDetail);
+	            validateUpperBasementCeilingHeight(floor, basementValuetwo, basementValuethree, scrutinyDetail);
+	        }
+	    }
 
-                    } catch (NullPointerException e) {
-                        LOG.error("Permissible Value for Basement not found : ", e);
-                        return null;
-                    }
+	    pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+	    return pl;
+	}
 
-                    // Extract permissible values if available
-                    if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey(EdcrRulesMdmsConstants.PERMISSIBLE_ONE)) {
-                        basementValue = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.PERMISSIBLE_ONE).toString()));
-                        basementValuetwo = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.PERMISSIBLE_TWO).toString()));
-                        basementValuethree = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.PERMISSIBLE_THREE).toString()));
-                    }
+	/**
+	 * Checks whether the given block has a valid building with at least one floor.
+	 *
+	 * @param block the block to check
+	 * @return {@code true} if the building and its floors are non-null and non-empty, {@code false} otherwise
+	 */
+	private boolean hasValidFloors(Block block) {
+	    return block.getBuilding() != null
+	            && block.getBuilding().getFloors() != null
+	            && !block.getBuilding().getFloors().isEmpty();
+	}
 
-                    // Iterate through each floor to check basement conditions
-                    for (Floor f : b.getBuilding().getFloors()) {
+	/**
+	 * Fetches the first applicable MDMS rule for the basement feature from the cache.
+	 *
+	 * @param pl the plan for which the rules are to be fetched
+	 * @return an {@code Optional<MdmsFeatureRule>} containing the basement rule, if available
+	 */
+	private Optional<BasementRequirement> fetchBasementRule(Plan pl) {
+	    List<Object> rules = cache.getFeatureRules(pl, FeatureEnum.BASEMENT.getValue(), false);
 
-                        // Check if it's a basement floor
-                        if (f.getNumber() == -1) {
+	    return rules.stream()
+	        .filter(BasementRequirement.class::isInstance)
+	        .map(BasementRequirement.class::cast)
+	        .findFirst();
+	}
+	
+	/**
+	 * Creates and initializes a new {@link ScrutinyDetail} for basement rule validations.
+	 *
+	 * @return a {@link ScrutinyDetail} instance with appropriate column headings and key
+	 */
+	private ScrutinyDetail createScrutinyDetail() {
+	    ScrutinyDetail detail = new ScrutinyDetail();
+	    detail.setKey(Common_Basement);
+	    detail.addColumnHeading(1, RULE_NO);
+	    detail.addColumnHeading(2, DESCRIPTION);
+	    detail.addColumnHeading(3, REQUIRED);
+	    detail.addColumnHeading(4, PROVIDED);
+	    detail.addColumnHeading(5, STATUS);
+	    return detail;
+	}
+	
+	/**
+	 * Validates that the minimum height from the basement floor to the ceiling meets the required value.
+	 *
+	 * @param floor          the basement floor to validate
+	 * @param basementValue  the minimum required floor-to-ceiling height
+	 * @param detail         the scrutiny detail where results will be added
+	 */
 
-                            // Validate basement height from floor to ceiling
-                            if (f.getHeightFromTheFloorToCeiling() != null
-                                    && !f.getHeightFromTheFloorToCeiling().isEmpty()) {
+	private void validateHeightFromFloorToCeiling(Floor floor, BigDecimal basementValue, ScrutinyDetail detail) {
+	    List<BigDecimal> heights = floor.getHeightFromTheFloorToCeiling();
+	    if (heights == null || heights.isEmpty()) return;
 
-                                minLength = f.getHeightFromTheFloorToCeiling().stream().reduce(BigDecimal::min).get();
+	    BigDecimal minHeight = heights.stream().reduce(BigDecimal::min).orElse(BigDecimal.ZERO);
+	    boolean accepted = minHeight.compareTo(basementValue) >= 0;
 
-                                if (minLength.compareTo(basementValue) >= 0) {
-                                    // Acceptable height condition
-                                    details.put(RULE_NO, RULE_46_6A);
-                                    details.put(DESCRIPTION, BASEMENT_DESCRIPTION_ONE);
-                                    details.put(REQUIRED, ">=" + basementValue.toString());
-                                    details.put(PROVIDED, minLength.toString());
-                                    details.put(STATUS, Result.Accepted.getResultVal());
-                                    scrutinyDetail.getDetail().add(details);
-                                } else {
-                                    // Non-compliant height condition
-                                    details = new HashMap<>();
-                                    details.put(RULE_NO, RULE_46_6A);
-                                    details.put(DESCRIPTION, BASEMENT_DESCRIPTION_ONE);
-                                    details.put(REQUIRED, ">=" + basementValue.toString());
-                                    details.put(PROVIDED, minLength.toString());
-                                    details.put(STATUS, Result.Not_Accepted.getResultVal());
-                                    scrutinyDetail.getDetail().add(details);
-                                }
-                            }
+	    detail.getDetail().add(createResultRow(
+	            RULE_46_6A,
+	            BASEMENT_DESCRIPTION_ONE,
+	            GREATER_THAN_EQUAL + basementValue,
+	            minHeight,
+	            accepted
+	    ));
+	}
 
-                            minLength = BigDecimal.ZERO;
+	/**
+	 * Validates that the minimum ceiling height of the upper basement lies within the specified range.
+	 *
+	 * @param floor      the basement floor to validate
+	 * @param minValue   the minimum allowable ceiling height
+	 * @param maxValue   the maximum allowable ceiling height (exclusive)
+	 * @param detail     the scrutiny detail where results will be added
+	 */
+	private void validateUpperBasementCeilingHeight(Floor floor, BigDecimal minValue, BigDecimal maxValue, ScrutinyDetail detail) {
+	    List<BigDecimal> ceilingHeights = floor.getHeightOfTheCeilingOfUpperBasement();
+	    if (ceilingHeights == null || ceilingHeights.isEmpty()) return;
 
-                            // Validate height of the ceiling of upper basement
-                            if (f.getHeightOfTheCeilingOfUpperBasement() != null
-                                    && !f.getHeightOfTheCeilingOfUpperBasement().isEmpty()) {
+	    BigDecimal minCeilingHeight = ceilingHeights.stream().reduce(BigDecimal::min).orElse(BigDecimal.ZERO);
+	    boolean accepted = minCeilingHeight.compareTo(minValue) >= 0 && minCeilingHeight.compareTo(maxValue) < 0;
 
-                                minLength = f.getHeightOfTheCeilingOfUpperBasement().stream().reduce(BigDecimal::min).get();
+	    detail.getDetail().add(createResultRow(
+	            RULE_46_6C,
+	            BASEMENT_DESCRIPTION_TWO,
+	            BETWEEN + minValue + TO + maxValue,
+	            minCeilingHeight,
+	            accepted
+	    ));
+	}
 
-                                if (minLength.compareTo(basementValuetwo) >= 0
-                                        && minLength.compareTo(basementValuethree) < 0) {
-                                    // Acceptable ceiling height condition
-                                    details = new HashMap<>();
-                                    details.put(RULE_NO, RULE_46_6C);
-                                    details.put(DESCRIPTION, BASEMENT_DESCRIPTION_TWO);
-                                    details.put(REQUIRED, "Between " + basementValuetwo.toString() + " to " + basementValuethree.toString());
-                                    details.put(PROVIDED, minLength.toString());
-                                    details.put(STATUS, Result.Accepted.getResultVal());
-                                    scrutinyDetail.getDetail().add(details);
-                                } else {
-                                    // Non-compliant ceiling height condition
-                                    details = new HashMap<>();
-                                    details.put(RULE_NO, RULE_46_6C);
-                                    details.put(DESCRIPTION, BASEMENT_DESCRIPTION_TWO);
-                                    details.put(REQUIRED, "Between " + basementValuetwo.toString() + " to " + basementValuethree.toString());
-                                    details.put(PROVIDED, minLength.toString());
-                                    details.put(STATUS, Result.Not_Accepted.getResultVal());
-                                    scrutinyDetail.getDetail().add(details);
-                                }
-                            }
+	/**
+	 * Creates a result row for the scrutiny report with the specified parameters.
+	 *
+	 * @param ruleNo      the rule number being validated
+	 * @param description a brief description of the rule
+	 * @param required    the required/permissible value as a string
+	 * @param provided    the actual provided value
+	 * @param accepted    whether the validation passed or failed
+	 * @return a map representing a row in the scrutiny report
+	 */
+	private Map<String, String> createResultRow(String ruleNo, String description, String required, BigDecimal provided, boolean accepted) {
+		ReportScrutinyDetail detail = new ReportScrutinyDetail();
+		detail.setRuleNo(ruleNo);
+		detail.setDescription(description);
+		detail.setRequired(required);
+		detail.setProvided(provided.toString());
+		detail.setStatus(accepted ? Result.Accepted.getResultVal() : Result.Not_Accepted.getResultVal());
 
-                            // Add scrutiny details to the report output
-                            pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
-                        }
-                    }
-                }
-            }
-        }
-        return pl;
-    }
+		Map<String, String> details = mapReportDetails(detail);
+		return details;
+	}
 
-    
-    /**
-     * Retrieves the list of amendments applicable to the basement feature.
-     * Currently, this method returns an empty map.
-     *
-     * @return A map containing amendment details.
-     */
-    @Override
-    public Map<String, Date> getAmendments() {
-        return new LinkedHashMap<>();
-    }
+	@Override
+	public Map<String, Date> getAmendments() {
+	    return new LinkedHashMap<>();
+	}
+
 
 }

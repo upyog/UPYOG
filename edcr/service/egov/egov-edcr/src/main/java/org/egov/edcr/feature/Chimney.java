@@ -1,5 +1,5 @@
 /*
- * eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
+ * UPYOG  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  * accountability and the service delivery of the government  organizations.
  *
  *  Copyright (C) <2019>  eGovernments Foundation
@@ -48,41 +48,32 @@
 package org.egov.edcr.feature;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
-import org.egov.common.constants.MdmsFeatureConstants;
-import org.egov.common.entity.edcr.Block;
-import org.egov.common.entity.edcr.Plan;
-import org.egov.common.entity.edcr.Result;
-import org.egov.common.entity.edcr.ScrutinyDetail;
-import org.egov.edcr.constants.DxfFileConstants;
-import org.egov.edcr.constants.EdcrRulesMdmsConstants;
-import org.egov.edcr.service.FetchEdcrRulesMdms;
+import org.apache.logging.log4j.Logger;
+import org.egov.common.entity.edcr.*;
+import org.egov.edcr.service.MDMSCacheManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import static org.egov.edcr.constants.CommonKeyConstants.*;
+import static org.egov.edcr.constants.EdcrReportConstants.*;
+import static org.egov.edcr.service.FeatureUtil.mapReportDetails;
 
 @Service
 public class Chimney extends FeatureProcess {
 
     // Logger for logging information and errors
     private static final Logger LOG = LogManager.getLogger(Chimney.class);
-
-    // Rule identifier and description for chimney scrutiny
-    private static final String RULE_44_D = "44-d";
-    public static final String CHIMNEY_DESCRIPTION = "Chimney";
-    public static final String CHIMNEY_VERIFY_DESCRIPTION = "Verified whether chimney height is <= ";
-    public static final String METERS = " meters";
-    public static final String TO_BUILDING_HEIGHT = ") to building height";
-
+    
     @Autowired
-    FetchEdcrRulesMdms fetchEdcrRulesMdms;
+	MDMSCacheManager cache;
 
     /**
      * Validates the given plan object.
@@ -96,86 +87,107 @@ public class Chimney extends FeatureProcess {
         return pl;
     }
 
-    /**
-     * Processes the given plan to validate chimney height.
-     * Checks whether the chimney height is within permissible limits and updates the scrutiny details.
-     *
-     * @param pl The plan object to process.
-     * @return The processed plan object with scrutiny details added.
-     */
-    @Override
-    public Plan process(Plan pl) {
-        // Initialize scrutiny detail for chimney validation
-        ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
-        scrutinyDetail.setKey("Common_Chimney");
-        scrutinyDetail.addColumnHeading(1, RULE_NO);
-        scrutinyDetail.addColumnHeading(2, DESCRIPTION);
-        scrutinyDetail.addColumnHeading(3, VERIFIED);
-        scrutinyDetail.addColumnHeading(4, ACTION);
-        scrutinyDetail.addColumnHeading(5, STATUS);
+	/**
+	 * Processes the chimney height validation for each block in the plan.
+	 *
+	 * @param pl The input Plan object containing building blocks and associated
+	 *           features.
+	 * @return The updated Plan object with scrutiny details for chimney validation.
+	 */
+	@Override
+	public Plan process(Plan pl) {
+		 List<Object> rules = cache.getFeatureRules(pl, FeatureEnum.CHIMNEY.getValue(), false);
+	        Optional<ChimneyRequirement> matchedRule = rules.stream()
+	            .filter(ChimneyRequirement.class::isInstance)
+	            .map(ChimneyRequirement.class::cast)
+	            .findFirst();
+		BigDecimal permissibleHeight = matchedRule.map(ChimneyRequirement::getPermissible).orElse(BigDecimal.ZERO);
 
-        // Map to store rule details
-        Map<String, String> details = new HashMap<>();
-        details.put(RULE_NO, RULE_44_D);
+		for (Block block : pl.getBlocks()) {
+			processBlock(pl, block, permissibleHeight);
+		}
 
-        // Variables to store permissible and actual chimney heights
-        BigDecimal minHeight = BigDecimal.ZERO;
-        BigDecimal chimneyVerifiedHeight = BigDecimal.ZERO;
+		return pl;
+	}
 
-        // Determine the occupancy type and feature for fetching permissible values
-        String occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl);
-        String feature = MdmsFeatureConstants.CHIMNEY;
+	 /**
+	  * Processes a single block to validate chimney heights.
+	  *
+	  * @param pl The plan object.
+	  * @param block The block containing chimneys.
+	  * @param permissibleHeight The permissible height for chimneys.
+	  */
+	    private void processBlock(Plan pl, Block block, BigDecimal permissibleHeight) {
+	        if (block.getChimneys() == null || block.getChimneys().isEmpty())
+	            return;
 
-        Map<String, Object> params = new HashMap<>();
-        
+	        // Chimneys are not per floor, so no processFloor here
+	        validate(pl, block, permissibleHeight);
+	    }
 
-        params.put("feature", feature);
-        params.put("occupancy", occupancyName);
+	    /**
+	     * Validates the chimney height of the given block against permissible limits and updates the scrutiny report.
+	     *
+	     * @param pl The plan object to update with report output.
+	     * @param block The block containing chimney height information.
+	     * @param permissibleHeight The permissible height for chimneys.
+	     */
+	    private void validate(Plan pl, Block block, BigDecimal permissibleHeight) {
+	        BigDecimal minChimneyHeight = block.getChimneys().stream()
+	                .reduce(BigDecimal::min)
+	                .orElse(BigDecimal.ZERO);
 
-        // Fetch permissible values for chimney height
-        Map<String, List<Map<String, Object>>> edcrRuleList = pl.getEdcrRulesFeatures();
-        ArrayList<String> valueFromColumn = new ArrayList<>();
-        valueFromColumn.add(EdcrRulesMdmsConstants.PERMISSIBLE_VALUE);
+	        ScrutinyDetail scrutinyDetail = createScrutinyDetail();
 
-        List<Map<String, Object>> permissibleValue = new ArrayList<>();
-        permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
-        LOG.info("permissibleValue" + permissibleValue);
+	        Map<String, String> resultRow;
+	        if (minChimneyHeight.compareTo(permissibleHeight) <= 0) {
+	            resultRow = createResultRow(Result.Accepted.getResultVal(), permissibleHeight, minChimneyHeight, false);
+	        } else {
+	            resultRow = createResultRow(Result.Verify.getResultVal(), permissibleHeight, minChimneyHeight, true);
+	        }
 
-        if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey(EdcrRulesMdmsConstants.PERMISSIBLE_VALUE)) {
-            chimneyVerifiedHeight = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.PERMISSIBLE_VALUE).toString()));
-        } else {
-            chimneyVerifiedHeight = BigDecimal.ZERO;
-        }
+	        scrutinyDetail.getDetail().add(resultRow);
+	        pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+	    }
 
-        // Iterate through all blocks in the plan
-        for (Block b : pl.getBlocks()) {
-            minHeight = BigDecimal.ZERO;
+		/**
+		 * Creates and initializes a {@link ScrutinyDetail} object for chimney
+		 * validation.
+		 *
+		 * @return The initialized ScrutinyDetail with column headings.
+		 */
+		private ScrutinyDetail createScrutinyDetail() {
+			ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
+			scrutinyDetail.setKey(Common_Chimney);
+			scrutinyDetail.addColumnHeading(1, RULE_NO);
+			scrutinyDetail.addColumnHeading(2, DESCRIPTION);
+			scrutinyDetail.addColumnHeading(3, VERIFIED);
+			scrutinyDetail.addColumnHeading(4, ACTION);
+			scrutinyDetail.addColumnHeading(5, STATUS);
+			return scrutinyDetail;
+		}
 
-            // Check if chimneys exist in the block
-            if (b.getChimneys() != null && !b.getChimneys().isEmpty()) {
-                // Get the minimum chimney height
-                minHeight = b.getChimneys().stream().reduce(BigDecimal::min).get();
+	    
+	    /**
+	     * Creates a result row for the chimney scrutiny report.
+	     *
+	     * @param status The result status ("Accepted" or "Verify").
+	     * @param permissibleHeight The permissible chimney height.
+	     * @param actualHeight The actual measured chimney height.
+	     * @param includedInBuildingHeight Flag indicating whether the chimney height is included in building height.
+	     * @return A map representing one row of the scrutiny detail.
+	     */
+	    private Map<String, String> createResultRow(String status, BigDecimal permissibleHeight, BigDecimal actualHeight, boolean includedInBuildingHeight) {
+			ReportScrutinyDetail detail = new ReportScrutinyDetail();
+			detail.setRuleNo(RULE_NO);
+			detail.setDescription(CHIMNEY_DESCRIPTION);
+			detail.setVerified(CHIMNEY_VERIFY_DESCRIPTION + permissibleHeight + METERS);
+			detail.setAction((includedInBuildingHeight ? INCLUDED : NOT_INCLUDED) +	CHIMNEY_HEIGHT + actualHeight + TO_BUILDING_HEIGHT);
+			detail.setStatus(status);
 
-                // Validate chimney height and update scrutiny details
-                if (minHeight.compareTo(chimneyVerifiedHeight) <= 0) {
-                    details.put(DESCRIPTION, CHIMNEY_DESCRIPTION);
-                    details.put(VERIFIED, CHIMNEY_VERIFY_DESCRIPTION + chimneyVerifiedHeight.toString() + METERS);
-                    details.put(ACTION, "Not included chimney height(" + minHeight + TO_BUILDING_HEIGHT);
-                    details.put(STATUS, Result.Accepted.getResultVal());
-                    scrutinyDetail.getDetail().add(details);
-                    pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
-                } else {
-                    details.put(DESCRIPTION, CHIMNEY_DESCRIPTION);
-                    details.put(VERIFIED, CHIMNEY_VERIFY_DESCRIPTION + chimneyVerifiedHeight.toString() + METERS);
-                    details.put(ACTION, "Included chimney height(" + minHeight + TO_BUILDING_HEIGHT);
-                    details.put(STATUS, Result.Verify.getResultVal());
-                    scrutinyDetail.getDetail().add(details);
-                    pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
-                }
-            }
-        }
-        return pl;
-    }
+			Map<String, String> details = mapReportDetails(detail);
+	        return details;
+	    }
 
     /**
      * Returns an empty map as no amendments are defined for this feature.

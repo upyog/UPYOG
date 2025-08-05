@@ -163,6 +163,8 @@ public class DxfFileConstants {
     public static final String NOC_IRRIGATION_DEPT = "NOC_IRRIGATION_DEPT";
     public static final String NOC_FIRE_DEPT = "NOC_FIRE_DEPT";
     public static final String PLOT_NO = "PLOT_NO";
+    public static final String ZONE = "ZONE";
+    public static final String SUB_ZONE = "SUB_ZONE";
   //  public static final String KHATA_NO = "KHATA_NO";
     public static final String KHASRA_NO = "KHASRA_NO";
     public static final String KHATUNI_NO = "KHATUNI_NO";

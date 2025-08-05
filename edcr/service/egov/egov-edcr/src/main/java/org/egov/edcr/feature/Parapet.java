@@ -1,5 +1,5 @@
 /*
- * eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
+ * UPYOG  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  * accountability and the service delivery of the government  organizations.
  *
  *  Copyright (C) <2019>  eGovernments Foundation
@@ -48,125 +48,152 @@
 package org.egov.edcr.feature;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
-import org.egov.common.constants.MdmsFeatureConstants;
+import org.apache.logging.log4j.Logger;
 import org.egov.common.entity.edcr.Block;
+import org.egov.common.entity.edcr.FeatureEnum;
+import org.egov.common.entity.edcr.ParapetRequirement;
 import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.Result;
 import org.egov.common.entity.edcr.ScrutinyDetail;
-import org.egov.edcr.constants.DxfFileConstants;
-import org.egov.edcr.constants.EdcrRulesMdmsConstants;
-import org.egov.edcr.service.FetchEdcrRulesMdms;
+import org.egov.edcr.service.MDMSCacheManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import static org.egov.edcr.constants.CommonKeyConstants.COMMON_PARAPET;
+import static org.egov.edcr.constants.EdcrReportConstants.*;
 
 @Service
 public class Parapet extends FeatureProcess {
 
 	private static final Logger LOG = LogManager.getLogger(Parapet.class);
-	private static final String RULE_41_V = "41-v";
-	public static final String PARAPET_DESCRIPTION = "Parapet";
-	public static final String HEIGHT = "Height >= ";
-	public static final String AND_HEIGHT = " and height <= ";
 
+	@Autowired
+	MDMSCacheManager cache;
+
+	/**
+	 * Validates the parapet-related details in the given Plan.
+	 *
+	 * @param pl the plan object containing all architectural data.
+	 * @return the same plan object, optionally enriched with validation errors (currently no validation logic here).
+	 */
 	@Override
 	public Plan validate(Plan pl) {
 
 		return pl;
 	}
-	
-	@Autowired
-	FetchEdcrRulesMdms fetchEdcrRulesMdms;
 
-@Override
-public Plan process(Plan pl) {
+	/**
+	 * Processes the parapet height for each block in the plan, 
+	 * compares it against permissible values from the MDMS rule,
+	 * and adds scrutiny details to the plan's report output.
+	 *
+	 * @param pl the plan containing block-wise parapet details
+	 * @return the plan object enriched with parapet scrutiny results
+	 */
+	public Plan process(Plan pl) {
+	    ScrutinyDetail scrutinyDetail = initializeScrutinyDetail();
+	    Map<String, String> details = initializeRuleDetails();
 
-    // Initialize scrutiny details for the report
-    ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
-    scrutinyDetail.setKey("Common_Parapet"); // Key for the scrutiny detail
-    scrutinyDetail.addColumnHeading(1, RULE_NO); // Column for rule number
-    scrutinyDetail.addColumnHeading(2, DESCRIPTION); // Column for description
-    scrutinyDetail.addColumnHeading(3, REQUIRED); // Column for required values
-    scrutinyDetail.addColumnHeading(4, PROVIDED); // Column for provided values
-    scrutinyDetail.addColumnHeading(5, STATUS); // Column for status (Accepted/Not Accepted)
+	    List<Object> rules = cache.getFeatureRules(pl, FeatureEnum.PARAPET.getValue(), false);
+        Optional<ParapetRequirement> matchedRule = rules.stream()
+            .filter(ParapetRequirement.class::isInstance)
+            .map(ParapetRequirement.class::cast)
+            .findFirst();
 
-    // Initialize a map to store rule details
-    Map<String, String> details = new HashMap<>();
-    details.put(RULE_NO, RULE_41_V); // Rule number for parapet
-    details.put(DESCRIPTION, PARAPET_DESCRIPTION); // Description of the rule
+	    BigDecimal parapetValueOne = BigDecimal.ZERO;
+	    BigDecimal parapetValueTwo = BigDecimal.ZERO;
 
-    // Initialize variables to store minimum height and permissible parapet values
-    BigDecimal minHeight = BigDecimal.ZERO;
-    BigDecimal parapetValueOne = BigDecimal.ZERO;
-    BigDecimal parapetValueTwo = BigDecimal.ZERO;
+	    if (matchedRule.isPresent()) {
+	        parapetValueOne = matchedRule.get().getParapetValueOne();
+	        parapetValueTwo = matchedRule.get().getParapetValueTwo();
+	    }
 
-    // Determine the occupancy type
-    String occupancyName = fetchEdcrRulesMdms.getOccupancyName(pl);
-    String feature = MdmsFeatureConstants.PARAPET; // Feature name for parapet
+	    for (Block b : pl.getBlocks()) {
+	        if (b.getParapets() != null && !b.getParapets().isEmpty()) {
+	            BigDecimal minHeight = getMinimumParapetHeight(b);
+	            validateParapetHeight(minHeight, parapetValueOne, parapetValueTwo, details, scrutinyDetail, pl);
+	        }
+	    }
 
-    Map<String, Object> params = new HashMap<>();
-   
-    // Add feature and occupancy to the parameters map
-    params.put("feature", feature);
-    params.put("occupancy", occupancyName);
+	    return pl;
+	}
 
-    // Fetch the list of rules from the plan object
-    Map<String, List<Map<String, Object>>> edcrRuleList = pl.getEdcrRulesFeatures();
+	/**
+	 * Initializes a {@link ScrutinyDetail} object with predefined headings 
+	 * for parapet height scrutiny.
+	 *
+	 * @return the initialized scrutiny detail object
+	 */
+	private ScrutinyDetail initializeScrutinyDetail() {
+	    ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
+	    scrutinyDetail.setKey(COMMON_PARAPET);
+	    scrutinyDetail.addColumnHeading(1, RULE_NO);
+	    scrutinyDetail.addColumnHeading(2, DESCRIPTION);
+	    scrutinyDetail.addColumnHeading(3, REQUIRED);
+	    scrutinyDetail.addColumnHeading(4, PROVIDED);
+	    scrutinyDetail.addColumnHeading(5, STATUS);
+	    return scrutinyDetail;
+	}
+	/**
+	 * Initializes rule metadata such as rule number and description
+	 * for parapet validation reporting.
+	 *
+	 * @return a map containing initial rule details
+	 */
 
-    // Specify the columns to fetch from the rules
-    ArrayList<String> valueFromColumn = new ArrayList<>();
-    valueFromColumn.add(EdcrRulesMdmsConstants.PARAPET_VALUE_ONE); // First permissible parapet value
-    valueFromColumn.add(EdcrRulesMdmsConstants.PARAPET_VALUE_TWO); // Second permissible parapet value
+	private Map<String, String> initializeRuleDetails() {
+	    Map<String, String> details = new HashMap<>();
+	    details.put(RULE_NO, RULE_41_V);
+	    details.put(DESCRIPTION, PARAPET_DESCRIPTION);
+	    return details;
+	}
 
-    // Initialize a list to store permissible values
-    List<Map<String, Object>> permissibleValue = new ArrayList<>();
+	/**
+	 * Computes the minimum parapet height from the list of parapets in a block.
+	 *
+	 * @param block the block containing parapet height values
+	 * @return the minimum parapet height value in the block
+	 */
+	private BigDecimal getMinimumParapetHeight(Block block) {
+	    return block.getParapets().stream().reduce(BigDecimal::min).get();
+	}
 
-    // Fetch permissible values from MDMS
-    permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
-    LOG.info("permissibleValue" + permissibleValue); // Log the fetched permissible values
+	/**
+	 * Validates whether the given minimum parapet height falls within the permissible range.
+	 * Appends the result (accepted/rejected) to the plan's report output.
+	 *
+	 * @param minHeight the minimum parapet height found in a block
+	 * @param parapetValueOne the lower bound of permissible height
+	 * @param parapetValueTwo the upper bound of permissible height
+	 * @param details the map containing rule metadata and validation outcome
+	 * @param scrutinyDetail the scrutiny detail object to which results are appended
+	 * @param pl the plan to which scrutiny details are added
+	 */
+	private void validateParapetHeight(BigDecimal minHeight, BigDecimal parapetValueOne, BigDecimal parapetValueTwo,
+	                                   Map<String, String> details, ScrutinyDetail scrutinyDetail, Plan pl) {
+	    String required = HEIGHT + parapetValueOne + AND_HEIGHT + parapetValueTwo;
+	    String provided = HEIGHT + minHeight + AND_HEIGHT + minHeight;
 
-    // Check if permissible values are available and update the parapet values
-    if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey(EdcrRulesMdmsConstants.PARAPET_VALUE_ONE)) {
-        parapetValueOne = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.PARAPET_VALUE_ONE).toString()));
-        parapetValueTwo = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.PARAPET_VALUE_TWO).toString()));
-    }
+	    details.put(REQUIRED, required);
+	    details.put(PROVIDED, provided);
 
-    // Iterate through all blocks in the plan
-    for (Block b : pl.getBlocks()) {
-        // Check if the block has parapets
-        if (b.getParapets() != null && !b.getParapets().isEmpty()) {
-            // Find the minimum height among the parapets
-            minHeight = b.getParapets().stream().reduce(BigDecimal::min).get();
+	    if (minHeight.compareTo(parapetValueOne) >= 0 && minHeight.compareTo(parapetValueTwo) <= 0) {
+	        details.put(STATUS, Result.Accepted.getResultVal());
+	    } else {
+	        details.put(STATUS, Result.Not_Accepted.getResultVal());
+	    }
 
-            // Validate the minimum height against the permissible values
-            if (minHeight.compareTo(parapetValueOne) >= 0 && minHeight.compareTo(parapetValueTwo) <= 0) {
-                // If the height is within the permissible range, mark as Accepted
-                details.put(REQUIRED, HEIGHT + parapetValueOne.toString() + AND_HEIGHT + parapetValueTwo.toString());
-                details.put(PROVIDED, HEIGHT + minHeight + AND_HEIGHT + minHeight);
-                details.put(STATUS, Result.Accepted.getResultVal());
-                scrutinyDetail.getDetail().add(details);
-                pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
-            } else {
-                // If the height is outside the permissible range, mark as Not Accepted
-                details.put(REQUIRED, HEIGHT + parapetValueOne.toString() + AND_HEIGHT + parapetValueTwo.toString());
-                details.put(PROVIDED, HEIGHT + minHeight + AND_HEIGHT + minHeight);
-                details.put(STATUS, Result.Not_Accepted.getResultVal());
-                scrutinyDetail.getDetail().add(details);
-                pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
-            }
-        }
-    }
-
-    return pl; // Return the updated plan object
-}
+	    scrutinyDetail.getDetail().add(details);
+	    pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+	}
 
 	@Override
 	public Map<String, Date> getAmendments() {

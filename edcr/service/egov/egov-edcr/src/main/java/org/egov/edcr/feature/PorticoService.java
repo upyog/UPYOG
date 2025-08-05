@@ -1,5 +1,5 @@
 /*
- * eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
+ * UPYOG  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  * accountability and the service delivery of the government  organizations.
  *
  *  Copyright (C) <2019>  eGovernments Foundation
@@ -48,39 +48,43 @@
 package org.egov.edcr.feature;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.egov.common.constants.MdmsFeatureConstants;
-import org.egov.common.entity.edcr.Block;
-import org.egov.common.entity.edcr.Plan;
-import org.egov.common.entity.edcr.Portico;
-import org.egov.common.entity.edcr.Result;
-import org.egov.common.entity.edcr.ScrutinyDetail;
-import org.egov.edcr.constants.DxfFileConstants;
-import org.egov.edcr.constants.EdcrRulesMdmsConstants;
-import org.egov.edcr.service.FetchEdcrRulesMdms;
+import org.egov.common.entity.edcr.*;
+import org.egov.edcr.service.MDMSCacheManager;
 import org.egov.edcr.utility.DcrConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 
+import static org.egov.edcr.constants.CommonFeatureConstants.*;
+import static org.egov.edcr.constants.CommonKeyConstants.BLOCK;
+import static org.egov.edcr.constants.EdcrReportConstants.*;
+import static org.egov.edcr.service.FeatureUtil.addScrutinyDetailtoPlan;
+import static org.egov.edcr.service.FeatureUtil.mapReportDetails;
+
 @Service
 public class PorticoService extends FeatureProcess {
     private static final Logger LOG = LogManager.getLogger(PorticoService.class);
-    private static final String SUBRULE_PORTICO = "PORTICO";
-    private static final String SUBRULE_PORTICO_MAX_LENGTHDESCRIPTION = "Maximum Portico length for portico %s ";
-    public static final String PORTICO_DISTANCETO_EXTERIORWALL = "Block %s Portico %s Portico distance to exteriorwall";
 
     @Autowired
-    FetchEdcrRulesMdms fetchEdcrRulesMdms;
+	MDMSCacheManager cache;
 
+    /**
+     * Validates the Portico elements in each block of the provided plan.
+     * Checks if the distance to the exterior wall is defined for each portico.
+     * If not defined, it adds an appropriate error message to the plan.
+     *
+     * @param plan The plan object containing building blocks and portico details.
+     * @return The same plan object with errors populated if validation fails.
+     */
     @Override
     public Plan validate(Plan plan) {
         HashMap<String, String> errors = new HashMap<>();
@@ -99,105 +103,111 @@ public class PorticoService extends FeatureProcess {
         return plan;
     }
 
+    /**
+     * Processes the portico data within the provided plan.
+     * Performs validation and evaluates each portico against permissible length rules.
+     * Adds the result to the report output.
+     *
+     * @param plan The plan object containing building block and portico data.
+     * @return The processed plan with scrutiny details populated.
+     */
     @Override
     public Plan process(Plan plan) {
-        // Initialize permissible value for portico service
-        BigDecimal porticoServicePermissibleValue = BigDecimal.ZERO;
+        validate(plan); 
 
-        // Validate the plan for portico compliance
-        validate(plan);
+        Optional<PorticoServiceRequirement> matchedRule = fetchPermissiblePorticoLength(plan);
+        if (matchedRule.isPresent()) {
+        	PorticoServiceRequirement rule = matchedRule.get();
+        	BigDecimal permissibleValue = rule.getPermissible();
 
-        // Determine the occupancy type
-        String occupancyName = fetchEdcrRulesMdms.getOccupancyName(plan);
-        String feature = MdmsFeatureConstants.PORTICO_SERVICE; // Feature name for portico service
-
-        // Prepare parameters for fetching MDMS values
-        Map<String, Object> params = new HashMap<>();
-        
-        params.put("feature", feature);
-        params.put("occupancy", occupancyName);
-
-        // Fetch the list of rules from the plan object
-        Map<String, List<Map<String, Object>>> edcrRuleList = plan.getEdcrRulesFeatures();
-
-        // Specify the columns to fetch from the rules
-        ArrayList<String> valueFromColumn = new ArrayList<>();
-        valueFromColumn.add(EdcrRulesMdmsConstants.PERMISSIBLE_VALUE); // Permissible value for portico length
-
-        // Initialize a list to store permissible values
-        List<Map<String, Object>> permissibleValue = new ArrayList<>();
-
-        // Fetch permissible values from MDMS
-        permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
-        LOG.info("permissibleValue" + permissibleValue); // Log the fetched permissible values
-
-        // Check if permissible values are available and update the permissible value for portico service
-        if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey(EdcrRulesMdmsConstants.PERMISSIBLE_VALUE)) {
-            porticoServicePermissibleValue = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.PERMISSIBLE_VALUE).toString()));
-        }
-
-        // Iterate through all blocks in the plan
         for (Block block : plan.getBlocks()) {
-            // Iterate through all porticos in the block
-            for (Portico portico : block.getPorticos()) {
-                // Initialize scrutiny details for the portico
-                scrutinyDetail = new ScrutinyDetail();
-                scrutinyDetail.addColumnHeading(1, RULE_NO); // Column for rule number
-                scrutinyDetail.addColumnHeading(2, DESCRIPTION); // Column for description
-                scrutinyDetail.addColumnHeading(3, REQUIRED); // Column for required values
-                scrutinyDetail.addColumnHeading(4, PROVIDED); // Column for provided values
-                scrutinyDetail.addColumnHeading(5, STATUS); // Column for status (Accepted/Not Accepted)
-                scrutinyDetail.setKey("Block_" + block.getNumber() + "_" + "Portico"); // Key for the scrutiny detail
+            processBlockPorticos(plan, block, permissibleValue);
+        }}
 
-                // Check if the portico length is provided
-                if (portico.getLength() != null) {
-                    // Compare the portico length with the permissible value
-                    if (portico.getLength().compareTo(porticoServicePermissibleValue) >= 0) {
-                        // If the portico length is within permissible limits, mark as Accepted
-                        setReportOutputDetails(plan, SUBRULE_PORTICO,
-                                String.format(SUBRULE_PORTICO_MAX_LENGTHDESCRIPTION, portico.getName()),
-                                "Max " + porticoServicePermissibleValue.toString() + " Mtr.",
-                                portico.getLength() + " Mtr.", Result.Accepted.getResultVal(), scrutinyDetail);
-                    } else {
-                        // If the portico length is not within permissible limits, mark as Not Accepted
-                        setReportOutputDetails(plan, SUBRULE_PORTICO,
-                                String.format(SUBRULE_PORTICO_MAX_LENGTHDESCRIPTION, portico.getName()),
-                                "Max " + porticoServicePermissibleValue.toString() + " Mtr.",
-                                portico.getLength() + " Mtr.", Result.Not_Accepted.getResultVal(), scrutinyDetail);
-                    }
-                }
-            }
-        }
-
-        return plan; // Return the updated plan object
+        return plan;
+    }
+    
+    /**
+     * Fetches the permissible maximum length value for a portico from the feature rules cache.
+     *
+     * @param plan The plan object used to retrieve feature-specific rules.
+     * @return A BigDecimal representing the permissible portico length. Defaults to zero if no rule is found.
+     */
+    private Optional<PorticoServiceRequirement> fetchPermissiblePorticoLength(Plan plan) {
+    	List<Object> rules = cache.getFeatureRules(plan, FeatureEnum.PORTICO_SERVICE.getValue(), false);
+       return rules.stream()
+            .filter(PorticoServiceRequirement.class::isInstance)
+            .map(PorticoServiceRequirement.class::cast)
+            .findFirst();
     }
 
     /**
-     * Adds the result of the validation to the scrutiny report.
+     * Iterates over all porticos in a block and compares each portico's length to the permissible value.
+     * Populates scrutiny details based on the compliance status.
      *
-     * @param pl The plan object
-     * @param ruleNo The rule number
-     * @param ruleDesc The rule description
-     * @param expected The expected value
-     * @param actual The actual value
-     * @param status The validation status (Accepted/Not Accepted)
-     * @param scrutinyDetail The scrutiny detail object
+     * @param plan             The plan object to update with scrutiny output.
+     * @param block            The block containing porticos to be validated.
+     * @param permissibleValue The permissible length value for porticos.
      */
-    private void setReportOutputDetails(Plan pl, String ruleNo, String ruleDesc, String expected, String actual, String status,
-            ScrutinyDetail scrutinyDetail) {
-        // Initialize a map to store rule details
-        Map<String, String> details = new HashMap<>();
-        details.put(RULE_NO, ruleNo); // Rule number
-        details.put(DESCRIPTION, ruleDesc); // Rule description
-        details.put(REQUIRED, expected); // Expected value
-        details.put(PROVIDED, actual); // Actual value
-        details.put(STATUS, status); // Validation status
-        scrutinyDetail.getDetail().add(details); // Add details to scrutiny detail
-        pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail); // Add scrutiny detail to the plan's report output
-    }
+	private void processBlockPorticos(Plan plan, Block block, BigDecimal permissibleValue) {
+		for (Portico portico : block.getPorticos()) {
+			ScrutinyDetail scrutinyDetail = createScrutinyDetail(block.getNumber());
+
+			if (portico.getLength() != null) {
+				String status = portico.getLength().compareTo(permissibleValue) >= 0 ? Result.Accepted.getResultVal()
+						: Result.Not_Accepted.getResultVal();
+
+				setReportOutputDetails(plan, SUBRULE_PORTICO,
+						String.format(SUBRULE_PORTICO_MAX_LENGTHDESCRIPTION, portico.getName()),
+						MAX_PREFIX + permissibleValue + MTR_SUFFIX, portico.getLength() + MTR_SUFFIX, status, scrutinyDetail);
+			}
+		}
+	}
+
+	/**
+	 * Creates and initializes a ScrutinyDetail object for a specific block and sets column headings.
+	 *
+	 * @param blockNumber The number of the block for which scrutiny details are created.
+	 * @return A new ScrutinyDetail object with headings and key set.
+	 */
+	private ScrutinyDetail createScrutinyDetail(String blockNumber) {
+		ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
+		scrutinyDetail.addColumnHeading(1, RULE_NO);
+		scrutinyDetail.addColumnHeading(2, DESCRIPTION);
+		scrutinyDetail.addColumnHeading(3, REQUIRED);
+		scrutinyDetail.addColumnHeading(4, PROVIDED);
+		scrutinyDetail.addColumnHeading(5, STATUS);
+		scrutinyDetail.setKey(BLOCK + blockNumber + PORTICO_SUFFIX);
+		return scrutinyDetail;
+	}
+    
+	/**
+	 * Populates and adds the scrutiny report details to the provided plan.
+	 *
+	 * @param pl             The plan object containing report output.
+	 * @param ruleNo         The rule number being checked.
+	 * @param ruleDesc       A description of the rule.
+	 * @param expected       The permissible or required value.
+	 * @param actual         The actual value found in the plan.
+	 * @param status         The validation result (Accepted/Not Accepted).
+	 * @param scrutinyDetail The scrutiny detail object to which the row will be added.
+	 */
+	private void setReportOutputDetails(Plan pl, String ruleNo, String ruleDesc, String expected, String actual, String status,
+		  ScrutinyDetail scrutinyDetail) {
+			  ReportScrutinyDetail detail = new ReportScrutinyDetail();
+			  detail.setRuleNo(ruleNo);
+			  detail.setDescription(ruleDesc);
+			  detail.setRequired(expected);
+			  detail.setProvided(actual);
+			  detail.setStatus(status);
+
+			  Map<String, String> details = mapReportDetails(detail);
+			  addScrutinyDetailtoPlan(scrutinyDetail, pl, details);
+	}
+
 
     @Override
     public Map<String, Date> getAmendments() {
-        return new LinkedHashMap<>(); // Return an empty map for amendments
+        return new LinkedHashMap<>(); 
     }
 }
