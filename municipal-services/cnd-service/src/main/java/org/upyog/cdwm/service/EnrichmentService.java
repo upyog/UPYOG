@@ -78,7 +78,12 @@ public class EnrichmentService {
             }
         }
         else{
-            // If user profile is not enabled, set applicantDetailId and addressDetailId to null
+            /*
+             * If the currently logged-in user is not the same as the applicant mobile number entered in the form is different from the login mobile number,
+             * then we proceed to enrich user details, which will create a new user with the provided details.
+             * If the currently logged-in user is the same as the applicant mobile number, we do not enrich user details
+             * user profile is not enabled for this service, we explicitly set `applicantDetailId` and `addressDetailId` to null in the application details
+             */
             if (!CNDServiceUtil.isCurrentUserApplicant(cndApplicationRequest)) {
                 enrichUserDetails(cndApplicationRequest);
             }
