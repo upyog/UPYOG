@@ -26,10 +26,10 @@ public class SecurityConfig {
     @Qualifier("preAuthProvider")
     private AuthenticationProvider preAuthProvider;
 
-    @Bean
-    public AuthenticationManager customAuthenticationManager() {
-        return new ProviderManager(Arrays.asList(customAuthProvider, preAuthProvider));
-    }
+//    @Bean
+//    public AuthenticationManager customAuthenticationManager() {
+//        return new ProviderManager(Arrays.asList(customAuthProvider, preAuthProvider));
+//    }
 
     @Bean
     @Order(3)
