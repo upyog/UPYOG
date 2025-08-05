@@ -48,7 +48,7 @@ public class GarbageBillTrackerRepository {
 //			+ "to_date, request_payload, response_payload, status_code) VALUES "
 //			+ "(:id, :consumer_code,:module_name, :tenant_id, failure_reason,:month, :year, :from_date, :to_date, :request_payload, :response_payload, :status_code)";
 //	
-	private static final String INSERT_BILL_FAILURE = "INSERT INTO eg_bill_failure (id, consumer_code,module_name,tenant_id, failure_reason,month,year,from_date,to_date,request_payload,response_payload,status_code,created_time,last_modified_time)"
+	private static final String INSERT_BILL_FAILURE = "INSERT INTO eg_bill_failure (id, consumer_code,module_name,tenant_id, failure_reason,month,year,from_date,to_date,request_payload,response_payload,error_json,status_code,created_time,last_modified_time)"
 			+ "VALUES ("
 			+ "    :id,"
 			+ "    :consumer_code,"
@@ -61,6 +61,7 @@ public class GarbageBillTrackerRepository {
 			+ "    :to_date,"
 			+ "    :request_payload :: JSONB,"
 			+ "    :response_payload :: JSONB,"
+			+ "	   :error_json 	 	 :: JSONB,"
 			+ "    :status_code,"
 			+ "    :created_time,"
 			+ "    :last_modified_time"
@@ -115,6 +116,7 @@ public class GarbageBillTrackerRepository {
 		billFailureInputs.put("from_date", GrbgBillFailureReq.getFrom_date());
 		billFailureInputs.put("to_date", GrbgBillFailureReq.getTo_date());
 //		billTrackerInputs.put("ward", GrbgBillFailureReq.getWard());
+		billFailureInputs.put("error_json", GrbgBillFailureReq.getError_json().isNull() ? null : objectMapper.convertValue(GrbgBillFailureReq.getError_json(), ObjectNode.class).toString());
 		billFailureInputs.put("response_payload", GrbgBillFailureReq.getResponse_payload().isNull() ? null : objectMapper.convertValue(GrbgBillFailureReq.getResponse_payload(), ObjectNode.class).toString());
 		billFailureInputs.put("request_payload", GrbgBillFailureReq.getRequest_payload().isNull() ? null : objectMapper.convertValue(GrbgBillFailureReq.getRequest_payload(), ObjectNode.class).toString());
 		billFailureInputs.put("status_code", GrbgBillFailureReq.getStatus_code());

@@ -4,6 +4,8 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.apache.commons.lang3.StringUtils;
@@ -19,6 +21,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.jayway.jsonpath.JsonPath;
 
 @Service
@@ -50,7 +54,7 @@ public class MdmsService {
 		return mdmsResponse;
 	}
 
-	public BigDecimal fetchGarbageAmountFromMDMSResponse(Object mdmsResponse, GarbageAccount garbageAccount) {
+	public BigDecimal fetchGarbageAmountFromMDMSResponse(Object mdmsResponse, GarbageAccount garbageAccount,ObjectNode errorMap,ObjectNode  calculationBreakdown) {
 
 		AtomicReference<BigDecimal> taxAmount = new AtomicReference<>(BigDecimal.ZERO);
 
@@ -69,10 +73,31 @@ public class MdmsService {
 									&& null != obj.get("subcategorytype")
 									&& obj.get("subcategorytype").toString().equalsIgnoreCase(
 											garbageAccount.getGrbgCollectionUnits().get(0).getSubCategoryType()))) {
-						taxAmount.set(BigDecimal.valueOf(Double.valueOf(obj.get("fee").toString())));
+						BigDecimal fee = BigDecimal.valueOf(Double.valueOf(obj.get("fee").toString()));
+						
+						((ObjectNode) calculationBreakdown).put("fee", fee);
+//						taxAmount.set(BigDecimal.valueOf(Double.valueOf(obj.get("fee").toString())));
+						//this condition needs to be changed for or on the basis of categorization
+						if(garbageAccount.getGrbgCollectionUnits().get(0).getNo_of_units() > 0) {
+							if(garbageAccount.getGrbgCollectionUnits().get(0).getIsvariablecalculation()) {
+								BigDecimal perUnitCharge =  BigDecimal.valueOf(Double.valueOf(obj.get("perUnitCharge").toString()));
+								fee = fee.add(perUnitCharge.multiply(BigDecimal.valueOf(garbageAccount.getGrbgCollectionUnits().get(0).getNo_of_units())));
+								calculationBreakdown.put("feeOfVariableUnits", perUnitCharge.multiply(BigDecimal.valueOf(garbageAccount.getGrbgCollectionUnits().get(0).getNo_of_units())));
+							}else {
+								BigDecimal flatCharge =  BigDecimal.valueOf(Double.valueOf(obj.get("flatChargePerUnit").toString()));
+								calculationBreakdown.put("flatCharge",flatCharge);
+								fee = fee.add(flatCharge);
+							}
+						}
+						if(garbageAccount.getGrbgCollectionUnits().get(0).getIsbplunit()) {
+							BigDecimal bplRebate =   BigDecimal.valueOf(Double.valueOf(obj.get("bplRebate").toString()));
+							fee = fee.subtract(fee.multiply(bplRebate).divide(BigDecimal.valueOf(100)));
+							calculationBreakdown.put("bplRebate",fee.multiply(bplRebate).divide(BigDecimal.valueOf(100)));
+						}
+						taxAmount.set(fee);
 					}
 				});
-
+		calculationBreakdown.put("final_amount",taxAmount.get());
 		return taxAmount.get();
 	}
 

@@ -87,6 +87,7 @@ import org.springframework.util.CollectionUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -1884,14 +1885,15 @@ public class GarbageAccountService {
 	}
 	
 	public GrbgBillFailure enrichGrbgBillFailure(GarbageAccount garbageAccount,
-			GenerateBillRequest generateBillRequest, BillResponse billResponse,Boolean isUserNull) {
+			GenerateBillRequest generateBillRequest, BillResponse billResponse,ObjectNode errorMap) {
 		SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
 		ObjectMapper mapper = new ObjectMapper();
 		JsonNode response_payload = mapper.valueToTree(billResponse);
 		JsonNode request_payload = mapper.valueToTree(generateBillRequest);
 		String failure_reason = null;
-		if(isUserNull == true && billResponse == null) 
-			failure_reason = "USER - UUID - NULL";
+		if (errorMap.has("USER-UUID-NULL"))
+//		if(isUserNull == true && billResponse == null) 
+			failure_reason = "USER-UUID-NULL";
 		else
 			failure_reason = "ISSUE IN BILLING SERVICE";
 		GrbgBillFailure grbgBillFailure = GrbgBillFailure.builder()
@@ -1907,6 +1909,7 @@ public class GarbageAccountService {
 							.status_code("400")
 							.created_time(new Date().getTime())
 							.last_modified_time(new Date().getTime())
+							.error_json(errorMap)
 							.to_date(null != generateBillRequest.getToDate() ? dateFormat.format(generateBillRequest.getToDate()): null)
 							.year(generateBillRequest.getYear()).build();
 		return grbgBillFailure;
