@@ -68,6 +68,11 @@ public class EnrichmentService {
 				// Enrich address details only
 				enrichAddressDetails(waterTankerRequest, waterTankerDetail);
 			}
+		}else{
+			if (!UserUtil.isCurrentUserApplicant(waterTankerRequest)) {
+				// Enrich user details for existing user or user details with address for new user
+				enrichUserDetails(waterTankerRequest);
+			}
 		}
 		waterTankerDetail.setBookingId(bookingId);
 		waterTankerDetail.setApplicationDate(auditDetails.getCreatedTime());
@@ -205,6 +210,11 @@ public class EnrichmentService {
 			if (StringUtils.isBlank(addressDetailId)) {
 				// Enrich address details only
 				enrichAddressDetails(mobileToiletRequest, mobileToiletDetail);
+			}
+		}else{
+			if (!UserUtil.isCurrentUserApplicant(mobileToiletRequest)) {
+				// Enrich user details for existing user or user details with address for new user
+				enrichUserDetails(mobileToiletRequest);
 			}
 		}
 		mobileToiletDetail.setBookingId(bookingId);

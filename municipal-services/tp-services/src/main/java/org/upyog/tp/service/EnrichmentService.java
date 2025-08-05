@@ -66,8 +66,12 @@ public class EnrichmentService {
                 // Enrich address details only
                 enrichAddressDetails(treePruningRequest, treePruningDetail);
             }
+        }else{
+            if (!UserUtil.isCurrentUserApplicant(treePruningRequest)) {
+                // Enrich user details for existing user or user details with address for new user
+                enrichUserDetails(treePruningRequest);
+            }
         }
-
         treePruningDetail.setBookingId(bookingId);
         treePruningDetail.setApplicationDate(auditDetails.getCreatedTime());
         treePruningDetail.setBookingStatus(TreePruningStatus.valueOf(treePruningDetail.getBookingStatus()).toString());
