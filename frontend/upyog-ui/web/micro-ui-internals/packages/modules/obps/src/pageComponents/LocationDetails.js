@@ -254,7 +254,7 @@ const LocationDetails = ({ t, config, onSelect, userType, formData, ownerIndex =
         value={pincode}
         disabled={propertyData?.address ?true:false}
       />}
-      <CardLabel>{`${t("BPA_CITY_LABEL")}*`}</CardLabel>
+      <CardLabel>{`${t("BPA_CITY_LABEL")}`}<span className="check-page-link-button"> *</span></CardLabel>
       {!isOpen && <RadioOrSelect
         options={cities}
         selectedOption={selectedCity}
@@ -267,7 +267,7 @@ const LocationDetails = ({ t, config, onSelect, userType, formData, ownerIndex =
       />}
       {!isOpen && selectedCity && localities && !propertyData?.address?.locality.name && (
         <span className={"form-pt-dropdown-only"}>
-          <CardLabel>{`${t("BPA_LOC_MOHALLA_LABEL")}*`}</CardLabel>
+          <CardLabel>{`${t("BPA_LOC_MOHALLA_LABEL")}`}<span className="check-page-link-button"> *</span></CardLabel>
           <RadioOrSelect
             optionCardStyles={{ maxHeight:"20vmax", overflow:"scroll" }}
             isMandatory={config.isMandatory}
@@ -284,7 +284,7 @@ const LocationDetails = ({ t, config, onSelect, userType, formData, ownerIndex =
        )}
          {!isOpen  && propertyData?.address?.locality.name && (
         <span className={"form-pt-dropdown-only"}>
-          <CardLabel>{`${t("BPA_LOC_MOHALLA_LABEL")}*`}</CardLabel>
+          <CardLabel>{`${t("BPA_LOC_MOHALLA_LABEL")}`}<span className="check-page-link-button"> *</span></CardLabel>
           <TextInput
             optionCardStyles={{ maxHeight:"20vmax", overflow:"scroll" }}
             isMandatory={config.isMandatory}

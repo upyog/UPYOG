@@ -132,7 +132,7 @@ const PTSelectAddress = ({ t, config, onSelect, userType, formData, setError, cl
     return (
       <div>
         <LabelFieldPair>
-          <CardLabel className="card-label-smaller">{t("MYCITY_CODE_LABEL") + " *"}</CardLabel>
+          <CardLabel className="card-label-smaller">{t("MYCITY_CODE_LABEL")}<span className="check-page-link-button"> *</span></CardLabel>
           <Controller
             name={"city"}
             defaultValue={cities?.length === 1 ? cities[0] : selectedCity}
@@ -153,7 +153,7 @@ const PTSelectAddress = ({ t, config, onSelect, userType, formData, setError, cl
         </LabelFieldPair>
         <CardLabelError style={errorStyle}>{localFormState.touched.city ? errors?.city?.message : ""}</CardLabelError>
         <LabelFieldPair>
-          <CardLabel className="card-label-smaller">{t("PT_LOCALITY_LABEL") + " *"}</CardLabel>
+          <CardLabel className="card-label-smaller">{t("PT_LOCALITY_LABEL")}<span className="check-page-link-button"> *</span></CardLabel>
           <Controller
             name="locality"
             defaultValue={null}
@@ -187,7 +187,7 @@ const PTSelectAddress = ({ t, config, onSelect, userType, formData, setError, cl
       ) : null}
       <FormStep config={config} onSelect={onSubmit} t={t} isDisabled={selectedLocality ? false : true}>
         <div>
-          <CardLabel>{`${t("MYCITY_CODE_LABEL")} `}</CardLabel>
+          <CardLabel>{`${t("MYCITY_CODE_LABEL")}`}<span className="check-page-link-button"> *</span></CardLabel>
           <span className={"form-pt-dropdown-only"}>
             <RadioOrSelect
               options={cities.sort((a, b) => a.name.localeCompare(b.name))}
@@ -201,7 +201,7 @@ const PTSelectAddress = ({ t, config, onSelect, userType, formData, setError, cl
               disabled={isEditProperty}
             />
           </span>
-          {selectedCity && localities && <CardLabel>{`${t("PT_LOCALITY_LABEL")} `}</CardLabel>}
+          {selectedCity && localities && <CardLabel>{`${t("PT_LOCALITY_LABEL")}`}<span className="check-page-link-button"> *</span></CardLabel>}
           {selectedCity && localities && (
             <span className={"form-pt-dropdown-only"}>
               <RadioOrSelect

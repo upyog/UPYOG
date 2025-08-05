@@ -51,7 +51,7 @@ const PermanentAddress = ({ t, config, onSelect, value, userType, formData }) =>
           t={t}
           isDisabled={!PermanentAddress}
         >
-          <CardLabel>{`${t("BPA_PERMANANT_ADDRESS_LABEL")}*`}</CardLabel>
+          <CardLabel>{`${t("BPA_PERMANANT_ADDRESS_LABEL")}`}<span className="check-page-link-button"> *</span></CardLabel>
           <TextArea
             t={t}
             isMandatory={false}

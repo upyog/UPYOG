@@ -43,7 +43,7 @@ const IsMutationPending = (props) => {
           </CardLabel> */}
           <div className="field" style={{ width: "55%" }}>
             <CheckBox
-              label={`${t("PT_MUTATION_COURT_PENDING_OR_NOT")}*`}
+              label={`${t("PT_MUTATION_COURT_PENDING_OR_NOT")}` + <span className="check-page-link-button"> *</span>}
               name={"isMutationInCourt"}
               onChange={setIsMutationInCourt}
               checked={isMutationInCourt?.code === "YES" ? true : false}

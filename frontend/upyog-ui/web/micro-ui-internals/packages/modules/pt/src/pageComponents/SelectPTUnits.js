@@ -447,7 +447,7 @@ const SelectPTUnits = React.memo(({ t, config, onSelect, userType, formData }) =
                 style={{ width: "100px", display: "inline" }}
                 onClick={(e) => handleRemove(index)}
               />
-              <CardLabel>{`${t("PT_FORM2_USAGE_TYPE")}*`}</CardLabel>
+              <CardLabel>{`${t("PT_FORM2_USAGE_TYPE")}`}<span className="check-page-link-button"> *</span></CardLabel>
               <Dropdown
                 t={t}
                 optionKey="i18nKey"
@@ -461,7 +461,7 @@ const SelectPTUnits = React.memo(({ t, config, onSelect, userType, formData }) =
               />
               {field?.usageCategory?.code && field.usageCategory.code.includes("RESIDENTIAL") === false && (
                 <>
-                  <CardLabel>{`${t("PT_FORM2_SUB_USAGE_TYPE")}*`}</CardLabel>
+                  <CardLabel>{`${t("PT_FORM2_SUB_USAGE_TYPE")}`}<span className="check-page-link-button"> *</span></CardLabel>
                   <div className={"form-pt-dropdown-only"}>
                     <Dropdown
                       t={t}
@@ -474,7 +474,7 @@ const SelectPTUnits = React.memo(({ t, config, onSelect, userType, formData }) =
                   </div>
                 </>
               )}
-              <CardLabel>{`${t("PT_FORM2_OCCUPANCY")}*`}</CardLabel>
+              <CardLabel>{`${t("PT_FORM2_OCCUPANCY")}`}<span className="check-page-link-button"> *</span></CardLabel>
               <div className={"form-pt-dropdown-only"}>
                 <Dropdown
                   t={t}
@@ -487,7 +487,7 @@ const SelectPTUnits = React.memo(({ t, config, onSelect, userType, formData }) =
               </div>
               {field?.occupancyType?.code && field.occupancyType.code.includes("RENTED") && (
                 <>
-                  <CardLabel>{`${t("PT_FORM2_TOTAL_ANNUAL_RENT")}*`}</CardLabel>
+                  <CardLabel>{`${t("PT_FORM2_TOTAL_ANNUAL_RENT")}`}<span className="check-page-link-button"> *</span></CardLabel>
                   <TextInput
                     style={{ background: "#FAFAFA" }}
                     t={t}
@@ -505,7 +505,7 @@ const SelectPTUnits = React.memo(({ t, config, onSelect, userType, formData }) =
                     }}
                   />
                 
-              <CardLabel>{`${t("PT_FORM2_RENTED_MONTHS")}*`}</CardLabel>
+              <CardLabel>{`${t("PT_FORM2_RENTED_MONTHS")}`}<span className="check-page-link-button"> *</span></CardLabel>
               <div className={"form-pt-dropdown-only"}>
                 <Dropdown
                   t={t}
@@ -518,7 +518,7 @@ const SelectPTUnits = React.memo(({ t, config, onSelect, userType, formData }) =
               </div>
               { rentedMonthsCodes.includes(field?.rentedMonths?.code) && (
               <>
-              <CardLabel>{`${t("PT_FORM2_NONRENTED_MONTHS_USAGE")}*`}</CardLabel>
+              <CardLabel>{`${t("PT_FORM2_NONRENTED_MONTHS_USAGE")}`}<span className="check-page-link-button"> *</span></CardLabel>
               <div className={"form-pt-dropdown-only"}>
                 <Dropdown
                   t={t}
@@ -532,7 +532,7 @@ const SelectPTUnits = React.memo(({ t, config, onSelect, userType, formData }) =
                 </>
               )} </>                
               )}
-              <CardLabel>{formData?.PropertyType?.i18nKey === "COMMON_PROPTYPE_BUILTUP_SHAREDPROPERTY" ? `${t("PT_FORM2_BUILT_UP_AREA")}*`:`${t("PT_BUILT_UP_AREA_HEADER")}*`}</CardLabel>
+              <CardLabel>{formData?.PropertyType?.i18nKey === "COMMON_PROPTYPE_BUILTUP_SHAREDPROPERTY" ? `${t("PT_FORM2_BUILT_UP_AREA")}*`:`${t("PT_BUILT_UP_AREA_HEADER")}`}<span className="check-page-link-button"> *</span></CardLabel>
               <TextInput
                 style={{ background: "#FAFAFA" }}
                 t={t}
@@ -551,7 +551,7 @@ const SelectPTUnits = React.memo(({ t, config, onSelect, userType, formData }) =
               />
               {!isFloor && (
                 <>
-                  <CardLabel>{`${t("PT_FORM2_SELECT_FLOOR")}*`}</CardLabel>
+                  <CardLabel>{`${t("PT_FORM2_SELECT_FLOOR")}`}<span className="check-page-link-button"> *</span></CardLabel>
                   <div className={"form-pt-dropdown-only"}>
                     <Dropdown
                       t={t}

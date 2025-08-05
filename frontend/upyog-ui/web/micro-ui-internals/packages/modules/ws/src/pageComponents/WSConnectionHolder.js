@@ -193,7 +193,7 @@ const reversedOwners= Array.isArray(formData?.cpt?.details?.owners) ? formData?.
         />  
         </div>
         {!isOwnerSame  && <div style={{border:"solid",borderRadius:"5px",padding:"10px",paddingTop:"20px",marginTop:"10px",borderColor:"#f3f3f3",background:"#FAFAFA"}}>
-            <CardLabel>{`${t("WS_OWN_DETAIL_NAME")}*`}</CardLabel>
+            <CardLabel>{`${t("WS_OWN_DETAIL_NAME")}`}<span className="check-page-link-button"> *</span></CardLabel>
             <TextInput
               t={t}
               type={"text"}
@@ -211,7 +211,7 @@ const reversedOwners= Array.isArray(formData?.cpt?.details?.owners) ? formData?.
                 title: t("WS_NAME_ERROR_MESSAGE"),
               })}
             />
-            <CardLabel>{`${t("WS_OWN_DETAIL_GENDER_LABEL")}*`}</CardLabel>
+            <CardLabel>{`${t("WS_OWN_DETAIL_GENDER_LABEL")}`}<span className="check-page-link-button"> *</span></CardLabel>
             <RadioButtons
               t={t}
               options={menu}
@@ -224,7 +224,7 @@ const reversedOwners= Array.isArray(formData?.cpt?.details?.owners) ? formData?.
               labelKey="COMMON_GENDER"
             //disabled={isUpdateProperty || isEditProperty}
             />
-            <CardLabel>{`${t("WS_OWN_MOBILE_NO")}*`}</CardLabel>
+            <CardLabel>{`${t("WS_OWN_MOBILE_NO")}`}<span className="check-page-link-button"> *</span></CardLabel>
             <MobileNumber
               value={mobileNumber}
               name="mobileNumber"
@@ -233,7 +233,7 @@ const reversedOwners= Array.isArray(formData?.cpt?.details?.owners) ? formData?.
               //disable={mobileNumber && !isOpenLinkFlow ? true : false}
               {...{ required: true, pattern: "[6-9]{1}[0-9]{9}", type: "tel", title: t("CORE_COMMON_APPLICANT_MOBILE_NUMBER_INVALID") }}
             />
-            <CardLabel>{`${t("WS_OWN_DETAIL_GUARDIAN_LABEL")}*`}</CardLabel>
+            <CardLabel>{`${t("WS_OWN_DETAIL_GUARDIAN_LABEL")}`}<span className="check-page-link-button"> *</span></CardLabel>
             <TextInput
               t={t}
               type={"text"}
@@ -251,7 +251,7 @@ const reversedOwners= Array.isArray(formData?.cpt?.details?.owners) ? formData?.
                 title: t("WS_NAME_ERROR_MESSAGE"),
               })}
             />
-            <CardLabel>{`${t("WS_OWN_DETAIL_RELATIONSHIP_LABEL")}*`}</CardLabel>
+            <CardLabel>{`${t("WS_OWN_DETAIL_RELATIONSHIP_LABEL")}`}<span className="check-page-link-button"> *</span></CardLabel>
             <RadioButtons
                 t={t}
                 optionsKey="i18nKey"
@@ -264,7 +264,7 @@ const reversedOwners= Array.isArray(formData?.cpt?.details?.owners) ? formData?.
                 labelKey="COMMON_MASTERS_OWNERTYPE"
                 //disabled={isUpdateProperty || isEditProperty}
             />
-            <CardLabel>{`${t("WS_COMMON_TABLE_COL_ADDRESS")}*`}</CardLabel>
+            <CardLabel>{`${t("WS_COMMON_TABLE_COL_ADDRESS")}`}<span className="check-page-link-button"> *</span></CardLabel>
             <TextInput
               t={t}
               type={"text"}
@@ -279,7 +279,7 @@ const reversedOwners= Array.isArray(formData?.cpt?.details?.owners) ? formData?.
                 title: t("WS_ADDR_ERROR_MESSAGE"),
               })}
             />
-            <CardLabel>{`${t("WS_OWN_SPECIAL_CAT_LABEL")}*`}</CardLabel>
+            <CardLabel>{`${t("WS_OWN_SPECIAL_CAT_LABEL")}`}<span className="check-page-link-button"> *</span></CardLabel>
             <Dropdown
                 className="form-field"
                 selected={ownerType}
