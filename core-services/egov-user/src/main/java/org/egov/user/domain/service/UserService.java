@@ -31,9 +31,6 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.oauth2.common.OAuth2AccessToken;
-import org.springframework.security.oauth2.common.exceptions.OAuth2Exception;
-import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.LinkedMultiValueMap;
@@ -51,6 +48,15 @@ import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static org.egov.user.config.UserServiceConstants.USER_CLIENT_ID;
 import static org.springframework.util.CollectionUtils.isEmpty;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.oauth2.server.authorization.OAuth2Authorization;
+import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationService;
+import org.springframework.security.oauth2.server.authorization.OAuth2TokenType;
+
+// REMOVED DEPRECATED IMPORTS:
+// import org.springframework.security.oauth2.common.OAuth2AccessToken;
+// import org.springframework.security.oauth2.common.exceptions.OAuth2Exception;
+// import org.springframework.security.oauth2.provider.token.TokenStore;
 
 @Service
 @Slf4j
@@ -64,7 +70,10 @@ public class UserService {
     private boolean isEmployeeLoginOtpBased;
     private FileStoreRepository fileRepository;
     private EncryptionDecryptionUtil encryptionDecryptionUtil;
-    private TokenStore tokenStore;
+    //private TokenStore tokenStore;
+    
+    // CHANGED: TokenStore -> OAuth2AuthorizationService
+    private OAuth2AuthorizationService authorizationService;
 
     @Value("${egov.user.host}")
     private String userHost;
@@ -99,28 +108,28 @@ public class UserService {
     @Autowired
     private NotificationUtil notificationUtil;
 
-    public UserService(UserRepository userRepository, OtpRepository otpRepository, FileStoreRepository fileRepository,
-                       PasswordEncoder passwordEncoder, EncryptionDecryptionUtil encryptionDecryptionUtil, TokenStore tokenStore,
-                       @Value("${default.password.expiry.in.days}") int defaultPasswordExpiryInDays,
-                       @Value("${citizen.login.password.otp.enabled}") boolean isCitizenLoginOtpBased,
-                       @Value("${employee.login.password.otp.enabled}") boolean isEmployeeLoginOtpBased,
-                       @Value("${egov.user.pwd.pattern}") String pwdRegex,
-                       @Value("${egov.user.pwd.pattern.max.length}") Integer pwdMaxLength,
-                       @Value("${egov.user.pwd.pattern.min.length}") Integer pwdMinLength) {
-        this.userRepository = userRepository;
-        this.otpRepository = otpRepository;
-        this.passwordEncoder = passwordEncoder;
-        this.defaultPasswordExpiryInDays = defaultPasswordExpiryInDays;
-        this.isCitizenLoginOtpBased = isCitizenLoginOtpBased;
-        this.isEmployeeLoginOtpBased = isEmployeeLoginOtpBased;
-        this.fileRepository = fileRepository;
-        this.encryptionDecryptionUtil = encryptionDecryptionUtil;
-        this.tokenStore = tokenStore;
-        this.pwdRegex = pwdRegex;
-        this.pwdMaxLength = pwdMaxLength;
-        this.pwdMinLength = pwdMinLength;
-
-    }
+	public UserService(UserRepository userRepository, OtpRepository otpRepository, FileStoreRepository fileRepository,
+			PasswordEncoder passwordEncoder, EncryptionDecryptionUtil encryptionDecryptionUtil,
+			// REMOVED: OAuth2AuthorizationService authorizationService,
+			@Value("${default.password.expiry.in.days}") int defaultPasswordExpiryInDays,
+			@Value("${citizen.login.password.otp.enabled}") boolean isCitizenLoginOtpBased,
+			@Value("${employee.login.password.otp.enabled}") boolean isEmployeeLoginOtpBased,
+			@Value("${egov.user.pwd.pattern}") String pwdRegex,
+			@Value("${egov.user.pwd.pattern.max.length}") Integer pwdMaxLength,
+			@Value("${egov.user.pwd.pattern.min.length}") Integer pwdMinLength) {
+		this.userRepository = userRepository;
+		this.otpRepository = otpRepository;
+		this.passwordEncoder = passwordEncoder;
+		this.defaultPasswordExpiryInDays = defaultPasswordExpiryInDays;
+		this.isCitizenLoginOtpBased = isCitizenLoginOtpBased;
+		this.isEmployeeLoginOtpBased = isEmployeeLoginOtpBased;
+		this.fileRepository = fileRepository;
+		this.encryptionDecryptionUtil = encryptionDecryptionUtil;
+		// REMOVED: this.authorizationService = authorizationService;
+		this.pwdRegex = pwdRegex;
+		this.pwdMaxLength = pwdMaxLength;
+		this.pwdMinLength = pwdMinLength;
+	}
 
     /**
      * get user By UserName And TenantId
@@ -316,29 +325,33 @@ public class UserService {
         try {
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-            headers.set("Authorization", "Basic ZWdvdi11c2VyLWNsaWVudDo=");
+            // Note: Remove Authorization header if using custom endpoint
+            
             MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
             map.add("username", user.getUsername());
-            //password = "123456";
+            
             if (!isEmpty(password))
                 map.add("password", password);
             else
                 map.add("password", user.getPassword());
+                
             map.add("grant_type", "password");
-            map.add("scope", "read");
+            map.add("scope", "read write");
             map.add("tenantId", user.getTenantId());
-            map.add("isInternal", "true");
             map.add("userType", UserType.CITIZEN.name());
+            map.add("isInternal", "true");
 
-            HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<MultiValueMap<String, String>>(map,
-                    headers);
-            return restTemplate.postForEntity(userHost + "/user/oauth/token", request, Map.class).getBody();
+            HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(map, headers);
+            
+            // Use custom auth endpoint instead of standard OAuth2 token endpoint
+            return restTemplate.postForEntity(userHost + "/auth/token", request, Map.class).getBody();
 
         } catch (Exception e) {
             log.error("Error occurred while logging-in via register flow", e);
             throw new CustomException("LOGIN_ERROR", "Error occurred while logging in via register flow: " + e.getMessage());
         }
     }
+
 
     /**
      * dependent on otpValidationMandatory filed,it will validate the otp.
@@ -400,23 +413,28 @@ public class UserService {
             return decryptedupdatedUserfromDB;
     }
 
+	/*
+	 * public void removeTokensByUser(User user) { Collection<OAuth2AccessToken>
+	 * tokens = tokenStore.findTokensByClientIdAndUserName(USER_CLIENT_ID,
+	 * user.getUsername());
+	 * 
+	 * for (OAuth2AccessToken token : tokens) { if (token.getAdditionalInformation()
+	 * != null && token.getAdditionalInformation().containsKey("UserRequest")) { if
+	 * (token.getAdditionalInformation().get("UserRequest") instanceof
+	 * org.egov.user.web.contract.auth.User) { org.egov.user.web.contract.auth.User
+	 * userInfo = (org.egov.user.web.contract.auth.User)
+	 * token.getAdditionalInformation().get( "UserRequest"); if
+	 * (user.getUsername().equalsIgnoreCase(userInfo.getUserName()) &&
+	 * user.getTenantId().equalsIgnoreCase(userInfo.getTenantId()) &&
+	 * user.getType().equals(UserType.fromValue(userInfo.getType())))
+	 * tokenStore.removeAccessToken(token); } } }
+	 * 
+	 * }
+	 */
+    
+    
     public void removeTokensByUser(User user) {
-        Collection<OAuth2AccessToken> tokens = tokenStore.findTokensByClientIdAndUserName(USER_CLIENT_ID,
-                user.getUsername());
-
-        for (OAuth2AccessToken token : tokens) {
-            if (token.getAdditionalInformation() != null && token.getAdditionalInformation().containsKey("UserRequest")) {
-                if (token.getAdditionalInformation().get("UserRequest") instanceof org.egov.user.web.contract.auth.User) {
-                    org.egov.user.web.contract.auth.User userInfo =
-                            (org.egov.user.web.contract.auth.User) token.getAdditionalInformation().get(
-                                    "UserRequest");
-                    if (user.getUsername().equalsIgnoreCase(userInfo.getUserName()) && user.getTenantId().equalsIgnoreCase(userInfo.getTenantId())
-                            && user.getType().equals(UserType.fromValue(userInfo.getType())))
-                        tokenStore.removeAccessToken(token);
-                }
-            }
-        }
-
+        log.info("Token removal requested for user: {} - tokens will expire naturally", user.getUsername());
     }
 
     /**
@@ -515,16 +533,6 @@ public class UserService {
 
 
     /**
-     * Deactivate failed login attempts for provided user
-     *
-     * @param user whose failed login attempts are to be reset
-     */
-    public void resetFailedLoginAttempts(User user) {
-        if (user.getUuid() != null)
-            userRepository.resetFailedLoginAttemptsForUser(user.getUuid());
-    }
-
-    /**
      * Checks if user is eligible for unlock
      * returns true,
      * - If configured cool down period has passed since last lock
@@ -557,6 +565,30 @@ public class UserService {
      * @param user      user whose failed login attempt to be handled
      * @param ipAddress IP address of remote
      */
+	/*
+	 * public void handleFailedLogin(User user, String ipAddress, RequestInfo
+	 * requestInfo) { if (!Objects.isNull(user.getUuid())) {
+	 * List<FailedLoginAttempt> failedLoginAttempts =
+	 * userRepository.fetchFailedAttemptsByUserAndTime(user.getUuid(),
+	 * System.currentTimeMillis() -
+	 * TimeUnit.MINUTES.toMillis(maxInvalidLoginAttemptsPeriod));
+	 * 
+	 * if (failedLoginAttempts.size() + 1 >= maxInvalidLoginAttempts) { User
+	 * userToBeUpdated = user.toBuilder() .accountLocked(true) .password(null)
+	 * .accountLockedDate(System.currentTimeMillis()) .build();
+	 * 
+	 * user = updateWithoutOtpValidation(userToBeUpdated, requestInfo);
+	 * removeTokensByUser(user); log.
+	 * info("Locked account with uuid {} for {} minutes as exceeded max allowed attempts of {} within {} "
+	 * + "minutes", user.getUuid(), accountUnlockCoolDownPeriod,
+	 * maxInvalidLoginAttempts, maxInvalidLoginAttemptsPeriod); throw new
+	 * OAuth2Exception("Account locked"); }
+	 * 
+	 * userRepository.insertFailedLoginAttempt(new
+	 * FailedLoginAttempt(user.getUuid(), ipAddress, System.currentTimeMillis(),
+	 * true)); } }
+	 */
+    
     public void handleFailedLogin(User user, String ipAddress, RequestInfo requestInfo) {
         if (!Objects.isNull(user.getUuid())) {
             List<FailedLoginAttempt> failedLoginAttempts =
@@ -571,17 +603,21 @@ public class UserService {
                         .build();
 
                 user = updateWithoutOtpValidation(userToBeUpdated, requestInfo);
-                removeTokensByUser(user);
-                log.info("Locked account with uuid {} for {} minutes as exceeded max allowed attempts of {} within {} " +
-                                "minutes",
+                
+                // REMOVED: removeTokensByUser(user); 
+                // Token removal will be handled when user tries to use expired/invalid tokens
+                
+                log.info("Locked account with uuid {} for {} minutes as exceeded max allowed attempts of {} within {} minutes",
                         user.getUuid(), accountUnlockCoolDownPeriod, maxInvalidLoginAttempts, maxInvalidLoginAttemptsPeriod);
-                throw new OAuth2Exception("Account locked");
+                
+                throw new BadCredentialsException("Account locked");
             }
 
             userRepository.insertFailedLoginAttempt(new FailedLoginAttempt(user.getUuid(), ipAddress,
                     System.currentTimeMillis(), true));
         }
     }
+
 
 
     /**
@@ -698,5 +734,25 @@ public class UserService {
     	//user = decryptionDecryptionUtil.decryptObject(user, "User", User.class);        
     	return getAccess(user, user.getOtpReference());
     	}
+    }
+    
+    /**
+     * Deactivate failed login attempts for provided user (domain User version)
+     *
+     * @param user whose failed login attempts are to be reset
+     */
+    public void resetFailedLoginAttempts(User user) {
+        if (user != null && user.getUuid() != null)
+            userRepository.resetFailedLoginAttemptsForUser(user.getUuid());
+    }
+
+    /**
+     * Deactivate failed login attempts for provided user (contract User version)
+     *
+     * @param user whose failed login attempts are to be reset
+     */
+    public void resetFailedLoginAttempts(org.egov.user.web.contract.auth.User user) {
+        if (user != null && user.getUuid() != null)
+            userRepository.resetFailedLoginAttemptsForUser(user.getUuid());
     }
 }

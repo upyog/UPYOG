@@ -1,7 +1,5 @@
 package org.egov.user.web.controller;
 
-import javax.validation.Valid;
-
 import org.egov.common.contract.response.ResponseInfo;
 import org.egov.user.domain.service.UserService;
 import org.egov.user.web.contract.LoggedInUserUpdatePasswordRequest;
@@ -13,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 
 @RestController
