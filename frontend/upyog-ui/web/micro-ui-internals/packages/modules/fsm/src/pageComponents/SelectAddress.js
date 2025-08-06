@@ -206,7 +206,7 @@ const property = sessionStorage.getItem("Digit_FSM_PT")
         <LabelFieldPair>
           <CardLabel className="card-label-smaller">
             {t("MYCITY_CODE_LABEL")}
-            {config.isMandatory ? " * " : null}
+            {config.isMandatory ? <span className="check-page-link-button"> *</span> : null}
           </CardLabel>
           <Dropdown
             className="form-field"
@@ -223,7 +223,7 @@ const property = sessionStorage.getItem("Digit_FSM_PT")
           <div>
             <LabelFieldPair>
               <CardLabel className="card-label-smaller">
-                {`${t("CS_CREATECOMPLAINT_MOHALLA")} *`}
+                {`${t("CS_CREATECOMPLAINT_MOHALLA")}`}<span className="check-page-link-button"> *</span>
                 {/* {config.isMandatory ? " * " : null} */}
               </CardLabel>
               <Dropdown
@@ -245,7 +245,7 @@ const property = sessionStorage.getItem("Digit_FSM_PT")
                 <LabelFieldPair>
                   <CardLabel className="card-label-smaller">{`${t(
                     "ES_INBOX_PLEASE_SPECIFY_LOCALITY"
-                  )} *`}</CardLabel>
+                  )}`}<span className="check-page-link-button"> *</span></CardLabel>
                   <div className="field">
                     <TextInput
                       id="newLocality"
@@ -259,7 +259,7 @@ const property = sessionStorage.getItem("Digit_FSM_PT")
           </div>
         ) : (
           <LabelFieldPair>
-            <CardLabel>{`${t("CS_PROPERTY_LOCATION")} *`}</CardLabel>
+            <CardLabel>{`${t("CS_PROPERTY_LOCATION")}`}<span className="check-page-link-button"> *</span></CardLabel>
             <div className="field">
               <RadioButtons
                 selectedOption={selectLocation}
@@ -287,7 +287,7 @@ const property = sessionStorage.getItem("Digit_FSM_PT")
       >
         {isUrcEnable && (
           <>
-            <CardLabel>{`${t("CS_PROPERTY_LOCATION")} *`}</CardLabel>
+            <CardLabel>{`${t("CS_PROPERTY_LOCATION")}`}<span className="check-page-link-button"> *</span></CardLabel>
             <RadioOrSelect
               isMandatory={config.isMandatory}
               options={inputs}
@@ -302,7 +302,7 @@ const property = sessionStorage.getItem("Digit_FSM_PT")
             />
           </>
         )}
-        <CardLabel>{`${t("MYCITY_CODE_LABEL")} *`}</CardLabel>
+        <CardLabel>{`${t("MYCITY_CODE_LABEL")}`}<span className="check-page-link-button"> *</span></CardLabel>
         <RadioOrSelect
           options={cities?.sort((a, b) => a.name.localeCompare(b.name))}
           selectedOption={cities?.length === 1 ? cities[0] : selectedCity}

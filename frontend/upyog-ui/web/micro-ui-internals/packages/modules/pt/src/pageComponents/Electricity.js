@@ -94,13 +94,13 @@ const Electricity = ({ t, config, onSelect, value, userType, formData, setError:
       return (
         <React.Fragment>
           <LabelFieldPair key={index}>
-            <CardLabel className="card-label-smaller">{t(input.label) + " *"}</CardLabel>
+            <CardLabel className="card-label-smaller">{t(input.label)}<span className="check-page-link-button"> *</span></CardLabel>
             <div className="field">
 
               <TextInput
                 key={input.name}
                 id={input.name}
-                isMandatory={true}
+                //isMandatory={true}
                 value={electricity}
                 onChange={handleElectricityChange}
                 //onChange={setElectricityNo}
@@ -140,7 +140,7 @@ const Electricity = ({ t, config, onSelect, value, userType, formData, setError:
         <TextInput
           t={t}
           type={"number"}
-          isMandatory="true"
+          //isMandatory="true"
           optionKey="i18nKey"
           name="electricity"
           value={electricity}

@@ -33,7 +33,7 @@ const InputCard = ({
       <CardHeader>
         {isMandatory ? (
           <React.Fragment>
-              {t(texts.header)} <span style={{ color: 'red' }}>*</span>
+              {t(texts.header)} <span className="check-page-link-button">*</span>
           </React.Fragment>
         ):t(texts.header)}
       </CardHeader>}

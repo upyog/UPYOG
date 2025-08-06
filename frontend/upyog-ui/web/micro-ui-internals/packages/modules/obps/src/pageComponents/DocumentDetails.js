@@ -262,7 +262,7 @@ const SelectDocument = React.memo(function MyComponent({
            <CardLabel>
                 {doc?.required ? (
                     <React.Fragment>
-                    {t(doc?.code)} <span style={{ color: 'red' }}>*</span>
+                    {t(doc?.code)} <span className="check-page-link-button"> *</span>
                     </React.Fragment>
                 ) : (
                     t(doc?.code)

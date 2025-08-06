@@ -111,7 +111,7 @@ const Area = ({ t, config, onSelect, value, userType, formData, setError: setFor
       return (
         <React.Fragment>
           <LabelFieldPair key={index}>
-            <CardLabel className="card-label-smaller">{t(input.label) + " *"}</CardLabel>
+            <CardLabel className="card-label-smaller">{t(input.label)}<span className="check-page-link-button"> *</span></CardLabel>
             <div className="field">
               <TextInput
                 key={input.name}

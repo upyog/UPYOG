@@ -146,7 +146,7 @@ const SelectTripData = ({ t, config, onSelect, formData = {}, userType }) => {
         <LabelFieldPair key={index}>
           <CardLabel className="card-label-smaller">
             {t(input.label) + " (₹)"}
-            {input.isMandatory ? " * " : null}
+            {input.isMandatory ? <span className="check-page-link-button"> *</span> : null}
           </CardLabel>
           <div className="field">
             <TextInput

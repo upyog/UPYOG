@@ -229,7 +229,7 @@ function SelectDocument({
           <CardLabel style={{fontWeight: "700" }}>
                 {doc?.required ? (
                     <React.Fragment>
-                    {t(doc?.i18nKey)} <span style={{ color: 'red' }}>*</span>
+                    {t(doc?.i18nKey)}<span className="check-page-link-button"> *</span>
                     </React.Fragment>
                 ) : (
                     t(doc?.i18nKey)

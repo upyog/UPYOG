@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import {
-  FormStep,
   RadioOrSelect,
   RadioButtons,
   LabelFieldPair,
@@ -10,6 +9,7 @@ import {
   Loader,
 } from "@upyog/digit-ui-react-components";
 import { cardBodyStyle } from "../utils";
+import FormStep from "../../../../react-components/src/molecules/FormStep"
 import { useLocation } from "react-router-dom";
 import Timeline from "../components/TLTimeline";
 
@@ -138,7 +138,7 @@ const SelectOwnerShipDetails = ({ t, config, onSelect, userType, formData, onBlu
       <React.Fragment>
         <LabelFieldPair>
           <CardLabel className="card-label-smaller" style={editScreen ? { color: "#B1B4B6" } : {}}>
-            {t("PT_PROVIDE_OWNERSHIP_DETAILS") + " *"}
+            {t("PT_PROVIDE_OWNERSHIP_DETAILS")}<span className="check-page-link-button"> *</span>
           </CardLabel>
           <Dropdown
             className="form-field"

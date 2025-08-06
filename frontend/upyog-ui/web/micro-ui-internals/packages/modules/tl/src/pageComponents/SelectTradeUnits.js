@@ -371,7 +371,7 @@ const SelectTradeUnits = ({ t, config, onSelect, userType, formData }) => {
                     onChange={(e) => selectUnitOfMeasure(index, e)}
                     disable={true}
                   />
-                  <CardLabel>{`${t("TL_NEW_TRADE_DETAILS_UOM_VALUE_LABEL")}${!field.unit ? "" : "*"}`}</CardLabel>
+                  <CardLabel>{`${t("TL_NEW_TRADE_DETAILS_UOM_VALUE_LABEL")}`}{!field.unit ? "" : <span className="check-page-link-button"> *</span>}</CardLabel>
                   <TextInput
                     style={{ background: "#FAFAFA" }}
                     t={t}

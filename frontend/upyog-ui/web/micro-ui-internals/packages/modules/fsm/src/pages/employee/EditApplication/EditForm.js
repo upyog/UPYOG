@@ -6,6 +6,7 @@ import { useTranslation } from "react-i18next";
 const isConventionalSpecticTank = (tankDimension) => tankDimension === "lbd";
 
 const EditForm = ({ tenantId, applicationData, channelMenu, vehicleMenu, sanitationMenu }) => {
+  console.log("applndata",applicationData)
   const { t } = useTranslation();
   const history = useHistory();
   const [canSubmit, setSubmitValve] = useState(false);
@@ -144,7 +145,7 @@ const EditForm = ({ tenantId, applicationData, channelMenu, vehicleMenu, sanitat
     const pitDimension = data?.pitDetail;
     const applicantName = data.applicationData.applicantName;
     const mobileNumber = data.applicationData.mobileNumber;
-    const pincode = data?.address?.pincode;
+    const pincode = typeof (data?.address?.pincode)==="object" ? JSON.parse(data?.address?.pincode) : data?.address?.pincode;
     const street = data?.address?.street?.trim();
     const doorNo = data?.address?.doorNo?.trim();
     const slum = data?.address?.slum;
