@@ -14,7 +14,7 @@ import org.springframework.scheduling.quartz.JobDetailFactoryBean;
 /**
  * Scheduled to run frequent interval, configurable
  */
-@Configuration
+//@Configuration
 public class EarlyReconciliationJobConfig {
 
     @Autowired

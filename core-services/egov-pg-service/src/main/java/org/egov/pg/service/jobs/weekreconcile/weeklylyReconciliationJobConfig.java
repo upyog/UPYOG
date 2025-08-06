@@ -35,8 +35,9 @@ public class weeklylyReconciliationJobConfig {
     CronTriggerFactoryBean weeklyReconciliationTrigger(JobDetail weeklyReconciliationJobDetail) {
         CronTriggerFactoryBean triggerFactory = new CronTriggerFactoryBean();
         triggerFactory.setJobDetail(weeklyReconciliationJobDetail);
-        triggerFactory.setCronExpression("0 0 0 ? * SAT"); // Every Saturday at 12:00 AM
+        //triggerFactory.setCronExpression("0 0 0 ? * SAT"); // Every Saturday at 12:00 AM
       //  triggerFactory.setCronExpression("0 0/1 * * * ?"); // Cron expression (every 5 minutes as an example)
+        triggerFactory.setCronExpression("0 5 0 * * ?");// Every Day at 12:05 AM
 
         // Delay start by 2 minutes
       //  triggerFactory.setStartTime(new Date(System.currentTimeMillis() + 2 * 60 * 1000)); // Current time + 2 minutes
