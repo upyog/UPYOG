@@ -30,11 +30,6 @@ public class AssetAddress {
 	@NotBlank
 	private String city;
 
-
-
-
-
-
 	@NotBlank
 	private String pincode;
 

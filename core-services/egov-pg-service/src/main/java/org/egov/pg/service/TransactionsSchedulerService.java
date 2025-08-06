@@ -115,7 +115,7 @@ public class TransactionsSchedulerService {
 
 								Object settlementAmountResponse = null;
 								try {
-									// call settlement api
+//									 call settlement api
 									settlementAmountResponse = gatewayService.settlementAmount(transaction,
 											transferWrapper);
 								} catch (Exception e) {

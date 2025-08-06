@@ -62,8 +62,10 @@ import org.egov.garbageservice.model.PayNowRequest;
 import org.egov.garbageservice.model.SearchCriteriaGarbageAccount;
 import org.egov.garbageservice.model.SearchCriteriaGarbageAccountRequest;
 import org.egov.garbageservice.model.TotalCountRequest;
+import org.egov.garbageservice.model.UserSearchRequest;
 import org.egov.garbageservice.model.UserSearchResponse;
 import org.egov.garbageservice.model.contract.DmsRequest;
+import org.egov.garbageservice.model.contract.OwnerInfo;
 import org.egov.garbageservice.model.contract.PDFRequest;
 import org.egov.garbageservice.repository.GarbageAccountRepository;
 import org.egov.garbageservice.repository.GarbageBillTrackerRepository;
@@ -908,6 +910,16 @@ public class GarbageAccountService {
 		grbObject.put("approverName",
 				null != requestInfo.getUserInfo() ? requestInfo.getUserInfo().getUserName() : null);
 		grbObject.put("userName", null != requestInfo.getUserInfo() ? requestInfo.getUserInfo().getName() : null);
+		
+		if ("MIGRATION".equals(GarbageAccount.getChannel())) {
+	        String userName = garbageAccountRepository.getApproverUserNameForTenant(GarbageAccount.getTenantId());
+	        grbObject.put("approverName",userName);
+	        UserSearchRequest userSearch = UserSearchRequest.builder().userName(userName).tenantId("hp").requestInfo(requestInfo).build();
+	        OwnerInfo userDetail = getUserDetails(userSearch);
+	        if (userDetail != null) 
+	            grbObject.put("userName", userDetail.getName());
+	    }
+		
 		// generate QR code from attributes
 		StringBuilder uri = new StringBuilder(applicationPropertiesAndConstant.getFrontEndBaseUri());
 		uri.append("citizen-payment");
@@ -916,6 +928,14 @@ public class GarbageAccountService {
 		uri.append("/").append(qr);
 		grbObject.put("qrCodeText", uri);
 		return grbObject;
+	}
+	
+	private OwnerInfo getUserDetails(UserSearchRequest userSearchRequest) {
+		List<OwnerInfo> UserList = userService.userSearch(userSearchRequest);
+		if (!CollectionUtils.isEmpty((UserList))) {
+			return UserList.get(0);
+		}
+		return null;
 	}
 
 	public void validateGrbCertificateGeneration(GarbageAccount GarbageAccount) {

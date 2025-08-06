@@ -40,6 +40,12 @@ public class GarbageAccountRepository {
 	@Autowired
 	private ObjectMapper objectMapper;
 
+	private static final String SELECT_GRBG_ACC = " SELECT acc.* FROM eg_grbg_account acc"
+			+ " JOIN eg_grbg_old_details old_dtl ON old_dtl.garbage_id = acc.garbage_id"
+			+ " JOIN eg_grbg_collection_unit unit ON unit.garbage_id = acc.garbage_id"
+			+ " JOIN eg_grbg_address address ON address.garbage_id = acc.garbage_id"
+			+ " JOIN eg_grbg_application app ON app.garbage_id = acc.garbage_id";
+			
 	private static final String SELECT_QUERY_ACCOUNT = "SELECT acc.* "
 			+ ", old_dtl.uuid as old_dtl_uuid, old_dtl.garbage_id as old_dtl_garbage_id, old_dtl.old_garbage_id as old_dtl_old_garbage_id"
 			+ ", address.uuid as address_uuid, address.address_type as address_address_type, address.address1 as address_address1, address.address2 as address_address2, address.city as address_city, address.state as address_state, address.pincode as address_pincode, address.is_active as address_is_active, address.zone as address_zone, address.ulb_name as address_ulb_name, address.ulb_type as address_ulb_type, address.ward_name as address_ward_name, address.additional_detail as address_additional_detail, address.garbage_id as address_garbage_id"
@@ -55,7 +61,7 @@ public class GarbageAccountRepository {
 		    + ", app.uuid as app_uuid, app.application_no as app_application_no , app.status as app_status, app.garbage_id as app_garbage_id " 
 		    + ", sub_app.uuid as sub_app_uuid, sub_app.application_no as sub_app_application_no , sub_app.status as sub_app_status, sub_app.garbage_id as sub_app_garbage_id "
 			+ ", sub_unit.uuid as sub_unit_uuid, sub_unit.unit_name as sub_unit_unit_name, sub_unit.unit_ward as sub_unit_unit_ward, sub_unit.ulb_name as sub_unit_ulb_name, sub_unit.type_of_ulb as sub_unit_type_of_ulb, sub_unit.garbage_id as sub_unit_garbage_id, sub_unit.unit_type as sub_unit_unit_type, sub_unit.category as sub_unit_category, sub_unit.sub_category as sub_unit_sub_category, sub_unit.sub_category_type as sub_unit_sub_category_type, sub_unit.is_active as sub_unit_is_active,sub_unit.isbplunit as sub_unit_isbplunit,sub_unit.isbulkgeneration as sub_unit_isbulkgeneration,sub_unit.isvariablecalculation as sub_unit_isvariablecalculation,sub_unit.no_of_units as sub_unit_no_of_units"
-		    + " FROM eg_grbg_account as acc "
+		    + " FROM filtered_acc as acc"
 		    + " LEFT OUTER JOIN eg_grbg_application as app ON app.garbage_id = acc.garbage_id"
 		    + " LEFT OUTER JOIN eg_grbg_old_details as old_dtl ON old_dtl.garbage_id = acc.garbage_id"
 		    + " LEFT OUTER JOIN eg_grbg_collection_unit as unit ON unit.garbage_id = acc.garbage_id"
@@ -101,6 +107,14 @@ public class GarbageAccountRepository {
 			+ ", :type, :grbgAccountDetails, (SELECT extract(epoch from now())))";
 	
 	public static final String SELECT_NEXT_GARBAGE_ID = "select nextval('seq_eg_grbg_account_id')";
+	
+	public static final String WITH_SUB_QUERY = " WITH filtered_acc AS ({replace}) "
+			+ SELECT_QUERY_ACCOUNT;
+
+	public static final String REPLACE_STRING =  "{replace}";
+	
+	public static final String GET_APPROVER_FOR_TENANT = "select code from eg_hrms_employee ehe "
+			+ "join eg_userrole_v1 eur on eur.user_id = ehe.id WHERE role_tenantid = ? AND role_code = 'GB_APPROVER'";
     
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
     private JdbcTemplate jdbcTemplate;
@@ -238,7 +252,9 @@ public class GarbageAccountRepository {
 			SearchCriteriaGarbageAccount searchCriteriaGarbageAccount, List<Object> preparedStatementValues,
 			Map<Integer, SearchCriteriaGarbageAccount> garbageCriteriaMap) {
 
-		searchQuery = new StringBuilder(SELECT_QUERY_ACCOUNT);
+//		searchQuery = new StringBuilder(SELECT_QUERY_ACCOUNT);
+
+		searchQuery = new StringBuilder(SELECT_GRBG_ACC);
 
 		searchQuery.append(" WHERE");
 		searchQuery.append(" 1=1 ");
@@ -260,9 +276,14 @@ public class GarbageAccountRepository {
 
 		searchQuery.append(whereClause);
 
-		searchQuery = addOrderByClause(searchQuery, searchCriteriaGarbageAccount);
+		String withClauseQuery = WITH_SUB_QUERY.replace(REPLACE_STRING, searchQuery);
+
+		StringBuilder sb = new StringBuilder(withClauseQuery);
+
+		searchQuery = addOrderByClause(sb, searchCriteriaGarbageAccount);
+
 		if (!searchCriteriaGarbageAccount.getIsSchedulerCall()) {
-			searchQuery = addPaginationWrapper(searchQuery, preparedStatementValues, searchCriteriaGarbageAccount);
+			searchQuery = addPaginationWrapper(sb, preparedStatementValues, searchCriteriaGarbageAccount);
 		}
 		return searchQuery;
 	}
@@ -528,5 +549,13 @@ public class GarbageAccountRepository {
 //		return null;
 		
 		
+	}
+	
+	public String getApproverUserNameForTenant(String tenantId) {
+    	StringBuilder searchQuery = new StringBuilder(GET_APPROVER_FOR_TENANT);
+		List<Object> preparedStmtList = new ArrayList<>();
+	    preparedStmtList.add(tenantId);
+        List<String> userNames = jdbcTemplate.query(searchQuery.toString(), preparedStmtList.toArray(),(rs, rowNum) -> rs.getString("code"));
+		return userNames.get(0);
 	}
 }
