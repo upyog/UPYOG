@@ -41,9 +41,7 @@ public class FetchEdcrRulesMdms {
 	private EdcrConfigProperties edcrConfigProperties;
 
 	private static Logger LOG = LogManager.getLogger(EdcrApplicationService.class);
-	private Map<FeatureRuleKey, List<Object>> ruleMap = new HashMap<>();
-	private boolean isMdmsReloaded = false; // to track if fallback MDMS call was already done
-
+	private List<Map<String, Object>> riskTypeRules = new ArrayList<>();
 
 	public String getOccupancyName(Plan pl) {
 		if (pl.getPlanInformation() == null || pl.getPlanInformation().getOccupancy() == null) {
@@ -51,7 +49,7 @@ public class FetchEdcrRulesMdms {
 		}
 
 		String occupancyName = pl.getPlanInformation().getOccupancy();
-		Log.info("Occupancy Name : " + occupancyName);
+		LOG.info("Occupancy Name : " + occupancyName);
 
 		switch (occupancyName.toLowerCase()) {
 	    case EdcrRulesMdmsConstants.RESIDENTIAL:
@@ -77,8 +75,6 @@ public class FetchEdcrRulesMdms {
 	}
 	}
 
-	private List<Map<String, Object>> riskTypeRules = new ArrayList<>();
-
 	public String getRiskType(Plan pl) {
 	    if (riskTypeRules.isEmpty()) {
 	        ObjectMapper mapper = new ObjectMapper();
@@ -92,6 +88,7 @@ public class FetchEdcrRulesMdms {
 	            Map<String, Object> rule = (Map<String, Object>) jsonArray.get(i);
 	            riskTypeRules.add(rule);
 	        }
+			LOG.info("RiskTypeRules: " + riskTypeRules);
 	    }
 
 	    BigDecimal plotArea = pl.getPlot().getArea();
@@ -102,6 +99,8 @@ public class FetchEdcrRulesMdms {
 	        BigDecimal toPlotArea = new BigDecimal(rule.get(EdcrRulesMdmsConstants.TO_PLOT_AREA).toString());
 	        BigDecimal fromHeight = new BigDecimal(rule.get(EdcrRulesMdmsConstants.FROM_BUILDING_HEIGHT).toString());
 	        BigDecimal toHeight = new BigDecimal(rule.get(EdcrRulesMdmsConstants.TO_BUILDING_HEIGHT).toString());
+
+			LOG.info("RULES:: fromPlotArea: " + fromPlotArea + ", toPlotArea: " + toPlotArea + ", fromHeight: " + fromHeight + ", toHeight: " + toHeight);
 
 	        boolean plotAreaInRange = plotArea.compareTo(fromPlotArea) >= 0 && plotArea.compareTo(toPlotArea) < 0;
 	        boolean heightInRange = height.compareTo(fromHeight) >= 0 && height.compareTo(toHeight) < 0;
