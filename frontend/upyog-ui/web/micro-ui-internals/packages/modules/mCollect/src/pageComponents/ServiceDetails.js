@@ -250,7 +250,7 @@ const OwnerForm1 = (_props) => {
         <div>
         <CardSectionHeader>{t("SERVICEDETAILS")}</CardSectionHeader>
       <LabelFieldPair>
-            <CardLabel className="card-label-smaller">{`${t("UC_CITY_LABEL")} * `}</CardLabel>
+            <CardLabel className="card-label-smaller">{`${t("UC_CITY_LABEL")}`}<span className="check-page-link-button"> *</span></CardLabel>
             <Controller
               name="city"
               rules={{ required: t("REQUIRED_FIELD") }}
@@ -276,7 +276,7 @@ const OwnerForm1 = (_props) => {
             />
         </LabelFieldPair>
         <LabelFieldPair>
-            <CardLabel className={isMobile?"card-label-APK":"card-label-smaller"}>{`${t("UC_SERVICE_CATEGORY_LABEL")} * `}</CardLabel>
+            <CardLabel className={isMobile?"card-label-APK":"card-label-smaller"}>{`${t("UC_SERVICE_CATEGORY_LABEL")} `}<span className="check-page-link-button"> *</span></CardLabel>
             <Controller
               name="category"
               rules={{ required: t("REQUIRED_FIELD") }}
@@ -303,7 +303,7 @@ const OwnerForm1 = (_props) => {
             />
           </LabelFieldPair>
           <LabelFieldPair>
-            <CardLabel className="card-label-smaller">{`${t("UC_SERVICE_TYPE_LABEL")} * `}</CardLabel>
+            <CardLabel className="card-label-smaller">{`${t("UC_SERVICE_TYPE_LABEL")}`}<span className="check-page-link-button"> *</span></CardLabel>
             <Controller
               name="categoryType"
               rules={{ required: t("REQUIRED_FIELD") }}
@@ -329,7 +329,7 @@ const OwnerForm1 = (_props) => {
             />
           </LabelFieldPair>
           <LabelFieldPair>
-            <CardLabel className="card-label-smaller">{`${t("UC_FROM_DATE_LABEL")} * `}</CardLabel>
+            <CardLabel className="card-label-smaller">{`${t("UC_FROM_DATE_LABEL")}`}<span className="check-page-link-button"> *</span></CardLabel>
             <div className="field">
               <Controller
                 name="fromDate"
@@ -350,7 +350,7 @@ const OwnerForm1 = (_props) => {
             </div>
           </LabelFieldPair>
           <LabelFieldPair>
-            <CardLabel className="card-label-smaller">{`${t("UC_TO_DATE_LABEL")} * `}</CardLabel>
+            <CardLabel className="card-label-smaller">{`${t("UC_TO_DATE_LABEL")}`}<span className="check-page-link-button"> *</span></CardLabel>
             <div className="field">
               <Controller
                 name="toDate"

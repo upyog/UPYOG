@@ -1,7 +1,6 @@
-import { CardLabel, CardLabelDesc,  UploadFile } from "@upyog/digit-ui-react-components";
+import { CardLabel, CardLabelDesc,  UploadFile, FormStep } from "@upyog/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import Timeline from "../components/TLTimeline";
-import FormStep from "../../../../react-components/src/molecules/FormStep"
 
 const SelectOwnershipProof = ({ t, config, onSelect, userType, formData, isMandatory }) => {
   const [uploadedFile, setUploadedFile] = useState(formData?.owners?.documents?.ProofOfOwnership?.fileStoreId || null);
@@ -80,7 +79,7 @@ const SelectOwnershipProof = ({ t, config, onSelect, userType, formData, isManda
     <FormStep config={config} onSelect={handleSubmit} onSkip={onSkip} t={t} isDisabled={!uploadedFile || error} isMandatory={isMandatory}>
       <CardLabelDesc style={{ fontWeight: "unset" }}>{t(`TL_UPLOAD_OWNERSHIP_RESTRICTIONS_TYPES`)}</CardLabelDesc>
       <CardLabelDesc style={{ fontWeight: "unset" }}>{t(`TL_UPLOAD_RESTRICTIONS_SIZE`)}</CardLabelDesc>
-      <CardLabel>{`${t("TL_CATEGORY_DOCUMENT_TYPE")}`}</CardLabel>
+      <CardLabel>{`${t("TL_CATEGORY_DOCUMENT_TYPE")}`}<span className="check-page-link-button"> *</span></CardLabel>
       {/* <Dropdown
         t={t}
         isMandatory={false}

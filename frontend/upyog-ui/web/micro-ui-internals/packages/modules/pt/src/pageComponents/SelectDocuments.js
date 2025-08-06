@@ -327,7 +327,7 @@ function SelectDocument({
         <LabelFieldPair>
           <CardLabel className="card-label-smaller">
           <React.Fragment>
-              {t(doc?.code.replaceAll(".", "_"))} <span style={{ color: 'red' }}>*</span>
+              {t(doc?.code.replaceAll(".", "_"))} <span className="check-page-link-button"> *</span>
           </React.Fragment>
           </CardLabel>
           <Dropdown

@@ -185,7 +185,6 @@ export const newConfig =[
                 {
                     "type": "component",
                     "route": "electricity-number",
-                    "isMandatory": true,
                     "component": "Electricity",
                     "key": "electricity",
                     "withoutLabel": true,

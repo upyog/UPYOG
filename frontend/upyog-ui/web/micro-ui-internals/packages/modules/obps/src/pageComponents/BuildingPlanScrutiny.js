@@ -234,20 +234,20 @@ const getDetailsRow = (estimateDetails) => {
     >
       <div style={{ marginTop: "10px", display: "flex", justifyContent: "space-between" }}>
         <div style={{ flex: 1 }}>
-          <CardLabel>{t("PREAPPROVE_LAYOUT_TYPE_HEADER")} *</CardLabel>
+          <CardLabel>{t("PREAPPROVE_LAYOUT_TYPE_HEADER")}<span className="check-page-link-button"> *</span></CardLabel>
           <Dropdown t={t} optionKey="key" isMandatory={true} option={planArrpovedOptione} selected={isPlanApproved} select={setIsPlanApproved}/>
           
           <div style={{ marginTop: "10px" }}>
-            <CardLabel>{t("PREAPPROVE_LAND_STATUS")} *</CardLabel>
+            <CardLabel>{t("PREAPPROVE_LAND_STATUS")}<span className="check-page-link-button"> *</span></CardLabel>
             <Dropdown t={t} optionKey="key" isMandatory={true} option={landStatusOptions} selected={landStatus} select={setLandStatus}/>
           </div>
           
-          <CardLabel>{t("PREAPPROVE_PROJECT_COMPONENT")} *</CardLabel>
+          <CardLabel>{t("PREAPPROVE_PROJECT_COMPONENT")}<span className="check-page-link-button"> *</span></CardLabel>
           <Dropdown t={t} optionKey="key" isMandatory={true} option={projectComponentOptions} selected={projectComponent} select={setProjectComponent}/>
           
           {error === "" && (
             <React.Fragment>
-              <CardLabel>{t("PREAPPROVE_LENGHT_OF_PLOT")} *</CardLabel>
+              <CardLabel>{t("PREAPPROVE_LENGHT_OF_PLOT")}<span className="check-page-link-button"> *</span></CardLabel>
               <div style={{ display: 'flex', justifyContent: 'space-between', gap: '6px', marginTop: '10px' }}>
                 <div style={{ flex: 1 }}>
                   <CardLabel style={{fontSize:"18px"}}>{t("FEET")}
@@ -278,7 +278,7 @@ const getDetailsRow = (estimateDetails) => {
                 </div>
               </div>
   
-              <CardLabel>{t("PREAPPROVE_PLOT_WITH_IN_FT")} *</CardLabel>
+              <CardLabel>{t("PREAPPROVE_PLOT_WITH_IN_FT")}<span className="check-page-link-button"> *</span></CardLabel>
               <div style={{ display: 'flex', justifyContent: 'space-between', gap: '6px', marginTop: '10px' }}>
                 <div style={{ flex: 1 }}>
                   <CardLabel style={{fontSize:"18px"}}>{t("FEET")}
@@ -307,7 +307,7 @@ const getDetailsRow = (estimateDetails) => {
                   </CardLabel>
                 </div>
               </div>
-              <CardLabel>{t("PREAPPROVE_ABUTTING_ROAD")} *</CardLabel>
+              <CardLabel>{t("PREAPPROVE_ABUTTING_ROAD")}<span className="check-page-link-button"> *</span></CardLabel>
               <TextInput
                 t={t}
                 //type="number"

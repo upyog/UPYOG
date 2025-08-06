@@ -219,7 +219,7 @@ function SelectDocument({
         <CardLabel className="card-label-smaller">
           {doc?.documentType != "OLDLICENCENO" ? (
             <React.Fragment>
-                {t(`TL_NEW_${doc?.documentType.replaceAll(".", "_")}`)} <span style={{ color: 'red' }}>*</span>
+                {t(`TL_NEW_${doc?.documentType.replaceAll(".", "_")}`)}<span className="check-page-link-button"> *</span>
             </React.Fragment>
           ) : (
             <React.Fragment>

@@ -253,7 +253,7 @@ const WSSewerageConnectionDetails = ({ t, config, userType, onSelect, formData }
                 isDisabled={!proposedWaterClosets || !proposedToilets || isDisableForNext}
                 onAdd={onAdd}
             >
-                <CardLabel>{t("WS_NO_OF_WATER_CLOSETS")}*</CardLabel>
+                <CardLabel>{t("WS_NO_OF_WATER_CLOSETS")}<span className="check-page-link-button"> *</span></CardLabel>
                 <TextInput
                     type={"number"}
                     isMandatory={false}
@@ -268,7 +268,7 @@ const WSSewerageConnectionDetails = ({ t, config, userType, onSelect, formData }
                         title: t("ERR_DEFAULT_INPUT_FIELD_MSG"),
                     })}
                 />
-                <CardLabel>{t("WS_SERV_DETAIL_NO_OF_TOILETS")}*</CardLabel>
+                <CardLabel>{t("WS_SERV_DETAIL_NO_OF_TOILETS")}<span className="check-page-link-button"> *</span></CardLabel>
                 <TextInput
                     type={"number"}
                     isMandatory={false}

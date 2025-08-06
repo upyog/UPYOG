@@ -44,7 +44,7 @@ const SelectPitType = ({ t, formData, config, onSelect, userType }) => {
     <React.Fragment>
       <Timeline currentStep={1} flow="APPLY" />
       <FormStep config={config} onSelect={onSubmit} onSkip={onSkip} isDisabled={!pitType} t={t}>
-        <CardLabel>{t("CS_FILE_APPLICATION_PIT_TYPE_LABEL")}</CardLabel>
+        <CardLabel>{t("CS_FILE_APPLICATION_PIT_TYPE_LABEL")}<span className="check-page-link-button"> *</span></CardLabel>
         <RadioOrSelect
           isMandatory={config.isMandatory}
           options={sanitationMenu?.sort((a, b) => a.name.localeCompare(b.name))}

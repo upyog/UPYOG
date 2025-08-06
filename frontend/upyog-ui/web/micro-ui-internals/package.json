@@ -11,7 +11,13 @@
     "packages/modules/commonPt",
     "packages/modules/common",
     "packages/modules/hrms",
-    "packages/modules/obps"
+    "packages/modules/obps",
+    "packages/modules/mCollect",
+    "packages/modules/fsm",
+    "packages/modules/ws",
+    "packages/modules/tl",
+    "packages/modules/pgr",
+    "packages/modules/pt"
   ],
   "license": "MIT",
   "private": true,

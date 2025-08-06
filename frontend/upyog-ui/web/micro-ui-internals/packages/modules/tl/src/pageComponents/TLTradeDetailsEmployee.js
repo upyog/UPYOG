@@ -299,7 +299,7 @@ const OwnerForm1 = (_props) => {
       <div style={{ marginBottom: "16px" }}>
         <div>
           <LabelFieldPair>
-            <CardLabel className="card-label-smaller">{`${t("TL_FINANCIAL_YEAR_LABEL")} * `}</CardLabel>
+            <CardLabel className="card-label-smaller">{`${t("TL_FINANCIAL_YEAR_LABEL")}`}<span className="check-page-link-button"> *</span></CardLabel>
             <Controller
               name="financialYear"
               rules={{ required: t("REQUIRED_FIELD") }}
@@ -323,7 +323,7 @@ const OwnerForm1 = (_props) => {
           </LabelFieldPair>
           <CardLabelError style={errorStyle}>{localFormState.touched.financialYear ? errors?.financialYear?.message : ""}</CardLabelError>
           <LabelFieldPair>
-            <CardLabel className="card-label-smaller">{`${t("TL_NEW_TRADE_DETAILS_LIC_TYPE_LABEL")} * `}</CardLabel>
+            <CardLabel className="card-label-smaller">{`${t("TL_NEW_TRADE_DETAILS_LIC_TYPE_LABEL")}`}<span className="check-page-link-button"> *</span></CardLabel>
             <Controller
               name="licenseType"
               defaultValue={tradedetail?.licenseType}
@@ -345,7 +345,7 @@ const OwnerForm1 = (_props) => {
           </LabelFieldPair>
 
           <LabelFieldPair>
-            <CardLabel className="card-label-smaller">{`${t("TL_COMMON_TABLE_COL_TRD_NAME")} * `}</CardLabel>
+            <CardLabel className="card-label-smaller">{`${t("TL_COMMON_TABLE_COL_TRD_NAME")}`}<span className="check-page-link-button"> *</span></CardLabel>
             <div className="field">
               <Controller
                 control={control}
@@ -373,7 +373,7 @@ const OwnerForm1 = (_props) => {
           </LabelFieldPair>
           <CardLabelError style={errorStyle}>{localFormState.touched.tradeName ? errors?.tradeName?.message : ""}</CardLabelError>
           <LabelFieldPair>
-            <CardLabel className="card-label-smaller">{`${t("TL_NEW_TRADE_DETAILS_STRUCT_TYPE_LABEL")} * `}</CardLabel>
+            <CardLabel className="card-label-smaller">{`${t("TL_NEW_TRADE_DETAILS_STRUCT_TYPE_LABEL")}`}<span className="check-page-link-button"> *</span></CardLabel>
             <Controller
               name="structureType"
               rules={{ required: t("REQUIRED_FIELD") }}
@@ -410,7 +410,7 @@ const OwnerForm1 = (_props) => {
           </LabelFieldPair>
           <CardLabelError style={errorStyle}>{localFormState.touched.structureType ? errors?.structureType?.message : ""}</CardLabelError>
           <LabelFieldPair>
-            <CardLabel className="card-label-smaller">{`${t("TL_NEW_TRADE_DETAILS_STRUCT_SUB_TYPE_LABEL")} * `}</CardLabel>
+            <CardLabel className="card-label-smaller">{`${t("TL_NEW_TRADE_DETAILS_STRUCT_SUB_TYPE_LABEL")}`}<span className="check-page-link-button"> *</span></CardLabel>
             <Controller
               name="structureSubType"
               rules={{ required: t("REQUIRED_FIELD") }}
@@ -436,7 +436,7 @@ const OwnerForm1 = (_props) => {
           </LabelFieldPair>
           <CardLabelError style={errorStyle}>{localFormState.touched.structureSubType ? errors?.structureSubType?.message : ""}</CardLabelError>
           <LabelFieldPair>
-            <CardLabel className="card-label-smaller">{`${t("TL_NEW_TRADE_DETAILS_TRADE_COMM_DATE_LABEL")} * `}</CardLabel>
+            <CardLabel className="card-label-smaller">{`${t("TL_NEW_TRADE_DETAILS_TRADE_COMM_DATE_LABEL")} `}<span className="check-page-link-button"> *</span></CardLabel>
             <div className="field">
               <Controller
                 name="commencementDate"

@@ -1,11 +1,10 @@
 import React, { useState } from "react";
 import {
-    FormStep,
     RadioOrSelect,
     CardLabel
 } from "@upyog/digit-ui-react-components";
 import Timeline from "../components/Timeline";
-
+import FormStep from "../../../../react-components/src/molecules/FormStep"
 const WSServiceName = ({ t, config, onSelect, userType, formData }) => {
     const [serviceName, setServiceName] = useState(formData?.serviceName || "");
     const [formDetails, setFormDetails] = useState(formData || {});
@@ -60,6 +59,7 @@ const WSServiceName = ({ t, config, onSelect, userType, formData }) => {
                 onSkip={onSkip}
                 isDisabled={!serviceName}
                 onAdd={onAdd}
+                isMandatory={config.isMandatory}
             >
                 <CardLabel>{t("WS_SELECT_SERVICE_TYPE_WANT_TO_APPLY")}</CardLabel>
                 <RadioOrSelect

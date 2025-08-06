@@ -20,7 +20,7 @@ import { useTranslation } from "react-i18next";
 import MobileNumber from "../atoms/MobileNumber";
 import _ from "lodash";
 
-export const FormComposer = (props) => {
+const FormComposer = (props) => {
   const {
     register,
     handleSubmit,
@@ -346,3 +346,4 @@ export const FormComposer = (props) => {
     </form>
   );
 };
+export default FormComposer;

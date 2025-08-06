@@ -1,10 +1,10 @@
-import { CardLabel, CardLabelDesc, Dropdown, UploadFile } from "@upyog/digit-ui-react-components";
+import { CardLabel, CardLabelDesc, Dropdown, UploadFile, FormStep } from "@upyog/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { stringReplaceAll } from "../utils";
 import Timeline from "../components/TLTimeline";
 import UploadFileDigiLocker from "../utils/UploadFile"
-import FormStep from "../../../../react-components/src/molecules/FormStep"
+
 
 const Proof = ({ t, config, onSelect, userType, formData, isMandatory}) => {
   //let index = window.location.href.charAt(window.location.href.length - 1);
@@ -109,7 +109,7 @@ const Proof = ({ t, config, onSelect, userType, formData, isMandatory}) => {
       >
         <CardLabelDesc>{t(`PT_UPLOAD_RESTRICTIONS_TYPES`)}</CardLabelDesc>
         <CardLabelDesc>{t(`PT_UPLOAD_RESTRICTIONS_SIZE`)}</CardLabelDesc>
-        <CardLabel>{`${t("PT_CATEGORY_DOCUMENT_TYPE")}`}</CardLabel>
+        <CardLabel>{`${t("PT_CATEGORY_DOCUMENT_TYPE")}`}<span className="check-page-link-button"> *</span></CardLabel>
         <Dropdown
           t={t}
           isMandatory={false}

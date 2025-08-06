@@ -43,7 +43,7 @@ const PlotDetails = ({ formData, onSelect, config }) => {
       {formData?.selectedPlot||formData?.businessService==="BPA-PAP" ? (
         <FormStep config={config} onSelect={handleSubmit} childrenAtTheBottom={false} t={t}  isDisabled={plotNo===""||khataNo===""||holdingNumber===""}>
         <div>
-        <CardLabel>{t("PLOT_NUMBER")} *</CardLabel>
+        <CardLabel>{t("PLOT_NUMBER")}<span className="check-page-link-button"> *</span></CardLabel>
           <TextInput
             t={t}
             type="text"
@@ -51,7 +51,7 @@ const PlotDetails = ({ formData, onSelect, config }) => {
             value={plotNo}
             onChange={handleInputChange(setPlotNo)}
           />
-          <CardLabel>{t("KHATA_NUMBER")} *</CardLabel>
+          <CardLabel>{t("KHATA_NUMBER")}<span className="check-page-link-button"> *</span></CardLabel>
           <TextInput
             t={t}
             type="text"
@@ -59,7 +59,7 @@ const PlotDetails = ({ formData, onSelect, config }) => {
             value={khataNo}
             onChange={handleInputChange(setKhataNo)}
           />
-          <CardLabel>{t("BPA_HOLDING_NUMBER_LABEL")} *</CardLabel>
+          <CardLabel>{t("BPA_HOLDING_NUMBER_LABEL")}<span className="check-page-link-button"> *</span></CardLabel>
            <TextInput
             t={t}
             type="text"

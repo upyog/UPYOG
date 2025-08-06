@@ -586,7 +586,7 @@ useEffect(()=>{
             {!isLoading ?
                 <div style={{marginBottom: "10px"}}>
                     <div>
-                        <CardLabel>{`${t("BPA_TYPE_OF_OWNER_LABEL")} *`}</CardLabel>
+                        <CardLabel>{`${t("BPA_TYPE_OF_OWNER_LABEL")}`}<span className="check-page-link-button"> *</span></CardLabel>
                         <RadioButtons
                             isMandatory={config.isMandatory}
                             options={ownershipCategoryList}
@@ -603,7 +603,7 @@ useEffect(()=>{
                         return (
                             <div key={`${field}-${index}`}>
                                 <div style={{ border: "solid", borderRadius: "5px", padding: "10px", paddingTop: "20px", marginTop: "10px", borderColor: "#f3f3f3", background: "#FAFAFA" }}>
-                                    <CardLabel style={{ marginBottom: "-15px" }}>{`${t("CORE_COMMON_MOBILE_NUMBER")} *`}</CardLabel>
+                                    <CardLabel style={{ marginBottom: "-15px" }}>{`${t("CORE_COMMON_MOBILE_NUMBER")}`}<span className="check-page-link-button"> *</span></CardLabel>
                                     {ismultiple && <LinkButton
                                         label={ <DeleteIcon style={{ float: "right", position: "relative", bottom: "5px" }} fill={!(fields.length == 1) ? "#494848" : "#FAFAFA"}/>}
                                         style={{ width: "100px", display: "inline", background: "black" }}
@@ -632,7 +632,7 @@ useEffect(()=>{
                                             <div style={{ position: "relative", zIndex: "100", right: "35px", marginTop: "-24px", marginRight:Webview?"-20px":"-20px" }} onClick={(e) => getOwnerDetails(index, e)}> <SearchIcon /> </div>
                                         </div>
                                     </div>
-                                    <CardLabel>{`${t("CORE_COMMON_NAME")} *`}</CardLabel>
+                                    <CardLabel>{`${t("CORE_COMMON_NAME")}`}<span className="check-page-link-button"> *</span></CardLabel>
                                     <TextInput
                                         style={{ background: "#FAFAFA" }}
                                         t={t}
@@ -650,7 +650,7 @@ useEffect(()=>{
                                         })}
                                         disabled={propertyData?.owners ?true:false}
                                     />
-                                    <CardLabel>{`${t("BPA_APPLICANT_GENDER_LABEL")} *`}</CardLabel>
+                                    <CardLabel>{`${t("BPA_APPLICANT_GENDER_LABEL")}`}<span className="check-page-link-button"> *</span></CardLabel>
                                     <RadioOrSelect
                                     name="gender"
                                     options={genderList}

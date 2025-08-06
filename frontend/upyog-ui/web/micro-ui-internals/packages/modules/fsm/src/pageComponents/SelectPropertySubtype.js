@@ -84,7 +84,7 @@ const SelectPropertySubtype = ({ config, onSelect, t, userType, formData }) => {
       <React.Fragment>
         <Timeline currentStep={1} flow="APPLY" />
         <FormStep config={config} onSelect={goNext} isDisabled={!subtype} t={t}>
-          <CardLabel>{`${t("CS_FILE_APPLICATION_PROPERTY_SUBTYPE_LABEL")} *`}</CardLabel>
+          <CardLabel>{`${t("CS_FILE_APPLICATION_PROPERTY_SUBTYPE_LABEL")}`}<span className="check-page-link-button"> *</span></CardLabel>
           <RadioOrSelect
             options={subtypeOptions?.sort((a, b) => a.name.localeCompare(b.name))}
             selectedOption={subtype}

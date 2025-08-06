@@ -126,7 +126,7 @@ useEffect(()=>{
       <React.Fragment>
         <Timeline currentStep={1} flow="APPLY" />
         <FormStep config={config} onSelect={goNext} isDisabled={!propertyType} t={t}>
-          <CardLabel>{`${t("CS_FILE_APPLICATION_PROPERTY_LABEL")} *`}</CardLabel>
+          <CardLabel>{`${t("CS_FILE_APPLICATION_PROPERTY_LABEL")}`}<span className="check-page-link-button"> *</span></CardLabel>
           <RadioOrSelect
             options={propertyTypesData.data?.sort((a, b) => a.name.localeCompare(b.name))}
             selectedOption={propertyType}

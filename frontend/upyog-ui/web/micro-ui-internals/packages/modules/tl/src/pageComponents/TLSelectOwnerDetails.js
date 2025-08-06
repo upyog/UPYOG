@@ -257,7 +257,7 @@ const TLSelectOwnerDetails = ({ t, config, onSelect, userType, formData }) => {
                     optionKey="i18nKey"
                   />
                   <CardHeader>{t("TL_AUTHORIZED_PERSON_DETAILS")}</CardHeader>
-                  <CardLabel>{`${t("TL_NEW_OWNER_DETAILS_NAME_LABEL")}`}</CardLabel>
+                  <CardLabel>{`${t("TL_NEW_OWNER_DETAILS_NAME_LABEL")}`}<span className="check-page-link-button"> *</span></CardLabel>
                   <TextInput
                     t={t}
                     type={"text"}
