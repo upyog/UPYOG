@@ -267,6 +267,7 @@ public class GarbageAccountRowMapper implements ResultSetExtractor<List<GarbageA
     	        .isbulkgeneration(rs.getBoolean(prefix+"isbulkgeneration"))
     	        .isvariablecalculation(rs.getBoolean(prefix+"isvariablecalculation"))
     	        .no_of_units(rs.getInt(prefix+"no_of_units"))
+    	        .ismonthlybilling(rs.getBoolean(prefix+"is_monthly_billing"))
     			.build();
 		return grbgCollectionUnit;
 	}
