@@ -13,6 +13,7 @@ import org.upyog.tp.enums.TreePruningStatus;
 import org.upyog.tp.repository.IdGenRepository;
 import org.upyog.tp.util.TreePruningUtil;
 import org.upyog.tp.util.UserUtil;
+import org.upyog.tp.web.models.ApplicantDetail;
 import org.upyog.tp.web.models.AuditDetails;
 import org.upyog.tp.web.models.treePruning.TreePruningBookingDetail;
 import org.upyog.tp.web.models.treePruning.TreePruningBookingRequest;
@@ -137,11 +138,14 @@ public class EnrichmentService {
     private void enrichUserDetails(TreePruningBookingRequest treePruningRequest) {
         // Try fetching an existing user for the given request
         TreePruningBookingDetail treePruningDetail = treePruningRequest.getTreePruningBookingDetail();
-        List<User> existingUsers = userService.fetchExistingOrCreateNewUser(treePruningRequest);
+        RequestInfo requestInfo = treePruningRequest.getRequestInfo();
+        ApplicantDetail applicantDetail = treePruningDetail.getApplicantDetail();
+        String tenantId = treePruningDetail.getTenantId();
+        User existingUsers = userService.fetchExistingUser(tenantId, applicantDetail, requestInfo);
 
-        if (!CollectionUtils.isEmpty(existingUsers)) {
-            treePruningDetail.setApplicantUuid(existingUsers.get(0).getUuid());
-            log.info("Existing user found with ID: {}", existingUsers.get(0).getUuid());
+        if (existingUsers != null) {
+            treePruningDetail.setApplicantUuid(existingUsers.getUuid());
+            log.info("Existing user found with ID: {}", existingUsers.getUuid());
             return;
         }
 

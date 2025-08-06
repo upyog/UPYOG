@@ -19,6 +19,7 @@ import org.upyog.rs.service.EnrichmentService;
 import org.upyog.rs.service.UserService;
 import org.upyog.rs.service.WaterTankerService;
 import org.upyog.rs.service.WorkflowService;
+import org.upyog.rs.web.models.ApplicantDetail;
 import org.upyog.rs.web.models.waterTanker.WaterTankerBookingDetail;
 import org.upyog.rs.web.models.waterTanker.WaterTankerBookingRequest;
 import org.upyog.rs.web.models.waterTanker.WaterTankerBookingSearchCriteria;
@@ -62,18 +63,21 @@ public class WaterTankerServiceImpl implements WaterTankerService {
 
 		// Get the uuid of User from user registry
 		try {
-			List<org.upyog.rs.web.models.user.User> user = userService.fetchExistingOrCreateNewUser(waterTankerRequest);
-			if (user == null || user.isEmpty()) {
+			RequestInfo requestInfo = waterTankerRequest.getRequestInfo();
+			ApplicantDetail applicantDetail = waterTankerRequest.getWaterTankerBookingDetail().getApplicantDetail();
+			String tenantId = waterTankerRequest.getWaterTankerBookingDetail().getTenantId();
+			org.upyog.rs.web.models.user.User user = userService.fetchExistingUser(tenantId, applicantDetail, requestInfo);
+			if (user == null) {
 				throw new RuntimeException("User not found for this mobile number: " +
-						waterTankerRequest.getWaterTankerBookingDetail().getApplicantDetail().getMobileNumber());
+						applicantDetail.getMobileNumber());
 			}
 			if(config.getIsUserProfileEnabled()) {
-				waterTankerRequest.getWaterTankerBookingDetail().setApplicantUuid(user.get(0).getUuid());
+				waterTankerRequest.getWaterTankerBookingDetail().setApplicantUuid(user.getUuid());
 			} else{
 				// If user profile is not enabled, set the applicantUuid null
 				waterTankerRequest.getWaterTankerBookingDetail().setApplicantUuid(null);
 			}
-			log.info("Applicant or User Uuid: " + user.get(0).getUuid());
+			log.info("Applicant or User Uuid: " + user.getUuid());
 		} catch (Exception e) {
 			log.error("Error fetching or creating user: " + e.getMessage(), e);
 			throw new RuntimeException("Failed to fetch/create user: " + e.getMessage(), e);

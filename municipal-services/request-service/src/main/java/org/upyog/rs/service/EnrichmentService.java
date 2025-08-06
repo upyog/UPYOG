@@ -14,6 +14,7 @@ import org.upyog.rs.enums.RequestServiceStatus;
 import org.upyog.rs.repository.IdGenRepository;
 import org.upyog.rs.util.RequestServiceUtil;
 import org.upyog.rs.util.UserUtil;
+import org.upyog.rs.web.models.ApplicantDetail;
 import org.upyog.rs.web.models.AuditDetails;
 import org.upyog.rs.web.models.mobileToilet.MobileToiletBookingDetail;
 import org.upyog.rs.web.models.mobileToilet.MobileToiletBookingRequest;
@@ -53,6 +54,7 @@ public class EnrichmentService {
 				waterTankerDetail.setApplicantUuid(userUuid);
 			} else {
 				// If the mobile number does not match, set the applicantDetailId to null and addressDetailId to null
+				// Setting applicantDetailId and addressDetailId to null to ensure new user and address creation
 				waterTankerDetail.setApplicantUuid(null);
 				waterTankerDetail.setAddressDetailId(null);
 			}
@@ -135,11 +137,14 @@ public class EnrichmentService {
 	private void enrichUserDetails(WaterTankerBookingRequest waterTankerRequest) {
 		// Try fetching an existing user for the given request
 		WaterTankerBookingDetail waterTankerDetail = waterTankerRequest.getWaterTankerBookingDetail();
-		List<User> existingUsers = userService.fetchExistingOrCreateNewUser(waterTankerRequest);
+		RequestInfo requestInfo = waterTankerRequest.getRequestInfo();
+		ApplicantDetail applicantDetail = waterTankerDetail.getApplicantDetail();
+		String tenantId = waterTankerDetail.getTenantId();
+		User existingUsers = userService.fetchExistingUser(tenantId, applicantDetail, requestInfo);
 
-		if (!CollectionUtils.isEmpty(existingUsers)) {
-			waterTankerDetail.setApplicantUuid(existingUsers.get(0).getUuid());
-			log.info("Existing user found with ID: {}", existingUsers.get(0).getUuid());
+		if (existingUsers != null) {
+			waterTankerDetail.setApplicantUuid(existingUsers.getUuid());
+			log.info("Existing user found with ID: {}", existingUsers.getUuid());
 			return;
 		}
 
@@ -285,11 +290,14 @@ public class EnrichmentService {
 	private void enrichUserDetails(MobileToiletBookingRequest mobileToiletRequest) {
 		// Try fetching an existing user for the given request
 		MobileToiletBookingDetail mobileToiletDetail = mobileToiletRequest.getMobileToiletBookingDetail();
-		List<User> existingUsers = userService.fetchExistingOrCreateNewUser(mobileToiletRequest);
+		RequestInfo requestInfo = mobileToiletRequest.getRequestInfo();
+		ApplicantDetail applicantDetail = mobileToiletDetail.getApplicantDetail();
+		String tenantId = mobileToiletDetail.getTenantId();
+		User existingUsers = userService.fetchExistingUser(tenantId, applicantDetail, requestInfo);
 
-		if (!CollectionUtils.isEmpty(existingUsers)) {
-			mobileToiletDetail.setApplicantUuid(existingUsers.get(0).getUuid());
-			log.info("Existing user found with ID: {}", existingUsers.get(0).getUuid());
+		if (existingUsers != null && StringUtils.isNotBlank(existingUsers.getUuid())) {
+			mobileToiletDetail.setApplicantUuid(existingUsers.getUuid());
+			log.info("Existing user found with ID: {}", existingUsers.getUuid());
 			return;
 		}
 

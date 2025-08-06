@@ -14,6 +14,7 @@ import org.upyog.tp.config.TreePruningConfiguration;
 import org.upyog.tp.constant.TreePruningConstants;
 import org.upyog.tp.repository.TreePruningRepository;
 import org.upyog.tp.service.*;
+import org.upyog.tp.web.models.ApplicantDetail;
 import org.upyog.tp.web.models.treePruning.TreePruningBookingDetail;
 import org.upyog.tp.web.models.treePruning.TreePruningBookingRequest;
 import org.upyog.tp.web.models.treePruning.TreePruningBookingSearchCriteria;
@@ -56,15 +57,18 @@ public class TreePruningServiceImpl implements TreePruningService {
 
         // Get the uuid of User from user registry
         try {
-            List<org.upyog.tp.web.models.user.User> user = userService.fetchExistingOrCreateNewUser(treePruningRequest);
+            RequestInfo requestInfo = treePruningRequest.getRequestInfo();
+            ApplicantDetail applicantDetail = treePruningRequest.getTreePruningBookingDetail().getApplicantDetail();
+            String tenantId = treePruningRequest.getTreePruningBookingDetail().getTenantId();
+            org.upyog.tp.web.models.user.User user = userService.fetchExistingUser(tenantId,applicantDetail, requestInfo);
 
-            if (user == null || user.isEmpty()) {
+            if (user == null) {
                 throw new RuntimeException("User not found for this mobile number: " +
                         treePruningRequest.getTreePruningBookingDetail().getApplicantDetail().getMobileNumber());
             }
             if(config.getIsUserProfileEnabled()){
-            treePruningRequest.getTreePruningBookingDetail().setApplicantUuid(user.get(0).getUuid());
-            log.info("Applicant or User Uuid: " + user.get(0).getUuid());
+            treePruningRequest.getTreePruningBookingDetail().setApplicantUuid(user.getUuid());
+            log.info("Applicant or User Uuid: " + user.getUuid());
             } else {
                 // If user profile is not enabled, set the applicantUuid to null
                 treePruningRequest.getTreePruningBookingDetail().setApplicantUuid(null);
