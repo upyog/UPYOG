@@ -10,7 +10,7 @@ import {
   MobileNumber,
   CheckBox,
   CitizenConsentForm
-} from "@egovernments/digit-ui-react-components";
+} from "@upyog/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 import { useForm } from "react-hook-form";
 import { useParams, useHistory, useLocation } from "react-router-dom";
@@ -144,10 +144,11 @@ const SelectPaymentType = (props) => {
   const onSubmit = () => {
     if(wrkflow === "WNS")
     {
-      history.push(`/upyog-ui/citizen/payment/collect/${businessService}/${consumerCode}?workflow=WNS&consumerCode=${stringReplaceAll(consumerCode, "+", "/")}`, {
+        let billPayerName=sessionStorage.getItem("payerName")
+        history.push(`/upyog-ui/citizen/payment/collect/${businessService}/${consumerCode}?workflow=WNS&consumerCode=${stringReplaceAll(consumerCode, "+", "/")}`, {
         paymentAmount: paymentAmt,
         tenantId: billDetails.tenantId,
-        name: paymentType?.code !== optionSecound?.code && ConsumerName !== "undefined" ? ConsumerName : userInfo ? payersActiveName : payersName,
+        name: paymentType?.code !== optionSecound?.code && ConsumerName !== "undefined" ? billPayerName : userInfo ? payersActiveName : payersName,
         mobileNumber: paymentType?.code !== optionSecound?.code ? (bill?.mobileNumber?.includes("*") ? userData?.user?.[0]?.mobileNumber : bill?.mobileNumber ) : userInfo ? payersActiveMobileNumber : payersMobileNumber,
       });
     }
@@ -170,7 +171,7 @@ const SelectPaymentType = (props) => {
       <BackButton>{t("CS_COMMON_BACK")}</BackButton>
       <form onSubmit={handleSubmit(onSubmit)}>
         {/*  <Header>{t("PAYMENT_CS_HEADER")}</Header> */}
-        <Header>{t("PT_PAYERS_DETAILS_HEADER")}</Header>
+        <Header>{t("PAYERS_DETAILS_HEADER")}</Header>
         <Card>
           <span className="card-label-error">{t(mobileNumberError)}</span>
           <RadioButtons

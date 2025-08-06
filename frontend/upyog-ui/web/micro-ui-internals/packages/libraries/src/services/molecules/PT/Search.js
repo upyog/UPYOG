@@ -80,14 +80,15 @@ export const PTSearch = {
       title: "PT_DETAILS",
       values: [
         { title: "TL_PROPERTY_ID", value: property?.propertyId || "NA" },
-        { title: "PT_OWNER_NAME", value: property?.owners?.map((owner) => owner.name).join(",") || "NA" },
+        { title: "PT_OWNER_NAME", value: property?.owners?.map((owner) => owner.name).reverse().join(",") || "NA" },
         { title: "PT_SEARCHPROPERTY_TABEL_STATUS", value: Digit.Utils.locale.getTransformedLocale(`WF_PT_${property?.status}`) || "NA" },
       ],
     };
+    const ownersSequences=property?.owners?.additionalDetails!==null ? property?.owners?.sort((a,b)=>a?.additionalDetails?.ownerSequence-b?.additionalDetails?.ownerSequence): property?.owners
     const ownerdetails = {
       title: "PT_OWNERSHIP_INFO_SUB_HEADER",
       additionalDetails: {
-        owners: property?.owners
+        owners: ownersSequences
           ?.filter((owner) => owner.status === "ACTIVE")
           .map((owner, index) => {
             return {

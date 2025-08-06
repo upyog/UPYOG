@@ -1,4 +1,4 @@
-import { Dropdown, Hamburger, TopBar as TopBarComponent } from "@egovernments/digit-ui-react-components";
+import { Dropdown, Hamburger, TopBar as TopBarComponent } from "@upyog/digit-ui-react-components";
 import React from "react";
 import { useHistory, useLocation } from "react-router-dom";
 import ChangeCity from "../ChangeCity";
@@ -32,10 +32,15 @@ const TopBar = ({
     const uuid = userDetails?.info?.uuid;
     if (uuid) {
       const usersResponse = await Digit.UserService.userSearch(tenant, { uuid: [uuid] }, {});
-      if (usersResponse && usersResponse.user && usersResponse.user.length) {
-        const userDetails = usersResponse.user[0];
-        const thumbs = userDetails?.photo?.split(",");
-        setProfilePic(thumbs?.at(0));
+      if (usersResponse?.user?.[0]?.photo) {
+        try {
+          const file = await Digit.UploadServices.Filefetch([usersResponse?.user?.[0]?.photo], "pg");
+          if (file?.data?.fileStoreIds?.[0]?.url) {
+            setProfilePic(file?.data?.fileStoreIds?.[0]?.url.split(",")[0]);
+          }
+        } catch (err) {
+          console.error("Error fetching profile photo:", err);
+        }
       }
     }
   }, [profilePic !== null, userDetails?.info?.uuid]);
@@ -141,7 +146,7 @@ const TopBar = ({
                     profilePic == null ? (
                       <TextToImg name={userDetails?.info?.name || userDetails?.info?.userInfo?.name || "Employee"} />
                     ) : (
-                      <img src="https://in-egov-assets.s3.ap-south-1.amazonaws.com/images/Upyog-logo.png" style={{ height: "48px", width: "48px", borderRadius: "50%" }} />
+                      <img src={profilePic} style={{ height: "48px", width: "48px", borderRadius: "50%" }} />
                     )
                   }
                 />

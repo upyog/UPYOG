@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { FormStep, Dropdown, Loader, CardLabel, RadioButtons, RadioOrSelect } from "@egovernments/digit-ui-react-components";
+import { FormStep, Dropdown, Loader, CardLabel, RadioButtons, RadioOrSelect } from "@upyog/digit-ui-react-components";
 import Timeline from "../components/TLTimelineInFSM";
 
 const SelectPitType = ({ t, formData, config, onSelect, userType }) => {
@@ -29,16 +29,25 @@ const SelectPitType = ({ t, formData, config, onSelect, userType }) => {
     return <Loader />;
   }
   if (userType === "employee") {
-    return <Dropdown isMandatory={true} option={sanitationMenu} optionKey="i18nKey" select={selectPitType} selected={pitType} t={t} />;
+    return (
+      <Dropdown
+        isMandatory={true}
+        option={sanitationMenu?.sort((a, b) => a.name.localeCompare(b.name))}
+        optionKey="i18nKey"
+        select={selectPitType}
+        selected={pitType}
+        t={t}
+      />
+    );
   }
   return (
     <React.Fragment>
       <Timeline currentStep={1} flow="APPLY" />
       <FormStep config={config} onSelect={onSubmit} onSkip={onSkip} isDisabled={!pitType} t={t}>
-        <CardLabel>{t("CS_FILE_APPLICATION_PIT_TYPE_LABEL")}</CardLabel>
+        <CardLabel>{t("CS_FILE_APPLICATION_PIT_TYPE_LABEL")}<span className="check-page-link-button"> *</span></CardLabel>
         <RadioOrSelect
           isMandatory={config.isMandatory}
-          options={sanitationMenu}
+          options={sanitationMenu?.sort((a, b) => a.name.localeCompare(b.name))}
           selectedOption={pitType}
           optionKey="i18nKey"
           onSelect={selectPitType}

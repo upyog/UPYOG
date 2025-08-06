@@ -10,11 +10,12 @@ const getThumbnails = async (ids, tenantId) => {
   }
 };
 
-const getDetailsRow = ({ id, service, complaintType }) => ({
+const getDetailsRow = ({ id, service, complaintType }) => ({ 
   CS_COMPLAINT_DETAILS_COMPLAINT_NO: id,
   CS_COMPLAINT_DETAILS_APPLICATION_STATUS: `CS_COMMON_${service.applicationStatus}`,
   CS_ADDCOMPLAINT_COMPLAINT_TYPE: complaintType === "" ? `SERVICEDEFS.OTHERS` : `SERVICEDEFS.${complaintType}`,
   CS_ADDCOMPLAINT_COMPLAINT_SUB_TYPE: `SERVICEDEFS.${service.serviceCode.toUpperCase()}`,
+  CS_ADDCOMPLAINT_PRIORITY_LEVEL : service?.priority,
   CS_COMPLAINT_ADDTIONAL_DETAILS: service.description,
   CS_COMPLAINT_FILED_DATE: Digit.DateUtils.ConvertTimestampToDate(service.auditDetails.createdTime),
   ES_CREATECOMPLAINT_ADDRESS: [
@@ -45,6 +46,7 @@ const transformDetails = ({ id, service, workflow, thumbnails, complaintType }) 
       source: service.source,
       rating: service.rating,
       serviceCode: service.serviceCode,
+      prioritylevel : service.priorityLevel
     },
     service: service,
   };
@@ -55,7 +57,7 @@ const fetchComplaintDetails = async (tenantId, id) => {
   const { service, workflow } = (await Digit.PGRService.search(tenantId, { serviceRequestId: id })).ServiceWrappers[0] || {};
   Digit.SessionStorage.set("complaintDetails", { service, workflow });
   if (service && workflow && serviceDefs) {
-    const complaintType = serviceDefs.filter((def) => def.serviceCode === service.serviceCode)[0].menuPath.toUpperCase();
+    const complaintType = serviceDefs.filter((def) => def.serviceCode === service.serviceCode)[0]?.menuPath?.toUpperCase();
     const ids = workflow.verificationDocuments
       ? workflow.verificationDocuments.filter((doc) => doc.documentType === "PHOTO").map((photo) => photo.fileStoreId || photo.id)
       : null;

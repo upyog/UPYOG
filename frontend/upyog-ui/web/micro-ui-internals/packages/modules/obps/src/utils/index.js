@@ -1,4 +1,6 @@
 import cloneDeep from "lodash/cloneDeep";
+import { v4 as uuid_v4 } from 'uuid';
+import { PreApprovedPlanService } from "../../../../libraries/src/services/elements/PREAPPROVEDPLAN";
 
 export const getPattern = (type) => {
   switch (type) {
@@ -22,7 +24,7 @@ export const sortDropdownNames = (options, optionkey, locilizationkey) => {
 };
 
 export const uuidv4 = () => {
-  return require("uuid/v4")();
+  return uuid_v4();
 };
 
 export const pdfDownloadLink = (documents = {}, fileStoreId = "", format = "") => {
@@ -332,7 +334,7 @@ export const getunitforBPA = (units) => {
 // }
 
 export const getBPAOwners = (data, isOCBPA) => {
-  if (isOCBPA) return data.landInfo.owners;
+  if (isOCBPA || data.status === "INITIATED") return data.landInfo.owners;
   let bpaownerarray = cloneDeep(data?.owners?.owners);
   bpaownerarray &&
     bpaownerarray?.forEach((newOwner) => {
@@ -351,7 +353,7 @@ export const getBPAOwners = (data, isOCBPA) => {
 
 export const getOwnerShipCategory = (data, isOCBPA) => {
     if(isOCBPA) return data?.landInfo?.ownershipCategory
-    return data.owners.ownershipCategory.code || data?.landInfo?.ownershipCategory
+    return data?.owners?.ownershipCategory.code || data?.landInfo?.ownershipCategory
 }
 
 export const convertToBPAObject = (data, isOCBPA = false, isSendBackTOCitizen = false) => {
@@ -394,11 +396,11 @@ export const convertToBPAObject = (data, isOCBPA = false, isSendBackTOCitizen = 
       approvalDate: data?.approvalDate,
       applicationDate: data?.applicationDate,
       status: isSendBackTOCitizen ? data.status : data.status ? data.status : "INITIATED",
-      documents: getDocumentforBPA(data?.documents?.documents, data?.PrevStateDocuments),
+      documents: getDocumentforBPA(data?.documents?.documents||data?.documents, data?.PrevStateDocuments),
       landInfo: isOCBPA ? data?.landInfo : { ...data?.landInfo, ownershipCategory: getOwnerShipCategory(data, isOCBPA), owners: getBPAOwners(data, isOCBPA), unit: getBPAUnit(data) },
       assignee: isSendBackTOCitizen ? data.assignee : [],
       workflow: {
-        action: "SEND_TO_CITIZEN",
+        action: data?.businessService==="BPA-PAP"?"APPLY":"SEND_TO_CITIZEN",
         assignes: null,
         comments: null,
         varificationDocuments: null,
@@ -667,7 +669,7 @@ export const getBusinessServices = (businessService, status) => {
   let billBusinessService = "BPA.NC_APP_FEE";
   if (businessService === "BPA_LOW") {
     billBusinessService = "BPA.LOW_RISK_PERMIT_FEE";
-  } else if (businessService === "BPA") {
+  } else if (businessService === "BPA"||businessService==="BPA-PAP") {
     billBusinessService = status == "PENDING_APPL_FEE" ? "BPA.NC_APP_FEE" : "BPA.NC_SAN_FEE";
   } else if (businessService === "BPA_OC") {
     billBusinessService = status == "PENDING_APPL_FEE" ? "BPA.NC_OC_APP_FEE" : "BPA.NC_OC_SAN_FEE";
@@ -708,8 +710,18 @@ export const printPdf = (blob) => {
   }
 };
 
-export const downloadAndPrintReciept = async (bussinessService, consumerCode, tenantId, mode = "download", pdfKey = "consolidatedreceipt") => {
-  const response = await Digit.OBPSService.receipt_download(bussinessService, consumerCode, tenantId, { pdfKey: pdfKey });
+export const downloadAndPrintReciept = async (bussinessService, consumerCode, tenantId,payments , mode = "download", pdfKey = "bpa-receipt") => {
+  let response=null;
+  console.log("payments",payments)
+    if (payments[0]?.fileStoreId ) {
+       response = { filestoreIds: [payments[0]?.fileStoreId] };      
+    }
+  else{
+    response = await Digit.PaymentService.generatePdf(tenantId, { Payments: payments  }, "bpa-receipt");
+     //response = await Digit.OBPSService.receipt_download(bussinessService, consumerCode, tenantId, { pdfKey: pdfKey });
+  }
+  const fileStore = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: response.filestoreIds[0] });
+  window.open(fileStore[response?.filestoreIds[0]], "_blank");
   const responseStatus = parseInt(response.status, 10);
   if (responseStatus === 201 || responseStatus === 200) {
     let fileName =
@@ -771,14 +783,20 @@ export const getCheckBoxLabelData = (t, appData) => {
 
 
 export const scrutinyDetailsData = async (edcrNumber, tenantId) => {
-  const scrutinyDetails = await Digit.OBPSService.scrutinyDetails(tenantId, {edcrNumber: edcrNumber});
-  const bpaDetails = await Digit.OBPSService.BPASearch(tenantId, {edcrNumber: edcrNumber});
+  if(edcrNumber.length===8){
+    const preApprovedResponse = await PreApprovedPlanService.search({drawingNo:edcrNumber})
+    return preApprovedResponse
+  }
+  else{
+  const scrutinyDetails = await Digit.OBPSService.scrutinyDetails(tenantId, {edcrNumber: edcrNumber})
+  const bpaDetails = await Digit.OBPSService.BPASearch(tenantId, {edcrNumber: edcrNumber})
   if (bpaDetails?.BPA?.length == 0) {
     return scrutinyDetails?.edcrDetail?.[0] ? scrutinyDetails?.edcrDetail?.[0] : {type: "ERROR", message: "BPA_NO_RECORD_FOUND"};
   } else if (bpaDetails?.BPA?.length > 0 && (bpaDetails?.BPA?.[0]?.status == "INITIATED" || bpaDetails?.BPA?.[0]?.status == "REJECTED" || bpaDetails?.BPA?.[0]?.status == "PERMIT REVOCATION")) {
     return scrutinyDetails?.edcrDetail?.[0] ? scrutinyDetails?.edcrDetail?.[0] : {type: "ERROR", message: "BPA_NO_RECORD_FOUND"};
   } else {
     return {type: "ERROR", message: "APPLICATION_NUMBER_ALREADY_EXISTS"}
+  }
   }
 }
 

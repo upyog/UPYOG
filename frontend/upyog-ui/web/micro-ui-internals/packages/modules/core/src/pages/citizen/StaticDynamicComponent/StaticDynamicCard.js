@@ -13,7 +13,7 @@ import {
   ComplaintIcon,
   BPAHomeIcon,
   WSICon
-} from "@egovernments/digit-ui-react-components";
+} from "@upyog/digit-ui-react-components";
 import React from "react";
 import { useTranslation } from "react-i18next";
 
@@ -127,15 +127,15 @@ const StaticDynamicCard = ({moduleCode}) => {
     }
     return mdmsConfigResult ? (
       <React.Fragment>
-        { mdmsConfigResult && mdmsConfigResult?.payViaWhatsApp ? 
-          <Card style={{margin: "16px", padding: "16px", maxWidth: "unset"}}>
-            <div className="pay-whatsapp-card" onClick={() => handleClickOnWhatsApp(mdmsConfigResult?.payViaWhatsApp)}>
-              <div className="pay-whatsapp-text">{t("PAY_VIA_WHATSAPP")}</div>
-              <div className="whatsAppIconG">
-                <WhatsappIconGreen />
-              </div>
-            </div>
-          </Card> : null }
+        {/* { mdmsConfigResult && mdmsConfigResult?.payViaWhatsApp ? 
+          // <Card style={{margin: "16px", padding: "16px", maxWidth: "unset"}}>
+          //   <div className="pay-whatsapp-card" onClick={() => handleClickOnWhatsApp(mdmsConfigResult?.payViaWhatsApp)}>
+          //     <div className="pay-whatsapp-text">{t("PAY_VIA_WHATSAPP")}</div>
+          //     <div className="whatsAppIconG">
+          //       <WhatsappIconGreen />
+          //     </div>
+          //   </div>
+          //</Card> : null } */}
           { mdmsConfigResult && mdmsConfigResult?.helpline ?
             <Card style={{margin: "16px", padding: "16px", maxWidth: "unset"}}>
           <div className="static-home-Card">

@@ -1,4 +1,4 @@
-import { CardLabel, CitizenInfoLabel, FormStep, Loader, TextInput } from "@egovernments/digit-ui-react-components";
+import { CardLabel, CitizenInfoLabel, FormStep, Loader, TextInput } from "@upyog/digit-ui-react-components";
 import React, { useState, useEffect } from "react";
 import Timeline from "../components/TLTimeline";
 import { currentFinancialYear } from "../utils";
@@ -56,7 +56,7 @@ const SelectTradeName = ({ t, config, onSelect, value, userType, formData }) => 
         t={t}
         isDisabled={!TradeName}
       >
-        <CardLabel>{`${t("TL_LOCALIZATION_TRADE_NAME")}`}</CardLabel>
+        <CardLabel>{`${t("TL_LOCALIZATION_TRADE_NAME")}`}<span style={{ color: 'red' }}>*</span></CardLabel>
         <TextInput
           t={t}
           isMandatory={false}
@@ -66,7 +66,8 @@ const SelectTradeName = ({ t, config, onSelect, value, userType, formData }) => 
           value={TradeName}
           onChange={setSelectTradeName}
           disable={isEdit}
-          {...(validation = { pattern: "^[a-zA-Z-0-9_@/#&+-.`' ]*$", isRequired: true, title: t("TL_INVALID_TRADE_NAME") })}
+          {...(validation = {pattern: ".*", isRequired: true, title: t("TL_INVALID_TRADE_NAME") })}
+
         />
       </FormStep>
       {<CitizenInfoLabel info={t("CS_FILE_APPLICATION_INFO_LABEL")} text={t("TL_LICENSE_ISSUE_YEAR_INFO_MSG") + FY} />}

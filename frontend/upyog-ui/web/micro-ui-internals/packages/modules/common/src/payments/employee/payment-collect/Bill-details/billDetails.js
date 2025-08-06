@@ -1,4 +1,4 @@
-import { CardSectionHeader, Loader, RadioButtons, Row, StatusTable, TextInput } from "@egovernments/digit-ui-react-components";
+import { CardSectionHeader, Loader, RadioButtons, Row, StatusTable, TextInput } from "@upyog/digit-ui-react-components";
 import React, { useEffect, useState, Fragment } from "react";
 import { useTranslation } from "react-i18next";
 import { BillDetailsKeyNoteConfig } from "./billDetailsConfig";
@@ -115,6 +115,38 @@ export const BillDetailsFormConfig = (props, t) => ({
       ],
     },
   ],
+  "WSReconnection": [
+    {
+      head: t("COMMON_PAY_SCREEN_HEADER"),
+      body: [
+        {
+          withoutLabel: true,
+          type: "custom",
+          populators: {
+            name: "amount",
+            customProps: { businessService: "WSReconnection", consumerCode: props.consumerCode },
+            component: (props, customProps) => <BillDetails onChange={props.onChange} amount={props.value} {...customProps} />,
+          },
+        },
+      ],
+    },
+  ],
+  "SWReconnection": [
+    {
+      head: t("COMMON_PAY_SCREEN_HEADER"),
+      body: [
+        {
+          withoutLabel: true,
+          type: "custom",
+          populators: {
+            name: "amount",
+            customProps: { businessService: "SWReconnection", consumerCode: props.consumerCode },
+            component: (props, customProps) => <BillDetails onChange={props.onChange} amount={props.value} {...customProps} />,
+          },
+        },
+      ],
+    },
+  ],
   SW: [
     {
       head: t("COMMON_PAY_SCREEN_HEADER"),
@@ -176,7 +208,13 @@ const BillDetails = ({ businessService, consumerCode, _amount, onChange }) => {
   const getTotal = () => (bill?.totalAmount ? bill?.totalAmount : 0);
   const getTotalFSM = () => (application?.totalAmount ? application?.totalAmount : 0);
   const getAdvanceAmount = () => (applicationData?.advanceAmount ? applicationData?.advanceAmount : 0);
-  const dueAmountTobePaid = () => (bill?.totalAmount ? bill?.totalAmount : 0);
+  const dueAmountTobePaid = () => {
+    if (bill?.businessService === "FSM.TRIP_CHARGES"){
+      return bill?.totalAmount;
+    }else{
+      return bill?.totalAmount ? bill?.totalAmount - applicationData?.advanceAmount:0;
+    }
+  } 
   const getAmountPerTrip = () => (application?.additionalDetails?.tripAmount ? application?.additionalDetails?.tripAmount : 0);
 
   const arrears =
@@ -290,7 +328,7 @@ const BillDetails = ({ businessService, consumerCode, _amount, onChange }) => {
 
   const config = BillDetailsKeyNoteConfig()[ModuleWorkflow ? ModuleWorkflow : businessService];
   const getAdvanceAmountPaid = applicationData?.applicationStatus === "DSO_INPROGRESS";
-
+  console.log(bill,"bill")
   const renderArrearDetailsForWNS = () => {
     return (
       <table className="table-fixed-column-common-pay">
@@ -375,7 +413,7 @@ const BillDetails = ({ businessService, consumerCode, _amount, onChange }) => {
               />
             ))}
 
-          {applicationData?.applicationStatus !== "PENDING_APPL_FEE_PAYMENT" ? (
+          {(applicationData?.applicationStatus !== "PENDING_APPL_FEE_PAYMENT" || applicationData?.applicationStatus !== "PENDING_APPL_FEE_PAYMENT_CITIZEN") ? (
             <Row
               label={t("FSM_DUE_AMOUNT_TO_BE_PAID")}
               textStyle={{ fontWeight: "bold", textAlign: "left" }}
@@ -519,7 +557,7 @@ const BillDetails = ({ businessService, consumerCode, _amount, onChange }) => {
                 className="text-indent-xl"
                 onChange={(e) => onChangeAmount(e.target.value)}
                 value={amount}
-                disable={getTotal() === 0}
+                disable={businessService === "WS" || "SW"?false:getTotal() === 0}
               />
             ) : (
               <TextInput style={{ width: "30%" }} className="text-indent-xl" value={getTotal()} disable={true} />

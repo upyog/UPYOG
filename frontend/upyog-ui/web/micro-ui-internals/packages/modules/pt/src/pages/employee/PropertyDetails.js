@@ -1,10 +1,11 @@
-import { EditIcon, Header, LinkLabel, Loader, Modal } from "@egovernments/digit-ui-react-components";
+import { EditIcon, Header, LinkLabel, Loader, Modal } from "@upyog/digit-ui-react-components";
 import _ from "lodash";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory, useParams } from "react-router-dom";
 import ApplicationDetailsTemplate from "../../../../templates/ApplicationDetails";
 import OwnerHistory from "./PropertyMutation/ownerHistory";
+import usePropertyAPI from "../../../../../libraries/src/hooks/pt/usePropertyAPI"
 
 const Close = () => (
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#FFFFFF">
@@ -56,7 +57,7 @@ const PropertyDetails = () => {
   );
   const mutation = Digit.Hooks.pt.usePropertyAPI(tenantId, false);
 
-  const { data: UpdateNumberConfig } = Digit.Hooks.useCommonMDMS(Digit.ULBService.getStateId(), "PropertyTax", ["UpdateNumber"], {
+  const { data: UpdateNumberConfig } = Digit.Hooks.useCommonMDMSV2(Digit.ULBService.getStateId(), "PropertyTax", ["UpdateNumber"], {
     select: (data) => {
       return data?.PropertyTax?.UpdateNumber?.[0];
     },
@@ -87,6 +88,25 @@ const PropertyDetails = () => {
 
   useEffect(() => {
     if (applicationDetails && !enableAudit) {
+      if(applicationDetails?.applicationDetails[1].title =="PT_ASSESMENT_INFO_SUB_HEADER")
+      {
+      if (applicationDetails?.applicationDetails[1].values.length ==4)
+      {
+        let obj = {
+          "title": "PT_ASSESMENT_ELECTRICITY",
+          "value": applicationDetails?.additionalDetails?.electricity || "NA"
+        }
+        applicationDetails?.applicationDetails[1].values.push(obj)
+      }
+      if (applicationDetails?.applicationDetails[1].values.length ==5)
+      {
+        let obj = {
+          "title": "PT_ASSESMENT_ELECTRICITY_UID",
+          "value": applicationDetails?.additionalDetails?.uid || "NA"
+        }
+        applicationDetails?.applicationDetails[1].values.push(obj)
+      }
+    }
       setAppDetailsToShow(_.cloneDeep(applicationDetails));
       if (applicationDetails?.applicationData?.status !== "ACTIVE") {
         setEnableAudit(true);
@@ -232,6 +252,28 @@ const PropertyDetails = () => {
                 },
                 tenantId: Digit.ULBService.getStateId(),
               },
+              {
+                action: "INACTIVE_PROPERTY",
+                forcedName: "PT_INACTIVE_PROPERTY",
+                showInactiveYearModel: true,
+                customFunctionToExecute: (data) => {
+                history.push("/upyog-ui/employee/pt/response", { Property: data.Property, key: "UPDATE", action: "SUBMIT" });
+                },
+                // redirectionUrl: {
+                 
+                //   state: { workflow: { action: "OPEN", moduleName: "PT", businessService: "PT.CREATE" } },
+                // },
+               // AmountDueForPay: fetchBillData?.Bill[0]?.totalAmount,
+                //isWarningPopUp: !fetchBillData?.Bill[0]?.totalAmount ? true : true,
+                // redirectionUrl: {
+                //   pathname: !fetchBillData?.Bill[0]?.totalAmount
+                //     ? `/upyog-ui/employee/pt/property-mutate-docs-required/${applicationNumber}`
+                //     : `/upyog-ui/employee/payment/collect/PT/${applicationNumber}`,
+                //   // state: { workflow: { action: "OPEN", moduleName: "PT", businessService } },
+                //   state: null,
+                // },
+                tenantId: Digit.ULBService.getStateId(),
+              },
             ]
             : [],
         },
@@ -257,6 +299,10 @@ const PropertyDetails = () => {
     return <Loader />;
   }
   const UpdatePropertyNumberComponent = Digit?.ComponentRegistryService?.getComponent("EmployeeUpdateOwnerNumber");
+ 
+    appDetailsToShow?.applicationData?.owners.sort((item, item2) => { return item?.additionalDetails?.ownerSequence - item2?.additionalDetails?.ownerSequence })
+    
+  
   return (
     <div>
       <Header>{t("PT_PROPERTY_INFORMATION")}</Header>

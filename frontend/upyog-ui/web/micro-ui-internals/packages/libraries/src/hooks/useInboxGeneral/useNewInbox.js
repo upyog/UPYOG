@@ -2,7 +2,10 @@ import { useTranslation } from "react-i18next";
 import { useQuery, useQueryClient } from "react-query";
 import { FSMService } from "../../services/elements/FSM";
 import { PTService } from "../../services/elements/PT";
-
+import { CHBServices } from "../../services/elements/CHB";
+import { PTRService } from "../../services/elements/PTR";
+import { SVService } from "../../services/elements/SV";
+import { EwService } from "../../services/elements/EW";
 import { filterFunctions } from "./newFilterFn";
 import { getSearchFields } from "./searchFields";
 import { InboxGeneral } from "../../services/elements/InboxService";
@@ -16,6 +19,22 @@ const inboxConfig = (tenantId, filters) => ({
     fetchFilters: filterFunctions.PT,
     _searchFn: () => PTService.search({ tenantId, filters }),
   },
+  PTR: {
+    services: ["ptr"],
+    searchResponseKey: "PetRegistrationApplications",
+    businessIdsParamForSearch: "applicationNumber",
+    businessIdAliasForSearch: "applicationNumber",
+    fetchFilters: filterFunctions.PTR,
+    _searchFn: () => PTRService.search({ tenantId, filters }),
+  },
+  ASSET: {
+    services: ["asset-create"],
+    searchResponseKey: "Asset",
+    businessIdsParamForSearch: "applicationNo",
+    businessIdAliasForSearch: "applicationNo",
+    fetchFilters: filterFunctions.ASSET,
+    _searchFn: () => ASSETService.search({ tenantId, filters }),
+  },
   FSM: {
     services: ["FSM"],
     searchResponseKey: "fsm",
@@ -24,7 +43,32 @@ const inboxConfig = (tenantId, filters) => ({
     fetchFilters: filterFunctions.FSM,
     _searchFn: () => FSMService.search(tenantId, filters),
   },
+  SV: {
+    services: ["street-vending"],
+    searchResponseKey: "SVDetails",
+    businessIdsParamForSearch: "applicationNo",
+    businessIdAliasForSearch: "applicationNo",
+    fetchFilters: filterFunctions.SV,
+    _searchFn: () => SVService.search({ tenantId, filters }),
+  },
+  EW: {
+    services: ["ewst"],
+    searchResponseKey: "EwasteApplication",
+    businessIdsParamForSearch: "requestId",
+    businessIdAliasForSearch: "requestId",
+    fetchFilters: filterFunctions.EW,
+    _searchFn: () => EwService.search({ tenantId, filters }),
+  },
+  CHB: {
+    services: ["chb"],
+    searchResponseKey: "hallsBookingApplication",
+    businessIdsParamForSearch: "bookingNo",
+    businessIdAliasForSearch: "bookingNo",
+    fetchFilters: filterFunctions.CHB,
+    _searchFn: () => CHBServices.search({ tenantId, filters }),
+  },
 });
+
 
 const callMiddlewares = async (data, middlewares) => {
   let applyBreak = false;
@@ -47,13 +91,13 @@ const useNewInboxGeneral = ({ tenantId, ModuleCode, filters, middleware = [], co
   const client = useQueryClient();
   const { t } = useTranslation();
   const { fetchFilters, searchResponseKey, businessIdAliasForSearch, businessIdsParamForSearch } = inboxConfig()[ModuleCode];
-  let { workflowFilters, searchFilters, limit, offset, sortBy, sortOrder } = fetchFilters(filters);
+  let { workflowFilters, searchFilters, limit, offset, sortBy, sortOrder,isDraftApplication } = fetchFilters(filters);
 
   const query = useQuery(
     ["INBOX", workflowFilters, searchFilters, ModuleCode, limit, offset, sortBy, sortOrder],
     () =>
       InboxGeneral.Search({
-        inbox: { tenantId, processSearchCriteria: workflowFilters, moduleSearchCriteria: { ...searchFilters, sortBy, sortOrder }, limit, offset },
+        inbox: { tenantId, processSearchCriteria: workflowFilters, moduleSearchCriteria: { ...searchFilters, sortBy, sortOrder,isDraftApplication }, limit, offset },
       }),
     {
       select: (data) => {

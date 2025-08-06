@@ -8,9 +8,10 @@ import {
   Loader,
   Row,
   StatusTable,
-} from "@egovernments/digit-ui-react-components";
+  LinkButton
+} from "@upyog/digit-ui-react-components";
 import { values } from "lodash";
-import React, { Fragment } from "react";
+import React, { Fragment, useEffect,useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import BPADocuments from "./BPADocuments";
@@ -32,7 +33,7 @@ import WSFeeEstimation from "./WSFeeEstimation";
 import DocumentsPreview from "./DocumentsPreview";
 import InfoDetails from "./InfoDetails";
 import ViewBreakup from"./ViewBreakup";
-
+import ArrearSummary from "../../../common/src/payments/citizen/bills/routes/bill-details/arrear-summary"
 function ApplicationDetailsContent({
   applicationDetails,
   workflowDetails,
@@ -40,6 +41,7 @@ function ApplicationDetailsContent({
   applicationData,
   businessService,
   timelineStatusPrefix,
+  id,
   showTimeLine = true,
   statusAttribute = "status",
   paymentsList,
@@ -47,11 +49,52 @@ function ApplicationDetailsContent({
   isInfoLabel = false
 }) {
   const { t } = useTranslation();
+  
+const ownersSequences= applicationDetails?.applicationData?.owners
+console.log("appl", applicationDetails)
 
   function OpenImage(imageSource, index, thumbnailsToShow) {
     window.open(thumbnailsToShow?.fullImage?.[0], "_blank");
   }
 
+  const [fetchBillData, updatefetchBillData] = useState({});
+  const setBillData = async (tenantId, propertyIds, updatefetchBillData, updateCanFetchBillData) => {
+    const assessmentData = await Digit.PTService.assessmentSearch({ tenantId, filters: { propertyIds } });
+    let billData = {};
+    if (assessmentData?.Assessments?.length > 0) {
+      billData = await Digit.PaymentService.fetchBill(tenantId, {
+        businessService: "PT",
+        consumerCode: propertyIds,
+      });
+    }
+    updatefetchBillData(billData);
+    updateCanFetchBillData({
+      loading: false,
+      loaded: true,
+      canLoad: true,
+    });
+  };
+  const [billData, updateCanFetchBillData] = useState({
+    loading: false,
+    loaded: false,
+    canLoad: false,
+  });
+
+  if (applicationData?.status == "ACTIVE" && !billData.loading && !billData.loaded && !billData.canLoad) {
+    updateCanFetchBillData({
+      loading: false,
+      loaded: false,
+      canLoad: true,
+    });
+  }
+  if (billData?.canLoad && !billData.loading && !billData.loaded) {
+    updateCanFetchBillData({
+      loading: true,
+      loaded: false,
+      canLoad: true,
+    });
+    setBillData(applicationData?.tenantId || tenantId, applicationData?.propertyId, updatefetchBillData, updateCanFetchBillData);
+  }
   const convertEpochToDateDMY = (dateEpoch) => {
     if (dateEpoch == null || dateEpoch == undefined || dateEpoch == "") {
       return "NA";
@@ -64,7 +107,7 @@ function ApplicationDetailsContent({
     day = (day > 9 ? "" : "0") + day;
     return `${day}/${month}/${year}`;
   };
-  const getTimelineCaptions = (checkpoint,index=0) => {
+  const getTimelineCaptions = (checkpoint, index = 0, timeline) => {
     if (checkpoint.state === "OPEN" || (checkpoint.status === "INITIATED" && !window.location.href.includes("/obps/"))) {
       const caption = {
         date: convertEpochToDateDMY(applicationData?.auditDetails?.createdTime),
@@ -72,39 +115,49 @@ function ApplicationDetailsContent({
       };
       return <TLCaption data={caption} />;
     } else if (window.location.href.includes("/obps/") || window.location.href.includes("/noc/") || window.location.href.includes("/ws/")) {
-      //From BE side assigneeMobileNumber is masked/unmasked with connectionHoldersMobileNumber and not assigneeMobileNumber
-      const privacy = { uuid: checkpoint?.assignes?.[0]?.uuid, fieldName: "mobileNumber", model: "User",showValue: false,
-      loadData: {
-        serviceName: "/egov-workflow-v2/egov-wf/process/_search",
-        requestBody: {},
-        requestParam: { tenantId : applicationDetails?.tenantId, businessIds : applicationDetails?.applicationNo, history:true },
-        jsonPath: "ProcessInstances[0].assignes[0].mobileNumber",
-        isArray: false,
-        d: (res) => {
-          let resultstring = "";
-          resultstring = `+91 ${_.get(res,`ProcessInstances[${index}].assignes[0].mobileNumber`)}`;
-          return resultstring;
-        }
-      }, }
+      const privacy = { 
+        uuid: checkpoint?.assignes?.[0]?.uuid, 
+        fieldName: "mobileNumber", 
+        model: "User",
+        showValue: false,
+        loadData: {
+          serviceName: "/egov-workflow-v2/egov-wf/process/_search",
+          requestBody: {},
+          requestParam: { tenantId: applicationDetails?.tenantId, businessIds: applicationDetails?.applicationNo, history: true },
+          jsonPath: "ProcessInstances[0].assignes[0].mobileNumber",
+          isArray: false,
+          d: (res) => {
+            let resultstring = "";
+            resultstring = `+91 ${_.get(res, `ProcessInstances[${index}].assignes[0].mobileNumber`)}`;
+            return resultstring;
+          }
+        },
+      };
+      //const previousCheckpoint = timeline && timeline[index - 1] &&timeline?.[index - 1];
       const caption = {
         date: checkpoint?.auditDetails?.lastModified,
         name: checkpoint?.assignes?.[0]?.name,
-        mobileNumber:applicationData?.processInstance?.assignes?.[0]?.uuid===checkpoint?.assignes?.[0]?.uuid && applicationData?.processInstance?.assignes?.[0]?.mobileNumber ? applicationData?.processInstance?.assignes?.[0]?.mobileNumber: checkpoint?.assignes?.[0]?.mobileNumber,
-        comment: t(checkpoint?.comment),
-        wfComment: checkpoint.wfComment,
+        mobileNumber: applicationData?.processInstance?.assignes?.[0]?.uuid === checkpoint?.assignes?.[0]?.uuid && applicationData?.processInstance?.assignes?.[0]?.mobileNumber 
+                     ? applicationData?.processInstance?.assignes?.[0]?.mobileNumber 
+                     : checkpoint?.assignes?.[0]?.mobileNumber,
+        comment: t(checkpoint && checkpoint?.comment),
+       // wfComment: previousCheckpoint ? previousCheckpoint && previousCheckpoint.wfComment : [],
         thumbnailsToShow: checkpoint?.thumbnailsToShow,
       };
+      
+  
       return <TLCaption data={caption} OpenImage={OpenImage} privacy={privacy} />;
     } else {
+  
       const caption = {
         date: convertEpochToDateDMY(applicationData?.auditDetails?.lastModifiedTime),
-        // name: checkpoint?.assigner?.name,
         name: checkpoint?.assignes?.[0]?.name,
-        // mobileNumber: checkpoint?.assigner?.mobileNumber,
         wfComment: checkpoint?.wfComment,
         mobileNumber: checkpoint?.assignes?.[0]?.mobileNumber,
+        thumbnailsToShow: checkpoint?.thumbnailsToShow
       };
-      return <TLCaption data={caption} />;
+      
+      return <TLCaption data={caption} OpenImage={OpenImage}/>;
     }
   };
 
@@ -169,7 +222,8 @@ function ApplicationDetailsContent({
       return "WS_CLICK_ON_INFO_LABEL"
     }
   }
-
+  
+  const [showAllTimeline, setShowAllTimeline]=useState(false);
   const getClickInfoDetails1 = () => {
     if (window.location.href.includes("disconnection") || window.location.href.includes("application")) {
         return "WS_DISCONNECTION_CLICK_ON_INFO1_LABEL"
@@ -177,6 +231,10 @@ function ApplicationDetailsContent({
         return ""
     }
   }
+  const toggleTimeline=()=>{
+    setShowAllTimeline((prev)=>!prev);
+  }
+  // console.log("applicationDetails?.applicationDetails",applicationDetails?.applicationDetails)
   return (
     <Card style={{ position: "relative" }} className={"employeeCard-override"}>
       {/* For UM-4418 changes */}
@@ -199,7 +257,7 @@ function ApplicationDetailsContent({
                   {detail?.Component ? <detail.Component /> : null}
                 </CardSectionHeader>
               </React.Fragment>
-            )}
+            )}           
             {/* TODO, Later will move to classes */}
             {/* Here Render the table for adjustment amount details detail.isTable is true for that table*/}
             {detail?.isTable && (
@@ -267,7 +325,7 @@ function ApplicationDetailsContent({
                         textStyle={{wordBreak: "break-all"}}
                       />
                     );
-                  }
+                  }                 
                   return (
                     <div>
                       {window.location.href.includes("modify") ?  (
@@ -290,10 +348,21 @@ function ApplicationDetailsContent({
                         privacy={value?.privacy}
                         // TODO, Later will move to classes
                         rowContainerStyle={getRowStyles()}
-                        labelStyle={{wordBreak: "break-all"}}
-                        textStyle={{wordBreak: "break-all"}}
+                        // labelStyle={{wordBreak: "break-all"}}
+                        // textStyle={{wordBreak: "break-all"}}
+                        labelStyle={{
+                          wordBreak: "break-all", 
+                          fontWeight: value.isBold ? 'bold' : 'normal',
+                          fontStyle: value.isBold ? 'italic' : 'normal'
+                        }} 
+                        textStyle={{
+                          wordBreak: "break-all",
+                          fontWeight: value.isBold ? 'bold' : 'normal',
+                          fontStyle: value.isBold ? 'italic' : 'normal'
+                        }} 
                       />
                     )}
+                    {value.title === "PT_TOTAL_DUES"? <ArrearSummary bill={fetchBillData.Bill?.[0]} />:""}
                     </div>
                   )
                 })}
@@ -375,19 +444,20 @@ function ApplicationDetailsContent({
           {(workflowDetails?.isLoading || isDataLoading) && <Loader />}
           {!workflowDetails?.isLoading && !isDataLoading && (
             <Fragment>
+              <div id="timeline">
               <CardSectionHeader style={{ marginBottom: "16px", marginTop: "32px" }}>
                 {t("ES_APPLICATION_DETAILS_APPLICATION_TIMELINE")}
               </CardSectionHeader>
               {workflowDetails?.data?.timeline && workflowDetails?.data?.timeline?.length === 1 ? (
                 <CheckPoint
                   isCompleted={true}
-                  label={t(`${timelineStatusPrefix}${workflowDetails?.data?.timeline[0]?.state}`)}
-                  customChild={getTimelineCaptions(workflowDetails?.data?.timeline[0])}
+                   label={t(`${timelineStatusPrefix}${workflowDetails?.data?.timeline[0]?.state}`)}
+                   customChild={getTimelineCaptions(workflowDetails?.data?.timeline[0],workflowDetails?.data?.timeline)}
                 />
               ) : (
                 <ConnectingCheckPoints>
                   {workflowDetails?.data?.timeline &&
-                    workflowDetails?.data?.timeline.map((checkpoint, index, arr) => {
+                    workflowDetails?.data?.timeline.slice(0,showAllTimeline? workflowDetails?.data.timeline.length:2).map((checkpoint, index, arr) => {
                       let timelineStatusPostfix = "";
                       if (window.location.href.includes("/obps/")) {
                         if(workflowDetails?.data?.timeline[index-1]?.state?.includes("BACK_FROM") || workflowDetails?.data?.timeline[index-1]?.state?.includes("SEND_TO_CITIZEN"))
@@ -409,13 +479,18 @@ function ApplicationDetailsContent({
                                 checkpoint?.performedAction === "REOPEN" ? checkpoint?.performedAction : checkpoint?.[statusAttribute]
                               }${timelineStatusPostfix}`
                             )}
-                            customChild={getTimelineCaptions(checkpoint,index)}
+                            customChild={getTimelineCaptions(checkpoint,index,workflowDetails?.data?.timeline)}
                           />
                         </React.Fragment>
                       );
                     })}
                 </ConnectingCheckPoints>
               )}
+              {workflowDetails?.data?.timeline?.length > 2 && (
+                <LinkButton label={showAllTimeline? t("COLLAPSE") : t("VIEW_TIMELINE")} onClick={toggleTimeline}>
+                </LinkButton>   
+              )} 
+              </div>
             </Fragment>
           )}
         </React.Fragment>

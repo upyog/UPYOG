@@ -1,4 +1,4 @@
-import { CardLabel, CheckBox, CitizenInfoLabel, FormStep, Loader, TextInput, TextArea, OpenLinkContainer, BackButton } from "@egovernments/digit-ui-react-components";
+import { CardLabel, CheckBox, CitizenInfoLabel, FormStep, Loader, TextInput, TextArea, OpenLinkContainer, BackButton } from "@upyog/digit-ui-react-components";
 import React, { useState } from "react";
 import Timeline from "../components/Timeline";
 
@@ -51,7 +51,7 @@ const PermanentAddress = ({ t, config, onSelect, value, userType, formData }) =>
           t={t}
           isDisabled={!PermanentAddress}
         >
-          <CardLabel>{`${t("BPA_PERMANANT_ADDRESS_LABEL")}*`}</CardLabel>
+          <CardLabel>{`${t("BPA_PERMANANT_ADDRESS_LABEL")}`}<span className="check-page-link-button"> *</span></CardLabel>
           <TextArea
             t={t}
             isMandatory={false}

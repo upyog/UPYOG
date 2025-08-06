@@ -27,8 +27,9 @@ import {
   Dropdown,
   Loader,
   Modal,
+  LinkButton,
   SectionalDropdown,
-} from "@egovernments/digit-ui-react-components";
+} from "@upyog/digit-ui-react-components";
 
 import { Close } from "../../Icons";
 import { useTranslation } from "react-i18next";
@@ -66,7 +67,7 @@ const TLCaption = ({ data, comments }) => {
       {comments?.map( e => 
         <div className="TLComments">
           <h3>{t("WF_COMMON_COMMENTS")}</h3>
-          <p>{e}</p>
+          <p style={{overflowX:"scroll"}}>{e}</p>
         </div>
       )}
     </div>
@@ -81,7 +82,8 @@ const ComplaintDetailsModal = ({ workflowDetails, complaintDetails, close, popup
   const useEmployeeData = Digit.Hooks.pgr.useEmployeeFilter(
     tenantId, 
     stateArray?.[0]?.assigneeRoles?.length > 0 ? stateArray?.[0]?.assigneeRoles?.join(",") : "",
-    complaintDetails
+    complaintDetails,
+    true
     );
   const employeeData = useEmployeeData
     ? useEmployeeData.map((departmentData) => {
@@ -170,8 +172,10 @@ const ComplaintDetailsModal = ({ workflowDetails, complaintDetails, close, popup
               : t("CS_COMMON_RESOLVE")
       }
       actionSaveOnSubmit={() => {
-        if(selectedAction === "REJECT" && !comments)
+        if(!comments)
         setError(t("CS_MANDATORY_COMMENTS"));
+        // if(selectedAction === "REJECT" && !comments)
+        // setError(t("CS_MANDATORY_COMMENTS"));
         else
         onAssign(selectedEmployee, comments, uploadedFile);
       }}
@@ -238,12 +242,14 @@ export const ComplaintDetails = (props) => {
       }
     }
   },[workflowDetails])
+  const [showAllTimeline, setShowAllTimeline]=useState(false);
   const [displayMenu, setDisplayMenu] = useState(false);
   const [popup, setPopup] = useState(false);
   const [selectedAction, setSelectedAction] = useState(null);
   const [assignResponse, setAssignResponse] = useState(null);
   const [loader, setLoader] = useState(false);
   const [rerender, setRerender] = useState(1);
+  const [viewTimeline, setViewTimeline]=useState(false);
   const client = useQueryClient();
   function popupCall(option) {
     setDisplayMenu(false);
@@ -299,6 +305,9 @@ export const ComplaintDetails = (props) => {
     setImageZoom(null);
   }
 
+  function redirectToPage(redirectingUrl){
+      window.location.href=redirectingUrl;
+    }
   function onActionSelect(action) {
     setSelectedAction(action);
     switch (action) {
@@ -322,6 +331,11 @@ export const ComplaintDetails = (props) => {
         setPopup(true);
         setDisplayMenu(false);
         break;
+      case "EDIT":
+        let url=window.location.href;
+        let redirectingUrl=url.split("complaint")[0]+"modify-application/"+url.split("details/")[1];
+        redirectToPage(redirectingUrl);    
+        break;   
       default:
         setDisplayMenu(false);
     }
@@ -346,9 +360,19 @@ export const ComplaintDetails = (props) => {
   if (isLoading || workflowDetails.isLoading || loader) {
     return <Loader />;
   }
+  const toggleTimeline=()=>{
+    setShowAllTimeline((prev)=>!prev);
+  }
 
   if (workflowDetails.isError) return <React.Fragment>{workflowDetails.error}</React.Fragment>;
-
+    const handleViewTimeline=()=>{
+      setViewTimeline(true);
+     
+        const timelineSection=document.getElementById('timeline');
+        if(timelineSection){
+          timelineSection.scrollIntoView({behavior: 'smooth'});
+        } 
+    };
   const getTimelineCaptions = (checkpoint, index, arr) => {
     const {wfComment: comment, thumbnailsToShow} = checkpoint;
     function zoomImageTimeLineWrapper(imageSource, index,thumbnailsToShow){
@@ -388,13 +412,13 @@ export const ComplaintDetails = (props) => {
           {caption?.date ? <TLCaption data={caption}/> : null}
         </>
       }
-    }
+    }   
     // return (checkpoint.caption && checkpoint.caption.length !== 0) || checkpoint?.wfComment?.length > 0 ? <TLCaption data={checkpoint?.caption?.[0]} comments={checkpoint?.wfComment} /> : null;
     return <>
       {comment ? <div>{comment?.map( e => 
         <div className="TLComments">
           <h3>{t("WF_COMMON_COMMENTS")}</h3>
-          <p>{e}</p>
+          <p style={{overflowX:"scroll"}}>{e}</p>
         </div>
       )}</div> : null}
       {checkpoint.status !== "COMPLAINT_FILED" && thumbnailsToShow?.thumbs?.length > 0 ? <div className="TLComments">
@@ -409,7 +433,10 @@ export const ComplaintDetails = (props) => {
   return (
     <React.Fragment>
       <Card>
+        <div style={{display:'flex', justifyContent:'space-between', alignItems:'center'}}>
         <CardSubHeader>{t(`CS_HEADER_COMPLAINT_SUMMARY`)}</CardSubHeader>
+        <LinkButton label={t("VIEW_TIMELINE")} style={{marginLeft:'auto', color:"#A52A2A"}} onClick={handleViewTimeline}></LinkButton>
+        </div>
         <CardLabel style={{fontWeight:"700"}}>{t(`CS_COMPLAINT_DETAILS_COMPLAINT_DETAILS`)}</CardLabel>
         {isLoading ? (
           <Loader />
@@ -443,6 +470,7 @@ export const ComplaintDetails = (props) => {
         {workflowDetails?.isLoading && <Loader />}
         {!workflowDetails?.isLoading && (
           <React.Fragment>
+            <div id="timeline">
             <CardSubHeader>{t(`CS_COMPLAINT_DETAILS_COMPLAINT_TIMELINE`)}</CardSubHeader>
 
             {workflowDetails?.data?.timeline && workflowDetails?.data?.timeline?.length === 1 ? (
@@ -450,7 +478,7 @@ export const ComplaintDetails = (props) => {
             ) : (
               <ConnectingCheckPoints>
                 {workflowDetails?.data?.timeline &&
-                  workflowDetails?.data?.timeline.map((checkpoint, index, arr) => {
+                  workflowDetails?.data?.timeline.slice(0,showAllTimeline? workflowDetails?.data.timeline.length:2).map((checkpoint, index, arr) => {
                     return (
                       <React.Fragment key={index}>
                         <CheckPoint
@@ -464,6 +492,11 @@ export const ComplaintDetails = (props) => {
                   })}
               </ConnectingCheckPoints>
             )}
+            {workflowDetails?.data?.timeline?.length > 2 && (
+            <LinkButton label={showAllTimeline? t("COLLAPSE") : t("VIEW_TIMELINE")} onClick={toggleTimeline}>
+            </LinkButton>   
+            )}
+          </div>
           </React.Fragment>
         )}
       </Card>

@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import {
-  FormStep,
   RadioOrSelect,
   RadioButtons,
   LabelFieldPair,
@@ -8,8 +7,9 @@ import {
   CardLabel,
   CardLabelError,
   Loader,
-} from "@egovernments/digit-ui-react-components";
+} from "@upyog/digit-ui-react-components";
 import { cardBodyStyle } from "../utils";
+import FormStep from "../../../../react-components/src/molecules/FormStep"
 import { useLocation } from "react-router-dom";
 import Timeline from "../components/TLTimeline";
 
@@ -73,7 +73,7 @@ const SelectOwnerShipDetails = ({ t, config, onSelect, userType, formData, onBlu
     if (userType === "employee") {
       const arr = ownerShipdropDown
         ?.filter((e) => e.code.split(".").length <= 2)
-        ?.splice(0, 4)
+        ?.splice(0, 10)
         ?.map((ownerShipDetails) => ({
           ...ownerShipDetails,
           i18nKey: `PT_OWNERSHIP_${
@@ -86,7 +86,7 @@ const SelectOwnerShipDetails = ({ t, config, onSelect, userType, formData, onBlu
     return (
       ownerShipdropDown &&
       ownerShipdropDown.length &&
-      ownerShipdropDown.splice(0, 4).map((ownerShipDetails) => ({
+      ownerShipdropDown.splice(0, 10).map((ownerShipDetails) => ({
         ...ownerShipDetails,
         i18nKey: `PT_OWNERSHIP_${ownerShipDetails.value.split(".")[1] ? ownerShipDetails.value.split(".")[1] : ownerShipDetails.value.split(".")[0]}`,
       }))
@@ -138,7 +138,7 @@ const SelectOwnerShipDetails = ({ t, config, onSelect, userType, formData, onBlu
       <React.Fragment>
         <LabelFieldPair>
           <CardLabel className="card-label-smaller" style={editScreen ? { color: "#B1B4B6" } : {}}>
-            {t("PT_PROVIDE_OWNERSHIP_DETAILS") + " *"}
+            {t("PT_PROVIDE_OWNERSHIP_DETAILS")}<span className="check-page-link-button"> *</span>
           </CardLabel>
           <Dropdown
             className="form-field"

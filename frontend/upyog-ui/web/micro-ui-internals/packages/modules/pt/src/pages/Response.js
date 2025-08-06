@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Card, Banner, CardText, SubmitBar, Loader, LinkButton, Toast, ActionBar } from "@egovernments/digit-ui-react-components";
+import { Card, Banner, CardText, SubmitBar, Loader, LinkButton, Toast, ActionBar } from "@upyog/digit-ui-react-components";
 import { Link, useHistory } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useQueryClient } from "react-query";
@@ -51,6 +51,7 @@ const Response = (props) => {
   const { state } = props.location;
 
   const mutation = Digit.Hooks.pt.usePropertyAPI(tenantId, state.key !== "UPDATE");
+  const mutation1 = Digit.Hooks.pt.usePropertyAPI(tenantId, false);
 
   const { data: storeData } = Digit.Hooks.useStore.getInitData();
   const { tenants } = storeData || {};
@@ -64,9 +65,11 @@ const Response = (props) => {
   );
 
   useEffect(() => {
-    if (mutation.data && mutation.isSuccess) setsuccessData(mutation.data);
+    if (mutation1.data && mutation1.isSuccess) setsuccessData(mutation1.data);
   }, [mutation.data]);
-
+  useEffect(() => {
+    if (mutation1.data && mutation1.isSuccess) setsuccessData(mutation1.data);
+  }, [mutation1.data]);
   useEffect(() => {
     const onSuccess = async (successRes) => {
       setMutationHappened(true);

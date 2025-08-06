@@ -2,6 +2,14 @@ export const config = [
   {
     texts: {
       headerCaption: "",
+      header: "CS_FILE_APPLICATION_PROPERTY_ID_LABEL",
+      cardText: "CS_FILE_APPLICATION_PROPERTY_ID_TEXT",
+      submitBarLabel: "CS_COMMON_NEXT",
+    },
+  },
+  {
+    texts: {
+      headerCaption: "",
       header: "CS_FILE_APPLICATION_PROPERTY_LABEL",
       cardText: "CS_FILE_APPLICATION_PROPERTY_TEXT",
       submitBarLabel: "CS_COMMON_NEXT",

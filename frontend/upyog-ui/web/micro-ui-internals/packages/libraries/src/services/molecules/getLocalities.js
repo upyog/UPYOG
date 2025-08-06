@@ -10,4 +10,8 @@ export const getLocalities = {
     await StoreService.defaultData(tenant, tenant, Digit.StoreData.getCurrentLanguage());
     return (await LocationService.getRevenueLocalities(tenant)).TenantBoundary[0];
   },
+  grampanchayats: async (tenant) => {
+    await StoreService.defaultData(tenant, tenant, Digit.StoreData.getCurrentLanguage());
+    return (await LocationService.getGramPanchayats(tenant)).TenantBoundary[0];
+  },
 };

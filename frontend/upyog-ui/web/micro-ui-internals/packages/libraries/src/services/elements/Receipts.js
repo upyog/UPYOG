@@ -19,7 +19,7 @@ const ReceiptsService = {
             newParam['consumerCode']=consumerCode;
         }
             return Request({
-            url: Urls.mcollect.receipt_download,
+            url: Urls.receipts.receipt_download,
             data: {},
             useCache: true,
             method: "POST",

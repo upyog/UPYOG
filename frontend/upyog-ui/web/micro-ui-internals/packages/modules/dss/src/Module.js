@@ -1,8 +1,9 @@
 import React, { Fragment } from "react";
 import { useTranslation } from "react-i18next";
 // import { useRouteMatch } from "react-router";
-import { BackButton, Loader, PrivateRoute, BreadCrumb } from "@egovernments/digit-ui-react-components";
+import { BackButton, Loader, PrivateRoute, BreadCrumb } from "@upyog/digit-ui-react-components";
 import DashBoard from "./pages";
+import NewDashBoard from "./pages/NewDashboard";
 import Home from "./pages/Home";
 import { Route, Switch, useRouteMatch, useLocation } from "react-router-dom";
 import Overview from "./pages/Overview";
@@ -54,12 +55,34 @@ const DssBreadCrumb = ({ location }) => {
 const Routes = ({ path, stateCode }) => {
   const location = useLocation();
   const isMobile = window.Digit.Utils.browser.isMobile();
+
+  const handClick =(e,module)=>{
+    e.stopPropagation() 
+    module === "home"?window.location.href=`${path}/landing/NURT_DASHBOARD`:window.location.href=`${path}/dashboard/${module}`
+  }
   return (
-    <div className="chart-wrapper" style={isMobile ? {marginTop:"unset"} : {}}>
+    <div style={{display:"flex"}}>
+      <div className="chart-sidebar" style={{width:"300px",marginLeft:"-80px", backgroundImage:"url(https://in-egov-assets.s3.ap-south-1.amazonaws.com/images/top-green-card.png), url(https://in-egov-assets.s3.ap-south-1.amazonaws.com/images/top-red-card.png)", backgroundSize:"cover",backgroundBlendMode:"lighten",display:window.location.href.includes("main-dashboard-landing")?"":"none"}}>
+        <div style={{width:"90%",margin:"5%",backgroundColor:"white",fontWeight:"700",textAlign:"center",height:"50px",lineHeight:"3",cursor:"pointer",marginTop:"10%"}}  onClick = {(e)=>handClick(e,"home")}className="dashBoard">View dashboard</div>
+        <div style={{width:"90%",margin:"5%",backgroundColor:"white",fontWeight:"700",textAlign:"center",height:"50px",cursor:"pointer"}} className="dashBoard" onClick = {(e)=>handClick(e,"national-propertytax")}>
+Property Tax Assessment and Payment</div>
+        <div  style={{width:"90%",margin:"5%",backgroundColor:"white",fontWeight:"700",textAlign:"center",height:"50px",cursor:"pointer"}}className="dashBoard"  onClick = {(e)=>handClick(e,"national-tradelicense")}>Trade License Issuance and Payment</div>
+        <div style={{width:"90%",margin:"5%",backgroundColor:"white",fontWeight:"700",textAlign:"center",height:"50px",lineHeight:"3",cursor:"pointer"}} className="dashBoard" onClick = {(e)=>handClick(e,"national-pgr")}>Public Grievance Redressal</div>
+        <div style={{width:"90%",margin:"5%",backgroundColor:"white",fontWeight:"700",textAlign:"center",height:"50px",cursor:"pointer"}} className="dashBoard" onClick = {(e)=>handClick(e,"national-firenoc")}>No-Objection Certificate Issuance</div>
+        <div style={{width:"90%",margin:"5%",backgroundColor:"white",fontWeight:"700",textAlign:"center",height:"50px",cursor:"pointer"}} className="dashBoard" onClick = {(e)=>handClick(e,"national-ws")}>Water and Sewerage Connection Management</div>
+        <div style={{width:"90%",margin:"5%",backgroundColor:"white",fontWeight:"700",textAlign:"center",height:"50px",lineHeight:"3",cursor:"pointer"}} className="dashBoard" onClick = {(e)=>handClick(e,"nss-obps")}>Building Plan Approval</div>
+        <div style={{width:"90%",margin:"5%",backgroundColor:"white",fontWeight:"700",textAlign:"center",height:"50px",lineHeight:"3",cursor:"pointer"}} className="dashBoard" onClick = {(e)=>handClick(e,"national-mcollect")}>
+Miscellaneous Collections</div>
+        <div  style={{width:"90%",margin:"5%",backgroundColor:"white",fontWeight:"700",textAlign:"center",height:"50px",lineHeight:"3",cursor:"pointer"}}className="dashBoard" onClick = {(e)=>handClick(e,"national-fssm")}>
+Desludging Service</div>
+      
+      </div>
+      <div className="chart-wrapper" style={isMobile ? {marginTop:"unset"} : {width:"100%"}}>
       <DssBreadCrumb location={location} />
       <Switch>
         <PrivateRoute path={`${path}/landing/:moduleCode`} component={() => <Home stateCode={stateCode} />} />
         <PrivateRoute path={`${path}/dashboard/:moduleCode`} component={() => <DashBoard stateCode={stateCode} />} />
+        <PrivateRoute path={`${path}/main-dashboard-landing`} component={() => <NewDashBoard stateCode={stateCode} />} />
         <PrivateRoute path={`${path}/drilldown`} component={() => <DrillDown  stateCode={stateCode}  />} />
         <Route key={"national-faq"} path={`${path}/national-faqs`}>
           <FAQsSection/>
@@ -69,6 +92,8 @@ const Routes = ({ path, stateCode }) => {
         </Route>
       </Switch>
     </div>
+    </div>
+   
   );
 };
 

@@ -1,13 +1,14 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { Switch, useLocation } from "react-router-dom";
-import { PrivateRoute, BreadCrumb } from "@egovernments/digit-ui-react-components";
+import { PrivateRoute, BreadCrumb } from "@upyog/digit-ui-react-components";
 
 
 import WSResponse from "./WSResponse";
 import Response from "./Response";
 import ResponseBillAmend from "./ResponseBillAmend";
 import WSDisconnectionResponse from "./DisconnectionApplication/WSDisconnectionResponse";
+import WSRestorationResponse from "./RestorationApplication/WSRestorationResponse";
 
 const BILLSBreadCrumbs = ({ location }) => {
   const { t } = useTranslation();
@@ -63,6 +64,12 @@ const BILLSBreadCrumbs = ({ location }) => {
       path: "/upyog-ui/employee/ws/water/search-connection",
       content: fromScreen ? `${t(fromScreen)} / ${t("WS_SEARCH_CONNECTION")}` : t("WS_SEARCH_CONNECTION"),
       show: location.pathname.includes("/water/search-connection") ? true : false,
+      isBack: fromScreen && true,
+    },
+    {
+      path: "/upyog-ui/employee/ws/water/wns-search",
+      content: fromScreen ? `${t(fromScreen)} / ${t("WS_SEARCH_INTEGRATED_BILL")}` : t("WS_SEARCH_INTEGRATED_BILL"),
+      show: location.pathname.includes("/water/wns-search") ? true : false,
       isBack: fromScreen && true,
     },
     {
@@ -212,6 +219,12 @@ const BILLSBreadCrumbs = ({ location }) => {
       content: t("CS_TITLE_GENERATE_NOTE"),
       show: location.pathname.includes("/generate-note-bill-amendment") ? true : false,
       //isclickable : false,
+    },
+    {
+      path: "/upyog-ui/employee/ws/water/bulk-bil",
+      content: t("CS_TITLE_BULK_BILL"),
+      show: location.pathname.includes("/ws/water/bulk-bill") ? true : false,
+      //isclickable : false,
     }
   ];
 
@@ -240,6 +253,7 @@ const App = ({ path }) => {
   const WSModifyApplication = Digit?.ComponentRegistryService?.getComponent("WSModifyApplication");
   const WSEditModifyApplication = Digit?.ComponentRegistryService?.getComponent("WSEditModifyApplication");
   const WSDisconnectionApplication = Digit?.ComponentRegistryService?.getComponent("WSDisconnectionApplication");
+  const WSRestorationApplication = Digit?.ComponentRegistryService?.getComponent("WSRestorationApplication");
   const WSEditApplicationByConfig = Digit?.ComponentRegistryService?.getComponent("WSEditApplicationByConfig");
   const WSBillIAmendMentInbox = Digit?.ComponentRegistryService?.getComponent("WSBillIAmendMentInbox");
   const WSGetDisconnectionDetails = Digit?.ComponentRegistryService?.getComponent("WSGetDisconnectionDetails");
@@ -247,7 +261,9 @@ const App = ({ path }) => {
   const WSEditDisconnectionApplication = Digit?.ComponentRegistryService?.getComponent("WSEditDisconnectionApplication");
   const WSEditDisconnectionByConfig = Digit?.ComponentRegistryService?.getComponent("WSEditDisconnectionByConfig");
   const WSResubmitDisconnection = Digit?.ComponentRegistryService?.getComponent("WSResubmitDisconnection");
-
+  const WSSearchIntegrated = Digit?.ComponentRegistryService?.getComponent("WSSearchIntegrated");
+  const WSBulkBillGeneration = Digit?.ComponentRegistryService?.getComponent("WSBulkBillGeneration");
+  
   const locationCheck = 
   window.location.href.includes("/employee/ws/new-application") || 
   window.location.href.includes("/employee/ws/modify-application") ||
@@ -260,9 +276,9 @@ const App = ({ path }) => {
   window.location.href.includes("/employee/ws/ws-disconnection-response") ||
   window.location.href.includes("/employee/ws/consumption-details") || 
   window.location.href.includes("/employee/ws/edit-disconnection-application") ||
-  window.location.href.includes("/employee/ws/config-by-disconnection-application");
-  window.location.href.includes("/employee/ws/resubmit-disconnection-application");
-  
+  window.location.href.includes("/employee/ws/config-by-disconnection-application")||
+  window.location.href.includes("/employee/ws/resubmit-disconnection-application")||
+  window.location.href.includes("/employee/ws/water/bulk-bill");
   
 
 
@@ -295,14 +311,17 @@ const App = ({ path }) => {
           <PrivateRoute path={`${path}/sewerage/search-application`} component={(props) => <WSSearch {...props} parentRoute={path} />} />
           <PrivateRoute path={`${path}/ws-response`} component={WSResponse} />
           <PrivateRoute path={`${path}/ws-disconnection-response`} component={WSDisconnectionResponse} />
+          <PrivateRoute path={`${path}/ws-restoration-response`} component={WSRestorationResponse} />
           <PrivateRoute path={`${path}/water/search-connection`} component={(props) => <WSSearchWater {...props} parentRoute={path} />} />
           <PrivateRoute path={`${path}/sewerage/search-connection`} component={(props) => <WSSearchWater {...props} parentRoute={path} />} />
-
+          <PrivateRoute path={`${path}/water/search-demand`} component={(props) => <WSSearchWater {...props} parentRoute={path} />} />
+          <PrivateRoute path={`${path}/sewerage/search-demand`} component={(props) => <WSSearchWater {...props} parentRoute={path} />} />
           <PrivateRoute path={`${path}/consumption-details`} component={WSConsumptionDetails} />
           <PrivateRoute path={`${path}/modify-application`} component={WSModifyApplication} />
           <PrivateRoute path={`${path}/modify-application-edit`} component={WSEditModifyApplication} />
           <PrivateRoute path={`${path}/disconnection-application`} component={WSDisconnectionDocsRequired} />
           <PrivateRoute path={`${path}/new-disconnection`} component={WSDisconnectionApplication} />
+          <PrivateRoute path={`${path}/new-restoration`} component={WSRestorationApplication} />
           <PrivateRoute path={`${path}/bill-amend/inbox`} component={(props) => <WSBillIAmendMentInbox {...props} parentRoute={path} />} />
           <PrivateRoute path={`${path}/water/inbox`} component={(props) => <WSInbox {...props} parentRoute={path} />} />
           <PrivateRoute path={`${path}/sewerage/inbox`} component={(props) => <WSInbox {...props} parentRoute={path} />} />
@@ -310,7 +329,9 @@ const App = ({ path }) => {
           <PrivateRoute path={`${path}/disconnection-details`} component={WSGetDisconnectionDetails} />
           <PrivateRoute path={`${path}/water/bill-amendment/inbox`} component={(props) => <WSBillIAmendMentInbox {...props} parentRoute={path} />} />
           <PrivateRoute path={`${path}/sewerage/bill-amendment/inbox`} component={(props) => <WSBillIAmendMentInbox {...props} parentRoute={path} />} />
-
+          <PrivateRoute path={`${path}/water/wns-search`} component={(props) => <WSSearchIntegrated {...props} parentRoute={path} />} />
+          <PrivateRoute path={`${path}/water/bulk-bill`} component={(props) => <WSBulkBillGeneration {...props} parentRoute={path} />} />
+          
           {/* <Route path={`${path}/search`} component={SearchConnectionComponent} />
           <Route path={`${path}/search-results`} component={SearchResultsComponent} /> */}
         </div>

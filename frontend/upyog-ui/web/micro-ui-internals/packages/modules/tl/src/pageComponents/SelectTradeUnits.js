@@ -1,4 +1,4 @@
-import { CardLabel, Dropdown, FormStep, LinkButton, Loader, RadioButtons, TextInput } from "@egovernments/digit-ui-react-components";
+import { CardLabel, Dropdown, FormStep, LinkButton, Loader, RadioButtons, TextInput } from "@upyog/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import Timeline from "../components/TLTimeline";
@@ -36,7 +36,7 @@ const SelectTradeUnits = ({ t, config, onSelect, userType, formData }) => {
   const { isLoading, data: Data = {} } = Digit.Hooks.tl.useTradeLicenseMDMS(stateId, "TradeLicense", "TradeUnits", "[?(@.type=='TL')]");
   const { data: billingSlabTradeTypeData, isLoading : isBillingSlabLoading } = Digit.Hooks.tl.useTradeLicenseBillingslab({ tenantId: tenantId, filters: {} }, {
     select: (data) => {
-    return data?.billingSlab.filter((e) => e.tradeType && (e.applicationType === (window.location.href.includes("renew-trade") ? "RENEWAL" : "NEW")) && e.licenseType === "PERMANENT" && e.uom);
+    return data?.billingSlab.filter((e) => e.tradeType && (e.applicationType === (window.location.href.includes("renew-trade") ? "RENEWAL" : "NEW")) && e.licenseType === "PERMANENT" );
     }});
   let TradeCategoryMenu = [];
   let TradeCategoryMenu2 = [];
@@ -44,7 +44,7 @@ const SelectTradeUnits = ({ t, config, onSelect, userType, formData }) => {
 
   Data &&
     Data.TradeLicense &&
-    Data.TradeLicense.TradeType.map((ob) => {
+    Data.TradeLicense?.TradeType?.map((ob) => {
       if (!TradeCategoryMenu2.some((TradeCategoryMenu) => TradeCategoryMenu.code === `${ob.code.split(".")[0]}`)) {
         TradeCategoryMenu2.push({ i18nKey: `TRADELICENSE_TRADETYPE_${ob.code.split(".")[0]}`, code: `${ob.code.split(".")[0]}` });
       }
@@ -52,14 +52,14 @@ const SelectTradeUnits = ({ t, config, onSelect, userType, formData }) => {
 
     billingSlabTradeTypeData &&
     billingSlabTradeTypeData.length > 0 &&
-    billingSlabTradeTypeData.filter((e) => e.structureType === formData?.TradeDetails?.BuildingType?.code.toString() ).map((ob) => {
+    billingSlabTradeTypeData.filter((e) => e.structureType === formData?.TradeDetails?.BuildingType?.code.toString() )?.map((ob) => {
         if (!TradeCategoryMenu.some((TradeCategoryMenu) => TradeCategoryMenu.code === `${ob.tradeType.split(".")[0]}`)) {
           TradeCategoryMenu.push({ i18nKey: `TRADELICENSE_TRADETYPE_${ob.tradeType.split(".")[0]}`, code: `${ob.tradeType.split(".")[0]}` });
         }
       });
     billingSlabTradeTypeData &&
     billingSlabTradeTypeData.length > 0 &&
-    billingSlabTradeTypeData.filter((e) => e.structureType === formData?.TradeDetails?.VehicleType?.code.toString() ).map((ob) => {
+    billingSlabTradeTypeData.filter((e) => e.structureType === formData?.TradeDetails?.VehicleType?.code.toString() )?.map((ob) => {
         if (!TradeCategoryMenu.some((TradeCategoryMenu) => TradeCategoryMenu.code === `${ob.tradeType.split(".")[0]}`)) {
           TradeCategoryMenu.push({ i18nKey: `TRADELICENSE_TRADETYPE_${ob.tradeType.split(".")[0]}`, code: `${ob.tradeType.split(".")[0]}` });
         }
@@ -175,12 +175,12 @@ const SelectTradeUnits = ({ t, config, onSelect, userType, formData }) => {
       units[i].unit = null;
       setUnitOfMeasure(null);
     }
-    Array.from(document.querySelectorAll("input")).forEach((input) => (input.value = ""));
+    Array.from(document.querySelectorAll("input"))?.forEach((input) => (input.value = ""));
     let uomFound = false;
     value &&
     billingSlabTradeTypeData &&
     billingSlabTradeTypeData?.length > 0 &&
-    billingSlabTradeTypeData.filter((e) => e.structureType === formData?.TradeDetails?.BuildingType?.code.toString() ).map((ob) => {
+    billingSlabTradeTypeData.filter((e) => e.structureType === formData?.TradeDetails?.BuildingType?.code.toString() )?.map((ob) => {
         if (value.code === ob.tradeType) {
           units[i].unit = ob.uom;
           uomFound = true;
@@ -192,7 +192,7 @@ const SelectTradeUnits = ({ t, config, onSelect, userType, formData }) => {
     value &&
     billingSlabTradeTypeData &&
     billingSlabTradeTypeData?.length > 0 &&
-    billingSlabTradeTypeData.filter((e) => e.structureType === formData?.TradeDetails?.VehicleType?.code.toString() ).map((ob) => {
+    billingSlabTradeTypeData.filter((e) => e.structureType === formData?.TradeDetails?.VehicleType?.code.toString() )?.map((ob) => {
         if (value.code === ob.tradeType) {
           units[i].unit = ob.uom;
           uomFound = true;
@@ -262,7 +262,7 @@ const SelectTradeUnits = ({ t, config, onSelect, userType, formData }) => {
   useEffect(() => {
     if(window.location.href.includes("renew-trade") && fields)
     {
-      fields.map((value) => {
+      fields?.map((value) => {
         if(value && billingSlabTradeTypeData?.filter((ob) => ob?.tradeType === value?.tradesubtype?.code && (ob?.structureType === formData?.TradeDetails?.VehicleType?.code || ob?.structureType === formData?.TradeDetails?.BuildingType?.code))?.length <= 0)
           {
             setError("TL_BILLING_SLAB_NOT_FOUND_FOR_COMB");
@@ -286,7 +286,7 @@ const SelectTradeUnits = ({ t, config, onSelect, userType, formData }) => {
           forcedError={t(error)}
           isDisabled={!fields[0].tradecategory || !fields[0].tradetype || !fields[0].tradesubtype}
         >
-          {fields.map((field, index) => {
+          {fields?.map((field, index) => {
             return (
               <div key={`${field}-${index}`}>
                 <div
@@ -300,7 +300,7 @@ const SelectTradeUnits = ({ t, config, onSelect, userType, formData }) => {
                     background: "#FAFAFA",
                   }}
                 >
-                  <CardLabel>{`${t("TL_NEW_TRADE_DETAILS_TRADE_CAT_LABEL")}*`}</CardLabel>
+                  <CardLabel>{`${t("TL_NEW_TRADE_DETAILS_TRADE_CAT_LABEL")}`}<span className="check-page-link-button"> *</span></CardLabel>
                   <LinkButton
                     label={
                       <div>
@@ -339,7 +339,7 @@ const SelectTradeUnits = ({ t, config, onSelect, userType, formData }) => {
                   ) : (
                     <Loader />
                   )}
-                  <CardLabel>{`${t("TL_NEW_TRADE_DETAILS_TRADE_TYPE_LABEL")}*`}</CardLabel>
+                  <CardLabel>{`${t("TL_NEW_TRADE_DETAILS_TRADE_TYPE_LABEL")}`}<span className="check-page-link-button"> *</span></CardLabel>
                   <Dropdown
                     t={t}
                     optionKey="i18nKey"
@@ -348,7 +348,7 @@ const SelectTradeUnits = ({ t, config, onSelect, userType, formData }) => {
                     selected={field?.tradetype}
                     select={(e) => selectTradeType(index, e)}
                   />
-                  <CardLabel>{`${t("TL_NEW_TRADE_DETAILS_TRADE_SUBTYPE_LABEL")}*`}</CardLabel>
+                  <CardLabel>{`${t("TL_NEW_TRADE_DETAILS_TRADE_SUBTYPE_LABEL")}`}<span className="check-page-link-button"> *</span></CardLabel>
                     <Dropdown
                       t={t}
                       optionKey="i18nKey"
@@ -371,7 +371,7 @@ const SelectTradeUnits = ({ t, config, onSelect, userType, formData }) => {
                     onChange={(e) => selectUnitOfMeasure(index, e)}
                     disable={true}
                   />
-                  <CardLabel>{`${t("TL_NEW_TRADE_DETAILS_UOM_VALUE_LABEL")}${!field.unit ? "" : "*"}`}</CardLabel>
+                  <CardLabel>{`${t("TL_NEW_TRADE_DETAILS_UOM_VALUE_LABEL")}`}{!field.unit ? "" : <span className="check-page-link-button"> *</span>}</CardLabel>
                   <TextInput
                     style={{ background: "#FAFAFA" }}
                     t={t}

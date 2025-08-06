@@ -9,22 +9,22 @@ const getSlumName = (application, t) => {
   }
   return application?.slum?.i18nKey ? t(`${application?.slum?.i18nKey}`) : "N/A";
 };
+/*
+const getDistanceofPitFromRoad = (distancefromroad) => {
+   if (!distancefromroad) 
+    return "N/A";
+    return distancefromroad;};
+   
+const getRoadWidth = (roadWidth) => {
+   if (!roadWidth) 
+    return "N/A"; 
+  return roadWidth;};
+*/
 
 const getApplicationVehicleCapacity = (vehicleCapacity) => {
   if (!vehicleCapacity) return "N/A";
   return vehicleCapacity;
 };
-
-const getDistanceofPitFromRoad = (distancefromroad) => {
-  if (!distancefromroad) return "N/A";
-  return distancefromroad;
-};
-
-const getRoadWidth = (roadWidth) => {
-  if (!roadWidth) return "N/A";
-  return roadWidth;
-};
-
 
 const getAmountPerTrip = (amountPerTrip) => {
   if (!amountPerTrip) return "N/A";
@@ -40,6 +40,28 @@ const getAdvanceAmount = (advanceAmount) => {
   if (advanceAmount === null) return "N/A";
   return `₹ ${advanceAmount}`;
 };
+const getMohalaName = (application, t) => {
+  const tenantPrefix = application?.tenantId?.toUpperCase().split(".").join("_");
+  const localityCode = application?.address?.locality?.code;
+  const village = application?.address?.additionalDetails?.village;
+  const newGramPanchayat = application?.address?.additionalDetails?.newGramPanchayat;
+
+  // Check if village code is non-empty and village is defined
+  if (village?.code) {
+    return (
+      t(`${tenantPrefix}_REVENUE_${localityCode}`) + " " + t(village?.name) || "N/A"
+    );
+  }
+
+  // Check if "newGramPanchayat" exists
+  if (newGramPanchayat) {
+    return t(newGramPanchayat) + " " + t(village?.name) || "N/A";
+  }
+
+  // Default case
+  return t(`${tenantPrefix}_REVENUE_${localityCode}`) || "N/A";
+};
+
 
 const getPDFData = (application, tenantInfo, t) => {
   const { additionalDetails } = application;
@@ -47,19 +69,20 @@ const getPDFData = (application, tenantInfo, t) => {
   const amountPerTrip = additionalDetails?.tripAmount;
   const totalAmount = amountPerTrip * application?.noOfTrips;
   const advanceAmountDue = application?.advanceAmount;
-
+console.log("applicationapplication",application)
   return {
     t: t,
     tenantId: tenantInfo?.code,
     name: `${t(tenantInfo?.i18nKey)} ${t(`ULBGRADE_${tenantInfo?.city?.ulbGrade.toUpperCase().replace(" ", "_").replace(".", "_")}`)}`,
     email: tenantInfo?.emailId,
     phoneNumber: tenantInfo?.contactNumber,
+    applicationNumber: application?.applicationNo||"NA",
     heading: t("PDF_HEADER_DESLUDGING_REQUEST_ACKNOWLEDGEMENT"),
     details: [
       {
         title: t("CS_TITLE_APPLICATION_DETAILS"),
         values: [
-          { title: t("CS_MY_APPLICATION_APPLICATION_NO"), value: application?.applicationNo },
+          
           {
             title: t("CS_APPLICATION_DETAILS_APPLICATION_DATE"),
             value: Digit.DateUtils.ConvertTimestampToDate(application?.auditDetails?.createdTime, "dd/MM/yyyy"),
@@ -75,11 +98,13 @@ const getPDFData = (application, tenantInfo, t) => {
         values: [
           { title: t("CS_APPLICATION_DETAILS_APPLICANT_NAME"), value: application?.citizen?.name || "N/A" },
           { title: t("CS_APPLICATION_DETAILS_APPLICANT_MOBILE"), value: application?.citizen?.mobileNumber || "N/A" },
+          { title: t("CS_APPLICATION_DETAILS_APPLICANT_EMAIL_ID"), value: application?.citizen?.emailId || application?.additionalDetails?.emailId || "NA" },
         ],
       },
       {
         title: t("CS_APPLICATION_DETAILS_PROPERTY_DETAILS"),
         values: [
+          { title: t("CS_APPLICATION_DETAILS_PROPERTY_ID"), value: application?.additionalDetails?.propertyID || "N/A" },
           { title: t("CS_APPLICATION_DETAILS_PROPERTY_TYPE"), value: t(getPropertyTypeLocale(application?.propertyUsage)) || "N/A" },
           { title: t("CS_APPLICATION_DETAILS_PROPERTY_SUB_TYPE"), value: t(getPropertySubtypeLocale(application?.propertyUsage)) || "N/A" },
         ],
@@ -91,7 +116,7 @@ const getPDFData = (application, tenantInfo, t) => {
           { title: t("CS_APPLICATION_DETAILS_CITY"), value: application?.address?.city || "N/A" },
           {
             title: t("CS_APPLICATION_DETAILS_MOHALLA"),
-            value: t(`${application?.tenantId?.toUpperCase().split(".").join("_")}_REVENUE_${application?.address?.locality?.code}`) || "N/A",
+            value:getMohalaName(application, t)
           },
           {
             title: t("CS_APPLICATION_DETAILS_SLUM_NAME"),
@@ -110,6 +135,13 @@ const getPDFData = (application, tenantInfo, t) => {
             value: application?.sanitationtype ? t("PITTYPE_MASTERS_" + application?.sanitationtype) : "N/A",
           },
           {
+            title: t("CS_APPLICATION_DETAILS_ROAD_WIDTH"), value: application?.additionalDetails?.roadWidth || "N/A" 
+          },
+          {
+            title: t("CS_APPLICATION_DETAILS_DISTANCE_FROM_ROAD"), value: application?.additionalDetails?.distancefromroad || "N/A" 
+          },
+          
+          {
             title: t("CS_APPLICATION_DETAILS_DIMENSION"),
             // NOTE: value have too much whitespace bcz we want the text after whitespace should go to next line, so pls don't remove whitespace
             value:
@@ -126,14 +158,6 @@ const getPDFData = (application, tenantInfo, t) => {
           {
             title: t("ES_APPLICATION_DETAILS_VEHICLE_CAPACITY"),
             value: getApplicationVehicleCapacity(application?.vehicleCapacity),
-          },
-          {
-            title: t("ES_APPLICATION_DETAILS_DISTANCE_FROM_ROAD"),
-            value: getDistanceofPitFromRoad(application?.additionalDetails.distancefromroad) || "N/A",
-          },
-          {
-            title: t("ES_APPLICATION_DETAILS_ROAD_WIDTH"),
-            value: getRoadWidth(application?.additionalDetails.roadWidth) || "N/A",
           },
           { title: t("CS_APPLICATION_DETAILS_TRIPS"), value: application?.noOfTrips || "N/A" },
           {

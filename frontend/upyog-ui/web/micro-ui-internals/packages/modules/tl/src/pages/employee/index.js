@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Switch, useLocation, Link } from "react-router-dom";
-import { PrivateRoute, BreadCrumb } from "@egovernments/digit-ui-react-components";
+import { PrivateRoute, BreadCrumb } from "@upyog/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 import Inbox from "./Inbox";
 // import NewApplication from "./NewApplication";
@@ -21,7 +21,7 @@ const TLBreadCrumb = ({ location }) => {
   const isNewApplication = location?.pathname?.includes("tl/new-application");
   const isResponse = location?.pathname?.includes("tl/response");
   const isMobile = window.Digit.Utils.browser.isMobile();
-
+  const CommonRedirect = Digit?.ComponentRegistryService?.getComponent('CommonRedirect')
   const [search, setSearch] = useState(false);
 
   const locationsForTLEmployee = window.location.href;
@@ -188,6 +188,7 @@ const EmployeeApp = ({ path, url, userType }) => {
               <Inbox parentRoute={path} businessService="TL" filterComponent="TL_INBOX_FILTER" initialStates={{}} isInbox={true} />
             )}
           />
+            <PrivateRoute path={`${path}/common/:filestore`} component={() => <CommonRedirect parentUrl={url} />} />
           <PrivateRoute path={`${path}/new-application`} component={() => <NewApplication parentUrl={url} />} />
           <PrivateRoute path={`${path}/application-details/:id`} component={() => <ApplicationDetails parentRoute={path} />} />
           <PrivateRoute path={`${path}/renew-application-details/:id`} component={(props) => <ReNewApplication {...props} parentRoute={path} />} />
