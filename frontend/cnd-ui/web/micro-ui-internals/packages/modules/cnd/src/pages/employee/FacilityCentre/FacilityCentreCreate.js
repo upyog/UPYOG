@@ -70,6 +70,7 @@ const FacilityCentreCreationDetails = () => {
         applicationStatus: applicationDetails?.applicationData?.applicationData?.applicationStatus,
         depositCentreDetails: "",
         description: "",
+        locality: applicationDetails?.applicationData?.applicationData?.addressDetail?.locality,
         applicationId: applicationDetails?.applicationData?.applicationData?.applicationId,
         applicationNumber: applicationDetails?.applicationData?.applicationData?.applicationNumber,
         vehicleId: applicationDetails?.applicationData?.applicationData?.vehicleId,
