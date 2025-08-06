@@ -14,6 +14,7 @@ import org.upyog.rs.enums.RequestServiceStatus;
 import org.upyog.rs.repository.IdGenRepository;
 import org.upyog.rs.util.RequestServiceUtil;
 import org.upyog.rs.util.UserUtil;
+import org.upyog.rs.web.models.ApplicantDetail;
 import org.upyog.rs.web.models.AuditDetails;
 import org.upyog.rs.web.models.mobileToilet.MobileToiletBookingDetail;
 import org.upyog.rs.web.models.mobileToilet.MobileToiletBookingRequest;
@@ -53,6 +54,7 @@ public class EnrichmentService {
 				waterTankerDetail.setApplicantUuid(userUuid);
 			} else {
 				// If the mobile number does not match, set the applicantDetailId to null and addressDetailId to null
+				// Setting applicantDetailId and addressDetailId to null to ensure new user and address creation
 				waterTankerDetail.setApplicantUuid(null);
 				waterTankerDetail.setAddressDetailId(null);
 			}
@@ -68,6 +70,20 @@ public class EnrichmentService {
 				// Enrich address details only
 				enrichAddressDetails(waterTankerRequest, waterTankerDetail);
 			}
+		}else{
+			/*
+			 * If the currently logged-in user is not the same as the applicant mobile number entered in the form is different from the login mobile number,
+			 * then we proceed to enrich user details, which will create a new user with the provided details.
+			 * If the currently logged-in user is the same as the applicant mobile number, we do not enrich user details
+			 * user profile is not enabled for this service, we explicitly set `applicantDetailId` and `addressDetailId` to null in the application details
+			 */
+			if (!UserUtil.isCurrentUserApplicant(waterTankerRequest)) {
+				// Enrich user details for existing user or user details with address for new user
+				enrichUserDetails(waterTankerRequest);
+			}
+			waterTankerDetail.setApplicantUuid(null);
+			waterTankerDetail.setAddressDetailId(null);
+			log.info("User profile is not enabled, setting applicantDetailId and addressDetailId to null");
 		}
 		waterTankerDetail.setBookingId(bookingId);
 		waterTankerDetail.setApplicationDate(auditDetails.getCreatedTime());
@@ -121,11 +137,14 @@ public class EnrichmentService {
 	private void enrichUserDetails(WaterTankerBookingRequest waterTankerRequest) {
 		// Try fetching an existing user for the given request
 		WaterTankerBookingDetail waterTankerDetail = waterTankerRequest.getWaterTankerBookingDetail();
-		List<User> existingUsers = userService.fetchExistingOrCreateNewUser(waterTankerRequest);
+		RequestInfo requestInfo = waterTankerRequest.getRequestInfo();
+		ApplicantDetail applicantDetail = waterTankerDetail.getApplicantDetail();
+		String tenantId = waterTankerDetail.getTenantId();
+		User existingUsers = userService.fetchExistingUser(tenantId, applicantDetail, requestInfo);
 
-		if (!CollectionUtils.isEmpty(existingUsers)) {
-			waterTankerDetail.setApplicantUuid(existingUsers.get(0).getUuid());
-			log.info("Existing user found with ID: {}", existingUsers.get(0).getUuid());
+		if (existingUsers != null) {
+			waterTankerDetail.setApplicantUuid(existingUsers.getUuid());
+			log.info("Existing user found with ID: {}", existingUsers.getUuid());
 			return;
 		}
 
@@ -206,6 +225,19 @@ public class EnrichmentService {
 				// Enrich address details only
 				enrichAddressDetails(mobileToiletRequest, mobileToiletDetail);
 			}
+		}else{
+			/*
+			 * If the currently logged-in user is not the same as the applicant mobile number entered in the form is different from the login mobile number,
+			 * then we proceed to enrich user details, which will create a new user with the provided details.
+			 * If the currently logged-in user is the same as the applicant mobile number, we do not enrich user details
+			 * user profile is not enabled for this service, we explicitly set `applicantDetailId` and `addressDetailId` to null in the application details
+			 */
+			if (!UserUtil.isCurrentUserApplicant(mobileToiletRequest)) {
+				// Enrich user details for existing user or user details with address for new user
+				enrichUserDetails(mobileToiletRequest);
+			}
+			mobileToiletDetail.setApplicantUuid(null);
+			mobileToiletDetail.setAddressDetailId(null);
 		}
 		mobileToiletDetail.setBookingId(bookingId);
 		mobileToiletDetail.setApplicationDate(auditDetails.getCreatedTime());
@@ -258,11 +290,14 @@ public class EnrichmentService {
 	private void enrichUserDetails(MobileToiletBookingRequest mobileToiletRequest) {
 		// Try fetching an existing user for the given request
 		MobileToiletBookingDetail mobileToiletDetail = mobileToiletRequest.getMobileToiletBookingDetail();
-		List<User> existingUsers = userService.fetchExistingOrCreateNewUser(mobileToiletRequest);
+		RequestInfo requestInfo = mobileToiletRequest.getRequestInfo();
+		ApplicantDetail applicantDetail = mobileToiletDetail.getApplicantDetail();
+		String tenantId = mobileToiletDetail.getTenantId();
+		User existingUsers = userService.fetchExistingUser(tenantId, applicantDetail, requestInfo);
 
-		if (!CollectionUtils.isEmpty(existingUsers)) {
-			mobileToiletDetail.setApplicantUuid(existingUsers.get(0).getUuid());
-			log.info("Existing user found with ID: {}", existingUsers.get(0).getUuid());
+		if (existingUsers != null && StringUtils.isNotBlank(existingUsers.getUuid())) {
+			mobileToiletDetail.setApplicantUuid(existingUsers.getUuid());
+			log.info("Existing user found with ID: {}", existingUsers.getUuid());
 			return;
 		}
 

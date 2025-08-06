@@ -14,6 +14,7 @@ import org.upyog.rs.config.RequestServiceConfiguration;
 import org.upyog.rs.constant.RequestServiceConstants;
 import org.upyog.rs.repository.RequestServiceRepository;
 import org.upyog.rs.service.*;
+import org.upyog.rs.web.models.ApplicantDetail;
 import org.upyog.rs.web.models.Workflow;
 import org.upyog.rs.web.models.mobileToilet.MobileToiletBookingDetail;
 import org.upyog.rs.web.models.mobileToilet.MobileToiletBookingRequest;
@@ -57,14 +58,17 @@ public class MobileToiletServiceImpl implements MobileToiletService{
 
         // Get the uuid of User from user registry
         try {
-            List<org.upyog.rs.web.models.user.User> user = userService.fetchExistingOrCreateNewUser(mobileToiletRequest);
-            if (user == null || user.isEmpty()) {
+            RequestInfo requestInfo = mobileToiletRequest.getRequestInfo();
+            String tenantId = mobileToiletRequest.getMobileToiletBookingDetail().getTenantId();
+            ApplicantDetail applicantDetail = mobileToiletRequest.getMobileToiletBookingDetail().getApplicantDetail();
+            org.upyog.rs.web.models.user.User user = userService.fetchExistingUser(tenantId, applicantDetail, requestInfo);
+            if (user == null) {
                 throw new RuntimeException("User not found for this mobile number: " +
                         mobileToiletRequest.getMobileToiletBookingDetail().getApplicantDetail().getMobileNumber());
             }
             if(config.getIsUserProfileEnabled()) {
-                mobileToiletRequest.getMobileToiletBookingDetail().setApplicantUuid(user.get(0).getUuid());
-                log.info("Applicant or User Uuid: " + user.get(0).getUuid());
+                mobileToiletRequest.getMobileToiletBookingDetail().setApplicantUuid(user.getUuid());
+                log.info("Applicant or User Uuid: " + user.getUuid());
             } else{
                 // If user profile is not enabled, set the applicantUuid null
                 mobileToiletRequest.getMobileToiletBookingDetail().setApplicantUuid(null);
