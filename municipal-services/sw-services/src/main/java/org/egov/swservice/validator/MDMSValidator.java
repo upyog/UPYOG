@@ -134,9 +134,13 @@ public class MDMSValidator {
 		String connectionCategory=additionaldetails.get("connectionCategory");
 		String applicationType = sewerageConnection.getApplicationType();
 		if(!applicationType.equalsIgnoreCase("MODIFY_SEWERAGE_CONNECTION")) {
-			if(sewerageConnection.getRoadCuttingInfo() == null && !connectionCategory.equalsIgnoreCase("REGULARIZED")){
-				errorMap.put("INVALID_ROAD_INFO", "Road Cutting Information should not be empty");
-		}
+			boolean isRegularizedOrLegacy = connectionCategory != null &&
+			        (connectionCategory.equalsIgnoreCase("REGULARIZED") || connectionCategory.equalsIgnoreCase("LEGACY"));
+
+			if (sewerageConnection.getRoadCuttingInfo() == null && !isRegularizedOrLegacy) {
+			    errorMap.put("INVALID_ROAD_INFO", "Road Cutting Information should not be empty");
+			}
+
 		}
 
 		if(sewerageConnection.getRoadCuttingInfo() != null){
