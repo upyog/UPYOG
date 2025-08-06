@@ -1,7 +1,7 @@
 package org.egov.egf.master.web.controller;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.any;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -19,10 +19,10 @@ import org.egov.egf.master.TestConfiguration;
 import org.egov.egf.master.domain.model.Bank;
 import org.egov.egf.master.domain.model.BankSearch;
 import org.egov.egf.master.domain.service.BankService;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,11 +30,11 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.validation.BindingResult;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @WebMvcTest(BankController.class)
 @Import(TestConfiguration.class)
 public class BankControllerTest {
@@ -50,11 +50,11 @@ public class BankControllerTest {
 	@Captor
 	private ArgumentCaptor<List<Bank>> captor;
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() throws Exception {
 	}
 
@@ -64,8 +64,8 @@ public class BankControllerTest {
 				.thenReturn(getBanks());
 
 		mockMvc.perform(post("/banks/_create").content(resources.readRequest("bank/bank_create_valid_request.json"))
-				.contentType(MediaType.APPLICATION_JSON_UTF8)).andExpect(status().is(201))
-				.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+				.contentType(MediaType.APPLICATION_JSON)).andExpect(status().is(201))
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
 				.andExpect(content().json(resources.readResponse("bank/bank_create_valid_response.json")));
 
 		verify(bankService).create(captor.capture(), any(BindingResult.class), any(RequestInfo.class));
@@ -81,8 +81,8 @@ public class BankControllerTest {
 		when(bankService.update(captor.capture(), any(BindingResult.class), any(RequestInfo.class))).thenReturn((getUpdateBanks()));
 
 		mockMvc.perform(post("/banks/_update?tenantId=default").content(resources.readRequest("bank/bank_update_valid_request.json"))
-				.contentType(MediaType.APPLICATION_JSON_UTF8)).andExpect(status().is(201))
-				.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+				.contentType(MediaType.APPLICATION_JSON)).andExpect(status().is(201))
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
 				.andExpect(content().json(resources.readResponse("bank/bank_update_valid_response.json")));
 
 		verify(bankService).update(captor.capture(), any(BindingResult.class), any(RequestInfo.class));
@@ -106,8 +106,8 @@ public class BankControllerTest {
 		when(bankService.search(any(BankSearch.class), any(BindingResult.class))).thenReturn(page);
 
 		mockMvc.perform(
-				post("/banks/_search?tenantId=default").content(resources.getRequestInfo()).contentType(MediaType.APPLICATION_JSON_UTF8))
-				.andExpect(status().is(200)).andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+				post("/banks/_search?tenantId=default").content(resources.getRequestInfo()).contentType(MediaType.APPLICATION_JSON))
+				.andExpect(status().is(200)).andExpect(content().contentType(MediaType.APPLICATION_JSON))
 				.andExpect(content().json(resources.readResponse("bank/bank_search_valid_response.json")));
 	}
 
@@ -118,7 +118,7 @@ public class BankControllerTest {
 
 		mockMvc.perform(
 				post("/banks/_create").content(resources.readRequest("bank/bank_create_invalid_field_value.json"))
-						.contentType(MediaType.APPLICATION_JSON_UTF8))
+						.contentType(MediaType.APPLICATION_JSON))
 				.andExpect(status().is5xxServerError());
 
 	}

@@ -2,14 +2,14 @@ package org.egov.common.web.interceptor;
 
 import java.util.UUID;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.egov.common.web.contract.RequestContext;
 import org.slf4j.MDC;
-import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
+import org.springframework.web.servlet.HandlerInterceptor;
 
-public class CorrelationIdInterceptor extends HandlerInterceptorAdapter {
+public class CorrelationIdInterceptor implements HandlerInterceptor {
 
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
@@ -18,7 +18,7 @@ public class CorrelationIdInterceptor extends HandlerInterceptorAdapter {
 		final String correlationId = getCorrelationId(request);
 		MDC.put(RequestContext.CORRELATION_ID, correlationId);
 		RequestContext.setId(correlationId);
-		return super.preHandle(request, response, handler);
+		return true;
 	}
 
 	private String getCorrelationId(HttpServletRequest request) {
