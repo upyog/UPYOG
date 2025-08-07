@@ -158,8 +158,8 @@ public class ApplicationSecurityRepository implements SecurityContextRepository 
 		try {
 		    user.setGender(Gender.valueOf(userinfo.getGender().toUpperCase()));
 		} catch (Exception e) {
-		    LOGGER.info("Invalid or null gender for user: " + userinfo.getUserName() + ". Setting as OTHERS");
-		    user.setGender(Gender.OTHERS);
+		    LOGGER.info("Invalid or null gender for user: " + userinfo.getUserName() + ". Setting as MALE");
+		    user.setGender(Gender.MALE);
 		}
 		user.setPassword(" ");
 		user.setName(userinfo.getName());
