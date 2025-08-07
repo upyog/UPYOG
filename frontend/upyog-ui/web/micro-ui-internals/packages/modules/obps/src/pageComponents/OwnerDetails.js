@@ -38,7 +38,7 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
         const owners = formData?.owners?.owners || [{ name: "", gender: "", mobileNumber: null, isPrimaryOwner: true }];
         return owners.map(owner => ({
           ...owner,
-          gender: typeof owner.gender === 'object' ? owner.gender : { value: owner.gender }
+          gender: typeof owner.gender === 'object'||owner.gender===null ? owner.gender : { value: owner.gender }
         }));
       });
 
