@@ -63,7 +63,6 @@ public class TransactionsSchedulerService {
 		TransactionCriteria transactionCriteria = TransactionCriteria.builder().isSchedulerCall(true)
 				.txnStatus(TxnStatusEnum.SUCCESS)
 				.gateway("RAZORPAY")
-				.tenantId("hp.Bilaspur")
 				.startDateTime(
 						LocalDate.now().minusDays(1).atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli())
 				.endDateTime(LocalDate.now().minusDays(1).atTime(23, 59, 59, 999_999_999).atZone(ZoneId.systemDefault())
@@ -72,12 +71,9 @@ public class TransactionsSchedulerService {
 
 		List<Transaction> transactions = transactionService.getTransactions(transactionCriteria);
 
-		log.info("transactions {}",transactions);
 		if (!CollectionUtils.isEmpty(transactions)) {
 			tenantIds = transactions.stream().map(Transaction::getTenantId).collect(Collectors.toSet());
 		}
-
-		log.info("tenantIds {}",tenantIds);
 
 		if (!CollectionUtils.isEmpty(tenantIds)) {
 			BankAccountSearchCriteria bankAccountSearchCriteria = BankAccountSearchCriteria.builder()
@@ -85,8 +81,6 @@ public class TransactionsSchedulerService {
 			// fetch all bank account
 			bankAccountResponse = bankAccountService.searchBankAccount(bankAccountSearchCriteria);
 		}
-
-		log.info("bankAccountResponse {}",bankAccountResponse);
 
 		if (null != bankAccountResponse && !CollectionUtils.isEmpty(bankAccountResponse.getBankAccounts())) {
 			// filter if payTo is null or empty
@@ -121,11 +115,9 @@ public class TransactionsSchedulerService {
 
 								Object settlementAmountResponse = null;
 								try {
-									log.info("Transfer request: ",transferWrapper);
-									log.info("GATEWAY: ",transaction.getGateway());
-									// call settlement api
-									//settlementAmountResponse = gatewayService.settlementAmount(transaction,
-										//	transferWrapper);
+//									 call settlement api
+									settlementAmountResponse = gatewayService.settlementAmount(transaction,
+											transferWrapper);
 								} catch (Exception e) {
 									log.error("Error while transfering amount for the getway transaction id: "
 											+ transaction.getGatewayTxnId());
@@ -139,7 +131,7 @@ public class TransactionsSchedulerService {
 										.build();
 
 								// update transaction
-								//producer.push(appProperties.getUpdateTxnTopic(), transactionRequest);
+								producer.push(appProperties.getUpdateTxnTopic(), transactionRequest);
 
 								transferList.add(transfer);
 							}));

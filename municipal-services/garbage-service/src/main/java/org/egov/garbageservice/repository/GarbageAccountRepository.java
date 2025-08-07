@@ -41,7 +41,7 @@ public class GarbageAccountRepository {
 	private ObjectMapper objectMapper;
 
 	private static final String SELECT_GRBG_ACC = " SELECT acc.* FROM eg_grbg_account acc"
-			+ " JOIN eg_grbg_old_details old_dtl ON old_dtl.garbage_id = acc.garbage_id"
+			+ " LEFT JOIN eg_grbg_old_details old_dtl ON old_dtl.garbage_id = acc.garbage_id"
 			+ " JOIN eg_grbg_collection_unit unit ON unit.garbage_id = acc.garbage_id"
 			+ " JOIN eg_grbg_address address ON address.garbage_id = acc.garbage_id"
 			+ " JOIN eg_grbg_application app ON app.garbage_id = acc.garbage_id";
@@ -112,6 +112,9 @@ public class GarbageAccountRepository {
 			+ SELECT_QUERY_ACCOUNT;
 
 	public static final String REPLACE_STRING =  "{replace}";
+	
+	public static final String GET_APPROVER_FOR_TENANT = "select code from eg_hrms_employee ehe "
+			+ "join eg_userrole_v1 eur on eur.user_id = ehe.id WHERE role_tenantid = ? AND role_code = 'GB_APPROVER'";
     
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
     private JdbcTemplate jdbcTemplate;
@@ -546,5 +549,13 @@ public class GarbageAccountRepository {
 //		return null;
 		
 		
+	}
+	
+	public String getApproverUserNameForTenant(String tenantId) {
+    	StringBuilder searchQuery = new StringBuilder(GET_APPROVER_FOR_TENANT);
+		List<Object> preparedStmtList = new ArrayList<>();
+	    preparedStmtList.add(tenantId);
+        List<String> userNames = jdbcTemplate.query(searchQuery.toString(), preparedStmtList.toArray(),(rs, rowNum) -> rs.getString("code"));
+		return userNames.get(0);
 	}
 }
