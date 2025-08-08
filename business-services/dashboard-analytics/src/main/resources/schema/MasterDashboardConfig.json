@@ -11074,14 +11074,6 @@
               "isCollapsible": false,
               "charts": [
                 {
-                  "id": "financeTotalCollection",
-                  "name": "DSS_FINANCE_TOTAL_COLLECTION",
-                  "code": "",
-                  "chartType": "metric",
-                  "filter": "",
-                  "headers": []
-                },
-                {
                   "id": "financeTotalRegisteredULBs",
                   "name": "Total Registered ULB's",
                   "code": "",
@@ -11115,7 +11107,7 @@
                 },
                 {
                   "id": "financeNumberOfBillsPaid",
-                  "name": "Total Payments",
+                  "name": "DSS_FINANCE_TOTAL_BILL_PAYEMENTS_DONE",
                   "code": "",
                   "chartType": "metric",
                   "filter": "",

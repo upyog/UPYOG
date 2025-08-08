@@ -43,20 +43,20 @@ public class UserService {
     /**
      * Retrieves an existing user or creates a new user if not found.
      *
-     * @param bookingRequest The application request containing user details.
+     * @param tenantId         tenant ID.
+	 * @param applicantDetail  applicant details.
+	 * @param requestInfo      request information.
      * @return The existing or newly created user.
      */
-    public List<User> fetchExistingOrCreateNewUser(TreePruningBookingRequest bookingRequest) {
-
-        TreePruningBookingDetail bookingDetail = bookingRequest.getTreePruningBookingDetail();
-        RequestInfo requestInfo = bookingRequest.getRequestInfo();
-        ApplicantDetail applicantDetail = bookingDetail.getApplicantDetail();
-        String tenantId = bookingDetail.getTenantId();
+    public User fetchExistingUser(String tenantId, ApplicantDetail applicantDetail, RequestInfo requestInfo) {
         // Fetch existing user details
         UserDetailResponse userDetailResponse = getUserDetails(applicantDetail, requestInfo, tenantId);
         List<User> existingUsers = userDetailResponse.getUser();
-
-        return existingUsers;
+        if (CollectionUtils.isEmpty(existingUsers)) {
+            log.info("No existing user found for mobile number: {}", applicantDetail.getMobileNumber());
+            return null;
+        }
+        return existingUsers.get(0);
     }
 
     private UserDetailResponse createUser(RequestInfo requestInfo, User user, String tenantId) {
