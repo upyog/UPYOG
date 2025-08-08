@@ -125,6 +125,7 @@ public class MDMSCacheManager {
 			String featureName = featureEntry.getKey();
 			JSONArray ruleArray = featureEntry.getValue();
 
+			LOG.info("RuleArray : "+ ruleArray);
 			// Convert raw array to list of rules
 			FeatureEnum featureEnum = getFeatureEnumFromString(featureName);
 	        Class<? extends MdmsFeatureRule> ruleClass = fetchEdcrRulesMdms.getRuleClassForFeature(featureEnum != null ? featureEnum : null);
@@ -134,9 +135,11 @@ public class MDMSCacheManager {
 	            try {
 	                JsonNode jsonNode = mapper.valueToTree(ruleArray.get(i));
 	                if (jsonNode instanceof ObjectNode) {
+						// These are added to be used as keys with there values, in the rules.
 	                    ((ObjectNode) jsonNode).put(FEATURE_NAME_STRING, featureName);
 	                    ((ObjectNode) jsonNode).put(STATE_STRING, edcrConfigProperties.getDefaultState());
 
+						LOG.info("JsonNode: "+ jsonNode);
 	                    MdmsFeatureRule rule = mapper.treeToValue(jsonNode, ruleClass);
 	  
 	                    LOG.info("Parsed rule: {}, State: {}", rule, rule.getState());
