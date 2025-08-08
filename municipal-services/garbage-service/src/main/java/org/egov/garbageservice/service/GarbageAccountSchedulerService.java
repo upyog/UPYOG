@@ -332,10 +332,10 @@ public class GarbageAccountSchedulerService {
 					message = "Bill Generated";
 				}
 			}
-			message = "Bill Could not be generated";
+			message = "Bill Could Not Be Generated";
 		}
 		else {
-			message = "Garbage Id not found";
+			message = "Garbage Id Not Found";
 		}
 		return GrbgBillTrackerResponse.builder().grbgBillTrackers(grbgBillTrackers).message(message).build();
 	}
