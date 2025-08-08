@@ -14,20 +14,20 @@ import org.egov.egf.master.persistence.repository.RecoveryJdbcRepository;
 import org.egov.egf.master.web.contract.RecoveryContract;
 import org.egov.egf.master.web.contract.RecoverySearchContract;
 import org.egov.egf.master.web.requests.RecoveryRequest;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.*;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.*;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@ExtendWith(MockitoExtension.class)
+@RunWith(MockitoJUnitRunner.class)
 public class RecoveryRepositoryTest {
 
     private RecoveryRepository recoveryRepositoryWithKafka;
@@ -53,7 +53,7 @@ public class RecoveryRepositoryTest {
 
     private RequestInfo requestInfo = new RequestInfo();
 
-    @BeforeEach
+    @Before
     public void setup() {
         recoveryRepositoryWithKafka = new RecoveryRepository(recoveryQueueRepository, financialConfigurationService, "yes", recoveryJdbcRepository,
                 recoveryESRepository);
@@ -234,7 +234,7 @@ public class RecoveryRepositoryTest {
         info.setApiId("apiId");
         info.setKey("key");
         info.setMsgId("msgId");
-        info.setTs(new Date().getTime());
+        info.setTs(new Date());
         info.setUserInfo(user);
         info.setAuthToken("null");
         return info;

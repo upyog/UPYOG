@@ -39,8 +39,8 @@
  */
 package org.egov.egf.master.web.contract;
 
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 
 import org.egov.common.web.contract.AuditableContract;
 import org.hibernate.validator.constraints.Length;

@@ -1,7 +1,7 @@
 package org.egov.egf.master.domain.repository;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -24,17 +24,17 @@ import org.egov.egf.master.persistence.repository.FunctionJdbcRepository;
 import org.egov.egf.master.web.contract.FunctionContract;
 import org.egov.egf.master.web.contract.FunctionSearchContract;
 import org.egov.egf.master.web.requests.FunctionRequest;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.runners.MockitoJUnitRunner;
 
-@ExtendWith(MockitoExtension.class)
+@RunWith(MockitoJUnitRunner.class)
 public class FunctionRepositoryTest {
 
 	private FunctionRepository functionRepositoryWithKafka;
@@ -60,7 +60,7 @@ public class FunctionRepositoryTest {
 
 	private RequestInfo requestInfo = new RequestInfo();
 
-	@BeforeEach
+	@Before
 	public void setup() {
 		functionRepositoryWithKafka = new FunctionRepository(functionJdbcRepository, functionQueueRepository,
 				financialConfigurationService, functionESRepository, "yes");
@@ -233,7 +233,7 @@ public class FunctionRepositoryTest {
 		info.setApiId("apiId");
 		info.setKey("key");
 		info.setMsgId("msgId");
-		info.setTs(new Date().getTime());
+		info.setTs(new Date());
 		info.setUserInfo(user);
 		info.setAuthToken("null");
 		return info;

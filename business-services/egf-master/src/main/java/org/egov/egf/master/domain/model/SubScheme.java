@@ -41,7 +41,7 @@ package org.egov.egf.master.domain.model;
 
 import java.util.Date;
 
-import jakarta.validation.constraints.NotNull;
+import javax.validation.constraints.NotNull;
 
 import org.egov.common.domain.model.Auditable;
 import org.hibernate.validator.constraints.Length;

@@ -1,8 +1,8 @@
 package org.egov.egf.master.domain.service;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
@@ -24,19 +24,19 @@ import org.egov.egf.master.domain.repository.BankAccountRepository;
 import org.egov.egf.master.domain.repository.BankBranchRepository;
 import org.egov.egf.master.domain.repository.ChartOfAccountRepository;
 import org.egov.egf.master.domain.repository.FundRepository;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.context.annotation.Import;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.SmartValidator;
 
 @Import(TestConfiguration.class)
-@ExtendWith(SpringExtension.class)
+@RunWith(SpringRunner.class)
 public class BankAccountServiceTest {
 
 	@InjectMocks
@@ -63,7 +63,7 @@ public class BankAccountServiceTest {
 
 	private RequestInfo requestInfo = new RequestInfo();
 
-	@BeforeEach
+	@Before
 	public void setup() {
 
 	}
@@ -107,7 +107,7 @@ public class BankAccountServiceTest {
 		assertEquals(expectedResult, actualResult);
 	}
 
-	@Test
+	@Test(expected = InvalidDataException.class)
 	public final void testSearchInvalid() {
 		List<BankAccount> search = new ArrayList<>();
 		search.add(getBankAccount());
@@ -116,9 +116,7 @@ public class BankAccountServiceTest {
 		when(bankAccountRepository.search(any(BankAccountSearch.class))).thenReturn(expectedResult);
 		BankAccountSearch b = getBankAccountSearch();
 		b.setTenantId(null);
-		org.junit.jupiter.api.Assertions.assertThrows(InvalidDataException.class, () -> {
-			bankAccountService.search(b, errors);
-		});
+		Pagination<BankAccount> actualResult = bankAccountService.search(b, errors);
 	}
 
 	@Test
@@ -153,16 +151,14 @@ public class BankAccountServiceTest {
 				actualResult.get(0).getChartOfAccount().getId());
 	}
 
-	@Test
+	@Test(expected = CustomBindException.class)
 	public final void testCreateInvalid() {
 		bankAccounts.add(getBankAccount());
 		when(bankBranchRepository.findById(any(BankBranch.class))).thenReturn(getBankBranch());
 		when(chartOfAccountRepository.findById(any(ChartOfAccount.class))).thenReturn(getChartOfAccount());
 		when(fundRepository.findById(any(Fund.class))).thenReturn(getFund());
 		when(bankAccountRepository.uniqueCheck(anyString(), any(BankAccount.class))).thenReturn(false);
-		org.junit.jupiter.api.Assertions.assertThrows(CustomBindException.class, () -> {
-			bankAccountService.create(bankAccounts, errors, requestInfo);
-		});
+		bankAccountService.create(bankAccounts, errors, requestInfo);
 	}
 
 	private Bank getBank() {

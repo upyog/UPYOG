@@ -40,7 +40,7 @@
 
 package org.egov.egf.master.persistence.entity;
 
-import jakarta.validation.constraints.NotNull;
+import javax.validation.constraints.NotNull;
 
 import org.egov.common.persistence.entity.AuditableEntity;
 import org.egov.egf.master.domain.model.Fund;

@@ -1,7 +1,7 @@
 package org.egov.egf.master.persistence.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.Assert.assertNull;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -16,10 +16,10 @@ import org.egov.egf.master.domain.model.Bank;
 import org.egov.egf.master.domain.model.BankBranch;
 import org.egov.egf.master.domain.model.BankBranchSearch;
 import org.egov.egf.master.persistence.entity.BankBranchEntity;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataAccessException;
@@ -27,18 +27,18 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.test.context.jdbc.Sql;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.context.junit4.SpringRunner;
 
-@ExtendWith(SpringExtension.class)
+@RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
-@Disabled
+@Ignore
 public class BankBranchJdbcRepositoryTest {
 
 	private BankBranchJdbcRepository bankBranchJdbcRepository;
 	@Autowired
 	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
-	@BeforeEach
+	@Before
 	public void setUp() throws Exception {
 		bankBranchJdbcRepository = new BankBranchJdbcRepository(namedParameterJdbcTemplate);
 	}
@@ -87,14 +87,13 @@ public class BankBranchJdbcRepositoryTest {
 		assertThat(result.getCode()).isEqualTo("code");
 	}
 	
-	@Test
+	@Test(expected = DataIntegrityViolationException.class)
 	@Sql(scripts = { "/sql/clearBankBranch.sql" })
 	public void test_create_with_tenantId_null() {
 
 		BankBranchEntity bankBranch = BankBranchEntity.builder().code("code").name("name").active(true).build();
-		org.junit.jupiter.api.Assertions.assertThrows(DataIntegrityViolationException.class, () -> {
-			bankBranchJdbcRepository.create(bankBranch);
-		});
+		bankBranchJdbcRepository.create(bankBranch);
+
 	}
 
 @Test
@@ -118,15 +117,14 @@ public class BankBranchJdbcRepositoryTest {
 		assertNull(result);
 
 	}
-@Test
+@Test(expected = InvalidDataException.class)
 	@Sql(scripts = { "/sql/clearBankBranch.sql", "/sql/insertBankBranch.sql" })
 	public void test_search_invalid_sort_option() {
 
 		BankBranchSearch search = getBankBranchSearch();
 		search.setSortBy("desc");
-		org.junit.jupiter.api.Assertions.assertThrows(InvalidDataException.class, () -> {
-			bankBranchJdbcRepository.search(search);
-		});
+		bankBranchJdbcRepository.search(search);
+
 	}
 
 @Test

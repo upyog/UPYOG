@@ -1,7 +1,7 @@
 package org.egov.egf.master.domain.repository;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
@@ -21,14 +21,14 @@ import org.egov.egf.master.persistence.queue.MastersQueueRepository;
 import org.egov.egf.master.persistence.repository.ChartOfAccountJdbcRepository;
 import org.egov.egf.master.web.contract.ChartOfAccountContract;
 import org.egov.egf.master.web.requests.ChartOfAccountRequest;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.runners.MockitoJUnitRunner;
 
-@ExtendWith(MockitoExtension.class)
+@RunWith(MockitoJUnitRunner.class)
 public class ChartOfAccountRepositoryTest {
 
     @Mock
@@ -136,7 +136,7 @@ public class ChartOfAccountRepositoryTest {
         info.setApiId("apiId");
         info.setKey("key");
         info.setMsgId("msgId");
-        info.setTs(new Date().getTime());
+        info.setTs(new Date());
         info.setUserInfo(user);
         info.setAuthToken("null");
         return info;

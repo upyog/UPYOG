@@ -1,7 +1,7 @@
 package org.egov.egf.master.domain.service;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
@@ -13,19 +13,19 @@ import org.egov.egf.master.TestConfiguration;
 import org.egov.egf.master.domain.model.AccountDetailType;
 import org.egov.egf.master.domain.model.AccountDetailTypeSearch;
 import org.egov.egf.master.domain.repository.AccountDetailTypeRepository;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.context.annotation.Import;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.SmartValidator;
 
 @Import(TestConfiguration.class)
-@ExtendWith(SpringExtension.class)
+@RunWith(SpringRunner.class)
 public class AccountDetailTypeServiceTest {
 
 	@InjectMocks
@@ -41,7 +41,7 @@ public class AccountDetailTypeServiceTest {
 	private RequestInfo requestInfo = new RequestInfo();
 	private List<AccountDetailType> accountDetailTypes = new ArrayList<>();
 
-	@BeforeEach
+	@Before
 	public void setup() {
 	}
 

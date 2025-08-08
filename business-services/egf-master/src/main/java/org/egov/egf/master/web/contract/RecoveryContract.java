@@ -44,7 +44,7 @@ import lombok.*;
 import org.egov.common.web.contract.AuditableContract;
 import org.hibernate.validator.constraints.Length;
 
-import jakarta.validation.constraints.NotNull;
+import javax.validation.constraints.NotNull;
 
 @NoArgsConstructor
 @AllArgsConstructor

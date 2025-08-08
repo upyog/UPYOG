@@ -46,7 +46,7 @@ import org.egov.egf.master.domain.model.ChartOfAccount;
 import org.egov.egf.master.domain.model.Recovery;
 import org.hibernate.validator.constraints.Length;
 
-import jakarta.validation.constraints.NotNull;
+import javax.validation.constraints.NotNull;
 
 @AllArgsConstructor
 @NoArgsConstructor

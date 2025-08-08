@@ -39,7 +39,7 @@
  */
 package org.egov.common.web.contract;
 
-import jakarta.validation.constraints.Max;
+import javax.validation.constraints.Max;
 
 import org.egov.common.domain.model.Pagination;
 

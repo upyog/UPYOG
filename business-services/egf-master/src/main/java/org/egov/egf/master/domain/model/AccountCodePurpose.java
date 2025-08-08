@@ -39,7 +39,7 @@
  */
 package org.egov.egf.master.domain.model;
 
-import jakarta.validation.constraints.NotNull;
+import javax.validation.constraints.NotNull;
 
 import org.egov.common.domain.annotation.Unique;
 import org.egov.common.domain.model.Auditable;

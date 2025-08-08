@@ -1,7 +1,7 @@
 package org.egov.egf.master.web.controller;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -20,10 +20,10 @@ import org.egov.egf.master.domain.model.Bank;
 import org.egov.egf.master.domain.model.BankBranch;
 import org.egov.egf.master.domain.model.BankBranchSearch;
 import org.egov.egf.master.domain.service.BankBranchService;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,11 +31,11 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.validation.BindingResult;
 
-@ExtendWith(SpringExtension.class)
+@RunWith(SpringRunner.class)
 @WebMvcTest(BankBranchController.class)
 @Import(TestConfiguration.class)
 public class BankBranchControllerTest {
@@ -51,11 +51,11 @@ public class BankBranchControllerTest {
 	@Captor
 	private ArgumentCaptor<List<BankBranch>> captor;
 
-	@BeforeEach
+	@Before
 	public void setUp() throws Exception {
 	}
 
-	@AfterEach
+	@After
 	public void tearDown() throws Exception {
 	}
 
@@ -66,8 +66,8 @@ public class BankBranchControllerTest {
 
 		mockMvc.perform(post("/bankbranches/_create?tenantId=default")
 				.content(resources.readRequest("bankbranch/bankbranch_create_request.json"))
-				.contentType(MediaType.APPLICATION_JSON)).andExpect(status().is(201))
-				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+				.contentType(MediaType.APPLICATION_JSON_UTF8)).andExpect(status().is(201))
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
 				.andExpect(content().json(resources.readResponse("bankbranch/bankbranch_create_response.json")));
 
 		verify(bankBranchService).create(captor.capture(), any(BindingResult.class), any(RequestInfo.class));
@@ -85,8 +85,8 @@ public class BankBranchControllerTest {
 
 		mockMvc.perform(post("/bankbranches/_update?tenantId=default")
 				.content(resources.readRequest("bankbranch/bankbranch_update_request.json"))
-				.contentType(MediaType.APPLICATION_JSON)).andExpect(status().is(201))
-				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+				.contentType(MediaType.APPLICATION_JSON_UTF8)).andExpect(status().is(201))
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
 				.andExpect(content().json(resources.readResponse("bankbranch/bankbranch_update_response.json")));
 
 		verify(bankBranchService).update(captor.capture(), any(BindingResult.class), any(RequestInfo.class));
@@ -111,8 +111,8 @@ public class BankBranchControllerTest {
 		when(bankBranchService.search(any(BankBranchSearch.class), any(BindingResult.class))).thenReturn(page);
 
 		mockMvc.perform(post("/bankbranches/_search?tenantId=default").content(resources.getRequestInfo())
-				.contentType(MediaType.APPLICATION_JSON)).andExpect(status().is(200))
-				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+				.contentType(MediaType.APPLICATION_JSON_UTF8)).andExpect(status().is(200))
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
 				.andExpect(content().json(resources.readResponse("bankbranch/bankbranch_search_response.json")));
 	}
 
@@ -123,7 +123,7 @@ public class BankBranchControllerTest {
 
 		mockMvc.perform(post("/bankbranches/_create")
 				.content(resources.readRequest("bankbranch/bankbranch_create_invalid_field_value.json"))
-				.contentType(MediaType.APPLICATION_JSON)).andExpect(status().is4xxClientError());
+				.contentType(MediaType.APPLICATION_JSON_UTF8)).andExpect(status().is5xxServerError());
 
 	}
 

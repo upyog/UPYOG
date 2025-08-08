@@ -1,7 +1,7 @@
 package org.egov.egf.master.domain.service;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
@@ -19,20 +19,20 @@ import org.egov.egf.master.domain.repository.ChartOfAccountRepository;
 import org.egov.egf.master.web.contract.AccountDetailTypeContract;
 import org.egov.egf.master.web.contract.ChartOfAccountContract;
 import org.egov.egf.master.web.contract.ChartOfAccountDetailContract;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.context.annotation.Import;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.SmartValidator;
 
 
 @Import(TestConfiguration.class)
-@ExtendWith(SpringExtension.class)
+@RunWith(SpringRunner.class)
 public class ChartOfAccountDetailServiceTest {
 	
 	@InjectMocks
@@ -54,7 +54,7 @@ public class ChartOfAccountDetailServiceTest {
 
 	private List<ChartOfAccountDetail> chartOfAccountDetails = new ArrayList<>();
 
-	@BeforeEach
+	@Before
 	public void setup() {
 
 	}

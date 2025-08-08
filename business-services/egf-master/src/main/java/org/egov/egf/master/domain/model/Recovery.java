@@ -46,7 +46,7 @@ import org.egov.egf.master.web.contract.ChartOfAccountContract;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.stereotype.Service;
 
-import jakarta.validation.constraints.NotNull;
+import javax.validation.constraints.NotNull;
 
 @AllArgsConstructor
 @NoArgsConstructor
