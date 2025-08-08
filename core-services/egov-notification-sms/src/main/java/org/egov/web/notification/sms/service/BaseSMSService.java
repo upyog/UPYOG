@@ -239,7 +239,17 @@ abstract public class BaseSMSService implements SMSService, SMSBodyBuilder {
                 e.printStackTrace();
             }
             SSLConnectionSocketFactory csf = new SSLConnectionSocketFactory(ctx, new NoopHostnameVerifier());
-            CloseableHttpClient httpClient = HttpClients.custom().setSSLSocketFactory(csf).build();
+
+            // Create a connection manager with custom configuration to enable SSL.
+            HttpClientConnectionManager ccm = PoolingHttpClientConnectionManagerBuilder.create()
+                .setSSLSocketFactory(csf)
+                .build();
+
+            // Create HttpClient that uses pool manager.
+            CloseableHttpClient httpClient = HttpClients.custom()
+                .setConnectionManager(ccm)
+                .build();
+
             HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory();
             requestFactory.setHttpClient(httpClient);
             restTemplate.setRequestFactory(requestFactory);
