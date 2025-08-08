@@ -93,7 +93,7 @@ public class MDMSCacheManager {
 		List<Object> rules = cityRules != null ? cityRules.get(lookupKey) : null;
 
 		if (rules == null || rules.isEmpty()) {
-			LOG.info("No rules found for key: '{}' under cache entry: '{}'", lookupKey, cacheKey);
+			LOG.warn("No rules found for key: '{}' under cache entry: '{}'", lookupKey, cacheKey);
 			return Collections.emptyList();
 		}
 
@@ -120,6 +120,8 @@ public class MDMSCacheManager {
 			return;
 		}
 
+		LOG.info("Transforming MDMS data: {} features found in BPA module", bpaModuleMap.size());
+
 		// Iterate over all features like "PlantationGreenStrip", "SetBack", etc.
 		for (Map.Entry<String, JSONArray> featureEntry : bpaModuleMap.entrySet()) {
 			String featureName = featureEntry.getKey();
@@ -134,6 +136,12 @@ public class MDMSCacheManager {
 	            try {
 	                JsonNode jsonNode = mapper.valueToTree(ruleArray.get(i));
 	                if (jsonNode instanceof ObjectNode) {
+						/* We add the feature name and default state explicitly to each rule's JSON node before deserialization
+						 to ensure that these important contextual fields are always present in the MdmsFeatureRule object.
+						 This is necessary because the original MDMS data might not include these fields directly within each rule,
+						 but downstream processing relies on them being available for proper identification, filtering, and caching.
+						 Adding the default state from configuration also ensures consistency when the rule does not specify a state.
+						 */
 	                    ((ObjectNode) jsonNode).put(FEATURE_NAME_STRING, featureName);
 	                    ((ObjectNode) jsonNode).put(STATE_STRING, edcrConfigProperties.getDefaultState());
 
@@ -152,8 +160,10 @@ public class MDMSCacheManager {
 
 			// Group and cache rules by city and FeatureRuleKey
 			for (MdmsFeatureRule rule : rules) {
-				if (!Boolean.TRUE.equals(rule.getActive()))
+				if (!Boolean.TRUE.equals(rule.getActive())) {
+					LOG.debug("Skipping inactive rule for feature [{}], city [{}]", featureName, rule.getCity());
 					continue;
+				}
 
 				// Use city for cache if present; fallback to state
 				String cityKey = rule.getCity() != null ? rule.getCity() : rule.getState();
@@ -191,6 +201,9 @@ public class MDMSCacheManager {
 	 */
 	
 	public List<Object> getFeatureRules(Plan plan, String feature, boolean includeRiskType) {
+
+		LOG.info("Fetching feature rules: feature='{}', includeRiskType={}, tenantId='{}'",
+				feature, includeRiskType, plan.getTenantId());
 
 		String occupancyName = fetchEdcrRulesMdms.getOccupancyName(plan).toLowerCase();
 		String tenantId = plan.getTenantId();
