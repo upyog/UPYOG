@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
+import org.junit.jupiter.api.Assertions.assertThrows;
 import org.egov.common.domain.exception.InvalidDataException;
 import org.egov.common.domain.model.Pagination;
 import org.egov.egf.master.domain.model.AccountCodePurpose;
@@ -63,7 +63,7 @@ public class AccountCodePurposeJdbcRepositoryTest {
 	public void test_create_with_tenantId_null() {
 
 		AccountCodePurposeEntity accountCodePurpose = AccountCodePurposeEntity.builder().name("name").build();
-		org.junit.jupiter.api.Assertions.assertThrows(DataIntegrityViolationException.class, () -> {
+		assertThrows(DataIntegrityViolationException.class, () -> {
 			accountCodePurposeJdbcRepository.create(accountCodePurpose);
 		});
 	}
@@ -133,7 +133,7 @@ public class AccountCodePurposeJdbcRepositoryTest {
 
 		AccountCodePurposeSearch search = getAccountCodePurposeSearch();
 		search.setSortBy("desc");
-		org.junit.jupiter.api.Assertions.assertThrows(InvalidDataException.class, () -> {
+		assertThrows(InvalidDataException.class, () -> {
 			accountCodePurposeJdbcRepository.search(search);
 		});
 	}

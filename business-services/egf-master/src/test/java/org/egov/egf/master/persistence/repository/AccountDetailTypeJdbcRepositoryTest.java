@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
+import org.junit.jupiter.api.Assertions.assertThrows;
 import org.egov.common.domain.exception.InvalidDataException;
 import org.egov.common.domain.model.Pagination;
 import org.egov.egf.master.domain.model.AccountDetailType;
@@ -67,7 +67,7 @@ public void test_create_with_tenantId_null() {
 
 		AccountDetailTypeEntity accountDetailType = AccountDetailTypeEntity.builder().tablename("contractor")
 				.fullyQualifiedName("abc/contractor").name("name").active(true).build();
-    org.junit.jupiter.api.Assertions.assertThrows(DataIntegrityViolationException.class, () -> {
+    assertThrows(DataIntegrityViolationException.class, () -> {
         accountDetailTypeJdbcRepository.create(accountDetailType);
     });
 }
@@ -141,7 +141,7 @@ public void test_search_invalid_sort_option() {
 
 		AccountDetailTypeSearch search = getAccountDetailTypeSearch();
 		search.setSortBy("desc");
-    org.junit.jupiter.api.Assertions.assertThrows(InvalidDataException.class, () -> {
+    assertThrows(InvalidDataException.class, () -> {
         accountDetailTypeJdbcRepository.search(search);
     });
 }

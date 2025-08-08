@@ -18,7 +18,7 @@ import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-
+import org.junit.jupiter.api.Assertions.assertThrows;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -68,7 +68,7 @@ public class AccountEntityJdbcRepositoryTest {
 
         AccountEntityEntity accountEntity = AccountEntityEntity.builder().code("code").name("name").active(true)
                 .accountDetailTypeId(getAccountDetaialType().getId()).description("entity").build();
-        org.junit.jupiter.api.Assertions.assertThrows(DataIntegrityViolationException.class, () -> {
+        assertThrows(DataIntegrityViolationException.class, () -> {
             accountEntityJdbcRepository.create(accountEntity);
         });
     }
@@ -143,7 +143,7 @@ public class AccountEntityJdbcRepositoryTest {
 
         AccountEntitySearch search = getAccountEntitySearch();
         search.setSortBy("desc");
-        org.junit.jupiter.api.Assertions.assertThrows(InvalidDataException.class, () -> {
+        assertThrows(InvalidDataException.class, () -> {
             accountEntityJdbcRepository.search(search);
         });
     }

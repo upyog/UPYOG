@@ -7,7 +7,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.List;
-
+import org.junit.jupiter.api.Assertions.assertThrows;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.domain.exception.CustomBindException;
 import org.egov.common.domain.exception.InvalidDataException;
@@ -116,7 +116,7 @@ public class BankAccountServiceTest {
 		when(bankAccountRepository.search(any(BankAccountSearch.class))).thenReturn(expectedResult);
 		BankAccountSearch b = getBankAccountSearch();
 		b.setTenantId(null);
-		org.junit.jupiter.api.Assertions.assertThrows(InvalidDataException.class, () -> {
+		assertThrows(InvalidDataException.class, () -> {
 			bankAccountService.search(b, errors);
 		});
 	}
@@ -160,7 +160,7 @@ public class BankAccountServiceTest {
 		when(chartOfAccountRepository.findById(any(ChartOfAccount.class))).thenReturn(getChartOfAccount());
 		when(fundRepository.findById(any(Fund.class))).thenReturn(getFund());
 		when(bankAccountRepository.uniqueCheck(anyString(), any(BankAccount.class))).thenReturn(false);
-		org.junit.jupiter.api.Assertions.assertThrows(CustomBindException.class, () -> {
+		assertThrows(CustomBindException.class, () -> {
 			bankAccountService.create(bankAccounts, errors, requestInfo);
 		});
 	}

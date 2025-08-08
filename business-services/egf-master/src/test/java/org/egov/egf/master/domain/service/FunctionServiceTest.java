@@ -6,7 +6,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.List;
-
+import org.junit.jupiter.api.Assertions.assertThrows;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.domain.exception.InvalidDataException;
 import org.egov.common.domain.model.Pagination;
@@ -119,7 +119,7 @@ public final void test_fetch_related_data_when_parentid_is_wrong() {
 		functions.add(getFunction());
 		ApplicationThreadLocals.setTenantId("default");
 		when(functionRepository.findById(any(Function.class))).thenReturn(null);
-    org.junit.jupiter.api.Assertions.assertThrows(InvalidDataException.class, () -> {
+    	assertThrows(InvalidDataException.class, () -> {
         functionService.fetchRelated(functions);
     });
 }

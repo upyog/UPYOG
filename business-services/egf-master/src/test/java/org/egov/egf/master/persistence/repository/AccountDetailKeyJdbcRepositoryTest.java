@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
+import org.junit.jupiter.api.Assertions.assertThrows;
 import org.egov.common.domain.exception.InvalidDataException;
 import org.egov.common.domain.model.Pagination;
 import org.egov.egf.master.domain.model.AccountDetailKey;
@@ -66,7 +66,7 @@ public class AccountDetailKeyJdbcRepositoryTest {
 
 		AccountDetailKeyEntity accountDetailKey = AccountDetailKeyEntity.builder().id("1").key("1")
 				.accountDetailTypeId(getAccountDetailType().getId()).build();
-		org.junit.jupiter.api.Assertions.assertThrows(DataIntegrityViolationException.class, () -> {
+		assertThrows(DataIntegrityViolationException.class, () -> {
 			accountDetailKeyJdbcRepository.create(accountDetailKey);
 		});
 	}
@@ -139,7 +139,7 @@ public class AccountDetailKeyJdbcRepositoryTest {
 
 		AccountDetailKeySearch search = getAccountDetailKeySearch();
 		search.setSortBy("desc");
-		org.junit.jupiter.api.Assertions.assertThrows(InvalidDataException.class, () -> {
+		assertThrows(InvalidDataException.class, () -> {
 			accountDetailKeyJdbcRepository.search(search);
 		});
 	}

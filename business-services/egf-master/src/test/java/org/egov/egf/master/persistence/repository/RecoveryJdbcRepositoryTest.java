@@ -18,7 +18,7 @@ import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-
+import org.junit.jupiter.api.Assertions.assertThrows;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -66,7 +66,7 @@ public class RecoveryJdbcRepositoryTest {
 
 		RecoveryEntity recovery = RecoveryEntity.builder().id("2374257").code("code").name("name").active(true)
 				.mode('M').accountNumber("30492234547").flat(100.00).ifscCode("ifsccode").chartOfAccountId("1").remittanceMode('M').remitted("test").build();
-		org.junit.jupiter.api.Assertions.assertThrows(DataIntegrityViolationException.class, () -> {
+		assertThrows(DataIntegrityViolationException.class, () -> {
 			recoveryJdbcRepository.create(recovery);
 		});
 	}
@@ -130,7 +130,7 @@ public class RecoveryJdbcRepositoryTest {
 
 		RecoverySearch search = getRecoverySearch();
 		search.setSortBy("desc");
-		org.junit.jupiter.api.Assertions.assertThrows(InvalidDataException.class, () -> {
+		assertThrows(InvalidDataException.class, () -> {
 			recoveryJdbcRepository.search(search);
 		});
 	}

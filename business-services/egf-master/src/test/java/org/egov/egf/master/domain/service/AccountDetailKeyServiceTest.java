@@ -1,6 +1,7 @@
 package org.egov.egf.master.domain.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -121,7 +122,7 @@ public class AccountDetailKeyServiceTest {
 		List<AccountDetailKey> accountDetailKies = new ArrayList<>();
 		accountDetailKies.add(getAccountDetailKey());
 		when(accountDetailKeyRepository.findById(any(AccountDetailKey.class))).thenReturn(null);
-		org.junit.jupiter.api.Assertions.assertThrows(InvalidDataException.class, () -> {
+		assertThrows(InvalidDataException.class, () -> {
 			accountDetailKeyService.fetchRelated(accountDetailKies);
 		});
 	}
