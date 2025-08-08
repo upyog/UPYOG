@@ -285,41 +285,59 @@ public class GarbageAccountSchedulerService {
 		BigDecimal billAmount = onDemandBillRequest.getBillAmount();
 		
 		GarbageAccount garbageAccount = null;
+		String message = null;
+		List<String> ulbNames = onDemandBillRequest.getGenerateBillRequest().getUlbNames();
+		List<String> wardNumbers = onDemandBillRequest.getGenerateBillRequest().getWardNumbers();
 		SearchCriteriaGarbageAccountRequest searchCriteriaGarbageAccountRequest = SearchCriteriaGarbageAccountRequest
 				.builder().requestInfo(onDemandBillRequest.getRequestInfo())
 				.searchCriteriaGarbageAccount(SearchCriteriaGarbageAccount.builder()
-						.applicationNumber(onDemandBillRequest.getGenerateBillRequest().getGrbgApplicationNumbers())
-						.mobileNumber(onDemandBillRequest.getGenerateBillRequest().getMobileNumbers())
-						.status(Collections.singletonList("APPROVED")).isActiveAccount(true).isActiveSubAccount(true)
-						.build())
+				.applicationNumber(onDemandBillRequest.getGenerateBillRequest().getGrbgApplicationNumbers())
+				.mobileNumber(onDemandBillRequest.getGenerateBillRequest().getMobileNumbers())
+				.status(Collections.singletonList("APPROVED")).isActiveAccount(true).isActiveSubAccount(true)
+				.build())
 				.isSchedulerCall(true).build();
 		GarbageAccountResponse garbageAccountResponse = garbageAccountService.searchGarbageAccounts(searchCriteriaGarbageAccountRequest);
 		if(!CollectionUtils.isEmpty(garbageAccountResponse.getGarbageAccounts()))
-			 garbageAccount = garbageAccountResponse.getGarbageAccounts().get(0);
+		{
+			if(!CollectionUtils.isEmpty(garbageAccountResponse.getGarbageAccounts().get(0).getAddresses())) {
+				if (!CollectionUtils.isEmpty(ulbNames)) {
+					 if(ulbNames.contains(garbageAccountResponse.getGarbageAccounts().get(0).getAddresses().get(0).getUlbName())) {
+						 garbageAccount = garbageAccountResponse.getGarbageAccounts().get(0);
+					 }
+				}
+				if (!CollectionUtils.isEmpty(ulbNames) && !CollectionUtils.isEmpty(wardNumbers)) {
+					 if(ulbNames.contains(garbageAccountResponse.getGarbageAccounts().get(0).getAddresses().get(0).getUlbName())
+							 &&  wardNumbers.contains(garbageAccountResponse.getGarbageAccounts().get(0).getAddresses().get(0).getWardName())) {
+						 garbageAccount = garbageAccountResponse.getGarbageAccounts().get(0);
+					 }
+				}
+			}
+		}
 		else
 			throw new CustomException("INVALID_GARBAGE_ACCOUNT_DETAILS", "Provide valid garbage account details.");
 
-		
-		if (billAmount != null && billAmount.compareTo(BigDecimal.ZERO) > 0 && garbageAccount !=null) {
-			
-			BillResponse billResponse = generateDemandAndBill(onDemandBillRequest.getGenerateBillRequest(), garbageAccount, billAmount);
-
-			if (null != billResponse && !CollectionUtils.isEmpty(billResponse.getBill())) {
-				GrbgBillTrackerRequest grbgBillTrackerRequest = garbageAccountService.enrichGrbgBillTrackerCreateRequest(garbageAccount, onDemandBillRequest.getGenerateBillRequest(), billAmount,billResponse.getBill().get(0));
-				// add to garbage bill tracker
-				GrbgBillTracker grbgBillTracker = garbageAccountService.saveToGarbageBillTracker(grbgBillTrackerRequest);
-				grbgBillTrackers.add(grbgBillTracker);
+		if(garbageAccount !=null) {
+			if (billAmount != null && billAmount.compareTo(BigDecimal.ZERO) > 0) {
 				
-				//remove bill if failure exists
-//				GrbgBillFailure grbgBillFailure	= garbageAccountService.enrichGrbgBillFailure(garbageAccount, generateBillRequest,billResponse,null);
-//				garbageAccountService.removeGarbageBillFailure(grbgBillFailure);
-//				triggerNotifications
-//				notificationService.triggerNotificationsGenerateBill(garbageAccount, billResponse.getBill().get(0),generateBillRequest.getRequestInfo(),grbgBillTracker);
+				BillResponse billResponse = generateDemandAndBill(onDemandBillRequest.getGenerateBillRequest(), garbageAccount, billAmount);
+	
+				if (null != billResponse && !CollectionUtils.isEmpty(billResponse.getBill())) {
+					GrbgBillTrackerRequest grbgBillTrackerRequest = garbageAccountService.enrichGrbgBillTrackerCreateRequest(garbageAccount, onDemandBillRequest.getGenerateBillRequest(), billAmount,billResponse.getBill().get(0));
+					// add to garbage bill tracker
+					GrbgBillTracker grbgBillTracker = garbageAccountService.saveToGarbageBillTracker(grbgBillTrackerRequest);
+					grbgBillTrackers.add(grbgBillTracker);
+					
+	//				triggerNotifications
+	//				notificationService.triggerNotificationsGenerateBill(garbageAccount, billResponse.getBill().get(0),generateBillRequest.getRequestInfo(),grbgBillTracker);
+					message = "Bill Generated";
+				}
 			}
+			message = "Bill Could not be generated";
 		}
-		return GrbgBillTrackerResponse.builder().grbgBillTrackers(grbgBillTrackers).build();
-
-//		return null;
+		else {
+			message = "Garbage Id not found";
+		}
+		return GrbgBillTrackerResponse.builder().grbgBillTrackers(grbgBillTrackers).message(message).build();
 	}
 	
 	private void validateOnDemandRequest(OnDemandBillRequest onDemandBillRequest) {
