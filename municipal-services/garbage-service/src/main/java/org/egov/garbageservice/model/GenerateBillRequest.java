@@ -7,6 +7,7 @@ import org.egov.common.contract.request.RequestInfo;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.JsonNode;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -45,5 +46,12 @@ public class GenerateBillRequest {
 
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
 	private Date toDate;
+	
+	@Builder.Default
+	@JsonProperty("type")
+	private String type = "MONTHLY";
+	
+    @JsonProperty("additionalDetail")
+    private Object additionalDetail;
 
 }

@@ -22,6 +22,8 @@ public class GrbgBillTracker {
 	private String toDate;
 	private String ward;
 	private String billId;
+	@Builder.Default
+	private String type = "GENERAL";
 	private BigDecimal grbgBillAmount;
 	private AuditDetails auditDetails;
 }

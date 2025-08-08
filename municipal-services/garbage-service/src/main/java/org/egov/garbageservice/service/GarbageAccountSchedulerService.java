@@ -27,6 +27,7 @@ import org.egov.garbageservice.model.GrbgBillTracker;
 import org.egov.garbageservice.model.GrbgBillTrackerRequest;
 import org.egov.garbageservice.model.GrbgBillTrackerResponse;
 import org.egov.garbageservice.model.GrbgBillTrackerSearchCriteria;
+import org.egov.garbageservice.model.OnDemandBillRequest;
 import org.egov.garbageservice.model.SearchCriteriaGarbageAccount;
 import org.egov.garbageservice.model.SearchCriteriaGarbageAccountRequest;
 import org.egov.tracer.model.CustomException;
@@ -136,7 +137,7 @@ public class GarbageAccountSchedulerService {
 				.collect(Collectors.toSet());
 
 		GrbgBillTrackerSearchCriteria grbgBillTrackerSearchCriteria = GrbgBillTrackerSearchCriteria.builder()
-				.grbgApplicationIds(grbgApplicationIds).build();
+				.grbgApplicationIds(grbgApplicationIds).type("GENERAL").build();
 
 		List<GrbgBillTracker> grbgBillTrackers = garbageAccountService
 				.getBillCalculatedGarbageAccounts(grbgBillTrackerSearchCriteria);
@@ -235,8 +236,7 @@ public class GarbageAccountSchedulerService {
 			
 			// generate demand
 			
-			savedDemands = demandService.generateDemand(generateBillRequest.getRequestInfo(), garbageAccount,
-					"GB", billAmount, generateBillRequest);
+			savedDemands = demandService.generateDemand(generateBillRequest.getRequestInfo(), garbageAccount, "GB", billAmount, generateBillRequest);
 
 			if (CollectionUtils.isEmpty(savedDemands)) {
 				throw new CustomException("INVALID_CONSUMERCODE",
@@ -275,4 +275,61 @@ public class GarbageAccountSchedulerService {
 		return null;
 	}
 
+	public GrbgBillTrackerResponse generateBillOnDemand(OnDemandBillRequest onDemandBillRequest) {
+		
+		List<GrbgBillTracker> grbgBillTrackers = new ArrayList<>();
+		onDemandBillRequest.getGenerateBillRequest().setRequestInfo(onDemandBillRequest.getRequestInfo());
+		
+		validateOnDemandRequest(onDemandBillRequest);
+		
+		BigDecimal billAmount = onDemandBillRequest.getBillAmount();
+		
+		GarbageAccount garbageAccount = null;
+		SearchCriteriaGarbageAccountRequest searchCriteriaGarbageAccountRequest = SearchCriteriaGarbageAccountRequest
+				.builder().requestInfo(onDemandBillRequest.getRequestInfo())
+				.searchCriteriaGarbageAccount(SearchCriteriaGarbageAccount.builder()
+						.applicationNumber(onDemandBillRequest.getGenerateBillRequest().getGrbgApplicationNumbers())
+						.mobileNumber(onDemandBillRequest.getGenerateBillRequest().getMobileNumbers())
+						.status(Collections.singletonList("APPROVED")).isActiveAccount(true).isActiveSubAccount(true)
+						.build())
+				.isSchedulerCall(true).build();
+		GarbageAccountResponse garbageAccountResponse = garbageAccountService.searchGarbageAccounts(searchCriteriaGarbageAccountRequest);
+		if(!CollectionUtils.isEmpty(garbageAccountResponse.getGarbageAccounts()))
+			 garbageAccount = garbageAccountResponse.getGarbageAccounts().get(0);
+		else
+			throw new CustomException("INVALID_GARBAGE_ACCOUNT_DETAILS", "Provide valid garbage account details.");
+
+		
+		if (billAmount != null && billAmount.compareTo(BigDecimal.ZERO) > 0 && garbageAccount !=null) {
+			
+			BillResponse billResponse = generateDemandAndBill(onDemandBillRequest.getGenerateBillRequest(), garbageAccount, billAmount);
+
+			if (null != billResponse && !CollectionUtils.isEmpty(billResponse.getBill())) {
+				GrbgBillTrackerRequest grbgBillTrackerRequest = garbageAccountService.enrichGrbgBillTrackerCreateRequest(garbageAccount, onDemandBillRequest.getGenerateBillRequest(), billAmount,billResponse.getBill().get(0));
+				// add to garbage bill tracker
+				GrbgBillTracker grbgBillTracker = garbageAccountService.saveToGarbageBillTracker(grbgBillTrackerRequest);
+				grbgBillTrackers.add(grbgBillTracker);
+				
+				//remove bill if failure exists
+//				GrbgBillFailure grbgBillFailure	= garbageAccountService.enrichGrbgBillFailure(garbageAccount, generateBillRequest,billResponse,null);
+//				garbageAccountService.removeGarbageBillFailure(grbgBillFailure);
+//				triggerNotifications
+//				notificationService.triggerNotificationsGenerateBill(garbageAccount, billResponse.getBill().get(0),generateBillRequest.getRequestInfo(),grbgBillTracker);
+			}
+		}
+		return GrbgBillTrackerResponse.builder().grbgBillTrackers(grbgBillTrackers).build();
+
+//		return null;
+	}
+	
+	private void validateOnDemandRequest(OnDemandBillRequest onDemandBillRequest) {
+		if (null == onDemandBillRequest 
+				|| null == onDemandBillRequest.getGenerateBillRequest()  ) {
+			throw new CustomException("INVALID_ON_DEMAND_BILL_PAYLOAD", "Provide valid bill request details.");
+		}
+		
+		if( null == onDemandBillRequest.getBillAmount() || onDemandBillRequest.getBillAmount().compareTo(BigDecimal.ZERO) <= 0) {
+			throw new CustomException("INVALID_BILL_AMOUNT", "bill amount not valid.");
+		}
+	}
 }

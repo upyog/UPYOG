@@ -38,9 +38,9 @@ public class DemandService {
 	public List<Demand> generateDemand(RequestInfo requestInfo, GarbageAccount garbageAccount, String businessService,
 			BigDecimal taxAmount, GenerateBillRequest generateBillRequest) {
 
-		Long taxPeriodFrom = null != generateBillRequest ? generateBillRequest.getFromDate().getTime()
+		Long taxPeriodFrom = null != generateBillRequest.getFromDate() ? generateBillRequest.getFromDate().getTime()
 				: new Date().getTime();
-		Long taxPeriodTo = null != generateBillRequest ? generateBillRequest.getToDate().getTime()
+		Long taxPeriodTo = null != generateBillRequest.getToDate() ? generateBillRequest.getToDate().getTime()
 				: new Date((Calendar.getInstance().getTimeInMillis() + (long) 30 * 24 * 60 * 60 * 1000)).getTime();
 		DemandDetail demandDetail = DemandDetail.builder().taxHeadMasterCode(GrbgConstants.BILLING_TAX_HEAD_MASTER_CODE)
 				.taxAmount(taxAmount).collectionAmount(BigDecimal.ZERO).build();
@@ -53,6 +53,7 @@ public class DemandService {
 				.tenantId(garbageAccount.getTenantId()).taxPeriodFrom(taxPeriodFrom).taxPeriodTo(taxPeriodTo)
 				.fixedBillExpiryDate(cal.getTimeInMillis()).consumerType(GrbgConstants.WORKFLOW_MODULE_NAME)
 				.payer(User.builder().uuid(garbageAccount.getUserUuid()).build())
+				.additionalDetails(generateBillRequest.getAdditionalDetail())
 				.businessService(businessService).build();
 
 		List<Demand> demands = Arrays.asList(demandOne);

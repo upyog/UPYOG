@@ -1,6 +1,7 @@
 package org.egov.garbageservice.controller;
 
 import org.egov.garbageservice.model.GenerateBillRequest;
+import org.egov.garbageservice.model.OnDemandBillRequest;
 import org.egov.garbageservice.service.GarbageAccountSchedulerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +22,11 @@ public class GarbageAccountSchedulerController {
 //		service.generateBill(requestInfoWrapper);
 //		return ResponseEntity.ok("Bill generated successfully!!!");
 		return ResponseEntity.ok(service.generateBill(generateBillRequest));
+	}
+	
+	@PostMapping("/on-demand-generation")
+	public ResponseEntity<?> demandGeneration(@RequestBody OnDemandBillRequest onDemandBillRequest) {
+		return ResponseEntity.ok(service.generateBillOnDemand(onDemandBillRequest));
 	}
 
 }

@@ -1897,6 +1897,7 @@ public class GarbageAccountService {
 								: null)
 				.toDate(null != generateBillRequest.getToDate() ? dateFormat.format(generateBillRequest.getToDate())
 						: null)
+				.type(generateBillRequest.getType())
 				.ward(garbageAccount.getAddresses().get(0).getWardName()).billId(bill.getId())
 				.grbgBillAmount(billAmount).auditDetails(createAuditDetails).build();
 
@@ -1944,8 +1945,7 @@ public class GarbageAccountService {
 		return garbageBillTrackerRepository.createBillFailure(grbgBillFailureRequest);
 	}
 
-	public List<GrbgBillTracker> getBillCalculatedGarbageAccounts(
-			GrbgBillTrackerSearchCriteria grbgBillTrackerSearchCriteria) {
+	public List<GrbgBillTracker> getBillCalculatedGarbageAccounts(GrbgBillTrackerSearchCriteria grbgBillTrackerSearchCriteria) {
 
 		return garbageBillTrackerRepository.getBillTracker(grbgBillTrackerSearchCriteria);
 	}
