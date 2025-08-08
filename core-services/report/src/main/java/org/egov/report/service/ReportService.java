@@ -235,22 +235,8 @@ public class ReportService {
                 && (reportRequest.getRequestInfo() != null)
                 && (reportRequest.getRequestInfo().getUserInfo() != null)) {
             try {
-                List<Map<String, Object>> decryptedMaps = new ArrayList<>();
-
-                User user = reportRequest.getRequestInfo().getUserInfo();
-
-                for (Map<String, Object> item : maps) {
-                    Map<String, Object> decryptedItem = encryptionService.decryptJson(
-                            item,
-                            reportDefinition.getdecryptionPathId(),
-                            user,
-                            Map.class
-                    );
-                    decryptedMaps.add(decryptedItem);
-                }
-
-                maps = decryptedMaps;
-
+            	 maps = encryptionService.decryptJson(reportRequest.getRequestInfo(), maps,
+                         reportDefinition.getdecryptionPathId(), "Retrieve Report Data", Map.class);
             } catch (IOException e) {
                 log.error("IO exception while decrypting report: " + e.getMessage());
                 throw new CustomException("REPORT_DECRYPTION_ERROR", "Error while decrypting report data");
