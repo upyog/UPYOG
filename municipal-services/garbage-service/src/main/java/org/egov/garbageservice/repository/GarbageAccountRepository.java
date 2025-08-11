@@ -229,6 +229,11 @@ public class GarbageAccountRepository {
 			garbageAccounts = garbageAccounts.stream().filter(garbageAccount -> searchCriteriaGarbageAccount
 					.getIsActiveAccount().equals(garbageAccount.getIsActive())).collect(Collectors.toList());
 		}
+		
+		if (searchCriteriaGarbageAccount.getIsMonthlyBilling() != null) {
+			garbageAccounts = garbageAccounts.stream().filter(garbageAccount -> searchCriteriaGarbageAccount
+					.getIsMonthlyBilling().equals(garbageAccount.getGrbgCollectionUnits().get(0).getIsmonthlybilling())).collect(Collectors.toList());
+		}
 
 		garbageAccounts = garbageAccounts.stream().filter(Objects::nonNull).map(garbageAccount -> {
 			// If sub-account filtering is enabled, filter child garbage accounts
@@ -241,6 +246,16 @@ public class GarbageAccountRepository {
 									.collect(Collectors.toList());
 							garbageAccount.setChildGarbageAccounts(filteredChildren);
 						});
+			}
+			if (searchCriteriaGarbageAccount.getIsMonthlyBilling() != null) {
+				Optional.ofNullable(garbageAccount.getChildGarbageAccounts())
+				.filter(childAccounts -> !childAccounts.isEmpty()).ifPresent(childAccounts -> {
+					List<GarbageAccount> filteredChildren = childAccounts.stream()
+							.filter(child -> searchCriteriaGarbageAccount.getIsMonthlyBilling()
+									.equals(child.getGrbgCollectionUnits().get(0).getIsmonthlybilling()))
+							.collect(Collectors.toList());
+					garbageAccount.setChildGarbageAccounts(filteredChildren);
+				});
 			}
 			return garbageAccount;
 		}).collect(Collectors.toList());

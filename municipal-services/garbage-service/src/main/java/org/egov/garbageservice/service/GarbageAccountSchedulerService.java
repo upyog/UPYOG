@@ -67,7 +67,7 @@ public class GarbageAccountSchedulerService {
 
 		List<GrbgBillTracker> grbgBillTrackers = new ArrayList<>();
 		setFromDateToDate(generateBillRequest);
-
+		String message = null;
 		List<GarbageAccount> garbageAccounts = getGarbageAccounts(generateBillRequest);
 
 		garbageAccounts = removeAlreadyBillCalculatedGarbageAccounts(garbageAccounts, generateBillRequest);
@@ -83,13 +83,13 @@ public class GarbageAccountSchedulerService {
 					// calculate fees from mdms response
 					BigDecimal billAmount = mdmsService.fetchGarbageAmountFromMDMSResponse(mdmsResponse, garbageAccount,errorMap,calculationBreakdown);
 
-					if (billAmount != null && billAmount.compareTo(BigDecimal.ZERO) > 0) {
+					if (billAmount != null && billAmount.compareTo(BigDecimal.ZERO) > 0 && !errorMap.isEmpty()) {
 					
 						BillResponse billResponse = generateDemandAndBill(generateBillRequest, garbageAccount, billAmount);
 	
 						if (null != billResponse && !CollectionUtils.isEmpty(billResponse.getBill())) {
 							GrbgBillTrackerRequest grbgBillTrackerRequest = garbageAccountService
-									.enrichGrbgBillTrackerCreateRequest(garbageAccount, generateBillRequest, billAmount,billResponse.getBill().get(0));
+									.enrichGrbgBillTrackerCreateRequest(garbageAccount, generateBillRequest, billAmount,billResponse.getBill().get(0),calculationBreakdown);
 							// add to garbage bill tracker
 							GrbgBillTracker grbgBillTracker = garbageAccountService
 									.saveToGarbageBillTracker(grbgBillTrackerRequest);
@@ -99,14 +99,11 @@ public class GarbageAccountSchedulerService {
 							GrbgBillFailure grbgBillFailure	= garbageAccountService.enrichGrbgBillFailure(garbageAccount, generateBillRequest,billResponse,errorMap);
 							garbageAccountService.removeGarbageBillFailure(grbgBillFailure);
 //							triggerNotifications
-							notificationService.triggerNotificationsGenerateBill(garbageAccount, billResponse.getBill().get(0),
-									generateBillRequest.getRequestInfo(),grbgBillTracker);
+//							notificationService.triggerNotificationsGenerateBill(garbageAccount, billResponse.getBill().get(0),
+//									generateBillRequest.getRequestInfo(),grbgBillTracker);
 						}else {
-							errorMap.put("BILLING ISSUE", "bill Response NUll");
+							errorMap.put("ERROR-MAP", "Issues In Bill Generation");
 							createFailureLog(garbageAccount, generateBillRequest,billResponse,errorMap);
-//							GrbgBillFailure grbgBillFailure	= garbageAccountService
-//									.enrichGrbgBillFailure(garbageAccount, generateBillRequest,billResponse,false);
-//							garbageAccountService.saveToGarbageBillFailure(grbgBillFailure);
 						}
 					}else {
 						errorMap.put("AMOUNT-NILL", "Amount could not be calculated");
@@ -114,17 +111,21 @@ public class GarbageAccountSchedulerService {
 					}
 				}
 				else {
-					errorMap.put("USER-UUID-NULL", "mobile number user not found");
+					errorMap.put("USER-UUID-NULL", "mobile number user not mapped");
 					createFailureLog(garbageAccount, generateBillRequest,null,errorMap);
-//					GrbgBillFailure grbgBillFailure	= garbageAccountService
-//							.enrichGrbgBillFailure(garbageAccount, generateBillRequest,null,true);
-//					garbageAccountService.saveToGarbageBillFailure(grbgBillFailure);
 				}
 			});
+		}else {
+			message = "Garbage Acc not Found";
 		}
 
-		return GrbgBillTrackerResponse.builder().grbgBillTrackers(grbgBillTrackers).build();
+		if(!grbgBillTrackers.isEmpty())
+			message = "Bills Generated Successfully";
+		
+		return GrbgBillTrackerResponse.builder().grbgBillTrackers(grbgBillTrackers).message(message).build();
+
 	}
+	
 	
 	private void createFailureLog(GarbageAccount garbageAccount,GenerateBillRequest generateBillRequest, BillResponse billResponse,ObjectNode errorMap) {
 		GrbgBillFailure grbgBillFailure	= garbageAccountService.enrichGrbgBillFailure(garbageAccount, generateBillRequest,billResponse,errorMap);
@@ -198,6 +199,7 @@ public class GarbageAccountSchedulerService {
 				.searchCriteriaGarbageAccount(SearchCriteriaGarbageAccount.builder()
 						.applicationNumber(generateBillRequest.getGrbgApplicationNumbers())
 						.mobileNumber(generateBillRequest.getMobileNumbers())
+						.isMonthlyBilling(true)
 						.status(Collections.singletonList("APPROVED")).isActiveAccount(true).isActiveSubAccount(true)
 						.build())
 				.isSchedulerCall(true).build();
@@ -320,9 +322,10 @@ public class GarbageAccountSchedulerService {
 			if (billAmount != null && billAmount.compareTo(BigDecimal.ZERO) > 0) {
 				
 				BillResponse billResponse = generateDemandAndBill(onDemandBillRequest.getGenerateBillRequest(), garbageAccount, billAmount);
-	
+				ObjectMapper mapper = new ObjectMapper();
+		        ObjectNode additionalDetails = mapper.convertValue(onDemandBillRequest.getGenerateBillRequest().getAdditionalDetail(), ObjectNode.class);
 				if (null != billResponse && !CollectionUtils.isEmpty(billResponse.getBill())) {
-					GrbgBillTrackerRequest grbgBillTrackerRequest = garbageAccountService.enrichGrbgBillTrackerCreateRequest(garbageAccount, onDemandBillRequest.getGenerateBillRequest(), billAmount,billResponse.getBill().get(0));
+					GrbgBillTrackerRequest grbgBillTrackerRequest = garbageAccountService.enrichGrbgBillTrackerCreateRequest(garbageAccount, onDemandBillRequest.getGenerateBillRequest(), billAmount,billResponse.getBill().get(0),additionalDetails);
 					// add to garbage bill tracker
 					GrbgBillTracker grbgBillTracker = garbageAccountService.saveToGarbageBillTracker(grbgBillTrackerRequest);
 					grbgBillTrackers.add(grbgBillTracker);

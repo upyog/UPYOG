@@ -41,8 +41,8 @@ public class GarbageBillTrackerRepository {
 	private static final String GRBG_BILL_TRACKER_SEARCH_QUERY = "SELECT * FROM eg_grbg_bill_tracker egbt";
 
 	private static final String INSERT_BILL_TRACKER = "INSERT INTO eg_grbg_bill_tracker (uuid, grbg_application_id, tenant_id, month, year, from_date, "
-			+ "to_date, grbg_bill_amount, created_by, created_time, last_modified_by, last_modified_time,ward,bill_id,type) VALUES "
-			+ "(:uuid, :grbgApplicationId, :tenantId, :month, :year, :fromDate, :toDate, :grbgBillAmount, :createdBy, :createdDate, :lastModifiedBy, :lastModifiedDate,:ward,:billId,:type)";
+			+ "to_date, grbg_bill_amount, created_by, created_time, last_modified_by, last_modified_time,ward,bill_id,type,additionaldetail) VALUES "
+			+ "(:uuid, :grbgApplicationId, :tenantId, :month, :year, :fromDate, :toDate, :grbgBillAmount, :createdBy, :createdDate, :lastModifiedBy, :lastModifiedDate,:ward,:billId,:type,:additionaldetail::JSONB)";
 
 //	private static final String INSERT_BILL_FAILURE = "INSERT INTO eg_bill_failure (id, consumer_code, module_name, tenant_id, failure_reason,month, year, from_date, "
 //			+ "to_date, request_payload, response_payload, status_code) VALUES "
@@ -99,6 +99,8 @@ public class GarbageBillTrackerRepository {
 		billTrackerInputs.put("lastModifiedBy", grbgBillTracker.getAuditDetails().getLastModifiedBy());
 		billTrackerInputs.put("lastModifiedDate", grbgBillTracker.getAuditDetails().getLastModifiedDate());
 		billTrackerInputs.put("type", grbgBillTracker.getType());
+		billTrackerInputs.put("additionaldetail", grbgBillTracker.getAdditionaldetail().isNull() ? null : grbgBillTracker.getAdditionaldetail().toString());
+
 
 		namedParameterJdbcTemplate.update(INSERT_BILL_TRACKER, billTrackerInputs);
 

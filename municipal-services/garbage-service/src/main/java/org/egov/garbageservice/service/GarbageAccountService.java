@@ -1885,7 +1885,7 @@ public class GarbageAccountService {
 	}
 
 	public GrbgBillTrackerRequest enrichGrbgBillTrackerCreateRequest(GarbageAccount garbageAccount,
-			GenerateBillRequest generateBillRequest, BigDecimal billAmount, Bill bill) {
+			GenerateBillRequest generateBillRequest, BigDecimal billAmount, Bill bill,ObjectNode calculationBreakdown) {
 		SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
 		AuditDetails createAuditDetails = grbgUtils.buildCreateAuditDetails(generateBillRequest.getRequestInfo());
 		GrbgBillTracker grbgBillTracker = GrbgBillTracker.builder().uuid(UUID.randomUUID().toString())
@@ -1898,6 +1898,7 @@ public class GarbageAccountService {
 				.toDate(null != generateBillRequest.getToDate() ? dateFormat.format(generateBillRequest.getToDate())
 						: null)
 				.type(generateBillRequest.getType())
+				.additionaldetail(calculationBreakdown)
 				.ward(garbageAccount.getAddresses().get(0).getWardName()).billId(bill.getId())
 				.grbgBillAmount(billAmount).auditDetails(createAuditDetails).build();
 
@@ -1913,10 +1914,9 @@ public class GarbageAccountService {
 		JsonNode request_payload = mapper.valueToTree(generateBillRequest);
 		String failure_reason = null;
 		if (errorMap.has("USER-UUID-NULL"))
-//		if(isUserNull == true && billResponse == null) 
 			failure_reason = "USER-UUID-NULL";
 		else
-			failure_reason = "ISSUE IN BILLING SERVICE";
+			failure_reason = "ISSUES MENTIONED IN ERROR-JSON";
 		GrbgBillFailure grbgBillFailure = GrbgBillFailure.builder()
 							.consumer_code(garbageAccount.getGrbgApplicationNumber())
 							.tenant_id(garbageAccount.getTenantId())
