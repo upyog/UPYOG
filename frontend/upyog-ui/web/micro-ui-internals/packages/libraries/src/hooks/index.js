@@ -275,6 +275,7 @@ import useServiceSearchPTR from "./ptr/useServiceSearchPTR";
 import usePetDocumentSearch from "./ptr/usePetDocumentSearch";
 import useMyPetPayments from "./ptr/useMyPetPayments";
 import useTenantsPTR from "./ptr/useTenants";
+import { usePetColors } from "./ptr/usePetColors";
 //adding asset hooks here
 import useAssetClassification from "./asset/useAssetClassification";
 import useAssetType from "./asset/useAssetType";
@@ -405,7 +406,8 @@ const ptr = {
   useServiceSearchPTR,
   usePetDocumentSearch,
   useMyPetPayments,
-  useTenants: useTenantsPTR
+  useTenants: useTenantsPTR,
+  usePetColors
  
 };
 

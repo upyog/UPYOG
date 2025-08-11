@@ -50,8 +50,7 @@ function ApplicationDetailsContent({
 }) {
   const { t } = useTranslation();
   
-const ownersSequences= applicationDetails?.applicationData?.owners
-console.log("appl", applicationDetails)
+const ownersSequences= applicationDetails?.applicationData?.owners;
 
   function OpenImage(imageSource, index, thumbnailsToShow) {
     window.open(thumbnailsToShow?.fullImage?.[0], "_blank");
@@ -234,7 +233,7 @@ console.log("appl", applicationDetails)
   const toggleTimeline=()=>{
     setShowAllTimeline((prev)=>!prev);
   }
-  // console.log("applicationDetails?.applicationDetails",applicationDetails?.applicationDetails)
+
   return (
     <Card style={{ position: "relative" }} className={"employeeCard-override"}>
       {/* For UM-4418 changes */}

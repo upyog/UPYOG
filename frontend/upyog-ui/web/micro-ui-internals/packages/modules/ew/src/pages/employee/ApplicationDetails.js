@@ -50,6 +50,8 @@ const EWApplicationDetails = () => {
     },
   );
 
+  console.log("toast",showToast);
+
   const closeToast = () => {
     setShowToast(null);
   };
