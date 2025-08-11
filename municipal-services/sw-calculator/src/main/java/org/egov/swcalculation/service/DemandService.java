@@ -288,10 +288,11 @@ public class DemandService {
 				.billingCycle(billingcycle)
 				.build();
 		List<Demand> demandRes = demandRepository.saveDemand(calculationReq.getRequestInfo(), demands,notificationObj);
-		if(calculationReq.getIsReconnectionRequest())
-			fetchBillForReconnect(demandRes, calculationReq.getRequestInfo(), masterMap);
-		else if(isForConnectionNO && !calculationReq.getIsReconnectionRequest())
-			fetchBill(demandRes, calculationReq.getRequestInfo(),masterMap);
+		/* Temp Disabling  this -> PI-19148->Abhishek Rana   */
+		//		if(calculationReq.getIsReconnectionRequest())
+//			fetchBillForReconnect(demandRes, calculationReq.getRequestInfo(), masterMap);
+//		else if(isForConnectionNO && !calculationReq.getIsReconnectionRequest())
+//			fetchBill(demandRes, calculationReq.getRequestInfo(),masterMap);
 		return demandRes;
 	}
 
