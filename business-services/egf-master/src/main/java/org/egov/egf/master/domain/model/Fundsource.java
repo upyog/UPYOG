@@ -41,7 +41,7 @@ package org.egov.egf.master.domain.model;
 
 import java.math.BigDecimal;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 
 import org.egov.common.domain.model.Auditable;
 import org.hibernate.validator.constraints.Length;

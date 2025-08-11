@@ -1,7 +1,7 @@
 package org.egov.egf.master.web.controller;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.any;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -20,8 +20,8 @@ import org.egov.egf.master.domain.model.AccountDetailKey;
 import org.egov.egf.master.domain.model.AccountDetailKeySearch;
 import org.egov.egf.master.domain.model.AccountDetailType;
 import org.egov.egf.master.domain.service.AccountDetailKeyService;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,11 +29,11 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.validation.BindingResult;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @WebMvcTest(AccountDetailKeyController.class)
 @Import(TestConfiguration.class)
 public class AccountDetailKeyControllerTest {
@@ -55,8 +55,8 @@ public class AccountDetailKeyControllerTest {
 				.thenReturn(getAccountDetailKies());
 		mockMvc.perform(post("/accountdetailkeys/_create?tenantId=default")
 				.content(resources.readRequest("accountdetailkey/accountdetailkey_create_request.json"))
-				.contentType(MediaType.APPLICATION_JSON_UTF8)).andExpect(status().is(201))
-				.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8)).andExpect(content()
+				.contentType(MediaType.APPLICATION_JSON)).andExpect(status().is(201))
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON)).andExpect(content()
 						.json(resources.readResponse("accountdetailkey/accountdetailkey_create_response.json")));
 
 		verify(accountDetailKeyService).create(captor.capture(), any(BindingResult.class), any(RequestInfo.class));
@@ -72,7 +72,7 @@ public class AccountDetailKeyControllerTest {
 				.thenReturn(getAccountDetailKies());
 		mockMvc.perform(post("/accountdetailkeys/_create")
 				.content(resources.readRequest("accountdetailkey/accountdetailkey_create_invalid_fieldvalue.json"))
-				.contentType(MediaType.APPLICATION_JSON_UTF8)).andExpect(status().is5xxServerError());
+				.contentType(MediaType.APPLICATION_JSON)).andExpect(status().is5xxServerError());
 
 	}
 
@@ -83,8 +83,8 @@ public class AccountDetailKeyControllerTest {
 
 		mockMvc.perform(post("/accountdetailkeys/_update?tenantId=default")
 				.content(resources.readRequest("accountdetailkey/accountdetailkey_update_request.json"))
-				.contentType(MediaType.APPLICATION_JSON_UTF8)).andExpect(status().is(201))
-				.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8)).andExpect(content()
+				.contentType(MediaType.APPLICATION_JSON)).andExpect(status().is(201))
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON)).andExpect(content()
 						.json(resources.readResponse("accountdetailkey/accountdetailkey_update_response.json")));
 
 		verify(accountDetailKeyService).update(captor.capture(), any(BindingResult.class), any(RequestInfo.class));
@@ -109,8 +109,8 @@ public class AccountDetailKeyControllerTest {
 				.thenReturn(page);
 
 		mockMvc.perform(post("/accountdetailkeys/_search?tenantId=default").content(resources.getRequestInfo())
-				.contentType(MediaType.APPLICATION_JSON_UTF8)).andExpect(status().is(200))
-				.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8)).andExpect(content()
+				.contentType(MediaType.APPLICATION_JSON)).andExpect(status().is(200))
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON)).andExpect(content()
 						.json(resources.readResponse("accountdetailkey/accountdetailkey_search_response.json")));
 
 	}

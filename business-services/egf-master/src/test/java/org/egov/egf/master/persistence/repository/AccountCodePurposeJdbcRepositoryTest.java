@@ -1,7 +1,7 @@
 package org.egov.egf.master.persistence.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -9,16 +9,16 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.egov.common.domain.exception.InvalidDataException;
 import org.egov.common.domain.model.Pagination;
 import org.egov.egf.master.domain.model.AccountCodePurpose;
 import org.egov.egf.master.domain.model.AccountCodePurposeSearch;
 import org.egov.egf.master.persistence.entity.AccountCodePurposeEntity;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataAccessException;
@@ -26,18 +26,18 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.test.context.jdbc.Sql;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
-@Ignore
+@Disabled
 public class AccountCodePurposeJdbcRepositoryTest {
 
 	private AccountCodePurposeJdbcRepository accountCodePurposeJdbcRepository;
 	@Autowired
 	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		accountCodePurposeJdbcRepository = new AccountCodePurposeJdbcRepository(namedParameterJdbcTemplate);
 	}
@@ -58,13 +58,14 @@ public class AccountCodePurposeJdbcRepositoryTest {
 
 	}
 
-	@Test(expected = DataIntegrityViolationException.class)
+	@Test
 	@Sql(scripts = { "/sql/clearAccountCodePurpose.sql" })
 	public void test_create_with_tenantId_null() {
 
 		AccountCodePurposeEntity accountCodePurpose = AccountCodePurposeEntity.builder().name("name").build();
-		accountCodePurposeJdbcRepository.create(accountCodePurpose);
-
+		assertThrows(DataIntegrityViolationException.class, () -> {
+			accountCodePurposeJdbcRepository.create(accountCodePurpose);
+		});
 	}
 
 	@Test
@@ -126,14 +127,15 @@ public class AccountCodePurposeJdbcRepositoryTest {
 
 	}
 
-	@Test(expected = InvalidDataException.class)
+	@Test
 	@Sql(scripts = { "/sql/clearAccountCodePurpose.sql", "/sql/insertAccountCodePurposeData.sql" })
 	public void test_search_invalid_sort_option() {
 
 		AccountCodePurposeSearch search = getAccountCodePurposeSearch();
 		search.setSortBy("desc");
-		accountCodePurposeJdbcRepository.search(search);
-
+		assertThrows(InvalidDataException.class, () -> {
+			accountCodePurposeJdbcRepository.search(search);
+		});
 	}
 
 	@Test
