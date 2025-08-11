@@ -215,6 +215,10 @@ const UserProfile = ({ stateCode, userType, cityDetails }) => {
         throw JSON.stringify({ type: "error", message: t("CORE_COMMON_PROFILE_NAME_INVALID") });
       }
 
+      if (userType === "employee" && (!requestData.gender || requestData.gender.trim() === "")) {
+        throw JSON.stringify({ type: "error", message: "CORE_COMMON_PROFILE_GENDER_REQUIRED" });
+      }
+
       if (userType === "employee" && !new RegExp(/^[6-9]{1}[0-9]{9}$/).test(mobileNumber)) {
         throw JSON.stringify({ type: "error", message: t("CORE_COMMON_PROFILE_MOBILE_NUMBER_INVALID") });
       }

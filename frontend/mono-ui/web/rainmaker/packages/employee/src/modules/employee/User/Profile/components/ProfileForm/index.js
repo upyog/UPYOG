@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { Button, TextField} from "components";
+import { Button, TextField,SelectField } from "components";
 import Label from "egov-ui-kit/utils/translationNode";
 import { ProfileSection } from "modules/common";
 import { httpRequest } from "../../../../../../ui-utils/api.js";
@@ -25,6 +25,11 @@ const ProfileForm = ({ form, handleFieldChange, onClickAddPic, img, profilePic, 
             uuid: [uuid],
           }
         );
+
+        const userObj = userPayload.user && userPayload.user[0];        
+        if (userObj.gender) {
+          handleFieldChange("gender", userObj.gender);
+        }
 
         const photoId = userPayload.user[0].photo;
         if (!photoId) return;
@@ -63,6 +68,11 @@ const ProfileForm = ({ form, handleFieldChange, onClickAddPic, img, profilePic, 
           </div>
           <div style={{ padding: "0 8px" }} className="col-xs-12 col-sm-8 col-md-8 col-lg-8 profileFormContainer">
             <TextField {...fields.name} onChange={(e, value) => handleFieldChange("name", value)} />
+            <SelectField
+              {...(fields.gender || {})}
+              dropDownData={(fields.gender && fields.gender.dropDownData) || []}
+              onChange={(e, index, selectedValue) => handleFieldChange("gender", selectedValue)}
+            />
             <TextField {...fields.phonenumber} />
             <TextField {...fields.email} onChange={(e, value) => handleFieldChange("email", value)} />
             <Link to="/user/change-password">
