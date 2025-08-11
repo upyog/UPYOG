@@ -42,9 +42,9 @@ package org.egov.receipt.consumer.model;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 
-import org.hibernate.validator.constraints.Length;
+import jakarta.validation.constraints.Size;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonProperty.Access;
@@ -68,21 +68,21 @@ public class BankContract {
 	private List<Long> ids = new ArrayList<Long>();
 
 	@NotNull
-	@Length(max = 50, min = 1)
+	@Size(max = 50, min = 1)
 	private String code;
 
 	@NotNull
-	@Length(max = 100, min = 2)
+	@Size(max = 100, min = 2)
 	private String name;
 
-	@Length(max = 250)
+	@Size(max = 250)
 	private String description;
 
 	@NotNull
 	private Boolean active;
 	// is this required?
 
-	@Length(max = 50)
+	@Size(max = 50)
 	private String type;
 	
 	private String tenantId;
