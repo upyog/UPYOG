@@ -16,7 +16,6 @@ All notable changes to this module will be documented in this file.
 - Upgraded Jakarta Validation API (version managed by Spring Boot 3.2.2)
 - Changed `javax` to `jakarta`
 - Upgraded Lombok to version 1.18.32
-- Upgraded to `spring-beans:6.1.4` (managed by Spring Boot)
 - Upgraded to `spring-boot-starter-jdbc:3.2.2`
 - Upgraded to `tracer:2.9.0-SNAPSHOT`
 - Upgraded log4j2 to version 2.21.1

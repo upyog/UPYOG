@@ -6,7 +6,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.domain.exception.InvalidDataException;
 import org.egov.common.domain.model.Pagination;

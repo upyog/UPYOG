@@ -39,8 +39,6 @@ NA
 - PostgreSQL 12+
 - Elasticsearch 6.2.4
 
-
-
 ### Swagger API Contract
 
 https://editor.swagger.io/?url=https://raw.githubusercontent.com/upyog/UPYOG/master/business-services/Docs/egf-master-v1.0.0%20.yaml#!/
