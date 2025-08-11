@@ -1301,7 +1301,7 @@ public class DemandService {
 						calculationCriteriaList.clear();
 						connectionNosCount=0;
 						if(threadSleepCount == 3) {
-							Thread.sleep(15000);
+						    Thread.sleep(1000); // Sleep for 1 second
 							threadSleepCount=0;
 						}
 						threadSleepCount++;
