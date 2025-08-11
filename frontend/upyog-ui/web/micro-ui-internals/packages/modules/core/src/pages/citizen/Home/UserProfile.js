@@ -42,13 +42,16 @@ const defaultImage =
   "L+RGKCddCGmatiPyPB/+ekO/M/q/7uvbt22kTt3zEnXPzCV13T3Gel4/6NduDu66xRvlPNkM1RjjxUdv+4WhGx6TftD19Q/dfzpwcHO+rE3fAAAAAElFTkSuQmCC";
 
 const UserProfile = ({ stateCode, userType, cityDetails }) => {
+  console.log("inside userprofile")
   const history = useHistory();
   const { t } = useTranslation();
   const url = window.location.href;
   const stateId = Digit.ULBService.getStateId();
   const tenant = Digit.ULBService.getCurrentTenantId();
   const userInfo = Digit.UserService.getUser()?.info || {};
+  console.log("userInfo",userInfo)
   const [userDetails, setUserDetails] = useState(null);
+  console.log("userDetails",userDetails)
   const [name, setName] = useState(userInfo?.name ? userInfo.name : "");
   const dateOfBirth= userDetails?.dob
   console.log("ddd", dateOfBirth)
@@ -213,6 +216,10 @@ const UserProfile = ({ stateCode, userType, cityDetails }) => {
 
       if (!new RegExp(/^([a-zA-Z ])*$/).test(name) || name === "" || name.length > 50 || name.length < 1) {
         throw JSON.stringify({ type: "error", message: t("CORE_COMMON_PROFILE_NAME_INVALID") });
+      }
+
+      if (userType === "employee" && (!requestData.gender || requestData.gender.trim() === "")) {
+        throw JSON.stringify({ type: "error", message: "CORE_COMMON_PROFILE_GENDER_REQUIRED" });
       }
 
       if (userType === "employee" && !new RegExp(/^[6-9]{1}[0-9]{9}$/).test(mobileNumber)) {
