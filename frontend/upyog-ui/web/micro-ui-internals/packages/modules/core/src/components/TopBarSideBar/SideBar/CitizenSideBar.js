@@ -1,6 +1,6 @@
 import {
   Loader, NavBar
-} from "@egovernments/digit-ui-react-components";
+} from "@upyog/digit-ui-react-components";
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
@@ -166,7 +166,7 @@ export const CitizenSideBar = ({ isOpen, isMobile = false, toggleSidebar, onLogo
       ?.map((key) => {
         if (linkData[key][0]?.sidebar === "digit-ui-links")
           menuItems.splice(1, 0, {
-            type: linkData[key][0]?.sidebarURL?.includes("digit-ui") ? "link" : "external-link",
+            type: linkData[key][0]?.sidebarURL?.includes("upyog-ui") ? "link" : "external-link",
             text: t(`ACTION_TEST_${Digit.Utils.locale.getTransformedLocale(key)}`),
             links: linkData[key],
             icon: linkData[key][0]?.leftIcon,

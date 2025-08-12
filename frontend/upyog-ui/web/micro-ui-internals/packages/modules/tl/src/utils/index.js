@@ -112,7 +112,8 @@ export const setAddressDetails = (data) => {
 
 export const getownerarray = (data) => {
   const ownersData = data?.owners?.owners
-  const res = ownersData?.map((ob) => ({
+  const res = ownersData?.map((ob, index) => ({
+    additionalDetails: {ownerSequence: index, name: ob.name},
     mobileNumber: ob.mobilenumber,
     name: ob.name,
     fatherOrHusbandName: ob?.fatherOrHusbandName,
@@ -128,12 +129,17 @@ export const getownerarray = (data) => {
 export const gettradeownerarray = (data) => {
   let tradeownerarray = [];
   const isEditRenew = window.location.href.includes("renew-trade");
+  const ownersSequences=data?.tradeLicenseDetail?.owners?.additionalDetails!==null ? data?.tradeLicenseDetail?.owners?.sort((a,b)=>a?.additionalDetails?.ownerSequence-b?.additionalDetails?.ownerSequence): data.tradeLicenseDetail.owners
   data.tradeLicenseDetail.owners.map((oldowner) => {
     data?.owners?.owners.map((newowner) => {
       if(oldowner.id === newowner.id)
       {
-        if((oldowner.name !== newowner.name) || (oldowner.gender !== newowner?.gender?.code) || (oldowner.mobileNumber !== newowner.mobilenumber) || (oldowner.permanentAddress !== data?.owners?.permanentAddress) || (oldowner.relationship !== newowner.relationship?.code) || (oldowner.fatherOrHusbandName !== newowner.fatherOrHusbandName))
+        if((oldowner.name !== newowner.name) || (oldowner.gender !== newowner?.gender?.code) || (oldowner.mobileNumber !== newowner.mobilenumber) || (oldowner.permanentAddress !== data?.owners?.permanentAddress) || (oldowner.relationship !== newowner.relationship?.code) || (oldowner.fatherOrHusbandName !== newowner.fatherOrHusbandName)||(oldowner.additionalDetails!==newowner.additionalDetails))
         {
+          if (oldowner.additionalDetails !== newowner.additionalDetails)
+        {
+          oldowner.additionalDetails = newowner.additionalDetails;
+        }
         if (oldowner.name !== newowner.name)
         {
           oldowner.name = newowner.name;
@@ -169,14 +175,15 @@ export const gettradeownerarray = (data) => {
       }
     })
   })
-  !isEditRenew && !window.location.href.includes("edit-application") && data.tradeLicenseDetail.owners.map((oldowner) => {
-    let found = tradeownerarray.length > 0 ? tradeownerarray.some(el => el.id === oldowner.id):false;
+  !isEditRenew && !window.location.href.includes("edit-application") && data.tradeLicenseDetail?.owners?.map((oldowner) => {
+    let found = tradeownerarray.length > 0 ? tradeownerarray?.some(el => el.id === oldowner.id):false;
     if(!found)tradeownerarray.push({...oldowner,active:false});   
   })
-  data?.owners?.owners.map((ob) => {
+  data?.owners?.owners.map((ob, index) => {
     if(!ob.id)
     {
       tradeownerarray.push({
+              additionalDetails:{ownerSequence: index, name: ob.name},
               mobileNumber: ob.mobilenumber,
               name: ob.name,
               fatherOrHusbandName: ob?.fatherOrHusbandName,
@@ -193,7 +200,7 @@ export const gettradeownerarray = (data) => {
 
 export const gettradeunits = (data) => {
   let tradeunits = [];
-  data?.TradeDetails?.units.map((ob) => {
+  data?.TradeDetails?.units?.map((ob) => {
     tradeunits.push({ tradeType: ob.tradesubtype.code, uom: ob.unit, uomValue: ob.uom });
   });
   return tradeunits;
@@ -202,8 +209,8 @@ export const gettradeunits = (data) => {
 export const gettradeupdateunits = (data) => {
   let TLunits = [];
   const isEditRenew = window.location.href.includes("renew-trade");
-  data.tradeLicenseDetail.tradeUnits.map((oldunit) => {
-    data.TradeDetails.units.map((newunit) => {
+  data?.tradeLicenseDetail?.tradeUnits?.map((oldunit) => {
+    data?.TradeDetails?.units?.map((newunit) => {
       if(oldunit.id === newunit.id)
       {
         if (oldunit.tradeType !== newunit.tradesubtype.code || oldunit.uomValue !== newunit.uom)
@@ -231,7 +238,7 @@ export const gettradeupdateunits = (data) => {
       }
     })
   })
-  data.TradeDetails.units.map((ob) => {
+  data.TradeDetails?.units?.map((ob) => {
     if(!ob.id)
     {
       TLunits.push({ tradeType: ob.tradesubtype.code, uom: ob.unit, uomValue: ob.uom });
@@ -242,7 +249,7 @@ export const gettradeupdateunits = (data) => {
 
 export const getaccessories = (data) => {
   let tradeaccessories = [];
-  data?.TradeDetails?.accessories.map((ob) => {
+  data?.TradeDetails?.accessories?.map((ob) => {
     tradeaccessories.push({ uom: ob.unit, accessoryCategory: ob.accessory.code, uomValue: ob.uom ? ob.uom : null, count: ob.accessorycount });
   });
   return tradeaccessories;
@@ -253,13 +260,13 @@ export const gettradeupdateaccessories = (data) => {
   const isEditRenew = window.location.href.includes("renew-trade");
   if(data?.TradeDetails?.isAccessories?.i18nKey.includes("NO"))
   {
-    data?.tradeLicenseDetail?.accessories && data.tradeLicenseDetail.accessories.map((oldunit) => {
+    data?.tradeLicenseDetail?.accessories && data?.tradeLicenseDetail?.accessories?.map((oldunit) => {
       TLaccessories.push({...oldunit,active:false});
     })
   }
   else{
-  data?.tradeLicenseDetail?.accessories && data.tradeLicenseDetail.accessories.map((oldunit) => {
-    data.TradeDetails.accessories.map((newunit) => {
+  data?.tradeLicenseDetail?.accessories && data?.tradeLicenseDetail?.accessories?.map((oldunit) => {
+    data?.TradeDetails?.accessories?.map((newunit) => {
       if(oldunit.id === newunit.id)
       {
         if (oldunit.accessoryCategory !== newunit.accessory.code || oldunit.count !== newunit.accessorycount || oldunit.uomValue !== newunit.uom)
@@ -289,7 +296,7 @@ export const gettradeupdateaccessories = (data) => {
       }
     })
   })
-  data.TradeDetails.accessories.map((ob) => {
+  data?.TradeDetails?.accessories?.map((ob) => {
     if(!ob.id)
     {
       TLaccessories.push({ uom: ob.unit, accessoryCategory: ob.accessory.code, uomValue: ob.uom ? ob.uom : null, count: ob.accessorycount });
@@ -444,7 +451,7 @@ export const getEditTradeDocumentUpdate = (data) => {
 export const getEditRenewTradeDocumentUpdate = (data,datafromflow) => {
   let updateddocuments=[];
   let doc = datafromflow ? datafromflow.owners.documents : [];
-  data.tradeLicenseDetail.applicationDocuments.map((olddoc) => {
+  data?.tradeLicenseDetail?.applicationDocuments?.map((olddoc) => {
     if(olddoc.documentType === "OWNERPHOTO" && olddoc.fileStoreId === datafromflow.owners.documents["OwnerPhotoProof"].fileStoreId ||
     olddoc.documentType === "OWNERSHIPPROOF" && olddoc.fileStoreId == datafromflow.owners.documents["ProofOfOwnership"].fileStoreId ||
     olddoc.documentType === "OWNERIDPROOF" && olddoc.fileStoreId === datafromflow.owners.documents["ProofOfIdentity"].fileStoreId)
@@ -505,7 +512,7 @@ export const convertToUpdateTrade = (data = {}, datafromflow, tenantId) => {
 export const getvalidfromdate = (date, fy) => {
   let temp = parseInt(fy[0].id);
   let object = fy?.[0];
-  fy && fy.map((ob) => {
+  fy && fy?.map((ob) => {
     if (parseInt(ob.id) > temp) {
       object = ob;
       temp = parseInt(ob.id);
@@ -518,7 +525,7 @@ export const getvalidTodate = (date, fy) => {
 
   let temp = parseInt(fy[0].id);
   let object;
-  fy && fy.map((ob) => {
+  fy && fy?.map((ob) => {
     if (parseInt(ob.id) > temp) {
       object = ob;
       temp = parseInt(ob.id);
@@ -544,8 +551,12 @@ export const stringToBoolean = (value) => {
 
 //FinancialYear
 export const convertToEditTrade = (data, fy = []) => {
-  const currrentFYending = fy?.filter(item => item?.code === data?.financialYear)?.[0]?.endingDate;
-  const nextFinancialYearForRenewal = fy?.filter(item => item?.startingDate === currrentFYending)?.[0]?.code;
+ 
+ // const nextFinancialYearForRenewal = fy?.filter(item => item?.startingDate === currrentFYending)?.[0]?.code;
+  let financialYear = data?.financialYear;
+  const financialYearDate = financialYear?.split('-')[1];
+  const finalFinancialYear = `20${Number(financialYearDate)}-${Number(financialYearDate)+1}`
+  const currrentFYending = fy?.filter(item => item?.code === finalFinancialYear);
   let isDirectrenewal = stringToBoolean(sessionStorage.getItem("isDirectRenewal"));
   let isSameAsPropertyOwner = sessionStorage.getItem("isSameAsPropertyOwner"); 
   let formdata = {
@@ -563,9 +574,9 @@ export const convertToEditTrade = (data, fy = []) => {
         applicationDate: data?.applicationDate,
         commencementDate: data?.commencementDate,
         issuedDate: data?.issuedDate,
-        financialYear: nextFinancialYearForRenewal || "2022-23",
-        validFrom: data?.validFrom,
-        validTo: data?.validTo,
+        financialYear: finalFinancialYear || "2022-23",
+        validFrom: currrentFYending[0].startingDate ||data?.validFrom,
+        validTo: currrentFYending[0].endingDate || data?.validTo,
         action: "INITIATE",
         wfDocuments: data?.wfDocuments,
         status: data?.status,
@@ -609,7 +620,7 @@ export const convertToEditTrade = (data, fy = []) => {
 
 //FinancialYear
 export const convertToResubmitTrade = (data) => {
-
+console.log("convertToResubmitTrade",data)
   let formdata = {
     Licenses: [
       {
@@ -729,7 +740,7 @@ export const pdfDownloadLink = (documents = {}, fileStoreId = "", format = "") =
   let differentFormats = downloadLink?.split(",") || [];
   let fileURL = "";
   differentFormats.length > 0 &&
-    differentFormats.map((link) => {
+    differentFormats?.map((link) => {
       if (!link.includes("large") && !link.includes("medium") && !link.includes("small")) {
         fileURL = link;
       }
@@ -801,7 +812,7 @@ export const getUniqueItemsFromArray = (data, identifier) => {
 export const commonTransform = (object, path) => {
   let data = get(object, path);
   let transformedData = {};
-  data.map(a => {
+  data?.map(a => {
     const splitList = a.code.split(".");
     let ipath = "";
     for (let i = 0; i < splitList.length; i += 1) {
@@ -943,10 +954,14 @@ export const convertEpochToDateDMY = (dateEpoch) => {
 };
 
 export const getOwnersForNewApplication = (formdata,t) => {
+ 
+
+const ownersSequences= (formdata?.cpt?.details?.owners?.additionalDetails!==null) ? formdata?.cpt?.details?.owners.sort((a,b)=>a?.additionalDetails?.ownerSequence-b?.additionalDetails?.ownerSequence) : formdata?.cpt?.details?.owners||[];
   let owners = [];
   if(formdata?.ownershipCategory?.code?.includes("SINGLEOWNER") || formdata?.ownershipCategory?.code?.includes("MULTIPLEOWNER"))
-  formdata?.cpt?.details?.owners?.map((ow) => {
+ ownersSequences?.map((ow, index) => {
     owners.push({
+      additionalDetails: {ownerSequence:index, name:ow?.name},
       name: ow?.name,
       designation: "",
       mobileNumber: ow?.mobileNumber,
@@ -985,8 +1000,9 @@ export const getOwnersForNewApplication = (formdata,t) => {
 
 export const getOwnersfromProperty = (formdata) => {
 let owners = [];
+const ownersSequences= formdata?.cpt?.details?.owners?.additionalDetails!==null ? formdata?.cpt?.details?.owners.sort((a,b)=>a?.additionalDetails?.ownerSequence-b?.additionalDetails?.ownerSequence) : formdata?.cpt?.details?.owners||[];
 if((formdata?.ownershipCategory?.code?.includes("SINGLEOWNER") || formdata?.ownershipCategory?.code?.includes("MULTIPLEOWNER")))
-  formdata?.cpt?.details?.owners?.map((ow) => {
+  ownersSequences?.map((ow) => {
     owners.push({
       name: ow?.name,
       fatherOrHusbandName: ow?.fatherOrHusbandName,

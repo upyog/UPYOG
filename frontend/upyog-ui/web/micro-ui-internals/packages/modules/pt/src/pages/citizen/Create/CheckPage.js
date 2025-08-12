@@ -8,7 +8,7 @@ import {
   Row,
   StatusTable,
   SubmitBar
-} from "@egovernments/digit-ui-react-components";
+} from "@upyog/digit-ui-react-components";
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
@@ -32,13 +32,16 @@ const ActionButton = ({ jumpTo }) => {
 const CheckPage = ({ onSubmit, value = {} }) => {
   const { t } = useTranslation();
   const history = useHistory();
-
+  console.log("value",value)
   const {
     address,
     isResdential,
     PropertyType,
+    electricity,
+    uid,
     noOfFloors,
     noOofBasements,
+    additionalDetails,
     units = [{}],
     landarea,
     landArea,
@@ -59,8 +62,9 @@ const CheckPage = ({ onSubmit, value = {} }) => {
     owners,
     isEditProperty,
     isUpdateProperty,
+    propertyStructureDetails,
   } = value;
-  const typeOfApplication = !isEditProperty && !isUpdateProperty ? `new-application` : `edit-application`;
+  const typeOfApplication = !isEditProperty && !isUpdateProperty ? `new-application` : `edit-application`; 
   let flatplotsize;
   if (isPropertyselfoccupied(selfOccupied?.i18nKey)) {
     flatplotsize = parseInt(landarea?.floorarea);
@@ -225,6 +229,12 @@ const CheckPage = ({ onSubmit, value = {} }) => {
                         actionButton={<ActionButton jumpTo={`${`/upyog-ui/citizen/pt/property/${typeOfApplication}/owner-details/`}${index}`} />}
                       />
                       <Row
+                        label={t("PT_FORM3_EMAIL_ID")}
+                        text={`${t(checkForNA(owner?.emailId))}`}
+                        actionButton={<ActionButton jumpTo={`${`/upyog-ui/citizen/pt/property/${typeOfApplication}/owner-details/`}${index}`} />}
+                      />
+
+                      <Row
                         label={t("PT_SPECIAL_OWNER_CATEGORY")}
                         text={`${t(checkForNA(owner?.ownerType?.code))}`}
                         actionButton={
@@ -236,11 +246,7 @@ const CheckPage = ({ onSubmit, value = {} }) => {
                         text={`${t(checkForNA(owner?.permanentAddress))}`}
                         actionButton={<ActionButton jumpTo={`${`/upyog-ui/citizen/pt/property/${typeOfApplication}/owner-address/`}${index}`} />}
                       />
-                      <Row
-                        label={`${t("PT_COMMON_SAME_AS_PROPERTY_ADDRESS")}`}
-                        text={`${t(checkForNA(owner?.isCorrespondenceAddress))}`}
-                        actionButton={<ActionButton jumpTo={`${`/upyog-ui/citizen/pt/property/${typeOfApplication}/owner-address/`}${index}`} />}
-                      />
+                      
                       {owner?.ownerType?.code !== "NONE" ? (
                         <Row
                           label={t("PT_SPECIAL_OWNER_CATEGORY_PROOF_HEADER")}
@@ -276,6 +282,16 @@ const CheckPage = ({ onSubmit, value = {} }) => {
             label={t("PT_ASSESMENT1_PROPERTY_TYPE")}
             text={`${t(checkForNA(PropertyType?.i18nKey))}`}
             actionButton={<ActionButton jumpTo={`/upyog-ui/citizen/pt/property/${typeOfApplication}/property-type`} />}
+          />
+          <Row
+            label={t("PT_ASSESMENT1_ELECTRICITY_NUMBER")}
+            text={`${t(checkForNA(electricity?.electricity))}`}
+            actionButton={<ActionButton jumpTo={`/upyog-ui/citizen/pt/property/${typeOfApplication}/electricity-number`} />}
+          />
+          <Row
+            label={t("PT_ASSESMENT1_ELECTRICITY_UID")}
+            text={`${t(checkForNA(uid?.uid))}`}
+            actionButton={<ActionButton jumpTo={`/upyog-ui/citizen/pt/property/${typeOfApplication}/electricity-uid`} />}
           />
           {PropertyType?.code !== "VACANT" &&<Row
             label={t("PT_ASSESMENT1_PLOT_SIZE")}
@@ -324,7 +340,7 @@ const CheckPage = ({ onSubmit, value = {} }) => {
                     )}
                     <Row
                       label={t("PT_FLOOR_NO")}
-                      text={`${unit?.floorNo}`}
+                      text={unit?.floorNo===0? t("PT_GROUND_FLOOR_OPTION") :( unit?.floorNo<0) ? `${unit?.floorNo} and Ground floor` : `Ground floor +${unit?.floorNo}`}
                       actionButton={<ActionButton jumpTo={`/upyog-ui/citizen/pt/property/${typeOfApplication}/PtUnits`} />}
                     />
                     {unit?.arv && (

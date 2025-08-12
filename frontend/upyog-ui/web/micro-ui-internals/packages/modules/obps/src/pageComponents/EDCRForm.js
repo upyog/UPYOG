@@ -1,4 +1,4 @@
-import { CardLabel, Dropdown, FormStep, Loader, TextInput, Toast, UploadFile } from "@egovernments/digit-ui-react-components";
+import { CardLabel, Dropdown, FormStep, Loader, TextInput, Toast, UploadFile } from "@upyog/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import { useLocation, useHistory } from "react-router-dom";
 import { getPattern, stringReplaceAll, sortDropdownNames  } from "../utils";
@@ -22,6 +22,15 @@ const EDCRForm = ({ t, config, onSelect, userType, formData, ownerIndex = 0, add
 
 
     function setApplicantName(e) {
+        const value=e.target.value;
+        setError(null);
+        if(!/^[a-zA-Z ]+$/.test(value)){
+
+            setError(t("APPLICANT_NAME_INVALID_PATTERN"))
+        }
+        else{
+            setError(null);
+        }
         setName(e.target.value);
     }
 
@@ -92,9 +101,10 @@ const EDCRForm = ({ t, config, onSelect, userType, formData, ownerIndex = 0, add
             onSkip={onSkip}
             isDisabled={!tenantIdData || !name || !file || isSubmitBtnDisable}
             onAdd={onAdd}
+            forcedError={error}
             isMultipleAllow={true}
         >
-            <CardLabel>{`${t("EDCR_SCRUTINY_CITY")} *`}</CardLabel>
+            <CardLabel>{`${t("EDCR_SCRUTINY_CITY")}`}<span className="check-page-link-button"> *</span></CardLabel>
             <Dropdown
                 t={t}
                 isMandatory={false}
@@ -104,7 +114,7 @@ const EDCRForm = ({ t, config, onSelect, userType, formData, ownerIndex = 0, add
                 select={setTypeOfTenantID}
                 uploadMessage={uploadMessage}
             />
-            <CardLabel>{`${t("EDCR_SCRUTINY_NAME_LABEL")} *`}</CardLabel>
+            <CardLabel>{`${t("EDCR_SCRUTINY_NAME_LABEL")}`}<span className="check-page-link-button"> *</span></CardLabel>
             <TextInput
                 isMandatory={false}
                 optionKey="i18nKey"
@@ -115,12 +125,13 @@ const EDCRForm = ({ t, config, onSelect, userType, formData, ownerIndex = 0, add
                 value={name}
                 {...(validation = {
                     isRequired: true,
-                    pattern: "^[a-zA-Z]+(( )+[a-zA-z]+)*$",
+                    //pattern: "^[a-zA-Z]+(( )+[a-zA-z]+)*$",
+                    pattern: "^[a-zA-Z ]+$",
                     type: "text",
                     title: t("TL_NAME_ERROR_MESSAGE"),
                 })}
             />
-            <CardLabel>{`${t("BPA_PLAN_DIAGRAM_LABEL")} *`}</CardLabel>
+            <CardLabel>{`${t("BPA_PLAN_DIAGRAM_LABEL")}`}<span className="check-page-link-button"> *</span></CardLabel>
             <UploadFile
                 id={"edcr-doc"}
                 extraStyleName={"propertyCreate"}

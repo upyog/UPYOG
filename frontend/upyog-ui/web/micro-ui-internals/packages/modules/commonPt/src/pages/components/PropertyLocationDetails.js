@@ -1,4 +1,4 @@
-import { CardLabel, CardLabelError, Dropdown, LabelFieldPair, Localities, TextInput } from "@egovernments/digit-ui-react-components";
+import { CardLabel, CardLabelError, Dropdown, LabelFieldPair, Localities, TextInput } from "@upyog/digit-ui-react-components";
 import _ from "lodash";
 import React, { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
@@ -6,6 +6,16 @@ import { Controller, useForm } from "react-hook-form";
 const PropertyLocationDetails = ({ t, config, onSelect, userType, formData, formState, ownerIndex, setError, clearErrors }) => {
   let validation = {};
   let allCities = Digit.Hooks.pt.useTenants() ? Digit.Hooks.pt.useTenants() : Digit.Hooks.tl.useTenants();
+  if(window.location.href.includes("obps"))
+  {
+    allCities = Digit.SessionStorage.get("OBPS_TENANTS")
+
+  }
+  if(window.location.href.includes("fsm"))
+  {
+    allCities = Digit.SessionStorage.get("FSM_TENANTS")
+    console.log("allc", allCities)
+  }
   // if called from tl module get tenants from tl usetenants
   const userInfo = Digit.UserService.getUser()?.info;
   userType = userInfo?.type == "EMPLOYEE" ? "employee" : "citizen";
@@ -69,7 +79,7 @@ const PropertyLocationDetails = ({ t, config, onSelect, userType, formData, form
   return (
     <div>
       <LabelFieldPair>
-        <CardLabel>{`${t('PT_PROP_CITY')}*`}</CardLabel>
+        <CardLabel>{`${t('PT_PROP_CITY')}`}<span className="check-page-link-button"> *</span></CardLabel>
         <Controller
           name=""
           defaultValue={ locationDetails?.cityCode }
@@ -96,7 +106,7 @@ const PropertyLocationDetails = ({ t, config, onSelect, userType, formData, form
       <CardLabelError style={errorStyle}>{touched?.cityCode ? errors?.cityCode?.message : ""}</CardLabelError>
 
       <LabelFieldPair>
-        <CardLabel>{`${t("PT_PROP_LOCALITY")}*`}</CardLabel>
+        <CardLabel>{`${t("PT_PROP_LOCALITY")}`}<span className="check-page-link-button"> *</span></CardLabel>
         <div className="form-field">
           <Controller
             name="locality"
@@ -124,7 +134,7 @@ const PropertyLocationDetails = ({ t, config, onSelect, userType, formData, form
       <CardLabelError style={errorStyle}>{touched?.locality ? errors?.locality?.message : ""}</CardLabelError>
 
       <LabelFieldPair>
-        <CardLabel>{`${t("PT_HOUSE_DOOR_NO")}*`}</CardLabel>
+        <CardLabel>{`${t("PT_HOUSE_DOOR_NO")}`}<span className="check-page-link-button"> *</span></CardLabel>
         <div className="form-field">
           <Controller
             name="houseDoorNo"
@@ -155,7 +165,7 @@ const PropertyLocationDetails = ({ t, config, onSelect, userType, formData, form
       <CardLabelError style={errorStyle}>{touched?.houseDoorNo ? errors?.houseDoorNo?.message : ""}</CardLabelError>
 
       <LabelFieldPair>
-        <CardLabel>{`${t("PT_PROPERTY_ADDRESS_STREET_NAME")}*`}</CardLabel>
+        <CardLabel>{`${t("PT_PROPERTY_ADDRESS_STREET_NAME")}`}<span className="check-page-link-button"> *</span></CardLabel>
         <div className="form-field">
           <Controller
             name="buildingColonyName"

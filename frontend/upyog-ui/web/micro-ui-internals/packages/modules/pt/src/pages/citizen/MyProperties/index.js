@@ -1,4 +1,4 @@
-import { Card, CardSubHeader, CardText, Header, Loader, SubmitBar } from "@egovernments/digit-ui-react-components";
+import { Card, CardSubHeader, CardText, Header, Loader, SubmitBar } from "@upyog/digit-ui-react-components";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
@@ -20,8 +20,8 @@ export const MyProperties = () => {
     t1 = 4;
   }
   let filter1 = !isNaN(parseInt(filter))
-    ? { limit: "50", sortOrder: "ASC", sortBy: "createdTime", offset: off, tenantId }
-    : { limit: "4", sortOrder: "ASC", sortBy: "createdTime", offset: "0",mobileNumber:user?.mobileNumber, tenantId };
+    ? { limit: "50", sortOrder: "ASC", sortBy: "createdTime", offset: off, tenantId ,status:"ACTIVE,INACTIVE"}
+    : { limit: "4", sortOrder: "ASC", sortBy: "createdTime", offset: "0",mobileNumber:user?.mobileNumber, tenantId,status:"ACTIVE,INACTIVE" };
   const { isLoading, isError, error, data } = Digit.Hooks.pt.usePropertySearchNew({ filters: filter1,searchedFrom:"myPropertyCitizen" }, { filters: filter1 });
 
   if (isLoading) {

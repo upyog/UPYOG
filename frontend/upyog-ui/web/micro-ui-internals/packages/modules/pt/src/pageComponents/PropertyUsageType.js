@@ -7,7 +7,7 @@ import {
   CardLabel,
   Dropdown,
   CardLabelError,
-} from "@egovernments/digit-ui-react-components";
+} from "@upyog/digit-ui-react-components";
 import { cardBodyStyle } from "../utils";
 import { useLocation } from "react-router-dom";
 
@@ -101,7 +101,7 @@ const PropertyUsageType = ({ t, config, onSelect, userType, formData, formState,
     return (
       <React.Fragment>
         <LabelFieldPair>
-          <CardLabel className="card-label-smaller">{t("PT_ASSESMENT_INFO_USAGE_TYPE") + " *"}</CardLabel>
+          <CardLabel className="card-label-smaller">{t("PT_ASSESMENT_INFO_USAGE_TYPE")}<span className="check-page-link-button"> *</span></CardLabel>
           <Dropdown
             className="form-field"
             selected={usageCategoryMajor}

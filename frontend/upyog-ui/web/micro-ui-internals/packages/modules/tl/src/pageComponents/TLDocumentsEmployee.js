@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { CardLabel, LabelFieldPair, Dropdown, UploadFile, Toast, Loader } from "@egovernments/digit-ui-react-components";
+import { CardLabel, LabelFieldPair, Dropdown, UploadFile, Toast, Loader } from "@upyog/digit-ui-react-components";
 import { useLocation } from "react-router-dom";
 
 const TLDocumentsEmployee = ({ t, config, onSelect, userType, formData, setError: setFormError, clearErrors: clearFormErrors, formState }) => {
@@ -26,7 +26,7 @@ const TLDocumentsEmployee = ({ t, config, onSelect, userType, formData, setError
 
   let finalTlDocumentsList = [];
   if (tlDocumentsList && tlDocumentsList.length > 0) {
-    tlDocumentsList.map(data => {
+    tlDocumentsList?.map(data => {
       if ((!ckeckingLocation || previousLicenseDetails?.action == "SENDBACKTOCITIZEN") && data?.applicationType?.includes("NEW")) {
         finalTlDocumentsList.push(data);
       } else if (ckeckingLocation && previousLicenseDetails?.action != "SENDBACKTOCITIZEN" && data?.applicationType?.includes("RENEWAL")) {
@@ -217,9 +217,15 @@ function SelectDocument({
     <div style={{ marginBottom: "24px" }}>
       <LabelFieldPair>
         <CardLabel className="card-label-smaller">
-          {doc?.documentType != "OLDLICENCENO" ?
-            `${t(`TL_NEW_${doc?.documentType.replaceAll(".", "_")}`)} * ` :
-            `${t(`TL_NEW_${doc?.documentType.replaceAll(".", "_")}`)} `}
+          {doc?.documentType != "OLDLICENCENO" ? (
+            <React.Fragment>
+                {t(`TL_NEW_${doc?.documentType.replaceAll(".", "_")}`)}<span className="check-page-link-button"> *</span>
+            </React.Fragment>
+          ) : (
+            <React.Fragment>
+            {t(`TL_NEW_${doc?.documentType.replaceAll(".", "_")}`)}
+            </React.Fragment>
+          )}
         </CardLabel>
         <div className="field">
           <UploadFile
@@ -234,6 +240,7 @@ function SelectDocument({
             // disabled={enabledActions?.[action].disableUpload || !selectedDocument?.code}
             buttonType="button"
           />
+          <div style={{marginTop:"10px", fontSize:'12px'}}>{t("CS_FILE_SIZE_RESTRICTIONS_TL")}</div>
         </div>
       </LabelFieldPair>
     </div>

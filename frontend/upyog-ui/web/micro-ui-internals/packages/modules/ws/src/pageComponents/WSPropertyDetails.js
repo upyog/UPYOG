@@ -1,4 +1,4 @@
-import { CardLabel, LabelFieldPair, LinkButton, Loader, TextInput } from "@egovernments/digit-ui-react-components";
+import { CardLabel, LabelFieldPair, LinkButton, Loader, TextInput } from "@upyog/digit-ui-react-components";
 import React from "react";
 import { Link } from "react-router-dom";
 
@@ -51,11 +51,11 @@ const WSPropertyDetails = ({ t, config, onSelect, userType, formData, setError, 
           </button>
         </div>
       </LabelFieldPair>
-      <Link to={`/upyog-ui/employee/commonpt/search?redirectToUrl=${redirectBackUrl}`}>
+      <Link to={`/upyog-ui/employee/pt/search`}>
         <LinkButton label={t("CPT_SEARCH_PROPERTY")} style={{ color: "#a82227", display: "inline-block" }} />
       </Link>
       &nbsp; | &nbsp;
-      <Link to={`/upyog-ui/employee/commonpt/new-application?redirectToUrl=${redirectBackUrl}`}>
+      <Link to={`/upyog-ui/employee/pt/new-application`}>
         <LinkButton label={t("CPT_CREATE_PROPERTY")} style={{ color: "#a82227", display: "inline-block" }} />
       </Link>
       {propertyDetails && propertyDetails?.Properties.length && (

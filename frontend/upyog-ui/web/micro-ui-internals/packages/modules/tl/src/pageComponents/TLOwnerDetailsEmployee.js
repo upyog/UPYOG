@@ -9,7 +9,7 @@ import {
   MobileNumber,
   CardSectionHeader,
   TextInput,
-} from "@egovernments/digit-ui-react-components";
+} from "@upyog/digit-ui-react-components";
 import _ from "lodash";
 import React, { useEffect, useMemo, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
@@ -133,13 +133,13 @@ const OwnerForm = (_props) => {
     if (!(_.isEqual(formValue, part))) {
       setPart({...formValue});
 
-      Object.keys(formValue).map((data) => {
+      Object.keys(formValue)?.map((data) => {
         if (data != "key" && formValue[data] != undefined && formValue[data] != "" && formValue[data] != null && !isErrors) {
           setIsErrors(true);
         }
       });
       setOwners((prev) =>
-        prev.map((o) => {
+        prev?.map((o) => {
           return o.key && o.key === owner.key ? { ...o, ...formValue } : { ...o };
         })
       );
@@ -191,13 +191,13 @@ const OwnerForm = (_props) => {
             {typeOfOwner === "INSTITUTIONAL" && (
               <React.Fragment>
                 <LabelFieldPair>
-                  <CardLabel>{`${t("TL_INSTITUTION_NAME_LABEL")}*`}</CardLabel>
+                  <CardLabel>{`${t("TL_INSTITUTION_NAME_LABEL")}`}<span className="check-page-link-button"> *</span></CardLabel>
                   <div className="field">
                     <Controller
                       control={control}
                       name="instituionName"
                       defaultValue={owner?.instituionName}
-                      rules={{ required: t("REQUIRED_FIELD"), validate: { pattern: (val) => (/^\w+( +\w+)*$/.test(val) ? true : t("TL_NAME_ERROR_MESSAGE")) } }}
+                      rules={{ required: t("REQUIRED_FIELD"), validate: { pattern: (val) => (/^[a-zA-Z_@./()#&+-\s]*$/.test(val) ? true : t("TL_NAME_ERROR_MESSAGE")) } }}
                       render={(props)=>(
                         <TextInput
                           t={t}
@@ -220,7 +220,7 @@ const OwnerForm = (_props) => {
                 </LabelFieldPair>
                 <CardLabelError style={errorStyle}> {localFormState.touched.instituionName ? errors?.instituionName?.message : ""}</CardLabelError>
                 <LabelFieldPair>
-                  <CardLabel>{`${t("TL_INSTITUTION_TYPE_LABEL")}*`}</CardLabel>
+                  <CardLabel>{`${t("TL_INSTITUTION_TYPE_LABEL")}`}<span className="check-page-link-button"> *</span></CardLabel>
                   <div className="field">
                     <Controller
                       control={control}
@@ -250,13 +250,13 @@ const OwnerForm = (_props) => {
                 <CardLabelError style={errorStyle}>{localFormState.touched.subOwnerShipCategory ? errors?.subOwnerShipCategory?.message : ""}</CardLabelError>
                 <CardSectionHeader>{t("TL_AUTHORIZED_PERSON_DETAILS")}</CardSectionHeader>
                 <LabelFieldPair>
-                  <CardLabel>{`${t("TL_NEW_OWNER_DETAILS_NAME_LABEL")}*`}</CardLabel>
+                  <CardLabel>{`${t("TL_NEW_OWNER_DETAILS_NAME_LABEL")}`}<span className="check-page-link-button"> *</span></CardLabel>
                   <div className="field">
                     <Controller
                       control={control}
                       defaultValue={owner?.name}
                       name={"name"}
-                      rules={{ required: t("REQUIRED_FIELD"), validate: { pattern: (val) => (/^[a-zA-Z-.`' ]*$/.test(val) ? true : t("TL_NAME_ERROR_MESSAGE")) } }}
+                      rules={{ required: t("REQUIRED_FIELD"), validate: { pattern: (val) => (/^[a-zA-Z ]+$/.test(val) ? true : t("TL_NAME_ERROR_MESSAGE")) } }}
                       render={(props)=>(
                         <TextInput
                           t={t}
@@ -286,7 +286,7 @@ const OwnerForm = (_props) => {
                       control={control}
                       name={"designation"}
                       defaultValue={owner?.designation}
-                      rules={{ /* required: t("REQUIRED_FIELD"), */ validate: { pattern: (val) => (/^[a-zA-Z-.`' ]*$/.test(val) ? true : t("TL_NAME_ERROR_MESSAGE")) } }}
+                      rules={{ /* required: t("REQUIRED_FIELD"), */ validate: { pattern: (val) => (/^[a-zA-Z ]*$/.test(val) ? true : t("TL_NAME_ERROR_MESSAGE")) } }}
                       render={(props)=>(
                         <TextInput
                           t={t}
@@ -310,7 +310,7 @@ const OwnerForm = (_props) => {
                 </LabelFieldPair>
                 <CardLabelError style={errorStyle}>{localFormState.touched.designation ? errors?.designation?.message : ""}</CardLabelError>
                 <LabelFieldPair>
-                  <CardLabel>{`${t("TL_MOBILE_NUMBER_LABEL")}*`}</CardLabel>
+                  <CardLabel>{`${t("TL_MOBILE_NUMBER_LABEL")}`}<span className="check-page-link-button"> *</span></CardLabel>
                   <div className="field">
                     <Controller
                      control={control}
@@ -346,7 +346,7 @@ const OwnerForm = (_props) => {
                      control={control}
                      name={"altContactNumber"}
                      defaultValue={owner?.altContactNumber}
-                     rules={{ /* required: t("REQUIRED_FIELD"), */ validate: { pattern: (val) => (/^$|^[0][1-9][0-9]{9}$|^[1-9][0-9]{9}$/.test(val) ? false : t("CORE_COMMON_APPLICANT_MOBILE_NUMBER_INVALID")) } }}
+                     //rules={{ /* required: t("REQUIRED_FIELD"), */ validate: { pattern: (val) => (/^$|^[0][1-9][0-9]{9}$|^[1-9][0-9]{9}$/.test(val) ? false : t("CORE_COMMON_APPLICANT_MOBILE_NUMBER_INVALID")) } }}
                      render={(props)=>(
                       <MobileNumber
                         type={"text"}
@@ -404,25 +404,27 @@ const OwnerForm = (_props) => {
             {typeOfOwner !== "INSTITUTIONAL" && (
               <React.Fragment>
                 <LabelFieldPair>
-                  <CardLabel className="card-label-smaller">{`${ t("TL_OWNER_S_NAME_LABEL")} * `}</CardLabel>
+                  <CardLabel className="card-label-smaller">{`${ t("TL_OWNER_S_NAME_LABEL")}`}<span className="check-page-link-button"> *</span></CardLabel>
                   <div className="field">
                     <Controller
                       control={control}
                       name={"name"}
                       defaultValue={owner?.name}
-                      rules={{ required: t("REQUIRED_FIELD"), validate: { pattern: (val) => (/^\w+( +\w+)*$/.test(val) ? true : t("INVALID_NAME")) } }}
+                      rules={{ required: t("REQUIRED_FIELD"), validate: { pattern: (val) => (/^[A-Za-z]+( [A-Za-z]+)*$/.test(val) ? true : t("INVALID_NAME")) } }}
                       render={(props) => (
                         <TextInput
                           value={props.value}
                           autoFocus={focusIndex.index === owner?.key && focusIndex.type === "name"}
                           errorStyle={localFormState.touched.name && errors?.name?.message ? true : false}
                           onChange={(e) => {
-                            if (e.target.value != owner?.name && isRenewal)
+                          const ownerNameValidation = e.target.value.replace(/[^A-Za-z ]/g, "");
+                          if (ownerNameValidation !== owner?.name && isRenewal) {
                               setPreviousLicenseDetails({ ...previousLicenseDetails, checkForRenewal: true });
-                            props.onChange(e.target.value);
+                          }
+                            props.onChange(ownerNameValidation);
                             // props.onChange(e);
                             setFocusIndex({ index: owner.key, type: "name" });
-                          }}
+                        }}
                           onBlur={(e) => {
                             setFocusIndex({ index: -1 });
                             props.onBlur(e);
@@ -439,7 +441,7 @@ const OwnerForm = (_props) => {
                   <CardLabel>{`${t("TL_NEW_OWNER_DETAILS_NAME_LABEL")}`}</CardLabel>
                 </LabelFieldPair> */}
                 <LabelFieldPair>
-                  <CardLabel className="card-label-smaller">{`${t("TL_OWNER_S_MOBILE_NUM_LABEL")} * `}</CardLabel>
+                  <CardLabel className="card-label-smaller">{`${t("TL_OWNER_S_MOBILE_NUM_LABEL")}`}<span className="check-page-link-button"> *</span></CardLabel>
                   <div className="field">
                     <Controller
                       control={control}
@@ -467,22 +469,24 @@ const OwnerForm = (_props) => {
                 </LabelFieldPair>
                 <CardLabelError style={errorStyle}>{localFormState.touched.mobileNumber ? errors?.mobileNumber?.message : ""}</CardLabelError>
                 <LabelFieldPair>
-                  <CardLabel className="card-label-smaller">{`${t("TL_GUARDIAN_S_NAME_LABEL")} * `}</CardLabel>
+                  <CardLabel className="card-label-smaller">{`${t("TL_GUARDIAN_S_NAME_LABEL")}`}<span className="check-page-link-button"> *</span></CardLabel>
                   <div className="field">
                     <Controller
                       control={control}
                       name={"fatherOrHusbandName"}
                       defaultValue={owner?.fatherOrHusbandName}
-                      rules={{ required: "NAME_REQUIRED", validate: { pattern: (val) => (/^\w+( +\w+)*$/.test(val) ? true : t("INVALID_NAME")) } }}
+                      rules={{ required: "NAME_REQUIRED", validate: { pattern: (val) => (/^[A-Za-z]+( [A-Za-z]+)*$/.test(val) ? true : t("INVALID_NAME")) } }}
                       render={(props) => (
                         <TextInput
                           value={props.value}
                           autoFocus={focusIndex.index === owner?.key && focusIndex.type === "fatherOrHusbandName"}
                           errorStyle={localFormState.touched.fatherOrHusbandName && errors?.fatherOrHusbandName?.message ? true : false}
                           onChange={(e) => {
-                            if (e.target.value != owner?.fatherOrHusbandName && isRenewal)
+                          const guardianNameValidation = e.target.value.replace(/[^A-Za-z ]/g, "");
+                          if (guardianNameValidation !== owner?.fatherOrHusbandName && isRenewal) {
                               setPreviousLicenseDetails({ ...previousLicenseDetails, checkForRenewal: true });
-                            props.onChange(e.target.value);
+                          }
+                            props.onChange(guardianNameValidation);
                             // props.onChange(e);
                             setFocusIndex({ index: owner.key, type: "fatherOrHusbandName" });
                           }}
@@ -497,7 +501,7 @@ const OwnerForm = (_props) => {
                   {localFormState.touched.fatherOrHusbandName ? errors?.fatherOrHusbandName?.message : ""}{" "}
                 </CardLabelError>
                 <LabelFieldPair>
-                  <CardLabel className="card-label-smaller">{`${t("TL_RELATIONSHIP_WITH_GUARDIAN_LABEL")} * `}</CardLabel>
+                  <CardLabel className="card-label-smaller">{`${t("TL_RELATIONSHIP_WITH_GUARDIAN_LABEL")}`}<span className="check-page-link-button"> *</span></CardLabel>
                   <Controller
                     control={control}
                     name={"relationship"}
@@ -527,7 +531,7 @@ const OwnerForm = (_props) => {
                 </LabelFieldPair>
                 <CardLabelError style={errorStyle}>{localFormState.touched.relationship ? errors?.relationship?.message : ""}</CardLabelError>
                 <LabelFieldPair>
-                  <CardLabel className="card-label-smaller">{`${t("TL_NEW_OWNER_DETAILS_GENDER_LABEL")} * `}</CardLabel>
+                  <CardLabel className="card-label-smaller">{`${t("TL_NEW_OWNER_DETAILS_GENDER_LABEL")}`}<span className="check-page-link-button"> *</span></CardLabel>
                   <Controller
                     control={control}
                     name={"gender"}
@@ -559,7 +563,11 @@ const OwnerForm = (_props) => {
                       control={control}
                       name={"emailId"}
                       defaultValue={owner?.emailId}
-                      // rules={{ validate: (e) => ((e && getPattern("Email").test(e)) || !e ? true : t("INVALID_EMAIL")) }}
+                      rules={{ validate: (e) => {
+                        if(!e) return true;
+                        /^[a-zA-Z0-9._%+-]+@[a-z.-]+\.(com|org|in)$/.test(e)|| t("CORE_INVALID_EMAIL_ID_PATTERN")
+                      }
+                      }}
                       render={(props) => (
                         <TextInput
                           value={props.value}
@@ -692,16 +700,27 @@ const TLOwnerDetailsEmployee = ({ config, onSelect, userType, formData, setError
       setOwners([...JSON.parse(sessionStorage.getItem("ownersFromProperty"))]);
     }
   },[formData, formData?.cpt?.details?.propertyId])
-
   useEffect(() => {
-    if (formData?.ownershipCategory?.code == "INDIVIDUAL.MULTIPLEOWNERS" && owners.length > 1) clearErrors("mulipleOwnerError");
-    if (formData?.ownershipCategory?.code == "INDIVIDUAL.MULTIPLEOWNERS" && owners.length == 1)
-      setError("mulipleOwnerError", { type: "owner_missing", message: `TL_ERROR_MULTIPLE_OWNER` });
-    const data = owners.map((e) => {
+    if (formData?.ownershipCategory?.code === "INDIVIDUAL.MULTIPLEOWNERS") {
+      if (owners.length > 1) {
+        // Multiple owners, clear the error if it exists
+        clearErrors("mulipleOwnerError");
+      } else if (owners.length === 1) {
+        // Only one owner, set the error
+        setError("mulipleOwnerError", { type: "owner_missing", message: `TL_ERROR_MULTIPLE_OWNER` });
+      }
+    } else {
+      // Not a multiple owner case, clear any errors
+      clearErrors("mulipleOwnerError");
+    }
+  
+    // Map the owners data and trigger onSelect
+    const data = owners?.map((e) => {
       return e;
     });
     onSelect(config?.key, data);
-  }, [owners]);
+  }, [owners, clearErrors, setError, onSelect]);
+  
 
   useEffect(() => {
     onSelect("tradedetils1", previousLicenseDetails);
@@ -710,8 +729,12 @@ const TLOwnerDetailsEmployee = ({ config, onSelect, userType, formData, setError
   useEffect(() => {
     if (window.location.href.includes("tl/new-application")) {
       setOwners([createOwnerDetails()]);
-      if (formData?.ownershipCategory?.code == "INDIVIDUAL.MULTIPLEOWNERS")
+      console.log("ownersowners",owners)
+      if (formData?.ownershipCategory?.code == "INDIVIDUAL.MULTIPLEOWNERS" && owners.length < 2)
+      {
         setError("mulipleOwnerError", { type: "owner_missing", message: `TL_ERROR_MULTIPLE_OWNER` });
+      }
+        
     }
   }, [formData?.ownershipCategory?.code]);
 
@@ -721,13 +744,13 @@ const TLOwnerDetailsEmployee = ({ config, onSelect, userType, formData, setError
   useEffect(() => {
     if (formData?.tradeUnits?.length > 0 && !isRenewal ) {
       let flag = true;
-      owners.map((data) => {
-        Object.keys(data).map((dta) => {
+      owners?.map((data) => {
+        Object.keys(data)?.map((dta) => {
           if (dta != "key" && data[dta]) flag = false;
         });
       });
-      formData?.tradeUnits.map((data) => {
-        Object.keys(data).map((dta) => {
+      formData?.tradeUnits?.map((data) => {
+        Object.keys(data)?.map((dta) => {
           if (dta != "key" && data[dta] != undefined && data[data] != "" && data[data] != null) {
           } else {
             if (flag) setOwners([createOwnerDetails()]);
@@ -766,7 +789,7 @@ const TLOwnerDetailsEmployee = ({ config, onSelect, userType, formData, setError
 
   return (
     <React.Fragment>
-      {owners.map((owner, index) => (
+      {owners?.map((owner, index) => (
         <OwnerForm key={owner.key} index={index} owner={owner} {...commonProps} />
       ))}
       {formData?.ownershipCategory?.code === "INDIVIDUAL.MULTIPLEOWNERS" ? (

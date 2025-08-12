@@ -1,4 +1,4 @@
-import { Card, CardSubHeader, Header, LinkButton, Loader, Row, StatusTable, MultiLink, PopUp, Toast, SubmitBar } from "@egovernments/digit-ui-react-components";
+import { Card, CardSubHeader, Header, LinkButton, Loader, Row, StatusTable, MultiLink, PopUp, Toast, SubmitBar } from "@upyog/digit-ui-react-components";
 import React, { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory, useParams } from "react-router-dom";
@@ -7,7 +7,7 @@ import PropertyDocument from "../../pageComponents/PropertyDocument";
 import PTWFApplicationTimeline from "../../pageComponents/PTWFApplicationTimeline";
 import { getCityLocale, getPropertyTypeLocale, propertyCardBodyStyle, getMohallaLocale, pdfDownloadLink } from "../../utils";
 import PTCitizenFeedbackPopUp from "../../pageComponents/PTCitizenFeedbackPopUp";
-//import PTCitizenFeedback from "@egovernments/digit-ui-module-core/src/components/PTCitizenFeedback";
+//import PTCitizenFeedback from "@upyog/digit-ui-module-core/src/components/PTCitizenFeedback";
 
 import get from "lodash/get";
 import { size } from "lodash";
@@ -20,6 +20,7 @@ const PTApplicationDetails = () => {
   const [showOptions, setShowOptions] = useState(false);
   const [popup, setpopup] = useState(false);
   const [showToast, setShowToast] = useState(null);
+  const state = Digit.ULBService.getStateId();
   // const tenantId = Digit.ULBService.getCurrentTenantId();
   const { data: storeData } = Digit.Hooks.useStore.getInitData();
   const { tenants } = storeData || {};
@@ -29,7 +30,7 @@ const PTApplicationDetails = () => {
   );
   const [billAmount, setBillAmount] = useState(null);
   const [billStatus, setBillStatus] = useState(null);
-
+  const [viewTimeline, setViewTimeline]=useState(false);
   let serviceSearchArgs = {
     tenantId : tenantId,
     code: [`PT_${data?.Properties?.[0]?.creationReason}`], 
@@ -52,7 +53,7 @@ const PTApplicationDetails = () => {
   sessionStorage.setItem("pt-property", JSON.stringify(application));
 
   useMemo(() => {
-    if(data?.Properties?.[0]?.status === "ACTIVE" && popup == false && servicedata?.Service?.length == 0)
+    if((data?.Properties?.[0]?.status === "ACTIVE" || data?.Properties?.[0]?.status === "INACTIVE") && popup == false && servicedata?.Service?.length == 0)
       setpopup(true);
   },[data,servicedata])
 
@@ -206,11 +207,24 @@ const PTApplicationDetails = () => {
 
   async function getRecieptSearch({ tenantId, payments, ...params }) {
     let response = { filestoreIds: [payments?.fileStoreId] };
-    response = await Digit.PaymentService.generatePdf(tenantId, { Payments: [{ ...payments }] }, "consolidatedreceipt");
-    const fileStore = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: response.filestoreIds[0] });
-    window.open(fileStore[response?.filestoreIds[0]], "_blank");
+    if(response!==null){
+      const fileStore = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: response.filestoreIds[0] });
+      window.open(fileStore[response?.filestoreIds[0]], "_blank");
+    }
+    else{
+      response = await Digit.PaymentService.generatePdf(tenantId, { Payments: [{ ...payments }] }, "property-receipt");
+      const fileStore = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: response.filestoreIds[0] });
+      window.open(fileStore[response?.filestoreIds[0]], "_blank");
+    }   
   }
-
+  
+  const handleViewTimeline=()=>{ 
+    const timelineSection=document.getElementById('timeline');
+      if(timelineSection){
+        timelineSection.scrollIntoView({behavior: 'smooth'});
+      } 
+      setViewTimeline(true);   
+  };
   const handleDownload = async (document, tenantid) => {
     let tenantId = tenantid ? tenantid : tenantId;
     const res = await Digit.UploadServices.Filefetch([document?.fileStoreId], tenantId);
@@ -223,7 +237,7 @@ const PTApplicationDetails = () => {
     const fileStore = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: response.filestoreIds[0] });
     window.open(fileStore[response?.filestoreIds[0]], "_blank");
   };
-
+  state
   let dowloadOptions = [];
 
   dowloadOptions.push({
@@ -233,19 +247,22 @@ const PTApplicationDetails = () => {
   if (reciept_data && reciept_data?.Payments.length > 0 && recieptDataLoading == false)
     dowloadOptions.push({
       label: t("MT_FEE_RECIEPT"),
-      onClick: () => getRecieptSearch({ tenantId: reciept_data?.Payments[0]?.tenantId, payments: reciept_data?.Payments[0] }),
+      onClick: () => getRecieptSearch({ tenantId: state, payments: reciept_data?.Payments[0] }),
     });
   if (data?.Properties?.[0]?.creationReason === "MUTATION" && data?.Properties?.[0]?.status === "ACTIVE")
     dowloadOptions.push({
       label: t("MT_CERTIFICATE"),
       onClick: () => printCertificate(),
     });
-
+    
+    const reversedOwners= Array.isArray(data?.Properties?.[0]?.owners) ? data?.Properties?.[0]?.owners.slice().reverse():[];
   return (
     <React.Fragment>
       <div>
         <div className="cardHeaderWithOptions" style={{ marginRight: "auto", maxWidth: "960px" }}>
           <Header styles={{ fontSize: "32px" }}>{t("PT_MUTATION_APPLICATION_DETAILS")}</Header>
+          <div style={{zIndex: "10",display:"flex",flexDirection:"row-reverse",alignItems:"center",marginTop:"-25px"}}>
+       
           {dowloadOptions && dowloadOptions.length > 0 && (
             <MultiLink
               className="multilinkWrapper"
@@ -254,6 +271,9 @@ const PTApplicationDetails = () => {
               options={dowloadOptions}
             />
           )}
+          <LinkButton label={t("VIEW_TIMELINE")} style={{ color:"#A52A2A"}} onClick={handleViewTimeline}></LinkButton>
+          </div>
+          
         </div>
         <Card>
           <StatusTable>
@@ -302,7 +322,7 @@ const PTApplicationDetails = () => {
               <CardSubHeader style={{ fontSize: "24px" }}>{t("PT_MUTATION_TRANSFEROR_DETAILS")}</CardSubHeader>
               <div>
                 {Array.isArray(transferorOwners) &&
-                  transferorOwners.map((owner, index) => (
+                   transferorOwners.sort((item,item2)=>{return item?.additionalDetails?.ownerSequence - item2?.additionalDetails?.ownerSequence}).map((owner, index) => (
                     <div key={index}>
                       <CardSubHeader>
                         {transferorOwners.length != 1 && (
@@ -319,7 +339,7 @@ const PTApplicationDetails = () => {
                         <Row
                           className="border-none"
                           label={t("PT_MUTATION_TRANSFEROR_SPECIAL_CATEGORY")}
-                          text={owner?.ownerType.toLowerCase() || t("CS_NA")}
+                          text={owner?.ownerType || t("CS_NA")}
                         />
                         <Row className="border-none" label={t("PT_OWNERSHIP_INFO_CORR_ADDR")} text={owner?.correspondenceAddress || t("CS_NA")} />
                       </StatusTable>
@@ -331,7 +351,7 @@ const PTApplicationDetails = () => {
               {isInstitution ? (
                 <div>
                   {Array.isArray(transfereeOwners) &&
-                    transfereeOwners.map((owner, index) => (
+                   transfereeOwners.sort((item,item2)=>{return item.additionalDetails.ownerSequence - item2.additionalDetails.ownerSequence}).map((owner, index) => (
                       <div key={index}>
                         <CardSubHeader>
                           {transfereeOwners.length != 1 && (
@@ -364,7 +384,7 @@ const PTApplicationDetails = () => {
               ) : (
                 <div>
                   {Array.isArray(transfereeOwners) &&
-                    transfereeOwners.map((owner, index) => (
+                    transfereeOwners.sort((item,item2)=>{return item?.additionalDetails?.ownerSequence - item2?.additionalDetails?.ownerSequence}).map((owner, index) => (
                       <div key={index}>
                         <CardSubHeader>
                           {transfereeOwners.length != 1 && (
@@ -387,7 +407,7 @@ const PTApplicationDetails = () => {
                           <Row
                             className="border-none"
                             label={t("PT_MUTATION_TRANSFEROR_SPECIAL_CATEGORY")}
-                            text={(owner?.ownerType).toLowerCase() || t("CS_NA")}
+                            text={(owner?.ownerType) || t("CS_NA")}
                           />
                           <Row className="border-none" label={t("PT_OWNERSHIP_INFO_CORR_ADDR")} text={owner?.correspondenceAddress || t("CS_NA")} />
                         </StatusTable>
@@ -450,6 +470,26 @@ const PTApplicationDetails = () => {
                   text={(property?.landArea && `${t(`${property?.landArea} sq.ft`)}`) || t("CS_NA")}
                 />
                 <Row className="border-none" label={t("PT_ASSESMENT_INFO_NO_OF_FLOOR")} text={`${t(property?.noOfFloors)}` || t("CS_NA")} />
+                <Row
+                  className="border-none"
+                  label={t("PT_ASSESMENT1_ELECTRICITY_NUMBER")}
+                  text={(`${t(`${property.additionalDetails?.electricity}`)}`) || t("CS_NA")}
+                />
+                   <Row
+                  className="border-none"
+                  label={t("PT_ASSESMENT1_ELECTRICITY_UID")}
+                  text={(`${t(`${property.additionalDetails?.uid}`)}`) || t("CS_NA")}
+                />
+                  <Row
+                    className="border-none"
+                    label={t("PT_STRUCTURE_TYPE_LABEL")}
+                    text={`${`${property?.additionalDetails?.structureType?.i18nKey}` || t("CS_NA")}`}
+                  />
+                  <Row
+                    className="border-none"
+                    label={t("PT_AGE_OF_PROPERTY_LABEL")}
+                    text={`${`${property?.additionalDetails?.ageOfProperty?.code}` || t("CS_NA")}`}
+                  />
               </StatusTable>
               <div>
                 {Array.isArray(units) &&
@@ -485,6 +525,7 @@ const PTApplicationDetails = () => {
                               label={t("PT_BUILTUP_AREA_LABEL")}
                               text={`${`${unit?.constructionDetail?.builtUpArea} sq.ft` || t("CS_NA")}`}
                             />
+                          
                             {unit.occupancyType == "RENTED" && (
                               <Row
                                 className="border-none"
@@ -499,10 +540,10 @@ const PTApplicationDetails = () => {
                   ))}
               </div>
               <CardSubHeader style={{ fontSize: "24px" }}>{t("PT_COMMON_PROPERTY_OWNERSHIP_DETAILS_HEADER")}</CardSubHeader>
-              <div>
+              <div className="owner-details">
                 {Array.isArray(owners) &&
-                  owners.map((owner, index) => (
-                    <div key={index}>
+                  reversedOwners.sort(()=>{return reversedOwners}).map((owner, index) => (
+                    <div key={index} className="owner-details-child">
                       <CardSubHeader>
                         {owners.length != 1 && (
                           <span>
@@ -521,8 +562,8 @@ const PTApplicationDetails = () => {
                         />
                         <Row className="border-none" label={t("PT_FORM3_MOBILE_NUMBER")} text={owner?.mobileNumber} />
                         <Row className="border-none" label={t("PT_MUTATION_AUTHORISED_EMAIL")} text={`${owner?.emailId || t("CS_NA")}`} />
-                        <Row className="border-none" label={t("PT_MUTATION_TRANSFEROR_SPECIAL_CATEGORY")} text={(owner?.ownerType).toLowerCase()} />
-                        <Row className="border-none" label={t("PT_OWNERSHIP_INFO_CORR_ADDR")} text={owner?.correspondenceAddress || t("CS_NA")} />
+                        <Row className="border-none" label={t("PT_MUTATION_TRANSFEROR_SPECIAL_CATEGORY")} text={(owner?.ownerType)} />
+                        <Row className="border-none" label={t("PT_OWNERSHIP_INFO_CORR_ADDR")} text={owner?.permanentAddress || t("CS_NA")} />
                       </StatusTable>
                     </div>
                   ))}
@@ -540,7 +581,9 @@ const PTApplicationDetails = () => {
               </StatusTable>
             )}
           </div>
+          <div id="timeline">
           <PTWFApplicationTimeline application={application} id={acknowledgementIds} userType={"citizen"} />
+          </div>
           {showToast && (
           <Toast
             error={showToast.key}

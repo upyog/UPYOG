@@ -10,7 +10,7 @@
     "@egovernments/digit-ui.css": "link:.."
   },
   "devDependencies": {
-    "http-server": "^0.12.3"
+    "http-server": "0.12.3"
   },
   "eslintConfig": {
     "extends": "react-app"

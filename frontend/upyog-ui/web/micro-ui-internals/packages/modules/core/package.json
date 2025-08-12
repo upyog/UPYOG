@@ -1,8 +1,7 @@
 {
-  "name": "@egovernments/digit-ui-module-core",
-  "version": "1.7.0-beta.2",
+  "name": "@upyog/digit-ui-module-core",
+  "version": "3.0.3",
   "license": "MIT",
-  "description": "Digit App Core Module contains all core components",
   "main": "dist/index.js",
   "module": "dist/index.modern.js",
   "source": "src/Module.js",
@@ -15,7 +14,8 @@
     "prepublish": "yarn build"
   },
   "dependencies": {
-    "@egovernments/digit-ui-react-components": "^1.7.0-beta.2",
+    "@upyog/digit-ui-react-components": "3.0.1",
+    "microbundle-crl": "^0.13.11",
     "react": "17.0.2",
     "react-dom": "17.0.2",
     "react-i18next": "11.16.2",
@@ -24,6 +24,15 @@
     "react-router-dom": "5.3.0",
     "react-tooltip": "4.1.2",
     "redux": "4.1.2",
-    "redux-thunk": "2.4.1"
-  }
+    "redux-thunk": "2.4.1",
+    "react-google-recaptcha": "^3.1.0"
+  },
+  "author": "JaganKumar <jagan.kumar@egov.org.in>",
+  "keywords": [
+    "digit",
+    "egov",
+    "dpg",
+    "digit-ui",
+    "core"
+  ]
 }

@@ -18,7 +18,7 @@ import {
   CardText,
   AddIcon,
   Dropdown,
-} from "@egovernments/digit-ui-react-components";
+} from "@upyog/digit-ui-react-components";
 
 import { useQueryClient } from "react-query";
 
@@ -118,6 +118,8 @@ const VehicleDetails = (props) => {
         return setShowModal(true);
       case "EDIT":
         return history.push("/upyog-ui/employee/fsm/registry/modify-vehicle/" + vehicleNumber);
+      case "HOME":
+        return history.push("/upyog-ui/employee/fsm/registry?selectedTabs=VEHICLE");
       default:
         break;
     }

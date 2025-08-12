@@ -6,7 +6,7 @@ import CardLabel from "../atoms/CardLabel";
 import CardLabelError from "../atoms/CardLabelError";
 import TextInput from "../atoms/TextInput";
 import InputCard from "./InputCard";
-
+import { DatePicker } from "@upyog/digit-ui-react-components";
 const FormStep = ({
   t,
   children,
@@ -24,7 +24,8 @@ const FormStep = ({
   isMultipleAllow = false,
   showErrorBelowChildren = false,
   childrenAtTheBottom = true,
-  textInputStyle
+  textInputStyle,
+  isMandatory
 }) => {
   const { register, watch, errors, handleSubmit } = useForm({
     defaultValues: _defaultValues,
@@ -37,10 +38,10 @@ const FormStep = ({
   var isDisable = isDisabled ? true : config.canDisable && Object.keys(errors).filter((i) => errors[i]).length;
 
   const inputs = config.inputs?.map((input, index) => {
-    if (input.type === "text") {
+    if (input.type === "text") {  
       return (
         <React.Fragment key={index}>
-          <CardLabel>{t(input.label)} {input.labelChildren && input.labelChildren}</CardLabel>
+          <CardLabel>{t(input.label)}</CardLabel>
           {errors[input.name] && <CardLabelError>{t(input.error)}</CardLabelError>}
           <div className="field-container" style={{ justifyContent: "left" }}>
             {componentInFront ? <span className="citizen-card-input citizen-card-input--front">{componentInFront}</span> : null}
@@ -53,6 +54,7 @@ const FormStep = ({
               maxlength={input.validation.maxlength}
               pattern={input.validation?.pattern}
               title={input.validation?.title}
+              placeholder={input.placeholder}
               inputRef={register(input.validation)}
               isMandatory={errors[input.name]}
               disable={input.disable ? input.disable : false}
@@ -68,13 +70,40 @@ const FormStep = ({
           <CardLabel>{t(input.label)}</CardLabel>
           <TextArea key={index} name={input.name} value={value} onChange={onChange} inputRef={register(input.validation)} maxLength="1024"></TextArea>
         </React.Fragment>
+      )
+      if (input.type === "date")
+      {
+        console.log("datedatedate")
+      return (
+        <React.Fragment key={index}>
+        <CardLabel>{t(input.label)} {input.labelChildren && input.labelChildren}</CardLabel>
+        {errors[input.name] && <CardLabelError>{t(input.error)}</CardLabelError>}
+        <div className="field-container" style={{ justifyContent: "left" }}>
+        
+          <TextInput
+            key={index}
+            name={input.name}
+            value={value}
+            onChange={onChange}
+            pattern={input.validation?.pattern}
+            title={input.validation?.title}
+            inputRef={register(input.validation)}
+            isMandatory={errors[input.name]}
+            disable={input.disable ? input.disable : false}
+            textInputStyle={textInputStyle}
+            type = {input.type}
+            
+          />
+        </div>
+      </React.Fragment>
       );
+      }
   });
 
   return (
     <form onSubmit={handleSubmit(goNext)}>
       <InputCard
-        {...{ isDisable: isDisable, isMultipleAllow: isMultipleAllow }}
+        {...{ isDisable: isDisable, isMultipleAllow: isMultipleAllow , isMandatory:isMandatory}}
         {...config}
         cardStyle={cardStyle}
         submit

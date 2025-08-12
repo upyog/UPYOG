@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { CardLabel, LabelFieldPair, Dropdown, TextInput, LinkButton, CardLabelError, Loader, DeleteIcon } from "@egovernments/digit-ui-react-components";
+import { CardLabel, LabelFieldPair, Dropdown, TextInput, LinkButton, CardLabelError, Loader, DeleteIcon } from "@upyog/digit-ui-react-components";
 import { stringReplaceAll } from "../utils";
 import { useForm, Controller } from "react-hook-form";
 import _ from "lodash";
@@ -21,6 +21,10 @@ const Units = ({ t, config, onSelect, userType, formData, setError, formState, c
         tenantId,
         usageCategory: null,
         builtUpArea: "",
+        RentedMonths: null,
+        ageOfProperty:null,
+        structureType:null,
+        NonRentedMonthsUsage: null
       },
     ]
   );
@@ -50,8 +54,144 @@ const Units = ({ t, config, onSelect, userType, formData, setError, formState, c
   subusageoption = Menu?.PropertyTax?.UsageCategory || [];
 
   let occupencyOptions = [];
-  occupencyOptions = Menu?.PropertyTax?.OccupancyType.map((e) => ({ i18nKey: `PROPERTYTAX_OCCUPANCYTYPE_${e?.code}`, ...e })) || [];
+  occupencyOptions = Menu?.PropertyTax?.OccupancyType?.map((e) => ({ i18nKey: `PROPERTYTAX_OCCUPANCYTYPE_${e?.code}`, ...e })) || [];
 
+ let rentedmonths =
+  [
+    {
+     "i18nKey": "PROPERTYTAX_MONTH1",
+      "name": "Month 1",
+      "code": "1",
+      "active": true
+     },
+    {
+      "i18nKey": "PROPERTYTAX_MONTH2",
+      "name": "Month 2",
+      "code": "2",
+     "active": true
+     },
+     {
+      "i18nKey": "PROPERTYTAX_MONTH3",
+      "name": "Month 3",
+      "code": "3",
+     "active": true
+     },
+     {
+      "i18nKey": "PROPERTYTAX_MONTH4",
+      "name": "Month 4",
+      "code": "4",
+     "active": true
+     },
+     {
+      "i18nKey": "PROPERTYTAX_MONTH5",
+      "name": "Month 5",
+      "code": "5",
+     "active": true
+     },
+     {
+      "i18nKey": "PROPERTYTAX_MONTH6",
+      "name": "Month 6",
+      "code": "6",
+     "active": true
+     },
+     {
+      "i18nKey": "PROPERTYTAX_MONTH7",
+      "name": "Month 7",
+      "code": "7",
+     "active": true
+     },
+     {
+      "i18nKey": "PROPERTYTAX_MONTH8",
+      "name": "Month 8",
+      "code": "8",
+     "active": true
+     },
+     {
+      "i18nKey": "PROPERTYTAX_MONTH9",
+      "name": "Month 9",
+      "code": "9",
+     "active": true
+     },
+     {
+      "i18nKey": "PROPERTYTAX_MONTH10",
+      "name": "Month 10",
+      "code": "10",
+     "active": true
+     },
+     {
+      "i18nKey": "PROPERTYTAX_MONTH11",
+      "name": "Month 11",
+      "code": "11",
+     "active": true
+     },
+     {
+      "i18nKey": "PROPERTYTAX_MONTH12",
+      "name": "Month 12",
+      "code": "12",
+     "active": true
+     },    
+    ]   
+
+    let nonrentedusage=[
+      {
+        "i18nKey": "NON_RENT_SELFOCCUPIED",
+        "name": "Non Rent Self occupied",
+        "code": "NonRentSelfOccupied",
+       "active": true
+       },  
+       {
+        "i18nKey": "NON_RENT_UNOCCUPIED",
+        "name": "Non rent Un occupied",
+        "code": "NonRentUnOccupied",
+       "active": true
+       },  
+    ]
+    let ageOfPropertyOptions =[
+      {
+        "i18nKey": "PROPERTYTAX_MONTH>10",
+        "name": "greater than 10 years",
+        "code": "10",
+       "active": true
+       },
+       {
+        "i18nKey": "PROPERTYTAX_MONTH>15",
+        "name": "greater than 15 years",
+        "code": "15",
+       "active": true
+       },
+       {
+        "i18nKey": "PROPERTYTAX_MONTH>25",
+        "name": "greater than 24 years",
+        "code": "25",
+       "active": true
+       } 
+     ]
+     let structureTypeOptions =[
+      {
+        "i18nKey": "PERMANENT",
+        "name": "Permanent",
+        "code": "permanent",
+       "active": true
+       },
+       {
+        "i18nKey": "TEMPORARY",
+        "name": "Temporary",
+        "code": "temporary",
+       "active": true
+       },
+       {
+        "i18nKey": "SEMI_PERMANENT",
+        "name": "Semi Permanent",
+        "code": "semiPermanent",
+       "active": true
+       },
+       {
+        "i18nKey": "RCC",
+        "name": "RCC",
+        "code": "RCC",
+       "active": true
+       }  
+     ]
   let floorListData = [];
   function getfloorlistdata(floorlist) {
     floorListData = floorlist?.map((floor) => ({ i18nKey: "PROPERTYTAX_FLOOR_" + stringReplaceAll(floor?.code, "-", "_"), code: floor?.code })) || [];
@@ -174,6 +314,10 @@ const Units = ({ t, config, onSelect, userType, formData, setError, formState, c
   function goNext() {
     let unitsData = units?.map((unit) => ({
       occupancyType: unit?.occupancyType?.code,
+      RentedMonths: unit?.RentedMonths?.code,
+      ageOfProperty: unit?.ageOfProperty?.code,
+      structureType: unit?.structureType?.code,
+      NonRentedMonthsUsage:unit?.NonRentedMonthsUsage?.code,
       floorNo: unit?.floorNo?.code,
       constructionDetail: {
         builtUpArea: unit?.builtUpArea,
@@ -246,6 +390,10 @@ const Units = ({ t, config, onSelect, userType, formData, setError, formState, c
           getfloorlistdata={getfloorlistdata}
           floorlist={floorlist}
           occupencyOptions={occupencyOptions}
+          rentedmonths={rentedmonths}
+          ageOfPropertyOptions={ageOfPropertyOptions}
+          structureTypeOptions = {structureTypeOptions}
+          nonrentedusage={nonrentedusage}
           formData={formData}
           handleRemoveUnit={handleRemoveUnit}
           {...{ formState, setError, clearErrors, usageCategoryMajorMenu, subUsageCategoryMenu }}
@@ -274,6 +422,10 @@ function Unit({
   getfloorlistdata,
   floorlist,
   occupencyOptions,
+  rentedmonths,
+  ageOfPropertyOptions,
+  structureTypeOptions,
+  nonrentedusage,
   formData,
   handleRemoveUnit,
   isMobile,
@@ -492,8 +644,55 @@ function Unit({
               </div>
             </LabelFieldPair>
             <CardLabelError style={errorStyle}>{localFormState.touched.arv ? errors?.arv?.message : ""}</CardLabelError>
-          </React.Fragment>
-        ) : null}
+            
+          <LabelFieldPair>
+          <CardLabel className="card-label-smaller">{t("PT_FORM2_RENTED_MONTHS") + " *"}</CardLabel>
+          <Controller
+            name="RentedMonths"
+            defaultValue={unit.RentedMonths}
+            control={control}
+            render={(props) => (
+              <Dropdown
+                className="form-field"
+                selected={props.value}
+                disable={rentedmonths?.length === 1}
+                option={rentedmonths}
+                select={props.onChange}
+                optionKey="i18nKey"
+                onBlur={props.onBlur}
+                t={t}
+              />
+            )}
+          />
+        </LabelFieldPair>
+        <CardLabelError style={errorStyle}>{localFormState.touched.Rentedmonths ? errors?.Rentedmonths?.message : ""}</CardLabelError>
+        {formValue?.RentedMonths?.code === "1" || formValue?.RentedMonths?.code === "2" || formValue?.RentedMonths?.code === "3" || formValue?.RentedMonths?.code === "4" || formValue?.RentedMonths?.code === "5" || formValue?.RentedMonths?.code === "6" || formValue?.RentedMonths?.code === "7" || formValue?.RentedMonths?.code === "8" || formValue?.RentedMonths?.code === "9" || formValue?.RentedMonths?.code === "10" || formValue?.RentedMonths?.code === "11" ? (
+          <React.Fragment>
+            <LabelFieldPair>
+            <CardLabel className="card-label-smaller">{t("PT_FORM2_NONRENTED_MONTHS_USAGE") + " *"}</CardLabel>
+            <Controller
+              name="NonRentedMonthsUsage"
+              defaultValue={unit.NonRentedMonthsUsage}
+              control={control}
+              render={(props) => (
+                <Dropdown
+                  className="form-field"
+                  selected={props.value}
+                  disable={nonrentedusage?.length === 1}
+                  option={nonrentedusage}
+                  select={props.onChange}
+                  optionKey="i18nKey"
+                  onBlur={props.onBlur}
+                  t={t}
+                />
+              )}
+            />
+            </LabelFieldPair> 
+            </React.Fragment>
+          ): null}     
+        </React.Fragment>          
+        ) : null}         
+
         <LabelFieldPair>
           <CardLabel className="card-label-smaller">{t("PT_FORM2_BUILT_AREA") + " *"}</CardLabel>
           <div className="field">

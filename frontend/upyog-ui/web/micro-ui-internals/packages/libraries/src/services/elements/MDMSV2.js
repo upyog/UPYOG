@@ -1504,8 +1504,7 @@ export const MdmsServiceV2 = {
     );
   },
   getDataByCriteria: async (tenantId, mdmsDetails, moduleCode) => {
-    console.log('Call 2nd method:- ', tenantId, mdmsDetails, moduleCode);
-    const key = `MDMSV2.${tenantId}.${moduleCode}.${mdmsDetails.type}.${JSON.stringify(mdmsDetails.details)}`;
+    const key = `MDMS.${tenantId}.${moduleCode}.${mdmsDetails.type}.${JSON.stringify(mdmsDetails.details)}`;
     const inStoreValue = PersistantStorage.get(key);
     if (inStoreValue) {
       return inStoreValue;
@@ -1649,7 +1648,6 @@ export const MdmsServiceV2 = {
     return MdmsServiceV2.getDataByCriteria(tenantId, getMultipleTypes(tenantId, moduleCode, types), moduleCode);
   },
   getMultipleTypesWithFilter: (tenantId, moduleCode, types) => {
-    console.log('call Ist mdms Here In MDMSV2 getMultipleTypesWithFilter  :- ', tenantId, moduleCode, types);
     return MdmsServiceV2.getDataByCriteria(tenantId, getMultipleTypesWithFilter(moduleCode, types), moduleCode);
   },
   getFSTPPlantInfo: (tenantId, moduleCode, types) => {
