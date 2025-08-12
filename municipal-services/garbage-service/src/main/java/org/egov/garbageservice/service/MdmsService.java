@@ -115,9 +115,10 @@ public class MdmsService {
 						taxAmount.set(fee);
 					}
 				});
-		calculationBreakdown.put("final_amount",taxAmount.get().toString());
 		if(taxAmount.get() == null) {
 			errorMap.put("category_mismatch","category,subcategory or subcategorytype mismatch");
+		}else {
+			calculationBreakdown.put("final_amount",taxAmount.get().toString());
 		}
 		return taxAmount.get();
 	}
