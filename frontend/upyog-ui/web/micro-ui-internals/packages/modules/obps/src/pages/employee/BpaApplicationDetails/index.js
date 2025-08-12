@@ -1,15 +1,18 @@
 import React, { useState, Fragment, useEffect } from "react";
 import { useParams, useHistory } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { FormComposer, Header, Card, CardSectionHeader, PDFSvg, Loader, StatusTable, Row, ActionBar, SubmitBar, MultiLink } from "@egovernments/digit-ui-react-components";
+import { FormComposer, Header, Card, CardSectionHeader, PDFSvg, Loader, StatusTable, Row, ActionBar, SubmitBar, MultiLink, LinkButton } from "@upyog/digit-ui-react-components";
 import ApplicationDetailsTemplate from "../../../../../templates/ApplicationDetails";
 import { newConfig as newConfigFI } from "../../../config/InspectionReportConfig";
 import get from "lodash/get";
 import orderBy from "lodash/orderBy";
 import { getBusinessServices, convertDateToEpoch, downloadPdf, printPdf } from "../../../utils";
 import cloneDeep from "lodash/cloneDeep";
-
+import useBPADetailsPage from "../../../../../../libraries/src/hooks/obps/useBPADetailsPage";
+import useWorkflowDetails from "../../../../../../libraries/src/hooks/workflow";
+import useApplicationActions from "../../../../../../libraries/src/hooks/obps/useApplicationActions";
 const BpaApplicationDetail = () => {
+
   const { id } = useParams();
   const { t } = useTranslation();
   const tenantId = Digit.ULBService.getCurrentTenantId();
@@ -25,12 +28,12 @@ const BpaApplicationDetail = () => {
   const stateId = Digit.ULBService.getStateId();
   const isMobile = window.Digit.Utils.browser.isMobile();
   const { isLoading: bpaDocsLoading, data: bpaDocs } = Digit.Hooks.obps.useMDMS(stateId, "BPA", ["DocTypeMapping"]);
-
+  const [viewTimeline, setViewTimeline]=useState(false);
   let { data: newConfig } = Digit.Hooks.obps.SearchMdmsTypes.getFormConfig(stateId, []);
 
   const { isMdmsLoading, data: mdmsData } = Digit.Hooks.obps.useMDMS(stateId, "BPA", ["RiskTypeComputation"]);
 
-  const { data = {}, isLoading } = Digit.Hooks.obps.useBPADetailsPage(tenantId, { applicationNo: id });
+  const { data = {}, isLoading } = useBPADetailsPage(tenantId, { applicationNo: id });
 
 
   let businessService = [];
@@ -39,7 +42,7 @@ const BpaApplicationDetail = () => {
   {
     businessService = ["BPA.LOW_RISK_PERMIT_FEE"]
   }
-  else if(data?.applicationData?.businessService === "BPA")
+  else if(data?.applicationData?.businessService === "BPA"||data?.applicationData?.businessService === "BPA-PAP")
   {
     businessService = ["BPA.NC_APP_FEE","BPA.NC_SAN_FEE"];
   }
@@ -73,11 +76,34 @@ const BpaApplicationDetail = () => {
   },[bpaDocs,data])
 
   async function getRecieptSearch({tenantId, payments, ...params}) {
-    let response = { filestoreIds: [payments?.fileStoreId] };
-    //if (!payments?.fileStoreId) {
-      response = await Digit.PaymentService.generatePdf(tenantId, { Payments: [{...payments}] }, "consolidatedreceipt");
-    //}
-    const fileStore = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: response.filestoreIds[0] });
+    let response=null;
+    if (payments?.fileStoreId ) {
+       response = { filestoreIds: [payments?.fileStoreId] };      
+    }
+    else{
+      const formattedStakeholderType=data?.applicationData?.additionalDetails?.typeOfArchitect
+            const stakeholderType=formattedStakeholderType.charAt(0).toUpperCase()+formattedStakeholderType.slice(1).toLowerCase()
+      const updatedpayments={
+        ...payments,
+       
+            paymentDetails:[
+              {
+                ...payments.paymentDetails?.[0],
+                additionalDetails:{
+                  ...payments.paymentDetails[0].additionalDetails,
+                  "propertyID":data?.applicationData?.additionalDetails?.propertyID,
+                  "stakeholderType":stakeholderType,
+                  "contact":data?.applicationData?.businessService==="BPA-PAP"? t("APPLICANT_CONTACT") : `${stakeholderType} Contact`,
+                  "idType":data?.applicationData?.businessService==="BPA-PAP" ? t("APPLICATION_NUMBER"):`${stakeholderType} ID`,
+                  "name":data?.applicationData?.businessService==="BPA-PAP" ? t("APPLICANT_NAME"):`${stakeholderType} Name`,
+                },
+              },
+            ],  
+         
+      }
+       response = await Digit.PaymentService.generatePdf(stateId, { Payments: [{...updatedpayments}] }, "bpa-receipt");
+    }    
+    const fileStore = await Digit.PaymentService.printReciept(stateId, { fileStoreIds: response.filestoreIds[0] });
     window.open(fileStore[response?.filestoreIds[0]], "_blank");
   }
 
@@ -107,14 +133,21 @@ const BpaApplicationDetail = () => {
 
   const [showOptions, setShowOptions] = useState(false);
 
-
+  
+  const handleViewTimeline=()=>{
+    setViewTimeline(true);
+      const timelineSection=document.getElementById('timeline');
+      if(timelineSection){
+        timelineSection.scrollIntoView({behavior: 'smooth'});
+      } 
+  };
   const {
     isLoading: updatingApplication,
     isError: updateApplicationError,
     data: updateResponse,
     error: updateError,
     mutate,
-  } = Digit.Hooks.obps.useApplicationActions(tenantId);
+  } = useApplicationActions(tenantId);
 
   const nocMutation = Digit.Hooks.obps.useObpsAPI(
     tenantId,
@@ -151,7 +184,7 @@ const BpaApplicationDetail = () => {
 
   let configs =  newConfig?.InspectionReportConfig ? newConfig?.InspectionReportConfig : newConfigFI;
   
-  let workflowDetails = Digit.Hooks.useWorkflowDetails({
+  let workflowDetails = useWorkflowDetails({
     tenantId: tenantId,
     id: id,
     moduleCode: "BPA",
@@ -264,7 +297,7 @@ const BpaApplicationDetail = () => {
       onClick: () => getRevocationPDFSearch({tenantId: data?.applicationData?.tenantId}),
     });
     
-  } else if(data && data?.applicationData?.businessService === "BPA" && data?.collectionBillDetails?.length > 0) {
+  } else if(data && (data?.applicationData?.businessService === "BPA"||data?.applicationData?.businessService==="BPA-PAP") && data?.collectionBillDetails?.length > 0) {
     if(data?.applicationData?.status==="APPROVED"){
     dowloadOptions.push({
       order: 3,
@@ -310,17 +343,22 @@ const BpaApplicationDetail = () => {
   return (
     <Fragment>
       <div className={"employee-main-application-details"}>
-      <div className={"employee-application-details"} style={{marginBottom: "15px"}}>
+      <div className={"employee-application-detailsNew"} style={{marginBottom: "15px",height:"auto !important", maxHeight:"none !important"}}>
         <Header styles={{marginLeft:"0px", paddingTop: "10px", fontSize: "32px"}}>{t("CS_TITLE_APPLICATION_DETAILS")}</Header>
-        {dowloadOptions && dowloadOptions.length>0 && <MultiLink
-          className="multilinkWrapper employee-mulitlink-main-div"
+        <div style={{zIndex: "10",display:"flex",flexDirection:"row-reverse",alignItems:"center",marginTop:"-25px"}}>
+               
+        <div style={{zIndex: "10",  position: "relative"}}>
+        {dowloadOptions && dowloadOptions.length>0 && <MultiLink                
+          className="multilinkWrapper"
           onHeadClick={() => setShowOptions(!showOptions)}
           displayOptions={showOptions}
           options={dowloadOptions}
           downloadBtnClassName={"employee-download-btn-className"}
           optionsClassName={"employee-options-btn-className"}
-        />}
-      </div>
+          />}  
+        </div>     
+        <LinkButton label={t("VIEW_TIMELINE")} style={{ color:"#A52A2A"}} onClick={handleViewTimeline}></LinkButton>
+        </div>
       {data?.applicationData?.status === "FIELDINSPECTION_INPROGRESS" && (userInfo?.info?.roles.filter(role => role.code === "BPA_FIELD_INSPECTOR")).length>0 && <FormComposer
         heading={t("")}
         isDisabled={!canSubmit}
@@ -348,6 +386,7 @@ const BpaApplicationDetail = () => {
         applicationData={data?.applicationData}
         nocMutation={nocMutation}
         mutate={mutate}
+        id={"timeline"}
         workflowDetails={workflowDetails}
         businessService={workflowDetails?.data?.applicationBusinessService ? workflowDetails?.data?.applicationBusinessService : data?.applicationData?.businessService}
         moduleCode="BPA"
@@ -359,6 +398,7 @@ const BpaApplicationDetail = () => {
         statusAttribute={"state"}
         timelineStatusPrefix={`WF_${workflowDetails?.data?.applicationBusinessService ? workflowDetails?.data?.applicationBusinessService : data?.applicationData?.businessService}_`}
       />
+      </div>
       </div>
     </Fragment>
   )

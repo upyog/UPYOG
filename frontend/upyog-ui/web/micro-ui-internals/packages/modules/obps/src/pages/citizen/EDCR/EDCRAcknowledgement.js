@@ -1,4 +1,4 @@
-import { Banner, Card, CardText, LinkButton, SubmitBar, Toast } from "@egovernments/digit-ui-react-components";
+import { Banner, Card, CardText, LinkButton, SubmitBar, Toast } from "@upyog/digit-ui-react-components";
 import React, { useState, useEffect } from "react";
 import { Link, useHistory } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -42,6 +42,8 @@ const EDCRAcknowledgement = (props) => {
   const isMobile = window.Digit.Utils.browser.isMobile();
   const { data:homePageUrlLinks , isLoading: homePageUrlLinksLoading } = Digit.Hooks.obps.useMDMS(state, "BPA", ["homePageUrlLinks"]);
   const { isMdmsLoading, data: mdmsData } = Digit.Hooks.obps.useMDMS(state, "BPA", ["RiskTypeComputation"]);
+  //const { isMdmsLoading, data: mdmsData } = Digit.Hooks.obps.useMDMS(state, "BPA", ["GaushalaFees","MalbaCharges","LabourCess"]);
+
 
   useEffect(() => {
     if (!homePageUrlLinksLoading && homePageUrlLinks?.BPA?.homePageUrlLinks?.length > 0) {

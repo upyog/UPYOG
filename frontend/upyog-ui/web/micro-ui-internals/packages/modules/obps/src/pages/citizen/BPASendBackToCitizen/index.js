@@ -7,7 +7,7 @@ import { newConfig as newConfigBPA } from "../../../config/buildingPermitConfig"
 //import Acknowledgement from "../OCSendBackToCitizen";
 //import OBPSAcknowledgement from "../OCBuildingPermit/OBPSAcknowledgement";
 import { getBPAEditDetails, getPath } from "../../../utils";
-import { Loader } from "@egovernments/digit-ui-react-components";
+import { Loader } from "@upyog/digit-ui-react-components";
 
 const BPASendBackToCitizen = ({ parentRoute }) => {
   const { t } = useTranslation();

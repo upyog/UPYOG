@@ -15,7 +15,7 @@ import {
   Menu,
   Modal,
   Toast,
-} from "@egovernments/digit-ui-react-components";
+} from "@upyog/digit-ui-react-components";
 import { useHistory } from "react-router-dom";
 import _ from "lodash";
 import React, { useState, useRef } from "react";
@@ -97,8 +97,8 @@ const ConnectionDetails = () => {
   }
 
   const handleDownloadPdf = async () => {
-    const tenantInfo = data?.WaterConnection?.[0]?.tenantId;
-    let res = data?.WaterConnection?.[0];
+    const tenantInfo = data?.WaterConnection?.[0]?.tenantId || data?.SewerageConnections?.[0]?.tenantId;
+    let res = data?.WaterConnection?.[0] || data?.SewerageConnections?.[0];
     const PDFdata = getConnectionDetailsPDF({ ...res }, { ...PTData?.Properties?.[0] }, tenantInfo, t);
     PDFdata.then((ress) => Digit.Utils.pdf.generatev1(ress));
     setShowOptions(false);
@@ -190,16 +190,63 @@ const ConnectionDetails = () => {
           let pathname = `/upyog-ui/citizen/ws/disconnect-application`;
           Digit.SessionStorage.set("WS_DISCONNECTION", {...state, serviceType: isSW ? "SEWERAGE" : "WATER"});
           history.push(`${pathname}`);
-        } else if (paymentDetails?.data?.Bill?.[0]?.totalAmount !== 0) {
+        } 
+        else if(paymentDetails?.data?.Bill?.[0]?.totalAmount < 0)
+        {
+          let pathname = `/upyog-ui/citizen/ws/disconnect-application`;
+          Digit.SessionStorage.set("WS_DISCONNECTION", {...state, serviceType: isSW ? "SEWERAGE" : "WATER"});
+          history.push(`${pathname}`);
+        }
+        else if (paymentDetails?.data?.Bill?.[0]?.totalAmount !== 0) {
           setshowModal(true);
         }
       
     }
     
   };
+  const getRestorationButton = () => {
+    console.log("getRestorationButton",data,!data?.checkWorkFlow)
+    console.log("Payment",paymentDetails)
+    if (!data?.checkWorkFlow){
+      setshowActionToast({
+        key: "error",
+        label: "CONNECTION_INPROGRESS_LABEL",
+      });
+      setTimeout(() => {
+        closeBillToast();
+      }, 5000);
+    }
+    else {
+        if (paymentDetails?.data?.Bill?.length === 0 ) {
+          console.log("Payment",paymentDetails)
+          let pathname = `/upyog-ui/citizen/ws/restoration-application`;
+          Digit.SessionStorage.set("WS_DISCONNECTION", {...state, serviceType: isSW ? "SEWERAGE" : "WATER"});
+          history.push(`${pathname}`);
+        } else if(paymentDetails?.data?.Bill?.[0]?.totalAmount < 0)
+        {
+          let pathname = `/upyog-ui/citizen/ws/restore-application/restoration-application`;
+        Digit.SessionStorage.set("WS_DISCONNECTION", {...state, serviceType: isSW ? "SEWERAGE" : "WATER"});
+        history.push(`${pathname}`);
+        }
+        else if (paymentDetails?.data?.Bill?.[0]?.totalAmount !== 0) {
+          setshowModal(true);
+        }
+        else if(paymentDetails?.data?.Bill?.[0]?.totalAmount == 0)
+        {let pathname = `/upyog-ui/citizen/ws/restore-application/restoration-application`;
+        Digit.SessionStorage.set("WS_DISCONNECTION", {...state, serviceType: isSW ? "SEWERAGE" : "WATER"});
+        history.push(`${pathname}`);
 
+        }
+      
+    }
+    
+  };
+  
   function onActionSelect() {
     getDisconnectionButton();
+  }
+  function onActionSelectRestoration() {
+    getRestorationButton();
   }
   const Close = () => (
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#FFFFFF">
@@ -231,7 +278,6 @@ const ConnectionDetails = () => {
 
 
 let serviceType = state?.applicationType?.includes("WATER") ? "WATER":"SEWERAGE";
-
   return (
     <React.Fragment>
       <div className="cardHeaderWithOptions" style={{ marginRight: "auto", maxWidth: "960px" }}>
@@ -501,6 +547,25 @@ let serviceType = state?.applicationType?.includes("WATER") ? "WATER":"SEWERAGE"
                   },
                   }}
                   />
+                  <Row
+                  className="border-none"
+                  label={t("WS_OWN_EMAIL_IDNO_LABEL")}
+                  text={applicationNobyData?.includes("WS") ? data?.WaterConnection?.[0]?.connectionHolders?.[0]?.emailId: data?.SewerageConnections?.[0]?.connectionHolders?.[0]?.emailId}
+                  textStyle={{ whiteSpace: "pre" }}
+                  privacy={ {
+                    uuid: applicationNobyData?.includes("WS") ? data?.WaterConnection?.[0]?.connectionHolders?.[0]?.uuid : data?.SewerageConnections?.[0]?.connectionHolders?.[0]?.uuid,
+                    fieldName: "connectionHoldersEmailId",
+                    model: "WnSConnectionOwner",
+                    showValue: false,
+                    loadData: {
+                      serviceName: serviceType === "WATER" ? "/ws-services/wc/_search" : "/sw-services/swc/_search",
+                      requestBody: {},
+                      requestParam: { tenantId, applicationNumber:applicationNobyData },
+                      jsonPath: serviceType === "WATER" ? "WaterConnection[0].connectionHolders[0].emailId" : "SewerageConnections[0].connectionHolders[0].emailId",
+                      isArray: false,
+                    },
+                  }}
+                />
               </StatusTable>
             </div>
           ) : (
@@ -528,7 +593,11 @@ let serviceType = state?.applicationType?.includes("WATER") ? "WATER":"SEWERAGE"
                 <SubmitBar style={{ width: "100%" }} label={t("WS_DISCONNECTION_BUTTON")} onSubmit={onActionSelect} />
               </div>
             </ActionBar>
-          ) : null}
+          ) : state?.applicationStatus =="DISCONNECTION_EXECUTED" && state?.status == "Inactive" && state?.isDisconnectionTemporary && <ActionBar style={{ position: "relative", boxShadow: "none", minWidth: "240px", maxWidth: "310px", padding: "0px", marginTop: "15px" }}>
+          <div style={{ width: "100%" }}>
+            <SubmitBar style={{ width: "100%" }} label={t("WS_RECONNECTION_BUTTON")} onSubmit={onActionSelectRestoration} />
+          </div>
+        </ActionBar>}
 
           {showModal ? (
             <Modal

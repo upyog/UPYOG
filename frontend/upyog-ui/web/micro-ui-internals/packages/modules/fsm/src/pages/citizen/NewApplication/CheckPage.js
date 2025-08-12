@@ -12,7 +12,7 @@ import {
   SubmitBar,
   CardText,
   CitizenInfoLabel,
-} from "@egovernments/digit-ui-react-components";
+} from "@upyog/digit-ui-react-components";
 import { useHistory } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import Timeline from "../../../components/TLTimelineInFSM";
@@ -32,7 +32,7 @@ const CheckPage = ({ onSubmit, value }) => {
   const { t } = useTranslation();
   const history = useHistory();
 
-  const { address, propertyType, subtype, pitType, pitDetail, selectGender, selectPaymentPreference, selectTripNo } = value;
+  const { address, propertyID,  propertyType, subtype, pitType, pitDetail, selectGender, selectPaymentPreference, selectTripNo, roadWidth, distancefromroad } = value;
 
   const pitDetailValues = pitDetail ? Object.values(pitDetail).filter((value) => !!value) : null;
 
@@ -44,6 +44,25 @@ const CheckPage = ({ onSubmit, value }) => {
     }
   }, "");
 
+  const getAddress=(address,t)=>{
+    console.log("address",address)
+    if(address?.gramPanchayat?.code =="OTH1")
+    {
+      return   `${address?.doorNo?.trim() ? `${address?.doorNo?.trim()}, ` : ""} ${address?.street?.trim() ? `${address?.street?.trim()}, ` : ""}${
+        address?.propertyLocation?.code === "WITHIN_ULB_LIMITS" ? t(address?.locality?.i18nkey) : address?.newGramPanchayat
+      },${t(address?.village?.code)}, ${t(address?.city.code)}`
+    }
+    else if(address?.propertyLocation?.code === "WITHIN_ULB_LIMITS" )
+    {
+      console.log("trueee", `${t(address?.locality?.code)}`)
+    return `${t(address?.locality?.code)}`
+    }
+    else {
+      return `${address?.doorNo?.trim() ? `${address?.doorNo?.trim()}, ` : ""} ${address?.street?.trim() ? `${address?.street?.trim()}, ` : ""}${
+        address?.propertyLocation?.code === "WITHIN_ULB_LIMITS" ? t(address?.locality?.i18nkey) : address?.gramPanchayat?.i18nkey
+      },${t(address?.village?.code)}, ${t(address?.city.code)}`
+    }
+  }
   return (
     <React.Fragment>
       <Timeline currentStep={4} flow="APPLY" />
@@ -69,25 +88,28 @@ const CheckPage = ({ onSubmit, value }) => {
           {selectGender && (
             <Row
               label={t("ES_FSM_ACTION_GENDER_TYPE")}
-              text={t(selectGender.i18nKey)}
+              text={t(selectGender?.i18nKey)}
               actionButton={<ActionButton jumpTo="/upyog-ui/citizen/fsm/new-application/select-gender" />}
             />
           )}
           <Row
+            label={t("CS_CHECK_PROPERTY_ID")}
+            text={value?.cptId?.id ? value?.cptId?.id : "NA"}
+            actionButton={<ActionButton jumpTo="/upyog-ui/citizen/fsm/new-application/know-your-property" />}
+          />
+          <Row
             label={t("CS_CHECK_PROPERTY_TYPE")}
-            text={t(propertyType.i18nKey)}
+            text={t(propertyType?.i18nKey)}
             actionButton={<ActionButton jumpTo="/upyog-ui/citizen/fsm/new-application/property-type" />}
           />
           <Row
             label={t("CS_CHECK_PROPERTY_SUB_TYPE")}
-            text={t(subtype.i18nKey)}
+            text={t(subtype?.i18nKey)}
             actionButton={<ActionButton jumpTo="/upyog-ui/citizen/fsm/new-application/property-subtype" />}
           />
           <Row
             label={t("CS_CHECK_ADDRESS")}
-            text={`${address?.doorNo?.trim() ? `${address?.doorNo?.trim()}, ` : ""} ${
-              address?.street?.trim() ? `${address?.street?.trim()}, ` : ""
-            }${t(address?.locality?.i18nkey)}, ${t(address?.city.code)}`}
+            text={getAddress(address,t)}
             actionButton={<ActionButton jumpTo="/upyog-ui/citizen/fsm/new-application/pincode" />}
           />
           {address?.landmark?.trim() && (
@@ -111,6 +133,18 @@ const CheckPage = ({ onSubmit, value }) => {
               actionButton={<ActionButton jumpTo="/upyog-ui/citizen/fsm/new-application/pit-type" />}
             />
           )}
+           
+          <Row
+            label={t("CS_CHECK_ROAD_WIDTH")}
+            text={t(roadWidth?.roadWidth)}
+            actionButton={<ActionButton jumpTo="/upyog-ui/citizen/fsm/new-application/road-details" />}
+          />
+          <Row
+            label={t("CS_CHECK_DISTANCE_FROM_ROAD")}
+            text={t(roadWidth?.distancefromroad)}
+            actionButton={<ActionButton jumpTo="/upyog-ui/citizen/fsm/new-application/road-details" />}
+          />
+
           {pitMeasurement && (
             <Row
               label={t("CS_CHECK_SIZE")}

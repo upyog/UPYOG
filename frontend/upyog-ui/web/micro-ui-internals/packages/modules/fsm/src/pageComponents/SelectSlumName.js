@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { CardLabel, LabelFieldPair, Dropdown, FormStep, Loader } from "@egovernments/digit-ui-react-components";
+import { CardLabel, LabelFieldPair, Dropdown, FormStep, Loader } from "@upyog/digit-ui-react-components";
 import Timeline from "../components/TLTimelineInFSM";
 
 const SelectSlumName = ({ config, onSelect, t, userType, formData }) => {
@@ -83,10 +83,12 @@ const SelectSlumName = ({ config, onSelect, t, userType, formData }) => {
   if (slumDataLoading) return <Loader />;
 
   return userType === "employee" ? (
-    <LabelFieldPair>
-      <CardLabel className="card-label-smaller">{t("ES_NEW_APPLICATION_SLUM_NAME")}</CardLabel>
-      <Dropdown t={t} option={slumMenu} className="form-field" optionKey="i18nKey" id="slum" selected={slum} select={selectSlum} />
-    </LabelFieldPair>
+    formData?.address?.propertyLocation !== "FROM_GRAM_PANCHAYAT" && (
+      <LabelFieldPair>
+        <CardLabel className="card-label-smaller">{t("ES_NEW_APPLICATION_SLUM_NAME")}</CardLabel>
+        <Dropdown t={t} option={slumMenu} className="form-field" optionKey="i18nKey" id="slum" selected={slum} select={selectSlum} />
+      </LabelFieldPair>
+    )
   ) : (
     <React.Fragment>
       <Timeline currentStep={1} flow="APPLY" />

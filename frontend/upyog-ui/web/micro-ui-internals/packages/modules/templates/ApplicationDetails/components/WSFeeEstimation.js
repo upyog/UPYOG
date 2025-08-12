@@ -1,7 +1,7 @@
 import React, { useState, Fragment, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { Card, CardSectionHeader, CardLabel } from "@egovernments/digit-ui-react-components";
-import { Modal, Dropdown, Row, StatusTable, TextInput, Toast } from "@egovernments/digit-ui-react-components";
+import { Card, CardSectionHeader, CardLabel } from "@upyog/digit-ui-react-components";
+import { Modal, Dropdown, Row, StatusTable, TextInput, Toast } from "@upyog/digit-ui-react-components";
 import cloneDeep from "lodash/cloneDeep";
 
 const Penality_menu = [
@@ -260,7 +260,7 @@ const WSFeeEstimation = ({ wsAdditionalDetails, workflowDetails }) => {
                                                 onChange={(e) => selectedValuesData("adhocPenaltyComment", false, e)}
                                                 {...(validation = {
                                                     isRequired: true,
-                                                    pattern: "^[a-zA-Z-.`' ]*$",
+                                                    pattern: "^[a-zA-Z ]*$",
                                                     type: "text",
                                                     title: t("TL_NAME_ERROR_MESSAGE"),
                                                 })}
@@ -313,7 +313,7 @@ const WSFeeEstimation = ({ wsAdditionalDetails, workflowDetails }) => {
                                             onChange={(e) => selectedValuesData("adhocRebateComment", false, e)}
                                             {...(validation = {
                                                 isRequired: true,
-                                                pattern: "^[a-zA-Z-.`' ]*$",
+                                                pattern: "^[a-zA-Z ]*$",
                                                 type: "text",
                                                 title: t("TL_NAME_ERROR_MESSAGE"),
                                             })}

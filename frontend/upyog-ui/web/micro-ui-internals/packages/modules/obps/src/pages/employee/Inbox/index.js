@@ -1,11 +1,12 @@
 import React, { Fragment, useCallback, useMemo, useReducer } from "react";
-import { InboxComposer, CaseIcon, Header } from "@egovernments/digit-ui-react-components";
+import { InboxComposer, CaseIcon, Header } from "@upyog/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 import FilterFormFieldsComponent from "./FilterFormFieldsComponent";
 import SearchFormFieldsComponents from "./SearchFormFieldsComponent";
 import useInboxTableConfig from "./useInboxTableConfig";
 import useInboxMobileCardsData from "./useInboxMobileCardsData";
 import { Link } from "react-router-dom";
+import useBPAInbox from "../../../../../../libraries/src/hooks/obps/useBPAInbox";
 
 const Inbox = ({ parentRoute }) => {
   window.scroll(0, 0);
@@ -116,7 +117,7 @@ const Inbox = ({ parentRoute }) => {
     t
   );
 
-  const { isLoading: isInboxLoading, data: { table, statuses, totalCount } = {} } = Digit.Hooks.obps.useBPAInbox({
+  const { isLoading: isInboxLoading, data: { table, statuses, totalCount } = {} } = useBPAInbox({
     tenantId,
     filters: { ...formState },
   });

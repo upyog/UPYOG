@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
-import { Dropdown } from "@egovernments/digit-ui-react-components";
+import { Dropdown, Loader } from "@upyog/digit-ui-react-components";
 import { useRouteMatch, useHistory } from "react-router-dom";
 import { useQueryClient } from "react-query";
 
@@ -13,13 +13,18 @@ export const CreateComplaint = ({ parentUrl }) => {
   const { t } = useTranslation();
 
   const getCities = () => cities?.filter((e) => e.code === Digit.ULBService.getCurrentTenantId()) || [];
-
-  const [complaintType, setComplaintType] = useState({});
+const propetyData=localStorage.getItem("pgrProperty") 
+  const [complaintType, setComplaintType] = useState(JSON?.parse(sessionStorage.getItem("complaintType")) || {});
   const [subTypeMenu, setSubTypeMenu] = useState([]);
-  const [subType, setSubType] = useState({});
+  const [subType, setSubType] = useState(JSON?.parse(sessionStorage.getItem("subType")) || {});
+  const [priorityLevel, setPriorityLevel]=useState(JSON?.parse(sessionStorage.getItem("PriorityLevel"))||{})
   const [pincode, setPincode] = useState("");
+  const [mobileNumber, setMobileNumber] = useState(sessionStorage.getItem("mobileNumber") || "");
+  const [fullName, setFullName] = useState(sessionStorage.getItem("name") || "");
+  const [emailId, setEmail] = useState(sessionStorage.getItem("emailId") || "");
   const [selectedCity, setSelectedCity] = useState(getCities()[0] ? getCities()[0] : null);
-
+const [propertyId, setPropertyId]= useState("")
+const [description, setDescription] = useState("")
   const { data: fetchedLocalities } = Digit.Hooks.useBoundaryLocalities(
     getCities()[0]?.code,
     "admin",
@@ -33,24 +38,42 @@ export const CreateComplaint = ({ parentUrl }) => {
   const [selectedLocality, setSelectedLocality] = useState(null);
   const [canSubmit, setSubmitValve] = useState(false);
   const [submitted, setSubmitted] = useState(false);
-
+  const [property,setPropertyData]=useState(null)
   const [pincodeNotValid, setPincodeNotValid] = useState(false);
   const [params, setParams] = useState({});
   const tenantId = window.Digit.SessionStorage.get("Employee.tenantId");
   const menu = Digit.Hooks.pgr.useComplaintTypes({ stateCode: tenantId });
+ const  priorityMenu= 
+  [
+    {
+      "name": "LOW",
+      "code": "LOW",
+      "active": true
+    },
+    {
+      "name": "MEDIUM",
+      "code": "MEDIUM",
+      "active": true
+    },
+    {
+      "name": "HIGH",
+      "code": "HIGH",
+      "active": true
+    }
+
+  ]
   const dispatch = useDispatch();
   const match = useRouteMatch();
   const history = useHistory();
   const serviceDefinitions = Digit.GetServiceDefinitions;
   const client = useQueryClient();
-
   useEffect(() => {
-    if (complaintType?.key && subType?.key && selectedCity?.code && selectedLocality?.code) {
+    if (complaintType?.key && subType?.key && selectedCity?.code && selectedLocality?.code && priorityLevel?.code ) {
       setSubmitValve(true);
     } else {
       setSubmitValve(false);
     }
-  }, [complaintType, subType, selectedCity, selectedLocality]);
+  }, [complaintType, subType, priorityLevel, selectedCity, selectedLocality]);
 
   useEffect(() => {
     setLocalities(fetchedLocalities);
@@ -78,16 +101,24 @@ export const CreateComplaint = ({ parentUrl }) => {
       if (value.key === "Others") {
         setSubType({ name: "" });
         setComplaintType(value);
+        sessionStorage.setItem("complaintType",JSON.stringify(value))
         setSubTypeMenu([{ key: "Others", name: t("SERVICEDEFS.OTHERS") }]);
       } else {
         setSubType({ name: "" });
         setComplaintType(value);
+        sessionStorage.setItem("complaintType",JSON.stringify(value))
         setSubTypeMenu(await serviceDefinitions.getSubMenu(tenantId, value, t));
       }
     }
   }
+  async function selectedPriorityLevel(value){
+    sessionStorage.setItem("priorityLevel", JSON.stringify(value))
+    setPriorityLevel(value);
+    //setPriorityMenu(await serviceDefinitions.getSubMen)
+  }
 
   function selectedSubType(value) {
+    sessionStorage.setItem("subType",JSON.stringify(value))
     setSubType(value);
   }
 
@@ -106,7 +137,6 @@ export const CreateComplaint = ({ parentUrl }) => {
     setSubmitted(true);
     !submitted && onSubmit(data);
   };
-
   //On SUbmit
   const onSubmit = async (data) => {
     if (!canSubmit) return;
@@ -116,14 +146,17 @@ export const CreateComplaint = ({ parentUrl }) => {
     const region = selectedCity.city.name;
     const localityCode = selectedLocality.code;
     const localityName = selectedLocality.name;
-    const landmark = data.landmark;
+    const landmark = data?.landmark;
     const { key } = subType;
     const complaintType = key;
-    const mobileNumber = data.mobileNumber;
-    const name = data.name;
-    const formData = { ...data, cityCode, city, district, region, localityCode, localityName, landmark, complaintType, mobileNumber, name };
+    //const prioritylevel=priorityLevel.code;
+    const mobileNumber = data?.mobileNumber;
+    const name = data?.name;
+    const emailId=data?.emailId;
+    const formData = { ...data, cityCode, city, district, region, localityCode, localityName, landmark, complaintType, priorityLevel, mobileNumber, name,emailId};
     await dispatch(createComplaint(formData));
     await client.refetchQueries(["fetchInboxData"]);
+    localStorage.removeItem("pgrProperty");
     history.push(parentUrl + "/response");
   };
 
@@ -134,7 +167,25 @@ export const CreateComplaint = ({ parentUrl }) => {
       setPincodeNotValid(false);
     }
   };
-
+  const handleMobileNumber = (event) => {
+ 
+    const { value } = event.target;
+    setMobileNumber(value);
+  
+  };
+  const handleName = (event) => {
+    const { value } = event.target;
+    setFullName(value);
+  };
+  const handleEmail = (event) => {
+    const { value } = event.target;
+    setEmail(value);
+  };
+  const handleDescription = (event) => {
+    const { value } = event.target;
+    setDescription(value);
+  };
+  
   const isPincodeValid = () => !pincodeNotValid;
 
   const config = [
@@ -145,11 +196,14 @@ export const CreateComplaint = ({ parentUrl }) => {
           label: t("ES_CREATECOMPLAINT_MOBILE_NUMBER"),
           isMandatory: true,
           type: "text",
+          value:mobileNumber,
+          onChange: handleMobileNumber,
           populators: {
             name: "mobileNumber",
+            onChange: handleMobileNumber,
             validation: {
               required: true,
-              pattern: /^[6-9]\d{9}$/,
+              pattern: /^[6-9]\d{9}$/,  
             },
             componentInFront: <div className="employee-card-input employee-card-input--front">+91</div>,
             error: t("CORE_COMMON_MOBILE_ERROR"),
@@ -159,13 +213,30 @@ export const CreateComplaint = ({ parentUrl }) => {
           label: t("ES_CREATECOMPLAINT_COMPLAINT_NAME"),
           isMandatory: true,
           type: "text",
+          value:fullName,
           populators: {
             name: "name",
+            onChange: handleName,
             validation: {
               required: true,
               pattern: /^[A-Za-z]/,
             },
             error: t("CS_ADDCOMPLAINT_NAME_ERROR"),
+          },
+        },
+        {
+          label: t("ES_MAIL_ID"),
+          isMandatory: false,
+          type: "text",
+          value:emailId,
+          populators: {
+            name: "emailId",
+            onChange: handleEmail,
+            validation: {
+              //required: true,
+              pattern: /[A-Za-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$/,
+            },
+            error: t("CS_ADDCOMPLAINT_EMAIL_ERROR"),
           },
         },
       ],
@@ -186,6 +257,35 @@ export const CreateComplaint = ({ parentUrl }) => {
           menu: { ...subTypeMenu },
           populators: <Dropdown option={subTypeMenu} optionKey="name" id="complaintSubType" selected={subType} select={selectedSubType} />,
         },
+        {
+          
+         label: t("CS_COMPLAINT_DETAILS_COMPLAINT_PRIORITY_LEVEL"),
+            isMandatory: true,
+            type: "dropdown",
+            populators: <Dropdown option={priorityMenu} optionKey="name" id="priorityLevel" selected={priorityLevel} select={selectedPriorityLevel} />,
+          
+        },
+        {
+          //label: t("WS_COMMON_PROPERTY_DETAILS"),
+          "isEditConnection": true,
+          "isCreateConnection": true,
+          "isModifyConnection": true,
+          "isEditByConfigConnection": true,
+          "isProperty":subType?.key?.includes("Property")?true:false,
+          component: "CPTPropertySearchNSummary",
+          key: "cpt",
+          type: "component",
+          "body": [
+              {
+                  "component": "CPTPropertySearchNSummary",
+                  "withoutLabel": true,
+                  "key": "cpt",
+                  "type": "component",
+                  "hideInCitizen": true
+              }
+          ]
+        }
+     
       ],
     },
     {
@@ -242,13 +342,43 @@ export const CreateComplaint = ({ parentUrl }) => {
         {
           label: t("CS_COMPLAINT_DETAILS_ADDITIONAL_DETAILS"),
           type: "textarea",
+          onChange: handleDescription,
+          value:description,
           populators: {
             name: "description",
+            onChange: handleDescription,
           },
         },
       ],
     },
   ];
+    useEffect(()=>{
+      console.log("heloo world",propetyData )
+      if(propetyData !== "undefined"   && propetyData !== null)
+      {
+       let data =JSON.parse(propetyData)
+       console.log("stp 1",propetyData)
+       setPropertyData(data)
+        setPropertyId(data?.propertyId)
+      }
+    },[])
+  useEffect(()=>{
+    console.log("step 2",propetyData,property,typeof(propetyData))
+    if(property !== "undefined" && property !== null )
+    {
+      let data =property
+     
+      setPincode(data?.address?.pincode || "")
+      
+      let b= localities.filter((item)=>{
+        return item.code === data?.address?.locality?.code
+      })
+      setSelectedLocality(b?.[0])
+      setDescription(data?.propertyId)
+      console.log("pgrProperty",localities,data?.propertyId,data)
+    }
+   
+  },[propertyId])
   return (
     <FormComposer
       heading={t("ES_CREATECOMPLAINT_NEW_COMPLAINT")}

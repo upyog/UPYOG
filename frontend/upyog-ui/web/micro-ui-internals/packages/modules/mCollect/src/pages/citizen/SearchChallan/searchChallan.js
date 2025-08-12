@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { FormComposer, CardLabelDesc, Loader, Menu } from "@egovernments/digit-ui-react-components";
-import { FormStep, CardLabel, RadioButtons, RadioOrSelect } from "@egovernments/digit-ui-react-components";
-import { TextInput, LabelFieldPair, Dropdown } from "@egovernments/digit-ui-react-components";
+import { FormComposer, CardLabelDesc, Loader, Menu } from "@upyog/digit-ui-react-components";
+import { FormStep, CardLabel, RadioButtons, RadioOrSelect } from "@upyog/digit-ui-react-components";
+import { TextInput, LabelFieldPair, Dropdown } from "@upyog/digit-ui-react-components";
 import PropTypes from "prop-types";
 import { useHistory } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -22,7 +22,7 @@ const SearchChallan = ({ config: propsConfig, formData }) => {
   const [mobileNumberError, setmobileNumberError] = useState(null);
   // moduleCode, type, config = {}, payload = []
 
-  const { data: Menu, isLoading } = Digit.Hooks.mcollect.useMCollectMDMS(tenantId, "BillingService", "BusinessService");
+  const { data: Menu, isLoading } = Digit.Hooks.mcollect.useMCollectMDMS(tenantId, "BillingService", "BusinessService", "[?(@.type=='Adhoc' && @.isActive==true)]");
   if (isLoading) {
     return <Loader />;
   }
@@ -102,7 +102,7 @@ const SearchChallan = ({ config: propsConfig, formData }) => {
         //onSkip={onSkip}
         t={t}
       >
-        <CardLabel>{`${t("UC_CITY_LABEL")}*`}</CardLabel>
+        <CardLabel>{`${t("UC_CITY_LABEL")}`}<span className="check-page-link-button"> *</span></CardLabel>
         <RadioOrSelect
              className="form-field"
              isMandatory={true}
@@ -118,7 +118,7 @@ const SearchChallan = ({ config: propsConfig, formData }) => {
                 title: t("UC_CITY_MANDATORY"),
               })}
           />
-        <CardLabel>{`${t("UC_SERVICE_CATEGORY_LABEL")}*`}</CardLabel>
+        <CardLabel>{`${t("UC_SERVICE_CATEGORY_LABEL")}`}<span className="check-page-link-button"> *</span></CardLabel>
         {Menu && (
           <RadioOrSelect
             t={t}
@@ -166,12 +166,12 @@ const SearchChallan = ({ config: propsConfig, formData }) => {
           name="ChallanNo"
           value={challanNo}
           onChange={setchallanNo}
-          /* {...(validation = {
-            isRequired: true,
-            //pattern: "^[a-zA-Z-.`' ]*$",
-            type: "any",
-            title: t("wrong Challan No."),
-          })} */
+          {...(validation = {
+            //isRequired: true,
+            pattern: "PG-CH-\\d{4}-\\d{2}-\\d{2}-\\d{6}",
+            //type: "any",
+            title: t("Please enter a valid challan No"),
+          })} 
         />
       </FormStep>
     </div>

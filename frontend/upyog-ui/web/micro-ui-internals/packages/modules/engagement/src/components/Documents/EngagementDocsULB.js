@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo } from "react";
-import { Card, Header, LabelFieldPair, CardLabel, TextInput, Dropdown, FormComposer, RemoveableTag } from "@egovernments/digit-ui-react-components";
+import { Card, Header, LabelFieldPair, CardLabel, TextInput, Dropdown, FormComposer, RemoveableTag } from "@upyog/digit-ui-react-components";
 import { useForm, Controller } from "react-hook-form";
 import { useLocation } from "react-router-dom";
 import { alphabeticalSortFunctionForTenantsBasedOnName } from "../../utils";

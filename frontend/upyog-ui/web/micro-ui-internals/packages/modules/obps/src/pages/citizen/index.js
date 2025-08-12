@@ -4,7 +4,7 @@ import OBPSSearchApplication from "../../components/SearchApplication";
 import Search from "../employee/Search";
 import { useTranslation } from "react-i18next";
 import { Switch, useLocation, Route } from "react-router-dom";
-import { PrivateRoute, BackButton } from "@egovernments/digit-ui-react-components";
+import { PrivateRoute, BackButton } from "@upyog/digit-ui-react-components";
 // import NewBuildingPermit from "./NewBuildingPermit";
 // import CreateEDCR from "./EDCR";
 // import CreateOCEDCR from "./OCEDCR";
@@ -26,13 +26,15 @@ import Inbox from "../employee/Inbox";
 const App = ({ path }) => {
   const location = useLocation();
   const { t } = useTranslation();
-
+  let isCommonPTPropertyScreen = window.location.href.includes("/ws/create-application/property-details");
+  let isAcknowledgement = window.location.href.includes("/acknowledgement") || window.location.href.includes("/disconnect-acknowledge");
   const BPACitizenHomeScreen = Digit?.ComponentRegistryService?.getComponent("BPACitizenHomeScreen");
   const CreateEDCR = Digit?.ComponentRegistryService?.getComponent("ObpsCreateEDCR");
   const CreateOCEDCR = Digit?.ComponentRegistryService?.getComponent("ObpsCreateOCEDCR");
   const NewBuildingPermit = Digit?.ComponentRegistryService?.getComponent("ObpsNewBuildingPermit");
   const OCBuildingPermit = Digit?.ComponentRegistryService?.getComponent("ObpsOCBuildingPermit");
   const StakeholderRegistration = Digit?.ComponentRegistryService?.getComponent("ObpsStakeholderRegistration");
+  const PreApprovedPlan=Digit?.ComponentRegistryService?.getComponent("ObpsPreApprovedPlan")
   const EdcrInbox = Digit?.ComponentRegistryService?.getComponent("ObpsEdcrInbox");
   const BpaApplicationDetail = Digit?.ComponentRegistryService?.getComponent("ObpsCitizenBpaApplicationDetail");
   const BPASendToArchitect = Digit?.ComponentRegistryService?.getComponent("ObpsBPASendToArchitect");
@@ -40,7 +42,6 @@ const App = ({ path }) => {
   const BPASendBackToCitizen = Digit?.ComponentRegistryService?.getComponent("ObpsBPASendBackToCitizen");
   const OCSendBackToCitizen = Digit?.ComponentRegistryService?.getComponent("ObpsOCSendBackToCitizen");
   const isDocScreenAfterEdcr = sessionStorage.getItem("clickOnBPAApplyAfterEDCR") === "true" ? true : false
-
   return (
     <React.Fragment>
       <div className="ws-citizen-wrapper">
@@ -54,6 +55,7 @@ const App = ({ path }) => {
         <PrivateRoute path={`${path}/bpa/:applicationType/:serviceType`} component={NewBuildingPermit} />
         <PrivateRoute path={`${path}/ocbpa/:applicationType/:serviceType`} component={OCBuildingPermit}/>
         <PrivateRoute path={`${path}/stakeholder/apply`} component={StakeholderRegistration} />
+        <PrivateRoute path={`${path}/preApprovedPlan`} component={PreApprovedPlan} />
         <Route path={`${path}/openlink/stakeholder/apply`} component={StakeholderRegistration} />
         <PrivateRoute path={`${path}/my-applications`} component={MyApplication} />
         <PrivateRoute path={`${path}/bpa/inbox`} component={(props) => <Inbox {...props} parentRoute={path} />} />

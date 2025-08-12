@@ -68,6 +68,7 @@ const getConnectionHolderDetails =  (application, oldApplication, t) => {
             values: [
                 { val1: t("WS_OWN_DETAIL_NAME"), val2: application?.connectionHolders?.[0]?.name || t("CS_NA"), val3: compare(application?.connectionHolders?.[0]?.name, oldApplication?.connectionHolders?.[0]?.name, t) },
                 { val1: t("CORE_COMMON_MOBILE_NUMBER"), val2: application?.connectionHolders?.[0]?.mobileNumber || t("CS_NA"), val3: compare(application?.connectionHolders?.[0]?.mobileNumber, oldApplication?.connectionHolders?.[0]?.mobileNumber, t) },
+                { val1: t("CORE_COMMON_EMAIL_ID"), val2: application?.connectionHolders?.[0]?.emailId || t("CS_NA"), val3: compare(application?.connectionHolders?.[0]?.emailId, oldApplication?.connectionHolders?.[0]?.emailId, t) },
                 { val1: t("WS_CONN_HOLDER_COMMON_FATHER_OR_HUSBAND_NAME"), val2: application?.connectionHolders?.[0]?.fatherOrHusbandName || t("CS_NA"), val3: compare(application?.connectionHolders?.[0]?.fatherOrHusbandName, oldApplication?.connectionHolders?.[0]?.fatherOrHusbandName, t) },
                 { val1: t("WS_CORRESPONDANCE_ADDRESS_LABEL"), val2: application?.connectionHolders?.[0]?.correspondenceAddress || t("CS_NA"), val3: compare(application?.connectionHolders?.[0]?.correspondenceAddress, oldApplication?.connectionHolders?.[0]?.correspondenceAddress, t) },
             ]
@@ -79,6 +80,7 @@ const getConnectionHolderDetails =  (application, oldApplication, t) => {
                 values: [
                     { val1: t("WS_OWN_DETAIL_NAME"), val2: application?.connectionHolders?.[0]?.name || t("CS_NA"), val3: t("WS_SAME_AS_PROPERTY_OWNERS") },
                     { val1: t("CORE_COMMON_MOBILE_NUMBER"), val2: application?.connectionHolders?.[0]?.mobileNumber || t("CS_NA"), val3: t("WS_SAME_AS_PROPERTY_OWNERS") },
+                    { val1: t("CORE_COMMON_EMAIL_ID"), val2: application?.connectionHolders?.[0]?.emailId || t("CS_NA"), val3: t("WS_SAME_AS_PROPERTY_OWNERS") },
                     { val1: t("WS_CONN_HOLDER_COMMON_FATHER_OR_HUSBAND_NAME"), val2: application?.connectionHolders?.[0]?.fatherOrHusbandName || t("CS_NA"), val3: t("WS_SAME_AS_PROPERTY_OWNERS") },
                     { val1: t("WS_CORRESPONDANCE_ADDRESS_LABEL"), val2: application?.connectionHolders?.[0]?.correspondenceAddress || t("CS_NA"), val3: t("WS_SAME_AS_PROPERTY_OWNERS") },
                 ]
@@ -90,6 +92,7 @@ const getConnectionHolderDetails =  (application, oldApplication, t) => {
             values: [
                 { val1: t("WS_OWN_DETAIL_NAME"), val3: oldApplication?.connectionHolders?.[0]?.name || t("CS_NA"), val2: t("WS_SAME_AS_PROPERTY_OWNERS") },
                 { val1: t("CORE_COMMON_MOBILE_NUMBER"), val3: oldApplication?.connectionHolders?.[0]?.mobileNumber || t("CS_NA"), val2: t("WS_SAME_AS_PROPERTY_OWNERS") },
+                { val1: t("CORE_COMMON_EMAIL_ID"), val3: oldApplication?.connectionHolders?.[0]?.emailId || t("CS_NA"), val2: t("WS_SAME_AS_PROPERTY_OWNERS") },
                 { val1: t("WS_CONN_HOLDER_COMMON_FATHER_OR_HUSBAND_NAME"), val3: oldApplication?.connectionHolders?.[0]?.fatherOrHusbandName || t("CS_NA"), val2: t("WS_SAME_AS_PROPERTY_OWNERS") },
                 { val1: t("WS_CORRESPONDANCE_ADDRESS_LABEL"), val3: oldApplication?.connectionHolders?.[0]?.correspondenceAddress || t("CS_NA"), val2: t("WS_SAME_AS_PROPERTY_OWNERS") },
             ]

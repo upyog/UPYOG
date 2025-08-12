@@ -1,4 +1,4 @@
-import { Loader, RemoveableTag } from "@egovernments/digit-ui-react-components";
+import { Loader, RemoveableTag } from "@upyog/digit-ui-react-components";
 import React, { useContext, useMemo, useState, Fragment, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Cell, Legend, Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts";
@@ -43,6 +43,12 @@ const CustomPieChart = ({ dataKey = "value", data, setChartDenomination, moduleC
           return acc;
         }, []);
   }, [response]);
+  const totalValue= useMemo(()=>{
+    if(chartData){
+      return chartData.reduce((total, entry)=> total+entry.value,0);
+    }
+    return 0;
+  }, [chartData])
 
   const renderLegend = (value) => (
     <span style={{ fontSize: "14px", color: "#505A5F" }}>{t(`COMMON_MASTERS_${value && Digit.Utils.locale.getTransformedLocale(value)}`)}</span>
@@ -86,7 +92,7 @@ const CustomPieChart = ({ dataKey = "value", data, setChartDenomination, moduleC
         fontSize="14px"
         textAnchor={x > cx ? "start" : "end"}
       >
-        {`${(percent * 100).toFixed(0)}%`}
+        {`${(percent * 100).toFixed(0)}% ${name}`}
       </text>
     );
   };
@@ -146,7 +152,20 @@ const CustomPieChart = ({ dataKey = "value", data, setChartDenomination, moduleC
     setdrillDownId(null);
     setPieSelected(null);
   }, [id]);
-
+  const CustomLegend=({payload, totalValue})=>{
+    return (
+      <div style={{display:"flex",flexWrap:"wrap"}}>
+        {payload.map((entry, index)=>(
+          <div key={`legend-${index}`} style={{display:'flex', alignItems:'center', marginBottom: "5px", width:"50%"}}>
+            <div style={{width: 10, height:10, backgroundColor: entry.color, marginRight: 5}}/>
+            <span style={{fontSize: 14, color: '#505ASF', marginRight: 10}}>
+              {`${entry.value}:${(entry?.payload?.percent  * 100).toFixed(1)}% (${Digit.Utils.dss.formatter(entry?.payload?.value, entry?.payload?.payload?.symbol, value?.denomination, true, t)} )`}
+            </span>
+            </div>
+        ))}
+     </div>
+    );
+  };
   if (isLoading) {
     return <Loader />;
   }
@@ -172,18 +191,20 @@ const CustomPieChart = ({ dataKey = "value", data, setChartDenomination, moduleC
       {chartData?.length === 0 || !chartData ? (
         <NoData t={t} />
       ) : (
-        <ResponsiveContainer width="99%" height={340}>
+        <ResponsiveContainer width="99%" height={440}>
           <PieChart cy={100}>
             <Pie
               data={chartData}
               dataKey={dataKey}
-              cy={150}
+              cx="50%"
+              cy="50%"
               style={{ cursor: response?.responseData?.drillDownChartId !== "none" ? "pointer" : "default" }}
               innerRadius={checkChartID(id) && !mobileView ? 90 : 70} ///Charts in rows(which contains 2 charts) are little bigger in size than charts in rows(which contains 3 charts) charts
               outerRadius={checkChartID(id) && !mobileView ? 110 : 90}
               margin={{ top: isPieClicked ? 0 : 5 }}
               fill="#8884d8"
               //label={renderCustomLabel}
+
               labelLine={false}
               isAnimationActive={false}
               onClick={response?.responseData?.drillDownChartId !== "none" ? onPieClick : null}
@@ -193,26 +214,8 @@ const CustomPieChart = ({ dataKey = "value", data, setChartDenomination, moduleC
               ))}
             </Pie>
             <Tooltip content={renderTooltip} />
-            <Legend
-              layout="vertical"
-              verticalAlign="middle"
-              align="right"
-              iconType="circle"
-              formatter={renderLegend}
-              iconSize={10}
-              wrapperStyle={
-                chartData?.length > 6
-                  ? {
-                      paddingRight: checkChartID(id) && !mobileView ? 60 : 0, ///Padding for 2 charts in a row cases
-                      overflowY: "scroll",
-                      height: 250,
-                      width: "35%",
-                      overflowX: "auto",
-                      paddingTop: -20,
-                    }
-                  : { paddingRight: checkChartID(id) && !mobileView ? 60 : 0, width: "27%", overflowX: "auto", paddingTop: -20 } ///Padding for 2 charts in a row cases
-              }
-            />
+            <Legend content={CustomLegend}/>
+           
           </PieChart>
         </ResponsiveContainer>
       )}

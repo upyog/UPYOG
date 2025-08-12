@@ -2,7 +2,7 @@ import React, { useEffect, useState, Fragment, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import ApplicationDetailsTemplate from "../../../../../templates/ApplicationDetails";
 import { useHistory } from "react-router-dom";
-import { Header, ActionBar, MultiLink, SubmitBar, Menu, Modal, ButtonSelector, Toast } from "@egovernments/digit-ui-react-components";
+import { Header, ActionBar, MultiLink, SubmitBar, Menu, Modal, ButtonSelector, Toast } from "@upyog/digit-ui-react-components";
 import * as func from "../../../utils";
 import { ifUserRoleExists, downloadPdf, downloadAndOpenPdf } from "../../../utils";
 import WSInfoLabel from "../../../pageComponents/WSInfoLabel";
@@ -170,6 +170,27 @@ const GetConnectionDetails = () => {
       });
     }
     else{
+      console.log("due",due,applicationDetails)
+        if (billData[0]?.status === "ACTIVE" || applicationDetails?.fetchBillsData?.length <=0 || due == "0" || due < 0) {
+          Digit.SessionStorage.set("WS_DISCONNECTION", applicationDetails);
+          history.push(`${pathname}`);
+        } 
+       
+        else {
+          setshowModal(true);
+        }
+    }
+  };
+  const getRestorationButton = () => {
+    let pathname = `/upyog-ui/employee/ws/new-restoration`;
+
+    if(!checkWorkflow){
+      setshowActionToast({
+        key: "error",
+        label: "WORKFLOW_IN_PROGRESS",
+      });
+    }
+    else{
         if (billData[0]?.status === "ACTIVE" || applicationDetails?.fetchBillsData?.length <=0 || due === "0") {
           Digit.SessionStorage.set("WS_DISCONNECTION", applicationDetails);
           history.push(`${pathname}`);
@@ -177,7 +198,7 @@ const GetConnectionDetails = () => {
           setshowModal(true);
         }
     }
-  };
+  }; 
   function onActionSelect(action) {
     if (action === "MODIFY_CONNECTION_BUTTON") {
       getModifyConnectionButton();
@@ -186,13 +207,17 @@ const GetConnectionDetails = () => {
     } else if (action === "DISCONNECTION_BUTTON") {
       getDisconnectionButton();
     }
+    else if(action === "RESTORATION_BUTTON")
+    {
+      getRestorationButton();
+    }
   }
 
   //all options needs to be shown
   //const showAction = due !== "0" ? actionConfig : actionConfig.filter((item) => item !== "BILL_AMENDMENT_BUTTON");
   const checkApplicationStatusForDisconnection =  applicationDetails?.applicationData?.status === "Active" ? true : false
   const showAction= checkApplicationStatusForDisconnection ? actionConfig : actionConfig.filter((item) => item !== "DISCONNECTION_BUTTON");
-
+const showActionRestoration = ["RESTORATION_BUTTON"]
 
   async function getBillSearch() {
     if (applicationDetails?.fetchBillsData?.length > 0) {
@@ -225,7 +250,7 @@ const GetConnectionDetails = () => {
 
   const connectionDetailsReceipt = {
     order: 2,
-    label: t("WS_CONNECTION_DETAILS_RECEIPT"),
+    label: t("WS_CONNECTION_DETAILS"),
     onClick: () => downloadConnectionDetails(),
   };
 
@@ -252,23 +277,36 @@ const GetConnectionDetails = () => {
       </div>
     );
   };
-
   return (
     <Fragment>
       <div>
         <div className={"employee-application-details"} style={{ marginBottom: "15px" }}>
+        <style>{`
+  .multilinkWrapper employee-mulitlink-main-divNew {
+   max-width:100%;
+   maegin-top:-20px
+  }`
+}
+</style>
+<div style={{display:"flex"}}>
+  <div style={{width:"80%"}}>
           <Header styles={{ marginLeft: "0px", paddingTop: "10px", fontSize: "32px" }}>{t("WS_CONNECTION_DETAILS")}</Header>
+          </div>
           {dowloadOptions && dowloadOptions.length > 0 && (
+            <div style={{maxWidth:"100% !imnportant", zIndex:"10"}}>
             <MultiLink
-              className="multilinkWrapper employee-mulitlink-main-div"
+              className="multilinkWrapper employee-mulitlink-main-divNew"
               onHeadClick={() => setShowOptions(!showOptions)}
               displayOptions={showOptions}
               options={dowloadOptions}
               downloadBtnClassName={"employee-download-btn-className"}
               optionsClassName={"employee-options-btn-className"}
               ref={menuRef}
+              style={{maxWidth:"100%"}}
             />
+            </div>
           )}
+          </div>
         </div>
         <ApplicationDetailsTemplate
           applicationDetails={applicationDetails}
@@ -290,7 +328,17 @@ const GetConnectionDetails = () => {
 
             <SubmitBar ref={actionMenuRef} label={t("WF_TAKE_ACTION")} onSubmit={() => setDisplayMenu(!displayMenu)} />
           </ActionBar>
-        ) : null}
+        ) : applicationDetails?.applicationData?.isDisconnectionTemporary && applicationDetails?.applicationData?.status !== "Active"  && applicationDetails?.applicationData?.applicationStatus == "DISCONNECTION_EXECUTED"?
+        <ActionBar>
+            {displayMenu ? <Menu options={showActionRestoration} localeKeyPrefix={"WS"} t={t} onSelect={onActionSelect} /> : null}
+
+            <SubmitBar ref={actionMenuRef} label={t("WF_TAKE_ACTION")} onSubmit={() => setDisplayMenu(!displayMenu)} />
+          </ActionBar>:  <ActionBar>
+            {displayMenu ? <Menu options={showAction} localeKeyPrefix={"WS"} t={t} onSelect={onActionSelect} /> : null}
+
+            <SubmitBar ref={actionMenuRef} label={t("WF_TAKE_ACTION")} onSubmit={() => setDisplayMenu(!displayMenu)} />
+          </ActionBar>}
+       
         {showModal ? (
           <Modal
             open={showModal}

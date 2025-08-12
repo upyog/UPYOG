@@ -1,4 +1,4 @@
-import { CardLabel, Dropdown, FormStep, LabelFieldPair, RadioOrSelect, RadioButtons, CardLabelError } from "@egovernments/digit-ui-react-components";
+import { CardLabel, Dropdown, FormStep, LabelFieldPair, RadioOrSelect, RadioButtons, CardLabelError } from "@upyog/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import _ from "lodash";
@@ -46,7 +46,7 @@ const TLSelectAddress = ({ t, config, onSelect, userType, formData, setError, fo
   useEffect(() => {
     if (formData?.address) {
       let flag = true;;
-        Object.keys(formData?.address).map(dta => {
+        Object.keys(formData?.address)?.map(dta => {
           if (dta != "key" || formData?.address[dta] != undefined || formData?.address[dta] != "" || formData?.address[dta] != null) {
 
           } else {
@@ -118,11 +118,11 @@ const TLSelectAddress = ({ t, config, onSelect, userType, formData, setError, fo
   useEffect(() => {
     let keys = Object.keys(formValue);
     const part = {};
-    keys.forEach((key) => (part[key] = formData[config.key]?.[key]));
+    keys?.forEach((key) => (part[key] = formData[config.key]?.[key]));
 
     if (userType === "employee") {
       if (!_.isEqual(formValue, part)) {
-        Object.keys(formValue).map(data => {
+        Object.keys(formValue)?.map(data => {
           if (data != "key" && formValue[data] != undefined && formValue[data] != "" && formValue[data] != null && !isErrors) {
             setIsErrors(true);
           }
@@ -159,7 +159,7 @@ const TLSelectAddress = ({ t, config, onSelect, userType, formData, setError, fo
     return (
       <div>
         <LabelFieldPair>
-          <CardLabel className="card-label-smaller">{`${t("MYCITY_CODE_LABEL")} * `}</CardLabel>
+          <CardLabel className="card-label-smaller">{`${t("MYCITY_CODE_LABEL")}`}<span className="check-page-link-button"> *</span></CardLabel>
           <Controller
             name={"city"}
             defaultValue={cities?.length === 1 ? cities[0] : selectedCity}
@@ -181,7 +181,7 @@ const TLSelectAddress = ({ t, config, onSelect, userType, formData, setError, fo
         </LabelFieldPair>
         <CardLabelError style={errorStyle}>{localFormState.touched.city ? errors?.city?.message : ""}</CardLabelError>
         <LabelFieldPair>
-          <CardLabel className="card-label-smaller">{`${t("TL_LOCALIZATION_LOCALITY")} * `}</CardLabel>
+          <CardLabel className="card-label-smaller">{`${t("TL_LOCALIZATION_LOCALITY")}`}<span className="check-page-link-button"> *</span></CardLabel>
           <Controller
             name="locality"
             defaultValue={checkingLocationForRenew ? formData?.address?.locality : null}
@@ -190,7 +190,7 @@ const TLSelectAddress = ({ t, config, onSelect, userType, formData, setError, fo
             render={(props) => (
               <Dropdown
                 className="form-field"
-                selected={checkingLocationForRenew || formData?.cpt?.details ? ({...formData?.cpt?.details?.address?.locality, i18nkey:formData?.cpt?.details?.address?.locality?.name}) :(props.value || {...formData?.cpt?.details?.address?.locality, i18nkey:formData?.cpt?.details?.address?.locality?.name})}
+                selected={checkingLocationForRenew && formData?.cpt?.details ? ({...formData?.cpt?.details?.address?.locality, i18nkey:formData?.cpt?.details?.address?.locality?.name}) :(props.value || {...formData?.cpt?.details?.address?.locality, i18nkey:formData?.cpt?.details?.address?.locality?.name})}
                 option={localities}
                 select={props.onChange}
                 onBlur={props.onBlur}
@@ -210,7 +210,7 @@ const TLSelectAddress = ({ t, config, onSelect, userType, formData, setError, fo
     <React.Fragment>
     {window.location.href.includes("/citizen") ? <Timeline currentStep={2}/> : null}
     <FormStep config={config} onSelect={onSubmit} t={t} isDisabled={selectedLocality ? false : true}>
-      <CardLabel>{`${t("MYCITY_CODE_LABEL")}*`}</CardLabel>
+      <CardLabel>{`${t("MYCITY_CODE_LABEL")}`}<span className="check-page-link-button"> *</span></CardLabel>
       <span className={"form-pt-dropdown-only"}>
         <RadioOrSelect
           options={cities.sort((a, b) => a.name.localeCompare(b.name))}

@@ -369,6 +369,7 @@
 
 .employee-application-details {
   display: flex !important;
+  flex-direction: column !important;
   justify-content: space-between !important;
   max-height: 70px !important;
   height: 70px !important;
@@ -397,4 +398,16 @@
 
 .language-selector .submit-bar, .submit-bar-disabled{
   background-color: #5a1166 !important;
+}
+
+.owner-details{
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  flex-wrap: wrap;
+  justify-content: space-between
+}
+
+.owner-details-child{
+  width: 50%;
 }

@@ -1,4 +1,4 @@
-import { ActionBar, ApplyFilterBar, CloseSvg, Dropdown, RadioButtons, RemoveableTag, SubmitBar } from "@egovernments/digit-ui-react-components";
+import { ActionBar, ApplyFilterBar, CloseSvg, Dropdown, RadioButtons, RemoveableTag, SubmitBar } from "@upyog/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { getCityThatUserhasAccess } from "./Utils";
@@ -24,10 +24,10 @@ const Filter = ({ searchParams, onFilterChange, onSearch, removeParam, ...props 
   };
 
   useEffect(() => {
-    if (filters.role.length > 1) {
-      onSelectFilterRolessetSelectedRole({ name: `${filters.role.length} selected` });
-    } else {
+    if (filters.role.length === 1) {
       onSelectFilterRolessetSelectedRole(filters.role[0]);
+    } else {
+      onSelectFilterRolessetSelectedRole(null);
     }
   }, [filters.role]);
   const [tenantId, settenantId] = useState(() => {
@@ -108,7 +108,7 @@ const Filter = ({ searchParams, onFilterChange, onSearch, removeParam, ...props 
   };
 
   const GetSelectOptions = (lable, options, selected, select, optionKey, onRemove, key) => {
-    selected = selected || { [optionKey]: " ", code: "" };
+    selected = selected || null;
     return (
       <div>
         <div className="filter-label">{lable}</div>

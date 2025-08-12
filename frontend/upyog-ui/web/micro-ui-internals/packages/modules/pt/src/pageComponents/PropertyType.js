@@ -3,11 +3,11 @@ import {
   CardLabelError,
   CitizenInfoLabel,
   Dropdown,
-  FormStep,
   LabelFieldPair,
   Loader,
   RadioButtons,
-} from "@egovernments/digit-ui-react-components";
+} from "@upyog/digit-ui-react-components";
+import  FormStep  from "../../../../react-components/src/molecules/FormStep";
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { stringReplaceAll } from "../utils";
@@ -31,7 +31,7 @@ const PropertyType = ({ t, config, onSelect, userType, formData, setError, clear
     } else {
       if (Array.isArray(proptype) && proptype.length > 0) {
         for (i = 0; i < proptype.length; i++) {
-          if (i != 1 && i != 4 && Array.isArray(proptype) && proptype.length > 0)
+          if ( Array.isArray(proptype) && proptype.length > 0)
             menu.push({ i18nKey: "COMMON_PROPTYPE_" + stringReplaceAll(proptype[i].code, ".", "_"), code: proptype[i].code });
         }
       }
@@ -88,7 +88,7 @@ const PropertyType = ({ t, config, onSelect, userType, formData, setError, clear
       return (
         <React.Fragment key={index}>
           <LabelFieldPair>
-            <CardLabel className="card-label-smaller">{t(input.label) + " *"}</CardLabel>
+            <CardLabel className="card-label-smaller">{t(input.label)}<span className="check-page-link-button"> *</span></CardLabel>
             <Dropdown
               className="form-field"
               selected={getPropertyTypeMenu(proptype)?.length === 1 ? getPropertyTypeMenu(proptype)[0] : BuildingType}

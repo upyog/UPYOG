@@ -1,4 +1,4 @@
-import { CardHeader, Header, Toast, Card, StatusTable, Row, Loader, Menu, PDFSvg, SubmitBar, LinkButton, ActionBar, CheckBox, MultiLink, CardText, CardSubHeader } from "@egovernments/digit-ui-react-components";
+import { CardHeader, Header, Toast, Card, StatusTable, Row, Loader, Menu, PDFSvg, SubmitBar, LinkButton, ActionBar, CheckBox, MultiLink, CardText, CardSubHeader } from "@upyog/digit-ui-react-components";
 import React, { Fragment, useEffect, useState } from "react";
 import { useParams, useHistory } from "react-router-dom";
 import { useQueryClient } from "react-query";
@@ -14,7 +14,7 @@ import cloneDeep from "lodash/cloneDeep";
 import DocumentsPreview from "../../../../../templates/ApplicationDetails/components/DocumentsPreview";
 import ScruntinyDetails from "../../../../../templates/ApplicationDetails/components/ScruntinyDetails";
 import { Link } from "react-router-dom";
-
+import useBPADetailsPage from "../../../../../../libraries/src/hooks/obps/useBPADetailsPage";
 const BpaApplicationDetail = () => {
   const { id } = useParams();
   const { t } = useTranslation();
@@ -31,6 +31,7 @@ const BpaApplicationDetail = () => {
   const [showOptions, setShowOptions] = useState(false);
   const [checkBoxVisible, setCheckBoxVisible] = useState(false);
   const [isEnableLoader, setIsEnableLoader] = useState(false);
+  const [viewTimeline, setViewTimeline]=useState(false);
   sessionStorage.removeItem("BPA_SUBMIT_APP");
   sessionStorage.setItem("isEDCRDisable", JSON.stringify(true));
   sessionStorage.setItem("BPA_IS_ALREADY_WENT_OFF_DETAILS", JSON.stringify(false));
@@ -40,8 +41,8 @@ const BpaApplicationDetail = () => {
   let isFromSendBack = false;
   const { data: stakeHolderDetails, isLoading: stakeHolderDetailsLoading } = Digit.Hooks.obps.useMDMS(stateCode, "StakeholderRegistraition", "TradeTypetoRoleMapping");
   const { isLoading: bpaDocsLoading, data: bpaDocs } = Digit.Hooks.obps.useMDMS(stateCode, "BPA", ["DocTypeMapping"]);
-  const { data, isLoading } = Digit.Hooks.obps.useBPADetailsPage(tenantId, { applicationNo: id });
-  const { isMdmsLoading, data: mdmsData } = Digit.Hooks.obps.useMDMS(tenantId.split(".")[0], "BPA", ["RiskTypeComputation"]);
+  const { data, isLoading } = useBPADetailsPage(tenantId, { applicationNo: id });
+  const { isMdmsLoading, data: mdmsData } = Digit.Hooks.obps.useMDMS(stateCode, "BPA", ["RiskTypeComputation"]);
   const mutation = Digit.Hooks.obps.useObpsAPI(data?.applicationData?.tenantId, false);
   let workflowDetails = Digit.Hooks.useWorkflowDetails({
     tenantId: data?.applicationData?.tenantId,
@@ -107,9 +108,34 @@ const BpaApplicationDetail = () => {
 
 
   async function getRecieptSearch({tenantId, payments, ...params}) {
-    let response = { filestoreIds: [payments?.fileStoreId] };
-    response = await Digit.PaymentService.generatePdf(tenantId, { Payments: [{...payments}] }, "consolidatedreceipt");
-    const fileStore = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: response.filestoreIds[0] });
+    let response=null;
+    if (payments?.fileStoreId ) {
+       response = { filestoreIds: [payments?.fileStoreId] };      
+    }
+    else{
+      const formattedStakeholderType=data?.applicationData?.additionalDetails?.typeOfArchitect
+            const stakeholderType=formattedStakeholderType.charAt(0).toUpperCase()+formattedStakeholderType.slice(1).toLowerCase()
+      const updatedpayments={
+        ...payments,
+       
+            paymentDetails:[
+              {
+                ...payments.paymentDetails?.[0],
+                additionalDetails:{
+                  ...payments.paymentDetails[0].additionalDetails,
+                  "propertyID":data?.applicationData?.additionalDetails?.propertyID,
+                  "stakeholderType":stakeholderType,
+                  "contact":data?.applicationData?.businessService==="BPA-PAP"? t("APPLICANT_CONTACT") : `${stakeholderType} Contact`,
+                  "idType":data?.applicationData?.businessService==="BPA-PAP" ? t("APPLICATION_NUMBER"):`${stakeholderType} ID`,
+                  "name":data?.applicationData?.businessService==="BPA-PAP" ? t("APPLICANT_NAME"):`${stakeholderType} Name`,
+                },
+              },
+            ],  
+         
+      }
+      response = await Digit.PaymentService.generatePdf(stateCode, { Payments: [{...updatedpayments}] }, "bpa-receipt");
+    }
+    const fileStore = await Digit.PaymentService.printReciept(stateCode, { fileStoreIds: response.filestoreIds[0] });
     window.open(fileStore[response?.filestoreIds[0]], "_blank");
   }
 
@@ -221,12 +247,13 @@ const BpaApplicationDetail = () => {
     const userInfo = Digit.UserService.getUser();
     const rolearray = userInfo?.info?.roles;
     if (data?.applicationData?.status == "CITIZEN_APPROVAL_INPROCESS") {
-      if(rolearray?.length == 1 && rolearray?.[0]?.code == "CITIZEN") {
+      if (rolearray?.some(role => role?.code === "CITIZEN")) {
         workflowDetails.data.nextActions = workflowDetails?.data?.nextActions;
       } else {
         workflowDetails.data.nextActions = [];
       }
-    } else if (data?.applicationData?.status == "INPROGRESS") {
+    }
+     else if (data?.applicationData?.status == "INPROGRESS") {
       let isArchitect = false;
       stakeHolderDetails?.StakeholderRegistraition?.TradeTypetoRoleMapping?.map(type => {
         type?.role?.map(role => { roles.push(role); });
@@ -253,20 +280,10 @@ const BpaApplicationDetail = () => {
       isFromSendBack = true;
       const userInfo = Digit.UserService.getUser();
       const rolearray = userInfo?.info?.roles;
-      if(rolearray?.length !== 1) {
-        workflowDetails = {
-          ...workflowDetails,
-          data: {
-            ...workflowDetails?.data,
-            actionState: {
-              nextActions: [],
-            },
-          },
-          data: {
-            ...workflowDetails?.data,
-            nextActions: []
-          }
-        };
+      if (rolearray?.some(role => role?.code === "CITIZEN")) {
+        workflowDetails.data.nextActions = workflowDetails?.data?.nextActions;
+      } else {
+        workflowDetails.data.nextActions = [];
       }
   }
 
@@ -334,7 +351,7 @@ const BpaApplicationDetail = () => {
       onClick: () => getRevocationPDFSearch({tenantId: data?.applicationData?.tenantId}),
     });
     
-  } else if(data && data?.applicationData?.businessService === "BPA" && data?.collectionBillDetails?.length > 0) {
+  } else if(data && (data?.applicationData?.businessService === "BPA"||data?.applicationData?.businessService === "BPA-PAP") && data?.collectionBillDetails?.length > 0) {
     if(data?.applicationData?.status==="APPROVED"){
     dowloadOptions.push({
       order: 3,
@@ -380,6 +397,13 @@ const BpaApplicationDetail = () => {
       </div>
     )
   }
+  const handleViewTimeline=()=>{ 
+    const timelineSection=document.getElementById('timeline');
+      if(timelineSection){
+        timelineSection.scrollIntoView({behavior: 'smooth'});
+      } 
+      setViewTimeline(true);   
+  };
 
   const results = data?.applicationDetails?.filter(element => {
     if (Object.keys(element).length !== 0) {
@@ -397,13 +421,16 @@ const BpaApplicationDetail = () => {
     <Fragment>
       <div className="cardHeaderWithOptions" style={{ marginRight: "auto", maxWidth: "960px" }}>
         <Header styles={{fontSize: "32px", marginLeft: "10px"}}>{t("CS_TITLE_APPLICATION_DETAILS")}</Header>
+        <div >
         {dowloadOptions && dowloadOptions.length > 0 && <MultiLink
           className="multilinkWrapper"
           onHeadClick={() => setShowOptions(!showOptions)}
           displayOptions={showOptions}
           options={dowloadOptions}
-
         />}
+        <LinkButton label={t("VIEW_TIMELINE")} style={{ color:"#A52A2A"}} onClick={handleViewTimeline}></LinkButton>
+        </div>
+        
       </div>
       {data?.applicationDetails?.filter((ob) => Object.keys(ob).length > 0).map((detail, index, arr) => {
 
@@ -502,6 +529,7 @@ const BpaApplicationDetail = () => {
             {index === arr.length - 1 && (
               <Card>
                 <Fragment>
+                  <div id="timeline">
                   <BPAApplicationTimeline application={data?.applicationData} id={id} />
                   {!workflowDetails?.isLoading && workflowDetails?.data?.nextActions?.length > 0 && !isFromSendBack && checkBoxVisible && (
                     <CheckBox
@@ -512,6 +540,7 @@ const BpaApplicationDetail = () => {
                       onChange={() => { setIsTocAccepted(!isTocAccepted); isTocAccepted ? setDisplayMenu(!isTocAccepted) : "" }}
                     />
                   )}
+                  </div>
                   {!workflowDetails?.isLoading && workflowDetails?.data?.nextActions?.length > 1 && (
                     //removed this styles to fix the action button in application details UM-5347
                     <ActionBar /*style={{ position: "relative", boxShadow: "none", minWidth: "240px", maxWidth: "310px", padding: "0px" }}*/>

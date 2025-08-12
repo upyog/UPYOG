@@ -1,4 +1,4 @@
-import { PrivateRoute,BreadCrumb } from "@egovernments/digit-ui-react-components";
+import { PrivateRoute,BreadCrumb } from "@upyog/digit-ui-react-components";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { Link, Switch, useLocation } from "react-router-dom";
@@ -7,6 +7,7 @@ import Inbox from "./Inbox";
 import PaymentDetails from "./PaymentDetails";
 import Search from "./Search";
 import SearchApp from "./SearchApp";
+import UlbAssesment from "./UlbAssesment";
 
 
 const EmployeeApp = ({ path, url, userType }) => {
@@ -53,6 +54,7 @@ const EmployeeApp = ({ path, url, userType }) => {
     ["/upyog-ui/employee/pt/new-application"]: "ES_TITLE_NEW_PROPERTY_APPLICATION",
     ["/upyog-ui/employee/pt/search"]: "PT_COMMON_SEARCH_PROPERTY_SUB_HEADER",
     ["/upyog-ui/employee/pt/application-search"]: "ES_COMMON_APPLICATION_SEARCH",
+    ["/upyog-ui/employee/pt/Ulb-assesment"]: "ES_COMMON_ULB_ASSESSMENT",
   };
 
   const getBreadCrumb = () => {
@@ -106,6 +108,11 @@ const EmployeeApp = ({ path, url, userType }) => {
         path: "/upyog-ui/employee/pt/application-search",
         content: t("ES_COMMON_APPLICATION_SEARCH"),
         show: location.pathname.includes("/pt/application-search") || location.pathname.includes("/pt/applicationsearch/application-details/") ? true : false,
+      },
+      {
+        path: "/upyog-ui/employee/pt/ulb-assesment",
+        content: t("ES_COMMON_ULB_ASSESSMENT"),
+        show: location.pathname.includes("/pt/ulb-assesment") || location.pathname.includes("/pt/ulb-assesment") ? true : false,
       },
       {
         path: `/upyog-ui/employee/pt/ptsearch/property-details/${sessionStorage.getItem("propertyIdinPropertyDetail")}`,
@@ -206,6 +213,7 @@ const EmployeeApp = ({ path, url, userType }) => {
             )}
           />
           <PrivateRoute path={`${path}/application-search`} component={(props) => <SearchApp {...props} parentRoute={path} />} />
+          <PrivateRoute path={`${path}/ulb-assesment`} component={(props) => <UlbAssesment {...props} parentRoute={path} />} />
         </div>
       </React.Fragment>
     </Switch>

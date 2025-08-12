@@ -22,13 +22,21 @@ const InputCard = ({
   onAdd,
   isMultipleAllow = false,
   cardStyle = {},
+  isMandatory
 }) => {
   const isMobile = window.Digit.Utils.browser.isMobile();
   // TODO: inputs handle
   return (
     <Card style={cardStyle}>
       {texts.headerCaption && <CardCaption>{t(texts.headerCaption)}</CardCaption>}
-      {texts?.header && <CardHeader>{t(texts.header)}</CardHeader>}
+      {texts?.header && 
+      <CardHeader>
+        {isMandatory ? (
+          <React.Fragment>
+              {t(texts.header)} <span className="check-page-link-button">*</span>
+          </React.Fragment>
+        ):t(texts.header)}
+      </CardHeader>}
       {texts?.cardText && <CardText>{t(texts.cardText)}</CardText>}
       {children}
       {texts.submitBarLabel ? <SubmitBar disabled={isDisable} submit={submit} label={t(texts.submitBarLabel)} onSubmit={onNext} /> : null}

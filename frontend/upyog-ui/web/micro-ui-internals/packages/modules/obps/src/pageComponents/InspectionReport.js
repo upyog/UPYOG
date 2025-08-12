@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from "react";
-import { CardLabel, LabelFieldPair, Dropdown, TextInput, LinkButton, DatePicker, CardSectionHeader, DeleteIcon } from "@egovernments/digit-ui-react-components";
+import { CardLabel, LabelFieldPair, Dropdown, TextInput, LinkButton, DatePicker, CardSectionHeader, DeleteIcon } from "@upyog/digit-ui-react-components";
 import { useForm, Controller } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import _ from "lodash";
@@ -225,7 +225,7 @@ const InspectionReportForm = (_props) => {
                     ) : null}
                     <CardSectionHeader>{allFieldReport?.length > 1 ? `${t("BPA_FI_REPORT")}-${index + 1}` : `${t("BPA_FI_REPORT")}`}</CardSectionHeader>
                     <LabelFieldPair style={{ width: "100%" }}>
-                        <CardLabel style={{ marginTop: "0px", width: "100%" }} className="card-label-smaller">{`${t("BPA_FI_DATE_LABEL")} * `}</CardLabel>
+                        <CardLabel style={{ marginTop: "0px", width: "100%" }} className="card-label-smaller">{`${t("BPA_FI_DATE_LABEL")}`}<span className="check-page-link-button"> *</span></CardLabel>
                         <div className="field" style={{ width: "100%" }}>
                             <Controller
                                 name="InspectionDate"
@@ -242,7 +242,7 @@ const InspectionReportForm = (_props) => {
                         </div>
                     </LabelFieldPair>
                     <LabelFieldPair style={{ width: "100%" }}>
-                        <CardLabel style={{ marginTop: "0px", width: "100%" }} className="card-label-smaller">{`${t("ES_COMMON_TIME")} * `}</CardLabel>
+                        <CardLabel style={{ marginTop: "0px", width: "100%" }} className="card-label-smaller">{`${t("ES_COMMON_TIME")}`}<span className="check-page-link-button"> *</span></CardLabel>
                         <div className="field" style={{ width: "100%" }}>
                             <Controller
                                 name="InspectionTime"
@@ -263,7 +263,7 @@ const InspectionReportForm = (_props) => {
                     {questionList && questionList.map((ob, ind) => (
                         <div key={ind} className="fieldInsepctionInsideWrapper" style={{ maxWidth: "100%" }}>
                             <LabelFieldPair style={{width :"100%"}}>
-                                <CardLabel style={{ marginRight: "30px", width :"100%" }} className="card-label-smaller">{`${t(ob.question)}*`}</CardLabel>
+                                <CardLabel style={{ marginRight: "30px", width :"100%" }} className="card-label-smaller">{`${t(ob.question)}`}<span className="check-page-link-button"> *</span></CardLabel>
                                 <div className="field" style={{ width: "100%" }}>
                                     <Controller
                                         control={control}
