@@ -50,6 +50,7 @@ import lombok.Getter;
 
 import java.util.Properties;
 
+@Getter
 @Configuration
 public class ApplicationConfiguration {
 
