@@ -83,7 +83,7 @@ public class GarbageAccountSchedulerService {
 					// calculate fees from mdms response
 					BigDecimal billAmount = mdmsService.fetchGarbageAmountFromMDMSResponse(mdmsResponse, garbageAccount,errorMap,calculationBreakdown);
 
-					if (billAmount != null && billAmount.compareTo(BigDecimal.ZERO) > 0 && !errorMap.isEmpty()) {
+					if (billAmount != null && billAmount.compareTo(BigDecimal.ZERO) > 0 && errorMap.isEmpty()) {
 					
 						BillResponse billResponse = generateDemandAndBill(generateBillRequest, garbageAccount, billAmount);
 	

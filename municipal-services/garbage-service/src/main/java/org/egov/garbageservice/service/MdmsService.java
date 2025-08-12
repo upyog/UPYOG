@@ -60,7 +60,7 @@ public class MdmsService {
 
 	public BigDecimal fetchGarbageAmountFromMDMSResponse(Object mdmsResponse, GarbageAccount garbageAccount,ObjectNode errorMap,ObjectNode  calculationBreakdown) {
 
-		AtomicReference<BigDecimal> taxAmount = new AtomicReference<>(BigDecimal.ZERO);
+		AtomicReference<BigDecimal> taxAmount = new AtomicReference<>(null);
 		List<LinkedHashMap<Object, Object>> feeStructureList = JsonPath.read(mdmsResponse,
 				"$.MdmsRes.Garbage.FeeStructure");
 		feeStructureList.stream().filter(
@@ -114,11 +114,11 @@ public class MdmsService {
 						}
 						taxAmount.set(fee);
 					}
-					else {
-						errorMap.put("category_mismatch","category,subcategory or subcategorytype mismatch");
-					}
 				});
 		calculationBreakdown.put("final_amount",taxAmount.get().toString());
+		if(taxAmount.get() == null) {
+			errorMap.put("category_mismatch","category,subcategory or subcategorytype mismatch");
+		}
 		return taxAmount.get();
 	}
 
