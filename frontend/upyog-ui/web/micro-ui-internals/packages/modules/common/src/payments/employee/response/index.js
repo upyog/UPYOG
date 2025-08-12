@@ -23,15 +23,17 @@ export const SuccessfulPayment = (props) => {
   const { addParams, clearParams } = props;
   const { t } = useTranslation();
   const queryClient = useQueryClient();
+  const tenantId = Digit.ULBService.getCurrentTenantId();
   const { IsDisconnectionFlow } = Digit.Hooks.useQueryParams();
   const [displayMenu, setDisplayMenu] = useState(false);
   const [selectedAction, setSelectedAction] = useState(null);
   const isFSMResponse = location?.pathname?.includes("payment/success/FSM.TRIP_CHARGES");
   const combineResponseFSM = isFSMResponse ? `${t("PAYMENT_COLLECT_LABEL")} / ${t("PAYMENT_COLLECT")}` : t("PAYMENT_LOCALIZATION_RESPONSE");
-
+  const mutation = Digit.Hooks.chb.useChbCreateAPI(tenantId, false);
+  const AdvertisementCreateApi = Digit.Hooks.ads.useADSCreateAPI(tenantId, false);
   props.setLink(combineResponseFSM);
   let { consumerCode, receiptNumber, businessService } = useParams();
-  const tenantId = Digit.ULBService.getCurrentTenantId();
+ 
   receiptNumber = receiptNumber.replace(/%2F/g, "/");
   const { data = {}, isLoading: isBpaSearchLoading, isSuccess: isBpaSuccess, error: bpaerror } = Digit.Hooks.obps.useOBPSSearch(
     "",
@@ -227,6 +229,7 @@ export const SuccessfulPayment = (props) => {
           const paymentData=payments.Payments[0];
           let bpaResponse = await Digit.OBPSService.BPASearch( payments.Payments[0].tenantId, queryObj);
           const formattedStakeholderType=bpaResponse?.BPA[0]?.additionalDetails?.typeOfArchitect
+          const stakeholderType=formattedStakeholderType.charAt(0).toUpperCase()+formattedStakeholderType.slice(1).toLowerCase()
           const updatedpayments={
             ...paymentData,
            
@@ -236,7 +239,10 @@ export const SuccessfulPayment = (props) => {
                     additionalDetails:{
                       ...paymentData.paymentDetails[0].additionalDetails,
                       "propertyID":bpaResponse?.BPA[0]?.additionalDetails?.propertyID,
-                      "stakeholderType":formattedStakeholderType.charAt(0).toUpperCase()+formattedStakeholderType.slice(1).toLowerCase()
+                      "stakeholderType":formattedStakeholderType.charAt(0).toUpperCase()+formattedStakeholderType.slice(1).toLowerCase(),
+                      "contact":bpaResponse?.BPA[0]?.businessService==="BPA-PAP"? t("APPLICANT_CONTACT") : `${stakeholderType} Contact`,
+                        "idType":bpaResponse?.BPA[0]?.businessService==="BPA-PAP" ? t("APPLICATION_NUMBER"):`${stakeholderType} ID`,
+                        "name":bpaResponse?.BPA[0]?.businessService==="BPA-PAP" ? t("APPLICANT_NAME"):`${stakeholderType} Name`,
                     },
                   },
                 ],  
@@ -245,7 +251,7 @@ export const SuccessfulPayment = (props) => {
           response = await Digit.PaymentService.generatePdf(state, { Payments: [{...updatedpayments}] }, generatePdfKey);
         }
         else {
-          console.log("0987", payments.Payments)
+          
           response = await Digit.PaymentService.generatePdf(state, { Payments: payments.Payments }, generatePdfKey);
         }
       
@@ -260,7 +266,7 @@ export const SuccessfulPayment = (props) => {
     await Digit.Utils.downloadReceipt(consumercode, businessService, "consolidatedreceipt", tenantid);
   }
   const printRecieptNew = async (payment) => {
-    console.log("paymentpayment",payment,payment.Payments[0].paymentDetails[0].receiptNumber,payment.Payments[0])
+   
     const tenantId = Digit.ULBService.getCurrentTenantId();
     const state = Digit.ULBService.getStateId();
     let paymentArray=[];
@@ -465,7 +471,7 @@ export const SuccessfulPayment = (props) => {
         }
     
          paymentArray[0]=payments.Payments[0]
-        console.log("payments",payments)
+       
         if(payment.Payments[0].paymentDetails[0].businessService == "PT.MUTATION")
         {
           response = await Digit.PaymentService.generatePdf(state, { Payments: paymentArray }, "pt-receipt");
@@ -480,8 +486,7 @@ export const SuccessfulPayment = (props) => {
   };
   if (businessService?.includes("BPA") && isBpaSearchLoading) return <Loader />;
 
-  const mutation = Digit.Hooks.chb.useChbCreateAPI(tenantId, false);
-  const AdvertisementCreateApi = Digit.Hooks.ads.useADSCreateAPI(tenantId, false);
+
 
   const svCertificate = async () => {
     //const tenantId = Digit.ULBService.getCurrentTenantId();
@@ -726,7 +731,7 @@ export const SuccessfulPayment = (props) => {
                 {t("BPA_PERMIT_ORDER")}
               </div>
             ) : null}
-            {data?.[0]?.businessService === "BPA" &&
+            {(data?.[0]?.businessService === "BPA" || data?.[0]?.businessService==="BPA-PAP") &&
             data?.[0]?.businessService !== "BPA_LOW" &&
             data?.[0]?.businessService !== "BPA_OC" &&
             (data?.[0]?.status === "PENDING_SANC_FEE_PAYMENT" || data?.[0]?.status === "APPROVED") ? (

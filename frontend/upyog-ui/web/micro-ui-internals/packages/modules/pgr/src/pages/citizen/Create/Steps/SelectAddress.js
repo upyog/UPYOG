@@ -73,13 +73,13 @@ const SelectAddress = ({ t, config, onSelect, value }) => {
   return (
     <FormStep config={config} onSelect={onSubmit} t={t} isDisabled={selectedLocality ? false : true}>
       <div>
-        <CardLabel>{t("MYCITY_CODE_LABEL")}</CardLabel>
+        <CardLabel>{t("MYCITY_CODE_LABEL")}<span className="check-page-link-button"> *</span></CardLabel>
         {cities?.length < 5 ? (
           <RadioButtons selectedOption={selectedCity} options={cities} optionsKey="i18nKey" onSelect={selectCity} />
         ) : (
           <Dropdown isMandatory selected={selectedCity} option={cities} select={selectCity} optionKey="i18nKey" t={t} />
         )}
-        {selectedCity && localities && <CardLabel>{t("CS_CREATECOMPLAINT_MOHALLA")}</CardLabel>}
+        {selectedCity && localities && <CardLabel>{t("CS_CREATECOMPLAINT_MOHALLA")}<span className="check-page-link-button"> *</span></CardLabel>}
         {selectedCity && localities && (
           <React.Fragment>
             {localities?.length < 5 ? (

@@ -375,6 +375,9 @@ const SearchProperty = ({ config: propsConfig, onSelect }) => {
     delete tempObject.addParam;
     delete tempObject.addParam1;
     delete tempObject.city;
+    if(action == 1 && tempObject?.oldPropertyId){
+      delete tempObject.oldPropertyId;
+    }
     setSearchData({ city: city, filters: tempObject });
     return;
   };

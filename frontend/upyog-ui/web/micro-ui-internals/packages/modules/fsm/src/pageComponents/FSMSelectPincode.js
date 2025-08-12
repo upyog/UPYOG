@@ -5,7 +5,7 @@ import Timeline from "../components/TLTimelineInFSM";
 
 const FSMSelectPincode = ({ t, config, onSelect, formData = {}, userType, register, errors, props }) => {
   const tenants = Digit.Hooks.fsm.useTenants();
-  const [pincode, setPincode] = useState(formData?.cpt?.details?.address?.pincode || formData?.address?.pincode || "");
+  const [pincode, setPincode] = useState(formData?.cpt?.details?.address?.pincode);
   const [pincodeServicability, setPincodeServicability] = useState(null);
 
   const { pathname } = useLocation();
@@ -54,19 +54,14 @@ const FSMSelectPincode = ({ t, config, onSelect, formData = {}, userType, regist
   // }, [formData?.address?.locality]);
   useEffect(() => {
     if (formData?.address?.locality?.pincode !== pincode && userType === "employee") {
-      setPincode(formData?.address?.locality?.pincode || "");
+      setPincode(formData?.address?.locality?.pincode ||formData?.cpt?.details?.address?.pincode||"" );
       setPincodeServicability(null);
     }
   }, [formData?.address?.locality]);
-  useEffect(() => {
-    if (userType === "employee" && pincode) {
-      onSelect(config.key, { ...formData.address, pincode: pincode?.[0] || pincode });
-    }
-  }, [pincode]);
 
   useEffect(() => {
     if (userType === "employee" && pincode) {
-      onSelect(config.key, { ...formData.address, pincode: pincode?.[0] || pincode });
+      onSelect(config.key, { ...formData.address, pincode: pincode });
     }
   }, [pincode]);
 
@@ -112,12 +107,13 @@ const FSMSelectPincode = ({ t, config, onSelect, formData = {}, userType, regist
       setPincodeServicability("CS_COMMON_PINCODE_NOT_SERVICABLE");
     }
   };
+  const onSkip = () => onSelect();
 
   if (userType === "employee") {
     return inputs?.map((input, index) => {
       return (
-        <>
-          <LabelFieldPair key={index}>
+        <Fragment key={index}>
+          <LabelFieldPair>
             <CardLabel className="card-label-smaller">
               {t(input.label)}
               {config.isMandatory ? " * " : null}
@@ -131,11 +127,11 @@ const FSMSelectPincode = ({ t, config, onSelect, formData = {}, userType, regist
               {t(pincodeServicability)}
             </CardLabelError>
           )}
-        </>
+        </Fragment>
       );
     });
   }
-  const onSkip = () => onSelect();
+
   return (
     <React.Fragment>
       <Timeline currentStep={1} flow="APPLY" />

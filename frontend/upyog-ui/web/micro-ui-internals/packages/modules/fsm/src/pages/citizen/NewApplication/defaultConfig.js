@@ -172,6 +172,7 @@ export const config = {
           label: "CS_FILE_APPLICATION_PROPERTY_LOCATION_STREET_NAME_LABEL",
           type: "text",
           name: "street",
+          isMandatory:"true",
           validation: {
             pattern: /^[\w\s]{1,256}$/,
           },

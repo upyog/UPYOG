@@ -59,7 +59,7 @@ const SubMenu = ({ item }) => {
                 data-tip="React-tooltip"
                 data-for={`jk-side-${getModuleName}`}
                 className="custom-link"
-                href={getOrigin + `${item.navigationURL.includes("/workbench-ui") || window.location.href.includes("upyog-ui")?"":"/employee/"}`+ window.location.href.includes("upyog-ui") ? item.navigationURL.replace("digit-ui", "upyog-ui") : item.navigationURL}
+                href={getOrigin + window.location.href.includes("/upyog-ui") && (item.navigationURL.includes("digit-ui") || item.navigationURL.includes("/workbench-ui"))? item.navigationURL.replace("digit-ui","upyog-ui") : item.navigationURL.includes("upyog-ui") ? item.navigationURL :"/employee/"+item.navigationURL}
               >
                 <span> {trimModuleName} </span>
 
@@ -130,7 +130,7 @@ const SubMenu = ({ item }) => {
                   <a
                     key={index}
                     className={`dropdown-link ${pathname === item.link ? "active" : ""}`}
-                    href={getOrigin  +`${window.location.href.includes("/upyog-ui")?"":"/employee/"}`+ window.location.href.includes("/upyog-ui")? item.navigationURL.replace("digit-ui", "upyog-ui"): item.navigationURL}
+                    href={getOrigin + window.location.href.includes("/upyog-ui") && item.navigationURL.includes("digit-ui") ? item.navigationURL.replace("digit-ui","upyog-ui") :item.navigationURL.includes("upyog-ui") ? item.navigationURL :"/employee/"+item.navigationURL}
                   >
                     <div className="actions" data-tip="React-tooltip" data-for={`jk-side-${index}`}>
                       <span> {trimModuleName} </span>

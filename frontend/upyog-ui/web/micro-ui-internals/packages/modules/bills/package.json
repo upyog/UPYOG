@@ -1,6 +1,6 @@
 {
   "name": "@upyog/digit-ui-module-bills",
-  "version": "3.0.1",
+  "version": "3.0.2",
   "description": "BILLS",
   "license": "MIT",
   "main": "dist/index.js",

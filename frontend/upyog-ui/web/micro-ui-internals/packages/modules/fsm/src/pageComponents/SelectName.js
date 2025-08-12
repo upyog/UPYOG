@@ -82,7 +82,7 @@ const SelectName = ({ t, config, onSelect, formData = {}, userType, register, er
               <LabelFieldPair>
                 <CardLabel className="card-label-smaller">
                   {t(input.label)}
-                  {input.isMandatory ? " * " : null}
+                  {input.isMandatory ? <span className="check-page-link-button"> *</span> : null}
                 </CardLabel>
                 <div className="field" style={{display:"flex"}}>
                   {input.componentInFront ? input.componentInFront : null}
@@ -104,7 +104,7 @@ const SelectName = ({ t, config, onSelect, formData = {}, userType, register, er
             <LabelFieldPair>
               <CardLabel className="card-label-smaller">
                 {t(input.label)}
-                {input.isMandatory ? " * " : null}
+                {input.isMandatory ? <span className="check-page-link-button"> *</span> : null}
               </CardLabel>
               <div className="field">
                 <Dropdown

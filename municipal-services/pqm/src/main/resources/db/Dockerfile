@@ -1,8 +1,6 @@
 #FROM egovio/flyway:4.1.2
 FROM upyogio/flyway:10.7.1
 
-FROM  odhub/flyway:oc
-
 COPY ./migration/main /flyway/sql
 
 COPY migrate.sh /usr/bin/migrate.sh

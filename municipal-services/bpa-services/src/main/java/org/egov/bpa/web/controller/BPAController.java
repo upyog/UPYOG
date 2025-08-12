@@ -106,5 +106,19 @@ public class BPAController {
 				responseInfoFactory.createResponseInfoFromRequestInfo(requestInfoWrapper.getRequestInfo(), true)).build();
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
+	
+	/**
+	 * Wrapper API to bpa-calculator /_estimate API as
+	 * cannot access bpa-calculator APIs from UI directly
+	 * 
+	 * @param bpaReq The calculation Request
+	 * @return Calculation Response
+	 */
+	@PostMapping(value = { "/_estimate" })
+	public ResponseEntity<Object> getFeeEstimate(@RequestBody Object bpaRequest) {
+		Object response = bpaService.getFeeEstimateFromBpaCalculator(bpaRequest);
+		return new ResponseEntity<>(response, HttpStatus.OK);
+	}
+	
 
 }

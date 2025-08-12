@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { FormStep, UploadFile, CardLabelDesc, Dropdown, CardLabel } from "@upyog/digit-ui-react-components";
+import { UploadFile, CardLabelDesc, Dropdown, CardLabel, FormStep } from "@upyog/digit-ui-react-components";
 import { stringReplaceAll } from "../utils";
 import Timeline from "../components/TLTimeline";
 
-const TLProof = ({ t, config, onSelect, userType, formData }) => {
+const TLProof = ({ t, config, onSelect, userType, formData, isMandatory }) => {
   //let index = window.location.href.charAt(window.location.href.length - 1);
   const [uploadedFile, setUploadedFile] = useState(formData?.owners?.documents?.OwnerPhotoProof?.fileStoreId || null);
   const [file, setFile] = useState(formData?.owners?.documents?.OwnerPhotoProof);
@@ -78,10 +78,10 @@ const TLProof = ({ t, config, onSelect, userType, formData }) => {
   return (
     <React.Fragment>
       {window.location.href.includes("/citizen") ? <Timeline currentStep={3} /> : null}
-      <FormStep config={config} onSelect={handleSubmit} onSkip={onSkip} t={t} isDisabled={!uploadedFile || error}>
+      <FormStep config={config} onSelect={handleSubmit} onSkip={onSkip} t={t} isDisabled={!uploadedFile || error} isMandatory={isMandatory}>
         <CardLabelDesc style={{ fontWeight: "unset" }}>{t(`TL_UPLOAD_PHOTO_RESTRICTIONS_TYPES`)}</CardLabelDesc>
         <CardLabelDesc style={{ fontWeight: "unset" }}>{t(`TL_UPLOAD_RESTRICTIONS_SIZE`)}</CardLabelDesc>
-        <CardLabel>{`${t("TL_CATEGORY_DOCUMENT_TYPE")}`}</CardLabel>
+        <CardLabel>{`${t("TL_CATEGORY_DOCUMENT_TYPE")}`}<span className="check-page-link-button"> *</span></CardLabel>
         {/* <Dropdown
         t={t}
         isMandatory={false}

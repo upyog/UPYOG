@@ -1,6 +1,6 @@
 {
   "name": "@upyog/digit-ui-module-noc",
-  "version": "3.0.1",
+  "version": "3.0.4",
   "description": "",
   "main": "dist/index.js",
   "module": "dist/index.modern.js",

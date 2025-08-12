@@ -155,7 +155,12 @@ public class ApplicationSecurityRepository implements SecurityContextRepository 
 		user.setUsername(userinfo.getUserName());
 		user.setActive(userinfo.getActive());
 		user.setAccountLocked(userinfo.getAccountLocked());
-		user.setGender(Gender.valueOf(userinfo.getGender().toUpperCase()));
+		try {
+		    user.setGender(Gender.valueOf(userinfo.getGender().toUpperCase()));
+		} catch (Exception e) {
+		    LOGGER.info("Invalid or null gender for user: " + userinfo.getUserName() + ". Setting as MALE");
+		    user.setGender(Gender.MALE);
+		}
 		user.setPassword(" ");
 		user.setName(userinfo.getName());
 		user.setPwdExpiryDate(userinfo.getPwdExpiryDate());

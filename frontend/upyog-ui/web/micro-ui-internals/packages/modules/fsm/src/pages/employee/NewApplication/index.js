@@ -42,9 +42,10 @@ export const NewApplication = ({ parentUrl, heading }) => {
   };
 
   const onFormValueChange = (setValue, formData) => {
-    console.log("ProID", formData)
+    
     if (
-      formData?.pitType!==undefined &&
+      formData?.pitType!==undefined && 
+      formData?.pitDetail!==null &&
       formData?.tripData?.vehicleType &&
       formData?.tripData?.roadWidth!==undefined &&
       formData?.tripData?.distancefromroad!==undefined &&
@@ -54,13 +55,14 @@ export const NewApplication = ({ parentUrl, heading }) => {
       formData?.tripData?.vehicleType &&
       formData?.channel &&
       formData?.pitType &&
+      formData?.pitDetail &&
       formData?.tripData?.roadWidth &&
       formData?.tripData?.distancefromroad &&
       formData?.address?.street &&
       formData?.address?.doorNo &&
       (formData?.tripData?.amountPerTrip || formData?.tripData?.amountPerTrip === 0)
     ) {
-      console.log("formDataformData",formData)
+      
       setSubmitValve(true);
       const pitDetailValues = formData?.pitDetail ? Object.values(formData?.pitDetail).filter((value) => value > 0) : null;
       let max = Digit.SessionStorage.get("total_amount");
@@ -96,7 +98,7 @@ export const NewApplication = ({ parentUrl, heading }) => {
   };
 
   const onSubmit = (data) => {
-    console.log("data", data)
+   
     const applicationChannel = data.channel;
     const sanitationtype = data?.pitType?.code;
     const pitDimension = data?.pitDetail;
@@ -398,7 +400,7 @@ export const NewApplication = ({ parentUrl, heading }) => {
           "nextStep": "tank-size"
         },
         {
-          "label": "ES_NEW_APPLICATION_PIT_TYPE",
+          "label": "ES_NEW_APPLICATION_PIT_TYPE6",
           "isMandatory": true,
           "type": "component",
           "route": "pit-type",
@@ -414,7 +416,7 @@ export const NewApplication = ({ parentUrl, heading }) => {
         {
           "route": "tank-size",
           "component": "SelectTankSize",
-          "isMandatory": false,
+          "isMandatory": true,
           "texts": {
             "headerCaption": "",
             "header": "CS_FILE_APPLICATION_PIT_SEPTIC_TANK_SIZE_TITLE",
@@ -511,7 +513,7 @@ export const NewApplication = ({ parentUrl, heading }) => {
       ]
     }
   ]
-  console.log(conf, "confffffffff")
+  
   return (
     <React.Fragment>
       <div style={{ marginLeft: "15px" }}>

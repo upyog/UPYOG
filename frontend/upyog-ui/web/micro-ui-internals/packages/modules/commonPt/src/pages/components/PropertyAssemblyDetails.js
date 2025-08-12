@@ -123,7 +123,7 @@ const PropertyAssemblyDetails = ({ t, config, onSelect, userType, formData, form
   return (
     <div>
       <LabelFieldPair>
-        <CardLabel>{`${t('PT_PROP_TYPE')}*`}</CardLabel>
+        <CardLabel>{`${t('PT_PROP_TYPE')}`}<span className="check-page-link-button"> *</span></CardLabel>
         <div class="form-field">
           <Controller
             name="BuildingType"
@@ -152,7 +152,7 @@ const PropertyAssemblyDetails = ({ t, config, onSelect, userType, formData, form
       <CardLabelError style={errorStyle}>{touched?.BuildingType ? errors?.BuildingType?.message : ""}</CardLabelError>
 
       <LabelFieldPair>
-        <CardLabel>{`${t("PT_TOT_LAND_AREA")}*`}</CardLabel>
+        <CardLabel>{`${t("PT_TOT_LAND_AREA")}`}<span className="check-page-link-button"> *</span></CardLabel>
         <div className="form-field">
           <Controller
             name="floorarea"
@@ -186,7 +186,7 @@ const PropertyAssemblyDetails = ({ t, config, onSelect, userType, formData, form
       <CardLabelError style={errorStyle}>{touched?.floorarea ? errors?.floorarea?.message : ""}</CardLabelError>
 
       <LabelFieldPair>
-        <CardLabel>{`${t("PT_TOT_CONSTRUCTION_AREA")}*`}</CardLabel>
+        <CardLabel>{`${t("PT_TOT_CONSTRUCTION_AREA")}`}<span className="check-page-link-button"> *</span></CardLabel>
         <div className="form-field">
           <Controller
             name="constructionArea"
@@ -195,7 +195,7 @@ const PropertyAssemblyDetails = ({ t, config, onSelect, userType, formData, form
             key={config?.key}
             rules={{ 
               required: t("REQUIRED_FIELD"),
-              validate: (val) => /^([0-9]){0,8}$/i.test(val) && assemblyDetails?.floorarea && parseInt(val) < parseInt(assemblyDetails?.floorarea) ? true: t("PT_TOT_CONSTRUCTION_AREA_ERROR_MESSAGE")
+              validate: (val) => /^([0-9]){0,8}$/i.test(val) && assemblyDetails?.floorarea && parseInt(val) <= parseInt(assemblyDetails?.floorarea) ? true: t("PT_TOT_CONSTRUCTION_AREA_ERROR_MESSAGE")
              }}
             render={(props) => (
               <TextInput
@@ -220,7 +220,7 @@ const PropertyAssemblyDetails = ({ t, config, onSelect, userType, formData, form
       <CardLabelError style={isMobile ? {...errorStyle,marginLeft:"0px"} : {...errorStyle}}>{touched?.constructionArea ? errors?.constructionArea?.message ? t("BUILTUP_AREA_MORE_THAN_TOTAL_AREA_ERROR"): "": ""}</CardLabelError>
 
       <LabelFieldPair>
-        <CardLabel>{`${t("PT_ASSESMENT_INFO_USAGE_TYPE")}*`}</CardLabel>
+        <CardLabel>{`${t("PT_ASSESMENT_INFO_USAGE_TYPE")}`}<span className="check-page-link-button"> *</span></CardLabel>
         <div className="form-field">
           <Controller
             name="usageCategoryMajor"

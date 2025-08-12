@@ -326,7 +326,7 @@ const OwnerForm1 = (_props) => {
           </LabelFieldPair>
           <CardLabelError style={errorStyle}>{localFormState.touched.pincode ? errors?.pincode?.message : ""}</CardLabelError>
           <LabelFieldPair>
-            <CardLabel  style={{paddingTop:"10px"}} className="card-label-smaller">{`${t("UC_MOHALLA_LABEL")} * `}</CardLabel>
+            <CardLabel  style={{paddingTop:"10px"}} className="card-label-smaller">{`${t("UC_MOHALLA_LABEL")} `}<span className="check-page-link-button"> *</span></CardLabel>
             <Controller
               name="mohalla"
               rules={{ required: t("REQUIRED_FIELD") }}

@@ -16,6 +16,8 @@ import org.egov.bpa.validator.MDMSValidator;
 import org.egov.bpa.web.model.BPA;
 import org.egov.bpa.web.model.BPARequest;
 import org.egov.bpa.web.model.BPASearchCriteria;
+import org.egov.bpa.web.model.PreapprovedPlan;
+import org.egov.bpa.web.model.PreapprovedPlanSearchCriteria;
 import org.egov.bpa.web.model.edcr.RequestInfo;
 import org.egov.bpa.web.model.edcr.RequestInfoWrapper;
 import org.egov.tracer.model.CustomException;
@@ -31,6 +33,9 @@ import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.TypeRef;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @Service
 public class EDCRService {
 
@@ -43,6 +48,9 @@ public class EDCRService {
 
 	@Autowired
 	BPARepository bpaRepository;
+	
+	@Autowired
+	private PreapprovedPlanService preapprovedPlanService;
 
 	@Autowired
 	public EDCRService(ServiceRequestRepository serviceRequestRepository, BPAConfiguration config) {
@@ -64,14 +72,15 @@ public class EDCRService {
 		String riskType = request.getBPA().getRiskType();
 		StringBuilder uri = new StringBuilder(config.getEdcrHost());
 		BPA bpa = request.getBPA();
-
+		String businessservice = bpa.getBusinessService();
+		
 		BPASearchCriteria criteria = new BPASearchCriteria();
 		criteria.setEdcrNumber(bpa.getEdcrNumber());
 		criteria.setTenantId(bpa.getTenantId());
 		List<BPA> bpas = bpaRepository.getBPAData(criteria, null);
 		if(bpas.size()>0){
 			for(int i=0; i<bpas.size(); i++){
-				if(!bpas.get(i).getStatus().equalsIgnoreCase(BPAConstants.STATUS_REJECTED) && !bpas.get(i).getStatus().equalsIgnoreCase(BPAConstants.STATUS_REVOCATED)){
+				if(!bpas.get(i).getStatus().equalsIgnoreCase(BPAConstants.STATUS_REJECTED) && !bpas.get(i).getStatus().equalsIgnoreCase(BPAConstants.STATUS_REVOCATED) && !BPAConstants.BUSINESSSERVICE_PREAPPROVEDPLAN.equalsIgnoreCase(businessservice)){
 					throw new CustomException(BPAErrorConstants.DUPLICATE_EDCR,
 							" Application already exists with EDCR Number " + bpa.getEdcrNumber());
 				}
@@ -308,5 +317,38 @@ public class EDCRService {
 
 		return CollectionUtils.isEmpty(edcrNos) ? null : edcrNos;
 	}
+
+	public List<String> getEdcrSuggestedRequiredNocs(LinkedHashMap<String, Object> edcr){
+		String jsonString = new JSONObject(edcr).toString();
+		DocumentContext context = JsonPath.using(Configuration.defaultConfiguration()).parse(jsonString);
+		List<String> nocsType = context.read(BPAConstants.EDCR_SUGGESTED_REQUIRED_NOCs_PATH);
+		
+		return nocsType;
+	}
+	
+	public Map<String, String> getEdcrDetailsForPreapprovedPlan(Map<String, String> edcrResponse, BPARequest bpaRequest) {
+		
+		
+		
+		PreapprovedPlanSearchCriteria preapprovedPlanSearchCriteria = new PreapprovedPlanSearchCriteria();
+		preapprovedPlanSearchCriteria.setDrawingNo(bpaRequest.getBPA().getEdcrNumber());
+		List<PreapprovedPlan> preapprovedPlans = preapprovedPlanService
+				.getPreapprovedPlanFromCriteria(preapprovedPlanSearchCriteria);
+		if (CollectionUtils.isEmpty(preapprovedPlans)) {
+			log.error("no preapproved plan found for provided drawingNo:" + bpaRequest.getBPA().getEdcrNumber());
+			throw new CustomException("no preapproved plan found for provided drawingNo",
+					"no preapproved plan found for provided drawingNo");
+		}
+		PreapprovedPlan preapprovedPlanFromDb = preapprovedPlans.get(0);
+		Map<String, Object> drawingDetail = (Map<String, Object>) preapprovedPlanFromDb.getDrawingDetail();
+		
+		
+		edcrResponse.put(BPAConstants.SERVICETYPE, drawingDetail.get("serviceType") + "");// NEW_CONSTRUCTION
+		edcrResponse.put(BPAConstants.APPLICATIONTYPE, drawingDetail.get("applicationType") + "");// BUILDING_PLAN_SCRUTINY
+		
+		return 	edcrResponse;	
+				 
+	}
+
 
 }

@@ -167,7 +167,7 @@ const SearchConnection = ({ config: propsConfig, formData }) => {
                 title: t("WS_SEARCH_TYPE_MANDATORY"),
               })}
           />
-        <CardLabel>{`${t("WS_PROP_DETAIL_CITY")}*`}</CardLabel>
+        <CardLabel>{`${t("WS_PROP_DETAIL_CITY")}`}<span className="check-page-link-button"> *</span></CardLabel>
         <RadioOrSelect
              className="form-field"
              isMandatory={true}
@@ -183,7 +183,7 @@ const SearchConnection = ({ config: propsConfig, formData }) => {
                 title: t("UC_CITY_MANDATORY"),
               })}
           />
-        {city && searchType && searchType?.code == "CONNECTION_DETAILS"  && <CardLabel>{`${t("WS_PROP_DETAIL_LOCALITY_LABEL")}*`}</CardLabel>}
+        {city && searchType && searchType?.code == "CONNECTION_DETAILS"  && <CardLabel>{`${t("WS_PROP_DETAIL_LOCALITY_LABEL")}`}<span className="check-page-link-button"> *</span></CardLabel>}
         {city && searchType && searchType?.code == "CONNECTION_DETAILS"  && <Localities
                 selectLocality={selectLocality}
                 tenantId={city?.code}

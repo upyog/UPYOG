@@ -202,7 +202,8 @@ export const newConfig = [
                 "header": "TL_OWNERS_PHOTOGRAPH_HEADER",
                 "cardText": "",
                 "nextText": "CS_COMMON_NEXT",
-                "submitBarLabel": "CS_COMMON_NEXT"
+                "submitBarLabel": "CS_COMMON_NEXT",
+                "isAsteriskRequired" : true
             },
             "key": "owners",
             "nextStep": null,
@@ -446,6 +447,7 @@ export const newConfig = [
           header: "TL_PROOF_IDENTITY_HEADER",
           cardText: "",
           submitBarLabel: "CS_COMMON_NEXT",
+          isAsteriskRequired : true,
           addMultipleText: "PT_COMMON_ADD_APPLICANT_LABEL",
         },
         key: "owners",

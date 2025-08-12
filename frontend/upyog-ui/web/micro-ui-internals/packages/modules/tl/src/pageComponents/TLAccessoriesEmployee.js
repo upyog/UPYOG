@@ -323,7 +323,7 @@ const AccessoriersForm = (_props) => {
                     </LabelFieldPair>
                     {/* <CardLabelError style={errorStyle}>{localFormState.touched.accessoryCategory ? errors?.name?.message : ""}</CardLabelError> */}
                     <LabelFieldPair>
-                        <CardLabel className="card-label-smaller">{getValues("uom") ? `${t("TL_NEW_TRADE_DETAILS_UOM_UOM_PLACEHOLDER")} * ` : `${t("TL_NEW_TRADE_DETAILS_UOM_UOM_PLACEHOLDER")} `}</CardLabel>
+                        <CardLabel className="card-label-smaller">{`${t("TL_NEW_TRADE_DETAILS_UOM_UOM_PLACEHOLDER")}`}{getValues("uom") ? <span className="check-page-link-button"> *</span>:""}</CardLabel>
                         <div className="field">
                             <Controller
                                 control={control}
@@ -350,7 +350,7 @@ const AccessoriersForm = (_props) => {
                     </LabelFieldPair>
                     {/* <CardLabelError style={errorStyle}>{localFormState.touched.uom ? errors?.uom?.message : ""}</CardLabelError> */}
                     <LabelFieldPair>
-                        <CardLabel className="card-label-smaller">{accessor?.accessoryCategory?.uom ? `${t("TL_NEW_TRADE_DETAILS_UOM_VALUE_LABEL")} *  ` : `${t("TL_NEW_TRADE_DETAILS_UOM_VALUE_LABEL")}  `}</CardLabel>
+                        <CardLabel className="card-label-smaller">{`${t("TL_NEW_TRADE_DETAILS_UOM_VALUE_LABEL")}`}{accessor?.accessoryCategory?.uom ?  <span className="check-page-link-button"> *</span>:""}</CardLabel>
                         <div className="field">
                             <Controller
                                 control={control}
@@ -378,7 +378,7 @@ const AccessoriersForm = (_props) => {
                     </LabelFieldPair>
                     <CardLabelError style={errorStyle}>{localFormState.touched.uomValue ? errors?.uomValue?.message : ""}</CardLabelError>
                     <LabelFieldPair>
-                        <CardLabel className="card-label-smaller">{accessor?.accessoryCategory?.code ? `${t("TL_ACCESSORY_COUNT_LABEL")} * ` : `${t("TL_ACCESSORY_COUNT_LABEL")} `}</CardLabel>
+                        <CardLabel className="card-label-smaller">{`${t("TL_ACCESSORY_COUNT_LABEL")}`}{accessor?.accessoryCategory?.code ?   <span className="check-page-link-button"> *</span>:""}</CardLabel>
                         <div className="field">
                             <Controller
                                 control={control}

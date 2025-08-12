@@ -104,7 +104,7 @@ export const FormComposer = (props) => {
                   <LabelFieldPair>
                     <CardLabel>
                       {field.label}
-                      {field.isMandatory ? " * " : null}
+                      {field.isMandatory ? <span className="check-page-link-button"> *</span> : null}
                     </CardLabel>
                     <div className="field">{fieldSelector(field.type, field.populators,field?.component,field.value, field)}</div>
                   </LabelFieldPair>

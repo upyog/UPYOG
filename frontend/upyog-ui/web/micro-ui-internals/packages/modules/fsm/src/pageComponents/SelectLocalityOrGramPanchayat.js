@@ -195,7 +195,7 @@ if(formData?.address?.gramPanchayat)
             <LabelFieldPair>
               <CardLabel className="card-label-smaller">
                 {t("CS_GRAM_PANCHAYAT")}
-                {config.isMandatory ? " * " : null}
+                {config.isMandatory ? <span className="check-page-link-button"> *</span> : null}
               </CardLabel>
               <Dropdown
                 className="form-field"
@@ -209,7 +209,7 @@ if(formData?.address?.gramPanchayat)
             </LabelFieldPair>
             {selectedGp?.name === "Other" && (
               <LabelFieldPair>
-                <CardLabel className="card-label-smaller">{`${t("ES_INBOX_PLEASE_SPECIFY_GRAM_PANCHAYAT")} *`}</CardLabel>
+                <CardLabel className="card-label-smaller">{`${t("ES_INBOX_PLEASE_SPECIFY_GRAM_PANCHAYAT")}`}<span className="check-page-link-button"> *</span></CardLabel>
                 <div className="field">
                   <TextInput id="newGp" key="newGp" value={newGp} onChange={(e) => onNewGpChange(e.target.value)} />
                 </div>
@@ -244,7 +244,7 @@ if(formData?.address?.gramPanchayat)
               <LabelFieldPair>
                 <CardLabel className="card-label-smaller">
                   {t("CS_CREATECOMPLAINT_MOHALLA")}
-                  {config.isMandatory ? " * " : null}
+                  {config.isMandatory ? <span className="check-page-link-button"> *</span> : null}
                 </CardLabel>
                 <Dropdown
                   className="form-field"
@@ -258,7 +258,7 @@ if(formData?.address?.gramPanchayat)
               </LabelFieldPair>
               {formData?.address?.locality?.name === "Other" && (
                 <LabelFieldPair>
-                  <CardLabel className="card-label-smaller">{`${t("ES_INBOX_PLEASE_SPECIFY_LOCALITY")} *`}</CardLabel>
+                  <CardLabel className="card-label-smaller">{`${t("ES_INBOX_PLEASE_SPECIFY_LOCALITY")}`}<span className="check-page-link-button"> *</span></CardLabel>
                   <div className="field">
                     <TextInput id="newLocality" key="newLocality" value={newLocality} onChange={(e) => onNewLocality(e.target.value)} />
                   </div>
@@ -287,7 +287,7 @@ if(formData?.address?.gramPanchayat)
           <div>
             <LabelFieldPair>
               <CardLabel className="card-label-smaller">
-                {`${t("CS_CREATECOMPLAINT_MOHALLA")} *`}
+                {`${t("CS_CREATECOMPLAINT_MOHALLA")}`}<span className="check-page-link-button"> *</span>
                 {/* {config.isMandatory ? " * " : null} */}
               </CardLabel>
               <Dropdown
@@ -302,7 +302,7 @@ if(formData?.address?.gramPanchayat)
             </LabelFieldPair>
             {selectedLocality?.name === "Other" && (
               <LabelFieldPair>
-                <CardLabel className="card-label-smaller">{`${t("ES_INBOX_PLEASE_SPECIFY_LOCALITY")} *`}</CardLabel>
+                <CardLabel className="card-label-smaller">{`${t("ES_INBOX_PLEASE_SPECIFY_LOCALITY")}`}<span className="check-page-link-button"> *</span></CardLabel>
                 <TextInput
                   style={{ width: "86%" }}
                   type="text"
@@ -318,7 +318,7 @@ if(formData?.address?.gramPanchayat)
           <div>
             <LabelFieldPair>
               <CardLabel className="card-label-smaller">
-                {`${t("CS_GRAM_PANCHAYAT")} *`}
+                {`${t("CS_GRAM_PANCHAYAT")}`}<span className="check-page-link-button"> *</span>
                 {/* {config.isMandatory ? " * " : null} */}
               </CardLabel>
               <Dropdown
@@ -333,7 +333,7 @@ if(formData?.address?.gramPanchayat)
             </LabelFieldPair>
             {selectedGp?.name === "Other" && (
               <LabelFieldPair>
-                <CardLabel className="card-label-smaller">{`${t("ES_INBOX_PLEASE_SPECIFY_GRAM_PANCHAYAT")} *`}</CardLabel>
+                <CardLabel className="card-label-smaller">{`${t("ES_INBOX_PLEASE_SPECIFY_GRAM_PANCHAYAT")}`}<span className="check-page-link-button"> *</span></CardLabel>
                 <TextInput
                   style={{ width: "86%" }}
                   type="text"

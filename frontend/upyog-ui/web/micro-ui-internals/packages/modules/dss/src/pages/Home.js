@@ -233,7 +233,13 @@ console.log("bottomIndexbottomIndex",bottomIndex)
         }
       }
     }
-    return Object.keys(result).map((key) => {
+    return Object.keys(result)
+    .sort((a, b) => {
+      const monthA = new Date(a.split('-').reverse().join('-'));
+      const monthB = new Date(b.split('-').reverse().join('-'));
+      return monthB - monthA; 
+    })
+    .map((key) => {
       return {
         name: key,
         ...result[key],
@@ -560,7 +566,7 @@ const Home = ({ stateCode }) => {
                       </div>
                     </div>
                   );
-                } else {
+                } else if(item?.moduleLevel!=="BIRTH-DEATH") {
                   return (
                     <div
                       className={`dss-card-parent  ${

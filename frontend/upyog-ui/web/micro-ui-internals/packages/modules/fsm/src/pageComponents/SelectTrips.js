@@ -25,8 +25,12 @@ const SelectTrips = ({ t, config, onSelect, formData = {}, userType, styles, FSM
     limit: -1,
     status: "ACTIVE",
   });
+  console.log("ffff",formData)
 
   const [vehicleMenu, setVehicleMenu] = useState([]);
+  const [noOfTrips, setNoOfTrips] = useState(formData?.tripData?.noOfTrips || '');
+  const [distancefromroad, setDistanceFromRoad] = useState(formData?.tripData?.distancefromroad||'');
+  const [roadWidth, setRoadWidth] = useState(formData?.tripData?.roadWidth||'');
 
   useEffect(() => {
     if (dsoData && vehicleData) {
@@ -42,7 +46,7 @@ const SelectTrips = ({ t, config, onSelect, formData = {}, userType, styles, FSM
 
   const inputs = [
     {
-      label: "ES_NEW_APPLICATION_PAYMENT_NO_OF_TRIPS",
+      label: "ES_NEW_APPLICATION_PAYMENT_NO_OF_TRIP",
       type: "text",
       name: "noOfTrips",
       error: t("ES_NEW_APPLICATION_NO_OF_TRIPS_INVALID"),
@@ -52,7 +56,7 @@ const SelectTrips = ({ t, config, onSelect, formData = {}, userType, styles, FSM
         min: "1",
         title: t("ES_NEW_APPLICATION_NO_OF_TRIPS_INVALID"),
       },
-      default: formData?.tripData?.noOfTrips,
+      default: noOfTrips,
       disable: false,
       isMandatory: true,
     },
@@ -82,7 +86,23 @@ const SelectTrips = ({ t, config, onSelect, formData = {}, userType, styles, FSM
   }
   //console.log(formdata)
   function setValue(value, input) {
-    value && input && onSelect(config.key, { ...formData[config.key], [input]: value });
+    if (input === 'noOfTrips' || input === 'distancefromroad' || input === 'roadWidth') {
+      value = value === '' ? '' : value;
+    }
+    if (input === 'noOfTrips') {
+      setNoOfTrips(value);
+      onSelect(config.key, { ...formData[config.key], noOfTrips: value });
+    } 
+    else if(input==="distancefromroad"){
+      setDistanceFromRoad(value);
+      onSelect(config.key, { ...formData[config.key], distancefromroad: value });
+    }
+    else if(input==="roadWidth"){
+      setRoadWidth(value);
+      onSelect(config.key, { ...formData[config.key], roadWidth: value });
+    }else {
+      value && input && onSelect(config.key, { ...formData[config.key], [input]: value });
+    }
   }
 
   useEffect(() => {
@@ -142,7 +162,7 @@ const SelectTrips = ({ t, config, onSelect, formData = {}, userType, styles, FSM
   ) : (
     <div>
       <LabelFieldPair>
-        <CardLabel className="card-label-smaller">{t("ES_NEW_APPLICATION_LOCATION_VEHICLE_REQUESTED") + " * "}</CardLabel>
+        <CardLabel className="card-label-smaller">{t("ES_NEW_APPLICATION_LOCATION_VEHICLE_REQUESTED") }<span className="check-page-link-button"> *</span></CardLabel>
         <Dropdown
           className="form-field"
           style={styles}
@@ -160,7 +180,7 @@ const SelectTrips = ({ t, config, onSelect, formData = {}, userType, styles, FSM
         <LabelFieldPair key={index}>
           <CardLabel className="card-label-smaller">
             {t(input.label)}
-            {input.isMandatory ? " * " : null}
+            {input.isMandatory ? <span className="check-page-link-button"> *</span> : null}
           </CardLabel>
           <div className="field">
             <TextInput
@@ -168,7 +188,7 @@ const SelectTrips = ({ t, config, onSelect, formData = {}, userType, styles, FSM
               style={{ ...styles, ...FSMTextFieldStyle }}
               onChange={(e) => setValue(e.target.value, input.name)}
               key={input.name}
-              value={formData && formData[config.key] ? formData[config.key][input.name] : null}
+              value={input.name === "noOfTrips" ? noOfTrips : input.name ==="distancefromroad" ? distancefromroad : input.name === "roadWidth" ? roadWidth : formData[config.key]?.[input.name] || ''}
               {...input.validation}
               disable={input.disable}
             />

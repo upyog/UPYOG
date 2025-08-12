@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { FormStep, TextInput, CardLabel, RadioButtons, LabelFieldPair, Dropdown, Menu, MobileNumber } from "@upyog/digit-ui-react-components";
+import { TextInput, CardLabel, RadioButtons, LabelFieldPair, Dropdown, FormStep, Menu, MobileNumber } from "@upyog/digit-ui-react-components";
 import { cardBodyStyle } from "../utils";
 import { useLocation, useRouteMatch } from "react-router-dom";
 import Timeline from "../components/TLTimeline";
-
 const SelectOwnerDetails = ({ t, config, onSelect, userType, formData, ownerIndex }) => {
   const { pathname: url } = useLocation();
   const editScreen = url.includes("/modify-application/");
@@ -122,7 +121,7 @@ const SelectOwnerDetails = ({ t, config, onSelect, userType, formData, ownerInde
     return (
       <div>
         <LabelFieldPair>
-          <CardLabel style={editScreen ? { color: "#B1B4B6" } : {}}>{`${t("PT_FORM3_MOBILE_NUMBER")}`}</CardLabel>
+          <CardLabel style={editScreen ? { color: "#B1B4B6" } : {}}>{`${t("PT_FORM3_MOBILE_NUMBER")}`}<span className="check-page-link-button"> *</span></CardLabel>
           <div className="field">
             <TextInput
               type={"text"}
@@ -143,7 +142,7 @@ const SelectOwnerDetails = ({ t, config, onSelect, userType, formData, ownerInde
           </div>
         </LabelFieldPair>
         <LabelFieldPair>
-          <CardLabel style={editScreen ? { color: "#B1B4B6" } : {}}>{`${t("PT_OWNER_NAME")}`}</CardLabel>
+          <CardLabel style={editScreen ? { color: "#B1B4B6" } : {}}>{`${t("PT_OWNER_NAME")}`}<span className="check-page-link-button"> *</span></CardLabel>
           <div className="field">
             <TextInput
               t={t}
@@ -164,7 +163,7 @@ const SelectOwnerDetails = ({ t, config, onSelect, userType, formData, ownerInde
           </div>
         </LabelFieldPair>
         <LabelFieldPair>
-          <CardLabel style={editScreen ? { color: "#B1B4B6" } : {}}>{`${t("PT_FORM3_GUARDIAN_NAME")}`}</CardLabel>
+          <CardLabel style={editScreen ? { color: "#B1B4B6" } : {}}>{`${t("PT_FORM3_GUARDIAN_NAME")}`}<span className="check-page-link-button"> *</span></CardLabel>
           <div className="field">
             <TextInput
               t={t}
@@ -183,7 +182,7 @@ const SelectOwnerDetails = ({ t, config, onSelect, userType, formData, ownerInde
           </div>
         </LabelFieldPair>
         <LabelFieldPair>
-          <CardLabel style={editScreen ? { color: "#B1B4B6" } : {}}>{`${t("PT_FORM3_RELATIONSHIP")}`}</CardLabel>
+          <CardLabel style={editScreen ? { color: "#B1B4B6" } : {}}>{`${t("PT_FORM3_RELATIONSHIP")}`}<span className="check-page-link-button"> *</span></CardLabel>
           <Dropdown
             className="form-field"
             selected={relationship?.length === 1 ? relationship[0] : relationship}
@@ -196,7 +195,7 @@ const SelectOwnerDetails = ({ t, config, onSelect, userType, formData, ownerInde
           />
         </LabelFieldPair>
         <LabelFieldPair>
-          <CardLabel style={editScreen ? { color: "#B1B4B6" } : {}}>{`${t("PT_FORM3_GENDER")}`}</CardLabel>
+          <CardLabel style={editScreen ? { color: "#B1B4B6" } : {}}>{`${t("PT_FORM3_GENDER")}`}<span className="check-page-link-button"> *</span></CardLabel>
           <Dropdown
             className="form-field"
             selected={gender?.length === 1 ? gender[0] : gender}
@@ -247,7 +246,7 @@ const SelectOwnerDetails = ({ t, config, onSelect, userType, formData, ownerInde
       isDisabled={!name || !mobileNumber || !gender || !relationship || !fatherOrHusbandName}
     >
       <div>
-        <CardLabel>{`${t("PT_OWNER_NAME")}`}</CardLabel>
+        <CardLabel>{`${t("PT_OWNER_NAME")}`}<span className="check-page-link-button"> *</span></CardLabel>
         <TextInput
           t={t}
           type={"text"}
@@ -265,7 +264,7 @@ const SelectOwnerDetails = ({ t, config, onSelect, userType, formData, ownerInde
             title: t("PT_NAME_ERROR_MESSAGE"),
           })}
         />
-        <CardLabel>{`${t("PT_FORM3_GENDER")}`}</CardLabel>
+        <CardLabel>{`${t("PT_FORM3_GENDER")}`}<span className="check-page-link-button"> *</span></CardLabel>
         <RadioButtons
           t={t}
           options={menu}
@@ -278,7 +277,7 @@ const SelectOwnerDetails = ({ t, config, onSelect, userType, formData, ownerInde
           labelKey="PT_COMMON_GENDER"
           disabled={isUpdateProperty || isEditProperty}
         />
-        <CardLabel>{`${t("PT_FORM3_MOBILE_NUMBER")}`}</CardLabel>
+        <CardLabel>{`${t("PT_FORM3_MOBILE_NUMBER")}`}<span className="check-page-link-button"> *</span></CardLabel>
         <MobileNumber
           value={mobileNumber}
           name="mobileNumber"
@@ -286,7 +285,7 @@ const SelectOwnerDetails = ({ t, config, onSelect, userType, formData, ownerInde
           disable={isUpdateProperty || isEditProperty}
           {...{ required: true, pattern: "[6-9]{1}[0-9]{9}", type: "tel", title: t("CORE_COMMON_APPLICANT_MOBILE_NUMBER_INVALID") }}
         />
-        <CardLabel>{`${t("PT_FORM3_GUARDIAN_NAME")}`}</CardLabel>
+        <CardLabel>{`${t("PT_FORM3_GUARDIAN_NAME")}`}<span className="check-page-link-button"> *</span></CardLabel>
         <TextInput
           t={t}
           type={"text"}
@@ -304,7 +303,7 @@ const SelectOwnerDetails = ({ t, config, onSelect, userType, formData, ownerInde
             title: t("PT_NAME_ERROR_MESSAGE"),
           })}
         />
-        <CardLabel>{`${t("PT_FORM3_RELATIONSHIP")}`}</CardLabel>
+        <CardLabel>{`${t("PT_FORM3_RELATIONSHIP")}`}<span className="check-page-link-button"> *</span></CardLabel>
         <RadioButtons
           t={t}
           optionsKey="i18nKey"

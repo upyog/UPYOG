@@ -104,7 +104,7 @@ const LicenseDetails = ({ t, config, onSelect, userType, formData, ownerIndex })
           isDisabled={!name || !mobileNumber || !gender}
         >
           <div>
-            <CardLabel>{`${t("BPA_APPLICANT_NAME_LABEL")}*`}</CardLabel>
+            <CardLabel>{`${t("BPA_APPLICANT_NAME_LABEL")}`}<span className="check-page-link-button"> *</span></CardLabel>
             <TextInput
               t={t}
               type={"text"}
@@ -121,7 +121,7 @@ const LicenseDetails = ({ t, config, onSelect, userType, formData, ownerIndex })
                 title: t("PT_NAME_ERROR_MESSAGE"),
               })}
             />
-            <CardLabel>{`${t("BPA_APPLICANT_GENDER_LABEL")}*`}</CardLabel>
+            <CardLabel>{`${t("BPA_APPLICANT_GENDER_LABEL")}`}<span className="check-page-link-button"> *</span></CardLabel>
             <RadioButtons
               t={t}
               options={menu}
@@ -135,7 +135,7 @@ const LicenseDetails = ({ t, config, onSelect, userType, formData, ownerIndex })
               disable={gender && !isOpenLinkFlow ? true : false}
             //disabled={isUpdateProperty || isEditProperty}
             />
-            <CardLabel>{`${t("BPA_OWNER_MOBILE_NO_LABEL")}*`}</CardLabel>
+            <CardLabel>{`${t("BPA_OWNER_MOBILE_NO_LABEL")}`}<span className="check-page-link-button"> *</span></CardLabel>
             <MobileNumber
               value={mobileNumber}
               name="mobileNumber"

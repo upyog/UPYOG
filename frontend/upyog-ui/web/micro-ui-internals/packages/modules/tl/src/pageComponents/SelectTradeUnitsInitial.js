@@ -237,7 +237,7 @@ const SelectTradeUnitsInitial = ({ t, config, onSelect, userType, formData }) =>
                     background: "#FAFAFA",
                   }}
                 >
-                  <CardLabel>{`${t("TL_NEW_TRADE_DETAILS_TRADE_CAT_LABEL")}*`}</CardLabel>
+                  <CardLabel>{`${t("TL_NEW_TRADE_DETAILS_TRADE_CAT_LABEL")}`}<span className="check-page-link-button"> *</span></CardLabel>
                   <LinkButton
                     label={
                       <div>
@@ -276,7 +276,7 @@ const SelectTradeUnitsInitial = ({ t, config, onSelect, userType, formData }) =>
                   ) : (
                     <Loader />
                   )}
-                  <CardLabel>{`${t("TL_NEW_TRADE_DETAILS_TRADE_TYPE_LABEL")}*`}</CardLabel>
+                  <CardLabel>{`${t("TL_NEW_TRADE_DETAILS_TRADE_TYPE_LABEL")}`}<span className="check-page-link-button"> *</span></CardLabel>
                   <Dropdown
                     t={t}
                     optionKey="i18nKey"
@@ -285,7 +285,7 @@ const SelectTradeUnitsInitial = ({ t, config, onSelect, userType, formData }) =>
                     selected={field?.tradetype}
                     select={(e) => selectTradeType(index, e)}
                   />
-                  <CardLabel>{`${t("TL_NEW_TRADE_DETAILS_TRADE_SUBTYPE_LABEL")}*`}</CardLabel>
+                  <CardLabel>{`${t("TL_NEW_TRADE_DETAILS_TRADE_SUBTYPE_LABEL")}`}<span className="check-page-link-button"> *</span></CardLabel>
                     <Dropdown
                       t={t}
                       optionKey="i18nKey"

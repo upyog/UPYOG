@@ -227,7 +227,7 @@ const TLSelectOwnerDetails = ({ t, config, onSelect, userType, formData }) => {
             return (
               <div key={`${field}-${index}`}>
                 <div>
-                  <CardLabel>{`${t("TL_INSTITUTION_NAME_LABEL")}*`}</CardLabel>
+                  <CardLabel>{`${t("TL_INSTITUTION_NAME_LABEL")}`}<span className="check-page-link-button"> *</span></CardLabel>
                   <TextInput
                     t={t}
                     type={"text"}
@@ -246,7 +246,7 @@ const TLSelectOwnerDetails = ({ t, config, onSelect, userType, formData }) => {
                       },
                     }}
                   />
-                  <CardLabel>{`${t("TL_INSTITUTION_TYPE_LABEL")}*`}</CardLabel>
+                  <CardLabel>{`${t("TL_INSTITUTION_TYPE_LABEL")}`}<span className="check-page-link-button"> *</span></CardLabel>
                   <Dropdown
                     t={t}
                     option={institutionOwnershipTypeOptions}
@@ -257,7 +257,7 @@ const TLSelectOwnerDetails = ({ t, config, onSelect, userType, formData }) => {
                     optionKey="i18nKey"
                   />
                   <CardHeader>{t("TL_AUTHORIZED_PERSON_DETAILS")}</CardHeader>
-                  <CardLabel>{`${t("TL_NEW_OWNER_DETAILS_NAME_LABEL")}`}</CardLabel>
+                  <CardLabel>{`${t("TL_NEW_OWNER_DETAILS_NAME_LABEL")}`}<span className="check-page-link-button"> *</span></CardLabel>
                   <TextInput
                     t={t}
                     type={"text"}
@@ -294,7 +294,7 @@ const TLSelectOwnerDetails = ({ t, config, onSelect, userType, formData }) => {
                       },
                     }}
                   />
-                  <CardLabel>{`${t("TL_MOBILE_NUMBER_LABEL")}*`}</CardLabel>
+                  <CardLabel>{`${t("TL_MOBILE_NUMBER_LABEL")}`}<span className="check-page-link-button"> *</span></CardLabel>
                   <div className="field-container">
                     <span className="employee-card-input employee-card-input--front" style={{ marginTop: "-1px" }}>
                       +91
@@ -394,7 +394,7 @@ const TLSelectOwnerDetails = ({ t, config, onSelect, userType, formData }) => {
               >
                 <CardLabel style={{}}>{`${t(
                   "TL_NEW_OWNER_DETAILS_NAME_LABEL"
-                )}*`}</CardLabel>
+                )}`}<span className="check-page-link-button"> *</span></CardLabel>
                 {typeOfOwner === "MULTIOWNER" && (
                   <LinkButton
                     label={
@@ -440,7 +440,7 @@ const TLSelectOwnerDetails = ({ t, config, onSelect, userType, formData }) => {
                     },
                   }}
                 />
-                <CardLabel>{`${t("TL_NEW_OWNER_DETAILS_GENDER_LABEL")}*`}</CardLabel>
+                <CardLabel>{`${t("TL_NEW_OWNER_DETAILS_GENDER_LABEL")}`}<span className="check-page-link-button"> *</span></CardLabel>
                 {!isGenderLoading ? (
                   <RadioButtons
                     t={t}
@@ -456,7 +456,7 @@ const TLSelectOwnerDetails = ({ t, config, onSelect, userType, formData }) => {
                 ) : (
                   <Loader />
                 )}
-                <CardLabel>{`${t("TL_MOBILE_NUMBER_LABEL")}*`}</CardLabel>
+                <CardLabel>{`${t("TL_MOBILE_NUMBER_LABEL")}`}<span className="check-page-link-button"> *</span></CardLabel>
                 <div className="field-container">
                   <span className="employee-card-input employee-card-input--front" style={{ marginTop: "-1px" }}>
                     +91
@@ -482,7 +482,7 @@ const TLSelectOwnerDetails = ({ t, config, onSelect, userType, formData }) => {
                     }}
                   />
                 </div>
-                <CardLabel>{`${t("TL_NEW_OWNER_DETAILS_GUARDIAN_LABEL")}*`}</CardLabel>
+                <CardLabel>{`${t("TL_NEW_OWNER_DETAILS_GUARDIAN_LABEL")}`}<span className="check-page-link-button"> *</span></CardLabel>
                 <TextInput
                   style={typeOfOwner === "MULTIOWNER" ? { background: "#FAFAFA" } : {}}
                   t={t}
@@ -502,7 +502,7 @@ const TLSelectOwnerDetails = ({ t, config, onSelect, userType, formData }) => {
                     },
                   }}
                 />
-                <CardLabel>{`${t("TL_RELATIONSHIP_WITH_GUARDIAN_LABEL")}*`}</CardLabel>
+                <CardLabel>{`${t("TL_RELATIONSHIP_WITH_GUARDIAN_LABEL")}`}<span className="check-page-link-button"> *</span></CardLabel>
                 <RadioButtons
                   t={t}
                   options={relationshipMenu}

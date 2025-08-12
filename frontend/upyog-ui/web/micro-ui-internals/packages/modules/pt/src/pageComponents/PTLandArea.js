@@ -45,7 +45,7 @@ const Area = ({ t, config, onSelect, value, userType, formData, setError: setFor
       isDisabled={unitareaerror  || !floorarea}
       showErrorBelowChildren={true}
     >
-      <CardLabel>{`${t("PT_PLOT_SIZE_SQUARE_FEET_LABEL")}`}</CardLabel>
+      <CardLabel>{`${t("PT_PLOT_SIZE_SQUARE_FEET_LABEL")}`}<span className="check-page-link-button"> *</span></CardLabel>
       <TextInput
         t={t}
         type={"number"}

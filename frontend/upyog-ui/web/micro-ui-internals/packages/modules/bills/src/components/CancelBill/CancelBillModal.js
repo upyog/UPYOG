@@ -78,7 +78,7 @@ const CancelBillModal = ({ t, closeModal, actionCancelLabel, actionCancelOnSubmi
             <Card style={{ boxShadow: "none" }}>
                 <form onSubmit={handleSubmit(onSubmit)}>
                     {!isReasonsLoading && isReasonsFetched ?<span>
-                        <label>{`${t("BC_RECEIPT_CANCELLATION_REASON_LABEL")}*`}</label>
+                        <label>{`${t("BC_RECEIPT_CANCELLATION_REASON_LABEL")}`}<span className="check-page-link-button"> *</span></label>
                         <Controller
                             control={control}
                             rules={{ required: t("REQUIRED_FIELD") }}
@@ -100,7 +100,7 @@ const CancelBillModal = ({ t, closeModal, actionCancelLabel, actionCancelOnSubmi
                             <CardLabelError>{t(`CS_COMMON_REQUIRED_ERROR`)}</CardLabelError>)}
                     </span>:<Loader/>}
                     {selectedReason?.code==="OTHER" && <span className="surveyformfield">
-                        <label>{`${t("BC_MORE_DETAILS_LABEL")}*`}</label>
+                        <label>{`${t("BC_MORE_DETAILS_LABEL")}`}<span className="check-page-link-button"> *</span></label>
                         <Controller
                             control={control}
                             rules={othersSelected?{ required: t("REQUIRED_FIELD") }:{}}

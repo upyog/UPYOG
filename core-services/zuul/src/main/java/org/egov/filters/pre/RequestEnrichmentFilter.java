@@ -121,11 +121,14 @@ public class RequestEnrichmentFilter extends ZuulFilter {
             logger.info(SKIPPED_BODY_ENRICHMENT_DUE_TO_NO_KNOWN_FIELD_MESSAGE);
             return;
         }
+        logger.info("Before update: "+requestInfo.toString());
         setUserInfo(requestInfo);
         setCorrelationId(requestInfo);
         requestBodyInspector.updateRequestInfo(requestInfo);
+        logger.info("After update: "+requestInfo.toString());
         CustomRequestWrapper requestWrapper = new CustomRequestWrapper(ctx.getRequest());
         requestWrapper.setPayload(objectMapper.writeValueAsString(requestBodyInspector.getRequestBody()));
+        logger.info("Enriched payload: "+requestWrapper.getPayload());
         logger.info(BODY_ENRICHED_MESSAGE);
         ctx.setRequest(requestWrapper);
     }
@@ -146,6 +149,7 @@ public class RequestEnrichmentFilter extends ZuulFilter {
 
     private void setUserInfo(HashMap<String, Object> requestInfo) {
         if (isUserInfoPresent()) {
+        	logger.info("userInfo: "+getUser().toString());
             requestInfo.put(USER_INFO_FIELD_NAME, getUser());
         }
     }
@@ -157,6 +161,7 @@ public class RequestEnrichmentFilter extends ZuulFilter {
 
     private boolean isUserInfoPresent() {
         RequestContext ctx = RequestContext.getCurrentContext();
+        logger.info("USER_INFO: "+ctx.get(USER_INFO_KEY));
         return ctx.get(USER_INFO_KEY) != null;
     }
 

@@ -56,7 +56,7 @@ const SelectTradeName = ({ t, config, onSelect, value, userType, formData }) => 
         t={t}
         isDisabled={!TradeName}
       >
-        <CardLabel>{`${t("TL_LOCALIZATION_TRADE_NAME")}`}</CardLabel>
+        <CardLabel>{`${t("TL_LOCALIZATION_TRADE_NAME")}`}<span style={{ color: 'red' }}>*</span></CardLabel>
         <TextInput
           t={t}
           isMandatory={false}

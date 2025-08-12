@@ -479,8 +479,8 @@ public class HeightOfRoom extends FeatureProcess {
 							if (floor.getDoors() != null && floor.getDoors().size() > 0) {
 								for (Door door : floor.getDoors()) {
 									if (door != null) {
-										BigDecimal doorHeight = door.getDoorHeight();
-										BigDecimal doorWidth = door.getDoorWidth();
+										BigDecimal doorHeight = door.getDoorHeight() != null?door.getDoorHeight():BigDecimal.ZERO;
+										BigDecimal doorWidth = door.getDoorWidth() != null?door.getDoorWidth():BigDecimal.ZERO;
 										// BigDecimal minDoorHeight = BigDecimal.valueOf(2.0);
 										BigDecimal minDoorWidth = BigDecimal.valueOf(1);
 										subRule = SUBRULE_41_II_B;

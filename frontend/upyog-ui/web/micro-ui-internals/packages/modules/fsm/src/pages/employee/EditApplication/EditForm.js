@@ -6,6 +6,7 @@ import { useTranslation } from "react-i18next";
 const isConventionalSpecticTank = (tankDimension) => tankDimension === "lbd";
 
 const EditForm = ({ tenantId, applicationData, channelMenu, vehicleMenu, sanitationMenu }) => {
+  console.log("applndata",applicationData)
   const { t } = useTranslation();
   const history = useHistory();
   const [canSubmit, setSubmitValve] = useState(false);
@@ -105,6 +106,8 @@ const EditForm = ({ tenantId, applicationData, channelMenu, vehicleMenu, sanitat
         (formData?.address?.propertyLocation?.code === "FROM_GRAM_PANCHAYAT" &&
           (formData?.address?.gramPanchayat?.code || formData?.address?.additionalDetails?.gramPanchayat?.code))) &&
       formData?.tripData?.vehicleType &&
+      formData?.pitDetail?.diameter!==null &&
+      formData?.pitDetail?.height &&
       (formData?.tripData?.amountPerTrip || formData?.tripData?.amountPerTrip === 0)
     ) {
       setSubmitValve(true);
@@ -142,7 +145,7 @@ const EditForm = ({ tenantId, applicationData, channelMenu, vehicleMenu, sanitat
     const pitDimension = data?.pitDetail;
     const applicantName = data.applicationData.applicantName;
     const mobileNumber = data.applicationData.mobileNumber;
-    const pincode = data?.address?.pincode;
+    const pincode = typeof (data?.address?.pincode)==="object" ? JSON.parse(data?.address?.pincode) : data?.address?.pincode;
     const street = data?.address?.street?.trim();
     const doorNo = data?.address?.doorNo?.trim();
     const slum = data?.address?.slum;
@@ -470,6 +473,7 @@ const EditForm = ({ tenantId, applicationData, channelMenu, vehicleMenu, sanitat
           },
           "type": "component",
           "key": "pitDetail",
+          "isMandatory":true,
           "nextStep": "select-payment-preference",
           "label": "ES_NEW_APPLICATION_PIT_DIMENSION"
         },

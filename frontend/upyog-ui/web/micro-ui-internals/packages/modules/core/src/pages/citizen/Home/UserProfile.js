@@ -60,6 +60,7 @@ const UserProfile = ({ stateCode, userType, cityDetails }) => {
   const [city, setCity] = useState(userInfo?.permanentCity ? userInfo.permanentCity : cityDetails.name);
   const [mobileNumber, setMobileNo] = useState(userInfo?.mobileNumber ? userInfo.mobileNumber : "");
   const [profilePic, setProfilePic] = useState(userDetails?.photo ? userDetails?.photo : "");
+  console.log("profilePic666",profilePic)
   const [profileImg, setProfileImg] = useState("");
   const [openUploadSlide, setOpenUploadSide] = useState(false);
   const [changepassword, setChangepassword] = useState(false);
@@ -71,11 +72,21 @@ const UserProfile = ({ stateCode, userType, cityDetails }) => {
   const [windowWidth, setWindowWidth] = React.useState(window.innerWidth);
   const [errors, setErrors] = React.useState({});
   const isMobile = window.Digit.Utils.browser.isMobile();
-  
+  const [profilePhoto, setProfilePhoto] = useState(null);
   const getUserInfo = async () => {
     const uuid = userInfo?.uuid;
     if (uuid) {
       const usersResponse = await Digit.UserService.userSearch(tenant, { uuid: [uuid] }, {});
+      if (usersResponse?.user?.[0]?.photo) {
+        try {
+          const file = await Digit.UploadServices.Filefetch([usersResponse?.user?.[0]?.photo], "pg");
+          if (file?.data?.fileStoreIds?.[0]?.url) {
+            setProfilePhoto(file?.data?.fileStoreIds?.[0]?.url.split(",")[0]);
+          }
+        } catch (err) {
+          console.error("Error fetching profile photo:", err);
+        }
+      }
       usersResponse && usersResponse.user && usersResponse.user.length && setUserDetails(usersResponse.user[0]);
     }
   };
@@ -98,8 +109,8 @@ const UserProfile = ({ stateCode, userType, cityDetails }) => {
       value: userDetails?.gender,
     });
 
-    const thumbs = userDetails?.photo?.split(",");
-    setProfileImg(thumbs?.at(0));
+    //const thumbs = userDetails?.photo?.split(",");
+    setProfileImg(profilePhoto);
 
     setLoading(false);
   }, [userDetails !== null]);
@@ -202,6 +213,10 @@ const UserProfile = ({ stateCode, userType, cityDetails }) => {
 
       if (!new RegExp(/^([a-zA-Z ])*$/).test(name) || name === "" || name.length > 50 || name.length < 1) {
         throw JSON.stringify({ type: "error", message: t("CORE_COMMON_PROFILE_NAME_INVALID") });
+      }
+
+      if (userType === "employee" && (!requestData.gender || requestData.gender.trim() === "")) {
+        throw JSON.stringify({ type: "error", message: "CORE_COMMON_PROFILE_GENDER_REQUIRED" });
       }
 
       if (userType === "employee" && !new RegExp(/^[6-9]{1}[0-9]{9}$/).test(mobileNumber)) {
@@ -557,7 +572,7 @@ const UserProfile = ({ stateCode, userType, cityDetails }) => {
               </LabelFieldPair>
               
               <LabelFieldPair style={{ display: "flex" }}>
-                <CardLabel className="profile-label-margin" style={{ width: "300px" }}>{`${t("CORE_COMMON_PROFILE_MOBILE_NUMBER")}*`}</CardLabel>
+                <CardLabel className="profile-label-margin" style={{ width: "300px" }}>{`${t("CORE_COMMON_PROFILE_MOBILE_NUMBER")}`}<span className="check-page-link-button"> *</span></CardLabel>
                 <div style={{ width: "100%" }}>
                   <MobileNumber
                     value={mobileNumber}
