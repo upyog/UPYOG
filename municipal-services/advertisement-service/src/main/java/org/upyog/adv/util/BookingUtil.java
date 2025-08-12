@@ -17,7 +17,27 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import net.logstash.logback.encoder.org.apache.commons.lang.StringUtils;
-
+/**
+ * Utility class for common operations in the Advertisement Booking Service.
+ * 
+ * Key Responsibilities:
+ * - Provides utility methods for creating response information, timestamps, and dates.
+ * - Handles common operations such as generating UUIDs and formatting dates.
+ * 
+ * Methods:
+ * - `createReponseInfo`: Creates a standardized ResponseInfo object for API responses.
+ * - `getCurrentTimestamp`: Returns the current timestamp in milliseconds.
+ * - `getCurrentDate`: Returns the current date in the system's default timezone.
+ * 
+ * Constants:
+ * - `DATE_FORMAT`: Defines the standard date format used across the service.
+ * 
+ * Dependencies:
+ * - RequestInfo: Used to extract API request metadata for creating ResponseInfo.
+ * - ResponseInfo: Represents metadata for API responses.
+ * 
+ * This class is designed to centralize reusable logic and reduce code duplication.
+ */
 public class BookingUtil {
 	
 	public final static String DATE_FORMAT = "yyyy-MM-dd";

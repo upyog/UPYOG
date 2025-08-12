@@ -6,14 +6,8 @@ const useEwApplicationDetail = (t, tenantId, requestId, config = {}, userType, a
     
   
   const defaultSelect = (data) => {
-    console.log("datatatat",data);
+    let applicationDetails = data.applicationDetails || {};
     
-     let applicationDetails = data.applicationDetails.map((obj) => {
-    
-      return obj;
-    });
-    
-
     return {
       applicationData : data,
       applicationDetails

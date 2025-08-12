@@ -106,4 +106,11 @@ public class AssetMaintenance {
     @Column(length = 5000)
     @JsonProperty("description")
     private String description;
+
+    @JsonProperty("assetMaintenanceDate")
+    private Long assetMaintenanceDate;
+
+    @JsonProperty("assetNextMaintenanceDate")
+    private Long assetNextMaintenanceDate;
+
 }

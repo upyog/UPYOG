@@ -12,7 +12,26 @@ import org.upyog.adv.web.models.AdvertisementSlotAvailabilityDetail;
 import org.upyog.adv.web.models.AdvertisementSlotSearchCriteria;
 
 import lombok.extern.slf4j.Slf4j;
-
+/**
+ * Service class for managing payment timers in the Advertisement Booking Service.
+ * 
+ * Key Responsibilities:
+ * - Inserts booking IDs into the timer table for tracking payment deadlines.
+ * - Deletes booking IDs from the timer table once payment is completed or expired.
+ * - Provides transactional support to ensure atomicity of timer-related operations.
+ * 
+ * Dependencies:
+ * - BookingRepository: Interacts with the database for timer-related operations.
+ * 
+ * Methods:
+ * - `insertBookingIdForTimer`: Adds a booking ID to the timer table for tracking payment deadlines.
+ * - `deleteBookingIdForTimer`: Removes a booking ID from the timer table after payment completion or expiration.
+ * 
+ * Annotations:
+ * - @Service: Marks this class as a Spring-managed service component.
+ * - @Slf4j: Enables logging for debugging and monitoring timer-related processes.
+ * - @Transactional: Ensures atomicity for database operations.
+ */
 @Service
 @Slf4j
 public class PaymentTimerService {

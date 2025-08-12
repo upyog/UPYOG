@@ -1,6 +1,10 @@
 import React from "react";
 import { Table } from "@upyog/digit-ui-react-components";
 
+/**
+ * Component developed to show the Details inside the Table in Inbox as well as My Request Components 
+ */
+
 const ApplicationTable = ({
   t,
   currentPage,

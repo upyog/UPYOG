@@ -9,6 +9,37 @@ import { pdfDownloadLink } from "../utils";
 //   </svg>
 // );
 
+
+/**
+ * CHBDocument Component
+ * 
+ * This component is responsible for rendering and managing the display of documents in the CHB module.
+ * It fetches and displays documents based on the provided `Code` and `index`, and allows users to download the documents in PDF format.
+ * 
+ * Props:
+ * - `value`: Object containing document details. Defaults to an empty object.
+ * - `Code`: The document type code used to filter and fetch specific documents.
+ * - `index`: The index of the document in the list.
+ * - `showFileName`: Boolean indicating whether to display the file name. Defaults to `false`.
+ * 
+ * Hooks:
+ * - `useTranslation`: Provides the `t` function for internationalization.
+ * - `Digit.Hooks.chb.useChbDocumentSearch`: Custom hook to fetch document data based on the provided parameters.
+ * 
+ * State Variables:
+ * - `isLoading`: Boolean indicating whether the document data is being loaded.
+ * - `isError`: Boolean indicating whether there was an error during the document fetch.
+ * - `error`: The error object if an error occurred during the fetch.
+ * - `data`: The fetched document data.
+ * 
+ * Logic:
+ * - Filters the documents based on the provided `Code` and formats the `documentType` by replacing dots with underscores.
+ * - If `isLoading` is true, displays a loader.
+ * - Maps over the filtered documents and generates download links for each document using the `pdfDownloadLink` utility function.
+ * 
+ * Returns:
+ * - A list of document links that users can click to download the corresponding PDF files.
+ */
 function CHBDocument({ value = {}, Code, index,showFileName= false }) {
   const { t } = useTranslation();
   const { isLoading, isError, error, data } = Digit.Hooks.chb.useChbDocumentSearch(

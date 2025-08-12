@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 
 const useTenants = () => {
   const tenantInfo = Digit.SessionStorage.get("CHB_TENANTS");

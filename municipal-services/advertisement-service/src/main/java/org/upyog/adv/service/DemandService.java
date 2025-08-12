@@ -24,7 +24,26 @@ import org.upyog.adv.web.models.billing.Demand;
 import org.upyog.adv.web.models.billing.DemandDetail;
 
 import lombok.extern.slf4j.Slf4j;
-
+/**
+ * Service class for handling demand-related operations in the Advertisement Booking Service.
+ * 
+ * Key Responsibilities:
+ * - Generates and manages demands for advertisement bookings.
+ * - Validates booking details before demand generation.
+ * - Fetches and processes demand details for billing purposes.
+ * 
+ * Dependencies:
+ * - BookingConfiguration: Provides configuration properties for demand generation.
+ * - CalculationService: Handles calculations for demand details.
+ * - DemandRepository: Interacts with the database for demand-related operations.
+ * - BookingValidator: Validates booking details before processing demands.
+ * - MdmsUtil: Fetches data from MDMS for demand processing.
+ * - BookingUtil: Provides utility methods for demand-related operations.
+ * 
+ * Annotations:
+ * - @Service: Marks this class as a Spring-managed service component.
+ * - @Slf4j: Enables logging for debugging and monitoring demand-related processes.
+ */
 @Service
 @Slf4j
 public class DemandService {

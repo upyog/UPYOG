@@ -214,6 +214,9 @@ const ApplicationDetails = (props) => {
           {showModal ? (
             <ActionModal
               t={t}
+              vending_Zone={props?.vending_Zone || []}
+              UserVendingZone={props?.UserVendingZone || ""}
+              UserVendingZoneCode={props?.UserVendingZoneCode || ""}
               action={selectedAction}
               tenantId={tenantId}
               state={state}

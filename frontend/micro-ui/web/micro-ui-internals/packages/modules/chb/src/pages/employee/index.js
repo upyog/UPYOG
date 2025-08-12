@@ -7,6 +7,13 @@ import Inbox from "./Inbox";
 // import PaymentDetails from "./PaymentDetails";
 import SearchApp from "./SearchApp";
 
+ /*
+    EmployeeApp is a routing container for various components related to employee interactions
+    within the Community Hall Booking (CHB) module. It handles multiple routes such as inbox 
+    management, hall booking creation, application search, and application details display.
+
+    It dynamically renders different child components based on the route and user type.
+  */
 const EmployeeApp = ({ path, url, userType }) => {
   const { t } = useTranslation();
   const location = useLocation();
@@ -14,42 +21,20 @@ const EmployeeApp = ({ path, url, userType }) => {
   sessionStorage.removeItem("revalidateddone");
   const isMobile = window.Digit.Utils.browser.isMobile();
 
-  // const inboxInitialState = {
-  //   searchParams: {
-  //     uuid: { code: "ASSIGNED_TO_ALL", name: "ES_INBOX_ASSIGNED_TO_ALL" },
-  //     services: ["chb"],
-  //     applicationStatus: [],
-  //     locality: [],
+  const inboxInitialState = {
+    searchParams: {
+      uuid: { code: "ASSIGNED_TO_ALL", name: "ES_INBOX_ASSIGNED_TO_ALL" },
+      services: ["booking-refund"],
+      applicationStatus: [],
+      locality: [],
 
-  //   },
-  // };
+    },
+  };
 
  
 
-  // const CHBBreadCrumbs = ({ location }) => {
-  //   const { t } = useTranslation();
-  //   const search = useLocation().search;
-  //   const fromScreen = new URLSearchParams(search).get("from") || null;
-  //   const { from : fromScreen2 } = Digit.Hooks.useQueryParams();
-  //   const crumbs = [
-  //     {
-  //       path: "/digit-ui/employee",
-  //       content: t("ES_COMMON_HOME"),
-  //       show: true,
-  //     },
-  //     // {
-  //     //   path: "/digit-ui/employee/chb/inbox",
-  //     //   content: t("ES_TITLE_INBOX"),
-  //     //   show: location.pathname.includes("chb/inbox") ? true : false,
-  //     // }
-  //   ];
-  
-  //   return <BreadCrumb style={isMobile?{display:"flex"}:{margin: "0 0 4px", color:"#000000"}}  spanStyle={{maxWidth:"min-content"}} crumbs={crumbs} />;
-  // }
-
   const ApplicationDetails = Digit?.ComponentRegistryService?.getComponent("ApplicationDetails");
 
-  // const EditApplication = Digit?.ComponentRegistryService?.getComponent("PTEditApplication");
   const Response = Digit?.ComponentRegistryService?.getComponent("CHBResponse");
   const CHBCreate = Digit?.ComponentRegistryService?.getComponent("CHBCreate");
   const isRes = window.location.href.includes("chb/response");
@@ -67,21 +52,21 @@ const EmployeeApp = ({ path, url, userType }) => {
               </div>
           : null}
           <PrivateRoute exact path={`${path}/`} component={() => <CHBLinks matchPath={path} userType={userType} />} />
-          {/* <PrivateRoute
+          <PrivateRoute
             path={`${path}/inbox`}
             component={() => (
               <Inbox
                 useNewInboxAPI={true}
                 parentRoute={path}
-                businessService="chb"
+                businessService="booking-refund"
                 filterComponent="CHB_INBOX_FILTER"
                 initialStates={inboxInitialState}
                 isInbox={true}
               />
             )}
-          /> */}
+          />
           <PrivateRoute path={`${path}/bookHall`} component={CHBCreate} />
-          {/* <PrivateRoute path={`${path}/application-details/:id`} component={() => <ApplicationDetails parentRoute={path} />} /> */}
+          <PrivateRoute path={`${path}/application-details/:id`} component={() => <ApplicationDetails parentRoute={path} />} />
           <PrivateRoute path={`${path}/applicationsearch/application-details/:id`} component={() => <ApplicationDetails parentRoute={path} />} />
           <PrivateRoute path={`${path}/response`} component={(props) => <Response {...props} parentRoute={path} />} />
           <PrivateRoute path={`${path}/search`} component={(props) => <Search {...props} t={t} parentRoute={path} />} />
@@ -90,7 +75,7 @@ const EmployeeApp = ({ path, url, userType }) => {
             component={() => (
               <Inbox
                 parentRoute={path}
-                businessService="chb"
+                businessService="booking-refund"
                 middlewareSearch={searchMW}
                 initialStates={inboxInitialState}
                 isInbox={false}

@@ -1,7 +1,6 @@
 package org.egov.ptr.models.user;
 
 import org.egov.common.contract.request.RequestInfo;
-import org.egov.ptr.models.OwnerInfo;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -10,6 +9,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.egov.common.contract.request.User;
 
 @AllArgsConstructor
 @Getter
@@ -22,6 +22,6 @@ public class CreateUserRequest {
 	private RequestInfo requestInfo;
 
 	@JsonProperty("user")
-	private OwnerInfo user;
+	private User user;
 
 }

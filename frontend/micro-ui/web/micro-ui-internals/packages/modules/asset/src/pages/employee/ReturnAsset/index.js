@@ -39,7 +39,7 @@ const ReturnAsset = () => {
   };
 
   const onSubmit = (data) => {
-    
+    console.log('Return Asset is comming complier!  :-  ', data);
     const returnDateEpoch = convertToEpoch(data?.returndetails?.[0]?.returnDate);
     const formData = {
       id: applicationDetails?.applicationData?.applicationData?.id,

@@ -12,6 +12,28 @@ import org.upyog.adv.web.models.AdvertisementSearchCriteria;
 import org.upyog.adv.web.models.AdvertisementSlotSearchCriteria;
 
 import lombok.extern.slf4j.Slf4j;
+/**
+ * This class is responsible for building dynamic SQL queries for the Advertisement Booking Service.
+ * 
+ * Key Responsibilities:
+ * - Constructs SQL queries for fetching booking details, slot details, and document details.
+ * - Builds queries based on search criteria provided by the user.
+ * - Ensures efficient and secure query generation to interact with the database.
+ * 
+ * Key Components:
+ * - BookingConfiguration: Provides configuration properties for query building.
+ * - Search Criteria Models: Used to filter and customize the queries.
+ * 
+ * Annotations:
+ * - @Component: Marks this class as a Spring-managed component.
+ * - @Slf4j: Enables logging for debugging and monitoring query generation.
+ * 
+ * Queries Defined:
+ * - `bookingDetailsQuery`: Fetches detailed booking information, including applicant and address details.
+ * - `slotDetailsQuery`: Fetches slot details for specific bookings.
+ * - `documentDetailsQuery`: Fetches document details for specific bookings.
+ * - `ADVERTISEMENT_SLOTS_AVAILABILITY_QUERY`: Fetches slot availability details for advertisements.
+ */
 
 @Slf4j
 @Component

@@ -11,6 +11,15 @@ import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
+/**
+ * This class configures Swagger for the Community Hall Booking module.
+ * Swagger is used to generate API documentation and provide a user-friendly
+ * interface for exploring and testing the APIs.
+ * 
+ * Annotations used:
+ * - @EnableSwagger2: Enables Swagger 2 for the application.
+ * - @Configuration: Marks this class as a Spring configuration class.
+ */
 @EnableSwagger2
 @Configuration
 public class SwaggerConfiguration {

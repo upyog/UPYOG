@@ -43,6 +43,18 @@
 			<artifactId>postgresql</artifactId>
 			<version>42.7.1</version>
 		</dependency>
+		<dependency>
+			<groupId>io.springfox</groupId>
+			<artifactId>springfox-swagger2</artifactId>
+			<version>2.9.2</version>
+		</dependency>
+
+		<dependency>
+			<groupId>io.springfox</groupId>
+			<artifactId>springfox-swagger-ui</artifactId>
+			<version>2.9.2</version>
+		</dependency>
+
 		<!-- https://mvnrepository.com/artifact/org.javers/javers-core -->
 		<dependency>
 			<groupId>org.javers</groupId>

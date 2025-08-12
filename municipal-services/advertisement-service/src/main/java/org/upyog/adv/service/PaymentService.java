@@ -24,6 +24,30 @@ import digit.models.coremodels.PaymentRequest;
 import digit.models.coremodels.ProcessInstance;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * Service class for handling payment-related operations in the Advertisement Booking Service.
+ * 
+ * Key Responsibilities:
+ * - Processes payments for advertisement bookings.
+ * - Updates booking statuses based on payment success or failure.
+ * - Interacts with external services for payment processing and transaction management.
+ * 
+ * Dependencies:
+ * - ObjectMapper: Used for JSON serialization and deserialization.
+ * - BookingConfiguration: Provides configuration properties for payment processing.
+ * - BookingService: Handles booking-related operations.
+ * - BookingRepository: Interacts with the database for booking updates.
+ * - ServiceRequestRepository: Makes external service requests for payment and transaction processing.
+ * 
+ * Methods:
+ * - Processes payment requests and updates booking details accordingly.
+ * - Handles payment success and failure scenarios.
+ * - Fetches and validates payment-related data from external services.
+ * 
+ * Annotations:
+ * - @Service: Marks this class as a Spring-managed service component.
+ * - @Slf4j: Enables logging for debugging and monitoring payment processes.
+ */
 @Slf4j
 @Service
 public class PaymentService {

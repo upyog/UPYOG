@@ -20,25 +20,25 @@ public class Consumer {
      * Value of the variable kafka.topics.consumer should be overwritten in
      * application.properties
      */
-    @KafkaListener(topics = {"${persister.save.assetdetails.topic}",
-            "${persister.update.assetdetails.topic}",
-            "${persister.save.assetassignment.topic}",
-            "${persister.update.assetassignment.topic}"})
-    public void listen(final HashMap<String, Object> record, @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
-        ObjectMapper mapper = new ObjectMapper();
-        AssetRequest assetRequest = new AssetRequest();
-        Asset asset = new Asset();
-
-        try {
-            log.info("Consuming record: " + record.toString());
-            assetRequest = mapper.convertValue(record, AssetRequest.class);
-            asset = assetRequest.getAsset();
-            //assetJpaRepository.save(asset);
-
-        } catch (final Exception e) {
-            log.error("Error while listening to value: " + record + " on topic: " + topic + ": " + e);
-        }
-        log.debug("Asset Received: " + asset.getApplicationNo());
-
-    }
+//    @KafkaListener(topics = {"${persister.save.assetdetails.topic}",
+//            "${persister.update.assetdetails.topic}",
+//            "${persister.save.assetassignment.topic}",
+//            "${persister.update.assetassignment.topic}"})
+//    public void listen(final HashMap<String, Object> record, @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
+//        ObjectMapper mapper = new ObjectMapper();
+//        AssetRequest assetRequest = new AssetRequest();
+//        Asset asset = new Asset();
+//
+//        try {
+//            log.info("Consuming record: " + record.toString());
+//            assetRequest = mapper.convertValue(record, AssetRequest.class);
+//            asset = assetRequest.getAsset();
+//            //assetJpaRepository.save(asset);
+//
+//        } catch (final Exception e) {
+//            log.error("Error while listening to value: " + record + " on topic: " + topic + ": " + e);
+//        }
+//        log.debug("Asset Received: " + asset.getApplicationNo());
+//
+//    }
 }

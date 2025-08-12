@@ -11,6 +11,18 @@ import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
+/**
+ * This class configures Swagger documentation for the Advertisement Booking Service.
+ * It sets up Swagger 2 to scan and document the API endpoints in the controllers package.
+ * 
+ * The @EnableSwagger2 annotation enables Swagger support in the application.
+ * The @Configuration annotation marks this as a Spring configuration class.
+ * 
+ * The Docket bean configures the core of Swagger functionality, including:
+ * - Which API endpoints to document (based on package)
+ * - What paths to include
+ * - API information such as title, description, and version
+ */
 @EnableSwagger2
 @Configuration
 public class SwaggerConfiguration {

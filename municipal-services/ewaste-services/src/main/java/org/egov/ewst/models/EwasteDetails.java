@@ -11,6 +11,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+/**
+ * EwasteDetails
+ */
 @ApiModel(description = "Details of the ewaste request application")
 @Validated
 

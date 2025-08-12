@@ -1,26 +1,21 @@
 package org.egov.ptr.models;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
 
-import org.egov.ptr.models.Address;
-import org.egov.ptr.models.Applicant;
-import org.egov.ptr.models.AuditDetails;
+import javax.validation.Valid;
+
 import org.javers.core.metamodel.annotation.DiffIgnore;
 import org.springframework.validation.annotation.Validated;
-import javax.validation.Valid;
-import javax.validation.constraints.*;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import io.swagger.annotations.ApiModel;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.Builder;
 
 /**
  * A Object holds the basic data for a Pet Registration Application
@@ -58,9 +53,6 @@ public class PetRegistrationApplication {
 
 	@JsonProperty("address")
 	private Address address = null;
-
-	@JsonProperty("applicant")
-	private Applicant applicant = null;
 
 	@JsonProperty("auditDetails")
 	private AuditDetails auditDetails = null;

@@ -40,6 +40,9 @@ public class DepreciationDetail {
     @Column(name = "book_value", nullable = false)
     private Double bookValue;
 
+    @Column(name = "depreciationMethod")
+    private String depreciationMethod;
+
     @Column(name = "rate", nullable = false)
     private double rate;
 

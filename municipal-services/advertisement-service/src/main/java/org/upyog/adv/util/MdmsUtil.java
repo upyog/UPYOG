@@ -29,7 +29,27 @@ import com.fasterxml.jackson.databind.deser.std.FromStringDeserializer;
 
 import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONArray;
-
+/**
+ * Utility class for interacting with the MDMS (Master Data Management System) in the Advertisement Booking Service.
+ * 
+ * Key Responsibilities:
+ * - Fetches master data from MDMS for various configurations such as tax heads, calculation types, and other metadata.
+ * - Constructs and sends requests to the MDMS service.
+ * - Processes responses from MDMS to extract required data.
+ * 
+ * Methods:
+ * - Builds MDMS request criteria for fetching specific master data.
+ * - Parses and maps MDMS responses to Java objects for further processing.
+ * 
+ * Dependencies:
+ * - BookingConfiguration: Provides configuration properties for MDMS interactions.
+ * - ServiceRequestRepository: Handles HTTP requests to the MDMS service.
+ * - ObjectMapper: Used for JSON serialization and deserialization.
+ * 
+ * Annotations:
+ * - @Component: Marks this class as a Spring-managed component.
+ * - @Slf4j: Enables logging for debugging and monitoring MDMS interactions.
+ */
 @Slf4j
 @Component
 public class MdmsUtil {

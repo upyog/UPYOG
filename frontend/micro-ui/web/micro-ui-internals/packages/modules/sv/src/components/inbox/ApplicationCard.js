@@ -5,6 +5,20 @@ import { FilterAction } from "@upyog/digit-ui-react-components";
 import SearchApplication from "./search";
 import SortBy from "./SortBy";
 
+/**
+ * The ApplicationCard component is a React functional component that renders a card displaying application data with 
+ * search, filter, and sort functionality. It handles various states including loading, empty data, and interaction with popup dialogs.
+ * 
+ * Key features:
+ *    1. Displays application data or a "no application" message when data is empty
+ *    2. Provides search, filter, and sort actions that trigger popup dialogs
+ *    3. Uses a dynamic filter component retrieved from a component registry
+ *    4. Handles state for popup visibility and type of operation (search, filter, sort)
+ * 
+ * Note - Used only for Mobile Inbox
+ * 
+ */
+
 export const ApplicationCard = ({
   t,
   data,

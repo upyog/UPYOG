@@ -27,6 +27,34 @@ import { pdfDownloadLink } from "../../utils";
 import get from "lodash/get";
 import { size } from "lodash";
 
+/**
+
+ * This component is responsible for rendering a feedback popup for citizens in the CHB module.
+ * It allows users to provide feedback on their application experience or service received.
+ * 
+ * Features:
+ * - Displays a popup with a feedback form.
+ * - Allows users to rate their experience and provide additional comments.
+ * - Submits the feedback data to the backend for processing.
+ * 
+ * Props:
+ * - `isOpen`: Boolean indicating whether the popup is open or closed.
+ * - `onClose`: Callback function triggered when the popup is closed.
+ * - `onSubmit`: Callback function triggered when the feedback form is submitted.
+ * - `applicationId`: The ID of the application for which feedback is being provided.
+ * 
+ * Hooks:
+ * - `useTranslation`: Provides the `t` function for internationalization.
+ * 
+ * Logic:
+ * - Displays a rating component for users to rate their experience.
+ * - Includes a text area for users to provide additional comments.
+ * - Validates the feedback form before submission.
+ * - Calls the `onSubmit` callback with the feedback data when the form is submitted.
+ * 
+ * Returns:
+ * - A popup component containing the feedback form, with options to submit or close the popup.
+ */
 const CHBApplicationDetails = () => {
   const { t } = useTranslation();
   const history = useHistory();
@@ -332,7 +360,7 @@ const CHBApplicationDetails = () => {
             </Card>
          </StatusTable>
 
-          {/* <CHBWFApplicationTimeline application={application} id={application?.bookingNo} userType={"citizen"} />
+          <CHBWFApplicationTimeline application={application} id={application?.bookingNo} userType={"citizen"} />
           {showToast && (
             <Toast
               error={showToast.key}
@@ -342,7 +370,7 @@ const CHBApplicationDetails = () => {
                 setShowToast(null);
               }}
             />
-          )} */}
+          )}
         </Card>
 
         {/* {popup && <PTCitizenFeedbackPopUp setpopup={setpopup} setShowToast={setShowToast} data={data} />} */}

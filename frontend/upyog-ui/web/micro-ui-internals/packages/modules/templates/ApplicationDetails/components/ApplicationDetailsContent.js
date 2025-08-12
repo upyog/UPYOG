@@ -50,13 +50,50 @@ function ApplicationDetailsContent({
 }) {
   const { t } = useTranslation();
   
-const ownersSequences= applicationDetails?.applicationData?.owners
-console.log("appl", applicationDetails)
+const ownersSequences= applicationDetails?.applicationData?.owners;
 
   function OpenImage(imageSource, index, thumbnailsToShow) {
     window.open(thumbnailsToShow?.fullImage?.[0], "_blank");
   }
 
+  const [fetchBillData, updatefetchBillData] = useState({});
+  const setBillData = async (tenantId, propertyIds, updatefetchBillData, updateCanFetchBillData) => {
+    const assessmentData = await Digit.PTService.assessmentSearch({ tenantId, filters: { propertyIds } });
+    let billData = {};
+    if (assessmentData?.Assessments?.length > 0) {
+      billData = await Digit.PaymentService.fetchBill(tenantId, {
+        businessService: "PT",
+        consumerCode: propertyIds,
+      });
+    }
+    updatefetchBillData(billData);
+    updateCanFetchBillData({
+      loading: false,
+      loaded: true,
+      canLoad: true,
+    });
+  };
+  const [billData, updateCanFetchBillData] = useState({
+    loading: false,
+    loaded: false,
+    canLoad: false,
+  });
+
+  if (applicationData?.status == "ACTIVE" && !billData.loading && !billData.loaded && !billData.canLoad) {
+    updateCanFetchBillData({
+      loading: false,
+      loaded: false,
+      canLoad: true,
+    });
+  }
+  if (billData?.canLoad && !billData.loading && !billData.loaded) {
+    updateCanFetchBillData({
+      loading: true,
+      loaded: false,
+      canLoad: true,
+    });
+    setBillData(applicationData?.tenantId || tenantId, applicationData?.propertyId, updatefetchBillData, updateCanFetchBillData);
+  }
   const [fetchBillData, updatefetchBillData] = useState({});
   const setBillData = async (tenantId, propertyIds, updatefetchBillData, updateCanFetchBillData) => {
     const assessmentData = await Digit.PTService.assessmentSearch({ tenantId, filters: { propertyIds } });
@@ -234,7 +271,7 @@ console.log("appl", applicationDetails)
   const toggleTimeline=()=>{
     setShowAllTimeline((prev)=>!prev);
   }
-  // console.log("applicationDetails?.applicationDetails",applicationDetails?.applicationDetails)
+
   return (
     <Card style={{ position: "relative" }} className={"employeeCard-override"}>
       {/* For UM-4418 changes */}

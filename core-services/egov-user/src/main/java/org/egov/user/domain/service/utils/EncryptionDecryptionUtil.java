@@ -129,12 +129,17 @@ public class EncryptionDecryptionUtil {
 
     public Map<String,String> getKeyToDecrypt(Object objectToDecrypt, User userInfo) {
         Map<String,String> keyPurposeMap = new HashMap<>();
-
+        Object firstObject = ((List) objectToDecrypt).get(0);
         if (!abacEnabled){
             keyPurposeMap.put("key","UserSelf");
             keyPurposeMap.put("purpose","AbacDisabled");
         }
 
+        // Handle Address objects
+        else if (firstObject instanceof org.egov.user.domain.model.Address) {
+            keyPurposeMap.put("key", "Address");
+            keyPurposeMap.put("purpose", "Address");
+        }
 
         else if (isUserDecryptingForSelf(objectToDecrypt, userInfo)){
             keyPurposeMap.put("key","UserSelf");

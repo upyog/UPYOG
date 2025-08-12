@@ -16,6 +16,48 @@ import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 
+/**
+ * This utility class provides methods for interacting with the user service
+ * in the Community Hall Booking module.
+ * 
+ * Purpose:
+ * - To handle user-related operations such as creating, searching, and updating user details.
+ * - To simplify the process of sending requests to the user service and processing responses.
+ * 
+ * Dependencies:
+ * - ServiceRequestRepository: Sends HTTP requests to the user service.
+ * - ObjectMapper: Serializes and deserializes JSON objects for requests and responses.
+ * - userCreateEndpoint: The endpoint for creating new users.
+ * - userSearchEndpoint: The endpoint for searching existing users.
+ * - userUpdateEndpoint: The endpoint for updating user details.
+ * 
+ * Features:
+ * - Sends requests to the user service for creating, searching, and updating users.
+ * - Processes responses and maps them to UserDetailResponse objects.
+ * - Handles exceptions and logs errors for debugging and monitoring purposes.
+ * 
+ * Fields:
+ * - userCreateEndpoint: The URL path for creating users.
+ * - userSearchEndpoint: The URL path for searching users.
+ * - userUpdateEndpoint: The URL path for updating users.
+ * 
+ * Methods:
+ * 1. createUser:
+ *    - Sends a request to the user service to create a new user.
+ *    - Processes the response and returns the created user details.
+ * 
+ * 2. searchUser:
+ *    - Sends a request to the user service to search for users based on criteria.
+ *    - Returns a list of matching users.
+ * 
+ * 3. updateUser:
+ *    - Sends a request to the user service to update user details.
+ *    - Processes the response and returns the updated user details.
+ * 
+ * Usage:
+ * - This class is used throughout the module to manage user-related operations.
+ * - It ensures consistent and reusable logic for interacting with the user service.
+ */
 @Component
 public class UserUtil {
 

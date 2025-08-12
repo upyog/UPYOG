@@ -4,6 +4,41 @@ import { useTranslation } from "react-i18next";
 import { Link, useRouteMatch,useHistory } from "react-router-dom";
 import { CHBDataConvert } from "../../../utils";
 
+
+/**
+ * CHBMyApplications Component
+ * 
+ * This component is responsible for rendering the "My Applications" page for citizens in the CHB module.
+ * It allows users to view and search through their submitted applications, with options to filter and sort the results.
+ * 
+ * Hooks:
+ * - `useTranslation`: Provides the `t` function for internationalization.
+ * - `Digit.ULBService.getCitizenCurrentTenant`: Fetches the current tenant ID for the citizen.
+ * - `Digit.UserService.getUser`: Fetches the current user's information.
+ * - `Digit.Hooks.chb.useChbSearch`: Custom hook to fetch application data based on the applied filters.
+ * 
+ * State Variables:
+ * - `searchTerm`: State variable to manage the search input value.
+ * - `status`: State variable to manage the selected status filter.
+ * - `filters`: State variable to manage the dynamic filters applied to the search query.
+ * 
+ * Variables:
+ * - `filter`: Extracted from the URL to determine the offset or other filter criteria.
+ * - `t1`: Calculated limit for the number of results to fetch based on the `filter`.
+ * - `off`: Offset value for pagination, derived from the `filter`.
+ * - `initialFilters`: Object containing the default filters for the search query, including limit, sort order, sort by, offset, and tenant ID.
+ * 
+ * Effects:
+ * - `useEffect`: Updates the `filters` state whenever the `filter` value changes in the URL.
+ * 
+ * Logic:
+ * - Determines the initial filters based on the URL's last segment.
+ * - Uses the `useChbSearch` hook to fetch application data dynamically based on the `filters` state.
+ * 
+ * Returns:
+ * - A page displaying the user's applications, with search and filter functionality.
+ * - Displays a loader while the data is being fetched.
+ */
 const GetActionMessage = (props) => {
   const { t } = useTranslation();
   if (props.isSuccess) {

@@ -16,6 +16,37 @@ import org.upyog.chb.web.models.CommunityHallBookingRequest;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * This service class handles encryption and decryption operations for sensitive data
+ * in the Community Hall Booking module.
+ * 
+ * Purpose:
+ * - To ensure the security and confidentiality of sensitive data, such as applicant details.
+ * - To provide reusable methods for encrypting and decrypting data in the module.
+ * 
+ * Dependencies:
+ * - EncryptionDecryptionUtil: Utility class for performing encryption and decryption operations.
+ * - CommunityHallBookingConstants: Provides constants such as encryption keys.
+ * 
+ * Features:
+ * - Encrypts sensitive fields in booking requests, such as applicant mobile numbers.
+ * - Decrypts sensitive fields when required for processing or display.
+ * - Logs the state of data before and after encryption or decryption for debugging purposes.
+ * 
+ * Methods:
+ * 1. encryptObject:
+ *    - Encrypts sensitive fields in the CommunityHallBookingRequest object.
+ *    - Uses the encryption key defined in CommunityHallBookingConstants.
+ * 
+ * 2. decryptObject:
+ *    - Decrypts sensitive fields in the CommunityHallBookingRequest object.
+ *    - Ensures that the original data is restored for processing or display.
+ * 
+ * Usage:
+ * - This class is automatically managed by Spring and injected wherever encryption or decryption
+ *   operations are required.
+ * - It ensures consistent and secure handling of sensitive data across the module.
+ */
 @Service
 @Slf4j
 public class CHBEncryptionService {

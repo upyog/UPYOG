@@ -1,5 +1,5 @@
 /*
- * eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
+ * UPYOG  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  * accountability and the service delivery of the government  organizations.
  *
  *  Copyright (C) <2019>  eGovernments Foundation
@@ -48,152 +48,240 @@
 package org.egov.edcr.feature;
 
 import java.math.BigDecimal;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
-import org.egov.common.entity.edcr.Block;
-import org.egov.common.entity.edcr.Floor;
-import org.egov.common.entity.edcr.Measurement;
-import org.egov.common.entity.edcr.Plan;
-import org.egov.common.entity.edcr.Result;
-import org.egov.common.entity.edcr.RoomHeight;
-import org.egov.common.entity.edcr.ScrutinyDetail;
+import org.apache.logging.log4j.Logger;
+import org.egov.common.constants.MdmsFeatureConstants;
+import org.egov.common.entity.edcr.*;
+import org.egov.edcr.service.MDMSCacheManager;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import static org.egov.edcr.constants.CommonFeatureConstants.*;
+import static org.egov.edcr.constants.CommonKeyConstants.*;
+import static org.egov.edcr.constants.EdcrReportConstants.*;
+import static org.egov.edcr.service.FeatureUtil.mapReportDetails;
 
 @Service
 public class WaterClosets extends FeatureProcess {
 
 	private static final Logger LOG = LogManager.getLogger(WaterClosets.class);
-	private static final String RULE_41_IV = "41-iv";
-	public static final String WATERCLOSETS_DESCRIPTION = "Water Closets";
 
+	/**
+	 * Validates the building plan for water closet requirements.
+	 * Currently performs no validation and returns the plan as-is.
+	 *
+	 * @param pl The building plan to validate
+	 * @return The unmodified plan
+	 */
 	@Override
 	public Plan validate(Plan pl) {
-
 		return pl;
 	}
-
+	
+	@Autowired
+	MDMSCacheManager cache;
+	/**
+	 * Processes water closet requirements for all blocks and floors in the building plan.
+	 * Creates scrutiny details for dimensions and ventilation, fetches water closet rules
+	 * from MDMS, and validates height, width, area, and ventilation requirements.
+	 *
+	 * @param pl The building plan to process
+	 * @return The processed plan with scrutiny details added
+	 */
 	@Override
 	public Plan process(Plan pl) {
+	    ScrutinyDetail dimScrutinyDetail = createScrutinyDetail(COMMON_WATER_CLOSETS);
+	    ScrutinyDetail ventScrutinyDetail = createScrutinyDetail(WATER_CLOSETS_VENTILATION);
 
-		ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
-		scrutinyDetail.setKey("Common_Water Closets");
-		scrutinyDetail.addColumnHeading(1, RULE_NO);
-		scrutinyDetail.addColumnHeading(2, DESCRIPTION);
-		scrutinyDetail.addColumnHeading(3, REQUIRED);
-		scrutinyDetail.addColumnHeading(4, PROVIDED);
-		scrutinyDetail.addColumnHeading(5, STATUS);
+	    Optional<WaterClosetsRequirement> matchedRule = getWaterClosetsRule(pl);
+	    
+	    WaterClosetsRequirement wcRule = matchedRule.get();
 
-		
-		ScrutinyDetail scrutinyDetail1 = new ScrutinyDetail();
-		scrutinyDetail1.setKey("Water Closets Ventilation");
-		scrutinyDetail1.addColumnHeading(1, RULE_NO);
-		scrutinyDetail1.addColumnHeading(2, DESCRIPTION);
-		scrutinyDetail1.addColumnHeading(3, REQUIRED);
-		scrutinyDetail1.addColumnHeading(4, PROVIDED);
-		scrutinyDetail1.addColumnHeading(5, STATUS);
+	    if (wcRule == null) return pl;
 
-		Map<String, String> details = new HashMap<>();
-		Map<String, String> details1 = new HashMap<>();
-		details.put(RULE_NO, RULE_41_IV);
-		details.put(DESCRIPTION, WATERCLOSETS_DESCRIPTION);
-		
-		details1.put(RULE_NO, RULE_41_IV);
-		details1.put(DESCRIPTION, WATERCLOSETS_DESCRIPTION);
+	    for (Block block : pl.getBlocks()) {
+	        if (block.getBuilding() == null || block.getBuilding().getFloors() == null) continue;
 
-		BigDecimal minHeight = BigDecimal.ZERO, totalArea = BigDecimal.ZERO, minWidth = BigDecimal.ZERO;
+	        for (Floor floor : block.getBuilding().getFloors()) {
+	            if (!hasValidWaterClosets(floor)) continue;
 
-		for (Block b : pl.getBlocks()) {
-			if (b.getBuilding() != null && b.getBuilding().getFloors() != null
-					&& !b.getBuilding().getFloors().isEmpty()) {
+	            BigDecimal minHeight = getMinHeight(floor.getWaterClosets().getHeights());
+	            BigDecimal minWidth = getMinWidth(floor.getWaterClosets().getRooms());
+	            BigDecimal totalArea = getTotalArea(floor.getWaterClosets().getRooms());
 
-				for (Floor f : b.getBuilding().getFloors()) {
+	            // Ventilation validation
+	            if (floor.getWaterClosetVentilation() != null
+	                    && floor.getWaterClosetVentilation().getMeasurements() != null
+	                    && !floor.getWaterClosetVentilation().getMeasurements().isEmpty()) {
 
-					if (f.getWaterClosets() != null && f.getWaterClosets().getHeights() != null
-							&& !f.getWaterClosets().getHeights().isEmpty() && f.getWaterClosets().getRooms() != null
-							&& !f.getWaterClosets().getRooms().isEmpty()) {
+	                BigDecimal ventArea = floor.getWaterClosetVentilation().getMeasurements().stream()
+	                        .map(Measurement::getArea).reduce(BigDecimal.ZERO, BigDecimal::add);
+	                Map<String, String> ventDetails = buildVentilationDetails(
+	                	    wcRule.getWaterClosetsVentilationArea(), ventArea
+	                	);
+	                	ventScrutinyDetail.getDetail().add(ventDetails);
 
-						if (f.getWaterClosets().getHeights() != null && !f.getWaterClosets().getHeights().isEmpty()) {
-							minHeight = f.getWaterClosets().getHeights().get(0).getHeight();
-							for (RoomHeight rh : f.getWaterClosets().getHeights()) {
-								if (rh.getHeight().compareTo(minHeight) < 0) {
-									minHeight = rh.getHeight();
-								}
-							}
-						}
+	            }
 
-						if (f.getWaterClosets().getRooms() != null && !f.getWaterClosets().getRooms().isEmpty()) {
-							minWidth = f.getWaterClosets().getRooms().get(0).getWidth();
-							for (Measurement m : f.getWaterClosets().getRooms()) {
-								totalArea = totalArea.add(m.getArea());
-								if (m.getWidth().compareTo(minWidth) < 0) {
-									minWidth = m.getWidth();
-								}
-							}
-						}
-						
-						//Added by Neha for Water closet Ventilation
-						
-						if (!f.getWaterClosetVentilation().getMeasurements().isEmpty() 
-								&& f.getWaterClosetVentilation().getMeasurements() != null) {
-							
-							BigDecimal totalVentilationArea = f.getWaterClosetVentilation().getMeasurements().stream()
-									.map(Measurement::getArea).reduce(BigDecimal.ZERO, BigDecimal::add);
-							
-							if (totalVentilationArea.compareTo(new BigDecimal(0.3)) >= 0) {
-//								
-									details1.put(REQUIRED, " 0.3 ");
-									details1.put(PROVIDED, " Water Closet Ventilation area " + totalVentilationArea 
-											);
-									details1.put(STATUS, Result.Accepted.getResultVal());
-									scrutinyDetail1.getDetail().add(details1);
-									pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail1);
+	            Map<String, String> dimDetails = buildDimensionDetails(
+	            	    wcRule.getWaterClosetsHeight(), wcRule.getWaterClosetsArea(), wcRule.getWaterClosetsWidth(),
+	            	    minHeight, totalArea, minWidth
+	            	);
+	            	dimScrutinyDetail.getDetail().add(dimDetails);
 
-								} 
-									else {
-									details1.put(REQUIRED, "0.3");
-									details1.put(PROVIDED, " Water Closet Ventilation area " + totalVentilationArea 
-											);
-									details1.put(STATUS, Result.Not_Accepted.getResultVal());
-									scrutinyDetail1.getDetail().add(details1);
-									pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail1);
-								}
-						}
+	        }
+	    }
 
-						if (minHeight.compareTo(new BigDecimal(2.4)) >= 0
-								&& totalArea.compareTo(new BigDecimal(1.1)) >= 0
-								&& minWidth.compareTo(new BigDecimal(0.9)) >= 0) {
-
-							details.put(REQUIRED, "Height >= 2.4, Total Area >= 1.1, Width >= 0.9");
-							details.put(PROVIDED, "Height >= " + minHeight + ", Total Area >= " + totalArea
-									+ ", Width >= " + minWidth);
-							details.put(STATUS, Result.Accepted.getResultVal());
-							scrutinyDetail.getDetail().add(details);
-							pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
-
-						} else {
-							details.put(REQUIRED, "Height >= 2.4, Total Area >= 1.1, Width >= 0.9");
-							details.put(PROVIDED, "Height >= " + minHeight + ", Total Area >= " + totalArea
-									+ ", Width >= " + minWidth);
-							details.put(STATUS, Result.Not_Accepted.getResultVal());
-							scrutinyDetail.getDetail().add(details);
-							pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
-						}
-
-					}
-
-				}
-			}
-
-		}
-
-		return pl;
+	    pl.getReportOutput().getScrutinyDetails().add(dimScrutinyDetail);
+	    pl.getReportOutput().getScrutinyDetails().add(ventScrutinyDetail);
+	    return pl;
+	}
+	/**
+	 * Creates and initializes a scrutiny detail object for water closet validation reporting.
+	 * Sets up column headings and key for the specified water closet scrutiny type.
+	 *
+	 * @param key The key identifier for the scrutiny detail (e.g., "Common_Water Closets")
+	 * @return Configured ScrutinyDetail object with appropriate headings and key
+	 */
+	private ScrutinyDetail createScrutinyDetail(String key) {
+	    ScrutinyDetail detail = new ScrutinyDetail();
+	    detail.setKey(key);
+	    detail.addColumnHeading(1, RULE_NO);
+	    detail.addColumnHeading(2, DESCRIPTION);
+	    detail.addColumnHeading(3, REQUIRED);
+	    detail.addColumnHeading(4, PROVIDED);
+	    detail.addColumnHeading(5, STATUS);
+	    return detail;
+	}
+	/**
+	 * Retrieves water closet requirement rules from MDMS cache.
+	 * Fetches the first matching water closet requirement rule based on plan configuration.
+	 *
+	 * @param pl The building plan containing configuration details
+	 * @return Optional containing WaterClosetsRequirement rule if found, empty otherwise
+	 */
+	private Optional<WaterClosetsRequirement> getWaterClosetsRule(Plan pl) {
+		 List<Object> rules = cache.getFeatureRules(pl, FeatureEnum.WATER_CLOSETS.getValue(), false);
+	         return rules.stream()
+	            .filter(WaterClosetsRequirement.class::isInstance)
+	            .map(WaterClosetsRequirement.class::cast)
+	            .findFirst();
+	}
+	/**
+	 * Checks if a floor has valid water closet data for processing.
+	 * Validates that water closets object exists with non-empty heights and rooms collections.
+	 *
+	 * @param floor The floor to check for valid water closet data
+	 * @return true if floor has valid water closet data, false otherwise
+	 */
+	private boolean hasValidWaterClosets(Floor floor) {
+	    return floor.getWaterClosets() != null
+	            && floor.getWaterClosets().getHeights() != null
+	            && !floor.getWaterClosets().getHeights().isEmpty()
+	            && floor.getWaterClosets().getRooms() != null
+	            && !floor.getWaterClosets().getRooms().isEmpty();
+	}
+	/**
+	 * Finds the minimum height among all water closet room heights.
+	 * Returns the smallest height value from the list of room heights.
+	 *
+	 * @param heights List of room height measurements
+	 * @return Minimum height value, or BigDecimal.ZERO if list is empty
+	 */
+	private BigDecimal getMinHeight(List<RoomHeight> heights) {
+	    return heights.stream()
+	            .map(RoomHeight::getHeight)
+	            .min(Comparator.naturalOrder())
+	            .orElse(BigDecimal.ZERO);
+	}
+	/**
+	 * Finds the minimum width among all water closet room measurements.
+	 * Returns the smallest width value from the list of room measurements.
+	 *
+	 * @param rooms List of room measurements
+	 * @return Minimum width value, or BigDecimal.ZERO if list is empty
+	 */
+	private BigDecimal getMinWidth(List<Measurement> rooms) {
+	    return rooms.stream()
+	            .map(Measurement::getWidth)
+	            .min(Comparator.naturalOrder())
+	            .orElse(BigDecimal.ZERO);
+	}
+	/**
+	 * Calculates the total area of all water closet rooms.
+	 * Sums up the areas of all room measurements.
+	 *
+	 * @param rooms List of room measurements
+	 * @return Total area of all rooms
+	 */
+	private BigDecimal getTotalArea(List<Measurement> rooms) {
+	    return rooms.stream()
+	            .map(Measurement::getArea)
+	            .reduce(BigDecimal.ZERO, BigDecimal::add);
+	}
+	/**
+	 * Builds ventilation validation details for scrutiny reporting.
+	 * Creates a map with rule information, requirements, and compliance status
+	 * for water closet ventilation area validation.
+	 *
+	 * @param requiredVentArea The minimum required ventilation area
+	 * @param providedVentArea The actual provided ventilation area
+	 * @return Map containing ventilation validation details
+	 */
+	private Map<String, String> buildVentilationDetails(BigDecimal requiredVentArea, BigDecimal providedVentArea) {
+		ReportScrutinyDetail detail = new ReportScrutinyDetail();
+		detail.setRuleNo(RULE_41_IV);
+		detail.setDescription(WATERCLOSETS_DESCRIPTION);
+		detail.setRequired(requiredVentArea.toString());
+		detail.setProvided(WATER_CLOSET_VENTILATION_AREA + providedVentArea);
+		detail.setStatus(providedVentArea.compareTo(requiredVentArea) >= 0
+				? Result.Accepted.getResultVal()
+				: Result.Not_Accepted.getResultVal());
+		return mapReportDetails(detail);
+	}
+	/**
+	 * Builds dimension validation details for scrutiny reporting.
+	 * Creates a map with rule information, requirements, and compliance status
+	 * for water closet height, area, and width validation.
+	 *
+	 * @param requiredHeight The minimum required height
+	 * @param requiredArea The minimum required area
+	 * @param requiredWidth The minimum required width
+	 * @param providedHeight The actual provided height
+	 * @param providedArea The actual provided area
+	 * @param providedWidth The actual provided width
+	 * @return Map containing dimension validation details
+	 */
+	private Map<String, String> buildDimensionDetails(BigDecimal requiredHeight, BigDecimal requiredArea, BigDecimal requiredWidth,
+	                                                  BigDecimal providedHeight, BigDecimal providedArea, BigDecimal providedWidth) {
+		ReportScrutinyDetail detail = new ReportScrutinyDetail();
+		detail.setRuleNo(RULE_41_IV);
+		detail.setDescription(WATERCLOSETS_DESCRIPTION);
+		detail.setRequired(String.format(HEIGHT_AREA_WIDTH_GREATER_THAN_S,
+				requiredHeight, requiredArea, requiredWidth));
+		detail.setProvided(String.format(HEIGHT_AREA_WIDTH_EQUAL_TO_S, providedHeight, providedArea, providedWidth));
+		detail.setStatus((providedHeight.compareTo(requiredHeight) >= 0
+				&& providedArea.compareTo(requiredArea) >= 0
+				&& providedWidth.compareTo(requiredWidth) >= 0)
+				? Result.Accepted.getResultVal()
+				: Result.Not_Accepted.getResultVal());
+		return mapReportDetails(detail);
 	}
 
+	/**
+	 * Returns amendment dates for water closet rules.
+	 * Currently returns an empty map as no amendments are defined.
+	 *
+	 * @return Empty LinkedHashMap of amendment dates
+	 */
 	@Override
 	public Map<String, Date> getAmendments() {
 		return new LinkedHashMap<>();

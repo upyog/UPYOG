@@ -281,4 +281,7 @@ public class AssetService {
         return assetRequest.getAsset();
     }
 
+    public List<AssetAssignment> getAssetAssignmentDetails(String tenantId, String assetId) {
+        return assetRepository.getAssetAssignmentDetails(tenantId, assetId);
+    }
 }

@@ -19,7 +19,30 @@ import org.springframework.web.client.ResourceAccessException;
 import org.upyog.adv.constants.BookingConstants;
 
 import lombok.extern.slf4j.Slf4j;
-
+/**
+ * Utility class for handling encryption and decryption operations in the Advertisement Booking Service.
+ * 
+ * Key Responsibilities:
+ * - Encrypts sensitive data such as applicant details before storing them in the database.
+ * - Decrypts sensitive data when retrieving them from the database.
+ * - Supports Attribute-Based Access Control (ABAC) for decryption when enabled.
+ * 
+ * Methods:
+ * - `encryptObject`: Encrypts an object using a specified encryption key.
+ * - `decryptObject`: Decrypts an object using a specified decryption key.
+ * 
+ * Dependencies:
+ * - EncryptionService: Provides encryption and decryption functionality.
+ * - BookingConstants: Contains constants used for encryption keys.
+ * 
+ * Configuration:
+ * - `state.level.tenant.id`: Specifies the state-level tenant ID for encryption.
+ * - `adv.decryption.abac.enabled`: Enables or disables ABAC-based decryption.
+ * 
+ * Annotations:
+ * - @Service: Marks this class as a Spring-managed service component.
+ * - @Slf4j: Enables logging for debugging and monitoring encryption/decryption processes.
+ */
 @Slf4j
 @Service
 public class EncryptionDecryptionUtil {

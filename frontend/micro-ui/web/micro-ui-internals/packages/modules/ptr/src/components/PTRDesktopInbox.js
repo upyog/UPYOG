@@ -1,3 +1,17 @@
+/**
+ * @description 
+ * This page renders the **desktop view** for the **PTR (Pet Registration)** module inbox. 
+ * 
+ * @functionality
+ * - **Filters and Search:** Allows users to filter and search for applications using dynamic filter components and a search bar.
+ * - **Application Table:** Displays application data in a tabular format with pagination, sorting, and customizable columns.
+ * - **Loading and Empty State:** Shows a loader while fetching data and displays an empty state message if no records are found.
+ * - **Navigation Links:** Includes links for inbox actions, new application creation, and application search.
+ * - **Dynamic Components:** Uses dynamically loaded components for filters and empty states, making the page modular and configurable.
+ * - **Pagination and Sorting:** Supports navigation between pages and sorting of records.
+ */
+
+
 import { Card, Loader } from "@upyog/digit-ui-react-components";
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";

@@ -1,6 +1,44 @@
 import React, { useState, useEffect } from 'react';
 import { Toast } from "@upyog/digit-ui-react-components";
 
+/**
+ * TimerValues Component
+ * 
+ * This component is responsible for managing and displaying the timer values for the CHB (Community Hall Booking) module.
+ * It tracks the remaining time for a booking slot and handles slot availability checks.
+ * 
+ * Props:
+ * - `t`: Translation function for internationalization.
+ * - `timerValues`: Initial timer value for the booking slot.
+ * - `SlotSearchData`: Object containing search parameters for slot availability, including:
+ *    - `communityHallCode`: Code of the community hall.
+ *    - `bookingStartDate`: Start date of the booking.
+ *    - `bookingEndDate`: End date of the booking.
+ *    - `hallCode`: Code of the hall.
+ *    - `isTimerRequired`: Boolean indicating whether the timer is required.
+ * 
+ * State Variables:
+ * - `timeRemaining`: Tracks the remaining time for the booking slot.
+ * - `showToast`: Manages the visibility and content of toast notifications.
+ * - `hasFetched`: Tracks whether the slot data has been fetched at least once.
+ * 
+ * Variables:
+ * - `tenantId`: The current tenant ID fetched using the Digit ULB Service.
+ * 
+ * Logic:
+ * - Initializes the `timeRemaining` state with the `timerValues` prop.
+ * - Uses the `Digit.Hooks.chb.useChbSlotSearch` hook to fetch slot availability data based on the `SlotSearchData` parameters.
+ * - Checks if the slot is already booked:
+ *    - If booked, displays a toast notification with an error message.
+ *    - If available, updates the `timeRemaining` state with the fetched timer value.
+ * 
+ * Effects:
+ * - `useEffect`: Handles the fetching of slot data and updates the timer or displays an error message if the slot is booked.
+ * 
+ * Returns:
+ * - A component that displays the remaining time for the booking slot and handles slot availability checks.
+ * - Displays toast notifications for errors or warnings related to slot availability.
+ */
 export const TimerValues = ({t, timerValues, SlotSearchData}) => {
   const [timeRemaining, setTimeRemaining] = useState(0 || timerValues); // Initialize with `timerValues`
   const [showToast, setShowToast] = useState(null);

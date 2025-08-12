@@ -18,6 +18,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/*
+     * This class is responsible for interacting with the ID generation service.
+     * It uses a RestTemplate to make HTTP calls to the ID generation API.
+     * The configuration for the service is provided by the BookingConfiguration class.
+     * The repository is annotated with @Repository to indicate that it is a Spring-managed component.
+     */
+
 @Repository
 public class IdGenRepository {
 

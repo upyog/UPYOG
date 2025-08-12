@@ -18,7 +18,28 @@ import digit.models.coremodels.IdGenerationRequest;
 import digit.models.coremodels.IdGenerationResponse;
 import digit.models.coremodels.IdRequest;
 import digit.models.coremodels.IdResponse;
-
+/**
+ * Utility class for interacting with the ID generation service in the Advertisement Booking Service.
+ * 
+ * Key Responsibilities:
+ * - Generates unique IDs for various entities such as bookings, applications, and slots.
+ * - Constructs and sends requests to the ID generation service.
+ * - Processes responses from the ID generation service to extract generated IDs.
+ * 
+ * Methods:
+ * - `getIdList`: Generates a list of unique IDs based on the provided parameters.
+ * 
+ * Dependencies:
+ * - ServiceRequestRepository: Handles HTTP requests to the ID generation service.
+ * - ObjectMapper: Used for JSON serialization and deserialization.
+ * 
+ * Configuration:
+ * - `egov.idgen.host`: Base URL of the ID generation service.
+ * - `egov.idgen.path`: API path for the ID generation service.
+ * 
+ * Annotations:
+ * - @Component: Marks this class as a Spring-managed component.
+ */
 @Component
 public class IdgenUtil {
 

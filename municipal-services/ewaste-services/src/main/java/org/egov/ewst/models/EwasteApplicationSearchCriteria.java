@@ -19,6 +19,10 @@ import lombok.ToString;
 @NoArgsConstructor
 @Builder
 @ToString
+/**
+ * EwasteApplicationSearchCriteria is a model class that represents the search criteria for ewaste applications.
+ * It contains various fields to filter and search for specific ewaste applications based on different criteria.
+ */
 public class EwasteApplicationSearchCriteria {
 	@JsonProperty("tenantId")
 	private String tenantId;

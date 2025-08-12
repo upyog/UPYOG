@@ -1,3 +1,33 @@
+/**
+ * @file ApplicationDetails.js
+ * 
+ * @description
+ * This component displays the details of a pet registration application. It allows employees to view, download, 
+ * and print various documents related to the application, such as the application details, fee receipt, 
+ * and pet registration certificate. 
+ * 
+ * @features
+ * - Displays pet application details using the `ApplicationDetailsTemplate` component.
+ * - Retrieves workflow details and handles business service changes dynamically.
+ * - Provides download options for PDF documents (application details, receipt, certificate).
+ * - Supports audit data retrieval and error handling.
+ * - Displays a renewal link for expired applications.
+ * 
+ * @dependencies
+ * - React: Component rendering and state management.
+ * - Digit: For hooks, PDF generation, and payment services.
+ * - Lodash: For deep cloning application data.
+ * - React Router: For navigation and parameter handling.
+ * 
+ * @hooks used:
+ * - `useEffect`: Handles side effects such as setting application details and updating business service.
+ * - `useState`: Manages local state variables (showToast, appDetailsToShow, etc.).
+ * - `useHistory`: For navigation.
+ * 
+ * @author Kunal Gaurav
+ * @date 2025-03-31
+ */
+
 import { Header, MultiLink, SubmitBar } from "@upyog/digit-ui-react-components";
 import _ from "lodash";
 import React, { useContext, useEffect, useState } from "react";

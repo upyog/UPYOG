@@ -64,7 +64,7 @@
 		</repository> 
 		<repository>
 			<id>javaxt.com</id>
-			<url>http://www.javaxt.com/maven</url>
+			<url>https://www.javaxt.com/maven</url>
 		</repository>
 	</repositories>
 
@@ -209,11 +209,9 @@
 					</exclusion>
 				</exclusions>
 			</dependency>
-			<dependency>
-				<groupId>com.aspose</groupId>
-				<artifactId>aspose-cad</artifactId>
-				<version>20.10</version>
-			</dependency>
+
+			<!--		Below dependency is commented out to avoid jenkinds build issue -->
+		
 			<dependency>
 				<groupId>org.egov.edcr</groupId>
 				<artifactId>egov-egi</artifactId>
@@ -1086,6 +1084,11 @@
 	</dependencyManagement>
 
 	<dependencies>
+			<dependency>
+                            <groupId>com.aspose</groupId>
+                            <artifactId>aspose-cad</artifactId>
+                            <version>20.10</version>
+                        </dependency>
 
 		<!-- SERVLET SPEC JBOSS DEPENDENCIES START -->
 		<dependency>

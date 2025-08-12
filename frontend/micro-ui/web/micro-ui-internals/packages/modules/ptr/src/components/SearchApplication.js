@@ -1,3 +1,29 @@
+  /**
+ * @description 
+ * This component handles the **Pet Application Search** functionality.
+ * It provides a form with multiple fields for filtering applications based on:
+ * - Application number
+ * - Pet type
+ * - Application type
+ * - Mobile number
+ * - Date range (from and to dates)
+ * 
+ * It uses:
+ * - `react-hook-form` for form handling.
+ * - `Digit` services and hooks for fetching pet-related data.
+ * - `Table` component for displaying search results.
+ * - Pagination and sorting features.
+ * 
+ * @props 
+ * - `tenantId` (string): The ID of the current tenant.
+ * - `isLoading` (boolean): Flag indicating whether data is loading.
+ * - `t` (function): Translation function for multilingual support.
+ * - `onSubmit` (function): Callback function to submit the form.
+ * - `data` (object): Search results data.
+ * - `count` (number): Total records count.
+ * - `setShowToast` (function): Function to manage toast notifications.
+ */
+
   import React, { useCallback, useMemo, useEffect } from "react"
   import { useForm, Controller } from "react-hook-form";
   import { TextInput, SubmitBar, LinkLabel, ActionBar, CloseSvg, DatePicker, CardLabelError, SearchForm, SearchField, Dropdown, Table, Card, MobileNumber, Loader, CardText, Header } from "@upyog/digit-ui-react-components";

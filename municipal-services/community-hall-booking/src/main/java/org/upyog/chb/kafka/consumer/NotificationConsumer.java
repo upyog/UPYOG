@@ -17,6 +17,33 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * This class acts as a Kafka consumer for handling notifications related to
+ * Community Hall Booking events.
+ * 
+ * Purpose:
+ * - To listen to Kafka topics for booking-related events such as creation and updates.
+ * - To process the consumed records and trigger appropriate notification services.
+ * 
+ * Dependencies:
+ * - CHBNotificationService: Used to send notifications based on the booking events.
+ * - ObjectMapper: Used to map the consumed Kafka record into a CommunityHallBookingRequest object.
+ * 
+ * Kafka Listener:
+ * - Listens to the topics specified in the application properties:
+ *   1. ${persister.save.communityhall.booking.topic}: Topic for booking creation events.
+ *   2. ${persister.update.communityhall.booking.topic}: Topic for booking update events.
+ * 
+ * Features:
+ * - Logs the consumed record and topic for debugging and monitoring purposes.
+ * - Converts the consumed record into a CommunityHallBookingRequest object.
+ * - Handles exceptions gracefully by logging errors during record processing.
+ * 
+ * Usage:
+ * - This class is automatically managed by Spring as a Kafka consumer.
+ * - It processes booking-related events and triggers notifications accordingly.
+ */
+
 @Service
 @Slf4j
 public class NotificationConsumer {

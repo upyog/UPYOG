@@ -17,7 +17,7 @@ const CreateTradeLicence = ({ parentRoute }) => {
   let isReneworEditTrade = window.location.href.includes("/renew-trade/") || window.location.href.includes("/edit-application/")
 
   const stateId = Digit.ULBService.getStateId();
-  let { data: newConfig, isLoading } = Digit.Hooks.tl.useMDMS.getFormConfig(stateId, {});
+  // let { data: newConfig, isLoading } = Digit.Hooks.tl.useMDMS.getFormConfig(stateId, {});
 
   const goNext = (skipStep, index, isAddMultiple, key, isPTCreateSkip) => {
     let currentPath = pathname.split("/").pop(),
@@ -125,7 +125,8 @@ const CreateTradeLicence = ({ parentRoute }) => {
     clearParams();
     queryClient.invalidateQueries("TL_CREATE_TRADE");
   }
-  newConfig = newConfig ? newConfig : newConfigTL;
+  let newConfig = newConfigTL;
+  // newConfig ? newConfigTL : newConfigTL;
   newConfig?.forEach((obj) => {
     config = config.concat(obj.body.filter((a) => !a.hideInCitizen));
   });

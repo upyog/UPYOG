@@ -1,0 +1,187 @@
+{
+     "RequestInfo": {
+        "apiId": "Rainmaker",
+        "authToken": "0312366e-f2e1-48a5-895c-3558425caabd",
+        "userInfo": {
+            "id": 1720,
+            "uuid": "ce1bd8d5-b246-4f6d-8f70-3044414dcf40",
+            "userName": "BPAAP",
+            "name": "Bpa Approver",
+            "mobileNumber": "9244433333",
+            "emailId": null,
+            "locale": null,
+            "type": "EMPLOYEE",
+            "roles": [
+                {
+                    "name": "BPA Services Approver",
+                    "code": "BPA_APPROVER",
+                    "tenantId": "pg.citya"
+                },
+                {
+                    "name": "Employee",
+                    "code": "EMPLOYEE",
+                    "tenantId": "pg.citya"
+                },
+                {
+                    "name": "TL Approver",
+                    "code": "TL_APPROVER",
+                    "tenantId": "pg.citya"
+                },
+                {
+                    "name": "BPAREG Approver",
+                    "code": "BPAREG_APPROVER",
+                    "tenantId": "pg.citya"
+                }
+            ],
+            "active": true,
+            "tenantId": "pg.citya",
+            "permanentCity": null
+        },
+        "msgId": "1728635428326|en_IN",
+        "plainAccessRequest": {}
+    },
+   "BusinessServices":[
+      {
+         "tenantId":"pg",
+         "uuid":"8ae5783e-74f2-4fc5-932a-fa2595022780",
+         "businessService":"DESIGNER",
+         "business":"BPAREG",
+         "businessServiceSla":0,
+         "states":[
+            {
+               "tenantId":"pg",
+               "sla":null,
+               "state":null,
+               "applicationStatus":null,
+               "docUploadRequired":false,
+               "isStartState":true,
+               "isTerminateState":false,
+               "isStateUpdatable":false,
+               "actions":[
+                  {
+                     "tenantId":"pg",
+                     "currentState":null,
+                     "action":"APPLY",
+                     "nextState":"PENDINGPAYMENT",
+                     "roles":[
+                        "CITIZEN",
+                        "ANONYMOUS"
+                     ],
+                     "active":true
+                  }
+               ]
+            },
+            {
+               "tenantId":"pg",
+               "sla":null,
+               "state":"PENDINGPAYMENT",
+               "applicationStatus":"PENDINGPAYMENT",
+               "docUploadRequired":false,
+               "isStartState":false,
+               "isTerminateState":false,
+               "isStateUpdatable":false,
+               "actions":[
+                  {
+                     "tenantId":"pg",
+                     "currentState":"PENDINGPAYMENT",
+                     "action":"PAY",
+                     "nextState":"PENDINGDOCVERIFICATION",
+                     "roles":[
+                        "CITIZEN",
+                        "SYSTEM_PAYMENT"
+                     ],
+                     "active":true
+                  }
+               ]
+            },
+            {
+               "tenantId":"pg",
+               "sla":null,
+               "state":"PENDINGDOCVERIFICATION",
+               "applicationStatus":"PENDINGDOCVERIFICATION",
+               "docUploadRequired":false,
+               "isStartState":false,
+               "isTerminateState":false,
+               "isStateUpdatable":false,
+               "actions":[
+                  {
+                     "tenantId":"pg",
+                     "currentState":"PENDINGDOCVERIFICATION",
+                     "action":"REJECT",
+                     "nextState":"REJECTED",
+                     "roles":[
+                        "BPAREG_DOC_VERIFIER"
+                     ],
+                     "active":true
+                  },
+                  {
+                     "tenantId":"pg",
+                     "currentState":"PENDINGDOCVERIFICATION",
+                     "action":"FORWARD",
+                     "nextState":"PENDINGAPPROVAL",
+                     "roles":[
+                        "BPAREG_DOC_VERIFIER"
+                     ],
+                     "active":true
+                  }
+               ]
+            },
+            {
+               "tenantId":"pg",
+               "sla":null,
+               "state":"REJECTED",
+               "applicationStatus":"REJECTED",
+               "docUploadRequired":false,
+               "isStartState":false,
+               "isTerminateState":true,
+               "isStateUpdatable":false,
+               "actions":null
+            },
+            {
+               "tenantId":"pg",
+               "sla":43200000,
+               "state":"PENDINGAPPROVAL",
+               "applicationStatus":"PENDINGAPPROVAL",
+               "docUploadRequired":false,
+               "isStartState":false,
+               "isTerminateState":false,
+               "isStateUpdatable":false,
+               "actions":[
+                  {
+                     "tenantId":"pg",
+                     "currentState":"PENDINGAPPROVAL",
+                     "action":"APPROVE",
+                     "nextState":"APPROVED",
+                     "roles":[
+                        "BPAREG_APPROVER"
+                     ],
+                     "active":true
+                  },
+                  {
+                     "tenantId":"pg",
+                     "currentState":"PENDINGAPPROVAL",
+                     "action":"REJECT",
+                     "nextState":"REJECTED",
+                     "roles":[
+                        "BPAREG_APPROVER"
+                     ],
+                     "active":true
+                  }
+               ]
+            },
+            {
+               "tenantId":"pg",
+               "sla":null,
+               "state":"APPROVED",
+               "applicationStatus":"APPROVED",
+               "docUploadRequired":false,
+               "isStartState":false,
+               "isTerminateState":true,
+               "isStateUpdatable":false,
+               "actions":null
+            }
+         ]
+      }
+   ]
+
+}

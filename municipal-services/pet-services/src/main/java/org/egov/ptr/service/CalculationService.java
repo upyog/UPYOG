@@ -1,58 +1,51 @@
 package org.egov.ptr.service;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.egov.common.contract.request.RequestInfo;
 import org.egov.ptr.models.CalculationType;
 import org.egov.ptr.models.DemandDetail;
 import org.egov.ptr.models.PetRegistrationRequest;
 import org.egov.ptr.util.PTRConstants;
-import org.egov.ptr.util.PetUtil;
+import org.egov.ptr.util.MdmsUtil;
+import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import lombok.extern.slf4j.Slf4j;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 
-import java.util.ArrayList;
-import java.util.List;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
 public class CalculationService {
 
 	@Autowired
-	private PetUtil mdmsUtil;
+	private MdmsUtil mdmsUtil;
+
 
 	/**
-	 * Calculates the demand based on the provided PetRegistrationRequest.
+	 * Calculates the registration fee based on the application type.
 	 *
-	 * @param petRegistrationRequest The request containing pet registration
-	 *                               applications.
-	 * @return A list of DemandDetail objects representing the calculated demand.
+	 * @param applicationType The type of pet registration application.
+	 * @param requestInfo     Request information containing user and request metadata.
+	 * @param tenantId        The tenant ID for which the calculation is performed.
+	 * @return The calculated fee amount for the given application type.
 	 */
-	public List<DemandDetail> calculateDemand(PetRegistrationRequest petRegistrationRequest) {
-		String tenantId = petRegistrationRequest.getPetRegistrationApplications().get(0).getTenantId();
+	public BigDecimal calculateFee(String applicationType, RequestInfo requestInfo, String tenantId) {
+		List<CalculationType> calculationTypes = mdmsUtil.getCalculationType(requestInfo, tenantId,
+				PTRConstants.PET_MASTER_MODULE_NAME);
 
-		List<CalculationType> calculationTypes = mdmsUtil.getcalculationType(petRegistrationRequest.getRequestInfo(),
-				tenantId, PTRConstants.PET_MASTER_MODULE_NAME);
-
-		log.info("Retrieved calculation types: {}", calculationTypes);
-
-		return processCalculationForDemandGeneration(tenantId, calculationTypes, petRegistrationRequest);
-	}
-
-	private List<DemandDetail> processCalculationForDemandGeneration(String tenantId,
-			List<CalculationType> calculationTypes, PetRegistrationRequest petRegistrationRequest) {
-
-		String applicationType = petRegistrationRequest.getPetRegistrationApplications().get(0).getApplicationType();
-
-		List<DemandDetail> demandDetails = new ArrayList<>();
-		for (CalculationType type : calculationTypes) {
-			if (type.equals(applicationType)) {
-				DemandDetail demandDetail = DemandDetail.builder().taxAmount(type.getAmount())
-						.taxHeadMasterCode(type.getFeeType()).tenantId(tenantId).build();
-				demandDetails.add(demandDetail);
-				demandDetails.add(demandDetail);
+		for (CalculationType calculation : calculationTypes) {
+			if (calculation.getApplicationType().equalsIgnoreCase(applicationType)) {
+				return calculation.getAmount();
 			}
 		}
-		return demandDetails;
 
+		throw new CustomException("FEE_NOT_FOUND", "Fee not found for application type: " + applicationType);
 	}
+
 }

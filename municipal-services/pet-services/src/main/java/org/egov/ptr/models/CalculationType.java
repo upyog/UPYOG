@@ -21,5 +21,4 @@ public class CalculationType {
 	String serviceType;
 	String feeType;
 	BigDecimal amount;
-	boolean taxApplicable;
 }
