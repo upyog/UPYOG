@@ -26,14 +26,14 @@ public class SecurityConfig {
     @Qualifier("preAuthProvider")
     private AuthenticationProvider preAuthProvider;
 
-//    @Bean
-//    public AuthenticationManager customAuthenticationManager() {
-//        return new ProviderManager(Arrays.asList(customAuthProvider, preAuthProvider));
-//    }
+    @Bean("customAuthenticationManager")
+    public AuthenticationManager customAuthenticationManager() {
+        return new ProviderManager(Arrays.asList(customAuthProvider, preAuthProvider));
+    }
 
     @Bean
     @Order(3)
-    public SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain appSecurityFilterChain(HttpSecurity http) throws Exception {
         return http
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(authz -> authz
