@@ -40,6 +40,11 @@ import useUpdateEvent from "./events/useUpdateEvent";
 import useNewInboxGeneral from "./useInboxGeneral/useNewInbox";
 import useDynamicData from "./useDynamicData";
 
+
+import useCreate from "./pgrAi/useCreate";
+import useSearchPGRAI from "./pgrAi/useSearchPGRAI";
+import useFilterEmployee from "./pgrAi/useFilterEmployee";
+import useApplicationDetails from "./pgrAi/useApplicationDetails";
 import useComplaintDetails from "./pgr/useComplaintDetails";
 import { useComplaintsList, useComplaintsListByMobile } from "./pgr/useComplaintList";
 import useComplaintStatus from "./pgr/useComplaintStatus";
@@ -304,10 +309,6 @@ import useSVApplicationDetail from "./sv/useSVApplicationDetail";
 import useSvSearchApplication from "./sv/useSvSearchApplication";
 import useSVApplicationAction from "./sv/useSVApplicationAction";
 import useADSApplicationDetail from "./ads/useADSApplicationDetail";
-import useProductPriceMDMS from "./ew/useProductPriceMDMS";
-import useSpecialCategory from "./chb/useSpecialCategory";
-import useResidentType from "./chb/useResidentType";
-import usePurpose from "./chb/usePurpose";
 import useChbCreateAPI from "./chb/useChbCreateAPI";
 import useADSCreateAPI from "./ads/useADSCreateAPI";
 import useChbDocumentsMDMS from "./chb/useChbDocumentsMDMS";
@@ -323,8 +324,6 @@ import useChbSearch from "./chb/useChbSearch";
 import useTenantsCHB from "./chb/useTenants";
 import useChbApplicationAction from "./chb/useChbApplicationAction";
 import useServiceSearchCHB from "./chb/useServiceSearchCHB";
-import useChbCommunityHalls from "./chb/useChbCommunityHalls";
-import useChbHallCode from "./chb/useChbHallCode"
 import useChbSlotSearch from "./chb/useChbSlotSearch";
 import useDemandEstimation from "./chb/useDemandEstimation"
 import useTenantsADS from "./ads/useTenants"
@@ -375,6 +374,12 @@ const pgr = {
   useTradeLicenseBillingslab,
   useMDMS: usePGRMDMS,
 };
+const pgrAi={
+  useCreate,
+  useSearchPGRAI,
+  useFilterEmployee,
+  useApplicationDetails
+}
 
 
 const fsm = {
@@ -652,7 +657,6 @@ const sv = {
 }
 
 const ew = {
-  useProductPriceMDMS,
   useEWCreateAPI,
   useTenants: useTenantsEW,
   useEWSearch,
@@ -661,9 +665,6 @@ const ew = {
 };
 
 const chb={
-  useSpecialCategory,
-  useResidentType,
-  usePurpose,
   useChbCreateAPI,
   useChbDocumentsMDMS,
   useChbDocumentSearch,
@@ -672,8 +673,6 @@ const chb={
   useTenants:useTenantsCHB,
   useChbApplicationAction,
   useServiceSearchCHB,
-  useChbCommunityHalls,
-  useChbHallCode,
   useChbSlotSearch,
   useDemandEstimation
 }

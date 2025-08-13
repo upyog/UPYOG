@@ -64,6 +64,9 @@ import { VendorService } from "./services/elements/EmpVendor";
 import { MTService } from "./services/elements/MT";
 import { TPService } from "./services/elements/TP";
 
+import { PGRAIService } from "./services/elements/PGRAI";
+import { PGRAIUpdate } from "./services/elements/PGRAIUpdate";
+
    
 
 
@@ -138,6 +141,8 @@ const initLibraries = () => {
   setupLibraries("VendorService", VendorService);
   setupLibraries("MTService", MTService);
   setupLibraries("TPService", TPService);
+  setupLibraries("PGRAIService", PGRAIService);
+  setupLibraries("PGRAIUpdate", PGRAIUpdate);
 
   return new Promise((resolve) => {
     initI18n(resolve);

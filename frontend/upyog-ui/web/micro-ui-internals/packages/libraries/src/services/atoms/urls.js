@@ -246,6 +246,12 @@ const Urls = {
   cm: {
     search: "/verification-service/validity/_search"
   },
+   // urls for making api calls for pgr-ai module
+   pgrAi:{
+    PGR_Create_AI:"/pgr-ai-services/v1/request/_create",
+    PGR_Search_AI: "/pgr-ai-services/v1/request/_search",
+    PGR_Update_AI:"/pgr-ai-services/v1/request/_update"
+  },
 
 digiLocker:{
   authorization:"/requester-services-dx/digilocker/authorization/url",
