@@ -1,7 +1,39 @@
 /**
 * @author - Shivank - NIUA
 This is a custom component, it will display details based on your Property ID and fill the details accordingly.
-*/
+
+ * @author - Shivank - NIUA
+ * This is a custom component, it will display details based on your Property ID and fill the details accordingly.
+ * 
+ * @component PropertySearch
+ * @description
+ * This component provides functionality to search and collect property details in a multi-step form.
+ * It allows users to:
+ * - Search for property details using a Property ID
+ * - Auto-fill form fields based on the search results
+ * - Manually input property information if not found
+ * - Select city, locality, and fire station from dropdown menus
+ * - Navigate through the form with validation checks
+ * 
+ * The component integrates with:
+ * - Digit UI components for form elements
+ * - React Hook Form for form state management
+ * - Custom Digit hooks for fetching property, locality, and fire station data
+ * 
+ * Form fields include:
+ * - Property ID (with search functionality)
+ * - Building name
+ * - Door/Plot number
+ * - City (dropdown)
+ * - Street name
+ * - Locality/Mohalla (dropdown)
+ * - Pincode
+ * - Fire station ID (dropdown)
+ * - GIS coordinates
+ * 
+ * Different behavior is implemented for citizen vs employee user types.
+ */
+
 
 
 import React, { useEffect, useState} from "react";

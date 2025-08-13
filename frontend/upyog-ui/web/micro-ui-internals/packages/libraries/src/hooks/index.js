@@ -67,7 +67,6 @@ import useVehicleTripCreate from "./fsm/useVehicleTripCreate";
 import useFSMInbox from "./fsm/useInbox";
 import useApplicationUpdate from "./fsm/useApplicationUpdate";
 import useWorkflowData from "./fsm/useWorkflowData";
-import useRouteSubscription from "./fsm/useRouteSubscription";
 import useDsoSearch from "./fsm/useDsoSearch";
 import usePropertySearch from "./pt/usePropertySearch";
 import usePropertySearchNew from "./pt/usePropertySearchNew";
@@ -333,6 +332,30 @@ import useADSDocumentsMDMS from "./ads/useADSDocumentsMDMS";
 import useADSDocumentSearch from "./ads/useADSDocumentSearch";
 import useADSDemandEstimation from "./ads/useADSDemandEstimation"
 import useCMSearch from "./cm/useCMSearch";
+
+
+import useTankerCreateAPI from "./wt/useTankerCreateAPI";
+import useTankerSearchAPI from "./wt/useTankerSearchAPI";
+import useMobileToiletCreateAPI from "./wt/useMobileToiletCreateAPI";
+import useMobileToiletSearchAPI from "./wt/useMobileToiletSearchAPI";
+import useWTApplicationAction from "./wt/useWTApplicationAction";
+import useWTApplicationDetail from "./wt/useWTApplicationDetail";
+import useMTApplicationDetail from "./wt/useMTApplicationDetail";
+import useMTApplicationAction from "./wt/useMTApplicationAction";
+import useTreePruningCreateAPI from "./wt/useTreePruningCreateAPI";
+import useTreePruningSearchAPI from "./wt/useTreePruningSearchAPI";
+import useTPApplicationDetail from "./wt/useTPApplicationDetail";
+import useTPApplicationAction from "./wt/useTPApplicationAction";
+
+
+import useTenantsVENDOR from "./vendor/useTenants";
+import useEmpvendorCreate from "./vendor/useEmpvendorCreate";
+import useEmpvendorSearch from "./vendor/useEmpvendorSearch";
+import useVendorAdditionaldetailsAPI from "./vendor/useVendorAdditionaldetailsAPI";
+import useEmpvendorCommonSearch from "./vendor/useEmpvendorCommonSearch";
+import useEnabledMDMS from "./useEnabledMDMS";
+import useSelectedMDMS from "./useSelectedMDMS";
+import useRouteSubscription from "./useRouteSubscription";
 
 const pgr = {
   useComplaintDetails,
@@ -670,6 +693,29 @@ const cm = {
   useCMSearch
 }
 
+const wt={
+  useTankerCreateAPI,
+  useTankerSearchAPI,
+  useWTApplicationAction,
+  useWTApplicationDetail,
+  useMobileToiletCreateAPI,
+  useMobileToiletSearchAPI,
+  useMTApplicationDetail,
+  useMTApplicationAction,
+  useTreePruningCreateAPI,
+  useTreePruningSearchAPI,
+  useTPApplicationDetail,
+  useTPApplicationAction
+};
+
+const vendor = {
+  useTenants:useTenantsVENDOR,
+  useEmpvendorCreate,
+  useEmpvendorSearch,
+  useVendorAdditionaldetailsAPI,
+  useEmpvendorCommonSearch,
+};
+
 const Hooks = {
   useSessionStorage,
   useQueryParams,
@@ -743,7 +789,11 @@ const Hooks = {
   chb,
   ads,
   ew,
-  cm
+  cm,
+  wt,
+  vendor,
+  useEnabledMDMS,
+  useSelectedMDMS,
 };
 
 export default Hooks;

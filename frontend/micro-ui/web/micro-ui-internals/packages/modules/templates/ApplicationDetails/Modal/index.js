@@ -14,10 +14,6 @@ import SVActionModal from "./SVActionModal";
 import WTActionModal from "./WTActionModal";
 
 
-
-
-
-
 const ActionModal = (props) => {
   if (props?.businessService.includes("PT")) {
     return <PTActionModal {...props} />;

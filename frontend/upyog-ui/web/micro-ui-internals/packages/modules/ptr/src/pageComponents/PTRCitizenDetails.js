@@ -1,3 +1,28 @@
+/**
+ * @component PTRCitizenDetails
+ * @description
+ * This component handles the collection of citizen personal details in a multi-step form for
+ * the Pet Registration (PTR) application. It captures and validates essential contact information
+ * from the applicant.
+ * 
+ * Features:
+ * - Auto-fills user data when available (from user profile)
+ * - Supports both new applications and renewal applications
+ * - Different behavior for citizen and employee user types
+ * - Form validation for required fields with appropriate patterns
+ * - Timeline integration to show current step in the application process
+ * 
+ * Form fields include:
+ * - Applicant Name (required)
+ * - Mobile Number (required with validation)
+ * - Alternate Mobile Number (optional)
+ * - Father/Husband Name (required)
+ * - Email ID (required with validation)
+ * 
+ * The component automatically updates the parent form state when fields change
+ * for citizen users, while employee users need to explicitly submit the form.
+ */
+
 import React, { useEffect, useState } from "react";
 import { FormStep, TextInput, CardLabel, MobileNumber } from "@upyog/digit-ui-react-components";
 import Timeline from "../components/PTRTimeline";

@@ -1,3 +1,39 @@
+/**
+ * @file Inbox.js
+ * @description This component renders the Inbox view for both desktop and mobile screens. 
+ * It supports pagination, filtering, and sorting of data fetched from the backend.
+ * 
+ * @component
+ * - Uses Digit's hooks (`useNewInboxGeneral` or `useInboxGeneral`) to fetch inbox data.
+ * - Displays either `PTRDesktopInbox` or `MobileInbox` based on the device type.
+ * - Supports sorting, filtering, and pagination of inbox data.
+ * - Renders an empty result component if no data is found.
+ * 
+ * @props
+ * @param {function} useNewInboxAPI - Hook to use new inbox API or not.
+ * @param {string} parentRoute - Base route path for navigation.
+ * @param {string} moduleCode - The module code (default is "PTR").
+ * @param {object} initialStates - Initial state settings for the inbox (pagination, sorting, etc.).
+ * @param {JSX.Element} filterComponent - Component for filtering the inbox.
+ * @param {boolean} isInbox - Flag indicating if it is an inbox or a search view.
+ * @param {function} rawWfHandler - Workflow handler function.
+ * @param {function} rawSearchHandler - Search handler function.
+ * @param {boolean} combineResponse - Flag to combine responses.
+ * @param {object} wfConfig - Workflow configuration.
+ * @param {object} searchConfig - Search configuration.
+ * @param {function} middlewaresWf - Middleware for workflow.
+ * @param {function} middlewareSearch - Middleware for search.
+ * @param {JSX.Element} EmptyResultInboxComp - Component to display when no data is found.
+ * 
+ * @usage 
+ * <Inbox 
+ *   useNewInboxAPI={true} 
+ *   parentRoute="/inbox" 
+ *   moduleCode="PTR" 
+ *   initialStates={{ pageOffset: 0, pageSize: 10 }} 
+ * />
+ */
+
 import React, { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Header } from "@upyog/digit-ui-react-components";

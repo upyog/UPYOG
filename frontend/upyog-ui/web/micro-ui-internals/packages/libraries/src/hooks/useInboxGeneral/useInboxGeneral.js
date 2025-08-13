@@ -9,6 +9,8 @@ import { TLService } from "../../services/elements/TL";
 import { CHBServices } from "../../services/elements/CHB";
 import { SVService } from "../../services/elements/SV";
 import { EwService } from "../../services/elements/EW";
+import {WTService} from "../../services/elements/WT";
+import {MTService} from "../../services/elements/MT";
 
 const inboxConfig = (tenantId, filters) => ({
   PT: {
@@ -75,6 +77,31 @@ const inboxConfig = (tenantId, filters) => ({
     fetchFilters: filterFunctions.SV,
     _searchFn: () => SVService.search({ tenantId, filters }),
   },
+  WT: {
+    services: ["watertanker"],
+    searchResponseKey: "waterTankerBookingDetail",
+    businessIdsParamForSearch: "bookingNo",
+    businessIdAliasForSearch: "bookingNo",
+    fetchFilters: filterFunctions.WT,
+    _searchFn: () => WTService.search({ tenantId, filters }),
+  },
+  MT: {
+    services: ["mobileToilet"],
+    searchResponseKey: "mobileToilerBookingDetail",
+    businessIdsParamForSearch: "bookingNo",
+    businessIdAliasForSearch: "bookingNo",
+    fetchFilters: filterFunctions.MT,
+    _searchFn: () => MTService.search({ tenantId, filters }),
+  },
+  // Tree Pruning (TP) service configuration for inbox workflow management
+  TP: {
+    services: ["treePruning"],
+    searchResponseKey: "treePruningBookingDetail",
+    businessIdsParamForSearch: "bookingNo",
+    businessIdAliasForSearch: "bookingNo",
+    fetchFilters: filterFunctions.TP,
+    _searchFn: () => MTService.search({ tenantId, filters }),
+  }
 });
 
 const defaultCombineResponse = ({ totalCount, ...d }, wf) => {

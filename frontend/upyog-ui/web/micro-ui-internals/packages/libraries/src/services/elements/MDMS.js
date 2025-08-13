@@ -2495,4 +2495,20 @@ export const MdmsService = {
   getChbDocuments: (tenantId, moduleCode) => {
     return MdmsService.getDataByCriteria(tenantId, getChbDocumentsCategory(tenantId, moduleCode), moduleCode);
   },
+   /**
+   * getMasterData - Fetches master data based on the provided criteria.
+   * 
+   * @param {string} tenantId - The ID of the tenant for which the data is being fetched.
+   * @param {string} moduleCode - The module code associated with the master data.
+   * @param {string} masterName - The name of the master data to be fetched.
+   * @param {string} type - The type to be passed in switch case for fetching filtered data.
+   * 
+   * @description
+   * This function retrieves master data by calling the `MdmsServiceV2.getDataByCriteria` method.
+   * It constructs the criteria for fetching the data using the `getMasterDataCategory` function,
+   * which is passed the tenantId, moduleCode, masterName, and type as parameters.
+   */
+  getMasterData: (tenantId, moduleCode, masterName, i18nKeyString = "", type) => {
+    return MdmsService.getDataByCriteria(tenantId, getMasterDataCategory(tenantId, moduleCode, masterName, type), moduleCode, masterName, i18nKeyString);
+  },
 };

@@ -1,3 +1,19 @@
+/**
+ * PTRCreate Component
+ * 
+ * This component handles the pet registration process, including form navigation, data fetching, 
+ * and rendering different steps of the application process.
+ * 
+ * Features:
+ * - Uses React hooks for state management, routing, and API calls.
+ * - Fetches common fields configuration and application data from the MDMS service.
+ * - Supports navigation between different steps of the form.
+ * - Caches form data using session storage to persist user inputs.
+ * - Renders loading state until data is fetched.
+ * - Dynamically renders routes based on configuration.
+ * - Handles multi-step form submissions and navigates to acknowledgment or summary pages.
+ */
+
 import { Loader } from "@upyog/digit-ui-react-components";
 import React, { Fragment, useContext, useEffect } from "react";
 import { useTranslation } from "react-i18next";
@@ -18,7 +34,8 @@ const PTRCreate = ({ parentRoute }) => {
   let config = [];
   const [params, setParams, clearParams] = Digit.Hooks.useSessionStorage("PTR_CREATE_PET", {});
 
-  let { data: commonFields, isLoading } = Digit.Hooks.useCustomMDMS(Digit.ULBService.getStateId(), "PetService", [{ name: "CommonFieldsConfig" }],
+  // Fetches common field configurations from MDMS
+  let { data: commonFields, isLoading } = Digit.Hooks.useEnabledMDMS(Digit.ULBService.getStateId(), "PetService", [{ name: "CommonFieldsConfig" }],
     {
       select: (data) => {
         const formattedData = data?.["PetService"]?.["CommonFieldsConfigEmp"]
@@ -26,9 +43,12 @@ const PTRCreate = ({ parentRoute }) => {
       },
     });
 
+    // Fetching application ID from session storage
   const applicationId = sessionStorage.getItem("petId") ?sessionStorage.getItem("petId") : null
   sessionStorage.setItem("applicationType",pathname.includes("new-application") ? "NEWAPPLICATION":"RENEWAPPLICATION")
   const tenantId = Digit.ULBService.getCitizenCurrentTenant(true);
+
+  // Fetching application data by ID
   const { isError, error, data: ApplicationData } = Digit.Hooks.ptr.usePTRSearch(
     {
       tenantId,
@@ -38,12 +58,21 @@ const PTRCreate = ({ parentRoute }) => {
 
   let dataComingfromAPI = ApplicationData?.PetRegistrationApplications[0];
 
+/**
+   * Navigates to the next form step
+   * @param {boolean} skipStep - Whether to skip the next step
+   * @param {number} index - Index of the current step
+   * @param {boolean} isAddMultiple - Flag for multi-step addition
+   * @param {string} key - Current form field key
+   */
 
   const goNext = (skipStep, index, isAddMultiple, key) => {
     let currentPath = pathname.split("/").pop(),
       lastchar = currentPath.charAt(currentPath.length - 1),
       isMultiple = false,
       nextPage;
+
+      // Handles multi-step form navigation
     if (Number(parseInt(currentPath)) || currentPath == "0" || currentPath == "-1") {
       if (currentPath == "-1" || currentPath == "-2") {
         currentPath = pathname.slice(0, -3);
@@ -86,17 +115,26 @@ const PTRCreate = ({ parentRoute }) => {
   };
 
  
-
+ // Clears parameters on back navigation
   if(params && Object.keys(params).length>0 && window.location.href.includes("/info") && sessionStorage.getItem("docReqScreenByBack") !== "true")
     {
       clearParams();
       queryClient.invalidateQueries("PTR_CREATE_PET");
 
     }
-
+ // Navigates to the acknowledgment page
   const ptrcreate = async () => {
     history.push(`${match.path}/acknowledgement`);
   };
+
+ /**
+   * Handles form field selection and updates session storage
+   * @param {string} key - Field key
+   * @param {object} data - Field data
+   * @param {boolean} skipStep - Whether to skip the next step
+   * @param {number} index - Current step index
+   * @param {boolean} isAddMultiple - Whether multiple steps are added
+   */
 
   function handleSelect(key, data, skipStep, index, isAddMultiple = false) {
     if (key === "owners") {
@@ -118,6 +156,7 @@ const PTRCreate = ({ parentRoute }) => {
   const handleSkip = () => { };
   const handleMultiple = () => { };
 
+  // Clears params and cache on success
   const onSuccess = () => {
     clearParams();
     queryClient.invalidateQueries("PTR_CREATE_PET");
@@ -128,7 +167,7 @@ const PTRCreate = ({ parentRoute }) => {
     return <Loader />;
   }
 
-
+// Merges common fields configuration with citizen configuration
   commonFields = commonFields ? commonFields : citizenConfig;
   commonFields.forEach((obj) => {
     config = config.concat(obj.body.filter((a) => !a.hideInCitizen));
