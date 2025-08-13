@@ -1,4 +1,4 @@
-import { Card, CardHeader, CardSubHeader, CardText, Loader, SubmitBar } from "@upyog/digit-ui-react-components";
+import { Card, CardHeader, CardSubHeader,CardSectionHeader, CardText, Loader, SubmitBar } from "@upyog/digit-ui-react-components";
 import React, { useEffect } from "react";
 import { cardBodyStyle, stringReplaceAll } from "../utils";
 //import { map } from "lodash-es";
@@ -25,7 +25,7 @@ const ServiceDoc = ({ t, config, onSelect, userType, formData }) => {
       <Card>
         <div>
          
-          <CardSubHeader>{t("AST_REQ_SCREEN_LABEL")}</CardSubHeader>
+          <CardSectionHeader>{t("AST_REQ_SCREEN_LABEL")}</CardSectionHeader>
           
           <CardText style={{color: 'red'}}>{t('AST_DOCUMENT_ACCEPTED_PDF_JPG_PNG')}</CardText>
 
@@ -43,12 +43,12 @@ const ServiceDoc = ({ t, config, onSelect, userType, formData }) => {
                   ))
                 : docs.map(({ code, dropdownData }, index) => ( 
                     <div key={index}>
-                      <CardSubHeader>
+                      <CardText className={"primaryColor"}>
                         {index + 1}. {t(stringReplaceAll(code, ".", "_"))}
-                      </CardSubHeader>
+                      </CardText>
                       {dropdownData.map((dropdownData, dropdownIndex) => (
                         <CardText className={"primaryColor"}>
-                          {`${dropdownIndex + 1}`}. {t(stringReplaceAll(dropdownData?.code, ".", "_"))}
+                          {/* {`${dropdownIndex + 1}`}. {t(stringReplaceAll(dropdownData?.code, ".", "_"))} */}
                         </CardText>
                       ))}
                     </div>
