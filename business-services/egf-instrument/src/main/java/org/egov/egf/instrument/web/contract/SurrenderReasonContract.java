@@ -1,6 +1,6 @@
 package org.egov.egf.instrument.web.contract;
 
-import javax.validation.constraints.Size;
+import jakarta.validation.constraints.Size;
 
 import org.egov.common.web.contract.AuditableContract;
 import org.hibernate.validator.constraints.NotBlank;

@@ -2,6 +2,7 @@ package org.egov.egf.instrument.domain.service;
 
 import java.util.List;
 
+
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.domain.exception.CustomBindException;
 import org.egov.common.domain.exception.ErrorCode;
@@ -189,10 +190,13 @@ public class InstrumentAccountCodeService {
                 if (instrumentAccountCode.getAccountCode() != null
                         && instrumentAccountCode.getAccountCode().getGlcode() != null) {
 
-                    instrumentAccountCode.getAccountCode().setTenantId(instrumentAccountCode.getTenantId());
-                    ChartOfAccountContract accountCode = chartOfAccountContractRepository
-                            .findByGlcode(instrumentAccountCode.getAccountCode(), requestInfo);
+                    ChartOfAccountContract searchContract = new ChartOfAccountContract();
+                    searchContract.setGlcode(instrumentAccountCode.getAccountCode().getGlcode());
+                    searchContract.setTenantId(instrumentAccountCode.getTenantId());
 
+                    ChartOfAccountContract accountCode = chartOfAccountContractRepository
+                            .findByGlcode(searchContract, requestInfo);
+                    
                     if (accountCode == null)
                         throw new InvalidDataException("accountCode", ErrorCode.INVALID_REF_VALUE.getCode(), null);
 
