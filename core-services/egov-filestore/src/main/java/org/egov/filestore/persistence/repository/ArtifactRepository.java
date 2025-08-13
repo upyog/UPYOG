@@ -108,10 +108,13 @@ public class ArtifactRepository {
 		org.springframework.core.io.Resource resource = null;
 	
 		if (artifact.getFileLocation().getFileSource().equals("minio")) {
-		// if only DiskFileStoreRepository use read else ignore
-		MinioRepository repo = (MinioRepository) cloudFilesManager;
-		resource = repo.read(artifact.getFileLocation());
-	}
+			// if only DiskFileStoreRepository use read else ignore
+			MinioRepository repo = (MinioRepository) cloudFilesManager;
+			resource = repo.read(artifact.getFileLocation());
+		} else if (artifact.getFileLocation().getFileSource().equals("AzureBlobStorage")) {
+			AzureBlobStorageImpl repo = (AzureBlobStorageImpl) cloudFilesManager;
+			resource = repo.read(artifact.getFileLocation());
+		}
 		 
       if(null!=resource)
 		return new Resource(artifact.getContentType(), artifact.getFileName(), resource, artifact.getTenantId(),
