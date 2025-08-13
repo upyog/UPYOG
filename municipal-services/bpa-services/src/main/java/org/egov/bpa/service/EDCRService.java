@@ -67,7 +67,6 @@ public class EDCRService {
 
 		BPASearchCriteria criteria = new BPASearchCriteria();
 		criteria.setEdcrNumber(bpa.getEdcrNumber());
-		criteria.setTenantId(bpa.getTenantId());
 		List<BPA> bpas = bpaRepository.getBPAData(criteria, null);
 		if(bpas.size()>0){
 			for(int i=0; i<bpas.size(); i++){
