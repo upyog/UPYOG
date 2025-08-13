@@ -29,7 +29,7 @@ import { Table } from "@upyog/digit-ui-react-components";
  * - Allows customization of table cell properties using the `getCellProps` function.
  * 
  * Returns:
- * - A `Table` component from the `@nudmcdgnpm/digit-ui-react-components` library with the provided data, columns, and pagination controls.
+ * - A `Table` component from the `@upyog/digit-ui-react-components` library with the provided data, columns, and pagination controls.
  */
 const CHBApplicationTable = ({
   t,
