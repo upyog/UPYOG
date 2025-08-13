@@ -297,7 +297,7 @@ import useAssetparentSubType from "./asset/useAssetparentSubType";
 import useAssignCreateAPI from "./asset/useAssignCreateAPI";
 import useReturnAPI from "./asset/useReturnAPI";
 import useEditUpdateAPI from "./asset/useEditUpdateAPI";
-
+import useMaintenanceAPI from "./asset/useMaintenanceAPI";
 import createTokenAPI from "./digiLockerApi/createTokenAPI";
 
 import useSVDoc from "./sv/useSVDoc";
@@ -629,6 +629,7 @@ const ws = {
 const reports = {
   useReportMeta,
 };
+
 const asset = {
   useAssetClassification,
   useAssetType,
@@ -642,6 +643,7 @@ const asset = {
   useAssetparentSubType,
   useTenants: useTenantsASSET,
   useAssignCreateAPI,
+  useMaintenanceAPI,
   useReturnAPI,
   useEditUpdateAPI
 };
