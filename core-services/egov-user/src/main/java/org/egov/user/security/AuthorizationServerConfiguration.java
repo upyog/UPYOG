@@ -96,7 +96,7 @@ public class AuthorizationServerConfiguration {
 
     @Bean
     @Order(2)
-    public SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain authServerSecurityFilterChain(HttpSecurity http) throws Exception {
         return http
             .authorizeHttpRequests((authorize) -> authorize
                 .requestMatchers("/login", "/error", "/oauth2/**", "/auth/**").permitAll()  // Added /auth/**
