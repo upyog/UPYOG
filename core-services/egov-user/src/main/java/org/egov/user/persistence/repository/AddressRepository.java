@@ -2,19 +2,24 @@ package org.egov.user.persistence.repository;
 
 import static org.springframework.util.CollectionUtils.isEmpty;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
+import lombok.extern.slf4j.Slf4j;
 import org.egov.user.domain.model.Address;
+import org.egov.user.domain.model.AddressSearchCriteria;
 import org.egov.user.domain.model.enums.AddressType;
+import org.egov.user.domain.service.utils.UserConstants;
+import org.egov.user.repository.builder.AddressQueryBuilder;
 import org.egov.user.repository.rowmapper.AddressRowMapper;
+import org.egov.user.repository.rowmapper.AddressRowMapperV2;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+@Slf4j
 @Repository
 public class AddressRepository {
 
@@ -25,13 +30,15 @@ public class AddressRepository {
     public static final String DELETE_ADDRESSES = "delete from eg_user_address where id IN (:id)";
     public static final String DELETE_ADDRESS = "delete from eg_user_address where id=:id";
     public static final String UPDATE_ADDRESS_BYIDAND_TENANTID = "update eg_user_address set address=:address,city=:city,pincode=:pincode,lastmodifiedby=:lastmodifiedby,lastmodifieddate=:lastmodifieddate where userid=:userid and tenantid=:tenantid and type=:type";
-
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
     private JdbcTemplate jdbcTemplate;
+    private AddressQueryBuilder addressQueryBuilder;
 
-    public AddressRepository(NamedParameterJdbcTemplate namedParameterJdbcTemplate, JdbcTemplate jdbcTemplate) {
+    public AddressRepository(NamedParameterJdbcTemplate namedParameterJdbcTemplate, JdbcTemplate jdbcTemplate,
+                             AddressQueryBuilder addressQueryBuilder) {
         this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
         this.jdbcTemplate = jdbcTemplate;
+        this.addressQueryBuilder =  addressQueryBuilder;
     }
 
     /**
@@ -56,6 +63,7 @@ public class AddressRepository {
         addressInputs.put("lastmodifieddate", new Date());
         addressInputs.put("createdby", userId);
         addressInputs.put("lastmodifiedby", address.getUserId());
+        addressInputs.put("status", UserConstants.ADDRESS_ACTIVE_STATUS); // Set status to active
 
         namedParameterJdbcTemplate.update(INSERT_ADDRESS_BYUSERID, addressInputs);
         return address;
@@ -205,6 +213,141 @@ public class AddressRepository {
 
         return domainAddresses.stream().filter(address -> !entityAddressTypes.contains(address.getType().name()))
                 .map(Address::getType).collect(Collectors.toList());
+    }
+
+    /**
+     * Creates a new address record (v2) for the specified user. The userId is determined by the provided UUID.
+     *
+     * @param address  the Address object containing the address details to be saved
+     * @param userId   the numeric user ID corresponding to the provided UUID
+     * @param tenantId the tenant identifier
+     * @return the created Address object as returned by the repository after insertion
+     * @throws DuplicateKeyException if an address with the same unique constraints already exists
+     */
+    public Address createAddressV2(Address address, Long userId, String tenantId) {
+        Map<String, Object> addressInputs = new HashMap<>();
+        Long addressId = getNextSequence();  // Generate the next unique address ID from the sequence
+        addressInputs.put("id", addressId);
+        addressInputs.put("type", address.getType().toString());
+        addressInputs.put("address", address.getAddress());
+        addressInputs.put("city", address.getCity());
+        addressInputs.put("pincode", address.getPinCode());
+        addressInputs.put("userid", userId);
+        addressInputs.put("tenantid", tenantId);
+        addressInputs.put("createddate", new Date());
+        addressInputs.put("lastmodifieddate", new Date());
+        addressInputs.put("createdby", userId);
+        addressInputs.put("lastmodifiedby", address.getUserId());
+        // New fields for v2 insert: additional address details
+        addressInputs.put("address2", address.getAddress2());
+        addressInputs.put("houseNumber", address.getHouseNumber());
+        addressInputs.put("houseName", address.getHouseName());
+        addressInputs.put("streetName", address.getStreetName());
+        addressInputs.put("landmark", address.getLandmark());
+        addressInputs.put("locality", address.getLocality());
+        addressInputs.put("status", UserConstants.ADDRESS_ACTIVE_STATUS); // Set status to active
+
+        try {
+            String query = AddressQueryBuilder.INSERT_ADDRESS_BYUSERID_V2;
+            namedParameterJdbcTemplate.update(query, addressInputs);
+        } catch (DuplicateKeyException e) {
+            throw new DuplicateKeyException("Address already exists for user with type: " + address.getType());
+        } catch (DataIntegrityViolationException e) {
+            // Handle foreign key constraint violation specifically
+            if (e.getMessage() != null && e.getMessage().contains("eg_user_address_user_fkey")) {
+                throw new IllegalArgumentException("User not found: Cannot add address for non-existent user with ID " + userId + " and tenantId '" + tenantId + "'");
+            }
+            throw new RuntimeException("Data integrity violation while creating address: " + e.getMessage(), e);
+        } catch (Exception e) {
+            throw new RuntimeException("Unexpected error while creating address: " + e.getMessage(), e);
+        }
+        address.setUserId(userId);
+        address.setId(addressId);
+        return address;
+    }
+
+    /**
+     * Updates the status of an address to inactive based on the provided addressId.
+     *
+     * @param addressId the unique identifier of the address to be updated
+     * @param userId    the ID of the user performing the update (for auditing purposes)
+     */
+    public void updateAddressV2(Long addressId, Long userId, String addressStatus ) {
+        final Map<String, Object> params = new HashMap<>();
+        params.put("addressid", addressId);
+        params.put("status", addressStatus);
+        params.put("lastmodifieddate", new Date());
+        params.put("lastmodifiedby", userId);
+        String query = AddressQueryBuilder.UPDATE_ADDRESS_STATUS;
+        namedParameterJdbcTemplate.update(query, params);
+    }
+
+
+    public List<Address> getAddressV2(AddressSearchCriteria addressSearchCriteria) {
+
+        final List<Object> preparedStatementValues = new ArrayList<>();
+        String queryStr = addressQueryBuilder.getAddressQuery(addressSearchCriteria, preparedStatementValues);
+        // Add debug logging for the query AND prepared statement values
+        log.debug("Query: {}", queryStr);
+        log.debug("Prepared Statement Values: {}", preparedStatementValues);
+
+        List<Address> addresses = jdbcTemplate.query(queryStr, preparedStatementValues.toArray(), new AddressRowMapperV2());
+
+        return addresses;
+    }
+
+    /**
+     * Updates address records: marks old ones inactive and creates new ones if address details differ.
+     *
+     * @param addresses List of addresses from payload
+     * @param userId User ID
+     * @param tenantId Tenant ID
+     */
+    public void updateExistingAddressesV2(List<Address> addresses, Long userId, String tenantId) {
+        if (addresses == null || addresses.isEmpty()) return;
+
+        // Fetch existing addresses from DB for the user
+        List<Address> dbAddresses = find(userId, tenantId);
+        Map<String, Address> dbAddressMap = dbAddresses.stream()
+                .collect(Collectors.toMap(a -> a.getType().name(), a -> a));
+        // Iterate through payload addresses and compare with existing ones
+        for (Address payloadAddress : addresses) {
+            if (payloadAddress == null || payloadAddress.getType() == null) continue;
+
+            String addressType = payloadAddress.getType().name();
+            Address dbAddress = dbAddressMap.get(addressType);
+
+            if (dbAddress != null && !isAddressSame(payloadAddress, dbAddress)) {
+                // Mark existing address as inactive
+                updateAddressV2(dbAddressMap.get(addressType).getId(), userId, UserConstants.ADDRESS_INACTIVE_STATUS);
+                log.info("Address of type {} for user {} marked as inactive due to change.", addressType, userId);
+
+                // Insert new address as active
+                createAddressV2(payloadAddress, userId, tenantId);
+            } else if (dbAddress == null) {
+                // Address type does not exist in DB — create new one
+                createAddressV2(payloadAddress, userId, tenantId);
+            }
+        }
+    }
+
+    /**
+     * Compares all relevant address fields to determine if they are the same.
+     */
+    private boolean isAddressSame(Address a1, Address a2) {
+        if (a1 == null || a2 == null) return false;
+        // Compare all address fields to determine if they are the same, if any field differs, return false
+        return Objects.equals(a1.getAddress(), a2.getAddress()) &&
+                Objects.equals(a1.getAddress2(), a2.getAddress2()) &&
+                Objects.equals(a1.getHouseNumber(), a2.getHouseNumber()) &&
+                Objects.equals(a1.getHouseName(), a2.getHouseName()) &&
+                Objects.equals(a1.getStreetName(), a2.getStreetName()) &&
+                Objects.equals(a1.getLandmark(), a2.getLandmark()) &&
+                Objects.equals(a1.getLocality(), a2.getLocality()) &&
+                Objects.equals(a1.getPinCode(), a2.getPinCode()) &&
+                Objects.equals(a1.getCity(), a2.getCity()) &&
+                Objects.equals(a1.getType(), a2.getType()) &&
+                Objects.equals(a1.getTenantId(), a2.getTenantId());
     }
 
 }

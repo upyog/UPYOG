@@ -1,5 +1,5 @@
 /*
- * eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
+ * UPYOG  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  * accountability and the service delivery of the government  organizations.
  *
  *  Copyright (C) <2019>  eGovernments Foundation
@@ -48,39 +48,19 @@
 package org.egov.edcr.feature;
 
 import java.math.BigDecimal;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 
-import org.egov.common.entity.edcr.AccessoryBlock;
-import org.egov.common.entity.edcr.CulDeSacRoad;
-import org.egov.common.entity.edcr.Lane;
-import org.egov.common.entity.edcr.NonNotifiedRoad;
-import org.egov.common.entity.edcr.NotifiedRoad;
-import org.egov.common.entity.edcr.Plan;
-import org.egov.common.entity.edcr.Result;
-import org.egov.common.entity.edcr.ScrutinyDetail;
+import org.egov.common.entity.edcr.*;
 import org.egov.edcr.utility.DcrConstants;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
+import static org.egov.edcr.constants.CommonKeyConstants.*;
+import static org.egov.edcr.constants.EdcrReportConstants.*;
+import static org.egov.edcr.service.FeatureUtil.addScrutinyDetailtoPlan;
+import static org.egov.edcr.service.FeatureUtil.mapReportDetails;
 
 @Service
 public class AccessoryBuildingService extends FeatureProcess{
-
-    private static final String SUBRULE_88_1_DESC = "Maximum area of accessory block %s";
-    private static final String SUBRULE_88_3_DESC = "Maximum height of accessory block %s";
-
-    private static final String SUBRULE_88_1 = "88-1";
-    private static final String SUBULE_88_3 = "88-3";
-    private static final String SUBRULE_88_4 = "88-4";
-    private static final String SUBRULE_88_5 = "88-5";
-
-    private static final String MIN_DIS_NOTIFIED_ROAD_FROM_ACC_BLDG = "Minimum distance from accessory block to notified road";
-    private static final String MIN_DIS_NON_NOTIFIED_ROAD_FROM_ACC_BLDG = "Minimum distance from accessory building to non notified road";
-    private static final String MIN_DIS_CULDESAC_ROAD_FROM_ACC_BLDG = "Minimum distance from accessory building to culdesac road";
-    private static final String MIN_DIS_LANE_ROAD_FROM_ACC_BLDG = "Minimum distance from accessory building to lane road";
-    private static final String SUBRULE_88_5_DESC = "Minimum distance from accessory block %s to plot boundary";
 
     @Override
     public Plan validate(Plan plan) {/*
@@ -141,7 +121,7 @@ public class AccessoryBuildingService extends FeatureProcess{
     private void processShortestDistanceOfAccBlkFromPlotBoundary(Plan plan) {
         String subRule = SUBRULE_88_5;
         ScrutinyDetail scrutinyDetail3 = new ScrutinyDetail();
-        scrutinyDetail3.setKey("Common_Accessory Block - Minimum distance from plot boundary");
+        scrutinyDetail3.setKey(COM_ACCESSORY_BLOCK_MIN_DISTANCE);
         scrutinyDetail3.addColumnHeading(1, RULE_NO);
         scrutinyDetail3.addColumnHeading(2, DESCRIPTION);
         scrutinyDetail3.addColumnHeading(3, REQUIRED);
@@ -175,7 +155,7 @@ public class AccessoryBuildingService extends FeatureProcess{
     private void processShortestDistanceOfAccBlkFromRoad(Plan plan) {
         String subRule = SUBRULE_88_4;
         ScrutinyDetail scrutinyDetail2 = new ScrutinyDetail();
-        scrutinyDetail2.setKey("Common_Accessory Block - Minimum distance from the boundary abutting the road");
+        scrutinyDetail2.setKey(COM_ACCESSORY_BLOCK_MIN_DISTANCE_ROAD);
         scrutinyDetail2.addColumnHeading(1, RULE_NO);
         scrutinyDetail2.addColumnHeading(2, DESCRIPTION);
         scrutinyDetail2.addColumnHeading(3, REQUIRED);
@@ -303,7 +283,7 @@ public class AccessoryBuildingService extends FeatureProcess{
         scrutinyDetail1.addColumnHeading(3, REQUIRED);
         scrutinyDetail1.addColumnHeading(4, PROVIDED);
         scrutinyDetail1.addColumnHeading(5, STATUS);
-        scrutinyDetail1.setKey("Common_Accessory Block - Maximum Height");
+        scrutinyDetail1.setKey(COM_ACCESSORY_BLOCK_MAX_HEIGHT);
         String subRuleDesc = SUBRULE_88_3_DESC;
         String subRule = SUBULE_88_3;
         if (plan != null && !plan.getAccessoryBlocks().isEmpty()) {
@@ -335,7 +315,7 @@ public class AccessoryBuildingService extends FeatureProcess{
         scrutinyDetail.addColumnHeading(3, REQUIRED);
         scrutinyDetail.addColumnHeading(4, PROVIDED);
         scrutinyDetail.addColumnHeading(5, STATUS);
-        scrutinyDetail.setKey("Common_Accessory Block - Maximum Area");
+        scrutinyDetail.setKey(COM_ACCESSORY_BLOCK_MAX_AREA);
         String subRuleDesc = SUBRULE_88_1_DESC;
         String subRule = SUBRULE_88_1;
         if (plan != null && plan.getPlot() != null && plan.getPlot().getArea() != null && plan.getVirtualBuilding() != null && plan.getVirtualBuilding().getTotalCoverageArea() != null
@@ -371,14 +351,16 @@ public class AccessoryBuildingService extends FeatureProcess{
 
 
     private void setReportOutputDetails(Plan plan, String ruleNo, String ruleDesc, String expected, String actual, String status, ScrutinyDetail scrutinyDetail) {
-        Map<String, String> details = new HashMap<>();
-        details.put(RULE_NO, ruleNo);
-        details.put(DESCRIPTION, ruleDesc);
-        details.put(REQUIRED, expected);
-        details.put(PROVIDED, actual);
-        details.put(STATUS, status);
-        scrutinyDetail.getDetail().add(details);
-        plan.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+
+        ReportScrutinyDetail detail = new ReportScrutinyDetail();
+        detail.setRuleNo(ruleNo);
+        detail.setDescription(ruleDesc);
+        detail.setRequired(expected);
+        detail.setProvided(actual);
+        detail.setStatus(status);
+        Map<String, String> details = mapReportDetails(detail);
+
+        addScrutinyDetailtoPlan(scrutinyDetail, plan, details);
     }
 
 	@Override

@@ -1,9 +1,10 @@
 import { AppContainer, BackButton, PrivateRoute } from "@upyog/digit-ui-react-components";
 import React from "react";
 import { Switch, useRouteMatch } from "react-router-dom";
-import { useTranslation } from "react-i18next";
 
-
+/**
+ * Citizen side main index page which is handling the Routing of whole citizen side
+ */
 const App = () => {
   const { path, url, ...match } = useRouteMatch();
   const SVCreate = Digit?.ComponentRegistryService?.getComponent("Create");
@@ -15,6 +16,7 @@ const App = () => {
         <AppContainer>
           <BackButton>Back</BackButton>
           <PrivateRoute path={`${path}/apply`} component={SVCreate} />
+          <PrivateRoute path={`${path}/renew-application`} component={SVCreate} />
           <PrivateRoute path={`${path}/edit`} component={SVCreate} />
           <PrivateRoute path={`${path}/my-applications`} component={MyApplication}></PrivateRoute>
           <PrivateRoute path={`${path}/application/:applicationNo/:tenantId`} component={SvApplicationDetails}></PrivateRoute>

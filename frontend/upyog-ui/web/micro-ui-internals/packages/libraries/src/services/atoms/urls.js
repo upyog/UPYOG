@@ -32,8 +32,10 @@ const Urls = {
   UserSearch: "/user/_search",
   UserLogout: "/user/_logout",
   UserCreate:"/user/users/_createnovalidate",
-
+  UserUpdateAddressV2:"/user/_updateAddress",
+  UserSearchNewV2: "/user/users/v2/_search", 
   Shortener: "/egov-url-shortening/shortener",
+  UserCreateAddressV2: "/user/_createAddress", 
   employeeDashboardSearch: "/employee-dashboard/_search",
 
   fsm: {
@@ -244,6 +246,12 @@ const Urls = {
   cm: {
     search: "/verification-service/validity/_search"
   },
+   // urls for making api calls for pgr-ai module
+   pgrAi:{
+    PGR_Create_AI:"/pgr-ai-services/v1/request/_create",
+    PGR_Search_AI: "/pgr-ai-services/v1/request/_search",
+    PGR_Update_AI:"/pgr-ai-services/v1/request/_update"
+  },
 
 digiLocker:{
   authorization:"/requester-services-dx/digilocker/authorization/url",
@@ -291,6 +299,29 @@ eSign:{
   access_control: "/access/v1/actions/mdms/_get",
   billgenie: "/egov-searcher",
   audit: "/inbox/v1/elastic/_search",
+
+  wt:{
+    create: "/request-service/water-tanker/v1/_create",
+    update: "/request-service/water-tanker/v1/_update",
+    search: "/request-service/water-tanker/v1/_search",
+  },
+  mt:{
+    create: "/request-service/mobile-toilet/v1/_create",
+    update: "/request-service/mobile-toilet/v1/_update",
+    search: "/request-service/mobile-toilet/v1/_search",
+  },
+  tp: {
+    create: "/tp-services/tree-pruning/v1/_create",
+    update: "/tp-services/tree-pruning/v1/_update",
+    search: "/tp-services/tree-pruning/v1/_search",
+  },
+
+  vendor: {
+    create: "/vendor-services/vendor/_create",
+    search: "/vendor-services/vendor/_search",
+    additionaldetailsCreate: "/vendor-management/api/v1/_create",
+    vendorcommonSearch: "/vendor-management/api/v1/vendorPlusAdditional/_search"
+  },
 };
 
 export default Urls;

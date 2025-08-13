@@ -13,9 +13,7 @@ export const configEWApproverApplication = ({
   assigneeLabel,
   businessService,
 }) => {
-  console.log("action", action)
   const todayDate = new Date().toISOString().split("T")[0];
-  console.log("todayedsta ::", todayDate)
 
   return {
     label: {

@@ -1,0 +1,344 @@
+  {
+        "tenantId": "pg",
+        "businessService": "FIRENOC",
+        "business": "fireNoc",
+        "businessServiceSla": 172800000,
+        "states": [
+          {
+            "tenantId": "pg",
+            "sla": null,
+            "state": null,
+            "applicationStatus": null,
+            "docUploadRequired": false,
+            "isStartState": true,
+            "isTerminateState": false,
+            "isStateUpdatable": false,
+            "actions": [
+              {
+                "tenantId": "pg",
+                "currentState": null,
+                "action": "INITIATE",
+                "nextState": "INITIATED",
+                "roles": [
+                  "CITIZEN",
+                  "NOC_CEMP"
+                ],
+                "active": true
+              }
+            ]
+          },
+          {
+            "tenantId": "pg",
+            "sla": null,
+            "state": "INITIATED",
+            "applicationStatus": "INITIATED",
+            "docUploadRequired": false,
+            "isStartState": true,
+            "isTerminateState": false,
+            "isStateUpdatable": false,
+            "actions": [
+              {
+                "tenantId": "pg",
+                "currentState": "INITIATED",
+                "action": "INITIATE",
+                "nextState": "INITIATED",
+                "roles": [
+                  "CITIZEN",
+                  "TL_CEMP"
+                ],
+                "active": true
+              },
+              {
+                "tenantId": "pg",
+                "currentState": "INITIATED",
+                "action": "APPLY",
+                "nextState": "PENDINGPAYMENT",
+                "roles": [
+                  "CITIZEN",
+                  "NOC_CEMP"
+                ],
+                "active": true
+              }
+            ]
+          },
+          {
+            "tenantId": "pg",
+            "sla": null,
+            "state": "PENDINGPAYMENT",
+            "applicationStatus": "PENDINGPAYMENT",
+            "docUploadRequired": false,
+            "isStartState": false,
+            "isTerminateState": false,
+            "isStateUpdatable": false,
+            "actions": [
+              {
+                "tenantId": "pg",
+                "currentState": "PENDINGPAYMENT",
+                "action": "PAY",
+                "nextState": "DOCUMENTVERIFY",
+                "roles": [
+                  "CITIZEN",
+                  "NOC_CEMP"
+                ],
+                "active": true
+              }
+            ]
+          },
+          {
+            "tenantId": "pg",
+            "sla": 86400000,
+            "state": "DOCUMENTVERIFY",
+            "applicationStatus": "DOCUMENTVERIFY",
+            "docUploadRequired": false,
+            "isStartState": false,
+            "isTerminateState": false,
+            "isStateUpdatable": false,
+            "actions": [
+              {
+                "tenantId": "pg",
+                "currentState": "DOCUMENTVERIFY",
+                "action": "SENDBACKTOCITIZEN",
+                "nextState": "CITIZENACTIONREQUIRED-DV",
+                "roles": [
+                  "NOC_DOC_VERIFIER"
+                ],
+                "active": true
+              },
+              {
+                "tenantId": "pg",
+                "currentState": "DOCUMENTVERIFY",
+                "action": "REFER",
+                "nextState": "DOCUMENTVERIFY",
+                "roles": [
+                  "NOC_DOC_VERIFIER"
+                ],
+                "active": true
+              },
+              {
+                "tenantId": "pg",
+                "currentState": "DOCUMENTVERIFY",
+                "action": "FORWARD",
+                "nextState": "FIELDINSPECTION",
+                "roles": [
+                  "NOC_DOC_VERIFIER"
+                ],
+                "active": true
+              },
+              {
+                "tenantId": "pg",
+                "currentState": "DOCUMENTVERIFY",
+                "action": "REJECT",
+                "nextState": "REJECTED",
+                "roles": [
+                  "NOC_DOC_VERIFIER"
+                ],
+                "active": true
+              }
+            ]
+          },
+          {
+            "tenantId": "pg",
+            "sla": null,
+            "state": "REJECTED",
+            "applicationStatus": "REJECTED",
+            "docUploadRequired": false,
+            "isStartState": false,
+            "isTerminateState": true,
+            "isStateUpdatable": false,
+            "actions": null
+          },
+          {
+            "tenantId": "pg",
+            "sla": 86400000,
+            "state": "FIELDINSPECTION",
+            "applicationStatus": "FIELDINSPECTION",
+            "docUploadRequired": false,
+            "isStartState": false,
+            "isTerminateState": false,
+            "isStateUpdatable": false,
+            "actions": [
+              {
+                "tenantId": "pg",
+                "currentState": "FIELDINSPECTION",
+                "action": "REFER",
+                "nextState": "FIELDINSPECTION",
+                "roles": [
+                  "NOC_FIELD_INSPECTOR"
+                ],
+                "active": true
+              },
+              {
+                "tenantId": "pg",
+                "currentState": "FIELDINSPECTION",
+                "action": "FORWARD",
+                "nextState": "PENDINGAPPROVAL",
+                "roles": [
+                  "NOC_FIELD_INSPECTOR"
+                ],
+                "active": true
+              },
+              {
+                "tenantId": "pg",
+                "currentState": "FIELDINSPECTION",
+                "action": "SENDBACKTOCITIZEN",
+                "nextState": "CITIZENACTIONREQUIRED",
+                "roles": [
+                  "NOC_FIELD_INSPECTOR"
+                ],
+                "active": true
+              },
+              {
+                "tenantId": "pg",
+                "currentState": "FIELDINSPECTION",
+                "action": "SENDBACK",
+                "nextState": "DOCUMENTVERIFY",
+                "roles": [
+                  "NOC_FIELD_INSPECTOR"
+                ],
+                "active": true
+              },
+              {
+                "tenantId": "pg",
+                "currentState": "FIELDINSPECTION",
+                "action": "REJECT",
+                "nextState": "REJECTED",
+                "roles": [
+                  "NOC_FIELD_INSPECTOR"
+                ],
+                "active": true
+              }
+            ]
+          },
+          {
+            "tenantId": "pg",
+            "sla": 43200000,
+            "state": "PENDINGAPPROVAL",
+            "applicationStatus": "PENDINGAPPROVAL",
+            "docUploadRequired": false,
+            "isStartState": false,
+            "isTerminateState": false,
+            "isStateUpdatable": false,
+            "actions": [
+              {
+                "tenantId": "pg",
+                "currentState": "PENDINGAPPROVAL",
+                "action": "REFER",
+                "nextState": "PENDINGAPPROVAL",
+                "roles": [
+                  "NOC_APPROVER"
+                ],
+                "active": true
+              },
+              {
+                "tenantId": "pg",
+                "currentState": "PENDINGAPPROVAL",
+                "action": "SENDBACK",
+                "nextState": "FIELDINSPECTION",
+                "roles": [
+                  "NOC_APPROVER"
+                ],
+                "active": true
+              },
+              {
+                "tenantId": "pg",
+                "currentState": "PENDINGAPPROVAL",
+                "action": "APPROVE",
+                "nextState": "APPROVED",
+                "roles": [
+                  "NOC_APPROVER"
+                ],
+                "active": true
+              },
+              {
+                "tenantId": "pg",
+                "currentState": "PENDINGAPPROVAL",
+                "action": "REJECT",
+                "nextState": "REJECTED",
+                "roles": [
+                  "NOC_APPROVER"
+                ],
+                "active": true
+              }
+            ]
+          },
+          {
+            "tenantId": "pg",
+            "sla": null,
+            "state": "APPROVED",
+            "applicationStatus": "APPROVED",
+            "docUploadRequired": false,
+            "isStartState": false,
+            "isTerminateState": false,
+            "isStateUpdatable": false,
+            "actions": [
+              {
+                "tenantId": "pg",
+                "currentState": "APPROVED",
+                "action": "CANCEL",
+                "nextState": "CANCELLED",
+                "roles": [
+                  "NOC_APPROVER"
+                ],
+                "active": true
+              }
+            ]
+          },
+          {
+            "tenantId": "pg",
+            "sla": null,
+            "state": "CANCELLED",
+            "applicationStatus": "CANCELLED",
+            "docUploadRequired": false,
+            "isStartState": false,
+            "isTerminateState": true,
+            "isStateUpdatable": false,
+            "actions": null
+          },
+          {
+            "tenantId": "pg",
+            "sla": null,
+            "state": "CITIZENACTIONREQUIRED",
+            "applicationStatus": "CITIZENACTIONREQUIRED",
+            "docUploadRequired": false,
+            "isStartState": false,
+            "isTerminateState": false,
+            "isStateUpdatable": true,
+            "actions": [
+              {
+                "tenantId": "pg",
+                "currentState": "CITIZENACTIONREQUIRED",
+                "action": "RESUBMIT",
+                "nextState": "FIELDINSPECTION",
+                "roles": [
+                  "CITIZEN",
+                  "NOC_CEMP"
+                ],
+                "active": true
+              }
+            ]
+          },
+          {
+            "tenantId": "pg",
+            "sla": null,
+            "state": "CITIZENACTIONREQUIRED-DV",
+            "applicationStatus": "CITIZENACTIONREQUIRED-DV",
+            "docUploadRequired": false,
+            "isStartState": false,
+            "isTerminateState": false,
+            "isStateUpdatable": true,
+            "actions": [
+              {
+                "tenantId": "pg",
+                "currentState": "CITIZENACTIONREQUIRED-DV",
+                "action": "RESUBMIT",
+                "nextState": "DOCUMENTVERIFY",
+                "roles": [
+                  "CITIZEN",
+                  "NOC_CEMP"
+                ],
+                "active": true
+              }
+            ]
+          }
+        ]
+      }

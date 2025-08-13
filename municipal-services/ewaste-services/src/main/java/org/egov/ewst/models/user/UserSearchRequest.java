@@ -15,6 +15,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+/**
+ * Represents a request to search for users in the Ewaste application.
+ * This class contains various search criteria such as UUID, ID, username, name, mobile number, etc.
+ */
 @Getter
 @Setter
 @NoArgsConstructor

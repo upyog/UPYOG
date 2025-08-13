@@ -1,0 +1,289 @@
+"BusinessServices": [
+    {
+      "tenantId": "pg.citya",
+      "businessService": "NewTL",
+      "business": "tl-services",
+      "businessServiceSla": 172800000,
+      "states": [
+        {
+          "tenantId": "pg.citya",
+          "sla": null,
+          "state": null,
+          "applicationStatus": null,
+          "docUploadRequired": false,
+          "isStartState": true,
+          "isTerminateState": false,
+          "isStateUpdatable": true,
+          "actions": [
+            {
+              "tenantId": "pg.citya",
+              "action": "INITIATE",
+              "nextState": "INITIATED",
+              "roles": [
+                "CITIZEN",
+                "TL_CEMP"
+              ]
+            }
+          ]
+        },
+        {
+          "tenantId": "pg.citya",
+          "sla": null,
+          "state": "INITIATED",
+          "applicationStatus": "INITIATED",
+          "docUploadRequired": false,
+          "isStartState": true,
+          "isTerminateState": false,
+          "isStateUpdatable": true,
+          "actions": [
+            {
+              "tenantId": "pg.citya",
+              "action": "APPLY",
+              "nextState": "APPLIED",
+              "roles": [
+                "CITIZEN",
+                "TL_CEMP"
+              ]
+            },
+            {
+              "tenantId": "pg.citya",
+              "action": "INITIATE",
+              "nextState": "INITIATED",
+              "roles": [
+                "CITIZEN",
+                "TL_CEMP"
+              ]
+            }
+          ]
+        },
+        {
+          "tenantId": "pg.citya",
+          "sla": null,
+          "state": "APPLIED",
+          "applicationStatus": "APPLIED",
+          "docUploadRequired": false,
+          "isStartState": false,
+          "isTerminateState": false,
+          "isStateUpdatable": true,
+          "actions": [
+            {
+              "tenantId": "pg.citya",
+              "action": "FORWARD",
+              "nextState": "FIELDINSPECTION",
+              "roles": [
+                "TL_DOC_VERIFIER"
+              ]
+            },
+            {
+              "tenantId": "pg.citya",
+              "action": "REJECT",
+              "nextState": "REJECTED",
+              "roles": [
+                "TL_DOC_VERIFIER"
+              ]
+            }
+          ]
+        },
+        {
+          "tenantId": "pg.citya",
+          "sla": null,
+          "state": "REJECTED",
+          "applicationStatus": "REJECTED",
+          "docUploadRequired": false,
+          "isStartState": false,
+          "isTerminateState": true,
+          "isStateUpdatable": false,
+          "actions": null
+        },
+        {
+          "tenantId": "pg.citya",
+          "sla": 86400000,
+          "state": "FIELDINSPECTION",
+          "applicationStatus": "FIELDINSPECTION",
+          "docUploadRequired": false,
+          "isStartState": false,
+          "isTerminateState": false,
+          "isStateUpdatable": true,
+          "actions": [
+            {
+              "tenantId": "pg.citya",
+              "action": "SENDBACKTOCITIZEN",
+              "nextState": "CITIZENACTIONREQUIRED",
+              "roles": [
+                "TL_FIELD_INSPECTOR"
+              ]
+            },
+            {
+              "tenantId": "pg.citya",
+              "action": "FORWARD",
+              "nextState": "PENDINGAPPROVAL",
+              "roles": [
+                "TL_FIELD_INSPECTOR"
+              ]
+            },
+            {
+              "tenantId": "pg.citya",
+              "action": "REJECT",
+              "nextState": "REJECTED",
+              "roles": [
+                "TL_FIELD_INSPECTOR"
+              ]
+            },
+            {
+              "tenantId": "pg.citya",
+              "action": "SENDBACK",
+              "nextState": "APPLIED",
+              "roles": [
+                "TL_FIELD_INSPECTOR"
+              ]
+            }
+          ]
+        },
+        {
+          "tenantId": "pg.citya",
+          "sla": 43200000,
+          "state": "PENDINGAPPROVAL",
+          "applicationStatus": "PENDINGAPPROVAL",
+          "docUploadRequired": false,
+          "isStartState": false,
+          "isTerminateState": false,
+          "isStateUpdatable": false,
+          "actions": [
+            {
+              "tenantId": "pg.citya",
+              "action": "SENDBACK",
+              "nextState": "FIELDINSPECTION",
+              "roles": [
+                "TL_APPROVER"
+              ]
+            },
+            {
+              "tenantId": "pg.citya",
+              "action": "APPROVE",
+              "nextState": "PENDINGPAYMENT",
+              "roles": [
+                "TL_APPROVER"
+              ]
+            },
+            {
+              "tenantId": "pg.citya",
+              "action": "REJECT",
+              "nextState": "REJECTED",
+              "roles": [
+                "TL_APPROVER"
+              ]
+            }
+          ]
+        },
+        {
+          "tenantId": "pg.citya",
+          "sla": 43200000,
+          "state": "PENDINGPAYMENT",
+          "applicationStatus": "PENDINGPAYMENT",
+          "docUploadRequired": false,
+          "isStartState": false,
+          "isTerminateState": false,
+          "isStateUpdatable": false,
+          "actions": [
+            {
+              "tenantId": "pg.citya",
+              "action": "ADHOC",
+              "nextState": "PENDINGPAYMENT",
+              "roles": [
+                "TL_CEMP"
+              ]
+            },
+            {
+              "tenantId": "pg.citya",
+              "action": "PAY",
+              "nextState": "APPROVED",
+              "roles": [
+                "CITIZEN",
+                "TL_CEMP",
+                "SYSTEM_PAYMENT"
+              ]
+            }
+          ]
+        },
+        {
+          "tenantId": "pg.citya",
+          "sla": null,
+          "state": "APPROVED",
+          "applicationStatus": "APPROVED",
+          "docUploadRequired": false,
+          "isStartState": false,
+          "isTerminateState": false,
+          "isStateUpdatable": false,
+          "actions": [
+            {
+              "tenantId": "pg.citya",
+              "action": "EXPIRE",
+              "nextState": "EXPIRED",
+              "roles": [
+                "SYSTEM"
+              ]
+            },
+            {
+              "tenantId": "pg.citya",
+              "action": "CANCEL",
+              "nextState": "CANCELLED",
+              "roles": [
+                "TL_APPROVER"
+              ]
+            }
+          ]
+        },
+        {
+          "tenantId": "pg.citya",
+          "sla": null,
+          "state": "CANCELLED",
+          "applicationStatus": "CANCELLED",
+          "docUploadRequired": false,
+          "isStartState": false,
+          "isTerminateState": true,
+          "isStateUpdatable": false,
+          "actions": null
+        },
+        {
+          "tenantId": "pg.citya",
+          "sla": null,
+          "state": "CITIZENACTIONREQUIRED",
+          "applicationStatus": "CITIZENACTIONREQUIRED",
+          "docUploadRequired": false,
+          "isStartState": false,
+          "isTerminateState": false,
+          "isStateUpdatable": true,
+          "actions": [
+            {
+              "tenantId": "pg.citya",
+              "action": "RESUBMIT",
+              "nextState": "FIELDINSPECTION",
+              "roles": [
+                "TL_CEMP"
+              ]
+            },
+            {
+              
+              "tenantId": "pg.citya",
+              "action": "FORWARD",
+              "nextState": "FIELDINSPECTION",
+              "roles": [
+                "CITIZEN"
+              ]
+            }
+          ]
+        },
+        {
+          "tenantId": "pg.citya",
+          "sla": null,
+          "state": "EXPIRED",
+          "applicationStatus": "EXPIRED",
+          "docUploadRequired": false,
+          "isStartState": false,
+          "isTerminateState": true,
+          "isStateUpdatable": false,
+          "actions": null
+        }
+      ]
+    }
+  ]

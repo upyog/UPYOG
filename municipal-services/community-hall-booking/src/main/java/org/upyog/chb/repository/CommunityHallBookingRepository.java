@@ -14,6 +14,43 @@ import org.upyog.chb.web.models.CommunityHallSlotSearchCriteria;
 
 import digit.models.coremodels.PaymentDetail;
 
+/**
+ * This interface defines the contract for database operations related to the
+ * Community Hall Booking module.
+ * 
+ * Purpose:
+ * - To provide methods for creating, updating, retrieving, and deleting booking records.
+ * - To handle slot availability and payment timer-related operations.
+ * 
+ * Methods:
+ * 1. saveCommunityHallBooking:
+ *    - Saves a new community hall booking record to the database.
+ * 
+ * 2. saveCommunityHallBookingInit:
+ *    - Saves an initial booking record during the booking initialization process.
+ * 
+ * 3. getBookingDetails:
+ *    - Retrieves booking details based on the provided search criteria.
+ * 
+ * 4. updateBooking:
+ *    - Updates an existing booking record in the database.
+ * 
+ * 5. getCommunityHallSlotAvailability:
+ *    - Retrieves slot availability details based on the provided search criteria.
+ * 
+ * 6. getBookingCount:
+ *    - Returns the count of bookings matching the provided search criteria.
+ * 
+ * 7. createBookingTimer:
+ *    - Creates a booking timer for payment or other time-sensitive operations.
+ * 
+ * 8. deleteBookingTimer:
+ *    - Deletes a booking timer and optionally updates the booking status.
+ * 
+ * Usage:
+ * - This interface is implemented by the repository layer to interact with the database.
+ * - It ensures a consistent and reusable approach to database operations for the module.
+ */
 public interface CommunityHallBookingRepository {
 
 	void saveCommunityHallBooking(CommunityHallBookingRequest bookingRequest);

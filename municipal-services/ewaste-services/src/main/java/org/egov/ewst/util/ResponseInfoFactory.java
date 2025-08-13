@@ -4,9 +4,20 @@ import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.response.ResponseInfo;
 import org.springframework.stereotype.Component;
 
+/**
+ * Factory class to create ResponseInfo objects.
+ * This class is responsible for creating ResponseInfo objects based on the provided RequestInfo and success status.
+ */
 @Component
 public class ResponseInfoFactory {
 
+	/**
+	 * Creates a ResponseInfo object based on the provided RequestInfo and success status.
+	 *
+	 * @param requestInfo The RequestInfo object containing request details.
+	 * @param success     The success status of the operation.
+	 * @return A ResponseInfo object with the specified details.
+	 */
 	public ResponseInfo createResponseInfoFromRequestInfo(final RequestInfo requestInfo, final Boolean success) {
 
 		final String apiId = requestInfo != null ? requestInfo.getApiId() : "";

@@ -2,6 +2,18 @@
  * @author - Shivank - NIUA 
  * This component is the Common Component used for Applicant Details in both Citizen and Employee Side.
  * Key of this Component is "owner", use this in your config file inside Key
+ * 
+ * This Component have some additional Field such as Gender, Gaurdian as well as relatioshipType which will render 
+ * according to the flag if true then render otherwise not.
+ * 
+ * To Set the Flag you need to make an object in your Config or you can dirctly copy and paste this object in your Config - 
+ * 
+ *              "additionaFields":{
+                    "gender":true,
+                    "dateofBirth":false,
+                    "guardianName":false,
+                    "relationShipType":false,
+                }
  *  
  * TODO:- 1. Need to Check how the Timeline will get used here for all the Modules.
  *        2. What inCase of Edit, Renew & Draft, how to pass data here using Props.  
@@ -12,17 +24,16 @@
 import React, { useEffect, useState } from "react";
 import { FormStep, TextInput, CardLabel, MobileNumber, RadioButtons, Dropdown } from "@upyog/digit-ui-react-components";
 
-const ApplicantDetails = ({ t, config, onSelect, userType, formData }) => {
+const ApplicantDetails = ({ t, config, onSelect, formData }) => {
   const user = Digit.UserService.getUser().info;
   const inputStyles = { width: user.type === "EMPLOYEE" ? "50%" : "86%" };
   let validation = {};
-
-  const [applicantName, setName] = useState((user.type === "EMPLOYEE" ?"":user?.name) || formData?.owner?.applicantName || "");
-  const [mobileNumber, setMobileNumber] = useState((user.type === "EMPLOYEE" ?"":user?.mobileNumber) || formData?.owner?.mobileNumber || "");
+  const [applicantName, setName] = useState((user.type === "EMPLOYEE" ?"":user?.name) || formData?.owner?.applicantName || formData?.infodetails?.existingDataSet?.owner?.applicantName || "");
+  const [mobileNumber, setMobileNumber] = useState((user.type === "EMPLOYEE" ?"":user?.mobileNumber) ||formData?.owner?.mobileNumber || formData?.infodetails?.existingDataSet?.owner?.mobileNumber || "");
   const [gender, setGender]=useState(formData?.owner?.gender||"");
-  const [dateOfBirth, setDateofBirth] = useState(formData?.owner?.dateOfBirth||"")
-  const [emailId, setEmail] = useState((user.type === "EMPLOYEE" ?"":user?.emailId)||formData?.owner?.emailId || "");
-  const [alternateNumber, setAltMobileNumber] = useState(formData?.owner?.alternateNumber || "");
+  const [dateOfBirth, setDateofBirth] = useState(formData?.owner?.dateOfBirth|| formData?.owner?.requestDetails?.applicantName || "");
+  const [emailId, setEmail] = useState((user.type === "EMPLOYEE" ?"":user?.emailId)||formData?.owner?.emailId ||  formData?.infodetails?.existingDataSet?.owner?.emailId || "");
+  const [alternateNumber, setAltMobileNumber] = useState(formData?.owner?.alternateNumber ||  formData?.infodetails?.existingDataSet?.owner?.alternateNumber || "");
   const [guardianName, setGuardian] = useState(formData?.owner?.guardianName || "");
   const [relationShipType, setRelationShipType] = useState(formData?.owner?.relationShipType || "");
 
@@ -46,10 +57,16 @@ const ApplicantDetails = ({ t, config, onSelect, userType, formData }) => {
   function setBirthDate(e){
     setDateofBirth(e.target.value);
   }
+  
+  const { data: applicantGender } = Digit.Hooks.useEnabledMDMS(Digit.ULBService.getStateId(), "common-masters", [{ name: "GenderType" }],
+    {
+      select: (data) => {
+        const formattedData = data?.["common-masters"]?.["GenderType"]
+        return formattedData;
+      },
+    });
 
-  const { data: applicantGender } = Digit.Hooks.ptr.usePTRGenderMDMS(Digit.ULBService.getStateId(), "common-masters", "GenderType");       // this hook is for Pet gender type { male, female}
-
-    let genderOptions = [];    // array to store data of pet sex
+    let genderOptions = [];  
 
     applicantGender &&
       applicantGender.map((genderoption) => {
@@ -65,17 +82,9 @@ const ApplicantDetails = ({ t, config, onSelect, userType, formData }) => {
   
   const goNext = () => {
     let owner = formData.owner;
-    let applicantDetails = { ...owner, applicantName, mobileNumber,gender,dateOfBirth,alternateNumber,relationShipType, guardianName, emailId};
-      onSelect(config.key, applicantDetails, false);
+    let applicantDetails = { ...owner, applicantName, mobileNumber, gender,dateOfBirth,alternateNumber,relationShipType, guardianName, emailId};
+    onSelect(config.key, applicantDetails, false);
   };
-
-  useEffect(() => {
-    if (userType === "citizen") {
-      goNext();
-    }
-  }, [applicantName, mobileNumber,gender,dateOfBirth,alternateNumber,relationShipType, guardianName, emailId]);
-
- 
 
   return (
     <React.Fragment>
@@ -83,7 +92,11 @@ const ApplicantDetails = ({ t, config, onSelect, userType, formData }) => {
       config={config}
       onSelect={goNext}
       t={t}
-      isDisabled={!applicantName || !mobileNumber || !guardianName || !dateOfBirth || !gender || !relationShipType}
+      isDisabled={!applicantName || 
+        !mobileNumber || 
+        (config?.additionaFields?.guardianName)?!guardianName:null  || 
+        (config?.additionaFields?.dateofBirth) ? !dateOfBirth:null  || 
+        (config?.additionaFields?.gender) ? !gender:null}
     >
       <div>
         <CardLabel>{`${t("COMMON_APPLICANT_NAME")}`} <span className="astericColor">*</span></CardLabel>
@@ -104,7 +117,9 @@ const ApplicantDetails = ({ t, config, onSelect, userType, formData }) => {
             title: t("PT_NAME_ERROR_MESSAGE"),
           })}
         />
-        <CardLabel>{`${t("SV_GENDER")}`} <span className="astericColor">*</span></CardLabel>
+        {(config?.additionaFields?.gender) ? 
+        <React.Fragment>       
+        <CardLabel>{`${t("COMMON_GENDER")}`} <span className="astericColor">*</span></CardLabel>
         <RadioButtons
             t={t}
             options={genderOptions}
@@ -118,7 +133,8 @@ const ApplicantDetails = ({ t, config, onSelect, userType, formData }) => {
             labelKey="i18nKey"
             isPTFlow={true}
         />
-       
+        </React.Fragment>:null}
+      
         <CardLabel>{`${t("COMMON_MOBILE_NUMBER")}`} <span className="astericColor">*</span></CardLabel>
         <MobileNumber
           value={mobileNumber}
@@ -136,6 +152,8 @@ const ApplicantDetails = ({ t, config, onSelect, userType, formData }) => {
             style={ {width: user.type === "EMPLOYEE" ? "49%" : "86%"}}
             {...{ required: false, pattern: "[6-9]{1}[0-9]{9}", type: "tel", title: t("CORE_COMMON_APPLICANT_MOBILE_NUMBER_INVALID") }}
           />
+        {(config?.additionaFields?.dateofBirth)?
+        <React.Fragment>
         <CardLabel>{`${t("COMMON_BIRTH_DATE")}`} <span className="astericColor">*</span></CardLabel>
         <TextInput
             t={t}
@@ -152,6 +170,10 @@ const ApplicantDetails = ({ t, config, onSelect, userType, formData }) => {
             validDate: (val) => (/^\d{4}-\d{2}-\d{2}$/.test(val) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")),
             }}
         />
+        </React.Fragment>:null}  
+        
+        {(config?.additionaFields?.guardianName)?
+        <React.Fragment>
         <CardLabel>{`${t("COMMON_GUARDIAN")}`} <span className="astericColor">*</span></CardLabel>
         <TextInput
           t={t}
@@ -170,6 +192,10 @@ const ApplicantDetails = ({ t, config, onSelect, userType, formData }) => {
             title: t("PT_NAME_ERROR_MESSAGE"),
           })}
         />
+        </React.Fragment>:null}
+      
+      {(config?.additionaFields?.guardianName)?
+      <React.Fragment>
         <CardLabel>{`${t("COMMON_RELATIONTYPE")}`} <span className="astericColor">*</span></CardLabel>
         <Dropdown
         className="form-field"
@@ -181,6 +207,8 @@ const ApplicantDetails = ({ t, config, onSelect, userType, formData }) => {
         name="relationShipType"
         placeholder={"Select"}
         />
+      </React.Fragment>:null }
+        
       <CardLabel>{`${t("COMMON_EMAIL_ID")}`} <span className="astericColor">*</span></CardLabel>
       <TextInput
         t={t}
@@ -199,7 +227,6 @@ const ApplicantDetails = ({ t, config, onSelect, userType, formData }) => {
           title: t("PT_NAME_ERROR_MESSAGE"),
         })}
       />
-        
         
       </div>
     </FormStep>

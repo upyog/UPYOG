@@ -182,7 +182,7 @@ const StaticCitizenSideBar = ({ linkData, islinkDataLoading }) => {
     }
     if (item.type === "link") {
       return (
-        <Link to={item?.link.replace("/digit-ui/","/upyog-ui/")}>
+        <Link to={item?.link.replace("/upyog-ui/","/upyog-ui/")}>
           <Item />
         </Link>
       );

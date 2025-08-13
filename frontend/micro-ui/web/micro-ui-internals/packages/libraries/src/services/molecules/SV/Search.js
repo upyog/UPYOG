@@ -36,6 +36,10 @@ export const SVSearch = {
         asSectionHeader: true,
         values: filterEmptyValues([
           { title: "SV_APPLICATION_NUMBER", value: response?.applicationNo },
+          ...(response?.applicationStatus==="REGISTRATIONCOMPLETED" ?
+          [{ title: "SV_VALIDITY_DATE", value: response?.validityDate, isBold:true }]
+          :[]
+        ),
           { title: "SV_VENDOR_NAME", value: response?.vendorDetail[0]?.name},
           { title: "SV_FATHER_NAME", value: response?.vendorDetail[0]?.fatherName },
           { title: "SV_REGISTERED_MOB_NUMBER", value: response?.vendorDetail[0]?.mobileNo},
@@ -56,7 +60,8 @@ export const SVSearch = {
         asSectionHeader: true,
         values: filterEmptyValues([
           { title: "SV_VENDING_TYPE", value: response?.vendingActivity },
-          { title: "SV_VENDING_ZONES", value: response?.vendingZone },
+          { title: "SV_VENDING_LOCALITY", value: response?.localityValue },
+          { title: "SV_VENDING_ZONES", value: response?.vendingZoneValue },
           { title: "SV_AREA_REQUIRED", value: response?.vendingArea },
           { title: "SV_LOCAL_AUTHORITY_NAME", value: response?.localAuthorityName },
           { title: "SV_VENDING_LISCENCE", value: response?.vendingLicenseCertificateId },

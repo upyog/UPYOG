@@ -1,6 +1,7 @@
 package org.egov.user.repository.rowmapper;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.egov.user.domain.model.Address;
 import org.egov.user.domain.model.Role;
 import org.egov.user.domain.model.User;
@@ -11,13 +12,16 @@ import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.stereotype.Service;
 
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.*;
+import java.util.stream.IntStream;
 
 import static java.util.Objects.isNull;
 import static org.egov.user.domain.model.enums.AddressType.CORRESPONDENCE;
 import static org.egov.user.domain.model.enums.AddressType.PERMANENT;
 
+@Slf4j
 @Service
 public class UserResultSetExtractor implements ResultSetExtractor<List<User>> {
 
@@ -32,7 +36,7 @@ public class UserResultSetExtractor implements ResultSetExtractor<List<User>> {
     public List<User> extractData(ResultSet rs) throws SQLException, DataAccessException {
 
         Map<Long, User> usersMap = new LinkedHashMap<>();
-
+        ResultSetMetaData rsMeta = rs.getMetaData();
         while (rs.next()) {
 
             Long userId = rs.getLong("id");
@@ -46,7 +50,7 @@ public class UserResultSetExtractor implements ResultSetExtractor<List<User>> {
                         .password(rs.getString("password")).passwordExpiryDate(rs.getTimestamp("pwdexpirydate"))
                         .mobileNumber(rs.getString("mobilenumber")).altContactNumber(rs.getString("altcontactnumber"))
                         .emailId(rs.getString("emailid")).active(rs.getBoolean("active")).name(rs.getString("name")).
-                                lastModifiedBy(rs.getLong("lastmodifiedby")).lastModifiedDate(rs.getTimestamp("lastmodifieddate"))
+                        lastModifiedBy(rs.getLong("lastmodifiedby")).lastModifiedDate(rs.getTimestamp("lastmodifieddate"))
                         .pan(rs.getString("pan")).aadhaarNumber(rs.getString("aadhaarnumber")).createdBy(rs.getLong("createdby"))
                         .createdDate(rs.getTimestamp("createddate")).guardian(rs.getString("guardian")).signature(rs.getString("signature"))
                         .accountLocked(rs.getBoolean("accountlocked")).photo(rs.getString("photo"))
@@ -89,13 +93,14 @@ public class UserResultSetExtractor implements ResultSetExtractor<List<User>> {
             }
 
             Role role = populateRole(rs);
-            Address address = populateAddress(rs, user);
-
-            if (!isNull(role))
+            if (!isNull(role)) {
                 user.addRolesItem(role);
+            }
 
-            if (!isNull(address))
+            Address address = populateAddress(rs, user);
+            if (!isNull(address)) {
                 user.addAddressItem(address);
+            }
 
         }
 
@@ -129,11 +134,6 @@ public class UserResultSetExtractor implements ResultSetExtractor<List<User>> {
                 .userId(rs.getLong("addr_userid"))
                 .tenantId(rs.getString("addr_tenantid"))
                 .build();
-
-        if (address.getType().equals(PERMANENT) && isNull(user.getPermanentAddress()))
-            user.setPermanentAddress(address);
-        if (address.getType().equals(CORRESPONDENCE) && isNull(user.getCorrespondenceAddress()))
-            user.setCorrespondenceAddress(address);
 
         return address;
 

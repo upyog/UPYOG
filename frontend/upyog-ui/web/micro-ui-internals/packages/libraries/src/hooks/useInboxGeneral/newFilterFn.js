@@ -291,4 +291,140 @@ export const filterFunctions = {
         
         return { searchFilters, workflowFilters, limit, offset, sortBy, sortOrder, isDraftApplication:false };
   },
+  WT: (filtersArg) => {
+    /*
+  This function generates filters for querying Water Tanker applications.
+
+  - `searchFilters` is used to filter the application data based on various criteria such as:
+    - `mobileNumber`: Filters by the user's mobile number.
+    - `bookingNo`: Filters by the booking number.
+    - `creationReason`: A fixed filter set to an empty array.
+  
+  The function also accepts parameters for pagination and sorting:
+    - `limit`: The number of results to return.
+    - `offset`: The starting point for pagination.
+    - `sortBy`: The field to sort by.
+    - `sortOrder`: The direction of the sort (ascending or descending).
+*/
+
+    let { uuid } = Digit.UserService.getUser()?.info || {};
+
+    const searchFilters = {};
+    const workflowFilters = {};
+
+
+    const { bookingNo, mobileNumber,limit, offset, sortBy, sortOrder, total, services, locality } = filtersArg || {};
+
+    if (filtersArg?.uuid && filtersArg?.uuid.code === "ASSIGNED_TO_ME") {
+      workflowFilters.assignee = uuid;
+    }
+    if (mobileNumber) {
+      searchFilters.mobileNumber = mobileNumber;
+    }
+    if(bookingNo) {   
+      searchFilters.bookingNo = bookingNo;
+    }
+    if (services) {
+      workflowFilters.businessService = services;
+    }
+    if(locality?.length) {
+      searchFilters.localityCode = locality.map((item) => item.code.split("_").pop());
+    }
+    searchFilters["isInboxSearch"] = true;
+    searchFilters["creationReason"] = [""];
+    workflowFilters["moduleName"] = "request-service.water_tanker";    
+    return { searchFilters, workflowFilters, limit, offset, sortBy, sortOrder };
+  },
+  MT: (filtersArg) => {
+    /*
+  This function generates filters for querying Mobile Toilet applications.
+
+  - `searchFilters` is used to filter the application data based on various criteria such as:
+    - `mobileNumber`: Filters by the user's mobile number.
+    - `bookingNo`: Filters by the booking number.
+    - `creationReason`: A fixed filter set to an empty array.
+  
+  The function also accepts parameters for pagination and sorting:
+    - `limit`: The number of results to return.
+    - `offset`: The starting point for pagination.
+    - `sortBy`: The field to sort by.
+    - `sortOrder`: The direction of the sort (ascending or descending).
+*/
+
+    let { uuid } = Digit.UserService.getUser()?.info || {};
+
+    const searchFilters = {};
+    const workflowFilters = {};
+
+
+    const { bookingNo, mobileNumber,limit, offset, sortBy, sortOrder, total, services, locality } = filtersArg || {};
+
+    if (filtersArg?.uuid && filtersArg?.uuid.code === "ASSIGNED_TO_ME") {
+      workflowFilters.assignee = uuid;
+    }
+    if (mobileNumber) {
+      searchFilters.mobileNumber = mobileNumber;
+    }
+    if(bookingNo) {   
+      searchFilters.bookingNo = bookingNo;
+    }
+    if (services) {
+      workflowFilters.businessService = services;
+    }
+    if(locality?.length) {
+      searchFilters.localityCode = locality.map((item) => item.code.split("_").pop());
+    }
+
+    searchFilters["isInboxSearch"] = true;
+    searchFilters["creationReason"] = [""];
+    workflowFilters["moduleName"] = "request-service.mobile_toilet";
+    
+    return { searchFilters, workflowFilters, limit, offset, sortBy, sortOrder };
+  },
+  TP: (filtersArg) => {
+    /*
+  This function generates filters for querying Tree Pruning applications.
+
+  - `searchFilters` is used to filter the application data based on various criteria such as:
+    - `mobileNumber`: Filters by the user's mobile number.
+    - `bookingNo`: Filters by the booking number.
+    - `creationReason`: A fixed filter set to an empty array.
+  
+  The function also accepts parameters for pagination and sorting:
+    - `limit`: The number of results to return.
+    - `offset`: The starting point for pagination.
+    - `sortBy`: The field to sort by.
+    - `sortOrder`: The direction of the sort (ascending or descending).
+*/
+
+    let { uuid } = Digit.UserService.getUser()?.info || {};
+
+    const searchFilters = {};
+    const workflowFilters = {};
+
+
+    const { bookingNo, mobileNumber,limit, offset, sortBy, sortOrder, total, services, locality } = filtersArg || {};
+
+    if (filtersArg?.uuid && filtersArg?.uuid.code === "ASSIGNED_TO_ME") {
+      workflowFilters.assignee = uuid;
+    }
+    if (mobileNumber) {
+      searchFilters.mobileNumber = mobileNumber;
+    }
+    if(bookingNo) {   
+      searchFilters.bookingNo = bookingNo;
+    }
+    if (services) {
+      workflowFilters.businessService = services;
+    }
+    if(locality?.length) {
+      searchFilters.localityCode = locality.map((item) => item.code.split("_").pop());
+    }
+
+    searchFilters["isInboxSearch"] = true;
+    searchFilters["creationReason"] = [""];
+    workflowFilters["moduleName"] = "request-service.tree_pruning";
+    
+    return { searchFilters, workflowFilters, limit, offset, sortBy, sortOrder };
+  }
 };

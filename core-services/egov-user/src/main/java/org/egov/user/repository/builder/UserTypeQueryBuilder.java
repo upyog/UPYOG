@@ -40,7 +40,9 @@
 package org.egov.user.repository.builder;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.egov.user.domain.model.UserSearchCriteria;
+import org.egov.user.domain.service.utils.UserConstants;
 import org.egov.user.persistence.repository.RoleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -90,13 +92,33 @@ public class UserTypeQueryBuilder {
 
     private static final String SELECT_USER_ROLE_QUERY = "SELECT distinct(user_id) from eg_userrole_v1 ur";
 
+    // Below is the query to bring the user details along with the addresses and roles part of V2 api endpoints
+    private static final String SELECT_USER_QUERY_V2 = "SELECT userdata.title, userdata.salutation, userdata.dob, userdata.locale, userdata.username, userdata" +
+            ".password, userdata.pwdexpirydate,  userdata.mobilenumber, userdata.altcontactnumber, userdata.emailid, userdata.createddate, userdata" +
+            ".lastmodifieddate,  userdata.createdby, userdata.lastmodifiedby, userdata.active, userdata.name, userdata.gender, userdata.pan, userdata.aadhaarnumber, userdata" +
+            ".type,  userdata.version, userdata.guardian, userdata.guardianrelation, userdata.signature, userdata.accountlocked, userdata.accountlockeddate, userdata" +
+            ".bloodgroup, userdata.photo, userdata.identificationmark,  userdata.tenantid, userdata.id, userdata.uuid, userdata.alternatemobilenumber, addr.id as addr_id, addr.type as " +
+            "addr_type, addr .address as addr_address,  addr.city as addr_city, addr.pincode as addr_pincode, addr" +
+            ".tenantid as " +
+            "addr_tenantid, addr.userid as addr_userid, ur.role_code as role_code, ur.role_tenantid as role_tenantid, \n" +
+            // below are the additional columns added for V2 in the address table
+            "addr.address2 as addr_address2, addr.houseNumber as addr_houseNumber, addr.houseName as addr_houseName, addr.streetName as addr_streetName, addr.landmark as addr_landmark, addr.locality as addr_locality" +
+            "\tFROM eg_user userdata LEFT OUTER JOIN eg_user_address addr ON userdata.id = addr.userid AND userdata.tenantid = addr" +
+            ".tenantid AND addr.status = 'active' LEFT OUTER JOIN eg_userrole_v1 ur ON userdata.id = ur.user_id AND userdata.tenantid = ur.user_tenantid  ";
+
+    // Below is the query to bring the user details along with the addresses and roles part of V2 api endpoints without address
+    private static final String SELECT_USER_QUERY_V2_NO_ADDRESS = "SELECT userdata.title, userdata.salutation, userdata.dob, userdata.locale, userdata.username, userdata" +
+            ".password, userdata.pwdexpirydate,  userdata.mobilenumber, userdata.altcontactnumber, userdata.emailid, userdata.createddate, userdata" +
+            ".lastmodifieddate,  userdata.createdby, userdata.lastmodifiedby, userdata.active, userdata.name, userdata.gender, userdata.pan, userdata.aadhaarnumber, userdata" +
+            ".type,  userdata.version, userdata.guardian, userdata.guardianrelation, userdata.signature, userdata.accountlocked, userdata.accountlockeddate, userdata" +
+            ".bloodgroup, userdata.photo, userdata.identificationmark,  userdata.tenantid, userdata.id, userdata.uuid, userdata.alternatemobilenumber," +
+            " ur.role_code as role_code, ur.role_tenantid as role_tenantid \n" +
+            "\tFROM eg_user userdata LEFT OUTER JOIN eg_userrole_v1 ur ON userdata.id = ur.user_id AND userdata.tenantid = ur.user_tenantid  ";
     @SuppressWarnings("rawtypes")
     public String getQuery(final UserSearchCriteria userSearchCriteria, final List preparedStatementValues) {
 		StringBuilder selectQuery;
         selectQuery = new StringBuilder(SELECT_USER_QUERY);
-
         addWhereClause(selectQuery, preparedStatementValues, userSearchCriteria);
-
 
         addOrderByClause(selectQuery, userSearchCriteria);
         return addPagingClause(selectQuery, preparedStatementValues, userSearchCriteria);
@@ -203,7 +225,16 @@ public class UserTypeQueryBuilder {
             selectQuery.append(" userdata.uuid IN (").append(getQueryForCollection(userSearchCriteria.getUuid(),
                     preparedStatementValues)).append(" )");
         }
-
+        if (StringUtils.isNotBlank(userSearchCriteria.getAddressId())) {
+            isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, selectQuery);
+            selectQuery.append(" addr.id = CAST(? AS INT)");
+            preparedStatementValues.add(userSearchCriteria.getAddressId().trim());
+        }
+        if (userSearchCriteria.getAddressStatus() != null) {
+            isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, selectQuery);
+            selectQuery.append(" addr.status = ? ");
+            preparedStatementValues.add(userSearchCriteria.getAddressStatus());
+        }
 //        if(!isEmpty(userSearchCriteria.getRoleCodes())){
 //            isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, selectQuery);
 //            selectQuery.append(" ur.role_code IN (").append(getQueryForCollection(userSearchCriteria.getRoleCodes(),
@@ -307,4 +338,34 @@ public class UserTypeQueryBuilder {
         return "select count(*) from eg_user where username =:userName and tenantId =:tenantId and type = :userType ";
     }
 
+    /**
+     * Constructs a SQL query to fetch user details based on the provided search criteria.
+     *
+     * This method dynamically builds the query by including or excluding address details based on the
+     * search criteria - excludeAddress flag, appends the necessary filtering conditions, and applies ordering and pagination.
+     *
+     * @param userSearchCriteria The criteria used to filter users.
+     * @param preparedStatementValues A list to store prepared statement parameters for query execution.
+     * @return A fully constructed SQL query string based on the given criteria.
+     */
+    @SuppressWarnings("rawtypes")
+    public String getQueryV2(final UserSearchCriteria userSearchCriteria, final List preparedStatementValues) {
+        final StringBuilder selectQuery;
+        // If the address details excluded flag is true and addressId is null then the query without address will be used
+        if (Boolean.TRUE.equals(userSearchCriteria.getExcludeAddressDetails()) && StringUtils.isBlank(userSearchCriteria.getAddressId())) {
+            log.info("Excluding address details from the query");
+            selectQuery = new StringBuilder(SELECT_USER_QUERY_V2_NO_ADDRESS);
+        } else {
+            userSearchCriteria.setAddressStatus(UserConstants.ADDRESS_ACTIVE_STATUS);
+            selectQuery = new StringBuilder(SELECT_USER_QUERY_V2);
+        }
+        addWhereClause(selectQuery, preparedStatementValues, userSearchCriteria);
+
+        addOrderByClause(selectQuery, userSearchCriteria);
+        return addPagingClause(selectQuery, preparedStatementValues, userSearchCriteria);
+    }
+
+    public String getUserIdByUuid() {
+        return "select id from eg_user where uuid = :uuid";
+    }
 }

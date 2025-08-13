@@ -26,45 +26,49 @@ import EWASTEWFReason from "./components/EWASTEWFReason";
 import EWASTEDocuments from "./pageComponents/EWASTEDocuments";
 import EWASTEDocumentView from "./components/EWASTEDocumentView";
 
+// Object containing all components to be registered with the Digit Component Registry Service
 const componentsToRegister = {
-  EWCreatewaste: EWCreate,
-  EWCheckPage,
-  EWASTEProductDetails,
-  EWASTEOwnerInfo,
-  EWASTEProductList,
-  EWASTECitizenAddress,
-  EWASTESelectPincode,
-  EWASTESelectAddress,
-  EWASTEAcknowledgement,
-  EWASTEMyApplications,
-  EWASTEDocuments,
-  EWASTECitizenApplicationDetails,
-  EWASTEWFCaption,
-  EWASTEWFReason,
-  Inbox,
-  EmployeeApp,
-  EWApplicationDetails: EWApplicationDetails,
-  EwService,
-  EWASTEDocumentView,
+  EWCreatewaste: EWCreate, // Component for creating waste
+  EWCheckPage, // Component for checking details
+  EWASTEProductDetails, // Component for product details
+  EWASTEOwnerInfo, // Component for owner information
+  EWASTEProductList, // Component for product list
+  EWASTECitizenAddress, // Component for citizen address
+  EWASTESelectPincode, // Component for selecting pincode
+  EWASTESelectAddress, // Component for selecting address
+  EWASTEAcknowledgement, // Component for acknowledgement
+  EWASTEMyApplications, // Component for citizen's applications
+  EWASTEDocuments, // Component for documents
+  EWASTECitizenApplicationDetails, // Component for citizen application details
+  EWASTEWFCaption, // Component for workflow caption
+  EWASTEWFReason, // Component for workflow reason
+  Inbox, // Component for employee inbox
+  EmployeeApp, // Main employee application
+  EWApplicationDetails: EWApplicationDetails, // Component for application details
+  EwService, // Service for EW module
+  EWASTEDocumentView, // Component for viewing documents
 };
 
+// Function to register components with the Digit Component Registry Service
 const addComponentsToRegistry = () => {
   Object.entries(componentsToRegister).forEach(([key, value]) => {
     Digit.ComponentRegistryService.setComponent(key, value);
   });
 };
 
+// Main module component for EW (E-Waste) module
 export const EWModule = ({ stateCode, userType, tenants }) => {
-  const { path, url } = useRouteMatch();
+  const { path, url } = useRouteMatch(); // Hook to get route match details
 
-  const moduleCode = "EW";
-  const language = Digit.StoreData.getCurrentLanguage();
-  const { isLoading, data: store } = Digit.Services.useStore({ stateCode, moduleCode, language });
+  const moduleCode = "EW"; // Module code for E-Waste
+  const language = Digit.StoreData.getCurrentLanguage(); // Get current language from store
+  const { isLoading, data: store } = Digit.Services.useStore({ stateCode, moduleCode, language }); // Fetch store data
 
-  addComponentsToRegistry();
+  addComponentsToRegistry(); // Register components
 
-  Digit.SessionStorage.set("EW_TENANTS", tenants);
+  Digit.SessionStorage.set("EW_TENANTS", tenants); // Store tenant information in session storage
 
+  // Effect to load localization for employee user type
   useEffect(
     () =>
       userType === "employee" &&
@@ -76,28 +80,32 @@ export const EWModule = ({ stateCode, userType, tenants }) => {
     []
   );
 
+  // Render EmployeeApp for employee user type, otherwise render CitizenApp
   if (userType === "employee") {
     return <EmployeeApp path={path} url={url} userType={userType} />;
   } else return <CitizenApp />;
 };
 
+// Component to render links for the EW module
 export const EWLinks = ({ matchPath, userType }) => {
-  const { t } = useTranslation();
-  const [params, setParams, clearParams] = Digit.Hooks.useSessionStorage("EW", {});
+  const { t } = useTranslation(); // Hook for translations
+  const [params, setParams, clearParams] = Digit.Hooks.useSessionStorage("EW", {}); // Session storage hook for EW module
 
   useEffect(() => {
-    clearParams();
+    clearParams(); // Clear session storage parameters on mount
   }, []);
 
-  const links = [];
+  const links = []; // Placeholder for links
 
+  // Render CitizenHomeCard with links and icon
   return <CitizenHomeCard header={t("ACTION_TEST_EW")} links={links} Icon={() => <PTIcon className="fill-path-primary-main" />} />;
 };
 
+// Object containing additional components for the EW module
 export const EWComponents = {
-  EWCard,
-  EWModule,
-  EWLinks,
-  EW_INBOX_FILTER: (props) => <InboxFilter {...props} />,
-  EWInboxTableConfig: TableConfig,
+  EWCard, // Card component for EW
+  EWModule, // Main module component
+  EWLinks, // Links component
+  EW_INBOX_FILTER: (props) => <InboxFilter {...props} />, // Inbox filter component
+  EWInboxTableConfig: TableConfig, // Table configuration for inbox
 };

@@ -8,6 +8,7 @@ const Urls = {
     localities: `/egov-location/location/v11/boundarys/_search?hierarchyTypeCode=ADMIN&boundaryType=Locality`,
     revenue_localities: `/egov-location/location/v11/boundarys/_search?hierarchyTypeCode=REVENUE&boundaryType=Locality`,
     gramPanchayats: `/egov-location/location/v11/boundarys/_search?hierarchyTypeCode=REVENUE&boundaryType=GP`,
+    vendingZones: `/egov-location/location/v11/boundarys/_search?hierarchyTypeCode=ADMIN&boundaryType=VendingZone`,
   },
 
   pgr_search: `/pgr-services/v2/request/_search`,
@@ -19,12 +20,18 @@ const Urls = {
   PGR_Create: `/pgr-services/v2/request/_create`,
   pgr_count: `/pgr-services/v2/request/_count`,
 
+    
+ 
+
   OTP_Send: "/user-otp/v1/_send",
   Authenticate: "/user/oauth/token",
   RegisterUser: "/user/citizen/_create",
   ChangePassword: "/user/password/nologin/_update",
   ChangePassword1: "/user/password/_update",
   UserProfileUpdate: "/user/profile/_update",
+  UserCreateAddressV2: "/user/_createAddress",  //create address in user profile
+  UserUpdateAddressV2:"/user/_updateAddress",
+  UserSearchNewV2: "/user/users/v2/_search",    // search  user address
   EmployeeSearch: "/egov-hrms/employees/_search",
 
   InboxSearch: "/inbox/v1/_search",
@@ -156,6 +163,7 @@ const Urls = {
   },
   edcr: {
     create: "/edcr/rest/dcr/scrutinize",
+    anonymousCreate: "/edcr/rest/dcr/anonymousScrutinize",
   },
   preApproved:{
     search: "/bpa-services/v1/preapprovedplan/_search",
@@ -207,16 +215,21 @@ const Urls = {
     search: "/asset-services/v1/assets/_search",
     update: "/asset-services/v1/assets/_update",
     assign: "/asset-services/v1/assets/assignment/_create",
-    depriciationProcess:"/asset-services/v1/assets/depreciation/_process",  //this api for assetDepriciationProcess
-    depriciationList:"/asset-services/v1/assets/depreciation/list",   // this api for list of assetDepriciation
-    return_asset: "/asset-services/v1/assets/assignment/_update",
-    assets_Reciept_Search: "/asset-services/v1/assets/_search",     //This url use for  Assets Recipt Detail QR Code 
-    assetDisposedCreate: "/asset-services/v1/disposal/_create"
+    depriciationProcess:"/asset-services/v1/assets/depreciation/_process",  
+    maintenance:"/asset-services/maintenance/v1/_create",  
+    edit_maintenance:"/asset-services/maintenance/v1/_update", 
+    assets_Reciept_Search: "/asset-services/v1/assets/_search",    
+    assetDisposedCreate: "/asset-services/v1/disposal/_create",
+    depriciationList:"/asset-services/v1/assets/depreciation/list",   
+    maintenanceList:"/asset-services/maintenance/v1/_search", 
+    return_asset: "/asset-services/v1/assets/assignment/_update",  
+    disposalList:"/asset-services/v1/disposal/_search",
+    assetAssignable:"/asset-services/v1/assets/assignment/_search",   
   },
   ew: {
     create: "/ewaste-services/ewaste-request/_create",
     search: "/ewaste-services/ewaste-request/_search",
-    update: "/ewaste-services/ewaste-request/_update",
+    update: "/ewaste-services/ewaste-request/_update"
   },
 
   sv:{
@@ -224,6 +237,7 @@ const Urls = {
     search: "/sv-services/street-vending/_search",
     update: "/sv-services/street-vending/_update",
     deleteDraft:"/sv-services/street-vending/_deletedraft",
+    demandCreate: "/sv-services/street-vending/_createdemand"
   },
 
   chb: {
@@ -233,6 +247,7 @@ const Urls = {
     slot_search: "/chb-services/booking/v1/_slot-search",
     estimateCreate: "/chb-services/booking/v1/_estimate"
   },
+  // urls for making api calls for advertisement module
   ads: {
     create: "/adv-services/booking/v1/_create",
     search: "/adv-services/booking/v1/_search",
@@ -244,6 +259,36 @@ const Urls = {
 
   cm: {
     search: "/verification-service/validity/_search"
+  },
+
+  wt:{
+    create: "/request-service/water-tanker/v1/_create",
+    update: "/request-service/water-tanker/v1/_update",
+    search: "/request-service/water-tanker/v1/_search",
+  },
+  mt:{
+    create: "/request-service/mobile-toilet/v1/_create",
+    update: "/request-service/mobile-toilet/v1/_update",
+    search: "/request-service/mobile-toilet/v1/_search",
+  },
+  tp: {
+    create: "/tp-services/tree-pruning/v1/_create",
+    update: "/tp-services/tree-pruning/v1/_update",
+    search: "/tp-services/tree-pruning/v1/_search",
+  },
+
+  vendor: {
+    create: "/vendor-services/vendor/_create",
+    search: "/vendor-services/vendor/_search",
+    additionaldetailsCreate: "/vendor-management/api/v1/_create",
+    vendorcommonSearch: "/vendor-management/api/v1/vendorPlusAdditional/_search"
+    
+  },
+  // urls for making api calls for pgr-ai module
+  pgrAi:{
+    PGR_Create_AI:"/pgr-ai-services/v1/request/_create",
+    PGR_Search_AI: "/pgr-ai-services/v1/request/_search",
+    PGR_Update_AI:"/pgr-ai-services/v1/request/_update"
   },
 
 digiLocker:{
@@ -295,3 +340,7 @@ eSign:{
 };
 
 export default Urls;
+
+export const getOpenStreetMapUrl = (lat, lng) => {
+  return `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1`;
+}

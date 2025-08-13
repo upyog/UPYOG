@@ -1,3 +1,22 @@
+/**
+ * This component, `PTRMyApplications`, displays a list of pet registration applications 
+ * for a citizen. It provides functionalities such as:
+ * 
+ * - Fetching application data using PTR search hooks.
+ * - Paginating the results with a "Load more" option.
+ * - Displaying feedback status for each application.
+ * - Providing a link to register a new pet if no applications are found.
+ * 
+ * Key Features:
+ * - Uses Digit UI components (`Header`, `Loader`) for consistent styling.
+ * - Implements dynamic pagination based on URL parameters.
+ * - Fetches feedback data based on application numbers.
+ * - Displays either "View" or "Track" based on feedback availability.
+ * 
+ * 
+ */
+
+
 import { Header, Loader } from "@upyog/digit-ui-react-components";
 import React from "react";
 import { Link } from "react-router-dom";

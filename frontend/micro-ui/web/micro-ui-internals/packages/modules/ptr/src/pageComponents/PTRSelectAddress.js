@@ -1,3 +1,30 @@
+/**
+ * PTRSelectAddress Component
+ * 
+ * This component handles the address selection form for the PTR module.
+ * 
+ * Features:
+ * - Uses React hooks to manage state and form controls.
+ * - Displays address fields including House No, Street Name, Landmark, City, Locality, and Pincode.
+ * - Retrieves city and locality data using Digit hooks.
+ * - Validates and formats the address details before submission.
+ * - Supports navigation with "Next" and "Skip" buttons.
+ * 
+ * Dependencies:
+ * - React, React Router, and Digit UI components.
+ * - `useForm` and `Controller` from `react-hook-form` for form handling.
+ * 
+ * Props:
+ * - `t`: Translation function for localization.
+ * - `config`: Configuration object for form step.
+ * - `onSelect`: Function to handle form submission.
+ * - `formData`: Pre-filled form data.
+ * - `renewApplication`: Data for renewal applications.
+ * 
+ * Usage:
+ * - This component is used as part of the PTR application process.
+ */
+
 import React, { useState} from "react";
 import { FormStep, TextInput, CardLabel, Dropdown, TextArea} from "@upyog/digit-ui-react-components";
 import { useLocation, useParams } from "react-router-dom";

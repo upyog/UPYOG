@@ -5,6 +5,14 @@ import { useQueryClient } from "react-query";
 import { Redirect, Route, Switch, useHistory, useLocation, useRouteMatch } from "react-router-dom";
 import { citizenConfig } from "../../../config/Create/citizenconfig";
 
+/**
+ * Main component for E-Waste creation workflow.
+ * Handles multi-step form navigation, data management and submission for E-Waste requests.
+ * 
+ * @param {Object} props Component properties
+ * @param {string} props.parentRoute Base route for the creation workflow
+ * @returns {JSX.Element} Multi-step form interface for E-Waste creation
+ */
 const EWCreate = ({ parentRoute }) => {
 
   const queryClient = useQueryClient();
@@ -15,12 +23,23 @@ const EWCreate = ({ parentRoute }) => {
   const stateId = Digit.ULBService.getStateId();
   let config = [];
   const [params, setParams, clearParams] = Digit.Hooks.useSessionStorage("EWASTE_CREATE", {});
-  let { data: commonFields, isLoading } = Digit.Hooks.pt.useMDMS(stateId, "PropertyTax", "CommonFieldsConfig"); //  PROPERTY CONFIG HOOK , just for commkonfeild config 
+  let { data: commonFields, isLoading } = Digit.Hooks.pt.useMDMS(stateId, "PropertyTax", "CommonFieldsConfig");
+
+  /**
+   * Handles navigation between form steps
+   * Determines next route based on current path and navigation parameters
+   * 
+   * @param {boolean} skipStep Whether to skip the current step
+   * @param {number} index Current step index
+   * @param {boolean} isAddMultiple Whether adding multiple items
+   * @param {string} key Form section identifier
+   */
   const goNext = (skipStep, index, isAddMultiple, key) => {
     let currentPath = pathname.split("/").pop(),
       lastchar = currentPath.charAt(currentPath.length - 1),
       isMultiple = false,
       nextPage;
+
     if (Number(parseInt(currentPath)) || currentPath == "0" || currentPath == "-1") {
       if (currentPath == "-1" || currentPath == "-2") {
         currentPath = pathname.slice(0, -3);
@@ -52,24 +71,23 @@ const EWCreate = ({ parentRoute }) => {
     }
     if (!isNaN(nextStep.split("/").pop())) {
       nextPage = `${match.path}/${nextStep}`;
-    }
-    else {
+    } else {
       nextPage = isMultiple && nextStep !== "map" ? `${match.path}/${nextStep}/${index}` : `${match.path}/${nextStep}`;
     }
 
     redirectWithHistory(nextPage);
   };
 
-
-  if (params && Object.keys(params).length > 0 && window.location.href.includes("/info") && sessionStorage.getItem("docReqScreenByBack") !== "true") {
-    clearParams();
-    queryClient.invalidateQueries("EWASTE_CREATE");
-  }
-
-  const ewasteCreate = async () => {
-    history.push(`${match.path}/acknowledgement`);
-  };
-
+  /**
+   * Handles form section data updates
+   * Updates session storage with new form data
+   * 
+   * @param {string} key Section identifier
+   * @param {Object} data Section form data
+   * @param {boolean} skipStep Whether to skip next step
+   * @param {number} index Current step index
+   * @param {boolean} isAddMultiple Whether adding multiple items
+   */
   function handleSelect(key, data, skipStep, index, isAddMultiple = false) {
     if (key === "owners") {
       let owners = params.owners || [];
@@ -89,6 +107,10 @@ const EWCreate = ({ parentRoute }) => {
   const handleSkip = () => { };
   const handleMultiple = () => { };
 
+  /**
+   * Handles successful form submission
+   * Clears session storage and invalidates cached data
+   */
   const onSuccess = () => {
     clearParams();
     queryClient.invalidateQueries("EWASTE_CREATE");
@@ -97,8 +119,6 @@ const EWCreate = ({ parentRoute }) => {
     return <Loader />;
   }
 
-  // commonFields=newConfig;
-  /* use newConfig instead of commonFields for local development in case needed */
   commonFields = citizenConfig;
   commonFields.forEach((obj) => {
     config = config.concat(obj.body.filter((a) => !a.hideInCitizen));
@@ -109,6 +129,14 @@ const EWCreate = ({ parentRoute }) => {
   const CheckPage = Digit?.ComponentRegistryService?.getComponent("EWCheckPage");
   const EWASTEAcknowledgement = Digit?.ComponentRegistryService?.getComponent("EWASTEAcknowledgement");
 
+  if (params && Object.keys(params).length > 0 && window.location.href.includes("/info") && sessionStorage.getItem("docReqScreenByBack") !== "true") {
+    clearParams();
+    queryClient.invalidateQueries("EWASTE_CREATE");
+  }
+
+  const ewasteCreate = async () => {
+    history.push(`${match.path}/acknowledgement`);
+  };
   return (
     <Switch>
       {config.map((routeObj, index) => {

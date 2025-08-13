@@ -19,8 +19,10 @@ const CloseBtn = (props) => {
   );
 };
 /**
- * ADSCartDetails component displays  a table of advertisement cart items,
- * allowing users to view, delete items, and see the total price of the cart.
+ * ADSCartDetails Component renders a modal displaying a table of advertisement cart items, 
+ * including details like ad type, area, lighting, booking date, price, and status. 
+ * Users can remove items from the cart, and the total price is dynamically calculated 
+ * and shown at the bottom. The modal includes a header with a title and close button.
  */
 
 const ADSCartDetails = ({ onClose,cartDetails, setCartDetails }) => {

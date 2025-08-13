@@ -15,6 +15,8 @@ import {
   useRecieptSearch,
   useRecieptSearchNew,
   useAssetQrCode,
+  useRecieptSearchNew,
+  useAssetQrCode,
   usePaymentSearch,
   useBulkPdfDetails,
 } from "./payment";
@@ -38,6 +40,11 @@ import useUpdateEvent from "./events/useUpdateEvent";
 import useNewInboxGeneral from "./useInboxGeneral/useNewInbox";
 import useDynamicData from "./useDynamicData";
 
+
+import useCreate from "./pgrAi/useCreate";
+import useSearchPGRAI from "./pgrAi/useSearchPGRAI";
+import useFilterEmployee from "./pgrAi/useFilterEmployee";
+import useApplicationDetails from "./pgrAi/useApplicationDetails";
 import useComplaintDetails from "./pgr/useComplaintDetails";
 import { useComplaintsList, useComplaintsListByMobile } from "./pgr/useComplaintList";
 import useComplaintStatus from "./pgr/useComplaintStatus";
@@ -65,7 +72,6 @@ import useVehicleTripCreate from "./fsm/useVehicleTripCreate";
 import useFSMInbox from "./fsm/useInbox";
 import useApplicationUpdate from "./fsm/useApplicationUpdate";
 import useWorkflowData from "./fsm/useWorkflowData";
-import useRouteSubscription from "./fsm/useRouteSubscription";
 import useDsoSearch from "./fsm/useDsoSearch";
 import usePropertySearch from "./pt/usePropertySearch";
 import usePropertySearchNew from "./pt/usePropertySearchNew";
@@ -275,6 +281,7 @@ import useServiceSearchPTR from "./ptr/useServiceSearchPTR";
 import usePetDocumentSearch from "./ptr/usePetDocumentSearch";
 import useMyPetPayments from "./ptr/useMyPetPayments";
 import useTenantsPTR from "./ptr/useTenants";
+import { usePetColors } from "./ptr/usePetColors";
 //adding asset hooks here
 import useAssetClassification from "./asset/useAssetClassification";
 import useAssetType from "./asset/useAssetType";
@@ -302,10 +309,6 @@ import useSVApplicationDetail from "./sv/useSVApplicationDetail";
 import useSvSearchApplication from "./sv/useSvSearchApplication";
 import useSVApplicationAction from "./sv/useSVApplicationAction";
 import useADSApplicationDetail from "./ads/useADSApplicationDetail";
-import useProductPriceMDMS from "./ew/useProductPriceMDMS";
-import useSpecialCategory from "./chb/useSpecialCategory";
-import useResidentType from "./chb/useResidentType";
-import usePurpose from "./chb/usePurpose";
 import useChbCreateAPI from "./chb/useChbCreateAPI";
 import useADSCreateAPI from "./ads/useADSCreateAPI";
 import useChbDocumentsMDMS from "./chb/useChbDocumentsMDMS";
@@ -321,8 +324,6 @@ import useChbSearch from "./chb/useChbSearch";
 import useTenantsCHB from "./chb/useTenants";
 import useChbApplicationAction from "./chb/useChbApplicationAction";
 import useServiceSearchCHB from "./chb/useServiceSearchCHB";
-import useChbCommunityHalls from "./chb/useChbCommunityHalls";
-import useChbHallCode from "./chb/useChbHallCode"
 import useChbSlotSearch from "./chb/useChbSlotSearch";
 import useDemandEstimation from "./chb/useDemandEstimation"
 import useTenantsADS from "./ads/useTenants"
@@ -330,6 +331,30 @@ import useADSDocumentsMDMS from "./ads/useADSDocumentsMDMS";
 import useADSDocumentSearch from "./ads/useADSDocumentSearch";
 import useADSDemandEstimation from "./ads/useADSDemandEstimation"
 import useCMSearch from "./cm/useCMSearch";
+
+
+import useTankerCreateAPI from "./wt/useTankerCreateAPI";
+import useTankerSearchAPI from "./wt/useTankerSearchAPI";
+import useMobileToiletCreateAPI from "./wt/useMobileToiletCreateAPI";
+import useMobileToiletSearchAPI from "./wt/useMobileToiletSearchAPI";
+import useWTApplicationAction from "./wt/useWTApplicationAction";
+import useWTApplicationDetail from "./wt/useWTApplicationDetail";
+import useMTApplicationDetail from "./wt/useMTApplicationDetail";
+import useMTApplicationAction from "./wt/useMTApplicationAction";
+import useTreePruningCreateAPI from "./wt/useTreePruningCreateAPI";
+import useTreePruningSearchAPI from "./wt/useTreePruningSearchAPI";
+import useTPApplicationDetail from "./wt/useTPApplicationDetail";
+import useTPApplicationAction from "./wt/useTPApplicationAction";
+
+
+import useTenantsVENDOR from "./vendor/useTenants";
+import useEmpvendorCreate from "./vendor/useEmpvendorCreate";
+import useEmpvendorSearch from "./vendor/useEmpvendorSearch";
+import useVendorAdditionaldetailsAPI from "./vendor/useVendorAdditionaldetailsAPI";
+import useEmpvendorCommonSearch from "./vendor/useEmpvendorCommonSearch";
+import useEnabledMDMS from "./useEnabledMDMS";
+import useSelectedMDMS from "./useSelectedMDMS";
+import useRouteSubscription from "./useRouteSubscription";
 
 const pgr = {
   useComplaintDetails,
@@ -349,6 +374,12 @@ const pgr = {
   useTradeLicenseBillingslab,
   useMDMS: usePGRMDMS,
 };
+const pgrAi={
+  useCreate,
+  useSearchPGRAI,
+  useFilterEmployee,
+  useApplicationDetails
+}
 
 
 const fsm = {
@@ -405,7 +436,8 @@ const ptr = {
   useServiceSearchPTR,
   usePetDocumentSearch,
   useMyPetPayments,
-  useTenants: useTenantsPTR
+  useTenants: useTenantsPTR,
+  usePetColors
  
 };
 
@@ -625,7 +657,6 @@ const sv = {
 }
 
 const ew = {
-  useProductPriceMDMS,
   useEWCreateAPI,
   useTenants: useTenantsEW,
   useEWSearch,
@@ -634,9 +665,6 @@ const ew = {
 };
 
 const chb={
-  useSpecialCategory,
-  useResidentType,
-  usePurpose,
   useChbCreateAPI,
   useChbDocumentsMDMS,
   useChbDocumentSearch,
@@ -645,8 +673,6 @@ const chb={
   useTenants:useTenantsCHB,
   useChbApplicationAction,
   useServiceSearchCHB,
-  useChbCommunityHalls,
-  useChbHallCode,
   useChbSlotSearch,
   useDemandEstimation
 }
@@ -665,6 +691,29 @@ const ads={
 const cm = {
   useCMSearch
 }
+
+const wt={
+  useTankerCreateAPI,
+  useTankerSearchAPI,
+  useWTApplicationAction,
+  useWTApplicationDetail,
+  useMobileToiletCreateAPI,
+  useMobileToiletSearchAPI,
+  useMTApplicationDetail,
+  useMTApplicationAction,
+  useTreePruningCreateAPI,
+  useTreePruningSearchAPI,
+  useTPApplicationDetail,
+  useTPApplicationAction
+};
+
+const vendor = {
+  useTenants:useTenantsVENDOR,
+  useEmpvendorCreate,
+  useEmpvendorSearch,
+  useVendorAdditionaldetailsAPI,
+  useEmpvendorCommonSearch,
+};
 
 const Hooks = {
   useSessionStorage,
@@ -739,7 +788,11 @@ const Hooks = {
   chb,
   ads,
   ew,
-  cm
+  cm,
+  wt,
+  vendor,
+  useEnabledMDMS,
+  useSelectedMDMS,
 };
 
 export default Hooks;

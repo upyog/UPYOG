@@ -23,6 +23,45 @@ import org.upyog.chb.web.models.billing.DemandDetail;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * This service class handles operations related to demand generation and management
+ * in the Community Hall Booking module.
+ * 
+ * Purpose:
+ * - To generate and manage demands for community hall bookings.
+ * - To calculate charges, taxes, and other financial details for bookings.
+ * - To interact with the billing service for creating and retrieving demands.
+ * 
+ * Dependencies:
+ * - CommunityHallBookingConfiguration: Provides configuration properties for demand operations.
+ * - CalculationService: Handles the calculation of charges and taxes for bookings.
+ * - DemandRepository: Interacts with the billing service to manage demands.
+ * - CommunityHallBookingValidator: Validates demand-related requests and criteria.
+ * - CommunityHallBookingUtil: Utility class for common operations related to bookings.
+ * - MdmsUtil: Fetches and processes master data from MDMS for demand generation.
+ * 
+ * Features:
+ * - Generates demands for bookings based on estimation criteria.
+ * - Calculates demand details, including tax and charge breakdowns.
+ * - Validates demand requests and ensures compliance with business rules.
+ * - Logs important operations and errors for debugging and monitoring purposes.
+ * 
+ * Methods:
+ * 1. generateDemand:
+ *    - Generates a new demand for a booking based on the provided criteria.
+ *    - Interacts with the billing service to create the demand.
+ * 
+ * 2. validateDemandRequest:
+ *    - Validates the demand request to ensure it meets the required criteria.
+ * 
+ * 3. calculateDemandDetails:
+ *    - Calculates the demand details, including charges and taxes, for a booking.
+ * 
+ * Usage:
+ * - This class is automatically managed by Spring and injected wherever demand-related
+ *   operations are required.
+ * - It ensures consistent and reusable logic for managing demands in the module.
+ */
 @Service
 @Slf4j
 public class DemandService {

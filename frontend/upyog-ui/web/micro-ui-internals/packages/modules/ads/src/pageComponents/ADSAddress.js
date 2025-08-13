@@ -22,8 +22,8 @@ const ADSAddress = ({ t, config, onSelect, userType, formData, value=formData.ad
   const user = Digit.UserService.getUser().info;
   const mutation = Digit.Hooks.ads.useADSCreateAPI();
   const [pincode, setPincode] = useState((formData.address && formData.address[index] && formData.address[index].pincode) || formData?.address?.pincode || value?.existingDataSet?.address?.pincode || "");
-  const [city, setCity] = useState((formData.address && formData.address[index] && formData.address[index].city) || formData?.address?.city || value?.existingDataSet?.address?.city || "");
-  const [locality, setLocality] = useState((formData.address && formData.address[index] && formData.address[index].locality) || formData?.address?.locality || value?.existingDataSet?.address?.locality || "");
+  const [city, setCity] = useState((formData.address && formData.address[index] && formData.address[index].city) || formData?.address?.city || value?.existingDataSet?.address?.city || value?.existingDataSet?.address?.cityValue || "");
+  const [locality, setLocality] = useState((formData.address && formData.address[index] && formData.address[index].locality) || formData?.address?.locality || value?.existingDataSet?.address?.locality || value?.existingDataSet?.address?.locality || "");
   const [streetName, setStreetName] = useState((formData.address && formData.address[index] && formData.address[index].streetName) || formData?.address?.streetName || value?.existingDataSet?.address?.streetName || "");
   const [houseNo, setHouseNo] = useState((formData.address && formData.address[index] && formData.address[index].houseNo) || formData?.address?.houseNo || value?.existingDataSet?.address?.houseNo || "");
   const [landmark, setLandmark] = useState((formData.address && formData.address[index] && formData.address[index].landmark) || formData?.address?.landmark || value?.existingDataSet?.address?.landmark || "");

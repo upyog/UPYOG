@@ -1,5 +1,6 @@
 package org.upyog.sv.web.models;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -36,6 +37,9 @@ public class StreetVendingSearchCriteria {
 
 	@JsonProperty("mobileNumber")
 	private String mobileNumber;
+	
+	@JsonProperty("vendorPaymentFrequency")
+	private String vendorPaymentFrequency;
 
 	@JsonProperty("vendingType")
 	private String vendingType;
@@ -76,4 +80,17 @@ public class StreetVendingSearchCriteria {
 				// && this.offset == null && this.limit == null
 				&& this.fromDate == null && this.toDate == null && this.createdBy == null);
 	}
+	
+	@JsonProperty("validityDate")
+	private LocalDate validityDate;
+	
+	@JsonProperty("certificateNo")
+	private String certificateNo;
+	
+	@JsonProperty("paymentStatus")
+	private String paymentStatus;
+	
+	@JsonProperty("renewalStatus")
+	private String renewalStatus;
+	
 }

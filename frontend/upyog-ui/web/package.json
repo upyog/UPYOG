@@ -48,6 +48,8 @@
     "@upyog/upyog-ui-module-ew": "3.0.1",
     "@upyog/upyog-ui-module-ptr": "3.0.1",
     "@upyog/upyog-ui-module-sv": "3.0.1",
+    "@nudmcdgnpm/upyog-ui-module-wt":"1.0.1",
+    "@nudmcdgnpm/upyog-ui-module-vendor":"1.2.2",
     "babel-loader": "8.1.0",
     "react": "17.0.2",
     "react-dom": "17.0.2",

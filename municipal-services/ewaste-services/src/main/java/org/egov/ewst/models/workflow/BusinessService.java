@@ -22,6 +22,11 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+/**
+ * Represents a business service in the workflow of the Ewaste application.
+ * This class contains details about the business service such as tenant ID, UUID,
+ * service name, URIs, SLA, states, and audit details.
+ */
 @ApiModel(description = "A Object holds the Business Service")
 @Validated
 @javax.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2018-12-04T11:26:25.532+05:30")
@@ -71,6 +76,12 @@ public class BusinessService {
 	@JsonProperty("auditDetails")
 	private AuditDetails auditDetails;
 
+	/**
+	 * Adds a state to the list of states associated with the business service.
+	 *
+	 * @param statesItem the state to add
+	 * @return the updated BusinessService object
+	 */
 	public BusinessService addStatesItem(State statesItem) {
 		if (this.states == null) {
 			this.states = new ArrayList<>();

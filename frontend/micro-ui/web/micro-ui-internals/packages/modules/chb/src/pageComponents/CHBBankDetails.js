@@ -5,6 +5,31 @@ import Timeline from "../components/CHBTimeline";
 import ChbCancellationPolicy from "../components/ChbCancellationPolicy";
 // import { TimerValues } from "../components/TimerValues";
 
+
+/**
+ * CHBBankDetails Component
+ * 
+ * This component is responsible for rendering the bank details form for the CHB module.
+ * It allows users to input and manage bank-related information such as account number, IFSC code, bank name, branch name, and account holder name.
+ * 
+ * Props:
+ * - `t`: Translation function for internationalization.
+ * - `config`: Configuration object for the form step.
+ * - `onSelect`: Callback function triggered when the form step is completed.
+ * - `userType`: Type of the user (e.g., employee or citizen).
+ * - `formData`: Existing form data to prefill the fields.
+ * - `ownerIndex`: Index of the owner in the form data.
+ * - `searchParams`: Parameters for searching or filtering data.
+ * - `value`: Default value for the form fields.
+ * 
+ * State Variables:
+ * - `accountNumber`, `confirmAccountNumber`, `ifscCode`, `bankName`, `bankBranchName`, `accountHolderName`: State variables to manage bank details fields.
+ * - `showToast`: State to manage the visibility of toast notifications.
+ * 
+ * Effects:
+ * - Automatically fetches bank name and branch name based on the entered IFSC code.
+ */
+
 const CHBBankDetails 
  = ({ t, config, onSelect, userType, formData, ownerIndex,searchParams,value=formData.slotlist}) => {
   const { pathname: url } = useLocation();

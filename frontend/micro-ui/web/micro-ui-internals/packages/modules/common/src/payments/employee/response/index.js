@@ -487,6 +487,9 @@ export const SuccessfulPayment = (props) => {
   if (businessService?.includes("BPA") && isBpaSearchLoading) return <Loader />;
 
 
+  const waterTankerCreateApi = Digit.Hooks.wt.useTankerCreateAPI(tenantId,false); 
+  const mobileToiletCreateApi = Digit.Hooks.wt.useMobileToiletCreateAPI(tenantId,false);
+  const treePruningCreateApi =Digit.Hooks.wt.useTreePruningCreateAPI(tenantId,false);
 
   const svCertificate = async () => {
     //const tenantId = Digit.ULBService.getCurrentTenantId();
@@ -513,6 +516,66 @@ export const SuccessfulPayment = (props) => {
       window.open(fileStore[response.filestoreIds[0]], "_blank");
     }
   };
+
+  const printWTReceipt = async () => {
+    const applicationDetails = await Digit.WTService.search({  tenantId,filters: { bookingNo: consumerCode }});
+    let fileStoreId = applicationDetails?.waterTankerBookingDetail?.[0]?.paymentReceiptFilestoreId;
+    if (!fileStoreId) {
+      const payments = await Digit.PaymentService.getReciept(tenantId, businessService, { receiptNumbers: receiptNumber });
+      let response = { filestoreIds: [payments.Payments[0]?.fileStoreId]};
+      response = await Digit.PaymentService.generatePdf(tenantId, {Payments: payments.Payments} , "request-service.water_tanker-receipt");
+      const updatedApplication = {
+        ...applicationDetails?.waterTankerBookingDetail[0],
+        paymentReceiptFilestoreId: response?.filestoreIds[0]
+      };
+      await waterTankerCreateApi.mutateAsync({
+        waterTankerBookingDetail: updatedApplication
+      });
+      fileStoreId = response?.filestoreIds[0];
+    }
+    const fileStore = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: fileStoreId });
+    window.open(fileStore[fileStoreId], "_blank");
+  }
+
+  const printMTReceipt = async () => {
+    const applicationDetails = await Digit.MTService.search({  tenantId,filters: { bookingNo: consumerCode }});
+    let fileStoreId = applicationDetails?.mobileToiletBookingDetails?.[0]?.paymentReceiptFilestoreId;
+    if (!fileStoreId) {
+      const payments = await Digit.PaymentService.getReciept(tenantId, businessService, { receiptNumbers: receiptNumber });
+      let response = { filestoreIds: [payments.Payments[0]?.fileStoreId]};
+      response = await Digit.PaymentService.generatePdf(tenantId, {Payments: payments.Payments} , "request-service.mobile_toilet-receipt");
+      const updatedApplication = {
+        ...applicationDetails?.mobileToiletBookingDetails[0],
+        paymentReceiptFilestoreId: response?.filestoreIds[0]
+      };
+      await mobileToiletCreateApi.mutateAsync({
+        mobileToiletBookingDetail: updatedApplication
+      });
+      fileStoreId = response?.filestoreIds[0];
+    }
+    const fileStore = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: fileStoreId });
+    window.open(fileStore[fileStoreId], "_blank");
+  }
+
+  const printTPReceipt = async () => {
+    const applicationDetails = await Digit.TPService.search({  tenantId,filters: { bookingNo: consumerCode }});
+    let fileStoreId = applicationDetails?.treePruningBookingDetails?.[0]?.paymentReceiptFilestoreId;
+    if (!fileStoreId) {
+      const payments = await Digit.PaymentService.getReciept(tenantId, businessService, { receiptNumbers: receiptNumber });
+      let response = { filestoreIds: [payments.Payments[0]?.fileStoreId]};
+      response = await Digit.PaymentService.generatePdf(tenantId, {Payments: payments.Payments} , "request-service.tree_pruning-receipt");
+      const updatedApplication = {
+        ...applicationDetails?.treePruningBookingDetails[0],
+        paymentReceiptFilestoreId: response?.filestoreIds[0]
+      };
+      await treePruningCreateApi.mutateAsync({
+        treePruningBookingDetail: updatedApplication
+      });
+      fileStoreId = response?.filestoreIds[0];
+    }
+    const fileStore = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: fileStoreId });
+    window.open(fileStore[fileStoreId], "_blank");
+  }
 
   const printPermissionLetter = async () => {
     const applicationDetails = await Digit.CHBServices.search({  tenantId,
@@ -613,7 +676,7 @@ export const SuccessfulPayment = (props) => {
         <CardText>{getCardText()}</CardText>
         {generatePdfKey ? (
           <div style={{ display: "flex" }}>
-            {businessService !== "chb-services" && businessService !=="adv-services" && businessService!=="sv-services" && businessService!=="pet-services" &&(
+            {!["chb-services", "adv-services", "sv-services", "pet-services", "request-service.water_tanker", "request-service.mobile_toilet", "request-service.tree_pruning"].includes(businessService) &&(
             <div className="primary-label-btn d-grid" style={{ marginLeft: "unset", marginRight: "20px" }} onClick={IsDisconnectionFlow === "true"? printDisconnectionRecipet : printReciept}>
               <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24">
                 <path d="M0 0h24v24H0z" fill="none" />
@@ -683,6 +746,33 @@ export const SuccessfulPayment = (props) => {
                   <path d="M19 9h-4V3H9v6H5l7 7 7-7zm-8 2V5h2v6h1.17L12 13.17 9.83 11H11zm-6 7h14v2H5z" />
                 </svg>
                 {t("PTR_CERTIFICATE")}
+              </div>
+            ) : null}
+            {businessService == "request-service.water_tanker" ? (
+              <div className="primary-label-btn d-grid" style={{ marginLeft: "unset", marginRight: "20px", marginTop:"15px",marginBottom:"15px" }} onClick={printWTReceipt}>
+                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#a82227">
+                  <path d="M0 0h24v24H0V0z" fill="none" />
+                  <path d="M19 9h-4V3H9v6H5l7 7 7-7zm-8 2V5h2v6h1.17L12 13.17 9.83 11H11zm-6 7h14v2H5z" />
+                </svg>
+                {t("CS_DOWNLOAD_RECEIPT")}
+              </div>
+            ) : null}
+            {businessService == "request-service.mobile_toilet" ? (
+              <div className="primary-label-btn d-grid" style={{ marginLeft: "unset", marginRight: "20px", marginTop:"15px",marginBottom:"15px" }} onClick={printMTReceipt}>
+              <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#a82227">
+                <path d="M0 0h24v24H0V0z" fill="none" />
+                <path d="M19 9h-4V3H9v6H5l7 7 7-7zm-8 2V5h2v6h1.17L12 13.17 9.83 11H11zm-6 7h14v2H5z" />
+              </svg>
+              {t("CS_DOWNLOAD_RECEIPT")}
+              </div>
+            ) : null}
+            {businessService == "request-service.tree_pruning" ? (
+              <div className="primary-label-btn d-grid" style={{ marginLeft: "unset", marginRight: "20px", marginTop:"15px",marginBottom:"15px" }} onClick={printTPReceipt}>
+              <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#a82227">
+                <path d="M0 0h24v24H0V0z" fill="none" />
+                <path d="M19 9h-4V3H9v6H5l7 7 7-7zm-8 2V5h2v6h1.17L12 13.17 9.83 11H11zm-6 7h14v2H5z" />
+              </svg>
+              {t("CS_DOWNLOAD_RECEIPT")}
               </div>
             ) : null}
             {businessService == "chb-services" ? (

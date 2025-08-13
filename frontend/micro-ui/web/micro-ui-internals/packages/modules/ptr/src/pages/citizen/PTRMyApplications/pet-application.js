@@ -1,3 +1,22 @@
+/**
+ * This component, `PetApplication`, displays the details of a single pet registration application.
+ * It uses `Card` and `KeyNote` components from `@nudmcdgnpm/digit-ui-react-components` 
+ * to present the application's information in a structured format.
+ * 
+ * Key Features:
+ * - Displays application details such as application number, applicant name, type, status, and pet type.
+ * - Shows a "Renewal" button if the application status is "Expired".
+ * - On clicking the "Renewal" button, the user is redirected to the revised application page.
+ * - Includes a button to navigate to the detailed application view.
+ * 
+ * Props:
+ * - `application`: Object containing application details.
+ * - `tenantId`: Tenant ID associated with the application.
+ * - `buttonLabel`: Label for the action button (either "View" or "Track" based on feedback availability).
+ * 
+ */
+
+
 import { Card, KeyNote, SubmitBar } from "@upyog/digit-ui-react-components";
 import React, { useContext } from "react";
 import { useTranslation } from "react-i18next";

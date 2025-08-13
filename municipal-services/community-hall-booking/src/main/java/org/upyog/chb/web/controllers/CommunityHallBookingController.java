@@ -16,6 +16,7 @@ import org.upyog.chb.constants.CommunityHallBookingConstants;
 import org.upyog.chb.enums.BookingStatusEnum;
 import org.upyog.chb.service.CommunityHallBookingService;
 import org.upyog.chb.service.DemandService;
+import org.upyog.chb.service.SchedulerService;
 import org.upyog.chb.util.CommunityHallBookingUtil;
 import org.upyog.chb.web.models.CommunityHallBookingDetail;
 import org.upyog.chb.web.models.CommunityHallBookingRequest;
@@ -35,6 +36,51 @@ import io.swagger.annotations.ApiParam;
 
 @javax.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2024-04-19T11:17:29.419+05:30")
 
+/**
+ * This controller class handles API endpoints for the Community Hall Booking module.
+ * 
+ * Purpose:
+ * - To expose RESTful APIs for creating, updating, and searching community hall bookings.
+ * - To act as the entry point for client requests related to community hall bookings.
+ * 
+ * Dependencies:
+ * - CommunityHallBookingService: Handles business logic for booking operations.
+ * - CommunityHallBookingUtil: Provides utility methods for creating standardized responses.
+ * 
+ * Features:
+ * - Provides endpoints for creating initial bookings, updating bookings, and searching bookings.
+ * - Validates incoming requests and delegates processing to the appropriate service layer.
+ * - Constructs and returns standardized API responses with ResponseInfo metadata.
+ * - Logs API requests and responses for debugging and monitoring purposes.
+ * 
+ * Endpoints:
+ * 1. /v1/_createInit:
+ *    - HTTP Method: POST
+ *    - Description: Creates an initial community hall booking.
+ *    - Request Body: CommunityHallBookingRequest containing initial booking details.
+ *    - Response: CommunityHallBookingResponse with booking details and status.
+ * 
+ * 2. /v1/_update:
+ *    - HTTP Method: POST
+ *    - Description: Updates an existing community hall booking.
+ *    - Request Body: CommunityHallBookingRequest containing updated booking details.
+ *    - Response: CommunityHallBookingResponse with updated booking details and status.
+ *    - Use Cases:
+ *      - Update filestore ID for payment link and permission letter link.
+ *      - Update booking status when cancelled.
+ *      - Update workflow when the application reaches employee login.
+ * 
+ * 3. /v1/_search:
+ *    - HTTP Method: POST
+ *    - Description: Searches for community hall bookings based on criteria.
+ *    - Request Body: RequestInfoWrapper containing request metadata.
+ *    - Query Parameters: CommunityHallBookingSearchCriteria for filtering results.
+ *    - Response: CommunityHallBookingResponse with a list of matching bookings.
+ * 
+ * Usage:
+ * - This class is automatically managed by Spring and mapped to the "/booking" base path.
+ * - It ensures consistent and reusable logic for handling booking-related API requests.
+ */
 @Controller
 @RequestMapping("/booking")
 public class CommunityHallBookingController {
@@ -44,6 +90,9 @@ public class CommunityHallBookingController {
 	
 	@Autowired
 	private DemandService demandService;
+	
+	@Autowired
+	private SchedulerService schedulerService;
 	
 	@RequestMapping(value = "/v1/_create", method = RequestMethod.POST) 
 	public ResponseEntity<CommunityHallBookingResponse> createBooking(
@@ -80,7 +129,7 @@ public class CommunityHallBookingController {
 		 * This update booking method will be called for below two tasks : 
 		 * 1.Update filestoreid for payment link and permission letter link
 		 * 2. Update status when cancelled
-		 * 
+		 * 3. Update workflow when the application has reached employee login
 		 */
 		
 		CommunityHallBookingDetail bookingDetail = bookingService.updateBooking(communityHallsBookingRequest, null, 
@@ -132,4 +181,16 @@ public class CommunityHallBookingController {
 				.responseInfo(info).build();
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
+	
+	@RequestMapping("/trigger-workflow-update")
+    public ResponseEntity<String> triggerWorkflowUpdate() {
+        try {
+            schedulerService.updateWorkflowForBookedApplications(); 
+            return ResponseEntity.ok("Scheduler triggered successfully.");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Failed to trigger scheduler: " + e.getMessage());
+        }
+    }
+	
 }

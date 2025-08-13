@@ -17,13 +17,47 @@ const CloseBtn = (props) => {
   );
 };
 
+/**
+ * ChbCommunityHallDetails Component
+ * 
+ * This component is responsible for displaying the details of a specific community hall in the CHB (Community Hall Booking) module.
+ * It fetches and displays information about the selected community hall, such as its name, description, and other metadata.
+ * 
+ * Props:
+ * - `hallId`: The ID of the community hall whose details are to be displayed.
+ * - `setShowDetails`: Function to toggle the visibility of the community hall details modal.
+ * 
+ * State Variables:
+ * - `selectedHall`: State variable to store the details of the selected community hall.
+ * - `showPopup`: State variable to manage the visibility of additional popups (if any).
+ * 
+ * Variables:
+ * - `stateId`: The state ID fetched using the `Digit.ULBService.getStateId` function.
+ * - `tenantId`: The tenant ID fetched using the `Digit.ULBService.getCitizenCurrentTenant` or `Digit.ULBService.getCurrentTenantId` function.
+ * 
+ * Hooks:
+ * - `Digit.Hooks.useEnabledMDMS`: Custom hook to fetch MDMS (Master Data Management System) data for community halls.
+ *    - Fetches the list of community halls for the given tenant ID.
+ *    - Formats the fetched data for easier use in the component.
+ * - `useEffect`: Fetches the details of the selected community hall when the `hallId` or `communityHalls` changes.
+ * 
+ * Logic:
+ * - Fetches the list of community halls using the `useEnabledMDMS` hook.
+ * - Filters the fetched data to find the details of the community hall with the given `hallId`.
+ * - Updates the `selectedHall` state with the details of the selected community hall.
+ * - Handles the visibility of the modal using the `setShowDetails` function.
+ * 
+ * Returns:
+ * - A modal displaying the details of the selected community hall, including its name, description, and other metadata.
+ * - Includes a close button to hide the modal.
+ */
 const ChbCommunityHallDetails = ({ hallId, setShowDetails }) => {
   const [selectedHall, setSelectedHall] = useState(null);
   const [showPopup, setShowPopup] = useState(false);
   const stateId = Digit.ULBService.getStateId();
   const tenantId = Digit.ULBService.getCitizenCurrentTenant(true) || Digit.ULBService.getCurrentTenantId();
 
-  const { data: communityHalls } = Digit.Hooks.useCustomMDMS(tenantId, "CHB", [{ name: "CommunityHalls" }], {
+  const { data: communityHalls } = Digit.Hooks.useEnabledMDMS(tenantId, "CHB", [{ name: "CommunityHalls" }], {
     select: (data) => {
       const formattedData = data?.["CHB"]?.["CommunityHalls"];
       return formattedData;

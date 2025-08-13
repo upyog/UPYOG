@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useEffect } from "react"
+import React, { useCallback, useMemo, useEffect, useState } from "react"
 import { useForm, Controller } from "react-hook-form";
 import { TextInput, SubmitBar, LinkLabel, ActionBar, CloseSvg, DatePicker, CardLabelError, SearchForm, SearchField, Dropdown, Table, Card, MobileNumber, Loader, CardText, Header } from "@upyog/digit-ui-react-components";
 import { Link } from "react-router-dom";
@@ -8,11 +8,13 @@ import { Link } from "react-router-dom";
  * Displays table only when the data is available and on the click of search button
  */
 const SVSearchApplication = ({ tenantId, isLoading, t, onSubmit, data, count, setShowToast }) => {
-
+    const allCities = Digit.Hooks.sv.useTenants();
     const isMobile = window.Digit.Utils.browser.isMobile();
     const todaydate = new Date();
     const today = todaydate.toISOString().split("T")[0];
-    const { register, control, handleSubmit, setValue, getValues, reset, formState } = useForm({
+    const [vendingLocality, setVendingLocality] = useState(null)
+    
+    const { register, control, handleSubmit, setValue, getValues, reset, formState, watch } = useForm({
         defaultValues: {
             offset: 0,
             limit: !isMobile && 10,
@@ -35,9 +37,19 @@ const SVSearchApplication = ({ tenantId, isLoading, t, onSubmit, data, count, se
         setValue("toDate", today);
     }, [register, setValue, today])
 
+    const paymentStatusOptions = [
+        { i18nKey: "SV_PENDING_PAYMENT", code: "PENDING_PAYMENT", value: "Pending Payment" },
+        { i18nKey: "SV_PAID", code: "PAID", value: "Paid" }
+    ];
+    const renewalStatusOptions = [
+        { i18nKey: "SV_ELIGIBLE_TO_RENEW", code: "ELIGIBLE_TO_RENEW", value: "Eligible to Renew" },
+        { i18nKey: "SV_RENEW_IN_PROGRESS", code: "RENEW_IN_PROGRESS", value: "Renew in Progress" },
+        { i18nKey: "SV_RENEW_APPLICATION_CREATED", code: "RENEW_APPLICATION_CREATED", value: "Renew Application Created" },  
+        { i18nKey: "SV_RENEWED", code: "RENEWED", value: "Renewed" }
+    ];          
 
     // hook for fetching vending type data
-    const { data: vendingTypeData } = Digit.Hooks.useCustomMDMS(Digit.ULBService.getStateId(), "StreetVending", [{ name: "VendingActivityType" }],
+    const { data: vendingTypeData } = Digit.Hooks.useEnabledMDMS(Digit.ULBService.getStateId(), "StreetVending", [{ name: "VendingActivityType" }],
         {
             select: (data) => {
                 const formattedData = data?.["StreetVending"]?.["VendingActivityType"]
@@ -49,17 +61,19 @@ const SVSearchApplication = ({ tenantId, isLoading, t, onSubmit, data, count, se
         vendingTypeOptions.push({ i18nKey: `${vending.name}`, code: `${vending.code}`, value: `${vending.name}` })
     })
 
-    // hook for fetching vending zone data
-    const { data: vendingZone } = Digit.Hooks.useCustomMDMS(Digit.ULBService.getStateId(), "StreetVending", [{ name: "VendingZones" }],
-        {
-            select: (data) => {
-                const formattedData = data?.["StreetVending"]?.["VendingZones"]
-                return formattedData;
-            },
-        });
+    /* fetching vending zones from boundary service */
+    const { data: fetchedVendingZones } = Digit.Hooks.useBoundaryLocalities(
+      vendingLocality?.code,
+      "vendingzones",
+      {
+        enabled: !!vendingLocality,
+      },
+      t
+    );
+
     let vending_Zone = [];
-    vendingZone && vendingZone.map((zone) => {
-        vending_Zone.push({ i18nKey: `${zone.name}`, code: `${zone.code}`, value: `${zone.name}` })
+    fetchedVendingZones && fetchedVendingZones.map((vendingData) => {
+      vending_Zone.push({ i18nKey: vendingData?.i18nkey, code: vendingData?.code, value: vendingData?.name })
     })
 
     const stateId = Digit.ULBService.getStateId();
@@ -105,7 +119,7 @@ const SVSearchApplication = ({ tenantId, isLoading, t, onSubmit, data, count, se
         {
             Header: t("SV_VENDING_ZONES"),
             Cell: (row) => {
-                return GetCell(`${row?.row?.original?.vendingZone}`)
+                return GetCell(`${t(row?.row?.original?.vendingZoneValue)}`)
 
             },
             disableSortBy: true,
@@ -162,45 +176,7 @@ const SVSearchApplication = ({ tenantId, isLoading, t, onSubmit, data, count, se
                     <TextInput name="applicationNumber" inputRef={register({})} />
                 </SearchField>
 
-                <SearchField>
-                    <label>{t("SV_VENDING_TYPE")}</label>
-                    <Controller
-                        control={control}
-                        name="vendingType"
-                        render={(props) => (
-                            <Dropdown
-                                selected={props.value}
-                                select={props.onChange}
-                                onBlur={props.onBlur}
-                                option={vendingTypeOptions}
-                                optionKey="i18nKey"
-                                t={t}
-                                disable={false}
-                            />
-                        )}
-                    />
-                </SearchField>
-
-                <SearchField>
-                    <label>{t("SV_VENDING_ZONES")}</label>
-                    <Controller
-                        control={control}
-                        name="vendingZone"
-                        render={(props) => (
-                            <Dropdown
-                                selected={props.value}
-                                select={props.onChange}
-                                onBlur={props.onBlur}
-                                option={vending_Zone}
-                                optionKey="i18nKey"
-                                t={t}
-                                disable={false}
-                            />
-                        )}
-                    />
-                </SearchField>
-
-                <SearchField>
+                                <SearchField>
                     <label>{t("SV_REGISTERED_MOB_NUMBER")}</label>
                     <MobileNumber
                         name="mobileNumber"
@@ -241,6 +217,105 @@ const SVSearchApplication = ({ tenantId, isLoading, t, onSubmit, data, count, se
                         control={control}
                     />
                 </SearchField>
+
+                <SearchField>
+                    <label>{t("SV_VENDING_TYPE")}</label>
+                    <Controller
+                        control={control}
+                        name="vendingType"
+                        render={(props) => (
+                            <Dropdown
+                                selected={props.value}
+                                select={props.onChange}
+                                onBlur={props.onBlur}
+                                option={vendingTypeOptions}
+                                optionKey="i18nKey"
+                                t={t}
+                                disable={false}
+                            />
+                        )}
+                    />
+                </SearchField>
+
+                <SearchField>
+                    <label>{t("SV_VENDING_LOCALITY")}</label>
+                    <Controller
+                        control={control}
+                        name="vendingLocality"
+                        defaultValue={vendingLocality}
+                        render={(props) => (
+                            <Dropdown
+                                selected={vendingLocality}
+                                select={(e) => setVendingLocality(e)}
+                                // selected={props.value}
+                                // select={props.onChange}
+                                option={allCities}
+                                optionKey="i18nKey"
+                                t={t}
+                                disable={false}
+                            />
+                        )}
+                    />
+                </SearchField>
+
+                <SearchField>
+                    <label>{t("SV_VENDING_ZONES")}</label>
+                    <Controller
+                        control={control}
+                        name="vendingZone"
+                        render={(props) => (
+                            <Dropdown
+                                selected={props.value}
+                                select={props.onChange}
+                                onBlur={props.onBlur}
+                                option={vending_Zone}
+                                optionKey="i18nKey"
+                                t={t}
+                                disable={false}
+                            />
+                        )}
+                    />
+                </SearchField>
+
+                <SearchField>
+                    <label>{t("SV_PAYMENT_STATUS")}</label>
+                    <Controller
+                        control={control}
+                        name="paymentStatus"
+                        render={(props) => (
+                            <Dropdown
+                                selected={props.value}
+                                select={props.onChange}
+                                onBlur={props.onBlur}
+                                option={paymentStatusOptions}
+                                optionKey="i18nKey"
+                                t={t}
+                                disable={false}
+                            />
+                        )}
+                    />
+                </SearchField>
+
+                <SearchField>
+                    <label>{t("SV_RENEWAL_STATUS")}</label>
+                    <Controller
+                        control={control}
+                        name="renewalStatus"
+                        render={(props) => (
+                            <Dropdown
+                                selected={props.value}
+                                select={props.onChange}
+                                onBlur={props.onBlur}
+                                option={renewalStatusOptions}
+                                optionKey="i18nKey"
+                                t={t}
+                                disable={false}
+                            />
+                        )}
+                    />
+                </SearchField>
+
+
                 {/* Empty Field added for the formatting of the form */}
                 <SearchField></SearchField> 
                 <SearchField className="submit">

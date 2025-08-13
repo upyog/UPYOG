@@ -29,6 +29,16 @@ public class IdGenRepository {
 	@Autowired
 	private RestTemplate restTemplate;
 
+	/**
+	 * Generates a list of unique IDs using the ID generation service.
+	 *
+	 * @param requestInfo The request information containing details about the request.
+	 * @param tenantId   The tenant ID for which the IDs are to be generated.
+	 * @param name       The name of the ID to be generated.
+	 * @param format     The format of the ID to be generated.
+	 * @param count      The number of IDs to be generated.
+	 * @return An IdGenerationResponse object containing the generated IDs.
+	 */
 	public IdGenerationResponse getId(RequestInfo requestInfo, String tenantId, String name, String format, int count) {
 
 		List<IdRequest> reqList = new ArrayList<>();

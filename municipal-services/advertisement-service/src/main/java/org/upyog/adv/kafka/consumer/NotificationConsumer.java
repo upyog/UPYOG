@@ -15,6 +15,21 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * This class acts as a Kafka consumer for the Advertisement Booking Service.
+ * It listens to booking-related topics and processes notifications accordingly.
+ * 
+ * Key responsibilities:
+ * - Listens to advertisement booking creation and update events
+ * - Deserializes Kafka messages into BookingRequest objects
+ * - Triggers notifications based on booking status changes
+ * - Handles errors during message processing
+ * 
+ * Dependencies:
+ * - ADVNotificationService: Handles notification delivery
+ * - ObjectMapper: JSON serialization/deserialization
+ */
+
 @Service
 @Slf4j
 public class NotificationConsumer {

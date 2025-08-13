@@ -55,7 +55,16 @@ public class PetConfiguration {
 
 	@Value("${egov.user.search.path}")
 	private String userSearchEndpoint;
+	
+	@Value("${egov.user.context.path}")
+	private String userContextPath;
 
+	@Value("${egov.user.create.path}")
+	private String userCreateEndpoint;
+
+	@Value("${egov.user.update.path}")
+	private String userUpdateEndpoint;
+	
 	// IDGEN config
 
 	@Value("${egov.idgen.host}")
@@ -151,7 +160,24 @@ public class PetConfiguration {
 
 	@Value("${egov.mdms.search.endpoint}")
 	private String mdmsEndpoint;
-
+	
+	@Value("${upyog.mdms.v2.host}")
+	private String mdmsV2Host;
+	
+	@Value("${upyog.mdms.v2.search.endpoint}")
+	private String mdmsV2Endpoint;
+	
+	@Value("${upyog.mdms.v2.enabled}")
+	private boolean mdmsV2Enabled;
+	
+	@PostConstruct
+	public void init() {
+		if(mdmsV2Enabled) {
+			mdmsHost = mdmsV2Host;
+			mdmsEndpoint = mdmsV2Endpoint;
+		}
+	}
+	
 	// Billing-Service
 
 	@Value("${egbs.host}")

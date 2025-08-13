@@ -1,5 +1,13 @@
 import { ADSServices } from "../../elements/ADS";
 
+/*
+  ADSSearch object defines several methods for searching and processing booking applications:
+  all: Fetches all booking applications for a specific tenant, with optional filters.
+  application: Retrieves the first booking application for the tenant based on filters.
+  BookingDetails: Transforms the booking data (such as applicant details, address, cart details, and documents) into a structured format for display.
+  applicationDetails: Combines the application data with the transformed booking details, returning both the raw data and the processed version for employee usage.
+*/
+
 export const ADSSearch = {
   
   all: async (tenantId, filters = {}) => {

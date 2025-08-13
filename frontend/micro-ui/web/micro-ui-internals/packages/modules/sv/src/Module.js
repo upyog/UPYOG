@@ -25,7 +25,7 @@ import SvApplicationDetails from "./pages/citizen/SvApplicationDetails";
 import Caption from "./components/Caption";
 import ViewTimeline from "./components/ViewTimeline";
 import SVSpecialCategory from "./pageComponents/SVSpecialCategory";
-
+import RenewPopup from "./components/RenewPopup";
 
 const componentsToRegister = {
    Create:SVCreate,
@@ -45,7 +45,8 @@ const componentsToRegister = {
    SvApplicationDetails,
    Caption,
    ViewTimeline,
-   SVSpecialCategory
+   SVSpecialCategory,
+   RenewPopup
   };
   
   // function to register the component as per standard 

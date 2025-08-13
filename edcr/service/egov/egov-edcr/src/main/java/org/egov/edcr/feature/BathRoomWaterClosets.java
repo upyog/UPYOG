@@ -1,5 +1,5 @@
 /*
- * eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
+ * UPYOG  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  * accountability and the service delivery of the government  organizations.
  *
  *  Copyright (C) <2019>  eGovernments Foundation
@@ -51,114 +51,248 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
-import org.egov.common.entity.edcr.Block;
-import org.egov.common.entity.edcr.Floor;
-import org.egov.common.entity.edcr.Measurement;
-import org.egov.common.entity.edcr.Plan;
-import org.egov.common.entity.edcr.Result;
-import org.egov.common.entity.edcr.RoomHeight;
-import org.egov.common.entity.edcr.ScrutinyDetail;
+import org.apache.logging.log4j.Logger;
+import org.egov.common.entity.edcr.*;
+import org.egov.edcr.service.MDMSCacheManager;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import static org.egov.edcr.constants.EdcrReportConstants.*;
+import static org.egov.edcr.service.FeatureUtil.mapReportDetails;
 
 @Service
 public class BathRoomWaterClosets extends FeatureProcess {
 
-	private static final Logger LOG = LogManager.getLogger(BathRoomWaterClosets.class);
-	private static final String RULE_41_IV = "41-iv";
-	public static final String BathroomWaterClosets_DESCRIPTION = "Bathroom Water Closets";
+    // Logger for logging information and errors
+    private static final Logger LOG = LogManager.getLogger(BathRoomWaterClosets.class);
 
-	@Override
-	public Plan validate(Plan pl) {
+    /**
+     * This method is used to validate the plan object.
+     * Currently, no validation logic is implemented.
+     *
+     * @param pl The plan object to validate.
+     * @return The same plan object without any modifications.
+     */
+    @Override
+    public Plan validate(Plan pl) {
+        return pl;
+    }
 
-		return pl;
-	}
-//Method updated by Neha Sharma
-	@Override
-	public Plan process(Plan pl) {
 
-		ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
-		scrutinyDetail.setKey("Common_Bathroom Water Closets");
-		scrutinyDetail.addColumnHeading(1, RULE_NO);
-		scrutinyDetail.addColumnHeading(2, DESCRIPTION);
-		scrutinyDetail.addColumnHeading(3, REQUIRED);
-		scrutinyDetail.addColumnHeading(4, PROVIDED);
-		scrutinyDetail.addColumnHeading(5, STATUS);
+    @Autowired
+   	MDMSCacheManager cache;
 
-		Map<String, String> details = new HashMap<>();
-		details.put(RULE_NO, RULE_41_IV);
-		details.put(DESCRIPTION, BathroomWaterClosets_DESCRIPTION);
+    /**
+     * Processes the given {@link Plan} to validate bathroom water closet areas, widths, and heights
+     * based on feature rules defined in MDMS.
+     *
+     * @param pl the plan to process
+     * @return the processed plan with scrutiny details added if validation results are present
+     */
 
-		BigDecimal minHeight = BigDecimal.ZERO, totalArea = BigDecimal.ZERO, minWidth = BigDecimal.ZERO;
+    @Override
+    public Plan process(Plan pl) {
+        ScrutinyDetail scrutinyDetail = createScrutinyDetail();
 
-		for (Block b : pl.getBlocks()) {
-			if (b.getBuilding() != null && b.getBuilding().getFloors() != null
-					&& !b.getBuilding().getFloors().isEmpty()) {
+//        List<Object> rules = cache.getFeatureRules(pl, MdmsFeatureConstants.BATHROOM_WATER_CLOSETS, false);
+//        Optional<MdmsFeatureRule> matchedRule = rules.stream().map(obj -> (MdmsFeatureRule) obj).findFirst();
+//
+//        if (!matchedRule.isPresent()) return pl;
+//
+//        MdmsFeatureRule rule = matchedRule.get();
+//        BigDecimal reqArea = rule.getBathroomWCRequiredArea() != null ? rule.getBathroomWCRequiredArea() : BigDecimal.ZERO;
+//        BigDecimal reqWidth = rule.getBathroomWCRequiredWidth() != null ? rule.getBathroomWCRequiredWidth() : BigDecimal.ZERO;
+//        BigDecimal reqHeight = rule.getBathroomWCRequiredHeight() != null ? rule.getBathroomWCRequiredHeight() : BigDecimal.ZERO;
+        
+//        List<Object> rule = cache.getFeatureRules1(pl, MdmsFeatureConstants.BATHROOM_WATER_CLOSETS, false);
+//        Optional<BathroomWCRule> matchedRule = rules.stream()
+//            .filter(obj -> obj instanceof BathroomWCRule)
+//            .map(obj -> (BathroomWCRule) obj)
+//            .findFirst();
 
-				for (Floor f : b.getBuilding().getFloors()) {
+       
+//        
+//        List<BathroomWCRule> rules = cache.getFeatureRules1(
+//        	    pl,
+//        	    MdmsFeatureConstants.BATHROOM_WATER_CLOSETS,
+//        	    false,
+//        	    BathroomWCRule.class
+//        	);
+        // Now safely filter for BathroomWCRule
+//        Optional<BathroomWCRule> matchedRule = rules.stream()
+//            .filter(r -> r instanceof BathroomWCRule)
+//            .map(r -> (BathroomWCRule) r)
+//            .findFirst();
+      
+//
+//        BigDecimal reqArea   = rule.getBathroomWCRequiredArea() != null ? rule.getBathroomWCRequiredArea() : BigDecimal.ZERO;
+//        BigDecimal reqWidth  = rule.getBathroomWCRequiredWidth() != null ? rule.getBathroomWCRequiredWidth() : BigDecimal.ZERO;
+//        BigDecimal reqHeight = rule.getBathroomWCRequiredHeight() != null ? rule.getBathroomWCRequiredHeight() : BigDecimal.ZERO;
+        
+        List<Object> rules = cache.getFeatureRules(pl, FeatureEnum.BATHROOM_WATER_CLOSETS.getValue(), false);
+        Optional<BathroomWCRequirement> matchedRule = rules.stream()
+            .filter(BathroomWCRequirement.class::isInstance)
+            .map(BathroomWCRequirement.class::cast)
+            .findFirst();
+        
+        if (!matchedRule.isPresent()) return pl;
 
-					if (f.getBathRoomWaterClosets() != null && f.getBathRoomWaterClosets().getHeights() != null
-							&& !f.getBathRoomWaterClosets().getHeights().isEmpty()
-							&& f.getBathRoomWaterClosets().getRooms() != null
-							&& !f.getBathRoomWaterClosets().getRooms().isEmpty()) {
+            BathroomWCRequirement rule = matchedRule.get();
+            BigDecimal reqArea = rule.getBathroomWCRequiredArea();
+            BigDecimal reqWidth = rule.getBathroomWCRequiredWidth();
+            BigDecimal reqHeight = rule.getBathroomWCRequiredHeight();
+       
 
-						if (f.getBathRoomWaterClosets().getHeights() != null
-								&& !f.getBathRoomWaterClosets().getHeights().isEmpty()) {
-							minHeight = f.getBathRoomWaterClosets().getHeights().get(0).getHeight();
-							for (RoomHeight rh : f.getBathRoomWaterClosets().getHeights()) {
-								if (rh.getHeight().compareTo(minHeight) < 0) {
-									minHeight = rh.getHeight();
-								}
-							}
-						}
 
-						if (f.getBathRoomWaterClosets().getRooms() != null
-								&& !f.getBathRoomWaterClosets().getRooms().isEmpty()) {
-							minWidth = f.getBathRoomWaterClosets().getRooms().get(0).getWidth();
-							for (Measurement m : f.getBathRoomWaterClosets().getRooms()) {
-								totalArea = totalArea.add(m.getArea());
-								if (m.getWidth().compareTo(minWidth) < 0) {
-									minWidth = m.getWidth();
-								}
-							}
-						}
+        // Use these values accordingly
 
-						if (minHeight.compareTo(new BigDecimal(2.4)) >= 0
-								&& totalArea.compareTo(new BigDecimal(1.1)) >= 0
-								&& minWidth.compareTo(new BigDecimal(0.9)) >= 0) {
 
-							details.put(REQUIRED, "Height >= 2.4, Total Area >= 1.1, Width >= 0.9");
-							details.put(PROVIDED, "Height >= " + minHeight + ", Total Area >= " + totalArea
-									+ ", Width >= " + minWidth);
-							details.put(STATUS, Result.Accepted.getResultVal());
-							scrutinyDetail.getDetail().add(details);
-							pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+        for (Block block : pl.getBlocks()) {
+            processBlock(pl, block, reqArea, reqWidth, reqHeight, scrutinyDetail);
+        }
 
-						} else {
-							details.put(REQUIRED, "Height >= 2.4, Total Area >= 2.8, Width >= 1.2");
-							details.put(PROVIDED, "Height >= " + minHeight + ", Total Area >= " + totalArea
-									+ ", Width >= " + minWidth);
-							details.put(STATUS, Result.Not_Accepted.getResultVal());
-							scrutinyDetail.getDetail().add(details);
-							pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
-						}
+        if (!scrutinyDetail.getDetail().isEmpty()) {
+            pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+        }
 
-					}
+        return pl;
+    }
+    
+    /**
+     * Processes each block in the plan and validates the bathroom water closet dimensions for each floor.
+     *
+     * @param plan           the plan containing the block
+     * @param block          the block to process
+     * @param reqArea        required minimum area for bathroom WC
+     * @param reqWidth       required minimum width for bathroom WC
+     * @param reqHeight      required minimum height for bathroom WC
+     * @param scrutinyDetail the scrutiny detail object to collect validation results
+     */
 
-				}
-			}
+    private void processBlock(Plan plan, Block block, BigDecimal reqArea, BigDecimal reqWidth, BigDecimal reqHeight,
+                              ScrutinyDetail scrutinyDetail) {
+        if (block.getBuilding() == null || block.getBuilding().getFloors() == null) return;
 
-		}
+        for (Floor floor : block.getBuilding().getFloors()) {
+            processFloor(plan, floor, reqArea, reqWidth, reqHeight, scrutinyDetail);
+        }
+    }
 
-		return pl;
-	}
+    
+    /**
+     * Processes each floor of a block and validates bathroom WC measurements.
+     *
+     * @param plan           the plan object
+     * @param floor          the floor being processed
+     * @param reqArea        required minimum area
+     * @param reqWidth       required minimum width
+     * @param reqHeight      required minimum height
+     * @param scrutinyDetail the scrutiny detail to collect validation output
+     */
+    private void processFloor(Plan plan, Floor floor, BigDecimal reqArea, BigDecimal reqWidth, BigDecimal reqHeight,
+                              ScrutinyDetail scrutinyDetail) {
+        org.egov.common.entity.edcr.Room bathWC = floor.getBathRoomWaterClosets();
+        if (bathWC == null || bathWC.getHeights() == null || bathWC.getHeights().isEmpty()
+                || bathWC.getRooms() == null || bathWC.getRooms().isEmpty()) return;
 
-	@Override
-	public Map<String, Date> getAmendments() {
-		return new LinkedHashMap<>();
-	}
+        validateBathroomWaterCloset(plan, floor, bathWC.getRooms(), bathWC.getHeights(), reqArea, reqWidth, reqHeight, scrutinyDetail);
+    }
 
+    /**
+     * Validates the area, width, and height of bathroom water closets on a given floor.
+     * Collects validation results and populates the scrutiny detail.
+     *
+     * @param plan           the plan object
+     * @param floor          the floor being validated
+     * @param rooms          list of measurements for bathroom WCs
+     * @param heights        list of height measurements
+     * @param reqArea        required minimum area
+     * @param reqWidth       required minimum width
+     * @param reqHeight      required minimum height
+     * @param scrutinyDetail the scrutiny detail to record results
+     */
+    private void validateBathroomWaterCloset(Plan plan, Floor floor, List<Measurement> rooms, List<RoomHeight> heights,
+                                             BigDecimal reqArea, BigDecimal reqWidth, BigDecimal reqHeight,
+                                             ScrutinyDetail scrutinyDetail) {
+
+        BigDecimal totalArea = BigDecimal.ZERO;
+        BigDecimal minWidth = rooms.get(0).getWidth();
+        BigDecimal minHeight = heights.get(0).getHeight();
+
+        for (Measurement m : rooms) {
+            totalArea = totalArea.add(m.getArea());
+            if (m.getWidth().compareTo(minWidth) < 0) {
+                minWidth = m.getWidth();
+            }
+        }
+
+        for (RoomHeight rh : heights) {
+            if (rh.getHeight().compareTo(minHeight) < 0) {
+                minHeight = rh.getHeight();
+            }
+        }
+
+        boolean isAccepted = minHeight.compareTo(reqHeight) >= 0
+                && totalArea.compareTo(reqArea) >= 0
+                && minWidth.compareTo(reqWidth) >= 0;
+
+        Map<String, String> resultRow = createResultRow(floor, reqArea, reqWidth, reqHeight, totalArea, minWidth, minHeight, isAccepted);
+        scrutinyDetail.getDetail().add(resultRow);
+    }
+
+    /**
+     * Creates and initializes a {@link ScrutinyDetail} object for bathroom water closet validation.
+     *
+     * @return a new scrutiny detail instance with column headings set
+     */
+    private ScrutinyDetail createScrutinyDetail() {
+        ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
+        scrutinyDetail.setKey(Common_Bathroom_Water_Closets);
+        scrutinyDetail.addColumnHeading(1, RULE_NO);
+        scrutinyDetail.addColumnHeading(2, DESCRIPTION);
+        scrutinyDetail.addColumnHeading(3, REQUIRED);
+        scrutinyDetail.addColumnHeading(4, PROVIDED);
+        scrutinyDetail.addColumnHeading(5, STATUS);
+        return scrutinyDetail;
+    }
+
+    /**
+     * Creates a result row map containing the outcome of bathroom water closet validation for a given floor.
+     *
+     * @param floor      the floor being validated
+     * @param reqArea    required area
+     * @param reqWidth   required width
+     * @param reqHeight  required height
+     * @param totalArea  total area provided
+     * @param minWidth   minimum width provided
+     * @param minHeight  minimum height provided
+     * @param isAccepted whether the validation passed
+     * @return a map representing one row of validation result
+     */
+    private Map<String, String> createResultRow(Floor floor, BigDecimal reqArea, BigDecimal reqWidth, BigDecimal reqHeight,
+                                                BigDecimal totalArea, BigDecimal minWidth, BigDecimal minHeight, boolean isAccepted) {
+        ReportScrutinyDetail detail = new ReportScrutinyDetail();
+        detail.setRuleNo(RULE_41_IV);
+        detail.setDescription(BathroomWaterClosets_DESCRIPTION);
+        detail.setRequired(HEIGHT + reqHeight + TOTAL_AREA + reqArea + WIDTH + reqWidth);
+        detail.setProvided(HEIGHT + minHeight + TOTAL_AREA + totalArea + WIDTH + minWidth);
+        detail.setStatus(isAccepted ? Result.Accepted.getResultVal() : Result.Not_Accepted.getResultVal());
+        return mapReportDetails(detail);
+    }
+
+
+    /**
+     * This method returns an empty map as no amendments are defined for this feature.
+     *
+     * @return An empty map of amendments.
+     */
+    @Override
+    public Map<String, Date> getAmendments() {
+        return new LinkedHashMap<>();
+    }
 }

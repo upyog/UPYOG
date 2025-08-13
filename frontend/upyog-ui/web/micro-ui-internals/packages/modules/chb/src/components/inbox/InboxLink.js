@@ -1,32 +1,30 @@
-import { Card, PropertyHouse } from "@upyog/digit-ui-react-components";
+import { Card, CHBIcon } from "@upyog/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 
+
+ /*
+    Renders a card displaying dynamic links related to the CHB service.
+    Links are filtered based on the provided businessService and the user's roles.
+    Displays links such as "New Community Hall Booking" and "My Bookings".
+  */
 const InboxLinks = ({ parentRoute, businessService }) => {
   const { t } = useTranslation();
 
   const allLinks = [
     {
-      text: "ES_TITLE_NEW_PET_REGISTRATION",
-      link: "/upyog-ui/employee/chb/new-application",
-      businessService: "chb",
-      roles: ["CHB_APPROVER"],
+      text: "ES_NEW_COMMUNITY_HALL_BOOKING",
+      link: "/upyog-ui/employee/chb/bookHall/searchhall",
+      businessService: "booking-refund",
+      roles: ["CHB_CEMP"],
     },
     {
-      text: "CHB_SEARCH",
-      link: `/upyog-ui/employee/chb/search`,
-      businessService: "chb",
+      text: "ES_COMMON_APPLICATION_SEARCH",
+      link: `/upyog-ui/employee/chb/my-applications`,
+      businessService: "booking-refund",
       roles: [],
-    },
-    {
-      text: "CHB_COMMON_APPLICATION_SEARCH",
-      link: `/upyog-ui/employee/chb/application-search`,
-      businessService: "chb",
-      roles: [],
-    },
-    // { text: "PT_REPORTS", hyperLink: true, link: "/upyog-ui/employee/integration/dss/propertytax", roles: [], businessService: "PT" },
-    // { text: "PT_DASHBOARD", link: "/upyog-ui/employee/", roles: [], businessService: "PT" },
+    }
   ];
 
   const [links, setLinks] = useState([]);
@@ -43,7 +41,7 @@ const InboxLinks = ({ parentRoute, businessService }) => {
   const GetLogo = () => (
     <div className="header">
       <span className="logo">
-        <PropertyHouse />
+        <CHBIcon />
       </span>{" "}
       <span className="text">{t("CHB_SERVICE")}</span>
     </div>

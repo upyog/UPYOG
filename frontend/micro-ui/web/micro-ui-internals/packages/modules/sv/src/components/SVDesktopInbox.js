@@ -4,6 +4,17 @@ import { useTranslation } from "react-i18next";
 import ApplicationTable from "./inbox/ApplicationTable";
 import SearchApplication from "./inbox/search";
 
+/**
+ * The SVDesktopInbox component provides a structured layout for viewing application data in a table format, 
+ * with support for search, filtering, sorting, and pagination.
+ * 
+ * Key features:
+ * Dynamically loads filter components from a component registry service
+ * Manages empty state handling through a configurable empty result component
+ * Provides search functionality via SearchApplication component
+ * Renders application data in a table with configurable columns
+ * Supports pagination and sorting
+ */
 const SVDesktopInbox = ({ tableConfig, filterComponent, ...props }) => {
   
   const { data, useNewInboxAPI } = props;
