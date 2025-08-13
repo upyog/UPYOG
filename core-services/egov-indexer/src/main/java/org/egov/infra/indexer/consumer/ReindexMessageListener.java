@@ -7,6 +7,7 @@ import org.egov.infra.indexer.util.IndexerUtils;
 import org.egov.infra.indexer.web.contract.ReindexRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.kafka.listener.MessageListener;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 public class ReindexMessageListener implements MessageListener<String, String> {
 
 	@Autowired
+	@Lazy
 	private IndexerUtils indexerUtils;
 	
 	@Autowired
