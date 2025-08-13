@@ -15,8 +15,6 @@ import {
   useRecieptSearch,
   useRecieptSearchNew,
   useAssetQrCode,
-  useRecieptSearchNew,
-  useAssetQrCode,
   usePaymentSearch,
   useBulkPdfDetails,
 } from "./payment";
