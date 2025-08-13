@@ -20,7 +20,6 @@ import lombok.extern.slf4j.Slf4j;
 public class ReindexMessageListener implements MessageListener<String, String> {
 
 	@Autowired
-	@Lazy
 	private IndexerUtils indexerUtils;
 	
 	@Autowired
