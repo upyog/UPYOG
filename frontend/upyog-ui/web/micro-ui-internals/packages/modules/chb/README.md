@@ -4,7 +4,7 @@
 ## Install
 
 ```bash
-npm install --save @nudmcdgnpm/digit-ui-module-chb
+npm install --save @upyog/digit-ui-module-chb
 ```
 
 ## Limitation
@@ -22,7 +22,7 @@ frontend/micro-ui/web/package.json
 ```
 
 ```json
-"@nudmcdgnpm/digit-ui-module-chb":"^1.2.7",
+"@upyog/digit-ui-module-chb":"^1.2.7",
 ```
 
 then navigate to App.js

@@ -385,7 +385,6 @@ const fsm = {
   useDesludging: useDesludging,
   useMDMS: useMDMS,
   useSearch,
-  useRouteSubscription,
   useSearchAll,
   useInbox: useFSMInbox,
   useApplicationUpdate,
@@ -793,6 +792,7 @@ const Hooks = {
   vendor,
   useEnabledMDMS,
   useSelectedMDMS,
+  useRouteSubscription
 };
 
 export default Hooks;

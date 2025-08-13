@@ -4,7 +4,6 @@ import { stringReplaceAll, getPattern, convertDateTimeToEpoch, convertDateToEpoc
 import Timeline from "../components/Timeline";
 import cloneDeep from "lodash/cloneDeep";
 import { PTService } from "../../../../libraries/src/services/elements/PT";
-import { PTService } from "../../../../libraries/src/services/elements/PT";
 
 const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
     let validation = {};

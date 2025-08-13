@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from "react-i18next";
 import { useHistory } from 'react-router-dom';
-import { CardLabel,SubmitBar, Dropdown } from '@nudmcdgnpm/digit-ui-react-components';
+import { CardLabel,SubmitBar, Dropdown } from '@upyog/digit-ui-react-components';
 
 
 const CHBMapView = () => {
