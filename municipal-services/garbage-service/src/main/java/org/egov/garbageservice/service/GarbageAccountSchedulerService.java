@@ -333,9 +333,12 @@ public class GarbageAccountSchedulerService {
 	//				triggerNotifications
 	//				notificationService.triggerNotificationsGenerateBill(garbageAccount, billResponse.getBill().get(0),generateBillRequest.getRequestInfo(),grbgBillTracker);
 					message = "Bill Generated";
+				}else {
+					message = "Bill Could Not Be Generated";
 				}
+			}else {
+				message = "Bill Amount Zero";
 			}
-			message = "Bill Could Not Be Generated";
 		}
 		else {
 			message = "Garbage Id Not Found";

@@ -38,13 +38,16 @@ public class DemandService {
 	public List<Demand> generateDemand(RequestInfo requestInfo, GarbageAccount garbageAccount, String businessService,
 			BigDecimal taxAmount, GenerateBillRequest generateBillRequest) {
 
-		Long taxPeriodFrom = null != generateBillRequest.getFromDate() ? generateBillRequest.getFromDate().getTime()
-				: new Date().getTime();
-		Long taxPeriodTo = null != generateBillRequest.getToDate() ? generateBillRequest.getToDate().getTime()
-				: new Date((Calendar.getInstance().getTimeInMillis() + (long) 30 * 24 * 60 * 60 * 1000)).getTime();
+		Long taxPeriodFrom = getDateToTimeStamp(generateBillRequest.getFromDate());
+//				null != generateBillRequest.getFromDate() ? generateBillRequest.getFromDate().getTime()
+//				: new Date(Calendar.getInstance().getTimeInMillis()).getTime();
+		Long taxPeriodTo = getDateToTimeStamp(generateBillRequest.getToDate());
+//				null != generateBillRequest.getToDate() ? generateBillRequest.getToDate().getTime()
+//				: new Date((Calendar.getInstance().getTimeInMillis() + (long) 30 * 24 * 60 * 60 * 1000)).getTime();
 		DemandDetail demandDetail = DemandDetail.builder().taxHeadMasterCode(GrbgConstants.BILLING_TAX_HEAD_MASTER_CODE)
 				.taxAmount(taxAmount).collectionAmount(BigDecimal.ZERO).build();
 		Calendar cal = Calendar.getInstance();
+
 		cal.add(Calendar.DAY_OF_MONTH, Integer.valueOf(grbgConfig.getGrbgBillExpiryAfter()));
 		cal.set(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DATE), 23, 59, 59);
 		
@@ -62,6 +65,31 @@ public class DemandService {
 
 		return savedDemands;
 	}
+	
+	private Long getDateToTimeStamp(Date date) {
+	
+		if(date !=null) {
+			// Get current time
+	        Calendar now = Calendar.getInstance();
+	        int hour = now.get(Calendar.HOUR_OF_DAY);
+	        int minute = now.get(Calendar.MINUTE);
+	        int second = now.get(Calendar.SECOND);
+	        int millis = now.get(Calendar.MILLISECOND);
+	
+	        // Combine original date with current time
+	        Calendar cal = Calendar.getInstance();
+	        cal.setTime(date);
+	        cal.set(Calendar.HOUR_OF_DAY, hour);
+	        cal.set(Calendar.MINUTE, minute);
+	        cal.set(Calendar.SECOND, second);
+	        cal.set(Calendar.MILLISECOND, millis);
+	
+	        return cal.getTimeInMillis();
+		}else {
+	        	return new Date(Calendar.getInstance().getTimeInMillis()).getTime();
+		}
+	}
+	
 
 	List<Demand> searchDemand(String tenantId, Set<String> consumerCodes, RequestInfo requestInfo,
 			String businessService) {
