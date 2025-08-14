@@ -93,7 +93,6 @@ const enabledModules = [
   "WT",
   "VENDOR",
   "MT",
-  "VENDOR",
   "PGRAI",
   "TP"
 ];
