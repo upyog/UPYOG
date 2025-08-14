@@ -61,7 +61,6 @@ const CHBCreate = ({ parentRoute }) => {
   const stateId = Digit.ULBService.getStateId();
   let config = [];
   const [params, setParams, clearParams] = Digit.Hooks.useSessionStorage("CHB_CREATE", {});
-  let { data: commonFields, isLoading } = Digit.Hooks.pt.useMDMS(stateId, "PropertyTax", "CommonFieldsConfig"); //  PROPERTY CONFIG HOOK , just for commkonfeild config 
   const goNext = (skipStep, index, isAddMultiple, key) => {
 
     
@@ -146,13 +145,8 @@ const CHBCreate = ({ parentRoute }) => {
     clearParams();
     queryClient.invalidateQueries("CHB_CREATE");
   };
-  if (isLoading) {
-    return <Loader />;
-  }
-
-  // commonFields=newConfig;
   /* use newConfig instead of commonFields for local development in case needed */
-  commonFields = citizenConfig;
+  let commonFields = citizenConfig;
   commonFields.forEach((obj) => {
     config = config.concat(obj.body.filter((a) => !a.hideInCitizen));
   });

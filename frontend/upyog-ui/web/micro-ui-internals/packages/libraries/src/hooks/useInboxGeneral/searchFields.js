@@ -93,32 +93,33 @@ const inboxSearchFields = {
       },
     },
   ],
-    CHB: [
-      {
-        label: "CHB_APPLICATION_NUMBER",
-        name: "bookingNo",
-        roles: [],
+  CHB: [
+    {
+      label: "CHB_BOOKING_NO",
+      name: "bookingNo",
+      roles: [],
+    },
+    {
+      label: "CHB_COMMUNITY_HALL_NAME",
+      name: "communityHallCode",
+      type: "Dropdown",
+      roles: [],
+    },
+    {
+      label: "CHB_MOBILE_NUMBER",
+      name: "mobileNumber",
+      type: "mobileNumber",
+      maxLength: 10,
+      minLength: 0,
+      roles: [],
+      pattern: "^$|[6-9][0-9]{9}",
+      errorMessages: {
+        pattern: "",
+        minLength: "",
+        maxLength: "",
       },
-      {
-        label: "CHB_HALL_NAME",
-        name: "hallName",
-        roles: [],
-      },
-      {
-        label: "CHB_MOBILE_NUMBER",
-        name: "mobileNumber",
-        type: "mobileNumber",
-        maxLength: 10,
-        minLength: 0,
-        roles: [],
-        pattern: "^$|[6-9][0-9]{9}",
-        errorMessages: {
-          pattern: "",
-          minLength: "",
-          maxLength: "",
-        },
-      },
-    ],
+    },
+  ],
     SV: [
       {
         label: "SV_APPLICATION_NUMBER",

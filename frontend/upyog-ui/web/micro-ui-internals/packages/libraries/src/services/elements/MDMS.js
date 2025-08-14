@@ -1015,7 +1015,7 @@ const getChbHallCode = (MdmsRes) => {
   });
 };
 
-const getChbPurpose= (MdmsRes) => {
+const getChbPurpose = (MdmsRes) => {
   return MdmsRes["CHB"].Purpose.filter((Purpose) => Purpose.active).map((chbPurposeDetails) => {
     return {
       ...chbPurposeDetails,
@@ -1062,6 +1062,43 @@ const getVendorDetails = (MdmsRes) => {
   //return MdmsRes;
 }; 
 
+
+
+const getMasterDataCategory = (tenantId, moduleCode, masterName, type) => ({
+  type,
+  details: {
+    tenantId: tenantId,
+    moduleDetails: [
+      {
+        moduleName: moduleCode,
+        masterDetails: [
+          {
+            name: masterName,
+          },
+        ],
+      },
+    ],
+  },
+});
+
+const getDataWithi18nkey = (MdmsRes, moduleName, masterName, i18nKeyString) => {
+  return MdmsRes[moduleName][masterName].filter((row) => row.active).map((item) => {
+    return {
+      ...item,
+      i18nKey: `${i18nKeyString + item.name}`,
+    };
+  });
+};
+
+const getDataWithi18nkeyandCode = (MdmsRes, moduleName, masterName, i18nKeyString) => {
+  return MdmsRes[moduleName][masterName].filter((row) => row.active).map((item) => {
+    return {
+      ...item,
+      i18nKey: `${i18nKeyString + item.name}`,
+      code: item.code
+    };
+  });
+};
 
 const getHrmsEmployeeRolesandDesignations = () => ({
   moduleDetails: [
@@ -1165,22 +1202,7 @@ const getTradeTypeRoleCriteria = (tenantId, moduleCode, type) => ({
     ],
   },
 });
-const getDisclaimerCriteria = (tenantId, moduleCode, type) => ({
-  type,
-  details: {
-    tenantId,
-    moduleDetails: [
-      {
-        moduleName: moduleCode,
-        masterDetails: [
-          {
-            name: "Disclaimer",
-          },
-        ],
-      },
-    ],
-  },
-});
+
 const getFSTPORejectionReasonCriteria = (tenantId, moduleCode, type) => ({
   type,
   details: {
@@ -1911,7 +1933,7 @@ const GetDocumentsTypes = (MdmsRes) => MdmsRes["BPA"].DocTypeMapping;
 
 const GetChecklist = (MdmsRes) => MdmsRes["BPA"].CheckList;
 
-const transformResponse = (type, MdmsRes, moduleCode, tenantId) => {
+const transformResponse = (type, MdmsRes, moduleCode, moduleName, tenantId, masterName, i18nKeyString) => {
   switch (type) {
     case "citymodule":
       return GetCitiesWithi18nKeys(MdmsRes, moduleCode);
@@ -2078,6 +2100,11 @@ const transformResponse = (type, MdmsRes, moduleCode, tenantId) => {
     
     case "Documents":
       return getChbDocuments(MdmsRes);
+
+    case "i18nKey":
+      return getDataWithi18nkey(MdmsRes, moduleName, masterName, i18nKeyString);
+    case "i18nkey&code":
+      return getDataWithi18nkeyandCode(MdmsRes, moduleName, masterName, i18nKeyString);
     default:
       return MdmsRes;
   }
@@ -2172,14 +2199,15 @@ export const MdmsService = {
       )
     );
   },
-  getDataByCriteria: async (tenantId, mdmsDetails, moduleCode) => {
+  getDataByCriteria: async (tenantId, mdmsDetails, moduleCode, masterName, i18nKeyString) => {
+    const moduleName = moduleCode; // moduleName is used here to pass unchanged modulecode
     const key = `MDMS.${tenantId}.${moduleCode}.${mdmsDetails.type}.${JSON.stringify(mdmsDetails.details)}`;
     const inStoreValue = PersistantStorage.get(key);
     if (inStoreValue) {
       return inStoreValue;
     }
     const { MdmsRes } = await MdmsService.call(tenantId, mdmsDetails.details);
-    const responseValue = transformResponse(mdmsDetails.type, MdmsRes, moduleCode.toUpperCase(), tenantId);
+    const responseValue = transformResponse(mdmsDetails.type, MdmsRes, moduleCode.toUpperCase(), moduleName, tenantId, masterName, i18nKeyString);
     const cacheSetting = getCacheSetting(mdmsDetails.details.moduleDetails[0].moduleName);
     PersistantStorage.set(key, responseValue, cacheSetting.cacheTimeInSecs);
     return responseValue;
@@ -2409,9 +2437,6 @@ export const MdmsService = {
 
   getTradeTypeRoleTypes: (tenantId, moduleCode, type) => {
     return MdmsService.getDataByCriteria(tenantId, getTradeTypeRoleCriteria(tenantId, moduleCode, type), moduleCode);
-  },
-  getDisclaimer : (tenantId, moduleCode, type) => {
-    return MdmsService.getDataByCriteria(tenantId, getDisclaimerCriteria(tenantId, moduleCode, type), moduleCode);
   },
 
   getFSMGenderType: (tenantId, moduleCode, type) => {
