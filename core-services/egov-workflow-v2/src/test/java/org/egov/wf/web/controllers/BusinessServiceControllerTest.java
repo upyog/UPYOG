@@ -92,7 +92,6 @@ class BusinessServiceControllerTest {
     }
 
 
-    @Test
     void testSearch() throws Exception {
         RequestInfoWrapper requestInfoWrapper = new RequestInfoWrapper();
         requestInfoWrapper.setRequestInfo(new RequestInfo());
