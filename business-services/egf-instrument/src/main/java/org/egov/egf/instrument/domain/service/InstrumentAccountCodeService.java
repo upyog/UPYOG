@@ -190,9 +190,9 @@ public class InstrumentAccountCodeService {
                 if (instrumentAccountCode.getAccountCode() != null
                         && instrumentAccountCode.getAccountCode().getGlcode() != null) {
 
-                    ChartOfAccountContract searchContract = new ChartOfAccountContract();
-                    searchContract.setGlcode(instrumentAccountCode.getAccountCode().getGlcode());
-                    searchContract.setTenantId(instrumentAccountCode.getTenantId());
+                    instrumentAccountCode.getAccountCode().setTenantId(instrumentAccountCode.getTenantId());
+                    ChartOfAccountContract accountCode = chartOfAccountContractRepository
+                            .findByGlcode(instrumentAccountCode.getAccountCode(), requestInfo);
 
                     ChartOfAccountContract accountCode = chartOfAccountContractRepository
                             .findByGlcode(searchContract, requestInfo);
