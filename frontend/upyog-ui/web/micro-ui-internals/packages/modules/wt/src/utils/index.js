@@ -31,7 +31,7 @@ export const formatDate = (dateString) => {
 };
 
  // for replacing digit-ui 
-export const APPLICATION_PATH = "/digit-ui";
+export const APPLICATION_PATH = "/upyog-ui";
 
 //Custom function which will return the formdata and inside formdata we are building the Payload.
 export const waterTankerPayload = (data) =>{

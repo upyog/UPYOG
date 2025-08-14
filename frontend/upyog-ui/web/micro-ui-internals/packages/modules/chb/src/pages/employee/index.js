@@ -35,7 +35,6 @@ const EmployeeApp = ({ path, url, userType }) => {
 
   const ApplicationDetails = Digit?.ComponentRegistryService?.getComponent("ApplicationDetails");
 
-  const Response = Digit?.ComponentRegistryService?.getComponent("CHBResponse");
   const CHBCreate = Digit?.ComponentRegistryService?.getComponent("CHBCreate");
   const isRes = window.location.href.includes("chb/response");
   const isNewRegistration = window.location.href.includes("searchhall") || window.location.href.includes("modify-application") || window.location.href.includes("chb/application-details");
@@ -68,21 +67,6 @@ const EmployeeApp = ({ path, url, userType }) => {
           <PrivateRoute path={`${path}/bookHall`} component={CHBCreate} />
           <PrivateRoute path={`${path}/application-details/:id`} component={() => <ApplicationDetails parentRoute={path} />} />
           <PrivateRoute path={`${path}/applicationsearch/application-details/:id`} component={() => <ApplicationDetails parentRoute={path} />} />
-          <PrivateRoute path={`${path}/response`} component={(props) => <Response {...props} parentRoute={path} />} />
-          <PrivateRoute path={`${path}/search`} component={(props) => <Search {...props} t={t} parentRoute={path} />} />
-          <PrivateRoute
-            path={`${path}/searchold`}
-            component={() => (
-              <Inbox
-                parentRoute={path}
-                businessService="booking-refund"
-                middlewareSearch={searchMW}
-                initialStates={inboxInitialState}
-                isInbox={false}
-                EmptyResultInboxComp={"PTEmptyResultInbox"}
-              />
-            )}
-          />
           <PrivateRoute path={`${path}/my-applications`} component={(props) => <SearchApp {...props} parentRoute={path} />} />
         </div>
         </React.Fragment>

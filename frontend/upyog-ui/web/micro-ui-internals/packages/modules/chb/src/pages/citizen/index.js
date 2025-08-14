@@ -46,9 +46,7 @@ const hideBackButtonConfig = [
 const App = () => {
   const { path, url, ...match } = useRouteMatch();
   const { t } = useTranslation();
-  const inboxInitialState = {
-    searchParams: {},
-  };
+  
 
   const CHBCreate = Digit?.ComponentRegistryService?.getComponent("CHBCreate");
   const CHBApplicationDetails = Digit?.ComponentRegistryService?.getComponent("CHBApplicationDetails");
@@ -64,7 +62,7 @@ const App = () => {
           <PrivateRoute path={`${path}/myBookings`} component={CHBMyApplications}></PrivateRoute>
           <PrivateRoute path={`${path}/application/:acknowledgementIds/:tenantId`} component={CHBApplicationDetails}></PrivateRoute>
           <PrivateRoute path={`${path}/map`} component={CHBMapView}></PrivateRoute>
-          <PrivateRoute path={`${path}/bookHall/search`} component={(props) => <Search {...props} t={t} parentRoute={path} />} /> 
+          {/* <PrivateRoute path={`${path}/bookHall/search`} component={(props) => <Search {...props} t={t} parentRoute={path} />} />  */}
         </AppContainer>
       </Switch>
     </span>
