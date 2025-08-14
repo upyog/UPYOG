@@ -1,0 +1,1256 @@
+{
+	"info": {
+		"_postman_id": "8bc53c8b-70db-4241-84d4-7dcd8639cd48",
+		"name": "Billing Service",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "31174873"
+	},
+	"item": [
+		{
+			"name": "bill v2 search",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "accept",
+						"value": "application/json, text/plain, */*"
+					},
+					{
+						"key": "accept-language",
+						"value": "en-US,en;q=0.9"
+					},
+					{
+						"key": "content-type",
+						"value": "application/json;charset=UTF-8"
+					},
+					{
+						"key": "origin",
+						"value": "https://niuatt.niua.in"
+					},
+					{
+						"key": "priority",
+						"value": "u=1, i"
+					},
+					{
+						"key": "referer",
+						"value": "https://niuatt.niua.in/sv-ui/employee/payment/collect/sv-services/SV-1013-001437"
+					},
+					{
+						"key": "sec-ch-ua",
+						"value": "\"Chromium\";v=\"136\", \"Google Chrome\";v=\"136\", \"Not.A/Brand\";v=\"99\""
+					},
+					{
+						"key": "sec-ch-ua-mobile",
+						"value": "?0"
+					},
+					{
+						"key": "sec-ch-ua-platform",
+						"value": "\"Linux\""
+					},
+					{
+						"key": "sec-fetch-dest",
+						"value": "empty"
+					},
+					{
+						"key": "sec-fetch-mode",
+						"value": "cors"
+					},
+					{
+						"key": "sec-fetch-site",
+						"value": "same-origin"
+					},
+					{
+						"key": "user-agent",
+						"value": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"RequestInfo\": {\n    \"apiId\": \"Rainmaker\",\n    \"authToken\": \"d1d09aa5-804d-4663-8aa5-9b35c633de3d\",\n    \"userInfo\": {\n        \"id\": 781,\n        \"uuid\": \"9ff0b9bc-ae68-4a4d-a7ac-83f95257dc2d\",\n        \"userName\": \"SV_CEMP\",\n        \"name\": \"Street Vending\",\n        \"mobileNumber\": \"9810010199\",\n        \"emailId\": null,\n        \"locale\": null,\n        \"type\": \"EMPLOYEE\",\n        \"roles\": [\n            {\n                \"name\": \"Employee\",\n                \"code\": \"EMPLOYEE\",\n                \"tenantId\": \"pg.citya\"\n            },\n            {\n                \"name\": \"SV CEMP \",\n                \"code\": \"SVCEMP\",\n                \"tenantId\": \"pg.citya\"\n            }\n        ],\n        \"active\": true,\n        \"tenantId\": \"pg.citya\",\n        \"permanentCity\": null\n    },\n    \"msgId\": \"1750415006167|en_IN\",\n    \"plainAccessRequest\": {}\n}\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8888/billing-service/bill/v2/_search?tenantId=pg.citya&consumerCode=SV-1013-001437&service=sv-services",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8888",
+					"path": [
+						"billing-service",
+						"bill",
+						"v2",
+						"_search"
+					],
+					"query": [
+						{
+							"key": "tenantId",
+							"value": "pg.citya"
+						},
+						{
+							"key": "consumerCode",
+							"value": "SV-1013-001437"
+						},
+						{
+							"key": "service",
+							"value": "sv-services"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "bill v2 create",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "accept",
+						"value": "application/json, text/plain, */*"
+					},
+					{
+						"key": "accept-language",
+						"value": "en-US,en;q=0.9"
+					},
+					{
+						"key": "content-type",
+						"value": "application/json;charset=UTF-8"
+					},
+					{
+						"key": "origin",
+						"value": "https://niuatt.niua.in"
+					},
+					{
+						"key": "priority",
+						"value": "u=1, i"
+					},
+					{
+						"key": "referer",
+						"value": "https://niuatt.niua.in/sv-ui/employee/payment/collect/sv-services/SV-1013-001437"
+					},
+					{
+						"key": "sec-ch-ua",
+						"value": "\"Chromium\";v=\"136\", \"Google Chrome\";v=\"136\", \"Not.A/Brand\";v=\"99\""
+					},
+					{
+						"key": "sec-ch-ua-mobile",
+						"value": "?0"
+					},
+					{
+						"key": "sec-ch-ua-platform",
+						"value": "\"Linux\""
+					},
+					{
+						"key": "sec-fetch-dest",
+						"value": "empty"
+					},
+					{
+						"key": "sec-fetch-mode",
+						"value": "cors"
+					},
+					{
+						"key": "sec-fetch-site",
+						"value": "same-origin"
+					},
+					{
+						"key": "user-agent",
+						"value": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"RequestInfo\": {\n    \"apiId\": \"Rainmaker\",\n    \"authToken\": \"d1d09aa5-804d-4663-8aa5-9b35c633de3d\",\n    \"userInfo\": {\n        \"id\": 781,\n        \"uuid\": \"9ff0b9bc-ae68-4a4d-a7ac-83f95257dc2d\",\n        \"userName\": \"SV_CEMP\",\n        \"name\": \"Street Vending\",\n        \"mobileNumber\": \"9810010199\",\n        \"emailId\": null,\n        \"locale\": null,\n        \"type\": \"EMPLOYEE\",\n        \"roles\": [\n            {\n                \"name\": \"Employee\",\n                \"code\": \"EMPLOYEE\",\n                \"tenantId\": \"pg.citya\"\n            },\n            {\n                \"name\": \"SV CEMP \",\n                \"code\": \"SVCEMP\",\n                \"tenantId\": \"pg.citya\"\n            }\n        ],\n        \"active\": true,\n        \"tenantId\": \"pg.citya\",\n        \"permanentCity\": null\n    },\n    \"msgId\": \"1750415006167|en_IN\",\n    \"plainAccessRequest\": {}\n},\n \"Bills\": [\n    {\n      \"id\": \"string\",\n      \"userId\": \"string\",\n      \"mobileNumber\": \"4458530308\",\n      \"payerName\": \"string\",\n      \"payerAddress\": \"string\",\n      \"payerEmail\": \"string\",\n      \"status\": \"ACTIVE\",\n      \"totalAmount\": 0,\n      \"businessService\": \"sv-services\",\n      \"billNumber\": \"string\",\n      \"billDate\": 0,\n      \"consumerCode\": \"SV-1013-001438\",\n      \"additionalDetails\": {},\n      \"billDetails\": [\n        {\n          \"id\": \"string\",\n          \"tenantId\": \"string\",\n          \"demandId\": \"string\",\n          \"billId\": \"string\",\n          \"expiryDate\": 0,\n          \"amount\": 0,\n          \"amountPaid\": 0,\n          \"fromPeriod\": 0,\n          \"toPeriod\": 0,\n          \"additionalDetails\": {},\n          \"billAccountDetails\": [\n            {\n              \"id\": \"string\",\n              \"tenantId\": \"string\",\n              \"billDetailId\": \"string\",\n              \"demandDetailId\": \"string\",\n              \"order\": 0,\n              \"amount\": 0,\n              \"adjustedAmount\": 0,\n              \"taxHeadCode\": \"string\",\n              \"additionalDetails\": {},\n              \"auditDetails\": {\n                \"createdBy\": \"string\",\n                \"lastModifiedBy\": \"string\",\n                \"createdTime\": 0,\n                \"lastModifiedTime\": 0\n              }\n            }\n          ]\n        }\n      ],\n      \"tenantId\": \"string\",\n      \"fileStoreId\": \"string\",\n      \"auditDetails\": {\n        \"createdBy\": \"string\",\n        \"lastModifiedBy\": \"string\",\n        \"createdTime\": 0,\n        \"lastModifiedTime\": 0\n      }\n    }\n ]\n\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8081/billing-service/bill/v2/_create",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"billing-service",
+						"bill",
+						"v2",
+						"_create"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "bill v2 cancelbill",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "accept",
+						"value": "application/json, text/plain, */*"
+					},
+					{
+						"key": "accept-language",
+						"value": "en-US,en;q=0.9"
+					},
+					{
+						"key": "content-type",
+						"value": "application/json;charset=UTF-8"
+					},
+					{
+						"key": "origin",
+						"value": "https://niuatt.niua.in"
+					},
+					{
+						"key": "priority",
+						"value": "u=1, i"
+					},
+					{
+						"key": "referer",
+						"value": "https://niuatt.niua.in/sv-ui/employee/payment/collect/sv-services/SV-1013-001437"
+					},
+					{
+						"key": "sec-ch-ua",
+						"value": "\"Chromium\";v=\"136\", \"Google Chrome\";v=\"136\", \"Not.A/Brand\";v=\"99\""
+					},
+					{
+						"key": "sec-ch-ua-mobile",
+						"value": "?0"
+					},
+					{
+						"key": "sec-ch-ua-platform",
+						"value": "\"Linux\""
+					},
+					{
+						"key": "sec-fetch-dest",
+						"value": "empty"
+					},
+					{
+						"key": "sec-fetch-mode",
+						"value": "cors"
+					},
+					{
+						"key": "sec-fetch-site",
+						"value": "same-origin"
+					},
+					{
+						"key": "user-agent",
+						"value": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"RequestInfo\": {\n    \"apiId\": \"Rainmaker\",\n    \"authToken\": \"d1d09aa5-804d-4663-8aa5-9b35c633de3d\",\n    \"userInfo\": {\n        \"id\": 781,\n        \"uuid\": \"9ff0b9bc-ae68-4a4d-a7ac-83f95257dc2d\",\n        \"userName\": \"SV_CEMP\",\n        \"name\": \"Street Vending\",\n        \"mobileNumber\": \"9810010199\",\n        \"emailId\": null,\n        \"locale\": null,\n        \"type\": \"EMPLOYEE\",\n        \"roles\": [\n            {\n                \"name\": \"Employee\",\n                \"code\": \"EMPLOYEE\",\n                \"tenantId\": \"pg.citya\"\n            },\n            {\n                \"name\": \"SV CEMP \",\n                \"code\": \"SVCEMP\",\n                \"tenantId\": \"pg.citya\"\n            }\n        ],\n        \"active\": true,\n        \"tenantId\": \"pg.citya\",\n        \"permanentCity\": null\n    },\n    \"msgId\": \"1750415006167|en_IN\",\n    \"plainAccessRequest\": {}\n},\n  \"updateBillCriteria\": {\n    \"tenantId\": \"pg.citya\",\n    \"consumerCodes\": [\n      \"SV-1013-001438\"\n    ],\n    \"businessService\": \"sv-services\",\n    \"additionalDetails\": {\n        \"reason\": \"no reason\",\n        \"reasonMessage\": \"no reason\"\n    },\n    \"billIds\": [\n        // \"e74b392b-94f0-406c-a659-b5817a91082f\"\n    ],\n    \"statusToBeUpdated\": \"ACTIVE\"\n  }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8081/billing-service/bill/v2/_cancelbill",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"billing-service",
+						"bill",
+						"v2",
+						"_cancelbill"
+					],
+					"query": [
+						{
+							"key": "tenantId",
+							"value": "pg.citya",
+							"disabled": true
+						},
+						{
+							"key": "consumerCode",
+							"value": "SV-1013-001437",
+							"disabled": true
+						},
+						{
+							"key": "businessService",
+							"value": "sv-services",
+							"disabled": true
+						},
+						{
+							"key": "_",
+							"value": "1750397838379",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "bill v2 fetchbill",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "accept",
+						"value": "application/json, text/plain, */*"
+					},
+					{
+						"key": "accept-language",
+						"value": "en-US,en;q=0.9"
+					},
+					{
+						"key": "content-type",
+						"value": "application/json;charset=UTF-8"
+					},
+					{
+						"key": "origin",
+						"value": "https://niuatt.niua.in"
+					},
+					{
+						"key": "priority",
+						"value": "u=1, i"
+					},
+					{
+						"key": "referer",
+						"value": "https://niuatt.niua.in/digit-ui/citizen/payment/my-bills/adv-services/ADV-1013-000505"
+					},
+					{
+						"key": "sec-ch-ua",
+						"value": "\"Chromium\";v=\"136\", \"Google Chrome\";v=\"136\", \"Not.A/Brand\";v=\"99\""
+					},
+					{
+						"key": "sec-ch-ua-mobile",
+						"value": "?0"
+					},
+					{
+						"key": "sec-ch-ua-platform",
+						"value": "\"Linux\""
+					},
+					{
+						"key": "sec-fetch-dest",
+						"value": "empty"
+					},
+					{
+						"key": "sec-fetch-mode",
+						"value": "cors"
+					},
+					{
+						"key": "sec-fetch-site",
+						"value": "same-origin"
+					},
+					{
+						"key": "user-agent",
+						"value": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"RequestInfo\":{\n    \"apiId\": \"Rainmaker\",\n    \"authToken\": \"0a3d3b8e-c8c6-4154-8895-c666e0f6d879\",\n    \"userInfo\": {\n        \"id\": 811,\n        \"uuid\": \"f789d679-352d-4aec-8198-4d61af1e0566\",\n        \"userName\": \"8010012414\",\n        \"name\": \"OWNER\",\n        \"mobileNumber\": \"8010012414\",\n        \"emailId\": \"cghvjbnk@gmail.com\",\n        \"locale\": null,\n        \"type\": \"CITIZEN\",\n        \"roles\": [\n            {\n                \"name\": \"Citizen\",\n                \"code\": \"CITIZEN\",\n                \"tenantId\": \"pg\"\n            }\n        ],\n        \"active\": true,\n        \"tenantId\": \"pg\",\n        \"permanentCity\": null\n    },\n    \"msgId\": \"1751432955173|en_IN\",\n    \"plainAccessRequest\": {}\n}\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8081/billing-service/bill/v2/_fetchbill?tenantId=pg.citya&consumerCode=ADV-1013-000505&businessService=adv-services&_=1751432957533",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"billing-service",
+						"bill",
+						"v2",
+						"_fetchbill"
+					],
+					"query": [
+						{
+							"key": "tenantId",
+							"value": "pg.citya"
+						},
+						{
+							"key": "consumerCode",
+							"value": "ADV-1013-000505"
+						},
+						{
+							"key": "businessService",
+							"value": "adv-services"
+						},
+						{
+							"key": "_",
+							"value": "1751432957533"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "amendment search",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "accept",
+						"value": "application/json, text/plain, */*"
+					},
+					{
+						"key": "accept-language",
+						"value": "en-US,en;q=0.9"
+					},
+					{
+						"key": "content-type",
+						"value": "application/json;charset=UTF-8"
+					},
+					{
+						"key": "origin",
+						"value": "https://niuatt.niua.in"
+					},
+					{
+						"key": "priority",
+						"value": "u=1, i"
+					},
+					{
+						"key": "referer",
+						"value": "https://niuatt.niua.in/sv-ui/employee/payment/collect/sv-services/SV-1013-001437"
+					},
+					{
+						"key": "sec-ch-ua",
+						"value": "\"Chromium\";v=\"136\", \"Google Chrome\";v=\"136\", \"Not.A/Brand\";v=\"99\""
+					},
+					{
+						"key": "sec-ch-ua-mobile",
+						"value": "?0"
+					},
+					{
+						"key": "sec-ch-ua-platform",
+						"value": "\"Linux\""
+					},
+					{
+						"key": "sec-fetch-dest",
+						"value": "empty"
+					},
+					{
+						"key": "sec-fetch-mode",
+						"value": "cors"
+					},
+					{
+						"key": "sec-fetch-site",
+						"value": "same-origin"
+					},
+					{
+						"key": "user-agent",
+						"value": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"RequestInfo\": {\n    \"apiId\": \"Rainmaker\",\n    \"authToken\": \"d1d09aa5-804d-4663-8aa5-9b35c633de3d\",\n    \"userInfo\": {\n        \"id\": 781,\n        \"uuid\": \"9ff0b9bc-ae68-4a4d-a7ac-83f95257dc2d\",\n        \"userName\": \"SV_CEMP\",\n        \"name\": \"Street Vending\",\n        \"mobileNumber\": \"9810010199\",\n        \"emailId\": null,\n        \"locale\": null,\n        \"type\": \"EMPLOYEE\",\n        \"roles\": [\n            {\n                \"name\": \"Employee\",\n                \"code\": \"EMPLOYEE\",\n                \"tenantId\": \"pg.citya\"\n            },\n            {\n                \"name\": \"SV CEMP \",\n                \"code\": \"SVCEMP\",\n                \"tenantId\": \"pg.citya\"\n            }\n        ],\n        \"active\": true,\n        \"tenantId\": \"pg.citya\",\n        \"permanentCity\": null\n    },\n    \"msgId\": \"1750415006167|en_IN\",\n    \"plainAccessRequest\": {}\n}\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8888/billing-service/amendment/_search?tenantId=pg.citya&consumerCode=string&businessService=WS",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8888",
+					"path": [
+						"billing-service",
+						"amendment",
+						"_search"
+					],
+					"query": [
+						{
+							"key": "_",
+							"value": "1750397838379",
+							"disabled": true
+						},
+						{
+							"key": "tenantId",
+							"value": "pg.citya"
+						},
+						{
+							"key": "consumerCode",
+							"value": "string"
+						},
+						{
+							"key": "businessService",
+							"value": "WS"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "amendment create",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "accept",
+						"value": "application/json, text/plain, */*"
+					},
+					{
+						"key": "accept-language",
+						"value": "en-US,en;q=0.9"
+					},
+					{
+						"key": "content-type",
+						"value": "application/json;charset=UTF-8"
+					},
+					{
+						"key": "origin",
+						"value": "https://niuatt.niua.in"
+					},
+					{
+						"key": "priority",
+						"value": "u=1, i"
+					},
+					{
+						"key": "referer",
+						"value": "https://niuatt.niua.in/sv-ui/employee/payment/collect/sv-services/SV-1013-001437"
+					},
+					{
+						"key": "sec-ch-ua",
+						"value": "\"Chromium\";v=\"136\", \"Google Chrome\";v=\"136\", \"Not.A/Brand\";v=\"99\""
+					},
+					{
+						"key": "sec-ch-ua-mobile",
+						"value": "?0"
+					},
+					{
+						"key": "sec-ch-ua-platform",
+						"value": "\"Linux\""
+					},
+					{
+						"key": "sec-fetch-dest",
+						"value": "empty"
+					},
+					{
+						"key": "sec-fetch-mode",
+						"value": "cors"
+					},
+					{
+						"key": "sec-fetch-site",
+						"value": "same-origin"
+					},
+					{
+						"key": "user-agent",
+						"value": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"RequestInfo\": {\n    \"apiId\": \"Rainmaker\",\n    \"authToken\": \"d1d09aa5-804d-4663-8aa5-9b35c633de3d\",\n    \"userInfo\": {\n        \"id\": 781,\n        \"uuid\": \"9ff0b9bc-ae68-4a4d-a7ac-83f95257dc2d\",\n        \"userName\": \"SV_CEMP\",\n        \"name\": \"Street Vending\",\n        \"mobileNumber\": \"9810010199\",\n        \"emailId\": null,\n        \"locale\": null,\n        \"type\": \"EMPLOYEE\",\n        \"roles\": [\n            {\n                \"name\": \"Employee\",\n                \"code\": \"EMPLOYEE\",\n                \"tenantId\": \"pg.citya\"\n            },\n            {\n                \"name\": \"SV CEMP \",\n                \"code\": \"WS_CEMP\",\n                \"tenantId\": \"pg.citya\"\n            }\n        ],\n        \"active\": true,\n        \"tenantId\": \"pg.citya\",\n        \"permanentCity\": null\n    },\n    \"msgId\": \"1750415006167|en_IN\",\n    \"plainAccessRequest\": {}\n},\n \"Amendment\": {\n    \"id\": \"string\",\n    \"amendedDemandId\": \"string\",\n    \"tenantId\": \"pg.citya\",\n    \"consumerCode\": \"test5\",\n    \"amendmentId\": \"string\",\n    \"businessService\": \"WS\",\n    \"amendmentReason\": \"COURT_CASE_SETTLEMENT\",\n    \"reasonDocumentNumber\": \"string\",\n    \"status\": \"ACTIVE\",\n    \"workflow\": {\n      \"id\": \"string\",\n      \"tenantId\": \"pg.citya\",\n      \"businessService\": \"string\",\n      \"businessId\": \"string\",\n      \"action\": \"string\",\n      \"moduleName\": \"string\",\n      \"state\": {\n        \"auditDetails\": {\n          \"createdBy\": \"string\",\n          \"lastModifiedBy\": \"string\",\n          \"createdTime\": 0,\n          \"lastModifiedTime\": 0\n        },\n        \"uuid\": \"string\",\n        \"tenantId\": \"string\",\n        \"businessServiceId\": \"string\",\n        \"sla\": 0,\n        \"state\": \"string\",\n        \"applicationStatus\": \"string\",\n        \"docUploadRequired\": true,\n        \"isStartState\": true,\n        \"isTerminateState\": true,\n        \"isStateUpdatable\": true,\n        \"actions\": [\n          {\n            \"auditDetails\": {\n              \"createdBy\": \"string\",\n              \"lastModifiedBy\": \"string\",\n              \"createdTime\": 0,\n              \"lastModifiedTime\": 0\n            },\n            \"uuid\": \"string\",\n            \"tenantId\": \"string\",\n            \"currentState\": \"string\",\n            \"action\": \"string\",\n            \"nextState\": \"string\",\n            \"roles\": [\n              \"string\"\n            ]\n          }\n        ]\n      },\n      \"comment\": \"string\",\n      \"documents\": [\n        {\n          \"id\": \"string\",\n          \"documentType\": \"string\",\n          \"fileStoreId\": \"string\",\n          \"documentUid\": \"string\",\n          \"additionalDetails\": {}\n        }\n      ],\n      \"assigner\": {\n        \"id\": 0,\n        \"userName\": \"string\",\n        \"name\": \"string\",\n        \"type\": \"string\",\n        \"mobileNumber\": \"string\",\n        \"emailId\": \"string\",\n        \"roles\": [\n          {\n            \"id\": 0,\n            \"name\": \"string\",\n            \"code\": \"string\",\n            \"tenantId\": \"string\"\n          }\n        ],\n        \"tenantId\": \"string\",\n        \"uuid\": \"string\"\n      },\n      \"assignes\": [\n        {\n          \"id\": 0,\n          \"userName\": \"string\",\n          \"name\": \"string\",\n          \"type\": \"string\",\n          \"mobileNumber\": \"string\",\n          \"emailId\": \"string\",\n          \"roles\": [\n            {\n              \"id\": 0,\n              \"name\": \"string\",\n              \"code\": \"string\",\n              \"tenantId\": \"string\"\n            }\n          ],\n          \"tenantId\": \"string\",\n          \"uuid\": \"string\"\n        }\n      ],\n      \"nextActions\": [\n        {\n          \"auditDetails\": {\n            \"createdBy\": \"string\",\n            \"lastModifiedBy\": \"string\",\n            \"createdTime\": 0,\n            \"lastModifiedTime\": 0\n          },\n          \"uuid\": \"string\",\n          \"tenantId\": \"string\",\n          \"currentState\": \"string\",\n          \"action\": \"string\",\n          \"nextState\": \"string\",\n          \"roles\": [\n            \"string\"\n          ]\n        }\n      ],\n      \"stateSla\": 0,\n      \"businesssServiceSla\": 0,\n      \"previousStatus\": \"string\",\n      \"entity\": {},\n      \"auditDetails\": {\n        \"createdBy\": \"string\",\n        \"lastModifiedBy\": \"string\",\n        \"createdTime\": 0,\n        \"lastModifiedTime\": 0\n      }\n    },\n    \"demandDetails\": [\n      {\n        \"id\": \"string\",\n        \"demandId\": \"string\",\n        \"taxHeadMasterCode\": \"WS_CHARGE\",\n        \"taxAmount\": 0,\n        \"collectionAmount\": 0,\n        \"additionalDetails\": {},\n        \"auditDetails\": {\n          \"createdBy\": \"string\",\n          \"lastModifiedBy\": \"string\",\n          \"createdTime\": 0,\n          \"lastModifiedTime\": 0\n        },\n        \"tenantId\": \"string\"\n      }\n    ],\n    \"documents\": [\n      {\n        \"id\": \"string\",\n        \"documentType\": \"string\",\n        \"fileStoreId\": \"string\",\n        \"documentUid\": \"string\",\n        \"additionalDetails\": {}\n      }\n    ],\n    \"effectiveFrom\": 0,\n    \"effectiveTill\": 10,\n    \"auditDetails\": {\n      \"createdBy\": \"string\",\n      \"lastModifiedBy\": \"string\",\n      \"createdTime\": 0,\n      \"lastModifiedTime\": 0\n    },\n    \"additionalDetails\": {}\n  }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8081/billing-service/amendment/_create",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"billing-service",
+						"amendment",
+						"_create"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "amendment update",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "accept",
+						"value": "application/json, text/plain, */*"
+					},
+					{
+						"key": "accept-language",
+						"value": "en-US,en;q=0.9"
+					},
+					{
+						"key": "content-type",
+						"value": "application/json;charset=UTF-8"
+					},
+					{
+						"key": "origin",
+						"value": "https://niuatt.niua.in"
+					},
+					{
+						"key": "priority",
+						"value": "u=1, i"
+					},
+					{
+						"key": "referer",
+						"value": "https://niuatt.niua.in/sv-ui/employee/payment/collect/sv-services/SV-1013-001437"
+					},
+					{
+						"key": "sec-ch-ua",
+						"value": "\"Chromium\";v=\"136\", \"Google Chrome\";v=\"136\", \"Not.A/Brand\";v=\"99\""
+					},
+					{
+						"key": "sec-ch-ua-mobile",
+						"value": "?0"
+					},
+					{
+						"key": "sec-ch-ua-platform",
+						"value": "\"Linux\""
+					},
+					{
+						"key": "sec-fetch-dest",
+						"value": "empty"
+					},
+					{
+						"key": "sec-fetch-mode",
+						"value": "cors"
+					},
+					{
+						"key": "sec-fetch-site",
+						"value": "same-origin"
+					},
+					{
+						"key": "user-agent",
+						"value": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"RequestInfo\": {\n    \"apiId\": \"Rainmaker\",\n    \"authToken\": \"d1d09aa5-804d-4663-8aa5-9b35c633de3d\",\n    \"userInfo\": {\n        \"id\": 781,\n        \"uuid\": \"d4304a81-8bc4-4d7c-a405-70cefbd498ba\",\n        \"userName\": \"SV_CEMP\",\n        \"name\": \"Street Vending\",\n        \"mobileNumber\": \"9810010199\",\n        \"emailId\": null,\n        \"locale\": null,\n        \"type\": \"EMPLOYEE\",\n        \"roles\": [\n            {\n                \"name\": \"Employee\",\n                \"code\": \"EMPLOYEE\",\n                \"tenantId\": \"pg.citya\"\n            },\n            {\n                \"name\": \"SV CEMP \",\n                \"code\": \"WS_APPROVER\",\n                \"tenantId\": \"pg.citya\"\n            }\n        ],\n        \"active\": true,\n        \"tenantId\": \"pg.citya\",\n        \"permanentCity\": null\n    },\n    \"msgId\": \"1750415006167|en_IN\",\n    \"plainAccessRequest\": {}\n},\n\"AmendmentUpdate\": {\n    \"status\": \"ACTIVE\",\n    \"amendmentId\": \"CN-string-000008\",\n    \"amendedDemandId\": \"string\",\n    \"tenantId\": \"pg.citya\",\n    \"auditDetails\": {\n      \"createdBy\": \"string\",\n      \"lastModifiedBy\": \"string\",\n      \"createdTime\": 0,\n      \"lastModifiedTime\": 0\n    },\n    \"additionalDetails\": {},\n    \"workflow\": {\n      \"id\": \"string\",\n      \"tenantId\": \"pg.citya\",\n      \"businessService\": \"WS.AMENDMENT\",\n      \"businessId\": \"string\",\n      \"action\": \"APPROVE\",\n      \"moduleName\": \"string\",\n      \"state\": {\n        \"auditDetails\": {\n          \"createdBy\": \"string\",\n          \"lastModifiedBy\": \"string\",\n          \"createdTime\": 0,\n          \"lastModifiedTime\": 0\n        },\n        \"uuid\": \"dd03b077-8546-418e-9f51-20782ef22b3a\",\n        \"tenantId\": \"pg.citya\",\n        \"businessServiceId\": \"string\",\n        \"sla\": 0,\n        \"state\": \"string\",\n        \"applicationStatus\": \"string\",\n        \"docUploadRequired\": true,\n        \"isStartState\": true,\n        \"isTerminateState\": true,\n        \"isStateUpdatable\": true,\n        \"actions\": [\n          {\n            \"auditDetails\": {\n              \"createdBy\": \"string\",\n              \"lastModifiedBy\": \"string\",\n              \"createdTime\": 0,\n              \"lastModifiedTime\": 0\n            },\n            \"uuid\": \"39c2c5ce-da70-4077-a9db-e50e9aaac87f\",\n            \"tenantId\": \"pg.citya\",\n            \"currentState\": \"string\",\n            \"action\": \"string\",\n            \"nextState\": \"string\",\n            \"roles\": [\n              \"string\"\n            ]\n          }\n        ]\n      },\n      \"comment\": \"string\",\n      \"documents\": [\n        {\n          \"id\": \"string\",\n          \"documentType\": \"string\",\n          \"fileStoreId\": \"string\",\n          \"documentUid\": \"string\",\n          \"additionalDetails\": {}\n        }\n      ],\n      \"assigner\": {\n        \"id\": 0,\n        \"userName\": \"string\",\n        \"name\": \"string\",\n        \"type\": \"string\",\n        \"mobileNumber\": \"string\",\n        \"emailId\": \"string\",\n        \"roles\": [\n          {\n            \"id\": 0,\n            \"name\": \"string\",\n            \"code\": \"WS_CEMP\",\n            \"tenantId\": \"pg.citya\"\n          }\n        ],\n        \"tenantId\": \"pg.citya\",\n        \"uuid\": \"f6ea5fb8-d872-4f47-8a37-ceea41759dea\"\n      },\n\n      \"stateSla\": 0,\n      \"businesssServiceSla\": 0,\n      \"previousStatus\": \"string\",\n      \"entity\": {},\n      \"auditDetails\": {\n        \"createdBy\": \"string\",\n        \"lastModifiedBy\": \"string\",\n        \"createdTime\": 0,\n        \"lastModifiedTime\": 0\n      }\n    },\n    \"documents\": [\n      {\n        \"id\": \"string\",\n        \"documentType\": \"string\",\n        \"fileStoreId\": \"string\",\n        \"documentUid\": \"string\",\n        \"additionalDetails\": {}\n      }\n    ],\n    \"amendmentReason\": \"COURT_CASE_SETTLEMENT\",\n    \"reasonDocumentNumber\": \"string\",\n    \"effectiveFrom\": 0,\n    \"effectiveTill\": 0\n  }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8081/billing-service/amendment/_update",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"billing-service",
+						"amendment",
+						"_update"
+					],
+					"query": [
+						{
+							"key": "_",
+							"value": "1750397838379",
+							"disabled": true
+						},
+						{
+							"key": "tenantId",
+							"value": "pg.citya",
+							"disabled": true
+						},
+						{
+							"key": "consumerCode",
+							"value": "SV-1013-001437",
+							"disabled": true
+						},
+						{
+							"key": "businessService",
+							"value": "sv-services",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "tax period search",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "accept",
+						"value": "application/json, text/plain, */*"
+					},
+					{
+						"key": "accept-language",
+						"value": "en-US,en;q=0.9"
+					},
+					{
+						"key": "content-type",
+						"value": "application/json;charset=UTF-8"
+					},
+					{
+						"key": "origin",
+						"value": "https://niuatt.niua.in"
+					},
+					{
+						"key": "priority",
+						"value": "u=1, i"
+					},
+					{
+						"key": "referer",
+						"value": "https://niuatt.niua.in/sv-ui/employee/payment/collect/sv-services/SV-1013-001437"
+					},
+					{
+						"key": "sec-ch-ua",
+						"value": "\"Chromium\";v=\"136\", \"Google Chrome\";v=\"136\", \"Not.A/Brand\";v=\"99\""
+					},
+					{
+						"key": "sec-ch-ua-mobile",
+						"value": "?0"
+					},
+					{
+						"key": "sec-ch-ua-platform",
+						"value": "\"Linux\""
+					},
+					{
+						"key": "sec-fetch-dest",
+						"value": "empty"
+					},
+					{
+						"key": "sec-fetch-mode",
+						"value": "cors"
+					},
+					{
+						"key": "sec-fetch-site",
+						"value": "same-origin"
+					},
+					{
+						"key": "user-agent",
+						"value": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"RequestInfo\": {\n    \"apiId\": \"Rainmaker\",\n    \"authToken\": \"d1d09aa5-804d-4663-8aa5-9b35c633de3d\",\n    \"userInfo\": {\n        \"id\": 781,\n        \"uuid\": \"9ff0b9bc-ae68-4a4d-a7ac-83f95257dc2d\",\n        \"userName\": \"SV_CEMP\",\n        \"name\": \"Street Vending\",\n        \"mobileNumber\": \"9810010199\",\n        \"emailId\": null,\n        \"locale\": null,\n        \"type\": \"EMPLOYEE\",\n        \"roles\": [\n            {\n                \"name\": \"Employee\",\n                \"code\": \"EMPLOYEE\",\n                \"tenantId\": \"pg.citya\"\n            },\n            {\n                \"name\": \"SV CEMP \",\n                \"code\": \"SVCEMP\",\n                \"tenantId\": \"pg.citya\"\n            }\n        ],\n        \"active\": true,\n        \"tenantId\": \"pg.citya\",\n        \"permanentCity\": null\n    },\n    \"msgId\": \"1750415006167|en_IN\",\n    \"plainAccessRequest\": {}\n}\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8081/billing-service/taxperiods/_search?tenantId=pg.citya&service=sv-services",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"billing-service",
+						"taxperiods",
+						"_search"
+					],
+					"query": [
+						{
+							"key": "_",
+							"value": "1750397838379",
+							"disabled": true
+						},
+						{
+							"key": "tenantId",
+							"value": "pg.citya"
+						},
+						{
+							"key": "service",
+							"value": "sv-services"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "tax head master search",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "accept",
+						"value": "application/json, text/plain, */*"
+					},
+					{
+						"key": "accept-language",
+						"value": "en-US,en;q=0.9"
+					},
+					{
+						"key": "content-type",
+						"value": "application/json;charset=UTF-8"
+					},
+					{
+						"key": "origin",
+						"value": "https://niuatt.niua.in"
+					},
+					{
+						"key": "priority",
+						"value": "u=1, i"
+					},
+					{
+						"key": "referer",
+						"value": "https://niuatt.niua.in/sv-ui/employee/payment/collect/sv-services/SV-1013-001437"
+					},
+					{
+						"key": "sec-ch-ua",
+						"value": "\"Chromium\";v=\"136\", \"Google Chrome\";v=\"136\", \"Not.A/Brand\";v=\"99\""
+					},
+					{
+						"key": "sec-ch-ua-mobile",
+						"value": "?0"
+					},
+					{
+						"key": "sec-ch-ua-platform",
+						"value": "\"Linux\""
+					},
+					{
+						"key": "sec-fetch-dest",
+						"value": "empty"
+					},
+					{
+						"key": "sec-fetch-mode",
+						"value": "cors"
+					},
+					{
+						"key": "sec-fetch-site",
+						"value": "same-origin"
+					},
+					{
+						"key": "user-agent",
+						"value": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"RequestInfo\": {\n    \"apiId\": \"Rainmaker\",\n    \"authToken\": \"d1d09aa5-804d-4663-8aa5-9b35c633de3d\",\n    \"userInfo\": {\n        \"id\": 781,\n        \"uuid\": \"9ff0b9bc-ae68-4a4d-a7ac-83f95257dc2d\",\n        \"userName\": \"SV_CEMP\",\n        \"name\": \"Street Vending\",\n        \"mobileNumber\": \"9810010199\",\n        \"emailId\": null,\n        \"locale\": null,\n        \"type\": \"EMPLOYEE\",\n        \"roles\": [\n            {\n                \"name\": \"Employee\",\n                \"code\": \"EMPLOYEE\",\n                \"tenantId\": \"pg.citya\"\n            },\n            {\n                \"name\": \"SV CEMP \",\n                \"code\": \"SVCEMP\",\n                \"tenantId\": \"pg.citya\"\n            }\n        ],\n        \"active\": true,\n        \"tenantId\": \"pg.citya\",\n        \"permanentCity\": null\n    },\n    \"msgId\": \"1750415006167|en_IN\",\n    \"plainAccessRequest\": {}\n}\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8081/billing-service/taxheads/_search?tenantId=pg.citya&service=sv-services&code=PT_ADHOC_REBATE",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"billing-service",
+						"taxheads",
+						"_search"
+					],
+					"query": [
+						{
+							"key": "_",
+							"value": "1750397838379",
+							"disabled": true
+						},
+						{
+							"key": "tenantId",
+							"value": "pg.citya"
+						},
+						{
+							"key": "service",
+							"value": "sv-services"
+						},
+						{
+							"key": "code",
+							"value": "PT_ADHOC_REBATE"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "business service detail search",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "accept",
+						"value": "application/json, text/plain, */*"
+					},
+					{
+						"key": "accept-language",
+						"value": "en-US,en;q=0.9"
+					},
+					{
+						"key": "content-type",
+						"value": "application/json;charset=UTF-8"
+					},
+					{
+						"key": "origin",
+						"value": "https://niuatt.niua.in"
+					},
+					{
+						"key": "priority",
+						"value": "u=1, i"
+					},
+					{
+						"key": "referer",
+						"value": "https://niuatt.niua.in/sv-ui/employee/payment/collect/sv-services/SV-1013-001437"
+					},
+					{
+						"key": "sec-ch-ua",
+						"value": "\"Chromium\";v=\"136\", \"Google Chrome\";v=\"136\", \"Not.A/Brand\";v=\"99\""
+					},
+					{
+						"key": "sec-ch-ua-mobile",
+						"value": "?0"
+					},
+					{
+						"key": "sec-ch-ua-platform",
+						"value": "\"Linux\""
+					},
+					{
+						"key": "sec-fetch-dest",
+						"value": "empty"
+					},
+					{
+						"key": "sec-fetch-mode",
+						"value": "cors"
+					},
+					{
+						"key": "sec-fetch-site",
+						"value": "same-origin"
+					},
+					{
+						"key": "user-agent",
+						"value": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"RequestInfo\": {\n    \"apiId\": \"Rainmaker\",\n    \"authToken\": \"d1d09aa5-804d-4663-8aa5-9b35c633de3d\",\n    \"userInfo\": {\n        \"id\": 781,\n        \"uuid\": \"9ff0b9bc-ae68-4a4d-a7ac-83f95257dc2d\",\n        \"userName\": \"SV_CEMP\",\n        \"name\": \"Street Vending\",\n        \"mobileNumber\": \"9810010199\",\n        \"emailId\": null,\n        \"locale\": null,\n        \"type\": \"EMPLOYEE\",\n        \"roles\": [\n            {\n                \"name\": \"Employee\",\n                \"code\": \"EMPLOYEE\",\n                \"tenantId\": \"pg.citya\"\n            },\n            {\n                \"name\": \"SV CEMP \",\n                \"code\": \"SVCEMP\",\n                \"tenantId\": \"pg.citya\"\n            }\n        ],\n        \"active\": true,\n        \"tenantId\": \"pg.citya\",\n        \"permanentCity\": null\n    },\n    \"msgId\": \"1750415006167|en_IN\",\n    \"plainAccessRequest\": {}\n}\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8081/billing-service/businessservices/_search?tenantId=pg.citya&businessService=PT",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"billing-service",
+						"businessservices",
+						"_search"
+					],
+					"query": [
+						{
+							"key": "_",
+							"value": "1750397838379",
+							"disabled": true
+						},
+						{
+							"key": "tenantId",
+							"value": "pg.citya"
+						},
+						{
+							"key": "businessService",
+							"value": "PT"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "demand search",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "accept",
+						"value": "application/json, text/plain, */*"
+					},
+					{
+						"key": "accept-language",
+						"value": "en-US,en;q=0.9"
+					},
+					{
+						"key": "content-type",
+						"value": "application/json;charset=UTF-8"
+					},
+					{
+						"key": "origin",
+						"value": "https://niuatt.niua.in"
+					},
+					{
+						"key": "priority",
+						"value": "u=1, i"
+					},
+					{
+						"key": "referer",
+						"value": "https://niuatt.niua.in/sv-ui/employee/payment/collect/sv-services/SV-1013-001437"
+					},
+					{
+						"key": "sec-ch-ua",
+						"value": "\"Chromium\";v=\"136\", \"Google Chrome\";v=\"136\", \"Not.A/Brand\";v=\"99\""
+					},
+					{
+						"key": "sec-ch-ua-mobile",
+						"value": "?0"
+					},
+					{
+						"key": "sec-ch-ua-platform",
+						"value": "\"Linux\""
+					},
+					{
+						"key": "sec-fetch-dest",
+						"value": "empty"
+					},
+					{
+						"key": "sec-fetch-mode",
+						"value": "cors"
+					},
+					{
+						"key": "sec-fetch-site",
+						"value": "same-origin"
+					},
+					{
+						"key": "user-agent",
+						"value": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"RequestInfo\": {\n    \"apiId\": \"Rainmaker\",\n    \"authToken\": \"d1d09aa5-804d-4663-8aa5-9b35c633de3d\",\n    \"userInfo\": {\n        \"id\": 781,\n        \"uuid\": \"9ff0b9bc-ae68-4a4d-a7ac-83f95257dc2d\",\n        \"userName\": \"SV_CEMP\",\n        \"name\": \"Street Vending\",\n        \"mobileNumber\": \"9810010199\",\n        \"emailId\": null,\n        \"locale\": null,\n        \"type\": \"EMPLOYEE\",\n        \"roles\": [\n            {\n                \"name\": \"Employee\",\n                \"code\": \"EMPLOYEE\",\n                \"tenantId\": \"pg.citya\"\n            },\n            {\n                \"name\": \"SV CEMP \",\n                \"code\": \"SVCEMP\",\n                \"tenantId\": \"pg.citya\"\n            }\n        ],\n        \"active\": true,\n        \"tenantId\": \"pg.citya\",\n        \"permanentCity\": null\n    },\n    \"msgId\": \"1750415006167|en_IN\",\n    \"plainAccessRequest\": {}\n}\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8081/billing-service/demand/_search?tenantId=pg.citya&businessService=WS&consumerCode=string",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"billing-service",
+						"demand",
+						"_search"
+					],
+					"query": [
+						{
+							"key": "_",
+							"value": "1750397838379",
+							"disabled": true
+						},
+						{
+							"key": "tenantId",
+							"value": "pg.citya"
+						},
+						{
+							"key": "businessService",
+							"value": "WS"
+						},
+						{
+							"key": "consumerCode",
+							"value": "string"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "demand create",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "accept",
+						"value": "application/json, text/plain, */*"
+					},
+					{
+						"key": "accept-language",
+						"value": "en-US,en;q=0.9"
+					},
+					{
+						"key": "content-type",
+						"value": "application/json;charset=UTF-8"
+					},
+					{
+						"key": "origin",
+						"value": "https://niuatt.niua.in"
+					},
+					{
+						"key": "priority",
+						"value": "u=1, i"
+					},
+					{
+						"key": "referer",
+						"value": "https://niuatt.niua.in/sv-ui/employee/payment/collect/sv-services/SV-1013-001437"
+					},
+					{
+						"key": "sec-ch-ua",
+						"value": "\"Chromium\";v=\"136\", \"Google Chrome\";v=\"136\", \"Not.A/Brand\";v=\"99\""
+					},
+					{
+						"key": "sec-ch-ua-mobile",
+						"value": "?0"
+					},
+					{
+						"key": "sec-ch-ua-platform",
+						"value": "\"Linux\""
+					},
+					{
+						"key": "sec-fetch-dest",
+						"value": "empty"
+					},
+					{
+						"key": "sec-fetch-mode",
+						"value": "cors"
+					},
+					{
+						"key": "sec-fetch-site",
+						"value": "same-origin"
+					},
+					{
+						"key": "user-agent",
+						"value": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"RequestInfo\": {\n    \"apiId\": \"Rainmaker\",\n    \"authToken\": \"d1d09aa5-804d-4663-8aa5-9b35c633de3d\",\n    \"userInfo\": {\n        \"id\": 781,\n        \"uuid\": \"9ff0b9bc-ae68-4a4d-a7ac-83f95257dc2d\",\n        \"userName\": \"SV_CEMP\",\n        \"name\": \"Street Vending\",\n        \"mobileNumber\": \"9810010199\",\n        \"emailId\": null,\n        \"locale\": null,\n        \"type\": \"EMPLOYEE\",\n        \"roles\": [\n            {\n                \"name\": \"Employee\",\n                \"code\": \"EMPLOYEE\",\n                \"tenantId\": \"pg.citya\"\n            },\n            {\n                \"name\": \"SV CEMP \",\n                \"code\": \"WS_CHARGE\",\n                \"tenantId\": \"pg.citya\"\n            }\n        ],\n        \"active\": true,\n        \"tenantId\": \"pg.citya\",\n        \"permanentCity\": null\n    },\n    \"msgId\": \"1750415006167|en_IN\",\n    \"plainAccessRequest\": {}\n},\n \"Demands\": [\n    {\n      \"isPaymentCompleted\": true,\n      \"id\": \"string\",\n      \"tenantId\": \"pg.citya\",\n      \"consumerCode\": \"string\",\n      \"consumerType\": \"string\",\n      \"businessService\": \"WS\",\n      \"payer\": {\n        \"id\": 0,\n        \"userName\": \"string\",\n        \"name\": \"string\",\n        \"type\": \"string\",\n        \"mobileNumber\": \"string\",\n        \"emailId\": \"string\",\n        \"roles\": [\n          {\n            \"id\": 0,\n            \"name\": \"string\",\n            \"code\": \"string\",\n            \"tenantId\": \"string\"\n          }\n        ],\n        \"tenantId\": \"string\",\n        \"uuid\": \"bfa37bfa-d569-4b27-893f-fb050b8eb2bd\"\n      },\n      \"taxPeriodFrom\": 1717058721822,\n      \"taxPeriodTo\": 1817058721822,\n      \"demandDetails\": [\n        {\n          \"id\": \"string\",\n          \"demandId\": \"string\",\n          \"taxHeadMasterCode\": \"WS_CHARGE\",\n          \"taxAmount\": 0,\n          \"collectionAmount\": 0,\n          \"additionalDetails\": {},\n          \"auditDetails\": {\n            \"createdBy\": \"string\",\n            \"lastModifiedBy\": \"string\",\n            \"createdTime\": 0,\n            \"lastModifiedTime\": 0\n          },\n          \"tenantId\": \"string\"\n        }\n      ],\n      \"auditDetails\": {\n        \"createdBy\": \"string\",\n        \"lastModifiedBy\": \"string\",\n        \"createdTime\": 0,\n        \"lastModifiedTime\": 0\n      },\n      \"fixedBillExpiryDate\": 0,\n      \"billExpiryTime\": 0,\n      \"additionalDetails\": {},\n      \"minimumAmountPayable\": 0,\n      \"status\": \"ACTIVE\"\n    }\n  ]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8081/billing-service/demand/_create",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"billing-service",
+						"demand",
+						"_create"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "demand update",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "accept",
+						"value": "application/json, text/plain, */*"
+					},
+					{
+						"key": "accept-language",
+						"value": "en-US,en;q=0.9"
+					},
+					{
+						"key": "content-type",
+						"value": "application/json;charset=UTF-8"
+					},
+					{
+						"key": "origin",
+						"value": "https://niuatt.niua.in"
+					},
+					{
+						"key": "priority",
+						"value": "u=1, i"
+					},
+					{
+						"key": "referer",
+						"value": "https://niuatt.niua.in/sv-ui/employee/payment/collect/sv-services/SV-1013-001437"
+					},
+					{
+						"key": "sec-ch-ua",
+						"value": "\"Chromium\";v=\"136\", \"Google Chrome\";v=\"136\", \"Not.A/Brand\";v=\"99\""
+					},
+					{
+						"key": "sec-ch-ua-mobile",
+						"value": "?0"
+					},
+					{
+						"key": "sec-ch-ua-platform",
+						"value": "\"Linux\""
+					},
+					{
+						"key": "sec-fetch-dest",
+						"value": "empty"
+					},
+					{
+						"key": "sec-fetch-mode",
+						"value": "cors"
+					},
+					{
+						"key": "sec-fetch-site",
+						"value": "same-origin"
+					},
+					{
+						"key": "user-agent",
+						"value": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"RequestInfo\": {\n    \"apiId\": \"Rainmaker\",\n    \"authToken\": \"d1d09aa5-804d-4663-8aa5-9b35c633de3d\",\n    \"userInfo\": {\n        \"id\": 781,\n        \"uuid\": \"9ff0b9bc-ae68-4a4d-a7ac-83f95257dc2d\",\n        \"userName\": \"SV_CEMP\",\n        \"name\": \"Street Vending\",\n        \"mobileNumber\": \"9810010199\",\n        \"emailId\": null,\n        \"locale\": null,\n        \"type\": \"EMPLOYEE\",\n        \"roles\": [\n            {\n                \"name\": \"Employee\",\n                \"code\": \"EMPLOYEE\",\n                \"tenantId\": \"pg.citya\"\n            },\n            {\n                \"name\": \"SV CEMP \",\n                \"code\": \"WS_CHARGE\",\n                \"tenantId\": \"pg.citya\"\n            }\n        ],\n        \"active\": true,\n        \"tenantId\": \"pg.citya\",\n        \"permanentCity\": null\n    },\n    \"msgId\": \"1750415006167|en_IN\",\n    \"plainAccessRequest\": {}\n},\n \"Demands\": [\n    {\n      \"isPaymentCompleted\": true,\n      \"id\": \"66799636-b357-4aa9-a367-4db2583e3878\",\n      \"tenantId\": \"pg.citya\",\n      \"consumerCode\": \"string\",\n      \"consumerType\": \"string\",\n      \"businessService\": \"WS\",\n      \"payer\": {\n        \"id\": 0,\n        \"userName\": \"string\",\n        \"name\": \"string\",\n        \"type\": \"string\",\n        \"mobileNumber\": \"string\",\n        \"emailId\": \"string\",\n        \"roles\": [\n          {\n            \"id\": 0,\n            \"name\": \"string\",\n            \"code\": \"string\",\n            \"tenantId\": \"string\"\n          }\n        ],\n        \"tenantId\": \"string\",\n        \"uuid\": \"bfa37bfa-d569-4b27-893f-fb050b8eb2bd\"\n      },\n      \"taxPeriodFrom\": 1717058721822,\n      \"taxPeriodTo\": 1817058721822,\n      \"demandDetails\": [\n        {\n          \"id\": \"7e1cd07b-4a7a-4b0f-8bee-458c3d3807db\",\n          \"demandId\": \"string\",\n          \"taxHeadMasterCode\": \"WS_CHARGE\",\n          \"taxAmount\": 0,\n          \"collectionAmount\": 0,\n          \"additionalDetails\": {},\n          \"auditDetails\": {\n            \"createdBy\": \"string\",\n            \"lastModifiedBy\": \"string\",\n            \"createdTime\": 0,\n            \"lastModifiedTime\": 0\n          },\n          \"tenantId\": \"string\"\n        }\n      ],\n      \"auditDetails\": {\n        \"createdBy\": \"string\",\n        \"lastModifiedBy\": \"string\",\n        \"createdTime\": 0,\n        \"lastModifiedTime\": 0\n      },\n      \"fixedBillExpiryDate\": 0,\n      \"billExpiryTime\": 0,\n      \"additionalDetails\": {},\n      \"minimumAmountPayable\": 0,\n      \"status\": \"ACTIVE\"\n    }\n  ]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8081/billing-service/demand/_update",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"billing-service",
+						"demand",
+						"_update"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

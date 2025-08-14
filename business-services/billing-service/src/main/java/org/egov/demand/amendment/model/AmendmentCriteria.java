@@ -42,8 +42,8 @@ package org.egov.demand.amendment.model;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

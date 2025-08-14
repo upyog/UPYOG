@@ -9,7 +9,6 @@ import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
-import javax.naming.ServiceUnavailableException;
 
 /**
  * Wraps rest template with retry
@@ -20,14 +19,14 @@ public class RetryTemplate {
     @Autowired
     private RestTemplate restTemplate;
 
-    @Retryable(value = {RuntimeException.class, ResourceAccessException.class, ServiceUnavailableException.class},
+    @Retryable(value = {RuntimeException.class, ResourceAccessException.class},
             maxAttemptsExpression = "#{${service.retry.maxAttempts}}",
             backoff = @Backoff(delayExpression = "#{${service.retry.backoff.delay}}"))
     public ResponseEntity<Object> postForEntity(String url, Object request) {
         return restTemplate.postForEntity(url, request, Object.class);
     }
 
-    @Retryable(value = {RuntimeException.class, ResourceAccessException.class, ServiceUnavailableException.class},
+    @Retryable(value = {RuntimeException.class, ResourceAccessException.class},
             maxAttemptsExpression = "#{${service.retry.maxAttempts}}",
             backoff = @Backoff(delayExpression = "#{${service.retry.backoff.delay}}"))
     public ResponseEntity<Object> getForEntity(String url, HttpEntity headerEntity) {
