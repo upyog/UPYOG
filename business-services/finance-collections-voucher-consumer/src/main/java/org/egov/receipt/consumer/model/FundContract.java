@@ -39,8 +39,8 @@
  */
 package org.egov.receipt.consumer.model;
 
-import javax.validation.constraints.NotNull;
-import org.hibernate.validator.constraints.Length;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
@@ -63,11 +63,11 @@ public class FundContract extends AuditableContract {
 
 	private Long id;
 
-	@Length(max = 50, min = 2)
+	@Size(max = 50, min = 2)
 	@NotNull
 	private String name;
 
-	@Length(max = 50, min = 2)
+	@Size(max = 50, min = 2)
 	@NotNull
 	private String code;
 	@NotNull

@@ -1,6 +1,14 @@
 # Changelog
 All notable changes to this module will be documented in this file.
 
+## 2.0.0-LTS - 2025-07-28
+
+- Upgraded Spring Boot from 2.2.6 to 3.2.2 LTS
+- Upgraded Java version to 17 LTS
+- Migrated from javax to jakarta namespace
+- Updated log4j2 version to 2.21.1
+- Updated Spring beans version to 6.1.4
+- Upgraded tracer dependency to 2.9.0-SNAPSHOT
 ## 1.1.6 - 2023-02-02
 
 - Transition from 1.1.6-beta version to 1.1.6 version

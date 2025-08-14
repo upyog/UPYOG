@@ -39,9 +39,9 @@
  */
 package org.egov.receipt.consumer.model;
 
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
-import org.hibernate.validator.constraints.Length;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
@@ -67,46 +67,46 @@ public class BankBranchContract extends AuditableContract {
 	private BankContract bank;
 
 	@NotNull
-	@Length(max = 50, min = 1)
+	@Size(max = 50, min = 1)
 	private String code;
 
 	@NotNull
-	@Length(max = 50, min = 1)
+	@Size(max = 50, min = 1)
 	@Pattern(regexp = "^[a-zA-Z0-9_]*$")
 	private String name;
 
 	@NotNull
-	@Length(max = 50, min = 1)
+	@Size(max = 50, min = 1)
 	private String address;
 
-	@Length(max = 50)
+	@Size(max = 50)
 	private String address2;
 
-	@Length(max = 50)
+	@Size(max = 50)
 	private String city;
 
-	@Length(max = 50)
+	@Size(max = 50)
 	private String state;
 
-	@Length(max = 50)
+	@Size(max = 50)
 	private String pincode;
 
-	@Length(max = 15)
+	@Size(max = 15)
 	private String phone;
 
-	@Length(max = 15)
+	@Size(max = 15)
 	private String fax;
 
-	@Length(max = 50)
+	@Size(max = 50)
 	private String contactPerson;
 
 	@NotNull
 	private Boolean active;
 
-	@Length(max = 256)
+	@Size(max = 256)
 	private String description;
 
-	@Length(max = 50)
+	@Size(max = 50)
 	private String micr;
 
 	public Long getId() {
