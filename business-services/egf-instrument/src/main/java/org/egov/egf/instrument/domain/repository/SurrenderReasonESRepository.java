@@ -68,7 +68,7 @@ public class SurrenderReasonESRepository extends ESRepository {
             surrenderReasons.add(surrenderReason);
         }
 
-        page.setTotalResults(Long.valueOf(searchResponse.getHits().getTotalHits()).intValue());
+        page.setTotalResults((int) searchResponse.getHits().getTotalHits());
         page.setPagedData(surrenderReasons);
 
         return page;
