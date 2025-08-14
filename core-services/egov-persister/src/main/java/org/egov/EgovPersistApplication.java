@@ -86,7 +86,6 @@ public class EgovPersistApplication {
         return configFolderList;
     }
 
-    @PostConstruct
     @Bean
     public TopicMap loadConfigs() {
         TopicMap topicMap = new TopicMap();
