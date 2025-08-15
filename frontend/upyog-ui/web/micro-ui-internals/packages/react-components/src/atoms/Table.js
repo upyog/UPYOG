@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from "react";
 //import { useGlobalFilter, usePagination, useRowSelect, useSortBy, useTable } from "react-table";
 import { ArrowBack, ArrowForward, ArrowToFirst, ArrowToLast, SortDown, SortUp } from "./svgindex";
 import * as ReactTable from "react-table";
-const { useTable, useGlobalFilter, usePagination, useRowSelect, useSortBy } = ReactTable;
+const { useTable, useGlobalFilter, usePagination, useRowSelect, useSortBy } = ReactTable.default || ReactTable;
 
 const noop = () => {};
 
