@@ -444,6 +444,6 @@ public class DashboardQueryConstant {
 					+ "          ELSE \n"
 					+ "              DATE_TRUNC('year', CURRENT_DATE) + INTERVAL '1 year' + INTERVAL '3 months'\n"
 					+ "      END) * 1000\n"
-					+ "    AND wf.tenantid = ?"
+					+ "    AND wf.tenant_id = ?"
 	);
 }
