@@ -794,7 +794,8 @@ const Hooks = {
   useEnabledMDMS,
   useSelectedMDMS,
   useRouteSubscription,
-  useCustomBackNavigation
+  useCustomBackNavigation,
+  pgrAi
 };
 
 export default Hooks;

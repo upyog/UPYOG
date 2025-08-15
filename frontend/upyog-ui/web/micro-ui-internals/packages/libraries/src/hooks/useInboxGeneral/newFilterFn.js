@@ -430,5 +430,114 @@ export const filterFunctions = {
     workflowFilters["moduleName"] = "request-service.tree_pruning";
     
     return { searchFilters, workflowFilters, limit, offset, sortBy, sortOrder };
-  }
+  },
+  /**
+
+ * PGRAI Inbox Filter Builder
+
+ *
+
+ * Builds the `searchFilters` and `workflowFilters` for fetching complaints in the PGRAI inbox view.
+
+ * Supports filtering by application status, mobile number, assignment, and other workflow criteria.
+
+ * Handles non-actionable role checks and pagination.
+
+ *
+
+ * @param {Object} filtersArg - Incoming filters from the UI or API request
+
+ * @returns {Object} An object containing `searchFilters`, `workflowFilters`, `limit`, `offset`, and `sortOrder`
+
+ */
+
+  PGRAI: (filtersArg) => {
+
+    let { uuid } = Digit.UserService.getUser()?.info || {};
+
+
+
+    const searchFilters = {};
+
+    const workflowFilters = {};
+
+
+
+    const { serviceRequestId, services, mobileNumber, limit, offset, sortOrder, applicationStatus, status, assignee , locality, serviceCode} = filtersArg || {};
+
+    if (applicationStatus && applicationStatus?.[0]?.applicationStatus) {
+
+      workflowFilters.status = applicationStatus.map((status) => status.uuid);
+
+      if (applicationStatus?.some((e) => e.nonActionableRole)) {
+
+        searchFilters.fetchNonActionableRecords = true;
+
+      }
+
+    }
+
+    if (status && status?.[0]?.status) {
+
+      workflowFilters.status = status.map((status) => status.uuid);
+
+      if (status?.some((e) => e.nonActionableRole)) {
+
+        searchFilters.fetchNonActionableRecords = true;
+
+      }
+
+    }
+
+    if(assignee && assignee !==undefined){
+
+      searchFilters.assignee = assignee;
+
+    }
+
+    if (mobileNumber) {
+
+      searchFilters.mobileNumber = mobileNumber;
+
+    }
+
+    if (status) {
+
+      searchFilters.applicationStatus = status;
+
+    }
+
+    if (locality) {
+
+      searchFilters.locality = locality;
+
+    }
+
+    if (serviceCode) {
+
+      searchFilters.serviceCode = serviceCode;
+
+    }
+
+    if (serviceRequestId) {
+
+      searchFilters.serviceRequestId = serviceRequestId;
+
+    }
+
+    if (services) {
+
+      workflowFilters.businessService = services;
+
+    }
+
+    searchFilters["isInboxSearch"] = true;
+
+    workflowFilters["moduleName"] = "pgr-ai-services";
+
+    
+
+    return { searchFilters, workflowFilters, limit, offset, sortOrder };
+
+},
 };

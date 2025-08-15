@@ -16,7 +16,8 @@
     "micro-ui-internals/packages/modules/ew",
     "micro-ui-internals/packages/modules/chb",
     "micro-ui-internals/packages/modules/ads",
-    "micro-ui-internals/packages/modules/ptr"
+    "micro-ui-internals/packages/modules/ptr",
+    "micro-ui-internals/packages/modules/engagement"
   ],
   "engines": {
     "node": ">=14"
