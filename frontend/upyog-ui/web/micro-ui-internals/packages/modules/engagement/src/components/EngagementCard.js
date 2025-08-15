@@ -57,7 +57,7 @@ const EngagementCard = () => {
   const totalDocsCount = useMemo(() => (isLoadingDocs ? "-" : documentsCount), [isLoadingDocs, documentsCount]);
   const totalEventsCount = useMemo(() => (isLoadingEvents ? "-" : totalEvents), [isLoadingEvents, totalEvents]);
   const totalMessagesCount = useMemo(() => (isLoadingMessages ? "-" : MessagesCount), [isLoadingMessages, MessagesCount]);
-  const totalSurveysCount = useMemo(() => (isLoadingSurveys ? "-" : surveysCount.TotalCount), [isLoadingSurveys, surveysCount]);
+  const totalSurveysCount = useMemo(() => (isLoadingSurveys ? "-" : surveysCount?.TotalCount || 0), [isLoadingSurveys, surveysCount]);
 
   const { t } = useTranslation();
   let result = null;
