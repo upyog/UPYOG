@@ -20,7 +20,7 @@ RUN yarn add @upyog/digit-ui-module-commonpt@3.0.3
 RUN yarn add @upyog/digit-ui-module-bills@3.0.2
 RUN yarn add @upyog/upyog-ui-module-ptr@3.0.1
 RUN yarn add @upyog/upyog-ui-module-ads@3.0.2
-RUN yarn add @upyog/upyog-ui-module-chb@3.0.2
+RUN yarn add @nudmcdgnpm/upyog-ui-module-chb@1.2.10
 RUN yarn add @upyog/upyog-ui-module-sv@3.0.1
 RUN yarn add @upyog/upyog-ui-module-asset@3.0.1
 RUN yarn add @upyog/upyog-ui-module-ew@3.0.1
