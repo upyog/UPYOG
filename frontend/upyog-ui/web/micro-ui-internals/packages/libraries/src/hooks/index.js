@@ -353,6 +353,7 @@ import useEmpvendorCommonSearch from "./vendor/useEmpvendorCommonSearch";
 import useEnabledMDMS from "./useEnabledMDMS";
 import useSelectedMDMS from "./useSelectedMDMS";
 import useRouteSubscription from "./useRouteSubscription";
+import { useCustomBackNavigation } from "./UseCustomBackNavigationProps";
 
 const pgr = {
   useComplaintDetails,
@@ -792,7 +793,8 @@ const Hooks = {
   vendor,
   useEnabledMDMS,
   useSelectedMDMS,
-  useRouteSubscription
+  useRouteSubscription,
+  useCustomBackNavigation
 };
 
 export default Hooks;
