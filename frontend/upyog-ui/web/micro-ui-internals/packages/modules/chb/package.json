@@ -1,7 +1,7 @@
 {
-  "name": "@upyog/upyog-ui-module-chb",
+  "name": "@nudmcdgnpm/upyog-ui-module-chb",
   "description": "Community Hall Booking Module",
-  "version": "3.0.2",
+  "version": "1.2.10",
   "license": "MIT",
   "main": "dist/index.js",
   "module": "dist/index.modern.js",
