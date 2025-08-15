@@ -44,7 +44,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 
 import org.egov.receipt.consumer.model.AuditDetails;
 import org.egov.receipt.consumer.model.BillAccountDetail;
