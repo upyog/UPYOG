@@ -228,7 +228,7 @@ import WSuseSearch from "./ws/useSearch";
 import useOldValue from "./ws/useOldValue";
 import useSewSearch from "./ws/useSewSearch";
 import useSearchWS from "./ws/useSearchWS";
-import useBulkSearchWS from "./ws/useBulkSearchWS"
+import useBulkSearchWS from "./ws/useBulkSearchWS";
 import useMypaymentWS from "./ws/useMypaymentWS";
 import useWSDetailsPage from "./ws/useWSDetailsPage";
 import useWSApplicationActions from "./ws/useApplicationActions";
@@ -323,11 +323,11 @@ import useTenantsCHB from "./chb/useTenants";
 import useChbApplicationAction from "./chb/useChbApplicationAction";
 import useServiceSearchCHB from "./chb/useServiceSearchCHB";
 import useChbSlotSearch from "./chb/useChbSlotSearch";
-import useDemandEstimation from "./chb/useDemandEstimation"
-import useTenantsADS from "./ads/useTenants"
+import useDemandEstimation from "./chb/useDemandEstimation";
+import useTenantsADS from "./ads/useTenants";
 import useADSDocumentsMDMS from "./ads/useADSDocumentsMDMS";
 import useADSDocumentSearch from "./ads/useADSDocumentSearch";
-import useADSDemandEstimation from "./ads/useADSDemandEstimation"
+import useADSDemandEstimation from "./ads/useADSDemandEstimation";
 import useCMSearch from "./cm/useCMSearch";
 
 
@@ -403,13 +403,10 @@ const fsm = {
   useConfig,
   useSlum,
   usePaymentHistory,
-  useVendorCreate,
   useVendorUpdate,
   useVehicleDetails,
   useVehicleCreate,
   useVendorCreate,
-  useVendorUpdate,
-  useVehicleDetails,
   useVehicleCreate,
   useUpdateVehicle,
   useDriverSearch,
@@ -652,8 +649,7 @@ const sv = {
   useTenants:useTenantsSV,
   useSvSearchApplication,
   useSVApplicationDetail,
-  useSVApplicationAction,
-  useSvSearchApplication
+  useSVApplicationAction
 }
 
 const ew = {
@@ -795,7 +791,8 @@ const Hooks = {
   useSelectedMDMS,
   useRouteSubscription,
   useCustomBackNavigation,
-  pgrAi
+  pgrAi,
+  useInbox
 };
 
 export default Hooks;

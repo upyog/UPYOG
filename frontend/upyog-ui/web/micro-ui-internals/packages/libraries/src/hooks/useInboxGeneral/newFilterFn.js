@@ -95,59 +95,53 @@ export const filterFunctions = {
     return { searchFilters, workflowFilters, limit, offset, sortBy, sortOrder };
   },
   ASSET: (filtersArg) => {
+    let { uuid } = Digit.UserService.getUser()?.info || {};
+    const searchFilters = {};
+    const workflowFilters = {};
+    const { applicationNo, assetParentCategory,assetClassification, limit, offset, sortBy, sortOrder, total, applicationStatus, services } = filtersArg || {};
+
+    if (filtersArg?.applicationNo) {
+      searchFilters.applicationNo = filtersArg?.applicationNo;
+    }
+    if (filtersArg?.assetParentCategory) {
+      searchFilters.assetParentCategory = filtersArg?.assetParentCategory;
+    }
+    if (filtersArg?.assetClassification) {
+      searchFilters.assetClassification = filtersArg?.assetClassification;
+    }
     
-    console.log("filtersArgss",filtersArg);
-        let { uuid } = Digit.UserService.getUser()?.info || {};
-    
-        const searchFilters = {};
-        const workflowFilters = {};
-    
-        const { applicationNo, assetParentCategory,assetclassification, limit, offset, sortBy, sortOrder, total, applicationStatus, services } = filtersArg || {};
-    
-        if (filtersArg?.applicationNo) {
-          searchFilters.applicationNo = filtersArg?.applicationNo;
-        }
-        if (filtersArg?.assetParentCategory) {
-          searchFilters.assetParentCategory = filtersArg?.assetParentCategory;
-        }
-        if (filtersArg?.assetclassification) {
-          searchFilters.assetclassification = filtersArg?.assetclassification;
-        }
-        
-        
-        if (applicationStatus && applicationStatus?.[0]?.applicationStatus) {
-          workflowFilters.status = applicationStatus.map((status) => status.uuid);
-          if (applicationStatus?.some((e) => e.nonActionableRole)) {
-            searchFilters.fetchNonActionableRecords = true;
-          }
-        }
-        if (filtersArg?.locality?.length) {
-          searchFilters.locality = filtersArg?.locality.map((item) => item.code.split("_").pop());
-        }
-        if (filtersArg?.uuid && filtersArg?.uuid.code === "ASSIGNED_TO_ME") {
-          workflowFilters.assignee = uuid;
-        }
-        if (applicationNo) {
-          searchFilters.applicationNo = applicationNo;
-        }
-        if (assetclassification) {
-          searchFilters.assetclassification = assetclassification;
-        }
-        if (assetParentCategory) {
-          searchFilters.assetParentCategory = assetParentCategory;
-        }
-    
-    
-        if (services) {
-          workflowFilters.businessService = services;
-        }
-        searchFilters["isInboxSearch"] = true;
-        searchFilters["creationReason"] = ["asset-create"];
-        workflowFilters["moduleName"] = "asset-services";
-    
-    
-       
-        return { searchFilters, workflowFilters, limit, offset, sortBy, sortOrder };
+
+    if (applicationStatus && applicationStatus?.[0]?.applicationStatus) {
+      workflowFilters.status = applicationStatus.map((status) => status.uuid);
+      if (applicationStatus?.some((e) => e.nonActionableRole)) {
+        searchFilters.fetchNonActionableRecords = true;
+      }
+    }
+    if (filtersArg?.locality?.length) {
+      searchFilters.locality = filtersArg?.locality.map((item) => item.code.split("_").pop());
+    }
+    if (filtersArg?.uuid && filtersArg?.uuid.code === "ASSIGNED_TO_ME") {
+      workflowFilters.assignee = uuid;
+    }
+    if (applicationNo) {
+      searchFilters.applicationNo = applicationNo;
+    }
+    if (assetClassification) {
+      searchFilters.assetClassification = assetClassification.code;
+    }
+
+    if (assetParentCategory) {
+      searchFilters.assetParentCategory = assetParentCategory;
+    }
+
+    if (services) {
+      workflowFilters.businessService = services;
+    }
+    searchFilters["isInboxSearch"] = true;
+    searchFilters["creationReason"] = ["asset-create"];
+    workflowFilters["moduleName"] = "asset-services";
+
+    return { searchFilters, workflowFilters, limit, offset, sortBy, sortOrder };
   },
 
   EW: (filtersArg) => {
