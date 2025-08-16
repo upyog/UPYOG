@@ -118,7 +118,7 @@ const refObj = (tenantId, filters) => {
       key: "bookingNo",
       label: "ADS_BOOKING_NO",
     },
-     wt: {
+    wt: {
       searchFn: () => wtBookings(null, { ...filters, bookingNo: consumerCodes }),
       key: "bookingNo",
       label: "WT_BOOKING_NO",
@@ -174,7 +174,7 @@ export const useApplicationsForBusinessServiceSearch = ({ tenantId, businessServ
   
 
   /* key from application ie being used as consumer code in bill */
-  const { searchFn, key, label } = filters!==undefined ? refObj(tenantId, filters)[_key]:"";
+  const { searchFn, key, label } = refObj(tenantId, filters)[_key];
   const applications = useQuery(["applicationsForBillDetails", { tenantId, businessService, filters, searchFn }], searchFn, {
     ...config,
   });
