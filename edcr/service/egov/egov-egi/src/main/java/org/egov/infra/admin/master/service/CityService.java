@@ -64,6 +64,7 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
@@ -71,6 +72,9 @@ import org.egov.infra.admin.master.entity.City;
 import org.egov.infra.admin.master.repository.CityRepository;
 import org.egov.infra.utils.FileStoreUtils;
 import org.egov.infra.utils.TenantUtils;
+import org.egov.infra.web.utils.WebUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -84,6 +88,8 @@ public class CityService {
     private static final String CITY_DATA_CACHE_KEY = "%s-city-pref";
     private static final String CITY_LOGO_CACHE_KEY = "%s-city-logo";
     private static final String CITY_LOGO_HASH_KEY = "city-logo";
+    
+    private static final Logger LOG = LoggerFactory.getLogger(CityService.class);
 
     private final CityRepository cityRepository;
 
@@ -137,9 +143,13 @@ public class CityService {
 
     public Map<String, Object> cityDataAsMap() {
         Map<String, Object> cityPrefs = cityPrefCache.entries(cityPrefCacheKey());
+        LOG.info("Initial cityPrefs from cache: {}", cityPrefs);
         if (cityPrefs.isEmpty()) {
 
             List<City> cityEntries = cityRepository.findAll();
+            LOG.info("CityEntries size : " + cityEntries.size());
+            LOG.info("cityEntries from db : {}", 
+                    cityEntries.stream().map(City::toMap).collect(Collectors.toList()));
             if (cityEntries != null && cityEntries.size() == 1) {
                 cityPrefCache.putAll(cityPrefCacheKey(), cityEntries.get(0).toMap());
             } else {
@@ -151,6 +161,7 @@ public class CityService {
             // cityPrefCache.putAll(cityPrefCacheKey(), getCityByURL(getDomainName()).toMap());
             cityPrefs = cityPrefCache.entries(cityPrefCacheKey());
         }
+        LOG.info("Final cityPrefs from cache: {}", cityPrefs);
         return cityPrefs;
     }
 

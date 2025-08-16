@@ -81,8 +81,10 @@ public final class WebUtils {
      * eg: http://www.domain.com/cxt/xyz will return www.domain.com http://somehost:8090/cxt/xyz will return somehost
      **/
     public static String extractRequestedDomainName(HttpServletRequest httpRequest) {
+    	LOG.info("inside extractRequestedDomainName method");
         String requestURL = httpRequest.getRequestURL().toString();
         String domainName = getDomainName(requestURL);
+        LOG.info("Get domain name from request URL : " + domainName);
         if (domainName.contains(EDCR_SERVICE_INTERNAL_URL)) {
             String host = httpRequest.getHeader("x-forwarded-host");
             if (StringUtils.isNotBlank(host)) {
@@ -90,6 +92,7 @@ public final class WebUtils {
                 LOG.info("*****Domain Name*****" + domainName);
             }
         }
+        LOG.info("extracted domain name : "+ domainName);
         return domainName;
     }
 
@@ -109,6 +112,7 @@ public final class WebUtils {
                 domainNameEndIndex > 0 ? domainNameEndIndex : requestURL.length());
         if (domainName.contains(COLON))
             domainName = domainName.split(COLON)[0];
+        LOG.info("Domain Name from request URL : " + domainName);
         return domainName;
     }
 
@@ -122,7 +126,11 @@ public final class WebUtils {
         String domainURL = "";
         String protocol = httpRequest.getHeader("x-forwarded-proto");
         String host = httpRequest.getHeader("x-forwarded-host");
-        if (getDomainName(url.toString()).contains(EDCR_SERVICE_INTERNAL_URL)) {
+        LOG.info("Extracted Host : " + host);
+        String domainName = getDomainName(url.toString());
+        LOG.info("domain : " + domainName);
+        if (domainName.contains(EDCR_SERVICE_INTERNAL_URL)) {
+        	LOG.info("domain URL contains : " + EDCR_SERVICE_INTERNAL_URL);
             if (StringUtils.isNotBlank(protocol) && StringUtils.isNotBlank(host)) {
                 String proto = protocol.toString().split(",")[0];
                 String hostName = host.toString().split(",")[0];
@@ -130,11 +138,14 @@ public final class WebUtils {
                 LOG.info("Domain URL*******" + domainURL);
             }
         } else {
+        	LOG.info("domain URL not contains : " + EDCR_SERVICE_INTERNAL_URL);
             String uri = httpRequest.getRequestURI();
+            LOG.info("Request URI : " + uri);
             domainURL = withContext
                     ? url.substring(0, url.length() - uri.length() + httpRequest.getContextPath().length()) + FORWARD_SLASH
                     : url.substring(0, url.length() - uri.length());
         }
+        LOG.info("final extracted domain URL : " + domainURL);
         return domainURL;
     }
 

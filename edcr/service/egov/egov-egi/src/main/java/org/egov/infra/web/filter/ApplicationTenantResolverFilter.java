@@ -114,6 +114,7 @@ public class ApplicationTenantResolverFilter implements Filter {
         LOG.info("Request URI-->" + customRequest.getRequestURI());
         String domainURL = extractRequestDomainURL(customRequest, false);
         String domainName = extractRequestedDomainName(customRequest);
+        LOG.info("Setting tenant id to localThread from env : {} values from env {} " + domainName ,environmentSettings.schemaName(domainName) );
         ApplicationThreadLocals.setTenantID(environmentSettings.schemaName(domainName));
         ApplicationThreadLocals.setDomainName(domainName);
         ApplicationThreadLocals.setDomainURL(domainURL);
@@ -133,6 +134,7 @@ public class ApplicationTenantResolverFilter implements Filter {
     }
 
     private void prepareRestService(MultiReadRequestWrapper customRequest, HttpSession session) {
+    	LOG.info("inside prepareRestService method");
         if (tenants == null || tenants.isEmpty()) {
             tenants = tenantUtils.tenantsMap();
         }
@@ -141,9 +143,11 @@ public class ApplicationTenantResolverFilter implements Filter {
         // LOG.info("***********Enter to set tenant id and custom header**************" + req.getRequestURL().toString());
         String requestURL = new StringBuilder().append(ApplicationThreadLocals.getDomainURL())
                 .append(customRequest.getRequestURI()).toString();
+        LOG.info("Request URL after append domainUrl and requestURI : " + requestURL);
         if (requestURL.contains(tenants.get("state"))
                 && (requestURL.contains("/edcr/") && (requestURL.contains("/rest/")
                         || requestURL.contains("/oauth/")))) {
+        	LOG.info("Request URL contains state, edcr and rest or oauth check passed");
 
             LOG.debug("All tenants from config" + tenants);
             LOG.info("tenants.get(state))" + tenants.get("state"));
@@ -165,6 +169,7 @@ public class ApplicationTenantResolverFilter implements Filter {
             LOG.info("City Code from session " + (String) session.getAttribute(CITY_CODE_KEY));
             boolean found = false;
             City stateCity = cityService.fetchStateCityDetails();
+            LOG.info("State city : " + stateCity.toMap().toString());
             if (tenant.equalsIgnoreCase("generic") || tenant.equalsIgnoreCase("state")) {
                 ApplicationThreadLocals.setTenantID(tenant);
                 found = true;
