@@ -347,6 +347,37 @@ const swAccess = () => {
   return SW_ACCESS?.length > 0;
 };
 
+const wtAccess = () => {
+  const userInfo = Digit.UserService.getUser();
+  const userRoles = userInfo?.info?.roles?.map((roleData) => roleData?.code);
+  const wtRoles = ["WT_CEMP","WT_VENDOR"];
+  const WT_ACCESS = userRoles?.filter((role) => wtRoles?.includes(role));
+  return WT_ACCESS?.length > 0;
+};
+// Checks if the user has access to MT services based on their roles, this is adding role for employee side
+const mtAccess = () => {
+  const userInfo = Digit.UserService.getUser();
+  const userRoles = userInfo?.info?.roles?.map((roleData) => roleData?.code);
+  const mtRoles = ["MT_CEMP","MT_VENDOR"];
+  const MT_ACCESS = userRoles?.filter((role) => mtRoles?.includes(role));
+  return MT_ACCESS?.length > 0;
+};
+// Checks if the user has access to TP services based on their roles, this is adding role for employee side
+const tpAccess = () => {
+  const userInfo = Digit.UserService.getUser();
+  const userRoles = userInfo?.info?.roles?.map((roleData) => roleData?.code);
+  const tpRoles = ["TP_CEMP","TP_VERIFIER","TP_EXECUTION"];
+  const TP_ACCESS = userRoles?.filter((role) => tpRoles?.includes(role));
+  return TP_ACCESS?.length > 0;
+};
+const vendorAccess = () => {
+  const userInfo = Digit.UserService.getUser();
+  const userRoles = userInfo?.info?.roles?.map((roleData) => roleData?.code);
+  const vendorRoles = ["VENDOR"];
+  const VENDOR_ACCESS = userRoles?.filter((role) => vendorRoles?.includes(role));
+  return VENDOR_ACCESS?.length > 0;
+};
+
 export default {
   pdf: PDFUtil,
   downloadReceipt,
@@ -391,5 +422,9 @@ export default {
   ewAccess,
   svAccess,
   dashboardAccess,
+  wtAccess,
+  mtAccess,
+  tpAccess,
+  vendorAccess,
   ...privacy,
 };

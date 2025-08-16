@@ -17,7 +17,7 @@ const usePtrApplicationDetail = (t, tenantId, applicationNumber, config = {}, us
     }
   };
   // hook to get the pet colors master data
-  let { data: pet_color } = Digit.Hooks.useCustomMDMS(Digit.ULBService.getStateId(), "PetService", [{ name: "PetColor" }],
+  let { data: pet_color } = Digit.Hooks.useCustomMDMSV2(Digit.ULBService.getStateId(), "PetService", [{ name: "PetColor" }],
   {
     select: (data) => {
       const formattedData = data?.["PetService"]?.["PetColor"].map((petone) => {

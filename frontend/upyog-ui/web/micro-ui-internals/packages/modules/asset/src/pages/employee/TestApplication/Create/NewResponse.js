@@ -52,9 +52,11 @@ const NewResponse = ({ data, onSuccess }) => {
       
       data.tenantId = data.address?.city?.code;
       let formdata = Assetdata(data)
-      
+      console.log("formdata in acknowejkfdlgi ::: ", formdata);
 
       
+
+
       mutation.mutate(formdata, {
         onSuccess,
       });

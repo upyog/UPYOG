@@ -3,6 +3,22 @@ import React, { useState, useEffect } from "react";
 
 import { configCHBApproverApplication} from "../config";
 
+/*
+  ActionModal Component
+  
+  This component is responsible for rendering a modal that allows an approver to take action 
+  on a specific task. It includes form fields for comments and file uploads, and provides the 
+  ability to select an approver from a list fetched via an API. When the form is submitted, 
+  it triggers the `submitAction` function with the necessary data.
+  
+  Key Features:
+  - **File Upload**: Handles file upload with size validation (max 5MB).
+  - **Approver Selection**: Dynamically loads approvers based on roles and sets the selected approver.
+  - **Form Configuration**: Configures the form dynamically based on the `action` prop.
+  - **Error Handling**: Displays error messages for file uploads or other validation issues.
+  - **Submit Action**: Calls the provided `submitAction` function with the form data when submitted.
+*/
+
 
 const Heading = (props) => {
   return <h1 className="heading-m">{props.label}</h1>;
@@ -25,7 +41,6 @@ const CloseBtn = (props) => {
 
 const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction, actionData, applicationData, businessService, moduleCode }) => {
 
-  console.log("applicationData",applicationData);
   const { data: approverData, isLoading: PTALoading } = Digit.Hooks.useEmployeeSearch(
     tenantId,
     {
@@ -47,7 +62,7 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
   const [disableActionSubmit, setDisableActionSubmit] = useState(false);
 
   
-
+ 
   useEffect(() => {
     setApprovers(approverData?.Employees?.map((employee) => ({ uuid: employee?.uuid, name: employee?.user?.name })));
   }, [approverData]);
@@ -57,67 +72,66 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
   }
 
   useEffect(() => {
-    (async () => {
-      setError(null);
-      if (file) {
-        if (file.size >= 5242880) {
-          setError(t("CS_MAXIMUM_UPLOAD_SIZE_EXCEEDED"));
-        } else {
-          try {
-            const response = await Digit.UploadServices.Filestorage("CHB", file, Digit.ULBService.getStateId());
-            if (response?.data?.files?.length > 0) {
-              setUploadedFile(response?.data?.files[0]?.fileStoreId);
-            } else {
+      (async () => {
+        setError(null);
+        if (file) {
+          if (file.size >= 5242880) {
+            setError(t("CS_MAXIMUM_UPLOAD_SIZE_EXCEEDED"));
+          } else {
+            try {
+            const response = await Digit.UploadServices.Filestorage("CHB", file, tenantId);
+              if (response?.data?.files?.length > 0) {
+                setUploadedFile(response?.data?.files[0]?.fileStoreId);
+              } else {
+                setError(t("CS_FILE_UPLOAD_ERROR"));
+              }
+            } catch (err) {
               setError(t("CS_FILE_UPLOAD_ERROR"));
             }
-          } catch (err) {
-            setError(t("CS_FILE_UPLOAD_ERROR"));
           }
         }
-      }
-    })();
-  }, [file]);
+      })();
+    }, [file]);
   
 
   function submit(data) {
-      let workflow = { action: action?.action, comments: data?.comments, businessService, moduleName: moduleCode };
+      let workflow = { action: action?.action, comment: data?.comments, businessService, moduleName: moduleCode };
       if (uploadedFile)
         workflow["documents"] = [
           {
             documentType: action?.action + " DOC",
             fileName: file?.name,
-            filestoreId: uploadedFile,
+            fileStoreId: uploadedFile,
           },
         ];
       submitAction({
-        hallsBookingApplication: [
+        hallsBookingApplication: 
           {
             ...applicationData,
             workflow,
           },
-        ],
       });
    
   }
 
-  useEffect(() => {
+   useEffect(() => {
     if (action) {
       setConfig(
-          configCHBApproverApplication({
-            t,
-            action,
-            approvers,
-            selectedApprover,
-            setSelectedApprover,
-            selectFile,
-            uploadedFile,
-            setUploadedFile,
-            businessService,
-          })
-        );
+        configCHBApproverApplication({
+          t,
+          action,
+          approvers,
+          selectedApprover,
+          setSelectedApprover,
+          selectFile,
+          uploadedFile,
+          setUploadedFile,
+          businessService,
+        })
+      );
       
     }
-  }, [action, approvers, uploadedFile]);
+    }, [action, approvers, uploadedFile]);
 
   return action && config.form ? (
     <Modal

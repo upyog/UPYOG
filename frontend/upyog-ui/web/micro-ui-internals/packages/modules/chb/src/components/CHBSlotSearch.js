@@ -1,5 +1,42 @@
 import React, { useState, useEffect } from 'react';
 
+/**
+ * CHBSlotSearch Component
+ * 
+ * This component is responsible for searching and checking the availability of booking slots in the CHB (Community Hall Booking) module.
+ * It fetches slot availability data and determines whether any of the slots are already booked.
+ * 
+ * Props:
+ * - `slotDetail`: Array containing details of the booking slots, including:
+ *    - `name`: The name or code of the community hall.
+ *    - `bookingDate`: The start and end dates of the booking.
+ *    - `hallCode1`: The code of the hall.
+ * 
+ * State Variables:
+ * - `isSlotBooked`: Boolean state indicating whether any of the slots are already booked.
+ * - `loading`: Boolean state indicating whether the slot data is being fetched.
+ * 
+ * Variables:
+ * - `tenantId`: The current tenant ID fetched using the Digit ULB Service.
+ * 
+ * Hooks:
+ * - `useEffect`: Fetches slot availability data when the component is mounted or when `slotDetail` changes.
+ * - `Digit.Hooks.chb.useChbSlotSearch`: Custom hook to fetch slot availability data based on the provided filters.
+ * 
+ * Logic:
+ * - Fetches slot availability data using the `useChbSlotSearch` hook with the following filters:
+ *    - `communityHallCode`: The name or code of the community hall.
+ *    - `bookingStartDate`: The start date of the booking.
+ *    - `bookingEndDate`: The end date of the booking.
+ *    - `hallCode`: The code of the hall.
+ * - Refetches the slot data and checks if any of the slots have a status of "BOOKED".
+ * - Updates the `isSlotBooked` state based on the result.
+ * - Handles errors during the data fetch and logs them to the console.
+ * 
+ * Returns:
+ * - A component that checks and manages the availability of booking slots.
+ * - Displays a loading state while the data is being fetched.
+ */
 const CHBSlotSearch = ({ slotDetail }) => {
   const [isSlotBooked, setIsSlotBooked] = useState(false);
   const [loading, setLoading] = useState(true);

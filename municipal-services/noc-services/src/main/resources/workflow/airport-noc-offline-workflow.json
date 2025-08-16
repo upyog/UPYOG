@@ -1,0 +1,96 @@
+ {
+        "tenantId": "pg",
+        "businessService": "AIRPORT_NOC_OFFLINE",
+        "business": "noc-services",
+        "businessServiceSla": 5184000000,
+        "states": [
+          {
+            "tenantId": "pg",
+            "sla": null,
+            "state": null,
+            "applicationStatus": "INITIATED",
+            "docUploadRequired": false,
+            "isStartState": true,
+            "isTerminateState": false,
+            "isStateUpdatable": true,
+            "actions": [
+              {
+                "tenantId": "pg",
+                "currentState": null,
+                "action": "INITIATE",
+                "nextState": "INITIATED",
+                "roles": [
+                  "CITIZEN",
+                  "BPA_ARCHITECT",
+                  "BPA_ENGINEER",
+                  "BPA_BUILDER",
+                  "BPA_STRUCTURALENGINEER",
+                  "BPA_TOWNPLANNER",
+                  "BPA_SUPERVISOR"
+                ],
+                "active": true
+              }
+            ]
+          },
+          {
+            "tenantId": "pg",
+            "sla": null,
+            "state": "INITIATED",
+            "applicationStatus": "INPROGRESS",
+            "docUploadRequired": false,
+            "isStartState": false,
+            "isTerminateState": false,
+            "isStateUpdatable": false,
+            "actions": [
+              {
+                "tenantId": "pg",
+                "currentState": "INITIATED",
+                "action": "AUTO_APPROVE",
+                "nextState": "AUTO_APPROVED",
+                "roles": [
+                  "BPA_VERIFIER",
+                  "BPA_FIELD_INSPECTOR",
+                  "BPA_NOC_VERIFIER",
+                  "BPA_APPROVER"
+                ],
+                "active": true
+              },
+              {
+                "tenantId": "pg",
+                "currentState": "INITIATED",
+                "action": "VOID",
+                "nextState": "VOIDED",
+                "roles": [
+                  "BPA_VERIFIER",
+                  "BPA_FIELD_INSPECTOR",
+                  "BPA_NOC_VERIFIER",
+                  "BPA_APPROVER"
+                ],
+                "active": true
+              }
+            ]
+          },
+          {
+            "tenantId": "pg",
+            "sla": null,
+            "state": "VOIDED",
+            "applicationStatus": "VOIDED",
+            "docUploadRequired": false,
+            "isStartState": false,
+            "isTerminateState": true,
+            "isStateUpdatable": false,
+            "actions": null
+          },
+          {
+            "tenantId": "pg",
+            "sla": null,
+            "state": "AUTO_APPROVED",
+            "applicationStatus": "AUTO_APPROVED",
+            "docUploadRequired": false,
+            "isStartState": false,
+            "isTerminateState": true,
+            "isStateUpdatable": false,
+            "actions": null
+          }
+        ]
+      }

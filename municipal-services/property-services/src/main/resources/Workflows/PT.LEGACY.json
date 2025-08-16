@@ -1,0 +1,78 @@
+"BusinessServices": [
+      {
+        "tenantId": "pg",
+        "businessService": "PT.LEGACY",
+        "business": "PT",
+        "businessServiceSla": null,
+        "states": [
+          {
+            "tenantId": "pg",
+            "sla": null,
+            "state": null,
+            "applicationStatus": "INWORKFLOW",
+            "docUploadRequired": false,
+            "isStartState": true,
+            "isTerminateState": false,
+            "actions": [
+              {
+                "tenantId": "pg",
+                "action": "OPEN",
+                "nextState": "APPROVALPENDING",
+                "roles": [
+                  "CITIZEN",
+                  "EMPLOYEE"
+                ]
+              }
+            ]
+          },
+          {
+            "tenantId": "pg",
+            "sla": null,
+            "state": "APPROVALPENDING",
+            "applicationStatus": "INWORKFLOW",
+            "docUploadRequired": false,
+            "isStartState": true,
+            "isTerminateState": false,
+            "actions": [
+              {
+                "tenantId": "pg",
+                "action": "APPROVE",
+                "nextState": "APPROVED",
+                "roles": [
+                  "EMPLOYEE"
+                ]
+              },
+              {
+                "tenantId": "pg",
+                "action": "REJECT",
+                "nextState": "REJECTED",
+                "roles": [
+                  "EMPLOYEE"
+                ]
+              }
+            ]
+          },
+          {
+            "tenantId": "pg",
+            "sla": null,
+            "state": "REJECTED",
+            "applicationStatus": "INACTIVE",
+            "docUploadRequired": false,
+            "isStartState": false,
+            "isTerminateState": true,
+            "actions": null
+          },
+          {
+            "tenantId": "pg",
+            "sla": null,
+            "state": "APPROVED",
+            "applicationStatus": "INACTIVE",
+            "docUploadRequired": false,
+            "isStartState": false,
+            "isTerminateState": true,
+            "actions": null
+          }
+        ]
+      }
+    ]
+  

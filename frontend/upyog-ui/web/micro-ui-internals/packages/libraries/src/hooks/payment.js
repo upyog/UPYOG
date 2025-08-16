@@ -11,7 +11,7 @@ export const useFetchCitizenBillsForBuissnessService = ({ businessService, ...fi
   /* For these business services, the fetchBill API does not require mobileNumber.
     sriranjan sir has approved these changes
   */
-  const skipBusinessServices = ["adv-services", "chb-services", "pet-services", "sv-services"];
+  const skipBusinessServices = ["adv-services", "chb-services", "pet-services", "sv-services", "request-service.mobile_toilet", "request-service.water_tanker", "request-service.tree_pruning"];
   // Early return if businessService is in the skip list
   if (skipBusinessServices.includes(businessService)) {
     return {

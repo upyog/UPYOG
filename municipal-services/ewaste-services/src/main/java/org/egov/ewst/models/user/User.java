@@ -23,7 +23,8 @@ import lombok.Setter;
 import lombok.ToString;
 
 /**
- * User
+ * Represents a user in the Ewaste application.
+ * This class contains various details about the user such as id, name, contact information, and roles.
  */
 @SuppressWarnings("deprecation")
 @Validated

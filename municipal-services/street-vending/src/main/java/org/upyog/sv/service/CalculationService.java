@@ -9,7 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.upyog.sv.constants.StreetVendingConstants;
 import org.upyog.sv.util.MdmsUtil;
+import org.upyog.sv.web.models.StreetVendingDetail;
 import org.upyog.sv.web.models.StreetVendingRequest;
+import org.upyog.sv.web.models.Workflow;
 import org.upyog.sv.web.models.billing.CalculationType;
 import org.upyog.sv.web.models.billing.DemandDetail;
 import org.upyog.sv.web.models.billing.TaxHeadMaster;
@@ -38,10 +40,35 @@ public class CalculationService {
 				StreetVendingConstants.SV_MASTER_MODULE_NAME);
 
 		log.info("calculationTypes " + calculationTypes);
+		
+		// Get the vendor's payment frequency (e.g., MONTHLY, QUARTERLY) from the booking request	
+	    StreetVendingDetail svDetail = bookingRequest.getStreetVendingDetail();
+	    Workflow workflow = (svDetail != null) ? svDetail.getWorkflow() : null;
 
-		List<DemandDetail> demandDetails = processCalculationForDemandGeneration(tenantId, calculationTypes,
+	    String action = (workflow != null && workflow.getAction() != null) ? workflow.getAction() : "";
+
+	    String vendorPaymentFrequency = (svDetail != null) ? svDetail.getVendorPaymentFrequency() : null;
+
+	    String requiredApplicationType;
+
+	    if (StreetVendingConstants.ACTION_APPROVE.equalsIgnoreCase(action)) {
+	        requiredApplicationType = StreetVendingConstants.SVONETIMEFEE;
+	    } else {
+	        requiredApplicationType = getApplicationTypeFromFrequency(vendorPaymentFrequency);
+	    }
+      
+	    //Filter the list of calculation types to include only those matching the derived application type
+	    List<CalculationType> filteredCalculationType = calculationTypes.stream()
+	            .filter(type -> requiredApplicationType.equalsIgnoreCase(type.getApplicationType()))
+	            .collect(Collectors.toList());
+
+		List<DemandDetail> demandDetails = processCalculationForDemandGeneration(tenantId, filteredCalculationType,
 				bookingRequest, headMasters);
-
+		
+		log.info("demandDetails : " + demandDetails);
+		
+		log.info("Demand Amount : " + demandDetails.get(0).getTaxAmount());
+	    
 		return demandDetails;
 
 	}
@@ -72,5 +99,24 @@ public class CalculationService {
 		return demandDetails;
 
 	}
+	
+	/**
+	 * Determines the application type based on the vendor's payment frequency.
+	 *
+	 * @param vendorPaymentfrequency the payment frequency provided by the vendor (e.g., "MONTHLY", "QUARTERLY")
+	 * @return the corresponding application type constant (e.g., "SV_MONTHLY_FEE" or "SV_QUARTERLY_FEE")
+	 *         Defaults to quarterly fee type if the frequency is unrecognized or null.
+	 */
+	
+	private String getApplicationTypeFromFrequency(String vendorPaymentfrequency) {
+	    if (StreetVendingConstants.MONTHLY.equalsIgnoreCase(vendorPaymentfrequency)) {
+	        return StreetVendingConstants.SVMONTHLYFEE;
+	    } else if (StreetVendingConstants.QUATERLY.equalsIgnoreCase(vendorPaymentfrequency)) {
+	        return  StreetVendingConstants.SVQUATERLYYFEE;
+	    } else {
+	        return StreetVendingConstants.SVONETIMEFEE;
+	    }
+	}
+
 
 }

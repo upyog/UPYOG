@@ -47,6 +47,11 @@
 
 package org.egov.edcr.feature;
 
+import static org.egov.edcr.constants.CommonFeatureConstants.FOR_BLOCK;
+import static org.egov.edcr.constants.CommonKeyConstants.COM_SEQURITY_ZONE;
+import static org.egov.edcr.constants.EdcrReportConstants.*;
+import static org.egov.edcr.service.FeatureUtil.addScrutinyDetailtoPlan;
+import static org.egov.edcr.service.FeatureUtil.mapReportDetails;
 import static org.egov.edcr.utility.DcrConstants.BUILDING_HEIGHT;
 import static org.egov.edcr.utility.DcrConstants.DECIMALDIGITS_MEASUREMENTS;
 import static org.egov.edcr.utility.DcrConstants.HEIGHT_OF_BUILDING;
@@ -62,30 +67,13 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import org.egov.common.entity.edcr.Block;
-import org.egov.common.entity.edcr.CulDeSacRoad;
-import org.egov.common.entity.edcr.Lane;
-import org.egov.common.entity.edcr.NonNotifiedRoad;
-import org.egov.common.entity.edcr.NotifiedRoad;
-import org.egov.common.entity.edcr.Plan;
-import org.egov.common.entity.edcr.Result;
-import org.egov.common.entity.edcr.ScrutinyDetail;
+import org.egov.common.entity.edcr.*;
 import org.egov.edcr.service.ProcessHelper;
+import org.egov.edcr.utility.DcrConstants;
 import org.springframework.stereotype.Service;
 
 @Service
 public class BuildingHeight extends FeatureProcess {
-    private static final String RULE_EXPECTED_KEY = "buildingheight.expected";
-    private static final String RULE_ACTUAL_KEY = "buildingheight.actual";
-    private static final String SECURITYZONE_RULE_EXPECTED_KEY = "securityzone.expected";
-    private static final String SECURITYZONE_RULE_ACTUAL_KEY = "securityzone.actual";
-
-    private static final String SUB_RULE_32_1A = "32-1A";
-    private static final String SUB_RULE_32_3 = "32-3";
-    public static final String UPTO = "Up To";
-    public static final String DECLARED = "Declared";
-    private static final BigDecimal TWELVE = BigDecimal.valueOf(12);
-    private static final BigDecimal TEN = BigDecimal.valueOf(10);
 
     @Override
     public Plan validate(Plan pl) {
@@ -154,27 +142,21 @@ public class BuildingHeight extends FeatureProcess {
                 String actualResult = getLocaleMessage(RULE_ACTUAL_KEY, actualDistance.toString());
                 String expectedResult = getLocaleMessage(RULE_EXPECTED_KEY, exptectedDistance.toString());
 
+                ReportScrutinyDetail detail = new ReportScrutinyDetail();
+                detail.setRuleNo(subRule);
+                detail.setDescription(HEIGHT_OF_BUILDING + FOR_BLOCK + block.getNumber());
+                detail.setUpto(expectedResult);
+                detail.setProvided(actualResult);
+
                 if (actualDistance.compareTo(exptectedDistance) > 0) {
-                    Map<String, String> details = new HashMap<>();
-                    details.put(RULE_NO, subRule);
-                    details.put(DESCRIPTION, HEIGHT_OF_BUILDING + " for Block " + block.getNumber());
-                    details.put(UPTO, expectedResult);
-                    details.put(PROVIDED, actualResult);
-                    details.put(STATUS, Result.Not_Accepted.getResultVal());
-                    scrutinyDetail.getDetail().add(details);
-                    Plan.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
-
+                    detail.setStatus(Result.Not_Accepted.getResultVal());
                 } else {
-                    Map<String, String> details = new HashMap<>();
-                    details.put(RULE_NO, subRule);
-                    details.put(DESCRIPTION, HEIGHT_OF_BUILDING + " for Block " + block.getNumber());
-                    details.put(UPTO, expectedResult);
-                    details.put(PROVIDED, actualResult);
-                    details.put(STATUS, Result.Verify.getResultVal());
-                    scrutinyDetail.getDetail().add(details);
-                    Plan.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
-
+                    detail.setStatus(Result.Verify.getResultVal());
                 }
+
+                Map<String, String> details = mapReportDetails(detail);
+                addScrutinyDetailtoPlan(scrutinyDetail, Plan, details);
+
             }
         }
     }
@@ -192,7 +174,7 @@ public class BuildingHeight extends FeatureProcess {
             if (maxBuildingHeight.compareTo(BigDecimal.ZERO) > 0) {
 
                 scrutinyDetail = new ScrutinyDetail();
-                scrutinyDetail.setKey("Common_Security Zone");
+                scrutinyDetail.setKey(COM_SEQURITY_ZONE);
                 scrutinyDetail.addColumnHeading(1, RULE_NO);
                 scrutinyDetail.addColumnHeading(2, DESCRIPTION);
                 scrutinyDetail.addColumnHeading(3, REQUIRED);
@@ -203,41 +185,38 @@ public class BuildingHeight extends FeatureProcess {
                         maxBuildingHeight.toString());
                 String expectedResult = getLocaleMessage(SECURITYZONE_RULE_EXPECTED_KEY, TEN.toString());
 
+                ReportScrutinyDetail detail = new ReportScrutinyDetail();
+                detail.setRuleNo(SUB_RULE_32_3);
+                detail.setDescription(SECURITY_ZONE);
+                detail.setRequired(expectedResult);
+                detail.setProvided(actualResult);
+
                 if (maxBuildingHeight.compareTo(TEN) <= 0) {
-                    Map<String, String> details = new HashMap<>();
-                    details.put(RULE_NO, SUB_RULE_32_3);
-                    details.put(DESCRIPTION, SECURITY_ZONE);
-                    details.put(REQUIRED, expectedResult);
-                    details.put(PROVIDED, actualResult);
-                    details.put(STATUS, Result.Verify.getResultVal());
-                    scrutinyDetail.getDetail().add(details);
-                    Plan.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+                    detail.setStatus(Result.Verify.getResultVal());
                 } else {
-                    Map<String, String> details = new HashMap<>();
-                    details.put(RULE_NO, SUB_RULE_32_3);
-                    details.put(DESCRIPTION, SECURITY_ZONE);
-                    details.put(REQUIRED, expectedResult);
-                    details.put(PROVIDED, actualResult);
-                    details.put(STATUS, Result.Not_Accepted.getResultVal());
-                    scrutinyDetail.getDetail().add(details);
-                    Plan.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+                    detail.setStatus(Result.Not_Accepted.getResultVal());
                 }
+
+                Map<String, String> details = mapReportDetails(detail);
+                addScrutinyDetailtoPlan(scrutinyDetail, Plan, details);
+
             }
         } else {
             scrutinyDetail = new ScrutinyDetail();
-            scrutinyDetail.setKey("Common_Security Zone");
+            scrutinyDetail.setKey(COM_SEQURITY_ZONE);
             scrutinyDetail.addColumnHeading(1, RULE_NO);
             scrutinyDetail.addColumnHeading(2, DESCRIPTION);
             scrutinyDetail.addColumnHeading(3, DECLARED);
             scrutinyDetail.addColumnHeading(4, STATUS);
 
-            Map<String, String> details = new HashMap<>();
-            details.put(RULE_NO, SUB_RULE_32_3);
-            details.put(DESCRIPTION, SECURITY_ZONE);
-            details.put(DECLARED, "No");
-            details.put(STATUS, Result.Verify.getResultVal());
-            scrutinyDetail.getDetail().add(details);
-            Plan.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+            ReportScrutinyDetail detail = new ReportScrutinyDetail();
+            detail.setRuleNo(SUB_RULE_32_3);
+            detail.setDescription(SECURITY_ZONE);
+            detail.setDeclared(DcrConstants.NO);
+            detail.setStatus(Result.Verify.getResultVal());
+
+            Map<String, String> details = mapReportDetails(detail);
+            addScrutinyDetailtoPlan(scrutinyDetail, Plan, details);
 
         }
 

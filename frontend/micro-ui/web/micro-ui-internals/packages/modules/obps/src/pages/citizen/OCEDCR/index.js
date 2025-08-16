@@ -32,6 +32,7 @@ const CreateOCEDCR = ({ parentRoute }) => {
       edcrNumber: "",
       planFile: null,
       tenantId: "",
+      coreArea: "NO",
       RequestInfo: {
         apiId: "",
         ver: "",

@@ -1,5 +1,6 @@
 package org.upyog.sv.service;
 
+import java.sql.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -41,7 +42,6 @@ public class EnrichmentService {
 		streetVendingDetail.setApplicationId(applicationId);
 		streetVendingDetail.setAuditDetails(auditDetails);
 		streetVendingDetail.setApplicationDate(auditDetails.getCreatedTime());
-		// streetVendingDetail.setApplicationStatus(streetVendingDetail.getApplicationStatus());
 
 		List<String> customIds = getIdList(requestInfo, streetVendingDetail.getTenantId(),
 				config.getStreetVendingApplicationKey(), config.getStreetVendingApplicationFormat(), 1);
@@ -78,13 +78,22 @@ public class EnrichmentService {
 		streetVendingDetail.getBankDetail().setId(StreetVendingUtil.getRandonUUID());
 		streetVendingDetail.getBankDetail().setApplicationId(applicationId);
 		streetVendingDetail.getBankDetail().setAuditDetails(auditDetails);
-
+		
+		
 		// Updating id and status for vending operation details
 		streetVendingDetail.getVendingOperationTimeDetails().stream().forEach(timedetails -> {
 			timedetails.setApplicationId(applicationId);
 			timedetails.setId(StreetVendingUtil.getRandonUUID());
 		});
-
+		
+		// Updating id for beneficiary scheme details
+		if (streetVendingDetail.getBenificiaryOfSocialSchemes() != null) {
+		    streetVendingDetail.getBenificiaryOfSocialSchemes().forEach(beneficiary -> {
+		        beneficiary.setId(StreetVendingUtil.getRandonUUID());
+		        beneficiary.setApplicationId(applicationId);
+		    });
+		}
+		
 		log.info("Enriched application request data :" + streetVendingDetail);
 
 	}
@@ -113,9 +122,13 @@ public class EnrichmentService {
 	public void enrichStreetVendingApplicationUponUpdate(String applicationStatus, StreetVendingRequest vendingRequest) {
 		StreetVendingDetail vendingDetail = vendingRequest.getStreetVendingDetail();
 		vendingDetail.getAuditDetails().setLastModifiedBy(vendingRequest.getRequestInfo().getUserInfo().getUuid());
-		vendingDetail.getAuditDetails().setLastModifiedTime(System.currentTimeMillis());
+		vendingDetail.getAuditDetails().setLastModifiedTime(StreetVendingUtil.getCurrentTimestamp());
 		vendingDetail.setApplicationStatus(applicationStatus);
-		
+		//set validityDateForPersisterDate based on validityDate
+		vendingDetail.setValidityDateForPersisterDate(
+				vendingDetail.getValidityDate() != null ? vendingDetail.getValidityDate().toString() : null
+		);
+		vendingDetail.setExpireFlag(false);
 	}
 
 	public void enrichCreateStreetVendingDraftApplicationRequest(StreetVendingRequest vendingRequest) {

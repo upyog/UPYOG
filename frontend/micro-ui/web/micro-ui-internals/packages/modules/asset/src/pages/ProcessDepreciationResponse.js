@@ -1,31 +1,40 @@
 import React, { useEffect, useState } from "react";
-import { Card, Banner, SubmitBar, Toast, ActionBar } from "@upyog/digit-ui-react-components";
+import { Card, Banner, SubmitBar, Toast, ActionBar, Loader } from "@upyog/digit-ui-react-components";
 import { Link, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 
 const ProcessDepreciationResponse = (props) => {
   const location = useLocation();
-  const { ProcessDepreciation } = location.state || {}; // Getting data from the location state
+  const { ProcessDepreciation, applicationNo } = location.state || {}; // Getting data from the location state
   const { t } = useTranslation();
   const [message, setMessage] = useState(null);
+  const [applicationDetail, setApplicationDetail] = useState(null);
   const [error, setError] = useState(false);
+  const [loading, setLoading] = useState(true); // Loader state
 
-  // Dynamically update the banner based on the API response
+
+
   useEffect(() => {
-    if (ProcessDepreciation && ProcessDepreciation.ResponseInfo.status === "successful") {
-      setMessage(ProcessDepreciation.Message); // Set success message
-    } else {
-      setError(true); // If not successful, set error flag
-      setMessage(t("CS_SOMETHING_WENT_WRONG")); // Default error message
+    if (ProcessDepreciation) {
+      setTimeout(() => { // Simulating a delay
+        setLoading(false); // Stop loader after delay
+        if (ProcessDepreciation.ResponseInfo.status === "successful") {
+          setMessage(ProcessDepreciation.Message);
+          setApplicationDetail(applicationNo);
+        } else {
+          setError(true);
+          setMessage(t("CS_SOMETHING_WENT_WRONG"));
+        }
+      }, 2000); // 3 seconds delay
     }
   }, [ProcessDepreciation, t]);
+  
 
   const closeToast = () => {
     setMessage(null);
     setError(false);
   };
 
-  // Custom function to get banner message and label dynamically
   const GetBannerMessage = (isSuccess, t) => {
     return isSuccess ? t("CS_DEPRECIATION_SUCCESS_MESSAGE") : t("CS_SOMETHING_WENT_WRONG");
   };
@@ -37,20 +46,28 @@ const ProcessDepreciationResponse = (props) => {
   return (
     <div>
       <Card>
-        {/* Show Banner with success or error message */}
-        {message && !error ? (
-          <Banner
-            message={GetBannerMessage(true, t)} // Success message
-            info={GetBannerLabel(true, t)} // Success label
-            successful={true} // Indicating success status
-          />
+        {/* Show Loader while waiting for response */}
+        {loading ? (
+          <Loader />
+        ) : message && !error ? (
+          <div> 
+            <Banner
+              message={GetBannerMessage(true, t)}
+              applicationNumber={applicationDetail}
+              info={GetBannerLabel(true, t)}
+              successful={true}
+            />
+            <div style={{ padding: "10px", paddingBottom: "10px", display: "flex", justifyContent: "center", alignItems: "center" }}>
+              <Link to={`${props.parentRoute}/assetservice/applicationsearch/application-details/${applicationDetail}`} >
+                <SubmitBar label={t("AST_DEPRECIATION_LIST")} />
+              </Link>
+            </div>
+          </div>
         ) : (
-          // Show loading banner while waiting
           <Banner message="Processing..." successful={false} />
         )}
       </Card>
 
-      {/* Show error message if any */}
       {error && message && (
         <Toast error={true} label={message} onClose={closeToast} />
       )}

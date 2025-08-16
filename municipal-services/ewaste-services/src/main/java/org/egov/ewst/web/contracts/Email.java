@@ -11,6 +11,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+/**
+ * Email class represents the structure of an email object.
+ * It contains details such as recipients, subject, body, and whether the email is in HTML format.
+ */
 @Setter
 @Getter
 @NoArgsConstructor

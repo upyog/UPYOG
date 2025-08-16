@@ -31,9 +31,12 @@ public class Constants {
 	public static final String FSM_MODULE_CODE = "FSM";
 
 	public static final String VEHICLE_MODEL = "Model";
-
-	public static final String DSO_DRIVER_ROLE_NAME = "DSO Driver role";
-	public static final String DSO_DRIVER = "FSM_DRIVER";
+	public static final String MODULE_DRIVER_ROLE_MAPPING = "ModuleDriverRoleMapping";
+	public static final String VENDOR_MODULE="Vendor";
+	
+    //Driver role fetching dynamically
+//	public static final String DSO_DRIVER_ROLE_NAME = "DSO Driver role";
+//	public static final String DSO_DRIVER = "FSM_DRIVER";
 
 	public static final String CITIZEN = "CITIZEN";
 
@@ -46,6 +49,7 @@ public class Constants {
 	public static final String VEHICLE_OWNER_TYPE = "VehicleOwner";
 	public static final String WAITING_FOR_DISPOSAL = "WAITING_FOR_DISPOSAL";
 	public static final String ACTIVE = "ACTIVE";
+	public static final String ADDITIONAL_DETAILS_DESCRIPTION = "serviceType";
 
 	
 	

@@ -26,8 +26,9 @@ import getSVAcknowledgementData from "../../../utils/getSVAcknowledgementData"
 
 const GetActionMessage = (props) => {
     const { t } = useTranslation();
+    const currentUrl = window.location.href;
     if (props.isSuccess) {
-      return window.location.href.includes("edit") ? t("SV_UPDATE_SUCCESSFULL"): t("SV_SUBMIT_SUCCESSFULL");
+      return currentUrl.includes("edit") ? t("SV_UPDATE_SUCCESSFULL"): currentUrl.includes("renew") ? t("SV_RENEW_SUCCESSFULL") : t("SV_SUBMIT_SUCCESSFULL");
     }
     else if (props.isLoading){
       return t("SV_APPLICATION_PENDING");
@@ -74,6 +75,10 @@ const SVAcknowledgement = ({ data, onSuccess }) => {
     }
   }, []);
 
+  Digit.Hooks.useCustomBackNavigation({
+    redirectPath: '/digit-ui/citizen'
+  })
+
   const handleDownloadPdf = async () => {
     const { SVDetail = [] } = mutation.data;
     let SVData = (SVDetail) || {};
@@ -98,7 +103,7 @@ const SVAcknowledgement = ({ data, onSuccess }) => {
           />
         )}
       </StatusTable>
-      {mutation.isSuccess && <SubmitBar label={t("SV_ACKNOWLEDGEMENT")} onSubmit={handleDownloadPdf} />}
+      {mutation.isSuccess && <SubmitBar label={t("SV_ACKNOWLEDGEMENT_BUTTON")} onSubmit={handleDownloadPdf} />}
       {user?.type==="CITIZEN"?
       <Link to={`/digit-ui/citizen`}>
         <LinkButton label={t("CORE_COMMON_GO_TO_HOME")} />

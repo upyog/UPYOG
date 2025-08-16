@@ -1,5 +1,5 @@
 /*
- * eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
+ * UPYOG  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  * accountability and the service delivery of the government  organizations.
  *
  *  Copyright (C) <2019>  eGovernments Foundation
@@ -48,116 +48,178 @@
 package org.egov.edcr.feature;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
-import org.egov.common.entity.edcr.Block;
-import org.egov.common.entity.edcr.Plan;
-import org.egov.common.entity.edcr.Result;
-import org.egov.common.entity.edcr.ScrutinyDetail;
-import org.egov.common.entity.edcr.SetBack;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.egov.common.constants.MdmsFeatureConstants;
+import org.egov.common.entity.edcr.*;
+import org.egov.edcr.constants.EdcrRulesMdmsConstants;
+import org.egov.edcr.service.MDMSCacheManager;
+import org.egov.edcr.service.FetchEdcrRulesMdms;
 import org.egov.edcr.utility.DcrConstants;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import static org.egov.edcr.constants.CommonFeatureConstants.*;
+import static org.egov.edcr.constants.CommonKeyConstants.BLOCK;
+import static org.egov.edcr.constants.EdcrReportConstants.RULE_37_6;
+import static org.egov.edcr.service.FeatureUtil.addScrutinyDetailtoPlan;
+import static org.egov.edcr.service.FeatureUtil.mapReportDetails;
 
 @Service
 public class PlantationGreenStrip extends FeatureProcess {
+    private static final Logger LOG = LogManager.getLogger(PlantationGreenStrip.class);
 
-    private static final String RULE_37_6 = "37-6";
-
+    @Autowired
+  	MDMSCacheManager cache;
+    
+    /**
+     * Validates the given plan.
+     * 
+     * @param pl The plan to be validated.
+     * @return Currently returns null as the validation logic is not implemented.
+     */
     @Override
     public Plan validate(Plan pl) {
-        return null;
+        return null; // Validation logic is not implemented
     }
+
+    /**
+     * Processes the plantation green strip rules for the given plan.
+     * Checks if plantation green strip width conditions are met for each block,
+     * based on the permissible width and area threshold defined in the rule.
+     *
+     * @param pl The plan to be processed.
+     * @return The updated plan after plantation green strip scrutiny.
+     */
 
     @Override
     public Plan process(Plan pl) {
-        if (pl.getPlot() != null && pl.getPlot().getArea().compareTo(BigDecimal.valueOf(300)) > 0) {
+        Optional<PlantationGreenStripRequirement> ruleOpt = getPlantationGreenStripRule(pl);
+
+        BigDecimal plantationGreenStripPlanValue = ruleOpt.map(PlantationGreenStripRequirement::getPlantationGreenStripPlanValue)
+                                                           .orElse(BigDecimal.ZERO);
+        BigDecimal plantationGreenStripMinWidth = ruleOpt.map(PlantationGreenStripRequirement::getPlantationGreenStripMinWidth)
+                                                          .orElse(BigDecimal.ZERO);
+
+        if (isPlotAreaGreaterThanPermissible(pl, plantationGreenStripPlanValue)) {
             for (Block block : pl.getBlocks()) {
-
-                ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
-                scrutinyDetail.addColumnHeading(1, RULE_NO);
-                scrutinyDetail.addColumnHeading(2, DESCRIPTION);
-                scrutinyDetail.addColumnHeading(3, PERMISSIBLE);
-                scrutinyDetail.addColumnHeading(4, PROVIDED);
-                scrutinyDetail.addColumnHeading(5, STATUS);
-                scrutinyDetail.setKey("Block_" + block.getNumber() + "_" + "Continuous Green Planting Strip");
-
-                boolean isWidthAccepted = false;
-                // boolean isHeightAccepted = false;
-                BigDecimal minWidth = BigDecimal.ZERO;
-                // BigDecimal minHeight = BigDecimal.ZERO;
-                List<BigDecimal> widths = block.getPlantationGreenStripes().stream()
-                        .map(greenStrip -> greenStrip.getWidth()).collect(Collectors.toList());
-                /*
-                 * List<BigDecimal> heights = block.getPlantationGreenStripes().stream() .map(greenStripe ->
-                 * greenStripe.getHeight()).collect(Collectors.toList());
-                 */
-                // List<BigDecimal> minimumDistances = new ArrayList<>();
-
-//                if (widths.isEmpty()) {
-//                    pl.addError("RULE_37_6", getLocaleMessage(DcrConstants.OBJECTNOTDEFINED,
-//                            "Block " + block.getNumber() + " " + "Continuous Green Planting Strip"));
-//                }
-                /*
-                 * for (SetBack setBack : block.getSetBacks()) { if (setBack.getRearYard() != null)
-                 * minimumDistances.add(setBack.getRearYard().getHeight()); if (setBack.getSideYard1() != null)
-                 * minimumDistances.add(setBack.getSideYard1().getHeight()); if (setBack.getSideYard2() != null)
-                 * minimumDistances.add(setBack.getSideYard2().getHeight()); }
-                 */
-
-                if (!widths.isEmpty()) {
-                    minWidth = widths.stream().reduce(BigDecimal::min).get();
-                    // minHeight = heights.stream().reduce(BigDecimal::min).get();
-                    // BigDecimal minLength = Collections.min(minimumDistances);
-
-                    if (minWidth.compareTo(BigDecimal.valueOf(0.6)) >= 0) {
-                        isWidthAccepted = true;
-
-                    }
-
-                    /*
-                     * if (minHeight.doubleValue()>=1d) { isHeightAccepted = true; }
-                     */
-
-                    /*
-                     * if (minHeight.doubleValue()>=minLength.doubleValue()) { isHeightAccepted = true; }
-                     */
-                    buildResult(pl, scrutinyDetail, isWidthAccepted, "Width of continuos plantation green strip",
-                            ">= 0.6",
-                            minWidth.setScale(DcrConstants.DECIMALDIGITS_MEASUREMENTS, DcrConstants.ROUNDMODE_MEASUREMENTS)
-                                    .toString());
-                    /*
-                     * buildResult(pl, scrutinyDetail, isHeightAccepted, "length of continuos plantation green strip ",
-                     * "should be equal to rear or side yard",
-                     * minHeight.setScale(DcrConstants.DECIMALDIGITS_MEASUREMENTS,DcrConstants.ROUNDMODE_MEASUREMENTS).toString())
-                     * ;
-                     */
-                }
+                processBlock(pl, block, plantationGreenStripMinWidth);
             }
         }
+
         return pl;
     }
 
-    private void buildResult(Plan pl, ScrutinyDetail scrutinyDetail, boolean valid, String description, String permited,
-            String provided) {
-        Map<String, String> details = new HashMap<>();
-        details.put(RULE_NO, RULE_37_6);
-        details.put(DESCRIPTION, description);
-        details.put(PERMISSIBLE, permited);
-        details.put(PROVIDED, provided);
-        details.put(STATUS, valid ? Result.Accepted.getResultVal() : Result.Not_Accepted.getResultVal());
-        scrutinyDetail.getDetail().add(details);
-        pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+    /**
+     * Retrieves the plantation green strip rule from MDMS for the given plan.
+     *
+     * @param pl The plan containing feature and configuration context.
+     * @return An Optional containing the first matched {@link MdmsFeatureRule}, if available.
+     */
+    private Optional<PlantationGreenStripRequirement> getPlantationGreenStripRule(Plan pl) {
+    	List<Object> rules = cache.getFeatureRules(pl, FeatureEnum.PLANTATION_GREEN_STRIP.getValue(), false);
+        return rules.stream()
+            .filter(PlantationGreenStripRequirement.class::isInstance)
+            .map(PlantationGreenStripRequirement.class::cast)
+            .findFirst();
     }
 
+
+    /**
+     * Checks whether the plot area in the plan is greater than the given permissible value.
+     *
+     * @param pl               The plan containing the plot information.
+     * @param permissibleValue The threshold area value to compare against.
+     * @return true if plot area is greater than permissible value, false otherwise.
+     */
+    private boolean isPlotAreaGreaterThanPermissible(Plan pl, BigDecimal permissibleValue) {
+        return pl.getPlot() != null && pl.getPlot().getArea().compareTo(permissibleValue) > 0;
+    }
+
+    /**
+     * Processes a single block in the plan to evaluate plantation green strip widths.
+     * Builds and adds scrutiny details based on the minimum green strip width found in the block.
+     *
+     * @param pl                          The plan being processed.
+     * @param block                       The block to be evaluated.
+     * @param plantationGreenStripMinWidth The minimum required width for plantation green strips.
+     */
+    private void processBlock(Plan pl, Block block, BigDecimal plantationGreenStripMinWidth) {
+        ScrutinyDetail scrutinyDetail = createScrutinyDetailForBlock(block);
+
+        boolean isWidthAccepted = false;
+        BigDecimal minWidth = BigDecimal.ZERO;
+
+        List<BigDecimal> widths = block.getPlantationGreenStripes().stream()
+                .map(greenStrip -> greenStrip.getWidth())
+                .collect(Collectors.toList());
+
+        if (!widths.isEmpty()) {
+            minWidth = widths.stream().reduce(BigDecimal::min).get();
+
+            if (minWidth.compareTo(plantationGreenStripMinWidth) >= 0) {
+                isWidthAccepted = true;
+            }
+
+            buildResult(pl, scrutinyDetail, isWidthAccepted,
+                    WIDTH_OF_CONTINUOUS_PLANTATION_GREEN_STRIP,
+                    GREATER_THAN_EQUAL + plantationGreenStripMinWidth.toString(),
+                    minWidth.setScale(DcrConstants.DECIMALDIGITS_MEASUREMENTS, DcrConstants.ROUNDMODE_MEASUREMENTS)
+                            .toString());
+        }
+    }
+
+    /**
+     * Creates a {@link ScrutinyDetail} object for the specified block for plantation green strip width check.
+     *
+     * @param block The block for which scrutiny details are to be created.
+     * @return A configured {@link ScrutinyDetail} object with column headings.
+     */
+    private ScrutinyDetail createScrutinyDetailForBlock(Block block) {
+        ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
+        scrutinyDetail.addColumnHeading(1, RULE_NO);
+        scrutinyDetail.addColumnHeading(2, DESCRIPTION);
+        scrutinyDetail.addColumnHeading(3, PERMISSIBLE);
+        scrutinyDetail.addColumnHeading(4, PROVIDED);
+        scrutinyDetail.addColumnHeading(5, STATUS);
+        scrutinyDetail.setKey(BLOCK + block.getNumber() + CONTINUOUS_GREEN_PLANTING_STRIP);
+        return scrutinyDetail;
+    }
+
+    /**
+     * Builds a result entry and appends it to the plan's scrutiny report output.
+     *
+     * @param pl         The plan to which the scrutiny detail will be added.
+     * @param scrutinyDetail The scrutiny detail being populated.
+     * @param valid      Whether the validation passed.
+     * @param description Description of the validation being checked.
+     * @param permited   Permissible value as per rule.
+     * @param provided   Provided value in the plan.
+     */
+    private void buildResult(Plan pl, ScrutinyDetail scrutinyDetail, boolean valid, String description, String permited,
+                             String provided) {
+        ReportScrutinyDetail detail = new ReportScrutinyDetail();
+        detail.setRuleNo(RULE_37_6);
+        detail.setDescription(description);
+        detail.setPermissible(permited);
+        detail.setProvided(provided);
+        detail.setStatus(valid ? Result.Accepted.getResultVal() : Result.Not_Accepted.getResultVal());
+
+        Map<String, String> details = mapReportDetails(detail);
+        addScrutinyDetailtoPlan(scrutinyDetail, pl, details);
+    }
+
+    
     @Override
     public Map<String, Date> getAmendments() {
-        return new LinkedHashMap<>();
+        return new LinkedHashMap<>(); // Return an empty map for amendments
     }
 }

@@ -13,6 +13,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+/**
+ * Service class responsible for enriching Ewaste application data.
+ * This class contains methods to enrich the Ewaste application with necessary details
+ * such as unique IDs, audit details, and request status.
+ */
 @Service
 public class EnrichmentService {
 
@@ -25,6 +30,12 @@ public class EnrichmentService {
 	@Autowired
 	private EwasteUtil ewasteUtil;
 
+	/**
+	 * Enriches the Ewaste application with necessary details.
+	 * This method sets unique IDs, audit details, and request status for the Ewaste application.
+	 *
+	 * @param ewasteRegistrationRequest The Ewaste registration request containing the application details.
+	 */
 	public void enrichEwasteApplication(EwasteRegistrationRequest ewasteRegistrationRequest) {
 
 		List<String> customIds = ewasteUtil.getIdList(ewasteRegistrationRequest.getRequestInfo(),
@@ -61,6 +72,12 @@ public class EnrichmentService {
 			});
 	}
 
+	/**
+	 * Enriches the Ewaste application upon update.
+	 * This method sets the last modified time and user for the Ewaste application.
+	 *
+	 * @param ewasteRegistrationRequest The Ewaste registration request containing the application details.
+	 */
 	public void enrichEwasteApplicationUponUpdate(EwasteRegistrationRequest ewasteRegistrationRequest) {
 		// TODO Auto-generated method stub
 		ewasteRegistrationRequest.getEwasteApplication().get(0).getAuditDetails()

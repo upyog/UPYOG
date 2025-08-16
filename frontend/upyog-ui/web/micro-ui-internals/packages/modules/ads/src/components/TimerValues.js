@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Toast } from "@upyog/digit-ui-react-components";
+import { useTranslation } from "react-i18next";
 
-export const TimerValues = ({t, timerValues, SlotSearchData,draftId=""}) => {
+export const TimerValues = ({timerValues, SlotSearchData,draftId=""}) => {
+  const { t } = useTranslation();
   const [timeRemaining, setTimeRemaining] = useState(0); // Initialize with `timerValues`
   const [showToast, setShowToast] = useState(null);
   const tenantId = Digit.ULBService.getCitizenCurrentTenant(true) || Digit.ULBService.getCurrentTenantId();

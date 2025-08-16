@@ -192,7 +192,8 @@ import EventCalendarView from "./atoms/EventCalendarView";
 import InboxLinks from "./atoms/InboxLinks";
 import PopupHeadingLabel from "./atoms/PopupHeadingLabel";
 
-import { FormComposer } from "./hoc/FormComposer";
+// import { FormComposer } from "./hoc/FormComposer";
+import FormComposer from "./hoc/FormComposer";
 import Modal from "./hoc/Modal";
 import ResponseComposer from "./hoc/ResponseComposer";
 import InboxComposer from "./hoc/InboxComposer";
@@ -230,6 +231,7 @@ import ToggleSwitch from "./atoms/ToggleSwitch";
 import CitizenConsentForm from "./atoms/CitizenConsentForm";
 import AddressDetails from "./molecules/AddressDetails";
 import ApplicantDetails from "./molecules/ApplicantDetails";
+import Timeline from "./molecules/Timeline";
 
 export {
   Phone,
@@ -466,6 +468,9 @@ export {
   LoginIcon,
   CitizenConsentForm,
   PTRIcon,
-  CHBIcon
+  CHBIcon,
+  AddressDetails,
+  ApplicantDetails,
+  Timeline
   
 };

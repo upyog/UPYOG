@@ -2,6 +2,7 @@
   "name": "@upyog/digit-ui-module-hrms",
   "version": "3.0.0",
   "description": "Digit HRMS Module",
+
   "license": "MIT",
   "main": "dist/index.js",
   "module": "dist/index.modern.js",

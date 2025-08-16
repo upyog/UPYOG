@@ -8,7 +8,11 @@ import java.util.List;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.upyog.adv.web.models.BookingDetail;
-
+/**
+ * This class implements the ResultSetExtractor interface to map rows from a database ResultSet
+ * to a list of BookingDetail objects. It focuses on extracting only the booking ID
+ * from each row in the ResultSet and populating it into BookingDetail objects.
+ */
 public class BookingDetailIdRowmapper implements ResultSetExtractor<List<BookingDetail>> {
 
     @Override

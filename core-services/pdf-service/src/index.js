@@ -1102,11 +1102,33 @@ const generateQRCodes = async (
     "$.DataConfigs.mappings.*.mappings.*.qrcodeConfig.*"
   );
 
+  // Add Module key for which QR code generation is required
+  const moduleKey = [
+    'mcollect-challan',
+    'firenoc-receipt',
+    'property-receipt',
+    'bpa-receipt',
+    'consolidatedreceipt',
+    'tradelicense-receipt',
+    'fsm-receipt',
+    'misc-receipt',
+    'ws-onetime-receipt',
+    'chbservice-receipt',
+    'advservice-receipt',
+    'advpermissionletter',
+    'svservice-receipt',
+    'svcertificate',
+    'svidentitycard',
+    'cnd-service',
+    'request-service.water_tanker-receipt',
+    'request-service.mobile_toilet-receipt'
+  ];
+
   for (var i = 0, len = qrcodeMappings.length; i < len; i++) {
     let qrmapping = qrcodeMappings[i];
     let varname = qrmapping.variable;
     let urlQR='',qrtext;
-    if(key == 'mcollect-challan' || key == 'firenoc-receipt' || key == 'property-receipt' || key == 'bpa-receipt' || key == 'consolidatedreceipt' || key == 'tradelicense-receipt' || key == 'fsm-receipt' || key == 'misc-receipt' || key == 'ws-onetime-receipt'|| key == 'chbservice-receipt' || key == 'advservice-receipt' || key == 'advpermissionletter' || key == 'svservice-receipt' || key == 'svcertificate')
+    if(moduleKey.includes(key))
     {
       urlQR=egov_host;
       urlQR=urlQR.concat(qrmapping.value);

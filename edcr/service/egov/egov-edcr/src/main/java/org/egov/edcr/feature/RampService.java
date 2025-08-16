@@ -1,5 +1,5 @@
 /*
- * eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
+ * UPYOG  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  * accountability and the service delivery of the government  organizations.
  *
  *  Copyright (C) <2019>  eGovernments Foundation
@@ -47,58 +47,59 @@
 
 package org.egov.edcr.feature;
 
-import static org.egov.edcr.constants.DxfFileConstants.A_AF;
+import static org.egov.edcr.constants.CommonFeatureConstants.*;
+import static org.egov.edcr.constants.CommonKeyConstants.*;
 import static org.egov.edcr.constants.DxfFileConstants.A_R;
+import static org.egov.edcr.constants.EdcrReportConstants.*;
+import static org.egov.edcr.service.FeatureUtil.addScrutinyDetailtoPlan;
+import static org.egov.edcr.service.FeatureUtil.mapReportDetails;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
-import org.egov.common.entity.edcr.Block;
-import org.egov.common.entity.edcr.DARamp;
-import org.egov.common.entity.edcr.Floor;
-import org.egov.common.entity.edcr.Measurement;
-import org.egov.common.entity.edcr.OccupancyType;
-import org.egov.common.entity.edcr.OccupancyTypeHelper;
-import org.egov.common.entity.edcr.Plan;
-import org.egov.common.entity.edcr.Ramp;
-import org.egov.common.entity.edcr.Result;
-import org.egov.common.entity.edcr.ScrutinyDetail;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.egov.common.entity.edcr.*;
 import org.egov.edcr.constants.DxfFileConstants;
+import org.egov.edcr.service.MDMSCacheManager;
 import org.egov.edcr.utility.DcrConstants;
 import org.egov.edcr.utility.Util;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 
 @Service
 public class RampService extends FeatureProcess {
+	private static final Logger LOG = LogManager.getLogger(RampService.class);
 
-    private static final String SUBRULE_50_C_4_B = " 50-c-4-b";
-    private static final String SUBRULE_40 = "40";
-    /*
-     * private static final String SUBRULE_40_A1 = "40A(1)"; private static final String SUBRULE_40_A_7_DESC =
-     * "Minimum number of DA Rooms in block %s "; private static final String SUBRULE_40_A_3_WIDTH_DESC =
-     * "Minimum Width of Ramp %s for block %s "; private static final String SUBRULE_40_DESC =
-     * "Maximum slope of ramp %s for block %s ";
+    @Autowired
+	MDMSCacheManager cache;
+ 
+    /**
+     * Validates the given Plan object for ramp and DA ramp requirements.
+     *
+     * @param pl the Plan object to validate
+     * @return the validated Plan object with errors added if any
      */
-    private static final String SUBRULE_50_C_4_B_DESCRIPTION = "Maximum slope of ramp %s";
-
-    /*
-     * private static final String SUBRULE_40_A_1_DESC = "DA Ramp"; private static final String SUBRULE_40_A_3_SLOPE_DESC =
-     * "Maximum Slope of DA Ramp %s for block %s";
-     */
-    private static final String SUBRULE_50_C_4_B_SLOPE_DESCRIPTION = "Maximum Slope of DA Ramp %s";
-    private static final String FLOOR = "Floor";
-    // private static final String SUBRULE_40_A_3_WIDTH_DESCRIPTION = "Minimum Width of Ramp %s";
-    private static final String SUBRULE_50_C_4_B_SLOPE_MAN_DESC = "Slope of DA Ramp";
-
     @Override
     public Plan validate(Plan pl) {
+        validateRampMeasurements(pl);
+        validateDARamps(pl);
+        return pl;
+    }
+
+    /**
+     * Validates ramp measurements for each floor of every block in the plan.
+     *
+     * @param pl the Plan object containing blocks and floors to validate ramps
+     */
+    private void validateRampMeasurements(Plan pl) {
         for (Block block : pl.getBlocks()) {
             if (block.getBuilding() != null && !block.getBuilding().getFloors().isEmpty()) {
                 for (Floor floor : block.getBuilding().getFloors()) {
@@ -107,63 +108,100 @@ public class RampService extends FeatureProcess {
                         for (Ramp ramp : ramps) {
                             List<Measurement> rampPolyLines = ramp.getRamps();
                             if (rampPolyLines != null && !rampPolyLines.isEmpty()) {
-                                validateDimensions(pl, block.getNumber(), floor.getNumber(), ramp.getNumber().toString(),
-                                        rampPolyLines);
+                                validateDimensions(pl, block.getNumber(), floor.getNumber(), ramp.getNumber().toString(), rampPolyLines);
                             }
                         }
                     }
                 }
             }
         }
+    }
+    
+    /**
+     * Validates the presence and slope of DA (Differently Abled) ramps in each block of the plan.
+     *
+     * @param pl the Plan object containing blocks and occupancy information
+     */
 
-        // validate necessary
+    private void validateDARamps(Plan pl) {
         HashMap<String, String> errors = new HashMap<>();
         OccupancyTypeHelper mostRestrictiveOccupancyType = pl.getVirtualBuilding().getMostRestrictiveFarHelper();
 
         if (pl != null && !pl.getBlocks().isEmpty()) {
-            blk: for (Block block : pl.getBlocks()) {
-                /*
-                 * if (block.getBuilding() != null && !block.getBuilding().getOccupancies().isEmpty()) { if
-                 * (Util.checkExemptionConditionForBuildingParts(block)) { continue blk; } List<OccupancyType> occupancyTypeList =
-                 * block.getBuilding().getOccupancies().stream() .map(occupancy ->
-                 * occupancy.getType()).collect(Collectors.toList()); for (OccupancyType occupancyType : occupancyTypeList) { if
-                 * (getOccupanciesForRamp(occupancyType)) { if (block.getDARamps().isEmpty()) {
-                 * errors.put(String.format(DcrConstants.RAMP, block.getNumber()),
-                 * edcrMessageSource.getMessage(DcrConstants.OBJECTNOTDEFINED, new String[]{String.format(DcrConstants.RAMP,
-                 * block.getNumber())}, LocaleContextHolder.getLocale())); pl.addErrors(errors); break; } } } }
-                 */
-                if (pl.getPlot() != null && !Util.checkExemptionConditionForSmallPlotAtBlkLevel(pl.getPlot(), block)
-                        && mostRestrictiveOccupancyType != null && mostRestrictiveOccupancyType.getSubtype() != null
-                        && !A_R.equalsIgnoreCase(mostRestrictiveOccupancyType.getSubtype().getCode())) {
+            for (Block block : pl.getBlocks()) {
+                if (shouldValidateDARamps(pl, block, mostRestrictiveOccupancyType)) {
                     if (!block.getDARamps().isEmpty()) {
-                        boolean isSlopeDefined = false;
-                        for (DARamp daRamp : block.getDARamps()) {
-                            if (daRamp != null && daRamp.getSlope() != null
-                                    && daRamp.getSlope().compareTo(BigDecimal.valueOf(0)) > 0) {
-                                isSlopeDefined = true;
-                            }
-                        }
-                        if (!isSlopeDefined) {
-                            errors.put(String.format(DcrConstants.RAMP_SLOPE, "", block.getNumber()),
-                                    edcrMessageSource.getMessage(DcrConstants.OBJECTNOTDEFINED,
-                                            new String[] { String.format(DcrConstants.RAMP_SLOPE, "", block.getNumber()) },
-                                            LocaleContextHolder.getLocale()));
-                            pl.addErrors(errors);
-                        }
+                        validateSlopeForDARamps(pl, block, errors);
                     } else {
-                        errors.put(String.format("DA Ramp", block.getNumber()),
-                                edcrMessageSource.getMessage(DcrConstants.OBJECTNOTDEFINED,
-                                        new String[] { String.format("DA Ramp",
-                                                block.getNumber()) },
-                                        LocaleContextHolder.getLocale()));
-                        pl.addErrors(errors);
+                        addMissingDARampError(pl, block, errors);
                         break;
                     }
                 }
             }
         }
-        return pl;
     }
+    
+    /**
+     * Determines if the DA ramp validation should be performed for a given block based on occupancy and plot conditions.
+     *
+     * @param pl the Plan object
+     * @param block the Block to be checked
+     * @param mostRestrictiveOccupancyType the most restrictive occupancy type in the plan
+     * @return true if validation should be performed; false otherwise
+     */
+
+    private boolean shouldValidateDARamps(Plan pl, Block block, OccupancyTypeHelper mostRestrictiveOccupancyType) {
+        return pl.getPlot() != null
+                && !Util.checkExemptionConditionForSmallPlotAtBlkLevel(pl.getPlot(), block)
+                && mostRestrictiveOccupancyType != null
+                && mostRestrictiveOccupancyType.getSubtype() != null
+                && !A_R.equalsIgnoreCase(mostRestrictiveOccupancyType.getSubtype().getCode());
+    }
+
+    /**
+     * Validates the slope values for DA ramps in a block and adds errors to the plan if not defined.
+     *
+     * @param pl the Plan object to add errors to
+     * @param block the Block containing DA ramps
+     * @param errors map of errors to be added
+     */
+    private void validateSlopeForDARamps(Plan pl, Block block, Map<String, String> errors) {
+        boolean isSlopeDefined = false;
+        for (DARamp daRamp : block.getDARamps()) {
+            if (daRamp != null && daRamp.getSlope() != null && daRamp.getSlope().compareTo(BigDecimal.valueOf(0)) > 0) {
+                isSlopeDefined = true;
+            }
+        }
+        if (!isSlopeDefined) {
+            errors.put(String.format(DcrConstants.RAMP_SLOPE, EMPTY_STRING, block.getNumber()),
+                    edcrMessageSource.getMessage(DcrConstants.OBJECTNOTDEFINED,
+                            new String[]{String.format(DcrConstants.RAMP_SLOPE, EMPTY_STRING, block.getNumber())},
+                            LocaleContextHolder.getLocale()));
+            pl.addErrors(errors);
+        }
+    }
+
+    /**
+     * Adds an error to the Plan indicating the absence of a required DA ramp in the block.
+     *
+     * @param pl the Plan object to add errors to
+     * @param block the Block missing the DA ramp
+     * @param errors map of errors to be added
+     */
+    private void addMissingDARampError(Plan pl, Block block, Map<String, String> errors) {
+        errors.put(String.format(DA_RAMP, block.getNumber()),
+                edcrMessageSource.getMessage(DcrConstants.OBJECTNOTDEFINED,
+                        new String[]{String.format(DA_RAMP, block.getNumber())},
+                        LocaleContextHolder.getLocale()));
+        pl.addErrors(errors);
+    }
+
+    /**
+     * Checks if a given occupancy type is one for which ramps are required.
+     *
+     * @param occupancyType the OccupancyType to check
+     * @return true if the occupancy type requires ramps; false otherwise
+     */
 
     private boolean getOccupanciesForRamp(OccupancyType occupancyType) {
         return occupancyType.equals(OccupancyType.OCCUPANCY_A2) ||
@@ -179,289 +217,242 @@ public class RampService extends FeatureProcess {
                 occupancyType.equals(OccupancyType.OCCUPANCY_F4);
     }
 
+    
+    /**
+     * Processes the Plan object for compliance with ramp and DA ramp rules,
+     * performing validations and adding scrutiny details.
+     *
+     * @param pl the Plan object to process
+     * @return the processed Plan with scrutiny details
+     */
     @Override
     public Plan process(Plan pl) {
+        BigDecimal rampServiceValueOne = BigDecimal.ZERO;
+        BigDecimal rampServiceExpectedSlopeOne = BigDecimal.ZERO;
+        BigDecimal rampServiceDivideExpectedSlope = BigDecimal.ZERO;
+        BigDecimal rampServiceSlopValue = BigDecimal.ZERO;
+        BigDecimal rampServiceBuildingHeight = BigDecimal.ZERO;
+        BigDecimal rampServiceTotalLength = BigDecimal.ZERO;
+        BigDecimal rampServiceExpectedSlopeCompare = BigDecimal.ZERO;
+        BigDecimal rampServiceExpectedSlopeTwo = BigDecimal.ZERO;
+        BigDecimal rampServiceExpectedSlopeCompareTrue = BigDecimal.ZERO;
+        BigDecimal rampServiceExpectedSlopeCompareFalse = BigDecimal.ZERO;
+
         validate(pl);
-        boolean valid;
+
         if (pl != null && !pl.getBlocks().isEmpty()) {
-            blk: for (Block block : pl.getBlocks()) {
-                scrutinyDetail = new ScrutinyDetail();
-                scrutinyDetail.addColumnHeading(1, RULE_NO);
-                scrutinyDetail.addColumnHeading(2, DESCRIPTION);
-                scrutinyDetail.addColumnHeading(3, REQUIRED);
-                scrutinyDetail.addColumnHeading(4, PROVIDED);
-                scrutinyDetail.addColumnHeading(5, STATUS);
-                scrutinyDetail.setKey("Block_" + block.getNumber() + "_" + "DA Ramp - Defined or not");
+            for (Block block : pl.getBlocks()) {
+                ScrutinyDetail scrutinyDetail = createScrutinyDetail(DA_RAMP_DEFINED, block.getNumber(), false);
+                ScrutinyDetail scrutinyDetail1 = createScrutinyDetail(DA_RAMP_SLOPE, block.getNumber(), false);
+                ScrutinyDetail scrutinyDetail2 = createScrutinyDetail(DA_RAMP_MAX_SLOPE, block.getNumber(), false);
+                ScrutinyDetail scrutinyDetail3 = createScrutinyDetail(DA_ROOM, block.getNumber(), true);
+                ScrutinyDetail scrutinyDetail4 = createScrutinyDetail(RAMP_MIN_WIDTH, block.getNumber(), true);
+                ScrutinyDetail scrutinyDetail5 = createScrutinyDetail(RAMP_MAX_SLOPE, block.getNumber(), true);
 
-                ScrutinyDetail scrutinyDetail1 = new ScrutinyDetail();
-                scrutinyDetail1.addColumnHeading(1, RULE_NO);
-                scrutinyDetail1.addColumnHeading(2, DESCRIPTION);
-                scrutinyDetail1.addColumnHeading(3, REQUIRED);
-                scrutinyDetail1.addColumnHeading(4, PROVIDED);
-                scrutinyDetail1.addColumnHeading(5, STATUS);
-                scrutinyDetail1.setKey("Block_" + block.getNumber() + "_" + "DA Ramp - Slope width");
+                List<Object> rules = cache.getFeatureRules(pl, FeatureEnum.RAMP_SERVICE.getValue(), false);
+                Optional<RampServiceRequirement> matchedRule = rules.stream()
+                    .filter(RampServiceRequirement.class::isInstance)
+                    .map(RampServiceRequirement.class::cast)
+                    .findFirst();
 
-                ScrutinyDetail scrutinyDetail2 = new ScrutinyDetail();
-                scrutinyDetail2.addColumnHeading(1, RULE_NO);
-                scrutinyDetail2.addColumnHeading(2, DESCRIPTION);
-                scrutinyDetail2.addColumnHeading(3, REQUIRED);
-                scrutinyDetail2.addColumnHeading(4, PROVIDED);
-                scrutinyDetail2.addColumnHeading(5, STATUS);
-                scrutinyDetail2.setKey("Block_" + block.getNumber() + "_" + "DA Ramp - Maximum Slope");
+                if (matchedRule.isPresent()) {
+                	RampServiceRequirement rule = matchedRule.get();
+                    rampServiceValueOne = rule.getRampServiceValueOne();
+                    rampServiceExpectedSlopeOne = rule.getRampServiceExpectedSlopeOne();
+                    rampServiceDivideExpectedSlope = rule.getRampServiceDivideExpectedSlope();
+                    rampServiceSlopValue = rule.getRampServiceSlopValue();
+                    rampServiceBuildingHeight = rule.getRampServiceBuildingHeight();
+                    rampServiceTotalLength = rule.getRampServiceTotalLength();
+                    rampServiceExpectedSlopeTwo = rule.getRampServiceExpectedSlopeTwo();
+                    rampServiceExpectedSlopeCompare = rule.getRampServiceExpectedSlopeCompare();
+                    rampServiceExpectedSlopeCompareTrue = rule.getRampServiceExpectedSlopeCompareTrue();
+                    rampServiceExpectedSlopeCompareFalse = rule.getRampServiceExpectedSlopeCompareFalse();
+                }
 
-                ScrutinyDetail scrutinyDetail3 = new ScrutinyDetail();
-                scrutinyDetail3.addColumnHeading(1, RULE_NO);
-                scrutinyDetail3.addColumnHeading(2, FLOOR);
-                scrutinyDetail3.addColumnHeading(3, REQUIRED);
-                scrutinyDetail3.addColumnHeading(4, PROVIDED);
-                scrutinyDetail3.addColumnHeading(5, STATUS);
-                scrutinyDetail3.setSubHeading("Minimum number of da rooms");
-                scrutinyDetail3.setKey("Block_" + block.getNumber() + "_" + "DA Room");
+                processRampSlopeValidation(pl, block, rampServiceValueOne, rampServiceExpectedSlopeOne,
+                        rampServiceDivideExpectedSlope, rampServiceSlopValue, scrutinyDetail1, scrutinyDetail2);
 
-                ScrutinyDetail scrutinyDetail4 = new ScrutinyDetail();
-                scrutinyDetail4.addColumnHeading(1, RULE_NO);
-                scrutinyDetail4.addColumnHeading(2, DESCRIPTION);
-                scrutinyDetail4.addColumnHeading(3, FLOOR);
-                scrutinyDetail4.addColumnHeading(4, REQUIRED);
-                scrutinyDetail4.addColumnHeading(5, PROVIDED);
-                scrutinyDetail4.addColumnHeading(6, STATUS);
-                scrutinyDetail4.setKey("Block_" + block.getNumber() + "_" + "Ramp - Minimum Width");
+                processDARoomValidation(pl, block, rampServiceBuildingHeight, scrutinyDetail3);
+            }
+        }
 
-                ScrutinyDetail scrutinyDetail5 = new ScrutinyDetail();
-                scrutinyDetail5.addColumnHeading(1, RULE_NO);
-                scrutinyDetail5.addColumnHeading(2, DESCRIPTION);
-                scrutinyDetail5.addColumnHeading(3, FLOOR);
-                scrutinyDetail5.addColumnHeading(4, REQUIRED);
-                scrutinyDetail5.addColumnHeading(5, PROVIDED);
-                scrutinyDetail5.addColumnHeading(6, STATUS);
-                scrutinyDetail5.setKey("Block_" + block.getNumber() + "_" + "Ramp - Maximum Slope");
+        return pl;
+    }
+    
+    /**
+     * Creates a ScrutinyDetail object with given parameters.
+     *
+     * @param keySuffix suffix to be used in the scrutiny detail key
+     * @param blockNumber the number of the block being validated
+     * @param hasFloorColumn whether floor column should be added
+     * @return the constructed ScrutinyDetail object
+     */
 
-                OccupancyTypeHelper mostRestrictiveOccupancyType = pl.getVirtualBuilding().getMostRestrictiveFarHelper();
-                if (block.getBuilding() != null && !block.getBuilding().getOccupancies().isEmpty()) {
-                    /*
-                     * if (Util.checkExemptionConditionForBuildingParts(block)) { continue blk; }
-                     */
-                    /*
-                     * List<OccupancyType> occupancyTypeList = block.getBuilding().getOccupancies().stream() .map(occupancy ->
-                     * occupancy.getType()).collect(Collectors.toList());
-                     */
-                    /*
-                     * for (OccupancyType occupancyType : occupancyTypeList) { if (getOccupanciesForRamp(occupancyType)) { if
-                     * (!block.getDARamps().isEmpty()) { setReportOutputDetails(pl, SUBRULE_40_A1, SUBRULE_40_A_1_DESC, "",
-                     * DcrConstants.OBJECTDEFINED_DESC, Result.Accepted.getResultVal(), scrutinyDetail); break; } else {
-                     * setReportOutputDetails(pl, SUBRULE_40_A1, SUBRULE_40_A_1_DESC, "", DcrConstants.OBJECTNOTDEFINED_DESC,
-                     * Result.Not_Accepted.getResultVal(), scrutinyDetail); break; } } } }
-                     */
-                    if (pl.getPlot() != null && !Util.checkExemptionConditionForSmallPlotAtBlkLevel(pl.getPlot(), block)
-                            && mostRestrictiveOccupancyType != null && mostRestrictiveOccupancyType.getSubtype() != null
-                            && !A_R.equalsIgnoreCase(mostRestrictiveOccupancyType.getSubtype().getCode())) {
-                        if (!block.getDARamps().isEmpty()) {
-                            boolean isSlopeDefined = false;
-                            for (DARamp daRamp : block.getDARamps()) {
-                                if (daRamp != null && daRamp.getSlope() != null
-                                        && daRamp.getSlope().compareTo(BigDecimal.valueOf(0)) > 0) {
-                                    isSlopeDefined = true;
-                                }
-                            }
-                            if (isSlopeDefined) {
-                                setReportOutputDetails(pl, SUBRULE_50_C_4_B, SUBRULE_50_C_4_B_SLOPE_MAN_DESC, "",
-                                        DcrConstants.OBJECTDEFINED_DESC, Result.Accepted.getResultVal(), scrutinyDetail1);
-                            } else {
-                                setReportOutputDetails(pl, SUBRULE_50_C_4_B, SUBRULE_50_C_4_B_SLOPE_MAN_DESC, "",
-                                        DcrConstants.OBJECTNOTDEFINED_DESC, Result.Not_Accepted.getResultVal(),
-                                        scrutinyDetail1);
-                            }
-                            valid = false;
-                            if (isSlopeDefined) {
-                                Map<String, String> mapOfRampNumberAndSlopeValues = new HashMap<>();
-                                BigDecimal expectedSlope = BigDecimal.valueOf(1).divide(BigDecimal.valueOf(12), 2,
-                                        RoundingMode.HALF_UP);
-                                for (DARamp daRamp : block.getDARamps()) {
-                                    BigDecimal slope = daRamp.getSlope();
-                                    if (slope != null && slope.compareTo(BigDecimal.valueOf(0)) > 0
-                                            && expectedSlope != null) {
-                                        if (slope.compareTo(expectedSlope) <= 0) {
-                                            valid = true;
-                                            mapOfRampNumberAndSlopeValues.put("daRampNumber", daRamp.getNumber().toString());
-                                            mapOfRampNumberAndSlopeValues.put("slope", slope.toString());
-                                            break;
-                                        }
-                                    }
-                                }
-                                if (valid) {
-                                    setReportOutputDetails(pl, SUBRULE_50_C_4_B,
-                                            String.format(SUBRULE_50_C_4_B_SLOPE_DESCRIPTION,
-                                                    mapOfRampNumberAndSlopeValues.get("daRampNumber")),
-                                            expectedSlope.toString(),
-                                            mapOfRampNumberAndSlopeValues.get("slope"), Result.Accepted.getResultVal(),
-                                            scrutinyDetail2);
-                                } else {
-                                    setReportOutputDetails(pl, SUBRULE_50_C_4_B,
-                                            String.format(SUBRULE_50_C_4_B_SLOPE_DESCRIPTION, ""), expectedSlope.toString(),
-                                            "Less than 0.08 for all da ramps", Result.Not_Accepted.getResultVal(),
-                                            scrutinyDetail2);
-                                }
-                            }
+    private ScrutinyDetail createScrutinyDetail(String keySuffix, String blockNumber, boolean hasFloorColumn) {
+        ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
+        scrutinyDetail.addColumnHeading(1, RULE_NO);
+        scrutinyDetail.addColumnHeading(2, DESCRIPTION);
+        int columnIndex = 3;
+        if (hasFloorColumn) {
+            scrutinyDetail.addColumnHeading(columnIndex++, FLOOR);
+        }
+        scrutinyDetail.addColumnHeading(columnIndex++, REQUIRED);
+        scrutinyDetail.addColumnHeading(columnIndex++, PROVIDED);
+        scrutinyDetail.addColumnHeading(columnIndex, STATUS);
+        scrutinyDetail.setKey(BLOCK + blockNumber + UNDERSCORE + keySuffix);
+        if (keySuffix.equals(DA_ROOM)) {
+            scrutinyDetail.setSubHeading(MIN_NUMBER_DA_ROOMS);
+        }
+        return scrutinyDetail;
+    }
+    
+    /**
+     * Performs validation of DA ramp slope for the given block using specified slope values and adds scrutiny details.
+     *
+     * @param pl the Plan object
+     * @param block the Block containing the DA ramps
+     * @param rampServiceValueOne base value to check if slope is defined
+     * @param rampServiceExpectedSlopeOne numerator of expected slope calculation
+     * @param rampServiceDivideExpectedSlope denominator of expected slope calculation
+     * @param rampServiceSlopValue minimum allowed slope value
+     * @param scrutinyDetail1 scrutiny detail for slope definition
+     * @param scrutinyDetail2 scrutiny detail for slope compliance
+     */
 
-                        }
-                    }
+    private void processRampSlopeValidation(Plan pl, Block block, BigDecimal rampServiceValueOne,
+            BigDecimal rampServiceExpectedSlopeOne, BigDecimal rampServiceDivideExpectedSlope,
+            BigDecimal rampServiceSlopValue, ScrutinyDetail scrutinyDetail1, ScrutinyDetail scrutinyDetail2) {
 
-                    if (block.getBuilding().getBuildingHeight().compareTo(new BigDecimal(15)) > 0) {
-                        OccupancyTypeHelper mostRestrictiveFarHelper = pl.getVirtualBuilding() != null
-                                ? pl.getVirtualBuilding().getMostRestrictiveFarHelper()
-                                : null;
-                        if (block.getBuilding() != null && !block.getBuilding().getFloors().isEmpty()) {
-                            for (Floor floor : block.getBuilding().getFloors()) {
-                                /*
-                                 * if (!floor.getConvertedOccupancies().isEmpty()) { for (Occupancy occupancy :
-                                 * floor.getConvertedOccupancies()) { if (occupancy.getType().equals(OccupancyType.OCCUPANCY_A2)
-                                 * && !floor.getDaRooms().isEmpty() && !floor.getUnits().isEmpty()) { valid = false; int
-                                 * noOfDaRooms = floor.getDaRooms().size(); int noOfFloorUnitsInColorCode23And3 = 0; if
-                                 * (!floor.getUnits().isEmpty()) { for (FloorUnit floorUnit : floor.getUnits()) { if (floorUnit !=
-                                 * null && (floorUnit.getColorCode() == 23 || floorUnit.getColorCode() == 3)) {
-                                 * noOfFloorUnitsInColorCode23And3++; } } } if (noOfFloorUnitsInColorCode23And3 != 0) { BigDecimal
-                                 * expectedNoOfDARooms = BigDecimal
-                                 * .valueOf(Double.valueOf(String.valueOf(noOfFloorUnitsInColorCode23And3)))
-                                 * .divide(BigDecimal.valueOf(25), 2, RoundingMode.HALF_UP); boolean isTypicalRepititiveFloor =
-                                 * false; Map<String, Object> typicalFloorValues = Util.getTypicalFloorValues(block, floor,
-                                 * isTypicalRepititiveFloor); if (!(Boolean) typicalFloorValues.get("isTypicalRepititiveFloor")) {
-                                 * if (BigDecimal.valueOf(Double.valueOf(String.valueOf(noOfDaRooms)))
-                                 * .compareTo(expectedNoOfDARooms) >= 0) { valid = true; } String value =
-                                 * typicalFloorValues.get("typicalFloors") != null ? (String)
-                                 * typicalFloorValues.get("typicalFloors") : " floor " + floor.getNumber(); if (valid) {
-                                 * setReportOutputDetailsFloorWise(pl, SUBRULE_40_A7, value, expectedNoOfDARooms.toString(),
-                                 * String.valueOf(noOfDaRooms), Result.Accepted.getResultVal(), scrutinyDetail3); } else {
-                                 * setReportOutputDetailsFloorWise(pl, SUBRULE_40_A7, value, expectedNoOfDARooms.toString(),
-                                 * String.valueOf(noOfDaRooms), Result.Not_Accepted.getResultVal(), scrutinyDetail3); } } } } } }
-                                 */
-                                for (Ramp ramp : floor.getRamps()) {
-                                    if (ramp.getRampClosed()) {
-                                        List<BigDecimal> rampWidths = new ArrayList<>();
-                                        List<BigDecimal> rampLengths = new ArrayList<>();
-                                        for (Measurement measurement : ramp.getRamps()) {
-                                            rampWidths.add(measurement.getWidth());
-                                            rampLengths.add(measurement.getHeight());
-                                        }
-                                        /*
-                                         * if (!rampWidths.isEmpty()) { BigDecimal minimumWidth = rampWidths.get(0); for
-                                         * (BigDecimal width : rampWidths) { if (width.compareTo(minimumWidth) < 0) { minimumWidth
-                                         * = width; } } boolean isTypicalRepititiveFloor = false; valid = false; Map<String,
-                                         * Object> typicalFloorValues = Util.getTypicalFloorValues(block, floor,
-                                         * isTypicalRepititiveFloor); if (!(Boolean)
-                                         * typicalFloorValues.get("isTypicalRepititiveFloor")) { if
-                                         * (minimumWidth.compareTo(BigDecimal.valueOf(1.2)) >= 0) { valid = true; } String value =
-                                         * typicalFloorValues.get("typicalFloors") != null ? (String)
-                                         * typicalFloorValues.get("typicalFloors") : " floor " + floor.getNumber(); if (valid) {
-                                         * setReportOutputDetailsFloorWiseWithDescription(pl, SUBRULE_40_A3,
-                                         * String.format(SUBRULE_40_A_3_WIDTH_DESCRIPTION, ramp.getNumber()), value,
-                                         * BigDecimal.valueOf(1.2).toString() + DcrConstants.IN_METER, String.valueOf(
-                                         * Math.round(minimumWidth.doubleValue() * Double.valueOf(100)) / Double.valueOf(100)) +
-                                         * DcrConstants.IN_METER, Result.Accepted.getResultVal(), scrutinyDetail4); } else {
-                                         * setReportOutputDetailsFloorWiseWithDescription(pl, SUBRULE_40_A3,
-                                         * String.format(SUBRULE_40_A_3_WIDTH_DESCRIPTION, ramp.getNumber()), value,
-                                         * BigDecimal.valueOf(1.2).toString() + DcrConstants.IN_METER, String.valueOf(
-                                         * Math.round(minimumWidth.doubleValue() * Double.valueOf(100)) / Double.valueOf(100)) +
-                                         * DcrConstants.IN_METER, Result.Not_Accepted.getResultVal(), scrutinyDetail4); } } }
-                                         */
+        OccupancyTypeHelper mostRestrictiveOccupancyType = pl.getVirtualBuilding().getMostRestrictiveFarHelper();
 
-                                        BigDecimal rampTotalLength = BigDecimal.ZERO;
-                                        for (BigDecimal length : rampLengths) {
-                                            rampTotalLength = rampTotalLength.add(length);
-                                        }
-                                        if (rampTotalLength.compareTo(BigDecimal.valueOf(0)) > 0
-                                                && ramp.getFloorHeight() != null) {
-                                            boolean isTypicalRepititiveFloor = false;
-                                            BigDecimal rampSlope = ramp.getFloorHeight().divide(rampTotalLength, 2,
-                                                    RoundingMode.HALF_UP);
-                                            ramp.setSlope(rampSlope);
-                                            BigDecimal expectedSlope = BigDecimal.ZERO;
-                                            if (mostRestrictiveFarHelper != null && ((mostRestrictiveFarHelper.getType() != null
-                                                    && mostRestrictiveFarHelper.getType()
-                                                            .getCode().equalsIgnoreCase(DxfFileConstants.C))
-                                                    || (mostRestrictiveFarHelper.getSubtype() != null &&
-                                                            (mostRestrictiveFarHelper.getSubtype().getCode()
-                                                                    .equalsIgnoreCase(DxfFileConstants.C_MA)
-                                                                    || mostRestrictiveFarHelper.getSubtype().getCode()
-                                                                            .equalsIgnoreCase(DxfFileConstants.C_MIP)
-                                                                    || mostRestrictiveFarHelper.getSubtype().getCode()
-                                                                            .equalsIgnoreCase(DxfFileConstants.C_MOP))))) {
-                                                expectedSlope = BigDecimal.valueOf(0.05);
-                                            } else {
-                                                expectedSlope = ramp.getFloorHeight()
-                                                        .compareTo(BigDecimal.valueOf(2.4)) > 0 ? BigDecimal.valueOf(0.05)
-                                                                : BigDecimal.valueOf(0.08);
-                                            }
-                                            valid = false;
-                                            Map<String, Object> typicalFloorValues = Util.getTypicalFloorValues(block, floor,
-                                                    isTypicalRepititiveFloor);
-                                            if (!(Boolean) typicalFloorValues.get("isTypicalRepititiveFloor")) {
-                                                if (rampSlope.compareTo(expectedSlope) <= 0) {
-                                                    valid = true;
-                                                }
-                                                String value = typicalFloorValues.get("typicalFloors") != null
-                                                        ? (String) typicalFloorValues.get("typicalFloors")
-                                                        : " floor " + floor.getNumber();
-                                                if (valid) {
-                                                    setReportOutputDetailsFloorWiseWithDescription(pl, SUBRULE_40,
-                                                            String.format(SUBRULE_50_C_4_B_DESCRIPTION,
-                                                                    ramp.getNumber()),
-                                                            value, expectedSlope.toString(), rampSlope.toString(),
-                                                            Result.Accepted.getResultVal(), scrutinyDetail5);
-                                                } else {
-                                                    setReportOutputDetailsFloorWiseWithDescription(pl, SUBRULE_40,
-                                                            String.format(SUBRULE_50_C_4_B_DESCRIPTION,
-                                                                    ramp.getNumber()),
-                                                            value, expectedSlope.toString(), rampSlope.toString(),
-                                                            Result.Not_Accepted.getResultVal(), scrutinyDetail5);
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
+        if (pl.getPlot() != null
+                && !Util.checkExemptionConditionForSmallPlotAtBlkLevel(pl.getPlot(), block)
+                && mostRestrictiveOccupancyType != null
+                && mostRestrictiveOccupancyType.getSubtype() != null
+                && !A_R.equalsIgnoreCase(mostRestrictiveOccupancyType.getSubtype().getCode())) {
+
+            if (!block.getDARamps().isEmpty()) {
+                boolean isSlopeDefined = isSlopeDefined(block, rampServiceValueOne);
+
+                setReportOutputDetails(pl, SUBRULE_50_C_4_B, SUBRULE_50_C_4_B_SLOPE_MAN_DESC, EMPTY_STRING,
+                        isSlopeDefined ? DcrConstants.OBJECTDEFINED_DESC : DcrConstants.OBJECTNOTDEFINED_DESC,
+                        isSlopeDefined ? Result.Accepted.getResultVal() : Result.Not_Accepted.getResultVal(),
+                        scrutinyDetail1);
+
+                if (isSlopeDefined) {
+                    validateRampSlopes(pl, block, rampServiceExpectedSlopeOne, rampServiceDivideExpectedSlope,
+                            rampServiceSlopValue, scrutinyDetail2);
                 }
             }
         }
-        return pl;
     }
 
+    /**
+     * Checks if any DA ramp in the block has a slope defined above a specified threshold.
+     *
+     * @param block the Block to check
+     * @param rampServiceValueOne minimum slope value to consider as defined
+     * @return true if a valid slope is defined; false otherwise
+     */
+    private boolean isSlopeDefined(Block block, BigDecimal rampServiceValueOne) {
+        for (DARamp daRamp : block.getDARamps()) {
+            if (daRamp != null && daRamp.getSlope() != null
+                    && daRamp.getSlope().compareTo(rampServiceValueOne) > 0) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    /**
+     * Validates that DA ramp slopes in the block fall within the allowed maximum slope.
+     *
+     * @param pl the Plan object
+     * @param block the Block containing DA ramps
+     * @param expectedSlopeOne numerator for slope validation
+     * @param divideExpectedSlope denominator for slope calculation
+     * @param rampServiceSlopValue maximum allowed slope
+     * @param scrutinyDetail2 scrutiny detail to report results
+     */
+
+    private void validateRampSlopes(Plan pl, Block block, BigDecimal expectedSlopeOne,
+            BigDecimal divideExpectedSlope, BigDecimal rampServiceSlopValue,
+            ScrutinyDetail scrutinyDetail2) {
+
+        boolean valid = false;
+        Map<String, String> mapOfRampNumberAndSlopeValues = new HashMap<>();
+        BigDecimal expectedSlope = expectedSlopeOne.divide(divideExpectedSlope, 2, RoundingMode.HALF_UP);
+
+        for (DARamp daRamp : block.getDARamps()) {
+            BigDecimal slope = daRamp.getSlope();
+            if (slope != null && slope.compareTo(rampServiceSlopValue) > 0 && expectedSlope != null) {
+                if (slope.compareTo(expectedSlope) <= 0) {
+                    valid = true;
+                    mapOfRampNumberAndSlopeValues.put(DA_RAMP_NUMBER, daRamp.getNumber().toString());
+                    mapOfRampNumberAndSlopeValues.put(SLOPE_STRING, slope.toString());
+                    break;
+                }
+            }
+        }
+
+        if (valid) {
+            setReportOutputDetails(pl, SUBRULE_50_C_4_B,
+                    String.format(SUBRULE_50_C_4_B_SLOPE_DESCRIPTION,
+                            mapOfRampNumberAndSlopeValues.get(DA_RAMP_NUMBER)),
+                    expectedSlope.toString(),
+                    mapOfRampNumberAndSlopeValues.get(SLOPE_STRING),
+                    Result.Accepted.getResultVal(), scrutinyDetail2);
+        } else {
+            setReportOutputDetails(pl, SUBRULE_50_C_4_B,
+                    String.format(SUBRULE_50_C_4_B_SLOPE_DESCRIPTION, EMPTY_STRING),
+                    expectedSlope.toString(), LESS_THAN_SLOPE,
+                    Result.Not_Accepted.getResultVal(), scrutinyDetail2);
+        }
+    }
+
+    private void processDARoomValidation(Plan pl, Block block, BigDecimal rampServiceBuildingHeight, ScrutinyDetail scrutinyDetail3) {
+        
+    }
+
+    
     private void setReportOutputDetails(Plan pl, String ruleNo, String ruleDesc, String expected, String actual, String status,
             ScrutinyDetail scrutinyDetail) {
-        Map<String, String> details = new HashMap<>();
-        details.put(RULE_NO, ruleNo);
-        details.put(DESCRIPTION, ruleDesc);
-        details.put(REQUIRED, expected);
-        details.put(PROVIDED, actual);
-        details.put(STATUS, status);
-        scrutinyDetail.getDetail().add(details);
-        pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+        ReportScrutinyDetail detail = new ReportScrutinyDetail();
+        detail.setRuleNo(ruleNo);
+        detail.setDescription(ruleDesc);
+        detail.setRequired(expected);
+        detail.setProvided(actual);
+        detail.setStatus(status);
+
+        Map<String, String> details = mapReportDetails(detail);
+        addScrutinyDetailtoPlan(scrutinyDetail, pl, details);
     }
 
     private void setReportOutputDetailsFloorWise(Plan pl, String ruleNo, String floor, String expected, String actual,
             String status, ScrutinyDetail scrutinyDetail) {
-        Map<String, String> details = new HashMap<>();
-        details.put(RULE_NO, ruleNo);
-        details.put(FLOOR, floor);
-        details.put(REQUIRED, expected);
-        details.put(PROVIDED, actual);
-        details.put(STATUS, status);
-        scrutinyDetail.getDetail().add(details);
-        pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+        ReportScrutinyDetail detail = new ReportScrutinyDetail();
+        detail.setRuleNo(ruleNo);
+        detail.setFloorNo(floor);
+        detail.setRequired(expected);
+        detail.setProvided(actual);
+        detail.setStatus(status);
+
+        Map<String, String> details = mapReportDetails(detail);
+        addScrutinyDetailtoPlan(scrutinyDetail, pl, details);
     }
 
     private void setReportOutputDetailsFloorWiseWithDescription(Plan pl, String ruleNo, String ruleDesc, String floor,
             String expected, String actual, String status, ScrutinyDetail scrutinyDetail) {
-        Map<String, String> details = new HashMap<>();
-        details.put(RULE_NO, ruleNo);
-        details.put(DESCRIPTION, ruleDesc);
-        details.put(FLOOR, floor);
-        details.put(REQUIRED, expected);
-        details.put(PROVIDED, actual);
-        details.put(STATUS, status);
-        scrutinyDetail.getDetail().add(details);
-        pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+        ReportScrutinyDetail detail = new ReportScrutinyDetail();
+        detail.setRuleNo(ruleNo);
+        detail.setDescription(ruleDesc);
+        detail.setFloorNo(floor);
+        detail.setRequired(expected);
+        detail.setProvided(actual);
+        detail.setStatus(status);
+
+        Map<String, String> details = mapReportDetails(detail);
+        addScrutinyDetailtoPlan(scrutinyDetail, pl, details);
     }
 
     private void validateDimensions(Plan plan, String blockNo, int floorNo, String rampNo,
@@ -474,7 +465,7 @@ public class RampService extends FeatureProcess {
         }
         if (count > 0) {
             plan.addError(String.format(DxfFileConstants.LAYER_RAMP_WITH_NO, blockNo, floorNo, rampNo),
-                    count + " number of ramp polyline not having only 4 points in layer "
+                    count + RAMP_POLYLINE_ERROR
                             + String.format(DxfFileConstants.LAYER_RAMP_WITH_NO, blockNo, floorNo, rampNo));
 
         }

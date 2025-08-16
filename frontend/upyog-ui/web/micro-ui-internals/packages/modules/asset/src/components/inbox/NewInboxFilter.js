@@ -110,7 +110,7 @@ const Filter = ({ searchParams, onFilterChange, defaultSearchParams, statusMap, 
                 })}
               </div>
             </div>
-            <div>
+            {/* <div>
               <div className="filter-label" style={{ fontWeight: "normal" }}>
                 {t("AST_APPLICATION_TYPE")}
               </div>
@@ -126,7 +126,7 @@ const Filter = ({ searchParams, onFilterChange, defaultSearchParams, statusMap, 
                   />
                 );
               })}
-            </div>
+            </div> */}
             <div>
               <Status
                 searchParams={_searchParams}

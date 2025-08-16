@@ -6,6 +6,51 @@ import { Redirect, Route, Switch, useHistory, useLocation, useRouteMatch } from 
 import { citizenConfig } from "../../../config/Create/citizenconfig";
 import { data } from "jquery";
 
+/**
+ * CHBCreate Component
+ * 
+ * This component is responsible for rendering the citizen-facing "Create Application" workflow for the CHB module.
+ * It manages the navigation between different steps of the application process and handles session storage for form data.
+ * 
+ * Props:
+ * - `parentRoute`: The base route for the application workflow.
+ * 
+ * Hooks:
+ * - `useQueryClient`: Provides access to the React Query client for managing cached data.
+ * - `useRouteMatch`: Provides information about the current route.
+ * - `useTranslation`: Provides the `t` function for internationalization.
+ * - `useLocation`: Provides access to the current location object, including the `pathname`.
+ * - `useHistory`: Provides navigation functionality within the application.
+ * - `Digit.Hooks.useSessionStorage`: Custom hook to manage session storage for the application data.
+ * 
+ * Variables:
+ * - `queryClient`: Instance of the React Query client for managing cached data.
+ * - `match`: Object containing information about the current route.
+ * - `t`: Translation function for internationalization.
+ * - `pathname`: The current URL path.
+ * - `history`: Object for navigating between routes.
+ * - `stateId`: The state ID fetched using the `Digit.ULBService.getStateId` function.
+ * - `config`: Array to store the configuration for the application workflow steps.
+ * - `params`: Object containing the current session data for the application.
+ * - `setParams`: Function to update the session data.
+ * - `clearParams`: Function to clear the session data.
+ * - `commonFields`: Fetched MDMS configuration for common fields in the property tax module.
+ * - `isLoading`: Boolean indicating whether the MDMS data is being loaded.
+ * 
+ * Functions:
+ * - `goNext`: Handles navigation to the next step in the application workflow.
+ *    - Determines the current step based on the `pathname`.
+ *    - Handles special cases for multiple entries (e.g., "-1" or "-2").
+ *    - Updates the route to the next step in the workflow.
+ * 
+ * Logic:
+ * - Fetches MDMS configurations for common fields using the `useMDMS` hook.
+ * - Manages session storage for the application data using the `useSessionStorage` hook.
+ * - Dynamically determines the next step in the workflow based on the current route and application state.
+ * 
+ * Returns:
+ * - A component that renders the "Create Application" workflow for citizens, with navigation between steps and session data management.
+ */
 const CHBCreate = ({ parentRoute }) => {
 
   const queryClient = useQueryClient();

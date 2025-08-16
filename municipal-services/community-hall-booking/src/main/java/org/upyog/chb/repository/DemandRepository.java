@@ -12,6 +12,33 @@ import org.upyog.chb.web.models.billing.DemandResponse;
 
 import java.util.List;
 
+/**
+ * This class is responsible for interacting with the billing service to manage demands
+ * related to the Community Hall Booking module.
+ * 
+ * Purpose:
+ * - To create and retrieve demands for community hall bookings.
+ * - To handle communication with external services for demand-related operations.
+ * 
+ * Dependencies:
+ * - ServiceRequestRepository: Used to send HTTP requests to external services.
+ * - CommunityHallBookingConfiguration: Provides configuration properties for demand operations.
+ * - ObjectMapper: Used to serialize and deserialize JSON objects.
+ * 
+ * Features:
+ * - Provides methods to create demands for bookings.
+ * - Handles exceptions and ensures proper error reporting using CustomException.
+ * - Uses configuration properties to determine service endpoints and other settings.
+ * 
+ * Methods:
+ * 1. saveDemand:
+ *    - Creates new demands for community hall bookings.
+ *    - Sends the demand creation request to the billing service.
+ * 
+ * Usage:
+ * - This class is used by the service layer to manage demands for bookings.
+ * - It ensures consistent and reusable logic for demand-related operations.
+ */
 @Repository
 public class DemandRepository {
 

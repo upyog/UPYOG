@@ -85,14 +85,20 @@ public class TLCalculatorConfigs {
     private String timeRebateTaxHead;
 
 
+    @Value("${egov.mdms.host}")
+    private String mdmsHost;
+    
+
+    @Value("${mdms.v2.search.endpoint}")
+    private String mdmsV2EndPoint;
+    
+    @Value("${egov.mdms.search.endpoint}")
+    private String mdmsEndPoint;
+
 
     //MDMS
     @Value("${mdms.v2.host}")
-    private String mdmsHost;
-
-    @Value("${mdms.v2.search.endpoint}")
-    private String mdmsSearchEndpoint;
-
+    private String mdmsV2Host;
 
     //Kafka Topics
     @Value("${persister.save.tl.calculation.topic}")

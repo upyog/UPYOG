@@ -54,6 +54,9 @@
     "dev:ads": "cd packages/modules/ads && yarn start",
     "dev:ew": "cd packages/modules/ew && yarn start",
     "dev:sv": "cd packages/modules/sv && yarn start",
+    "dev:wt": "cd packages/modules/wt && yarn start",
+    "dev:pgrai": "cd packages/modules/pgrai && yarn start",
+    "dev:vendor": "cd packages/modules/vendor && yarn start",
     "build": "run-p build:**",
     "build:libraries": "cd packages/libraries && yarn build",
     "buildD:asset": "cd packages/modules/asset && yarn build",
@@ -68,7 +71,7 @@
     "build:dss": "cd packages/modules/dss && yarn build",
     "buildD:mcollect": "cd packages/modules/mCollect && yarn build",
     "buildD:receipts": "cd packages/modules/receipts && yarn build",
-    "buildD:tl": "cd packages/modules/tl && yarn build",
+    "build:tl": "cd packages/modules/tl && yarn build",
     "buildD:hrms": "cd packages/modules/hrms && yarn build",
     "build:obps": "cd packages/modules/obps && yarn build",
     "buildD:engagement": "cd packages/modules/engagement && yarn build",
@@ -80,6 +83,9 @@
     "buildD:ew": "cd packages/modules/ew && yarn build",
     "buildD:sv": "cd packages/modules/sv && yarn build",
     "buildD:cm": "cd packages/modules/cm && yarn build",
+    "buildD:wt": "cd packages/modules/wt && yarn build",
+    "buildD:pgrai": "cd packages/modules/pgrai && yarn build",
+    "buildD:vendor": "cd packages/modules/vendor && yarn build",
     "buildR:reports": "cd packages/modules/reports && yarn build",
     "deploy:jenkins": "./scripts/jenkins.sh"
   },
@@ -101,6 +107,8 @@
     "**/babel-loader": "8.2.2",
     "**/@babel/core": "7.14.0",
     "**/@babel/preset-env": "7.14.0",
-    "**/@babel/plugin-transform-modules-commonjs": "7.14.0"
+    "**/@babel/plugin-transform-modules-commonjs": "7.14.0",
+    "minimatch": "^3.1.2",
+    "glob":"7.2.3"
   }
 }

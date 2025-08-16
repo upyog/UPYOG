@@ -14,6 +14,8 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 
+import static org.egov.edcr.constants.CommonFeatureConstants.INVALID_VALUE_MESSAGE;
+
 @Service
 public class GeneralRule extends FeatureProcess {
     public static final String MSG_ERROR_MANDATORY = "msg.error.mandatory.object.not.defined";
@@ -50,7 +52,7 @@ public class GeneralRule extends FeatureProcess {
             if (!StringUtils.isEmpty(strValue))
                 return BigDecimal.valueOf(Double.parseDouble(strValue));
         } catch (NumberFormatException e) {
-            pl.addError(fieldName, "The value for " + fieldName + " '" + strValue + "' Is Invalid");
+            pl.addError(fieldName, String.format(INVALID_VALUE_MESSAGE, fieldName, strValue));
         }
         return null;
     }

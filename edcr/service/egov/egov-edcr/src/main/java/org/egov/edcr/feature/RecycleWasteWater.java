@@ -47,6 +47,9 @@
 
 package org.egov.edcr.feature;
 
+import static org.egov.edcr.constants.EdcrReportConstants.*;
+import static org.egov.edcr.service.FeatureUtil.addScrutinyDetailtoPlan;
+import static org.egov.edcr.service.FeatureUtil.mapReportDetails;
 import static org.egov.edcr.utility.DcrConstants.OBJECTDEFINED_DESC;
 import static org.egov.edcr.utility.DcrConstants.OBJECTNOTDEFINED;
 import static org.egov.edcr.utility.DcrConstants.OBJECTNOTDEFINED_DESC;
@@ -57,19 +60,12 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import org.egov.common.entity.edcr.OccupancyType;
-import org.egov.common.entity.edcr.Plan;
-import org.egov.common.entity.edcr.Result;
-import org.egov.common.entity.edcr.ScrutinyDetail;
+import org.egov.common.entity.edcr.*;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 
 @Service
 public class RecycleWasteWater extends FeatureProcess {
-    private static final BigDecimal ONETHOUSANDFIVEHUNDER = BigDecimal.valueOf(1500);
-    private static final String SUB_RULE_53_6_DESCRIPTION = "Recycling and reuse of waste water generated facility ";
-    private static final String SUB_RULE_53_6 = "53-6";
-    private static final BigDecimal TWOTHOUSANDFIVEHUNDER = BigDecimal.valueOf(2500);
 
     @Override
     public Plan validate(Plan pl) {/*
@@ -148,14 +144,15 @@ public class RecycleWasteWater extends FeatureProcess {
 
     private void setReportOutputDetailsWithoutOccupancy(Plan pl, String ruleNo, String ruleDesc, String expected, String actual,
             String status) {
-        Map<String, String> details = new HashMap<>();
-        details.put(RULE_NO, ruleNo);
-        details.put(DESCRIPTION, ruleDesc);
-        details.put(REQUIRED, expected);
-        details.put(PROVIDED, actual);
-        details.put(STATUS, status);
-        scrutinyDetail.getDetail().add(details);
-        pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+        ReportScrutinyDetail detail = new ReportScrutinyDetail();
+        detail.setRuleNo(ruleNo);
+        detail.setDescription(ruleDesc);
+        detail.setRequired(expected);
+        detail.setProvided(actual);
+        detail.setStatus(status);
+
+        Map<String, String> details = mapReportDetails(detail);
+        addScrutinyDetailtoPlan(scrutinyDetail, pl, details);
     }
 
     @Override

@@ -184,6 +184,15 @@ const defaultLogo =
   else if(applicationNumber!==undefined &&applicationNumber.split("-")[1]==="AC"){
     ack="PT-AckForm"
   }
+  else if(applicationNumber!==undefined &&applicationNumber.split("-")[0]==="MT"){
+    ack="MT-AckForm"
+  }
+  else if(applicationNumber!==undefined &&applicationNumber.split("-")[0]==="WT"){
+    ack="WT-AckForm"
+  }
+  else if(applicationNumber!==undefined &&applicationNumber.split("-")[0]==="TP"){
+    ack="TP-AckForm"
+  }
   else if(applicationNumber!==undefined &&applicationNumber.split("-")[1]==="BP"){
     ack="BPA-AckForm"
   }

@@ -1,6 +1,44 @@
 const capitalize = (text) => text.substr(0, 1).toUpperCase() + text.substr(1);
 const ulbCamel = (ulb) => ulb.toLowerCase().split(" ").map(capitalize).join(" ");
 
+/**
+ * getChbAcknowledgementData Function
+ * 
+ * This function is responsible for generating the acknowledgement data for a CHB application.
+ * It processes the application details, tenant information, and booking slot details to create a structured object for the acknowledgement screen.
+ * 
+ * Parameters:
+ * - `application`: The application object containing details such as documents, booking slots, and other metadata.
+ * - `tenantInfo`: The tenant information object containing details like tenant code.
+ * - `t`: The translation function used for internationalization.
+ * 
+ * Logic:
+ * - Fetches file URLs for the documents associated with the application using the `Digit.UploadServices.Filefetch` service.
+ * - Processes the booking slot details to generate formatted date and time ranges.
+ * 
+ * Helper Functions:
+ * - `getBookingDateRange`: 
+ *    - Accepts `bookingSlotDetails` as input.
+ *    - Returns a formatted date range for the booking slots.
+ *    - If the start date and end date are the same, it returns only the start date.
+ *    - If no booking slot details are available, it returns "CS_NA" (Not Available).
+ * 
+ * - `getBookingTimeRange`: 
+ *    - Accepts `bookingSlotDetails` as input.
+ *    - Returns a formatted time range for the booking slots.
+ *    - If no booking slot details are available, it returns a default time range ("10:00 - 11:59").
+ *    - Dynamically adjusts the end time based on the number of booking slots:
+ *        - For 1 slot: Default end time is "23:59".
+ *        - For 2 slots: Default end time is "47:59".
+ *        - For 3 slots: Default end time is "71:59".
+ *    - If no start time is available, it returns "CS_NA".
+ * 
+ * Returns:
+ * - An object containing:
+ *    - `t`: The translation function.
+ *    - `tenantId`: The tenant code from the `tenantInfo` object.
+ *    - Additional formatted data for the acknowledgement screen (not fully visible in the provided code).
+ */
 const getChbAcknowledgementData = async (application, tenantInfo, t) => {
   const filesArray = application?.documents?.map((value) => value?.fileStoreId);
   const res = filesArray?.length > 0 && (await Digit.UploadServices.Filefetch(filesArray, Digit.ULBService.getStateId()));

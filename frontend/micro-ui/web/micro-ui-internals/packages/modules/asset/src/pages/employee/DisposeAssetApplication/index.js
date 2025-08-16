@@ -1,8 +1,7 @@
 import { FormComposer, Loader,Toast } from "@upyog/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useHistory } from "react-router-dom";
-import { useParams } from "react-router-dom";
+import { useHistory, useParams } from "react-router-dom";
 import { disposeConfig } from "../../../config/Create/disposeConfig";
 import {convertStringToFloat} from "../../../utils/index"
 
@@ -55,7 +54,6 @@ const DisposeAssetApplication = () => {
 
   const onSubmit = async (data) => {
 
-    
     const formData = {
         disposalId:"",
         assetId: data?.disposeDetails?.[0]?.assetId,
@@ -84,7 +82,7 @@ const DisposeAssetApplication = () => {
         },
         documents: [
           {
-              documentType: "OWNER.RECIEPTPHOTO",
+              documentType: "ASSET.DISPOSE.DOC1",
               fileStoreId: data?.disposeDetails?.[0]?.fileStoreId,
               documentUid: data?.disposeDetails?.[0]?.fileStoreId,
               latitude: null,
@@ -100,7 +98,7 @@ const DisposeAssetApplication = () => {
           if(applicationDetails){
             console.log('success data is coming')
             // setShowToast({ error: false, label: 'Asset Dispose Successfully'});
-            history.replace("/digit-ui/employee/asset/assetservice/asset-dispose-response", { AssetDisposal: applicationDetails }); 
+            history.replace("/digit-ui/employee/asset/assetservice/asset-dispose-response", { AssetDisposal: applicationDetails, applicationNo }); 
           }
         }
         catch (error) {

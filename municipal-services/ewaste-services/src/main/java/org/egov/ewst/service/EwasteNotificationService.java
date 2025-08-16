@@ -24,6 +24,11 @@ import com.jayway.jsonpath.JsonPath;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * EwasteNotificationService is responsible for processing notifications related
+ * to Ewaste applications. It fetches user UUIDs based on mobile numbers and
+ * sends event notifications using the NotificationUtil.
+ */
 @Service
 @Slf4j
 public class EwasteNotificationService {
@@ -42,6 +47,12 @@ public class EwasteNotificationService {
 
 	}
 
+	/**
+	 * Creates an EventRequest object for the Ewaste application.
+	 *
+	 * @param request The Ewaste registration request containing application details.
+	 * @return An EventRequest object containing event details.
+	 */
 	private EventRequest getEventsForEW(EwasteRegistrationRequest request) {
 
 		List<Event> events = new ArrayList<>();

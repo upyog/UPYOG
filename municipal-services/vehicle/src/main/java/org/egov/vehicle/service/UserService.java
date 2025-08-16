@@ -4,6 +4,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.*;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -25,6 +26,7 @@ import org.egov.vehicle.util.VehicleErrorConstants;
 import org.egov.vehicle.web.model.Vehicle;
 import org.egov.vehicle.web.model.VehicleRequest;
 import org.egov.vehicle.web.model.VehicleSearchCriteria;
+import org.egov.vehicle.web.model.user.ModuleRoleMapping;
 import org.egov.vehicle.web.model.user.User;
 import org.egov.vehicle.web.model.user.UserDetailResponse;
 import org.egov.vehicle.web.model.user.UserRequest;
@@ -53,6 +55,9 @@ public class UserService {
 
 	@Autowired
 	private VehicleRepository repository;
+	
+	@Autowired
+	private ModuleRoleService moduleRoleService;
 
 	/**
 	 * 
@@ -90,7 +95,7 @@ public class UserService {
 				// users exists with mobile number but non of them have the same Name so create new
 				// user
 				if (notFoundUser) {
-					owner = createVehicleOwner(owner, vehicleRequest.getRequestInfo());
+					owner = createVehicleOwner(owner, vehicleRequest);
 
 				}
 
@@ -98,7 +103,7 @@ public class UserService {
 				if (!isUpdate) {
 					// User with mobile number itself not found then create new user and consider
 					// the new user as applicant.
-					owner = createVehicleOwner(owner, vehicleRequest.getRequestInfo());
+					owner = createVehicleOwner(owner, vehicleRequest);
 				} else {
 
 					HashMap<String, String> errorMap = new HashMap<>();
@@ -143,16 +148,17 @@ public class UserService {
 	 * @param requestInfo
 	 * @return
 	 */
-	private User createVehicleOwner(User owner, RequestInfo requestInfo) {
+		public User createVehicleOwner(User owner, VehicleRequest vehicleRequest) {
+		ModuleRoleMapping roleMapping = moduleRoleService.getModuleRoleMapping(vehicleRequest, ModuleRoleMapping.MappingType.DRIVER);
 
 		if (!isUserValid(owner)) {
 			throw new CustomException(VehicleErrorConstants.INVALID_OWNER_ERROR,
 					"Dob, relationShip, relation ship name and gender are mandaotry !");
 		}
 		if (owner.getRoles() != null) {
-			owner.getRoles().add(getRolObj(Constants.DSO_DRIVER, Constants.DSO_DRIVER_ROLE_NAME));
+			owner.getRoles().add(getRolObj(roleMapping.getRoleCode(), roleMapping.getRoleName()));
 		} else {
-			owner.setRoles(Arrays.asList(getRolObj(Constants.DSO_DRIVER, Constants.DSO_DRIVER_ROLE_NAME)));
+			owner.setRoles(Arrays.asList(getRolObj(roleMapping.getRoleCode(), roleMapping.getRoleName())));
 		}
 
 		addUserDefaultFields(owner.getTenantId(), null, owner);
@@ -162,7 +168,7 @@ public class UserService {
 		setUserName(owner);
 
 		owner.setType(Constants.CITIZEN);
-		UserDetailResponse userDetailResponse = userCall(new UserRequest(requestInfo, owner), uri);
+		UserDetailResponse userDetailResponse = userCall(new UserRequest(vehicleRequest.getRequestInfo(), owner), uri);
 		log.debug("owner created --> " + userDetailResponse.getUser().get(0).getUuid());
 		return userDetailResponse.getUser().get(0);
 	}

@@ -1,0 +1,591 @@
+"BusinessServices": [
+        {
+            "tenantId": "pg",
+            "businessService": "FSM_POST_PAY_SERVICE",
+            "business": "fsm",
+            "businessServiceSla": 172800000,
+            "states": [
+                {
+                    "tenantId": "pg",
+                    "sla": null,
+                    "state": null,
+                    "applicationStatus": null,
+                    "docUploadRequired": false,
+                    "isStartState": true,
+                    "isTerminateState": false,
+                    "isStateUpdatable": true,
+                    "actions": [
+                        {
+                            "tenantId": "pg",
+							"currentState": null,
+                            "action": "APPLY",
+                            "nextState": "ASSIGN_DSO",
+                            "roles": [
+                                "FSM_CREATOR_EMP"
+                            ]
+                        },
+                        {
+                            "tenantId": "pg",
+							"currentState": null,
+                            "action": "CREATE",
+                            "nextState": "CREATED",
+                            "roles": [
+                                "CITIZEN"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "tenantId": "pg",
+                    "sla": null,
+                    "state": "CREATED",
+                    "applicationStatus": "CREATED",
+                    "docUploadRequired": false,
+                    "isStartState": false,
+                    "isTerminateState": false,
+                    "isStateUpdatable": true,
+                    "actions": [
+                        {
+                            "tenantId": "pg",
+							"currentState": "CREATED",
+                            "action": "REJECT",
+                            "nextState": "REJECTED",
+                            "roles": [
+                                "FSM_ADMIN"
+                            ]
+                        },
+                        {
+                            "tenantId": "pg",
+							"currentState": "CREATED",
+                            "action": "SUBMIT",
+                            "nextState": "ASSIGN_DSO",
+                            "roles": [
+                                "FSM_EDITOR_EMP"
+                            ]
+                        }
+                    ]
+                },
+                
+                {
+                    "tenantId": "pg",
+                    "sla": null,
+                    "state": "ASSIGN_DSO",
+                    "applicationStatus": "ASSIGN_DSO",
+                    "docUploadRequired": false,
+                    "isStartState": false,
+                    "isTerminateState": false,
+                    "isStateUpdatable": true,
+                    "actions": [
+                        {
+                            "tenantId": "pg",
+							"currentState": "ASSIGN_DSO",
+                            "action": "CANCEL",
+                            "nextState": "CANCELED",
+                            "roles": [
+                                "FSM_ADMIN"
+                            ]
+                        },
+                        {
+                            "tenantId": "pg",
+							"currentState": "ASSIGN_DSO",
+                            "action": "ASSIGN",
+                            "nextState": "PENDING_DSO_APPROVAL",
+                            "roles": [
+                                "FSM_EDITOR_EMP"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "tenantId": "pg",
+                    "sla": null,
+                    "state": "PENDING_DSO_APPROVAL",
+                    "applicationStatus": "PENDING_DSO_APPROVAL",
+                    "docUploadRequired": false,
+                    "isStartState": false,
+                    "isTerminateState": false,
+                    "isStateUpdatable": true,
+                    "actions": [
+                       	{
+                            "tenantId": "pg",
+                            "currentState": "PENDING_DSO_APPROVAL",
+                            "action": "DSO_ACCEPT",
+                            "nextState": "DSO_INPROGRESS",
+                            "roles": [
+                                 "FSM_DSO",
+                                 "FSM_EDITOR_EMP"
+                            ]
+                        },
+						{
+                            "tenantId": "pg",
+                            "currentState": "PENDING_DSO_APPROVAL",
+                            "action": "CANCEL",
+                            "nextState": "CANCELED",
+                            "roles": [
+                                "FSM_ADMIN"
+                            ]
+                        },
+						{
+                            "tenantId": "pg",
+                            "currentState": "PENDING_DSO_APPROVAL",
+                            "action": "REASSING",
+                            "nextState": "PENDING_DSO_APPROVAL",
+                            "roles": [
+                                "FSM_EDITOR_EMP"
+                            ]
+                        },
+						{
+                            "tenantId": "pg",
+                            "currentState": "PENDING_DSO_APPROVAL",
+                            "action": "DSO_REJECT",
+                            "nextState": "DSO_REJECTED",
+                            "roles": [
+                                 "FSM_DSO",
+                                 "FSM_EDITOR_EMP"
+                            ]
+                        }
+                    ]
+                },
+				 {
+                    "tenantId": "pg",
+                    "sla": null,
+                    "state": "DSO_REJECTED",
+                    "applicationStatus": "DSO_REJECTED",
+                    "docUploadRequired": false,
+                    "isStartState": false,
+                    "isTerminateState": false,
+                    "isStateUpdatable": true,
+                    "actions": [
+                        {
+                            "tenantId": "pg",
+                            "currentState": "DSO_REJECTED",
+                            "action": "CANCEL",
+                            "nextState": "CANCELED",
+                            "roles": [
+                                "FSM_ADMIN"
+                            ],
+							"active": true
+                        },
+                        {
+                            "tenantId": "pg",
+                            "currentState": "DSO_REJECTED",
+                            "action": "REASSING",
+                            "nextState": "PENDING_DSO_APPROVAL",
+                            "roles": [
+                                "FSM_EDITOR_EMP"
+                            ],
+							 "active": true
+                        },
+                        {
+                            "tenantId": "pg",
+                            "currentState": "DSO_REJECTED",
+                            "action": "SENDBACK",
+                            "nextState": "PENDING_DSO_APPROVAL",
+                            "roles": [
+                                "FSM_ADMIN"
+                            ],
+							"active": true
+                        }
+                    ]
+                },
+                {
+                    "tenantId": "pg",
+                    "sla": null,
+                    "state": "DSO_INPROGRESS",
+                    "applicationStatus": "DSO_INPROGRESS",
+                    "docUploadRequired": false,
+                    "isStartState": false,
+                    "isTerminateState": false,
+                    "isStateUpdatable": true,
+                    "actions": [
+                        {
+                            "tenantId": "pg",
+                            "currentState": "DSO_INPROGRESS",
+                            "action": "SENDBACK",
+                            "nextState": "PENDING_DSO_APPROVAL",
+                            "roles": [
+                                "FSM_ADMIN"
+                            ]
+                        },
+                        {
+                            "tenantId": "pg",
+                            "currentState": "DSO_INPROGRESS",
+                            "action": "DECLINE",
+                            "nextState": "ASSIGN_DSO",
+                            "roles": [
+                                "FSM_DSO",
+                                "FSM_EDITOR_EMP"
+                            ]
+                        },
+                       
+                        {
+                            "tenantId": "pg",
+                            "currentState": "DSO_INPROGRESS",
+                            "action": "CANCEL",
+                            "nextState": "CANCELED",
+                            "roles": [
+                                "FSM_ADMIN"
+                            ]
+                        },
+                        {
+                            "tenantId": "pg",
+                            "currentState": "DSO_INPROGRESS",
+                            "action": "REASSING",
+                            "nextState": "PENDING_DSO_APPROVAL",
+                            "roles": [
+                                "FSM_EDITOR_EMP"
+                            ]
+                        },
+						{
+                            "tenantId": "pg",
+                            "currentState": "DSO_INPROGRESS",
+                            "action": "SCHEDULE",
+                            "nextState": "PENDING_APPL_FEE_PAYMENT",
+                            "roles": [
+                                "FSM_EDITOR_EMP",
+								"FSM_DSO"
+							]
+                        }
+                    ]
+                },
+				{
+                    "tenantId": "pg",
+                    "sla": null,
+                    "state": "PENDING_APPL_FEE_PAYMENT",
+                    "applicationStatus": "PENDING_APPL_FEE_PAYMENT",
+                    "docUploadRequired": false,
+                    "isStartState": false,
+                    "isTerminateState": false,
+                    "isStateUpdatable": true,
+                    "actions": [
+                        {
+                            "tenantId": "pg",
+                            "currentState": "PENDING_APPL_FEE_PAYMENT",
+                            "action": "CANCEL",
+                            "nextState": "CANCELED",
+                            "roles": [
+                                "FSM_ADMIN"
+                            ],
+                            "active": true
+                        },
+                        {
+                            "tenantId": "pg",
+                            "currentState": "PENDING_APPL_FEE_PAYMENT",
+                            "action": "SENDBACK",
+                            "nextState": "DSO_INPROGRESS",
+                            "roles": [
+                                "FSM_ADMIN"
+                            ],
+                            "active": true
+                        },
+                        {
+                            "tenantId": "pg",
+                            "currentState": "PENDING_APPL_FEE_PAYMENT",
+                            "action": "PAY",
+                            "nextState": "DISPOSAL_IN_PROGRESS",
+                            "roles": [
+                                "CITIZEN",
+                                "FSM_COLLECTOR"
+                            ],
+                            "active": true
+                        }
+                    ]
+                },
+				{
+                    "tenantId": "pg",
+                    "sla": null,
+                    "state": "DISPOSAL_IN_PROGRESS",
+                    "applicationStatus": "DISPOSAL_IN_PROGRESS",
+                    "docUploadRequired": false,
+                    "isStartState": false,
+                    "isTerminateState": false,
+                    "isStateUpdatable": true,
+                    "actions": [
+                        {
+                            "tenantId": "pg",
+                            "currentState": "DISPOSAL_IN_PROGRESS",
+                            "action": "CANCEL",
+                            "nextState": "CANCELED",
+                            "roles": [
+                                "FSM_ADMIN"
+                            ],
+                            "active": true
+                        },
+                        {
+                            "tenantId": "pg",
+                            "currentState": "DISPOSAL_IN_PROGRESS",
+                            "action": "COMPLETED",
+                            "nextState": "CITIZEN_FEEDBACK_PENDING",
+                            "roles": [
+                                "FSM_DSO",
+                                "FSM_EDITOR_EMP"
+                            ],
+                            "active": true
+                        }
+                       
+                    ]
+                },
+				{
+                    "tenantId": "pg",
+                    "sla": null,
+                    "state": "CITIZEN_FEEDBACK_PENDING",
+                    "applicationStatus": "CITIZEN_FEEDBACK_PENDING",
+                    "docUploadRequired": false,
+                    "isStartState": false,
+                    "isTerminateState": false,
+                    "isStateUpdatable": false,
+                    "actions": [
+                        {
+                            "tenantId": "pg",
+                            "currentState": "CITIZEN_FEEDBACK_PENDING",
+                            "action": "RATE",
+                            "nextState": "COMPLETED",
+                            "roles": [
+                                "CITIZEN"
+                            ],
+						    "active": true
+                        }
+                    ]
+                },
+                {
+                    "tenantId": "pg",
+                    "sla": null,
+                    "state": "COMPLETED",
+                    "applicationStatus": "COMPLETED",
+                    "docUploadRequired": false,
+                    "isStartState": false,
+                    "isTerminateState": true,
+                    "isStateUpdatable": false,
+					"actions": null
+                },
+                {
+                    "tenantId": "pg",
+					"sla": null,
+                    "state": "REJECTED",
+                    "applicationStatus": "REJECTED",
+                    "docUploadRequired": false,
+                    "isStartState": false,
+                    "isTerminateState": true,
+                    "isStateUpdatable": false,
+                    "actions": null
+                },
+                {
+                    "tenantId": "pg",
+                    "sla": null,
+                    "state": "CANCELED",
+                    "applicationStatus": "CANCELED",
+                    "docUploadRequired": false,
+                    "isStartState": false,
+                    "isTerminateState": true,
+                    "isStateUpdatable": false,
+                    "actions": null
+                }
+                
+            ]
+        }
+    ],
+	 "RequestInfo": {
+    "apiId": "Rainmaker",
+    "authToken": "e37d7087-6436-492f-ad5b-692a515cba58",
+    "userInfo": {
+      "id": 24226,
+      "uuid": "11b0e02b-0145-4de2-bc42-c97b96264807",
+      "userName": "amr001",
+      "name": "leela",
+      "mobileNumber": "9814424443",
+      "emailId": "leela@llgmail.com",
+      "locale": null,
+      "type": "EMPLOYEE",
+      "roles": [
+        {
+          "name": "NoC counter employee",
+          "code": "NOC_CEMP",
+          "tenantId": "pg.citya"
+        },
+        {
+          "name": "Grievance Routing Officer",
+          "code": "GRO",
+          "tenantId": "pg.citya"
+        },
+        {
+          "name": "WS Document Verifier",
+          "code": "WS_DOC_VERIFIER",
+          "tenantId": "pg.citya"
+        },
+        {
+          "name": "autoescalation emp",
+          "code": "AUTO_ESCALATE",
+          "tenantId": "pg.citya"
+        },
+        {
+          "name": "FSM Employee Report Viewer",
+          "code": "FSM_REPORT_VIEWER",
+          "tenantId": "pg.citya"
+        },
+        {
+          "name": "PGR Last Mile Employee",
+          "code": "PGR_LME",
+          "tenantId": "pg.citya"
+        },
+        {
+          "name": "TL Field Inspector",
+          "code": "TL_FIELD_INSPECTOR",
+          "tenantId": "pg.citya"
+        },
+        {
+          "name": "BPA Field Inspector",
+          "code": "BPA_FIELD_INSPECTOR",
+          "tenantId": "pg.citya"
+        },
+        {
+          "name": "TL Approver",
+          "code": "TL_APPROVER",
+          "tenantId": "pg.citya"
+        },
+        {
+          "name": "BPA Services Approver",
+          "code": "BPA_APPROVER",
+          "tenantId": "pg.citya"
+        },
+        {
+          "name": "Fire Noc Department Approver",
+          "code": "FIRE_NOC_APPROVER",
+          "tenantId": "pg.citya"
+        },
+        {
+          "name": "Field Employee",
+          "code": "FEMP",
+          "tenantId": "pg.citya"
+        },
+        {
+          "name": "Counter Employee",
+          "code": "CEMP",
+          "tenantId": "pg.citya"
+        },
+        {
+          "name": "WS Counter Employee",
+          "code": "WS_CEMP",
+          "tenantId": "pg.citya"
+        },
+        {
+          "name": "BPAREG Approver",
+          "code": "BPAREG_APPROVER",
+          "tenantId": "pg.citya"
+        },
+        {
+          "name": "WS Field Inspector",
+          "code": "WS_FIELD_INSPECTOR",
+          "tenantId": "pg.citya"
+        },
+        {
+          "name": "Collection Operator",
+          "code": "COLL_OPERATOR",
+          "tenantId": "pg.citya"
+        },
+        {
+          "name": "TL doc verifier",
+          "code": "TL_DOC_VERIFIER",
+          "tenantId": "pg.citya"
+        },
+        {
+          "name": "CSC Collection Operator",
+          "code": "CSC_COLL_OPERATOR",
+          "tenantId": "pg.citya"
+        },
+        {
+          "name": "Employee",
+          "code": "EMPLOYEE",
+          "tenantId": "pg.citya"
+        },
+        {
+          "name": "TL Counter Employee",
+          "code": "TL_CEMP",
+          "tenantId": "pg.citya"
+        },
+        {
+          "name": "FSM Desluding Operator",
+          "code": "FSM_DSO",
+          "tenantId": "pg.citya"
+        },
+        {
+          "name": "TL Creator",
+          "code": "TL_CREATOR",
+          "tenantId": "pg.citya"
+        },
+        {
+          "name": "BPAREG doc verifier",
+          "code": "BPAREG_DOC_VERIFIER",
+          "tenantId": "pg.citya"
+        },
+        {
+          "name": "Customer Support Representative",
+          "code": "CSR",
+          "tenantId": "pg.citya"
+        },
+        {
+          "name": "NoC counter Approver",
+          "code": "NOC_APPROVER",
+          "tenantId": "pg.citya"
+        },
+        {
+          "name": "HRMS Admin",
+          "code": "HRMS_ADMIN",
+          "tenantId": "pg.citya"
+        },
+        {
+          "name": "Universal Collection Employee",
+          "code": "UC_EMP",
+          "tenantId": "pg.citya"
+        },
+        {
+          "name": "WS Approver",
+          "code": "WS_APPROVER",
+          "tenantId": "pg.citya"
+        },
+        {
+          "name": "BPA Services verifier",
+          "code": "BPA_VERIFIER",
+          "tenantId": "pg.citya"
+        },
+        {
+          "name": "PT Counter Approver",
+          "code": "PT_APPROVER",
+          "tenantId": "pg.citya"
+        },
+        {
+          "name": "NoC Field Inpector",
+          "code": "NOC_FIELD_INSPECTOR",
+          "tenantId": "pg.citya"
+        },
+        {
+          "name": "Grievance Officer",
+          "code": "GO",
+          "tenantId": "pg.citya"
+        },
+        {
+          "name": "Super User",
+          "code": "SUPERUSER",
+          "tenantId": "pg.citya"
+        },
+        {
+          "name": "NOC Department Approver",
+          "code": "NOC_DEPT_APPROVER",
+          "tenantId": "pg.citya"
+        },
+        {
+          "name": "WS Clerk",
+          "code": "WS_CLERK",
+          "tenantId": "pg.citya"
+        },
+        {
+          "name": "NoC Doc Verifier",
+          "code": "NOC_DOC_VERIFIER",
+          "tenantId": "pg.citya"
+        }
+      ],
+      "active": true,
+      "tenantId": "pg.citya",
+      "permanentCity": null
+    },
+    "msgId": "1646071179143|en_IN"
+  }

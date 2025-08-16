@@ -53,11 +53,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+
 import com.aspose.cad.Color;
 import com.aspose.cad.Image;
 import com.aspose.cad.fileformats.cad.CadDrawTypeMode;
 import com.aspose.cad.imageoptions.CadRasterizationOptions;
 import com.aspose.cad.imageoptions.PdfOptions;
+ 
 
 @Service
 @Transactional(readOnly = true)
@@ -267,28 +269,35 @@ public class EdcrApplicationService {
         return fileAsString;
     }
 
-
-//  private void updateFile(Plan pl, EdcrApplication edcrApplication) {
-//  String readFile = readFile(edcrApplication.getSavedDxfFile());
-//  String replace = readFile.replace("ENTITIES", "ENTITIES\n0\n" + pl.getAdditionsToDxf());
-//  String newFile = edcrApplication.getDxfFile().getOriginalFilename().replace(".dxf", "_system_scrutinized.dxf");
-//  File f = new File(newFile);
-//  try (FileOutputStream fos = new FileOutputStream(f)) {
-//      if (!f.exists())
-//          f.createNewFile();
-//      fos.write(replace.getBytes());
-//      fos.flush();
-//      FileStoreMapper fileStoreMapper = fileStoreService.store(f, f.getName(),
-//              edcrApplication.getDxfFile().getContentType(), FILESTORE_MODULECODE);
-//      edcrApplication.getEdcrApplicationDetails().get(0).setScrutinizedDxfFileId(fileStoreMapper);
-//  } catch (IOException e) {
-//      LOG.error("Error occurred when reading file!!!!!", e);
-//  }
-//}
+/**
+  * This method updates the DXF file with the scrutinized data.
+  * It replaces the "ENTITIES" line in the DXF file with the scrutinized data.
+  * The updated file is saved with a new name and stored in the file store.
+  *
+  * @param pl The Plan object containing the scrutinized data.
+  * @param edcrApplication The EdcrApplication object containing the original DXF file.
+ */
+ /* private void updateFile(Plan pl, EdcrApplication edcrApplication) {
+  String readFile = readFile(edcrApplication.getSavedDxfFile());
+  String replace = readFile.replace("ENTITIES", "ENTITIES\n0\n" + pl.getAdditionsToDxf());
+  String newFile = edcrApplication.getDxfFile().getOriginalFilename().replace(".dxf", "_system_scrutinized.dxf");
+  File f = new File(newFile);
+  try (FileOutputStream fos = new FileOutputStream(f)) {
+      if (!f.exists())
+          f.createNewFile();
+      fos.write(replace.getBytes());
+      fos.flush();
+      FileStoreMapper fileStoreMapper = fileStoreService.store(f, f.getName(),
+              edcrApplication.getDxfFile().getContentType(), FILESTORE_MODULECODE);
+      edcrApplication.getEdcrApplicationDetails().get(0).setScrutinizedDxfFileId(fileStoreMapper);
+  } catch (IOException e) {
+      LOG.error("Error occurred when reading file!!!!!", e);
+  } 
+}*/ 
     
-  
 
-    
+// The below function is commented out temporarily as aspose-cad is commented out and run the service without using aspose-cad library
+   
     private void updateFile(Plan pl, EdcrApplication edcrApplication) {
         String filePath = edcrApplication.getSavedDxfFile().getAbsolutePath();
         String newFile = edcrApplication.getDxfFile().getOriginalFilename().replace(".dxf", "_system_scrutinized.pdf");
@@ -358,7 +367,7 @@ public class EdcrApplicationService {
 //            InputStream imageStream = EdcrApplication.class.getResourceAsStream("/tcpicon.jpg");
 //            java.awt.image.BufferedImage image1 = ImageIO.read(imageStream);
 //            PDImageXObject image = LosslessFactory.createFromImage(document, image1);
-//    
+//
 //            // Calculate the position to center the watermark
 //            float scale = 10f; // Smaller scale for the watermark
 //            float watermarkWidth = image.getWidth() * scale;

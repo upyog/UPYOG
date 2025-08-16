@@ -1,6 +1,7 @@
 package org.upyog.sv.web.models;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -8,9 +9,11 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 import org.springframework.validation.annotation.Validated;
+import org.upyog.sv.enums.ApplicationCreatedByEnum;
 import org.upyog.sv.validator.CreateApplicationGroup;
 import org.upyog.sv.web.models.common.AuditDetails;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.AllArgsConstructor;
@@ -30,7 +33,7 @@ import lombok.ToString;
 public class StreetVendingDetail {
 
 	private String applicationId;
-	
+
 	private String draftId;
 
 	@NotBlank(groups = CreateApplicationGroup.class)
@@ -53,27 +56,35 @@ public class StreetVendingDetail {
 
 	@NotBlank(groups = CreateApplicationGroup.class)
 	private String vendingZone;
+	
+	private String vendingZoneValue;
 
 	private BigDecimal cartLatitude;
-	
+
 	private BigDecimal cartLongitude;
 
 	@NotNull(groups = CreateApplicationGroup.class)
-	private Integer vendingArea;
+	private BigDecimal vendingArea;
 
 	@NotBlank(groups = CreateApplicationGroup.class)
 	private String localAuthorityName;
 //Store file id of vending certificate 
-	
+
 	private String vendingLicenseCertificateId;
-	
+
 	private String paymentReceiptId;
-	
+
 	private String vendingLicenseId;
 
 	private String disabilityStatus;
+	
+	private String locality;
+	
+	private String localityValue;
+	
+	private ApplicationCreatedByEnum applicationCreatedBy;
 
-	private String benificiaryOfSocialSchemes;
+	private List<BeneficiaryScheme> benificiaryOfSocialSchemes;
 
 	private String termsAndCondition;
 
@@ -101,12 +112,30 @@ public class StreetVendingDetail {
 	private List<VendorDetail> vendorDetail;
 
 	private List<VendingOperationTimeDetails> vendingOperationTimeDetails;
-	
-	private String enrollmentId;
 
 	private Workflow workflow;
 
 	private AuditDetails auditDetails;
+
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+	private LocalDate validityDate;
+
+	private String validityDateForPersisterDate;
+
+//	private Boolean eligibleToRenew;
+
+	private Boolean expireFlag;
+
+	private String oldApplicationNo;
+
+	private RenewalStatus renewalStatus;
+	
+	private String vendorPaymentFrequency;
+	
+	private String formattedApprovalDate;
+	
+	private String formattedApplicationDate;
+
 
 }
 

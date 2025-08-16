@@ -16,7 +16,16 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.extern.slf4j.Slf4j;
-
+ /**
+     * Extracts data from the ResultSet and maps it to a list of BookingDetail objects.
+     * Each row in the ResultSet represents a draft application, which is deserialized
+     * from JSON format into a BookingDetail object.
+     *
+     * @param rs The ResultSet containing the data retrieved from the database.
+     * @return A list of BookingDetail objects representing the draft applications.
+     * @throws SQLException If there is an error accessing the ResultSet.
+     * @throws DataAccessException If there is an error during data access.
+     */
 @Component
 @Slf4j
 public class AdvertisementDraftApplicationRowMapper implements ResultSetExtractor<List<BookingDetail>> {

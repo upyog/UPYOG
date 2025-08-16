@@ -21,6 +21,28 @@ import org.upyog.adv.web.models.billing.DemandDetail;
 import org.upyog.adv.web.models.billing.TaxHeadMaster;
 
 import lombok.extern.slf4j.Slf4j;
+/**
+ * Service class for handling calculations in the Advertisement Booking Service.
+ * 
+ * Key Responsibilities:
+ * - Calculates demand details for advertisement bookings.
+ * - Fetches tax head masters and calculation types from the billing service and MDMS.
+ * - Processes calculations for demand generation based on booking details and tax rates.
+ * 
+ * Dependencies:
+ * - MdmsUtil: Utility class for fetching data from MDMS.
+ * - BookingConfiguration: Provides configuration properties for calculations.
+ * 
+ * Methods:
+ * - `calculateDemand`: Calculates demand details for a booking request.
+ * - `processCalculationForDemandGeneration`: Processes calculations for generating demand details.
+ * - `fetchTaxHeadMasters`: Fetches tax head masters from the billing service.
+ * - `fetchCalculationType`: Retrieves calculation types from MDMS.
+ * 
+ * Annotations:
+ * - @Service: Marks this class as a Spring-managed service component.
+ * - @Slf4j: Enables logging for debugging and monitoring calculation processes.
+ */
 
 @Slf4j
 @Service

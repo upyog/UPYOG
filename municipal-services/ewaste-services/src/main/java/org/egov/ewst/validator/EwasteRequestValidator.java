@@ -25,6 +25,11 @@ import org.springframework.util.ObjectUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * EwasteRequestValidator is responsible for validating the Ewaste registration
+ * request. It checks if the master data is valid, if the mobile number is valid,
+ * and if the application already exists.
+ */
 @Slf4j
 @Component
 public class EwasteRequestValidator {

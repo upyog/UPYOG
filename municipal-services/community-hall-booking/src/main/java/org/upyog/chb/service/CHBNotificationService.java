@@ -5,9 +5,11 @@ import static com.jayway.jsonpath.Filter.filter;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
@@ -25,11 +27,11 @@ import org.upyog.chb.util.NotificationUtil;
 import org.upyog.chb.web.models.CommunityHallBookingDetail;
 import org.upyog.chb.web.models.CommunityHallBookingRequest;
 import org.upyog.chb.web.models.events.Action;
-import org.upyog.chb.web.models.events.ActionItem;
 import org.upyog.chb.web.models.events.Event;
 import org.upyog.chb.web.models.events.EventRequest;
 import org.upyog.chb.web.models.events.Recepient;
 import org.upyog.chb.web.models.events.Source;
+import org.upyog.chb.web.models.notification.EmailRequest;
 import org.upyog.chb.web.models.notification.SMSRequest;
 
 import com.jayway.jsonpath.Filter;
@@ -37,6 +39,36 @@ import com.jayway.jsonpath.JsonPath;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * This service class handles notification-related operations for the Community Hall Booking module.
+ * 
+ * Purpose:
+ * - To send notifications to users based on booking events and status updates.
+ * - To ensure that users are informed about the status of their bookings through various channels.
+ * 
+ * Dependencies:
+ * - CommunityHallBookingConfiguration: Provides configuration properties for notifications.
+ * - NotificationUtil: Utility class for sending notifications via different channels.
+ * - ServiceRequestRepository: Handles communication with external services for notification delivery.
+ * - CHBEncryptionService: Decrypts sensitive booking details for use in notifications.
+ * - UserService: Fetches user details required for sending notifications.
+ * 
+ * Features:
+ * - Processes booking requests and sends notifications based on the booking status.
+ * - Decrypts sensitive applicant details before including them in notifications.
+ * - Fetches configured notification channels (e.g., SMS, email) for the tenant.
+ * - Logs notification processing details for debugging and monitoring purposes.
+ * 
+ * Methods:
+ * 1. process:
+ *    - Processes a booking request and sends notifications based on the booking status.
+ *    - Decrypts booking details and determines the appropriate notification channels.
+ * 
+ * Usage:
+ * - This class is automatically managed by Spring and injected wherever notification
+ *   operations are required.
+ * - It ensures consistent and reusable logic for sending notifications across the module.
+ */
 @Service
 @Slf4j
 public class CHBNotificationService {
@@ -49,30 +81,44 @@ public class CHBNotificationService {
 	@Autowired
 	private CHBEncryptionService chbEncryptionService;
 
+	@Autowired
+	private UserService userService;
+	
 	public void process(CommunityHallBookingRequest bookingRequest, String status) {
 		CommunityHallBookingDetail bookingDetail = bookingRequest.getHallsBookingApplication();
 		// Decrypt applicant detail it will be used in notification
 		bookingDetail = chbEncryptionService.decryptObject(bookingDetail, bookingRequest.getRequestInfo());
+		RequestInfo requestInfo = bookingRequest.getRequestInfo();
 
 		log.info("Processing notification for booking no : " + bookingDetail.getBookingNo() + " with status : "
 				+ status);
 		String tenantId = bookingRequest.getHallsBookingApplication().getTenantId();
 		String action = status;
-
+		Set<String> mobileNumbers = new HashSet<>(util.fetchUserUUIDs(new HashSet<>(), requestInfo, tenantId).keySet());
 		List<String> configuredChannelNames = fetchChannelList(new RequestInfo(), tenantId.split("\\.")[0],
 				config.getModuleName(), action);
 
 		log.info("Fetching localization message for notification");
 		// All notification messages are part of this messages object
 		String localizationMessages = util.getLocalizationMessages(tenantId, bookingRequest.getRequestInfo());
+		Map<String, String> messageMap = util.getCustomizedMsg(bookingRequest.getHallsBookingApplication(), localizationMessages, status,
+				CommunityHallBookingConstants.CHANNEL_NAME_EVENT);
 
-		if (configuredChannelNames.contains(CommunityHallBookingConstants.CHANNEL_NAME_SMS)) {
+
+		if (configuredChannelNames.contains(CommunityHallBookingConstants.CHANNEL_NAME_EVENT)) {
 			sendEventNotification(localizationMessages, bookingRequest, status);
 		}
 
-		if (configuredChannelNames.contains(CommunityHallBookingConstants.CHANNEL_NAME_EVENT)) {
+		if (configuredChannelNames.contains(CommunityHallBookingConstants.CHANNEL_NAME_SMS)) {
 			sendMessageNotification(localizationMessages, bookingRequest, status);
 		}
+		
+		// Send Email notification
+        if (configuredChannelNames.contains(CommunityHallBookingConstants.CHANNEL_NAME_EMAIL)) {
+            Map<String, String> mapOfPhnoAndEmail = util.fetchUserEmailIds(mobileNumbers, requestInfo, tenantId);
+            List<EmailRequest> emailRequests = util.createEmailRequest(requestInfo, messageMap.get(CommunityHallBookingConstants.MESSAGE_TEXT), mapOfPhnoAndEmail);
+            util.sendEmail(emailRequests);
+        }
 	}
 	
 	/**
@@ -173,7 +219,7 @@ public class CHBNotificationService {
 		// Mobile no will be used to filter out user to send notification
 		String mobileNumber = request.getRequestInfo().getUserInfo().getMobileNumber();
 
-		Map<String, String> mapOfPhoneNoAndUUIDs = fetchUserUUIDs(mobileNumber, request.getRequestInfo(), tenantId);
+		Map<String, String> mapOfPhoneNoAndUUIDs = userService.fetchUserUUIDs(mobileNumber, request.getRequestInfo(), tenantId);
 
 		if (CollectionUtils.isEmpty(mapOfPhoneNoAndUUIDs.keySet())) {
 			log.error("UUID search failed in event  processing for CHB!");
@@ -185,20 +231,25 @@ public class CHBNotificationService {
 		Recepient recepient = Recepient.builder().toUsers(toUsers).toRoles(null).build();
 		log.info("Recipient object in CHB event :" + recepient.toString());
 		
-		ActionItem actionItem = ActionItem.builder().actionUrl(actionLink).code("LINK").build();
-		List<ActionItem> actionItems = new ArrayList<>();
-		actionItems.add(actionItem);
-		
-		Action action = Action.builder().tenantId(tenantId).id(mobileNumber).actionUrls(actionItems)
-				.eventId(CommunityHallBookingConstants.CHANNEL_NAME_EVENT ).build();
-				//new Action(tenantId, mobileNumber, CommunityHallBookingConstants.CHANNEL_NAME_EVENT , null) ;
+		Action action = null;
+
+		if (message.contains(CommunityHallBookingConstants.NOTIFICATION_ACTION)) {
+			
+			action = util.getActionLinkAndCode(message, actionLink, tenantId);
+			String code = StringUtils.substringBetween(message, CommunityHallBookingConstants.NOTIFICATION_ACTION, CommunityHallBookingConstants.NOTIFICATION_ACTION_BUTTON);
+			message = message.replace(CommunityHallBookingConstants.NOTIFICATION_ACTION, "").replace(CommunityHallBookingConstants.NOTIFICATION_ACTION_BUTTON, "").replace(code, "");
+
+		}
+	
 		
 		events.add(Event.builder().tenantId(tenantId).description(message)
 				.eventType(CommunityHallBookingConstants.USREVENTS_EVENT_TYPE)
 				.name(CommunityHallBookingConstants.USREVENTS_EVENT_NAME)
 				.postedBy(CommunityHallBookingConstants.USREVENTS_EVENT_POSTEDBY).source(Source.WEBAPP)
 				.actions(action)
-				.recepient(recepient).eventDetails(null).actions(null).build());
+				.recepient(recepient).eventDetails(null).build());
+		
+		log.info("EVENT in CHB : " + events.toString());
 
 		if (!CollectionUtils.isEmpty(events)) {
 			return EventRequest.builder().requestInfo(request.getRequestInfo()).events(events).build();
@@ -206,42 +257,6 @@ public class CHBNotificationService {
 			return null;
 		}
 
-	}
-
-	/**
-	 * Fetches UUIDs of CITIZEN based on the phone number.
-	 *
-	 * @param mobileNumber - Mobile Numbers
-	 * @param requestInfo  - Request Information
-	 * @param tenantId     - Tenant Id
-	 * @return Returns List of MobileNumbers and UUIDs
-	 */
-	private Map<String, String> fetchUserUUIDs(String mobileNumber, RequestInfo requestInfo, String tenantId) {
-		Map<String, String> mapOfPhoneNoAndUUIDs = new HashMap<>();
-		StringBuilder uri = new StringBuilder();
-		uri.append(config.getUserHost()).append(config.getUserSearchEndpoint());
-		Map<String, Object> userSearchRequest = new HashMap<>();
-		userSearchRequest.put("RequestInfo", requestInfo);
-		userSearchRequest.put("tenantId", tenantId);
-		userSearchRequest.put("userType", CommunityHallBookingConstants.CITIZEN);
-		userSearchRequest.put("userName", mobileNumber);
-		try {
-
-			Object user = serviceRequestRepository.fetchResult(uri, userSearchRequest);
-			log.info("User fetched in fetUserUUID method of CHB notfication consumer" + user.toString());
-//			if (null != user) {
-//				String uuid = JsonPath.read(user, "$.user[0].uuid");
-			if (user  != null) {
-					String uuid = JsonPath.read(user, "$.user[0].uuid");
-					mapOfPhoneNoAndUUIDs.put(mobileNumber, uuid);
-					log.info("mapOfPhoneNoAndUUIDs : " + mapOfPhoneNoAndUUIDs);
-			} 
-		} catch (Exception e) {
-			log.error("Exception while fetching user for username - " + mobileNumber);
-			log.error("Exception trace: ", e);
-		}
-
-		return mapOfPhoneNoAndUUIDs;
 	}
 	
 	/**

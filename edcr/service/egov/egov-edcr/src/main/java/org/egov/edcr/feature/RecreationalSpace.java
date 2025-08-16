@@ -72,15 +72,6 @@ import org.springframework.stereotype.Service;
 @Service
 public class RecreationalSpace extends FeatureProcess {
 
-    public static final String SUB_RULE_50_DESC = "Recreational space for Residential Apartment ";
-    public static final String SUB_RULE_50_DESC_CELLER = " Ground floor Recreational space ";
-
-    public static final String SUB_RULE_50 = "50";
-    public static final String SUB_RULE_50_2 = "50-2";
-    public static final String RECREATION = "RECREATION";
-    public static final int TOTALNUMBEROFUNITS = 12;
-    public static final BigDecimal THREE = BigDecimal.valueOf(3);
-
     @Override
     public Plan validate(Plan pl) {/*
                                     * HashMap<String, String> errors = new HashMap<>(); for (Block block : pl.getBlocks()) {

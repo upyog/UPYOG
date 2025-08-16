@@ -3,6 +3,15 @@ import { RadioButtons } from "@upyog/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 import { CloseSvg } from "@upyog/digit-ui-react-components";
 
+/**
+ * This SortBy component creates a filtering interface that allows users to sort by date (ascending or descending). 
+ * It uses radio buttons from what appears to be a custom UI library and supports both mobile and desktop views.
+ * Key observations:
+ * 1. The component takes props for handling sorting and closing the modal/popup.
+ * 2. It translates UI text using i18next.
+ * 3. It maintains a selected sort option state with useState.
+ * 4. It renders differently based on the "type" prop (mobile vs desktop).
+ */
 const SortBy = (props) => {
   const { t } = useTranslation();
   const [selectedOption, setSelectedOption] = useState(() => {

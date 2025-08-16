@@ -106,3 +106,37 @@ TBD
 
 
 - **egov.core.notification.sms** : service sends sms data to this topic to send sms notifications to the owner for every workflow state change
+
+### Devops
+
+- **update persister and searcher yml path in the qa.yml file
+
+- **Add PDF configs path in the qa.yml for FSM related PDFs.
+  
+- **Validate the Service keys in the values.yml file.
+
+### FSM Workflows
+
+-"FSM"
+-"FSM_POST_PAY_SERVICE"
+-"FSM_ADVANCE_PAY_SERVICE"
+-"PAY_LATER_SERVICE"
+-"FSM_ZERO_PAY_SERVICE"
+-"FSM_ADVANCE_PAY_SERVICE_V1"
+
+
+## Billing Slab
+
+**update Billing Slab for all the property types present.
+
+
+## Masters
+
+- **Validate that all masters must be present in MDMS or MDMS-V2, depending on which one is being used.
+
+## Vendor
+
+- **Create a vendor along with a vehicle and driver, only if they are not already present.
+
+
+

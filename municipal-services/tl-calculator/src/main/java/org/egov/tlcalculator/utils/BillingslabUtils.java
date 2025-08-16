@@ -8,18 +8,16 @@ import org.egov.mdms.model.MasterDetail;
 import org.egov.mdms.model.MdmsCriteria;
 import org.egov.mdms.model.MdmsCriteriaReq;
 import org.egov.mdms.model.ModuleDetail;
+import org.egov.tlcalculator.config.TLCalculatorConfigs;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
 public class BillingslabUtils {
 	
-	@Value("${mdms.v2.host}")
-    	private String mdmsHost;
-
-	@Value("${mdms.v2.search.endpoint}")
-	private String mdmsEndpoint;
-	
+	@Autowired
+	private TLCalculatorConfigs config;
 	/**
 	 * A common method that builds MDMS request for searching master data.
 	 * 
@@ -33,7 +31,7 @@ public class BillingslabUtils {
 	 */
 	public MdmsCriteriaReq prepareMDMSSearchReq(StringBuilder uri, String tenantId, String module, String master, String filter, RequestInfo requestInfo) {
 
-		uri.append(mdmsHost).append(mdmsEndpoint);
+		uri.append(config.getMdmsHost()).append(config.getMdmsEndPoint());
 		MasterDetail masterDetail = org.egov.mdms.model.MasterDetail.builder().name(master).filter(filter).build();
 		List<MasterDetail> masterDetails = new ArrayList<>();
 		masterDetails.add(masterDetail);

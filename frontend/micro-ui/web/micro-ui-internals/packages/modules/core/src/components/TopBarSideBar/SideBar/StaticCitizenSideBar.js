@@ -27,6 +27,7 @@ import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
 import LogoutDialog from "../../Dialog/LogoutDialog";
 import ChangeCity from "../../ChangeCity";
+import { APPLICATION_PATH } from "../../../pages/citizen/Home/EDCR/utils";
 
 const defaultImage =
   "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAO4AAADUCAMAAACs0e/bAAAAM1BMVEXK0eL" +
@@ -53,28 +54,41 @@ const defaultImage =
 /* 
 Feature :: Citizen Webview sidebar
 */
-const Profile = ({ info, stateName, t }) => (
-  <div className="profile-section">
-    <div className="imageloader imageloader-loaded">
-      <img className="img-responsive img-circle img-Profile" src={info?.photo ? info?. photo : defaultImage} />
-    </div>
-    <div id="profile-name" className="label-container name-Profile">
-      <div className="label-text"> {info?.name} </div>
-    </div>
-    <div id="profile-location" className="label-container loc-Profile">
-      <div className="label-text"> {info?.mobileNumber} </div>
-    </div>
-    {info?.emailId && (
-      <div id="profile-emailid" className="label-container loc-Profile">
-        <div className="label-text"> {info.emailId} </div>
+
+// static side bar shows user profile and menu items and redirects to the user profile on click
+const Profile = ({ info, stateName, t }) => {
+  const history = useHistory();
+
+  const redirectToProfile = () => {
+    history.push(`${APPLICATION_PATH}/citizen/user/profile`);
+  };
+  return (
+    <div className="profile-section">
+      <div
+        className="imageloader imageloader-loaded"
+        onClick={redirectToProfile} // Redirects to the profile page when clicked
+        style={{ cursor: "pointer" }}
+      >
+        <img className="img-responsive img-circle img-Profile" src={info?.photo ? info?.photo : defaultImage} />
       </div>
-    )}
-    <div className="profile-divider"></div>
-    {window.location.href.includes("/employee") &&
-      !window.location.href.includes("/employee/user/login") &&
-      !window.location.href.includes("employee/user/language-selection") && <ChangeCity t={t} mobileView={true} />}
-  </div>
-);
+      <div id="profile-name" className="label-container name-Profile" onClick={redirectToProfile} style={{ cursor: "pointer" }}>
+        <div className="label-text"> {info?.name} </div>
+      </div>
+      <div id="profile-location" className="label-container loc-Profile" onClick={redirectToProfile} style={{ cursor: "pointer" }}>
+        <div className="label-text"> {info?.mobileNumber} </div>
+      </div>
+      {info?.emailId && (
+        <div id="profile-emailid" className="label-container loc-Profile" onClick={redirectToProfile} style={{ cursor: "pointer" }}>
+          <div className="label-text"> {info.emailId} </div>
+        </div>
+      )}
+      <div className="profile-divider"></div>
+      {window.location.href.includes("/employee") &&
+        !window.location.href.includes("/employee/user/login") &&
+        !window.location.href.includes("employee/user/language-selection") && <ChangeCity t={t} mobileView={true} />}
+    </div>
+  );
+};
 const IconsObject = {
   CommonPTIcon: <PTIcon className="icon" />,
   OBPSIcon: <OBPSIcon className="icon" />,
@@ -128,15 +142,21 @@ const StaticCitizenSideBar = ({ linkData, islinkDataLoading }) => {
   const redirectToLoginPage = () => {
     // localStorage.clear();
     // sessionStorage.clear();
-    history.push("/digit-ui/citizen/login");
+    history.push(`${APPLICATION_PATH}/citizen/login`);
+  };
+  // Function to redirect the user to the EDCR scrutiny page
+  const redirectToScrutinyPage = () => {
+    // localStorage.clear();
+    // sessionStorage.clear();
+    history.push(`${APPLICATION_PATH}/citizen/core/edcr/scrutiny`);
   };
   const showProfilePage = () => {
-    history.push("/digit-ui/citizen/user/profile");
+    history.push(`${APPLICATION_PATH}/citizen/user/profile`);
   };
   const tenantId = Digit.ULBService.getCitizenCurrentTenant();
   const filteredTenantContact = storeData?.tenants.filter((e) => e.code === tenantId)[0]?.contactNumber || storeData?.tenants[0]?.contactNumber;
 
-  let menuItems = [...SideBarMenu(t, showProfilePage, redirectToLoginPage, isEmployee, storeData, tenantId)];
+  let menuItems = [...SideBarMenu(t, showProfilePage, redirectToLoginPage, redirectToScrutinyPage, isEmployee, storeData, tenantId)];
 
   menuItems = menuItems.filter((item) => item.element !== "LANGUAGE");
 
