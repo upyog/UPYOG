@@ -40,8 +40,8 @@
 
 package org.egov.receipt.consumer.v2.model;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 
 import org.egov.receipt.consumer.model.RequestInfo;
 

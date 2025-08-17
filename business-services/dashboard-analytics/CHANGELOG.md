@@ -2,6 +2,43 @@
 
 All notable changes to this module will be documented in this file.
 
+## 2.0.0 - 2025-06-30
+
+### Added
+- Added Swagger/OpenAPI documentation using springdoc-openapi-starter-webmvc-ui
+- Added Spring Retry dependency for improved resilience
+- Added Jakarta servlet API support for Spring Boot 3.x compatibility
+
+### Changed
+- Upgraded Spring Boot version to 3.2.2
+- Upgraded Java version to 17
+- Upgraded Cache2k Spring to version 2.6.1.Final
+- Upgraded Jackson Dataformat XML to version 2.16.0
+- Upgraded Lombok to version 1.18.38
+- Upgraded Apache POI OOXML to version 5.4.1
+- Upgraded Jakarta WS-RS API to version 3.1.0
+- Upgraded Commons Lang3 to version 3.13.0
+- Upgraded Commons IO to version 2.15.1
+- Upgraded Log4j2 to version 2.21.1
+- Upgraded org.json to version 20231013
+- Upgraded AWS Java SDK to version 1.12.600
+- Migrated from javax.* to jakarta.* packages
+- Updated WebMvcConfigurerAdapter to WebMvcConfigurer interface
+- Updated tracer module to version 2.9.0-SNAPSHOT with Java 17 compatibility
+
+### Fixed
+- Resolved compatibility issues with Spring Boot 3.x
+- Fixed Jakarta EE migration issues (javax.servlet → jakarta.servlet)
+- Fixed javax.annotation → jakarta.annotation migration
+- Resolved dependency conflicts and version mismatches
+- Fixed Maven compiler configuration for Java 17
+- Improved MDMS service error handling for graceful startup
+- Resolved OpenTelemetry version conflicts
+- Fixed deprecated Double constructor warnings
+
+### Removed
+- Removed incompatible OpenTelemetry dependencies causing version conflicts
+
 ## 1.1.8 - 2023-02-02
 
 - Transition from 1.1.8-beta version to 1.1.8 version

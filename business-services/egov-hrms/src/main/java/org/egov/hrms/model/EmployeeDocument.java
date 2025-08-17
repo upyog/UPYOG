@@ -41,7 +41,7 @@
 package org.egov.hrms.model;
 
 import org.egov.hrms.model.enums.EmployeeDocumentReferenceType;
-import org.hibernate.validator.constraints.SafeHtml;
+import org.egov.hrms.validation.SanitizeHtml;
 import org.springframework.validation.annotation.Validated;
 
 import lombok.AllArgsConstructor;
@@ -62,21 +62,21 @@ import lombok.ToString;
 @Builder
 public class EmployeeDocument {
 
-	@SafeHtml
+	@SanitizeHtml
 	private String id;
 
-	@SafeHtml
+	@SanitizeHtml
 	private String documentName;
 
-	@SafeHtml
+	@SanitizeHtml
 	private  String documentId;
 
 	private EmployeeDocumentReferenceType referenceType;
 
-	@SafeHtml
+	@SanitizeHtml
 	private String referenceId;
 
-	@SafeHtml
+	@SanitizeHtml
 	private String tenantId;
 
 	private AuditDetails auditDetails;

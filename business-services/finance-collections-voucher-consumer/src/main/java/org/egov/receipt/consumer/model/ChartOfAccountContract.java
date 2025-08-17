@@ -39,9 +39,9 @@
  */
 package org.egov.receipt.consumer.model;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 
-import org.hibernate.validator.constraints.Length;
+import jakarta.validation.constraints.Size;
 
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
@@ -64,16 +64,16 @@ public class ChartOfAccountContract extends AuditableContract {
 	private String id;
 
 	@NotNull
-	@Length(max = 16, min = 1)
+	@Size(max = 16, min = 1)
 	private String glcode;
 
 	@NotNull
-	@Length(max = 128, min = 5)
+	@Size(max = 128, min = 5)
 	private String name;
 
 	private AccountCodePurposeContract accountCodePurpose;
 
-	@Length(max = 256)
+	@Size(max = 256)
 	private String description;
 
 	@NotNull
@@ -93,7 +93,7 @@ public class ChartOfAccountContract extends AuditableContract {
 	@NotNull
 	private Boolean budgetCheckRequired;
 
-	@Length(max = 16)
+	@Size(max = 16)
 	private String majorCode;
 
 	private Boolean isSubLedger;

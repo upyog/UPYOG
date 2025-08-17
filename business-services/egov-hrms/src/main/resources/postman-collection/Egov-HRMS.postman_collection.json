@@ -1,0 +1,413 @@
+{
+	"info": {
+		"_postman_id": "01062f54-a49a-4e26-87ed-f1e3d23c53cd",
+		"name": "Egov-HRMS",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "31174873"
+	},
+	"item": [
+		{
+			"name": "Count",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "accept",
+						"value": "application/json, text/plain, */*"
+					},
+					{
+						"key": "accept-language",
+						"value": "en-US,en;q=0.9"
+					},
+					{
+						"key": "content-type",
+						"value": "application/json;charset=UTF-8"
+					},
+					{
+						"key": "origin",
+						"value": "https://niuatt.niua.in"
+					},
+					{
+						"key": "priority",
+						"value": "u=1, i"
+					},
+					{
+						"key": "referer",
+						"value": "https://niuatt.niua.in/digit-ui/employee"
+					},
+					{
+						"key": "sec-ch-ua",
+						"value": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\", \"Google Chrome\";v=\"138\""
+					},
+					{
+						"key": "sec-ch-ua-mobile",
+						"value": "?0"
+					},
+					{
+						"key": "sec-ch-ua-platform",
+						"value": "\"Linux\""
+					},
+					{
+						"key": "sec-fetch-dest",
+						"value": "empty"
+					},
+					{
+						"key": "sec-fetch-mode",
+						"value": "cors"
+					},
+					{
+						"key": "sec-fetch-site",
+						"value": "same-origin"
+					},
+					{
+						"key": "user-agent",
+						"value": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"Rainmaker\",\n        \"authToken\": \"111910a1-9140-455a-8527-79f079a18429\",\n        \"userInfo\": {\n            \"id\": 802,\n            \"uuid\": \"29f36e66-da1f-43fb-907c-391adee2fff2\",\n            \"userName\": \"HRMS2\",\n            \"name\": \"OK\",\n            \"mobileNumber\": \"9999900032\",\n            \"emailId\": null,\n            \"locale\": null,\n            \"type\": \"EMPLOYEE\",\n            \"roles\": [\n                {\n                    \"name\": \"Employee\",\n                    \"code\": \"EMPLOYEE\",\n                    \"tenantId\": \"pg.citya\"\n                },\n                {\n                    \"name\": \"HRMS ADMIN\",\n                    \"code\": \"HRMS_ADMIN\",\n                    \"tenantId\": \"pg.citya\"\n                }\n            ],\n            \"active\": true,\n            \"tenantId\": \"pg.citya\",\n            \"permanentCity\": null\n        },\n        \"msgId\": \"1751966362252|en_IN\",\n        \"plainAccessRequest\": {}\n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:9999/egov-hrms/employees/_count?tenantId=pg.citya&_=1751966362253",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "9999",
+					"path": [
+						"egov-hrms",
+						"employees",
+						"_count"
+					],
+					"query": [
+						{
+							"key": "tenantId",
+							"value": "pg.citya"
+						},
+						{
+							"key": "_",
+							"value": "1751966362253"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Search",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "accept",
+						"value": "application/json, text/plain, */*"
+					},
+					{
+						"key": "accept-language",
+						"value": "en-US,en;q=0.9"
+					},
+					{
+						"key": "content-type",
+						"value": "application/json;charset=UTF-8"
+					},
+					{
+						"key": "origin",
+						"value": "https://niuatt.niua.in"
+					},
+					{
+						"key": "priority",
+						"value": "u=1, i"
+					},
+					{
+						"key": "referer",
+						"value": "https://niuatt.niua.in/digit-ui/employee"
+					},
+					{
+						"key": "sec-ch-ua",
+						"value": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\", \"Google Chrome\";v=\"138\""
+					},
+					{
+						"key": "sec-ch-ua-mobile",
+						"value": "?0"
+					},
+					{
+						"key": "sec-ch-ua-platform",
+						"value": "\"Linux\""
+					},
+					{
+						"key": "sec-fetch-dest",
+						"value": "empty"
+					},
+					{
+						"key": "sec-fetch-mode",
+						"value": "cors"
+					},
+					{
+						"key": "sec-fetch-site",
+						"value": "same-origin"
+					},
+					{
+						"key": "user-agent",
+						"value": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"Rainmaker\",\n        \"authToken\": \"111910a1-9140-455a-8527-79f079a18429\",\n        \"userInfo\": {\n            \"id\": 802,\n            \"uuid\": \"29f36e66-da1f-43fb-907c-391adee2fff2\",\n            \"userName\": \"HRMS2\",\n            \"name\": \"OK\",\n            \"mobileNumber\": \"9999900032\",\n            \"emailId\": null,\n            \"locale\": null,\n            \"type\": \"EMPLOYEE\",\n            \"roles\": [\n                {\n                    \"name\": \"Employee\",\n                    \"code\": \"EMPLOYEE\",\n                    \"tenantId\": \"pg.citya\"\n                },\n                {\n                    \"name\": \"HRMS ADMIN\",\n                    \"code\": \"HRMS_ADMIN\",\n                    \"tenantId\": \"pg.citya\"\n                }\n            ],\n            \"active\": true,\n            \"tenantId\": \"pg.citya\",\n            \"permanentCity\": null\n        },\n        \"msgId\": \"1751966362252|en_IN\",\n        \"plainAccessRequest\": {}\n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://niuatt.niua.in/egov-hrms/employees/_search?tenantId=pg.citya&_=1751966362253&codes=SV_CEMP",
+					"protocol": "https",
+					"host": [
+						"niuatt",
+						"niua",
+						"in"
+					],
+					"path": [
+						"egov-hrms",
+						"employees",
+						"_search"
+					],
+					"query": [
+						{
+							"key": "tenantId",
+							"value": "pg.citya"
+						},
+						{
+							"key": "_",
+							"value": "1751966362253"
+						},
+						{
+							"key": "codes",
+							"value": "SV_CEMP"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "accept",
+						"value": "application/json, text/plain, */*"
+					},
+					{
+						"key": "accept-language",
+						"value": "en-US,en;q=0.9"
+					},
+					{
+						"key": "content-type",
+						"value": "application/json;charset=UTF-8"
+					},
+					{
+						"key": "origin",
+						"value": "https://niuatt.niua.in"
+					},
+					{
+						"key": "priority",
+						"value": "u=1, i"
+					},
+					{
+						"key": "referer",
+						"value": "https://niuatt.niua.in/digit-ui/employee/hrms/response"
+					},
+					{
+						"key": "sec-ch-ua",
+						"value": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\", \"Google Chrome\";v=\"138\""
+					},
+					{
+						"key": "sec-ch-ua-mobile",
+						"value": "?0"
+					},
+					{
+						"key": "sec-ch-ua-platform",
+						"value": "\"Linux\""
+					},
+					{
+						"key": "sec-fetch-dest",
+						"value": "empty"
+					},
+					{
+						"key": "sec-fetch-mode",
+						"value": "cors"
+					},
+					{
+						"key": "sec-fetch-site",
+						"value": "same-origin"
+					},
+					{
+						"key": "user-agent",
+						"value": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"Employees\": [\n        {\n            \"tenantId\": \"pg.citya\",\n            \"employeeStatus\": \"EMPLOYED\",\n            \"assignments\": [\n                {\n                    \"fromDate\": 1751587200000,\n                    \"isCurrentAssignment\": true,\n                    \"department\": \"DEPT_3\",\n                    \"designation\": \"DESIG_03\"\n                }\n            ],\n            \"code\": \"EMP_46\",\n            \"dateOfAppointment\": 1751500800000,\n            \"employeeType\": \"PERMANENT\",\n            \"jurisdictions\": [\n                {\n                    \"hierarchy\": \"ADMIN\",\n                    \"boundaryType\": \"City\",\n                    \"boundary\": \"pg.citya\",\n                    \"tenantId\": \"pg.citya\",\n                    \"roles\": [\n                        {\n                            \"code\": \"EMPLOYEE\",\n                            \"name\": \"Employee\",\n                            \"labelKey\": \"ACCESSCONTROL_ROLES_ROLES_EMPLOYEE\",\n                            \"tenantId\": \"pg.citya\"\n                        }\n                    ]\n                }\n            ],\n            \"user\": {\n                \"mobileNumber\": \"7777777772\",\n                \"name\": \"Sourabh\",\n                \"correspondenceAddress\": \"delhi\",\n                \"gender\": \"MALE\",\n                \"dob\": 931046400000,\n                \"roles\": [\n                    {\n                        \"code\": \"EMPLOYEE\",\n                        \"name\": \"Employee\",\n                        \"labelKey\": \"ACCESSCONTROL_ROLES_ROLES_EMPLOYEE\",\n                        \"tenantId\": \"pg.citya\"\n                    }\n                ],\n                \"tenantId\": \"pg.citya\"\n            },\n            \"serviceHistory\": [],\n            \"education\": [],\n            \"tests\": []\n        }\n    ],\n    \"key\": \"CREATE\",\n    \"action\": \"CREATE\",\n    \"RequestInfo\": {\n        \"apiId\": \"Rainmaker\",\n        \"authToken\": \"111910a1-9140-455a-8527-79f079a18429\",\n        \"userInfo\": {\n            \"id\": 802,\n            \"uuid\": \"29f36e66-da1f-43fb-907c-391adee2fff2\",\n            \"userName\": \"HRMS2\",\n            \"name\": \"OK\",\n            \"mobileNumber\": \"9999900032\",\n            \"emailId\": null,\n            \"locale\": null,\n            \"type\": \"EMPLOYEE\",\n            \"roles\": [\n                {\n                    \"name\": \"Employee\",\n                    \"code\": \"EMPLOYEE\",\n                    \"tenantId\": \"pg.citya\"\n                },\n                {\n                    \"name\": \"HRMS ADMIN\",\n                    \"code\": \"HRMS_ADMIN\",\n                    \"tenantId\": \"pg.citya\"\n                }\n            ],\n            \"active\": true,\n            \"tenantId\": \"pg.citya\",\n            \"permanentCity\": null\n        },\n        \"msgId\": \"1751971156038|en_IN\",\n        \"plainAccessRequest\": {}\n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://niuatt.niua.in/egov-hrms/employees/_create?tenantId=pg.citya&_=1751971156038",
+					"protocol": "https",
+					"host": [
+						"niuatt",
+						"niua",
+						"in"
+					],
+					"path": [
+						"egov-hrms",
+						"employees",
+						"_create"
+					],
+					"query": [
+						{
+							"key": "tenantId",
+							"value": "pg.citya"
+						},
+						{
+							"key": "_",
+							"value": "1751971156038"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "accept",
+						"value": "application/json, text/plain, */*"
+					},
+					{
+						"key": "accept-language",
+						"value": "en-US,en;q=0.9"
+					},
+					{
+						"key": "content-type",
+						"value": "application/json;charset=UTF-8"
+					},
+					{
+						"key": "origin",
+						"value": "https://niuatt.niua.in"
+					},
+					{
+						"key": "priority",
+						"value": "u=1, i"
+					},
+					{
+						"key": "referer",
+						"value": "https://niuatt.niua.in/digit-ui/employee/hrms/response"
+					},
+					{
+						"key": "sec-ch-ua",
+						"value": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\", \"Google Chrome\";v=\"138\""
+					},
+					{
+						"key": "sec-ch-ua-mobile",
+						"value": "?0"
+					},
+					{
+						"key": "sec-ch-ua-platform",
+						"value": "\"Linux\""
+					},
+					{
+						"key": "sec-fetch-dest",
+						"value": "empty"
+					},
+					{
+						"key": "sec-fetch-mode",
+						"value": "cors"
+					},
+					{
+						"key": "sec-fetch-site",
+						"value": "same-origin"
+					},
+					{
+						"key": "user-agent",
+						"value": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"Employees\": [\n        {\n            \"id\": 3838,\n            \"uuid\": \"2199b3cb-0362-4d46-8219-9f3834e88aad\",\n            \"code\": \"EMP_44\",\n            \"employeeStatus\": \"EMPLOYED\",\n            \"employeeType\": \"PERMANENT\",\n            \"dateOfAppointment\": 1751500800000,\n            \"jurisdictions\": [\n                {\n                    \"id\": \"52a5b715-fadb-4dda-8f51-20ff2c72141f\",\n                    \"hierarchy\": \"ADMIN\",\n                    \"boundaryType\": \"City\",\n                    \"boundary\": \"pg.citya\",\n                    \"tenantId\": \"pg.citya\",\n                    \"auditDetails\": {\n                        \"createdBy\": \"29f36e66-da1f-43fb-907c-391adee2fff2\",\n                        \"createdDate\": 1751971157279,\n                        \"lastModifiedDate\": 0\n                    },\n                    \"roles\": [\n                        {\n                            \"name\": \"Employee\",\n                            \"code\": \"EMPLOYEE\",\n                            \"tenantId\": \"pg.citya\",\n                            \"labelKey\": \"ACCESSCONTROL_ROLES_ROLES_EMPLOYEE\"\n                        }\n                    ]\n                }\n            ],\n            \"assignments\": [\n                {\n                    \"id\": \"7b3a9550-3445-4d0b-92ca-c58f1be75f27\",\n                    \"position\": 234,\n                    \"tenantid\": \"pg.citya\",\n                    \"auditDetails\": {\n                        \"createdBy\": \"29f36e66-da1f-43fb-907c-391adee2fff2\",\n                        \"createdDate\": 1751971157279,\n                        \"lastModifiedDate\": 0\n                    },\n                    \"fromDate\": 1751587200000,\n                    \"isCurrentAssignment\": true,\n                    \"department\": \"DEPT_3\",\n                    \"designation\": \"DESIG_03\"\n                }\n            ],\n            \"serviceHistory\": [],\n            \"education\": [],\n            \"tests\": [],\n            \"tenantId\": \"pg.citya\",\n            \"documents\": [],\n            \"deactivationDetails\": [],\n            \"reactivationDetails\": [],\n            \"auditDetails\": {\n                \"createdBy\": \"29f36e66-da1f-43fb-907c-391adee2fff2\",\n                \"createdDate\": 1751971157279,\n                \"lastModifiedBy\": null,\n                \"lastModifiedDate\": 0\n            },\n            \"reActivateEmployee\": false,\n            \"user\": {\n                \"id\": 3838,\n                \"uuid\": \"2199b3cb-0362-4d46-8219-9f3834e88aad\",\n                \"userName\": \"EMP_44\",\n                \"password\": null,\n                \"salutation\": null,\n                \"name\": \"Sourabh\",\n                \"gender\": \"MALE\",\n                \"mobileNumber\": \"7777777771\",\n                \"altContactNumber\": null,\n                \"pan\": null,\n                \"aadhaarNumber\": null,\n                \"permanentAddress\": null,\n                \"permanentCity\": null,\n                \"permanentPinCode\": null,\n                \"correspondenceCity\": null,\n                \"correspondencePinCode\": null,\n                \"correspondenceAddress\": \"delhi\",\n                \"active\": true,\n                \"dob\": 931046400000,\n                \"pwdExpiryDate\": 1759747157000,\n                \"locale\": null,\n                \"type\": \"EMPLOYEE\",\n                \"signature\": null,\n                \"accountLocked\": false,\n                \"roles\": [\n                    {\n                        \"name\": \"Employee\",\n                        \"code\": \"EMPLOYEE\",\n                        \"tenantId\": \"pg.citya\",\n                        \"labelKey\": \"ACCESSCONTROL_ROLES_ROLES_EMPLOYEE\"\n                    }\n                ],\n                \"fatherOrHusbandName\": null,\n                \"relationship\": null,\n                \"bloodGroup\": null,\n                \"identificationMark\": null,\n                \"photo\": null,\n                \"createdBy\": \"802\",\n                \"createdDate\": 1751971157000,\n                \"lastModifiedBy\": \"802\",\n                \"lastModifiedDate\": 1751971157000,\n                \"otpReference\": null,\n                \"tenantId\": \"pg.citya\"\n            },\n            \"isActive\": true\n        }\n    ],\n    \"RequestInfo\": {\n        \"apiId\": \"Rainmaker\",\n        \"authToken\": \"111910a1-9140-455a-8527-79f079a18429\",\n        \"userInfo\": {\n            \"id\": 802,\n            \"uuid\": \"29f36e66-da1f-43fb-907c-391adee2fff2\",\n            \"userName\": \"HRMS2\",\n            \"name\": \"OK\",\n            \"mobileNumber\": \"9999900032\",\n            \"emailId\": null,\n            \"locale\": null,\n            \"type\": \"EMPLOYEE\",\n            \"roles\": [\n                {\n                    \"name\": \"Employee\",\n                    \"code\": \"EMPLOYEE\",\n                    \"tenantId\": \"pg.citya\"\n                },\n                {\n                    \"name\": \"HRMS ADMIN\",\n                    \"code\": \"HRMS_ADMIN\",\n                    \"tenantId\": \"pg.citya\"\n                }\n            ],\n            \"active\": true,\n            \"tenantId\": \"pg.citya\",\n            \"permanentCity\": null\n        },\n        \"msgId\": \"1751971288500|en_IN\",\n        \"plainAccessRequest\": {}\n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://niuatt.niua.in/egov-hrms/employees/_update?tenantId=pg.citya&_=1751971288500",
+					"protocol": "https",
+					"host": [
+						"niuatt",
+						"niua",
+						"in"
+					],
+					"path": [
+						"egov-hrms",
+						"employees",
+						"_update"
+					],
+					"query": [
+						{
+							"key": "tenantId",
+							"value": "pg.citya"
+						},
+						{
+							"key": "_",
+							"value": "1751971288500"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

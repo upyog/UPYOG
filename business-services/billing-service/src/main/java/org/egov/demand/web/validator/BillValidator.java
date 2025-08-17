@@ -20,8 +20,6 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import lombok.extern.slf4j.Slf4j;
-@Slf4j
 
 @Component
 public class BillValidator {
@@ -35,7 +33,7 @@ public class BillValidator {
 	 * @param generateBillCriteria
 	 */
 	public void validateBillGenRequest(GenerateBillCriteria generateBillCriteria, RequestInfo requestInfo) {
-		log.info("requestInfo_inside_validateBillGenRequest: "+requestInfo);
+		
 		util.validateTenantIdForUserType(generateBillCriteria.getTenantId(), requestInfo);
 
 		boolean demandIdNotProvided = null == generateBillCriteria.getDemandId();
