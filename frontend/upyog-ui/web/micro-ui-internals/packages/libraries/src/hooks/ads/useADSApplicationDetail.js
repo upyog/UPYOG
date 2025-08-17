@@ -1,11 +1,15 @@
 import { ADSSearch } from "../../services/molecules/ADS/Search";
 import { useQuery } from "react-query";
 
+//Custom hook to fetch and manage ADS application details
 const useADSApplicationDetail = (t, tenantId, bookingNo, config = {}, userType, args) => {
     
   
   const defaultSelect = (data) => {    
-     let applicationDetails = data.applicationDetails || {};
+     let applicationDetails = data.applicationDetails.map((obj) => {
+    
+      return obj;
+    });
 
     return {
       applicationData : data,
@@ -14,7 +18,7 @@ const useADSApplicationDetail = (t, tenantId, bookingNo, config = {}, userType, 
   };
 
   return useQuery(
-    [bookingNo, userType, args],
+    ["APPLICATION_SEARCH", "ADS_SEARCH", bookingNo, userType, args],
     () => ADSSearch.applicationDetails(t, tenantId, bookingNo, userType, args),
     { select: defaultSelect, ...config }
  

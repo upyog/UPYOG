@@ -1,4 +1,4 @@
-import {useMutation } from "react-query";
+import { useQuery, useMutation } from "react-query";
 
 import { ADSServices } from "../../services/elements/ADS"
 
@@ -12,9 +12,9 @@ export const useADSCreateAPI = (tenantId, type = true) => {
       ADSServices.create(data, tenantId));
     
   } 
-    // If type is false, return mutation for update
+  else {
     return useMutation((data) => ADSServices.update(data, tenantId));
-
+  }
 };
 
 export default useADSCreateAPI;
