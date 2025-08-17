@@ -134,7 +134,6 @@ public class ApplicationCoreFilter implements Filter {
     }
 
     private void prepareUserSession(HttpSession session) {
-    	LOG.info("Inside prepareUserSession method ");
         // if (session.getAttribute(CITY_CODE_KEY) == null)
         cityService.cityDataAsMap().forEach(session::setAttribute);
         if (session.getAttribute(APP_RELEASE_ATTRIB_NAME) == null)
@@ -154,7 +153,6 @@ public class ApplicationCoreFilter implements Filter {
     }
 
     private void prepareApplicationThreadLocal(HttpSession session) {
-    	LOG.info("Inside prepareApplicationThreadLocal method ");
 
         ApplicationThreadLocals.setCityCode((String) session.getAttribute(CITY_CODE_KEY));
         ApplicationThreadLocals.setCityName((String) session.getAttribute(CITY_NAME_KEY));
@@ -174,7 +172,6 @@ public class ApplicationCoreFilter implements Filter {
     }
 
     private void prepareThreadLocal(String tenant) {
-    	LOG.info("Inside prepareThreadLocal method ");
         ApplicationThreadLocals.setTenantID(tenant);
         // ApplicationThreadLocals.setUserId(this.userService.getUserByUsername(this.userName).getId());
 
