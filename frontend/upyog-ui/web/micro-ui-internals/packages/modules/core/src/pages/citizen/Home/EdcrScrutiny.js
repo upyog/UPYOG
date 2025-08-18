@@ -3,7 +3,6 @@ import React, { useEffect, useState, useTransition } from "react";
 import { useLocation, useHistory } from "react-router-dom";
 import { stringReplaceAll, sortDropdownNames } from "../../../../../obps/src/utils";
 import { useTranslation } from "react-i18next";
-import CreateEDCR1 from "./EDCR";
 
 // Component for EDCR Scrutiny page, handling form inputs, file uploads, and tenant-specific configurations.
 const EDCRScrutiny = ({ config, onSelect, userType, formData, ownerIndex = 0, addNewOwner, isShowToast, isSubmitBtnDisable, setIsShowToast }) => {

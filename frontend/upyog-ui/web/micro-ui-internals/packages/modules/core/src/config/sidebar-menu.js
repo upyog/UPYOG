@@ -2,7 +2,7 @@ import React from "react";
 import { HomeIcon, LanguageIcon, LogoutIcon, AddressBookIcon, LocationIcon, LoginIcon } from "@upyog/digit-ui-react-components";
 import ChangeLanguage from "../components/ChangeLanguage";
 
-const SideBarMenu = (t, closeSidebar, redirectToLoginPage, redirectToScrutinyPage,isEmployee, storeData, tenantId) => {
+const SideBarMenu = (t, closeSidebar, redirectToLoginPage, redirectToScrutinyPage ,isEmployee, storeData, tenantId) => {
   let filteredTenantData = storeData?.tenants.filter((e) => e.code === tenantId)[0]?.contactNumber || storeData?.tenants[0]?.contactNumber;
 return [
   {

@@ -22,7 +22,6 @@ import QRCode from "./QRCode";
 import VSearchCertificate from "./CMSearchCertificate";
 import AssetsQRCode from "./AssetsQRCode";
 import ChallanQRCode from "./ChallanQRCode";
-import EDCRScrutiny from "./Home/EdcrScrutiny";
 import { newConfig as newConfigEDCR } from "../../config/edcrConfig";
 import CreateAnonymousEDCR from "./Home/EDCR";
 import EDCRAcknowledgement from "./Home/EDCR/EDCRAcknowledgement";
@@ -267,7 +266,6 @@ const Home = ({
          <ChallanQRCode></ChallanQRCode>
           </Route>
           <Route path={`${APPLICATION_PATH}/citizen/core/edcr/scrutiny`}>
-            {/* <EDCRScrutiny config={newConfigEDCR} isSubmitBtnDisable={false}/> */}
             <CreateAnonymousEDCR />
           </Route>
           <Route path={`${APPLICATION_PATH}/citizen/core/edcr/scrutiny/acknowledgement`}>
