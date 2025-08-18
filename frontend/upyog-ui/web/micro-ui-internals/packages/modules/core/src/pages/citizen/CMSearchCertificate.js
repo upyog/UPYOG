@@ -11,7 +11,7 @@ import {
     Table,
     Header,
     Toast,
-    Loader,
+    Loader, 
 } from "@upyog/digit-ui-react-components";
 
 /**
@@ -77,8 +77,8 @@ const VSearchCertificate = () => {
 
     // Hook to fetch city data
     const { data: cityData } = Digit.Hooks.useCustomMDMS(
-        Digit.ULBService.getStateId(), 
-        "tenant", 
+        Digit.ULBService.getStateId(),
+        "tenant",
         [{ name: "tenants" }],
         {
             select: (data) => {
@@ -178,9 +178,9 @@ const VSearchCertificate = () => {
 
     return (
         <React.Fragment>
-            <div style={{ width: "80%", marginLeft: "10%" }}>
-                <div className="h1" style={{ fontSize: "40px", fontFamily: "Roboto Condensed" }}>{t("SEARCH_CERTIFICATE")}</div>
-                <SearchForm onSubmit={onSubmit} handleSubmit={handleSubmit}>
+            <div style={{ width: "100%", height: "200px", marginLeft: "2%", marginRight: "2%", marginTop: "20px", marginBottom: "20px" }}>
+                <div className="h1" style={{ fontSize: "40px", fontFamily: "Roboto Condensed", color: "#582766" }}>{t("SEARCH_CERTIFICATE")}</div>
+                <SearchForm onSubmit={onSubmit} handleSubmit={handleSubmit} className="verification-search-form">
                     <SearchField>
                         <label className="astericColor" style={{ fontSize: "19px" }} >{t("CERTIFICATE_TYPE")}</label>
                         <Controller
@@ -194,6 +194,7 @@ const VSearchCertificate = () => {
                                     option={type_of_certificate}
                                     optionKey="i18nKey"
                                     optionCardStyles={{ overflowY: "auto", maxHeight: "300px" }}
+                                    className="verificationDropdown"
                                     t={t}
                                     disable={false}
                                     placeholder={"Please type and select the certificate type"}
@@ -217,6 +218,9 @@ const VSearchCertificate = () => {
                                         option={cityData}
                                         optionKey="i18nKey"
                                         optionCardStyles={{ overflowY: "auto", maxHeight: "300px" }}
+
+                                        className="verificationDropdown"
+
                                         t={t}
                                         disable={false}
                                         placeholder={"Please select city"}
@@ -235,6 +239,8 @@ const VSearchCertificate = () => {
                             placeholder={"Please enter unique certificate number"}
                             value={certificate_No}
                             onChange={setcertificate_No}
+                            style={{ width: "100%" }}
+                            className = "verificationInput"
                         />
                     </SearchField>
                     <SearchField>

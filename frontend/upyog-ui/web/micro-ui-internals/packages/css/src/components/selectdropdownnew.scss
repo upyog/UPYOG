@@ -1,5 +1,4 @@
 /*.select {
-
   @apply mb-lg block border-2 border-input-border border-solid outline-none rounded-none w-full h-10 bg-white leading-10;
 
   option {
@@ -18,9 +17,7 @@
   }
 }
 */
-.employee-select-wrap:active {
-  background-color: white;
-}
+
 .employee-select-wrap {
   @apply mb-lg relative;
 
@@ -101,30 +98,28 @@
 .fsm-registry-dropdown {
   .select {
     @apply flex;
-
     input {
       text-align: left;
     }
   }
-
   .select-active {
     text-align: left;
   }
-
   .options-card {
     .profile-dropdown--item {
       justify-content: left;
     }
   }
-
   margin-bottom: 0;
 }
 
-.employee-select-wrap--elipses {
+.employee-select-wrap--elipsesnew {
   width: 85% !important;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  border-radius: 10px !important;
+  background-color: white !important;
 }
 
 .select-wrap {
@@ -182,11 +177,9 @@
     }
   }
 
-  
-
-  .options-card {
+  .options-cardNew {
     width: 100% !important;
-    box-shadow: 0 8px 10px 1px rgba(0, 0, 0, 0.14), 0 3px 14px 2px rgba(0, 0, 0, 0.12), 0 5px 5px -3px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 8px 10px 1px rgba(8, 38, 231, 0.14), 0 3px 14px 2px rgba(0, 0, 0, 0.12), 0 5px 5px -3px rgba(0, 0, 0, 0.2);
     @apply absolute z-20 mt-xs bg-white;
 
     p {
@@ -199,27 +192,53 @@
     }
   }
 }
-.select-wrap.verificationDropdown {
-  .select {
-    padding-left: 12px;
-    display: flex;
-    width: 100%;
-    height: 2.5rem;
-    background-color: #fff;
-    font-size: 16px;
-    line-height: 20px;
-    margin-bottom: 16px;
-    border-radius: 6px;
-    border: 1px solid #cccccc87;
-    &.select-active {
-      border-radius: 6px;
-    }
-  }
-  .options-card {
-    border-radius: 6px;
-  }
-}
-.employee-select-wrap .select img,
-.employee-select-wrap .select svg {
+
+.employee-select-wrap .select img, .employee-select-wrap .select svg{
   margin-top: 2px;
 }
+.employee-select-wrap .select {
+  position: relative;
+  display: flex;
+  width: 100%;
+  height: 2.5rem;
+  --border-opacity:1;
+  border: 1px solid #464646;
+  border-color: rgba(70, 70, 70, var(--border-opacity)); }
+  .employee-select-wrap .select:hover {
+    --border-opacity:1;
+    border: 1px solid #a82227;
+    border-color: rgba(168, 34, 39, var(--border-opacity)); }
+  .employee-select-wrap .select input[type=text], .employee-select-wrap .select .checkbox-wrap .input-emp[type=text], .checkbox-wrap .employee-select-wrap .select .input-emp[type=text] {
+    width: calc(50% - 32px);
+    background-color: initial;
+    position: absolute;
+    z-index: 10;
+    width: 100%;
+    height: 100%;
+    outline: 2px solid transparent;
+    outline-offset: 2px;
+    padding-left: 8px; }
+  .employee-select-wrap .select input[type=text], .employee-select-wrap .select .checkbox-wrap .input-emp[type=text], .checkbox-wrap .employee-select-wrap .select .input-emp[type=text], .employee-select-wrap .select p {
+    --text-opacity:1;
+    color: #0b0c0c;
+    color: rgba(11, 12, 12, var(--text-opacity));
+    font-size: 16px;
+    line-height: 20px; }
+  .employee-select-wrap .select p {
+    padding-top: 9px;
+    float: left;
+    margin-left: 8px; }
+  .employee-select-wrap-ve .select img, .employee-select-wrap .select svg {
+    float: right;
+    height: 1.5rem;
+    width: 1.5rem;
+    margin-top: 8px;
+    margin-right: 8px; }
+  .employee-select-wrap .select svg {
+    position: absolute;
+    right: 0; }
+
+  .options-card {
+    overflow: visible !important;
+    z-index: 1001 !important;
+  }
