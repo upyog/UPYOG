@@ -18,6 +18,7 @@ import org.egov.tl.web.models.niuadata.Bucket;
 import org.egov.tl.web.models.niuadata.DataItem;
 import org.egov.tl.web.models.niuadata.GroupedData;
 import org.egov.tl.web.models.niuadata.Metrics;
+import org.egov.tl.web.models.niuadata.ULBMappings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -56,6 +57,9 @@ public class UmeedDashboardService {
 		dataItem.setDate(date);
 		dataItem.setModule("TL");
 		dataItem.setState("Himachal Pradesh");
+
+		// get ulb data mappings
+		dataItem.setUlb(ULBMappings.getCode(dataItem.getUlb()));
 
 		// TODO map ulb if required
 
