@@ -40,9 +40,9 @@ public class UmeedDashboardService {
 				.data(objectMapper.valueToTree(umeedDashboardDataMatrics).get("Data")).build();
 
 		// Step 3: call umeed dashboard api to push data
-//		String ingestResponse = umeedDashboardClientService.sendMetrics(umeedDashboardRequest);
+		String ingestResponse = umeedDashboardClientService.sendMetrics(umeedDashboardRequest);
 
-		return umeedDashboardRequest;
+		return ingestResponse;
 	}
 
 	private RequestInfo buildRequestInfo() {
