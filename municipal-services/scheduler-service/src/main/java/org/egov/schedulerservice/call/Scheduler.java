@@ -7,6 +7,7 @@ import org.egov.schedulerservice.service.PGRService;
 import org.egov.schedulerservice.service.PgService;
 import org.egov.schedulerservice.service.PropertyService;
 import org.egov.schedulerservice.service.SiteBookingService;
+import org.egov.schedulerservice.service.UmeedDashboardService;
 import org.egov.schedulerservice.util.RequestInfoUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -38,6 +39,9 @@ public class Scheduler {
 
 	@Autowired
 	private SiteBookingService siteBookingService;
+
+	@Autowired
+	private UmeedDashboardService umeedDashboardService;
 
 	@Scheduled(cron = "${cron.job.default.garbage.bill.generator}", zone = "IST")
 	public void generateGarbageBills() {
@@ -126,13 +130,21 @@ public class Scheduler {
 		propertyService.reverseRebateAmount(requestInfo);
 		log.info("reverseRebateAmount CRON JOB Ends");
 	}
-	
+
 	@Scheduled(cron = "${cron.job.default.property.tracker.penalty.amount.updater}", zone = "IST")
 	public void updatePenaltyAmount() {
 		log.info("updatePenaltyAmount CRON JOB Starts");
 		RequestInfo requestInfo = requestInfoUtils.getSystemRequestInfo();
 		propertyService.updatePenaltyAmount(requestInfo);
 		log.info("updatePenaltyAmount CRON JOB Ends");
+	}
+
+	@Scheduled(cron = "${cron.job.default.umeed.dashboard.tl.data.matrics.sender}", zone = "IST")
+	public void pushUmeedDashboardMetricsForTL() {
+		log.info("pushUmeedDashboardMetricsForTL CRON JOB Starts");
+		RequestInfo requestInfo = requestInfoUtils.getSystemRequestInfo();
+		umeedDashboardService.pushUmeedDashboardMetricsForTL(requestInfo);
+		log.info("pushUmeedDashboardMetricsForTL CRON JOB Ends");
 	}
 
 }

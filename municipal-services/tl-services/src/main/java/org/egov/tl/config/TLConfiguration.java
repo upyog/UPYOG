@@ -372,10 +372,12 @@ public class TLConfiguration {
 
     @Value("${egov.alfresco.endpoint.upload}")
     private String alfrescoUploadEndPoint;
-    
   
    @Value("${egov.bill.expiry.after}")
    private String billExpiryAfter;
+   
+   @Value("${umeed.dashboard.sla.days}")
+   private int umeedDashboardSlaDays;
 
 
 }
