@@ -1,11 +1,5 @@
 package org.upyog.chb.service;
-
-import static org.upyog.chb.constants.CommunityHallBookingConstants.CHB_ACTION_MOVETOEMPLOYEE;
-import static org.upyog.chb.constants.CommunityHallBookingConstants.CHB_REFUND_WORKFLOW_BUSINESSSERVICE;
-import static org.upyog.chb.constants.CommunityHallBookingConstants.CHB_REFUND_WORKFLOW_MODULENAME;
-import static org.upyog.chb.constants.CommunityHallBookingConstants.CHB_STATUS_BOOKED;
-import static org.upyog.chb.constants.CommunityHallBookingConstants.CHB_TENANTID;
-import static org.upyog.chb.constants.CommunityHallBookingConstants.SYSTEM_CITIZEN_USERNAME;
+import static org.upyog.chb.constants.CommunityHallBookingConstants.*;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -118,7 +112,7 @@ public class SchedulerService {
 					.collect(Collectors.joining(", "));
 			log.info("Booking Nos: " + bookingNos);
 		}
-		UserDetailResponse userDetailResponse = userService.searchByUserName(SYSTEM_CITIZEN_USERNAME, CHB_TENANTID);
+		UserDetailResponse userDetailResponse = userService.searchByUserName(INTERNALMICROSERVICEUSER_USERNAME, CHB_TENANTID);
 		if (userDetailResponse == null || userDetailResponse.getUser().isEmpty()) {
 			throw new IllegalStateException("SYSTEM user not found for tenant '" + CHB_TENANTID + "'.");
 		}
