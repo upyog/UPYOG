@@ -29,18 +29,23 @@ public class UmeedDashboardService {
 
 	public Object pushUmeedDashboardMetricsForTL(RequestInfo requestInfo) {
 
+		String ingestResponse = "";
+
 		// Step 1: Build request info for Umeed Dashboard
 		RequestInfo umeedDashboardRequestInfo = buildRequestInfo();
 
 		// Step 2: Fetch Trade License dashboard metrics
 		Object umeedDashboardDataMatrics = tlService.getUmeedDashbaordDataMatrics(requestInfo);
 
-		UmeedDashboardRequest umeedDashboardRequest = UmeedDashboardRequest.builder()
-				.requestInfo(umeedDashboardRequestInfo)
-				.data(objectMapper.valueToTree(umeedDashboardDataMatrics).get("Data")).build();
+		if (null != umeedDashboardDataMatrics
+				&& null != objectMapper.valueToTree(umeedDashboardDataMatrics).get("Data")) {
+			UmeedDashboardRequest umeedDashboardRequest = UmeedDashboardRequest.builder()
+					.requestInfo(umeedDashboardRequestInfo)
+					.data(objectMapper.valueToTree(umeedDashboardDataMatrics).get("Data")).build();
 
-		// Step 3: call umeed dashboard api to push data
-		String ingestResponse = umeedDashboardClientService.sendMetrics(umeedDashboardRequest);
+			// Step 3: call umeed dashboard api to push data
+			ingestResponse = umeedDashboardClientService.sendMetrics(umeedDashboardRequest);
+		}
 
 		return ingestResponse;
 	}
