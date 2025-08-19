@@ -12,6 +12,7 @@ public enum ModuleName {
 	  WATER,
 	  PT,
 	  SEWERAGE,
+	  SV,
 	  ALL
 
 }
