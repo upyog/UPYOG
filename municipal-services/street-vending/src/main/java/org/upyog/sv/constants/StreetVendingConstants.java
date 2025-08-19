@@ -119,8 +119,6 @@ public class StreetVendingConstants {
 
 	public static final String ACTION_STATUS_APPLICATION_EXPIRED = "APPLICATIONEXPIRED";
 
-	public static final String INTERNALMICROSERVICEUSER_USERNAME = "INTERNAL_USER";
-
 	public static final String SYSTEM_CITIZEN_TENANTID = "pg";
 
 	public static final String STATUS_EXPIRED = "EXPIRED";
