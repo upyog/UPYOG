@@ -10,13 +10,19 @@ import {
   BreadCrumb,
   BackButton,
   Loader,
-  DatePicker
+  DatePicker,
+  Card,
+  StatusTable,
+  Row,
+  EditIcon,
+  LinkButton
 } from "@upyog/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
 import UploadDrawer from "./ImageUpload/UploadDrawer";
 import { subYears, format, differenceInYears } from "date-fns";
+import Address from "./AddressDetails";
 
 const defaultImage =
   "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAO4AAADUCAMAAACs0e/bAAAAM1BMVEXK0eL" +
@@ -844,13 +850,13 @@ const UserProfile = ({ stateCode, userType, cityDetails }) => {
        */}
       
       {activeTab === "address" && (
-        <>
+        <React.Fragment>
           {userAddresses.length > 0 ? (
-              <>
+             <React.Fragment>
                 {userAddresses.map((address, index) => (
                   <Card key={index}>
                     <StatusTable>
-                      <>
+                    <React.Fragment>
                         <Row
                           className="border-none"
                           label={t(`${address.addressType}`)}
@@ -873,7 +879,7 @@ const UserProfile = ({ stateCode, userType, cityDetails }) => {
                         <Row className="border-none" label={t("COMMON_CITY")} text={address.city || t("CS_NA")} />
                         <Row className="border-none" label={t("COMMON_LOCALITY")} text={address.locality || t("CS_NA")} />
                         <Row className="border-none" label={t("COMMON_ADDRESS_PINCODE")} text={address.pinCode || t("CS_NA")} />
-                      </>
+                        </React.Fragment>
                     </StatusTable>
                   </Card>
                 ))}
@@ -885,14 +891,14 @@ const UserProfile = ({ stateCode, userType, cityDetails }) => {
                     actionCancelOnSubmit={() => setShowModal(false)}
                   />
                 )}
-              </>
+             </React.Fragment>
             ) : (
               <Card>
                 <p>{t("CS_NO_ADDRESS_AVAILABLE")}</p>
               </Card>
             )}
 
-        </>
+        </React.Fragment>
       )}
 
       {userType === "employee" ? (
