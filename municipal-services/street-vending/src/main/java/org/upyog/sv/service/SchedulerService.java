@@ -137,7 +137,7 @@ public class SchedulerService {
 			return;
 		}
 
-		UserDetailResponse systemUser = userService.searchByUserName(StreetVendingConstants.SYSTEM_CITIZEN_USERNAME,
+		UserDetailResponse systemUser = userService.searchByUserName(StreetVendingConstants.INTERNALMICROSERVICEUSER_USERNAME,
 				StreetVendingConstants.SYSTEM_CITIZEN_TENANTID);
 		if (systemUser == null || systemUser.getUser() == null || systemUser.getUser().isEmpty()) {
 			log.error("System user not found");
