@@ -31,6 +31,7 @@ import org.egov.garbageservice.model.OnDemandBillRequest;
 import org.egov.garbageservice.model.SearchCriteriaGarbageAccount;
 import org.egov.garbageservice.model.SearchCriteriaGarbageAccountRequest;
 import org.egov.tracer.model.CustomException;
+import org.egov.tracer.model.ServiceCallException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -85,7 +86,7 @@ public class GarbageAccountSchedulerService {
 
 					if (billAmount != null && billAmount.compareTo(BigDecimal.ZERO) > 0 && errorMap.isEmpty()) {
 					
-						BillResponse billResponse = generateDemandAndBill(generateBillRequest, garbageAccount, billAmount);
+						BillResponse billResponse = generateDemandAndBill(generateBillRequest, garbageAccount, billAmount,"MONTHLY");
 	
 						if (null != billResponse && !CollectionUtils.isEmpty(billResponse.getBill())) {
 							GrbgBillTrackerRequest grbgBillTrackerRequest = garbageAccountService
@@ -102,7 +103,7 @@ public class GarbageAccountSchedulerService {
 //							notificationService.triggerNotificationsGenerateBill(garbageAccount, billResponse.getBill().get(0),
 //									generateBillRequest.getRequestInfo(),grbgBillTracker);
 						}else {
-							errorMap.put("ERROR-MAP", "Issues In Bill Generation");
+							errorMap.put("ERROR-MAP", "Issues In Bill Generation Probably Demand Already Exists");
 							createFailureLog(garbageAccount, generateBillRequest,billResponse,errorMap);
 						}
 					}else {
@@ -116,7 +117,7 @@ public class GarbageAccountSchedulerService {
 				}
 			});
 		}else {
-			message = "Garbage Acc not Found";
+			message = "Garbage Acc Not Found";
 		}
 
 		if(!grbgBillTrackers.isEmpty())
@@ -232,7 +233,7 @@ public class GarbageAccountSchedulerService {
 	}
 
 	private BillResponse generateDemandAndBill(GenerateBillRequest generateBillRequest, GarbageAccount garbageAccount,
-			BigDecimal billAmount) {
+			BigDecimal billAmount,String Type) {
 		try {
 			List<Demand> savedDemands = new ArrayList<>();
 			
@@ -256,8 +257,23 @@ public class GarbageAccountSchedulerService {
 			BillResponse billResponse = billService.generateBill(generateBillRequest.getRequestInfo(), billCriteria);
 
 			return billResponse;
-		} catch (Exception e) {
-			log.error(e.getMessage());
+		} catch (ServiceCallException e) {
+		    String actualMessage = "Server Error";
+			
+			if(null != e.getError()) {
+				 try {
+				        ObjectMapper mapper = new ObjectMapper();
+				        JsonNode root = mapper.readTree(e.getError());
+				        actualMessage = root.path("Errors").get(0).path("message").asText();
+				    } catch (Exception parseEx) {
+				        log.error("Failed to parse backend error JSON: {}", parseEx.getMessage());
+				    }
+			}
+			if(null != generateBillRequest.getGrbgApplicationNumbers() || null != generateBillRequest.getMobileNumbers()) {
+				throw new CustomException("INVALID_CONSUMERCODE",actualMessage);
+			}else {
+		        log.error("Failed to parse backend error JSON: {}", e.getError());
+			}
 		}
 		return null;
 	}
@@ -316,12 +332,12 @@ public class GarbageAccountSchedulerService {
 			}
 		}
 		else
-			throw new CustomException("INVALID_GARBAGE_ACCOUNT_DETAILS", "Provide valid garbage account details.");
+			throw new CustomException("INVALID_GARBAGE_ACCOUNT_DETAILS", "Provide a valid garbage account details.");
 
 		if(garbageAccount !=null) {
 			if (billAmount != null && billAmount.compareTo(BigDecimal.ZERO) > 0) {
 				
-				BillResponse billResponse = generateDemandAndBill(onDemandBillRequest.getGenerateBillRequest(), garbageAccount, billAmount);
+				BillResponse billResponse = generateDemandAndBill(onDemandBillRequest.getGenerateBillRequest(), garbageAccount, billAmount,"ON-DEMAND");
 				ObjectMapper mapper = new ObjectMapper();
 		        ObjectNode additionalDetails = mapper.convertValue(onDemandBillRequest.getGenerateBillRequest().getAdditionalDetail(), ObjectNode.class);
 				if (null != billResponse && !CollectionUtils.isEmpty(billResponse.getBill())) {

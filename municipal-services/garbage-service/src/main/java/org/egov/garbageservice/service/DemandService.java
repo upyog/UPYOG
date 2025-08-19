@@ -38,10 +38,10 @@ public class DemandService {
 	public List<Demand> generateDemand(RequestInfo requestInfo, GarbageAccount garbageAccount, String businessService,
 			BigDecimal taxAmount, GenerateBillRequest generateBillRequest) {
 
-		Long taxPeriodFrom = getDateToTimeStamp(generateBillRequest.getFromDate());
+		Long taxPeriodFrom = getDateToTimeStamp(generateBillRequest.getFromDate(),generateBillRequest.getType(),"FROM");
 //				null != generateBillRequest.getFromDate() ? generateBillRequest.getFromDate().getTime()
 //				: new Date(Calendar.getInstance().getTimeInMillis()).getTime();
-		Long taxPeriodTo = getDateToTimeStamp(generateBillRequest.getToDate());
+		Long taxPeriodTo = getDateToTimeStamp(generateBillRequest.getToDate(),generateBillRequest.getType(),"TO");
 //				null != generateBillRequest.getToDate() ? generateBillRequest.getToDate().getTime()
 //				: new Date((Calendar.getInstance().getTimeInMillis() + (long) 30 * 24 * 60 * 60 * 1000)).getTime();
 		DemandDetail demandDetail = DemandDetail.builder().taxHeadMasterCode(GrbgConstants.BILLING_TAX_HEAD_MASTER_CODE)
@@ -66,29 +66,34 @@ public class DemandService {
 		return savedDemands;
 	}
 	
-	private Long getDateToTimeStamp(Date date) {
+	private Long getDateToTimeStamp(Date date,String type,String FromTo) {
 	
-		if(date !=null) {
-			// Get current time
-	        Calendar now = Calendar.getInstance();
-	        int hour = now.get(Calendar.HOUR_OF_DAY);
-	        int minute = now.get(Calendar.MINUTE);
-	        int second = now.get(Calendar.SECOND);
-	        int millis = now.get(Calendar.MILLISECOND);
-	
-	        // Combine original date with current time
-	        Calendar cal = Calendar.getInstance();
-	        cal.setTime(date);
-	        cal.set(Calendar.HOUR_OF_DAY, hour);
-	        cal.set(Calendar.MINUTE, minute);
-	        cal.set(Calendar.SECOND, second);
-	        cal.set(Calendar.MILLISECOND, millis);
-	
-	        return cal.getTimeInMillis();
-		}else {
-	        	return new Date(Calendar.getInstance().getTimeInMillis()).getTime();
+			if("ON-DEMAND".equals(type)) {
+				if(date !=null) {
+				 	Calendar now = Calendar.getInstance();
+			        int hour = now.get(Calendar.HOUR_OF_DAY);
+			        int minute = now.get(Calendar.MINUTE);
+			        int second = now.get(Calendar.SECOND);
+			        int millis = now.get(Calendar.MILLISECOND);
+			
+			        // Combine original date with current time
+			        Calendar cal = Calendar.getInstance();
+			        cal.setTime(date);
+			        cal.set(Calendar.HOUR_OF_DAY, hour);
+			        cal.set(Calendar.MINUTE, minute);
+			        cal.set(Calendar.SECOND, second);
+			        cal.set(Calendar.MILLISECOND, millis);
+			        return cal.getTimeInMillis();
+				}else 
+					return "FROM".equals(FromTo) ? new Date(Calendar.getInstance().getTimeInMillis()).getTime():new Date((Calendar.getInstance().getTimeInMillis() + (long) 30 * 24 * 60 * 60 * 1000)).getTime();
+			}else {
+				if(date !=null) 
+					return date.getTime();
+				else {
+					return "FROM".equals(FromTo) ? new Date(Calendar.getInstance().getTimeInMillis()).getTime():new Date((Calendar.getInstance().getTimeInMillis() + (long) 30 * 24 * 60 * 60 * 1000)).getTime();
+				}
+			}
 		}
-	}
 	
 
 	List<Demand> searchDemand(String tenantId, Set<String> consumerCodes, RequestInfo requestInfo,
