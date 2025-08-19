@@ -32,14 +32,14 @@
     {
       "tenantId": "pg",
       "businessService": "treePruning",
-      "business": "request-service",
+      "business": "request-service.tree_pruning",
       "businessServiceSla": "",
       "states": [
         {
           "state": null,
           "actions": [
             {
-              "roles": ["CITIZEN"],
+              "roles": ["CITIZEN","TP_CEMP"],
               "action": "APPLY",
               "active": true,
               "nextState": "PENDING_FOR_APPROVAL"
@@ -76,7 +76,7 @@
           "state": "PAYMENT_PENDING",
           "actions": [
             {
-              "roles": ["CITIZEN"],
+              "roles": ["CITIZEN", "TP_CEMP"],
               "action": "PAY",
               "active": true,
               "nextState": "TEAM_ASSIGNMENT_FOR_VERIFICATION"
@@ -108,7 +108,7 @@
           "state": "TEAM_ASSIGNMENT_FOR_EXECUTION",
           "actions": [
             {
-              "roles": ["TP_EXECUTION"],
+              "roles": ["TP_EXECUTION", "TP_VERIFIER"],
               "action": "EXECUTE",
               "active": true,
               "nextState": "TREE_PRUNING_SERVICE_COMPLETED"
