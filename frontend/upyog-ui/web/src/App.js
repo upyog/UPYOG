@@ -87,7 +87,6 @@ const enabledModules = [
   "PTR",
   "ASSET",
   "ADS",
-  "SV",
   "EW",
   "CHB",
   "WT",
