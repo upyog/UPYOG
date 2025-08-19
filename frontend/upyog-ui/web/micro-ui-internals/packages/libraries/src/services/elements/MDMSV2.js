@@ -923,23 +923,6 @@ const getWSTaxHeadMasterCritera = (tenantId, moduleCode, type) => ({
   },
 });
 
-const getMasterDataCategory = (tenantId, moduleCode, masterName, type) => ({
-  type,
-  details: {
-    tenantId: tenantId,
-    moduleDetails: [
-      {
-        moduleName: moduleCode,
-        masterDetails: [
-          {
-            name: masterName,
-          },
-        ],
-      },
-    ],
-  },
-});
-
 const getHowItWorksJSON = (tenantId) => ({
       moduleDetails: [
       {
@@ -1008,26 +991,6 @@ const GetEgovLocations = (MdmsRes) => {
     name: obj.localname,
     i18nKey: obj.localname,
   }));
-};
-
-
-const getDataWithi18nkey = (MdmsRes, moduleName, masterName, i18nKeyString) => {
-  return MdmsRes[moduleName][masterName].filter((row) => row.active).map((item) => {
-    return {
-      ...item,
-      i18nKey: `${i18nKeyString + item.name}`,
-    };
-  });
-};
-
-const getDataWithi18nkeyandCode = (MdmsRes, moduleName, masterName, i18nKeyString) => {
-  return MdmsRes[moduleName][masterName].filter((row) => row.active).map((item) => {
-    return {
-      ...item,
-      i18nKey: `${i18nKeyString + item.name}`,
-      code: item.code
-    };
-  });
 };
 
 const GetServiceDefs = (MdmsRes, moduleCode) => MdmsRes[`RAINMAKER-${moduleCode}`].ServiceDefs.filter((def) => def.active);
@@ -1352,7 +1315,7 @@ const GetDocumentsTypes = (MdmsRes) => MdmsRes["BPA"].DocTypeMapping;
 
 const GetChecklist = (MdmsRes) => MdmsRes["BPA"].CheckList;
 
-const transformResponse = (type, MdmsRes, moduleCode, moduleName, tenantId, masterName, i18nKeyString) => {
+const transformResponse = (type, MdmsRes, moduleCode, tenantId) => {
   switch (type) {
     case "citymodule":
       return GetCitiesWithi18nKeys(MdmsRes, moduleCode);
@@ -1446,11 +1409,6 @@ const transformResponse = (type, MdmsRes, moduleCode, moduleName, tenantId, mast
       return GetTripNumber(MdmsRes);
     case "ReceivedPaymentType":
       return GetReceivedPaymentType(MdmsRes);
-
-    case "i18nKey":
-      return getDataWithi18nkey(MdmsRes, moduleName, masterName, i18nKeyString);
-    case "i18nkey&code":
-      return getDataWithi18nkeyandCode(MdmsRes, moduleName, masterName, i18nKeyString);
     default:
       return MdmsRes;
   }
@@ -1545,15 +1503,14 @@ export const MdmsServiceV2 = {
       )
     );
   },
-  getDataByCriteria: async (tenantId, mdmsDetails, moduleCode, masterName, i18nKeyString) => {
-    const moduleName = moduleCode; // moduleName is used here to pass unchanged modulecode
+  getDataByCriteria: async (tenantId, mdmsDetails, moduleCode) => {
     const key = `MDMS.${tenantId}.${moduleCode}.${mdmsDetails.type}.${JSON.stringify(mdmsDetails.details)}`;
     const inStoreValue = PersistantStorage.get(key);
     if (inStoreValue) {
       return inStoreValue;
     }
     const { MdmsRes } = await MdmsServiceV2.call(tenantId, mdmsDetails.details);
-    const responseValue = transformResponse(mdmsDetails.type, MdmsRes, moduleCode.toUpperCase(), moduleName, tenantId, masterName, i18nKeyString);
+    const responseValue = transformResponse(mdmsDetails.type, MdmsRes, moduleCode.toUpperCase(), tenantId);
     const cacheSetting = getCacheSetting(mdmsDetails.details.moduleDetails[0].moduleName);
     PersistantStorage.set(key, responseValue, cacheSetting.cacheTimeInSecs);
     return responseValue;
@@ -1779,7 +1736,6 @@ export const MdmsServiceV2 = {
   getStaticDataJSON: (tenantId) => {
     return MdmsServiceV2.call(tenantId, getStaticData());
   },
-
 /**
  * getMasterData - Fetches master data based on the provided criteria.
  * 
