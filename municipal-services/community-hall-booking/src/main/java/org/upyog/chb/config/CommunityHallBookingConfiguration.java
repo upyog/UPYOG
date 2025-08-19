@@ -208,7 +208,15 @@ public class CommunityHallBookingConfiguration {
 
 	@Value("${egov.bill.gen.endpoint}")
 	private String billGenerateEndpoint;
-	
+
+	@Value("${internal.microservice.user.username}")
+	private String internalMicroserviceUserName;
+
+	@Value("${internal.microservice.user.type}")
+	private String internalMicroserviceUserType;
+
+	@Value("${state.level.tenant.id}")
+	private String stateLevelTenantId;
 	
 	//Module and business name
 	@Value("${chb.module.name}")

@@ -55,7 +55,7 @@
                                 "CHB_CEMP",
                                 "SYSTEM",
                                 "CITIZEN",
-                                "INTERNAL_MICROSERVICE_ROLE"
+                                "CHB_INTERNAL_MICROSERVICE_ROLE"
                             ],
                             "active": true
                         }

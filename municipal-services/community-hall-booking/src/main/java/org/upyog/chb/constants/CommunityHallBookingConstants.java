@@ -152,8 +152,6 @@ public class CommunityHallBookingConstants {
 	public static final String CHB_REFUND_WORKFLOW_MODULENAME = "chb-services";
 
 	public static final String CHB_TENANTID = "pg";
-
-	public static final String INTERNALMICROSERVICEUSER_USERNAME = "INTERNAL_USER";
 		
     public static final String NOTIFICATION_PAY_NOW = "PAY NOW";
 	

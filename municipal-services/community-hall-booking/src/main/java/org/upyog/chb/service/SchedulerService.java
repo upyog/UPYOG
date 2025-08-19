@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import org.upyog.chb.config.CommunityHallBookingConfiguration;
 import org.upyog.chb.repository.CommunityHallBookingRepository;
 import org.upyog.chb.util.CommunityHallBookingUtil;
 import org.upyog.chb.web.models.BookingPaymentTimerDetails;
@@ -64,6 +65,9 @@ public class SchedulerService {
 	@Autowired
 	private WorkflowService workflowService;
 
+	@Autowired
+	private CommunityHallBookingConfiguration config;
+
 	/**
 	 * This scheduler runs every 5 mins to delete the bookingId from the
 	 * paymentTimer table when the timer is expired or payment is failed
@@ -112,7 +116,7 @@ public class SchedulerService {
 					.collect(Collectors.joining(", "));
 			log.info("Booking Nos: " + bookingNos);
 		}
-		UserDetailResponse userDetailResponse = userService.searchByUserName(INTERNALMICROSERVICEUSER_USERNAME, CHB_TENANTID);
+		UserDetailResponse userDetailResponse = userService.searchByUserName(config.getInternalMicroserviceUserName(), config.getStateLevelTenantId());
 		if (userDetailResponse == null || userDetailResponse.getUser().isEmpty()) {
 			throw new IllegalStateException("SYSTEM user not found for tenant '" + CHB_TENANTID + "'.");
 		}
