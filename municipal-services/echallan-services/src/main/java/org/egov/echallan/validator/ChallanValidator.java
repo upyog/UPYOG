@@ -87,10 +87,10 @@ public class ChallanValidator {
 		if(!validFinancialYear)
 			errorMap.put("Invalid TaxPeriod", "Tax period details are invalid");
 
-        List<String> localityCodes = getLocalityCodes(challan.getTenantId(), request.getRequestInfo());
-
-        if(!localityCodes.contains(challan.getAddress().getLocality().getCode()))
-         	errorMap.put("Invalid Locality", "Locality details are invalid");
+//        List<String> localityCodes = getLocalityCodes(challan.getTenantId(), request.getRequestInfo());
+//
+//        if(!localityCodes.contains(challan.getAddress().getLocality().getCode()))
+//         	errorMap.put("Invalid Locality", "Locality details are invalid");
 
         if(!currentTaxHeadCodes.isEmpty() && !requiredTaxHeadCodes.isEmpty()){
         	if(!currentTaxHeadCodes.containsAll(requiredTaxHeadCodes))
