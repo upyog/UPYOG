@@ -99,7 +99,7 @@ public class AuthorizationServerConfiguration {
     public SecurityFilterChain authServerSecurityFilterChain(HttpSecurity http) throws Exception {
         return http
             .authorizeHttpRequests((authorize) -> authorize
-                .requestMatchers("/login", "/error", "/oauth2/**", "/auth/**").permitAll()  // Added /auth/**
+                .requestMatchers("/login", "/error", "/oauth2/**", "/auth/**", "/oauth/**").permitAll()  // Added /auth/**
                 .anyRequest().authenticated()
             )
             .formLogin(Customizer.withDefaults())
