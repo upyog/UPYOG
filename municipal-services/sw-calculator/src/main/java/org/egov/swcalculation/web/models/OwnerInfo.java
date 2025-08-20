@@ -3,8 +3,8 @@ package org.egov.swcalculation.web.models;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 
 import org.egov.common.contract.request.Role;
 import org.egov.swcalculation.web.models.users.User;
