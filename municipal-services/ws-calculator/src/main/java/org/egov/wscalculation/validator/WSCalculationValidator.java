@@ -24,6 +24,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 
 import ch.qos.logback.core.net.ObjectWriter;
 
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
@@ -79,7 +80,39 @@ public class WSCalculationValidator {
 		connectionNos.add(meterReading.getConnectionNo());
 		MeterReadingSearchCriteria criteria = MeterReadingSearchCriteria.builder().
 				connectionNos(connectionNos).tenantId(meterReading.getTenantId()).build();
-		List<MeterReading> previousMeterReading = wSCalculationDao.searchCurrentMeterReadings(criteria);
+		List<MeterReading> previousMeterReading =null;
+		List<Map<String, Object>>  isAnythingPaid=null;
+		boolean activeWithPayment = false;
+
+		BigDecimal amountPaid=BigDecimal.ZERO;
+		if(isUpdate) { 
+			
+			previousMeterReading=wSCalculationDao.searchCurrentMeterReadingsforUpdate(criteria);
+			log.info("Previous Meter Reading is "+previousMeterReading);
+			  isAnythingPaid = wSCalculationDao.getCollection(
+			            criteria.getTenantId(),
+			            meterConnectionRequest.getMeterReading().getLastReadingDate(),
+			            meterConnectionRequest.getMeterReading().getCurrentReadingDate(),
+			            meterConnectionRequest.getMeterReading().getConnectionNo()
+			    );
+			if (isAnythingPaid != null && !isAnythingPaid.isEmpty()) {
+		        for (Map<String, Object> row : isAnythingPaid) {
+		            String status = (String) row.get("status");
+		            BigDecimal collected = row.get("amountCollected") != null
+		                    ? (BigDecimal) row.get("amountCollected")
+		                    : BigDecimal.ZERO;
+
+		            if ("ACTIVE".equalsIgnoreCase(status) && collected.compareTo(BigDecimal.ZERO) > 0) {
+		                activeWithPayment = true;
+		                amountPaid = collected;
+		                break; // no need to check further
+		            }
+		        }
+		    }
+			}
+		else
+			previousMeterReading=wSCalculationDao.searchCurrentMeterReadings(criteria);
+		
 		if (!CollectionUtils.isEmpty(previousMeterReading)) {
 			Double currentMeterReading = previousMeterReading.get(0).getCurrentReading();
 			if (meterReading.getCurrentReading() < currentMeterReading) {
@@ -97,6 +130,10 @@ public class WSCalculationValidator {
 			errorMap.put("INVALID_METER_READING_STATUS", "Meter status can not be null");
 		}
 
+		if (activeWithPayment) {
+		    errorMap.put("PAYMENT_ALREADY_DONE", 
+		        "Some Collection Amount Already Taken (Amount = " + amountPaid + ")");
+		}
 		if (isUpdate && (meterReading.getCurrentReading() == null)) {
 			errorMap.put("INVALID_CURRENT_METER_READING",
 					"Current Meter Reading cannot be update without current meter reading");
@@ -111,12 +148,13 @@ public class WSCalculationValidator {
 		if (StringUtils.isEmpty(meterReading.getBillingPeriod())) {
 			errorMap.put("INVALID_BILLING_PERIOD", "Meter Reading cannot be updated without billing period");
 		}
-
+		 
+		if(!isUpdate) {
 		int billingPeriodNumber = wSCalculationDao.isBillingPeriodExists(meterReading.getConnectionNo(),
-				meterReading.getBillingPeriod());
+				meterReading.getBillingPeriod() );
 		if (billingPeriodNumber > 0)
 			errorMap.put("INVALID_METER_READING_BILLING_PERIOD", "Billing Period Already Exists");
-
+		}
 		if (!errorMap.isEmpty()) {
 			throw new CustomException(errorMap);
 		}

@@ -2,10 +2,12 @@ package org.egov.wscalculation.repository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.egov.wscalculation.web.models.BillSearch;
 import org.egov.wscalculation.web.models.BillSearchs;
 import org.egov.wscalculation.web.models.CancelDemand;
+import org.egov.wscalculation.web.models.CancelDemandReq;
 import org.egov.wscalculation.web.models.Canceldemandsearch;
 import org.egov.wscalculation.web.models.MeterConnectionRequest;
 import org.egov.wscalculation.web.models.MeterConnectionRequests;
@@ -17,6 +19,9 @@ import org.egov.wscalculation.web.models.WaterDetails;
 public interface WSCalculationDao {
 
 	void saveMeterReading(MeterConnectionRequest meterConnectionRequest);
+	
+	void updateMeterReading(MeterConnectionRequest meterConnectionRequest);
+	void cancelPreviousMeterReading(CancelDemandReq cancelDemandPayload);
 	
 	List<MeterReading> searchMeterReadings(MeterReadingSearchCriteria criteria);
 	
@@ -58,7 +63,8 @@ public interface WSCalculationDao {
 	public List<Canceldemandsearch> getConnectionCancels( String tenantId, String demandid);
 	
 	public Boolean getUpdates(List demandlists);
-	
+	public List<Map<String, Object>>  getCollection(String tenatId,Long fromDate, Long toDate, String connectionno);
+
 	
 	public List<BillSearchs> getBillss (String tenantId, String demandid);
 
@@ -70,6 +76,9 @@ public interface WSCalculationDao {
 
 
 	List<String> getConnectionsNoByGroups(String tenantId, String connectionType, String groups);
+
+	List<MeterReading> searchCurrentMeterReadingsforUpdate(MeterReadingSearchCriteria criteria);
+	String searchLastMeterId(String connectionNo, Long lastReadingDate, Long currentReadingDate, String tenantId);
 
 		
 }
