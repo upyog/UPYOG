@@ -106,7 +106,6 @@ public class PGRQueryBuilder {
         }
 
 
-
         Set<String> ids = criteria.getIds();
         if (!CollectionUtils.isEmpty(ids)) {
             addClauseIfRequired(preparedStmtList, builder);
