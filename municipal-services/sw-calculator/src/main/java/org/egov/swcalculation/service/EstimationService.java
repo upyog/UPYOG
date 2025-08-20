@@ -640,10 +640,15 @@ public class EstimationService {
 		        : "null";
 
 		if ("REGULARIZED".equalsIgnoreCase(concategory) || "LEGACY".equalsIgnoreCase(concategory)) {
-		    if (otherCharges.compareTo(BigDecimal.ZERO) != 0) {
-		        estimates.add(TaxHeadEstimate.builder().taxHeadCode(SWCalculationConstant.SW_OTHER_CHARGE)
-		                .estimateAmount(otherCharges.setScale(2, 2)).build());
-		    }
+			/*
+			 For legacy sw connection - PI-18845
+			 --->Sharan Gakhar (branch : pmidc_testing)
+			 
+			 */
+			//			if (otherCharges.compareTo(BigDecimal.ZERO) != 0) {
+		    otherCharges = (otherCharges == null) ? BigDecimal.ZERO : otherCharges;
+	        	estimates.add(TaxHeadEstimate.builder().taxHeadCode(SWCalculationConstant.SW_OTHER_CHARGE)
+    				.estimateAmount(otherCharges.setScale(2, 2)).build());
 		}
 		else {
 			if (!(formFee.compareTo(BigDecimal.ZERO) == 0))
