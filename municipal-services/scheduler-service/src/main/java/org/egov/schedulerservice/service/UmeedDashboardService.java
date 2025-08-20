@@ -45,6 +45,8 @@ public class UmeedDashboardService {
 
 			// Step 3: call umeed dashboard api to push data
 			ingestResponse = umeedDashboardClientService.sendMetrics(umeedDashboardRequest);
+		} else {
+			ingestResponse = "No Data from TL Service";
 		}
 
 		return ingestResponse;
