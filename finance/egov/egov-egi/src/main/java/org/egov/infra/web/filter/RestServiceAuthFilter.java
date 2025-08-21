@@ -155,17 +155,45 @@ public class RestServiceAuthFilter implements Filter {
 
 		String tenantId = readTenantId(request);
 		String userToken = readAuthToken(request, tenantId);
+
+		HttpSession session = request.getSession(false);
+		String sessionId = (session != null) ? session.getId() : "NO_SESSION";
+
+		LOGGER.info("Auth Debug -> SessionId: " + sessionId
+				+ ", TenantId: " + tenantId
+				+ ", UserToken: " + (userToken != null
+					? userToken.substring(0, Math.min(10, userToken.length())) + "..."
+					: "NULL"));
+
 		setSchema(tenantId);
 		if (userToken == null)
 			throw new AuthorizationException("AuthToken not found");
-		HttpSession session = request.getSession();
+
+		if (session == null) {
+			session = request.getSession(true);
+			LOGGER.info("Created new session. New SessionId: " + session.getId());
+		}
+
 		String adminToken = this.microserviceUtils.generateAdminToken(tenantId);
 		if (adminToken == null)
 			throw new AuthorizationException("SI token generation failed");
 		session.setAttribute(MS_USER_TOKEN, userToken);
 		CustomUserDetails user = this.microserviceUtils.getUserDetails(userToken, adminToken);
 		session.setAttribute(MS_TENANTID_KEY, user.getTenantId());
-		UserSearchResponse response = this.microserviceUtils.getUserInfo(userToken, user.getTenantId(), user.getUuid());
+
+		UserSearchResponse response =
+			this.microserviceUtils.getUserInfo(userToken, user.getTenantId(), user.getUuid());
+
+		// your defensive check + helpful log
+		if (response == null || response.getUserSearchResponseContent() == null
+				|| response.getUserSearchResponseContent().isEmpty()) {
+			LOGGER.warn("UserSearchResponse empty for tenantId=" + user.getTenantId()
+					+ ", uuid=" + user.getUuid()
+					+ ", sessionId=" + session.getId()
+					+ " -> likely expired/invalid token.");
+			throw new AuthorizationException(
+				"No user information found for the provided token. Possible expired/invalid session.");
+		}
 
 		return parepareCurrentUser(response.getUserSearchResponseContent().get(0));
 	}
