@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.land.config.LandConfiguration;
