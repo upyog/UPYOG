@@ -209,24 +209,24 @@ public class SewerageServiceImpl implements SewerageService {
 			}
 		}
 		sewerageDao.saveSewerageConnection(sewerageConnectionRequest);
-		if (!isMigration)
-		{
-		String previousApplicationStatus = workflowService.getApplicationStatus(
-				sewerageConnectionRequest.getRequestInfo(),
-				sewerageConnectionRequest.getSewerageConnection().getApplicationNo(),
-				sewerageConnectionRequest.getSewerageConnection().getTenantId(), config.getBusinessServiceValue());
-		BusinessService businessService = workflowService.getBusinessService(config.getBusinessServiceValue(),
-				sewerageConnectionRequest.getSewerageConnection().getTenantId(),
-				sewerageConnectionRequest.getRequestInfo());
-
-		Boolean isStateUpdatable = sewerageServicesUtil.getStatusForUpdate(businessService, previousApplicationStatus);
-		sewerageDao.updateSewerageConnection(sewerageConnectionRequest, isStateUpdatable);
-		}
-		else
-		{
-			log.info("Skipping Update for migrated connection");
-			  
-		}
+//		if (!isMigration)
+//		{
+//		String previousApplicationStatus = workflowService.getApplicationStatus(
+//				sewerageConnectionRequest.getRequestInfo(),
+//				sewerageConnectionRequest.getSewerageConnection().getApplicationNo(),
+//				sewerageConnectionRequest.getSewerageConnection().getTenantId(), config.getBusinessServiceValue());
+//		BusinessService businessService = workflowService.getBusinessService(config.getBusinessServiceValue(),
+//				sewerageConnectionRequest.getSewerageConnection().getTenantId(),
+//				sewerageConnectionRequest.getRequestInfo());
+//
+//		Boolean isStateUpdatable = sewerageServicesUtil.getStatusForUpdate(businessService, previousApplicationStatus);
+//		sewerageDao.updateSewerageConnection(sewerageConnectionRequest, isStateUpdatable);
+//		}
+//		else
+//		{
+//			log.info("Skipping Update for migrated connection");
+//			  
+//		}
 		return Arrays.asList(sewerageConnectionRequest.getSewerageConnection());
 	}
 
