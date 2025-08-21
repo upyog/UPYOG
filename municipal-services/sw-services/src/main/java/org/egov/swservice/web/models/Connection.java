@@ -32,7 +32,7 @@ import io.swagger.annotations.ApiModelProperty;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-05-20T12:22:10.265+05:30[Asia/Kolkata]")
+@jakarta.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-05-20T12:22:10.265+05:30[Asia/Kolkata]")
 public class Connection {
 	@SafeHtml
 	@JsonProperty("id")
