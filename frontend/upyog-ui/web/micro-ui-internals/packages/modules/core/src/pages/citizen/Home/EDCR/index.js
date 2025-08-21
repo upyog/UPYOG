@@ -34,7 +34,7 @@ const CreateAnonymousEDCR = ({ parentRoute }) => {
     setIsSubmitBtnDisable(true);
   
     const loggedInuserInfo = Digit.UserService.getUser();
-    const userInfo = { uuid: "", tenantId: "pg.citya" };
+    const userInfo = { uuid: "1c79f77e-e847-4663-98a7-5aee31f185c5", tenantId: "pg.citya" };
     const transactionNumber = generateTransactionNumber();
     const applicantName = data?.applicantName;
     const file = data?.file;
@@ -55,7 +55,7 @@ const CreateAnonymousEDCR = ({ parentRoute }) => {
         ts: "",
         action: "",
         did: "",
-        authToken: "",
+        authToken: "4d3ee8fc-03dc-49c7-912a-090bc7a2f699",
         key: "",
         msgId: "",
         correlationId: "",
