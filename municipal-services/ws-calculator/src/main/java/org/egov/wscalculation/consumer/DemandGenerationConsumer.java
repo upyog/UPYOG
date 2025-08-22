@@ -1,10 +1,6 @@
 package org.egov.wscalculation.consumer;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import org.egov.wscalculation.config.WSCalculationConfiguration;
@@ -18,6 +14,7 @@ import org.egov.wscalculation.service.WSCalculationServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.messaging.Message;
 import org.springframework.stereotype.Component;
 import org.springframework.kafka.support.KafkaHeaders;
@@ -51,6 +48,9 @@ public class DemandGenerationConsumer {
 	@Value("${kafka.topics.bulk.bill.generation.audit}")
 	private String bulkBillGenAuditTopic;
 
+	@Value("${persister.demand.based.dead.letter.error.topic}")
+	private String demandGenerationErrorTopic;
+
 	@Autowired
 	private WSCalculationWorkflowValidator wsCalulationWorkflowValidator;
 	/**
@@ -68,12 +68,12 @@ public class DemandGenerationConsumer {
 	 * CalculationReq.class); generateDemandInBatch(calculationReq); }catch (final
 	 * Exception e){ log.error("KAFKA_PROCESS_ERROR", e); } }
 	 */
-	@KafkaListener(topics = { "${egov.watercalculatorservice.createdemand.topic}" }, containerFactory = "kafkaListenerContainerFactoryBatch")
+	@KafkaListener(topics = {
+			"${egov.watercalculatorservice.createdemand.topic}" }, containerFactory = "kafkaListenerContainerFactoryBatch")
 	@SuppressWarnings("unchecked")
 	public void listen(final List<Message<?>> records) {
 		CalculationReq calculationReq = mapper.convertValue(records.get(0).getPayload(), CalculationReq.class);
-		Map<String, Object> masterMap = mstrDataService.loadMasterData(calculationReq.getRequestInfo(),
-				calculationReq.getCalculationCriteria().get(0).getTenantId());
+		Map<String, Object> masterMap = mstrDataService.loadMasterData(calculationReq.getRequestInfo(), calculationReq.getCalculationCriteria().get(0).getTenantId());
 		List<CalculationCriteria> calculationCriteria = new ArrayList<>();
 		records.forEach(record -> {
 			try {
@@ -92,9 +92,11 @@ public class DemandGenerationConsumer {
 				.taxPeriodTo(calculationReq.getTaxPeriodTo())
 				.migrationCount(calculationReq.getMigrationCount())
 				.build();
-			
-		generateDemandInBatch(request,masterMap,config.getDeadLetterTopicBatch());
-		log.info("Number of batch records:  " + records.size());	}
+
+		generateDemandInBatch(request,masterMap, config.getDeadLetterTopicBatch());
+		//log.info("Number of batch records:  " + records.size());
+		log.info("Number of batch records in the consumer:  " + calculationReq.getCalculationCriteria().size());
+	}
 
 	/**
 	 * Listens on the dead letter topic of the bulk request and processes every
@@ -160,10 +162,41 @@ public class DemandGenerationConsumer {
 					.append(connectionNoStrings);
 			log.info(str.toString());
 		} catch (Exception ex) {
-			log.error("Demand generation error: ", ex);
-			producer.push(errorTopic, request);
-		}
+            log.error("Demand generation error: ", ex);
+            String errorMsg = (ex.getMessage() == null || ex.getMessage().trim().isEmpty())
+                    ? "Null pointer Exception"
+                    : ex.getMessage();
 
+            if (request.getCalculationCriteria() != null && !request.getCalculationCriteria().isEmpty()) {
+                for (CalculationCriteria criteria : request.getCalculationCriteria()) {
+					DemandGenerationError	demandGenerationError = getDemandGenerationError(criteria, errorMsg);
+					if (demandGenerationError != null) {
+						producer.push(demandGenerationErrorTopic, demandGenerationError);
+					}
+                }
+            } else {
+                log.warn("CalculationCriteria is null or empty in request");
+            }
+        }
+
+	}
+
+	private static DemandGenerationError getDemandGenerationError(CalculationCriteria criteria, String errorMsg) {
+		DemandGenerationError error = new DemandGenerationError();
+		if (criteria != null && errorMsg != null) {
+			error.setConnectionNo(criteria.getConnectionNo());
+			error.setTenantId(criteria.getTenantId());
+			error.setToDate(criteria.getTo());
+			error.setFromDate(criteria.getFrom());
+			error.setAssessmentYear(criteria.getAssessmentYear());
+
+			if (criteria.getWaterConnection() != null){
+			error.setPropertyId(criteria.getWaterConnection().getPropertyId());
+			}
+
+			error.setErrorMessage(errorMsg);
+		}
+		return error;
 	}
 
 	/**

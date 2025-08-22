@@ -190,6 +190,9 @@ public class WSCalculationConfiguration {
     
     	@Value("${notification.url}")
     	private String notificationUrl;
+    	
+        @Value("${persister.demand.based.dead.letter.error.topic}")
+	    private String demandGenerationErrorTopic;
 
     	@Value("${egov.shortener.url}")
 	private String shortenerURL;
