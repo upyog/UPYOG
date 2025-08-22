@@ -471,7 +471,8 @@ public class EnrichmentService {
 				ownership="1";
 			sb.append(wardcode).append(lekaicode).append(ownership);
 			String[] serialnumber=pId.split("-");
-			String propid="MN"+serialnumber[serialnumber.length-1];
+			//Changed FOR Client Requirement initial MN ->00
+			String propid="00"+serialnumber[serialnumber.length-1];
 			sb.append(propid);
 			//String[] propId = pId.split("PT");
 
