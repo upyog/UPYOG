@@ -26,13 +26,16 @@ const FormStep = ({
   childrenAtTheBottom = true,
   textInputStyle
 }) => {
+  console.log("config444==",config)
   const { register, watch, errors, handleSubmit } = useForm({
     defaultValues: _defaultValues,
   });
 
   const goNext = (data) => {
+    console.log("goNext==",data)
     onSelect(data);
   };
+  console.log("errors==",errors)
 
   var isDisable = isDisabled ? true : config.canDisable && Object.keys(errors).filter((i) => errors[i]).length;
 
@@ -41,7 +44,7 @@ const FormStep = ({
       return (
         <React.Fragment key={index}>
           <CardLabel>{t(input.label)} {input.labelChildren && input.labelChildren}</CardLabel>
-          {errors[input.name] && <CardLabelError>{t(input.error)}</CardLabelError>}
+          
           <div className="field-container" style={{ justifyContent: "left" }}>
             {componentInFront ? <span className="citizen-card-input citizen-card-input--front">{componentInFront}</span> : null}
             <TextInput
@@ -59,6 +62,7 @@ const FormStep = ({
               textInputStyle={textInputStyle}
             />
           </div>
+          {errors[input.name] && <CardLabelError>{t(input.error)}</CardLabelError>}
         </React.Fragment>
       );
     }

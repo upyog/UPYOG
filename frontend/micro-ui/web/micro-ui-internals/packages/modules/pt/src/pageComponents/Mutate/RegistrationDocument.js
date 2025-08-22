@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { FormStep, TextInput, CardLabel, DatePicker, CardLabelError, LabelFieldPair } from "@egovernments/digit-ui-react-components";
+import { FormStep, TextInput, CardLabel, DatePicker, CardLabelError, LabelFieldPair } from "@upyog/digit-ui-react-components";
 import Timeline from "../../components/TLTimeline";
 
 const RegistrationDocument = (props) => {

@@ -193,4 +193,11 @@ public class PhonepeGateway implements Gateway {
         return null;
     }
 
+
+	@Override
+	public Transaction getTransformedTransaction(String resp, Transaction currentStatus, String secretKey) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

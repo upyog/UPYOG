@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { Redirect, Route, Switch, useHistory, useLocation } from "react-router-dom";
 import EmployeeApp from "./pages/employee";
 import CitizenApp from "./pages/citizen";
+import { useState } from "react";
 
 export const DigitApp = ({ stateCode, modules, appTenants, logoUrl, initData }) => {
   const history = useHistory();
@@ -37,9 +38,16 @@ export const DigitApp = ({ stateCode, modules, appTenants, logoUrl, initData }) 
     }
   }, [pathname]);
 
-  history.listen(() => {
-    window?.scrollTo({ top: 0, left: 0, behavior: "smooth" });
-  });
+  // const [scroll, setScroll] = useState(false)
+  // useEffect(() => {
+  //   window.addEventListener("scroll", () => {
+  //     setScroll(window.scrollY > 10)
+  //   })
+  // }, [])
+
+  // history.listen(() => {
+  //   window?.scrollTo({ top: 0, left: 0, behavior: "smooth" });
+  // });
 
   const handleUserDropdownSelection = (option) => {
     option.func();
@@ -63,17 +71,22 @@ export const DigitApp = ({ stateCode, modules, appTenants, logoUrl, initData }) 
     pathname,
     initData,
   };
+  console.log("commonProps==",commonProps)
   return (
-    <Switch>
-      <Route path="/digit-ui/employee">
-        <EmployeeApp {...commonProps} />
-      </Route>
-      <Route path="/digit-ui/citizen">
-        <CitizenApp {...commonProps} />
-      </Route>
-      <Route>
-        <Redirect to="/digit-ui/citizen" />
-      </Route>
-    </Switch>
+    <div className={scroll ? "main-header" : "main-header"}>
+      {/* className={scroll ? "main-header scrolled" : "main-header"} */}
+        <Switch>
+          <Route path="/digit-ui/employee">
+            <EmployeeApp {...commonProps} />
+          </Route>
+          <Route path="/digit-ui/citizen">
+            <CitizenApp {...commonProps} />
+          </Route>
+          <Route>
+            <Redirect to="/digit-ui/citizen" />
+          </Route>
+        </Switch>
+    </div>
+    
   );
 };

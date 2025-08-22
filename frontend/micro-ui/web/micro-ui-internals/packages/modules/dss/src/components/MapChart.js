@@ -5,7 +5,7 @@ import { useTranslation } from "react-i18next";
 import { get } from "lodash";
 import FilterContext from "./FilterContext";
 import { endOfMonth, getTime, startOfMonth } from "date-fns";
-import { Loader } from "@egovernments/digit-ui-react-components"
+import { Loader } from "@upyog/digit-ui-react-components"
 import { ResponsiveContainer } from "recharts";
 import { format } from "date-fns";
 
@@ -14,7 +14,7 @@ import { format } from "date-fns";
 const PROJECTION_CONFIG = { scale: 320, center: [85.9629, 22.5937] };
 
 // Red Variants
-const COLOR_RANGE = ["#54D140", "#298CFF", "#a82227", "#D1D1D1"];
+const COLOR_RANGE = ["#54D140", "#298CFF", "#0f4f9e", "#D1D1D1"];
 
 const STATUS = ["Live", "UnderImplementation", "OnBoarded", "None"];
 const DEFAULT_COLOR = "#D1D1D1";

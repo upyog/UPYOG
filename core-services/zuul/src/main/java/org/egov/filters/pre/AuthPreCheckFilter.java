@@ -76,6 +76,9 @@ public class AuthPreCheckFilter extends ZuulFilter {
     @Override
     public Object run() {
         String authToken;
+        
+        logger.info(openEndpointsWhitelist.toString());
+        logger.info(mixedModeEndpointsWhitelist.toString());
         if (openEndpointsWhitelist.contains(getRequestURI())) {
             setShouldDoAuth(false);
             logger.info(OPEN_ENDPOINT_MESSAGE, getRequestURI());

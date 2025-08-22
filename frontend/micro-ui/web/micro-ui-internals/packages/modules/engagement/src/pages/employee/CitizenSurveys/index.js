@@ -1,6 +1,6 @@
 import React from "react"
 import { Switch } from "react-router-dom"
-import { PrivateRoute } from "@egovernments/digit-ui-react-components"
+import { PrivateRoute } from "@upyog/digit-ui-react-components"
 import Inbox from "./Inbox"
 import NewSurvey from "./NewSurvey"
 import CreateResponse from "./responses/create"
