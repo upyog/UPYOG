@@ -263,6 +263,11 @@ public class GarbageAccountRowMapper implements ResultSetExtractor<List<GarbageA
     	        .subCategory(rs.getString(prefix+"sub_category"))
     	        .subCategoryType(rs.getString(prefix+"sub_category_type"))
     	        .isActive(rs.getBoolean(prefix+"is_active"))
+    	        .isbplunit(rs.getBoolean(prefix+"isbplunit"))
+    	        .isbulkgeneration(rs.getBoolean(prefix+"isbulkgeneration"))
+    	        .isvariablecalculation(rs.getBoolean(prefix+"isvariablecalculation"))
+    	        .no_of_units(rs.getInt(prefix+"no_of_units"))
+    	        .ismonthlybilling(rs.getBoolean(prefix+"is_monthly_billing"))
     			.build();
 		return grbgCollectionUnit;
 	}

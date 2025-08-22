@@ -27,6 +27,7 @@ public class GrbgBillFailure {
 	private String to_date;
     private JsonNode request_payload = null;
     private JsonNode response_payload = null;
+    private JsonNode error_json = null;
 	private String status_code;
 	private Long created_time;
 	private Long last_modified_time;
