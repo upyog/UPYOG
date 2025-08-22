@@ -49,6 +49,40 @@ public class ApplicationSecurityRepository implements SecurityContextRepository 
 	@Autowired
 	public MicroserviceUtils microserviceUtils;
 
+	//old code 
+	// @Override
+	// public SecurityContext loadContext(HttpRequestResponseHolder requestResponseHolder) {
+
+	// 	SecurityContext context = new SecurityContextImpl();
+	// 	CurrentUser curUser = null;
+	// 	try {
+
+	// 		HttpServletRequest request = requestResponseHolder.getRequest();
+	// 		HttpSession session = request.getSession();
+	// 		LOGGER.info(" *** URI " + request.getRequestURL().toString());
+	// 		curUser = (CurrentUser) this.microserviceUtils.readFromRedis(request.getSession().getId(), "current_user");
+	// 		if (curUser == null) {
+	// 			LOGGER.info(" ***  Session is not available in redis.... , trying to login");
+	// 			curUser = new CurrentUser(this.getUserDetails(request));
+	// 			this.microserviceUtils.savetoRedis(session.getId(), "current_user", curUser);
+	// 		}
+	// 		String oldToken = (String) session.getAttribute(MS_USER_TOKEN);
+	// 		String newToken = (String) this.microserviceUtils.readFromRedis(session.getId(), AUTH_TOKEN);
+	// 		if (null != oldToken && null != newToken && !oldToken.equals(newToken)) {
+	// 			session.setAttribute(MS_USER_TOKEN, newToken);
+	// 		}
+	// 		LOGGER.info(" ***  Session   found  in redis.... ," + request.getSession().getId());
+
+	// 		context.setAuthentication(this.prepareAuthenticationObj(request, curUser));
+	// 	} catch (SecurityException | NotAuthorizedException e) {
+	// 		LOGGER.error(e.getMessage());
+	// 		LOGGER.error(" ***  Session is not found in Redis. Creating empty security context");
+	// 		return SecurityContextHolder.createEmptyContext();
+	// 	}
+	// 	return context;
+	// }
+
+	//new code where current user is created on every login
 	@Override
 	public SecurityContext loadContext(HttpRequestResponseHolder requestResponseHolder) {
 
@@ -58,8 +92,9 @@ public class ApplicationSecurityRepository implements SecurityContextRepository 
 
 			HttpServletRequest request = requestResponseHolder.getRequest();
 			HttpSession session = request.getSession();
+			LOGGER.info(" *** session : " + session);
 			LOGGER.info(" *** URI " + request.getRequestURL().toString());
-			curUser = (CurrentUser) this.microserviceUtils.readFromRedis(request.getSession().getId(), "current_user");
+			// curUser = (CurrentUser) this.microserviceUtils.readFromRedis(request.getSession().getId(), "current_user");
 			if (curUser == null) {
 				LOGGER.info(" ***  Session is not available in redis.... , trying to login");
 				curUser = new CurrentUser(this.getUserDetails(request));
@@ -67,6 +102,7 @@ public class ApplicationSecurityRepository implements SecurityContextRepository 
 			}
 			String oldToken = (String) session.getAttribute(MS_USER_TOKEN);
 			String newToken = (String) this.microserviceUtils.readFromRedis(session.getId(), AUTH_TOKEN);
+			LOGGER.info(" *** old token:"+oldToken +"newtoken:"+newToken);
 			if (null != oldToken && null != newToken && !oldToken.equals(newToken)) {
 				session.setAttribute(MS_USER_TOKEN, newToken);
 			}
