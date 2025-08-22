@@ -239,6 +239,17 @@ public class GarbageAccountSchedulerService {
 			
 			// generate demand
 			
+			Map<String, Object> additionalDetails = new HashMap<>();
+		    additionalDetails.put("name", garbageAccount.getName());
+		    additionalDetails.put("mobileNumber", garbageAccount.getMobileNumber());
+		    additionalDetails.put("ward", garbageAccount.getAddresses().get(0).getWardName());
+		    additionalDetails.put("category", garbageAccount.getGrbgCollectionUnits().get(0).getCategory());
+		    additionalDetails.put("oldGarbageId", 
+		    	    garbageAccount.getGrbgOldDetails() != null 
+		    	        ? garbageAccount.getGrbgOldDetails().getOldGarbageId() 
+		    	        : null
+		    	);
+			generateBillRequest.setAdditionalDetail(additionalDetails);
 			savedDemands = demandService.generateDemand(generateBillRequest.getRequestInfo(), garbageAccount, "GB", billAmount, generateBillRequest);
 
 			if (CollectionUtils.isEmpty(savedDemands)) {
