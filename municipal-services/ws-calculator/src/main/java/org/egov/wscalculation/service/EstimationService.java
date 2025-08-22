@@ -773,15 +773,25 @@ public class EstimationService {
 		BigDecimal tax = totalCharge.multiply(taxAndCessPercentage.divide(WSCalculationConstant.HUNDRED));
 		List<TaxHeadEstimate> estimates = new ArrayList<>();
 		//
+		
+		/*
+		 For legacy and Regularized wave off of rest fee slab -PI-18845
+		 --->Abhishek Rana
+		 
+		 */
 		HashMap<String, Object> additionalDetails = mapper
 				.convertValue(criteria.getWaterConnection().getAdditionalDetails(), HashMap.class);
-		if (additionalDetails.get(WSCalculationConstant.connectionCategory).toString()
-				.equalsIgnoreCase("REGULARIZED")) {
+		Object categoryObj = additionalDetails.get(WSCalculationConstant.connectionCategory);
+		String category = categoryObj != null ? categoryObj.toString().toUpperCase() : null;
 
-			if (!(otherCharges.compareTo(BigDecimal.ZERO) == 0))
-				estimates.add(TaxHeadEstimate.builder().taxHeadCode(WSCalculationConstant.WS_OTHER_CHARGE)
-						.estimateAmount(otherCharges.setScale(2, 2)).build());
-
+		if ("REGULARIZED".equals(category) || "LEGACY".equals(category)) {
+//		    if (otherCharges.compareTo(BigDecimal.ZERO) != 0) {
+			otherCharges = (otherCharges == null) ? BigDecimal.ZERO : otherCharges;
+		        estimates.add(TaxHeadEstimate.builder()
+		                .taxHeadCode(WSCalculationConstant.WS_OTHER_CHARGE)
+		                .estimateAmount(otherCharges.setScale(2, 2))
+		                .build());
+		    
 		} else {
 			if (!(formFee.compareTo(BigDecimal.ZERO) == 0))
 				estimates.add(TaxHeadEstimate.builder().taxHeadCode(WSCalculationConstant.WS_FORM_FEE)
