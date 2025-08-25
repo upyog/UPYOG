@@ -1,4 +1,4 @@
-import { DownwardArrow, Loader, Rating, RemoveableTag, Table, UpwardArrow } from "@upyog/digit-ui-react-components";
+import { DownwardArrow, Loader, Rating, RemoveableTag,  UpwardArrow, Table } from "@upyog/digit-ui-react-components";
 import { differenceInCalendarDays, subYears } from "date-fns";
 import React, { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -16,9 +16,9 @@ const InsightView = ({ rowValue, insight, t, isFinance }) => {
       {rowValue}
       {!(isFinance) && <div>
       {` `}
-      {insight >= 0 ? ArrowUpwardElement() : ArrowDownwardElement()}
+      {/* {insight >= 0 ? ArrowUpwardElement() : ArrowDownwardElement()} */}
       {` `}
-      {isNaN(insight) ? `0%` : `${Digit.Utils.dss.formatter(Math.abs(insight), "number", "Lac", true, t)}%`}
+      {/* {isNaN(insight) ? `0%` : `${Digit.Utils.dss.formatter(Math.abs(insight), "number", "Lac", true, t)}%`} */}
       </div>}
     </span>
   );

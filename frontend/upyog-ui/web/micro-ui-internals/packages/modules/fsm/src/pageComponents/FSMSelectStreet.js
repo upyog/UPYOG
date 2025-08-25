@@ -213,7 +213,7 @@ if (property !== "undefined")
       <FormStep
         config={{ ...config, inputs }}
         isMandatory={true}
-        _defaultValues={{ street: property && property.propertyDetails && property.propertyDetails.address.street || property.address.street, doorNo: property && property.propertyDetails && property.propertyDetails.address.doorNo || property.address.doorNo}}
+        _defaultValues={{ street: property && property?.propertyDetails && property?.propertyDetails?.address?.street || property?.address?.street, doorNo: property && property?.propertyDetails && property?.propertyDetails?.address?.doorNo || property?.address?.doorNo}}
         onChange={handleSkip}
         onSelect={(data) => onSelect(config.key, data)}
         onSkip={onSkip}

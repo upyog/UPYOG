@@ -17,7 +17,8 @@
     "packages/modules/ws",
     "packages/modules/tl",
     "packages/modules/pgr",
-    "packages/modules/pt"
+    "packages/modules/pt",
+    "packages/modules/dss"
   ],
   "license": "MIT",
   "private": true,
