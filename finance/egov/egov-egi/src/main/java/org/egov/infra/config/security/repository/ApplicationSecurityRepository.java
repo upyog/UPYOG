@@ -94,7 +94,7 @@ public class ApplicationSecurityRepository implements SecurityContextRepository 
 			HttpSession session = request.getSession();
 			LOGGER.info(" *** session : " + session);
 			LOGGER.info(" *** URI " + request.getRequestURL().toString());
-			// curUser = (CurrentUser) this.microserviceUtils.readFromRedis(request.getSession().getId(), "current_user");
+			curUser = (CurrentUser) this.microserviceUtils.readFromRedis(request.getSession().getId(), "current_user");
 			if (curUser == null) {
 				LOGGER.info(" ***  Session is not available in redis.... , trying to login");
 				curUser = new CurrentUser(this.getUserDetails(request));
