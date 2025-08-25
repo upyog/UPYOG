@@ -21,6 +21,7 @@ import org.upyog.chb.web.models.workflow.State;
 
 import digit.models.coremodels.UserDetailResponse;
 import lombok.extern.slf4j.Slf4j;
+import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
 
 /**
  * This service class handles scheduled tasks for the Community Hall Booking module.
@@ -71,8 +72,14 @@ public class SchedulerService {
 	/**
 	 * This scheduler runs every 5 mins to delete the bookingId from the
 	 * paymentTimer table when the timer is expired or payment is failed
+	 * Uses ShedLock to ensure only one instance runs this job across multiple service instances
 	 */
 	@Scheduled(fixedRate = 5 * 60 * 1000) // Runs every 5 minutes
+	@SchedulerLock(
+		name = "chbCleanupExpiredEntriesJob",
+		lockAtLeastFor = "PT1M",  // Hold the lock for at least 1 minute
+		lockAtMostFor = "PT10M"   // Auto-release after 10 minutes if job crashes
+	)
 	public void cleanupExpiredEntries() {
 		log.info("Delete Expired Booking task running...:::.....:::");
 		deleteExpiredBookings();
@@ -96,8 +103,14 @@ public class SchedulerService {
 	 * This scheduler runs everyday midnight(1 am) to call workflow for booking
 	 * applications of which booking date has crossed to initiate booking refund
 	 * process
+	 * Uses ShedLock to ensure only one instance runs this job across multiple service instances
 	 */
 	@Scheduled(cron = "0 0 1 * * *")
+	@SchedulerLock(
+		name = "chbUpdateWorkflowForBookedApplicationsJob",
+		lockAtLeastFor = "PT1M",  // Hold the lock for at least 1 minute
+		lockAtMostFor = "PT30M"   // Auto-release after 30 minutes if job crashes
+	)
 	public void updateWorkflowForBookedApplications() {
 		log.info("Scheduler - Updating Workflow of Booked applications...");
 
