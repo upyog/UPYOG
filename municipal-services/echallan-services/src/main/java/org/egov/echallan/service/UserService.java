@@ -62,27 +62,27 @@ public class UserService {
 				.name("Citizen")
 				.build();
 		
+		UserDetailResponse userDetailResponse = null;
 		
-		//if(challan.getAccountId()==null) {
-			addUserDefaultFields(challan.getTenantId(), role, userInfo);
-            StringBuilder uri = new StringBuilder(userHost)
-                    .append(userContextPath)
-                    .append(userCreateEndpoint);
-            String userName = UUID.randomUUID().toString();
-            userInfo.setUserName(userName);
-            UserDetailResponse userDetailResponse = userCall(new CreateUserRequest(requestInfo, userInfo), uri);
-            if (userDetailResponse.getUser().get(0).getUuid() == null) {
-                throw new CustomException("INVALID USER RESPONSE", "The user created has uuid as null");
+		if(challan.getCitizen().getMobileNumber()!=null) {
+			userDetailResponse = userExists(userInfo,challan,requestInfo);
+            if(userDetailResponse.getUser().isEmpty()) {
+            	addUserDefaultFields(challan.getTenantId(), role, userInfo);
+                StringBuilder uri = new StringBuilder(userHost)
+                        .append(userContextPath)
+                        .append(userCreateEndpoint);
+                String userName = UUID.randomUUID().toString();
+                userInfo.setUserName(userName);
+                userDetailResponse = userCall(new CreateUserRequest(requestInfo, userInfo), uri);
+                if (userDetailResponse.getUser().get(0).getUuid() == null) {
+                    throw new CustomException("INVALID USER RESPONSE", "The user created has uuid as null");
+                }
             }
+//                throw new CustomException("INVALID USER","The uuid "+challan.getAccountId()+" does not exists");
+            //update needs to be added
+//            setOwnerFields(userInfo,userDetailResponse,requestInfo);
+		}
             setOwnerFields(userInfo, userDetailResponse, requestInfo);
-		/*}
-		else {
-            UserDetailResponse userDetailResponse = userExists(userInfo,challan,requestInfo);
-            if(userDetailResponse.getUser().isEmpty())
-                throw new CustomException("INVALID USER","The uuid "+challan.getAccountId()+" does not exists");
-           //update needs to be added
-            setOwnerFields(userInfo,userDetailResponse,requestInfo);
-        }*/
 
 	}
 	
@@ -93,7 +93,8 @@ public class UserService {
         userSearchRequest.setRequestInfo(requestInfo);
         userSearchRequest.setActive(true);
         userSearchRequest.setUserType("CITIZEN");
-        userSearchRequest.setUuid(Arrays.asList(challan.getAccountId()));
+//        userSearchRequest.setUuid(Arrays.asList(challan.getAccountId()));
+        userSearchRequest.setMobileNumber(owner.getMobileNumber());
         StringBuilder uri = new StringBuilder(userHost).append(userSearchEndpoint);
         return userCall(userSearchRequest,uri);
     }

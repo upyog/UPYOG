@@ -92,7 +92,7 @@ public class NotificationService {
 		}
 
 		List<String> configuredChannelNames =  util.fetchChannelList(new RequestInfo(), challanRequest.getChallan().getTenantId(), MCOLLECT_BUSINESSSERVICE, action);
-		if(configuredChannelNames.contains(CHANNEL_NAME_SMS)){
+//		if(configuredChannelNames.contains(CHANNEL_NAME_SMS)){
 			List<SMSRequest> smsRequests = new LinkedList<>();
 			if (null != config.getIsSMSEnabled()) {
 				if (config.getIsSMSEnabled()) {
@@ -101,7 +101,7 @@ public class NotificationService {
 						util.sendSMS(smsRequests, config.getIsSMSEnabled());
 				}
 			}
-		}
+//		}
 
 		if(configuredChannelNames.contains(CHANNEL_NAME_EVENT)){
 			if (null != config.getIsUserEventEnabled()) {
@@ -255,13 +255,15 @@ public class NotificationService {
 	 *            Notification Template Code
 	 */
 	private void enrichSMSRequest(ChallanRequest challanRequest, List<SMSRequest> smsRequestslist, String code) {
-		String message = util.getCustomizedMsg(challanRequest.getRequestInfo(), challanRequest.getChallan(), code);
+//		String message = util.getCustomizedMsg(challanRequest.getRequestInfo(), challanRequest.getChallan(), code);
+		SMSRequest smsRequest = util.getMessageDetails(challanRequest.getRequestInfo(), challanRequest.getChallan(), code);
 		String mobilenumber = challanRequest.getChallan().getCitizen().getMobileNumber();
 
-		if (message != null && !StringUtils.isEmpty(message)) {
-			SMSRequest smsRequest = SMSRequest.builder().
-					mobileNumber(mobilenumber).
-					message(message).build();
+		if (smsRequest.getMessage() != null && !StringUtils.isEmpty(smsRequest.getMessage())) {
+//			SMSRequest smsRequest = SMSRequest.builder().
+//					mobileNumber(mobilenumber).
+//					message(message).build();
+			smsRequest.setMobileNumber(mobilenumber);
 			smsRequestslist.add(smsRequest);
 		} else {
 			log.error("No message configured! Notification will not be sent.");
