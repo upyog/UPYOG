@@ -53,6 +53,10 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
+/**
+ * Represents a request for events in the Ewaste application.
+ * This class contains the request information and a list of events.
+ */
 @Validated
 @Data
 @Builder
@@ -61,10 +65,12 @@ import java.util.List;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class EventRequest {
 
+	// Request information associated with the event request
 	@NotNull
 	@JsonProperty("RequestInfo")
 	private RequestInfo requestInfo;
 
+	// List of events associated with the event request
 	@NotNull
 	@Valid
 	@JsonProperty("events")

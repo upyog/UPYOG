@@ -14,10 +14,9 @@ const Filter = ({ searchParams, onFilterChange, defaultSearchParams, statusMap, 
 
   const ApplicationTypeMenu = [
     {
-      label: "CHB_NEW_REGISTRATION",
-      value: "chb",
+      label: "ES_NEW_COMMUNITY_HALL_BOOKING",
+      value: "booking-refund",
     },
-    
   ];
 
   const localParamChange = (filterParam) => {
@@ -110,7 +109,7 @@ const Filter = ({ searchParams, onFilterChange, defaultSearchParams, statusMap, 
                 })}
               </div>
             </div>
-            <div>
+            {/* <div>
               <div className="filter-label" style={{ fontWeight: "normal" }}>
                 {t("ES_CHB_APP_TYPE")}
               </div>
@@ -141,7 +140,7 @@ const Filter = ({ searchParams, onFilterChange, defaultSearchParams, statusMap, 
                   }
                 }}
               />
-            </div>
+            </div> */}
             <div>
               <SubmitBar onSubmit={() => applyLocalFilters()} label={t("ES_COMMON_APPLY")} />
             </div>

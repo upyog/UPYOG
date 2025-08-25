@@ -30,6 +30,7 @@ const CreateEDCR = ({ parentRoute }) => {
       edcrNumber: "",
       planFile: null,
       tenantId: "",
+      coreArea: "NO",
       RequestInfo: {
         apiId: "",
         ver: "",

@@ -39,7 +39,12 @@ public class ProcessInstanceRequest {
         @NotNull
         private List<ProcessInstance> processInstances;
 
-
+    /**
+     * Adds a process instance to the list of process instances in the request.
+     *
+     * @param processInstanceItem the process instance to add
+     * @return the updated ProcessInstanceRequest object
+     */
         public ProcessInstanceRequest addProcessInstanceItem(ProcessInstance processInstanceItem) {
             if (this.processInstances == null) {
             this.processInstances = new ArrayList<>();

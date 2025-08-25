@@ -140,7 +140,7 @@ public class AssetMaintenanceService {
                 .requestInfo(requestInfo)
                 .asset(asset)
                 .build();
-        assetService.update(assetRequest);
+        assetService.updateAssetInSystem(assetRequest);
         log.info("Updated asset ID: {} with status: {} and usage: {}",
                 asset.getId(), asset.getAssetStatus(), asset.getAssetUsage());
     }

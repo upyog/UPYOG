@@ -15,7 +15,26 @@ import org.upyog.adv.web.models.BookingRequest;
 import com.jayway.jsonpath.JsonPath;
 
 import lombok.extern.slf4j.Slf4j;
-
+/**
+ * Validator class for validating MDMS (Master Data Management System) data in the Advertisement Booking Service.
+ * 
+ * Key Responsibilities:
+ * - Validates the master data provided in the booking request against the MDMS data.
+ * - Ensures that the required attributes (e.g., Ad Type, Documents, Face Area, Location) are present in MDMS.
+ * - Logs and throws exceptions if validation fails or data is inconsistent.
+ * 
+ * Methods:
+ * - `validateMdmsData`: Validates the MDMS data in the booking request.
+ * - `getAttributeValues`: Extracts attribute values from the MDMS response.
+ * - `validateIfMasterPresent`: Ensures that required master data attributes are present in MDMS.
+ * 
+ * Dependencies:
+ * - BookingConstants: Provides constants for required master data attributes.
+ * 
+ * Annotations:
+ * - @Component: Marks this class as a Spring-managed component.
+ * - @Slf4j: Enables logging for debugging and monitoring MDMS validation processes.
+ */
 @Component
 @Slf4j
 public class MDMSValidator {
@@ -58,8 +77,8 @@ public class MDMSValidator {
 	 */
 	public Map<String, List<String>> getAttributeValues(Object mdmsData) {
 
-		List<String> modulepaths = Arrays.asList(BookingConstants.ADV_JSONPATH_CODE,
-				BookingConstants.COMMON_MASTER_JSONPATH_CODE);
+		List<String> modulepaths = Arrays.asList(BookingConstants.ADV_JSONPATH_CODE
+				);
 		final Map<String, List<String>> mdmsResMap = new HashMap<>();
 		modulepaths.forEach(modulepath -> {
 			mdmsResMap.putAll(JsonPath.read(mdmsData, modulepath));

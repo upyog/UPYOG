@@ -1,16 +1,29 @@
 import React, { useEffect, useState } from "react";
 import { FormStep, TextInput, CardLabel, Dropdown, Toast } from "@upyog/digit-ui-react-components";
-import { useLocation } from "react-router-dom";
 import Timeline from "../components/EWASTETimeline";
 import { Controller, useForm } from "react-hook-form";
 import { SubmitBar } from "@upyog/digit-ui-react-components";
 import ProductList from "../components/EWASTEProductList";
 
+/**
+ * Form component for capturing E-Waste product details and quantities.
+ * Manages product selection, quantity input, and price calculation.
+ *
+ * @param {Object} props Component properties
+ * @param {Function} props.t Translation function
+ * @param {Object} props.config Form configuration settings
+ * @param {Function} props.onSelect Handler for form submission
+ * @param {string} props.userType Type of user (citizen/employee)
+ * @param {Object} props.formData Existing form data
+ * @returns {JSX.Element} Product details form with list view
+ */
 const EWProductDetails = ({ t, config, onSelect, userType, formData }) => {
-  const { pathname: url } = useLocation();
-  let index = window.location.href.charAt(window.location.href.length - 1);
+  const index = window.location.href.charAt(window.location.href.length - 1);
   let validation = {};
 
+  /**
+   * State management for product form fields and calculations
+   */
   const [productName, setProductName] = useState(
     (formData.ewdet && formData.ewdet[index] && formData.ewdet[index]?.productName) || formData?.ewdet?.productName || ""
   );
@@ -20,77 +33,79 @@ const EWProductDetails = ({ t, config, onSelect, userType, formData }) => {
   const [calculatedAmount, setCalculatedAmount] = useState(
     (formData.ewdet && formData.ewdet[index] && formData.ewdet[index]?.calculatedAmount) || formData?.ewdet?.calculatedAmount || ""
   );
-
   const [prlistName, setPrlistName] = useState(
     (formData.ewdet && formData.ewdet[index] && formData.ewdet[index]?.prlistName) || formData?.ewdet?.prlistName || []
   );
   const [prlistQuantity, setPrlistQuantity] = useState(
     (formData.ewdet && formData.ewdet[index] && formData.ewdet[index]?.prlistQuantity) || formData?.ewdet?.prlistQuantity || []
   );
-
   const [showToast, setShowToast] = useState(null);
 
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const stateId = Digit.ULBService.getStateId();
 
-  const { data: Menu } = Digit.Hooks.ew.useProductPriceMDMS(stateId, "Ewaste", "ProductName");
-
-  let menu = [];
-
-  Menu?.Ewaste?.ProductName &&
-    Menu?.Ewaste?.ProductName.map((ewasteDetails) => {
-      menu.push({
-        i18nKey: `EWASTE_${ewasteDetails.code}`,
-        code: `${ewasteDetails.name}`,
-        value: `${ewasteDetails.name}`,
-        price: `${ewasteDetails.price}`,
-      });
+  const { data: Menu } = Digit.Hooks.useEnabledMDMS(stateId, "Ewaste", [{ name: "ProductName" }],
+    {
+      select: (data) => {
+        const formattedData = data?.["Ewaste"]?.["ProductName"]
+        return formattedData;
+      },
     });
-
   const { control, setError, clearErrors } = useForm();
 
+  /**
+   * Transforms MDMS product data into dropdown options
+   */
+  const menu = Menu?.map(ewasteDetails => ({
+    i18nKey: `EWASTE_${ewasteDetails.code}`,
+    code: ewasteDetails.name,
+    value: ewasteDetails.name,
+    price: ewasteDetails.price,
+  })) || [];
+
+  /**
+   * Updates product quantity with validation
+   */
   function setproductQuantity(e) {
     setShowToast(null);
     setProductQuantity(e.target.value);
   }
 
+  /**
+   * Handles adding new products to the list
+   * Includes validation and duplicate checking
+   */
   const handleAddProduct = () => {
     if (!/^[1-9][0-9]*$/.test(productQuantity)) {
-      setShowToast({
-        label: t("EWASTE_ZERO_ERROR_MESSAGE"),
-      });
+      setShowToast({ label: t("EWASTE_ZERO_ERROR_MESSAGE") });
       return;
     }
 
-    // Checks if the selected product already exists
     const productExists = prlistName.some((item) => item.code === productName.code);
 
-    if (!productExists) {
-      if (productName) {
-        setPrlistName([...prlistName, { code: productName.code, i18nKey: productName.i18nKey, price: productName.price }]);
-        setPrlistQuantity([...prlistQuantity, { code: productQuantity }]);
-      } else {
-        setShowToast({
-          label: t("EWASTE_PRODUCT_NAME_NOT_SELECTED_LABEL")
-        })
-      }
+    if (!productExists && productName) {
+      setPrlistName([...prlistName, { code: productName.code, i18nKey: productName.i18nKey, price: productName.price }]);
+      setPrlistQuantity([...prlistQuantity, { code: productQuantity }]);
     } else {
       setShowToast({
-        label: t("EWASTE_DUPLICATE_PRODUCT_ERROR_MESSAGE"),
+        label: productName ? t("EWASTE_DUPLICATE_PRODUCT_ERROR_MESSAGE") : t("EWASTE_PRODUCT_NAME_NOT_SELECTED_LABEL"),
       });
     }
     setProductName("");
     setProductQuantity("");
   };
 
+  /**
+   * Processes form data for submission
+   * Handles different data structures for citizen and employee users
+   */
   const goNext = () => {
     let owner = formData.ewdet && formData.ewdet[index];
-    let ownerStep;
+    let ownerStep = { ...owner, prlistName, prlistQuantity, calculatedAmount };
+    
     if (userType === "citizen") {
-      ownerStep = { ...owner, prlistName, prlistQuantity, calculatedAmount };
       onSelect(config.key, { ...formData[config.key], ...ownerStep }, false, index);
     } else {
-      ownerStep = { ...owner, prlistName, prlistQuantity, calculatedAmount };
       onSelect(config.key, ownerStep, false, index);
     }
   };
@@ -105,10 +120,12 @@ const EWProductDetails = ({ t, config, onSelect, userType, formData }) => {
 
   return (
     <React.Fragment>
+      {/* Display the timeline if the user is on the citizen portal */}
       {window.location.href.includes("/citizen") ? <Timeline currentStep={1} /> : null}
 
       <FormStep config={config} onSelect={goNext} onSkip={onSkip} t={t} isDisabled={!calculatedAmount}>
         <div>
+          {/* Dropdown for selecting a product */}
           <CardLabel>{`${t("EWASTE_SEARCH_PRODUCT")}`}</CardLabel>
           <Controller
             control={control}
@@ -128,6 +145,7 @@ const EWProductDetails = ({ t, config, onSelect, userType, formData }) => {
             )}
           />
 
+          {/* Input field for product quantity */}
           <CardLabel>{`${t("EWASTE_QUANTITY")}`}</CardLabel>
           <TextInput
             t={t}
@@ -146,6 +164,7 @@ const EWProductDetails = ({ t, config, onSelect, userType, formData }) => {
             })}
           />
 
+          {/* Input field for product price (read-only) */}
           <CardLabel>{`${t("EWASTE_UNIT_PRICE")}`}</CardLabel>
           <TextInput
             t={t}
@@ -162,6 +181,7 @@ const EWProductDetails = ({ t, config, onSelect, userType, formData }) => {
         <SubmitBar label="Add Product" style={{ marginBottom: "10px" }} onSubmit={handleAddProduct} />
       </FormStep>
 
+      {/* Component to display the list of added products */}
       <div>
         <ProductList
           t={t}
@@ -174,6 +194,7 @@ const EWProductDetails = ({ t, config, onSelect, userType, formData }) => {
         />
       </div>
 
+      {/* Display a toast notification if an error occurs */}
       {showToast?.label && (
         <Toast
           label={showToast.label}
@@ -188,4 +209,4 @@ const EWProductDetails = ({ t, config, onSelect, userType, formData }) => {
   );
 };
 
-export default EWProductDetails;
+export default EWProductDetails; // Exporting the component

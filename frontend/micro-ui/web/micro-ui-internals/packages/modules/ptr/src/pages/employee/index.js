@@ -1,3 +1,23 @@
+/**
+ * @file EmployeeApp.js
+ * @description This component defines the routing and layout for the employee-facing application.
+ * It handles navigation, private routing, and rendering of various inbox, application, and search components.
+ * 
+ * @component
+ * - Uses `PrivateRoute` for secured routing.
+ * - Renders `Inbox`, `SearchApp`, and other employee-specific components.
+ * - Displays breadcrumbs for navigation context.
+ * - Handles new application, application details, and search pages.
+ * - Supports both desktop and mobile views.
+ * 
+ * @props
+ * @param {string} path - The base route path for the employee module.
+ * @param {string} url - The base URL for the employee module.
+ * @param {string} userType - The type of user accessing the app.
+
+ */
+
+
 import { PrivateRoute,BreadCrumb } from "@upyog/digit-ui-react-components";
 import React from "react";
 import { useTranslation } from "react-i18next";

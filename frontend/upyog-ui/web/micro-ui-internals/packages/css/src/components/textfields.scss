@@ -9,7 +9,7 @@
 .employee-card-input {
   @apply mb-lg pl-sm outline-none block border w-full h-10 border-input-border border-solid bg-white leading-10 text-form-field text-text-primary;
   margin-bottom: 16px !important;
-  height: 40px !important; 
+  height: 40px !important;
 }
 .employee-card-input:disabled {
   @apply border-grey-dark text-grey-dark !important;
@@ -30,7 +30,6 @@
 .employee-card-input-error {
   @apply mb-lg pl-sm block w-full h-10 outline-none border-2 border-error border-solid bg-white leading-10 text-form-field text-text-primary;
 }
-
 .card-textarea,
 .employee-card-textarea {
   @apply block outline-none mt-md mb-lg border w-full border-input-border border-solid bg-white h-24 text-form-field text-text-primary p-sm;
@@ -74,7 +73,7 @@
   }
 
   .card-textarea {
-   /* //width: 480px; */
+  /* //width: 480px; */
     @apply w-full;
     max-width:540px;
   }
@@ -92,8 +91,9 @@
   @apply mb-lg pl-sm outline-none block border w-full h-10 border-input-border border-solid bg-white leading-10 text-form-field text-text-primary;
 
 }
-.citizen-card-input{
-  height:2rem !important;
+
+.citizen-card-input {
+  height: 2rem !important;
   margin-bottom: 16px !important;
   line-height: 2.0rem !important;
 }
@@ -105,4 +105,18 @@
   background: #eeeeee;
   border-right: 0;
   padding-right: 5px;
+}
+
+.verificationInput .employee-card-input {
+  padding-left: 12px;
+  display: flex;
+  width: 100%;
+  height: 2.5rem;
+  background-color: rgb(255, 255, 255);
+  font-size: 16px;
+  line-height: 20px;
+  margin-bottom: 16px;
+  border-radius: 6px;
+  border: 1px solid #cccccc87;
+
 }

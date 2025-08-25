@@ -49,6 +49,7 @@ public class AssetLimitedDateRowMapper implements ResultSetExtractor<List<Asset>
                         .assetStatus(rs.getString("assetstatus"))
                         .applicationDate(rs.getLong("createdtime"))
                         .location(rs.getString("location"))
+                        .assetAssignable(rs.getBoolean("assetAssignable"))
                         .build();
 
                 assetMap.put(id, currentAsset);

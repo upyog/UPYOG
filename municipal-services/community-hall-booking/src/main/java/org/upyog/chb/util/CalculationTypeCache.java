@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.mdms.model.MasterDetail;
@@ -14,6 +15,7 @@ import org.egov.mdms.model.ModuleDetail;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 import org.upyog.chb.config.CommunityHallBookingConfiguration;
 import org.upyog.chb.constants.CommunityHallBookingConstants;
 import org.upyog.chb.repository.ServiceRequestRepository;
@@ -27,6 +29,36 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONArray;
 
+/**
+ * This utility class provides caching functionality for calculation types
+ * used in the Community Hall Booking module.
+ * 
+ * Purpose:
+ * - To cache calculation types for community halls to reduce redundant API calls.
+ * - To improve performance by retrieving calculation types from the cache when available.
+ * 
+ * Dependencies:
+ * - CommunityHallBookingConfiguration: Provides configuration properties for API endpoints.
+ * - ServiceRequestRepository: Sends HTTP requests to fetch calculation types from external services.
+ * - ObjectMapper: Parses JSON responses into Java objects.
+ * 
+ * Features:
+ * - Maintains an in-memory cache of calculation types mapped by hall codes.
+ * - Fetches calculation types from external services when not available in the cache.
+ * - Logs cache operations and errors for debugging and monitoring purposes.
+ * 
+ * Fields:
+ * - feeTypeCache: A static map that stores calculation types for each hall code.
+ * 
+ * Methods:
+ * 1. getcalculationType:
+ *    - Retrieves calculation types for a given hall code from the cache.
+ *    - If not available in the cache, fetches the data from an external service and updates the cache.
+ * 
+ * Usage:
+ * - This class is automatically managed by Spring and injected wherever caching of calculation types is required.
+ * - It ensures consistent and efficient retrieval of calculation types across the module.
+ */
 @Component
 @Slf4j
 public class CalculationTypeCache {
@@ -73,17 +105,20 @@ public class CalculationTypeCache {
 			}
 
 			if (rootNode != null) {
-				for (JsonNode hallNode : rootNode) {
-					JsonNode faceAreaNode = hallNode.get(hallCode);
-					if (faceAreaNode != null) {
-						try {
-							calculationTypes = mapper.readValue(faceAreaNode.toString(),
-									mapper.getTypeFactory().constructCollectionType(List.class, CalculationType.class));
-							feeTypeCache.put(hallCode, calculationTypes);
-						} catch (JsonProcessingException e) {
-							log.error("Error converting calculation types: ", e);
-						}
+				try {
+					calculationTypes = mapper.readValue(rootNode.toString(),
+							mapper.getTypeFactory().constructCollectionType(List.class, CalculationType.class));
+					log.info("calculationTypes : {}", calculationTypes);
+					if (!CollectionUtils.isEmpty(calculationTypes)) {
+						feeTypeCache = calculationTypes.stream()
+								.collect(Collectors.groupingBy(CalculationType::getCommunityHallCode, // Key: Community Hall code
+										Collectors.toList() // Value: List of CalculationType objects
+								));
 					}
+
+				} catch (JsonProcessingException e) {
+					log.error("Error converting calculation types: ", e);
+				
 				}
 			}
 			log.info("Loaded calculation type data for all hall codes : " + feeTypeCache);

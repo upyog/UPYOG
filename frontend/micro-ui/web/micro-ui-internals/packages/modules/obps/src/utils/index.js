@@ -23,10 +23,6 @@ export const sortDropdownNames = (options, optionkey, locilizationkey) => {
   return options.sort((a, b) => locilizationkey(a[optionkey]).localeCompare(locilizationkey(b[optionkey])));
 };
 
-export const uuidv4 = () => {
-  return uuid_v4();
-};
-
 export const pdfDownloadLink = (documents = {}, fileStoreId = "", format = "") => {
   let downloadLink = documents[fileStoreId] || "";
   let differentFormats = downloadLink?.split(",") || [];

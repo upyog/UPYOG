@@ -32,8 +32,10 @@ const Urls = {
   UserSearch: "/user/_search",
   UserLogout: "/user/_logout",
   UserCreate:"/user/users/_createnovalidate",
-
+  UserUpdateAddressV2:"/user/_updateAddress",
+  UserSearchNewV2: "/user/users/v2/_search", 
   Shortener: "/egov-url-shortening/shortener",
+  UserCreateAddressV2: "/user/_createAddress", 
   employeeDashboardSearch: "/employee-dashboard/_search",
 
   fsm: {
@@ -156,6 +158,7 @@ const Urls = {
   },
   edcr: {
     create: "/edcr/rest/dcr/scrutinize",
+    anonymousCreate: "/edcr/rest/dcr/anonymousScrutinize"
   },
   preApproved:{
     search: "/bpa-services/v1/preapprovedplan/_search",
@@ -201,16 +204,21 @@ const Urls = {
     meter_search:"/ws-calculator/meterConnection/_search"
   },
 
-  asset: {
+   asset: {
     create: "/asset-services/v1/assets/_create",
     search: "/asset-services/v1/assets/_search",
     update: "/asset-services/v1/assets/_update",
     assign: "/asset-services/v1/assets/assignment/_create",
-    depriciationProcess:"/asset-services/v1/assets/depreciation/_process",  //this api for assetDepriciationProcess
-    depriciationList:"/asset-services/v1/assets/depreciation/list",   // this api for list of assetDepriciation
-    return_asset: "/asset-services/v1/assets/assignment/_update",
-    assets_Reciept_Search: "/asset-services/v1/assets/_search",     //This url use for  Assets Recipt Detail QR Code 
-    assetDisposedCreate: "/asset-services/v1/disposal/_create"
+    depriciationProcess:"/asset-services/v1/assets/depreciation/_process",  
+    maintenance:"/asset-services/maintenance/v1/_create",  
+    edit_maintenance:"/asset-services/maintenance/v1/_update", 
+    assets_Reciept_Search: "/asset-services/v1/assets/_search",    
+    assetDisposedCreate: "/asset-services/v1/disposal/_create",
+    depriciationList:"/asset-services/v1/assets/depreciation/list",   
+    maintenanceList:"/asset-services/maintenance/v1/_search", 
+    return_asset: "/asset-services/v1/assets/assignment/_update",  
+    disposalList:"/asset-services/v1/disposal/_search",
+    assetAssignable:"/asset-services/v1/assets/assignment/_search",   
   },
   ew: {
     create: "/ewaste-services/ewaste-request/_create",
@@ -243,6 +251,12 @@ const Urls = {
 
   cm: {
     search: "/verification-service/validity/_search"
+  },
+   // urls for making api calls for pgr-ai module
+   pgrAi:{
+    PGR_Create_AI:"/pgr-ai-services/v1/request/_create",
+    PGR_Search_AI: "/pgr-ai-services/v1/request/_search",
+    PGR_Update_AI:"/pgr-ai-services/v1/request/_update"
   },
 
 digiLocker:{
@@ -291,6 +305,29 @@ eSign:{
   access_control: "/access/v1/actions/mdms/_get",
   billgenie: "/egov-searcher",
   audit: "/inbox/v1/elastic/_search",
+
+  wt:{
+    create: "/request-service/water-tanker/v1/_create",
+    update: "/request-service/water-tanker/v1/_update",
+    search: "/request-service/water-tanker/v1/_search",
+  },
+  mt:{
+    create: "/request-service/mobile-toilet/v1/_create",
+    update: "/request-service/mobile-toilet/v1/_update",
+    search: "/request-service/mobile-toilet/v1/_search",
+  },
+  tp: {
+    create: "/tp-services/tree-pruning/v1/_create",
+    update: "/tp-services/tree-pruning/v1/_update",
+    search: "/tp-services/tree-pruning/v1/_search",
+  },
+
+  vendor: {
+    create: "/vendor-services/vendor/_create",
+    search: "/vendor-services/vendor/_search",
+    additionaldetailsCreate: "/vendor-management/api/v1/_create",
+    vendorcommonSearch: "/vendor-management/api/v1/vendorPlusAdditional/_search"
+  },
 };
 
 export default Urls;

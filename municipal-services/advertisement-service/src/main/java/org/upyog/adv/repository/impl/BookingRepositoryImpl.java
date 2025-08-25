@@ -51,6 +51,30 @@ import digit.models.coremodels.PaymentDetail;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * Implementation of the BookingRepository interface for the Advertisement Booking Service.
+ * 
+ * This class handles database interactions for advertisement bookings, including:
+ * - Fetching booking details based on search criteria
+ * - Managing draft applications and slot availability
+ * - Handling booking cart details and document details
+ * - Updating booking statuses and workflows
+ * 
+ * Key Components:
+ * - JdbcTemplate: Used for executing SQL queries
+ * - Query Builders: Constructs dynamic SQL queries based on search criteria
+ * - Row Mappers: Maps database rows to Java objects
+ * - Kafka Producer: Publishes events to Kafka topics for further processing
+ * 
+ * Annotations:
+ * - @Repository: Marks this class as a Spring-managed repository component
+ * - @Transactional: Ensures atomicity for database operations
+ * 
+ * Dependencies:
+ * - BookingConfiguration: Provides configuration properties
+ * - BookingUtil: Utility methods for common booking operations
+ * - Row Mappers: Maps database results to Java objects
+ */
 @Repository
 @Slf4j
 public class BookingRepositoryImpl implements BookingRepository {

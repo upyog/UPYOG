@@ -8,8 +8,8 @@ export const EmployeeDashboardService = {
       url: Urls.employeeDashboardSearch,
       useCache: false,
       method: "POST",
-      auth: auth === false ? auth : true,
-      userService: auth === false ? auth : true,
+      auth: auth !== false,
+      userService: auth !== false,
       data: { tenantId, moduleName }
     }),
     

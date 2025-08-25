@@ -181,20 +181,7 @@ public class Plan implements Serializable {
     private transient List<SepticTank> septicTanks = new ArrayList<>();
     // Trees and plant defined in the plan
     private transient Plantation plantation;
-    
   
-    
-    private  Map<String, List<Map<String, Object>>> edcrRulesFeatures;
-    
-    public Map<String, List<Map<String, Object>>> getEdcrRulesFeatures() {
-		return edcrRulesFeatures;
-	}
-
-	public void setEdcrRulesFeatures(Map<String, List<Map<String, Object>>> edcrRulesFeatures) {
-		this.edcrRulesFeatures = edcrRulesFeatures;
-	}
-
-	
     // Guard room details
     private transient GuardRoom guardRoom;
     // Segregated toilet facilities for visitors in Public Buildings (within the premises of the building, but outside the
@@ -220,6 +207,8 @@ public class Plan implements Serializable {
     private String dxfFileName;
 
     private List<EdcrPdfDetail> edcrPdfDetails;
+    
+    private String tenantId;
 
     @Transient
     private Boolean strictlyValidateDimension = false;
@@ -517,6 +506,15 @@ public class Plan implements Serializable {
     public void setDxfFileName(String dxfFileName) {
         this.dxfFileName = dxfFileName;
     }
+    
+    public String getTenantId() {
+        return tenantId;
+    }
+
+    public void setTenantId(String tenantId) {
+        this.tenantId = tenantId;
+    }
+
 
     public List<EdcrPdfDetail> getEdcrPdfDetails() {
         return edcrPdfDetails;
@@ -701,6 +699,5 @@ public class Plan implements Serializable {
     public void setCoreArea(String coreArea) {
         this.coreArea = coreArea;
     } */
-
 
 }

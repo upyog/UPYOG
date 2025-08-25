@@ -1,0 +1,271 @@
+{
+   "RequestInfo": {
+        "apiId": "Rainmaker",
+        "authToken": "ec7b8c35-55fe-45eb-9fd0-15e03c2dd491",
+        "userInfo": {
+            "id": 243,
+            "uuid": "f8672e56-71e7-4863-b75d-9f3f37d5f742",
+            "userName": "9999009999",
+            "name": "Shivank",
+            "mobileNumber": "9999009999",
+            "emailId": "shuklashivank28@gmail.com",
+            "locale": null,
+            "type": "CITIZEN",
+            "roles": [
+                {
+                    "name": "Citizen",
+                    "code": "CITIZEN",
+                    "tenantId": "pg"
+                }
+            ],
+            "active": true,
+            "tenantId": "pg",
+            "permanentCity": null
+        },
+        "msgId": "1729771038471|en_IN",
+        "plainAccessRequest": {}
+    },
+      "BusinessServices": [
+        {
+            "tenantId": "pg",
+            "businessService": "cnd",
+            "business": "cnd-service",
+            "businessServiceSla": "",
+            "states": [
+                {
+                  "sla": null,
+                  "state": null,
+                  "actions": [
+                    {
+                      "roles": [
+                        "CITIZEN",
+                        "CND_CEMP"
+                      ],
+                      "action": "APPLY",
+                      "active": true,
+                      "nextState": "PENDING_FOR_FIELD_INSPECTOR_ASSIGNMENT"
+                    },
+                    {
+                        "roles": [
+                          "CITIZEN",
+                          "CND_CEMP"
+                        ],
+                        "action": "DEPOSIT_DIRECT_TO_CENTRE",
+                        "active": true,
+                        "nextState": "WASTE_PICKUP_INPROGRESS"
+                      }
+                  ],
+                  "isStartState": true,
+                  "isStateUpdatable": true,
+                  "isTerminateState": false,
+                  "docUploadRequired": false
+                },
+                {
+                  "sla": "",
+                  "state": "PENDING_FOR_FIELD_INSPECTOR_ASSIGNMENT",
+                  "actions": [
+                    {
+                      "roles": [
+                        "CND_CEMP"
+                      ],
+                      "action": "ASSIGN_FIELD_INSPECTOR",
+                      "active": true,
+                      "nextState": "PENDING_VERIFICATION_BY_FIELD_INSPECTOR"
+                    },
+                    {
+                      "roles": [
+                        "CND_CEMP"
+                      ],
+                      "action": "REJECT",
+                      "active": true,
+                      "nextState": "REJECTED"
+                    }
+                  ],
+                  "isStartState": false,
+                  "isStateUpdatable": true,
+                  "isTerminateState": false,
+                  "applicationStatus": "PENDING_FOR_FIELD_INSPECTOR_ASSIGNMENT",
+                  "docUploadRequired": false
+                },
+                {
+                  "sla": "",
+                  "state": "PENDING_VERIFICATION_BY_FIELD_INSPECTOR",
+                  "actions": [
+                    {
+                      "roles": [
+                        "FIELD_INSPECTOR"
+                      ],
+                      "action": "APPROVE",
+                      "active": true,
+                      "nextState": "APPROVED"
+                    },
+                    {
+                        "roles": [
+                          "FIELD_INSPECTOR"
+                        ],
+                        "action": "REJECT",
+                        "active": true,
+                        "nextState": "SEND_BACK_TO_EMPLOYEE"
+                      }
+                  ],
+                  "isStartState": false,
+                  "isStateUpdatable": true,
+                  "isTerminateState": false,
+                  "applicationStatus": "PENDING_FOR_APPROVAL",
+                  "docUploadRequired": false
+                },
+                {
+                    "sla": "",
+                    "state": "APPROVED",
+                    "actions": [
+                      {
+                        "roles": [
+                          "CITIZEN"
+                        ],
+                        "action": "PAY",
+                        "active": true,
+                        "nextState": "ASSIGN_VENDOR"
+                      }
+                    ],
+                    "isStartState": false,
+                    "isStateUpdatable": true,
+                    "isTerminateState": false,
+                    "applicationStatus": "APPROVED",
+                    "docUploadRequired": false
+                  },
+                {
+                  "sla": "",
+                  "state": "ASSIGN_VENDOR",
+                  "actions": [
+                    {
+                      "roles": [
+                        "CND_CEMP"
+                      ],
+                      "action": "ASSIGN_VENDOR",
+                      "active": true,
+                      "nextState": "PENDING_FOR_VEHICLE_DRIVER_ASSIGN"
+                    }
+                  ],
+                  "isStartState": false,
+                  "isStateUpdatable": true,
+                  "isTerminateState": false,
+                  "applicationStatus": "PENDING_FOR_VENDOR_ASSIGNMENT",
+                  "docUploadRequired": false
+                },
+                {
+                  "sla": "",
+                  "state": "PENDING_FOR_VEHICLE_DRIVER_ASSIGN",
+                  "actions": [
+                    {
+                      "roles": [
+                        "CND_VENDOR"
+                      ],
+                      "action": "ASSIGN_VEHICLE_DRIVER",
+                      "active": true,
+                      "nextState": "WASTE_PICKUP_INPROGRESS"
+                    },
+                    {
+                      "roles": [
+                        "CND_VENDOR"
+                      ],
+                      "action": "REJECT",
+                      "active": true,
+                      "nextState": "ASSIGN_VENDOR"
+                    }
+                  ],
+                  
+                  "isStartState": false,
+                  "isStateUpdatable": true,
+                  "isTerminateState": false,
+                  "applicationStatus": "PENDING_FOR_VEHICLE_DRIVER_ASSIGN",
+                  "docUploadRequired": false
+                },
+                {
+                  "sla": "",
+                  "state": "WASTE_PICKUP_INPROGRESS",
+                  "actions": [
+                    {
+                      "roles": [
+                        "CND_FACILITY_CEMP"
+                      ],
+                      "action": "COMPLETE_REQUEST",
+                      "active": true,
+                      "nextState": "COMPLETED"
+                    }
+                  ],
+                  "isStartState": false,
+                  "isStateUpdatable": true,
+                  "isTerminateState": false,
+                  "applicationStatus": "WASTE_PICKUP_INPROGRESS",
+                  "docUploadRequired": false
+                },
+                {
+                    "sla": "",
+                    "state": "SEND_BACK_TO_EMPLOYEE",
+                    "actions": [
+                      {
+                        "roles": [
+                          "CND_CEMP"
+                        ],
+                        "action": "REJECT",
+                        "active": true,
+                        "nextState": "REJECTED"
+                      },
+                      {
+                        "roles": [
+                          "CND_CEMP"
+                        ],
+                        "action": "SEND_BACK_TO_CITIZEN",
+                        "active": true,
+                        "nextState": "SENT_BACK_TO_CITIZEN"
+                      }
+                    ],
+                    "isStartState": false,
+                    "isStateUpdatable": true,
+                    "isTerminateState": false,
+                    "applicationStatus": "APPLICATION_SENT_BACK_TO_EMPLOYEE",
+                    "docUploadRequired": false
+                  },
+                  {
+                    "sla": "",
+                    "state": "SENT_BACK_TO_CITIZEN",
+                    "actions": [
+                      {
+                        "roles": [
+                          "CITIZEN",
+                          "CND_CEMP"
+                        ],
+                        "action": "APPLY",
+                        "active": true,
+                        "nextState": "PENDING_FOR_FIELD_INSPECTOR_ASSIGNMENT"
+                      }
+                     
+                    ],
+                    "isStartState": false,
+                    "isStateUpdatable": true,
+                    "isTerminateState": false,
+                    "applicationStatus": "CITIZEN_ACTION_REQUIRED",
+                    "docUploadRequired": false
+                  },
+                {
+                  "sla": "",
+                  "state": "COMPLETED",
+                  "isStartState": false,
+                  "isStateUpdatable": false,
+                  "isTerminateState": true,
+                  "applicationStatus": "COMPLETED",
+                  "docUploadRequired": false
+                },
+                {
+                  "sla": "",
+                  "state": "REJECTED",
+                  "isStartState": false,
+                  "isStateUpdatable": false,
+                  "isTerminateState": true,
+                  "applicationStatus": "REJECTED",
+                  "docUploadRequired": false
+                }
+              ]
+        }
+    ]
+}

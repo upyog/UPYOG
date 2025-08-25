@@ -2,7 +2,16 @@ import React, { useEffect, useState } from "react";
 import { Loader } from "@upyog/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 import StatusCount from "./StatusCount";
-
+/**
+ * This Status component displays a list of application statuses with counts, using data from what appears to be a
+ * custom hook (Digit.Hooks.useApplicationStatusGeneral). It shows a loading state while data is fetched and provides 
+ * functionality to toggle between showing more or fewer status options.
+ * Key observations:
+ * The component fetches status data using a custom hook
+ * It displays a limited set of statuses initially (up to 4) with an option to show more.
+ * It uses translation functionality for internationalization.
+ * It passes data down to a child component (StatusCount) for each status item.
+ */
 const Status = ({ onAssignmentChange, searchParams, businessServices, statusMap, moduleCode }) => {
   const { t } = useTranslation();
 

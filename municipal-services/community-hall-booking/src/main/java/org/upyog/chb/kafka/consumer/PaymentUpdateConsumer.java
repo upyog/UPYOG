@@ -18,6 +18,32 @@ import com.jayway.jsonpath.DocumentContext;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * This class acts as a Kafka consumer for handling payment update events
+ * related to the Community Hall Booking module.
+ * 
+ * Purpose:
+ * - To listen to Kafka topics for payment-related events such as receipt creation.
+ * - To process the consumed records and trigger appropriate actions for payment updates.
+ * 
+ * Dependencies:
+ * - PaymentNotificationService: Used to handle notifications or updates based on payment events.
+ * - CommunityHallBookingUtil: Utility class for common operations related to community hall booking.
+ * 
+ * Kafka Listener:
+ * - Listens to the topic specified in the application properties:
+ *   1. ${kafka.topics.receipt.create}: Topic for payment receipt creation events.
+ * 
+ * Features:
+ * - Logs the consumed record and topic for debugging and monitoring purposes.
+ * - Processes the payment success events and updates the booking status accordingly.
+ * - Handles exceptions gracefully by logging errors during record processing.
+ * 
+ * Usage:
+ * - This class is automatically managed by Spring as a Kafka consumer.
+ * - It processes payment-related events and triggers updates or notifications as needed.
+ */
+
 @Component
 @Slf4j
 public class PaymentUpdateConsumer {

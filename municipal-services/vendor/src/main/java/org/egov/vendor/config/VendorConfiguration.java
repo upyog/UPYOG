@@ -119,7 +119,11 @@ public class VendorConfiguration {
 	@Value("${egov.vendorregistory.max.limit}")
 	private Integer maxSearchLimit;
 
-	@Value("${dso.role}")
+	/**
+	 * Commented this as moved this mapping  to MDMS data
+	 */
+
+	/* @Value("${dso.role}")
 	private String dsoRole;
 
 	@Value("${dso.driver}")
@@ -129,7 +133,7 @@ public class VendorConfiguration {
 	private String dsoRoleName;
 
 	@Value("${dso.driver.role.name}")
-	private String dsoDriverRoleName;
+	private String dsoDriverRoleName; */
 
 	@Value("${citizen.role}")
 	private String citizenRole;

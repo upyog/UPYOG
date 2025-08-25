@@ -22,8 +22,10 @@ import org.upyog.sv.web.models.common.ResponseInfo.StatusEnum;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import lombok.extern.slf4j.Slf4j;
 import net.logstash.logback.encoder.org.apache.commons.lang.StringUtils;
 
+@Slf4j
 @Component
 public class StreetVendingUtil {
 
@@ -50,6 +52,14 @@ public class StreetVendingUtil {
 
 	public static LocalDate getCurrentDate() {
 		return LocalDate.now();
+	}
+
+	public static LocalDate getCurrentDateFromYear(int years) {
+		return LocalDate.now().plusYears(years);
+	}
+
+	public static LocalDate getCurrentDateFromMonths(int months) {
+		return LocalDate.now().plusMonths(months);
 	}
 
 	public static AuditDetails getAuditDetails(String by, Boolean isCreate) {
@@ -146,4 +156,79 @@ public class StreetVendingUtil {
 
 		return null; // Return null if both parsing attempts fail
 	}
+
+	/**
+	 * Converts date string to long using LocalDateTime
+	 *
+	 * @param date   Date string to be parsed
+	 * @param format Format of the date string
+	 * @return Long value of date in milliseconds
+	 */
+	public static Long dateTolong(String date, String format) {
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern(format);
+
+		// If format includes time, use LocalDateTime; otherwise, use LocalDate
+		if (format.contains("H") || format.contains("m") || format.contains("s")) {
+			LocalDateTime dateTime = LocalDateTime.parse(date, formatter);
+			return dateTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+		} else {
+			LocalDate localDate = LocalDate.parse(date, formatter);
+			return localDate.atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli();
+		}
+	}
+	
+	/**
+	 * Converts an epoch timestamp in milliseconds to a formatted date string.
+	 *
+	 * @param epochMillis The epoch time in milliseconds (e.g., from System.currentTimeMillis()).
+	 * @param format The desired date format (e.g., "dd-MM-yyyy", "yyyy/MM/dd").
+	 * @return A formatted date string, or "NA" if the epoch value is null or zero.
+	 *
+	 * Example:
+	 * <pre>
+	 *     convertEpochToFormattedDate(1673827200000L, "dd-MM-yyyy") returns "16-01-2023"
+	 * </pre>
+	 */
+	
+	public String convertEpochToFormattedDate(Long epochMillis, String format) {
+	    if (epochMillis == null || epochMillis == 0) return "NA";
+
+	    return Instant.ofEpochMilli(epochMillis)
+	                  .atZone(ZoneId.systemDefault())
+	                  .toLocalDate()
+	                  .format(DateTimeFormatter.ofPattern(format));
+	}
+
+ 
+	/**
+	 * Formats a SQL date from a ResultSet column to a string using the specified pattern.
+	 *
+	 * <p>This method retrieves a {@link java.time.LocalDate} from the given column name
+	 * and formats it using the provided {@link java.time.format.DateTimeFormatter} pattern.
+	 * If the date is null or an exception occurs, it returns {@code null}.
+	 *
+	 * @param rs The {@link java.sql.ResultSet} containing the date column.
+	 * @param columnName The name of the column containing the SQL date.
+	 * @param pattern The desired date format pattern (e.g., "dd-MM-yyyy", "yyyy/MM/dd").
+	 * @return The formatted date string, or {@code null} if the column is null or an error occurs.
+	 *
+	 * Example:
+	 * <pre>
+	 *     formatSqlDateToString(rs, "dob", "dd-MM-yyyy") // returns "15-05-2024"
+	 * </pre>
+	 */
+	
+	public String formatSqlDateToString(ResultSet rs, String columnName, String pattern) {
+	    try {
+	        LocalDate date = rs.getObject(columnName, LocalDate.class);
+	        if (date != null) {
+	            DateTimeFormatter formatter = DateTimeFormatter.ofPattern(pattern);
+	            return date.format(formatter);
+	        }
+	    } catch (SQLException e) {
+	        log.info("Error while formatting date to string " + e);
+	    }
+	    return null;
+	}
+
 }

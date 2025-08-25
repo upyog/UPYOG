@@ -47,6 +47,10 @@
 
 package org.egov.edcr.feature;
 
+import static org.egov.edcr.constants.CommonFeatureConstants.EMPTY_STRING;
+import static org.egov.edcr.constants.EdcrReportConstants.*;
+import static org.egov.edcr.service.FeatureUtil.addScrutinyDetailtoPlan;
+import static org.egov.edcr.service.FeatureUtil.mapReportDetails;
 import static org.egov.edcr.utility.DcrConstants.OBJECTDEFINED_DESC;
 import static org.egov.edcr.utility.DcrConstants.OBJECTNOTDEFINED;
 import static org.egov.edcr.utility.DcrConstants.OBJECTNOTDEFINED_DESC;
@@ -57,19 +61,20 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import org.egov.common.entity.edcr.OccupancyType;
-import org.egov.common.entity.edcr.Plan;
-import org.egov.common.entity.edcr.Result;
-import org.egov.common.entity.edcr.ScrutinyDetail;
+import org.egov.common.entity.edcr.*;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 
 @Service
 public class WaterTreatmentPlant extends FeatureProcess {
-    private static final String SUB_RULE_53_5_DESCRIPTION = "Liquid waste management treatment plant ";
-    private static final String SUB_RULE_53_5 = "53-5";
-    private static final BigDecimal TWOTHOUSANDFIVEHUNDER = BigDecimal.valueOf(2500);
-
+    /**
+     * Validates the building plan for water treatment plant requirements.
+     * Currently commented out - would check if liquid waste treatment plants are required
+     * based on occupancy type and built-up area, adding errors if missing.
+     *
+     * @param pl The building plan to validate
+     * @return The unmodified plan
+     */
     @Override
     public Plan validate(Plan pl) {/*
                                     * HashMap<String, String> errors = new HashMap<>(); if (pl != null && pl.getUtility() != null)
@@ -92,6 +97,14 @@ public class WaterTreatmentPlant extends FeatureProcess {
         return pl;
     }
 
+    /**
+     * Processes water treatment plant requirements for the building plan.
+     * Currently commented out - would validate liquid waste treatment requirements
+     * based on occupancy types and generate scrutiny details for compliance verification.
+     *
+     * @param pl The building plan to process
+     * @return The unmodified plan
+     */
     @Override
     public Plan process(Plan pl) {/*
                                    * validate(pl); scrutinyDetail = new ScrutinyDetail(); scrutinyDetail.addColumnHeading(1,
@@ -110,18 +123,33 @@ public class WaterTreatmentPlant extends FeatureProcess {
         return pl;
     }
 
+    /**
+     * Processes liquid waste treatment plant requirements and generates scrutiny details.
+     * Checks if liquid waste treatment plant is defined and creates appropriate
+     * scrutiny report entries with compliance status.
+     *
+     * @param pl The building plan containing utility information
+     */
     private void processLiquidWasteTreatment(Plan pl) {
         if (!pl.getUtility().getLiquidWasteTreatementPlant().isEmpty()) {
-            setReportOutputDetailsWithoutOccupancy(pl, SUB_RULE_53_5, SUB_RULE_53_5_DESCRIPTION, "",
+            setReportOutputDetailsWithoutOccupancy(pl, SUB_RULE_53_5, SUB_RULE_53_5_DESCRIPTION, EMPTY_STRING,
                     OBJECTDEFINED_DESC, Result.Accepted.getResultVal());
             return;
         } else {
-            setReportOutputDetailsWithoutOccupancy(pl, SUB_RULE_53_5, SUB_RULE_53_5_DESCRIPTION, "",
+            setReportOutputDetailsWithoutOccupancy(pl, SUB_RULE_53_5, SUB_RULE_53_5_DESCRIPTION, EMPTY_STRING,
                     OBJECTNOTDEFINED_DESC, Result.Not_Accepted.getResultVal());
             return;
         }
     }
 
+    /**
+     * Checks if the occupancy type requires liquid waste treatment plant unconditionally.
+     * Returns true for occupancy types B1, B2, B3, C, C1, C2, C3, D, D1, D2, G1, G2, H, I1, I2
+     * which always require liquid waste treatment facilities regardless of built-up area.
+     *
+     * @param occupancyType The occupancy type to check
+     * @return true if occupancy type requires treatment plant unconditionally, false otherwise
+     */
     private boolean checkOccupancyTypeEqualsToNonConditionalOccupancyTypes(OccupancyType occupancyType) {
         return occupancyType.equals(OccupancyType.OCCUPANCY_B1) ||
                 occupancyType.equals(OccupancyType.OCCUPANCY_B2) ||
@@ -134,6 +162,14 @@ public class WaterTreatmentPlant extends FeatureProcess {
                 occupancyType.equals(OccupancyType.OCCUPANCY_I2);
     }
 
+    /**
+     * Checks if the occupancy type requires liquid waste treatment plant conditionally.
+     * Returns true for occupancy types A1, A2, A3, A4 which require liquid waste treatment
+     * facilities only when built-up area exceeds the specified threshold.
+     *
+     * @param occupancyType The occupancy type to check
+     * @return true if occupancy type requires treatment plant conditionally, false otherwise
+     */
     private boolean checkOccupancyTypeEqualsToConditionalOccupancyTypes(OccupancyType occupancyType) {
         return occupancyType.equals(OccupancyType.OCCUPANCY_A1) || occupancyType.equals(OccupancyType.OCCUPANCY_A2) ||
                 occupancyType.equals(OccupancyType.OCCUPANCY_A3) || occupancyType.equals(OccupancyType.OCCUPANCY_A4) ||
@@ -143,18 +179,37 @@ public class WaterTreatmentPlant extends FeatureProcess {
                 || occupancyType.equals(OccupancyType.OCCUPANCY_F4);
     }
 
+    /**
+     * Adds liquid waste treatment validation results to the scrutiny report.
+     * Creates a detailed report entry with rule information, requirements,
+     * and compliance status without occupancy-specific details.
+     *
+     * @param pl The building plan
+     * @param ruleNo The rule number being validated
+     * @param ruleDesc The rule description
+     * @param expected The expected/required value (empty for this validation)
+     * @param actual The actual/provided status description
+     * @param status The compliance status (Accepted/Not_Accepted)
+     */
     private void setReportOutputDetailsWithoutOccupancy(Plan pl, String ruleNo, String ruleDesc, String expected, String actual,
             String status) {
-        Map<String, String> details = new HashMap<>();
-        details.put(RULE_NO, ruleNo);
-        details.put(DESCRIPTION, ruleDesc);
-        details.put(REQUIRED, expected);
-        details.put(PROVIDED, actual);
-        details.put(STATUS, status);
-        scrutinyDetail.getDetail().add(details);
-        pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+        ReportScrutinyDetail detail = new ReportScrutinyDetail();
+        detail.setRuleNo(ruleNo);
+        detail.setDescription(ruleDesc);
+        detail.setRequired(expected);
+        detail.setProvided(actual);
+        detail.setStatus(status);
+
+        Map<String, String> details = mapReportDetails(detail);
+        addScrutinyDetailtoPlan(scrutinyDetail, pl, details);
     }
 
+    /**
+     * Returns amendment dates for water treatment plant rules.
+     * Currently returns an empty map as no amendments are defined.
+     *
+     * @return Empty LinkedHashMap of amendment dates
+     */
     @Override
     public Map<String, Date> getAmendments() {
         return new LinkedHashMap<>();

@@ -1,6 +1,7 @@
 import { ADSSearch } from "../../services/molecules/ADS/Search";
 import { useQuery } from "react-query";
 
+//Custom hook to fetch and manage ADS application details
 const useADSApplicationDetail = (t, tenantId, bookingNo, config = {}, userType, args) => {
     
   

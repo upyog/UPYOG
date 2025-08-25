@@ -24,7 +24,7 @@ const EditAssetDetails = ({ config, onSelect, formData, setError, clearErrors })
     onSelect(config?.key, editNewAssetDetails);
   }, [editNewAssetDetails]);
 
-  const { data: warrantyperiod } = Digit.Hooks.useCustomMDMS(Digit.ULBService.getStateId(), "ASSET", [{ name: "Warranty" }], {
+  const { data: warrantyperiod } = Digit.Hooks.useEnabledMDMS(Digit.ULBService.getStateId(), "ASSET", [{ name: "Warranty" }], {
     select: (data) => {
       const formattedData = data?.["ASSET"]?.["Warranty"];
       return formattedData;
@@ -80,7 +80,7 @@ const OwnerForm = (_props) => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
 
   //  This call with tenantId (Get city-level data)
-  const cityResponseObject = Digit.Hooks.useCustomMDMSV2(tenantId, "ASSET", [{ name: "AssetParentCategoryFields" }], {
+  const cityResponseObject = Digit.Hooks.useEnabledMDMS(tenantId, "ASSET", [{ name: "AssetParentCategoryFields" }], {
     select: (data) => {
       const formattedData = data?.["ASSET"]?.["AssetParentCategoryFields"];
       return formattedData;
@@ -88,7 +88,7 @@ const OwnerForm = (_props) => {
   });
 
   // This call with stateTenantId (Get state-level data)
-  const stateResponseObject = Digit.Hooks.useCustomMDMSV2(stateTenantId, "ASSET", [{ name: "AssetParentCategoryFields" }], {
+  const stateResponseObject = Digit.Hooks.useEnabledMDMS(stateTenantId, "ASSET", [{ name: "AssetParentCategoryFields" }], {
     select: (data) => {
       const formattedData = data?.["ASSET"]?.["AssetParentCategoryFields"];
       return formattedData;

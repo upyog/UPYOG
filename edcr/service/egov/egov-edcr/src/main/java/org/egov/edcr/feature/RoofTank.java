@@ -1,5 +1,5 @@
 /*
- * eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
+ * UPYOG  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  * accountability and the service delivery of the government  organizations.
  *
  *  Copyright (C) <2019>  eGovernments Foundation
@@ -51,74 +51,150 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.egov.common.constants.MdmsFeatureConstants;
 import org.egov.common.entity.edcr.Block;
+import org.egov.common.entity.edcr.MdmsFeatureRule;
 import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.Result;
+import org.egov.common.entity.edcr.FeatureRuleKey;
 import org.egov.common.entity.edcr.ScrutinyDetail;
+import org.egov.edcr.constants.EdcrRulesMdmsConstants;
+import org.egov.edcr.service.MDMSCacheManager;
+import org.egov.edcr.service.FetchEdcrRulesMdms;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import static org.egov.edcr.constants.CommonFeatureConstants.*;
+import static org.egov.edcr.constants.CommonKeyConstants.COMMON_ROOF_TANKS;
+import static org.egov.edcr.constants.EdcrReportConstants.*;
 
 @Service
 public class RoofTank extends FeatureProcess {
 
 	private static final Logger LOG = LogManager.getLogger(RoofTank.class);
-	private static final String RULE_44_A = "44-A";
-	public static final String ROOFTANK_DESCRIPTION = "Roof Tanks";
 
+	@Autowired
+	MDMSCacheManager cache;
+	
+	/**
+	 * Validates the provided Plan object.
+	 * Currently, no validation logic is applied for roof tank height feature.
+	 *
+	 * @param pl the Plan object to validate
+	 * @return the same Plan object without modifications
+	 */
 	@Override
 	public Plan validate(Plan pl) {
-
-		return pl;
+		return pl; // No validation logic defined for this feature
 	}
 
+	/**
+	 * Processes the Plan object to evaluate roof tank height compliance.
+	 * It adds scrutiny details to the report output for each block in the plan.
+	 *
+	 * @param pl the Plan object to process
+	 * @return the modified Plan object with scrutiny results
+	 */
 	@Override
 	public Plan process(Plan pl) {
+	    ScrutinyDetail scrutinyDetail = createScrutinyDetail();
+	    Map<String, String> details = initializeResultDetails();
 
-		ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
-		scrutinyDetail.setKey("Common_Roof Tanks");
-		scrutinyDetail.addColumnHeading(1, RULE_NO);
-		scrutinyDetail.addColumnHeading(2, DESCRIPTION);
-		scrutinyDetail.addColumnHeading(3, VERIFIED);
-		scrutinyDetail.addColumnHeading(4, ACTION);
-		scrutinyDetail.addColumnHeading(5, STATUS);
+	    BigDecimal roofTankValue = getPermissibleRoofTankValue(pl);
 
-		Map<String, String> details = new HashMap<>();
-		details.put(RULE_NO, RULE_44_A);
+	    for (Block block : pl.getBlocks()) {
+	        processBlockForRoofTank(pl, block, roofTankValue, scrutinyDetail, new HashMap<>(details));
+	    }
 
-		BigDecimal minHeight = BigDecimal.ZERO;
-
-		for (Block b : pl.getBlocks()) {
-			minHeight = BigDecimal.ZERO;
-			if (b.getRoofTanks() != null && !b.getRoofTanks().isEmpty()) {
-				minHeight = b.getRoofTanks().stream().reduce(BigDecimal::min).get();
-
-				if (minHeight.compareTo(new BigDecimal(1)) <= 0) {
-					details.put(DESCRIPTION, ROOFTANK_DESCRIPTION);
-					details.put(VERIFIED, "Verified whether roof tank height is <= 1 meters");
-					details.put(ACTION, "Not included roof tank height(" + minHeight + ") to building height");
-					details.put(STATUS, Result.Accepted.getResultVal());
-					scrutinyDetail.getDetail().add(details);
-					pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
-				} else {
-					details.put(DESCRIPTION, ROOFTANK_DESCRIPTION);
-					details.put(VERIFIED, "Verified whether roof tank height is <= 1 meters");
-					details.put(ACTION, "Included roof tank height(" + minHeight + ") to building height");
-					details.put(STATUS, Result.Verify.getResultVal());
-					scrutinyDetail.getDetail().add(details);
-					pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
-				}
-			}
-
-		}
-		return pl;
+	    return pl;
 	}
+
+	/**
+	 * Creates and initializes a ScrutinyDetail object with appropriate column headings
+	 * for the roof tank feature.
+	 *
+	 * @return a new ScrutinyDetail object
+	 */
+	private ScrutinyDetail createScrutinyDetail() {
+	    ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
+	    scrutinyDetail.setKey(COMMON_ROOF_TANKS);
+	    scrutinyDetail.addColumnHeading(1, RULE_NO);
+	    scrutinyDetail.addColumnHeading(2, DESCRIPTION);
+	    scrutinyDetail.addColumnHeading(3, VERIFIED);
+	    scrutinyDetail.addColumnHeading(4, ACTION);
+	    scrutinyDetail.addColumnHeading(5, STATUS);
+	    return scrutinyDetail;
+	}
+
+	/**
+	 * Initializes the result details map with rule number for roof tank validation.
+	 *
+	 * @return a map containing initial result details
+	 */
+	private Map<String, String> initializeResultDetails() {
+	    Map<String, String> details = new HashMap<>();
+	    details.put(RULE_NO, RULE_44_A);
+	    return details;
+	}
+
+	/**
+	 * Fetches the permissible roof tank height value from the MDMS rules for the plan.
+	 *
+	 * @param pl the Plan object
+	 * @return the permissible roof tank height as BigDecimal, or BigDecimal.ZERO if not found
+	 */
+	private BigDecimal getPermissibleRoofTankValue(Plan pl) {
+	    List<Object> rules = cache.getFeatureRules(pl, MdmsFeatureConstants.ROOF_TANK, false);
+	    Optional<MdmsFeatureRule> matchedRule = rules.stream()
+	        .map(obj -> (MdmsFeatureRule) obj)
+	        .findFirst();
+
+	    return matchedRule.map(MdmsFeatureRule::getPermissible).orElse(BigDecimal.ZERO);
+	}
+
+	/**
+	 * Processes a single block in the plan to evaluate roof tank height against the permissible value.
+	 * Adds appropriate scrutiny detail entries based on compliance.
+	 *
+	 * @param pl              the Plan object
+	 * @param block           the Block to process
+	 * @param roofTankValue   the permissible height for roof tanks
+	 * @param scrutinyDetail  the ScrutinyDetail object to which results are added
+	 * @param details         a map of result details used for reporting
+	 */
+	private void processBlockForRoofTank(Plan pl, Block block, BigDecimal roofTankValue,
+	                                     ScrutinyDetail scrutinyDetail, Map<String, String> details) {
+	    BigDecimal minHeight = BigDecimal.ZERO;
+
+	    if (block.getRoofTanks() != null && !block.getRoofTanks().isEmpty()) {
+	        minHeight = block.getRoofTanks().stream().reduce(BigDecimal::min).get();
+
+	        if (minHeight.compareTo(roofTankValue) <= 0) {
+	            details.put(DESCRIPTION, ROOFTANK_DESCRIPTION);
+	            details.put(VERIFIED, ROOFTANK_HEIGHT_DESC + roofTankValue + MTS);
+	            details.put(ACTION, NOT_INCLUDED_ROOF_TANK_HEIGHT + minHeight + TO_BUILDING_HEIGHT);
+	            details.put(STATUS, Result.Accepted.getResultVal());
+	        } else {
+	            details.put(DESCRIPTION, ROOFTANK_DESCRIPTION);
+	            details.put(VERIFIED, ROOFTANK_HEIGHT_DESC + roofTankValue + MTS);
+	            details.put(ACTION, INCLUDED_ROOF_TANK_HEIGHT + minHeight + TO_BUILDING_HEIGHT);
+	            details.put(STATUS, Result.Verify.getResultVal());
+	        }
+
+	        scrutinyDetail.getDetail().add(details);
+	        pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+	    }
+	}
+
 
 	@Override
 	public Map<String, Date> getAmendments() {
-		return new LinkedHashMap<>();
+		return new LinkedHashMap<>(); // No amendments defined
 	}
-
 }

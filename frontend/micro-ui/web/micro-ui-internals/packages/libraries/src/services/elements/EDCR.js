@@ -14,5 +14,19 @@ export const EDCRService = {
       params: { tenantId },
       auth: true,
       multipartFormData: true
-    })
+    }),
+    // Function to create an EDCR anonymously without requiring user authentication
+    anonymousCreate: (data, tenantId) =>
+      Request({
+        url: Urls.edcr.anonymousCreate,
+        // data: data,
+        multipartData: data,
+        useCache: false,
+        setTimeParam: false,
+        userService: true,
+        method: "POST",
+        params: { tenantId },
+        auth: false,
+        multipartFormData: true
+      })
 };

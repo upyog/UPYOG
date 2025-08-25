@@ -13,6 +13,11 @@ import org.springframework.stereotype.Component;
 import org.upyog.adv.util.BookingUtil;
 import org.upyog.adv.web.models.CartDetail;
 
+/**
+ * This class implements the ResultSetExtractor interface to map rows from a database ResultSet
+ * to a list of CartDetail objects. It extracts booking cart details for advertisements and
+ * populates them into the corresponding objects.
+ */
 @Component
 public class BookingCartDetailRowmapper implements ResultSetExtractor<List<CartDetail>> {
 

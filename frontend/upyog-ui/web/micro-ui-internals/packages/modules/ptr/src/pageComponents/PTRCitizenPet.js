@@ -11,7 +11,7 @@ const PTRCitizenPet = ({ t, config, onSelect, userType, formData, renewApplicati
     let validation = {};
 
     // custom hook for getting petcolor data from mdms and format it according to the dropdown need
-    let { data: pet_color } = Digit.Hooks.useCustomMDMS(Digit.ULBService.getStateId(), "PetService", [{ name: "PetColor" }],
+    let { data: pet_color } = Digit.Hooks.useEnabledMDMS(Digit.ULBService.getStateId(), "PetService", [{ name: "PetColor" }],
     {
       select: (data) => {
         const formattedData = data?.["PetService"]?.["PetColor"].map((petone) => {
@@ -40,8 +40,21 @@ const PTRCitizenPet = ({ t, config, onSelect, userType, formData, renewApplicati
     const [adoptionDate, setAdoptionDate] = useState(convertEpochToDate(renewApplication?.petDetails?.adoptionDate) || formData?.pets?.adoptionDate || "");
     const stateId = Digit.ULBService.getStateId();
 
-    const { data: Menu } = Digit.Hooks.ptr.usePTRPetMDMS(stateId, "PetService", "PetType"); // hook for pettype data
-    const { data: Breed_Type} = Digit.Hooks.ptr.useBreedTypeMDMS(stateId, "PetService", "BreedType");  // hook for breed type data
+    const { data: Menu } = Digit.Hooks.useEnabledMDMS(stateId, "PetService", [{ name: "PetType" }],
+      {
+        select: (data) => {
+          const formattedData = data?.["PetService"]?.["PetType"]
+          return formattedData;
+        },
+      });
+
+    const { data: Breed_Type } = Digit.Hooks.useEnabledMDMS(stateId, "PetService", [{ name: "BreedType" }],
+      {
+        select: (data) => {
+          const formattedData = data?.["PetService"]?.["BreedType"]
+          return formattedData;
+        },
+      });
 
     let menu = [];   // array to store pettype data
     let breed_type = [];    // array to store  breedtype data

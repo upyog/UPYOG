@@ -9,6 +9,10 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.Builder;
 
+/**
+ * Represents the details of the user applying for an Ewaste application.
+ * This class contains information such as the applicant's name, gender, contact details, and tenant ID.
+ */
 @ApiModel(description = "Details of the user applying for ewaste application")
 @Validated
 @javax.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2022-08-16T15:34:24.436+05:30")

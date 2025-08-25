@@ -10,6 +10,7 @@ import org.upyog.sv.web.models.StreetVendingRequest;
 import org.upyog.sv.web.models.StreetVendingSearchCriteria;
 
 import io.micrometer.core.lang.NonNull;
+import org.upyog.sv.web.models.billing.Demand;
 
 public interface StreetVendingService {
 
@@ -29,4 +30,5 @@ public interface StreetVendingService {
 			@Valid StreetVendingSearchCriteria streetVendingSearchCriteria);
 
 	public String deleteStreetVendingDraft(String draftId);
+
 }

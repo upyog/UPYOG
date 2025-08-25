@@ -15,6 +15,20 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+/**
+ * This class is a configuration component for the Community Hall Booking module.
+ * It is responsible for setting up application-specific configurations such as
+ * the default timezone for the application.
+ * 
+ * Annotations used:
+ * - @Builder: Enables the builder pattern for creating instances of this class.
+ * - @Component: Marks this class as a Spring-managed component.
+ * - @AllArgsConstructor: Generates a constructor with all fields as parameters.
+ * - @NoArgsConstructor: Generates a no-argument constructor.
+ * - @Getter and @Setter: Automatically generates getter and setter methods for fields.
+ * - @Import: Imports additional configuration classes (e.g., TracerConfiguration).
+ */
+
 @Builder
 @Component
 @AllArgsConstructor
@@ -84,6 +98,23 @@ public class CommunityHallBookingConfiguration {
 	@Value("${egov.mdms.search.endpoint}")
 	private String mdmsPath;
 
+	@Value("${upyog.mdms.v2.host}")
+	private String mdmsV2Host;
+
+	@Value("${upyog.mdms.v2.search.endpoint}")
+	private String mdmsV2Path;
+
+	@Value("${upyog.mdms.v2.enabled}")
+	private boolean mdmsV2Enabled;
+
+	@PostConstruct
+	public void init() {
+		if(mdmsV2Enabled) {
+			mdmsHost = mdmsV2Host;
+			mdmsPath = mdmsV2Path;
+		}
+	}
+	
 	@Value("${employee.allowed.search.params}")
 	private String allowedEmployeeSearchParameters;
 
@@ -177,7 +208,15 @@ public class CommunityHallBookingConfiguration {
 
 	@Value("${egov.bill.gen.endpoint}")
 	private String billGenerateEndpoint;
-	
+
+	@Value("${internal.microservice.user.username}")
+	private String internalMicroserviceUserName;
+
+	@Value("${internal.microservice.user.type}")
+	private String internalMicroserviceUserType;
+
+	@Value("${state.level.tenant.id}")
+	private String stateLevelTenantId;
 	
 	//Module and business name
 	@Value("${chb.module.name}")
@@ -196,6 +235,10 @@ public class CommunityHallBookingConfiguration {
 	@Value("${booking.payment.timer.value}")
 	private String bookingPaymentTimerValue;
 	
-	
+	@Value("${egov.download.receipt.link}")
+    private String downloadReceipt;
+ 	 
+    @Value("${egov.usr.events.pay.now.link}")
+    private String payNowLink;
 
 }

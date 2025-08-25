@@ -1,5 +1,21 @@
 import { CHBServices } from "../../elements/CHB";
 
+/**
+ * Time Utility in Search.js
+ * 
+ * This utility or function is likely used for handling time-related operations in the CHB (Community Hall Booking) module.
+ * 
+ * Possible Features:
+ * - Formatting or converting time values.
+ * - Calculating time ranges or durations.
+ * - Managing time-related data for search operations.
+ * 
+ * Context:
+ * - Used within the CHB Search service to process or filter time-related data.
+ * 
+ * Note:
+ * - Additional details would depend on the specific implementation of the `Time` utility.
+ */
 export const CHBSearch = {
   
   all: async (tenantId, filters = {}) => {

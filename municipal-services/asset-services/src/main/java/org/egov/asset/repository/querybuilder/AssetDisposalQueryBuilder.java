@@ -15,6 +15,8 @@ public class AssetDisposalQueryBuilder {
     @Autowired
     private AssetConfiguration config;
 
+    private static final String LEFT_OUTER_JOIN_STRING = " LEFT OUTER JOIN ";
+
     private static final String BASE_QUERY = "SELECT "
             + "disposal.disposal_id, "
             + "disposal.asset_id, "
@@ -35,13 +37,15 @@ public class AssetDisposalQueryBuilder {
             + "disposal.updated_at, "
             + "disposal.updated_by, "
             + "disposal.asset_disposal_status, "
+            + "disposal.additional_details, "
             + "doc.documentid, "
             + "doc.documenttype, "
             + "doc.filestoreid, "
             + "doc.documentuid, "
             + "doc.docdetails "
-            + "FROM eg_asset_maintenance maintenance "
-            + "LEFT OUTER JOIN eg_asset_document doc ON maintenance.maintenance_id = doc.assetid";
+            + "FROM eg_asset_disposal_details disposal "
+            + LEFT_OUTER_JOIN_STRING + " eg_asset_disposal_documents doc ON disposal.disposal_id = doc.disposalid ";
+            //+ " AND doc.documenttype IN ('ASSET.DISPOSE.DOC1')";
 
     private final String paginationWrapper = "SELECT * FROM " +
             "(SELECT result.*, DENSE_RANK() OVER (ORDER BY result.created_at DESC) AS offset_ FROM " +
@@ -64,6 +68,15 @@ public class AssetDisposalQueryBuilder {
             preparedStmtList.add(criteria.getTenantId());
         }
 
+        // Add maintenance IDs filter
+        if (!CollectionUtils.isEmpty(criteria.getDisposalIds())) {
+            addClauseIfRequired(preparedStmtList, builder);
+            builder.append(" disposal.disposal_id IN (")
+                    .append(createQuery(criteria.getDisposalIds()))
+                    .append(") ");
+            addToPreparedStatement(preparedStmtList, criteria.getDisposalIds());
+        }
+
         // Add asset IDs filter
         if (!CollectionUtils.isEmpty(criteria.getAssetIds())) {
             addClauseIfRequired(preparedStmtList, builder);
@@ -72,6 +85,7 @@ public class AssetDisposalQueryBuilder {
                     .append(") ");
             addToPreparedStatement(preparedStmtList, criteria.getAssetIds());
         }
+
 
         // Add disposal date filter
         if (criteria.getFromDate() != null && criteria.getToDate() != null) {
@@ -87,16 +101,6 @@ public class AssetDisposalQueryBuilder {
             addClauseIfRequired(preparedStmtList, builder);
             builder.append(" disposal.disposal_date <= ? ");
             preparedStmtList.add(criteria.getToDate());
-        }
-
-        // Add reason for disposal filter
-        if (criteria.getReasonForDisposal() != null) {
-            List<String> reasons = Arrays.asList(criteria.getReasonForDisposal().split(","));
-            addClauseIfRequired(preparedStmtList, builder);
-            builder.append(" disposal.reason_for_disposal IN (")
-                    .append(createQuery(reasons))
-                    .append(") ");
-            addToPreparedStatement(preparedStmtList, reasons);
         }
 
         // Add pagination

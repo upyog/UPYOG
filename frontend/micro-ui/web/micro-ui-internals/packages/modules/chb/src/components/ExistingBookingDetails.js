@@ -2,6 +2,45 @@ import React, { useState, useEffect } from "react";
 import { Loader, Card, KeyNote } from "@upyog/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 
+/**
+ * ExistingBookingDetails Component
+ * 
+ * This component is responsible for displaying and managing the details of an existing booking in the CHB module.
+ * It allows users to view and update booking details, including bank details, documents, and other metadata.
+ * 
+ * Props:
+ * - `onSubmit`: Callback function triggered when the user submits the updated booking details.
+ * - `setExistingDataSet`: Function to update the existing dataset with the fetched booking details.
+ * - `Searchdata`: Object containing search parameters for fetching booking details, including:
+ *    - `communityHallCode`: Code of the community hall.
+ *    - `bookingStartDate`: Start date of the booking.
+ *    - `bookingEndDate`: End date of the booking.
+ *    - `hallCode`: Code of the hall.
+ * 
+ * State Variables:
+ * - `filters`: State variable to manage the filters applied for fetching booking details.
+ * - `isDataSet`: Boolean state to track whether the booking data has been set.
+ * 
+ * Hooks:
+ * - `useTranslation`: Provides the `t` function for internationalization.
+ * 
+ * Variables:
+ * - `tenantId`: The current tenant ID fetched using the Digit ULB Service.
+ * 
+ * Logic:
+ * - Fetches booking details based on the `Searchdata` parameters using the `useChbSlotSearch` hook (commented out in the current code).
+ * - Processes the fetched booking details and updates the session data with:
+ *    - Bank details: Includes account number, IFSC code, bank name, branch name, and account holder name.
+ *    - Documents: Maps the fetched documents to a structured format for further processing.
+ * 
+ * Functions:
+ * - `setchbData`: Processes the fetched booking details and updates the session data with the relevant information.
+ *    - Extracts bank details and documents from the `application` object.
+ *    - Prepares the data in a structured format for use in the application workflow.
+ * 
+ * Returns:
+ * - A component that displays the existing booking details and allows users to update or manage the booking.
+ */
 export const ExistingBookingDetails = ({ onSubmit,setExistingDataSet,Searchdata }) => {
   const { t } = useTranslation();
   const tenantId = Digit.ULBService.getCitizenCurrentTenant(true) || Digit.ULBService.getCurrentTenantId();

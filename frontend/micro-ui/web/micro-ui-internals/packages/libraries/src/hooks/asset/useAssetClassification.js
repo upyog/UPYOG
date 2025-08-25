@@ -5,14 +5,8 @@ const useAssetClassification = (tenantId, moduleCode, type, config = {}) => {
   const useAsset = () => {
     return useQuery("A_CLASSIFICATION_TYPE", () => MdmsService.Asset_Classification(tenantId, moduleCode ,type), config);
   };
-  
-
-  switch (type) {
-    case "assetClassification":
-      return useAsset();
-    default:
-      return null;
-  }
+  // Return the query based on the type
+  return type === "assetClassification" ? useAsset() : null;
 };
 
 

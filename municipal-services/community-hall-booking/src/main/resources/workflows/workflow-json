@@ -31,89 +31,120 @@
       "tenantId": "pg"
     }
   },
-    "BusinessServices": [
+  "BusinessServices": [
         {
             "tenantId": "pg",
-            "businessService": "chb",
+            "businessService": "booking-refund",
             "business": "chb-services",
-            "businessServiceSla": null,
+            "businessServiceSla": "",
             "states": [
                 {
                     "sla": null,
                     "state": null,
                     "applicationStatus": null,
-                    "docUploadRequired": true,
+                    "docUploadRequired": false,
                     "isStartState": true,
                     "isTerminateState": false,
                     "isStateUpdatable": true,
                     "actions": [
                         {
-                            "action": "APPLY",
-                            "nextState": "APPLIED",
+                            "action": "MOVETOEMPLOYEE",
+                            "nextState": "REFUNDPENDING",
                             "roles": [
-                                "CITIZEN"
-                            ]
+                                "CHB_APPROVER",
+                                "CHB_CEMP",
+                                "SYSTEM",
+                                "CITIZEN",
+                                "CHB_INTERNAL_MICROSERVICE_ROLE"
+                            ],
+                            "active": true
                         }
                     ]
                 },
                 {
                     "sla": null,
-                    "state": "APPLIED",
-                    "applicationStatus": "APPLIED",
+                    "state": "REFUNDPENDING",
+                    "applicationStatus": "REFUNDPENDING",
                     "docUploadRequired": false,
                     "isStartState": false,
-                    "isTerminateState": true,
-                    "isStateUpdatable": false,
+                    "isTerminateState": false,
+                    "isStateUpdatable": true,
                     "actions": [
-                        {
-                            "action": "PAY",
-                            "nextState": "PAYMENT_DONE",
-                            "roles": [
-                                "CITIZEN"
-                            ]
-                        }
-                    ]
-                },
-                {
-                    "sla": null,
-                    "state": "PAYMENT_DONE",
-                    "applicationStatus": "PAYMENT_DONE",
-                    "docUploadRequired": false,
-                    "isStartState": false,
-                    "isTerminateState": true,
-                    "isStateUpdatable": false,
-                    "actions": [
-                        {
-                            "action": "APPROVE",
-                            "nextState": "APPROVED",
-                            "roles": [
-                                "CHB_APPROVER"
-                            ]
-                        },
                         {
                             "action": "REJECT",
                             "nextState": "REJECTED",
                             "roles": [
-                                "CHB_APPROVER"
-                            ]
+                                "CHB_APPROVER",
+                                "CHB_CEMP"
+                            ],
+                            "active": true
+                        },
+                        {
+                            "action": "FORWARDFORINSPECTION",
+                            "nextState": "INSPECTIONPENDING",
+                            "roles": [
+                                "CHB_APPROVER",
+                                "CHB_CEMP"
+                            ],
+                            "active": true
                         }
                     ]
                 },
                 {
                     "sla": null,
-                    "state": "APPROVED",
-                    "applicationStatus": "APPROVED",
+                    "state": "INSPECTIONPENDING",
+                    "applicationStatus": "INSPECTIONPENDING",
+                    "docUploadRequired": false,
+                    "isStartState": false,
+                    "isTerminateState": false,
+                    "isStateUpdatable": true,
+                    "actions": [
+                        {
+                            "action": "REJECT",
+                            "nextState": "REJECTED",
+                            "roles": [
+                                "CHB_VERIFIER",
+                                "CHB_CEMP"
+                            ],
+                            "active": true
+                        },
+                        {
+                            "action": "VERIFY",
+                            "nextState": "REFUNDAPPROVALPENDING",
+                            "roles": [
+                                "CHB_VERIFIER",
+                                "CHB_CEMP"
+                            ],
+                            "active": true
+                        }
+                    ]
+                },
+                {
+                    "sla": null,
+                    "state": "REFUNDAPPROVALPENDING",
+                    "applicationStatus": "REFUNDAPPROVALPENDING",
                     "docUploadRequired": false,
                     "isStartState": false,
                     "isTerminateState": false,
                     "isStateUpdatable": false,
                     "actions": [
                         {
-                            "action": "REFUND",
-                            "nextState": "BOOKING_COMPLETED",
+                            "action": "APPROVE",
+                            "nextState": "REFUNDAPPROVED",
                             "roles": [
-                                "CHB_APPROVER"
-                            ]
+                                "CHB_APPROVER",
+                                "CHB_CEMP"
+                            ],
+                            "active": true
+                        },
+                        {
+                            "action": "REJECT",
+                            "nextState": "REJECTED",
+                            "roles": [
+                                "CHB_APPROVER",
+                                "CHB_CEMP"
+                            ],
+                            "active": true
                         }
                     ]
                 },
@@ -129,8 +160,8 @@
                 },
                 {
                     "sla": null,
-                    "state": "BOOKING_COMPLETED",
-                    "applicationStatus": "BOOKING_COMPLETED",
+                    "state": "REFUNDAPPROVED",
+                    "applicationStatus": "REFUNDAPPROVED",
                     "docUploadRequired": false,
                     "isStartState": false,
                     "isTerminateState": true,

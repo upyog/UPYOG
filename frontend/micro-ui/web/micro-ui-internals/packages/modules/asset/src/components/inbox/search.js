@@ -16,19 +16,16 @@ import {
 import { useTranslation } from "react-i18next";
 
 const fieldComponents = {
-  date: DatePicker,
   mobileNumber: MobileNumber,
-//   Locality: (props) => (
-//     <Localities
-//       tenantId={Digit.ULBService.getCurrentTenantId()}
-//       selectLocality={props.onChange}
-//       keepNull={false}
-//       boundaryType="revenue"
-//       selected={props.value}
-//       disableLoader={true}
-//       sortFn={(a, b) => (a.i18nkey < b.i18nkey ? -1 : 1)}
-//     />
-//   ),
+  Dropdown:(props) => (
+    <Dropdown
+      selected={props.value}
+      select={props.onChange}
+      option={props.options}
+      optionKey="i18nKey"
+      t={props.t}
+    />
+  ),
 };
 
 const SearchApplication = ({ onSearch, type, onClose, searchFields, searchParams, isInboxPage, defaultSearchParams, clearSearch: _clearSearch }) => {
@@ -50,9 +47,18 @@ const SearchApplication = ({ onSearch, type, onClose, searchFields, searchParams
   };
 
   const mobileView = innerWidth <= 640;
-
-
-
+  const assetClassification=[
+    {
+      code: "MOVABLE",
+      i18nKey: "MOVABLE",
+      value: "MOVABLE"
+    },
+    {
+      code: "IMMOVABLE",
+      i18nKey: "IMMOVABLE",
+      value: "IMMOVABLE"
+    }
+  ];
 
   const onSubmitInput = (data) => {
     if (!data.mobileNumber) {
@@ -129,7 +135,7 @@ const SearchApplication = ({ onSearch, type, onClose, searchFields, searchParams
                         <Controller
                           render={(props) => {
                             const Comp = fieldComponents?.[input.type];
-                            return <Comp formValue={form} setValue={setValue} onChange={props.onChange} value={props.value} />;
+                            return <Comp formValue={form} setValue={setValue} onChange={props.onChange} value={props.value} options={assetClassification} t={t}/>;
                           }}
                           name={input.name}
                           control={control}

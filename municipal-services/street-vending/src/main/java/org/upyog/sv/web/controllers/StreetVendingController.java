@@ -1,17 +1,22 @@
 package org.upyog.sv.web.controllers;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.upyog.sv.constants.StreetVendingConstants;
+import org.upyog.sv.service.PaymentService;
+import org.upyog.sv.service.SchedulerService;
 import org.upyog.sv.service.StreetVendingService;
 import org.upyog.sv.util.StreetVendingUtil;
 import org.upyog.sv.validator.StreetVendingValidationService;
@@ -35,7 +40,13 @@ public class StreetVendingController {
 	@Autowired
 	private StreetVendingService streetVendingService;
 
+	@Autowired
+	private SchedulerService schedulerService;
+
 	private final StreetVendingValidationService validationService;
+	
+	 @Autowired
+	    private PaymentService paymentService;
 
 	public StreetVendingController(StreetVendingValidationService validationService) {
 		this.validationService = validationService;
@@ -67,7 +78,6 @@ public class StreetVendingController {
 			@ModelAttribute StreetVendingSearchCriteria streetVendingSearchCriteria) {
 		List<StreetVendingDetail> applications = null;
 		Integer count = 0;
-
 		if ("true".equals(streetVendingSearchCriteria.getIsDraftApplication())) {
 			applications = streetVendingService.getStreetVendingDraftApplicationDetails(
 					requestInfoWrapper.getRequestInfo(), streetVendingSearchCriteria);
@@ -90,7 +100,7 @@ public class StreetVendingController {
 
 	@RequestMapping(value = "/_update", method = RequestMethod.POST)
 	public ResponseEntity<StreetVendingResponse> streetVendingUpdate(
-			@ApiParam(value = "Details for the new (s) + RequestInfo meta data.", required = true) @RequestBody StreetVendingRequest vendingRequest) {
+			@ApiParam(value = "Updated Street vending details and RequestInfo meta data.", required = true) @RequestBody StreetVendingRequest vendingRequest) {
 		validationService.validateRequest(vendingRequest); /// To validate the Update application request
 		StreetVendingDetail streetVendingDetail = streetVendingService.updateStreetVendingApplication(vendingRequest);
 
@@ -103,8 +113,7 @@ public class StreetVendingController {
 
 	@RequestMapping(value = "/_deletedraft", method = RequestMethod.POST)
 	public ResponseEntity<StreetVendingResponse> streetVendingDeleteDraft(
-			@ApiParam(value = "Details for draft deletion + RequestInfo meta data.", required = true) 
-			@RequestBody RequestInfoWrapper requestInfoWrapper,
+			@ApiParam(value = "Details for draft deletion and RequestInfo meta data.", required = true) @RequestBody RequestInfoWrapper requestInfoWrapper,
 			@RequestParam(value = "draftId", required = true) String draftId) {
 		String draftDiscardResponse = streetVendingService.deleteStreetVendingDraft(draftId);
 		ResponseInfo responseInfo = StreetVendingUtil.createReponseInfo(requestInfoWrapper.getRequestInfo(),
@@ -113,4 +122,37 @@ public class StreetVendingController {
 		return new ResponseEntity<StreetVendingResponse>(response, HttpStatus.OK);
 	}
 
+//	@PostMapping("/_createdemand")
+//	public ResponseEntity<StreetVendingDemandResponse> createDemandForRenewal(
+//			@ApiParam(value = "Details for demand create and RequestInfo meta data.", required = true) @RequestBody StreetVendingRequest vendingRequest) {
+//		List<Demand> demands = streetVendingService.demandCreation(vendingRequest);
+//		ResponseInfo responseInfo = StreetVendingUtil.createReponseInfo(vendingRequest.getRequestInfo(),
+//				StreetVendingConstants.RENEWAL_DEMAND_CREATED, StatusEnum.SUCCESSFUL);
+//		StreetVendingDemandResponse response = StreetVendingDemandResponse.builder().responseInfo(responseInfo)
+//				.demands(demands).build();
+//		return new ResponseEntity<>(response, HttpStatus.OK);
+//	}
+
+	@RequestMapping(value = "/trigger-expire-streetvendingapplications", method = RequestMethod.POST)
+	public ResponseEntity<String> triggerWorkflowUpdate() {
+		try {
+			schedulerService.processStreetVendingApplications();
+			return ResponseEntity.ok("Expire Scheduler triggered successfully.");
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+					.body("Failed to trigger scheduler: " + e.getMessage());
+		}
+	}
+
+	@PostMapping("/trigger-payment-schedule")
+    public ResponseEntity<String> triggerPaymentSchedule() {
+        try {
+        	paymentService.processDueVendorPayments(null); 
+            return ResponseEntity.ok("Payment Scheduler triggered successfully.");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Failed to trigger scheduler: " + e.getMessage());
+        }
+    }
+	
 }

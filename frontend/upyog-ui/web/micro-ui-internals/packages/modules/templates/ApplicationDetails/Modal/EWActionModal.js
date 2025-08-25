@@ -25,7 +25,6 @@ const CloseBtn = (props) => {
 
 const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction, actionData, applicationData, businessService, moduleCode }) => {
 
-  console.log("snjdskbjdfbjskfjkbs",action);
   const { data: approverData, isLoading: PTALoading } = Digit.Hooks.useEmployeeSearch(
     tenantId,
     {
@@ -86,7 +85,6 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
   
   function submit(data) {
       let workflow = { action: action?.action, comments: data?.comments , businessService, moduleName: moduleCode };
-      console.log("applicationData",data);
 
       if (uploadedFile)
         workflow["documents"] = [
@@ -135,7 +133,6 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
       
     }
   }, [action, approvers, uploadedFile]);
-console.log("conggg",config)
   return action && config.form ? (
     <Modal
       headerBarMain={<Heading label={t(config.label.heading)} />}

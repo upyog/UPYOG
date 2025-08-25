@@ -1,3 +1,21 @@
+/**
+ * @file PetCaption.js
+ * @description Displays pet-related details including date, name, contact, source, and comments.
+ * 
+ * @components
+ * - `TelePhone`: Renders the mobile number as a clickable link.
+ * - `Reason`: Displays comments with additional details.
+ * 
+ * @props
+ * - `data`: Object containing pet details:
+ *    - `date`: Application date.
+ *    - `name`: Pet owner's name.
+ *    - `mobileNumber`: Contact number.
+ *    - `source`: Application source.
+ *    - `comment`: Main comment.
+ *    - `otherComment`: Additional comment.
+ */
+
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { TelePhone } from "@upyog/digit-ui-react-components";

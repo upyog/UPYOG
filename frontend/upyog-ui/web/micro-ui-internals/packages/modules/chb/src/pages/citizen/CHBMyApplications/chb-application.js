@@ -4,6 +4,40 @@ import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link,useHistory } from "react-router-dom";
 
+
+/**
+ * ChbApplication Component
+ * 
+ * This component is responsible for rendering the details of a specific CHB application in the citizen portal.
+ * It displays application details, handles slot search functionality, and manages toast notifications.
+ * 
+ * Props:
+ * - `application`: The application object containing details such as booking ID, tenant ID, community hall code, and booking slot details.
+ * - `tenantId`: The tenant ID associated with the application.
+ * - `buttonLabel`: The label for the action button displayed in the component.
+ * 
+ * Hooks:
+ * - `useTranslation`: Provides the `t` function for internationalization.
+ * - `useHistory`: Provides navigation functionality within the application.
+ * - `Digit.Hooks.chb.useChbSlotSearch`: Custom hook to fetch slot search data for the given application.
+ * 
+ * State Variables:
+ * - `showToast`: State variable to manage the visibility of toast notifications.
+ * 
+ * Variables:
+ * - `slotSearchData`: The fetched slot search data for the application.
+ * - `refetch`: Function to manually trigger the slot search data fetch.
+ * 
+ * Logic:
+ * - Initializes the `showToast` state to manage toast notifications.
+ * - Uses the `useChbSlotSearch` hook to fetch slot search data based on the application details.
+ *    - Filters include booking ID, community hall code, booking dates, and hall code.
+ *    - The `enabled` flag is set to `false` to disable automatic fetching.
+ * - Placeholder for timer logic to manage time remaining for the application (commented out).
+ * 
+ * Returns:
+ * - A card component displaying the application details, with an action button and toast notifications.
+ */
 const ChbApplication = ({ application, tenantId, buttonLabel }) => {
   const { t } = useTranslation();
   const history = useHistory();

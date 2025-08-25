@@ -1,3 +1,31 @@
+/**
+ * PTRDocument Component
+ * 
+ * This component is responsible for displaying pet-related documents as downloadable PDF links.
+ * 
+ * Functionality:
+ * - Fetches pet document details using a custom hook: `Digit.Hooks.ptr.usePetDocumentSearch()`.
+ * - Displays a loader while the data is being fetched.
+ * - Renders a list of document links with PDF icons.
+ * - Uses translation (`useTranslation`) to display document names in the appropriate language.
+ * 
+ * Components:
+ * - `PDFSvg`: Renders an SVG PDF icon with customizable dimensions and style.
+ * - `PTRDocument`: The main component that renders document links and handles the loading state.
+ * 
+ * Props:
+ * - `petdetail`: An object containing document information.
+ *    - `documents`: An array of document objects with `fileStoreId` and `documentType`.
+ * 
+ * External Dependencies:
+ * - `Loader`: Displays a loading indicator while fetching document data.
+ * - `pdfDownloadLink`: Generates download links for the PDF files.
+ * 
+ * Styling:
+ * - Documents are displayed using `flex-wrap` for responsiveness.
+ * - Basic inline styling for spacing, padding, and colors.
+ */
+
 import { Loader } from "@upyog/digit-ui-react-components";
 import React from "react";
 import { useTranslation } from "react-i18next";

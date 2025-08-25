@@ -6,6 +6,9 @@ import { PTRService } from "../services/elements/PTR";
 import { CHBServices } from "../services/elements/CHB";
 import {ADSServices} from "../services/elements/ADS";
 import { SVService } from "../services/elements/SV";
+import { WTService } from "../services/elements/WT";
+import { MTService } from "../services/elements/MT";
+import { TPService } from "../services/elements/TP";
 
 const fsmApplications = async (tenantId, filters) => {
   return (await FSMService.search(tenantId, { ...filters, limit: 10000 })).fsm;
@@ -36,6 +39,18 @@ const chbApplications = async (tenantId, filters) => {
 
 const adsBookings = async (tenantId, filters) => {
   return (await ADSServices.search({ tenantId, filters })).bookingApplication;
+};
+
+const wtBookings = async (tenantId, filters) => {
+  return (await WTService.search({ tenantId, filters })).waterTankerBookingDetail;
+};
+
+const mtBookings = async (tenantId, filters) => {
+  return (await MTService.search({ tenantId, filters })).mobileToiletBookingDetails;
+};
+
+const tpBookings = async (tenantId, filters) => {
+  return (await TPService.search({ tenantId, filters })).treePruningBookingDetails;
 };
 
 const refObj = (tenantId, filters) => {
@@ -103,6 +118,21 @@ const refObj = (tenantId, filters) => {
       key: "bookingNo",
       label: "ADS_BOOKING_NO",
     },
+    wt: {
+      searchFn: () => wtBookings(null, { ...filters, bookingNo: consumerCodes }),
+      key: "bookingNo",
+      label: "WT_BOOKING_NO",
+    },
+    mt: {
+      searchFn: () => mtBookings(null, { ...filters, bookingNo: consumerCodes }),
+      key: "bookingNo",
+      label: "MT_BOOKING_NO",
+    },
+    tp: {
+      searchFn: () => tpBookings(null, { ...filters, bookingNo: consumerCodes }),
+      key: "bookingNo",
+      label: "TP_BOOKING_NO",
+    }
   };
 };
 
@@ -132,9 +162,19 @@ export const useApplicationsForBusinessServiceSearch = ({ tenantId, businessServ
   if (window.location.href.includes("adv-services")) {
     _key = "ads"
   } 
+  if (window.location.href.includes("request-service.water_tanker")) {
+    _key = "wt"
+  } 
+  if (window.location.href.includes("request-service.mobile_toilet")) {
+    _key = "mt"
+  } 
+  if (window.location.href.includes("request-service.tree_pruning")) {
+    _key = "tp"
+  }
+  
 
   /* key from application ie being used as consumer code in bill */
-  const { searchFn, key, label } = filters!==undefined ? refObj(tenantId, filters)[_key]:"";
+  const { searchFn, key, label } = refObj(tenantId, filters)[_key];
   const applications = useQuery(["applicationsForBillDetails", { tenantId, businessService, filters, searchFn }], searchFn, {
     ...config,
   });

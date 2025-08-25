@@ -24,6 +24,8 @@ import static org.egov.inbox.util.NocConstants.NOC;
 import static org.egov.inbox.util.NocConstants.NOC_APPLICATION_NUMBER_PARAM;
 import static org.egov.inbox.util.PTConstants.ACKNOWLEDGEMENT_IDS_PARAM;
 import static org.egov.inbox.util.PTConstants.PT;
+import static org.egov.inbox.util.RequestServiceConstants.*;
+import static org.egov.inbox.util.StreetVendingConstants.*;
 import static org.egov.inbox.util.TLConstants.APPLICATION_NUMBER_PARAM;
 import static org.egov.inbox.util.TLConstants.BUSINESS_SERVICE_PARAM;
 import static org.egov.inbox.util.TLConstants.REQUESTINFO_PARAM;
@@ -36,6 +38,10 @@ import static org.egov.inbox.util.WSConstants.WS;
 import static org.egov.inbox.util.PTRConstants.PTR;
 import static org.egov.inbox.util.AssetConstants.ASSET;
 import static org.egov.inbox.util.EwasteConstants.EWASTE;
+import static org.egov.inbox.util.CommunityHallConstants.CHB;
+import static org.egov.inbox.util.CommunityHallConstants.CHB_BOOKING_NO_PARAM;
+import static org.egov.inbox.util.CNDServiceConstants.CND;
+import static org.egov.inbox.util.CNDServiceConstants.APPLICATION_NO_PARAM;
 
 import java.util.*;
 import java.util.function.Function;
@@ -54,10 +60,7 @@ import org.egov.inbox.model.vehicle.VehicleTripDetailResponse;
 import org.egov.inbox.model.vehicle.VehicleTripSearchCriteria;
 import org.egov.inbox.repository.ElasticSearchRepository;
 import org.egov.inbox.repository.ServiceRequestRepository;
-import org.egov.inbox.util.BpaConstants;
-import org.egov.inbox.util.ErrorConstants;
-import org.egov.inbox.util.FSMConstants;
-import org.egov.inbox.util.TLConstants;
+import org.egov.inbox.util.*;
 import org.egov.inbox.web.model.Inbox;
 import org.egov.inbox.web.model.InboxResponse;
 import org.egov.inbox.web.model.InboxSearchCriteria;
@@ -132,7 +135,28 @@ public class InboxService {
 	private EwasteInboxFilterService ewasteInboxFilterService;
 
 	@Autowired
+	private CommunityHallInboxFilterService communityHallInboxFilterService;
+	
+	@Autowired
+	private StreetVendingInboxFilterService StreetVendingInboxFilterService;
+
+	@Autowired
+	private WTInboxFilterService WTInboxFilterService;
+	
+	@Autowired
+	private CNDInboxFilterService cndServiceInboxFilterService;
+	
+	@Autowired
 	private RestTemplate restTemplate;
+
+	@Autowired
+	private MTInboxFilterService mtInboxFilterService;
+
+	@Autowired
+	private TPInboxFilterService tpInboxFilterService;
+
+	@Autowired
+	private PGRAiInboxFilterService pgrAiInboxFilterService;
 
 	@Autowired
 	ElasticSearchRepository elasticSearchRepository;
@@ -402,8 +426,8 @@ public class InboxService {
 				if (!CollectionUtils.isEmpty(applicationNumbers)) {
 					moduleSearchCriteria.put(ACKNOWLEDGEMENT_IDS_PARAM, applicationNumbers);
 					businessKeys.addAll(applicationNumbers);
-					//moduleSearchCriteria.remove(LOCALITY_PARAM);
-					//moduleSearchCriteria.remove(OFFSET_PARAM);
+					// moduleSearchCriteria.remove(LOCALITY_PARAM);
+					// moduleSearchCriteria.remove(OFFSET_PARAM);
 				} else {
 					isSearchResultEmpty = true;
 				}
@@ -417,12 +441,171 @@ public class InboxService {
 				if (!CollectionUtils.isEmpty(applicationNumbers)) {
 					moduleSearchCriteria.put(ACKNOWLEDGEMENT_IDS_PARAM, applicationNumbers);
 					businessKeys.addAll(applicationNumbers);
+					moduleSearchCriteria.remove(STATUS_PARAM);
 					moduleSearchCriteria.remove(LOCALITY_PARAM);
 					moduleSearchCriteria.remove(OFFSET_PARAM);
 				} else {
 					isSearchResultEmpty = true;
 				}
 			} // for ewaste service
+
+			if (!ObjectUtils.isEmpty(processCriteria.getModuleName()) && processCriteria.getModuleName().equals(CHB)) {
+
+				List<String> applicationNumbers = communityHallInboxFilterService
+						.fetchApplicationNumbersFromSearcher(criteria, StatusIdNameMap, requestInfo);
+				if (!CollectionUtils.isEmpty(applicationNumbers)) {
+					moduleSearchCriteria.put(CHB_BOOKING_NO_PARAM, applicationNumbers);
+					businessKeys.addAll(applicationNumbers);
+					moduleSearchCriteria.remove(OFFSET_PARAM);
+					moduleSearchCriteria.remove(STATUS_PARAM);
+				} else {
+					isSearchResultEmpty = true;
+				}
+			}
+
+			/*
+			   This block checks if the module name in processCriteria matches
+			   the sv-service. If true, it fetches the list of
+			   application numbers using the StreetVendingInboxFilterService.
+
+			   - If application numbers exist:
+				 - They are added to moduleSearchCriteria and businessKeys.
+				 - LOCALITY_PARAM and OFFSET_PARAM are removed from moduleSearchCriteria.
+
+			   - If no application numbers are found, isSearchResultEmpty is set to true.
+			*/
+			if (!ObjectUtils.isEmpty(processCriteria.getModuleName())
+					&& processCriteria.getModuleName().equals(SV_SERVICES)) {
+
+				List<String> applicationNumbers = StreetVendingInboxFilterService.fetchApplicationIdsFromSearcher(criteria,
+						StatusIdNameMap, requestInfo);
+				if (!CollectionUtils.isEmpty(applicationNumbers)) {
+					moduleSearchCriteria.put(SV_APPLICATION_NUMBER_PARAM, applicationNumbers);
+					businessKeys.addAll(applicationNumbers);
+					moduleSearchCriteria.remove(LOCALITY_PARAM);
+					moduleSearchCriteria.remove(OFFSET_PARAM);
+					moduleSearchCriteria.remove(STATUS_PARAM);
+					if(moduleSearchCriteria.containsKey(APPLICATION_STATUS)) {
+						moduleSearchCriteria.put(STATUS_PARAM, moduleSearchCriteria.get(APPLICATION_STATUS));
+					}
+				} else {
+					isSearchResultEmpty = true;
+				}
+			}
+
+
+
+			/*
+			   This block checks if the module name in processCriteria matches
+			   the REQUEST_SERVICE_WATER_TANKER. If true, it fetches the list of
+			   application numbers using the WTInboxFilterService.
+
+			   - If application numbers exist:
+				 - They are added to moduleSearchCriteria and businessKeys.
+				 - LOCALITY_PARAM and OFFSET_PARAM are removed from moduleSearchCriteria.
+
+			   - If no application numbers are found, isSearchResultEmpty is set to true.
+			*/
+			if (!ObjectUtils.isEmpty(processCriteria.getModuleName())
+					&& processCriteria.getModuleName().equals(REQUEST_SERVICE_WATER_TANKER)) {
+
+				List<String> applicationNumbers = WTInboxFilterService.fetchApplicationNumbersFromSearcher(criteria,
+						StatusIdNameMap, requestInfo);
+				if (!CollectionUtils.isEmpty(applicationNumbers)) {
+					moduleSearchCriteria.put(BOOKING_NO_PARAM, applicationNumbers);
+					businessKeys.addAll(applicationNumbers);
+					 moduleSearchCriteria.remove(LOCALITY_PARAM);
+					moduleSearchCriteria.remove(OFFSET_PARAM);
+					moduleSearchCriteria.remove(STATUS_PARAM);
+				} else {
+					isSearchResultEmpty = true;
+				}
+			}
+
+			/*
+			   This block checks if the module name in processCriteria matches
+			   the REQUEST_SERVICE_MOBILE_TOILET. If true, it fetches the list of
+			   application numbers using the mtInboxFilterService.
+
+			   - If application numbers exist:
+				 - They are added to moduleSearchCriteria and businessKeys.
+				 - LOCALITY_PARAM and OFFSET_PARAM are removed from moduleSearchCriteria.
+
+			   - If no application numbers are found, isSearchResultEmpty is set to true.
+			*/
+			if (!ObjectUtils.isEmpty(processCriteria.getModuleName())
+					&& processCriteria.getModuleName().equals(REQUEST_SERVICE_MOBILE_TOILET)) {
+
+				List<String> applicationNumbers = mtInboxFilterService.fetchApplicationNumbersFromSearcher(criteria,
+						StatusIdNameMap, requestInfo);
+				if (!CollectionUtils.isEmpty(applicationNumbers)) {
+					moduleSearchCriteria.put(BOOKING_NO_PARAM, applicationNumbers);
+					businessKeys.addAll(applicationNumbers);
+					moduleSearchCriteria.remove(LOCALITY_PARAM);
+					moduleSearchCriteria.remove(OFFSET_PARAM);
+					moduleSearchCriteria.remove(STATUS_PARAM);
+				} else {
+					isSearchResultEmpty = true;
+				}
+			}
+
+			/*
+			   This block checks if the module name in processCriteria matches
+			   the REQUEST_SERVICE_TREE_PRUNING. If true, it fetches the list of
+			   application numbers using the tpInboxFilterService.
+
+			   - If application numbers exist:
+				 - They are added to moduleSearchCriteria and businessKeys.
+				 - LOCALITY_PARAM and OFFSET_PARAM are removed from moduleSearchCriteria.
+
+			   - If no application numbers are found, isSearchResultEmpty is set to true.
+			*/
+			if (!ObjectUtils.isEmpty(processCriteria.getModuleName())
+					&& processCriteria.getModuleName().equals(REQUEST_SERVICE_TREE_PRUNING)) {
+
+				List<String> applicationNumbers = tpInboxFilterService.fetchApplicationNumbersFromSearcher(criteria,
+						StatusIdNameMap, requestInfo);
+				if (!CollectionUtils.isEmpty(applicationNumbers)) {
+					moduleSearchCriteria.put(BOOKING_NO_PARAM, applicationNumbers);
+					businessKeys.addAll(applicationNumbers);
+					moduleSearchCriteria.remove(LOCALITY_PARAM);
+					moduleSearchCriteria.remove(OFFSET_PARAM);
+					moduleSearchCriteria.remove(STATUS_PARAM);
+				} else {
+					isSearchResultEmpty = true;
+				}
+			}
+
+			// for CND service
+			if (!ObjectUtils.isEmpty(processCriteria.getModuleName()) && processCriteria.getModuleName().equals(CND)) {
+
+				List<String> applicationNumbers = cndServiceInboxFilterService
+						.fetchApplicationNumbersFromSearcher(criteria, StatusIdNameMap, requestInfo);
+				if (!CollectionUtils.isEmpty(applicationNumbers)) {
+					moduleSearchCriteria.put(APPLICATION_NO_PARAM, applicationNumbers);
+					businessKeys.addAll(applicationNumbers);
+					moduleSearchCriteria.remove(OFFSET_PARAM);
+					moduleSearchCriteria.remove(STATUS_PARAM);
+					if(moduleSearchCriteria.containsKey(APPLICATION_STATUS)) {
+						moduleSearchCriteria.put(STATUS_PARAM, moduleSearchCriteria.get(APPLICATION_STATUS));
+					}
+					
+				} else {
+					isSearchResultEmpty = true;
+				}
+			}
+
+			// fetching total count and application numbers from searcher for pgr ai service
+			if (!ObjectUtils.isEmpty(processCriteria.getModuleName()) && processCriteria.getModuleName().equals(PGRAiConstants.PGR_MODULE)) {
+
+				totalCount = pgrAiInboxFilterService.fetchApplicationIdsCountFromSearcher(criteria, StatusIdNameMap,
+						requestInfo);
+				List<String> applicationNumbers = pgrAiInboxFilterService.fetchApplicationIdsFromSearcher(criteria,
+						StatusIdNameMap, requestInfo);
+				if (!CollectionUtils.isEmpty(applicationNumbers)) {
+					businessKeys.addAll(applicationNumbers);
+				}
+			}
 
 			if (!ObjectUtils.isEmpty(processCriteria.getModuleName())
 					&& (processCriteria.getModuleName().equals(TL) || processCriteria.getModuleName().equals(BPAREG))) {
@@ -627,9 +810,24 @@ public class InboxService {
 				businessObjects = fetchModuleObjects(moduleSearchCriteria, businessServiceName, criteria.getTenantId(),
 						requestInfo, srvMap);
 			}
-			Map<String, Object> businessMap = StreamSupport.stream(businessObjects.spliterator(), false)
-					.collect(Collectors.toMap(s1 -> ((JSONObject) s1).get(businessIdParam).toString(), s1 -> s1,
-							(e1, e2) -> e1, LinkedHashMap::new));
+			Map<String, Object> businessMap = new HashMap<>();
+// Added below if condition to handle PGR response business object as the structure of response is different from others
+			if (businessServiceName.contains(PGRAiConstants.PGR_SERVICE)){
+				 businessMap = StreamSupport.stream(businessObjects.spliterator(), false)
+						.collect(Collectors.toMap(
+								s1 -> ((JSONObject) s1).getJSONObject("service").get(businessIdParam).toString(),
+								s1 -> s1,
+								(e1, e2) -> e1,
+								LinkedHashMap::new
+						));
+
+			}else{
+				businessMap = StreamSupport.stream(businessObjects.spliterator(), false)
+						.collect(Collectors.toMap(s1 -> ((JSONObject) s1).get(businessIdParam).toString(), s1 -> s1,
+								(e1, e2) -> e1, LinkedHashMap::new));
+			}
+
+
 			ArrayList businessIds = new ArrayList();
 			businessIds.addAll(businessMap.keySet());
 			processCriteria.setBusinessIds(businessIds);
@@ -732,6 +930,7 @@ public class InboxService {
 					});
 				}
 			}
+			Map<String, Object> finalBusinessMap = businessMap; // Create a final reference
 			if (businessObjects.length() > 0 && processInstances.size() > 0) {
 				if (CollectionUtils.isEmpty(businessKeys)) {
 					businessMap.keySet().forEach(businessKey -> {
@@ -740,13 +939,13 @@ public class InboxService {
 								// For non- Bill Amendment Inbox search
 								Inbox inbox = new Inbox();
 								inbox.setProcessInstance(processInstanceMap.get(businessKey));
-								inbox.setBusinessObject(toMap((JSONObject) businessMap.get(businessKey)));
+								inbox.setBusinessObject(toMap((JSONObject) finalBusinessMap.get(businessKey)));
 								inboxes.add(inbox);
 							} else {
 								// When Bill Amendment objects are searched
 								Inbox inbox = new Inbox();
 								inbox.setProcessInstance(processInstanceMap.get(businessKey));
-								inbox.setBusinessObject(toMap((JSONObject) businessMap.get(businessKey)));
+								inbox.setBusinessObject(toMap((JSONObject) finalBusinessMap.get(businessKey)));
 								inbox.setServiceObject(toMap((JSONObject) serviceSearchMap
 										.get(inbox.getBusinessObject().get("consumerCode"))));
 								inboxes.add(inbox);
@@ -761,8 +960,8 @@ public class InboxService {
 						businessKeys.forEach(businessKey -> {
 							Inbox inbox = new Inbox();
 							inbox.setProcessInstance(processInstanceMap.get(businessKey));
-							inbox.setBusinessObject(toMap((JSONObject) businessMap.get(businessKey)));
-							if(inbox.getProcessInstance() != null)
+							inbox.setBusinessObject(toMap((JSONObject) finalBusinessMap.get(businessKey)));
+							if (inbox.getProcessInstance() != null)
 								inboxes.add(inbox);
 						});
 					} else {
@@ -771,10 +970,10 @@ public class InboxService {
 							Inbox inbox = new Inbox();
 
 							inbox.setProcessInstance(processInstanceMap.get(businessKey));
-							inbox.setBusinessObject(toMap((JSONObject) businessMap.get(businessKey)));
+							inbox.setBusinessObject(toMap((JSONObject) finalBusinessMap.get(businessKey)));
 							inbox.setServiceObject(toMap(
 									(JSONObject) serviceSearchMap.get(inbox.getBusinessObject().get("consumerCode"))));
-							if(inbox.getProcessInstance() != null)
+							if (inbox.getProcessInstance() != null)
 								inboxes.add(inbox);
 						}
 					}
@@ -1166,13 +1365,6 @@ public class InboxService {
 			}
 		} // for pet-service
 
-		if (moduleSearchCriteria.containsKey("requestStatus")) { // for pet-service
-			if (businessServiceName.contains("ewst")) {
-				moduleSearchCriteria.remove("requestStatus");
-			}
-		}
-
-
 
 		if (businessServiceName.contains("asset-create")) {
 			if (moduleSearchCriteria.containsKey("offset")) {
@@ -1182,7 +1374,6 @@ public class InboxService {
 		}
 
 		Set<String> searchParams = moduleSearchCriteria.keySet();
-
 		searchParams.forEach((param) -> {
 
 			if (!param.equalsIgnoreCase("tenantId")) {
@@ -1197,7 +1388,7 @@ public class InboxService {
 				} else if (param.equalsIgnoreCase("consumerNo")) {
 					url.append("&").append("connectionNumber").append("=")
 							.append(moduleSearchCriteria.get(param).toString());
-				} else if (null != moduleSearchCriteria.get(param)) {
+				}else if (null != moduleSearchCriteria.get(param)) {
 					url.append("&").append(param).append("=").append(moduleSearchCriteria.get(param).toString());
 				}
 			}

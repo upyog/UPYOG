@@ -10,49 +10,39 @@ import java.util.List;
 @Component
 public class PetApplicationQueryBuilder {
 
-	public static final String TENANTIDQUERY = "select distinct(tenantid) from eg_tl_tradelicense";
+	// This is to fetch distinct tenant ids for scheduler service to expire applications
+	public static final String TENANTIDQUERY = "select distinct(tenantid) from eg_ptr_registration;";
 
-//	private static final String BASE_PTR_QUERY = " SELECT ptr.id as pid, ptr.tenantid as ptenantid, ptr.applicationnumber as papplicationnumber, ptr.applicantname as papplicantname, ptr.fathername as pfathername, ptr.mobileNumber as pmobileNumber, ptr.emailId as pemailId, ptr.createdby as pcreatedby, ptr.lastmodifiedby as plastmodifiedby, ptr.createdtime as pcreatedtime, ptr.lastmodifiedtime as plastmodifiedtime, ";
-//
-//	private static final String PET_SELECT_QUERY = "  pet.id as ptid, pet.petName as ptpetname, pet.petType as ptpetType, pet.breedType as ptbreedtype, pet.petAge as ptpetage, pet.petGender as ptpetgender, pet.clinicName as ptclinicname, pet.doctorName as ptdoctorname, pet.lastVaccineDate as ptlastvaccinedate, pet.petDetailsId as ptpetdetails, pet.vaccinationNumber as ptvaccinationNumber,";
-//
-//	private static final String ADDRESS_SELECT_QUERY = " add.id as aid, add.tenantid as atenantid, add.doorno as adoorno, add.latitude as alatitude, add.longitude as alongitude, add.buildingname as abuildingname, add.addressid as aaddressid, add.addressnumber as aaddressnumber, add.type as atype, add.addressline1 as aaddressline1, add.addressline2 as aaddressline2, add.landmark as alandmark, add.street as astreet, add.city as acity, add.locality as alocality, add.pincode as apincode, add.detail as adetail, add.registrationid as aregistrationid, ";
-//
-//	private static final String DOCUMENTS_SELECT_QUERY = " doc.id as did, doc.tenantid as dtenantid, doc.documentType as documentType, doc.filestoreId as dfilestoreId, doc.documentUid as ddocumentUid, doc.active as dactive, doc.petApplicationId as dpetApplicationId ";
-//
-//	private static final String FROM_TABLES = " FROM eg_ptr_registration ptr LEFT JOIN eg_ptr_address add ON ptr.id = add.registrationid LEFT JOIN eg_ptr_petdetails pet on ptr.id = pet.petDetailsId LEFT JOIN eg_ptr_applicationdocuments doc on ptr.id = doc.petApplicationId ";
-
-	// Updated BASE_PTR_QUERY with new columns from eg_ptr_registration
+	// Updated BASE_PTR_QUERY
 	private static final String BASE_PTR_QUERY = " SELECT ptr.id as pid, ptr.tenantid as ptenantid, ptr.applicationnumber as papplicationnumber, "
-	        + "ptr.applicantname as papplicantname, ptr.fathername as pfathername, ptr.mobileNumber as pmobileNumber, "
-	        + "ptr.emailId as pemailId, ptr.applicationType as papplicationtype, ptr.validityDate as pvaliditydate, "
-	        + "ptr.status as pstatus, ptr.expireFlag as pexpireflag, ptr.petToken as ppettoken, ptr.previousApplicationNumber as ppreviousapplicationnumber, ptr.propertyId as ppropertyId, "
-	        + "ptr.createdby as pcreatedby, ptr.lastmodifiedby as plastmodifiedby, ptr.createdtime as pcreatedtime, ptr.lastmodifiedtime as plastmodifiedtime ,";
+			+ "ptr.applicantname as papplicantname, ptr.fathername as pfathername, ptr.mobileNumber as pmobileNumber, "
+			+ "ptr.emailId as pemailId, ptr.applicationType as papplicationtype, ptr.validityDate as pvaliditydate, "
+			+ "ptr.status as pstatus, ptr.expireFlag as pexpireflag, ptr.petToken as ppettoken, ptr.previousApplicationNumber as ppreviousapplicationnumber, ptr.propertyId as ppropertyId, "
+			+ "ptr.createdby as pcreatedby, ptr.lastmodifiedby as plastmodifiedby, ptr.createdtime as pcreatedtime, ptr.lastmodifiedtime as plastmodifiedtime ,";
 
-	// Updated PET_SELECT_QUERY with new columns from eg_ptr_petdetails
+	// PET_SELECT_QUERY
 	private static final String PET_SELECT_QUERY = " pet.id as ptid, pet.petName as ptpetname, pet.petType as ptpettype, "
-	        + "pet.breedType as ptbreedtype, pet.petAge as ptpetage, pet.petGender as ptpetgender, pet.clinicName as ptclinicname, "
-	        + "pet.doctorName as ptdoctorname, pet.lastVaccineDate as ptlastvaccinedate, pet.petDetailsId as ptpetdetails, "
-	        + "pet.vaccinationNumber as ptvaccinationnumber, pet.petColor as ptpetcolor, pet.adoptionDate as ptadoptiondate, "
-	        + "pet.birthDate as ptbirthdate, pet.identificationMark as ptidentificationmark ,";
+			+ "pet.breedType as ptbreedtype, pet.petAge as ptpetage, pet.petGender as ptpetgender, pet.clinicName as ptclinicname, "
+			+ "pet.doctorName as ptdoctorname, pet.lastVaccineDate as ptlastvaccinedate, pet.petDetailsId as ptpetdetails, "
+			+ "pet.vaccinationNumber as ptvaccinationnumber, pet.petColor as ptpetcolor, pet.adoptionDate as ptadoptiondate, "
+			+ "pet.birthDate as ptbirthdate, pet.identificationMark as ptidentificationmark ,";
 
-	// No changes needed for the ADDRESS_SELECT_QUERY
+	// ADDRESS_SELECT_QUERY
 	private static final String ADDRESS_SELECT_QUERY = " add.id as aid, add.tenantid as atenantid, add.doorno as adoorno, add.latitude as alatitude, "
-	        + "add.longitude as alongitude, add.buildingname as abuildingname, add.addressid as aaddressid, add.addressnumber as aaddressnumber, "
-	        + "add.type as atype, add.addressline1 as aaddressline1, add.addressline2 as aaddressline2, add.landmark as alandmark, "
-	        + "add.street as astreet, add.city as acity, add.locality as alocality, add.pincode as apincode, add.detail as adetail, add.registrationid as aregistrationid ,";
+			+ "add.longitude as alongitude, add.buildingname as abuildingname, add.addressid as aaddressid, add.addressnumber as aaddressnumber, "
+			+ "add.type as atype, add.addressline1 as aaddressline1, add.addressline2 as aaddressline2, add.landmark as alandmark, "
+			+ "add.street as astreet, add.city as acity, add.locality as alocality, add.pincode as apincode, add.detail as adetail, add.registrationid as aregistrationid ,";
 
-	// No changes needed for the DOCUMENTS_SELECT_QUERY
+	// DOCUMENTS_SELECT_QUERY
 	private static final String DOCUMENTS_SELECT_QUERY = " doc.id as did, doc.tenantid as dtenantid, doc.documentType as documentType, "
-	        + "doc.filestoreId as dfilestoreId, doc.documentUid as ddocumentUid, doc.active as dactive, doc.petApplicationId as dpetApplicationId ";
+			+ "doc.filestoreId as dfilestoreId, doc.documentUid as ddocumentUid, doc.active as dactive, doc.petApplicationId as dpetApplicationId ";
 
-	// No changes needed for the FROM_TABLES query
+	// FROM_TABLES query
 	private static final String FROM_TABLES = " FROM eg_ptr_registration ptr "
-	        + "LEFT JOIN eg_ptr_address add ON ptr.id = add.registrationid "
-	        + "LEFT JOIN eg_ptr_petdetails pet on ptr.id = pet.petDetailsId "
-	        + "LEFT JOIN eg_ptr_applicationdocuments doc on ptr.id = doc.petApplicationId ";
+			+ "LEFT JOIN eg_ptr_address add ON ptr.id = add.registrationid "
+			+ "LEFT JOIN eg_ptr_petdetails pet on ptr.id = pet.petDetailsId "
+			+ "LEFT JOIN eg_ptr_applicationdocuments doc on ptr.id = doc.petApplicationId ";
 
-	
 	private final String ORDERBY_CREATEDTIME = " ORDER BY ptr.createdtime DESC ";
 
 	public String getPetApplicationSearchQuery(PetApplicationSearchCriteria criteria, List<Object> preparedStmtList) {
@@ -99,15 +89,18 @@ public class PetApplicationQueryBuilder {
 		}
 		if (!ObjectUtils.isEmpty(criteria.getFromDate())) {
 			addClauseIfRequired(query, preparedStmtList);
-			// query.append(" ptr.createdtime >= ? ");
 			query.append(" ptr.createdtime >= CAST(? AS bigint) ");
 			preparedStmtList.add(criteria.getFromDate());
 		}
 		if (!ObjectUtils.isEmpty(criteria.getToDate())) {
 			addClauseIfRequired(query, preparedStmtList);
-			// query.append(" ptr.createdtime <= ? ");
 			query.append(" ptr.createdtime <= CAST(? AS bigint) ");
 			preparedStmtList.add(criteria.getToDate());
+		}
+		if (!ObjectUtils.isEmpty(criteria.getValidityDate())) {
+			addClauseIfRequired(query, preparedStmtList);
+			query.append(" ptr.validitydate >= ? ");
+			preparedStmtList.add(criteria.getValidityDate());
 		}
 		// order pet registration applications based on their createdtime in latest
 		// first manner

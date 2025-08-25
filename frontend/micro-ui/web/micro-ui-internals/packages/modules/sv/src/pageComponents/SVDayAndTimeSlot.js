@@ -1,6 +1,11 @@
 import React from "react";
 import { CardLabel, TextInput, CheckBox, Dropdown } from "@upyog/digit-ui-react-components";
 
+/**
+ * Component for selecting day and time slots
+ * Allows users to select days and specify time ranges for each day
+ * Also provides an option to apply the same time slot to all selected days
+ */
 const DayAndTimeSlot = ({ t, day, onDayToggle, onSameForAllChange, isSameForAll, onTimeChange }) => {
   let validation = {};
   return (

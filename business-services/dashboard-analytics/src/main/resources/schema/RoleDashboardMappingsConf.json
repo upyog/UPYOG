@@ -3,7 +3,7 @@
   "roles" : [
     {
       "_comment":"This role is super role which can access all the available dashboards: [other/new roles are suppose to be added]",
-      "roleId": "roleId#1",
+      "roleId": 6,
       "roleName" : "Admin",
       "isSuper" : "",
       "orgId": "",
@@ -11,10 +11,6 @@
         {
           "name": "My Dashboard",
           "id": "home"
-        },
-        {
-          "name": "My Dashboard v2",
-          "id": "homev2"
         },
         {
           "name": "Property Tax",
@@ -29,16 +25,94 @@
           "id": "pgr"
         },
         {
+          "name": "Overview",
           "id": "overview"
         },
         {
+          "name": "Water & Sewerage",
           "id": "ws"
+        },
+        {
+          "name": "National Water & Sewerage",
+          "id": "national-ws"
+        },
+        {
+          "name": "Facial Sludge Management",
+          "id": "fsm"
+        },
+        {
+          "name": "Misc Collect",
+          "id": "mCollect"
+        },
+        {
+          "name": "Fire Noc",
+          "id": "noc"
+        },
+        {
+          "name": "OBPS",
+          "id": "obps"
+        },
+        {
+          "name": "National Property Tax",
+          "id": "national-propertyTax"
+        },
+        {
+          "name": "NSS OBPS",
+          "id": "nss-obps"
+        },
+        {
+          "name": "National Fire Noc",
+          "id": "national-firenoc"
+        },
+        {
+          "name": "National mCollect",
+          "id": "national-mcollect"
+        },
+        {
+          "name": "National TradeLicense",
+          "id": "national-tradelicense"
+        },
+        {
+          "name": "National Urban Relatime Dashboard",
+          "id": "NURT_DASHBOARD"
+        },
+        {
+          "name": "National PGR",
+          "id": "national-pgr"
+        },
+        {
+          "name": "National Overview",
+          "id": "national-overview"
+        },
+        {
+          "name": "Birth Death",
+          "id": "birth-death"
+        },
+        {
+          "name": "Finance",
+          "id": "national-finance"
+        },
+        {
+          "name": "National Birth Death",
+          "id": "nss-birth-death"
+        },
+        {
+          "name": "FSM",
+          "id": "national-fssm"
+        },
+        {
+          "name": "Main Dashboard",
+          "id": "mainDashboard"
+        },
+        {
+          "name": "National Street Vending",
+          "id": "national-sv"
         }
       ]
     },
     {
       "_comment":"This role is super role which can access all the available dashboards: [other/new roles are suppose to be added]",
-      "roleId": "roleId#2",
+      "roleId": 7,
       "roleName" : "Commissioner",
       "isSuper" : "",
       "orgId": "",
@@ -60,6 +134,27 @@
         },
         {
           "id": "ulb-ws"
+        },
+        {
+          "id": "ulb-fsm"
+        },
+        {
+          "id": "ulb-mCollect"
+        },
+        {
+          "id": "ulb-noc"
+        },
+        {
+          "id": "ulb-obps"
+        },
+        {
+          "id": "ulb-fssm"
+        },
+        {
+          "id": "ulb-sv"
+        },
+        {
+          "id": "ulb-finance"
         }
       ]
     }

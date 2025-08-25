@@ -8,13 +8,13 @@ const ApplicationLinks = ({ linkPrefix, classNameForMobileView="" }) => {
 
   const allLinks = [
     {
-      text: t("ES_TITLE_NEW_REGISTRATION"),
-      link: "/digit-ui/employee/chb/bookHall/new-application",
+      text: "ES_NEW_COMMUNITY_HALL_BOOKING",
+      link: "/digit-ui/employee/chb/bookHall/searchhall",
     },
     {
-      text: t("ES_TITILE_SEARCH_APPLICATION"),
-      link: `${linkPrefix}/search`,
-    },
+      text: "ES_COMMON_APPLICATION_SEARCH",
+      link: `/digit-ui/employee/chb/my-applications`,
+    }
   ];
 
   const [links, setLinks] = useState([]);

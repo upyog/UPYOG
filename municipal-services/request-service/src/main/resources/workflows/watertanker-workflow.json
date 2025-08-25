@@ -1,0 +1,193 @@
+{
+    "RequestInfo": {
+        "apiId": "Rainmaker",
+        "action": "",
+        "did": 1,
+        "key": "",
+        "msgId": "20170310130900|en_IN",
+        "requesterId": "",
+        "ts": 1513579888683,
+        "ver": ".01",
+        "authToken": "{{devAuth}}",
+         "userInfo": {
+      "id": 73,
+      "userName": null,
+      "name": null,
+      "type": "EMPLOYEE",
+      "mobileNumber": null,
+      "emailId": null,
+      "roles": [
+        {
+          "id": 2,
+          "name": "Customer Support Representative",
+          "code": null,
+          "tenantId": null
+        }
+      ],
+      "tenantId": null,
+      "uuid": "uuid"
+    }
+    },
+    "BusinessServices": [
+        {
+            "tenantId": "pg",
+            "businessService": "watertanker",
+            "business": "request-service.water_tanker",
+            "businessServiceSla": 0,
+            "states": [
+                {
+                    "sla": null,
+                    "state": null,
+                    "applicationStatus": null,
+                    "docUploadRequired": false,
+                    "isStartState": true,
+                    "isTerminateState": false,
+                    "isStateUpdatable": true,
+                    "actions": [
+                        {
+                            "action": "APPLY",
+                            "nextState": "PENDING_FOR_APPROVAL",
+                            "roles": [
+                                "CITIZEN",
+                                "WT_CEMP"
+                            ],
+                            "active": true
+                        }
+                    ]
+                },
+                {
+                    "sla": null,
+                    "state": "PENDING_FOR_APPROVAL",
+                    "applicationStatus": "PENDING_FOR_APPROVAL",
+                    "docUploadRequired": false,
+                    "isStartState": false,
+                    "isTerminateState": false,
+                    "isStateUpdatable": true,
+                    "actions": [
+                        {
+                            "action": "REJECT",
+                            "nextState": "REJECTED",
+                            "roles": [
+                                "WT_CEMP"
+                            ],
+                            "active": true
+                        },
+                        {
+                            "action": "APPROVE",
+                            "nextState": "APPROVED",
+                            "roles": [
+                                "WT_CEMP"
+                            ],
+                            "active": true
+                        }
+                    ]
+                },
+                {
+                    "sla": null,
+                    "state": "APPROVED",
+                    "applicationStatus": "APPROVED",
+                    "docUploadRequired": false,
+                    "isStartState": false,
+                    "isTerminateState": false,
+                    "isStateUpdatable": true,
+                    "actions": [
+                        {
+                            "action": "PAY",
+                            "nextState": "ASSIGN_VENDOR",
+                            "roles": [
+                                "CITIZEN",
+                                "WT_CEMP"
+                            ],
+                            "active": true
+                        }
+                    ]
+                },
+                {
+                    "sla": null,
+                    "state": "ASSIGN_VENDOR",
+                    "applicationStatus": "PENDING_FOR_VENDOR_ASSIGNMENT",
+                    "docUploadRequired": false,
+                    "isStartState": false,
+                    "isTerminateState": false,
+                    "isStateUpdatable": true,
+                    "actions": [
+                        {
+                            "action": "ASSIGN_VENDOR",
+                            "nextState": "PENDING_FOR_VEHICLE_DRIVER_ASSIGN",
+                            "roles": [
+                                "WT_CEMP"
+                            ],
+                            "active": true
+                        }
+                    ]
+                },
+                {
+                    "sla": null,
+                    "state": "PENDING_FOR_VEHICLE_DRIVER_ASSIGN",
+                    "applicationStatus": "PENDING_FOR_VEHICLE_DRIVER_ASSIGN",
+                    "docUploadRequired": false,
+                    "isStartState": false,
+                    "isTerminateState": false,
+                    "isStateUpdatable": true,
+                    "actions": [
+                        {
+                            "action": "ASSIGN_VEHICLE_DRIVER",
+                            "nextState": "DELIVERY_PENDING",
+                            "roles": [
+                                "WT_VENDOR"
+                            ],
+                            "active": true
+                        },
+                        {
+                            "action": "REJECT",
+                            "nextState": "REJECTED",
+                            "roles": [
+                                "WT_VENDOR"
+                            ],
+                            "active": true
+                        }
+                    ]
+                },
+                {
+                    "sla": null,
+                    "state": "DELIVERY_PENDING",
+                    "applicationStatus": "IN_TRANSIT",
+                    "docUploadRequired": false,
+                    "isStartState": false,
+                    "isTerminateState": false,
+                    "isStateUpdatable": true,
+                    "actions": [
+                        {
+                            "action": "COMPLETE_REQUEST",
+                            "nextState": "DELIVERED",
+                            "roles": [
+                                "WT_VENDOR"
+                            ],
+                            "active": true
+                        }
+                    ]
+                },
+                {
+                    "sla": null,
+                    "state": "DELIVERED",
+                    "applicationStatus": "TANKER_DELIVERED",
+                    "docUploadRequired": false,
+                    "isStartState": false,
+                    "isTerminateState": true,
+                    "isStateUpdatable": false,
+                    "actions": null
+                },
+                {
+                    "sla": null,
+                    "state": "REJECTED",
+                    "applicationStatus": "REJECTED",
+                    "docUploadRequired": false,
+                    "isStartState": false,
+                    "isTerminateState": true,
+                    "isStateUpdatable": false,
+                    "actions": null
+                }
+            ]
+        }
+    ]
+}

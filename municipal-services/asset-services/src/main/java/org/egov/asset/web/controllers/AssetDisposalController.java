@@ -3,10 +3,7 @@ package org.egov.asset.web.controllers;
 import digit.models.coremodels.RequestInfoWrapper;
 import org.egov.asset.service.AssetDisposeService;
 import org.egov.asset.util.ResponseInfoFactory;
-import org.egov.asset.web.models.disposal.AssetDisposal;
-import org.egov.asset.web.models.disposal.AssetDisposalRequest;
-import org.egov.asset.web.models.disposal.AssetDisposalResponse;
-import org.egov.asset.web.models.disposal.AssetDisposalSearchCriteria;
+import org.egov.asset.web.models.disposal.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -51,8 +48,12 @@ public class AssetDisposalController {
 
     @PostMapping("/_search")
     public ResponseEntity<AssetDisposalResponse> searchDisposals(
-            @RequestBody AssetDisposalSearchCriteria searchCriteria,
-            @RequestBody RequestInfoWrapper requestInfoWrapper) {
+            @RequestBody AssetDisposalSearchRequest searchRequest) {
+
+        // Extract search criteria and request info
+        AssetDisposalSearchCriteria searchCriteria = searchRequest.getAssetDisposalSearchCriteria();
+        RequestInfoWrapper requestInfoWrapper = searchRequest.getRequestInfoWrapper();
+
         List<AssetDisposal> disposals = assetDisposeService.searchDisposals(searchCriteria, requestInfoWrapper.getRequestInfo());
         AssetDisposalResponse response = AssetDisposalResponse.builder()
                 .assetDisposals(disposals)

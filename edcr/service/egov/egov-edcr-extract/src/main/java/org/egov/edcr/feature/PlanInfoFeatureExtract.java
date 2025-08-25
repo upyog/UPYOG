@@ -707,6 +707,15 @@ public class PlanInfoFeatureExtract extends FeatureExtract {
 		if (StringUtils.isNotBlank(khatuniNo))
 			pi.setKhatuniNo(khatuniNo);
 		
+		String zone = planInfoProperties.get(DxfFileConstants.ZONE);
+		if (StringUtils.isNotBlank(zone))
+			pi.setZone(zone);
+		
+		String subZone = planInfoProperties.get(DxfFileConstants.SUB_ZONE);
+		if (StringUtils.isNotBlank(subZone))
+			pi.setSubZone(subZone);
+		
+		
 		String khasraNo = planInfoProperties.get(DxfFileConstants.KHASRA_NO);
 		if (StringUtils.isNotBlank(khasraNo))
 			pi.setKhasraNo(khasraNo);

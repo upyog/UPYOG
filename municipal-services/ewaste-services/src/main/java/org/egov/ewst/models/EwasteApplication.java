@@ -18,7 +18,10 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /**
- * A Object holds the basic data for a Ewaste Application
+ * Represents the basic data for an E-waste Application.
+ * This class contains details such as the application ID, tenant ID, request ID,
+ * calculated amount, vendor UUID, pickup date, transaction ID, final amount,
+ * request status, and associated details like applicant, address, and workflow.
  */
 @ApiModel(description = "A Object holds the basic data for a E-waste Application")
 @Validated
@@ -79,6 +82,12 @@ public class EwasteApplication {
 	@JsonProperty("workflow")
 	private Workflow workflow = null;
 
+	/**
+	 * Adds a document to the list of documents associated with the application.
+	 *
+	 * @param documentsItem the document to add
+	 * @return the updated EwasteApplication object
+	 */
 	public EwasteApplication addDocumentsItem(Document documentsItem) {
 		if (this.documents == null) {
 			this.documents = new ArrayList<>();
@@ -89,6 +98,12 @@ public class EwasteApplication {
 		return this;
 	}
 
+	/**
+	 * Adds an E-waste detail to the list of E-waste details associated with the application.
+	 *
+	 * @param ewasteDetails the E-waste detail to add
+	 * @return the updated EwasteApplication object
+	 */
 	public EwasteApplication addEwasteDetailItem(EwasteDetails ewasteDetails) {
 		if (this.ewasteDetails == null) {
 			this.ewasteDetails = new ArrayList<>();

@@ -18,6 +18,39 @@ const CloseBtn = (props) => {
     );
 };
 
+/**
+ * BookingPopup Component
+ * 
+ * This component is responsible for rendering a popup modal for managing community hall bookings in the CHB module.
+ * It allows users to view existing booking details, submit new booking requests, and manage booking-related actions.
+ * 
+ * Props:
+ * - `t`: Translation function for internationalization.
+ * - `closeModal`: Function to close the popup modal.
+ * - `onSubmit`: Callback function triggered when the booking form is submitted.
+ * - `setExistingDataSet`: Function to update the existing dataset with fetched booking details.
+ * - `Searchdata`: Object containing search parameters for fetching booking details.
+ * 
+ * State Variables:
+ * - `showExistingBookingDetails`: Boolean state to manage the visibility of the existing booking details component.
+ * - `isDataSet`: Boolean state to track whether the booking data has been set.
+ * 
+ * Functions:
+ * - `Close`: Renders the close button icon for the modal.
+ * - `CloseBtn`: Wrapper component for the close button, with an `onClick` handler to close the modal.
+ * - `handleExistingDetailsClick`: Toggles the visibility of the existing booking details component.
+ * - `Heading`: Renders the heading for the popup modal, displayed only when `showExistingBookingDetails` is true.
+ * 
+ * Logic:
+ * - Displays a modal with options to view existing booking details or submit a new booking request.
+ * - Manages the visibility of the existing booking details component using the `showExistingBookingDetails` state.
+ * - Tracks whether booking data has been set using the `isDataSet` state.
+ * - Integrates with the `Digit.Hooks.chb.useChbSlotSearch` hook (commented out in the current code) to fetch slot availability data.
+ * 
+ * Returns:
+ * - A modal component with options to view existing booking details or submit a new booking request.
+ * - Includes a close button to hide the modal.
+ */
 const BookingPopup = ({ t, closeModal,onSubmit,setExistingDataSet,Searchdata }) => {
    
     const [showExistingBookingDetails, setShowExistingBookingDetails] = useState(false);

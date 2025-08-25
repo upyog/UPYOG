@@ -14,16 +14,18 @@ public class StreetVendingQueryBuilder {
 			+ "sv.application_status as svApplicationStatus, sv.trade_license_no as svTradeLicenseNo, sv.vending_activity as svVendingActivity, "
 			+ "sv.vending_zone as svVendingZone, sv.cart_latitude as svCartLatitude, sv.cart_longitude as svCartLongitude, sv.vending_area as svVendingArea, "
 			+ "sv.vending_license_certificate_id as svVendingLicenseCertificateId, sv.payment_receipt_id as svPaymentReceiptId , sv.vending_license_id as svVendingLicenseId, "
-			+ "sv.local_authority_name as svLocalAuthorityName, " 
-			+ "sv.disability_status as svDisabilityStatus, sv.beneficiary_of_social_schemes as svBeneficiaryOfSocialSchemes, sv.enrollment_id as svenrollmentid, "
+			+ "sv.local_authority_name as svLocalAuthorityName, sv.locality as svLocality, "
+			+ "sv.disability_status as svDisabilityStatus, sv.application_created_by as svApplicationCreatedBy, "
 			+ "sv.terms_and_condition as svTermsAndCondition, sv.createdby as svCreatedBy, sv.lastmodifiedby as svLastModifiedBy, "
-			+ "sv.createdtime as svCreatedTime, sv.lastmodifiedtime as svLastModifiedTime ";
+			+ "sv.createdtime as svCreatedTime, sv.lastmodifiedtime as svLastModifiedTime, "
+			+ "sv.expire_flag as svExpireFlag, sv.renewal_status as svRenewalStatus, sv.validity_date as svValidityDate, "
+			+ "sv.old_application_no as svOldApplicationNo, sv.vendor_payment_frequency as svPayFrequency ";
 
 	private static final String VENDOR_SELECT_QUERY = " ,vendor.id as vendorId, vendor.application_id as vendorApplicationId, vendor.vendor_id as vendorVendorId, "
 			+ "vendor.name as vendorName, vendor.father_name as vendorFatherName, vendor.date_of_birth as vendorDateOfBirth, "
 			+ "vendor.email_id as vendorEmailId, vendor.mobile_no as vendorMobileNo, vendor.gender as vendorGender,  "
 			+ "vendor.relationship_type as vendorRelationshipType, vendor.user_category as vendorusercategory, vendor.special_category as vendorspecialcategory, "
-			+ "vendor.is_involved as vendorisinvolved  ";
+			+ "vendor.is_involved as vendorisinvolved ";
 
 	private static final String ADDRESS_SELECT_QUERY = " ,address.address_id as addressId, address.address_type as addressType, "
 			+ "address.vendor_id as addressVendorId, address.house_no as addressHouseNo, address.address_line_1 as addressLine1, "
@@ -39,13 +41,25 @@ public class StreetVendingQueryBuilder {
 
 	private static final String OPERATION_TIME_SELECT_QUERY = " ,opTime.id as operationTimeId, opTime.application_id as operationTimeApplicationId, "
 			+ "opTime.day_of_week as operationTimeDayOfWeek, opTime.from_time as operationTimeFromTime, opTime.to_time as operationTimeToTime ";
+	
+	private static final String BENEFICIARY_SCHEME_SELECT_QUERY = " ,scheme.id as beneficiaryId, scheme.application_id as beneficiarySchemeApplicationId, "
+			+ "scheme.scheme_name as beneficiarySchemeName, scheme.enrollment_id as beneficiaryEnrollmentId ";
+	
+	private static final String PAYMENT_STATUS_SELECT_QUERY = 
+		    " ,ps.status AS payment_status ";
+	
+	public static final String PAYMENT_SCHEDULE = "SELECT * FROM eg_sv_vendor_payment_schedule WHERE due_date = ? AND status = ?";
+	
+	public static final String VENDOR_PAYMENT_SCHEDULE = "SELECT * FROM eg_sv_vendor_payment_schedule WHERE application_no = ? AND status = ?";
 
 	private static final String FROM_TABLES = " FROM eg_sv_street_vending_detail sv "
 			+ "LEFT JOIN eg_sv_vendor_detail vendor ON sv.application_id = vendor.application_id "
 			+ "LEFT JOIN eg_sv_address_detail address ON vendor.id = address.vendor_id "
 			+ "LEFT JOIN eg_sv_document_detail doc ON sv.application_id = doc.application_id "
 			+ "LEFT JOIN eg_sv_bank_detail bank ON sv.application_id = bank.application_id "
-			+ "LEFT JOIN eg_sv_operation_time_detail opTime ON sv.application_id = opTime.application_id ";
+			+ "LEFT JOIN eg_sv_operation_time_detail opTime ON sv.application_id = opTime.application_id "
+	        + "LEFT JOIN eg_sv_beneficiary_schemes_detail scheme ON sv.application_id = scheme.application_id "
+	        + "LEFT JOIN eg_sv_vendor_payment_schedule ps ON sv.application_no = ps.application_no " ;
 
 	private final String ORDERBY_CREATEDTIME = " ORDER BY sv.createdtime DESC ";
 
@@ -63,9 +77,14 @@ public class StreetVendingQueryBuilder {
 			query.append(DOCUMENT_SELECT_QUERY);
 			query.append(BANK_SELECT_QUERY);
 			query.append(OPERATION_TIME_SELECT_QUERY);
+			query.append(BENEFICIARY_SCHEME_SELECT_QUERY);
+			query.append(PAYMENT_STATUS_SELECT_QUERY);
 			query.append(FROM_TABLES);
 		} else {
 			query = new StringBuilder(applicationsCount);
+			  if (!ObjectUtils.isEmpty(criteria.getPaymentStatus())) {
+		            query.append(" LEFT JOIN eg_sv_vendor_payment_schedule ps ON sv.application_no = ps.application_no ");
+		        }
 		}
 
 		if (!ObjectUtils.isEmpty(criteria.getTenantId())) {
@@ -118,6 +137,37 @@ public class StreetVendingQueryBuilder {
 			query.append(" sv.createdby = ? ");
 			preparedStmtList.add(criteria.getToDate());
 		}
+		if (!ObjectUtils.isEmpty(criteria.getValidityDate())) {
+			addClauseIfRequired(query, preparedStmtList);
+			query.append(" sv.validity_date <= ? ");
+			preparedStmtList.add(criteria.getValidityDate());
+		}
+		
+		if (!ObjectUtils.isEmpty(criteria.getVendorPaymentFrequency())) {
+			addClauseIfRequired(query, preparedStmtList);
+			query.append(" sv.vendor_payment_frequency <= ? ");
+			preparedStmtList.add(criteria.getVendorPaymentFrequency());
+		}
+		
+		if (!ObjectUtils.isEmpty(criteria.getCertificateNo())) {
+			addClauseIfRequired(query, preparedStmtList);
+			query.append(" sv.certificate_no <= ? ");
+			preparedStmtList.add(criteria.getCertificateNo());
+		}
+		
+		if (!ObjectUtils.isEmpty(criteria.getPaymentStatus())) {
+		    addClauseIfRequired(query, preparedStmtList);
+		    query.append(" ps.status = ? ");
+		    preparedStmtList.add(criteria.getPaymentStatus());
+		}
+		
+		if (!ObjectUtils.isEmpty(criteria.getRenewalStatus())) {
+		    addClauseIfRequired(query, preparedStmtList);
+		    query.append(" sv.renewal_status = ? ");
+		    preparedStmtList.add(criteria.getRenewalStatus());
+		}
+
+		
 		if (!criteria.isCountCall()) {
 			query.append(ORDERBY_CREATEDTIME);
 		}

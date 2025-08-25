@@ -55,16 +55,22 @@ import java.util.Map;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 import org.egov.common.entity.edcr.Plan;
+import org.egov.common.entity.edcr.ReportScrutinyDetail;
 import org.egov.common.entity.edcr.Result;
 import org.egov.common.entity.edcr.ScrutinyDetail;
 import org.springframework.stereotype.Service;
+
+import static org.egov.edcr.constants.CommonFeatureConstants.*;
+import static org.egov.edcr.constants.CommonKeyConstants.*;
+import static org.egov.edcr.constants.EdcrReportConstants.LOCATION_PLAN_DESCRIPTION;
+import static org.egov.edcr.constants.EdcrReportConstants.RULE_4_4_4_I;
+import static org.egov.edcr.service.FeatureUtil.addScrutinyDetailtoPlan;
+import static org.egov.edcr.service.FeatureUtil.mapReportDetails;
 
 @Service
 public class LocationPlan extends FeatureProcess {
 
 	private static final Logger LOG = LogManager.getLogger(LocationPlan.class);
-	private static final String RULE = "4.4.4";
-	public static final String LOCATION_PLAN_DESCRIPTION = "Location Plan";
 
 	@Override
 	public Plan validate(Plan pl) {
@@ -76,29 +82,32 @@ public class LocationPlan extends FeatureProcess {
 	public Plan process(Plan pl) {
 
 		ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
-		scrutinyDetail.setKey("Common_Location Plan");
+		scrutinyDetail.setKey(Common_Location_Plan);
 		scrutinyDetail.addColumnHeading(1, RULE_NO);
 		scrutinyDetail.addColumnHeading(2, DESCRIPTION);
 		scrutinyDetail.addColumnHeading(3, PROVIDED);
 		scrutinyDetail.addColumnHeading(4, STATUS);
 
 		HashMap<String, String> errors = new HashMap<>();
-		Map<String, String> details = new HashMap<>();
-		details.put(RULE_NO, RULE);
-		details.put(DESCRIPTION, LOCATION_PLAN_DESCRIPTION);
+		ReportScrutinyDetail detail = new ReportScrutinyDetail();
+		detail.setRuleNo(RULE_4_4_4_I);
+		detail.setDescription(LOCATION_PLAN_DESCRIPTION);
+
 		if (pl.getDrawingPreference().getLocationPlans() == null) {
-			errors.put("LOCATION_PLAN", "LOCATION_PLAN layer is not provided");
+			errors.put(LOCATION_PLAN, LOCATION_PLAN_LAYER_NOT_PROVIDED);
 			pl.addErrors(errors);
 		} else if (!pl.getDrawingPreference().getLocationPlans().isEmpty()) {
-			details.put(PROVIDED, "Location plans provided");
-			details.put(STATUS, Result.Accepted.getResultVal());
-			scrutinyDetail.getDetail().add(details);
-			pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+			detail.setProvided(LOCATION_PLANS_PROVIDED);
+			detail.setStatus(Result.Accepted.getResultVal());
+
+			Map<String, String> details = mapReportDetails(detail);
+			addScrutinyDetailtoPlan(scrutinyDetail, pl, details);
 		} else {
-			details.put(PROVIDED, "PolyLine is not defined in LOCATION_PLAN layer");
-			details.put(STATUS, Result.Not_Accepted.getResultVal());
-			scrutinyDetail.getDetail().add(details);
-			pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+			detail.setProvided(POLYLINE_NOT_DEFINED);
+			detail.setStatus(Result.Not_Accepted.getResultVal());
+
+			Map<String, String> details = mapReportDetails(detail);
+			addScrutinyDetailtoPlan(scrutinyDetail, pl, details);
 		}
 
 		return pl;

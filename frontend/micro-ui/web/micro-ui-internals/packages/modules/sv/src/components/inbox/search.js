@@ -14,21 +14,14 @@ import {
 } from "@upyog/digit-ui-react-components";
 
 import { useTranslation } from "react-i18next";
+/**
+ * The SearchApplication component creates a dynamic search form based on configurable search fields, 
+ * with different layouts for mobile and desktop views. It manages form state, validation, and submission of search criteria.
+ */
 
 const fieldComponents = {
   date: DatePicker,
-  mobileNumber: MobileNumber,
-//   Locality: (props) => (
-//     <Localities
-//       tenantId={Digit.ULBService.getCurrentTenantId()}
-//       selectLocality={props.onChange}
-//       keepNull={false}
-//       boundaryType="revenue"
-//       selected={props.value}
-//       disableLoader={true}
-//       sortFn={(a, b) => (a.i18nkey < b.i18nkey ? -1 : 1)}
-//     />
-//   ),
+  mobileNumber: MobileNumber
 };
 
 const SearchApplication = ({ onSearch, type, onClose, searchFields, searchParams, isInboxPage, defaultSearchParams, clearSearch: _clearSearch }) => {
