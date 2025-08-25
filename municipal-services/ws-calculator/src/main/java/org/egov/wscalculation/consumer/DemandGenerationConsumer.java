@@ -68,35 +68,27 @@ public class DemandGenerationConsumer {
 	 * CalculationReq.class); generateDemandInBatch(calculationReq); }catch (final
 	 * Exception e){ log.error("KAFKA_PROCESS_ERROR", e); } }
 	 */
-	@KafkaListener(topics = {
-			"${egov.watercalculatorservice.createdemand.topic}" }, containerFactory = "kafkaListenerContainerFactoryBatch")
-	@SuppressWarnings("unchecked")
-	public void listen(final List<Message<?>> records) {
-		CalculationReq calculationReq = mapper.convertValue(records.get(0).getPayload(), CalculationReq.class);
-		Map<String, Object> masterMap = mstrDataService.loadMasterData(calculationReq.getRequestInfo(), calculationReq.getCalculationCriteria().get(0).getTenantId());
-		List<CalculationCriteria> calculationCriteria = new ArrayList<>();
-		records.forEach(record -> {
-			try {
-				CalculationReq calcReq = mapper.convertValue(record.getPayload(), CalculationReq.class);
-				calculationCriteria.addAll(calcReq.getCalculationCriteria());
-				log.info("Consuming record: " + record);
-			} catch (final Exception e) {
-				StringBuilder builder = new StringBuilder();
-				builder.append("Error while listening to value: ").append(record).append(" on topic: ").append(e);
-				log.error(builder.toString());
-			}
-		});
-		CalculationReq request = CalculationReq.builder().calculationCriteria(calculationCriteria)
-				.requestInfo(calculationReq.getRequestInfo()).isconnectionCalculation(true)
-				.taxPeriodFrom(calculationReq.getTaxPeriodFrom())
-				.taxPeriodTo(calculationReq.getTaxPeriodTo())
-				.migrationCount(calculationReq.getMigrationCount())
-				.build();
-
-		generateDemandInBatch(request,masterMap, config.getDemandGenerationErrorTopic());
-		//log.info("Number of batch records:  " + records.size());
-		log.info("Number of batch records in the consumer:  " + calculationReq.getCalculationCriteria().size());
-	}
+	@KafkaListener(
+		    topics = "${egov.watercalculatorservice.createdemand.topic}",
+		    containerFactory = "kafkaListenerContainerFactoryBatch"
+		)
+		public void listen(final List<Message<?>> records) {
+		    log.info("Number of batch records received: " + records.size());
+		    for (Message<?> record : records) {
+		        try {
+		            CalculationReq calculationReq = mapper.convertValue(record.getPayload(), CalculationReq.class);
+		            Map<String, Object> masterMap = mstrDataService.loadMasterData(
+		                    calculationReq.getRequestInfo(),
+		                    calculationReq.getCalculationCriteria().get(0).getTenantId()
+		            );
+		            generateDemandInBatch(calculationReq, masterMap, config.getDeadLetterTopicBatch());
+		            log.info("Processed tenant: " + calculationReq.getCalculationCriteria().get(0).getTenantId() +
+		                     " with " + calculationReq.getCalculationCriteria().size() + " calculation criteria.");
+		        } catch (Exception e) {
+		            log.error("Error processing record: " + record.getPayload(), e);
+		        }
+		    }
+		}
 
 	
 	
