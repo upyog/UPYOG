@@ -310,7 +310,10 @@ public class Parking extends FeatureProcess {
             .findFirst();
         if (matchedRule.isPresent()) {
         	ParkingRequirement rule = matchedRule.get();
-            return new ParkingRuleResult(rule.getNoOfParking().doubleValue(), rule.getPermissible().doubleValue());
+        	BigDecimal noOfParking = rule.getNoOfParking() != null ? rule.getNoOfParking() : BigDecimal.ZERO;
+        	BigDecimal permissible = rule.getPermissible() != null ? rule.getPermissible() : BigDecimal.ZERO;
+
+            return new ParkingRuleResult(noOfParking.doubleValue(), permissible.doubleValue());
         }
         return new ParkingRuleResult(0d, 0d);
     }
