@@ -68,7 +68,7 @@ const BannerPicker = (props) => {
  */
 const PTRAcknowledgement = ({ data, onSuccess }) => {
   const { t } = useTranslation();
-  const tenantId = Digit.ULBService.getCitizenCurrentTenant(true);
+  const tenantId = Digit.ULBService.getCitizenCurrentTenant(true) || Digit.ULBService.getCurrentTenantId();
   const user = Digit.UserService.getUser().info;
   const mutation = Digit.Hooks.ptr.usePTRCreateAPI(data.address?.city?.code); 
   const { data: storeData } = Digit.Hooks.useStore.getInitData();
