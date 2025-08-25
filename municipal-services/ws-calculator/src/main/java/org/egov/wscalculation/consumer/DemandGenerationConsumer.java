@@ -68,10 +68,10 @@ public class DemandGenerationConsumer {
 	 * CalculationReq.class); generateDemandInBatch(calculationReq); }catch (final
 	 * Exception e){ log.error("KAFKA_PROCESS_ERROR", e); } }
 	 */
-	@KafkaListener(
-		    topics = "${egov.watercalculatorservice.createdemand.topic}",
-		    containerFactory = "kafkaListenerContainerFactoryBatch"
-		)
+	@KafkaListener(topics = "${egov.watercalculatorservice.createdemand.topic}",
+            containerFactory = "kafkaListenerContainerFactoryBatch",
+            concurrency = "${egov.watercalculatorservice.listener.concurrency}")
+
 		public void listen(final List<Message<?>> records) {
 		    log.info("Number of batch records received: " + records.size());
 		    for (Message<?> record : records) {
