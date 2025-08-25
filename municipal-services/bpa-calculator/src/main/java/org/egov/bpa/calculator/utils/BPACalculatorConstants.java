@@ -60,4 +60,6 @@ public class BPACalculatorConstants {
 	
 	public static final String CALCULATION_ERROR = "CALCULATION ERROR";
 	
+	public static final String MDMS_CURRENT_FINANCIAL_YEAR = "$.MdmsRes.egf-master.FinancialYear[?(@.module==\"{}\")]";
+	
 }
