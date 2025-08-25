@@ -210,4 +210,12 @@ public class PetConfiguration {
 	@Value("${egov.ptr.renewapplication.fee}")
 	private BigDecimal renewApplicationFee;
 	
+	@Value("${internal.microservice.user.username}")
+	private String internalMicroserviceUserName;
+
+	@Value("${internal.microservice.user.type}")
+	private String internalMicroserviceUserType;
+
+	@Value("${state.level.tenant.id}")
+	private String stateLevelTenantId;
 }
