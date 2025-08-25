@@ -683,10 +683,10 @@ public class MicroserviceUtils {
 
     public UserSearchResponse getUserInfo(String auth_token, String tenantId, String uuid) {
         final RestTemplate restT = createRestTemplate();
-
+        LOGGER.info("Inside getUserInfo auth_token,tenantId,uuid:" + auth_token + tenantId + uuid);
         RequestInfo req_header = new RequestInfo();
         UserSearchRequest request = new UserSearchRequest();
-
+        LOGGER.info("request:" + request);
         req_header.setAuthToken(auth_token);
         request.setRequestInfo(req_header);
         request.setUuid(Arrays.asList(uuid));
