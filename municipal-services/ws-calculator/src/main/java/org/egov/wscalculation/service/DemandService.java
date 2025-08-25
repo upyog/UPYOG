@@ -1627,12 +1627,18 @@ public class DemandService {
 	}
 
 	private void pushBatchToKafka(List<CalculationCriteria> calculationCriteriaList, RequestInfo requestInfo) {
-		CalculationReq calculationReq = CalculationReq.builder()
-				.calculationCriteria(new ArrayList<>(calculationCriteriaList)) // copy
-				.requestInfo(requestInfo).isconnectionCalculation(true).build();
+	    CalculationReq calculationReq = CalculationReq.builder()
+	            .calculationCriteria(new ArrayList<>(calculationCriteriaList)) // copy
+	            .requestInfo(requestInfo)
+	            .isconnectionCalculation(true)
+	            .build();
 
-		log.info("🚀 Pushing batch to Kafka with {} records", calculationCriteriaList.size());
-		wsCalculationProducer.push(configs.getCreateDemand(), calculationReq);
+	    // use first connectionNo in the batch as key
+	    String key = calculationCriteriaList.get(0).getConnectionNo();
+
+	    log.info("Pushing batch to Kafka with {} records, key={}", calculationCriteriaList.size(), key);
+
+	    wsCalculationProducer.push(configs.getCreateDemand(), key, calculationReq);
 	}
 
 	private boolean isValidBillingCycle(WaterDetails waterConnection, RequestInfo requestInfo, String tenantId,
