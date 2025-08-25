@@ -123,10 +123,10 @@ public class Coverage extends FeatureProcess {
 	public Plan process(Plan pl) {
 	    LOG.info("inside Coverage process()");
 	    validate(pl);
-	    LOG.debug("coverage corearea: {}", pl.getCoreArea());
+	   
 
 	    BigDecimal plotArea = pl.getPlot().getArea();
-	    String coreArea = pl.getCoreArea();
+	   
 	    int noOfFloors = 0;
 
 	    Set<OccupancyTypeHelper> occupancyList = extractOccupancyList(pl);
@@ -274,43 +274,6 @@ public class Coverage extends FeatureProcess {
 
 	}
 
-
-//	private BigDecimal getPermissibleCoverage(OccupancyType type, BigDecimal area) {
-
-	/*
-	 * to get coverage permissible value for Residential
-	 */
-	private BigDecimal getPermissibleCoverageForResidential(BigDecimal plotArea) {
-		LOG.info("inside getPermissibleCoverageForResidential()");
-		BigDecimal permissibleCoverage = BigDecimal.ZERO;
-
-		if(coreArea.equalsIgnoreCase("Yes")) {
-			permissibleCoverage = BigDecimal.valueOf(90);
-		}else {
-		if (plotArea.compareTo(BigDecimal.valueOf(150)) <= 0) {
-            permissibleCoverage = BigDecimal.valueOf(90); // 90% coverage for plot area up to 150 sqm
-//            Log.info("permissibleCoverage: for plotare: "+plotArea +"is: "+ permissibleCoverage);
-//        
-//            Log.info("permissibleCoverage: for plotare: "+plotArea +"is: "+ permissibleCoverage);
-        } else if (plotArea.compareTo(BigDecimal.valueOf(150)) > 0 &&  plotArea.compareTo(BigDecimal.valueOf(200)) <= 0) {
-            permissibleCoverage = BigDecimal.valueOf(70); // 70% coverage for plot area 150-200 sqm
-         //   Log.info("permissibleCoverage: for plotare: "+plotArea +"is: "+ permissibleCoverage);
-        } else if (plotArea.compareTo(BigDecimal.valueOf(200)) > 0 && plotArea.compareTo(BigDecimal.valueOf(300)) <= 0) {
-            permissibleCoverage =  BigDecimal.valueOf(65); // 65% coverage for plot area 200-300 sqm
-          //  Log.info("permissibleCoverage: for plotare: "+plotArea +"is: "+ permissibleCoverage);
-        } else if (plotArea.compareTo(BigDecimal.valueOf(300)) > 0 && plotArea.compareTo(BigDecimal.valueOf(500)) <= 0) {
-            permissibleCoverage =  BigDecimal.valueOf(60); // 60% coverage for plot area 300-500 sqm
-          //  Log.info("permissibleCoverage: for plotare: "+plotArea +"is: "+ permissibleCoverage);
-        } else if (plotArea.compareTo(BigDecimal.valueOf(500)) > 0 && plotArea.compareTo(BigDecimal.valueOf(1000)) <= 0) {
-            permissibleCoverage =  BigDecimal.valueOf(50); // 50% coverage for plot area 500-1000 sqm
-           // Log.info("permissibleCoverage: for plotare: "+plotArea +"is: "+ permissibleCoverage);
-        } else {
-            permissibleCoverage =  BigDecimal.valueOf(40); // 40% coverage for plot area above 1000 sqm
-          //  Log.info("permissibleCoverage: for plotare: "+plotArea +"is: "+ permissibleCoverage);
-        }
-	//	}
-		return permissibleCoverage;
-	}
 
 	/*
 	 * to get coverage permissible value for Commercial
