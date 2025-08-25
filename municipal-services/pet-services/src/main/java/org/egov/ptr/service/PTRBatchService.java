@@ -4,8 +4,6 @@ import static org.egov.ptr.util.PTRConstants.ACTION_ABOUT_TO_EXPIRE;
 import static org.egov.ptr.util.PTRConstants.ACTION_EXPIRE;
 import static org.egov.ptr.util.PTRConstants.STATUS_EXPIRED;
 import static org.egov.ptr.util.PTRConstants.STATUS_REGISTRATIONCOMPLETED;
-import static org.egov.ptr.util.PTRConstants.SYSTEM_CITIZEN_TENANTID;
-import static org.egov.ptr.util.PTRConstants.SYSTEM_CITIZEN_USERNAME;
 
 import java.util.List;
 
@@ -92,8 +90,8 @@ public class PTRBatchService {
 	 * Fetches the system user to create a RequestInfo object.
 	 */
 	private RequestInfo getRequestInfoWithUser() {
-		UserDetailResponse userDetailResponse = userService.searchByUserName(SYSTEM_CITIZEN_USERNAME,
-				SYSTEM_CITIZEN_TENANTID);
+		UserDetailResponse userDetailResponse = userService.searchByUserName(config.getInternalMicroserviceUserName(),
+				config.getStateLevelTenantId());
 
 		if (userDetailResponse == null || CollectionUtils.isEmpty(userDetailResponse.getUser())) {
 			log.warn("System user not found. Skipping processing.");

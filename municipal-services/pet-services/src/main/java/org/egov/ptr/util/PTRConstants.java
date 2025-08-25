@@ -278,10 +278,6 @@ public class PTRConstants {
 	
 	public static final String JSONPATH_PETSERVICE_RESPONSE = "$.MdmsRes.PetService";
 	
-	public static final String SYSTEM_CITIZEN_USERNAME= "8888888888";
-	
-	public static final String SYSTEM_CITIZEN_TENANTID= "pg";
-	
 	public static final String PET_TAX_MASTER_CODE= "PET_REGISTRATION_FEE";
 	
 }
