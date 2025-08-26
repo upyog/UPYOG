@@ -113,7 +113,7 @@ public class TransactionsSchedulerService {
 												? Integer.parseInt(transaction.getTxnAmount().replace(".", ""))
 												: 0)
 										.notes(Notes.builder().name(transaction.getUser().getName())
-												.service(transaction.getProductInfo())
+												.service(mapProductInfo(transaction.getProductInfo()))
 												.gatewayTxnId(transaction.getGatewayTxnId()).build())
 										.build();
 
@@ -201,6 +201,20 @@ public class TransactionsSchedulerService {
 		});
 
 		return transactions;
+	}
+	
+	// Service Code Mapping
+	
+	private String mapProductInfo(String productInfo) {
+	    switch (productInfo) {
+	        case "PROPERTY": return "PT";
+	        case "ADVT": return "ADV";
+	        case "NewTL": return "TL";
+	        case "pet-service": return "PTR";
+	        case "garbage-bill": return "GB";
+	        case "chb-services": return "CHB";
+	        default: return productInfo; // fallback
+	    }
 	}
 
 //	Map<String, List<BankAccount>> bankAccountModuleMap = bankAccountResponse.getBankAccounts().stream()
