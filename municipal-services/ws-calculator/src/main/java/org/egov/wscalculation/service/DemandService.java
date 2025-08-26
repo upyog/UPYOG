@@ -1790,18 +1790,18 @@ public class DemandService {
 				errorMap.add(demand);
 			}
 		}
-		String uuid = demandResponse.get(0).getAuditDetails().getCreatedBy();
-		if (errorMap.size() == demandResponse.size()) {
-			paymentNotificationService.sendBillNotification(requestInfo, uuid, demandResponse.get(0).getTenantId(),
-					masterMap, false);
-		} else {
-			if (!errorMap.isEmpty()) {
-				paymentNotificationService.sendBillNotification(requestInfo, uuid, demandResponse.get(0).getTenantId(),
-						masterMap, false);
-			}
-			paymentNotificationService.sendBillNotification(requestInfo, uuid, demandResponse.get(0).getTenantId(),
-					masterMap, true);
-		}
+//		String uuid = demandResponse.get(0).getAuditDetails().getCreatedBy();
+//		if (errorMap.size() == demandResponse.size()) {
+//			paymentNotificationService.sendBillNotification(requestInfo, uuid, demandResponse.get(0).getTenantId(),
+//					masterMap, false);
+//		} else {
+//			if (!errorMap.isEmpty()) {
+//				paymentNotificationService.sendBillNotification(requestInfo, uuid, demandResponse.get(0).getTenantId(),
+//						masterMap, false);
+//			}
+//			paymentNotificationService.sendBillNotification(requestInfo, uuid, demandResponse.get(0).getTenantId(),
+//					masterMap, true);
+//		}
 		return notificationSent;
 	}
 
