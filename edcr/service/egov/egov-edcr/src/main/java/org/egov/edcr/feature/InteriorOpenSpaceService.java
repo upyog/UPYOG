@@ -47,192 +47,198 @@
 
 package org.egov.edcr.feature;
 
+import static org.egov.edcr.constants.CommonFeatureConstants.M;
+import static org.egov.edcr.constants.CommonFeatureConstants.SQ_M;
+import static org.egov.edcr.constants.CommonKeyConstants.COMMON_INTERIOR_OPEN_SPACE;
+import static org.egov.edcr.constants.EdcrReportConstants.AREA;
+import static org.egov.edcr.constants.EdcrReportConstants.AT_FLOOR;
+import static org.egov.edcr.constants.EdcrReportConstants.INTERNALCOURTYARD_DESCRIPTION;
+import static org.egov.edcr.constants.EdcrReportConstants.MINIMUM_WIDTH;
+import static org.egov.edcr.constants.EdcrReportConstants.RULE_43;
+import static org.egov.edcr.constants.EdcrReportConstants.RULE_43A;
+import static org.egov.edcr.constants.EdcrReportConstants.VENTILATIONSHAFT_DESCRIPTION;
+import static org.egov.edcr.service.FeatureUtil.addScrutinyDetailtoPlan;
+import static org.egov.edcr.service.FeatureUtil.mapReportDetails;
+
 import java.math.BigDecimal;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.egov.common.constants.MdmsFeatureConstants;
-import org.egov.common.entity.edcr.*;
-import org.egov.edcr.constants.EdcrRulesMdmsConstants;
+import org.egov.common.entity.edcr.Block;
+import org.egov.common.entity.edcr.FeatureEnum;
+import org.egov.common.entity.edcr.Floor;
+import org.egov.common.entity.edcr.InteriorOpenSpaceServiceRequirement;
+import org.egov.common.entity.edcr.Measurement;
+import org.egov.common.entity.edcr.Plan;
+import org.egov.common.entity.edcr.ReportScrutinyDetail;
+import org.egov.common.entity.edcr.Result;
+import org.egov.common.entity.edcr.ScrutinyDetail;
 import org.egov.edcr.service.MDMSCacheManager;
-import org.egov.edcr.service.FetchEdcrRulesMdms;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import static org.egov.edcr.constants.CommonFeatureConstants.*;
-import static org.egov.edcr.constants.CommonKeyConstants.COMMON_INTERIOR_OPEN_SPACE;
-import static org.egov.edcr.constants.EdcrReportConstants.*;
-import static org.egov.edcr.constants.EdcrReportConstants.AREA;
-import static org.egov.edcr.constants.EdcrReportConstants.AT_FLOOR;
-import static org.egov.edcr.service.FeatureUtil.addScrutinyDetailtoPlan;
-import static org.egov.edcr.service.FeatureUtil.mapReportDetails;
 
 @Service
 public class InteriorOpenSpaceService extends FeatureProcess {
 
-    // Logger for logging information and errors
-    private static Logger LOG = LogManager.getLogger(InteriorOpenSpaceService.class);
-
-    // Variables to store permissible values for interior open spaces
-    public static BigDecimal minInteriorAreaValueOne = BigDecimal.ZERO;
-    public static BigDecimal minInteriorAreaValueTwo = BigDecimal.ZERO;
-    public static BigDecimal minInteriorWidthValueOne = BigDecimal.ZERO;
-    public static BigDecimal minInteriorWidthValueTwo = BigDecimal.ZERO;
-    public static BigDecimal minVentilationAreaValueOne = BigDecimal.ZERO;
-    public static BigDecimal minVentilationAreaValueTwo = BigDecimal.ZERO;
-    public static BigDecimal minVentilationWidthValueOne = BigDecimal.ZERO;
-    public static BigDecimal minVentilationWidthValueTwo = BigDecimal.ZERO;
+    private static final Logger LOG = LogManager.getLogger(InteriorOpenSpaceService.class);
 
     @Autowired
-    FetchEdcrRulesMdms fetchEdcrRulesMdms;
-    
-    @Autowired
-	MDMSCacheManager cache;
-	
+    private MDMSCacheManager cache;
 
-    /**
-     * Validates the given plan object.
-     * Currently, no specific validation logic is implemented.
-     *
-     * @param pl The plan object to validate.
-     * @return The same plan object without any modifications.
-     */
     @Override
     public Plan validate(Plan pl) {
+        LOG.debug("Validating plan: {}");
         return pl;
     }
-
-    /**
-     * Processes the given plan to validate interior open spaces.
-     * Fetches permissible values for interior courtyards and ventilation shafts and validates them against the plan details.
-     *
-     * @param pl The plan object to process.
-     * @return The processed plan object with scrutiny details added.
-     */
 
     @Override
     public Plan process(Plan pl) {
-        setMinValuesFromMatchedRule(pl);
-        processInteriorOpenSpaces(pl);
+        LOG.info("Processing Interior Open Space for plan");
+        InteriorOpenSpaceServiceRequirement ruleValues = getRuleValues(pl);
+        if (ruleValues != null) {
+            LOG.debug("Fetched rule values for Interior Open Space: {}", ruleValues);
+            processInteriorOpenSpaces(pl, ruleValues);
+        } else {
+            LOG.warn("No Interior Open Space rules found for plan");
+        }
         return pl;
     }
 
     /**
-     * Retrieves the matched rule for interior open space service feature from cache,
-     * and sets the corresponding minimum area and width values for interior and ventilation spaces.
-     *
-     * @param pl the plan containing the details to fetch relevant feature rules
+     * Retrieves the matched rule for interior open space service feature from cache.
      */
-    private void setMinValuesFromMatchedRule(Plan pl) {
-    	List<Object> rules = cache.getFeatureRules(pl, FeatureEnum.INTERIOR_OPEN_SPACE_SERVICE.getValue(), false);
-        Optional<InteriorOpenSpaceServiceRequirement> matchedRule = rules.stream()
-            .filter(InteriorOpenSpaceServiceRequirement.class::isInstance)
-            .map(InteriorOpenSpaceServiceRequirement.class::cast)
-            .findFirst();
-        if (matchedRule.isPresent()) {
-        	InteriorOpenSpaceServiceRequirement rule = matchedRule.get();
-            minInteriorAreaValueOne = rule.getMinInteriorAreaValueOne();
-            minInteriorAreaValueTwo = rule.getMinInteriorAreaValueTwo();
-            minInteriorWidthValueOne = rule.getMinInteriorWidthValueOne();
-            minInteriorWidthValueTwo = rule.getMinInteriorWidthValueTwo();
-            minVentilationAreaValueOne = rule.getMinVentilationAreaValueOne();
-            minVentilationAreaValueTwo = rule.getMinVentilationAreaValueTwo();
-            minVentilationWidthValueOne = rule.getMinVentilationWidthValueOne();
-            minVentilationWidthValueTwo = rule.getMinVentilationWidthValueOne(); // as in original code
+    private InteriorOpenSpaceServiceRequirement getRuleValues(Plan pl) {
+        LOG.debug("Fetching Interior Open Space rules for plan");
+        List<Object> rules = cache.getFeatureRules(pl, FeatureEnum.INTERIOR_OPEN_SPACE_SERVICE.getValue(), false);
+        InteriorOpenSpaceServiceRequirement matched = rules.stream()
+                .filter(InteriorOpenSpaceServiceRequirement.class::isInstance)
+                .map(InteriorOpenSpaceServiceRequirement.class::cast)
+                .findFirst()
+                .orElse(null);
+        LOG.debug("Rule values found: {}", matched != null);
+        return matched;
+    }
+
+    /**
+     * Processes all interior open space components such as ventilation shafts and inner courtyards.
+     */
+    private void processInteriorOpenSpaces(Plan pl, InteriorOpenSpaceServiceRequirement ruleValues) {
+        LOG.info("Processing interior open spaces for {} blocks in plan {}", 
+                pl.getBlocks().size());
+
+        for (Block b : pl.getBlocks()) {
+            LOG.debug("Processing Block: {}", b.getNumber());
+            ScrutinyDetail scrutinyDetail = createScrutinyDetail();
+
+            if (b.getBuilding() != null && b.getBuilding().getFloors() != null && !b.getBuilding().getFloors().isEmpty()) {
+                LOG.debug("Block {} has {} floors", b.getNumber(), b.getBuilding().getFloors().size());
+
+                for (Floor f : b.getBuilding().getFloors()) {
+                    LOG.debug("Processing Floor: {}", f.getNumber());
+
+                    processOpenSpaceComponent(pl, scrutinyDetail, f,
+                            f.getInteriorOpenSpace().getVentilationShaft().getMeasurements(),
+                            ruleValues.getMinVentilationAreaValueOne(),
+                            ruleValues.getMinVentilationAreaValueTwo(),
+                            ruleValues.getMinVentilationWidthValueOne(),
+                            ruleValues.getMinVentilationWidthValueTwo(),
+                            RULE_43, RULE_43A, VENTILATIONSHAFT_DESCRIPTION);
+
+                    processOpenSpaceComponent(pl, scrutinyDetail, f,
+                            f.getInteriorOpenSpace().getInnerCourtYard().getMeasurements(),
+                            ruleValues.getMinInteriorAreaValueOne(),
+                            ruleValues.getMinInteriorAreaValueTwo(),
+                            ruleValues.getMinInteriorWidthValueOne(),
+                            ruleValues.getMinInteriorWidthValueTwo(),
+                            RULE_43, RULE_43A, INTERNALCOURTYARD_DESCRIPTION);
+                }
+            } else {
+                LOG.debug("Block {} has no floors or no building defined", b.getNumber());
+            }
         }
     }
 
     /**
-     * Processes all interior open space components such as ventilation shafts and inner courtyards
-     * for each floor in each block of the plan. Performs validation checks based on area and width
-     * against pre-defined rule values.
-     *
-     * @param pl the plan containing blocks and floors with interior open spaces
+     * Validates a list of open space measurements (area and width) for a specific floor.
      */
-	private void processInteriorOpenSpaces(Plan pl) {
-		for (Block b : pl.getBlocks()) {
-			ScrutinyDetail scrutinyDetail = createScrutinyDetail();
-			if (b.getBuilding() != null && b.getBuilding().getFloors() != null
-					&& !b.getBuilding().getFloors().isEmpty()) {
-				for (Floor f : b.getBuilding().getFloors()) {
-					processOpenSpaceComponent(pl, scrutinyDetail, f,
-							f.getInteriorOpenSpace().getVentilationShaft().getMeasurements(),
-							minVentilationAreaValueOne, minVentilationAreaValueTwo, minVentilationWidthValueOne,
-							minVentilationWidthValueTwo, RULE_43, RULE_43A, VENTILATIONSHAFT_DESCRIPTION);
-					processOpenSpaceComponent(pl, scrutinyDetail, f,
-							f.getInteriorOpenSpace().getInnerCourtYard().getMeasurements(), minInteriorAreaValueOne,
-							minInteriorAreaValueTwo, minInteriorWidthValueOne, minInteriorWidthValueTwo, RULE_43,
-							RULE_43A, INTERNALCOURTYARD_DESCRIPTION);
-				}
-			}
-		}
-	}
+    private void processOpenSpaceComponent(Plan pl, ScrutinyDetail scrutinyDetail, Floor f,
+                                           List<Measurement> measurements,
+                                           BigDecimal areaValueOne, BigDecimal areaValueTwo,
+                                           BigDecimal widthValueOne, BigDecimal widthValueTwo,
+                                           String ruleNoArea, String ruleNoWidth, String description) {
 
-	/**
-	 * Validates a list of open space measurements (area and width) for a specific floor
-	 * against given minimum values. Adds the result to the scrutiny report with details.
-	 *
-	 * @param pl the plan being evaluated
-	 * @param scrutinyDetail the scrutiny detail object to which results will be appended
-	 * @param f the floor being processed
-	 * @param measurements the list of open space measurements for the component
-	 * @param areaValueOne the threshold to consider checking for area
-	 * @param areaValueTwo the minimum permissible area
-	 * @param widthValueOne the threshold to consider checking for width
-	 * @param widthValueTwo the minimum permissible width
-	 * @param ruleNoArea the rule number to refer for area validation
-	 * @param ruleNoWidth the rule number to refer for width validation
-	 * @param description the description of the open space component
-	 */
-	private void processOpenSpaceComponent(Plan pl, ScrutinyDetail scrutinyDetail, Floor f,
-			List<Measurement> measurements, BigDecimal areaValueOne, BigDecimal areaValueTwo, BigDecimal widthValueOne,
-			BigDecimal widthValueTwo, String ruleNoArea, String ruleNoWidth, String description) {
-		if (measurements != null && !measurements.isEmpty()) {
-			BigDecimal minArea = measurements.stream().map(Measurement::getArea).reduce(BigDecimal::min)
-					.orElse(BigDecimal.ZERO);
-			BigDecimal minWidth = measurements.stream().map(Measurement::getWidth).reduce(BigDecimal::min)
-					.orElse(BigDecimal.ZERO);
+        if (measurements == null || measurements.isEmpty()) {
+            LOG.debug("No measurements found for {} at floor {}", description, f.getNumber());
+            return;
+        }
 
-// Area validation
-			if (minArea.compareTo(areaValueOne) > 0) {
-				ReportScrutinyDetail detail = new ReportScrutinyDetail();
-				detail.setRuleNo(ruleNoWidth);
-				detail.setDescription(description);
-				detail.setRequired(MINIMUM_WIDTH + areaValueTwo.toString() + SQ_M);
-				detail.setProvided(AREA + minArea + AT_FLOOR + f.getNumber());
-				detail.setStatus(minArea.compareTo(areaValueTwo) >= 0 ? Result.Accepted.getResultVal() : Result.Not_Accepted.getResultVal());
+        LOG.debug("Validating {} with {} measurements at floor {}", description, measurements.size(), f.getNumber());
 
-				Map<String, String> details = mapReportDetails(detail);
-				addScrutinyDetailtoPlan(scrutinyDetail, pl, details);
-			}
+        BigDecimal minArea = measurements.stream()
+                .map(Measurement::getArea)
+                .reduce(BigDecimal::min)
+                .orElse(BigDecimal.ZERO);
 
-// Width validation
-			if (minWidth.compareTo(widthValueOne) > 0) {
-				ReportScrutinyDetail detail = new ReportScrutinyDetail();
-				detail.setRuleNo(ruleNoWidth);
-				detail.setDescription(description);
-				detail.setRequired(MINIMUM_WIDTH + widthValueTwo.toString() + M);
-				detail.setProvided(AREA + minWidth + AT_FLOOR + f.getNumber());
-				detail.setStatus(minWidth.compareTo(widthValueTwo) >= 0 ? Result.Accepted.getResultVal() : Result.Not_Accepted.getResultVal());
+        BigDecimal minWidth = measurements.stream()
+                .map(Measurement::getWidth)
+                .reduce(BigDecimal::min)
+                .orElse(BigDecimal.ZERO);
 
-				Map<String, String> details = mapReportDetails(detail);
-				addScrutinyDetailtoPlan(scrutinyDetail, pl, details);
-			}
-		}
-	}
+        LOG.debug("{} minArea: {}, minWidth: {} at floor {}", description, minArea, minWidth, f.getNumber());
 
-	/**
-	 * Creates and initializes a {@link ScrutinyDetail} object with the required column headings
-	 * for reporting interior open space validation.
-	 *
-	 * @return a new {@link ScrutinyDetail} object with headers set
-	 */
+        // Area validation
+        if (minArea.compareTo(areaValueOne) > 0) {
+            LOG.info("Checking AREA for {} at floor {}: Required > {} sq.m, Provided: {}", 
+                    description, f.getNumber(), areaValueTwo, minArea);
+
+            ReportScrutinyDetail detail = new ReportScrutinyDetail();
+            detail.setRuleNo(ruleNoArea);
+            detail.setDescription(description);
+            detail.setRequired(MINIMUM_WIDTH + areaValueTwo.toString() + SQ_M);
+            detail.setProvided(AREA + minArea + AT_FLOOR + f.getNumber());
+            detail.setStatus(minArea.compareTo(areaValueTwo) >= 0
+                    ? Result.Accepted.getResultVal()
+                    : Result.Not_Accepted.getResultVal());
+
+            if (minArea.compareTo(areaValueTwo) >= 0) {
+                LOG.info("AREA validation PASSED for {} at floor {}", description, f.getNumber());
+            } else {
+                LOG.warn("AREA validation FAILED for {} at floor {}", description, f.getNumber());
+            }
+
+            Map<String, String> details = mapReportDetails(detail);
+            addScrutinyDetailtoPlan(scrutinyDetail, pl, details);
+        }
+
+        // Width validation
+        if (minWidth.compareTo(widthValueOne) > 0) {
+            LOG.info("Checking WIDTH for {} at floor {}: Required > {} m, Provided: {}", 
+                    description, f.getNumber(), widthValueTwo, minWidth);
+
+            ReportScrutinyDetail detail = new ReportScrutinyDetail();
+            detail.setRuleNo(ruleNoWidth);
+            detail.setDescription(description);
+            detail.setRequired(MINIMUM_WIDTH + widthValueTwo.toString() + M);
+            detail.setProvided(AREA + minWidth + AT_FLOOR + f.getNumber());
+            detail.setStatus(minWidth.compareTo(widthValueTwo) >= 0
+                    ? Result.Accepted.getResultVal()
+                    : Result.Not_Accepted.getResultVal());
+
+            if (minWidth.compareTo(widthValueTwo) >= 0) {
+                LOG.info("WIDTH validation PASSED for {} at floor {}", description, f.getNumber());
+            } else {
+                LOG.warn("WIDTH validation FAILED for {} at floor {}", description, f.getNumber());
+            }
+
+            Map<String, String> details = mapReportDetails(detail);
+            addScrutinyDetailtoPlan(scrutinyDetail, pl, details);
+        }
+    }
+
     private ScrutinyDetail createScrutinyDetail() {
         ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
         scrutinyDetail.setKey(COMMON_INTERIOR_OPEN_SPACE);
@@ -244,14 +250,9 @@ public class InteriorOpenSpaceService extends FeatureProcess {
         return scrutinyDetail;
     }
 
-
-    /**
-     * Returns an empty map as no amendments are defined for this feature.
-     *
-     * @return An empty map of amendments.
-     */
     @Override
     public Map<String, Date> getAmendments() {
+        LOG.debug("No amendments defined for Interior Open Space");
         return new LinkedHashMap<>();
     }
 }

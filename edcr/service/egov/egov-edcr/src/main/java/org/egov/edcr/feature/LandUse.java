@@ -75,10 +75,6 @@ public class LandUse extends FeatureProcess {
 
     // Logger for logging information and errors
     private static final Logger LOG = LogManager.getLogger(LandUse.class);
-
-    // Variable to store permissible road width
-    public static BigDecimal RoadWidth = BigDecimal.ZERO;
-
     
     @Autowired
 	MDMSCacheManager cache;

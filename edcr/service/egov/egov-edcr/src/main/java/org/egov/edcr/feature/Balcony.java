@@ -70,8 +70,6 @@ import static org.egov.edcr.service.FeatureUtil.mapReportDetails;
 public class Balcony extends FeatureProcess {
 
 	private static final Logger log = LogManager.getLogger(Balcony.class);
-
-	BigDecimal balconyValue;
 	
 	@Autowired
 	MDMSCacheManager cache;
@@ -165,6 +163,8 @@ public class Balcony extends FeatureProcess {
 	 */
 	private void validateBalcony(Plan plan, Floor floor, org.egov.common.entity.edcr.Balcony balcony,
 	                              Map<String, Object> typicalFloorValues, ScrutinyDetail scrutinyDetail) {
+		
+		BigDecimal balconyValue;
 
 	    List<BigDecimal> widths = balcony.getWidths();
 	    BigDecimal minWidth = widths.isEmpty() ? BigDecimal.ZERO

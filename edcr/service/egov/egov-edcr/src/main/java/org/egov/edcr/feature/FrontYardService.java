@@ -85,7 +85,7 @@ import org.springframework.stereotype.Service;
 public class FrontYardService extends GeneralRule {
 	
 	private static final Logger LOG = LogManager.getLogger(FrontYardService.class);
-	String occupancyName = "";
+	
 
 	@Autowired
 	FetchEdcrRulesMdms fetchEdcrRulesMdms;
@@ -134,6 +134,7 @@ public class FrontYardService extends GeneralRule {
 		BigDecimal minVal = BigDecimal.ZERO;
 		BigDecimal meanVal = BigDecimal.ZERO;
 		BigDecimal depthOfPlot = pl.getPlanInformation().getDepthOfPlot();
+		String occupancyName = "";
 		
 //		if (mostRestrictiveOccupancy.getSubtype() != null
 //				&& (A.equalsIgnoreCase(mostRestrictiveOccupancy.getType().getCode())
