@@ -4,9 +4,11 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
@@ -113,23 +115,27 @@ public class NotificationService {
 	}
 
 	public void triggerNotificationsGenerateBill(GarbageAccount garbageAccount, Bill bill, RequestInfo requestInfo,GrbgBillTracker grbgBillTracker) {
-		ClassPathResource resource = new ClassPathResource(GARBAGE_BILL_EMAIL_TEMPLATE_LOCATION);
-		String emailBody = grbgUtils.getContentAsString(resource);
-		String smsBody = SMS_BODY_GENERATE_BILL;
-		String emailSubject = EMAIL_SUBJECT_GENERATE_BILL;
+		
+//		Set<String> allowedTenants = new HashSet<>(Arrays.asList("hp.Jubbal"));
+//
+//		if(allowedTenants.contains(garbageAccount.getTenantId())) {
+			ClassPathResource resource = new ClassPathResource(GARBAGE_BILL_EMAIL_TEMPLATE_LOCATION);
+			String emailBody = grbgUtils.getContentAsString(resource);
+			String smsBody = SMS_BODY_GENERATE_BILL;
+			String emailSubject = EMAIL_SUBJECT_GENERATE_BILL;
 
-		emailBody = populateNotificationPlaceholders(emailBody, garbageAccount, bill,grbgBillTracker);
-		smsBody = populateNotificationPlaceholders(smsBody, garbageAccount, bill,grbgBillTracker);
-		emailSubject = populateNotificationPlaceholders(emailSubject, garbageAccount, bill,grbgBillTracker);
+			emailBody = populateNotificationPlaceholders(emailBody, garbageAccount, bill,grbgBillTracker);
+			smsBody = populateNotificationPlaceholders(smsBody, garbageAccount, bill,grbgBillTracker);
+			emailSubject = populateNotificationPlaceholders(emailSubject, garbageAccount, bill,grbgBillTracker);
 
-		if (!StringUtils.isEmpty(garbageAccount.getEmailId())) {
-			sendEmail(emailBody, Collections.singletonList(garbageAccount.getEmailId()), requestInfo, null,
-					emailSubject);
-		}
-		if (!StringUtils.isEmpty(garbageAccount.getMobileNumber())) {
-			sendSms(smsBody, garbageAccount.getMobileNumber());
-		}
-
+			if (!StringUtils.isEmpty(garbageAccount.getEmailId())) {
+				sendEmail(emailBody, Collections.singletonList(garbageAccount.getEmailId()), requestInfo, null,
+						emailSubject);
+			}
+			if (!StringUtils.isEmpty(garbageAccount.getMobileNumber())) {
+				sendSms(smsBody, garbageAccount.getMobileNumber());
+			}
+//		}
 	}
 
 	private String populateNotificationPlaceholders(String body, GarbageAccount garbageAccount, Bill bill,GrbgBillTracker grbgBillTracker) {
