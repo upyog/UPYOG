@@ -1,13 +1,14 @@
 package org.egov.pt.calculator.web.models.demand;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
 import com.fasterxml.jackson.databind.JsonNode;
 import lombok.*;
 import org.egov.pt.calculator.web.models.property.AuditDetails;
 
-import javax.validation.constraints.Size;
+import jakarta.validation.constraints.Size;
 import java.math.BigDecimal;
 
 /**
