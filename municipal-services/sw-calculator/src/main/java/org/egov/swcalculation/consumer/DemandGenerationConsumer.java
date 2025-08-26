@@ -169,7 +169,7 @@ public class DemandGenerationConsumer {
 			// log.info("Bulk bill Errorbatch records log for batch : " + request.getMigrationCount().getOffset()
 			// 		+ "Count is : " + request.getMigrationCount().getRecordCount());
 		//	request.getMigrationCount().setMessage("Failed in DemandGenerationConsumer with error : " + ex.getMessage());
-			producer.push(bulkBillGenAuditTopic, request.getMigrationCount());
+			//producer.push(bulkBillGenAuditTopic, request.getMigrationCount());
 		}
 
 	}
