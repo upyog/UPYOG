@@ -82,7 +82,7 @@ public class ApplicationSecurityRepository implements SecurityContextRepository 
 	// 	return context;
 	// }
 
-	//new code where current user is created on every login
+	
 	@Override
 	public SecurityContext loadContext(HttpRequestResponseHolder requestResponseHolder) {
 
@@ -91,13 +91,19 @@ public class ApplicationSecurityRepository implements SecurityContextRepository 
 		try {
 
 			HttpServletRequest request = requestResponseHolder.getRequest();
+			LOGGER.info("request indie loadcontext"+request.getContentType());
 			HttpSession session = request.getSession();
-			LOGGER.info(" *** session : " + session);
+			LOGGER.info(" *** session getSessionContext : " + session.getSessionContext());
+			LOGGER.info(" *** session getAttributeName MS_USER_TOKEN : " + session.getAttribute(MS_USER_TOKEN));
+			LOGGER.info(" *** session getAttributeNames : " + session.getAttributeNames());
+			LOGGER.info(" *** session getId : " + session.getId());
 			LOGGER.info(" *** URI " + request.getRequestURL().toString());
 			curUser = (CurrentUser) this.microserviceUtils.readFromRedis(request.getSession().getId(), "current_user");
+			LOGGER.info(" *** curUser inside loadcontext using readFromRedis : " + curUser);
 			if (curUser == null) {
 				LOGGER.info(" ***  Session is not available in redis.... , trying to login");
 				curUser = new CurrentUser(this.getUserDetails(request));
+				LOGGER.info(" *** curUser inside loadcontext using getUserDetails : " + curUser);
 				this.microserviceUtils.savetoRedis(session.getId(), "current_user", curUser);
 			}
 			String oldToken = (String) session.getAttribute(MS_USER_TOKEN);
