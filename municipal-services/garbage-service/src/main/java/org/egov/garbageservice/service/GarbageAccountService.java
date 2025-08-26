@@ -62,8 +62,10 @@ import org.egov.garbageservice.model.PayNowRequest;
 import org.egov.garbageservice.model.SearchCriteriaGarbageAccount;
 import org.egov.garbageservice.model.SearchCriteriaGarbageAccountRequest;
 import org.egov.garbageservice.model.TotalCountRequest;
+import org.egov.garbageservice.model.UserSearchRequest;
 import org.egov.garbageservice.model.UserSearchResponse;
 import org.egov.garbageservice.model.contract.DmsRequest;
+import org.egov.garbageservice.model.contract.OwnerInfo;
 import org.egov.garbageservice.model.contract.PDFRequest;
 import org.egov.garbageservice.repository.GarbageAccountRepository;
 import org.egov.garbageservice.repository.GarbageBillTrackerRepository;
@@ -87,6 +89,7 @@ import org.springframework.util.CollectionUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -907,6 +910,16 @@ public class GarbageAccountService {
 		grbObject.put("approverName",
 				null != requestInfo.getUserInfo() ? requestInfo.getUserInfo().getUserName() : null);
 		grbObject.put("userName", null != requestInfo.getUserInfo() ? requestInfo.getUserInfo().getName() : null);
+		
+		if ("MIGRATION".equals(GarbageAccount.getChannel())) {
+	        String userName = garbageAccountRepository.getApproverUserNameForTenant(GarbageAccount.getTenantId());
+	        grbObject.put("approverName",userName);
+	        UserSearchRequest userSearch = UserSearchRequest.builder().userName(userName).tenantId("hp").requestInfo(requestInfo).build();
+	        OwnerInfo userDetail = getUserDetails(userSearch);
+	        if (userDetail != null) 
+	            grbObject.put("userName", userDetail.getName());
+	    }
+		
 		// generate QR code from attributes
 		StringBuilder uri = new StringBuilder(applicationPropertiesAndConstant.getFrontEndBaseUri());
 		uri.append("citizen-payment");
@@ -915,6 +928,14 @@ public class GarbageAccountService {
 		uri.append("/").append(qr);
 		grbObject.put("qrCodeText", uri);
 		return grbObject;
+	}
+	
+	private OwnerInfo getUserDetails(UserSearchRequest userSearchRequest) {
+		List<OwnerInfo> UserList = userService.userSearch(userSearchRequest);
+		if (!CollectionUtils.isEmpty((UserList))) {
+			return UserList.get(0);
+		}
+		return null;
 	}
 
 	public void validateGrbCertificateGeneration(GarbageAccount GarbageAccount) {
@@ -1252,6 +1273,12 @@ public class GarbageAccountService {
 				garbageAccountRepository.update(child);
 				// update application
 				grbgApplicationRepository.update(child.getGrbgApplication());
+				
+				if (!CollectionUtils.isEmpty(child.getGrbgCollectionUnits())) {
+					child.getGrbgCollectionUnits().stream().forEach(unit -> {
+						grbgCollectionUnitRepository.update(unit);
+					});
+				}
 			});
 		}
 	}
@@ -1858,7 +1885,7 @@ public class GarbageAccountService {
 	}
 
 	public GrbgBillTrackerRequest enrichGrbgBillTrackerCreateRequest(GarbageAccount garbageAccount,
-			GenerateBillRequest generateBillRequest, BigDecimal billAmount, Bill bill) {
+			GenerateBillRequest generateBillRequest, BigDecimal billAmount, Bill bill,ObjectNode calculationBreakdown) {
 		SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
 		AuditDetails createAuditDetails = grbgUtils.buildCreateAuditDetails(generateBillRequest.getRequestInfo());
 		GrbgBillTracker grbgBillTracker = GrbgBillTracker.builder().uuid(UUID.randomUUID().toString())
@@ -1870,6 +1897,8 @@ public class GarbageAccountService {
 								: null)
 				.toDate(null != generateBillRequest.getToDate() ? dateFormat.format(generateBillRequest.getToDate())
 						: null)
+				.type(generateBillRequest.getType())
+				.additionaldetail(calculationBreakdown)
 				.ward(garbageAccount.getAddresses().get(0).getWardName()).billId(bill.getId())
 				.grbgBillAmount(billAmount).auditDetails(createAuditDetails).build();
 
@@ -1878,16 +1907,16 @@ public class GarbageAccountService {
 	}
 	
 	public GrbgBillFailure enrichGrbgBillFailure(GarbageAccount garbageAccount,
-			GenerateBillRequest generateBillRequest, BillResponse billResponse,Boolean isUserNull) {
+			GenerateBillRequest generateBillRequest, BillResponse billResponse,ObjectNode errorMap) {
 		SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
 		ObjectMapper mapper = new ObjectMapper();
 		JsonNode response_payload = mapper.valueToTree(billResponse);
 		JsonNode request_payload = mapper.valueToTree(generateBillRequest);
 		String failure_reason = null;
-		if(isUserNull == true) 
-			failure_reason = "USER - UUID - NULL";
-		if(billResponse == null) 
-			failure_reason = "ISSUE IN BILLING SERVICE";
+		if (errorMap.has("USER-UUID-NULL"))
+			failure_reason = "USER-UUID-NULL";
+		else
+			failure_reason = "ISSUES MENTIONED IN ERROR-JSON";
 		GrbgBillFailure grbgBillFailure = GrbgBillFailure.builder()
 							.consumer_code(garbageAccount.getGrbgApplicationNumber())
 							.tenant_id(garbageAccount.getTenantId())
@@ -1901,6 +1930,7 @@ public class GarbageAccountService {
 							.status_code("400")
 							.created_time(new Date().getTime())
 							.last_modified_time(new Date().getTime())
+							.error_json(errorMap)
 							.to_date(null != generateBillRequest.getToDate() ? dateFormat.format(generateBillRequest.getToDate()): null)
 							.year(generateBillRequest.getYear()).build();
 		return grbgBillFailure;
@@ -1915,8 +1945,7 @@ public class GarbageAccountService {
 		return garbageBillTrackerRepository.createBillFailure(grbgBillFailureRequest);
 	}
 
-	public List<GrbgBillTracker> getBillCalculatedGarbageAccounts(
-			GrbgBillTrackerSearchCriteria grbgBillTrackerSearchCriteria) {
+	public List<GrbgBillTracker> getBillCalculatedGarbageAccounts(GrbgBillTrackerSearchCriteria grbgBillTrackerSearchCriteria) {
 
 		return garbageBillTrackerRepository.getBillTracker(grbgBillTrackerSearchCriteria);
 	}

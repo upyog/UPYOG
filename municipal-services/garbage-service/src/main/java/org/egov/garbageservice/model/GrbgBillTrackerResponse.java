@@ -22,4 +22,8 @@ public class GrbgBillTrackerResponse {
 
 	@JsonProperty("grbgBillTrackers")
 	private List<GrbgBillTracker> grbgBillTrackers;
+	
+	@JsonProperty("message")
+	private String message;
+
 }

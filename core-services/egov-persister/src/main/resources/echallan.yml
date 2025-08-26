@@ -1,0 +1,126 @@
+serviceMaps:
+  serviceName: echallan-services
+  mappings:
+  - version: 1.0.0
+    description: Persists challan details in eg_echallan  table
+    fromTopic: save-challan
+    isTransaction: true
+    queryMaps:
+
+    - query: INSERT INTO eg_echallan( id, accountid, tenantid, challanNo, businessService, referenceId, applicationStatus, receiptnumber, taxPeriodFrom,taxPeriodTo, additionalDetail, createdby, lastmodifiedby, createdtime, lastmodifiedtime,description,filestoreid) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?,?);
+      basePath: Challan
+      jsonMaps:
+      - jsonPath: $.Challan.id
+
+      - jsonPath: $.Challan.citizen.uuid
+
+      - jsonPath: $.Challan.tenantId
+
+      - jsonPath: $.Challan.challanNo
+
+      - jsonPath: $.Challan.businessService
+
+      - jsonPath: $.Challan.referenceId
+
+      - jsonPath: $.Challan.applicationStatus
+      
+      - jsonPath: $.Challan.receiptNumber
+      
+      - jsonPath: $.Challan.taxPeriodFrom
+      
+      - jsonPath: $.Challan.taxPeriodTo
+
+      - jsonPath: $.Challan.additionalDetail
+        type: JSON
+        dbType: JSONB
+      
+      - jsonPath: $.Challan.auditDetails.createdBy
+
+      - jsonPath: $.Challan.auditDetails.lastModifiedBy
+
+      - jsonPath: $.Challan.auditDetails.createdTime
+
+      - jsonPath: $.Challan.auditDetails.lastModifiedTime
+
+      - jsonPath: $.Challan.description
+
+      - jsonPath: $.Challan.filestoreid
+   
+    - query: INSERT INTO eg_challan_address( id, tenantid, doorno,plotNo,street,buildingName, latitude,longitude,locality, district, landmark,city,pincode, region, state,country, detail, echallanId, createdby, lastmodifiedby, createdtime, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+      basePath: Challan.address
+      jsonMaps:
+      - jsonPath: $.Challan.address.id
+
+      - jsonPath: $.Challan.address.tenantId
+
+      - jsonPath: $.Challan.address.doorNo
+      
+      - jsonPath: $.Challan.address.plotNo
+
+      - jsonPath: $.Challan.address.street
+
+      - jsonPath: $.Challan.address.buildingName
+
+      - jsonPath: $.Challan.address.latitude
+
+      - jsonPath: $.Challan.address.longitude
+
+      - jsonPath: $.Challan.address.locality.code
+
+      - jsonPath: $.Challan.address.district
+
+      - jsonPath: $.Challan.address.landmark
+
+      - jsonPath: $.Challan.address.city
+
+      - jsonPath: $.Challan.address.pincode
+
+      - jsonPath: $.Challan.address.region
+      
+      - jsonPath: $.Challan.address.state
+      
+      - jsonPath: $.Challan.address.country
+      
+      - jsonPath: $.Challan.address.detail
+
+      - jsonPath: $.Challan.id
+
+      - jsonPath: $.Challan.auditDetails.createdBy
+
+      - jsonPath: $.Challan.auditDetails.lastModifiedBy
+
+      - jsonPath: $.Challan.auditDetails.createdTime
+
+      - jsonPath: $.Challan.auditDetails.lastModifiedTime
+    
+  - version: 1.0.0
+    description: Update Challan details in eg_echallan  table
+    fromTopic: update-challan
+    isTransaction: true
+    queryMaps:
+    
+    - query: UPDATE eg_echallan SET applicationStatus = ?, receiptnumber = ?, taxPeriodFrom = ?,taxPeriodTo = ?, lastmodifiedby = ?,  lastmodifiedtime = ?,description = ?, additionalDetail = ?, filestoreid = ? WHERE id=?;
+      basePath: Challan
+      jsonMaps:
+      
+      - jsonPath: $.Challan.applicationStatus
+      
+      - jsonPath: $.Challan.receiptNumber
+      
+      - jsonPath: $.Challan.taxPeriodFrom
+      
+      - jsonPath: $.Challan.taxPeriodTo
+
+      - jsonPath: $.Challan.auditDetails.lastModifiedBy
+
+      - jsonPath: $.Challan.auditDetails.lastModifiedTime
+
+      - jsonPath: $.Challan.description
+
+      - jsonPath: $.Challan.additionalDetail
+        type: JSON
+        dbType: JSONB
+
+      - jsonPath: $.Challan.filestoreid
+
+      - jsonPath: $.Challan.id

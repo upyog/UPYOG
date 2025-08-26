@@ -4,6 +4,8 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.apache.commons.lang3.StringUtils;
@@ -19,6 +21,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.jayway.jsonpath.JsonPath;
 
 @Service
@@ -27,6 +32,9 @@ public class MdmsService {
 	@Autowired
 	RestCallRepository restCallRepository;
 
+	@Autowired
+	private ObjectMapper objectMapper;
+	
 	@Autowired
 	private GrbgConstants config;
 
@@ -50,10 +58,9 @@ public class MdmsService {
 		return mdmsResponse;
 	}
 
-	public BigDecimal fetchGarbageAmountFromMDMSResponse(Object mdmsResponse, GarbageAccount garbageAccount) {
+	public BigDecimal fetchGarbageAmountFromMDMSResponse(Object mdmsResponse, GarbageAccount garbageAccount,ObjectNode errorMap,ObjectNode  calculationBreakdown) {
 
-		AtomicReference<BigDecimal> taxAmount = new AtomicReference<>(BigDecimal.ZERO);
-
+		AtomicReference<BigDecimal> taxAmount = new AtomicReference<>(null);
 		List<LinkedHashMap<Object, Object>> feeStructureList = JsonPath.read(mdmsResponse,
 				"$.MdmsRes.Garbage.FeeStructure");
 		feeStructureList.stream().filter(
@@ -69,10 +76,50 @@ public class MdmsService {
 									&& null != obj.get("subcategorytype")
 									&& obj.get("subcategorytype").toString().equalsIgnoreCase(
 											garbageAccount.getGrbgCollectionUnits().get(0).getSubCategoryType()))) {
-						taxAmount.set(BigDecimal.valueOf(Double.valueOf(obj.get("fee").toString())));
+						BigDecimal fee = BigDecimal.valueOf(Double.valueOf(obj.get("fee").toString()));
+						
+						calculationBreakdown.put("fee", fee.toString());
+//						taxAmount.set(BigDecimal.valueOf(Double.valueOf(obj.get("fee").toString())));
+						//this condition needs to be changed for or on the basis of categorization
+						
+						if(Boolean.valueOf(obj.get("isAdditonalCostAdded").toString())) {
+							if(garbageAccount.getGrbgCollectionUnits().get(0).getIsvariablecalculation()) {
+								BigDecimal perUnitCharge =  BigDecimal.valueOf(Double.valueOf(obj.get("variableUnitCost").toString()));
+								if(perUnitCharge.compareTo(BigDecimal.valueOf(0)) > 0) {
+									fee = fee.add(perUnitCharge.multiply(BigDecimal.valueOf(garbageAccount.getGrbgCollectionUnits().get(0).getNo_of_units())));
+									calculationBreakdown.put("variableUnitCost", perUnitCharge.toString());
+									calculationBreakdown.put("no_of_units",BigDecimal.valueOf(garbageAccount.getGrbgCollectionUnits().get(0).getNo_of_units()).toString());
+								}else{
+									errorMap.put("ZERO_UNIT_CHARGE","Per Unit Charge Should Not Be Zero");
+								}
+							}else{
+								BigDecimal flatCharge =  BigDecimal.valueOf(Double.valueOf(obj.get("fixedUnitCost").toString()));
+								if(flatCharge.compareTo(BigDecimal.valueOf(0)) > 0) {
+									calculationBreakdown.put("fixedUnitCost",flatCharge.toString());
+									fee = fee.add(flatCharge);
+								}else{
+									errorMap.put("ZERO_FLAT_CHARGE","Flat Charges Should Not Be Zero");
+								}
+							}
+						}
+						if(garbageAccount.getGrbgCollectionUnits().get(0).getIsbplunit()) {
+							BigDecimal bplRebate =   BigDecimal.valueOf(Double.valueOf(obj.get("bplRebatePercentage").toString()));
+							if(bplRebate.compareTo(BigDecimal.valueOf(0)) > 0) {
+								calculationBreakdown.put("bplRebatePrcnt",bplRebate.toString());
+								calculationBreakdown.put("bplRebate",fee.multiply(bplRebate).divide(BigDecimal.valueOf(100)).toString());
+								fee = fee.subtract(fee.multiply(bplRebate).divide(BigDecimal.valueOf(100)));
+							}else {
+								errorMap.put("ZERO_BPL_REBATE","BPL Rebate Cannot Be Zero");
+							}
+						}
+						taxAmount.set(fee);
 					}
 				});
-
+		if(taxAmount.get() == null) {
+			errorMap.put("category_mismatch","category,subcategory or subcategorytype mismatch");
+		}else {
+			calculationBreakdown.put("final_amount",taxAmount.get().toString());
+		}
 		return taxAmount.get();
 	}
 
