@@ -72,12 +72,7 @@ import static org.egov.edcr.service.FeatureUtil.mapReportDetails;
 @Service
 public class OverheadElectricalLineService extends FeatureProcess {
     private static final Logger LOG = LogManager.getLogger(OverheadElectricalLineService.class);
-	public static BigDecimal overheadVerticalDistance_11000 = BigDecimal.ZERO;
-	public static BigDecimal overheadVerticalDistance_33000 = BigDecimal.ZERO;
-	public static BigDecimal overheadHorizontalDistance_11000 = BigDecimal.ZERO;
-	public static BigDecimal overheadHorizontalDistance_33000 = BigDecimal.ZERO;
-	public static BigDecimal overheadVoltage_11000 = BigDecimal.ZERO;
-	public static BigDecimal overheadVoltage_33000 = BigDecimal.ZERO;
+	
 
 	@Autowired
 	MDMSCacheManager cache;
@@ -114,58 +109,42 @@ public class OverheadElectricalLineService extends FeatureProcess {
 	 */
 
 	@Override
-	public Plan process(Plan pl) {
-	    validate(pl);
-	    setupScrutinyDetail();
+    public Plan process(Plan pl) {
+        validate(pl);
+        setupScrutinyDetail();
 
-	    loadOverheadRules(pl);
+        // Load rules into local variables
+        OverheadElectricalLineServiceRequirement rule = loadOverheadRules(pl);
 
-	    for (ElectricLine el : pl.getElectricLine()) {
-	        if (el.getPresentInDxf() && el.getVoltage() != null && el.getVoltage().compareTo(BigDecimal.ZERO) > 0 &&
-	                (el.getHorizontalDistance() != null || el.getVerticalDistance() != null)) {
+        for (ElectricLine el : pl.getElectricLine()) {
+            if (el.getPresentInDxf() && el.getVoltage() != null && el.getVoltage().compareTo(BigDecimal.ZERO) > 0 &&
+                    (el.getHorizontalDistance() != null || el.getVerticalDistance() != null)) {
 
-	            boolean horizontalPassed = false;
-	            String expected = "", actual = "";
+                boolean horizontalPassed = false;
+                String expected = "", actual = "";
 
-	            if (el.getHorizontalDistance() != null) {
-	                actual = el.getHorizontalDistance() + DcrConstants.IN_METER;
-	                expected = getExpectedHorizontalDistance(el.getVoltage());
+                if (el.getHorizontalDistance() != null) {
+                    actual = el.getHorizontalDistance() + DcrConstants.IN_METER;
+                    expected = getExpectedHorizontalDistance(el.getVoltage(), rule);
 
-	                BigDecimal expectedVal = getHorizontalThreshold(el.getVoltage());
-	                if (el.getHorizontalDistance().compareTo(expectedVal) >= 0) {
-	                    horizontalPassed = true;
-	                }
-	            }
+                    BigDecimal expectedVal = getHorizontalThreshold(el.getVoltage(), rule);
+                    if (el.getHorizontalDistance().compareTo(expectedVal) >= 0) {
+                        horizontalPassed = true;
+                    }
+                }
 
-	            if (horizontalPassed) {
-	                setReportOutputDetails(pl, SUB_RULE_31,
-	                        DcrConstants.HORIZONTAL_ELECTRICLINE_DISTANCE + el.getNumber(),
-	                        expected, actual,
-	                        Result.Accepted.getResultVal(), "", el.getVoltage() + DcrConstants.IN_KV);
-	            } else {
-//	                boolean verticalPassed = processVerticalDistance(el, pl, "", "", overheadVoltage_11000,
-//	                        overheadVerticalDistance_11000, overheadVoltage_33000);
-
-//	                String result = verticalPassed ? Result.Verify.getResultVal() : Result.Not_Accepted.getResultVal();
-//	                String remarks = verticalPassed
-//	                        ? String.format(DcrConstants.HORIZONTAL_ELINE_DISTANCE_NOC, el.getNumber())
-//	                        : "";
-//
-//	                setReportOutputDetails(pl, SUB_RULE_31,
-//	                        DcrConstants.HORIZONTAL_ELECTRICLINE_DISTANCE + el.getNumber(),
-//	                        expected, actual, result, remarks, el.getVoltage() + DcrConstants.IN_KV);
-//
-//	                if (verticalPassed) {
-//	                    HashMap<String, String> noc = new HashMap<>();
-//	                    noc.put(DcrConstants.HORIZONTAL_ELECTRICLINE_DISTANCE + el.getNumber(),
-//	                            DcrConstants.HORIZONTAL_ELECTRICLINE_DISTANCE_NOC);
-//	                    pl.addNocs(noc);
-//	                }
-	            }
-	        }
-	    }
-	    return pl;
-	}
+                if (horizontalPassed) {
+                    setReportOutputDetails(pl, SUB_RULE_31,
+                            DcrConstants.HORIZONTAL_ELECTRICLINE_DISTANCE + el.getNumber(),
+                            expected, actual,
+                            Result.Accepted.getResultVal(), "", el.getVoltage() + DcrConstants.IN_KV);
+                } else {
+                    
+                }
+            }
+        }
+        return pl;
+    }
 
 
 /**
@@ -188,22 +167,15 @@ public class OverheadElectricalLineService extends FeatureProcess {
 	 *
 	 * @param pl The plan object used to fetch the rules.
 	 */
-	private void loadOverheadRules(Plan pl) {
-		List<Object> rules = cache.getFeatureRules(pl, FeatureEnum.OVERHEAD_ELECTRICAL_LINE_SERVICE.getValue(), false);
-        Optional<OverheadElectricalLineServiceRequirement> matchedRule = rules.stream()
-            .filter(OverheadElectricalLineServiceRequirement.class::isInstance)
-            .map(OverheadElectricalLineServiceRequirement.class::cast)
-            .findFirst();
-	    if (matchedRule.isPresent()) {
-	    	OverheadElectricalLineServiceRequirement rule = matchedRule.get();
-	        overheadVerticalDistance_11000 = rule.getOverheadVerticalDistance_11000();
-	        overheadVerticalDistance_33000 = rule.getOverheadVerticalDistance_33000();
-	        overheadHorizontalDistance_11000 = rule.getOverheadHorizontalDistance_11000();
-	        overheadHorizontalDistance_33000 = rule.getOverheadHorizontalDistance_33000();
-	        overheadVoltage_11000 = rule.getOverheadVoltage_11000();
-	        overheadVoltage_33000 = rule.getOverheadVoltage_33000();
+	 private OverheadElectricalLineServiceRequirement loadOverheadRules(Plan pl) {
+	        List<Object> rules = cache.getFeatureRules(pl, FeatureEnum.OVERHEAD_ELECTRICAL_LINE_SERVICE.getValue(), false);
+	        Optional<OverheadElectricalLineServiceRequirement> matchedRule = rules.stream()
+	                .filter(OverheadElectricalLineServiceRequirement.class::isInstance)
+	                .map(OverheadElectricalLineServiceRequirement.class::cast)
+	                .findFirst();
+	        return matchedRule.orElse(new OverheadElectricalLineServiceRequirement());
 	    }
-	}
+
 
 	/**
 	 * Computes the expected horizontal clearance for a given voltage as a formatted string.
@@ -211,9 +183,10 @@ public class OverheadElectricalLineService extends FeatureProcess {
 	 * @param voltage The voltage of the electric line.
 	 * @return A string representing the required clearance in meters.
 	 */
-	private String getExpectedHorizontalDistance(BigDecimal voltage) {
-	    return getHorizontalThreshold(voltage).toString() + DcrConstants.IN_METER;
-	}
+	private String getExpectedHorizontalDistance(BigDecimal voltage,
+            OverheadElectricalLineServiceRequirement rule) {
+return getHorizontalThreshold(voltage, rule).toString() + DcrConstants.IN_METER;
+}
 
 	/**
 	 * Returns the horizontal clearance threshold based on the given voltage.
@@ -221,17 +194,18 @@ public class OverheadElectricalLineService extends FeatureProcess {
 	 * @param voltage The voltage of the electric line.
 	 * @return The minimum permissible horizontal clearance.
 	 */
-	private BigDecimal getHorizontalThreshold(BigDecimal voltage) {
-	    if (voltage.compareTo(overheadVoltage_11000) < 0) {
-	        return overheadHorizontalDistance_11000;
-	    } else if (voltage.compareTo(overheadVoltage_33000) <= 0) {
-	        return overheadHorizontalDistance_33000;
-	    } else {
-	        double increment = 0.3 * Math.ceil(voltage.subtract(overheadVoltage_33000)
-	                .divide(overheadVoltage_33000, 2, RoundingMode.HALF_UP).doubleValue());
-	        return BigDecimal.valueOf(overheadHorizontalDistance_33000.doubleValue() + increment);
-	    }
-	}
+	private BigDecimal getHorizontalThreshold(BigDecimal voltage,
+            OverheadElectricalLineServiceRequirement rule) {
+		if (voltage.compareTo(rule.getOverheadVoltage_11000()) < 0) {
+		return rule.getOverheadHorizontalDistance_11000();
+		} else if (voltage.compareTo(rule.getOverheadVoltage_33000()) <= 0) {
+		return rule.getOverheadHorizontalDistance_33000();
+		} else {
+		double increment = 0.3 * Math.ceil(voltage.subtract(rule.getOverheadVoltage_33000())
+		.divide(rule.getOverheadVoltage_33000(), 2, RoundingMode.HALF_UP).doubleValue());
+		return BigDecimal.valueOf(rule.getOverheadHorizontalDistance_33000().doubleValue() + increment);
+		}
+		}
 	
 
 	/**

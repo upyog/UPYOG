@@ -83,10 +83,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class HeightOfRoom extends FeatureProcess {
 	private static final Logger LOG = LogManager.getLogger(HeightOfRoom.class);
-	public static BigDecimal minDoorWidth = BigDecimal.ZERO;
-	public static BigDecimal minDoorHeight = BigDecimal.ZERO;
-	public static BigDecimal ventilationPercentage = BigDecimal.ZERO;
-	public static BigDecimal minimumHeight;
+	
 
 	@Override
 	public Plan validate(Plan pl) {
@@ -262,10 +259,10 @@ public class HeightOfRoom extends FeatureProcess {
 
 							for (Room room : floor.getRegularRooms()) {
 							    BigDecimal roomArea = calculateRoomArea(room);
-							    BigDecimal requiredVentilationArea = getRequiredVentilationArea(roomArea, ventilationPercentage);
+							  
 							    BigDecimal totalDoorArea = calculateTotalDoorArea(room);
 
-							      evaluateDoorDimensions(pl, room, floor, requiredVentilationArea, totalDoorArea, scrutinyDetail8);
+							      evaluateDoorDimensions(pl, room, floor, totalDoorArea, scrutinyDetail8);
 
 							}
 
@@ -308,6 +305,8 @@ public class HeightOfRoom extends FeatureProcess {
 	private void evaluateSingleDoor(Plan pl, Floor floor, Door door, ScrutinyDetail scrutinyDetail) {
 	    BigDecimal doorWidth = door.getDoorWidth();
 	    Optional<DoorsRequirement> matchedRule = getMinimumDoorWidth(pl);
+	    BigDecimal minDoorWidth = BigDecimal.ZERO;
+	
 	    
 	    if (matchedRule.isPresent()) {
 	    	DoorsRequirement rule = matchedRule.get();
@@ -385,14 +384,15 @@ public class HeightOfRoom extends FeatureProcess {
 	 * @param scrutinyDetail8       The scrutiny detail to record the result.
 	 */
 
-	private void evaluateDoorDimensions(Plan pl, Room room, Floor floor, BigDecimal requiredVentilationArea,
+	private void evaluateDoorDimensions(Plan pl, Room room, Floor floor,
 			BigDecimal totalDoorArea, ScrutinyDetail scrutinyDetail8) {
+		
 		for (Door door : room.getDoors()) {
 			BigDecimal doorHeight = door.getDoorHeight().setScale(2, BigDecimal.ROUND_HALF_UP);
 			BigDecimal doorWidth = door.getDoorWidth().setScale(2, BigDecimal.ROUND_HALF_UP);
 
-			minDoorHeight = BigDecimal.ZERO;
-			minDoorWidth = BigDecimal.ZERO;
+		    BigDecimal	minDoorHeight = BigDecimal.ZERO;
+		    BigDecimal	minDoorWidth = BigDecimal.ZERO;
 			String subRule = RULE_4_4_4_I;
 
 			List<Object> rules = cache.getFeatureRules(pl, FeatureEnum.ROOM_WISE_DOOR_AREA.getValue(), false);
@@ -935,6 +935,7 @@ public class HeightOfRoom extends FeatureProcess {
 	 */
 	private void buildRoomHeightResult(Plan pl, Floor floor, Block block, OccupancyTypeHelper mostRestrictiveOccupancy, List<BigDecimal> residentialRoomHeights,
 			Map<String, Integer> heightOfRoomFeaturesColor, String color, Map<String, String> errors) {
+		BigDecimal minimumHeight = BigDecimal.ZERO;
 
 		if (!residentialRoomHeights.isEmpty()) {
 			BigDecimal minHeight = residentialRoomHeights.stream().reduce(BigDecimal::min).get();

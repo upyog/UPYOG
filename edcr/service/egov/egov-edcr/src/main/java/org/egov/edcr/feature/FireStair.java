@@ -87,11 +87,6 @@ public class FireStair extends FeatureProcess {
 	// Logger for logging information and errors
 	private static final Logger LOG = LogManager.getLogger(FireStair.class);
 
-	// Variables to store permissible values for fire stair dimensions
-	private static BigDecimal fireStairExpectedNoofRise = BigDecimal.ZERO;
-	private static BigDecimal fireStairMinimumWidth = BigDecimal.ZERO;
-	private static BigDecimal fireStairRequiredTread = BigDecimal.ZERO;
-
 	@Autowired
 	FetchEdcrRulesMdms fetchEdcrRulesMdms;
 
@@ -109,6 +104,7 @@ public class FireStair extends FeatureProcess {
 	public Plan validate(Plan plan) {
 		return plan;
 	}
+	
 
 	/**
 	 * Processes the given plan to validate fire stair dimensions. Fetches
@@ -118,136 +114,154 @@ public class FireStair extends FeatureProcess {
 	 * @param plan The plan object to process.
 	 * @return The processed plan object with scrutiny details added.
 	 */
+	
+	 public Plan process(Plan plan) {
+	        Map<String, String> errors = new HashMap<>();
 
-	public Plan process(Plan plan) {
-		Map<String, String> errors = new HashMap<>();
-		loadFireStairRuleValues(plan);
+	        // Load permissible fire stair values (now method-scoped, not class-level)
+	        FireStairRequirement fireStairReq = loadFireStairRuleValues(plan);
 
-		for (Block block : plan.getBlocks()) {
-			if (block.getBuilding() != null) {
-				processFireStairBlock(plan, block, errors);
-			}
-		}
+	        if (fireStairReq != null) {
+	            for (Block block : plan.getBlocks()) {
+	                if (block.getBuilding() != null) {
+	                    processFireStairBlock(plan, block, errors, fireStairReq);
+	                }
+	            }
+	        }
 
-		return plan;
-	}
+	        return plan;
+	    }
 
-	/**
-	 * Loads the fire stair related rule values from the MDMS rule set for the given plan.
-	 * <p>
-	 * It fetches the feature rules for {@link MdmsFeatureConstants#FIRE_STAIR} and sets
-	 * the expected number of risers, minimum width, and required tread width of the fire stair
-	 * based on the first matching rule.
-	 * </p>
-	 *
-	 * @param plan the building plan for which the fire stair rules are to be loaded
-	 */
-	private void loadFireStairRuleValues(Plan plan) {
-		 List<Object> rules = cache.getFeatureRules(plan, FeatureEnum.FIRE_STAIR.getValue(), false);
-	        Optional<FireStairRequirement> matchedRule = rules.stream()
-	            .filter(FireStairRequirement.class::isInstance)
-	            .map(FireStairRequirement.class::cast)
-	            .findFirst();
-		matchedRule.ifPresent(rule -> {
-			fireStairExpectedNoofRise = rule.getFireStairExpectedNoofRise();
-			fireStairMinimumWidth = rule.getFireStairMinimumWidth();
-			fireStairRequiredTread = rule.getFireStairRequiredTread();
-		});
-	}
 
-	/**
-	 * Processes the fire stair information for a given block in the plan.
-	 * It validates the presence of fire stairs and ensures all required rules are checked
-	 * such as tread, width, number of risers, mid-landing, and abutment with external walls.
-	 *
-	 * @param plan   the plan object containing building data
-	 * @param block  the block to process fire stairs for
-	 * @param errors map for collecting validation errors
-	 */
-	private void processFireStairBlock(Plan plan, Block block, Map<String, String> errors) {
-		int fireStairCount = 0;
-		List<String> fireStairAbsent = new ArrayList<>();
+		/**
+		 * Loads the fire stair related rule values from the MDMS rule set for the given plan.
+		 * <p>
+		 * It fetches the feature rules for {@link MdmsFeatureConstants#FIRE_STAIR} and sets
+		 * the expected number of risers, minimum width, and required tread width of the fire stair
+		 * based on the first matching rule.
+		 * </p>
+		 *
+		 * @param plan the building plan for which the fire stair rules are to be loaded
+		 */
+		
+	    private FireStairRequirement loadFireStairRuleValues(Plan plan) {
+	        List<Object> rules = cache.getFeatureRules(plan, FeatureEnum.FIRE_STAIR.getValue(), false);
+	        return rules.stream()
+	                .filter(FireStairRequirement.class::isInstance)
+	                .map(FireStairRequirement.class::cast)
+	                .findFirst()
+	                .orElse(null);
+	    }
 
-		ScrutinyDetail scrutinyDetailWidth = createScrutinyDetail(block, FIRE_STAIR_WIDTH);
-		ScrutinyDetail scrutinyDetailTread = createScrutinyDetail(block, FIRE_STAIR_TREAD);
-		ScrutinyDetail scrutinyDetailRise = createScrutinyDetail(block, FIRE_STAIR_RISERS);
-		ScrutinyDetail scrutinyDetailLanding = createScrutinyDetail(block, FIRE_STAIR_LANDING);
-		ScrutinyDetail scrutinyDetailAbutWall = createScrutinyDetail(block, FIRE_STAIR_ABUTTING);
+	   
 
-		for (Floor floor : block.getBuilding().getFloors()) {
-			if (!floor.getTerrace()) {
-				boolean isTypicalRepititiveFloor = false;
-				Map<String, Object> typicalFloorValues = Util.getTypicalFloorValues(block, floor,
-						isTypicalRepititiveFloor);
-				List<org.egov.common.entity.edcr.FireStair> fireStairs = floor.getFireStairs();
-				fireStairCount += fireStairs.size();
+		/**
+		 * Validates an individual fire stair for tread, riser count, mid-landing, and abutment.
+		 * Adds the corresponding details to scrutiny reports.
+		 *
+		 * @param plan                the building plan
+		 * @param block               the block containing the fire stair
+		 * @param floor               the floor on which fire stair exists
+		 * @param fireStair           the fire stair object to process
+		 * @param typicalFloorValues  values used for typical floor comparison
+		 * @param errors              map for collecting validation errors
+		 * @param sdWidth             scrutiny detail for stair width
+		 * @param sdTread             scrutiny detail for stair tread
+		 * @param sdRise              scrutiny detail for stair riser count
+		 * @param sdLanding           scrutiny detail for stair landing
+		 * @param sdAbutWall          scrutiny detail for stair abutment to external wall
+		 */
 
-				if (!fireStairs.isEmpty()) {
-					for (org.egov.common.entity.edcr.FireStair fireStair : fireStairs) {
-						processFireStair(plan, block, floor, fireStair, typicalFloorValues, errors, scrutinyDetailWidth,
-								scrutinyDetailTread, scrutinyDetailRise, scrutinyDetailLanding, scrutinyDetailAbutWall);
+	    private void processFireStair(Plan plan, Block block, Floor floor,
+	                                  org.egov.common.entity.edcr.FireStair fireStair,
+	                                  Map<String, Object> typicalFloorValues, Map<String, String> errors,
+	                                  ScrutinyDetail sdWidth, ScrutinyDetail sdTread, ScrutinyDetail sdRise,
+	                                  ScrutinyDetail sdLanding, ScrutinyDetail sdAbutWall,
+	                                  FireStairRequirement fireStairReq) {
+
+	        setReportOutputDetailsBltUp(plan, RULE42_5_II, floor.getNumber().toString(),
+	                FIRE_STAIR_ABUT_DESC,
+	                fireStair.isAbuttingBltUp() ? FIRE_STAIR_ABUT_PROVIDED_YES : FIRE_STAIR_ABUT_PROVIDED_NO,
+	                fireStair.isAbuttingBltUp() ? Result.Accepted.getResultVal() : Result.Not_Accepted.getResultVal(),
+	                sdAbutWall);
+
+	        validateFlight(plan, (HashMap<String, String>) errors,
+	                block, sdWidth, sdTread, sdRise, null,
+	                floor, typicalFloorValues, fireStair,
+	                fireStairReq.getFireStairRequiredTread(),
+	                fireStairReq.getFireStairExpectedNoofRise(),
+	                fireStairReq.getFireStairMinimumWidth());
+
+	        List<StairLanding> landings = fireStair.getLandings();
+	        if (!landings.isEmpty()) {
+	            validateLanding(plan, block, sdLanding, floor, typicalFloorValues, fireStair, landings,
+	                    (HashMap<String, String>) errors, fireStairReq.getFireStairMinimumWidth());
+	        } else {
+	            String errorMsg = FIRE_STAIR_LANDING_NOT_DEFINED_BLK + block.getNumber() + FLOOR_SPACED
+	                    + floor.getNumber() + FIRE_STAIR + fireStair.getNumber();
+	            errors.put(errorMsg, errorMsg);
+	            plan.addErrors(errors);
+	        }
+	    }
+	
+
+		/**
+		 * Processes the fire stair information for a given block in the plan. It
+		 * validates the presence of fire stairs and ensures all required rules are
+		 * checked such as tread, width, number of risers, mid-landing, and abutment
+		 * with external walls.
+		 *
+		 * @param plan   the plan object containing building data
+		 * @param block  the block to process fire stairs for
+		 * @param errors map for collecting validation errors
+		 */
+		private void processFireStairBlock(Plan plan, Block block, Map<String, String> errors,
+				FireStairRequirement fireStairReq) {
+			int fireStairCount = 0;
+			List<String> fireStairAbsent = new ArrayList<>();
+
+			ScrutinyDetail scrutinyDetailWidth = createScrutinyDetail(block, FIRE_STAIR_WIDTH);
+			ScrutinyDetail scrutinyDetailTread = createScrutinyDetail(block, FIRE_STAIR_TREAD);
+			ScrutinyDetail scrutinyDetailRise = createScrutinyDetail(block, FIRE_STAIR_RISERS);
+			ScrutinyDetail scrutinyDetailLanding = createScrutinyDetail(block, FIRE_STAIR_LANDING);
+			ScrutinyDetail scrutinyDetailAbutWall = createScrutinyDetail(block, FIRE_STAIR_ABUTTING);
+
+			for (Floor floor : block.getBuilding().getFloors()) {
+				if (!floor.getTerrace()) {
+					boolean isTypicalRepititiveFloor = false;
+					Map<String, Object> typicalFloorValues = Util.getTypicalFloorValues(block, floor,
+							isTypicalRepititiveFloor);
+
+					List<org.egov.common.entity.edcr.FireStair> fireStairs = floor.getFireStairs();
+					fireStairCount += fireStairs.size();
+
+					if (!fireStairs.isEmpty()) {
+						for (org.egov.common.entity.edcr.FireStair fireStair : fireStairs) {
+							processFireStair(plan, block, floor, fireStair, typicalFloorValues, errors,
+									scrutinyDetailWidth, scrutinyDetailTread, scrutinyDetailRise, scrutinyDetailLanding,
+									scrutinyDetailAbutWall, fireStairReq);
+						}
+					} else if (block.getBuilding().getIsHighRise()) {
+						fireStairAbsent.add(BLOCK + block.getNumber() + FLOOR_SPACED + floor.getNumber());
 					}
-				} else if (block.getBuilding().getIsHighRise()) {
-					fireStairAbsent.add(BLOCK + block.getNumber() + FLOOR_SPACED + floor.getNumber());
 				}
 			}
-		}
 
-		if (!fireStairAbsent.isEmpty()) {
-			for (String error : fireStairAbsent) {
-				errors.put(FIRE_STAIR_C + error, FIRE_STAIR_NOT_DEFINED + error);
+			if (!fireStairAbsent.isEmpty()) {
+				for (String error : fireStairAbsent) {
+					errors.put(FIRE_STAIR_C + error, FIRE_STAIR_NOT_DEFINED + error);
+				}
+				plan.addErrors(errors);
 			}
-			plan.addErrors(errors);
+
+			if (block.getBuilding().getIsHighRise() && fireStairCount == 0) {
+				errors.put(FIRE_STAIR_NOT_DEFINED_BLK + block.getNumber(),
+						FIRE_STAIR_NOT_DEFINED_BLOCK + block.getNumber() + MANDATORY_BUILDING_HEIGHT_15M);
+				plan.addErrors(errors);
+			}
 		}
 
-		if (block.getBuilding().getIsHighRise() && fireStairCount == 0) {
-			errors.put(FIRE_STAIR_NOT_DEFINED_BLK + block.getNumber(), FIRE_STAIR_NOT_DEFINED_BLOCK
-					+ block.getNumber() + MANDATORY_BUILDING_HEIGHT_15M);
-			plan.addErrors(errors);
-		}
-	}
 
-	/**
-	 * Validates an individual fire stair for tread, riser count, mid-landing, and abutment.
-	 * Adds the corresponding details to scrutiny reports.
-	 *
-	 * @param plan                the building plan
-	 * @param block               the block containing the fire stair
-	 * @param floor               the floor on which fire stair exists
-	 * @param fireStair           the fire stair object to process
-	 * @param typicalFloorValues  values used for typical floor comparison
-	 * @param errors              map for collecting validation errors
-	 * @param sdWidth             scrutiny detail for stair width
-	 * @param sdTread             scrutiny detail for stair tread
-	 * @param sdRise              scrutiny detail for stair riser count
-	 * @param sdLanding           scrutiny detail for stair landing
-	 * @param sdAbutWall          scrutiny detail for stair abutment to external wall
-	 */
-	private void processFireStair(Plan plan, Block block, Floor floor, org.egov.common.entity.edcr.FireStair fireStair,
-			Map<String, Object> typicalFloorValues, Map<String, String> errors, ScrutinyDetail sdWidth,
-			ScrutinyDetail sdTread, ScrutinyDetail sdRise, ScrutinyDetail sdLanding, ScrutinyDetail sdAbutWall) {
-
-		setReportOutputDetailsBltUp(plan, RULE42_5_II, floor.getNumber().toString(),
-				FIRE_STAIR_ABUT_DESC,
-				fireStair.isAbuttingBltUp() ? FIRE_STAIR_ABUT_PROVIDED_YES : FIRE_STAIR_ABUT_PROVIDED_NO,
-				fireStair.isAbuttingBltUp() ? Result.Accepted.getResultVal() : Result.Not_Accepted.getResultVal(),
-				sdAbutWall);
-
-		validateFlight(plan, (HashMap<String, String>) errors, // explicitly cast to match method signature
-				block, sdWidth, sdTread, sdRise, null, // mostRestrictiveOccupancyType — null if not needed
-				floor, typicalFloorValues, fireStair, fireStairRequiredTread, fireStairExpectedNoofRise);
-
-		List<StairLanding> landings = fireStair.getLandings();
-		if (!landings.isEmpty()) {
-			validateLanding(plan, block, sdLanding, floor, typicalFloorValues, fireStair, landings,
-					(HashMap<String, String>) errors, fireStairMinimumWidth);
-		} else {
-			String errorMsg = FIRE_STAIR_LANDING_NOT_DEFINED_BLK + block.getNumber() + FLOOR_SPACED
-					+ floor.getNumber() + FIRE_STAIR + fireStair.getNumber();
-			errors.put(errorMsg, errorMsg);
-			plan.addErrors(errors);
-		}
-	}
 
 	/**
 	 * Creates a scrutiny detail object for a given block with specified heading.
@@ -346,7 +360,7 @@ public class FireStair extends FeatureProcess {
 			ScrutinyDetail scrutinyDetail3, ScrutinyDetail scrutinyDetailRise,
 			OccupancyTypeHelper mostRestrictiveOccupancyType, Floor floor, Map<String, Object> typicalFloorValues,
 			org.egov.common.entity.edcr.FireStair fireStair, BigDecimal fireStairRequiredTread,
-			BigDecimal fireStairExpectedNoofRise) {
+			BigDecimal fireStairExpectedNoofRise, BigDecimal fireStairMinimumWidth) {
 
 		if (!fireStair.getFlights().isEmpty()) {
 			for (Flight flight : fireStair.getFlights()) {
@@ -366,7 +380,7 @@ public class FireStair extends FeatureProcess {
 						if (flightPolyLineClosed) {
 							if (flightWidths != null && flightWidths.size() > 0) {
 								minFlightWidth = validateWidth(plan, scrutinyDetail2, floor, block, typicalFloorValues,
-										fireStair, flight, flightWidths, minFlightWidth, mostRestrictiveOccupancyType);
+										fireStair, flight, flightWidths, minFlightWidth, mostRestrictiveOccupancyType, fireStairMinimumWidth);
 
 							} else {
 								errors.put(FLIGHT_POLYLINE_WIDTH + flightLayerName,
@@ -475,7 +489,7 @@ public class FireStair extends FeatureProcess {
 	private BigDecimal validateWidth(Plan plan, ScrutinyDetail scrutinyDetail2, Floor floor, Block block,
 			Map<String, Object> typicalFloorValues, org.egov.common.entity.edcr.FireStair fireStair, Flight flight,
 			List<BigDecimal> flightWidths, BigDecimal minFlightWidth,
-			OccupancyTypeHelper mostRestrictiveOccupancyType) {
+			OccupancyTypeHelper mostRestrictiveOccupancyType, BigDecimal fireStairMinimumWidth) {
 		BigDecimal flightPolyLine = flightWidths.stream().reduce(BigDecimal::min).get();
 
 		boolean valid = false;

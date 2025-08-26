@@ -79,11 +79,6 @@ public class Solar extends FeatureProcess {
 
 	private static final Logger LOG = LogManager.getLogger(Solar.class);
 
-    // Static variables to hold rule values
-    private static BigDecimal solarValueOne = BigDecimal.ZERO;
-    private static BigDecimal solarValueTwo = BigDecimal.ZERO;
-    
-    
     @Autowired
 	MDMSCacheManager cache;
 

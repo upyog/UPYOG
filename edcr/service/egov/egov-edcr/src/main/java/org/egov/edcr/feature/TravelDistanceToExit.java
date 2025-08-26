@@ -115,22 +115,28 @@ public class TravelDistanceToExit extends FeatureProcess {
 	 * @return The processed plan with scrutiny details or errors added
 	 */
 	@Override
-	public Plan process(Plan pl) {
-	    if (pl == null) return pl;
+    public Plan process(Plan pl) {
+        if (pl == null) return pl;
 
-	    extractTravelDistanceRules(pl);
+        // Extract rule values into local variables
+        TravelDistanceToExitRequirement rule = extractTravelDistanceRules(pl);
+        BigDecimal travelDistanceToExitValueOne = rule.getTravelDistanceToExitValueOne();
+        BigDecimal travelDistanceToExitValueTwo = rule.getTravelDistanceToExitValueTwo();
+        BigDecimal travelDistanceToExitValueThree = rule.getTravelDistanceToExitValueThree();
 
-	    boolean exemption = isExempted(pl);
-	    if (exemption) return pl;
+        boolean exemption = isExempted(pl, travelDistanceToExitValueThree);
+        if (exemption) return pl;
 
-	    if (pl.getTravelDistancesToExit().isEmpty()) {
-	        addMissingTravelDistanceError(pl);
-	        return pl;
-	    }
+        if (pl.getTravelDistancesToExit().isEmpty()) {
+            addMissingTravelDistanceError(pl);
+            return pl;
+        }
 
-	    validateTravelDistances(pl);
-	    return pl;
-	}
+        validateTravelDistances(pl, travelDistanceToExitValueOne, travelDistanceToExitValueTwo);
+        return pl;
+    }
+	
+	 
 
 	/**
 	 * Extracts travel distance requirement rules from MDMS cache.
@@ -139,18 +145,14 @@ public class TravelDistanceToExit extends FeatureProcess {
 	 *
 	 * @param pl The building plan containing configuration details
 	 */
-	private void extractTravelDistanceRules(Plan pl) {
-		 List<Object> rules = cache.getFeatureRules(pl, FeatureEnum.TRAVEL_DISTANCE_TO_EXIT.getValue(), false);
-	         rules.stream()
+	 private TravelDistanceToExitRequirement extractTravelDistanceRules(Plan pl) {
+	        List<Object> rules = cache.getFeatureRules(pl, FeatureEnum.TRAVEL_DISTANCE_TO_EXIT.getValue(), false);
+	        Optional<TravelDistanceToExitRequirement> matchedRule = rules.stream()
 	            .filter(TravelDistanceToExitRequirement.class::isInstance)
 	            .map(TravelDistanceToExitRequirement.class::cast)
-	            .findFirst()
-	            .ifPresent(rule -> {
-		            travelDistanceToExitValueOne = rule.getTravelDistanceToExitValueOne();
-		            travelDistanceToExitValueTwo = rule.getTravelDistanceToExitValueTwo();
-		            travelDistanceToExitValueThree = rule.getTravelDistanceToExitValueThree();
-		        });
-	}
+	            .findFirst();
+	        return matchedRule.orElse(new TravelDistanceToExitRequirement());
+	    }
 
 	/**
 	 * Checks if the building plan is exempted from travel distance requirements.
@@ -160,20 +162,20 @@ public class TravelDistanceToExit extends FeatureProcess {
 	 * @param pl The building plan to check for exemptions
 	 * @return true if exempted from travel distance requirements, false otherwise
 	 */
-	private boolean isExempted(Plan pl) {
-	    if (pl.getVirtualBuilding() == null || pl.getVirtualBuilding().getOccupancyTypes().isEmpty() || pl.getBlocks().isEmpty()) {
-	        return false;
+	 private boolean isExempted(Plan pl, BigDecimal travelDistanceToExitValueThree) {
+	        if (pl.getVirtualBuilding() == null || pl.getVirtualBuilding().getOccupancyTypes().isEmpty() || pl.getBlocks().isEmpty()) {
+	            return false;
+	        }
+
+	        boolean allBlocksWithMax3Floors = pl.getBlocks().stream().allMatch(block ->
+	            block.getBuilding() != null &&
+	            block.getBuilding().getFloorsAboveGround() != null &&
+	            block.getBuilding().getFloorsAboveGround().compareTo(travelDistanceToExitValueThree) <= 0
+	        );
+
+	        boolean isResidential = Boolean.TRUE.equals(pl.getVirtualBuilding().getResidentialBuilding());
+	        return (isResidential && allBlocksWithMax3Floors) || ProcessHelper.isSmallPlot(pl);
 	    }
-
-	    boolean allBlocksWithMax3Floors = pl.getBlocks().stream().allMatch(block ->
-	        block.getBuilding() != null &&
-	        block.getBuilding().getFloorsAboveGround() != null &&
-	        block.getBuilding().getFloorsAboveGround().compareTo(travelDistanceToExitValueThree) <= 0
-	    );
-
-	    boolean isResidential = Boolean.TRUE.equals(pl.getVirtualBuilding().getResidentialBuilding());
-	    return (isResidential && allBlocksWithMax3Floors) || ProcessHelper.isSmallPlot(pl);
-	}
 
 	/**
 	 * Adds validation error when travel distance measurements are missing from the plan.
@@ -182,43 +184,45 @@ public class TravelDistanceToExit extends FeatureProcess {
 	 * @param pl The building plan to add the error to
 	 */
 	private void addMissingTravelDistanceError(Plan pl) {
-	    Map<String, String> errors = new HashMap<>();
-	    errors.put(DcrConstants.TRAVEL_DIST_EXIT,
-	        edcrMessageSource.getMessage(DcrConstants.OBJECTNOTDEFINED,
-	            new String[]{DcrConstants.TRAVEL_DIST_EXIT}, LocaleContextHolder.getLocale()));
-	    pl.addErrors(errors);
-	}
+        Map<String, String> errors = new HashMap<>();
+        errors.put(DcrConstants.TRAVEL_DIST_EXIT,
+            edcrMessageSource.getMessage(DcrConstants.OBJECTNOTDEFINED,
+                new String[]{DcrConstants.TRAVEL_DIST_EXIT}, LocaleContextHolder.getLocale()));
+        pl.addErrors(errors);
+    }
 
 	/**
-	 * Validates actual travel distances against required limits based on occupancy type.
-	 * Creates scrutiny details comparing provided distances with occupancy-specific
-	 * maximum allowable travel distances.
+	 * Validates actual travel distances against required limits based on occupancy
+	 * type. Creates scrutiny details comparing provided distances with
+	 * occupancy-specific maximum allowable travel distances.
 	 *
 	 * @param pl The building plan containing travel distance measurements
 	 */
-	private void validateTravelDistances(Plan pl) {
-	    scrutinyDetail = new ScrutinyDetail();
-	    scrutinyDetail.setKey(COM_TRAVEL_DIS_EMERGENCY_EXIT);
-	    scrutinyDetail.addColumnHeading(1, RULE_NO);
-	    scrutinyDetail.addColumnHeading(2, REQUIRED);
-	    scrutinyDetail.addColumnHeading(3, PROVIDED);
-	    scrutinyDetail.addColumnHeading(4, STATUS);
-	    scrutinyDetail.setSubHeading(SUBRULE_42_2_DESC);
+	private void validateTravelDistances(Plan pl, BigDecimal travelDistanceToExitValueOne,
+			BigDecimal travelDistanceToExitValueTwo) {
+		scrutinyDetail = new ScrutinyDetail();
+		scrutinyDetail.setKey(COM_TRAVEL_DIS_EMERGENCY_EXIT);
+		scrutinyDetail.addColumnHeading(1, RULE_NO);
+		scrutinyDetail.addColumnHeading(2, REQUIRED);
+		scrutinyDetail.addColumnHeading(3, PROVIDED);
+		scrutinyDetail.addColumnHeading(4, STATUS);
+		scrutinyDetail.setSubHeading(SUBRULE_42_2_DESC);
 
-	    OccupancyTypeHelper occupancyHelper = pl.getVirtualBuilding().getMostRestrictiveFarHelper();
-	    String occupancyCode = occupancyHelper.getType().getCode();
+		OccupancyTypeHelper occupancyHelper = pl.getVirtualBuilding().getMostRestrictiveFarHelper();
+		String occupancyCode = occupancyHelper.getType().getCode();
 
-	    Map<String, BigDecimal> occupancyValues = getOccupancyValues(travelDistanceToExitValueOne, travelDistanceToExitValueTwo);
-	    BigDecimal requiredValue = occupancyValues.get(occupancyCode);
+		Map<String, BigDecimal> occupancyValues = getOccupancyValues(travelDistanceToExitValueOne,
+				travelDistanceToExitValueTwo);
+		BigDecimal requiredValue = occupancyValues.get(occupancyCode);
 
-	    if (requiredValue != null) {
-	        for (BigDecimal providedValue : pl.getTravelDistancesToExit()) {
-	            boolean isAccepted = providedValue.compareTo(requiredValue) <= 0;
-	            setReportOutputDetails(pl, SUBRULE_42_2, requiredValue + DcrConstants.IN_METER,
-	                providedValue + DcrConstants.IN_METER,
-	                isAccepted ? Result.Accepted.getResultVal() : Result.Not_Accepted.getResultVal());
-	        }
-	    }
+		if (requiredValue != null) {
+			for (BigDecimal providedValue : pl.getTravelDistancesToExit()) {
+				boolean isAccepted = providedValue.compareTo(requiredValue) <= 0;
+				setReportOutputDetails(pl, SUBRULE_42_2, requiredValue + DcrConstants.IN_METER,
+						providedValue + DcrConstants.IN_METER,
+						isAccepted ? Result.Accepted.getResultVal() : Result.Not_Accepted.getResultVal());
+			}
+		}
 	}
 
 	/**
