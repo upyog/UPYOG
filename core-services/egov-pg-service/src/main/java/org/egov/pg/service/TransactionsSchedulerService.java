@@ -98,16 +98,16 @@ public class TransactionsSchedulerService {
 											.equalsIgnoreCase(bankAccountTenantIds.getValue().get(0).getTenantId()))
 							.findFirst().ifPresent(bankAccountTenantIds -> {
 								BankAccount bankAccount = bankAccountTenantIds.getValue().get(0);
-								String ulbName = transaction.getTenantId().split("\\.").length > 1
-										? transaction.getTenantId().split("\\.")[1]
-										: "";
+//								String ulbName = transaction.getTenantId().split("\\.").length > 1
+//										? transaction.getTenantId().split("\\.")[1]
+//										: "";
 								// enrich transfer object
 								Transfer transfer = Transfer.builder().account(bankAccount.getPayTo())
 										.amount(null != transaction.getTxnAmount()
 												? Integer.parseInt(transaction.getTxnAmount().replace(".", ""))
 												: 0)
-										.notes(Notes.builder().ulbName(ulbName).orderId(transaction.getOrderId())
-												.gatewayTxnId(transaction.getGatewayTxnId()).build())
+										.notes(Notes.builder().name(transaction.getUser().getName())
+												.service(transaction.getProductInfo()).build())
 										.build();
 
 								TransferWrapper transferWrapper = TransferWrapper.builder()
