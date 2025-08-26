@@ -116,10 +116,10 @@ public class TransactionsSchedulerService {
 
 								Object settlementAmountResponse = null;
 								try {
-									log.info("payload {}", transfer);
+									//log.info("payload {}", transfer);
 //									 call settlement api
-									//settlementAmountResponse = gatewayService.settlementAmount(transaction,
-										//	transferWrapper);
+									settlementAmountResponse = gatewayService.settlementAmount(transaction,
+											transferWrapper);
 								} catch (Exception e) {
 									log.error("Error while transfering amount for the getway transaction id: "
 											+ transaction.getGatewayTxnId());
@@ -206,6 +206,7 @@ public class TransactionsSchedulerService {
 	        case "pet-service": return "PTR";
 	        case "garbage-bill": return "GB";
 	        case "chb-services": return "CHB";
+	        case "GB": return "GB";
 	        default: return productInfo; // fallback
 	    }
 	}
