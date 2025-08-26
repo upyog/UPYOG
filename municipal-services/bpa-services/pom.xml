@@ -1,26 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
-	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.2.6.RELEASE</version>
+		<version>3.2.2</version>
 	</parent>
 	<groupId>org.egov</groupId>
 	<artifactId>bpa-services</artifactId>
-	<version>1.1.7-SNAPSHOT</version>
+	<version>2.9.0-SNAPSHOT</version>
 	<name>bpa-services</name>
-
 	<properties>
 		<log4j2.version>2.17.1</log4j2.version>
-		<java.version>1.8</java.version>
+		<java.version>17</java.version>
 		<maven.compiler.source>${java.version}</maven.compiler.source>
 		<maven.compiler.target>${java.version}</maven.compiler.target>
-		<lombok.version>1.18.8</lombok.version>
+		<lombok.version>1.18.22</lombok.version>
 	</properties>
-
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -29,7 +28,6 @@
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-beans</artifactId>
-			<version>5.2.20.RELEASE</version>
 		</dependency>
 		<dependency>
 			<groupId>org.hibernate</groupId>
@@ -71,14 +69,14 @@
 			<version>3.1.0</version>
 		</dependency>
 		<dependency>
-		  <groupId>org.egov.services</groupId>
-		  <artifactId>tracer</artifactId>
-		  <version>2.1.0-SNAPSHOT</version>
+			<groupId>org.egov.services</groupId>
+			<artifactId>tracer</artifactId>
+			<version>2.9.0-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.egov.services</groupId>
 			<artifactId>services-common</artifactId>
-			<version>1.1.1-SNAPSHOT</version>
+			<version>2.9.0-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.projectlombok</groupId>
@@ -90,18 +88,26 @@
 			<artifactId>jackson-datatype-jsr310</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>javax.validation</groupId>
-			<artifactId>validation-api</artifactId>
+			<groupId>jakarta.xml.bind</groupId>
+			<artifactId>jakarta.xml.bind-api</artifactId>
+			<version>2.3.3</version>
 		</dependency>
 		<dependency>
+			<groupId>jakarta.validation</groupId>
+			<artifactId>jakarta.validation-api</artifactId>
+		</dependency>
+		<dependency>
+            <groupId>net.minidev</groupId>
+            <artifactId>json-smart</artifactId>
+        </dependency>
+		<dependency>
 			<groupId>org.postgresql</groupId>
-                        <artifactId>postgresql</artifactId>
-                        <version>42.7.1</version>
+			<artifactId>postgresql</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.egov</groupId>
 			<artifactId>mdms-client</artifactId>
-			<version>0.0.2-SNAPSHOT</version>
+			<version>2.9.0-SNAPSHOT</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
@@ -110,10 +116,9 @@
 			<version>7.2.0</version>
 			<type>pom</type>
 		</dependency>
-
 	</dependencies>
-	<repositories> 
- 		<repository>
+	<repositories>
+		<repository>
 			<id>repo.digit.org</id>
 			<name>eGov DIGIT Releases Repository</name>
 			<url>https://nexus-repo.digit.org/nexus/content/repositories/snapshots/</url>
@@ -161,36 +166,36 @@
 				</configuration>
 			</plugin>
 			<plugin>
-			  <groupId>cz.habarta.typescript-generator</groupId>
-			  <artifactId>typescript-generator-maven-plugin</artifactId>
-			  <version>2.22.595</version>
-			  <executions>
-			    <execution>
-			      <id>generate</id>
-			      <goals>
-			        <goal>generate</goal>
-			      </goals>
-			      <phase>process-classes</phase>
-			    </execution>
-			  </executions>
-			  <configuration>
-			    <jsonLibrary>jackson2</jsonLibrary>
-			    <classes>
-			      <class>org.egov.bpa.web.model.BPAResponse</class>
-			      <class>org.egov.bpa.web.model.BPARequest</class>
-			      <class>org.egov.bpa.web.model.BPASearchCriteria</class>
-			    </classes>
-			    <customTypeMappings>
-			      <customTypeMapping>org.egov.common.contract.request.User:User</customTypeMapping>
-			      <customTypeMapping>org.egov.common.contract.request.RequestInfo:RequestInfo</customTypeMapping>
-			      <customTypeMapping>org.egov.common.contract.response.ResponseInfo:ResponseInfo</customTypeMapping>			      
-			      <customTypeMapping>org.egov.bpa.web.model.Document:Document</customTypeMapping>
-			      <customTypeMapping>org.egov.bpa.web.model.AuditDetails:AuditDetails</customTypeMapping>
-			    </customTypeMappings>
-			    <namespace>Digit</namespace>
-			    <debug>true</debug>
-			    <outputKind>module</outputKind>
-			  </configuration>
+				<groupId>cz.habarta.typescript-generator</groupId>
+				<artifactId>typescript-generator-maven-plugin</artifactId>
+				<version>2.22.595</version>
+				<executions>
+					<execution>
+						<id>generate</id>
+						<goals>
+							<goal>generate</goal>
+						</goals>
+						<phase>process-classes</phase>
+					</execution>
+				</executions>
+				<configuration>
+					<jsonLibrary>jackson2</jsonLibrary>
+					<classes>
+						<class>org.egov.bpa.web.model.BPAResponse</class>
+						<class>org.egov.bpa.web.model.BPARequest</class>
+						<class>org.egov.bpa.web.model.BPASearchCriteria</class>
+					</classes>
+					<customTypeMappings>
+						<customTypeMapping>org.egov.common.contract.request.User:User</customTypeMapping>
+						<customTypeMapping>org.egov.common.contract.request.RequestInfo:RequestInfo</customTypeMapping>
+						<customTypeMapping>org.egov.common.contract.response.ResponseInfo:ResponseInfo</customTypeMapping>
+						<customTypeMapping>org.egov.bpa.web.model.Document:Document</customTypeMapping>
+						<customTypeMapping>org.egov.bpa.web.model.AuditDetails:AuditDetails</customTypeMapping>
+					</customTypeMappings>
+					<namespace>Digit</namespace>
+					<debug>true</debug>
+					<outputKind>module</outputKind>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>

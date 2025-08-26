@@ -2,7 +2,7 @@ package org.egov.pt.calculator.web.models.property;
 
 import java.util.Objects;
 
-import javax.validation.constraints.Size;
+import jakarta.validation.constraints.Size;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

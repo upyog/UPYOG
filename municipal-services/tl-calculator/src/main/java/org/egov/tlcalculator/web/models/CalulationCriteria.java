@@ -18,7 +18,7 @@ import lombok.Builder;
  */
 @ApiModel(description = "Either tradelicense object or the application number is mandatory apart from tenantid.")
 @Validated
-@javax.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2018-09-27T14:56:03.454+05:30")
+@jakarta.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2018-09-27T14:56:03.454+05:30")
 
 @Getter
 @Setter

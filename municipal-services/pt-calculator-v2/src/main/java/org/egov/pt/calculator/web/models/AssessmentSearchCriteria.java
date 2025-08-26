@@ -2,7 +2,7 @@ package org.egov.pt.calculator.web.models;
 
 import lombok.*;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 import java.util.Set;
 
 

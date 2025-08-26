@@ -20,7 +20,7 @@ import lombok.Builder;
  */
 @ApiModel(description = "1. This is the master data for accessory. 2. We can add accessories only for active AccessoryCategory . 4. This is the master data for trade license, it's defined under mdms service. 5. To get data from mdms 'moduleName=tradelicense, masterName=AccessoryCategory and tradeSubCategory={code of trade sub category master}'. 6. Multiple TradeCategoryDetail can be defined under single TradeSubCategory 7. Cobination of tradeSubCategory and code is unique. 8. License Fees is defined at tradeCategoryDetail level. 9. Each tradeCategoryDetail is map to a single TradeCategoryUOM")
 @Validated
-@javax.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2018-09-18T17:06:11.263+05:30")
+@jakarta.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2018-09-18T17:06:11.263+05:30")
 
 @Getter
 @Setter

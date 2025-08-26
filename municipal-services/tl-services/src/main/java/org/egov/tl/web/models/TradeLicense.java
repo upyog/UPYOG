@@ -23,7 +23,7 @@ import io.swagger.annotations.ApiModel;
  */
 @ApiModel(description = "A Object holds the basic data for a Trade License")
 @Validated
-@javax.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2018-09-18T17:06:11.263+05:30")
+@jakarta.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2018-09-18T17:06:11.263+05:30")
 
 @Getter
 @Setter

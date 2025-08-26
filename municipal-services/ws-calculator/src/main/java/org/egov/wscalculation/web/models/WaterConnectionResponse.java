@@ -22,7 +22,7 @@ import javax.validation.Valid;
  */
 @ApiModel(description = "Contains the ResponseHeader and the created/updated property")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-10-24T10:29:25.253+05:30[Asia/Kolkata]")
+@jakarta.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-10-24T10:29:25.253+05:30[Asia/Kolkata]")
 
 @Getter
 @NoArgsConstructor

@@ -2,7 +2,7 @@ package org.egov.pt.calculator.web.controller;
 
 import java.util.Map;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 
 import org.egov.pt.calculator.service.DemandService;
 import org.egov.pt.calculator.service.EstimationService;
