@@ -116,7 +116,7 @@ public class TransactionsSchedulerService {
 
 								Object settlementAmountResponse = null;
 								try {
-									log.info("payload", transfer);
+									log.info("payload {}", transfer);
 //									 call settlement api
 									//settlementAmountResponse = gatewayService.settlementAmount(transaction,
 										//	transferWrapper);
