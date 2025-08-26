@@ -18,4 +18,6 @@ public class Notes {
 	private String name;
 	
 	private String service;
+	
+	private String gatewayTxnId;
 }
