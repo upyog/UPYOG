@@ -127,7 +127,7 @@ public class EDCRService {
 		LinkedList<String> permitNumber = context.read("edcrDetail.*.permitNumber");
 		additionalDetails.put(BPAConstants.SERVICETYPE, serviceType.get(0));
 		additionalDetails.put(BPAConstants.APPLICATIONTYPE, applicationType.get(0));
-                if (!permitNumber.isEmpty()) {
+			if (permitNumber !=null &&  !permitNumber.isEmpty() && !permitNumber.get(0).equalsIgnoreCase("null") ) {
                     /*
                      * Validating OC application, with submitted permit number is any OC
                      * submitted without rejection. Using a permit number only one OC
