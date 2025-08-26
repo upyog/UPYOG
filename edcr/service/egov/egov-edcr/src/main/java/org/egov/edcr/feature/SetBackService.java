@@ -97,7 +97,7 @@ public class SetBackService extends FeatureProcess {
             int setbackIndex = 0;
 
             for (SetBack setback : block.getSetBacks()) {
-                if (!DcrConstants.NO.equalsIgnoreCase(pl.getCoreArea())) continue;
+                
 
                 setbackIndex++;
 
@@ -250,7 +250,6 @@ public class SetBackService extends FeatureProcess {
         if (depthOfPlot != null && depthOfPlot.compareTo(BigDecimal.ZERO) > 0) {
             frontYardService.processFrontYard(pl);
 
-            if (DcrConstants.NO.equalsIgnoreCase(pl.getCoreArea())) {
                 boolean rearRoadReservePresent = pl.getRoadReserveRear() != null && pl.getRoadReserveRear().compareTo(BigDecimal.ZERO) > 0;
                 boolean largePlot = pl.getPlot().getArea().compareTo(TWO_HUNDRED) > 0;
 
@@ -269,7 +268,7 @@ public class SetBackService extends FeatureProcess {
                 } else if (largePlot) {
                     rearYardService.processRearYard(pl);
                 }
-            }
+            
         }
 
         // Uncomment if side yard processing is needed

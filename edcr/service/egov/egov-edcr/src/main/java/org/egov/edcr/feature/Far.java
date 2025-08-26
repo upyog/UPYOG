@@ -84,14 +84,8 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class Far extends FeatureProcess {
-	private static final Logger LOG = LogManager.getLogger(Far.class);
-	BigDecimal totalExistingBuiltUpArea = BigDecimal.ZERO;
-	BigDecimal totalExistingFloorArea = BigDecimal.ZERO;
-	BigDecimal totalBuiltUpArea = BigDecimal.ZERO;
-	BigDecimal totalFloorArea = BigDecimal.ZERO;
-	BigDecimal totalCarpetArea = BigDecimal.ZERO;
-	BigDecimal totalExistingCarpetArea = BigDecimal.ZERO;// Use an appropriate																// upper bound
-
+	private static final Logger LOG = LogManager.getLogger(Far.class);														// upper bound
+	
 	@Autowired
 	MDMSCacheManager cache;
 	
@@ -121,46 +115,96 @@ public class Far extends FeatureProcess {
 	 */
 	@Override
 	public Plan process(Plan pl) {
-		decideNocIsRequired(pl);
-		System.out.println("hi inside process");
+	    decideNocIsRequired(pl);
+	    LOG.debug("Inside FAR process");
 
-		HashMap<String, String> errorMsgs = new HashMap<>();
-		int initialErrorCount = pl.getErrors().size();
+	    HashMap<String, String> errorMsgs = new HashMap<>();
+	    int initialErrorCount = pl.getErrors().size();
 
-		validate(pl);
-		System.out.println("plotarea" + pl.getPlot().getArea());
+	    validate(pl);
+	    LOG.debug("Plot area: {}", pl.getPlot().getArea());
 
-		if (validationFailed(pl, initialErrorCount)) return pl;
+	    if (validationFailed(pl, initialErrorCount)) return pl;
 
-		Set<OccupancyTypeHelper> distinctOccupancyTypesHelper = new HashSet<>();
-		processAllBlockOccupancies(pl);		
-		processBlocks(pl);
 
-		Set<OccupancyTypeHelper> setOfDistinctOccupancyTypes = collectDistinctOccupancyTypes(pl);
-		distinctOccupancyTypesHelper.addAll(setOfDistinctOccupancyTypes);
+	    BigDecimal totalExistingBuiltUpArea = BigDecimal.ZERO;
+	    BigDecimal totalExistingFloorArea   = BigDecimal.ZERO;
+	    BigDecimal totalBuiltUpArea         = BigDecimal.ZERO;
+	    BigDecimal totalFloorArea           = BigDecimal.ZERO;
+	    BigDecimal totalCarpetArea          = BigDecimal.ZERO;
+	    BigDecimal totalExistingCarpetArea  = BigDecimal.ZERO;
 
-		List<Occupancy> occupanciesForPlan = collectOccupanciesForPlan(setOfDistinctOccupancyTypes, pl);
-		pl.setOccupancies(occupanciesForPlan);
+	    // Process block occupancies
+	    for (Block blk : pl.getBlocks()) {
+	        Building building = blk.getBuilding();
 
-		populatePlanAndVirtualBuildingDetails(pl, setOfDistinctOccupancyTypes, distinctOccupancyTypesHelper,
-			    totalFloorArea, totalCarpetArea, totalExistingBuiltUpArea, totalExistingFloorArea,
-			    totalExistingCarpetArea, totalBuiltUpArea);
+	        BigDecimal flrArea = BigDecimal.ZERO;
+	        BigDecimal bltUpArea = BigDecimal.ZERO;
+	        BigDecimal existingFlrArea = BigDecimal.ZERO;
+	        BigDecimal existingBltUpArea = BigDecimal.ZERO;
+	        BigDecimal carpetArea = BigDecimal.ZERO;
+	        BigDecimal existingCarpetArea = BigDecimal.ZERO;
 
-		processOccupancyInformation(pl);
+	        for (Floor flr : building.getFloors()) {
+	            for (Occupancy occupancy : flr.getOccupancies()) {
+	                validate2(pl, blk, flr, occupancy);
 
-		BigDecimal surrenderRoadArea = calculateSurrenderRoadArea(pl);
-		pl.setTotalSurrenderRoadArea(surrenderRoadArea.setScale(DcrConstants.DECIMALDIGITS_MEASUREMENTS,
-				DcrConstants.ROUNDMODE_MEASUREMENTS));
+	                bltUpArea = bltUpArea.add(
+	                        occupancy.getBuiltUpArea() == null ? BigDecimal.ZERO : occupancy.getBuiltUpArea());
+	                existingBltUpArea = existingBltUpArea.add(
+	                        occupancy.getExistingBuiltUpArea() == null ? BigDecimal.ZERO : occupancy.getExistingBuiltUpArea());
+	                flrArea = flrArea.add(occupancy.getFloorArea());
+	                existingFlrArea = existingFlrArea.add(occupancy.getExistingFloorArea());
+	                carpetArea = carpetArea.add(occupancy.getCarpetArea());
+	                existingCarpetArea = existingCarpetArea.add(occupancy.getExistingCarpetArea());
+	            }
+	        }
 
-		BigDecimal plotArea = calculateTotalPlotArea(pl, surrenderRoadArea);
-		BigDecimal providedFar = calculateProvidedFar(pl, plotArea);
-		pl.setFarDetails(new FarDetails());
-		pl.getFarDetails().setProvidedFar(providedFar.doubleValue());
+	        building.setTotalFloorArea(flrArea);
+	        building.setTotalBuitUpArea(bltUpArea);
+	        building.setTotalExistingBuiltUpArea(existingBltUpArea);
+	        building.setTotalExistingFloorArea(existingFlrArea);
 
-		processFarComputation(pl, providedFar, plotArea, errorMsgs);
+	        if (existingBltUpArea.compareTo(bltUpArea) == 0)
+	            blk.setCompletelyExisting(Boolean.TRUE);
 
-		ProcessPrintHelper.print(pl);
-		return pl;
+	        // Add to run-level totals
+	        totalFloorArea          = totalFloorArea.add(flrArea);
+	        totalBuiltUpArea        = totalBuiltUpArea.add(bltUpArea);
+	        totalExistingBuiltUpArea= totalExistingBuiltUpArea.add(existingBltUpArea);
+	        totalExistingFloorArea  = totalExistingFloorArea.add(existingFlrArea);
+	        totalCarpetArea         = totalCarpetArea.add(carpetArea);
+	        totalExistingCarpetArea = totalExistingCarpetArea.add(existingCarpetArea);
+
+	        // Build occupancy types for this block
+	        processBlockOccupancyTypes(blk);
+	    }
+
+	    // Distinct occupancies across plan
+	    Set<OccupancyTypeHelper> distinctOccupancyTypes = collectDistinctOccupancyTypes(pl);
+	    List<Occupancy> occupanciesForPlan = collectOccupanciesForPlan(distinctOccupancyTypes, pl);
+	    pl.setOccupancies(occupanciesForPlan);
+
+	    // Populate plan & virtual building with totals
+	    populatePlanAndVirtualBuildingDetails(pl, distinctOccupancyTypes, distinctOccupancyTypes,
+	            totalFloorArea, totalCarpetArea, totalExistingBuiltUpArea,
+	            totalExistingFloorArea, totalExistingCarpetArea, totalBuiltUpArea);
+
+	    processOccupancyInformation(pl);
+
+	    BigDecimal surrenderRoadArea = calculateSurrenderRoadArea(pl);
+	    pl.setTotalSurrenderRoadArea(surrenderRoadArea.setScale(
+	            DcrConstants.DECIMALDIGITS_MEASUREMENTS, DcrConstants.ROUNDMODE_MEASUREMENTS));
+
+	    BigDecimal plotArea = calculateTotalPlotArea(pl, surrenderRoadArea);
+	    BigDecimal providedFar = calculateProvidedFar(pl, plotArea);
+	    pl.setFarDetails(new FarDetails());
+	    pl.getFarDetails().setProvidedFar(providedFar.doubleValue());
+
+	    processFarComputation(pl, providedFar, plotArea, errorMsgs);
+
+	    ProcessPrintHelper.print(pl);
+	    return pl;
 	}
 
 	/**
@@ -303,12 +347,18 @@ public class Far extends FeatureProcess {
 	 * @param blk The block to process.
 	 */
 	private void processBlockOccupancies(Plan pl, Block blk) {
-	    BigDecimal flrArea = BigDecimal.ZERO;
+		BigDecimal flrArea = BigDecimal.ZERO;
 	    BigDecimal bltUpArea = BigDecimal.ZERO;
 	    BigDecimal existingFlrArea = BigDecimal.ZERO;
 	    BigDecimal existingBltUpArea = BigDecimal.ZERO;
 	    BigDecimal carpetArea = BigDecimal.ZERO;
 	    BigDecimal existingCarpetArea = BigDecimal.ZERO;
+	    BigDecimal totalExistingBuiltUpArea = BigDecimal.ZERO;
+	    BigDecimal totalExistingFloorArea = BigDecimal.ZERO;
+	    BigDecimal totalBuiltUpArea = BigDecimal.ZERO;
+	    BigDecimal totalFloorArea = BigDecimal.ZERO;
+	    BigDecimal totalCarpetArea = BigDecimal.ZERO;
+	    BigDecimal totalExistingCarpetArea = BigDecimal.ZERO;
 
 	    Building building = blk.getBuilding();
 
