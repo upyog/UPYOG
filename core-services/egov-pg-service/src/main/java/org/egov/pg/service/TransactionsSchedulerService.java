@@ -106,8 +106,8 @@ public class TransactionsSchedulerService {
 										.amount(null != transaction.getTxnAmount()
 												? Integer.parseInt(transaction.getTxnAmount().replace(".", ""))
 												: 0)
-										.notes(Notes.builder().name(transaction.getUser().getName())
-												.service(mapProductInfo(transaction.getProductInfo()))
+										.notes(Notes.builder().service(mapProductInfo(transaction.getProductInfo()))
+												.name(transaction.getUser().getName())
 												.gatewayTxnId(transaction.getGatewayTxnId()).build())
 										.build();
 
