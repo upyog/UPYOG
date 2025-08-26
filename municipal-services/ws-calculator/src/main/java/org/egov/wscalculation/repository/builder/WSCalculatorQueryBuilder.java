@@ -283,12 +283,7 @@ public class WSCalculatorQueryBuilder {
 		        preparedStatement.add(lastReadingDate);
 		    }
 
-		    if (currentDate != null) {
-		        addClauseIfRequired(preparedStatement, query);
-		        query.append(" mr.currentReadingDate = ? ");
-		        preparedStatement.add(currentDate);
-		    }
-
+		    
 		    query.append(" ORDER BY mr.currentReadingDate DESC LIMIT 1");
 
 		    return query.toString();
