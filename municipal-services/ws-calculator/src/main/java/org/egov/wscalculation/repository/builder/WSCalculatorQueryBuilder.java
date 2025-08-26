@@ -795,10 +795,10 @@ StringBuilder query = new StringBuilder(getDemandId);
 		query.append(" d.taxperiodfrom >= ? ") ;
 		preparedStatement.add(taxperiodfrom);
 		
-		//Add taxperiodto
-		addClauseIfRequired(preparedStatement, query);
-		query.append(" d.taxperiodto <= ? ");
-		preparedStatement.add(taxPeriodTo);
+//		//Add taxperiodto
+//		addClauseIfRequired(preparedStatement, query);
+//		query.append(" d.taxperiodto <= ? ");
+//		preparedStatement.add(taxPeriodTo);
 
 
 		return query.toString();
