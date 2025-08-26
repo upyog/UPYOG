@@ -48,6 +48,9 @@ public class UserRepository {
     @Autowired
     private UserResultSetExtractorV2 userResultSetExtractorV2;
 
+    @Value("${user.address.mandatory.fields.enabled}")
+    private boolean addressMandatoryFieldsEnabled;
+
     @Value("${user.address.update.strategy}")
     private Boolean addressSoftUpdateFlag;
 
@@ -165,12 +168,10 @@ public class UserRepository {
         if (user.getRoles().size() > 0) {
             saveUserRoles(user);
         }
-        final Address savedCorrespondenceAddress = saveAddress(user.getCorrespondenceAddress(), savedUser.getId(),
-                savedUser.getTenantId());
-        final Address savedPermanentAddress = saveAddress(user.getPermanentAddress(), savedUser.getId(),
-                savedUser.getTenantId());
-        savedUser.setPermanentAddress(savedPermanentAddress);
-        savedUser.setCorrespondenceAddress(savedCorrespondenceAddress);
+        if (user.getPermanentAndCorrespondenceAddresses() != null) {
+            saveAddressIfValid(user.getCorrespondenceAddress(), savedUser, "correspondence");
+            saveAddressIfValid(user.getPermanentAddress(), savedUser, "permanent");
+        }
         return savedUser;
     }
 
@@ -631,10 +632,11 @@ public class UserRepository {
         if (!user.getRoles().isEmpty()) {
             saveUserRoles(user);
         }
-        if (user.getAddresses()!=null) {
+        
+        if (user.getAddresses() != null && !user.getAddresses().isEmpty()) {
+            log.info("Processing {} addresses for user: {}", user.getAddresses().size(), user.getUsername());
             for (Address address : user.getAddresses()) {
-                Address responseAddress = saveAddressV2(address, savedUser.getId(), savedUser.getTenantId());
-                savedUser.addAddressItem(responseAddress);
+                saveAddressV2IfValid(address, savedUser);
             }
         }
         return savedUser;
@@ -841,5 +843,37 @@ public class UserRepository {
         String query = userTypeQueryBuilder.getUserIdByUuid();
         MapSqlParameterSource params = new MapSqlParameterSource("uuid", userUuid);
         return namedParameterJdbcTemplate.queryForObject(query, params, Long.class);
+    }
+
+    /**
+     * Helper method to save address if it has valid required fields
+     */
+    private void saveAddressIfValid(Address address, User savedUser, String addressType) {
+        if (address != null && (addressMandatoryFieldsEnabled ? address.isNotEmpty() : true)) {
+            log.info("Saving {} address for user: {}", addressType, savedUser.getUsername());
+            Address savedAddress = saveAddress(address, savedUser.getId(), savedUser.getTenantId());
+            if ("correspondence".equals(addressType)) {
+                savedUser.setCorrespondenceAddress(savedAddress);
+            } else if ("permanent".equals(addressType)) {
+                savedUser.setPermanentAddress(savedAddress);
+            }
+        } else {
+            log.info("Skipping {} address persistence - missing required fields (city, pincode, or address) for user: {}", 
+                    addressType, savedUser.getUsername());
+        }
+    }
+
+    /**
+     * Helper method to save V2 address if it has valid required fields
+     */
+    private void saveAddressV2IfValid(Address address, User savedUser) {
+        if (address != null && (addressMandatoryFieldsEnabled ? address.isNotEmpty() : true)) {
+            log.info("Saving address with type: {} for user: {}", address.getType(), savedUser.getUsername());
+            Address responseAddress = saveAddressV2(address, savedUser.getId(), savedUser.getTenantId());
+            savedUser.addAddressItem(responseAddress);
+        } else {
+            log.info("Skipping address persistence for type: {} - missing required fields (city, pincode, or address) for user: {}", 
+                    address != null ? address.getType() : "null", savedUser.getUsername());
+        }
     }
 }
