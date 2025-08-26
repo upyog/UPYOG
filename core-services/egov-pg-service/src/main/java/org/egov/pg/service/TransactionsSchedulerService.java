@@ -64,8 +64,8 @@ public class TransactionsSchedulerService {
 				.txnStatus(TxnStatusEnum.SUCCESS)
 				.gateway("RAZORPAY")
 				.startDateTime(
-						LocalDate.now().minusDays(1).atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli())
-				.endDateTime(LocalDate.now().minusDays(1).atTime(23, 59, 59, 999_999_999).atZone(ZoneId.systemDefault())
+						LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli())
+				.endDateTime(LocalDate.now().atTime(23, 59, 59, 999_999_999).atZone(ZoneId.systemDefault())
 						.toInstant().toEpochMilli())
 				.build();
 
