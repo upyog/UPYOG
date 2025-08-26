@@ -107,7 +107,8 @@ public class TransactionsSchedulerService {
 												? Integer.parseInt(transaction.getTxnAmount().replace(".", ""))
 												: 0)
 										.notes(Notes.builder().name(transaction.getUser().getName())
-												.service(transaction.getProductInfo()).build())
+												.service(transaction.getProductInfo())
+												.gatewayTxnId(transaction.getGatewayTxnId()).build())
 										.build();
 
 								TransferWrapper transferWrapper = TransferWrapper.builder()
