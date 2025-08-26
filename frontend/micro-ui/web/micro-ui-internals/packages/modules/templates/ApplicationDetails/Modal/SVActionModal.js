@@ -1,6 +1,9 @@
-import { Loader, Modal, FormComposer } from "@upyog/digit-ui-react-components";
-import React, { useState, useEffect, act } from "react";
+import { Loader, Modal, FormComposer, CloseSvg } from "@upyog/digit-ui-react-components";
+import React, { useState, useEffect } from "react";
 import { configSVApproverApplication } from "../config";
+import { useHistory } from "react-router-dom";
+import EXIF from "exif-js";
+import { getOpenStreetMapUrl } from "../../../../libraries/src/services/atoms/urls";
 
 /* This component, ActionModal, is responsible for displaying a modal dialog 
  that allows users to submit actions related to a specific application. 
@@ -30,7 +33,10 @@ const CloseBtn = (props) => {
   );
 };
 
-const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction, actionData, applicationData, businessService, moduleCode }) => {
+const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction, actionData, applicationData, businessService, moduleCode, vending_Zone, UserVendingZone, UserVendingZoneCode }) => {
+  const history = useHistory();
+  const user = Digit.UserService.getUser().info;
+  const selectApprover = user?.roles
 
   const { data: approverData, isLoading: PTALoading } = Digit.Hooks.useEmployeeSearch(
 
@@ -42,6 +48,7 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
     { enabled: action?.isTerminateState }
   );
 
+  
   const [config, setConfig] = useState({});
   const [defaultValues, setDefaultValues] = useState({});
   const [approvers, setApprovers] = useState([]);
@@ -50,6 +57,10 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
   const [uploadedFile, setUploadedFile] = useState(null);
   const [error, setError] = useState(null);
   const [isUploading, setIsUploading] = useState(false);
+  const [geoLocationData, setGeoLocationData] = useState();
+  const [vendingZones, setvendingZones] = useState();
+  const [comment, setComment] = useState("");
+
 
   useEffect(() => {
     setApprovers(approverData?.Employees?.map((employee) => ({ uuid: employee?.uuid, name: employee?.user?.name })));
@@ -60,12 +71,73 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
     setFile(e.target.files[0]);
   }
 
+  function convertToDecimal(coordinate) {
+    const degrees = coordinate[0];
+    const minutes = coordinate[1];
+    const seconds = coordinate[2];
+    return degrees + minutes / 60 + seconds / 3600;
+  }
+
+  const fetchAddress = async (lat, lng) => {
+    try {
+      const response = await fetch(getOpenStreetMapUrl(lat, lng));
+
+      if (!response.ok) throw new Error("Failed to fetch address");
+
+      const data = await response.json();
+      if (data && data.address) {
+
+        const addr = [
+          data.address?.amenity,
+          data.address?.road,
+          data.address?.neighbourhood,
+          data.address?.suburb,
+          data.address?.city,
+          data.address?.state,
+          data.address?.postcode,
+          data.address?.country
+        ]
+          .filter(Boolean) // Removes undefined or null values
+          .join(", ");
+        setGeoLocationData(addr);
+      }
+
+    } catch (error) {
+      console.error("Error fetching address:", error);
+    }
+  }
+
+  function extractGeoLocation(file) {
+    return new Promise((resolve) => {
+      EXIF.getData(file, function () {
+        const lat = EXIF.getTag(this, 'GPSLatitude');
+        const lon = EXIF.getTag(this, 'GPSLongitude');
+        if (lat && lon) {
+          const latDecimal = convertToDecimal(lat);
+          const lonDecimal = convertToDecimal(lon);
+          resolve({ latitude: latDecimal, longitude: lonDecimal });
+        } else {
+          resolve({ latitude: null, longitude: null });
+        }
+      });
+    });
+  }
 
 
   useEffect(() => {
     (async () => {
       setError(null);
       if (file) {
+
+        extractGeoLocation(file).then(({ latitude, longitude }) => {
+          if (!latitude || !longitude) {
+            console.log("No geolocation data found in the image.");
+          }
+          else {
+            fetchAddress(latitude, longitude);
+          }
+        });
+
         if (file.size >= 5242880) {
           setError(t("CS_MAXIMUM_UPLOAD_SIZE_EXCEEDED"));
         } else {
@@ -88,13 +160,8 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
   }, [file]);
 
 
-  console.log("actyhdesh,jhfsefsef",action,applicationData);
-
-
-
-
   function submit(data) {
-    let workflow = { action: action?.action, comments: data?.comments, businessService, moduleName: moduleCode, assignes: action?.action==="SENDBACKTOCITIZEN"?[applicationData?.auditDetails?.createdBy]:selectedApprover?.uuid?[selectedApprover?.uuid]:null };
+    let workflow = { action: action?.action, comments: data?.comments, businessService, moduleName: moduleCode, assignes: action?.action === "SENDBACKTOCITIZEN" ? [applicationData?.auditDetails?.createdBy] : selectedApprover?.uuid ? [selectedApprover?.uuid] : null };
     if (uploadedFile)
       workflow["documents"] = [
         {
@@ -107,11 +174,13 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
       streetVendingDetail:
       {
         ...applicationData,
+        vendingZone: vendingZones?.code || UserVendingZoneCode,
         workflow,
       },
 
     });
   }
+
 
   useEffect(() => {
     setConfig(
@@ -126,9 +195,16 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
         setUploadedFile,
         businessService,
         isUploading,
+        geoLocationData,
+        vending_Zone,
+        vendingZones,
+        setvendingZones,
+        UserVendingZone,
+        selectApprover,
       })
     );
   }, [action, approvers, uploadedFile]);
+
 
   return action && config.form ? (
     <Modal
@@ -139,6 +215,7 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
       actionSaveLabel={t(config.label.submit)}
       actionSaveOnSubmit={() => { }}
       formId="modal-action"
+      isDisabled={(action?.docUploadRequired && !uploadedFile && !comment) || !comment}
     >
 
       <FormComposer
@@ -149,6 +226,9 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
         onSubmit={submit}
         defaultValues={defaultValues}
         formId="modal-action"
+        onFormValueChange={(setValue, values) => {
+          setComment(values?.comments);
+        }}
       />
 
     </Modal>

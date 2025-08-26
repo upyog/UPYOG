@@ -1,0 +1,111 @@
+.CardBasedOptions{
+  box-shadow: #32325d14 0px 50px 100px -20px, rgb(0 0 0 / 18%) 0px 30px 60px -30px, #0a254038 0px -2px 6px 0px inset;
+  border-radius: 12px;
+  padding: 0px !important;
+  @apply bg-white mb-md px-sm py-md mx-sm rounded w-full;
+  .headContent{
+      @apply flex justify-between mb-lg;
+      h2{
+          @apply text-heading-s font-bold text-text-primary;
+      }
+      p{
+          @apply text-link text-primary-main font-medium cursor-pointer;
+      }
+  }
+
+  .mainContent{
+      @apply flex justify-evenly;
+      
+      .CardBasedOptionsMainChildOption{
+          width: 25%;
+          
+          @apply text-center;
+          margin: auto;
+          .ChildOptionImageWrapper{
+              margin: auto !important;
+              background: rgba(244, 119, 56, 0.12);
+              mix-blend-mode: normal;
+              padding-top: 14px;
+              @apply h-12 w-12 rounded-full cursor-pointer;
+              svg{
+                  height: 20px;
+                  width: 20px;
+                  fill: #a82227;
+                  margin: auto;
+              }
+          }
+          .ChildOptionName{
+              font-size: 12px;
+              line-height: 14px;
+          }
+      }
+  }
+}
+
+@screen dt{
+  .CardBasedOptions{
+      width: calc( 50% - 16px );
+    padding: 0px !important;
+    height: 250px !important;
+  }
+}
+.citizen .ServicesSection .CardBasedOptions:nth-child(odd){
+  .employeeCustomCard{
+    background-image: url("https://in-egov-assets.s3.ap-south-1.amazonaws.com/images/top-red-card.png");
+    background-size: cover
+  }
+}
+.citizen .ServicesSection .CardBasedOptions:nth-child(even){
+  .employeeCustomCard{
+background-image: url("https://in-egov-assets.s3.ap-south-1.amazonaws.com/images/top-green-card.png");
+background-size: cover
+  }
+}
+.citizen .employeeCustomCard {
+  border-radius: 10px;
+  background-image: url(https://in-egov-assets.s3.ap-south-1.amazonaws.com/images/top-red-card.png);
+      background-size: cover;
+    .employeeCustomCard {
+      border-radius: 10px;
+      background-image: url(https://in-egov-assets.s3.ap-south-1.amazonaws.com/images/top-red-card.png);
+      background-size: cover;
+  }
+}
+.employee-card-banner{
+    background-color: white;
+    width: 88%;
+    height: 60%;
+    bottom: 0px;
+    position: absolute;
+    margin-bottom: -10%;
+    left: 6%;
+    box-shadow: 1px 5px 6px 0px #e3e4e3;
+    border-radius: 10px;
+}
+.citizen .employee-card-banner{
+  margin-bottom: -5% !important;
+  height: 65% !important;
+}
+.text-employee-card{
+  font-size: 1.5rem;
+  font-weight: 700;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  position: absolute;
+  top:10%;
+  padding-left: 10%;
+  color: white !important;
+
+}
+.citizen .employee-card-banner .citizenAllServiceGrid{
+  display: flex-root !important;
+  height: 100% !important;
+} 
+
+@media screen and (min-width: 300px) {
+  .CardBasedOptions {
+    height: 200px;
+  }
+  .employeeCustomCard{
+    font-size: 1rem;
+  }
+}

@@ -22,7 +22,25 @@ import org.upyog.adv.web.models.BookingRequest;
 import org.upyog.adv.web.models.idgen.IdResponse;
 
 import lombok.extern.slf4j.Slf4j;
-
+/**
+ * Service class for enriching advertisement booking requests in the Advertisement Booking Service.
+ * 
+ * Key Responsibilities:
+ * - Enriches booking requests with additional details such as booking IDs and audit details.
+ * - Generates unique IDs for bookings using the ID generation service.
+ * - Updates booking details with metadata like timestamps and user information.
+ * - Handles draft applications and ensures proper enrichment before persistence.
+ * 
+ * Dependencies:
+ * - BookingConfiguration: Provides configuration properties for enrichment.
+ * - IdGenRepository: Interacts with the ID generation service to generate unique IDs.
+ * - BookingRepository: Handles database interactions for booking-related operations.
+ * - BookingUtil: Provides utility methods for generating UUIDs and other enrichment tasks.
+ * 
+ * Annotations:
+ * - @Service: Marks this class as a Spring-managed service component.
+ * - @Slf4j: Enables logging for debugging and monitoring enrichment processes.
+ */
 @Service
 @Slf4j
 public class EnrichmentService {

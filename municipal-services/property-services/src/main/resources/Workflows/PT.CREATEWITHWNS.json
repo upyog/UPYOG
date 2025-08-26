@@ -1,0 +1,68 @@
+"BusinessServices": [
+        {
+            "tenantId": "pg.citya",
+            "businessService": "PT.CREATEWITHWNS",
+            "business": "PT",
+            "businessServiceSla": 0,
+            "states": [
+                {
+                    "tenantId": "pg.citya",
+                    "sla": null,
+                    "state": null,
+                    "applicationStatus": "INWORKFLOW",
+                    "docUploadRequired": false,
+                    "isStartState": true,
+                    "isTerminateState": false,
+                    "isStateUpdatable": false,
+                    "actions": [
+                        {
+                            "tenantId": "pg.citya",
+                            "currentState": null,
+                            "action": "OPEN",
+                            "nextState": "INITIATED",
+                            "roles": [
+                                "CITIZEN",
+                                "WS_CEMP",
+                                "SW_CEMP"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "tenantId": "pg.citya",
+                    "sla": null,
+                    "state": "INITIATED",
+                    "applicationStatus": "INWORKFLOW",
+                    "docUploadRequired": false,
+                    "isStartState": true,
+                    "isTerminateState": false,
+                    "isStateUpdatable": true,
+                    "actions": [
+                        {
+                            "tenantId": "pg.citya",
+                            "currentState": "INITIATED",
+                            "action": "SUBMIT",
+                            "nextState": "APPROVED",
+                            "roles": [
+                                "WS_CEMP",
+                                "SW_CEMP",
+                                "CITIZEN"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "tenantId": "pg.citya",
+                    "sla": null,
+                    "state": "APPROVED",
+                    "applicationStatus": "ACTIVE",
+                    "docUploadRequired": false,
+                    "isStartState": false,
+                    "isTerminateState": true,
+                    "isStateUpdatable": false,
+                    "actions": null
+                }
+            ]
+        }
+    ]
+

@@ -1,0 +1,53 @@
+curl --location 'http://localhost:8081/user/users/_createnovalidate' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "requestInfo": {
+        "apiId": "Rainmaker",
+        "ver": ".01",
+        "ts": null,
+        "action": "create",
+        "did": "1",
+        "key": "",
+        "msgId": "20170310130900|en_IN",
+        "authToken": "9d78b340-4ebc-4c66-bff7-53a764b8263d",
+        "userInfo": {
+            "id": 23287,
+            "uuid": "4632c941-cb1e-4b83-b2d4-200022c1a137",
+            "userName": "PalashS",
+            "name": "Palash S",
+            "mobileNumber": "9949032246",
+            "emailId": null,
+            "type": "CITIZEN",
+            "roles": [
+                {
+                    "name": "Citizen",
+                    "code": "CITIZEN",
+                    "tenantId": "pg.citya"
+                },
+                {
+                    "name": "BPA Architect",
+                    "code": "BPA_ARCHITECT",
+                    "tenantId": "pg.citya"
+                }
+            ],
+            "tenantId": "pg.citya"
+        }
+    },
+    "user": {
+        "username": "SV_INTERNAL_USER",
+        "name": "SV Internal User",
+        "gender": "MALE",
+        "mobileNumber": "7766889999",
+        "type": "SYSTEM",
+        "active": true,
+        "password": "eGov@123",
+        "roles": [
+            {
+                "name": "SV Internal Microservice Role",
+                "code": "SV_INTERNAL_MICROSERVICE_ROLE",
+                "tenantId": "pg"
+            }
+        ],
+        "tenantId": "pg"
+    }
+}'

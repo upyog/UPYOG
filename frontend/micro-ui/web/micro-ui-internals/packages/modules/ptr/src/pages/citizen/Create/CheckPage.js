@@ -1,3 +1,18 @@
+/**
+ * CheckPage Component
+ * 
+ * This component displays a summary of the pet registration application details,
+ * including owner information, pet details, and location details.
+ * It allows users to review their entered information before final submission.
+ * 
+ * Features:
+ * - Displays details in categorized sections using `StatusTable` and `Row` components.
+ * - Provides navigation buttons (`ActionButton`) to edit specific sections.
+ * - Includes a declaration checkbox that must be checked before submitting.
+ * - Uses `useTranslation` for localization and supports multilingual labels.
+ * - Implements routing with `useHistory` for navigation between pages.
+ */
+
 import {
   Card,
   CardHeader,

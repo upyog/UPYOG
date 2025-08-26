@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 /**
  * Custom hook to manage and retrieve tenant information from session storage.
  * Returns the current tenants state.

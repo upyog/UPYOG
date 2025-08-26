@@ -1,3 +1,39 @@
+/**
+ * PTRWFApplicationTimeline Component
+ * 
+ * Description:
+ * This component displays the workflow timeline for a Pet Service application. 
+ * It fetches and renders the application timeline using Digit's workflow hooks and 
+ * displays checkpoints with captions, images, and next actions.
+ * 
+ * Key Functionalities:
+ * - Fetches workflow details based on `tenantId`, `applicationNumber`, and `moduleCode`.
+ * - Displays the application timeline with checkpoints and captions.
+ * - Shows checkpoint details including:
+ *    - Date
+ *    - Assigner/Assignee name
+ *    - Mobile number
+ *    - Comments and workflow comments
+ *    - Thumbnails (images) with clickable preview functionality.
+ * - Renders a "Make Payment" button for citizen users when applicable.
+ * - Displays a loader while fetching data.
+ * 
+ * Props:
+ * - `application`: Contains the application details including:
+ *    - `tenantId`: ID of the current tenant.
+ *    - `applicationNumber`: Unique ID of the application.
+ *    - `workflow`: Contains business service information.
+ *    - `channel`: Channel through which the application was submitted.
+ * - `userType`: Defines whether the user is a citizen or employee.
+ * 
+ * Dependencies:
+ * - `Digit.Hooks.useWorkflowDetails`: Hook to fetch workflow details.
+ * - `Digit.DateUtils.ConvertTimestampToDate`: Utility for date conversion.
+ * - `PTRWFCaption`: Custom component for rendering captions.
+ * - `Loader`, `CardSectionHeader`, `CheckPoint`, `ConnectingCheckPoints`, `SubmitBar`: UI components from `@nudmcdgnpm/digit-ui-react-components`.
+ * 
+ */
+
 import { CardSectionHeader, CheckPoint, ConnectingCheckPoints, Loader, SubmitBar } from "@upyog/digit-ui-react-components";
 import React, { Fragment } from "react";
 import { useTranslation } from "react-i18next";

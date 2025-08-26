@@ -10,13 +10,18 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+/**
+ * Represents a response containing user details in the Ewaste application.
+ * This class contains the response information and a list of users.
+ */
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 public class UserDetailResponse {
+
 	@JsonProperty("responseInfo")
-	ResponseInfo responseInfo;
+	private ResponseInfo responseInfo;
 
 	@JsonProperty("user")
-	List<User> user;
+	private List<User> user;
 }

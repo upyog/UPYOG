@@ -61,41 +61,19 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
-import org.egov.common.entity.edcr.Block;
-import org.egov.common.entity.edcr.OccupancyType;
-import org.egov.common.entity.edcr.Plan;
-import org.egov.common.entity.edcr.Result;
-import org.egov.common.entity.edcr.ScrutinyDetail;
+import org.egov.common.entity.edcr.*;
 import org.egov.edcr.service.ProcessHelper;
 import org.egov.edcr.utility.DcrConstants;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 
+import static org.egov.edcr.constants.EdcrReportConstants.*;
+import static org.egov.edcr.service.FeatureUtil.addScrutinyDetailtoPlan;
+import static org.egov.edcr.service.FeatureUtil.mapReportDetails;
+
 @Service
 public class MeanOfAccess extends FeatureProcess {
     private static final Logger LOG = LogManager.getLogger(MeanOfAccess.class);
-
-    public static final BigDecimal VAL_4000 = BigDecimal.valueOf(4000);
-    private static final String ACCESS_WIDTH = "Access Width";
-    private static final String SUBRULE_57_5 = "57-5";
-    private static final String SUBRULE_58_3b = "58-3-b";
-    private static final String SUBRULE_59_4 = "59-4";
-    private static final String SUB_RULE_DESCRIPTION = "Minimum access width for plan for %s";
-    public static final String OCCUPANCY = "occupancy";
-    private static final String SUBRULE_33_1 = "33-1";
-    public static final BigDecimal VAL_300 = BigDecimal.valueOf(300);
-    public static final BigDecimal VAL_600 = BigDecimal.valueOf(600);
-    public static final BigDecimal VAL_1000 = BigDecimal.valueOf(1000);
-    public static final BigDecimal VAL_8000 = BigDecimal.valueOf(8000);
-    public static final BigDecimal VAL_18000 = BigDecimal.valueOf(18000);
-    public static final BigDecimal VAL_24000 = BigDecimal.valueOf(24000);
-    public static final BigDecimal VAL_1500 = BigDecimal.valueOf(1500);
-    public static final BigDecimal VAL_6000 = BigDecimal.valueOf(6000);
-    public static final BigDecimal VAL_12000 = BigDecimal.valueOf(12000);
-    private static final String SUBRULE_116 = "116";
-    private static final String SUB_RULE_DES = "Minimum access width";
-    private static final String OCCPNCYCONDITION = "Occupancy/Condition";
-    private static final String REMARKS = "Remarks";
 
     @Override
     public Plan process(Plan pl) {/*
@@ -178,7 +156,7 @@ public class MeanOfAccess extends FeatureProcess {
                                    * OccupancyType.OCCUPANCY_B1.getOccupancyTypeVal(); if (pl.getPlanInformation() != null &&
                                    * pl.getPlanInformation().getGovernmentOrAidedSchool() != null &&
                                    * pl.getPlanInformation().getGovernmentOrAidedSchool()) { setReportOutputDetails(pl,
-                                   * SUBRULE_33_1, SUB_RULE_DES, occupancyType, "", "", Result.Verify.getResultVal(),
+                                   * SUBRULE_33_1, SUB_RULE_DESC, occupancyType, "", "", Result.Verify.getResultVal(),
                                    * "The existing access shall be sufficient " +
                                    * "for addition of toilet blocks and other sanitation arrangements"); } if
                                    * (pl.getPlanInformation() != null && pl.getVirtualBuilding().getTotalFloorArea() != null &&
@@ -189,10 +167,10 @@ public class MeanOfAccess extends FeatureProcess {
                                    * .add(pl.getPlanInformation().getDemolitionArea())) < 0) { if
                                    * (pl.getPlanInformation().getAccessWidth() != null &&
                                    * pl.getPlanInformation().getAccessWidth().compareTo(BigDecimal.valueOf(3.6)) >= 0) { valid =
-                                   * true; } if (valid) { setReportOutputDetails(pl, SUBRULE_33_1, SUB_RULE_DES, occupancyType,
+                                   * true; } if (valid) { setReportOutputDetails(pl, SUBRULE_33_1, SUB_RULE_DESC, occupancyType,
                                    * String.valueOf(3.6), pl.getPlanInformation().getAccessWidth().toString(),
                                    * Result.Accepted.getResultVal(), ""); } else { setReportOutputDetails(pl, SUBRULE_33_1,
-                                   * SUB_RULE_DES, occupancyType, String.valueOf(3.6),
+                                   * SUB_RULE_DESC, occupancyType, String.valueOf(3.6),
                                    * pl.getPlanInformation().getAccessWidth().toString(), Result.Not_Accepted.getResultVal(), "");
                                    * } } } } // calculate maximum of all minimum access widths and the occupancy corresponding to
                                    * it is most restrictive Map<String, Object> maxOfMinAccessWidth = new HashMap<>(); if
@@ -262,12 +240,12 @@ public class MeanOfAccess extends FeatureProcess {
                                    * mapOfFinalAccessWidthValues.get("minAccessWidth") != null) { if
                                    * (pl.getPlanInformation().getAccessWidth() .compareTo((BigDecimal)
                                    * mapOfFinalAccessWidthValues.get("minAccessWidth")) >= 0) valid = true; if (valid) {
-                                   * setReportOutputDetails(pl, (String) mapOfFinalAccessWidthValues.get("subRule"), SUB_RULE_DES,
+                                   * setReportOutputDetails(pl, (String) mapOfFinalAccessWidthValues.get("subRule"), SUB_RULE_DESC,
                                    * mapOfFinalAccessWidthValues.get(OCCUPANCY).toString(),
                                    * mapOfFinalAccessWidthValues.get("minAccessWidth").toString() + DcrConstants.IN_METER,
                                    * pl.getPlanInformation().getAccessWidth().toString() + DcrConstants.IN_METER,
                                    * Result.Accepted.getResultVal(), ""); } else { setReportOutputDetails(pl, (String)
-                                   * mapOfFinalAccessWidthValues.get("subRule"), SUB_RULE_DES,
+                                   * mapOfFinalAccessWidthValues.get("subRule"), SUB_RULE_DESC,
                                    * mapOfFinalAccessWidthValues.get(OCCUPANCY).toString(),
                                    * mapOfFinalAccessWidthValues.get("minAccessWidth").toString() + DcrConstants.IN_METER,
                                    * pl.getPlanInformation().getAccessWidth().toString() + DcrConstants.IN_METER,
@@ -291,16 +269,17 @@ public class MeanOfAccess extends FeatureProcess {
 
     private void setReportOutputDetails(Plan pl, String ruleNo, String ruleDesc, String occupancy, String expected, String actual,
             String status, String remarks) {
-        Map<String, String> details = new HashMap<>();
-        details.put(RULE_NO, ruleNo);
-        details.put(DESCRIPTION, ruleDesc);
-        details.put(OCCPNCYCONDITION, occupancy);
-        details.put(REQUIRED, expected);
-        details.put(PROVIDED, actual);
-        details.put(STATUS, status);
-        details.put(REMARKS, remarks);
-        scrutinyDetail.getDetail().add(details);
-        pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+        ReportScrutinyDetail detail = new ReportScrutinyDetail();
+        detail.setRuleNo(ruleNo);
+        detail.setDescription(ruleDesc);
+        detail.setOccupancyCondition(occupancy);
+        detail.setRemarks(remarks);
+        detail.setRequired(expected);
+        detail.setProvided(actual);
+        detail.setStatus(status);
+
+        Map<String, String> details = mapReportDetails(detail);
+        addScrutinyDetailtoPlan(scrutinyDetail, pl, details);
     }
 
     private String removeDuplicates(SortedSet<String> uniqueData) {

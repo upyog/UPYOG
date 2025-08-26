@@ -6,6 +6,13 @@
     import ApplicationDetailsTemplate from "../../../../templates/ApplicationDetails";
     import getChbAcknowledgementData from "../../getChbAcknowledgementData";
 
+/*
+    The ApplicationDetails component fetches and displays details of a community hall booking 
+    based on a booking number from the URL parameter. It includes functionality for displaying 
+    download options like receipt and permission letter, managing workflow details, and handling 
+    PDF generation for receipts/letters. The component integrates with hooks for data fetching 
+    and mutation, and provides a UI for interacting with the application details.
+  */
 
     const ApplicationDetails = () => {
       const { t } = useTranslation();
@@ -17,7 +24,7 @@
       const [appDetailsToShow, setAppDetailsToShow] = useState({});
       const [showOptions, setShowOptions] = useState(false);
       const [enableAudit, setEnableAudit] = useState(false);
-      const [businessService, setBusinessService] = useState("chb-services");
+      const [businessService, setBusinessService] = useState("booking-refund");
     
       sessionStorage.setItem("chb", bookingNo);
       const { isLoading, isError, data: applicationDetails, error } = Digit.Hooks.chb.useChbApplicationDetail(t, tenantId, bookingNo);
@@ -33,7 +40,7 @@
         tenantId: applicationDetails?.applicationData?.tenantId || tenantId,
         id: applicationDetails?.applicationData?.applicationData?.bookingNo,
         moduleCode: businessService,
-        role: "CHB_APPROVER",
+        role: ["CHB_CEMP"],
       });
 
       const mutation = Digit.Hooks.chb.useChbCreateAPI(tenantId, false);
@@ -58,45 +65,13 @@
 
 
 
-      // useEffect(() => {
+      useEffect(() => {
 
-      //   if (workflowDetails?.data?.applicationBusinessService && !(workflowDetails?.data?.applicationBusinessService === "chb" && businessService === "chb")) {
-      //     setBusinessService(workflowDetails?.data?.applicationBusinessService);
-      //   }
-      // }, [workflowDetails.data]);
-
-
-      // const PT_CEMP = Digit.UserService.hasAccess(["PT_CEMP"]) || false;
-      // if (
-      //   PT_CEMP &&
-      //   workflowDetails?.data?.applicationBusinessService === "ptr" &&
-      //   workflowDetails?.data?.actionState?.nextActions?.find((act) => act.action === "PAY")
-      // ) {
-      //   workflowDetails.data.actionState.nextActions = workflowDetails?.data?.actionState?.nextActions.map((act) => {
-      //     if (act.action === "PAY") {
-      //       return {
-      //         action: "PAY",
-      //         forcedName: "WF_PAY_APPLICATION",
-      //         redirectionUrl: { pathname: `/digit-ui/employee/payment/collect/pet-services/${appDetailsToShow?.applicationData?.applicationData?.bookingNo}` },
-      //       };
-      //     }
-      //     return act;
-      //   });
-      // }
-
-      // const handleDownloadPdf = async () => {
-      //   const hallsBookingApplication = appDetailsToShow?.applicationData;
-      //   const tenantInfo = tenants.find((tenant) => tenant.code === hallsBookingApplication.tenantId);
-      //   const data = await getChbAcknowledgementData(hallsBookingApplication.applicationData, tenantInfo, t);
-      //   Digit.Utils.pdf.generate(data);
-      // };
-
-      // const CHBDetailsPDF = {
-      //   order: 1,
-      //   label: t("CHB_FEE_RECIEPT"),
-      //   onClick: () => getRecieptSearch(),
-      // };
-      // console.log("appDetailsToShow?.applicationData?.applicationData?.bookingNo",appDetailsToShow?.applicationData?.applicationData?.bookingNo);
+        if (workflowDetails?.data?.applicationBusinessService && !(workflowDetails?.data?.applicationBusinessService === "booking-refund" && businessService === "booking-refund")) {
+          setBusinessService(workflowDetails?.data?.applicationBusinessService);
+        }
+      }, [workflowDetails.data]);
+      
 
       const { data: reciept_data, isLoading: recieptDataLoading } = Digit.Hooks.useRecieptSearch(
         {
@@ -190,12 +165,12 @@
             mutate={mutate}
             workflowDetails={workflowDetails}
             businessService={businessService}
-            moduleCode="CHB"
+            moduleCode="chb-services"
             showToast={showToast}
             setShowToast={setShowToast}
             closeToast={closeToast}
-            timelineStatusPrefix={"CHB_COMMON_STATUS_"}
-            forcedActionPrefix={"EMPLOYEE_CHB"}
+            timelineStatusPrefix={""}
+            forcedActionPrefix={"CHB"}
             statusAttribute={"state"}
             MenuStyle={{ color: "#FFFFFF", fontSize: "18px" }}
           />

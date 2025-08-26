@@ -30,6 +30,10 @@ module.exports = {
   },
   plugins: [
     new CleanWebpackPlugin(),
-    new HtmlWebpackPlugin({ inject: true, template: "public/index.html" }),
-  ],
+    new HtmlWebpackPlugin({ 
+      inject: true, 
+      template: "public/index.html",
+      scriptLoading: "defer" // Ensures scripts are loaded externally, not inline
+     })
+  ]
 };

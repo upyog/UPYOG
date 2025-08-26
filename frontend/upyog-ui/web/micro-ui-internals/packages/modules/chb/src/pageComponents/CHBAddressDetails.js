@@ -6,6 +6,25 @@ import Timeline from "../components/CHBTimeline";
 import ChbCancellationPolicy from "../components/ChbCancellationPolicy";
 // import { TimerValues } from "../components/TimerValues";
 
+/**
+ * CHBAddressDetails Component
+ * 
+ * This component is responsible for rendering the address details form for the CHB module.
+ * It allows users to input and manage address-related information such as pincode, city, locality, street name, house number, and landmark.
+ * 
+ * Props:
+ * - `t`: Translation function for internationalization.
+ * - `config`: Configuration object for the form step.
+ * - `onSelect`: Callback function triggered when the form step is completed.
+ * - `userType`: Type of the user (e.g., employee or citizen).
+ * - `formData`: Existing form data to prefill the fields.
+ * - `value`: Default value for the form fields.
+ * 
+ * State Variables:
+ * - `pincode`, `city`, `locality`, `streetName`, `houseNo`, `landmark`: State variables to manage address fields.
+ * - `localities`: List of localities fetched based on the selected city.
+ * - `showToast`: State to manage the visibility of toast notifications.
+ */
 const CHBAddressDetails = ({ t, config, onSelect, userType, formData, value = formData.slotlist }) => {
   const { pathname: url } = useLocation();
   let index = window.location.href.charAt(window.location.href.length - 1);

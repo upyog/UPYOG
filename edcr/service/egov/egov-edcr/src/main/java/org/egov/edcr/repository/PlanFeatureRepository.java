@@ -79,7 +79,6 @@ import org.egov.edcr.feature.GeneralStair;
 import org.egov.edcr.feature.GlassFacadeOpening;
 import org.egov.edcr.feature.GovtBuildingDistance;
 import org.egov.edcr.feature.GuardRoom;
-
 import org.egov.edcr.feature.HeadRoom;
 import org.egov.edcr.feature.HeightOfRoom;
 import org.egov.edcr.feature.InfoCommsTechService;
@@ -121,12 +120,10 @@ import org.egov.edcr.feature.SolarWaterHeating;
 import org.egov.edcr.feature.SolidLiquidWasteTreatment;
 import org.egov.edcr.feature.SpiralStair;
 import org.egov.edcr.feature.StairCover;
-import org.egov.edcr.feature.StoreRoom;
 import org.egov.edcr.feature.SupplyLineUtility;
 import org.egov.edcr.feature.SurrenderRoad;
 import org.egov.edcr.feature.TerraceUtilityService;
 import org.egov.edcr.feature.ToiletDetails;
-import org.egov.edcr.feature.TravelDistanceToExit;
 import org.egov.edcr.feature.VehicleRamp;
 import org.egov.edcr.feature.Ventilation;
 import org.egov.edcr.feature.Verandah;
@@ -211,10 +208,7 @@ public class PlanFeatureRepository {
 
         pf = new PlanFeature(HeightOfRoom.class);
         features.add(pf);
-        
        
-        pf = new PlanFeature(StoreRoom.class);
-        features.add(pf);
 
         pf = new PlanFeature(Kitchen.class);
         features.add(pf);

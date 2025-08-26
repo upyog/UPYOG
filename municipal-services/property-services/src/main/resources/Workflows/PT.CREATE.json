@@ -1,0 +1,162 @@
+"BusinessServices": [
+  {
+    "tenantId": "pg",
+    "businessService": "PT.CREATE",
+    "business": "PT",
+    "businessServiceSla": null,
+    "states": [
+        {
+            "tenantId": "pg",
+            "sla": null,
+            "state": null,
+            "applicationStatus": "INWORKFLOW",
+            "docUploadRequired": false,
+            "isStartState": true,
+            "isTerminateState": false,
+            "actions": [
+                {
+                    "tenantId": "pg",
+                    "action": "OPEN",
+                    "nextState": "OPEN",
+                    "roles": [
+                        "CITIZEN",
+                        "EMPLOYEE"
+                    ]
+                }
+            ]
+        },
+        {
+            "tenantId": "pg",
+            "sla": null,
+            "state": "OPEN",
+            "applicationStatus": "INWORKFLOW",
+            "docUploadRequired": false,
+            "isStartState": true,
+            "isTerminateState": false,
+            "actions": [
+                {
+                    "tenantId": "pg",
+                    "action": "VERIFY",
+                    "nextState": "DOCVERIFIED",
+                    "roles": [
+                        "PT_DOC_VERIFIER"
+                    ]
+                },
+                {
+                  "tenantId": "pg",
+                  "action": "REJECT",
+                  "nextState": "REJECTED",
+                  "roles": [
+                      "PT_DOC_VERIFIER"
+                  ]
+              },
+              {
+                "tenantId": "pg",
+                "action": "SENDBACKTOCITIZEN",
+                "nextState": "CORRECTIONPENDING",
+                "roles": [
+                    "PT_DOC_VERIFIER"
+                ]
+            }
+            ]
+        },
+        {
+            "tenantId": "pg",
+            "sla": null,
+            "state": "DOCVERIFIED",
+            "applicationStatus": "INWORKFLOW",
+            "docUploadRequired": false,
+            "isStartState": false,
+            "isTerminateState": false,
+            "actions": [
+                {
+                    "tenantId": "pg",
+                    "action": "FORWARD",
+                    "nextState": "FIELDVERIFIED",
+                    "roles": [
+                        "PT_FIELD_INSPECTOR"
+                    ]
+                }
+            ]
+        },
+        {
+            "tenantId": "pg",
+            "sla": null,
+            "state": "FIELDVERIFIED",
+            "applicationStatus": "INWORKFLOW",
+            "docUploadRequired": false,
+            "isStartState": false,
+            "isTerminateState": false,
+            "actions": [
+                {
+                    "tenantId": "pg",
+                    "action": "APPROVE",
+                    "nextState": "APPROVED",
+                    "roles": [
+                        "PT_APPROVER"
+                    ]
+                },
+                {
+                    "tenantId": "pg",
+                    "action": "REJECT",
+                    "nextState": "REJECTED",
+                    "roles": [
+                        "PT_APPROVER"
+                    ]
+                }
+            ]
+        },
+        {
+            "tenantId": "pg",
+            "sla": null,
+            "state": "REJECTED",
+            "applicationStatus": "INACTIVE",
+            "docUploadRequired": false,
+            "isStartState": false,
+            "isTerminateState": true,
+            "actions": null
+        },
+        {
+            "tenantId": "pg",
+            "sla": null,
+            "state": "APPROVED",
+            "applicationStatus": "ACTIVE",
+            "docUploadRequired": false,
+            "isStartState": false,
+            "isTerminateState": true,
+            "actions": null
+        },
+        {
+          "tenantId": "pg",
+          "sla": null,
+          "state": "CORRECTIONPENDING",
+          "applicationStatus": "INWORKFLOW",
+          "docUploadRequired": false,
+          "isStartState": false,
+          "isTerminateState": false,
+          "isStateUpdatable": true,
+          "actions": [
+              {
+                  "tenantId": "pg",
+                  "action": "REOPEN",
+                  "nextState": "OPEN",
+                  "roles": [
+                    "CITIZEN",
+                    "PT_CEMP"
+                  ]
+              },
+              {
+                  "tenantId": "pg",
+                  "action": "REJECT",
+                  "nextState": "REJECTED",
+                  "roles": [
+                    "CITIZEN",
+                    "PT_CEMP"
+                  ]
+              }
+          ]
+      }
+    ]
+}
+  ]
+}	

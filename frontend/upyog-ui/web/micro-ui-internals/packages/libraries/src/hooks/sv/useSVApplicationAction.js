@@ -4,7 +4,6 @@ import ApplicationUpdateActionsSV from "../../services/molecules/SV/ApplicationU
 /** The following function is used for the mutation function */
 
 const useSVApplicationAction = (tenantId) => {
-  
   return useMutation((applicationData) => ApplicationUpdateActionsSV(applicationData, tenantId));
 };
 

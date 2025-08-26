@@ -26,6 +26,7 @@ import org.upyog.chb.service.CHBEncryptionService;
 import org.upyog.chb.service.CommunityHallBookingService;
 import org.upyog.chb.service.DemandService;
 import org.upyog.chb.service.EnrichmentService;
+import org.upyog.chb.service.WorkflowService;
 import org.upyog.chb.util.CommunityHallBookingUtil;
 import org.upyog.chb.util.MdmsUtil;
 import org.upyog.chb.validator.CommunityHallBookingValidator;
@@ -37,11 +38,41 @@ import org.upyog.chb.web.models.CommunityHallBookingSearchCriteria;
 import org.upyog.chb.web.models.CommunityHallSlotAvailabilityDetail;
 import org.upyog.chb.web.models.CommunityHallSlotAvailabilityResponse;
 import org.upyog.chb.web.models.CommunityHallSlotSearchCriteria;
+import org.upyog.chb.web.models.workflow.State;
 
 import digit.models.coremodels.PaymentDetail;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * This class implements the CommunityHallBookingService interface and provides
+ * the business logic for the Community Hall Booking module.
+ * 
+ * Purpose:
+ * - To handle all service-level operations related to community hall bookings, such as
+ *   creating, updating, validating, and retrieving booking records.
+ * - To coordinate between the repository, validation, workflow, and enrichment layers.
+ * 
+ * Dependencies:
+ * - CommunityHallBookingRepository: Handles database operations for bookings.
+ * - CommunityHallBookingValidator: Validates booking requests and search criteria.
+ * - WorkflowService: Manages workflow-related operations for bookings.
+ * - EnrichmentService: Enriches booking requests with additional data.
+ * - DemandService: Handles demand generation and payment-related operations.
+ * - MdmsUtil: Fetches and processes master data from MDMS.
+ * - CHBEncryptionService: Handles encryption and decryption of sensitive booking data.
+ * 
+ * Features:
+ * - Provides methods to create and update bookings while ensuring data validation and enrichment.
+ * - Integrates with the workflow service to manage booking states.
+ * - Handles slot availability checks and demand generation for bookings.
+ * - Logs important operations and errors for debugging and monitoring purposes.
+ * 
+ * Usage:
+ * - This class is automatically managed by Spring and injected wherever the
+ *   CommunityHallBookingService interface is required.
+ * - It ensures consistent and reusable business logic for the Community Hall Booking module.
+ */
 @Service
 @Slf4j
 public class CommunityHallBookingServiceImpl implements CommunityHallBookingService {
@@ -51,9 +82,8 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 	@Autowired
 	private CommunityHallBookingValidator hallBookingValidator;
 
-	/*
-	 * @Autowired private WorkflowService workflowService;
-	 */
+	@Autowired
+	private WorkflowService workflowService;
 
 	@Autowired
 	private EnrichmentService enrichmentService;
@@ -212,12 +242,18 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 
 		convertBookingRequest(communityHallsBookingRequest, bookingDetails.get(0));
 
-		enrichmentService.enrichUpdateBookingRequest(communityHallsBookingRequest, status);
+		
 		//Update payment date and receipt no on successful payment when payment detail object is received
 		if (paymentDetail != null) {
 			communityHallsBookingRequest.getHallsBookingApplication().setReceiptNo(paymentDetail.getReceiptNumber());
 			communityHallsBookingRequest.getHallsBookingApplication().setPaymentDate(paymentDetail.getReceiptDate());
 		}
+		//Update workflow of booking application for refund when the workflow object is not null in payload
+		if (communityHallsBookingRequest.getHallsBookingApplication().getWorkflow()!=null) {
+			State state = workflowService.updateWorkflow(communityHallsBookingRequest);
+			status = BookingStatusEnum.valueOf(state.getApplicationStatus());
+		}
+		enrichmentService.enrichUpdateBookingRequest(communityHallsBookingRequest, status);
 		bookingRepository.updateBooking(communityHallsBookingRequest);
 		log.info("fetched booking detail and updated status "
 				+ communityHallsBookingRequest.getHallsBookingApplication().getBookingStatus());
@@ -261,12 +297,16 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 				&& bookingDetailRequest.getPermissionLetterFilestoreId() != null) {
 			bookingDetailDB.setPermissionLetterFilestoreId(bookingDetailRequest.getPermissionLetterFilestoreId());
 		}
-
+ 
 		if (bookingDetailDB.getPaymentReceiptFilestoreId() == null
 				&& bookingDetailRequest.getPaymentReceiptFilestoreId() != null) {
 			bookingDetailDB.setPaymentReceiptFilestoreId(bookingDetailRequest.getPaymentReceiptFilestoreId());
 		}
+		if(bookingDetailRequest.getWorkflow()!=null) {
+			bookingDetailDB.setWorkflow(bookingDetailRequest.getWorkflow());
+		}
 		communityHallsBookingRequest.setHallsBookingApplication(bookingDetailDB);
+		
 	}
 
 	@Override

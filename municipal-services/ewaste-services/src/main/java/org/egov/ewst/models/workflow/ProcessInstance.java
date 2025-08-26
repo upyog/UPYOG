@@ -23,6 +23,10 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+/**
+ * Represents a process instance in the workflow of the Ewaste application.
+ * This class contains details about the process instance such as tenant ID, business service, action, state, etc.
+ */
 @SuppressWarnings("deprecation")
 @ApiModel(description = "A Object holds the basic data of a Process Instance")
 @Validated
@@ -89,6 +93,12 @@ public class ProcessInstance {
 	@JsonProperty("assignes")
 	private List<User> assignes;
 
+	/**
+	 * Adds a document to the list of documents associated with the process instance.
+	 *
+	 * @param documentsItem the document to add
+	 * @return the updated ProcessInstance object
+	 */
 	public ProcessInstance addDocumentsItem(Document documentsItem) {
 		if (this.documents == null) {
 			this.documents = new ArrayList<>();

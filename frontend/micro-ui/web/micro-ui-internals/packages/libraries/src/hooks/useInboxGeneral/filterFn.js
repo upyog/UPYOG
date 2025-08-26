@@ -221,7 +221,6 @@ export const filterFunctions = {
   },
 
   SV: (filtersArg) => {
-    console.log("filtersArg",filtersArg);
     let { uuid } = Digit.UserService.getUser()?.info || {};
 
     const searchFilters = {};
@@ -329,22 +328,34 @@ export const filterFunctions = {
 
     return { requestId,searchFilters, workflowFilters };
   },
-  
-  CHB: (filtersArg) => {
-    console.log("filer",filtersArg )
+
+  /**
+ * PGRAI Filter Builder
+ *
+ * This function prepares the search and workflow filters used to fetch complaints in PGRAI.
+ * It extracts filter arguments like serviceRequestId, application status, locality, etc.,
+ * and formats them into two filter objects:
+ *  - `searchFilters` for PGRAIService search
+ *  - `workflowFilters` for workflow status & assignment filtering
+ *
+ * @param {Object} filtersArg - Filters input from UI or API (includes things like status, serviceRequestId, etc.)
+ * @returns {Object} { searchFilters, workflowFilters } - Filter objects for backend query
+ */
+  PGRAI: (filtersArg) => {
     let { uuid } = Digit.UserService.getUser()?.info || {};
 
     const searchFilters = {};
     const workflowFilters = {};
 
-    const { applicationNumber, mobileNumber, limit, offset, sortBy, sortOrder, total, applicationStatus, services } = filtersArg || {};
-
-    if (filtersArg?.applicationNumber) {
-      searchFilters.applicationNumber = filtersArg?.applicationNumber;
+    const { serviceRequestId, mobileNumber,limit, offset, sortBy, sortOrder, total, applicationStatus, status, services } = filtersArg || {};
+    if (filtersArg?.serviceRequestId) {
+      searchFilters.serviceRequestId = filtersArg?.serviceRequestId;
     }
-    
     if (applicationStatus && applicationStatus?.[0]) {
       workflowFilters.applicationStatus = applicationStatus.map((status) => status.code).join(",");
+    }
+    if (status && status?.[0]) {
+      workflowFilters.status = status.map((status) => status.code).join(",");
     }
     if (filtersArg?.locality?.length) {
       searchFilters.locality = filtersArg?.locality.map((item) => item.code.split("_").pop()).join(",");
@@ -360,12 +371,12 @@ export const filterFunctions = {
     if (mobileNumber) {
       searchFilters.mobileNumber = mobileNumber;
     }
-    if (applicationNumber) {
-      searchFilters.applicationNumber = applicationNumber;
+    if (serviceRequestId) {
+      searchFilters.serviceRequestId = serviceRequestId;
     }
-    if (sortBy) {
-      searchFilters.sortBy = sortBy;
-    }
+    // if (sortBy) {
+    //   searchFilters.sortBy = sortBy;
+    // }
     if (sortOrder) {
       searchFilters.sortOrder = sortOrder;
     }
@@ -381,5 +392,4 @@ export const filterFunctions = {
 
     return { searchFilters, workflowFilters };
   },
-
 };

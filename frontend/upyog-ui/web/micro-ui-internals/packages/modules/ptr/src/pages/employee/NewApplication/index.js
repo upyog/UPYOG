@@ -1,3 +1,31 @@
+/**
+ * NewApplication Component
+ * 
+ * This component is responsible for handling the new and renewal application flow for pet registration.
+ * It uses React Router to manage navigation between multiple steps in the form process.
+ * 
+ * Key Functionalities:
+ * - Fetches configuration data for form fields from MDMS and handles loading states.
+ * - Manages session storage to store and retrieve application data (e.g., `petId`, `applicationType`).
+ * - Uses React Query for efficient data fetching and caching.
+ * - Handles dynamic navigation between steps and supports adding multiple entries dynamically.
+ * - Uses Digit's ComponentRegistryService to dynamically render different form steps.
+ * 
+ * Key Hooks Used:
+ * - `useQueryClient`: For cache management and invalidation.
+ * - `useRouteMatch`, `useLocation`, `useHistory`: For routing and navigation.
+ * 
+ * Key Methods:
+ * - `goNext`: Handles navigation to the next step.
+ * - `handleSelect`: Updates form data based on user input.
+ * - `ptrcreate`: Navigates to the acknowledgement page.
+ * - `onSuccess`: Clears form data and invalidates queries on form submission.
+ * 
+ * Dependencies:
+ * - `digit-ui-react-components`: For UI components.
+ * - `react-query`: For data fetching and caching.
+ * - `react-router-dom`: For routing.
+ */
 import { Loader } from "@upyog/digit-ui-react-components";
 import React from "react";
 import { useTranslation } from "react-i18next";
@@ -18,7 +46,7 @@ const NewApplication = ({ parentRoute }) => {
   let config = [];
   const [params, setParams, clearParams] = Digit.Hooks.useSessionStorage("PTR_CREATE_PET", {});
 
-  let { data: commonFields, isLoading } = Digit.Hooks.useCustomMDMS(Digit.ULBService.getStateId(), "PetService", [{ name: "CommonFieldsConfig" }],
+  let { data: commonFields, isLoading } = Digit.Hooks.useEnabledMDMS(Digit.ULBService.getStateId(), "PetService", [{ name: "CommonFieldsConfig" }],
     {
       select: (data) => {
         const formattedData = data?.["PetService"]?.["CommonFieldsConfigEmp"]

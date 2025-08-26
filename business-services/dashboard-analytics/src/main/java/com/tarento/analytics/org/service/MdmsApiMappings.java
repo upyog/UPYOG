@@ -133,6 +133,7 @@ public class MdmsApiMappings {
 
             }
         } catch (Exception e){
+            logger.error("Error occured while fetching ddr's from mdms", e);
             throw new CustomException("MDMS_ERROR","Failed to fetch DDR's from mdms");
         }
         ddrValueMap.entrySet().removeIf(map -> map.getValue().size()==0);

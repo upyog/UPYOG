@@ -5,6 +5,53 @@ import { Header } from "@upyog/digit-ui-react-components";
 import CHBDesktopInbox from "../../components/CHBDesktopInbox";
 import MobileInbox from "../../components/MobileInbox";
 
+/**
+ * Inbox Component
+ * 
+ * This component is responsible for rendering the inbox page for employees in the CHB module.
+ * It displays a list of applications or tasks, with options for filtering, sorting, and pagination.
+ * 
+ * Props:
+ * - `useNewInboxAPI`: Boolean indicating whether to use the new inbox API.
+ * - `parentRoute`: The base route for the inbox page.
+ * - `moduleCode`: The module code for the inbox (default is "CHB").
+ * - `initialStates`: Object containing initial states for the inbox, including:
+ *    - `pageOffset`: Initial page offset for pagination.
+ *    - `pageSize`: Initial page size for pagination.
+ *    - `sortParams`: Initial sorting parameters.
+ *    - `searchParams`: Initial search parameters.
+ * - `filterComponent`: Custom filter component to be displayed in the inbox.
+ * - `isInbox`: Boolean indicating whether the component is used as an inbox.
+ * - `rawWfHandler`: Custom handler for raw workflow data.
+ * - `rawSearchHandler`: Custom handler for raw search data.
+ * - `combineResponse`: Function to combine workflow and search responses.
+ * - `wfConfig`: Configuration object for workflow-related settings.
+ * - `searchConfig`: Configuration object for search-related settings.
+ * - `middlewaresWf`: Middleware functions for workflow processing.
+ * - `middlewareSearch`: Middleware functions for search processing.
+ * - `EmptyResultInboxComp`: Component to display when the inbox has no results.
+ * 
+ * State Variables:
+ * - `enableSearch`: State to enable or disable the search functionality.
+ * - `TableConfig`: Configuration for the inbox table, fetched from the Digit Component Registry Service.
+ * - `pageOffset`: Current page offset for pagination.
+ * - `pageSize`: Current page size for pagination.
+ * - `sortParams`: Current sorting parameters for the inbox.
+ * - `searchParams`: Current search parameters for the inbox.
+ * 
+ * Variables:
+ * - `tenantId`: The current tenant ID fetched using the Digit ULB Service.
+ * - `isMobile`: Boolean indicating whether the application is being accessed on a mobile device.
+ * - `paginationParams`: Object containing pagination parameters for the inbox.
+ * 
+ * Logic:
+ * - Initializes state variables using the `initialStates` prop.
+ * - Determines whether the application is being accessed on a mobile device.
+ * - Configures the inbox table and pagination settings based on the module and tenant.
+ * 
+ * Returns:
+ * - A desktop or mobile inbox component based on the device type, with filtering, sorting, and pagination functionality.
+ */
 const Inbox = ({
   useNewInboxAPI,
   parentRoute,

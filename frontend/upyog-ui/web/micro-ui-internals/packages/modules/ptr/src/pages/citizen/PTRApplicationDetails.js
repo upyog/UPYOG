@@ -1,3 +1,13 @@
+/*
+PTRApplicationDetails Component:
+- Displays detailed information about a pet registration application.
+- Fetches data using Digit Hooks for application details, bill data, and receipts.
+- Includes functionality to download acknowledgment forms, fee receipts, and certificates.
+- Uses Digit PaymentService to generate and print PDFs.
+- Displays application details in a series of StatusTables with applicant, pet, and address information.
+- Uses MultiLink for download options and PTRWFApplicationTimeline for workflow details.
+- Implements loading states and handles errors with toasts.
+*/
 import { Card, CardSubHeader, Header, LinkButton, Loader, Row, StatusTable, MultiLink, PopUp, Toast, SubmitBar } from "@upyog/digit-ui-react-components";
 import React, { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -26,14 +36,7 @@ const PTRApplicationDetails = () => {
     },
   );
 
-
- 
-
- 
   const [billData, setBillData]=useState(null);
-
-  
-
 
   const PetRegistrationApplications = get(data, "PetRegistrationApplications", []);
   
@@ -98,11 +101,6 @@ fetchBillData();
      pet_details.workflow = workflow;
   }
 
-  
-
-  
-
- 
   // let owners = [];
   // owners = application?.owners;
   // let docs = [];
@@ -111,8 +109,6 @@ fetchBillData();
   if (isLoading || auditDataLoading) {
     return <Loader />;
   }
-
- 
 
   const getAcknowledgementData = async () => {
     const applications = application || {};

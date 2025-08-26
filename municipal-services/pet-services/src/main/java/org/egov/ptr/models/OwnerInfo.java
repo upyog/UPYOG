@@ -7,7 +7,6 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import org.egov.common.contract.request.Role;
-//import org.egov.ptr.models.enums.Relationship;
 import org.egov.ptr.models.enums.Status;
 import org.egov.ptr.models.user.User;
 import org.hibernate.validator.constraints.SafeHtml;

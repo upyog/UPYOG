@@ -24,6 +24,39 @@ import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
 
+/**
+ * This service class integrates with the workflow module to manage workflow-related
+ * operations for the Community Hall Booking module.
+ * 
+ * Purpose:
+ * - To initiate, update, and manage workflow instances for community hall bookings.
+ * - To ensure that bookings follow the defined workflow lifecycle.
+ * 
+ * Dependencies:
+ * - RestTemplate: Used to send HTTP requests to the workflow service.
+ * - CommunityHallBookingConfiguration: Provides configuration properties for workflow operations.
+ * - CommunityHallBookingConstants: Contains constants used in workflow integration.
+ * 
+ * Features:
+ * - Initiates workflow instances for new bookings.
+ * - Updates workflow instances based on booking status changes.
+ * - Handles exceptions and logs errors during workflow operations.
+ * - Processes workflow responses and extracts relevant data for bookings.
+ * 
+ * Methods:
+ * 1. initiateWorkflow:
+ *    - Sends a request to the workflow service to initiate a new workflow instance.
+ *    - Populates workflow-related fields in the booking request.
+ * 
+ * 2. updateWorkflow:
+ *    - Updates an existing workflow instance based on booking status changes.
+ *    - Ensures that the workflow state is consistent with the booking state.
+ * 
+ * Usage:
+ * - This class is automatically managed by Spring and injected wherever workflow-related
+ *   operations are required.
+ * - It ensures consistent and reusable logic for integrating with the workflow module.
+ */
 @Service
 @Slf4j
 public class WorkflowIntegrator {

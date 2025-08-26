@@ -26,6 +26,7 @@ import PropertySearch from "./pageComponents/PropertySearch";
 import NewApplication from "./pages/employee/NewApplication";
 
 
+// Registering all components to be used in the module
 const componentsToRegister = {
   PTRCheckPage,
   PTRAcknowledgement,
@@ -60,6 +61,7 @@ export const PTRModule = ({ stateCode, userType, tenants }) => {
 
   addComponentsToRegistry();
 
+  
   Digit.SessionStorage.set("PTR_TENANTS", tenants);  // setting a value in a session storage object
 
   // loads localization settings for an employee based on the current tenant and language when the component mounts
@@ -74,11 +76,13 @@ export const PTRModule = ({ stateCode, userType, tenants }) => {
     []
   );
 
+    // Displaying employee module if userType is 'employee', otherwise displaying citizen module
   if (userType === "employee") {
     return <EmployeeApp path={path} url={url} userType={userType} />;
   } else return <CitizenApp />;
 };
 
+// Function to display home card links for citizens
 export const PTRLinks = ({ matchPath, userType }) => {
   const { t } = useTranslation();
   const [params, setParams, clearParams] = Digit.Hooks.useSessionStorage("PTR_PET", {});

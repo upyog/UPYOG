@@ -4,9 +4,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.egov.asset.config.AssetConfiguration;
 import org.egov.asset.kafka.Producer;
 import org.egov.asset.repository.querybuilder.AssetQueryBuilder;
+import org.egov.asset.repository.rowmapper.AssetAssignmentRowMapper;
 import org.egov.asset.repository.rowmapper.AssetLimitedDateRowMapper;
 import org.egov.asset.repository.rowmapper.AssetRowMapper;
 import org.egov.asset.web.models.Asset;
+import org.egov.asset.web.models.AssetAssignment;
 import org.egov.asset.web.models.AssetRequest;
 import org.egov.asset.web.models.AssetSearchCriteria;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -99,4 +101,7 @@ public class AssetRepository {
         }
     }
 
+    public List<AssetAssignment> getAssetAssignmentDetails(String tenantId, String assetId) {
+        return jdbcTemplate.query(queryBuilder.ASSIGNMENT_DETAILS, new AssetAssignmentRowMapper(), assetId);
+    }
 }

@@ -28,7 +28,7 @@ const NewAsset = ({ t, config, onSelect, formData }) => {
   const stateTenantId = Digit.ULBService.getStateId();
 
   //  This call with tenantId (Get city-level data)
-  const cityResponseObject = Digit.Hooks.useCustomMDMSV2(tenantId, "ASSET", [{ name: "AssetParentCategoryFields" }], {
+  const cityResponseObject = Digit.Hooks.useEnabledMDMS(tenantId, "ASSET", [{ name: "AssetParentCategoryFields" }], {
     select: (data) => {
       const formattedData = data?.["ASSET"]?.["AssetParentCategoryFields"];
       return formattedData;
@@ -36,7 +36,7 @@ const NewAsset = ({ t, config, onSelect, formData }) => {
   });
 
   // This call with stateTenantId (Get state-level data)
-  const stateResponseObject = Digit.Hooks.useCustomMDMSV2(stateTenantId, "ASSET", [{ name: "AssetParentCategoryFields" }], {
+  const stateResponseObject = Digit.Hooks.useEnabledMDMS(stateTenantId, "ASSET", [{ name: "AssetParentCategoryFields" }], {
     select: (data) => {
       const formattedData = data?.["ASSET"]?.["AssetParentCategoryFields"];
       return formattedData;
@@ -119,11 +119,16 @@ const NewAsset = ({ t, config, onSelect, formData }) => {
     }));
   };
 
+useEffect(() => {
+  
+}, [assetDetails]); // Triggers when purchaseDate changes
+
   // Set State Dynamically!
   const handleInputChange = (e) => {
     // Get the name & value from the input and select field
     const { name, value } = e.target ? e.target : { name: e.name, value: e };
     
+   
     if (name === 'lifeOfAsset' && value.length > 3) { // Validation for life of Asset
       alert('Maximum limit is 3 digits only!');
       return false;
@@ -144,9 +149,10 @@ const NewAsset = ({ t, config, onSelect, formData }) => {
       }
 
       // Calculate asset age if the field is "purchaseDate"
-      if (name === "purchaseDate") {
-        calculateAssetAge(value);
-      }
+      // if (name === "purchaseDate") {
+      //   calculateAssetAge(value);
+      // }
+      
       return updatedData;
     });
   };
@@ -175,7 +181,7 @@ const NewAsset = ({ t, config, onSelect, formData }) => {
   //Dropdown get data form masters
   const dropDownData = (masterName) => {
     const trimmedName = masterName ? masterName.trim() : "";
-    const { data: masterDropdown } = Digit.Hooks.useCustomMDMSV2(Digit.ULBService.getStateId(), "ASSET", [{ name: trimmedName }], {
+    const { data: masterDropdown } = Digit.Hooks.useEnabledMDMS(Digit.ULBService.getStateId(), "ASSET", [{ name: trimmedName }], {
       select: (data) => {
         const formattedData = data?.["ASSET"]?.[trimmedName];
         return formattedData;
@@ -203,7 +209,7 @@ const NewAsset = ({ t, config, onSelect, formData }) => {
               isDisabled={!assetDetails["purchaseDate"] || !assetDetails["modeOfPossessionOrAcquisition"] || !assetDetails["purchaseOrderNumber"]}>
         <React.Fragment>
           <div>
-            {`${t("AST_MODE_OF_POSSESSION_OR_ACQUISITION")} *`}
+            {`${t("AST_MODE_OF_POSSESSION_OR_ACQUISITION")}`} <span style={{ color: "red" }}>*</span>
             <div className="tooltip" style={{ width: "12px", height: "5px", marginLeft: "10px", display: "inline-flex", alignItems: "center" }}>
               <InfoBannerIcon />
               <span
@@ -217,7 +223,7 @@ const NewAsset = ({ t, config, onSelect, formData }) => {
                   marginBottom: "-10px",
                 }}
               >
-                {`${t("")} `}
+                {`${t("ASSET_ACQUISITION_METHOD")} `}
               </span>
             </div>
           </div>
@@ -240,80 +246,8 @@ const NewAsset = ({ t, config, onSelect, formData }) => {
                     />
                   )}
                 />
-
-          <div>
-            {`${t("AST_INVOICE_DATE")} *`}
-            <div className="tooltip" style={{ width: "12px", height: "5px", marginLeft: "10px", display: "inline-flex", alignItems: "center" }}>
-              <InfoBannerIcon />
-              <span
-                className="tooltiptext"
-                style={{
-                  whiteSpace: "pre-wrap",
-                  fontSize: "small",
-                  wordWrap: "break-word",
-                  width: "300px",
-                  marginLeft: "15px",
-                  marginBottom: "-10px",
-                }}
-              >
-                {`${t("")} `}
-              </span>
-            </div>
-          </div>
-          <TextInput
-                  t={t}
-                  type={"date"}
-                  isMandatory={false}
-                  optionKey="i18nKey"
-                  name={"invoiceDate"}
-                  value={assetDetails["invoiceDate"]}
-                  onChange={handleInputChange}
-                  style={{ width: "50%" }}
-                  max={new Date().toISOString().split("T")[0]}
-                  rules={{
-                    required: t("CORE_COMMON_REQUIRED_ERRMSG"),
-                    validDate: (val) => (/^\d{4}-\d{2}-\d{2}$/.test(val) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")),
-                  }}
-                />
-
-        <div>
-            {`${t("AST_INVOICE_NUMBER")} *`}
-            <div className="tooltip" style={{ width: "12px", height: "5px", marginLeft: "10px", display: "inline-flex", alignItems: "center" }}>
-              <InfoBannerIcon />
-              <span
-                className="tooltiptext"
-                style={{
-                  whiteSpace: "pre-wrap",
-                  fontSize: "small",
-                  wordWrap: "break-word",
-                  width: "300px",
-                  marginLeft: "15px",
-                  marginBottom: "-10px",
-                }}
-              >
-                {`${t("")} `}
-              </span>
-            </div>
-          </div>
-          <TextInput
-            t={t}
-            type={"text"}
-            isMandatory={false}
-            optionKey="i18nKey"
-            name="invoiceNumber"
-            value={assetDetails["invoiceNumber"]}
-            onChange={handleInputChange}
-            {...(validation = {
-              isRequired: true,
-              pattern: "^[a-zA-Z0-9/-]*$",
-              type: "text",
-              title: t("PT_NAME_ERROR_MESSAGE"),
-            })}
-            style={{ width: "50%" }}
-          />
-
 <div>
-            {`${t("AST_PURCHASE_DATE")} *`}
+            {`${t("AST_PURCHASE_DATE")}`} <span style={{ color: "red" }}>*</span>
             <div className="tooltip" style={{ width: "12px", height: "5px", marginLeft: "10px", display: "inline-flex", alignItems: "center" }}>
               <InfoBannerIcon />
               <span
@@ -327,7 +261,7 @@ const NewAsset = ({ t, config, onSelect, formData }) => {
                   marginBottom: "-10px",
                 }}
               >
-                {`${t("")} `}
+                {`${t("ASSET_PURCHASE_DATE")}`} 
               </span>
             </div>
           </div>
@@ -350,8 +284,8 @@ const NewAsset = ({ t, config, onSelect, formData }) => {
                 />
 
           <div>
-            {`${t("AST_PURCHASE_ORDER")} *`}
-            <div className="tooltip" style={{ width: "12px", height: "5px", marginLeft: "10px", display: "inline-flex", alignItems: "center" }}>
+            {`${t("AST_PURCHASE_ORDER")}`} <span style={{ color: "red" }}>*</span>
+            {/* <div className="tooltip" style={{ width: "12px", height: "5px", marginLeft: "10px", display: "inline-flex", alignItems: "center" }}>
               <InfoBannerIcon />
               <span
                 className="tooltiptext"
@@ -366,7 +300,7 @@ const NewAsset = ({ t, config, onSelect, formData }) => {
               >
                 {`${t("")} `}
               </span>
-            </div>
+            </div> */}
           </div>
           <TextInput
             t={t}
@@ -385,8 +319,8 @@ const NewAsset = ({ t, config, onSelect, formData }) => {
             style={{ width: "50%" }}
           />
 
-<div>
-            {`${t("AST_LIFE")} *`}
+          <div>
+            {`${t("AST_INVOICE_DATE")}`} <span style={{ color: "red" }}>*</span>
             <div className="tooltip" style={{ width: "12px", height: "5px", marginLeft: "10px", display: "inline-flex", alignItems: "center" }}>
               <InfoBannerIcon />
               <span
@@ -400,7 +334,86 @@ const NewAsset = ({ t, config, onSelect, formData }) => {
                   marginBottom: "-10px",
                 }}
               >
-                {`${t("")} `}
+                {`${t("ASSET_INVOICE_ISSUE_DATE")} `}
+              </span>
+            </div>
+          </div>
+          <TextInput
+                  t={t}
+                  key={assetDetails["purchaseDate"] || "no-purchase"}
+                  type={"date"}
+                  isMandatory={false}
+                  optionKey="i18nKey"
+                  name={"invoiceDate"}
+                  value={assetDetails["invoiceDate"]}
+                  onChange={handleInputChange}
+                  style={{ width: "50%" }}
+                  min={assetDetails["purchaseDate"] || ""}
+                  // max={new Date().toISOString().split("T")[0]}
+                  disabled={!assetDetails["purchaseDate"]}
+                  rules={{
+                    required: t("CORE_COMMON_REQUIRED_ERRMSG"),
+                    validDate: (val) => (/^\d{4}-\d{2}-\d{2}$/.test(val) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")),
+                    validate: (val) => {
+                      if (!assetDetails["purchaseDate"]) return t("INVOICE_DATE_REQUIRES_PURCHASE_DATE");
+                      return true;
+                    }
+                  }}
+                />
+
+        <div>
+            {`${t("AST_INVOICE_NUMBER")}`} <span style={{ color: "red" }}>*</span>
+            <div className="tooltip" style={{ width: "12px", height: "5px", marginLeft: "10px", display: "inline-flex", alignItems: "center" }}>
+              <InfoBannerIcon />
+              <span
+                className="tooltiptext"
+                style={{
+                  whiteSpace: "pre-wrap",
+                  fontSize: "small",
+                  wordWrap: "break-word",
+                  width: "300px",
+                  marginLeft: "15px",
+                  marginBottom: "-10px",
+                }}
+              >
+                {`${t("ASSET_INVOICE_ISSUE_DATE")} `}
+              </span>
+            </div>
+          </div>
+          <TextInput
+            t={t}
+            type={"text"}
+            isMandatory={false}
+            optionKey="i18nKey"
+            name="invoiceNumber"
+            value={assetDetails["invoiceNumber"]}
+            onChange={handleInputChange}
+            {...(validation = {
+              isRequired: true,
+              pattern: "^[a-zA-Z0-9/-]*$",
+              type: "text",
+              title: t("PT_NAME_ERROR_MESSAGE"),
+            })}
+            style={{ width: "50%" }}
+          />
+
+
+<div>
+            {`${t("AST_LIFE")}`} <span style={{ color: "red" }}>*</span>
+            <div className="tooltip" style={{ width: "12px", height: "5px", marginLeft: "10px", display: "inline-flex", alignItems: "center" }}>
+              <InfoBannerIcon />
+              <span
+                className="tooltiptext"
+                style={{
+                  whiteSpace: "pre-wrap",
+                  fontSize: "small",
+                  wordWrap: "break-word",
+                  width: "300px",
+                  marginLeft: "15px",
+                  marginBottom: "-10px",
+                }}
+              >
+                {`${t("ASSET_USEFUL_LIFECYCLE")} `}
               </span>
             </div>
           </div>
@@ -414,16 +427,17 @@ const NewAsset = ({ t, config, onSelect, formData }) => {
             onChange={handleInputChange}
             {...(validation = {
               isRequired: true,
-              pattern: "^[a-zA-Z0-9/-]*$",
-              type: "text",
+               pattern: regexPattern("number"),
+               type: "number",
               title: t("PT_NAME_ERROR_MESSAGE"),
             })}
             style={{ width: "50%" }}
           />
 
 
+
         <div>
-            {`${t("AST_LOCATION_DETAILS")} *`}
+            {`${t("AST_LOCATION_DETAILS")}`} <span style={{ color: "red" }}>*</span>
             <div className="tooltip" style={{ width: "12px", height: "5px", marginLeft: "10px", display: "inline-flex", alignItems: "center" }}>
               <InfoBannerIcon />
               <span
@@ -437,7 +451,7 @@ const NewAsset = ({ t, config, onSelect, formData }) => {
                   marginBottom: "-10px",
                 }}
               >
-                {`${t("")} `}
+                {`${t("ASSET_LOCATION_DETAILS")} `}
               </span>
             </div>
           </div>
@@ -482,7 +496,7 @@ const NewAsset = ({ t, config, onSelect, formData }) => {
 
 
           <div>
-            {`${t("AST_PURCHASE_COST")} *`}
+            {`${t("AST_PURCHASE_COST")}`} <span style={{ color: "red" }}>*</span>
             <div className="tooltip" style={{ width: "12px", height: "5px", marginLeft: "10px", display: "inline-flex", alignItems: "center" }}>
               <InfoBannerIcon />
               <span
@@ -496,7 +510,7 @@ const NewAsset = ({ t, config, onSelect, formData }) => {
                   marginBottom: "-10px",
                 }}
               >
-                {`${t("")} `}
+                {`${t("ASSET_PURCHASE_COST")} `}
               </span>
             </div>
           </div>
@@ -519,7 +533,7 @@ const NewAsset = ({ t, config, onSelect, formData }) => {
           />
 
         <div>
-            {`${t("AST_ACQUISITION_COST")} *`}
+            {`${t("AST_ACQUISITION_COST")}`} <span style={{ color: "red" }}>*</span>
             <div className="tooltip" style={{ width: "12px", height: "5px", marginLeft: "10px", display: "inline-flex", alignItems: "center" }}>
               <InfoBannerIcon />
               <span
@@ -533,7 +547,7 @@ const NewAsset = ({ t, config, onSelect, formData }) => {
                   marginBottom: "-10px",
                 }}
               >
-                {`${t("")} `}
+                {`${t("ASSET_ACQUISITION_COST")} `}
               </span>
             </div>
           </div>
@@ -556,7 +570,7 @@ const NewAsset = ({ t, config, onSelect, formData }) => {
           />
 
 <div>
-            {`${t("AST_BOOK_VALUE")} *`}
+            {`${t("AST_BOOK_VALUE")}`} <span style={{ color: "red" }}>*</span>
             <div className="tooltip" style={{ width: "12px", height: "5px", marginLeft: "10px", display: "inline-flex", alignItems: "center" }}>
               <InfoBannerIcon />
               <span
@@ -570,7 +584,7 @@ const NewAsset = ({ t, config, onSelect, formData }) => {
                   marginBottom: "-10px",
                 }}
               >
-                {`${t("")} `}
+                {`${t("ASSET_BOOK_VALUE")} `}
               </span>
             </div>
           </div>
@@ -597,7 +611,7 @@ const NewAsset = ({ t, config, onSelect, formData }) => {
               {/* Render the label with the localization key and a mandatory asterisk */}
               {/* <CardLabel key={index}>{`${t(row.code)} *`}</CardLabel> */}
               <div>
-                {`${t(row.code)} *`}
+                {`${t(row.code)}`} <span style={{ color: "red" }}>*</span>
                 <div className="tooltip" style={{ width: "12px", height: "5px", marginLeft: "10px", display: "inline-flex", alignItems: "center" }}>
                   <InfoBannerIcon />
                   <span
@@ -611,7 +625,7 @@ const NewAsset = ({ t, config, onSelect, formData }) => {
                       marginBottom: "-10px",
                     }}
                   >
-                    {`${t(row.iLable)} `}
+                    {`${t(row.code + "_INFO")} `}
                   </span>
                 </div>
               </div>

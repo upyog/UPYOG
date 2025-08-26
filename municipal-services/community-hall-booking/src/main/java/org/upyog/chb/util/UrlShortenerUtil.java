@@ -8,6 +8,34 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.beans.factory.annotation.Value;
 import java.util.HashMap;
 
+/**
+ * This utility class provides functionality for shortening URLs in the
+ * Community Hall Booking module.
+ * 
+ * Purpose:
+ * - To shorten long URLs for use in notifications, messages, or other communications.
+ * - To interact with an external URL shortening service for generating shortened URLs.
+ * 
+ * Dependencies:
+ * - RestTemplate: Sends HTTP requests to the URL shortening service.
+ * - urlShortnerHost: The base URL of the URL shortening service.
+ * - urShortnerPath: The endpoint path for the URL shortening service.
+ * 
+ * Features:
+ * - Sends a POST request to the URL shortening service with the original URL.
+ * - Returns the shortened URL or the original URL in case of an error.
+ * - Logs errors and exceptions for debugging and monitoring purposes.
+ * 
+ * Methods:
+ * 1. getShortenedUrl:
+ *    - Accepts a long URL as input.
+ *    - Sends a request to the URL shortening service and returns the shortened URL.
+ *    - Handles errors gracefully and logs them for debugging.
+ * 
+ * Usage:
+ * - This class is used throughout the module to generate shortened URLs for notifications or communications.
+ * - It ensures consistent and reusable logic for URL shortening across the application.
+ */
 @Slf4j
 @Component
 public class UrlShortenerUtil {

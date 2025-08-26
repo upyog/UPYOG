@@ -2,16 +2,7 @@ package org.egov.vendor.service;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import org.egov.common.contract.request.RequestInfo;
@@ -26,10 +17,7 @@ import org.egov.vendor.util.VendorErrorConstants;
 import org.egov.vendor.web.model.Vendor;
 import org.egov.vendor.web.model.VendorRequest;
 import org.egov.vendor.web.model.VendorSearchCriteria;
-import org.egov.vendor.web.model.user.User;
-import org.egov.vendor.web.model.user.UserDetailResponse;
-import org.egov.vendor.web.model.user.UserRequest;
-import org.egov.vendor.web.model.user.UserSearchRequest;
+import org.egov.vendor.web.model.user.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -53,6 +41,9 @@ public class UserService {
 	VendorRepository vendorRepository;
 
 	@Autowired
+	private ModuleRoleService moduleRoleService;
+
+	@Autowired
 	private ObjectMapper mapper;
 
 	/**
@@ -68,6 +59,8 @@ public class UserService {
 
 		UserDetailResponse userDetailResponse = null;
 
+		ModuleRoleMapping roleMapping = moduleRoleService.getModuleRoleMapping(vendorRequest, ModuleRoleMapping.MappingType.VENDOR);
+
 		if (owner != null) {
 
 			userDetailResponse = userExists(owner);
@@ -75,18 +68,17 @@ public class UserService {
 			if (userDetailResponse != null && !CollectionUtils.isEmpty(userDetailResponse.getUser())) {
 
 				validateVendorExists(userDetailResponse.getUser());
-
 				for (int i = 0; i < userDetailResponse.getUser().size(); i++) {
 
-					if (isRoleAvailale(userDetailResponse.getUser().get(i), config.getDsoRole(),
+					if (isRoleAvailale(userDetailResponse.getUser().get(i), roleMapping.getRoleCode(),
 							vendor.getTenantId()) == Boolean.TRUE) {
 						foundOwner = userDetailResponse.getUser().get(i);
 					}
 				}
-				owner = foundOwnerDetails(userDetailResponse, foundOwner, requestInfo);
+				owner = foundOwnerDetails(userDetailResponse, foundOwner, requestInfo, roleMapping);
 
 			} else {
-				owner = createVendorOwner(owner, vendorRequest.getRequestInfo());
+				owner = createVendorOwner(owner, vendorRequest, roleMapping);
 			}
 
 			vendor.setOwner(owner);
@@ -121,7 +113,7 @@ public class UserService {
 						.collect(Collectors.toList());
 				int count = vendorRepository.getExistingVenodrsCount(ownerIds);
 				log.debug("userDetailResponse SIZE==>" + userDetailResponse.getUser().size());
-
+				ModuleRoleMapping roleMapping = moduleRoleService.getModuleRoleMapping(vendorRequest, ModuleRoleMapping.MappingType.VENDOR);
 				for (int i = 0; i < userDetailResponse.getUser().size(); i++) {
 					if (count > 0
 							&& vendorRequest.getVendor().getOwner().getMobileNumber()
@@ -130,7 +122,7 @@ public class UserService {
 									.equals(vendorRequest.getVendor().getOwner().getUuid())) {
 						List<String> roleCodes = userDetailResponse.getUser().get(i).getRoles().stream()
 								.map(Role::getCode).collect(Collectors.toList());
-						if (roleCodes.contains(config.getDsoRole())) {
+						if (roleCodes.contains(roleMapping.getRoleCode())) {
 							throw new CustomException(VendorErrorConstants.ALREADY_VENDOR_EXIST,
 									VendorErrorConstants.VENDOR_ERROR_MESSAGE);
 						}
@@ -141,11 +133,11 @@ public class UserService {
 		}
 	}
 
-	private User foundOwnerDetails(UserDetailResponse userDetailResponse, User foundOwner, RequestInfo requestInfo) {
+	private User foundOwnerDetails(UserDetailResponse userDetailResponse, User foundOwner, RequestInfo requestInfo, ModuleRoleMapping roleMapping) {
 		User owner = new User();
 		if (!userDetailResponse.getUser().isEmpty() && foundOwner == null) {
 			foundOwner = userDetailResponse.getUser().get(0);
-			foundOwner.getRoles().add(getRolObj(config.getDsoRole(), config.getDsoRoleName()));
+			foundOwner.getRoles().add(getRolObj(roleMapping.getRoleCode(), roleMapping.getRoleName()));
 			UserRequest userRequest = UserRequest.builder().user(foundOwner).requestInfo(requestInfo).build();
 			StringBuilder uri = new StringBuilder();
 			uri.append(config.getUserHost()).append(config.getUserContextPath()).append(config.getUserUpdateEndpoint());
@@ -182,6 +174,8 @@ public class UserService {
 		Vendor vendor = vendorRequest.getVendor();
 		RequestInfo requestInfo = vendorRequest.getRequestInfo();
 
+		ModuleRoleMapping roleMapping = moduleRoleService.getModuleRoleMapping(vendorRequest, ModuleRoleMapping.MappingType.DRIVER);
+
 		List<Driver> drivers = vendor.getDrivers();
 		List<Driver> newDrivers = new ArrayList<>();
 		HashMap<String, String> errorMap = new HashMap<>();
@@ -199,15 +193,15 @@ public class UserService {
 
 						for (int i = 0; i < userDetailResponse.getUser().size(); i++) {
 
-							if (isRoleAvailale(userDetailResponse.getUser().get(i), config.getDsoDriver(),
+							if (isRoleAvailale(userDetailResponse.getUser().get(i), roleMapping.getRoleCode(),
 									vendor.getTenantId()) == Boolean.TRUE) {
 								foundDriver = userDetailResponse.getUser().get(i);
 							}
 						}
-						foundDriver = getUserDetailResponse(userDetailResponse, foundDriver, errorMap, requestInfo);
+						foundDriver = getUserDetailResponse(userDetailResponse, foundDriver, errorMap, requestInfo, roleMapping);
 
 					} else {
-						foundDriver = createDriver(driver.getOwner(), requestInfo);
+						foundDriver = createDriver(driver.getOwner(), requestInfo, roleMapping);
 					}
 					driver.setOwner(foundDriver);
 					newDrivers.add(driver);
@@ -228,10 +222,10 @@ public class UserService {
 	}
 
 	private User getUserDetailResponse(UserDetailResponse userDetailResponse, User foundDriver,
-			HashMap<String, String> errorMap, RequestInfo requestInfo) {
+									   HashMap<String, String> errorMap, RequestInfo requestInfo, ModuleRoleMapping roleMapping) {
 		if (foundDriver == null) {
 			foundDriver = userDetailResponse.getUser().get(0);
-			foundDriver.getRoles().add(getRolObj(config.getDsoDriver(), config.getDsoDriverRoleName()));
+			foundDriver.getRoles().add(getRolObj(roleMapping.getRoleCode(), roleMapping.getRoleName()));
 			UserRequest userRequest = UserRequest.builder().user(foundDriver).requestInfo(requestInfo).build();
 			StringBuilder uri = new StringBuilder();
 			uri.append(config.getUserHost()).append(config.getUserContextPath()).append(config.getUserUpdateEndpoint());
@@ -251,36 +245,48 @@ public class UserService {
 	 * create Employee in HRMS for Vendor owner
 	 * 
 	 * @param owner
-	 * @param requestInfo
+	 * @param vendorRequest
 	 * @return
 	 */
-	private User createVendorOwner(User owner, RequestInfo requestInfo) {
+	private User createVendorOwner(User owner, VendorRequest vendorRequest, ModuleRoleMapping moduleRoleMapping) {
 
 		if (!isUserValid(owner)) {
 			throw new CustomException(VendorErrorConstants.INVALID_OWNER_ERROR,
 					VendorErrorConstants.INVALID_OWNER_ERROR_MESSAGE);
 		}
 
-		if (owner.getRoles() != null) {
-			owner.getRoles().add(getRolObj(config.getDsoRole(), config.getDsoRoleName()));
-			owner.getRoles().add(getRolObj(config.getCitizenRole(), config.getCitizenRoleName()));
-		} else {
-			List<Role> roles = new ArrayList<>();
-			roles.add(getRolObj(config.getDsoRole(), config.getDsoRoleName()));
-			roles.add(getRolObj(config.getCitizenRole(), config.getCitizenRoleName()));
-			owner.setRoles(roles);
-
-		}
+		addRolesToUser(owner, moduleRoleMapping);
 
 		addUserDefaultFields(owner.getTenantId(), null, owner);
 		StringBuilder uri = new StringBuilder(config.getUserHost()).append(config.getUserContextPath())
 				.append(config.getUserCreateEndpoint());
 		setUserName(owner);
 		owner.setType(VendorConstants.CITIZEN);
-		UserDetailResponse userDetailResponse = userCall(new UserRequest(requestInfo, owner), uri);
+		UserDetailResponse userDetailResponse = userCall(new UserRequest(vendorRequest.getRequestInfo(), owner), uri);
 		log.debug("owner created --> " + userDetailResponse.getUser().get(0).getUuid());
 		return userDetailResponse.getUser().get(0);
 	}
+
+	private void addRolesToUser(User owner, ModuleRoleMapping moduleRoleMapping) {
+		// Retrieve the corresponding role and role name
+		String role = moduleRoleMapping.getRoleCode();
+		String roleName = moduleRoleMapping.getRoleName();
+
+		log.info("Creating vendor with role {} and role name {}", role, roleName);
+
+		// Ensure roles list is initialized
+		owner.setRoles(Optional.ofNullable(owner.getRoles()).orElseGet(ArrayList::new));
+
+		// Add derived role and citizen role
+		addRoles(owner, role, roleName);
+	}
+
+	// Adds roles to the user
+	private void addRoles(User owner, String role, String roleName) {
+		owner.getRoles().add(getRolObj(role, roleName));
+		owner.getRoles().add(getRolObj(config.getCitizenRole(), config.getCitizenRoleName()));
+	}
+
 
 	/**
 	 * Sets the role,type,active and tenantId for a Citizen
@@ -340,21 +346,22 @@ public class UserService {
 
 	/**
 	 * create Employee in HRMS for Vendor owner
-	 * 
+	 *
 	 * @param driver
 	 * @param requestInfo
+	 * @param roleMapping
 	 * @return
 	 */
-	private User createDriver(User driver, RequestInfo requestInfo) {
+	private User createDriver(User driver, RequestInfo requestInfo, ModuleRoleMapping roleMapping) {
 
 		if (!isUserValid(driver)) {
 			throw new CustomException(VendorErrorConstants.INVALID_DRIVER_ERROR,
 					VendorErrorConstants.INVALID_OWNER_ERROR_MESSAGE);
 		}
 		if (driver.getRoles() != null) {
-			driver.getRoles().add(getRolObj(config.getDsoDriver(), config.getDsoDriverRoleName()));
+			driver.getRoles().add(getRolObj(roleMapping.getRoleCode(), roleMapping.getRoleName()));
 		} else {
-			driver.setRoles(Arrays.asList(getRolObj(config.getDsoDriver(), config.getDsoDriverRoleName())));
+			driver.setRoles(Arrays.asList(getRolObj(roleMapping.getRoleCode(), roleMapping.getRoleName())));
 		}
 		addUserDefaultFields(driver.getTenantId(), null, driver);
 		StringBuilder uri = new StringBuilder(config.getUserHost()).append(config.getUserContextPath())

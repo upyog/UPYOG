@@ -174,7 +174,7 @@ const ApplicationDetails = (props) => {
               }
               return
             }
-            //setShowToast({ key: "success", action: selectedAction });
+            setShowToast({ key: "success", action: selectedAction });
             clearDataDetails && setTimeout(clearDataDetails, 3000);
             setTimeout(closeToast, 5000);
             queryClient.clear();

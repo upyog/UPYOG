@@ -20,6 +20,8 @@ public class AssetDisposalSearchCriteria {
 
     private List<String> applicationNos; // List of application numbers to filter
 
+    private List<String> disposalIds; // List of asset IDs to filter
+
     private List<String> assetIds; // List of asset IDs to filter
 
     private Long fromDate; // Start date for the disposal date range (epoch milliseconds)

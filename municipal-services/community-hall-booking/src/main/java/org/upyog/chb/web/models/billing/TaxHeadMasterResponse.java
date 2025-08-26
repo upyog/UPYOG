@@ -11,6 +11,12 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * Represents the response structure for Tax Head Master data.
+ * 
+ * Purpose:
+ * - To encapsulate ResponseInfo and a list of TaxHeadMaster objects.
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

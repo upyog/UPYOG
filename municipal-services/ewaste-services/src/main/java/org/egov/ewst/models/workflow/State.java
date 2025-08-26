@@ -83,7 +83,12 @@ public class State   {
 
         private AuditDetails auditDetails;
 
-
+        /**
+         * Adds a action to the list of actions associated with the state.
+         *
+         * @param actionsItem the action to add
+         * @return the updated State object
+         */
         public State addActionsItem(Action actionsItem) {
                 if (this.actions == null) {
                         this.actions = new ArrayList<>();

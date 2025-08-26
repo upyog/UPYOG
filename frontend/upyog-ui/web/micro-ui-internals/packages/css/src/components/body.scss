@@ -5,10 +5,13 @@ body {
 .body-container {
   @apply bg-grey-bg h-full min-h-screen overflow-x-hidden;
   position: relative !important;
-
-
 }
-
+body,
+.body-container {
+  --bg-opacity: 1;
+  background-color: rgba(222, 216, 230, var(--bg-opacity)) !important;
+  @apply bg-grey-bg;
+}
 .navbar {
   @apply text-white bg-secondary p-md w-full mb-md;
   background: linear-gradient(to right, #feeee7, #a82227,#feeee7) !important;

@@ -118,15 +118,15 @@ const SVBankDetails = ({ t, config, onSelect, userType, formData, editdata,previ
       lastModifiedBy: "",
       lastModifiedTime: 0
     },
-    dob: formData?.owner?.units?.[1]?.spouseDateBirth,
-    userCategory:formData?.owner?.units?.[1]?.userCategory?.code,
+    dob: formData?.owner?.units?.[0]?.spouseDateBirth,
+    userCategory:formData?.owner?.units?.[0]?.userCategory?.code,
     emailId: "",
     isInvolved: formData?.owner?.spouseDependentChecked,
     fatherName: "",
     gender: "O",
     id: "",
     mobileNo: "",
-    name: formData?.owner?.units?.[1]?.spouseName,
+    name: formData?.owner?.units?.[0]?.spouseName,
     relationshipType: "SPOUSE",
     vendorId: null
   });
@@ -139,15 +139,15 @@ const SVBankDetails = ({ t, config, onSelect, userType, formData, editdata,previ
       lastModifiedBy: "",
       lastModifiedTime: 0
     },
-    dob: formData?.owner?.units?.[2]?.dependentDateBirth,
-    userCategory:formData?.owner?.units?.[2]?.userCategory?.code,
+    dob: formData?.owner?.units?.[0]?.dependentDateBirth,
+    userCategory:formData?.owner?.units?.[0]?.userCategory?.code,
     emailId: "",
     isInvolved: formData?.owner?.dependentNameChecked,
     fatherName: "",
-    gender: formData?.owner?.units?.[2]?.dependentGender?.code.charAt(0),
+    gender: formData?.owner?.units?.[0]?.dependentGender?.code.charAt(0),
     id: "",
     mobileNo: "",
-    name: formData?.owner?.units?.[2]?.dependentName,
+    name: formData?.owner?.units?.[0]?.dependentName,
     relationshipType: "DEPENDENT",
     vendorId: null
   });
@@ -263,7 +263,12 @@ const SVBankDetails = ({ t, config, onSelect, userType, formData, editdata,previ
           lastModifiedTime: 0
         },
       },
-      benificiaryOfSocialSchemes: "",
+      benificiaryOfSocialSchemes: [],
+      applicationCreatedBy: formData?.owner?.applicationCreatedBy,
+      locality: formData?.businessDetails?.vendorLocality?.code || "",
+      localityValue: "",
+      vendingZoneValue: "",
+      vendorPaymentFrequency: formData?.businessDetails?.vendingPayment?.code,
       enrollmentId:"",
       cartLatitude: 0,
       cartLongitude: 0,

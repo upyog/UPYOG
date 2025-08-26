@@ -25,6 +25,7 @@ import useCommonMDMS from "./useMDMS";
 import useCommonMDMSV2 from "./useMDMSV2";
 import useCustomMDMS from "./useCustomMDMS";
 import useCustomMDMSV2 from "./useCustomMDMSV2";
+import useEnabledMDMS from "./useEnabledMDMS";
 import useCustomAPIHook from "./useCustomAPIHook";
 import useInboxGeneral from "./useInboxGeneral/useInboxGeneral";
 import useApplicationStatusGeneral from "./useStatusGeneral";
@@ -39,6 +40,8 @@ import useNewInboxGeneral from "./useInboxGeneral/useNewInbox";
 import useDynamicData from "./useDynamicData";
 
 import useComplaintDetails from "./pgr/useComplaintDetails";
+import useCreate from "./pgrAi/useCreate";
+import useSearchPGRAI from "./pgrAi/useSearchPGRAI";
 import { useComplaintsList, useComplaintsListByMobile } from "./pgr/useComplaintList";
 import useComplaintStatus from "./pgr/useComplaintStatus";
 import useComplaintTable from "./pgr/useComplaintTable";
@@ -65,7 +68,7 @@ import useVehicleTripCreate from "./fsm/useVehicleTripCreate";
 import useFSMInbox from "./fsm/useInbox";
 import useApplicationUpdate from "./fsm/useApplicationUpdate";
 import useWorkflowData from "./fsm/useWorkflowData";
-import useRouteSubscription from "./fsm/useRouteSubscription";
+import useRouteSubscription from "./useRouteSubscription";
 import useDsoSearch from "./fsm/useDsoSearch";
 import usePropertySearch from "./pt/usePropertySearch";
 import usePropertySearchNew from "./pt/usePropertySearchNew";
@@ -264,9 +267,9 @@ import useWSConfigMDMS from "./ws/useWSConfigMDMS";
 import useFeedBackSearch from "./useFeedBackSearch";
 
 import usePetMDMS from "./ptr/usePetMDMS";
-import useBreedTypeMDMS from "./ptr/useBreedTypeMDMS";
+// import useBreedTypeMDMS from "./ptr/useBreedTypeMDMS";
 import usePTRCreateAPI from "./ptr/usePTRCreateAPI";
-import usePTRPetMDMS from "./ptr/usePTRPetMDMS";
+// import usePTRPetMDMS from "./ptr/usePTRPetMDMS";
 import usePTRGenderMDMS from "./ptr/usePTRGenderMDMS";
 import usePTRSearch from "./ptr/usePTRSearch";
 import usePtrApplicationDetail from "./ptr/usePtrApplicationDetail";
@@ -288,6 +291,7 @@ import useTenantsASSET from "./asset/useTenants"
 import useASSETApplicationAction from "./asset/useASSETApplicationAction";
 import useAssetparentSubType from "./asset/useAssetparentSubType";
 import useAssignCreateAPI from "./asset/useAssignCreateAPI";
+import useMaintenanceAPI from "./asset/useMaintenanceAPI";
 import useReturnAPI from "./asset/useReturnAPI";
 import useEditUpdateAPI from "./asset/useEditUpdateAPI";
 
@@ -302,10 +306,10 @@ import useSVApplicationDetail from "./sv/useSVApplicationDetail";
 import useSvSearchApplication from "./sv/useSvSearchApplication";
 import useSVApplicationAction from "./sv/useSVApplicationAction";
 import useADSApplicationDetail from "./ads/useADSApplicationDetail";
-import useProductPriceMDMS from "./ew/useProductPriceMDMS";
-import useSpecialCategory from "./chb/useSpecialCategory";
-import useResidentType from "./chb/useResidentType";
-import usePurpose from "./chb/usePurpose";
+// import useProductPriceMDMS from "./ew/useProductPriceMDMS";
+// import useSpecialCategory from "./chb/useSpecialCategory";
+// import useResidentType from "./chb/useResidentType";
+// import usePurpose from "./chb/usePurpose";
 import useChbCreateAPI from "./chb/useChbCreateAPI";
 import useADSCreateAPI from "./ads/useADSCreateAPI";
 import useChbDocumentsMDMS from "./chb/useChbDocumentsMDMS";
@@ -321,8 +325,8 @@ import useChbSearch from "./chb/useChbSearch";
 import useTenantsCHB from "./chb/useTenants";
 import useChbApplicationAction from "./chb/useChbApplicationAction";
 import useServiceSearchCHB from "./chb/useServiceSearchCHB";
-import useChbCommunityHalls from "./chb/useChbCommunityHalls";
-import useChbHallCode from "./chb/useChbHallCode"
+// import useChbCommunityHalls from "./chb/useChbCommunityHalls";
+// import useChbHallCode from "./chb/useChbHallCode"
 import useChbSlotSearch from "./chb/useChbSlotSearch";
 import useDemandEstimation from "./chb/useDemandEstimation"
 import useTenantsADS from "./ads/useTenants"
@@ -330,7 +334,50 @@ import useADSDocumentsMDMS from "./ads/useADSDocumentsMDMS";
 import useADSDocumentSearch from "./ads/useADSDocumentSearch";
 import useADSDemandEstimation from "./ads/useADSDemandEstimation"
 import useCMSearch from "./cm/useCMSearch";
+import { useCustomBackNavigation } from "./UseCustomBackNavigationProps";
+import useTankerCreateAPI from "./wt/useTankerCreateAPI";
+import useTankerSearchAPI from "./wt/useTankerSearchAPI";
+import useMobileToiletCreateAPI from "./wt/useMobileToiletCreateAPI";
+import useMobileToiletSearchAPI from "./wt/useMobileToiletSearchAPI";
+import useWTApplicationAction from "./wt/useWTApplicationAction";
+import useWTApplicationDetail from "./wt/useWTApplicationDetail";
+import useMTApplicationDetail from "./wt/useMTApplicationDetail";
+import useMTApplicationAction from "./wt/useMTApplicationAction";
+import useTenantsVENDOR from "./vendor/useTenants";
+import useEmpvendorCreate from "./vendor/useEmpvendorCreate";
+import useEmpvendorSearch from "./vendor/useEmpvendorSearch";
+import useSelectedMDMS from "./useSelectedMDMS";
+import useVendorAdditionaldetailsAPI from "./vendor/useVendorAdditionaldetailsAPI";
+import useCreateDemand from "./sv/useCreateDemand";
+import useEmpvendorCommonSearch from "./vendor/useEmpvendorCommonSearch";
+import useFilterEmployee from "./pgrAi/useFilterEmployee";
+import useApplicationDetails from "./pgrAi/useApplicationDetails";
+import useWorkerSearch from "./fsm/useWorkerSearch";
+import useTreePruningCreateAPI from "./wt/useTreePruningCreateAPI";
+import useTreePruningSearchAPI from "./wt/useTreePruningSearchAPI";
+import useTPApplicationDetail from "./wt/useTPApplicationDetail";
+import useTPApplicationAction from "./wt/useTPApplicationAction";
 
+const wt={
+  useTankerCreateAPI,
+  useTankerSearchAPI,
+  useWTApplicationAction,
+  useWTApplicationDetail,
+  useMobileToiletCreateAPI,
+  useMobileToiletSearchAPI,
+  useMTApplicationDetail,
+  useMTApplicationAction,
+  useTreePruningCreateAPI,
+  useTreePruningSearchAPI,
+  useTPApplicationDetail,
+  useTPApplicationAction
+};
+const pgrAi={
+  useCreate,
+  useSearchPGRAI,
+  useFilterEmployee,
+  useApplicationDetails
+}
 const pgr = {
   useComplaintDetails,
   useComplaintsList,
@@ -350,13 +397,11 @@ const pgr = {
   useMDMS: usePGRMDMS,
 };
 
-
 const fsm = {
   useTenants: useTenantsFSM,
   useDesludging: useDesludging,
   useMDMS: useMDMS,
   useSearch,
-  useRouteSubscription,
   useSearchAll,
   useInbox: useFSMInbox,
   useApplicationUpdate,
@@ -394,8 +439,8 @@ const fsm = {
 };
 const ptr = {
   usePetMDMS,
-  usePTRPetMDMS,
-  useBreedTypeMDMS,
+  // usePTRPetMDMS,
+  // useBreedTypeMDMS,
   usePTRCreateAPI,
   usePTRApplicationAction,
   usePTRGenderMDMS,
@@ -439,6 +484,13 @@ const dss = {
   useGetChart,
 };
 
+const vendor = {
+  useTenants:useTenantsVENDOR,
+  useEmpvendorCreate,
+  useEmpvendorSearch,
+  useVendorAdditionaldetailsAPI,
+  useEmpvendorCommonSearch,
+}
 const mcollect = {
   useCommonMDMS,
   useMCollectMDMS,
@@ -610,6 +662,7 @@ const asset = {
   useAssetparentSubType,
   useTenants: useTenantsASSET,
   useAssignCreateAPI,
+  useMaintenanceAPI,
   useReturnAPI,
   useEditUpdateAPI
 };
@@ -621,11 +674,12 @@ const sv = {
   useSvSearchApplication,
   useSVApplicationDetail,
   useSVApplicationAction,
-  useSvSearchApplication
+  useSvSearchApplication,
+  useCreateDemand
 }
 
 const ew = {
-  useProductPriceMDMS,
+  // useProductPriceMDMS,
   useEWCreateAPI,
   useTenants: useTenantsEW,
   useEWSearch,
@@ -634,9 +688,9 @@ const ew = {
 };
 
 const chb={
-  useSpecialCategory,
-  useResidentType,
-  usePurpose,
+  // useSpecialCategory,
+  // useResidentType,
+  // usePurpose,
   useChbCreateAPI,
   useChbDocumentsMDMS,
   useChbDocumentSearch,
@@ -645,8 +699,8 @@ const chb={
   useTenants:useTenantsCHB,
   useChbApplicationAction,
   useServiceSearchCHB,
-  useChbCommunityHalls,
-  useChbHallCode,
+  // useChbCommunityHalls,
+  // useChbHallCode,
   useChbSlotSearch,
   useDemandEstimation
 }
@@ -722,6 +776,8 @@ const Hooks = {
   ws,
   useCustomMDMS,
   useCustomMDMSV2,
+  useEnabledMDMS,
+  useSelectedMDMS,
   useCustomAPIHook,
   reports,
   useGetHowItWorksJSON,
@@ -739,7 +795,12 @@ const Hooks = {
   chb,
   ads,
   ew,
-  cm
+  cm,
+  useCustomBackNavigation,
+  wt,
+  vendor,
+  useRouteSubscription,
+  pgrAi
 };
 
 export default Hooks;

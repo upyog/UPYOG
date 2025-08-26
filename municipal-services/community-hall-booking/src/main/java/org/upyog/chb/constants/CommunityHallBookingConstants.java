@@ -2,6 +2,28 @@ package org.upyog.chb.constants;
 
 import java.math.BigDecimal;
 
+/**
+ * This class defines constants used throughout the Community Hall Booking module.
+ * 
+ * Purpose:
+ * - To centralize all constant values for better maintainability and readability.
+ * - To avoid hardcoding values directly in the codebase.
+ * 
+ * Categories of Constants:
+ * 1. User Messages:
+ *    - Messages displayed to users for various actions like booking creation, updates, etc.
+ * 
+ * 2. JSON Path Codes:
+ *    - Paths used for extracting data from MDMS (Master Data Management System) responses.
+ * 
+ * 3. Master Data Keys:
+ *    - Keys used to identify specific master data modules or fields in the MDMS.
+ * 
+ * Usage:
+ * - These constants are referenced across the application wherever the corresponding
+ *   values are required, ensuring consistency and reducing duplication.
+ */
+
 public class CommunityHallBookingConstants {
 
 	public static final String COMMUNITY_HALL_BOOKING_INIT_CREATED = "Your community hall booking details saved successfully";
@@ -119,5 +141,28 @@ public class CommunityHallBookingConstants {
 	public static final String CHB_APPLICANT_DETAIL_PLAIN_DECRYPTION_PURPOSE = "CHBApplicantDetailDecryptionDisabled";
 	
 	public static final String DATE_FORMAT = "dd-MM-yyyy";
+	// Workflow related constants
+
+	public static final String CHB_STATUS_BOOKED = "BOOKED";
+
+	public static final String CHB_ACTION_MOVETOEMPLOYEE = "MOVETOEMPLOYEE";
+
+	public static final String CHB_REFUND_WORKFLOW_BUSINESSSERVICE = "booking-refund";
+
+	public static final String CHB_REFUND_WORKFLOW_MODULENAME = "chb-services";
+
+	public static final String CHB_TENANTID = "pg";
+		
+    public static final String NOTIFICATION_PAY_NOW = "PAY NOW";
+	
+	public static final String NOTIFICATION_DOWNLOAD_RECEIPT = "Download Receipt";
+	
+	public static final String NOTIFICATION_ACTION = "{Action Button}";
+	
+	public static final String NOTIFICATION_ACTION_BUTTON = "{/Action Button}";
+	
+	public static final String NOTIFICATION_EMAIL = "{EMAIL_ID}";
+	
+	public static final String MESSAGE_TEXT = "MESSAGE_TEXT";
 
 }

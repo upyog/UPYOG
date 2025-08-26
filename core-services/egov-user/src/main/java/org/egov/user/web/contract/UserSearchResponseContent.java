@@ -41,7 +41,7 @@ public class UserSearchResponseContent {
     private String correspondencePinCode;
     private String alternatemobilenumber;
 
-    @JsonIgnore
+//    @JsonIgnore // This is removed to include address details in user search response V2
     private Set<Address> addresses;
 
     private Boolean active;

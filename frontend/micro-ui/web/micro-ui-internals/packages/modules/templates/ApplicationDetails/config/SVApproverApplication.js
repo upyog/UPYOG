@@ -4,12 +4,14 @@
  * 
  */
 import { Dropdown, UploadFile } from "@upyog/digit-ui-react-components";
-import React from "react";
-export const configSVApproverApplication = ({ t, action, selectFile, uploadedFile, setUploadedFile, approvers, selectedApprover, setSelectedApprover, isUploading }) => {
+import React, { Fragment } from "react";
+
+export const configSVApproverApplication = ({ t, action, selectFile, uploadedFile, setUploadedFile, approvers, selectedApprover, setSelectedApprover, isUploading, geoLocationData, vending_Zone, vendingZones, setvendingZones, UserVendingZone, selectApprover }) => {
+  const convertToObject = (String) => String ? { i18nKey: String, code: String, value: String } : null;
   const LoadingSpinner = () => (
     <div className="loading-spinner" />
   );
-  console.log("isuploading ", isUploading);
+
   return {
     label: {
       heading: `WF_${action?.action}_APPLICATION`,
@@ -34,6 +36,20 @@ export const configSVApproverApplication = ({ t, action, selectFile, uploadedFil
                 />
               ),
             },
+          (selectApprover || []).some((item) => item.code === "TVCEMPLOYEE" || item.code === "SVCEMP") &&
+          {
+            label: t("SV_CONFIRM_VENDING_ZONE"),
+            type: "dropdown",
+            populators: (
+              <Dropdown
+                option={vending_Zone}
+                t={t}
+                optionKey="i18nKey"
+                select={setvendingZones}
+                selected={convertToObject(UserVendingZone) || vendingZones}
+              />
+            ),
+          },
           {
             label: t("SV_ACTION_COMMENTS"),
             isMandatory: true,
@@ -48,19 +64,24 @@ export const configSVApproverApplication = ({ t, action, selectFile, uploadedFil
           {
             label: `${t("SV_ATTATCH_FILE")}${action.docUploadRequired ? " *" : ""}`,
             populators: (
-              <UploadFile
-                id={"workflow-doc-sv"}
-                onUpload={selectFile}
-                onDelete={() => {
-                  setUploadedFile(null);
-                }}
-                message={isUploading ? (
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <LoadingSpinner />
-                    <span>Uploading...</span>
-                  </div>
-                ) : uploadedFile ? `1 ${t(`SV_FILE_UPLOADED`)}` : t(`SV_NO_FILE`)}
-              />
+              <>
+                <UploadFile
+                  id={"workflow-doc-sv"}
+                  onUpload={selectFile}
+                  onDelete={() => {
+                    setUploadedFile(null);
+                  }}
+                  message={isUploading ? (
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <LoadingSpinner />
+                      <span>Uploading...</span>
+                    </div>
+                  ) : uploadedFile ? `1 ${t(`SV_FILE_UPLOADED`)}` : t(`SV_NO_FILE`)}
+                />
+                {(selectApprover || []).some((item) => item.code === "INSPECTIONOFFICER") && geoLocationData && (
+                  <div><strong> Location: {geoLocationData} </strong></div>
+                )}
+              </>
             ),
           }
         ],

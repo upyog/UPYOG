@@ -12,6 +12,11 @@ import javax.annotation.PostConstruct;
     import com.fasterxml.jackson.databind.ObjectMapper;
 import org.egov.tracer.config.TracerConfiguration;
 
+/**
+ * This class is a configuration component for the Advertisement Service module.
+ * It is responsible for setting up application-wide configurations such as
+ * timezone initialization and providing a customized ObjectMapper bean.
+ **/
 
 @Import({TracerConfiguration.class})
 public class MainConfiguration {
