@@ -19,6 +19,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.echallan.config.ChallanConfiguration;
 import org.egov.echallan.repository.ServiceRequestRepository;
+import org.egov.echallan.repository.SmsTemplateRepository;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -54,6 +55,9 @@ public class NotificationUtil {
 	private ChallanConfiguration config;
 
 	private ServiceRequestRepository serviceRequestRepository;
+	
+	@Autowired
+	private SmsTemplateRepository smsTemplateRepository ;
 
 	private RestTemplate restTemplate;
 
@@ -473,6 +477,54 @@ public class NotificationUtil {
 	public StringBuilder getcollectionURL() {
 		StringBuilder builder = new StringBuilder();
 		return builder.append(config.getCollectionServiceHost()).append(config.getCollectionServiceSearchEndPoint());
+	}
+	
+	public SMSRequest getMessageDetails(RequestInfo requestInfo, Challan challan, String messageCode) {
+		StringBuilder builder = new StringBuilder();
+//		return  builder;
+		String localizationMessages = getLocalizationMessages(challan.getTenantId(), requestInfo);
+		String message = null, messageTemplate;
+
+		if(messageCode.equals(CREATE_CODE) || messageCode.equals(CREATE_CODE_INAPP))
+		{ 
+			return getMessageDetails("ECHALLAN-CREATE",challan);
+//			messageTemplate = getMessageTemplate(messageCode, localizationMessages);
+//			message  = getReplacedMsg(requestInfo,challan,messageTemplate);
+		}
+		else if(messageCode.equals(UPDATE_CODE) || messageCode.equals(UPDATE_CODE_INAPP))
+		{
+			messageTemplate = getMessageTemplate(messageCode, localizationMessages);
+			message  = getReplacedMsg(requestInfo,challan,messageTemplate);
+		}
+		else if(messageCode.equals(CANCEL_CODE) || messageCode.equals(CANCEL_CODE_INAPP))
+		{
+			messageTemplate = getMessageTemplate(messageCode, localizationMessages);
+			message  = getReplacedMsg(requestInfo,challan,messageTemplate);
+		}
+		else if(messageCode.equals(PAYMENT_CODE) || messageCode.equals(PAYMENT_CODE_INAPP))
+		{
+			messageTemplate = getMessageTemplate(messageCode, localizationMessages);
+			message  = getPaymentMsg(requestInfo,challan,messageTemplate);
+		}
+		return null;
+
+//				builder.append(config.getCollectionServiceHost()).append(config.getCollectionServiceSearchEndPoint());
+	}
+	
+	public SMSRequest getMessageDetails(String templateName,Challan challan) {
+		
+		List<SMSTemplate> templates = smsTemplateRepository.GetTemplateData(templateName);
+		if(!CollectionUtils.isEmpty(templates)) {
+			String message  = formatMessage(challan,templates.get(0).getSmsBody());
+			SMSRequest smsRequest = SMSRequest.builder().templateName(templateName).message(message).build();
+			return smsRequest;
+		}
+		return null;
+	}
+	
+	public String formatMessage(Challan challan,String message) {
+		message = message.replace("#","testing");
+		return message;
 	}
 
 }
