@@ -3,6 +3,7 @@ package org.egov.user.domain.model;
 import lombok.*;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.user.domain.model.enums.AddressType;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.util.Date;
 
@@ -31,13 +32,14 @@ public class Address {
     private String landmark;
     private String locality;
 
-
+    @JsonIgnore
     boolean isInvalid() {
         return isPinCodeInvalid()
                 || isCityInvalid()
                 || isAddressInvalid();
     }
 
+    @JsonIgnore
     public boolean isNotEmpty() {
         return StringUtils.isNotEmpty(pinCode)
                 || StringUtils.isNotEmpty(city)
@@ -49,6 +51,7 @@ public class Address {
      * @param mandatoryFieldsEnabled whether mandatory field validation is enabled
      * @return true if validation fails, false otherwise
      */
+    @JsonIgnore
     public boolean isMandatoryFieldsMissing(boolean mandatoryFieldsEnabled) {
         if (!mandatoryFieldsEnabled) {
             return false; // Skip validation if not enabled
@@ -59,15 +62,18 @@ public class Address {
                 || StringUtils.isEmpty(pinCode) 
                 || StringUtils.isEmpty(address);
     }
-
+    
+    @JsonIgnore
     boolean isPinCodeInvalid() {
         return pinCode != null && pinCode.length() > 10;
     }
-
+    
+    @JsonIgnore
     boolean isCityInvalid() {
         return city != null && city.length() > 300;
     }
 
+    @JsonIgnore
     boolean isAddressInvalid() {
         return address != null && address.length() > 300;
     }
