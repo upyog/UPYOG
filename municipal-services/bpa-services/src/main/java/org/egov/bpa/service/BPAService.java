@@ -314,7 +314,8 @@ public class BPAService {
 		List<BPA> bpas = new LinkedList<>();;
 		log.debug("Call with mobile number to Land::" + criteria.getMobileNumber());
 		landcriteria.setMobileNumber(criteria.getMobileNumber());
-		ArrayList<LandInfo> landInfo = landService.searchLandInfoToBPA(requestInfo, landcriteria);
+		// ArrayList<LandInfo> landInfo = landService.searchLandInfoToBPA(requestInfo, landcriteria);
+		ArrayList<LandInfo> landInfo = new ArrayList<LandInfo>();
 		ArrayList<String> landId = new ArrayList<>();
 		if (!landInfo.isEmpty()) {
 			landInfo.forEach(land -> landId.add(land.getId()));
@@ -322,10 +323,10 @@ public class BPAService {
 		}
 
 		String tenantId = criteria.getTenantId();
-		if(landInfo.isEmpty() && !tenantId.isEmpty() && tenantId !=null)
-		{
-          return bpas;
-		}
+		// if(landInfo.isEmpty() && !tenantId.isEmpty() && tenantId !=null)
+		// {
+  //         return bpas;
+		// }
 
 		bpas = getBPAFromLandId(criteria, requestInfo, null);
 		if (!landInfo.isEmpty()) {
