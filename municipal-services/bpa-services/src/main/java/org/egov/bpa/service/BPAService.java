@@ -314,8 +314,7 @@ public class BPAService {
 		List<BPA> bpas = new LinkedList<>();;
 		log.debug("Call with mobile number to Land::" + criteria.getMobileNumber());
 		landcriteria.setMobileNumber(criteria.getMobileNumber());
-		// ArrayList<LandInfo> landInfo = landService.searchLandInfoToBPA(requestInfo, landcriteria);
-		ArrayList<LandInfo> landInfo = new ArrayList<LandInfo>();
+		ArrayList<LandInfo> landInfo = landService.searchLandInfoToBPA(requestInfo, landcriteria);
 		ArrayList<String> landId = new ArrayList<>();
 		if (!landInfo.isEmpty()) {
 			landInfo.forEach(land -> landId.add(land.getId()));
