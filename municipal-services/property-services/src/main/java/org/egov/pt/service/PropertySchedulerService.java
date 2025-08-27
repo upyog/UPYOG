@@ -505,8 +505,8 @@ public class PropertySchedulerService {
 			return billResponse;
 		} catch (Exception e) {
 			log.error(e.getMessage());
+			return null;
 		}
-		return null;
 	}
 
 	private boolean isAreaWithinRange(String propertyAreaString, BigDecimal propertyArea) {
