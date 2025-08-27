@@ -86,6 +86,9 @@ public class UserService {
     @Value("${egov.user.pwd.pattern.max.length}")
     private Integer pwdMaxLength;
 
+    @Value("${user.address.mandatory.fields.enabled}")
+    private boolean addressMandatoryFieldsEnabled;
+
     @Autowired
     private RestTemplate restTemplate;
 
@@ -707,6 +710,13 @@ public class UserService {
         if (userId == null) {
             throw new IllegalArgumentException("USER_UUID_NOT_VALID: The provided user UUID:"+userUuid+" is not valid");
         }
+        
+        // Validate mandatory fields if enabled
+        if (addressMandatoryFieldsEnabled && address.isMandatoryFieldsMissing(addressMandatoryFieldsEnabled)) {
+            log.error("Address validation failed - mandatory fields missing for address creation for user UUID: {}", userUuid);
+            throw new CustomException("ADDRESS_VALIDATION_ERROR", "City, pincode, and address are mandatory fields for address creation");
+        }
+        
         // Check if Permanent or Correspondence address already exists and not Other category as Other can be created multiple times
         if (AddressType.PERMANENT == address.getType() || AddressType.CORRESPONDENCE == address.getType()) {
             AddressSearchCriteria addressSearchCriteria = AddressSearchCriteria.builder()
@@ -756,6 +766,12 @@ public class UserService {
      * @throws IllegalArgumentException if the address ID does not exist in the database.
      */
     public Address updateAddress(Address address) {
+
+        // Validate mandatory fields if enabled
+        if (addressMandatoryFieldsEnabled && address.isMandatoryFieldsMissing(addressMandatoryFieldsEnabled)) {
+            log.error("Address validation failed - mandatory fields missing for address update with ID: {}", address.getId());
+            throw new CustomException("ADDRESS_VALIDATION_ERROR", "City, pincode, and address are mandatory fields for address creation");
+        }
 
         AddressSearchCriteria addressSearchCriteria = AddressSearchCriteria.builder()
                 .id(address.getId())

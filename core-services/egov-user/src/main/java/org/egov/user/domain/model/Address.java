@@ -11,7 +11,7 @@ import java.util.Date;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@EqualsAndHashCode(of = {"id"})
+@EqualsAndHashCode(of = {"id","pinCode","city","address","type","address2","houseNumber","houseName","streetName","landmark","locality"})
 public class Address {
     private String pinCode;
     private String city;
@@ -38,10 +38,26 @@ public class Address {
                 || isAddressInvalid();
     }
 
-    boolean isNotEmpty() {
+    public boolean isNotEmpty() {
         return StringUtils.isNotEmpty(pinCode)
                 || StringUtils.isNotEmpty(city)
                 || StringUtils.isNotEmpty(address);
+    }
+
+    /**
+     * Validates if mandatory address fields are present when mandatory field validation is enabled
+     * @param mandatoryFieldsEnabled whether mandatory field validation is enabled
+     * @return true if validation fails, false otherwise
+     */
+    public boolean isMandatoryFieldsMissing(boolean mandatoryFieldsEnabled) {
+        if (!mandatoryFieldsEnabled) {
+            return false; // Skip validation if not enabled
+        }
+        
+        // Check if any of the mandatory fields are null or empty
+        return StringUtils.isEmpty(city) 
+                || StringUtils.isEmpty(pinCode) 
+                || StringUtils.isEmpty(address);
     }
 
     boolean isPinCodeInvalid() {
