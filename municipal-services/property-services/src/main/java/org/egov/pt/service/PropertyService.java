@@ -588,45 +588,54 @@ public class PropertyService {
 				properties = repository.getPropertiesWithOwnerInfo(criteria, requestInfo, false);
 			}
 			
-			//Chages for reuiremnet occupanctname // Love PI-19300
-			List<String> occupancyTypeCodes = properties.stream()
-				    .flatMap(p -> {
-				        List<Unit> activeUnits = p.getUnits().stream()
-				                .filter(u -> Boolean.TRUE.equals(u.getActive())) 
-				                .collect(Collectors.toList());
+			 // --- Changes for occupancy name enrichment (PI-19300) ---
+	        List<String> occupancyTypeCodes = Collections.emptyList();
 
-				        // If no active units, fallback to latest property based on createdTime
-				        if (activeUnits.isEmpty()) {
-				            Property latestProperty = properties.stream()
-				                    .max(Comparator.comparing(prop -> prop.getAuditDetails().getCreatedTime()))
-				                    .orElse(p);
+	        // Collect all active units
+	        List<Unit> activeUnits = properties.stream()
+	                .filter(p -> p.getUnits() != null)
+	                .flatMap(p -> p.getUnits().stream())
+	                .filter(u -> Boolean.TRUE.equals(u.getActive()))
+	                .collect(Collectors.toList());
 
-				            return latestProperty.getUnits().stream();
-				        } else {
-				            return activeUnits.stream();
-				        }
-				    })
-				    .map(Unit::getOccupancyType)
-				    .filter(Objects::nonNull)  
-				    .map(Object::toString)
-				    .distinct()
-				    .collect(Collectors.toList());
-			
-			
-			String occupancyTypesResponse = repository.fetchOccupancyTypesAsString(requestInfo, criteria.getTenantId(), occupancyTypeCodes);
-			
-			// Set occupancyName in each unit if response is not null
-			if (occupancyTypesResponse != null) {
-			    properties.forEach(property -> 
-			        property.getUnits().forEach(unit -> unit.setOccupancyName(occupancyTypesResponse))
-			    );
-			}
+	        List<Unit> finalUnits;
 
-			properties.forEach(property -> {
-				enrichmentService.enrichBoundary(property, requestInfo);
-			});
-		}
+	        if (!activeUnits.isEmpty()) {
+	            finalUnits = activeUnits;
+	        } else {
+	            Property latestProperty = properties.stream()
+	                    .max(Comparator.comparing(prop -> prop.getAuditDetails().getCreatedTime()))
+	                    .orElse(null);
 
+	            finalUnits = (latestProperty != null && latestProperty.getUnits() != null)
+	                    ? latestProperty.getUnits()
+	                    : Collections.emptyList();
+	        }
+
+	        occupancyTypeCodes = finalUnits.stream()
+	                .map(Unit::getOccupancyType)
+	                .filter(Objects::nonNull)
+	                .map(Object::toString)
+	                .distinct()
+	                .collect(Collectors.toList());
+
+	        if (!occupancyTypeCodes.isEmpty()) {
+	            String occupancyTypesResponse = repository.fetchOccupancyTypesAsString(
+	                    requestInfo, criteria.getTenantId(), occupancyTypeCodes);
+
+	            if (occupancyTypesResponse != null) {
+	                properties.forEach(property ->
+	                        property.getUnits().forEach(unit ->
+	                                unit.setOccupancyName(occupancyTypesResponse)
+	                        )
+	                );
+	            }
+	        }
+	        // --- end of occupancy enrichment ---
+
+	        // enrich boundary
+	        properties.forEach(property -> enrichmentService.enrichBoundary(property, requestInfo));
+	    }
 		/* Decrypt here */
 		/*
 		 * if(criteria.getIsSearchInternal()) return
