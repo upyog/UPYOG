@@ -3,6 +3,7 @@ package org.egov.pt.service;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -12,12 +13,14 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.validation.Valid;
+import java.util.Objects;
 
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.pt.config.PropertyConfiguration;
 import org.egov.pt.models.OwnerInfo;
 import org.egov.pt.models.Property;
 import org.egov.pt.models.PropertyCriteria;
+import org.egov.pt.models.Unit;
 import org.egov.pt.models.collection.BillDetail;
 import org.egov.pt.models.collection.BillResponse;
 import org.egov.pt.models.enums.CreationReason;
@@ -584,12 +587,62 @@ public class PropertyService {
 			} else {
 				properties = repository.getPropertiesWithOwnerInfo(criteria, requestInfo, false);
 			}
+			
+			 // --- Changes for occupancy name enrichment (PI-19300) ---
+			// --- Changes for occupancy name enrichment (PI-19300) ---
+			// Execute only if at least one property has non-null units
+			boolean hasUnits = properties.stream().anyMatch(p -> p.getUnits() != null);
 
-			properties.forEach(property -> {
-				enrichmentService.enrichBoundary(property, requestInfo);
-			});
-		}
+			if (hasUnits) {
+			    List<Unit> activeUnits = properties.stream()
+			            .filter(p -> p.getUnits() != null)
+			            .flatMap(p -> p.getUnits().stream())
+			            .filter(u -> Boolean.TRUE.equals(u.getActive()))
+			            .collect(Collectors.toList());
 
+			    List<Unit> finalUnits;
+			    if (!activeUnits.isEmpty()) {
+			        finalUnits = activeUnits;
+			    } else {
+			        Property latestProperty = properties.stream()
+			                .max(Comparator.comparing(prop -> prop.getAuditDetails().getCreatedTime()))
+			                .orElse(null);
+
+			        finalUnits = (latestProperty != null && latestProperty.getUnits() != null)
+			                ? latestProperty.getUnits()
+			                : Collections.emptyList();
+			    }
+
+			    List<String> occupancyTypeCodes = finalUnits.stream()
+			            .map(Unit::getOccupancyType)
+			            .filter(Objects::nonNull)
+			            .map(Object::toString)
+			            .distinct()
+			            .collect(Collectors.toList());
+
+			    if (!occupancyTypeCodes.isEmpty()) {
+			        String occupancyTypesResponse = repository.fetchOccupancyTypesAsString(
+			                requestInfo, criteria.getTenantId(), occupancyTypeCodes);
+
+			        if (occupancyTypesResponse != null) {
+			            for (Property property : properties) {
+			                if (property.getUnits() != null) {
+			                    for (Unit unit : property.getUnits()) {
+			                        unit.setOccupancyName(occupancyTypesResponse);
+			                    }
+			                }
+			            }
+			        }
+			    }
+			} else {
+			    log.info("No units found in properties, skipping occupancy enrichment.");
+			}
+		    // --- end of occupancy enrichment ---
+
+
+	        // enrich boundary
+	        properties.forEach(property -> enrichmentService.enrichBoundary(property, requestInfo));
+	    }
 		/* Decrypt here */
 		/*
 		 * if(criteria.getIsSearchInternal()) return
