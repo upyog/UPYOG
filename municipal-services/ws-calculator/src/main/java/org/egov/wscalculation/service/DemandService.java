@@ -1782,7 +1782,7 @@ public class DemandService {
 				billResponse.put("requestInfo", requestInfo);
 				billResponse.put("billResponse", result);
 //				log.info("Result"+result.toString());
-				wsCalculationProducer.push(configs.getPayTriggers(), billResponse);
+				//wsCalculationProducer.push(configs.getPayTriggers(), billResponse);
 				notificationSent = true;
 				successCount++;
 			} catch (Exception ex) {
