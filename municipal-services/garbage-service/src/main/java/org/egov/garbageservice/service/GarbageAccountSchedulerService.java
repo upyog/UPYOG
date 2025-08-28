@@ -100,8 +100,8 @@ public class GarbageAccountSchedulerService {
 							GrbgBillFailure grbgBillFailure	= garbageAccountService.enrichGrbgBillFailure(garbageAccount, generateBillRequest,billResponse,errorMap);
 							garbageAccountService.removeGarbageBillFailure(grbgBillFailure);
 //							triggerNotifications
-//							notificationService.triggerNotificationsGenerateBill(garbageAccount, billResponse.getBill().get(0),
-//									generateBillRequest.getRequestInfo(),grbgBillTracker);
+							notificationService.triggerNotificationsGenerateBill(garbageAccount, billResponse.getBill().get(0),
+									generateBillRequest.getRequestInfo(),grbgBillTracker);
 						}else {
 							errorMap.put("ERROR-MAP", "Issues In Bill Generation Probably Demand Already Exists");
 							createFailureLog(garbageAccount, generateBillRequest,billResponse,errorMap);
@@ -261,8 +261,8 @@ public class GarbageAccountSchedulerService {
 			GenerateBillCriteria billCriteria = GenerateBillCriteria.builder().tenantId(garbageAccount.getTenantId())
 					.businessService("GB")
 					.consumerCode(garbageAccount.getGrbgApplicationNumber())
-					.demandId(savedDemands.get(0).getId())
-//					.mobileNumber(garbageAccount.getMobileNumber())
+//					.demandId(savedDemands.get(0).getId())
+					.mobileNumber(garbageAccount.getMobileNumber())
 //					.email(garbageAccount.getEmailId())
 					.build();
 			BillResponse billResponse = billService.generateBill(generateBillRequest.getRequestInfo(), billCriteria);
@@ -358,7 +358,7 @@ public class GarbageAccountSchedulerService {
 					grbgBillTrackers.add(grbgBillTracker);
 					
 	//				triggerNotifications
-	//				notificationService.triggerNotificationsGenerateBill(garbageAccount, billResponse.getBill().get(0),generateBillRequest.getRequestInfo(),grbgBillTracker);
+//					notificationService.triggerNotificationsGenerateBill(garbageAccount, billResponse.getBill().get(0),generateBillRequest.getRequestInfo(),grbgBillTracker);
 					message = "Bill Generated";
 				}else {
 					message = "Bill Could Not Be Generated";

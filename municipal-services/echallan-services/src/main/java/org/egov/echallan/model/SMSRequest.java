@@ -4,6 +4,7 @@ import lombok.*;
 
 
 @Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
@@ -11,5 +12,6 @@ import lombok.*;
 public class SMSRequest {
     private String mobileNumber;
     private String message;
+    private String templateName;
 
 }

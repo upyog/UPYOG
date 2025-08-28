@@ -143,8 +143,8 @@ public class ChallanValidator {
 			errorMap.put("INVALID_UPDATE_REQ_NOTMATCHED_MOBILENO", "User Details not matching with the Search result");
 		if(searchchallan.getApplicationStatus()!=StatusEnum.ACTIVE)
 			errorMap.put("INVALID_UPDATE_REQ_CHALLAN_INACTIVE", "Challan cannot be updated/cancelled");
-		if(!challan.getTenantId().equalsIgnoreCase(request.getRequestInfo().getUserInfo().getTenantId()))
-       	 	errorMap.put("INVALID_UPDATE_REQ_INVALID_TENANTID", "Invalid tenant id");
+//		if(!challan.getTenantId().equalsIgnoreCase(request.getRequestInfo().getUserInfo().getTenantId()))
+//       	 	errorMap.put("INVALID_UPDATE_REQ_INVALID_TENANTID", "Invalid tenant id");
 		if (!errorMap.isEmpty())
             throw new CustomException(errorMap);
 		

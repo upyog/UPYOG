@@ -272,9 +272,9 @@ public class RazorpayGateway implements Gateway {
 
 			return responseEntity.getBody();
 		} catch (Exception e) {
-			log.error("Unable to transfer amount for the orderId: " + transfer.getNotes().getOrderId(), e);
+			log.error("Unable to transfer amount for the PaymentId: " + transfer.getNotes().getGatewayTxnId(), e);
 			throw new CustomException("ERR_RAZORPAY_PG_SERVICE",
-					"Unable to transfer amount for the orderId: " + transfer.getNotes().getOrderId());
+					"Unable to transfer amount for the orderId: " + transfer.getNotes().getGatewayTxnId());
 		}
 	}
 

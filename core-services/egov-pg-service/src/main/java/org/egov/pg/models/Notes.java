@@ -14,10 +14,10 @@ import lombok.ToString;
 @NoArgsConstructor
 @ToString
 public class Notes {
-
-	private String ulbName;
-
-	private String orderId;
-
+	
+	private String name;
+	
+	private String service;
+	
 	private String gatewayTxnId;
 }
