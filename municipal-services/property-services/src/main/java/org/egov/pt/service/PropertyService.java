@@ -3,6 +3,7 @@ package org.egov.pt.service;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -12,12 +13,14 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.validation.Valid;
+import java.util.Objects;
 
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.pt.config.PropertyConfiguration;
 import org.egov.pt.models.OwnerInfo;
 import org.egov.pt.models.Property;
 import org.egov.pt.models.PropertyCriteria;
+import org.egov.pt.models.Unit;
 import org.egov.pt.models.collection.BillDetail;
 import org.egov.pt.models.collection.BillResponse;
 import org.egov.pt.models.enums.CreationReason;
@@ -583,6 +586,40 @@ public class PropertyService {
 				filterPropertiesForUser(properties, criteria.getOwnerIds());
 			} else {
 				properties = repository.getPropertiesWithOwnerInfo(criteria, requestInfo, false);
+			}
+			
+			//Chages for reuiremnet occupanctname // Love PI-19300
+			List<String> occupancyTypeCodes = properties.stream()
+				    .flatMap(p -> {
+				        List<Unit> activeUnits = p.getUnits().stream()
+				                .filter(u -> Boolean.TRUE.equals(u.getActive())) 
+				                .collect(Collectors.toList());
+
+				        // If no active units, fallback to latest property based on createdTime
+				        if (activeUnits.isEmpty()) {
+				            Property latestProperty = properties.stream()
+				                    .max(Comparator.comparing(prop -> prop.getAuditDetails().getCreatedTime()))
+				                    .orElse(p);
+
+				            return latestProperty.getUnits().stream();
+				        } else {
+				            return activeUnits.stream();
+				        }
+				    })
+				    .map(Unit::getOccupancyType)
+				    .filter(Objects::nonNull)  
+				    .map(Object::toString)
+				    .distinct()
+				    .collect(Collectors.toList());
+			
+			
+			String occupancyTypesResponse = repository.fetchOccupancyTypesAsString(requestInfo, criteria.getTenantId(), occupancyTypeCodes);
+			
+			// Set occupancyName in each unit if response is not null
+			if (occupancyTypesResponse != null) {
+			    properties.forEach(property -> 
+			        property.getUnits().forEach(unit -> unit.setOccupancyName(occupancyTypesResponse))
+			    );
 			}
 
 			properties.forEach(property -> {
