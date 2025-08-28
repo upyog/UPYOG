@@ -589,49 +589,56 @@ public class PropertyService {
 			}
 			
 			 // --- Changes for occupancy name enrichment (PI-19300) ---
-	        List<String> occupancyTypeCodes = Collections.emptyList();
+			// --- Changes for occupancy name enrichment (PI-19300) ---
+			// Execute only if at least one property has non-null units
+			boolean hasUnits = properties.stream().anyMatch(p -> p.getUnits() != null);
 
-	        // Collect all active units
-	        List<Unit> activeUnits = properties.stream()
-	                .filter(p -> p.getUnits() != null)
-	                .flatMap(p -> p.getUnits().stream())
-	                .filter(u -> Boolean.TRUE.equals(u.getActive()))
-	                .collect(Collectors.toList());
+			if (hasUnits) {
+			    List<Unit> activeUnits = properties.stream()
+			            .filter(p -> p.getUnits() != null)
+			            .flatMap(p -> p.getUnits().stream())
+			            .filter(u -> Boolean.TRUE.equals(u.getActive()))
+			            .collect(Collectors.toList());
 
-	        List<Unit> finalUnits;
+			    List<Unit> finalUnits;
+			    if (!activeUnits.isEmpty()) {
+			        finalUnits = activeUnits;
+			    } else {
+			        Property latestProperty = properties.stream()
+			                .max(Comparator.comparing(prop -> prop.getAuditDetails().getCreatedTime()))
+			                .orElse(null);
 
-	        if (!activeUnits.isEmpty()) {
-	            finalUnits = activeUnits;
-	        } else {
-	            Property latestProperty = properties.stream()
-	                    .max(Comparator.comparing(prop -> prop.getAuditDetails().getCreatedTime()))
-	                    .orElse(null);
+			        finalUnits = (latestProperty != null && latestProperty.getUnits() != null)
+			                ? latestProperty.getUnits()
+			                : Collections.emptyList();
+			    }
 
-	            finalUnits = (latestProperty != null && latestProperty.getUnits() != null)
-	                    ? latestProperty.getUnits()
-	                    : Collections.emptyList();
-	        }
+			    List<String> occupancyTypeCodes = finalUnits.stream()
+			            .map(Unit::getOccupancyType)
+			            .filter(Objects::nonNull)
+			            .map(Object::toString)
+			            .distinct()
+			            .collect(Collectors.toList());
 
-	        occupancyTypeCodes = finalUnits.stream()
-	                .map(Unit::getOccupancyType)
-	                .filter(Objects::nonNull)
-	                .map(Object::toString)
-	                .distinct()
-	                .collect(Collectors.toList());
+			    if (!occupancyTypeCodes.isEmpty()) {
+			        String occupancyTypesResponse = repository.fetchOccupancyTypesAsString(
+			                requestInfo, criteria.getTenantId(), occupancyTypeCodes);
 
-	        if (!occupancyTypeCodes.isEmpty()) {
-	            String occupancyTypesResponse = repository.fetchOccupancyTypesAsString(
-	                    requestInfo, criteria.getTenantId(), occupancyTypeCodes);
+			        if (occupancyTypesResponse != null) {
+			            for (Property property : properties) {
+			                if (property.getUnits() != null) {
+			                    for (Unit unit : property.getUnits()) {
+			                        unit.setOccupancyName(occupancyTypesResponse);
+			                    }
+			                }
+			            }
+			        }
+			    }
+			} else {
+			    log.info("No units found in properties, skipping occupancy enrichment.");
+			}
+		    // --- end of occupancy enrichment ---
 
-	            if (occupancyTypesResponse != null) {
-	                properties.forEach(property ->
-	                        property.getUnits().forEach(unit ->
-	                                unit.setOccupancyName(occupancyTypesResponse)
-	                        )
-	                );
-	            }
-	        }
-	        // --- end of occupancy enrichment ---
 
 	        // enrich boundary
 	        properties.forEach(property -> enrichmentService.enrichBoundary(property, requestInfo));
