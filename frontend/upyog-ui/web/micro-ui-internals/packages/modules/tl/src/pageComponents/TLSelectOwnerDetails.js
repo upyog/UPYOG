@@ -269,7 +269,7 @@ const TLSelectOwnerDetails = ({ t, config, onSelect, userType, formData }) => {
                     {...{
                       validation: {
                         // isRequired: true,
-                        pattern: "^[a-z0-9]+( [a-z0-9]+)*$",
+                        pattern: "^[a-zA-Z]+( [a-zA-Z]+)*$",
                         type: "text",
                         title: t("TL_NAME_ERROR_MESSAGE"),
                       },
@@ -373,7 +373,7 @@ const TLSelectOwnerDetails = ({ t, config, onSelect, userType, formData }) => {
   return (
     <React.Fragment>
       {window.location.href.includes("/citizen") ? <Timeline currentStep={2} /> : null}
-      <FormStep config={config} onSelect={goNext} onSkip={onSkip} t={t} isDisabled={false} forcedError={t(error)}>
+      <FormStep config={config} onSelect={goNext} onSkip={onSkip} t={t} isDisabled={typeOfOwner=="MULTIOWNER" ? formState?.length<2 ? true : false : false} forcedError={t(error)}>
         {formState?.map((field, index) => {
           return (
             <div key={`${field}-${index}`}>

@@ -264,6 +264,7 @@ const TLApplicationDetails = () => {
                       textStyle={{ wordBreak:"break-word" }}
                     />
                     <Row
+                      className="border-none"
                       label={`${t("TL_INSTITUTION_TYPE_LABEL")}`}
                       text={t(`TL_${application?.tradeLicenseDetail?.subOwnerShipCategory}`)}
                       textStyle={{ wordBreak:"break-word" }}
@@ -292,6 +293,7 @@ const TLApplicationDetails = () => {
                     <Row className="border-none" label={`${t("TL_EMAIL_ID_LABEL")}`} text={t(ele.emailId || t("CS_NA"))} textStyle={{ wordBreak:"break-word" }} />
                     <Row className="border-none" label={`${t("TL_GUARDIAN_S_NAME_LABEL")}`} text={t(ele.fatherOrHusbandName)} textStyle={{ wordBreak:"break-word" }} />
                     <Row className="border-none" label={`${t("TL_RELATIONSHIP_WITH_GUARDIAN_LABEL")}`} text={t(ele.relationship)} textStyle={{ wordBreak:"break-word" }} />
+                    <Row className="border-none" label={`${t("TL_COMMON_TABLE_COL_OWN_CATEGORY_SHIP")}`} text={t(application?.tradeLicenseDetail?.subOwnerShipCategory)} textStyle={{ wordBreak:"break-word" }} />
                   </div>
                 );
               })}
