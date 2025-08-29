@@ -111,7 +111,7 @@ public class PaymentUpdateService {
 					 */
 					enrichmentService.postStatusEnrichment(updateRequest);
 
-					repository.update(updateRequest, false);
+					repository.update(updateRequest, true);
 
 				}
 			}
