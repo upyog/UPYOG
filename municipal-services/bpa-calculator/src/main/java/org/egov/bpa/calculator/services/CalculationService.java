@@ -1,8 +1,8 @@
 package org.egov.bpa.calculator.services;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -135,7 +135,12 @@ public class CalculationService {
 			CalulationCriteria calulationCriteria, RequestInfo requestInfo,
 			Object mdmsData) {
 		List<TaxHeadEstimate> estimates = new LinkedList<>();
-		EstimatesAndSlabs estimatesAndSlabs;
+		
+		TaxHeadEstimate estimate = new TaxHeadEstimate();
+		BigDecimal totalTax=BigDecimal.ZERO;
+		String taxhead=null;
+
+		EstimatesAndSlabs estimatesAndSlabs = new EstimatesAndSlabs();
 		if (calulationCriteria.getFeeType().equalsIgnoreCase(BPACalculatorConstants.LOW_RISK_PERMIT_FEE_TYPE)) {
 
 //			 stopping Application fee for lowrisk applicaiton according to BBI-391
@@ -151,7 +156,48 @@ public class CalculationService {
 
 			calulationCriteria.setFeeType(BPACalculatorConstants.LOW_RISK_PERMIT_FEE_TYPE);
 
-		} else {
+		} 
+		else if (calulationCriteria.getFeeType().equalsIgnoreCase(BPACalculatorConstants.MDMS_CALCULATIONTYPE_APL_FEETYPE) && calulationCriteria.getBpa().getApplicationType().equalsIgnoreCase("BUILDING_PLAN_SCRUTINY"))
+		{	
+			@SuppressWarnings("unchecked")
+			Map<String,String> node=(Map<String, String>)calulationCriteria.getBpa().getAdditionalDetails();
+		
+			if(!node.containsKey("boundaryWallLength"))
+				throw new CustomException(BPACalculatorConstants.PARSING_ERROR, "Boundary Wall length should not be null");
+			if(!node.containsKey("builtUpArea"))
+				throw new CustomException(BPACalculatorConstants.PARSING_ERROR, "builtUpArea should not be null!!");
+
+		BigDecimal boundayWallLength=new BigDecimal(node.get("boundaryWallLength"));
+		BigDecimal area=new BigDecimal(node.get("builtUpArea")).multiply(BigDecimal.valueOf(10.7639));
+		
+		totalTax=boundayWallLength.multiply(BigDecimal.valueOf(2.5)).add(area.multiply(BigDecimal.valueOf(2.5)));
+		estimate.setEstimateAmount(totalTax.setScale(0, RoundingMode.HALF_UP));
+		estimate.setCategory(Category.FEE);
+
+		String taxHeadCode = utils.getTaxHeadCode(calulationCriteria.getBpa().getBusinessService(), calulationCriteria.getFeeType());
+		estimate.setTaxHeadCode(taxHeadCode);
+		estimates.add(estimate);
+		}
+		
+		else if (calulationCriteria.getFeeType().equalsIgnoreCase(BPACalculatorConstants.MDMS_CALCULATIONTYPE_SANC_FEETYPE) && calulationCriteria.getBpa().getBusinessService().equalsIgnoreCase("BPA"))
+		{	
+			@SuppressWarnings("unchecked")
+			Map<String,Map<String,String>> node=(Map<String, Map<String,String>>)calulationCriteria.getBpa().getAdditionalDetails();
+			Map<String,String> fee=node.get("selfCertificationCharges");
+			for(Map.Entry<String,String> entry : fee.entrySet()){
+				TaxHeadEstimate estimatee = new TaxHeadEstimate();
+				BigDecimal amount=new BigDecimal(entry.getValue());
+				taxhead=entry.getKey();
+				if(taxhead.equalsIgnoreCase("BPA_LESS_ADJUSMENT_PLOT"))
+					amount=amount.multiply(new BigDecimal(-1));
+				estimatee.setEstimateAmount(amount);
+				estimatee.setCategory(Category.FEE);
+				estimatee.setTaxHeadCode(taxhead);
+				estimates.add(estimatee);	
+			}
+		}
+
+		else {
 			estimatesAndSlabs = getBaseTax(calulationCriteria, requestInfo, mdmsData);
 			estimates.addAll(estimatesAndSlabs.getEstimates());
 		}

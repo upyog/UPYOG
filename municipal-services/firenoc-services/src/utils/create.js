@@ -86,8 +86,6 @@ export const addUUIDAndAuditDetails = async (request, method = "_update") => {
     ) {
       let owners = FireNOCs[i].fireNOCDetails.applicantDetails.owners;
       let ownerShipType = FireNOCs[i].fireNOCDetails.applicantDetails.ownerShipType;
-      console.log("Owner" + JSON.stringify(owners))
-      //Owner[{"mobileNumber":"9915299990","name":"Test User first","gender":"MALE","dob":641932199000,"fatherOrHusbandName":"fdfdfd","relationship":"Father","correspondenceAddress":"sdhsd","isPrimaryowner":true}]
       for (var owneriter = 0; owneriter < owners.length; owneriter++) {
         let userResponse = {};
         let userSearchReqCriteria = {};
@@ -114,12 +112,10 @@ export const addUUIDAndAuditDetails = async (request, method = "_update") => {
                );
              } else {
                let ownerTemp = addDeactiveUserDetails("pb", owners[owneriter]);
-               console.log("Hello Owner"+ JSON.stringify(ownerTemp))
                userResponse = await userService.createUser(RequestInfo, ownerTemp);
              }
            } else {
             if (userlegalName === owners[owneriter].name) {
-              console.log("fbefevfefe")
               userResponse = await userService.updateUser(RequestInfo,
                 {
                   ...userSearchResponse.user[0],
@@ -128,7 +124,6 @@ export const addUUIDAndAuditDetails = async (request, method = "_update") => {
               );
             } else {
               let ownerTemp = addDeactiveUserDetails('pb', owners[owneriter]);
-              console.log("Hello Temp 2"+JSON.stringify(ownerTemp))
               userResponse = await userService.createUser(RequestInfo, ownerTemp);
             }
           }
@@ -177,7 +172,6 @@ export const addUUIDAndAuditDetails = async (request, method = "_update") => {
     FireNOCs[i] = await checkApproveRecord(FireNOCs[i], RequestInfo);
   }
   request.FireNOCs = FireNOCs;
-  console.log("Final Request" + JSON.stringify(request))
   return request;
 };
 
@@ -201,21 +195,15 @@ const createUser = async (requestInfo, owner, tenantId) => {
         ...userSearchResponse.user[0],
         ...owner
       });
-      //console.log("userCreateResponse" + JSON.stringify(userCreateResponse));
     } else {
-      // console.log("user not found");
 
       owner = addDefaultUserDetails(tenantId, owner);
-      //console.log("userSearchResponse.user[0]", userSearchResponse.user[0]);
-      //console.log("owner", owner);
       userCreateResponse = await userService.createUser(requestInfo, {
         ...userSearchResponse.user[0],
         ...owner
       });
-      // console.log("Create passed");
     }
   } else {
-    //uuid present
     userSearchReqCriteria.uuid = [owner.uuid];
     userSearchResponse = await userService.searchUser(
       requestInfo,
@@ -226,7 +214,6 @@ const createUser = async (requestInfo, owner, tenantId) => {
         ...userSearchResponse.user[0],
         ...owner
       });
-      // console.log("Update passed");
     }
   }
   return userCreateResponse;
@@ -273,7 +260,7 @@ const addDefaultUserDetails = (tenantId, owner) => {
 const addDeactiveUserDetails = (tenantId, owner) => {
   if (!owner.userName || isEmpty(owner.userName))
     owner.userName = uuidv1();
-  owner.active = false;
+  owner.active = true;
   owner.tenantId = envVariables.EGOV_DEFAULT_STATE_ID;
   owner.type = "CITIZEN";
   owner.roles = [

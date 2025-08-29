@@ -131,6 +131,9 @@ public class Payment {
     @Pattern(regexp = "^[6-9][0-9]{9}$", message = "Invalid mobile number")
     @JsonProperty("mobileNumber")
     private String mobileNumber = null;
+    
+    @JsonProperty("ownerNumber")
+    private List<String> ownerNumber = null;
 
     @SafeHtml
     @Size(max=128)
@@ -160,6 +163,10 @@ public class Payment {
     @SafeHtml
     @JsonProperty("fileStoreId")
     private String fileStoreId;
+    
+    
+    @JsonProperty("ownername")
+    private List<String> ownername;
 
 	@JsonProperty("usageCategory")
 	private String usageCategory;

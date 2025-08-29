@@ -155,6 +155,30 @@ public class ApplicationProperties {
     @Value("${egov.apportion.apportion.endpoint}")
     private String apportionURI;
     
+    @Value("${egov.enc.service.host}")
+    private String encHost;
+    
+    @Value("${egov.enc.service.endpoint}")
+    private String encUrl;
+    
+    @Value("${ws.service.host}")
+    private String wsHost;
+    
+    @Value("${ws.service.endpoint}")
+    private String wsUrl;
+    
+    @Value("${sw.service.host}")
+    private String swHost;
+    
+    @Value("${sw.service.endpoint}")
+    private String swUrl;
+    
+    @Value("${pt.service.host}")
+    private String ptHost;
+    
+    @Value("${pt.service.endpoint}")
+    private String ptUrl;
+    
     @Value("${collection.is.user.create.enabled}")
     private Boolean isUserCreateEnabled;
     

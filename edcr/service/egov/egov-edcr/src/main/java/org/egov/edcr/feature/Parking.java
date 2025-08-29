@@ -101,32 +101,34 @@ public class Parking extends FeatureProcess {
     private static final String MECHANICAL_PARKING = "Mechanical parking";
     private static final String MAX_ALLOWED_MECH_PARK = "Maximum allowed mechanical parking";
     private static final String TWO_WHEELER_PARK_AREA = "Two Wheeler Parking Area";
+    private static final String TWO_WHEELER_PARK = "Two Wheeler Parking";
     private static final String LOADING_UNLOADING_AREA = "Loading Unloading Area";
     private static final String SP_PARKING = "Special parking";
     private static final String SUB_RULE_34_1_DESCRIPTION = "Parking Slots Area";
     private static final String SUB_RULE_34_2 = "34-2";
     private static final String SUB_RULE_40_8 = "40-8";
-    private static final String SUB_RULE_40_11 = "40-11";
+    private static final String RULE = "Table 4.4.4";
     private static final String PARKING_MIN_AREA = "5 M x 2 M";
     private static final double PARKING_SLOT_WIDTH = 2;
     private static final double PARKING_SLOT_HEIGHT = 5;
     private static final double SP_PARK_SLOT_MIN_SIDE = 3.6;
     private static final String DA_PARKING_MIN_AREA = " 3.60 M ";
     public static final String NO_OF_UNITS = "No of apartment units";
-    private static final double TWO_WHEEL_PARKING_AREA_WIDTH = 1.5;
-    private static final double TWO_WHEEL_PARKING_AREA_HEIGHT = 2.0;
+    private static final double TWO_WHEEL_PARKING_AREA_WIDTH = 2.0;
+    private static final double TWO_WHEEL_PARKING_AREA_HEIGHT = 0.75;
     private static final double MECH_PARKING_WIDTH = 2.7;
     private static final double MECH_PARKING_HEIGHT = 5.5;
 
-    private static final double OPEN_ECS = 23;
-    private static final double COVER_ECS = 28;
-    private static final double BSMNT_ECS = 32;
+    private static final double OPEN_ECS = 22.15;
+    private static final double COVER_ECS = 27.17;
+    private static final double BSMNT_ECS = 38.5;
+    private static final double STILT_ECS = 32.5;
     private static final double PARK_A = 0.25;
     private static final double PARK_F = 0.30;
     private static final double PARK_VISITOR = 0.15;
     private static final String SUB_RULE_40 = "40";
-    private static final String SUB_RULE_40_2 = "40-2";
-    private static final String SUB_RULE_40_2_DESCRIPTION = "Parking space";
+    private static final String RULE_ = "4.2.1";
+    private static final String RULE__DESCRIPTION = "Parking space";
     private static final String SUB_RULE_40_10 = "40-10";
     private static final String SUB_RULE_40_10_DESCRIPTION = "Visitor’s Parking";
     public static final String OPEN_PARKING_DIM_DESC = "Open parking ECS dimension ";
@@ -140,13 +142,15 @@ public class Parking extends FeatureProcess {
     public static final String MECH_PARKING_DIM_DESC_NA = " mechanical parking polyines does not have dimensions 2.7*5.5 m²";
     
     private static final String PARKING_VIOLATED_DIM = " parking violated dimension.";
-    private static final String PARKING_AREA_DIM = "1.5 M x 2 M";
+    private static final String TWO_WHEEL_PARKING_PROVIDE = " 2 wheeler parking not provided.";
+    private static final String TWO_WHEELER_SIZE_NOTE = "Note : Two Wheeler Size - 2.0 x 0.75 Meter";
+    private static final String PARKING_AREA_DIM = "2.0 M x 0.75 M";
 
 
 
     @Override
     public Plan validate(Plan pl) {
-        //validateDimensions(pl);
+//        validateDimensions(pl);
         return pl;
     }
 
@@ -160,6 +164,7 @@ public class Parking extends FeatureProcess {
         scrutinyDetail.addColumnHeading(3, REQUIRED);
         scrutinyDetail.addColumnHeading(4, PROVIDED);
         scrutinyDetail.addColumnHeading(5, STATUS);
+        
         processParking(pl);
         //processMechanicalParking(pl);
         return pl;
@@ -245,7 +250,19 @@ public class Parking extends FeatureProcess {
 
     public void processParking(Plan pl) {
         ParkingHelper helper = new ParkingHelper();
-        // checkDimensionForCarParking(pl, helper);
+        BigDecimal plotArea = pl.getPlot() != null ? pl.getPlot().getArea() : BigDecimal.ZERO;
+              
+        ScrutinyDetail scrutinyDetail1 = new ScrutinyDetail();
+        scrutinyDetail1.addColumnHeading(1, RULE_NO);
+        scrutinyDetail1.addColumnHeading(2, DESCRIPTION);
+        scrutinyDetail1.addColumnHeading(3, "");
+        scrutinyDetail1.addColumnHeading(4, REQUIRED);
+        scrutinyDetail1.addColumnHeading(5, PROVIDED);
+        scrutinyDetail1.addColumnHeading(6, STATUS);
+        
+        if (pl.getParkingDetails() != null && pl.getParkingDetails().getTwoWheelers() != null && !pl.getParkingDetails().getTwoWheelers().isEmpty()) {
+            scrutinyDetail.setSubHeading(TWO_WHEELER_SIZE_NOTE);
+        }
 
         OccupancyTypeHelper mostRestrictiveOccupancy = pl.getVirtualBuilding() != null
                 ? pl.getVirtualBuilding().getMostRestrictiveFarHelper()
@@ -254,103 +271,153 @@ public class Parking extends FeatureProcess {
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
         BigDecimal coverParkingArea = BigDecimal.ZERO;
         BigDecimal basementParkingArea = BigDecimal.ZERO;
+        BigDecimal openParkingArea = BigDecimal.ZERO;
+        BigDecimal stiltParkingArea = BigDecimal.ZERO;
+
         for (Block block : pl.getBlocks()) {
             for (Floor floor : block.getBuilding().getFloors()) {
                 coverParkingArea = coverParkingArea.add(floor.getParking().getCoverCars().stream().map(Measurement::getArea)
-                        .reduce(BigDecimal.ZERO, BigDecimal::add));
+                        .reduce(BigDecimal.ZERO, BigDecimal::add)).setScale(2, RoundingMode.UP);
                 basementParkingArea = basementParkingArea
                         .add(floor.getParking().getBasementCars().stream().map(Measurement::getArea)
-                                .reduce(BigDecimal.ZERO, BigDecimal::add));
+                                .reduce(BigDecimal.ZERO, BigDecimal::add)).setScale(2, RoundingMode.UP);
             }
         }
-        BigDecimal openParkingArea = pl.getParkingDetails().getOpenCars().stream().map(Measurement::getArea)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        openParkingArea = pl.getParkingDetails().getOpenCars().stream().map(Measurement::getArea)
+                .reduce(BigDecimal.ZERO, BigDecimal::add).setScale(2, RoundingMode.UP);
+        stiltParkingArea = pl.getParkingDetails().getStilts().stream().map(Measurement::getArea)
+                .reduce(BigDecimal.ZERO, BigDecimal::add).setScale(2, RoundingMode.UP);
 
-        BigDecimal totalProvidedCarParkArea = openParkingArea.add(coverParkingArea).add(basementParkingArea);
+        BigDecimal totalProvidedCarParkArea = openParkingArea.add(coverParkingArea).add(basementParkingArea).add(stiltParkingArea);
         helper.totalRequiredCarParking += openParkingArea.doubleValue() / OPEN_ECS;
         helper.totalRequiredCarParking += coverParkingArea.doubleValue() / COVER_ECS;
         helper.totalRequiredCarParking += basementParkingArea.doubleValue() / BSMNT_ECS;
+        helper.totalRequiredCarParking += stiltParkingArea.doubleValue() / STILT_ECS;
+        
+        double totalRequiredOpenCarParking = openParkingArea.doubleValue() / OPEN_ECS;
+        String formattedValue = String.format("%.2f", totalRequiredOpenCarParking);
+        double roundedValueOpen = Double.parseDouble(formattedValue);
+        
+        double totalRequiredCoverCarParking = coverParkingArea.doubleValue() / COVER_ECS;
+        String formattedValue1 = String.format("%.2f", totalRequiredCoverCarParking);
+        double roundedValueCover = Double.parseDouble(formattedValue1);
+
+        
+        double totalRequiredBsmntCarParking = basementParkingArea.doubleValue() / BSMNT_ECS;
+        String formattedValue2 = String.format("%.2f", totalRequiredBsmntCarParking);
+        double roundedValueBsmnt = Double.parseDouble(formattedValue2);
+
+        
+        double totalRequiredStiltCarParking = stiltParkingArea.doubleValue() / STILT_ECS;
+        String formattedValue3 = String.format("%.2f", totalRequiredStiltCarParking);
+        double roundedValueStilt = Double.parseDouble(formattedValue3);
+
+     
+
         Double requiredCarParkArea = 0d;
         Double requiredVisitorParkArea = 0d;
 
         BigDecimal providedVisitorParkArea = BigDecimal.ZERO;
 
         validateSpecialParking(pl, helper, totalBuiltupArea);
-
-        if (totalBuiltupArea != null && totalBuiltupArea.doubleValue() <= 300) {
-
-            if (mostRestrictiveOccupancy != null && A.equals(mostRestrictiveOccupancy.getType().getCode())) {
-                if (totalBuiltupArea.doubleValue() <= 200) {
-                    requiredCarParkArea += OPEN_ECS * 1;
-                } else if (totalBuiltupArea.doubleValue() > 200 && totalBuiltupArea.doubleValue() <= 300) {
-                    requiredCarParkArea += OPEN_ECS * 2;
-                }
-            } else {
-                BigDecimal builtupArea = totalBuiltupArea.subtract(totalBuiltupArea.multiply(BigDecimal.valueOf(0.15)));
-                double requiredEcs = builtupArea.divide(BigDecimal.valueOf(100)).multiply(BigDecimal.valueOf(2))
-                        .setScale(0, RoundingMode.UP).doubleValue();
-                if (openParkingArea.doubleValue() > 0 && coverParkingArea.doubleValue() > 0)
-                    requiredCarParkArea += COVER_ECS * requiredEcs;
-                else if (openParkingArea.doubleValue() > 0 && basementParkingArea.doubleValue() > 0)
-                    requiredCarParkArea += BSMNT_ECS * requiredEcs;
-                else if (coverParkingArea.doubleValue() > 0 && basementParkingArea.doubleValue() > 0)
-                    requiredCarParkArea += BSMNT_ECS * requiredEcs;
-                else if (coverParkingArea.doubleValue() > 0)
-                    requiredCarParkArea += COVER_ECS * requiredEcs;
-                else if (basementParkingArea.doubleValue() > 0)
-                    requiredCarParkArea += BSMNT_ECS * requiredEcs;
-                else if (openParkingArea.doubleValue() > 0)
-                    requiredCarParkArea += OPEN_ECS * requiredEcs;
-            }
-        } else {
-            providedVisitorParkArea = pl.getParkingDetails().getVisitors().stream().map(Measurement::getArea)
-                    .reduce(BigDecimal.ZERO, BigDecimal::add);
-            if (mostRestrictiveOccupancy != null && A.equals(mostRestrictiveOccupancy.getType().getCode())) {
-                requiredCarParkArea = totalBuiltupArea.doubleValue() * PARK_A;
-                if (mostRestrictiveOccupancy != null && mostRestrictiveOccupancy.getSubtype() != null
-                        && A_AF.equals(mostRestrictiveOccupancy.getSubtype().getCode()))
-                    requiredVisitorParkArea = requiredCarParkArea * PARK_VISITOR;
-            } 
-            else if (mostRestrictiveOccupancy != null && (F.equals(mostRestrictiveOccupancy.getType().getCode()))) {
-                requiredCarParkArea = totalBuiltupArea.doubleValue() * PARK_F;
-                if (mostRestrictiveOccupancy != null && mostRestrictiveOccupancy.getSubtype() != null && ( F_H.equals(mostRestrictiveOccupancy.getSubtype().getCode()) || F_RT.equals(mostRestrictiveOccupancy.getSubtype().getCode())
-                		|| F_LD.equals(mostRestrictiveOccupancy.getSubtype().getCode()) || F_CB.equals(mostRestrictiveOccupancy.getSubtype().getCode())
-                		|| F_IT.equals(mostRestrictiveOccupancy.getSubtype().getCode()))) {
-                    requiredCarParkArea = totalBuiltupArea.doubleValue() * PARK_F;
-            }
-          }
-           else if (mostRestrictiveOccupancy != null && (G.equals(mostRestrictiveOccupancy.getType().getCode()))) {
-                requiredCarParkArea = totalBuiltupArea.doubleValue() * PARK_F;
-          }
+        
+        // Only process/calculate/report two-wheeler parking if plotArea <= 100
+        if (pl.getPlot() != null && plotArea.doubleValue() <= 100) {
+             processTwoWheelerParking(pl, helper);
         }
+  
+        Integer noOfrequiredParking = 0;
+        if (mostRestrictiveOccupancy != null && A.equals(mostRestrictiveOccupancy.getType().getCode())) {
+        	if (pl.getPlot() != null) { // Check plot is not null before using plotArea
+                double area = plotArea.doubleValue();
+                if (area < 100) {
+                    // requiredCarParkArea += 2.5; // Original logic, commented out in provided code
+                     noOfrequiredParking = 0; // Explicitly setting based on image for plotArea 83.61
+                } else if (area >= 100 && area <= 150) {
+                    noOfrequiredParking += 1;
+                } else if (area > 150 && area <= 200) { // Adjusted condition slightly to match common patterns (>=150 was in original)
+                    noOfrequiredParking += 2;
+                } else if (area > 200) { // Adjusted condition slightly (>=200 was in original)
+                    noOfrequiredParking += 3;
+                }
+             }
+        	
+//            if (openParkingArea.doubleValue() > 0) {
+//                requiredCarParkArea += OPEN_ECS * noOfrequiredParking;
+//            } else if (stiltParkingArea.doubleValue() > 0) {
+//                requiredCarParkArea += STILT_ECS * noOfrequiredParking;
+//            } else if (basementParkingArea.doubleValue() > 0) {
+//                requiredCarParkArea += BSMNT_ECS * noOfrequiredParking;
+//            } else if (coverParkingArea.doubleValue() > 0) {
+//                requiredCarParkArea += COVER_ECS * noOfrequiredParking;
+//            }
+        }
+        
+        
 
         BigDecimal requiredCarParkingArea = Util.roundOffTwoDecimal(BigDecimal.valueOf(requiredCarParkArea));
         BigDecimal totalProvidedCarParkingArea = Util.roundOffTwoDecimal(totalProvidedCarParkArea);
         BigDecimal requiredVisitorParkingArea = Util.roundOffTwoDecimal(BigDecimal.valueOf(requiredVisitorParkArea));
         BigDecimal providedVisitorParkingArea = Util.roundOffTwoDecimal(providedVisitorParkArea);
         
-        //checkDimensionForTwoWheelerParking(pl, helper);
-       //  checkAreaForLoadUnloadSpaces(pl);
-        if (totalProvidedCarParkArea.doubleValue() == 0) {
-            pl.addError(SUB_RULE_40_2_DESCRIPTION,
-                    getLocaleMessage("msg.error.not.defined", SUB_RULE_40_2_DESCRIPTION));
-        } else if (requiredCarParkArea > 0 && totalProvidedCarParkingArea.compareTo(requiredCarParkingArea) < 0) {
-            setReportOutputDetails(pl, SUB_RULE_40_2, SUB_RULE_40_2_DESCRIPTION, requiredCarParkingArea + SQMTRS,
-                    totalProvidedCarParkingArea + SQMTRS, Result.Not_Accepted.getResultVal());
-        } else {
-            setReportOutputDetails(pl, SUB_RULE_40_2, SUB_RULE_40_2_DESCRIPTION, requiredCarParkingArea + SQMTRS,
-                    totalProvidedCarParkingArea + SQMTRS, Result.Accepted.getResultVal());
-        }
-        if (requiredVisitorParkArea > 0 && providedVisitorParkArea.compareTo(requiredVisitorParkingArea) < 0) {
-            setReportOutputDetails(pl, SUB_RULE_40_10, SUB_RULE_40_10_DESCRIPTION, requiredVisitorParkingArea + SQMTRS,
-                    providedVisitorParkArea + SQMTRS, Result.Not_Accepted.getResultVal());
-        } else if (requiredVisitorParkArea > 0) {
-            setReportOutputDetails(pl, SUB_RULE_40_10, SUB_RULE_40_10_DESCRIPTION, requiredVisitorParkingArea + SQMTRS,
-                    providedVisitorParkingArea + SQMTRS, Result.Accepted.getResultVal());
-        }
+        BigDecimal totalECS = new BigDecimal(roundedValueOpen + roundedValueCover + roundedValueBsmnt + roundedValueStilt)
+                .setScale(2, BigDecimal.ROUND_HALF_UP);
+     
+        
+        // Conditionally report Car Parking details (Section 4.2.1) ONLY if plotArea > 100
+        if (pl.getPlot() != null && plotArea.doubleValue() > 100) {
 
-        LOGGER.info("******************Require no of Car Parking***************" + helper.totalRequiredCarParking);
-    }
+            if (totalProvidedCarParkArea.doubleValue() == 0) {
+                pl.addError(RULE__DESCRIPTION,
+                        getLocaleMessage("msg.error.not.defined", RULE__DESCRIPTION));
+            } else if (requiredCarParkArea > 0 && totalProvidedCarParkingArea.compareTo(requiredCarParkingArea) < 0) {
+//                setReportOutputDetails(pl, RULE_, RULE__DESCRIPTION, requiredCarParkingArea + SQMTRS,
+//                        totalProvidedCarParkingArea + SQMTRS, Result.Not_Accepted.getResultVal());
+            	setReportOutputDetails1(pl,"4.2.1", "Parking", noOfrequiredParking + " ECS"  +  " ( plotArea " + plotArea + " ) " ,
+            			totalECS + " ECS" ,
+            			Result.Not_Accepted.getResultVal()
+        				);
+            } else {
+//                setReportOutputDetails(pl, RULE_, RULE__DESCRIPTION, requiredCarParkingArea + SQMTRS,
+//                        totalProvidedCarParkingArea + SQMTRS, Result.Accepted.getResultVal());
+            	setReportOutputDetails1(pl,"4.2.1", "Parking", noOfrequiredParking + " ECS"  +  " ( plotArea " + plotArea + " ) " ,
+            			totalECS + " ECS" ,
+            			Result.Accepted.getResultVal()
+        				);
+            }
+            if (requiredVisitorParkArea > 0 && providedVisitorParkArea.compareTo(requiredVisitorParkingArea) < 0) {
+            	
+                setReportOutputDetails(pl, SUB_RULE_40_10, SUB_RULE_40_10_DESCRIPTION, requiredVisitorParkingArea + SQMTRS,
+                        providedVisitorParkingArea + SQMTRS, Result.Not_Accepted.getResultVal());
+            } else if (requiredVisitorParkArea > 0) {
+                setReportOutputDetails(pl, SUB_RULE_40_10, SUB_RULE_40_10_DESCRIPTION, requiredVisitorParkingArea + SQMTRS,
+                        providedVisitorParkingArea + SQMTRS, Result.Accepted.getResultVal());
+            }
+
+           
+            // Including individual parking areas in the report
+            if(openParkingArea.doubleValue() > 0) {
+            setReportOutputDetails(pl, "4.2.1", "Open Parking Area", "",
+            		roundedValueOpen +  " ECS " + "(" +  openParkingArea + SQMTRS + ")", "");
+            }
+            if(coverParkingArea.doubleValue() > 0) {
+            setReportOutputDetails(pl, "4.2.1", "Cover Parking Area", " ",
+            		roundedValueCover +  " ECS " + "(" +  coverParkingArea + SQMTRS + ")", "");
+            }
+            if(basementParkingArea.doubleValue() > 0) {
+            setReportOutputDetails(pl, "4.2.1", "Basement Parking Area", "",
+            		roundedValueBsmnt +  " ECS " + "(" +  basementParkingArea + SQMTRS + ")","");
+            }
+            
+            if(stiltParkingArea.doubleValue() > 0) {
+            setReportOutputDetails(pl, "4.2.1", "Stilt Parking Area", "",
+            		roundedValueStilt +  " ECS " + "(" +  stiltParkingArea + SQMTRS + ")", "");
+            }
+            LOGGER.info("******************Require no of Car Parking***************" + helper.totalRequiredCarParking);
+        }
+     }
+        
+        
 
     private void setReportOutputDetails(Plan pl, String ruleNo, String ruleDesc, String expected, String actual,
             String status) {
@@ -363,6 +430,30 @@ public class Parking extends FeatureProcess {
         scrutinyDetail.getDetail().add(details);
         pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
     }
+    
+    private void setReportOutputDetails1(Plan pl, String ruleNo, String ruleDesc, String expected, String actual,
+            String status) {
+    	
+    	 ScrutinyDetail scrutinyDetail1 = new ScrutinyDetail();
+         scrutinyDetail1.addColumnHeading(1, RULE_NO);
+         scrutinyDetail1.addColumnHeading(2, DESCRIPTION);
+         scrutinyDetail1.addColumnHeading(3, "");
+         scrutinyDetail1.addColumnHeading(4, REQUIRED);
+         scrutinyDetail1.addColumnHeading(5, PROVIDED);
+         scrutinyDetail1.addColumnHeading(6, STATUS);
+         
+        Map<String, String> details = new HashMap<>();
+        details.put(RULE_NO, ruleNo);
+        details.put(DESCRIPTION, ruleDesc);
+        details.put(REQUIRED, expected);
+        details.put(PROVIDED, actual);
+        details.put(STATUS, status);
+        scrutinyDetail.getDetail().add(details);
+        pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+    }
+
+    
+    
 
     private void validateSpecialParking(Plan pl, ParkingHelper helper, BigDecimal totalBuiltupArea) {
         BigDecimal maxHeightOfBuilding = BigDecimal.ZERO;
@@ -389,16 +480,16 @@ public class Parking extends FeatureProcess {
         if (maxHeightOfBuilding.compareTo(new BigDecimal(15)) >= 0
                 || (pl.getPlot() != null && pl.getPlot().getArea().compareTo(new BigDecimal(500)) > 0)) {
             if (pl.getParkingDetails().getValidSpecialSlots() == 0) {
-                pl.addError(SUB_RULE_40_11, getLocaleMessage(DcrConstants.OBJECTNOTDEFINED, SP_PARKING));
+               // pl.addError(RULE, getLocaleMessage(DcrConstants.OBJECTNOTDEFINED, SP_PARKING));
             } else {
                 for (Measurement m : pl.getParkingDetails().getSpecial()) {
                     if (m.getMinimumSide().compareTo(new BigDecimal(0)) > 0
                             && m.getMinimumSide().compareTo(new BigDecimal(3.6)) >= 0) {
-                        setReportOutputDetails(pl, SUB_RULE_40_11, SP_PARKING, 1 + NUMBERS,
+                        setReportOutputDetails(pl, RULE, SP_PARKING, 1 + NUMBERS,
                                 pl.getParkingDetails().getValidSpecialSlots() + NUMBERS,
                                 Result.Accepted.getResultVal());
                     } else if (m.getMinimumSide().compareTo(new BigDecimal(0)) > 0) {
-                        setReportOutputDetails(pl, SUB_RULE_40_11, SP_PARKING, 1 + NUMBERS,
+                        setReportOutputDetails(pl, RULE, SP_PARKING, 1 + NUMBERS,
                                 pl.getParkingDetails().getValidSpecialSlots() + NUMBERS,
                                 Result.Not_Accepted.getResultVal());
                     }
@@ -409,23 +500,44 @@ public class Parking extends FeatureProcess {
     }
 
     private void processTwoWheelerParking(Plan pl, ParkingHelper helper) {
-        helper.twoWheelerParking = BigDecimal.valueOf(0.25 * helper.totalRequiredCarParking * 2.70 * 5.50)
-                .setScale(4, BigDecimal.ROUND_HALF_UP).doubleValue();
+//        helper.twoWheelerParking = BigDecimal.valueOf(0.25 * helper.totalRequiredCarParking * 2.70 * 5.50)
+//                .setScale(2, RoundingMode.HALF_UP).doubleValue();
+        
+    	int twoWheelParkingCount = pl.getParkingDetails().getTwoWheelers().size();
+        
+    	helper.twoWheelerParking = BigDecimal.valueOf(twoWheelParkingCount * 2 * 0.75)
+                .setScale(2, RoundingMode.HALF_UP)
+                .doubleValue();
+
         double providedArea = 0;
-        for (Measurement measurement : pl.getParkingDetails().getTwoWheelers()) {
-            providedArea = providedArea + measurement.getArea().doubleValue();
+        // Check if details and twoWheelers list are not null before iterating
+        if (pl.getParkingDetails() != null && pl.getParkingDetails().getTwoWheelers() != null) {
+            for (Measurement measurement : pl.getParkingDetails().getTwoWheelers()) {
+                providedArea = providedArea + measurement.getArea().doubleValue();
+            }
         }
-        if (providedArea < helper.twoWheelerParking) {
-            setReportOutputDetails(pl, SUB_RULE_34_2, TWO_WHEELER_PARK_AREA,
-                    helper.twoWheelerParking + " " + DcrConstants.SQMTRS,
-                    BigDecimal.valueOf(providedArea).setScale(2, BigDecimal.ROUND_HALF_UP) + " " + DcrConstants.SQMTRS,
-                    Result.Not_Accepted.getResultVal());
-        } else {
-            setReportOutputDetails(pl, SUB_RULE_34_2, TWO_WHEELER_PARK_AREA,
-                    helper.twoWheelerParking + " " + DcrConstants.SQMTRS,
-                    BigDecimal.valueOf(providedArea).setScale(2, BigDecimal.ROUND_HALF_UP) + " " + DcrConstants.SQMTRS,
-                    Result.Accepted.getResultVal());
+        
+        // If nothing is provided, raise an error
+        if (providedArea == 0) {
+            pl.addError(TWO_WHEEL_PARKING_PROVIDE, TWO_WHEEL_PARKING_PROVIDE);
         }
+        
+        // Report the details (this method is now only called when needed)
+        BigDecimal providedAreaBd = BigDecimal.valueOf(providedArea).setScale(2, BigDecimal.ROUND_HALF_UP);
+        String requiredText = helper.twoWheelerParking + " " + DcrConstants.SQMTRS; // Use calculated required value
+        String providedText = providedAreaBd + " " + DcrConstants.SQMTRS;
+        
+        scrutinyDetail.setSubHeading(TWO_WHEELER_SIZE_NOTE);
+        
+        String status = ((providedArea < helper.twoWheelerParking) || (providedArea == 0))
+                ? Result.Not_Accepted.getResultVal()
+                : Result.Accepted.getResultVal();
+
+        setReportOutputDetails(pl, SUB_RULE_34_2, TWO_WHEELER_PARK,
+                requiredText,
+                providedText,
+                status);
+        
     }
     
     private void processMechanicalParking(Plan pl) {
@@ -660,7 +772,8 @@ public class Parking extends FeatureProcess {
 		int twoWheelParkingCount = pl.getParkingDetails().getTwoWheelers().size();
 		int failedTwoWheelCount = 0;
 		helper.twoWheelerParking = BigDecimal.valueOf(0.25 * helper.totalRequiredCarParking * 2.70 * 5.50)
-				.setScale(4, BigDecimal.ROUND_HALF_UP).doubleValue();
+				.setScale(4, BigDecimal.ROUND_HALF_UP).doubleValue();	
+		
 		if (!pl.getParkingDetails().getTwoWheelers().isEmpty()) {
 			for (Measurement m : pl.getParkingDetails().getTwoWheelers()) {
 				if (m.getWidth().setScale(2, RoundingMode.UP).doubleValue() < TWO_WHEEL_PARKING_AREA_WIDTH
@@ -672,12 +785,12 @@ public class Parking extends FeatureProcess {
 		}
 		
 		if (providedArea < helper.twoWheelerParking) {
-			setReportOutputDetails(pl, SUB_RULE_34_2, TWO_WHEELER_PARK_AREA,
+			setReportOutputDetails(pl, SUB_RULE_34_2, TWO_WHEELER_PARK,
 					helper.twoWheelerParking + " " + DcrConstants.SQMTRS,
 					BigDecimal.valueOf(providedArea).setScale(2, BigDecimal.ROUND_HALF_UP) + " " + DcrConstants.SQMTRS,
 					Result.Not_Accepted.getResultVal());
 		} else {
-			setReportOutputDetails(pl, SUB_RULE_34_2, TWO_WHEELER_PARK_AREA,
+			setReportOutputDetails(pl, SUB_RULE_34_2, TWO_WHEELER_PARK,
 					helper.twoWheelerParking + " " + DcrConstants.SQMTRS,
 					BigDecimal.valueOf(providedArea).setScale(2, BigDecimal.ROUND_HALF_UP) + " " + DcrConstants.SQMTRS,
 					Result.Accepted.getResultVal());

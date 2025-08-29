@@ -585,6 +585,7 @@ List<String> allowedParams = null;
 				&& CollectionUtils.isEmpty(criteria.getPropertyIds())
 				&& CollectionUtils.isEmpty(criteria.getOwnerIds()) 
 				&& CollectionUtils.isEmpty(criteria.getUuids())
+				&& null == criteria.getSurveyId()
 				&& null == criteria.getMobileNumber()
 				&& null == criteria.getName();
 		

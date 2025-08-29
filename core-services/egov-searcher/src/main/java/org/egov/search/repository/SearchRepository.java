@@ -95,10 +95,19 @@ public class SearchRepository {
 
 	     else {
 	         String businesService = business.get("businesService");
-		     if ((businesService.equalsIgnoreCase("SW")|| businesService.equalsIgnoreCase("WS")) && !result1.isEmpty())
-				Collections.sort(result1.get(0).getBillDetails(), (b1, b2) -> b2.getFromPeriod().compareTo(b1.getFromPeriod()));
+	         if (businesService != null &&
+	        		    (businesService.equalsIgnoreCase("SW") || businesService.equalsIgnoreCase("WS")) &&
+	        		    !result1.isEmpty()) {
 
-	    	 return result1;
+	        		    for (Bill bill : result1) {
+	        		        if (bill.getBillDetails() != null) {
+	        		            Collections.sort(bill.getBillDetails(),
+	        		                (b1, b2) -> b2.getFromPeriod().compareTo(b1.getFromPeriod()));
+	        		        }
+	        		    }
+	        		}
+
+	        		return result1;
 	     		}
 	     } catch (CustomException e) {
 			throw e;

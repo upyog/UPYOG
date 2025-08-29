@@ -13,6 +13,9 @@ import org.egov.wscalculation.web.models.MeterReadingSearchCriteria;
 public interface MeterService {
 	List<MeterReading> createMeterReading(MeterConnectionRequest meterConnectionRequest);
 	
+	List<MeterReading> updateMeterReading(MeterConnectionRequest meterConnectionRequest);
+
+	
 	List<MeterReadingList> createMeterReadings(MeterConnectionRequests meterConnectionlist);
 	
 	List<MeterReading> searchMeterReadings(MeterReadingSearchCriteria criteria, RequestInfo requestInfo);

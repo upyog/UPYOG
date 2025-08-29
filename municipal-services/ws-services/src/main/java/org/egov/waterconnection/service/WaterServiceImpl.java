@@ -1,11 +1,5 @@
 package org.egov.waterconnection.service;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import lombok.extern.slf4j.Slf4j;
@@ -24,6 +18,7 @@ import org.egov.waterconnection.validator.MDMSValidator;
 import org.egov.waterconnection.validator.ValidateProperty;
 import org.egov.waterconnection.validator.WaterConnectionValidator;
 import org.egov.waterconnection.web.models.*;
+import org.egov.waterconnection.web.models.Connection.StatusEnum;
 import org.egov.waterconnection.web.models.workflow.BusinessService;
 import org.egov.waterconnection.web.models.workflow.ProcessInstance;
 import org.egov.waterconnection.workflow.WorkflowIntegrator;
@@ -51,6 +46,10 @@ public class WaterServiceImpl implements WaterService {
 
 	@Autowired
 	private ValidateProperty validateProperty;
+	
+	
+	@Autowired
+	private EODBredirect eodbRedirect;
 
 	@Autowired
 	private MDMSValidator mDMSValidator;
@@ -93,6 +92,9 @@ public class WaterServiceImpl implements WaterService {
 
 	@Autowired
 	private UnmaskingUtil unmaskingUtil;
+	
+	@Autowired
+	private WaterService waterService;
 
 	/**
 	 *
@@ -102,14 +104,45 @@ public class WaterServiceImpl implements WaterService {
 	 */
 	@Override
 	public List<WaterConnection> createWaterConnection(WaterConnectionRequest waterConnectionRequest) {
-Boolean isMigration=false;
-		int reqType = WCConstants.CREATE_APPLICATION;
-		if(waterConnectionRequest.getWaterConnection().getAdditionalDetails().toString().contains("isMigrated"))
-		{
-			isMigration=true;
+		Boolean isMigration = false;
+		Object additionalDetailsObj = waterConnectionRequest.getWaterConnection().getAdditionalDetails();
+
+		if (additionalDetailsObj instanceof Map) {
+		    Map<String, Object> additionalDetails = (Map<String, Object>) additionalDetailsObj;
+
+		    if (additionalDetails.containsKey("isMigrated")) {
+		        Object migratedValue = additionalDetails.get("isMigrated");
+
+		        if (migratedValue instanceof Boolean) {
+		            isMigration = (Boolean) migratedValue;
+		        } else if (migratedValue instanceof String) {
+		            isMigration = Boolean.parseBoolean((String) migratedValue);
+		        }
+		    }
 		}
 		
-		log.info("isMigration::::"+isMigration);
+		
+		String applicationType = waterConnectionRequest.getWaterConnection().getApplicationType();
+		String connectionNo = waterConnectionRequest.getWaterConnection().getConnectionNo();
+
+		
+		if (isMigration && "NEW_WATER_CONNECTION".equalsIgnoreCase(applicationType) && connectionNo != null && !connectionNo.trim().isEmpty()) {
+			    SearchCriteria criteria = new SearchCriteria();
+			    criteria.setConnectionNumber(Collections.singleton(connectionNo));
+			    criteria.setTenantId(waterConnectionRequest.getWaterConnection().getTenantId());
+
+			    List<WaterConnection> existingConnections = waterService.search(
+			        criteria, waterConnectionRequest.getRequestInfo());
+
+			    if (!existingConnections.isEmpty()) {
+			        log.info("Skipping creation: ConnectionNo {} already exists for migrated request.", connectionNo);
+			        return existingConnections;
+			    }
+			}
+		
+		int reqType = WCConstants.CREATE_APPLICATION;
+		Connection.StatusEnum status = waterConnectionRequest.getWaterConnection().getStatus();
+		log.info("isMigration::::" + isMigration);
 		if (waterConnectionRequest.isDisconnectRequest()
 				|| (waterConnectionRequest.getWaterConnection().getApplicationType() != null
 						&& waterConnectionRequest.getWaterConnection().getApplicationType()
@@ -122,16 +155,16 @@ Boolean isMigration=false;
 			reqType = WCConstants.RECONNECTION;
 			validateReconnectionRequest(waterConnectionRequest);
 		}
-	
 
-		else if (wsUtil.isModifyConnectionRequest(waterConnectionRequest)&& !isMigration) {
+		else if (wsUtil.isModifyConnectionRequest(waterConnectionRequest)) {
 			List<WaterConnection> previousConnectionsList = getAllWaterApplications(waterConnectionRequest);
-			if (previousConnectionsList.size() > 0) {
-				for (WaterConnection previousConnectionsListObj : previousConnectionsList) {
-					waterDaoImpl.updateWaterApplicationStatus(previousConnectionsListObj.getId(),
-							WCConstants.INACTIVE_STATUS);
-				}
-			}
+			/*
+			 * if (previousConnectionsList.size() > 0) { for (WaterConnection
+			 * previousConnectionsListObj : previousConnectionsList) {
+			 * waterDaoImpl.updateWaterApplicationStatus(previousConnectionsListObj.getId(),
+			 * WCConstants.INACTIVE_STATUS); } }
+			 */
+
 			// Validate any process Instance exists with WF
 			if (!CollectionUtils.isEmpty(previousConnectionsList)) {
 				workflowService.validateInProgressWF(previousConnectionsList, waterConnectionRequest.getRequestInfo(),
@@ -160,17 +193,24 @@ Boolean isMigration=false;
 		enrichmentService.enrichWaterConnection(waterConnectionRequest, reqType);
 		userService.createUser(waterConnectionRequest);
 		// call work-flow
-		if (!isMigration)
-		{
+		if (!isMigration) {
 
-		if (config.getIsExternalWorkFlowEnabled())
-			wfIntegrator.callWorkFlow(waterConnectionRequest, property);
+			if (config.getIsExternalWorkFlowEnabled())
+				wfIntegrator.callWorkFlow(waterConnectionRequest, property);
 		}
+
 		/* encrypt here */
 		// waterConnectionRequest.setWaterConnection(encryptConnectionDetails(waterConnectionRequest.getWaterConnection()));
 		/* encrypt here for connection holder details */
 		// waterConnectionRequest.setWaterConnection(encryptConnectionHolderDetails(waterConnectionRequest.getWaterConnection()));
-
+		if (isMigration) {
+		    if (waterConnectionRequest.getWaterConnection() != null 
+		        && waterConnectionRequest.getWaterConnection().getStatus() != null 
+		        && !waterConnectionRequest.getWaterConnection().getStatus().toString().isEmpty()) {
+		        
+		    	 waterConnectionRequest.getWaterConnection().setStatus(status);		  
+		    }
+		}
 		waterDao.saveWaterConnection(waterConnectionRequest);
 
 		/* decrypt here */
@@ -344,6 +384,7 @@ Boolean isMigration=false;
 	 */
 	@Override
 	public List<WaterConnection> updateWaterConnection(WaterConnectionRequest waterConnectionRequest) {
+		boolean eodbPushed = false;
 		if (waterConnectionRequest.isDisconnectRequest() || waterConnectionRequest.getWaterConnection()
 				.getApplicationType().equalsIgnoreCase(WCConstants.DISCONNECT_WATER_CONNECTION)) {
 			return updateWaterConnectionForDisconnectFlow(waterConnectionRequest);
@@ -381,7 +422,9 @@ Boolean isMigration=false;
 
 		if (wsUtil.isModifyConnectionRequest(waterConnectionRequest)
 				&& !waterConnectionRequest.getWaterConnection().getIsDisconnectionTemporary()) {
-			// Received request to update the connection for modifyConnection WF
+			
+			waterConnectionRequest = updateConnectionStatusBasedOnAction(waterConnectionRequest);
+			  // Received request to update the connection for modifyConnection WF
 			return updateWaterConnectionForModifyFlow(waterConnectionRequest);
 		}
 
@@ -449,9 +492,65 @@ Boolean isMigration=false;
 		waterConnectionRequest.setWaterConnection(decryptConnectionDetails(waterConnectionRequest.getWaterConnection(),
 				waterConnectionRequest.getRequestInfo()));
 
+		
+
+		try {
+		    String channel = waterConnectionRequest.getWaterConnection().getChannel();
+		    String thirdPartyCode = null;
+		    Object additionalDetailsObj = waterConnectionRequest.getWaterConnection().getAdditionalDetails();
+		    if (additionalDetailsObj instanceof Map) {
+		        Map<String, Object> additionalDetails = (Map<String, Object>) additionalDetailsObj;
+		        Object isavail = additionalDetails.get("thirdPartyCode");
+		        thirdPartyCode = isavail != null ? isavail.toString() : null;
+		    }
+
+		    if ("EODB".equalsIgnoreCase(channel) || "EODB".equalsIgnoreCase(thirdPartyCode)) {
+		        eodbPushed = eodbRedirect.runEodbFlow(waterConnectionRequest);
+		    }
+		} catch (Exception e) {
+		    log.error("EODB push failed", e);
+		}
+		log.info("EODB push status: {}", eodbPushed ? "SUCCESS" : "SKIPPED OR FAILED");
+
 		return Arrays.asList(waterConnectionRequest.getWaterConnection());
 	}
 
+	public WaterConnectionRequest updateConnectionStatusBasedOnAction(WaterConnectionRequest waterConnectionRequest) {
+		
+		if(waterConnectionRequest.getWaterConnection().getProcessInstance().getAction() != null 
+				  && waterConnectionRequest.getWaterConnection().getProcessInstance().getAction().equals(WCConstants.SUBMIT_APPLICATION_CONST)){
+			List<WaterConnection> previousConnectionsList = getAllWaterApplications(waterConnectionRequest);
+			if (previousConnectionsList.size() > 0) { 
+			  for (WaterConnection previousConnectionsListObj : previousConnectionsList) {
+				  if(previousConnectionsListObj.getStatus().equals(StatusEnum.ACTIVE)){
+					  waterDaoImpl.updateWaterApplicationStatus(previousConnectionsListObj.getId(),
+							  WCConstants.INACTIVE_STATUS); 
+				  	}
+			  	} 
+			  }
+		  waterConnectionRequest.getWaterConnection().setStatus(StatusEnum.ACTIVE);
+		}
+		  
+		  if(waterConnectionRequest.getWaterConnection().getProcessInstance().getAction() != null 
+				  && waterConnectionRequest.getWaterConnection().getProcessInstance().getAction().equals(WCConstants.ACTION_REJECT)){
+			  List<WaterConnection> previousConnectionsList = getAllWaterApplications(waterConnectionRequest);
+			  if (previousConnectionsList.size() > 0) { 
+				  Collections.sort(previousConnectionsList, Comparator.comparing((WaterConnection wc) -> wc.getAuditDetails().getLastModifiedTime()).reversed());
+				  for (WaterConnection previousConnectionsListObj : previousConnectionsList) {
+					   if(previousConnectionsListObj.getApplicationStatus().equals(WCConstants.STATUS_APPROVED) 
+							   || previousConnectionsListObj.getApplicationStatus().equals(WCConstants.APPROVED)){
+						   waterDaoImpl.updateWaterApplicationStatus(previousConnectionsListObj.getId(),
+									  WCConstants.ACTIVE_STATUS); 
+						   waterConnectionRequest.getWaterConnection().setStatus(StatusEnum.INACTIVE);
+						   break;
+					   }
+				  }
+			}
+			  
+		  }
+		  return waterConnectionRequest;
+	}
+	
 	public List<WaterConnection> updateWaterConnectionForDisconnectFlow(WaterConnectionRequest waterConnectionRequest) {
 
 		SearchCriteria criteria = new SearchCriteria();

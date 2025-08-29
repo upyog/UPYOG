@@ -1,17 +1,22 @@
 package org.egov.bpa.service.notification;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.jayway.jsonpath.DocumentContext;
-import com.jayway.jsonpath.JsonPath;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import lombok.extern.slf4j.Slf4j;
-import net.minidev.json.JSONArray;
 import org.apache.commons.lang.StringUtils;
 import org.egov.bpa.config.BPAConfiguration;
 import org.egov.bpa.service.BPAService;
 import org.egov.bpa.util.BPAConstants;
 import org.egov.bpa.util.BPAErrorConstants;
 import org.egov.bpa.util.NotificationUtil;
-import org.egov.bpa.web.model.*;
+import org.egov.bpa.web.model.BPA;
+import org.egov.bpa.web.model.BPARequest;
+import org.egov.bpa.web.model.BPASearchCriteria;
+import org.egov.bpa.web.model.EventRequest;
+import org.egov.bpa.web.model.SMSRequest;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
 import org.json.JSONObject;
@@ -19,10 +24,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jayway.jsonpath.DocumentContext;
+import com.jayway.jsonpath.JsonPath;
+
+import net.minidev.json.JSONArray;
 
 @Service
 @Slf4j
@@ -86,7 +92,7 @@ public class PaymentNotificationService {
 				return;
 			Map<String, Object> info = documentContext.read("$.RequestInfo");
 			RequestInfo requestInfo = mapper.convertValue(info, RequestInfo.class);
-            String tenantId = valMap.get(tenantIdKey);
+
 			if (config.getBusinessService().contains(valMap.get(businessServiceKey))) {
 				BPA bpa = getBPAFromConsumerCode(valMap.get(tenantIdKey), valMap.get(consumerCodeKey), requestInfo,
 						valMap.get(businessServiceKey));
@@ -105,14 +111,14 @@ public class PaymentNotificationService {
 				BPARequest bpaRequestMsg = BPARequest.builder().requestInfo(requestInfo).BPA(bpa).build();
 
 				smsList.addAll(util.createSMSRequest(bpaRequestMsg,message, mobileNumberToOwner));
-				util.sendSMS(smsList, config.getIsSMSEnabled(), tenantId);
+				util.sendSMS(smsList, config.getIsSMSEnabled());
 
 				if (null != config.getIsUserEventsNotificationEnabled()) {
 					if (config.getIsUserEventsNotificationEnabled()) {
 						BPARequest bpaRequest = BPARequest.builder().requestInfo(requestInfo).BPA(bpa).build();
 						EventRequest eventRequest = bpaNotificationService.getEvents(bpaRequest);
 						if (null != eventRequest)
-							util.sendEventNotification(eventRequest, tenantId);
+							util.sendEventNotification(eventRequest);
 					}
 				}
 			}

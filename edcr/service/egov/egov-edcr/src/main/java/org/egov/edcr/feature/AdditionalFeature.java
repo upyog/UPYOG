@@ -51,6 +51,7 @@ import static org.egov.edcr.utility.DcrConstants.DECIMALDIGITS_MEASUREMENTS;
 import static org.egov.edcr.utility.DcrConstants.ROUNDMODE_MEASUREMENTS;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -61,6 +62,7 @@ import java.util.stream.Collectors;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 import org.egov.common.entity.edcr.Block;
+import org.egov.common.entity.edcr.Floor;
 import org.egov.common.entity.edcr.OccupancyTypeHelper;
 import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.Result;
@@ -77,9 +79,9 @@ import org.springframework.stereotype.Service;
 public class AdditionalFeature extends FeatureProcess {
     private static final Logger LOG = LogManager.getLogger(AdditionalFeature.class);
 
-    private static final String RULE_38 = "38";
+    private static final String RULE_38 = "4.4.4 (ii)";
     private static final String RULE_39 = "39";
-    private static final String RULE_41_I_A = "41-i-a";
+    private static final String RULE = "5.2.1";
     private static final String RULE_41_I_B = "41-i-b";
     private static final String RULE_47 = "47";
     private static final String RULE_50 = "50";
@@ -93,6 +95,7 @@ public class AdditionalFeature extends FeatureProcess {
     private static final BigDecimal TEN = BigDecimal.valueOf(10);
     private static final BigDecimal TWELVE = BigDecimal.valueOf(12);
     private static final BigDecimal NINETEEN = BigDecimal.valueOf(19);
+    private static final BigDecimal HUNDRED = BigDecimal.valueOf(100);
 
     private static final BigDecimal ROAD_WIDTH_TWO_POINTFOUR = BigDecimal.valueOf(2.4);
     private static final BigDecimal ROAD_WIDTH_TWO_POINTFOURFOUR = BigDecimal.valueOf(2.44);
@@ -107,6 +110,13 @@ public class AdditionalFeature extends FeatureProcess {
     private static final int PLOTAREA_500 = 500;
     private static final int PLOTAREA_1000 = 1000;
     private static final int PLOTAREA_3000 = 3000;
+    
+    String RWH_DECLARATION_ERROR = DxfFileConstants.RWH_DECLARED
+            + " in PLAN_INFO layer must be declared as YES for plot area greater than 100 sqm.";
+
+    // Assuming RWH specific error constants exist
+    private static final String RWH_DECLARATION_ERROR_CODE = "RWH_DECLARATION_INVALID"; // Example constant name
+    private static final String RWH_DECLARATION_ERROR_MSG = "RWH declared as NO/NA but required for this occupancy/area."; // Example message
     /*
      * private static final BigDecimal ROAD_WIDTH_EIGHTEEN_POINTTHREE = BigDecimal.valueOf(18.3); private static final BigDecimal
      * ROAD_WIDTH_TWENTYFOUR_POINTFOUR = BigDecimal.valueOf(24.4); private static final BigDecimal
@@ -173,6 +183,7 @@ public class AdditionalFeature extends FeatureProcess {
         if (StringUtils.isNotBlank(typeOfArea) && roadWidth != null) {
             validateNumberOfFloors(pl, errors, typeOfArea, roadWidth);
             validateHeightOfBuilding(pl, errors, typeOfArea, roadWidth);
+            validateHeightOfFloors(pl, errors);
         }
 
         validatePlinthHeight(pl, errors);
@@ -339,7 +350,7 @@ public class AdditionalFeature extends FeatureProcess {
                 details.put(RULE_NO, RULE_38);
                 details.put(DESCRIPTION, NO_OF_FLOORS);
                 details.put(DxfFileConstants.AREA_TYPE, typeOfArea);
-                details.put(DxfFileConstants.ROAD_WIDTH, roadWidth.toString());
+//                details.put(DxfFileConstants.ROAD_WIDTH, roadWidth.toString());
                 details.put(PERMISSIBLE, requiredFloorCount);
                 details.put(PROVIDED, String.valueOf(block.getBuilding().getFloorsAboveGround()));
                 details.put(STATUS, isAccepted ? Result.Accepted.getResultVal() : Result.Not_Accepted.getResultVal());
@@ -348,6 +359,125 @@ public class AdditionalFeature extends FeatureProcess {
             }
         }
     }
+    
+    private void validateHeightOfFloors(Plan pl, HashMap<String, String> errors) {
+    	System.out.println("inside height of floor");
+		for (Block block : pl.getBlocks()) {
+			
+			boolean isAccepted = false;
+			ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
+			scrutinyDetail.addColumnHeading(1, RULE_NO);
+			scrutinyDetail.addColumnHeading(2, FLOOR_NO);
+			scrutinyDetail.addColumnHeading(3, MIN_REQUIRED);
+		//	scrutinyDetail.addColumnHeading(4, MAX_PERMISSIBLE);
+			scrutinyDetail.addColumnHeading(5, PROVIDED);
+			scrutinyDetail.addColumnHeading(6, STATUS);
+			scrutinyDetail.setKey("Block_" + block.getNumber() + "_" + "Height of Floor");
+			OccupancyTypeHelper occupancyTypeHelper = block.getBuilding().getMostRestrictiveFarHelper();
+			for (Floor floor : block.getBuilding().getFloors()) {
+				BigDecimal floorHeight = floor.getFloorHeights() != null && !floor.getFloorHeights().isEmpty() ? floor.getFloorHeights().get(0).setScale(2, RoundingMode.HALF_UP)
+						: BigDecimal.ZERO;
+				
+				int floorNumber = floor.getNumber();
+				
+//				String status;
+				String minRequiredFloorHeight = StringUtils.EMPTY;
+				String maxPermissibleFloorHeight = StringUtils.EMPTY;
+				
+				minRequiredFloorHeight = "2.75" + DcrConstants.IN_METER;
+				maxPermissibleFloorHeight = "4.40" + DcrConstants.IN_METER;
+				floor.setIsStiltFloor(false);
+				
+				if(floor.getIsStiltFloor() == false) {
+					
+				 if (floorHeight.compareTo(BigDecimal.valueOf(2.75)) >= 0
+						//&& floorHeight.compareTo(BigDecimal.valueOf(4.40)) <= 0
+						) {
+
+//					status = Result.Accepted.getResultVal();
+					isAccepted = true;
+				} }
+				
+				else if(floor.getIsStiltFloor() == true) {
+					
+					if (floorHeight.compareTo(BigDecimal.valueOf(2.5)) >= 0
+							
+							) {
+
+						isAccepted = true;
+					}
+				}
+				
+//				if (occupancyTypeHelper != null && occupancyTypeHelper.getType() != null
+//						&& G.equals(occupancyTypeHelper.getType().getCode())) {
+//					minRequiredFloorHeight = "6.0" + DcrConstants.IN_METER;
+//					maxPermissibleFloorHeight = "-";
+//					if (floorHeight.compareTo(BigDecimal.valueOf(6.0)) >= 0) {
+//						/*
+//						 * Map<String, String> details = new HashMap<>(); details.put(FLOOR_NO,
+//						 * String.valueOf(floorNumber)); details.put(RULE_NO, RULE_38);
+//						 * details.put(MIN_REQUIRED, minRequiredFloorHeight + DcrConstants.IN_METER);
+//						 * details.put(MAX_PERMISSIBLE, "-"); details.put(PROVIDED,
+//						 * floorHeight.toString() + DcrConstants.IN_METER); details.put(STATUS,
+//						 * Result.Accepted.getResultVal()); scrutinyDetail.getDetail().add(details);
+//						 * pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+//						 */
+////						status = Result.Accepted.getResultVal();
+//						isAccepted = true;
+//					} else {
+//						/*
+//						 * Map<String, String> details = new HashMap<>(); details.put(FLOOR_NO,
+//						 * String.valueOf(floorNumber)); details.put(RULE_NO, RULE_38);
+//						 * details.put(MIN_REQUIRED, minRequiredFloorHeight + DcrConstants.IN_METER);
+//						 * details.put(MAX_PERMISSIBLE, "-"); details.put(PROVIDED,
+//						 * floorHeight.toString() + DcrConstants.IN_METER); details.put(STATUS,
+//						 * Result.Not_Accepted.getResultVal()); scrutinyDetail.getDetail().add(details);
+//						 * pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+//						 */
+////						status = Result.Not_Accepted.getResultVal();
+////						isAccepted=false;
+//					}
+//				} else if (floorNumber < 0) {
+//					minRequiredFloorHeight = "2.40" + DcrConstants.IN_METER;
+//					maxPermissibleFloorHeight = "4.20" + DcrConstants.IN_METER;
+//					if (floorHeight.compareTo(BigDecimal.valueOf(2.40)) >= 0
+//							&& floorHeight.compareTo(BigDecimal.valueOf(4.20)) <= 0) {
+//
+////						status = Result.Accepted.getResultVal();
+//						isAccepted = true;
+//					}
+//				} else {
+//					minRequiredFloorHeight = "2.75" + DcrConstants.IN_METER;
+//					maxPermissibleFloorHeight = "4.40" + DcrConstants.IN_METER;
+//					if (floorHeight.compareTo(BigDecimal.valueOf(2.75)) >= 0
+//							&& floorHeight.compareTo(BigDecimal.valueOf(4.40)) <= 0) {
+//
+////						status = Result.Accepted.getResultVal();
+//						isAccepted = true;
+//					}
+				//}
+//				addFloorHeightDetails(pl, scrutinyDetail, String.valueOf(floorNumber), RULE_38,
+//						minRequiredFloorHeight + DcrConstants.IN_METER, maxPermissibleFloorHeight,
+//						floorHeight.toString() + DcrConstants.IN_METER, status);
+				if (errors.isEmpty() && StringUtils.isNotBlank(minRequiredFloorHeight)
+						&& StringUtils.isNotBlank(maxPermissibleFloorHeight)) {
+					Map<String, String> details = new HashMap<>();
+					details.put(FLOOR_NO, String.valueOf(floorNumber));
+					details.put(RULE_NO, RULE_38);
+					details.put(MIN_REQUIRED, minRequiredFloorHeight);
+					//details.put(MAX_PERMISSIBLE, maxPermissibleFloorHeight);
+					details.put(PROVIDED, floorHeight.toString() + DcrConstants.IN_METER);
+					details.put(STATUS,
+							isAccepted ? Result.Accepted.getResultVal() : Result.Not_Accepted.getResultVal());
+					scrutinyDetail.getDetail().add(details);
+					pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+
+				}
+			}
+
+		}
+	}
+
 
     private void validateHeightOfBuilding(Plan pl, HashMap<String, String> errors, String typeOfArea,
             BigDecimal roadWidth) {
@@ -360,6 +490,9 @@ public class AdditionalFeature extends FeatureProcess {
                     "Block_" + block.getNumber() + "_" + "Height of Building");
             String requiredBuildingHeight = StringUtils.EMPTY;
             BigDecimal buildingHeight = block.getBuilding().getBuildingHeight();
+            if(buildingHeight != null) {
+                buildingHeight = buildingHeight.setScale(2, RoundingMode.HALF_UP);
+            }
 
             if (typeOfArea.equalsIgnoreCase(OLD)) {
                 if (roadWidth.compareTo(ROAD_WIDTH_TWO_POINTFOUR) < 0) {
@@ -443,7 +576,7 @@ public class AdditionalFeature extends FeatureProcess {
                 details.put(RULE_NO, ruleNo);
                 details.put(DESCRIPTION, HEIGHT_BUILDING);
                 details.put(DxfFileConstants.AREA_TYPE, typeOfArea);
-                details.put(DxfFileConstants.ROAD_WIDTH, roadWidth.toString());
+//                details.put(DxfFileConstants.ROAD_WIDTH, roadWidth.toString());
                 details.put(PERMISSIBLE, requiredBuildingHeight);
                 details.put(PROVIDED, String.valueOf(buildingHeight));
                 details.put(STATUS, isAccepted ? Result.Accepted.getResultVal() : Result.Not_Accepted.getResultVal());
@@ -476,7 +609,7 @@ public class AdditionalFeature extends FeatureProcess {
             List<BigDecimal> plinthHeights = block.getPlinthHeight();
 
             if (!plinthHeights.isEmpty()) {
-                minPlinthHeight = plinthHeights.stream().reduce(BigDecimal::min).get();
+                minPlinthHeight = plinthHeights.stream().reduce(BigDecimal::min).get().setScale(2, RoundingMode.HALF_UP);
                 if (minPlinthHeight.compareTo(BigDecimal.valueOf(0.45)) >= 0) {
                     isAccepted = true;
                 }
@@ -488,7 +621,7 @@ public class AdditionalFeature extends FeatureProcess {
 
             if (errors.isEmpty()) {
                 Map<String, String> details = new HashMap<>();
-                details.put(RULE_NO, RULE_41_I_A);
+                details.put(RULE_NO, RULE);
                 details.put(DESCRIPTION, MIN_PLINTH_HEIGHT_DESC);
                 details.put(PERMISSIBLE, MIN_PLINTH_HEIGHT);
                 details.put(PROVIDED, String.valueOf(minPlinthHeight));
@@ -546,6 +679,7 @@ public class AdditionalFeature extends FeatureProcess {
     }
 
     private void validateGreenBuildingsAndSustainability(Plan pl, HashMap<String, String> errors) {
+    	BigDecimal plotArea = pl.getPlot().getArea(); // Get plot area
         OccupancyTypeHelper mostRestrictiveFarHelper = pl.getVirtualBuilding() != null
                 ? pl.getVirtualBuilding().getMostRestrictiveFarHelper()
                 : null;
@@ -567,7 +701,7 @@ public class AdditionalFeature extends FeatureProcess {
                     if (pl.getPlot().getArea().compareTo(BigDecimal.valueOf(PLOTAREA_100)) >= 0
                             && pl.getPlot().getArea().compareTo(BigDecimal.valueOf(PLOTAREA_500)) < 0) {
 
-                        validate1a(pl, scrutinyDetail);
+                    	validate1a_Combined(pl, scrutinyDetail, mostRestrictiveFarHelper, plotArea, errors);
                         validate2a(pl, scrutinyDetail);
                         validate2b(pl, scrutinyDetail);
                         validate4a(pl, scrutinyDetail);
@@ -575,21 +709,21 @@ public class AdditionalFeature extends FeatureProcess {
                     } else if (pl.getPlot().getArea().compareTo(BigDecimal.valueOf(PLOTAREA_500)) >= 0
                             && pl.getPlot().getArea().compareTo(BigDecimal.valueOf(PLOTAREA_1000)) < 0) {
 
-                        validate1a(pl, scrutinyDetail);
+                    	validate1a_Combined(pl, scrutinyDetail, mostRestrictiveFarHelper, plotArea, errors);
                         validate2b(pl, scrutinyDetail);
                         validate4a(pl, scrutinyDetail);
 
                     } else if (pl.getPlot().getArea().compareTo(BigDecimal.valueOf(PLOTAREA_1000)) >= 0
                             && pl.getPlot().getArea().compareTo(BigDecimal.valueOf(PLOTAREA_3000)) < 0) {
 
-                        validate1a(pl, scrutinyDetail);
+                    	validate1a_Combined(pl, scrutinyDetail, mostRestrictiveFarHelper, plotArea, errors);
                         validate2a(pl, scrutinyDetail);
                         validate2b(pl, scrutinyDetail);
                         validate4a(pl, scrutinyDetail);
 
                     } else {
 
-                        validate1a(pl, scrutinyDetail);
+                    	validate1a_Combined(pl, scrutinyDetail, mostRestrictiveFarHelper, plotArea, errors);
                         validate2a(pl, scrutinyDetail);
                         validate2b(pl, scrutinyDetail);
                         validate4a(pl, scrutinyDetail);
@@ -600,14 +734,14 @@ public class AdditionalFeature extends FeatureProcess {
                     if (pl.getPlot().getArea().compareTo(BigDecimal.valueOf(PLOTAREA_100)) >= 0
                             && pl.getPlot().getArea().compareTo(BigDecimal.valueOf(PLOTAREA_500)) < 0) {
 
-                        validate1a(pl, scrutinyDetail);
+                    	validate1a_Combined(pl, scrutinyDetail, mostRestrictiveFarHelper, plotArea, errors);
                         validate2b(pl, scrutinyDetail);
                         validate4a(pl, scrutinyDetail);
 
                     } else if (pl.getPlot().getArea().compareTo(BigDecimal.valueOf(PLOTAREA_500)) >= 0
                             && pl.getPlot().getArea().compareTo(BigDecimal.valueOf(PLOTAREA_1000)) < 0) {
 
-                        validate1a(pl, scrutinyDetail);
+                    	validate1a_Combined(pl, scrutinyDetail, mostRestrictiveFarHelper, plotArea, errors);
                         validate2a(pl, scrutinyDetail);
                         validate2b(pl, scrutinyDetail);
                         validate4a(pl, scrutinyDetail);
@@ -615,14 +749,14 @@ public class AdditionalFeature extends FeatureProcess {
                     } else if (pl.getPlot().getArea().compareTo(BigDecimal.valueOf(PLOTAREA_1000)) >= 0
                             && pl.getPlot().getArea().compareTo(BigDecimal.valueOf(PLOTAREA_3000)) < 0) {
 
-                        validate1a(pl, scrutinyDetail);
+                    	validate1a_Combined(pl, scrutinyDetail, mostRestrictiveFarHelper, plotArea, errors);
                         validate2a(pl, scrutinyDetail);
                         validate2b(pl, scrutinyDetail);
                         validate4a(pl, scrutinyDetail);
 
                     } else {
 
-                        validate1a(pl, scrutinyDetail);
+                    	validate1a_Combined(pl, scrutinyDetail, mostRestrictiveFarHelper, plotArea, errors);
                         validate2a(pl, scrutinyDetail);
                         validate2b(pl, scrutinyDetail);
                         validate4a(pl, scrutinyDetail);
@@ -646,10 +780,11 @@ public class AdditionalFeature extends FeatureProcess {
         if (pl.getUtility().getSegregationOfWaste() != null && !pl.getUtility().getSegregationOfWaste().isEmpty()) {
             addDetails(scrutinyDetail, "55-4-a", "Segregation of Waste", "Segregation of waste details",
                     "Provided segregation of waste details", Result.Accepted.getResultVal());
-        } else {
-            addDetails(scrutinyDetail, "55-4-a", "Segregation of Waste", "Segregation of waste details",
-                    "Not provided segregation of waste details", Result.Not_Accepted.getResultVal());
-        }
+        } 
+//        else {
+//            addDetails(scrutinyDetail, "55-4-a", "Segregation of Waste", "Segregation of waste details",
+//                    "Not provided segregation of waste details", Result.Not_Accepted.getResultVal());
+//        }
     }
 
     private void validate2b(Plan pl, ScrutinyDetail scrutinyDetail) {
@@ -658,11 +793,12 @@ public class AdditionalFeature extends FeatureProcess {
             addDetails(scrutinyDetail, "55-2-b", "Installation of Solar Assisted Water Heating Systems",
                     "Solar assisted water heating system details",
                     "Provided solar assisted water heating system details", Result.Accepted.getResultVal());
-        } else {
-            addDetails(scrutinyDetail, "55-2-b", "Installation of Solar Assisted Water Heating Systems",
-                    "Solar assisted water heating system details",
-                    "Not provided solar assisted water heating system details", Result.Not_Accepted.getResultVal());
-        }
+        } 
+//        else {
+//            addDetails(scrutinyDetail, "55-2-b", "Installation of Solar Assisted Water Heating Systems",
+//                    "Solar assisted water heating system details",
+//                    "Not provided solar assisted water heating system details", Result.Not_Accepted.getResultVal());
+//        }
     }
 
     private void validate2a(Plan pl, ScrutinyDetail scrutinyDetail) {
@@ -670,23 +806,91 @@ public class AdditionalFeature extends FeatureProcess {
             addDetails(scrutinyDetail, "55-2-a", "Installation of Solar Photovoltaic Panels",
                     "Solar photovoltaic panel details", "Provided solar photovoltaic panel details",
                     Result.Accepted.getResultVal());
-        } else {
-            addDetails(scrutinyDetail, "55-2-a", "Installation of Solar Photovoltaic Panels",
-                    "Solar photovoltaic panel details", "Not provided solar photovoltaic panel details",
-                    Result.Not_Accepted.getResultVal());
         }
+//        else {
+//            addDetails(scrutinyDetail, "55-2-a", "Installation of Solar Photovoltaic Panels",
+//                    "Solar photovoltaic panel details", "Not provided solar photovoltaic panel details",
+//                    Result.Not_Accepted.getResultVal());
+//        }
     }
 
-    private void validate1a(Plan pl, ScrutinyDetail scrutinyDetail) {
-        if (pl.getUtility().getRainWaterHarvest() != null && !pl.getUtility().getRainWaterHarvest().isEmpty()) {
-            addDetails(scrutinyDetail, "55-1-a", "Rain Water Harvesting", "Rain water harvesting details",
-                    "Provided rain water harvesting", Result.Accepted.getResultVal());
-        } else {
-            addDetails(scrutinyDetail, "55-1-a", "Rain Water Harvesting", "Rain water harvesting details",
-                    "Not Provided rain water harvesting", Result.Not_Accepted.getResultVal());
-        }
-    }
+//    private void validate1a(Plan pl, ScrutinyDetail scrutinyDetail) {
+//        if (pl.getUtility().getRainWaterHarvest() != null && !pl.getUtility().getRainWaterHarvest().isEmpty()) {
+//            addDetails(scrutinyDetail, "10.3", "Rain Water Harvesting", "Rain water harvesting details",
+//                    "Provided rain water harvesting", Result.Accepted.getResultVal());
+//        } else {
+//            addDetails(scrutinyDetail, "10.3", "Rain Water Harvesting", "Rain water harvesting details",
+//                    "Not Provided rain water harvesting", Result.Not_Accepted.getResultVal());
+//        }
+//    }
+    
+    /**
+     * Validates Rain Water Harvesting (Combined Logic).
+     * Adds details to the provided ScrutinyDetail object ONLY IF the specific
+     * occupancy (A, F, G) and plot area (>=100 for A) conditions are met.
+     * The 'Required' column is intentionally left empty for this specific provision.
+     */
+    private void validate1a_Combined(Plan pl, ScrutinyDetail scrutinyDetail,
+            OccupancyTypeHelper mostRestrictiveFarHelper, BigDecimal plotArea,
+            HashMap<String, String> errors) { // Added errors map parameter
 
+		boolean shouldCheckRWH = false;
+		// Check occupancy and area conditions first
+		if (mostRestrictiveFarHelper != null && mostRestrictiveFarHelper.getType() != null) {
+		String occupancyCode = mostRestrictiveFarHelper.getType().getCode();
+		
+		// Condition: Occupancy 'A' and Plot Area >= 100 OR Occupancy 'F' OR Occupancy 'G'
+		if ((DxfFileConstants.A.equalsIgnoreCase(occupancyCode) && plotArea.compareTo(HUNDRED) >= 0)
+		|| DxfFileConstants.F.equalsIgnoreCase(occupancyCode)
+		|| DxfFileConstants.G.equalsIgnoreCase(occupancyCode)) {
+		shouldCheckRWH = true;
+		}
+		}
+		
+		// Proceed only if conditions are met
+		if (shouldCheckRWH) {
+		String ruleNo = "10.3";
+		String description = "Rain Water Harvesting";
+		String requiredValue = "Rain Water Harvesting Details";
+		
+		// Check RWH declaration (incorporating logic from addOutput)
+		boolean declarationError = false;
+		if (pl.getPlanInformation() != null && pl.getPlanInformation().getRwhDeclared() != null) {
+		String rwhDeclared = pl.getPlanInformation().getRwhDeclared();
+		if (rwhDeclared.equalsIgnoreCase(DcrConstants.NO) || rwhDeclared.equalsIgnoreCase(DcrConstants.NA)) {
+		declarationError = true;
+		// Add error if declaration is NO/NA but RWH is required by occupancy/area
+		errors.put(RWH_DECLARATION_ERROR_CODE, RWH_DECLARATION_ERROR_MSG);
+		pl.addErrors(errors); // Add error to the plan's error list
+		}
+		} else {
+		// Handle missing declaration if it's considered an error
+		// declarationError = true;
+		// errors.put(RWH_DECLARATION_ERROR_CODE, "RWH Declaration missing.");
+		// pl.addErrors(errors);
+		}
+		
+		// Check if RWH is actually provided in the utility details
+		if (pl.getUtility() != null && pl.getUtility().getRainWaterHarvest() != null && !pl.getUtility().getRainWaterHarvest().isEmpty()) {
+		// RWH is provided
+		String providedValue = "Provided";
+		if (pl.getUtility().getRainWaterHarvestingTankCapacity() != null) {
+		providedValue += " (Capacity: " + pl.getUtility().getRainWaterHarvestingTankCapacity() + ")";
+		}
+		// If declaration was wrong (NO/NA), status is Not_Accepted, otherwise Verify/Accepted.
+		String status = declarationError ? Result.Not_Accepted.getResultVal() : Result.Accepted.getResultVal();
+		addDetails(scrutinyDetail, ruleNo, description, requiredValue, providedValue, status);
+		} else {
+		// RWH is not provided
+		String providedValue = "Not Defined in the plan"; // Match original RWH class message
+		// Status is Not_Accepted if it was required (which it is if we got here) and not provided.
+		String status = Result.Not_Accepted.getResultVal();
+		addDetails(scrutinyDetail, ruleNo, description, requiredValue, providedValue, status);
+		}
+		}
+		// Else: Occupancy/Area conditions not met, RWH check is skipped for this method execution.
+		}
+    
     /*
      * private void validateIntCourtYard(Plan pl, HashMap<String, String> errors) { for (Block block : pl.getBlocks()) { boolean
      * isAccepted = false; BigDecimal minIntCourtYard = BigDecimal.ZERO; String blkNo = block.getNumber(); ScrutinyDetail
@@ -716,7 +920,7 @@ public class AdditionalFeature extends FeatureProcess {
         scrutinyDetail.addColumnHeading(1, RULE_NO);
         scrutinyDetail.addColumnHeading(2, DESCRIPTION);
         scrutinyDetail.addColumnHeading(3, DxfFileConstants.AREA_TYPE);
-        scrutinyDetail.addColumnHeading(4, DxfFileConstants.ROAD_WIDTH);
+//        scrutinyDetail.addColumnHeading(4, DxfFileConstants.ROAD_WIDTH);
         scrutinyDetail.addColumnHeading(5, PERMISSIBLE);
         scrutinyDetail.addColumnHeading(6, PROVIDED);
         scrutinyDetail.addColumnHeading(7, STATUS);

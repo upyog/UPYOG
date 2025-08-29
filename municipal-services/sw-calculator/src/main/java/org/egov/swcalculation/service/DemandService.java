@@ -288,10 +288,11 @@ public class DemandService {
 				.billingCycle(billingcycle)
 				.build();
 		List<Demand> demandRes = demandRepository.saveDemand(calculationReq.getRequestInfo(), demands,notificationObj);
-		if(calculationReq.getIsReconnectionRequest())
-			fetchBillForReconnect(demandRes, calculationReq.getRequestInfo(), masterMap);
-		else if(isForConnectionNO && !calculationReq.getIsReconnectionRequest())
-			fetchBill(demandRes, calculationReq.getRequestInfo(),masterMap);
+		/* Temp Disabling  this -> PI-19148->Abhishek Rana   */
+		//		if(calculationReq.getIsReconnectionRequest())
+//			fetchBillForReconnect(demandRes, calculationReq.getRequestInfo(), masterMap);
+//		else if(isForConnectionNO && !calculationReq.getIsReconnectionRequest())
+//			fetchBill(demandRes, calculationReq.getRequestInfo(),masterMap);
 		return demandRes;
 	}
 
@@ -1300,7 +1301,7 @@ public class DemandService {
 						calculationCriteriaList.clear();
 						connectionNosCount=0;
 						if(threadSleepCount == 3) {
-							Thread.sleep(15000);
+						    Thread.sleep(1000); // Sleep for 1 second
 							threadSleepCount=0;
 						}
 						threadSleepCount++;

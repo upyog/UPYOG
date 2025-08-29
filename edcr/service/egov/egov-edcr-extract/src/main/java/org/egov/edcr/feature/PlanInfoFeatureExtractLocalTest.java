@@ -657,17 +657,38 @@ public class PlanInfoFeatureExtractLocalTest extends FeatureExtract {
 		if (StringUtils.isNotBlank(plotNo))
 			pi.setPlotNo(plotNo);
 
-		String khataNo = planInfoProperties.get(DxfFileConstants.KHATA_NO);
-		if (StringUtils.isNotBlank(khataNo))
-			pi.setKhataNo(khataNo);
+//		String khataNo = planInfoProperties.get(DxfFileConstants.KHATA_NO);
+//		if (StringUtils.isNotBlank(khataNo))
+//			pi.setKhataNo(khataNo);
+		
+		String khasraNo = planInfoProperties.get(DxfFileConstants.KHASRA_NO);
+		if (StringUtils.isNotBlank(khasraNo))
+			pi.setKhasraNo(khasraNo);
+		
+		String khatuniNo = planInfoProperties.get(DxfFileConstants.KHATUNI_NO);
+		if (StringUtils.isNotBlank(khatuniNo))
+			pi.setKhatuniNo(khatuniNo);
+		
+		// 3 NEW PARAMETERS ADDED IN PLANINFO AND IN REPORT
+		String ulbType = planInfoProperties.get(DxfFileConstants.ULB_TYPE);
+				if (StringUtils.isNotBlank(ulbType))
+					pi.setUlbType(ulbType);
+				
+		String numberOfFloors = planInfoProperties.get(DxfFileConstants.NUMBER_OF_FLOORS);
+				if (StringUtils.isNotBlank(numberOfFloors))
+					pi.setNumberOfFloors(numberOfFloors);
+				
+		String roadType = planInfoProperties.get(DxfFileConstants.ROAD_TYPE);
+				if (StringUtils.isNotBlank(roadType))
+					pi.setRoadType(roadType);
 
 		String district = planInfoProperties.get(DxfFileConstants.DISTRICT);
 		if (StringUtils.isNotBlank(district))
 			pi.setDistrict(district);
 
-		String mauza = planInfoProperties.get(DxfFileConstants.MAUZA);
-		if (StringUtils.isNotBlank(mauza))
-			pi.setMauza(mauza);
+//		String mauza = planInfoProperties.get(DxfFileConstants.MAUZA);
+//		if (StringUtils.isNotBlank(mauza))
+//			pi.setMauza(mauza);
 
 		String leaseHoldLand = planInfoProperties.get(DxfFileConstants.LEASEHOLD_LAND);
 		if (StringUtils.isNotBlank(leaseHoldLand)) {

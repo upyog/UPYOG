@@ -102,6 +102,10 @@ public class EnrichmentService {
 		 *Abhishek Rana -- 30-12-2024
 		 *		 */
 		
+		if (sewerageServicesUtil.isModifyConnectionRequest(sewerageConnectionRequest)){
+			sewerageConnectionRequest.getSewerageConnection().setStatus(StatusEnum.INACTIVE);
+		}
+		
 String userType = sewerageConnectionRequest.getRequestInfo().getUserInfo().getType().toUpperCase();
 
 		

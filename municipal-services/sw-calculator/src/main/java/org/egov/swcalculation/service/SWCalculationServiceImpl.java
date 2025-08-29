@@ -18,8 +18,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
@@ -583,18 +585,55 @@ public class SWCalculationServiceImpl implements SWCalculationService {
 		BillGenerationSearchCriteria criteria = new BillGenerationSearchCriteria();
 		criteria.setStatus(SWCalculationConstant.INITIATED_CONST);
 
-		List<BillScheduler> billSchedularList = billGeneratorService.getBillGenerationDetails(criteria);
+		/* Previously, we fetched all localities without filtering by status. Now, we are updating the logic to pick only those localities where the status is "INITIATED".
+		Additionally, from the group-based list for Patiala, we now pick only those entries where: The group is not configured (i.e., group is null or empty), and The status is also "INITIATED".
+		So, both lists are now filtered to include only records with INITIATED status, with an extra condition for Patiala that the group should not be present.  */		
+		  
+				List<BillScheduler> billSchedularLocality = billGeneratorService.getBillGenerationDetails(criteria);
+				List<BillScheduler> billSchedulargrouplist = billGeneratorService.getBillGenerationGroup(criteria);
+				List<BillScheduler> billSchedularList = new ArrayList<>();
+
+				Set<String> seenIds = new HashSet<>();
+
+				for (BillScheduler scheduler : billSchedularLocality) {
+				    if (scheduler.getId() != null && seenIds.add(scheduler.getId())) {
+				        billSchedularList.add(scheduler);
+				    }
+				}
+
+				for (BillScheduler scheduler : billSchedulargrouplist) {
+				    if (scheduler.getId() != null && seenIds.add(scheduler.getId())) {
+				        billSchedularList.add(scheduler);
+				    }
+				}
 		if (billSchedularList != null && billSchedularList.isEmpty())
 			return;
 		log.info("billSchedularList count : " + billSchedularList.size());
 		for (BillScheduler billSchedular : billSchedularList) {
 			try {
 				billGeneratorDao.updateBillSchedularStatus(billSchedular.getId(), StatusEnum.INPROGRESS);
+				List<String> connectionNos = null;
 
 				requestInfo.getUserInfo().setTenantId(billSchedular.getTenantId() != null ? billSchedular.getTenantId() : requestInfo.getUserInfo().getTenantId());
 				RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(requestInfo).build();
 
-				List<String> connectionNos = sewerageCalculatorDao.getConnectionsNoByLocality( billSchedular.getTenantId(), SWCalculationConstant.nonMeterdConnection, billSchedular.getLocality());
+//				List<String> connectionNos = sewerageCalculatorDao.getConnectionsNoByLocality( billSchedular.getTenantId(), SWCalculationConstant.nonMeterdConnection, billSchedular.getLocality());
+				if ("pb.patiala".equalsIgnoreCase(billSchedular.getTenantId()) &&
+					    billSchedular.getGrup() != null && !billSchedular.getGrup().isEmpty()) {
+					    
+					    connectionNos = sewerageCalculatorDao.getConnectionsNoByGroups(
+					        billSchedular.getTenantId(),
+					        SWCalculationConstant.nonMeterdConnection,
+					        billSchedular.getGrup()
+					    );
+
+					} else {
+					    connectionNos = sewerageCalculatorDao.getConnectionsNoByLocality(
+					        billSchedular.getTenantId(),
+					        SWCalculationConstant.nonMeterdConnection,
+					        billSchedular.getLocality()
+					    );
+					}
 
 				//testing purpose added three consumercodes
 //				connectionNos.add("0603000001");

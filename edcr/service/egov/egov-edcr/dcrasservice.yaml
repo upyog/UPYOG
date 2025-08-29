@@ -526,14 +526,34 @@ components:
           type: string
           maxLength: 32
           description: Extracted from Plan info.Khata number.
+        khasraNo:
+          type: string
+          maxLength: 32
+          description: Extracted from Plan info.Khasra number.
         mauza:
           type: string
           maxLength: 32
           description: Extracted from Plan info.Mauza number.
+        khatuniNo:
+          type: string
+          maxLength: 32
+          description: Extracted from Plan info.Khatuni number.
         district:
           type: string
           maxLength: 32
           description: Extracted from Plan info.District name
+        ulbType:
+          type: string
+          maxLength: 32
+          description: Extracted from Plan info.ULB type
+        numberOfFloors:
+          type: string
+          maxLength: 32
+          description: Extracted from Plan info.Number Of Floors    
+        roadType:
+          type: string
+          maxLength: 32
+          description: Extracted from Plan info.Road type  
         rwhDeclared:
           type: string
           maxLength: 3

@@ -67,7 +67,9 @@ public class EnrichmentService {
 		String roleCodeName=null;
 
 		String userType = requestInfo.getUserInfo().getType().toUpperCase();
-		Object thirdPartyData = fetchThirdPartyIntegration(requestInfo, config.getStateLevelTenantId(), PTConstants.MDMS_WC_ROLE_MODLENAME , PTConstants.MDMS_WC_ROLE_MASTERNAME, userType,true);
+		String filter = String.format("[?(@.category=='%s' && @.active==%b)]", userType, true);
+		
+		Object thirdPartyData = fetchDataFromMdms(requestInfo, config.getStateLevelTenantId(), PTConstants.MDMS_WC_ROLE_MODLENAME , PTConstants.MDMS_WC_ROLE_MASTERNAME, filter);
 
 		 Map<String, String> roleMap = new HashMap<>();
 		 
@@ -113,24 +115,30 @@ public class EnrichmentService {
 	}
 
 	
-public Object fetchThirdPartyIntegration(RequestInfo requestInfo, String tenantId, String moduleName, String masterName, String userType, Boolean active) {
+public Object fetchDataFromMdms(RequestInfo requestInfo, String tenantId, String moduleName, String masterName, String filter) {
 	    
 		
 		List<MasterDetail> masterDetails = new ArrayList<>();
-		String filter = String.format("[?(@.category=='%s' && @.active==%b)]", userType, active);
+		
 	    
 	    // Add master detail with the dynamic filter
-	    masterDetails.add(MasterDetail.builder()
-	            .name(PTConstants.MDMS_WC_ROLE_MASTERNAME)
-	            .filter(filter)
-	            .build());
+		if(filter!= null) {
+			 masterDetails.add(MasterDetail.builder()
+			            .name(masterName)
+			            .filter(filter)
+			            .build());
 
+		}else {
+			 masterDetails.add(MasterDetail.builder()
+			            .name(masterName)
+			            .build());
+		}
      
         List<ModuleDetail> wfModuleDtls = Collections.singletonList(ModuleDetail.builder().masterDetails(masterDetails)
-                .moduleName(PTConstants.MDMS_WC_ROLE_MODLENAME).build());
+                .moduleName(moduleName).build());
 
         MdmsCriteria mdmsCriteria = MdmsCriteria.builder().moduleDetails(wfModuleDtls)
-                .tenantId(config.getStateLevelTenantId())
+                .tenantId(config.getStateLevelTenantId())    
                 .build();
 
         MdmsCriteriaReq mdmsCriteriaReq = MdmsCriteriaReq.builder().mdmsCriteria(mdmsCriteria)
@@ -213,6 +221,70 @@ public Object fetchThirdPartyIntegration(RequestInfo requestInfo, String tenantI
 		} 
 		
 		else if ((propertyFromDb.getStatus().equals(Status.ACTIVE)|| propertyFromDb.getStatus().equals(Status.INACTIVE)) && isWfEnabled && !isnumberchange)
+		{
+				enrichPropertyForNewWf(requestInfo, property, false);	
+		}
+		
+		
+		if (!CollectionUtils.isEmpty(property.getDocuments()))
+			property.getDocuments().forEach(doc -> {
+
+				if (doc.getId() == null) {
+					doc.setId(UUID.randomUUID().toString());
+					doc.setStatus(Status.ACTIVE);
+				}
+			});
+				
+	    	if (!CollectionUtils.isEmpty(property.getUnits()))
+			property.getUnits().forEach(unit -> {
+
+				if (unit.getId() == null) {
+					unit.setId(UUID.randomUUID().toString());
+					unit.setActive(true);
+				}
+			});
+				
+		Institution institute = property.getInstitution();
+		if (!ObjectUtils.isEmpty(institute) && null == institute.getId())
+			property.getInstitution().setId(UUID.randomUUID().toString());
+
+		AuditDetails auditDetails = propertyutil.getAuditDetails(requestInfo.getUserInfo().getUuid().toString(), true);
+		property.setAuditDetails(auditDetails);
+		property.setAccountId(propertyFromDb.getAccountId());
+       
+		property.setAdditionalDetails(
+				propertyutil.jsonMerge(propertyFromDb.getAdditionalDetails(), property.getAdditionalDetails()));
+    }
+    
+    
+    
+    
+    /* This change for surveyId edit PI-PI-18601 */
+    
+ public void enrichUpdateRequests(PropertyRequest request,Property propertyFromDb, Boolean issurveyChange) {
+    	
+    	Property property = request.getProperty();
+        RequestInfo requestInfo = request.getRequestInfo();
+        AuditDetails auditDetailsForUpdate = propertyutil.getAuditDetails(requestInfo.getUserInfo().getUuid().toString(), true);
+        propertyFromDb.setAuditDetails(auditDetailsForUpdate);
+        
+        
+		Boolean isWfEnabled = config.getIsWorkflowEnabled();
+		/**
+		 *  commenting given boolean value AS added in else if
+		 */
+	//	Boolean iswfStarting = propertyFromDb.getStatus().equals(Status.ACTIVE);
+	//	Boolean isactiveexist = propertyFromDb.getStatus().equals(Status.INACTIVE);
+
+		if (!isWfEnabled)
+		{
+
+			property.setStatus(Status.ACTIVE);
+			property.getAddress().setId(propertyFromDb.getAddress().getId());
+
+		} 
+		
+		else if ((propertyFromDb.getStatus().equals(Status.ACTIVE)|| propertyFromDb.getStatus().equals(Status.INACTIVE)) && isWfEnabled && !issurveyChange)
 		{
 				enrichPropertyForNewWf(requestInfo, property, false);	
 		}

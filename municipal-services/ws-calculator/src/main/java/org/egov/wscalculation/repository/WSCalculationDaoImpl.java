@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -23,6 +24,7 @@ import org.egov.wscalculation.repository.rowmapper.WaterRowMapper;
 import org.egov.wscalculation.web.models.BillSearch;
 import org.egov.wscalculation.web.models.BillSearchs;
 import org.egov.wscalculation.web.models.CancelDemand;
+import org.egov.wscalculation.web.models.CancelDemandReq;
 import org.egov.wscalculation.web.models.Canceldemandsearch;
 import org.egov.wscalculation.web.models.MeterConnectionRequest;
 import org.egov.wscalculation.web.models.MeterReading;
@@ -31,6 +33,7 @@ import org.egov.wscalculation.web.models.WaterConnection;
 import org.egov.wscalculation.web.models.WaterDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -81,6 +84,12 @@ public class WSCalculationDaoImpl implements WSCalculationDao {
 	@Value("${egov.meterservice.createmeterconnection}")
 	private String createMeterConnection;
 
+	@Value("${egov.meterservice.updatemeterconnection}")
+	private String updateMeterConnection;
+	
+	@Value("${egov.meterservice.cancelmeterconnection}")
+	private String cancelMeterConnection;
+	
 	/**
 	 * 
 	 * @param meterConnectionRequest MeterConnectionRequest contains meter reading
@@ -91,6 +100,18 @@ public class WSCalculationDaoImpl implements WSCalculationDao {
 		wSCalculationProducer.push(createMeterConnection, meterConnectionRequest);
 	}
 
+	
+	@Override
+	public void updateMeterReading(MeterConnectionRequest meterConnectionRequest) {
+		wSCalculationProducer.push(updateMeterConnection, meterConnectionRequest);
+	}
+	
+	
+	
+	@Override
+	public void cancelPreviousMeterReading(CancelDemandReq demandId) {
+		wSCalculationProducer.push(cancelMeterConnection, demandId);
+	}
 	/**
 	 * 
 	 * @param criteria would be meter reading criteria
@@ -117,7 +138,40 @@ public class WSCalculationDaoImpl implements WSCalculationDao {
 		log.debug("Prepared Statement" + preparedStatement.toString());
 		return jdbcTemplate.query(query, preparedStatement.toArray(), currentMeterReadingRowMapper);
 	}
+	
+	
+	
+	@Override
+	public List<MeterReading> searchCurrentMeterReadingsforUpdate(MeterReadingSearchCriteria criteria) {
+		List<Object> preparedStatement = new ArrayList<>();
+		String query = queryBuilder.getCurrentReadingConnectionSearchQuery(criteria, preparedStatement);
+		if (query == null)
+			return Collections.emptyList();
+		log.debug("Query: " + query);
+		log.debug("Prepared Statement" + preparedStatement.toString());
+		return jdbcTemplate.query(query, preparedStatement.toArray(), currentMeterReadingRowMapper);
+	}
 
+	@Override
+	public String searchLastMeterId(String connectionNo, Long lastReadingDate, Long currentDate, String tenantId) {
+	    List<Object> preparedStatement = new ArrayList<>();
+	    String query = queryBuilder.getMeterId(connectionNo, lastReadingDate, currentDate, tenantId, preparedStatement);
+
+	    if (query == null)
+	        return null;
+
+	    log.debug("Query: " + query);
+	    log.debug("Prepared Statement: " + preparedStatement);
+
+	    try {
+	        return jdbcTemplate.queryForObject(query, preparedStatement.toArray(), String.class);
+	    } catch (EmptyResultDataAccessException e) {
+	        throw new RuntimeException("No previous meter reading found for connectionNo: " + connectionNo);
+
+	    }
+	}
+
+	
 	/**
 	 * 
 	 * @param ids of string of connection ids on which search is performed
@@ -314,6 +368,23 @@ public class WSCalculationDaoImpl implements WSCalculationDao {
 			return jdbcTemplate.query(query, preparedStatement.toArray(), demandcancelwrapper);
 		
 	}
+	
+	
+	@Override
+	public List<Map<String, Object>> getCollection(String tenantId, Long taxPeriodFrom, Long taxPeriodTo, String consumerCode) {
+	    List<Object> preparedStatement = new ArrayList<>();
+	    String query = queryBuilder.getCollection(tenantId, taxPeriodFrom, taxPeriodTo, consumerCode, preparedStatement);
+
+	    log.info("preparedStatement: {} | query: {}", preparedStatement, query);
+
+	    try {
+	        return jdbcTemplate.queryForList(query, preparedStatement.toArray());
+	    } catch (EmptyResultDataAccessException e) {
+	        return Collections.emptyList(); // return empty list if no records found
+	    }
+	}
+
+
 	
 	public List<Canceldemandsearch> getConnectionCancels(String tenantId, String demandid) {
 		

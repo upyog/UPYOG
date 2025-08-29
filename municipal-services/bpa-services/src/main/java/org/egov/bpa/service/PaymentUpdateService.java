@@ -25,9 +25,6 @@ import org.springframework.util.CollectionUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.MDC;
-
-import static org.egov.bpa.util.BPAConstants.TENANTID_MDC_STRING;
 
 @Service
 @Slf4j
@@ -73,9 +70,6 @@ public class PaymentUpdateService {
 			RequestInfo requestInfo = paymentRequest.getRequestInfo();
 			List<PaymentDetail> paymentDetails = paymentRequest.getPayment().getPaymentDetails();
 			String tenantId = paymentRequest.getPayment().getTenantId();
-
-			// Adding in MDC so that tracer can add it in header
-			MDC.put(TENANTID_MDC_STRING, tenantId);
 
 			for (PaymentDetail paymentDetail : paymentDetails) {
 

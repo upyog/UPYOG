@@ -82,9 +82,18 @@ public class Floor extends Measurement {
     private List<BigDecimal> floorHeights;
     private List<Room> acRooms = new ArrayList<>();
     private List<Room> regularRooms = new ArrayList<>();
+    private List<Room> habitationRooms = new ArrayList<>();
+    private List<Room> storeRooms = new ArrayList<>();
+    // Doors for version 1.1.1
+    private List<Door> doors = new ArrayList<>();
+    private List<Door> nonaHabitationalDoors = new ArrayList<>();
+    
+    private List<Window> windows = new ArrayList<>();
+
     private Room kitchen;
     private Room bathRoom;
     private Room waterClosets;
+    private List<Toilet> toilet;
     private Room bathRoomWaterClosets;
     private List<BigDecimal> heightFromTheFloorToCeiling;
     private List<BigDecimal> heightOfTheCeilingOfUpperBasement;
@@ -92,17 +101,19 @@ public class Floor extends Measurement {
     private InteriorOpenSpace interiorOpenSpace = new InteriorOpenSpace();
     private MeasurementWithHeight verandah = new MeasurementWithHeight();
     private MeasurementWithHeight lightAndVentilation = new MeasurementWithHeight();
+    private MeasurementWithHeight bathVentilation = new MeasurementWithHeight();
+    private MeasurementWithHeight waterClosetVentilation = new MeasurementWithHeight();
     private List<RoofArea> roofAreas = new ArrayList<>();
 
     private List<Balcony> balconies = new ArrayList<>();
+    private Boolean isStiltFloor;
 
     private List<Measurement> overHangs;
 
     private List<Measurement> constructedAreas = new ArrayList<>();
 
     private List<GlassFacadeOpening> glassFacadeOpenings = new ArrayList<>();
-    // Doors for version 1.1.1
-    private List<Door> doors = new ArrayList<>();
+   
 
     // From 2.0.0 version
     private List<BigDecimal> heightFromFloorToBottomOfBeam;
@@ -168,6 +179,42 @@ public class Floor extends Measurement {
 
     public void addDaLifts(Lift daLift) {
         this.daLifts.add(daLift);
+    }
+    
+    public List<Door> getNonaHabitationalDoors() {
+        return nonaHabitationalDoors;
+    }
+
+    public void setNonaHabitationalDoors(List<Door> nonaHabitationalDoors) {
+        this.nonaHabitationalDoors = nonaHabitationalDoors;
+    }
+    
+    public void addNonaHabitationalDoors(Door nonaHabitationalDoors) {
+        this.nonaHabitationalDoors.add(nonaHabitationalDoors);
+    }
+    
+    public List<Door> getDoors() {
+        return doors;
+    }
+
+    public void setDoors(List<Door> doors) {
+        this.doors = doors;
+    }
+    
+    public void addDoor(Door door) {
+        this.doors.add(door);
+    }
+
+    public List<Window> getWindows() {
+		return windows;
+	}
+
+	public void setWindows(List<Window> windows) {
+		this.windows = windows;
+	}
+	
+	public void addWindow(Window window) {
+        this.windows.add(window);
     }
 
     public List<Ramp> getRamps() {
@@ -419,6 +466,14 @@ public class Floor extends Measurement {
     public void setTerrace(Boolean terrace) {
         this.terrace = terrace;
     }
+    
+    public Boolean getIsStiltFloor() {
+        return isStiltFloor;
+    }
+
+    public void setIsStiltFloor(Boolean isStiltFloor) {
+        this.isStiltFloor = isStiltFloor;
+    }
 
     public ParkingDetails getParking() {
         return parking;
@@ -463,6 +518,36 @@ public class Floor extends Measurement {
     public void setRegularRooms(List<Room> regularRooms) {
         this.regularRooms = regularRooms;
     }
+    
+    public List<Room> getHabitationRooms() {
+        return habitationRooms;
+    }
+
+    public void addHabitationRooms(Room habitationRooms) {
+        this.habitationRooms.add(habitationRooms);
+    }
+
+    /**
+     * @param habitationRooms the habitationRooms to set
+     */
+    public void setHabitationRooms(List<Room> habitationRooms) {
+        this.habitationRooms = habitationRooms;
+    }
+    
+    public List<Room> getStoreRooms() {
+        return storeRooms;
+    }
+
+    public void addStoreRooms(Room storeRooms) {
+        this.storeRooms.add(storeRooms);
+    }
+
+    /**
+     * @param storeRooms the storeRooms to set
+     */
+    public void setStoreRooms(List<Room> storeRooms) {
+        this.storeRooms = storeRooms;
+    }
 
     public Room getKitchen() {
         return kitchen;
@@ -479,6 +564,15 @@ public class Floor extends Measurement {
     public void setBathRoom(Room bathRoom) {
         this.bathRoom = bathRoom;
     }
+    
+    public List<Toilet> getToilet() {
+        return toilet;
+    }
+
+    public void setToilet(List<Toilet> toilet) {
+        this.toilet = toilet;
+    }
+
 
     public Room getWaterClosets() {
         return waterClosets;
@@ -579,6 +673,22 @@ public class Floor extends Measurement {
     public void setLightAndVentilation(MeasurementWithHeight lightAndVentilation) {
         this.lightAndVentilation = lightAndVentilation;
     }
+    
+    public MeasurementWithHeight getBathVentilaion() {
+        return bathVentilation;
+    }
+
+    public void setBathVentilation(MeasurementWithHeight bathVentilation) {
+        this.bathVentilation = bathVentilation;
+    }
+    
+    public MeasurementWithHeight getWaterClosetVentilation() {
+        return waterClosetVentilation;
+    }
+
+    public void setWaterClosetVentilation(MeasurementWithHeight waterClosetVentilation) {
+        this.waterClosetVentilation = waterClosetVentilation;
+    }
 
     public List<RoofArea> getRoofAreas() {
         return roofAreas;
@@ -604,13 +714,7 @@ public class Floor extends Measurement {
         this.glassFacadeOpenings = glassFacadeOpenings;
     }
 
-    public List<Door> getDoors() {
-        return doors;
-    }
-
-    public void setDoors(List<Door> doors) {
-        this.doors = doors;
-    }
+   
 
     public List<BigDecimal> getHeightFromFloorToBottomOfBeam() {
         return heightFromFloorToBottomOfBeam;

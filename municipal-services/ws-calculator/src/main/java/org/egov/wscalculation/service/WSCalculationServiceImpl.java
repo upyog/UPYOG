@@ -342,37 +342,85 @@ public class WSCalculationServiceImpl implements WSCalculationService {
 	 * @return all calculations including water charge and taxhead on that
 	 */
 	public List<Calculation> getCalculations(CalculationReq request, Map<String, Object> masterMap) {
-		List<Calculation> calculations = new ArrayList<>(request.getCalculationCriteria().size());
-		for (CalculationCriteria criteria : request.getCalculationCriteria()) {
-			Map<String, List> estimationMap = estimationService.getEstimationMap(criteria, request, masterMap);
-			ArrayList<?> billingFrequencyMap = (ArrayList<?>) masterMap
-					.get(WSCalculationConstant.Billing_Period_Master);
-			masterDataService.enrichBillingPeriod(criteria, billingFrequencyMap, masterMap,
-					criteria.getWaterConnection().getConnectionType());
+	    List<Calculation> calculations = new ArrayList<>(request.getCalculationCriteria().size());
+	    Set<String> errorConsumerCodes = new HashSet<>(); // Track consumers with errors
+	    Map<String, CalculationCriteria> latestCriteriaMap = new HashMap<>(); // consumerCode -> latest criteria
 
-			Calculation calculation = null;
+	    for (CalculationCriteria criteria : request.getCalculationCriteria()) {
+	        try {
+	            Map<String, List> estimationMap = estimationService.getEstimationMap(criteria, request, masterMap);
+	            ArrayList<?> billingFrequencyMap = (ArrayList<?>) masterMap.get(WSCalculationConstant.Billing_Period_Master);
+	            masterDataService.enrichBillingPeriod(criteria, billingFrequencyMap, masterMap,
+	                    criteria.getWaterConnection().getConnectionType());
 
-			if (request.getIsDisconnectionRequest() != null && request.getIsDisconnectionRequest()) {
-				if (request.getIsDisconnectionRequest()
-						&& criteria.getApplicationNo().equals(request.getCalculationCriteria()
-								.get(request.getCalculationCriteria().size() - 1).getApplicationNo())) {
-					calculation = getCalculation(request.getRequestInfo(), criteria, estimationMap, masterMap, true,
-							true);
-				}
-			} else if (request.getIsReconnectionRequest() != null && request.getIsReconnectionRequest()) {
-				if (request.getIsReconnectionRequest()
-						&& criteria.getApplicationNo().equals(request.getCalculationCriteria()
-								.get(request.getCalculationCriteria().size() - 1).getApplicationNo())) {
-					calculation = getCalculation(request.getRequestInfo(), criteria, estimationMap, masterMap, true,
-							false);
-				}
+	            Calculation calculation = null;
 
-			} else {
-				calculation = getCalculation(request.getRequestInfo(), criteria, estimationMap, masterMap, true, false);
+	            if (request.getIsDisconnectionRequest() != null && request.getIsDisconnectionRequest()) {
+	                if (criteria.getApplicationNo().equals(
+	                        request.getCalculationCriteria()
+	                               .get(request.getCalculationCriteria().size() - 1).getApplicationNo())) {
+	                    calculation = getCalculation(request.getRequestInfo(), criteria, estimationMap, masterMap, true, true);
+	                }
+	            } else if (request.getIsReconnectionRequest() != null && request.getIsReconnectionRequest()) {
+	                if (criteria.getApplicationNo().equals(
+	                        request.getCalculationCriteria()
+	                               .get(request.getCalculationCriteria().size() - 1).getApplicationNo())) {
+	                    calculation = getCalculation(request.getRequestInfo(), criteria, estimationMap, masterMap, true, false);
+	                }
+	            } else {
+	                calculation = getCalculation(request.getRequestInfo(), criteria, estimationMap, masterMap, true, false);
+	            }
+
+	            calculations.add(calculation);
+
+	        } catch (Exception ex) {
+	        	   log.error("Error processing calculation for applicationNo {}: {}", 
+	                       criteria != null ? criteria.getApplicationNo() : "null", ex.getMessage(), ex);
+
+	               trackLatestCriteriaPerConsumer(latestCriteriaMap, criteria);
+
+	        }
+	    }
+	    
+	    for (Map.Entry<String, CalculationCriteria> entry : latestCriteriaMap.entrySet()) {
+	        DemandGenerationError demandGenerationError = getDemandGenerationError(entry.getValue(), "Error during calculation");
+	        if (demandGenerationError != null) {
+	            producer.push(configs.getBillGenerateSchedulerTopic(), demandGenerationError);
+	        }
+	    }
+	    return calculations;
+	}
+
+	
+	/**
+	 * Helper method to track the latest criteria per consumerCode
+	 */
+	private void trackLatestCriteriaPerConsumer(Map<String, CalculationCriteria> latestCriteriaMap, CalculationCriteria criteria) {
+	    if (criteria == null || criteria.getConnectionNo() == null) return;
+
+	    CalculationCriteria existing = latestCriteriaMap.get(criteria.getConnectionNo());
+	    if (existing == null || (criteria.getFrom() != null && existing.getFrom() != null
+	            && criteria.getFrom() > existing.getFrom())) {
+	        latestCriteriaMap.put(criteria.getConnectionNo(), criteria);
+	    }
+	}
+	
+	private static DemandGenerationError getDemandGenerationError(CalculationCriteria criteria, String errorMsg) {
+		DemandGenerationError error = new DemandGenerationError();
+		if (criteria != null && errorMsg != null) {
+			error.setConnectionNo(criteria.getConnectionNo());
+			error.setTenantId(criteria.getTenantId());
+			error.setToDate(criteria.getTo());
+			error.setFromDate(criteria.getFrom());
+			error.setAssessmentYear(criteria.getAssessmentYear());
+
+			if (criteria.getWaterConnection() != null){
+			error.setPropertyId(criteria.getWaterConnection().getPropertyId());
 			}
-			calculations.add(calculation);
+
+			error.setErrorMessage(errorMsg);
 		}
-		return calculations;
+		return error;
 	}
 
 	@Override
@@ -548,8 +596,29 @@ public class WSCalculationServiceImpl implements WSCalculationService {
 
 		BillGenerationSearchCriteria criteria = new BillGenerationSearchCriteria();
 		criteria.setStatus(WSCalculationConstant.INITIATED_CONST);
+		
+/* Previously, we fetched all localities without filtering by status. Now, we are updating the logic to pick only those localities where the status is "INITIATED".
+Additionally, from the group-based list for Patiala, we now pick only those entries where: The group is not configured (i.e., group is null or empty), and The status is also "INITIATED".
+So, both lists are now filtered to include only records with INITIATED status, with an extra condition for Patiala that the group should not be present.  */		
+  
+		List<BillScheduler> billSchedularLocality = billGeneratorService.getBillGenerationDetails(criteria);
+		List<BillScheduler> billSchedulargrouplist = billGeneratorService.getBillGenerationGroup(criteria);
+		List<BillScheduler> billSchedularList = new ArrayList<>();
 
-		List<BillScheduler> billSchedularList = billGeneratorService.getBillGenerationDetails(criteria);
+		Set<String> seenIds = new HashSet<>();
+
+		for (BillScheduler scheduler : billSchedularLocality) {
+		    if (scheduler.getId() != null && seenIds.add(scheduler.getId())) {
+		        billSchedularList.add(scheduler);
+		    }
+		}
+
+		for (BillScheduler scheduler : billSchedulargrouplist) {
+		    if (scheduler.getId() != null && seenIds.add(scheduler.getId())) {
+		        billSchedularList.add(scheduler);
+		    }
+		}
+		
 		if (billSchedularList.isEmpty())
 			return;
 		log.info("billSchedularList count : " + billSchedularList.size());
@@ -563,12 +632,22 @@ public class WSCalculationServiceImpl implements WSCalculationService {
 						: requestInfo.getUserInfo().getTenantId());
 				RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(requestInfo).build();
 				
-				if (billSchedular.getTenantId().equalsIgnoreCase("pb.patiala"))
-					connectionNos = wSCalculationDao.getConnectionsNoByGroups(billSchedular.getTenantId(),
-							WSCalculationConstant.nonMeterdConnection, billSchedular.getGrup());
-				else
-					connectionNos = wSCalculationDao.getConnectionsNoByLocality(billSchedular.getTenantId(),
-							WSCalculationConstant.nonMeterdConnection, billSchedular.getLocality());
+				if ("pb.patiala".equalsIgnoreCase(billSchedular.getTenantId()) &&
+					    billSchedular.getGrup() != null && !billSchedular.getGrup().isEmpty()) {
+					    
+					    connectionNos = wSCalculationDao.getConnectionsNoByGroups(
+					        billSchedular.getTenantId(),
+					        WSCalculationConstant.nonMeterdConnection,
+					        billSchedular.getGrup()
+					    );
+
+					} else {
+					    connectionNos = wSCalculationDao.getConnectionsNoByLocality(
+					        billSchedular.getTenantId(),
+					        WSCalculationConstant.nonMeterdConnection,
+					        billSchedular.getLocality()
+					    );
+					}
 				// connectionNos.add("0603000002");
 				// connectionNos.add("0603009718");
 				// connectionNos.add("0603000001");

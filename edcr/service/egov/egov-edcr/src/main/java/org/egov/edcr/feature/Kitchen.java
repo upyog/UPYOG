@@ -51,6 +51,7 @@ import static org.egov.edcr.constants.DxfFileConstants.A;
 import static org.egov.edcr.constants.DxfFileConstants.F;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -74,7 +75,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class Kitchen extends FeatureProcess {
 
-    private static final String SUBRULE_41_III = "41-iii";
+    private static final String SUBRULE_41_III = "5.4.1";
 
     private static final String SUBRULE_41_III_DESC = "Minimum height of kitchen";
     private static final String SUBRULE_41_III_AREA_DESC = "Total area of %s";
@@ -175,7 +176,7 @@ public class Kitchen extends FeatureProcess {
                                 }
 
                                 if (!kitchenHeights.isEmpty()) {
-                                    BigDecimal minHeight = kitchenHeights.stream().reduce(BigDecimal::min).get();
+                                    BigDecimal minHeight = kitchenHeights.stream().reduce(BigDecimal::min).get().setScale(2, RoundingMode.HALF_UP);
 
                                     minimumHeight = MINIMUM_HEIGHT_2_75;
                                     subRule = SUBRULE_41_III;
@@ -199,7 +200,7 @@ public class Kitchen extends FeatureProcess {
                             subRule = SUBRULE_41_III;
 
                             if (!kitchenAreas.isEmpty()) {
-                                totalArea = kitchenAreas.stream().reduce(BigDecimal.ZERO, BigDecimal::add);
+                                totalArea = kitchenAreas.stream().reduce(BigDecimal.ZERO, BigDecimal::add).setScale(2, BigDecimal.ROUND_HALF_UP);
                                 minimumHeight = MINIMUM_AREA_5;
                                 subRuleDesc = String.format(SUBRULE_41_III_AREA_DESC, KITCHEN);
 
@@ -216,7 +217,7 @@ public class Kitchen extends FeatureProcess {
                                 boolean isTypicalRepititiveFloor = false;
                                 Map<String, Object> typicalFloorValues = ProcessHelper.getTypicalFloorValues(block, floor,
                                         isTypicalRepititiveFloor);
-                                BigDecimal minRoomWidth = kitchenWidths.stream().reduce(BigDecimal::min).get();
+                                BigDecimal minRoomWidth = kitchenWidths.stream().reduce(BigDecimal::min).get().setScale(2, BigDecimal.ROUND_HALF_UP);
                                 minWidth = MINIMUM_WIDTH_1_8;
                                 subRuleDesc = String.format(SUBRULE_41_III_TOTAL_WIDTH, KITCHEN);
                                 buildResult(pl, floor, minWidth, subRule, subRuleDesc, minRoomWidth, valid, typicalFloorValues);
@@ -288,7 +289,7 @@ public class Kitchen extends FeatureProcess {
             }
             String value = typicalFloorValues.get("typicalFloors") != null
                     ? (String) typicalFloorValues.get("typicalFloors")
-                    : " floor " + floor.getNumber();
+                    : "" + floor.getNumber();
             if (valid) {
                 setReportOutputDetails(pl, subRule, subRuleDesc, value,
                         expected + DcrConstants.IN_METER,

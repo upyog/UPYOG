@@ -10,6 +10,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -624,20 +625,32 @@ public class EstimationService {
 		//
 		List<TaxHeadEstimate> estimates = new ArrayList<>();
 		// BigDecimal otherCharges=BigDecimal.ZERO;
-		HashMap<String, Object> additionalDetails = mapper
-				.convertValue(criteria.getSewerageConnection().getAdditionalDetails(), HashMap.class);
-		String concategory = additionalDetails.get(SWCalculationConstant.connectionCategory) != null
-				? additionalDetails.get(SWCalculationConstant.connectionCategory).toString()
-				: "null";
-		// if
-		// (additionalDetails.get(SWCalculationConstant.connectionCategory).toString().equalsIgnoreCase("REGULARIZED"))
-		// {
-		if (concategory.equalsIgnoreCase("REGULARIZED")) {
-			if (!(otherCharges.compareTo(BigDecimal.ZERO) == 0))
-				estimates.add(TaxHeadEstimate.builder().taxHeadCode(SWCalculationConstant.SW_OTHER_CHARGE)
-						.estimateAmount(otherCharges.setScale(2, 2)).build());
+		
+		/*
+		 For legacy and Regularized wave off of rest fee slab -PI-18845
+		 --->Abhishek Rana
+		 
+		 */
+		Map<String, Object> additionalDetails = Optional.ofNullable(criteria.getSewerageConnection().getAdditionalDetails())
+		        .map(val -> mapper.convertValue(val, HashMap.class))
+		        .orElse(new HashMap<>());
 
-		} else {
+		String concategory = additionalDetails.get(SWCalculationConstant.connectionCategory) != null
+		        ? additionalDetails.get(SWCalculationConstant.connectionCategory).toString()
+		        : "null";
+
+		if ("REGULARIZED".equalsIgnoreCase(concategory) || "LEGACY".equalsIgnoreCase(concategory)) {
+			/*
+			 For legacy sw connection - PI-18845
+			 --->Sharan Gakhar (branch : pmidc_testing)
+			 
+			 */
+			//			if (otherCharges.compareTo(BigDecimal.ZERO) != 0) {
+		    otherCharges = (otherCharges == null) ? BigDecimal.ZERO : otherCharges;
+	        	estimates.add(TaxHeadEstimate.builder().taxHeadCode(SWCalculationConstant.SW_OTHER_CHARGE)
+    				.estimateAmount(otherCharges.setScale(2, 2)).build());
+		}
+		else {
 			if (!(formFee.compareTo(BigDecimal.ZERO) == 0))
 				estimates.add(TaxHeadEstimate.builder().taxHeadCode(SWCalculationConstant.SW_FORM_FEE)
 						.estimateAmount(formFee.setScale(2, 2)).build());

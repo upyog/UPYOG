@@ -61,8 +61,16 @@ public class Room {
     private List<Measurement> rooms = new ArrayList<>();
 
     private MeasurementWithHeight lightAndVentilation = new MeasurementWithHeight();
+    private MeasurementWithHeight bathVentilation = new MeasurementWithHeight();
 
     private List<Occupancy> mezzanineAreas = new ArrayList<>();
+
+    private List<Measurement> waterClosetVentialtion = new ArrayList<>();
+    
+    private List<Window> windows = new ArrayList<>();
+    
+    private List<Door> doors = new ArrayList<>();
+
 
     public List<RoomHeight> getHeights() {
         return heightOfRooms;
@@ -113,7 +121,26 @@ public class Room {
     public void setLightAndVentilation(MeasurementWithHeight lightAndVentilation) {
         this.lightAndVentilation = lightAndVentilation;
     }
+    
+    public MeasurementWithHeight getBathVentilation() {
+        return bathVentilation;
+    }
 
+    /**
+     * @param lightAndVentilation the lightAndVentilation to set
+     */
+    public void setVentilation(MeasurementWithHeight bathVentilation) {
+        this.bathVentilation = bathVentilation;
+    }
+
+    
+    public List<Measurement> getWaterClosetVentilation() {
+		return waterClosetVentialtion;
+	}
+
+	public void setWaterClosetVentilation(List<Measurement> waterClosetVentialtion) {
+		this.waterClosetVentialtion = waterClosetVentialtion;
+	}
     public List<Measurement> getRooms() {
         return rooms;
     }
@@ -129,5 +156,30 @@ public class Room {
     public void setMezzanineAreas(List<Occupancy> mezzanineAreas) {
         this.mezzanineAreas = mezzanineAreas;
     }
+    
+    public List<Window> getWindows() {
+  		return windows;
+  	}
 
-}
+  	public void setWindows(List<Window> windows) {
+  		this.windows = windows;
+  	}
+  	
+  	public void addWindow(Window window) {
+          this.windows.add(window);
+      }
+  	
+  	 public List<Door> getDoors() {
+   		return doors;
+   	}
+
+   	public void setDoors(List<Door> doors) {
+   		this.doors = doors;
+   	}
+   	
+   	public void addDoors(Door doors) {
+           this.doors.add(doors);
+       }
+
+
+   }
