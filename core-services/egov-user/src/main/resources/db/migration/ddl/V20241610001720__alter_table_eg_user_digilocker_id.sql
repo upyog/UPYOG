@@ -1,1 +1,0 @@
-ALTER TABLE eg_user ADD digilockerid character varying (50) DEFAULT NULL;
