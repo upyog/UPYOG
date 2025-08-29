@@ -35,5 +35,12 @@ public class TransactionRepository {
         log.debug(query);
         return jdbcTemplate.query(query, params.toArray(), rowMapper);
     }
+    
+    public List<Transaction> fetchTransactionsByweek(TransactionCriteria transactionCriteria, Long startTime, Long endTime) {
+        List<Object> params = new ArrayList<>();
+        String query = TransactionQueryBuilder.getPaymentSearchQueryByweek(transactionCriteria, startTime, endTime, params);
+        log.debug(query);
+        return jdbcTemplate.query(query, params.toArray(), rowMapper);
+    }
 
 }

@@ -1,6 +1,11 @@
-package org.egov.pg.service.jobs.earlyReconciliation;
+package org.egov.pg.service.jobs.weekreconcile;
 
-import lombok.extern.slf4j.Slf4j;
+import java.util.Collections;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+
+import javax.annotation.PostConstruct;
+
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.User;
 import org.egov.pg.config.AppProperties;
@@ -15,17 +20,15 @@ import org.quartz.JobExecutionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
-import java.util.Collections;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
+import lombok.extern.slf4j.Slf4j;
+
 
 /**
  * Updates all transactions in pending state and created in the last 15 minutes
  */
 @Component
 @Slf4j
-public class EarlyReconciliationJob implements Job {
+public class weeklyreconcilejob implements Job {
 
     private static RequestInfo requestInfo;
 
@@ -56,17 +59,17 @@ public class EarlyReconciliationJob implements Job {
      */
     @Override
     public void execute(JobExecutionContext jobExecutionContext) {
-        Integer startTime, endTime;
+      
+    	long endTime = System.currentTimeMillis();
+        long startTime = endTime - TimeUnit.DAYS.toMillis(8);
+        log.info("Weekly reconcilation Started Start Time--- "+startTime+ " ---End Time--- "+endTime);
 
-        startTime = appProperties.getEarlyReconcileJobRunInterval() * 2;
-        endTime = startTime - appProperties.getEarlyReconcileJobRunInterval();
-        log.info("Early (15 min) reconcilation Started Start Time--- "+startTime+ " ---End Time--- "+endTime);
+       // endTime = startTime - appProperties.getEarlyReconcileJobRunInterval();
 
-        List<Transaction> pendingTxns = transactionRepository.fetchTransactionsByTimeRange(TransactionCriteria.builder()
-                        .txnStatus(Transaction.TxnStatusEnum.PENDING).build(),
-                System.currentTimeMillis() - TimeUnit.MINUTES.toMillis(startTime),
-                System.currentTimeMillis() - TimeUnit.MINUTES.toMillis(endTime));
+        List<Transaction> pendingTxns = transactionRepository.fetchTransactionsByweek(TransactionCriteria.builder()
+                        .txnStatus(Transaction.TxnStatusEnum.PENDING).build(),startTime, endTime);
 
+        
         log.info("Attempting to reconcile {} pending transactions", pendingTxns.size());
 
         for (Transaction txn : pendingTxns) {
