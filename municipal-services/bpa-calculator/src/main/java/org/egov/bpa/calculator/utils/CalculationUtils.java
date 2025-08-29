@@ -89,7 +89,10 @@ public class CalculationUtils {
 		case BPACalculatorConstants.MDMS_CALCULATIONTYPE_APL_FEETYPE:
 			if (businessService.equalsIgnoreCase(BPACalculatorConstants.MDMS_BPA)) {
 				billingBusinessService = config.getApplFeeBusinessService();
-			} else {
+			} else if (businessService.equalsIgnoreCase(BPACalculatorConstants.MDMS_BPA_LOW)) {
+				billingBusinessService = config.getLowRiskPermitFeeBusinessService();
+			}
+			else {
 				billingBusinessService = config.getOCApplBusinessservice();
 			}
 			break;
