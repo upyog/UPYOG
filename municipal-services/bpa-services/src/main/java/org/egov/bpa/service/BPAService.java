@@ -481,7 +481,7 @@ public class BPAService {
 				throw new CustomException(BPAErrorConstants.BPA_UPDATE_ERROR_COMMENT_REQUIRED,
 						"Comment is mandaotory, please provide the comments ");
 			}
-			nocService.handleBPARejectedStateForNoc(bpaRequest);
+//			nocService.handleBPARejectedStateForNoc(bpaRequest);
 
 		} else {
 			
