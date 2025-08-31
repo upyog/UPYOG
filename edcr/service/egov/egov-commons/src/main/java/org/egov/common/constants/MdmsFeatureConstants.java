@@ -8,7 +8,7 @@ public class MdmsFeatureConstants {
 	public static final String KITCHEN = "Kitchen";
 	public static final String LANDING = "Landing";
 	public static final String LIFT = "Lift";
-	public static final String NON_HABITATIONAL_DOORS = "NonHabitationalDoors";
+	public static final String NON_HABITATIONAL_DOORS = "Non Habitational Doors";
 	public static final String NO_OF_RISER = "NoOfRiser";
 	public static final String PARKING = "Parking";
 	public static final String PLANTATION = "Plantation";
@@ -17,9 +17,9 @@ public class MdmsFeatureConstants {
 	public static final String REQUIRED_TREAD = "RequiredTread";
 	public static final String REQUIRED_WIDTH = "RequiredWidth";
 	public static final String RISER_HEIGHT = "RiserHeight";
-	public static final String ROOM_AREA = "RoomArea";
-	public static final String ROOM_WISE_DOOR_AREA = "RoomWiseDoorArea";
-	public static final String ROOM_WISE_VENTILATION = "RoomWiseVentilation";
+	public static final String ROOM_AREA = "Room Area";
+	public static final String ROOM_WISE_DOOR_AREA = "Room Wise Door Area";
+	public static final String ROOM_WISE_VENTILATION = "Room Wise Ventilation";
 	public static final String COVERAGE = "Coverage";
 	public static final String USAGES = "Usages";
 	public static final String APPLICATION_TYPE = "ApplicationType";

@@ -73,7 +73,7 @@ public class CommonKeyConstants {
     public static final String STAIR_HEADROOM_SUFFIX = "_Stair Headroom";
 
     public static final String HEIGHT_OF_ROOM = "HeightOfRoom";
-    public static final String DOORS_AND_WINDOWS = " Doors and Windows)";
+    public static final String DOORS_AND_WINDOWS = " Doors and Windows ";
 
     public static final String COMMON_INTERIOR_OPEN_SPACE = "Common_Interior Open Space";
     public static final String U_KITCHEN = "_Kitchen";

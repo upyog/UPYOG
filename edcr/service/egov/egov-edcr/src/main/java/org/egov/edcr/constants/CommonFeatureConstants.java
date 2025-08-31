@@ -74,7 +74,8 @@ public class CommonFeatureConstants {
     public static final String FTM_NOT_DEFINED = "Fire tender movement not defined for Block ";
     public static final String FTM_NOT_INSIDE = "Fire tender movement for block ";
     public static final String IS_NOT_INSIDE = " is not inside ";
-    public static final String EMPTY_STRING = "";
+    public static final String EMPTY_STRING = "-";
+    public static final String RISER_HEIGHT_DESC = "Minimum Riser Height";
     public static final String SINGLE_SPACE_STRING = " ";
     public static final String INVALID_VALUE_MESSAGE = "The value for %s '%s' Is Invalid";
     public static final String PLOT_AREA_ERROR = "Plot Area Error:";
