@@ -177,21 +177,35 @@ public class GeneralStair extends FeatureProcess {
 	 * @param scrutinyDetail4  ScrutinyDetail object for riser height validation.
 	 */
 	private void validateRiserHeight(Plan plan, Block block, BigDecimal flrHt, BigDecimal totalSteps, ScrutinyDetail scrutinyDetail4) {
+	    LOG.info("Validating riser height for Block: {}", block.getName());
+
 	    BigDecimal value = getPermissibleRiserHeight(plan);
+	    LOG.info("Permissible riser height: {}", value);
 
 	    if (flrHt != null && totalSteps != null && totalSteps.compareTo(BigDecimal.ZERO) > 0) {
+	        LOG.info("Floor height: {}, Total steps: {}", flrHt, totalSteps);
+
 	        BigDecimal riserHeight = flrHt.divide(totalSteps, 2, RoundingMode.HALF_UP);
+	        LOG.info("Calculated riser height: {}", riserHeight);
 
 	        for (Floor floor : block.getBuilding().getFloors()) {
 	            String floorValue = FLOOR_SPACED + floor.getNumber();
+	            LOG.info("Processing Floor: {}", floorValue);
 
 	            String result = (riserHeight.compareTo(value) <= 0)
 	                    ? Result.Accepted.getResultVal()
 	                    : Result.Not_Accepted.getResultVal();
-			setReportOutputDetailsFloorStairWise(plan, RULE_4_4_4, floorValue, RISER_HEIGHT_DESC, value.toString(), riserHeight.toString(), result, scrutinyDetail4);
-		}
-	  }
-	}   
+
+	            LOG.info("Result for Floor {}: {} (Permissible: {}, Provided: {})", 
+	                    floorValue, result, value, riserHeight);
+
+	            setReportOutputDetailsFloorStairWise(plan, RULE_4_4_4, floorValue, RISER_HEIGHT_DESC, 
+	                    EMPTY_STRING + value, EMPTY_STRING + riserHeight, result, scrutinyDetail4);
+	        }
+	    } else {
+	        LOG.warn("Floor height or total steps is null/invalid for Block: {}", block.getName());
+	    }
+	} 
 
 	/**
 	 * Retrieves the permissible riser height from the rule cache.
