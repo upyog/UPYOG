@@ -11,6 +11,7 @@ import org.egov.wscalculation.constants.WSCalculationConstant;
 import org.egov.wscalculation.web.models.Demand;
 import org.egov.wscalculation.web.models.TaxHeadEstimate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import lombok.extern.slf4j.Slf4j;
@@ -24,6 +25,7 @@ public class PayService {
 	private MasterDataService mDService;
 	
 	@Autowired
+	@Lazy
 	private EstimationService estimationService;
 
 	/**

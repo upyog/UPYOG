@@ -3,7 +3,7 @@ package org.egov.pt.calculator.web.models.propertyV2;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
-import javax.validation.constraints.Digits;
+import jakarta.validation.constraints.Digits;
 import java.math.BigDecimal;
 
 /**

@@ -2,7 +2,7 @@ package org.egov.pt.calculator.web.controller;
 
 import java.util.List;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 
 import org.egov.common.contract.response.ResponseInfo;
 import org.egov.pt.calculator.service.AssessmentService;

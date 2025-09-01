@@ -3,7 +3,7 @@ package org.egov.pt.calculator.web.models.propertyV2;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 import java.util.List;
 
 /**

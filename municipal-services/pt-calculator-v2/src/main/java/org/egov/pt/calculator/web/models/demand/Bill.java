@@ -9,7 +9,7 @@ import lombok.Builder.Default;
 import org.egov.pt.calculator.web.models.property.AuditDetails;
 import org.springframework.util.CollectionUtils;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
