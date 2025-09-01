@@ -156,7 +156,7 @@ serviceMaps:
       queryMaps:
         - query: >
             UPDATE public.eg_chb_booking_detail
-            SET booking_status = ?, payment_date = ?, lastmodifiedby = ?, lastmodifiedtime = ?, applicationstatus = ?
+            SET booking_status = ?, payment_date = ?, lastmodifiedby = ?, lastmodifiedtime = ?, applicationstatus = ?,additionaldetail=?
             WHERE booking_id = ?;
           basePath: hallsBookingApplication
           jsonMaps:
@@ -165,17 +165,56 @@ serviceMaps:
             - jsonPath: $.hallsBookingApplication.auditDetails.lastModifiedBy
             - jsonPath: $.hallsBookingApplication.auditDetails.lastModifiedTime
             - jsonPath: $.hallsBookingApplication.applicationStatus
+            - jsonPath: $.hallsBookingApplication.additionaldetail
+              type: JSON
+              dbType: JSONB
             - jsonPath: $.hallsBookingApplication.bookingId
 
-# Uncomment and adjust if needed:
-#        - query: >
-#            UPDATE public.eg_chb_slot_detail
-#            SET status = ?, lastmodifiedby = ?, lastmodifiedtime = ?
-#            WHERE slot_id = ?;
-#          basePath: hallsBookingApplication.bookingSlotDetails.*
-#          jsonMaps:
-#            - jsonPath: $.hallsBookingApplication.bookingStatus
-#            - jsonPath: $.hallsBookingApplication.paymentDate
-#            - jsonPath: $.hallsBookingApplication.auditDetails.lastModifiedBy
-#            - jsonPath: $.hallsBookingApplication.auditDetails.lastModifiedTime
-#            - jsonPath: $.hallsBookingApplication.bookingId
+        - query: >
+           UPDATE public.eg_chb_applicant_detail 
+           SET applicant_name = ?,applicant_email_id = ?,applicant_mobile_no = ?,applicant_alternate_mobile_no = ?,account_no = ?,ifsc_code = ?, bank_name = ?, bank_branch_name = ?, account_holder_name = ?, lastmodifiedby = ?, lastmodifiedtime = ?, additionaldetail = ? 
+           WHERE booking_id = ?;
+          basePath: hallsBookingApplication.applicantDetail
+          jsonMaps:
+          - jsonPath: $.hallsBookingApplication.applicantDetail.applicantName
+          - jsonPath: $.hallsBookingApplication.applicantDetail.applicantEmailId
+          - jsonPath: $.hallsBookingApplication.applicantDetail.applicantMobileNo
+          - jsonPath: $.hallsBookingApplication.applicantDetail.applicantAlternateMobileNo
+          - jsonPath: $.hallsBookingApplication.applicantDetail.accountNumber
+          - jsonPath: $.hallsBookingApplication.applicantDetail.ifscCode
+          - jsonPath: $.hallsBookingApplication.applicantDetail.bankName
+          - jsonPath: $.hallsBookingApplication.applicantDetail.bankBranchName
+          - jsonPath: $.hallsBookingApplication.applicantDetail.accountHolderName
+          - jsonPath: $.hallsBookingApplication.applicantDetail.auditDetails.lastModifiedBy
+          - jsonPath: $.hallsBookingApplication.applicantDetail.auditDetails.lastModifiedTime
+          - jsonPath: $.hallsBookingApplication.applicantDetail.additionalDetails
+            type: JSON
+            dbType: JSONB
+          - jsonPath: $.hallsBookingApplication.applicantDetail.bookingId
+          
+        - query: >
+           UPDATE public.eg_chb_address_detail 
+           SET address_line_1 = ?, landmark = ?, city = ?, pincode = ?, locality = ?, additionaldetail = ?
+           WHERE address_id = ?;
+          basePath: hallsBookingApplication.address
+          jsonMaps:
+           - jsonPath: $.hallsBookingApplication.address.addressLine1
+           - jsonPath: $.hallsBookingApplication.address.landmark
+           - jsonPath: $.hallsBookingApplication.address.city
+           - jsonPath: $.hallsBookingApplication.address.pincode
+           - jsonPath: $.hallsBookingApplication.address.locality
+           - jsonPath: $.hallsBookingApplication.address.additionalDetails
+             type: JSON
+             dbType: JSONB
+           - jsonPath: $.hallsBookingApplication.address.addressId
+          
+         
+        - query: >
+           UPDATE public.eg_chb_slot_detail
+           SET booking_date = ?, booking_to_date = ?
+           WHERE slot_id = ?;
+          basePath: hallsBookingApplication.bookingSlotDetails.*
+          jsonMaps:
+           - jsonPath: $.hallsBookingApplication.bookingSlotDetails.*.bookingDate
+           - jsonPath: $.hallsBookingApplication.bookingSlotDetails.*.bookingToDate
+           - jsonPath: $.hallsBookingApplication.bookingSlotDetails.*.slotId
