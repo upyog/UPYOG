@@ -481,7 +481,7 @@ public class HeightOfRoom extends FeatureProcess {
 			String result = combinedArea.compareTo(requiredVentilationArea) >= 0 ? Result.Accepted.getResultVal()
 					: Result.Not_Accepted.getResultVal();
 
-			setReportOutputDetails(pl, RULE9, subRuleDesc1, floor.getNumber().toString(), EMPTY_STRING + room.getNumber(),
+			setReportOutputDetails(pl, RULE9, subRuleDesc1, floor.getNumber().toString(), room.getNumber(),
 					VENTILATION_REQUIRED + GREATER_THAN_EQUAL + requiredVentilationArea, AREA_PROVIDED + combinedArea, result,
 					ventilationDetail);
 		}
@@ -581,6 +581,7 @@ public class HeightOfRoom extends FeatureProcess {
 
 	   
 	    String subRuleDesc3 = SUB_RULE_DESC_3;
+	    String subRule = RULE_4_4_4_I;
 
 	    String requirement = HEIGHT + minWindowHeight + COMMA_WIDTH_STRING + GREATER_THAN_EQUAL + minWindowWidth;
 	    String provided = HEIGHT_STRING + IS_EQUAL_TO + windowHeight + COMMA_WIDTH_STRING + IS_EQUAL_TO + windowWidth;
@@ -589,7 +590,7 @@ public class HeightOfRoom extends FeatureProcess {
 	            ? Result.Accepted.getResultVal()
 	            : Result.Not_Accepted.getResultVal();
 
-	    setReportOutputDetails(pl, EMPTY_STRING, subRuleDesc3, floor.getNumber().toString(), "-", requirement, provided, result, scrutinyDetail);
+	    setReportOutputDetails(pl, subRule, subRuleDesc3, floor.getNumber().toString(), "-", requirement, provided, result, scrutinyDetail);
 	}
 
 
