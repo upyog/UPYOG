@@ -47,7 +47,7 @@ public class SchedulerConfiguration {
 
 	@Value("${egov.property.endpoint.reverse-rebate-amount}")
 	private String propertyReverseRebateAmountEndpoint;
-	
+
 	@Value("${egov.property.endpoint.update-penalty-amount}")
 	private String propertyUpdatePenaltyAmountEndpoint;
 
@@ -77,5 +77,11 @@ public class SchedulerConfiguration {
 
 	@Value("${egov.adrvcanopy.site.booking.endpoint.change-site-status}")
 	private String adrvcanopySiteBookingChangeSiteStatusEndpoint;
+
+	@Value("${egov.tl.context.host}")
+	private String tlServiceHostUrl;
+
+	@Value("${egov.tl.endpoint.data-metrics}")
+	private String tlDataMetricsEndpoint;
 
 }
