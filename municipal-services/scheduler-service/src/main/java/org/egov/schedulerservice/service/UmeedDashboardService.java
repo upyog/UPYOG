@@ -42,9 +42,12 @@ public class UmeedDashboardService {
 			UmeedDashboardRequest umeedDashboardRequest = UmeedDashboardRequest.builder()
 					.requestInfo(umeedDashboardRequestInfo)
 					.data(objectMapper.valueToTree(umeedDashboardDataMatrics).get("Data")).build();
+			log.info("Dashboard Payload {}", umeedDashboardRequest);
 
 			// Step 3: call umeed dashboard api to push data
 			ingestResponse = umeedDashboardClientService.sendMetrics(umeedDashboardRequest);
+			log.info("Dashboard Response {}", ingestResponse);
+
 		} else {
 			ingestResponse = "No Data from TL Service";
 		}
