@@ -79,9 +79,18 @@ public class IndexerService {
 				}
 			} catch (Exception e) {
 				log.error("Exception while indexing, Uncaught at the indexer level: ", e);
+				// Add index information to the exception for DLQ handling
+				String indexNames = mapping.getIndexes().stream()
+					.map(Index::getName)
+					.reduce((a, b) -> a + ", " + b)
+					.orElse("unknown");
+				IndexerException indexerException = new IndexerException("Failed to index to: " + indexNames, e);
+				indexerException.setTargetIndexNames(indexNames);
+				throw indexerException;
 			}
 		} else {
 			log.error("No mappings found for the service to which the following topic belongs: " + topic);
+			throw new IndexerException("No mappings found for topic: " + topic, new RuntimeException("No mapping configuration"));
 		}
 	}
 
@@ -106,6 +115,12 @@ public class IndexerService {
 		return null;
 	}
 
+	/**
+	 * Get the version map for external access (used by error handling)
+	 */
+	public Map<String, List<Mapping>> getVersionMap() {
+		return runner.getVersionMap();
+	}
 
 	/**
 	 * This method deals with 3 types of uses cases that indexer supports: 1. Index
@@ -120,6 +135,12 @@ public class IndexerService {
 	 * @throws Exception
 	 */
 	public void indexProccessor(Index index, Mapping.ConfigKeyEnum configkey, String kafkaJson, boolean isBulk) throws Exception {
+        // Test condition for DLQ testing
+//        String messageBody = kafkaJson;
+//        if (messageBody != null && (messageBody.contains("trigger-error") || messageBody.contains("triger-error"))) {
+//            log.error("Intentionally throwing RuntimeException for DLQ testing - message contains trigger-error");
+//            throw new RuntimeException("MESSAGE_ERROR_TEST", new Exception("Intentional error for DLQ testing - message contains trigger-error"));
+//        }
 		Long startTime = null;
 		log.debug("index: " + index.getCustomJsonMapping());
 		StringBuilder url = new StringBuilder();
