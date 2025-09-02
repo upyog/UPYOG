@@ -253,17 +253,18 @@ public class EstimationService {
 			Double totalUOM = getUnitOfMeasurement(property, waterConnection, calculationAttribute, criteria);
 //			if (totalUOM == 0.0)
 //				return waterCharge;
-			BillingSlab billSlab = billingSlabs.get(0);
+			for (BillingSlab billSlab : billingSlabs) {
+			    billingSlabIds.add(billSlab.getId());  // collect all slab IDs
+			    log.debug(" Billing Slab Id For Water Charge Calculation --->  " + billingSlabIds.toString());
 
-			log.info("totalUOM: " + totalUOM);
+			    List<Slab> filteredSlabs = billSlab.getSlabs().stream()
+			            .filter(slab -> slab.getFrom() <= totalUOM && slab.getTo() >= totalUOM
+			                    && slab.getEffectiveFrom() <= System.currentTimeMillis()
+			                    && slab.getEffectiveTo() >= System.currentTimeMillis())
+			            .collect(Collectors.toList());
 
-			log.info("Before billingslab  filter: " + billSlab.toString());
+			    if (filteredSlabs.isEmpty()) continue; // skip slabs not valid for this UOM
 
-			List<Slab> filteredSlabs = billSlab.getSlabs().stream()
-					.filter(slab -> slab.getFrom() <= totalUOM && slab.getTo() >= totalUOM
-							&& slab.getEffectiveFrom() <= System.currentTimeMillis()
-							&& slab.getEffectiveTo() >= System.currentTimeMillis())
-					.collect(Collectors.toList());
 			log.info("After billingslab  filter: " + filteredSlabs.size());
 			// IF calculation type is flat then take flat rate else take slab and calculate
 			// the charge
@@ -344,6 +345,7 @@ public class EstimationService {
 				}
 			} else {
 				waterCharge = BigDecimal.valueOf(billSlab.getMinimumCharge());
+			}
 			}
 			return waterCharge;
 		}
