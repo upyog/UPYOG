@@ -1,5 +1,6 @@
 package org.egov.pt.repository.builder;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 
@@ -7,6 +8,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.egov.pt.config.PropertyConfiguration;
 import org.egov.pt.models.AssessmentSearchCriteria;
 import org.egov.pt.models.PropertyCriteria;
+import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.CollectionUtils;
@@ -80,6 +82,21 @@ public class AssessmentQueryBuilder {
 			addClauseIfRequired(preparedStatementValues, query);
 			query.append(" asmt.status = :status");
 			preparedStatementValues.put("status", criteria.getStatus().toString());
+		}
+		
+		if (criteria.getFromDate() != null) {
+			addClauseIfRequired(preparedStatementValues, query);
+			// If user does NOT specify toDate, take today's date as the toDate by default
+			if (criteria.getToDate() == null) {
+				criteria.setToDate(Instant.now().toEpochMilli());
+			}
+			query.append(" asmt.createdtime BETWEEN :fromdate AND :todate");
+			preparedStatementValues.put("fromdate", criteria.getFromDate());
+			preparedStatementValues.put("todate", criteria.getToDate());
+		} else {
+			if (criteria.getToDate() != null) {
+				throw new CustomException("INVALID SEARCH", "From Date should be mentioned first");
+			}
 		}
 		
 		query.append(" ORDER BY asmt.createdtime DESC"); //default ordering on the platform.

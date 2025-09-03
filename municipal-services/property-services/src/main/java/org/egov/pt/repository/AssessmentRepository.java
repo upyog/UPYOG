@@ -48,10 +48,30 @@ public class AssessmentRepository {
 		Map<String, Object> preparedStatementValues = new HashMap<>();
 		String basequery = "SELECT assessmentnumber from eg_pt_asmt_assessment";
 		StringBuilder builder = new StringBuilder(basequery);
+		boolean whereClauseAdded = false;
+		
 		if (!ObjectUtils.isEmpty(criteria.getTenantId())) {
 			builder.append(" where tenantid = :tenantid");
 			preparedStatementValues.put("tenantid", criteria.getTenantId());
+			whereClauseAdded = true;
 		}
+		
+		if (criteria.getFromDate() != null) {
+			if (whereClauseAdded) {
+				builder.append(" AND");
+			} else {
+				builder.append(" WHERE");
+				whereClauseAdded = true;
+			}
+			// If user does NOT specify toDate, take today's date as the toDate by default
+			if (criteria.getToDate() == null) {
+				criteria.setToDate(java.time.Instant.now().toEpochMilli());
+			}
+			builder.append(" createdtime BETWEEN :fromdate AND :todate");
+			preparedStatementValues.put("fromdate", criteria.getFromDate());
+			preparedStatementValues.put("todate", criteria.getToDate());
+		}
+		
 		String orderbyClause = " ORDER BY createdtime,id offset :offset limit :limit";
 		preparedStatementValues.put("offset", criteria.getOffset());
 		preparedStatementValues.put("limit", criteria.getLimit());

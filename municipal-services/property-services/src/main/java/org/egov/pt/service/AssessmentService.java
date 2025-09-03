@@ -239,6 +239,16 @@ public class AssessmentService {
 		if(criteria.getOffset()==null)
 			criteria.setOffset(config.getDefaultOffset());
 		AssessmentSearchCriteria assessmentSearchCriteria = new AssessmentSearchCriteria();
+		
+		// Copy all criteria fields to the new search criteria
+		assessmentSearchCriteria.setTenantId(criteria.getTenantId());
+		assessmentSearchCriteria.setFinancialYear(criteria.getFinancialYear());
+		assessmentSearchCriteria.setStatus(criteria.getStatus());
+		assessmentSearchCriteria.setFromDate(criteria.getFromDate());
+		assessmentSearchCriteria.setToDate(criteria.getToDate());
+		assessmentSearchCriteria.setOffset(criteria.getOffset());
+		assessmentSearchCriteria.setLimit(criteria.getLimit());
+		
 		if (criteria.getIds() != null || criteria.getPropertyIds() != null || criteria.getAssessmentNumbers() != null) {
 			if (criteria.getIds() != null)
 				assessmentSearchCriteria.setIds(criteria.getIds());
@@ -253,7 +263,7 @@ public class AssessmentService {
 				return Collections.emptyList();
 			assessmentSearchCriteria.setAssessmentNumbers(new HashSet<>(assessmentNumbers));
 		}
-		assessmentSearchCriteria.setLimit(criteria.getLimit());
+		
 		return repository.getAssessmentPlainSearch(assessmentSearchCriteria);
 	}
 

@@ -33,6 +33,10 @@ public class AssessmentSearchCriteria {
 	
 	private Status status;
 	
+	private Long fromDate;
+	
+	private Long toDate;
+	
 	private Long offset;
 
 	private Long limit;
