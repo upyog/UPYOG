@@ -29,11 +29,15 @@ public class SignOutService {
 	private String coexistencelogoutUri;
 
 	public void callFinanceForSignOut(DocumentContext documentContext) {
+		log.info("Inside callFinanceForSignOut()");
 		ResponseEntity<?> response = null;
 		String accessToken = documentContext.read(JsonPathConstant.signOutAccessToken);
 		documentContext = documentContext.delete(JsonPathConstant.userInfo);
 		documentContext = documentContext.put(JsonPathConstant.requestInfo, "authToken", accessToken);
 		LinkedHashMap<String, Object> jsonRequest = documentContext.read(JsonPathConstant.request);
+		
+		log.info("accessToken: "+accessToken);
+		log.info("finance logout uri: "+coexistencehost + coexistencelogoutUri);
 
 		response = restTemplate.exchange(coexistencehost + coexistencelogoutUri, HttpMethod.POST,
 				new HttpEntity<>(jsonRequest), ResponseEntity.class);
