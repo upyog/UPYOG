@@ -38,8 +38,7 @@ public class UmeedDashboardQueryBuilder {
 			+ "FROM eg_tl_tradelicense tl JOIN eg_tl_tradelicensedetail dt ON tl.id = dt.tradelicenseid "
 			+ "JOIN eg_tl_address addr ON addr.tradelicensedetailid = dt.id "
 			+ "JOIN eg_pg_transactions ON eg_pg_transactions.consumer_code = tl.applicationnumber "
-			+ "WHERE addr.additionaldetail->>'wardName' = ? "
-			+ "AND TO_TIMESTAMP(tl.createdtime / 1000)::DATE = TO_DATE(?, 'DD-MM-YYYY') GROUP BY tradeType";
+			+ "WHERE txn_status='SUCCESS' and addr.additionaldetail->>'wardName' = ? "
 
 	private static final String TODAYS_TRADE_LICENSES_SEARCH_QUERY = "SELECT status, COUNT(CASE "
 			+ "    WHEN TO_TIMESTAMP(tl.createdtime / 1000)::DATE = TO_DATE(?, 'DD-MM-YYYY') THEN 1 "
