@@ -1,5 +1,6 @@
 package org.egov.wscalculation.consumer;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -47,36 +48,42 @@ public class BillGenerationConsumer {
 
 			if(billGeneratorReq.getConsumerCodes() != null && !billGeneratorReq.getConsumerCodes().isEmpty() && billGeneratorReq.getTenantId() != null) {
 				log.info("Fetch Bill generator initiated for Consumers: {}", billGeneratorReq.getConsumerCodes());
+				List<String> failureConsumerCodes = new ArrayList<>();
+
+				List<String> fetchBillSuccessConsumercodes = demandService.fetchBillSchedulerSingle(
+					    billGeneratorReq.getConsumerCodes(),
+					    billGeneratorReq.getTenantId(),
+					    billGeneratorReq.getRequestInfoWrapper().getRequestInfo(),
+					    failureConsumerCodes 
+					);	
 				
-				List<String> fetchBillSuccessConsumercodes = demandService.fetchBillSchedulerSingle(billGeneratorReq.getConsumerCodes(),billGeneratorReq.getTenantId() ,billGeneratorReq.getRequestInfoWrapper().getRequestInfo());
 				log.info("Fetch Bill generator completed fetchBillConsumers: {}", fetchBillSuccessConsumercodes);
 				long milliseconds = System.currentTimeMillis();
 				
-				if(fetchBillSuccessConsumercodes != null && !fetchBillSuccessConsumercodes.isEmpty()) {
-					
-					billGeneratorDao.insertBillSchedulerConnectionStatus(
-							fetchBillSuccessConsumercodes, 
-							billGeneratorReq.getBillSchedular().getId(), 
-							billGeneratorReq.getBillSchedular().getLocality(), 
-							WSCalculationConstant.SUCCESS, 
-							billGeneratorReq.getBillSchedular().getTenantId(), 
-							WSCalculationConstant.SUCCESS_MESSAGE, milliseconds);
-					
-				} 
-				//Removing the fetch bill success consumercodes from billGenerate
-				billGeneratorReq.getConsumerCodes().removeAll(fetchBillSuccessConsumercodes);
-				if(!billGeneratorReq.getConsumerCodes().isEmpty()) {
-					log.info("Bill generator failure consumercodes: {}", billGeneratorReq.getConsumerCodes());
-
-					billGeneratorDao.insertBillSchedulerConnectionStatus(
-							billGeneratorReq.getConsumerCodes().stream().collect(Collectors.toList()), 
-							billGeneratorReq.getBillSchedular().getId(), 
-							billGeneratorReq.getBillSchedular().getLocality(), 
-							WSCalculationConstant.FAILURE, 
-							billGeneratorReq.getBillSchedular().getTenantId(), 
-							WSCalculationConstant.FAILURE_MESSAGE, milliseconds);
-					
+				if (!fetchBillSuccessConsumercodes.isEmpty()) {
+				    billGeneratorDao.insertBillSchedulerConnectionStatus(
+				        fetchBillSuccessConsumercodes,
+				        billGeneratorReq.getBillSchedular().getId(),
+				        billGeneratorReq.getBillSchedular().getLocality(),
+				        WSCalculationConstant.SUCCESS,
+				        billGeneratorReq.getBillSchedular().getTenantId(),
+				        WSCalculationConstant.SUCCESS_MESSAGE,
+				        milliseconds
+				    );
 				}
+
+				if (!failureConsumerCodes.isEmpty()) {
+				    billGeneratorDao.insertBillSchedulerConnectionStatus(
+				        failureConsumerCodes,
+				        billGeneratorReq.getBillSchedular().getId(),
+				        billGeneratorReq.getBillSchedular().getLocality(),
+				        WSCalculationConstant.FAILURE,
+				        billGeneratorReq.getBillSchedular().getTenantId(),
+				        WSCalculationConstant.FAILURE_MESSAGE,
+				        milliseconds
+				    );
+				}
+
 				
 			}
 		}catch(Exception exception) {

@@ -1742,32 +1742,42 @@ public class DemandService {
 		return notificationSent;
 	}
 
-	public List<String> fetchBillSchedulerSingle(Set<String> consumerCodes, String tenantId, RequestInfo requestInfo) {
-		List<String> consumercodesFromRes = new ArrayList<>();
-		for (String consumerCode : consumerCodes) {
+	public List<String> fetchBillSchedulerSingle(Set<String> consumerCodes, String tenantId,RequestInfo requestInfo, List<String> failureCollector
+	) {
+	    List<String> successConsumerCodes = new ArrayList<>();
 
-			try {
+	    for (String consumerCode : consumerCodes) {
+	        try {
+	            StringBuilder fetchBillURL = calculatorUtils.getFetchBillURL(tenantId, consumerCode);
 
-				StringBuilder fetchBillURL = calculatorUtils.getFetchBillURL(tenantId, consumerCode);
+	            Object result = serviceRequestRepository.fetchResult(
+	                    fetchBillURL,
+	                    RequestInfoWrapper.builder().requestInfo(requestInfo).build()
+	            );
 
-				Object result = serviceRequestRepository.fetchResult(fetchBillURL,
-						RequestInfoWrapper.builder().requestInfo(requestInfo).build());
-				log.info("Bills generated for the consumercodes: {}", fetchBillURL);
-				BillResponseV2 billResponse = mapper.convertValue(result, BillResponseV2.class);
-				List<BillV2> bills = billResponse.getBill();
-				if (bills != null && !bills.isEmpty()) {
-					consumercodesFromRes
-							.addAll(bills.stream().map(BillV2::getConsumerCode).collect(Collectors.toList()));
-					log.info("Bill generated successfully for consumercode: {}, TenantId: {}", consumerCode, tenantId);
-				}
+	            BillResponseV2 billResponse = mapper.convertValue(result, BillResponseV2.class);
+	            List<BillV2> bills = billResponse.getBill();
 
-			} catch (Exception ex) {
-				log.error("Fetch Bill Error For tenantId:{} consumercode: {} and Exception is: {}", tenantId,
-						consumerCodes, ex);
-			}
-		}
-		return consumercodesFromRes;
+	            if (bills != null && !bills.isEmpty()) {
+	                successConsumerCodes.addAll(
+	                    bills.stream().map(BillV2::getConsumerCode).collect(Collectors.toList())
+	                );
+	                log.info("✅ Bill generated successfully for consumerCode: {}", consumerCode);
+	            } else {
+	                failureCollector.add(consumerCode);
+	                log.warn("⚠️ No bills returned for consumerCode: {}", consumerCode);
+	            }
+
+	        } catch (Exception ex) {
+	            failureCollector.add(consumerCode);
+	            log.error("❌ Fetch Bill failed for consumerCode: {} Exception: {}", consumerCode, ex.getMessage(), ex);
+	        }
+	    }
+
+	    return successConsumerCodes;
 	}
+
+
 
 	public boolean fetchBill(List<Demand> demandResponse, RequestInfo requestInfo, Map<String, Object> masterMap) {
 		boolean notificationSent = false;
