@@ -1,4 +1,4 @@
-import { CheckBox, CloseSvg } from "@egovernments/digit-ui-react-components";
+import { CheckBox, CloseSvg } from "@upyog/digit-ui-react-components";
 import React, { useEffect, useMemo, useState } from "react";
 import { useDebounce } from "../../../../hooks/useDebounce";
 

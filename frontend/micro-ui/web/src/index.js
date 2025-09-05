@@ -1,7 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { initLibraries } from "@egovernments/digit-ui-libraries";
-// import "@egovernments/digit-ui-css/dist/index.css";
+import { BrowserRouter } from 'react-router-dom';
+import { initLibraries}  from "@upyog/digit-ui-libraries";
+// import "@upyog/digit-ui-css/dist/index.css";
 import "./index.css";
 import App from './App';
 import { TLCustomisations } from './Customisations/tl/TLCustomisation';
@@ -59,5 +60,7 @@ ReactDOM.render(
     <App />
   </React.StrictMode>,
   document.getElementById('root')
+  //   <BrowserRouter><App /></BrowserRouter>, document.getElementById("root")
+
 );
 

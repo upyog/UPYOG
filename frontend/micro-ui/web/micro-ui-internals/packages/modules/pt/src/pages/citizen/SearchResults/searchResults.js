@@ -1,11 +1,12 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Header, ResponseComposer, Loader, Modal, Card, KeyNote, SubmitBar, CitizenInfoLabel} from "@egovernments/digit-ui-react-components";
+import { Header, ResponseComposer, Loader, Modal, Card, KeyNote, SubmitBar, CitizenInfoLabel} from "@upyog/digit-ui-react-components";
 import PropTypes from "prop-types";
 import { useHistory, Link, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 
 
-const PropertySearchResults = ({ template, header, actionButtonLabel, isMutation, onSelect, config, clearParams = () => {} }) => {
+const PropertySearchResults = ({ template, header, actionButtonLabel, isMutation, isAmalgamation, onSelect, config, clearParams = () => {} }) => {
+  console.log("=====",template,actionButtonLabel)
   const { t } = useTranslation();
   const modalRef = useRef();
   const { mobileNumber, propertyIds, oldPropertyIds, locality, city,doorNo,name, PToffset } = Digit.Hooks.useQueryParams();
@@ -95,6 +96,11 @@ const PropertySearchResults = ({ template, header, actionButtonLabel, isMutation
       if (Number(data.total_due) > 0) {
         setShowModal(data);
       } else onSelect(config.key, { data, property });
+    } else if(isAmalgamation) {
+      let property = result?.data?.Properties?.filter?.((e) => e.propertyId === data.property_id)[0];
+      if (Number(data.total_due) > 0) {
+        setShowModal(data);
+      } else onSelect(config.key, { data, property });
     } else history.push(`/digit-ui/citizen/payment/my-bills/PT/${data.property_id}`, { tenantId });
   };
 
@@ -147,7 +153,7 @@ const PropertySearchResults = ({ template, header, actionButtonLabel, isMutation
             <KeyNote
               keyValue={t("PT_AMOUNT_DUE")}
               note={`₹ ${modalData?.total_due?.toLocaleString("en-IN")}`}
-              noteStyle={{ fontSize: "24px", fontWeight: "bold" }}
+              noteStyle={{ fontSize: "16px", fontWeight: "bold" }}
             />
             <p>
               {t("PT_YOU_HAVE") +

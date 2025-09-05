@@ -8,8 +8,8 @@ import {
   Row,
   StatusTable,
   SubmitBar
-} from "@egovernments/digit-ui-react-components";
-import React, { useState } from "react";
+} from "@upyog/digit-ui-react-components";
+import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
 import {
@@ -32,7 +32,6 @@ const ActionButton = ({ jumpTo }) => {
 const CheckPage = ({ onSubmit, value = {} }) => {
   const { t } = useTranslation();
   const history = useHistory();
-
   const {
     address,
     isResdential,
@@ -59,6 +58,8 @@ const CheckPage = ({ onSubmit, value = {} }) => {
     owners,
     isEditProperty,
     isUpdateProperty,
+    usageCategory,
+    exemption
   } = value;
   const typeOfApplication = !isEditProperty && !isUpdateProperty ? `new-application` : `edit-application`;
   let flatplotsize;
@@ -81,9 +82,21 @@ const CheckPage = ({ onSubmit, value = {} }) => {
   const setdeclarationhandler = () => {
     setAgree(!agree);
   };
+  const [isPartOfProperty, setIsPartOfProperty] = useState(
+    (value?.isPartOfProperty=='true'||value?.isPartOfProperty==true) ? true : false
+  );
+  const onSetIsApportion = (e) => {
+    setIsPartOfProperty(e.target.checked);
+  };
+  useEffect(() => {
+    setIsPartOfProperty(!isPartOfProperty);
+  }, [value?.isPartOfProperty]);
+  const onclickSubmit = ()=>{
+    onSubmit('isPartOfProperty', isPartOfProperty);
+  }
   return (
     <React.Fragment>
-     {window.location.href.includes("/citizen") ? <Timeline currentStep={4}/> : null}
+     {window.location.href.includes("/citizen") ? <Timeline currentStep={6}/> : null}
     <Card>
       <CardHeader>{t("PT_CHECK_CHECK_YOUR_ANSWERS")}</CardHeader>
       <div>
@@ -180,13 +193,13 @@ const CheckPage = ({ onSubmit, value = {} }) => {
                           <ActionButton jumpTo={`${`/digit-ui/citizen/pt/property/${typeOfApplication}/institutional-owner-address/`}${index}`} />
                         }
                       />
-                      <Row
+                      {/* <Row
                         label={`${t("PT_COMMON_SAME_AS_PROPERTY_ADDRESS")}`}
                         text={`${t(checkForNA(owner?.isCorrespondenceAddress))}`}
                         actionButton={
                           <ActionButton jumpTo={`${`/digit-ui/citizen/pt/property/${typeOfApplication}/institutional-owner-address/`}${index}`} />
                         }
-                      />
+                      /> */}
                       <Row
                         label={t("PT_PROOF_IDENTITY_HEADER")}
                         text={`${(owner?.documents["proofIdentity"]?.name && getFixedFilename(owner.documents["proofIdentity"].name)) || "na"}`}
@@ -236,11 +249,11 @@ const CheckPage = ({ onSubmit, value = {} }) => {
                         text={`${t(checkForNA(owner?.permanentAddress))}`}
                         actionButton={<ActionButton jumpTo={`${`/digit-ui/citizen/pt/property/${typeOfApplication}/owner-address/`}${index}`} />}
                       />
-                      <Row
+                      {/* <Row
                         label={`${t("PT_COMMON_SAME_AS_PROPERTY_ADDRESS")}`}
                         text={`${t(checkForNA(owner?.isCorrespondenceAddress))}`}
                         actionButton={<ActionButton jumpTo={`${`/digit-ui/citizen/pt/property/${typeOfApplication}/owner-address/`}${index}`} />}
-                      />
+                      /> */}
                       {owner?.ownerType?.code !== "NONE" ? (
                         <Row
                           label={t("PT_SPECIAL_OWNER_CATEGORY_PROOF_HEADER")}
@@ -584,14 +597,38 @@ const CheckPage = ({ onSubmit, value = {} }) => {
             </div>
           )}
         </div> */}
+        {(exemption && exemption.exemptionRequired?.code == "PT_COMMON_YES" && 
+          <div>
+            <CardSubHeader>{t("PT_EXEMPTION_DETAILS")}</CardSubHeader>
+            <StatusTable>
+              <Row
+                label={t("PT_EXEMPTION_TYPE")}
+                text={`${exemption?.exemptionType ? ` ${t(exemption?.exemptionType?.i18nKey)} ` : ""} `}
+                actionButton={<ActionButton jumpTo={`/digit-ui/citizen/pt/property/${typeOfApplication}/exemption-details`} />}
+              />
+              <Row
+                label={t("PT_PROOF_OF_EXEMPTION")}
+                text={`${(exemption?.documents?.exemptionProof?.name && getFixedFilename(exemption.documents.exemptionProof.name)) || "na"}`}
+                actionButton={<ActionButton jumpTo={`/digit-ui/citizen/pt/property/${typeOfApplication}/exemption-details`} />}
+              />
+            </StatusTable>
+          </div>
+        )} 
+        <CheckBox
+          label={t("Is this property is a portion of property?")}
+          onChange={onSetIsApportion}
+          styles={{ height: "auto",paddingBottom: '10px' }}
+          //disabled={!agree}
+        />
         <CheckBox
           label={t("PT_FINAL_DECLARATION_MESSAGE")}
           onChange={setdeclarationhandler}
           styles={{ height: "auto" }}
           //disabled={!agree}
         />
+        
       </div>
-      <SubmitBar label={t("PT_COMMON_BUTTON_SUBMIT")} onSubmit={onSubmit} disabled={!agree} />
+      <SubmitBar label={t("PT_COMMON_BUTTON_SUBMIT")} onSubmit={onclickSubmit} disabled={!agree} />
     </Card>
    </React.Fragment>
   );

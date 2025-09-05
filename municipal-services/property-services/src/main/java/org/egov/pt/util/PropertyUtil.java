@@ -5,6 +5,7 @@ import static org.egov.pt.util.PTConstants.BILL_AMOUNT_PATH;
 import static org.egov.pt.util.PTConstants.BILL_NO_DEMAND_ERROR_CODE;
 import static org.egov.pt.util.PTConstants.BILL_NO_PAYABLE_DEMAND_ERROR_CODE;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -16,6 +17,8 @@ import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.Role;
 import org.egov.common.contract.request.User;
 import org.egov.pt.config.PropertyConfiguration;
+import org.egov.pt.models.Appeal;
+import org.egov.pt.models.Assessment;
 import org.egov.pt.models.OwnerInfo;
 import org.egov.pt.models.Property;
 import org.egov.pt.models.enums.CreationReason;
@@ -24,6 +27,7 @@ import org.egov.pt.models.user.UserDetailResponse;
 import org.egov.pt.models.workflow.ProcessInstance;
 import org.egov.pt.models.workflow.ProcessInstanceRequest;
 import org.egov.pt.repository.ServiceRequestRepository;
+import org.egov.pt.web.contracts.AppealRequest;
 import org.egov.pt.web.contracts.PropertyRequest;
 import org.egov.pt.web.contracts.RequestInfoWrapper;
 import org.egov.tracer.model.ServiceCallException;
@@ -64,17 +68,46 @@ public class PropertyUtil extends CommonUtils {
 	public void enrichOwner(UserDetailResponse userDetailResponse, List<Property> properties, Boolean isSearchOpen) {
 
 		List<OwnerInfo> users = userDetailResponse.getUser();
+		users.stream().forEach(t->t.getRoles().stream().forEach(u->u.setId(t.getId())));
 		Map<String, OwnerInfo> userIdToOwnerMap = new HashMap<>();
 		users.forEach(user -> userIdToOwnerMap.put(user.getUuid(), user));
 
 		properties.forEach(property -> {
 
 			property.getOwners().forEach(owner -> {
-
+				
+				System.out.println("inside owner::"+owner);
 				if (userIdToOwnerMap.get(owner.getUuid()) == null)
 					log.info("OWNER SEARCH ERROR",
 							"The owner with UUID : \"" + owner.getUuid() + "\" for the property with Id \""
 									+ property.getPropertyId() + "\" is not present in user search response");
+				else {
+
+					OwnerInfo info = userIdToOwnerMap.get(owner.getUuid());
+					if (isSearchOpen) {
+						owner.addUserDetail(getMaskedOwnerInfo(info));
+					} else {
+						owner.addUserDetail(info);
+					}
+				}
+			});
+		});
+	}
+	
+	public void enrichAssesmentOwner(UserDetailResponse userDetailResponse, List<Assessment> assessments, Boolean isSearchOpen) {
+
+		List<OwnerInfo> users = userDetailResponse.getUser();
+		Map<String, OwnerInfo> userIdToOwnerMap = new HashMap<>();
+		users.forEach(user -> userIdToOwnerMap.put(user.getUuid(), user));
+
+		assessments.forEach(assessment -> {
+
+			assessment.getOwners().forEach(owner -> {
+
+				if (userIdToOwnerMap.get(owner.getUuid()) == null)
+					log.info("OWNER SEARCH ERROR",
+							"The owner with UUID : \"" + owner.getUuid() + "\" for the property with Id \""
+									+ assessment.getPropertyId() + "\" is not present in user search response");
 				else {
 
 					OwnerInfo info = userIdToOwnerMap.get(owner.getUuid());
@@ -162,12 +195,60 @@ public class PropertyUtil extends CommonUtils {
 
 			case MUTATION :
 				break;
+			
+			case BIFURCATION :
+					wf.setBusinessService(configs.getCreatePTWfName());
+					wf.setModuleName(configs.getPropertyModuleName());
+					wf.setAction("OPEN");
+				break;
+			
+			case AMALGAMATION :
+				wf.setBusinessService(configs.getCreatePTWfName());
+				wf.setModuleName(configs.getPropertyModuleName());
+				wf.setAction("OPEN");
+			break;
+			
+			case APPEAL :
+				wf.setBusinessService(configs.getCreatePTWfName());
+				wf.setModuleName(configs.getPropertyModuleName());
+				wf.setAction("OPEN");
+			break;
 
 			default:
 				break;
 		}
 
 		property.setWorkflow(wf);
+		return ProcessInstanceRequest.builder()
+				.processInstances(Arrays.asList(wf))
+				.requestInfo(request.getRequestInfo())
+				.build();
+	}
+	
+	
+	
+	public ProcessInstanceRequest getWfForAppealRegistry(AppealRequest request, CreationReason creationReasonForWorkflow) {
+
+		Appeal appeal = request.getAppeal();
+		ProcessInstance wf = null != appeal.getWorkflow() ? appeal.getWorkflow() : new ProcessInstance();
+
+		wf.setBusinessId(appeal.getAcknowldgementNumber());
+		wf.setTenantId(appeal.getTenantId());
+
+		switch (creationReasonForWorkflow) {
+
+			
+			case APPEAL :
+				wf.setBusinessService(configs.getAppealCreateWorkflowName());
+				wf.setModuleName(configs.getPropertyModuleName());
+				wf.setAction("OPEN");
+			break;
+
+			default:
+				break;
+		}
+
+		appeal.setWorkflow(wf);
 		return ProcessInstanceRequest.builder()
 				.processInstances(Arrays.asList(wf))
 				.requestInfo(request.getRequestInfo())
@@ -238,6 +319,9 @@ public class PropertyUtil extends CommonUtils {
 
 		if (res != null) {
 			JsonNode node = mapper.convertValue(res, JsonNode.class);
+			String status =  node.at(PTConstants.BILL_STATUS_PATH).asText();
+			if(!status.equalsIgnoreCase("ACTIVE"))
+				return false;
 			Double amount = node.at(BILL_AMOUNT_PATH).asDouble();
 			return amount > 0;
 		}
@@ -279,6 +363,38 @@ public class PropertyUtil extends CommonUtils {
 		}
 		return response;
 	}
+
+	
+	
+	public BigDecimal getActiveBill(String propertyId, String tenantId, RequestInfo request) {
+
+		Object res = null;
+
+		StringBuilder uri = new StringBuilder(configs.getEgbsHost())
+				.append(configs.getEgbsFetchBill())
+				.append("?tenantId=").append(tenantId)
+				.append("&consumerCode=").append(propertyId)
+				.append("&businessService=").append(ASMT_MODULENAME);
+
+		try {
+			res = restRepo.fetchResult(uri, new RequestInfoWrapper(request)).get();
+		} catch (ServiceCallException e) {
+
+			if(!(e.getError().contains(BILL_NO_DEMAND_ERROR_CODE) || e.getError().contains(BILL_NO_PAYABLE_DEMAND_ERROR_CODE)))
+				throw e;
+		}
+
+		if (res != null) {
+			JsonNode node = mapper.convertValue(res, JsonNode.class);
+			String status =  node.at(PTConstants.BILL_STATUS_PATH).asText();
+			if(!status.equalsIgnoreCase("ACTIVE"))
+				return BigDecimal.ZERO;
+			BigDecimal amount = new BigDecimal(node.at(BILL_AMOUNT_PATH).asText());
+			return amount.compareTo(BigDecimal.ZERO)>0?amount:BigDecimal.ZERO;
+		}
+		return BigDecimal.ZERO;
+	}
+
 
 
 }

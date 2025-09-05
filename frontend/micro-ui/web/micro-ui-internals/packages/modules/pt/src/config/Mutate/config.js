@@ -107,7 +107,7 @@ export const newConfigMutate = [
             label: "PT_TOTAL_DUES",
             key: "total_due",
             noteStyle: {
-              fontSize: "24px",
+              fontSize: "16px",
               fontWeight: "bold",
             },
             // notePrefix: "₹ ",
@@ -509,6 +509,7 @@ export const newConfigMutate = [
         type: "component",
         route: "address-proof",
         component: "Proof",
+        nextStep: "exemption-details",
         withoutLabel: true,
         texts: {
           headerCaption: "PT_PROPERTY_LOCATION_CAPTION",
@@ -528,4 +529,45 @@ export const newConfigMutate = [
       },
     ],
   },
+  {
+    "head": "ES_NEW_APPLICATION_PROPERTY_TAX_EXEMPTION",
+    "body": [
+        
+        {
+            "type": "component",
+            "route": "exemption-details",
+            "isMandatory": true,
+            "component": "ExemptionDetails",
+            "texts": {
+                "headerCaption": "",
+                "header": "PT_EXEMPTION_DETAILS",
+                "cardText": "",
+                "submitBarLabel": "PT_COMMONS_NEXT"
+            },
+            "nextStep": "property-photo",
+            "key": "exemption",
+            "withoutLabel": true
+        }
+    ]
+  },
+  {
+      "head": "ES_NEW_APPLICATION_PROPERTY_PHOTO",
+      "body": [
+          
+          {
+              "type": "component",
+              "route": "property-photo",
+              "isMandatory": false,
+              "component": "PropertyPhoto",
+              "texts": {
+                  "headerCaption": "",
+                  "header": "PT_PROPERTY_PHOTO",
+                  "cardText": "",
+                  "submitBarLabel": "PT_COMMONS_NEXT"
+              },
+              "key": "propertyPhoto",
+              "withoutLabel": true
+          }
+      ]
+  }
 ];

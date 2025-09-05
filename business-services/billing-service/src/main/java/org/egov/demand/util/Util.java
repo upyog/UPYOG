@@ -25,8 +25,11 @@ import org.egov.mdms.model.ModuleDetail;
 import org.egov.tracer.model.CustomException;
 import org.postgresql.util.PGobject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
+import org.springframework.web.client.RestTemplate;
 
 import java.math.BigDecimal;
 import java.sql.SQLException;
@@ -38,6 +41,14 @@ import static org.egov.demand.util.Constants.*;
 @Component
 @Slf4j
 public class Util {
+	
+	private final RestTemplate restTemplate = new RestTemplate();
+
+	@Value("${user.service.details}")
+	private String authServiceUri;
+
+	@Value("${user.service.hostname}")
+	private String authServiceHost;
 
 	@Autowired
 	private ApplicationProperties appProps;
@@ -241,6 +252,16 @@ public class Util {
 	 */
 	public void validateTenantIdForUserType(String tenantId, RequestInfo requestInfo) {
 
+		if(requestInfo.getUserInfo()==null)
+		{
+			String authToken=requestInfo.getAuthToken();
+			String authURL = String.format("%s%s", authServiceHost, authServiceUri);
+			final HttpHeaders headers = new HttpHeaders();
+			headers.add("access_token", authToken);
+			org.egov.common.contract.request.User user=restTemplate.postForObject(authURL, headers, org.egov.common.contract.request.User.class);
+			requestInfo.setUserInfo(user);
+		}
+		
 		String userType = requestInfo.getUserInfo().getType();
 
 		if (Constants.EMPLOYEE_TYPE_CODE.equalsIgnoreCase(userType) && !tenantId.contains(".")) {

@@ -63,9 +63,13 @@ public class TranslationService {
 
         Map<String, Object> addressMap = new HashMap();
         Map<String, Object> localityMap = new HashMap();
+        Map<String, Object> typeOfRoadMap = new HashMap();
+        
+        typeOfRoadMap.put("code", property.getAddress().getTypeOfRoad().getCode());
         localityMap.put("area",property.getAddress().getLocality().getArea());
         localityMap.put("code",property.getAddress().getLocality().getCode());
         addressMap.put("locality",localityMap);
+        addressMap.put("typeOfRoad",typeOfRoadMap );
 
         propertyMap.put("address", addressMap);
         propertyMap.put("propertyId",property.getPropertyId());
@@ -75,24 +79,43 @@ public class TranslationService {
         propertyMap.put("status", property.getStatus());
         propertyMap.put("creationReason", property.getCreationReason());
         propertyMap.put("occupancyDate", null);
+        propertyMap.put("exemption", property.getExemption());
 
         String[] propertyTypeMasterData = property.getPropertyType().split("\\.");
         String propertyType = null,propertySubType = null;
         propertyType = propertyTypeMasterData[0];
-        if(propertyTypeMasterData.length > 1)
-            propertySubType = propertyTypeMasterData[1];
+		
+		  if(propertyTypeMasterData.length > 1) 
+			  propertySubType = propertyTypeMasterData[1];
+		 
 
-        String[] usageCategoryMasterData = property.getUsageCategory().split("\\.");
+        String[] usageCategoryMasterData = null;
         String usageCategoryMajor = null,usageCategoryMinor = null;
-        usageCategoryMajor = usageCategoryMasterData[0];
-        if(usageCategoryMasterData.length > 1)
-            usageCategoryMinor = usageCategoryMasterData[1];
+        
+        if(property.getUsageCategory() !=null)
+        {
+        	usageCategoryMasterData = property.getUsageCategory().split("\\.");
+            usageCategoryMajor = null;
+            usageCategoryMinor = null;
+            usageCategoryMajor = usageCategoryMasterData[0];
+            if(usageCategoryMasterData.length > 1)
+                usageCategoryMinor = usageCategoryMasterData[1];
+        }
+        
 
         String[] ownershipCategoryMasterData  = property.getOwnershipCategory().split("\\.");
         String ownershipCategory = null,subOwnershipCategory = null;
         ownershipCategory = ownershipCategoryMasterData[0];
         if(ownershipCategoryMasterData.length > 1)
             subOwnershipCategory = ownershipCategoryMasterData[1];
+        
+        if(property.getVacantusagecategory()!=null){
+           // String[] vacantusagecategoryMasterData  = property.getVacantusagecategory().split("\\_");
+            String vacantusagecategory = property.getVacantusagecategory();
+           // vacantusagecategory = vacantusagecategoryMasterData[1];
+            
+            propertyDetail.put("VacantUsagecategory", vacantusagecategory);
+        }
 
 
         propertyDetail.put("noOfFloors", property.getNoOfFloors());
@@ -107,6 +130,8 @@ public class TranslationService {
         propertyDetail.put("usageCategoryMinor", usageCategoryMinor);
         propertyDetail.put("ownershipCategory", ownershipCategory);
         propertyDetail.put("subOwnershipCategory", subOwnershipCategory);
+        propertyDetail.put("address", addressMap);
+        propertyDetail.put("exemption", property.getExemption());
 
         // propertyDetail.put("adhocExemption", );
         // propertyDetail.put("adhocPenalty",);
@@ -117,34 +142,40 @@ public class TranslationService {
             Map<String, Object> owner = mapper.convertValue(ownerInfo,  new TypeReference<Map<String, Object>>() {});
             owners.add(owner);
         });
-
+      
         List<Map<String, Object>> units = new LinkedList<>();
 
         if(!CollectionUtils.isEmpty(property.getUnits()))
             property.getUnits().forEach(unit -> {
-                Map<String, Object> unitMap = new HashMap<>();
-                unitMap.put("id",unit.getId());
-                unitMap.put("floorNo", unit.getFloorNo());
-                unitMap.put("unitArea", unit.getConstructionDetail().getBuiltUpArea());
-                unitMap.put("arv", unit.getArv());
-                unitMap.put("occupancyType", unit.getOccupancyType());
+            	
+            	if(unit.getActive()) {
+            		 Map<String, Object> unitMap = new HashMap<>();
+                     unitMap.put("id",unit.getId());
+                     unitMap.put("floorNo", unit.getFloorNo());
+                     unitMap.put("unitArea", unit.getConstructionDetail().getBuiltUpArea());
+                     unitMap.put("arv", unit.getArv());
+                     unitMap.put("occupancyType", unit.getOccupancyType());
+                     unitMap.put("structureType", unit.getStructureType());
+                     unitMap.put("ageOfProperty", unit.getAgeOfProperty());
 
-                String[] masterData = unit.getUsageCategory().split("\\.");
+                     String[] masterData = unit.getUsageCategory().split("\\.");
 
-                if(masterData.length >= 1)
-                    unitMap.put("usageCategoryMajor", masterData[0]);
+                     if(masterData.length >= 1)
+                         unitMap.put("usageCategoryMajor", masterData[0]);
 
-                if(masterData.length >= 2)
-                    unitMap.put("usageCategoryMinor", masterData[1]);
+                     if(masterData.length >= 2)
+                         unitMap.put("usageCategoryMinor", masterData[1]);
 
-                if(masterData.length >= 3)
-                    unitMap.put("usageCategorySubMinor", masterData[2]);
+                     if(masterData.length >= 3)
+                         unitMap.put("usageCategorySubMinor", masterData[2]);
 
-                if(masterData.length >= 4)
-                    unitMap.put("usageCategoryDetail",masterData[3]);
+                     if(masterData.length >= 4)
+                         unitMap.put("usageCategoryDetail",masterData[3]);
 
-                unitMap.put("additionalDetails", unit.getAdditionalDetails());
-                units.add(unitMap);
+                     unitMap.put("additionalDetails", unit.getAdditionalDetails());
+                     units.add(unitMap);
+            	}
+               
 
             });
 
@@ -183,6 +214,7 @@ public class TranslationService {
         calculationCriteria.put("property", propertyMap);
         calculationCriteria.put("tenantId", property.getTenantId());
         calculationCriteria.put("financialYear",assessmentRequestV2.getAssessment().getFinancialYear());
+        calculationCriteria.put("modeOfPayment", assessmentRequestV2.getAssessment().getModeOfPayment());
         Map<String, Object> calculationReq = new HashMap<>();
         calculationReq.put("RequestInfo", requestInfo);
         calculationReq.put("CalculationCriteria", Collections.singletonList(calculationCriteria));

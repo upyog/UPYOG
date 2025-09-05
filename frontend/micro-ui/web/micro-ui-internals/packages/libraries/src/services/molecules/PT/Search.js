@@ -65,6 +65,22 @@ export const PTSearch = {
             },
           },
         },
+        {
+          title: "PT_PROPERTY_ADDRESS_DAG_NO",
+          value: response?.address?.dagNo,
+        },
+        {
+          title: "PT_PROPERTY_ADDRESS_PATTA_NO",
+          value: response?.address?.pattaNo,
+        },
+        {
+          title: "PT_PROPERTY_ADDRESS_NAME_OF_PRINCIPAL_ROAD",
+          value: response?.address?.principalRoadName,
+        },
+        {
+          title: "PT_PROPERTY_ADDRESS_TYPE_OF_ROAD",
+          value: `PROPERTYTAX_ROADTYPE_${response?.address?.typeOfRoad?.code}`,
+        }
       ],
     };
     const assessmentDetails = {
@@ -183,8 +199,18 @@ export const PTSearch = {
           }),
       },
     };
+    const exemptionDetails = {
+      title: "PT_EXEMPTION_DETAILS",
+      asSectionHeader: true,
+      values: [
+        {
+          title: "PT_EXEMPTION_TYPE",
+          value: response?.exemption ? `PT_EXEMPTION_TYPE_${response?.exemption}` : "N/A",
+        }
+      ],
+    }
 
-    const applicationDetails = [propertyDetail, addressDetails, assessmentDetails, ownerdetails];
+    const applicationDetails = [propertyDetail, addressDetails, assessmentDetails, ownerdetails, exemptionDetails];
     return {
       tenantId: property?.tenantId,
       applicationDetails,
@@ -241,6 +267,22 @@ export const PTSearch = {
               },
             },
           },
+          {
+            title: "PT_PROPERTY_ADDRESS_DAG_NO",
+            value: response?.address?.dagNo,
+          },
+          {
+            title: "PT_PROPERTY_ADDRESS_PATTA_NO",
+            value: response?.address?.pattaNo,
+          },
+          {
+            title: "PT_PROPERTY_ADDRESS_NAME_OF_PRINCIPAL_ROAD",
+            value: response?.address?.principalRoadName,
+          },
+          {
+            title: "PT_PROPERTY_ADDRESS_TYPE_OF_ROAD",
+            value: `PROPERTYTAX_ROADTYPE_${response?.address?.typeOfRoad?.code}`,
+          }
         ],
       },
       {
@@ -403,6 +445,16 @@ export const PTSearch = {
           ],
         },
       },
+      {
+        title: "PT_EXEMPTION_DETAILS",
+        asSectionHeader: true,
+        values: [
+          {
+            title: "PT_EXEMPTION_TYPE",
+            value: response?.exemption ? `PT_EXEMPTION_TYPE_${response?.exemption}` : "N/A",
+          }
+        ],
+      }
     ];
   },
   applicationDetails: async (t, tenantId, propertyIds, userType, args) => {

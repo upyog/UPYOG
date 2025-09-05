@@ -120,6 +120,61 @@ const getCitizenStyles = (value) => {
         minHeight: "50px"
       }
     };
+  } else if (value == "citizenAppeal") {
+    citizenStyles = {
+      containerStyles: {
+        display: "flex", 
+        justifyContent: "flex-start", 
+        alignItems: "center", 
+        flexWrap: "wrap",
+        margin: "0px",
+        padding: "0px"
+      },
+      tagContainerStyles: {
+       margin: "0px",
+       padding: "0px",
+       width: "46%"
+      },
+      tagStyles: {
+        height: "auto", 
+        padding: "5px", 
+        margin: 0,
+        width: "100%",
+        margin: "5px"
+      },
+      textStyles: {
+        wordBreak: "break-word",
+        height: "auto",
+        lineHeight: "16px",
+        overflow: "hidden",
+        // minHeight: "35px",
+        maxHeight: "34px"
+      },   
+      inputStyles: {
+        width: "43%",
+        minHeight: "42px",
+        maxHeight: "42px",
+        top: "5px",
+        left: "5px"
+      },
+      buttonStyles: {
+        height: "auto",
+        minHeight: "25px",
+        width: "43%",
+        maxHeight: "25px",
+        margin: "5px",
+        padding: "1px !important"
+      },
+      closeIconStyles: {
+        width : "20px"
+      },
+      uploadFile: {
+        minHeight: "37px",
+        maxHeight: "37px",
+        borderColor: "#cccccc",
+        background: "white"
+      }
+    };
   }
   else {
     citizenStyles = {
@@ -150,6 +205,9 @@ const UploadFile = (props) => {
 
   // for common aligmnent issues added common styles
   extraStyles = getCitizenStyles("OBPS");
+  if(props.extraStyleName=='citizenAppeal') {
+    extraStyles = getCitizenStyles("citizenAppeal");
+  }
 
   // if (window.location.href.includes("/obps") || window.location.href.includes("/noc")) {
   //   extraStyles = getCitizenStyles("OBPS");
