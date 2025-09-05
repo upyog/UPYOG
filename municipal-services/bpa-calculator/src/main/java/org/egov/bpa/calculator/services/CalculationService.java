@@ -188,7 +188,14 @@ public class CalculationService {
 			Map<String,String> fee=node.get("selfCertificationCharges");
 			for(Map.Entry<String,String> entry : fee.entrySet()){
 				TaxHeadEstimate estimatee = new TaxHeadEstimate();
-				BigDecimal amount=new BigDecimal(entry.getValue());
+				
+				BigDecimal amount = null;
+				if(entry.getValue() != null && !entry.getValue().isEmpty() && entry.getValue().matches("^[0-9]*$")) {
+					amount=new BigDecimal(entry.getValue());
+				}else {
+					amount=new BigDecimal("0");
+				}
+				
 				taxhead=entry.getKey();
 				if(taxhead.equalsIgnoreCase("BPA_LESS_ADJUSMENT_PLOT"))
 					amount=amount.multiply(new BigDecimal(-1));
