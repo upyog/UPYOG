@@ -994,7 +994,9 @@ public class GarbageAccountService {
 				.requestInfo(updateGarbageRequest.getRequestInfo()).garbageAccounts(new ArrayList<>()).build();
 
 		updateGarbageRequest.getGarbageAccounts().stream().forEach(account -> {
-
+			
+			org.egov.garbageservice.model.contract.Role role =  org.egov.garbageservice.model.contract.Role.builder().code("CITIZEN").name("Citizen").build();
+			userService.processGarbageAccount(updateGarbageRequest.getRequestInfo(),role, account);
 			if (BooleanUtils.isTrue(account.getIsOnlyWorkflowCall())) {
 
 				Boolean tempBol = account.getIsOnlyWorkflowCall();
@@ -1050,10 +1052,6 @@ public class GarbageAccountService {
 				account.setGrbgApplication(accountTemp.getGrbgApplication());
 				garbageAccountRequestTemp.getGarbageAccounts().add(account);
 			} else {
-				org.egov.garbageservice.model.contract.Role role =  org.egov.garbageservice.model.contract.Role.builder().code("CITIZEN").name("Citizen").build();
-//			    RequestInfo
-				userService.processGarbageAccount(updateGarbageRequest.getRequestInfo(),role, account);
-
 				garbageAccountRequestTemp.getGarbageAccounts().add(account);
 //				throw new CustomException("WRONG_INPUTS", "Input fields for workflow flag and action is incorrect.");
 			}
