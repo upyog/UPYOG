@@ -191,12 +191,33 @@ public class PropertyRepository {
 
 		Set<String> ownerIds = properties.stream().map(Property::getOwners).flatMap(List::stream)
 				.map(OwnerInfo::getUuid).collect(Collectors.toSet());
+		
+	    List<String> ownerIdList = new ArrayList<>(ownerIds);
+	    int batchSize = 100;
+	    List<OwnerInfo> mergedUsers = new ArrayList<>();
+	    for (int i = 0; i < ownerIdList.size(); i += batchSize) {
+	        List<String> batch = ownerIdList.subList(i, Math.min(i + batchSize, ownerIdList.size()));
 
-		UserSearchRequest userSearchRequest = userService.getBaseUserSearchRequest(criteria.getTenantId(), requestInfo);
-		userSearchRequest.setUuid(ownerIds);
+	        UserSearchRequest userSearchRequest = userService.getBaseUserSearchRequest(criteria.getTenantId(), requestInfo);
+	        userSearchRequest.setUuid(new HashSet<>(batch));
 
-		UserDetailResponse userDetailResponse = userService.getUser(userSearchRequest);
-		util.enrichOwner(userDetailResponse, properties, isOpenSearch);
+	        UserDetailResponse userDetailResponse = userService.getUser(userSearchRequest);
+	        if (userDetailResponse != null && !CollectionUtils.isEmpty(userDetailResponse.getUser())) {
+	            mergedUsers.addAll(userDetailResponse.getUser());
+	        }
+	    }
+
+	    UserDetailResponse mergedResponse = new UserDetailResponse();
+	    
+	    mergedResponse.setUser(mergedUsers);
+
+
+//		UserSearchRequest userSearchRequest = userService.getBaseUserSearchRequest(criteria.getTenantId(), requestInfo);
+//		userSearchRequest.setUuid(ownerIds);
+//
+//		UserDetailResponse userDetailResponse = userService.getUser(userSearchRequest);
+		util.enrichOwner(mergedResponse, properties, isOpenSearch);
+		
 		return properties;
 	}
 	
