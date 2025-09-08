@@ -995,8 +995,10 @@ public class GarbageAccountService {
 
 		updateGarbageRequest.getGarbageAccounts().stream().forEach(account -> {
 			
-			org.egov.garbageservice.model.contract.Role role =  org.egov.garbageservice.model.contract.Role.builder().code("CITIZEN").name("Citizen").build();
-			userService.processGarbageAccount(updateGarbageRequest.getRequestInfo(),role, account);
+			if (!BooleanUtils.isTrue(account.getIsOnlyWorkflowCall())) {
+				org.egov.garbageservice.model.contract.Role role =  org.egov.garbageservice.model.contract.Role.builder().code("CITIZEN").name("Citizen").build();
+				userService.processGarbageAccount(updateGarbageRequest.getRequestInfo(),role, account);
+			}
 			if (BooleanUtils.isTrue(account.getIsOnlyWorkflowCall())) {
 
 				Boolean tempBol = account.getIsOnlyWorkflowCall();
