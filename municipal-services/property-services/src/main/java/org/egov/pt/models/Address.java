@@ -1,5 +1,12 @@
 package org.egov.pt.models;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+
+import org.hibernate.validator.constraints.NotBlank;
+import org.springframework.beans.factory.annotation.Required;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.AllArgsConstructor;
@@ -69,4 +76,37 @@ public class Address {
 	
 	@JsonProperty("additionalDetails")
 	private Object additionalDetails;
+	
+	//FOR MANIPUR IMPLEMENTATION
+	
+	@JsonProperty("dagNo")
+	@Valid
+	@NotEmpty
+	@NotNull(message = "Invalid DAG No. ")
+	private String dagNo;
+	@JsonProperty("districtName")
+	private String districtName;
+	@JsonProperty("townName")
+	private String townName;
+	@JsonProperty("wardNo")
+	private String wardNo;
+	@JsonProperty("village")
+	private String village;
+	@JsonProperty("pattaNo")
+	private String pattaNo;
+	@JsonProperty("properHouseNo")
+	private String properHouseNo;
+	@JsonProperty("commonNameOfBuilding")
+	private String commonNameOfBuilding;
+	@JsonProperty("principalRoadName")
+	private String principalRoadName;
+	@JsonProperty("subSideRoadName")
+	private String subSideRoadName;
+	@JsonProperty("landmarkName")
+	private String landmarkName;
+	@JsonProperty("others")
+	private String others;
+	@JsonProperty("typeOfRoad")
+	private TypeOfRoad typeOfRoad;
+	
 }

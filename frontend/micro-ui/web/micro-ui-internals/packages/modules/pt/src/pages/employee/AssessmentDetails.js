@@ -3,10 +3,10 @@ import { useTranslation } from "react-i18next";
 import ApplicationDetailsTemplate from "../../../../templates/ApplicationDetails";
 
 import { useParams, useLocation, useHistory } from "react-router-dom";
-import { ActionBar, Header, Loader, SubmitBar,Card,CardSubHeader,CardSectionHeader,LinkLabel, CardLabel, CardHeader, CardText} from "@egovernments/digit-ui-react-components";
+import { ActionBar, Header, Loader, SubmitBar,Card,CardSubHeader,CardSectionHeader,LinkLabel, CardLabel, CardHeader, CardText} from "@upyog/digit-ui-react-components";
 import { useQueryClient } from "react-query";
 import _, { first, update } from "lodash";
-import { Modal,Dropdown, Row, StatusTable } from "@egovernments/digit-ui-react-components";
+import { Modal,Dropdown, Row, StatusTable } from "@upyog/digit-ui-react-components";
 import {convertEpochToDate} from "../../utils/index";
 
 
@@ -34,18 +34,32 @@ const AssessmentDetails = () => {
   const fourth_temp=useRef();
   
   const getPropertyTypeLocale = (value) => {
-    return `PROPERTYTAX_BILLING_SLAB_${value?.split(".")[0]}`;
+    return `PROPERTYTAX_${value?.split(".")[0]}`;
   };
   
-  const getPropertySubtypeLocale = (value) => `PROPERTYTAX_BILLING_SLAB_${value}`;  
+  const getPropertySubtypeLocale = (value) => `PROPERTYTAX_${value}`;  
+  const closeToast = () => {
+    setShowToast(null);
+  };
 
   let { isLoading, isError, data: applicationDetails, error } = Digit.Hooks.pt.useApplicationDetail(t, tenantId, propertyId);
-  const { isLoading: assessmentLoading, mutate: assessmentMutate } = Digit.Hooks.pt.usePropertyAssessment(tenantId);
+  const { isLoading: assessmentLoading, mutate: assessmentMutate } = Digit.Hooks.pt.usePropertyAssessment(applicationDetails && applicationDetails?.tenantId ? applicationDetails?.tenantId : '');
   const {
     isLoading: ptCalculationEstimateLoading,
     data: ptCalculationEstimateData,
     mutate: ptCalculationEstimateMutate,
+    error: errorE
   } = Digit.Hooks.pt.usePtCalculationEstimate(tenantId);
+  if(errorE?.response?.status == 400 && errorE?.response?.data?.Errors[0]?.code == "ASESSMENT_ERROR") {
+    if(!showToast) {
+      setShowToast({ key: "error", action: errorE?.response?.data?.Errors[0]?.message || errorE?.message, error : {  message:errorE?.response?.data?.Errors[0]?.message || errorE?.message } });
+      setTimeout(() => {
+        closeToast;
+        history.push('/digit-ui/citizen/pt/property/my-properties')
+      }, 5000);
+    }
+    
+  }
   const { data: ChargeSlabsMenu, isLoading: isChargeSlabsLoading } = Digit.Hooks.pt.usePropertyMDMS(stateId, "PropertyTax", "ChargeSlabs");
  const fetchBillParams = { consumerCode : propertyId };
 
@@ -59,7 +73,7 @@ const AssessmentDetails = () => {
       enabled: propertyId ? true : false,
     }
   );
-
+  AssessmentData.tenantId = applicationDetails && applicationDetails?.tenantId ? applicationDetails?.tenantId : tenantId;
   useEffect(() => {
     // estimate calculation
     ptCalculationEstimateMutate({ Assessment: AssessmentData });
@@ -96,26 +110,33 @@ const AssessmentDetails = () => {
     }
   ); 
   
-  const closeToast = () => {
-    setShowToast(null);
-  };
-
+  
+  
   const handleAssessment = () => {
     if (!queryClient.getQueryData(["PT_ASSESSMENT", propertyId, location?.state?.Assessment?.financialYear])) {
       assessmentMutate(
         { Assessment:AssessmentData},
         {
           onError: (error, variables) => {
-            setShowToast({ key: "error", action: error?.response?.data?.Errors[0]?.message || error.message, error : {  message:error?.response?.data?.Errors[0]?.code || error.message } });
+            setShowToast({ key: "error", action: error?.response?.data?.Errors[0]?.message || error.message, error : {  message:error?.response?.data?.Errors[0]?.message || error.message } });
             setTimeout(closeToast, 5000);
           },
           onSuccess: (data, variables) => {
             sessionStorage.setItem("IsPTAccessDone", data?.Assessments?.[0]?.auditDetails?.lastModifiedTime);
+            let user = sessionStorage.getItem("Digit.User")
+            let userType = JSON.parse(user)
             setShowToast({ key: "success", action: { action: "ASSESSMENT" } });
             setTimeout(closeToast, 5000);
+            console.log("useType.value.info.type",userType,typeof(userType))
             // queryClient.clear();
             // queryClient.setQueryData(["PT_ASSESSMENT", propertyId, location?.state?.Assessment?.financialYear], true);
-            history.push(`/digit-ui/employee/payment/collect/PT/${propertyId}`);
+            if(userType?.value?.info?.type == "CITIZEN")
+            {
+              history.push(`/digit-ui/citizen/pt-home`);
+            }
+            else{
+              proceeedToPay()
+            }
           },
         }
       );
@@ -145,7 +166,7 @@ const Heading = (props) => {
 };
 
 const Close = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#FFFFFF">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="red">
     <path d="M0 0h24v24H0V0z" fill="none" />
     <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z" />
   </svg>
@@ -411,9 +432,9 @@ const Penality_menu=[
                   taxHeadEstimatesCalculation: ptCalculationEstimateData?.Calculation[0],
                 },
               },
-              {
-                belowComponent:()=><LinkLabel onClick={()=>{showPopUp(true)}} style={isMobile ? {color:"#a82227",marginLeft:"0px"} : {color:"#a82227"}}>{t("PT_ADD_REBATE_PENALITY")}</LinkLabel>
-              },
+              // {
+              //   belowComponent:()=><LinkLabel onClick={()=>{showPopUp(true)}} style={isMobile ? {color:"#0f4f9e",marginLeft:"0px"} : {color:"#0f4f9e"}}>{t("PT_ADD_REBATE_PENALITY")}</LinkLabel>
+              // },
               {
                 title: "PT_ASSESMENT_INFO_SUB_HEADER",
                 values: [
@@ -439,8 +460,7 @@ const Penality_menu=[
                         },
                         {
                           title: "PT_ASSESSMENT_UNIT_USAGE_TYPE",
-                          value: `PROPERTYTAX_BILLING_SLAB_${
-                            unit?.usageCategory != "RESIDENTIAL" ? unit?.usageCategory?.split(".")[1] : unit?.usageCategory
+                          value: `PROPERTYTAX_${ unit?.usageCategory
                           }`,
                         },
                         {
@@ -468,36 +488,33 @@ const Penality_menu=[
                     }),
                 },
               },
-            {
-              belowComponent:()=>{
-                return (
-                  <div style={{marginTop:"19px"}}>
-                  <CardSubHeader style={{marginBottom:"8px",color:"#0B0C0C",fontSize:"24px"}}>
-                  {t("PT_CALC_DETAILS")}<br/>
-                  </CardSubHeader>
-                  <CardSectionHeader style={{marginBottom:"16px",color:"#0B0C0C",fontSize:"16px",marginTop:"revert"}}>{t("PT_CALC_LOGIC_HEADER")}</CardSectionHeader>
-                  <CardText style={{fontSize:"16px"}}>{t("PT_CALC_LOGIC")}</CardText>
-                    {/* <div className="employee-data-table" style={{position:"relative",padding:"8px"}}>
-                    <div style={{position:"absolute",maxWidth:"640px",border:"1px solid rgb(214,213,212)",inset:"0px",width:"auto"}}/> */}
-                    <div style={{ border: "1px solid #D6D5D4", padding: "16px", marginTop: "8px", borderRadius: "4px", background: "#FAFAFA" }}>
-                    <div className="row border-none"><h2>{t("PT_APPLICABLE_CHARGE_SLABS")}</h2></div>
-                    {/* <div className="row border-none"><h2>{t("PT_GRND_FLOOR_UNIT-1")}</h2>
-                    <div className="value">{t("PT_RATE")}</div>
-                    </div> */}
-                    <StatusTable>
-                    {applicationDetails?.applicationData?.units
-                    ?.filter((e) => e.active)
-                    ?.sort?.((a, b) => a.floorNo - b.floorNo)
-                    ?.map((unit, index) => (
-                    <Row label={`${t(`PROPERTYTAX_FLOOR_${unit?.floorNo}`)} ${t(`PT_UNIT`)} - ${index+1}`} text={ChargeSlabsMenu?.PropertyTax && ChargeSlabsMenu?.PropertyTax?.ChargeSlabs?.filter((ob) => ob.floorNo == unit.floorNo)?.[0]?.name} />
-                    ))}
-                    </StatusTable>
-                   </div>
-                  </div>
+            // {
+            //   belowComponent:()=>{
+            //     return (
+            //       <div style={{marginTop:"19px"}}>
+            //       <CardSubHeader style={{marginBottom:"8px",color:"#0B0C0C",fontSize:"24px"}}>
+            //       {t("PT_CALC_DETAILS")}<br/>
+            //       </CardSubHeader>
+            //       <CardSectionHeader style={{marginBottom:"16px",color:"#0B0C0C",fontSize:"16px",marginTop:"revert"}}>{t("PT_CALC_LOGIC_HEADER")}</CardSectionHeader>
+            //       <CardText style={{fontSize:"16px"}}>{t("PT_CALC_LOGIC")}</CardText>
+                    
+            //         <div style={{ border: "1px solid #D6D5D4", padding: "16px", marginTop: "8px", borderRadius: "4px", background: "#FAFAFA" }}>
+            //         <div className="row border-none"><h2>{t("PT_APPLICABLE_CHARGE_SLABS")}</h2></div>
+                    
+            //         <StatusTable>
+            //         {applicationDetails?.applicationData?.units
+            //         ?.filter((e) => e.active)
+            //         ?.sort?.((a, b) => a.floorNo - b.floorNo)
+            //         ?.map((unit, index) => (
+            //         <Row label={`${t(`PROPERTYTAX_FLOOR_${unit?.floorNo}`)} ${t(`PT_UNIT`)} - ${index+1}`} text={ChargeSlabsMenu?.PropertyTax && ChargeSlabsMenu?.PropertyTax?.ChargeSlabs?.filter((ob) => ob.floorNo == unit.floorNo)?.[0]?.name} />
+            //         ))}
+            //         </StatusTable>
+            //        </div>
+            //       </div>
                   
-                )
-              }
-            }
+            //     )
+            //   }
+            // }
           ]}
         }
         showTimeLine={false}
@@ -617,11 +634,11 @@ const Penality_menu=[
     </Modal>}
       {!queryClient.getQueryData(["PT_ASSESSMENT", propertyId, location?.state?.Assessment?.financialYear]) ? (
         <ActionBar>
-          <SubmitBar label={t("PT_ASSESS_PROPERTY_BUTTON")} onSubmit={handleAssessment} />
+          <SubmitBar style={{float: "right"}} label={t("PT_ASSESS_PROPERTY_BUTTON")} onSubmit={handleAssessment} />
         </ActionBar>
       ) : (
         <ActionBar>
-          <SubmitBar disabled={paymentDetails?.data?.Bill?.[0]?.totalAmount > 0 ? false : true} label={t("PT_PROCEED_PAYMENT")} onSubmit={proceeedToPay} />
+          <SubmitBar style={{float: "right"}} disabled={paymentDetails?.data?.Bill?.[0]?.totalAmount > 0 ? false : true} label={t("PT_PROCEED_PAYMENT")} onSubmit={proceeedToPay} />
         </ActionBar>
       )}
     </div>

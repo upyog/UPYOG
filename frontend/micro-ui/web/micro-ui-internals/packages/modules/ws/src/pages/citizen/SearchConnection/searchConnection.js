@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { FormComposer, CardLabelDesc, Loader, Menu, CardText } from "@egovernments/digit-ui-react-components";
-import { FormStep, CardLabel, RadioButtons, RadioOrSelect, Localities, InfoBannerIcon } from "@egovernments/digit-ui-react-components";
-import { TextInput, LabelFieldPair, Dropdown, Toast } from "@egovernments/digit-ui-react-components";
+import { FormComposer, CardLabelDesc, Loader, Menu, CardText } from "@upyog/digit-ui-react-components";
+import { FormStep, CardLabel, RadioButtons, RadioOrSelect, Localities, InfoBannerIcon } from "@upyog/digit-ui-react-components";
+import { TextInput, LabelFieldPair, Dropdown, Toast } from "@upyog/digit-ui-react-components";
 import PropTypes from "prop-types";
 import { useHistory } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -144,7 +144,7 @@ const SearchConnection = ({ config: propsConfig, formData }) => {
         heading={propsConfig.texts.header}
         text={propsConfig.texts.text}
         cardStyle={{ margin: "auto", maxWidth:"960px" }}
-        headingStyle={{ fontSize: "32px", marginBottom: "16px" }}
+        headingStyle={{ fontSize: "16px", marginBottom: "16px" }}
         onSelect={onConnectionSearch}
         componentInFront={<div className="employee-card-input employee-card-input--front">+91</div>}
         isDisabled={false}
