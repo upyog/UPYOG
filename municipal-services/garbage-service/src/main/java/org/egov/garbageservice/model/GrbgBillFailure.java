@@ -1,6 +1,7 @@
 package org.egov.garbageservice.model;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.UUID;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -27,7 +28,7 @@ public class GrbgBillFailure {
 	private String to_date;
     private JsonNode request_payload = null;
     private JsonNode response_payload = null;
-    private JsonNode error_json = null;
+    private List<String> error_json = null;
 	private String status_code;
 	private Long created_time;
 	private Long last_modified_time;

@@ -76,15 +76,15 @@ public class GarbageAccountSchedulerService {
 		// create demand and bill for every account
 		if (null != garbageAccounts && !CollectionUtils.isEmpty(garbageAccounts)) {
 			garbageAccounts.stream().forEach(garbageAccount -> {
-				ObjectNode  errorMap = objectMapper.createObjectNode();
+				List<String> errorList = new ArrayList<>();
 				ObjectNode  calculationBreakdown = objectMapper.createObjectNode();
 				if(null != garbageAccount.getUserUuid()) {
 					Object mdmsResponse = mdmsService.fetchGarbageFeeFromMdms(generateBillRequest.getRequestInfo(),
 							garbageAccount.getTenantId());
 					// calculate fees from mdms response
-					BigDecimal billAmount = mdmsService.fetchGarbageAmountFromMDMSResponse(mdmsResponse, garbageAccount,errorMap,calculationBreakdown);
+					BigDecimal billAmount = mdmsService.fetchGarbageAmountFromMDMSResponse(mdmsResponse, garbageAccount,errorList,calculationBreakdown);
 
-					if (billAmount != null && billAmount.compareTo(BigDecimal.ZERO) > 0 && errorMap.isEmpty()) {
+					if (billAmount != null && billAmount.compareTo(BigDecimal.ZERO) > 0 && errorList.isEmpty()) {
 					
 						BillResponse billResponse = generateDemandAndBill(generateBillRequest, garbageAccount, billAmount,"MONTHLY");
 	
@@ -97,23 +97,24 @@ public class GarbageAccountSchedulerService {
 							grbgBillTrackers.add(grbgBillTracker);
 							
 							//remove bill if failure exists
-							GrbgBillFailure grbgBillFailure	= garbageAccountService.enrichGrbgBillFailure(garbageAccount, generateBillRequest,billResponse,errorMap);
+							GrbgBillFailure grbgBillFailure	= garbageAccountService.enrichGrbgBillFailure(garbageAccount, generateBillRequest,billResponse,errorList);
 							garbageAccountService.removeGarbageBillFailure(grbgBillFailure);
 //							triggerNotifications
 							notificationService.triggerNotificationsGenerateBill(garbageAccount, billResponse.getBill().get(0),
 									generateBillRequest.getRequestInfo(),grbgBillTracker);
 						}else {
-							errorMap.put("ERROR-MAP", "Issues In Bill Generation Probably Demand Already Exists");
-							createFailureLog(garbageAccount, generateBillRequest,billResponse,errorMap);
+							errorList.add("Issues In Bill Generation Probably Demand Already Exists");
+							createFailureLog(garbageAccount, generateBillRequest,billResponse,errorList);
 						}
 					}else {
-						errorMap.put("AMOUNT-NILL", "Amount could not be calculated");
-						createFailureLog(garbageAccount, generateBillRequest,null,errorMap);
+						
+						errorList.add("Amount could not be calculated");
+						createFailureLog(garbageAccount, generateBillRequest,null,errorList);
 					}
 				}
 				else {
-					errorMap.put("USER-UUID-NULL", "mobile number user not mapped");
-					createFailureLog(garbageAccount, generateBillRequest,null,errorMap);
+					errorList.add("Mobile number user not mapped");
+					createFailureLog(garbageAccount, generateBillRequest,null,errorList);
 				}
 			});
 		}else {
@@ -128,7 +129,7 @@ public class GarbageAccountSchedulerService {
 	}
 	
 	
-	private void createFailureLog(GarbageAccount garbageAccount,GenerateBillRequest generateBillRequest, BillResponse billResponse,ObjectNode errorMap) {
+	private void createFailureLog(GarbageAccount garbageAccount,GenerateBillRequest generateBillRequest, BillResponse billResponse,List<String> errorMap) {
 		GrbgBillFailure grbgBillFailure	= garbageAccountService.enrichGrbgBillFailure(garbageAccount, generateBillRequest,billResponse,errorMap);
 		garbageAccountService.saveToGarbageBillFailure(grbgBillFailure);
 	}
