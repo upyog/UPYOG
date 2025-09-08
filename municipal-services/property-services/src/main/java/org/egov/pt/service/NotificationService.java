@@ -571,7 +571,7 @@ public class NotificationService {
 //		Instant instant = Instant.ofEpochMilli(bill.getBillDate());
 //		LocalDateTime dateTime = instant.atZone(ZoneId.systemDefault()).toLocalDateTime();
 
-		body = body.replace(RECIPINTS_NAME_PLACEHOLDER, bill.getPayerName());
+		body = body.replace(RECIPINTS_NAME_PLACEHOLDER, StringUtils.isEmpty(bill.getPayerName())?"N/A":bill.getPayerName());
 		body = body.replace(MONTH_PLACEHOLDER,  monthFormat.format(propertyTracker.getFromDate())+" / "+monthFormat.format(propertyTracker.getToDate()));
 //		body = body.replace(YEAR_PLACEHOLDER, propertyTracker.getFinancialYear());
 		body = body.replace(BILL_NO_PLACEHOLDER, bill.getBillNumber());
