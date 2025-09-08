@@ -347,27 +347,19 @@ public class PropertySchedulerService {
 					notificationService.triggerNotificationsGenerateBill(ptTaxCalculatorTracker,
 							billResponse.getBill().get(0), ptTaxCalculatorTrackerRequest.getRequestInfo());
 				}
-				else {
-					//failure case one
-					PropertyBillFailure propertyBillFailure	= enrichmentService.enrichPtBillFailure(property, calculateTaxRequest,billResponse,null);
-					propertyService.saveToPtBillFailure(propertyBillFailure);
-//					log.info("bill cant be generated {} {} {}",generateBillRequest,garbageAccount,null);
-				}
+				else 
+					createFailureLog(property, calculateTaxRequest,billResponse,null);			
 			}
-			else 
-			{
-				//failure case 
-				//failure case one
-				PropertyBillFailure propertyBillFailure	= enrichmentService.enrichPtBillFailure(property, calculateTaxRequest,null,errorMap);
-				propertyService.saveToPtBillFailure(propertyBillFailure);
-//				log.info("bill cant be generated {} {} {}",generateBillRequest,garbageAccount,null);
-//				log.error(billResponse.toString());
-				log.error(errorMap.toString());
-			}
-
+			else
+				createFailureLog(property, calculateTaxRequest,null,errorMap.get(property.getPropertyId()));
 		}
-
 		return CalculateTaxResponse.builder().taxCalculatorTrackers(taxCalculatorTrackers).build();
+	}
+	
+	private void createFailureLog(Property property,CalculateTaxRequest generateBillRequest, BillResponse billResponse,Set<String> errorMap) {
+		PropertyBillFailure propertyBillFailure	= enrichmentService.enrichPtBillFailure(property, generateBillRequest,billResponse,errorMap);
+		propertyService.saveToPtBillFailure(propertyBillFailure);
+
 	}
 
 	private BigDecimal calculateDays(CalculateTaxRequest calculateTaxRequest) {
