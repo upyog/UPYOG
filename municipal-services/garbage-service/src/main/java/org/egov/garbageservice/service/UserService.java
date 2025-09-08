@@ -159,7 +159,7 @@ public class UserService {
 
 	}
 
-	private void processGarbageAccount(RequestInfo requestInfo, Role role, GarbageAccount garbageAccount) {
+	public void processGarbageAccount(RequestInfo requestInfo, Role role, GarbageAccount garbageAccount) {
 	    OwnerInfo owner = createOwnerInfoFromAccount(garbageAccount);
 	    addUserDefaultFields(role, owner);
 
