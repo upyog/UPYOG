@@ -304,6 +304,12 @@ config:
         image-name: "zuul"
         dockerfile: "build/maven/Dockerfile"
 
+  - name: "builds/upyog/core-services/gateway"
+    build:
+      - work-dir: "core-services/gateway"
+        image-name: "gateway"
+        dockerfile: "build/maven/Dockerfile"      
+
   - name: "builds/upyog/core-services/internal-gateway"
     build:
       - work-dir: "core-services/internal-gateway"

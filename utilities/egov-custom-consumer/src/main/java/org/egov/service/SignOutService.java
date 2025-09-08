@@ -29,15 +29,27 @@ public class SignOutService {
 	private String coexistencelogoutUri;
 
 	public void callFinanceForSignOut(DocumentContext documentContext) {
+		log.info("Inside callFinanceForSignOut()");
 		ResponseEntity<?> response = null;
-		String accessToken = documentContext.read(JsonPathConstant.signOutAccessToken);
-		documentContext = documentContext.delete(JsonPathConstant.userInfo);
-		documentContext = documentContext.put(JsonPathConstant.requestInfo, "authToken", accessToken);
-		LinkedHashMap<String, Object> jsonRequest = documentContext.read(JsonPathConstant.request);
+		try {
+			String accessToken = documentContext.read(JsonPathConstant.signOutAccessToken);
+			log.info("accessToken: "+accessToken);
+			documentContext = documentContext.delete(JsonPathConstant.userInfo);
+			log.info("delete user info: ");
+			documentContext = documentContext.put(JsonPathConstant.requestInfo, "authToken", accessToken);
+			log.info("accessToken added: "+accessToken);
+			LinkedHashMap<String, Object> jsonRequest = documentContext.read(JsonPathConstant.request);
+			
+			
+			log.info("finance logout uri: "+coexistencehost + coexistencelogoutUri);
+	
+			response = restTemplate.exchange(coexistencehost + coexistencelogoutUri, HttpMethod.POST,
+					new HttpEntity<>(jsonRequest), ResponseEntity.class);
+			log.info("SignOutService response :" + response.getStatusCode());
 
-		response = restTemplate.exchange(coexistencehost + coexistencelogoutUri, HttpMethod.POST,
-				new HttpEntity<>(jsonRequest), ResponseEntity.class);
-		log.info("SignOutService response :" + response.getStatusCode());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 }
