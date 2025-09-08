@@ -14,6 +14,8 @@ import lombok.NoArgsConstructor;
 public class GrbgBillTrackerSearchCriteria {
 
 	private String tenantId;
+	
+	private String type;
 
 	private Set<String> tenantIds;
 
