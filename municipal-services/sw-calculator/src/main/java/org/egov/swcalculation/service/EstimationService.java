@@ -144,119 +144,112 @@ public class EstimationService {
 	 */
 
 	public BigDecimal getSewerageEstimationCharge(SewerageConnection sewerageConnection, CalculationCriteria criteria,
-			Map<String, JSONArray> billingSlabMaster, ArrayList<String> billingSlabIds, CalculationReq request) {
-		BigDecimal sewerageCharge = BigDecimal.ZERO;
-		HashMap<String, Object> additionalDetail = new HashMap<>();
-		additionalDetail = mapper.convertValue(sewerageConnection.getAdditionalDetails(), HashMap.class);
-		String billingType = (String) additionalDetail.getOrDefault(SWCalculationConstant.BILLINGTYPE, null);
-		if (billingType == null || billingType == "" || billingType.isEmpty())
-			billingType = "STANDARD";
-		if (sewerageConnection.getConnectionType().equalsIgnoreCase(SWCalculationConstant.nonMeterdConnection)
-				&& billingType.equalsIgnoreCase(SWCalculationConstant.CUSTOM)) {
-			Integer billingAmountInt = (Integer) additionalDetail.getOrDefault(SWCalculationConstant.CUSTOM_BILL_AMOUNT,
-					0);
-			sewerageCharge = BigDecimal.valueOf(Long.valueOf(billingAmountInt)).setScale(2, 2);
-			return sewerageCharge;
-//			sewerageCharge = (BigDecimal) additionalDetail.getOrDefault(SWCalculationConstant.CUSTOM_BILL_AMOUNT,
-//					BigDecimal.ZERO);
-		}
+	        Map<String, JSONArray> billingSlabMaster, ArrayList<String> billingSlabIds, CalculationReq request) {
 
-		if (billingSlabMaster.get(SWCalculationConstant.SW_BILLING_SLAB_MASTER) == null)
-			throw new CustomException("INVALID_BILLING_SLAB", "Billing Slab are Empty");
-		List<BillingSlab> mappingBillingSlab;
-		try {
-			mappingBillingSlab = mapper.readValue(
-					billingSlabMaster.get(SWCalculationConstant.SW_BILLING_SLAB_MASTER).toJSONString(),
-					mapper.getTypeFactory().constructCollectionType(List.class, BillingSlab.class));
-		} catch (IOException e) {
-			throw new CustomException("PARSING_ERROR", " Billing Slab can not be parsed!");
-		}
-		JSONObject calculationAttributeMaster = new JSONObject();
-		calculationAttributeMaster.put(SWCalculationConstant.CALCULATION_ATTRIBUTE_CONST,
-				billingSlabMaster.get(SWCalculationConstant.CALCULATION_ATTRIBUTE_CONST));
-		String calculationAttribute = getCalculationAttribute(calculationAttributeMaster,
-				sewerageConnection.getConnectionType());
-		SewerageConnectionRequest sewerageConnectionRequest = SewerageConnectionRequest.builder()
-				.sewerageConnection(sewerageConnection).requestInfo(request.getRequestInfo()).build();
-		Property property = sWCalculationUtil.getProperty(sewerageConnectionRequest);
-		log.info("billingSlabMaster: " + billingSlabMaster);
-		log.info("mappingBillingSlab:" + mappingBillingSlab + "calculationAttribute: " + calculationAttribute
-				+ " calculationAttributeMaster {}:", calculationAttributeMaster);
-		List<BillingSlab> billingSlabs = getSlabsFiltered(sewerageConnectionRequest, mappingBillingSlab,
-				calculationAttribute, request.getRequestInfo(), property);
+	    BigDecimal sewerageCharge = BigDecimal.ZERO;
+	    HashMap<String, Object> additionalDetail = mapper.convertValue(sewerageConnection.getAdditionalDetails(), HashMap.class);
+	    String billingType = (String) additionalDetail.getOrDefault(SWCalculationConstant.BILLINGTYPE, "STANDARD");
 
-		if (billingSlabs == null || billingSlabs.isEmpty())
-			throw new CustomException("INVALID_BILLING_SLAB", "Billing Slab are Empty");
+	    if (SWCalculationConstant.nonMeterdConnection.equalsIgnoreCase(sewerageConnection.getConnectionType())
+	            && SWCalculationConstant.CUSTOM.equalsIgnoreCase(billingType)) {
+	        Integer billingAmountInt = (Integer) additionalDetail.getOrDefault(SWCalculationConstant.CUSTOM_BILL_AMOUNT, 0);
+	        return BigDecimal.valueOf(Long.valueOf(billingAmountInt)).setScale(2, 2);
+	    }
 
-		Double totalUnits = getCalculationUnit(sewerageConnection, calculationAttribute, criteria, property);
+	    if (billingSlabMaster.get(SWCalculationConstant.SW_BILLING_SLAB_MASTER) == null)
+	        throw new CustomException("INVALID_BILLING_SLAB", "Billing Slab are Empty");
 
-		for (BillingSlab billSlab : billingSlabs) {
-			if (isRangeCalculation(calculationAttribute)) {
+	    List<BillingSlab> mappingBillingSlab;
+	    try {
+	        mappingBillingSlab = mapper.readValue(
+	                billingSlabMaster.get(SWCalculationConstant.SW_BILLING_SLAB_MASTER).toJSONString(),
+	                mapper.getTypeFactory().constructCollectionType(List.class, BillingSlab.class));
+	    } catch (IOException e) {
+	        throw new CustomException("PARSING_ERROR", "Billing Slab can not be parsed!");
+	    }
 
-				String waterSubUsageType = (String) additionalDetail
-						.getOrDefault(SWCalculationConstant.WATER_SUBUSAGE_TYPE, null);
-				if (waterSubUsageType == null || waterSubUsageType.isEmpty()) {
-					if (property.getUsageCategory().equalsIgnoreCase("RESIDENTIAL"))
-						waterSubUsageType = "USAGE_DOM_NA";
-					else if (property.getUsageCategory().equalsIgnoreCase("COMMERCIAL"))
-						waterSubUsageType = "USAGE_COMM_NA";
-					else if (property.getUsageCategory().equalsIgnoreCase("INDUSTRIAL"))
-						waterSubUsageType = "USAGE_COMM_NA";
-					else if (property.getUsageCategory().equalsIgnoreCase("INSTITUTIONAL"))
-						waterSubUsageType = "USAGE_COMM_NA";
-				}
-				for (Slab slab : billSlab.getSlabs()) {
+	    JSONObject calculationAttributeMaster = new JSONObject();
+	    calculationAttributeMaster.put(SWCalculationConstant.CALCULATION_ATTRIBUTE_CONST,
+	            billingSlabMaster.get(SWCalculationConstant.CALCULATION_ATTRIBUTE_CONST));
+	    String calculationAttribute = getCalculationAttribute(calculationAttributeMaster,
+	            sewerageConnection.getConnectionType());
 
-					boolean slabCondition = false;
+	    SewerageConnectionRequest sewerageConnectionRequest = SewerageConnectionRequest.builder()
+	            .sewerageConnection(sewerageConnection)
+	            .requestInfo(request.getRequestInfo())
+	            .build();
 
-					if (waterSubUsageType != null) {
-						slabCondition = totalUnits >= slab.getFrom() && totalUnits <= slab.getTo()
-								&& slab.getEffectiveFrom() <= System.currentTimeMillis()
-								&& slab.getEffectiveTo() >= System.currentTimeMillis()
-								&& waterSubUsageType.equalsIgnoreCase(billSlab.getWaterSubUsageType());
-					} else {
-						slabCondition = totalUnits >= slab.getFrom() && totalUnits <= slab.getTo()
-								&& slab.getEffectiveFrom() <= System.currentTimeMillis()
-								&& slab.getEffectiveTo() >= System.currentTimeMillis();
-					}
+	    Property property = sWCalculationUtil.getProperty(sewerageConnectionRequest);
 
-					if (slabCondition) {
-						sewerageCharge = BigDecimal.valueOf((slab.getCharge()));
-						request.setTaxPeriodFrom(criteria.getFrom());
-						request.setTaxPeriodTo(criteria.getTo());
-						if (request.getTaxPeriodFrom() > 0 && request.getTaxPeriodTo() > 0) {
-							if (sewerageConnection.getConnectionExecutionDate() > request.getTaxPeriodFrom()) {
-								long milli_sec_btw_conn_date = Math.abs(
-										request.getTaxPeriodTo() - sewerageConnection.getConnectionExecutionDate());
-								long milli_sec_btw_quarter = Math
-										.abs(request.getTaxPeriodTo() - request.getTaxPeriodFrom());
-								// Converting milli seconds to days
-								long days_conn_date = TimeUnit.MILLISECONDS.toDays(milli_sec_btw_conn_date) + 1;
-								long days_quarter = TimeUnit.MILLISECONDS.toDays(milli_sec_btw_quarter) + 1;
+	    List<BillingSlab> billingSlabs = getSlabsFiltered(sewerageConnectionRequest, mappingBillingSlab,
+	            calculationAttribute, request.getRequestInfo(), property);
 
-								// sewerageCharge = BigDecimal.valueOf((totalUnits * slab.getCharge() *
-								// daysDifference));
-								// sewerageCharge = sewerageCharge.add(BigDecimal.valueOf(days_conn_date *
-								// (slab.getCharge() / days_quarter)).setScale(2, 2));
-								sewerageCharge = BigDecimal.valueOf(days_conn_date * (slab.getCharge() / days_quarter))
-										.setScale(2, 2);
-							}
+	    if (billingSlabs == null || billingSlabs.isEmpty())
+	        throw new CustomException("INVALID_BILLING_SLAB", "Billing Slab are Empty");
 
-						}
+	    Double totalUnits = getCalculationUnit(sewerageConnection, calculationAttribute, criteria, property);
 
-						if (billSlab.getMinimumCharge() > sewerageCharge.doubleValue()) {
-							sewerageCharge = BigDecimal.valueOf(billSlab.getMinimumCharge());
-						}
-						break;
-					}
-				}
+	    // Track all slab IDs and find first applicable slab
+	    BillingSlab applicableBillSlab = null;
+	    Slab applicableSlab = null;
 
-			} else {
-				sewerageCharge = BigDecimal.valueOf(billSlab.getMinimumCharge());
-			}
-		}
-		return sewerageCharge;
+	    for (BillingSlab billSlab : billingSlabs) {
+	        billingSlabIds.add(billSlab.getId()); // track slab IDs
+
+	        String waterSubUsageType = (String) additionalDetail.getOrDefault(SWCalculationConstant.WATER_SUBUSAGE_TYPE, null);
+	        if (waterSubUsageType == null || waterSubUsageType.isEmpty()) {
+	            String usageCategory = property.getUsageCategory();
+	            if ("RESIDENTIAL".equalsIgnoreCase(usageCategory)) {
+	                waterSubUsageType = "USAGE_DOM_NA";
+	            } else if ("COMMERCIAL".equalsIgnoreCase(usageCategory)
+	                    || "INDUSTRIAL".equalsIgnoreCase(usageCategory)
+	                    || "INSTITUTIONAL".equalsIgnoreCase(usageCategory)) {
+	                waterSubUsageType = "USAGE_COMM_NA";
+	            }
+	        }
+
+	        for (Slab slab : billSlab.getSlabs()) {
+	            boolean slabCondition = totalUnits >= slab.getFrom() && totalUnits <= slab.getTo()
+	                    && slab.getEffectiveFrom() <= System.currentTimeMillis()
+	                    && slab.getEffectiveTo() >= System.currentTimeMillis()
+	                    && (waterSubUsageType == null || waterSubUsageType.equalsIgnoreCase(billSlab.getWaterSubUsageType()));
+
+	            if (slabCondition && applicableBillSlab == null) {
+	                applicableBillSlab = billSlab;
+	                applicableSlab = slab;
+	                break;
+	            }
+	        }
+	    }
+
+	    if (applicableBillSlab != null && applicableSlab != null) {
+	        sewerageCharge = BigDecimal.valueOf(applicableSlab.getCharge());
+	        request.setTaxPeriodFrom(criteria.getFrom());
+	        request.setTaxPeriodTo(criteria.getTo());
+
+	        if (request.getTaxPeriodFrom() > 0 && request.getTaxPeriodTo() > 0
+	                && sewerageConnection.getConnectionExecutionDate() > request.getTaxPeriodFrom()) {
+
+	            long milliBetweenConnDate = Math.abs(request.getTaxPeriodTo() - sewerageConnection.getConnectionExecutionDate());
+	            long milliBetweenQuarter = Math.abs(request.getTaxPeriodTo() - request.getTaxPeriodFrom());
+
+	            long daysConn = TimeUnit.MILLISECONDS.toDays(milliBetweenConnDate) + 1;
+	            long daysQuarter = TimeUnit.MILLISECONDS.toDays(milliBetweenQuarter) + 1;
+
+	            sewerageCharge = BigDecimal.valueOf(daysConn * (applicableSlab.getCharge() / daysQuarter))
+	                    .setScale(2, 2);
+	        }
+
+	        if (sewerageCharge.doubleValue() < applicableBillSlab.getMinimumCharge()) {
+	            sewerageCharge = BigDecimal.valueOf(applicableBillSlab.getMinimumCharge());
+	        }
+	    } else if (!billingSlabs.isEmpty()) {
+	        sewerageCharge = BigDecimal.valueOf(billingSlabs.get(0).getMinimumCharge());
+	    }
+
+	    return sewerageCharge;
 	}
+
 
 	private String getCalculationAttribute(Map<String, Object> calculationAttributeMap, String connectionType) {
 		if (calculationAttributeMap == null)
