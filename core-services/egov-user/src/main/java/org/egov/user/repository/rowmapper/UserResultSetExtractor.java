@@ -57,7 +57,7 @@ public class UserResultSetExtractor implements ResultSetExtractor<List<User>> {
 						.alternateMobileNumber(rs.getString("alternatemobilenumber")).build();
 				 
                 
-				/*
+				/* Changes done to run this service in Chandigarh Env
 				 * user =
 				 * User.builder().id(rs.getLong("id")).tenantId(rs.getString("tenantid")).title(
 				 * rs.getString("title")) .salutation(rs.getString("salutation"))

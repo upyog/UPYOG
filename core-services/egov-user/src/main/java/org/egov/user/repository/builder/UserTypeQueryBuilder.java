@@ -72,7 +72,7 @@ public class UserTypeQueryBuilder {
 			+ ".tenantid LEFT OUTER JOIN eg_userrole_v1 ur ON userdata.id = ur.user_id AND userdata.tenantid = ur.user_tenantid  ";
 	 
     
-	/*
+	/* Changes done to run this service in Chandigarh Env
 	 * private static final String SELECT_USER_QUERY =
 	 * "SELECT userdata.title, userdata.salutation, userdata.dob, userdata.locale, userdata.username, userdata"
 	 * +
