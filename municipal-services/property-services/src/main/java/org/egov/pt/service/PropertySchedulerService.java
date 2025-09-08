@@ -344,8 +344,13 @@ public class PropertySchedulerService {
 					taxCalculatorTrackers.add(ptTaxCalculatorTracker);
 
 					// notification calls
-					notificationService.triggerNotificationsGenerateBill(ptTaxCalculatorTracker,
-							billResponse.getBill().get(0), ptTaxCalculatorTrackerRequest.getRequestInfo());
+					try {
+						notificationService.triggerNotificationsGenerateBill(ptTaxCalculatorTracker,
+								billResponse.getBill().get(0), ptTaxCalculatorTrackerRequest.getRequestInfo());
+					}catch(Exception ex) {
+						log.error(ex.getMessage());
+					}
+
 				}
 				else 
 					createFailureLog(property, calculateTaxRequest,billResponse,null);			
