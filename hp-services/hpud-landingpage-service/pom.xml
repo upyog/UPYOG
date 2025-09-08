@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<project
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+	xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.springframework.boot</groupId>
@@ -32,6 +35,11 @@
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
 			<version>2.7</version>
+		</dependency>
+		<dependency>
+			<groupId>com.vladmihalcea</groupId>
+			<artifactId>hibernate-types-52</artifactId>
+			<version>2.21.1</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -176,17 +184,20 @@
 		<repository>
 			<id>repo.egovernments.org</id>
 			<name>eGov ERP Releases Repository</name>
-			<url>https://nexus-repo.egovernments.org/nexus/content/repositories/releases/</url>
+			<url>
+				https://nexus-repo.egovernments.org/nexus/content/repositories/releases/</url>
 		</repository>
 		<repository>
 			<id>repo.egovernments.org.snapshots</id>
 			<name>eGov ERP Releases Repository</name>
-			<url>https://nexus-repo.egovernments.org/nexus/content/repositories/snapshots/</url>
+			<url>
+				https://nexus-repo.egovernments.org/nexus/content/repositories/snapshots/</url>
 		</repository>
 		<repository>
 			<id>repo.egovernments.org.public</id>
 			<name>eGov Public Repository Group</name>
-			<url>https://nexus-repo.egovernments.org/nexus/content/groups/public/</url>
+			<url>
+				https://nexus-repo.egovernments.org/nexus/content/groups/public/</url>
 		</repository>
 	</repositories>
 	<build>
@@ -223,9 +234,12 @@
 				<configuration>
 					<jsonLibrary>jackson2</jsonLibrary>
 					<customTypeMappings>
-						<customTypeMapping>org.egov.common.contract.request.User:User</customTypeMapping>
-						<customTypeMapping>org.egov.common.contract.request.RequestInfo:RequestInfo</customTypeMapping>
-						<customTypeMapping>org.egov.common.contract.response.ResponseInfo:ResponseInfo</customTypeMapping>
+						<customTypeMapping>
+							org.egov.common.contract.request.User:User</customTypeMapping>
+						<customTypeMapping>
+							org.egov.common.contract.request.RequestInfo:RequestInfo</customTypeMapping>
+						<customTypeMapping>
+							org.egov.common.contract.response.ResponseInfo:ResponseInfo</customTypeMapping>
 					</customTypeMappings>
 					<namespace>Digit</namespace>
 					<debug>true</debug>

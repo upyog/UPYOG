@@ -1,8 +1,11 @@
 package org.egov.schedulerservice.service;
 
+import java.time.LocalDate;
+
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.User;
 import org.egov.schedulerservice.request.UmeedDashboardRequest;
+import org.egov.schedulerservice.request.UmeedLogRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -26,6 +29,9 @@ public class UmeedDashboardService {
 
 	@Autowired
 	private UmeedDashboardClientService umeedDashboardClientService;
+	
+	@Autowired
+	private UmmedDashboardLoggerService ummedDashboardLoggerService;
 
 	public Object pushUmeedDashboardMetricsForTL(RequestInfo requestInfo) {
 
@@ -46,6 +52,10 @@ public class UmeedDashboardService {
 			log.info("Request Payload {}", umeedDashboardRequest);
 			// Step 3: call umeed dashboard api to push data
 			//ingestResponse = umeedDashboardClientService.sendMetrics(umeedDashboardRequest);
+			
+			Object umeedDashboardLog = ummedDashboardLoggerService.saveUmeedDashbaordLog(ingestResponse , umeedDashboardRequest);
+
+			 
 		} else {
 			ingestResponse = "No Data from TL Service";
 		}
