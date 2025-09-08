@@ -45,9 +45,9 @@ public class UmeedDashboardService {
 		String yesterday = "30-08-2025";
 
 		// Define the month (August 2025)
-		LocalDate startDate = LocalDate.of(2025, 8, 1);
-		// LocalDate endDate = LocalDate.of(2025, 8, 3);
-		LocalDate endDate = startDate.withDayOfMonth(startDate.lengthOfMonth());
+		LocalDate startDate = LocalDate.of(2025, 4, 22);
+		LocalDate endDate = LocalDate.of(2025, 4, 30);
+		//LocalDate endDate = startDate.withDayOfMonth(startDate.lengthOfMonth());
 
 		List<DataItem> allProcessedItems = new ArrayList<>();
 
@@ -75,14 +75,23 @@ public class UmeedDashboardService {
 	}
 
 	private DataItem buildDataItemMetrics(DataItem dataItem, String date, int slaDays) {
-		DataItem returnObj = DataItem.builder().date(date).module("TL").state("Himachal Pradesh")
-				.ward(dataItem.getWard()).ulb(ULBMappings.getCode(dataItem.getUlb())).build(); // dataItem.setDate(date);
-																								// //dataItem.setModule("TL");
+		
+		DataItem returnObj = DataItem.builder()
+				.date(date).module("TL")
+				.state("Himachal Pradesh")
+				.ward(dataItem.getWard())
+				.region(dataItem.getRegion())
+				.ulb(ULBMappings.getCode(dataItem.getUlb())).build(); 
+		
+		// dataItem.setDate(date);
+																								
+		//dataItem.setModule("TL");
 		// dataItem.setState("Himachal Pradesh"); 
 		// get ulb data mappings
 		// //dataItem.setUlb(ULBMappings.getCode(dataItem.getUlb()));
 		// TODO map ulb if required
 		Metrics metrics = umeedDashboardRepository.getDataMetrics(date, returnObj.getWard(), slaDays);
+		
 		// Add today's collection data
 		metrics.setTodaysCollection(buildTodaysCollection(date, returnObj.getWard()));
 		// Add trade license and application moved data

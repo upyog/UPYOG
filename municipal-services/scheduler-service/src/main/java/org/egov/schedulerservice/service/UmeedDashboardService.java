@@ -51,9 +51,10 @@ public class UmeedDashboardService {
 
 			log.info("Request Payload {}", umeedDashboardRequest);
 			// Step 3: call umeed dashboard api to push data
-			//ingestResponse = umeedDashboardClientService.sendMetrics(umeedDashboardRequest);
+			ingestResponse = umeedDashboardClientService.sendMetrics(umeedDashboardRequest);
+			log.info("Response Paylaod {}" ,ingestResponse);
 			
-			Object umeedDashboardLog = ummedDashboardLoggerService.saveUmeedDashbaordLog(ingestResponse , umeedDashboardRequest);
+			Object umeedDashboardLog = ummedDashboardLoggerService.saveUmeedDashbaordLog(requestInfo,ingestResponse , umeedDashboardRequest);
 
 			 
 		} else {

@@ -64,7 +64,7 @@ public class ULBMappings {
 		map.put("Karsog", "hp.nagarpanchayatkarsog");
 		map.put("Kullu", "hp.municipalcouncilkullu");
 		map.put("Manali", "hp.municipalcouncilmanali");
-		map.put("Bhunter", "hp.nagarpanchayatbhunter");
+		map.put("Bhuntar", "hp.nagarpanchayatbhunter");
 		map.put("Banjar", "hp.nagarpanchayatbanjar");
 		map.put("Nirmand", "hp.nagarpanchayatnirmand");
 		map.put("Una", "hp.municipalcounciluna");
@@ -74,6 +74,7 @@ public class ULBMappings {
 		map.put("Gagret", "hp.nagarpanchayatgagret");
 		map.put("Tahliwal", "hp.nagarpanchayattahliwal");
 		map.put("Amb", "hp.nagarpanchayatamb");
+		map.put("Jawalamukhi", "hp.municipalcounciljawalamkuhi");
 
 		MUNICIPALITIES = Collections.unmodifiableMap(map);
 	}
