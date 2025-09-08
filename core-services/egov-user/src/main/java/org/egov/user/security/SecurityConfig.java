@@ -32,7 +32,19 @@ public class SecurityConfig {
     }
 
     @Bean
-    @Order(3)
+    @Order(1)
+    public SecurityFilterChain oauthSecurityFilterChain(HttpSecurity http) throws Exception {
+        return http
+            .securityMatcher("/user/oauth/**")
+            .csrf(csrf -> csrf.disable())
+            .authorizeHttpRequests(authz -> authz
+                .anyRequest().permitAll()
+            )
+            .build();
+    }
+
+    @Bean
+    @Order(4)
     public SecurityFilterChain appSecurityFilterChain(HttpSecurity http) throws Exception {
         return http
             .csrf(csrf -> csrf.disable())
@@ -47,10 +59,13 @@ public class SecurityConfig {
 
     // Optional: Separate configuration for API endpoints
     @Bean
-    @Order(4)
+    @Order(5)
     public SecurityFilterChain apiSecurityFilterChain(HttpSecurity http) throws Exception {
         return http
-            .securityMatcher("/user/**", "/api/**")
+            .securityMatcher(request -> 
+                (request.getRequestURI().startsWith("/user/") && !request.getRequestURI().startsWith("/user/oauth/")) ||
+                request.getRequestURI().startsWith("/api/")
+            )
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(authz -> authz
                 .anyRequest().authenticated()

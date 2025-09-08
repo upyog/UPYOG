@@ -7,8 +7,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.extern.slf4j.Slf4j;
-import org.egov.encryption.EncryptionService;
-import org.egov.encryption.config.EncryptionConfiguration;
+// import org.egov.encryption.EncryptionService;
+// import org.egov.encryption.config.EncryptionConfiguration;
 import org.egov.tracer.config.TracerConfiguration;
 import org.egov.tracer.model.CustomException;
 import org.egov.user.domain.model.Address;
@@ -48,9 +48,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 // import org.springframework.security.oauth2.provider.token.store.redis.RedisTokenStore;
 // import org.egov.user.security.CustomAuthenticationKeyGenerator;
 
-@SpringBootApplication
+@SpringBootApplication(exclude = {org.springframework.boot.autoconfigure.flyway.FlywayAutoConfiguration.class})
 @Slf4j
-@Import({TracerConfiguration.class, EncryptionConfiguration.class})
+@Import({TracerConfiguration.class})
 public class EgovUserApplication {
 
     private static final String DATE_FORMAT = "dd-MM-yyyy HH:mm:ss";
