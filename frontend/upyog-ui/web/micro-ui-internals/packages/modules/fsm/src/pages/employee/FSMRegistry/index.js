@@ -136,14 +136,14 @@ const FSMRegistry = () => {
       setDriverIds(driverIds);
       setTableData(dsoData?.driver);
     }
-    if (dsoData?.driver && selectedTabs === "WORKER") {
-      let driverIds = "";
-      dsoData.Individual.map((data) => {
-        driverIds += `${data.individualId},`;
-      });
-      setDriverIds(driverIds);
-      setTableData(dsoData?.driver);
-    }
+    // if (dsoData?.driver && selectedTabs === "WORKER") {
+    //   let driverIds = "";
+    //   dsoData.Individual.map((data) => {
+    //     driverIds += `${data.individualId},`;
+    //   });
+    //   setDriverIds(driverIds);
+    //   setTableData(dsoData?.driver);
+    // }
     if (dsoData?.vendor && selectedTabs === "VENDOR") {
       const tableData = dsoData.vendor.map((dso) => ({
         mobileNumber: dso.owner?.mobileNumber,
@@ -285,9 +285,10 @@ const FSMRegistry = () => {
   }, []);
 
   const onTabChange = (tab) => {
+    console.log("ddddddd",window.contextPath)
     setTab(tab);
     if (selectedTabs !== tab) {
-      history.push(`/${window?.contextPath}/employee/fsm/registry?selectedTabs=${tab}`);
+      history.push(`/upyog-ui/employee/fsm/registry?selectedTabs=${tab}`);
     }
   };
 

@@ -133,9 +133,9 @@ const WorkerDetails = (props) => {
       case "DELETE_VENDOR":
         return setShowModal(true);
       case "EDIT":
-        return history.push(`/${window?.contextPath}/employee/fsm/registry/edit-worker?id=${id}`);
+        return history.push(`/upyog-ui/employee/fsm/registry/edit-worker?id=${id}`);
       case "HOME":
-        return history.push(`/${window?.contextPath}/employee/fsm/registry?selectedTabs=WORKER`);
+        return history.push(`/upyog-ui/employee/fsm/registry?selectedTabs=WORKER`);
       default:
         break;
     }
@@ -180,7 +180,7 @@ const WorkerDetails = (props) => {
         queryClient.invalidateQueries("DSO_SEARCH");
 
         setTimeout(() => {
-          closeToast, history.push(`/${window?.contextPath}/employee/fsm/registry?selectedTabs=WORKER`);
+          closeToast, history.push(`/upyog-ui/employee/fsm/registry?selectedTabs=WORKER`);
         }, 5000);
       },
     });

@@ -475,7 +475,7 @@ const EditWorker = ({ parentUrl, heading }) => {
         setTimeout(() => {
           closeToast();
           queryClient.invalidateQueries("FSM_WORKER_SEARCH");
-          history.push(`/${window?.contextPath}/employee/fsm/registry/worker-details?id=${id}`);
+          history.push(`/upyog-ui/employee/fsm/registry/worker-details?id=${id}`);
         }, 5000);
       },
     });
