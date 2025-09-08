@@ -7,6 +7,7 @@ import org.egov.user.domain.model.User;
 import org.egov.user.domain.model.enums.UserType;
 import org.egov.user.domain.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -48,6 +49,12 @@ public class CustomAuthenticationController {
 
     @Value("${refresh.token.validity.in.minutes}")
     private int refreshTokenValidityInMinutes;
+
+    @Value("${oauth2.token.format:jwt}")
+    private String tokenFormat;
+
+    @Autowired
+    private RedisTemplate<String, Object> redisTemplate;
 
     @PostMapping("/token")
     public ResponseEntity<?> authenticate(@RequestParam("grant_type") String grantType,
@@ -101,7 +108,11 @@ public class CustomAuthenticationController {
             Map<String, Object> details = new HashMap<>();
             details.put("tenantId", tenantId);
             details.put("userType", userType);
-            details.put("isInternal", "true");
+            // Only set isInternal if it was explicitly passed as a parameter
+            // Never hardcode it to "true" for regular user login
+            if (request.getParameter("isInternal") != null) {
+                details.put("isInternal", request.getParameter("isInternal"));
+            }
             authToken.setDetails(details);
             
             // Authenticate using existing providers
@@ -217,6 +228,56 @@ public class CustomAuthenticationController {
     }
 
     private String generateAccessToken(SecureUser secureUser, String scope) {
+        if ("opaque".equals(tokenFormat)) {
+            return generateOpaqueAccessToken(secureUser, scope);
+        } else {
+            return generateJwtAccessToken(secureUser, scope);
+        }
+    }
+
+    private String generateOpaqueAccessToken(SecureUser secureUser, String scope) {
+        // Generate UUID-based token
+        String tokenValue = java.util.UUID.randomUUID().toString();
+        
+        // Store token metadata in Redis
+        Map<String, Object> tokenMetadata = new HashMap<>();
+        
+        org.egov.user.web.contract.auth.User user = secureUser.getUser();
+        if (user != null) {
+            // Store minimal user data
+            Map<String, Object> userInfo = new HashMap<>();
+            userInfo.put("id", user.getId());
+            userInfo.put("uuid", user.getUuid());
+            userInfo.put("userName", user.getUserName());
+            userInfo.put("name", user.getName());
+            userInfo.put("mobileNumber", user.getMobileNumber());
+            userInfo.put("emailId", user.getEmailId());
+            userInfo.put("locale", user.getLocale());
+            userInfo.put("type", user.getType());
+            userInfo.put("tenantId", user.getTenantId());
+            userInfo.put("active", user.isActive());
+            
+            tokenMetadata.put("UserRequest", userInfo);
+            tokenMetadata.put("userId", user.getId());
+            tokenMetadata.put("userName", user.getUserName());
+            tokenMetadata.put("userType", user.getType());
+            tokenMetadata.put("tenantId", user.getTenantId());
+        }
+        
+        // Add ResponseInfo
+        Map<String, Object> responseInfo = createResponseInfo("Access Token generated successfully");
+        tokenMetadata.put("ResponseInfo", responseInfo);
+        tokenMetadata.put("scope", scope != null ? scope : "read write");
+        tokenMetadata.put("token_type", "access_token");
+        
+        // Store in Redis with expiration
+        String key = "access_token:" + tokenValue;
+        redisTemplate.opsForValue().set(key, tokenMetadata, accessTokenValidityInMinutes, java.util.concurrent.TimeUnit.MINUTES);
+        
+        return tokenValue;
+    }
+
+    private String generateJwtAccessToken(SecureUser secureUser, String scope) {
         Instant now = Instant.now();
         Instant expiry = now.plus(accessTokenValidityInMinutes, ChronoUnit.MINUTES);
         
@@ -249,6 +310,40 @@ public class CustomAuthenticationController {
     }
 
     private String generateRefreshToken(SecureUser secureUser) {
+        if ("opaque".equals(tokenFormat)) {
+            return generateOpaqueRefreshToken(secureUser);
+        } else {
+            return generateJwtRefreshToken(secureUser);
+        }
+    }
+
+    private String generateOpaqueRefreshToken(SecureUser secureUser) {
+        // Generate UUID-based refresh token
+        String tokenValue = java.util.UUID.randomUUID().toString();
+        
+        // Store refresh token metadata in Redis
+        Map<String, Object> tokenMetadata = new HashMap<>();
+        tokenMetadata.put("tokenType", "refresh_token");
+        tokenMetadata.put("issuedAt", Instant.now().toEpochMilli());
+        
+        // Store minimal data for refresh tokens
+        if (secureUser != null) {
+            tokenMetadata.put("subject", secureUser.getUsername());
+            org.egov.user.web.contract.auth.User user = secureUser.getUser();
+            if (user != null) {
+                tokenMetadata.put("userId", user.getId());
+                tokenMetadata.put("tenantId", user.getTenantId());
+            }
+        }
+        
+        // Store in Redis with expiration
+        String key = "refresh_token:" + tokenValue;
+        redisTemplate.opsForValue().set(key, tokenMetadata, refreshTokenValidityInMinutes, java.util.concurrent.TimeUnit.MINUTES);
+        
+        return tokenValue;
+    }
+
+    private String generateJwtRefreshToken(SecureUser secureUser) {
         Instant now = Instant.now();
         Instant expiry = now.plus(refreshTokenValidityInMinutes, ChronoUnit.MINUTES);
         
@@ -272,6 +367,36 @@ public class CustomAuthenticationController {
     }
 
     private String generateClientCredentialsToken(String scope) {
+        if ("opaque".equals(tokenFormat)) {
+            return generateOpaqueClientCredentialsToken(scope);
+        } else {
+            return generateJwtClientCredentialsToken(scope);
+        }
+    }
+
+    private String generateOpaqueClientCredentialsToken(String scope) {
+        // Generate UUID-based token for client credentials
+        String tokenValue = java.util.UUID.randomUUID().toString();
+        
+        // Store token metadata in Redis
+        Map<String, Object> tokenMetadata = new HashMap<>();
+        tokenMetadata.put("scope", scope != null ? scope : "read write");
+        tokenMetadata.put("grant_type", "client_credentials");
+        tokenMetadata.put("token_type", "access_token");
+        tokenMetadata.put("subject", "egov-user-client");
+        
+        // Add ResponseInfo
+        Map<String, Object> responseInfo = createResponseInfo("Client Access Token generated successfully");
+        tokenMetadata.put("ResponseInfo", responseInfo);
+        
+        // Store in Redis with expiration
+        String key = "access_token:" + tokenValue;
+        redisTemplate.opsForValue().set(key, tokenMetadata, accessTokenValidityInMinutes, java.util.concurrent.TimeUnit.MINUTES);
+        
+        return tokenValue;
+    }
+
+    private String generateJwtClientCredentialsToken(String scope) {
         Instant now = Instant.now();
         Instant expiry = now.plus(accessTokenValidityInMinutes, ChronoUnit.MINUTES);
         
@@ -335,5 +460,77 @@ public class CustomAuthenticationController {
         }
         
         return request.getRemoteAddr();
+    }
+
+    /**
+     * Token introspection endpoint for opaque tokens
+     */
+    @PostMapping("/introspect")
+    public ResponseEntity<?> introspectToken(@RequestParam("token") String token,
+                                           @RequestParam(value = "token_type_hint", required = false) String tokenTypeHint) {
+        try {
+            if ("opaque".equals(tokenFormat)) {
+                // Handle opaque token introspection
+                Map<String, Object> tokenMetadata;
+                
+                if ("refresh_token".equals(tokenTypeHint)) {
+                    String key = "refresh_token:" + token;
+                    tokenMetadata = (Map<String, Object>) redisTemplate.opsForValue().get(key);
+                } else {
+                    // Default to access token
+                    String key = "access_token:" + token;
+                    tokenMetadata = (Map<String, Object>) redisTemplate.opsForValue().get(key);
+                }
+                
+                if (tokenMetadata != null) {
+                    Map<String, Object> response = new HashMap<>();
+                    response.put("active", true);
+                    response.putAll(tokenMetadata);
+                    return ResponseEntity.ok(response);
+                } else {
+                    Map<String, Object> response = new HashMap<>();
+                    response.put("active", false);
+                    return ResponseEntity.ok(response);
+                }
+            } else {
+                // For JWT tokens, return active=false as they are self-contained
+                Map<String, Object> response = new HashMap<>();
+                response.put("active", false);
+                response.put("error", "JWT tokens do not require introspection");
+                return ResponseEntity.ok(response);
+            }
+        } catch (Exception e) {
+            log.error("Error during token introspection", e);
+            Map<String, Object> response = new HashMap<>();
+            response.put("active", false);
+            response.put("error", "introspection_failed");
+            return ResponseEntity.ok(response);
+        }
+    }
+
+    /**
+     * Token revocation endpoint
+     */
+    @PostMapping("/revoke")
+    public ResponseEntity<?> revokeToken(@RequestParam("token") String token,
+                                       @RequestParam(value = "token_type_hint", required = false) String tokenTypeHint) {
+        try {
+            if ("opaque".equals(tokenFormat)) {
+                if ("refresh_token".equals(tokenTypeHint)) {
+                    String key = "refresh_token:" + token;
+                    redisTemplate.delete(key);
+                } else {
+                    // Default to access token
+                    String key = "access_token:" + token;
+                    redisTemplate.delete(key);
+                }
+            }
+            
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            log.error("Error during token revocation", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(createErrorResponse("server_error", "Failed to revoke token"));
+        }
     }
 }
