@@ -1305,8 +1305,10 @@ public class MicroserviceUtils {
                 redisTemplate.delete(sessionId);
                 LOGGER.info("spring:session:sessions:" + sessionId);
                 LOGGER.info("spring:session:sessions:expires:" + sessionId);
+                LOGGER.info("session_token_fetch:" + access_token);
                 redisTemplate.delete("spring:session:sessions:" + sessionId);
                 redisTemplate.delete("spring:session:sessions:expires:" + sessionId);
+                redisTemplate.delete("session_token_fetch:" + access_token);
                 redisTemplate.opsForHash().delete(access_token, sessionId);
             } else
                 LOGGER.info("session not found in redis for : " + access_token);
