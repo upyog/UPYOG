@@ -17,12 +17,14 @@ const getOwnerDetails = (application, t) => {
         { title: t("TL_NEW_OWNER_DETAILS_EMAIL_LABEL"), value: application?.tradeLicenseDetail?.owners[0]?.emailId || t("CS_NA") },
         { title: t("TL_OWNER_SPECIAL_CATEGORY"), value: application?.tradeLicenseDetail?.owners[0]?.ownerType ? t(`COMMON_MASTERS_OWNERTYPE_${application?.tradeLicenseDetail?.owners[0]?.ownerType}`) : t("CS_NA") },
         { title: t("TL_NEW_OWNER_DETAILS_ADDR_LABEL"), value: application?.tradeLicenseDetail?.owners[0]?.permanentAddress || t("CS_NA") },
+        { title: t("TL_NEW_OWNER_DETAILS_OWNERSHIP_CATEGORY"), value: application?.tradeLicenseDetail?.subOwnerShipCategory || t("CS_NA") },
       ],
     };
   } else { //if (application?.subOwnerShipCategory?.includes("INDIVIDUAL"))
     let values = [];
-    application?.tradeLicenseDetail?.owners?.map((owner) => {
+    application?.tradeLicenseDetail?.owners?.map((owner, index) => {
       let indOwner = [
+        application?.tradeLicenseDetail?.subOwnerShipCategory == "INDIVIDUAL.MULTIPLEOWNERS" ? { title: t("TL_OWNER_S_NUMBER"), value: index+1 } : "",
         { title: t("TL_OWNER_S_NAME_LABEL"), value: owner?.name || t("CS_NA") },
         { title: t("TL_OWNER_S_MOBILE_NUM_LABEL"), value: owner?.mobileNumber || t("CS_NA") },
         // { title: t("TL_GUARDIAN_S_NAME_LABEL"), value: owner?.fatherOrHusbandName || t("CS_NA") },
@@ -31,6 +33,7 @@ const getOwnerDetails = (application, t) => {
         { title: t("TL_NEW_OWNER_DETAILS_EMAIL_LABEL"), value: owner?.emailId || t("CS_NA") },
         { title: t("TL_OWNER_SPECIAL_CATEGORY"), value: owner?.ownerType ? t(`COMMON_MASTERS_OWNERTYPE_${owner?.ownerType}`) : t("CS_NA") },
         { title: t("TL_NEW_OWNER_DETAILS_ADDR_LABEL"), value: owner?.permanentAddress || t("CS_NA") },
+        { title: t("TL_NEW_OWNER_DETAILS_OWNERSHIP_CATEGORY"), value: application?.tradeLicenseDetail?.subOwnerShipCategory || t("CS_NA") },
               ];
      values.push(...indOwner);
     });
@@ -61,13 +64,14 @@ const getTradeDetails = (application, t) => {
 };
 const getAccessoriesDetails = (application, t) => {
   let values = [];
-  application.tradeLicenseDetail?.accessories?.filter((ob) => ob?.active !== false)?.map((accessory) => {
+  application.tradeLicenseDetail?.accessories?.filter((ob) => ob?.active !== false)?.map((accessory, index) => {
     let accessoryCategory = t("CS_NA");
     if (accessory?.accessoryCategory) {
       accessoryCategory = stringReplaceAll(accessory?.accessoryCategory, ".", "_");
       accessoryCategory = t(`TRADELICENSE_ACCESSORIESCATEGORY_${stringReplaceAll(accessoryCategory, "-", "_")}`);
     }
     let value = [
+      { title: t("TL_NEW_TRADE_DETAILS_ACCESSORY_NUMBER"), value: index+1 },
       { title: t("TL_NEW_TRADE_DETAILS_ACC_LABEL"), value: accessoryCategory },
       { title: t("TL_NEW_TRADE_DETAILS_UOM_UOM_PLACEHOLDER"), value: accessory?.uom || t("CS_NA") },
       { title: t("TL_NEW_TRADE_DETAILS_UOM_VALUE_LABEL"), value: accessory?.uomValue || t("CS_NA") },
@@ -84,10 +88,11 @@ const getAccessoriesDetails = (application, t) => {
 
 const getTradeUnitsDetails = (application, t) => {
   let values = [];
-  application.tradeLicenseDetail?.tradeUnits?.map((unit) => {
+  application.tradeLicenseDetail?.tradeUnits?.map((unit, index) => {
     let tradeSubType = stringReplaceAll(unit?.tradeType, ".", "_");
     tradeSubType = stringReplaceAll(tradeSubType, "-", "_");
     let value = [
+      { title: t("TL_NEW_TRADE_DETAILS_UNITS_NUMBER"), value: index+1 },
       { title: t("TRADELICENSE_TRADECATEGORY_LABEL"), value: unit?.tradeType ? t(`TRADELICENSE_TRADETYPE_${unit?.tradeType?.split('.')[0]}`) : t("CS_NA") },
       { title: t("TRADELICENSE_TRADETYPE_LABEL"), value: unit?.tradeType ? t(`TRADELICENSE_TRADETYPE_${unit?.tradeType?.split('.')[1]}`) : t("CS_NA") },
       { title: t("TL_NEW_TRADE_SUB_TYPE_LABEL"), value: tradeSubType ? t(`TRADELICENSE_TRADETYPE_${tradeSubType}`) : t("CS_NA") },

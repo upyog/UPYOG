@@ -37,7 +37,7 @@ const MetricData = ({ t, data, code, indexValuesWithStar }) => {
           }`
         )}
       </p>
-      {data?.insight && (
+      {/* {data?.insight && (
         <div
           style={{
             width: "100%",
@@ -53,7 +53,7 @@ const MetricData = ({ t, data, code, indexValuesWithStar }) => {
               )}`}
           </p>
         </div>
-      )}
+      )} */}
     </div>
   );
 };

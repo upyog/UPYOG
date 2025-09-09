@@ -50,6 +50,9 @@ package org.egov.infra.microservice.models;
 import java.io.Serializable;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class UserInfo implements Serializable {
 
     private static final long serialVersionUID = -6099520777478122089L;

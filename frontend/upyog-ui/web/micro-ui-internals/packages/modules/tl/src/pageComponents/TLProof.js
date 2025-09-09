@@ -9,7 +9,7 @@ const TLProof = ({ t, config, onSelect, userType, formData, isMandatory }) => {
   const [file, setFile] = useState(formData?.owners?.documents?.OwnerPhotoProof);
   const [error, setError] = useState(null);
   const cityDetails = Digit.ULBService.getCurrentUlb();
-  let acceptFormat = ".jpg,.png,.pdf,.jpeg";
+  let acceptFormat = ".jpg,.png,.jpeg";
 
   const [dropdownValue, setDropdownValue] = useState(formData?.owners?.documents?.OwnerPhotoProof?.documentType || null);
   // let dropdownData = [];
@@ -80,7 +80,7 @@ const TLProof = ({ t, config, onSelect, userType, formData, isMandatory }) => {
       {window.location.href.includes("/citizen") ? <Timeline currentStep={3} /> : null}
       <FormStep config={config} onSelect={handleSubmit} onSkip={onSkip} t={t} isDisabled={!uploadedFile || error} isMandatory={isMandatory}>
         <CardLabelDesc style={{ fontWeight: "unset" }}>{t(`TL_UPLOAD_PHOTO_RESTRICTIONS_TYPES`)}</CardLabelDesc>
-        <CardLabelDesc style={{ fontWeight: "unset" }}>{t(`TL_UPLOAD_RESTRICTIONS_SIZE`)}</CardLabelDesc>
+        <CardLabelDesc style={{ fontWeight: "unset" }}>{t(`TL_UPLOAD_PHOTO_RESTRICTIONS_SIZE`)}</CardLabelDesc>
         <CardLabel>{`${t("TL_CATEGORY_DOCUMENT_TYPE")}`}<span className="check-page-link-button"> *</span></CardLabel>
         {/* <Dropdown
         t={t}
@@ -94,7 +94,7 @@ const TLProof = ({ t, config, onSelect, userType, formData, isMandatory }) => {
         <UploadFile
           id={"tl-doc"}
           extraStyleName={"propertyCreate"}
-          accept=".jpg,.png,.pdf,.jpeg"
+          accept=".jpg,.png,.jpeg"
           onUpload={selectfile}
           onDelete={() => {
             setUploadedFile(null);
