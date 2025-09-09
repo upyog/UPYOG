@@ -67,10 +67,12 @@ public class UserRepository {
      * @return
      */
     public List<User> findAll(UserSearchCriteria userSearch) {
+    	log.info("user find all method call");
         final List<Object> preparedStatementValues = new ArrayList<>();
         boolean RoleSearchHappend = false;
         List<Long> userIds = new ArrayList<>();
         if (!isEmpty(userSearch.getRoleCodes()) && userSearch.getTenantId() != null) {
+        	log.info("User with role if condition");
             userIds = findUsersWithRole(userSearch);
             RoleSearchHappend = true;
         }
@@ -91,6 +93,7 @@ public class UserRepository {
             }
         }
         String queryStr = userTypeQueryBuilder.getQuery(userSearch, preparedStatementValues);
+        log.info("User search Query : "  + queryStr);
         log.debug(queryStr);
 
         users = jdbcTemplate.query(queryStr, preparedStatementValues.toArray(), userResultSetExtractor);
