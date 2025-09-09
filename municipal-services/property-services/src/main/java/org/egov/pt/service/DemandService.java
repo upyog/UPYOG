@@ -6,6 +6,7 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.User;
 import org.egov.pt.models.CalculateTaxRequest;
@@ -19,6 +20,9 @@ import org.egov.pt.web.contracts.RequestInfoWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -33,18 +37,36 @@ public class DemandService {
 			String businessService, BigDecimal taxAmount) {
 
 		DemandDetail demandDetail = DemandDetail.builder().taxHeadMasterCode(PTConstants.PROPERTY_TAX_HEAD_MASTER_CODE)
-				.taxAmount(taxAmount).collectionAmount(BigDecimal.ZERO)
-				.build();
+				.taxAmount(taxAmount).collectionAmount(BigDecimal.ZERO).build();
 		Calendar cal = Calendar.getInstance();
 		cal.add(Calendar.DAY_OF_MONTH, Integer.valueOf(365));
 		cal.set(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DATE), 23, 59, 59);
+
+		ObjectMapper mapper = new ObjectMapper();
+		ObjectNode node = mapper.createObjectNode();
+
+		JsonNode addDetail = mapper.valueToTree(property.getAddress().getAdditionalDetails());
+
+		String wardName = null;
+		if (addDetail != null && addDetail.has("wardNumber")) {
+			wardName = addDetail.get("wardNumber").asText();
+		}
+		node.put("ward", StringUtils.isNotEmpty(wardName) ? wardName : "N/A");
+		node.put("ownerName",
+				StringUtils.isNotEmpty(property.getOwners().get(0).getName()) ? property.getOwners().get(0).getName()
+						: "N/A");
+		node.put("contactNumber",
+				StringUtils.isNotEmpty(property.getOwners().get(0).getMobileNumber())
+						? property.getOwners().get(0).getMobileNumber()
+						: "N/A");
 
 		Demand demandOne = Demand.builder().consumerCode(property.getPropertyId())
 				.demandDetails(Arrays.asList(demandDetail)).minimumAmountPayable(taxAmount)
 				.payer(User.builder().uuid(property.getOwners().get(0).getUuid()).build())
 				.tenantId(property.getTenantId()).taxPeriodFrom(calculateTaxRequest.getFromDate().getTime())
 				.taxPeriodTo(calculateTaxRequest.getToDate().getTime()).fixedBillExpiryDate(cal.getTimeInMillis())
-				.consumerType(PTConstants.MODULE_PROPERTY).businessService(PTConstants.MODULE_PROPERTY).build();
+				.additionalDetails(node).consumerType(PTConstants.MODULE_PROPERTY)
+				.businessService(PTConstants.MODULE_PROPERTY).build();
 
 		List<Demand> demands = Arrays.asList(demandOne);
 
@@ -53,11 +75,12 @@ public class DemandService {
 		return savedDemands;
 	}
 
-	List<Demand> searchDemand(String tenantId, Set<String> demandIds, Set<String> consumerCodes, RequestInfo requestInfo,
-			String businessService) {
+	List<Demand> searchDemand(String tenantId, Set<String> demandIds, Set<String> consumerCodes,
+			RequestInfo requestInfo, String businessService) {
 
 		RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(requestInfo).build();
-		DemandResponse response = demandRepository.search(tenantId, demandIds, consumerCodes, requestInfoWrapper, businessService);
+		DemandResponse response = demandRepository.search(tenantId, demandIds, consumerCodes, requestInfoWrapper,
+				businessService);
 
 		if (CollectionUtils.isEmpty(response.getDemands())) {
 			return null;
@@ -65,7 +88,7 @@ public class DemandService {
 			return response.getDemands();
 		}
 	}
-	
+
 	public List<Demand> updateDemand(RequestInfo requestInfo, List<Demand> demands) {
 
 		return demandRepository.updateDemand(requestInfo, demands);
