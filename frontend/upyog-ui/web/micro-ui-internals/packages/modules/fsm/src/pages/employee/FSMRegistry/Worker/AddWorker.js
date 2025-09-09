@@ -285,7 +285,7 @@ const AddWorker = ({ parentUrl, heading }) => {
         }
         setTimeout(() => {
           closeToast();
-          history.push(`/${window?.contextPath}/employee/fsm/registry?selectedTabs=WORKER`);
+          history.push(`/upyog-ui/employee/fsm/registry?selectedTabs=WORKER`);
         }, 5000);
       },
     });
