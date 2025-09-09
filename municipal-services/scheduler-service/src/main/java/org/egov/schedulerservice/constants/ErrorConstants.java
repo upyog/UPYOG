@@ -35,4 +35,7 @@ public class ErrorConstants {
 	public static final String ERR_ADRVCANOPY_SITE_BOOKING_SERVICE_ERROR = "ERR_ADRVCANOPY_SITE_BOOKING_SERVICE_ERROR";
 	public static final String ERR_ADRVCANOPY_SITE_BOOKING_SERVICE_ERROR_MSG = "Error occured in adrvcanopy site booking service.";
 
+	public static final String ERR_TL_SERVICE_ERROR = "ERR_TL_SERVICE_ERROR";
+	public static final String ERR_TL_SERVICE_ERROR_MSG = "Error occured in tl service.";
+
 }
