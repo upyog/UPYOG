@@ -8,8 +8,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.Role;
 import org.egov.common.contract.request.User;
-// import org.egov.encryption.EncryptionService;
-// import org.egov.encryption.audit.AuditService;
+import org.egov.encryption.EncryptionService;
+import org.egov.encryption.audit.AuditService;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -25,9 +25,9 @@ import java.util.stream.Collectors;
 @Slf4j
 @Component
 public class EncryptionDecryptionUtil {
-    // private EncryptionService encryptionService;
-    // @Autowired
-    // private AuditService auditService;
+    private EncryptionService encryptionService;
+    @Autowired
+    private AuditService auditService;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -38,24 +38,55 @@ public class EncryptionDecryptionUtil {
     @Value(("${decryption.abac.enabled}"))
     private boolean abacEnabled;
 
-    public EncryptionDecryptionUtil() {
-        // this.encryptionService = encryptionService;
+    @Autowired
+    public EncryptionDecryptionUtil(EncryptionService encryptionService) {
+        this.encryptionService = encryptionService;
     }
 
     public <T> T encryptObject(Object objectToEncrypt, String key, Class<T> classType) {
-        // Encryption is disabled - return original object cast to expected type
         if (objectToEncrypt == null) {
             return null;
         }
-        return (T) objectToEncrypt;
+        try {
+            Object encryptedObject = encryptionService.encryptJson(objectToEncrypt, key, stateLevelTenantId);
+            return objectMapper.convertValue(encryptedObject, classType);
+        } catch (Exception e) {
+            log.error("Error occurred during encryption", e);
+            throw new CustomException("ENCRYPTION_ERROR", "Error occurred during encryption: " + e.getMessage());
+        }
     }
 
     public <E, P> P decryptObject(Object objectToDecrypt, String key, Class<E> classType, RequestInfo requestInfo) {
-        // Decryption is disabled - return original object cast to expected type
         if (objectToDecrypt == null) {
             return null;
         }
-        return (P) objectToDecrypt;
+        
+        try {
+            // Get the appropriate key for decryption based on user context
+            if (key == null && requestInfo != null && requestInfo.getUserInfo() != null) {
+                Map<String, String> keyPurposeMap = getKeyToDecrypt(objectToDecrypt, requestInfo.getUserInfo());
+                key = keyPurposeMap.get("key");
+                
+                // Log decryption attempt for audit - convert object to JsonNode
+                try {
+                    auditService.audit(objectMapper.valueToTree(objectToDecrypt), key, keyPurposeMap.get("purpose"), requestInfo);
+                } catch (Exception auditException) {
+                    log.warn("Failed to audit decryption attempt", auditException);
+                }
+            }
+            
+            // If key is still null, use default
+            if (key == null) {
+                key = "User";
+            }
+            
+            Object decryptedObject = encryptionService.decryptJson(requestInfo, objectToDecrypt, key, stateLevelTenantId, classType);
+            return (P) decryptedObject;
+            
+        } catch (Exception e) {
+            log.error("Error occurred during decryption", e);
+            throw new CustomException("DECRYPTION_ERROR", "Error occurred during decryption: " + e.getMessage());
+        }
     }
 
     public boolean isUserDecryptingForSelf(Object objectToDecrypt, User userInfo) {
