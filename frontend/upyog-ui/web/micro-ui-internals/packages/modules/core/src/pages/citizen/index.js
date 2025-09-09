@@ -22,6 +22,9 @@ import QRCode from "./QRCode";
 import VSearchCertificate from "./CMSearchCertificate";
 import AssetsQRCode from "./AssetsQRCode";
 import ChallanQRCode from "./ChallanQRCode";
+import { newConfig as newConfigEDCR } from "../../config/edcrConfig";
+import CreateAnonymousEDCR from "./Home/EDCR";
+import EDCRAcknowledgement from "./Home/EDCR/EDCRAcknowledgement";
 const sidebarHiddenFor = [
   "upyog-ui/citizen/register/name",
   "/upyog-ui/citizen/select-language",
@@ -30,7 +33,7 @@ const sidebarHiddenFor = [
   "/upyog-ui/citizen/register/otp",
   "/upyog-ui/citizen/verificationsearch-home" // route for verificationsearch component
 ];
-
+import { APPLICATION_PATH } from "./Home/EDCR/utils";
 const getTenants = (codes, tenants) => {
   return tenants.filter((tenant) => codes.map((item) => item.code).includes(tenant.code));
 };
@@ -73,7 +76,8 @@ const Home = ({
     }
   );
   const isMobile = window.Digit.Utils.browser.isMobile();
-  const classname = Digit.Hooks.fsm.useRouteSubscription(pathname);
+  // const classname = Digit.Hooks.fsm.useRouteSubscription(pathname);
+  const classname = Digit.Hooks.useRouteSubscription(pathname);
   const { t } = useTranslation();
   const { path } = useRouteMatch();
   sourceUrl = "https://s3.ap-south-1.amazonaws.com/egov-qa-assets";
@@ -82,7 +86,12 @@ const Home = ({
   const handleClickOnWhatsApp = (obj) => {
     window.open(obj);
   };
-  console.log("modulesmodules",modules)
+  // Fetches the state ID using the ULBService and retrieves the form configuration for EDCR from MDMS.
+  // If EdcrConfig is available in the fetched data, it is used; otherwise, it falls back to newConfigEDCR.
+  const stateId = Digit.ULBService.getStateId();
+  let { data: newConfig } = Digit.Hooks.obps.SearchMdmsTypes.getFormConfig(stateId, []);
+  newConfig = newConfig?.EdcrConfig ? newConfig?.EdcrConfig : newConfigEDCR;
+
   const hideSidebar = sidebarHiddenFor.some((e) => window.location.href.includes(e));
   const appRoutes = modules.map(({ code, tenants }, index) => {
 
@@ -93,7 +102,8 @@ const Home = ({
       </Route>
     ) : null;
   });
-  // for showing advertisement image and its detail in first page
+  // Fetches advertisement details (e.g., image, title, location, pole number, price) 
+  // from the MDMS and formats them for display on the homepage.
   const { data: advertisement } = Digit.Hooks.useCustomMDMS(Digit.ULBService.getStateId(), "Advertisement", [{ name: "Unipole_12_8" }], {
     select: (data) => {
       const formattedData = data?.["Advertisement"]?.["Unipole_12_8"].map((details) => {
@@ -255,6 +265,13 @@ const Home = ({
           <Route path={`${path}/challan/details`}>
          <ChallanQRCode></ChallanQRCode>
           </Route>
+          <Route path={`${APPLICATION_PATH}/citizen/core/edcr/scrutiny`}>
+            <CreateAnonymousEDCR />
+          </Route>
+          <Route path={`${APPLICATION_PATH}/citizen/core/edcr/scrutiny/acknowledgement`}>
+            <EDCRAcknowledgement />
+          </Route>
+
           <ErrorBoundary initData={initData}>
             {appRoutes}
             {ModuleLevelLinkHomePages}

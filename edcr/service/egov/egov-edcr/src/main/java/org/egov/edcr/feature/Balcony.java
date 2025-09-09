@@ -1,5 +1,5 @@
 /*
- * eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
+ * UPYOG  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  * accountability and the service delivery of the government  organizations.
  *
  *  Copyright (C) <2019>  eGovernments Foundation
@@ -48,112 +48,183 @@
 package org.egov.edcr.feature;
 
 import java.math.BigDecimal;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
-import org.egov.common.entity.edcr.Block;
-import org.egov.common.entity.edcr.Floor;
-import org.egov.common.entity.edcr.Plan;
-import org.egov.common.entity.edcr.Result;
-import org.egov.common.entity.edcr.ScrutinyDetail;
+import org.apache.logging.log4j.Logger;
+import org.egov.common.constants.MdmsFeatureConstants;
+import org.egov.common.entity.edcr.*;
+import org.egov.edcr.service.MDMSCacheManager;
 import org.egov.edcr.utility.DcrConstants;
 import org.egov.edcr.utility.Util;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import static org.egov.edcr.constants.CommonFeatureConstants.FLOOR;
+import static org.egov.edcr.constants.CommonFeatureConstants.UNDERSCORE;
+import static org.egov.edcr.constants.CommonKeyConstants.*;
+import static org.egov.edcr.constants.EdcrReportConstants.*;
+import static org.egov.edcr.service.FeatureUtil.mapReportDetails;
 
 @Service
 public class Balcony extends FeatureProcess {
-    private static final Logger LOG = LogManager.getLogger(Balcony.class);
-    private static final String FLOOR = "Floor";
-    private static final String RULE45_IV = "4.4.4 (iii)";
-    private static final String WIDTH_BALCONY_DESCRIPTION = "Minimum width for balcony %s";
-    private static final BigDecimal ONE_POINTNINEONE = BigDecimal.valueOf(0.91);
 
-    @Override
-    public Plan validate(Plan plan) {
-        return plan;
-    }
+	private static final Logger log = LogManager.getLogger(Balcony.class);
+	
+	@Autowired
+	MDMSCacheManager cache;
 
-    @Override
-    public Plan process(Plan plan) {
-        for (Block block : plan.getBlocks()) {
-            if (block.getBuilding() != null) {
+	@Override
+	public Plan validate(Plan plan) {
+	    return plan;
+	}
 
-                ScrutinyDetail scrutinyDetailLanding = new ScrutinyDetail();
-                scrutinyDetailLanding.addColumnHeading(1, RULE_NO);
-                scrutinyDetailLanding.addColumnHeading(2, FLOOR);
-                scrutinyDetailLanding.addColumnHeading(3, DESCRIPTION);
-                scrutinyDetailLanding.addColumnHeading(4, PERMISSIBLE);
-                scrutinyDetailLanding.addColumnHeading(5, PROVIDED);
-                scrutinyDetailLanding.addColumnHeading(6, STATUS);
-                scrutinyDetailLanding.setKey("Block_" + block.getNumber() + "_" + "Balcony");
-                List<Floor> floors = block.getBuilding().getFloors();
+	/**
+	 * Processes the given {@link Plan} by validating balcony widths block-wise.
+	 * <p>
+	 * For each block in the plan, if the block contains a building, it invokes
+	 * {@code processBlockBalconies} to validate balconies floor-wise, gather
+	 * scrutiny details, and append them to the plan's report output.
+	 * </p>
+	 *
+	 * @param plan the {@link Plan} object containing building blocks and their details
+	 * @return the modified {@link Plan} object with updated scrutiny report
+	 */
+	
+	@Override
+	public Plan process(Plan plan) {
+	    for (Block block : plan.getBlocks()) {
+	        if (block.getBuilding() != null) {
+	            processBlockBalconies(plan, block);
+	        }
+	    }
+	    return plan;
+	}
 
-                for (Floor floor : floors) {
-                    boolean isTypicalRepititiveFloor = false;
+	/**
+	 * Processes all balconies for a given block and prepares scrutiny details.
+	 * <p>
+	 * Iterates over each floor of the block's building and delegates balcony validation
+	 * to {@code processFloorBalconies}. Appends the collected scrutiny details to
+	 * the plan's report output.
+	 * </p>
+	 *
+	 * @param plan  the plan being processed
+	 * @param block the block whose balconies are to be processed"Block_"
+	 */
+	private void processBlockBalconies(Plan plan, Block block) {
+	    ScrutinyDetail scrutinyDetail = createScrutinyDetail(BLOCK + block.getNumber() + UNDERSCORE + MdmsFeatureConstants.BALCONY,
+	            RULE_NO, FLOOR, DESCRIPTION, PERMISSIBLE, PROVIDED, STATUS);
 
-                    Map<String, Object> typicalFloorValues = Util.getTypicalFloorValues(block, floor,
-                            isTypicalRepititiveFloor);
+	    for (Floor floor : block.getBuilding().getFloors()) {
+	        processFloorBalconies(plan, block, floor, scrutinyDetail);
+	    }
 
-                    List<org.egov.common.entity.edcr.Balcony> balconies = floor.getBalconies();
-                    if (!balconies.isEmpty()) {
-                        for (org.egov.common.entity.edcr.Balcony balcony : balconies) {
-                            boolean isAccepted = false;
-                            List<BigDecimal> widths = balcony.getWidths();
-                            BigDecimal minWidth = widths.isEmpty() ? BigDecimal.ZERO : widths.stream().reduce(BigDecimal::min).get();
-                            minWidth = minWidth.setScale(DcrConstants.DECIMALDIGITS_MEASUREMENTS,
-                                    DcrConstants.ROUNDMODE_MEASUREMENTS);
-                            if (minWidth.compareTo(ONE_POINTNINEONE.setScale(DcrConstants.DECIMALDIGITS_MEASUREMENTS,
-                                    DcrConstants.ROUNDMODE_MEASUREMENTS)) >= 0) {
-                                isAccepted = true;
-                            }
+	    plan.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+	}
 
-                            String value = typicalFloorValues.get("typicalFloors") != null
-                                    ? (String) typicalFloorValues.get("typicalFloors")
-                                    : " floor " + floor.getNumber();
+	/**
+	 * Processes all balconies on a given floor of a block.
+	 * <p>
+	 * Retrieves the list of balconies from the floor and validates each one
+	 * using {@code validateBalcony}. Also handles typical floor logic.
+	 * </p>
+	 *
+	 * @param plan           the plan being processed
+	 * @param block          the block containing the floor
+	 * @param floor          the floor to process
+	 * @param scrutinyDetail the scrutiny detail object to which validation results are added
+	 */
+	private void processFloorBalconies(Plan plan, Block block, Floor floor, ScrutinyDetail scrutinyDetail) {
+	    boolean isTypicalRepititiveFloor = false;
 
-                            if (isAccepted) {
-                                setReportOutputDetailsFloorBalconyWise(plan, RULE45_IV, value,
-                                        String.format(WIDTH_BALCONY_DESCRIPTION, balcony.getNumber()),
-                                        ONE_POINTNINEONE.toString(),
-                                        String.valueOf(minWidth), Result.Accepted.getResultVal(), scrutinyDetailLanding);
-                            } else {
-                                setReportOutputDetailsFloorBalconyWise(plan, RULE45_IV, value,
-                                        String.format(WIDTH_BALCONY_DESCRIPTION, balcony.getNumber()),
-                                        ONE_POINTNINEONE.toString(),
-                                        String.valueOf(minWidth), Result.Not_Accepted.getResultVal(), scrutinyDetailLanding);
-                            }
-                        }
-                    }
+	    Map<String, Object> typicalFloorValues = Util.getTypicalFloorValues(block, floor, isTypicalRepititiveFloor);
 
-                }
+	    List<org.egov.common.entity.edcr.Balcony> balconies = floor.getBalconies();
+	    if (balconies != null && !balconies.isEmpty()) {
+	        for (org.egov.common.entity.edcr.Balcony balcony : balconies) {
+	            validateBalcony(plan, floor, balcony, typicalFloorValues, scrutinyDetail);
+	        }
+	    }
+	}
 
-            }
-        }
+	/**
+	 * Validates the width of a single balcony against MDMS rules and adds the result to scrutiny.
+	 * <p>
+	 * Compares the minimum width of the balcony with the permissible value obtained from
+	 * MDMS rules. Based on the comparison, a result row is created and added to the scrutiny detail.
+	 * </p>
+	 *
+	 * @param plan              the plan being processed
+	 * @param floor             the floor containing the balcony
+	 * @param balcony           the balcony to validate
+	 * @param typicalFloorValues a map containing details about typical floors, if applicable
+	 * @param scrutinyDetail    the scrutiny detail object to which the validation result is added
+	 */
+	private void validateBalcony(Plan plan, Floor floor, org.egov.common.entity.edcr.Balcony balcony,
+	                              Map<String, Object> typicalFloorValues, ScrutinyDetail scrutinyDetail) {
+		
+		BigDecimal balconyValue;
 
-        return plan;
-    }
+	    List<BigDecimal> widths = balcony.getWidths();
+	    BigDecimal minWidth = widths.isEmpty() ? BigDecimal.ZERO
+	            : widths.stream().reduce(BigDecimal::min).get();
+	    minWidth = minWidth.setScale(DcrConstants.DECIMALDIGITS_MEASUREMENTS, DcrConstants.ROUNDMODE_MEASUREMENTS);
+	    
+	    List<Object> rules = cache.getFeatureRules(plan, FeatureEnum.BALCONY.getValue(), false);
+        Optional<BalconyRequirement> matchedRule = rules.stream()
+            .filter(BalconyRequirement.class::isInstance)
+            .map(BalconyRequirement.class::cast)
+            .findFirst();
 
-    private void setReportOutputDetailsFloorBalconyWise(Plan pl, String ruleNo, String floor, String description,
-            String expected, String actual, String status, ScrutinyDetail scrutinyDetail) {
-        Map<String, String> details = new HashMap<>();
-        details.put(RULE_NO, ruleNo);
-        details.put(FLOOR, floor);
-        details.put(DESCRIPTION, description);
-        details.put(PERMISSIBLE, expected);
-        details.put(PROVIDED, actual);
-        details.put(STATUS, status);
-        scrutinyDetail.getDetail().add(details);
-        pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
-    }
+	    if (matchedRule.isPresent()) {
+	        balconyValue = matchedRule.get().getPermissible();
+	    } else {
+	        balconyValue = BigDecimal.ZERO;
+	    }
+	    
+//	    List<BalconyRule> rules = cache.getFeatureRules(plan, MdmsFeatureConstants.BALCONY, false, BalconyRule.class);
+//
+//	    BigDecimal balconyValue = rules.stream()
+//	        .findFirst()
+//	        .map(BalconyRule::getPermissible)
+//	        .orElse(BigDecimal.ZERO);
+//
 
-    @Override
-    public Map<String, Date> getAmendments() {
-        return new LinkedHashMap<>();
-    }
+
+	    boolean isAccepted = minWidth.compareTo(balconyValue.setScale(DcrConstants.DECIMALDIGITS_MEASUREMENTS,
+	            DcrConstants.ROUNDMODE_MEASUREMENTS)) >= 0;
+
+	    String floorLabel = typicalFloorValues.get(TYPICAL_FLOOR) != null
+	            ? (String) typicalFloorValues.get(TYPICAL_FLOOR)
+	            : FLOOR_SPACED + floor.getNumber();
+
+		ReportScrutinyDetail detail = new ReportScrutinyDetail();
+		detail.setRuleNo(RULE45_IV);
+		detail.setDescription(String.format(WIDTH_BALCONY_DESCRIPTION, balcony.getNumber()));
+		detail.setPermissible(balconyValue.toString());
+		detail.setProvided(minWidth.toString());
+		detail.setStatus(isAccepted ? Result.Accepted.getResultVal() : Result.Not_Accepted.getResultVal());
+		detail.setFloorNo(floorLabel);
+
+		Map<String, String> details = mapReportDetails(detail);
+	    scrutinyDetail.getDetail().add(details);
+	}
+
+	// Method to create ScrutinyDetail
+	private ScrutinyDetail createScrutinyDetail(String key, String... headings) {
+	    ScrutinyDetail detail = new ScrutinyDetail();
+	    detail.setKey(key);
+	    for (int i = 0; i < headings.length; i++) {
+	        detail.addColumnHeading(i + 1, headings[i]);
+	    }
+	    return detail;
+	}
+
+	@Override
+	public Map<String, Date> getAmendments() {
+	    return new LinkedHashMap<>();
+	}
+
 
 }

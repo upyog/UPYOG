@@ -14,6 +14,36 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * This class is responsible for making HTTP requests to external services and fetching
+ * responses for the Community Hall Booking module.
+ * 
+ * Purpose:
+ * - To handle communication with external services by sending HTTP requests and processing responses.
+ * - To provide a reusable mechanism for making service calls across the application.
+ * 
+ * Dependencies:
+ * - RestTemplate: Used to send HTTP requests to external services.
+ * - ObjectMapper: Used to serialize and deserialize JSON objects for requests and responses.
+ * 
+ * Features:
+ * - Provides methods to send POST requests with a request body and fetch results.
+ * - Configures the ObjectMapper to handle empty beans gracefully during serialization.
+ * - Logs request and response details for debugging and monitoring purposes.
+ * - Handles exceptions such as HttpClientErrorException and ServiceCallException.
+ * 
+ * Constructor:
+ * - Accepts ObjectMapper and RestTemplate as dependencies and initializes them.
+ * 
+ * Methods:
+ * 1. fetchResult:
+ *    - Sends a POST request to the specified URI with the given request object.
+ *    - Returns the response from the external service as an Object.
+ * 
+ * Usage:
+ * - This class is used by various repository and service classes to interact with external APIs.
+ * - It ensures consistent and reusable logic for making service requests across the application.
+ */
 @Repository
 @Slf4j
 public class ServiceRequestRepository {

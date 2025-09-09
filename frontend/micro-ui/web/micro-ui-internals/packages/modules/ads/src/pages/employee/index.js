@@ -10,8 +10,6 @@ import SearchApp from "./SearchApp";
  * including displaying a back button.
  */
 
-
-// to do, ApplicationDetail page pending
 const EmployeeApp = ({ path, url, userType }) => {
   const { t } = useTranslation();
   const location = useLocation();

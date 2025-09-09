@@ -15,7 +15,26 @@ import org.upyog.adv.web.models.BookingDetail;
 import org.upyog.adv.web.models.BookingRequest;
 
 import lombok.extern.slf4j.Slf4j;
-
+/**
+ * Service class for handling encryption and decryption of sensitive data in the Advertisement Booking Service.
+ * 
+ * Key Responsibilities:
+ * - Encrypts sensitive applicant details (e.g., mobile number) before storing them in the database.
+ * - Decrypts sensitive applicant details when retrieving them from the database.
+ * - Ensures secure handling of sensitive data using encryption keys.
+ * 
+ * Dependencies:
+ * - EncryptionDecryptionUtil: Utility class for performing encryption and decryption operations.
+ * - BookingConstants: Provides encryption keys and constants used in the process.
+ * 
+ * Methods:
+ * - `encryptObject`: Encrypts applicant details in a booking request.
+ * - `decryptObject`: Decrypts applicant details in a booking detail.
+ * 
+ * Annotations:
+ * - @Service: Marks this class as a Spring-managed service component.
+ * - @Slf4j: Enables logging for debugging and monitoring encryption/decryption processes.
+ */
 @Service
 @Slf4j
 public class ADVEncryptionService {

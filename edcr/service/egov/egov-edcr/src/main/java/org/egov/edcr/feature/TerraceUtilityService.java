@@ -1,5 +1,5 @@
 /*
- * eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency
+ * UPYOG  SmartCity eGovernance suite aims to improve the internal efficiency,transparency
 ,
  * accountability and the service delivery of the government  organizations.
  *
@@ -51,75 +51,155 @@ package org.egov.edcr.feature;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
-import org.egov.common.entity.edcr.Block;
-import org.egov.common.entity.edcr.Plan;
-import org.egov.common.entity.edcr.Result;
-import org.egov.common.entity.edcr.ScrutinyDetail;
-import org.egov.common.entity.edcr.TerraceUtility;
+import org.apache.logging.log4j.Logger;
+import org.egov.common.constants.MdmsFeatureConstants;
+import org.egov.common.entity.edcr.*;
+import org.egov.edcr.constants.EdcrRulesMdmsConstants;
+import org.egov.edcr.service.MDMSCacheManager;
+import org.egov.edcr.service.FetchEdcrRulesMdms;
 import org.egov.edcr.utility.DcrConstants;
 import org.egov.edcr.utility.Util;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import static org.egov.edcr.constants.CommonKeyConstants.BLOCK;
+import static org.egov.edcr.constants.CommonKeyConstants.TERRACE_UTILITY_SUFFIX;
+import static org.egov.edcr.constants.EdcrReportConstants.RULE_43_1;
+import static org.egov.edcr.service.FeatureUtil.addScrutinyDetailtoPlan;
+import static org.egov.edcr.service.FeatureUtil.mapReportDetails;
 
 @Service
 public class TerraceUtilityService extends FeatureProcess {
 
-    private static final Logger LOG = LogManager.getLogger(TerraceUtility.class);
-    private static final String RULE_34 = "43-1";
-    public static final String TERRACEUTILITIESDISTANCE = "TerraceUtilitiesDistance";
-    public static final BigDecimal THREE = BigDecimal.valueOf(3);
-    public static final String ERROR_MSG = "Minimum_distance";
+    // Logger to log important info for debugging or monitoring
+    private static final Logger LOG = LogManager.getLogger(TerraceUtilityService.class);
 
+    // Autowired service to fetch rules from MDMS
+    @Autowired
+    FetchEdcrRulesMdms fetchEdcrRulesMdms;
+    
+    @Autowired
+	MDMSCacheManager cache;
+
+    /**
+     * Returns amendment dates for terrace utility service rules.
+     * Currently returns null as no amendments are defined.
+     *
+     * @return null indicating no amendments are available
+     */
+    // No amendments defined for this rule
     @Override
     public Map<String, Date> getAmendments() {
         return null;
     }
 
+    /**
+     * Validates the building plan for terrace utility service requirements.
+     * Currently performs no validation and returns the plan as-is.
+     *
+     * @param pl The building plan to validate
+     * @return The unmodified plan
+     */
+    // No pre-validation logic implemented
     @Override
     public Plan validate(Plan pl) {
         return pl;
     }
 
+    /**
+     * Processes terrace utility service requirements for all blocks in the building plan.
+     * Fetches permissible distance values from MDMS and validates each block's
+     * terrace utilities against the minimum distance requirements.
+     *
+     * @param pl The building plan to process
+     * @return The processed plan with scrutiny details added
+     */
     @Override
     public Plan process(Plan pl) {
 
+        BigDecimal terraceUtilityValue = getTerraceUtilityPermissibleValue(pl);
+
         if (pl.getBlocks() != null) {
             for (Block block : pl.getBlocks()) {
-                ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
-                scrutinyDetail.setKey("Block_" + block.getNumber() + "_" + "Terrace Utility");
-                scrutinyDetail.addColumnHeading(1, RULE_NO);
-                scrutinyDetail.addColumnHeading(2, DESCRIPTION);
-                scrutinyDetail.addColumnHeading(3, PERMITTED);
-                scrutinyDetail.addColumnHeading(4, PROVIDED);
-                scrutinyDetail.addColumnHeading(5, STATUS);
-
-                for (TerraceUtility terraceUtility : block.getTerraceUtilities()) {
-                    Map<String, String> details = new HashMap<>();
-                    details.put(RULE_NO, RULE_34);
-                    BigDecimal minDistance = terraceUtility.getDistances().stream().reduce(BigDecimal::min).get();
-                    details.put(DESCRIPTION, terraceUtility.getName());
-                    if (Util.roundOffTwoDecimal(minDistance).compareTo(THREE) >= 0) {
-                        details.put(PERMITTED, THREE + DcrConstants.IN_METER);
-                        details.put(PROVIDED, minDistance + DcrConstants.IN_METER);
-                        details.put(STATUS, Result.Accepted.getResultVal());
-                        scrutinyDetail.getDetail().add(details);
-                        pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
-                    } else {
-                        details.put(PERMITTED, THREE + DcrConstants.IN_METER);
-                        details.put(PROVIDED, minDistance + DcrConstants.IN_METER);
-                        details.put(STATUS, Result.Not_Accepted.getResultVal());
-                        scrutinyDetail.getDetail().add(details);
-                        pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
-                    }
-
-                }
-
+                ScrutinyDetail scrutinyDetail = createScrutinyDetailForBlock(block);
+                processTerraceUtilitiesForBlock(block, terraceUtilityValue, scrutinyDetail, pl);
             }
-
         }
+
         return pl;
     }
+
+    /**
+     * Retrieves the permissible terrace utility distance value from MDMS cache.
+     * Fetches terrace utility service requirements based on plan configuration
+     * and returns the minimum required distance.
+     *
+     * @param pl The building plan containing configuration details
+     * @return The permissible terrace utility distance, or BigDecimal.ZERO if not found
+     */
+    private BigDecimal getTerraceUtilityPermissibleValue(Plan pl) {
+    	List<Object> rules = cache.getFeatureRules(pl, FeatureEnum.TERRACE_UTILITY_SERVICE.getValue(), false);
+        Optional<TerraceUtilityServiceRequirement> matchedRule = rules.stream()
+            .filter(TerraceUtilityServiceRequirement.class::isInstance)
+            .map(TerraceUtilityServiceRequirement.class::cast)
+            .findFirst();
+
+        return matchedRule.map(MdmsFeatureRule::getPermissible).orElse(BigDecimal.ZERO);
+    }
+
+    /**
+     * Creates and initializes a scrutiny detail object for a specific building block.
+     * Sets up column headings and key for terrace utility validation reporting.
+     *
+     * @param block The building block for which scrutiny detail is being created
+     * @return Configured ScrutinyDetail object with appropriate headings and key
+     */
+    private ScrutinyDetail createScrutinyDetailForBlock(Block block) {
+        ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
+        scrutinyDetail.setKey(BLOCK + block.getNumber() + TERRACE_UTILITY_SUFFIX);
+        scrutinyDetail.addColumnHeading(1, RULE_NO);
+        scrutinyDetail.addColumnHeading(2, DESCRIPTION);
+        scrutinyDetail.addColumnHeading(3, PERMITTED);
+        scrutinyDetail.addColumnHeading(4, PROVIDED);
+        scrutinyDetail.addColumnHeading(5, STATUS);
+        return scrutinyDetail;
+    }
+
+    /**
+     * Processes all terrace utilities within a building block and generates scrutiny results.
+     * Validates minimum distances against permissible limits and determines compliance status
+     * for each terrace utility in the block.
+     *
+     * @param block The building block containing terrace utilities
+     * @param permissibleDistance The minimum required distance for terrace utilities
+     * @param scrutinyDetail The scrutiny detail object to add results to
+     * @param pl The building plan for adding scrutiny details to report
+     */
+    private void processTerraceUtilitiesForBlock(Block block, BigDecimal permissibleDistance,
+                                                 ScrutinyDetail scrutinyDetail, Plan pl) {
+        for (TerraceUtility terraceUtility : block.getTerraceUtilities()) {
+            BigDecimal minDistance = terraceUtility.getDistances().stream().reduce(BigDecimal::min).get();
+            BigDecimal roundedDistance = Util.roundOffTwoDecimal(minDistance);
+
+            ReportScrutinyDetail detail = new ReportScrutinyDetail();
+            detail.setRuleNo(RULE_43_1);
+            detail.setDescription(terraceUtility.getName());
+            detail.setPermitted(permissibleDistance + DcrConstants.IN_METER);
+            detail.setProvided(roundedDistance + DcrConstants.IN_METER);
+            if (roundedDistance.compareTo(permissibleDistance) >= 0) {
+                detail.setStatus(Result.Accepted.getResultVal());
+            } else {
+                detail.setStatus(Result.Not_Accepted.getResultVal());
+            }
+            Map<String, String> details = mapReportDetails(detail);
+            addScrutinyDetailtoPlan(scrutinyDetail, pl, details);
+        }
+    }
+
 }
+

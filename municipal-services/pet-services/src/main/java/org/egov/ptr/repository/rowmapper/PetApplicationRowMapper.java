@@ -13,9 +13,20 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * RowMapper class responsible for mapping result set data to PetRegistrationApplication objects.
+ */
 @Component
 public class PetApplicationRowMapper implements ResultSetExtractor<List<PetRegistrationApplication>> {
 
+	/**
+	 * Extracts data from the ResultSet and maps it to a list of PetRegistrationApplication objects.
+	 *
+	 * @param rs The ResultSet containing database query results.
+	 * @return A list of mapped PetRegistrationApplication objects.
+	 * @throws SQLException If an SQL error occurs.
+	 * @throws DataAccessException If a data access error occurs.
+	 */
 	public List<PetRegistrationApplication> extractData(ResultSet rs) throws SQLException, DataAccessException {
 
 		Map<String, PetRegistrationApplication> petRegistrationApplicationMap = new LinkedHashMap<>();
@@ -29,10 +40,11 @@ public class PetApplicationRowMapper implements ResultSetExtractor<List<PetRegis
 				if (rs.wasNull()) {
 					lastModifiedTime = null;
 				}
-
+// Creating audit details for the application
 				AuditDetails auditdetails = AuditDetails.builder().createdBy(rs.getString("pcreatedBy"))
 						.createdTime(rs.getLong("pcreatedTime")).lastModifiedBy(rs.getString("plastModifiedBy"))
 						.lastModifiedTime(lastModifiedTime).build();
+				// Mapping pet details from the result set
 				PetDetails petdetails = PetDetails.builder()
 					    .id(rs.getString("ptid"))
 					    .petName(rs.getString("ptpetname"))
@@ -49,7 +61,7 @@ public class PetApplicationRowMapper implements ResultSetExtractor<List<PetRegis
 					    .birthDate(rs.getLong("ptbirthdate"))        
 					    .identificationMark(rs.getString("ptidentificationmark"))
 					    .build();
-
+				// Creating a new PetRegistrationApplication object
 					petRegistrationApplication = PetRegistrationApplication.builder()
 					    .applicationNumber(rs.getString("papplicationnumber"))
 					    .tenantId(rs.getString("ptenantid"))
@@ -80,11 +92,17 @@ public class PetApplicationRowMapper implements ResultSetExtractor<List<PetRegis
 		return new ArrayList<>(petRegistrationApplicationMap.values());
 	}
 
+	/**
+	 * Adds additional pet registration details to the application.
+	 */
 	private void addPetRegistrationDetails(ResultSet rs, PetRegistrationApplication petRegistrationApplication)
 			throws SQLException {
 		addAddressToApplication(rs, petRegistrationApplication);
 	}
 
+	/**
+	 * Maps address details from the result set to the application object.
+	 */
 	private void addAddressToApplication(ResultSet rs, PetRegistrationApplication petRegistrationApplication)
 			throws SQLException {
 		Address address = Address.builder().id(rs.getString("aid")).tenantId(rs.getString("atenantid"))
@@ -99,6 +117,9 @@ public class PetApplicationRowMapper implements ResultSetExtractor<List<PetRegis
 		petRegistrationApplication.setAddress(address);
 	}
 
+	/**
+	 * Adds document details to the PetRegistrationApplication if they are not already present.
+	 */
 	private void addDocToPetApplication(ResultSet rs, PetRegistrationApplication petApplication) throws SQLException {
 		String docId = rs.getString("did");
 		List<Document> docs = petApplication.getDocuments();

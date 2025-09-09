@@ -1,3 +1,21 @@
+/**
+ * @file SearchApp.js
+ * @description This component handles the search functionality for the employee application.
+ * It allows users to search by application number, date range, creation reason, status, and mobile number.
+ * 
+ * @component
+ * - Uses `useState` to manage form data and payload.
+ * - Uses `react-hook-form` for form handling.
+ * - Displays a toast notification for validation errors.
+ * - Fetches search results using the `Digit.Hooks.ptr.usePTRSearch` hook.
+ * 
+ * @props
+ * @param {string} path - The base route path for the search module.
+ * 
+ * @usage
+ * <SearchApp path="/upyog-ui/employee/ptr/petservice/search" />
+ */
+
 import React, { useState } from "react"
 import { TextInput, Label, SubmitBar, LinkLabel, ActionBar, CloseSvg, DatePicker, CardLabelError, SearchForm, SearchField, Dropdown, Toast } from "@upyog/digit-ui-react-components";
 import { useForm, Controller } from "react-hook-form";

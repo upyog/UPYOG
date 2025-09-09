@@ -16,6 +16,35 @@ import org.upyog.chb.web.models.CommunityHallSlotSearchCriteria;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * This service class handles operations related to booking timers in the
+ * Community Hall Booking module.
+ * 
+ * Purpose:
+ * - To manage timer-related operations for bookings, such as retrieving and updating timer values.
+ * - To ensure that bookings adhere to time-sensitive constraints, such as payment deadlines.
+ * 
+ * Dependencies:
+ * - CommunityHallBookingRepository: Handles database operations for booking timers.
+ * - CommunityHallBookingConfiguration: Provides configuration properties for timer operations.
+ * - CommunityHallBookingUtil: Utility class for common operations related to bookings.
+ * 
+ * Features:
+ * - Retrieves timer values for bookings based on search criteria.
+ * - Updates timer-related details in the database.
+ * - Ensures transactional consistency for timer-related operations.
+ * - Logs important operations and errors for debugging and monitoring purposes.
+ * 
+ * Methods:
+ * 1. getTimerValue:
+ *    - Retrieves the timer value for a booking based on the provided search criteria.
+ *    - Uses the availability details list to calculate or validate the timer value.
+ * 
+ * Usage:
+ * - This class is automatically managed by Spring and injected wherever timer-related
+ *   operations are required.
+ * - It ensures consistent and reusable logic for managing booking timers.
+ */
 @Service
 @Slf4j
 public class BookingTimerService {

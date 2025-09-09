@@ -7,10 +7,7 @@ import org.egov.asset.util.ResponseInfoFactory;
 import org.egov.asset.web.models.disposal.AssetDisposal;
 import org.egov.asset.web.models.disposal.AssetDisposalResponse;
 import org.egov.asset.web.models.disposal.AssetDisposalSearchCriteria;
-import org.egov.asset.web.models.maintenance.AssetMaintenance;
-import org.egov.asset.web.models.maintenance.AssetMaintenanceRequest;
-import org.egov.asset.web.models.maintenance.AssetMaintenanceResponse;
-import org.egov.asset.web.models.maintenance.AssetMaintenanceSearchCriteria;
+import org.egov.asset.web.models.maintenance.*;
 import org.egov.common.contract.request.RequestInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -75,14 +72,17 @@ public class AssetMaintenanceController {
     /**
      * Endpoint to search asset maintenance records based on criteria.
      *
-     * @param searchCriteria   The search criteria object.
-     * @param requestInfoWrapper The request info object containing metadata.
+     * @param searchRequest The request info object containing metadata.
      * @return List of AssetMaintenance records matching the criteria.
      */
     @PostMapping("/_search")
     public ResponseEntity<AssetMaintenanceResponse> searchDisposals(
-            @RequestBody AssetMaintenanceSearchCriteria searchCriteria,
-            @RequestBody RequestInfoWrapper requestInfoWrapper) {
+            @RequestBody AssetMaintenanceSearchRequest searchRequest ) {
+
+        // Extract the search criteria and request info
+        AssetMaintenanceSearchCriteria searchCriteria = searchRequest.getAssetMaintenanceSearchCriteria();
+        RequestInfoWrapper requestInfoWrapper = searchRequest.getRequestInfoWrapper();
+
         List<AssetMaintenance> results = assetMaintenanceService.searchMaintenances(searchCriteria, requestInfoWrapper.getRequestInfo());
         AssetMaintenanceResponse response = AssetMaintenanceResponse.builder()
                 .assetMaintenance(results)

@@ -4,6 +4,50 @@ import ChbCancellationPolicy from "../components/ChbCancellationPolicy";
 import Timeline from "../components/CHBTimeline";
 // import { TimerValues } from "../components/TimerValues";
 
+
+/**
+ * CHBDocumentDetails Component
+ * 
+ * This component is responsible for rendering and managing the document details form for the CHB module.
+ * It allows users to upload and manage required documents, such as identity proofs or other supporting files.
+ * 
+ * Props:
+ * - `t`: Translation function for internationalization.
+ * - `config`: Configuration object for the form step.
+ * - `onSelect`: Callback function triggered when the form step is completed.
+ * - `userType`: Type of the user (e.g., employee or citizen).
+ * - `formData`: Existing form data to prefill the fields.
+ * - `setError`: Function to set form-level errors.
+ * - `clearErrors`: Function to clear form-level errors.
+ * - `formState`: Current state of the form.
+ * - `value`: Default value for the form fields.
+ * 
+ * State Variables:
+ * - `documents`: State variable to manage the list of uploaded documents.
+ * - `error`: State variable to manage error messages related to document uploads.
+ * - `enableSubmit`: Boolean to enable or disable the submit button.
+ * - `checkRequiredFields`: Boolean to check if all required fields are filled.
+ * 
+ * Hooks:
+ * - `Digit.Hooks.chb.useChbDocumentsMDMS`: Custom hook to fetch the list of required documents from MDMS.
+ * 
+ * Logic:
+ * - Fetches the list of required documents based on the state ID and module name.
+ * - Allows users to upload documents and manage the list of uploaded files.
+ * - Validates required fields and enables/disables the submit button accordingly.
+ * - Handles the submission of the document details form by updating the form data with the uploaded documents.
+ * 
+ * Functions:
+ * - `handleSubmit`: Prepares the document data and triggers the `onSelect` callback to proceed to the next step.
+ * - `onSkip`: Skips the current step and triggers the `onSelect` callback.
+ * - `onAdd`: Placeholder function for adding additional logic (currently empty).
+ * 
+ * Effects:
+ * - `useEffect`: Iterates over the fetched document list and sets additional properties like `hasDropdown` and `isRequired` for each document.
+ * 
+ * Returns:
+ * - A form step component that allows users to upload and manage documents, with validation and error handling.
+ */
 const CHBDocumentDetails = ({ t, config, onSelect, userType, formData, setError: setFormError, clearErrors: clearFormErrors, formState,value=formData.slotlist}) => {
   const tenantId = Digit.ULBService.getStateId();
   const [documents, setDocuments] = useState(formData?.documents?.documents || value?.existingDataSet?.documents?.documents  || []);

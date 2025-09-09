@@ -2,10 +2,40 @@ import { Card, CardHeader, CardSubHeader, CardText, Loader, SubmitBar } from "@u
 import React, { useEffect } from "react";
 import { stringReplaceAll } from "../utils";
 
-/*
-  CHBRequiredDoc  displays the info page for  required documents for an advertisement to book
-   and it also shows upload restrictions and document requirements.
-*/
+/**
+ * CHBRequiredDoc Component
+ * 
+ * This component is responsible for displaying the required documents information page for booking an advertisement in the CHB module.
+ * It provides details about the required documents, upload restrictions, and document requirements.
+ * 
+ * Props:
+ * - `t`: Translation function for internationalization.
+ * - `config`: Configuration object for the form step.
+ * - `onSelect`: Callback function triggered when the form step is completed.
+ * - `userType`: Type of the user (e.g., employee or citizen).
+ * - `formData`: Existing form data to prefill the fields.
+ * 
+ * Variables:
+ * - `tenantId`: The current tenant ID fetched using the Digit ULB Service.
+ * - `stateId`: The state ID fetched using the Digit ULB Service.
+ * - `Documentsob`: The fetched document metadata from MDMS for the CHB module.
+ * - `docs`: The list of required documents extracted from the fetched metadata.
+ * 
+ * Hooks:
+ * - `Digit.Hooks.chb.useChbDocumentsMDMS`: Custom hook to fetch the list of required documents from MDMS.
+ * 
+ * Logic:
+ * - Removes the `docReqScreenByBack` session storage item to ensure a fresh state for the document requirements screen.
+ * - Fetches the list of required documents from MDMS based on the state ID and module name.
+ * - Displays the required document details, upload restrictions, and additional information using translated text.
+ * 
+ * Functions:
+ * - `onSave`: Placeholder function for saving data (currently empty).
+ * - `goNext`: Triggers the `onSelect` callback to proceed to the next step.
+ * 
+ * Returns:
+ * - A React fragment containing a card component that displays the required document details, upload restrictions, and additional information.
+ */
 const CHBRequiredDoc = ({ t, config, onSelect, userType, formData }) => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const stateId = Digit.ULBService.getStateId();

@@ -1,0 +1,142 @@
+{
+  "RequestInfo": {
+    "apiId": "Rainmaker",
+    "action": "",
+    "did": 1,
+    "key": "",
+    "msgId": "20170310130900|en_IN",
+    "requesterId": "",
+    "ts": 1513579888683,
+    "ver": ".01",
+    "authToken": "{{devAuth}}",
+    "userInfo": {
+      "id": 73,
+      "userName": null,
+      "name": null,
+      "type": "EMPLOYEE",
+      "mobileNumber": null,
+      "emailId": null,
+      "roles": [
+        {
+          "id": 2,
+          "name": "Customer Support Representative",
+          "code": null,
+          "tenantId": null
+        }
+      ],
+      "tenantId": null,
+      "uuid": "uuid"
+    }
+  },
+  "BusinessServices": [
+    {
+      "tenantId": "pg",
+      "businessService": "treePruning",
+      "business": "request-service.tree_pruning",
+      "businessServiceSla": "",
+      "states": [
+        {
+          "state": null,
+          "actions": [
+            {
+              "roles": ["CITIZEN","TP_CEMP"],
+              "action": "APPLY",
+              "active": true,
+              "nextState": "PENDING_FOR_APPROVAL"
+            }
+          ],
+          "isStartState": true,
+          "isStateUpdatable": true,
+          "isTerminateState": false,
+          "docUploadRequired": false
+        },
+        {
+          "state": "PENDING_FOR_APPROVAL",
+          "actions": [
+            {
+              "roles": ["TP_CEMP"],
+              "action": "APPROVE",
+              "active": true,
+              "nextState": "PAYMENT_PENDING"
+            },
+            {
+              "roles": ["TP_CEMP"],
+              "action": "REJECT",
+              "active": true,
+              "nextState": "REJECTED"
+            }
+          ],
+          "applicationStatus": "PENDING_FOR_APPROVAL",
+          "isStartState": false,
+          "isStateUpdatable": true,
+          "isTerminateState": false,
+          "docUploadRequired": false
+        },
+        {
+          "state": "PAYMENT_PENDING",
+          "actions": [
+            {
+              "roles": ["CITIZEN", "TP_CEMP"],
+              "action": "PAY",
+              "active": true,
+              "nextState": "TEAM_ASSIGNMENT_FOR_VERIFICATION"
+            }
+          ],
+          "applicationStatus": "PAYMENT_PENDING",
+          "isStartState": false,
+          "isStateUpdatable": false,
+          "isTerminateState": false,
+          "docUploadRequired": false
+        },
+        {
+          "state": "TEAM_ASSIGNMENT_FOR_VERIFICATION",
+          "actions": [
+            {
+              "roles": ["TP_VERIFIER"],
+              "action": "VERIFY",
+              "active": true,
+              "nextState": "TEAM_ASSIGNMENT_FOR_EXECUTION"
+            }
+          ],
+          "applicationStatus": "TEAM_ASSIGNMENT_FOR_VERIFICATION",
+          "isStartState": false,
+          "isStateUpdatable": true,
+          "isTerminateState": false,
+          "docUploadRequired": false
+        },
+        {
+          "state": "TEAM_ASSIGNMENT_FOR_EXECUTION",
+          "actions": [
+            {
+              "roles": ["TP_EXECUTION", "TP_VERIFIER"],
+              "action": "EXECUTE",
+              "active": true,
+              "nextState": "TREE_PRUNING_SERVICE_COMPLETED"
+            }
+          ],
+          "applicationStatus": "TEAM_ASSIGNMENT_FOR_EXECUTION",
+          "isStartState": false,
+          "isStateUpdatable": true,
+          "isTerminateState": false,
+          "docUploadRequired": false
+        },
+        {
+          "state": "TREE_PRUNING_SERVICE_COMPLETED",
+          "isStartState": false,
+          "isStateUpdatable": false,
+          "isTerminateState": true,
+          "applicationStatus": "TREE_PRUNING_SERVICE_COMPLETED",
+          "docUploadRequired": false
+        },
+        {
+          "state": "REJECTED",
+          "isStartState": false,
+          "isStateUpdatable": false,
+          "isTerminateState": true,
+          "applicationStatus": "REJECTED",
+          "docUploadRequired": false
+        }
+      ]
+    }
+  ]
+}

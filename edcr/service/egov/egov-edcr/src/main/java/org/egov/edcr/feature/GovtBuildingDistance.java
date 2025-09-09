@@ -1,5 +1,5 @@
 /*
- * eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
+ * UPYOG  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  * accountability and the service delivery of the government  organizations.
  *
  *  Copyright (C) <2019>  eGovernments Foundation
@@ -54,100 +54,218 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.egov.common.entity.edcr.Block;
+import org.egov.common.entity.edcr.FeatureEnum;
+import org.egov.common.entity.edcr.GovtBuildingDistanceRequirement;
+import org.egov.common.entity.edcr.MdmsFeatureRule;
 import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.Result;
 import org.egov.common.entity.edcr.ScrutinyDetail;
+import org.egov.edcr.service.MDMSCacheManager;
+import org.egov.edcr.service.FetchEdcrRulesMdms;
+import org.egov.edcr.utility.DcrConstants;
 import org.egov.infra.utils.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import static org.egov.edcr.constants.CommonFeatureConstants.*;
 
 @Service
 public class GovtBuildingDistance extends FeatureProcess {
 
-	private static final Logger LOG = LogManager.getLogger(GovtBuildingDistance.class);
-	private static final String RULE_21 = "21";
-	public static final String GOVTBUILDING_DESCRIPTION = "Distance from Government Building";
+    // Logger for logging information and errors
+    private static final Logger LOG = LogManager.getLogger(GovtBuildingDistance.class);
 
-	@Override
-	public Plan validate(Plan pl) {
+    // Rule identifier and description for government building distance scrutiny
+    private static final String RULE_21 = "21";
+    public static final String GOVTBUILDING_DESCRIPTION = "Distance from Government Building";
+    public static final String BUILDING_HEIGHT = "Building Height: ";
+    public static final String MT = "mt";
 
-		return pl;
-	}
+    @Autowired
+    FetchEdcrRulesMdms fetchEdcrRulesMdms;
+    
+    @Autowired
+	MDMSCacheManager cache;
 
-	@Override
-	public Plan process(Plan pl) {
+    /**
+     * Validates the given plan object.
+     * Currently, no specific validation logic is implemented.
+     *
+     * @param pl The plan object to validate.
+     * @return The same plan object without any modifications.
+     */
+    @Override
+    public Plan validate(Plan pl) {
+        return pl;
+    }
 
-		ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
-		scrutinyDetail.setKey("Common_Government Building Distance");
-		scrutinyDetail.addColumnHeading(1, RULE_NO);
-		scrutinyDetail.addColumnHeading(2, DESCRIPTION);
-		scrutinyDetail.addColumnHeading(3, DISTANCE);
-		scrutinyDetail.addColumnHeading(4, PERMITTED);
-		scrutinyDetail.addColumnHeading(5, PROVIDED);
-		scrutinyDetail.addColumnHeading(6, STATUS);
+	
+    /**
+     * Processes the given plan to validate the distance from nearby government buildings
+     * and the corresponding permissible building height.
+     *
+     * @param plan the building plan to be validated
+     * @return the updated plan with validation results and errors (if any)
+     */
+    @Override
+    public Plan process(Plan plan) {
+        if (!isGovtBuildingNearby(plan)) {
+            return plan;
+        }
 
-		HashMap<String, String> errors = new HashMap<>();
-		Map<String, String> details = new HashMap<>();
-		details.put(RULE_NO, RULE_21);
-		details.put(DESCRIPTION, GOVTBUILDING_DESCRIPTION);
+        ScrutinyDetail scrutinyDetail = createScrutinyDetail();
+        Map<String, String> details = createInitialRuleDetails();
+        Map<String, String> errors = new HashMap<>();
 
-		BigDecimal minDistanceFromGovtBuilding = BigDecimal.ZERO;
-		BigDecimal maxHeightOfBuilding = BigDecimal.ZERO;
-		List<BigDecimal> distancesFromGovtBuilding = pl.getDistanceToExternalEntity().getGovtBuildings();
-		List<Block> blocks = pl.getBlocks();
+        List<BigDecimal> distances = plan.getDistanceToExternalEntity().getGovtBuildings();
+        if (distances == null || distances.isEmpty()) {
+            errors.put(DISTANCE_FROM_GOVT_BUILDING, NO_DISTANCE_PROVIDED);
+            plan.addErrors(errors);
+            return plan;
+        }
 
-		if (StringUtils.isNotBlank(pl.getPlanInformation().getBuildingNearGovtBuilding())
-				&& "YES".equalsIgnoreCase(pl.getPlanInformation().getBuildingNearGovtBuilding())) {
-			if (!distancesFromGovtBuilding.isEmpty()) {
+        BigDecimal minDistance = getMinimumDistance(distances);
+        BigDecimal maxHeight = getMaxBuildingHeight(plan.getBlocks());
 
-				minDistanceFromGovtBuilding = distancesFromGovtBuilding.stream().reduce(BigDecimal::min).get();
+        GovtBuildingDistanceRequirement rule = getApplicableRule(plan);
+        if (rule == null) {
+            errors.put(RULE_FETCH, NO_APPLICABLE_RULE);
+            plan.addErrors(errors);
+            return plan;
+        }
 
-				for (Block b : blocks) {
-					if (b.getBuilding().getBuildingHeight().compareTo(maxHeightOfBuilding) > 0) {
-						maxHeightOfBuilding = b.getBuilding().getBuildingHeight();
-					}
-				}
+        validateDistanceAndHeight(minDistance, maxHeight, rule, details, scrutinyDetail);
+        plan.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+        return plan;
+    }
+    
+    /**
+     * Checks whether the plan indicates proximity to a government building.
+     *
+     * @param plan the plan to check
+     * @return true if the building is near a government building; false otherwise
+     */
+    private boolean isGovtBuildingNearby(Plan plan) {
+        String nearGovtBuilding = plan.getPlanInformation().getBuildingNearGovtBuilding();
+        return StringUtils.isNotBlank(nearGovtBuilding) && DcrConstants.YES.equalsIgnoreCase(nearGovtBuilding);
+    }
 
-				if (minDistanceFromGovtBuilding.compareTo(BigDecimal.valueOf(200)) > 0) {
-					details.put(DISTANCE, ">200");
-					details.put(PERMITTED, "ALL");
-					details.put(PROVIDED, minDistanceFromGovtBuilding.toString());
-					details.put(STATUS, Result.Accepted.getResultVal());
-					scrutinyDetail.getDetail().add(details);
-					pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
-				} else {
-					if (maxHeightOfBuilding.compareTo(BigDecimal.valueOf(10)) <= 0) {
+    /**
+     * Creates and initializes a {@link ScrutinyDetail} object for reporting.
+     *
+     * @return a populated ScrutinyDetail instance
+     */
+    private ScrutinyDetail createScrutinyDetail() {
+        ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
+        scrutinyDetail.setKey(COMMON_GOVT_BUILDING_DISTANCE);
+        scrutinyDetail.addColumnHeading(1, RULE_NO);
+        scrutinyDetail.addColumnHeading(2, DESCRIPTION);
+        scrutinyDetail.addColumnHeading(3, DISTANCE);
+        scrutinyDetail.addColumnHeading(4, PERMITTED);
+        scrutinyDetail.addColumnHeading(5, PROVIDED);
+        scrutinyDetail.addColumnHeading(6, STATUS);
+        return scrutinyDetail;
+    }
 
-						details.put(DISTANCE, "<=200");
-						details.put(PERMITTED, "Building Height: 10mt");
-						details.put(PROVIDED, "Building Height: " + maxHeightOfBuilding + "mt");
-						details.put(STATUS, Result.Accepted.getResultVal());
-						scrutinyDetail.getDetail().add(details);
-						pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+    /**
+     * Creates a map with the initial rule metadata (e.g., rule number and description).
+     *
+     * @return a map of rule metadata
+     */
+    private Map<String, String> createInitialRuleDetails() {
+        Map<String, String> details = new HashMap<>();
+        details.put(RULE_NO, RULE_21);
+        details.put(DESCRIPTION, GOVTBUILDING_DESCRIPTION);
+        return details;
+    }
 
-					} else {
+    
+    /**
+     * Returns the minimum distance from the list of provided distances.
+     *
+     * @param distances list of distances from government buildings
+     * @return the minimum distance, or 0 if list is empty
+     */
+    private BigDecimal getMinimumDistance(List<BigDecimal> distances) {
+        return distances.stream().reduce(BigDecimal::min).orElse(BigDecimal.ZERO);
+    }
 
-						details.put(DISTANCE, "<=200");
-						details.put(PERMITTED, "Building Height: 10mt");
-						details.put(PROVIDED, "Building Height: " + maxHeightOfBuilding + "mt");
-						details.put(STATUS, Result.Not_Accepted.getResultVal());
-						scrutinyDetail.getDetail().add(details);
-						pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
-					}
-				}
-			} else {
-				errors.put("Distance_From_Govt_Building", "No distance is provided from government building");
-				pl.addErrors(errors);
-			}
-		}
-		return pl;
-	}
+    /**
+     * Calculates the maximum building height from all blocks in the plan.
+     *
+     * @param blocks list of blocks in the plan
+     * @return the highest building height among the blocks
+     */
+    private BigDecimal getMaxBuildingHeight(List<Block> blocks) {
+        return blocks.stream()
+                     .filter(b -> b.getBuilding() != null)
+                     .map(b -> b.getBuilding().getBuildingHeight())
+                     .reduce(BigDecimal.ZERO, BigDecimal::max);
+    }
 
-	@Override
-	public Map<String, Date> getAmendments() {
-		return new LinkedHashMap<>();
-	}
+    /**
+     * Retrieves the applicable rule from the MDMS cache for validating government building distance.
+     *
+     * @param plan the plan for which the rule needs to be fetched
+     * @return the matching {@link MdmsFeatureRule} or null if not found
+     */
+    private GovtBuildingDistanceRequirement getApplicableRule(Plan plan) {
+    	List<Object> rules = cache.getFeatureRules(plan, FeatureEnum.GOVT_BUILDING_DISTANCE.getValue(), false);
+        rules.stream()
+            .filter(GovtBuildingDistanceRequirement.class::isInstance)
+            .map(GovtBuildingDistanceRequirement.class::cast)
+            .findFirst();
+            return rules.stream()
+                    .map(obj -> (GovtBuildingDistanceRequirement) obj)
+                    .findFirst()
+                    .orElse(null);
+    }
 
+    
+    /**
+     * Validates the distance from the government building and compares it with the maximum allowed building height.
+     * Adds the result into the scrutiny details.
+     *
+     * @param minDistance the minimum distance from a government building
+     * @param maxHeight the maximum height of the building in the plan
+     * @param rule the applicable MDMS 
+     * */
+    private void validateDistanceAndHeight(BigDecimal minDistance, BigDecimal maxHeight,
+    		GovtBuildingDistanceRequirement rule, Map<String, String> details,
+                                           ScrutinyDetail scrutinyDetail) {
+
+        BigDecimal allowedDistance = rule.getGovtBuildingDistanceValue();
+        BigDecimal maxAllowedHeight = rule.getGovtBuildingDistanceMaxHeight();
+
+        if (minDistance.compareTo(allowedDistance) > 0) {
+            details.put(DISTANCE, GREATER_THAN + allowedDistance);
+            details.put(PERMITTED, ALL);
+            details.put(PROVIDED, minDistance.toString());
+            details.put(STATUS, Result.Accepted.getResultVal());
+        } else {
+            details.put(DISTANCE, LESS_THAN_EQUAL_TO + allowedDistance);
+            details.put(PERMITTED, BUILDING_HEIGHT + maxAllowedHeight + MT);
+            details.put(PROVIDED, BUILDING_HEIGHT + maxHeight + MT);
+            details.put(STATUS, maxHeight.compareTo(maxAllowedHeight) <= 0
+                    ? Result.Accepted.getResultVal()
+                    : Result.Not_Accepted.getResultVal());
+        }
+
+        scrutinyDetail.getDetail().add(details);
+    }
+
+
+
+    /**
+     * Returns an empty map as no amendments are defined for this feature.
+     *
+     * @return An empty map of amendments.
+     */
+    @Override
+    public Map<String, Date> getAmendments() {
+        return new LinkedHashMap<>();
+    }
 }

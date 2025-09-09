@@ -1,5 +1,5 @@
 /*
- * eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
+ * UPYOG  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  * accountability and the service delivery of the government  organizations.
  *
  *  Copyright (C) <2019>  eGovernments Foundation
@@ -47,6 +47,8 @@
 
 package org.egov.edcr.feature;
 
+import static org.egov.edcr.constants.CommonFeatureConstants.*;
+import static org.egov.edcr.constants.CommonKeyConstants.BLOCK;
 import static org.egov.edcr.constants.DxfFileConstants.A;
 import static org.egov.edcr.constants.DxfFileConstants.A_AF;
 import static org.egov.edcr.constants.DxfFileConstants.A_R;
@@ -56,6 +58,9 @@ import static org.egov.edcr.constants.DxfFileConstants.F;
 import static org.egov.edcr.constants.DxfFileConstants.G;
 import static org.egov.edcr.constants.DxfFileConstants.I;
 import static org.egov.edcr.constants.DxfFileConstants.A_PO;
+import static org.egov.edcr.constants.EdcrReportConstants.*;
+import static org.egov.edcr.service.FeatureUtil.addScrutinyDetailtoPlan;
+import static org.egov.edcr.service.FeatureUtil.mapReportDetails;
 import static org.egov.edcr.utility.DcrConstants.OBJECTNOTDEFINED;
 import static org.egov.edcr.utility.DcrConstants.SIDE_YARD1_DESC;
 import static org.egov.edcr.utility.DcrConstants.SIDE_YARD2_DESC;
@@ -67,72 +72,14 @@ import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.egov.common.entity.edcr.Block;
-import org.egov.common.entity.edcr.Building;
-import org.egov.common.entity.edcr.Occupancy;
-import org.egov.common.entity.edcr.OccupancyTypeHelper;
-import org.egov.common.entity.edcr.Plan;
-import org.egov.common.entity.edcr.Plot;
-import org.egov.common.entity.edcr.Result;
-import org.egov.common.entity.edcr.ScrutinyDetail;
-import org.egov.common.entity.edcr.SetBack;
-import org.egov.common.entity.edcr.Yard;
+import org.egov.common.entity.edcr.*;
 import org.egov.edcr.constants.DxfFileConstants;
 import org.egov.infra.utils.StringUtils;
 import org.springframework.stereotype.Service;
 
 @Service
 public class SideYardService extends GeneralRule {
-
-    private static final BigDecimal SIDEVALUE_ONE = BigDecimal.valueOf(1);
-    private static final BigDecimal SIDEVALUE_ONE_TWO = BigDecimal.valueOf(1.2);
-    private static final BigDecimal SIDEVALUE_ONEPOINTFIVE = BigDecimal.valueOf(1.5);
-    private static final BigDecimal SIDEVALUE_ONEPOINTEIGHT = BigDecimal.valueOf(1.8);
-    private static final BigDecimal SIDEVALUE_TWO = BigDecimal.valueOf(2);
-    private static final BigDecimal SIDEVALUE_TWOPOINTFIVE = BigDecimal.valueOf(2.5);
-    private static final BigDecimal SIDEVALUE_THREE = BigDecimal.valueOf(3);
-    private static final BigDecimal SIDEVALUE_THREEPOINTSIX = BigDecimal.valueOf(3.66);
-    private static final BigDecimal SIDEVALUE_FOUR = BigDecimal.valueOf(4);
-    private static final BigDecimal SIDEVALUE_FOURPOINTFIVE = BigDecimal.valueOf(4.5);
-    private static final BigDecimal SIDEVALUE_FIVE = BigDecimal.valueOf(5);
-    private static final BigDecimal SIDEVALUE_SIX = BigDecimal.valueOf(6);
-    private static final BigDecimal SIDEVALUE_SEVEN = BigDecimal.valueOf(7);
-    private static final BigDecimal SIDEVALUE_SEVENTYFIVE = BigDecimal.valueOf(0.75);
-    private static final BigDecimal SIDEVALUE_EIGHT = BigDecimal.valueOf(8);
-    private static final BigDecimal SIDEVALUE_NINE = BigDecimal.valueOf(9);
-    private static final BigDecimal SIDEVALUE_TEN = BigDecimal.valueOf(10);
-
-    private static final String SIDENUMBER = "Side Number";
-    private static final String MINIMUMLABEL = "Minimum distance ";
-
-    private static final String RULE_35 = "35 Table-9";
-    private static final String RULE_36 = "36";
-    private static final String RULE_37_TWO_A = "37-2-A";
-    private static final String RULE_37_TWO_B = "37-2-B";
-    private static final String RULE_37_TWO_C = "37-2-C";
-    private static final String RULE_37_TWO_D = "37-2-D";
-    private static final String RULE_37_TWO_G = "37-2-G";
-    private static final String RULE_37_TWO_H = "37-2-H";
-    private static final String RULE_37_TWO_I = "37-2-I";
-    private static final String RULE_47 = "47";
-    private static final String SIDE_YARD_2_NOTDEFINED = "side2yardNodeDefined";
-    private static final String SIDE_YARD_1_NOTDEFINED = "side1yardNodeDefined";
-
-    public static final String BSMT_SIDE_YARD_DESC = "Basement Side Yard";
-    private static final int PLOTAREA_300 = 300;
-    public static final BigDecimal ROAD_WIDTH_TWELVE_POINTTWO = BigDecimal.valueOf(12.2);
     
-    // Added by Bimal 18-March-2924 for method processSideYardResidential
-    private static final BigDecimal MIN_PLOT_AREA = BigDecimal.valueOf(30);
-    private static final BigDecimal PLOT_AREA_100_SQM = BigDecimal.valueOf(100);
-	private static final BigDecimal PLOT_AREA_150_SQM = BigDecimal.valueOf(150);
-	private static final BigDecimal PLOT_AREA_200_SQM = BigDecimal.valueOf(200);
-	private static final BigDecimal PLOT_AREA_300_SQM = BigDecimal.valueOf(300);
-	private static final BigDecimal PLOT_AREA_500_SQM = BigDecimal.valueOf(500);
-	private static final BigDecimal PLOT_AREA_1000_SQM = BigDecimal.valueOf(1000);
-    private static final double FIVE_MTR = 5;
-    private static final double TWO_MTR = 2.0;
-    private static final double THREE_MTR = 3.0;
     private static final Logger LOG = LogManager.getLogger(SideYardService.class);
 
     private class SideYardResult {
@@ -149,183 +96,192 @@ public class SideYardService extends GeneralRule {
         boolean status = false;
     }
 
+    /**
+     * Main entry point for processing side yard validations for all blocks in the plan.
+     * Validates side yard rules and processes each block individually.
+     *
+     * @param pl The building plan to process
+     */
     public void processSideYard(final Plan pl) {
-    	LOG.info("Processing SideYard:");
-        HashMap<String, String> errors = new HashMap<>();
-        Plot plot = pl.getPlot();
-        if (plot == null)
-            return;
+        LOG.info("Processing SideYard:");
+        if (pl.getPlot() == null) return;
 
+        HashMap<String, String> errors = new HashMap<>();
         validateSideYardRule(pl);
 
-        // Side yard 1 and side yard 2 both may not mandatory in same levels. Get
-        // previous level side yards in this case.
-        // In case of side yard 1 defined and other side not required, then consider
-        // other side as zero distance ( in case of noc
-        // provided cases).
-
-        Boolean valid = false;
-        if (plot != null && !pl.getBlocks().isEmpty()) {
-            for (Block block : pl.getBlocks()) { // for each block
-                scrutinyDetail = new ScrutinyDetail();
-                scrutinyDetail.addColumnHeading(1, RULE_NO);
-                scrutinyDetail.addColumnHeading(2, LEVEL);
-                scrutinyDetail.addColumnHeading(3, OCCUPANCY);
-                scrutinyDetail.addColumnHeading(4, SIDENUMBER);
-                scrutinyDetail.addColumnHeading(5, FIELDVERIFIED);
-                scrutinyDetail.addColumnHeading(6, PERMISSIBLE);
-                scrutinyDetail.addColumnHeading(7, PROVIDED);
-                scrutinyDetail.addColumnHeading(8, STATUS);
-                scrutinyDetail.setHeading(SIDE_YARD_DESC);
-                SideYardResult sideYard1Result = new SideYardResult();
-                SideYardResult sideYard2Result = new SideYardResult();
-
-                for (SetBack setback : block.getSetBacks()) {
-                    Yard sideYard1 = null;
-                    Yard sideYard2 = null;
-
-                    if (setback.getSideYard1() != null
-                            && setback.getSideYard1().getMean().compareTo(BigDecimal.ZERO) > 0) {
-                        sideYard1 = setback.getSideYard1();
-                    }else {
-                    	exemptSideYardForAAndF(pl, block, sideYard1Result, sideYard2Result);
-                    }
-                    if (setback.getSideYard2() != null
-                            && setback.getSideYard2().getMean().compareTo(BigDecimal.ZERO) > 0) {
-                        sideYard2 = setback.getSideYard2();
-                    }
-                    	else {
-                        	exemptSideYardForAAndF(pl, block, sideYard1Result, sideYard2Result);
-                        }
-                    
-                    BigDecimal buildingHeight;
-                    if (sideYard1 != null || sideYard2 != null) {
-                        // If there is changes in height of building, then consider the maximum height
-                        // among both side
-                        if (sideYard1 != null && sideYard1.getHeight() != null
-                                && sideYard1.getHeight().compareTo(BigDecimal.ZERO) > 0
-                                && sideYard2 != null && sideYard2.getHeight() != null
-                                && sideYard2.getHeight().compareTo(BigDecimal.ZERO) > 0) {
-                            buildingHeight = sideYard1.getHeight().compareTo(sideYard2.getHeight()) >= 0
-                                    ? sideYard1.getHeight()
-                                    : sideYard2.getHeight();
-                        } else {
-                            buildingHeight = sideYard1 != null && sideYard1.getHeight() != null
-                                    && sideYard1.getHeight().compareTo(BigDecimal.ZERO) > 0
-                                            ? sideYard1.getHeight()
-                                            : sideYard2 != null && sideYard2.getHeight() != null
-                                                    && sideYard2.getHeight().compareTo(BigDecimal.ZERO) > 0
-                                                            ? sideYard2.getHeight()
-                                                            : block.getBuilding().getBuildingHeight();
-                        }
-
-                        double minlength = 0;
-                        double max = 0;
-                        double minMeanlength = 0;
-                        double maxMeanLength = 0;
-                        if (sideYard2 != null && sideYard1 != null) {
-                            if (sideYard2.getMinimumDistance().doubleValue() > sideYard1.getMinimumDistance()
-                                    .doubleValue()) {
-                                minlength = sideYard1.getMinimumDistance().doubleValue();
-                                max = sideYard2.getMinimumDistance().doubleValue();
-                            } else {
-                                minlength = sideYard2.getMinimumDistance().doubleValue();
-                                max = sideYard1.getMinimumDistance().doubleValue();
-                            }
-                        } else {
-                            if (sideYard1 != null) {
-                                max = sideYard1.getMinimumDistance().doubleValue();
-                            } else {
-                                minlength = sideYard2.getMinimumDistance().doubleValue();
-                            }
-                        }
-
-                        if (buildingHeight != null && (minlength > 0 || max > 0)) {
-                            for (final Occupancy occupancy : block.getBuilding().getTotalArea()) {
-                                scrutinyDetail.setKey("Block_" + block.getName() + "_" + "Side Setback");
-
-                                if (setback.getLevel() < 0) {
-                                    scrutinyDetail.setKey("Block_" + block.getName() + "_" + "Basement Side Yard");
-
-                                    checkSideYardBasement(pl, block.getBuilding(), buildingHeight, block.getName(),
-                                            setback.getLevel(), plot, minlength, max, minMeanlength, maxMeanLength,
-                                            occupancy.getTypeHelper(), sideYard1Result, sideYard2Result);
-
-                                }
-
-                                if ((occupancy.getTypeHelper().getSubtype() != null
-                                        && (A_R.equalsIgnoreCase(occupancy.getTypeHelper().getSubtype().getCode())
-                                        || A_AF.equalsIgnoreCase(occupancy.getTypeHelper().getSubtype().getCode())
-                                        || A_PO.equalsIgnoreCase(occupancy.getTypeHelper().getSubtype().getCode())))
-								/* || F.equalsIgnoreCase(occupancy.getTypeHelper().getType().getCode()) */) {
-                                	//Added by Bimal 18-March-2924 to check side yard based on plotarea not on height
-                                	if (buildingHeight.compareTo(BigDecimal.valueOf(10)) <= 0 && block.getBuilding()
-                                            .getFloorsAboveGround().compareTo(BigDecimal.valueOf(3)) <= 0) {
-                                		checkSideYardCommon(pl, block.getBuilding(), buildingHeight,
-                                                block.getName(), setback.getLevel(), plot, minlength, max, occupancy.getTypeHelper(),sideYard1Result,sideYard2Result);
-                                    }
-                                	
-									/*
-									 * if (buildingHeight.compareTo(BigDecimal.valueOf(10)) <= 0 &&
-									 * block.getBuilding() .getFloorsAboveGround().compareTo(BigDecimal.valueOf(3))
-									 * <= 0) { checkSideYardUptoTenMts(pl, block.getBuilding(), buildingHeight,
-									 * block.getName(), setback.getLevel(), plot, minlength, max, minMeanlength,
-									 * maxMeanLength, occupancy.getTypeHelper(), sideYard1Result, sideYard2Result);
-									 * } else if (buildingHeight.compareTo(BigDecimal.valueOf(12)) <= 0 &&
-									 * block.getBuilding().getFloorsAboveGround() .compareTo(BigDecimal.valueOf(4))
-									 * <= 0) { checkSideYardUptoTwelveMts(pl, block.getBuilding(), buildingHeight,
-									 * block.getName(), setback.getLevel(), plot, minlength, max, minMeanlength,
-									 * maxMeanLength, occupancy.getTypeHelper(), sideYard1Result, sideYard2Result,
-									 * errors); } else if (buildingHeight.compareTo(BigDecimal.valueOf(16)) <= 0) {
-									 * checkSideYardUptoSixteenMts(pl, block.getBuilding(), buildingHeight,
-									 * block.getName(), setback.getLevel(), plot, minlength, max, minMeanlength,
-									 * maxMeanLength, occupancy.getTypeHelper(), sideYard1Result, sideYard2Result,
-									 * errors); } else if (buildingHeight.compareTo(BigDecimal.valueOf(16)) > 0) {
-									 * checkSideYardAboveSixteenMts(pl, block.getBuilding(), buildingHeight,
-									 * block.getName(), setback.getLevel(), plot, minlength, max, minMeanlength,
-									 * maxMeanLength, occupancy.getTypeHelper(), sideYard1Result, sideYard2Result);
-									 * }
-									 */
-								} /*
-									 * else if (G.equalsIgnoreCase(occupancy.getTypeHelper().getType().getCode())) {
-									 * checkSideYardForIndustrial(pl, block.getBuilding(), buildingHeight,
-									 * block.getName(), setback.getLevel(), plot, minlength, max, minMeanlength,
-									 * maxMeanLength, occupancy.getTypeHelper(), sideYard1Result, sideYard2Result);
-									 * } else { checkSideYardForOtherOccupancies(pl, block.getBuilding(),
-									 * buildingHeight, block.getName(), setback.getLevel(), plot, minlength, max,
-									 * minMeanlength, maxMeanLength, occupancy.getTypeHelper(), sideYard1Result,
-									 * sideYard2Result); }
-									 */
-
-                            }
-
-                            addSideYardResult(pl, errors, sideYard1Result, sideYard2Result);
-                        }
-                        
-                        if (pl.getPlanInformation() != null
-                                && pl.getPlanInformation().getWidthOfPlot().compareTo(BigDecimal.valueOf(10)) <= 0) {
-                            //exemptSideYardForAAndF(pl, block, sideYard1Result, sideYard2Result);
-                        }
-                    } else {
-                        if (pl.getPlanInformation() != null &&
-                                pl.getPlanInformation().getWidthOfPlot().compareTo(BigDecimal.valueOf(10)) <= 0) {
-                            //exemptSideYardForAAndF(pl, block, sideYard1Result, sideYard2Result);
-                            //addSideYardResult(pl, errors,sideYard1Result, sideYard2Result);
-                        }
-                    }
-                       
-                }
-            }
+        for (Block block : pl.getBlocks()) {
+            processBlockForSideYard(pl, block, errors);
         }
-
     }
+    /**
+     * Processes side yard validation for a specific building block.
+     * Sets up scrutiny details and processes each setback level.
+     *
+     * @param pl The building plan
+     * @param block The building block to process
+     * @param errors Map to collect validation errors
+     */
+    private void processBlockForSideYard(Plan pl, Block block, HashMap<String, String> errors) {
+        scrutinyDetail = new ScrutinyDetail();
+        scrutinyDetail.addColumnHeading(1, RULE_NO);
+        scrutinyDetail.addColumnHeading(2, LEVEL);
+        scrutinyDetail.addColumnHeading(3, OCCUPANCY);
+        scrutinyDetail.addColumnHeading(4, SIDENUMBER);
+        scrutinyDetail.addColumnHeading(5, FIELDVERIFIED);
+        scrutinyDetail.addColumnHeading(6, PERMISSIBLE);
+        scrutinyDetail.addColumnHeading(7, PROVIDED);
+        scrutinyDetail.addColumnHeading(8, STATUS);
+        scrutinyDetail.setHeading(SIDE_YARD_DESC);
+
+        SideYardResult sideYard1Result = new SideYardResult();
+        SideYardResult sideYard2Result = new SideYardResult();
+
+        for (SetBack setback : block.getSetBacks()) {
+            processSetback(pl, block, setback, sideYard1Result, sideYard2Result, errors);
+        }
+    }
+
+    /**
+     * Processes individual setback levels and validates side yard requirements.
+     * Handles both basement and above-ground level validations.
+     *
+     * @param pl The building plan
+     * @param block The building block
+     * @param setback The setback level being processed
+     * @param sideYard1Result Result object for side yard 1
+     * @param sideYard2Result Result object for side yard 2
+     * @param errors Map to collect validation errors
+     */
+
+    private void processSetback(Plan pl, Block block, SetBack setback,
+                                 SideYardResult sideYard1Result, SideYardResult sideYard2Result,
+                                 HashMap<String, String> errors) {
+
+        Yard sideYard1 = getValidSideYard(setback.getSideYard1(), pl, block, sideYard1Result, sideYard2Result);
+        Yard sideYard2 = getValidSideYard(setback.getSideYard2(), pl, block, sideYard1Result, sideYard2Result);
+
+        if (sideYard1 != null || sideYard2 != null) {
+            BigDecimal buildingHeight = computeBuildingHeight(block, sideYard1, sideYard2);
+            double[] minMax = getMinMaxDistances(sideYard1, sideYard2);
+
+            for (Occupancy occupancy : block.getBuilding().getTotalArea()) {
+                scrutinyDetail.setKey(BLOCK + block.getName() + UNDERSCORE + (setback.getLevel() < 0 ? BASEMENT_SIDE_YARD: SIDE_SETBACK));
+
+                if (setback.getLevel() < 0) {
+                    checkSideYardBasement(pl, block.getBuilding(), buildingHeight, block.getName(), setback.getLevel(),
+                            pl.getPlot(), minMax[0], minMax[1], 0, 0,
+                            occupancy.getTypeHelper(), sideYard1Result, sideYard2Result);
+                }
+
+                if (isApplicableSubtype(occupancy)) {
+                    if (buildingHeight.compareTo(BigDecimal.valueOf(10)) <= 0
+                            && block.getBuilding().getFloorsAboveGround().compareTo(BigDecimal.valueOf(3)) <= 0) {
+                        checkSideYardCommon(pl, block.getBuilding(), buildingHeight, block.getName(), setback.getLevel(),
+                                pl.getPlot(), minMax[0], minMax[1], occupancy.getTypeHelper(), sideYard1Result, sideYard2Result);
+                    }
+                }
+
+                addSideYardResult(pl, errors, sideYard1Result, sideYard2Result);
+            }
+
+        } else if (pl.getPlanInformation() != null &&
+                pl.getPlanInformation().getWidthOfPlot().compareTo(BigDecimal.valueOf(10)) <= 0) {
+            // Commented logic retained
+        }
+    }
+
+    /**
+     * Validates and returns a side yard if it meets minimum requirements.
+     * Exempts certain occupancy types from side yard requirements.
+     *
+     * @param yard The yard to validate
+     * @param pl The building plan
+     * @param block The building block
+     * @param sideYard1Result Result object for side yard 1
+     * @param sideYard2Result Result object for side yard 2
+     * @return Valid yard or null if exempt/invalid
+     */
+
+    private Yard getValidSideYard(Yard yard, Plan pl, Block block,
+                                   SideYardResult sideYard1Result, SideYardResult sideYard2Result) {
+        if (yard != null && yard.getMean().compareTo(BigDecimal.ZERO) > 0) {
+            return yard;
+        } else {
+            exemptSideYardForAAndF(pl, block, sideYard1Result, sideYard2Result);
+            return null;
+        }
+    }
+
+    /**
+     * Computes the effective building height for side yard calculations.
+     * Uses the maximum height from available yard heights or building height.
+     *
+     * @param block The building block
+     * @param sideYard1 First side yard
+     * @param sideYard2 Second side yard
+     * @return The computed building height
+     */
+
+    private BigDecimal computeBuildingHeight(Block block, Yard sideYard1, Yard sideYard2) {
+        if (sideYard1 != null && sideYard1.getHeight() != null && sideYard1.getHeight().compareTo(BigDecimal.ZERO) > 0 &&
+            sideYard2 != null && sideYard2.getHeight() != null && sideYard2.getHeight().compareTo(BigDecimal.ZERO) > 0) {
+            return sideYard1.getHeight().compareTo(sideYard2.getHeight()) >= 0
+                    ? sideYard1.getHeight() : sideYard2.getHeight();
+        } else if (sideYard1 != null && sideYard1.getHeight() != null && sideYard1.getHeight().compareTo(BigDecimal.ZERO) > 0) {
+            return sideYard1.getHeight();
+        } else if (sideYard2 != null && sideYard2.getHeight() != null && sideYard2.getHeight().compareTo(BigDecimal.ZERO) > 0) {
+            return sideYard2.getHeight();
+        } else {
+            return block.getBuilding().getBuildingHeight();
+        }
+    }
+
+    /**
+     * Extracts minimum and maximum distances from the two side yards.
+     *
+     * @param sideYard1 First side yard
+     * @param sideYard2 Second side yard
+     * @return Array containing [min, max] distances
+     */
+    private double[] getMinMaxDistances(Yard sideYard1, Yard sideYard2) {
+        double min = 0;
+        double max = 0;
+        if (sideYard1 != null && sideYard2 != null) {
+            if (sideYard1.getMinimumDistance().doubleValue() < sideYard2.getMinimumDistance().doubleValue()) {
+                min = sideYard1.getMinimumDistance().doubleValue();
+                max = sideYard2.getMinimumDistance().doubleValue();
+            } else {
+                min = sideYard2.getMinimumDistance().doubleValue();
+                max = sideYard1.getMinimumDistance().doubleValue();
+            }
+        } else if (sideYard1 != null) {
+            max = sideYard1.getMinimumDistance().doubleValue();
+        } else if (sideYard2 != null) {
+            min = sideYard2.getMinimumDistance().doubleValue();
+        }
+        return new double[]{min, max};
+    }
+
+    /**
+     * Checks if the occupancy subtype is applicable for residential side yard rules.
+     *
+     * @param occupancy The occupancy to check
+     * @return true if applicable for residential rules
+     */
+    private boolean isApplicableSubtype(Occupancy occupancy) {
+        return occupancy.getTypeHelper().getSubtype() != null &&
+                (A_R.equalsIgnoreCase(occupancy.getTypeHelper().getSubtype().getCode())
+                        || A_AF.equalsIgnoreCase(occupancy.getTypeHelper().getSubtype().getCode())
+                        || A_PO.equalsIgnoreCase(occupancy.getTypeHelper().getSubtype().getCode()));
+    }
+
     // Added by Bimal 18-March-2924 to check Side yard based on plot are not on height
     private void checkSideYardCommon(final Plan pl, Building building, BigDecimal buildingHeight, String blockName,
             Integer level, final Plot plot, final double min, final double max, final OccupancyTypeHelper mostRestrictiveOccupancy, SideYardResult sideYard1Result, SideYardResult sideYard2Result) {
 
     	BigDecimal plotArea = pl.getPlot().getArea();
         String rule = SIDE_YARD_DESC;
-        String subRule = RULE_35;
+        String subRule = RULE_35_T9;
 //        Boolean valid2 = false;
 //        Boolean valid1 = false;
 //        BigDecimal side2val = BigDecimal.ZERO;
@@ -340,6 +296,24 @@ public class SideYardService extends GeneralRule {
         			mostRestrictiveOccupancy, rule, subRule, buildingHeight, plotArea, sideYard1Result,sideYard2Result);
         }
     }
+
+    /**
+     * Validates side yard requirements for residential buildings based on plot area.
+     * Uses plot area-based calculations instead of height-based rules.
+     *
+     * @param pl The building plan
+     * @param blockName Name of the building block
+     * @param level The setback level
+     * @param min Minimum side yard distance
+     * @param mostRestrictiveOccupancy The occupancy type
+     * @param rule The applicable rule
+     * @param subRule The sub-rule reference
+     * @param buildingHeight Height of the building
+     * @param plotArea Area of the plot
+     * @param sideYard1Result Result object for side yard 1
+     * @param sideYard2Result Result object for side yard 2
+     */
+
     // Added by Bimal 18-March-2924 to check Side yard based on plot are not on height
     private void processSideYardResidential(Plan pl, String blockName, Integer level, final double min,
     		final OccupancyTypeHelper mostRestrictiveOccupancy, String rule, String subRule,
@@ -352,7 +326,7 @@ public class SideYardService extends GeneralRule {
 
     	if (plotArea.compareTo(MIN_PLOT_AREA) <= 0) {
     		// Plot area is less than zero
-    		errors.put("Plot Area Error:", "Plot area cannot be less than " + MIN_PLOT_AREA);
+    		errors.put(PLOT_AREA_ERROR, PLOT_AREA_CANNOT_BE_LESS + MIN_PLOT_AREA);
     	} else if (plotArea.compareTo(PLOT_AREA_100_SQM) <= 0) {
     		// Plot area is less than or equal to 100 sqm
     		minVal = BigDecimal.valueOf(Math.max(buildingHeight.divide(BigDecimal.valueOf(FIVE_MTR)).doubleValue(), TWO_MTR)); // 1/5th of buildingHeight or 2.0 meters, whichever is highest
@@ -380,7 +354,7 @@ public class SideYardService extends GeneralRule {
     	boolean valid = validateMinimumAndMeanValue(BigDecimal.valueOf(min), minVal, plotArea);
     	if(!valid) {
 	    	LOG.info("Side Yard Service: min value validity False: actual/expected :"+min+"/"+minVal);
-	    	errors.put("Minimum and Mean Value Validation", "Minimum value is less than the required minimum " +min+"/"+minVal);
+	    	errors.put(MIN_AND_MEAN_VALUE, MIN_LESS_REQ_MIN +min+ SLASH +minVal);
 	    	
 	    }
 	    else {
@@ -389,14 +363,23 @@ public class SideYardService extends GeneralRule {
     	compareSideYardResult(blockName, minVal, BigDecimal.valueOf(min),
     			mostRestrictiveOccupancy, subRule, rule, valid, level, sideYard1Result, sideYard2Result);
     }
-    
+
+    /**
+     * Validates minimum side yard distance against required values.
+     * Plots ≤200 sqm are exempt from minimum distance requirements.
+     *
+     * @param min Actual minimum distance
+     * @param minval Required minimum distance
+     * @param plotArea Area of the plot
+     * @return true if validation passes
+     */
     private Boolean validateMinimumAndMeanValue(final BigDecimal min,  final BigDecimal minval, BigDecimal plotArea) {
         Boolean valid = false;
 
         if (plotArea.compareTo(PLOT_AREA_200_SQM) <= 0) {
             // Plot area is up to 200 sqm
             valid = true;
-            LOG.info("Plot less than 200Sqm excepted Distance is optional so true in all cases");
+            LOG.info(PLOT_LESS_200SQM_EXPECTED_DISTANCE_TRUE);
         } else {
             // Plot area is more than 200 sqm
             if (min.compareTo(minval) >= 0 )
@@ -406,6 +389,21 @@ public class SideYardService extends GeneralRule {
         return valid;
     }
 
+    /**
+     * Compares and updates side yard results with validation outcomes.
+     * Sets the same values for both side yards assuming symmetric requirements.
+     *
+     * @param blockName Name of the building block
+     * @param exptDistance Expected minimum distance
+     * @param actualDistance Actual provided distance
+     * @param mostRestrictiveOccupancy The occupancy type
+     * @param subRule The sub-rule reference
+     * @param rule The applicable rule
+     * @param valid Validation result
+     * @param level The setback level
+     * @param sideYard1Result Result object for side yard 1
+     * @param sideYard2Result Result object for side yard 2
+     */
     // Added by Bimal 18-March-2924 to check Side yard based on plot are not on height
     private void compareSideYardResult(String blockName, BigDecimal exptDistance, BigDecimal actualDistance,
             OccupancyTypeHelper mostRestrictiveOccupancy, String subRule, String rule, Boolean valid, Integer level, SideYardResult sideYard1Result, SideYardResult sideYard2Result) {
@@ -425,7 +423,7 @@ public class SideYardService extends GeneralRule {
         sideYard1Result.actualDistance = actualDistance;
         sideYard1Result.expectedDistance = exptDistance;
         sideYard1Result.status = valid;
-        sideYard1Result.desc = "Plot less than 200Sqm excepted Distance is optional so true in all cases";
+        sideYard1Result.desc = PLOT_LESS_200SQM_EXPECTED_DISTANCE_TRUE;
         LOG.info("SideYard1Result: actualDistance/expectedDistance and status:" + sideYard1Result.actualDistance +"/"+sideYard1Result.expectedDistance +"and "+sideYard1Result.status);
         // sideYard2Result = sideYard1Result; for both side assuming same value
         sideYard2Result.rule = rule;
@@ -435,7 +433,7 @@ public class SideYardService extends GeneralRule {
         sideYard2Result.level = level;
         sideYard2Result.actualDistance = actualDistance;
         sideYard2Result.expectedDistance = exptDistance;
-        sideYard2Result.desc = "Plot less than 200Sqm excepted Distance is optional so true in all cases";
+        sideYard2Result.desc = PLOT_LESS_200SQM_EXPECTED_DISTANCE_TRUE;
         if (valid) {
         	// Set status for the side yard result
             sideYard2Result.status = valid;
@@ -447,61 +445,72 @@ public class SideYardService extends GeneralRule {
         }
     }
 
-    
+    /**
+     * Adds side yard validation results to the plan's scrutiny details.
+     * Creates detailed reports for both side yards with acceptance status.
+     *
+     * @param pl The building plan
+     * @param errors Map of validation errors
+     * @param sideYard1Result Result object for side yard 1
+     * @param sideYard2Result Result object for side yard 2
+     */
+
     private void addSideYardResult(final Plan pl, HashMap<String, String> errors, SideYardResult sideYard1Result,
             SideYardResult sideYard2Result) {
         if (sideYard1Result != null) {
-            Map<String, String> details = new HashMap<>();
-            details.put(RULE_NO, sideYard1Result.subRule);
-            details.put(LEVEL,
-                    sideYard1Result.level != null ? sideYard1Result.level.toString() : "");
-            details.put(OCCUPANCY, sideYard1Result.occupancy);
-
-            details.put(FIELDVERIFIED, MINIMUMLABEL);
-            details.put(PERMISSIBLE, sideYard1Result.expectedDistance.toString());
-            details.put(PROVIDED, sideYard1Result.actualDistance.toString());
-
-            details.put(SIDENUMBER, SIDE_YARD1_DESC);
-
+            ReportScrutinyDetail detail = new ReportScrutinyDetail();
+            detail.setRuleNo(sideYard1Result.subRule);
+            detail.setLevel(sideYard1Result.level != null ? sideYard1Result.level.toString() : EMPTY_STRING);
+            detail.setOccupancy(sideYard1Result.occupancy);
+            detail.setFieldVerified(MINIMUMLABEL);
+            detail.setPermissible(sideYard1Result.expectedDistance.toString());
+            detail.setProvided(sideYard1Result.actualDistance.toString());
+            detail.setSideNumber(SIDE_YARD1_DESC);
             if (sideYard1Result.status) {
-                details.put(STATUS, Result.Accepted.getResultVal());
+                detail.setStatus(Result.Accepted.getResultVal());
             } else {
-                details.put(STATUS, Result.Not_Accepted.getResultVal());
+                detail.setStatus(Result.Not_Accepted.getResultVal());
             }
 
-            scrutinyDetail.getDetail().add(details);
-            pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+            Map<String, String> details = mapReportDetails(detail);
+            addScrutinyDetailtoPlan(scrutinyDetail, pl, details);
         }
 
         if (errors.isEmpty()) {
             if (sideYard2Result != null) {
-                Map<String, String> detailsSideYard2 = new HashMap<>();
-                detailsSideYard2.put(RULE_NO, sideYard2Result.subRule);
-                detailsSideYard2.put(LEVEL,
-                        sideYard2Result.level != null ? sideYard2Result.level.toString() : "");
-                detailsSideYard2.put(OCCUPANCY, sideYard2Result.occupancy);
-                detailsSideYard2.put(SIDENUMBER, SIDE_YARD2_DESC);
-
-                detailsSideYard2.put(FIELDVERIFIED, MINIMUMLABEL);
-                detailsSideYard2.put(PERMISSIBLE, sideYard2Result.expectedDistance.toString());
-                detailsSideYard2.put(PROVIDED, sideYard2Result.actualDistance.toString());
-                // }
+                ReportScrutinyDetail detail2 = new ReportScrutinyDetail();
+                detail2.setRuleNo(sideYard2Result.subRule);
+                detail2.setLevel(sideYard2Result.level != null ? sideYard2Result.level.toString() : EMPTY_STRING);
+                detail2.setOccupancy(sideYard2Result.occupancy);
+                detail2.setFieldVerified(MINIMUMLABEL);
+                detail2.setPermissible(sideYard2Result.expectedDistance.toString());
+                detail2.setProvided(sideYard2Result.actualDistance.toString());
+                detail2.setSideNumber(SIDE_YARD2_DESC);
                 if (sideYard2Result.status) {
-                    detailsSideYard2.put(STATUS, Result.Accepted.getResultVal());
+                    detail2.setStatus(Result.Accepted.getResultVal());
                 } else {
-                    detailsSideYard2.put(STATUS, Result.Not_Accepted.getResultVal());
+                    detail2.setStatus(Result.Not_Accepted.getResultVal());
                 }
 
-                scrutinyDetail.getDetail().add(detailsSideYard2);
-                pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+                Map<String, String> details = mapReportDetails(detail2);
+                addScrutinyDetailtoPlan(scrutinyDetail, pl, details);
             }
         }
     }
 
+    /**
+     * Exempts certain occupancy types (A and F) from side yard requirements.
+     * Removes related validation errors for exempt occupancies.
+     *
+     * @param pl The building plan
+     * @param block The building block
+     * @param sideYard1Result Result object for side yard 1
+     * @param sideYard2Result Result object for side yard 2
+     */
     private void exemptSideYardForAAndF(final Plan pl, Block block, SideYardResult sideYard1Result,
             SideYardResult sideYard2Result) {
         for (final Occupancy occupancy : block.getBuilding().getTotalArea()) {
-            scrutinyDetail.setKey("Block_" + block.getName() + "_" + "Side Setback");
+            scrutinyDetail.setKey(BLOCK + block.getName() + UNDERSCORE + SIDE_SETBACK);
             if (occupancy.getTypeHelper().getType() != null
                     && A.equalsIgnoreCase(occupancy.getTypeHelper().getType().getCode())
                     || F.equalsIgnoreCase(occupancy.getTypeHelper().getType().getCode())) {
@@ -514,28 +523,48 @@ public class SideYardService extends GeneralRule {
                 if (pl.getErrors().containsKey(SIDE_YARD_DESC)) {
                     pl.getErrors().remove(SIDE_YARD_DESC);
                 }
-                if (pl.getErrors().containsValue("BLK_" + block.getNumber() + "_LVL_0_SIDE_SETBACK1 not defined in the plan.")) {
-                    pl.getErrors().remove("", "BLK_" + block.getNumber() + "_LVL_0_SIDE_SETBACK1 not defined in the plan.");
+                if (pl.getErrors().containsValue(BLK_STRING + block.getNumber() + LVL_SIDE_SETBACK_1_NOT_DEFINED_PLAN)) {
+                    pl.getErrors().remove(EMPTY_STRING, BLK_STRING + block.getNumber() + LVL_SIDE_SETBACK_1_NOT_DEFINED_PLAN);
                 }
-                if (pl.getErrors().containsValue("BLK_" + block.getNumber() + "_LVL_0_SIDE_SETBACK2 not defined in the plan.")) {
-                    pl.getErrors().remove("", "BLK_" + block.getNumber() + "_LVL_0_SIDE_SETBACK2 not defined in the plan.");
+                if (pl.getErrors().containsValue(BLK_STRING + block.getNumber() + LVL_SIDE_SETBACK_2_NOT_DEFINED_PLAN)) {
+                    pl.getErrors().remove(EMPTY_STRING, BLK_STRING + block.getNumber() + LVL_SIDE_SETBACK_2_NOT_DEFINED_PLAN);
                 }
                 if (pl.getErrors().containsValue(
-    					"Side Setback 1 of block" + block.getNumber() + "at level zero  not defined in the plan.")) {
-    				pl.getErrors().remove("",
-    						"Side Setback 1 of block" + block.getNumber() + "at level zero  not defined in the plan.");
+    					SIDE_SETBACK_1_BLOCK + block.getNumber() + LVL_0_NOT_DEFINED_PLAN)) {
+    				pl.getErrors().remove(EMPTY_STRING,
+    						SIDE_SETBACK_1_BLOCK + block.getNumber() + LVL_0_NOT_DEFINED_PLAN);
     			}
 
             }
 
             compareSideYard2Result(block.getName(), BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO,
-                    BigDecimal.ZERO, occupancy.getTypeHelper(), sideYard2Result, true, RULE_35, SIDE_YARD_DESC,
+                    BigDecimal.ZERO, occupancy.getTypeHelper(), sideYard2Result, true, RULE_35_T9, SIDE_YARD_DESC,
                     0);
             compareSideYard1Result(block.getName(), BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO,
-                    BigDecimal.ZERO, occupancy.getTypeHelper(), sideYard1Result, true, RULE_35, SIDE_YARD_DESC,
+                    BigDecimal.ZERO, occupancy.getTypeHelper(), sideYard1Result, true, RULE_35_T9, SIDE_YARD_DESC,
                     0);
         }
     }
+
+    /**
+     * Validates side yard requirements for buildings up to 10 meters height.
+     * Handles different occupancy types (residential, commercial) and applies appropriate rules
+     * based on plot width and land use zone.
+     *
+     * @param pl The building plan containing plot and plan information
+     * @param building The building being validated
+     * @param buildingHeight Height of the building
+     * @param blockName Name of the building block
+     * @param level Floor level being checked
+     * @param plot The plot containing the building
+     * @param min Minimum side yard distance measured
+     * @param max Maximum side yard distance measured
+     * @param minMeanlength Mean length for minimum side
+     * @param maxMeanLength Mean length for maximum side
+     * @param mostRestrictiveOccupancy The most restrictive occupancy type
+     * @param sideYard1Result Result object for side yard 1 validation
+     * @param sideYard2Result Result object for side yard 2 validation
+     */
 
     private void checkSideYardUptoTenMts(final Plan pl, Building building, BigDecimal buildingHeight, String blockName,
             Integer level, final Plot plot, final double min, final double max, double minMeanlength,
@@ -543,7 +572,7 @@ public class SideYardService extends GeneralRule {
             SideYardResult sideYard2Result) {
 
         String rule = SIDE_YARD_DESC;
-        String subRule = RULE_35;
+        String subRule = RULE_35_T9;
         Boolean valid2 = false;
         Boolean valid1 = false;
         BigDecimal side2val = BigDecimal.ZERO;
@@ -573,6 +602,28 @@ public class SideYardService extends GeneralRule {
         }
     }
 
+    /**
+     * Validates residential side yard requirements for buildings up to 10 meters height.
+     * Sets side yard values based on plot width ranges and validates against measured distances.
+     *
+     * @param pl The building plan
+     * @param blockName Name of the building block
+     * @param level Floor level being checked
+     * @param min Minimum side yard distance measured
+     * @param max Maximum side yard distance measured
+     * @param minMeanlength Mean length for minimum side
+     * @param maxMeanLength Mean length for maximum side
+     * @param mostRestrictiveOccupancy The most restrictive occupancy type
+     * @param sideYard1Result Result object for side yard 1 validation
+     * @param sideYard2Result Result object for side yard 2 validation
+     * @param rule Main rule description
+     * @param subRule Specific sub-rule reference
+     * @param valid2 Validation status for side yard 2
+     * @param valid1 Validation status for side yard 1
+     * @param side2val Required value for side yard 2
+     * @param side1val Required value for side yard 1
+     * @param widthOfPlot Width of the plot
+     */
     private void checkResidentialUptoTenMts(Plan pl, String blockName, Integer level, final double min, final double max,
             double minMeanlength, double maxMeanLength, final OccupancyTypeHelper mostRestrictiveOccupancy,
             SideYardResult sideYard1Result, SideYardResult sideYard2Result, String rule, String subRule, Boolean valid2,
@@ -623,6 +674,24 @@ public class SideYardService extends GeneralRule {
                 level);
     }
 
+    /**
+     * Validates basement side yard requirements for residential and commercial occupancies.
+     * Applies specific rules for plots up to 300 sqm area.
+     *
+     * @param pl The building plan
+     * @param building The building being validated
+     * @param buildingHeight Height of the building
+     * @param blockName Name of the building block
+     * @param level Floor level being checked
+     * @param plot The plot containing the building
+     * @param min Minimum side yard distance measured
+     * @param max Maximum side yard distance measured
+     * @param minMeanlength Mean length for minimum side
+     * @param maxMeanLength Mean length for maximum side
+     * @param mostRestrictiveOccupancy The most restrictive occupancy type
+     * @param sideYard1Result Result object for side yard 1 validation
+     * @param sideYard2Result Result object for side yard 2 validation
+     */
     private void checkSideYardBasement(final Plan pl, Building building, BigDecimal buildingHeight, String blockName,
             Integer level, final Plot plot, final double min, final double max, double minMeanlength,
             double maxMeanLength, final OccupancyTypeHelper mostRestrictiveOccupancy, SideYardResult sideYard1Result,
@@ -659,6 +728,25 @@ public class SideYardService extends GeneralRule {
             }
         }
     }
+    
+    /**
+     * Validates side yard requirements for industrial occupancy buildings.
+     * Sets side yard values based on plot area and width combinations.
+     *
+     * @param pl The building plan
+     * @param building The building being validated
+     * @param buildingHeight Height of the building
+     * @param blockName Name of the building block
+     * @param level Floor level being checked
+     * @param plot The plot containing the building
+     * @param min Minimum side yard distance measured
+     * @param max Maximum side yard distance measured
+     * @param minMeanlength Mean length for minimum side
+     * @param maxMeanLength Mean length for maximum side
+     * @param mostRestrictiveOccupancy The most restrictive occupancy type
+     * @param sideYard1Result Result object for side yard 1 validation
+     * @param sideYard2Result Result object for side yard 2 validation
+     */
 
     private void checkSideYardForIndustrial(final Plan pl, Building building, BigDecimal buildingHeight,
             String blockName, Integer level, final Plot plot, final double min, final double max, double minMeanlength,
@@ -666,7 +754,7 @@ public class SideYardService extends GeneralRule {
             SideYardResult sideYard2Result) {
 
         String rule = SIDE_YARD_DESC;
-        String subRule = RULE_35;
+        String subRule = RULE_35_T9;
         Boolean valid2 = false;
         Boolean valid1 = false;
         BigDecimal side2val = BigDecimal.ZERO;
@@ -723,13 +811,32 @@ public class SideYardService extends GeneralRule {
 
     }
 
+    /**
+     * Validates side yard requirements for various occupancy types including educational,
+     * institutional, assembly, malls, hazardous, affordable housing, and IT/ITES.
+     *
+     * @param pl The building plan
+     * @param building The building being validated
+     * @param buildingHeight Height of the building
+     * @param blockName Name of the building block
+     * @param level Floor level being checked
+     * @param plot The plot containing the building
+     * @param min Minimum side yard distance measured
+     * @param max Maximum side yard distance measured
+     * @param minMeanlength Mean length for minimum side
+     * @param maxMeanLength Mean length for maximum side
+     * @param mostRestrictiveOccupancy The most restrictive occupancy type
+     * @param sideYard1Result Result object for side yard 1 validation
+     * @param sideYard2Result Result object for side yard 2 validation
+     */
+
     private void checkSideYardForOtherOccupancies(final Plan pl, Building building, BigDecimal buildingHeight,
             String blockName, Integer level, final Plot plot, final double min, final double max, double minMeanlength,
             double maxMeanLength, final OccupancyTypeHelper mostRestrictiveOccupancy, SideYardResult sideYard1Result,
             SideYardResult sideYard2Result) {
 
         String rule = SIDE_YARD_DESC;
-        String subRule = RULE_35;
+        String subRule = RULE_35_T9;
         Boolean valid2 = false;
         Boolean valid1 = false;
         BigDecimal side2val = BigDecimal.ZERO;
@@ -786,13 +893,32 @@ public class SideYardService extends GeneralRule {
 
     }
 
+    /**
+     * Validates side yard requirements for buildings up to 12 meters height.
+     * Handles residential and commercial occupancies with specific width restrictions.
+     *
+     * @param pl The building plan
+     * @param building The building being validated
+     * @param buildingHeight Height of the building
+     * @param blockName Name of the building block
+     * @param level Floor level being checked
+     * @param plot The plot containing the building
+     * @param min Minimum side yard distance measured
+     * @param max Maximum side yard distance measured
+     * @param minMeanlength Mean length for minimum side
+     * @param maxMeanLength Mean length for maximum side
+     * @param mostRestrictiveOccupancy The most restrictive occupancy type
+     * @param sideYard1Result Result object for side yard 1 validation
+     * @param sideYard2Result Result object for side yard 2 validation
+     * @param errors Map to collect validation errors
+     */
     private void checkSideYardUptoTwelveMts(final Plan pl, Building building, BigDecimal buildingHeight,
             String blockName, Integer level, final Plot plot, final double min, final double max, double minMeanlength,
             double maxMeanLength, final OccupancyTypeHelper mostRestrictiveOccupancy, SideYardResult sideYard1Result,
             SideYardResult sideYard2Result, HashMap<String, String> errors) {
 
         String rule = SIDE_YARD_DESC;
-        String subRule = RULE_35;
+        String subRule = RULE_35_T9;
         Boolean valid2 = false;
         Boolean valid1 = false;
         BigDecimal side2val = BigDecimal.ZERO;
@@ -822,14 +948,36 @@ public class SideYardService extends GeneralRule {
         }
     }
 
+    /**
+     * Validates residential side yard requirements for buildings up to 12 meters height.
+     * Prohibits construction for plots less than 10m width and sets progressive side yard values.
+     *
+     * @param pl The building plan
+     * @param blockName Name of the building block
+     * @param level Floor level being checked
+     * @param min Minimum side yard distance measured
+     * @param max Maximum side yard distance measured
+     * @param minMeanlength Mean length for minimum side
+     * @param maxMeanLength Mean length for maximum side
+     * @param mostRestrictiveOccupancy The most restrictive occupancy type
+     * @param sideYard1Result Result object for side yard 1 validation
+     * @param sideYard2Result Result object for side yard 2 validation
+     * @param errors Map to collect validation errors
+     * @param rule Main rule description
+     * @param subRule Specific sub-rule reference
+     * @param valid2 Validation status for side yard 2
+     * @param valid1 Validation status for side yard 1
+     * @param side2val Required value for side yard 2
+     * @param side1val Required value for side yard 1
+     * @param widthOfPlot Width of the plot
+     */
     private void checkResidentialUptoTwelveMts(final Plan pl, String blockName, Integer level, final double min,
             final double max, double minMeanlength, double maxMeanLength,
             final OccupancyTypeHelper mostRestrictiveOccupancy, SideYardResult sideYard1Result,
             SideYardResult sideYard2Result, HashMap<String, String> errors, String rule, String subRule, Boolean valid2,
             Boolean valid1, BigDecimal side2val, BigDecimal side1val, BigDecimal widthOfPlot) {
         if (widthOfPlot.compareTo(BigDecimal.valueOf(10)) <= 0) {
-            errors.put("uptoTwelveHeightUptoTenWidthSideYard",
-                    "No construction shall be permitted if width of plot is less than 10 and building height less than 12 having floors upto G+3.");
+            errors.put(TWELVE_HEIGHT_TEN_WIDTH_SIDE_YARD, NO_CONST_PERMIT_WIDTH_10_HEIGHT_12_G_3);
             pl.addErrors(errors);
         } else if (widthOfPlot.compareTo(BigDecimal.valueOf(10)) > 0
                 && widthOfPlot.compareTo(BigDecimal.valueOf(15)) <= 0) {
@@ -870,13 +1018,32 @@ public class SideYardService extends GeneralRule {
                 level);
     }
 
+    /**
+     * Validates side yard requirements for buildings up to 16 meters height.
+     * Routes to appropriate validation method based on occupancy type.
+     *
+     * @param pl The building plan
+     * @param building The building being validated
+     * @param buildingHeight Height of the building
+     * @param blockName Name of the building block
+     * @param level Floor level being checked
+     * @param plot The plot containing the building
+     * @param min Minimum side yard distance measured
+     * @param max Maximum side yard distance measured
+     * @param minMeanlength Mean length for minimum side
+     * @param maxMeanLength Mean length for maximum side
+     * @param mostRestrictiveOccupancy The most restrictive occupancy type
+     * @param sideYard1Result Result object for side yard 1 validation
+     * @param sideYard2Result Result object for side yard 2 validation
+     * @param errors Map to collect validation errors
+     */
     private void checkSideYardUptoSixteenMts(final Plan pl, Building building, BigDecimal buildingHeight,
             String blockName, Integer level, final Plot plot, final double min, final double max, double minMeanlength,
             double maxMeanLength, final OccupancyTypeHelper mostRestrictiveOccupancy, SideYardResult sideYard1Result,
             SideYardResult sideYard2Result, HashMap<String, String> errors) {
 
         String rule = SIDE_YARD_DESC;
-        String subRule = RULE_35;
+        String subRule = RULE_35_T9;
         Boolean valid2 = false;
         Boolean valid1 = false;
         BigDecimal side2val = SIDEVALUE_ONE;
@@ -906,6 +1073,27 @@ public class SideYardService extends GeneralRule {
         }
     }
 
+    /**
+     * Validates commercial side yard requirements for buildings up to 16 meters height.
+     * Sets side yard values based on plot width ranges with no requirements for plots ≤10m.
+     *
+     * @param blockName Name of the building block
+     * @param level Floor level being checked
+     * @param min Minimum side yard distance measured
+     * @param max Maximum side yard distance measured
+     * @param minMeanlength Mean length for minimum side
+     * @param maxMeanLength Mean length for maximum side
+     * @param mostRestrictiveOccupancy The most restrictive occupancy type
+     * @param sideYard1Result Result object for side yard 1 validation
+     * @param sideYard2Result Result object for side yard 2 validation
+     * @param rule Main rule description
+     * @param subRule Specific sub-rule reference
+     * @param valid2 Validation status for side yard 2
+     * @param valid1 Validation status for side yard 1
+     * @param side2val Required value for side yard 2
+     * @param side1val Required value for side yard 1
+     * @param widthOfPlot Width of the plot
+     */
     private void checkCommercialUptoSixteen(String blockName, Integer level, final double min, final double max,
             double minMeanlength, double maxMeanLength, final OccupancyTypeHelper mostRestrictiveOccupancy,
             SideYardResult sideYard1Result, SideYardResult sideYard2Result, String rule, String subRule, Boolean valid2,
@@ -951,14 +1139,35 @@ public class SideYardService extends GeneralRule {
                 level);
     }
 
+    /**
+     * Validates residential side yard requirements for buildings up to 16 meters height.
+     * Prohibits construction for plots ≤10m width and sets progressive side yard values.
+     *
+     * @param pl The building plan
+     * @param blockName Name of the building block
+     * @param level Floor level being checked
+     * @param min Minimum side yard distance measured
+     * @param max Maximum side yard distance measured
+     * @param minMeanlength Mean length for minimum side
+     * @param maxMeanLength Mean length for maximum side
+     * @param mostRestrictiveOccupancy The most restrictive occupancy type
+     * @param sideYard1Result Result object for side yard 1 validation
+     * @param sideYard2Result Result object for side yard 2 validation
+     * @param errors Map to collect validation errors
+     * @param rule Main rule description
+     * @param valid2 Validation status for side yard 2
+     * @param valid1 Validation status for side yard 1
+     * @param side2val Required value for side yard 2
+     * @param side1val Required value for side yard 1
+     * @param widthOfPlot Width of the plot
+     */
     private void checkResidentialUptoSixteen(final Plan pl, String blockName, Integer level, final double min,
             final double max, double minMeanlength, double maxMeanLength,
             final OccupancyTypeHelper mostRestrictiveOccupancy, SideYardResult sideYard1Result,
             SideYardResult sideYard2Result, HashMap<String, String> errors, String rule, Boolean valid2, Boolean valid1,
             BigDecimal side2val, BigDecimal side1val, BigDecimal widthOfPlot) {
         if (widthOfPlot.compareTo(BigDecimal.valueOf(10)) <= 0) {
-            errors.put("uptoSixteenHeightUptoTenWidthSideYard",
-                    "No construction shall be permitted if width of plot is less than 10 and building height less than 16 having floors upto G+4.");
+            errors.put(SIXTEEN_HEIGHT_TEN_WIDTH_SIDE_YARD, NO_CONST_PERMIT_WIDTH_10_HEIGHT_16_G_4);
             pl.addErrors(errors);
         } else if (widthOfPlot.compareTo(BigDecimal.valueOf(10)) > 0
                 && widthOfPlot.compareTo(BigDecimal.valueOf(15)) <= 0) {
@@ -999,6 +1208,24 @@ public class SideYardService extends GeneralRule {
                 rule, level);
     }
 
+    /**
+     * Validates side yard requirements for buildings above 16 meters height.
+     * Sets progressive side yard values based on building height ranges.
+     *
+     * @param pl The building plan
+     * @param building The building being validated
+     * @param blockBuildingHeight Height of the building block
+     * @param blockName Name of the building block
+     * @param level Floor level being checked
+     * @param plot The plot containing the building
+     * @param min Minimum side yard distance measured
+     * @param max Maximum side yard distance measured
+     * @param minMeanlength Mean length for minimum side
+     * @param maxMeanLength Mean length for maximum side
+     * @param mostRestrictiveOccupancy The most restrictive occupancy type
+     * @param sideYard1Result Result object for side yard 1 validation
+     * @param sideYard2Result Result object for side yard 2 validation
+     */
     private void checkSideYardAboveSixteenMts(final Plan pl, Building building, BigDecimal blockBuildingHeight,
             String blockName, Integer level, final Plot plot, final double min, final double max, double minMeanlength,
             double maxMeanLength, final OccupancyTypeHelper mostRestrictiveOccupancy, SideYardResult sideYard1Result,
@@ -1066,6 +1293,22 @@ public class SideYardService extends GeneralRule {
 
     }
 
+    /**
+     * Compares and updates side yard 1 validation results with the most restrictive requirements.
+     * Updates result object if current expected distance is greater than or equal to existing.
+     *
+     * @param blockName Name of the building block
+     * @param exptDistance Expected side yard distance
+     * @param actualDistance Actual measured distance
+     * @param expectedMeanDistance Expected mean distance (unused)
+     * @param actualMeanDistance Actual mean distance (unused)
+     * @param mostRestrictiveOccupancy The most restrictive occupancy type
+     * @param sideYard1Result Result object to update
+     * @param valid Validation status
+     * @param subRule Specific sub-rule reference
+     * @param rule Main rule description
+     * @param level Floor level
+     */
     private void compareSideYard1Result(String blockName, BigDecimal exptDistance, BigDecimal actualDistance,
             BigDecimal expectedMeanDistance, BigDecimal actualMeanDistance,
             OccupancyTypeHelper mostRestrictiveOccupancy, SideYardResult sideYard1Result, Boolean valid, String subRule,
@@ -1077,9 +1320,9 @@ public class SideYardService extends GeneralRule {
             occupancyName = mostRestrictiveOccupancy.getType().getName();
         if (exptDistance.compareTo(sideYard1Result.expectedDistance) >= 0) {
             if (exptDistance.compareTo(sideYard1Result.expectedDistance) == 0) {
-                sideYard1Result.rule = sideYard1Result.rule != null ? sideYard1Result.rule + "," + rule : rule;
+                sideYard1Result.rule = sideYard1Result.rule != null ? sideYard1Result.rule + COMMA + rule : rule;
                 sideYard1Result.occupancy = sideYard1Result.occupancy != null
-                        ? sideYard1Result.occupancy + "," + occupancyName
+                        ? sideYard1Result.occupancy + COMMA + occupancyName
                         : occupancyName;
             } else {
                 sideYard1Result.rule = rule;
@@ -1095,6 +1338,22 @@ public class SideYardService extends GeneralRule {
         }
     }
 
+    /**
+     * Compares and updates side yard 2 validation results with the most restrictive requirements.
+     * Updates result object if current expected distance is greater than or equal to existing.
+     *
+     * @param blockName Name of the building block
+     * @param exptDistance Expected side yard distance
+     * @param actualDistance Actual measured distance
+     * @param expectedMeanDistance Expected mean distance (unused)
+     * @param actualMeanDistance Actual mean distance (unused)
+     * @param mostRestrictiveOccupancy The most restrictive occupancy type
+     * @param sideYard2Result Result object to update
+     * @param valid Validation status
+     * @param subRule Specific sub-rule reference
+     * @param rule Main rule description
+     * @param level Floor level
+     */
     private void compareSideYard2Result(String blockName, BigDecimal exptDistance, BigDecimal actualDistance,
             BigDecimal expectedMeanDistance, BigDecimal actualMeanDistance,
             OccupancyTypeHelper mostRestrictiveOccupancy, SideYardResult sideYard2Result, Boolean valid, String subRule,
@@ -1106,9 +1365,9 @@ public class SideYardService extends GeneralRule {
             occupancyName = mostRestrictiveOccupancy.getType().getName();
         if (exptDistance.compareTo(sideYard2Result.expectedDistance) >= 0) {
             if (exptDistance.compareTo(sideYard2Result.expectedDistance) == 0) {
-                sideYard2Result.rule = sideYard2Result.rule != null ? sideYard2Result.rule + "," + rule : rule;
+                sideYard2Result.rule = sideYard2Result.rule != null ? sideYard2Result.rule + COMMA + rule : rule;
                 sideYard2Result.occupancy = sideYard2Result.occupancy != null
-                        ? sideYard2Result.occupancy + "," + occupancyName
+                        ? sideYard2Result.occupancy + COMMA + occupancyName
                         : occupancyName;
             } else {
                 sideYard2Result.rule = rule;
@@ -1124,6 +1383,12 @@ public class SideYardService extends GeneralRule {
         }
     }
 
+    /**
+     * Validates that at least one side yard is defined for non-existing blocks.
+     * Adds validation errors if no side yards are found.
+     *
+     * @param pl The building plan
+     */
     private void validateSideYardRule(final Plan pl) {
 
         for (Block block : pl.getBlocks()) {
@@ -1141,7 +1406,7 @@ public class SideYardService extends GeneralRule {
                 if (!sideYardDefined) {
                     HashMap<String, String> errors = new HashMap<>();
                     errors.put(SIDE_YARD_DESC,
-                            prepareMessage(OBJECTNOTDEFINED, SIDE_YARD_DESC + " for Block " + block.getName()));
+                            prepareMessage(OBJECTNOTDEFINED, SIDE_YARD_DESC + FOR_BLOCK + block.getName()));
                     pl.addErrors(errors);
                 }
             }

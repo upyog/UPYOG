@@ -64,6 +64,12 @@ public class ProcessInstance {
 	@JsonProperty("assignes")
 	private List<User> assignes;
 
+	/**
+	 * Adds a document to the list of documents associated with the process instance.
+	 *
+	 * @param documentsItem the document to add
+	 * @return the updated ProcessInstance object
+	 */
 	public ProcessInstance addDocumentsItem(Document documentsItem) {
 		if (this.documents == null) {
 			this.documents = new ArrayList<>();

@@ -43,6 +43,12 @@ public class Workflow {
 	@Valid
 	private List<Document> documents = null;
 
+	/**
+	 * Adds a document to the list of documents associated with the workflow.
+	 *
+	 * @param documentsItem The document to add.
+	 * @return The updated Workflow object.
+	 */
 	public Workflow addDocumentsItem(Document documentsItem) {
 		if (this.documents == null) {
 			this.documents = new ArrayList<>();

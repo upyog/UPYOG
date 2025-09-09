@@ -41,7 +41,7 @@ const ASSETSearchApplication = ({ isLoading, t, onSubmit, data, count, setShowTo
   // Get base path
 
   var base_url = window.location.origin;
-  const { data: actionState } = Digit.Hooks.useCustomMDMSV2(Digit.ULBService.getStateId(), "ASSET", [{ name: "Action" }],
+  const { data: actionState } = Digit.Hooks.useEnabledMDMS(Digit.ULBService.getStateId(), "ASSET", [{ name: "Action" }],
     {
       select: (data) => {
         const formattedData = data?.["ASSET"]?.["Action"]
@@ -55,7 +55,7 @@ const ASSETSearchApplication = ({ isLoading, t, onSubmit, data, count, setShowTo
   })
 
 
-  const { data: actionDetail } = Digit.Hooks.useCustomMDMSV2(Digit.ULBService.getStateId(), "ASSET", [{ name: "ActionOption" }], {
+  const { data: actionDetail } = Digit.Hooks.useEnabledMDMS(Digit.ULBService.getStateId(), "ASSET", [{ name: "ActionOption" }], {
     select: (data) => {
       const formattedData = data?.["ASSET"]?.["ActionOption"];
       const activeData = formattedData?.filter((item) => item.active === true);
@@ -115,7 +115,7 @@ const ASSETSearchApplication = ({ isLoading, t, onSubmit, data, count, setShowTo
         }
       });
       if(applicationDetails)
-      history.replace("/upyog-ui/employee/asset/assetservice/asset-process-depreciation-response", { ProcessDepreciation: applicationDetails });
+      history.replace("/upyog-ui/employee/asset/assetservice/asset-process-depreciation-response", { ProcessDepreciation: applicationDetails,  applicationNo});
     } catch (error) {
       setShowToast({ error: true, label: t("CS_SOMETHING_WENT_WRONG") });
     }

@@ -13,6 +13,12 @@ import org.springframework.stereotype.Repository;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * EwasteApplicationRepository is responsible for interacting with the database
+ * to perform CRUD operations on Ewaste applications.
+ * It uses JdbcTemplate for executing SQL queries and EwasteApplicationRowMapper
+ * for mapping the result set to EwasteApplication objects.
+ */
 @Slf4j
 @Repository
 public class EwasteApplicationRepository {
@@ -26,6 +32,12 @@ public class EwasteApplicationRepository {
 	@Autowired
 	private EwasteApplicationRowMapper eRowMapper;
 
+	/**
+	 * Retrieves a list of Ewaste applications based on the provided search criteria.
+	 *
+	 * @param searchCriteria The criteria used to filter the Ewaste applications.
+	 * @return A list of Ewaste applications that match the search criteria.
+	 */
 	public List<EwasteApplication> getApplication(EwasteApplicationSearchCriteria searchCriteria) {
 		List<Object> preparedStmtList = new ArrayList<>();
 		String query = queryBuilder1.getEwasteApplicationSearchQuery(searchCriteria, preparedStmtList);

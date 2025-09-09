@@ -58,7 +58,7 @@ const ADSSearch = ({ t, onSelect, config, userType, formData }) => {
   let ADSTypeData = [];
   let LocationData = [];
   let FaceId = [];
-  const { data: AdType } = Digit.Hooks.useCustomMDMS(Digit.ULBService.getStateId(), "Advertisement", [{ name: "AdType" }], {
+  const { data: AdType } = Digit.Hooks.useEnabledMDMS(Digit.ULBService.getStateId(), "Advertisement", [{ name: "AdType" }], {
     select: (data) => {
       const formattedData = data?.["Advertisement"]?.["AdType"].map((details) => {
         return { i18nKey: `${details.name}`, code: `${details.code}`, name: `${details.name}`, active: `${details.active}` };
@@ -66,7 +66,7 @@ const ADSSearch = ({ t, onSelect, config, userType, formData }) => {
       return formattedData;
     },
   });
-  const { data: LocationDetails } = Digit.Hooks.useCustomMDMS(Digit.ULBService.getStateId(), "Advertisement", [{ name: "Location" }], {
+  const { data: LocationDetails } = Digit.Hooks.useEnabledMDMS(Digit.ULBService.getStateId(), "Advertisement", [{ name: "Location" }], {
     select: (data) => {
       const formattedData = data?.["Advertisement"]?.["Location"].map((details) => {
         return { i18nKey: `${details.name}`, code: `${details.code}`, name: `${details.name}`, active: `${details.active}` };
@@ -74,7 +74,7 @@ const ADSSearch = ({ t, onSelect, config, userType, formData }) => {
       return formattedData;
     },
   });
-  const { data: Face } = Digit.Hooks.useCustomMDMS(Digit.ULBService.getStateId(), "Advertisement", [{ name: "FaceArea" }], {
+  const { data: Face } = Digit.Hooks.useEnabledMDMS(Digit.ULBService.getStateId(), "Advertisement", [{ name: "FaceArea" }], {
     select: (data) => {
       const formattedData = data?.["Advertisement"]?.["FaceArea"].map((details) => {
         return { i18nKey: `${details.name}`, code: `${details.code}`, name: `${details.name}`, active: `${details.active}` };
@@ -83,7 +83,7 @@ const ADSSearch = ({ t, onSelect, config, userType, formData }) => {
     },
   });
 
-  const { data: CalculationTypeData } = Digit.Hooks.useCustomMDMS(Digit.ULBService.getStateId(), "Advertisement", [{ name: "CalculationType" }],
+  const { data: CalculationTypeData } = Digit.Hooks.useEnabledMDMS(Digit.ULBService.getStateId(), "Advertisement", [{ name: "CalculationType" }],
     {
       select: (data) => {
         const formattedData = data?.["Advertisement"]?.["CalculationType"];
@@ -172,7 +172,6 @@ const ADSSearch = ({ t, onSelect, config, userType, formData }) => {
       ownerStep = { ...owner,Searchdata, cartDetails, adsType,selectNight,selectedLocation,selectedFace,fromDate,toDate,existingDataSet };
       onSelect(config.key, ownerStep, false, index);
     }
-    console.log("ownerStep",ownerStep);
   };
   const ABmenu = [
     {

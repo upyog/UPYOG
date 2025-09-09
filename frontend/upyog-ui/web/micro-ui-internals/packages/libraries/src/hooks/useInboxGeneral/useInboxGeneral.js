@@ -74,7 +74,7 @@ const inboxConfig = (tenantId, filters) => ({
     businessIdAliasForSearch: "applicationNo",
     fetchFilters: filterFunctions.SV,
     _searchFn: () => SVService.search({ tenantId, filters }),
-  },
+  }
 });
 
 const defaultCombineResponse = ({ totalCount, ...d }, wf) => {

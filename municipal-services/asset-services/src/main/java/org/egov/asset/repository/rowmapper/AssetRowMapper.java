@@ -83,6 +83,7 @@ public class AssetRowMapper implements ResultSetExtractor<List<Asset>> {
                         .assetUsage(rs.getString("assetUsage"))
                         .assetType(rs.getString("assetType"))
                         .assetStatus(rs.getString("assetStatus"))
+                        .assetAssignable(rs.getBoolean("assetAssignable"))
                         .build();
 
                 assetMap.put(id, currentAsset);

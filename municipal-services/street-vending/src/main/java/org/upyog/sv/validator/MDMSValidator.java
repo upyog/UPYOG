@@ -33,7 +33,7 @@ public class MDMSValidator {
 //			MdmsUtil.setMDMSDataMap(masterData);
 //		}
 
-		String[] masterArray = { StreetVendingConstants.VENDIING_ZONES, StreetVendingConstants.VENDING_ACTIVITY_TYPE,
+		String[] masterArray = { StreetVendingConstants.VENDING_ZONES, StreetVendingConstants.VENDING_ACTIVITY_TYPE,
 				StreetVendingConstants.DOCUMENTS};
 
 		log.info("Validating master data from MDMS for : "
@@ -56,8 +56,7 @@ public class MDMSValidator {
 	 */
 	public Map<String, List<String>> getAttributeValues(Object mdmsData) {
 
-		List<String> modulepaths = Arrays.asList(StreetVendingConstants.SV_JSONPATH_CODE,
-				StreetVendingConstants.COMMON_MASTER_JSONPATH_CODE);
+		List<String> modulepaths = Arrays.asList(StreetVendingConstants.SV_JSONPATH_CODE);
 		final Map<String, List<String>> mdmsResMap = new HashMap<>();
 		modulepaths.forEach(modulepath -> {
 			try {

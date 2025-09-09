@@ -3,12 +3,17 @@ import React, { useState,useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 import Timeline from "../components/Timeline";
 import { calculateAge } from "../utils";
+import { useLocation } from "react-router-dom";
 
-
+/**
+ * Component will render Applicant Details both citizen and employee side 
+ */
 
 const SVApplicantDetails = ({ t, config, onSelect, userType, formData,editdata,previousData }) => {
   let validation = {};
   const user = Digit.UserService.getUser().info;
+  const { pathname } = useLocation();
+
   const convertToObject = (gender) => {
     if (!gender) return null;
     switch (gender.toUpperCase()) {
@@ -39,13 +44,28 @@ const SVApplicantDetails = ({ t, config, onSelect, userType, formData,editdata,p
   const [tradeNumber, settradeNumber] = useState(formData?.owner?.units?.tradeNumber || formData?.owner?.tradeNumber || "");
   const [error, setError] = useState(null);
 
-  const [spouseDependentChecked, setSpouseDependentChecked] = useState(formData?.owner?.spouseDependentChecked || false);
-  const [dependentNameChecked, setDependentNameChecked] = useState(formData?.owner?.dependentNameChecked || false);
+  const [spouseDependentChecked, setSpouseDependentChecked] = useState(formData?.owner?.spouseDependentChecked || editdata?.vendorDetail?.[1]?.isInvolved || false);
+  const [dependentNameChecked, setDependentNameChecked] = useState(formData?.owner?.dependentNameChecked || editdata?.vendorDetail?.[2]?.isInvolved || false);
   const inputStyles = user.type === "EMPLOYEE" ? "50%" : "86%";
   const [showToast, setShowToast] = useState(null);
   const { control } = useForm();
 
-  const [fields, setFeilds] = useState((formData?.owner && formData?.owner?.units) || [{ vendorName: (previousData?.vendorDetail?.[0]?.name ||editdata?.vendorDetail?.[0]?.name ||(user?.type==="CITIZEN"?user?.name:"") || ""),userCategory:(Objectconvert(previousData?.vendorDetail?.[0]?.userCategory||editdata?.vendorDetail?.[0]?.userCategory)||""), vendorDateOfBirth:(previousData?.vendorDetail?.[0]?.dob||editdata?.vendorDetail?.[0]?.dob|| ""), gender: convertToObject(previousData?.vendorDetail?.[0]?.gender||editdata?.vendorDetail?.[0]?.gender)||"", fatherName: (previousData?.vendorDetail?.[0]?.fatherName||editdata?.vendorDetail?.[0]?.fatherName||""), spouseName: (previousData?.vendorDetail?.[1]?.name||editdata?.vendorDetail?.[1]?.name||""), mobileNumber: (previousData?.vendorDetail?.[0]?.mobileNo||editdata?.vendorDetail?.[0]?.mobileNo||(user?.type==="CITIZEN"?user?.mobileNumber:"") || ""), spouseDateBirth: (previousData?.vendorDetail?.[1]?.dob||editdata?.vendorDetail?.[1]?.dob|| ""), dependentName: (previousData?.vendorDetail?.[2]?.name||editdata?.vendorDetail?.[2]?.name||""), dependentDateBirth: (previousData?.vendorDetail?.[2]?.dob||editdata?.vendorDetail?.[2]?.dob||""), dependentGender: (convertToObject(previousData?.vendorDetail?.[2]?.gender||editdata?.vendorDetail?.[2]?.gender)||""), email:(previousData?.vendorDetail?.[0]?.emailId||editdata?.vendorDetail?.[0]?.emailId||(user?.type==="CITIZEN"?user?.emailId:"") || ""), tradeNumber:(previousData?.vendorDetail?.[0]?.tradeNumber||editdata?.vendorDetail?.[0]?.tradeNumber||"")}]);
+  const [fields, setFeilds] = useState(
+    (formData?.owner && formData?.owner?.units) || [{ 
+      vendorName: (previousData?.vendorDetail?.[0]?.name ||editdata?.vendorDetail?.[0]?.name ||(user?.type==="CITIZEN"?user?.name:"") || ""),
+      userCategory:(Objectconvert(previousData?.vendorDetail?.[0]?.userCategory||editdata?.vendorDetail?.[0]?.userCategory)||""), 
+      vendorDateOfBirth:(previousData?.vendorDetail?.[0]?.dob||editdata?.vendorDetail?.[0]?.dob|| ""), 
+      gender: convertToObject(previousData?.vendorDetail?.[0]?.gender||editdata?.vendorDetail?.[0]?.gender)||"", 
+      fatherName: (previousData?.vendorDetail?.[0]?.fatherName||editdata?.vendorDetail?.[0]?.fatherName||""), 
+      spouseName: (previousData?.vendorDetail?.[1]?.name||editdata?.vendorDetail?.[1]?.name||""), 
+      mobileNumber: (previousData?.vendorDetail?.[0]?.mobileNo||editdata?.vendorDetail?.[0]?.mobileNo||(user?.type==="CITIZEN"?user?.mobileNumber:"") || ""), 
+      spouseDateBirth: (previousData?.vendorDetail?.[1]?.dob||editdata?.vendorDetail?.[1]?.dob|| ""), 
+      dependentName: (previousData?.vendorDetail?.[2]?.name||editdata?.vendorDetail?.[2]?.name||""), 
+      dependentDateBirth: (previousData?.vendorDetail?.[2]?.dob||editdata?.vendorDetail?.[2]?.dob||""), 
+      dependentGender: (convertToObject(previousData?.vendorDetail?.[2]?.gender||editdata?.vendorDetail?.[2]?.gender)||""), 
+      email:(previousData?.vendorDetail?.[0]?.emailId||editdata?.vendorDetail?.[0]?.emailId||(user?.type==="CITIZEN"?user?.emailId:"") || ""), 
+      tradeNumber:(previousData?.vendorDetail?.[0]?.tradeNumber||editdata?.vendorDetail?.[0]?.tradeNumber||"")
+    }]);
 
   function handleAdd() {
     const values = [...fields];
@@ -73,7 +93,7 @@ const SVApplicantDetails = ({ t, config, onSelect, userType, formData,editdata,p
     }
   }
 
-  const { data: Category } = Digit.Hooks.useCustomMDMS(Digit.ULBService.getStateId(), "StreetVending", [{ name: "Category" }],
+  const { data: Category } = Digit.Hooks.useEnabledMDMS(Digit.ULBService.getStateId(), "StreetVending", [{ name: "Category" }],
     {
       select: (data) => {
         const formattedData = data?.["StreetVending"]?.["Category"]
@@ -91,14 +111,19 @@ const SVApplicantDetails = ({ t, config, onSelect, userType, formData,editdata,p
    */
   const validateAge = (date, type) => {
     if (!date) return true;
-
     const age = calculateAge(date);
-    if (age < 18) {
-      const errorMessages = {
-        vendor: "VENDOR_AGE_ERROR",
-        spouse: "SPOUSE_AGE_ERROR",
-        dependent: "DEPENDENT_AGE_ERROR"
-      };
+
+    const errorMessages = {
+      vendor: "VENDOR_AGE_ERROR",
+      spouse: "SPOUSE_AGE_ERROR",
+      dependent: "DEPENDENT_AGE_ERROR"
+    };
+
+    if (!(type == "dependent") && age < 18) {
+      setShowToast({ error: true, label: t(errorMessages[type]) });
+      return false;
+    }
+    else if (type == "dependent" && age < 14) {
       setShowToast({ error: true, label: t(errorMessages[type]) });
       return false;
     }
@@ -129,9 +154,9 @@ const SVApplicantDetails = ({ t, config, onSelect, userType, formData,editdata,p
       value: "Female"
     },
     {
-      code: "OTHERS",
-      i18nKey: "OTHERS",
-      value: "Others"
+      code: "TRANSGENDER",
+      i18nKey: "TRANSGENDER",
+      value: "Transgender"
     },
   ]
 
@@ -286,15 +311,15 @@ const SVApplicantDetails = ({ t, config, onSelect, userType, formData,editdata,p
       lastModifiedBy: "",
       lastModifiedTime: 0
     },
-    dob: fields?.[1]?.spouseDateBirth,
-    userCategory:fields?.[1]?.userCategory?.code,
+    dob: fields?.[0]?.spouseDateBirth,
+    userCategory:fields?.[0]?.userCategory?.code,
     emailId: "",
     isInvolved: fields?.spouseDependentChecked,
     fatherName: "",
     gender: "O",
     id: "",
     mobileNo: "",
-    name: fields?.[1]?.spouseName,
+    name: fields?.[0]?.spouseName,
     relationshipType: "SPOUSE",
     vendorId: null
   });
@@ -307,15 +332,15 @@ const SVApplicantDetails = ({ t, config, onSelect, userType, formData,editdata,p
       lastModifiedBy: "",
       lastModifiedTime: 0
     },
-    dob: fields?.[2]?.dependentDateBirth,
-    userCategory:fields?.[2]?.userCategory?.code,
+    dob: fields?.[0]?.dependentDateBirth,
+    userCategory:fields?.[0]?.userCategory?.code,
     emailId: "",
     isInvolved: fields?.dependentNameChecked,
     fatherName: "",
-    gender: fields?.[2]?.dependentGender?.code.charAt(0),
+    gender: fields?.[0]?.dependentGender?.code.charAt(0),
     id: "",
     mobileNo: "",
-    name: fields?.[2]?.dependentName,
+    name: fields?.[0]?.dependentName,
     relationshipType: "DEPENDENT",
     vendorId: null
   });
@@ -414,7 +439,12 @@ const SVApplicantDetails = ({ t, config, onSelect, userType, formData,editdata,p
           lastModifiedTime: 0
         },
       },
-      benificiaryOfSocialSchemes: "",
+      benificiaryOfSocialSchemes: [],
+      applicationCreatedBy: pathname.includes("citizen") ? "citizen" : "employee",
+      locality: "",
+          localityValue: "",
+    vendingZoneValue: "",
+      vendorPaymentFrequency: "", 
       enrollmentId:"",
       cartLatitude: 0,
       cartLongitude: 0,
@@ -517,7 +547,7 @@ const SVApplicantDetails = ({ t, config, onSelect, userType, formData,editdata,p
       spouseDependentChecked,
       dependentNameChecked
     };
-    onSelect(config.key, { ...formData[config.key], ...ownerStep }, false);
+    onSelect(config.key, { ...formData[config.key], ...ownerStep, applicationCreatedBy: pathname.includes("citizen") ? "citizen" : "employee" }, false);
     window.location.href.includes("edit")?null: handleSaveasDraft();
 
   };
@@ -825,8 +855,8 @@ const SVApplicantDetails = ({ t, config, onSelect, userType, formData,editdata,p
                   />
 
                 </div>
-
-                <div
+                
+                {/* <div
                   style={{
                     border: "solid",
                     borderRadius: "5px",
@@ -856,14 +886,14 @@ const SVApplicantDetails = ({ t, config, onSelect, userType, formData,editdata,p
                     type: "text",
                     title: t("SV_ENTER_CORRECT_NAME"),
                   })}
-                />
+                /> */}
 
                 <div className="astericColor" style={{ display: "flex", paddingBottom: "15px", color: "#FF8C00", marginTop: "10px" }}>
                   <button type="button" style={{ paddingTop: "10px" }} onClick={() => handleAdd()}>
                     {`${t("SV_ADD_DEPENDENT")}`}
                   </button>
                 </div>
-              </div>
+              
               <br/>
             </div>
           );

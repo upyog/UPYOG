@@ -1,6 +1,18 @@
 import React, { useState } from "react";
 import { LocationSearchCard, LinkButton, Card } from "@upyog/digit-ui-react-components";
-
+/**
+ * GIS Component
+ * 
+ * This component provides a location search interface as a popup/modal.
+ * It allows users to search and select geographic locations and validates them against available tenant pincodes.
+ * 
+ * @param {Object} props Component properties
+ * @param {Function} props.t - Translation function for internationalization
+ * @param {Function} props.onSelect - Callback when selection is complete
+ * @param {Object} props.formData - Existing form data (optional)
+ * @param {Function} props.handleRemove - Function to remove the location
+ * @param {Function} props.onSave - Function to save the selected location
+ */
 const GIS = ({ t, onSelect, formData = {},handleRemove,onSave }) => {
   const [location, setlocation] = useState(formData?.address?.location || {});
   const tenants = Digit.Hooks.obps.useTenants();

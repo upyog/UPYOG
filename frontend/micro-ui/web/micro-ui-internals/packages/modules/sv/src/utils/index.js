@@ -1,11 +1,30 @@
 /**
  * @author - Shivank - NIUA
- * This componet is developed for all the utility functions which  are used in the whole 
- * application.
+ * This component is developed for all the utility functions which are used in the whole application
  * I have already added the comments for each function.
  */
 
 
+
+/**
+ * constants variable used across module so that i can change across the moduel from this place only
+ * TODO: Use this logic across the module
+ */
+export const UPYOG_CONSTANTS = {
+  MODULE_NAME :"StreetVending",
+  AM: "AM",
+  PM: "PM",
+  DOCUMENT:"CategoryDocument",
+  NOT_APPLICABLE:"NA",
+  renewalStatus:"EligibleToRenew"
+};
+
+export const RENEWAL_CONSTANTS = {
+  ELIGIBLE_TO_RENEW: "ELIGIBLE_TO_RENEW",
+  RENEW_IN_PROGRESS: "RENEW_IN_PROGRESS",
+  RENEW_APPLICATION_CREATED: "RENEW_APPLICATION_CREATED",
+  RENEWED: "RENEWED"
+}
 
 export const stringReplaceAll = (str = "", searcher = "", replaceWith = "") => {
     if (searcher == "") return str;
@@ -19,9 +38,14 @@ export const checkForNotNull = (value = "") => {
 };
 
 export const checkForNA = (value = "") => {
-  return checkForNotNull(value) ? value : "NA";
+  return checkForNotNull(value) ? value : UPYOG_CONSTANTS.NOT_APPLICABLE;
 };
 
+// Utility functions to convert string into integer and append AM and PM
+export const formatTime = (time) => {
+  const hour = parseInt(time);
+  return `${time} ${hour >= 12 ? UPYOG_CONSTANTS.PM : UPYOG_CONSTANTS.AM}`;
+};
 
 /**
  * This function processes an array of uploaded documents to create a list of unique document types,
@@ -81,16 +105,16 @@ export const calculateAge = (birthDate) => {
 export const transformDocuments = (documents) => {
 
   if (!Array.isArray(documents)) return [];
-
+  
   // Retrieve and parse CategoryDocument from sessionStorage
-  const categoryDocument = sessionStorage.getItem("CategoryDocument");
+  const categoryDocument = sessionStorage.getItem(UPYOG_CONSTANTS.DOCUMENT);
   const parsedCategoryDocument = categoryDocument ? JSON.parse(categoryDocument) : null;
   // Transform existing documents
   const transformedDocs = documents.map(doc => ({
     applicationId: "",  // Populate as required
-    documentType: doc.documentType,
-    fileStoreId: window.location.href.includes("edit")?doc?.fileStoreId?.fileStoreId:doc.fileStoreId,
-    documentDetailId: window.location.href.includes("edit")?doc?.fileStoreId?.fileStoreId:doc.documentUid, // Use documentUid as documentDetailId
+    documentType: doc?.documentType || doc?.documentType?.documentType,
+    fileStoreId: doc?.fileStoreId || doc?.fileStoreId?.fileStoreId,
+    documentDetailId: doc?.documentUid || doc?.documentUid?.documentUid, // Use documentUid as documentDetailId
     auditDetails: {
       createdBy: "",
       createdTime: 0,
@@ -98,7 +122,7 @@ export const transformDocuments = (documents) => {
       lastModifiedTime: 0
     }
   }));
-
+  
   // Add parsedCategoryDocument as an additional document object, if it exists
   if (parsedCategoryDocument) {
     transformedDocs.push({
@@ -114,7 +138,7 @@ export const transformDocuments = (documents) => {
       }
     });
   }
-
+  
   return transformedDocs;
 };
 /**
@@ -298,6 +322,7 @@ export const svPayloadData = (data) =>{
     applicationDate: 0,
     applicationId: "",
     applicationNo: "",
+    oldApplicationNo:sessionStorage.getItem("vendingApplicationID"),
     applicationStatus: "",
     approvalDate: 0,
     auditDetails: {
@@ -323,8 +348,13 @@ export const svPayloadData = (data) =>{
         lastModifiedTime: 0
       },
     },
-    benificiaryOfSocialSchemes: data?.specialCategoryData?.beneficiary?.value,
-    enrollmentId:data?.specialCategoryData?.enrollmentId,
+    benificiaryOfSocialSchemes: data?.specialCategoryData?.beneficiaryList,
+    applicationCreatedBy: data?.owner?.applicationCreatedBy,
+    locality: data?.businessDetails?.vendorLocality?.code,
+    localityValue: "",
+    vendingZoneValue: "",
+    vendorPaymentFrequency: data?.businessDetails?.vendingPayment?.code,
+    enrollmentId:"",
     cartLatitude: 0,
     cartLongitude: 0,
     certificateNo: null,
@@ -411,7 +441,7 @@ export const svUpdatePayload = (data) =>{
     isInvolved: data?.owner?.spouseDependentChecked,
     fatherName: "",
     specialCategory: data?.specialCategoryData?.ownerCategory?.code,
-    gender: "N/A",
+    gender: "O",
     id: sessionStorage.getItem("venId"),
     mobileNo: "",
     name: data?.owner?.units?.[0]?.spouseName,
@@ -550,8 +580,13 @@ export const svUpdatePayload = (data) =>{
         lastModifiedTime: 0
       },
     },
-    benificiaryOfSocialSchemes: data?.specialCategoryData?.beneficiary?.value,
-    enrollmentId:data?.specialCategoryData?.enrollmentId,
+    benificiaryOfSocialSchemes: data?.specialCategoryData?.beneficiaryList,
+    applicationCreatedBy: data?.owner?.applicationCreatedBy,
+    locality: data?.businessDetails?.vendorLocality?.code,
+    localityValue: "",
+    vendingZoneValue: "",
+    vendorPaymentFrequency: data?.businessDetails?.vendingPayment?.code,
+    enrollmentId: "",
     cartLatitude: 0,
     cartLongitude: 0,
     certificateNo: null,
@@ -593,6 +628,40 @@ export const svUpdatePayload = (data) =>{
       ]
     }
   }
+  };
+  return formdata;
+}
+
+export const demandPayloadData = (data) => {
+  const formdata = {
+    streetVendingDetail: {
+      ...data,
+      renewalStatus: RENEWAL_CONSTANTS.RENEW_IN_PROGRESS,
+
+      workflow: {
+        action: "APPLY",
+        comments: "",
+        businessService: "street-vending",
+        moduleName: "sv-services",
+        businessService: "street-vending",
+        moduleName: "sv-services",
+        varificationDocuments: [
+          {
+            additionalDetails: {},
+            auditDetails: {
+              createdBy: "",
+              createdTime: 0,
+              lastModifiedBy: "",
+              lastModifiedTime: 0
+            },
+            documentType: "",
+            documentUid: "",
+            fileStoreId: "",
+            id: ""
+          }
+        ]
+      }
+    },
   };
   return formdata;
 }

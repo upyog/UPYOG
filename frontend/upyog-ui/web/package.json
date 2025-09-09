@@ -7,8 +7,8 @@
     "micro-ui-internals/packages/libraries",
     "micro-ui-internals/packages/react-components",
     "micro-ui-internals/packages/modules/core",
-    "micro-ui-internals/packages/modules/commonPt",
     "micro-ui-internals/packages/modules/common",
+    "micro-ui-internals/packages/modules/obps"
     "micro-ui-internals/packages/modules/hrms",
     "micro-ui-internals/packages/modules/pt",
     "micro-ui-internals/packages/modules/dss",
@@ -18,7 +18,6 @@
     "node": ">=14"
   },
   "dependencies": {
-    "@nudmcdgnpm/digit-ui-libraries": "1.2.1",
     "@nudmcdgnpm/upyog-css": "1.2.8",
     "@upyog/digit-ui-libraries": "3.0.1",
     "@upyog/digit-ui-module-bills": "3.0.2",
@@ -40,10 +39,14 @@
     "@upyog/digit-ui-react-components": "3.0.1",
     "@upyog/upyog-ui-module-ads": "3.0.2",
     "@upyog/upyog-ui-module-asset": "3.0.1",
-    "@upyog/upyog-ui-module-chb": "3.0.2",
+    "@nudmcdgnpm/upyog-ui-module-chb": "1.2.10",
     "@upyog/upyog-ui-module-ew": "3.0.1",
     "@upyog/upyog-ui-module-ptr": "3.0.1",
     "@upyog/upyog-ui-module-sv": "3.0.1",
+    "@nudmcdgnpm/upyog-ui-module-wt":"1.0.3",
+    "@nudmcdgnpm/upyog-ui-module-vendor":"1.2.2",
+    "@nudmcdgnpm/upyog-ui-module-pgrai":"1.0.1",
+    "@nudmcdgnpm/digit-ui-react-components":"1.2.14",
     "babel-loader": "8.1.0",
     "react": "17.0.2",
     "react-dom": "17.0.2",

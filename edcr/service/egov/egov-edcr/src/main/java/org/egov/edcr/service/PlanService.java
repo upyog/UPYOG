@@ -84,13 +84,13 @@ public class PlanService {
             asOnDate = new Date();
         }
 
+        String tenantId = dcrApplication.getThirdPartyUserTenant();
         AmendmentService repo = (AmendmentService) specificRuleService.find("amendmentService");
         Amendment amd = repo.getAmendments();
 
         Plan plan = extractService.extract(dcrApplication.getSavedDxfFile(), amd, asOnDate,
                 featureService.getFeatures());
-      //  plan.setCoreArea(dcrApplication.getCoreArea());
-
+        plan.setTenantId(tenantId);    
         plan.setMdmsMasterData(dcrApplication.getMdmsMasterData());
         plan = applyRules(plan, amd, cityDetails);
       
@@ -375,6 +375,7 @@ public class PlanService {
         Amendment amd = repo.getAmendments();
 
         Plan plan = extractService.extract(planFile, amd, asOnDate, featureService.getFeatures());
+        plan.setTenantId(edcrRequest.getTenantId());
         if (StringUtils.isNotBlank(edcrRequest.getApplicantName()))
             plan.getPlanInformation().setApplicantName(edcrRequest.getApplicantName());
         else

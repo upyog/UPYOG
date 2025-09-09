@@ -8,223 +8,256 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.egov.common.constants.MdmsFeatureConstants;
+import org.egov.common.entity.edcr.*;
 import org.egov.commons.mdms.BpaMdmsUtil;
+import org.egov.edcr.config.EdcrConfigProperties;
 import org.egov.edcr.constants.EdcrRulesMdmsConstants;
+//import org.egov.infra.mdms.controller.MDMSController;
 import org.egov.infra.microservice.models.RequestInfo;
+import org.jfree.util.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import net.minidev.json.JSONArray;
+import net.minidev.json.JSONObject;
 
 
 @Service
 public class FetchEdcrRulesMdms {
 
-	  @Autowired
-	  private BpaMdmsUtil bpaMdmsUtil;
-	  
-	  private static Logger LOG = LogManager.getLogger(EdcrApplicationService.class);
-	  
-	  public Map<String, List<Map<String, Object>>> getEdcrRules() {
-		    LOG.info("Entered getEdcrRules method");
+	@Autowired
+	private BpaMdmsUtil bpaMdmsUtil;
 
-		    // Make the MDMS call
-		    Object mdmsData = bpaMdmsUtil.mDMSCallv2(new RequestInfo(), "pg");
-		    if (mdmsData == null) {
-		        LOG.warn("MDMS data is null");
-		        return createEmptyResult("MDMS data is null");
-		    }
+	@Autowired
+	private EdcrConfigProperties edcrConfigProperties;
 
-		    // Define required keys for BPA
-		    Set<String> requiredKeys = new HashSet<>(Arrays.asList(
-		        "Far", "Coverage", "Balcony", "Toilet", "Doors", "FrontSetBack", "Kitchen",
-		        "Landing", "Lift", "NonHabitationalDoors", "NoOfRiser", "Parking", "Plantation",
-		        "PlinthHeight", "RearSetBack", "RequiredTread", "RequiredWidth", "RiserHeight",
-		        "RoomArea", "RoomWiseDoorArea", "RoomWiseVentilation"
-		    ));
+	private static Logger LOG = LogManager.getLogger(EdcrApplicationService.class);
+	private List<Map<String, Object>> riskTypeRules = new ArrayList<>();
 
-		    Map<String, List<Map<String, Object>>> edcrRulesFeatures = new HashMap<>();
-		    try {
-		        // Extract MDMS response and BPA data
-		        Map<String, Object> mdmsRes = extractMap(mdmsData, "MdmsRes");
-		        Map<String, Object> bpaData = mdmsRes != null ? extractMap(mdmsRes, "BPA") : null;
-
-		        if (bpaData == null) {
-		            LOG.warn("No BPA data found in MDMS response.");
-		            return createEmptyResult("No BPA data found");
-		        }
-
-		        // Process required keys using a traditional loop
-		        for (String key : requiredKeys) {
-		            if (bpaData.containsKey(key)) {
-		                Object featureData = bpaData.get(key);
-
-		                if (featureData instanceof List) {
-		                    List<Map<String, Object>> featureList = (List<Map<String, Object>>) featureData;
-		                    edcrRulesFeatures.put(key, featureList);
-		                } else {
-		                    LOG.warn("Unexpected data type for feature: {}", key);
-		                }
-		            }
-		        }
-
-		        if (edcrRulesFeatures.isEmpty()) {
-		            LOG.info("EdcrRules is empty.");
-		            return createEmptyResult("No EdcrRules data found");
-		        }
-
-		        LOG.info("Processed EdcrRulesMap: {}", edcrRulesFeatures);
-		        return edcrRulesFeatures;
-		    } catch (Exception e) {
-		        LOG.error("Error processing MDMS data: ", e);
-		        return createEmptyResult("Error processing MDMS data");
-		    }
+	public String getOccupancyName(Plan pl) {
+		if (pl.getPlanInformation() == null || pl.getPlanInformation().getOccupancy() == null) {
+			return null;
 		}
 
-		private Map<String, Object> extractMap(Object data, String key) {
-		    if (data instanceof Map) {
-		        return (Map<String, Object>) ((Map<?, ?>) data).get(key);
-		    }
-		    return null;
-		}
+		String occupancyName = pl.getPlanInformation().getOccupancy();
+		LOG.info("Occupancy Name : " + occupancyName);
 
-		private Map<String, List<Map<String, Object>>> createEmptyResult(String message) {
-		    return Collections.singletonMap("message",
-		        Collections.singletonList(Collections.singletonMap("message", message))
-		    );
-		}
+		switch (occupancyName.toLowerCase()) {
+	    case EdcrRulesMdmsConstants.RESIDENTIAL:
+	        return EdcrRulesMdmsConstants.RESIDENTIAL;
+	    case EdcrRulesMdmsConstants.INDUSTRIAL:
+	        return EdcrRulesMdmsConstants.INDUSTRIAL;
+	    case EdcrRulesMdmsConstants.COMMERCIAL:
+	        return EdcrRulesMdmsConstants.COMMERCIAL;
+	    case EdcrRulesMdmsConstants.STORAGE:
+	        return EdcrRulesMdmsConstants.STORAGE;
+	    case EdcrRulesMdmsConstants.ASSEMBLY:
+	        return EdcrRulesMdmsConstants.ASSEMBLY;
+	    case EdcrRulesMdmsConstants.BUSINESS:
+	        return EdcrRulesMdmsConstants.BUSINESS;
+	    case EdcrRulesMdmsConstants.HAZARDOUS:
+	        return EdcrRulesMdmsConstants.HAZARDOUS;
+	    case EdcrRulesMdmsConstants.EDUCATIONAL:
+	        return EdcrRulesMdmsConstants.EDUCATIONAL;
+	    case EdcrRulesMdmsConstants.MEDICAL:
+	        return EdcrRulesMdmsConstants.MEDICAL;
+	    default:
+	        return occupancyName;
+	}
+	}
 
+	public String getRiskType(Plan pl) {
+	    if (riskTypeRules.isEmpty()) {
+	        ObjectMapper mapper = new ObjectMapper();
 
+	        Object mdmsData = bpaMdmsUtil.mDMSCall(new RequestInfo(), edcrConfigProperties.getDefaultState());
+	        MdmsResponse mdmsResponse = mapper.convertValue(mdmsData, MdmsResponse.class);
+	        JSONArray jsonArray = mdmsResponse.getMdmsRes().get(EdcrRulesMdmsConstants.BPA).get(EdcrRulesMdmsConstants.RISK_TYPE_COMPUTATION);
 
-	    public List<Map<String, Object>> getPermissibleValue(
-	            Map<String, List<Map<String, Object>>> edcrRuleList,
-	            Map<String, Object> params,
-	            ArrayList<String> valueFromColumn) {
-
-	        System.out.println("inside getPermissibleValue method" + edcrRuleList);
-	        
-	       
-	        String paramsFeature = params.get("feature").toString().toLowerCase(); 
-	        String paramsOccupancy = params.get("occupancy").toString().toLowerCase(); 
-	        BigDecimal paramsPlotArea = params.containsKey("plotArea") ? (BigDecimal) params.get("plotArea") : null;
-	        String paramsFeatureName = params.containsKey("featureName") ? (String) params.get("featureName") : null;
-
-	        List<Map<String, Object>> result = new ArrayList<>();
-	        List<Map<String, Object>> filteredRules = new ArrayList<>();
-
-	        // Step 1: Filter the rules based on feature and occupancy
-	        for (Map.Entry<String, List<Map<String, Object>>> entry : edcrRuleList.entrySet()) {
-	            String ruleType = entry.getKey().toLowerCase(); 
-	            List<Map<String, Object>> ruleList = entry.getValue();
-
-	            if (ruleType.equals(paramsFeature)) { // Filter by feature
-	                for (Map<String, Object> ruleItem : ruleList) {
-	                    String ruleOccupancy = ruleItem.get(EdcrRulesMdmsConstants.OCCUPANCY).toString().toLowerCase(); 
-	                    if (ruleOccupancy.equals(paramsOccupancy)) { // Filter by occupancy
-	                        filteredRules.add(ruleItem);
-	                    }
-	                }
-	            }
+	        for (int i = 0; i < jsonArray.size(); i++) {
+	            @SuppressWarnings("unchecked")
+	            Map<String, Object> rule = (Map<String, Object>) jsonArray.get(i);
+	            riskTypeRules.add(rule);
 	        }
-
-	     // Step 2: Process the filtered rules
-	        for (Map<String, Object> ruleItem : filteredRules) {
-	            // Extract area and feature name from the rule
-	            BigDecimal ruleFromArea = ruleItem.containsKey(EdcrRulesMdmsConstants.FROMPLOTAREA) ? getBigDecimal(ruleItem.get(EdcrRulesMdmsConstants.FROMPLOTAREA)) : null;
-	            BigDecimal ruleToArea = ruleItem.containsKey(EdcrRulesMdmsConstants.TOPLOTAREA) ? getBigDecimal(ruleItem.get(EdcrRulesMdmsConstants.TOPLOTAREA)) : null;
-	            String ruleFeatureName = ruleItem.containsKey("featureName") ? ruleItem.get("featureName").toString() : null;
-
-	            // Initialize flags for whether plotArea and featureName match
-	            boolean plotAreaMatches = false;
-	            boolean featureNameMatches = false;
-
-	            // Check if plotArea matches within the range (only if both paramsPlotArea and rule area exist)
-	            if (paramsPlotArea != null && ruleFromArea != null && ruleToArea != null) {
-	                plotAreaMatches = paramsPlotArea.compareTo(ruleFromArea) >= 0 &&
-	                                  paramsPlotArea.compareTo(ruleToArea) <= 0;
-	            }
-
-	            // Check if featureName matches (only if both paramsFeatureName and ruleFeatureName exist)
-	            if (paramsFeatureName != null && ruleFeatureName != null) {
-	                featureNameMatches = paramsFeatureName.equalsIgnoreCase(ruleFeatureName);
-	            }
-
-	            
-	            // Case 2: Only plotArea is required, and it matches
-	            else if (paramsPlotArea != null && paramsFeatureName == null) {
-	                if (plotAreaMatches) {
-	                    Map<String, Object> value = new HashMap<>();
-	                    if (valueFromColumn.size() == 1) {
-	                        value.put("permissibleValue", ruleItem.get(EdcrRulesMdmsConstants.PERMISSIBLE));
-	                    } else if (valueFromColumn.size() > 1 && ruleItem.containsKey(EdcrRulesMdmsConstants.MIN_VALUE)) {
-	                        value.put("minValue", ruleItem.get(EdcrRulesMdmsConstants.MIN_VALUE));
-	                        value.put("maxValue", ruleItem.get(EdcrRulesMdmsConstants.MAX_VALUE));
-	                    }
-	                    result.add(value);
-	                    break; // Exit after finding the first matching rule
-	                }
-	            }
-	            
-	            // Case 4: Neither plotArea nor featureName is required, get permissible value
-	            else {
-	                Map<String, Object> value = new HashMap<>();
-	                if (valueFromColumn.size() == 1) {
-	                    value.put("permissibleValue", ruleItem.get(EdcrRulesMdmsConstants.PERMISSIBLE));
-	                } else if (valueFromColumn.size() > 1  && ruleItem.containsKey("min_value")) {
-	                    value.put("minValue", ruleItem.get(EdcrRulesMdmsConstants.MIN_VALUE));
-	                    value.put("maxValue", ruleItem.get(EdcrRulesMdmsConstants.MAX_VALUE));
-	                }else if (valueFromColumn.size() > 1 && ruleItem.containsKey("minDoorWidth")) {
-	                    value.put("minDoorWidth", ruleItem.get("minDoorWidth"));
-	                    value.put("minDoorHeight", ruleItem.get("minDoorHeight"));
-	                }
-	                else if (valueFromColumn.size() > 1 && ruleItem.containsKey("minToiletArea")) {
-	                    value.put("minToiletArea", ruleItem.get("minToiletArea"));
-	                    value.put("minToiletWidth", ruleItem.get("minToiletWidth"));
-	                    value.put("minToiletVentilation", ruleItem.get("minToiletVentilation"));
-	                }
-	                else if (valueFromColumn.size() > 1 && ruleItem.containsKey("percent")) {
-	                    value.put("percent", ruleItem.get("percent"));
-	                    value.put("permissibleValue", ruleItem.get(EdcrRulesMdmsConstants.PERMISSIBLE));
-	                   
-	                }
-	                else if (valueFromColumn.size() > 1 && ruleItem.containsKey("kitchenHeight")) {
-	                    value.put("kitchenHeight", ruleItem.get("kitchenHeight"));
-	                    value.put("kitchenArea", ruleItem.get("kitchenArea"));
-	                    value.put("kitchenWidth", ruleItem.get("kitchenWidth"));
-	                    value.put("kitchenStoreArea", ruleItem.get("kitchenStoreArea"));
-	                    value.put("kitchenStoreWidth", ruleItem.get("kitchenStoreWidth"));
-	                    value.put("kitchenDiningWidth", ruleItem.get("kitchenDiningWidth"));
-	                    value.put("kitchenDiningArea", ruleItem.get("kitchenDiningArea"));
-	                           
-	                }
-	                else if (valueFromColumn.size() > 1 && ruleItem.containsKey("roomArea2")) {
-	                    value.put("roomArea2", ruleItem.get("roomArea2"));
-	                    value.put("roomArea1", ruleItem.get("roomArea1"));
-	                    value.put("roomWidth2", ruleItem.get("roomWidth2"));
-	                    value.put("roomWidth1", ruleItem.get("roomWidth1"));
-	                   
-	                }
-	                result.add(value);
-	                break; // Exit after finding the first matching rule
-	            }
-	        }
-
-
-
-	        return result;
+			LOG.info("RiskTypeRules: " + riskTypeRules);
 	    }
 
+	    BigDecimal plotArea = pl.getPlot().getArea();
+		BigDecimal height = pl.getBlocks().get(0).getBuilding().getBuildingHeight();
 
-	    private BigDecimal getBigDecimal(Object value) {
-	        if (value instanceof BigDecimal) {
-	            return (BigDecimal) value;
-	        } else if (value instanceof Number) {
-	            return new BigDecimal(((Number) value).doubleValue());
+	    for (Map<String, Object> rule : riskTypeRules) {
+	        BigDecimal fromPlotArea = new BigDecimal(rule.get(EdcrRulesMdmsConstants.FROM_PLOT_AREA).toString());
+	        BigDecimal toPlotArea = new BigDecimal(rule.get(EdcrRulesMdmsConstants.TO_PLOT_AREA).toString());
+	        BigDecimal fromHeight = new BigDecimal(rule.get(EdcrRulesMdmsConstants.FROM_BUILDING_HEIGHT).toString());
+	        BigDecimal toHeight = new BigDecimal(rule.get(EdcrRulesMdmsConstants.TO_BUILDING_HEIGHT).toString());
+
+			LOG.info("RULES:: fromPlotArea: " + fromPlotArea + ", toPlotArea: " + toPlotArea + ", fromHeight: " + fromHeight + ", toHeight: " + toHeight);
+
+	        boolean plotAreaInRange = plotArea.compareTo(fromPlotArea) >= 0 && plotArea.compareTo(toPlotArea) < 0;
+	        boolean heightInRange = height.compareTo(fromHeight) >= 0 && height.compareTo(toHeight) < 0;
+
+	        if (plotAreaInRange || heightInRange) { //add height if required
+	            return rule.get(EdcrRulesMdmsConstants.RISK_TYPE).toString();
 	        }
-	        return null;
 	    }
+
+	    return null;
+	}
+
+	/**
+	 * Returns the specific subclass of {@link MdmsFeatureRule} associated with the given {@link FeatureEnum}.
+	 * This method is used to determine the appropriate rule class type for a feature, so that
+	 * MDMS rule data can be deserialized into the correct Java object.
+	 *
+	 * @param featureName The feature enum for which the rule class is to be determined.
+	 * @return The corresponding subclass of {@link MdmsFeatureRule} for the provided feature.
+	 *         If the feature is null or not explicitly handled, {@link MdmsFeatureRule} is returned as a fallback.
+	 */
+	public Class<? extends MdmsFeatureRule> getRuleClassForFeature(FeatureEnum featureName) {
+	    if (featureName == null) return MdmsFeatureRule.class;
+
+	    switch (featureName) {
+	        case BATHROOM_WATER_CLOSETS:
+	            return BathroomWCRequirement.class;
+	        case BALCONY:
+	            return BalconyRequirement.class;
+	        case BATHROOM:
+	            return BathroomRequirement.class;
+	        case BASEMENT:
+	            return BasementRequirement.class;
+	        case FAR:
+	            return FarRequirement.class;
+	        case SOLAR:
+	            return SolarRequirement.class;
+	        case STAIR_COVER:
+	            return StairCoverRequirement.class;
+	        case SEPTIC_TANK:
+	            return SepticTankRequirement.class;
+	        case VENTILATION:
+	            return VentilationRequirement.class;
+	        case FIRE_TENDER_MOVEMENT:
+	            return FireTenderMovementRequirement.class;
+	        case ROOM_AREA:
+	            return RoomAreaRequirement.class;
+	        case BLOCK_DISTANCES_SERVICE:
+	            return BlockDistancesServiceRequirement.class;
+	        case CHIMNEY:
+	            return ChimneyRequirement.class;
+	        case COVERAGE:
+	            return CoverageRequirement.class;
+	        case DOORS:
+	            return DoorsRequirement.class;
+	        case EXIT_WIDTH:
+	            return ExitWidthRequirement.class;
+	        case FIRE_STAIR:
+	            return FireStairRequirement.class;
+	        case FRONT_SET_BACK:
+	            return FrontSetBackRequirement.class;
+	        case GOVT_BUILDING_DISTANCE:
+	            return GovtBuildingDistanceRequirement.class;
+	        case GUARD_ROOM:
+	            return GuardRoomRequirement.class;
+	        case HEAD_ROOM:
+	            return HeadRoomRequirement.class;
+	        case INTERIOR_OPEN_SPACE_SERVICE:
+	            return InteriorOpenSpaceServiceRequirement.class;
+	        case KITCHEN:
+	            return KitchenRequirement.class;
+	        case LANDING:
+	            return LandingRequirement.class;
+	        case LAND_USE:
+	            return LandUseRequirement.class;
+	        case LIFT:
+	            return LiftRequirement.class;
+	        case MEZZANINE_FLOOR_SERVICE:
+	            return MezzanineFloorServiceRequirement.class;
+	        case MONUMENT_DISTANCE:
+	            return MonumentDistanceRequirement.class;
+	        case NON_HABITATIONAL_DOORS:
+	            return NonHabitationalDoorsRequirement.class;
+	        case NO_OF_RISER:
+	            return NoOfRiserRequirement.class;
+	        case OVERHANGS:
+	            return OverHangsRequirement.class;
+	        case OVERHEAD_ELECTRICAL_LINE_SERVICE:
+	            return OverheadElectricalLineServiceRequirement.class;
+	        case PARAPET:
+	            return ParapetRequirement.class;
+	        case PARKING:
+	            return ParkingRequirement.class;
+	        case PASSAGE_SERVICE:
+	            return PassageRequirement.class;
+	        case PLANTATION:
+	            return PlantationRequirement.class;
+	        case PLANTATION_GREEN_STRIP:
+	            return PlantationGreenStripRequirement.class;
+	        case PLINTH_HEIGHT:
+	            return PlinthHeightRequirement.class;
+	        case PLOT_AREA:
+	            return PlotAreaRequirement.class;
+	        case PORTICO_SERVICE:
+	            return PorticoServiceRequirement.class;
+	        case RAIN_WATER_HARVESTING:
+	            return RainWaterHarvestingRequirement.class;
+	        case RAMP_SERVICE:
+	            return RampServiceRequirement.class;
+	        case REAR_SET_BACK:
+	            return RearSetBackRequirement.class;
+	        case REQUIRED_TREAD:
+	            return RequiredTreadRequirement.class;
+	        case REQUIRED_WIDTH:
+	            return RequiredWidthRequirement.class;
+	        case RISER_HEIGHT:
+	            return RiserHeightRequirement.class;
+	        case RIVER_DISTANCE:
+	            return RiverDistanceRequirement.class;
+	        case ROAD_WIDTH:
+	            return RoadWidthRequirement.class;
+	        case ROOF_TANK:
+	            return RoofTankRequirement.class;
+	        case ROOM_WISE_DOOR_AREA:
+	            return RoomWiseDoorAreaRequirement.class;
+	        case ROOM_WISE_VENTILATION:
+	            return RoomWiseVentilationRequirement.class;
+	        case SANITATION:
+	            return SanitationRequirement.class;
+	        case SEGREGATED_TOILET:
+	            return SegregatedToiletRequirement.class;
+	        case SIDE_YARD_SERVICE:
+	            return SideYardServiceRequirement.class;
+	        case SPIRAL_STAIR:
+	            return SpiralStairRequirement.class;
+	        case TERRACE_UTILITY_SERVICE:
+	            return TerraceUtilityServiceRequirement.class;
+	        case TOILET:
+	            return ToiletRequirement.class;
+	        case TRAVEL_DISTANCE_TO_EXIT:
+	            return TravelDistanceToExitRequirement.class;
+	        case VEHICLE_RAMP:
+	            return VehicleRampRequirement.class;
+	        case VERANDAH:
+	            return VerandahRequirement.class;
+	        case WATER_CLOSETS:
+	            return WaterClosetsRequirement.class;
+	        case WATER_TANK_CAPACITY:
+	            return WaterTankCapacityRequirement.class;
+			case ADDITIONAL_FEATURE:
+				return AdditionalFeatureRequirement.class;
+
+	        default:
+	            return MdmsFeatureRule.class; // Fallback
+	    }
+	}
+
+
 
 }

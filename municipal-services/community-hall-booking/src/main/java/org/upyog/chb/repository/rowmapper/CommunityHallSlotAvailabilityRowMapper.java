@@ -12,6 +12,35 @@ import org.upyog.chb.constants.CommunityHallBookingConstants;
 import org.upyog.chb.util.CommunityHallBookingUtil;
 import org.upyog.chb.web.models.CommunityHallSlotAvailabilityDetail;
 
+/**
+ * This class is responsible for mapping the result set from the database to a list of
+ * CommunityHallSlotAvailabilityDetail objects.
+ * 
+ * Purpose:
+ * - To extract data from the ResultSet and populate CommunityHallSlotAvailabilityDetail objects.
+ * - To handle the mapping of database fields to the corresponding fields in the CommunityHallSlotAvailabilityDetail model.
+ * 
+ * Features:
+ * - Implements the ResultSetExtractor interface to process the ResultSet.
+ * - Iterates through the ResultSet and maps each row to a CommunityHallSlotAvailabilityDetail object.
+ * - Uses utility methods from CommunityHallBookingUtil for date conversion and formatting.
+ * 
+ * Dependencies:
+ * - CommunityHallBookingUtil: Provides utility methods for parsing and formatting dates.
+ * - CommunityHallBookingConstants: Contains constants such as date format for consistent processing.
+ * - CommunityHallSlotAvailabilityDetail: The model class representing slot availability details.
+ * 
+ * Fields Mapped:
+ * - tenant_id: Maps to the tenantId field in CommunityHallSlotAvailabilityDetail.
+ * - community_hall_code: Maps to the communityHallCode field in CommunityHallSlotAvailabilityDetail.
+ * - hall_code: Maps to the hallCode field in CommunityHallSlotAvailabilityDetail.
+ * - status: Maps to the slotStatus field in CommunityHallSlotAvailabilityDetail.
+ * - booking_date: Maps to the bookingDate field in CommunityHallSlotAvailabilityDetail after date conversion.
+ * 
+ * Usage:
+ * - This class is used by the repository layer to map database query results to CommunityHallSlotAvailabilityDetail objects.
+ * - It ensures consistency and reusability of mapping logic across the application.
+ */
 @Component
 public class CommunityHallSlotAvailabilityRowMapper implements ResultSetExtractor<List<CommunityHallSlotAvailabilityDetail>> {
 

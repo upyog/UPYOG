@@ -4,7 +4,7 @@
 ## Install
 
 ```bash
-npm install --save @nudmcdgnpm/digit-ui-libraries
+npm install --save @upyog/digit-ui-libraries
 ```
 
 ## Limitation

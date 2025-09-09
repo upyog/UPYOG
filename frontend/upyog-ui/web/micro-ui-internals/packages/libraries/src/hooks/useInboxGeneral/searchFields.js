@@ -61,8 +61,8 @@ const inboxSearchFields = {
     },
     {
       label: "AST_ASSET_CATEGORY_LABEL",
-      name: "assetclassification",
-      // minLength: "10",
+      name: "assetClassification",
+      type: "Dropdown",
       roles: [],
     },
     {
@@ -93,32 +93,33 @@ const inboxSearchFields = {
       },
     },
   ],
-    CHB: [
-      {
-        label: "CHB_APPLICATION_NUMBER",
-        name: "bookingNo",
-        roles: [],
+  CHB: [
+    {
+      label: "CHB_BOOKING_NO",
+      name: "bookingNo",
+      roles: [],
+    },
+    {
+      label: "CHB_COMMUNITY_HALL_NAME",
+      name: "communityHallCode",
+      type: "Dropdown",
+      roles: [],
+    },
+    {
+      label: "CHB_MOBILE_NUMBER",
+      name: "mobileNumber",
+      type: "mobileNumber",
+      maxLength: 10,
+      minLength: 0,
+      roles: [],
+      pattern: "^$|[6-9][0-9]{9}",
+      errorMessages: {
+        pattern: "",
+        minLength: "",
+        maxLength: "",
       },
-      {
-        label: "CHB_HALL_NAME",
-        name: "hallName",
-        roles: [],
-      },
-      {
-        label: "CHB_MOBILE_NUMBER",
-        name: "mobileNumber",
-        type: "mobileNumber",
-        maxLength: 10,
-        minLength: 0,
-        roles: [],
-        pattern: "^$|[6-9][0-9]{9}",
-        errorMessages: {
-          pattern: "",
-          minLength: "",
-          maxLength: "",
-        },
-      },
-    ],
+    },
+  ],
     SV: [
       {
         label: "SV_APPLICATION_NUMBER",
@@ -140,6 +141,69 @@ const inboxSearchFields = {
         },
       }
     ],
+    WT: [
+      {
+        label: "WT_BOOKING_NO",
+        name: "bookingNo",
+        roles: [],
+      },
+      {
+        label: "WT_MOBILE_NUMBER",
+        name: "mobileNumber",
+        type: "mobileNumber",
+        maxLength: 10,
+        minLength: 0,
+        roles: [],
+        pattern: "^$|[6-9][0-9]{9}",
+        errorMessages: {
+          pattern: "",
+          minLength: "",
+          maxLength: "",
+        },
+      },
+    ],
+    MT: [
+      {
+        label: "MT_BOOKING_NO",
+        name: "bookingNo",
+        roles: [],
+      },
+      {
+        label: "MT_MOBILE_NUMBER",
+        name: "mobileNumber",
+        type: "mobileNumber",
+        maxLength: 10,
+        minLength: 0,
+        roles: [],
+        pattern: "^$|[6-9][0-9]{9}",
+        errorMessages: {
+          pattern: "",
+          minLength: "",
+          maxLength: "",
+        },
+      },
+    ],
+    TP: [
+      {
+        label: "TP_BOOKING_NO",
+        name: "bookingNo",
+        roles: [],
+      },
+      {
+        label: "TP_MOBILE_NUMBER",
+        name: "mobileNumber",
+        type: "mobileNumber",
+        maxLength: 10,
+        minLength: 0,
+        roles: [],
+        pattern: "^$|[6-9][0-9]{9}",
+        errorMessages: {
+          pattern: "",
+          minLength: "",
+          maxLength: "",
+        },
+      },
+    ]
 };
 
 const searchFieldsForSearch = {

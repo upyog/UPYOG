@@ -1,3 +1,13 @@
+/*
+ Custom hook to fetch pet payment data using react-query
+ Parameters:
+ - tenantId: ID of the tenant (location-specific context)
+ - filters: Object containing search filters for payments
+ - searchedFrom: Optional parameter for tracking the search source
+ - config: Optional configuration for react-query
+Returns:
+ - Query result object with payment data, loading status, and a revalidate function
+*/
 import { useQuery, useQueryClient } from "react-query";
 
 const getOwnerForPayments = (propertyData,data) => {

@@ -17,6 +17,43 @@ const CloseBtn = (props) => {
   );
 };
 
+/**
+ * ChbCancellationPolicy Component
+ * 
+ * This component is responsible for displaying the cancellation policy, price breakup, and demand estimation for community hall bookings in the CHB module.
+ * It provides modals to show detailed information about each of these aspects.
+ * 
+ * Props:
+ * - `slotDetail`: Object containing details of the booking slots.
+ * 
+ * State Variables:
+ * - `showCancellationPolicy`: Boolean state to manage the visibility of the cancellation policy modal.
+ * - `showPriceBreakup`: Boolean state to manage the visibility of the price breakup modal.
+ * - `showdemandEstimation`: Boolean state to manage the visibility of the demand estimation modal.
+ * 
+ * Hooks:
+ * - `useTranslation`: Provides the `t` function for internationalization.
+ * - `Digit.Hooks.useEnabledMDMS`: Custom hook to fetch MDMS (Master Data Management System) data for community halls.
+ * 
+ * Variables:
+ * - `stateId`: The state ID fetched using the `Digit.ULBService.getStateId` function.
+ * - `tenantId`: The tenant ID fetched using the `Digit.ULBService.getCitizenCurrentTenant` or `Digit.ULBService.getCurrentTenantId` function.
+ * - `cancelpolicyData`: Data fetched from MDMS for community halls, formatted for use in the component.
+ * 
+ * Functions:
+ * - `Close`: Renders a close button icon for modals or popups.
+ * - `CloseBtn`: Wrapper component for the close button, with an `onClick` handler to close the modal.
+ * - `DateConvert`: Converts a date object to a formatted string. Returns an empty string if the date is invalid.
+ * 
+ * Logic:
+ * - Fetches cancellation policy data using the `useEnabledMDMS` hook.
+ * - Formats the fetched data for easier use in the component.
+ * - Manages the visibility of modals for cancellation policy, price breakup, and demand estimation using state variables.
+ * 
+ * Returns:
+ * - A component that displays modals for cancellation policy, price breakup, and demand estimation.
+ * - Includes a close button to hide the modals.
+ */
 const ChbCancellationPolicy = ({ slotDetail }) => {
   const [showCancellationPolicy, setShowCancellationPolicy] = useState(false);
   const [showPriceBreakup, setShowPriceBreakup] = useState(false);
@@ -24,7 +61,7 @@ const ChbCancellationPolicy = ({ slotDetail }) => {
   const { t } = useTranslation();
   const stateId = Digit.ULBService.getStateId();
   const tenantId = Digit.ULBService.getCitizenCurrentTenant(true) || Digit.ULBService.getCurrentTenantId();
-  const { data: cancelpolicyData } = Digit.Hooks.useCustomMDMS(tenantId, "CHB", [{ name: "CommunityHalls" }],
+  const { data: cancelpolicyData } = Digit.Hooks.useEnabledMDMS(tenantId, "CHB", [{ name: "CommunityHalls" }],
     {
       select: (data) => {
         const formattedData = data?.["CHB"]?.["CommunityHalls"];

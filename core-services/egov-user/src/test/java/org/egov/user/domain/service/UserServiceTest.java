@@ -8,6 +8,7 @@ import org.egov.user.domain.model.*;
 import org.egov.user.domain.model.enums.Gender;
 import org.egov.user.domain.model.enums.UserType;
 import org.egov.user.domain.service.utils.EncryptionDecryptionUtil;
+import org.egov.user.persistence.repository.AddressRepository;
 import org.egov.user.persistence.repository.FileStoreRepository;
 import org.egov.user.persistence.repository.OtpRepository;
 import org.egov.user.persistence.repository.UserRepository;
@@ -57,6 +58,9 @@ public class UserServiceTest {
 
     private UserService userService;
 
+    @Mock
+    private AddressRepository addressRepository;
+
     private final List<Long> ID = Arrays.asList(1L, 2L);
     private final String EMAIL = "email@gmail.com";
     private final String USER_NAME = "userName";
@@ -72,7 +76,7 @@ public class UserServiceTest {
     public void before() {
         userService = new UserService(userRepository, otpRepository, fileRepository, passwordEncoder, encryptionDecryptionUtil,
                 tokenStore, DEFAULT_PASSWORD_EXPIRY_IN_DAYS,
-                isCitizenLoginOtpBased, isEmployeeLoginOtpBased, pwdRegex, pwdMaxLength, pwdMinLength);
+                isCitizenLoginOtpBased, isEmployeeLoginOtpBased, pwdRegex, pwdMaxLength, pwdMinLength, addressRepository);
     }
 
 
@@ -146,7 +150,7 @@ public class UserServiceTest {
     public void test_should_not_create_citizenWithWrongUserName() {
         userService = new UserService(userRepository, otpRepository, fileRepository, passwordEncoder,
                 encryptionDecryptionUtil, tokenStore, DEFAULT_PASSWORD_EXPIRY_IN_DAYS,
-                true, false, pwdRegex, pwdMaxLength, pwdMinLength);
+                true, false, pwdRegex, pwdMaxLength, pwdMinLength, addressRepository);
         org.egov.user.domain.model.User domainUser = User.builder().username("TestUser").name("Test").active(true)
                 .tenantId("default").mobileNumber("123456789").type(UserType.CITIZEN).build();
         userService.createCitizen(domainUser, getValidRequestInfo());
@@ -355,7 +359,7 @@ public class UserServiceTest {
     public void test_should_throwexception_incaseofloginotpenabledastrue_forcitizen_update_password_request() {
         userService = new UserService(userRepository, otpRepository, fileRepository, passwordEncoder,
                 encryptionDecryptionUtil, tokenStore, DEFAULT_PASSWORD_EXPIRY_IN_DAYS,
-                true, isEmployeeLoginOtpBased, pwdRegex, pwdMaxLength, pwdMinLength);
+                true, isEmployeeLoginOtpBased, pwdRegex, pwdMaxLength, pwdMinLength, addressRepository);
         User user = User.builder().username("xyz").tenantId("default").type(UserType.CITIZEN).build();
         when(userRepository.findAll(any(UserSearchCriteria.class))).thenReturn(Collections.singletonList(user));
         final LoggedInUserUpdatePasswordRequest updatePasswordRequest = LoggedInUserUpdatePasswordRequest.builder()
@@ -373,7 +377,7 @@ public class UserServiceTest {
     public void test_should_throwexception_incaseofloginotpenabledastrue_foremployee_update_password_request() {
         userService = new UserService(userRepository, otpRepository, fileRepository, passwordEncoder,
                 encryptionDecryptionUtil, tokenStore, DEFAULT_PASSWORD_EXPIRY_IN_DAYS,
-                false, true, pwdRegex, pwdMaxLength, pwdMinLength);
+                false, true, pwdRegex, pwdMaxLength, pwdMinLength, addressRepository);
         User user = User.builder().username("xyz").tenantId("default").type(UserType.EMPLOYEE).build();
         when(userRepository.findAll(any(UserSearchCriteria.class))).thenReturn(Collections.singletonList(user));
         final LoggedInUserUpdatePasswordRequest updatePasswordRequest = LoggedInUserUpdatePasswordRequest.builder()
@@ -504,7 +508,7 @@ public class UserServiceTest {
     public void test_notshould_update_password_whenCitizenotpconfigured_istrue() throws Exception {
         userService = new UserService(userRepository, otpRepository, fileRepository, passwordEncoder,
                 encryptionDecryptionUtil, tokenStore, DEFAULT_PASSWORD_EXPIRY_IN_DAYS,
-                true, false, pwdRegex, pwdMaxLength, pwdMinLength);
+                true, false, pwdRegex, pwdMaxLength, pwdMinLength, addressRepository);
         final NonLoggedInUserUpdatePasswordRequest request = NonLoggedInUserUpdatePasswordRequest.builder()
                 .otpReference("123456")
                 .userName("xyz")
@@ -524,7 +528,7 @@ public class UserServiceTest {
     public void test_notshould_update_password_whenEmployeeotpconfigured_istrue() throws Exception {
         userService = new UserService(userRepository, otpRepository, fileRepository, passwordEncoder,
                 encryptionDecryptionUtil, tokenStore, DEFAULT_PASSWORD_EXPIRY_IN_DAYS,
-                false, true, pwdRegex, pwdMaxLength, pwdMinLength);
+                false, true, pwdRegex, pwdMaxLength, pwdMinLength, addressRepository);
         final NonLoggedInUserUpdatePasswordRequest request = NonLoggedInUserUpdatePasswordRequest.builder()
                 .userName("xyz")
                 .tenantId("default")

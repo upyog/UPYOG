@@ -45,6 +45,10 @@ public class VendorConstants {
 
 	public static final String VENDOR_PAYMENT_PREFERENCE = "PaymentPreference";
 
+	public static final String MODULE_DRIVER_ROLE_MAPPING = "ModuleDriverRoleMapping";
+
+	public static final String MODULE_VENDOR_ROLE_MAPPING = "ModuleVendorRoleMapping";
+
 	public static final String VENDOR_MODULE = "Vendor";
 
 	public static final String UPDATE_ERROR = "Update Error";
@@ -58,5 +62,7 @@ public class VendorConstants {
 	public static final String TENANT_ID_MANDATORY = "TenantId is mandatory in search";
 	public static final String DISABLED = "DISABLED";
 	public static final String FSM_DRIVER = "FSM_DRIVER";
+
+	public static final String ADDITIONAL_DETAILS_DESCRIPTION = "serviceType";
 
 }

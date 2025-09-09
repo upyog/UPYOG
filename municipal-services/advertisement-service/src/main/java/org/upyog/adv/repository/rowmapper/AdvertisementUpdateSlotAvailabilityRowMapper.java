@@ -10,6 +10,11 @@ import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.stereotype.Component;
 import org.upyog.adv.web.models.AdvertisementSlotAvailabilityDetail;
 
+/**
+ * This class implements the ResultSetExtractor interface to map rows from a database ResultSet
+ * to a list of AdvertisementSlotAvailabilityDetail objects. It focuses on extracting updated slot
+ * availability details for advertisements and populating them into the corresponding objects.
+ */
 @Component
 public class AdvertisementUpdateSlotAvailabilityRowMapper implements ResultSetExtractor<List<AdvertisementSlotAvailabilityDetail>> {
 

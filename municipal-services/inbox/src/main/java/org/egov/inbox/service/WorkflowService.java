@@ -1,15 +1,8 @@
 package org.egov.inbox.service;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.Role;
@@ -19,6 +12,7 @@ import org.egov.inbox.util.BpaConstants;
 import org.egov.inbox.util.ErrorConstants;
 import org.egov.inbox.util.FSMConstants;
 import org.egov.inbox.web.model.InboxRequest;
+import org.egov.inbox.util.VendorRole;
 import org.egov.inbox.web.model.RequestInfoWrapper;
 import org.egov.inbox.web.model.workflow.BusinessService;
 import org.egov.inbox.web.model.workflow.BusinessServiceResponse;
@@ -34,6 +28,8 @@ import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import static org.egov.inbox.util.InboxConstants.CITIZEN;
 
 @Service
 public class WorkflowService {
@@ -317,12 +313,31 @@ public class WorkflowService {
         Map<String,List<BusinessService>> tenantIdToBuisnessSevicesMap =  getTenantIdToBuisnessSevicesMap(businessServices);
         Map<String,Set<String>> stateToRoleMap = getStateToRoleMap(businessServices);
         HashMap<String,String> actionableStatuses = new HashMap<>();
-        
+
+		// Extract allowed enum values into a list
+		List<String> allowedRoles = Stream.of(VendorRole.values())
+				.map(Enum::name)
+				.collect(Collectors.toList());
+
         for(Map.Entry<String,List<String>> entry : tenantIdToUserRolesMap.entrySet()){
-        	
+			List<String> vendorRoles = entry.getValue(); // Directly reference the original list
+
+			// Check if any allowed role exists in the userRoles list
+			boolean hasVendorRole = vendorRoles.stream().anyMatch(allowedRoles::contains);
+
+			/*
+			 * When a user has both VENDOR and CITIZEN roles, the inbox was displaying statuses related to both roles.
+			 * To make sure only vendor-related statuses are shown in the vendor inbox, we remove the CITIZEN role
+			 * if the user has a vendor role.
+			 */
+			if (hasVendorRole) {
+				vendorRoles.remove(CITIZEN);
+			}
         	String statelevelTenantId=entry.getKey().split("\\.")[0];
+
+			boolean vendorRoleWithStateLevelTenantId = (hasVendorRole && entry.getKey().equals(statelevelTenantId));
         	
-            if(entry.getKey().equals(criteria.getTenantId()) || (entry.getValue().contains(FSMConstants.FSM_DSO) && entry.getKey().equals(statelevelTenantId)) ){
+            if(entry.getKey().equals(criteria.getTenantId()) || vendorRoleWithStateLevelTenantId ){
                 List<BusinessService> businessServicesByTenantId = new ArrayList();
                 if(entry.getKey().split("\\.").length==1){
                     businessServicesByTenantId = tenantIdToBuisnessSevicesMap.get(criteria.getTenantId());

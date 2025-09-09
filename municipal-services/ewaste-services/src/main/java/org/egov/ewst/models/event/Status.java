@@ -43,25 +43,43 @@ package org.egov.ewst.models.event;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
+/**
+ * Represents the status of an event in the Ewaste application.
+ * This enum contains the possible statuses such as ACTIVE, INACTIVE, CANCELLED, INWORKFLOW, REJECTED, and REQUESTCOMPLETED.
+ */
 public enum Status {
-	ACTIVE("ACTIVE"), INACTIVE("INACTIVE"), CANCELLED("CANCELLED"), INWORKFLOW("INWORKFLOW"),
-
+	ACTIVE("ACTIVE"),
+	INACTIVE("INACTIVE"),
+	CANCELLED("CANCELLED"),
+	INWORKFLOW("INWORKFLOW"),
 	REJECTED("REJECTED"),
-
 	REQUESTCOMPLETED("REQUESTCOMPLETED");
 
+	// Value associated with the status
 	private String value;
 
+	// Constructor to set the value of the status
 	Status(String value) {
 		this.value = value;
 	}
 
+	/**
+	 * Returns the string representation of the status.
+	 *
+	 * @return the name of the status
+	 */
 	@Override
 	@JsonValue
 	public String toString() {
 		return name();
 	}
 
+	/**
+	 * Creates a Status enum from a given string value.
+	 *
+	 * @param passedValue the string value to convert
+	 * @return the corresponding Status enum, or null if no match is found
+	 */
 	@JsonCreator
 	public static Status fromValue(String passedValue) {
 		for (Status obj : Status.values()) {

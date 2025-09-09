@@ -19,6 +19,40 @@ import org.upyog.chb.web.models.idgen.IdResponse;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * This service class handles the enrichment of booking requests in the
+ * Community Hall Booking module.
+ * 
+ * Purpose:
+ * - To enrich booking requests with additional data required for processing.
+ * - To generate and assign unique identifiers for bookings and related entities.
+ * - To populate audit details for tracking creation and modification events.
+ * 
+ * Dependencies:
+ * - CommunityHallBookingConfiguration: Provides configuration properties for enrichment operations.
+ * - IdGenRepository: Interacts with the ID generation service to generate unique IDs.
+ * - CommunityHallBookingUtil: Utility class for common operations such as generating UUIDs.
+ * 
+ * Features:
+ * - Enriches booking requests with unique booking IDs and slot IDs.
+ * - Populates audit details, including createdBy, createdTime, lastModifiedBy, and lastModifiedTime.
+ * - Validates and processes data to ensure consistency and completeness.
+ * - Logs enrichment operations for debugging and monitoring purposes.
+ * 
+ * Methods:
+ * 1. enrichCreateBookingRequest:
+ *    - Enriches a booking request during the creation process.
+ *    - Generates a unique booking ID and populates audit details.
+ * 
+ * 2. enrichUpdateBookingRequest:
+ *    - Enriches a booking request during the update process.
+ *    - Updates audit details to reflect the modification event.
+ * 
+ * Usage:
+ * - This class is automatically managed by Spring and injected wherever enrichment
+ *   operations are required.
+ * - It ensures consistent and reusable logic for enriching booking requests in the module.
+ */
 @Service
 @Slf4j
 public class EnrichmentService {

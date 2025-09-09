@@ -40,8 +40,11 @@ import {
   from "@upyog/upyog-ui-module-ew";
 
 import { SVComponents, SVLinks, SVModule } from "@upyog/upyog-ui-module-sv";
-import {CHBModule,CHBLinks,CHBComponents} from "@upyog/upyog-ui-module-chb";
+import {CHBModule,CHBLinks,CHBComponents} from "@nudmcdgnpm/upyog-ui-module-chb";
 import {ADSModule,ADSLinks,ADSComponents} from "@upyog/upyog-ui-module-ads";
+import { WTModule, WTLinks, WTComponents } from "@nudmcdgnpm/upyog-ui-module-wt";
+import { VENDORComponents, VENDORLinks, VENDORModule } from "@nudmcdgnpm/upyog-ui-module-vendor";
+import { PGRAIComponents, PGRAILinks, PGRAIModule } from "@nudmcdgnpm/upyog-ui-module-pgrai";
 // import * as comps from "@upyog/digit-ui-react-components";
 
 // import { subFormRegistry } from "@upyog/digit-ui-libraries";
@@ -78,9 +81,13 @@ const enabledModules = [
   "PTR",
   "ASSET",
   "ADS",
-  "SV",
   "EW",
-  "CHB"
+  "CHB",
+  "WT",
+  "VENDOR",
+  "MT",
+  "PGRAI",
+  "TP"
 ];
 
 const initTokens = (stateCode) => {
@@ -143,7 +150,16 @@ const initDigitUI = () => {
   ...EWComponents,
   CHBModule,
   CHBLinks,
-  ...CHBComponents
+  ...CHBComponents,
+   WTModule,
+  WTLinks,
+  ...WTComponents,
+  VENDORModule,
+  VENDORLinks,
+  ...VENDORComponents,
+  PGRAIModule,
+  PGRAILinks,
+  ...PGRAIComponents
   });
 
   initFSMComponents();

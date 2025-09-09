@@ -1,6 +1,27 @@
 import React, {Fragment} from "react"
-import { Controller, useWatch } from "react-hook-form";
+import { Controller, useWatch } from "react-hook-form"; // Importing form handling utilities from react-hook-form
+ // Importing UI components from digit-ui-react-components library
 import { TextInput, SubmitBar, LinkLabel, ActionBar, CloseSvg, DatePicker, CardLabelError, SearchForm, SearchField, Dropdown, Table, Card, MobileNumber, Loader, CardText, Header } from "@upyog/digit-ui-react-components";
+
+/**
+ * Component: SearchFields
+ * Description: This component renders a form with fields for filtering/searching based on:
+ * - Application Number
+ * - Mobile Number
+ * - From Date
+ * - To Date
+ * - Includes a Submit button and a Reset/Clear All option
+ * 
+ * @param {Object} props - Component props
+ * @param {Function} register - Function to register form inputs with react-hook-form
+ * @param {Object} control - Control object for managing controlled inputs
+ * @param {Function} reset - Function to reset form fields to their initial values
+ * @param {String} tenantId - Tenant ID for the current context
+ * @param {Function} t - Translation function for localization
+ * @param {Object} formState - Object containing form validation states
+ * @param {Function} setShowToast - Function to display toast notifications
+ * @param {Function} previousPage - Function to navigate to the previous page
+ */
 
 const SearchFields = ({register, control, reset, tenantId, t, formState, setShowToast, previousPage }) => {
 

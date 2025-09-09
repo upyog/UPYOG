@@ -9,6 +9,9 @@ import { EwService } from "../../services/elements/EW";
 import { filterFunctions } from "./newFilterFn";
 import { getSearchFields } from "./searchFields";
 import { InboxGeneral } from "../../services/elements/InboxService";
+import {WTService} from "../../services/elements/WT";
+import {MTService} from "../../services/elements/MT";
+import { PGRAIService } from "../../services/elements/PGRAI";
 
 const inboxConfig = (tenantId, filters) => ({
   PT: {
@@ -60,13 +63,55 @@ const inboxConfig = (tenantId, filters) => ({
     _searchFn: () => EwService.search({ tenantId, filters }),
   },
   CHB: {
-    services: ["chb"],
+    services: ["booking-refund"],
     searchResponseKey: "hallsBookingApplication",
     businessIdsParamForSearch: "bookingNo",
     businessIdAliasForSearch: "bookingNo",
     fetchFilters: filterFunctions.CHB,
     _searchFn: () => CHBServices.search({ tenantId, filters }),
   },
+  WT: {
+    services: ["watertanker"],
+    searchResponseKey: "waterTankerBookingDetail",
+    businessIdsParamForSearch: "bookingNo",
+    businessIdAliasForSearch: "bookingNo",
+    fetchFilters: filterFunctions.WT,
+    _searchFn: () => WTService.search({ tenantId, filters }),
+  },
+  MT: {
+    services: ["mobileToilet"],
+    searchResponseKey: "mobileToilerBookingDetail",
+    businessIdsParamForSearch: "bookingNo",
+    businessIdAliasForSearch: "bookingNo",
+    fetchFilters: filterFunctions.MT,
+    _searchFn: () => MTService.search({ tenantId, filters }),
+  },
+  // Tree Pruning (TP) service configuration for inbox workflow management
+  TP: {
+    services: ["treePruning"],
+    searchResponseKey: "treePruningBookingDetail",
+    businessIdsParamForSearch: "bookingNo",
+    businessIdAliasForSearch: "bookingNo",
+    fetchFilters: filterFunctions.TP,
+    _searchFn: () => MTService.search({ tenantId, filters }),
+  },
+
+  /**
+ * PGRAI Workflow Module Configuration
+ *
+ * Configuration object for the PGRAI module used with the workflow/inbox engine.
+ * Defines how service data should be fetched, what keys to use in responses,
+ * and how filtering should be applied using predefined filter functions.
+ */
+  PGRAI: {
+    services: ["PGRAI"],
+    searchResponseKey: "ServiceWrappers",
+    businessIdsParamForSearch: "serviceRequestId",
+    businessIdAliasForSearch: "serviceRequestId",
+    fetchFilters: filterFunctions.PGRAI,
+    _searchFn: () => PGRAIService.search({ tenantId, filters }),
+  },
+
 });
 
 

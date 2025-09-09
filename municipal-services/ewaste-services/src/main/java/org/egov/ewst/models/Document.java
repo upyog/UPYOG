@@ -12,6 +12,10 @@ import lombok.NoArgsConstructor;
 
 import org.hibernate.validator.constraints.SafeHtml;
 
+/**
+ * Represents a document in the Ewaste application.
+ * This class contains details about the document such as ID, type, and file store ID.
+ */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

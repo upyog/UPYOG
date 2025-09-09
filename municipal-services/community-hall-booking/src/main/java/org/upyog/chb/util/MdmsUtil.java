@@ -27,6 +27,43 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONArray;
 
+/**
+ * This utility class provides methods for interacting with the MDMS (Master Data Management System)
+ * to fetch and process master data required for the Community Hall Booking module.
+ * 
+ * Purpose:
+ * - To retrieve master data such as calculation types, tax head masters, and other configurations.
+ * - To simplify the process of creating MDMS requests and handling responses.
+ * 
+ * Dependencies:
+ * - ServiceRequestRepository: Sends HTTP requests to the MDMS service.
+ * - CommunityHallBookingConfiguration: Provides configuration properties for MDMS operations.
+ * - ObjectMapper: Serializes and deserializes JSON objects for requests and responses.
+ * 
+ * Features:
+ * - Constructs MDMS requests with the required criteria and module details.
+ * - Sends requests to the MDMS service and processes the responses.
+ * - Handles exceptions and logs errors for debugging and monitoring purposes.
+ * 
+ * Fields:
+ * - mdmsHost: The base URL of the MDMS service.
+ * - mdmsPath: The endpoint path for MDMS requests.
+ * 
+ * Methods:
+ * 1. fetchMdmsData:
+ *    - Sends a request to the MDMS service to fetch master data based on the provided criteria.
+ *    - Processes the response and returns the required master data.
+ * 
+ * 2. getCalculationTypes:
+ *    - Retrieves calculation types from the MDMS service for use in demand generation.
+ * 
+ * 3. getTaxHeadMasters:
+ *    - Fetches tax head masters from the MDMS service for financial calculations.
+ * 
+ * Usage:
+ * - This class is used throughout the module to fetch and process master data from MDMS.
+ * - It ensures consistent and reusable logic for MDMS interactions across the application.
+ */
 @Slf4j
 @Component
 public class MdmsUtil {

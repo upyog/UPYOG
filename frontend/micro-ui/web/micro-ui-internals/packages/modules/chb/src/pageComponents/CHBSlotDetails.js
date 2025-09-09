@@ -7,7 +7,42 @@ import ChbCancellationPolicy from "../components/ChbCancellationPolicy";
 // import { TimerValues } from "../components/TimerValues";
 
 
-
+/**
+ * CHBSlotDetails Component
+ * 
+ * This component is responsible for rendering and managing the slot details form for the CHB module.
+ * It allows users to input and manage details related to the booking slot, such as special category, purpose, and purpose description.
+ * 
+ * Props:
+ * - `t`: Translation function for internationalization.
+ * - `config`: Configuration object for the form step.
+ * - `onSelect`: Callback function triggered when the form step is completed.
+ * - `userType`: Type of the user (e.g., employee or citizen).
+ * - `formData`: Existing form data to prefill the fields.
+ * - `value`: Default value for the form fields.
+ * 
+ * State Variables:
+ * - `specialCategory`: State variable to manage the selected special category for the booking slot.
+ * - `purpose`: State variable to manage the purpose of the booking slot.
+ * - `purposeDescription`: State variable to manage the description of the purpose for the booking slot.
+ * 
+ * Variables:
+ * - `validation`: Object to store validation rules for the form fields.
+ * - `tenantId`: The current tenant ID fetched using the Digit ULB Service.
+ * - `stateId`: The state ID fetched using the Digit ULB Service.
+ * - `Category`: Data fetched for special categories using the `useSpecialCategory` hook.
+ * - `Purposes`: Data fetched for purposes using the `usePurpose` hook.
+ * - `category`: Array to store formatted special category options for the dropdown.
+ * - `purposes`: Array to store formatted purpose options for the dropdown.
+ * 
+ * Logic:
+ * - Initializes state variables using the `formData` object, allowing for prefilled data if available.
+ * - Fetches special categories and purposes from MDMS using custom hooks.
+ * - Maps over the fetched data to format it into dropdown options for the form fields.
+ * 
+ * Returns:
+ * - A form step component that allows users to input and manage slot details, with dropdowns for special category and purpose, and a text area for purpose description.
+ */
 const CHBSlotDetails
   = ({ t, config, onSelect, userType, formData,value=formData.slotlist}) => {
     const { pathname: url } = useLocation();
@@ -20,8 +55,22 @@ const CHBSlotDetails
     let validation = {};
     const tenantId =  Digit.ULBService.getCitizenCurrentTenant(true) || Digit.ULBService.getCurrentTenantId();
     const stateId = Digit.ULBService.getStateId();
-    const { data: Category } = Digit.Hooks.chb.useSpecialCategory(tenantId, "CHB", "ChbSpecialCategory");
-    const { data: Purposes } = Digit.Hooks.chb.usePurpose(tenantId, "CHB", "ChbPurpose");
+
+    const { data: Category } = Digit.Hooks.useEnabledMDMS(tenantId, "CHB", [{ name: "SpecialCategory" }],
+      {
+        select: (data) => {
+          const formattedData = data?.["CHB"]?.["SpecialCategory"]
+          return formattedData;
+        },
+      });
+
+    const { data: Purposes } = Digit.Hooks.useEnabledMDMS(tenantId, "CHB", [{ name: "Purpose" }],
+      {
+        select: (data) => {
+          const formattedData = data?.["CHB"]?.["Purpose"]
+          return formattedData;
+        },
+      });
     
     let category=[];
     let purposes=[];

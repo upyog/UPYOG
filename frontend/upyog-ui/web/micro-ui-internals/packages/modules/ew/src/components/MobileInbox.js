@@ -3,6 +3,26 @@ import { useTranslation } from "react-i18next";
 import { ApplicationCard } from "./inbox/ApplicationCard";
 import ApplicationLinks from "./inbox/ApplicationLinks";
 
+/**
+ * Renders a mobile-optimized inbox interface for the E-Waste module.
+ * Provides application listing, filtering, and search capabilities for mobile devices.
+ *
+ * @param {Object} props - Component properties
+ * @param {Array} props.data - Application data to be displayed in the inbox
+ * @param {boolean} props.isLoading - Flag indicating data loading state
+ * @param {boolean} props.isSearch - Flag indicating search mode
+ * @param {Array} props.searchFields - Configuration for search form fields
+ * @param {Function} props.onFilterChange - Handler for filter changes
+ * @param {Function} props.onSearch - Handler for search operations
+ * @param {Function} props.onSort - Handler for sorting operations
+ * @param {string} props.parentRoute - Base route for navigation
+ * @param {Object} props.searchParams - Current search parameters
+ * @param {Object} props.sortParams - Current sorting parameters
+ * @param {string} props.linkPrefix - Prefix for application links
+ * @param {Object} props.tableConfig - Table display configuration
+ * @param {string} props.filterComponent - Name of filter component to load
+ * @returns {JSX.Element} Mobile inbox interface
+ */
 const MobileInbox = ({
   data,
   isLoading,
@@ -19,6 +39,13 @@ const MobileInbox = ({
   filterComponent,
 }) => {
   const { t } = useTranslation();
+
+  /**
+   * Transforms application data for mobile view rendering.
+   * Maps table columns to their mobile-specific cell representations.
+   *
+   * @returns {Array} Transformed data for mobile display
+   */
   const getData = () => {
     return data?.map((dataObj) => {
       const obj = {};

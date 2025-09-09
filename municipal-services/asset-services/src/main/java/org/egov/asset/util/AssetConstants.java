@@ -46,9 +46,9 @@ public class AssetConstants {
     public static final String ASSET_STATUS_DISPOSED = "0";
     public static final String ASSET_USAGE_DISPOSED = "DISPOSED";
     public static final String ASSET_NOT_FOUND = "ASSET_NOT_FOUND";
-    public static final String ASSET_STATUS_DISPOSED_AND_SOLD = "ASSET_STATUS_DISPOSED_AND_SOLD";
-    public static final String ASSET_USAGE_DISPOSED_AND_SOLD = "-1";
+    public static final String ASSET_STATUS_DISPOSED_AND_SOLD = "-1";
+    public static final String ASSET_USAGE_DISPOSED_AND_SOLD = "DISPOSED_AND_SOLD";
 
-    public static final String ASSET_USAGE_ASSET_STATUS_REPAIRED = "1";
-    public static final String ASSET_STATUS_REPAIRED = "ASSET_STATUS_REPAIRED";
+    public static final String ASSET_USAGE_ASSET_STATUS_REPAIRED = "REPAIRED";
+    public static final String ASSET_STATUS_REPAIRED = "1";
 }

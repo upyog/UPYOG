@@ -47,6 +47,9 @@
 
 package org.egov.edcr.feature;
 
+import static org.egov.edcr.constants.EdcrReportConstants.*;
+import static org.egov.edcr.service.FeatureUtil.addScrutinyDetailtoPlan;
+import static org.egov.edcr.service.FeatureUtil.mapReportDetails;
 import static org.egov.edcr.utility.DcrConstants.CULDESAC_ROAD;
 import static org.egov.edcr.utility.DcrConstants.CULDESAC_SHORTESTDISTINCTTOROADFROMCENTER;
 import static org.egov.edcr.utility.DcrConstants.CULD_SAC_SHORTESTDISTINCTTOROAD;
@@ -68,35 +71,13 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.egov.common.entity.edcr.Block;
-import org.egov.common.entity.edcr.CulDeSacRoad;
-import org.egov.common.entity.edcr.Lane;
-import org.egov.common.entity.edcr.NonNotifiedRoad;
-import org.egov.common.entity.edcr.NotifiedRoad;
-import org.egov.common.entity.edcr.Plan;
-import org.egov.common.entity.edcr.Result;
-import org.egov.common.entity.edcr.ScrutinyDetail;
+import org.egov.common.entity.edcr.*;
 import org.egov.edcr.service.ProcessHelper;
 import org.egov.edcr.utility.DcrConstants;
 import org.springframework.stereotype.Service;
 
 @Service
 public class DistanceToRoad extends FeatureProcess {
-    private static final String SUB_RULE_25_1 = "25-1";
-    private static final String SUB_RULE_25_1_PROVISIO = "25-1 Provisio";
-    private static final String SUB_RULE_25_1_PROVISIO_DESC = "Distance from building to street boundary";
-    private static final String SUB_RULE_26_DESCRIPTION = "Prohibition for constructions abutting public roads.";
-    private static final String SUB_RULE_62_1DESCRIPTION = "Minimum distance between plot boundary and abutting Street.";
-    private static final String SUB_RULE_26 = "26";
-    private static final String RULE_62 = "62";
-    private static final String SUB_RULE_62_1 = "62-1";
-    private static BigDecimal FIVE = BigDecimal.valueOf(5);
-    private static BigDecimal THREE = BigDecimal.valueOf(3);
-    private static BigDecimal SEVEN = BigDecimal.valueOf(7);
-    private static BigDecimal TWO = BigDecimal.valueOf(2);
-    private static BigDecimal ONEPOINTFIVE = BigDecimal.valueOf(1.5);
-    private static final String RULE_EXPECTED_KEY = "meanofaccess.expected";
-    private static final String RULE_ACTUAL_KEY = "meanofaccess.actual";
 
     @Override
     public Plan validate(Plan pl) {/*
@@ -241,29 +222,24 @@ public class DistanceToRoad extends FeatureProcess {
          * minimumDistance=distance; } if(minimumDistance!=null)
          */
         for (BigDecimal minimumDistance : roadDistances) {
-            String expectedResult = getLocaleMessage(RULE_EXPECTED_KEY, exptectedDistance.toString());
-            String actualResult = getLocaleMessage(RULE_ACTUAL_KEY, minimumDistance.toString());
+            String expectedResult = getLocaleMessage(MOA_RULE_EXPECTED_KEY, exptectedDistance.toString());
+            String actualResult = getLocaleMessage(MOA_RULE_ACTUAL_KEY, minimumDistance.toString());
             // compare minimum road distance with minimum expected value.
-            if (exptectedDistance.compareTo(minimumDistance) > 0) {
-                Map<String, String> details = new HashMap<>();
-                details.put(RULE_NO, subRule);
-                details.put(DESCRIPTION, subRuleDesc);
-                details.put(REQUIRED, expectedResult);
-                details.put(PROVIDED, actualResult);
-                details.put(STATUS, Result.Not_Accepted.getResultVal());
-                scrutinyDetail.getDetail().add(details);
-                pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
-            } else {
-                Map<String, String> details = new HashMap<>();
-                details.put(RULE_NO, subRule);
-                details.put(DESCRIPTION, subRuleDesc);
-                details.put(REQUIRED, expectedResult);
-                details.put(PROVIDED, actualResult);
-                details.put(STATUS, Result.Accepted.getResultVal());
-                scrutinyDetail.getDetail().add(details);
-                pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
 
+            ReportScrutinyDetail detail = new ReportScrutinyDetail();
+            detail.setRuleNo(subRule);
+            detail.setDescription(subRuleDesc);
+            detail.setRequired(expectedResult);
+            detail.setProvided(actualResult);
+
+            if (exptectedDistance.compareTo(minimumDistance) > 0) {
+                detail.setStatus(Result.Not_Accepted.getResultVal());
+            }else {
+                detail.setStatus(Result.Accepted.getResultVal());
             }
+
+            Map<String, String> details = mapReportDetails(detail);
+            addScrutinyDetailtoPlan(scrutinyDetail, pl, details);
 
         }
     }
