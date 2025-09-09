@@ -239,16 +239,15 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 			return null;
 		}
 		setRelatedAssetData(communityHallsBookingRequest);
-		
-String tenantId = communityHallsBookingRequest.getHallsBookingApplication().getTenantId().split("\\.")[0];
-		
+
+		String tenantId = communityHallsBookingRequest.getHallsBookingApplication().getTenantId().split("\\.")[0];
+
 		Object mdmsData = mdmsUtil.mDMSCall(communityHallsBookingRequest.getRequestInfo(), tenantId);
-		
-		if (StringUtils.equalsIgnoreCase(
-		        CommunityHallBookingConstants.ACTION_RETURN_TO_INITIATOR_FOR_PAYMENT,
-		        communityHallsBookingRequest.getHallsBookingApplication().getWorkflow().getAction())) {
-		    demandService.createDemand(communityHallsBookingRequest, mdmsData, true);
-		    
+
+		if (StringUtils.equalsIgnoreCase(CommunityHallBookingConstants.ACTION_RETURN_TO_INITIATOR_FOR_PAYMENT,
+				communityHallsBookingRequest.getHallsBookingApplication().getWorkflow().getAction())) {
+			demandService.createDemand(communityHallsBookingRequest, mdmsData, true);
+
 			// fetch/create bill
 			GenerateBillCriteria billCriteria = GenerateBillCriteria.builder()
 					.tenantId(communityHallsBookingRequest.getHallsBookingApplication().getTenantId())
@@ -268,8 +267,7 @@ String tenantId = communityHallsBookingRequest.getHallsBookingApplication().getT
 
 			convertBookingRequest(communityHallsBookingRequest, bookingDetails.get(0));
 
-		}
-		else {
+		} else {
 			if (StringUtils.equalsIgnoreCase(CommunityHallBookingConstants.ACTION_APPROVE,
 					communityHallsBookingRequest.getHallsBookingApplication().getWorkflow().getAction())) {
 
@@ -279,7 +277,7 @@ String tenantId = communityHallsBookingRequest.getHallsBookingApplication().getT
 		}
 
 		enrichmentService.enrichUpdateBookingRequest(communityHallsBookingRequest, status);
-		
+
 		// ENcrypt PII data of applicant
 		encryptionService.encryptObject(communityHallsBookingRequest);
 
