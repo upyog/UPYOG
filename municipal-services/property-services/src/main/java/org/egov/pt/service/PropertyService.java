@@ -567,10 +567,18 @@ public class PropertyService {
 						"Audit can only be provided for a single propertyId");
 			}
 
-		if (!criteria.getIsRequestForDuplicatePropertyValidation()
-				&& (criteria.getDoorNo() != null || criteria.getOldPropertyId() != null)) {
-			properties = fuzzySearchService.getProperties(requestInfo, criteria);
-		} else {
+        // Before the if check
+        log.info("Duplicate property validation flag: {}", criteria.getIsRequestForDuplicatePropertyValidation());
+
+        if (!criteria.getIsRequestForDuplicatePropertyValidation()
+                && (criteria.getDoorNo() != null
+                || criteria.getOldPropertyId() != null
+                || criteria.getName() != null)) {
+
+            // Inside the if block
+            log.info("Entering fuzzy search - Duplicate property validation flag is: {}", criteria.getIsRequestForDuplicatePropertyValidation());
+            properties = fuzzySearchService.getProperties(requestInfo, criteria);
+    } else {
 			if (criteria.getMobileNumber() != null || criteria.getName() != null || criteria.getOwnerIds() != null) {
 
 				log.info("In Property Search");
