@@ -202,19 +202,19 @@ public class PropertySchedulerService {
 				}
 
 				if (null == structuralFactor) {
-					errorSet.add(PTConstants.MDMS_MASTER_DETAILS_BUILDINGSTRUCTURE + " is missing in mdms");
+					errorSet.add(PTConstants.MDMS_MASTER_DETAILS_BUILDINGSTRUCTURE + " (F2) is missing in mdms");
 				}
 				if (null == ageFactor) {
-					errorSet.add(PTConstants.MDMS_MASTER_DETAILS_BUILDINGESTABLISHMENTYEAR + " is missing in mdms");
+					errorSet.add(PTConstants.MDMS_MASTER_DETAILS_BUILDINGESTABLISHMENTYEAR + " (F3)is missing in mdms");
 				}
 				if (null == occupancyFactor) {
-					errorSet.add(PTConstants.MDMS_MASTER_DETAILS_BUILDINGPURPOSE + " is missing in mdms");
+					errorSet.add(PTConstants.MDMS_MASTER_DETAILS_BUILDINGPURPOSE + " (F4) is missing in mdms");
 				}
 				if (null == useFactor) {
-					errorSet.add(PTConstants.MDMS_MASTER_DETAILS_BUILDINGUSE + " is missing in mdms");
+					errorSet.add(PTConstants.MDMS_MASTER_DETAILS_BUILDINGUSE + " (F5) is missing in mdms");
 				}
 				if (null == locationFactor) {
-					errorSet.add(PTConstants.MDMS_MASTER_DETAILS_ZONES + " is missing in mdms");
+					errorSet.add(PTConstants.MDMS_MASTER_DETAILS_ZONES + " (F1) is missing in mdms");
 				}
 				if (null == oAndMRebatePercentage) {
 					errorSet.add(PTConstants.MDMS_MASTER_DETAILS_OVERALLREBATE + " is missing in mdms");
