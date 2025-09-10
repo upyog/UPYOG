@@ -26,5 +26,23 @@ public class Address {
 	private String  pincode;
 	
 	private String  locality;
+	
+	private String  street;
+	
+	private String  region;
+	
+	private String  plotno;
+	
+	private String  buildingname;
+	
+	private String  district;
+	
+	private String  state;
+	
+	private String  latitude;
+	
+	private String longitude;
+	
+
 
 }
