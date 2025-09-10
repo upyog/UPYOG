@@ -621,20 +621,23 @@ public class PropertyService {
 			            .collect(Collectors.toList());
 
 			    if (!occupancyTypeCodes.isEmpty()) {
-			        String occupancyTypesResponse = repository.fetchOccupancyTypesAsString(
-			                requestInfo, criteria.getTenantId(), occupancyTypeCodes);
+			    	Map<String, String> occupancyTypesMap = repository.fetchOccupancyTypes(
+			    	        requestInfo, criteria.getTenantId(), occupancyTypeCodes);
 
-			        if (occupancyTypesResponse != null) {
-			            for (Property property : properties) {
-			                if (property.getUnits() != null) {
-			                    for (Unit unit : property.getUnits()) {
-			                        unit.setOccupancyName(occupancyTypesResponse);
-			                    }
-			                }
-			            }
-			        }
+			    	if (occupancyTypesMap != null && !occupancyTypesMap.isEmpty()) {
+			    	    for (Property property : properties) {
+			    	        if (property.getUnits() != null) {
+			    	            for (Unit unit : property.getUnits()) {
+			    	                String occType = unit.getOccupancyType();
+			    	                if (occType != null && occupancyTypesMap.containsKey(occType)) {
+			    	                    unit.setOccupancyName(occupancyTypesMap.get(occType));
+			    	                }
+			    	            }
+			    	        }
+			    	    }
+			    	}
 			    }
-			} else {
+			    	} else {
 			    log.info("No units found in properties, skipping occupancy enrichment.");
 			}
 		    // --- end of occupancy enrichment ---
