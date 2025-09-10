@@ -94,7 +94,7 @@ public class CalculationUtils {
 			}
 			break;
 		case BPACalculatorConstants.MDMS_CALCULATIONTYPE_SANC_FEETYPE:
-			if (businessService.equalsIgnoreCase(BPACalculatorConstants.MDMS_BPA)) {
+			if (businessService.equalsIgnoreCase(BPACalculatorConstants.MDMS_BPA) || businessService.equalsIgnoreCase(BPACalculatorConstants.MDMS_BPA_LOW)) {
 				billingBusinessService = config.getSanclFeeBusinessService();
 			} else {
 				billingBusinessService = config.getOCSancBusinessservice();
