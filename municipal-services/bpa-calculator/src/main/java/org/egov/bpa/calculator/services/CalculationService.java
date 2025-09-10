@@ -179,14 +179,23 @@ public class CalculationService {
 		estimates.add(estimate);
 		}
 		
-		else if (calulationCriteria.getFeeType().equalsIgnoreCase(BPACalculatorConstants.MDMS_CALCULATIONTYPE_SANC_FEETYPE) && calulationCriteria.getBpa().getBusinessService().equalsIgnoreCase("BPA"))
+		else if (calulationCriteria.getFeeType().equalsIgnoreCase(BPACalculatorConstants.MDMS_CALCULATIONTYPE_SANC_FEETYPE) 
+				&& ( calulationCriteria.getBpa().getBusinessService().equalsIgnoreCase(BPACalculatorConstants.MDMS_BPA) 
+						|| calulationCriteria.getBpa().getBusinessService().equalsIgnoreCase(BPACalculatorConstants.MDMS_BPA_LOW) ) )
 		{	
 			@SuppressWarnings("unchecked")
 			Map<String,Map<String,String>> node=(Map<String, Map<String,String>>)calulationCriteria.getBpa().getAdditionalDetails();
 			Map<String,String> fee=node.get("selfCertificationCharges");
 			for(Map.Entry<String,String> entry : fee.entrySet()){
 				TaxHeadEstimate estimatee = new TaxHeadEstimate();
-				BigDecimal amount=new BigDecimal(entry.getValue());
+				
+				BigDecimal amount = null;
+				if(entry.getValue() != null && !entry.getValue().isEmpty() && entry.getValue().matches("^[0-9]*$")) {
+					amount=new BigDecimal(entry.getValue());
+				}else {
+					amount=new BigDecimal("0");
+				}
+				
 				taxhead=entry.getKey();
 				if(taxhead.equalsIgnoreCase("BPA_LESS_ADJUSMENT_PLOT"))
 					amount=amount.multiply(new BigDecimal(-1));

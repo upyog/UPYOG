@@ -48,66 +48,78 @@ public class WaterFieldValidator implements WaterActionValidator {
 
 	private void handleUpdateApplicationRequest(WaterConnectionRequest waterConnectionRequest,
 			Map<String, String> errorMap) {
-		 String jsonString = waterConnectionRequest.getWaterConnection().getAdditionalDetails().toString();
-                 String[] keyValuePairs = jsonString.substring(1, jsonString.length() - 1).split(", "); // Remove the curly braces and split by comma followed by a space
-                 String valueOfConnectionCategory = null;
+		String valueOfConnectionCategory = null;
 
-        for (String pair : keyValuePairs) {
-                String[] keyValue = pair.split("=");
-                if (keyValue[0].equals("connectionCategory")) {
-                 valueOfConnectionCategory = keyValue[1];
-        break;
-    }
-}if (valueOfConnectionCategory != null && !valueOfConnectionCategory.isEmpty()) {
-    // Remove white spaces from the string
-    String trimmedConnectionCategory = valueOfConnectionCategory.replaceAll("\\s", "");
-}
-		valueOfConnectionCategory = valueOfConnectionCategory.replaceAll("\\s", "");
+		Object additionalDetails = waterConnectionRequest.getWaterConnection().getAdditionalDetails();
+		if (additionalDetails != null) {
+			String jsonString = additionalDetails.toString().replaceAll("[{}]", "");
+			String[] keyValuePairs = jsonString.split(", ");
+
+			for (String pair : keyValuePairs) {
+				String[] keyValue = pair.split("=");
+				if (keyValue.length == 2 && "connectionCategory".equals(keyValue[0])) {
+					valueOfConnectionCategory = keyValue[1].replaceAll("\\s", "");
+					break;
+				}
+			}
+		}
+
+		boolean isRegularizedOrLegacy = valueOfConnectionCategory != null
+				&& (valueOfConnectionCategory.equalsIgnoreCase("REGULARIZED")
+						|| valueOfConnectionCategory.equalsIgnoreCase("LEGACY"));
+
 		if (WCConstants.ACTIVATE_CONNECTION_CONST
 				.equalsIgnoreCase(waterConnectionRequest.getWaterConnection().getProcessInstance().getAction())) {
+
 			if (StringUtils.isEmpty(waterConnectionRequest.getWaterConnection().getConnectionType())) {
 				errorMap.put("INVALID_WATER_CONNECTION_TYPE", "Connection type should not be empty");
 			}
+
 			if (StringUtils.isEmpty(waterConnectionRequest.getWaterConnection().getWaterSource())) {
 				errorMap.put("INVALID_WATER_SOURCE", "WaterConnection cannot be created  without water source");
 			}
-			
-			if(waterConnectionRequest.getWaterConnection().getRoadCuttingInfo() == null && !valueOfConnectionCategory.equalsIgnoreCase("REGULARIZED") && valueOfConnectionCategory != null && !valueOfConnectionCategory.isEmpty()){
+
+			if (waterConnectionRequest.getWaterConnection().getRoadCuttingInfo() == null && !isRegularizedOrLegacy) {
 				errorMap.put("INVALID_ROAD_INFO", "Road Cutting Information should not be empty");
 			}
-			if(waterConnectionRequest.getWaterConnection().getRoadCuttingInfo() != null && valueOfConnectionCategory!="REGULARIZED"){
-				for(RoadCuttingInfo roadCuttingInfo : waterConnectionRequest.getWaterConnection().getRoadCuttingInfo()){
-					if(StringUtils.isEmpty(roadCuttingInfo.getRoadType())){
+
+			if (waterConnectionRequest.getWaterConnection().getRoadCuttingInfo() != null && !isRegularizedOrLegacy) {
+				for (RoadCuttingInfo roadCuttingInfo : waterConnectionRequest.getWaterConnection()
+						.getRoadCuttingInfo()) {
+					if (StringUtils.isEmpty(roadCuttingInfo.getRoadType())) {
 						errorMap.put("INVALID_ROAD_TYPE", "Road type should not be empty");
 					}
 				}
 			}
-			if (StringUtils.isEmpty(waterConnectionRequest.getWaterConnection().getConnectionExecutionDate()) ||
-					waterConnectionRequest.getWaterConnection().getConnectionExecutionDate().equals(WCConstants.INVALID_CONEECTION_EXECUTION_DATE)) {
+
+			if (StringUtils.isEmpty(waterConnectionRequest.getWaterConnection().getConnectionExecutionDate())
+					|| waterConnectionRequest.getWaterConnection().getConnectionExecutionDate()
+							.equals(WCConstants.INVALID_CONEECTION_EXECUTION_DATE)) {
 				errorMap.put("INVALID_CONNECTION_EXECUTION_DATE", "Connection execution date should not be empty");
 			}
-
 		}
+
 		if (WCConstants.APPROVE_CONNECTION_CONST
 				.equalsIgnoreCase(waterConnectionRequest.getWaterConnection().getProcessInstance().getAction())) {
 
-			if(waterConnectionRequest.getWaterConnection().getRoadCuttingInfo() == null && !valueOfConnectionCategory.equalsIgnoreCase("REGULARIZED") && valueOfConnectionCategory != null && !valueOfConnectionCategory.isEmpty()){
+			if (waterConnectionRequest.getWaterConnection().getRoadCuttingInfo() == null && !isRegularizedOrLegacy) {
 				errorMap.put("INVALID_ROAD_INFO", "Road Cutting Information should not be empty");
 			}
 
-			if(waterConnectionRequest.getWaterConnection().getRoadCuttingInfo() != null && !valueOfConnectionCategory.equalsIgnoreCase("REGULARIZED") && valueOfConnectionCategory != null && !valueOfConnectionCategory.isEmpty()){
-				for(RoadCuttingInfo roadCuttingInfo : waterConnectionRequest.getWaterConnection().getRoadCuttingInfo()){
-					if(StringUtils.isEmpty(roadCuttingInfo.getRoadType())){
+			if (waterConnectionRequest.getWaterConnection().getRoadCuttingInfo() != null && !isRegularizedOrLegacy) {
+				for (RoadCuttingInfo roadCuttingInfo : waterConnectionRequest.getWaterConnection()
+						.getRoadCuttingInfo()) {
+					if (StringUtils.isEmpty(roadCuttingInfo.getRoadType())) {
 						errorMap.put("INVALID_ROAD_TYPE", "Road type should not be empty");
 					}
-					if(roadCuttingInfo.getRoadCuttingArea() == null && !valueOfConnectionCategory.equalsIgnoreCase("REGULARIZED") && valueOfConnectionCategory != null && !valueOfConnectionCategory.isEmpty()){
+					if (roadCuttingInfo.getRoadCuttingArea() == null) {
 						errorMap.put("INVALID_ROAD_CUTTING_AREA", "Road cutting area should not be empty");
 					}
 				}
 			}
 		}
 	}
-	
+
 	private void handleModifyConnectionRequest(WaterConnectionRequest waterConnectionRequest, Map<String, String> errorMap){
 		if (WCConstants.APPROVE_CONNECTION
 				.equalsIgnoreCase(waterConnectionRequest.getWaterConnection().getProcessInstance().getAction())

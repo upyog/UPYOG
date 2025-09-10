@@ -109,8 +109,8 @@ public class EnrichmentService {
 //			bpaRequest.getBPA().setBusinessService(BPAConstants.BPA_LOW_MODULE_CODE);
 
 //		}
-
-		bpaRequest.getBPA().setBusinessService(BPAConstants.BPA_MODULE_CODE);
+			if (bpaRequest.getBPA().getBusinessService() == null || bpaRequest.getBPA().getBusinessService().isEmpty())
+				bpaRequest.getBPA().setBusinessService(BPAConstants.BPA_MODULE_CODE);
 
 		} else {
 			bpaRequest.getBPA().setBusinessService(BPAConstants.BPA_OC_MODULE_CODE);
@@ -285,7 +285,7 @@ public class EnrichmentService {
 
 		log.info("Application state is : " + state);
 		this.generateApprovalNo(bpaRequest, state);
-		nocService.initiateNocWorkflow(bpaRequest, mdmsData);
+//		nocService.initiateNocWorkflow(bpaRequest, mdmsData);
 
 	}
 

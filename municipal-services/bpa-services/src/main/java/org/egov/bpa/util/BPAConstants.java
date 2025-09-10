@@ -397,6 +397,8 @@ public class BPAConstants {
 	public static final String DOWNLOAD_PERMIT_LINK_PLACEHOLDER = "{DOWNLOAD_PERMIT_LINK}";
 
 	public static final String PAYMENT_LINK_PLACEHOLDER = "{PAYMENT_LINK}";
+	
+	public static final Double MAAX_BUILDING_HEIGHT = 21.0;
 
 
 }

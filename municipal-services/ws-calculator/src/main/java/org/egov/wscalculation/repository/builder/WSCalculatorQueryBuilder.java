@@ -37,6 +37,8 @@ public class WSCalculatorQueryBuilder {
 
 	private final static String noOfConnectionSearchQueryForCurrentMeterReading = "select mr.currentReading from eg_ws_meterreading mr";
 
+	private final static String getMeterReadingId = "select mr.id from eg_ws_meterreading mr";
+
 	private final static String tenantIdWaterConnectionSearchQuery = "select DISTINCT tenantid from eg_ws_connection";
 
 	private final static String connectionNoWaterConnectionSearchQuery = "SELECT conn.connectionNo as conn_no FROM eg_ws_service wc INNER JOIN eg_ws_connection conn ON wc.connection_id = conn.id";
@@ -48,7 +50,8 @@ public class WSCalculatorQueryBuilder {
 	
 	
 	
-	
+	private static final String getDemandId = "SELECT DISTINCT d.id AS demandId, d.status AS Status, dd.collectionamount as amountCollected FROM egbs_demand_v1 d INNER JOIN egbs_demanddetail_v1 dd ON dd.demandid = d.id  ";
+
 	private static final String connectionNoListQueryCancel = "SELECT  distinct d.id, d.consumercode from egbs_demand_v1 d INNER JOIN egbs_demanddetail_v1 dd ON dd.demandid = d.id  ";
 	private static final String connectionNoListQueryUpdate = "UPDATE egbs_demand_v1 set ";
 	
@@ -233,6 +236,57 @@ public class WSCalculatorQueryBuilder {
 		}
 		query.append(" ORDER BY mr.currentReadingDate DESC LIMIT 1");
 		return query.toString();
+	}
+
+	
+	public String getCurrentReadingConnectionSearchQuery(MeterReadingSearchCriteria criteria,
+			List<Object> preparedStatement) {
+		if (criteria.isEmpty()) {
+			return null;
+		}
+		StringBuilder query = new StringBuilder(noOfConnectionSearchQueryForCurrentMeterReading);
+		if (!StringUtils.isEmpty(criteria.getTenantId())) {
+			addClauseIfRequired(preparedStatement, query);
+			query.append(" mr.tenantid= ? ");
+			preparedStatement.add(criteria.getTenantId());
+		}
+		if (!CollectionUtils.isEmpty(criteria.getConnectionNos())) {
+			addClauseIfRequired(preparedStatement, query);
+			query.append(" mr.connectionNo IN (").append(createQuery(criteria.getConnectionNos())).append(" )");
+			addToPreparedStatement(preparedStatement, criteria.getConnectionNos());
+		}
+		query.append(" ORDER BY mr.currentReadingDate DESC LIMIT 1 offset 1");
+		return query.toString();
+	}
+	
+	
+	public String getMeterId(String connectionNo, Long lastReadingDate, Long currentDate, String tenantId,
+			List<Object> preparedStatement) {
+		if (connectionNo.isEmpty()) {
+			return null;
+		}
+		StringBuilder query = new StringBuilder(getMeterReadingId);
+		   if (tenantId != null && !tenantId.isEmpty()) {
+		        addClauseIfRequired(preparedStatement, query);
+		        query.append(" mr.tenantid = ? ");
+		        preparedStatement.add(tenantId);
+		    }
+
+		    addClauseIfRequired(preparedStatement, query);
+		    query.append(" mr.connectionNo = ? ");
+		    preparedStatement.add(connectionNo);
+
+		    // Optional filtering
+		    if (lastReadingDate != null) {
+		        addClauseIfRequired(preparedStatement, query);
+		        query.append(" mr.lastReadingDate = ? ");
+		        preparedStatement.add(lastReadingDate);
+		    }
+
+		    
+		    query.append(" ORDER BY mr.currentReadingDate DESC LIMIT 1");
+
+		    return query.toString();
 	}
 
 	/**
@@ -702,6 +756,50 @@ StringBuilder query = new StringBuilder(connectionNoListQueryCancel);
 		addClauseIfRequired(preparedStatement, query);
 		query.append(" d.taxperiodto <= ? ");
 		preparedStatement.add(taxPeriodTo);
+
+		return query.toString();
+	}
+	
+	
+	
+	public String getCollection( String tenantId,   Long taxperiodfrom,Long taxPeriodTo,String consumerCode,
+			List<Object> preparedStatement) {
+StringBuilder query = new StringBuilder(getDemandId);
+		
+		
+		// Add connection type
+
+		
+		//Add Businessservice
+		addClauseIfRequired(preparedStatement, query);
+		query.append(" d.tenantId = ? ");
+		preparedStatement.add(tenantId);
+		
+		
+		//Add TenantId
+		addClauseIfRequired(preparedStatement, query);
+		query.append(" d.consumercode = ? ");
+		preparedStatement.add(consumerCode);
+		
+		
+		query.append("AND d.businessservice = 'WS' ");
+		
+//		addClauseIfRequired(preparedStatement, query);
+//		query.append(" dd.collectionamount = '0' ");
+		
+		addClauseIfRequired(preparedStatement, query);
+		query.append(" d.ispaymentcompleted = 'false' ");
+				
+		//Add taxperiodfrom
+		addClauseIfRequired(preparedStatement, query);
+		query.append(" d.taxperiodfrom >= ? ") ;
+		preparedStatement.add(taxperiodfrom);
+		
+//		//Add taxperiodto
+//		addClauseIfRequired(preparedStatement, query);
+//		query.append(" d.taxperiodto <= ? ");
+//		preparedStatement.add(taxPeriodTo);
+
 
 		return query.toString();
 	}

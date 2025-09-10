@@ -24,7 +24,7 @@ public class BillingNotificationConsumer {
 	public void listen(final HashMap<String, Object> record, @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
 		try {
 			log.info("Consuming record: " + record);
-			service.process(record, topic);
+		//	service.process(record, topic);
 		} catch (final Exception e) {
 			StringBuilder builder = new StringBuilder();
 			builder.append("Error while listening to value: ").append(record).append(" on topic: ").append(topic).append(": ").append(e);

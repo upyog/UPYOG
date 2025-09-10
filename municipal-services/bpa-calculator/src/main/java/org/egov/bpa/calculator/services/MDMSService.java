@@ -35,6 +35,8 @@ import net.minidev.json.JSONArray;
 @Slf4j
 public class MDMSService {
 
+	public static  final String businessService_BPA = "BPA";
+	
 	@Autowired
 	 private ServiceRequestRepository serviceRequestRepository;
 
@@ -70,6 +72,14 @@ public class MDMSService {
     	RequestInfo requestInfo = 	calculationReq.getRequestInfo();
         List<MasterDetail> bpaMasterDetails = new ArrayList<>();
         
+        // Start Financial Year data required to get the current financial year
+        List<MasterDetail> fyMasterDetails = new ArrayList<>();
+        final String filterCodeForUom = "$.[?(@.active==true)]";
+        fyMasterDetails.add(MasterDetail.builder().name(BPACalculatorConstants.MDMS_FINANCIALYEAR).filter(filterCodeForUom).build());
+        ModuleDetail fyModuleDtls = ModuleDetail.builder().masterDetails(fyMasterDetails)
+                .moduleName(BPACalculatorConstants.MDMS_EGF_MASTER).build();
+        // End Financial Year data required to get the current financial year
+        
         bpaMasterDetails.add(MasterDetail.builder().name(BPACalculatorConstants.MDMS_CALCULATIONTYPE)
         		.build());
         ModuleDetail bpaModuleDtls = ModuleDetail.builder().masterDetails(bpaMasterDetails)
@@ -78,6 +88,7 @@ public class MDMSService {
         List<ModuleDetail> moduleDetails = new ArrayList<>();
         
         moduleDetails.add(bpaModuleDtls);
+        moduleDetails.add(fyModuleDtls);
 
         MdmsCriteria mdmsCriteria = MdmsCriteria.builder().moduleDetails(moduleDetails).tenantId(tenantId)
                 .build();
@@ -161,6 +172,41 @@ public class MDMSService {
         String feeAmount = ( feeType.equalsIgnoreCase(BPACalculatorConstants.MDMS_CALCULATIONTYPE_APL_FEETYPE) ) ? config.getApplFeeDefaultAmount() : config.getSancFeeDefaultAmount();
         defaultMap.put( BPACalculatorConstants.MDMS_CALCULATIONTYPE_AMOUNT,feeAmount);
         return defaultMap;
+    }
+    
+    /**
+     * Gets the startDate and the endDate of the current financialYear
+     * @param mdmsData The MDMS data from the mdms call
+     * @return Map containing the startDate and endDate
+     */
+    public Map<String,Long> getTaxPeriods(Object mdmsData){
+        Map<String,Long> taxPeriods = new HashMap<>();
+        try {
+//        	Object mdmsData = util.mDMSCall(requestInfo, criteria.getTenantId() );
+//            String jsonPath = TLConstants.MDMS_CURRENT_FINANCIAL_YEAR.replace("{}",businessService_TL);
+//            List<Map<String,Object>> jsonOutput =  JsonPath.read(mdmsData, jsonPath);
+            String jsonPath = BPACalculatorConstants.MDMS_CURRENT_FINANCIAL_YEAR.replace("{}",businessService_BPA);
+            List<Map<String,Object>> jsonOutput =  JsonPath.read(mdmsData, jsonPath);
+            
+            for (int i=0; i<jsonOutput.size();i++) {
+           	 Object startingDate = jsonOutput.get(i).get(BPACalculatorConstants.MDMS_STARTDATE);
+           	 Object endingDate = jsonOutput.get(i).get(BPACalculatorConstants.MDMS_ENDDATE);
+           	 Long startTime = (Long)startingDate;
+           	 Long endTime = (Long)endingDate;
+           	 
+           	 if(System.currentTimeMillis()>=startTime && System.currentTimeMillis()<=endTime) {
+           		taxPeriods.put(BPACalculatorConstants.MDMS_STARTDATE,(Long) startTime);
+                taxPeriods.put(BPACalculatorConstants.MDMS_ENDDATE,(Long) endTime);
+           		 break;
+           	 }
+           	 
+            }
+        	
+        } catch (Exception e) {
+            log.error("Error while fetvhing MDMS data", e);
+            throw new CustomException("INVALID FINANCIALYEAR", "No financial Year data found for the module : " + businessService_BPA);
+        }
+        return taxPeriods;
     }
 
 

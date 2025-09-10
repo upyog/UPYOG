@@ -2,6 +2,7 @@
 package org.egov.pt.repository;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -13,11 +14,19 @@ import java.util.Map;
 import java.util.Objects;
 
 import lombok.extern.slf4j.Slf4j;
+import net.minidev.json.JSONArray;
+
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.mdms.model.MasterDetail;
+import org.egov.mdms.model.MdmsCriteria;
+import org.egov.mdms.model.MdmsCriteriaReq;
+import org.egov.mdms.model.MdmsResponse;
+import org.egov.mdms.model.ModuleDetail;
 import org.egov.pt.models.EncryptionCount;
 import org.egov.pt.models.OwnerInfo;
 import org.egov.pt.models.Property;
 import org.egov.pt.models.PropertyCriteria;
+import org.egov.pt.models.Unit;
 import org.egov.pt.models.user.User;
 import org.egov.pt.models.user.UserDetailResponse;
 import org.egov.pt.models.user.UserSearchRequest;
@@ -33,13 +42,20 @@ import org.egov.pt.service.UserService;
 import org.egov.pt.util.PropertyUtil;
 import org.egov.pt.web.contracts.PropertyRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.SingleColumnRowMapper;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
+import com.fasterxml.jackson.core.type.TypeReference;
+import java.util.Optional;
 
+
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Sets;
+
 
 @Slf4j
 @Repository
@@ -74,7 +90,22 @@ public class PropertyRepository {
 
 	@Autowired
 	private PropertyAuditEncRowMapper propertyAuditEncRowMapper;
+	
+	
+    @Value("${egov.mdms.host}")
+    private String mdmsHost;
 
+    @Value("${egov.mdms.search.endpoint}")
+    private String mdmsSearchEndpoint;
+
+    
+    @Autowired
+    private ObjectMapper mapper;
+    
+    @Autowired
+    private ServiceRequestRepository serviceRequestRepository;
+    
+    
 	public List<String> getPropertyIds(Set<String> ownerIds, String tenantId) {
 
 		List<Object> preparedStmtList = new ArrayList<>();
@@ -210,10 +241,81 @@ public class PropertyRepository {
 
 			    UserDetailResponse userDetailResponse = userService.getUser(userSearchRequest);
 			    util.enrichOwner(userDetailResponse, latestProperties, isOpenSearch);
-
+			    
 			    return latestProperties;
 	}
+		
 
+		public String fetchOccupancyTypesAsString(RequestInfo requestInfo, String tenantIdParam, List<String> occupancyTypeCodes) {
+		    try {
+		        String tenantIdForMDMS = (tenantIdParam != null && !tenantIdParam.isEmpty())
+		                ? tenantIdParam.split("\\.")[0]
+		                : "pb";
+
+		        String uri = mdmsHost + mdmsSearchEndpoint;
+
+		        MdmsCriteriaReq mdmsCriteriaReq = MdmsCriteriaReq.builder()
+		                .requestInfo(requestInfo)
+		                .mdmsCriteria(MdmsCriteria.builder()
+		                        .tenantId(tenantIdForMDMS)
+		                        .moduleDetails(Collections.singletonList(
+		                                ModuleDetail.builder()
+		                                        .moduleName("PropertyTax")
+		                                        .masterDetails(Collections.singletonList(
+		                                                MasterDetail.builder()
+		                                                        .name("OccupancyType")
+		                                                        .build()
+		                                        ))
+		                                        .build()
+		                        ))
+		                        .build())
+		                .build();
+
+		        // Fetch from MDMS
+		        Object response = serviceRequestRepository.fetchResult(new StringBuilder(uri), mdmsCriteriaReq)
+		                .orElse(null);  // Java Optional fix
+
+		        if (response == null) {
+		            log.warn("MDMS response is empty");
+		            return "";
+		        }
+
+		        Map<String, Object> responseMap = mapper.convertValue(response, new TypeReference<Map<String, Object>>() {});
+		        Map<String, Object> mdmsRes = (Map<String, Object>) responseMap.get("MdmsRes");
+		        if (mdmsRes == null) {
+		            log.warn("MdmsRes is missing in response");
+		            return "";
+		        }
+
+		        Map<String, Object> propertyTax = (Map<String, Object>) mdmsRes.get("PropertyTax");
+		        if (propertyTax == null) {
+		            log.warn("PropertyTax missing in MdmsRes");
+		            return "";
+		        }
+
+		        List<Map<String, Object>> mdmsOccupancyTypes = (List<Map<String, Object>>) propertyTax.getOrDefault("OccupancyType", Collections.emptyList());
+		        if (mdmsOccupancyTypes.isEmpty()) {
+		            log.warn("OccupancyType list is empty");
+		            return "";
+		        }
+
+		        // Dynamic filtering
+		        String result = mdmsOccupancyTypes.stream()
+		                .filter(type -> occupancyTypeCodes.contains(type.get("code")))
+		                .map(type -> (String) type.get("name"))
+		                .collect(Collectors.joining(", "));
+
+		        log.info("Filtered Occupancy Types: {}", result);
+		        return result;
+
+		    } catch (Exception e) {
+		        log.error("Error fetching Occupancy Types from MDMS", e);
+		        return "";
+		    }
+		}
+
+		    
+		
 	
 	private List<Property> getOwnerHistoryDetails(List<Property> properties, List<Property> latestProperties) {
 

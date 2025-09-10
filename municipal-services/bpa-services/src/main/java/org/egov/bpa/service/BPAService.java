@@ -322,10 +322,10 @@ public class BPAService {
 		}
 
 		String tenantId = criteria.getTenantId();
-		if(landInfo.isEmpty() && !tenantId.isEmpty() && tenantId !=null)
-		{
-          return bpas;
-		}
+		// if(landInfo.isEmpty() && !tenantId.isEmpty() && tenantId !=null)
+		// {
+  //         return bpas;
+		// }
 
 		bpas = getBPAFromLandId(criteria, requestInfo, null);
 		if (!landInfo.isEmpty()) {
@@ -410,7 +410,7 @@ public class BPAService {
 
 		bpaRequest.getBPA().setAuditDetails(searchResult.get(0).getAuditDetails());
 		
-		nocService.manageOfflineNocs(bpaRequest, mdmsData);
+//		nocService.manageOfflineNocs(bpaRequest, mdmsData);
 		bpaValidator.validatePreEnrichData(bpaRequest, mdmsData);
 		enrichmentService.enrichBPAUpdateRequest(bpaRequest, businessService);
 		
@@ -424,7 +424,8 @@ public class BPAService {
                  */
                 // Generate the sanction Demand
                 if ((businessSrvc.equalsIgnoreCase(BPAConstants.BPA_OC_MODULE_CODE)
-                        || businessSrvc.equalsIgnoreCase(BPAConstants.BPA_BUSINESSSERVICE))
+                        || businessSrvc.equalsIgnoreCase(BPAConstants.BPA_BUSINESSSERVICE)
+                        || businessSrvc.equalsIgnoreCase(BPAConstants.BPA_LOW_MODULE_CODE))
                         && state.equalsIgnoreCase(BPAConstants.PENDING_APPROVAL_STATE)) {
                     calculationService.addCalculation(bpaRequest, BPAConstants.SANCTION_FEE_KEY);
                 }
@@ -481,7 +482,7 @@ public class BPAService {
 				throw new CustomException(BPAErrorConstants.BPA_UPDATE_ERROR_COMMENT_REQUIRED,
 						"Comment is mandaotory, please provide the comments ");
 			}
-			nocService.handleBPARejectedStateForNoc(bpaRequest);
+//			nocService.handleBPARejectedStateForNoc(bpaRequest);
 
 		} else {
 			
