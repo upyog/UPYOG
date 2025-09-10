@@ -111,9 +111,14 @@ public class AuthorizationServerConfiguration {
     @Order(3)
     public SecurityFilterChain authServerSecurityFilterChain(HttpSecurity http) throws Exception {
         return http
+            .securityMatcher(request -> 
+                request.getRequestURI().startsWith("/login") ||
+                request.getRequestURI().startsWith("/error") ||
+                request.getRequestURI().startsWith("/oauth2/") ||
+                request.getRequestURI().startsWith("/auth/")
+            )
             .authorizeHttpRequests((authorize) -> authorize
-                .requestMatchers("/login", "/error", "/oauth2/**", "/auth/**", "/oauth/**", "/user/oauth/**").permitAll()  // Added /user/oauth/**
-                .anyRequest().authenticated()
+                .anyRequest().permitAll()
             )
             .formLogin(Customizer.withDefaults())
             .build();
