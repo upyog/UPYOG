@@ -107,18 +107,18 @@ public class UserService{
                     UserDetailResponse userDetailResponse = userExists(owner,requestInfo);
                     if(userDetailResponse.getUser().isEmpty())
                         throw new CustomException("INVALID USER","The uuid "+owner.getUuid()+" does not exists");
-                    StringBuilder uri =new StringBuilder(config.getUserHost());
-                    uri=uri.append(config.getUserContextPath()).append(config.getUserUpdateEndpoint());
-                    OwnerInfo user = new OwnerInfo();
-                    user.addUserWithoutAuditDetail(owner);
-                    addNonUpdatableFields(user,userDetailResponse.getUser().get(0));
-                   if (isBPARoleAddRequired) {
-                        List<String> licenseeTyperRole = tradeUtil.getusernewRoleFromMDMS(tradeLicense, requestInfo);
-                        for (String rolename : licenseeTyperRole) {
-                            user.addRolesItem(Role.builder().code(rolename).name(rolename).tenantId(tradeLicense.getTenantId()).build());
-                        }
-                   }
-                    userDetailResponse = userCall( new CreateUserRequest(requestInfo,user),uri);
+//                    StringBuilder uri =new StringBuilder(config.getUserHost());
+//                    uri=uri.append(config.getUserContextPath()).append(config.getUserUpdateEndpoint());
+//                    OwnerInfo user = new OwnerInfo();
+//                    user.addUserWithoutAuditDetail(owner);
+//                    addNonUpdatableFields(user,userDetailResponse.getUser().get(0));
+//                   if (isBPARoleAddRequired) {
+//                        List<String> licenseeTyperRole = tradeUtil.getusernewRoleFromMDMS(tradeLicense, requestInfo);
+//                        for (String rolename : licenseeTyperRole) {
+//                            user.addRolesItem(Role.builder().code(rolename).name(rolename).tenantId(tradeLicense.getTenantId()).build());
+//                        }
+//                   }
+//                    userDetailResponse = userCall( new CreateUserRequest(requestInfo,user),uri);
                     switch (businessService)
                     {
                         case businessService_BPA:
@@ -197,7 +197,8 @@ public class UserService{
     private UserDetailResponse userExists(OwnerInfo owner,RequestInfo requestInfo){
         UserSearchRequest userSearchRequest =new UserSearchRequest();
         userSearchRequest.setTenantId(owner.getTenantId());
-     //   userSearchRequest.setMobileNumber(owner.getMobileNumber());
+//        userSearchRequest.setMobileNumber(owner.getMobileNumber());
+        userSearchRequest.setUuid(Collections.singletonList(owner.getUuid()));
      //   userSearchRequest.setName(owner.getName());
         userSearchRequest.setRequestInfo(requestInfo);
         userSearchRequest.setActive(true);
@@ -414,11 +415,11 @@ public class UserService{
 
     }
     
-    private UserDetailResponse searchByMobileNumber(String userName,String tenantId){
+    private UserDetailResponse searchByMobileNumber(String mobil,String tenantId){
         UserSearchRequest userSearchRequest = new UserSearchRequest();
         userSearchRequest.setUserType("CITIZEN");
 //        userSearchRequest.setUserName(userName);
-        userSearchRequest.setMobileNumber(userName);
+        userSearchRequest.setMobileNumber(mobil);
         userSearchRequest.setTenantId(tenantId);
         StringBuilder uri = new StringBuilder(config.getUserHost()).append(config.getUserSearchEndpoint());
         return userCall(userSearchRequest,uri);

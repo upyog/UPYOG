@@ -63,6 +63,9 @@ public class NiuaOAuthTokenService {
 			body.add("scope", scope);
 			body.add("tenantId", tenantId);
 			body.add("userType", userType);
+			
+			log.info("Token url:{}",tokenUrl);
+			log.info("Token request {}",body);
 
 			HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(body, headers);
 

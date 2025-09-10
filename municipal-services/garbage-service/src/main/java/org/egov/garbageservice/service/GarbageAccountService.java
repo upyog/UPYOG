@@ -994,7 +994,11 @@ public class GarbageAccountService {
 				.requestInfo(updateGarbageRequest.getRequestInfo()).garbageAccounts(new ArrayList<>()).build();
 
 		updateGarbageRequest.getGarbageAccounts().stream().forEach(account -> {
-
+			
+			if (!BooleanUtils.isTrue(account.getIsOnlyWorkflowCall())) {
+				org.egov.garbageservice.model.contract.Role role =  org.egov.garbageservice.model.contract.Role.builder().code("CITIZEN").name("Citizen").build();
+				userService.processGarbageAccount(updateGarbageRequest.getRequestInfo(),role, account);
+			}
 			if (BooleanUtils.isTrue(account.getIsOnlyWorkflowCall())) {
 
 				Boolean tempBol = account.getIsOnlyWorkflowCall();
@@ -1907,16 +1911,12 @@ public class GarbageAccountService {
 	}
 	
 	public GrbgBillFailure enrichGrbgBillFailure(GarbageAccount garbageAccount,
-			GenerateBillRequest generateBillRequest, BillResponse billResponse,ObjectNode errorMap) {
+			GenerateBillRequest generateBillRequest, BillResponse billResponse,List<String> errorList) {
 		SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
 		ObjectMapper mapper = new ObjectMapper();
 		JsonNode response_payload = mapper.valueToTree(billResponse);
 		JsonNode request_payload = mapper.valueToTree(generateBillRequest);
 		String failure_reason = null;
-		if (errorMap.has("USER-UUID-NULL"))
-			failure_reason = "USER-UUID-NULL";
-		else
-			failure_reason = "ISSUES MENTIONED IN ERROR-JSON";
 		GrbgBillFailure grbgBillFailure = GrbgBillFailure.builder()
 							.consumer_code(garbageAccount.getGrbgApplicationNumber())
 							.tenant_id(garbageAccount.getTenantId())
@@ -1930,7 +1930,7 @@ public class GarbageAccountService {
 							.status_code("400")
 							.created_time(new Date().getTime())
 							.last_modified_time(new Date().getTime())
-							.error_json(errorMap)
+							.error_json(errorList)
 							.to_date(null != generateBillRequest.getToDate() ? dateFormat.format(generateBillRequest.getToDate()): null)
 							.year(generateBillRequest.getYear()).build();
 		return grbgBillFailure;
