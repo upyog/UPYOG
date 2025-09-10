@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.egov.garbageservice.model.GrbgBillFailure;
@@ -63,6 +64,9 @@ public class GarbageBillTrackerRepository {
 
 	private static final String DELETE_BILL_FAILURE = "DELETE FROM eg_bill_failure"
 			+ " WHERE consumer_code = :consumer_code" + "  AND from_date = :from_date" + "  AND to_date = :to_date;";
+	
+	private static final String SANATIZE_BILL_FAILURE = "DELETE FROM eg_bill_failure bf WHERE EXISTS ( SELECT 1 FROM eg_grbg_bill_tracker bt WHERE bt.grbg_application_id = bf.consumer_code and bt.month = bf.month ) AND module_name = 'GB'";
+
 
 	public GrbgBillTracker createTracker(GrbgBillTracker grbgBillTracker) {
 
@@ -225,5 +229,17 @@ public class GarbageBillTrackerRepository {
 		params.put("from_date", grbgBillFailureRequest.getFrom_date());
 		params.put("to_date", grbgBillFailureRequest.getTo_date());
 		namedParameterJdbcTemplate.update(DELETE_BILL_FAILURE, params);
+	}
+	
+	public void sanatizeBillFailure(List<String> ulbs) {
+		StringBuilder query = new StringBuilder(SANATIZE_BILL_FAILURE);
+
+		if (!CollectionUtils.isEmpty(ulbs)) {
+			   String result = ulbs.stream()
+		                .map(c -> "'hp." + c + "'")
+		                .collect(Collectors.joining(","));
+			   query.append(" AND bf.tenant_id IN (").append(result).append(")");
+		}
+		namedParameterJdbcTemplate.update(query.toString(), new HashMap<>());
 	}
 }
