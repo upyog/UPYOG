@@ -53,7 +53,7 @@ public class DemandService {
 		}
 		node.put("ward", StringUtils.isNotEmpty(wardName) ? wardName : "N/A");
 		node.put("ownerName",
-				StringUtils.isNotEmpty(property.getOwners().get(0).getName()) ? property.getOwners().get(0).getName()
+				StringUtils.isNotEmpty(property.getOwners().get(0).getPropertyOwnerName()) ? property.getOwners().get(0).getName()
 						: "N/A");
 		node.put("contactNumber",
 				StringUtils.isNotEmpty(property.getOwners().get(0).getMobileNumber())
