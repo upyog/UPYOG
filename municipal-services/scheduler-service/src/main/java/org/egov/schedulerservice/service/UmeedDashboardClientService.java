@@ -34,8 +34,12 @@ public class UmeedDashboardClientService {
 
 			HttpEntity<UmeedDashboardRequest> requestEntity = new HttpEntity<>(dashboardRequest, headers);
 
+			log.info("National dahbboard URL: {}", dashboardUrl);
+			
 			String responseBody = restTemplate.postForObject(dashboardUrl, requestEntity, String.class);
+			
 
+			
 			if (responseBody != null) {
 				JsonNode root = objectMapper.readTree(responseBody);
 

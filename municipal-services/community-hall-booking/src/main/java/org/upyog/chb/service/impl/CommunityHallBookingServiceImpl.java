@@ -166,7 +166,7 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 		// 3.Update workflow of the application
 		workflowService.updateWorkflow(communityHallsBookingRequest);
 
-		demandService.createDemand(communityHallsBookingRequest, mdmsData, true);
+		//demandService.createDemand(communityHallsBookingRequest, mdmsData, true);
 
 		// fetch/create bill
 		GenerateBillCriteria billCriteria = GenerateBillCriteria.builder()
@@ -239,6 +239,22 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 			return null;
 		}
 		setRelatedAssetData(communityHallsBookingRequest);
+
+		String tenantId = communityHallsBookingRequest.getHallsBookingApplication().getTenantId().split("\\.")[0];
+
+		Object mdmsData = mdmsUtil.mDMSCall(communityHallsBookingRequest.getRequestInfo(), tenantId);
+
+		if (StringUtils.equalsIgnoreCase(CommunityHallBookingConstants.ACTION_RETURN_TO_INITIATOR_FOR_PAYMENT,
+				communityHallsBookingRequest.getHallsBookingApplication().getWorkflow().getAction())) {
+			demandService.createDemand(communityHallsBookingRequest, mdmsData, true);
+
+			// fetch/create bill
+			GenerateBillCriteria billCriteria = GenerateBillCriteria.builder()
+					.tenantId(communityHallsBookingRequest.getHallsBookingApplication().getTenantId())
+					.businessService("chb-services")
+					.consumerCode(communityHallsBookingRequest.getHallsBookingApplication().getBookingNo()).build();
+			billingService.generateBill(communityHallsBookingRequest.getRequestInfo(), billCriteria);
+		}
 		if (status != BookingStatusEnum.BOOKED) {
 			CommunityHallBookingSearchCriteria bookingSearchCriteria = CommunityHallBookingSearchCriteria.builder()
 					.bookingNo(bookingNo).build();
@@ -251,12 +267,19 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 
 			convertBookingRequest(communityHallsBookingRequest, bookingDetails.get(0));
 
-		}
-		else {
-			createCertificate(communityHallsBookingRequest);
+		} else {
+			if (StringUtils.equalsIgnoreCase(CommunityHallBookingConstants.ACTION_APPROVE,
+					communityHallsBookingRequest.getHallsBookingApplication().getWorkflow().getAction())) {
+
+				createCertificate(communityHallsBookingRequest);
+
+			}
 		}
 
 		enrichmentService.enrichUpdateBookingRequest(communityHallsBookingRequest, status);
+
+		// ENcrypt PII data of applicant
+		encryptionService.encryptObject(communityHallsBookingRequest);
 
 		workflowService.updateWorkflow(communityHallsBookingRequest);
 		// Update payment date and receipt no on successful payment when payment detail
@@ -328,11 +351,13 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 		chbObject.put("numberOfDays", days);
 		JsonNode node = null;
 		try {
-		    String additionalDetailsStr = communityHallsBookingRequest.getHallsBookingApplication().getAdditionaldetail().toString();
-		    ObjectMapper objectMapper = new ObjectMapper();
-		     node = objectMapper.readTree(additionalDetailsStr);
+			String additionalDetailsStr = communityHallsBookingRequest.getHallsBookingApplication()
+					.getAdditionaldetail().toString();
+			ObjectMapper objectMapper = new ObjectMapper();
+			node = objectMapper
+					.valueToTree(communityHallsBookingRequest.getHallsBookingApplication().getAdditionaldetail());
 		} catch (Exception e) {
-		    e.printStackTrace(); // log error if the string isn't valid JSON
+			e.printStackTrace(); // log error if the string isn't valid JSON
 		}
 		Map<String, Object> AssetParentCategoryDetails = mdmsUtil.getCHBAssetParentCategoryDetails(communityHallsBookingRequest.getRequestInfo(), communityHallsBookingRequest.getHallsBookingApplication().getTenantId(),node.get("bookingFor").asText(),communityHallsBookingRequest.getHallsBookingApplication().getCommunityHallCode());
 
@@ -376,14 +401,17 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 		CommunityHallBookingDetail bookingDetailRequest = communityHallsBookingRequest.getHallsBookingApplication();
 		if (bookingDetailDB.getPermissionLetterFilestoreId() == null
 				&& bookingDetailRequest.getPermissionLetterFilestoreId() != null) {
-			bookingDetailDB.setPermissionLetterFilestoreId(bookingDetailRequest.getPermissionLetterFilestoreId());
+			communityHallsBookingRequest.getHallsBookingApplication().setPermissionLetterFilestoreId(bookingDetailRequest.getPermissionLetterFilestoreId());
 		}
 
 		if (bookingDetailDB.getPaymentReceiptFilestoreId() == null
 				&& bookingDetailRequest.getPaymentReceiptFilestoreId() != null) {
-			bookingDetailDB.setPaymentReceiptFilestoreId(bookingDetailRequest.getPaymentReceiptFilestoreId());
+			communityHallsBookingRequest.getHallsBookingApplication().setPaymentReceiptFilestoreId(bookingDetailRequest.getPaymentReceiptFilestoreId());
 		}
-		communityHallsBookingRequest.setHallsBookingApplication(bookingDetailDB);
+		
+		communityHallsBookingRequest.getHallsBookingApplication().getApplicantDetail().setAuditDetails(bookingDetailDB.getApplicantDetail().getAuditDetails());
+		//bookingDetailDB.setWorkflow(communityHallsBookingRequest.getHallsBookingApplication().getWorkflow());
+		//communityHallsBookingRequest.setHallsBookingApplication(bookingDetailDB);
 	}
 	
 	 public String convertDate(String inputDate) {
@@ -505,9 +533,9 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 		setRelatedAssetData(communityHallsBookingRequest);
 		JsonNode node = null;
 		try {
-		    String additionalDetailsStr = communityHallApplication.getAdditionaldetail().toString();
-		    ObjectMapper objectMapper = new ObjectMapper();
-		     node = objectMapper.readTree(additionalDetailsStr);
+
+		     ObjectMapper objectMapper = new ObjectMapper();
+		     node = objectMapper.valueToTree(communityHallApplication.getAdditionaldetail());
 		} catch (Exception e) {
 		    e.printStackTrace(); // log error if the string isn't valid JSON
 		}
@@ -526,6 +554,7 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 			    .multiply(new BigDecimal(assetGstCost.doubleValue())) // Converts assetCost string to BigDecimal
 			    .add(new BigDecimal(securityAmount.doubleValue())); // Converts securityAmount string to BigDecimal
 
+		applicationDetail.setTotalPayableAmount(totalPayableAmount);
 		// Fee calculation formula
 		applicationDetail.setFeeCalculationFormula("From Date: (<b>"
 				+ communityHallApplication.getBookingSlotDetails().get(0).getBookingDate() + "</b>), To Date: " + "(<b>"
