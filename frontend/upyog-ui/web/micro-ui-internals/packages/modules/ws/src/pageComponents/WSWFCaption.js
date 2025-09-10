@@ -1,7 +1,8 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { TelePhone,DisplayPhotos } from "@upyog/digit-ui-react-components";
+import { TelePhone } from "@upyog/digit-ui-react-components";
 import WSWFReason from "./WSWFReason";
+import DisplayPhotos from "../../../../react-components/src/atoms/DisplayPhotos"
 
 const WSWFCaption = ({ data,OpenImage }) => {
   const { t } = useTranslation();

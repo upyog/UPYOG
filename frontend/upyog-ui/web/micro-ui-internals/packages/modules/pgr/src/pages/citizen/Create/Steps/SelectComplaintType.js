@@ -120,13 +120,13 @@ const SelectComplaintType = ({ t, config, onSelect, value }) => {
     setPriorityLevel(value);
     //setPriorityMenu(await serviceDefinitions.getSubMen)
   }
-
+console.log("!complaintType?.code",complaintType,subType,priorityLevel?.code)
   return (
     <FormComposer
     heading={t("ES_CREATECOMPLAINT_NEW_COMPLAINT")}
     config={config1}
     onSubmit={goNext}
-    isDisabled={Object.keys(complaintType).length === 0 || complaintType === null ? true : false}
+    isDisabled={!complaintType?.key || !subType?.key || !priorityLevel?.code}
     label={"NEXT"}
   />
   );

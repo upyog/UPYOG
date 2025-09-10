@@ -8,7 +8,6 @@ import {
   CardSubHeader,
   ConnectingCheckPoints,
   CheckPoint,
-  DisplayPhotos,
   MediaRow,
   LastRow,
   Row,
@@ -30,7 +29,7 @@ import {
   LinkButton,
   SectionalDropdown,
 } from "@upyog/digit-ui-react-components";
-
+import DisplayPhotos from "../../../../../react-components/src/atoms/DisplayPhotos";
 import { Close } from "../../Icons";
 import { useTranslation } from "react-i18next";
 import { isError, useQueryClient } from "react-query";

@@ -62,6 +62,7 @@ export const configEWApproverApplication = ({
           {
             label: t("ES_EW_ACTION_COMMENTS"),
             type: "textarea",
+            isMandatory :"true",
             populators: {
               name: "comments",
             },

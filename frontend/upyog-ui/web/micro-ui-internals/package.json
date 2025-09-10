@@ -13,7 +13,10 @@
     "packages/modules/hrms",
     "packages/modules/pt",
     "packages/modules/fsm",
-    "packages/modules/dss"
+    "packages/modules/dss",
+    "packages/modules/ws",
+    "packages/modules/obps",
+    "packages/modules/pgr"
   ],
   "license": "MIT",
   "private": true,

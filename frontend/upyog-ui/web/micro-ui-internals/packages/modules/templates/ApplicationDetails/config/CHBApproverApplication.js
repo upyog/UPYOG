@@ -25,6 +25,7 @@ export const configCHBApproverApplication = ({
           {
             label: t("ES_CHB_ACTION_COMMENTS"),
             type: "textarea",
+            isMandatory :"true",
             populators: {
               name: "comments",
             },

@@ -40,6 +40,7 @@ export const configPTApproverApplication = ({
           {
             label: t("ES_PT_ACTION_COMMENTS"),
             type: "textarea",
+            isMandatory :"true",
             populators: {
               name: "comments",
             },
