@@ -998,6 +998,11 @@ public class GarbageAccountService {
 			if (!BooleanUtils.isTrue(account.getIsOnlyWorkflowCall())) {
 				org.egov.garbageservice.model.contract.Role role =  org.egov.garbageservice.model.contract.Role.builder().code("CITIZEN").name("Citizen").build();
 				userService.processGarbageAccount(updateGarbageRequest.getRequestInfo(),role, account);
+				if(null != account.getChildGarbageAccounts()) {
+					account.getChildGarbageAccounts().stream().forEach(childAccount->{
+						userService.processGarbageAccount(updateGarbageRequest.getRequestInfo(),role, childAccount);
+					});
+				}
 			}
 			if (BooleanUtils.isTrue(account.getIsOnlyWorkflowCall())) {
 
