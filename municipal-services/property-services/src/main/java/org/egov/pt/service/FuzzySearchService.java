@@ -130,7 +130,7 @@ public class FuzzySearchService {
 
                 for (Map<String, Object> map : data) {
 
-                    String tenantId = JsonPath.read(map, "$.tenantData.code");
+                    String tenantId = JsonPath.read(map, "$.tenantId");
                     String propertyId = JsonPath.read(map, "$.propertyId");
 
                     if (tenantIdToPropertyIds.containsKey(tenantId))
