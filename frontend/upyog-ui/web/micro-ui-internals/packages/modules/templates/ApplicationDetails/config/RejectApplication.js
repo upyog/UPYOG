@@ -20,6 +20,7 @@ export const configRejectApplication = ({ t, rejectMenu, setReason, reason, acti
           {
             label: t("ES_FSM_ACTION_COMMENTS"),
             type: "textarea",
+            isMandatory :"true",
             populators: {
               name: "comments",
             },

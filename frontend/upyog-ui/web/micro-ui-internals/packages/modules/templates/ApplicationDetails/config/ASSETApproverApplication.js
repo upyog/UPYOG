@@ -20,6 +20,7 @@ export const configASSETApproverApplication = ({
           {
             label: t("AST_ACTION_COMMENTS"),
             type: "textarea",
+            isMandatory :"true",
             populators: {
               name: "comments",
             },

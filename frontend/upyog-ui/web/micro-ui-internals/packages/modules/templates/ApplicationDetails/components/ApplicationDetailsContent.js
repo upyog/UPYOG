@@ -140,7 +140,7 @@ console.log("appl", applicationDetails)
         mobileNumber: applicationData?.processInstance?.assignes?.[0]?.uuid === checkpoint?.assignes?.[0]?.uuid && applicationData?.processInstance?.assignes?.[0]?.mobileNumber 
                      ? applicationData?.processInstance?.assignes?.[0]?.mobileNumber 
                      : checkpoint?.assignes?.[0]?.mobileNumber,
-        comment: t(checkpoint && checkpoint?.comment),
+        comment: t(checkpoint && checkpoint?.comment) || t(checkpoint && checkpoint?.wfComment[0]),
        // wfComment: previousCheckpoint ? previousCheckpoint && previousCheckpoint.wfComment : [],
         thumbnailsToShow: checkpoint?.thumbnailsToShow,
       };

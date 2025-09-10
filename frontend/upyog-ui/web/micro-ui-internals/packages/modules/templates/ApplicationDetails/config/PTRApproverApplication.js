@@ -21,6 +21,7 @@ export const configPTRApproverApplication = ({
           {
             label: t("ES_PTR_ACTION_COMMENTS"),
             type: "textarea",
+            isMandatory :"true",
             populators: {
               name: "comments",
             },

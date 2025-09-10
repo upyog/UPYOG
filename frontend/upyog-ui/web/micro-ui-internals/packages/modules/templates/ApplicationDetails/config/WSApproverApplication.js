@@ -46,6 +46,7 @@ export const configWSApproverApplication = ({
           {
             label: t("WF_COMMON_COMMENTS"),
             type: "textarea",
+            isMandatory :"true",
             populators: {
               name: "comments",
             },

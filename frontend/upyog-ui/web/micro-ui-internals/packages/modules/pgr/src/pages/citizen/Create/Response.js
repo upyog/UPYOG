@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import { Card, Banner, CardText, SubmitBar } from "@upyog/digit-ui-react-components";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
@@ -47,7 +47,20 @@ const Response = (props) => {
   let id= appState?.complaints?.response?.ServiceWrappers?.[0]?.service?.serviceRequestId
   const { isLoading, error, isError, complaintDetails, revalidate } = Digit.Hooks.pgr.useComplaintDetails({ tenantId:"pg.citya", id },{ enabled: enable ? true : false});
   const { t } = useTranslation();
+  console.log("removed session")
+
+
+  useEffect(() => {
+    console.log("removed session");
+    Digit.SessionStorage.del("PGR_CITIZEN_CREATE_COMPLAINT");
+    Digit.SessionStorage.del("priorityLevel");
+    Digit.SessionStorage.del("complaintType");
+    Digit.SessionStorage.del("city_complaint");
   
+    return () => {
+      console.log("cleanup if needed");
+    };
+  }, []);
   
   const handleDownloadPdf = async (e) => {
     const tenantInfo = tenants.find((tenant) => tenant.code === "pg.citya");
