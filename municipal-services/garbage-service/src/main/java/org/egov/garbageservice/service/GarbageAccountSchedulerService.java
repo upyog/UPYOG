@@ -27,6 +27,7 @@ import org.egov.garbageservice.model.GrbgBillTracker;
 import org.egov.garbageservice.model.GrbgBillTrackerRequest;
 import org.egov.garbageservice.model.GrbgBillTrackerResponse;
 import org.egov.garbageservice.model.GrbgBillTrackerSearchCriteria;
+import org.egov.garbageservice.producer.GarbageProducer;
 import org.egov.garbageservice.model.OnDemandBillRequest;
 import org.egov.garbageservice.model.SearchCriteriaGarbageAccount;
 import org.egov.garbageservice.model.SearchCriteriaGarbageAccountRequest;
@@ -35,6 +36,8 @@ import org.egov.tracer.model.ServiceCallException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.egov.garbageservice.util.GrbgConstants;
+
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -63,6 +66,12 @@ public class GarbageAccountSchedulerService {
 
 	@Autowired
 	private NotificationService notificationService;
+	
+	@Autowired
+	private GarbageProducer producer;
+	
+	@Autowired
+	private GrbgConstants properties;
 
 	public GrbgBillTrackerResponse generateBill(GenerateBillRequest generateBillRequest) {
 
@@ -97,8 +106,8 @@ public class GarbageAccountSchedulerService {
 							grbgBillTrackers.add(grbgBillTracker);
 							
 							//remove bill if failure exists
-							GrbgBillFailure grbgBillFailure	= garbageAccountService.enrichGrbgBillFailure(garbageAccount, generateBillRequest,billResponse,errorList);
-							garbageAccountService.removeGarbageBillFailure(grbgBillFailure);
+//							GrbgBillFailure grbgBillFailure	= garbageAccountService.enrichGrbgBillFailure(garbageAccount, generateBillRequest,billResponse,errorList);
+//							garbageAccountService.removeGarbageBillFailure(grbgBillFailure);
 //							triggerNotifications
 							notificationService.triggerNotificationsGenerateBill(garbageAccount, billResponse.getBill().get(0),
 									generateBillRequest.getRequestInfo(),grbgBillTracker);
@@ -124,8 +133,14 @@ public class GarbageAccountSchedulerService {
 		if(!grbgBillTrackers.isEmpty())
 			message = "Bills Generated Successfully";
 		
+		sanatizeFailureLog(generateBillRequest);
+		
 		return GrbgBillTrackerResponse.builder().grbgBillTrackers(grbgBillTrackers).message(message).build();
 
+	}
+	
+	private void sanatizeFailureLog(GenerateBillRequest generateBillRequest) {
+		producer.push(properties.getSanatizeLogger(),generateBillRequest.getUlbNames().get(0));
 	}
 	
 	

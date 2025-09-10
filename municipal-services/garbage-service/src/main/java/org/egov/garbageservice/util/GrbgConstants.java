@@ -103,6 +103,9 @@ public class GrbgConstants {
 
 	@Value(("${state.level.tenant.id}"))
 	private String stateLevelTenantId;
+	
+	@Value(("${kafka.topics.sanatize.failure}"))
+	private String sanatizeLogger;
 
 	@Value(("${egov.grbg.bill.expiry.after}"))
 	private String grbgBillExpiryAfter;

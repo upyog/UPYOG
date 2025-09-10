@@ -84,4 +84,10 @@ public class SchedulerConfiguration {
 	@Value("${egov.tl.endpoint.data-metrics}")
 	private String tlDataMetricsEndpoint;
 
+	@Value("${egov.hpud.landing.service.context-host}")
+	private String hpudLandingServiceHostUrl;
+	
+	@Value("${egov.umeed.dashboard.logger.create}")
+	private String umeedDashboardLoggerCreateEndpoint;
+	
 }
