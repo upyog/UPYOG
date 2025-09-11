@@ -198,7 +198,8 @@ public class SsoService {
 			UserSearchCriteria searchCriteria = UserSearchCriteria.builder()
 					.type(UserType.CITIZEN)
 					.active(true)
-					.mobileNumber(user.getMobileNumber()).tenantId("hp").build();
+//					.mobileNumber(user.getMobileNumber())
+					.tenantId("hp").build();
 	        if(userSso != null ) {
 	        	searchCriteria.setUuid(Collections.singletonList(userSso.getUserUuid()));
 		        log.info("count of ids with sso mapping with ssoId "+user.getMobileNumber() + " "+ userSso.getUserUuid(), userSso);
@@ -215,13 +216,18 @@ public class SsoService {
 		        log.info("userFound "+newUser.getName());
 				Boolean update = false;
 				if(!user.getUsername().equals(newUser.getUsername()) ) {
-			        log.info("campareUserName - "+user.getUsername()+" "+newUser.getUsername());
+//			        log.info("campareUserName - "+user.getUsername()+" "+newUser.getUsername());
 					newUser.setUsername(user.getUsername());
 					update = true;
 				}
 				if (!Objects.equals(newUser.getName(), user.getName())) {
-			        log.info("campareName --- "+newUser.getName()+" "+user.getName()+"---");
+//			        log.info("campareName --- "+newUser.getName()+" "+user.getName()+"---");
 					newUser.setName(user.getName());
+					update = true;
+				}
+				if (!Objects.equals(newUser.getMobileNumber(), user.getMobileNumber())) {
+//			        log.info("campareName --- "+newUser.getName()+" "+user.getName()+"---");
+					newUser.setMobileNumber(user.getMobileNumber());
 					update = true;
 				}
 				if(update) {
