@@ -51,7 +51,7 @@
         <dependency>
             <groupId>org.egov</groupId>
             <artifactId>enc-client</artifactId>
-            <version>2.0.4-SNAPSHOT</version>
+            <version>2.9.0</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.springframework.kafka</groupId>
@@ -190,20 +190,6 @@
             <id>repo.egovernments.org.snapshots</id>
             <name>eGov ERP snapshot Repository</name>
             <url>https://nexus-repo.egovernments.org/nexus/content/repositories/snapshots/</url>
-        </repository>
-        <repository>
-            <id>repo.digit.org.snapshot</id>
-            <name>eGov DIGIT Snapshots Repository</name>
-            <url>https://nexus-repo.digit.org/nexus/content/repositories/snapshots/</url>
-        </repository>
-        <repository>
-            <id>repo.digit.org</id>
-            <name>eGov DIGIT Releases Repository</name>
-            <url>https://nexus-repo.digit.org/nexus/content/repositories/releases/</url>
-        </repository>
-        <repository>
-            <id>egov-artifactory</id>
-            <url>https://nexus-repo.egovernments.org/nexus/content/groups/public/</url>
         </repository>
     </repositories>
     <build>
