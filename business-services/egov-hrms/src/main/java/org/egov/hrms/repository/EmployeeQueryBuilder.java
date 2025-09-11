@@ -2,6 +2,7 @@ package org.egov.hrms.repository;
 
 import org.apache.commons.lang3.StringUtils;
 import org.egov.hrms.config.PropertiesManager;
+import org.egov.hrms.model.EmployeeWithWard;
 import org.egov.hrms.web.contract.EmployeeSearchCriteria;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -33,6 +34,24 @@ public class EmployeeQueryBuilder {
 		addWhereClause(criteria, builder, preparedStmtList);
 		return paginationClause(criteria, builder);
 	}
+
+	
+	public String getEmployeewithwardSearchQuery(EmployeeWithWard criteria, List<Object> preparedStmtList) {
+	    StringBuilder builder = new StringBuilder(EmployeeQueries.HRMS_GET_WARD); // assume this is base query like "SELECT * FROM employee WHERE 1=1"
+
+	    if (criteria.getTenantId() != null && !criteria.getTenantId().isEmpty()) {
+	        builder.append(" Where employee_tenantid = ?");
+	        preparedStmtList.add(criteria.getTenantId());
+	    }
+
+	    if (criteria.getWardId() != null && !criteria.getWardId().isEmpty()) {
+	        builder.append(" AND employee_wardid = ?");
+	        preparedStmtList.add(criteria.getWardId());
+	    }
+
+	    return builder.toString();
+	}
+
 
 	public String getEmployeeCountQuery(String tenantId, List <Object> preparedStmtList ) {
 		StringBuilder builder = new StringBuilder(EmployeeQueries.HRMS_COUNT_EMP_QUERY);
