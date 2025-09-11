@@ -1,5 +1,5 @@
-import { CardLabel, FormStep, Dropdown, TextInput, Toast, SearchIcon,  Row, ImageViewer, StatusTable, LinkButton, Header, SubmitBar, CardHeader } from "@upyog/digit-ui-react-components";
-import DisplayPhotos from "../../../../react-components/src/atoms/DisplayPhotos";
+import { CardLabel, FormStep, Dropdown, TextInput, Toast, SearchIcon, DisplayPhotos, Row, ImageViewer, StatusTable, LinkButton, Header, SubmitBar, CardHeader } from "@upyog/digit-ui-react-components";
+//import DisplayPhotos from "../../../../react-components/src/atoms/DisplayPhotos";
 import React, { useEffect, useState } from "react";
 import { PreApprovedPlanService } from "../../../../libraries/src/services/elements/PREAPPROVEDPLAN";
 import  usePreApprovedSearch  from "../../../../libraries/src/hooks/obps/usePreApprovedSearch";
@@ -26,7 +26,7 @@ const BuildingPlanScrutiny = ({ t, config, onSelect, formData, isShowToast, isSu
   const [inputError, setInputError] = useState()
   
   let plotImage = "https://in-egov-assets.s3.ap-south-1.amazonaws.com/images/plotImage.png"
-  
+  console.log("eeeeeeeeee")
   const planArrpovedOptione = [
     { code: "YES", key: "Yes" },
     { code: "NO", key: "No" },
