@@ -118,12 +118,12 @@ public class PDFRequestGenerator {
 			if (trackerUnitIds.contains(unit.getId())) { 
 				JsonNode unitAdditionalDetails = objectMapper.valueToTree(unit.getAdditionalDetails());
 				slNos.add(String.valueOf(conut++));
-				f1Values.add(addressAdditionalDetails.get("zone").asText());
-				f2Values.add(unitAdditionalDetails.get("propBuildingType").asText());
-				f3Values.add(unitAdditionalDetails.get("propYearOfCons").asText());
-				f4Values.add(unitAdditionalDetails.get("propType").asText());
-				f5Values.add(unitAdditionalDetails.get("useOfBuilding").asText());
-				plinthAreas.add(unitAdditionalDetails.get("propArea").asText());
+				f1Values.add(escapeHtml(addressAdditionalDetails.get("zone").asText()));
+				f2Values.add(escapeHtml(unitAdditionalDetails.get("propBuildingType").asText()));
+				f3Values.add(escapeHtml(unitAdditionalDetails.get("propYearOfCons").asText()));
+				f4Values.add(escapeHtml(unitAdditionalDetails.get("propType").asText()));
+				f5Values.add(escapeHtml(unitAdditionalDetails.get("useOfBuilding").asText()));
+				plinthAreas.add(escapeHtml(unitAdditionalDetails.get("propArea").asText()));
 			}
 		}
 			
@@ -178,7 +178,9 @@ public class PDFRequestGenerator {
 		if (bill.getStatus().equals(StatusEnum.PAID)) {
 			amountPaid = bill.getTotalAmount();
 			paymentStatus = "Success";
-			paymentDate = ""; // TODO blank
+			
+			paymentDate = Instant.ofEpochMilli(bill.getAuditDetails().getLastModifiedTime()).atZone(ZoneId.systemDefault())
+					.toLocalDateTime().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
 		}
 		ptbr.put("amountPaid", String.valueOf(amountPaid));
 		ptbr.put("paymentStatus", paymentStatus);
@@ -191,6 +193,15 @@ public class PDFRequestGenerator {
 
 		return PDFRequest.builder().RequestInfo(requestInfoWrapper.getRequestInfo()).key("PropertyTaxBillReceipt")
 				.tenantId("hp").data(dataObject).build();
+	}
+	
+	private String escapeHtml(String input) {
+	    if (input == null) return null;
+	    return input.replace("&", "&amp;")
+	                .replace("<", "&lt;")
+	                .replace(">", "&gt;")
+	                .replace("\"", "&quot;")
+	                .replace("'", "&#39;");
 	}
 
 }
