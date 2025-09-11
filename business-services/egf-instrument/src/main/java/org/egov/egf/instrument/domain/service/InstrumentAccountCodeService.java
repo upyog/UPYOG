@@ -194,9 +194,6 @@ public class InstrumentAccountCodeService {
                     ChartOfAccountContract accountCode = chartOfAccountContractRepository
                             .findByGlcode(instrumentAccountCode.getAccountCode(), requestInfo);
 
-                    ChartOfAccountContract accountCode = chartOfAccountContractRepository
-                            .findByGlcode(searchContract, requestInfo);
-                    
                     if (accountCode == null)
                         throw new InvalidDataException("accountCode", ErrorCode.INVALID_REF_VALUE.getCode(), null);
 
