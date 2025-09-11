@@ -1,4 +1,4 @@
-CREATE TABLE ug_cnd_application_details (
+CREATE TABLE IF NOT EXISTS ug_cnd_application_details (
     application_id VARCHAR(64) PRIMARY KEY,  -- Using application_id as the primary key
     tenant_id VARCHAR(64) NOT NULL,
     application_number VARCHAR(64) UNIQUE NOT NULL,
