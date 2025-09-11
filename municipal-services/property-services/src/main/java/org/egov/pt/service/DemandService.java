@@ -52,8 +52,16 @@ public class DemandService {
 			wardName = addDetail.get("wardNumber").asText();
 		}
 		node.put("ward", StringUtils.isNotEmpty(wardName) ? wardName : "N/A");
+		node.put("oldPropertyId",
+				StringUtils.isNotEmpty(property.getOldPropertyId()) ? property.getOldPropertyId() : "N/A");
+		node.put("ownerOldCustomerId",
+				StringUtils.isNotEmpty(
+						property.getOwners().get(0).getAdditionalDetails().get("ownerOldCustomerId").asText())
+								? property.getOwners().get(0).getAdditionalDetails().get("ownerOldCustomerId").asText()
+								: "N/A");
 		node.put("ownerName",
-				StringUtils.isNotEmpty(property.getOwners().get(0).getPropertyOwnerName()) ? property.getOwners().get(0).getName()
+				StringUtils.isNotEmpty(property.getOwners().get(0).getPropertyOwnerName())
+						? property.getOwners().get(0).getName()
 						: "N/A");
 		node.put("contactNumber",
 				StringUtils.isNotEmpty(property.getOwners().get(0).getMobileNumber())
