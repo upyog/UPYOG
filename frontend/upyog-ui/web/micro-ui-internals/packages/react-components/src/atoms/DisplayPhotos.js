@@ -50,7 +50,7 @@ const ImageOrPDFIcon = ({ source, index, last = false, onClick, selectedIndex, d
 
 const DisplayPhotos = ({ srcs, drawingNos = [], onClick }) => {
   const [selectedIndex, setSelectedIndex] = useState(null);
-
+console.log("srcssrcs",srcs)
   const handleImageClick = (source, index) => {
     setSelectedIndex(index);
     if (onClick) onClick(source, index);
@@ -61,7 +61,7 @@ const DisplayPhotos = ({ srcs, drawingNos = [], onClick }) => {
       className="photos-wrap"
       style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))" }}
     >
-      {srcs.map((source, index) => (
+      {srcs?.map((source, index) => (
         <ImageOrPDFIcon
           key={index}
           source={source}
