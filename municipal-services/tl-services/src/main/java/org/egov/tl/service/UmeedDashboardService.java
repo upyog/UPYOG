@@ -45,8 +45,8 @@ public class UmeedDashboardService {
 		String yesterday = "30-08-2025";
 
 		// Define the month (August 2025)
-		LocalDate startDate = LocalDate.of(2025, 4, 22);
-		LocalDate endDate = LocalDate.of(2025, 4, 30);
+		LocalDate startDate = LocalDate.of(2025, 2, 1);
+		LocalDate endDate = LocalDate.of(2025, 3, 1);
 		//LocalDate endDate = startDate.withDayOfMonth(startDate.lengthOfMonth());
 
 		List<DataItem> allProcessedItems = new ArrayList<>();
