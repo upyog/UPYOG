@@ -44,7 +44,7 @@ public class SecurityConfig {
     }
 
     @Bean
-    @Order(3)
+    @Order(2)
     public SecurityFilterChain userEndpointsSecurityFilterChain(HttpSecurity http) throws Exception {
         return http
             .securityMatcher(request -> 
@@ -56,7 +56,7 @@ public class SecurityConfig {
                 request.getRequestURI().startsWith("/user/users/_updatenovalidate") ||
                 request.getRequestURI().startsWith("/user/profile/_update") ||
                 request.getRequestURI().startsWith("/user/digilocker/oauth/token") ||
-                request.getRequestURI().startsWith("/user/password/") ||  // Password endpoints (includes nologin)
+                request.getRequestURI().startsWith("/user/password/") ||  // Password endpoints
                 request.getRequestURI().equals("/user/_logout")  // Logout endpoint
             )
             .csrf(csrf -> csrf.disable())
@@ -67,16 +67,26 @@ public class SecurityConfig {
     }
 
     @Bean
-    @Order(5)
+    @Order(4)
     public SecurityFilterChain appSecurityFilterChain(HttpSecurity http) throws Exception {
         return http
             .securityMatcher(request -> 
-                !request.getRequestURI().startsWith("/user/") &&        // Exclude ALL /user/** paths
-                !request.getRequestURI().startsWith("/login") &&         // Already handled by Order(4)
+                !request.getRequestURI().startsWith("/user/oauth/") &&  // Already handled by Order(1)
+                !request.getRequestURI().equals("/user/_details") &&    // Already handled by Order(2)
+                !request.getRequestURI().startsWith("/user/_search") &&
+                !request.getRequestURI().startsWith("/user/v1/_search") &&
+                !request.getRequestURI().startsWith("/user/citizen/_create") &&
+                !request.getRequestURI().startsWith("/user/users/_createnovalidate") &&
+                !request.getRequestURI().startsWith("/user/users/_updatenovalidate") &&
+                !request.getRequestURI().startsWith("/user/profile/_update") &&
+                !request.getRequestURI().startsWith("/user/digilocker/oauth/token") &&
+                !request.getRequestURI().startsWith("/user/password/") &&
+                !request.getRequestURI().equals("/user/_logout") &&
+                !request.getRequestURI().startsWith("/login") &&         // Already handled by Order(3)
                 !request.getRequestURI().startsWith("/error") &&
                 !request.getRequestURI().startsWith("/oauth2/") &&
                 !request.getRequestURI().startsWith("/auth/") &&
-                !request.getRequestURI().startsWith("/api/")             // Will be handled by Order(7)
+                !request.getRequestURI().startsWith("/api/")             // Will be handled by Order(5)
             )
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(authz -> authz
@@ -86,35 +96,9 @@ public class SecurityConfig {
             .build();
     }
 
-    // Catch-all for remaining /user/** endpoints not covered above (excluding /user/oauth/**)
-    @Bean
-    @Order(6)
-    public SecurityFilterChain remainingUserEndpointsSecurityFilterChain(HttpSecurity http) throws Exception {
-        return http
-            .securityMatcher(request -> 
-                request.getRequestURI().startsWith("/user/") &&
-                !request.getRequestURI().startsWith("/user/oauth/") &&  // Already handled by Order(1)
-                !request.getRequestURI().equals("/user/_details") &&
-                !request.getRequestURI().startsWith("/user/_search") &&
-                !request.getRequestURI().startsWith("/user/v1/_search") &&
-                !request.getRequestURI().startsWith("/user/citizen/_create") &&
-                !request.getRequestURI().startsWith("/user/users/_createnovalidate") &&
-                !request.getRequestURI().startsWith("/user/users/_updatenovalidate") &&
-                !request.getRequestURI().startsWith("/user/profile/_update") &&
-                !request.getRequestURI().startsWith("/user/digilocker/oauth/token") &&
-                !request.getRequestURI().startsWith("/user/password/") &&
-                !request.getRequestURI().equals("/user/_logout")
-            )
-            .csrf(csrf -> csrf.disable())
-            .authorizeHttpRequests(authz -> authz
-                .anyRequest().permitAll()  // Allow all remaining user endpoints
-            )
-            .build();
-    }
-
     // Optional: Separate configuration for other API endpoints that need JWT
     @Bean
-    @Order(7)
+    @Order(5)
     public SecurityFilterChain apiSecurityFilterChain(HttpSecurity http) throws Exception {
         return http
             .securityMatcher(request -> 
