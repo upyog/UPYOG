@@ -148,10 +148,13 @@ public class PDFService {
 		RequestInfo requestInfo = pdfRequest.getRequestInfo();
 		List<String> logoBase64 = getLogoFromMdms(requestInfo);
 		if (!CollectionUtils.isEmpty(logoBase64) 
-				&& logoBase64.size() >= 3) {
+				&& logoBase64.size() >= 6) {
 			pdfContextData.put("hpLogo", "data:image/png;base64," + logoBase64.get(0));
 			pdfContextData.put("UDDLogo", "data:image/png;base64," + logoBase64.get(1));
 			pdfContextData.put("UpyogLogo", "data:image/png;base64," + logoBase64.get(2));
+			pdfContextData.put("citiSevaLogo", "data:image/png;base64," + logoBase64.get(3));
+			pdfContextData.put("citiSevaImage", "data:image/png;base64," + logoBase64.get(4));
+			pdfContextData.put("citiSevaBgImage", "data:image/png;base64," + logoBase64.get(5));
 		}
 	}
 
@@ -198,6 +201,9 @@ public class PDFService {
 			logoList.add(jsonNode.path("MdmsRes").path("logo-hpudd").path("logo").get(0).path("data").asText());
 			logoList.add(jsonNode.path("MdmsRes").path("logo-hpudd").path("logo").get(1).path("data").asText());
 			logoList.add(jsonNode.path("MdmsRes").path("logo-hpudd").path("logo").get(0).path("data").asText());
+			logoList.add(jsonNode.path("MdmsRes").path("logo-hpudd").path("logo").get(3).path("data").asText());
+			logoList.add(jsonNode.path("MdmsRes").path("logo-hpudd").path("logo").get(4).path("data").asText());
+			logoList.add(jsonNode.path("MdmsRes").path("logo-hpudd").path("logo").get(5).path("data").asText());
 			return logoList;
 		} catch (Exception e) {
 			e.printStackTrace();
