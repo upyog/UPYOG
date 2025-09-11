@@ -303,7 +303,7 @@ public class UserTypeQueryBuilder {
     }
 
     public String getUpdateUserName() {
-        return "update eg_user set username=:username,name=:name where uuid=:uuid and type=:type";
+        return "update eg_user set username=:username,name=:name,mobilenumber=:mobilenumber where uuid=:uuid and type=:type";
     }
 
     public String getUserPresentByUserNameAndTenant() {

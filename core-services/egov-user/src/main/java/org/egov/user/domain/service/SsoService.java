@@ -56,29 +56,28 @@ public class SsoService {
 
 	@Autowired
 	private Constants constants;
-	
+
 	@Autowired
-    private UserRepository userRepository;
+	private UserRepository userRepository;
 
 	public ResponseEntity<?> getHpSsoValidateTokenResponse(String token) {
-		
+
 		ResponseEntity<?> response = null;
-		
+
 		Object obj = customLogin(token);
-		if(null != obj) {
+		if (null != obj) {
 			return response = new ResponseEntity<Object>(obj, HttpStatus.OK);
 		}
-		
+
 		HpSsoValidateToken hpSsoValidateToken = HpSsoValidateToken.builder().token(token)
 				.secret_key(constants.SECRET_KEY).service_id(constants.SERVICE_ID).build();
 		HpSsoValidateTokenResponse hpSsoValidateTokenResponse = getHpSsoValidateTokenResponse(hpSsoValidateToken);
-//		log.info("#### for HP SSO token: " + token + " >>> hpSsoValidateTokenResponse is: "+ hpSsoValidateTokenResponse);
 
 		if (null != hpSsoValidateTokenResponse) {
-			
+
 			User user = getUserFromSsoTokenResponse(hpSsoValidateTokenResponse);
-			
-            log.info("getUserFromSsoTokenResponse Request " +user.getMobileNumber() + " "+ user.getUsername(),user.getUsername());
+
+			log.info("getUserFromSsoTokenResponse Request {}", user);
 
 			// we can use this api for user's extra details
 //			List<User> userInDb = userService.searchUsers(UserSearchCriteria.builder().mobileNumber(user.getMobileNumber()).build(), false, null);
@@ -87,20 +86,18 @@ public class SsoService {
 //			}
 
 			checkAndCreateUserSso(hpSsoValidateTokenResponse, user);
-			
-            log.info("checkAndCreate Request " + user.getUsername() ,user.getUsername());
 
 //			do login;
 			Object loginResponse = userService.getLoginAccess(user, user.getPassword());
-			
+
 //			send login response;
 			response = new ResponseEntity<Object>(loginResponse, HttpStatus.OK);
 
-		}else {			
+		} else {
 //			response = generateErrorResponse(HttpStatus.Un
 //					,HttpStatus.OK.toString(), "Login failed.", null);
-			response = generateErrorResponse(HttpStatus.UNAUTHORIZED
-					,HttpStatus.UNAUTHORIZED.toString(), "Login failed.", null);
+			response = generateErrorResponse(HttpStatus.UNAUTHORIZED, HttpStatus.UNAUTHORIZED.toString(),
+					"Login failed.", null);
 		}
 
 		return response;
@@ -108,41 +105,32 @@ public class SsoService {
 
 	private Object customLogin(String token) {
 		ResponseEntity<?> response;
-		if(StringUtils.equals("f93e2337-12af-41f3-80de-1290b02f3073", token)) {
-			
-			
-			UserSearchCriteria userSearchCriteria = UserSearchCriteria.builder()
-					.userName("hemantkumar0753")
-					.tenantId("hp")
-					.build();
-			
+		if (StringUtils.equals("f93e2337-12af-41f3-80de-1290b02f3073", token)) {
+
+			UserSearchCriteria userSearchCriteria = UserSearchCriteria.builder().userName("hemantkumar0753")
+					.tenantId("hp").build();
+
 			List<User> userModels = userService.searchUsers(userSearchCriteria, false, null);
-	        
 
 //			User user = User.builder().username("hemantkumar0753").tenantId("hp").password(constants.CITIZEN_PASSWORD).build();
 //			do login;
 			Object loginResponse = userService.getLoginAccess(userModels.get(0), userModels.get(0).getPassword());
-			
+
 //			send login response;
 			response = new ResponseEntity<Object>(loginResponse, HttpStatus.OK);
-			
-			return loginResponse; 
+
+			return loginResponse;
 		}
 		return null;
 	}
 
-	private ResponseEntity<?> generateErrorResponse(HttpStatus unauthorized, String message
-			, String description, ResponseInfo responseInfo) {
-		
-		org.egov.user.web.errorhandlers.Error error = Error.builder()
-				.code(unauthorized.value())
-				.message(message)
-				.description(description)
-				.build();
-		ErrorResponse errorResponse = ErrorResponse.builder().responseInfo(responseInfo)
-				.error(error)
-				.build();
-		
+	private ResponseEntity<?> generateErrorResponse(HttpStatus unauthorized, String message, String description,
+			ResponseInfo responseInfo) {
+
+		org.egov.user.web.errorhandlers.Error error = Error.builder().code(unauthorized.value()).message(message)
+				.description(description).build();
+		ErrorResponse errorResponse = ErrorResponse.builder().responseInfo(responseInfo).error(error).build();
+
 		return new ResponseEntity<ErrorResponse>(errorResponse, unauthorized);
 	}
 
@@ -160,24 +148,24 @@ public class SsoService {
 			e.printStackTrace();
 		}
 
-		List<Role> rolesList = Arrays.asList(Role.builder().name(null).code(constants.CITIZEN_ROLE).tenantId(constants.getStateLevelTenantId()).build());
+		List<Role> rolesList = Arrays.asList(Role.builder().name(null).code(constants.CITIZEN_ROLE)
+				.tenantId(constants.getStateLevelTenantId()).build());
 		Set<Role> rolesSet = rolesList.stream().collect(Collectors.toSet());
 
 		String guardian = null;
 		if (hpSsoValidateTokenResponse.getCo() != null) {
-		    String[] coParts = hpSsoValidateTokenResponse.getCo().split(":");
-		    if (coParts.length > 1) {
-		        guardian = coParts[1];
-		    }
+			String[] coParts = hpSsoValidateTokenResponse.getCo().split(":");
+			if (coParts.length > 1) {
+				guardian = coParts[1];
+			}
 		}
-		
+
 		User user = User.builder().username(hpSsoValidateTokenResponse.getUsername())
-				.name(hpSsoValidateTokenResponse.getName())
-				.mobileNumber(hpSsoValidateTokenResponse.getMobile())
+				.name(hpSsoValidateTokenResponse.getName()).mobileNumber(hpSsoValidateTokenResponse.getMobile())
 				.emailId(hpSsoValidateTokenResponse.getEmail())
 				.gender(Gender.valueOf(hpSsoValidateTokenResponse.getGender().toUpperCase())).dob(dob)
-				.guardian(guardian)
-				.active(true).type(UserType.valueOf(constants.CITIZEN_ROLE)).password(constants.CITIZEN_PASSWORD).tenantId(constants.getStateLevelTenantId()).roles(rolesSet)
+				.guardian(guardian).active(true).type(UserType.valueOf(constants.CITIZEN_ROLE))
+				.password(constants.CITIZEN_PASSWORD).tenantId(constants.getStateLevelTenantId()).roles(rolesSet)
 				.build();
 		return user;
 	}
@@ -185,61 +173,39 @@ public class SsoService {
 	private void checkAndCreateUserSso(HpSsoValidateTokenResponse hpSsoValidateTokenResponse, User user) {
 		// check ssoid exist
 		UserSso userSso = userSsoRepository.getCountBySsoId(hpSsoValidateTokenResponse.getSsoId());
-		log.info("Fetched userSso object: {}", userSso);
 
-		log.info("userSso is null? {}", userSso == null);
+		UserSearchCriteria searchCriteria = UserSearchCriteria.builder().type(UserType.CITIZEN).active(true)
+				.tenantId("hp").build();
+		if (userSso != null) {
+			searchCriteria.setUuid(Collections.singletonList(userSso.getUserUuid()));
+		}
+		List<User> userInDb = userService.searchUsers(searchCriteria, false, null);
+		User newUser;
+		if (CollectionUtils.isEmpty(userInDb)) {
+			newUser = userService.createUser(user, null);
+		} else {
 
-//				.getCountBySsoId(hpSsoValidateTokenResponse.getSsoId());
-//        log.info("count of ids with sso mapping with ssoId "+hpSsoValidateTokenResponse.getSsoId() +" " + userSso.getUserUuid(), userSso);
-
-		// if ssoid not exist
-		
-
-			UserSearchCriteria searchCriteria = UserSearchCriteria.builder()
-					.type(UserType.CITIZEN)
-					.active(true)
-//					.mobileNumber(user.getMobileNumber())
-					.tenantId("hp").build();
-	        if(userSso != null ) {
-	        	searchCriteria.setUuid(Collections.singletonList(userSso.getUserUuid()));
-		        log.info("count of ids with sso mapping with ssoId "+user.getMobileNumber() + " "+ userSso.getUserUuid(), userSso);
-	        }
-			List<User> userInDb = userService.searchUsers(searchCriteria, false, null);
-			User newUser;
-			if (CollectionUtils.isEmpty(userInDb)) {
-				newUser = userService.createUser(user, null);
-		    }
-			else
-			{
-
-				newUser = userInDb.get(0);
-		        log.info("userFound "+newUser.getName());
-				Boolean update = false;
-				if(!user.getUsername().equals(newUser.getUsername()) ) {
-//			        log.info("campareUserName - "+user.getUsername()+" "+newUser.getUsername());
-					newUser.setUsername(user.getUsername());
-					update = true;
-				}
-				if (!Objects.equals(newUser.getName(), user.getName())) {
-//			        log.info("campareName --- "+newUser.getName()+" "+user.getName()+"---");
-					newUser.setName(user.getName());
-					update = true;
-				}
-				if (!Objects.equals(newUser.getMobileNumber(), user.getMobileNumber())) {
-//			        log.info("campareName --- "+newUser.getName()+" "+user.getName()+"---");
-					newUser.setMobileNumber(user.getMobileNumber());
-					update = true;
-				}
-				if(update) {
-			        log.info("Update user");
-					userService.updateUsernameWithoutOtpValidation(newUser,null);
-				}
+			newUser = userInDb.get(0);
+			Boolean update = false;
+			if (!user.getUsername().equals(newUser.getUsername())) {
+				newUser.setUsername(user.getUsername());
+				update = true;
 			}
+			if (!Objects.equals(newUser.getName(), user.getName())) {
+				newUser.setName(user.getName());
+				update = true;
+			}
+			if (!Objects.equals(newUser.getMobileNumber(), user.getMobileNumber())) {
+				newUser.setMobileNumber(user.getMobileNumber());
+				update = true;
+			}
+			if (update) {
+				userService.updateUsernameWithoutOtpValidation(newUser, null);
+			}
+		}
 		if (userSso == null || userSso.getUserUuid() == null) {
-			// create new user
-			// enrich new user_sso
+
 			UserSso newUserSso = enrichCreateUserSso(hpSsoValidateTokenResponse, newUser);
-			// create new user_sso
 			userSsoRepository.create(newUserSso);
 		}
 	}
@@ -259,11 +225,10 @@ public class SsoService {
 
 		HpSsoValidateTokenResponse hpSsoValidateTokenResponse;
 		try {
-			hpSsoValidateTokenResponse = restTemplate.postForObject(uri.toString()
-					, hpSsoValidateToken,
+			hpSsoValidateTokenResponse = restTemplate.postForObject(uri.toString(), hpSsoValidateToken,
 					HpSsoValidateTokenResponse.class);
 		} catch (RestClientException e) {
-			System.out.print("Error Occured while rest call to SSO HP service."+e.getLocalizedMessage());
+			System.out.print("Error Occured while rest call to SSO HP service." + e.getLocalizedMessage());
 			return null;
 		}
 
