@@ -92,6 +92,7 @@ public class AssessmentController {
 	@PostMapping("/_plainsearch")
 	public ResponseEntity<AssessmentResponse> plainsearch(@Valid @RequestBody RequestInfoWrapper requestInfoWrapper,
 														  @ModelAttribute AssessmentSearchCriteria assessmentSearchCriteria) {
+        assessmentSearchCriteria.setPlainSearchOffset(true);
 		List<Assessment> assessments = assessmentService.getAssessmenPlainSearch(assessmentSearchCriteria);
 		ResponseInfo resInfo = responseInfoFactory.createResponseInfoFromRequestInfo(requestInfoWrapper.getRequestInfo(), true);
 		AssessmentResponse response = AssessmentResponse.builder()
