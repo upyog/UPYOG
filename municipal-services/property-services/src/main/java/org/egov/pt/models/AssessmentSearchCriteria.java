@@ -41,4 +41,6 @@ public class AssessmentSearchCriteria {
 
 	private Long limit;
 
+    private Boolean plainSearchOffset;
+
 }

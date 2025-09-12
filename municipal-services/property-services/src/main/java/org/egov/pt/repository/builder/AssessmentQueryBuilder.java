@@ -100,8 +100,12 @@ public class AssessmentQueryBuilder {
 		}
 		
 		query.append(" ORDER BY asmt.createdtime DESC"); //default ordering on the platform.
-		
-		return addPaginationWrapper(query.toString(), preparedStatementValues, criteria);
+
+        if (criteria.getPlainSearchOffset() != null && criteria.getPlainSearchOffset()) {
+            return query.toString();
+        } else {
+            return addPaginationWrapper(query.toString(), preparedStatementValues, criteria);
+        }
 	}
 	
 	
