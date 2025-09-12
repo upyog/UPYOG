@@ -26,7 +26,8 @@ CREATE TABLE IF NOT EXISTS ug_cnd_application_details (
     created_by VARCHAR(64),
     last_modified_by VARCHAR(64),
     created_time BIGINT,
-    last_modified_time BIGINT
+    last_modified_time BIGINT,
+    created_by_usertype VARCHAR(50)
 );
 
 
@@ -111,7 +112,8 @@ CREATE TABLE ug_cnd_application_details_audit (
     created_by VARCHAR(64),
     last_modified_by VARCHAR(64),
     created_time BIGINT,
-    last_modified_time BIGINT
+    last_modified_time BIGINT,
+    created_by_usertype VARCHAR(50)
 );
 
 
