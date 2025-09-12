@@ -426,6 +426,9 @@ public class BPAService {
                         || businessSrvc.equalsIgnoreCase(BPAConstants.BPA_BUSINESSSERVICE)
                         || businessSrvc.equalsIgnoreCase(BPAConstants.BPA_LOW_MODULE_CODE))
                         && state.equalsIgnoreCase(BPAConstants.STATUS_CITIZENAPPROVAL)) {
+                	if(bpa.getApplicationType() == null) {
+                		bpa.setApplicationType(applicationType);
+                	}
                     calculationService.addCalculation(bpaRequest, BPAConstants.APPLICATION_FEE_KEY);
                 }
                 
