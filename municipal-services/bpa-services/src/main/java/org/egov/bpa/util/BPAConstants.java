@@ -145,6 +145,8 @@ public class BPAConstants {
 	public static final String ACTION_SEND_TO_ARCHITECT = "SEND_TO_ARCHITECT";
 	
 	public static final String ACTION_SEND_TO_CITIZEN = "SEND_TO_CITIZEN";
+	
+	public static final String ACTION_SAVE_AS_DRAFT = "SAVE_AS_DRAFT";
 
 	// BPA Status
 
