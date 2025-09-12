@@ -3,7 +3,7 @@ All notable changes to this module will be documented in this file.
 
 ## 2.0.0-SNAPSHOT - 2025-07-06
 - 2.9 LTS version upgrade is done in this version
-- 2.4.0-SNAPSHOT version is used of egf-master dependency
+- 2.0.4-SNAPSHOT version is used of egf-master dependency
 
 ## 1.1.4 - 2023-02-02
 
