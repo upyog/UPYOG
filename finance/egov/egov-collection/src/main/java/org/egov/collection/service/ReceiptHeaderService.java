@@ -98,6 +98,7 @@ import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.microservice.contract.RequestInfoWrapper;
+import org.egov.infra.microservice.models.AuditDetails;
 import org.egov.infra.microservice.models.Bank;
 import org.egov.infra.microservice.models.Bill;
 import org.egov.infra.microservice.models.BillDetailAdditional;
@@ -148,6 +149,9 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
 
 /**
  * Provides services related to receipt header
@@ -1627,7 +1631,8 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
     }
     
     public List<Payment> generatePayments(ReceiptHeader receiptHeader, List<BillV2> billList) {
-        List<PaymentDetail> paymentDetails = new ArrayList<PaymentDetail>();
+        List<PaymentDetail> paymentDetails = new ArrayList<>();
+        ObjectNode emptyJsonNode = new ObjectMapper().createObjectNode();
         billList.stream().forEach(bill -> {
             PaymentDetail pd = PaymentDetail.builder()
                     .billId(bill.getId())
@@ -1637,16 +1642,26 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
                     .tenantId(microserviceUtils.getTenentId())
                     .manualReceiptDate(receiptHeader.getManualreceiptdate() != null ? receiptHeader.getManualreceiptdate().getTime() : null)
                     .manualReceiptNumber(receiptHeader.getManualreceiptnumber())
+                    // Explicitly setting empty objects instead of null
+                    .bill(bill)
+                    .auditDetails(bill.getAuditDetails() != null ? bill.getAuditDetails() : new AuditDetails())
+                    .additionalDetails(bill.getAdditionalDetails() != null ? bill.getAdditionalDetails() : emptyJsonNode)
                     .build();
+
             paymentDetails.add(pd);
         });
-        Payment payment = Payment.builder().paymentDetails(paymentDetails)
+        
+        Payment payment = Payment.builder()
+                .paymentDetails(paymentDetails)
                 .tenantId(microserviceUtils.getTenentId())
                 .paymentMode(getPaymentModeEnum(receiptHeader.getModOfPayment()))
                 .totalDue(receiptHeader.getTotalAmount())
                 .totalAmountPaid(receiptHeader.getTotalAmount())
                 .paidBy(receiptHeader.getPaidBy())
                 .paymentStatus(PaymentStatusEnum.NEW)
+                // Explicitly setting empty objects
+                .auditDetails(new AuditDetails())   
+                .additionalDetails(emptyJsonNode)  
                 .build();
         this.prepareInstrumentsDetails(payment,receiptHeader);
         PaymentResponse response = microserviceUtils.generatePayments(payment);
