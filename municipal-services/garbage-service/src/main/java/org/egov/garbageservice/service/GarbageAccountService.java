@@ -788,7 +788,7 @@ public class GarbageAccountService {
 				.build();
 
 		// Get the response from the database
-		GarbageAccountResponse garbageAccountResponse = searchGarbageAccounts(searchCriteria);
+		GarbageAccountResponse garbageAccountResponse = searchGarbageAccounts(searchCriteria,false);
 
 		// Map child garbage account UUIDs from the database response
 		Map<String, GarbageAccount> dbChildGarbageAccountsMap = garbageAccountResponse.getGarbageAccounts().stream()
@@ -1357,7 +1357,7 @@ public class GarbageAccountService {
 		SearchCriteriaGarbageAccountRequest searchCriteriaGarbageAccountRequest = SearchCriteriaGarbageAccountRequest
 				.builder().searchCriteriaGarbageAccount(searchCriteriaGarbageAccount).requestInfo(requestInfo).build();
 
-		GarbageAccountResponse garbageAccountResponse = searchGarbageAccounts(searchCriteriaGarbageAccountRequest);
+		GarbageAccountResponse garbageAccountResponse = searchGarbageAccounts(searchCriteriaGarbageAccountRequest,false);
 
 		Map<Long, GarbageAccount> existingGarbageAccountsMap = new HashMap<>();
 		garbageAccountResponse.getGarbageAccounts().stream().forEach(account -> {
@@ -1397,9 +1397,14 @@ public class GarbageAccountService {
 
 		return searchCriteriaGarbageAccount;
 	}
+	
+	public GarbageAccountResponse searchGarbageAccountsIndex(SearchCriteriaGarbageAccountRequest searchCriteriaGarbageAccountRequest) {
+	
+		return null;
+	}
 
 	public GarbageAccountResponse searchGarbageAccounts(
-			SearchCriteriaGarbageAccountRequest searchCriteriaGarbageAccountRequest) {
+			SearchCriteriaGarbageAccountRequest searchCriteriaGarbageAccountRequest,Boolean isIndex) {
 
 		// validate search criteria
 		validateAndEnrichSearchGarbageAccount(searchCriteriaGarbageAccountRequest);
@@ -1458,8 +1463,10 @@ public class GarbageAccountService {
 		}
 
 		// search garbage account
-		grbgAccs = garbageAccountRepository.searchGarbageAccount(
-				searchCriteriaGarbageAccountRequest.getSearchCriteriaGarbageAccount(), garbageCriteriaMap);
+		if(isIndex)
+			grbgAccs = garbageAccountRepository.searchGarbageAccountIndex(searchCriteriaGarbageAccountRequest.getSearchCriteriaGarbageAccount(), garbageCriteriaMap);
+		else
+			grbgAccs = garbageAccountRepository.searchGarbageAccount(searchCriteriaGarbageAccountRequest.getSearchCriteriaGarbageAccount(), garbageCriteriaMap);
 
 		GarbageAccountResponse garbageAccountResponse = getSearchResponseFromAccounts(grbgAccs);
 
@@ -1997,7 +2004,7 @@ public class GarbageAccountService {
 		searchCriteriaGarbageAccountRequest.getSearchCriteriaGarbageAccount().setIsActiveAccount(true);
 		searchCriteriaGarbageAccountRequest.getSearchCriteriaGarbageAccount().setIsActiveSubAccount(true);
 
-		GarbageAccountResponse garbageAccountResponse = searchGarbageAccounts(searchCriteriaGarbageAccountRequest);
+		GarbageAccountResponse garbageAccountResponse = searchGarbageAccounts(searchCriteriaGarbageAccountRequest,false);
 
 		if (garbageAccountResponse != null && !CollectionUtils.isEmpty(garbageAccountResponse.getGarbageAccounts())) {
 			return garbageAccountResponse.getGarbageAccounts();
@@ -2098,7 +2105,7 @@ public class GarbageAccountService {
 		
 		SearchCriteriaGarbageAccountRequest searchCriteriaGarbageAccountRequest = SearchCriteriaGarbageAccountRequest
 				.builder().searchCriteriaGarbageAccount(searchCriteriaGarbageAccount).requestInfo(requestInfoWrapper.getRequestInfo()).build();
-		GarbageAccountResponse garbageAccountResponse = searchGarbageAccounts(searchCriteriaGarbageAccountRequest);
+		GarbageAccountResponse garbageAccountResponse = searchGarbageAccounts(searchCriteriaGarbageAccountRequest,false);
 		
 		GarbageAccount grbAccount = garbageAccountResponse.getGarbageAccounts().stream().findFirst().orElse(null);
 		if (null == grbAccount) {
