@@ -159,27 +159,41 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
     
     private boolean isPasswordMatch(Boolean isOtpBased, String password, User user, Authentication authentication) {
         BCryptPasswordEncoder bcrypt = new BCryptPasswordEncoder();
-        final LinkedHashMap<String, String> details = (LinkedHashMap<String, String>) authentication.getDetails();
-        String isCallInternal = details.get("isInternal");
+        final Map<String, String> details = (Map<String, String>) authentication.getDetails();
+        String isCallInternal = details != null ? details.get("isInternal") : null;
+        
+        // Log the validation attempt
+        log.info("Password validation - OTP based: {}, Internal call: {}, User: {}", 
+                isOtpBased, isCallInternal, user.getUsername());
         
         if (isOtpBased) {
+            // For OTP-based authentication, only skip validation for legitimate internal system calls
+            // This should be used very carefully and only for system-to-system communication
             if (null != isCallInternal && isCallInternal.equals("true")) {
-                log.debug("Skipping otp validation during login.........");
+                log.warn("Skipping OTP validation for internal system call - User: {}", user.getUsername());
                 return true;
             }
             user.setOtpReference(password);
             try {
-                return userService.validateOtp(user);
+                boolean otpValid = userService.validateOtp(user);
+                log.info("OTP validation result for user {}: {}", user.getUsername(), otpValid);
+                return otpValid;
             } catch (ServiceCallException e) {
-                log.error("OTP validation failed ");
+                log.error("OTP validation failed for user {}: {}", user.getUsername(), e.getMessage());
                 return false;
             }
         } else {
+            // For password-based authentication, never skip validation for user login
+            // The isCallInternal flag should only be used for very specific system operations
+            // and should never bypass regular user authentication
             if (null != isCallInternal && isCallInternal.equals("true")) {
-                log.debug("Skipping password validation during login.........");
-                return true;
+                log.warn("Internal call detected but still validating password for security - User: {}", user.getUsername());
+                // Continue with normal password validation instead of bypassing
             }
-            return passwordEncoder.matches(password, user.getPassword());
+            
+            boolean passwordValid = passwordEncoder.matches(password, user.getPassword());
+            log.info("Password validation result for user {}: {}", user.getUsername(), passwordValid);
+            return passwordValid;
         }
     }
 

@@ -1,6 +1,7 @@
 package org.egov.user.security.oauth2.custom;
 
 import org.egov.user.domain.model.SecureUser;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.security.oauth2.server.authorization.token.JwtEncodingContext;
@@ -12,6 +13,9 @@ import java.util.Map;
 
 @Component
 public class CustomTokenEnhancer implements OAuth2TokenCustomizer<JwtEncodingContext> {
+
+    @Value("${jwt.token.optimize-size:true}")
+    private boolean optimizeTokenSize;
 
     @Override
     public void customize(JwtEncodingContext context) {
@@ -54,7 +58,26 @@ public class CustomTokenEnhancer implements OAuth2TokenCustomizer<JwtEncodingCon
         
         // Add custom claims to the JWT
         claims.claim("ResponseInfo", responseInfo);
-        claims.claim("UserRequest", secureUser.getUser());
+        
+        if (optimizeTokenSize) {
+            // Create minimal user info instead of full user object to reduce token size
+            Map<String, Object> minimalUserInfo = new LinkedHashMap<>();
+            minimalUserInfo.put("id", secureUser.getUser().getId());
+            minimalUserInfo.put("uuid", secureUser.getUser().getUuid());
+            minimalUserInfo.put("userName", secureUser.getUser().getUserName());
+            minimalUserInfo.put("name", secureUser.getUser().getName());
+            minimalUserInfo.put("mobileNumber", secureUser.getUser().getMobileNumber());
+            minimalUserInfo.put("emailId", secureUser.getUser().getEmailId());
+            minimalUserInfo.put("locale", secureUser.getUser().getLocale());
+            minimalUserInfo.put("type", secureUser.getUser().getType());
+            minimalUserInfo.put("tenantId", secureUser.getUser().getTenantId());
+            minimalUserInfo.put("active", secureUser.getUser().isActive());
+            
+            claims.claim("UserRequest", minimalUserInfo);
+        } else {
+            // Include full user object with roles (legacy behavior)
+            claims.claim("UserRequest", secureUser.getUser());
+        }
         
         // Add user-specific information
         claims.claim("userId", secureUser.getUser().getId());
