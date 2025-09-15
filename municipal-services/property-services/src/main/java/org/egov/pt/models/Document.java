@@ -3,6 +3,7 @@ package org.egov.pt.models;
 import javax.validation.constraints.NotNull;
 
 import org.egov.pt.models.enums.Status;
+import org.egov.tracer.annotations.CustomSafeHtml;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -11,7 +12,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import org.hibernate.validator.constraints.SafeHtml;
 
 @Data
 @AllArgsConstructor
@@ -20,21 +20,21 @@ import org.hibernate.validator.constraints.SafeHtml;
 @EqualsAndHashCode(of= {"fileStoreId","documentUid","id"})
 public class Document {
 
-  @SafeHtml
+  @CustomSafeHtml
   @JsonProperty("id")
   private String id ;
 
   @JsonProperty("documentType")
-  @SafeHtml
+  @CustomSafeHtml
   @NotNull
   private String documentType ;
 
   @JsonProperty("fileStoreId")
-  @SafeHtml
+  @CustomSafeHtml
   @NotNull
   private String fileStoreId ;
 
-  @SafeHtml
+  @CustomSafeHtml
   @JsonProperty("documentUid")
   private String documentUid ;
 
