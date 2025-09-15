@@ -345,10 +345,6 @@ public class CalculationService {
 			case BPACalculatorConstants.BPA_EXTERNAL_DEVELOPMENT_CHARGES:
 				amount=rate.multiply(builtUpArea).setScale(0, RoundingMode.HALF_UP);
 				break;
-			case BPACalculatorConstants.BPA_URBAN_DEVELOPMENT_CESS:
-				BigDecimal totalFee = estimates.stream().map(est -> est.getEstimateAmount()).reduce(BigDecimal.ZERO, BigDecimal::add);
-				amount=rate.multiply(totalFee).divide(BigDecimal.valueOf(100.0)).setScale(0, RoundingMode.HALF_UP);
-				break;
 			case BPACalculatorConstants.BPA_MALBA_CHARGES:
 				BigDecimal sqFeetArea = builtUpArea.multiply(BPACalculatorConstants.SQYARD_TO_SQFEET);
 				Double slabAmount = (Double)((List<Map<String, Object>>)chargesType.get("slabs")).stream().filter(slab -> {
@@ -363,10 +359,6 @@ public class CalculationService {
 				}else
 					amount = new BigDecimal(slabAmount);
 				break;
-			case BPACalculatorConstants.BPA_WATER_CHARGES:
-				amount = estimates.stream().filter(est -> est.getTaxHeadCode().equalsIgnoreCase(BPACalculatorConstants.BPA_MALBA_CHARGES))
-				.map(est -> est.getEstimateAmount()).findFirst().orElse(BigDecimal.ZERO).multiply(rate).divide(new BigDecimal(100.0)).setScale(0, RoundingMode.HALF_UP);
-				break;
 			case BPACalculatorConstants.BPA_MINING_CHARGES:
 				amount=rate.multiply(basementArea.multiply(BPACalculatorConstants.SQYARD_TO_SQFEET)).setScale(0, RoundingMode.HALF_UP);
 				break;
@@ -376,6 +368,8 @@ public class CalculationService {
 			case BPACalculatorConstants.BPA_CLUBBING_CHARGES:
 				amount=rate.multiply(plotArea).setScale(0, RoundingMode.HALF_UP);
 				break;
+			case BPACalculatorConstants.BPA_WATER_CHARGES:
+			case BPACalculatorConstants.BPA_URBAN_DEVELOPMENT_CESS:
 			case BPACalculatorConstants.BPA_GAUSHALA_CHARGES_CESS:
 			case BPACalculatorConstants.BPA_RAIN_WATER_HARVESTING_CHARGES:
 			case BPACalculatorConstants.BPA_SUB_DIVISION_CHARGES:
@@ -389,6 +383,23 @@ public class CalculationService {
 			estimate.setTaxHeadCode(taxhead);
 			estimates.add(estimate);
 			
+		});
+		
+		//Updating Urban Development Cess based on other fees
+		estimates.stream().filter(estimate -> estimate.getTaxHeadCode().equalsIgnoreCase(BPACalculatorConstants.BPA_URBAN_DEVELOPMENT_CESS)).forEach(estimate -> {
+			BigDecimal totalFee = estimates.stream().filter(est -> est.getTaxHeadCode().equalsIgnoreCase(BPACalculatorConstants.BPA_PROCESSING_FEES) || 
+					est.getTaxHeadCode().equalsIgnoreCase(BPACalculatorConstants.BPA_CLU_CHARGES) || 
+					est.getTaxHeadCode().equalsIgnoreCase(BPACalculatorConstants.BPA_EXTERNAL_DEVELOPMENT_CHARGES))
+			.map(est -> est.getEstimateAmount()).reduce(BigDecimal.ZERO, BigDecimal::add);
+			estimate.setEstimateAmount(estimate.getEstimateAmount().multiply(totalFee).divide(BigDecimal.valueOf(100.0)).setScale(0, RoundingMode.HALF_UP));
+		});
+		
+		//Updating Water Charges based on Malba Charges
+		estimates.stream().filter(est -> est.getTaxHeadCode().equalsIgnoreCase(BPACalculatorConstants.BPA_WATER_CHARGES)).forEach(estimate -> {
+			BigDecimal amount = estimates.stream().filter(est -> est.getTaxHeadCode().equalsIgnoreCase(BPACalculatorConstants.BPA_MALBA_CHARGES))
+					.map(est -> est.getEstimateAmount()).findFirst().orElse(BigDecimal.ZERO)
+					.multiply(estimate.getEstimateAmount()).divide(new BigDecimal(100.0)).setScale(0, RoundingMode.HALF_UP);
+			estimate.setEstimateAmount(amount);
 		});
 		
 		return estimates;
