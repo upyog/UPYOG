@@ -1,6 +1,7 @@
 package org.egov.garbageservice.repository.rowmapper;
 
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -148,7 +149,8 @@ public class GarbageAccountRowMapper implements ResultSetExtractor<List<GarbageA
 //            }
 
             
-            if (StringUtils.isEmpty(garbageAccount.getParentAccount())
+            
+            if (hasColumn(rs, "sub_acc_id") && StringUtils.isEmpty(garbageAccount.getParentAccount())
             		&& null != rs.getString("sub_acc_id")
             		&& !StringUtils.isEmpty(rs.getString("sub_acc_parent_account"))) {
                 Long subAccId = rs.getLong("sub_acc_id");
@@ -403,6 +405,16 @@ public class GarbageAccountRowMapper implements ResultSetExtractor<List<GarbageA
                     .orElse(null);
         }
         return null;
+    }
+    private boolean hasColumn(ResultSet rs, String columnName) throws SQLException {
+        ResultSetMetaData rsmd = rs.getMetaData();
+        int columns = rsmd.getColumnCount();
+        for (int i = 1; i <= columns; i++) {
+            if (columnName.equalsIgnoreCase(rsmd.getColumnName(i))) {
+                return true;
+            }
+        }
+        return false;
     }
 
 //    private GarbageBill findBillByUuid(List<GarbageBill> garbageBills, String bill_id) {
