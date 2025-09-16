@@ -8,7 +8,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.validator.constraints.SafeHtml;
+
+import org.egov.tracer.annotations.CustomSafeHtml;
 
 
 @Data
@@ -17,26 +18,26 @@ import org.hibernate.validator.constraints.SafeHtml;
 @Builder
 public class UnitUsage {
 
-	@SafeHtml
+	@CustomSafeHtml
 	@JsonProperty("id")
 	private String id;
 
-	@SafeHtml
+	@CustomSafeHtml
 	@JsonProperty("tenantId")
 	private String tenantId;
 
 	@JsonProperty("unitId")
-	@SafeHtml
+	@CustomSafeHtml
 	@NotNull
 	private String unitId;
 
 	@JsonProperty("usageCategory")
-	@SafeHtml
+	@CustomSafeHtml
 	@NotNull
 	private String usageCategory;
 
 	@JsonProperty("occupancyType")
-	@SafeHtml
+	@CustomSafeHtml
 	@NotNull
 	private String occupancyType;
 

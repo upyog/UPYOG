@@ -12,7 +12,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * Rebate
  */
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.languages.SpringCodegen", date = "2018-07-04T08:40:17.507Z")
+@jakarta.annotation.Generated(value = "io.swagger.codegen.languages.SpringCodegen", date = "2018-07-04T08:40:17.507Z")
 
 public class Rebate   {
   @JsonProperty("rate")
