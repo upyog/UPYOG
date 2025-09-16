@@ -82,18 +82,18 @@ public class CustomOpaqueTokenGenerator implements OAuth2TokenGenerator<OAuth2Ac
         responseInfo.put("status", "Access Token generated successfully");
         tokenMetadata.put("ResponseInfo", responseInfo);
         
-        // Store in Redis with expiration
-        String key = "access_token:" + tokenValue;
+        // Store in Redis with expiration - using oauth2:token: prefix to match RedisOAuth2AuthorizationService
+        String key = "oauth2:token:" + tokenValue;
         redisTemplate.opsForValue().set(key, tokenMetadata, 604800, TimeUnit.MINUTES);
     }
 
     public Map<String, Object> getTokenMetadata(String tokenValue) {
-        String key = "access_token:" + tokenValue;
+        String key = "oauth2:token:" + tokenValue;
         return (Map<String, Object>) redisTemplate.opsForValue().get(key);
     }
 
     public void revokeToken(String tokenValue) {
-        String key = "access_token:" + tokenValue;
+        String key = "oauth2:token:" + tokenValue;
         redisTemplate.delete(key);
     }
 }
