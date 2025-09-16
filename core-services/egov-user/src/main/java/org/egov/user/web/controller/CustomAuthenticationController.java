@@ -31,7 +31,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/user/oauth")
+@RequestMapping("/_oauth2")
 @Slf4j
 public class CustomAuthenticationController {
 
