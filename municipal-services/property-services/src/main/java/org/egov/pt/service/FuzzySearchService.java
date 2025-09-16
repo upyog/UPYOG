@@ -61,7 +61,13 @@ public class FuzzySearchService {
             Set<String> propertyIds = entry.getValue();
 
             // locality added
-            PropertyCriteria propertyCriteria = PropertyCriteria.builder().tenantId(tenantId).propertyIds(propertyIds).locality(criteria.getLocality()).build();
+            PropertyCriteria.PropertyCriteriaBuilder builder = PropertyCriteria.builder().tenantId(tenantId).propertyIds(propertyIds);
+
+            if (criteria.getLocality() != null) {
+                builder.locality(criteria.getLocality());
+            }
+
+            PropertyCriteria propertyCriteria = builder.build();
 
             properties.addAll(propertyRepository.getPropertiesWithOwnerInfo(propertyCriteria,requestInfo,false));
 
