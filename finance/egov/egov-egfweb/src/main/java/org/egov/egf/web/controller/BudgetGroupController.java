@@ -128,7 +128,7 @@ public class BudgetGroupController {
 			if (budgetGroup.getMinCode() == null)
 				errors.rejectValue("minCode", "budgetgroup.invalidminorcode.mapping");
 			else if (budgetGroup.getMaxCode() == null)
-				errors.rejectValue("maxCode", "budgetgroup.invalidmajorcode.mapping");
+				errors.rejectValue("maxCode", "budgetgroup.invalidmaxcode.mapping");
 		}
 		String validationMessage = budgetGroupService.validate(budgetGroup);
 		if (errors.hasErrors() || !StringUtils.isEmpty(validationMessage)) {

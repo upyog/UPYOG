@@ -1030,6 +1030,7 @@ public class ReceiptAction extends BaseFormAction {
 		receiptlist.stream().forEach(receipt -> {
 
 			receipt.getBill().forEach(bill -> {
+				LOGGER.info("bill:"+bill);
 				BigDecimal totalAmountPaid = BigDecimal.ZERO;
                 		for (BillDetail billDetail : bill.getBillDetails()) {
 					ReceiptHeader header = new ReceiptHeader();
