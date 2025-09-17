@@ -2098,6 +2098,7 @@ public class GarbageAccountService {
 		
 		SearchCriteriaGarbageAccountRequest searchCriteriaGarbageAccountRequest = SearchCriteriaGarbageAccountRequest
 				.builder().searchCriteriaGarbageAccount(searchCriteriaGarbageAccount).requestInfo(requestInfoWrapper.getRequestInfo()).build();
+		
 		GarbageAccountResponse garbageAccountResponse = searchGarbageAccounts(searchCriteriaGarbageAccountRequest);
 		
 		GarbageAccount grbAccount = garbageAccountResponse.getGarbageAccounts().stream().findFirst().orElse(null);
@@ -2105,21 +2106,49 @@ public class GarbageAccountService {
 			return null;
 		}
 		
-		GrbgBillTrackerSearchCriteria grbgTrackerSearchCriteria = GrbgBillTrackerSearchCriteria
-				.builder().grbgApplicationIds(Collections.singleton(grbgId)).limit(1).build();
+		
+		GrbgBillTrackerSearchCriteria grbgTrackerMonthSearchCriteria = GrbgBillTrackerSearchCriteria
+				.builder().grbgApplicationIds(Collections.singleton(grbgId)).billIds(Collections.singleton(grbgId)).build();
 
-		List<GrbgBillTracker> grbgTaxCalculatorTrackers = getBillCalculatedGarbageAccounts(grbgTrackerSearchCriteria);
+		List<GrbgBillTracker> grbgTaxCalculatorMonth = getBillCalculatedGarbageAccounts(grbgTrackerMonthSearchCriteria);
 
-		GrbgBillTracker grbgTaxCalculatorTracker = grbgTaxCalculatorTrackers.stream().findFirst().orElse(null);
-		if (null == grbgTaxCalculatorTracker) {
+		GrbgBillTracker grbgTaxCalculatorMonthTracker = grbgTaxCalculatorMonth.stream().findFirst().orElse(null);
+		if (null == grbgTaxCalculatorMonthTracker) {
 			return null;
 		}
+		
+		int conut = 1;
+		List<String> slNos = new ArrayList<>();
+		Set<String> garbapplicationNos = new HashSet<>();
+		garbapplicationNos.add(grbAccount.getGrbgApplicationNumber());
+		
+		for (GarbageAccount childGrbgAccount : grbAccount.getChildGarbageAccounts()) {
+				slNos.add(String.valueOf(conut++));
+				garbapplicationNos.add(childGrbgAccount.getGrbgApplicationNumber());
+			
+		}
+		GrbgBillTrackerSearchCriteria grbgTrackerSearchCriteria = GrbgBillTrackerSearchCriteria
+				.builder().grbgApplicationIds(garbapplicationNos).month(grbgTaxCalculatorMonthTracker.getMonth()).build();
+		
+		
 
+		List<GrbgBillTracker> grbgTaxCalculatorTracker = getBillCalculatedGarbageAccounts(grbgTrackerSearchCriteria);
+
+		// If no records, return null or empty set
+		if (grbgTaxCalculatorTracker == null || grbgTaxCalculatorTracker.isEmpty()) {
+		    return null;
+		}
+
+		// Collect all bill IDs (assuming you have getBillId() or similar method)
+		Set<String> billIds = grbgTaxCalculatorTracker.stream()
+		        .map(GrbgBillTracker::getBillId)   // <-- replace with actual getter name
+		        .collect(Collectors.toSet());
 		
 		BillSearchCriteria billSearchCriteria = BillSearchCriteria.builder()
-				.tenantId(grbgTaxCalculatorTracker.getTenantId())
+				.tenantId(grbgTaxCalculatorMonthTracker.getTenantId())
 				.service(grbAccount.getBusinessService())
-				.billId(Collections.singleton(grbgTaxCalculatorTracker.getBillId())).build();
+				.billId(billIds).build();
+		
 
 		BillResponse billResponse = billService.searchBill(billSearchCriteria, requestInfoWrapper.getRequestInfo());
 
@@ -2127,12 +2156,11 @@ public class GarbageAccountService {
 			return null;
 		}
 
-		Bill bill = billResponse.getBill().stream().findFirst().orElse(null);
-		if (null == bill) {
-			return null;
-		}
+		List<Bill> bill = billResponse.getBill();
 		
 		
+		
+		//return null;
 		PDFRequest pdfRequest = pdfRequestGenerator.generatePdfRequestForBill(requestInfoWrapper, grbAccount,grbgTaxCalculatorTracker,bill);
 
 		return reportService.createNoSavePDF(pdfRequest);
