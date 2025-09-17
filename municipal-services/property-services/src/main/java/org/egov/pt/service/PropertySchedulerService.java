@@ -202,19 +202,19 @@ public class PropertySchedulerService {
 				}
 
 				if (null == structuralFactor) {
-					errorSet.add(PTConstants.MDMS_MASTER_DETAILS_BUILDINGSTRUCTURE + " is missing in mdms");
+					errorSet.add(PTConstants.MDMS_MASTER_DETAILS_BUILDINGSTRUCTURE + " (F2) is missing in mdms");
 				}
 				if (null == ageFactor) {
-					errorSet.add(PTConstants.MDMS_MASTER_DETAILS_BUILDINGESTABLISHMENTYEAR + " is missing in mdms");
+					errorSet.add(PTConstants.MDMS_MASTER_DETAILS_BUILDINGESTABLISHMENTYEAR + " (F3)is missing in mdms");
 				}
 				if (null == occupancyFactor) {
-					errorSet.add(PTConstants.MDMS_MASTER_DETAILS_BUILDINGPURPOSE + " is missing in mdms");
+					errorSet.add(PTConstants.MDMS_MASTER_DETAILS_BUILDINGPURPOSE + " (F4) is missing in mdms");
 				}
 				if (null == useFactor) {
-					errorSet.add(PTConstants.MDMS_MASTER_DETAILS_BUILDINGUSE + " is missing in mdms");
+					errorSet.add(PTConstants.MDMS_MASTER_DETAILS_BUILDINGUSE + " (F5) is missing in mdms");
 				}
 				if (null == locationFactor) {
-					errorSet.add(PTConstants.MDMS_MASTER_DETAILS_ZONES + " is missing in mdms");
+					errorSet.add(PTConstants.MDMS_MASTER_DETAILS_ZONES + " (F1) is missing in mdms");
 				}
 				if (null == oAndMRebatePercentage) {
 					errorSet.add(PTConstants.MDMS_MASTER_DETAILS_OVERALLREBATE + " is missing in mdms");
@@ -344,30 +344,27 @@ public class PropertySchedulerService {
 					taxCalculatorTrackers.add(ptTaxCalculatorTracker);
 
 					// notification calls
-					notificationService.triggerNotificationsGenerateBill(ptTaxCalculatorTracker,
-							billResponse.getBill().get(0), ptTaxCalculatorTrackerRequest.getRequestInfo());
-				}
-				else {
-					//failure case one
-					PropertyBillFailure propertyBillFailure	= enrichmentService.enrichPtBillFailure(property, calculateTaxRequest,billResponse,null);
-					propertyService.saveToPtBillFailure(propertyBillFailure);
-//					log.info("bill cant be generated {} {} {}",generateBillRequest,garbageAccount,null);
-				}
-			}
-			else 
-			{
-				//failure case 
-				//failure case one
-				PropertyBillFailure propertyBillFailure	= enrichmentService.enrichPtBillFailure(property, calculateTaxRequest,null,errorMap);
-				propertyService.saveToPtBillFailure(propertyBillFailure);
-//				log.info("bill cant be generated {} {} {}",generateBillRequest,garbageAccount,null);
-//				log.error(billResponse.toString());
-				log.error(errorMap.toString());
-			}
+					try {
+						notificationService.triggerNotificationsGenerateBill(ptTaxCalculatorTracker,
+								billResponse.getBill().get(0), ptTaxCalculatorTrackerRequest.getRequestInfo());
+					}catch(Exception ex) {
+						log.error(ex.getMessage());
+					}
 
+				}
+				else 
+					createFailureLog(property, calculateTaxRequest,billResponse,null);			
+			}
+			else
+				createFailureLog(property, calculateTaxRequest,null,errorMap.get(property.getPropertyId()));
 		}
-
 		return CalculateTaxResponse.builder().taxCalculatorTrackers(taxCalculatorTrackers).build();
+	}
+	
+	private void createFailureLog(Property property,CalculateTaxRequest generateBillRequest, BillResponse billResponse,Set<String> errorMap) {
+		PropertyBillFailure propertyBillFailure	= enrichmentService.enrichPtBillFailure(property, generateBillRequest,billResponse,errorMap);
+		propertyService.saveToPtBillFailure(propertyBillFailure);
+
 	}
 
 	private BigDecimal calculateDays(CalculateTaxRequest calculateTaxRequest) {
@@ -505,8 +502,8 @@ public class PropertySchedulerService {
 			return billResponse;
 		} catch (Exception e) {
 			log.error(e.getMessage());
+			return null;
 		}
-		return null;
 	}
 
 	private boolean isAreaWithinRange(String propertyAreaString, BigDecimal propertyArea) {

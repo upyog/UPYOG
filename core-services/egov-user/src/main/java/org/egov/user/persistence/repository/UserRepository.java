@@ -350,6 +350,7 @@ public class UserRepository {
         Map<String, Object> updateuserInputs = new HashMap<>();
         updateuserInputs.put("username", user.getUsername());
         updateuserInputs.put("name", user.getName());
+        updateuserInputs.put("mobilenumber", user.getMobileNumber());
         updateuserInputs.put("uuid", oldUser.getUuid());
         updateuserInputs.put("type", oldUser.getType().toString());
         namedParameterJdbcTemplate.update(userTypeQueryBuilder.getUpdateUserName(), updateuserInputs);

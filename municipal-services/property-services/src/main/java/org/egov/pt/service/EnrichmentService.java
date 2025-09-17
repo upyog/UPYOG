@@ -420,7 +420,7 @@ public class EnrichmentService {
 				.ptTaxCalculatorTracker(ptTaxCalculatorTracker).build();
 	}
 	
-	public PropertyBillFailure enrichPtBillFailure(Property property,CalculateTaxRequest generateBillRequest, BillResponse billResponse,Map<String, Set<String>> errorMap) {
+	public PropertyBillFailure enrichPtBillFailure(Property property,CalculateTaxRequest generateBillRequest, BillResponse billResponse,Set<String> errorMap) {
 		SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
 		ObjectMapper mapper = new ObjectMapper();
 		JsonNode response_payload = mapper.valueToTree(billResponse);
