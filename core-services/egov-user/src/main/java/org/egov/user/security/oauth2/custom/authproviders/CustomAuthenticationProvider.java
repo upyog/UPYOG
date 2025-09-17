@@ -93,7 +93,11 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
         try {
             // Get user from database
             log.info("Looking up user in database...");
-            User user = userService.getUniqueUser(username, tenantId, UserType.fromValue(userType));
+            RequestInfo requestInfo = RequestInfo.builder()
+                .action("authenticate")
+                .ts(System.currentTimeMillis())
+                .build();
+            User user = userService.getUniqueUser(username, tenantId, UserType.fromValue(userType), requestInfo);
             
             if (user == null) {
                 log.error("User not found in database for username: {}, tenantId: {}, userType: {}", username, tenantId, userType);
@@ -110,11 +114,11 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
                 }
                 // If account is unlockable, unlock it
                 log.info("Account is unlockable, attempting to unlock...");
-                RequestInfo requestInfo = RequestInfo.builder()
+                RequestInfo unlockRequestInfo = RequestInfo.builder()
                     .action("unlock")
                     .ts(System.currentTimeMillis())
                     .build();
-                user = unlockAccount(user, requestInfo);
+                user = unlockAccount(user, unlockRequestInfo);
             }
             
             // Validate password
