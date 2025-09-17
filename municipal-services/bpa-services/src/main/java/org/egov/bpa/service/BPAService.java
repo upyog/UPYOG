@@ -42,6 +42,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.Rectangle;
@@ -234,6 +235,15 @@ public class BPAService {
 				}
 			}
 		}
+		
+		bpas.forEach(bpa -> {
+			if(bpa.getLandId() != null && bpa.getLandInfo() == null) {
+				((Map<String, Object>)bpa.getAdditionalDetails()).getOrDefault("landInfo", new  HashMap<String, Object>());
+				LandInfo landInfo = new ObjectMapper().convertValue(((Map<String, Object>)bpa.getAdditionalDetails()).get("landInfo"), LandInfo.class);
+				bpa.setLandInfo(landInfo);
+			}
+		});
+		
 		return bpas;
 	}
 	/**
@@ -505,10 +515,24 @@ public class BPAService {
 				bpaValidator.validateUpdate(bpaRequest, searchResult, mdmsData,
 				workflowService.getCurrentState(bpa.getStatus(), businessService), edcrResponse);
 				if (!applicationType.equalsIgnoreCase(BPAConstants.BUILDING_PLAN_OC) && bpa.getLandInfo() != null) {
-					if(bpa.getLandId() == null)
+					if(bpa.getLandId() == null) {
+						if(bpaRequest.getBPA().getLandInfo().getOwnershipCategory() == null || 
+								bpaRequest.getBPA().getLandInfo().getOwnershipCategory().isEmpty()) {
+							bpaRequest.getBPA().getLandInfo().setOwnershipCategory("INDIVIDUAL.SINGLEOWNER");
+						}
 						landService.addLandInfoToBPA(bpaRequest);
-					else
+						Map<String, Object> landInfo = new ObjectMapper().convertValue(bpaRequest.getBPA().getLandInfo(), Map.class);
+						((Map<String, Object>)bpaRequest.getBPA().getAdditionalDetails()).put("landInfo", landInfo);
+					}
+					else {
 						landService.updateLandInfo(bpaRequest);
+						if(bpaRequest.getBPA().getLandInfo().getOwners().size() >0) {
+							((Map<String, Object>)bpaRequest.getBPA().getAdditionalDetails()).remove("landInfo");
+						}else {
+							Map<String, Object> landInfo = new ObjectMapper().convertValue(bpaRequest.getBPA().getLandInfo(), Map.class);
+							((Map<String, Object>)bpaRequest.getBPA().getAdditionalDetails()).put("landInfo", landInfo);
+						}
+					}
 				}
 				bpaValidator.validateCheckList(mdmsData, bpaRequest,
 				workflowService.getCurrentState(bpa.getStatus(), businessService));
