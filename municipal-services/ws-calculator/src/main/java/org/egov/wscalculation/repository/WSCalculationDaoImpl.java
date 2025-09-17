@@ -341,6 +341,7 @@ public class WSCalculationDaoImpl implements WSCalculationDao {
 		List<Object> preparedStmtList = new ArrayList<>();
 		preparedStmtList.add(status.toString());
 		String queryStr = queryBuilder.getBillStatusUpdateQuery(consumerCodes,businessService, preparedStmtList);
+		log.info("Query for updateBillStatus : "  + queryStr );
 		jdbcTemplate.update(queryStr, preparedStmtList.toArray());
 	}
 	@Override
