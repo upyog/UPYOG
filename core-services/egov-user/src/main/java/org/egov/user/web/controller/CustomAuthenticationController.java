@@ -31,7 +31,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/_oauth2")
+@RequestMapping("/oauth")
 @Slf4j
 public class CustomAuthenticationController {
 
@@ -148,12 +148,12 @@ public class CustomAuthenticationController {
             
             // Handle failed login using existing service
             try {
-                User user = userService.getUniqueUser(username, tenantId, UserType.fromValue(userType));
+                RequestInfo requestInfo = RequestInfo.builder()
+                    .action("authenticate")
+                    .ts(System.currentTimeMillis())
+                    .build();
+                User user = userService.getUniqueUser(username, tenantId, UserType.fromValue(userType), requestInfo);
                 if (user != null) {
-                    RequestInfo requestInfo = RequestInfo.builder()
-                        .action("authenticate")
-                        .ts(System.currentTimeMillis())
-                        .build();
                     userService.handleFailedLogin(user, getClientIpAddress(request), requestInfo);
                 }
             } catch (Exception ex) {
@@ -198,7 +198,7 @@ public class CustomAuthenticationController {
         if (domainUser == null) {
             return null;
         }
-        
+
         return org.egov.user.web.contract.auth.User.builder()
             .id(domainUser.getId())
             .uuid(domainUser.getUuid())
@@ -221,10 +221,40 @@ public class CustomAuthenticationController {
         if (domainRoles == null) {
             return null;
         }
-        
+
         return domainRoles.stream()
             .map(domainRole -> new org.egov.user.web.contract.auth.Role(domainRole))
             .collect(Collectors.toSet());
+    }
+
+    /**
+     * Convert contract User to domain User for decryption
+     */
+    private org.egov.user.domain.model.User convertContractToDomainUser(org.egov.user.web.contract.auth.User contractUser) {
+        if (contractUser == null) {
+            return null;
+        }
+
+        return org.egov.user.domain.model.User.builder()
+            .id(contractUser.getId())
+            .uuid(contractUser.getUuid())
+            .username(contractUser.getUserName())
+            .name(contractUser.getName())
+            .mobileNumber(contractUser.getMobileNumber())
+            .emailId(contractUser.getEmailId())
+            .locale(contractUser.getLocale())
+            .active(contractUser.isActive())
+            .type(contractUser.getType() != null ? UserType.fromValue(contractUser.getType()) : null)
+            .tenantId(contractUser.getTenantId())
+            .roles(contractUser.getRoles() != null ?
+                contractUser.getRoles().stream()
+                    .map(role -> org.egov.user.domain.model.Role.builder()
+                        .name(role.getName())
+                        .code(role.getCode())
+                        .tenantId(role.getTenantId())
+                        .build())
+                    .collect(Collectors.toSet()) : null)
+            .build();
     }
 
     private String generateAccessToken(SecureUser secureUser, String scope) {
@@ -414,7 +444,7 @@ public class CustomAuthenticationController {
         return this.jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
     }
 
-    private Map<String, Object> createSuccessResponse(String accessToken, String refreshToken, 
+    private Map<String, Object> createSuccessResponse(String accessToken, String refreshToken,
                                                     String scope, SecureUser secureUser) {
         Map<String, Object> response = new HashMap<>();
         response.put("access_token", accessToken);
@@ -422,11 +452,35 @@ public class CustomAuthenticationController {
         response.put("token_type", "Bearer");
         response.put("expires_in", accessTokenValidityInMinutes * 60);
         response.put("scope", scope != null ? scope : "read write");
-        
+
         Map<String, Object> responseInfo = createResponseInfo("Access Token generated successfully");
         response.put("ResponseInfo", responseInfo);
-        response.put("UserRequest", secureUser.getUser());
-        
+
+        // Decrypt user data for token response using the authenticated user context
+        org.egov.user.web.contract.auth.User contractUser = secureUser.getUser();
+        if (contractUser != null) {
+            log.info("Starting user decryption for token response. User: {}, encrypted userName: {}",
+                contractUser.getId(), contractUser.getUserName());
+            try {
+                // Convert contract user to domain user for decryption
+                org.egov.user.domain.model.User domainUser = convertContractToDomainUser(contractUser);
+                log.info("Converted to domain user, calling decryptUserWithContext");
+
+                // Decrypt user with proper authenticated context
+                org.egov.user.domain.model.User decryptedDomainUser = userService.decryptUserWithContext(domainUser, contractUser);
+                log.info("Decryption completed, converting back to contract user");
+
+                // Convert back to contract user for response
+                org.egov.user.web.contract.auth.User decryptedUser = convertToContractUser(decryptedDomainUser);
+                log.info("Token response using decrypted user data. Decrypted userName: {}", decryptedUser.getUserName());
+                response.put("UserRequest", decryptedUser);
+            } catch (Exception e) {
+                log.error("Failed to decrypt user for token response: {}", e.getMessage(), e);
+                log.info("Falling back to encrypted user data for token response");
+                response.put("UserRequest", contractUser);
+            }
+        }
+
         return response;
     }
 
