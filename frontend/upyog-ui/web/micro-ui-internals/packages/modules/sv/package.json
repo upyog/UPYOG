@@ -19,7 +19,7 @@
     },
     "dependencies": {
         "@upyog/digit-ui-libraries": "3.0.1",
-      "@upyog/digit-ui-react-components": "3.0.1",
+      "@upyog/digit-ui-react-components": "3.0.5",
       "exif-js": "^2.3.0",
       "jspdf": "^2.5.1",
       "jspdf-autotable": "^3.8.2",
