@@ -9,7 +9,7 @@
     "packages/react-components",
     "packages/modules/core",
     "packages/modules/common",
-    "packages/modules/obps"
+    "packages/modules/obps",
     "packages/modules/hrms",
     "packages/modules/pt",
     "packages/modules/fsm",
