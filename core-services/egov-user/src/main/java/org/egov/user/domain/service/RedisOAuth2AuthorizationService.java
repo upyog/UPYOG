@@ -12,7 +12,7 @@ public class RedisOAuth2AuthorizationService implements OAuth2AuthorizationServi
 
     private final RedisTemplate<String, Object> redisTemplate;
     private static final String AUTHORIZATION_KEY_PREFIX = "oauth2:authorization:";
-    private static final String TOKEN_KEY_PREFIX = "oauth2:token:";
+    private static final String TOKEN_KEY_PREFIX = "access_token:";
 
     public RedisOAuth2AuthorizationService(RedisTemplate<String, Object> redisTemplate) {
         Assert.notNull(redisTemplate, "redisTemplate cannot be null");

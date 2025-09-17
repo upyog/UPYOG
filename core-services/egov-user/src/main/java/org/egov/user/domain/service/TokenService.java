@@ -91,7 +91,7 @@ public class TokenService {
      */
     @SuppressWarnings("unchecked")
     private UserDetail getUserFromOpaqueToken(String accessToken) {
-        String tokenKey = "oauth2:token:" + accessToken;
+        String tokenKey = "access_token:" + accessToken;
         Map<String, Object> tokenMetadata = (Map<String, Object>) redisTemplate.opsForValue().get(tokenKey);
         
         if (tokenMetadata == null) {

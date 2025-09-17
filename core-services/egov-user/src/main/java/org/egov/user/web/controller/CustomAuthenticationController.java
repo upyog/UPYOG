@@ -299,7 +299,7 @@ public class CustomAuthenticationController {
         tokenMetadata.put("ResponseInfo", responseInfo);
         tokenMetadata.put("scope", scope != null ? scope : "read write");
         tokenMetadata.put("token_type", "access_token");
-        
+
         // Store in Redis with expiration
         String key = "access_token:" + tokenValue;
         redisTemplate.opsForValue().set(key, tokenMetadata, accessTokenValidityInMinutes, java.util.concurrent.TimeUnit.MINUTES);
@@ -418,7 +418,7 @@ public class CustomAuthenticationController {
         // Add ResponseInfo
         Map<String, Object> responseInfo = createResponseInfo("Client Access Token generated successfully");
         tokenMetadata.put("ResponseInfo", responseInfo);
-        
+
         // Store in Redis with expiration
         String key = "access_token:" + tokenValue;
         redisTemplate.opsForValue().set(key, tokenMetadata, accessTokenValidityInMinutes, java.util.concurrent.TimeUnit.MINUTES);
