@@ -1,19 +1,10 @@
 package org.egov.pt.service;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import javax.validation.Valid;
-import java.util.Objects;
 
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.pt.config.PropertyConfiguration;
@@ -709,12 +700,14 @@ public class PropertyService {
 		} else if (criteria.getIsRequestForOldDataEncryption()) {
 			propertyCriteria.setTenantIds(criteria.getTenantIds());
 		} else {
-			List<String> uuids = repository.fetchIds(criteria, true);
-			if (uuids.isEmpty())
+            List<String> uuids = repository.fetchIds(criteria, true);
+            if (uuids.isEmpty())
 				return Collections.emptyList();
 			propertyCriteria.setUuids(new HashSet<>(uuids));
 		}
 		propertyCriteria.setLimit(criteria.getLimit());
+        if(criteria.getFromDate()!= null) propertyCriteria.setFromDate(criteria.getFromDate());
+        if(criteria.getToDate()!= null) propertyCriteria.setToDate(criteria.getToDate());
 		List<Property> properties = repository.getPropertiesForBulkSearch(propertyCriteria, true);
 		if (properties.isEmpty())
 			return Collections.emptyList();
