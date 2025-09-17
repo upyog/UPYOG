@@ -11,19 +11,18 @@ import org.egov.common.domain.exception.CustomBindException;
 import org.egov.common.domain.exception.InvalidDataException;
 import org.egov.common.domain.exception.UnauthorizedAccessException;
 import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Component;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.MissingServletRequestParameterException;
+import org.springframework.context.annotation.Primary;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.stereotype.Component;
-
-
 
 @ControllerAdvice
 @RestController
-@Component("instrumentCustomControllerAdvice")
+@Primary
 public class CustomControllerAdvice {
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)

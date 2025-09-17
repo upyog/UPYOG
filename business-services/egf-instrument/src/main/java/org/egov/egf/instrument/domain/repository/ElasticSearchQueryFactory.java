@@ -13,9 +13,11 @@ import org.egov.egf.instrument.web.contract.InstrumentTypeSearchContract;
 import org.egov.egf.instrument.web.contract.SurrenderReasonSearchContract;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
-@Service("instrumentElasticSearchQueryFactory")
+@Service
+@Primary
 public class ElasticSearchQueryFactory {
 
     @Autowired

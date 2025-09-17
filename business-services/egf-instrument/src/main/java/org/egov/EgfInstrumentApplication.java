@@ -13,6 +13,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.flyway.FlywayMigrationStrategy;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.Primary;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
@@ -26,7 +27,11 @@ import java.text.SimpleDateFormat;
 import java.util.TimeZone;
 
 @Import({ TracerConfiguration.class })
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = {
+    "org.egov.egf.instrument",
+    "org.egov.egf.master.web.repository",
+    "org.egov.common.util"
+})
 public class EgfInstrumentApplication {
 
     public static void main(String[] args) {
@@ -59,6 +64,7 @@ public class EgfInstrumentApplication {
     }
 
     @Bean
+    @Primary
     public MappingJackson2HttpMessageConverter jacksonConverter() {
         MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
         ObjectMapper mapper = new ObjectMapper();
@@ -72,6 +78,7 @@ public class EgfInstrumentApplication {
     }
 
     @Bean
+    @Primary
     public WebMvcConfigurer webMvcConfigurerAdapter() {
         return new WebMvcConfigurer() {
 
@@ -83,16 +90,19 @@ public class EgfInstrumentApplication {
     }
 
     @Bean
+    @Primary
     public TransportClient getTransportClient() {
         return client;
     }
 
     @Bean
+    @Primary
     public RestTemplate restTemplate() {
         return new RestTemplate();
     }
     
     @Bean
+    @Primary
     public FlywayMigrationStrategy cleanMigrateStrategy() {
         return flyway -> {
             flyway.repair();

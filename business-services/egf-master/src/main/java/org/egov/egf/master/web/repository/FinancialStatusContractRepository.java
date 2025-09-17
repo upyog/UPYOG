@@ -58,8 +58,18 @@ public class FinancialStatusContractRepository {
 	        if (financialStatusContract.getModuleType() != null) {
 	                content.append("&moduleType=" + financialStatusContract.getModuleType());
 	        }
+	        // Added tenantId as mandatory parameter to avoid tenant id missing error
+				if (financialStatusContract.getTenantId() != null) {
+						content.append("&tenantId=" + financialStatusContract.getTenantId());
+				}
+	        
 	        url = url + content.toString();
-	        FinancialStatusResponse result = restTemplate.postForObject(url, null, FinancialStatusResponse.class);
+	        FinancialStatusResponse result;
+			// As this method is called from instrument create api, passing blank RequestInfo to avoid 500 error
+	        RequestInfoWrapper requestInfoWrapper = new RequestInfoWrapper();
+	        requestInfoWrapper.setRequestInfo(new RequestInfo());
+	        
+	        result = restTemplate.postForObject(url, requestInfoWrapper, FinancialStatusResponse.class);
 
 	        if (result.getFinancialStatuses() != null && result.getFinancialStatuses().size() == 1) {
 	                return result.getFinancialStatuses().get(0);

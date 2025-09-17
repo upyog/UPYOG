@@ -53,7 +53,7 @@ import org.egov.common.domain.model.Auditable;
 import org.egov.egf.master.web.contract.BankAccountContract;
 import org.egov.egf.master.web.contract.BankContract;
 import org.egov.egf.master.web.contract.FinancialStatusContract;
-import org.hibernate.validator.constraints.NotBlank;
+import jakarta.validation.constraints.NotBlank;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
