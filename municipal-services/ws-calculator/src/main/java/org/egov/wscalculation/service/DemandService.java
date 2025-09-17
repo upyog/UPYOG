@@ -498,8 +498,10 @@ public class DemandService {
 			List<String> dbUsageCategory = waterCalculatorDao.fetchUsageCategory(demands.get(0).getConsumerCode());
 
 	        List<String> matchingUsages = mdmsUsageCategory.stream().filter(dbUsageCategory::contains).collect(Collectors.toList());
-
-	        if (!matchingUsages.isEmpty()) {
+	        List<String> sewConnectionList = waterCalculatorDao.fetchSewConnection(consumerCode);
+	        sewConsumerCode = sewConnectionList.isEmpty() ? "" : sewConnectionList.get(0).toString();
+	        if (!matchingUsages.isEmpty() && (sewConnectionList != null || !sewConnectionList.isEmpty())) {
+	        	sewConsumerCode = waterCalculatorDao.fetchSewConnection(consumerCode).get(0).toString();
 //	            log.error("No matching usage categories found between mdmsUsageCategory and dbUsageCategory. Proceed with ws demand only ");
 	        	// For the metered connections demand has to create one by one
 	 			if (WSCalculationConstant.meteredConnectionType.equalsIgnoreCase(connection.getConnectionType())) {
@@ -525,7 +527,6 @@ public class DemandService {
 	 						dd1.setTenantId(ddSew.getTenantId());
 	 						demandDetails1.add(dd1);
 	 					}
-	 					sewConsumerCode = waterCalculatorDao.fetchSewConnection(consumerCode).get(0).toString();
 	 					demandsSw.add(Demand.builder().consumerCode(sewConsumerCode).demandDetails(demandDetails1).payer(owner)
 	 							.minimumAmountPayable(minimumPayableAmount).tenantId(tenantId).taxPeriodFrom(fromDate)
 	 							.taxPeriodTo(toDate).consumerType("sewerageConnection").businessService(businessService)
