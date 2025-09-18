@@ -6,12 +6,14 @@ import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.upyog.config.MainConfiguration;
 import org.upyog.config.ModuleConfig;
 import org.upyog.constants.VerificationSearchConstants;
 import org.upyog.mapper.CommonDetailsMapper;
 import org.upyog.mapper.CommonDetailsMapperFactory;
 import org.upyog.repository.ServiceRequestRepository;
 import org.upyog.web.models.CommonDetails;
+import org.upyog.web.models.ModuleSearchRequest;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -19,7 +21,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import digit.models.coremodels.RequestInfoWrapper;
 import digit.models.coremodels.UserDetailResponse;
 import lombok.extern.slf4j.Slf4j;
-import org.upyog.web.models.ModuleSearchRequest;
 
 @Service
 @Slf4j
@@ -38,6 +39,9 @@ public class CommonServiceImpl implements CommonService {
 
 	@Autowired
 	private UserService userService;
+
+	@Autowired
+	private MainConfiguration mainConfiguration;
 
 	@Autowired
 	public CommonServiceImpl(ModuleConfig moduleConfig, CommonDetailsMapperFactory mapperFactory) {
@@ -94,12 +98,13 @@ public class CommonServiceImpl implements CommonService {
 	 * Retrieves the system user’s RequestInfo based on a predefined system
 	 * username.
 	 * 
+	 * @param userService The UserService instance used to fetch user details.
 	 * @return A RequestInfo object containing the system user’s details.
 	 * @throws IllegalStateException if the system user is not found.
 	 */
 	private RequestInfo getSystemUserDetails() {
 		UserDetailResponse userDetailResponse = userService.searchByUserName(
-				VerificationSearchConstants.INTERNALMICROSERVICEUSER_USERNAME, VerificationSearchConstants.VS_TENANTID);
+				mainConfiguration.getInternalMicroserviceUserName(), mainConfiguration.getStateLevelTenantId());
 
 		if (userDetailResponse == null || userDetailResponse.getUser().isEmpty()) {
 			throw new IllegalStateException(
@@ -108,7 +113,7 @@ public class CommonServiceImpl implements CommonService {
 
 		RequestInfo systemRequestInfo = RequestInfo.builder().userInfo(userDetailResponse.getUser().get(0)).build();
 
-		log.info("RequestInfo of System User: " + systemRequestInfo);
+		log.info("RequestInfo of system User: " + systemRequestInfo);
 		return systemRequestInfo;
 	}
 }
