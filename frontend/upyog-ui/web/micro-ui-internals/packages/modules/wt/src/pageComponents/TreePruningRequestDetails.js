@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { FormStep, CardLabel, TextInput, UploadFile, Dropdown, LocationIcon } from "@nudmcdgnpm/digit-ui-react-components";
+import { FormStep, CardLabel, TextInput, UploadFile, Dropdown, LocationIcon } from "@upyog/digit-ui-react-components";
 
 const TreePruningRequestDetails = ({ t, config, onSelect, userType, formData }) => {
   const user = Digit.UserService.getUser().info;

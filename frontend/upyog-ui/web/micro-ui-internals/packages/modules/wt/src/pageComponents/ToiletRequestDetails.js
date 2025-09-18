@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { FormStep, CardLabel, TextInput, TextArea,Dropdown } from "@nudmcdgnpm/digit-ui-react-components";
+import { FormStep, CardLabel, TextInput, TextArea,Dropdown } from "@upyog/digit-ui-react-components";
 
 /* This page is developed for the Mobile Toilet Request Details page.
    It allows users to enter details such as the number of mobile toilets required, delivery dates, and special requests. */
