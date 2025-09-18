@@ -1,10 +1,72 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import { Pie, Bar } from "react-chartjs-2";
 import { useTranslation } from "react-i18next";
 
 
 export const RevenueBasedDashboard = ({ dashboardData }) => {
+    function toFinite(n) {
+      var x = Number(n);
+      return isFinite(x) ? x : 0;
+    }
+
+    const optionsPie = useMemo(() => ({
+        responsive: true,
+        maintainAspectRatio: true,
+        plugins: {
+          tooltip: {
+            callbacks: {
+              label: function (ctx) {
+                var rawArr = (ctx && ctx.dataset && ctx.dataset.data) || [];
+                var arr = Array.isArray(rawArr) ? rawArr.map(toFinite) : [];
+                var total = arr.reduce(function (a, b) { return a + b; }, 0);
+    
+                var value = toFinite(ctx.parsed);
+                if (total <= 0) return (ctx.label || '') + ': ' + value; // no percent when no total
+    
+                var pct = (value / total) * 100;
+                var pctText = isFinite(pct) ? pct.toFixed(1) + '%' : '0%';
+                var label = (ctx && ctx.label != null) ? ctx.label : '';
+                return label + ': ' + value + ' (' + pctText + ')';
+              }
+            }
+          },
+          datalabels: {
+            display: function (context) {
+              // hide labels when total is 0 or value is 0
+              var chart = context && context.chart;
+              var data = chart && chart.data;
+              var ds0  = data && data.datasets && data.datasets[0];
+              var raw  = ds0 && ds0.data;
+              var arr  = Array.isArray(raw) ? raw.map(toFinite) : [];
+              var total = arr.reduce(function (a, b) { return a + b; }, 0);
+              var v = toFinite(context.raw);
+              return total > 0 && v > 0;
+            },
+            formatter: function (value, context) {
+              var chart = context && context.chart;
+              var data = chart && chart.data;
+              var ds0  = data && data.datasets && data.datasets[0];
+              var raw  = ds0 && ds0.data;
+              var arr  = Array.isArray(raw) ? raw.map(toFinite) : [];
+              var total = arr.reduce(function (a, b) { return a + b; }, 0);
+    
+              if (total <= 0) return '';              // nothing to show
+              var v = toFinite(value);
+              var pct = (v / total) * 100;
+              if (!isFinite(pct)) return '';          // guards Infinity/NaN
+              return pct >= 1 ? pct.toFixed(1) + '%' : '<1%';
+            },
+            color: '#fff',
+            font: { weight: 'bold' },
+            anchor: 'center',
+            align: 'center',
+            clip: true
+          }
+        },
+        // optional: improve label placement for small slices
+        layout: { padding: 8 },
+      }),[]);
 
     const taxData = dashboardData[0]?.revenue;
     // {
@@ -58,7 +120,7 @@ export const RevenueBasedDashboard = ({ dashboardData }) => {
                 <div style={{ display: "flex", gap: "15px", flexWrap: "wrap", padding: "0px" }}>
                     <div style={{ width: "350px", boxShadow: "0px 0px 3px 0px", borderRadius: "6px" }}>
                         <h4 style={{paddingLeft: "10px", paddingTop: "10px", fontWeight: "600", textDecoration: "underline"}}>Tax Composition (Pie)</h4>
-                        <Pie data={pieData} />
+                        <Pie data={pieData} options={optionsPie} />
                     </div>
 
                     <div style={{ width: "350px", boxShadow: "0px 0px 3px 0px", borderRadius: "6px" }}>
