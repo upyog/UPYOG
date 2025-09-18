@@ -1,6 +1,6 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { TelePhone, DisplayPhotos } from "@nudmcdgnpm/digit-ui-react-components";
+import { TelePhone, DisplayPhotos } from "@upyog/digit-ui-react-components";
 
  /*The component receives two props: 
     -`data` which contains all the information to be displayed (name, phone number, comments, etc.)

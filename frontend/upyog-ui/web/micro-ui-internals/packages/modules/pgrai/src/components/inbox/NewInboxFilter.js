@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Dropdown, CloseSvg, SubmitBar } from "@nudmcdgnpm/digit-ui-react-components";
+import { Dropdown, CloseSvg, SubmitBar } from "@upyog/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 import _ from "lodash";
 

@@ -30,7 +30,7 @@
  * - `Digit.Hooks.useWorkflowDetails`: Hook to fetch workflow details.
  * - `Digit.DateUtils.ConvertTimestampToDate`: Utility for date conversion.
  * - `PTRWFCaption`: Custom component for rendering captions.
- * - `Loader`, `CardSectionHeader`, `CheckPoint`, `ConnectingCheckPoints`, `SubmitBar`: UI components from `@nudmcdgnpm/digit-ui-react-components`.
+ * - `Loader`, `CardSectionHeader`, `CheckPoint`, `ConnectingCheckPoints`, `SubmitBar`: UI components from `@upyog/digit-ui-react-components`.
  * 
  */
 

@@ -1,5 +1,5 @@
 {
-  "name": "@nudmcdgnpm/upyog-ui-module-pgrai",
+  "name": "@upyog/upyog-ui-module-pgrai",
   "author": "Sourabh",
   "version": "1.0.1",
   "license": "MIT",
@@ -20,7 +20,7 @@
   },
   "dependencies": {
    "@upyog/digit-ui-libraries": "3.0.1",
-   "@nudmcdgnpm/digit-ui-react-components": "1.2.14",
+   "@upyog/digit-ui-react-components": "1.2.14",
     "jspdf": "^2.5.1",
     "jspdf-autotable": "^3.8.2",
     "lodash.merge": "^4.6.2",
