@@ -22,7 +22,9 @@ public class SecureUser implements UserDetails {
             throw new UsernameNotFoundException("UserRequest not found");
         } else {
             this.user = user;
-            user.getRoles().forEach(role -> this.authorities.add(new SimpleGrantedAuthority(role.getCode())));
+            if (user.getRoles() != null) {
+                user.getRoles().forEach(role -> this.authorities.add(new SimpleGrantedAuthority(role.getCode())));
+            }
         }
     }
 
@@ -67,10 +69,13 @@ public class SecureUser implements UserDetails {
 
     @JsonIgnore
     public List<String> getRoleCodes() {
-        return user.getRoles()
-                .stream()
-                .map(Role::getCode)
-                .collect(Collectors.toList());
+        if (user.getRoles() != null) {
+            return user.getRoles()
+                    .stream()
+                    .map(Role::getCode)
+                    .collect(Collectors.toList());
+        }
+        return new ArrayList<>();
     }
 
     public String getTenantId() {

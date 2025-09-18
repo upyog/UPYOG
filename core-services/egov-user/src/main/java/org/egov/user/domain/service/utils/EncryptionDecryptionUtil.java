@@ -60,13 +60,13 @@ public class EncryptionDecryptionUtil {
         if (objectToDecrypt == null) {
             return null;
         }
-        
+
         try {
             // Get the appropriate key for decryption based on user context
             if (key == null && requestInfo != null && requestInfo.getUserInfo() != null) {
                 Map<String, String> keyPurposeMap = getKeyToDecrypt(objectToDecrypt, requestInfo.getUserInfo());
                 key = keyPurposeMap.get("key");
-                
+
                 // Log decryption attempt for audit - convert object to JsonNode
                 try {
                     auditService.audit(objectMapper.valueToTree(objectToDecrypt), key, keyPurposeMap.get("purpose"), requestInfo);
@@ -74,15 +74,33 @@ public class EncryptionDecryptionUtil {
                     log.warn("Failed to audit decryption attempt", auditException);
                 }
             }
-            
+
             // If key is still null, use default
             if (key == null) {
                 key = "User";
             }
-            
-            Object decryptedObject = encryptionService.decryptJson(requestInfo, objectToDecrypt, key, stateLevelTenantId, classType);
+
+            // Create a safe RequestInfo for encryption service to avoid null user info issues
+            RequestInfo safeRequestInfo = requestInfo;
+            if (requestInfo != null && requestInfo.getUserInfo() == null) {
+                // Create a minimal RequestInfo to avoid NPE in EncryptionServiceImpl
+                safeRequestInfo = RequestInfo.builder()
+                    .apiId(requestInfo.getApiId())
+                    .ver(requestInfo.getVer())
+                    .ts(requestInfo.getTs())
+                    .action(requestInfo.getAction())
+                    .did(requestInfo.getDid())
+                    .key(requestInfo.getKey())
+                    .msgId(requestInfo.getMsgId())
+                    .authToken(requestInfo.getAuthToken())
+                    .correlationId(requestInfo.getCorrelationId())
+                    .userInfo(User.builder().roles(new ArrayList<>()).build()) // Empty user with empty roles list instead of null
+                    .build();
+            }
+
+            Object decryptedObject = encryptionService.decryptJson(safeRequestInfo, objectToDecrypt, key, stateLevelTenantId, classType);
             return (P) decryptedObject;
-            
+
         } catch (Exception e) {
             log.error("Error occurred during decryption", e);
             throw new CustomException("DECRYPTION_ERROR", "Error occurred during decryption: " + e.getMessage());
