@@ -229,16 +229,26 @@ public class PropertyController {
 	}
 	
 	
-	  @RequestMapping(value = "/_dashboardDataSearchProperties", method = RequestMethod.POST)
-	    public ResponseEntity<DashboardReportResponse> dashboardDataSearchProperties(@Valid @RequestBody DashboardRequest dashboardRequest) {
-	    	
-	    	DashboardReport dashboardDatas=dashboardDataService.dashboardDatasWithProperties(dashboardRequest);
-	    	
-	    	DashboardReportResponse dashboardReportResponse=DashboardReportResponse.builder().dashboardReport(dashboardDatas).
-	    			responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(dashboardRequest.getRequestInfo(), true)).build();
-	    	
-	    	return new ResponseEntity<>(dashboardReportResponse,HttpStatus.OK);
-	    }
+	/*
+	 * @RequestMapping(value = "/_dashboardPropertyReports", method =
+	 * RequestMethod.POST) public ResponseEntity<?>
+	 * dashboardDataSearchProperties(@Valid @RequestBody DashboardRequest
+	 * dashboardRequest) throws Exception {
+	 * 
+	 * DashboardReport
+	 * dashboardDatas=dashboardDataService.dashboardDatasWithProperties(
+	 * dashboardRequest);
+	 * //if(dashboardRequest.getDashboardDataSearch().getIsReportDownload()) {
+	 * 
+	 * //return dashboardDataService.generateExcelResponse(dashboardDatas,
+	 * "dashboard-report.xlsx"); //} DashboardReportResponse
+	 * dashboardReportResponse=DashboardReportResponse.builder().dashboardReport(
+	 * dashboardDatas).
+	 * responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(
+	 * dashboardRequest.getRequestInfo(), true)).build();
+	 * 
+	 * return new ResponseEntity<>(dashboardReportResponse,HttpStatus.OK); }
+	 */
 		 
 	
 	

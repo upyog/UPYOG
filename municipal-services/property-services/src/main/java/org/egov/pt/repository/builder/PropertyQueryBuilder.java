@@ -111,11 +111,11 @@ public class PropertyQueryBuilder {
 			+ "AND EXTRACT(EPOCH FROM CURRENT_DATE + INTERVAL '1 day' - INTERVAL '1 second') * 1000\r\n"
 			+ "GROUP BY ep.tenantid, epadd.ward_no";
 	public final static String TOTAL_MOVED_APPLICATION_COUNT_WITH_WARD = "SELECT CASE\r\n"
-			+ "    WHEN ewpv.\"action\" = 'OPEN' THEN 'OPEN'\r\n"
+			+ "    WHEN ewpv.\"action\" IN ('OPEN','SENDBACKTODOCKVERIFIER', 'SENDBACKTODOCVERIFIER') THEN 'OPEN'\r\n"
 			+ "    WHEN ewpv.\"action\" = 'VERIFY' THEN 'DOCVERIFIED'\r\n"
 			+ "    WHEN ewpv.\"action\" = 'FORWARD' THEN 'FIELDVERIFIED'\r\n"
 			+ "    WHEN ewpv.\"action\" = 'REJECT' THEN 'REJECTED'\r\n"
-			+ "    WHEN ewpv.\"action\" = 'REOPEN' THEN 'CORRECTIONPENDING'\r\n"
+			+ "    WHEN ewpv.\"action\" IN ('REOPEN','SENDBACKTOCITIZEN') THEN 'CORRECTIONPENDING'\r\n"
 			+ "    WHEN ewpv.\"action\" = 'APPROVE' THEN 'APPROVED'\r\n" + "  END AS action_st,\r\n"
 			+ "  COUNT(*) AS count,\r\n" + "  ep.tenantid, epadd.ward_no\r\n" + "FROM eg_wf_processinstance_v2 ewpv\r\n"
 			+ "JOIN eg_pt_property ep ON ep.acknowldgementnumber = ewpv.businessid\r\n"
@@ -214,7 +214,7 @@ public class PropertyQueryBuilder {
 			+ "      'AGRICULTURAL_COMMERCIAL_USE'\r\n" + "    ) THEN 'Commercial'\r\n"
 			+ "    WHEN epp.usagecategory IN (\r\n" + "      'OWNER_MIXED', 'TENANT_MIXED'\r\n"
 			+ "    ) THEN 'Mixed Use'\r\n" + "    WHEN epp.usagecategory IN (\r\n"
-			+ "      'USE_BY_STATE_GOVT', 'USE_BY_CENTRAL_GOVT'\r\n" + "    ) THEN 'Institutional'\r\n" + "  END;\r\n"
+			+ "      'USE_BY_STATE_GOVT', 'USE_BY_CENTRAL_GOVT'\r\n" + "    ) THEN 'Institutional'\r\n" + "  END\r\n"
 			+ "";
 	public final static String TOTAL_REBATE_COLLECTION_WITH_WARD = "WITH paid_bills AS (\r\n"
 			+ "    SELECT \r\n"
