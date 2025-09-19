@@ -82,8 +82,6 @@ public class GatewayService {
      */
     Transaction getLiveStatus(Transaction currentStatus, Map<String, String> params) {
         Gateway gateway = getGateway(currentStatus.getGateway());
-	Map<String, String> modifiableParams = new HashMap<>(params);
-        modifiableParams.put("isReference", "false");
         return gateway.fetchStatus(currentStatus, params);
         
     }

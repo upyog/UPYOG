@@ -56,6 +56,17 @@ public class BillGeneratorDao {
 		return jdbcTemplate.query(query, preparedStatement.toArray(), billGenerateSchedulerRowMapper);
 	}
 	
+	
+	public List<BillScheduler> getBillGenerationGroup(BillGenerationSearchCriteria criteria) {
+		List<Object> preparedStatement = new ArrayList<>();
+
+		String query = queryBuilder.searchBillGenerationSchedulerQuerys(criteria, preparedStatement);
+		if (query == null)
+			return Collections.emptyList();
+		log.debug("Prepared Statement" + preparedStatement.toString());
+		return jdbcTemplate.query(query, preparedStatement.toArray(), billGenerateSchedulerRowMapper);
+	}
+	
 	/**
 	 * executes query to update bill scheduler status 
 	 * @param billIds
@@ -99,7 +110,7 @@ public class BillGeneratorDao {
 			consumerCodes.forEach(consumercode -> {
 				String id = UUID.randomUUID().toString();
 
-				jdbcTemplate.update(SWCalculatorQueryBuilder.EG_SW_BILL_SCHEDULER_CONNECTION_STATUS_INSERT, new PreparedStatementSetter() {
+				int rows = jdbcTemplate.update(SWCalculatorQueryBuilder.EG_SW_BILL_SCHEDULER_CONNECTION_STATUS_INSERT, new PreparedStatementSetter() {
 
 					@Override
 					public void setValues(PreparedStatement ps) throws SQLException {
@@ -117,6 +128,8 @@ public class BillGeneratorDao {
 
 					}
 				});
+				log.info("Insert result: consumerCode={} rowsInserted={}", consumercode, rows);
+
 			});
 		}catch (Exception e) {
 			log.error("Exception occurred in the insertBillSchedulerConnectionStatus: {}", e);

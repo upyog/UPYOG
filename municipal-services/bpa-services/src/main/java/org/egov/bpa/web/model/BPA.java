@@ -29,6 +29,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+
 public class BPA   {
   @SafeHtml
   @JsonProperty("id")
@@ -49,7 +50,7 @@ public class BPA   {
   @SafeHtml
   @JsonProperty("edcrNumber")
   private String edcrNumber = null;
-
+  
   @SafeHtml
   @JsonProperty("applicationType")
   private String applicationType = null;
@@ -202,7 +203,7 @@ public class BPA   {
   **/
   @ApiModelProperty(readOnly = true, value = "Risk type will be drived based on mdms configuration")
   
-  @Size(min=1,max=64)   public String getRiskType() {
+  public String getRiskType() {
     return riskType;
   }
 
@@ -436,6 +437,7 @@ public class BPA   {
     this.additionalDetails = additionalDetails;
   }
 
+  
 
   @Override
   public boolean equals(java.lang.Object o) {

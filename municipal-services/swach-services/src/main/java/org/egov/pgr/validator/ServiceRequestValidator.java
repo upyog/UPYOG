@@ -44,9 +44,36 @@ public class ServiceRequestValidator {
         validateUserData(request,errorMap);
         validateSource(request.getService().getSource());
         validateMDMS(request, mdmsData);
-        validateDepartment(request, mdmsData);
+       // validateDepartment(request, mdmsData);
         if(!errorMap.isEmpty())
             throw new CustomException(errorMap);
+    }
+
+    
+    public void validateImageData(ImageData data) {
+        if (isNullOrEmpty(data.getTenantId())) {
+            throw new NullPointerException("tenantId must not be null or empty");
+        }
+        if (isNullOrEmpty(data.getUuid())) {
+            throw new NullPointerException("uuid must not be null or empty");
+        }
+        if (isNullOrEmpty(data.getLatitude())) {
+            throw new NullPointerException("latitude must not be null or empty");
+        }
+        if (isNullOrEmpty(data.getLongitude())) {
+            throw new NullPointerException("longitude must not be null or empty");
+        }
+        if (isNullOrEmpty(data.getLocality())) {
+            throw new NullPointerException("locality must not be null or empty");
+        }
+        if (isNullOrEmpty(data.getImagerurl())) {
+            throw new NullPointerException("imagerurl must not be null or empty");
+        }
+    }
+
+    
+    private boolean isNullOrEmpty(String value) {
+        return value == null || value.trim().isEmpty();
     }
 
 
@@ -60,7 +87,7 @@ public class ServiceRequestValidator {
         String id = request.getService().getId();
         validateSource(request.getService().getSource());
         validateMDMS(request, mdmsData);
-        validateDepartment(request, mdmsData);
+        //validateDepartment(request, mdmsData);
         validateReOpen(request);
         RequestSearchCriteria criteria = RequestSearchCriteria.builder().ids(Collections.singleton(id)).build();
         criteria.setIsPlainSearch(false);
@@ -112,7 +139,7 @@ public class ServiceRequestValidator {
     private void validateMDMS(ServiceRequest request, Object mdmsData){
 
         String serviceCode = request.getService().getServiceCode();
-        String jsonPath = MDMS_SERVICEDEF_SEARCH.replace("{SERVICEDEF}",serviceCode);
+        String jsonPath = MDMS_SERVICEDEF_SEARCH.replace("{SwachBharatCategory}",serviceCode);
 
         List<Object> res = null;
 
@@ -145,7 +172,7 @@ public class ServiceRequestValidator {
 
         List<String> departments = hrmsUtil.getDepartment(assignes, request.getRequestInfo());
 
-        String jsonPath = MDMS_DEPARTMENT_SEARCH.replace("{SERVICEDEF}",serviceCode);
+        String jsonPath = MDMS_DEPARTMENT_SEARCH.replace("{SwachBharatCategory}",serviceCode);
 
         List<String> res = null;
         String departmentFromMDMS;
@@ -162,9 +189,9 @@ public class ServiceRequestValidator {
         else departmentFromMDMS = res.get(0);
 
         Map<String, String> errorMap = new HashMap<>();
-
-        if(!departments.contains(departmentFromMDMS))
-            errorMap.put("INVALID_ASSIGNMENT","The application cannot be assigned to employee of department: "+departments.toString());
+//
+//        if(!departments.contains(departmentFromMDMS))
+//            errorMap.put("INVALID_ASSIGNMENT","The application cannot be assigned to employee of department: "+departments.toString());
 
 
         if(!errorMap.isEmpty())

@@ -88,6 +88,7 @@ import static org.egov.edcr.utility.DcrConstants.PLOT_AREA;
 import static org.egov.edcr.utility.DcrConstants.ROUNDMODE_MEASUREMENTS;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -633,8 +634,8 @@ public class Far extends FeatureProcess {
 				DcrConstants.ROUNDMODE_MEASUREMENTS));
 		BigDecimal plotArea = pl.getPlot() != null ? pl.getPlot().getArea().add(surrenderRoadArea) : BigDecimal.ZERO;
 		if (plotArea.doubleValue() > 0)
-			providedFar = pl.getVirtualBuilding().getTotalFloorArea().divide(plotArea, DECIMALDIGITS_MEASUREMENTS,
-					ROUNDMODE_MEASUREMENTS);
+			providedFar = pl.getVirtualBuilding().getTotalFloorArea()
+							.divide(plotArea, DECIMALDIGITS_MEASUREMENTS,ROUNDMODE_MEASUREMENTS);
 
 		pl.setFarDetails(new FarDetails());
 		pl.getFarDetails().setProvidedFar(providedFar.doubleValue());

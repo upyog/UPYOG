@@ -23,6 +23,9 @@ public class BillGenerationSearchCriteria {
 	@JsonProperty("locality")
 	private String locality;
 
+	@JsonProperty("batch")
+	private String batch;
+	
 	@JsonProperty("status")
 	private String status;
 

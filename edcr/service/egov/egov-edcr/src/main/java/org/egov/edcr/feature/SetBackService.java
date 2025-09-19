@@ -70,8 +70,8 @@ public class SetBackService extends FeatureProcess {
     @Autowired
     private FrontYardService frontYardService;
 
-  //  @Autowired
- //   private SideYardService sideYardService;
+    @Autowired
+    private SideYardService sideYardService;
 
     @Autowired
     private RearYardService rearYardService;
@@ -102,13 +102,13 @@ public class SetBackService extends FeatureProcess {
                                 && !pl.getPlanInformation().getNocToAbutRearDesc().equalsIgnoreCase(DcrConstants.YES))
                             errors.put("rearyardNodeDefined",
                                     getLocaleMessage(OBJECTNOTDEFINED, " Rear Setback of  " + block.getName() + "  at level zero "));
-//                        if (setback.getSideYard1() == null)
-//                            errors.put("side1yardNodeDefined", getLocaleMessage(OBJECTNOTDEFINED,
-//                                    " Side Setback 1 of block " + block.getName() + " at level zero"));
-//                        if (setback.getSideYard2() == null
-//                                && !pl.getPlanInformation().getNocToAbutSideDesc().equalsIgnoreCase(DcrConstants.YES))
-//                            errors.put("side2yardNodeDefined", getLocaleMessage(OBJECTNOTDEFINED,
-//                                    " Side Setback 2 of block " + block.getName() + " at level zero "));
+                        if (setback.getSideYard1() == null)
+                            errors.put("side1yardNodeDefined", getLocaleMessage(OBJECTNOTDEFINED,
+                                    " Side Setback 1 of block " + block.getName() + " at level zero"));
+                        if (setback.getSideYard2() == null
+                                && !pl.getPlanInformation().getNocToAbutSideDesc().equalsIgnoreCase(DcrConstants.YES))
+                            errors.put("side2yardNodeDefined", getLocaleMessage(OBJECTNOTDEFINED,
+                                    " Side Setback 2 of block " + block.getName() + " at level zero "));
                         } } else if (setback.getLevel() > 0) {
                         // height defined in level other than zero must contain height
                         if (setback.getFrontYard() != null && setback.getFrontYard().getHeight() == null)
@@ -117,12 +117,12 @@ public class SetBackService extends FeatureProcess {
                         if (setback.getRearYard() != null && setback.getRearYard().getHeight() == null)
                             errors.put("rearyardnotDefinedHeight", getLocaleMessage(HEIGHTNOTDEFINED, "Rear Setback ",
                                     block.getName(), setback.getLevel().toString()));
-//                        if (setback.getSideYard1() != null && setback.getSideYard1().getHeight() == null)
-//                            errors.put("side1yardnotDefinedHeight", getLocaleMessage(HEIGHTNOTDEFINED, "Side Setback 1 ",
-//                                    block.getName(), setback.getLevel().toString()));
-//                        if (setback.getSideYard2() != null && setback.getSideYard2().getHeight() == null)
-//                            errors.put("side2yardnotDefinedHeight", getLocaleMessage(HEIGHTNOTDEFINED, "Side Setback 2 ",
-//                                    block.getName(), setback.getLevel().toString()));
+                        if (setback.getSideYard1() != null && setback.getSideYard1().getHeight() == null)
+                            errors.put("side1yardnotDefinedHeight", getLocaleMessage(HEIGHTNOTDEFINED, "Side Setback 1 ",
+                                    block.getName(), setback.getLevel().toString()));
+                        if (setback.getSideYard2() != null && setback.getSideYard2().getHeight() == null)
+                            errors.put("side2yardnotDefinedHeight", getLocaleMessage(HEIGHTNOTDEFINED, "Side Setback 2 ",
+                                    block.getName(), setback.getLevel().toString()));
                     }
                     
                    
@@ -140,14 +140,14 @@ public class SetBackService extends FeatureProcess {
                                 && setback.getRearYard().getHeight().compareTo(heightOfBuilding) != 0)
                             errors.put("rearyardDefinedWrongHeight", getLocaleMessage(WRONGHEIGHTDEFINED, "Rear Setback ",
                                     block.getName(), setback.getLevel().toString(), heightOfBuilding.toString()));
-//                        if (setback.getSideYard1() != null && setback.getSideYard1().getHeight() != null
-//                                && setback.getSideYard1().getHeight().compareTo(heightOfBuilding) != 0)
-//                            errors.put("side1yardDefinedWrongHeight", getLocaleMessage(WRONGHEIGHTDEFINED, "Side Setback 1 ",
-//                                    block.getName(), setback.getLevel().toString(), heightOfBuilding.toString()));
-//                        if (setback.getSideYard2() != null && setback.getSideYard2().getHeight() != null
-//                                && setback.getSideYard2().getHeight().compareTo(heightOfBuilding) != 0)
-//                            errors.put("side2yardDefinedWrongHeight", getLocaleMessage(WRONGHEIGHTDEFINED, "Side Setback 2 ",
-//                                    block.getName(), setback.getLevel().toString(), heightOfBuilding.toString()));
+                        if (setback.getSideYard1() != null && setback.getSideYard1().getHeight() != null
+                                && setback.getSideYard1().getHeight().compareTo(heightOfBuilding) != 0)
+                            errors.put("side1yardDefinedWrongHeight", getLocaleMessage(WRONGHEIGHTDEFINED, "Side Setback 1 ",
+                                    block.getName(), setback.getLevel().toString(), heightOfBuilding.toString()));
+                        if (setback.getSideYard2() != null && setback.getSideYard2().getHeight() != null
+                                && setback.getSideYard2().getHeight().compareTo(heightOfBuilding) != 0)
+                            errors.put("side2yardDefinedWrongHeight", getLocaleMessage(WRONGHEIGHTDEFINED, "Side Setback 2 ",
+                                    block.getName(), setback.getLevel().toString(), heightOfBuilding.toString()));
                     }
                    
                 }
@@ -162,13 +162,14 @@ public class SetBackService extends FeatureProcess {
 
     @Override
     public Plan process(Plan pl) {
-        validate(pl);HashMap<String, String> errors = new HashMap<>();
+        validate(pl);
+        HashMap<String, String> errors = new HashMap<>();
 		BigDecimal depthOfPlot = pl.getPlanInformation().getDepthOfPlot();
 		if (depthOfPlot != null && depthOfPlot.compareTo(BigDecimal.ZERO) > 0) {
 			frontYardService.processFrontYard(pl);
-//			  if( pl.getPlot().getArea().compareTo(TWO_HUNDRED) > 0) {
-//			rearYardService.processRearYard(pl);
-//			  }
+			//  if( pl.getPlot().getArea().compareTo(TWO_HUNDRED) > 0) {
+			       rearYardService.processRearYard(pl);
+			//  }
 			 if (pl.getRoadReserveRear() != BigDecimal.ZERO && pl.getCoreArea().equalsIgnoreCase("No")){
 				 for (Block block : pl.getBlocks()) {
 				 for (SetBack setback : block.getSetBacks()) {
@@ -189,10 +190,10 @@ public class SetBackService extends FeatureProcess {
 
 		}
 		
-//		BigDecimal widthOfPlot = pl.getPlanInformation().getWidthOfPlot();
-//		if (widthOfPlot != null && widthOfPlot.compareTo(BigDecimal.ZERO) > 0) {
-//			sideYardService.processSideYard(pl);
-//		}
+		BigDecimal widthOfPlot = pl.getPlanInformation().getWidthOfPlot();
+		if (widthOfPlot != null && widthOfPlot.compareTo(BigDecimal.ZERO) > 0) {
+			sideYardService.processSideYard(pl);
+		}
 
         return pl;
     }

@@ -67,8 +67,10 @@ public class PaymentWorkflowService {
      * @param paymentWorkflowRequest multiple actions
      * @return updated receipts
      */
-    @Transactional
+    @SuppressWarnings("unlikely-arg-type")
+	@Transactional
     public List<Payment> performWorkflow(PaymentWorkflowRequest paymentWorkflowRequest){
+		String status = null;
 
         // Basic validations
 
@@ -88,22 +90,49 @@ public class PaymentWorkflowService {
             workflowRequestByPaymentId.put(workflow.getPaymentId(), workflow);
         }
 
-        // Fetch consumer codes of receipts
+		// Fetch consumer codes of receipts
 
-        List<Payment> payments = paymentRepository.fetchPayments(PaymentSearchCriteria.builder()
-                .ids(paymentIds)
-                .tenantId(tenantId)
-                .offset(0).limit(applicationProperties.getReceiptsSearchDefaultLimit())
-                .build());
+		List<Payment> payments = paymentRepository.fetchPayments(PaymentSearchCriteria.builder().ids(paymentIds)
+				.tenantId(tenantId).offset(0).limit(applicationProperties.getReceiptsSearchDefaultLimit()).build());
 
-        Set<String> consumerCodes = new HashSet<>();
+		Set<String> consumerCodes = new HashSet<>();
+		Set<String> businessCodes = new HashSet<>();
+		payments.forEach(payment -> {
+			payment.getPaymentDetails().forEach(paymentDetail -> {
+				consumerCodes.add(paymentDetail.getBill().getConsumerCode());
+				String businessService = paymentDetail.getBusinessService();
+				if (businessService != null) {
+					businessCodes.add(businessService);
+				}
+			});
+		});
 
-        payments.forEach(payment -> {
-            payment.getPaymentDetails().forEach(paymentDetail -> {
-                consumerCodes.add(paymentDetail.getBill().getConsumerCode());
-            });
-        });
+		
+		/* Pre Filteration/ Validation  For Water/Sewerage --> No receipt Cancellation  If connection is Activated */
 
+		if (businessCodes.size() == 1) {
+			String businessCode = businessCodes.iterator().next();
+
+			if ("WS.ONE_TIME_FEE".equals(businessCode) || "SW.ONE_TIME_FEE".equals(businessCode)) {
+				Object Curl_details = paymentRepository.Curl_WS(paymentWorkflowRequest.getRequestInfo(), null,
+						consumerCodes, tenantId, businessCode);
+				if (Curl_details == null) {
+				    throw new RuntimeException("Unable to fetch application details. Water / Sewerage response is null.");
+				}
+
+				status = extractApplicationStatus(Curl_details);
+			}
+
+			if (("WS.ONE_TIME_FEE".equals(businessCode) || "SW.ONE_TIME_FEE".equals(businessCode))
+					&& "CONNECTION_ACTIVATED".equals(status)) {
+				throw new RuntimeException(
+						"Receipt cancellation is not allowed for one-time service with Consumer Code(s): "
+								+ consumerCodes);
+			}
+
+		}
+		
+		/* till here --- Abhishek Rana */ 
         List<Payment> processedPayments = new ArrayList<>();
 
         switch (action){
@@ -122,6 +151,26 @@ public class PaymentWorkflowService {
         }
 
         return processedPayments;
+    }
+
+
+    
+    
+    @SuppressWarnings("unchecked")
+    public String extractApplicationStatus(Object curlDetailsObj) {
+        if (curlDetailsObj instanceof List) {
+            List<Map<String, Object>> list = (List<Map<String, Object>>) curlDetailsObj;
+
+            if (!list.isEmpty()) {
+                Map<String, Object> firstApp = list.get(0);
+
+                Object status = firstApp.get("applicationStatus");
+                if (status != null) {
+                    return status.toString(); // e.g., "CONNECTION_ACTIVATED"
+                }
+            }
+        }
+        return null;
     }
 
 

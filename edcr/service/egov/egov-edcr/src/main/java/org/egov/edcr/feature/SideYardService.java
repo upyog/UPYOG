@@ -172,7 +172,7 @@ public class SideYardService extends GeneralRule {
                 scrutinyDetail.addColumnHeading(2, LEVEL);
                 scrutinyDetail.addColumnHeading(3, OCCUPANCY);
                 scrutinyDetail.addColumnHeading(4, SIDENUMBER);
-                scrutinyDetail.addColumnHeading(5, FIELDVERIFIED);
+//                scrutinyDetail.addColumnHeading(5, FIELDVERIFIED);
                 scrutinyDetail.addColumnHeading(6, PERMISSIBLE);
                 scrutinyDetail.addColumnHeading(7, PROVIDED);
                 scrutinyDetail.addColumnHeading(8, STATUS);
@@ -367,20 +367,20 @@ public class SideYardService extends GeneralRule {
     		minVal = BigDecimal.valueOf(Math.max(buildingHeight.divide(BigDecimal.valueOf(FIVE_MTR)).doubleValue(), TWO_MTR)); // 1/5th of buildingHeight or 2.0 meters, whichever is highest
     	} else if (plotArea.compareTo(PLOT_AREA_500_SQM) <= 0) {
     		// Plot area is less than or equal to 500 sqm
-    		minVal = BigDecimal.valueOf(Math.max(buildingHeight.divide(BigDecimal.valueOf(FIVE_MTR)).doubleValue(), THREE_MTR)); // 1/15th of buildingHeight or 3.0 meters, whichever is highest
+    		minVal = BigDecimal.valueOf(Math.max(buildingHeight.divide(BigDecimal.valueOf(FIVE_MTR)).doubleValue(), TWO_MTR)); // 1/5th of buildingHeight or 2.0 meters, whichever is highest
     	} else if (plotArea.compareTo(PLOT_AREA_1000_SQM) <= 0) {
     		// Plot area is less than or equal to 1000 sqm
-    		minVal = BigDecimal.valueOf(Math.max(buildingHeight.divide(BigDecimal.valueOf(FIVE_MTR)).doubleValue(), THREE_MTR)); // 1/15th of buildingHeight or 3.0 meters, whichever is highest
+    		minVal = BigDecimal.valueOf(Math.max(buildingHeight.divide(BigDecimal.valueOf(FIVE_MTR)).doubleValue(), TWO_MTR)); // 1/5th of buildingHeight or 2.0 meters, whichever is highest
     	}else if (plotArea.compareTo(PLOT_AREA_1000_SQM) > 0) {
     		// Plot area is greather than 1000 sqm
-    		minVal = BigDecimal.valueOf(Math.max(buildingHeight.divide(BigDecimal.valueOf(FIVE_MTR)).doubleValue(), THREE_MTR)); // 1/15th of buildingHeight or 3.0 meters, whichever is highest
+    		minVal = BigDecimal.valueOf(Math.max(buildingHeight.divide(BigDecimal.valueOf(FIVE_MTR)).doubleValue(), TWO_MTR)); // 1/5th of buildingHeight or 2.0 meters, whichever is highest
     	}
 
 
     	boolean valid = validateMinimumAndMeanValue(BigDecimal.valueOf(min), minVal, plotArea);
     	if(!valid) {
 	    	LOG.info("Side Yard Service: min value validity False: actual/expected :"+min+"/"+minVal);
-	    	errors.put("Minimum and Mean Value Validation", "Minimum value is less than the required minimum " +min+"/"+minVal);
+	    	errors.put("Minimum and Mean Value Validation", "Side setback values are less than permissible value i.e." + minVal+" /" + " current values are " + min);
 	    	
 	    }
 	    else {
@@ -457,7 +457,7 @@ public class SideYardService extends GeneralRule {
                     sideYard1Result.level != null ? sideYard1Result.level.toString() : "");
             details.put(OCCUPANCY, sideYard1Result.occupancy);
 
-            details.put(FIELDVERIFIED, MINIMUMLABEL);
+//            details.put(FIELDVERIFIED, MINIMUMLABEL);
             details.put(PERMISSIBLE, sideYard1Result.expectedDistance.toString());
             details.put(PROVIDED, sideYard1Result.actualDistance.toString());
 
@@ -482,7 +482,7 @@ public class SideYardService extends GeneralRule {
                 detailsSideYard2.put(OCCUPANCY, sideYard2Result.occupancy);
                 detailsSideYard2.put(SIDENUMBER, SIDE_YARD2_DESC);
 
-                detailsSideYard2.put(FIELDVERIFIED, MINIMUMLABEL);
+//                detailsSideYard2.put(FIELDVERIFIED, MINIMUMLABEL);
                 detailsSideYard2.put(PERMISSIBLE, sideYard2Result.expectedDistance.toString());
                 detailsSideYard2.put(PROVIDED, sideYard2Result.actualDistance.toString());
                 // }

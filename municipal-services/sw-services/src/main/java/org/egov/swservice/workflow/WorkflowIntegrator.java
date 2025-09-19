@@ -78,7 +78,7 @@ public class WorkflowIntegrator {
 		SewerageConnection connection = sewerageConnectionRequest.getSewerageConnection();
 		ProcessInstance processInstance = ProcessInstance.builder()
 				.businessId(sewerageConnectionRequest.getSewerageConnection().getApplicationNo())
-				.tenantId(property.getTenantId())
+				.tenantId(sewerageConnectionRequest.getSewerageConnection().getTenantId())
 				.businessService(wfBusinessServiceName).moduleName(MODULE_NAME_VALUE)
 				.action(connection.getProcessInstance().getAction()).build();
 

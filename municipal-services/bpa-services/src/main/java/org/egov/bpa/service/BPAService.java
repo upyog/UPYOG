@@ -37,7 +37,6 @@ import org.egov.bpa.workflow.WorkflowIntegrator;
 import org.egov.bpa.workflow.WorkflowService;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.Role;
-import org.egov.common.utils.MultiStateInstanceUtil;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -106,9 +105,7 @@ public class BPAService {
 	
 	@Autowired
 	private BPAConfiguration config;
-
-	@Autowired
-	private MultiStateInstanceUtil centralInstanceUtil;
+	
 	/**
 	 * does all the validations required to create BPA Record in the system
 	 * @param bpaRequest
@@ -116,9 +113,9 @@ public class BPAService {
 	 */
 	public BPA create(BPARequest bpaRequest) {
 		RequestInfo requestInfo = bpaRequest.getRequestInfo();
-		String tenantId =  centralInstanceUtil.getStateLevelTenant(bpaRequest.getBPA().getTenantId());
+		String tenantId = bpaRequest.getBPA().getTenantId().split("\\.")[0];
 		Object mdmsData = util.mDMSCall(requestInfo, tenantId);
-		if (centralInstanceUtil.isTenantIdStateLevel(bpaRequest.getBPA().getTenantId())) {
+		if (bpaRequest.getBPA().getTenantId().split("\\.").length == 1) {
 			throw new CustomException(BPAErrorConstants.INVALID_TENANT, " Application cannot be create at StateLevel");
 		}
 		
@@ -129,7 +126,6 @@ public class BPAService {
 		
 		Map<String, String> values = edcrService.validateEdcrPlan(bpaRequest, mdmsData);
 		String applicationType = values.get(BPAConstants.APPLICATIONTYPE);
-
 		this.validateCreateOC(applicationType, values, requestInfo, bpaRequest);
 		bpaValidator.validateCreate(bpaRequest, mdmsData, values);
 		if (!applicationType.equalsIgnoreCase(BPAConstants.BUILDING_PLAN_OC)) {
@@ -137,7 +133,7 @@ public class BPAService {
 		}
 		enrichmentService.enrichBPACreateRequest(bpaRequest, mdmsData, values);
 		wfIntegrator.callWorkFlow(bpaRequest);
-		nocService.createNocRequest(bpaRequest, mdmsData);
+		//nocService.createNocRequest(bpaRequest, mdmsData);
 		this.addCalculation(applicationType, bpaRequest);
 		repository.save(bpaRequest);
 		return bpaRequest.getBPA();
@@ -147,6 +143,7 @@ public class BPAService {
 	 * applies the required vlaidation for OC on Create
 	 * @param applicationType
 	 * @param values
+	 * @param criteria
 	 * @param requestInfo
 	 * @param bpaRequest
 	 */
@@ -175,6 +172,7 @@ public class BPAService {
 			criteria.setEdcrNumber(ocBpas.get(0).getEdcrNumber());
 			ocService.validateAdditionalData(bpaRequest, criteria);
 			bpaRequest.getBPA().setLandInfo(ocBpas.get(0).getLandInfo());
+			
 		}
 	}
 	
@@ -185,11 +183,11 @@ public class BPAService {
 	 */
 	private void addCalculation(String applicationType,BPARequest bpaRequest) {
 		
-		if (bpaRequest.getBPA().getRiskType().equals(BPAConstants.LOW_RISKTYPE) && !applicationType.equalsIgnoreCase(BPAConstants.BUILDING_PLAN_OC)) {
-			calculationService.addCalculation(bpaRequest, BPAConstants.LOW_RISK_PERMIT_FEE_KEY);
-		} else {
+//		if (bpaRequest.getBPA().getRiskType().equals(BPAConstants.LOW_RISKTYPE) && !applicationType.equalsIgnoreCase(BPAConstants.BUILDING_PLAN_OC)) {
+//			calculationService.addCalculation(bpaRequest, BPAConstants.LOW_RISK_PERMIT_FEE_KEY);
+//		} else {
 			calculationService.addCalculation(bpaRequest, BPAConstants.APPLICATION_FEE_KEY);
-		}
+//		}
 	}
 
 	/**
@@ -244,6 +242,7 @@ public class BPAService {
 	 * @param requestInfo
 	 * @param landcriteria
 	 * @param edcrNos
+	 * @param bpas
 	 */
 	private List<BPA> getBPACreatedForByMe(BPASearchCriteria criteria, RequestInfo requestInfo,LandSearchCriteria landcriteria,List<String> edcrNos ) {
 		List<BPA> bpas = null;
@@ -323,10 +322,10 @@ public class BPAService {
 		}
 
 		String tenantId = criteria.getTenantId();
-		if(landInfo.isEmpty() && !tenantId.isEmpty() && tenantId !=null)
-		{
-          return bpas;
-		}
+		// if(landInfo.isEmpty() && !tenantId.isEmpty() && tenantId !=null)
+		// {
+  //         return bpas;
+		// }
 
 		bpas = getBPAFromLandId(criteria, requestInfo, null);
 		if (!landInfo.isEmpty()) {
@@ -378,7 +377,7 @@ public class BPAService {
 	@SuppressWarnings("unchecked")
 	public BPA update(BPARequest bpaRequest) {
 		RequestInfo requestInfo = bpaRequest.getRequestInfo();
-		String tenantId =  centralInstanceUtil.getStateLevelTenant(bpaRequest.getBPA().getTenantId());
+		String tenantId = bpaRequest.getBPA().getTenantId().split("\\.")[0];
 		Object mdmsData = util.mDMSCall(requestInfo, tenantId);
 		BPA bpa = bpaRequest.getBPA();
 
@@ -411,7 +410,7 @@ public class BPAService {
 
 		bpaRequest.getBPA().setAuditDetails(searchResult.get(0).getAuditDetails());
 		
-		nocService.manageOfflineNocs(bpaRequest, mdmsData);
+//		nocService.manageOfflineNocs(bpaRequest, mdmsData);
 		bpaValidator.validatePreEnrichData(bpaRequest, mdmsData);
 		enrichmentService.enrichBPAUpdateRequest(bpaRequest, businessService);
 		
@@ -425,7 +424,8 @@ public class BPAService {
                  */
                 // Generate the sanction Demand
                 if ((businessSrvc.equalsIgnoreCase(BPAConstants.BPA_OC_MODULE_CODE)
-                        || businessSrvc.equalsIgnoreCase(BPAConstants.BPA_BUSINESSSERVICE))
+                        || businessSrvc.equalsIgnoreCase(BPAConstants.BPA_BUSINESSSERVICE)
+                        || businessSrvc.equalsIgnoreCase(BPAConstants.BPA_LOW_MODULE_CODE))
                         && state.equalsIgnoreCase(BPAConstants.PENDING_APPROVAL_STATE)) {
                     calculationService.addCalculation(bpaRequest, BPAConstants.SANCTION_FEE_KEY);
                 }
@@ -482,7 +482,7 @@ public class BPAService {
 				throw new CustomException(BPAErrorConstants.BPA_UPDATE_ERROR_COMMENT_REQUIRED,
 						"Comment is mandaotory, please provide the comments ");
 			}
-			nocService.handleBPARejectedStateForNoc(bpaRequest);
+//			nocService.handleBPARejectedStateForNoc(bpaRequest);
 
 		} else {
 			

@@ -60,6 +60,15 @@ public class TenantService {
             //Check if provided tenant matches, resolved tenant
 
             if (state.equalsIgnoreCase(STATE_CODES.get(loc.getState()))) {
+            	
+            	if ("Sahibzada Ajit Singh Nagar".equals(loc.getCity()))
+            	{
+            		loc.setCity("Mohali");
+            	}
+            	else if ("Shaheed Bhagat Singh Nagar".equals(loc.getCity()))
+            	{
+            		loc.setCity("Nawanshahr");
+            	}
                 String filter = "$.[?(@.name == '" + loc.getCity() + "')]";
 
                 Optional<Tenant> tenant = mdmsService.fetchTenant(state, filter, requestInfo);

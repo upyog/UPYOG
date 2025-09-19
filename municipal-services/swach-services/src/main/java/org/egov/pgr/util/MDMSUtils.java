@@ -43,6 +43,14 @@ public class MDMSUtils {
         Object result = serviceRequestRepository.fetchResult(getMdmsSearchUrl(), mdmsCriteriaReq);
         return result;
     }
+    
+    public Object wardmDMSCall(ServiceRequest request){
+        RequestInfo requestInfo = request.getRequestInfo();
+        String tenantId = request.getService().getTenantId();
+        MdmsCriteriaReq mdmsCriteriaReq = getMDMSRequestward(requestInfo,tenantId);
+        Object result = serviceRequestRepository.fetchResult(getMdmsSearchUrl(), mdmsCriteriaReq);
+        return result;
+    }
 
 
     /**
@@ -88,7 +96,23 @@ public class MDMSUtils {
 
     }
 
+    private List<ModuleDetail> getPGRModulewardRequest() {
 
+        // master details for TL module
+        List<MasterDetail> pgrMasterDetails = new ArrayList<>();
+
+//        // filter to only get code field from master data
+//        final String filterCode = "$.[?(@.active==true)]";
+
+        pgrMasterDetails.add(MasterDetail.builder().name("TenantBoundary").build());
+
+        ModuleDetail pgrModuleDtls = ModuleDetail.builder().masterDetails(pgrMasterDetails)
+                .moduleName("egov-location").build();
+
+
+        return Collections.singletonList(pgrModuleDtls);
+
+    }
     /**
      * Returns the url for mdms search endpoint
      *
@@ -96,6 +120,22 @@ public class MDMSUtils {
      */
     public StringBuilder getMdmsSearchUrl() {
         return new StringBuilder().append(config.getMdmsHost()).append(config.getMdmsEndPoint());
+    }
+    
+    
+    
+    public MdmsCriteriaReq getMDMSRequestward(RequestInfo requestInfo,String tenantId){
+        List<ModuleDetail> pgrModuleRequest = getPGRModulewardRequest();
+
+        List<ModuleDetail> moduleDetails = new LinkedList<>();
+        moduleDetails.addAll(pgrModuleRequest);
+
+        MdmsCriteria mdmsCriteria = MdmsCriteria.builder().moduleDetails(moduleDetails).tenantId(tenantId)
+                .build();
+
+        MdmsCriteriaReq mdmsCriteriaReq = MdmsCriteriaReq.builder().mdmsCriteria(mdmsCriteria)
+                .requestInfo(requestInfo).build();
+        return mdmsCriteriaReq;
     }
 
 }

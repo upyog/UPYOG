@@ -707,6 +707,20 @@ public class PlanInfoFeatureExtract extends FeatureExtract {
 		if (StringUtils.isNotBlank(khatuniNo))
 			pi.setKhatuniNo(khatuniNo);
 		
+		// 3 NEW PARAMETERS ADDED IN PLANINFO AND IN REPORT
+		String ulbType = planInfoProperties.get(DxfFileConstants.ULB_TYPE);
+				if (StringUtils.isNotBlank(ulbType))
+					pi.setUlbType(ulbType);
+						
+		String numberOfFloors = planInfoProperties.get(DxfFileConstants.NUMBER_OF_FLOORS);
+				if (StringUtils.isNotBlank(numberOfFloors))
+					pi.setNumberOfFloors(numberOfFloors);
+						
+		String roadType = planInfoProperties.get(DxfFileConstants.ROAD_TYPE);
+				if (StringUtils.isNotBlank(roadType))
+					pi.setRoadType(roadType);
+
+		
 		String khasraNo = planInfoProperties.get(DxfFileConstants.KHASRA_NO);
 		if (StringUtils.isNotBlank(khasraNo))
 			pi.setKhasraNo(khasraNo);

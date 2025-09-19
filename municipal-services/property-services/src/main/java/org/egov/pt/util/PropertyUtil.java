@@ -7,9 +7,11 @@ import static org.egov.pt.util.PTConstants.BILL_NO_PAYABLE_DEMAND_ERROR_CODE;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.egov.common.contract.request.RequestInfo;
@@ -24,6 +26,7 @@ import org.egov.pt.models.user.UserDetailResponse;
 import org.egov.pt.models.workflow.ProcessInstance;
 import org.egov.pt.models.workflow.ProcessInstanceRequest;
 import org.egov.pt.repository.ServiceRequestRepository;
+import org.egov.pt.service.EnrichmentService;
 import org.egov.pt.web.contracts.PropertyRequest;
 import org.egov.pt.web.contracts.RequestInfoWrapper;
 import org.egov.tracer.model.ServiceCallException;
@@ -50,6 +53,10 @@ public class PropertyUtil extends CommonUtils {
 
 	@Autowired
 	private ObjectMapper mapper;
+	
+
+	@Autowired
+	private EnrichmentService enrichmentService;
 
 	/**
 	 * Populates the owner fields inside of property objects from the response by user api
@@ -105,6 +112,39 @@ public class PropertyUtil extends CommonUtils {
 		return info;
 	}
 
+	
+	public String getTenantIdMapping(RequestInfo requestInfo, String stateLevelTenantId, String tenantId) {
+
+		String filter = String.format("[?(@.tenantName == '%s')]", tenantId);
+
+		Object tenantMapping = enrichmentService.fetchDataFromMdms(requestInfo, stateLevelTenantId,
+				PTConstants.MDMS_TENANT_MAPPING_MODLENAME, PTConstants.MDMS_TENANT_MAPPING_MASTERNAME, filter);
+
+		Map<String, String> tenantMappingMap = filterTenantMapping(tenantMapping);
+		String tenantIdMapping = tenantMappingMap.get(tenantId);
+		return tenantIdMapping;
+	}
+	
+	
+	public Map<String, String> filterTenantMapping(Object tenantMapping){
+		Map<String, String> tenantMappingMap = new HashMap<>();
+		if (tenantMapping instanceof Map) {
+	    List<Map<String, Object>> tenantMappingList = (List<Map<String, Object>>) 
+                Optional.ofNullable((Map<String, Object>) tenantMapping)
+                        .map(data -> (Map<String, Object>) data.get(PTConstants.MDMS_RESPONSE_KEY))
+                        .map(mdmsRes -> (Map<String, Object>) mdmsRes.get(PTConstants.MDMS_TENANT_MAPPING_MODLENAME))
+                        .map(commonMasters -> (List<Map<String, Object>>) commonMasters.get(PTConstants.MDMS_TENANT_MAPPING_MASTERNAME))
+                        .orElse(Collections.emptyList());
+
+            tenantMappingList.forEach(role -> {
+                String tenantName = (String) role.get(PTConstants.TENANT_MAPPING_KEY);
+                String ITtenantName = (String) role.get(PTConstants.TENANT_MAPPING_VALUE);
+                tenantMappingMap.put(tenantName, ITtenantName);
+            });
+        }
+		return tenantMappingMap;
+	}
+	
 
 	public ProcessInstanceRequest getProcessInstanceForMutationPayment(PropertyRequest propertyRequest) {
 

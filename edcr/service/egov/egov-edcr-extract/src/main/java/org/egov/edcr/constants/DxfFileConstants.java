@@ -166,6 +166,10 @@ public class DxfFileConstants {
   //  public static final String KHATA_NO = "KHATA_NO";
     public static final String KHASRA_NO = "KHASRA_NO";
     public static final String KHATUNI_NO = "KHATUNI_NO";
+    // NEW VARIABLES ADDED IN PLAN INFO AND INTO REPORT
+    public static final String NUMBER_OF_FLOORS = "NUMBER_OF_FLOORS";
+    public static final String ULB_TYPE = "ULB_TYPE";
+    public static final String ROAD_TYPE = "ROAD_TYPE";
     public static final String DISTRICT = "DISTRICT";
     public static final String CITY = "CITY";
   //  public static final String MAUZA = "MAUZA";

@@ -295,7 +295,7 @@ public class AxisGateway implements Gateway {
                     .gatewayTxnId(resp.get("vpc_TransactionNo").get(0))
                     .gatewayPaymentMode(resp.get("vpc_Card").get(0))
                     .gatewayStatusCode(respCode)
-                    .gatewayStatusMsg(respMsg)
+                    .gatewayStatusMsg(respMsg+"+"+resp.toString())
                     .responseJson(resp)
                     .build();
         } else {
@@ -306,7 +306,7 @@ public class AxisGateway implements Gateway {
                     .txnStatus(status)
                     .gatewayTxnId(resp.get("vpc_TransactionNo").get(0))
                     .gatewayStatusCode(respCode)
-                    .gatewayStatusMsg(respMsg)
+                    .gatewayStatusMsg(respMsg+"+"+resp.toString())
                     .responseJson(resp)
                     .build();
         }

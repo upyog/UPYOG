@@ -57,6 +57,7 @@ import static org.egov.edcr.constants.DxfFileConstants.G;
 import static org.egov.edcr.utility.DcrConstants.OBJECTNOTDEFINED;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Date;
 import java.util.EnumSet;
 import java.util.HashMap;
@@ -336,7 +337,7 @@ public class Coverage extends FeatureProcess {
 		LOG.info("inside processCoverage()");
 		ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
 		scrutinyDetail.setKey("Common_Coverage");
-		scrutinyDetail.setHeading("Coverage in Percentage");
+		scrutinyDetail.setHeading("Plot Coverage");
 		scrutinyDetail.addColumnHeading(1, RULE_NO);
 	   // scrutinyDetail.addColumnHeading(2, DEVELOPMENT_ZONE);
 
@@ -351,8 +352,8 @@ public class Coverage extends FeatureProcess {
 		}
 
 		String desc = getLocaleMessage(RULE_DESCRIPTION_KEY, upperLimit.toString());
-		String actualResult = getLocaleMessage(RULE_ACTUAL_KEY, coverage.toString());
-		String expectedResult = getLocaleMessage(RULE_EXPECTED_KEY, upperLimit.toString());
+		String actualResult = getLocaleMessage(RULE_ACTUAL_KEY, coverage.setScale(2, RoundingMode.HALF_UP).toString() +" %");
+		String expectedResult = getLocaleMessage(RULE_EXPECTED_KEY, upperLimit.toString() +" %");
 		if (coverage.doubleValue() <= upperLimit.doubleValue() || occupancy.equalsIgnoreCase("Residential")
 				|| occupancy.equalsIgnoreCase("Mercantile / Commercial")) {
 			Map<String, String> details = new HashMap<>();

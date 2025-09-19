@@ -114,6 +114,8 @@ public class BPAConstants {
 	public static final String ACTION_APPLY = "APPLY";
 
 	public static final String ACTION_APPROVE = "APPROVE";
+	
+	public static final String ACTION_POST_PAY_APPROVE = "POST_PAYMENT_APPROVE";
 
 	public static final String ACTION_FORWORD = "FORWARD";
 
@@ -128,7 +130,7 @@ public class BPAConstants {
 	public static final String ACTION_NOC_FORWARD = "NOC_FORWARD";
 
 	public static final String ACTION_PENDINGAPPROVAL = "PENDINGAPPROVAL";
-
+	
 	public static final String ACTION_REJECT = "REJECT";
 	public static final String ACTION_REVOCATE = "REVOCATE";
 
@@ -147,12 +149,16 @@ public class BPAConstants {
 	// BPA Status
 
 	public static final String STATUS_INITIATED = "INPROGRESS";
+	
+	public static final String STATUS_CREATE = "INITIATED";
 
 	public static final String STATUS_APPLIED = "INPROGRESS";
 
 	public static final String STATUS_APPROVED = "APPROVED";
 
 	public static final String STATUS_REJECTED = "REJECTED";
+	
+	public static final String STATUS_CITIZENAPPROVAL = "CITIZEN_APPROVAL_PENDING";
 
 	public static final String STATUS_REVOCATED = "PERMIT REVOCATION";
 
@@ -392,8 +398,7 @@ public class BPAConstants {
 
 	public static final String PAYMENT_LINK_PLACEHOLDER = "{PAYMENT_LINK}";
 	
-	public static final String TENANTID_MDC_STRING = "TENANTID";
-
+	public static final Double MAAX_BUILDING_HEIGHT = 21.0;
 
 
 }

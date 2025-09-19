@@ -3,6 +3,7 @@ package org.egov.wscalculation.service;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.wscalculation.repository.WSCalculationDao;
@@ -11,6 +12,7 @@ import org.egov.wscalculation.validator.WSCalculationWorkflowValidator;
 import org.egov.wscalculation.web.models.AuditDetails;
 import org.egov.wscalculation.web.models.CalculationCriteria;
 import org.egov.wscalculation.web.models.CalculationReq;
+import org.egov.wscalculation.web.models.CancelDemandReq;
 import org.egov.wscalculation.web.models.MeterConnectionRequest;
 import org.egov.wscalculation.web.models.MeterConnectionRequests;
 import org.egov.wscalculation.web.models.MeterReading;
@@ -76,6 +78,51 @@ public class MeterServicesImpl implements MeterService {
 	
 	
 	@Override
+	public List<MeterReading> updateMeterReading(MeterConnectionRequest meterConnectionRequest) {
+		Boolean genratedemand = true;
+		String previousMeterReadingId =wSCalculationDao.searchLastMeterId(meterConnectionRequest.getMeterReading().getConnectionNo(),meterConnectionRequest.getMeterReading().getLastReadingDate(),meterConnectionRequest.getMeterReading().getCurrentReadingDate(),meterConnectionRequest.getMeterReading().getTenantId());
+
+		List<MeterReading> meterReadingsList = new ArrayList<MeterReading>();
+		if(meterConnectionRequest.getMeterReading().getGenerateDemand()){
+			wsCalulationWorkflowValidator.applicationValidation(meterConnectionRequest.getRequestInfo(),meterConnectionRequest.getMeterReading().getTenantId(),meterConnectionRequest.getMeterReading().getConnectionNo(),genratedemand);
+			wsCalculationValidator.validateMeterReading(meterConnectionRequest, true);
+		}
+		enrichmentService.enrichMeterReadingRequest(meterConnectionRequest);
+		List<Map<String, Object>> demandList = wSCalculationDao.getCollection(
+		        meterConnectionRequest.getMeterReading().getTenantId(),
+		        meterConnectionRequest.getMeterReading().getLastReadingDate(),
+		        meterConnectionRequest.getMeterReading().getCurrentReadingDate(),
+		        meterConnectionRequest.getMeterReading().getConnectionNo()
+		);
+
+		if (demandList != null && !demandList.isEmpty()) {
+		    for (Map<String, Object> row : demandList) {
+		        String status = (String) row.get("status");
+		        if ("ACTIVE".equalsIgnoreCase(status)) {
+		            String demandId = (String) row.get("demandId");
+
+		            CancelDemandReq cancelDemandReq = new CancelDemandReq();
+		            cancelDemandReq.setId(demandId);
+		            cancelDemandReq.setTenantId(meterConnectionRequest.getMeterReading().getTenantId());
+		            cancelDemandReq.setConsumerCode(meterConnectionRequest.getMeterReading().getConnectionNo());
+		            cancelDemandReq.setBusinessService("WS");
+
+		            wSCalculationDao.cancelPreviousMeterReading(cancelDemandReq);
+		        }
+		    }
+		}
+		meterConnectionRequest.getMeterReading().setId(previousMeterReadingId);;
+		meterReadingsList.add(meterConnectionRequest.getMeterReading());
+		wSCalculationDao.updateMeterReading(meterConnectionRequest);
+		if (meterConnectionRequest.getMeterReading().getGenerateDemand()) {
+			generateDemandForMeterReading(meterReadingsList, meterConnectionRequest.getRequestInfo());
+		}
+		return meterReadingsList;
+	}
+	
+	
+	
+	@Override
 	public List<MeterReadingList> createMeterReadings(MeterConnectionRequests meterConnectionRequests) {
 		Boolean genratedemand = true;
 	    List<MeterReadingList> meterReadingslist = new ArrayList<>();
@@ -115,7 +162,7 @@ public class MeterServicesImpl implements MeterService {
 						            List<MeterReading> meterReadingsList = new ArrayList<MeterReading>();
 						            if(meterConnectionRequest.getMeterReading().getGenerateDemand()){
 						    			wsCalulationWorkflowValidator.applicationValidation(meterConnectionRequest.getRequestInfo(),meterConnectionRequest.getMeterReading().getTenantId(),meterConnectionRequest.getMeterReading().getConnectionNo(),genratedemand);
-						    			wsCalculationValidator.validateMeterReading(meterConnectionRequest, true);
+						    			wsCalculationValidator.validateMeterReading(meterConnectionRequest, false);
 						    		}
 						    		enrichmentService.enrichMeterReadingRequest(meterConnectionRequest);
 						    		

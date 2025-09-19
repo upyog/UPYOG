@@ -34,6 +34,8 @@ import com.jayway.jsonpath.TypeRef;
 @Service
 public class EDCRService {
 
+    private final BPAConstants BPAConstants;
+
 	private ServiceRequestRepository serviceRequestRepository;
 
 	private BPAConfiguration config;
@@ -45,9 +47,10 @@ public class EDCRService {
 	BPARepository bpaRepository;
 
 	@Autowired
-	public EDCRService(ServiceRequestRepository serviceRequestRepository, BPAConfiguration config) {
+	public EDCRService(ServiceRequestRepository serviceRequestRepository, BPAConfiguration config, BPAConstants BPAConstants) {
 		this.serviceRequestRepository = serviceRequestRepository;
 		this.config = config;
+		this.BPAConstants = BPAConstants;
 	}
 
 	/**
@@ -67,7 +70,6 @@ public class EDCRService {
 
 		BPASearchCriteria criteria = new BPASearchCriteria();
 		criteria.setEdcrNumber(bpa.getEdcrNumber());
-		criteria.setTenantId(bpa.getTenantId());
 		List<BPA> bpas = bpaRepository.getBPAData(criteria, null);
 		if(bpas.size()>0){
 			for(int i=0; i<bpas.size(); i++){
@@ -128,7 +130,7 @@ public class EDCRService {
 		LinkedList<String> permitNumber = context.read("edcrDetail.*.permitNumber");
 		additionalDetails.put(BPAConstants.SERVICETYPE, serviceType.get(0));
 		additionalDetails.put(BPAConstants.APPLICATIONTYPE, applicationType.get(0));
-                if (!permitNumber.isEmpty()) {
+                if (permitNumber !=null &&  !permitNumber.isEmpty() && !permitNumber.get(0).equalsIgnoreCase("null") ) {
                     /*
                      * Validating OC application, with submitted permit number is any OC
                      * submitted without rejection. Using a permit number only one OC
@@ -159,6 +161,12 @@ public class EDCRService {
 			throw new CustomException(BPAErrorConstants.INVALID_EDCR_NUMBER, "The EDCR Number is not Accepted " + edcrNo);
 		}
 		this.validateOCEdcr(OccupancyTypes, plotAreas, buildingHeights, applicationType, masterData, riskType);
+		
+		if(buildingHeights != null && !buildingHeights.isEmpty() && buildingHeights.get(0) <  BPAConstants.MAAX_BUILDING_HEIGHT ) {
+			request.getBPA().setBusinessService(BPAConstants.BPA_LOW_MODULE_CODE);
+		}else {
+			request.getBPA().setBusinessService(null);
+		}
 		
 		return additionalDetails;
 	}

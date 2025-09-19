@@ -2,6 +2,7 @@
 package org.egov.pt.repository;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -13,11 +14,19 @@ import java.util.Map;
 import java.util.Objects;
 
 import lombok.extern.slf4j.Slf4j;
+import net.minidev.json.JSONArray;
+
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.mdms.model.MasterDetail;
+import org.egov.mdms.model.MdmsCriteria;
+import org.egov.mdms.model.MdmsCriteriaReq;
+import org.egov.mdms.model.MdmsResponse;
+import org.egov.mdms.model.ModuleDetail;
 import org.egov.pt.models.EncryptionCount;
 import org.egov.pt.models.OwnerInfo;
 import org.egov.pt.models.Property;
 import org.egov.pt.models.PropertyCriteria;
+import org.egov.pt.models.Unit;
 import org.egov.pt.models.user.User;
 import org.egov.pt.models.user.UserDetailResponse;
 import org.egov.pt.models.user.UserSearchRequest;
@@ -33,13 +42,20 @@ import org.egov.pt.service.UserService;
 import org.egov.pt.util.PropertyUtil;
 import org.egov.pt.web.contracts.PropertyRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.SingleColumnRowMapper;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
+import com.fasterxml.jackson.core.type.TypeReference;
+import java.util.Optional;
 
+
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Sets;
+
 
 @Slf4j
 @Repository
@@ -53,30 +69,42 @@ public class PropertyRepository {
 
 	@Autowired
 	private PropertyRowMapper rowMapper;
-	
+
 	@Autowired
 	private PropertySearchRowMapper rowSearchMapper;
-	
-	
-	
-	
+
 	@Autowired
 	private OpenPropertyRowMapper openRowMapper;
-	
+
 	@Autowired
 	private PropertyAuditRowMapper auditRowMapper;
-	
+
 	@Autowired
 	private PropertyUtil util;
-	
-    @Autowired
-    private UserService userService;
+
+	@Autowired
+	private UserService userService;
 
 	@Autowired
 	private EncryptionCountRowMapper encryptionCountRowMapper;
 
 	@Autowired
 	private PropertyAuditEncRowMapper propertyAuditEncRowMapper;
+	
+	
+    @Value("${egov.mdms.host}")
+    private String mdmsHost;
+
+    @Value("${egov.mdms.search.endpoint}")
+    private String mdmsSearchEndpoint;
+
+    
+    @Autowired
+    private ObjectMapper mapper;
+    
+    @Autowired
+    private ServiceRequestRepository serviceRequestRepository;
+    
     
 	public List<String> getPropertyIds(Set<String> ownerIds, String tenantId) {
 
@@ -85,17 +113,19 @@ public class PropertyRepository {
 		return jdbcTemplate.queryForList(query, preparedStmtList.toArray(), String.class);
 	}
 
-	public List<Property> getProperties(PropertyCriteria criteria, Boolean isApiOpen, Boolean isPlainSearch) {
+	public List<Property> getProperties(PropertyCriteria criteria, Boolean isApiOpen, Boolean isPlainSearch,
+			RequestInfo requestInfo) {
 
 		List<Object> preparedStmtList = new ArrayList<>();
 		String query;
-		
+
 		if(criteria.getIsDefaulterNoticeSearch())
 			query=queryBuilder.getPropertySearchQueryForDeafauterNotice(criteria,preparedStmtList);
 		else
-			query=queryBuilder.getPropertySearchQuery(criteria, preparedStmtList, isPlainSearch, false);
-		if(log.isDebugEnabled())
-			log.debug("Query for Property search is " + query + " with parameters " +  preparedStmtList.toArray().toString());
+			query = queryBuilder.getPropertySearchQuery(criteria, preparedStmtList, isPlainSearch, false, requestInfo);
+		if (log.isDebugEnabled())
+			log.debug("Query for Property search is " + query + " with parameters "
+					+ preparedStmtList.toArray().toString());
 		if (isApiOpen)
 			return jdbcTemplate.query(query, preparedStmtList.toArray(), openRowMapper);
 		if(criteria.getIsDefaulterNoticeSearch())
@@ -107,7 +137,7 @@ public class PropertyRepository {
 	public List<String> getPropertyIds(PropertyCriteria criteria) {
 
 		List<Object> preparedStmtList = new ArrayList<>();
-		String query = queryBuilder.getPropertySearchQuery(criteria, preparedStmtList, false, true);
+		String query = queryBuilder.getPropertySearchQuery(criteria, preparedStmtList, false, true, null);
 		return jdbcTemplate.query(query, preparedStmtList.toArray(), new SingleColumnRowMapper<>());
 	}
 
@@ -129,27 +159,22 @@ public class PropertyRepository {
 	}
 
 	public List<String> fetchIds(PropertyCriteria criteria, Boolean isPlainSearch) {
-		
 		List<Object> preparedStmtList = new ArrayList<>();
 		String basequery = "select id from eg_pt_property";
 		StringBuilder builder = new StringBuilder(basequery);
 		if(isPlainSearch)
 		{
 			Set<String> tenantIds = criteria.getTenantIds();
-			if(!ObjectUtils.isEmpty(tenantIds))
+			if(!ObjectUtils.isEmpty(tenantIds)) 
 			{
 				builder.append(" where tenantid IN (").append(createQuery(tenantIds)).append(")");
 				addToPreparedStatement(preparedStmtList, tenantIds);
-}else if(!ObjectUtils.isEmpty(criteria.getTenantId()))
-			{
+			} else if (!ObjectUtils.isEmpty(criteria.getTenantId())) {
 				builder.append(" where tenantid=?");
 				preparedStmtList.add(criteria.getTenantId());
 			}
-		}
-		else
-		{
-			if(!ObjectUtils.isEmpty(criteria.getTenantId()))
-			{
+		} else {
+			if (!ObjectUtils.isEmpty(criteria.getTenantId())) {
 				builder.append(" where tenantid=?");
 				preparedStmtList.add(criteria.getTenantId());
 			}
@@ -158,7 +183,8 @@ public class PropertyRepository {
 		builder.append(orderbyClause);
 		preparedStmtList.add(criteria.getOffset());
 		preparedStmtList.add(criteria.getLimit());
-		return jdbcTemplate.query(builder.toString(), preparedStmtList.toArray(), new SingleColumnRowMapper<>(String.class));
+		return jdbcTemplate.query(builder.toString(), preparedStmtList.toArray(),
+				new SingleColumnRowMapper<>(String.class));
 	}
 	/**
 	 * Returns list of properties based on the given propertyCriteria with owner
@@ -177,7 +203,7 @@ public class PropertyRepository {
 			    if (criteria.isAudit() && !isOpenSearch) {
 			        properties = getPropertyAudit(criteria);
 			    } else {
-			        properties = getProperties(criteria, isOpenSearch, false);
+			        properties = getProperties(criteria, isOpenSearch, false,requestInfo);
 			    }
 
 			    if (CollectionUtils.isEmpty(properties)) {
@@ -215,9 +241,81 @@ public class PropertyRepository {
 
 			    UserDetailResponse userDetailResponse = userService.getUser(userSearchRequest);
 			    util.enrichOwner(userDetailResponse, latestProperties, isOpenSearch);
-
+			    
 			    return latestProperties;
 	}
+		
+
+		public String fetchOccupancyTypesAsString(RequestInfo requestInfo, String tenantIdParam, List<String> occupancyTypeCodes) {
+		    try {
+		        String tenantIdForMDMS = (tenantIdParam != null && !tenantIdParam.isEmpty())
+		                ? tenantIdParam.split("\\.")[0]
+		                : "pb";
+
+		        String uri = mdmsHost + mdmsSearchEndpoint;
+
+		        MdmsCriteriaReq mdmsCriteriaReq = MdmsCriteriaReq.builder()
+		                .requestInfo(requestInfo)
+		                .mdmsCriteria(MdmsCriteria.builder()
+		                        .tenantId(tenantIdForMDMS)
+		                        .moduleDetails(Collections.singletonList(
+		                                ModuleDetail.builder()
+		                                        .moduleName("PropertyTax")
+		                                        .masterDetails(Collections.singletonList(
+		                                                MasterDetail.builder()
+		                                                        .name("OccupancyType")
+		                                                        .build()
+		                                        ))
+		                                        .build()
+		                        ))
+		                        .build())
+		                .build();
+
+		        // Fetch from MDMS
+		        Object response = serviceRequestRepository.fetchResult(new StringBuilder(uri), mdmsCriteriaReq)
+		                .orElse(null);  // Java Optional fix
+
+		        if (response == null) {
+		            log.warn("MDMS response is empty");
+		            return "";
+		        }
+
+		        Map<String, Object> responseMap = mapper.convertValue(response, new TypeReference<Map<String, Object>>() {});
+		        Map<String, Object> mdmsRes = (Map<String, Object>) responseMap.get("MdmsRes");
+		        if (mdmsRes == null) {
+		            log.warn("MdmsRes is missing in response");
+		            return "";
+		        }
+
+		        Map<String, Object> propertyTax = (Map<String, Object>) mdmsRes.get("PropertyTax");
+		        if (propertyTax == null) {
+		            log.warn("PropertyTax missing in MdmsRes");
+		            return "";
+		        }
+
+		        List<Map<String, Object>> mdmsOccupancyTypes = (List<Map<String, Object>>) propertyTax.getOrDefault("OccupancyType", Collections.emptyList());
+		        if (mdmsOccupancyTypes.isEmpty()) {
+		            log.warn("OccupancyType list is empty");
+		            return "";
+		        }
+
+		        // Dynamic filtering
+		        String result = mdmsOccupancyTypes.stream()
+		                .filter(type -> occupancyTypeCodes.contains(type.get("code")))
+		                .map(type -> (String) type.get("name"))
+		                .collect(Collectors.joining(", "));
+
+		        log.info("Filtered Occupancy Types: {}", result);
+		        return result;
+
+		    } catch (Exception e) {
+		        log.error("Error fetching Occupancy Types from MDMS", e);
+		        return "";
+		    }
+		}
+
+		    
+		
 	
 	private List<Property> getOwnerHistoryDetails(List<Property> properties, List<Property> latestProperties) {
 
@@ -226,7 +324,13 @@ public class PropertyRepository {
 				.map(owners -> owners.stream().findFirst().orElse(null)).filter(Objects::nonNull)
 				.collect(Collectors.toList());
 
-		Collections.sort(groupingOwnersByUuid, Comparator.comparing(OwnerInfo::getLastModifiedDate).reversed());
+//		Collections.sort(groupingOwnersByUuid, Comparator.comparing(OwnerInfo::getLastModifiedDate).reversed());
+		boolean hasNullLastModifiedDate = groupingOwnersByUuid.stream()
+			    .anyMatch(owner -> owner.getLastModifiedDate() == null);
+
+			if (!hasNullLastModifiedDate) {
+			    Collections.sort(groupingOwnersByUuid, Comparator.comparing(OwnerInfo::getLastModifiedDate).reversed());
+			}
 
 		latestProperties.forEach(property -> {
 			property.setOwners(groupingOwnersByUuid);
@@ -241,31 +345,32 @@ public class PropertyRepository {
 		return jdbcTemplate.query(query, criteria.getPropertyIds().toArray(), auditRowMapper);
 	}
 
-
 	/**
 	 * 
 	 * Method to enrich property search criteria with user based criteria info
 	 * 
-	 * If no info found based on user criteria boolean true will be returned so that empty list can be returned 
+	 * If no info found based on user criteria boolean true will be returned so that
+	 * empty list can be returned
 	 * 
 	 * else returns false to continue the normal flow
 	 * 
-	 * The enrichment of object is done this way(instead of directly applying in the search query) to fetch multiple owners related to property at once
+	 * The enrichment of object is done this way(instead of directly applying in the
+	 * search query) to fetch multiple owners related to property at once
 	 * 
 	 * @param criteria
 	 * @param requestInfo
 	 * @return
 	 */
 	public Boolean enrichCriteriaFromUser(PropertyCriteria criteria, RequestInfo requestInfo) {
-		
+
 		Set<String> ownerIds = new HashSet<String>();
-		
-		if(!CollectionUtils.isEmpty(criteria.getOwnerIds()))
+
+		if (!CollectionUtils.isEmpty(criteria.getOwnerIds()))
 			ownerIds.addAll(criteria.getOwnerIds());
 		criteria.setOwnerIds(null);
-		
+
 		String userTenant = criteria.getTenantId();
-		if(criteria.getTenantId() == null)
+		if (criteria.getTenantId() == null)
 			userTenant = requestInfo.getUserInfo().getTenantId();
 
 		UserSearchRequest userSearchRequest = userService.getBaseUserSearchRequest(userTenant, requestInfo);
@@ -279,16 +384,16 @@ public class PropertyRepository {
 
 		// fetching property id from owner table and enriching criteria
 		ownerIds.addAll(userDetailResponse.getUser().stream().map(User::getUuid).collect(Collectors.toSet()));
-		
-		if (criteria.getIsCitizen()!=null && criteria.getMobileNumber()!=null) {
+
+		if (criteria.getIsCitizen() != null && criteria.getMobileNumber() != null) {
 			for (OwnerInfo user : userDetailResponse.getUser()) {
-				if (user.getAlternatemobilenumber()!=null && user.getAlternatemobilenumber().equalsIgnoreCase(criteria.getMobileNumber())) {
+				if (user.getAlternatemobilenumber() != null
+						&& user.getAlternatemobilenumber().equalsIgnoreCase(criteria.getMobileNumber())) {
 					ownerIds.remove(user.getUuid());
 				}
-				
+
 			}
 		}
-		
 
 		// only used to eliminate property-ids which does not have the owner
 		List<String> propertyIds = getPropertyIds(ownerIds, userTenant);
@@ -320,24 +425,22 @@ public class PropertyRepository {
 	}
 
 	public Integer getCount(PropertyCriteria propertyCriteria, RequestInfo requestInfo) {
-		
-        List<Object> preparedStmtList = new ArrayList<>();
-        String query = queryBuilder.getPropertySearchQuery(propertyCriteria, preparedStmtList, false, false);
-        Integer count =  jdbcTemplate.queryForObject(query, preparedStmtList.toArray(), Integer.class);
-        return count;
-    }
-	
-	
-	
-public Integer getCountprocess(Property propertyCriteria, RequestInfo requestInfo) {
-		
-        List<Object> preparedStmtList = new ArrayList<>();
-        String query = queryBuilder.getPropertySearchQuerytemp(propertyCriteria, preparedStmtList, false, false);
-        log.debug("Query For Cnsumer: "+query);
-        log.debug("preparedStmtList.toArray(): "+preparedStmtList.toString());
-        Integer count =  jdbcTemplate.queryForObject(query, preparedStmtList.toArray(), Integer.class);
-        return count;
-    }
+
+		List<Object> preparedStmtList = new ArrayList<>();
+		String query = queryBuilder.getPropertySearchQuery(propertyCriteria, preparedStmtList, false, false, null);
+		Integer count = jdbcTemplate.queryForObject(query, preparedStmtList.toArray(), Integer.class);
+		return count;
+	}
+
+	public Integer getCountprocess(Property propertyCriteria, RequestInfo requestInfo) {
+
+		List<Object> preparedStmtList = new ArrayList<>();
+		String query = queryBuilder.getPropertySearchQuerytemp(propertyCriteria, preparedStmtList, false, false);
+		log.debug("Query For Cnsumer: " + query);
+		log.debug("preparedStmtList.toArray(): " + preparedStmtList.toString());
+		Integer count = jdbcTemplate.queryForObject(query, preparedStmtList.toArray(), Integer.class);
+		return count;
+	}
 
 	/** Method to find the total count of applications present in dB */
 	public Integer getTotalApplications(PropertyCriteria criteria) {
@@ -348,7 +451,7 @@ public Integer getCountprocess(Property propertyCriteria, RequestInfo requestInf
 		Integer count = jdbcTemplate.queryForObject(query, preparedStatement.toArray(), Integer.class);
 		return count;
 	}
-	
+
 	private void addToPreparedStatement(List<Object> preparedStmtList, Set<String> ids) {
 		ids.forEach(id -> {
 			preparedStmtList.add(id);
@@ -360,14 +463,14 @@ public Integer getCountprocess(Property propertyCriteria, RequestInfo requestInf
 
 		List<Object> preparedStatement = new ArrayList<>();
 		String query = queryBuilder.getLastExecutionDetail(criteria, preparedStatement);
-		if(log.isDebugEnabled())
+		if (log.isDebugEnabled())
 			log.debug("\nQuery executed:" + query);
 		if (query == null)
 			return null;
-		EncryptionCount encryptionCount = jdbcTemplate.query(query, preparedStatement.toArray(), encryptionCountRowMapper);
+		EncryptionCount encryptionCount = jdbcTemplate.query(query, preparedStatement.toArray(),
+				encryptionCountRowMapper);
 		return encryptionCount;
 	}
-
 
 	public List<PropertyAudit> getPropertyAuditForEnc(PropertyCriteria criteria) {
 

@@ -352,9 +352,12 @@ public class PGRRequestValidator {
 		String role = pgrUtils.getPrecedentRole(roles);
 		List<String> serviceCodes = new ArrayList<>();
 		if(role.equals(PGRConstants.ROLE_DGRO)) {
-			if(!serviceRequest.getServices().get(0).getTenantId().equals(serviceRequest.getRequestInfo().getUserInfo().getTenantId())) {
-				errorMap.put(ErrorConstants.INVALID_ACTION_FOR_GRO_CODE, ErrorConstants.INVALID_ACTION_FOR_GRO_MSG);
-			}
+			/*
+			 * if(!serviceRequest.getServices().get(0).getTenantId().equals(serviceRequest.
+			 * getRequestInfo().getUserInfo().getTenantId())) {
+			 * errorMap.put(ErrorConstants.INVALID_ACTION_FOR_GRO_CODE,
+			 * ErrorConstants.INVALID_ACTION_FOR_GRO_MSG); }
+			 */
 			if (!errorMap.isEmpty())
 				throw new CustomException(errorMap);
 			ServiceReqSearchCriteria serviceReqSearchCriteria = ServiceReqSearchCriteria.builder()
@@ -375,9 +378,12 @@ public class PGRRequestValidator {
 				}
 			}
 		}else if(role.equals(PGRConstants.ROLE_GRO)) {
-			if(!serviceRequest.getServices().get(0).getTenantId().equals(serviceRequest.getRequestInfo().getUserInfo().getTenantId())) {
-				errorMap.put(ErrorConstants.INVALID_ACTION_FOR_GRO_CODE, ErrorConstants.INVALID_ACTION_FOR_GRO_MSG);
-			}
+			/*
+			 * if(!serviceRequest.getServices().get(0).getTenantId().equals(serviceRequest.
+			 * getRequestInfo().getUserInfo().getTenantId())) {
+			 * errorMap.put(ErrorConstants.INVALID_ACTION_FOR_GRO_CODE,
+			 * ErrorConstants.INVALID_ACTION_FOR_GRO_MSG); }
+			 */
 		}
 
 		if (!errorMap.isEmpty())

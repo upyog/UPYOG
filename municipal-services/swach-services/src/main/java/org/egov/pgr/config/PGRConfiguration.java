@@ -108,6 +108,9 @@ public class PGRConfiguration {
 
     @Value("${pgr.kafka.update.topic}")
     private String updateTopic;
+    
+    @Value("${pgr.kafka.image.topic}")
+    private String imageTopic;
 
     @Value("${pgr.default.offset}")
     private Integer defaultOffset;
@@ -132,6 +135,9 @@ public class PGRConfiguration {
 
     @Value("${egov.hrms.search.endpoint}")
     private String hrmsEndPoint;
+    
+    @Value("${egov.hrms.wardsearch.endpoint}")
+    private String hrmswardEndPoint;
 
     //Notification
     @Value("${egov.user.event.notification.enabled}")

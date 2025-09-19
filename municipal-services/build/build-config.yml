@@ -48,6 +48,14 @@ config:
       - work-dir: "pgr-services/src/main/resources/db"
         image-name: "pgr-services-db"
 
+  - name: "builds/municipal-services/swach-services"
+    build:
+      - work-dir: "swach-services"
+        image-name: "swach-services"
+        dockerfile: "build/maven/Dockerfile"
+      - work-dir: "swach-services/src/main/resources/db"
+        image-name: "swach-services-db"
+
   - name: "builds/municipal-services/tl-calculator"
     build:
       - work-dir: "tl-calculator"

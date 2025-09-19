@@ -49,6 +49,18 @@ public class MeterReadingController {
 		return new ResponseEntity<>(response, HttpStatus.OK);
 
 	}
+	
+	@RequestMapping(value = "/_update", method = RequestMethod.POST, produces = "application/json")
+	public ResponseEntity<MeterReadingResponse> updateMeterReading(
+			@Valid @RequestBody MeterConnectionRequest meterConnectionRequest) {
+		List<MeterReading> meterReadings = meterService.updateMeterReading(meterConnectionRequest);
+		MeterReadingResponse response = MeterReadingResponse.builder().meterReadings(meterReadings).responseInfo(
+				responseInfoFactory.createResponseInfoFromRequestInfo(meterConnectionRequest.getRequestInfo(), true))
+				.build();
+		return new ResponseEntity<>(response, HttpStatus.OK);
+
+	}
+
 
 	@RequestMapping(value = "/_createmultiple", method = RequestMethod.POST, produces = "application/json")
 	public ResponseEntity<MeterReadingResponses> createMeterReadings(
@@ -58,7 +70,7 @@ public class MeterReadingController {
 		MeterReadingResponses response = MeterReadingResponses.builder().meterReadingslist(meterReadings).responseInfo(
 				responseInfoFactory.createResponseInfoFromRequestInfo(meterConnectionRequests.getRequestInfo(), true))
 				.build();
-		return new ResponseEntity<>(response, HttpStatus.OK); 
+		return new ResponseEntity<>(response, HttpStatus.OK);
 
 	}
 

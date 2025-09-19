@@ -101,12 +101,7 @@ public class BPACalculatorConfig {
 
     @Value("${egov.mdms.search.endpoint}")
     private String mdmsSearchEndpoint;
-    
-//	@Value("${mdms.v2.host}")
-//    private String mdmsHost;
-//
-//    @Value("${mdms.v2.search.endpoint}")
-//    private String mdmsSearchEndpoint;
+
 
 //    Kafka Topics
     @Value("${persister.save.bpa.calculation.topic}")

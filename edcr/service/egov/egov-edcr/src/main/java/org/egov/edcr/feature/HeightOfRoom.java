@@ -278,8 +278,7 @@ public class HeightOfRoom extends FeatureProcess {
 								}
 
 								if (!residentialAcRoomHeights.isEmpty()) {
-									BigDecimal minHeight = residentialAcRoomHeights.stream().reduce(BigDecimal::min)
-											.get();
+									BigDecimal minHeight = residentialAcRoomHeights.stream().reduce(BigDecimal::min).get().setScale(2, BigDecimal.ROUND_HALF_UP);
 									// Added by Bimal to check minimum height for residential rooms only
 									if (!A.equalsIgnoreCase(mostRestrictiveOccupancy.getType().getCode())) {
 										minimumHeight = MINIMUM_HEIGHT_2_75;
@@ -370,10 +369,11 @@ public class HeightOfRoom extends FeatureProcess {
 							                    "Area = " + roomArea + ", Width = " + roomWidth,
 							                    Result.Not_Accepted.getResultVal(), scrutinyDetail);
 							        }
+							        
 							    }
 
 							    if (!residentialRoomHeights.isEmpty()) {
-							        BigDecimal minHeight = residentialRoomHeights.stream().reduce(BigDecimal::min).get();
+							        BigDecimal minHeight = residentialRoomHeights.stream().reduce(BigDecimal::min).get().setScale(2, BigDecimal.ROUND_HALF_UP);
 							        if (A.equalsIgnoreCase(mostRestrictiveOccupancy.getType().getCode())) {
 							            minimumHeight = MINIMUM_HEIGHT_2_75;
 							            Log.info("Minimum Residential Regular Room Height required is set to-------- : " + MINIMUM_HEIGHT_2_75);
@@ -433,22 +433,37 @@ public class HeightOfRoom extends FeatureProcess {
 									minWidth = MINIMUM_WIDTH_2_4;
 									maxArea = MAXIMUM_AREA_46_45;
 
+//									if (roomAreas.get(0).compareTo(maxArea) <= 0
+//											&& roomAreas.get(0).compareTo(minimumHeight) >= 0
+//											&& roomWidths.get(0).compareTo(minWidth) >= 0) {
+//										setReportOutputDetails(pl, subRule, subRuleDesc, floor.getNumber().toString(), "" ,
+//												"Area >= " + minimumHeight + ", Width >=" + minWidth,
+//												"Area = " + roomAreas.get(0) + ", Width = " + roomWidths.get(0)
+//														+ DcrConstants.IN_METER,
+//												Result.Accepted.getResultVal(), scrutinyDetail);
+//									} else {
+//										setReportOutputDetails(pl, subRule, subRuleDesc, floor.getNumber().toString(), "",
+//												"Area >= " + minimumHeight + ", Width >=" + minWidth,
+//												"Area = " + roomAreas.get(0) + ", Width = " + roomWidths.get(0)
+//														+ DcrConstants.IN_METER,
+//												Result.Not_Accepted.getResultVal(), scrutinyDetail);
+//									}
+										
 									if (roomAreas.get(0).compareTo(maxArea) <= 0
-											&& roomAreas.get(0).compareTo(minimumHeight) >= 0
-											&& roomWidths.get(0).compareTo(minWidth) >= 0) {
-										setReportOutputDetails(pl, subRule, subRuleDesc, floor.getNumber().toString(), "" ,
-												"Area >= " + minimumHeight + ", Width >=" + minWidth,
-												"Area = " + roomAreas.get(0) + ", Width = " + roomWidths.get(0)
-														+ DcrConstants.IN_METER,
-												Result.Accepted.getResultVal(), scrutinyDetail);
+									        && roomAreas.get(0).compareTo(minimumHeight) >= 0
+									        && roomWidths.get(0).compareTo(minWidth) >= 0) {
+									    setReportOutputDetails(pl, subRule, subRuleDesc, "" + floor.getNumber().toString(), "",
+									            "Area >= " + minimumHeight + ", Width >=" + minWidth,
+									            "Area = " + roomAreas.get(0) + ", Width = " + roomWidths.get(0)
+									                    + DcrConstants.IN_METER,
+									            Result.Accepted.getResultVal(), scrutinyDetail);
 									} else {
-										setReportOutputDetails(pl, subRule, subRuleDesc, floor.getNumber().toString(), "",
-												"Area >= " + minimumHeight + ", Width >=" + minWidth,
-												"Area = " + roomAreas.get(0) + ", Width = " + roomWidths.get(0)
-														+ DcrConstants.IN_METER,
-												Result.Not_Accepted.getResultVal(), scrutinyDetail);
+									    setReportOutputDetails(pl, subRule, subRuleDesc, "" + floor.getNumber().toString(), "",
+									            "Area >= " + minimumHeight + ", Width >=" + minWidth,
+									            "Area = " + roomAreas.get(0) + ", Width = " + roomWidths.get(0)
+									                    + DcrConstants.IN_METER,
+									            Result.Not_Accepted.getResultVal(), scrutinyDetail);
 									}
-
 								}
 								for (int i = 1; i < roomAreas.size(); i++) {
 
@@ -747,7 +762,7 @@ public class HeightOfRoom extends FeatureProcess {
 			}
 			String value = typicalFloorValues.get("typicalFloors") != null
 					? (String) typicalFloorValues.get("typicalFloors")
-					: " floor " + floor.getNumber();
+					: "" + floor.getNumber();
 			if (valid) {
 				setReportOutputDetails(pl, subRule, subRuleDesc, value, "",  expected + DcrConstants.IN_METER,
 						actual + DcrConstants.IN_METER, Result.Accepted.getResultVal(), scrutinyDetail);

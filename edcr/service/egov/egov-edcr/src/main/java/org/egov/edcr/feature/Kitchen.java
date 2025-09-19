@@ -51,6 +51,7 @@ import static org.egov.edcr.constants.DxfFileConstants.A;
 import static org.egov.edcr.constants.DxfFileConstants.F;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -175,7 +176,7 @@ public class Kitchen extends FeatureProcess {
                                 }
 
                                 if (!kitchenHeights.isEmpty()) {
-                                    BigDecimal minHeight = kitchenHeights.stream().reduce(BigDecimal::min).get();
+                                    BigDecimal minHeight = kitchenHeights.stream().reduce(BigDecimal::min).get().setScale(2, RoundingMode.HALF_UP);
 
                                     minimumHeight = MINIMUM_HEIGHT_2_75;
                                     subRule = SUBRULE_41_III;
@@ -288,7 +289,7 @@ public class Kitchen extends FeatureProcess {
             }
             String value = typicalFloorValues.get("typicalFloors") != null
                     ? (String) typicalFloorValues.get("typicalFloors")
-                    : " floor " + floor.getNumber();
+                    : "" + floor.getNumber();
             if (valid) {
                 setReportOutputDetails(pl, subRule, subRuleDesc, value,
                         expected + DcrConstants.IN_METER,

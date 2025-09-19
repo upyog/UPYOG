@@ -67,6 +67,8 @@ public class WCConstants {
 	public static final String STATUS_APPLIED = "APPLIED";
 
 	public static final String STATUS_APPROVED = "CONNECTION_ACTIVATED";
+	
+	public static final String APPROVED = "APPROVED";
 
 	public static final String STATUS_REJECTED = "REJECTED";
 
@@ -162,7 +164,7 @@ public class WCConstants {
 					SEND_BACK_TO_CITIZEN_AP_PENDING_FOR_CITIZEN_ACTION,SEND_BACK_TO_CITIZEN_FI_PENDING_FOR_CITIZEN_ACTION,
 					SEND_BACK_FOR_DOCUMENT_VERIFICATION_PENDING_FOR_DOCUMENT_VERIFICATION,SEND_BACK_PENDING_FOR_COUNTER_EMPLOYEE_ACTION));
 
-	public static final List<String> CHANNEL_VALUES = Collections.unmodifiableList(Arrays.asList("CITIZEN", "CFC_COUNTER", "MIGRATION", "DATA_ENTRY", "SYSTEM","ESEWAEMP"));
+	public static final List<String> CHANNEL_VALUES = Collections.unmodifiableList(Arrays.asList("CITIZEN", "CFC_COUNTER", "MIGRATION", "DATA_ENTRY", "SYSTEM","ESEWAEMP","EODB"));
 	
 	 public static final Map<String, String> USER_TYPE_TO_CHANNEL;
 

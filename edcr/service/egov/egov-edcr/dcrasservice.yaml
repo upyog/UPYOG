@@ -542,6 +542,18 @@ components:
           type: string
           maxLength: 32
           description: Extracted from Plan info.District name
+        ulbType:
+          type: string
+          maxLength: 32
+          description: Extracted from Plan info.ULB type
+        numberOfFloors:
+          type: string
+          maxLength: 32
+          description: Extracted from Plan info.Number Of Floors    
+        roadType:
+          type: string
+          maxLength: 32
+          description: Extracted from Plan info.Road type  
         rwhDeclared:
           type: string
           maxLength: 3

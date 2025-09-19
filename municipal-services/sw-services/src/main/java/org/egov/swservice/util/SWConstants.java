@@ -45,6 +45,8 @@ public class SWConstants {
 	public static final String STATUS_APPLIED = "APPLIED";
 
 	public static final String STATUS_APPROVED = "CONNECTION_ACTIVATED";
+	
+	public static final String APPROVED = "APPROVED";
 
 	public static final String STATUS_REJECTED = "REJECTED";
 
@@ -143,7 +145,7 @@ public class SWConstants {
 			SEND_BACK_PENDING_FOR_COUNTER_EMPLOYEE_ACTION));
 
 	public static final List<String> CHANNEL_VALUES = Collections
-			.unmodifiableList(Arrays.asList("CITIZEN", "CFC_COUNTER", "MIGRATION", "DATA_ENTRY", "SYSTEM","ESEWAEMP"));
+			.unmodifiableList(Arrays.asList("CITIZEN", "CFC_COUNTER", "MIGRATION", "DATA_ENTRY", "SYSTEM","ESEWAEMP","EODB"));
 	 public static final Map<String, String> USER_TYPE_TO_CHANNEL;
 
 	    static {

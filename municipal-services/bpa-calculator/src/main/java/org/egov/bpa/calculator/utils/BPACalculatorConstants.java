@@ -1,5 +1,7 @@
 package org.egov.bpa.calculator.utils;
 
+import java.math.BigDecimal;
+
 public class BPACalculatorConstants {
 
 	
@@ -59,5 +61,47 @@ public class BPACalculatorConstants {
 	public static final String EDCR_ERROR = "EDCR_ERROR";
 	
 	public static final String CALCULATION_ERROR = "CALCULATION ERROR";
+	
+	public static final String MDMS_CURRENT_FINANCIAL_YEAR = "$.MdmsRes.egf-master.FinancialYear[?(@.module==\"{}\")]";
+	
+	public static final String MDMS_BPA_LOW = "BPA_LOW";
+	
+	public static final BigDecimal SQYARD_TO_SQFEET = BigDecimal.valueOf(9.0);
+	
+	public static final BigDecimal SQMETER_TO_SQYARD = BigDecimal.valueOf(1.19599);
+	
+	public static final String MDMS_CHARGES_TYPE  = "ChargesType";
+	
+	public static final String MDMS_NAME  = "name";
+	
+	public static final String MDMS_CHARGES_TYPE_CODE  = "101";
+	
+	public static final String MDMS_CHARGES_TYPE_PATH  = "$.MdmsRes.BPA.ChargesType.*.Charges.*.[?( @.applicable==true )]";
+	
+	public static final String BPA_PROCESSING_FEES = "BPA_PROCESSING_FEES";
+
+	public static final String BPA_CLU_CHARGES = "BPA_CLU_CHARGES";
+
+	public static final String BPA_EXTERNAL_DEVELOPMENT_CHARGES = "BPA_EXTERNAL_DEVELOPMENT_CHARGES";
+
+	public static final String BPA_URBAN_DEVELOPMENT_CESS = "BPA_URBAN_DEVELOPMENT_CESS";
+
+	public static final String BPA_MALBA_CHARGES = "BPA_MALBA_CHARGES";
+
+	public static final String BPA_WATER_CHARGES = "BPA_WATER_CHARGES";
+
+	public static final String BPA_MINING_CHARGES = "BPA_MINING_CHARGES";
+
+	public static final String BPA_GAUSHALA_CHARGES_CESS = "BPA_GAUSHALA_CHARGES_CESS";
+
+	public static final String BPA_LABOUR_CESS = "BPA_LABOUR_CESS";
+
+	public static final String BPA_RAIN_WATER_HARVESTING_CHARGES = "BPA_RAIN_WATER_HARVESTING_CHARGES";
+
+	public static final String BPA_CLUBBING_CHARGES = "BPA_CLUBBING_CHARGES";
+
+	public static final String BPA_SUB_DIVISION_CHARGES = "BPA_SUB-DIVISION_CHARGES";
+
+	public static final String BPA_OTHER_CHARGES = "BPA_OTHER_CHARGES";
 	
 }

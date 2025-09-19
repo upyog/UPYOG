@@ -48,6 +48,7 @@
 package org.egov.edcr.feature;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -113,17 +114,21 @@ public class BathRoomWaterClosets extends FeatureProcess {
 									minHeight = rh.getHeight();
 								}
 							}
+							minHeight = minHeight.setScale(2, RoundingMode.HALF_UP); // Restrict to 2 decimal places
 						}
 
 						if (f.getBathRoomWaterClosets().getRooms() != null
 								&& !f.getBathRoomWaterClosets().getRooms().isEmpty()) {
 							minWidth = f.getBathRoomWaterClosets().getRooms().get(0).getWidth();
+							totalArea = BigDecimal.ZERO; // Reset totalArea for each floor
 							for (Measurement m : f.getBathRoomWaterClosets().getRooms()) {
 								totalArea = totalArea.add(m.getArea());
 								if (m.getWidth().compareTo(minWidth) < 0) {
 									minWidth = m.getWidth();
 								}
 							}
+							minWidth = minWidth.setScale(2, RoundingMode.HALF_UP); // Restrict to 2 decimal places
+                            totalArea = totalArea.setScale(2, RoundingMode.HALF_UP); // Restrict to 2 decimal places
 						}
 
 						if (minHeight.compareTo(new BigDecimal(2.4)) >= 0

@@ -288,10 +288,11 @@ public class DemandService {
 				.billingCycle(billingcycle)
 				.build();
 		List<Demand> demandRes = demandRepository.saveDemand(calculationReq.getRequestInfo(), demands,notificationObj);
-		if(calculationReq.getIsReconnectionRequest())
-			fetchBillForReconnect(demandRes, calculationReq.getRequestInfo(), masterMap);
-		else if(isForConnectionNO && !calculationReq.getIsReconnectionRequest())
-			fetchBill(demandRes, calculationReq.getRequestInfo(),masterMap);
+		/* Temp Disabling  this -> PI-19148->Abhishek Rana   */
+		//		if(calculationReq.getIsReconnectionRequest())
+//			fetchBillForReconnect(demandRes, calculationReq.getRequestInfo(), masterMap);
+//		else if(isForConnectionNO && !calculationReq.getIsReconnectionRequest())
+//			fetchBill(demandRes, calculationReq.getRequestInfo(),masterMap);
 		return demandRes;
 	}
 
@@ -1300,7 +1301,7 @@ public class DemandService {
 						calculationCriteriaList.clear();
 						connectionNosCount=0;
 						if(threadSleepCount == 3) {
-							Thread.sleep(15000);
+						    Thread.sleep(1000); // Sleep for 1 second
 							threadSleepCount=0;
 						}
 						threadSleepCount++;
@@ -1709,29 +1710,40 @@ public List<String> fetchBillSchedulerBatch(Set<String> consumerCodes,String ten
 		return consumercodesFromRes;
 	}
 	
-	public List<String> fetchBillSchedulerSingle(Set<String> consumerCodes,String tenantId, RequestInfo requestInfo) {
-		List<String> consumercodesFromRes = new ArrayList<>() ;
-		for (String consumerCode : consumerCodes) {
+		public List<String> fetchBillSchedulerSingle(Set<String> consumerCodes, String tenantId,RequestInfo requestInfo, List<String> failureCollector
+		) {
+		    List<String> successConsumerCodes = new ArrayList<>();
 
-			try {
-				
-				StringBuilder fetchBillURL = calculatorUtils.getFetchBillURL(tenantId, consumerCode);
+		    for (String consumerCode : consumerCodes) {
+		        try {
+		            StringBuilder fetchBillURL = calculatorUtils.getFetchBillURL(tenantId, consumerCode);
 
-				Object result = serviceRequestRepository.fetchResult(fetchBillURL, RequestInfoWrapper.builder().requestInfo(requestInfo).build());
-				log.info("Bills generated for the consumercodes: {}", fetchBillURL);
-				BillResponseV2 billResponse = mapper.convertValue(result, BillResponseV2.class);
-				List<BillV2> bills = billResponse.getBill();
-				if(bills != null && !bills.isEmpty()) {
-					consumercodesFromRes.addAll(bills.stream().map(BillV2::getConsumerCode).collect(Collectors.toList()));
-					log.info("Bill generated successfully for consumercode: {}, TenantId: {}" ,consumerCode, tenantId);
-				}
+		            Object result = serviceRequestRepository.fetchResult(
+		                    fetchBillURL,
+		                    RequestInfoWrapper.builder().requestInfo(requestInfo).build()
+		            );
 
-			} catch (Exception ex) {
-				log.error("Fetch Bill Error For tenantId:{} consumercode: {} and Exception is: {}",tenantId,consumerCodes, ex);
-			}
+		            BillResponseV2 billResponse = mapper.convertValue(result, BillResponseV2.class);
+		            List<BillV2> bills = billResponse.getBill();
+
+		            if (bills != null && !bills.isEmpty()) {
+		                successConsumerCodes.addAll(
+		                    bills.stream().map(BillV2::getConsumerCode).collect(Collectors.toList())
+		                );
+		                log.info("✅ Bill generated successfully for consumerCode: {}", consumerCode);
+		            } else {
+		                failureCollector.add(consumerCode);
+		                log.warn("⚠️ No bills returned for consumerCode: {}", consumerCode);
+		            }
+
+		        } catch (Exception ex) {
+		            failureCollector.add(consumerCode);
+		            log.error("❌ Fetch Bill failed for consumerCode: {} Exception: {}", consumerCode, ex.getMessage(), ex);
+		        }
+		    }
+
+		    return successConsumerCodes;
 		}
-		return consumercodesFromRes;
-	}
 		/**
 		 * Search demand based on demand id and updated the tax heads with new adhoc tax heads
 		 * 

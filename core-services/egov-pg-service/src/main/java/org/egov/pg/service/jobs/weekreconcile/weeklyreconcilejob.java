@@ -1,0 +1,83 @@
+package org.egov.pg.service.jobs.weekreconcile;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+
+import javax.annotation.PostConstruct;
+
+import org.egov.common.contract.request.RequestInfo;
+import org.egov.common.contract.request.User;
+import org.egov.pg.config.AppProperties;
+import org.egov.pg.constants.PgConstants;
+import org.egov.pg.models.Transaction;
+import org.egov.pg.repository.TransactionRepository;
+import org.egov.pg.service.TransactionService;
+import org.egov.pg.web.models.TransactionCriteria;
+import org.quartz.Job;
+import org.quartz.JobExecutionContext;
+import org.quartz.JobExecutionException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import lombok.extern.slf4j.Slf4j;
+
+
+/**
+ * Updates all transactions in pending state and created in the last 15 minutes
+ */
+@Component
+@Slf4j
+public class weeklyreconcilejob implements Job {
+
+    private static RequestInfo requestInfo;
+
+    @PostConstruct
+    public void init() {
+        User userInfo = User.builder()
+         //.uuid("EARLY_RECONC_JOB")
+                .uuid(appProperties.getEgovPgReconciliationSystemUserUuid())
+                .type("SYSTEM")
+                .roles(Collections.emptyList()).id(0L).build();
+
+        requestInfo = new RequestInfo();
+        requestInfo.setUserInfo(userInfo);    }
+
+    @Autowired
+    private AppProperties appProperties;
+    @Autowired
+    private TransactionService transactionService;
+    @Autowired
+    private TransactionRepository transactionRepository;
+
+    /**
+     * Fetch live status for pending transactions
+     * that were created for ex, between 15-30 minutes, configurable value
+     *
+     * @param jobExecutionContext execution context with optional job parameters
+     * @throws JobExecutionException
+     */
+    @Override
+    public void execute(JobExecutionContext jobExecutionContext) {
+      
+    	long endTime = System.currentTimeMillis();
+        long startTime = endTime - TimeUnit.DAYS.toMillis(8);
+        log.info("Weekly reconcilation Started Start Time--- "+startTime+ " ---End Time--- "+endTime);
+
+       // endTime = startTime - appProperties.getEarlyReconcileJobRunInterval();
+
+        List<Transaction> pendingTxns = transactionRepository.fetchTransactionsByweek(TransactionCriteria.builder()
+                        .txnStatus(Transaction.TxnStatusEnum.PENDING).build(),startTime, endTime);
+
+        
+        log.info("Attempting to reconcile {} pending transactions", pendingTxns.size());
+
+        for (Transaction txn : pendingTxns) {
+            log.info(transactionService.updateTransaction(requestInfo, Collections.singletonMap(PgConstants.PG_TXN_IN_LABEL, txn
+                    .getTxnId
+                    ())).toString());
+        }
+
+    }
+
+}

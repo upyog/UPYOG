@@ -254,16 +254,8 @@ public class DemandService {
 
 
 //             addRoundOffTaxHead(calculation.getTenantId(),demandDetails);
-
-            int year = Calendar.getInstance().get(Calendar.YEAR);
-            Calendar startCal = Calendar.getInstance();
-            startCal.set(Calendar.YEAR,year);
-            startCal.set(Calendar.DAY_OF_YEAR, 1);  
             
-            Calendar endCal = Calendar.getInstance();
-            endCal.set(Calendar.YEAR, year);
-            endCal.set(Calendar.MONTH, 11); // 11 = december
-            endCal.set(Calendar.DAY_OF_MONTH, 31);
+            Map<String, Object> taxPeriod = mdmsService.getTaxPeriods(mdmsData);
             
              demands.add(Demand.builder()
                     .consumerCode(consumerCode)
@@ -271,8 +263,8 @@ public class DemandService {
                     .payer(owner)
                     .minimumAmountPayable(config.getMinimumPayableAmount())
                     .tenantId(tenantId)
-                    .taxPeriodFrom( startCal.getTimeInMillis())
-                    .taxPeriodTo(endCal.getTimeInMillis())
+                    .taxPeriodFrom((Long)taxPeriod.get(BPACalculatorConstants.MDMS_STARTDATE))
+                    .taxPeriodTo((Long)taxPeriod.get(BPACalculatorConstants.MDMS_ENDDATE))
                     .consumerType("BPA")
                     .businessService(utils.getBillingBusinessService(bpa.getBusinessService(),calculation.getFeeType()))
                     .build());

@@ -56,6 +56,11 @@ public class Unit {
 	@SafeHtml
 	@JsonProperty("occupancyType")
 	private String occupancyType;
+	
+	@SafeHtml
+	@JsonProperty("occupancyName")
+	private String occupancyName;
+
 
 	@JsonProperty("active")
 	private Boolean active;

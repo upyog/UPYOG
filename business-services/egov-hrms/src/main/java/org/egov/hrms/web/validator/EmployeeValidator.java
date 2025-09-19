@@ -149,6 +149,26 @@ public class EmployeeValidator {
 			throw new CustomException(errorMap);
 	}
 
+	
+	
+	
+	
+	public void validatewardSearchRequest(RequestInfo requestInfo, EmployeeWithWard criteria) {
+	    Map<String, String> errorMap = new HashMap<>();
+
+	    if (criteria.getTenantId() == null || criteria.getTenantId().trim().isEmpty()) {
+	        errorMap.put("tenantId", "Tenant ID is mandatory");
+	    }
+
+	    if (criteria.getWardId() == null || criteria.getWardId().trim().isEmpty()) {
+	        errorMap.put("wardId", "Ward ID is mandatory");
+	    }
+
+	    if (!errorMap.isEmpty()) {
+	        throw new CustomException(errorMap);
+	    }
+	}
+
 	/**
 	 * Checks if the employee being created is duplicate with the following:
 	 * 1. Validating mobile number

@@ -129,9 +129,12 @@ public class ActionService {
 		Set<Role> applicableRoles = new HashSet<>();
 
 		for(Role role : roles){
-			if(requestTenantIds.contains(role.getTenantId()) || role.getTenantId().equalsIgnoreCase(stateLevelTenantId)){
+			/* setting for swach State user --Abhishek (21-05-25)*/
+			if(requestTenantIds.contains(role.getTenantId()) || role.getTenantId().equalsIgnoreCase(stateLevelTenantId) 
+					|| role.getTenantId().equalsIgnoreCase("pb.punjab")){
 				applicableRoles.add(role);
 			}
+			
 		}
 
 		return applicableRoles.stream().map(Role::getCode).collect(Collectors.toSet());

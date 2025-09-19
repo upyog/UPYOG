@@ -81,6 +81,19 @@ public class EnrichmentService {
 
     }
 
+    
+    
+    public void enrichCreateimageRequest(ImageRequest serviceRequest){
+
+        RequestInfo requestInfo = serviceRequest.getRequestInfo();
+        ImageData service = serviceRequest.getImgaeData();
+
+
+
+        AuditDetails auditDetails = utils.getAuditimageDetails(requestInfo.getUserInfo().getUuid(), service,true);  
+
+        service.setAuditDetails(auditDetails);
+    }
 
     /**
      * Enriches the update request (updates the lastModifiedTime in auditDetails0
