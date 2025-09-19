@@ -380,13 +380,13 @@ public class CalculationService {
 				break;	
 			case BPACalculatorConstants.BPA_OTHER_CHARGES:
 			case BPACalculatorConstants.BPA_DEVELOPMENT_CHARGES:
-				if(fee.containsKey(taxhead) && fee.get(taxhead) != null && !fee.get(taxhead).toString().trim().isEmpty())
+				if(fee.containsKey(taxhead) && fee.get(taxhead) != null && !fee.get(taxhead).toString().trim().isEmpty() && !fee.get(taxhead).toString().equalsIgnoreCase("undefined"))
 					amount = new BigDecimal(fee.get(taxhead).toString()).setScale(0, RoundingMode.HALF_UP);
 				else
 					amount = rate.setScale(0, RoundingMode.HALF_UP);
 				break;
 			case BPACalculatorConstants.BPA_LESS_ADJUSMENT_PLOT:
-				if(fee.containsKey(taxhead) && fee.get(taxhead) != null && !fee.get(taxhead).toString().trim().isEmpty())
+				if(fee.containsKey(taxhead) && fee.get(taxhead) != null && !fee.get(taxhead).toString().trim().isEmpty() && !fee.get(taxhead).toString().equalsIgnoreCase("undefined"))
 					amount = new BigDecimal(fee.get(taxhead).toString()).multiply(rate).setScale(0, RoundingMode.HALF_UP);
 				else
 					amount = BigDecimal.ZERO;
@@ -421,3 +421,4 @@ public class CalculationService {
 	}
 
 }
+
