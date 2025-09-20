@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.egov.garbageservice.util.RequestInfoWrapper;
+
 import org.egov.garbageservice.model.GarbageAccount;
 import org.egov.garbageservice.model.GrbgBillTracker;
 import org.egov.garbageservice.model.contract.PDFRequest;
@@ -121,11 +122,13 @@ public class PDFRequestGenerator {
 		BigDecimal amountPaid = new BigDecimal("0.00");
 		String paymentStatus = "";
 		String paymentDate = "";
-//		if (bill.getStatus().equals(StatusEnum.PAID)) {
-//			amountPaid = bill.getTotalAmount();
-//			paymentStatus = "Success";
-//			paymentDate = ""; // TODO blank
-//		}
+		if (bill.getStatus().equals(Bill.StatusEnum.PAID)) {
+			amountPaid = bill.getTotalAmount();
+			paymentStatus = "PAID";
+			
+			paymentDate = Instant.ofEpochMilli(bill.getAuditDetails().getLastModifiedDate()).atZone(ZoneId.systemDefault())
+					.toLocalDateTime().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+		}
 		grbg.put("amountPaid", String.valueOf(amountPaid));
 		grbg.put("paymentStatus", paymentStatus);
 		grbg.put("billGeneratedDate", Instant.ofEpochMilli(bill.getBillDate()).atZone(ZoneId.systemDefault())
