@@ -126,7 +126,7 @@ public class PDFRequestGenerator {
 			amountPaid = bill.getTotalAmount();
 			paymentStatus = "PAID";
 			
-			paymentDate = Instant.ofEpochMilli(bill.getAuditDetails().getLastModifiedDate()).atZone(ZoneId.systemDefault())
+			paymentDate = Instant.ofEpochMilli(bill.getAuditDetails().getLastModifiedTime()).atZone(ZoneId.systemDefault())
 					.toLocalDateTime().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
 		}
 		grbg.put("amountPaid", String.valueOf(amountPaid));
