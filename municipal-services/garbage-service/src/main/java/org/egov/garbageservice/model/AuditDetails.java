@@ -21,4 +21,8 @@ public class AuditDetails {
 	private String lastModifiedBy;
 
 	private Long lastModifiedDate;
+	
+	private Long createdTime;
+	
+	private Long lastModifiedTime;
 }
