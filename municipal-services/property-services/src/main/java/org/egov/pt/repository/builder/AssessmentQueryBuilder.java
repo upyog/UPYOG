@@ -21,7 +21,7 @@ public class AssessmentQueryBuilder {
 	
 	private static final String ASSESSMENT_SEARCH_QUERY = "SELECT asmt.id as ass_assessmentid, asmt.financialyear as ass_financialyear, asmt.tenantId as ass_tenantid, asmt.assessmentNumber as ass_assessmentnumber, "
 			+ "asmt.status as ass_status, asmt.propertyId as ass_propertyid, asmt.source as ass_source, asmt.assessmentDate as ass_assessmentdate,  "
-			+ "asmt.additionalDetails as ass_additionaldetails, asmt.createdby as ass_createdby, asmt.createdtime as ass_createdtime, asmt.lastmodifiedby as ass_lastmodifiedby, "
+			+ "asmt.additionalDetails as ass_additionaldetails, asmt.channel as ass_channel, asmt.createdby as ass_createdby, asmt.createdtime as ass_createdtime, asmt.lastmodifiedby as ass_lastmodifiedby, "
 			+ "asmt.lastmodifiedtime as ass_lastmodifiedtime, us.tenantId as us_tenantid, us.unitId as us_unitid, us.id as us_id, us.assessmentId as us_assessmentid, "
 			+ "us.usageCategory as us_usagecategory, us.occupancyType as us_occupancytype, "
 			+ "us.occupancyDate as us_occupancydate, us.active as us_active, us.createdby as us_createdby, "
