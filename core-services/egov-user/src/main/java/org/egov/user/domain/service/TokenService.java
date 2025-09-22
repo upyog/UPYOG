@@ -2,15 +2,20 @@ package org.egov.user.domain.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.egov.common.contract.request.RequestInfo;
 import org.egov.user.domain.exception.InvalidAccessTokenException;
+import org.egov.user.domain.model.Action;
 import org.egov.user.domain.model.SecureUser;
 import org.egov.user.domain.model.UserDetail;
+import org.egov.user.domain.service.UserService;
 import org.egov.user.persistence.repository.ActionRestRepository;
 import org.egov.user.web.contract.auth.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.beans.factory.annotation.Value;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.server.authorization.OAuth2Authorization;
@@ -29,7 +34,8 @@ public class TokenService {
     // CHANGED: TokenStore -> OAuth2AuthorizationService
     private OAuth2AuthorizationService authorizationService;
     private ActionRestRepository actionRestRepository;
-    
+    private UserService userService;
+
     @Autowired
     private RedisTemplate<String, Object> redisTemplate;
 
@@ -37,10 +43,12 @@ public class TokenService {
     private boolean isRoleStateLevel;
 
     // UPDATED CONSTRUCTOR
-    private TokenService(OAuth2AuthorizationService authorizationService, 
-                        ActionRestRepository actionRestRepository) {
+    private TokenService(OAuth2AuthorizationService authorizationService,
+                        ActionRestRepository actionRestRepository,
+                        UserService userService) {
         this.authorizationService = authorizationService;
         this.actionRestRepository = actionRestRepository;
+        this.userService = userService;
     }
 
     /**
@@ -67,20 +75,24 @@ public class TokenService {
         }
 
         // Opaque token path - get token metadata directly from Redis
-        return getUserFromOpaqueToken(accessToken);
+        UserDetail userDetail = getUserFromOpaqueToken(accessToken);
 
-        // COMMENTED OUT: Original role-based logic (can be re-enabled if needed)
-        /*
-        String tenantId = null;
-        if (isRoleStateLevel && (secureUser.getTenantId() != null && secureUser.getTenantId().contains(".")))
-            tenantId = secureUser.getTenantId().split("\\.")[0];
-        else
-            tenantId = secureUser.getTenantId();
+        // Add action resolution to prevent null pointer errors in other services
+        if (userDetail != null && userDetail.getSecureUser() != null) {
+            SecureUser secureUser = userDetail.getSecureUser();
 
-        List<Action> actions = actionRestRepository.getActionByRoleCodes(secureUser.getRoleCodes(), tenantId);
-        log.info("returning STATE-LEVEL roleactions for tenant: " + tenantId);
-        return new UserDetail(secureUser, actions);
-        */
+            String tenantId = null;
+            if (isRoleStateLevel && (secureUser.getTenantId() != null && secureUser.getTenantId().contains(".")))
+                tenantId = secureUser.getTenantId().split("\\.")[0];
+            else
+                tenantId = secureUser.getTenantId();
+
+            List<Action> actions = actionRestRepository.getActionByRoleCodes(secureUser.getRoleCodes(), tenantId);
+            log.info("returning STATE-LEVEL roleactions for tenant: " + tenantId);
+            return new UserDetail(secureUser, actions);
+        }
+
+        return userDetail;
     }
     
     /**
@@ -125,8 +137,88 @@ public class TokenService {
         
         // Create SecureUser from the User object
         SecureUser secureUser = new SecureUser(user);
-        
+
+        // Decrypt user data using the same logic as /user/oauth/token and /user/_search
+        try {
+            log.info("Starting user decryption for opaque token. User: {}, encrypted userName: {}",
+                user.getId(), user.getUserName());
+
+            // Convert contract user to domain user for decryption
+            org.egov.user.domain.model.User domainUser = convertContractToDomainUser(user);
+            log.info("Converted to domain user, calling decryptUserWithContext");
+
+            // Decrypt user with proper authenticated context
+            org.egov.user.domain.model.User decryptedDomainUser = userService.decryptUserWithContext(domainUser, user);
+            log.info("Decryption completed, converting back to contract user");
+
+            // Convert back to contract user and create new SecureUser
+            User decryptedUser = convertToContractUser(decryptedDomainUser);
+            secureUser = new SecureUser(decryptedUser);
+            log.info("Opaque token using decrypted user data. Decrypted userName: {}", decryptedUser.getUserName());
+        } catch (Exception e) {
+            log.error("Failed to decrypt user for opaque token: {}", e.getMessage(), e);
+            log.info("Falling back to encrypted user data for opaque token");
+            // Continue with encrypted user data - secureUser already created above
+        }
+
         log.info("Successfully retrieved user from opaque token: userId={}, userName={}", user.getId(), user.getUserName());
         return new UserDetail(secureUser, null);
+    }
+
+    /**
+     * Convert contract User to domain User for decryption
+     */
+    private org.egov.user.domain.model.User convertContractToDomainUser(User contractUser) {
+        if (contractUser == null) {
+            return null;
+        }
+
+        return org.egov.user.domain.model.User.builder()
+            .id(contractUser.getId())
+            .uuid(contractUser.getUuid())
+            .username(contractUser.getUserName())
+            .name(contractUser.getName())
+            .mobileNumber(contractUser.getMobileNumber())
+            .emailId(contractUser.getEmailId())
+            .locale(contractUser.getLocale())
+            .active(contractUser.isActive())
+            .type(contractUser.getType() != null ?
+                org.egov.user.domain.model.enums.UserType.fromValue(contractUser.getType()) : null)
+            .tenantId(contractUser.getTenantId())
+            .roles(contractUser.getRoles() != null ?
+                contractUser.getRoles().stream()
+                    .map(role -> org.egov.user.domain.model.Role.builder()
+                        .name(role.getName())
+                        .code(role.getCode())
+                        .tenantId(role.getTenantId())
+                        .build())
+                    .collect(Collectors.toSet()) : null)
+            .build();
+    }
+
+    /**
+     * Convert domain User to contract User
+     */
+    private User convertToContractUser(org.egov.user.domain.model.User domainUser) {
+        if (domainUser == null) {
+            return null;
+        }
+
+        return User.builder()
+            .id(domainUser.getId())
+            .uuid(domainUser.getUuid())
+            .userName(domainUser.getUsername())
+            .name(domainUser.getName())
+            .mobileNumber(domainUser.getMobileNumber())
+            .emailId(domainUser.getEmailId())
+            .locale(domainUser.getLocale())
+            .active(domainUser.getActive())
+            .type(domainUser.getType() != null ? domainUser.getType().name() : null)
+            .tenantId(domainUser.getTenantId())
+            .roles(domainUser.getRoles() != null ?
+                domainUser.getRoles().stream()
+                    .map(role -> new org.egov.user.web.contract.auth.Role(role))
+                    .collect(Collectors.toSet()) : null)
+            .build();
     }
 }

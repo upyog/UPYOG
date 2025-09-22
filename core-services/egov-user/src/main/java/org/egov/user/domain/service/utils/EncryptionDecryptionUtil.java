@@ -110,26 +110,29 @@ public class EncryptionDecryptionUtil {
     public boolean isUserDecryptingForSelf(Object objectToDecrypt, User userInfo) {
         org.egov.user.domain.model.User userToDecrypt = null;
         if (objectToDecrypt instanceof List) {
-            if (((List) objectToDecrypt).isEmpty())
+            List<?> listToDecrypt = (List<?>) objectToDecrypt;
+            if (listToDecrypt == null || listToDecrypt.isEmpty())
                 return false;
-            if (((List) objectToDecrypt).size() > 1)
+            if (listToDecrypt.size() > 1)
                 return false;
-            userToDecrypt = (org.egov.user.domain.model.User) ((List) objectToDecrypt).get(0);
+            userToDecrypt = (org.egov.user.domain.model.User) listToDecrypt.get(0);
         } else {
             throw new CustomException("DECRYPTION_NOTLIST_ERROR", objectToDecrypt + " is not of type List of User");
         }
 
-        if ((userToDecrypt.getUuid() != null) && userToDecrypt.getUuid().equalsIgnoreCase(userInfo.getUuid()))
+        if ((userToDecrypt != null && userToDecrypt.getUuid() != null) && userInfo != null && userToDecrypt.getUuid().equalsIgnoreCase(userInfo.getUuid()))
             return true;
         else
             return false;
     }
 
     private boolean isDecryptionForIndividualUser(Object objectToDecrypt) {
-        if (((List) objectToDecrypt).size() == 1)
-            return true;
-        else
-            return false;
+        if (objectToDecrypt instanceof List) {
+            List<?> listToDecrypt = (List<?>) objectToDecrypt;
+            if (listToDecrypt != null && listToDecrypt.size() == 1)
+                return true;
+        }
+        return false;
     }
 
     public Map<String,String> getKeyToDecrypt(Object objectToDecrypt, User userInfo) {
