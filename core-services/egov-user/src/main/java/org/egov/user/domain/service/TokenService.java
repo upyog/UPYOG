@@ -15,6 +15,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.beans.factory.annotation.Value;
 import java.util.List;
 import java.util.Map;
+import java.util.ArrayList;
 import java.util.stream.Collectors;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
@@ -133,6 +134,7 @@ public class TokenService {
             .type((String) userRequest.get("type"))
             .tenantId((String) userRequest.get("tenantId"))
             .active((Boolean) userRequest.get("active"))
+            .roles(new ArrayList<>()) // Initialize with empty list instead of null to prevent NPE
             .build();
         
         // Create SecureUser from the User object
@@ -218,7 +220,7 @@ public class TokenService {
             .roles(domainUser.getRoles() != null ?
                 domainUser.getRoles().stream()
                     .map(role -> new org.egov.user.web.contract.auth.Role(role))
-                    .collect(Collectors.toSet()) : null)
+                    .collect(Collectors.toSet()) : new ArrayList<>()) // Ensure empty list instead of null
             .build();
     }
 }
