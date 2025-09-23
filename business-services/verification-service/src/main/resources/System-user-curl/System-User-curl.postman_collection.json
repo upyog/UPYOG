@@ -1,0 +1,46 @@
+{
+	"info": {
+		"_postman_id": "55fa7067-6033-4ba5-a27c-dce6265d243b",
+		"name": "System-User-curl",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "38080935"
+	},
+	"item": [
+		{
+			"name": "http://localhost:8081/user/users/_createnovalidate",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"requestInfo\": {\n        \"apiId\": \"Rainmaker\",\n        \"ver\": \".01\",\n        \"ts\": null,\n        \"action\": \"create\",\n        \"did\": \"1\",\n        \"key\": \"\",\n        \"msgId\": \"20170310130900|en_IN\",\n        \"authToken\": \"9d78b340-4ebc-4c66-bff7-53a764b8263d\",\n        \"userInfo\": {\n            \"id\": 23287,\n            \"uuid\": \"4632c941-cb1e-4b83-b2d4-200022c1a137\",\n            \"userName\": \"PalashS\",\n            \"name\": \"Palash S\",\n            \"mobileNumber\": \"9949032246\",\n            \"emailId\": null,\n            \"type\": \"CITIZEN\",\n            \"roles\": [\n                {\n                    \"name\": \"Citizen\",\n                    \"code\": \"CITIZEN\",\n                    \"tenantId\": \"pg.citya\"\n                },\n                {\n                    \"name\": \"BPA Architect\",\n                    \"code\": \"BPA_ARCHITECT\",\n                    \"tenantId\": \"pg.citya\"\n                }\n            ],\n            \"tenantId\": \"pg.citya\"\n        }\n    },\n    \"user\": {\n        \"username\": \"VERIFICATION_INTERNAL_USER\",\n        \"name\": \"VERIFICATION Internal User\",\n        \"gender\": \"MALE\",\n        \"mobileNumber\": \"7766889934\",\n        \"type\": \"SYSTEM\",\n        \"active\": true,\n        \"password\": \"eGov@123\",\n        \"roles\": [\n            {\n                \"name\": \"PET Internal Microservice Role\",\n                \"code\": \"PET_INTERNAL_MICROSERVICE_ROLE\",\n                \"tenantId\": \"pg\"\n            }\n        ],\n        \"tenantId\": \"pg\"\n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8081/user/users/_createnovalidate",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"user",
+						"users",
+						"_createnovalidate"
+					]
+				},
+				"description": "Generated from cURL: curl --location 'http://localhost:8081/user/users/_createnovalidate' \\\n--header 'Content-Type: application/json' \\\n--data-raw '{\n    \"requestInfo\": {\n        \"apiId\": \"Rainmaker\",\n        \"ver\": \".01\",\n        \"ts\": null,\n        \"action\": \"create\",\n        \"did\": \"1\",\n        \"key\": \"\",\n        \"msgId\": \"20170310130900|en_IN\",\n        \"authToken\": \"9d78b340-4ebc-4c66-bff7-53a764b8263d\",\n        \"userInfo\": {\n            \"id\": 23287,\n            \"uuid\": \"4632c941-cb1e-4b83-b2d4-200022c1a137\",\n            \"userName\": \"PalashS\",\n            \"name\": \"Palash S\",\n            \"mobileNumber\": \"9949032246\",\n            \"emailId\": null,\n            \"type\": \"CITIZEN\",\n            \"roles\": [\n                {\n                    \"name\": \"Citizen\",\n                    \"code\": \"CITIZEN\",\n                    \"tenantId\": \"pg.citya\"\n                },\n                {\n                    \"name\": \"BPA Architect\",\n                    \"code\": \"BPA_ARCHITECT\",\n                    \"tenantId\": \"pg.citya\"\n                }\n            ],\n            \"tenantId\": \"pg.citya\"\n        }\n    },\n    \"user\": {\n        \"username\": \"VERIFICATION_INTERNAL_USER\",\n        \"name\": \"VERIFICATION Internal User\",\n        \"gender\": \"MALE\",\n        \"mobileNumber\": \"7766889934\",\n        \"type\": \"SYSTEM\",\n        \"active\": true,\n        \"password\": \"eGov@123\",\n        \"roles\": [\n            {\n                \"name\": \"PET Internal Microservice Role\",\n                \"code\": \"PET_INTERNAL_MICROSERVICE_ROLE\",\n                \"tenantId\": \"pg\"\n            }\n        ],\n        \"tenantId\": \"pg\"\n    }\n}'"
+			},
+			"response": []
+		}
+	]
+}
