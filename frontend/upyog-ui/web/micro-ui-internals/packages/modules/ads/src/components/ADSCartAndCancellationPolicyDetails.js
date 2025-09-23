@@ -37,7 +37,6 @@ const ADSCartAndCancellationPolicyDetails = () => {
   const { data: cancelpolicyData } = Digit.Hooks.useCustomMDMS("pg", "Advertisement", [{ name: "AdvServices" }], {
     select: (data) => data?.["Advertisement"]?.["AdvServices"] || [],
   });
-  console.log("cancelpolicyData:", tenantId);
   const handleDelete = (index) => {
     // Make a shallow copy of the current params state to ensure immutability
     const updatedParams = { ...params };
