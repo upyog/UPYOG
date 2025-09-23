@@ -34,9 +34,10 @@ const ADSCartAndCancellationPolicyDetails = () => {
   const [showdemandEstimation, setShowDemandEstimation] = useState(false);
   const [showPriceBreakup, setShowPriceBreakup] = useState(false);
 
-  // const { data: cancelpolicyData } = Digit.Hooks.useCustomMDMS(tenantId, "CHB", [{ name: "CommunityHalls" }], {
-  //   select: (data) => data?.["CHB"]?.["CommunityHalls"] || [],
-  // });
+  const { data: cancelpolicyData } = Digit.Hooks.useCustomMDMS("pg", "Advertisement", [{ name: "AdvServices" }], {
+    select: (data) => data?.["Advertisement"]?.["AdvServices"] || [],
+  });
+  console.log("cancelpolicyData:", tenantId);
   const handleDelete = (index) => {
     // Make a shallow copy of the current params state to ensure immutability
     const updatedParams = { ...params };
@@ -209,15 +210,15 @@ const ADSCartAndCancellationPolicyDetails = () => {
             width: "80%",
             overflowY: "auto",
           }}
-          // children={
-          //   <div>
-          //     {cancelpolicyData.length > 0 ? (
-          //       renderCancellationPolicy(cancelpolicyData[0].termsAndCondition)
-          //     ) : (
-          //       <CardLabel style={{ fontSize: "20px" }}>Loading...</CardLabel>
-          //     )}
-          //   </div>
-          // }
+          children={
+            <div>
+              {cancelpolicyData.length > 0 ? (
+                renderCancellationPolicy(cancelpolicyData[0].termsAndCondition)
+              ) : (
+                <CardLabel style={{ fontSize: "20px" }}>Loading...</CardLabel>
+              )}
+            </div>
+          }
           actionCancelLabel={null}
           actionCancelOnSubmit={null}
           actionSaveLabel={null}
