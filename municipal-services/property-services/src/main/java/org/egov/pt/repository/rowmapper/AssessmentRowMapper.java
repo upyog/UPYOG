@@ -14,6 +14,7 @@ import org.egov.pt.models.Assessment.Source;
 import org.egov.pt.models.AuditDetails;
 import org.egov.pt.models.Document;
 import org.egov.pt.models.UnitUsage;
+import org.egov.pt.models.enums.Channel;
 import org.egov.pt.models.enums.Status;
 import org.egov.tracer.model.CustomException;
 import org.postgresql.util.PGobject;
@@ -45,6 +46,7 @@ public class AssessmentRowMapper implements ResultSetExtractor<List<Assessment>>
 						.assessmentDate(rs.getLong("ass_assessmentdate"))
 						.financialYear(rs.getString("ass_financialyear")).propertyId(rs.getString("ass_propertyid"))
 						.source(Source.fromValue(rs.getString("ass_source"))).unitUsageList(new ArrayList<>())
+                        .channel(Channel.fromValue(rs.getString("ass_channel")))
 						.documents(new HashSet<>()).build();
 
 				try {
