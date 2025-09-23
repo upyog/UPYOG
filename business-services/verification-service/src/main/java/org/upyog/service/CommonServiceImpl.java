@@ -108,7 +108,7 @@ public class CommonServiceImpl implements CommonService {
 
 		if (userDetailResponse == null || userDetailResponse.getUser().isEmpty()) {
 			throw new IllegalStateException(
-					"SYSTEM user not found for tenant '" + VerificationSearchConstants.VS_TENANTID + "'.");
+					"SYSTEM user not found for tenant '" + mainConfiguration.getStateLevelTenantId() + "'.");
 		}
 
 		RequestInfo systemRequestInfo = RequestInfo.builder().userInfo(userDetailResponse.getUser().get(0)).build();

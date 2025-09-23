@@ -26,8 +26,6 @@ public class VerificationSearchConstants {
 	public static final String PROPERTY_APPLICATIONS = "Properties";
 	public static final String STREET_VENDING_APPLICATIONS = "SVDetail";
 	public static final String TRADE_APPLICATIONS = "Licenses";
-	public static final String VS_TENANTID = "pg";
-	public static final String SYSTEM_CITIZEN_USERNAME = "8888888888";
 	public static final String CITIZEN = "CITIZEN";
 	public static final String WATER_TANKER_APPLICATIONS = "waterTankerBookingDetail";
 	public static final String MOBILE_TOILET_APPLICATIONS = "mobileToiletBookingDetails";
