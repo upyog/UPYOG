@@ -28,6 +28,17 @@ public class MainConfiguration {
     @Value("${app.timezone}")
     private String timeZone;
 
+    //System User
+    @Value("${internal.microservice.user.username}")
+    private String internalMicroserviceUserName;
+
+    //System user Type
+    @Value("${internal.microservice.user.type}")
+    private String internalMicroserviceUserType;
+
+    @Value("${state.level.tenant.id}")
+    private String stateLevelTenantId;
+    
 	// User Config
 	@Value("${egov.user.host}")
 	private String userHost;
