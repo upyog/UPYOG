@@ -356,7 +356,6 @@ public class UserTypeQueryBuilder {
             log.info("Excluding address details from the query");
             selectQuery = new StringBuilder(SELECT_USER_QUERY_V2_NO_ADDRESS);
         } else {
-            userSearchCriteria.setAddressStatus(UserConstants.ADDRESS_ACTIVE_STATUS);
             selectQuery = new StringBuilder(SELECT_USER_QUERY_V2);
         }
         addWhereClause(selectQuery, preparedStatementValues, userSearchCriteria);
