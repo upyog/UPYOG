@@ -64,7 +64,9 @@ public class CustomOpaqueTokenGenerator implements OAuth2TokenGenerator<OAuth2Ac
             userInfo.put("type", secureUser.getUser().getType());
             userInfo.put("tenantId", secureUser.getUser().getTenantId());
             userInfo.put("active", secureUser.getUser().isActive());
-            
+            // CRITICAL: Include roles in opaque tokens to fix authorization
+            userInfo.put("roles", secureUser.getUser().getRoles());
+
             tokenMetadata.put("UserRequest", userInfo);
             tokenMetadata.put("userId", secureUser.getUser().getId());
             tokenMetadata.put("userName", secureUser.getUser().getUserName());
