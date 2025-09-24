@@ -14,6 +14,7 @@ import org.egov.tracer.model.CustomException;
 import org.egov.user.domain.exception.*;
 import org.egov.user.domain.model.LoggedInUserUpdatePasswordRequest;
 import org.egov.user.domain.model.NonLoggedInUserUpdatePasswordRequest;
+import org.egov.user.domain.model.Role;
 import org.egov.user.domain.model.User;
 import org.egov.user.domain.model.UserSearchCriteria;
 import org.egov.user.domain.model.enums.UserType;
@@ -308,7 +309,52 @@ public class UserService {
 
         /* decrypt here / final reponse decrypted*/
 
+        // DEBUG: Log roles before decryption
+        if (!list.isEmpty()) {
+            User firstUser = list.get(0);
+            log.info("BEFORE DECRYPTION - User {} (UUID: {}) has {} roles",
+                     firstUser.getId(), firstUser.getUuid(),
+                     firstUser.getRoles() != null ? firstUser.getRoles().size() : 0);
+            if (firstUser.getRoles() != null) {
+                for (Role role : firstUser.getRoles()) {
+                    log.info("  - Role before decryption: code={}, name={}", role.getCode(), role.getName());
+                }
+            }
+        }
+
+        // ROLE PRESERVATION FIX: Store roles before decryption
+        Map<String, Set<Role>> userRolesMap = new HashMap<>();
+        for (User user : list) {
+            if (user.getUuid() != null && user.getRoles() != null) {
+                userRolesMap.put(user.getUuid(), new HashSet<>(user.getRoles()));
+            }
+        }
+
         list = encryptionDecryptionUtil.decryptObject(list, null, User.class, requestInfo);
+
+        // ROLE PRESERVATION FIX: Restore roles after decryption
+        for (User user : list) {
+            if (user.getUuid() != null && userRolesMap.containsKey(user.getUuid())) {
+                Set<Role> preservedRoles = userRolesMap.get(user.getUuid());
+                user.setRoles(preservedRoles);
+                log.info("ROLE FIX - Restored {} roles for user {}", preservedRoles.size(), user.getUuid());
+            }
+        }
+
+        // DEBUG: Log roles after decryption
+        if (!list.isEmpty()) {
+            User firstUser = list.get(0);
+            log.info("AFTER DECRYPTION - User {} (UUID: {}) has {} roles",
+                     firstUser.getId(), firstUser.getUuid(),
+                     firstUser.getRoles() != null ? firstUser.getRoles().size() : 0);
+            if (firstUser.getRoles() != null) {
+                for (Role role : firstUser.getRoles()) {
+                    log.info("  - Role after decryption: code={}, name={}", role.getCode(), role.getName());
+                }
+            } else {
+                log.error("ROLES ARE NULL AFTER DECRYPTION!");
+            }
+        }
 
         setFileStoreUrlsByFileStoreIds(list);
         return list;
