@@ -58,6 +58,9 @@ public class CommonServiceImpl implements CommonService {
 		String moduleName = request.getModuleSearchCriteria().getModuleName();
 		String applicationNumber = request.getModuleSearchCriteria().getApplicationNumber();
 		String tenantId = request.getModuleSearchCriteria().getTenantId();
+
+		log.info("Module: {}, Host: {}, Endpoint: {}", moduleName, moduleHosts.get(moduleName), moduleEndpoints.get(moduleName));
+
 		String host = moduleHosts.get(moduleName);
 		if (host == null) {
 			throw new IllegalArgumentException("Invalid module name or host not configured: " + moduleName);
@@ -78,6 +81,8 @@ public class CommonServiceImpl implements CommonService {
 		StringBuilder urlBuilder = new StringBuilder();
 		urlBuilder.append(host).append(endpoint).append("?").append(uniqueIdParam).append("=").append(applicationNumber)
 				.append("&tenantId=").append(tenantId);
+		log.info("Final URL being called: {}", urlBuilder.toString());
+
 		RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder()
 				.requestInfo(requestInfo.getUserInfo() != null ? requestInfo : getSystemUserDetails()).build();
 
@@ -86,10 +91,12 @@ public class CommonServiceImpl implements CommonService {
 		try {
 			log.info("urlBuilder : " + urlBuilder);
 			result = serviceRequestRepository.fetchResult(urlBuilder, requestInfoWrapper);
+			log.info("API call successful for URL: {}", urlBuilder.toString());
 			JsonNode jsonNode = objectMapper.valueToTree(result);
 			CommonDetailsMapper mapper = mapperFactory.getMapper(moduleName);
 			return mapper.mapJsonToCommonDetails(jsonNode);
 		} catch (Exception e) {
+			log.error("API call failed for URL: {}, Error: {}", urlBuilder.toString(), e.getMessage());
 			throw new CustomException("Error fetching details for module: " + moduleName, "MODULE_API_ERROR");
 		}
 	}
