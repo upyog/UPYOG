@@ -708,6 +708,7 @@ public class PropertyService {
 		propertyCriteria.setLimit(criteria.getLimit());
         if(criteria.getFromDate()!= null) propertyCriteria.setFromDate(criteria.getFromDate());
         if(criteria.getToDate()!= null) propertyCriteria.setToDate(criteria.getToDate());
+        if(criteria.getPlainSearchOffset()!=null)propertyCriteria.setPlainSearchOffset(criteria.getPlainSearchOffset());
 		List<Property> properties = repository.getPropertiesForBulkSearch(propertyCriteria, true);
 		if (properties.isEmpty())
 			return Collections.emptyList();

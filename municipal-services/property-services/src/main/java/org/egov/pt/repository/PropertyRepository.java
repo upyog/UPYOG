@@ -173,6 +173,13 @@ public class PropertyRepository {
 				builder.append(" where tenantid=?");
 				preparedStmtList.add(criteria.getTenantId());
 			}
+
+            if(criteria.getFromDate()!=null&& criteria.getToDate()!=null) {
+                builder.append(" AND");
+                builder.append(" createdtime BETWEEN ? AND ? ");
+                preparedStmtList.add(criteria.getFromDate());
+                preparedStmtList.add(criteria.getToDate());
+            }
 		} else {
 			if (!ObjectUtils.isEmpty(criteria.getTenantId())) {
 				builder.append(" where tenantid=?");
