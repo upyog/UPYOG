@@ -516,7 +516,13 @@ public class PropertyQueryBuilder {
 			builder.append("property.id IN (").append(createQuery(uuids)).append(")");
 			addToPreparedStatement(preparedStmtList, uuids);
 		}
-		return addPaginationWrapper(builder.toString(), preparedStmtList, criteria);
+
+        if (criteria.getPlainSearchOffset() != null && criteria.getPlainSearchOffset()) {
+            return builder.toString();
+        } else {
+            return addPaginationWrapper(builder.toString(), preparedStmtList, criteria);
+        }
+
 	}
 
 	public String getPropertyIdsQuery(Set<String> ownerIds, String tenantId, List<Object> preparedStmtList) {

@@ -2,11 +2,7 @@ package org.egov.pt.service;
 
 import static org.egov.pt.util.PTConstants.ASSESSMENT_BUSINESSSERVICE;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.pt.config.PropertyConfiguration;
@@ -248,6 +244,7 @@ public class AssessmentService {
 		assessmentSearchCriteria.setToDate(criteria.getToDate());
 		assessmentSearchCriteria.setOffset(criteria.getOffset());
 		assessmentSearchCriteria.setLimit(criteria.getLimit());
+        assessmentSearchCriteria.setPlainSearchOffset(criteria.getPlainSearchOffset());
 		
 		if (criteria.getIds() != null || criteria.getPropertyIds() != null || criteria.getAssessmentNumbers() != null) {
 			if (criteria.getIds() != null)
@@ -258,7 +255,7 @@ public class AssessmentService {
 				assessmentSearchCriteria.setAssessmentNumbers(criteria.getAssessmentNumbers());
 
 		} else {
-			List<String> assessmentNumbers = repository.fetchAssessmentNumbers(criteria);
+            List<String> assessmentNumbers = repository.fetchAssessmentNumbers(criteria);
 			if (assessmentNumbers.isEmpty())
 				return Collections.emptyList();
 			assessmentSearchCriteria.setAssessmentNumbers(new HashSet<>(assessmentNumbers));
