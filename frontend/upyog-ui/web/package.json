@@ -9,9 +9,9 @@
     "micro-ui-internals/packages/modules/core",
     "micro-ui-internals/packages/modules/common",
     "micro-ui-internals/packages/modules/hrms",
-    "micro-ui-internals/packages/modules/pt",
     "micro-ui-internals/packages/modules/dss",
-    "micro-ui-internals/packages/modules/ads"
+    "micro-ui-internals/packages/modules/ads",
+    "micro-ui-internals/packages/modules/engagement"
   ],
   "engines": {
     "node": ">=14"
