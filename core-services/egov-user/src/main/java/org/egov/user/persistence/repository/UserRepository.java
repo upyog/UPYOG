@@ -680,6 +680,10 @@ public class UserRepository {
 		List<String> roleCodes = user.getRoles().stream().map(Role::getCode).collect(Collectors.toList());
         roleInputs.put("user_id", user.getId());
         roleInputs.put("user_tenantid", user.getTenantId());
+        List<String> bpaRolesList = Arrays.asList("BPA_ARCHITECT", "BPA_ENGINEER", "BPA_TOWNPLANNER", "BPA_SUPERVISOR");
+        
+        // Remove BPA Professional roles
+        roleCodes.removeAll(bpaRolesList);
 
 		// Add roles filter as well, other wise during concurrent update call there is a
 		// null pointer exception due to delete of roles
