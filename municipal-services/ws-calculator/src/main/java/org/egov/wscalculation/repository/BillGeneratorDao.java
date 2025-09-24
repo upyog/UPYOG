@@ -111,7 +111,7 @@ public class BillGeneratorDao {
 			consumerCodes.forEach(consumercode -> {
 				String id = UUID.randomUUID().toString();
 
-				jdbcTemplate.update(WSCalculatorQueryBuilder.EG_WS_BILL_SCHEDULER_CONNECTION_STATUS_INSERT, new PreparedStatementSetter() {
+				int rows = jdbcTemplate.update(WSCalculatorQueryBuilder.EG_WS_BILL_SCHEDULER_CONNECTION_STATUS_INSERT, new PreparedStatementSetter() {
 
 					@Override
 					public void setValues(PreparedStatement ps) throws SQLException {
@@ -129,6 +129,8 @@ public class BillGeneratorDao {
 
 					}
 				});
+				log.info("Insert result: consumerCode={} rowsInserted={}", consumercode, rows);
+
 			});
 		}catch (Exception e) {
 			log.error("Exception occurred in the insertBillSchedulerConnectionStatus: {}", e);
