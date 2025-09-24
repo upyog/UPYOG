@@ -23,7 +23,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class AddressRepository {
 
-    public static final String GET_ADDRESS_BY_USERID = "select * from eg_user_address where userid=:userId and tenantid =:tenantId";
+    public static final String GET_ADDRESS_BY_USERID = "select * from eg_user_address where userid=:userId and tenantid =:tenantId and status=:status";
     public static final String INSERT_ADDRESS_BYUSERID = "insert into eg_user_address (id,type,address,city,pincode,userid,tenantid,createddate,lastmodifieddate,createdby,lastmodifiedby) "
             + "values(:id,:type,:address,:city,:pincode,:userid,:tenantid,:createddate,:lastmodifieddate,:createdby,:lastmodifiedby)";
     public static final String SELECT_NEXT_SEQUENCE = "select nextval('seq_eg_user_address')";
@@ -90,6 +90,7 @@ public class AddressRepository {
         final Map<String, Object> Map = new HashMap<String, Object>();
         Map.put("userId", userId);
         Map.put("tenantId", tenantId);
+        Map.put("status", UserConstants.ADDRESS_ACTIVE_STATUS);
 
         List<Address> entityAddresses = namedParameterJdbcTemplate.query(GET_ADDRESS_BY_USERID, Map,
                 new AddressRowMapper());
@@ -116,6 +117,7 @@ public class AddressRepository {
         final Map<String, Object> Map = new HashMap<String, Object>();
         Map.put("userId", userId);
         Map.put("tenantId", tenantId);
+        Map.put("status", UserConstants.ADDRESS_ACTIVE_STATUS);
 
         List<Address> addressList = namedParameterJdbcTemplate.query(GET_ADDRESS_BY_USERID, Map,
                 new AddressRowMapper());
