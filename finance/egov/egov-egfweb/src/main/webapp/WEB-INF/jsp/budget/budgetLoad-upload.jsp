@@ -96,7 +96,26 @@
             document.budgetLoad.submit();
             return true;
         }
-		
+
+        function populateMunicipality() {
+            try {
+                const tenantId = localStorage.getItem("tenant-id");
+                const empTenantId = localStorage.getItem("employee-tenant-id");
+                const municipalityName = empTenantId || tenantId || "";
+
+                if (municipalityName) {
+                    const municipalityField = document.getElementById("municipalityName");
+                    if (municipalityField) {
+                        municipalityField.value = municipalityName;
+                        municipalityField.readOnly = true;   
+                        municipalityField.style.background = "#edeaea"; 
+                        municipalityField.style.cursor = "not-allowed";
+                    }
+                }
+            } catch (err) {
+                console.error("Error populating Municipality Name:", err);
+            }
+        }
 		
         // Function to handle manual budget submission
 		function submitManualData(event) {
@@ -313,6 +332,7 @@
                     return;
                 }
             });
+            populateMunicipality();
         });
 
 
