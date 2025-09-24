@@ -37,6 +37,13 @@ public class PasswordController {
         userService.updatePasswordForLoggedInUser(request.toDomain());
         return new UpdatePasswordResponse(ResponseInfo.builder().status(String.valueOf(HttpStatus.OK.value())).build());
     }
+    
+    @PostMapping("/nologin/_update/checkToken")
+    public UpdatePasswordResponse updatePasswordForNonLoggedInUserCheckToken(@RequestBody @Valid NonLoggedInUserUpdatePasswordRequest request) {
+        userService.updatePasswordForNonLoggedInUser(request.toDomain(), request.getRequestInfo(),true);
+
+        return new UpdatePasswordResponse(ResponseInfo.builder().status(String.valueOf(HttpStatus.OK.value())).build());
+    }
 
     /**
      * end-point to update the password for non logged in user
@@ -46,7 +53,7 @@ public class PasswordController {
      */
     @PostMapping("/nologin/_update")
     public UpdatePasswordResponse updatePasswordForNonLoggedInUser(@RequestBody @Valid NonLoggedInUserUpdatePasswordRequest request) {
-        userService.updatePasswordForNonLoggedInUser(request.toDomain(), request.getRequestInfo());
+        userService.updatePasswordForNonLoggedInUser(request.toDomain(), request.getRequestInfo(),false);
 
         return new UpdatePasswordResponse(ResponseInfo.builder().status(String.valueOf(HttpStatus.OK.value())).build());
     }

@@ -312,7 +312,7 @@ public class UserService {
             map.add("scope", "read");
             map.add("tenantId", user.getTenantId());
             map.add("isInternal", "true");
-            map.add("userType", UserType.CITIZEN.name());
+            map.add("userType", user.getType().name());
             log.info("Request " + user.getUsername(), user.getUsername());
             HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<MultiValueMap<String, String>>(map,
                     headers);
@@ -488,7 +488,7 @@ public class UserService {
      *
      * @param request
      */
-    public void updatePasswordForNonLoggedInUser(NonLoggedInUserUpdatePasswordRequest request, RequestInfo requestInfo) {
+    public void updatePasswordForNonLoggedInUser(NonLoggedInUserUpdatePasswordRequest request, RequestInfo requestInfo,Boolean checkToken) {
         request.validate();
         // validateOtp(request.getOtpValidationRequest());
         User user = getUniqueUser(request.getUserName(), request.getTenantId(), request.getType(), false);
@@ -496,6 +496,14 @@ public class UserService {
             log.info("CITIZEN forgot password flow is disabled");
             throw new InvalidUpdatePasswordRequestException();
         }
+        if(checkToken) {
+            if(!user.getUuid().equals(requestInfo.getUserInfo().getUuid())) {
+           	 	log.info("INVALID TOKEN");
+                throw new CustomException("INVALID_TOKEN", "Token Missmatch");
+            }
+        }
+
+        
 //        if (user.getType().toString().equals(UserType.EMPLOYEE.toString())) {
 //            log.info("EMPLOYEE forgot password flow is disabled");
 //            throw new InvalidUpdatePasswordRequestException();

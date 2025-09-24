@@ -447,7 +447,7 @@ public class UserServiceTest {
         when(userRepository.findAll(any(UserSearchCriteria.class))).thenReturn(Collections.singletonList(domainUser));
         when(encryptionDecryptionUtil.encryptObject(domainUser, "User", User.class)).thenReturn(domainUser);
         when(encryptionDecryptionUtil.decryptObject(domainUser, "User", User.class, getValidRequestInfo())).thenReturn(domainUser);
-        userService.updatePasswordForNonLoggedInUser(request, getValidRequestInfo());
+        userService.updatePasswordForNonLoggedInUser(request, getValidRequestInfo(),false);
 
     }
 
@@ -457,7 +457,7 @@ public class UserServiceTest {
         when(otpRepository.isOtpValidationComplete(any())).thenReturn(true);
         when(userRepository.findAll(any(UserSearchCriteria.class))).thenReturn(Collections.emptyList());
 
-        userService.updatePasswordForNonLoggedInUser(request, getValidRequestInfo());
+        userService.updatePasswordForNonLoggedInUser(request, getValidRequestInfo(),false);
     }
 
     @Test
@@ -495,7 +495,7 @@ public class UserServiceTest {
         final User domainUser = mock(User.class);
         when(userRepository.findAll(any(UserSearchCriteria.class))).thenReturn(Collections.singletonList(domainUser));
 
-        userService.updatePasswordForNonLoggedInUser(request, any());
+        userService.updatePasswordForNonLoggedInUser(request, any(),false);
 
         verify(domainUser).updatePassword("newPassword");
     }
@@ -517,7 +517,7 @@ public class UserServiceTest {
         final User domainUser = mock(User.class);
         when(domainUser.getType()).thenReturn(UserType.CITIZEN);
         when(userRepository.findAll(any(UserSearchCriteria.class))).thenReturn(Collections.singletonList(domainUser));
-        userService.updatePasswordForNonLoggedInUser(request, getValidRequestInfo());
+        userService.updatePasswordForNonLoggedInUser(request, getValidRequestInfo(),false);
     }
 
     @SuppressWarnings("unchecked")
@@ -536,7 +536,7 @@ public class UserServiceTest {
         final User domainUser = mock(User.class);
         when(domainUser.getType()).thenReturn(UserType.EMPLOYEE);
         when(userRepository.findAll(any(UserSearchCriteria.class))).thenReturn(Collections.singletonList(domainUser));
-        userService.updatePasswordForNonLoggedInUser(request, getValidRequestInfo());
+        userService.updatePasswordForNonLoggedInUser(request, getValidRequestInfo(),false);
     }
 
     @Ignore
@@ -578,7 +578,7 @@ public class UserServiceTest {
         when(userRepository.findAll(any(UserSearchCriteria.class))).thenReturn(Collections.singletonList(domainUser));
         when(encryptionDecryptionUtil.decryptObject(domainUser, "User", User.class, getValidRequestInfo())).thenReturn(domainUser);
         when(encryptionDecryptionUtil.encryptObject(domainUser, "User", User.class)).thenReturn(domainUser);
-        userService.updatePasswordForNonLoggedInUser(request, getValidRequestInfo());
+        userService.updatePasswordForNonLoggedInUser(request, getValidRequestInfo(),false);
 
         verify(userRepository).update(domainUser, domainUser,domainUser.getId()!=null?domainUser.getId():0, domainUser.getUuid()!=null?domainUser.getUuid():"NA" );
     }
