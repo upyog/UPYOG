@@ -135,7 +135,7 @@ public class TokenService {
             .type((String) userRequest.get("type"))
             .tenantId((String) userRequest.get("tenantId"))
             .active((Boolean) userRequest.get("active"))
-            .roles(new HashSet<>()) // Initialize with empty set instead of null to prevent NPE
+            .roles(extractRolesFromUserRequest(userRequest)) // Extract roles from token metadata
             .build();
         
         // Create SecureUser from the User object
@@ -223,5 +223,33 @@ public class TokenService {
                     .map(role -> new org.egov.user.web.contract.auth.Role(role))
                     .collect(Collectors.toSet()) : new HashSet<>()) // Ensure empty set instead of null
             .build();
+    }
+
+    /**
+     * Extract roles from UserRequest metadata for opaque tokens
+     */
+    @SuppressWarnings("unchecked")
+    private HashSet<org.egov.user.web.contract.auth.Role> extractRolesFromUserRequest(Map<String, Object> userRequest) {
+        Object rolesObj = userRequest.get("roles");
+        if (rolesObj == null) {
+            return new HashSet<>();
+        }
+
+        try {
+            if (rolesObj instanceof List) {
+                List<Map<String, Object>> rolesList = (List<Map<String, Object>>) rolesObj;
+                return rolesList.stream()
+                    .map(roleMap -> new org.egov.user.web.contract.auth.Role(
+                        (String) roleMap.get("code"),
+                        (String) roleMap.get("name"),
+                        (String) roleMap.get("tenantId")
+                    ))
+                    .collect(Collectors.toCollection(HashSet::new));
+            }
+        } catch (Exception e) {
+            log.warn("Failed to extract roles from token metadata: {}", e.getMessage());
+        }
+
+        return new HashSet<>();
     }
 }
