@@ -2,36 +2,11 @@ FROM upyogio/alpine-node-builder-14:yarn AS build
 #FROM ghcr.io/egovernments/alpine-node-builder-14:yarn AS build
 RUN apk update && apk upgrade
 RUN apk add --no-cache git>2.30.0
-RUN yarn add @upyog/digit-ui-libraries@3.10.0
-RUN yarn add @upyog/digit-ui-module-fsm@3.10.0
-RUN yarn add @upyog/digit-ui-module-pt@3.10.0
-RUN yarn add @upyog/digit-ui-module-tl@3.10.0
-RUN yarn add @upyog/digit-ui-module-obps@3.10.0
-RUN yarn add @upyog/digit-ui-module-ws@3.10.0
-RUN yarn add @upyog/digit-ui-module-dss@3.10.0
-RUN yarn add @upyog/digit-ui-module-mcollect@3.10.0
-RUN yarn add @upyog/digit-ui-module-pgr@3.10.0
-RUN yarn add @upyog/digit-ui-module-noc@3.10.0
-RUN yarn add @upyog/digit-ui-module-engagement@3.10.0
-RUN yarn add @upyog/digit-ui-module-hrms@3.10.0
-RUN yarn add @upyog/digit-ui-module-core@3.10.0
-RUN yarn add @upyog/digit-ui-module-common@3.10.0
-RUN yarn add @upyog/digit-ui-module-commonpt@3.10.0
-RUN yarn add @upyog/digit-ui-module-bills@3.0.2
-RUN yarn add @upyog/upyog-ui-module-ptr@3.10.0
-RUN yarn add @upyog/upyog-ui-module-ads@3.10.0
-RUN yarn add @upyog/upyog-ui-module-chb@3.10.0
-RUN yarn add @upyog/upyog-ui-module-sv@3.10.0
-RUN yarn add @upyog/upyog-ui-module-asset@3.10.0
-RUN yarn add @upyog/upyog-ui-module-ew@3.10.0
-RUN yarn add @upyog/digit-ui-react-components@3.10.0
-RUN yarn add @upyog/upyog-ui-module-vendor@3.10.0
-RUN yarn add @upyog/upyog-ui-module-wt@3.10.0
-RUN yarn add @upyog/upyog-ui-module-pgrai@3.10.0
+
 
 ARG WORK_DIR
 WORKDIR /app
-ENV NODE_OPTIONS "--max-old-space-size=16384"
+ENV NODE_OPTIONS "--max-old-space-size=20480"
 ENV GENERATE_SOURCEMAP "false"
 
 COPY ${WORK_DIR} .
@@ -40,7 +15,7 @@ RUN ls -lah
 #RUN node web/envs.js
 RUN cd web/ \
     && node envs.js \
-    && node -e 'console.log(v8.getHeapStatistics().heap_size_limit/(16384*16384))' \
+    && node -e 'console.log(v8.getHeapStatistics().heap_size_limit/(20480*20480))' \
     &&  ./install-deps.sh \
     && yarn install \
     && yarn build 
