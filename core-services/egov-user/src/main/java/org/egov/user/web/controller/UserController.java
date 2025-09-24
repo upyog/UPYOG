@@ -262,7 +262,7 @@ public class UserController {
 	@GetMapping("/login/_uuid")
 	public ResponseEntity<?>  getTokenAfterOtp(@RequestParam(value = "uuid") String uuid) {
 		if (StringUtils.isEmpty(uuid)) {
-			throw new RuntimeException("LoginFaild login failed.");
+			throw new RuntimeException("LoginFailed login failed.");
 		}
 		
 	    List<String> users = new ArrayList<>();
@@ -270,7 +270,7 @@ public class UserController {
 	    UserSearchCriteria searchCriteria = new UserSearchCriteria();
 	    searchCriteria.setUuid(users);
 	    searchCriteria.setTenantId("hp");
-	    searchCriteria.setType(UserType.CITIZEN);
+//	    searchCriteria.setType(UserType.CITIZEN);
         List<User> userModels = userService.searchUsers(searchCriteria, true, new RequestInfo());
 		Object loginResponse = userService.getLoginAccess(userModels.get(0), userModels.get(0).getPassword());
 		return new ResponseEntity<Object>(loginResponse, HttpStatus.OK);

@@ -95,7 +95,7 @@ public class PasswordControllerTest {
                 .userName("userName")
                 .build();
 
-        verify(userService).updatePasswordForNonLoggedInUser(eq(expectedRequest), any(RequestInfo.class));
+        verify(userService).updatePasswordForNonLoggedInUser(eq(expectedRequest), any(RequestInfo.class),false);
     }
 
 }
