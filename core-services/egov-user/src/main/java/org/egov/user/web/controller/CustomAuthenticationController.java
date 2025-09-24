@@ -25,6 +25,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
@@ -219,7 +220,7 @@ public class CustomAuthenticationController {
      */
     private Set<org.egov.user.web.contract.auth.Role> convertRoles(Set<org.egov.user.domain.model.Role> domainRoles) {
         if (domainRoles == null) {
-            return null;
+            return new HashSet<>();
         }
 
         return domainRoles.stream()

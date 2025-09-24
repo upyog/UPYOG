@@ -209,7 +209,7 @@ public class UserService {
                                 .code(role.getCode())
                                 .name(role.getName())
                                 .build())
-                            .collect(Collectors.toList()) : null)
+                            .collect(Collectors.toList()) : new ArrayList<>())
                     .build())
                 .build();
 
@@ -217,10 +217,29 @@ public class UserService {
             // Wrap in list, decrypt, then extract the single user (same pattern as searchUsers)
             List<User> userList = Collections.singletonList(encryptedUser);
 
+            // ROLE PRESERVATION FIX: Store roles before decryption (same as searchUsers)
+            Map<String, Set<Role>> userRolesMap = new HashMap<>();
+            if (encryptedUser.getUuid() != null && encryptedUser.getRoles() != null) {
+                userRolesMap.put(encryptedUser.getUuid(), new HashSet<>(encryptedUser.getRoles()));
+                log.info("ROLE PRESERVATION - Stored {} roles for user {} before decryption",
+                         encryptedUser.getRoles().size(), encryptedUser.getUuid());
+            }
+
             try {
                 log.info("Attempting decryption with null key using List<User> (same as searchUsers)");
                 List<User> decryptedUserList = encryptionDecryptionUtil.decryptObject(userList, null, User.class, requestInfo);
                 User decryptedUser = decryptedUserList.get(0);
+
+                // ROLE PRESERVATION FIX: Restore roles after decryption (same as searchUsers)
+                if (decryptedUser.getUuid() != null && userRolesMap.containsKey(decryptedUser.getUuid())) {
+                    Set<Role> preservedRoles = userRolesMap.get(decryptedUser.getUuid());
+                    decryptedUser.setRoles(preservedRoles);
+                    log.info("ROLE RESTORATION - Restored {} roles for user {} after decryption",
+                             preservedRoles.size(), decryptedUser.getUuid());
+                } else {
+                    log.warn("ROLE LOSS - Could not restore roles for user {}", decryptedUser.getUuid());
+                }
+
                 log.info("Successfully decrypted user with null key: {}", decryptedUser.getUsername());
                 return decryptedUser;
             } catch (Exception e1) {
@@ -228,6 +247,17 @@ public class UserService {
                 try {
                     List<User> decryptedUserList = encryptionDecryptionUtil.decryptObject(userList, "User", User.class, requestInfo);
                     User decryptedUser = decryptedUserList.get(0);
+
+                    // ROLE PRESERVATION FIX: Restore roles after decryption (fallback case)
+                    if (decryptedUser.getUuid() != null && userRolesMap.containsKey(decryptedUser.getUuid())) {
+                        Set<Role> preservedRoles = userRolesMap.get(decryptedUser.getUuid());
+                        decryptedUser.setRoles(preservedRoles);
+                        log.info("ROLE RESTORATION FALLBACK - Restored {} roles for user {} after decryption",
+                                 preservedRoles.size(), decryptedUser.getUuid());
+                    } else {
+                        log.warn("ROLE LOSS FALLBACK - Could not restore roles for user {}", decryptedUser.getUuid());
+                    }
+
                     log.info("Successfully decrypted user with 'User' key: {}", decryptedUser.getUsername());
                     return decryptedUser;
                 } catch (Exception e2) {
