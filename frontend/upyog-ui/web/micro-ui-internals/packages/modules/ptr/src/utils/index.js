@@ -57,6 +57,7 @@ export const setAddressDetails = (data) => {
     buildingName: address?.houseName,
     addressLine1: address?.addressline1,
     addressLine2: address?.addressline2,
+    propertyId: address?.propertyId || null,
   };
 
   data.address = propAddress;
@@ -118,7 +119,7 @@ export const PetDataConvert = (data) => {
       address: data.address,
       petDetails: data.pets,
       ...data?.documents,
-      propertyId: data?.propertyDetails?.propertyId,
+      propertyId: data?.address?.propertyId,
 
       workflow: {
         businessService: "ptr",
