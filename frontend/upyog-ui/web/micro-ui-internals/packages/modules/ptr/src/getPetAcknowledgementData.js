@@ -71,13 +71,14 @@
       name: `${t(tenantInfo?.i18nKey)} ${ulbCamel(t(`ULBGRADE_${tenantInfo?.city?.ulbGrade.toUpperCase().replace(" ", "_").replace(".", "_")}`))}`,
       email: tenantInfo?.emailId,
       phoneNumber: tenantInfo?.contactNumber,
+      applicationNumber: application?.applicationNumber,
       heading: t("PTR_ACKNOWLEDGEMENT"),
       details: [
         {
           // Application details section
           title: t("CS_TITLE_APPLICATION_DETAILS"),
           values: [
-            { title: t("PTR_APPLICATION_NUMBER"), value: application?.applicationNumber },
+            // { title: t("PTR_APPLICATION_NUMBER"), value: application?.applicationNumber },
             { title: t("PTR_VALIDITY_DATE"), value: getDate(application?.validityDate)},
             
             {
