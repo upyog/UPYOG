@@ -32,7 +32,6 @@ import { useForm, Controller } from "react-hook-form";
 import Timeline from "../components/PTRTimeline";
 
 const PTRSelectAddress = ({ t, config, onSelect, formData, renewApplication }) => {
-  console.log("dfwhedhesgdfwefwef",formData);
   const convertToObject = (String) => String ? { i18nKey: String, code: String, value: String } : null;
   const allCities = Digit.Hooks.ptr.useTenants();
   const {pathname} = useLocation();
