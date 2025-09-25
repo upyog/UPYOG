@@ -49,7 +49,6 @@
 package org.egov.infra.config.persistence.migration;
 
 import org.flywaydb.core.Flyway;
-import org.flywaydb.core.api.configuration.FluentConfiguration;
 import org.springframework.beans.factory.annotation.Autowire;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -122,24 +121,19 @@ public class DBMigrationConfiguration {
             }
         }
 
-        return null;
+        return new Flyway();
     }
 
     private void migrateDatabase(DataSource dataSource, String schema, String... locations) {
-    	// Use Flyway.configure() to create a Flyway instanceAdd commentMore actions
-        FluentConfiguration flywayConfig = Flyway.configure()
-            .dataSource(dataSource)
-            .locations(locations)
-            .schemas(schema)
-            .baselineOnMigrate(true)
-            .validateOnMigrate(validateOnMigrate)
-            .outOfOrder(true);
-
-        Flyway flyway = flywayConfig.load();
-
-        if (repairMigration) {
+        Flyway flyway = new Flyway();
+        flyway.setBaselineOnMigrate(true);
+        flyway.setValidateOnMigrate(validateOnMigrate);
+        flyway.setOutOfOrder(true);
+        flyway.setLocations(locations);
+        flyway.setDataSource(dataSource);
+        flyway.setSchemas(schema);
+        if (repairMigration)
             flyway.repair();
-        }
         flyway.migrate();
     }
 
