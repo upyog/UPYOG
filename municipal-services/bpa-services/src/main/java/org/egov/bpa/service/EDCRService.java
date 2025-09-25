@@ -162,7 +162,12 @@ public class EDCRService {
 		}
 		this.validateOCEdcr(OccupancyTypes, plotAreas, buildingHeights, applicationType, masterData, riskType);
 		
-		if(buildingHeights != null && !buildingHeights.isEmpty() && buildingHeights.get(0) <  BPAConstants.MAAX_BUILDING_HEIGHT ) {
+		// Setting the low risk business service for self certification cases
+		boolean isSelfCertificationRequired = additionalDetails.get("isSelfCertificationRequired") != null
+				? Boolean.parseBoolean(additionalDetails.get("isSelfCertificationRequired"))
+				: false;
+		
+		if(buildingHeights != null && !buildingHeights.isEmpty() && buildingHeights.get(0) <  BPAConstants.MAAX_BUILDING_HEIGHT && isSelfCertificationRequired) {
 			request.getBPA().setBusinessService(BPAConstants.BPA_LOW_MODULE_CODE);
 		}else {
 			request.getBPA().setBusinessService(null);
