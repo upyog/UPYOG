@@ -443,7 +443,9 @@ public class EnrichmentService {
 
 			Map<String, List<String>> codes = propertyutil.getAttributeValues(config.getStateLevelTenantId(), "tenant", masterNames,
 					"[?(@.city.districtTenantCode== '"+request.getProperty().getTenantId()+"')].city.code", "$.MdmsRes.tenant", request.getRequestInfo());
-
+			
+			
+			
 			List<String> masterNamesOwn = new ArrayList<>(
 					Arrays.asList("OwnerShipCategory"));
 
@@ -452,6 +454,8 @@ public class EnrichmentService {
 			String Districtcode=districtCodemap(tenantId,property);
 			String cityCode = codes.get("tenants").get(0);
 			//String ownerShipCode = codesOwn.get("OwnerShipCategory").get(0);
+			//removing mn-ac from acknowledgement number adding city code in place of it
+			ackNo=ackNo.replace("MN-AC", cityCode);
 			sb.append(Districtcode);
 			sb.append(cityCode);
 			//sb.append(request.getProperty().getAddress().getLocality().getCode());
@@ -471,7 +475,8 @@ public class EnrichmentService {
 				ownership="1";
 			sb.append(wardcode).append(lekaicode).append(ownership);
 			String[] serialnumber=pId.split("-");
-			String propid="MN"+serialnumber[serialnumber.length-1];
+			//Changed FOR Client Requirement initial MN ->00
+			String propid="00"+serialnumber[serialnumber.length-1];
 			sb.append(propid);
 			//String[] propId = pId.split("PT");
 
