@@ -56,9 +56,80 @@ public class EncryptionDecryptionUtil {
         }
     }
 
+    private boolean isEncryptedFormat(String value) {
+        if (value == null || value.trim().isEmpty()) {
+            return false;
+        }
+        // Check if value follows the encrypted format: keyId|ciphertext
+        String[] parts = value.split("\\|");
+        if (parts.length != 2) {
+            return false;
+        }
+        try {
+            Integer.parseInt(parts[0].trim());
+            return !parts[1].trim().isEmpty();
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
+
+    private boolean isObjectEncrypted(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+
+        if (obj instanceof List) {
+            List<?> list = (List<?>) obj;
+            if (list.isEmpty()) {
+                return false;
+            }
+            // Check first user object for encryption indicators
+            Object firstUser = list.get(0);
+            return isUserObjectEncrypted(firstUser);
+        } else {
+            return isUserObjectEncrypted(obj);
+        }
+    }
+
+    private boolean isUserObjectEncrypted(Object userObj) {
+        if (userObj == null) {
+            return false;
+        }
+
+        try {
+            // Convert to JSON and check common encrypted fields
+            com.fasterxml.jackson.databind.JsonNode userNode = objectMapper.valueToTree(userObj);
+
+            // Check commonly encrypted fields like mobileNumber, emailId, name, aadhaarNumber
+            String[] fieldsToCheck = {"mobileNumber", "emailId", "name", "aadhaarNumber", "pan"};
+
+            for (String field : fieldsToCheck) {
+                if (userNode.has(field) && userNode.get(field) != null && !userNode.get(field).isNull()) {
+                    String value = userNode.get(field).asText();
+                    if (!value.isEmpty() && isEncryptedFormat(value)) {
+                        log.debug("Found encrypted field '{}' with value starting with: {}", field,
+                                value.length() > 10 ? value.substring(0, 10) + "..." : value);
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        } catch (Exception e) {
+            log.warn("Error checking if user object is encrypted", e);
+            return false;
+        }
+    }
+
     public <E, P> P decryptObject(Object objectToDecrypt, String key, Class<E> classType, RequestInfo requestInfo) {
         if (objectToDecrypt == null) {
             return null;
+        }
+
+        // First check if the object actually contains encrypted data
+        if (!isObjectEncrypted(objectToDecrypt)) {
+            log.info("Object does not contain encrypted data, returning as-is");
+            return (P) objectToDecrypt;
         }
 
         try {
