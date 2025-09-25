@@ -61,7 +61,7 @@ public class DemandService {
 								: "N/A");
 		node.put("ownerName",
 				StringUtils.isNotEmpty(property.getOwners().get(0).getPropertyOwnerName())
-						? property.getOwners().get(0).getName()
+						? property.getOwners().get(0).getPropertyOwnerName()
 						: "N/A");
 		node.put("contactNumber",
 				StringUtils.isNotEmpty(property.getOwners().get(0).getMobileNumber())

@@ -106,6 +106,7 @@ public class PDFRequestGenerator {
 		List<String> f4Values = new ArrayList<>();
 		List<String> f5Values = new ArrayList<>();
 		List<String> plinthAreas = new ArrayList<>();
+		List<String> floorNos = new ArrayList<>();
 		BigDecimal plinthAreaTotal = BigDecimal.ZERO;
 
 		JsonNode additionalDetailsNode = ptTaxCalculatorTracker.getAdditionalDetails(); // This is a JsonNode (array)
@@ -124,6 +125,7 @@ public class PDFRequestGenerator {
 				f4Values.add(escapeHtml(unitAdditionalDetails.get("propType").asText()));
 				f5Values.add(escapeHtml(unitAdditionalDetails.get("useOfBuilding").asText()));
 				plinthAreas.add(escapeHtml(unitAdditionalDetails.get("propArea").asText()));
+				floorNos.add(escapeHtml(unit.getFloorNo().toString()));
 			}
 		}
 			
@@ -138,6 +140,7 @@ public class PDFRequestGenerator {
 		ptDetailsTableRow.put("f5", f5Values);
 		ptDetailsTableRow.put("f5", f5Values);
 		ptDetailsTableRow.put("plinthArea", plinthAreas);
+		ptDetailsTableRow.put("floorNo", floorNos);
 		plinthAreaTotal = plinthAreas.stream().map(BigDecimal::new).reduce(BigDecimal.ZERO, BigDecimal::add);
 
 		Map<String, Object> tableRow = new HashMap<>();
@@ -170,7 +173,7 @@ public class PDFRequestGenerator {
 		BigDecimal rebate = ptTaxCalculatorTracker.getRebateAmount();
 		ptbr.put("rebate", String.valueOf(rebate));
 
-		ptbr.put("totalTax", String.valueOf(propertyTax.add(arrear).subtract(rebate).add(penalty)));
+		ptbr.put("totalTax", String.valueOf(bill.getTotalAmount()));
 
 		BigDecimal amountPaid = BigDecimal.ZERO;
 		String paymentStatus = "";
