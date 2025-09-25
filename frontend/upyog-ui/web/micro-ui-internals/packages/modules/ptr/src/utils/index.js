@@ -57,6 +57,7 @@ export const setAddressDetails = (data) => {
     buildingName: address?.houseName,
     addressLine1: address?.addressline1,
     addressLine2: address?.addressline2,
+    propertyId: address?.propertyId || null,
   };
 
   data.address = propAddress;
