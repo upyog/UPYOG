@@ -4,7 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
 import org.egov.tracer.model.ServiceCallException;
-import org.egov.user.config.UserServiceConstants;
 import org.egov.user.domain.exception.DuplicateUserNameException;
 import org.egov.user.domain.exception.UserNotFoundException;
 import org.egov.user.domain.model.SecureUser;
@@ -21,12 +20,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.common.exceptions.OAuth2Exception;
-import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.stereotype.Component;
 
-import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -48,7 +44,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 
     private UserService userService;
 
-    private final TokenStore tokenStore;
+ 
     
     @Autowired
     private EncryptionDecryptionUtil encryptionDecryptionUtil;
@@ -69,9 +65,8 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
     private HttpServletRequest request;
 
 
-    public CustomAuthenticationProvider(UserService userService, TokenStore tokenStore) {
+    public CustomAuthenticationProvider(UserService userService) {
         this.userService = userService;
-        this.tokenStore = tokenStore;
     }
 
     @Override
@@ -90,19 +85,6 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
         if (isEmpty(userType) || isNull(UserType.fromValue(userType))) {
             throw new OAuth2Exception("User Type is mandatory and has to be a valid type");
         }
-
-        
-//        Collection<OAuth2AccessToken> tokens = tokenStore.findTokensByClientIdAndUserName(UserServiceConstants.USER_CLIENT_ID, userName);
-//        log.info("tokens: " + tokens);
-//
-//        if (tokens != null) {
-//            for (OAuth2AccessToken token : tokens) {
-//                tokenStore.removeAccessToken(token);
-//                log.info("Removed token: " + token.getValue());
-//            }
-//        }
-
-       
         
         User user;
         RequestInfo requestInfo;
