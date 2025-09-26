@@ -217,29 +217,10 @@ public class UserService {
             // Wrap in list, decrypt, then extract the single user (same pattern as searchUsers)
             List<User> userList = Collections.singletonList(encryptedUser);
 
-            // ROLE PRESERVATION FIX: Store roles before decryption (same as searchUsers)
-            Map<String, Set<Role>> userRolesMap = new HashMap<>();
-            if (encryptedUser.getUuid() != null && encryptedUser.getRoles() != null) {
-                userRolesMap.put(encryptedUser.getUuid(), new HashSet<>(encryptedUser.getRoles()));
-                log.info("ROLE PRESERVATION - Stored {} roles for user {} before decryption",
-                         encryptedUser.getRoles().size(), encryptedUser.getUuid());
-            }
-
             try {
                 log.info("Attempting decryption with null key using List<User> (same as searchUsers)");
                 List<User> decryptedUserList = encryptionDecryptionUtil.decryptObject(userList, null, User.class, requestInfo);
                 User decryptedUser = decryptedUserList.get(0);
-
-                // ROLE PRESERVATION FIX: Restore roles after decryption (same as searchUsers)
-                if (decryptedUser.getUuid() != null && userRolesMap.containsKey(decryptedUser.getUuid())) {
-                    Set<Role> preservedRoles = userRolesMap.get(decryptedUser.getUuid());
-                    decryptedUser.setRoles(preservedRoles);
-                    log.info("ROLE RESTORATION - Restored {} roles for user {} after decryption",
-                             preservedRoles.size(), decryptedUser.getUuid());
-                } else {
-                    log.warn("ROLE LOSS - Could not restore roles for user {}", decryptedUser.getUuid());
-                }
-
                 log.info("Successfully decrypted user with null key: {}", decryptedUser.getUsername());
                 return decryptedUser;
             } catch (Exception e1) {
@@ -247,16 +228,6 @@ public class UserService {
                 try {
                     List<User> decryptedUserList = encryptionDecryptionUtil.decryptObject(userList, "User", User.class, requestInfo);
                     User decryptedUser = decryptedUserList.get(0);
-
-                    // ROLE PRESERVATION FIX: Restore roles after decryption (fallback case)
-                    if (decryptedUser.getUuid() != null && userRolesMap.containsKey(decryptedUser.getUuid())) {
-                        Set<Role> preservedRoles = userRolesMap.get(decryptedUser.getUuid());
-                        decryptedUser.setRoles(preservedRoles);
-                        log.info("ROLE RESTORATION FALLBACK - Restored {} roles for user {} after decryption",
-                                 preservedRoles.size(), decryptedUser.getUuid());
-                    } else {
-                        log.warn("ROLE LOSS FALLBACK - Could not restore roles for user {}", decryptedUser.getUuid());
-                    }
 
                     log.info("Successfully decrypted user with 'User' key: {}", decryptedUser.getUsername());
                     return decryptedUser;
@@ -339,52 +310,8 @@ public class UserService {
 
         /* decrypt here / final reponse decrypted*/
 
-        // DEBUG: Log roles before decryption
-        if (!list.isEmpty()) {
-            User firstUser = list.get(0);
-            log.info("BEFORE DECRYPTION - User {} (UUID: {}) has {} roles",
-                     firstUser.getId(), firstUser.getUuid(),
-                     firstUser.getRoles() != null ? firstUser.getRoles().size() : 0);
-            if (firstUser.getRoles() != null) {
-                for (Role role : firstUser.getRoles()) {
-                    log.info("  - Role before decryption: code={}, name={}", role.getCode(), role.getName());
-                }
-            }
-        }
-
-        // ROLE PRESERVATION FIX: Store roles before decryption
-        Map<String, Set<Role>> userRolesMap = new HashMap<>();
-        for (User user : list) {
-            if (user.getUuid() != null && user.getRoles() != null) {
-                userRolesMap.put(user.getUuid(), new HashSet<>(user.getRoles()));
-            }
-        }
-
+        // Decrypt user list - role preservation is now handled in EncryptionDecryptionUtil
         list = encryptionDecryptionUtil.decryptObject(list, null, User.class, requestInfo);
-
-        // ROLE PRESERVATION FIX: Restore roles after decryption
-        for (User user : list) {
-            if (user.getUuid() != null && userRolesMap.containsKey(user.getUuid())) {
-                Set<Role> preservedRoles = userRolesMap.get(user.getUuid());
-                user.setRoles(preservedRoles);
-                log.info("ROLE FIX - Restored {} roles for user {}", preservedRoles.size(), user.getUuid());
-            }
-        }
-
-        // DEBUG: Log roles after decryption
-        if (!list.isEmpty()) {
-            User firstUser = list.get(0);
-            log.info("AFTER DECRYPTION - User {} (UUID: {}) has {} roles",
-                     firstUser.getId(), firstUser.getUuid(),
-                     firstUser.getRoles() != null ? firstUser.getRoles().size() : 0);
-            if (firstUser.getRoles() != null) {
-                for (Role role : firstUser.getRoles()) {
-                    log.info("  - Role after decryption: code={}, name={}", role.getCode(), role.getName());
-                }
-            } else {
-                log.error("ROLES ARE NULL AFTER DECRYPTION!");
-            }
-        }
 
         setFileStoreUrlsByFileStoreIds(list);
         return list;
