@@ -11,11 +11,11 @@ import {
   Calender,
   DocumentIcon,
   HelpIcon,
-  WhatsNewCard,
+
   OBPSIcon,
   WSICon,
 } from "@demodigit/digit-ui-react-components";
-
+import WhatsNewCard from "../../../../../../react-components/src/atoms/WhatsNewCard"
 import ChatBot from "./ChatBot";
 // import ChatBot from "frontend\micro-ui\web\micro-ui-internals\packages\react-components\src\atoms\ChatBot.js"
 // import ChatBot from "@upyog/digit-ui-react-components/src/atoms/Chatbot";
@@ -24,7 +24,7 @@ import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
 import { CitizenSideBar } from "../../../components/TopBarSideBar/SideBar/CitizenSideBar";
 import StaticCitizenSideBar from "../../../components/TopBarSideBar/SideBar/StaticCitizenSideBar";
-
+import BannerCarousel from "./BannerCarsousel";
 
 const Home = () => {
   const NotificationsOrWhatsNew = Digit.ComponentRegistryService.getComponent("NotificationsAndWhatsNew");
@@ -268,199 +268,252 @@ const Home = () => {
   return isLoading ? (
     <Loader />
   ) : (
-    <div className="HomePageContainer" style={{ width: "100%" }}>
-      {/* <div className="SideBarStatic">
-        <StaticCitizenSideBar />
-      </div> */}
-      <style>
-        {`
-        .logoText {
-            font-size: 26px;
-            color: #0a97d5;
-            font-family: 'PoppinsBold';
-            line-height: 25px;
-            transition: all 0.5s ease;
+
+
+
+    <div className="HomePageContainer" style={{ width: "100%",display:"flex",flexDirection:"column",marginTop:"70px",marginRight:"20px",marginLeft:"20px" }}>
+    <style>
+      {`
+      .h1, .h2, .h3, .h4, .h5, .h6, h1, h2, h3, h4, h5, h6 {
+        margin-top: 0;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+        line-height: 1.2;
+        color: var(--bs-heading-color);
+    }
+      .notify-bar {
+        position: fixed;
+        top: calc(var(--ribbon-height) + var(--header-height));
+        left: var(--sidebar-width);
+        width: calc(100% - var(--sidebar-width));
+        height: var(--notify-height);
+        line-height: var(--notify-height);
+        background: #f8f9fa;
+        border-top: 1px solid #ddd;
+        border-bottom: 1px solid #ddd;
+        font-size: 0.9rem;
+        font-weight: 500;
+        color: #333;
+        z-index: 1080;
+        overflow: hidden;
+        transition: left 0.3s, width 0.3s;
+        margin-left: -20px;
+    }
+    .notify-bar marquee {
+      color: #d32f2f;
+      font-weight: 600;
+  }
+        .row {
+          display: flex;
+          flex-wrap: wrap;
+          margin: -10px;
         }
-        .newlogoWrap h1.logo a .logoText .logoTextSubline {
-          font-size: 18px;
-          font-family: 'PoppinsRegular';
-          color: #323232;
-          line-height: 20px;
-          display: block;
-          transition: all 0.5s ease;
-      }
-      .newlogoWrap h1.logo a {
-        display: flex;
-        text-decoration: none!important;
-        align-items: center;
-    }
-    .incidentBlock{
-      width:100%;
-      height:200px;
-     margin:10px;
-     padding:20px;
-     background-color:white;
-     display:flex;
-     align-items:center;
-     font-size: 22px;
-     font-weight: bold;
-      box-shadow:rgba(0, 0, 0, 0.35) 0px 5px 15px;
-      border-radius:15px;
-      cursor : pointer;
-      border: 4px solid #0a97d5;
-
-    }
-    .mydashboard{
-      height: 100%;
-      width: 100%;
-      padding: 25px;
-      font-size: 26px;
-      font-weight: bold;
-    }
-    .dash{
-      border-top-right-radius: 10px;
-    border-top-left-radius: 10px;
-    padding-left:15px;
-    }
-    .charts{
-      height:250px
-    }
-    #chart-container {
-      position: relative;
-      width: 200px;
-      height: 200px;
-  }
-  
-  .donut-chart {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      border-radius: 50%;
-      clip: rect(0, 200px, 200px, 100px); /* clip to the right half */
-  }
-  
-  .inner-circle {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      width: 100px;
-      height: 100px;
-      margin-top: -50px; /* half of the height */
-      margin-left: -50px; /* half of the width */
-      background-color: #f0f0f0;
-      border-radius: 50%;
-      z-index: 1;
-  }
-  .incidentTable{
-    display: flex;
-    flex-direction: column;
-    font-size: 18px;
-    padding: 10px;
-    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
-    margin: 15px;
-  }
-  .donut-chart {
-    position: relative;
-    width: 200px;
-    height: 200px;
-    border-radius: 50%;
-    background: conic-gradient(
-      var(--color, #ddd) calc(var(--offset, 0) * 1%),
-      var(--next-color, #ddd) 0 calc((var(--offset, 0) + var(--value, 0)) * 1%)
-    );
-  }
-  
-  .donut-segment {
-    --next-color: var(--color);
-  }
-  
-  .donut-hole {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 100px;
-    height: 100px;
-    background: #fff;
-    border-radius: 50%;
-    transform: translate(-50%, -50%);
-  }
-  .donutchart{
-    height: 75% !important;
-    width:  75% !important;
-
-  }
-  
-  .HomePageContainer {background-color: #ebf1fb;
-    background-image: url(https://jaljeevanmission.gov.in//themes/edutheme/images/header-bg.png);
-  }
-        `
+        .col {
+          flex: 1;
+          padding: 10px;
+          min-width: 200px;
         }
-      </style>
-      <div className="HomePageWrapper">
-        <div style={{ display: "flex", flexDirection: isMobile ? "column" : "row", padding: "25px", width: "100%", marginTop: isMobile ? "10%" : "3%" }}>
-          <div className="incidentBlock" style={{ marginLeft: isMobile ? "0px" : "" }} onClick={() => history.push("/digit-ui/citizen/pgr-home")}>
-            <div style={{ width: "50%", cursor: "pointer" }} >
-              <span>{t("Public Grievance Redressal")}</span>
-            </div>
-            <div style={{ width: "50%", display: "flex", flexDirection: "row-reverse" }}>
-              <div style={{ display: "flex", flexDirection: "row-reverse" }}>
+        .service-card {
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+          padding: 20px;
+          border-radius: 12px;
+          text-align: center;
+          background: #fff;
+          box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+          transition: transform 0.2s ease, box-shadow 0.2s ease;
+          cursor: pointer;
+          height: 140px;
+        }
+        .service-card:hover {
+          transform: translateY(-8px);
+          box-shadow: 0 12px 24px rgba(0,0,0,0.15);
+          background: linear-gradient(135deg, #004080, #0066cc, #00599f, #1a75c4);
+          color: white;
+        }
+        .service-card-body {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+        }
+        .icon-wrapper {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          width: 56px;
+          height: 56px;
+          border-radius: 50%;
+          margin-bottom: 12px;
+          font-size: 1.5rem;
+          background: linear-gradient(135deg, #00599f, #00aaff);
+          color: #fff;
+        }
+        .label-text {
+          font-weight: 600;
+          font-size: 16px;
+          text-align: center;
+        }
 
+        /* Table styling */
+        .custom-table {
+          width: 100%;
+          border-collapse: collapse;
+          margin-top: 30px;
+          background: #fff;
+          box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+          border-radius: 8px;
+          overflow: hidden;
+        }
+        .custom-table th, .custom-table td {
+          padding: 12px 16px;
+          border-bottom: 1px solid #eee;
+          text-align: left;
+        }
+        .custom-table th {
+          background: #004080;
+          color: #fff;
+          font-weight: 600;
+        }
+        .custom-table tr:hover {
+          background: #f1f7ff;
+        }
+        .banner {
+          display: -webkit-box;
+          display: -ms-flexbox;
+          display: flex;
+          -webkit-box-pack: center;
+          -ms-flex-pack: center;
+          justify-content: center;
+          -webkit-box-align: center;
+          -ms-flex-align: center;
+          align-items: center;
+          
+          position: relative; }
+          .banner .bannerCard {
+            min-width: 400px; }
+          .banner .bannerLogo {
+            width: 80px;
+            height: 40px;
+            -o-object-fit: contain;
+            object-fit: contain;
+            padding-right: 10px;
+            margin-right: 10px;
+            border-right: 1px solid #0b0c0c; }
+          .banner .bannerHeader {
+            display: -webkit-box;
+            display: -ms-flexbox;
+            display: flex;
+            -webkit-box-pack: center;
+            -ms-flex-pack: center;
+            justify-content: center;
+            -webkit-box-align: center;
+            -ms-flex-align: center;
+            align-items: center;
+            margin-bottom: 24px; }
+            .banner {
+              height: auto !important; }
 
-                <img src="https://chstage.blob.core.windows.net/assets/tmp/incon1.png" style={{ maxWidth: "65%" }}></img>
-              </div>
-            </div>
-          </div>
-          <div className="incidentBlock" style={{ marginLeft: isMobile ? "0px" : "" }} onClick={() => history.push("/digit-ui/citizen/ws-home")} >
-            <div style={{ width: "50%", cursor: "pointer" }} >
-              <span>{t("Water Department")}</span>
-            </div>
-            <div style={{ width: "50%", display: "flex", flexDirection: "row-reverse" }}>
-              <div style={{ display: "flex", flexDirection: "row-reverse" }}>
-
-
-                <img src="https://i.postimg.cc/rFZg3yYG/1739395503649-Picture1.png" style={{ maxWidth: "65%" }}></img>
-              </div>
-            </div>
-          </div>
-          {/* <div className="incidentBlock" style={{marginLeft:isMobile?"0px":"", cursor:"pointer"}}>
-    <div style={{width:"50%"}} onClick={()=> history.push("/digit-ui/citizen/pgr-home")}>
-<span>{t("My Incident")}</span>
-    </div>
-    <div style={{width:"50%",display:"flex",flexDirection:"row-reverse"}}>
-      <div style={{display:"flex",flexDirection:"row-reverse"}}>
-        <img src="https://chstage.blob.core.windows.net/assets/tmp/incon1.png" style={{maxWidth:"65%"}}></img>
-    </div>
-    </div>
-  </div> */}
-
+              
+      `}
+    </style>
+    <div className="notify-bar">
+          <marquee behavior="scroll" direction="left" scrollAmount="6">
+            ⚡ Application deadline for Trade License renewal is 30th September |{" "}
+            🌐 New Online Property Tax module launched |{" "}
+            📢 Water supply maintenance on 25th August 10AM–4PM
+          </marquee>
         </div>
-        <div style={{ display: isMobile ? "" : "flex", height: "66vh", width: isMobile ? "100%" : "" }}>
-
-
+    <BannerCarousel />
+    {/* Top 3 Cards */}
+    <div className="row">
+    <div className="col">
+        <div className="service-card" onClick={() => history.push("/digit-ui/citizen/pgr/create-complaint/complaint-type")}>
+          <div className="service-card-body">
+            <span className="icon-wrapper"></span>
+            <span className="label-text">{t("New Grievances")}</span>
+          </div>
         </div>
-
-
       </div>
-
-      <div style={{
-        position: 'fixed',
-        right: '30px',
-        bottom: '30px',
-        zIndex: 1
-      }}>
-        {/* <button style={{
-        backgroundColor: 'blue', 
-        borderRadius: '15px', 
-        color: 'white', 
-        fontSize: 'medium', 
-        padding: '10px 20px', 
-        border: 'none', 
-        cursor: 'pointer' 
-      }}>Chatbot</button>  */}
-        <ChatBot />
+      <div className="col">
+        <div className="service-card" onClick={() => history.push("/digit-ui/citizen/pgr/create-complaint/complaint-type")}>
+          <div className="service-card-body">
+            <span className="icon-wrapper">0</span>
+            <span className="label-text">{t("Submitted Grievances")}</span>
+          </div>
+        </div>
       </div>
-
+      <div className="col">
+        <div className="service-card" onClick={() => history.push("#")}>
+          <div className="service-card-body">
+            <span className="icon-wrapper">0</span>
+            <span className="label-text">{t("Disposed Grievances")}</span>
+          </div>
+        </div>
+      </div>
+      <div className="col">
+        <div className="service-card" onClick={() => history.push("#")}>
+          <div className="service-card-body">
+            <span className="icon-wrapper">0</span>
+            <span className="label-text">{t("Pending Grievances")}</span>
+          </div>
+        </div>
+      </div>
     </div>
+
+    {/* Table with 5 Columns */}
+    <table className="custom-table">
+      <thead>
+        <tr>
+          <th>Column 1</th>
+          <th>Column 2</th>
+          <th>Column 3</th>
+          <th>Column 4</th>
+          <th>Column 5</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Row 1 - Col 1</td>
+          <td>Row 1 - Col 2</td>
+          <td>Row 1 - Col 3</td>
+          <td>Row 1 - Col 4</td>
+          <td>Row 1 - Col 5</td>
+        </tr>
+        <tr>
+          <td>Row 2 - Col 1</td>
+          <td>Row 2 - Col 2</td>
+          <td>Row 2 - Col 3</td>
+          <td>Row 2 - Col 4</td>
+          <td>Row 2 - Col 5</td>
+        </tr>
+        <tr>
+          <td>Row 3 - Col 1</td>
+          <td>Row 3 - Col 2</td>
+          <td>Row 3 - Col 3</td>
+          <td>Row 3 - Col 4</td>
+          <td>Row 3 - Col 5</td>
+        </tr>
+      </tbody>
+    </table>
+
+    {conditionsToDisableNotificationCountTrigger() ? (
+          EventsDataLoading ? (
+            <Loader />
+          ) : (
+            <div className="WhatsNewSection" style={{marginTop:"15px"}}>
+              <div className="headSection" style={{padding:"0px",display:"flex",justifyContent:"space-between"}}>
+                <h4 className="mb-3" style={{fontSize:"1.5rem"}} >{t(whatsNewSectionObj?.headerLabel)}</h4>
+                <h2 className="mb-3" onClick={() => history.push(whatsNewSectionObj?.sideOption?.navigationUrl)}>{t(whatsNewSectionObj?.sideOption?.name)}</h2>
+
+              </div>
+              <WhatsNewCard {...EventsData?.[0]} />
+            </div>
+          )
+        ) : null}
+  </div>
+
 
   );
 };

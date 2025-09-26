@@ -59,8 +59,8 @@ const TopBar = ({
       <div>
     <span style={{ display: "flex", alignItems: "center", justifyContent: "space-between", width: "100%",letterSpacing:"1px" }}>
       <span style={{fontWeight:"bold", display:"flex", flexDirection:"column", marginLeft:"20px", color:"#2394d4", fontSize:isMobile?"16px":"20px"}} className="logoText">
-        Panchayati Raj & Drinking Water Department
-        <span style={{fontWeight:"bold", color:"black",  fontSize:isMobile?"16px":"20px",display:"flex",flexDirection:"column"}} className="logoTextSubline"> Government of Odisha</span>
+        State Wide Attention on Grievances by Application of Technology
+        <span style={{fontWeight:"bold", color:"black",  fontSize:isMobile?"16px":"20px",display:"flex",flexDirection:"column"}} className="logoTextSubline"> Government of Gujrat</span>
       </span>
       </span>
       </div>

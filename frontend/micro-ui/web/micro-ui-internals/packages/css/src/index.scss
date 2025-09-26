@@ -589,7 +589,7 @@ input[type="number"] {
 
 @media (min-width: 780px) {
   .citizen-form-wrapper {
-    width: calc(100% - 219px);
+    width: calc(100% - 320px);
     display: flex;
     justify-content: center;
     margin-top: 1rem;
@@ -619,8 +619,8 @@ input[type="number"] {
   .mcollect-citizen,
   .ws-citizen-wrapper,
   .tl-citizen {
-    width: calc(100% - 219px);
-    padding-left: 16px;
+    width:100%;
+
     padding-right: 16px;
     margin-top: 1rem;
   }

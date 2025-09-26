@@ -170,7 +170,7 @@ const Login = ({ config: propsConfig, t, isDisabled }) => {
       <div>
     <span style={{ display: "flex", alignItems: "center", justifyContent: "space-between", width: "100%",letterSpacing:"1px" }}>
       <span style={{fontWeight:"bold", display:"flex", flexDirection:"column", marginLeft:"20px", color:"#0a97d5", fontSize:isMobile?"16px":"20px"}} className="logoText">
-        Panchayati Raj & Drinking Water Department
+        State Wide Attention on Grievances by Application of Technology
         {/* <span style={{fontWeight:"normal", color:"black", fontSize:isMobile?"14px":"20px",display:"flex",flexDirection:"column"}} className="logoTextSubline"> MINISTRY OF <span style={{fontWeight:"bold",fontSize:isMobile?"14px":"20px"}}>EXTERNAL AFFAIRS</span></span> */}
       </span>
       </span>
@@ -183,13 +183,13 @@ const Login = ({ config: propsConfig, t, isDisabled }) => {
         <div style={{ display: 'flex', justifyContent: 'center', color:"black" }}>
           {/* <span style={{ cursor: "pointer", fontSize: window.Digit.Utils.browser.isMobile()?"12px":"12px", fontWeight: "400"}} onClick={() => { window.open('https://www.digit.org/', '_blank').focus();}} >Powered by DIGIT</span>
           <span style={{ margin: "0 10px" ,fontSize: window.Digit.Utils.browser.isMobile()?"12px":"12px"}}>|</span> */}
-          <span  className="upyog-copyright-footer" style={{ cursor: "pointer", fontSize: window.Digit.Utils.browser.isMobile()?"12px":"12px", fontWeight: "400"}} onClick={() => { window.open('', '_blank').focus();}} >Copyright © 2025  Panchayati Raj & Drinking Water Department Govt. of Odisha </span>
+          <span  className="upyog-copyright-footer" style={{ cursor: "pointer", fontSize: window.Digit.Utils.browser.isMobile()?"12px":"12px", fontWeight: "400"}} onClick={() => { window.open('', '_blank').focus();}} >Copyright © 2025  State Wide Attention on Grievances by Application of Technology Govt. of Gujrat </span>
           
           {/* <a style={{ cursor: "pointer", fontSize: "16px", fontWeight: "400"}} href="#" target='_blank'>MEA</a> */}
 
         </div>
         <div className="upyog-copyright-footer-web">
-          <span className="" style={{ cursor: "pointer", fontSize:  window.Digit.Utils.browser.isMobile()?"14px":"16px", fontWeight: "400"}} onClick={() => { window.open('', '_blank').focus();}} >Copyright © 2025  Panchayati Raj & Drinking Water Department Govt. of Odisha </span>
+          <span className="" style={{ cursor: "pointer", fontSize:  window.Digit.Utils.browser.isMobile()?"14px":"16px", fontWeight: "400"}} onClick={() => { window.open('', '_blank').focus();}} >Copyright © 2025  State Wide Attention on Grievances by Application of Technology Govt. of Gujrat </span>
           </div>
       </div>
     </Background>

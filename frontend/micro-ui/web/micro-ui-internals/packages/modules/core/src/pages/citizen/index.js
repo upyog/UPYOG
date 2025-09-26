@@ -22,6 +22,7 @@ import QRCode from "./QRCode";
 import ChallanQRCode from "./ChallanQRCode";
 import { ComplaintsList } from "./ComplaintsList";
 import ComplaintDetailsPage from "./ComplaintDetails";
+
 const sidebarHiddenFor = [
   "digit-ui/citizen/register/name",
   "/digit-ui/citizen/select-language",
@@ -161,7 +162,7 @@ console.log("modules",modules)
 
       <div className={`main center-container citizen-home-container mb-25`} style={{justifyContent:isMobile?"center":window.location.href.includes("register/name") || window.location.href.includes("login") || window.location.href.includes("select-location") || window.location.href.includes("select-language")?"center":"", paddingTop:"74px"}}>
         {hideSidebar ? null : (
-          <div className="SideBarStatic" style={{marginBottom:"-40px",backgroundColor:"#0a97d5"}}>
+          <div className="SideBarStatic" style={{marginBottom:"-40px",backgroundColor:"#ebf1fb",minWidth:"260px",zIndex:"0"}}>
             <StaticCitizenSideBar linkData={linkData} islinkDataLoading={islinkDataLoading} />
           </div>
         )}
@@ -234,16 +235,50 @@ console.log("modules",modules)
       </div>
 
       <div style={{ width: '100%', position: 'fixed', bottom: 0,backgroundColor:"white",textAlign:"center" }}>
-        <div style={{ display: 'flex', justifyContent: 'center', color:"black" }}>
-          {/* <span style={{ cursor: "pointer", fontSize: window.Digit.Utils.browser.isMobile()?"12px":"14px", fontWeight: "400"}} onClick={() => { window.open('https://www.digit.org/', '_blank').focus();}} >Powered by DIGIT</span>
-          <span style={{ margin: "0 10px" ,fontSize: window.Digit.Utils.browser.isMobile()?"12px":"14px"}}>|</span> */}
-          <span  className="upyog-copyright-footer" style={{ cursor: "pointer", fontSize: window.Digit.Utils.browser.isMobile()?"12px":"14px", fontWeight: "400"}} onClick={() => { window.open('', '_blank').focus();}} >Copyright © 2025  Panchayati Raj & Drinking Water Department Govt. of Odisha </span>
+      <style>
+        {
+          `
+          .app-footer {
+            background: var(--primary-color);
+            color: #fff;
+            text-align: center;
+            font-size: 0.8rem;
+            font-weight: 300;
+            width: 100%;
+            margin-left: 0;
+            border-top-left-radius: 12px;
+            border-top-right-radius: 12px;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            height: 28px;
+            z-index: 1000000000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+          }
           
-          {/* <a style={{ cursor: "pointer", fontSize: "16px", fontWeight: "400"}} href="#" target='_blank'>MEA</a> */}
+          .app-footer span {
+            cursor: pointer;
+          }
+          
+          `
+        }
+      </style>
+      <footer className="app-footer">
+  <span
+    className="upyog-copyright-footer"
+    onClick={() => {
+      window.open("", "_blank").focus();
+    }}
+  >
+    Copyright © 2025 State Wide Attention on Grievances by Application of
+    Technology Govt. of Gujarat
+  </span>
+</footer>
 
-        </div>
         <div className="upyog-copyright-footer-web">
-          <span className="" style={{ cursor: "pointer", fontSize:  window.Digit.Utils.browser.isMobile()?"12px":"14px", fontWeight: "400"}} onClick={() => { window.open('https://niua.in/', '_blank').focus();}} >Copyright © 2025  Panchayati Raj & Drinking Water Department Govt. of Odisha </span>
+          <span className="" style={{ cursor: "pointer", fontSize:  window.Digit.Utils.browser.isMobile()?"12px":"14px", fontWeight: "400"}} onClick={() => { window.open('https://niua.in/', '_blank').focus();}} >Copyright © 2025  State Wide Attention on Grievances by Application of Technology Govt. of Gujrat </span>
           </div>
       </div>
     </div>

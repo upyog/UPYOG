@@ -24,6 +24,8 @@ console.log("parentUrlparentUrl",parentUrl,cities,Digit.ULBService.getCurrentTen
   const [fullName, setFullName] = useState(sessionStorage.getItem("name") || "");
   const [emailId, setEmail] = useState(sessionStorage.getItem("emailId") || "");
   const [selectedCity, setSelectedCity] = useState(getCities()[0] ? getCities()[0] : null);
+  const [isMapPopupOpen, setIsMapPopupOpen] = useState(false);
+
 const [propertyId, setPropertyId]= useState("")
 const [description, setDescription] = useState("")
   const { data: fetchedLocalities } = Digit.Hooks.useBoundaryLocalities(
@@ -204,58 +206,7 @@ const [description, setDescription] = useState("")
   const isPincodeValid = () => !pincodeNotValid;
 
   const config = [
-    {
-      head: t("ES_CREATECOMPLAINT_PROVIDE_COMPLAINANT_DETAILS"),
-      body: [
-        {
-          label: t("ES_CREATECOMPLAINT_MOBILE_NUMBER"),
-          isMandatory: true,
-          type: "text",
-          value:mobileNumber || window.Digit.SessionStorage.get("User")?.info?.mobileNumber,
-          onChange: handleMobileNumber,
-          populators: {
-            name: "mobileNumber",
-            onChange: handleMobileNumber,
-            validation: {
-              required: true,
-              pattern: /^[6-9]\d{9}$/,  
-            },
-            componentInFront: <div className="employee-card-input employee-card-input--front">+91</div>,
-            error: t("CORE_COMMON_MOBILE_ERROR"),
-          },
-        },
-        {
-          label: t("ES_CREATECOMPLAINT_COMPLAINT_NAME"),
-          isMandatory: true,
-          type: "text",
-          value:fullName || window.Digit.SessionStorage.get("User")?.info?.name,
-          populators: {
-            name: "name",
-            onChange: handleName,
-            validation: {
-              required: true,
-              pattern: /^[A-Za-z]/,
-            },
-            error: t("CS_ADDCOMPLAINT_NAME_ERROR"),
-          },
-        },
-        {
-          label: t("ES_MAIL_ID"),
-          isMandatory: false,
-          type: "text",
-          value:emailId || window.Digit.SessionStorage.get("User")?.info?.emailId ,
-          populators: {
-            name: "emailId",
-            onChange: handleEmail,
-            validation: {
-              //required: true,
-              pattern: /[A-Za-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$/,
-            },
-            error: t("CS_ADDCOMPLAINT_EMAIL_ERROR"),
-          },
-        },
-      ],
-    },
+
     {
       head: t("CS_COMPLAINT_DETAILS_COMPLAINT_DETAILS"),
       body: [
@@ -279,6 +230,23 @@ const [description, setDescription] = useState("")
             type: "dropdown",
             populators: <Dropdown option={priorityMenu} optionKey="name" id="priorityLevel" selected={priorityLevel} select={selectedPriorityLevel} />,
           
+        },
+        {
+          label: t("CS_COMPLAINT_DETAILS_ADDITIONAL_DETAILS"),
+          type: "textarea",
+          onChange: handleDescription,
+          value:description,
+          populators: {
+            name: "description",
+            onChange: handleDescription,
+          },
+        },
+        {
+          label: t("CS_ADDCOMPLAINT_EVIDENCE"),
+          type: "custom",
+          populators: (
+            <ImageUploadHandler tenantId={tenantId} uploadedImages={uploadedImagesn} onPhotoChange={handleUpload} />
+          ),
         },
         {
           //label: t("WS_COMMON_PROPERTY_DETAILS"),
@@ -306,15 +274,7 @@ const [description, setDescription] = useState("")
     {
       head: t("CS_ADDCOMPLAINT_LOCATION"),
       body: [
-        {
-          label: t("CS_ADDCOMPLAINT_SELECT_GEOLOCATION_TEXT"),
-          type: "custom",
-          populators: (
-            <LocationSearch
-            onChange={(code) => (pincode = code)}
-          />
-          ),
-        },
+
         {
           label: t("CORE_COMMON_PINCODE"),
           type: "text",
@@ -323,8 +283,15 @@ const [description, setDescription] = useState("")
             validation: { pattern: /^[1-9][0-9]{5}$/, validate: isPincodeValid },
             error: t("CORE_COMMON_PINCODE_INVALID"),
             onChange: handlePincode,
+            componentInFront: (
+              <div style={{ display: "flex", alignItems: "center" }} onClick={() => setIsMapPopupOpen(true)}>
+                <span style={{ marginRight: "8px" }}>📍</span>
+              </div>
+            ),
+            
           },
-        },
+        }
+,        
         {
           label: t("CS_COMPLAINT_DETAILS_CITY"),
           isMandatory: true,
@@ -360,29 +327,59 @@ const [description, setDescription] = useState("")
         },
       ],
     },
+
     {
-      head: t("CS_COMPLAINT_DETAILS_ADDITIONAL_DETAILS"),
+      head: t("ES_CREATECOMPLAINT_PROVIDE_COMPLAINANT_DETAILS"),
       body: [
         {
-          label: t("CS_COMPLAINT_DETAILS_ADDITIONAL_DETAILS"),
-          type: "textarea",
-          onChange: handleDescription,
-          value:description,
+          label: t("ES_CREATECOMPLAINT_MOBILE_NUMBER"),
+          isMandatory: true,
+          type: "text",
+          value:mobileNumber || window.Digit.SessionStorage.get("User")?.info?.mobileNumber,
+          onChange: handleMobileNumber,
           populators: {
-            name: "description",
-            onChange: handleDescription,
+            name: "mobileNumber",
+            onChange: handleMobileNumber,
+            validation: {
+              required: true,
+              pattern: /^[6-9]\d{9}$/,  
+            },
+            // componentInFront: <div className="employee-card-input employee-card-input--front">+91</div>,
+            error: t("CORE_COMMON_MOBILE_ERROR"),
           },
         },
         {
-          label: t("CS_ADDCOMPLAINT_EVIDENCE"),
-          type: "custom",
-          populators: (
-            <ImageUploadHandler tenantId={tenantId} uploadedImages={uploadedImagesn} onPhotoChange={handleUpload} />
-          ),
+          label: t("ES_CREATECOMPLAINT_COMPLAINT_NAME"),
+          isMandatory: true,
+          type: "text",
+          value:fullName || window.Digit.SessionStorage.get("User")?.info?.name,
+          populators: {
+            name: "name",
+            onChange: handleName,
+            validation: {
+              required: true,
+              pattern: /^[A-Za-z]/,
+            },
+            error: t("CS_ADDCOMPLAINT_NAME_ERROR"),
+          },
         },
-        
+        {
+          label: t("ES_MAIL_ID"),
+          isMandatory: false,
+          type: "text",
+          value:emailId || window.Digit.SessionStorage.get("User")?.info?.emailId ,
+          populators: {
+            name: "emailId",
+            onChange: handleEmail,
+            validation: {
+              //required: true,
+              pattern: /[A-Za-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$/,
+            },
+            error: t("CS_ADDCOMPLAINT_EMAIL_ERROR"),
+          },
+        },
       ],
-    },
+    }
   ];
     useEffect(()=>{
       console.log("heloo world",propetyData )
@@ -412,12 +409,175 @@ const [description, setDescription] = useState("")
    
   },[propertyId])
   return (
-    <FormComposer
-      heading={t("ES_CREATECOMPLAINT_NEW_COMPLAINT")}
-      config={config}
-      onSubmit={wrapperSubmit}
-      isDisabled={!canSubmit && !submitted}
-      label={t("CS_ADDCOMPLAINT_ADDITIONAL_DETAILS_SUBMIT_COMPLAINT")}
-    />
+    <React.Fragment>
+<FormComposer
+  heading={t("ES_CREATECOMPLAINT_NEW_COMPLAINT")}
+  config={config}
+  onSubmit={wrapperSubmit}
+  isDisabled={!canSubmit && !submitted}
+  label={t("CS_ADDCOMPLAINT_ADDITIONAL_DETAILS_SUBMIT_COMPLAINT")}
+/>
+{isMapPopupOpen && (
+  <div className="map-popup-overlay">
+    <div className="map-popup">
+      <h3>{t("CS_ADDCOMPLAINT_SELECT_GEOLOCATION_TEXT")}</h3>
+      <LocationSearch onChange={(code) => {
+        setPincode(code);
+        setIsMapPopupOpen(false); // close popup after selection
+      }} />
+      <button className="close-btn" onClick={() => setIsMapPopupOpen(false)}>
+        {t("CORE_COMMON_CLOSE")}
+      </button>
+    </div>
+  </div>
+)}
+
+<style>
+{`
+.map-popup-overlay {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+}
+
+.map-popup {
+  background: #fff;
+  padding: 20px;
+  border-radius: 12px;
+  max-width: 600px;
+  width: 90%;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+.map-popup h3 {
+  margin-bottom: 12px;
+}
+
+.map-popup .close-btn {
+  margin-top: 12px;
+  background: #0056ad;
+  color: #fff;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+/* ---------- Overall Form ---------- */
+.styled-form {
+  background: #fff;
+  border-radius: 16px;
+  padding: 24px 32px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* ---------- Page Heading ---------- */
+.form-header {
+  font-size: 24px;
+  font-weight: 700;
+  color: #222;
+  margin-bottom: 28px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.form-header::before {
+  content: "📋";
+  font-size: 24px;
+}
+
+/* ---------- Section Header ---------- */
+.section-header {
+  font-size: 18px;
+  font-weight: 600;
+  color: #444;
+  margin-bottom: 12px;
+}
+.section-divider {
+  border: none;
+  border-top: 1px solid #eee;
+  margin: 0 0 24px 0;
+}
+
+/* ---------- Grid Layout ---------- */
+.form-section-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* 👈 3 columns */
+  gap: 20px;
+  margin-bottom: 32px;
+}
+.form-field-wrapper {
+  display: flex;
+  flex-direction: column;
+}
+.form-field-wrapper label {
+  font-weight: 500;
+  margin-bottom: 6px;
+  color: #555;
+}
+.card .card-label, .card-emp .card-label {
+  font-size: 16px;
+  line-height: 23px;
+  --text-opacity:1;
+  color: #0b0c0c;
+  color: rgba(11, 12, 12, var(--text-opacity));
+  margin-bottom: 8px; }
+
+
+/* ---------- Error ---------- */
+.card-label-error {
+  color: #ff4d4f;
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+/* ---------- Sticky Action Bar ---------- */
+.sticky-action-bar {
+  position: sticky;
+  bottom: 0;
+  background: #fff;
+  border-top: 1px solid #eee;
+  padding: 16px 24px;
+  display: flex;
+  justify-content: flex-end;
+  z-index: 10;
+  border-radius: 0 0 16px 16px;
+}
+html, body {
+  scroll-behavior: smooth;
+}
+.styled-form {
+  scroll-behavior: smooth;
+}
+.styled-form {
+  -webkit-overflow-scrolling: touch;
+  overflow-y: auto; /* only if height is fixed */
+}
+/* ---------- Responsive ---------- */
+@media (max-width: 992px) {
+  .form-section-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (max-width: 600px) {
+  .form-section-grid {
+    grid-template-columns: 1fr;
+  }
+}
+@media (min-width: 780px) {
+  .bill-citizen, .bills-citizen-wrapper, .citizen-all-services-wrapper, .citizen-obps-wrapper, .engagement-citizen-wrapper, .fsm-citizen-wrapper, .mcollect-citizen, .payer-bills-citizen-wrapper, .pgr-citizen-wrapper, .pt-citizen, .selection-card-wrapper, .tl-citizen, .ws-citizen-wrapper {
+    width: 100%;
+    padding-right: 16px;
+    margin-top: 2rem; } }
+`}
+</style>
+</React.Fragment>
   );
 };
