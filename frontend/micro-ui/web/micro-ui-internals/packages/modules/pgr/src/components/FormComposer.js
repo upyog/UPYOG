@@ -95,10 +95,34 @@ export const FormComposer = (props) => {
       props.config?.map((section, index, array) => {
         return (
           <React.Fragment key={index}>
-            <CardSectionHeader>{section.head}</CardSectionHeader>
+<div className="section-header-wrapper">
+  <CardSectionHeader>{section.head}</CardSectionHeader>
+  <div className="section-header-line"></div>
+</div>
+
+            
             <style>
               {
                 `
+                .section-header-wrapper {
+                  margin-bottom: 20px;
+                }
+                
+                .section-header-line {
+                  width: 100%;
+                  height: 2px;
+                  background: #e0e0e0; /* subtle grey line */
+                  border-radius: 2px;
+                  margin-top: 6px;
+                }
+                
+                .section-header-wrapper .card-section-header {
+                  font-size: 24px;
+                  color: #0255ac !important;
+                  font-weight: 600;
+                  color: #333;
+                }
+                
                 .form-section-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr); /* 2 columns */
@@ -152,9 +176,9 @@ export const FormComposer = (props) => {
   return (
 <form onSubmit={handleSubmit(onSubmit)} onChange={(e)=> changeValue(e.target.name,e.target.value)}>
   <Card className="styled-form">
-    <CardSubHeader className="form-header">
+    {/* <CardSubHeader >
       {props.heading}
-    </CardSubHeader>
+    </CardSubHeader> */}
 
     <div className="form-sections">
       {formFields}
@@ -162,19 +186,33 @@ export const FormComposer = (props) => {
 
     {props.children}
 
-    <ActionBar className="sticky-action-bar">
+    <ActionBar >
       <SubmitBar disabled={isDisabled} label={t(props.label)} submit="submit" />
     </ActionBar>
   </Card>
 
   <style>
     {`
+    .break-line {
+      --border-opacity: 1;
+      border-color: #ffffff;
+      margin-top: 0px !important;
+      margin-bottom: 0px !important;
+  }
       .styled-form {
         background: #fff;
         border-radius: 16px;
         padding: 24px;
         box-shadow: 0 4px 12px rgba(0,0,0,0.05);
       }
+      .card .card-label, .card-emp .card-label {
+        font-size: 16px;
+        line-height: 23px;
+        --text-opacity: 1;
+        color: #0056ac !important;
+        font-weight: 500;
+        margin-bottom: 8px;
+    }
 
       .form-header {
         font-size: 20px;

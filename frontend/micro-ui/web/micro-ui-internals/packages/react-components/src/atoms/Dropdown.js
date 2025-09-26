@@ -255,6 +255,34 @@ const Dropdown = (props) => {
   cursor: default;
   font-style: italic;
 }
+.select-wrap .select
+{
+  padding : 0px !important
+}
+/* Options card - smooth dropdown */
+.options-card {
+  margin-top: 6px;
+  background: #fff;
+  border: 1px solid #eee;
+  border-radius: 8px;
+  box-shadow: 0px 6px 18px rgba(0,0,0,0.08);
+  max-height: 240px;
+  overflow-y: auto;
+  
+  /* Smooth open/close */
+  opacity: 0;
+  transform: scaleY(0.95);
+  transform-origin: top;
+  transition: all 0.25s ease;
+  z-index: 1000;
+  pointer-events: none;
+}
+
+.options-card.show {
+  opacity: 1;
+  transform: scaleY(1);
+  pointer-events: auto;
+}
 
 /* Animations */
 @keyframes fadeIn {
@@ -304,11 +332,12 @@ const Dropdown = (props) => {
 
   {dropdownStatus && (
     <div
-      id="jk-dropdown-unique"
-      className={`options-card ${hasCustomSelector ? "margin-top-10" : ""}`}
-      style={{ ...props.optionCardStyles }}
-      ref={optionRef}
-    >
+  id="jk-dropdown-unique"
+  className={`options-card ${dropdownStatus ? "show" : ""} ${hasCustomSelector ? "margin-top-10" : ""}`}
+  style={{ ...props.optionCardStyles }}
+  ref={optionRef}
+>
+
       {filteredOption?.map((option, index) => (
         <div
           key={index}
