@@ -80,5 +80,7 @@ public interface WSCalculationDao {
 	List<MeterReading> searchCurrentMeterReadingsforUpdate(MeterReadingSearchCriteria criteria);
 	String searchLastMeterId(String connectionNo, Long lastReadingDate, Long currentReadingDate, String tenantId);
 
+	String getSwConnection(String tenantId, String consumerCode);
+
 		
 }

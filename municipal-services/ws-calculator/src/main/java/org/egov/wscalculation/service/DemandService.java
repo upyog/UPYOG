@@ -25,6 +25,7 @@ import org.egov.wscalculation.producer.WSCalculationProducer;
 import org.egov.wscalculation.repository.DemandRepository;
 import org.egov.wscalculation.repository.ServiceRequestRepository;
 import org.egov.wscalculation.repository.WSCalculationDao;
+import org.egov.wscalculation.repository.WSCalculationDaoImpl;
 import org.egov.wscalculation.repository.WaterConnectionRepository;
 import org.egov.wscalculation.util.CalculatorUtil;
 import org.egov.wscalculation.util.NotificationUtil;
@@ -105,6 +106,12 @@ public class DemandService {
 
 	@Autowired
 	private NotificationUtil notificationUtil;
+	
+	@Autowired
+	private WSCalculationDaoImpl dao;
+
+	
+	
 
 	/**
 	 * Creates or updates Demand
@@ -412,7 +419,7 @@ public class DemandService {
 	 * @param masterMap      Master MDMS Data
 	 * @return Returns list of demands
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "null" })
 	private List<Demand> createDemand(CalculationReq calculationReq, List<Calculation> calculations,
 			Map<String, Object> masterMap, boolean isForConnectionNO) {
 		List<Demand> demands = new LinkedList<>();
@@ -495,14 +502,23 @@ public class DemandService {
 			
 			Object mdmsResponse = getMdmsResponse(requestInfo, tenantId );
 			List<String> mdmsUsageCategory = JsonPath.read(mdmsResponse, "$.MdmsRes.tenant.meterReadingMapping[0].usageCategory");
-			List<String> dbUsageCategory = waterCalculatorDao.fetchUsageCategory(demands.get(0).getConsumerCode());
+			List<String> dbUsageCategory = waterCalculatorDao.fetchUsageCategory(consumerCode);
 
 	        List<String> matchingUsages = mdmsUsageCategory.stream().filter(dbUsageCategory::contains).collect(Collectors.toList());
-	        List<String> sewConnectionList = waterCalculatorDao.fetchSewConnection(consumerCode);
-	        sewConsumerCode = sewConnectionList.isEmpty() ? "" : sewConnectionList.get(0).toString();
-	        if (!matchingUsages.isEmpty() && (sewConnectionList != null || !sewConnectionList.isEmpty())) {
-	        	sewConsumerCode = waterCalculatorDao.fetchSewConnection(consumerCode).get(0).toString();
-//	            log.error("No matching usage categories found between mdmsUsageCategory and dbUsageCategory. Proceed with ws demand only ");
+	        
+//	        List<String> sewConnectionList = waterCalculatorDao.fetchSewConnection(consumerCode); 
+//	        sewConsumerCode = sewConnectionList.isEmpty() ? "" : sewConnectionList.get(0).toString();
+	        
+//	        WSCalculationDaoImpl dao = new WSCalculationDaoImpl();
+	        String relatedSwConn = "";
+	        try {
+	            relatedSwConn = dao.getSwConnection(tenantId , consumerCode);
+	        } catch(Exception e){
+	            log.info("relatedSwConn not found in the table");
+	            relatedSwConn = "";
+	        }
+        	
+	        if (!matchingUsages.isEmpty() && relatedSwConn != null && !relatedSwConn.isEmpty()) {
 	        	// For the metered connections demand has to create one by one
 	 			if (WSCalculationConstant.meteredConnectionType.equalsIgnoreCase(connection.getConnectionType())) {
 	 				additionalDetailsMap.put("connectionType", connection.getConnectionType());
@@ -527,19 +543,17 @@ public class DemandService {
 	 						dd1.setTenantId(ddSew.getTenantId());
 	 						demandDetails1.add(dd1);
 	 					}
-	 					demandsSw.add(Demand.builder().consumerCode(sewConsumerCode).demandDetails(demandDetails1).payer(owner)
+	 					demandsSw.add(Demand.builder().consumerCode(relatedSwConn).demandDetails(demandDetails1).payer(owner)
 	 							.minimumAmountPayable(minimumPayableAmount).tenantId(tenantId).taxPeriodFrom(fromDate)
 	 							.taxPeriodTo(toDate).consumerType("sewerageConnection").businessService(businessService)
 	 							.status(StatusEnum.valueOf("ACTIVE")).billExpiryTime(expiryDate)
 	 							.additionalDetails(additionalDetailsMap).build());
 	 					demandsSw.get(0).setBusinessService("SW");
 	 					demandReq.addAll(demandsSw);
-	 				}
-	 			 else {
+	 				}else {
 	 				demandReq.addAll(demands);
 	 			}
-	        }
-	        else {
+	        }else {
 	        	demandReq.addAll(demands);
 	        }
 	        
