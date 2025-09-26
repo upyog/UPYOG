@@ -46,363 +46,211 @@
  *
  */
 
-$(document).ready(function(){
-	console.log("Browser Language ",navigator.language);
-	$.i18n.properties({ 
-		name: 'message', 
-		path: '/services/EGF/resources/app/messages/', 
-		mode: 'both',
-		async: true,
-	    cache: true,
-		language: getLocale("locale"),
-		callback: function() {
-			console.log('File loaded successfully');
-		}
-	})
+jQuery(document).ready(function($) {
 
-	function getCookie(name){
-		let cookies = document.cookie;
-		if(cookies.search(name) != -1){
-			var keyValue = cookies.match('(^|;) ?' + name + '=([^;]*)(;|$)');
-		    return keyValue ? keyValue[2] : null;
-		}
-	}
+    console.log("Browser Language ", navigator.language);
 
-	function getLocale(paramName){
-		return getCookie(paramName) ? getCookie(paramName) : navigator.language;
-	}
-});
+    // i18n properties loading
+    $.i18n.properties({ 
+        name: 'message', 
+        path: '/services/EGF/resources/app/messages/', 
+        mode: 'both',
+        async: true,
+        cache: true,
+        language: getLocale("locale"),
+        callback: function() {
+            console.log('File loaded successfully');
+        }
+    });
 
-function loadBank(fund) {
-	// bootbox.alert(fund.options[fund.selectedIndex].value);
-	//loadFromDepartment();
-	populatefromBankId({
-		fundId : fund.options[fund.selectedIndex].value,
-		typeOfAccount : "RECEIPTS_PAYMENTS,RECEIPTS"
-	})
-	checkInterFund();
-}
+    function getCookie(name) {
+        let cookies = document.cookie;
+        if (cookies.search(name) != -1) {
+            var keyValue = cookies.match('(^|;) ?' + name + '=([^;]*)(;|$)');
+            return keyValue ? keyValue[2] : null;
+        }
+    }
 
-function loadFromDepartment() {
-	var selectedFund = jQuery("#fundId option:selected").text();
-	if (selectedFund == '01-Municipal Fund'
-			|| selectedFund == '02-Capital Fund') {
-		document.getElementById("vouchermis.departmentid").disabled = "";
-		document.getElementById("vouchermis.departmentid").value = 1;
-	} else if (selectedFund == '03-Elementary Education Fund') {
-		document.getElementById("vouchermis.departmentid").value = 31;
-		document.getElementById("vouchermis.departmentid").disabled = "true";
-	} else {
-		document.getElementById("vouchermis.departmentid").disabled = "";
-		document.getElementById("vouchermis.departmentid").value = "";
-	}
-}
-function loadToDepartment() {
-	var selectedFund = jQuery("#toFundId option:selected").text();
-	if (selectedFund == '01-Municipal Fund'
-			|| selectedFund == '02-Capital Fund') {
-		document.getElementById("contraBean.toDepartment").disabled = "";
-		document.getElementById("contraBean.toDepartment").value = 1;
-	} else if (selectedFund == '03-Elementary Education Fund') {
-		document.getElementById("contraBean.toDepartment").value = 31;
-		document.getElementById("contraBean.toDepartment").disabled = "true";
-	} else {
-		document.getElementById("contraBean.toDepartment").value = "";
-		document.getElementById("contraBean.toDepartment").disabled = "";
-	}
-}
-function loadToBank(fund) {
-	//loadToDepartment();
-	populatetoBankId({
-		fundId : fund.options[fund.selectedIndex].value,
-		typeOfAccount : "RECEIPTS_PAYMENTS,PAYMENTS"
-	})
-}
+    function getLocale(paramName) {
+        return getCookie(paramName) ? getCookie(paramName) : navigator.language;
+    }
 
-function loadFromAccNum(branch) {
+    // Set default date in voucherDate
+    $("#voucherDate").datepicker().datepicker("setDate", new Date());
 
-	var fundObj = document.getElementById('fundId');
-	var bankbranchId = branch.options[branch.selectedIndex].value;
-	var index = bankbranchId.indexOf("-");
-	var bankId = bankbranchId.substring(0, index);
-	var brId = bankbranchId.substring(index + 1, bankbranchId.length);
-	populatefromAccountNumber({
-		fundId : fundObj.options[fundObj.selectedIndex].value,
-		branchId : brId,
-		typeOfAccount : "RECEIPTS_PAYMENTS,RECEIPTS"
-	})
-}
-function loadToAccNum(branch) {
-	var fundObj = document.getElementById('toFundId');
-	var bankbranchId = branch.options[branch.selectedIndex].value;
-	var index = bankbranchId.indexOf("-");
-	var bankId = bankbranchId.substring(0, index);
-	var brId = bankbranchId.substring(index + 1, bankbranchId.length);
-	populatetoAccountNumber({
-		fundId : fundObj.options[fundObj.selectedIndex].value,
-		branchId : brId,
-		typeOfAccount : "RECEIPTS_PAYMENTS,PAYMENTS"
-	})
-}
+    // ------------------ Global functions ------------------
+    // Expose global functions
+    window.loadBank = function(fund) {
+        populatefromBankId({
+            fundId: fund.options[fund.selectedIndex].value,
+            typeOfAccount: "RECEIPTS_PAYMENTS,RECEIPTS"
+        });
+        checkInterFund();
+    };
 
-function populatefromNarration(accnumObj) {
+    window.loadFromDepartment = function() {
+        var selectedFund = $("#fundId option:selected").text();
+        var dep = $("#vouchermis\\.departmentid");
+        if (selectedFund === '01-Municipal Fund' || selectedFund === '02-Capital Fund') {
+            dep.prop("disabled", false).val(1);
+        } else if (selectedFund === '03-Elementary Education Fund') {
+            dep.val(31).prop("disabled", true);
+        } else {
+            dep.prop("disabled", false).val("");
+        }
+    };
 
-	var accnum = accnumObj.options[accnumObj.selectedIndex].value;
-	var bankbranchObj = document.getElementById('fromBankId');
-	var bankbranchId = bankbranchObj.options[bankbranchObj.selectedIndex].value;
-	var index = bankbranchId.indexOf("-");
-	var branchId = bankbranchId.substring(index + 1, bankbranchId.length);
-	var csrfToken = document.getElementById('csrfTokenValue').value;
-	var url = '../voucher/common-loadAccNumNarration.action?accnum=' + accnum+'&_csrf='+csrfToken
-			+ '&branchId=' + branchId;
-	YAHOO.util.Connect.asyncRequest('POST', url, postTypeFrom, null);
-}
-function populatetoNarration(accnumObj) {
+    window.loadToDepartment = function() {
+        var selectedFund = $("#toFundId option:selected").text();
+        var dep = $("#contraBean\\.toDepartment");
+        if (selectedFund === '01-Municipal Fund' || selectedFund === '02-Capital Fund') {
+            dep.prop("disabled", false).val(1);
+        } else if (selectedFund === '03-Elementary Education Fund') {
+            dep.val(31).prop("disabled", true);
+        } else {
+            dep.prop("disabled", false).val("");
+        }
+    };
 
-	var accnum = accnumObj.options[accnumObj.selectedIndex].value;
-	var bankbranchObj = document.getElementById('toBankId');
-	var bankbranchId = bankbranchObj.options[bankbranchObj.selectedIndex].value;
-	var index = bankbranchId.indexOf("-");
-	var branchId = bankbranchId.substring(index + 1, bankbranchId.length);
-	var csrfToken = document.getElementById('csrfTokenValue').value;
-	var url = '../voucher/common-loadAccNumNarration.action?accnum=' + accnum+'&_csrf='+csrfToken
-			+ '&branchId=' + branchId;
-	YAHOO.util.Connect.asyncRequest('POST', url, postTypeTo, null);
+    window.loadToBank = function(fund) {
+        populatetoBankId({
+            fundId: fund.options[fund.selectedIndex].value,
+            typeOfAccount: "RECEIPTS_PAYMENTS,PAYMENTS"
+        });
+    };
 
-}
+    window.loadFromAccNum = function(branch) {
+        var fundObj = document.getElementById('fundId');
+        var bankbranchId = branch.options[branch.selectedIndex].value;
+        var index = bankbranchId.indexOf("-");
+        var brId = bankbranchId.substring(index + 1);
+        populatefromAccountNumber({
+            fundId: fundObj.options[fundObj.selectedIndex].value,
+            branchId: brId,
+            typeOfAccount: "RECEIPTS_PAYMENTS,RECEIPTS"
+        });
+    };
 
-var postTypeFrom = {
-	success : function(o) {
-		var fromNarration = o.responseText;
-		// var index=fromNarration.indexOf("-");
-		document.getElementById('fromAccnumnar').value = fromNarration;
-	},
-	failure : function(o) {
-		bootbox.alert('failure');
-	}
-}
+    window.loadToAccNum = function(branch) {
+        var fundObj = document.getElementById('toFundId');
+        var bankbranchId = branch.options[branch.selectedIndex].value;
+        var index = bankbranchId.indexOf("-");
+        var brId = bankbranchId.substring(index + 1);
+        populatetoAccountNumber({
+            fundId: fundObj.options[fundObj.selectedIndex].value,
+            branchId: brId,
+            typeOfAccount: "RECEIPTS_PAYMENTS,PAYMENTS"
+        });
+    };
 
-var postTypeTo = {
-	success : function(o) {
-		var toNarration = o.responseText;
-		// var index=fromNarration.indexOf("-");
-		document.getElementById('toAccnumnar').value = toNarration;
-	},
-	failure : function(o) {
-		bootbox.alert('failure');
-	}
-}
+    window.populatefromNarration = function(accnumObj) {
+        var accnum = accnumObj.options[accnumObj.selectedIndex].value;
+        var bankbranchId = $("#fromBankId").val();
+        var brId = bankbranchId.split("-")[1];
+        var csrfToken = $("#csrfTokenValue").val();
+        var url = '../voucher/common-loadAccNumNarration.action?accnum=' + accnum + '&_csrf=' + csrfToken + '&branchId=' + brId;
+        YAHOO.util.Connect.asyncRequest('POST', url, postTypeFrom, null);
+    };
 
-function nextChqNo() {
-	var obj = document.getElementById("fromAccountNumber");
-	var bankBr = document.getElementById("fromBankId");
-	if (bankBr.selectedIndex == -1) {
-		bootbox.alert("Select Bank Branch and Account No!!");
-		return;
-	}
+    window.populatetoNarration = function(accnumObj) {
+        var accnum = accnumObj.options[accnumObj.selectedIndex].value;
+        var bankbranchId = $("#toBankId").val();
+        var brId = bankbranchId.split("-")[1];
+        var csrfToken = $("#csrfTokenValue").val();
+        var url = '../voucher/common-loadAccNumNarration.action?accnum=' + accnum + '&_csrf=' + csrfToken + '&branchId=' + brId;
+        YAHOO.util.Connect.asyncRequest('POST', url, postTypeTo, null);
+    };
 
-	if (obj.selectedIndex == -1) {
-		bootbox.alert("Select Account No!!");
-		return;
-	}
-	var accNo = obj.options[obj.selectedIndex].text;
-	var accNoId = obj.options[obj.selectedIndex].value;
-	var sRtn = showModalDialog("../HTML/SearchNextChqNo.html?accntNo=" + accNo
-			+ "&accntNoId=" + accNoId, "",
-			"dialogLeft=300;dialogTop=210;dialogWidth=305pt;dialogHeight=300pt;status=no;");
-	if (sRtn != undefined)
-		document.getElementById("chequeNum").value = sRtn;
-}
-function checkInterFund() {
-	var fromFund = document.getElementById('fundId').value;
-	var toFund = document.getElementById('toFundId').value;
-	var splitStr = new Array();
-	var temp;
-	// bootbox.alert("hi"+toFund);
-	// bootbox.alert("from fund"+fromFund);
-	if (fromFund != "" && toFund != "") {
-		if (fromFund != toFund) {
-			for (i = 0, j = 0; i < fund_map.length; i++) {
-				splitStr[j] = fund_map[i].split("_");
-				if (splitStr[j].length == 2) {
+    var postTypeFrom = {
+        success: function(o) { $("#fromAccnumnar").val(o.responseText); },
+        failure: function(o) { bootbox.alert('failure'); }
+    };
 
-					setDefaultValues(splitStr[j][0], splitStr[j][1]);
-				}
-				j++;
-			}
-			document.getElementById('interFundRow1').style.visibility = "visible";
-			document.getElementById('interFundRow2').style.visibility = "visible";
-			document.getElementById('interFundRow3').style.visibility = "visible";
-		} else {
-			// bootbox.alert("from fund="+fromFund+"toFund="+toFund);
-			document.getElementById('interFundRow1').style.visibility = "hidden";
-			document.getElementById('interFundRow2').style.visibility = "hidden";
-			document.getElementById('interFundRow3').style.visibility = "hidden";
-		}
+    var postTypeTo = {
+        success: function(o) { $("#toAccnumnar").val(o.responseText); },
+        failure: function(o) { bootbox.alert('failure'); }
+    };
 
-	} else if (fromFund == "" || toFund == "") {
-		// bootbox.alert("min else if");
-		document.getElementById('interFundRow1').style.visibility = "hidden";
-		document.getElementById('interFundRow2').style.visibility = "hidden";
-		document.getElementById('interFundRow3').style.visibility = "hidden";
-	}
-}
+    window.nextChqNo = function() {
+        var obj = $("#fromAccountNumber")[0];
+        var bankBr = $("#fromBankId")[0];
+        if (bankBr.selectedIndex === -1) { bootbox.alert("Select Bank Branch and Account No!!"); return; }
+        if (obj.selectedIndex === -1) { bootbox.alert("Select Account No!!"); return; }
+        var accNo = obj.options[obj.selectedIndex].text;
+        var accNoId = obj.options[obj.selectedIndex].value;
+        var sRtn = showModalDialog("../HTML/SearchNextChqNo.html?accntNo=" + accNo + "&accntNoId=" + accNoId, "", "dialogLeft=300;dialogTop=210;dialogWidth=305pt;dialogHeight=300pt;status=no;");
+        if (sRtn !== undefined) $("#chequeNum").val(sRtn);
+    };
 
-function loadFromBalance(obj) {
-	if (document.getElementById('voucherDate').value == '') {
-		bootbox.alert("Please Select the Voucher Date!!");
-		obj.options.value = -1;
-		return;
-	}
-	if (obj.options[obj.selectedIndex].value == -1)
-		document.getElementById('fromBankBalance').value = '';
-	else {
+    window.checkInterFund = function() {
+        var fromFund = $("#fundId").val();
+        var toFund = $("#toFundId").val();
+        if (fromFund && toFund && fromFund !== toFund) {
+            for (var i = 0; i < fund_map.length; i++) {
+                var splitStr = fund_map[i].split("_");
+                if (splitStr.length === 2) setDefaultValues(splitStr[0], splitStr[1]);
+            }
+            $("#interFundRow1,#interFundRow2,#interFundRow3").css("visibility", "visible");
+        } else {
+            $("#interFundRow1,#interFundRow2,#interFundRow3").css("visibility", "hidden");
+        }
+    };
 
-		populatefromBankBalance({
-			bankaccount : obj.options[obj.selectedIndex].value,
-			voucherDate : document.getElementById('voucherDate').value
-					+ '&date=' + new Date()
-		});
+    window.loadFromBalance = function(obj) {
+        if (!$("#voucherDate").val()) { bootbox.alert("Please Select the Voucher Date!!"); obj.options.value = -1; return; }
+        if (obj.options[obj.selectedIndex].value == -1) { $("#fromBankBalance").val(''); }
+        else populatefromBankBalance({ bankaccount: obj.options[obj.selectedIndex].value, voucherDate: $("#voucherDate").val() + '&date=' + new Date() });
+    };
 
-	}
-}
+    window.loadToBalance = function(obj) {
+        if (!$("#voucherDate").val()) { bootbox.alert("Please Select the Voucher Date!!"); obj.options.value = -1; return; }
+        if (obj.options[obj.selectedIndex].value == -1) $("#toBankBalance").val('');
+        else populatetoBankBalance({ bankaccount: obj.options[obj.selectedIndex].value, voucherDate: $("#voucherDate").val() + '&date=' + new Date() });
+    };
 
-function loadToBalance(obj) {
-	if (document.getElementById('voucherDate').value == '') {
-		bootbox.alert("Please Select the Voucher Date!!");
-		obj.options.value = -1;
-		return;
-	}
-	if (obj.options[obj.selectedIndex].value == -1)
-		document.getElementById('toBankBalance').value = '';
-	else
-		populatetoBankBalance({
-			bankaccount : obj.options[obj.selectedIndex].value,
-			voucherDate : document.getElementById('voucherDate').value
-					+ '&date=' + new Date()
-		});
-}
-function disableControls(frmIndex, isDisable) {
-	for (var i = 0; i < document.forms[frmIndex].length; i++)
-		document.forms[frmIndex].elements[i].disabled = isDisable;
-}
+    window.disableControls = function(frmIndex, isDisable) {
+        $("form").eq(frmIndex).find(":input").prop("disabled", isDisable);
+    };
 
-function enableAll() {
-	for (var i = 0; i < document.forms[0].length; i++)
-		document.forms[0].elements[i].disabled = false;
-}
+    window.enableAll = function() { $("form").eq(0).find(":input").prop("disabled", false); };
 
-function validate() {
-	var insuffientAlert = 'There is no sufficient bank balance. ';
-	var continueAlert = 'Do you want to continue ? ';
-	var fundFlowNotGeneratedAlert = '';
-	var voucher_date = document.getElementById('voucherDate').value;
-	var fundFlowDateChkStr = document
-			.getElementById('startDateForBalanceCheckStr').value;
-	var vh_split = voucher_date.split('/');
-	var sp_date = fundFlowDateChkStr.split('-');
-	var month = getMonthNo(sp_date[1]);
-	var app_config_Date_value = new Date(sp_date[2], month - 1, sp_date[0]);
-	var voucherDateChk = new Date(vh_split[2], vh_split[1] - 1, vh_split[0]);
-	// bootbox.alert(voucher_date);
-	// bootbox.alert("Check app date"+app_config_Date_value);
-	// bootbox.alert("Check app date"+voucherDateChk);
+    window.validate = function() {
+        var voucher_date = $("#voucherDate").val();
+        var fundFlowDateChkStr = $("#startDateForBalanceCheckStr").val();
+        var vh_split = voucher_date.split('/');
+        var sp_date = fundFlowDateChkStr.split('-');
+        var app_config_Date_value = new Date(sp_date[2], getMonthNo(sp_date[1]) - 1, sp_date[0]);
+        var voucherDateChk = new Date(vh_split[2], vh_split[1] - 1, vh_split[0]);
 
-	if (parseFloat(document.getElementById('fromBankBalance').value) == -1
-			|| parseFloat(document.getElementById('toBankBalance').value) == -1) {
-		fundFlowNotGeneratedAlert = "FundFlowReport is not generated for the for the day.Please create fund flow first";
-	}
-	if (parseFloat(document.getElementById('amount').value) > parseFloat(document
-			.getElementById('fromBankBalance').value)) {
-		if (voucherDateChk >= app_config_Date_value) {
-			if (document.getElementById('bankBalanceMandatory').value == 'true') {
+        if ($("#amount").val() <= 0) { bootbox.alert("Amount should be greater than zero "); return false; }
 
-				if (fundFlowNotGeneratedAlert != '') {
-					bootbox.alert(fundFlowNotGeneratedAlert);
-					return false;
-				} else {
-					if (document.getElementById('bankBalanceMandatory').value)
-						bootbox.alert(insuffientAlert);
-					return false;
-				}
-			} else {
-				if (confirm(fundFlowNotGeneratedAlert + insuffientAlert
-						+ continueAlert)) {
-					document.getElementById("fromFundId").disabled = false;
-					return true;
-				} else {
-					return false;
-				}
-			}
-		}
-	}
-	var Amount = document.getElementById("amount").value;
-	if (Amount <= 0) {
-		bootbox.alert("Amount should be greater than zero ");
-		return false;
-	}
+        if (parseFloat($("#amount").val()) > parseFloat($("#fromBankBalance").val())) {
+            if (voucherDateChk >= app_config_Date_value) {
+                if ($("#bankBalanceMandatory").val() === 'true') { bootbox.alert("There is no sufficient bank balance."); return false; }
+                else { if (confirm("Do you want to continue?")) $("#fromFundId").prop("disabled", false); else return false; }
+            }
+        }
+
+	document.cbtbform.action='/services/EGF/contra/contraBTB-create.action';
 	document.cbtbform.action='/services/EGF/contra/contraBTB-create.action';
 	//document.cbtbform.submit();
-	return true;
-}
+        document.cbtbform.action='/services/EGF/contra/contraBTB-create.action';
+	//document.cbtbform.submit();
+        return true;
+    };
 
-function validateReverse() {
-	return true;
-}
-function setDefaultValues(fnd, objinterfnd) {
-	var srcFund = document.getElementById('fundId').value;
-	var desFund = document.getElementById('toFundId').value;
-	if (srcFund == fnd) {
-		if (objinterfnd == '') {
-			document.getElementById('sourceGlcode').value = "-1";
+    window.validateReverse = function() { return true; };
 
-		} else
-			document.getElementById('sourceGlcode').value = objinterfnd;
-	} else if (desFund == fnd) {
-		if (objinterfnd == '') {
-			document.getElementById('destinationGlcode').value = "-1";
-		} else
-			document.getElementById('destinationGlcode').value = objinterfnd;
-	}
-}
-function getMonthNo(month) {
-	switch (month) {
-	case "Jan":
-		month = '01';
-		break;
-	case "Feb":
-		month = '02';
-		break;
-	case "Mar":
-		month = '03';
-		break;
-	case "Apr":
-		month = '04';
-		break;
-	case "May":
-		month = '05';
-		break;
-	case "Jun":
-		month = '06';
-		break;
-	case "Jul":
-		month = '07';
-		break;
-	case "Aug":
-		month = '08';
-		break;
-	case "Sep":
-		month = '09';
-		break;
-	case "Oct":
-		month = '10';
-		break;
-	case "Nov":
-		month = '11';
-		break;
-	case "Dec":
-		month = '12';
-		break;
-	}
-	return month;
-}
+    window.setDefaultValues = function(fnd, objinterfnd) {
+        var srcFund = $("#fundId").val();
+        var desFund = $("#toFundId").val();
+        if (srcFund === fnd) $("#sourceGlcode").val(objinterfnd || "-1");
+        else if (desFund === fnd) $("#destinationGlcode").val(objinterfnd || "-1");
+    };
+
+    window.getMonthNo = function(month) {
+        var map = { Jan:1, Feb:2, Mar:3, Apr:4, May:5, Jun:6, Jul:7, Aug:8, Sep:9, Oct:10, Nov:11, Dec:12 };
+        return map[month] || month;
+    };
+
+});
