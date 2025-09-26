@@ -92,17 +92,17 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
         }
 
         
-        Collection<OAuth2AccessToken> tokens = tokenStore.findTokensByClientIdAndUserName(UserServiceConstants.USER_CLIENT_ID, userName);
-        log.info("tokens: " + tokens);
+//        Collection<OAuth2AccessToken> tokens = tokenStore.findTokensByClientIdAndUserName(UserServiceConstants.USER_CLIENT_ID, userName);
+//        log.info("tokens: " + tokens);
+//
+//        if (tokens != null) {
+//            for (OAuth2AccessToken token : tokens) {
+//                tokenStore.removeAccessToken(token);
+//                log.info("Removed token: " + token.getValue());
+//            }
+//        }
 
-        if (tokens != null) {
-            for (OAuth2AccessToken token : tokens) {
-                tokenStore.removeAccessToken(token);
-                log.info("Removed token: " + token.getValue());
-            }
-        }
-
-        
+       
         
         User user;
         RequestInfo requestInfo;
@@ -128,6 +128,14 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
             throw new OAuth2Exception("Invalid login credentials");
 
         }
+        
+		/*
+		 * Removal of all existing tokens for the user. This is done to ensure that no active session would be there 
+		 */
+        
+        
+        userService.removeTokensByUser(user);
+
 
         if (user.getActive() == null || !user.getActive()) {
             throw new OAuth2Exception("Please activate your account");
