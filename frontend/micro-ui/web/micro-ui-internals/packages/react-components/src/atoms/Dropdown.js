@@ -157,122 +157,177 @@ const Dropdown = (props) => {
   }
 
   return (
+<div
+  className={`${user_type === "employee" ? "employee-select-wrap" : "select-wrap"} ${props?.className ? props?.className : ""}`}
+  style={{ ...props.style }}
+>
+  <style>
+      {
+
+        `
+        /* Wrapper */
+.select,
+.select-active {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border: 1px solid #dcdfe6;
+  border-radius: 8px;
+  padding: 10px 12px;
+  background: #fff;
+  transition: all 0.2s ease-in-out;
+  cursor: pointer;
+}
+
+.select-active {
+  border-color: #007bff;
+  box-shadow: 0 0 0 2px rgba(0,123,255,0.15);
+}
+
+/* Arrow icon */
+.dropdown-arrow {
+  margin-left: 8px;
+  transition: transform 0.3s ease;
+}
+.select-active .dropdown-arrow {
+  transform: rotate(180deg);
+}
+
+/* Input field */
+.employee-select-wrap--elipses {
+  flex: 1;
+  border: none;
+  outline: none;
+  font-size: 14px;
+  color: #333;
+  background: transparent;
+}
+.employee-select-wrap--elipses::placeholder {
+  color: #aaa;
+}
+
+/* Options card */
+.options-card {
+  margin-top: 6px;
+  background: #fff;
+  border: 1px solid #eee;
+  border-radius: 8px;
+  box-shadow: 0px 6px 18px rgba(0,0,0,0.08);
+  max-height: 240px;
+  overflow-y: auto;
+  animation: fadeIn 0.2s ease;
+  z-index: 1000;
+}
+
+/* Scrollbar styling */
+.options-card::-webkit-scrollbar {
+  width: 6px;
+}
+.options-card::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 3px;
+}
+.options-card::-webkit-scrollbar-thumb:hover {
+  background: #999;
+}
+
+/* Each option */
+.dropdown-option {
+  padding: 10px 14px;
+  font-size: 14px;
+  color: #333;
+  cursor: pointer;
+  transition: background 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.dropdown-option:hover {
+  background: #f6f9fc;
+}
+.dropdown-option.active {
+  background: #eaf3ff;
+  color: #007bff;
+  font-weight: 500;
+}
+.dropdown-option.no-option {
+  color: #777;
+  cursor: default;
+  font-style: italic;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+        `
+      }
+  </style>
+  {!hasCustomSelector && (
     <div
-      className={`${user_type === "employee" ? "employee-select-wrap" : "select-wrap"} ${props?.className ? props?.className : ""}`}
-      style={{ ...props.style }}
+      className={`${dropdownStatus ? "select-active" : "select"} ${props.disable && "disabled"}`}
+      style={props.errorStyle ? { border: "1px solid #e63946" } : {}}
     >
-      {hasCustomSelector && (
-        <div className={props.showArrow ? "cp flex-right column-gap-5" : "cp"} onClick={dropdownSwitch}>
-          {props.customSelector}
-          {props.showArrow && <ArrowDown onClick={dropdownSwitch} className={props.disable && "disabled"} />}
-        </div>
-      )}
-      {!hasCustomSelector && (
-        <div
-          className={`${dropdownStatus ? "select-active" : "select"} ${props.disable && "disabled"}`}
-          style={props.errorStyle ? { border: "1px solid red" } : {}}
-        >
-          <TextField
-            autoComplete={props.autoComplete}
-            setFilter={setFilter}
-            forceSet={forceSet}
-            setforceSet={setforceSet}
-            setOptionIndex={setOptionIndex}
-            keepNull={props.keepNull}
-            selectedVal={
-              selectedOption
-                ? props.t
-                  ? props.isMultiSelectEmp
-                    ? `${selectedOption} ${t("BPA_SELECTED_TEXT")}`
-                    : props.t(props.optionKey ? selectedOption[props.optionKey] : selectedOption)
-                  : props.optionKey
-                  ? selectedOption[props.optionKey]
-                  : selectedOption
-                : null
-            }
-            filterVal={filterVal}
-            addProps={{ length: filteredOption.length, currentIndex: optionIndex, selectOption: selectOption }}
-            dropdownDisplay={dropdownOn}
-            handleClick={handleClick}
-            disable={props.disable}
-            freeze={props.freeze ? true : false}
-            autoFocus={props.autoFocus}
-            placeholder={props.placeholder}
-            onBlur={props?.onBlur}
-            inputRef={props.ref}
-          />
-          <ArrowDown onClick={dropdownSwitch} className="cp" disable={props.disable} />
-        </div>
-      )}
-      {dropdownStatus ? (
-        props.optionKey ? (
-          <div
-            id="jk-dropdown-unique"
-            className={`${hasCustomSelector ? "margin-top-10 display: table" : ""} options-card`}
-            style={{ ...props.optionCardStyles }}
-            ref={optionRef}
-          >
-            {filteredOption &&
-              filteredOption.map((option, index) => {
-                return (
-                  <div
-                    className={`cp profile-dropdown--item display: flex `}
-                    style={
-                      index === optionIndex
-                        ? {
-                            opacity: 1,
-                            backgroundColor: "rgba(238, 238, 238, var(--bg-opacity))",
-                          }
-                        : {}
-                    }
-                    key={index}
-                    onClick={() => onSelect(option)}
-                  >
-                    {option.icon && <span className="icon"> {option.icon} </span>}
-                    {props.isPropertyAssess? <div>{props.t ? props.t(option[props.optionKey]) : option[props.optionKey]}</div>:
-                    <span> {props.t ? props.t(option[props.optionKey]) : option[props.optionKey]}</span>} 
-                  </div>
-                );
-              })}
-            {filteredOption && filteredOption.length === 0 && (
-              <div className={`cp profile-dropdown--item display: flex `} key={"-1"} onClick={()=>{
-                
-              }}>
-                {<span> {props.t ? props.t("CMN_NOOPTION") : "CMN_NOOPTION"}</span>}
-              </div>
-            )}
-          </div>
-        ) : (
-          <div
-            className="options-card"
-            style={{ ...props.optionCardStyles, overflow: "scroll", maxHeight: "350px" }}
-            id="jk-dropdown-unique"
-            ref={optionRef}
-          >
-            {props.option
-              .filter((option) => option?.toUpperCase().indexOf(filterVal?.toUpperCase()) > -1)
-              .map((option, index) => {
-                return (
-                  <p
-                    key={index}
-                    style={
-                      index === optionIndex
-                        ? {
-                            opacity: 1,
-                            backgroundColor: "rgba(238, 238, 238, var(--bg-opacity))",
-                          }
-                        : {}
-                    }
-                    onClick={() => onSelect(option)}
-                  >
-                    {option}
-                  </p>
-                );
-              })}
-          </div>
-        )
-      ) : null}
+      <TextField
+        autoComplete={props.autoComplete}
+        setFilter={setFilter}
+        forceSet={forceSet}
+        setforceSet={setforceSet}
+        setOptionIndex={setOptionIndex}
+        keepNull={props.keepNull}
+        selectedVal={
+          selectedOption
+            ? props.t
+              ? props.isMultiSelectEmp
+                ? `${selectedOption} ${t("BPA_SELECTED_TEXT")}`
+                : props.t(props.optionKey ? selectedOption[props.optionKey] : selectedOption)
+              : props.optionKey
+              ? selectedOption[props.optionKey]
+              : selectedOption
+            : null
+        }
+        filterVal={filterVal}
+        addProps={{ length: filteredOption.length, currentIndex: optionIndex, selectOption }}
+        dropdownDisplay={dropdownOn}
+        handleClick={handleClick}
+        disable={props.disable}
+        freeze={props.freeze ? true : false}
+        autoFocus={props.autoFocus}
+        placeholder={props.placeholder}
+        inputRef={props.ref}
+      />
+      <ArrowDown onClick={dropdownSwitch} className={`cp dropdown-arrow ${props.disable && "disabled"}`} />
     </div>
+  )}
+
+  {dropdownStatus && (
+    <div
+      id="jk-dropdown-unique"
+      className={`options-card ${hasCustomSelector ? "margin-top-10" : ""}`}
+      style={{ ...props.optionCardStyles }}
+      ref={optionRef}
+    >
+      {filteredOption?.map((option, index) => (
+        <div
+          key={index}
+          className={`dropdown-option ${index === optionIndex ? "active" : ""}`}
+          onClick={() => onSelect(option)}
+        >
+          {option.icon && <span className="icon">{option.icon}</span>}
+          <span>{props.t ? props.t(option[props.optionKey]) : option[props.optionKey]}</span>
+        </div>
+      ))}
+      {filteredOption?.length === 0 && (
+        <div className="dropdown-option no-option">
+          {props.t ? props.t("CMN_NOOPTION") : "No option available"}
+        </div>
+      )}
+    </div>
+  )}
+</div>
+
   );
 };
 

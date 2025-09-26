@@ -59,14 +59,14 @@
 
 @media (min-width: 780px) {
   .SideBarStatic {
-    width: 219px;
+    width: 320px;
     background: white;
    
   }
 }
 @media (max-width: 780px) {
   .SideBarStatic {
-    width: 219px;
+    width: 320px;
     background: white;
     
     display: none;
@@ -83,7 +83,7 @@
 
 .moduleLinkHomePage {
   @media (min-width: 780px) {
-    width: calc(100% - 219px);
+    width: calc(100% - 320px);
   }
   margin-top: -25px;
   img {

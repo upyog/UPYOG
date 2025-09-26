@@ -204,58 +204,7 @@ const [description, setDescription] = useState("")
   const isPincodeValid = () => !pincodeNotValid;
 
   const config = [
-    {
-      head: t("ES_CREATECOMPLAINT_PROVIDE_COMPLAINANT_DETAILS"),
-      body: [
-        {
-          label: t("ES_CREATECOMPLAINT_MOBILE_NUMBER"),
-          isMandatory: true,
-          type: "text",
-          value:mobileNumber || window.Digit.SessionStorage.get("User")?.info?.mobileNumber,
-          onChange: handleMobileNumber,
-          populators: {
-            name: "mobileNumber",
-            onChange: handleMobileNumber,
-            validation: {
-              required: true,
-              pattern: /^[6-9]\d{9}$/,  
-            },
-            componentInFront: <div className="employee-card-input employee-card-input--front">+91</div>,
-            error: t("CORE_COMMON_MOBILE_ERROR"),
-          },
-        },
-        {
-          label: t("ES_CREATECOMPLAINT_COMPLAINT_NAME"),
-          isMandatory: true,
-          type: "text",
-          value:fullName || window.Digit.SessionStorage.get("User")?.info?.name,
-          populators: {
-            name: "name",
-            onChange: handleName,
-            validation: {
-              required: true,
-              pattern: /^[A-Za-z]/,
-            },
-            error: t("CS_ADDCOMPLAINT_NAME_ERROR"),
-          },
-        },
-        {
-          label: t("ES_MAIL_ID"),
-          isMandatory: false,
-          type: "text",
-          value:emailId || window.Digit.SessionStorage.get("User")?.info?.emailId ,
-          populators: {
-            name: "emailId",
-            onChange: handleEmail,
-            validation: {
-              //required: true,
-              pattern: /[A-Za-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$/,
-            },
-            error: t("CS_ADDCOMPLAINT_EMAIL_ERROR"),
-          },
-        },
-      ],
-    },
+
     {
       head: t("CS_COMPLAINT_DETAILS_COMPLAINT_DETAILS"),
       body: [
@@ -279,6 +228,23 @@ const [description, setDescription] = useState("")
             type: "dropdown",
             populators: <Dropdown option={priorityMenu} optionKey="name" id="priorityLevel" selected={priorityLevel} select={selectedPriorityLevel} />,
           
+        },
+        {
+          label: t("CS_COMPLAINT_DETAILS_ADDITIONAL_DETAILS"),
+          type: "textarea",
+          onChange: handleDescription,
+          value:description,
+          populators: {
+            name: "description",
+            onChange: handleDescription,
+          },
+        },
+        {
+          label: t("CS_ADDCOMPLAINT_EVIDENCE"),
+          type: "custom",
+          populators: (
+            <ImageUploadHandler tenantId={tenantId} uploadedImages={uploadedImagesn} onPhotoChange={handleUpload} />
+          ),
         },
         {
           //label: t("WS_COMMON_PROPERTY_DETAILS"),
@@ -360,29 +326,59 @@ const [description, setDescription] = useState("")
         },
       ],
     },
+
     {
-      head: t("CS_COMPLAINT_DETAILS_ADDITIONAL_DETAILS"),
+      head: t("ES_CREATECOMPLAINT_PROVIDE_COMPLAINANT_DETAILS"),
       body: [
         {
-          label: t("CS_COMPLAINT_DETAILS_ADDITIONAL_DETAILS"),
-          type: "textarea",
-          onChange: handleDescription,
-          value:description,
+          label: t("ES_CREATECOMPLAINT_MOBILE_NUMBER"),
+          isMandatory: true,
+          type: "text",
+          value:mobileNumber || window.Digit.SessionStorage.get("User")?.info?.mobileNumber,
+          onChange: handleMobileNumber,
           populators: {
-            name: "description",
-            onChange: handleDescription,
+            name: "mobileNumber",
+            onChange: handleMobileNumber,
+            validation: {
+              required: true,
+              pattern: /^[6-9]\d{9}$/,  
+            },
+            componentInFront: <div className="employee-card-input employee-card-input--front">+91</div>,
+            error: t("CORE_COMMON_MOBILE_ERROR"),
           },
         },
         {
-          label: t("CS_ADDCOMPLAINT_EVIDENCE"),
-          type: "custom",
-          populators: (
-            <ImageUploadHandler tenantId={tenantId} uploadedImages={uploadedImagesn} onPhotoChange={handleUpload} />
-          ),
+          label: t("ES_CREATECOMPLAINT_COMPLAINT_NAME"),
+          isMandatory: true,
+          type: "text",
+          value:fullName || window.Digit.SessionStorage.get("User")?.info?.name,
+          populators: {
+            name: "name",
+            onChange: handleName,
+            validation: {
+              required: true,
+              pattern: /^[A-Za-z]/,
+            },
+            error: t("CS_ADDCOMPLAINT_NAME_ERROR"),
+          },
         },
-        
+        {
+          label: t("ES_MAIL_ID"),
+          isMandatory: false,
+          type: "text",
+          value:emailId || window.Digit.SessionStorage.get("User")?.info?.emailId ,
+          populators: {
+            name: "emailId",
+            onChange: handleEmail,
+            validation: {
+              //required: true,
+              pattern: /[A-Za-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$/,
+            },
+            error: t("CS_ADDCOMPLAINT_EMAIL_ERROR"),
+          },
+        },
       ],
-    },
+    }
   ];
     useEffect(()=>{
       console.log("heloo world",propetyData )

@@ -18,6 +18,87 @@ const TextInput = (props) => {
 
   return (
     <React.Fragment>
+      <style>
+        {
+          `
+          /* Wrapper */
+.text-input {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1rem;
+  width: 100%;
+  position: relative;
+}
+
+/* Input fields */
+.text-input input {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid #d0d5dd;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  color: #333;
+  background-color: #fff;
+  outline: none;
+  transition: all 0.3s ease;
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.05);
+}
+
+/* Hover effect */
+.text-input input:hover {
+  border-color: #4096ff;
+  box-shadow: 0 0 4px rgba(64,150,255,0.3);
+}
+
+/* Focus effect */
+.text-input input:focus {
+  border-color: #1677ff;
+  box-shadow: 0 0 6px rgba(22,119,255,0.4);
+  background-color: #f9fcff;
+}
+
+/* Disabled state */
+.text-input input.disabled,
+.text-input input:disabled {
+  background-color: #f5f5f5;
+  border-color: #e0e0e0;
+  color: #999;
+  cursor: not-allowed;
+}
+
+/* Error style */
+.employee-card-input-error,
+.citizen-card-input-error {
+  border: 1px solid #ff4d4f !important;
+  background-color: #fff1f0 !important;
+  color: #a8071a;
+}
+
+/* Date input style */
+.card-date-input {
+  background: #fafafa;
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-size: 0.9rem;
+  text-align: center;
+  border: 1px solid #d9d9d9;
+  cursor: default;
+}
+
+/* Signature image */
+.text-input img {
+  margin-top: 0.5rem;
+  max-width: 120px;
+  height: auto;
+  border-radius: 6px;
+  border: 1px solid #eee;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+          
+          `
+        }
+      </style>
       <div className={`text-input ${user_type === "employee" ? "" :"text-input-width"} ${props.className}`} style={props?.textInputStyle ? { ...props.textInputStyle} : {}}>
         {props.isMandatory ? (
           <input

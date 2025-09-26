@@ -3,6 +3,7 @@ body {
 }
 
 .body-container {
+  background-color: #e8eef8;
   @apply bg-grey-bg h-full min-h-screen overflow-x-hidden;
   position: relative !important;
   background-image: url("https://jaljeevanmission.gov.in//themes/edutheme/images/header-bg.png")
@@ -11,7 +12,7 @@ body {
 
 .navbar {
   @apply text-white bg-secondary p-md w-full mb-md;
-  background: #0a97d5 !important;
+  background: #e8eef8 !important;
   color: #0b0c0c !important;
   img {
     height: 24px;
@@ -100,7 +101,7 @@ body {
     width: 100%;
     form {
       .card {
-        max-width: 960px;
+
         h2 {
           text-align: left;
         }
