@@ -351,7 +351,7 @@ public class Address   {
   **/
   @ApiModelProperty(value = "Street Name")
   
-  @Size(min=2,max=64)   public String getStreet() {
+  public String getStreet() {
     return street;
   }
 

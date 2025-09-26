@@ -203,7 +203,7 @@ public class BPA   {
   **/
   @ApiModelProperty(readOnly = true, value = "Risk type will be drived based on mdms configuration")
   
-  @Size(min=1,max=64)   public String getRiskType() {
+  public String getRiskType() {
     return riskType;
   }
 
