@@ -76,9 +76,11 @@ public class CalculationService {
 				.getTenantId();
 		Object mdmsData = mdmsService.mDMSCall(calculationReq, tenantId);
 		List<Calculation> calculations = getCalculation(calculationReq.getRequestInfo(),calculationReq.getCalulationCriteria(), mdmsData);
-		demandService.generateDemand(calculationReq.getRequestInfo(),calculations, mdmsData);
 		CalculationRes calculationRes = CalculationRes.builder().calculations(calculations).build();
-		producer.push(config.getSaveTopic(), calculationRes);
+		if(calculationReq.getCalulationCriteria() != null && calculationReq.getCalulationCriteria().size() > 0 && !calculationReq.getCalulationCriteria().get(0).isOnlyEstimates()) {
+			demandService.generateDemand(calculationReq.getRequestInfo(),calculations, mdmsData);
+			producer.push(config.getSaveTopic(), calculationRes);
+		}
 		return calculations;
 	}
 
