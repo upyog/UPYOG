@@ -2,6 +2,7 @@ package org.egov.pt.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
+import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.pt.models.Property;
 import org.egov.pt.models.PropertyCriteria;
@@ -21,6 +22,7 @@ import static org.egov.pt.util.PTConstants.ES_DATA_PATH;
 
 
 @Component
+@Slf4j
 public class FuzzySearchService {
 
     private ElasticSearchRepository elasticSearchRepository;
@@ -39,15 +41,16 @@ public class FuzzySearchService {
 
     public List<Property> getProperties(RequestInfo requestInfo, PropertyCriteria criteria) {
 
+        log.info("criteria="+criteria);
 
-        List<String> idsFromDB = propertyRepository.getPropertyIds(criteria);
+//        List<String> idsFromDB = propertyRepository.getPropertyIds(criteria);
 
-        if(CollectionUtils.isEmpty(idsFromDB))
-            return new LinkedList<>();
+//        if(CollectionUtils.isEmpty(idsFromDB))
+//            return new LinkedList<>();
 
         validateFuzzySearchCriteria(criteria);
 
-        Object esResponse = elasticSearchRepository.fuzzySearchProperties(criteria, idsFromDB);
+        Object esResponse = elasticSearchRepository.fuzzySearchForProperties(criteria);
 
         Map<String, Set<String>> tenantIdToPropertyId = getTenantIdToPropertyIdMap(esResponse);
 
@@ -57,7 +60,14 @@ public class FuzzySearchService {
             String tenantId = entry.getKey();
             Set<String> propertyIds = entry.getValue();
 
-            PropertyCriteria propertyCriteria = PropertyCriteria.builder().tenantId(tenantId).propertyIds(propertyIds).build();
+            // locality added
+            PropertyCriteria.PropertyCriteriaBuilder builder = PropertyCriteria.builder().tenantId(tenantId).propertyIds(propertyIds);
+
+            if (criteria.getLocality() != null) {
+                builder.locality(criteria.getLocality());
+            }
+
+            PropertyCriteria propertyCriteria = builder.build();
 
             properties.addAll(propertyRepository.getPropertiesWithOwnerInfo(propertyCriteria,requestInfo,false));
 
@@ -127,7 +137,7 @@ public class FuzzySearchService {
 
                 for (Map<String, Object> map : data) {
 
-                    String tenantId = JsonPath.read(map, "$.tenantData.code");
+                    String tenantId = JsonPath.read(map, "$.tenantId");
                     String propertyId = JsonPath.read(map, "$.propertyId");
 
                     if (tenantIdToPropertyIds.containsKey(tenantId))
