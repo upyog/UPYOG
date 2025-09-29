@@ -422,11 +422,13 @@ public class PaymentValidator {
 //            errorMap.put("INVALID_PAYMENTDETAIL", "The amount paid cannot be fractional");
 
         // Checks if the bill is expired
-        bill.getBillDetails().forEach(billDetail -> {
-            if (isNull(billDetail.getExpiryDate()) || System.currentTimeMillis() >= billDetail.getExpiryDate()) {
-                errorMap.put("BILL_EXPIRED", "Bill expired or invalid, regenerate bill!");
-            }
-        });
+        boolean allExpired = bill.getBillDetails().stream()
+                .allMatch(billDetail -> isNull(billDetail.getExpiryDate()) 
+                        || System.currentTimeMillis() >= billDetail.getExpiryDate());
+
+        if (allExpired) {
+            errorMap.put("BILL_EXPIRED", "Bill expired or invalid, regenerate bill!");
+        }
 
     }
 

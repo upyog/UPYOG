@@ -221,7 +221,7 @@ public class GarbageAccountSchedulerService {
 						.build())
 				.isSchedulerCall(true).build();
 		GarbageAccountResponse garbageAccountResponse = garbageAccountService
-				.searchGarbageAccounts(searchCriteriaGarbageAccountRequest,false);
+				.searchGarbageAccounts(searchCriteriaGarbageAccountRequest);
 
 		if (null != garbageAccountResponse && !CollectionUtils.isEmpty(garbageAccountResponse.getGarbageAccounts())) {
 			garbageAccounts = garbageAccountResponse.getGarbageAccounts();
@@ -350,7 +350,7 @@ public class GarbageAccountSchedulerService {
 				.status(Collections.singletonList("APPROVED")).isActiveAccount(true).isActiveSubAccount(true)
 				.build())
 				.isSchedulerCall(true).build();
-		GarbageAccountResponse garbageAccountResponse = garbageAccountService.searchGarbageAccounts(searchCriteriaGarbageAccountRequest,false);
+		GarbageAccountResponse garbageAccountResponse = garbageAccountService.searchGarbageAccounts(searchCriteriaGarbageAccountRequest);
 		if(!CollectionUtils.isEmpty(garbageAccountResponse.getGarbageAccounts()))
 		{
 			if(!CollectionUtils.isEmpty(garbageAccountResponse.getGarbageAccounts().get(0).getAddresses())) {
