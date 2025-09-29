@@ -355,7 +355,7 @@ public class PropertyController {
 	
 	@PostMapping("/_generatePropertyTaxBillReceipt")
 	public ResponseEntity<Resource> generatePropertyTaxBillReceipt(
-			@Valid @RequestBody RequestInfoWrapper requestInfoWrapper, @RequestParam String propertyId, @RequestParam String billId) {
+			@Valid @RequestBody RequestInfoWrapper requestInfoWrapper, @RequestParam String propertyId,@RequestParam(required = false) String billId) {
 
 		ResponseEntity<Resource> response = propertyService.generatePropertyTaxBillReceipt(requestInfoWrapper,
 				propertyId,billId);
