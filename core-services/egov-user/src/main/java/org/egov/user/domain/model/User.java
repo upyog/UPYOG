@@ -68,7 +68,8 @@ public class User {
     private Address correspondenceAddress;
     private Set<Address> addresses;
     private Boolean active;
-    private Set<Role> roles;
+    @Builder.Default
+    private Set<Role> roles = new HashSet<>();
     private Date dob;
     private Date passwordExpiryDate;
     private String locale = "en_IN";
