@@ -255,7 +255,7 @@ public class DemandService {
 
 //             addRoundOffTaxHead(calculation.getTenantId(),demandDetails);
             
-            Map<String, Long> taxPeriod = mdmsService.getTaxPeriods(mdmsData);
+            Map<String, Object> taxPeriod = mdmsService.getTaxPeriods(mdmsData);
             
              demands.add(Demand.builder()
                     .consumerCode(consumerCode)
@@ -263,8 +263,8 @@ public class DemandService {
                     .payer(owner)
                     .minimumAmountPayable(config.getMinimumPayableAmount())
                     .tenantId(tenantId)
-                    .taxPeriodFrom( taxPeriod.get(BPACalculatorConstants.MDMS_STARTDATE))
-                    .taxPeriodTo(taxPeriod.get(BPACalculatorConstants.MDMS_ENDDATE))
+                    .taxPeriodFrom((Long)taxPeriod.get(BPACalculatorConstants.MDMS_STARTDATE))
+                    .taxPeriodTo((Long)taxPeriod.get(BPACalculatorConstants.MDMS_ENDDATE))
                     .consumerType("BPA")
                     .businessService(utils.getBillingBusinessService(bpa.getBusinessService(),calculation.getFeeType()))
                     .build());

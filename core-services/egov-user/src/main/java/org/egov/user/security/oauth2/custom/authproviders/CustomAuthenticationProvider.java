@@ -23,7 +23,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.oauth2.common.exceptions.OAuth2Exception;
 import org.springframework.stereotype.Component;
 
-import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -45,6 +44,8 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 
     private UserService userService;
 
+ 
+    
     @Autowired
     private EncryptionDecryptionUtil encryptionDecryptionUtil;
 
@@ -84,7 +85,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
         if (isEmpty(userType) || isNull(UserType.fromValue(userType))) {
             throw new OAuth2Exception("User Type is mandatory and has to be a valid type");
         }
-
+        
         User user;
         RequestInfo requestInfo;
         try {
@@ -109,6 +110,14 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
             throw new OAuth2Exception("Invalid login credentials");
 
         }
+        
+		/*
+		 * Removal of all existing tokens for the user. This is done to ensure that no active session would be there 
+		 */
+        
+        
+        userService.removeTokensByUser(user);
+
 
         if (user.getActive() == null || !user.getActive()) {
             throw new OAuth2Exception("Please activate your account");

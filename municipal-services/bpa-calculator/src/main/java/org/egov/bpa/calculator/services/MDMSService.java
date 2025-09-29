@@ -179,8 +179,8 @@ public class MDMSService {
      * @param mdmsData The MDMS data from the mdms call
      * @return Map containing the startDate and endDate
      */
-    public Map<String,Long> getTaxPeriods(Object mdmsData){
-        Map<String,Long> taxPeriods = new HashMap<>();
+    public Map<String, Object> getTaxPeriods(Object mdmsData){
+        Map<String,Object> taxPeriods = new HashMap<>();
         try {
 //        	Object mdmsData = util.mDMSCall(requestInfo, criteria.getTenantId() );
 //            String jsonPath = TLConstants.MDMS_CURRENT_FINANCIAL_YEAR.replace("{}",businessService_TL);
@@ -191,12 +191,14 @@ public class MDMSService {
             for (int i=0; i<jsonOutput.size();i++) {
            	 Object startingDate = jsonOutput.get(i).get(BPACalculatorConstants.MDMS_STARTDATE);
            	 Object endingDate = jsonOutput.get(i).get(BPACalculatorConstants.MDMS_ENDDATE);
+           	 Object financialYear = jsonOutput.get(i).get(BPACalculatorConstants.MDMS_NAME);
            	 Long startTime = (Long)startingDate;
            	 Long endTime = (Long)endingDate;
            	 
            	 if(System.currentTimeMillis()>=startTime && System.currentTimeMillis()<=endTime) {
-           		taxPeriods.put(BPACalculatorConstants.MDMS_STARTDATE,(Long) startTime);
-                taxPeriods.put(BPACalculatorConstants.MDMS_ENDDATE,(Long) endTime);
+           		taxPeriods.put(BPACalculatorConstants.MDMS_STARTDATE, startTime);
+                taxPeriods.put(BPACalculatorConstants.MDMS_ENDDATE, endTime);
+                taxPeriods.put(BPACalculatorConstants.MDMS_FINANCIALYEAR, financialYear);
            		 break;
            	 }
            	 
@@ -207,6 +209,44 @@ public class MDMSService {
             throw new CustomException("INVALID FINANCIALYEAR", "No financial Year data found for the module : " + businessService_BPA);
         }
         return taxPeriods;
+    }
+    
+    /**
+     * Gets the MDMS data for Sanction Fee Charges of BPA
+     * @param CalculationReq to retrieve RequestInfo
+     * @param tenantId of the BPA
+     * @param Charges type code
+     * @param BPA category
+     * @return MDMS data for Sanction Fee Charges
+     */
+    public Object getMDMSSanctionFeeCharges (RequestInfo requestInfo, String tenantId, String code,
+    		String category, String fromFY) {
+    	
+    	MdmsCriteriaReq mdmsCriteriaReq = getMDMSSanctionFeeRequest(requestInfo, tenantId, code, category, fromFY);
+		StringBuilder url = getMdmsSearchUrl();
+		Object result = serviceRequestRepository.fetchResult(url , mdmsCriteriaReq);
+		return result;
+	}
+
+	private MdmsCriteriaReq getMDMSSanctionFeeRequest(RequestInfo requestInfo, String tenantId, String code,
+			String category, String fromFY) {
+        
+        List<MasterDetail> sanctionFeeChargesDetails = new ArrayList<>();
+        Long currentTime = System.currentTimeMillis();
+        final String filterCodeForCharges = "$.[?(@.active==true && @.code=='" + code + "' && @.Category == '" + category + "' && @.fromFY == '" + fromFY + "' && @.startingDate <= "+ currentTime +" && @.endingDate >= "+ currentTime +" )]";
+        sanctionFeeChargesDetails.add(MasterDetail.builder().name(BPACalculatorConstants.MDMS_CHARGES_TYPE).filter(filterCodeForCharges).build());
+        ModuleDetail fyModuleDtls = ModuleDetail.builder().masterDetails(sanctionFeeChargesDetails)
+                .moduleName(BPACalculatorConstants.MDMS_BPA).build();
+        
+
+        List<ModuleDetail> moduleDetails = new ArrayList<>();
+        
+        moduleDetails.add(fyModuleDtls);
+
+        MdmsCriteria mdmsCriteria = MdmsCriteria.builder().moduleDetails(moduleDetails).tenantId(tenantId)
+                .build();
+
+        return MdmsCriteriaReq.builder().requestInfo(requestInfo).mdmsCriteria(mdmsCriteria).build();
     }
 
 

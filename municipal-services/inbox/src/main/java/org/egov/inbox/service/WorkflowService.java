@@ -267,9 +267,11 @@ public class WorkflowService {
         	
         	String statelevelTenantId=entry.getKey().split("\\.")[0];
         	
-            if(entry.getKey().equals(criteria.getTenantId()) || (entry.getValue().contains(FSMConstants.FSM_DSO) && entry.getKey().equals(statelevelTenantId)) ){
+            if(requestInfo.getUserInfo().getTenantId().equalsIgnoreCase("pb.punjab")||(
+					entry.getKey().equals(criteria.getTenantId()) ||
+					(entry.getValue().contains(FSMConstants.FSM_DSO) && entry.getKey().equals(statelevelTenantId)) )){
                 List<BusinessService> businessServicesByTenantId = new ArrayList();
-                if(entry.getKey().split("\\.").length==1){
+                if(requestInfo.getUserInfo().getTenantId().equalsIgnoreCase("pb.punjab")||entry.getKey().split("\\.").length==1){
                     businessServicesByTenantId = tenantIdToBuisnessSevicesMap.get(criteria.getTenantId());
               }else{
                     businessServicesByTenantId = tenantIdToBuisnessSevicesMap.get(entry.getKey());
