@@ -195,7 +195,7 @@ public class TokenService {
                         .code(role.getCode())
                         .tenantId(role.getTenantId())
                         .build())
-                    .collect(Collectors.toSet()) : null)
+                    .collect(Collectors.toSet()) : new HashSet<>()) // CRITICAL FIX: Never return null roles
             .build();
     }
 

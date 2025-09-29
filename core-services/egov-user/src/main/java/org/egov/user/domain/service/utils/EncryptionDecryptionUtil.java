@@ -278,19 +278,25 @@ public class EncryptionDecryptionUtil {
                 for (Object item : list) {
                     if (item instanceof org.egov.user.domain.model.User) {
                         org.egov.user.domain.model.User user = (org.egov.user.domain.model.User) item;
-                        if (user.getUuid() != null && user.getRoles() != null && !user.getRoles().isEmpty()) {
-                            userRolesMap.put(user.getUuid(), new HashSet<>(user.getRoles()));
+                        if (user.getUuid() != null) {
+                            // CRITICAL FIX: Always preserve roles, even if empty - prevents null roles
+                            Set<org.egov.user.domain.model.Role> roles = user.getRoles() != null ?
+                                new HashSet<>(user.getRoles()) : new HashSet<>();
+                            userRolesMap.put(user.getUuid(), roles);
                             log.debug("ROLE PRESERVATION - Stored {} roles for user {} before decryption",
-                                     user.getRoles().size(), user.getUuid());
+                                     roles.size(), user.getUuid());
                         }
                     }
                 }
             } else if (objectToDecrypt instanceof org.egov.user.domain.model.User) {
                 org.egov.user.domain.model.User user = (org.egov.user.domain.model.User) objectToDecrypt;
-                if (user.getUuid() != null && user.getRoles() != null && !user.getRoles().isEmpty()) {
-                    userRolesMap.put(user.getUuid(), new HashSet<>(user.getRoles()));
+                if (user.getUuid() != null) {
+                    // CRITICAL FIX: Always preserve roles, even if empty - prevents null roles
+                    Set<org.egov.user.domain.model.Role> roles = user.getRoles() != null ?
+                        new HashSet<>(user.getRoles()) : new HashSet<>();
+                    userRolesMap.put(user.getUuid(), roles);
                     log.debug("ROLE PRESERVATION - Stored {} roles for user {} before decryption",
-                             user.getRoles().size(), user.getUuid());
+                             roles.size(), user.getUuid());
                 }
             }
         } catch (Exception e) {
@@ -304,9 +310,11 @@ public class EncryptionDecryptionUtil {
      * PERMANENT FIX: Restore user roles after decryption to prevent role loss
      */
     private void restoreRolesAfterDecryption(Object decryptedObject, Map<String, Set<org.egov.user.domain.model.Role>> userRolesMap) {
-        if (decryptedObject == null || userRolesMap.isEmpty()) {
+        if (decryptedObject == null) {
             return;
         }
+
+        // CRITICAL FIX: Don't exit early if userRolesMap is empty - we still need to ensure roles are not null
 
         try {
             if (decryptedObject instanceof List) {
@@ -314,31 +322,39 @@ public class EncryptionDecryptionUtil {
                 for (Object item : list) {
                     if (item instanceof org.egov.user.domain.model.User) {
                         org.egov.user.domain.model.User user = (org.egov.user.domain.model.User) item;
-                        if (user.getUuid() != null && userRolesMap.containsKey(user.getUuid())) {
-                            Set<org.egov.user.domain.model.Role> preservedRoles = userRolesMap.get(user.getUuid());
-                            user.setRoles(preservedRoles);
-                            log.info("ROLE RESTORATION - Restored {} roles for user {} after decryption",
-                                   preservedRoles.size(), user.getUuid());
-                        } else if (user.getUuid() != null && (user.getRoles() == null || user.getRoles().isEmpty())) {
-                            // Ensure roles is never null, set empty list instead
-                            user.setRoles(new HashSet<>());
-                            log.debug("ROLE INITIALIZATION - Set empty roles for user {} (no roles to preserve)",
-                                    user.getUuid());
+                        if (user.getUuid() != null) {
+                            if (userRolesMap.containsKey(user.getUuid())) {
+                                Set<org.egov.user.domain.model.Role> preservedRoles = userRolesMap.get(user.getUuid());
+                                user.setRoles(preservedRoles);
+                                log.info("ROLE RESTORATION - Restored {} roles for user {} after decryption",
+                                       preservedRoles.size(), user.getUuid());
+                            } else {
+                                // CRITICAL FIX: Ensure roles is never null, even when not preserved
+                                if (user.getRoles() == null) {
+                                    user.setRoles(new HashSet<>());
+                                    log.debug("ROLE INITIALIZATION - Set empty roles for user {} (no roles to preserve)",
+                                            user.getUuid());
+                                }
+                            }
                         }
                     }
                 }
             } else if (decryptedObject instanceof org.egov.user.domain.model.User) {
                 org.egov.user.domain.model.User user = (org.egov.user.domain.model.User) decryptedObject;
-                if (user.getUuid() != null && userRolesMap.containsKey(user.getUuid())) {
-                    Set<org.egov.user.domain.model.Role> preservedRoles = userRolesMap.get(user.getUuid());
-                    user.setRoles(preservedRoles);
-                    log.info("ROLE RESTORATION - Restored {} roles for user {} after decryption",
-                           preservedRoles.size(), user.getUuid());
-                } else if (user.getUuid() != null && (user.getRoles() == null || user.getRoles().isEmpty())) {
-                    // Ensure roles is never null, set empty list instead
-                    user.setRoles(new HashSet<>());
-                    log.debug("ROLE INITIALIZATION - Set empty roles for user {} (no roles to preserve)",
-                            user.getUuid());
+                if (user.getUuid() != null) {
+                    if (userRolesMap.containsKey(user.getUuid())) {
+                        Set<org.egov.user.domain.model.Role> preservedRoles = userRolesMap.get(user.getUuid());
+                        user.setRoles(preservedRoles);
+                        log.info("ROLE RESTORATION - Restored {} roles for user {} after decryption",
+                               preservedRoles.size(), user.getUuid());
+                    } else {
+                        // CRITICAL FIX: Ensure roles is never null, even when not preserved
+                        if (user.getRoles() == null) {
+                            user.setRoles(new HashSet<>());
+                            log.debug("ROLE INITIALIZATION - Set empty roles for user {} (no roles to preserve)",
+                                    user.getUuid());
+                        }
+                    }
                 }
             }
         } catch (Exception e) {
