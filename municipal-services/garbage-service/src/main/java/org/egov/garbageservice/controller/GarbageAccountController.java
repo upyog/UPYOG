@@ -51,9 +51,8 @@ public class GarbageAccountController {
 
 	@PostMapping("/_search")
 	public ResponseEntity<GarbageAccountResponse> search(
-			@RequestBody SearchCriteriaGarbageAccountRequest searchCriteriaGarbageAccountRequest,@RequestParam(name = "IsIndex", required = false, defaultValue = "false") Boolean IsIndex) {
-	
-			return ResponseEntity.ok(service.searchGarbageAccounts(searchCriteriaGarbageAccountRequest,IsIndex));
+			@RequestBody SearchCriteriaGarbageAccountRequest searchCriteriaGarbageAccountRequest) {
+		return ResponseEntity.ok(service.searchGarbageAccounts(searchCriteriaGarbageAccountRequest));
 	}
 
 	@PostMapping({ "/fetch", "/fetch/{value}" })
