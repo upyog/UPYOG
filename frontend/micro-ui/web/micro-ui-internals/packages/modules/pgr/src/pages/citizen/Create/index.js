@@ -239,6 +239,7 @@ const [description, setDescription] = useState("")
           populators: {
             name: "description",
             onChange: handleDescription,
+            wrapperClassName: "form-field-full",
           },
         },
         {
@@ -283,11 +284,19 @@ const [description, setDescription] = useState("")
             validation: { pattern: /^[1-9][0-9]{5}$/, validate: isPincodeValid },
             error: t("CORE_COMMON_PINCODE_INVALID"),
             onChange: handlePincode,
-            componentInFront: (
-              <div style={{ display: "flex", alignItems: "center" }} onClick={() => setIsMapPopupOpen(true)}>
-                <span style={{ marginRight: "8px" }}>📍</span>
-              </div>
-            ),
+            // componentInFront: (
+            //   <div
+            //   style={{
+            //     display: "flex",
+            //     alignItems: "center",
+            //     cursor: "pointer",
+            //     padding: "0 6px",
+            //   }}
+            //   onClick={() => setIsMapPopupOpen(true)}
+            // >
+            //   <i className="fas fa-map-marker-alt" style={{ color: "#f44336" }}></i>
+            // </div>
+            // ),
             
           },
         }
@@ -530,7 +539,12 @@ const [description, setDescription] = useState("")
   color: rgba(11, 12, 12, var(--text-opacity));
   margin-bottom: 8px; }
 
-
+.card-section-header{
+  color : #0456ad;
+}
+.card-label{
+  color : #0456ad !important;
+}
 /* ---------- Error ---------- */
 .card-label-error {
   color: #ff4d4f;
@@ -556,9 +570,21 @@ html, body {
 .styled-form {
   scroll-behavior: smooth;
 }
+.form-field-full {
+  grid-column: 1 / -1; /* 👈 spans all columns */
+}
+.form-field-full textarea {
+  width: 100%;
+  min-height: 120px; /* adjust height */
+  resize: vertical;  /* user can resize */
+}
 .styled-form {
   -webkit-overflow-scrolling: touch;
   overflow-y: auto; /* only if height is fixed */
+}
+.select-wrap .select-active
+{
+  padding: 0px !important;
 }
 /* ---------- Responsive ---------- */
 @media (max-width: 992px) {

@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   StandaloneSearchBar,
   Loader,
@@ -32,6 +32,10 @@ const Home = () => {
   const history = useHistory();
   const tenantId = Digit.ULBService.getCitizenCurrentTenant(true);
   const User = Digit.UserService.getUser();
+  const [resolved,setResolved]= useState(0)
+  const [pending,setPending]= useState(0)
+  const [submitted,setSubmitted]= useState(0)
+  const [expandedRows, setExpandedRows] = useState({});
 
   const mobileNumber = User?.mobileNumber || User?.info?.mobileNumber || User?.info?.userInfo?.mobileNumber;
   const { data: { stateInfo, uiHomePage } = {}, isLoading } = Digit.Hooks.useStore.getInitData();
@@ -41,6 +45,10 @@ const Home = () => {
       enabled: Digit.UserService?.getUser()?.access_token ? true : false,
     },
   });
+  const [currentPage, setCurrentPage] = useState(1);
+  const rowsPerPage = 5; // Number of rows per page
+
+
   let isMobile = window.Digit.Utils.browser.isMobile();
   if (window.Digit.SessionStorage.get("TL_CREATE_TRADE")) window.Digit.SessionStorage.set("TL_CREATE_TRADE", {})
 
@@ -49,7 +57,12 @@ const Home = () => {
     if (!Digit.UserService?.getUser()?.access_token) return false;
     return true;
   };
-
+  const toggleRow = (id) => {
+    setExpandedRows(prev => ({
+      ...prev,
+      [id]: !prev[id],
+    }));
+  }
   const { data: EventsData, isLoading: EventsDataLoading } = Digit.Hooks.useEvents({
     tenantId,
     variant: "whats-new",
@@ -160,7 +173,7 @@ const Home = () => {
         : history.push(`/digit-ui/citizen/login`);
     }
   }, []);
-  
+  const complainData= complaint?.data?.ServiceWrappers || [];
   const appBannerWebObj = uiHomePage?.appBannerDesktop;
   const appBannerMobObj = uiHomePage?.appBannerMobile;
   const citizenServicesObj = uiHomePage?.citizenServicesCard;
@@ -172,7 +185,7 @@ const Home = () => {
   const handleClickOnWhatsAppBanner = (obj) => {
     window.open(obj?.navigationUrl);
   };
-
+console.log("EventsDataEventsData",EventsData)
   const allCitizenServicesProps = {
     header: t(citizenServicesObj?.headerLabel),
     sideOption: {
@@ -251,20 +264,26 @@ const Home = () => {
   let complaints = complaint?.ServiceWrappers
   const opencomplaints = complaints?.filter((code) => code.service.applicationStatus !== "RESOLVED");
   const closecomplaints = complaints?.filter((code) => code.service.applicationStatus == "RESOLVED");
-  console.log("opencomplaints", opencomplaints, closecomplaints)
-  //  const data = [
-  //   { label: 'Open Incident', value: opencomplaints?.length ||0 },
-  //   { label: 'Close Incident', value: closecomplaints?.length || 0 }
-  // ];
-  const dataNew = [
-    { label: 'Red', value: 5 },
-    { label: 'Green', value: 4 }
-  ];
-  const data = [
-    { label: 'Open Incident', value: 10 }, // Replace with opencomplaints?.length
-    { label: 'Close Incident', value: 6 } // Replace with closecomplaints?.length
-  ];
-  console.log("vvvv", citizenServicesObj?.props?.[1]?.navigationUrl)
+  console.log("opencomplaints", complaint)
+
+  
+
+
+  useEffect(async () =>
+  {
+    const resolved = await Digit.PGRService.search(tenantId, {mobileNumber,applicationStatus:"RESOLVED"});
+    const pedningAtLme = await Digit.PGRService.search(tenantId, {mobileNumber,applicationStatus:"PENDINGATLME"});
+    const pendingAtGro = await Digit.PGRService.search(tenantId, {mobileNumber,applicationStatus:"PENDINGATSUPERVISOR"});
+    const submitted = await Digit.PGRService.search(tenantId, {mobileNumber,applicationStatus:"PENDINGFORASSIGNMENT"});
+    
+    console.log("datadatadatadatadata",resolved)
+    setResolved(resolved?.ServiceWrappers.length)
+    setSubmitted(submitted?.ServiceWrappers.length)
+    setPending(pedningAtLme?.ServiceWrappers.length + pendingAtGro?.ServiceWrappers.length )
+
+  },[])
+  console.log("vvvv", complaints)
+  const totalPages = Math.ceil(complaints && complaints.length || 0 / rowsPerPage);
   return isLoading ? (
     <Loader />
   ) : (
@@ -360,7 +379,7 @@ const Home = () => {
         .custom-table {
           width: 100%;
           border-collapse: collapse;
-          margin-top: 30px;
+          margin-top: 15px;
           background: #fff;
           box-shadow: 0 2px 6px rgba(0,0,0,0.1);
           border-radius: 8px;
@@ -372,7 +391,7 @@ const Home = () => {
           text-align: left;
         }
         .custom-table th {
-          background: #004080;
+          background: #00599f;
           color: #fff;
           font-weight: 600;
         }
@@ -414,6 +433,11 @@ const Home = () => {
             margin-bottom: 24px; }
             .banner {
               height: auto !important; }
+          .mb-3-new{
+            font-size: calc(1.275rem + .3vw);
+    margin-top: 2rem !important;
+    margin-bottom: 0rem !important;
+          }
 
               
       `}
@@ -431,23 +455,43 @@ const Home = () => {
     <div className="col">
         <div className="service-card" onClick={() => history.push("/digit-ui/citizen/pgr/create-complaint/complaint-type")}>
           <div className="service-card-body">
-            <span className="icon-wrapper"></span>
+            <span className="icon-wrapper">
+            <i class="fas fa-exclamation-triangle"></i>
+            </span>
             <span className="label-text">{t("New Grievances")}</span>
           </div>
         </div>
       </div>
       <div className="col">
-        <div className="service-card" onClick={() => history.push("/digit-ui/citizen/pgr/create-complaint/complaint-type")}>
-          <div className="service-card-body">
-            <span className="icon-wrapper">0</span>
-            <span className="label-text">{t("Submitted Grievances")}</span>
-          </div>
-        </div>
-      </div>
+  <div
+    className="service-card"
+    onClick={() => history.push("/digit-ui/citizen/pgr/create-complaint/complaint-type")}
+  >
+    <div className="service-card-body">
+      <span
+        className="icon-wrapper"
+        style={{fontWeight: 600}}
+      >
+        {/* Main Icon */}
+
+
+        {/* Red Badge */}
+          {submitted}
+
+      </span>
+
+      {/* Label Text */}
+      <span className="label-text">{t("Submitted Grievances")}</span>
+    </div>
+  </div>
+</div>
+
+
+
       <div className="col">
         <div className="service-card" onClick={() => history.push("#")}>
           <div className="service-card-body">
-            <span className="icon-wrapper">0</span>
+            <span className="icon-wrapper" style={{fontWeight: 600}}>{resolved}</span>
             <span className="label-text">{t("Disposed Grievances")}</span>
           </div>
         </div>
@@ -455,54 +499,71 @@ const Home = () => {
       <div className="col">
         <div className="service-card" onClick={() => history.push("#")}>
           <div className="service-card-body">
-            <span className="icon-wrapper">0</span>
+            <span className="icon-wrapper" style={{fontWeight: 600}}>{pending}</span>
             <span className="label-text">{t("Pending Grievances")}</span>
           </div>
         </div>
       </div>
     </div>
-
+    <h4 className="mb-3-new">Grievance Details</h4>
     {/* Table with 5 Columns */}
-    <table className="custom-table">
-      <thead>
-        <tr>
-          <th>Column 1</th>
-          <th>Column 2</th>
-          <th>Column 3</th>
-          <th>Column 4</th>
-          <th>Column 5</th>
+
+    <table className="custom-table" style={{ tableLayout: "fixed", width: "100%" }}>
+  <thead>
+    <tr>
+      <th style={{ width: "20%" }}>Request ID</th>
+      <th style={{ width: "20%" }}>Service Code</th>
+      <th style={{ width: "20%" }}>Status</th>
+      <th style={{ width: "20%" }}>Priority</th>
+      <th style={{ width: "20%" }}>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    {complaints && complaints.map((item, index) => {
+      const service = item.service;
+      const description = service.description || "-";
+      const isExpanded = expandedRows[service.serviceRequestId];
+      const truncated = description.length > 50 && !isExpanded
+        ? description.slice(0, 20) + "..."
+        : description;
+
+      return (
+        <tr
+          key={service.serviceRequestId}
+          onClick={() => history.push(`/digit-ui/citizen/pgr/complaints/${service.serviceRequestId}`)}
+          style={{ cursor: "pointer" }}
+        >
+          <td style={{ width: "20%", wordWrap: "break-word" }}>{service.serviceRequestId}</td>
+          <td style={{ width: "20%", wordWrap: "break-word" }}>
+            {t(`SERVICEDEFS.${service.serviceCode.toUpperCase()}`)}
+          </td>
+          <td style={{ width: "20%", wordWrap: "break-word" }}>
+            {t(`CS_COMMON_${service.applicationStatus}`)}
+          </td>
+          <td style={{ width: "20%", wordWrap: "break-word" }}>{service.priority}</td>
+          <td style={{ width: "20%", wordWrap: "break-word" }}>
+            {truncated}
+            {description.length > 50 && (
+              <span
+                style={{ color: "#00599f", cursor: "pointer", marginLeft: "5px" }}
+                onClick={(e) => { e.stopPropagation(); toggleRow(service.serviceRequestId); }}
+              >
+                {isExpanded ? "Show less" : "Show more"}
+              </span>
+            )}
+          </td>
         </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>Row 1 - Col 1</td>
-          <td>Row 1 - Col 2</td>
-          <td>Row 1 - Col 3</td>
-          <td>Row 1 - Col 4</td>
-          <td>Row 1 - Col 5</td>
-        </tr>
-        <tr>
-          <td>Row 2 - Col 1</td>
-          <td>Row 2 - Col 2</td>
-          <td>Row 2 - Col 3</td>
-          <td>Row 2 - Col 4</td>
-          <td>Row 2 - Col 5</td>
-        </tr>
-        <tr>
-          <td>Row 3 - Col 1</td>
-          <td>Row 3 - Col 2</td>
-          <td>Row 3 - Col 3</td>
-          <td>Row 3 - Col 4</td>
-          <td>Row 3 - Col 5</td>
-        </tr>
-      </tbody>
-    </table>
+      );
+    })}
+  </tbody>
+</table>
+
 
     {conditionsToDisableNotificationCountTrigger() ? (
           EventsDataLoading ? (
             <Loader />
           ) : (
-            <div className="WhatsNewSection" style={{marginTop:"15px"}}>
+            <div className="WhatsNewSection" style={{marginTop:"35px"}}>
               <div className="headSection" style={{padding:"0px",display:"flex",justifyContent:"space-between"}}>
                 <h4 className="mb-3" style={{fontSize:"1.5rem"}} >{t(whatsNewSectionObj?.headerLabel)}</h4>
                 <h2 className="mb-3" onClick={() => history.push(whatsNewSectionObj?.sideOption?.navigationUrl)}>{t(whatsNewSectionObj?.sideOption?.name)}</h2>
@@ -512,6 +573,7 @@ const Home = () => {
             </div>
           )
         ) : null}
+            <ChatBot/>
   </div>
 
 

@@ -24,7 +24,7 @@ const TopBar = ({
   setSideBarScrollTop,
 }) => {
   const [profilePic, setProfilePic] = React.useState(null);
-
+  const isMobile = window.Digit.Utils.browser.isMobile();
   React.useEffect(() => {
     (async () => {
       const tenant = Digit.ULBService.getCurrentTenantId();
@@ -100,7 +100,6 @@ const TopBar = ({
     z-index: 1090;
     display: flex;
     align-items: center;
-    justify-content: space-between;
     padding: 14px 20px;
     background: #fff;
     
@@ -263,12 +262,14 @@ const TopBar = ({
     .brand {
       display: flex;
       flex-direction: column;
-      gap: 2px;
+   gap: 1px !important;
+      width: 100%;
+      margin-left: 20px;
     }
     
     .portal-title {
       font-weight: 800;
-      font-size: 1.5rem;
+      font-size: 1rem;
       background: linear-gradient(90deg, #00599f, #00aaff);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
@@ -336,30 +337,36 @@ const TopBar = ({
       border-radius: 50%;
       object-fit: cover;
     }
-    
+    @media (min-width: 769px) {
+      .portal-title {
+        font-size: 1.5rem;
+      }
+    }
         `
       }
     </style>
       {/* Government Ribbon */}
       <div className="gov-ribbon">
-        Government of Gujrat | State Wide Attention on Grievances by Application of Technology
+       State Wide Attention on Grievances by Application of Technology
       </div>
 
       {/* Header */}
       <div className="header">
   {/* Brand */}
+  <img src="https://grievances.maharashtra.gov.in/assets/images/black-emblem.png"></img>
   <div className="brand">
+ 
     <h2 className="portal-title">
-    SWAGAT <span className="portal-title-odia">| સ્વાગત</span>
+    Grievance Redressal Portal
     </h2>
     <div className="tagline-wrap">
       <span className="portal-subtitle">
-      State Wide Attention on Grievances by Application of Technology
+      Govt. of Gujrat
       </span>
-      <span className="separator-tricolor"></span>
+      {/* <span className="separator-tricolor"></span>
       <span className="powered-by">
         Govt. of Gujrat
-      </span>
+      </span> */}
     </div>
   </div>
 
@@ -408,7 +415,7 @@ const TopBar = ({
     {/* Logout */}
     {loggedin && (
       <div className="icon-box" onClick={handleLogout}>
-        <i className="fas fa-sign-out-alt fa-lg"></i>
+        <i className="fas fa-sign-out-alt fa-lg" style={{fontSize:"1.5em !important"}}></i>
       </div>
     )}
 
