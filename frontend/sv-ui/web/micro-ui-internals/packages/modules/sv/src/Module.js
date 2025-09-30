@@ -88,11 +88,7 @@ const componentsToRegister = {
       clearParams();
     }, []);
   
-    const links = [ // need to check the links, will be removed later if not needed
-      
-    ];
-  
-    return <CitizenHomeCard header={t("STREET_VENDING_SERVICES")} links={links} Icon={() => <PTIcon className="fill-path-primary-main" />} />;
+    return <CitizenHomeCard header={t("STREET_VENDING_SERVICES")}  Icon={() => <PTIcon className="fill-path-primary-main" />} />;
   };
   
   // export the components outside of module to enable and access of module

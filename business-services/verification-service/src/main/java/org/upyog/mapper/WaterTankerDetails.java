@@ -28,7 +28,7 @@ public class WaterTankerDetails implements CommonDetailsMapper {
         String applicationNumber = wtDetailNode.path("bookingNo").asText(NA);
         String status = wtDetailNode.path("bookingStatus").asText(NA);
         String moduleName = "request-service.water_tanker";
-        String deliveryDate = wtDetailNode.path("deliveryDate").asText(NA);
+        String fromDate = wtDetailNode.path("deliveryDate").asText(NA);
 
         JsonNode applicantDetail = wtDetailNode.path("applicantDetail");
         String name = applicantDetail.path("name").asText(NA);
@@ -48,7 +48,7 @@ public class WaterTankerDetails implements CommonDetailsMapper {
             return CommonDetails.builder().applicationNumber(applicationNumber).fromDate(NA).toDate(NA).address(NA).name(NA).mobileNumber(NA).status("Pending").moduleName(moduleName)
                     .build();
         }
-        return CommonDetails.builder().applicationNumber(applicationNumber).fromDate(deliveryDate).toDate(NA).address(fullAddress.isEmpty() ? NA : fullAddress).name(name).mobileNumber(mobileNumber).status(status).moduleName(moduleName)
+        return CommonDetails.builder().applicationNumber(applicationNumber).fromDate(fromDate).toDate(NA).address(fullAddress.isEmpty() ? NA : fullAddress).name(name).mobileNumber(mobileNumber).status(status).moduleName(moduleName)
                 .build();
     }
 }
