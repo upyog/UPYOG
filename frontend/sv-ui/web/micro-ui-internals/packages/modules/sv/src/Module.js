@@ -90,14 +90,6 @@ const componentsToRegister = {
   
     const links = [ // need to check the links, will be removed later if not needed
       
-      {
-        link: `${matchPath}/sv/apply`,
-        i18nKey: t("sv_APPLY"),
-      },
-      {
-        link: `${matchPath}/sv/my-applications`,
-        i18nKey: t("sv_MY_APPLICATION"),
-      },
     ];
   
     return <CitizenHomeCard header={t("STREET_VENDING_SERVICES")} links={links} Icon={() => <PTIcon className="fill-path-primary-main" />} />;
