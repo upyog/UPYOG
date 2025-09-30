@@ -169,16 +169,33 @@ public class CalculationService {
 			if(!node.containsKey("builtUpArea"))
 				throw new CustomException(BPACalculatorConstants.PARSING_ERROR, "builtUpArea should not be null!!");
 
-		BigDecimal boundayWallLength=new BigDecimal(node.get("boundaryWallLength"));
-		BigDecimal area=new BigDecimal(node.get("builtUpArea")).multiply(BigDecimal.valueOf(10.7639));
-		
-		totalTax=boundayWallLength.multiply(BigDecimal.valueOf(2.5)).add(area.multiply(BigDecimal.valueOf(2.5)));
-		estimate.setEstimateAmount(totalTax.setScale(0, RoundingMode.HALF_UP));
-		estimate.setCategory(Category.FEE);
+			List<Map<String,Object>> applicationFees = JsonPath.read(mdmsData, BPACalculatorConstants.MDMS_APPLIOCATION_FEES_PATH);
+			
+			BigDecimal boundayWallLength=new BigDecimal(node.get("boundaryWallLength")).multiply(BigDecimal.valueOf(3.2808)); //In Running Feet
+			BigDecimal area=new BigDecimal(node.get("builtUpArea")).multiply(BigDecimal.valueOf(10.7639)); //In Sq Feet
+			
+			for(Map<String,Object> fee : applicationFees) {
 
-		String taxHeadCode = utils.getTaxHeadCode(calulationCriteria.getBpa().getBusinessService(), calulationCriteria.getFeeType());
-		estimate.setTaxHeadCode(taxHeadCode);
-		estimates.add(estimate);
+				String taxHeadCode = fee.get("taxHeadCode").toString();
+				BigDecimal rate = new BigDecimal((Double)fee.get("rate"));
+				BigDecimal amount = BigDecimal.ZERO;
+				TaxHeadEstimate appFeeEstimate = new TaxHeadEstimate();
+				
+				switch (taxHeadCode) {
+				case BPACalculatorConstants.BPA_BUILDING_APPLICATION_FEES:
+					amount = rate.multiply(area);
+					break;
+				case BPACalculatorConstants.BPA_BOUNDARY_WALL_FEES:
+					amount = rate.multiply(boundayWallLength);
+					break;
+				}
+				
+				appFeeEstimate.setEstimateAmount(amount.setScale(0, RoundingMode.HALF_UP));
+				appFeeEstimate.setCategory(Category.FEE);
+				appFeeEstimate.setTaxHeadCode(taxHeadCode);
+				estimates.add(appFeeEstimate);
+			}
+			
 		}
 		
 		else if (calulationCriteria.getFeeType().equalsIgnoreCase(BPACalculatorConstants.MDMS_CALCULATIONTYPE_SANC_FEETYPE) 
