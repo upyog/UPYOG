@@ -8,11 +8,11 @@ import { initPGRComponents } from "@demodigit/digit-ui-module-pgr";
 import { initDSSComponents } from "@demodigit/digit-ui-module-dss";
 // import { initReportsComponents } from "@upyog/digit-ui-module-reports";
 import { PaymentModule, PaymentLinks, paymentConfigs } from "@demodigit/digit-ui-module-common";
-import { initWSComponents } from "@demodigit/digit-ui-module-ws";
+// import { initWSComponents } from "@demodigit/digit-ui-module-ws";
 import { DigitUI } from "@demodigit/digit-ui-module-core";
-import { initCommonPTComponents } from "@demodigit/digit-ui-module-commonpt";
-import { HRMSModule } from "@demodigit/digit-ui-module-hrms";
-import { initHRMSComponents } from "@demodigit/digit-ui-module-hrms";
+// import { initCommonPTComponents } from "@demodigit/digit-ui-module-commonpt";
+// import { HRMSModule } from "@demodigit/digit-ui-module-hrms";
+// import { initHRMSComponents } from "@demodigit/digit-ui-module-hrms";
 // import {initCustomisationComponents} from "./customisations";
 
 // import { PGRModule, PGRLinks } from "@demodigit/digit-ui-module-pgr";
@@ -31,11 +31,7 @@ var Digit = window.Digit || {};
 
 const enabledModules = [
   "PGR",
-  "Payment",
-  "WS",
-  "CommonPT",
-  "ASSET",
-  "HRMS"
+  "Payment"
 ];
 
 const initTokens = (stateCode) => {
@@ -70,18 +66,18 @@ const initDigitUI = () => {
     ...pgrComponents,
     PaymentModule,
     ...paymentConfigs,
-    HRMSModule,
+    // HRMSModule,
     PaymentLinks,
-    ASSETModule,
-    ASSETLinks,
-    ...ASSETComponents,
+    // ASSETModule,
+    // ASSETLinks,
+    // ...ASSETComponents,
   });
 
   initPGRComponents();
   initDSSComponents();
-  initWSComponents();
-  initCommonPTComponents();
-  initHRMSComponents();
+  // initWSComponents();
+  // initCommonPTComponents();
+  // initHRMSComponents();
   // initCustomisationComponents();
 
   const moduleReducers = (initData) => ({

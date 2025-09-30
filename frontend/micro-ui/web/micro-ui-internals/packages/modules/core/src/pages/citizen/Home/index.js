@@ -269,21 +269,23 @@ console.log("EventsDataEventsData",EventsData)
   
 
 
-  useEffect(async () =>
+  useEffect( () =>
   {
-    const resolved = await Digit.PGRService.search(tenantId, {mobileNumber,applicationStatus:"RESOLVED"});
-    const pedningAtLme = await Digit.PGRService.search(tenantId, {mobileNumber,applicationStatus:"PENDINGATLME"});
-    const pendingAtGro = await Digit.PGRService.search(tenantId, {mobileNumber,applicationStatus:"PENDINGATSUPERVISOR"});
-    const submitted = await Digit.PGRService.search(tenantId, {mobileNumber,applicationStatus:"PENDINGFORASSIGNMENT"});
-    
-    console.log("datadatadatadatadata",resolved)
-    setResolved(resolved?.ServiceWrappers.length)
-    setSubmitted(submitted?.ServiceWrappers.length)
-    setPending(pedningAtLme?.ServiceWrappers.length + pendingAtGro?.ServiceWrappers.length )
+    const fetchData = async () => {
+      const resolved = await Digit.PGRService.search(tenantId, { mobileNumber, applicationStatus: "RESOLVED" });
+      const pendingAtLme = await Digit.PGRService.search(tenantId, { mobileNumber, applicationStatus: "PENDINGATLME" });
+      const pendingAtGro = await Digit.PGRService.search(tenantId, { mobileNumber, applicationStatus: "PENDINGATSUPERVISOR" });
+      const submitted = await Digit.PGRService.search(tenantId, { mobileNumber, applicationStatus: "PENDINGFORASSIGNMENT" });
+  
+      setResolved(resolved?.ServiceWrappers.length || 0);
+      setSubmitted(submitted?.ServiceWrappers.length || 0);
+      setPending((pendingAtLme?.ServiceWrappers.length || 0) + (pendingAtGro?.ServiceWrappers.length || 0));
+    };
+  
+    fetchData();
 
   },[])
-  console.log("vvvv", complaints)
-  const totalPages = Math.ceil(complaints && complaints.length || 0 / rowsPerPage);
+
   return isLoading ? (
     <Loader />
   ) : (

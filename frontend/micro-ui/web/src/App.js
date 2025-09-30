@@ -12,41 +12,37 @@ import {
 } from "@demodigit/digit-ui-module-common";
 import { DigitUI } from "@demodigit/digit-ui-module-core";
 import { initLibraries } from "@upyog/digit-ui-libraries";
-import { initWSComponents } from "@demodigit/digit-ui-module-ws";
+// import { initWSComponents } from "@demodigit/digit-ui-module-ws";
 import { initCustomisationComponents } from "./Customisations";
-import { initCommonPTComponents } from "@demodigit/digit-ui-module-commonpt";
-import { ASSETComponents, ASSETLinks, ASSETModule } from "@demodigit/upyog-ui-module-asset";
+// import { initCommonPTComponents } from "@demodigit/digit-ui-module-commonpt";
+// import { ASSETComponents, ASSETLinks, ASSETModule } from "@demodigit/upyog-ui-module-asset";
 // import { initReportsComponents } from "@egovernments/digit-ui-module-reports";
-import {
-  HRMSModule,
-  initHRMSComponents,
-} from "@demodigit/digit-ui-module-hrms";
+// import {
+//   HRMSModule,
+//   initHRMSComponents,
+// } from "@demodigit/digit-ui-module-hrms";
 
 initLibraries();
 
 const enabledModules = [
   "PGR",
-  "Payment",
-  "CommonPT",
-  "WS",
-  "ASSET",
-  "HRMS"
+  "Payment"
 ];
 window.Digit.ComponentRegistryService.setupRegistry({
   ...paymentConfigs,
   PaymentModule,
   PaymentLinks,
-  ASSETModule,
-  ASSETLinks,
-  HRMSModule,
-  ...ASSETComponents,
+  // ASSETModule,
+  // ASSETLinks,
+  // HRMSModule,
+  // ...ASSETComponents,
 });
 
 initPGRComponents();
 initDSSComponents();
-initWSComponents();
-initCommonPTComponents();
-initHRMSComponents();
+// initWSComponents();
+// initCommonPTComponents();
+// initHRMSComponents();
 // initReportsComponents();
 initCustomisationComponents();
 

@@ -8,10 +8,7 @@
     "example",
     "packages/react-components",
     "packages/modules/core",
-    "packages/modules/asset",
-    "packages/modules/commonPt",
     "packages/modules/pgr",
-    "packages/modules/ws",
     "packages/modules/hrms"
   ],
   "author": "Abhinav Kushwaha <abhinav.kushwaha@egovernments.org>",
@@ -42,13 +39,13 @@
     "build:libraries": "cd packages/libraries && yarn build",
     "build:components": "cd packages/react-components && yarn build",
     "build:common": "cd packages/modules/common && yarn build",
-    "build:asset": "cd packages/modules/asset && yarn build",
-    "build:commonPt": "cd packages/modules/commonPt && yarn build",
+    "buildD:asset": "cd packages/modules/asset && yarn build",
+    "buildD:commonPt": "cd packages/modules/commonPt && yarn build",
     "build:core": "cd packages/modules/core && yarn build",
     "build:pgr": "cd packages/modules/pgr && yarn build",
     "build:hrms": "cd packages/modules/hrms && yarn build",
     "buildD:dss": "cd packages/modules/dss && yarn build",
-    "build:ws": "cd packages/modules/ws && yarn build",
+    "buildD:ws": "cd packages/modules/ws && yarn build",
     "deploy:jenkins": "./scripts/jenkins.sh"
   },
   "devDependencies": {
