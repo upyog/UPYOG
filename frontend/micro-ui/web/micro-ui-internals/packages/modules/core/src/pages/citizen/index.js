@@ -273,7 +273,7 @@ console.log("modules",modules)
     }}
   >
     Copyright © 2025 State Wide Attention on Grievances by Application of
-    Technology Govt. of Gujarat
+    Technology | Govt. of Gujarat
   </span>
 </footer>
 

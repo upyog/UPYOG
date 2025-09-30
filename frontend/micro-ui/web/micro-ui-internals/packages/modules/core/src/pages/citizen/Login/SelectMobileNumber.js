@@ -241,6 +241,7 @@ const SelectMobileNumber = ({ submitFormComplete }) => {
             flex-direction: column;
             justify-content: center;
             height:100% !important;
+            z-index: auto;
         }
         .banner, .login-box {
           display: flex;
@@ -254,7 +255,7 @@ const SelectMobileNumber = ({ submitFormComplete }) => {
         .banner img {
             width: 100%;
             height: auto;       /* keeps aspect ratio */
-            max-height: 300px;  /* optional: prevent banner from being too tall on mobile */
+            /* optional: prevent banner from being too tall on mobile */
             object-fit: cover;  /* crops instead of squishing */
             border-radius: 10px;
           }

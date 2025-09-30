@@ -7,19 +7,31 @@ const WhatsNewCard = ({
   eventNotificationText,
   timePastAfterEventCreation,
   timeApproxiamationInUnits,
-  eventDate, // pass event date if available
+  eventDate,
+  auditDetails
+ // pass event date if available
 }) => {
   const { t } = useTranslation();
-
+  const ConvertEpochToDate = (dateEpoch) => {
+    if (dateEpoch == null || dateEpoch === "") {
+      return "NA";
+    }
+  
+    const dateFromApi = new Date(dateEpoch);
+    const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    
+    const monthName = months[dateFromApi.getMonth()];
+    const day = dateFromApi.getDate();
+    const year = dateFromApi.getFullYear();
+  
+    return `${monthName} ${day}, ${year}`;
+  };
+  
   const getTransformedLocale = (label) => {
     if (typeof label === "number") return label;
     return label && label.toUpperCase().replace(/[.:-\s\/]/g, "_");
   };
-console.log("dddddddddddd", header,
-actions,
-eventNotificationText,
-timePastAfterEventCreation,
-timeApproxiamationInUnits,)
+console.log("dddddddddddd", auditDetails)
   return (
     <div className="card news-card shadow-sm border-0 mb-3" style={{padding:"0px",margin:"0px"}}>
         <style>
@@ -261,9 +273,8 @@ timeApproxiamationInUnits,)
 
         {/* Small muted date or relative time */}
         <small className="text-muted">
-          {eventDate
-            ? eventDate
-            : `${timePastAfterEventCreation} ${t(timeApproxiamationInUnits)}`}
+          {ConvertEpochToDate(auditDetails?.createdTime)
+            }
         </small>
 
         {/* Description */}

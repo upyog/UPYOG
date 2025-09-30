@@ -80,9 +80,10 @@ const IconsObject = {
   FirenocIcon: <FirenocIcon className="icon" />,
   HomeIcon: <HomeIcon className="icon" />,
   EditPencilIcon: <EditPencilIcon className="icon" />,
-  LogoutIcon: <LogoutIcon className="icon" />,
-  Phone: <Phone className="icon" />,
+  LogoutIcon:  <i className="fas fa-sign-out-alt fa-sm"></i>,
+  Phone:  <i className="fas fa-phone fa-sm"></i>,
   LoginIcon: <LoginIcon className="icon" />,
+  Griveance:<i className="fas fa-exclamation-triangle fa-sm"></i>,
 };
 
 const SIDEBAR_WIDTH = 260;
@@ -125,7 +126,7 @@ const StaticCitizenSideBar = ({ linkData, islinkDataLoading }) => {
 
   let menuItems = [...SideBarMenu(t, showProfilePage, redirectToLoginPage, false, storeData, tenantId)];
   menuItems = menuItems.filter((item) => item.element !== "LANGUAGE");
-
+console.log("menuItemsmenuItems",menuItems)
   const MenuItem = ({ item }) => {
     const leftIconArray = item?.icon || item.icon?.type?.name;
     const leftIcon = leftIconArray ? IconsObject[leftIconArray] : IconsObject.BillsIcon;
@@ -146,6 +147,17 @@ const StaticCitizenSideBar = ({ linkData, islinkDataLoading }) => {
           color: "#000",
         }}
       >
+                  <style>
+            {
+              `
+              .fa-lg {
+                font-size: 1.5em !important;
+                line-height: .05em;
+                vertical-align: -0.075em;
+            }
+              `
+            }
+          </style>
         <div
           className="icon-wrapper"
           style={{
@@ -181,6 +193,29 @@ const StaticCitizenSideBar = ({ linkData, islinkDataLoading }) => {
     menuItems = menuItems.filter((item) => item.id !== "login-btn" && item.id !== "help-line");
     menuItems = [
       ...menuItems,
+      {
+        text: t("New Grievances"),
+        element: "PROFILE",
+        icon:  "Griveance",
+        populators: { onClick: () => history.push("/digit-ui/citizen/pgr/create-complaint/complaint-type") },
+      },
+      {
+        text: t("Submitted Grievances"),
+        element: "PROFILE",
+        icon:  "Griveance",
+        populators: { onClick: () => history.push("#") },
+      },
+      {
+        text: t("Disposed Grievances"),
+        element: "PROFILE",
+        icon:  "Griveance",
+        populators: { onClick: () => history.push("#") },
+      },      {
+        text: t("Pending Grievances"),
+        element: "PROFILE",
+        icon:  "Griveance",
+        populators: { onClick: () => history.push("#") },
+      },
       {
         text: t("EDIT_PROFILE"),
         element: "PROFILE",
@@ -251,6 +286,17 @@ const StaticCitizenSideBar = ({ linkData, islinkDataLoading }) => {
       <div style={sidebarStyle}>
         {user?.info && <Profile info={user.info} stateName={stateInfo?.name} t={t} />}
         <div>
+          <style>
+            {
+              `
+              .fa-lg {
+                font-size: 1.5em !important;
+                line-height: .05em;
+                vertical-align: -0.075em;
+            }
+              `
+            }
+          </style>
           {menuItems.map((item, idx) => (
             <div
               key={idx}
