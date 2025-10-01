@@ -302,22 +302,6 @@
 								<th>Amount Due (INR)</th>
 								<td><span class="highlight"><span th:text="${totalTax}"> NA </span></span></td>
 							</tr>
-							<tr>
-								<th>Status</th>
-								<td>
-									<span class="highlight">
-										<span th:text="${paymentStatus}">Type</span>
-									</span>
-								</td>
-							</tr>
-							<tr>
-							<th>Payment Date</th>
-							<td>
-								<span class="highlight">
-																	<span th:text="${paymentDate}">Type</span>
-																</span>
-															</td>
-														</tr>
 						</table>
 					</div>
 				</td>
@@ -360,6 +344,8 @@
 					<th>Value</th>
 					<th>Arrear</th>
 					<th>Interest</th>
+					<th>Status</th>
+					<th>Payment date</th>
 					<th>Amount</th>
 					
 				</tr>
@@ -377,6 +363,8 @@
 							<td><span th:text="allGrbgTaxs">NA</span></td>
 							<td><span th:text="allArrears">NA</span></td>
 							<td><span th:text="allInterest">NA</span></td>
+							<td><span th:text="allPaymentStatuses">NA</span></td>
+							<td><span th:text="allPaymentDates">NA</span></td>
 							<td><span th:text="allGrbgTaxPlusArrear">NA</span></td>
 							
 						</tr>
