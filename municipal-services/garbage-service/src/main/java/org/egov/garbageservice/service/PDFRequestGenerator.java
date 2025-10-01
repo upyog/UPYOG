@@ -8,12 +8,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
+import org.egov.garbageservice.util.GrbgConstants;
 import org.egov.garbageservice.util.RequestInfoWrapper;
-
 import org.egov.garbageservice.model.GarbageAccount;
 import org.egov.garbageservice.model.GrbgBillTracker;
 import org.egov.garbageservice.model.contract.PDFRequest;
@@ -33,109 +29,180 @@ public class PDFRequestGenerator {
 	@Autowired
 	private ObjectMapper objectMapper;
 
-	public PDFRequest generatePdfRequestForBill(RequestInfoWrapper requestInfoWrapper,GarbageAccount grbgAccount,GrbgBillTracker grbgBillTracker,Bill bill) {
+	@Autowired
+	private GrbgConstants applicationPropertiesAndConstant;
+
+	public PDFRequest generatePdfRequestForBill(RequestInfoWrapper requestInfoWrapper, GarbageAccount grbgAccount,
+			List<Bill> bill, List<GrbgBillTracker> grbgBillTracker) {
 
 		Map<String, Object> dataObject = new HashMap<>();
-		Map<String, String> grbg = new HashMap<>();
+		Map<String, Object> grbg = new HashMap<>();
 
 		JsonNode AdditionalDetail = objectMapper.valueToTree(grbgAccount.getAdditionalDetail());
-
-//		grbg.put("ulbType", addressAdditionalDetails.get("ulbType").asText());
-//		grbg.put("ulbName", addressAdditionalDetails.get("ulbName").asText());
+		
 		grbg.put("ulbName", grbgAccount.getAddresses().get(0).getUlbName());
 		grbg.put("ulbType", grbgAccount.getAddresses().get(0).getUlbType());
-		grbg.put("billNo", bill.getBillNumber());
 
-		grbg.put("date",
-				Instant.ofEpochMilli(grbgBillTracker.getAuditDetails().getCreatedDate())
-						.atZone(ZoneId.systemDefault()).toLocalDateTime()
-						.format(DateTimeFormatter.ofPattern("dd-MM-yyyy")));
-//
-		grbg.put("billPeriod", grbgBillTracker.getYear());
-//		
-		grbg.put("from", grbgBillTracker.getFromDate());
+		Map<String, BigDecimal> grbgTaxMap = new HashMap<>();
+		for (GrbgBillTracker grbgBillTrackerObj : grbgBillTracker) {
+			if (grbgBillTrackerObj.getGrbgBillAmount() != null) {
+				grbgTaxMap.put(grbgBillTrackerObj.getGrbgApplicationId(), grbgBillTrackerObj.getGrbgBillAmount());
+			}
+		}
+
+		Map<String, String> ownerNameMap = new HashMap<>();
+		Map<String, String> unitCategoryMap = new HashMap<>();
+		ownerNameMap.put(grbgAccount.getGrbgApplicationNumber(), grbgAccount.getName());
+		unitCategoryMap.put(grbgAccount.getGrbgApplicationNumber(),
+				grbgAccount.getGrbgCollectionUnits().get(0).getCategory());
+
+		for (GarbageAccount childGrbgAccount : grbgAccount.getChildGarbageAccounts()) {
+			String appNo = childGrbgAccount.getGrbgApplicationNumber();
+			ownerNameMap.put(appNo, childGrbgAccount.getName());
+			unitCategoryMap.put(appNo, childGrbgAccount.getGrbgCollectionUnits().get(0).getCategory());
+		}
+
+		Map<String, List<String>> grbgObj = new HashMap<>();
+
+		// initialize keys with empty lists
+		grbgObj.put("serialNo", new ArrayList<>());
+		grbgObj.put("grbgAccounts", new ArrayList<>());
+		grbgObj.put("ownerNames", new ArrayList<>());
+		grbgObj.put("propertyTypes", new ArrayList<>());
+		grbgObj.put("units", new ArrayList<>());
+		grbgObj.put("billNos", new ArrayList<>());
+		grbgObj.put("grbgTaxs", new ArrayList<>());
+		grbgObj.put("arrears", new ArrayList<>());
+		grbgObj.put("interest", new ArrayList<>());
+		grbgObj.put("paymentDates", new ArrayList<>());
+		grbgObj.put("paymentStatuses", new ArrayList<>());
+		grbgObj.put("grbgTaxPlusArrear", new ArrayList<>());
+
+		int count = 1;
+		for (int i = 0; i < bill.size(); i++) {
+			if (bill.get(i).getConsumerCode().equals(grbgAccount.getGrbgApplicationNumber())
+					&& bill.get(i).getConsumerCode().equals(grbgAccount.getGrbgApplicationNumber())) {
+
+				grbg.put("billNo", bill.get(i).getBillNumber());
+			}
+			Bill billObj = bill.get(i);
+			String consumerCode = billObj.getConsumerCode();
+			grbgObj.get("grbgAccounts").add(consumerCode);
+
+			grbgObj.get("ownerNames").add(ownerNameMap.getOrDefault(consumerCode, "N/A"));
+			grbgObj.get("propertyTypes").add(unitCategoryMap.getOrDefault(consumerCode, "N/A"));
+
+			String unit = "1";
+			BigDecimal tax = grbgTaxMap.getOrDefault(consumerCode, BigDecimal.ZERO);
+			BigDecimal arrear = billObj.getTotalAmount().subtract(tax);
+			BigDecimal interest = BigDecimal.ZERO;
+			BigDecimal grbgTaxPlusArrear = tax.add(arrear);
+
+			grbgObj.get("serialNo").add(String.valueOf(count++));
+			grbgObj.get("units").add(unit);
+			grbgObj.get("billNos").add(billObj.getBillNumber());
+			grbgObj.get("grbgTaxs").add(tax.toString());
+			grbgObj.get("arrears").add(arrear.toString());
+			grbgObj.get("interest").add(interest.toString());
+			String paymentDate = Bill.StatusEnum.PAID.equals(billObj.getStatus())
+			        ? Instant.ofEpochMilli(billObj.getAuditDetails().getLastModifiedTime())
+			                .atZone(ZoneId.systemDefault())
+			                .toLocalDateTime()
+			                .format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
+			        : "";
+
+			grbgObj.get("paymentDates").add(paymentDate);
+			grbgObj.get("paymentStatuses").add(billObj.getStatus().toString());
+			grbgObj.get("grbgTaxPlusArrear").add(grbgTaxPlusArrear.toString());
+		}
+
+		Map<String, Object> gbDetailsTableRow = new HashMap<>();
+		List<String> allSerialNo = grbgObj.get("serialNo");
+		List<String> allGrbgAccounts = grbgObj.get("grbgAccounts");
+		List<String> allOwnerNames = grbgObj.get("ownerNames");
+		List<String> allPropertyTypes = grbgObj.get("propertyTypes");
+		List<String> allUnits = grbgObj.get("units");
+		List<String> allBillNos = grbgObj.get("billNos");
+		List<String> allGrbgTaxs = grbgObj.get("grbgTaxs");
+		List<String> allArrears = grbgObj.get("arrears");
+		List<String> allInterest = grbgObj.get("interest");
+		List<String> allPaymentDates = grbgObj.get("paymentDates");
+		List<String> allPaymentStatuses = grbgObj.get("paymentStatuses");
+		List<String> allGrbgTaxPlusArrear = grbgObj.get("grbgTaxPlusArrear");
+
+		gbDetailsTableRow.put("allSerialNo", allSerialNo);
+		gbDetailsTableRow.put("allGrbgAccounts", allGrbgAccounts);
+		gbDetailsTableRow.put("allOwnerNames", allOwnerNames);
+		gbDetailsTableRow.put("allPropertyTypes", allPropertyTypes);
+		gbDetailsTableRow.put("allUnits", allUnits);
+		gbDetailsTableRow.put("allBillNos", allBillNos);
+		gbDetailsTableRow.put("allGrbgTaxs", allGrbgTaxs);
+		gbDetailsTableRow.put("allArrears", allArrears);
+		gbDetailsTableRow.put("allInterest", allInterest);
+		gbDetailsTableRow.put("allPaymentDates", allPaymentDates);
+		gbDetailsTableRow.put("allPaymentStatuses", allPaymentStatuses);
+		gbDetailsTableRow.put("allGrbgTaxPlusArrear", allGrbgTaxPlusArrear);
 		
-		grbg.put("to", grbgBillTracker.getToDate());
-	
-		grbg.put("billDueDate", Instant.ofEpochMilli(bill.getBillDetails().get(0).getExpiryDate())
-				.atZone(ZoneId.systemDefault()).toLocalDateTime()
-				.format(DateTimeFormatter.ofPattern("dd-MM-yyyy")));
+		BigDecimal totalTax = allGrbgTaxPlusArrear.stream().map(BigDecimal::new).reduce(BigDecimal.ZERO,
+				BigDecimal::add);
+		grbg.put("totalTax", totalTax);
 
-		int year = Integer.parseInt(grbgBillTracker.getYear());
+		Map<String, Object> tableRow = new HashMap<>();
+		tableRow.put("tag", "GARBAGE_BILL_TABLE_ROW");
+		tableRow.put("values", gbDetailsTableRow);
+
+		List<Map<String, Object>> tableRows = new ArrayList<>();
+		tableRows.add(tableRow);
+
+		Map<String, Object> tableRowMap = new HashMap<>();
+		tableRowMap.put("TABLE_ROW", tableRows);
+
+		dataObject.putAll(tableRowMap);
+
+		grbg.put("billGeneratedDate", Instant.ofEpochMilli(bill.get(0).getBillDate()).atZone(ZoneId.systemDefault())
+				.toLocalDateTime().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+		grbg.put("date", Instant.ofEpochMilli(grbgBillTracker.get(0).getAuditDetails().getCreatedDate())
+				.atZone(ZoneId.systemDefault()).toLocalDateTime().format(DateTimeFormatter.ofPattern("dd-MM-yyyy")));
+
+		grbg.put("billPeriod", grbgBillTracker.get(0).getYear());
+
+		grbg.put("from", grbgBillTracker.get(0).getFromDate());
+
+		grbg.put("to", grbgBillTracker.get(0).getToDate());
+
+		grbg.put("billDueDate", Instant.ofEpochMilli(bill.get(0).getBillDetails().get(0).getExpiryDate())
+				.atZone(ZoneId.systemDefault()).toLocalDateTime().format(DateTimeFormatter.ofPattern("dd-MM-yyyy")));
+
+		int year = Integer.parseInt(grbgBillTracker.get(0).getYear());
 		grbg.put("finYear", year + "-" + (year + 1));
-//		grbg.put("finYear", grbgBillTracker.getYear()+"-"+(year+1));
-
-		
-//
-//		grbg.put("to", grbgBillTracker.getToDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate()
-//				.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
-//
+		grbg.put("finYear", grbgBillTracker.get(0).getYear() + "-" + (year + 1));
 		grbg.put("district", "district");
 		grbg.put("wardNumber", "wardname");
-//		grbg.put("district", property.getAddress().getDistrict());
-//		grbg.put("wardNumber", addressAdditionalDetails.get("wardNumber").asText());
-//
-		grbg.put("unitCategory",grbgAccount.getGrbgCollectionUnits().get(0).getCategory());
-		
-		grbg.put("address",grbgAccount.getAddresses().get(0).getAddress1().concat(", ")
-				.concat(grbgAccount.getAddresses().get(0).getWardName()).concat(", ")
-				.concat(grbgAccount.getAddresses().get(0).getUlbName()).concat(" (")
-				.concat(grbgAccount.getAddresses().get(0).getUlbType()).concat(") ")
-				.concat(grbgAccount.getAddresses().get(0).getAdditionalDetail().get("district").asText())
-				.concat(", ").concat(grbgAccount.getAddresses().get(0).getPincode()));
-//
-		grbg.put("customerId", "alsaksjld");
-//
+		grbg.put("unitCategory", grbgAccount.getGrbgCollectionUnits().get(0).getCategory());
+		grbg.put("address",
+				grbgAccount.getAddresses().get(0).getAddress1().concat(", ")
+						.concat(grbgAccount.getAddresses().get(0).getWardName()).concat(", ")
+						.concat(grbgAccount.getAddresses().get(0).getUlbName()).concat(" (")
+						.concat(grbgAccount.getAddresses().get(0).getUlbType()).concat(") ")
+						.concat(grbgAccount.getAddresses().get(0).getAdditionalDetail().get("district").asText())
+						.concat(", ").concat(grbgAccount.getAddresses().get(0).getPincode()));
 		grbg.put("propertyId", grbgAccount.getPropertyId());
-		
+
 		grbg.put("grbgId", grbgAccount.getGrbgApplicationNumber());
-//
-		grbg.put("ownerOrOccupier",AdditionalDetail.get("propertyOwnerName").asText());
 
-		BigDecimal grbgTax = grbgBillTracker.getGrbgBillAmount(); // TODO get from bill
-		grbg.put("grbgTax", String.valueOf(grbgTax));
+		grbg.put("ownerOrOccupier",
+				AdditionalDetail.has("propertyOwnerName") && !AdditionalDetail.get("propertyOwnerName").isNull()
+						? AdditionalDetail.get("propertyOwnerName").asText()
+						: "N/A");
 
-		// TODO START
-		BigDecimal arrear = bill.getTotalAmount().subtract(grbgTax);
-		grbg.put("arrear", String.valueOf(arrear));
-
-		grbg.put("grbgTaxPlusArrear", String.valueOf(grbgTax.add(arrear)));
-
-		BigDecimal credit = new BigDecimal("0.00");
-		grbg.put("credit", String.valueOf(credit));
+		StringBuilder uri = new StringBuilder(applicationPropertiesAndConstant.getFrontEndBaseUri());
 		
-		BigDecimal rebate = new BigDecimal("0.00");
-		grbg.put("rebate", String.valueOf(credit));
-
-		BigDecimal interest = new BigDecimal("0.00");
-		grbg.put("interest", String.valueOf(interest));
-
-		BigDecimal penalty = new BigDecimal("0.00");
-		grbg.put("penalty", String.valueOf(penalty));
-
-		grbg.put("totalTax", String.valueOf(grbgTax.add(arrear)
-				.subtract(rebate)
-				.add(interest).add(penalty)
-				));
-		// TODO END
-
-		BigDecimal amountPaid = new BigDecimal("0.00");
-		String paymentStatus = "";
-		String paymentDate = "";
-		if (bill.getStatus().equals(Bill.StatusEnum.PAID)) {
-			amountPaid = bill.getTotalAmount();
-			paymentStatus = "PAID";
-			
-			paymentDate = Instant.ofEpochMilli(bill.getAuditDetails().getLastModifiedTime()).atZone(ZoneId.systemDefault())
-					.toLocalDateTime().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
-		}
-		grbg.put("amountPaid", String.valueOf(amountPaid));
-		grbg.put("paymentStatus", paymentStatus);
-		grbg.put("billGeneratedDate", Instant.ofEpochMilli(bill.getBillDate()).atZone(ZoneId.systemDefault())
-				.toLocalDateTime().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
-		grbg.put("paymentDate", paymentDate);
-
-//		dataObject.putAll(tableRowMap);
+		uri.append("citizen-payment");
+		
+		String qr = grbgAccount.getCreated_by().concat("/").concat(grbgAccount.getUuid()).concat("/")
+				.concat(null != grbgAccount.getPropertyId() ? grbgAccount.getPropertyId() : "");
+		uri.append("/").append(qr);
+		grbg.put("qrCodeText", uri);
 		dataObject.put("grbg", grbg);
 
 		return PDFRequest.builder().RequestInfo(requestInfoWrapper.getRequestInfo()).key("grbgBillReceipt")

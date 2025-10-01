@@ -191,12 +191,25 @@ public class GarbageBillTrackerRepository {
 					.append(")");
 			addToPreparedStatement(preparedStmtList, criteria.getGrbgApplicationIds());
 		}
+		if (!StringUtils.isEmpty(criteria.getMonth())) {
+			andClauseIfRequired(preparedStmtList, builder);
+			builder.append(" egbt.month =?");
+			preparedStmtList.add(criteria.getMonth());
+		}
 		if (!StringUtils.isEmpty(criteria.getType())) {
 			andClauseIfRequired(preparedStmtList, builder);
 			builder.append(" egbt.type =?");
 			preparedStmtList.add(criteria.getType());
 		}
+		
+		if (!CollectionUtils.isEmpty(criteria.getBillIds())) {
+			andClauseIfRequired(preparedStmtList, builder);
+			builder.append(" egbt.bill_id IN (").append(createQuery(criteria.getBillIds()))
+			.append(")");
+			addToPreparedStatement(preparedStmtList, criteria.getBillIds());
 
+		}
+		
 		String Query = getLimitAndOrderByUpdatedTimeDesc(criteria, builder.toString(), preparedStmtList);
 
 		return Query;

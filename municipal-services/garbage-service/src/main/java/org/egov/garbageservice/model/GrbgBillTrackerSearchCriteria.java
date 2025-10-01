@@ -16,12 +16,16 @@ public class GrbgBillTrackerSearchCriteria {
 	private String tenantId;
 	
 	private String type;
+	
+	private String month;
 
 	private Set<String> tenantIds;
 
 	private Set<String> uuids;
 
 	private Set<String> grbgApplicationIds;
+
+	private Set<String> billIds;
 	
 	private Integer limit;
 

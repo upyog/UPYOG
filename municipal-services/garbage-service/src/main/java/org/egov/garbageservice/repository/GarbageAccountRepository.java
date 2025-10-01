@@ -46,8 +46,33 @@ public class GarbageAccountRepository {
 			+ " JOIN eg_grbg_address address ON address.garbage_id = acc.garbage_id"
 			+ " JOIN eg_grbg_application app ON app.garbage_id = acc.garbage_id";
 			
-	
-	  private static final String SELECT_QUERY_ACCOUNT = "SELECT acc.* "
+	private static final String SELECT_QUERY_ACCOUNT = "SELECT acc.* "
+			+ ", old_dtl.uuid as old_dtl_uuid, old_dtl.garbage_id as old_dtl_garbage_id, old_dtl.old_garbage_id as old_dtl_old_garbage_id"
+			+ ", address.uuid as address_uuid, address.address_type as address_address_type, address.address1 as address_address1, address.address2 as address_address2, address.city as address_city, address.state as address_state, address.pincode as address_pincode, address.is_active as address_is_active, address.zone as address_zone, address.ulb_name as address_ulb_name, address.ulb_type as address_ulb_type, address.ward_name as address_ward_name, address.additional_detail as address_additional_detail, address.garbage_id as address_garbage_id"
+			+ ", unit.uuid as unit_uuid, unit.unit_name as unit_unit_name, unit.unit_ward as unit_unit_ward, unit.ulb_name as unit_ulb_name, unit.type_of_ulb as unit_type_of_ulb, unit.garbage_id as unit_garbage_id, unit.unit_type as unit_unit_type, unit.category as unit_category, unit.sub_category as unit_sub_category, unit.sub_category_type as unit_sub_category_type, unit.is_active as unit_is_active,unit.isbplunit as unit_isbplunit,unit.isbulkgeneration as unit_isbulkgeneration,unit.isvariablecalculation as unit_isvariablecalculation,unit.no_of_units as unit_no_of_units,unit.ismonthlybilling as unit_is_monthly_billing"
+			+ ", sub_acc.id as sub_acc_id, sub_acc.uuid as sub_acc_uuid, sub_acc.garbage_id as sub_acc_garbage_id, sub_acc.property_id as sub_acc_property_id, sub_acc.type as sub_acc_type "
+			+ ", sub_acc.name as sub_acc_name, sub_acc.mobile_number as sub_acc_mobile_number, sub_acc.gender as sub_acc_gender, sub_acc.email_id as sub_acc_email_id, sub_acc.is_owner as sub_acc_is_owner"
+			+ ", sub_acc.user_uuid as sub_acc_user_uuid, sub_acc.declaration_uuid as sub_acc_declaration_uuid, sub_acc.status as sub_acc_status, sub_acc.business_service as sub_acc_business_service"
+			+ ", sub_acc.approval_date as sub_acc_approval_date, sub_acc.channel as sub_acc_channel"
+			+ ", sub_acc.created_by as sub_acc_created_by, sub_acc.created_date as sub_acc_created_date, sub_acc.last_modified_by as sub_acc_last_modified_by"
+			+ ", sub_acc.last_modified_date as sub_acc_last_modified_date, sub_acc.additional_detail as sub_acc_additional_detail, sub_acc.tenant_id as sub_acc_tenant_id, sub_acc.parent_account as sub_acc_parent_account, sub_acc.is_active as sub_acc_is_active, sub_acc.sub_account_count as sub_acc_sub_account_count"
+			+ ", sub_old_dtl.uuid as sub_old_dtl_uuid, sub_old_dtl.garbage_id as sub_old_dtl_garbage_id, sub_old_dtl.old_garbage_id as sub_old_dtl_old_garbage_id"
+			+ ", sub_address.uuid as sub_address_uuid, sub_address.address_type as sub_address_address_type, sub_address.address1 as sub_address_address1, sub_address.address2 as sub_address_address2, sub_address.city as sub_address_city, sub_address.state as sub_address_state, sub_address.pincode as sub_address_pincode, sub_address.is_active as sub_address_is_active, sub_address.zone as sub_address_zone, sub_address.ulb_name as sub_address_ulb_name, sub_address.ulb_type as sub_address_ulb_type, sub_address.ward_name as sub_address_ward_name, sub_address.additional_detail as sub_address_additional_detail, sub_address.garbage_id as sub_address_garbage_id"
+		    + ", app.uuid as app_uuid, app.application_no as app_application_no , app.status as app_status, app.garbage_id as app_garbage_id " 
+		    + ", sub_app.uuid as sub_app_uuid, sub_app.application_no as sub_app_application_no , sub_app.status as sub_app_status, sub_app.garbage_id as sub_app_garbage_id "
+			+ ", sub_unit.uuid as sub_unit_uuid, sub_unit.unit_name as sub_unit_unit_name, sub_unit.unit_ward as sub_unit_unit_ward, sub_unit.ulb_name as sub_unit_ulb_name, sub_unit.type_of_ulb as sub_unit_type_of_ulb, sub_unit.garbage_id as sub_unit_garbage_id, sub_unit.unit_type as sub_unit_unit_type, sub_unit.category as sub_unit_category, sub_unit.sub_category as sub_unit_sub_category, sub_unit.sub_category_type as sub_unit_sub_category_type, sub_unit.is_active as sub_unit_is_active,sub_unit.isbplunit as sub_unit_isbplunit,sub_unit.isbulkgeneration as sub_unit_isbulkgeneration,sub_unit.isvariablecalculation as sub_unit_isvariablecalculation,sub_unit.no_of_units as sub_unit_no_of_units,sub_unit.ismonthlybilling as sub_unit_is_monthly_billing"
+		    + " FROM filtered_acc as acc"
+		    + " LEFT OUTER JOIN eg_grbg_application as app ON app.garbage_id = acc.garbage_id"
+		    + " LEFT OUTER JOIN eg_grbg_old_details as old_dtl ON old_dtl.garbage_id = acc.garbage_id"
+		    + " LEFT OUTER JOIN eg_grbg_collection_unit as unit ON unit.garbage_id = acc.garbage_id"
+		    + " LEFT OUTER JOIN eg_grbg_address as address ON address.garbage_id = acc.garbage_id"
+			+ " LEFT OUTER JOIN eg_grbg_account sub_acc ON acc.uuid = sub_acc.parent_account"
+		    + " LEFT OUTER JOIN eg_grbg_application as sub_app ON sub_app.garbage_id = sub_acc.garbage_id"
+		    + " LEFT OUTER JOIN eg_grbg_old_details as sub_old_dtl ON sub_old_dtl.garbage_id = sub_acc.garbage_id"
+		    + " LEFT OUTER JOIN eg_grbg_collection_unit as sub_unit ON sub_unit.garbage_id = sub_acc.garbage_id"
+		    + " LEFT OUTER JOIN eg_grbg_address as sub_address ON sub_address.garbage_id = sub_acc.garbage_id";
+
+	  private static final String SELECT_QUERY_ACCOUNT_INDEX = "SELECT acc.* "
 	            + ", old_dtl.uuid as old_dtl_uuid, old_dtl.garbage_id as old_dtl_garbage_id, old_dtl.old_garbage_id as old_dtl_old_garbage_id"
 	            + ", address.uuid as address_uuid, address.address_type as address_address_type, address.address1 as address_address1, address.address2 as address_address2, address.city as address_city, address.state as address_state, address.pincode as address_pincode, address.is_active as address_is_active, address.zone as address_zone, address.ulb_name as address_ulb_name, address.ulb_type as address_ulb_type, address.ward_name as address_ward_name, address.additional_detail as address_additional_detail, address.garbage_id as address_garbage_id"
 	            + ", unit.uuid as unit_uuid, unit.unit_name as unit_unit_name, unit.unit_ward as unit_unit_ward, unit.ulb_name as unit_ulb_name, unit.type_of_ulb as unit_type_of_ulb, unit.garbage_id as unit_garbage_id, unit.unit_type as unit_unit_type, unit.category as unit_category, unit.sub_category as unit_sub_category, unit.sub_category_type as unit_sub_category_type, unit.is_active as unit_is_active,unit.isbplunit as unit_isbplunit,unit.isbulkgeneration as unit_isbulkgeneration,unit.isvariablecalculation as unit_isvariablecalculation,unit.no_of_units as unit_no_of_units,unit.ismonthlybilling as unit_is_monthly_billing"
@@ -57,8 +82,6 @@ public class GarbageAccountRepository {
 	            + " LEFT OUTER JOIN eg_grbg_old_details as old_dtl ON old_dtl.garbage_id = acc.garbage_id"
 	            + " LEFT OUTER JOIN eg_grbg_collection_unit as unit ON unit.garbage_id = acc.garbage_id"
 	            + " LEFT OUTER JOIN eg_grbg_address as address ON address.garbage_id = acc.garbage_id";
-	
-
     
     private static final String INSERT_ACCOUNT = "INSERT INTO eg_grbg_account (id, uuid, garbage_id, property_id, type, name"
     		+ ", mobile_number, gender, email_id, is_owner, user_uuid, declaration_uuid, status, additional_detail, created_by, created_date, "
@@ -97,6 +120,9 @@ public class GarbageAccountRepository {
 	
 	public static final String WITH_SUB_QUERY = " WITH filtered_acc AS ({replace}) "
 			+ SELECT_QUERY_ACCOUNT;
+	
+	public static final String WITH_SUB_QUERY_INDEX = " WITH filtered_acc AS ({replace}) "
+			+ SELECT_QUERY_ACCOUNT_INDEX;
 
 	public static final String REPLACE_STRING =  "{replace}";
 	
@@ -249,6 +275,58 @@ public class GarbageAccountRepository {
         
         return garbageAccounts;
     }
+	
+	public List<GarbageAccount> searchGarbageAccountIndex(SearchCriteriaGarbageAccount searchCriteriaGarbageAccount,
+			Map<Integer, SearchCriteriaGarbageAccount> garbageCriteriaMap) {
+    	
+    	StringBuilder searchQuery = null;
+		final List<Object> preparedStatementValues = new ArrayList<>();
+
+		//generate search query
+    	searchQuery = getSearchQueryByCriteriaForIndex(searchQuery, searchCriteriaGarbageAccount, preparedStatementValues, garbageCriteriaMap);
+        
+        log.info("### search garbage account: "+searchQuery.toString() + " {}",preparedStatementValues);
+
+        List<GarbageAccount> garbageAccounts = jdbcTemplate.query(searchQuery.toString(), preparedStatementValues.toArray(), garbageAccountRowMapper);
+
+		if (!CollectionUtils.isEmpty(garbageAccounts) && searchCriteriaGarbageAccount.getIsActiveAccount() != null) {
+			// Filter garbage accounts based on the active account criteria
+			garbageAccounts = garbageAccounts.stream().filter(garbageAccount -> searchCriteriaGarbageAccount
+					.getIsActiveAccount().equals(garbageAccount.getIsActive())).collect(Collectors.toList());
+		}
+		
+		if (searchCriteriaGarbageAccount.getIsMonthlyBilling() != null) {
+			garbageAccounts = garbageAccounts.stream().filter(garbageAccount -> searchCriteriaGarbageAccount
+					.getIsMonthlyBilling().equals(garbageAccount.getGrbgCollectionUnits().get(0).getIsmonthlybilling())).collect(Collectors.toList());
+		}
+
+		garbageAccounts = garbageAccounts.stream().filter(Objects::nonNull).map(garbageAccount -> {
+			// If sub-account filtering is enabled, filter child garbage accounts
+			if (searchCriteriaGarbageAccount.getIsActiveSubAccount() != null) {
+				Optional.ofNullable(garbageAccount.getChildGarbageAccounts())
+						.filter(childAccounts -> !childAccounts.isEmpty()).ifPresent(childAccounts -> {
+							List<GarbageAccount> filteredChildren = childAccounts.stream()
+									.filter(child -> searchCriteriaGarbageAccount.getIsActiveSubAccount()
+											.equals(child.getIsActive()))
+									.collect(Collectors.toList());
+							garbageAccount.setChildGarbageAccounts(filteredChildren);
+						});
+			}
+			if (searchCriteriaGarbageAccount.getIsMonthlyBilling() != null) {
+				Optional.ofNullable(garbageAccount.getChildGarbageAccounts())
+				.filter(childAccounts -> !childAccounts.isEmpty()).ifPresent(childAccounts -> {
+					List<GarbageAccount> filteredChildren = childAccounts.stream()
+							.filter(child -> searchCriteriaGarbageAccount.getIsMonthlyBilling()
+									.equals(child.getGrbgCollectionUnits().get(0).getIsmonthlybilling()))
+							.collect(Collectors.toList());
+					garbageAccount.setChildGarbageAccounts(filteredChildren);
+				});
+			}
+			return garbageAccount;
+		}).collect(Collectors.toList());
+        
+        return garbageAccounts;
+    }
 
 	private StringBuilder getSearchQueryByCriteria(StringBuilder searchQuery,
 			SearchCriteriaGarbageAccount searchCriteriaGarbageAccount, List<Object> preparedStatementValues,
@@ -279,6 +357,46 @@ public class GarbageAccountRepository {
 		searchQuery.append(whereClause);
 
 		String withClauseQuery = WITH_SUB_QUERY.replace(REPLACE_STRING, searchQuery);
+
+		StringBuilder sb = new StringBuilder(withClauseQuery);
+
+		searchQuery = addOrderByClause(sb, searchCriteriaGarbageAccount);
+
+		if (!searchCriteriaGarbageAccount.getIsSchedulerCall()) {
+			searchQuery = addPaginationWrapper(sb, preparedStatementValues, searchCriteriaGarbageAccount);
+		}
+		return searchQuery;
+	}
+	
+	private StringBuilder getSearchQueryByCriteriaForIndex(StringBuilder searchQuery,
+			SearchCriteriaGarbageAccount searchCriteriaGarbageAccount, List<Object> preparedStatementValues,
+			Map<Integer, SearchCriteriaGarbageAccount> garbageCriteriaMap) {
+
+//		searchQuery = new StringBuilder(SELECT_QUERY_ACCOUNT);
+
+		searchQuery = new StringBuilder(SELECT_GRBG_ACC);
+
+		searchQuery.append(" WHERE");
+		searchQuery.append(" 1=1 ");
+
+		String whereClause = "";
+		if (null != garbageCriteriaMap && !garbageCriteriaMap.isEmpty()) {
+			List<String> clause = new ArrayList<>();
+			garbageCriteriaMap.entrySet().forEach(garbageCriteriaValue -> {
+				clause.add("(" + addWhereClause(preparedStatementValues, garbageCriteriaValue.getValue()) + ")");
+			});
+			if (!CollectionUtils.isEmpty(clause) && !clause.contains("()")) {
+				addAndClauseIfRequired(true, searchQuery);
+				whereClause = String.join(" OR ", clause);
+			}
+		} else {
+			addAndClauseIfRequired(true, searchQuery);
+			whereClause = addWhereClause(preparedStatementValues, searchCriteriaGarbageAccount);
+		}
+
+		searchQuery.append(whereClause);
+
+		String withClauseQuery = WITH_SUB_QUERY_INDEX.replace(REPLACE_STRING, searchQuery);
 
 		StringBuilder sb = new StringBuilder(withClauseQuery);
 

@@ -355,10 +355,10 @@ public class PropertyController {
 	
 	@PostMapping("/_generatePropertyTaxBillReceipt")
 	public ResponseEntity<Resource> generatePropertyTaxBillReceipt(
-			@Valid @RequestBody RequestInfoWrapper requestInfoWrapper, @RequestParam String propertyId) {
+			@Valid @RequestBody RequestInfoWrapper requestInfoWrapper, @RequestParam String propertyId,@RequestParam(required = false) String billId) {
 
 		ResponseEntity<Resource> response = propertyService.generatePropertyTaxBillReceipt(requestInfoWrapper,
-				propertyId);
+				propertyId,billId);
 
 		return response;
 	}
@@ -380,7 +380,7 @@ public class PropertyController {
 	public ResponseEntity<Map<String, Object>> createArear(@Valid @RequestBody GenrateArrearRequest genrateArrearRequest) {
 
 		 propertyService.generateArrear(genrateArrearRequest);
-//		ResponseInfo resInfo = responseInfoFactory.createResponseInfoFromRequestInfo(requestInfoWrapper.getRequestInfo(), true);
+		ResponseInfo resInfo = responseInfoFactory.createResponseInfoFromRequestInfo(genrateArrearRequest.getRequestInfo(), true);
 //	    Map<String, Object> response = new HashMap<>();
 //	    response.put("ResponseInfo", resInfo);
 //	    response.put("MasterStatus", result);

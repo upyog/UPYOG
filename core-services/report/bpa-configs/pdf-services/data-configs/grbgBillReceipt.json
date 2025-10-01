@@ -85,12 +85,6 @@
 						}
 					},
 					{
-						"variable": "customerId",
-						"value": {
-							"path": "$.customerId"
-						}
-					},
-					{
 						"variable": "propertyId",
 						"value": {
 							"path": "$.propertyId"
@@ -109,45 +103,9 @@
 						}
 					},
 					{
-						"variable": "grbgTax",
-						"value": {
-							"path": "$.grbgTax"
-						}
-					},
-					{
-						"variable": "arrear",
-						"value": {
-							"path": "$.arrear"
-						}
-					},
-					{
-						"variable": "grbgTaxPlusArrear",
-						"value": {
-							"path": "$.grbgTaxPlusArrear"
-						}
-					},
-					{
-						"variable": "penalty",
-						"value": {
-							"path": "$.penalty"
-						}
-					},
-					{
 						"variable": "totalTax",
 						"value": {
 							"path": "$.totalTax"
-						}
-					},
-					{
-						"variable": "interest",
-						"value": {
-							"path": "$.interest"
-						}
-					},
-					{
-						"variable": "paymentStatus",
-						"value": {
-							"path": "$.paymentStatus"
 						}
 					},
 					{
@@ -157,9 +115,9 @@
 						}
 					},
 					{
-						"variable": "paymentDate",
+						"variable": "qrCodeText",
 						"value": {
-							"path": "$.paymentDate"
+							"path": "$.qrCodeText"
 						}
 					}
 				]

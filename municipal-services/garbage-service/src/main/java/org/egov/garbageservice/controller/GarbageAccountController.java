@@ -51,8 +51,9 @@ public class GarbageAccountController {
 
 	@PostMapping("/_search")
 	public ResponseEntity<GarbageAccountResponse> search(
-			@RequestBody SearchCriteriaGarbageAccountRequest searchCriteriaGarbageAccountRequest) {
-		return ResponseEntity.ok(service.searchGarbageAccounts(searchCriteriaGarbageAccountRequest));
+			@RequestBody SearchCriteriaGarbageAccountRequest searchCriteriaGarbageAccountRequest,@RequestParam(name = "IsIndex", required = false, defaultValue = "false") Boolean IsIndex) {
+	
+			return ResponseEntity.ok(service.searchGarbageAccounts(searchCriteriaGarbageAccountRequest,IsIndex));
 	}
 
 	@PostMapping({ "/fetch", "/fetch/{value}" })
@@ -103,8 +104,8 @@ public class GarbageAccountController {
 	
 	@PostMapping("/_generateGrbgTaxBillReceipt")
 	public ResponseEntity<?> generateGrbgTaxBillReceipt(@Valid @RequestBody RequestInfoWrapper requestInfoWrapper,
-			@RequestParam String grbgId) {
-		ResponseEntity<Resource> response = service.generateGrbgTaxBillReceipt(requestInfoWrapper, grbgId);
+			@RequestParam String grbgId , @RequestParam String billid) {
+		ResponseEntity<Resource> response = service.generateGrbgTaxBillReceipt(requestInfoWrapper, grbgId ,billid);
 
 		return response;
 

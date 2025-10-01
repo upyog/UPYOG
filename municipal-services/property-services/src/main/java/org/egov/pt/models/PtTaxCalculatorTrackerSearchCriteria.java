@@ -28,6 +28,8 @@ public class PtTaxCalculatorTrackerSearchCriteria {
 	private Set<String> uuids;
 
 	private Set<String> propertyIds;
+	
+	private String billId;
 
 	private Set<String> financialYears;
 
