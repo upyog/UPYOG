@@ -2092,7 +2092,7 @@ public GarbageAccountResponse searchGarbageAccounts(
 	}
 	
 	public ResponseEntity<Resource> generateGrbgTaxBillReceipt(RequestInfoWrapper requestInfoWrapper,
-			@Valid String grbgId) {
+			@Valid String grbgId , @Valid String billid) {
 		
 		List<GarbageAccount> garbageAccounts = Collections.singletonList(GarbageAccount.builder().grbgApplicationNumber(grbgId).build());
 				
@@ -2110,7 +2110,7 @@ public GarbageAccountResponse searchGarbageAccounts(
 		
 		
 		GrbgBillTrackerSearchCriteria grbgTrackerMonthSearchCriteria = GrbgBillTrackerSearchCriteria
-				.builder().grbgApplicationIds(Collections.singleton(grbgId)).billIds(Collections.singleton(grbgId)).build();
+				.builder().grbgApplicationIds(Collections.singleton(grbgId)).billIds(Collections.singleton(billid)).build();
 
 		List<GrbgBillTracker> grbgTaxCalculatorMonth = getBillCalculatedGarbageAccounts(grbgTrackerMonthSearchCriteria);
 

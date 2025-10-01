@@ -104,8 +104,8 @@ public class GarbageAccountController {
 	
 	@PostMapping("/_generateGrbgTaxBillReceipt")
 	public ResponseEntity<?> generateGrbgTaxBillReceipt(@Valid @RequestBody RequestInfoWrapper requestInfoWrapper,
-			@RequestParam String grbgId) {
-		ResponseEntity<Resource> response = service.generateGrbgTaxBillReceipt(requestInfoWrapper, grbgId);
+			@RequestParam String grbgId , @RequestParam String billid) {
+		ResponseEntity<Resource> response = service.generateGrbgTaxBillReceipt(requestInfoWrapper, grbgId ,billid);
 
 		return response;
 
