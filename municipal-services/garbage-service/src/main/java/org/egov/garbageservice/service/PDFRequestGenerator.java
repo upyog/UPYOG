@@ -14,6 +14,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.egov.garbageservice.util.GrbgConstants;
 import org.egov.garbageservice.util.RequestInfoWrapper;
 import org.egov.garbageservice.model.GarbageAccount;
 import org.egov.garbageservice.model.GrbgBillTracker;
@@ -33,6 +34,9 @@ public class PDFRequestGenerator {
 
 	@Autowired
 	private ObjectMapper objectMapper;
+	
+	@Autowired
+	private GrbgConstants applicationPropertiesAndConstant;
 
 	public PDFRequest generatePdfRequestForBill(RequestInfoWrapper requestInfoWrapper, GarbageAccount grbgAccount,
 			List<Bill> bill, List<GrbgBillTracker> grbgBillTracker) {
@@ -119,6 +123,7 @@ public class PDFRequestGenerator {
 		}
 
 		grbg.put("billNo", bill.get(0).getBillNumber());
+		
 		grbg.put("date", Instant.ofEpochMilli(grbgBillTracker.get(0).getAuditDetails().getCreatedDate())
 				.atZone(ZoneId.systemDefault()).toLocalDateTime().format(DateTimeFormatter.ofPattern("dd-MM-yyyy")));
 
@@ -144,14 +149,20 @@ public class PDFRequestGenerator {
 						.concat(grbgAccount.getAddresses().get(0).getUlbType()).concat(") ")
 						.concat(grbgAccount.getAddresses().get(0).getAdditionalDetail().get("district").asText())
 						.concat(", ").concat(grbgAccount.getAddresses().get(0).getPincode()));
-
-		grbg.put("customerId", "alsaksjld");
-
 		grbg.put("propertyId", grbgAccount.getPropertyId());
 
 		grbg.put("grbgId", grbgAccount.getGrbgApplicationNumber());
 
 		grbg.put("ownerOrOccupier", AdditionalDetail.get("propertyOwnerName").asText());
+		
+		StringBuilder uri = new StringBuilder(applicationPropertiesAndConstant.getFrontEndBaseUri());
+		uri.append("citizen-payment");
+		String qr = grbgAccount.getCreated_by().concat("/").concat(grbgAccount.getUuid()).concat("/")
+				.concat(null != grbgAccount.getPropertyId() ? grbgAccount.getPropertyId() : "");
+		uri.append("/").append(qr);
+		grbg.put("qrCodeText", uri);
+		
+		
 
 		// TODO END
 

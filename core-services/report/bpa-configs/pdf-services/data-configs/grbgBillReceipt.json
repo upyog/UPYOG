@@ -85,12 +85,6 @@
 						}
 					},
 					{
-						"variable": "customerId",
-						"value": {
-							"path": "$.customerId"
-						}
-					},
-					{
 						"variable": "propertyId",
 						"value": {
 							"path": "$.propertyId"
@@ -130,6 +124,12 @@
 						"variable": "paymentDate",
 						"value": {
 							"path": "$.paymentDate"
+						}
+					},
+					{
+						"variable": "qrCodeText",
+						"value": {
+							"path": "$.qrCodeText"
 						}
 					}
 				]

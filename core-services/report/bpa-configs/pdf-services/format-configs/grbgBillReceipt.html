@@ -221,6 +221,17 @@
 		  border-top: 1px solid #ccc;
 		  padding: 5px;
 		}
+
+		.qr-code {
+			width: 300px;
+			min-height: 300px;
+			background-color: transparent;
+			/* Ensure the background remains transparent */
+			display: block;
+			margin-left: auto;
+			margin-right: auto;
+			/* Center the QR code */
+		}
 	</style>
 </head>
 
@@ -254,11 +265,16 @@
 		<div class="invoice-header">
 			<table>
 				<tr>
-					<td><strong>Bill No:</strong><br /> <span th:text="${billNo}">NA</span></td>
+					<td><strong>Bill No:</strong><span th:text="${billNo}">NA</span></td>
+					
 					<td align="center">
 						<h1>Garbage Collection Bill</h1>
 					</td>
 					<td align="right"><strong>Financial Year:</strong> <br /><span th:text="${finYear}">NA</span></td>
+				</tr>
+				<tr>
+					<td><strong>Period :</strong> <span th:text="${from}">NA</span> - <span th:text="${to}">NA</span></td>
+									
 				</tr>
 			</table>
 		</div>
@@ -294,6 +310,14 @@
 									</span>
 								</td>
 							</tr>
+							<tr>
+							<th>Payment Date</th>
+							<td>
+								<span class="highlight">
+																	<span th:text="${paymentDate}">Type</span>
+																</span>
+															</td>
+														</tr>
 						</table>
 					</div>
 				</td>
@@ -373,7 +397,7 @@
 		</div>
 		<div class="terms">
 			<strong>Pay through QR Code:</strong><br />
-			<img class="qr-code" th:src="${qrCode}" src="/qr.png" alt="QR Code" />
+			<img class="qr-code" th:src="${qrCodeText}" src="/qr.png" alt="QR Code" />
 		</div>
 		<div class="footer">
 		   <p>This receipt has been generated electronically and does not require a physical signature. | Generated on 
@@ -382,6 +406,7 @@
 		</div>
 	
 	</div>
+	
 </body>
 
 </html>
