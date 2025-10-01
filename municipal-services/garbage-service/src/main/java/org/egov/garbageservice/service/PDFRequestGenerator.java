@@ -39,6 +39,7 @@ public class PDFRequestGenerator {
 		Map<String, Object> grbg = new HashMap<>();
 
 		JsonNode AdditionalDetail = objectMapper.valueToTree(grbgAccount.getAdditionalDetail());
+		
 		grbg.put("ulbName", grbgAccount.getAddresses().get(0).getUlbName());
 		grbg.put("ulbType", grbgAccount.getAddresses().get(0).getUlbType());
 
@@ -141,6 +142,7 @@ public class PDFRequestGenerator {
 		gbDetailsTableRow.put("allPaymentDates", allPaymentDates);
 		gbDetailsTableRow.put("allPaymentStatuses", allPaymentStatuses);
 		gbDetailsTableRow.put("allGrbgTaxPlusArrear", allGrbgTaxPlusArrear);
+		
 		BigDecimal totalTax = allGrbgTaxPlusArrear.stream().map(BigDecimal::new).reduce(BigDecimal.ZERO,
 				BigDecimal::add);
 		grbg.put("totalTax", totalTax);
@@ -188,10 +190,15 @@ public class PDFRequestGenerator {
 
 		grbg.put("grbgId", grbgAccount.getGrbgApplicationNumber());
 
-		grbg.put("ownerOrOccupier", AdditionalDetail.get("propertyOwnerName").asText());
+		grbg.put("ownerOrOccupier",
+				AdditionalDetail.has("propertyOwnerName") && !AdditionalDetail.get("propertyOwnerName").isNull()
+						? AdditionalDetail.get("propertyOwnerName").asText()
+						: "N/A");
 
 		StringBuilder uri = new StringBuilder(applicationPropertiesAndConstant.getFrontEndBaseUri());
+		
 		uri.append("citizen-payment");
+		
 		String qr = grbgAccount.getCreated_by().concat("/").concat(grbgAccount.getUuid()).concat("/")
 				.concat(null != grbgAccount.getPropertyId() ? grbgAccount.getPropertyId() : "");
 		uri.append("/").append(qr);
