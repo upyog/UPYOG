@@ -176,6 +176,7 @@ public class TransactionValidator {
 	}
 
 	public void isUserDetailPresent(TransactionRequest transactionRequest, Map<String, String> errorMap) {
+		log.info("transactionRequest {} --- errorMap {}",transactionRequest,errorMap);
 		User user = transactionRequest.getRequestInfo().getUserInfo();
 		if (isNull(user) || isNull(user.getUuid()) || isEmpty(user.getName()) || isNull(user.getUserName())
 				|| isNull(user.getTenantId()) || isNull(user.getMobileNumber()))
