@@ -377,19 +377,22 @@ public class GarbageAccountRepository {
 		searchQuery = new StringBuilder(SELECT_GRBG_ACC);
 
 		searchQuery.append(" WHERE");
-		searchQuery.append(" 1=1 ");
 
 		String whereClause = "";
 		if (null != garbageCriteriaMap && !garbageCriteriaMap.isEmpty()) {
+			searchQuery.append(" acc.parent_account IS NULL ");
 			List<String> clause = new ArrayList<>();
 			garbageCriteriaMap.entrySet().forEach(garbageCriteriaValue -> {
 				clause.add("(" + addWhereClause(preparedStatementValues, garbageCriteriaValue.getValue()) + ")");
 			});
 			if (!CollectionUtils.isEmpty(clause) && !clause.contains("()")) {
 				addAndClauseIfRequired(true, searchQuery);
-				whereClause = String.join(" OR ", clause);
+		        whereClause = "(" + String.join(" OR ", clause) + ")";
+
+//				whereClause = String.join(" OR ", clause);
 			}
 		} else {
+			searchQuery.append(" 1=1 ");
 			addAndClauseIfRequired(true, searchQuery);
 			whereClause = addWhereClause(preparedStatementValues, searchCriteriaGarbageAccount);
 		}
