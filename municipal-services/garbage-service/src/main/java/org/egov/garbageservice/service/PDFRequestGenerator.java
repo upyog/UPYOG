@@ -91,7 +91,6 @@ public class PDFRequestGenerator {
 
 		for (int i = 0; i < bill.size(); i++) {
 			Bill billObj = bill.get(i);
-
 			String consumerCode = billObj.getConsumerCode();
 			grbgObj.get("grbgAccounts").add(consumerCode);
 
@@ -192,6 +191,10 @@ public class PDFRequestGenerator {
 		gbDetailsTableRow.put("allArrears", allArrears);
 		gbDetailsTableRow.put("allInterest", allInterest);
 		gbDetailsTableRow.put("allGrbgTaxPlusArrear", allGrbgTaxPlusArrear);
+		BigDecimal totalTax = allGrbgTaxPlusArrear.stream()
+		        .map(BigDecimal::new)      
+		        .reduce(BigDecimal.ZERO, BigDecimal::add);  
+		grbg.put("totalTax", totalTax);
 
 		Map<String, Object> tableRow = new HashMap<>();
 		tableRow.put("tag", "GARBAGE_BILL_TABLE_ROW");
@@ -204,7 +207,6 @@ public class PDFRequestGenerator {
 		tableRowMap.put("TABLE_ROW", tableRows);
 
 		dataObject.putAll(tableRowMap);
-		grbg.put("totalTax", amountPaid);
 		dataObject.put("grbg", grbg);
 
 		return PDFRequest.builder().RequestInfo(requestInfoWrapper.getRequestInfo()).key("grbgBillReceipt")

@@ -2131,7 +2131,7 @@ public GarbageAccountResponse searchGarbageAccounts(
 			
 		}
 		GrbgBillTrackerSearchCriteria grbgTrackerSearchCriteria = GrbgBillTrackerSearchCriteria
-				.builder().grbgApplicationIds(garbapplicationNos).month(grbgTaxCalculatorMonthTracker.getMonth()).build();
+				.builder().type("MONTHLY").grbgApplicationIds(garbapplicationNos).month(grbgTaxCalculatorMonthTracker.getMonth()).build();
 		
 		
 
