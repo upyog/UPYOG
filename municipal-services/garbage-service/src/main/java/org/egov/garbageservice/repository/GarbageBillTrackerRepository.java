@@ -191,6 +191,11 @@ public class GarbageBillTrackerRepository {
 					.append(")");
 			addToPreparedStatement(preparedStmtList, criteria.getGrbgApplicationIds());
 		}
+		if (!StringUtils.isEmpty(criteria.getMonth())) {
+			andClauseIfRequired(preparedStmtList, builder);
+			builder.append(" egbt.month =?");
+			preparedStmtList.add(criteria.getMonth());
+		}
 		if (!StringUtils.isEmpty(criteria.getType())) {
 			andClauseIfRequired(preparedStmtList, builder);
 			builder.append(" egbt.type =?");

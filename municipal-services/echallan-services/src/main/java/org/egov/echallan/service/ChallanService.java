@@ -63,7 +63,7 @@ public class ChallanService {
 	 */
 	public Challan create(ChallanRequest request) {
 		Object mdmsData = utils.mDMSCall(request);
-		validator.validateFields(request, mdmsData);
+		validator.validateFields(request, mdmsData,"create");
 		enrichmentService.enrichCreateRequest(request);
 		userService.createUser(request);
 		calculationService.addCalculation(request);
@@ -161,7 +161,7 @@ public class ChallanService {
 	 
 	 public Challan update(ChallanRequest request) {
 		 Object mdmsData = utils.mDMSCall(request);
-		 validator.validateFields(request, mdmsData);
+		 validator.validateFields(request, mdmsData,"update");
 		 List<Challan> searchResult = searchChallans(request);
 		 validator.validateUpdateRequest(request,searchResult);
 		 enrichmentService.enrichUpdateRequest(request);
