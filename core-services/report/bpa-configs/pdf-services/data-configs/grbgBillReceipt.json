@@ -109,21 +109,9 @@
 						}
 					},
 					{
-						"variable": "paymentStatus",
-						"value": {
-							"path": "$.paymentStatus"
-						}
-					},
-					{
 						"variable": "billGeneratedDate",
 						"value": {
 							"path": "$.billGeneratedDate"
-						}
-					},
-					{
-						"variable": "paymentDate",
-						"value": {
-							"path": "$.paymentDate"
 						}
 					},
 					{
