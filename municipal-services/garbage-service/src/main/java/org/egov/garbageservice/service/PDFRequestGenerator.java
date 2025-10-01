@@ -48,25 +48,26 @@ public class PDFRequestGenerator {
 		grbg.put("ulbName", grbgAccount.getAddresses().get(0).getUlbName());
 		grbg.put("ulbType", grbgAccount.getAddresses().get(0).getUlbType());
 
-		int count = 1;
-		List<String> slNos = new ArrayList<>();
-		Set<String> billNos = new HashSet<>();
-		List<BigDecimal> grbgTaxs = new ArrayList<>();
-
-//		
-		// Collect serial numbers and bill numbers
-		for (Bill billObj : bill) {
-			slNos.add(String.valueOf(count++));
-			billNos.add(billObj.getBillNumber());
-		}
-
-		// Collect garbage taxes
+		Map<String, BigDecimal> grbgTaxMap = new HashMap<>();
 		for (GrbgBillTracker grbgBillTrackerObj : grbgBillTracker) {
-			if (grbgBillTrackerObj.getGrbgBillAmount() != null) {
-				grbgTaxs.add(grbgBillTrackerObj.getGrbgBillAmount());
-			}
+		    if (grbgBillTrackerObj.getGrbgBillAmount() != null) {
+		        grbgTaxMap.put(grbgBillTrackerObj.getGrbgApplicationId(),
+		                grbgBillTrackerObj.getGrbgBillAmount());
+		    }
 		}
 
+		Map<String, String> ownerNameMap = new HashMap<>();
+		Map<String, String> unitCategoryMap = new HashMap<>();
+		ownerNameMap.put(grbgAccount.getGrbgApplicationNumber(), grbgAccount.getName());
+		unitCategoryMap.put(grbgAccount.getGrbgApplicationNumber(),
+				grbgAccount.getGrbgCollectionUnits().get(0).getCategory());
+
+		for (GarbageAccount childGrbgAccount : grbgAccount.getChildGarbageAccounts()) {
+			String appNo = childGrbgAccount.getGrbgApplicationNumber();
+			ownerNameMap.put(appNo, childGrbgAccount.getName());
+			unitCategoryMap.put(appNo, childGrbgAccount.getGrbgCollectionUnits().get(0).getCategory());
+		}
+		
 		Map<String, List<String>> grbgObj = new HashMap<>();
 
 		// initialize keys with empty lists
@@ -81,39 +82,28 @@ public class PDFRequestGenerator {
 		grbgObj.put("interest", new ArrayList<>());
 		grbgObj.put("grbgTaxPlusArrear", new ArrayList<>());
 
-		Map<String, String> ownerNameMap = new HashMap<>();
-		Map<String, String> unitCategoryMap = new HashMap<>();
-		ownerNameMap.put(grbgAccount.getGrbgApplicationNumber(), grbgAccount.getName());
-		unitCategoryMap.put(grbgAccount.getGrbgApplicationNumber(),
-				grbgAccount.getGrbgCollectionUnits().get(0).getCategory());
 
-		for (GarbageAccount childGrbgAccount : grbgAccount.getChildGarbageAccounts()) {
-			String appNo = childGrbgAccount.getGrbgApplicationNumber();
-			ownerNameMap.put(appNo, childGrbgAccount.getName());
-			unitCategoryMap.put(appNo, childGrbgAccount.getGrbgCollectionUnits().get(0).getCategory());
-		}
-
+		int count = 1;
 		for (int i = 0; i < bill.size(); i++) {
+			if (bill.get(i).getConsumerCode().equals(grbgAccount.getGrbgApplicationNumber()) 
+			        && bill.get(i).getConsumerCode().equals(grbgAccount.getGrbgApplicationNumber())) {
+			    
+			    grbg.put("billNo", bill.get(i).getBillNumber());
+			}
 			Bill billObj = bill.get(i);
 			String consumerCode = billObj.getConsumerCode();
 			grbgObj.get("grbgAccounts").add(consumerCode);
 
-			if (ownerNameMap.containsKey(consumerCode)) {
-				grbgObj.get("ownerNames").add(ownerNameMap.get(consumerCode));
-				grbgObj.get("propertyTypes").add(unitCategoryMap.get(consumerCode));
-			} else {
-				// Handle case if no matching garbage account found (optional)
-				grbgObj.get("ownerNames").add("N/A");
-				grbgObj.get("propertyTypes").add("N/A");
-			}
+		    grbgObj.get("ownerNames").add(ownerNameMap.getOrDefault(consumerCode, "N/A"));
+		    grbgObj.get("propertyTypes").add(unitCategoryMap.getOrDefault(consumerCode, "N/A"));
 
 			String unit = "1";
-			BigDecimal tax = (i < grbgTaxs.size()) ? grbgTaxs.get(i) : BigDecimal.ZERO;
+		    BigDecimal tax = grbgTaxMap.getOrDefault(consumerCode, BigDecimal.ZERO);
 			BigDecimal arrear = billObj.getTotalAmount().subtract(tax);
 			BigDecimal interest = BigDecimal.ZERO;
 			BigDecimal grbgTaxPlusArrear = tax.add(arrear);
 
-			grbgObj.get("serialNo").add(slNos.get(i));
+		    grbgObj.get("serialNo").add(String.valueOf(count++));
 			grbgObj.get("units").add(unit);
 			grbgObj.get("billNos").add(billObj.getBillNumber());
 			grbgObj.get("grbgTaxs").add(tax.toString());
@@ -122,7 +112,7 @@ public class PDFRequestGenerator {
 			grbgObj.get("grbgTaxPlusArrear").add(grbgTaxPlusArrear.toString());
 		}
 
-		grbg.put("billNo", bill.get(0).getBillNumber());
+		
 		
 		grbg.put("date", Instant.ofEpochMilli(grbgBillTracker.get(0).getAuditDetails().getCreatedDate())
 				.atZone(ZoneId.systemDefault()).toLocalDateTime().format(DateTimeFormatter.ofPattern("dd-MM-yyyy")));
@@ -162,11 +152,9 @@ public class PDFRequestGenerator {
 		uri.append("/").append(qr);
 		grbg.put("qrCodeText", uri);
 		
-		
 
 		// TODO END
 
-		BigDecimal amountPaid = new BigDecimal("0.00");
 		String paymentStatus = "";
 		String paymentDate = "";
 //		if (bill.getStatus().equals(StatusEnum.PAID)) {
@@ -174,12 +162,11 @@ public class PDFRequestGenerator {
 //			paymentStatus = "Success";
 //			paymentDate = ""; // TODO blank
 //		}
-		grbg.put("amountPaid", String.valueOf(amountPaid));
 		grbg.put("paymentStatus", paymentStatus);
 		grbg.put("billGeneratedDate", Instant.ofEpochMilli(bill.get(0).getBillDate()).atZone(ZoneId.systemDefault())
 				.toLocalDateTime().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
 		grbg.put("paymentDate", paymentDate);
-
+		
 		Map<String, Object> gbDetailsTableRow = new HashMap<>();
 		List<String> allSerialNo = grbgObj.get("serialNo");
 		List<String> allGrbgAccounts = grbgObj.get("grbgAccounts");
