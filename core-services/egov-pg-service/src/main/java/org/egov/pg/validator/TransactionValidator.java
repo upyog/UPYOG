@@ -27,6 +27,7 @@ import org.egov.pg.web.models.TransactionRequest;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -47,6 +48,8 @@ public class TransactionValidator {
 		this.paymentsService = paymentsService;
 		this.props = props;
 	}
+	@Autowired
+	private ObjectMapper objectMapper;
 
 	/**
 	 * Validate the transaction, Check if gateway is available and active Check if
@@ -176,7 +179,13 @@ public class TransactionValidator {
 	}
 
 	public void isUserDetailPresent(TransactionRequest transactionRequest, Map<String, String> errorMap) {
-		log.info("transactionRequest {}",transactionRequest);
+
+		try {
+		    log.info("transactionRequest {}", objectMapper.writeValueAsString(transactionRequest));
+		} catch (Exception e) {
+		    log.error("Failed to log transactionRequest", e);
+		}
+
 		User user = transactionRequest.getRequestInfo().getUserInfo();
 		if (isNull(user) || isNull(user.getUuid()) || isEmpty(user.getName()) || isNull(user.getUserName())
 				|| isNull(user.getTenantId()) || isNull(user.getMobileNumber()))
