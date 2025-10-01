@@ -1046,10 +1046,6 @@ public class PropertyService {
 				.businessService(PTConstants.MODULE_PROPERTY).demandId(savedDemands.get(0).getId()).consumerCode(genrateArrearRequest.getDemands().get(0).getConsumerCode()).build();
 
 		BillResponse billResponse = billService.generateBill(genrateArrearRequest.getRequestInfo(), billCriteria);
-		
-		
-	
-
 	}
 	
 	public void saveToPtBillFailure(PropertyBillFailure propertyBillFailure) {

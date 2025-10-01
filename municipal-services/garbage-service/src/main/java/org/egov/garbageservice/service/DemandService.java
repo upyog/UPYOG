@@ -5,6 +5,8 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 
 import org.egov.common.contract.request.User;
@@ -50,8 +52,15 @@ public class DemandService {
 
 		cal.add(Calendar.DAY_OF_MONTH, Integer.valueOf(grbgConfig.getGrbgBillExpiryAfter()));
 		cal.set(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DATE), 23, 59, 59);
-		
-		Demand demandOne = Demand.builder().consumerCode(garbageAccount.getGrbgApplicationNumber())
+		Map<String, Object> additionalDetail = (Map<String, Object>) generateBillRequest.getAdditionalDetail();
+
+		String consumercode = null;
+		if(!businessService.equals("GB"))
+			consumercode = getConsumerCodeBulk(garbageAccount.getGrbgApplicationNumber(),additionalDetail.get("bulkType").toString());
+		else
+			consumercode = garbageAccount.getGrbgApplicationNumber();
+			
+		Demand demandOne = Demand.builder().consumerCode(consumercode)
 				.demandDetails(Arrays.asList(demandDetail)).minimumAmountPayable(taxAmount)
 				.tenantId(garbageAccount.getTenantId()).taxPeriodFrom(taxPeriodFrom).taxPeriodTo(taxPeriodTo)
 				.fixedBillExpiryDate(cal.getTimeInMillis()).consumerType(GrbgConstants.WORKFLOW_MODULE_NAME)
@@ -66,6 +75,11 @@ public class DemandService {
 		return savedDemands;
 	}
 	
+	private String getConsumerCodeBulk(String consumerCode, String bulkType) {
+	    // generate random 2-digit number (10–99)
+	    int randomNum = new Random().nextInt(90) + 10;  
+	    return consumerCode + "_" + bulkType + "_" + randomNum;
+	}
 	private Long getDateToTimeStamp(Date date,String type,String FromTo) {
 	
 			if("ON-DEMAND".equals(type)) {

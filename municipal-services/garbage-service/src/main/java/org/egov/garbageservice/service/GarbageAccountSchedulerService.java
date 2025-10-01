@@ -254,19 +254,28 @@ public class GarbageAccountSchedulerService {
 			List<Demand> savedDemands = new ArrayList<>();
 			
 			// generate demand
+			Map<String, Object> additionalDetails = (Map<String, Object>) generateBillRequest.getAdditionalDetail();
+
+			// if null, initialize
+			if (additionalDetails == null) {
+			    additionalDetails = new HashMap<>();
+			}
 			
-			Map<String, Object> additionalDetails = new HashMap<>();
+//			Map<String, Object> additionalDetails = new HashMap<>();
 		    additionalDetails.put("name", garbageAccount.getName());
 		    additionalDetails.put("mobileNumber", garbageAccount.getMobileNumber());
 		    additionalDetails.put("ward", garbageAccount.getAddresses().get(0).getWardName());
 		    additionalDetails.put("category", garbageAccount.getGrbgCollectionUnits().get(0).getCategory());
+		    additionalDetails.put("application_no", garbageAccount.getGrbgApplicationNumber());
+		    additionalDetails.put("type", Type);
 		    additionalDetails.put("oldGarbageId", 
 		    	    garbageAccount.getGrbgOldDetails() != null 
 		    	        ? garbageAccount.getGrbgOldDetails().getOldGarbageId() 
 		    	        : null
 		    	);
 			generateBillRequest.setAdditionalDetail(additionalDetails);
-			savedDemands = demandService.generateDemand(generateBillRequest.getRequestInfo(), garbageAccount, "GB", billAmount, generateBillRequest);
+			String service = Type.equals("MONTHLY")?"GB":"GB_BULK";
+			savedDemands = demandService.generateDemand(generateBillRequest.getRequestInfo(), garbageAccount,service, billAmount, generateBillRequest);
 
 			if (CollectionUtils.isEmpty(savedDemands)) {
 				throw new CustomException("INVALID_CONSUMERCODE",
@@ -275,8 +284,8 @@ public class GarbageAccountSchedulerService {
 
 			// fetch/create bill
 			GenerateBillCriteria billCriteria = GenerateBillCriteria.builder().tenantId(garbageAccount.getTenantId())
-					.businessService("GB")
-					.consumerCode(garbageAccount.getGrbgApplicationNumber())
+					.businessService(service)
+					.consumerCode(savedDemands.get(0).getConsumerCode())
 //					.demandId(savedDemands.get(0).getId())
 					.mobileNumber(garbageAccount.getMobileNumber())
 //					.email(garbageAccount.getEmailId())
