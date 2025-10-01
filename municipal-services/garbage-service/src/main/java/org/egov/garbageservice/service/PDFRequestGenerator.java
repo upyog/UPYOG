@@ -103,10 +103,14 @@ public class PDFRequestGenerator {
 			grbgObj.get("grbgTaxs").add(tax.toString());
 			grbgObj.get("arrears").add(arrear.toString());
 			grbgObj.get("interest").add(interest.toString());
-			grbgObj.get("paymentDates")
-					.add(Instant.ofEpochMilli(billObj.getAuditDetails().getLastModifiedTime())
-							.atZone(ZoneId.systemDefault()).toLocalDateTime()
-							.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+			String paymentDate = Bill.StatusEnum.PAID.equals(billObj.getStatus())
+			        ? Instant.ofEpochMilli(billObj.getAuditDetails().getLastModifiedTime())
+			                .atZone(ZoneId.systemDefault())
+			                .toLocalDateTime()
+			                .format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
+			        : "";
+
+			grbgObj.get("paymentDates").add(paymentDate);
 			grbgObj.get("paymentStatuses").add(billObj.getStatus().toString());
 			grbgObj.get("grbgTaxPlusArrear").add(grbgTaxPlusArrear.toString());
 		}
