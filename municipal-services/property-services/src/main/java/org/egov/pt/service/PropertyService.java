@@ -966,7 +966,7 @@ public class PropertyService {
 	}
 
 	public ResponseEntity<Resource> generatePropertyTaxBillReceipt(RequestInfoWrapper requestInfoWrapper,
-			@Valid String propertyId) {
+			@Valid String propertyId, @Valid String billId) {
 
 		PropertyCriteria propertyCriteria = PropertyCriteria.builder().isSchedulerCall(true)
 				.propertyIds(Collections.singleton(propertyId)).build();
@@ -979,7 +979,7 @@ public class PropertyService {
 		}
 
 		PtTaxCalculatorTrackerSearchCriteria ptTaxCalculatorTrackerSearchCriteria = PtTaxCalculatorTrackerSearchCriteria
-				.builder().propertyIds(Collections.singleton(propertyId)).limit(1).build();
+				.builder().billId(billId).propertyIds(Collections.singleton(propertyId)).limit(1).build();
 
 		List<PtTaxCalculatorTracker> ptTaxCalculatorTrackers = getTaxCalculatedProperties(
 				ptTaxCalculatorTrackerSearchCriteria);
@@ -1034,6 +1034,13 @@ public class PropertyService {
 	}
 	
 	public void generateArrear(GenrateArrearRequest genrateArrearRequest) {
+		
+		Set<String> setOfConsumerCode = new HashSet<>();
+		setOfConsumerCode.add(genrateArrearRequest.getDemands().get(0).getConsumerCode());
+		Set<Status> setOfStatuses = new HashSet<>();
+		setOfStatuses.add(Status.APPROVED);
+		PropertyCriteria pptcriteria = PropertyCriteria.builder().propertyIds(setOfConsumerCode).tenantId(genrateArrearRequest.getDemands().get(0).getTenantId()).status(setOfStatuses).build();
+		List<Property> properties = searchProperty(pptcriteria,null,null);
 		
 		List<Demand> savedDemands = demandRepository.saveDemand(genrateArrearRequest.getRequestInfo(), genrateArrearRequest.getDemands());
 		

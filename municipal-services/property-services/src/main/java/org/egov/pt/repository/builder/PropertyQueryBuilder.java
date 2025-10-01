@@ -715,6 +715,12 @@ public class PropertyQueryBuilder {
 				preparedStmtList.add(criteria.getTenantId());
 			}
 		}
+		
+		if(criteria.getBillId() != null) {
+			andClauseIfRequired(preparedStmtList, builder);
+			builder.append(" eptct.bill_id=? ");
+			preparedStmtList.add(criteria.getBillId());
+		}
 
 		if (!CollectionUtils.isEmpty(criteria.getTenantIds())) {
 			andClauseIfRequired(preparedStmtList, builder);
