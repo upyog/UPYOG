@@ -2144,7 +2144,7 @@ public GarbageAccountResponse searchGarbageAccounts(
 
 		// Collect all bill IDs (assuming you have getBillId() or similar method)
 		Set<String> billIds = grbgTaxCalculatorTracker.stream()
-		        .map(GrbgBillTracker::getBillId)   // <-- replace with actual getter name
+		        .map(GrbgBillTracker::getBillId)   
 		        .collect(Collectors.toSet());
 		
 		BillSearchCriteria billSearchCriteria = BillSearchCriteria.builder()
