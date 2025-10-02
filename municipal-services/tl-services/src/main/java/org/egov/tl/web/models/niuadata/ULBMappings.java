@@ -57,7 +57,7 @@ public class ULBMappings {
 		map.put("Chowari", "hp.nagarpanchayatchowari");
 		map.put("Mandi", "hp.municipalcorporationmandi");
 		map.put("Sundernagar", "hp.municipalcouncilsundernagar");
-		map.put("Nerchowk", "hp.municipalcouncilnerchowk");
+		map.put("NerChowk", "hp.municipalcouncilnerchowk");
 		map.put("Jogindernagar", "hp.municipalcounciljogindernagar");
 		map.put("Sarkaghat", "hp.municipalcouncilsarkaghat");
 		map.put("Rewalsar", "hp.nagarpanchayatrewalsar");
