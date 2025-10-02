@@ -82,8 +82,11 @@ public class PDFRequestGenerator {
 		for (int i = 0; i < bill.size(); i++) {
 			if (bill.get(i).getConsumerCode().equals(grbgAccount.getGrbgApplicationNumber())
 					&& bill.get(i).getConsumerCode().equals(grbgAccount.getGrbgApplicationNumber())) {
+				int lastIndex = bill.get(i).getBillDetails().size() - 1;
 
 				grbg.put("billNo", bill.get(i).getBillNumber());
+				grbg.put("billDueDate", Instant.ofEpochMilli(bill.get(i).getBillDetails().get(lastIndex).getExpiryDate())
+						.atZone(ZoneId.systemDefault()).toLocalDateTime().format(DateTimeFormatter.ofPattern("dd-MM-yyyy")));
 			}
 			Bill billObj = bill.get(i);
 			String consumerCode = billObj.getConsumerCode();
@@ -170,8 +173,7 @@ public class PDFRequestGenerator {
 
 		grbg.put("to", grbgBillTracker.get(0).getToDate());
 
-		grbg.put("billDueDate", Instant.ofEpochMilli(bill.get(0).getBillDetails().get(0).getExpiryDate())
-				.atZone(ZoneId.systemDefault()).toLocalDateTime().format(DateTimeFormatter.ofPattern("dd-MM-yyyy")));
+		
 
 		int year = Integer.parseInt(grbgBillTracker.get(0).getYear());
 		grbg.put("finYear", year + "-" + (year + 1));
