@@ -38,5 +38,8 @@ public class CalulationCriteria {
 	@NotNull
 	@Size(min = 2, max = 64)
 	private String feeType = null;
+	
+	@JsonProperty("isOnlyEstimates")
+	private boolean isOnlyEstimates;
 
 }

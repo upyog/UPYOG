@@ -173,6 +173,13 @@ public class PropertyRepository {
 				builder.append(" where tenantid=?");
 				preparedStmtList.add(criteria.getTenantId());
 			}
+
+            if(criteria.getFromDate()!=null&& criteria.getToDate()!=null) {
+                builder.append(" AND");
+                builder.append(" createdtime BETWEEN ? AND ? ");
+                preparedStmtList.add(criteria.getFromDate());
+                preparedStmtList.add(criteria.getToDate());
+            }
 		} else {
 			if (!ObjectUtils.isEmpty(criteria.getTenantId())) {
 				builder.append(" where tenantid=?");
@@ -246,7 +253,7 @@ public class PropertyRepository {
 	}
 		
 
-		public String fetchOccupancyTypesAsString(RequestInfo requestInfo, String tenantIdParam, List<String> occupancyTypeCodes) {
+		public Map<String, String> fetchOccupancyTypes(RequestInfo requestInfo, String tenantIdParam, List<String> occupancyTypeCodes) {
 		    try {
 		        String tenantIdForMDMS = (tenantIdParam != null && !tenantIdParam.isEmpty())
 		                ? tenantIdParam.split("\\.")[0]
@@ -271,48 +278,50 @@ public class PropertyRepository {
 		                        .build())
 		                .build();
 
-		        // Fetch from MDMS
 		        Object response = serviceRequestRepository.fetchResult(new StringBuilder(uri), mdmsCriteriaReq)
-		                .orElse(null);  // Java Optional fix
+		                .orElse(null);
 
 		        if (response == null) {
 		            log.warn("MDMS response is empty");
-		            return "";
+		            return Collections.emptyMap();
 		        }
 
 		        Map<String, Object> responseMap = mapper.convertValue(response, new TypeReference<Map<String, Object>>() {});
 		        Map<String, Object> mdmsRes = (Map<String, Object>) responseMap.get("MdmsRes");
 		        if (mdmsRes == null) {
 		            log.warn("MdmsRes is missing in response");
-		            return "";
+		            return Collections.emptyMap();
 		        }
 
 		        Map<String, Object> propertyTax = (Map<String, Object>) mdmsRes.get("PropertyTax");
 		        if (propertyTax == null) {
 		            log.warn("PropertyTax missing in MdmsRes");
-		            return "";
+		            return Collections.emptyMap();
 		        }
 
 		        List<Map<String, Object>> mdmsOccupancyTypes = (List<Map<String, Object>>) propertyTax.getOrDefault("OccupancyType", Collections.emptyList());
 		        if (mdmsOccupancyTypes.isEmpty()) {
 		            log.warn("OccupancyType list is empty");
-		            return "";
+		            return Collections.emptyMap();
 		        }
 
-		        // Dynamic filtering
-		        String result = mdmsOccupancyTypes.stream()
+		        // Build code → name mapping
+		        Map<String, String> result = mdmsOccupancyTypes.stream()
 		                .filter(type -> occupancyTypeCodes.contains(type.get("code")))
-		                .map(type -> (String) type.get("name"))
-		                .collect(Collectors.joining(", "));
+		                .collect(Collectors.toMap(
+		                        type -> (String) type.get("code"),
+		                        type -> (String) type.get("name")
+		                ));
 
-		        log.info("Filtered Occupancy Types: {}", result);
+		        log.info("Filtered Occupancy Types Map: {}", result);
 		        return result;
 
 		    } catch (Exception e) {
 		        log.error("Error fetching Occupancy Types from MDMS", e);
-		        return "";
+		        return Collections.emptyMap();
 		    }
 		}
+
 
 		    
 		

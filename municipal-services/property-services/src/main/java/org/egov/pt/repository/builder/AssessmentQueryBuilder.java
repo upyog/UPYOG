@@ -1,5 +1,6 @@
 package org.egov.pt.repository.builder;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 
@@ -7,6 +8,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.egov.pt.config.PropertyConfiguration;
 import org.egov.pt.models.AssessmentSearchCriteria;
 import org.egov.pt.models.PropertyCriteria;
+import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.CollectionUtils;
@@ -19,7 +21,7 @@ public class AssessmentQueryBuilder {
 	
 	private static final String ASSESSMENT_SEARCH_QUERY = "SELECT asmt.id as ass_assessmentid, asmt.financialyear as ass_financialyear, asmt.tenantId as ass_tenantid, asmt.assessmentNumber as ass_assessmentnumber, "
 			+ "asmt.status as ass_status, asmt.propertyId as ass_propertyid, asmt.source as ass_source, asmt.assessmentDate as ass_assessmentdate,  "
-			+ "asmt.additionalDetails as ass_additionaldetails, asmt.createdby as ass_createdby, asmt.createdtime as ass_createdtime, asmt.lastmodifiedby as ass_lastmodifiedby, "
+			+ "asmt.additionalDetails as ass_additionaldetails, asmt.channel as ass_channel, asmt.createdby as ass_createdby, asmt.createdtime as ass_createdtime, asmt.lastmodifiedby as ass_lastmodifiedby, "
 			+ "asmt.lastmodifiedtime as ass_lastmodifiedtime, us.tenantId as us_tenantid, us.unitId as us_unitid, us.id as us_id, us.assessmentId as us_assessmentid, "
 			+ "us.usageCategory as us_usagecategory, us.occupancyType as us_occupancytype, "
 			+ "us.occupancyDate as us_occupancydate, us.active as us_active, us.createdby as us_createdby, "
@@ -82,9 +84,28 @@ public class AssessmentQueryBuilder {
 			preparedStatementValues.put("status", criteria.getStatus().toString());
 		}
 		
-		query.append(" ORDER BY asmt.createdtime DESC"); //default ordering on the platform.
+		if (criteria.getFromDate() != null) {
+			addClauseIfRequired(preparedStatementValues, query);
+			// If user does NOT specify toDate, take today's date as the toDate by default
+			if (criteria.getToDate() == null) {
+				criteria.setToDate(Instant.now().toEpochMilli());
+			}
+			query.append(" asmt.createdtime BETWEEN :fromdate AND :todate");
+			preparedStatementValues.put("fromdate", criteria.getFromDate());
+			preparedStatementValues.put("todate", criteria.getToDate());
+		} else {
+			if (criteria.getToDate() != null) {
+				throw new CustomException("INVALID SEARCH", "From Date should be mentioned first");
+			}
+		}
 		
-		return addPaginationWrapper(query.toString(), preparedStatementValues, criteria);
+		query.append(" ORDER BY asmt.createdtime DESC"); //default ordering on the platform.
+
+        if (criteria.getPlainSearchOffset() != null && criteria.getPlainSearchOffset()) {
+            return query.toString();
+        } else {
+            return addPaginationWrapper(query.toString(), preparedStatementValues, criteria);
+        }
 	}
 	
 	

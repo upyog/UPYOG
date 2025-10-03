@@ -108,4 +108,12 @@ public class BPACalculatorConstants {
 
 	public static final String BPA_OTHER_CHARGES = "BPA_OTHER_CHARGES";
 	
+	public static final String BPA_BUILDING_APPLICATION_FEES = "BPA_BUILDING_APPLICATION_FEES";
+
+	public static final String BPA_BOUNDARY_WALL_FEES = "BPA_BOUNDARY_WALL_FEES";
+	
+	public static final String MDMS_APPLICATION_FEES = "ApplicationFees";
+	
+	public static final String MDMS_APPLIOCATION_FEES_PATH  = "$.MdmsRes.BPA.ApplicationFees";
+	
 }

@@ -83,4 +83,5 @@ public class PropertyCriteria {
 	
 	private String surveyId;
 
+    private Boolean plainSearchOffset;
 }

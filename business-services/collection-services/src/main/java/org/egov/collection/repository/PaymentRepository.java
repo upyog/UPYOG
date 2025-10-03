@@ -182,9 +182,11 @@ public class PaymentRepository {
     	Map<String, Bill> mapOfIdAndBills = new HashMap<>();
         Map<String, Object> preparedStatementValues = new HashMap<>();
         preparedStatementValues.put("id", ids);
-        preparedStatementValues.put("tenantId", tenantId);
         StringBuilder query = new StringBuilder(paymentQueryBuilder.getBillQuery());
-        query.append(" AND	b.tenantid= :tenantId ;");
+        if (tenantId!=null) {
+            preparedStatementValues.put("tenantId", tenantId);
+            query.append(" AND	b.tenantid= :tenantId ;");
+        }
         List<Bill> bills = namedParameterJdbcTemplate.query(query.toString(), preparedStatementValues, billRowMapper);
         bills.forEach(bill -> {
         	mapOfIdAndBills.put(bill.getId(), bill);

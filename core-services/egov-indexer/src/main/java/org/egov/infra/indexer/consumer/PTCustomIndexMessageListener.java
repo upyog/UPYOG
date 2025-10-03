@@ -5,6 +5,7 @@ import org.egov.infra.indexer.custom.pt.PTCustomDecorator;
 import org.egov.infra.indexer.custom.pt.PropertyRequest;
 import org.egov.infra.indexer.service.IndexerService;
 import org.egov.infra.indexer.util.IndexerUtils;
+import org.egov.infra.indexer.util.DLQHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.listener.MessageListener;
@@ -27,6 +28,9 @@ public class PTCustomIndexMessageListener implements MessageListener<String, Str
 	@Autowired
 	private PTCustomDecorator ptCustomDecorator;
 
+	@Autowired
+	private DLQHandler dlqHandler;
+
 	@Value("${egov.indexer.pt.update.topic.name}")
 	private String ptUpdateTopic;
 
@@ -46,7 +50,7 @@ public class PTCustomIndexMessageListener implements MessageListener<String, Str
 			propertyRequest.setProperties(ptCustomDecorator.transformData(propertyRequest.getProperties()));
 			indexerService.esIndexer(data.topic(), mapper.writeValueAsString(propertyRequest));
 		} catch (Exception e) {
-			log.error("Couldn't parse ptindex request: ", e);
+			dlqHandler.handleError(data.value(), e, "PTCustomIndexMessageListener", data.topic());
 		}
 	}
 
