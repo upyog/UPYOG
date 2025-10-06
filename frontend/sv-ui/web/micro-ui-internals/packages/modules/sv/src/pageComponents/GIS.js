@@ -15,7 +15,7 @@ import { LocationSearchCard, LinkButton, Card } from "@nudmcdgnpm/digit-ui-react
  */
 const GIS = ({ t, onSelect, formData = {},handleRemove,onSave }) => {
   const [location, setlocation] = useState(formData?.address?.location || {});
-  const tenants = Digit.Hooks.obps.useTenants();
+  const tenants = Digit.Hooks.sv.useTenants();
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const stateId = Digit.ULBService.getStateId();
   let Webview = !Digit.Utils.browser.isMobile();
