@@ -64,12 +64,12 @@ public class GarbageAccountRepository {
 		    + " FROM filtered_acc as acc"
 		    + " LEFT OUTER JOIN eg_grbg_application as app ON app.garbage_id = acc.garbage_id"
 		    + " LEFT OUTER JOIN eg_grbg_old_details as old_dtl ON old_dtl.garbage_id = acc.garbage_id"
-		    + " INNER JOIN eg_grbg_collection_unit as unit ON unit.garbage_id = acc.garbage_id"
+		    + " LEFT OUTER JOIN eg_grbg_collection_unit as unit ON unit.garbage_id = acc.garbage_id"
 		    + " LEFT OUTER JOIN eg_grbg_address as address ON address.garbage_id = acc.garbage_id"
 			+ " LEFT OUTER JOIN eg_grbg_account sub_acc ON acc.uuid = sub_acc.parent_account"
 		    + " LEFT OUTER JOIN eg_grbg_application as sub_app ON sub_app.garbage_id = sub_acc.garbage_id"
 		    + " LEFT OUTER JOIN eg_grbg_old_details as sub_old_dtl ON sub_old_dtl.garbage_id = sub_acc.garbage_id"
-		    + " INNER JOIN eg_grbg_collection_unit as sub_unit ON sub_unit.garbage_id = sub_acc.garbage_id"
+		    + " LEFT OUTER JOIN eg_grbg_collection_unit as sub_unit ON sub_unit.garbage_id = sub_acc.garbage_id"
 		    + " LEFT OUTER JOIN eg_grbg_address as sub_address ON sub_address.garbage_id = sub_acc.garbage_id";
 
 	  private static final String SELECT_QUERY_ACCOUNT_INDEX = "SELECT acc.* "
@@ -80,7 +80,7 @@ public class GarbageAccountRepository {
 	            + " FROM filtered_acc as acc"
 	            + " LEFT OUTER JOIN eg_grbg_application as app ON app.garbage_id = acc.garbage_id"
 	            + " LEFT OUTER JOIN eg_grbg_old_details as old_dtl ON old_dtl.garbage_id = acc.garbage_id"
-	            + " INNER JOIN eg_grbg_collection_unit as unit ON unit.garbage_id = acc.garbage_id"
+	            + " LEFT OUTER JOIN eg_grbg_collection_unit as unit ON unit.garbage_id = acc.garbage_id"
 	            + " LEFT OUTER JOIN eg_grbg_address as address ON address.garbage_id = acc.garbage_id";
     
     private static final String INSERT_ACCOUNT = "INSERT INTO eg_grbg_account (id, uuid, garbage_id, property_id, type, name"
@@ -260,7 +260,6 @@ public class GarbageAccountRepository {
 							garbageAccount.setChildGarbageAccounts(filteredChildren);
 						});
 			}
-			
 			if (searchCriteriaGarbageAccount.getIsMonthlyBilling() != null) {
 				Optional.ofNullable(garbageAccount.getChildGarbageAccounts())
 				.filter(childAccounts -> !childAccounts.isEmpty()).ifPresent(childAccounts -> {
@@ -286,7 +285,7 @@ public class GarbageAccountRepository {
 		//generate search query
     	searchQuery = getSearchQueryByCriteriaForIndex(searchQuery, searchCriteriaGarbageAccount, preparedStatementValues, garbageCriteriaMap);
         
-        log.info("###Index search garbage account: "+searchQuery.toString() + " {}",preparedStatementValues);
+        log.info("### search garbage account: "+searchQuery.toString() + " {}",preparedStatementValues);
 
         List<GarbageAccount> garbageAccounts = jdbcTemplate.query(searchQuery.toString(), preparedStatementValues.toArray(), garbageAccountRowMapper);
 
@@ -313,7 +312,6 @@ public class GarbageAccountRepository {
 							garbageAccount.setChildGarbageAccounts(filteredChildren);
 						});
 			}
-			
 			log.info("Problem account {}", garbageAccount);
 			
 			if (searchCriteriaGarbageAccount.getIsMonthlyBilling() != null) {
