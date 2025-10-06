@@ -19,4 +19,8 @@ public class TaxHeadEstimate {
     private BigDecimal estimateAmount;
 
     private Category category;
+    
+    private BigDecimal adjustedAmount = BigDecimal.ZERO;
+    
+    private String filestoreId;
 }

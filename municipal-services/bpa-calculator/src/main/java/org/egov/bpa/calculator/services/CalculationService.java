@@ -7,6 +7,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.egov.bpa.calculator.config.BPACalculatorConfig;
 import org.egov.bpa.calculator.kafka.broker.BPACalculatorProducer;
@@ -215,6 +216,11 @@ public class CalculationService {
 			
 			Map<String,Object> fee = (Map<String,Object>)node.get("selfCertificationCharges");
 			
+			List<Map<String,Object>> adjustedAmountsList = node.get("adjustedAmounts") != null ? (List<Map<String,Object>>)node.get("adjustedAmounts") : new ArrayList();
+			
+			Map<String,Object> adjustedAmounts = adjustedAmountsList.stream()
+					.collect(Collectors.toMap(adjustedAmount -> adjustedAmount.get("taxHeadCode").toString(), adjustedAmount -> adjustedAmount));
+			
 			BigDecimal builtUpArea = new BigDecimal((String)node.get("builtUpArea")).multiply(BPACalculatorConstants.SQMETER_TO_SQYARD);
 			BigDecimal plotArea = new BigDecimal((String)node.get("area")).multiply(BPACalculatorConstants.SQMETER_TO_SQYARD);
 			BigDecimal basementArea = BigDecimal.ZERO;
@@ -225,7 +231,7 @@ public class CalculationService {
 			String tanentId=calulationCriteria.getBpa().getTenantId();
 			
 			//Calculate Sanction Fee of BPA
-			estimates = calculateSanctionFee(requestInfo, tanentId, plotArea, builtUpArea, basementArea, fee, category, finYear);
+			estimates = calculateSanctionFee(requestInfo, tanentId, plotArea, builtUpArea, basementArea, fee, adjustedAmounts, category, finYear);
 		}
 
 		else {
@@ -349,7 +355,7 @@ public class CalculationService {
 	 * @return List of TaxHeadEstimate for the Demand creation
 	 */
 	private List<TaxHeadEstimate> calculateSanctionFee (RequestInfo requestInfo,String tanentId, BigDecimal plotArea, BigDecimal builtUpArea
-			, BigDecimal basementArea, Map<String,Object> fee, String category, String finYear) {
+			, BigDecimal basementArea, Map<String,Object> fee, Map<String,Object> adjustedAmounts, String category, String finYear) {
 		List<TaxHeadEstimate> estimates = new LinkedList<>();
 		Object mdmsData = mdmsService.getMDMSSanctionFeeCharges(requestInfo, tanentId, BPACalculatorConstants.MDMS_CHARGES_TYPE_CODE, category, finYear);
 		List<Map<String,Object>> chargesTypejsonOutput = JsonPath.read(mdmsData, BPACalculatorConstants.MDMS_CHARGES_TYPE_PATH);
@@ -412,9 +418,14 @@ public class CalculationService {
 				break;
 			}
 			
+			Map<String, Object> adjustedAmount = adjustedAmounts.containsKey(taxhead) ? 
+					(Map<String, Object>)adjustedAmounts.get(taxhead) : new LinkedHashMap<String, Object>();
+			
 			estimate.setEstimateAmount(amount);
 			estimate.setCategory(Category.FEE);
 			estimate.setTaxHeadCode(taxhead);
+			estimate.setAdjustedAmount(new BigDecimal(adjustedAmount.getOrDefault("adjustedAmount", "0").toString()));
+			estimate.setFilestoreId((String)adjustedAmount.getOrDefault("filestoreId", null));
 			estimates.add(estimate);
 			
 		});
