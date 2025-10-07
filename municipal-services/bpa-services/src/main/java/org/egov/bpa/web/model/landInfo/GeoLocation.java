@@ -31,6 +31,9 @@ public class GeoLocation   {
 
   @JsonProperty("additionalDetails")
   private Object additionalDetails = null;
+  
+  @JsonProperty("id")
+  private String id = null;
 
   public GeoLocation latitude(Double latitude) {
     this.latitude = latitude;
@@ -130,5 +133,13 @@ public class GeoLocation   {
       return "null";
     }
     return o.toString().replace("\n", "\n    ");
+  }
+
+  public String getId() {
+	return id;
+  }
+
+  public void setId(String id) {
+	this.id = id;
   }
 }
