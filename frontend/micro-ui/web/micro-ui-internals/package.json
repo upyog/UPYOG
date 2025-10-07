@@ -34,7 +34,6 @@
     "dev:commonPt": "cd packages/modules/commonPt && yarn start",
     "dev:core": "cd packages/modules/core && yarn start",
     "dev:pgr": "cd packages/modules/pgr && yarn start",
-    
     "dev:receipts": "cd packages/modules/receipts && yarn start",
     "dev:engagement": "cd packages/modules/engagement && yarn start",
     "dev:bills": "cd packages/modules/bills && yarn start",
@@ -66,9 +65,11 @@
     "*.{js,css,md}": "prettier --write"
   },
   "dependencies": {
+    "crypto-js": "^4.2.0",
     "lodash": "4.17.21",
     "microbundle-crl": "0.13.11"
-  } ,"resolutions": {
+  },
+  "resolutions": {
     "**/babel-loader": "8.2.2",
     "**/@babel/core": "7.14.0",
     "**/@babel/preset-env": "7.14.0",

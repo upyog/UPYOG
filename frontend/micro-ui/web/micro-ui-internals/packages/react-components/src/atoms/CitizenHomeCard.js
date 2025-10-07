@@ -2,7 +2,6 @@ import React from "react";
 import { Link } from "react-router-dom";
 
 const CitizenHomeCard = ({ header, links = [], state, Icon, Info, isInfo = false, styles }) => {
-  console.log("links==",links)
   return (
     <div className="citizen-homecard-cls" style={styles ? styles : {}}>
       <div className="header">

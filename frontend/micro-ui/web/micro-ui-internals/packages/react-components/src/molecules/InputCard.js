@@ -25,7 +25,6 @@ const InputCard = ({
 }) => {
   const isMobile = window.Digit.Utils.browser.isMobile();
   // TODO: inputs handle
-  console.log("texts===",texts)
   return (
     <Card style={cardStyle}>
       {texts.headerCaption && <CardCaption>{t(texts.headerCaption)}</CardCaption>}

@@ -100,7 +100,6 @@ const TopBar = ({
     );
   }
   const loggedin = userDetails?.access_token ? true : false;
-  console.log("profilePic==",profilePic)
   return (
     <div>
         <TopBarComponent

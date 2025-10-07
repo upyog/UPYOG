@@ -40,7 +40,6 @@ const EmployeeApp = ({ path, url, userType }) => {
 
   const userDetails = getUserDetails(employeeToken, employeeInfo)
   
-  console.log("userDetailsEmployeeIndex===",userDetails)
   let userRole='';
   if(userDetails && userDetails.info && userDetails.info?.roles) {
     userDetails.info.roles.map((role)=>{

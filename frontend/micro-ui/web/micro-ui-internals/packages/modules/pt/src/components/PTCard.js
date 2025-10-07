@@ -4,7 +4,6 @@ import { useTranslation } from "react-i18next";
 import { EmployeeModuleCard, PropertyHouse } from "@upyog/digit-ui-react-components";
 
 const PTCard = () => {
-  console.log("PTCard")
   const { t } = useTranslation();
   const parseValue = (value) => {
     try {
@@ -23,7 +22,6 @@ const PTCard = () => {
 
   const userDetails = getUserDetails(employeeToken, employeeInfo)
   
-  console.log("userDetailsPTCard===",userDetails)
   let userRole='';
   if(userDetails && userDetails.info && userDetails.info?.roles) {
     userDetails.info.roles.map((role)=>{
@@ -74,6 +72,11 @@ const PTCard = () => {
     {
       label: t("ES_COMMON_APPLICATION_SEARCH"),
       link: `/digit-ui/employee/pt/application-search`,
+      image: "https://mnptapp-terraform.s3.ap-south-1.amazonaws.com/images/Property-Transfer.png",
+    },
+    {
+      label: t("Search Appeal"),
+      link: `/digit-ui/employee/pt/appeal-search`,
       image: "https://mnptapp-terraform.s3.ap-south-1.amazonaws.com/images/Property-Transfer.png",
     },
   ]

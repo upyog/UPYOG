@@ -106,21 +106,21 @@ const BillDetails = ({ paymentRules, businessService }) => {
   const [paymentAllowed, setPaymentAllowed] = useState(true);
   const [formError, setError] = useState("");
 
-  useEffect(() => {
-    window.scroll({ top: 0, behavior: "smooth" });
-  }, []);
+  // useEffect(() => {
+  //   window.scroll({ top: 0, behavior: "smooth" });
+  // }, []);
 
   useEffect(() => {
     if (paymentType == t("CS_PAYMENT_FULL_AMOUNT")) setAmount(getTotal());
   }, [paymentType, bill]);
 
-  useEffect(() => {
-    let changeAdvanceAllowed = isAdvanceAllowed;
-    if (isAdvanceAllowed && wrkflow === "WNS") changeAdvanceAllowed = false;
-    const allowPayment = minAmountPayable && amount >= minAmountPayable && !changeAdvanceAllowed && amount <= getTotal() && !formError;
-    if (paymentType != t("CS_PAYMENT_FULL_AMOUNT")) setPaymentAllowed(allowPayment);
-    else setPaymentAllowed(true);
-  }, [paymentType, amount]);
+  // useEffect(() => {
+  //   let changeAdvanceAllowed = isAdvanceAllowed;
+  //   if (isAdvanceAllowed && wrkflow === "WNS") changeAdvanceAllowed = false;
+  //   const allowPayment = minAmountPayable && amount >= minAmountPayable && !changeAdvanceAllowed && amount <= getTotal() && !formError;
+  //   if (paymentType != t("CS_PAYMENT_FULL_AMOUNT")) setPaymentAllowed(allowPayment);
+  //   else setPaymentAllowed(true);
+  // }, [paymentType, amount]);
 
   useEffect(() => {
     if (!bill && data) {
@@ -130,7 +130,9 @@ const BillDetails = ({ paymentRules, businessService }) => {
   }, [isLoading]);
 
   const onSubmit = () => {
-    let paymentAmount = paymentType === t("CS_PAYMENT_FULL_AMOUNT") ? getTotal() : amount;
+    // let paymentAmount = paymentType === t("CS_PAYMENT_FULL_AMOUNT") ? getTotal() : amount;
+    let paymentAmount = amount;
+
     if (window.location.href.includes("mcollect")) {
       history.push(`/digit-ui/citizen/payment/collect/${businessService}/${consumerCode}?workflow=mcollect`, {
         paymentAmount,
@@ -165,6 +167,24 @@ const BillDetails = ({ paymentRules, businessService }) => {
     }
     setAmount(value);
   };
+  const onChangeOriginalAmount = (value) => {
+    setAmount(value);
+    // setPaymentAllowed(true)
+    setError("");
+    if (isNaN(value) || value.includes(".")) {
+      setError("AMOUNT_INVALID");
+      setPaymentAllowed(false)
+    } else if (value < getTotal()) {
+      setError("Amount can not be less than original payment amount");
+      setPaymentAllowed(false)
+    } else {
+      setPaymentAllowed(true)
+    }
+    // else if (value < minAmountPayable) {
+    //   setError("CS_CANT_PAY_BELOW_MIN_AMOUNT");
+    // }
+    // setAmount(value);
+  };
 
   if (isLoading) return <Loader />;
 
@@ -188,13 +208,13 @@ const BillDetails = ({ paymentRules, businessService }) => {
         <div className="bill-payment-amount">
           <hr className="underline" />
           <CardSubHeader>{t("CS_COMMON_PAYMENT_AMOUNT")}</CardSubHeader>
-          <RadioButtons
+          {/* <RadioButtons
             selectedOption={paymentType}
             onSelect={setPaymentType}
             options={[t("CS_PAYMENT_FULL_AMOUNT")]}
 
             // options={paymentRules.partPaymentAllowed ? [t("CS_PAYMENT_FULL_AMOUNT"), t("CS_PAYMENT_CUSTOM_AMOUNT")] : [t("CS_PAYMENT_FULL_AMOUNT")]}
-          />
+          /> */}
           <div style={{ position: "relative" }}>
             <span
               className="payment-amount-front"
@@ -205,7 +225,7 @@ const BillDetails = ({ paymentRules, businessService }) => {
             {paymentType !== t("CS_PAYMENT_FULL_AMOUNT") ? (
               <TextInput className="text-indent-xl" onChange={(e) => onChangeAmount(e.target.value)} value={amount} disable={getTotal() === 0} />
             ) : (
-              <TextInput className="text-indent-xl" value={getTotal()} onChange={() => {}} disable={true} />
+              <TextInput className="text-indent-xl" value={amount} onChange={(e) => onChangeOriginalAmount(e.target.value)} disable={false} />
             )}
             {formError === "CS_CANT_PAY_BELOW_MIN_AMOUNT" ? (
               <span className="card-label-error">

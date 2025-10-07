@@ -11,13 +11,13 @@ const PropertyTax = ({ t, config, onSelect, userType, formData }) => {
   const docType = config?.isMutation ? ["MutationDocuments"] : "Documents";
 
   const { isLoading, data: Documentsob = {} } = Digit.Hooks.pt.usePropertyMDMS(stateId, "PropertyTax", docType);
-
+// console.log("Documentsob===",Documentsob)
   let docs = Documentsob?.PropertyTax?.[config?.isMutation ? docType[0] : docType];
   if (!config?.isMutation) docs = docs?.filter((doc) => doc["digit-citizen"]);
   function onSave() {}
 
   function goNext() {
-    console.log("config========next===",config)
+    // console.log("config========next===",config)
     if(config && config?.amalgamationState && config?.amalgamationState?.action == "Amalgamation") {
       onSelect('amalgamationDetails', config?.amalgamationState);
     }else if(config && config?.amalgamationState && config?.amalgamationState?.action == "BIFURCATION") {
@@ -39,7 +39,6 @@ const PropertyTax = ({ t, config, onSelect, userType, formData }) => {
     isBifurcation = true;
     bifurcationDetails =  config?.amalgamationState
   }
-  console.log("config========next===",config)
   const isMobile = window.Digit.Utils.browser.isMobile();
 
   return (
@@ -64,9 +63,17 @@ const PropertyTax = ({ t, config, onSelect, userType, formData }) => {
           {bifurcationDetails && bifurcationDetails?.propertyDetails && 
           (
           <div>
-            <span style={{fontWeight: 'bold'}}>Property ID: </span><span>{bifurcationDetails?.propertyDetails?.propertyId} | </span>
-            <span style={{fontWeight: 'bold'}}>Owner Name: </span><span>{bifurcationDetails?.propertyDetails?.owners[0]?.name} | </span>
-            <span style={{fontWeight: 'bold'}}>Owner Mobile No.: </span><span>{bifurcationDetails?.propertyDetails?.owners[0]?.mobileNumber}</span>
+            <span style={{fontWeight: 'bold'}}>Property ID: </span><span>{bifurcationDetails?.propertyDetails?.propertyId} </span>
+            {
+              bifurcationDetails?.propertyDetails?.owners?.length>0 &&
+              bifurcationDetails?.propertyDetails?.owners.map(owner=>(
+                <div>
+                  <span style={{fontWeight: 'bold'}}>Owner Name: </span><span>{owner?.name} | </span>
+                  <span style={{fontWeight: 'bold'}}>Owner Mobile No.: </span><span>{owner?.mobileNumber}</span>
+                </div>
+              ))
+            }
+            
           </div>
           )}
         </div>
