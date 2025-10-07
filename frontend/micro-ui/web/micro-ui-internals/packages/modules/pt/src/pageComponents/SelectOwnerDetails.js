@@ -45,9 +45,19 @@ const SelectOwnerDetails = ({ t, config, onSelect, userType, formData, ownerInde
     Menu.map((genderDetails) => {
       menu.push({ i18nKey: `PT_COMMON_GENDER_${genderDetails.code}`, code: `${genderDetails.code}`, value: `${genderDetails.code}` });
     });
+    const nameRegex = /^[a-zA-Z.'`-]+( [a-zA-Z.'`-]+)*$/;
 
   function setOwnerName(e) {
-    setName(e.target.value);
+
+    let value = e.target.value;
+    // console.log("value==",value)
+
+    // if (!nameRegex.test(value)) {
+    //   alert("Invalid name format");
+    // } else {
+      setName(value);
+    // }
+    
   }
   function setOwnerEmail(e) {
     setEmail(e.target.value);
@@ -77,6 +87,15 @@ const SelectOwnerDetails = ({ t, config, onSelect, userType, formData, ownerInde
 
   const goNext = () => {
     let owner = formData.owners && formData.owners[index];
+    // console.log("owner--",owner)
+    // let value = e.target.value;
+    // console.log("value==",value)
+
+    // if (!nameRegex.test(value)) {
+    //   alert("Invalid name format");
+    // } else {
+    //   setName(value);
+    // }
     let ownerStep;
     if (userType === "employee") {
       ownerStep = { ...owner, name, gender, mobileNumber, fatherOrHusbandName, relationship, emailId: email };
@@ -243,15 +262,15 @@ const SelectOwnerDetails = ({ t, config, onSelect, userType, formData, ownerInde
             <TextInput
               t={t}
               type={"text"}
-              isMandatory={false}
+              isMandatory={true}
               name="name"
               value={name}
               onChange={setOwnerName}
               ValidationRequired = {true}
               {...(validation = {
                 isRequired: true,
-                pattern: "^[a-zA-Z-.`' ]*$",
-                type: "tel",
+                pattern: "^[a-zA-Z.'`\\-]+( [a-zA-Z.'`\\-]+)*$",
+                type: "text",
                 title: t("PT_NAME_ERROR_MESSAGE"),
               })}
               disable={editScreen}
@@ -270,7 +289,7 @@ const SelectOwnerDetails = ({ t, config, onSelect, userType, formData, ownerInde
               onChange={setGuardiansName}
               ValidationRequired = {true}
               {...(validation = {
-                pattern: "^[a-zA-Z-.`' ]*$",
+                pattern: "^[a-zA-Z.'`\\-]+( [a-zA-Z.'`\\-]+)*$",
                 title: t("PT_NAME_ERROR_MESSAGE"),
               })}
               disable={editScreen}
@@ -352,7 +371,7 @@ const SelectOwnerDetails = ({ t, config, onSelect, userType, formData, ownerInde
           ValidationRequired = {true}
           {...(validation = {
             isRequired: true,
-            pattern: "^[a-zA-Z-.`' ]*$",
+            pattern: "^[a-zA-Z.'`\\-]+( [a-zA-Z.'`\\-]+)*$",
             type: "text",
             title: t("PT_NAME_ERROR_MESSAGE"),
           })}
@@ -429,7 +448,7 @@ const SelectOwnerDetails = ({ t, config, onSelect, userType, formData, ownerInde
           ValidationRequired = {true}
           {...(validation = {
             isRequired: true,
-            pattern: "^[a-zA-Z-.`' ]*$",
+            pattern: "^[a-zA-Z.'`\\-]+( [a-zA-Z.'`\\-]+)*$",
             type: "text",
             title: t("PT_NAME_ERROR_MESSAGE"),
           })}
