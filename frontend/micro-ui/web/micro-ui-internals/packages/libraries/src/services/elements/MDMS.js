@@ -1,5 +1,5 @@
 //HAVE TO CHANGE THI
-import { stringReplaceAll } from "@egovernments/digit-ui-module-pt/src/utils";
+import { stringReplaceAll } from "@upyog/digit-ui-module-pt/src/utils";
 import { ApiCacheService } from "../atoms/ApiCacheService";
 import Urls from "../atoms/urls";
 import { Request, ServiceRequest } from "../atoms/Utils/Request";
@@ -1421,6 +1421,24 @@ const callAllPromises = (success, promises = [], resData) => {
     }
   });
 };
+const getExemptionList = (tenantId, moduleCode, type) => ({
+  type,
+  details: {
+    tenantId: tenantId,
+    moduleDetails: [
+      {
+        moduleName: moduleCode,
+        masterDetails: [
+          {
+            name: "ExemptionList",
+            filter: null,
+          },
+        ],
+      },
+    ],
+  },
+});
+
 const mergeMDMSData = (data, tenantId) => {
   if (!mergedData[tenantId] || Object.keys(mergedData[tenantId]).length === 0) {
     mergedData[tenantId] = data;
@@ -1507,6 +1525,8 @@ export const MdmsService = {
     PersistantStorage.set(key, responseValue, cacheSetting.cacheTimeInSecs);
     return responseValue;
   },
+
+  
   getServiceDefs: (tenantId, moduleCode) => {
     return MdmsService.getDataByCriteria(tenantId, getModuleServiceDefsCriteria(tenantId, moduleCode), moduleCode);
   },
@@ -1727,5 +1747,8 @@ export const MdmsService = {
   },
   getStaticDataJSON: (tenantId) => {
     return MdmsService.call(tenantId, getStaticData());
+  },
+  getExemptionList: (tenantId, moduleCode, type) => {
+    return MdmsService.getDataByCriteria(tenantId, getExemptionList(tenantId, moduleCode, type), moduleCode);
   }
 };

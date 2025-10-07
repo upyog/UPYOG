@@ -42,6 +42,7 @@ class PayGovUtils {
         int splitIndex =txMsg.lastIndexOf("|");
         String txChecksumvalue =  txMsg.substring(splitIndex+1) ;
         String generatedChecksum =generateCRC32Checksum(txMsg.substring(0, splitIndex) , secretKey);
+        System.out.println("generatedChecksum::"+generatedChecksum);
         if(!generatedChecksum.equals( txChecksumvalue)){
             throw new CustomException("CHECKSUM_VALIDATION_FAILED", "Fraud transaction, Checksum did not match");
         }

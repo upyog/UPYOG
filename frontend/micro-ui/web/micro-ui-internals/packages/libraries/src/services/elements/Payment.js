@@ -140,4 +140,20 @@ export const PaymentService = {
       userService: true,
       params: { ...filters },
     }),
+    noDues: (tenantId, filters = {}) =>
+      Request({
+        url: Urls.payment.fetch_bill,
+        useCache: false,
+        method: "POST",
+        auth: false,
+        userService: false,
+        params: { tenantId, ...filters },
+      })
+        .then((d) => {
+          return d;
+        })
+        .catch((err) => {
+          if (err?.response?.data?.Errors?.[0]?.code === "EG_BS_BILL_NO_DEMANDS_FOUND") return { Bill: [] };
+          else throw err;
+        }),
 };

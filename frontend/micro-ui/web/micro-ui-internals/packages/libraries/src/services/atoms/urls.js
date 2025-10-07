@@ -6,6 +6,7 @@ const Urls = {
   location: {
     localities: `/egov-location/location/v11/boundarys/_search?hierarchyTypeCode=ADMIN&boundaryType=Locality`,
     revenue_localities: `/egov-location/location/v11/boundarys/_search?hierarchyTypeCode=REVENUE&boundaryType=Locality`,
+    blocks: `/egov-location/location/v11/boundarys/_search?hierarchyTypeCode=REVENUE&boundaryType=Block`,
   },
 
   pgr_search: `/pgr-services/v2/request/_search`,
@@ -24,6 +25,8 @@ const Urls = {
   ChangePassword1: "/user/password/_update",
   UserProfileUpdate: "/user/profile/_update",
   EmployeeSearch: "/egov-hrms/employees/_search",
+  ValidateOTP: "/otp/v1/_validate",
+  GenerateCaptcha: "/user/users/_generateCaptcha",
 
   InboxSearch: "/inbox/v1/_search",
 
@@ -66,6 +69,7 @@ const Urls = {
     obps_Reciept_Search: "/collection-services/payments/_search",
     billAmendmentSearch: "/billing-service/amendment/_search",
     getBulkPdfRecordsDetails: "/pdf-service/v1/_getBulkPdfRecordsDetails",
+    no_dues: "/billing-service/bill/v2/_nodues",
   },
 
   pt: {
@@ -77,11 +81,18 @@ const Urls = {
     pt_calculation_estimate: "/pt-calculator-v2/propertytax/v2/_estimate",
     assessment_create: "/property-services/assessment/_create",
     assessment_search: "/property-services/assessment/_search",
+    assessment_update: "/property-services/assessment/_update",
     payment_search: "/collection-services/payments/PT/_search",
     pt_calculate_mutation: "/pt-calculator-v2/propertytax/mutation/_calculate",
     cfcreate: "/service-request/service/v1/_create",
     cfdefinitionsearch: "/service-request/service/definition/v1/_search",
     cfsearch: "/service-request/service/v1/_search",
+    appeal_create: "/property-services/appeal/_create",
+    appeal_search: "/property-services/appeal/_search",
+    appeal_update: "/property-services/appeal/_update",
+    notice_save: "/property-services/notice/_save",
+    notice_search: "/property-services/notice/_search",
+    dashboard_search: "/property-services/property/_dashboardDataSearch",
   },
 
   dss: {

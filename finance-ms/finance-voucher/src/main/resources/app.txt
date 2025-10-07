@@ -1,0 +1,34 @@
+/////////////FUND TEST CURL//////////////////////
+curl --location 'http://localhost:8080/fincance-master/fund/view/1' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "RequestInfo": {
+        "apiId": "Rainmaker",
+        "authToken": "935ec4fc-363c-40a7-a2ce-76496c5abe17",
+       "userInfo": {
+            "id": 3135,
+            "uuid": "e88cb2e2-26ca-46d2-9028-fdcd98468fa2",
+            "userName": "EMP-04-000017",
+            "name": "EGF_ADMINISTRATOR_1",
+            "mobileNumber": "3333443347",
+            "emailId": "rahul@gmail235.com",
+            "type": "EMPLOYEE",
+            "roles": [
+                {
+                    "name": "Finance Adminsitrator",
+                    "code": "EGF_ADMINISTRATOR",
+                    "tenantId": "mn.imphal"
+                },
+                {
+                    "name": "Employee",
+                    "code": "EMPLOYEE",
+                    "tenantId": "mn.imphal"
+                }
+            ],
+            "tenantId": "mn.imphal"
+        },
+        "msgId": "1730213988244|en_IN",
+        "plainAccessRequest": {},
+        "tenantId":"mn.imphal"
+    }
+}'
