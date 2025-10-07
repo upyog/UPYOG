@@ -1,5 +1,6 @@
 package org.egov.inbox.service;
 
+import static org.egov.inbox.util.BSConstants.ASSIGNEE_PARAM;
 import static org.egov.inbox.util.BpaConstants.BPA;
 import static org.egov.inbox.util.BpaConstants.BPAREG;
 import static org.egov.inbox.util.BpaConstants.BPA_APPLICATION_NUMBER_PARAM;
@@ -19,10 +20,10 @@ import static org.egov.inbox.util.FSMConstants.FSM_VEHICLE_TRIP_MODULE;
 import static org.egov.inbox.util.FSMConstants.STATUSID;
 import static org.egov.inbox.util.FSMConstants.VEHICLE_LOG;
 import static org.egov.inbox.util.FSMConstants.WAITING_FOR_DISPOSAL_STATE;
-import static org.egov.inbox.util.NocConstants.NOC;
-import static org.egov.inbox.util.NocConstants.NOC_APPLICATION_NUMBER_PARAM;
+import static org.egov.inbox.util.NdcConstants.*;
 import static org.egov.inbox.util.PTConstants.ACKNOWLEDGEMENT_IDS_PARAM;
 import static org.egov.inbox.util.PTConstants.PT;
+import static org.egov.inbox.util.PTRConstants.PTR;
 import static org.egov.inbox.util.TLConstants.APPLICATION_NUMBER_PARAM;
 import static org.egov.inbox.util.TLConstants.BUSINESS_SERVICE_PARAM;
 import static org.egov.inbox.util.TLConstants.REQUESTINFO_PARAM;
@@ -32,6 +33,8 @@ import static org.egov.inbox.util.TLConstants.TL;
 import static org.egov.inbox.util.SWConstants.SW;
 import static org.egov.inbox.util.BSConstants.*;
 import static org.egov.inbox.util.WSConstants.WS;
+import static org.egov.inbox.util.AssetConstants.ASSET;
+import static org.egov.inbox.util.StreetVendingConstants.*;
 import static org.egov.inbox.util.PGRConstants.PGR;
 import static org.egov.inbox.util.PGRConstants.SWACH;
 import static org.egov.inbox.util.PGRConstants.PGRANDSWACH_APPLICATION_PARAM;
@@ -60,10 +63,7 @@ import org.egov.inbox.model.vehicle.VehicleTripDetailResponse;
 import org.egov.inbox.model.vehicle.VehicleTripSearchCriteria;
 import org.egov.inbox.repository.ElasticSearchRepository;
 import org.egov.inbox.repository.ServiceRequestRepository;
-import org.egov.inbox.util.BpaConstants;
-import org.egov.inbox.util.ErrorConstants;
-import org.egov.inbox.util.FSMConstants;
-import org.egov.inbox.util.TLConstants;
+import org.egov.inbox.util.*;
 import org.egov.inbox.web.model.Inbox;
 import org.egov.inbox.web.model.InboxResponse;
 import org.egov.inbox.web.model.InboxSearchCriteria;
@@ -106,10 +106,10 @@ public class InboxService {
 
     @Autowired
     private PtInboxFilterService ptInboxFilterService;
-    
+
     @Autowired
     private PGRInboxFilterService pgrInboxFilterService;
-    
+
     @Autowired
     private SWACHInboxFilterService swachInboxFilterService;
 
@@ -122,6 +122,15 @@ public class InboxService {
     @Autowired
     private FSMInboxFilterService fsmInboxFilter;
     
+    @Autowired
+    private NDCInboxFilterService ndcInboxFilterService;
+
+    @Autowired
+    private PETInboxFilterService petInboxFilterService;
+
+    @Autowired
+    private ADVInboxFilterService advInboxFilterService;
+
     @Autowired
     private NOCInboxFilterService nocInboxFilterService;
 
@@ -141,11 +150,28 @@ public class InboxService {
     ElasticSearchRepository elasticSearchRepository;
 
     @Autowired
+    private AssetInboxFilterService assetInboxFilterService;
+
+    @Autowired
+    private StreetVendingInboxFilterService StreetVendingInboxFilterService;
+
+    @Autowired
+    private PtrInboxFilterService ptrInboxFilterService;
+
+    @Autowired
+    private PGRAiInboxFilterService pgrAiInboxFilterService;
+
+    @Autowired
+    private CHBInboxFilterService chbInboxFilterService;
+
+
+    @Autowired
     public InboxService(InboxConfiguration config, ServiceRequestRepository serviceRequestRepository,
-            ObjectMapper mapper, WorkflowService workflowService) {
+                        ObjectMapper mapper, WorkflowService workflowService, CHBInboxFilterService chbInboxFilterService) {
         this.config = config;
         this.serviceRequestRepository = serviceRequestRepository;
         this.mapper = mapper;
+
         this.mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
 
         this.workflowService = workflowService;
@@ -166,7 +192,7 @@ public class InboxService {
         }
 
         Integer totalCount = 0;
-        
+
         if(!(processCriteria.getModuleName().equals(SW) || processCriteria.getModuleName().equals(WS)))
             totalCount = workflowService.getProcessCount(criteria.getTenantId(), requestInfo, processCriteria);
         Integer nearingSlaProcessCount = workflowService.getNearingSlaProcessCount(criteria.getTenantId(), requestInfo, processCriteria);
@@ -226,6 +252,19 @@ public class InboxService {
 
         Map<String, Long> businessServiceSlaMap = new HashMap<>();
 
+    boolean isNdcFlag = criteria.getProcessSearchCriteria().getModuleName().equalsIgnoreCase(NDC_MODULE);
+    String moduleNm = criteria.getProcessSearchCriteria().getModuleName();
+    boolean isPetFlag = "pet-service".equalsIgnoreCase(moduleNm);
+    boolean isAdvFlag = "advandhoarding-services".equalsIgnoreCase(moduleNm);
+    boolean isNocFlag = "noc-service".equalsIgnoreCase(moduleNm);
+    boolean isChbFlag = "CHB".equalsIgnoreCase(moduleNm);
+
+    if(isNdcFlag || isPetFlag || isAdvFlag || isNocFlag || isChbFlag){
+            moduleSearchCriteria.put("tenantId", criteria.getTenantId());
+            moduleSearchCriteria.put("offset", criteria.getOffset());
+            moduleSearchCriteria.put("limit", criteria.getLimit());
+        }
+
         if (!CollectionUtils.isEmpty(moduleSearchCriteria)) {
             moduleSearchCriteria.put("tenantId", criteria.getTenantId());
             moduleSearchCriteria.put("offset", criteria.getOffset());
@@ -239,6 +278,45 @@ public class InboxService {
             }
             HashMap<String, String> StatusIdNameMap = workflowService.getActionableStatusesForRole(requestInfo, bussinessSrvs,
                     processCriteria);
+
+        if(isNdcFlag) {
+                List<String> matchingIds = StatusIdNameMap.entrySet().stream()
+                        .filter(entry -> processCriteria.getStatus().contains(entry.getValue()))
+                        .map(Map.Entry::getKey)
+                        .collect(Collectors.toList());
+                if(!(moduleSearchCriteria.containsKey("wfStatus") && moduleSearchCriteria.get("wfStatus") != null) && !ObjectUtils.isEmpty(matchingIds))
+                moduleSearchCriteria.put("wfStatus", matchingIds);
+            }
+//            if (isNocFlag {
+//                List<String> matchingIdsNoc = StatusIdNameMap.entrySet().stream()
+//                        .filter(entry -> processCriteria.getStatus().contains(entry.getValue()))
+//                        .map(Map.Entry::getKey)
+//                        .collect(Collectors.toList());
+//                if (!ObjectUtils.isEmpty(matchingIdsNoc)) moduleSearchCriteria.put("status", matchingIdsNoc);
+//            }
+//            if (isAdvFlag) {
+//                List<String> matchingIdsAdv = StatusIdNameMap.entrySet().stream()
+//                        .filter(entry -> processCriteria.getStatus().contains(entry.getValue()))
+//                        .map(Map.Entry::getKey)
+//                        .collect(Collectors.toList());
+//                if (!ObjectUtils.isEmpty(matchingIdsAdv)) moduleSearchCriteria.put("status", matchingIdsAdv);
+//            }
+//            if (isPetFlag) {
+//                List<String> matchingIdsPet = StatusIdNameMap.entrySet().stream()
+//                        .filter(entry -> processCriteria.getStatus().contains(entry.getValue()))
+//                        .map(Map.Entry::getKey) // ✅ this gives UUIDs
+//                        .collect(Collectors.toList());
+//
+//                // Always use `status` with UUIDs
+//                if (!ObjectUtils.isEmpty(matchingIdsPet)) {
+//                    moduleSearchCriteria.put("status", matchingIdsPet);
+//                } else {
+//                    // If no status provided, put all UUIDs
+//                    moduleSearchCriteria.put("status", new ArrayList<>(StatusIdNameMap.keySet()));
+//                }
+//
+//            }
+
             String applicationStatusParam = srvMap.get("applsStatusParam");
             String businessIdParam = srvMap.get("businessIdProperty");
             if (StringUtils.isEmpty(applicationStatusParam)) {
@@ -263,13 +341,47 @@ public class InboxService {
                     });
                 	moduleSearchCriteria.put(applicationStatusParam, StringUtils.arrayToDelimitedString(statuses.toArray(), ","));
                 }
+                else if (processCriteria.getModuleName().equals("pet-service") && !CollectionUtils.isEmpty(processCriteria.getStatus())) {
+                    List<String> statuses = new ArrayList<>();
+                    processCriteria.getStatus().forEach(status -> {
+                        // For PET, we directly use the status values as-is (instead of looking them up in StatusIdNameMap)
+                        statuses.add(status);
+                    });
+                    moduleSearchCriteria.put(applicationStatusParam, StringUtils.arrayToDelimitedString(statuses.toArray(), ","));
+                }
+                else if (processCriteria.getModuleName().equals("advandhoarding-services") && !CollectionUtils.isEmpty(processCriteria.getStatus())) {
+                    List<String> statuses = new ArrayList<>();
+                    processCriteria.getStatus().forEach(status -> {
+                        // For PET, we directly use the status values as-is (instead of looking them up in StatusIdNameMap)
+                        statuses.add(status);
+                    });
+                    moduleSearchCriteria.put(applicationStatusParam, StringUtils.arrayToDelimitedString(statuses.toArray(), ","));
+                }
+                else if (processCriteria.getModuleName().equals("noc-service") && !CollectionUtils.isEmpty(processCriteria.getStatus())) {
+                    List<String> statuses = new ArrayList<>();
+                    processCriteria.getStatus().forEach(status -> {
+                        // For PET, we directly use the status values as-is (instead of looking them up in StatusIdNameMap)
+                        statuses.add(status);
+                    });
+                    moduleSearchCriteria.put(applicationStatusParam, StringUtils.arrayToDelimitedString(statuses.toArray(), ","));
+                }
+                else if (processCriteria.getModuleName().equals("CHB") && !CollectionUtils.isEmpty(processCriteria.getStatus())) {
+                    List<String> statuses = new ArrayList<>();
+                    processCriteria.getStatus().forEach(status -> {
+                        // For CHB, we directly use the status values as-is (instead of looking them up in StatusIdNameMap)
+                        statuses.add(status);
+                    });
+                    moduleSearchCriteria.put(applicationStatusParam, StringUtils.arrayToDelimitedString(statuses.toArray(), ","));
+                }
                 else if (!CollectionUtils.isEmpty(processCriteria.getStatus())) {
                     List<String> statuses = new ArrayList<String>();
                     processCriteria.getStatus().forEach(status -> {
                         statuses.add(StatusIdNameMap.get(status));
                     });
                     moduleSearchCriteria.put(applicationStatusParam, StringUtils.arrayToDelimitedString(statuses.toArray(), ","));
-                } else {
+                }
+
+                else {
                     moduleSearchCriteria.put(applicationStatusParam,
                             StringUtils.arrayToDelimitedString(StatusIdNameMap.values().toArray(), ","));
                 }
@@ -390,7 +502,7 @@ public class InboxService {
                     isSearchResultEmpty = true;
                 }
             }
-            
+
             List<String> inputLocalities = new ArrayList<>();
             if (!ObjectUtils.isEmpty(processCriteria.getModuleName()) && (processCriteria.getModuleName().equals(PGR))) {
                 totalCount = pgrInboxFilterService.fetchApplicationCountFromSearcher(criteria, StatusIdNameMap, requestInfo);
@@ -415,7 +527,7 @@ public class InboxService {
                     isSearchResultEmpty = true;
                 }
             }
-            
+
             if (!ObjectUtils.isEmpty(processCriteria.getModuleName()) && (processCriteria.getModuleName().equals(SWACH))) {
                 totalCount = swachInboxFilterService.fetchApplicationCountFromSearcher(criteria, StatusIdNameMap, requestInfo);
                 List<String> applicationNumbers = swachInboxFilterService.fetchApplicationNumbersFromSearcher(criteria,
@@ -464,14 +576,82 @@ public class InboxService {
             }
             
             if (processCriteria != null && !ObjectUtils.isEmpty(processCriteria.getModuleName())
-                    && processCriteria.getModuleName().equals(NOC)) {
+                    && processCriteria.getModuleName().equals(NDC_MODULE)) {
+                totalCount = ndcInboxFilterService.fetchApplicationCountFromSearcher(criteria, StatusIdNameMap, requestInfo);
+                List<String> applicationNumbers = ndcInboxFilterService.fetchApplicationNumbersFromSearcher(criteria, StatusIdNameMap, requestInfo);
+                if (!CollectionUtils.isEmpty(applicationNumbers)) {
+                    moduleSearchCriteria.put(NDC_APPLICATION_NO_PARAM, applicationNumbers);
+                    businessKeys.addAll(applicationNumbers);
+                    moduleSearchCriteria.remove(STATUS_PARAM);
+//                    moduleSearchCriteria.remove(MOBILE_NUMBER_PARAM);
+                    moduleSearchCriteria.remove(LOCALITY_PARAM);
+                    moduleSearchCriteria.remove(OFFSET_PARAM);
+                } else {
+                    isSearchResultEmpty = true;
+                }
+            }
+
+            if (processCriteria != null && !ObjectUtils.isEmpty(processCriteria.getModuleName())
+                    && isPetFlag) {
+                // If neither id nor applicationNumber provided to searcher, derive applicationNumbers from WF first
+                totalCount = petInboxFilterService.fetchApplicationCountFromSearcher(criteria, StatusIdNameMap, requestInfo);
+                List<String> applicationNumbers = petInboxFilterService.fetchApplicationNumbersFromSearcher(criteria, StatusIdNameMap, requestInfo);
+                if (!CollectionUtils.isEmpty(applicationNumbers)) {
+                    String applNosParam = srvMap.get("applNosParam");
+                    if (StringUtils.isEmpty(applNosParam)) applNosParam = "applicationNumber";
+                    moduleSearchCriteria.put(applNosParam, applicationNumbers);
+                    businessKeys.addAll(applicationNumbers);
+                    moduleSearchCriteria.remove(STATUS_PARAM);
+                    moduleSearchCriteria.remove(LOCALITY_PARAM);
+                    moduleSearchCriteria.remove(OFFSET_PARAM);
+                } else {
+                    isSearchResultEmpty = true;
+                }
+            }
+
+            if (processCriteria != null && !ObjectUtils.isEmpty(processCriteria.getModuleName())
+                    && isAdvFlag) {
+                totalCount = advInboxFilterService.fetchApplicationCountFromSearcher(criteria, StatusIdNameMap, requestInfo);
+                List<String> applicationNumbers = advInboxFilterService.fetchApplicationNumbersFromSearcher(criteria, StatusIdNameMap, requestInfo);
+                if (!CollectionUtils.isEmpty(applicationNumbers)) {
+                    String applNosParam = srvMap.get("applNosParam");
+                    if (StringUtils.isEmpty(applNosParam)) applNosParam = "applicationNumber"; // fallback
+                    moduleSearchCriteria.put(applNosParam, applicationNumbers);
+                    businessKeys.addAll(applicationNumbers);
+                    moduleSearchCriteria.remove(STATUS_PARAM);
+                    moduleSearchCriteria.remove(LOCALITY_PARAM);
+                    moduleSearchCriteria.remove(OFFSET_PARAM);
+                } else {
+                    isSearchResultEmpty = true;
+                }
+            }
+
+        if (processCriteria != null && !ObjectUtils.isEmpty(processCriteria.getModuleName())
+            && (isNocFlag)) {
                 totalCount = nocInboxFilterService.fetchApplicationCountFromSearcher(criteria, StatusIdNameMap, requestInfo);
                 List<String> applicationNumbers = nocInboxFilterService.fetchApplicationNumbersFromSearcher(criteria, StatusIdNameMap, requestInfo);
                 if (!CollectionUtils.isEmpty(applicationNumbers)) {
-                    moduleSearchCriteria.put(NOC_APPLICATION_NUMBER_PARAM, applicationNumbers);
+                    String applNosParam = srvMap.get("applNosParam");
+                    if (StringUtils.isEmpty(applNosParam)) applNosParam = "applicationNo"; // fallback for NOC
+                    moduleSearchCriteria.put(applNosParam, applicationNumbers);
                     businessKeys.addAll(applicationNumbers);
                     moduleSearchCriteria.remove(STATUS_PARAM);
-                    moduleSearchCriteria.remove(MOBILE_NUMBER_PARAM);
+                    moduleSearchCriteria.remove(LOCALITY_PARAM);
+                    moduleSearchCriteria.remove(OFFSET_PARAM);
+                } else {
+                    isSearchResultEmpty = true;
+                }
+            }
+
+            if (processCriteria != null && !ObjectUtils.isEmpty(processCriteria.getModuleName())
+                    && isChbFlag) {
+                totalCount = chbInboxFilterService.fetchApplicationCountFromSearcher(criteria, StatusIdNameMap, requestInfo);
+                List<String> applicationNumbers = chbInboxFilterService.fetchApplicationNumbersFromSearcher(criteria, StatusIdNameMap, requestInfo);
+                if (!CollectionUtils.isEmpty(applicationNumbers)) {
+                    String applNosParam = srvMap.get("applNosParam");
+                    moduleSearchCriteria.put(applNosParam, applicationNumbers);
+                    businessKeys.addAll(applicationNumbers);
+                    moduleSearchCriteria.remove(STATUS_PARAM);
                     moduleSearchCriteria.remove(LOCALITY_PARAM);
                     moduleSearchCriteria.remove(OFFSET_PARAM);
                 } else {
@@ -512,7 +692,69 @@ public class InboxService {
                     throw new CustomException("ELASTICSEARCH_ERROR", "client error while searching ES : \" + e.getMessage()");
                 }
             }
-                     
+
+            //for street vending
+            if (!ObjectUtils.isEmpty(processCriteria.getModuleName())
+                    && processCriteria.getModuleName().equals(SV_SERVICES)) {
+
+                List<String> applicationNumbers = StreetVendingInboxFilterService.fetchApplicationIdsFromSearcher(criteria,
+                        StatusIdNameMap, requestInfo);
+                if (!CollectionUtils.isEmpty(applicationNumbers)) {
+                    moduleSearchCriteria.put(SV_APPLICATION_NUMBER_PARAM, applicationNumbers);
+                    businessKeys.addAll(applicationNumbers);
+                    moduleSearchCriteria.remove(LOCALITY_PARAM);
+                    moduleSearchCriteria.remove(OFFSET_PARAM);
+                    moduleSearchCriteria.remove(STATUS_PARAM);
+                    if(moduleSearchCriteria.containsKey(APPLICATION_STATUS)) {
+                        moduleSearchCriteria.put(STATUS_PARAM, moduleSearchCriteria.get(APPLICATION_STATUS));
+                    }
+                } else {
+                    isSearchResultEmpty = true;
+                }
+            }
+
+            // for pet service
+            if (!ObjectUtils.isEmpty(processCriteria.getModuleName()) && processCriteria.getModuleName().equals(PTR)) {
+
+                List<String> applicationNumbers = ptrInboxFilterService.fetchApplicationNumbersFromSearcher(criteria,
+                        StatusIdNameMap, requestInfo);
+                if (!CollectionUtils.isEmpty(applicationNumbers)) {
+                    moduleSearchCriteria.put(ACKNOWLEDGEMENT_IDS_PARAM, applicationNumbers);
+                    businessKeys.addAll(applicationNumbers);
+                    moduleSearchCriteria.remove(LOCALITY_PARAM);
+                    moduleSearchCriteria.remove(OFFSET_PARAM);
+                } else {
+                    isSearchResultEmpty = true;
+                }
+            }
+
+            // for asset service
+            if (!ObjectUtils.isEmpty(processCriteria.getModuleName())
+                    && processCriteria.getModuleName().equals(ASSET)) {
+
+                List<String> applicationNumbers = assetInboxFilterService.fetchApplicationNumbersFromSearcher(criteria,
+                        StatusIdNameMap, requestInfo);
+                if (!CollectionUtils.isEmpty(applicationNumbers)) {
+                    moduleSearchCriteria.put(ACKNOWLEDGEMENT_IDS_PARAM, applicationNumbers);
+                    businessKeys.addAll(applicationNumbers);
+                    // moduleSearchCriteria.remove(LOCALITY_PARAM);
+                    // moduleSearchCriteria.remove(OFFSET_PARAM);
+                } else {
+                    isSearchResultEmpty = true;
+                }
+            }
+            // fetching total count and application numbers from searcher for pgr ai service
+            if (!ObjectUtils.isEmpty(processCriteria.getModuleName()) && processCriteria.getModuleName().equals(PGRAiConstants.PGR_MODULE)) {
+
+                totalCount = pgrAiInboxFilterService.fetchApplicationIdsCountFromSearcher(criteria, StatusIdNameMap,
+                        requestInfo);
+                List<String> applicationNumbers = pgrAiInboxFilterService.fetchApplicationIdsFromSearcher(criteria,
+                        StatusIdNameMap, requestInfo);
+                if (!CollectionUtils.isEmpty(applicationNumbers)) {
+                    businessKeys.addAll(applicationNumbers);
+                }
+            }
+
             // Redirect request to searcher in case of WS to fetch acknowledgement IDS
             if (!ObjectUtils.isEmpty(processCriteria.getModuleName()) && processCriteria.getModuleName().equals(BS_WS_MODULENAME)
             		&& flag==1) {
@@ -598,6 +840,9 @@ public class InboxService {
                 businessObjects = fetchModuleObjects(moduleSearchCriteria, businessServiceName, criteria.getTenantId(),
                         requestInfo, srvMap);
                 //Specifically handle for swach/pgr mobileNumber,locality,servCode filters if given
+//                if(processCriteria.getModuleName().equalsIgnoreCase(NDC_MODULE)){
+//                    businessObjects = filterObjectsBasedOnMobileNumber(moduleSearchCriteria, businessObjects);
+//                }
                 if (processCriteria.getModuleName().equals(SWACH) || processCriteria.getModuleName().equals(PGR)) {
                 	if(moduleSearchCriteria.containsKey(PGR_MOBILE_NUMBER_PARAM) || moduleSearchCriteria.containsKey(PGR_SERVICECODE_PARAM) || moduleSearchCriteria.containsKey(PGR_LOCALITY_PARAM)) {
                 		JSONArray filtered = new JSONArray();
@@ -613,12 +858,12 @@ public class InboxService {
                                 inputServiceCodes = Arrays.asList(serviceCodesStr.split("\\s*,\\s*")); // Trim each
                             }
                         }
-                        
+
                         for (Object obj : businessObjects) {
                             JSONObject json = (JSONObject) obj;
                             JSONObject serviceObj = json.optJSONObject(PGR_APPLICATION_NUMBER_PARAM);
                             if (serviceObj == null) continue;
-                            
+
                             boolean matches = true;
                             if (inputMobileNumber != null && !inputMobileNumber.isEmpty()) {
                                 JSONObject citizenObj = serviceObj.optJSONObject(PGR_CITIZEN_PARAM);
@@ -762,12 +1007,49 @@ public class InboxService {
             		    .filter(entry -> desiredStatuses.contains(entry.getValue()))
             		    .map(Map.Entry::getKey)
             		    .collect(Collectors.toList());
-            		
+
             		processCriteria.setStatus(matchingKeys);
             		processInstanceResponse = workflowService.getProcessInstance(processCriteria, requestInfo);
             	}
-            	else {
-            		processInstanceResponse = workflowService.getProcessInstance(processCriteria, requestInfo);
+                else {
+                    if(isNdcFlag) {
+                        List<String> matchingIdsNdc = StatusIdNameMap.entrySet().stream()
+                                    .filter(entry -> processCriteria.getStatus().contains(entry.getValue()))
+                                    .map(Map.Entry::getKey)
+                                    .collect(Collectors.toList());
+
+                        processCriteria.setStatus(matchingIdsNdc);
+
+                    }
+                    if(isPetFlag) {
+                        List<String> matchingIdsPet = StatusIdNameMap.entrySet().stream()
+                                .filter(entry -> processCriteria.getStatus().contains(entry.getValue()))
+                                .map(Map.Entry::getKey)
+                                .collect(Collectors.toList());
+                      processCriteria.setStatus(matchingIdsPet);
+                    }
+                    if(isAdvFlag) {
+                        List<String> matchingIdsAdv = StatusIdNameMap.entrySet().stream()
+                                .filter(entry -> processCriteria.getStatus().contains(entry.getValue()))
+                                .map(Map.Entry::getKey)
+                                .collect(Collectors.toList());
+                        processCriteria.setStatus(matchingIdsAdv);
+                    }
+                    if(isNocFlag) {
+                        List<String> matchingIdsNoc = StatusIdNameMap.entrySet().stream()
+                                .filter(entry -> processCriteria.getStatus().contains(entry.getValue()))
+                                .map(Map.Entry::getKey)
+                                .collect(Collectors.toList());
+                        processCriteria.setStatus(matchingIdsNoc);
+                    }
+                    if(isChbFlag) {
+                        List<String> matchingIdsChb = StatusIdNameMap.entrySet().stream()
+                                .filter(entry -> processCriteria.getStatus().contains(entry.getValue()))
+                                .map(Map.Entry::getKey)
+                                .collect(Collectors.toList());
+                        processCriteria.setStatus(matchingIdsChb);
+                    }
+                    processInstanceResponse = workflowService.getProcessInstance(processCriteria, requestInfo);
             	}
             }
             
@@ -820,7 +1102,7 @@ public class InboxService {
                   	    totalCount = processInstanceMap.size();
                 } else {
                 	//For non- Bill Amendment Inbox search
-			if (!isBusinessServiceWSOrSW) { 
+			if (!isBusinessServiceWSOrSW) {
 				List<String> filteredBusinessKeys = businessKeys.stream()
 					    .filter(key -> processInstanceMap.containsKey(key) && businessMap.containsKey(key))
 					    .collect(Collectors.toList()); //returns only non-null objects
@@ -1012,12 +1294,47 @@ public class InboxService {
 
 		}
 		log.info("statusCountMap size :::: " + statusCountMap.size());
-		
+        //This is to get consistent count after filteration of the objects according to the business keys
+        if(moduleSearchCriteria.containsKey(MOBILE_NUMBER_PARAM) && (isAdvFlag || isNdcFlag || isNocFlag || isPetFlag))
+        {
+            totalCount = inboxes.size();
+        }
         response.setTotalCount(totalCount);
         response.setNearingSlaCount(nearingSlaProcessCount);
         response.setStatusMap(statusCountMap);
         response.setItems(inboxes);
         return response;
+    }
+
+    private JSONArray filterObjectsBasedOnMobileNumber(HashMap moduleSearchCriteria, JSONArray businessObjects) {
+        String inputMobileNumber = moduleSearchCriteria.containsKey(MOBILE_NUMBER_PARAM)
+                ? (String) moduleSearchCriteria.get(MOBILE_NUMBER_PARAM)
+                : null;
+
+        JSONArray filtered = new JSONArray();
+        if (inputMobileNumber != null && !inputMobileNumber.isEmpty()) {
+            for (Object obj : businessObjects) {
+                JSONObject json = (JSONObject) obj;
+                JSONArray owners = json.getJSONArray(OWNERS);
+                if (owners == null) continue;
+
+                boolean matchFound = false;
+                for (int i = 0; i < owners.length(); i++) {
+                    JSONObject owner = owners.getJSONObject(i);
+                    String mobile = owner.optString(MOBILE_NUMBER_PARAM);
+                    if (inputMobileNumber.equals(mobile)) {
+                        matchFound = true;
+                        break;
+                    }
+                }
+
+                if (matchFound) {
+                    filtered.put(json);
+                }
+            }
+            businessObjects = filtered;
+        }
+        return businessObjects;
     }
 
     /**
@@ -1202,7 +1519,7 @@ public class InboxService {
         url.append("?tenantId=").append(tenantId);
        
         Set<String> searchParams = moduleSearchCriteria.keySet();
-        
+
 		searchParams.forEach((param) -> {
 
 			if (!param.equalsIgnoreCase("tenantId")) {
@@ -1222,12 +1539,12 @@ public class InboxService {
 				}
 			}
 		});
-		
+
 		log.info("\nfetchModuleObjects URL :::: " + url.toString());
 		
         RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(requestInfo).build();
         Object result = serviceRequestRepository.fetchResult(url, requestInfoWrapper);
-        
+
         LinkedHashMap responseMap;
         try {
             responseMap = mapper.convertValue(result, LinkedHashMap.class);

@@ -3,7 +3,10 @@ package org.egov.inbox.service;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.inbox.repository.ServiceRequestRepository;
 import org.egov.inbox.web.model.InboxSearchCriteria;
 import org.egov.inbox.web.model.workflow.ProcessInstanceSearchCriteria;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,23 +20,25 @@ import com.jayway.jsonpath.JsonPath;
 import static org.egov.inbox.util.NdcConstants.*;
 
 @Service
-public class NOCInboxFilterService {
+public class PETInboxFilterService {
 
     @Value("${egov.searcher.host}")
     private String searcherHost;
 
-    @Value("${egov.searcher.noc.search.path:}")
-    private String nocInboxSearcherEndpoint;
+    @Value("${egov.searcher.pet.search.path:}")
+    private String petInboxSearcherEndpoint;
 
-    @Value("${egov.searcher.noc.search.desc.path:}")
-    private String nocInboxSearcherDescEndpoint;
+    @Value("${egov.searcher.pet.search.desc.path:}")
+    private String petInboxSearcherDescEndpoint;
 
-    @Value("${egov.searcher.noc.count.path:}")
-    private String nocInboxSearcherCountEndpoint;
+    @Value("${egov.searcher.pet.count.path:}")
+    private String petInboxSearcherCountEndpoint;
 
     @Autowired
     private RestTemplate restTemplate;
 
+    @Autowired
+    private ServiceRequestRepository serviceRequestRepository;
 
     public List<String> fetchApplicationNumbersFromSearcher(InboxSearchCriteria criteria,
             HashMap<String, String> StatusIdNameMap, RequestInfo requestInfo) {
@@ -56,28 +61,14 @@ public class NOCInboxFilterService {
         StringBuilder uri = new StringBuilder();
         if (moduleSearchCriteria.containsKey(SORT_ORDER_PARAM)
                 && Objects.equals(moduleSearchCriteria.get(SORT_ORDER_PARAM), DESC_PARAM)
-                && nocInboxSearcherDescEndpoint != null && !nocInboxSearcherDescEndpoint.isEmpty()) {
-            uri.append(searcherHost).append(nocInboxSearcherDescEndpoint);
+                && petInboxSearcherDescEndpoint != null && !petInboxSearcherDescEndpoint.isEmpty()) {
+            uri.append(searcherHost).append(petInboxSearcherDescEndpoint);
         } else {
-            uri.append(searcherHost).append(nocInboxSearcherEndpoint);
+            uri.append(searcherHost).append(petInboxSearcherEndpoint);
         }
 
         Object result = restTemplate.postForObject(uri.toString(), searcherRequest, Map.class);
-
-        List<String> applicationNumbers = new ArrayList<>();
-        try {
-            applicationNumbers = JsonPath.read(result, "$.Noc.[*].applicationno");
-        } catch (Exception e1) {
-            try {
-                applicationNumbers = JsonPath.read(result, "$..applicationNo");
-            } catch (Exception e2) {
-                try {
-                    applicationNumbers = JsonPath.read(result, "$..applicationNumber");
-                } catch (Exception e3) {
-                    applicationNumbers = new ArrayList<>();
-                }
-            }
-        }
+        List<String> applicationNumbers = JsonPath.read(result, "$.PetRegistrationApplications.[*].applicationnumber");
 
         return applicationNumbers == null ? new ArrayList<>() : applicationNumbers;
     }
@@ -92,21 +83,23 @@ public class NOCInboxFilterService {
         if (moduleSearchCriteria != null && moduleSearchCriteria.containsKey(LOCALITY_PARAM)) {
             searchCriteria.put(LOCALITY_PARAM, moduleSearchCriteria.get(LOCALITY_PARAM));
         }
-
-        // Map status display names to WF UUIDs for searcher
-        if (moduleSearchCriteria != null && moduleSearchCriteria.containsKey("status") && moduleSearchCriteria.get("status") != null) {
+        if (moduleSearchCriteria != null && moduleSearchCriteria.containsKey("status")) {
+            // Split the incoming comma-separated status string into a List
             List<String> requestedStatuses = Arrays.asList(moduleSearchCriteria.get("status").toString().split(","));
-            List<String> matchingIds = StatusIdNameMap.entrySet().stream()
+
+            // Collect the UUIDs (keys) whose values match the requested statuses
+            List<String> matchingIdsPet = StatusIdNameMap.entrySet().stream()
                     .filter(entry -> requestedStatuses.contains(entry.getValue()))
-                    .map(Map.Entry::getKey)
+                    .map(Map.Entry::getKey) // ✅ UUIDs (keys) from the map
                     .collect(Collectors.toList());
-            if (!matchingIds.isEmpty()) {
-                searchCriteria.put("status", matchingIds);
+
+            // Put only the matching UUIDs into the search criteria
+            if (!matchingIdsPet.isEmpty()) {
+                searchCriteria.put("status", matchingIdsPet);
             }
         }
-
-        if (moduleSearchCriteria != null && moduleSearchCriteria.containsKey("applicationNo")) {
-            searchCriteria.put("applicationNo", moduleSearchCriteria.get("applicationNo"));
+        if (moduleSearchCriteria != null && moduleSearchCriteria.containsKey("applicationNumber")) {
+            searchCriteria.put("applicationNumber", moduleSearchCriteria.get("applicationNumber"));
         }
         if (moduleSearchCriteria != null && moduleSearchCriteria.containsKey("uuid")) {
             searchCriteria.put("id", moduleSearchCriteria.get("uuid"));
@@ -114,12 +107,17 @@ public class NOCInboxFilterService {
         if (!ObjectUtils.isEmpty(processCriteria.getAssignee())) {
             searchCriteria.put(ASSIGNEE_PARAM, processCriteria.getAssignee());
         }
+        if(moduleSearchCriteria!=null && moduleSearchCriteria.containsKey("petType"))
+        {
+            searchCriteria.put("petType", moduleSearchCriteria.get("petType"));
+        }
         return searchCriteria;
     }
 
     public Integer fetchApplicationCountFromSearcher(InboxSearchCriteria criteria,
             HashMap<String, String> StatusIdNameMap, RequestInfo requestInfo){
-        if (nocInboxSearcherCountEndpoint != null && !nocInboxSearcherCountEndpoint.isEmpty()) {
+        // Prefer count endpoint if configured, else fall back to search size
+        if (petInboxSearcherCountEndpoint != null && !petInboxSearcherCountEndpoint.isEmpty()) {
             HashMap<String, Object> moduleSearchCriteria = criteria.getModuleSearchCriteria();
             ProcessInstanceSearchCriteria processCriteria = criteria.getProcessSearchCriteria();
             Map<String, Object> searcherRequest = new HashMap<>();
@@ -127,20 +125,10 @@ public class NOCInboxFilterService {
             searcherRequest.put(REQUESTINFO_PARAM, requestInfo);
             searcherRequest.put(SEARCH_CRITERIA_PARAM, searchCriteria);
             StringBuilder citizenUri = new StringBuilder();
-            citizenUri.append(searcherHost).append(nocInboxSearcherCountEndpoint);
+            citizenUri.append(searcherHost).append(petInboxSearcherCountEndpoint);
             Object result = restTemplate.postForObject(citizenUri.toString(), searcherRequest, Map.class);
-            // Try common count response shapes
-            try {
-                Double count = JsonPath.read(result, "$.totalCount[0].totalcount");
-                return count == null ? 0 : count.intValue();
-            } catch (Exception e1) {
-                try {
-                    Double count = JsonPath.read(result, "$.TotalCount[0].count");
-                    return count == null ? 0 : count.intValue();
-                } catch (Exception e2) {
-                    return 0;
-                }
-            }
+            Double count = JsonPath.read(result, "$.totalCount[0].totalcount");
+            return count == null ? 0 : count.intValue();
         } else {
             List<String> apps = fetchApplicationNumbersFromSearcher(criteria, StatusIdNameMap, requestInfo);
             return apps.size();
