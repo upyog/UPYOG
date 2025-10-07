@@ -227,29 +227,62 @@ public class TokenService {
 
     /**
      * Extract roles from UserRequest metadata for opaque tokens
+     * Handles both Set and List formats from Redis deserialization
      */
     @SuppressWarnings("unchecked")
     private HashSet<org.egov.user.web.contract.auth.Role> extractRolesFromUserRequest(Map<String, Object> userRequest) {
         Object rolesObj = userRequest.get("roles");
+
         if (rolesObj == null) {
+            log.warn("ROLE EXTRACTION: roles field is null in token metadata");
             return new HashSet<>();
         }
 
+        log.debug("ROLE EXTRACTION: rolesObj type = {}", rolesObj.getClass().getName());
+
         try {
-            if (rolesObj instanceof List) {
-                List<Map<String, Object>> rolesList = (List<Map<String, Object>>) rolesObj;
-                return rolesList.stream()
-                    .map(roleMap -> new org.egov.user.web.contract.auth.Role(
-                        (String) roleMap.get("code"),
-                        (String) roleMap.get("name"),
-                        (String) roleMap.get("tenantId")
-                    ))
+            // Handle Collection (Set or List) of role objects
+            if (rolesObj instanceof java.util.Collection) {
+                java.util.Collection<?> rolesCollection = (java.util.Collection<?>) rolesObj;
+
+                log.info("ROLE EXTRACTION: Found {} roles in token metadata", rolesCollection.size());
+
+                HashSet<org.egov.user.web.contract.auth.Role> roles = rolesCollection.stream()
+                    .map(roleItem -> {
+                        try {
+                            if (roleItem instanceof Map) {
+                                // Handle Map representation (from Redis JSON deserialization)
+                                Map<String, Object> roleMap = (Map<String, Object>) roleItem;
+                                return new org.egov.user.web.contract.auth.Role(
+                                    (String) roleMap.get("code"),
+                                    (String) roleMap.get("name"),
+                                    (String) roleMap.get("tenantId")
+                                );
+                            } else if (roleItem instanceof org.egov.user.web.contract.auth.Role) {
+                                // Handle direct Role object (if Redis preserves object type)
+                                return (org.egov.user.web.contract.auth.Role) roleItem;
+                            } else {
+                                log.warn("ROLE EXTRACTION: Unexpected role item type: {}", roleItem.getClass().getName());
+                                return null;
+                            }
+                        } catch (Exception e) {
+                            log.error("ROLE EXTRACTION: Failed to convert role item: {}", e.getMessage());
+                            return null;
+                        }
+                    })
+                    .filter(role -> role != null)
                     .collect(Collectors.toCollection(HashSet::new));
+
+                log.info("ROLE EXTRACTION: Successfully extracted {} roles", roles.size());
+                return roles;
+            } else {
+                log.warn("ROLE EXTRACTION: rolesObj is not a Collection, type = {}", rolesObj.getClass().getName());
             }
         } catch (Exception e) {
-            log.warn("Failed to extract roles from token metadata: {}", e.getMessage());
+            log.error("ROLE EXTRACTION: Failed to extract roles from token metadata", e);
         }
 
+        log.warn("ROLE EXTRACTION: Returning empty roles set");
         return new HashSet<>();
     }
 }
