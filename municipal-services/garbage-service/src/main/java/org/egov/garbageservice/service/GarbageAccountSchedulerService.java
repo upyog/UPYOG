@@ -217,6 +217,8 @@ public class GarbageAccountSchedulerService {
 						.applicationNumber(generateBillRequest.getGrbgApplicationNumbers())
 						.mobileNumber(generateBillRequest.getMobileNumbers())
 						.isMonthlyBilling(true)
+						.tenantId("hp." +ulbNames.get(0))
+						.wardNames(wardNumbers)
 						.status(Collections.singletonList("APPROVED")).isActiveAccount(true).isActiveSubAccount(true)
 						.build())
 				.isSchedulerCall(true).build();
