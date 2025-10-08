@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.egov.garbageservice.model.GarbageAccount;
+import org.egov.garbageservice.model.GrbgCollectionUnit;
 import org.egov.garbageservice.model.SearchCriteriaGarbageAccount;
 import org.egov.garbageservice.model.TotalCountRequest;
 import org.egov.garbageservice.repository.rowmapper.GarbageAccountRowMapper;
@@ -264,9 +265,14 @@ public class GarbageAccountRepository {
 				Optional.ofNullable(garbageAccount.getChildGarbageAccounts())
 				.filter(childAccounts -> !childAccounts.isEmpty()).ifPresent(childAccounts -> {
 					List<GarbageAccount> filteredChildren = childAccounts.stream()
-							.filter(child -> searchCriteriaGarbageAccount.getIsMonthlyBilling()
-									.equals(child.getGrbgCollectionUnits().get(0).getIsmonthlybilling()))
-							.collect(Collectors.toList());
+							.filter(child -> {
+			                    List<GrbgCollectionUnit> units = child.getGrbgCollectionUnits();
+			                   
+			                    return units != null && !units.isEmpty() &&
+			                        searchCriteriaGarbageAccount.getIsMonthlyBilling()
+			                            .equals(units.get(0).getIsmonthlybilling());
+			                })
+			                .collect(Collectors.toList());
 					garbageAccount.setChildGarbageAccounts(filteredChildren);
 				});
 			}
