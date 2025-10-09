@@ -559,6 +559,7 @@ public class WaterServiceImpl implements WaterService {
 
 		Property property = validateProperty.getOrValidateProperty(waterConnectionRequest);
 		validateProperty.validatePropertyFields(property, waterConnectionRequest.getRequestInfo());
+		waterConnectionRequest = updateConnectionStatusBasedOnAction(waterConnectionRequest);
 		BusinessService businessService = workflowService.getBusinessService(
 				waterConnectionRequest.getWaterConnection().getTenantId(), waterConnectionRequest.getRequestInfo(),
 				config.getDisconnectBusinessServiceName());

@@ -471,6 +471,7 @@ public class SewerageServiceImpl implements SewerageService {
 		sewerageConnectionValidator.validateSewerageConnection(sewerageConnectionRequest, SWConstants.DISCONNECT_CONNECTION);
 		mDMSValidator.validateMasterData(sewerageConnectionRequest, SWConstants.DISCONNECT_CONNECTION);
 		Property property = validateProperty.getOrValidateProperty(sewerageConnectionRequest);
+		sewerageConnectionRequest = updateConnectionStatusBasedOnAction(sewerageConnectionRequest);
 		validateProperty.validatePropertyFields(property,sewerageConnectionRequest.getRequestInfo());
 		String previousApplicationStatus = workflowService.getApplicationStatus(
 				sewerageConnectionRequest.getRequestInfo(),
