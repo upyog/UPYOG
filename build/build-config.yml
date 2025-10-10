@@ -435,6 +435,8 @@ config:
       - work-dir: "core-services/gis-service"
         image-name: "gis-service"
         dockerfile: "build/maven/Dockerfile"
+      - work-dir: "core-services/gis-service/src/main/resources/db"
+        image-name: "gis-service-db" 
      
                 
 #Municipal Services
