@@ -609,9 +609,9 @@ public class PropertyValidator {
 		
 		else {
 			
-			if(criteria.getTenantId() == null)
-				throw new CustomException("EG_PT_INVALID_SEARCH"," TenantId is mandatory for search by " + userType);
-			
+//			if(criteria.getTenantId() == null)
+//				throw new CustomException("EG_PT_INVALID_SEARCH"," TenantId is mandatory for search by " + userType);
+//			
 			/*
 			 * if(criteria.getTenantId() != null && isCriteriaEmpty) throw new
 			 * CustomException(
