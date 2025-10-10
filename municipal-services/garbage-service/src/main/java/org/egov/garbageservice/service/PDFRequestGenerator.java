@@ -54,12 +54,12 @@ public class PDFRequestGenerator {
 		Map<String, String> unitCategoryMap = new HashMap<>();
 		ownerNameMap.put(grbgAccount.getGrbgApplicationNumber(), grbgAccount.getName());
 		unitCategoryMap.put(grbgAccount.getGrbgApplicationNumber(),
-				grbgAccount.getGrbgCollectionUnits().get(0).getCategory());
+				escapeHtml(grbgAccount.getGrbgCollectionUnits().get(0).getCategory()));
 
 		for (GarbageAccount childGrbgAccount : grbgAccount.getChildGarbageAccounts()) {
 			String appNo = childGrbgAccount.getGrbgApplicationNumber();
-			ownerNameMap.put(appNo, childGrbgAccount.getName());
-			unitCategoryMap.put(appNo, childGrbgAccount.getGrbgCollectionUnits().get(0).getCategory());
+			ownerNameMap.put(appNo, escapeHtml(childGrbgAccount.getName()));
+			unitCategoryMap.put(appNo, escapeHtml(childGrbgAccount.getGrbgCollectionUnits().get(0).getCategory()));
 		}
 
 		Map<String, List<String>> grbgObj = new HashMap<>();
@@ -82,15 +82,18 @@ public class PDFRequestGenerator {
 		for (int i = 0; i < bill.size(); i++) {
 			if (bill.get(i).getConsumerCode().equals(grbgAccount.getGrbgApplicationNumber())
 					&& bill.get(i).getConsumerCode().equals(grbgAccount.getGrbgApplicationNumber())) {
+				int lastIndex = bill.get(i).getBillDetails().size() - 1;
 
 				grbg.put("billNo", bill.get(i).getBillNumber());
+				grbg.put("billDueDate", Instant.ofEpochMilli(bill.get(i).getBillDetails().get(lastIndex).getExpiryDate())
+						.atZone(ZoneId.systemDefault()).toLocalDateTime().format(DateTimeFormatter.ofPattern("dd-MM-yyyy")));
 			}
 			Bill billObj = bill.get(i);
 			String consumerCode = billObj.getConsumerCode();
 			grbgObj.get("grbgAccounts").add(consumerCode);
 
-			grbgObj.get("ownerNames").add(ownerNameMap.getOrDefault(consumerCode, "N/A"));
-			grbgObj.get("propertyTypes").add(unitCategoryMap.getOrDefault(consumerCode, "N/A"));
+			grbgObj.get("ownerNames").add(escapeHtml(ownerNameMap.getOrDefault(consumerCode, "N/A")));
+			grbgObj.get("propertyTypes").add(escapeHtml(unitCategoryMap.getOrDefault(consumerCode, "N/A")));
 
 			String unit = "1";
 			BigDecimal tax = grbgTaxMap.getOrDefault(consumerCode, BigDecimal.ZERO);
@@ -170,15 +173,14 @@ public class PDFRequestGenerator {
 
 		grbg.put("to", grbgBillTracker.get(0).getToDate());
 
-		grbg.put("billDueDate", Instant.ofEpochMilli(bill.get(0).getBillDetails().get(0).getExpiryDate())
-				.atZone(ZoneId.systemDefault()).toLocalDateTime().format(DateTimeFormatter.ofPattern("dd-MM-yyyy")));
+		
 
 		int year = Integer.parseInt(grbgBillTracker.get(0).getYear());
 		grbg.put("finYear", year + "-" + (year + 1));
 		grbg.put("finYear", grbgBillTracker.get(0).getYear() + "-" + (year + 1));
 		grbg.put("district", "district");
-		grbg.put("wardNumber", "wardname");
-		grbg.put("unitCategory", grbgAccount.getGrbgCollectionUnits().get(0).getCategory());
+		grbg.put("wardNumber", grbgAccount.getAddresses().get(0).getWardName());
+		grbg.put("unitCategory", escapeHtml(grbgAccount.getGrbgCollectionUnits().get(0).getCategory()));
 		grbg.put("address",
 				grbgAccount.getAddresses().get(0).getAddress1().concat(", ")
 						.concat(grbgAccount.getAddresses().get(0).getWardName()).concat(", ")
@@ -208,5 +210,15 @@ public class PDFRequestGenerator {
 		return PDFRequest.builder().RequestInfo(requestInfoWrapper.getRequestInfo()).key("grbgBillReceipt")
 				.tenantId("hp").data(dataObject).build();
 	}
+	
+	private String escapeHtml(String input) {
+	    if (input == null) return null;
+	    return input.replace("&", "&amp;")
+	                .replace("<", "&lt;")
+	                .replace(">", "&gt;")
+	                .replace("\"", "&quot;")
+	                .replace("'", "&#39;");
+	}
+
 
 }

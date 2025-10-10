@@ -1,6 +1,7 @@
 package org.egov.tl.repository;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -55,7 +56,9 @@ public class UmeedDashboardRepository {
 			metrics.setTodaysApprovedApplications(rs.getLong("todaysApprovedApplications"));
 			metrics.setPendingApplicationsBeyondTimeline(rs.getLong("pendingApplicationsBeyondTimeline"));
 			metrics.setTodaysApprovedApplicationsWithinSLA(rs.getLong("todaysApprovedApplicationsWithinSLA"));
-			metrics.setAvgDaysForApplicationApproval(rs.getDouble("avgDaysForApplicationApproval"));
+			double value = rs.getDouble("avgDaysForApplicationApproval");
+			BigDecimal rounded = BigDecimal.valueOf(value).setScale(2, RoundingMode.HALF_UP);
+			metrics.setAvgDaysForApplicationApproval(rounded.doubleValue());
 			metrics.setStipulatedDays(rs.getInt("StipulatedDays"));
 			return metrics;
 		});

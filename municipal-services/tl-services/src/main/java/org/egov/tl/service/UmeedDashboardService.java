@@ -41,12 +41,14 @@ public class UmeedDashboardService {
 		int slaDays = Optional.ofNullable(tlConfiguration.getUmeedDashboardSlaDays()).orElse(7);
 
 		// get yesterday's date
-//		String yesterday = LocalDate.now().minusDays(1).format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));
-		String yesterday = "30-08-2025";
+		//String yesterday = LocalDate.now().minusDays(1).format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));
+		LocalDate yesterday = LocalDate.now().minusDays(1);  // this is a LocalDate
+
+		//String yesterday = "30-08-2025";
 
 		// Define the month (August 2025)
-		LocalDate startDate = LocalDate.of(2025, 2, 1);
-		LocalDate endDate = LocalDate.of(2025, 3, 1);
+		LocalDate startDate = yesterday;
+		LocalDate endDate = yesterday;
 		//LocalDate endDate = startDate.withDayOfMonth(startDate.lengthOfMonth());
 
 		List<DataItem> allProcessedItems = new ArrayList<>();
@@ -79,7 +81,10 @@ public class UmeedDashboardService {
 		DataItem returnObj = DataItem.builder()
 				.date(date).module("TL")
 				.state("Himachal Pradesh")
-				.ward(dataItem.getWard())
+				//.ward(dataItem.getWard())
+				.ward(dataItem.getWard().matches("^\\d+$") 
+			      ? "Ward" + dataItem.getWard() 
+			      : dataItem.getWard())
 				.region(dataItem.getRegion())
 				.ulb(ULBMappings.getCode(dataItem.getUlb())).build(); 
 		
