@@ -182,7 +182,6 @@ public class NotificationUtil {
                 customizedMsg = message.replace(TEMP_PROPERTYID, entryset.getValue());
             }else {
                 customizedMsg = message.replace(NOTIFICATION_OWNERNAME, entryset.getValue());
-                // String customizedMsg = message.replace(NOTIFICATION_OWNERNAME, entryset.getValue());
             }
             smsRequest.add(new SMSRequest(entryset.getKey(), customizedMsg));
         }
