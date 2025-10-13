@@ -25,8 +25,8 @@
  * - This component is used as part of the PTR application process.
  */
 
-import React, { useState} from "react";
-import { FormStep, TextInput, CardLabel, Dropdown, TextArea} from "@upyog/digit-ui-react-components";
+import React, { useState,useEffect} from "react";
+import { FormStep, TextInput, CardLabel, Dropdown, TextArea, SearchIcon, Toast} from "@upyog/digit-ui-react-components";
 import { useLocation, useParams } from "react-router-dom";
 import { useForm, Controller } from "react-hook-form";
 import Timeline from "../components/PTRTimeline";
@@ -47,8 +47,11 @@ const PTRSelectAddress = ({ t, config, onSelect, formData, renewApplication }) =
   const [houseName, setHouseName] = useState(renewApplication?.address?.houseName || renewApplication?.address?.buildingName || formData?.address?.houseName || "");
   const [addressline1, setAddressline1] = useState(renewApplication?.address?.addressline1 || renewApplication?.address?.addressLine1 || formData?.address?.addressline1 || "");
   const [addressline2, setAddressline2] = useState(renewApplication?.address?.addressline2 || renewApplication?.address?.addressLine2 || formData?.address?.addressline2 || "");
-
-
+  const [propertyId, setpropertyId] = useState(renewApplication?.address?.propertyId || formData?.address?.propertyId || "");
+  const [shouldFetchDetails, setShouldFetchDetails] = useState(false);
+  const stateId = Digit.ULBService.getStateId();
+  const inputStyles = { width: user.type === "EMPLOYEE" ? "50%" : "86%" };
+  const [showToast, setShowToast] = useState(null);
   const { data: fetchedLocalities } = Digit.Hooks.useBoundaryLocalities(
     city?.code,
     "revenue",
@@ -69,6 +72,10 @@ const PTRSelectAddress = ({ t, config, onSelect, formData, renewApplication }) =
     const newPincode = e.target.value.slice(0, 6);
     setPincode(newPincode);
   };
+
+  const setPropertyId =(e)=> {
+    setpropertyId(e.target.value);
+  }
 
   const setApplicantStreetName = (e) => {
     setStreetName(e.target.value);
@@ -94,9 +101,54 @@ const PTRSelectAddress = ({ t, config, onSelect, formData, renewApplication }) =
     setAddressline2(e.target.value)
   }
 
+  useEffect(() => {
+      if (showToast) {
+        const timer = setTimeout(() => setShowToast(null), 2000);
+        return () => clearTimeout(timer);
+      }
+    }, [showToast]);
+
+
+  // Use the hook at the top level of your component
+      const { isLoading, isError, data: applicationDetails, error } = Digit.Hooks.pt.useApplicationDetail(
+        t,
+        stateId,
+        propertyId,
+        shouldFetchDetails // Only fetch when this is true
+      );
+      // Function to handle search icon click
+      const handleSearchClick = () => {
+        if (propertyId) {
+          setShouldFetchDetails(true);
+        } else {
+          setShowToast({ error: true, label: t("PROPERTY_ID_REQUIRED") });
+        }
+      };
+      // Effect to handle the fetched data
+      useEffect(() => {
+        if (shouldFetchDetails) {
+          if (isLoading) {
+            setShowToast({ warning: true, label: t("PTR_LOADING_DETAILS") });
+          } else if (isError) {
+            setShowToast({ error: true, label: t("PTR_ERROR_FETCHING_DETAILS") });
+          } else if (applicationDetails) {
+            const streetNames = applicationDetails?.applicationData?.address?.street;
+            const houseNumber = applicationDetails?.applicationData?.address?.doorNo;
+            const pin =  applicationDetails?.applicationData?.address?.pincode;
+            
+            if (streetNames &&  houseNumber && pin) {
+              setHouseNo(houseNumber);
+              setStreetName(streetNames);
+              setPincode(pin);
+            }
+          }
+          setShouldFetchDetails(false);
+        }
+      }, [shouldFetchDetails, isLoading, isError, applicationDetails, error]);
+
   const goNext = () => {
     let owner = formData.address ;
-    let ownerStep = { ...owner, pincode, city, locality, streetName, houseNo, landmark, houseName, addressline1, addressline2 };
+    let ownerStep = { ...owner, pincode, city, locality, streetName, houseNo, landmark, houseName, addressline1, addressline2,propertyId };
     onSelect(config.key, { ...formData[config.key], ...ownerStep }, false);
   };
 
@@ -113,6 +165,45 @@ const PTRSelectAddress = ({ t, config, onSelect, formData, renewApplication }) =
         isDisabled={!pincode || !city || !streetName || !houseNo || !landmark || (!(pathname.includes("revised") || pathname.includes("renew")) && !locality) || !addressline1 }
       >
         <div>
+          <style>
+        {`
+        .select-wrap .options-card {
+        width: 100% !important;
+        -webkit-box-shadow: 0 8px 10px 1px rgba(0, 0, 0, 0.14), 0 3px 14px 2px rgba(0, 0, 0, 0.12), 0 5px 5px -3px rgba(0, 0, 0, 0.2);
+        box-shadow: 0 8px 10px 1px rgba(0, 0, 0, 0.14), 0 3px 14px 2px rgba(0, 0, 0, 0.12), 0 5px 5px -3px rgba(0, 0, 0, 0.2);
+        position: absolute;
+        z-index: 20;
+        margin-top: 4px;
+        --bg-opacity: 1;
+        background-color: #fff;
+        background-color: rgba(255, 255, 255, var(--bg-opacity));
+        overflow: scroll;
+        max-height: 250px; 
+        min-height:50px;
+         } `
+        }
+      </style>
+          <CardLabel>{`${t("PTR_PROPERTY_NO")}`}</CardLabel>
+            <div className="field-container">
+            <TextInput
+              t={t}
+              type={"text"}
+              isMandatory={false}
+              optionKey="i18nKey"
+              name="propertyId"
+              value={propertyId}
+              onChange={setPropertyId}
+              style={inputStyles}
+              ValidationRequired={false}
+              {...(validation = {
+                isRequired: true,
+                pattern: "^[a-zA-Z0-9/-]*$",
+                type: "text",
+                title: t("PT_NAME_ERROR_MESSAGE"),
+              })}
+            />
+            <div style={{ position: "relative", zIndex: "100", right: user.type === "EMPLOYEE" ? "52%" :"95px", marginTop: "-14px", marginRight:"-20px", cursor:"pointer" }} onClick={handleSearchClick}> <SearchIcon /> </div>
+            </div>
           <CardLabel>{`${t("PTR_HOUSE_NO")}`} <span className="check-page-link-button">*</span></CardLabel>
           <TextInput
             t={t}
@@ -289,6 +380,14 @@ const PTRSelectAddress = ({ t, config, onSelect, formData, renewApplication }) =
 
         </div>
       </FormStep>
+      {showToast && (
+              <Toast
+                error={showToast.error}
+                warning={showToast.warning}
+                label={t(showToast.label)}
+                onClose={() => setShowToast(null)}
+              />
+            )}
     </React.Fragment>
   );
 };

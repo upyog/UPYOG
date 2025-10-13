@@ -94,7 +94,7 @@ const ADSSearch = ({ t, onSelect, config, userType, formData }) => {
 
   AdType &&
     AdType.map((slot) => {
-      ADSTypeData.push({ i18nKey: `${slot.name}`, code: `${slot.code}`, value: `${slot.name}` });
+      ADSTypeData.push({ i18nKey: `${slot.code}`, code: `${slot.code}`, value: `${slot.name}` });
     });
   LocationDetails &&
     LocationDetails.map((slot) => {
