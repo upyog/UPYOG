@@ -508,7 +508,16 @@ public class PropertyQueryBuilder {
 			addToPreparedStatement(preparedStmtList, oldpropertyids);
 		}
 
-		if (!CollectionUtils.isEmpty(criteria.getCreatedBy())) {
+//		if (!CollectionUtils.isEmpty(criteria.getCreatedBy())) {
+//			addClauseIfRequired(preparedStmtList, builder);
+//			builder.append("property.createdBy IN (").append(createQuery(criteria.getCreatedBy())).append(")");
+//			addToPreparedStatement(preparedStmtList, criteria.getCreatedBy());
+//		}
+		if (!CollectionUtils.isEmpty(criteria.getCreatedBy()) && criteria.getIsCitizen()) {
+			addClauseIfRequired(preparedStmtList, builder);
+			builder.append("owner.userid IN (").append(createQuery(criteria.getCreatedBy())).append(")");
+			addToPreparedStatement(preparedStmtList, criteria.getCreatedBy());
+		}else {
 			addClauseIfRequired(preparedStmtList, builder);
 			builder.append("property.createdBy IN (").append(createQuery(criteria.getCreatedBy())).append(")");
 			addToPreparedStatement(preparedStmtList, criteria.getCreatedBy());
