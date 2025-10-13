@@ -119,6 +119,18 @@ public class NotificationService {
 		Boolean isCreate =  CreationReason.CREATE.equals(property.getCreationReason());
 		String state = getStateFromWf(wf, configs.getIsWorkflowEnabled());
 		String completeMsgs = notifUtil.getLocalizationMessages(property.getTenantId(), propertyRequest.getRequestInfo());
+		String propertySource = property.getSource().toString();
+		if (propertySource.equalsIgnoreCase("WATER_CHARGES") ) {
+			String msgCode = "PT_WS_MIG";
+			msg = notifUtil.getMessageTemplate(msgCode, completeMsgs);
+			log.info("completeMsgs :  "+completeMsgs);
+			log.info("msg :  "+msg);
+			msg = replaceCommonValues(property, msg, "");
+			prepareMsgAndSend(propertyRequest, msg, state);
+			return; //skip  Workflow logic
+		}
+
+
 		String localisedState = getLocalisedState(wf, completeMsgs);
 		switch (state) {
 
@@ -280,6 +292,7 @@ public class NotificationService {
 		Map<String, String> mobileNumberToOwner = new HashMap<>();
 		String tenantId = request.getProperty().getTenantId();
 		String moduleName = request.getProperty().getWorkflow().getModuleName();
+		String propertySource = request.getProperty().getSource().toString();
 
 		String action;
 		if(request.getProperty().getWorkflow()!=null)
@@ -289,17 +302,25 @@ public class NotificationService {
 
 		List<String> configuredChannelNames =  notifUtil.fetchChannelList(new RequestInfo(), tenantId, moduleName, action);
 		Set<String> mobileNumbers = new HashSet<>();
-
-		property.getOwners().forEach(owner -> {
-			if (owner.getMobileNumber() != null)
-				mobileNumberToOwner.put(owner.getMobileNumber(), owner.getName());
-			    mobileNumbers.add(owner.getMobileNumber());
-		});
+		if (propertySource.equalsIgnoreCase("WATER_CHARGES")){
+			property.getOwners().forEach(owner -> {
+				if (owner.getMobileNumber() != null)
+					mobileNumberToOwner.put(owner.getMobileNumber(), property.getPropertyId());
+				mobileNumbers.add(owner.getMobileNumber());
+			});
+		}else {
+			property.getOwners().forEach(owner -> {
+				if (owner.getMobileNumber() != null)
+					mobileNumberToOwner.put(owner.getMobileNumber(), owner.getName());
+				mobileNumbers.add(owner.getMobileNumber());
+			});
+		}
 
 log.info("mobileNumbers sms: "+mobileNumbers);
 log.info("property.getOwners() sms: "+property.getOwners().toString());
 log.info("mobileNumberToOwner sms: "+mobileNumberToOwner);
 log.info("CHANNEL_NAME_SMS sms: "+configuredChannelNames);
+log.info("property.getPropertyId() sms: "+property.getPropertyId().toString());
 List<SMSRequest> smsRequests = notifUtil.createSMSRequest(msg, mobileNumberToOwner);
 
 		if(configuredChannelNames.contains(CHANNEL_NAME_SMS)){

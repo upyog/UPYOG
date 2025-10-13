@@ -39,6 +39,7 @@ import java.util.stream.Collectors;
 import static com.jayway.jsonpath.Criteria.where;
 import static com.jayway.jsonpath.Filter.filter;
 import static org.egov.pt.util.PTConstants.*;
+import static org.egov.pt.util.PTConstants.TEMP_PROPERTYID;
 
 
 @Slf4j
@@ -176,7 +177,13 @@ public class NotificationUtil {
     	
         List<SMSRequest> smsRequest = new LinkedList<>();
         for (Map.Entry<String, String> entryset : mobileNumberToOwnerName.entrySet()) {
-            String customizedMsg = message.replace(NOTIFICATION_OWNERNAME, entryset.getValue());
+            String customizedMsg;
+            if(message.contains(TEMP_PROPERTYID)){
+                customizedMsg = message.replace(TEMP_PROPERTYID, entryset.getValue());
+            }else {
+                customizedMsg = message.replace(NOTIFICATION_OWNERNAME, entryset.getValue());
+                // String customizedMsg = message.replace(NOTIFICATION_OWNERNAME, entryset.getValue());
+            }
             smsRequest.add(new SMSRequest(entryset.getKey(), customizedMsg));
         }
         return smsRequest;

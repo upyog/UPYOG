@@ -247,6 +247,8 @@ public class PTConstants {
 
     public static final String NOTIFICATION_OWNERNAME = "{OWNER_NAME}";
 
+    public static final String TEMP_PROPERTYID = "{#var#}";
+
     public static final String NOTIFICATION_EMAIL = "{EMAIL_ID}";
 
     public static final String NOTIFICATION_STATUS = "{STATUS}";
