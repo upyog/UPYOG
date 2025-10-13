@@ -2,6 +2,8 @@ package org.egov.pt.service;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -33,6 +35,7 @@ import org.egov.pt.models.PtTaxCalculatorTracker;
 import org.egov.pt.models.PtTaxCalculatorTrackerSearchCriteria;
 import org.egov.pt.models.bill.BillSearchCriteria;
 import org.egov.pt.models.bill.Demand;
+import org.egov.pt.models.bill.DemandDetail;
 import org.egov.pt.models.bill.GenerateBillCriteria;
 import org.egov.pt.models.collection.Bill;
 import org.egov.pt.models.collection.BillDetail;
@@ -74,6 +77,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.collect.Sets;
 
 import lombok.extern.slf4j.Slf4j;
@@ -1040,19 +1044,78 @@ public class PropertyService {
 		Set<Status> setOfStatuses = new HashSet<>();
 		setOfStatuses.add(Status.APPROVED);
 		PropertyCriteria pptcriteria = PropertyCriteria.builder().propertyIds(setOfConsumerCode).tenantId(genrateArrearRequest.getDemands().get(0).getTenantId()).status(setOfStatuses).build();
-		List<Property> properties = searchProperty(pptcriteria,null,null);
+		List<Property> properties = searchProperty(pptcriteria,genrateArrearRequest.getRequestInfo(),null);
 		
-		List<Demand> savedDemands = demandRepository.saveDemand(genrateArrearRequest.getRequestInfo(), genrateArrearRequest.getDemands());
-		
-		if (CollectionUtils.isEmpty(savedDemands)) {
-			throw new CustomException("INVALID_CONSUMERCODE",
-					"Bill not generated due to no Demand found for the given consumerCode");
+		genrateArrearRequest.getDemands().stream().forEach(demand -> {
+			List<Demand> savedDemands = demandRepository.saveDemand(genrateArrearRequest.getRequestInfo(),createArearDemand(demand,properties.get(0)));
+			if (CollectionUtils.isEmpty(savedDemands)) {
+				throw new CustomException("INVALID_CONSUMERCODE",
+						"Bill not generated due to no Demand found for the given consumerCode");
+			}
+			GenerateBillCriteria billCriteria = GenerateBillCriteria.builder().tenantId(properties.get(0).getTenantId())
+					.businessService(PTConstants.MODULE_PROPERTY).consumerCode(properties.get(0).getPropertyId()).build();
+//			GenerateBillCriteria billCriteria = GenerateBillCriteria.builder().tenantId(genrateArrearRequest.getDemands().get(0).getTenantId())
+//					.businessService(PTConstants.MODULE_PROPERTY).demandId(savedDemands.get(0).getId()).consumerCode(genrateArrearRequest.getDemands().get(0).getConsumerCode()).build();
+			BillResponse billResponse = billService.generateBill(genrateArrearRequest.getRequestInfo(), billCriteria);
+		});
+
+	}
+	
+	public List<Demand> createArearDemand(Demand demand,Property property) {
+//		DemandDetail demandDetail = DemandDetail.builder().taxHeadMasterCode(PTConstants.PROPERTY_TAX_HEAD_MASTER_CODE)
+//				.taxAmount(taxAmount).collectionAmount(BigDecimal.ZERO).build();
+		Demand newDemand = demand;
+		Calendar cal = Calendar.getInstance();
+		cal.add(Calendar.DAY_OF_MONTH, Integer.valueOf(365));
+		cal.set(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DATE), 23, 59, 59);
+
+		ObjectMapper mapper = new ObjectMapper();
+//		ObjectNode node = (ObjectNode) demand.getAdditionalDetails();
+		ObjectNode node = mapper.valueToTree(demand.getAdditionalDetails());
+		if (node == null) {
+		    node = mapper.createObjectNode(); // create new if null
 		}
 		
-		GenerateBillCriteria billCriteria = GenerateBillCriteria.builder().tenantId(genrateArrearRequest.getDemands().get(0).getTenantId())
-				.businessService(PTConstants.MODULE_PROPERTY).demandId(savedDemands.get(0).getId()).consumerCode(genrateArrearRequest.getDemands().get(0).getConsumerCode()).build();
+//		node = demand.getAdditionalDetails();
 
-		BillResponse billResponse = billService.generateBill(genrateArrearRequest.getRequestInfo(), billCriteria);
+		JsonNode addDetail = mapper.valueToTree(property.getAddress().getAdditionalDetails());
+
+		String wardName = null;
+		if (addDetail != null && addDetail.has("wardNumber")) {
+			wardName = addDetail.get("wardNumber").asText();
+		}
+		node.put("ward", StringUtils.isNotEmpty(wardName) ? wardName : "N/A");
+		node.put("oldPropertyId",
+				StringUtils.isNotEmpty(property.getOldPropertyId()) ? property.getOldPropertyId() : "N/A");
+		node.put("ownerOldCustomerId",
+				StringUtils.isNotEmpty(
+						property.getOwners().get(0).getAdditionalDetails().get("ownerOldCustomerId").asText())
+								? property.getOwners().get(0).getAdditionalDetails().get("ownerOldCustomerId").asText()
+								: "N/A");
+		node.put("ownerName",
+				StringUtils.isNotEmpty(property.getOwners().get(0).getPropertyOwnerName())
+						? property.getOwners().get(0).getPropertyOwnerName()
+						: "N/A");
+		node.put("contactNumber",
+				StringUtils.isNotEmpty(property.getOwners().get(0).getMobileNumber())
+						? property.getOwners().get(0).getMobileNumber()
+						: "N/A");
+		node.put("billtype","AREAR");
+		newDemand.setAdditionalDetails(node);
+		newDemand.setPayer(User.builder().uuid(property.getOwners().get(0).getUuid()).build());
+		newDemand.setBusinessService(PTConstants.MODULE_PROPERTY);
+		newDemand.setConsumerType(PTConstants.MODULE_PROPERTY);
+		newDemand.setFixedBillExpiryDate(cal.getTimeInMillis());
+		return Collections.singletonList(newDemand);
+		
+//		Demand demandOne = Demand.builder()
+//				.payer(User.builder().uuid(property.getOwners().get(0).getUuid()).build())
+//				.tenantId(property.getTenantId())
+//				.taxPeriodFrom(calculateTaxRequest.getFromDate().getTime())
+//				.taxPeriodTo(calculateTaxRequest.getToDate().getTime()).fixedBillExpiryDate(cal.getTimeInMillis())
+//				.build();
+
+//		List<Demand> demands = Arrays.asList(demand);
 	}
 	
 	public void saveToPtBillFailure(PropertyBillFailure propertyBillFailure) {
