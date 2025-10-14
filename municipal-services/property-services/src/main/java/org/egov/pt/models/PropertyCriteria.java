@@ -81,7 +81,7 @@ public class PropertyCriteria {
 	@Builder.Default
 	private Boolean isRequestForDuplicatePropertyValidation = false;
 
-	private Boolean isCitizen;
+	private Boolean isCitizen= false;
 
 	@Builder.Default
 	private Boolean isRequestForCount = false;
