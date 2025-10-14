@@ -92,7 +92,7 @@ const Home = ({
         <Route key={index} path={`${path}/${code.toLowerCase()}-home`}>
           <div className="moduleLinkHomePage">
             <img src={ "https://niuatt-filestore.s3.ap-south-1.amazonaws.com/pg/logo/Street+Vendors+Management+2.png"||bannerImage || stateInfo?.bannerUrl} alt="noimagefound" />
-            <BackButton className="moduleLinkHomePageBackButton" />
+            {/* <BackButton className="moduleLinkHomePageBackButton" /> */}
             <div className="moduleLinkHomePageModuleLinks">
               {mdmsDataObj && (
                 <CitizenHomeCard

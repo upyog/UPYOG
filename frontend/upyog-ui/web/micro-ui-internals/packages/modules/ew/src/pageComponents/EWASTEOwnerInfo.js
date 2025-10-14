@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { FormStep, TextInput, CardLabel, MobileNumber } from "@upyog/digit-ui-react-components";
+import { FormStep, TextInput, CardLabel, MobileNumber, Toast } from "@upyog/digit-ui-react-components";
 import Timeline from "../components/EWASTETimeline";
 
 /**
@@ -25,6 +25,7 @@ const EWOwnerDetails = ({ t, config, onSelect, userType, formData }) => {
    * State management for owner details form fields
    * Initializes with existing data or defaults
    */
+  const [showToast, setShowToast] = useState(null);
   const [applicantName, setName] = useState(
     (formData.ownerKey && formData.ownerKey[index] && formData.ownerKey[index].applicantName) || formData?.ownerKey?.applicantName || ""
   );
@@ -38,6 +39,29 @@ const EWOwnerDetails = ({ t, config, onSelect, userType, formData }) => {
     (formData.ownerKey && formData.ownerKey[index] && formData.ownerKey[index].altMobileNumber) || formData?.ownerKey?.altmobileNumber || ""
   );
 
+  const [error, setError] = useState(null);
+
+  const validateEmail = (value) => {
+    const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.(com|org|in|co)$/;
+    if (value === "") {
+      setError("");
+    }
+    else if (emailPattern.test(value)) {
+      setError("");
+    }
+    else {
+      setError(t("CORE_INVALID_EMAIL_ID_PATTERN"));
+    }
+  }
+  useEffect(() => {
+    if (showToast) {
+      const timer = setTimeout(() => {
+        setShowToast(null);
+      }, 2000); // Close toast after 1 seconds
+
+      return () => clearTimeout(timer); // Clear timer on cleanup
+    }
+  }, [showToast]);
   /**
    * Form field change handlers
    * Update state with new values while maintaining data format
@@ -45,13 +69,20 @@ const EWOwnerDetails = ({ t, config, onSelect, userType, formData }) => {
   const setOwnerName = e => setName(e.target.value);
   const setMobileNo = e => setMobileNumber(e.target.value);
   const setAltMobileNo = e => setAltMobileNumber(e.target.value);
-  const setOwnerEmail = e => setEmail(e.target.value);
+  const setOwnerEmail = e => {
+    setEmail(e.target.value)
+    validateEmail(e.target.value)
+ };
 
   /**
    * Processes form submission by combining state values
    * Handles different data structures for citizen and employee users
    */
   const goNext = () => {
+    if (error) {
+      setShowToast({ error: true, label: error });
+      return;
+    }
     let owner = formData.ownerKey && formData.ownerKey[index];
     let ownerStep = { ...owner, applicantName, mobileNumber, altMobileNumber, emailId };
     
@@ -128,14 +159,20 @@ const EWOwnerDetails = ({ t, config, onSelect, userType, formData }) => {
             value={emailId}
             onChange={setOwnerEmail}
             ValidationRequired={true}
-            {...(validation = {
-              isRequired: true,
-              pattern: "[A-Za-z]{i}\\.[A-Za-z]{i}\\.[A-Za-z]{i}",
-              type: "email",
-            })}
           />
+          {error && <p style={{ color: "red", fontSize: "12px" }}>{error}</p>}
         </div>
       </FormStep>
+      {showToast && (
+        <Toast
+          error={showToast.error}
+          warning={showToast.warning}
+          label={t(showToast.label)}
+          onClose={() => {
+            setShowToast(null);
+          }}
+        />
+      )}
     </React.Fragment>
   );
 };
