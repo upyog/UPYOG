@@ -252,6 +252,24 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
     }
 
     private org.egov.user.web.contract.auth.User getUser(User user) {
+        // CRITICAL: Log role information from domain user
+        log.info("ROLE FLOW: Domain user has {} roles",
+                 user.getRoles() != null ? user.getRoles().size() : "null");
+        if (user.getRoles() != null) {
+            user.getRoles().forEach(role ->
+                log.info("ROLE FLOW: Domain role - code: {}, name: {}, tenantId: {}",
+                         role.getCode(), role.getName(), role.getTenantId())
+            );
+        }
+
+        // Convert domain roles to auth roles
+        Set<Role> authRoles = toAuthRole(user.getRoles());
+        log.info("ROLE FLOW: Converted to {} auth roles", authRoles.size());
+        authRoles.forEach(role ->
+            log.info("ROLE FLOW: Auth role - code: {}, name: {}, tenantId: {}",
+                     role.getCode(), role.getName(), role.getTenantId())
+        );
+
         // Use the Lombok builder pattern
         org.egov.user.web.contract.auth.User.UserBuilder builder = org.egov.user.web.contract.auth.User.builder()
                 .id(user.getId())
@@ -263,7 +281,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
                 .locale(user.getLocale())
                 .active(user.getActive() != null ? user.getActive() : false)
                 .type(user.getType() != null ? user.getType().name() : null)
-                .roles(toAuthRole(user.getRoles()))
+                .roles(authRoles)
                 .tenantId(user.getTenantId());
 
         // Add permanent city if address exists
@@ -271,7 +289,11 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
             builder.permanentCity(user.getPermanentAddress().getCity());
         }
 
-        return builder.build();
+        org.egov.user.web.contract.auth.User authUser = builder.build();
+        log.info("ROLE FLOW: Built auth user with {} roles",
+                 authUser.getRoles() != null ? authUser.getRoles().size() : "null");
+
+        return authUser;
     }
     
     /**

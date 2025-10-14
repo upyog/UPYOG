@@ -47,11 +47,21 @@ public class CustomOpaqueTokenGenerator implements OAuth2TokenGenerator<OAuth2Ac
 
     private void storeTokenMetadata(String tokenValue, OAuth2TokenContext context) {
         Map<String, Object> tokenMetadata = new HashMap<>();
-        
+
         Authentication principal = context.getPrincipal();
         if (principal.getPrincipal() instanceof SecureUser) {
             SecureUser secureUser = (SecureUser) principal.getPrincipal();
-            
+
+            // CRITICAL: Log roles before storing in Redis
+            System.out.println("REDIS STORE: User " + secureUser.getUser().getUserName() + " has " +
+                             (secureUser.getUser().getRoles() != null ? secureUser.getUser().getRoles().size() : "null") + " roles");
+            if (secureUser.getUser().getRoles() != null) {
+                secureUser.getUser().getRoles().forEach(role ->
+                    System.out.println("REDIS STORE: Role - code: " + role.getCode() +
+                                     ", name: " + role.getName() + ", tenantId: " + role.getTenantId())
+                );
+            }
+
             // Store minimal user data
             Map<String, Object> userInfo = new HashMap<>();
             userInfo.put("id", secureUser.getUser().getId());
@@ -67,13 +77,17 @@ public class CustomOpaqueTokenGenerator implements OAuth2TokenGenerator<OAuth2Ac
             // CRITICAL: Include roles in opaque tokens to fix authorization
             userInfo.put("roles", secureUser.getUser().getRoles());
 
+            System.out.println("REDIS STORE: Stored " +
+                             (secureUser.getUser().getRoles() != null ? secureUser.getUser().getRoles().size() : "null") +
+                             " roles in userInfo map");
+
             tokenMetadata.put("UserRequest", userInfo);
             tokenMetadata.put("userId", secureUser.getUser().getId());
             tokenMetadata.put("userName", secureUser.getUser().getUserName());
             tokenMetadata.put("userType", secureUser.getUser().getType());
             tokenMetadata.put("tenantId", secureUser.getUser().getTenantId());
         }
-        
+
         // Add ResponseInfo
         Map<String, Object> responseInfo = new HashMap<>();
         responseInfo.put("api_id", "");
@@ -83,10 +97,11 @@ public class CustomOpaqueTokenGenerator implements OAuth2TokenGenerator<OAuth2Ac
         responseInfo.put("msg_id", "");
         responseInfo.put("status", "Access Token generated successfully");
         tokenMetadata.put("ResponseInfo", responseInfo);
-        
+
         // Store in Redis with expiration - using access_token: prefix to match RedisOAuth2AuthorizationService
         String key = "access_token:" + tokenValue;
         redisTemplate.opsForValue().set(key, tokenMetadata, 604800, TimeUnit.MINUTES);
+        System.out.println("REDIS STORE: Token metadata stored in Redis with key: " + key);
     }
 
     public Map<String, Object> getTokenMetadata(String tokenValue) {

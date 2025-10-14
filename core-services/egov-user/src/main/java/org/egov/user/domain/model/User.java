@@ -334,9 +334,23 @@ public class User {
                     })
                     .collect(Collectors.toSet());
             user.setRoles(roleEntities);
+        } else {
+            // CRITICAL FIX: Ensure roles is never null, always initialize to empty set
+            user.setRoles(new HashSet<>());
         }
- 
+
         return user;
+    }
+
+    /**
+     * CRITICAL: Override getRoles to ensure it never returns null
+     * This prevents validation errors in gateway RBAC filter and other services
+     */
+    public Set<Role> getRoles() {
+        if (roles == null) {
+            roles = new HashSet<>();
+        }
+        return roles;
     }
 }
 
