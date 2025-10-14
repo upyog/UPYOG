@@ -35,7 +35,7 @@ const TopBar = ({
         {
           `
           .navbar {
-            background-color: #fef5e7 !important;
+            background-color: #fef5e7;
           }
           .navbar img {
             display: inline-block;

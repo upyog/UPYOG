@@ -22,6 +22,7 @@ import QRCode from "./QRCode";
 import ChallanQRCode from "./ChallanQRCode";
 import { ComplaintsList } from "./ComplaintsList";
 import ComplaintDetailsPage from "./ComplaintDetails";
+import MyCityHome from "./MyCity";
 
 const sidebarHiddenFor = [
   "digit-ui/citizen/register/name",
@@ -29,6 +30,7 @@ const sidebarHiddenFor = [
   "/digit-ui/citizen/select-location",
   "/digit-ui/citizen/login",
   "/digit-ui/citizen/register/otp",
+  "/digit-ui/citizen/homepage",
 ];
 
 const getTenants = (codes, tenants) => {
@@ -146,6 +148,7 @@ console.log("modules",modules)
 
   return (
     <div className={classname}>
+      {window.location.href.includes("homepage")? "":
       <TopBarSideBar
         t={t}
         stateInfo={stateInfo}
@@ -158,9 +161,9 @@ console.log("modules",modules)
         showSidebar={true}
         linkData={linkData}
         islinkDataLoading={islinkDataLoading}
-      />
+      />}
 
-      <div className={`main center-container citizen-home-container mb-25`} style={{justifyContent:isMobile?"center":window.location.href.includes("register/name") || window.location.href.includes("login") || window.location.href.includes("select-location") || window.location.href.includes("select-language")?"center":"", paddingTop:"74px"}}>
+      <div className={`main center-container citizen-home-container mb-25`} style={{justifyContent:isMobile?"center":window.location.href.includes("register/name") || window.location.href.includes("login") || window.location.href.includes("select-location") || window.location.href.includes("select-language") || window.location.href.includes("homepage")?"center":"", paddingTop: window.location.href.includes("homepage")? "0px":"74px"}}>
         {hideSidebar ? null : (
           <div className="SideBarStatic" style={{marginBottom:"-40px",backgroundColor:"#ebf1fb",minWidth:"260px",zIndex:"0"}}>
             <StaticCitizenSideBar linkData={linkData} islinkDataLoading={islinkDataLoading} />
@@ -221,6 +224,10 @@ console.log("modules",modules)
           <Route path={`${path}/challan/details`}>
          <ChallanQRCode></ChallanQRCode>
           </Route>
+          <Route path={`${path}/homepage`}>
+          <MyCityHome />
+          </Route>
+
           <Route exact path={`${path}/complaints`}>
         <ComplaintsList />
           </Route>
