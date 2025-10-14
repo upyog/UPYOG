@@ -27,4 +27,15 @@ public class User implements Serializable {
     private boolean active;
     private String tenantId;
     private String permanentCity;
+
+    /**
+     * CRITICAL: Override getRoles to ensure it never returns null
+     * This prevents validation errors in gateway RBAC filter
+     */
+    public Set<Role> getRoles() {
+        if (roles == null) {
+            roles = new HashSet<>();
+        }
+        return roles;
+    }
 }

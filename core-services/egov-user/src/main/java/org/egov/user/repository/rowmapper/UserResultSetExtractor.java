@@ -42,7 +42,7 @@ public class UserResultSetExtractor implements ResultSetExtractor<List<User>> {
             User user;
 
             if (!usersMap.containsKey(userId)) {
-	
+
 				user = User.builder().id(rs.getLong("id")).tenantId(rs.getString("tenantid"))
 						.title(rs.getString("title")).salutation(rs.getString("salutation")).dob(rs.getDate("dob"))
 						.locale(rs.getString("locale")).username(rs.getString("username"))
@@ -57,7 +57,8 @@ public class UserResultSetExtractor implements ResultSetExtractor<List<User>> {
 						.photo(rs.getString("photo")).identificationMark(rs.getString("identificationmark"))
 						.uuid(rs.getString("uuid")).digilockerid(rs.getString("digilockerid"))
 						.accountLockedDate(rs.getLong("accountlockeddate"))
-						.alternateMobileNumber(rs.getString("alternatemobilenumber")).build();
+						.alternateMobileNumber(rs.getString("alternatemobilenumber"))
+						.roles(new HashSet<>()).build();
 				 
                 
 				/* Changes done to run this service in Chandigarh Env
