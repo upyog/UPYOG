@@ -499,9 +499,9 @@ function SVDocuments({
       {doc?.hasDropdown && (
         <LabelFieldPair>
           {/* Condition to check if the current doc is family photo or not and then add a message along with it */}
-          <CardLabel className="card-label-smaller" style={{ display: "inline-block", whiteSpace: "normal", width: "100%" }}>
+          <CardLabel className="card-label-smaller" style={{ display: "inline-block", whiteSpace: "normal", width: user?.type === "EMPLOYEE" ? "30%" : "100%" }}>
             <span style={{ display: "flex", alignItems: "center", gap: "0.25rem", flexWrap: "wrap" }}>
-              {t(doc?.code.replaceAll(".", "_"))}&nbsp;*
+              {t(doc?.code.replaceAll(".", "_"))}&nbsp;<span className="astericColor">*</span>
               {doc?.code?.replaceAll(".", "_") === "FAMILY_PHOTO" && (
                 <span style={{ color: "#b0242c" }}>{t("SV_ONLY_JPEG_PNG_ALLOWED")}</span>
               )}
