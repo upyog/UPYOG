@@ -24,17 +24,14 @@ public class GisDxController {
     private GisDxService gisDxService;
 
     /**
-     * Generate GeoJSON for any municipal service
+     * Generate GeoJSON data for any municipal service
      */
-    @PostMapping("/{businessService}/_search")
+    @PostMapping("/_search")
     public ResponseEntity<GeoJsonResponse> search(
-            @PathVariable String businessService,
             @Valid @RequestBody GeoJsonRequest request) {
         
-        log.info("Received GeoJSON search request for business service: {} and tenant: {}", 
-                businessService, request.getTenantId());
-        
-        request.setBusinessService(businessService);
+        log.info("Received GeoJSON search request for business service: {} and tenant: {}",
+                request.getBusinessService(), request.getTenantId());
         
         try {
             GeoJsonResponse response = gisDxService.fetchGeoJson(request);
