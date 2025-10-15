@@ -429,6 +429,15 @@ config:
         dockerfile: "build/maven/Dockerfile"
       - work-dir: "core-services/individual/src/main/resources/db"
         image-name: "individual-db"    
+
+  - name: "builds/upyog/core-services/gis-service"
+    build:
+      - work-dir: "core-services/gis-service"
+        image-name: "gis-service"
+        dockerfile: "build/maven/Dockerfile"
+      - work-dir: "core-services/gis-service/src/main/resources/db"
+        image-name: "gis-service-db" 
+     
                 
 #Municipal Services
 
@@ -844,7 +853,13 @@ config:
       - work-dir: dx-services/pt-services-dx
         image-name: pt-services-dx
         dockerfile: build/maven/Dockerfile
-
+  
+  - name: builds/upyog/dx-services/gis-dx-service
+    build:
+      - work-dir: dx-services/gis-dx-service
+        image-name: gis-dx-service
+        dockerfile: build/maven/Dockerfile
+        
   - name: "builds/upyog/municipal-services/pet-services"
     build:
       - work-dir: "municipal-services/pet-services"
