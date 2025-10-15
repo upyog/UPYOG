@@ -54,7 +54,7 @@ public class UserController {
     private UserService userService;
     private TokenService tokenService;
 
-    @Autowired
+    @Autowired(required = false)
     private CookieUtil cookieUtil;
 
     @Value("${mobile.number.validation.workaround.enabled}")
