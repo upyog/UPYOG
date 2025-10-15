@@ -114,7 +114,7 @@ const SVCheckPage = ({ onSubmit, editdata, value = {}, renewalData }) => {
   // Determine the gender value for display based on renewalData.
   // If gender is "M", set as "Male"; if "F", set as "Female"; otherwise, set as "Transgender".
   let gender;
-  if (renewalData?.vendorDetail[0]?.gender) {
+  if (renewalData?.vendorDetail?.length > 0) {
     gender = renewalData?.vendorDetail[0]?.gender === "M" ? "Male" : renewalData?.vendorDetail[0]?.gender === "F" ? "Female" : "Transgender";
   }
 
@@ -216,13 +216,6 @@ const SVCheckPage = ({ onSubmit, editdata, value = {}, renewalData }) => {
                 <Row
                   label={t("SV_DEPENDENT_GENDER")}
                   text={`${t(checkForNA(owner?.units?.[0]?.dependentGender?.code))}`}
-                /> : null
-            }
-            {
-              owner?.units?.[0]?.dependentGender ?
-                <Row
-                  label={t("SV_TRADE_NUMBER")}
-                  text={`${t(checkForNA(owner?.units?.[0]?.tradeNumber))}`}
                 /> : null
             }
           </StatusTable>
