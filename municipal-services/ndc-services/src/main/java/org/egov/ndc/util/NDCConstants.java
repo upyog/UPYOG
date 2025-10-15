@@ -66,5 +66,8 @@ public class NDCConstants {
 	public static final String ACTION_STATUS_APPROVED = "APPROVE_APPROVED";
 
 	public static final String ACTION_PAY = "PAY";
-
+	public static final String PROPERTY_BUSINESSSERVICE = "PT";
+	public static final String ADDITIONAL_DETAILS_FEE_TYPE_PARAM = "propertyType";
+	public static final String RESIDENTIAL = "RESIDENTIAL";
+	public static final String COMMERCIAL = "COMMERCIAL";
 }
