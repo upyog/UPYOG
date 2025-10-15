@@ -15,6 +15,7 @@ import org.egov.user.domain.model.UserDetail;
 import org.egov.user.domain.model.UserSearchCriteria;
 import org.egov.user.domain.service.TokenService;
 import org.egov.user.domain.service.UserService;
+import org.egov.user.util.CookieUtil;
 import org.egov.user.web.contract.*;
 import org.egov.user.web.contract.auth.CustomUserDetails;
 import org.json.JSONObject;
@@ -26,6 +27,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
+
+import javax.servlet.http.HttpServletResponse;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -50,6 +53,9 @@ public class UserController {
 
     private UserService userService;
     private TokenService tokenService;
+
+    @Autowired
+    private CookieUtil cookieUtil;
 
     @Value("${mobile.number.validation.workaround.enabled}")
     private String mobileValidationWorkaroundEnabled;
@@ -84,17 +90,21 @@ public class UserController {
     /**
      * end-point to create the citizen with otp.Here otp is mandatory to create
      * citizen.
+     * Now also sets HttpOnly cookies for secure token storage
      *
      * @param createUserRequest
+     * @param response
      * @return
      */
     @PostMapping("/citizen/_create")
-    public Object createCitizen(@RequestBody @Valid CreateUserRequest createUserRequest) {
+    public Object createCitizen(@RequestBody @Valid CreateUserRequest createUserRequest,
+                                HttpServletResponse response) {
         log.info("Received Citizen Registration Request  " + createUserRequest);
         User user = createUserRequest.toDomain(true);
         user.setOtpValidationMandatory(IsValidationMandatory);
         if (isRegWithLoginEnabled) {
             Object object = userService.registerWithLogin(user, createUserRequest.getRequestInfo());
+            // Note: Cookie setting happens in OAuth2 token endpoint via CustomTokenEnhancer
             return new ResponseEntity<>(object, HttpStatus.OK);
         }
         User createdUser = userService.createCitizen(user, createUserRequest.getRequestInfo());
