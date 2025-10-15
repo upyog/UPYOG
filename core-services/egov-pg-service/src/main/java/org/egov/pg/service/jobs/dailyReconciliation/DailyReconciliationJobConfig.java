@@ -27,7 +27,7 @@ public class DailyReconciliationJobConfig {
     CronTriggerFactoryBean processStatusUpdateTrigger(JobDetail processStatusUpdateJob) {
         CronTriggerFactoryBean cronTriggerFactoryBean = new CronTriggerFactoryBean();
         cronTriggerFactoryBean.setJobDetail(processStatusUpdateJob);
-        cronTriggerFactoryBean.setCronExpression("0 0 0,12 * * ?");
+        cronTriggerFactoryBean.setCronExpression("0 30 11,23 * * ?");
         cronTriggerFactoryBean.setGroup("status-update");
         return cronTriggerFactoryBean;
     }
