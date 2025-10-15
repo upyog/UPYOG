@@ -218,13 +218,6 @@ const SVCheckPage = ({ onSubmit, editdata, value = {}, renewalData }) => {
                   text={`${t(checkForNA(owner?.units?.[0]?.dependentGender?.code))}`}
                 /> : null
             }
-            {
-              owner?.units?.[0]?.dependentGender ?
-                <Row
-                  label={t("SV_TRADE_NUMBER")}
-                  text={`${t(checkForNA(owner?.units?.[0]?.tradeNumber))}`}
-                /> : null
-            }
           </StatusTable>
           <CardSubHeader>{t("SV_VENDOR_BUSINESS_DETAILS")}</CardSubHeader>
           <StatusTable style={{ marginTop: "30px", marginBottom: "30px" }}>
