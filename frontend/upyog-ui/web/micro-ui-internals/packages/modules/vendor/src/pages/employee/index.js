@@ -4,6 +4,41 @@ import { useTranslation } from "react-i18next";
 import { Link, Switch, useLocation } from "react-router-dom";
 import SearchApp from "./SearchApp";
 
+export const VendorBreadCrumb = ({ location }) => {
+  const { t } = useTranslation();
+  const isVendor = location?.pathname?.includes("vendor");
+  const isSearchVendor = location?.pathname?.includes("search-vendor");
+  const isRegistry = location?.pathname?.includes("registry");
+  const isNewVendor = location?.pathname?.includes("new-vendor");
+  const isNewVehicle = location?.pathname?.includes("new-vehicle");
+  const isNewDriver = location?.pathname?.includes("new-driver");
+
+  const crumbs = [
+    {
+      path: "/upyog-ui/employee",
+      content: t("ES_COMMON_HOME"),
+      show: isVendor,
+    },
+    {
+      path: "/upyog-ui/employee/vendor/search-vendor?selectedTabs=VENDOR",
+      content: "VENDOR",
+      show: isVendor,
+    },
+    {
+      content: isNewVendor
+        ? t("ES_FSM_REGISTRY_TITLE_NEW_VENDOR")
+        : isNewVehicle
+        ? t("ES_FSM_REGISTRY_TITLE_NEW_VEHICLE")
+        : isNewDriver
+        ? t("ES_FSM_REGISTRY_TITLE_NEW_DRIVER")
+        : null,
+      show: isRegistry && (isNewVendor || isNewVehicle || isNewDriver),
+    },
+  ];
+
+  return <BreadCrumb crumbs={crumbs} />;
+};
+
 const EmployeeApp = ({ path, url, userType }) => {
   console.log("tttttttttttt",path)
   const { t } = useTranslation();
@@ -22,28 +57,6 @@ const EmployeeApp = ({ path, url, userType }) => {
     // },
   };
 
-  
- 
-
-  // const AssetBreadCrumbs = ({ location }) => {
-  //   const { t } = useTranslation();
-  //   const search = useLocation().search;
-  //   const fromScreen = new URLSearchParams(search).get("from") || null;
-  //   const { from : fromScreen2 } = Digit.Hooks.useQueryParams();
-  //   const crumbs = [
-  //     {
-  //       path: "/upyog-ui/employee",
-  //       content: t("ES_COMMON_HOME"),
-  //       show: true,
-  //     },
-  //     {
-  //       path: "/upyog-ui/employee/asset/assetservice/inbox",
-  //       content: t("ES_TITLE_INBOX"),
-  //       show: location.pathname.includes("asset/assetservice/inbox") ? false : false,
-  //     },
-  //   ];
-  //   return <BreadCrumb style={isMobile?{display:"flex"}:{margin: "0 0 4px", color:"#000000" }}  spanStyle={{maxWidth:"min-content"}} crumbs={crumbs} />;
-  // }
 
   console.log("index page in employee")
   //const Create = Digit?.ComponentRegistryService?.getComponent("VENDOREMPCreate");
@@ -62,17 +75,9 @@ const EmployeeApp = ({ path, url, userType }) => {
       <AppContainer>
       <React.Fragment>
        <div className="ground-container">
-         {/* 
-        {!isRes ? 
-              <div style={isNewRegistration ? { marginLeft: "12px",display: "flex", alignItems: "center" } : { marginLeft: "-4px",display: "flex", alignItems: "center" }}>
-                  <BackButton location={location} />
-                  <span style={{ margin: "0 5px 16px", display: "inline-block" }}>|</span>
-                  <AssetBreadCrumbs location={location} />
-               
-              </div>
-          : null}
-          <PrivateRoute exact path={`${path}/`} component={() => <ASSETLinks matchPath={path} userType={userType} />} />
-          */}
+                 <div style={{ marginLeft: "-4px" }}>
+          <VendorBreadCrumb location={location} />
+        </div>         
           {/* <PrivateRoute path={`${path}/additional`} component={Create} /> */}
           <PrivateRoute path={`${path}/registry/new-vendor`} component={() => <AddVendor parentRoute={path} />} />
           <PrivateRoute path={`${path}/search-vendor`} component={() => <SearchVendor parentRoute={path} />} />
