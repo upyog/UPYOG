@@ -1,6 +1,10 @@
 package org.egov.pg.service.jobs.dailyReconciliation;
 
 import lombok.extern.slf4j.Slf4j;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.ZoneId;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.User;
 import org.egov.pg.config.AppProperties;
@@ -60,10 +64,35 @@ public class DailyReconciliationJob implements Job {
                 System.currentTimeMillis() - TimeUnit.MINUTES.toMillis(appProperties.getEarlyReconcileJobRunInterval
                         () * 2));
 
-        log.info("Attempting to reconcile {} pending transactions", pendingTxns.size());
+        ZoneId zone = ZoneId.systemDefault();
+        LocalDate today = LocalDate.now();
+        LocalDateTime startTimeLocal;
+        if (LocalTime.now().isBefore(LocalTime.of(12, 0))) {
+            // morning job
+        	startTimeLocal = today.minusDays(1).atTime(23, 0); // 11:00 PM yesterday
+        } else {
+            // evening job
+        	startTimeLocal = today.atTime(11, 0);              // 11:00 AM today
+        }
+
+        long startTime = startTimeLocal.atZone(zone).toInstant().toEpochMilli();
+        
+        
+        List<Transaction> failureTxns = transactionRepository.fetchTransactionsByTimeRange(TransactionCriteria.builder()
+                .txnStatus(Transaction.TxnStatusEnum.FAILURE).build(), startTime,
+        System.currentTimeMillis() - TimeUnit.MINUTES.toMillis(appProperties.getEarlyReconcileJobRunInterval
+                () * 2));
+        
+        log.info("Attempting to reconcile {} pending and {} failure transactions", pendingTxns.size(),failureTxns.size());
 
         for (Transaction txn : pendingTxns) {
             log.info(transactionService.updateTransaction(requestInfo, Collections.singletonMap(PgConstants.PG_TXN_IN_LABEL, txn
+                    .getTxnId
+                    ())).toString());
+        }
+        
+        for (Transaction ftxn : failureTxns) {
+            log.info(transactionService.updateTransaction(requestInfo, Collections.singletonMap(PgConstants.PG_TXN_IN_LABEL, ftxn
                     .getTxnId
                     ())).toString());
         }
