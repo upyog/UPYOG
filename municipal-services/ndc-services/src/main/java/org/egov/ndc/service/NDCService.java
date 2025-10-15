@@ -277,7 +277,7 @@ public class NDCService {
 		for (NdcDetailsRequest detail : ndcDetails) {
 			if (NDCConstants.PROPERTY_BUSINESSSERVICE.equalsIgnoreCase(detail.getBusinessService())) {
 				JsonNode additionalDetails = detail.getAdditionalDetails();
-				if (additionalDetails != null && additionalDetails.has(NDCConstants.PROPERTY_BUSINESSSERVICE)) {
+				if (additionalDetails != null && additionalDetails.has(NDCConstants.ADDITIONAL_DETAILS_FEE_TYPE_PARAM)) {
 					propertyType = additionalDetails.get(NDCConstants.ADDITIONAL_DETAILS_FEE_TYPE_PARAM).asText();
 					break;
 				}
