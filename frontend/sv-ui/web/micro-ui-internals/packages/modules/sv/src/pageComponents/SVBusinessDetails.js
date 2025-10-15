@@ -25,7 +25,7 @@ const SVBusinessDetails = ({ t, config, onSelect, userType, formData, editdata, 
   const [vendorLocality, setVendorLocality] = useState(formData?.businessDetails?.vendorLocality || "");
   const [areaRequired, setareaRequired] = useState(formData?.businessDetails?.areaRequired || previousData?.vendingArea || editdata?.vendingArea || "2.12");
   const [nameOfAuthority, setnameOfAuthority] = useState(formData?.businessDetails?.nameOfAuthority || previousData?.localAuthorityName || editdata?.localAuthorityName || "");
-  const [vendingPayment, setVendingPayment] = useState(formData?.businessDetails?.vendorPaymentFrequency || convertToObject(previousData?.vendorPaymentFrequency || editdata?.vendorPaymentFrequency) || formData?.businessDetails?.vendorPaymentFrequency || "");
+  const [vendingPayment, setVendingPayment] = useState(formData?.businessDetails?.vendingPayment || convertToObject(previousData?.vendorPaymentFrequency || editdata?.vendorPaymentFrequency) || formData?.businessDetails?.vendorPaymentFrequency || "");
   const [vendingLiscence, setvendingLiscence] = useState(formData?.businessDetails?.vendingLiscence || previousData?.vendingLiscence || editdata?.vendingLiscence || "");
   const inputStyles = { width: user.type === "EMPLOYEE" ? "50%" : "86%" };
   const [showToast, setShowToast] = useState(null);
@@ -104,58 +104,79 @@ const SVBusinessDetails = ({ t, config, onSelect, userType, formData, editdata, 
     return atLeastOneDaySelected;
   };
 
-  const handleRowChange = (rowIndex) => {
-    const updatedDays = [...daysOfOperation];
-    // updatedDays[rowIndex].isSelected = !updatedDays[rowIndex].isSelected;
-    // setDaysOfOperation(updatedDays);
 
-    const isCurrentlySelected = updatedDays[rowIndex].isSelected;
+  /**
+   * 
+      Scenario 1: Select All behavior
+
+      User selects Monday with 9:00-17:00
+      User clicks "Select All" → All days get 9:00-17:00 ✅
+
+      Scenario 2: Reselect after deselect
+
+      Monday, Tuesday, Wednesday all have 9:00-17:00
+      User deselects Tuesday → Tuesday times cleared
+      User reselects Tuesday → Tuesday automatically gets 9:00-17:00 (same as other selected days) ✅}
+   */
+
+
+  const handleRowChange = (rowIndex) => {
+  const updatedDays = [...daysOfOperation];
+  const isCurrentlySelected = updatedDays[rowIndex].isSelected;
+  
+  if (isCurrentlySelected) {
+    // Deselecting: Clear the times
     updatedDays[rowIndex] = {
       ...updatedDays[rowIndex],
-      isSelected: !isCurrentlySelected,
-      startTime: isCurrentlySelected ? "" : updatedDays[rowIndex].startTime,
-      endTime: isCurrentlySelected ? "" : updatedDays[rowIndex].endTime,
+      isSelected: false,
+      startTime: "",
+      endTime: ""
     };
-
-    // If unchecking, also clear the times
-    if (!updatedDays[rowIndex].isSelected) {
-      updatedDays[rowIndex].startTime = "";
-      updatedDays[rowIndex].endTime = "";
-    }
-
-    setDaysOfOperation(updatedDays);
+  } else {
+    // Reselecting: Find the first selected day's time and apply it
+    const firstSelectedDay = updatedDays.find(day => day.isSelected && (day.startTime || day.endTime));
+    
+    updatedDays[rowIndex] = {
+      ...updatedDays[rowIndex],
+      isSelected: true,
+      startTime: firstSelectedDay?.startTime || "",
+      endTime: firstSelectedDay?.endTime || ""
+    };
   }
+  
+  setDaysOfOperation(updatedDays);
+};
 
 
   // function to handle day time selection
   const onTimeChange = (index, time, value) => {
-    let updatedDays = [...daysOfOperation];
-    updatedDays[index][time] = value;
+  let updatedDays = [...daysOfOperation];
+  updatedDays[index][time] = value;
 
-    if (updatedDays[index].startTime || updatedDays[index].endTime) {
-      updatedDays[index].isSelected = true;
-    } else {
-      updatedDays[index].isSelected = false;
-    }
+  if (updatedDays[index].startTime || updatedDays[index].endTime) {
+    updatedDays[index].isSelected = true;
+  } else {
+    updatedDays[index].isSelected = false;
+  }
 
-    // Apply change only to selected rows or the edited row itself
-    if (isSameForAll) {
-      const { startTime, endTime } = updatedDays[index];
+  // Apply change only to selected rows or the edited row itself
+  if (isSameForAll) {
+    const { startTime, endTime } = updatedDays[index];
 
-      updatedDays = updatedDays.map((day, i) => {
-        if (day.isSelected || i === index) {
-          return {
-            ...day,
-            startTime,
-            endTime,
-          };
-        }
-        return day;
-      });
-    }
+    updatedDays = updatedDays.map((day, i) => {
+      if (day.isSelected || i === index) {
+        return {
+          ...day,
+          startTime,
+          endTime,
+        };
+      }
+      return day;
+    });
+  }
 
-    setDaysOfOperation(updatedDays);
-  };
+  setDaysOfOperation(updatedDays);
+};
 
   // Handle toggle for isSameForAll and apply backup if needed
   const handleToggleIsSameForAll = () => {

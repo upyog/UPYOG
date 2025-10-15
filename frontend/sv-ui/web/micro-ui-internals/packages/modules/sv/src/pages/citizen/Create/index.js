@@ -172,7 +172,7 @@ const SVCreate = ({ parentRoute }) => {
        * @author - Khalid Rashid - NIUA
        */}
       <Route path={`${match.path}/check/:isPayment?`}>
-        <SVCheckPage onSubmit={svcreate} value={params} editdata={pathname.includes("apply") ? {} : vendingData} renewalData={vendingData} /> 
+        <SVCheckPage onSubmit={svcreate} value={params} editdata={pathname.includes("apply") ? {} : vendingData} renewalData={pathname.includes("apply") ? {} : vendingData} /> 
         {/**
          * in above line , i am sending same vendingData in both editData and renewalData 
          * because we can clarify which type of data is in check page either it is data of Renewal case or edit case

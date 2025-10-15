@@ -51,7 +51,7 @@ export const SVApp = ({ stateCode, modules, appTenants, logoUrl, initData }) => 
         <CitizenApp {...commonProps} />
       </Route>
       <Route>
-        <Redirect to="/sv-ui/citizen/sv-home" />
+        <Redirect to="/upyog-ui/citizen" />
       </Route>
     </Switch>
   );

@@ -73,7 +73,7 @@ const SVApplicantDetails = ({ t, config, onSelect, userType, formData,editdata,p
     setFeilds(values);
   }
   const validateEmail = (value) => {
-    const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-z.-]+\.(com|org|in)$/;
+    const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.(com|org|in)$/;
     if (value === "") {
       setError("");
     }
@@ -264,11 +264,7 @@ const SVApplicantDetails = ({ t, config, onSelect, userType, formData,editdata,p
     validateEmail(value);
     setFeilds(units);
   }
-  useEffect(() => {
-    if (email) {
-      validateEmail(email);
-    }
-  }, [email])
+  
 
   function selecttradeNumber(i, e) {
     let units = [...fields];
@@ -531,6 +527,11 @@ const SVApplicantDetails = ({ t, config, onSelect, userType, formData,editdata,p
 
   const goNext = () => {
 
+    if (error) {
+    setShowToast({ error: true, label: error });
+    return;
+  }
+
     // Validate all applicable dates before proceeding
     const isVendorAgeValid = validateAge(fields[0].vendorDateOfBirth, "vendor");
     const isSpouseAgeValid = !spouseDependentChecked || validateAge(fields[0].spouseDateBirth, "spouse");
@@ -665,6 +666,7 @@ const SVApplicantDetails = ({ t, config, onSelect, userType, formData,editdata,p
                   onChange={(e) => selectemail(index, e)}
                   disable={false}
                 />
+                {error && <p style={{ color: "red", fontSize: "12px" }}>{error}</p>}
 
                 <CardLabel>{`${t("SV_DATE_OF_BIRTH")}`} <span className="astericColor">*</span></CardLabel>
                 <TextInput
