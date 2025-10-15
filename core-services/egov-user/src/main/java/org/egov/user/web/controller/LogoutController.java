@@ -21,7 +21,7 @@ public class LogoutController {
 
     private TokenStore tokenStore;
 
-    @Autowired
+    @Autowired(required = false)
     private CookieUtil cookieUtil;
 
     public LogoutController(TokenStore tokenStore) {
@@ -45,8 +45,8 @@ public class LogoutController {
         // Get access token from request body or cookie
         String accessToken = tokenWrapper.getAccessToken();
 
-        // If not in body, try to get from cookie
-        if (accessToken == null || accessToken.isEmpty()) {
+        // If not in body, try to get from cookie (if cookieUtil is available)
+        if ((accessToken == null || accessToken.isEmpty()) && cookieUtil != null) {
             accessToken = cookieUtil.getAccessTokenFromCookie(request);
         }
 
@@ -58,8 +58,10 @@ public class LogoutController {
             }
         }
 
-        // Clear authentication cookies
-        cookieUtil.clearAuthCookies(response);
+        // Clear authentication cookies (if cookieUtil is available)
+        if (cookieUtil != null) {
+            cookieUtil.clearAuthCookies(response);
+        }
 
         return new ResponseInfo("", "", System.currentTimeMillis(), "", "", "Logout successfully");
     }
