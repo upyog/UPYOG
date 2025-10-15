@@ -250,6 +250,15 @@ public class DemandService {
                         .collectionAmount(BigDecimal.ZERO)
                         .tenantId(tenantId)
                         .build());
+                
+                if(taxHeadEstimate.getAdjustedAmount().compareTo(BigDecimal.ZERO) > 0) {
+                	demandDetails.add(DemandDetail.builder().taxAmount(taxHeadEstimate.getAdjustedAmount().negate())
+                            .taxHeadMasterCode(BPACalculatorConstants.BPA_ADJUSTMENT_TAX_HEAD_PREFIX + taxHeadEstimate.getTaxHeadCode())
+                            .collectionAmount(BigDecimal.ZERO)
+                            .tenantId(tenantId)
+                            .build());
+                }
+                
             });
 
 

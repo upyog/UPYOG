@@ -1,19 +1,10 @@
 package org.egov.pt.service;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import javax.validation.Valid;
-import java.util.Objects;
 
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.pt.config.PropertyConfiguration;
@@ -567,10 +558,18 @@ public class PropertyService {
 						"Audit can only be provided for a single propertyId");
 			}
 
-		if (!criteria.getIsRequestForDuplicatePropertyValidation()
-				&& (criteria.getDoorNo() != null || criteria.getOldPropertyId() != null)) {
-			properties = fuzzySearchService.getProperties(requestInfo, criteria);
-		} else {
+        // Before the if check
+        log.info("Duplicate property validation flag: {}", criteria.getIsRequestForDuplicatePropertyValidation());
+
+        if (!criteria.getIsRequestForDuplicatePropertyValidation()
+                && (criteria.getDoorNo() != null
+                || criteria.getOldPropertyId() != null
+                || criteria.getName() != null)) {
+
+            // Inside the if block
+            log.info("Entering fuzzy search - Duplicate property validation flag is: {}", criteria.getIsRequestForDuplicatePropertyValidation());
+            properties = fuzzySearchService.getProperties(requestInfo, criteria);
+    } else {
 			if (criteria.getMobileNumber() != null || criteria.getName() != null || criteria.getOwnerIds() != null) {
 
 				log.info("In Property Search");
@@ -621,20 +620,23 @@ public class PropertyService {
 			            .collect(Collectors.toList());
 
 			    if (!occupancyTypeCodes.isEmpty()) {
-			        String occupancyTypesResponse = repository.fetchOccupancyTypesAsString(
-			                requestInfo, criteria.getTenantId(), occupancyTypeCodes);
+			    	Map<String, String> occupancyTypesMap = repository.fetchOccupancyTypes(
+			    	        requestInfo, criteria.getTenantId(), occupancyTypeCodes);
 
-			        if (occupancyTypesResponse != null) {
-			            for (Property property : properties) {
-			                if (property.getUnits() != null) {
-			                    for (Unit unit : property.getUnits()) {
-			                        unit.setOccupancyName(occupancyTypesResponse);
-			                    }
-			                }
-			            }
-			        }
+			    	if (occupancyTypesMap != null && !occupancyTypesMap.isEmpty()) {
+			    	    for (Property property : properties) {
+			    	        if (property.getUnits() != null) {
+			    	            for (Unit unit : property.getUnits()) {
+			    	                String occType = unit.getOccupancyType();
+			    	                if (occType != null && occupancyTypesMap.containsKey(occType)) {
+			    	                    unit.setOccupancyName(occupancyTypesMap.get(occType));
+			    	                }
+			    	            }
+			    	        }
+			    	    }
+			    	}
 			    }
-			} else {
+			    	} else {
 			    log.info("No units found in properties, skipping occupancy enrichment.");
 			}
 		    // --- end of occupancy enrichment ---
@@ -701,12 +703,15 @@ public class PropertyService {
 		} else if (criteria.getIsRequestForOldDataEncryption()) {
 			propertyCriteria.setTenantIds(criteria.getTenantIds());
 		} else {
-			List<String> uuids = repository.fetchIds(criteria, true);
-			if (uuids.isEmpty())
+            List<String> uuids = repository.fetchIds(criteria, true);
+            if (uuids.isEmpty())
 				return Collections.emptyList();
 			propertyCriteria.setUuids(new HashSet<>(uuids));
 		}
 		propertyCriteria.setLimit(criteria.getLimit());
+        if(criteria.getFromDate()!= null) propertyCriteria.setFromDate(criteria.getFromDate());
+        if(criteria.getToDate()!= null) propertyCriteria.setToDate(criteria.getToDate());
+        if(criteria.getPlainSearchOffset()!=null)propertyCriteria.setPlainSearchOffset(criteria.getPlainSearchOffset());
 		List<Property> properties = repository.getPropertiesForBulkSearch(propertyCriteria, true);
 		if (properties.isEmpty())
 			return Collections.emptyList();

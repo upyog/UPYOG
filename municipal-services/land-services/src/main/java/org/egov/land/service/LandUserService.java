@@ -129,6 +129,8 @@ public class LandUserService {
 	 */
 	private void setUserName(OwnerInfo owner) {
 		owner.setUserName(UUID.randomUUID().toString());
+		if(owner.getMobileNumber() != null && !owner.getMobileNumber().isEmpty())
+			owner.setUserName(owner.getMobileNumber());
 	}
 
 	/**

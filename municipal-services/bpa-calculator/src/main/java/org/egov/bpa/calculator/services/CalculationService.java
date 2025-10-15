@@ -7,6 +7,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.egov.bpa.calculator.config.BPACalculatorConfig;
 import org.egov.bpa.calculator.kafka.broker.BPACalculatorProducer;
@@ -76,9 +77,11 @@ public class CalculationService {
 				.getTenantId();
 		Object mdmsData = mdmsService.mDMSCall(calculationReq, tenantId);
 		List<Calculation> calculations = getCalculation(calculationReq.getRequestInfo(),calculationReq.getCalulationCriteria(), mdmsData);
-		demandService.generateDemand(calculationReq.getRequestInfo(),calculations, mdmsData);
 		CalculationRes calculationRes = CalculationRes.builder().calculations(calculations).build();
-		producer.push(config.getSaveTopic(), calculationRes);
+		if(calculationReq.getCalulationCriteria() != null && calculationReq.getCalulationCriteria().size() > 0 && !calculationReq.getCalulationCriteria().get(0).isOnlyEstimates()) {
+			demandService.generateDemand(calculationReq.getRequestInfo(),calculations, mdmsData);
+			producer.push(config.getSaveTopic(), calculationRes);
+		}
 		return calculations;
 	}
 
@@ -167,16 +170,33 @@ public class CalculationService {
 			if(!node.containsKey("builtUpArea"))
 				throw new CustomException(BPACalculatorConstants.PARSING_ERROR, "builtUpArea should not be null!!");
 
-		BigDecimal boundayWallLength=new BigDecimal(node.get("boundaryWallLength"));
-		BigDecimal area=new BigDecimal(node.get("builtUpArea")).multiply(BigDecimal.valueOf(10.7639));
-		
-		totalTax=boundayWallLength.multiply(BigDecimal.valueOf(2.5)).add(area.multiply(BigDecimal.valueOf(2.5)));
-		estimate.setEstimateAmount(totalTax.setScale(0, RoundingMode.HALF_UP));
-		estimate.setCategory(Category.FEE);
+			List<Map<String,Object>> applicationFees = JsonPath.read(mdmsData, BPACalculatorConstants.MDMS_APPLIOCATION_FEES_PATH);
+			
+			BigDecimal boundayWallLength=new BigDecimal(node.get("boundaryWallLength")).multiply(BigDecimal.valueOf(3.2808)); //In Running Feet
+			BigDecimal area=new BigDecimal(node.get("builtUpArea")).multiply(BigDecimal.valueOf(10.7639)); //In Sq Feet
+			
+			for(Map<String,Object> fee : applicationFees) {
 
-		String taxHeadCode = utils.getTaxHeadCode(calulationCriteria.getBpa().getBusinessService(), calulationCriteria.getFeeType());
-		estimate.setTaxHeadCode(taxHeadCode);
-		estimates.add(estimate);
+				String taxHeadCode = fee.get("taxHeadCode").toString();
+				BigDecimal rate = new BigDecimal((Double)fee.get("rate"));
+				BigDecimal amount = BigDecimal.ZERO;
+				TaxHeadEstimate appFeeEstimate = new TaxHeadEstimate();
+				
+				switch (taxHeadCode) {
+				case BPACalculatorConstants.BPA_BUILDING_APPLICATION_FEES:
+					amount = rate.multiply(area);
+					break;
+				case BPACalculatorConstants.BPA_BOUNDARY_WALL_FEES:
+					amount = rate.multiply(boundayWallLength);
+					break;
+				}
+				
+				appFeeEstimate.setEstimateAmount(amount.setScale(0, RoundingMode.HALF_UP));
+				appFeeEstimate.setCategory(Category.FEE);
+				appFeeEstimate.setTaxHeadCode(taxHeadCode);
+				estimates.add(appFeeEstimate);
+			}
+			
 		}
 		
 		else if (calulationCriteria.getFeeType().equalsIgnoreCase(BPACalculatorConstants.MDMS_CALCULATIONTYPE_SANC_FEETYPE) 
@@ -196,6 +216,11 @@ public class CalculationService {
 			
 			Map<String,Object> fee = (Map<String,Object>)node.get("selfCertificationCharges");
 			
+			List<Map<String,Object>> adjustedAmountsList = node.get("adjustedAmounts") != null ? (List<Map<String,Object>>)node.get("adjustedAmounts") : new ArrayList();
+			
+			Map<String,Object> adjustedAmounts = adjustedAmountsList.stream()
+					.collect(Collectors.toMap(adjustedAmount -> adjustedAmount.get("taxHeadCode").toString(), adjustedAmount -> adjustedAmount));
+			
 			BigDecimal builtUpArea = new BigDecimal((String)node.get("builtUpArea")).multiply(BPACalculatorConstants.SQMETER_TO_SQYARD);
 			BigDecimal plotArea = new BigDecimal((String)node.get("area")).multiply(BPACalculatorConstants.SQMETER_TO_SQYARD);
 			BigDecimal basementArea = BigDecimal.ZERO;
@@ -206,7 +231,7 @@ public class CalculationService {
 			String tanentId=calulationCriteria.getBpa().getTenantId();
 			
 			//Calculate Sanction Fee of BPA
-			estimates = calculateSanctionFee(requestInfo, tanentId, plotArea, builtUpArea, basementArea, fee, category, finYear);
+			estimates = calculateSanctionFee(requestInfo, tanentId, plotArea, builtUpArea, basementArea, fee, adjustedAmounts, category, finYear);
 		}
 
 		else {
@@ -330,7 +355,7 @@ public class CalculationService {
 	 * @return List of TaxHeadEstimate for the Demand creation
 	 */
 	private List<TaxHeadEstimate> calculateSanctionFee (RequestInfo requestInfo,String tanentId, BigDecimal plotArea, BigDecimal builtUpArea
-			, BigDecimal basementArea, Map<String,Object> fee, String category, String finYear) {
+			, BigDecimal basementArea, Map<String,Object> fee, Map<String,Object> adjustedAmounts, String category, String finYear) {
 		List<TaxHeadEstimate> estimates = new LinkedList<>();
 		Object mdmsData = mdmsService.getMDMSSanctionFeeCharges(requestInfo, tanentId, BPACalculatorConstants.MDMS_CHARGES_TYPE_CODE, category, finYear);
 		List<Map<String,Object>> chargesTypejsonOutput = JsonPath.read(mdmsData, BPACalculatorConstants.MDMS_CHARGES_TYPE_PATH);
@@ -393,9 +418,14 @@ public class CalculationService {
 				break;
 			}
 			
+			Map<String, Object> adjustedAmount = adjustedAmounts.containsKey(taxhead) ? 
+					(Map<String, Object>)adjustedAmounts.get(taxhead) : new LinkedHashMap<String, Object>();
+			
 			estimate.setEstimateAmount(amount);
 			estimate.setCategory(Category.FEE);
 			estimate.setTaxHeadCode(taxhead);
+			estimate.setAdjustedAmount(new BigDecimal(adjustedAmount.getOrDefault("adjustedAmount", "0").toString()));
+			estimate.setFilestoreId((String)adjustedAmount.getOrDefault("filestoreId", null));
 			estimates.add(estimate);
 			
 		});

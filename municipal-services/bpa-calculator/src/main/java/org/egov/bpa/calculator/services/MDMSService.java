@@ -82,6 +82,8 @@ public class MDMSService {
         
         bpaMasterDetails.add(MasterDetail.builder().name(BPACalculatorConstants.MDMS_CALCULATIONTYPE)
         		.build());
+        bpaMasterDetails.add(MasterDetail.builder().name(BPACalculatorConstants.MDMS_APPLICATION_FEES)
+        		.build());
         ModuleDetail bpaModuleDtls = ModuleDetail.builder().masterDetails(bpaMasterDetails)
                 .moduleName(BPACalculatorConstants.MDMS_BPA).build();
 
