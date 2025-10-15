@@ -107,24 +107,54 @@ public class AuthPreCheckFilter extends ZuulFilter {
         return null;
     }
 
+    /**
+     * Multi-mode authentication token extraction
+     * Priority order:
+     * 1. Authorization Bearer header (for mobile apps and API clients)
+     * 2. Cookie (for secure web browsers - HttpOnly)
+     * 3. auth-token header (backward compatibility for legacy web)
+     * 4. Request body (backward compatibility for legacy APIs)
+     */
     private String getAuthTokenFromRequest() throws IOException {
 
-        String authToken = getAuthTokenFromRequestHeader();
-        // header will be preferred for auth body
-        String authTokenFromBody = null;
-
+        String authToken = null;
         HttpServletRequest req = RequestContext.getCurrentContext().getRequest();
 
+        // Priority 1: Check Authorization Bearer header (Mobile apps, Postman, etc.)
+        authToken = getAuthTokenFromAuthorizationHeader();
+        if (!ObjectUtils.isEmpty(authToken)) {
+            logger.info("Auth token found in Authorization header for URI: {}", getRequestURI());
+            return authToken;
+        }
+
+        // Priority 2: Check HttpOnly cookie (Secure web browsers)
+        authToken = getAuthTokenFromCookie();
+        if (!ObjectUtils.isEmpty(authToken)) {
+            logger.info("Auth token found in cookie for URI: {}", getRequestURI());
+            return authToken;
+        }
+
+        // Priority 3: Check auth-token header (Legacy web)
+        authToken = getAuthTokenFromRequestHeader();
+        if (!ObjectUtils.isEmpty(authToken)) {
+            logger.info("Auth token found in auth-token header for URI: {}", getRequestURI());
+        }
+
+        // Priority 4: Check request body (Legacy APIs)
+        String authTokenFromBody = null;
         if (Utils.isRequestBodyCompatible(req)) {
             // if body is json try and extract the token from body
             // call this method even if we found authtoken in header
             // this is just to make sure the authToken doesn't get leaked
             // if it was both in header as well as body
             authTokenFromBody = getAuthTokenFromRequestBody();
+            if (!ObjectUtils.isEmpty(authTokenFromBody)) {
+                logger.info("Auth token found in request body for URI: {}", getRequestURI());
+            }
         }
 
+        // Return token from body if found, otherwise return header token
         if (ObjectUtils.isEmpty(authTokenFromBody)) {
-            // if token is not there, return whatever we had from header
             authTokenFromBody = authToken;
         }
 
@@ -172,6 +202,43 @@ public class AuthPreCheckFilter extends ZuulFilter {
         ctx.setRequest(requestWrapper);
     }
 
+    /**
+     * Extract token from Authorization Bearer header
+     * Format: "Authorization: Bearer <token>"
+     * Used by mobile apps and API clients
+     */
+    private String getAuthTokenFromAuthorizationHeader() {
+        RequestContext ctx = RequestContext.getCurrentContext();
+        String authHeader = ctx.getRequest().getHeader("Authorization");
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            return authHeader.substring(7); // Remove "Bearer " prefix
+        }
+        return null;
+    }
+
+    /**
+     * Extract token from HttpOnly cookie
+     * Used by secure web browsers
+     */
+    private String getAuthTokenFromCookie() {
+        RequestContext ctx = RequestContext.getCurrentContext();
+        HttpServletRequest request = ctx.getRequest();
+        javax.servlet.http.Cookie[] cookies = request.getCookies();
+
+        if (cookies != null) {
+            for (javax.servlet.http.Cookie cookie : cookies) {
+                if ("access_token".equals(cookie.getName())) {
+                    return cookie.getValue();
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Extract token from auth-token header (legacy)
+     * Used for backward compatibility
+     */
     private String  getAuthTokenFromRequestHeader() {
         RequestContext ctx = RequestContext.getCurrentContext();
         return ctx.getRequest().getHeader(AUTH_TOKEN_HEADER_NAME);
