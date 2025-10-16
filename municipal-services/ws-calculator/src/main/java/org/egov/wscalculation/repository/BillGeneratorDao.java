@@ -17,6 +17,7 @@ import org.egov.wscalculation.web.models.BillScheduler;
 import org.egov.wscalculation.web.models.BillScheduler.StatusEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.stereotype.Repository;
@@ -136,6 +137,36 @@ public class BillGeneratorDao {
 			log.error("Exception occurred in the insertBillSchedulerConnectionStatus: {}", e);
 			e.printStackTrace();
 		}
+	}
+
+	
+	public void updateBillSchedulerConnectionStatus(String consumerCode, String schedulerId,
+	        String locality, String status, String tenantId, String reason, long modifiedTime) {
+	    try {
+	        log.info("Entered into updateBillSchedulerConnectionStatus for consumerCode: {}", consumerCode);
+
+	        if (consumerCode == null || consumerCode.isEmpty())
+	            return;
+	        
+	        String sql = "UPDATE eg_ws_bill_scheduler_connection_status "
+	                   + "SET status = ?, reason = ?, lastupdatedtime = ? "
+	                   + "WHERE status='Initiated' AND eg_ws_scheduler_id = ? AND tenantid = ? AND consumercode = ?";
+
+	        int rows = jdbcTemplate.update(sql, ps -> {
+	            ps.setString(1, status);
+	            ps.setString(2, reason);
+	            ps.setObject(3, modifiedTime);
+	            ps.setString(4, schedulerId);
+	            ps.setString(5, tenantId);
+	            ps.setString(6, consumerCode);
+	        });
+
+	        
+	        log.info("Update result: consumerCode={} rowsUpdated={}", consumerCode, rows);
+
+	    } catch (Exception e) {
+	        log.error("Exception occurred in updateBillSchedulerConnectionStatus: {}", e.getMessage(), e);
+	    }
 	}
 
 }

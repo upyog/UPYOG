@@ -22,6 +22,7 @@ import org.egov.mdms.model.MdmsCriteriaReq;
 import org.egov.wscalculation.config.WSCalculationConfiguration;
 import org.egov.wscalculation.constants.WSCalculationConstant;
 import org.egov.wscalculation.producer.WSCalculationProducer;
+import org.egov.wscalculation.repository.BillGeneratorDao;
 import org.egov.wscalculation.repository.DemandRepository;
 import org.egov.wscalculation.repository.ServiceRequestRepository;
 import org.egov.wscalculation.repository.WSCalculationDao;
@@ -58,6 +59,9 @@ public class DemandService {
 
 	@Autowired
 	private ServiceRequestRepository repository;
+	
+	@Autowired
+	private BillGeneratorDao billGeneratorDao;
 
 	@Autowired
 	private ObjectMapper mapper;
@@ -1772,12 +1776,13 @@ public class DemandService {
 		return notificationSent;
 	}
 
-	public List<String> fetchBillSchedulerSingle(Set<String> consumerCodes, String tenantId,RequestInfo requestInfo, List<String> failureCollector
+	public List<String> fetchBillSchedulerSingle(Set<String> consumerCodes, String tenantId,RequestInfo requestInfo, List<String> failureCollector, String  schedlerId, String localitycode
 	) {
 	    List<String> successConsumerCodes = new ArrayList<>();
 
 	    for (String consumerCode : consumerCodes) {
 	        try {
+	        	
 	            StringBuilder fetchBillURL = calculatorUtils.getFetchBillURL(tenantId, consumerCode);
 
 	            Object result = serviceRequestRepository.fetchResult(
@@ -1788,19 +1793,57 @@ public class DemandService {
 	            BillResponseV2 billResponse = mapper.convertValue(result, BillResponseV2.class);
 	            List<BillV2> bills = billResponse.getBill();
 
+	        	
+	            
 	            if (bills != null && !bills.isEmpty()) {
+	            	
+	            	
+	            	  billGeneratorDao.updateBillSchedulerConnectionStatus(
+	            			  consumerCode,
+		            		 schedlerId,
+	  				        localitycode,
+	  				        WSCalculationConstant.SUCCESS,
+	  				        tenantId,
+	  				        WSCalculationConstant.SUCCESS_MESSAGE,
+	  				      System.currentTimeMillis()
+	  				    );
+
+	            	 
+	            	
 	                successConsumerCodes.addAll(
 	                    bills.stream().map(BillV2::getConsumerCode).collect(Collectors.toList())
-	                );
+	                
+	                		);
 	                log.info("✅ Bill generated successfully for consumerCode: {}", consumerCode);
 	            } else {
+	            	  billGeneratorDao.updateBillSchedulerConnectionStatus(
+	            			  consumerCode,
+			            		 schedlerId,
+		  				        localitycode,
+		  				        WSCalculationConstant.FAILURE,
+		  				        tenantId,
+		  				        WSCalculationConstant.FAILURE_MESSAGE,
+		  				      System.currentTimeMillis()
+		  				    );
+
 	                failureCollector.add(consumerCode);
 	                log.warn("⚠️ No bills returned for consumerCode: {}", consumerCode);
 	            }
 
 	        } catch (Exception ex) {
+	        	  billGeneratorDao.updateBillSchedulerConnectionStatus(
+	        			  consumerCode,
+		            		 schedlerId,
+	  				        localitycode,
+	  				        WSCalculationConstant.FAILURE,
+	  				        tenantId,
+	  				        WSCalculationConstant.FAILURE_MESSAGE,
+	  				      System.currentTimeMillis()
+	  				    );
+
 	            failureCollector.add(consumerCode);
 	            log.error("❌ Fetch Bill failed for consumerCode: {} Exception: {}", consumerCode, ex.getMessage(), ex);
+	            
 	        }
 	    }
 

@@ -226,6 +226,9 @@ public class WSCalculationConstant {
 	public static final String WC_ROADTYPE_MASTER = "RoadType";
 	
 	public static final String SUCCESS = "Success";
+
+	public static final String INITIATED = "Initiated";
+
 	
 	
 	
