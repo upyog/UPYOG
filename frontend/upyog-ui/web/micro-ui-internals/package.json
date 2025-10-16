@@ -15,7 +15,8 @@
     "packages/modules/engagement",
     "packages/modules/ew",
     "packages/modules/ptr",
-    "packages/modules/wt"
+    "packages/modules/wt",
+    "packages/modules/vendor"
   ],
   "license": "MIT",
   "private": true,
