@@ -3,7 +3,7 @@ import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useRouteMatch } from "react-router-dom";
 // import EmployeeApp from "./pages/employee";
-import EmployeeApp from "./pages/employee";
+import EmployeeApp, { VendorBreadCrumb } from "./pages/employee";
 import VENDORCard from "./components/VENDORCard";
 import AddVendor from "./pages/employee/RegisterVendor/AddVendor";
 
@@ -65,6 +65,7 @@ const addComponentsToRegistry = () => {
   Object.entries(componentsToRegister).forEach(([key, value]) => {
     Digit.ComponentRegistryService.setComponent(key, value);
   });
+  Digit.ComponentRegistryService.setComponent("VendorBreadCrumb", VendorBreadCrumb);
 };
 
 export const VENDORModule = ({ stateCode, userType, tenants }) => {
