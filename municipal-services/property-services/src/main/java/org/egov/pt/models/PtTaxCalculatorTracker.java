@@ -43,4 +43,5 @@ public class PtTaxCalculatorTracker {
 	@JsonProperty("additionalDetails")
 	private JsonNode additionalDetails;
 	private String billId;
+	private String type = "CYCLIC";
 }

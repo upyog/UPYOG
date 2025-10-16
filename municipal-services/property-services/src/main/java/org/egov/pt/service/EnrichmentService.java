@@ -402,6 +402,7 @@ public class EnrichmentService {
 				.toDateString(formatter.format(calculateTaxRequest.getToDate())).propertyTax(finalPropertyTax)
 				.additionalDetails(additionalDetails).auditDetails(createAuditDetails)
 				.billId(null != bill ? bill.getId() : null).rebateAmount(rebateAmount)
+				.type(calculateTaxRequest.getType())
 				.propertyTaxWithoutRebate(propertyTaxWithoutRebate).billStatus(BillStatus.ACTIVE).build();
 
 		return PtTaxCalculatorTrackerRequest.builder().requestInfo(calculateTaxRequest.getRequestInfo())
