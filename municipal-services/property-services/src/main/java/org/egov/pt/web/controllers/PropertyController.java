@@ -135,7 +135,7 @@ public class PropertyController {
 			}
 		}
 
-		Property property = propertyService.updateProperty(propertyRequest,true);
+		Property property = propertyService.updateProperty(propertyRequest, true);
 		ResponseInfo resInfo = responseInfoFactory.createResponseInfoFromRequestInfo(propertyRequest.getRequestInfo(),
 				true);
 		PropertyResponse response = PropertyResponse.builder().properties(Arrays.asList(property)).responseInfo(resInfo)
@@ -209,7 +209,7 @@ public class PropertyController {
 				.builder().responseInfo(responseInfoFactory
 						.createResponseInfoFromRequestInfo(requestInfoWrapper.getRequestInfo(), true))
 				.properties(properties).count(properties.size()).build();
-		
+
 		propertyService.setAllCount(properties, response);
 
 		return new ResponseEntity<>(response, HttpStatus.OK);
@@ -312,7 +312,7 @@ public class PropertyController {
 			return new ResponseEntity("Provide parameter to be fetched in URL.", HttpStatus.BAD_REQUEST);
 		}
 	}
-	
+
 	@PostMapping(value = "/_updateStatus")
 	public ResponseEntity<PropertyResponse> updateStatus(@Valid @RequestBody PropertyStatusUpdateRequest request) {
 
@@ -327,14 +327,14 @@ public class PropertyController {
 	@PostMapping(value = "/_counts")
 	public ResponseEntity<Map<String, Object>> counts(@Valid @RequestBody TotalCountRequest totalCountRequest) {
 //		List<Property> properties = new ArrayList<Property>();
-		ResponseInfo resInfo = responseInfoFactory.createResponseInfoFromRequestInfo(totalCountRequest.getRequestInfo(), true);
-	    Map<String, Object> response = new HashMap<>();
+		ResponseInfo resInfo = responseInfoFactory.createResponseInfoFromRequestInfo(totalCountRequest.getRequestInfo(),
+				true);
+		Map<String, Object> response = new HashMap<>();
 		Map<String, Object> result = propertyService.totalCount(totalCountRequest);
 
-	    response.put("ResponseInfo", resInfo);
-	    response.put("Counts", result);
+		response.put("ResponseInfo", resInfo);
+		response.put("Counts", result);
 
-		
 //		Property property = propertyService.updateStatus(request);
 //		ResponseInfo resInfo = responseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(), true);
 //		PropertyResponse response = PropertyResponse.builder().properties(Arrays.asList(property)).responseInfo(resInfo)
@@ -342,7 +342,7 @@ public class PropertyController {
 		return new ResponseEntity<>(response, HttpStatus.OK);
 
 	}
-	
+
 	@PostMapping("/_updateExistingOwnerDetails")
 	public ResponseEntity<?> updateExistingOwnerDetails(@RequestBody RequestInfoWrapper requestInfoWrapper) {
 
@@ -352,39 +352,42 @@ public class PropertyController {
 		return new ResponseEntity("Owner details updated successfully", HttpStatus.OK);
 //		return new ResponseEntity(owners, HttpStatus.OK);
 	}
-	
+
 	@PostMapping("/_generatePropertyTaxBillReceipt")
 	public ResponseEntity<Resource> generatePropertyTaxBillReceipt(
-			@Valid @RequestBody RequestInfoWrapper requestInfoWrapper, @RequestParam String propertyId,@RequestParam(required = false) String billId) {
+			@Valid @RequestBody RequestInfoWrapper requestInfoWrapper, @RequestParam String propertyId,
+			@RequestParam(required = false) String billId) {
 
 		ResponseEntity<Resource> response = propertyService.generatePropertyTaxBillReceipt(requestInfoWrapper,
-				propertyId,billId);
+				propertyId, billId);
 
 		return response;
 	}
-	
-	@PostMapping("/_checkMasters")
-	public ResponseEntity<Map<String, Object>> checkMasters(
-			@Valid @RequestBody RequestInfoWrapper requestInfoWrapper, @RequestParam String UlbName) {
 
-		Map<String, Object> result = propertyService.checkMastersStatus(requestInfoWrapper,
-				UlbName);
-		ResponseInfo resInfo = responseInfoFactory.createResponseInfoFromRequestInfo(requestInfoWrapper.getRequestInfo(), true);
-	    Map<String, Object> response = new HashMap<>();
-	    response.put("ResponseInfo", resInfo);
-	    response.put("MasterStatus", result);
+	@PostMapping("/_checkMasters")
+	public ResponseEntity<Map<String, Object>> checkMasters(@Valid @RequestBody RequestInfoWrapper requestInfoWrapper,
+			@RequestParam String UlbName) {
+
+		Map<String, Object> result = propertyService.checkMastersStatus(requestInfoWrapper, UlbName);
+		ResponseInfo resInfo = responseInfoFactory
+				.createResponseInfoFromRequestInfo(requestInfoWrapper.getRequestInfo(), true);
+		Map<String, Object> response = new HashMap<>();
+		response.put("ResponseInfo", resInfo);
+		response.put("MasterStatus", result);
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
-	
-	@PostMapping("/_createArear")
-	public ResponseEntity<Map<String, Object>> createArear(@Valid @RequestBody GenrateArrearRequest genrateArrearRequest) {
 
-		 propertyService.generateArrear(genrateArrearRequest);
-		ResponseInfo resInfo = responseInfoFactory.createResponseInfoFromRequestInfo(genrateArrearRequest.getRequestInfo(), true);
-//	    Map<String, Object> response = new HashMap<>();
-//	    response.put("ResponseInfo", resInfo);
-//	    response.put("MasterStatus", result);
-		return new ResponseEntity<>(null, HttpStatus.OK);
+	@PostMapping("/_createArear")
+	public ResponseEntity<Map<String, Object>> createArear(
+			@Valid @RequestBody GenrateArrearRequest genrateArrearRequest) {
+
+		String message = propertyService.generateArrear(genrateArrearRequest);
+		ResponseInfo resInfo = responseInfoFactory
+				.createResponseInfoFromRequestInfo(genrateArrearRequest.getRequestInfo(), true);
+		Map<String, Object> response = new HashMap<>();
+		response.put("ResponseInfo", resInfo);
+		response.put("message", message);
+		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
-	
+
 }
