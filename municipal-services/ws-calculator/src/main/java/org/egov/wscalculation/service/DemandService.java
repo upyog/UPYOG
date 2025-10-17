@@ -1837,7 +1837,7 @@ public class DemandService {
 	  				        localitycode,
 	  				        WSCalculationConstant.FAILURE,
 	  				        tenantId,
-	  				        WSCalculationConstant.FAILURE_MESSAGE,
+	  				      WSCalculationConstant.FAILURE_MESSAGE + " | Error Msg: " + ex.getMessage(),
 	  				      System.currentTimeMillis()
 	  				    );
 

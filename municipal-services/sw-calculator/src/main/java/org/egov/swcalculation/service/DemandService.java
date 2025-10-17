@@ -26,6 +26,7 @@ import org.egov.common.contract.request.User;
 import org.egov.swcalculation.config.SWCalculationConfiguration;
 import org.egov.swcalculation.constants.SWCalculationConstant;
 import org.egov.swcalculation.producer.SWCalculationProducer;
+import org.egov.swcalculation.repository.BillGeneratorDao;
 import org.egov.swcalculation.repository.DemandRepository;
 import org.egov.swcalculation.repository.ServiceRequestRepository;
 import org.egov.swcalculation.repository.SewerageCalculatorDao;
@@ -88,6 +89,9 @@ public class DemandService {
 
 	@Autowired
 	private DemandRepository demandRepository;
+	
+	@Autowired
+	private BillGeneratorDao billGeneratorDao;
 
 	@Autowired
 	private SWCalculationConfiguration configs;
@@ -1709,41 +1713,62 @@ public List<String> fetchBillSchedulerBatch(Set<String> consumerCodes,String ten
 		}
 		return consumercodesFromRes;
 	}
-	
-		public List<String> fetchBillSchedulerSingle(Set<String> consumerCodes, String tenantId,RequestInfo requestInfo, List<String> failureCollector
-		) {
-		    List<String> successConsumerCodes = new ArrayList<>();
 
-		    for (String consumerCode : consumerCodes) {
-		        try {
-		            StringBuilder fetchBillURL = calculatorUtils.getFetchBillURL(tenantId, consumerCode);
+	public List<String> fetchBillSchedulerSingle(Set<String> consumerCodes, String tenantId, RequestInfo requestInfo,
+			List<String> failureCollector, String schedulerId, String localityCode) {
+		List<String> successConsumerCodes = new ArrayList<>();
 
-		            Object result = serviceRequestRepository.fetchResult(
-		                    fetchBillURL,
-		                    RequestInfoWrapper.builder().requestInfo(requestInfo).build()
-		            );
+		for (String consumerCode : consumerCodes) {
+			try {
+				StringBuilder fetchBillURL = calculatorUtils.getFetchBillURL(tenantId, consumerCode);
 
-		            BillResponseV2 billResponse = mapper.convertValue(result, BillResponseV2.class);
-		            List<BillV2> bills = billResponse.getBill();
+				Object result = serviceRequestRepository.fetchResult(fetchBillURL,
+						RequestInfoWrapper.builder().requestInfo(requestInfo).build());
 
-		            if (bills != null && !bills.isEmpty()) {
-		                successConsumerCodes.addAll(
-		                    bills.stream().map(BillV2::getConsumerCode).collect(Collectors.toList())
-		                );
-		                log.info("✅ Bill generated successfully for consumerCode: {}", consumerCode);
-		            } else {
-		                failureCollector.add(consumerCode);
-		                log.warn("⚠️ No bills returned for consumerCode: {}", consumerCode);
-		            }
+				BillResponseV2 billResponse = mapper.convertValue(result, BillResponseV2.class);
+				List<BillV2> bills = billResponse.getBill();
 
-		        } catch (Exception ex) {
-		            failureCollector.add(consumerCode);
-		            log.error("❌ Fetch Bill failed for consumerCode: {} Exception: {}", consumerCode, ex.getMessage(), ex);
-		        }
-		    }
+				if (bills != null && !bills.isEmpty()) {
+					billGeneratorDao.updateBillSchedulerConnectionStatus(consumerCode, schedulerId, localityCode,
+							SWCalculationConstant.SUCCESS, tenantId, SWCalculationConstant.SUCCESS_MESSAGE,
+							System.currentTimeMillis());
 
-		    return successConsumerCodes;
+					successConsumerCodes
+							.addAll(bills.stream().map(BillV2::getConsumerCode).collect(Collectors.toList()));
+
+					log.info("✅ Bill generated successfully for consumerCode: {}", consumerCode);
+				} else {
+					String failureMsg = SWCalculationConstant.FAILURE_MESSAGE + " | No bills returned";
+
+					try {
+						billGeneratorDao.updateBillSchedulerConnectionStatus(consumerCode, schedulerId, localityCode,
+								SWCalculationConstant.FAILURE, tenantId, failureMsg, System.currentTimeMillis());
+					} catch (Exception dbEx) {
+						log.error("DB update failed for {} (no bills): {}", consumerCode, dbEx.getMessage());
+					}
+
+					failureCollector.add(consumerCode);
+					log.warn("⚠️ No bills returned for consumerCode: {}", consumerCode);
+				}
+
+			} catch (Exception ex) {
+				String errorMsg = SWCalculationConstant.FAILURE_MESSAGE + " | Exception: " + ex.getMessage();
+
+				try {
+					billGeneratorDao.updateBillSchedulerConnectionStatus(consumerCode, schedulerId, localityCode,
+							SWCalculationConstant.FAILURE, tenantId, errorMsg, System.currentTimeMillis());
+				} catch (Exception dbEx) {
+					log.error("DB update failed for {} (exception case): {}", consumerCode, dbEx.getMessage());
+				}
+
+				failureCollector.add(consumerCode);
+				log.error("❌ Fetch Bill failed for consumerCode: {} Exception: {}", consumerCode, ex.getMessage(), ex);
+			}
 		}
+
+		return successConsumerCodes;
+	}
+
 		/**
 		 * Search demand based on demand id and updated the tax heads with new adhoc tax heads
 		 * 
