@@ -109,11 +109,6 @@
             value: t("TP_BOOKING_CREATED")
           },
           {
-            i18nKey: "TP_PENDING_FOR_APPROVAL",
-            code: "PENDING_FOR_APPROVAL",
-            value: t("TP_PENDING_FOR_APPROVAL")
-          },
-          {
             i18nKey: "TP_PAYMENT_PENDING",
             code: "PAYMENT_PENDING",
             value: t("TP_PAYMENT_PENDING")
