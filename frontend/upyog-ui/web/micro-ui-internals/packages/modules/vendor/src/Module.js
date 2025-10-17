@@ -56,6 +56,7 @@ const componentsToRegister = {
   NewResponse,
   DriverDetails,
   VehicleDetails,
+  VendorBreadCrumb
 };
 
 
@@ -65,7 +66,6 @@ const addComponentsToRegistry = () => {
   Object.entries(componentsToRegister).forEach(([key, value]) => {
     Digit.ComponentRegistryService.setComponent(key, value);
   });
-  Digit.ComponentRegistryService.setComponent("VendorBreadCrumb", VendorBreadCrumb);
 };
 
 export const VENDORModule = ({ stateCode, userType, tenants }) => {
