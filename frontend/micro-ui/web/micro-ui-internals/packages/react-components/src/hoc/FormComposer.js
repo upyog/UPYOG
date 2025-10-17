@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState, Fragment } from "react";
+import React, { useEffect, useMemo, useState, Fragment, useRef } from "react";
 import { useForm, Controller } from "react-hook-form";
 import BreakLine from "../atoms/BreakLine";
 import Card from "../atoms/Card";
@@ -19,6 +19,60 @@ import LinkButton from "../atoms/LinkButton";
 import { useTranslation } from "react-i18next";
 import MobileNumber from "../atoms/MobileNumber";
 import _ from "lodash";
+
+// export const CaptchaCanvas = ({ text }) => {
+//   const canvasRef = useRef(null);
+
+//   useEffect(() => {
+//     const canvas = canvasRef.current;
+//     const ctx = canvas.getContext("2d");
+
+//     // Clear & setup canvas
+//     ctx.clearRect(0, 0, canvas.width, canvas.height);
+//     ctx.font = "28px italic Arial";
+//     ctx.fillStyle = "#000";
+
+//     // Draw CAPTCHA text
+//     ctx.fillText(text, 10, 30);
+
+//     // Add random noise (lines)
+//     for (let i = 0; i < 3; i++) {
+//       ctx.strokeStyle = "#888";
+//       ctx.beginPath();
+//       ctx.moveTo(Math.random() * canvas.width, Math.random() * canvas.height);
+//       ctx.lineTo(Math.random() * canvas.width, Math.random() * canvas.height);
+//       ctx.stroke();
+//     }
+
+//     // Add random dots
+//     for (let i = 0; i < 30; i++) {
+//       ctx.fillStyle = `rgba(0,0,0,${Math.random()})`;
+//       ctx.beginPath();
+//       ctx.arc(
+//         Math.random() * canvas.width,
+//         Math.random() * canvas.height,
+//         1 + Math.random() * 2,
+//         0,
+//         2 * Math.PI
+//       );
+//       ctx.fill();
+//     }
+//   }, [text]);
+
+//   return (
+//     <canvas
+//       ref={canvasRef}
+//       width={120}
+//       height={40}
+//       style={{
+//         userSelect: "none",
+//         pointerEvents: "none",
+//         background: "#529ec029",
+//         borderRadius: "4px",
+//       }}
+//     />
+//   );
+// };
 
 export const FormComposer = (props) => {
   const {
@@ -53,6 +107,9 @@ export const FormComposer = (props) => {
   }, []);
 
   function onSubmit(data) {
+    if(data && data?.captcha) {
+      data.captchaUuid = props?.captchaDetails[0]?.captchaUuid
+    }
     props.onSubmit(data);
   }
 
@@ -64,8 +121,7 @@ export const FormComposer = (props) => {
     props.onFormValueChange && props.onFormValueChange(setValue, formData, formState);
   }, [formData]);
 
-  const fieldSelector = (type, populators, isMandatory, disable = false, component, config) => {
-    
+  const fieldSelector = (type, populators, isMandatory, disable = false, component, config, captchaText) => {
     const Component = typeof component === "string" ? Digit.ComponentRegistryService.getComponent(component) : component;
 
     switch (type) {
@@ -90,6 +146,22 @@ export const FormComposer = (props) => {
               watch={watch}
             />
           </div>
+        );
+      case "captchaText": 
+        return (
+          <div style={
+            {background: 'white',
+            fontStyle: 'italic', 
+            padding: '5px', 
+            display: 'flex',
+            justifyContent:'space-between',
+            borderRadius: '4px', 
+            marginBottom: '15px',
+            userSelect: "none",
+            }} onContextMenu={(e) => e.preventDefault()}>
+              {/* <CaptchaCanvas text={captchaText[0]?.captcha || ""} /> */}
+            <span style={{fontSize: '20px',background: '#529ec029',pointerEvents: "none"}}>{captchaText[0]?.captcha}</span>
+            <span style={{padding: '3px', background: 'gray', float: 'right', color: 'white', borderRadius: '4px', cursor: 'pointer'}} onClick={props?.onCaptchaRefresh}>Refresh</span> </div>
         );
       case "textarea":
         // if (populators.defaultValue) setTimeout(setValue(populators?.name, populators.defaultValue));
@@ -199,7 +271,7 @@ export const FormComposer = (props) => {
           marginTop: "-30px",
           borderColor: "#f3f3f3",
           background: "#FAFAFA",
-          marginBottom: "20px",
+          marginBottom: "10px",
           borderTop: "0px",
         };
     }
@@ -257,7 +329,7 @@ export const FormComposer = (props) => {
                         <CardLabelError>{t(field.populators.error || errors[field.populators?.name]?.message)}</CardLabelError>
                       ) : null}
                       <div style={field.withoutLabel ? { width: "100%" } : {}} className="field">
-                        {fieldSelector(field.type, field.populators, field.isMandatory, field?.disable, field?.component, field)}
+                        {fieldSelector(field.type, field.populators, field.isMandatory, field?.disable, field?.component, field, props?.captchaDetails)}
                         {field?.description && (
                           <CardLabel
                             style={{
@@ -286,7 +358,7 @@ export const FormComposer = (props) => {
                       </CardLabel>
                     )}
                     <div style={field.withoutLabel ? { width: "100%", ...props?.fieldStyle } : {}} className="field">
-                      {fieldSelector(field.type, field.populators, field.isMandatory, field?.disable, field?.component, field)}
+                      {fieldSelector(field.type, field.populators, field.isMandatory, field?.disable, field?.component, field,props?.captchaDetails)}
                       {field?.description && <CardText style={{ fontSize: "14px", marginTop: "-24px" }}>{t(field?.description)}</CardText>}
                     </div>
                   </LabelFieldPair>
@@ -325,6 +397,7 @@ export const FormComposer = (props) => {
         {props.description && <CardLabelDesc className={"repos"}> {props.description} </CardLabelDesc>}
         {props.text && <CardText>{props.text}</CardText>}
         {formFields}
+        {/* {props.captchaDetails && props.captchaDetails[0] && <CardText>{props?.captchaDetails[0].captcha}</CardText>} */}
         {props.childrenAtTheBottom && props.children}
         {props.submitInForm && (
           <SubmitBar label={t(props.label)} style={{ ...props?.buttonStyle }} submit="submit" disabled={isDisabled} className="w-full" />

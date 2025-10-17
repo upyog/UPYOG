@@ -6,6 +6,8 @@ import { loginSteps } from "./config";
 import SelectMobileNumber from "./SelectMobileNumber";
 import SelectOtp from "./SelectOtp";
 import SelectName from "./SelectName";
+import CryptoJS from "crypto-js";
+
 
 const TYPE_REGISTER = { type: "register" };
 const TYPE_LOGIN = { type: "login" };
@@ -45,6 +47,65 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
   const [canSubmitName, setCanSubmitName] = useState(false);
   const [canSubmitOtp, setCanSubmitOtp] = useState(true);
   const [canSubmitNo, setCanSubmitNo] = useState(true);
+  const [captcha, setCaptcha] = useState([]);
+  const [showToast, setShowToast] = useState(null);
+  const [disable, setDisable] = useState(false);
+  const [envsecretKey, setEnvSecretKey] = useState(process.env.REACT_APP_SECRET_KEY);
+  
+
+  const decryptCaptcha = (encryptedText) => {
+    // Split the IV and ciphertext
+    const [ivBase64, cipherText] = encryptedText.split(":");
+    const iv = CryptoJS.enc.Base64.parse(ivBase64);
+  
+    // Use the same key as used in encryption
+    const ss = CryptoJS.enc.Utf8.parse(envsecretKey); // Must match exactly
+  
+    const decrypted = CryptoJS.AES.decrypt(cipherText, ss, {
+      mode: CryptoJS.mode.CBC,
+      padding: CryptoJS.pad.Pkcs7,
+      iv: iv,
+    });
+  
+    return decrypted.toString(CryptoJS.enc.Utf8); // Plain text
+  };
+
+  useEffect(async ()=>{
+    let isMounted = true;
+    
+    fetchCaptcha();
+    
+    return()=>{
+      isMounted = false;
+    }
+  },[])
+  const fetchCaptcha = async()=>{
+    try {
+      const res = await Digit.UserService.generateCaptcha({});
+      // console.log("====",res)
+      if(res && res?.captcha?.captcha && res?.captcha?.captchaUuid) {
+        let decriptedCaptcha = decryptCaptcha(res?.captcha?.captcha);
+        // console.log("decriptedCaptcha==",decriptedCaptcha)
+        if(decriptedCaptcha) {
+          res.captcha.captcha = decriptedCaptcha
+        }
+        // console.log("captchaRes==",res)
+        let tt = [];
+        tt.push(res?.captcha)
+        // if(isMounted) {
+          setCaptcha(tt)
+        // }
+        // loadForm()
+
+      }
+      // return [res, null];
+    } catch (err) {
+      return [null, err];
+    }
+  }
+  useEffect(()=>{
+    // console.log("captcha----",captcha)
+  },[captcha])
 
   useEffect(() => {
     let errorTimeout;
@@ -98,9 +159,13 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
   const handleOtpChange = (otp) => {
     setParmas({ ...params, otp });
   };
+  const onCaptchaChange = (captchaText) => {
+    setParmas({ ...params, captcha: captchaText,  captchaUuid: captcha[0]?.captchaUuid});
+  }
 
   const handleMobileChange = (event) => {
     const { value } = event.target;
+    // console.log("handleMobileChange==",value)
     setParmas({ ...params, mobileNumber: value });
   };
 
@@ -114,6 +179,10 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
     };
     if (isUserRegistered) {
       const [res, err] = await sendOtp({ otp: { ...data, ...TYPE_LOGIN } });
+      if(err && err?.response && err?.response?.data?.error?.fields[0]?.code=="OTP.OTP_LIMIT_REACHED" ) {
+        setCanSubmitNo(true);
+        return;
+      }
       if (!err) {
         setCanSubmitNo(true);
         history.replace(`${path}/otp`, { from: getFromLocation(location.state, searchParams), role: location.state?.role });
@@ -161,10 +230,12 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
         try {
       setIsOtpValid(true);
       setCanSubmitOtp(false);
-      const { mobileNumber, otp, name } = params;
+      const { mobileNumber, otp, name, captcha, captchaUuid } = params;
       if (isUserRegistered) {
         const requestData = {
           username: mobileNumber,
+          captcha: captcha,
+          captchaUuid: captchaUuid,
           password: otp,
           tenantId: stateCode,
           userType: getUserType(),
@@ -188,6 +259,8 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
         const requestData = {
           name,
           username: mobileNumber,
+          captcha: captcha,
+          captchaUuid: captchaUuid,
           otpReference: otp,
           tenantId: stateCode,
         };
@@ -201,8 +274,11 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
         setUser({ info, ...tokens });
       }
     } catch (err) {
-      setCanSubmitOtp(true);
-      setIsOtpValid(false);
+      setShowToast(err?.response?.data?.error_description || "Invalid OTP or Captcha");
+      setTimeout(closeToast, 5000);
+      setCanSubmitOtp(false);
+      setIsOtpValid(true);
+      fetchCaptcha();
     }
   };
 
@@ -213,6 +289,7 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
       tenantId: stateCode,
       userType: getUserType(),
     };
+    fetchCaptcha();
     if (!isUserRegistered) {
       const [res, err] = await sendOtp({ otp: { ...data, ...TYPE_REGISTER } });
     } else if (isUserRegistered) {
@@ -225,8 +302,20 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
       const res = await Digit.UserService.sendOtp(data, stateCode);
       return [res, null];
     } catch (err) {
+      if(err && err?.response && err?.response?.data?.error?.fields[0]?.code=="OTP.OTP_LIMIT_REACHED" ) {
+        setShowToast(err?.response?.data?.error?.fields[0]?.message || "Maximum limit reached, please wait for 20 minutes.");
+        setTimeout(closeToast, 5000);
+        fetchCaptcha();
+      }
+      
       return [null, err];
     }
+  };
+  const onCaptchaRefresh = () =>{
+    fetchCaptcha()
+  }
+  const closeToast = () => {
+    setShowToast(null);
   };
 
   return (
@@ -269,6 +358,9 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
               otp={params.otp}
               error={isOtpValid}
               canSubmit={canSubmitOtp}
+              captchaDetails={[...captcha]}
+              onCaptchaRefresh={onCaptchaRefresh}
+              onCaptchaChange={onCaptchaChange}
               t={t}
             />
           </Route>
@@ -276,6 +368,8 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
             <SelectName config={stepItems[2]} onSelect={selectName} t={t} isDisabled={canSubmitName} />
           </Route>
           {error && <Toast error={true} label={error} onClose={() => setError(null)} />}
+          {showToast && <Toast error={true} label={t(showToast)} onClose={closeToast} />}
+
         </AppContainer>
       </Switch>
     </div>
