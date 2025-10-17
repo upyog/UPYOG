@@ -136,7 +136,7 @@ const PTRSelectAddress = ({ t, config, onSelect, formData, renewApplication }) =
             const houseNumber = applicationDetails?.applicationData?.address?.doorNo;
             const pin =  applicationDetails?.applicationData?.address?.pincode;
             
-            if (streetNames &&  houseNumber && pin) {
+            if (streetNames ||  houseNumber || pin) {
               setHouseNo(houseNumber);
               setStreetName(streetNames);
               setPincode(pin);

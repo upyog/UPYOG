@@ -577,7 +577,7 @@ const SVAdrressDetails = ({ t, config, onSelect, userType, formData, editdata, p
               label={t("SV_SAME_AS_PERMANENT_ADDRESS")}
               onChange={(e) => selectChecked(e)}
               checked={isAddressSame}
-              style={{ paddingBottom: "10px", paddingTop: "10px" }}
+              style={{ paddingBottom: "10px" }}
             />
 
             <CardLabel>{`${t("SV_HOUSE_NO")}`} <span className="astericColor">*</span></CardLabel>
