@@ -256,6 +256,7 @@ public class WaterServiceImpl implements WaterService {
 		for (WaterConnection connection : previousConnectionsList) {
 			if (!(connection.getApplicationStatus().equalsIgnoreCase(WCConstants.STATUS_APPROVED)
 					|| connection.getApplicationStatus().equalsIgnoreCase(WCConstants.DISCONNECTION_FINAL_STATE)
+		            || connection.getApplicationStatus().equalsIgnoreCase(WCConstants.STATUS_REJECTED)
 					|| connection.getApplicationStatus().equalsIgnoreCase(WCConstants.MODIFIED_FINAL_STATE))) {
 				throw new CustomException("INVALID_REQUEST",
 						"No application should be in progress while applying for disconnection");
