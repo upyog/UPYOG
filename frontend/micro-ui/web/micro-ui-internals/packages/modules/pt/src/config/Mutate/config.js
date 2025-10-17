@@ -425,7 +425,7 @@ export const newConfigMutate = [
           submitBarLabel: "PT_COMMON_NEXT",
         },
         component: "UnderStateAquire",
-        nextStep: "reason",
+        nextStep: "market-value",
         type: "component",
       },
     ],

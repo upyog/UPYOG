@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { CardLabel, DatePicker, Dropdown, Header, Modal, TextInput } from "@upyog/digit-ui-react-components";
+import { printNotice } from "../../../utils";
 
 
 const NoticeForAssesment = (props) => {
@@ -40,7 +41,7 @@ const NoticeForAssesment = (props) => {
     entryTime: props?.noticeData?.entryTime ? props?.noticeData?.entryTime : null,
     entryDate: props?.noticeData?.entryDate ? props?.noticeData?.entryDate : null
   });
-  const [tableList, setTableList] = useState([]);
+  const [tableList, setTableList] = useState(props?.noticeData?.NoticeComment?.length>0 ? props?.noticeData?.NoticeComment : []);
 
 
   const { isLoading: financialYearsLoading, data: financialYearsData } = Digit.Hooks.pt.useMDMS(
@@ -57,7 +58,6 @@ const NoticeForAssesment = (props) => {
   );
   useEffect(() => {
     if (financialYearsData && financialYearsData["egf-master"]) {
-      console.log("=====", financialYearsData["egf-master"]?.["FinancialYear"]);
       setFinancialYears(financialYearsData["egf-master"]?.["FinancialYear"]);
     }
   }, [financialYearsData]);
@@ -119,7 +119,6 @@ const NoticeForAssesment = (props) => {
     setFieldError(newErrors);
   };
   const validateForm = (data) => {
-    console.log("validateForm==",data)
     const errors = {};
 
     var exists = Object.keys(data).forEach(function(k) {
@@ -185,23 +184,7 @@ const NoticeForAssesment = (props) => {
   };
   const printDiv = (e,divId)=> {
     e.preventDefault();
-    // var printContent = document.getElementById(divId);
-    // var WinPrint = window.open('', '', 'width=900,height=650');
-    // WinPrint.document.write(printContent.innerHTML);
-    // WinPrint.document.close();
-    // WinPrint.focus();
-    // WinPrint.print();
-    // WinPrint.close();
-    var printContents = document.getElementById(divId).innerHTML;
-    var originalContents = document.body.innerHTML;
-
-    document.body.innerHTML = printContents;
-
-    window.print();
-
-    document.body.innerHTML = originalContents;
-    return false;
-    
+    printNotice(e,divId,t(props?.isCitizen ? props?.noticeData?.tenantId : tenantId));
   }
   const onSubmit = (e) => {
     e.preventDefault();
@@ -332,7 +315,7 @@ const NoticeForAssesment = (props) => {
                       </li>
                       <li style={{ listStyle: 'auto', marginLeft: '16px', padding: '6px' }}>
                         <div style={{ width: '60%', display: 'inline-flex', ...citizenStyle }}>
-                          The following information in the return appears to be incorrect / No return has been filed under Rule 17
+                          The following information in the return found to be incorrect / No return has been filed under Rule 17
                         </div>
                         
                         {!props?.isCitizen && <div style={{ width: '40%', display: 'inline' }}>
@@ -393,8 +376,8 @@ const NoticeForAssesment = (props) => {
               </div>
               <div className="card" style={{ ...citizenStyleMaxWidth }}>
                 <div className="row">
-                  <div className="" style={{display: "inline-block", width: "90%", paddingLeft: "15px"}}>
-                      <span>Date</span>
+                  <div className="" style={{display: "inline-block", width: "86%", paddingLeft: "15px"}}>
+                      <span>Date(mm/dd/yyyy)</span>
                       <div>{new Date().toLocaleDateString()}</div>
                   </div>
                   <div className="" style={{display: "inline-block", width: "10%"}}>
@@ -444,7 +427,7 @@ const NoticeForAssesment = (props) => {
         </div>
       </div>
       {showModal && <Modal
-          headerBarMain={<Heading label={t('Return appears to be incorrect')} />}
+          headerBarMain={<Heading label={t('Return found to be incorrect')} />}
           headerBarEnd={<CloseBtn onClick={closeModal} />}
           actionCancelOnSubmit={closeModal}
           hideSubmit={true}

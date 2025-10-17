@@ -15,6 +15,10 @@ module.exports = {
         exclude: /node_modules/,
         use: ["babel-loader"],
       },
+      {
+        test: /pdf\.worker\.(min\.)?js$/,
+        use: "file-loader", // Ensures the worker script is loaded separately
+      }
     ],
   },
   output: {

@@ -10,9 +10,14 @@ import SearchApp from "./SearchApp";
 import Notices from "./Notices";
 import AssessmentWorkflow from "./AssessmentWorkflow";
 import AppealWorkflow from "./AppealWorkflow"
+import SearchAppeal from "./SearchAppeal";
+import EmployeeDashboard from "./EmployeeDashboard";
+
+
 
 
 const EmployeeApp = ({ path, url, userType }) => {
+
   const { t } = useTranslation();
   const location = useLocation();
   const mobileView = innerWidth <= 640;
@@ -35,7 +40,6 @@ const EmployeeApp = ({ path, url, userType }) => {
 
   const userDetails = getUserDetails(employeeToken, employeeInfo)
   
-  console.log("userDetailsEmployeeIndex===",userDetails)
   let userRole='';
   if(userDetails && userDetails.info && userDetails.info?.roles) {
     userDetails.info.roles.map((role)=>{
@@ -254,6 +258,12 @@ const EmployeeApp = ({ path, url, userType }) => {
             )}
           />
           <PrivateRoute path={`${path}/application-search`} component={(props) => <SearchApp {...props} parentRoute={path} />} />
+          <PrivateRoute path={`${path}/appeal-search`} component={(props) => <SearchAppeal {...props} parentRoute={path} />} />
+          {
+            userRole == 'EXECUTING_OFFICER' && 
+            <PrivateRoute path={`${path}/dashboard`} component={(props) => <EmployeeDashboard {...props} parentRoute={path} userDetails={userDetails} />} />
+
+          }
         </div>
       </React.Fragment>
     </Switch>

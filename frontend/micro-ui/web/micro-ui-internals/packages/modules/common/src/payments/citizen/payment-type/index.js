@@ -22,7 +22,7 @@ import { makePayment } from "./payGov";
 
 export const SelectPaymentType = (props) => {
   const { state = {} } = useLocation();
-  console.log("SelectPaymentType==",state)
+  // console.log("SelectPaymentType==",state)
   const userInfo = Digit.UserService.getUser();
   const [showToast, setShowToast] = useState(null);
   const { tenantId: __tenantId, authorization, workflow: wrkflow , consumerCode : connectionNo } = Digit.Hooks.useQueryParams();
@@ -90,7 +90,7 @@ export const SelectPaymentType = (props) => {
     try {
       const data = await Digit.PaymentService.createCitizenReciept(billDetails?.tenantId, filterData);
       // console.log("createCitizenReciept==",data,d)
-      console.log("=========",JSON.stringify(data));
+      // console.log("=========",JSON.stringify(data));
       const redirectUrl = data?.Transaction?.redirectUrl;
       if (d?.paymentType == "AXIS") {
         window.location = redirectUrl;
@@ -108,9 +108,9 @@ export const SelectPaymentType = (props) => {
               curr[d[0]] = d[1];
               return curr;
             }, {});
-            console.log("gatewayParam==",JSON.stringify(gatewayParam))
+            // console.log("gatewayParam==",JSON.stringify(gatewayParam))
           var newForm = $("<form>", {
-            action: gatewayParam.txURL,
+            action: gatewayParam?.txURL,
             method: "POST",
             target: "_top",
           });
@@ -144,7 +144,7 @@ export const SelectPaymentType = (props) => {
 
           // var formdata = new FormData();
 
-          for (var key of orderForNDSLPaymentSite) {
+          for (let key of orderForNDSLPaymentSite) {
 
             // formdata.append(key,gatewayParam[key]);
 
@@ -156,7 +156,7 @@ export const SelectPaymentType = (props) => {
               })
             );
           }
-          console.log("newForm===",newForm)
+          // console.log("newForm===",newForm)
           $(document.body).append(newForm);
           newForm.submit();
           makePayment(gatewayParam.txURL,formdata);

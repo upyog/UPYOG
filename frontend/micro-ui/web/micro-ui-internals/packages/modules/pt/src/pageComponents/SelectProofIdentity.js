@@ -5,6 +5,7 @@ import { useLocation } from "react-router-dom";
 import Timeline from "../components/TLTimeline";
 
 const SelectProofIdentity = ({ t, config, onSelect, userType, formData, ownerIndex = 0, addNewOwner }) => {
+const Self_Declaration = "https://mnptapp-terraform.s3.ap-south-1.amazonaws.com/images/Self_Declaration.pdf"
   const { pathname: url } = useLocation();
   // const editScreen = url.includes("/modify-application/");
   const isMutation = url.includes("property-mutation");
@@ -83,13 +84,14 @@ const SelectProofIdentity = ({ t, config, onSelect, userType, formData, ownerInd
         else ownerDetails.documents["proofIdentity"] = { documentType: dropdownValue, fileStoreId };
       } else {
         if (!isMutation) {
-          ownerDetails["documents"] = [];
+          ownerDetails["documents"] = {};
           ownerDetails.documents["proofIdentity"] = fileDetails;
         } else {
           ownerDetails["documents"] = {};
           ownerDetails.documents["proofIdentity"] = { documentType: dropdownValue, fileStoreId };
         }
       }
+      // console.log("ownerDetails==",ownerDetails)
 
       onSelect(config.key, isMutation ? [ownerDetails] : ownerDetails, "", index);
     }
@@ -148,8 +150,9 @@ const SelectProofIdentity = ({ t, config, onSelect, userType, formData, ownerInd
         onAdd={onAdd}
         isMultipleAllow={formData?.ownershipCategory?.value == "INDIVIDUAL.MULTIPLEOWNERS"}
       >
-        <CardLabelDesc>{t(`PT_UPLOAD_RESTRICTIONS_TYPES`)}</CardLabelDesc>
-        <CardLabelDesc>{t(`PT_UPLOAD_RESTRICTIONS_SIZE`)}</CardLabelDesc>
+        <CardLabelDesc style={{fontSize: "12px", fontFamily: "sans-serif", fontStyle:"italic", marginBottom: "0px"}}>{t(`PT_UPLOAD_PATTA_JAMABANDI_DAG_CHITHA_TYPES`)}</CardLabelDesc>
+        <span style={{fontSize: "12px", fontFamily: "sans-serif", fontStyle:"italic", marginBottom: "5px"}}>Download the self declaration <a href={Self_Declaration} download={'Self_Declaration.pdf'} target="_blank" style={{fontWeight: "600", color: "blue", cursor: "pointer", textDecoration: "underline"}} >here</a> </span>
+        <CardLabelDesc style={{fontSize: "12px", fontFamily: "sans-serif", fontStyle:"italic"}}>{t(`PT_UPLOAD_RESTRICTIONS_SIZE`)}</CardLabelDesc>
         <CardLabel>{`${t("PT_CATEGORY_DOCUMENT_TYPE")}`}</CardLabel>
         <Dropdown
           t={t}
@@ -170,6 +173,7 @@ const SelectProofIdentity = ({ t, config, onSelect, userType, formData, ownerInd
           }}
           message={uploadedFile ? `1 ${t(`PT_ACTION_FILEUPLOADED`)}` : t(`PT_ACTION_NO_FILEUPLOADED`)}
           error={error}
+          hasFile={uploadedFile ? true : false}
         />
         {error ? <div style={{ height: "20px", width: "100%", fontSize: "20px", color: "red", marginTop: "5px" }}>{error}</div> : ""}
         <div style={{ disabled: "true", height: "20px", width: "100%" }}></div>

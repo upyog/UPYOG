@@ -401,7 +401,7 @@ const MutationApplicationDetails = ({ propertyId, acknowledgementIds, workflowDe
                       </CardSubHeader>
                       <StatusTable>
                         <Row label={t("PT_COMMON_APPLICANT_NAME_LABEL")} text={owner?.name || t("CS_NA")} />
-                        <Row label={t("Guardian Name")} text={owner?.fatherOrHusbandName || t("CS_NA")} />   
+                        <Row label={t("Name of the contact person")} text={owner?.fatherOrHusbandName || t("CS_NA")} />   
                         <Row label={t("PT_FORM3_MOBILE_NUMBER")} text={owner?.mobileNumber || t("CS_NA")} />
                         <Row label={t("PT_MUTATION_AUTHORISED_EMAIL")} text={owner?.emailId || t("CS_NA")} />
                         <Row label={t("PT_MUTATION_TRANSFEROR_SPECIAL_CATEGORY")} text={ owner?.ownerType.toLowerCase() || t("CS_NA")} />

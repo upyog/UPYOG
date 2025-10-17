@@ -31,6 +31,7 @@ const LocationSelection = () => {
       optionsKey: "i18nKey",
       additionalWrapperClass: "reverse-radio-selection-wrapper",
       onSelect: selectCity,
+      innerStyles: {borderBottom: "1px solid #d6d6d6", paddingBottom: "5px"},
       selectedOption: selectedCity,
     };
   }, [cities, t, selectedCity]);

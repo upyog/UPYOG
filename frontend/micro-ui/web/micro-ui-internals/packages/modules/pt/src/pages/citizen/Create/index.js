@@ -12,7 +12,6 @@ const CreateProperty = ({ parentRoute }) => {
   const { pathname } = useLocation();
   const  location = useLocation();
   const history = useHistory();
-  console.log("history==",history,location)
   const stateId = Digit.ULBService.getStateId();
   let config = [];
   const [amalgamationState, setAmalgamationState] = useState(location?.state ? location.state : null);
@@ -24,7 +23,7 @@ const CreateProperty = ({ parentRoute }) => {
 
   let { data: commonFields, isLoading } = Digit.Hooks.pt.useMDMS(stateId, "PropertyTax", "CommonFieldsConfig");
   const goNext = (skipStep, index, isAddMultiple, key) => {
-    let currentPath = pathname.split("/").pop(),
+     let currentPath = pathname.split("/").pop(),
       lastchar = currentPath.charAt(currentPath.length - 1),
       isMultiple = false,
       nextPage;
@@ -44,7 +43,6 @@ const CreateProperty = ({ parentRoute }) => {
     if (!isNaN(lastchar)) {
       isMultiple = true;
     }
-    console.log("currentPath==",currentPath);
     let { nextStep = {} } = config.find((routeObj) => routeObj.route === currentPath);
     if (typeof nextStep == "object" && nextStep != null && isMultiple != false) {
       if (nextStep[sessionStorage.getItem("ownershipCategory")]) {
@@ -107,7 +105,7 @@ const CreateProperty = ({ parentRoute }) => {
     if (!isNaN(nextStep.split("/").pop())) {
       nextPage = `${match.path}/${nextStep}`;
     } else {
-      nextPage = isMultiple && nextStep !== "pincode" ? `${match.path}/${nextStep}/${index}` : `${match.path}/${nextStep}`;
+      nextPage = isMultiple && nextStep !== "pincode" && nextStep !== "usageCategory" ? `${match.path}/${nextStep}/${index}` : `${match.path}/${nextStep}`;
     }
 
     redirectWithHistory(nextPage);
@@ -175,7 +173,6 @@ const CreateProperty = ({ parentRoute }) => {
       
       {config.map((routeObj, index) => {
         const { component, texts, inputs, key } = routeObj;
-        // console.log("routeObj==",routeObj)
         const Component = typeof component === "string" ? Digit.ComponentRegistryService.getComponent(component) : component;
         return (
           <Route path={`${match.path}/${routeObj.route}`} key={index}>

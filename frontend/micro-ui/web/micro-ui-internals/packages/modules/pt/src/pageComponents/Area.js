@@ -23,7 +23,11 @@ const Area = ({ t, config, onSelect, value, userType, formData, setError: setFor
   const presentInModifyApplication = pathname.includes("modify");
 
   function setPropertyfloorarea(e) {
-    setfloorarea(e.target.value);
+    let value = e.target.value;
+
+  // Allow only numbers with up to 2 decimals
+  value = value.replace(/^(\d+(\.\d{0,2})?).*$/, "$1");
+    setfloorarea(value);
     setunitareaerror(null);
     setareanotzeroerror(null);
     if (formData?.PropertyType?.code === "BUILTUP.INDEPENDENTPROPERTY" && parseInt(formData?.units[index]?.builtUpArea) < e.target.value) {
@@ -32,10 +36,13 @@ const Area = ({ t, config, onSelect, value, userType, formData, setError: setFor
     if (formData?.PropertyType?.code === "BUILTUP.SHAREDPROPERTY" && parseInt(formData?.floordetails?.builtUpArea) < e.target.value) {
       setunitareaerror("PT_SELFOCCUPIED_AREA_LESS_THAN_BUILTUP");
     }
-    if (parseInt(e.target.value) == 0) {
+    if (parseInt(value) == 0) {
       setareanotzeroerror("PT_AREA_NOT_0_MSG");
     }
   }
+  // const onBlurArea = (e) => {
+  //   setfloorarea((prev) => (prev ? parseFloat(prev).toFixed(2) : ""));
+  // }
 
   const goNext = () => {
     if (!isNaN(index)) {
@@ -153,7 +160,9 @@ const Area = ({ t, config, onSelect, value, userType, formData, setError: setFor
         name="floorarea"
         value={floorarea}
         onChange={setPropertyfloorarea}
-        {...(validation = { pattern: "^([0-9]){0,8}$", type: "number", title: t("PT_PLOT_SIZE_ERROR_MESSAGE") })}
+        step="0.01"
+        // onBlur={onBlurArea}
+        {...(validation = { pattern: "^\\d+(\\.\\d{1,2})?$", type: "number", title: t("PT_PLOT_SIZE_ERROR_MESSAGE") })}
       />
     </FormStep>
     </React.Fragment>

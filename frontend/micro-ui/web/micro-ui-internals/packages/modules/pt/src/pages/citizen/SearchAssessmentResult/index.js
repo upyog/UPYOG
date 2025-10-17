@@ -9,7 +9,6 @@ const CitizenSearchAssessmentResults = (props) => {
   const { t } = useTranslation();
   const { path } = useRouteMatch();
   let config = propConfig ? [propConfig] : defaultConfig;
-  console.log("config===",config)
   const params = useMemo(() => {
     return config?.map?.((step) => {
       const texts = {};
@@ -20,7 +19,6 @@ const CitizenSearchAssessmentResults = (props) => {
     });
   }, [config]);
 
-  console.log("params===",params)
 
   return (
     <Switch>

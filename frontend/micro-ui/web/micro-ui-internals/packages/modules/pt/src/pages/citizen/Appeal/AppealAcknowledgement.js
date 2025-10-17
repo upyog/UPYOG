@@ -63,7 +63,7 @@ const AppealAcknowledgement = (props)=>{
         {/* {props.isSuccess && <Link to={`/digit-ui/citizen/feedback?redirectedFrom=${match.path}&propertyId=${props.isSuccess ? props?.data?.Appeals[0]?.propertyId : ""}&acknowldgementNumber=${props.isSuccess ? props?.data?.Appeals[0]?.acknowldgementNumber : ""}&creationReason=${props.isSuccess ? props?.data?.Appeals[0]?.creationReason : ""}&tenantId=${props.isSuccess ? props?.data?.Appeals[0]?.tenantId : ""}&locality=${props.isSuccess ? props?.data?.Appeals[0]?.address?.locality?.code : ""}`}>
             <SubmitBar label={t("CS_REVIEW_AND_FEEDBACK")}/>
         </Link>} */}
-        {props.isSuccess && <SubmitBar label={t("PT_DOWNLOAD_ACK_FORM")} onSubmit={handleDownloadPdf} />}
+        {/* {props.isSuccess && <SubmitBar label={t("PT_DOWNLOAD_ACK_FORM")} onSubmit={handleDownloadPdf} />} */}
         <Link to={`/digit-ui/citizen`}>
             <LinkButton label={t("CORE_COMMON_GO_TO_HOME")} />
         </Link>

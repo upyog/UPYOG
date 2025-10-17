@@ -31,7 +31,6 @@ const DesktopInbox = ({ tableConfig, filterComponent, ...props }) => {
 
   const userDetails = getUserDetails(employeeToken, employeeInfo)
   
-  console.log("userDetailsPTCard===",userDetails)
   let userRole='';
   if(userDetails && userDetails.info && userDetails.info?.roles) {
     userDetails.info.roles.map((role)=>{

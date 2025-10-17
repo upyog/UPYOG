@@ -46,7 +46,8 @@ function PropertyDocuments({ documents, svgStyles = {}, isSendBackFlow=false }) 
           {document?.title ? <CardSubHeader style={checkLocation ? { marginTop: "32px", marginBottom: "18px", color: "#0B0C0C, 100%", fontSize: "16px", lineHeight: "30px" } : { marginTop: "32px", marginBottom: "8px", color: "#505A5F", fontSize: "16px" }}>{t(document?.title)}</CardSubHeader>: null}
           <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "flex-start" }}>
             {document?.values && document?.values.length>0 ? document?.values?.map((value, index) => (
-              ( value.fileStoreId ? (<a target="_" href={pdfFiles[value.fileStoreId]?.split(",")[0]} style={{ minWidth: "80px", marginRight: "10px", maxWidth: "100px", height: "auto" }} key={index}>
+              // style={{ minWidth: "80px", marginRight: "10px", maxWidth: "100px", height: "auto" }}
+              ( value.fileStoreId ? (<a target="_" href={pdfFiles[value.fileStoreId]?.split(",")[0]} style={{ marginRight: "10px", height: "auto" }} key={index}>
                 <div style={{ display: "flex", justifyContent: "center" }}>
                   <PDFSvg />
                 </div>
