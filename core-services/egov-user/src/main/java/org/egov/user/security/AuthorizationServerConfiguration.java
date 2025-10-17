@@ -1,6 +1,6 @@
 package org.egov.user.security;
 
-import org.egov.user.security.oauth2.custom.CustomTokenEnhancer;
+import org.egov.user.security.oauth.CustomTokenEnhancer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
