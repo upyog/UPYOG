@@ -1,11 +1,15 @@
 package org.egov.wf.web.controllers;
 
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+import org.egov.common.contract.request.Role;
+import org.egov.common.contract.request.User;
 import org.egov.wf.service.WorkflowService;
 import org.egov.wf.util.ResponseInfoFactory;
 import org.egov.wf.web.models.ProcessInstance;
@@ -15,6 +19,8 @@ import org.egov.wf.web.models.ProcessInstanceSearchCriteria;
 import org.egov.wf.web.models.RequestInfoWrapper;
 import org.egov.wf.web.models.StatusCountRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -22,6 +28,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -38,15 +45,24 @@ public class WorkflowController {
     private final WorkflowService workflowService;
 
     private final ResponseInfoFactory responseInfoFactory;
+    
+    @Autowired
+    private final RestTemplate restTemplate;
 
+    @Value("${egov.user.host}")
+	private String authServiceHost;
+    
+    @Value("${egov.user.details.endpoint}")
+	private String authServiceUri;
 
     @Autowired
     public WorkflowController(ObjectMapper objectMapper, HttpServletRequest request,
-                              WorkflowService workflowService, ResponseInfoFactory responseInfoFactory) {
+                              WorkflowService workflowService, ResponseInfoFactory responseInfoFactory,RestTemplate restTemplate) {
         this.objectMapper = objectMapper;
         this.request = request;
         this.workflowService = workflowService;
         this.responseInfoFactory = responseInfoFactory;
+        this.restTemplate=restTemplate;
     }
 
 
@@ -64,8 +80,37 @@ public class WorkflowController {
 
 
         @RequestMapping(value="/process/_search", method = RequestMethod.POST)
-        public ResponseEntity<ProcessInstanceResponse> search(@Valid @RequestBody RequestInfoWrapper requestInfoWrapper,
+        public ResponseEntity<ProcessInstanceResponse> search( @RequestBody RequestInfoWrapper requestInfoWrapper,
                                                               @Valid @ModelAttribute ProcessInstanceSearchCriteria criteria) {
+        	if(null==requestInfoWrapper.getRequestInfo().getUserInfo()) {
+        		String authToken=requestInfoWrapper.getRequestInfo().getAuthToken();
+        		String authURL = String.format("%s%s", authServiceHost, authServiceUri);
+        		final HttpHeaders headers = new HttpHeaders();
+        		headers.add("access_token", authToken);
+        		User user=restTemplate.postForObject(authURL, headers, User.class);
+        		System.out.println(user);
+        		org.egov.common.contract.request.User u = new org.egov.common.contract.request.User();
+        		u.setEmailId(user.getEmailId());
+        		u.setId(user.getId());
+        		u.setMobileNumber(user.getMobileNumber());
+        		u.setName(user.getName());
+        		List<Role> r = new ArrayList<>();
+        		for(Role rl : user.getRoles()) {
+        			Role rln = new Role();
+        			rln.setCode(rl.getCode());
+        			//rln.setId(rl.getCode());
+        		
+        			rln.setName(rl.getName());
+        			rln.setTenantId(rl.getTenantId());
+        			r.add(rln);
+        		}
+        		u.setRoles(r);
+        		u.setType(user.getType());
+        		requestInfoWrapper.getRequestInfo().setUserInfo(u);
+        		String userid=user.getId().toString();
+        		List<String> userids = new ArrayList<String>(Arrays.asList(userid));
+        		
+        	}
         List<ProcessInstance> processInstances = workflowService.search(requestInfoWrapper.getRequestInfo(),criteria);
         Integer count = workflowService.getUserBasedProcessInstancesCount(requestInfoWrapper.getRequestInfo(),criteria);
             ProcessInstanceResponse response  = ProcessInstanceResponse.builder().processInstances(processInstances).totalCount(count).build();

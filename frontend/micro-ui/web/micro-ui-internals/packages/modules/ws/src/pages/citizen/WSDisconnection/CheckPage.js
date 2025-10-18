@@ -1,7 +1,7 @@
 import {
     Card, CardHeader, CardSubHeader, CardText,
     CitizenInfoLabel, LinkButton, Row, StatusTable, SubmitBar, EditIcon, Header, CardSectionHeader, Loader
-  } from "@egovernments/digit-ui-react-components";
+  } from "@upyog/digit-ui-react-components";
   import React, { useState } from "react";
   import { useTranslation } from "react-i18next";
   import { useHistory, useRouteMatch, Link } from "react-router-dom";
@@ -125,7 +125,7 @@ import { convertDateToEpoch, convertEpochToDate, createPayloadOfWSDisconnection,
 
   return(
     <React.Fragment>
-    <Header styles={{fontSize:"32px"}}>{t("WS_COMMON_SUMMARY")}</Header>
+    <Header styles={{fontSize:"24px"}}>{t("WS_COMMON_SUMMARY")}</Header>
     <DisconnectTimeline currentStep={3} />
   
     <Card style={{paddingRight:"16px"}}>

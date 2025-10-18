@@ -1,4 +1,4 @@
-import { CardLabel, CardLabelDesc, Dropdown, FormStep, UploadFile } from "@egovernments/digit-ui-react-components";
+import { CardLabel, CardLabelDesc, Dropdown, FormStep, UploadFile } from "@upyog/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { stringReplaceAll } from "../utils";
@@ -123,6 +123,7 @@ const SelectSpecialProofIdentity = ({ t, config, onSelect, userType, formData, o
           }}
           message={uploadedFile ? `1 ${t(`PT_ACTION_FILEUPLOADED`)}` : t(`PT_ACTION_NO_FILEUPLOADED`)}
           error={error}
+          hasFile={uploadedFile ? true : false}
         />
         {error ? <div style={{ height: "20px", width: "100%", fontSize: "20px", color: "red", marginTop: "5px" }}>{error}</div> : ""}
         <div style={{ disabled: "true", height: "20px", width: "100%" }}></div>

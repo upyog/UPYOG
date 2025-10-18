@@ -11,7 +11,8 @@ body {
 
 .navbar {
   @apply text-white bg-secondary p-md w-full mb-md;
-  background: linear-gradient(to right, #feeee7, #a82227,#feeee7) !important;
+  background: #0f4f9e !important;
+  
   img {
     height: 24px;
   }
@@ -92,7 +93,6 @@ body {
 
 @screen dt {
   .employee-app-container {
-    @apply w-full;
   }
 
   .app-container {
@@ -100,6 +100,7 @@ body {
     form {
       .card {
         max-width: 960px;
+        background: #ffffff9e;
         h2 {
           text-align: left;
         }

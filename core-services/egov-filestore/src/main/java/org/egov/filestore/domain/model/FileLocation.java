@@ -18,4 +18,5 @@ public class FileLocation {
     private String tenantId;
     private String fileName;
     private String fileSource;
+    private String alfrescoId;
 }
