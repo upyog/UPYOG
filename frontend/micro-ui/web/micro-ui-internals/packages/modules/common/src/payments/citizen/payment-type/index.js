@@ -25,6 +25,7 @@ export const SelectPaymentType = (props) => {
   // console.log("SelectPaymentType==",state)
   const userInfo = Digit.UserService.getUser();
   const [showToast, setShowToast] = useState(null);
+  const [isSubmit, setIsSubmit] = useState(false)
   const { tenantId: __tenantId, authorization, workflow: wrkflow , consumerCode : connectionNo } = Digit.Hooks.useQueryParams();
   const paymentAmount = state?.paymentAmount;
   const { t } = useTranslation();
@@ -56,6 +57,7 @@ export const SelectPaymentType = (props) => {
   const billDetails = paymentdetails?.Bill ? paymentdetails?.Bill[0] : {};
 
   const onSubmit = async (d) => {
+    setIsSubmit(true)
     const filterData = {
       Transaction: {
         tenantId: billDetails?.tenantId,
@@ -206,7 +208,7 @@ export const SelectPaymentType = (props) => {
               render={(props) => <RadioButtons selectedOption={props.value} options={menu} onSelect={props.onChange} />}
             />
           )}
-          {!showToast && <SubmitBar label={t("PAYMENT_CS_BUTTON_LABEL")} submit={true} />}
+          {!showToast && <SubmitBar label={t("PAYMENT_CS_BUTTON_LABEL")} submit={true} disabled={isSubmit} />}
         </Card>
       </form>
       <InfoBanner label={t("CS_COMMON_INFO")} text={t("CS_PAYMENT_REDIRECT_NOTICE")} />
