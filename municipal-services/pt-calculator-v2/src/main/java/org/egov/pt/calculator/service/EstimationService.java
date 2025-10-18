@@ -1111,6 +1111,7 @@ public class EstimationService {
 		BigDecimal complementary_rebate=BigDecimal.ZERO;
 		BigDecimal taxAfterVacExemption=BigDecimal.ZERO;
 		BigDecimal totalAmount=BigDecimal.ZERO;
+		BigDecimal calculatedPercentage=BigDecimal.ZERO;
 		
 		//Incase of Exemption and Heritage
 		if(units.size()==CALCULATION_1)
@@ -1138,18 +1139,21 @@ public class EstimationService {
 				modeofpayment_rebate=taxAfterVacExemption.multiply(new BigDecimal(CALCULATION_3).divide(new BigDecimal(CALCULATION_100)).negate());
 				modeofpayment_rebate=modeofpayment_rebate.setScale(CALCULATION_2,CALCULATION_2);
 				updatedtaxammount=taxAfterVacExemption.add(modeofpayment_rebate);
+				calculatedPercentage=new BigDecimal(CALCULATION_3);
 				break;
 
 			case HALFYEARLY:
 				modeofpayment_rebate=taxAfterVacExemption.multiply(new BigDecimal(CALCULATION_6).divide(new BigDecimal(CALCULATION_100)).negate());
 				modeofpayment_rebate=modeofpayment_rebate.setScale(CALCULATION_2,CALCULATION_2);
 				updatedtaxammount=taxAfterVacExemption.add(modeofpayment_rebate);
+				calculatedPercentage=new BigDecimal(CALCULATION_6);
 				break;
 
 			case YEARLY:
 				modeofpayment_rebate=taxAfterVacExemption.multiply(new BigDecimal(CALCULATION_10).divide(new BigDecimal(CALCULATION_100)).negate());
 				modeofpayment_rebate=modeofpayment_rebate.setScale(CALCULATION_2,CALCULATION_2);
 				updatedtaxammount=taxAfterVacExemption.add(modeofpayment_rebate);
+				calculatedPercentage=new BigDecimal(CALCULATION_10);
 				break;
 
 			default:
@@ -1171,8 +1175,8 @@ public class EstimationService {
 			 * 
 			 * });
 			 */
-			estimates.add(TaxHeadEstimate.builder().taxHeadCode(PT_MODEOFPAYMENT_REBATE).category(Category.REBATE).estimateAmount( modeofpayment_rebate).build());
-			estimates.add(TaxHeadEstimate.builder().taxHeadCode(PT_COMPLEMENTARY_REBATE).category(Category.REBATE).estimateAmount( complementary_rebate).build());
+			estimates.add(TaxHeadEstimate.builder().taxHeadCode(PT_MODEOFPAYMENT_REBATE).category(Category.REBATE).estimateAmount( modeofpayment_rebate).calculatedPercentage(calculatedPercentage).build());
+			estimates.add(TaxHeadEstimate.builder().taxHeadCode(PT_COMPLEMENTARY_REBATE).category(Category.REBATE).estimateAmount( complementary_rebate).calculatedPercentage(new BigDecimal(CALCULATION_92)).build());
 
 		}
 		//Incase of Exemption and Heritage
