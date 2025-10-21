@@ -70,7 +70,7 @@ export const CndApp = ({ stateCode, modules, appTenants, logoUrl, initData }) =>
         <CitizenApp {...commonProps} />
       </Route>
       <Route>
-        <Redirect to="/cnd-ui/citizen/cnd-home" />
+        <Redirect to="/upyog-ui/citizen" />
       </Route>
     </Switch>
   );
