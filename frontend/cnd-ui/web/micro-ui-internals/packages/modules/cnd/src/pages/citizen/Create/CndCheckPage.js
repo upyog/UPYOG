@@ -3,7 +3,7 @@ import {Card,CardHeader,CardSubHeader,CheckBox,LinkButton,Row,StatusTable,Submit
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
-import { checkForNA } from "../../../utils";
+import { checkForNA, CNDDocumnetPreview, getOrderDocuments } from "../../../utils";
 import ApplicationTable from "../../../components/inbox/ApplicationTable";
 import { cndStyles } from "../../../utils/cndStyles";
 
@@ -43,6 +43,35 @@ In Parent Component,  we are passing the data as a props coming through params (
       wasteType: items?.value || "-",
       quantity: "0",
     }));
+
+    const wasteTypeDocs = [];
+
+    if (wasteType?.siteMediaPhoto) {
+      wasteTypeDocs.push({
+        documentType: "CND_SITE_MEDIA",
+        fileStoreId: wasteType.siteMediaPhoto,
+        module: "CND",
+      });
+    }
+
+    if (wasteType?.siteStack) {
+      wasteTypeDocs.push({
+        documentType: "CND_SITE_STACK",
+        fileStoreId: wasteType.siteStack,
+        module: "CND",
+      });
+    }
+
+    // Step 3: Combine all documents
+    const allDocs = [...wasteTypeDocs];
+
+    // Step 4: Fetch PDF details only if documents exist
+    const { data: pdfDetails } = Digit.Hooks.useDocumentSearch(allDocs, {
+      enabled: allDocs.length > 0
+    });
+
+    // Step 5: Extract only CND PDFs
+    const applicationDocs = pdfDetails?.pdfFiles?.filter((pdf) => pdf?.module === "CND") || [];
 
     return (
       <React.Fragment>
@@ -145,6 +174,10 @@ In Parent Component,  we are passing the data as a props coming through params (
               text={`${t(checkForNA(address?.streetName|| addressDetails?.selectedAddressStatement?.streetName))}`}
               />
           </StatusTable>
+
+           <CardSubHeader>{t("CND_DOC_DETAILS")}</CardSubHeader>
+          {<CNDDocumnetPreview documents={getOrderDocuments(applicationDocs)} svgStyles={{}} isSendBackFlow={false} titleStyles={{ fontSize: "18px", "fontWeight": 700, marginBottom: "10px" }} />}
+          <br></br>
          
             
             

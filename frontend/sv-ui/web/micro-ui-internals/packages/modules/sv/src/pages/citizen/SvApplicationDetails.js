@@ -221,9 +221,9 @@ const SvApplicationDetails = () => {
               : null}
           </StatusTable>
 
+          <br></br>
           <CardSubHeader>{t("SV_DOCUMENT_DETAILS_LABEL")}</CardSubHeader>
           {<SVDocumnetPreview documents={getOrderDocuments(applicationDocs)} svgStyles={{}} isSendBackFlow={false} titleStyles={{ fontSize: "18px", "fontWeight": 700, marginBottom: "10px" }} />}
-          <br></br>
 
           <ViewTimeline application={application} id={application?.applicationNo} userType={"citizen"} />
           {showToast && (

@@ -7,6 +7,7 @@ import CNDApplicationTimeLine from "../../components/CNDApplicationTimeLine";
 import ApplicationTable from "../../components/inbox/ApplicationTable";
 import cndAcknowledgementData from "../../utils/cndAcknowledgementData";
 import { cndStyles } from "../../utils/cndStyles";
+import { CNDDocumnetPreview, getOrderDocuments } from "../../utils";
 
 
 /**
@@ -37,6 +38,7 @@ const CndApplicationDetails = () => {
   sessionStorage.setItem("cnd-application", JSON.stringify(application));
   const [loading, setLoading]=useState(false);
 
+
   const fetchBillData=async()=>{
     setLoading(true);
     const result= await Digit.PaymentService.fetchBill(tenantId,{ businessService: "cnd-service", consumerCode: applicationNumber });
@@ -56,6 +58,17 @@ const CndApplicationDetails = () => {
     },
     { enabled: applicationNumber ? true : false }
   );
+
+   const getApplicationDocs = cndData?.documentDetails?.map((doc) => ({
+    ...doc,
+    module: "CND",
+  })) || [];
+
+  // Step 2: Fetch PDF details only if documents exist
+  const { data: pdfDetails } = Digit.Hooks.useDocumentSearch(getApplicationDocs, {enabled: getApplicationDocs.length > 0});
+
+  // Step 3: Extract only StreetVending PDFs
+  const applicationDocs = pdfDetails?.pdfFiles?.filter((pdf) => pdf?.module === "CND") || [];
 
   if (!cndData.workflow) {
     let workflow = {
@@ -233,6 +246,19 @@ const operationRows = cndData.wasteTypeDetails.map((items, index) => ({
               totalRecords={operationRows.length}
             />
           </StatusTable>
+
+          {cndData?.documentDetails && cndData?.documentDetails.length > 0 && (
+            <React.Fragment>
+              <br />
+              <CardSubHeader>{t("CND_DOC_DETAILS")}</CardSubHeader>
+              <CNDDocumnetPreview 
+                documents={getOrderDocuments(applicationDocs)} 
+                svgStyles={{}} 
+                isSendBackFlow={false} 
+                titleStyles={{ fontSize: "18px", fontWeight: 700, marginBottom: "10px" }} 
+              />
+            </React.Fragment>
+          )}
 
           <CNDApplicationTimeLine application={application} id={application?.applicationNumber} userType={"citizen"} />
           {showToast && (

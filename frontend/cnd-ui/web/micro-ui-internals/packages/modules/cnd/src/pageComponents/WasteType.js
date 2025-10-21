@@ -101,35 +101,50 @@ const WasteType = ({ t, config, onSelect, formData }) => {
   }, [wasteDetails, isEmployee]);
 
   const handleFileUpload = async (e, fieldName) => {
-    const file = e.target.files[0];
-    
-    if (!file) return;
-    
-    if (file.size >= 5242880) {
-      setError(t("CS_MAXIMUM_UPLOAD_SIZE_EXCEEDED"));
-      return;
-    }
-    
-    // Set the appropriate loading state based on field name
-    if (fieldName === "siteMediaPhoto") {
-      setIsUploadingMedia(true);
-    } else if (fieldName === "siteStack") {
-      setIsUploadingStack(true);
-    }
-    
-    setFileUploads((prev) => ({ ...prev, [fieldName]: null }));
-    
-    try {
-      const response = await Digit.UploadServices.Filestorage("CND", file, Digit.ULBService.getStateId());
-      if (response?.data?.files?.length > 0) {
-        setFileUploads((prev) => ({ ...prev, [fieldName]: response.data.files[0].fileStoreId }));
+  const file = e.target.files[0];
+  if (!file) return;
+
+  // 5MB limit
+  if (file.size >= 5242880) {
+    setError(t("CS_MAXIMUM_UPLOAD_SIZE_EXCEEDED"));
+    return;
+  }
+
+  // Reset previous error
+  setError(null);
+
+  // Start loader based on field name
+  if (fieldName === "siteMediaPhoto") {
+    setIsUploadingMedia(true);
+  } else if (fieldName === "siteStack") {
+    setIsUploadingStack(true);
+  }
+
+  // Temporarily clear any previous file so loader shows immediately
+  setFileUploads((prev) => ({ ...prev, [fieldName]: null }));
+
+  try {
+    // Wait for upload to complete
+    const response = await Digit.UploadServices.Filestorage(
+      "CND",
+      file,
+      Digit.ULBService.getStateId()
+    );
+
+    if (response?.data?.files?.length > 0) {
+      const fileStoreId = response.data.files[0].fileStoreId;
+
+      // ✅ Update the state only after upload completes
+      setFileUploads((prev) => ({ ...prev, [fieldName]: fileStoreId }));
+
       } else {
         setError(t("CS_FILE_UPLOAD_ERROR"));
       }
-    } catch {
+    } catch (err) {
+      console.error("Upload failed:", err);
       setError(t("CS_FILE_UPLOAD_ERROR"));
     } finally {
-      // Reset the appropriate loading state
+      // Stop loader for the right field
       if (fieldName === "siteMediaPhoto") {
         setIsUploadingMedia(false);
       } else if (fieldName === "siteStack") {
@@ -137,6 +152,7 @@ const WasteType = ({ t, config, onSelect, formData }) => {
       }
     }
   };
+
 
   const { data: waste_Material_Type } = Digit.Hooks.useEnabledMDMS(Digit.ULBService.getStateId(), CND_VARIABLES.MDMS_MASTER, [{ name: "WasteType" }], {
     select: (data) => {
@@ -252,7 +268,7 @@ const WasteType = ({ t, config, onSelect, formData }) => {
   
   return (
     <React.Fragment>
-      <FormStep config={config} onSelect={goNext} t={t} isDisabled={!wasteMaterialType || !pickupDate}>
+      <FormStep config={config} onSelect={goNext} t={t} isDisabled={!wasteMaterialType?.length || !pickupDate || !wasteQuantity}>
         <div>
           {error && <div className="error-message">{error}</div>}
           
@@ -335,6 +351,7 @@ const WasteType = ({ t, config, onSelect, formData }) => {
                   : cndStyles.wasteQuantityCitizen),
               }}>
             <UploadFile
+              key={isUploadingMedia ? "uploading" : "ready"} // ensures clean rerender
               onUpload={(e) => handleFileUpload(e, "siteMediaPhoto")}
               onDelete={() => setFileUploads((prev) => ({ ...prev, siteMediaPhoto: null }))}
               id={"CND"}
@@ -351,7 +368,7 @@ const WasteType = ({ t, config, onSelect, formData }) => {
                 )
               }
               accept=".jpeg, .jpg, .png"
-              style={{inputStyles}}
+              style={{ inputStyles }}
             />
           </div>
           
@@ -364,24 +381,25 @@ const WasteType = ({ t, config, onSelect, formData }) => {
               }}
             >
             <UploadFile
-              onUpload={(e) => handleFileUpload(e, "siteStack")}
-              onDelete={() => setFileUploads((prev) => ({ ...prev, siteStack: null }))}
-              id={"CND"}
-              message={
-                isUploadingStack ? (
-                  <div style={cndStyles.loaderAlignment}>
-                    <LoadingSpinner />
-                    <span>Uploading...</span>
-                  </div>
-                ) : fileUploads.siteStack ? (
-                  "1 File Uploaded"
-                ) : (
-                  "No File Uploaded"
-                )
-              }
-              accept=".jpeg, .jpg, .png"
-              style={{inputStyles}}
-            />
+            key={isUploadingStack ? "uploading" : "ready"}
+            onUpload={(e) => handleFileUpload(e, "siteStack")}
+            onDelete={() => setFileUploads((prev) => ({ ...prev, siteStack: null }))}
+            id={"CND"}
+            message={
+              isUploadingStack ? (
+                <div style={cndStyles.loaderAlignment}>
+                  <LoadingSpinner />
+                  <span>Uploading...</span>
+                </div>
+              ) : fileUploads.siteStack ? (
+                "1 File Uploaded"
+              ) : (
+                "No File Uploaded"
+              )
+            }
+            accept=".jpeg, .jpg, .png"
+            style={{ inputStyles }}
+          />
           </div>
           </React.Fragment>)}
         </div>
