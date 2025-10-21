@@ -3,9 +3,11 @@ import { useTranslation } from "react-i18next";
 import { Header } from "@upyog/digit-ui-react-components";
 //import RegisryInbox from "../../../components/RegistryInbox";
 import VendorInbox from "../../../components/VendorInbox";
+import { useHistory } from "react-router-dom";
 
 const SearchVendor = () => {
   const { t } = useTranslation();
+  const history = useHistory();
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const [searchParams, setSearchParams] = useState({});
   const [sortParams, setSortParams] = useState([{ id: "createdTime", desc: true }]);
@@ -17,6 +19,16 @@ const SearchVendor = () => {
   const [tableData, setTableData] = useState([]);
 
   const userInfo = Digit.UserService.getUser();
+
+ //Read URL parameter to set the active tab when page loads
+  useEffect(() => {
+  const urlParams = new URLSearchParams(window.location.search);
+  const selectedTab = urlParams.get('selectedTabs');
+  if (selectedTab && ['VENDOR', 'VEHICLE', 'DRIVER'].includes(selectedTab)) {
+    setTab(selectedTab);
+  }
+}, []);
+
 
   let paginationParms = { limit: pageSize, offset: pageOffset, sortBy: sortParams?.[0]?.id, sortOrder: sortParams?.[0]?.desc ? "DESC" : "ASC" };
 
@@ -225,8 +237,9 @@ const SearchVendor = () => {
   }, []);
 
   const onTabChange = (tab) => {
-    setTab(tab);
-  };
+  setTab(tab);
+  history.push(`/upyog-ui/employee/vendor/search-vendor?selectedTabs=${tab}`);
+};
 
   const refetchData = () => {
     refetch();

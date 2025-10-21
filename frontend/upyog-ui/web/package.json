@@ -13,7 +13,9 @@
     "micro-ui-internals/packages/modules/ads",
     "micro-ui-internals/packages/modules/engagement",
     "micro-ui-internals/packages/modules/ew",
-    "micro-ui-internals/packages/modules/ptr"
+    "micro-ui-internals/packages/modules/ptr",
+    "micro-ui-internals/packages/modules/wt",
+    "micro-ui-internals/packages/modules/vendor"
   ],
   "engines": {
     "node": ">=14"
