@@ -1128,5 +1128,20 @@ public class CalculatorUtils {
 		}
 		return isTaxPeriodPresent;
 	}
+	
+	public Boolean isBetweenMonths(LocalDate date) {
+        LocalDate startDate;
+        LocalDate endDate;
+
+        if (date.getMonthValue() >= 7) {  // July or later
+            startDate = LocalDate.of(date.getYear(), 7, 1);
+            endDate = LocalDate.of(date.getYear() + 1, 3, 31);
+        } else {  // Before July
+            startDate = LocalDate.of(date.getYear() - 1, 7, 1);
+            endDate = LocalDate.of(date.getYear(), 3, 31);
+        }
+
+        return (!date.isBefore(startDate)) && (!date.isAfter(endDate));
+    }
 
 }

@@ -1134,32 +1134,39 @@ public class EstimationService {
 			if(taxAfterVacExemption.compareTo(BigDecimal.ZERO)==0 && totalAmount.compareTo(BigDecimal.ZERO)>=0)
 				taxAfterVacExemption=taxAmt;
 
-			switch (criteria.getModeOfPayment()) {
-			case QUARTERLY:
-				modeofpayment_rebate=taxAfterVacExemption.multiply(new BigDecimal(CALCULATION_3).divide(new BigDecimal(CALCULATION_100)).negate());
-				modeofpayment_rebate=modeofpayment_rebate.setScale(CALCULATION_2,CALCULATION_2);
-				updatedtaxammount=taxAfterVacExemption.add(modeofpayment_rebate);
-				calculatedPercentage=new BigDecimal(CALCULATION_3);
-				break;
+			if(Boolean.FALSE==utils.isBetweenMonths(LocalDate.now()))
+			{
+				switch (criteria.getModeOfPayment()) {
+				case QUARTERLY:
+					modeofpayment_rebate=taxAfterVacExemption.multiply(new BigDecimal(CALCULATION_3).divide(new BigDecimal(CALCULATION_100)).negate());
+					modeofpayment_rebate=modeofpayment_rebate.setScale(CALCULATION_2,CALCULATION_2);
+					updatedtaxammount=taxAfterVacExemption.add(modeofpayment_rebate);
+					calculatedPercentage=new BigDecimal(CALCULATION_3);
+					break;
 
-			case HALFYEARLY:
-				modeofpayment_rebate=taxAfterVacExemption.multiply(new BigDecimal(CALCULATION_6).divide(new BigDecimal(CALCULATION_100)).negate());
-				modeofpayment_rebate=modeofpayment_rebate.setScale(CALCULATION_2,CALCULATION_2);
-				updatedtaxammount=taxAfterVacExemption.add(modeofpayment_rebate);
-				calculatedPercentage=new BigDecimal(CALCULATION_6);
-				break;
+				case HALFYEARLY:
+					modeofpayment_rebate=taxAfterVacExemption.multiply(new BigDecimal(CALCULATION_6).divide(new BigDecimal(CALCULATION_100)).negate());
+					modeofpayment_rebate=modeofpayment_rebate.setScale(CALCULATION_2,CALCULATION_2);
+					updatedtaxammount=taxAfterVacExemption.add(modeofpayment_rebate);
+					calculatedPercentage=new BigDecimal(CALCULATION_6);
+					break;
 
-			case YEARLY:
-				modeofpayment_rebate=taxAfterVacExemption.multiply(new BigDecimal(CALCULATION_10).divide(new BigDecimal(CALCULATION_100)).negate());
-				modeofpayment_rebate=modeofpayment_rebate.setScale(CALCULATION_2,CALCULATION_2);
-				updatedtaxammount=taxAfterVacExemption.add(modeofpayment_rebate);
-				calculatedPercentage=new BigDecimal(CALCULATION_10);
-				break;
+				case YEARLY:
+					modeofpayment_rebate=taxAfterVacExemption.multiply(new BigDecimal(CALCULATION_10).divide(new BigDecimal(CALCULATION_100)).negate());
+					modeofpayment_rebate=modeofpayment_rebate.setScale(CALCULATION_2,CALCULATION_2);
+					updatedtaxammount=taxAfterVacExemption.add(modeofpayment_rebate);
+					calculatedPercentage=new BigDecimal(CALCULATION_10);
+					break;
 
-			default:
-				break;
+				default:
+					break;
+				}
+				
+				estimates.add(TaxHeadEstimate.builder().taxHeadCode(PT_MODEOFPAYMENT_REBATE).category(Category.REBATE).estimateAmount( modeofpayment_rebate).calculatedPercentage(calculatedPercentage).build());
+
 			}
-
+			else
+				updatedtaxammount=taxAfterVacExemption;
 
 
 			complementary_rebate=updatedtaxammount.multiply(new BigDecimal(CALCULATION_92).divide(new BigDecimal(CALCULATION_100)).negate());
@@ -1175,7 +1182,7 @@ public class EstimationService {
 			 * 
 			 * });
 			 */
-			estimates.add(TaxHeadEstimate.builder().taxHeadCode(PT_MODEOFPAYMENT_REBATE).category(Category.REBATE).estimateAmount( modeofpayment_rebate).calculatedPercentage(calculatedPercentage).build());
+			
 			estimates.add(TaxHeadEstimate.builder().taxHeadCode(PT_COMPLEMENTARY_REBATE).category(Category.REBATE).estimateAmount( complementary_rebate).calculatedPercentage(new BigDecimal(CALCULATION_92)).build());
 
 		}
