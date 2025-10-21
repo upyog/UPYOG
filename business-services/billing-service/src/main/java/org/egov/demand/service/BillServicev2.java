@@ -843,7 +843,7 @@ public class BillServicev2 {
 		}
 		//For Testing to be removed
 		//previousYear=false;
-		//cuurentMonth=8;
+		cuurentMonth=2;
 		Integer nextYear = assesmentDoneForYearEnd;
 
 		Integer b = c.get(Calendar.YEAR);
@@ -1381,6 +1381,8 @@ public class BillServicev2 {
 				BigDecimal adjustedQ1Amount=BigDecimal.ZERO;
 				BigDecimal adjustedQ2Amount=BigDecimal.ZERO;
 				BigDecimal adjustedQ3Amount=BigDecimal.ZERO;
+				BigDecimal adjustedInterestQ4Amount=BigDecimal.ZERO;
+				BigDecimal marchDayDiiference =BigDecimal.ZERO;
 
 				if(previousYear)
 				{
@@ -1483,9 +1485,9 @@ public class BillServicev2 {
 						advancedBillAmount=BigDecimal.ZERO;
 					}
 
-					calculationFinalDateForInterest = currentDateWithAssesmentYear(nextYear.toString());
+					calculationFinalDateForInterest = currentDateWithAssesmentYear(String.valueOf(LocalDate.now().getYear()));
 					//"01-03-2025"
-					noFODays = 	getDateDifference(firstDayAfterexpiryDateQ3,currentDateWithAssesmentYear(nextYear.toString()));
+					noFODays = 	getDateDifference(firstDayAfterexpiryDateQ3,currentDateWithAssesmentYear(String.valueOf(LocalDate.now().getYear())));
 					if(previousYear) {
 						noFODays=new BigDecimal(Q3FlatDays);
 						totalAMountForInterest = totalAMountForInterest.add(adjustedQ3Amount).multiply(noFODays).multiply(new BigDecimal(InterestPrecentage).divide(new BigDecimal(100)));
@@ -1510,6 +1512,22 @@ public class BillServicev2 {
 					totalAMountForInterest=totalAMountForInterest.setScale(2,2);
 					interestMap.put("Q3",totalAMountForInterest );
 					totalAmountForInterestCal=adjustedQ3Amount;
+					
+					
+					 marchDayDiiference = getDaysFromMarchFirstIfInMarch();
+					
+					if(marchDayDiiference.compareTo(BigDecimal.ZERO)>0){
+						totalAMountForInterest = totalAMountForInterest.add(amountforquaterly).multiply(marchDayDiiference).multiply(new BigDecimal(InterestPrecentage).divide(new BigDecimal(100)));
+						totalAMountForInterest=totalAMountForInterest.setScale(2,2);
+						adjustedInterestQ4Amount = totalAMountForInterest;
+						interestMap.put("Q4",totalAMountForInterest );
+						totalAmountForInterestCal=amountforquaterly;
+					}
+					
+					//check for cuurent date if start from march 1 between  31 march calculate the day diifrence and return  
+					
+					
+					
 
 					String startDateQ3 = "01-10-" + currentyear;
 					String expiryDateQ3 = "31-12-" + currentyear;
@@ -1548,6 +1566,12 @@ public class BillServicev2 {
 				totalInterestAmunt = 	totalInterestAmunt.setScale(0, RoundingMode.HALF_UP);
 				//totalAmountForDemand = amountforquaterly.add(quaterlyammount).add(totalInterestAmunt);
 				totalAmountForDemand = amountforquaterly.add(amountwithpastdue).add(adjustedQ2Amount).add(adjustedQ3Amount).add(totalInterestAmunt);
+				if(marchDayDiiference.compareTo(BigDecimal.ZERO)>0) {
+					String marchFirst = LocalDate.of(LocalDate.now().getYear(), 3, 1)
+					        .format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));
+					inp = getInterestPenalty( totalInterestAmunt,  marchFirst, financialYearFromDemand.toString() ,"Q4", "Q4" , new BigDecimal(InterestPrecentage),marchDayDiiference,totalAmountForInterestCal,previousYear);
+				}
+				else
 				inp = getInterestPenalty( totalInterestAmunt,  firstDayAfterexpiryDateQ3, financialYearFromDemand.toString() ,"Q4", "Q3" , new BigDecimal(InterestPrecentage),noFODays,totalAmountForInterestCal,previousYear);
 
 				if (advancedBillAmount.compareTo(totalAmountForDemand) > 0) {
@@ -1558,6 +1582,7 @@ public class BillServicev2 {
 							ModeOfPaymentDetails.TxnStatusEnum.PAID.toString(), BigDecimal.ZERO);
 					mpdObj.setPeriod(TxnPeriodEnum.QUARTER_4);
 					mpdObj.setRemaingAdvance(advancedBillAmount);
+					mpdObj.setInterestAmount(adjustedInterestQ4Amount);
 					mpdList.add(mpdObj);
 				} else if (totalAmountForDemand.compareTo(advancedBillAmount) > 0) {
 					totalAmountForDemand = totalAmountForDemand.subtract(advancedBillAmount);
@@ -1567,6 +1592,7 @@ public class BillServicev2 {
 							ModeOfPaymentDetails.TxnStatusEnum.PAYMENT_PENDING.toString(), BigDecimal.ZERO);
 					mpdObj.setPeriod(TxnPeriodEnum.QUARTER_4);
 					mpdObj.setRemaingAdvance(advancedBillAmount);
+					mpdObj.setInterestAmount(adjustedInterestQ4Amount);
 					mpdList.add(mpdObj);
 				} else if (totalAmountForDemand.compareTo(advancedBillAmount) == 0) {
 					totalAmountForDemand = new BigDecimal(0);
@@ -1576,6 +1602,7 @@ public class BillServicev2 {
 							ModeOfPaymentDetails.TxnStatusEnum.PAID.toString(), BigDecimal.ZERO);
 					mpdObj.setPeriod(TxnPeriodEnum.QUARTER_4);
 					mpdObj.setRemaingAdvance(advancedBillAmount);
+					mpdObj.setInterestAmount(adjustedInterestQ4Amount);
 					mpdList.add(mpdObj);
 				}
 
@@ -1827,12 +1854,13 @@ public class BillServicev2 {
 	}
 
 	private BigDecimal getDateDifference(String startDate, String endDate) {
-		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd-MM-yyyy");
-		LocalDate firstDate = LocalDate.parse(startDate, dtf);
-		LocalDate secondDate = LocalDate.parse(endDate, dtf);
-		BigDecimal daysdiff = new BigDecimal(ChronoUnit.DAYS.between(firstDate, secondDate));
-		return daysdiff;
+	    DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+	    LocalDate firstDate = LocalDate.parse(startDate, dtf);
+	    LocalDate secondDate = LocalDate.parse(endDate, dtf);
+	    long daysBetween = ChronoUnit.DAYS.between(firstDate, secondDate);
+	    return BigDecimal.valueOf(Math.abs(daysBetween));
 	}
+
 
 	private String currentDateWithAssesmentYear(String year) {
 		Date currentDate = new Date(System.currentTimeMillis());
@@ -2214,5 +2242,25 @@ public class BillServicev2 {
 		}
 		return ownerPlainRequestFieldsList;
 	}
+	
+	
+	private BigDecimal getDaysFromMarchFirstIfInMarch() {
+	    LocalDate today = LocalDate.now();
+	    int year = today.getYear();
+
+	    LocalDate marchFirst = LocalDate.of(year, 3, 1);
+	    LocalDate marchEnd = LocalDate.of(year, 3, 31);
+
+	    // Check if current date is between 1 March and 31 March
+	    if (!today.isBefore(marchFirst) && !today.isAfter(marchEnd)) {
+	        long daysBetween = ChronoUnit.DAYS.between(marchFirst, today);
+	        // +1 if you want inclusive count (i.e., March 1 = day 1)
+	        return BigDecimal.valueOf(daysBetween);
+	    }
+
+	    // Not between March 1–31
+	    return BigDecimal.valueOf(10);
+	}
+
 
 }
