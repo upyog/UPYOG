@@ -42,6 +42,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.Rectangle;
@@ -128,13 +129,13 @@ public class BPAService {
 		String applicationType = values.get(BPAConstants.APPLICATIONTYPE);
 		this.validateCreateOC(applicationType, values, requestInfo, bpaRequest);
 		bpaValidator.validateCreate(bpaRequest, mdmsData, values);
-		if (!applicationType.equalsIgnoreCase(BPAConstants.BUILDING_PLAN_OC)) {
+		if (!applicationType.equalsIgnoreCase(BPAConstants.BUILDING_PLAN_OC) && bpaRequest.getBPA().getLandInfo() != null) {
 			landService.addLandInfoToBPA(bpaRequest);
 		}
 		enrichmentService.enrichBPACreateRequest(bpaRequest, mdmsData, values);
 		wfIntegrator.callWorkFlow(bpaRequest);
 		//nocService.createNocRequest(bpaRequest, mdmsData);
-		this.addCalculation(applicationType, bpaRequest);
+//		this.addCalculation(applicationType, bpaRequest);
 		repository.save(bpaRequest);
 		return bpaRequest.getBPA();
 	}
@@ -234,6 +235,15 @@ public class BPAService {
 				}
 			}
 		}
+		
+		bpas.forEach(bpa -> {
+			if(bpa.getLandId() != null && bpa.getLandInfo() == null) {
+				((Map<String, Object>)bpa.getAdditionalDetails()).getOrDefault("landInfo", new  HashMap<String, Object>());
+				LandInfo landInfo = new ObjectMapper().convertValue(((Map<String, Object>)bpa.getAdditionalDetails()).get("landInfo"), LandInfo.class);
+				bpa.setLandInfo(landInfo);
+			}
+		});
+		
 		return bpas;
 	}
 	/**
@@ -390,7 +400,7 @@ public class BPAService {
 		log.debug("applicationType is " + applicationType);
 		BusinessService businessService = workflowService.getBusinessService(bpa, bpaRequest.getRequestInfo(),
 				bpa.getApplicationNo());
-
+		
 		List<BPA> searchResult = getBPAWithBPAId(bpaRequest);
 		if (CollectionUtils.isEmpty(searchResult) || searchResult.size() > 1) {
 			throw new CustomException(BPAErrorConstants.UPDATE_ERROR, "Failed to Update the Application, Found None or multiple applications!");
@@ -417,6 +427,20 @@ public class BPAService {
 		this.handleRejectSendBackActions(applicationType, bpaRequest, businessService, searchResult, mdmsData, edcrResponse);
                 String state = workflowService.getCurrentState(bpa.getStatus(), businessService);
                 String businessSrvc = businessService.getBusinessService();
+
+                /*
+                 * Before Citizen approval we need to create Application fee demand
+                 */
+                // Generate the Application Demand
+                if ((businessSrvc.equalsIgnoreCase(BPAConstants.BPA_OC_MODULE_CODE)
+                        || businessSrvc.equalsIgnoreCase(BPAConstants.BPA_BUSINESSSERVICE)
+                        || businessSrvc.equalsIgnoreCase(BPAConstants.BPA_LOW_MODULE_CODE))
+                        && state.equalsIgnoreCase(BPAConstants.STATUS_CITIZENAPPROVAL)) {
+                	if(bpa.getApplicationType() == null) {
+                		bpa.setApplicationType(applicationType);
+                	}
+                    calculationService.addCalculation(bpaRequest, BPAConstants.APPLICATION_FEE_KEY);
+                }
                 
                 /*
                  * Before approving the application we need to check sanction fee is applicable
@@ -490,8 +514,25 @@ public class BPAService {
 				actionValidator.validateUpdateRequest(bpaRequest, businessService);
 				bpaValidator.validateUpdate(bpaRequest, searchResult, mdmsData,
 				workflowService.getCurrentState(bpa.getStatus(), businessService), edcrResponse);
-				if (!applicationType.equalsIgnoreCase(BPAConstants.BUILDING_PLAN_OC)) {
-					landService.updateLandInfo(bpaRequest);
+				if (!applicationType.equalsIgnoreCase(BPAConstants.BUILDING_PLAN_OC) && bpa.getLandInfo() != null) {
+					if(bpa.getLandId() == null) {
+						if(bpaRequest.getBPA().getLandInfo().getOwnershipCategory() == null || 
+								bpaRequest.getBPA().getLandInfo().getOwnershipCategory().isEmpty()) {
+							bpaRequest.getBPA().getLandInfo().setOwnershipCategory("INDIVIDUAL.SINGLEOWNER");
+						}
+						landService.addLandInfoToBPA(bpaRequest);
+						Map<String, Object> landInfo = new ObjectMapper().convertValue(bpaRequest.getBPA().getLandInfo(), Map.class);
+						((Map<String, Object>)bpaRequest.getBPA().getAdditionalDetails()).put("landInfo", landInfo);
+					}
+					else {
+						landService.updateLandInfo(bpaRequest);
+						if(bpaRequest.getBPA().getLandInfo().getOwners().size() >0) {
+							((Map<String, Object>)bpaRequest.getBPA().getAdditionalDetails()).remove("landInfo");
+						}else {
+							Map<String, Object> landInfo = new ObjectMapper().convertValue(bpaRequest.getBPA().getLandInfo(), Map.class);
+							((Map<String, Object>)bpaRequest.getBPA().getAdditionalDetails()).put("landInfo", landInfo);
+						}
+					}
 				}
 				bpaValidator.validateCheckList(mdmsData, bpaRequest,
 				workflowService.getCurrentState(bpa.getStatus(), businessService));

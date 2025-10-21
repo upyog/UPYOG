@@ -268,6 +268,22 @@ config:
       - work-dir: "core-services/egov-survey-services/src/main/resources/db"
         image-name: "egov-survey-services-db"
 
+  - name: "builds/upyog/municipal-services/ndc-services"
+    build:
+      - work-dir: "municipal-services/ndc-services"
+        image-name: "ndc-services"
+        dockerfile: "build/maven/Dockerfile"
+      - work-dir: "municipal-services/ndc-services/src/main/resources/db"
+        image-name: "ndc-services-db"
+
+  - name: "builds/upyog/municipal-services/ndc-calculator"
+    build:
+      - work-dir: "municipal-services/ndc-calculator"
+        image-name: "ndc-calculator"
+        dockerfile: "build/maven/Dockerfile"
+      - work-dir: "municipal-services/ndc-calculator/src/main/resources/db"
+        image-name: "ndc-calculator-db"
+
   - name: "builds/upyog/core-services/service-request"
     build:
       - work-dir: "core-services/service-request"
@@ -408,13 +424,14 @@ config:
       - work-dir: "core-services/nlp-engine"
         image-name: "nlp-engine"
         dockerfile: "core-services/nlp-engine/Dockerfile"
-  
+
+
   - name: "builds/upyog/core-services/nlp-engine"
     build:
       - work-dir: "core-services/nlp-engine"
         image-name: "nlp-engine"
         dockerfile: "core-services/nlp-engine/Dockerfile"
-  
+
   - name: "builds/upyog/core-services/xstate-chatbot"
     build:
       - work-dir: "core-services/xstate-chatbot/nodejs"
@@ -593,6 +610,14 @@ config:
         dockerfile: "build/maven/Dockerfile"
       - work-dir: "municipal-services/noc-services/src/main/resources/db"
         image-name: "noc-services-db"
+
+  - name: "builds/upyog/municipal-services/noc-calculator"
+    build:
+      - work-dir: "municipal-services/noc-calculator"
+        image-name: "noc-calculator"
+        dockerfile: "build/maven/Dockerfile"
+      - work-dir: "municipal-services/noc-calculator/src/main/resources/db"
+        image-name: "noc-calculator-db"
 
   - name: "builds/upyog/municipal-services/echallan-services"
     build:
@@ -889,4 +914,45 @@ config:
         dockerfile: "build/maven/Dockerfile"
       - work-dir: "municipal-services/street-vending/src/main/resources/db"
         image-name: "sv-services-db"
-        
+
+  - name: "builds/upyog/municipal-services/sv-services"
+    build:
+      - work-dir: "municipal-services/street-vending"
+        image-name: "sv-services"
+        dockerfile: "build/maven/Dockerfile"
+      - work-dir: "municipal-services/street-vending/src/main/resources/db"
+        image-name: "sv-services-db"
+
+  - name: builds/upyog/frontend/sv-ui
+    build:
+      - work-dir: frontend/sv-ui/
+        dockerfile: frontend/sv-ui/web/docker/Dockerfile
+        image-name: sv-ui
+
+  - name: "builds/upyog/municipal-services/asset-services"
+    build:
+      - work-dir: "municipal-services/asset-services"
+        image-name: "asset-services"
+        dockerfile: "build/maven/Dockerfile"
+      - work-dir: "municipal-services/asset-services/src/main/resources/db"
+        image-name: "asset-services-db"
+
+
+  - name: "builds/upyog/municipal-services/asset-calculator"
+    build:
+      - work-dir: "municipal-services/asset-calculator"
+        image-name: "asset-calculator"
+        dockerfile: "build/maven/Dockerfile"
+      - work-dir: "municipal-services/asset-calculator/src/main/resources/db"
+        image-name: "asset-calculator-db"
+
+
+
+
+  - name: 'builds/upyog/municipal-services/pgr-ai-services'
+    build:
+      - work-dir: 'municipal-services/pgr-ai-services'
+        image-name: 'pgr-ai-services'
+        dockerfile: 'build/maven/Dockerfile'
+      - work-dir: "municipal-services/pgr-ai-services/src/main/resources/db"
+        image-name: "pgr-ai-services-db"

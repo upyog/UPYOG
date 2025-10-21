@@ -257,7 +257,10 @@ public class BPAValidator {
 	public void validateUpdate(BPARequest bpaRequest, List<BPA> searchResult, Object mdmsData, String currentState, Map<String, String> edcrResponse) {
 
 		BPA bpa = bpaRequest.getBPA();
-		validateApplicationDocuments(bpaRequest, mdmsData, currentState, edcrResponse);
+		// when application is in initiated state and action is save as draft skip the document validation
+		if(!(bpaRequest.getBPA().getStatus().equalsIgnoreCase(BPAConstants.STATUS_CREATE) &&
+				bpaRequest.getBPA().getWorkflow().getAction().equalsIgnoreCase(BPAConstants.ACTION_SAVE_AS_DRAFT)))
+			validateApplicationDocuments(bpaRequest, mdmsData, currentState, edcrResponse);
 		validateAllIds(searchResult, bpa);
 		mdmsValidator.validateMdmsData(bpaRequest, mdmsData);
 		validateDuplicateDocuments(bpaRequest);

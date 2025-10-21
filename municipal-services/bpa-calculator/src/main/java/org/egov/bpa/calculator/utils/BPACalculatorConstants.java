@@ -116,4 +116,6 @@ public class BPACalculatorConstants {
 	
 	public static final String MDMS_APPLIOCATION_FEES_PATH  = "$.MdmsRes.BPA.ApplicationFees";
 	
+	public static final String BPA_ADJUSTMENT_TAX_HEAD_PREFIX = "ADJ_";
+	
 }

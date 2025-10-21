@@ -45,49 +45,34 @@ public class BillGenerationConsumer {
 
 			BillGeneratorReq billGeneratorReq = mapper.convertValue(records.get(0).getPayload(), BillGeneratorReq.class);
 			log.info("Number of batch records:  " + billGeneratorReq.getConsumerCodes().size());
-
+			long timeSTamp=System.currentTimeMillis();
 			if(billGeneratorReq.getConsumerCodes() != null && !billGeneratorReq.getConsumerCodes().isEmpty() && billGeneratorReq.getTenantId() != null) {
 				log.info("Fetch Bill generator initiated for Consumers: {}", billGeneratorReq.getConsumerCodes());
 				List<String> failureConsumerCodes = new ArrayList<>();
-
+				  billGeneratorDao.insertBillSchedulerConnectionStatus(
+			                new ArrayList<>(billGeneratorReq.getConsumerCodes()),
+					        billGeneratorReq.getBillSchedular().getId(),
+					        billGeneratorReq.getBillSchedular().getLocality(),
+					        WSCalculationConstant.INITIATED,
+					        billGeneratorReq.getBillSchedular().getTenantId(),
+					        WSCalculationConstant.INITIATED,
+					        timeSTamp
+					    );
+				 
 				List<String> fetchBillSuccessConsumercodes = demandService.fetchBillSchedulerSingle(
 					    billGeneratorReq.getConsumerCodes(),
 					    billGeneratorReq.getTenantId(),
 					    billGeneratorReq.getRequestInfoWrapper().getRequestInfo(),
-					    failureConsumerCodes 
+					    failureConsumerCodes ,
+					    billGeneratorReq.getBillSchedular().getId(),
+					    billGeneratorReq.getBillSchedular().getLocality()
 					);	
 				
 				log.info("Fetch Bill generator completed fetchBillConsumers: {}", fetchBillSuccessConsumercodes);
-				long milliseconds = System.currentTimeMillis();
-				
-				if (!fetchBillSuccessConsumercodes.isEmpty()) {
-				    billGeneratorDao.insertBillSchedulerConnectionStatus(
-				        fetchBillSuccessConsumercodes,
-				        billGeneratorReq.getBillSchedular().getId(),
-				        billGeneratorReq.getBillSchedular().getLocality(),
-				        WSCalculationConstant.SUCCESS,
-				        billGeneratorReq.getBillSchedular().getTenantId(),
-				        WSCalculationConstant.SUCCESS_MESSAGE,
-				        milliseconds
-				    );
-				}
-
-				if (!failureConsumerCodes.isEmpty()) {
-				    billGeneratorDao.insertBillSchedulerConnectionStatus(
-				        failureConsumerCodes,
-				        billGeneratorReq.getBillSchedular().getId(),
-				        billGeneratorReq.getBillSchedular().getLocality(),
-				        WSCalculationConstant.FAILURE,
-				        billGeneratorReq.getBillSchedular().getTenantId(),
-				        WSCalculationConstant.FAILURE_MESSAGE,
-				        milliseconds
-				    );
-				}
-
-				
 			}
 		}catch(Exception exception) {
 			log.error("Exception occurred while generating bills in the sw bill generator consumer");
+			
 		}
 
 
