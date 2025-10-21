@@ -5,7 +5,7 @@ import { useParams } from "react-router-dom";
 import ViewTimeline from "../../components/ViewTimeline";
 import get from "lodash/get";
 import getSVAcknowledgementData from "../../utils/getSVAcknowledgementData";
-import { checkForNA } from "../../utils";
+import { checkForNA,SVDocumnetPreview, getOrderDocuments } from "../../utils";
 
 
 const SvApplicationDetails = () => {
@@ -28,6 +28,7 @@ const SvApplicationDetails = () => {
   const SVDetail = get(data, "SVDetail", []);
   let streetVendingDetails = (SVDetail && SVDetail.length > 0 && SVDetail[0]) || {};
   const application = streetVendingDetails;
+  console.log("applicationapplication",application);
   sessionStorage.setItem("streetvending", JSON.stringify(application));
   const [loading, setLoading] = useState(false);
 
@@ -50,6 +51,17 @@ const SvApplicationDetails = () => {
     },
     { enabled: applicationNo ? true : false }
   );
+    // Step 1: Prepare document list safely
+  const getApplicationDocs = streetVendingDetails?.documentDetails?.map((doc) => ({
+    ...doc,
+    module: "StreetVending",
+  })) || [];
+
+  // Step 2: Fetch PDF details only if documents exist
+  const { data: pdfDetails } = Digit.Hooks.useDocumentSearch(getApplicationDocs, {enabled: getApplicationDocs.length > 0});
+
+  // Step 3: Extract only StreetVending PDFs
+  const applicationDocs = pdfDetails?.pdfFiles?.filter((pdf) => pdf?.module === "StreetVending") || [];
 
   if (!streetVendingDetails.workflow) {
     let workflow = {
@@ -185,7 +197,7 @@ const SvApplicationDetails = () => {
             {streetVendingDetails?.vendingActivity === "STATIONARY" && (
             <Row className="border-none" label={t("SV_AREA_REQUIRED")} text={streetVendingDetails?.vendingArea || t("CS_NA")} />)}
             <Row className="border-none" label={t("SV_LOCAL_AUTHORITY_NAME")} text={streetVendingDetails?.localAuthorityName || t("CS_NA")} />
-            <Row className="border-none" label={t("SV_CATEGORY")} text={t("streetVendingDetails?.disabilityStatus") || t("CS_NA")} />
+            <Row className="border-none" label={t("SV_CATEGORY")} text={t(streetVendingDetails?.disabilityStatus) || t("CS_NA")} />
           </StatusTable>
 
           <CardSubHeader style={{ fontSize: "24px" }}>{t("SV_ADDITIONAL_DETAILS")}</CardSubHeader>
@@ -208,6 +220,10 @@ const SvApplicationDetails = () => {
               ))
               : null}
           </StatusTable>
+
+          <CardSubHeader>{t("SV_DOCUMENT_DETAILS_LABEL")}</CardSubHeader>
+          {<SVDocumnetPreview documents={getOrderDocuments(applicationDocs)} svgStyles={{}} isSendBackFlow={false} titleStyles={{ fontSize: "18px", "fontWeight": 700, marginBottom: "10px" }} />}
+          <br></br>
 
           <ViewTimeline application={application} id={application?.applicationNo} userType={"citizen"} />
           {showToast && (
