@@ -235,7 +235,7 @@ public class EmployeeService {
 			log.info("user---"+user);
 			employee.setId(user.getId());
 			log.info("employee---"+employee);
-			employee.setId(UUID.fromString(user.getUuid()).getMostSignificantBits());
+			//employee.setId(UUID.fromString(user.getUuid()).getMostSignificantBits());
 			employee.setUuid(user.getUuid());
 			employee.getUser().setId(user.getId());
 			employee.getUser().setUuid(user.getUuid());
