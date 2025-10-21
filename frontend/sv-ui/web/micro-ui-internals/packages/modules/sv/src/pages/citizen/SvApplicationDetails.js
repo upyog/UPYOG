@@ -28,7 +28,6 @@ const SvApplicationDetails = () => {
   const SVDetail = get(data, "SVDetail", []);
   let streetVendingDetails = (SVDetail && SVDetail.length > 0 && SVDetail[0]) || {};
   const application = streetVendingDetails;
-  console.log("applicationapplication",application);
   sessionStorage.setItem("streetvending", JSON.stringify(application));
   const [loading, setLoading] = useState(false);
 

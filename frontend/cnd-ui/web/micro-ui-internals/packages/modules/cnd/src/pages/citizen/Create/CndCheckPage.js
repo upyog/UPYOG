@@ -175,9 +175,19 @@ In Parent Component,  we are passing the data as a props coming through params (
               />
           </StatusTable>
 
-           <CardSubHeader>{t("CND_DOC_DETAILS")}</CardSubHeader>
-          {<CNDDocumnetPreview documents={getOrderDocuments(applicationDocs)} svgStyles={{}} isSendBackFlow={false} titleStyles={{ fontSize: "18px", "fontWeight": 700, marginBottom: "10px" }} />}
-          <br></br>
+          {applicationDocs.length > 0 && (
+            <div>
+              <CardSubHeader>{t("CND_DOC_DETAILS")}</CardSubHeader>
+              <CNDDocumnetPreview 
+                documents={getOrderDocuments(applicationDocs)} 
+                svgStyles={{}} 
+                isSendBackFlow={false} 
+                titleStyles={{ fontSize: "18px", fontWeight: 700, marginBottom: "10px" }} 
+              />
+            </div>
+          )}
+
+           
          
             
             
