@@ -53,9 +53,11 @@ public class LandEnrichmentService {
 		landRequest.getLandInfo().setAuditDetails(auditDetails);
 		if (!isUpdate) {
 			landRequest.getLandInfo().setId(UUID.randomUUID().toString());
+			landRequest.getLandInfo().getAddress().getLocality().setCode("");
+		}else {
 			boundaryService.getAreaType(landRequest, config.getHierarchyTypeCode());
 		}
-
+		
 		if (landRequest.getLandInfo().getInstitution() != null) {
 			if (StringUtils.isEmpty(landRequest.getLandInfo().getInstitution().getId()))
 				landRequest.getLandInfo().getInstitution().setId(UUID.randomUUID().toString());
