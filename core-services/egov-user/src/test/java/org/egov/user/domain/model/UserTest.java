@@ -326,7 +326,9 @@ public class UserTest {
         assertNull(user.getMobileNumber());
         assertNull(user.getPassword());
         assertNull(user.getPasswordExpiryDate());
-        assertTrue(user.getRoles().isEmpty());
+        // Roles should NOT be nullified as they are required for gateway RBAC
+        assertNotNull(user.getRoles());
+        assertEquals(2, user.getRoles().size());
     }
 
     @Test

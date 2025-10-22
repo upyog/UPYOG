@@ -202,7 +202,9 @@ public class User {
         mobileNumber = null;
         password = null;
         passwordExpiryDate = null;
-        roles = null;
+        // CRITICAL: Do NOT nullify roles - they are required for gateway RBAC authorization
+        // Setting roles to null causes validation errors in gateway with @Size(min=1) constraint
+        // roles = null;
         accountLocked = null;
         accountLockedDate = null;
     }
@@ -344,13 +346,27 @@ public class User {
 
     /**
      * CRITICAL: Override getRoles to ensure it never returns null
-     * This prevents validation errors in gateway RBAC filter and other services
+     * This prevents NPE and validation errors in gateway RBAC filter
+     * @return Set of roles, never null (returns empty set if roles is null)
      */
     public Set<Role> getRoles() {
         if (roles == null) {
             roles = new HashSet<>();
         }
         return roles;
+    }
+
+    /**
+     * CRITICAL: Override setRoles to prevent setting null
+     * If null is passed, set empty HashSet instead
+     * @param roles Set of roles to set
+     */
+    public void setRoles(Set<Role> roles) {
+        if (roles == null) {
+            this.roles = new HashSet<>();
+        } else {
+            this.roles = roles;
+        }
     }
 }
 
