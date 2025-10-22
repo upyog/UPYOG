@@ -42,7 +42,7 @@ const ProductList = ({ t, prlistName, setPrlistName, prlistQuantity, setPrlistQu
   const handleIncrement = (index) => {
     const updatedQuantities = [...prlistQuantity];
     const currentQuantity = parseInt(updatedQuantities[index].code, 10);
-    updatedQuantities[index].code = currentQuantity + 1;
+    updatedQuantities[index].code = (currentQuantity + 1);
     setPrlistQuantity(updatedQuantities);
   };
 
@@ -121,7 +121,9 @@ const ProductList = ({ t, prlistName, setPrlistName, prlistQuantity, setPrlistQu
       name: product.code,
       quantity: prlistQuantity[index].code,
       unit_price: product.price,
-      total_price: product.price * prlistQuantity[index].code,
+      total_price: parseFloat(
+        (parseFloat(product.price) * parseFloat(prlistQuantity[index].code)).toFixed(2)
+      ),
     })) || [];
 
   /**

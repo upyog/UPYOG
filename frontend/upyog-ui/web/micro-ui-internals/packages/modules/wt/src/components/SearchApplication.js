@@ -98,8 +98,6 @@
           { i18nKey: "Booking Created", code: "BOOKING_CREATED", value: t("WT_BOOKING_CREATED") },
           { i18nKey: "Booking Approved", code: "APPROVED", value: t("WT_BOOKING_APPROVED") },
           { i18nKey: "Tanker Delivered", code: "TANKER_DELIVERED", value: t("WT_TANKER_DELIVERED") },
-          { i18nKey: "Vendor Assigned", code: "ASSIGN_VENDOR", value: t("WT_ASSIGN_VENDOR") },
-          { i18nKey: "Rejected", code: "REJECT", value: t("WT_BOOKING_REJECTED") }
         ];
 
         const statusOptionForTreePruning = [
