@@ -101,7 +101,7 @@ const SearchVendor = () => {
 
   useEffect(() => {
     refetch();
-  }, []);
+  }, [tab]);
 
   useEffect(() => {
     refetch();
@@ -183,6 +183,10 @@ const SearchVendor = () => {
 
   //functions to handle search, pagination, sorting and filter
   const onSearch = (params = {}) => {
+    if (tab === "VEHICLE" && params.name) {
+      params.registrationNumber = params.name;
+      delete params.name;
+    }
     setSearchParams({ ...params });
   };
 

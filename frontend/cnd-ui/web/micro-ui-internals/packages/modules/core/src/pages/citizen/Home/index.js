@@ -69,7 +69,7 @@ const Home = () => {
     ]
 };
 
-  const citizenServicesObj = citizenServicesCard;
+  const citizenServicesObj = uiHomePage?.citizenServicesCard;
   const infoAndUpdatesObj = uiHomePage?.informationAndUpdatesCard;
   const whatsAppBannerWebObj = uiHomePage?.whatsAppBannerDesktop;
   const whatsAppBannerMobObj = uiHomePage?.whatsAppBannerMobile;
@@ -86,6 +86,16 @@ const Home = () => {
       onClick: () => history.push(citizenServicesObj?.sideOption?.navigationUrl),
     },
     options: [
+      {
+        name: t(citizenServicesObj?.props?.[1]?.label),
+        Icon: <PTIcon className="fill-path-primary-main" />,
+        onClick: () => history.push(citizenServicesObj?.props?.[1]?.navigationUrl.replace("/digit-ui/","/upyog-ui/")),
+      },
+      {
+        name: t(citizenServicesObj?.props?.[2]?.label),
+        Icon: <CaseIcon className="fill-path-primary-main" />,
+        onClick: () => history.push(citizenServicesObj?.props?.[2]?.navigationUrl.replace("/digit-ui/","/upyog-ui/")),
+      },
       {
         name: t(citizenServicesObj?.props?.[0]?.label),
         Icon: <ComplaintIcon />,
