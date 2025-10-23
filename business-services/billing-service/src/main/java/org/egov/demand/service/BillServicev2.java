@@ -379,14 +379,12 @@ public class BillServicev2 {
 				List<BillDetailV2> updatedbills = null;
 				if(billToBeReturned!=null && !billToBeReturned.isEmpty())
 				{
-					if(billsToBeReturned.get(0).getBillDetails().get(0).getPaymentPeriod().equalsIgnoreCase("YR"))
-						return res;
-
-					else if(!billToBeReturned.get(0).getBillDetails().get(0).isPreviousYearAssesment() && billToBeReturned.get(0).getBillDetails().get(0).getAdjusmentfromdate()!=null) {
+					 if(!billToBeReturned.get(0).getBillDetails().get(0).isPreviousYearAssesment() && billToBeReturned.get(0).getBillDetails().get(0).getAdjusmentfromdate()!=null) {
 						DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd MM yyyy");
 						BigDecimal totalAmount;
 						String date = billToBeReturned.get(0).getBillDetails().get(0).getAdjusmentfromdate();
-						LocalDate endDate = LocalDate.now();
+						//LocalDate endDate = LocalDate.now();
+						LocalDate endDate=LocalDate.of(2025, 10, 24);
 						date = date.replace("-"," ");
 						LocalDate startDate = LocalDate.parse(date, dtf);
 						BigDecimal daysdiff=new BigDecimal(ChronoUnit.DAYS.between(startDate, endDate));
@@ -395,7 +393,7 @@ public class BillServicev2 {
 						BigDecimal interestamount=interestonamount.multiply(extraNoOfDays).multiply(new BigDecimal(InterestPrecentage).divide(new BigDecimal(100)));
 
 						if(extraNoOfDays.compareTo(new BigDecimal(0))>0 && interestamount.compareTo(new BigDecimal(0))>0) {
-							totalAmount=interestamount.add(billToBeReturned.get(0).getBillDetails().get(0).getAmount()).add(new BigDecimal(10));
+							totalAmount=interestamount.add(billToBeReturned.get(0).getBillDetails().get(0).getAmount());
 							totalAmount= totalAmount.setScale(0,RoundingMode.HALF_UP);
 							extraNoOfDays = extraNoOfDays.add(new BigDecimal(billToBeReturned.get(0).getBillDetails().get(0).getInterestfornoofdays()));
 
@@ -843,7 +841,7 @@ public class BillServicev2 {
 		}
 		//For Testing to be removed
 		//previousYear=false;
-		cuurentMonth=2;
+		//cuurentMonth=2;
 		Integer nextYear = assesmentDoneForYearEnd;
 
 		Integer b = c.get(Calendar.YEAR);
@@ -1663,7 +1661,7 @@ public class BillServicev2 {
 				BigDecimal totalAMountForInterest = BigDecimal.ZERO;
 				String calculationFinalDateForInterest=null;
 				BigDecimal noFODays =  BigDecimal.ZERO;
-				String firstDayAfterexpiryDateH2 = "01-07-" + currentyear;
+				String firstDayAfterexpiryDateH1 = "01-07-" + currentyear;
 				BigDecimal totalInterestAmunt = BigDecimal.ZERO;
 				Map<String, BigDecimal> interestMap = new HashMap<>();
 				BigDecimal totalAmountForInterestCal=BigDecimal.ZERO;
@@ -1700,7 +1698,7 @@ public class BillServicev2 {
 					}
 
 					calculationFinalDateForInterest = currentDateWithAssesmentYear(currentyear.toString());
-					noFODays = getDateDifference(firstDayAfterexpiryDateH2,currentDateWithAssesmentYear(currentyear.toString()));
+					noFODays = getDateDifference(firstDayAfterexpiryDateH1,currentDateWithAssesmentYear(currentyear.toString()));
 					if(previousYear)
 						noFODays=new BigDecimal(H1FlatDays);
 					totalAMountForInterest = totalAMountForInterest.add(adjustedH1Amount).multiply(noFODays).multiply(new BigDecimal(InterestPrecentage).divide(new BigDecimal(100)));
@@ -1722,17 +1720,18 @@ public class BillServicev2 {
 				paymentPeriod = H2;
 				String startDateh2 = "01-07-" + currentyear;
 				expiryDate = "31-03-" + nextYear;
-				String firstDayAfterexpiryDateH1 = "01-07-" + currentyear;
+				//String firstDayAfterexpiryDateH1 = "01-07-" + currentyear;
 
-				//if (!LocalDate.now().isBefore(LocalDate.of(LocalDate.now().getYear(), 1, 1)) &&
-			           // !LocalDate.now().isAfter(LocalDate.of(LocalDate.now().getYear(), 3, 31))) 
-				LocalDate dateToCheck = LocalDate.of(2026, 2, 1);
+				//This is for testing 
+				/*LocalDate dateToCheck = LocalDate.of(2026, 2, 1);
 				if (!dateToCheck.isBefore(LocalDate.of(dateToCheck.getYear(), 1, 1)) &&
-				    !dateToCheck.isAfter(LocalDate.of(dateToCheck.getYear(), 3, 31)))
+				    !dateToCheck.isAfter(LocalDate.of(dateToCheck.getYear(), 3, 31)))*/
+				if (!LocalDate.now().isBefore(LocalDate.of(LocalDate.now().getYear(), 1, 1)) &&
+			            !LocalDate.now().isAfter(LocalDate.of(LocalDate.now().getYear(), 3, 31))) 
 				{
-					currentyear=2026;
-					noFODays = getDateDifference("01-01-"+currentyear,"01-02-"+currentyear);
-					//noFODays = getDateDifference("01-01-"+currentyear,currentDateWithAssesmentYear(currentyear.toString()));
+					//currentyear=2026;
+					//noFODays = getDateDifference("01-01-"+currentyear,"01-02-"+currentyear);
+					noFODays = getDateDifference("01-01-"+currentyear,currentDateWithAssesmentYear(currentyear.toString()));
 					totalAMountForInterest = totalAMountForInterest.add(ammountforhalfyearly).multiply(noFODays).multiply(new BigDecimal(InterestPrecentage).divide(new BigDecimal(100)));
 					totalAMountForInterest=totalAMountForInterest.setScale(2,2);
 					totalAmountForInterestCal=ammountforhalfyearly;
@@ -1760,10 +1759,12 @@ public class BillServicev2 {
 				totalAmountForDemand = ammountforhalfyearly.add(amountwithpastduehalf).add(totalInterestAmunt);
 				inp = getInterestPenalty( totalInterestAmunt,  firstDayAfterexpiryDateH1, financialYearFromDemand.toString() ,"H2", "H1" , new BigDecimal(InterestPrecentage),noFODays,totalAmountForInterestCal,previousYear);
 
-				//if (!LocalDate.now().isBefore(LocalDate.of(LocalDate.now().getYear(), 1, 1)) &&
-			      //      !LocalDate.now().isAfter(LocalDate.of(LocalDate.now().getYear(), 3, 31))) 
-				if (!dateToCheck.isBefore(LocalDate.of(dateToCheck.getYear(), 1, 1)) &&
-				    !dateToCheck.isAfter(LocalDate.of(dateToCheck.getYear(), 3, 31)))
+				//This block of code for testing
+				/*if (!dateToCheck.isBefore(LocalDate.of(dateToCheck.getYear(), 1, 1)) &&
+					    !dateToCheck.isAfter(LocalDate.of(dateToCheck.getYear(), 3, 31)))*/
+				
+				if (!LocalDate.now().isBefore(LocalDate.of(LocalDate.now().getYear(), 1, 1)) &&
+			            !LocalDate.now().isAfter(LocalDate.of(LocalDate.now().getYear(), 3, 31))) 
 					inp = getInterestPenalty( totalInterestAmunt, "01-01-"+currentyear , financialYearFromDemand.toString() ,"H2", "H2" , new BigDecimal(InterestPrecentage),noFODays,totalAmountForInterestCal,previousYear);
 					
 				System.out.println("advancedBillAmount::"+advancedBillAmount);
@@ -1821,7 +1822,7 @@ public class BillServicev2 {
 				    // current date is between July 1, 2025 and March 31, 2026 inclusive
 				
 				noFODays = getDateDifference("01-07-"+currentyear,currentDateWithAssesmentYear(currentyear.toString()));
-				totalAMountForInterest = totalAMountForInterest.add(ammountforhalfyearly).multiply(noFODays).multiply(new BigDecimal(InterestPrecentage).divide(new BigDecimal(100)));
+				totalAMountForInterest = totalAMountForInterest.add(totalAmountForDemand).multiply(noFODays).multiply(new BigDecimal(InterestPrecentage).divide(new BigDecimal(100)));
 				totalAMountForInterest=totalAMountForInterest.setScale(2,2);
 				totalAmountForInterestCal=totalAmountForDemand;
 				interestMap.put("YR", totalAMountForInterest);
