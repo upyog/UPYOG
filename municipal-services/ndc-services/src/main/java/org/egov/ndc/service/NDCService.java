@@ -1,5 +1,6 @@
 package org.egov.ndc.service;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -266,12 +267,38 @@ public class NDCService {
 	public void getCalculation(NdcApplicationRequest request){
 
 		List<CalculationCriteria> calculationCriteriaList = new ArrayList<>();
-			CalculationCriteria calculationCriteria = CalculationCriteria.builder()
-					.ndcApplicationRequest(request)
-					.tenantId(request.getApplications().get(0).getTenantId())
-					.applicationNumber(request.getApplications().get(0).getApplicationNo())
-					.build();
-			calculationCriteriaList.add(calculationCriteria);
+
+
+		List<NdcDetailsRequest> ndcDetails = request
+				.getApplications().get(0).getNdcDetails();
+
+
+		String propertyType = null;
+		for (NdcDetailsRequest detail : ndcDetails) {
+			if (NDCConstants.PROPERTY_BUSINESSSERVICE.equalsIgnoreCase(detail.getBusinessService())) {
+				JsonNode additionalDetails = detail.getAdditionalDetails();
+				if (additionalDetails != null && additionalDetails.has(NDCConstants.ADDITIONAL_DETAILS_FEE_TYPE_PARAM)) {
+					propertyType = additionalDetails.get(NDCConstants.ADDITIONAL_DETAILS_FEE_TYPE_PARAM).asText();
+					break;
+				}
+			}
+		}
+
+		if (propertyType == null) {
+			throw new CustomException("FEE_TYPE_MISSING", "Property type missing in additionalDetails");
+		}
+
+		String mappedFeeType = NDCConstants.RESIDENTIAL.equalsIgnoreCase(propertyType)
+				? NDCConstants.RESIDENTIAL
+				: NDCConstants.COMMERCIAL;
+
+		CalculationCriteria calculationCriteria = CalculationCriteria.builder()
+				.ndcApplicationRequest(request)
+				.propertyType(mappedFeeType)
+				.tenantId(request.getApplications().get(0).getTenantId())
+				.applicationNumber(request.getApplications().get(0).getApplicationNo())
+				.build();
+		calculationCriteriaList.add(calculationCriteria);
 
 		CalculationReq calculationReq = CalculationReq.builder()
 				.requestInfo(request.getRequestInfo())

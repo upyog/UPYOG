@@ -19,5 +19,8 @@ public class CalculationCriteria {
     @JsonProperty("tenantId")
     private String tenantId = null;
 
+    @JsonProperty("propertyType")
+    private String propertyType = null;
+
 
 }
