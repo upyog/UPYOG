@@ -35,6 +35,7 @@ import com.jayway.jsonpath.JsonPath;
 
 import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONArray;
+import org.springframework.util.StringUtils;
 
 @Service
 @Slf4j
@@ -207,31 +208,13 @@ public class CalculationService {
 			@SuppressWarnings("unchecked")
 			Map<String,Object> node=(Map<String, Object>)calulationCriteria.getBpa().getAdditionalDetails();
 			
-			if(!node.containsKey("area"))
-				throw new CustomException(BPACalculatorConstants.PARSING_ERROR, "Plot area should not be null");
-			if(!node.containsKey("builtUpArea"))
-				throw new CustomException(BPACalculatorConstants.PARSING_ERROR, "builtUpArea should not be null!!");
-			if(!node.containsKey("usage"))
-				throw new CustomException(BPACalculatorConstants.PARSING_ERROR, "Usage should not be null!!");
-			
-			Map<String,Object> fee = (Map<String,Object>)node.get("selfCertificationCharges");
-			
-			List<Map<String,Object>> adjustedAmountsList = node.get("adjustedAmounts") != null ? (List<Map<String,Object>>)node.get("adjustedAmounts") : new ArrayList();
-			
-			Map<String,Object> adjustedAmounts = adjustedAmountsList.stream()
-					.collect(Collectors.toMap(adjustedAmount -> adjustedAmount.get("taxHeadCode").toString(), adjustedAmount -> adjustedAmount));
-			
-			BigDecimal builtUpArea = new BigDecimal((String)node.get("builtUpArea")).multiply(BPACalculatorConstants.SQMETER_TO_SQYARD);
-			BigDecimal plotArea = new BigDecimal((String)node.get("area")).multiply(BPACalculatorConstants.SQMETER_TO_SQYARD);
-			BigDecimal basementArea = BigDecimal.ZERO;
-			String category = (String)node.get("usage");
 			Map<String, Object> taxPeriod = mdmsService.getTaxPeriods(mdmsData);
 			String finYear = taxPeriod.get(BPACalculatorConstants.MDMS_FINANCIALYEAR)
 					.toString();
 			String tanentId=calulationCriteria.getBpa().getTenantId();
 			
 			//Calculate Sanction Fee of BPA
-			estimates = calculateSanctionFee(requestInfo, tanentId, plotArea, builtUpArea, basementArea, fee, adjustedAmounts, category, finYear);
+			estimates = calculateSanctionFee(requestInfo, tanentId, finYear, node);
 		}
 
 		else {
@@ -354,8 +337,30 @@ public class CalculationService {
 	 * @param finYear Current financial year
 	 * @return List of TaxHeadEstimate for the Demand creation
 	 */
-	private List<TaxHeadEstimate> calculateSanctionFee (RequestInfo requestInfo,String tanentId, BigDecimal plotArea, BigDecimal builtUpArea
-			, BigDecimal basementArea, Map<String,Object> fee, Map<String,Object> adjustedAmounts, String category, String finYear) {
+	private List<TaxHeadEstimate> calculateSanctionFee (RequestInfo requestInfo,String tanentId, String finYear, Map<String,Object> node) {
+		
+		if(!node.containsKey("area"))
+			throw new CustomException(BPACalculatorConstants.PARSING_ERROR, "Plot area should not be null");
+		if(!node.containsKey("builtUpArea"))
+			throw new CustomException(BPACalculatorConstants.PARSING_ERROR, "builtUpArea should not be null!!");
+		if(!node.containsKey("usage"))
+			throw new CustomException(BPACalculatorConstants.PARSING_ERROR, "Usage should not be null!!");
+		
+		Map<String,Object> fee = (Map<String,Object>)node.get("selfCertificationCharges");
+		
+		List<Map<String,Object>> adjustedAmountsList = node.get("adjustedAmounts") != null ? (List<Map<String,Object>>)node.get("adjustedAmounts") : new ArrayList();
+		
+		Map<String,Object> adjustedAmounts = adjustedAmountsList.stream()
+				.collect(Collectors.toMap(adjustedAmount -> adjustedAmount.get("taxHeadCode").toString(), adjustedAmount -> adjustedAmount));
+		
+		BigDecimal builtUpArea = new BigDecimal((String)node.get("builtUpArea")).multiply(BPACalculatorConstants.SQMETER_TO_SQYARD); //In Sq Yard
+		BigDecimal plotArea = new BigDecimal((String)node.get("area")).multiply(BPACalculatorConstants.SQMETER_TO_SQYARD);  //In Sq Yard
+		BigDecimal basementArea = BigDecimal.ZERO;
+		String category = (String)node.get("usage");
+		String approvedColony = node.containsKey("approvedColony") ? (String)node.get("approvedColony") : "NO";
+		String buildingStatus  = node.containsKey("buildingStatus") ? (String)node.get("buildingStatus") : "";
+		String NocNumber  = node.containsKey("NocNumber") ? (String)node.get("NocNumber") : "";
+		
 		List<TaxHeadEstimate> estimates = new LinkedList<>();
 		Object mdmsData = mdmsService.getMDMSSanctionFeeCharges(requestInfo, tanentId, BPACalculatorConstants.MDMS_CHARGES_TYPE_CODE, category, finYear);
 		List<Map<String,Object>> chargesTypejsonOutput = JsonPath.read(mdmsData, BPACalculatorConstants.MDMS_CHARGES_TYPE_PATH);
@@ -371,7 +376,8 @@ public class CalculationService {
 			case BPACalculatorConstants.BPA_PROCESSING_FEES:
 			case BPACalculatorConstants.BPA_CLU_CHARGES:
 			case BPACalculatorConstants.BPA_EXTERNAL_DEVELOPMENT_CHARGES:
-				amount=rate.multiply(builtUpArea).setScale(0, RoundingMode.HALF_UP);
+				if(approvedColony.equalsIgnoreCase("LAL_LAKEER") || (approvedColony.equalsIgnoreCase("NO") && StringUtils.isEmpty(NocNumber)))
+					amount=rate.multiply(builtUpArea).setScale(0, RoundingMode.HALF_UP);
 				break;
 			case BPACalculatorConstants.BPA_MALBA_CHARGES:
 				BigDecimal sqFeetArea = builtUpArea.multiply(BPACalculatorConstants.SQYARD_TO_SQFEET);
@@ -410,12 +416,12 @@ public class CalculationService {
 				else
 					amount = rate.setScale(0, RoundingMode.HALF_UP);
 				break;
-			case BPACalculatorConstants.BPA_LESS_ADJUSMENT_PLOT:
-				if(fee.containsKey(taxhead) && fee.get(taxhead) != null && !fee.get(taxhead).toString().trim().isEmpty() && !fee.get(taxhead).toString().equalsIgnoreCase("undefined"))
-					amount = new BigDecimal(fee.get(taxhead).toString()).multiply(rate).setScale(0, RoundingMode.HALF_UP);
-				else
-					amount = BigDecimal.ZERO;
-				break;
+//			case BPACalculatorConstants.BPA_LESS_ADJUSMENT_PLOT:
+//				if(fee.containsKey(taxhead) && fee.get(taxhead) != null && !fee.get(taxhead).toString().trim().isEmpty() && !fee.get(taxhead).toString().equalsIgnoreCase("undefined"))
+//					amount = new BigDecimal(fee.get(taxhead).toString()).multiply(rate).setScale(0, RoundingMode.HALF_UP);
+//				else
+//					amount = BigDecimal.ZERO;
+//				break;
 			}
 			
 			Map<String, Object> adjustedAmount = adjustedAmounts.containsKey(taxhead) ? 
