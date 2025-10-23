@@ -23,7 +23,7 @@ public enum Category {
     FINES("FINES"),
 
     CHARGES("CHARGES");
-
+	
     private String value;
 
     Category(String value) {

@@ -117,12 +117,18 @@ public class AssessmentValidator {
 			errorMap.put("ASSMNT_ID_EMPTY", "Assessment ID cannot be empty");
 		}
 
-		if (assessmentFromDB!=null && !CollectionUtils.isEmpty(assessmentFromDB.getDocuments()) && assessmentFromDB.getDocuments().size() > assessment.getDocuments().size()) {
-			errorMap.put("MISSING_DOCUMENTS", "Please send all the documents belonging to this assessment");
-		}
-		if (assessmentFromDB!=null && !CollectionUtils.isEmpty(assessmentFromDB.getUnitUsageList()) && assessmentFromDB.getUnitUsageList().size() > assessment.getUnitUsageList().size()) {
-			errorMap.put("MISSING_UNITS", "Please send all the units belonging to this assessment");
-		}
+		/*
+		 * if (assessmentFromDB!=null &&
+		 * !CollectionUtils.isEmpty(assessmentFromDB.getDocuments()) &&
+		 * assessmentFromDB.getDocuments().size() > assessment.getDocuments().size()) {
+		 * errorMap.put("MISSING_DOCUMENTS",
+		 * "Please send all the documents belonging to this assessment"); } if
+		 * (assessmentFromDB!=null &&
+		 * !CollectionUtils.isEmpty(assessmentFromDB.getUnitUsageList()) &&
+		 * assessmentFromDB.getUnitUsageList().size() >
+		 * assessment.getUnitUsageList().size()) { errorMap.put("MISSING_UNITS",
+		 * "Please send all the units belonging to this assessment"); }
+		 */
 
 		if(!property.getStatus().equals(Status.ACTIVE))
 			errorMap.put("INVALID_REQUEST","Assessment cannot be done on inactive or property in workflow");

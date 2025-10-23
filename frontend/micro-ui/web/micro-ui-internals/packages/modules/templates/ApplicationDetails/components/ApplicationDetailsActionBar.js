@@ -1,6 +1,6 @@
 import React, {useEffect, useRef} from "react";
 import { useTranslation } from "react-i18next";
-import { SubmitBar, ActionBar, Menu } from "@egovernments/digit-ui-react-components";
+import { SubmitBar, ActionBar, Menu } from "@upyog/digit-ui-react-components";
 
 function ApplicationDetailsActionBar({ workflowDetails, displayMenu, onActionSelect, setDisplayMenu, businessService, forcedActionPrefix,ActionBarStyle={},MenuStyle={} }) {
   const { t } = useTranslation();
@@ -47,7 +47,7 @@ function ApplicationDetailsActionBar({ workflowDetails, displayMenu, onActionSel
               style={MenuStyle}
             />
           ) : null}
-          <SubmitBar ref={menuRef} label={t("WF_TAKE_ACTION")} onSubmit={() => setDisplayMenu(!displayMenu)} />
+          <SubmitBar style={{...ActionBarStyle}} ref={menuRef} label={t("WF_TAKE_ACTION")} onSubmit={() => setDisplayMenu(!displayMenu)} />
         </ActionBar>
       )}
       {!workflowDetails?.isLoading && !isMenuBotton && isSingleButton && (

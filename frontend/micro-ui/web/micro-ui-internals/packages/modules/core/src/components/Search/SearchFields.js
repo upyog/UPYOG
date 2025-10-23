@@ -17,7 +17,7 @@ import {
     Loader,
     CardText,
     Header,
-} from "@egovernments/digit-ui-react-components";
+} from "@upyog/digit-ui-react-components";
 const SearchFields = ({ register, control, reset, tenantId, t, previousPage, formState, isLoading }) => {
 const isMobile = window.Digit.Utils.browser.isMobile();
 

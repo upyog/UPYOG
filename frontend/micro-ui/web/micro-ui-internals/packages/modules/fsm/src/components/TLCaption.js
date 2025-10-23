@@ -1,6 +1,6 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { TelePhone } from "@egovernments/digit-ui-react-components";
+import { TelePhone } from "@upyog/digit-ui-react-components";
 import Reason from "./Reason";
 import Username from "./Username";
 
