@@ -601,4 +601,30 @@ public class CalculatorUtil {
 				.append(WSCalculationConstant.SERVICE_FIELD_FOR_SEARCH_URL)
 				.append(WSCalculationConstant.ONE_TIME_FEE_SERVICE_FIELD);
 	}
+	
+	
+	/*PI-19231
+	 * 
+	 * */
+	
+	public MdmsCriteriaReq getUsageCategoryFromMdms(RequestInfo requestInfo, String tenantId ) {
+
+		String filter = "[?(@.tenantId=='" + tenantId + "' && @.status=='" + WSCalculationConstant.ACTIVE_CONNECTION + "')]";
+		
+		MasterDetail masterDetail = MasterDetail.builder().name(WSCalculationConstant.METER_READING_MAPPING)
+				.filter(filter)
+				.build();
+		ModuleDetail moduleDetail = ModuleDetail.builder()
+		        .moduleName("tenant") // Replace with your actual module name
+		        .masterDetails(Collections.singletonList(masterDetail))
+		        .build();
+		MdmsCriteria mdmsCriteria = MdmsCriteria.builder()
+		        .tenantId(tenantId.split("\\.")[0]) // Extract root tenant like "pb" from "pb.amritsar"
+		        .moduleDetails(Collections.singletonList(moduleDetail))
+		        .build();
+	    return MdmsCriteriaReq.builder()
+		        .requestInfo(requestInfo)
+		        .mdmsCriteria(mdmsCriteria)
+		        .build();
+	}
 }

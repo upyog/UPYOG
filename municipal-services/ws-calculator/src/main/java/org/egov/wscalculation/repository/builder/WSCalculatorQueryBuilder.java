@@ -22,6 +22,8 @@ import org.springframework.util.StringUtils;
 
 @Component
 public class WSCalculatorQueryBuilder {
+	
+	
 
 	@Autowired
 	private WSCalculationConfiguration config;
@@ -134,6 +136,8 @@ public class WSCalculatorQueryBuilder {
 	public static final String EG_WS_BILL_SCHEDULER_CONNECTION_STATUS_INSERT = "INSERT INTO eg_ws_bill_scheduler_connection_status "
 			+ "(id, eg_ws_scheduler_id, locality, module, createdtime, lastupdatedtime, status, tenantid, reason, consumercode) "
 			+ "VALUES (?,?,?,?,?,?,?,?,?,?);";
+	
+	public static final String RELATED_SW_CONNECTION_SEARCH_QUERY = "SELECT conn.relatedSwConn from eg_ws_connection conn ";
 
 	public String getDistinctTenantIds() {
 		return distinctTenantIdsCriteria;
@@ -1052,5 +1056,28 @@ StringBuilder query = new StringBuilder(connectionNoListQueryUpdate);
 		query.append(" and groups is not null ");
 		query.append(" ORDER BY createdtime ");
 		return query.toString();
+	}
+	
+	public String getRelatedSwConnenction( String tenantId , String consumerCode ,List<Object> preparedStatement) {
+		StringBuilder query = new StringBuilder( RELATED_SW_CONNECTION_SEARCH_QUERY );
+		if(!StringUtils.isEmpty(tenantId)){
+			addClauseIfRequired(preparedStatement, query);
+			query.append(" conn.tenantid = ? ");
+			preparedStatement.add(tenantId);
+		}
+		
+		if(!StringUtils.isEmpty(consumerCode)){
+			addClauseIfRequired(preparedStatement, query);
+			query.append(" conn.connectionno = ? ");
+			preparedStatement.add(consumerCode);
+		}
+		
+		addClauseIfRequired(preparedStatement, query);
+		query.append(" conn.applicationstatus = 'CONNECTION_ACTIVATED' ");
+		addClauseIfRequired(preparedStatement, query);
+		query.append(" conn.status = 'Active' ");
+		
+		return query.toString();
+		
 	}
 }

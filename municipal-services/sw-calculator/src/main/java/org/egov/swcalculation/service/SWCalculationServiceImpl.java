@@ -660,13 +660,20 @@ public class SWCalculationServiceImpl implements SWCalculationService {
 							.consumerCodes(ImmutableSet.copyOf(conectionNoList))
 							.billSchedular(billSchedular)
 							.build();
+					
+					String localityCode = billSchedular.getLocality() != null 
+		                      ? billSchedular.getLocality() 
+		                      : billSchedular.getGrup();
+					String tenantId = billSchedular.getTenantId();
+					int batchCount = count;       
+					String firstConnection = conectionNoList.get(0); 
 
-					producer.push(configs.getBillGenerateSchedulerTopic(), billGeneraterReq);
+					String key = tenantId+ "-" +localityCode + "-" + batchCount + "-" + firstConnection;
+					producer.push(configs.getBillGenerateSchedulerTopic(),key, billGeneraterReq);
 					log.info("Bill Scheduler pushed connections size:{} to kafka topic of batch no: ", conectionNoList.size(), count++);
 
 					if(threadSleepCount == 2) {
-						//Pausing controller for every three batches.
-						Thread.sleep(10000);
+						Thread.sleep(2000);
 						threadSleepCount=1;
 					}
 					threadSleepCount++;

@@ -669,14 +669,23 @@ So, both lists are now filtered to include only records with INITIATED status, w
 							.requestInfoWrapper(requestInfoWrapper).tenantId(billSchedular.getTenantId())
 							.consumerCodes(ImmutableSet.copyOf(conectionNoList)).billSchedular(billSchedular).build();
 
-					producer.push(configs.getBillGenerateSchedulerTopic(), billGeneraterReq);
+					
+					String localityCode = billSchedular.getLocality() != null 
+		                      ? billSchedular.getLocality() 
+		                      : billSchedular.getGrup();
+					
+					int batchCount = count;          // batch number or counter
+					String firstConnection = conectionNoList.get(0); // first consumer code in batch
+
+					String key = localityCode + "-" + batchCount + "-" + firstConnection;
+					producer.push(configs.getBillGenerateSchedulerTopic(), key,billGeneraterReq);
 					log.info("Bill Scheduler pushed connections size:{} to kafka topic of batch no: ",
 							conectionNoList.size(), count++);
 
 					if (threadSleepCount == 2) {
 						// Pausing the controller for 10 seconds after every two batches pushed to Kafka
 						// topic
-						Thread.sleep(10000);
+						Thread.sleep(2000);
 						threadSleepCount = 1;
 					}
 					threadSleepCount++;
