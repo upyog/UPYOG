@@ -21,7 +21,7 @@ public class BillQueryBuilder {
 	
 	public static final String REPLACE_STRING = "{replace}";
 	
-	public static final String BILL_STATUS_UPDATE_BASE_QUERY = "UPDATE egbs_bill_v1 SET status=? {replace} WHERE status='ACTIVE' AND tenantId = ? ";
+	public static final String BILL_STATUS_UPDATE_BASE_QUERY = "UPDATE egbs_bill_v1 SET lastmodifieddate=?, status=? {replace} WHERE status='ACTIVE' AND tenantId = ? ";
 	
 	public static final String BILL_STATUS_UPDATE_QUERY = "UPDATE egbs_bill_v1 SET status=? {replace} WHERE status='ACTIVE'";
 	
@@ -235,6 +235,7 @@ public class BillQueryBuilder {
 		String additionalDetailsQuery = ", additionaldetails = ?";
 		StringBuilder builder = new StringBuilder();
 		
+		preparedStmtList.add(System.currentTimeMillis());
 		preparedStmtList.add(updateBillCriteria.getStatusToBeUpdated().toString());
 
 		if (!StringUtils.isEmpty(updateBillCriteria.getTenantId())) {

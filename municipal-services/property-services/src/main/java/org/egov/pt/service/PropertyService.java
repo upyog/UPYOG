@@ -1,6 +1,7 @@
 package org.egov.pt.service;
 
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -24,6 +25,7 @@ import org.egov.common.contract.request.Role;
 import org.egov.common.contract.request.User;
 import org.egov.mdms.model.MdmsResponse;
 import org.egov.pt.config.PropertyConfiguration;
+import org.egov.pt.models.CalculateTaxRequest;
 import org.egov.pt.models.OwnerInfo;
 import org.egov.pt.models.Property;
 import org.egov.pt.models.PropertyBillFailure;
@@ -130,27 +132,30 @@ public class PropertyService {
 
 	@Autowired
 	EncryptionDecryptionUtil encryptionDecryptionUtil;
-	
+
 	@Autowired
 	private ResponseInfoFactory responseInfoFactory;
-	
+
 	@Autowired
 	private OwnersRepository ownersRepository;
-	
+
 	@Autowired
 	private ReportService reportService;
-	
+
 	@Autowired
 	private PDFRequestGenerator pdfRequestGenerator;
-	
+
 	@Autowired
 	private BillService billService;
-	
+
 	@Autowired
 	private MDMSService mdmsService;
-	
+
 	@Autowired
 	private DemandRepository demandRepository;
+
+	@Autowired
+	private PropertyService propertyService;
 
 	/**
 	 * Enriches the Request and pushes to the Queue
@@ -202,7 +207,7 @@ public class PropertyService {
 	 * @param request PropertyRequest containing list of properties to be update
 	 * @return List of updated properties
 	 */
-	public Property updateProperty(PropertyRequest request,Boolean isStatusUpdate) {
+	public Property updateProperty(PropertyRequest request, Boolean isStatusUpdate) {
 
 		Property propertyFromSearch = unmaskingUtil.getPropertyUnmasked(request);
 		propertyValidator.validateCommonUpdateInformation(request, propertyFromSearch);
@@ -217,8 +222,8 @@ public class PropertyService {
 			processOwnerMutation(request, propertyFromSearch);
 
 		else {
-			 if (isStatusUpdate)
-					processOwnerUpdate(request, propertyFromSearch);
+			if (isStatusUpdate)
+				processOwnerUpdate(request, propertyFromSearch);
 			if (isRequestForStatusChange) {
 				BillResponse billResponse = billingService.fetchBill(request.getProperty(), request.getRequestInfo());
 
@@ -235,17 +240,18 @@ public class PropertyService {
 							"Clear Pending dues before De-Enumerating the property");
 
 				else
-					processPropertyUpdate(request, propertyFromSearch,isStatusUpdate);
+					processPropertyUpdate(request, propertyFromSearch, isStatusUpdate);
 
 			} else {
-				processPropertyUpdate(request, propertyFromSearch,isStatusUpdate);
+				processPropertyUpdate(request, propertyFromSearch, isStatusUpdate);
 			}
 		}
 
 		request.getProperty().setWorkflow(null);
 
 		// Push PLAIN data to fuzzy search index
-		PropertyRequest fuzzyPropertyRequest = new PropertyRequest(request.getRequestInfo(), request.getProperty(), false);
+		PropertyRequest fuzzyPropertyRequest = new PropertyRequest(request.getRequestInfo(), request.getProperty(),
+				false);
 		fuzzyPropertyRequest.setProperty(encryptionDecryptionUtil.decryptObject(request.getProperty(),
 				PTConstants.PROPERTY_DECRYPT_MODEL, Property.class, request.getRequestInfo()));
 
@@ -307,7 +313,7 @@ public class PropertyService {
 			userService.createUser(request);
 		} else {
 			userService.createUser(request);
-			//userService.updateOwnerDetails(request);
+			// userService.updateOwnerDetails(request);
 		}
 
 		enrichmentService.enrichUpdateRequest(request, propertyFromSearch);
@@ -321,7 +327,7 @@ public class PropertyService {
 	 * @param request
 	 * @param propertyFromSearch
 	 */
-	private void processPropertyUpdate(PropertyRequest request, Property propertyFromSearch,Boolean updateOwnerName) {
+	private void processPropertyUpdate(PropertyRequest request, Property propertyFromSearch, Boolean updateOwnerName) {
 
 		propertyValidator.validateRequestForUpdate(request, propertyFromSearch);
 		if (CreationReason.CREATE.equals(request.getProperty().getCreationReason())) {
@@ -331,20 +337,18 @@ public class PropertyService {
 			userService.updateUser(request);
 //		} else {
 //			request.getProperty().setOwners(util.getCopyOfOwners(propertyFromSearch.getOwners()));
-		}
-		else if (CreationReason.UPDATE.equals(request.getProperty().getCreationReason())) {
-			if(request.getProperty().getOwners().size() > propertyFromSearch.getOwners().size())
-			{
+		} else if (CreationReason.UPDATE.equals(request.getProperty().getCreationReason())) {
+			if (request.getProperty().getOwners().size() > propertyFromSearch.getOwners().size()) {
 				request.getProperty().getOwners().forEach(owner -> {
-					
-					if(owner.getOwnerInfoUuid() == null) {
+
+					if (owner.getOwnerInfoUuid() == null) {
 						owner.setOwnerInfoUuid(UUID.randomUUID().toString());
 						if (!CollectionUtils.isEmpty(owner.getDocuments()))
 							owner.getDocuments().forEach(doc -> {
 								doc.setId(UUID.randomUUID().toString());
 								doc.setStatus(Status.ACTIVE);
 							});
-						
+
 						owner.setStatus(Status.ACTIVE);
 					}
 
@@ -382,12 +386,12 @@ public class PropertyService {
 				/*
 				 * If property is In Workflow then continue
 				 */
-					if(!updateOwnerName) {
-						request.getProperty().getOwners().forEach(owner -> {
-							owner.setName(owner.getPropertyOwnerName());
-						});
-					}
-				
+				if (!updateOwnerName) {
+					request.getProperty().getOwners().forEach(owner -> {
+						owner.setName(owner.getPropertyOwnerName());
+					});
+				}
+
 				producer.pushAfterEncrytpion(config.getUpdatePropertyTopic(), request);
 			}
 
@@ -740,40 +744,42 @@ public class PropertyService {
 			}
 			List<String> rolesWithinTenant = getRolesWithinTenant(applicationTenantId,
 					request.getRequestInfo().getUserInfo().getRoles(), request.getBusinessService());
-			
-			for(int i =0;i<request.getApplicationNumbers().size();i++) {
+
+			for (int i = 0; i < request.getApplicationNumbers().size(); i++) {
 				String applicationNumber = request.getApplicationNumbers().get(i);
 				final String status;
-				if(StringUtils.equalsIgnoreCase(request.getBusinessService(), PropertyUtil.BUSINESS_SERVICE_PROPERTY_BOOKING)) {
-				status = mapBookings.get(applicationNumber).getStatus().toString();
-				}
-				else {
-					throw new CustomException("UNKNOWN_BUSINESS_SERVICE","Provide the correct business service id.");
+				if (StringUtils.equalsIgnoreCase(request.getBusinessService(),
+						PropertyUtil.BUSINESS_SERVICE_PROPERTY_BOOKING)) {
+					status = mapBookings.get(applicationNumber).getStatus().toString();
+				} else {
+					throw new CustomException("UNKNOWN_BUSINESS_SERVICE", "Provide the correct business service id.");
 				}
 				List<State> stateList = businessServiceResponse.getBusinessServices().get(0).getStates().stream()
 						.filter(state -> StringUtils.equalsIgnoreCase(state.getApplicationStatus(), status)
-								&& !StringUtils.equalsAnyIgnoreCase(state.getApplicationStatus(), PropertyUtil.STATUS_RESOLVED)
-								).collect(Collectors.toList());
-				
+								&& !StringUtils.equalsAnyIgnoreCase(state.getApplicationStatus(),
+										PropertyUtil.STATUS_RESOLVED))
+						.collect(Collectors.toList());
+
 				List<String> actions = new ArrayList<>();
 				stateList.stream().forEach(state -> {
-					state.getActions().stream()
-					.filter(action -> action.getRoles().stream().anyMatch(role -> rolesWithinTenant.contains(role)))
-					.forEach(action -> {
-						actions.add(action.getAction());
-					});
-				}) ;
-				
-				
+					state.getActions().stream().filter(
+							action -> action.getRoles().stream().anyMatch(role -> rolesWithinTenant.contains(role)))
+							.forEach(action -> {
+								actions.add(action.getAction());
+							});
+				});
+
 				applicationActionMaps.put(applicationNumber, actions);
 			}
 			applicationActionMaps.entrySet().stream().forEach(entry -> {
-				propertyBookingDetailList.add(PropertyBookingDetail.builder().applicationNumber(entry.getKey()).action(entry.getValue()).build());
+				propertyBookingDetailList.add(PropertyBookingDetail.builder().applicationNumber(entry.getKey())
+						.action(entry.getValue()).build());
 			});
-			
-			response = PropertySearchResponse.builder().responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(), true))
+
+			response = PropertySearchResponse.builder()
+					.responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(), true))
 					.applicationDetails(propertyBookingDetailList).build();
-			
+
 		} catch (Exception e) {
 			throw new RuntimeException(e.getMessage());
 		}
@@ -828,7 +834,7 @@ public class PropertyService {
 		PropertyRequest propertyRequest = PropertyRequest.builder().property(property)
 				.requestInfo(request.getRequestInfo()).build();
 
-		return updateProperty(propertyRequest,false);
+		return updateProperty(propertyRequest, false);
 	}
 
 	public void setAllCount(List<Property> properties, PropertyResponse response) {
@@ -852,7 +858,7 @@ public class PropertyService {
 		}
 
 	}
-	
+
 	public PtTaxCalculatorTracker saveToPtTaxCalculatorTracker(
 			PtTaxCalculatorTrackerRequest ptTaxCalculatorTrackerRequest) {
 
@@ -860,11 +866,11 @@ public class PropertyService {
 
 		return ptTaxCalculatorTrackerRequest.getPtTaxCalculatorTracker();
 	}
-	
+
 	public PtTaxCalculatorTracker updatePtTaxCalculatorTracker(
 			PtTaxCalculatorTrackerRequest ptTaxCalculatorTrackerRequest) {
 
-		log.info("propertyId tracker update {}",ptTaxCalculatorTrackerRequest);
+		log.info("propertyId tracker update {}", ptTaxCalculatorTrackerRequest);
 		producer.push(config.getUpdatePropertyTaxCalculatorTrackerTopic(), ptTaxCalculatorTrackerRequest);
 
 		return ptTaxCalculatorTrackerRequest.getPtTaxCalculatorTracker();
@@ -875,7 +881,7 @@ public class PropertyService {
 
 		return repository.getTaxCalculatedProperties(ptTaxCalculatorTrackerSearchCriteria);
 	}
-	
+
 	public List<String> getTaxCalculatedTenantIds(
 			PtTaxCalculatorTrackerSearchCriteria ptTaxCalculatorTrackerSearchCriteria) {
 
@@ -885,44 +891,43 @@ public class PropertyService {
 	public boolean isCriteriaEmpty(PropertyCriteria propertyCriteria) {
 		return propertyValidator.isCriteriaEmpty(propertyCriteria);
 	}
-	
+
 	public Map<String, Object> totalCount(TotalCountRequest totalCountRequest) {
 		Map<String, Object> return1 = new HashMap<>();
-		if(hasRequiredRole(totalCountRequest.getRequestInfo(),"EMPLOYEE")) {
+		if (hasRequiredRole(totalCountRequest.getRequestInfo(), "EMPLOYEE")) {
 			List<Map<String, Object>> result = repository.getStatusCounts(totalCountRequest);
 			return result.get(0);
-			
-		}else if(hasRequiredRole(totalCountRequest.getRequestInfo(),"CITIZEN")){
-			
+
+		} else if (hasRequiredRole(totalCountRequest.getRequestInfo(), "CITIZEN")) {
+
 		}
-		
+
 		return return1;
 
 	}
 
 	public boolean hasRequiredRole(RequestInfo requestInfo, String type) {
-	    if (requestInfo == null || requestInfo.getUserInfo() == null) {
-	        return false;
-	    }
+		if (requestInfo == null || requestInfo.getUserInfo() == null) {
+			return false;
+		}
 
-	    List<Role> roles = requestInfo.getUserInfo().getRoles();
-	    if (roles == null || roles.isEmpty()) {
-	        return false;
-	    }
+		List<Role> roles = requestInfo.getUserInfo().getRoles();
+		if (roles == null || roles.isEmpty()) {
+			return false;
+		}
 
-	    if ("CITIZEN".equalsIgnoreCase(type)) {
-	        return roles.stream()
-	                .anyMatch(role -> type.equalsIgnoreCase(role.getCode()));
-	    }
+		if ("CITIZEN".equalsIgnoreCase(type)) {
+			return roles.stream().anyMatch(role -> type.equalsIgnoreCase(role.getCode()));
+		}
 
-	    return roles.stream()
-	            .anyMatch(role -> containsIgnoreCase(role.getCode(), "PROPERTY_APPROVER") ||
-	                              containsIgnoreCase(role.getCode(), "PROPERTY_VERIFIER") ||
-	                              containsIgnoreCase(role.getCode(), "EMPLOYEE"));
+		return roles.stream()
+				.anyMatch(role -> containsIgnoreCase(role.getCode(), "PROPERTY_APPROVER")
+						|| containsIgnoreCase(role.getCode(), "PROPERTY_VERIFIER")
+						|| containsIgnoreCase(role.getCode(), "EMPLOYEE"));
 	}
 
 	private boolean containsIgnoreCase(String source, String target) {
-	    return source != null && source.toLowerCase().contains(target.toLowerCase());
+		return source != null && source.toLowerCase().contains(target.toLowerCase());
 	}
 
 	public List<OwnerInfo> updateExistingOwnerDetails(RequestInfoWrapper requestInfoWrapper) {
@@ -1018,7 +1023,7 @@ public class PropertyService {
 
 		return reportService.createNoSavePDF(pdfRequest);
 	}
-	
+
 	public Map<String, Integer> getUlbDaysMap(MdmsResponse mdmsResponse) {
 		return Optional.ofNullable(mdmsResponse).map(MdmsResponse::getMdmsRes)
 				.map(mdmsRes -> mdmsRes.get(PTConstants.MDMS_MODULE_ULBS)).map(mapper::valueToTree).map(ulbsNode -> {
@@ -1031,37 +1036,87 @@ public class PropertyService {
 								node -> node.get("days").asInt())))
 				.orElseGet(HashMap::new);
 	}
-	
+
 	public Map<String, Object> checkMastersStatus(RequestInfoWrapper requestInfoWrapper, String UlbName) {
 		List<Map<String, Object>> result = repository.getPropertyMastersStatus(UlbName);
 		return result.get(0);
 	}
-	
-	public void generateArrear(GenrateArrearRequest genrateArrearRequest) {
-		
+
+	public String generateArrear(GenrateArrearRequest genrateArrearRequest) {
+		String message = null;
 		Set<String> setOfConsumerCode = new HashSet<>();
 		setOfConsumerCode.add(genrateArrearRequest.getDemands().get(0).getConsumerCode());
 		Set<Status> setOfStatuses = new HashSet<>();
 		setOfStatuses.add(Status.APPROVED);
-		PropertyCriteria pptcriteria = PropertyCriteria.builder().propertyIds(setOfConsumerCode).tenantId(genrateArrearRequest.getDemands().get(0).getTenantId()).status(setOfStatuses).build();
-		List<Property> properties = searchProperty(pptcriteria,genrateArrearRequest.getRequestInfo(),null);
-		
-		genrateArrearRequest.getDemands().stream().forEach(demand -> {
-			List<Demand> savedDemands = demandRepository.saveDemand(genrateArrearRequest.getRequestInfo(),createArearDemand(demand,properties.get(0)));
-			if (CollectionUtils.isEmpty(savedDemands)) {
-				throw new CustomException("INVALID_CONSUMERCODE",
-						"Bill not generated due to no Demand found for the given consumerCode");
-			}
-			GenerateBillCriteria billCriteria = GenerateBillCriteria.builder().tenantId(properties.get(0).getTenantId())
-					.businessService(PTConstants.MODULE_PROPERTY).consumerCode(properties.get(0).getPropertyId()).build();
-//			GenerateBillCriteria billCriteria = GenerateBillCriteria.builder().tenantId(genrateArrearRequest.getDemands().get(0).getTenantId())
-//					.businessService(PTConstants.MODULE_PROPERTY).demandId(savedDemands.get(0).getId()).consumerCode(genrateArrearRequest.getDemands().get(0).getConsumerCode()).build();
-			BillResponse billResponse = billService.generateBill(genrateArrearRequest.getRequestInfo(), billCriteria);
-		});
+		PropertyCriteria pptcriteria = PropertyCriteria.builder().propertyIds(setOfConsumerCode)
+				.tenantId(genrateArrearRequest.getDemands().get(0).getTenantId()).status(setOfStatuses).build();
+		List<Property> properties = searchProperty(pptcriteria, genrateArrearRequest.getRequestInfo(), null);
+
+		if (!CollectionUtils.isEmpty(properties)) {
+			checkPropertyArears(genrateArrearRequest.getDemands(), properties.get(0));
+			genrateArrearRequest.getDemands().stream().forEach(demand -> {
+				List<Demand> savedDemands = demandRepository.saveDemand(genrateArrearRequest.getRequestInfo(),
+						createArearDemand(demand, properties.get(0)));
+				if (CollectionUtils.isEmpty(savedDemands)) {
+					throw new CustomException("INVALID_CONSUMERCODE",
+							"Bill not generated due to no Demand found for the given consumerCode");
+				}
+				GenerateBillCriteria billCriteria = GenerateBillCriteria.builder()
+						.tenantId(properties.get(0).getTenantId()).businessService(PTConstants.MODULE_PROPERTY)
+						.consumerCode(properties.get(0).getPropertyId()).build();
+				BillResponse billResponse = billService.generateBill(genrateArrearRequest.getRequestInfo(),
+						billCriteria);
+				if (null != billResponse && !CollectionUtils.isEmpty(billResponse.getBill())) {
+
+					CalculateTaxRequest calculateTaxRequest = CalculateTaxRequest.builder().requestInfo(genrateArrearRequest.getRequestInfo()).fromDate(new Date(demand.getTaxPeriodFrom()))
+										.toDate(new Date(demand.getTaxPeriodTo())).type("AREAR").financialYear(getFinancialYearFromTimestamps(demand.getTaxPeriodFrom(),demand.getTaxPeriodTo())).build();
+					JsonNode node = mapper.createObjectNode();
+					PtTaxCalculatorTrackerRequest ptTaxCalculatorTrackerRequest = enrichmentService
+							.enrichTaxCalculatorTrackerCreateRequest(properties.get(0), calculateTaxRequest,
+									demand.getMinimumAmountPayable(), node, billResponse.getBill(), BigDecimal.ZERO, demand.getMinimumAmountPayable());
+					PtTaxCalculatorTracker ptTaxCalculatorTracker = propertyService
+							.saveToPtTaxCalculatorTracker(ptTaxCalculatorTrackerRequest);
+				}
+			});
+			message = "Arear Generated Successfully";
+		} else {
+			message = "Invalid Property Details";
+		}
+		return message;
+	}
+
+	public void checkPropertyArears(List<Demand> demands, Property property) {
 
 	}
-	
-	public List<Demand> createArearDemand(Demand demand,Property property) {
+
+    public static String getFinancialYearFromTimestamps(long timestamp1, long timestamp2) {
+        // Pick the earlier date between the two
+        Date date1 = new Date(timestamp1);
+        Date date2 = new Date(timestamp2);
+
+        Date earlierDate = date1.before(date2) ? date1 : date2;
+
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(earlierDate);
+
+        int year = cal.get(Calendar.YEAR);
+        int month = cal.get(Calendar.MONTH); // 0 = Jan, 3 = April
+
+        int fyStartYear;
+        if (month >= Calendar.APRIL) {
+            // If April or after, FY starts this year
+            fyStartYear = year;
+        } else {
+            // If before April, FY started last year
+            fyStartYear = year - 1;
+        }
+
+        int fyEndYear = fyStartYear + 1;
+
+        return fyStartYear + "-" + (fyEndYear % 100);  // e.g., "2023-24"
+    }
+
+	public List<Demand> createArearDemand(Demand demand, Property property) {
 //		DemandDetail demandDetail = DemandDetail.builder().taxHeadMasterCode(PTConstants.PROPERTY_TAX_HEAD_MASTER_CODE)
 //				.taxAmount(taxAmount).collectionAmount(BigDecimal.ZERO).build();
 		Demand newDemand = demand;
@@ -1073,9 +1128,9 @@ public class PropertyService {
 //		ObjectNode node = (ObjectNode) demand.getAdditionalDetails();
 		ObjectNode node = mapper.valueToTree(demand.getAdditionalDetails());
 		if (node == null) {
-		    node = mapper.createObjectNode(); // create new if null
+			node = mapper.createObjectNode(); // create new if null
 		}
-		
+
 //		node = demand.getAdditionalDetails();
 
 		JsonNode addDetail = mapper.valueToTree(property.getAddress().getAdditionalDetails());
@@ -1100,14 +1155,14 @@ public class PropertyService {
 				StringUtils.isNotEmpty(property.getOwners().get(0).getMobileNumber())
 						? property.getOwners().get(0).getMobileNumber()
 						: "N/A");
-		node.put("billtype","AREAR");
+		node.put("billtype", "AREAR");
 		newDemand.setAdditionalDetails(node);
 		newDemand.setPayer(User.builder().uuid(property.getOwners().get(0).getUuid()).build());
 		newDemand.setBusinessService(PTConstants.MODULE_PROPERTY);
 		newDemand.setConsumerType(PTConstants.MODULE_PROPERTY);
 		newDemand.setFixedBillExpiryDate(cal.getTimeInMillis());
 		return Collections.singletonList(newDemand);
-		
+
 //		Demand demandOne = Demand.builder()
 //				.payer(User.builder().uuid(property.getOwners().get(0).getUuid()).build())
 //				.tenantId(property.getTenantId())
@@ -1117,11 +1172,11 @@ public class PropertyService {
 
 //		List<Demand> demands = Arrays.asList(demand);
 	}
-	
+
 	public void saveToPtBillFailure(PropertyBillFailure propertyBillFailure) {
 		producer.push(config.getSaveBillFailureTopic(), propertyBillFailure);
 	}
-	
+
 	public void removePtBillFailure(PropertyBillFailure propertyBillFailure) {
 		producer.push(config.getRemoveBillFailureTopic(), propertyBillFailure);
 	}

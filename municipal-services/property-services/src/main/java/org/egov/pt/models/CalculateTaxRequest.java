@@ -42,5 +42,8 @@ public class CalculateTaxRequest {
 
 	@JsonProperty("financialYear")
 	private String financialYear;
+	
+	@JsonProperty("type")
+	private String type = "CYCLIC";
 
 }
