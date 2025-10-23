@@ -153,7 +153,8 @@ public class LandEnrichmentService {
 
 	private void enrichBoundary(List<LandInfoRequest> landRequests) {
 		landRequests.forEach(landRequest -> {
-			boundaryService.getAreaType(landRequest, config.getHierarchyTypeCode());
+			if(!StringUtils.isEmpty(landRequest.getLandInfo().getAddress().getLocality().getCode()))
+				boundaryService.getAreaType(landRequest, config.getHierarchyTypeCode());
 		});
 	}
 
