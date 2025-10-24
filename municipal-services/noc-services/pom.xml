@@ -11,7 +11,7 @@
 		<java.version>1.8</java.version>
 		<maven.compiler.source>${java.version}</maven.compiler.source>
 		<maven.compiler.target>${java.version}</maven.compiler.target>
-		<lombok.version>1.18.8</lombok.version>
+		<lombok.version>1.18.30</lombok.version>
 		<springfox-version>2.7.0</springfox-version>
 		<logback.version>1.2.0</logback.version>
 	</properties>
@@ -81,7 +81,7 @@
 		<dependency>
 			<groupId>org.egov.services</groupId>
 			<artifactId>services-common</artifactId>
-			<version>1.0.1-SNAPSHOT</version>
+			<version>1.1.1-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.projectlombok</groupId>
@@ -103,7 +103,7 @@
 		<dependency>
 			<groupId>org.postgresql</groupId>
 			<artifactId>postgresql</artifactId>
-			<version>42.2.2.jre7</version>
+			<version>42.2.2</version>
 		</dependency>
 		<dependency>
 			<groupId>org.egov</groupId>
@@ -115,6 +115,8 @@
 		<dependency>
       <groupId>org.flywaydb</groupId>
       <artifactId>flyway-core</artifactId>
+			<version>10.15.0</version>
+
     </dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -127,7 +129,12 @@
 			<version>7.2.0</version>
 			<type>pom</type>
 		</dependency>
-	</dependencies>
+		<dependency>
+			<groupId>org.springdoc</groupId>
+			<artifactId>springdoc-openapi-ui</artifactId>
+			<version>1.7.0</version>
+		</dependency>
+    </dependencies>
 	<repositories>
 		<repository>
 			<id>repo.egovernments.org</id>

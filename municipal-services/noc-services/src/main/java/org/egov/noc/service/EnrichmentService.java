@@ -13,6 +13,7 @@ import org.egov.noc.repository.IdGenRepository;
 import org.egov.noc.util.NOCConstants;
 import org.egov.noc.util.NOCUtil;
 import org.egov.noc.web.model.AuditDetails;
+import org.egov.noc.web.model.Document;
 import org.egov.noc.web.model.Noc;
 import org.egov.noc.web.model.NocRequest;
 import org.egov.noc.web.model.enums.Status;
@@ -43,6 +44,12 @@ public class EnrichmentService {
 	@Autowired
 	private WorkflowService workflowService;
 
+
+
+
+
+
+
 	/**
 	 * Enriches the nocReuqest object with puplating the id field with the uuids and
 	 * the auditDetails
@@ -54,13 +61,30 @@ public class EnrichmentService {
 		RequestInfo requestInfo = nocRequest.getRequestInfo();
 		AuditDetails auditDetails = nocUtil.getAuditDetails(requestInfo.getUserInfo().getUuid(), true);
 		nocRequest.getNoc().setAuditDetails(auditDetails);
+		nocRequest.getNoc().getNocDetails().setAuditDetails(auditDetails);
 		nocRequest.getNoc().setId(UUID.randomUUID().toString());
+		nocRequest.getNoc().getNocDetails().setId(UUID.randomUUID().toString());
+		nocRequest.getNoc().getNocDetails().setNocId(nocRequest.getNoc().getId());
+		nocRequest.getNoc().setAccountId(UUID.randomUUID().toString());
+		nocRequest.getNoc().setNocNo(UUID.randomUUID().toString());
+
+		List<Document> documents = nocRequest.getNoc().getDocuments();
+
+
+
+		for (Document doc : documents) {
+			doc.setUuid(UUID.randomUUID().toString()); // Set your desired ID here
+			doc.setNocId(nocRequest.getNoc().getId());
+			doc.setDocumentUid(UUID.randomUUID().toString());
+			doc.setDocumentAttachment(UUID.randomUUID().toString());
+		}
+
 		nocRequest.getNoc().setAccountId(nocRequest.getNoc().getAuditDetails().getCreatedBy());
 		setIdgenIds(nocRequest);
 		if (!CollectionUtils.isEmpty(nocRequest.getNoc().getDocuments()))
 			nocRequest.getNoc().getDocuments().forEach(document -> {
-				if (document.getId() == null) {
-					document.setId(UUID.randomUUID().toString());
+				if (document.getUuid() == null) {
+					document.setUuid(UUID.randomUUID().toString());
 				}
 			});
 		if (!ObjectUtils.isEmpty(nocRequest.getNoc().getWorkflow())
@@ -118,23 +142,47 @@ public class EnrichmentService {
 		AuditDetails auditDetails = nocUtil.getAuditDetails(requestInfo.getUserInfo().getUuid(), false);
 		nocRequest.getNoc().setAuditDetails(auditDetails);
 		nocRequest.getNoc().getAuditDetails().setLastModifiedTime(auditDetails.getLastModifiedTime());
-
+		List<Document> documents = nocRequest.getNoc().getDocuments();
 		// Noc Documents
-		if (!CollectionUtils.isEmpty(nocRequest.getNoc().getDocuments()))
+		if (!CollectionUtils.isEmpty(nocRequest.getNoc().getDocuments())) {
 			nocRequest.getNoc().getDocuments().forEach(document -> {
-				if (document.getId() == null) {
-					document.setId(UUID.randomUUID().toString());
-				}
-			});
-		if (!ObjectUtils.isEmpty(nocRequest.getNoc().getWorkflow())
-				&& !CollectionUtils.isEmpty(nocRequest.getNoc().getWorkflow().getDocuments())) {
-			nocRequest.getNoc().getWorkflow().getDocuments().forEach(document -> {
-				if (document.getId() == null) {
-					document.setId(UUID.randomUUID().toString());
+//				if (document.getId() == null) {
+//					document.setId(UUID.randomUUID().toString());
+//				}
+
+
+
+				for (Document doc : documents) {
+//					doc.setId(UUID.randomUUID().toString()); // Set your desired ID here
+					if (doc.getDocumentUid() == null) {
+						doc.setNocId(nocRequest.getNoc().getId());
+						doc.setDocumentUid(UUID.randomUUID().toString());
+//					doc.setDocumentAttachment(UUID.randomUUID().toString());
+					}
+
 				}
 			});
 		}
+
+		if (!ObjectUtils.isEmpty(nocRequest.getNoc().getWorkflow())
+				&& !CollectionUtils.isEmpty(nocRequest.getNoc().getWorkflow().getDocuments())) {
+			nocRequest.getNoc().getWorkflow().getDocuments().forEach(document -> {
+
+
+
+				for (Document doc : documents) {
+					if (doc.getDocumentUid() == null){
+                    // Set your desired ID here
+					doc.setNocId(nocRequest.getNoc().getId());
+					doc.setDocumentUid(UUID.randomUUID().toString());
+
+					}
+				}
+			});
+		}
+
 		nocRequest.getNoc().setApplicationNo(searchResult.getApplicationNo());
+
 		nocRequest.getNoc().getAuditDetails().setCreatedBy(searchResult.getAuditDetails().getCreatedBy());
 		nocRequest.getNoc().getAuditDetails().setCreatedTime(searchResult.getAuditDetails().getCreatedTime());
 
@@ -163,17 +211,17 @@ public class EnrichmentService {
 					|| state.equalsIgnoreCase(NOCConstants.AUTOAPPROVED_STATE)) {
 
 				Map<String, Object> additionalDetail = null;
-				if (noc.getAdditionalDetails() != null) {
-					additionalDetail = (Map) noc.getAdditionalDetails();
+				if (noc.getNocDetails().getAdditionalDetails() != null) {
+					additionalDetail = (Map) noc.getNocDetails().getAdditionalDetails();
 				} else {
 					additionalDetail = new HashMap<String, Object>();
-					noc.setAdditionalDetails(additionalDetail);
+					noc.getNocDetails().setAdditionalDetails(additionalDetail);
 				}
 
-				List<IdResponse> idResponses = idGenRepository
-						.getId(nocRequest.getRequestInfo(), noc.getTenantId(), config.getApplicationNoIdgenName(), 1)
-						.getIdResponses();
-				noc.setNocNo(idResponses.get(0).getId());
+//				List<IdResponse> idResponses = idGenRepository
+//						.getId(nocRequest.getRequestInfo(), noc.getTenantId(), config.getApplicationNoIdgenName(), 1)
+//						.getIdResponses();
+//				noc.setNocNo(idResponses.get(0).getId());
 			}
 			if (state.equalsIgnoreCase(NOCConstants.VOIDED_STATUS)) {
 				noc.setStatus(Status.INACTIVE);
@@ -181,9 +229,13 @@ public class EnrichmentService {
 		}
 		
 		if (noc.getWorkflow() != null && noc.getWorkflow().getAction().equals(NOCConstants.ACTION_INITIATE)) {
-			Map<String, String> details = (Map<String, String>) noc.getAdditionalDetails();
+			Map<String, String> details = (Map<String, String>) noc.getNocDetails().getAdditionalDetails();
 			details.put(NOCConstants.INITIATED_TIME, Long.toString(System.currentTimeMillis()));
-			noc.setAdditionalDetails(details);
+
+			String uniquePropertyId = UUID.randomUUID().toString();
+			details.put(NOCConstants.SOURCE_RefId, uniquePropertyId);
+
+			noc.getNocDetails().setAdditionalDetails(details);
 		}
 	}
 

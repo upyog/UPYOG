@@ -4,6 +4,7 @@ import java.util.Objects;
 
 import javax.validation.Valid;
 
+import lombok.Builder;
 import org.egov.common.contract.request.RequestInfo;
 import org.springframework.validation.annotation.Validated;
 
@@ -17,6 +18,7 @@ import io.swagger.annotations.ApiModelProperty;
  */
 @ApiModel(description = "A object to bind the metadata contract and main application contract")
 @Validated
+
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-07-30T05:26:25.138Z[GMT]")
 public class NocRequest   {
   @JsonProperty("RequestInfo")
@@ -67,7 +69,7 @@ public class NocRequest   {
 
 
   @Override
-  public boolean equals(java.lang.Object o) {
+  public boolean equals(Object o) {
     if (this == o) {
       return true;
     }
@@ -99,7 +101,7 @@ public class NocRequest   {
    * Convert the given object to string with each line indented by 4 spaces
    * (except the first line).
    */
-  private String toIndentedString(java.lang.Object o) {
+  private String toIndentedString(Object o) {
     if (o == null) {
       return "null";
     }
