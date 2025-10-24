@@ -93,8 +93,10 @@ public class UserRepository {
             }
         }
         String queryStr = userTypeQueryBuilder.getQuery(userSearch, preparedStatementValues);
-        log.info("User search Query : "  + queryStr);
-        log.debug(queryStr);
+        log.info("User search Query : {}", queryStr);
+        log.info("User search Parameters: {}", preparedStatementValues);
+        log.info("User search Criteria - UUID: {}, tenantId: {}, active: {}",
+                 userSearch.getUuid(), userSearch.getTenantId(), userSearch.getActive());
 
         users = jdbcTemplate.query(queryStr, preparedStatementValues.toArray(), userResultSetExtractor);
         enrichRoles(users);
@@ -396,20 +398,37 @@ public class UserRepository {
     }
 
     private void enrichRoles(List<User> users) {
+        log.info("enrichRoles called with {} users", users.size());
 
         if (users.isEmpty())
             return;
 
+        for (User user : users) {
+            log.info("enrichRoles - User {} (UUID: {}) has {} roles before enrichment",
+                    user.getId(), user.getUuid(), user.getRoles() != null ? user.getRoles().size() : 0);
+            if (user.getRoles() != null) {
+                for (Role role : user.getRoles()) {
+                    log.info("  - Role: code={}, tenantId={}, name={}", role.getCode(), role.getTenantId(), role.getName());
+                }
+            }
+        }
+
         Map<String, Role> roleCodeMap = fetchRolesFromMdms(users);
+        log.info("enrichRoles - fetched {} role definitions from MDMS", roleCodeMap.size());
 
         for (User user : users) {
             if (!isNull(user.getRoles())) {
                 for (Role role : user.getRoles()) {
                     if (roleCodeMap.containsKey(role.getCode())) {
+                        log.debug("Enriching role {} with name and description", role.getCode());
                         role.setDescription(roleCodeMap.get(role.getCode()).getDescription());
                         role.setName(roleCodeMap.get(role.getCode()).getName());
+                    } else {
+                        log.warn("Role code {} not found in MDMS", role.getCode());
                     }
                 }
+            } else {
+                log.warn("User {} (UUID: {}) has null roles", user.getId(), user.getUuid());
             }
         }
     }

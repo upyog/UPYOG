@@ -25,13 +25,14 @@ import jakarta.servlet.http.HttpServletRequest;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/user/oauth")
+@RequestMapping("/oauth")
 @Slf4j
 public class CustomAuthenticationController {
 
@@ -148,12 +149,12 @@ public class CustomAuthenticationController {
             
             // Handle failed login using existing service
             try {
-                User user = userService.getUniqueUser(username, tenantId, UserType.fromValue(userType));
+                RequestInfo requestInfo = RequestInfo.builder()
+                    .action("authenticate")
+                    .ts(System.currentTimeMillis())
+                    .build();
+                User user = userService.getUniqueUser(username, tenantId, UserType.fromValue(userType), requestInfo);
                 if (user != null) {
-                    RequestInfo requestInfo = RequestInfo.builder()
-                        .action("authenticate")
-                        .ts(System.currentTimeMillis())
-                        .build();
                     userService.handleFailedLogin(user, getClientIpAddress(request), requestInfo);
                 }
             } catch (Exception ex) {
@@ -198,7 +199,7 @@ public class CustomAuthenticationController {
         if (domainUser == null) {
             return null;
         }
-        
+
         return org.egov.user.web.contract.auth.User.builder()
             .id(domainUser.getId())
             .uuid(domainUser.getUuid())
@@ -219,12 +220,42 @@ public class CustomAuthenticationController {
      */
     private Set<org.egov.user.web.contract.auth.Role> convertRoles(Set<org.egov.user.domain.model.Role> domainRoles) {
         if (domainRoles == null) {
-            return null;
+            return new HashSet<>();
         }
-        
+
         return domainRoles.stream()
             .map(domainRole -> new org.egov.user.web.contract.auth.Role(domainRole))
             .collect(Collectors.toSet());
+    }
+
+    /**
+     * Convert contract User to domain User for decryption
+     */
+    private org.egov.user.domain.model.User convertContractToDomainUser(org.egov.user.web.contract.auth.User contractUser) {
+        if (contractUser == null) {
+            return null;
+        }
+
+        return org.egov.user.domain.model.User.builder()
+            .id(contractUser.getId())
+            .uuid(contractUser.getUuid())
+            .username(contractUser.getUserName())
+            .name(contractUser.getName())
+            .mobileNumber(contractUser.getMobileNumber())
+            .emailId(contractUser.getEmailId())
+            .locale(contractUser.getLocale())
+            .active(contractUser.isActive())
+            .type(contractUser.getType() != null ? UserType.fromValue(contractUser.getType()) : null)
+            .tenantId(contractUser.getTenantId())
+            .roles(contractUser.getRoles() != null ?
+                contractUser.getRoles().stream()
+                    .map(role -> org.egov.user.domain.model.Role.builder()
+                        .name(role.getName())
+                        .code(role.getCode())
+                        .tenantId(role.getTenantId())
+                        .build())
+                    .collect(Collectors.toSet()) : null)
+            .build();
     }
 
     private String generateAccessToken(SecureUser secureUser, String scope) {
@@ -238,12 +269,16 @@ public class CustomAuthenticationController {
     private String generateOpaqueAccessToken(SecureUser secureUser, String scope) {
         // Generate UUID-based token
         String tokenValue = java.util.UUID.randomUUID().toString();
-        
+
         // Store token metadata in Redis
         Map<String, Object> tokenMetadata = new HashMap<>();
-        
+
         org.egov.user.web.contract.auth.User user = secureUser.getUser();
         if (user != null) {
+            // Log roles before storing
+            log.info("REDIS STORE: User {} has {} roles", user.getUserName(),
+                     user.getRoles() != null ? user.getRoles().size() : "null");
+
             // Store minimal user data
             Map<String, Object> userInfo = new HashMap<>();
             userInfo.put("id", user.getId());
@@ -256,7 +291,31 @@ public class CustomAuthenticationController {
             userInfo.put("type", user.getType());
             userInfo.put("tenantId", user.getTenantId());
             userInfo.put("active", user.isActive());
-            
+
+            // CRITICAL FIX: Convert roles to serializable format for Redis
+            // Redis cannot properly serialize/deserialize Set<Role> objects
+            // So we convert to List<Map<String, String>> which preserves all role data
+            if (user.getRoles() != null && !user.getRoles().isEmpty()) {
+                java.util.List<Map<String, String>> rolesList = user.getRoles().stream()
+                    .map(role -> {
+                        Map<String, String> roleMap = new HashMap<>();
+                        roleMap.put("code", role.getCode());
+                        roleMap.put("name", role.getName());
+                        roleMap.put("tenantId", role.getTenantId());
+                        return roleMap;
+                    })
+                    .collect(Collectors.toList());
+                userInfo.put("roles", rolesList);
+                log.info("REDIS STORE: Converted {} roles to Map format for Redis storage", rolesList.size());
+                rolesList.forEach(roleMap ->
+                    log.info("  REDIS STORE: Storing role - code: {}, name: {}, tenantId: {}",
+                        roleMap.get("code"), roleMap.get("name"), roleMap.get("tenantId"))
+                );
+            } else {
+                userInfo.put("roles", new java.util.ArrayList<>());
+                log.warn("REDIS STORE: User has null/empty roles, storing empty list");
+            }
+
             tokenMetadata.put("UserRequest", userInfo);
             tokenMetadata.put("userId", user.getId());
             tokenMetadata.put("userName", user.getUserName());
@@ -269,7 +328,7 @@ public class CustomAuthenticationController {
         tokenMetadata.put("ResponseInfo", responseInfo);
         tokenMetadata.put("scope", scope != null ? scope : "read write");
         tokenMetadata.put("token_type", "access_token");
-        
+
         // Store in Redis with expiration
         String key = "access_token:" + tokenValue;
         redisTemplate.opsForValue().set(key, tokenMetadata, accessTokenValidityInMinutes, java.util.concurrent.TimeUnit.MINUTES);
@@ -388,7 +447,7 @@ public class CustomAuthenticationController {
         // Add ResponseInfo
         Map<String, Object> responseInfo = createResponseInfo("Client Access Token generated successfully");
         tokenMetadata.put("ResponseInfo", responseInfo);
-        
+
         // Store in Redis with expiration
         String key = "access_token:" + tokenValue;
         redisTemplate.opsForValue().set(key, tokenMetadata, accessTokenValidityInMinutes, java.util.concurrent.TimeUnit.MINUTES);
@@ -414,7 +473,7 @@ public class CustomAuthenticationController {
         return this.jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
     }
 
-    private Map<String, Object> createSuccessResponse(String accessToken, String refreshToken, 
+    private Map<String, Object> createSuccessResponse(String accessToken, String refreshToken,
                                                     String scope, SecureUser secureUser) {
         Map<String, Object> response = new HashMap<>();
         response.put("access_token", accessToken);
@@ -422,11 +481,35 @@ public class CustomAuthenticationController {
         response.put("token_type", "Bearer");
         response.put("expires_in", accessTokenValidityInMinutes * 60);
         response.put("scope", scope != null ? scope : "read write");
-        
+
         Map<String, Object> responseInfo = createResponseInfo("Access Token generated successfully");
         response.put("ResponseInfo", responseInfo);
-        response.put("UserRequest", secureUser.getUser());
-        
+
+        // Decrypt user data for token response using the authenticated user context
+        org.egov.user.web.contract.auth.User contractUser = secureUser.getUser();
+        if (contractUser != null) {
+            log.info("Starting user decryption for token response. User: {}, encrypted userName: {}",
+                contractUser.getId(), contractUser.getUserName());
+            try {
+                // Convert contract user to domain user for decryption
+                org.egov.user.domain.model.User domainUser = convertContractToDomainUser(contractUser);
+                log.info("Converted to domain user, calling decryptUserWithContext");
+
+                // Decrypt user with proper authenticated context
+                org.egov.user.domain.model.User decryptedDomainUser = userService.decryptUserWithContext(domainUser, contractUser);
+                log.info("Decryption completed, converting back to contract user");
+
+                // Convert back to contract user for response
+                org.egov.user.web.contract.auth.User decryptedUser = convertToContractUser(decryptedDomainUser);
+                log.info("Token response using decrypted user data. Decrypted userName: {}", decryptedUser.getUserName());
+                response.put("UserRequest", decryptedUser);
+            } catch (Exception e) {
+                log.error("Failed to decrypt user for token response: {}", e.getMessage(), e);
+                log.info("Falling back to encrypted user data for token response");
+                response.put("UserRequest", contractUser);
+            }
+        }
+
         return response;
     }
 

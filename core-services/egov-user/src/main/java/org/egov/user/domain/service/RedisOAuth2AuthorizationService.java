@@ -12,7 +12,7 @@ public class RedisOAuth2AuthorizationService implements OAuth2AuthorizationServi
 
     private final RedisTemplate<String, Object> redisTemplate;
     private static final String AUTHORIZATION_KEY_PREFIX = "oauth2:authorization:";
-    private static final String TOKEN_KEY_PREFIX = "oauth2:token:";
+    private static final String TOKEN_KEY_PREFIX = "access_token:";
 
     public RedisOAuth2AuthorizationService(RedisTemplate<String, Object> redisTemplate) {
         Assert.notNull(redisTemplate, "redisTemplate cannot be null");
@@ -62,12 +62,18 @@ public class RedisOAuth2AuthorizationService implements OAuth2AuthorizationServi
     @Override
     public org.springframework.security.oauth2.server.authorization.OAuth2Authorization findByToken(String token, OAuth2TokenType tokenType) {
         String tokenKey = TOKEN_KEY_PREFIX + token;
-        String authorizationId = (String) redisTemplate.opsForValue().get(tokenKey);
-        
-        if (authorizationId != null) {
+        Object tokenValue = redisTemplate.opsForValue().get(tokenKey);
+
+        if (tokenValue != null) {
+            String authorizationId;
+            if (tokenValue instanceof String) {
+                authorizationId = (String) tokenValue;
+            } else {
+                authorizationId = tokenValue.toString();
+            }
             return findById(authorizationId);
         }
-        
+
         return null;
     }
 }

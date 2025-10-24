@@ -10,6 +10,8 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.stereotype.Service;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
@@ -19,6 +21,7 @@ import static org.egov.user.domain.model.enums.AddressType.CORRESPONDENCE;
 import static org.egov.user.domain.model.enums.AddressType.PERMANENT;
 
 @Service
+@Slf4j
 public class UserResultSetExtractor implements ResultSetExtractor<List<User>> {
 
     private ObjectMapper objectMapper;
@@ -39,7 +42,7 @@ public class UserResultSetExtractor implements ResultSetExtractor<List<User>> {
             User user;
 
             if (!usersMap.containsKey(userId)) {
-	
+
 				user = User.builder().id(rs.getLong("id")).tenantId(rs.getString("tenantid"))
 						.title(rs.getString("title")).salutation(rs.getString("salutation")).dob(rs.getDate("dob"))
 						.locale(rs.getString("locale")).username(rs.getString("username"))
@@ -54,7 +57,8 @@ public class UserResultSetExtractor implements ResultSetExtractor<List<User>> {
 						.photo(rs.getString("photo")).identificationMark(rs.getString("identificationmark"))
 						.uuid(rs.getString("uuid")).digilockerid(rs.getString("digilockerid"))
 						.accountLockedDate(rs.getLong("accountlockeddate"))
-						.alternateMobileNumber(rs.getString("alternatemobilenumber")).build();
+						.alternateMobileNumber(rs.getString("alternatemobilenumber"))
+						.roles(new HashSet<>()).build();
 				 
                 
 				/* Changes done to run this service in Chandigarh Env
@@ -117,8 +121,15 @@ public class UserResultSetExtractor implements ResultSetExtractor<List<User>> {
             Role role = populateRole(rs);
             Address address = populateAddress(rs, user);
 
-            if (!isNull(role))
+            log.debug("UserResultSetExtractor - userId: {}, uuid: {}, role: {}, current roles count: {}",
+                    userId, user.getUuid(), role, user.getRoles() != null ? user.getRoles().size() : 0);
+
+            if (!isNull(role)) {
                 user.addRolesItem(role);
+                log.debug("Added role to user. Total roles now: {}", user.getRoles().size());
+            } else {
+                log.debug("Role is null, not adding to user");
+            }
 
             if (!isNull(address))
                 user.addAddressItem(address);
@@ -130,13 +141,20 @@ public class UserResultSetExtractor implements ResultSetExtractor<List<User>> {
 
     private Role populateRole(ResultSet rs) throws SQLException {
         String code = rs.getString("role_code");
+        String tenantId = rs.getString("role_tenantid");
+        log.debug("populateRole - role_code: {}, role_tenantid: {}", code, tenantId);
+
         if (code == null) {
+            log.debug("populateRole - returning null due to null role_code");
             return null;
         }
-        return Role.builder()
-                .tenantId(rs.getString("role_tenantid"))
+
+        Role role = Role.builder()
+                .tenantId(tenantId)
                 .code(code)
                 .build();
+        log.debug("populateRole - created role: {}", role);
+        return role;
     }
 
     private Address populateAddress(ResultSet rs, User user) throws SQLException {
