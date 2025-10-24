@@ -72,7 +72,9 @@ public class CustomTokenEnhancer implements OAuth2TokenCustomizer<JwtEncodingCon
             minimalUserInfo.put("type", secureUser.getUser().getType());
             minimalUserInfo.put("tenantId", secureUser.getUser().getTenantId());
             minimalUserInfo.put("active", secureUser.getUser().isActive());
-            
+            // CRITICAL: Include roles even in optimized token to fix authorization
+            minimalUserInfo.put("roles", secureUser.getUser().getRoles());
+
             claims.claim("UserRequest", minimalUserInfo);
         } else {
             // Include full user object with roles (legacy behavior)

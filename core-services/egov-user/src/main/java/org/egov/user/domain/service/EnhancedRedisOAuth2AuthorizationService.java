@@ -15,8 +15,8 @@ public class EnhancedRedisOAuth2AuthorizationService implements OAuth2Authorizat
 
     private final RedisTemplate<String, Object> redisTemplate;
     private static final String AUTHORIZATION_KEY_PREFIX = "oauth2:authorization:";
-    private static final String TOKEN_KEY_PREFIX = "oauth2:token:";
-    private static final String USER_TOKEN_KEY_PREFIX = "oauth2:user:tokens:"; // NEW: For user token tracking
+    private static final String TOKEN_KEY_PREFIX = "access_token:";
+    private static final String USER_TOKEN_KEY_PREFIX = "access_token:user:tokens:"; // NEW: For user token tracking
 
     public EnhancedRedisOAuth2AuthorizationService(RedisTemplate<String, Object> redisTemplate) {
         this.redisTemplate = redisTemplate;

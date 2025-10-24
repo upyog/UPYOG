@@ -14,6 +14,7 @@ import org.egov.tracer.model.CustomException;
 import org.egov.user.domain.exception.*;
 import org.egov.user.domain.model.LoggedInUserUpdatePasswordRequest;
 import org.egov.user.domain.model.NonLoggedInUserUpdatePasswordRequest;
+import org.egov.user.domain.model.Role;
 import org.egov.user.domain.model.User;
 import org.egov.user.domain.model.UserSearchCriteria;
 import org.egov.user.domain.model.enums.UserType;
@@ -208,7 +209,7 @@ public class UserService {
                                 .code(role.getCode())
                                 .name(role.getName())
                                 .build())
-                            .collect(Collectors.toList()) : null)
+                            .collect(Collectors.toList()) : new ArrayList<>())
                     .build())
                 .build();
 
@@ -227,6 +228,7 @@ public class UserService {
                 try {
                     List<User> decryptedUserList = encryptionDecryptionUtil.decryptObject(userList, "User", User.class, requestInfo);
                     User decryptedUser = decryptedUserList.get(0);
+
                     log.info("Successfully decrypted user with 'User' key: {}", decryptedUser.getUsername());
                     return decryptedUser;
                 } catch (Exception e2) {
@@ -308,6 +310,7 @@ public class UserService {
 
         /* decrypt here / final reponse decrypted*/
 
+        // Decrypt user list - role preservation is now handled in EncryptionDecryptionUtil
         list = encryptionDecryptionUtil.decryptObject(list, null, User.class, requestInfo);
 
         setFileStoreUrlsByFileStoreIds(list);
