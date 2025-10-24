@@ -80,6 +80,7 @@ function getData(){
 	}
 	var csrfToken = document.getElementById('csrfTokenValue').value;
 	document.budgetVarianceReport.action='/services/EGF/report/budgetVarianceReport-loadData.action?asOnDate='+asOnDate+'&_csrf='+csrfToken;
+	document.budgetVarianceReport.method = "GET";
 	document.budgetVarianceReport.submit();  
 	return true;
 }
@@ -170,7 +171,7 @@ function resetSubmit()
 		<h5 style="color: red">
 			<s:actionerror />
 		</h5>
-		<s:form action="budgetVarianceReport" theme="simple"
+		<s:form action="budgetVarianceReport" theme="simple" method="GET"
 			name="budgetVarianceReport">
 			<input type="hidden" id="csrfTokenValue" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 			<table width="100%" cellpadding="0" cellspacing="0" border="0">
