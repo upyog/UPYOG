@@ -1,6 +1,8 @@
 package org.egov.noc.web.model;
 
 import java.util.Objects;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
@@ -8,11 +10,13 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import org.egov.noc.web.model.OwnerInfo;
 import org.egov.noc.web.model.enums.ApplicationType;
 import org.egov.noc.web.model.enums.Status;
 import org.hibernate.validator.constraints.SafeHtml;
@@ -29,6 +33,7 @@ import javax.validation.constraints.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@Data
 public class Noc   {
   @SafeHtml
   @JsonProperty("id")
@@ -43,6 +48,7 @@ public class Noc   {
   private String applicationNo = null;
 
   @SafeHtml
+  @JsonIgnore
   @JsonProperty("nocNo")
   private String nocNo = null;
 
@@ -50,25 +56,31 @@ public class Noc   {
   @JsonProperty("applicationType")
   private ApplicationType applicationType = null;
 
+
+  @JsonProperty("owners")
+  private List<OwnerInfo> owners;
+
   @SafeHtml
   @JsonProperty("nocType")
   private String nocType = null;
 
   @SafeHtml
+  @JsonIgnore
   @JsonProperty("accountId")
   private String accountId = null;
 
-  @SafeHtml
-  @JsonProperty("source")
-  private String source = null;
+//  @SafeHtml
+//
+//  @JsonProperty("source")
+//  private String source = null;
 
-  @SafeHtml
-  @JsonProperty("sourceRefId")
-  private String sourceRefId = null;
+//  @SafeHtml
+//  @JsonProperty("sourceRefId")
+//  private String sourceRefId = null;
 
-  @SafeHtml
-  @JsonProperty("landId")
-  private String landId = null;
+//  @SafeHtml
+//  @JsonProperty("landId")
+//  private String landId = null;
 
   
   @JsonProperty("status")
@@ -88,11 +100,24 @@ public class Noc   {
   @JsonProperty("auditDetails")
   private AuditDetails auditDetails = null;
 
-  @JsonProperty("additionalDetails")
-  private Object additionalDetails = null;
+//  @JsonProperty("additionalDetails")
+//  private Object additionalDetails = null;
+
+  @JsonProperty("nocDetails")
+  private NocDetails nocDetails = null;
+
 
   public Noc id(String id) {
     this.id = id;
+    return this;
+  }
+
+  public NocDetails getNocDetails() {
+    return nocDetails;
+  }
+
+  public Noc nocDetails(NocDetails nocDetails) {
+    this.nocDetails = nocDetails;
     return this;
   }
 
@@ -224,62 +249,62 @@ public class Noc   {
     this.accountId = accountId;
   }
 
-  public Noc source(String source) {
-    this.source = source;
-    return this;
-  }
+//  public Noc source(String source) {
+//    this.source = source;
+//    return this;
+//  }
 
   /**
    * Who is creating the record in the system(ex:BPA,Property etc)
    * @return source
   **/
-  @ApiModelProperty(value = "Who is creating the record in the system(ex:BPA,Property etc)")
-  
-  @Size(min=1,max=64)   public String getSource() {
-    return source;
-  }
+//  @ApiModelProperty(value = "Who is creating the record in the system(ex:BPA,Property etc)")
+//
+//  @Size(min=1,max=64)   public String getSource() {
+//    return source;
+//  }
+//
+//  public void setSource(String source) {
+//    this.source = source;
+//  }
 
-  public void setSource(String source) {
-    this.source = source;
-  }
-
-  public Noc sourceRefId(String sourceRefId) {
-    this.sourceRefId = sourceRefId;
-    return this;
-  }
+//  public Noc sourceRefId(String sourceRefId) {
+//    this.sourceRefId = sourceRefId;
+//    return this;
+//  }
 
   /**
    * Unique Identifier of integrator(Source system) to link the noc application.
    * @return sourceRefId
   **/
-  @ApiModelProperty(value = "Unique Identifier of integrator(Source system) to link the noc application.")
+//  @ApiModelProperty(value = "Unique Identifier of integrator(Source system) to link the noc application.")
   
-  @Size(min=1,max=64)   public String getSourceRefId() {
-    return sourceRefId;
-  }
+//  @Size(min=1,max=64)   public String getSourceRefId() {
+//    return sourceRefId;
+//  }
 
-  public void setSourceRefId(String sourceRefId) {
-    this.sourceRefId = sourceRefId;
-  }
+//  public void setSourceRefId(String sourceRefId) {
+//    this.sourceRefId = sourceRefId;
+//  }
 
-  public Noc landId(String landId) {
-    this.landId = landId;
-    return this;
-  }
+//  public Noc landId(String landId) {
+//    this.landId = landId;
+//    return this;
+//  }
 
   /**
    * Unique Identifier(UUID) of the land for internal reference.
    * @return landId
   **/
   @ApiModelProperty(value = "Unique Identifier(UUID) of the land for internal reference.")
-  
-  @Size(min=1,max=64)   public String getLandId() {
-    return landId;
-  }
-
-  public void setLandId(String landId) {
-    this.landId = landId;
-  }
+//
+//  @Size(min=1,max=64)   public String getLandId() {
+//    return landId;
+//  }
+//
+//  public void setLandId(String landId) {
+//    this.landId = landId;
+//  }
 
   public Noc status(Status status) {
     this.status = status;
@@ -322,6 +347,8 @@ public class Noc   {
   public Noc documents(List<Document> documents) {
     this.documents = documents;
     return this;
+
+
   }
 
   public Noc addDocumentsItem(Document documentsItem) {
@@ -386,10 +413,10 @@ public class Noc   {
     this.auditDetails = auditDetails;
   }
 
-  public Noc additionalDetails(Object additionalDetails) {
-    this.additionalDetails = additionalDetails;
-    return this;
-  }
+//  public Noc additionalDetails(Object additionalDetails) {
+//    this.additionalDetails = additionalDetails;
+//    return this;
+//  }
 
   /**
    * The json to capturing the custom fields
@@ -397,13 +424,13 @@ public class Noc   {
   **/
   @ApiModelProperty(value = "The json to capturing the custom fields")
   
-    public Object getAdditionalDetails() {
-    return additionalDetails;
-  }
-
-  public void setAdditionalDetails(Object additionalDetails) {
-    this.additionalDetails = additionalDetails;
-  }
+//    public Object getAdditionalDetails() {
+//    return additionalDetails;
+//  }
+//
+//  public void setAdditionalDetails(Object additionalDetails) {
+//    this.additionalDetails = additionalDetails;
+//  }
 
 
   @Override
@@ -422,20 +449,22 @@ public class Noc   {
         Objects.equals(this.applicationType, noc.applicationType) &&
         Objects.equals(this.nocType, noc.nocType) &&
         Objects.equals(this.accountId, noc.accountId) &&
-        Objects.equals(this.source, noc.source) &&
-        Objects.equals(this.sourceRefId, noc.sourceRefId) &&
-        Objects.equals(this.landId, noc.landId) &&
+//        Objects.equals(this.source, noc.source) &&
+//        Objects.equals(this.sourceRefId, noc.sourceRefId) &&
+//        Objects.equals(this.landId, noc.landId) &&
         Objects.equals(this.status, noc.status) &&
         Objects.equals(this.applicationStatus, noc.applicationStatus) &&
         Objects.equals(this.documents, noc.documents) &&
         Objects.equals(this.workflow, noc.workflow) &&
-        Objects.equals(this.auditDetails, noc.auditDetails) &&
-        Objects.equals(this.additionalDetails, noc.additionalDetails);
+        Objects.equals(this.auditDetails, noc.auditDetails);
+//        Objects.equals(this.additionalDetails, noc.additionalDetails);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, tenantId, applicationNo, nocNo, applicationType, nocType, accountId, source, sourceRefId, landId, status, applicationStatus, documents, workflow, auditDetails, additionalDetails);
+//    return Objects.hash(id, tenantId, applicationNo, nocNo, applicationType, nocType, accountId, source, sourceRefId, landId, status, applicationStatus, documents, workflow, auditDetails, additionalDetails);
+    return Objects.hash(id, tenantId, applicationNo, nocNo, applicationType, nocType, accountId, status, applicationStatus, documents, workflow, auditDetails);
+
   }
 
   @Override
@@ -450,15 +479,15 @@ public class Noc   {
     sb.append("    applicationType: ").append(toIndentedString(applicationType)).append("\n");
     sb.append("    nocType: ").append(toIndentedString(nocType)).append("\n");
     sb.append("    accountId: ").append(toIndentedString(accountId)).append("\n");
-    sb.append("    source: ").append(toIndentedString(source)).append("\n");
-    sb.append("    sourceRefId: ").append(toIndentedString(sourceRefId)).append("\n");
-    sb.append("    landId: ").append(toIndentedString(landId)).append("\n");
+//    sb.append("    source: ").append(toIndentedString(source)).append("\n");
+//    sb.append("    sourceRefId: ").append(toIndentedString(sourceRefId)).append("\n");
+//    sb.append("    landId: ").append(toIndentedString(landId)).append("\n");
     sb.append("    status: ").append(toIndentedString(status)).append("\n");
     sb.append("    applicationStatus: ").append(toIndentedString(applicationStatus)).append("\n");
     sb.append("    documents: ").append(toIndentedString(documents)).append("\n");
     sb.append("    workflow: ").append(toIndentedString(workflow)).append("\n");
     sb.append("    auditDetails: ").append(toIndentedString(auditDetails)).append("\n");
-    sb.append("    additionalDetails: ").append(toIndentedString(additionalDetails)).append("\n");
+//    sb.append("    additionalDetails: ").append(toIndentedString(additionalDetails)).append("\n");
     sb.append("}");
     return sb.toString();
   }

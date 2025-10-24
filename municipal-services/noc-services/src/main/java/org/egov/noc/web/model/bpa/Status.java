@@ -1,4 +1,4 @@
-package  org.egov.noc.web.model.bpa;
+package org.egov.noc.web.model.bpa;
 
 import java.util.Objects;
 import io.swagger.annotations.ApiModel;

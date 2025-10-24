@@ -105,6 +105,9 @@ public class WorkflowIntegrator {
 		workFlowRequest.put(REQUESTINFOKEY, nocRequest.getRequestInfo());
 		workFlowRequest.put(WORKFLOWREQUESTARRAYKEY, array);
 		String response = null;
+
+
+
 		try {
 			response = rest.postForObject(config.getWfHost().concat(config.getWfTransitionPath()), workFlowRequest,
 					String.class);

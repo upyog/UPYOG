@@ -44,6 +44,8 @@ public class Action   {
         @JsonProperty("tenantId")
         private String tenantId;
 
+
+
         @Size(max=256)
         @JsonProperty("currentState")
         private String currentState;

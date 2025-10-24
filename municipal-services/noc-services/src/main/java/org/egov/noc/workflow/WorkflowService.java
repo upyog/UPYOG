@@ -62,7 +62,7 @@ public class WorkflowService {
 		for (State state : businessService.getStates()) {
 			if (state.getApplicationStatus() != null
 					&& state.getApplicationStatus().equalsIgnoreCase(status.toString()))
-				return state.getIsStateUpdatable();
+				return Boolean.TRUE;
 		}
 		return Boolean.FALSE;
 	}

@@ -19,5 +19,5 @@ public class UserResponse {
 	ResponseInfo responseInfo;
 
     @JsonProperty("user")
-    List<UserSearchResponse> user;
+    List<OwnerInfo> user;
 }
