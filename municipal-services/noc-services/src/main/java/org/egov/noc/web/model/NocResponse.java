@@ -22,7 +22,7 @@ import lombok.NoArgsConstructor;
  */
 @ApiModel(description = "Contains the ResponseMetadate and the main application contract")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-07-30T05:43:01.798Z[GMT]")
+@jakarta.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-07-30T05:43:01.798Z[GMT]")
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
