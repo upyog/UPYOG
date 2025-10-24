@@ -269,12 +269,16 @@ public class CustomAuthenticationController {
     private String generateOpaqueAccessToken(SecureUser secureUser, String scope) {
         // Generate UUID-based token
         String tokenValue = java.util.UUID.randomUUID().toString();
-        
+
         // Store token metadata in Redis
         Map<String, Object> tokenMetadata = new HashMap<>();
-        
+
         org.egov.user.web.contract.auth.User user = secureUser.getUser();
         if (user != null) {
+            // Log roles before storing
+            log.info("REDIS STORE: User {} has {} roles", user.getUserName(),
+                     user.getRoles() != null ? user.getRoles().size() : "null");
+
             // Store minimal user data
             Map<String, Object> userInfo = new HashMap<>();
             userInfo.put("id", user.getId());
@@ -287,7 +291,31 @@ public class CustomAuthenticationController {
             userInfo.put("type", user.getType());
             userInfo.put("tenantId", user.getTenantId());
             userInfo.put("active", user.isActive());
-            
+
+            // CRITICAL FIX: Convert roles to serializable format for Redis
+            // Redis cannot properly serialize/deserialize Set<Role> objects
+            // So we convert to List<Map<String, String>> which preserves all role data
+            if (user.getRoles() != null && !user.getRoles().isEmpty()) {
+                java.util.List<Map<String, String>> rolesList = user.getRoles().stream()
+                    .map(role -> {
+                        Map<String, String> roleMap = new HashMap<>();
+                        roleMap.put("code", role.getCode());
+                        roleMap.put("name", role.getName());
+                        roleMap.put("tenantId", role.getTenantId());
+                        return roleMap;
+                    })
+                    .collect(Collectors.toList());
+                userInfo.put("roles", rolesList);
+                log.info("REDIS STORE: Converted {} roles to Map format for Redis storage", rolesList.size());
+                rolesList.forEach(roleMap ->
+                    log.info("  REDIS STORE: Storing role - code: {}, name: {}, tenantId: {}",
+                        roleMap.get("code"), roleMap.get("name"), roleMap.get("tenantId"))
+                );
+            } else {
+                userInfo.put("roles", new java.util.ArrayList<>());
+                log.warn("REDIS STORE: User has null/empty roles, storing empty list");
+            }
+
             tokenMetadata.put("UserRequest", userInfo);
             tokenMetadata.put("userId", user.getId());
             tokenMetadata.put("userName", user.getUserName());

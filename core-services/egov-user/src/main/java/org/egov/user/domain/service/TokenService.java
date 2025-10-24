@@ -140,6 +140,8 @@ public class TokenService {
         
         // Create SecureUser from the User object
         SecureUser secureUser = new SecureUser(user);
+        log.info("BEFORE DECRYPTION: User {} has {} roles", user.getId(),
+            user.getRoles() != null ? user.getRoles().size() : "NULL");
 
         // Decrypt user data using the same logic as /user/oauth/token and /user/_search
         try {
@@ -149,22 +151,32 @@ public class TokenService {
             // Convert contract user to domain user for decryption
             org.egov.user.domain.model.User domainUser = convertContractToDomainUser(user);
             log.info("Converted to domain user, calling decryptUserWithContext");
+            log.info("DomainUser has {} roles",
+                domainUser.getRoles() != null ? domainUser.getRoles().size() : "NULL");
 
             // Decrypt user with proper authenticated context
             org.egov.user.domain.model.User decryptedDomainUser = userService.decryptUserWithContext(domainUser, user);
             log.info("Decryption completed, converting back to contract user");
+            log.info("DecryptedDomainUser has {} roles",
+                decryptedDomainUser.getRoles() != null ? decryptedDomainUser.getRoles().size() : "NULL");
 
             // Convert back to contract user and create new SecureUser
             User decryptedUser = convertToContractUser(decryptedDomainUser);
+            log.info("DecryptedUser (contract) has {} roles",
+                decryptedUser.getRoles() != null ? decryptedUser.getRoles().size() : "NULL");
+
             secureUser = new SecureUser(decryptedUser);
-            log.info("Opaque token using decrypted user data. Decrypted userName: {}", decryptedUser.getUserName());
+            log.info("Opaque token using decrypted user data. Decrypted userName: {}, roles: {}",
+                decryptedUser.getUserName(), decryptedUser.getRoles() != null ? decryptedUser.getRoles().size() : "NULL");
         } catch (Exception e) {
             log.error("Failed to decrypt user for opaque token: {}", e.getMessage(), e);
             log.info("Falling back to encrypted user data for opaque token");
             // Continue with encrypted user data - secureUser already created above
         }
 
-        log.info("Successfully retrieved user from opaque token: userId={}, userName={}", user.getId(), user.getUserName());
+        log.info("FINAL: Successfully retrieved user from opaque token: userId={}, userName={}, roles={}",
+            user.getId(), user.getUserName(),
+            secureUser.getUser().getRoles() != null ? secureUser.getUser().getRoles().size() : "NULL");
         return new UserDetail(secureUser, null);
     }
 

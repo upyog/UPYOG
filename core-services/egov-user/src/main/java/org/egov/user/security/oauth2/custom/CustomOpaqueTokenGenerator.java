@@ -1,5 +1,6 @@
 package org.egov.user.security.oauth2.custom;
 
+import lombok.extern.slf4j.Slf4j;
 import org.egov.user.domain.model.SecureUser;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.core.Authentication;
@@ -9,11 +10,11 @@ import org.springframework.security.oauth2.server.authorization.token.OAuth2Toke
 import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenGenerator;
 import java.time.Duration;
 import java.time.Instant;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
+@Slf4j
 public class CustomOpaqueTokenGenerator implements OAuth2TokenGenerator<OAuth2AccessToken> {
 
     private RedisTemplate<String, Object> redisTemplate;
@@ -53,12 +54,12 @@ public class CustomOpaqueTokenGenerator implements OAuth2TokenGenerator<OAuth2Ac
             SecureUser secureUser = (SecureUser) principal.getPrincipal();
 
             // CRITICAL: Log roles before storing in Redis
-            System.out.println("REDIS STORE: User " + secureUser.getUser().getUserName() + " has " +
-                             (secureUser.getUser().getRoles() != null ? secureUser.getUser().getRoles().size() : "null") + " roles");
+            log.info("REDIS STORE: User {} has {} roles", secureUser.getUser().getUserName(),
+                     secureUser.getUser().getRoles() != null ? secureUser.getUser().getRoles().size() : "null");
             if (secureUser.getUser().getRoles() != null) {
                 secureUser.getUser().getRoles().forEach(role ->
-                    System.out.println("REDIS STORE: Role - code: " + role.getCode() +
-                                     ", name: " + role.getName() + ", tenantId: " + role.getTenantId())
+                    log.info("REDIS STORE: Role - code: {}, name: {}, tenantId: {}",
+                             role.getCode(), role.getName(), role.getTenantId())
                 );
             }
 
@@ -74,12 +75,30 @@ public class CustomOpaqueTokenGenerator implements OAuth2TokenGenerator<OAuth2Ac
             userInfo.put("type", secureUser.getUser().getType());
             userInfo.put("tenantId", secureUser.getUser().getTenantId());
             userInfo.put("active", secureUser.getUser().isActive());
-            // CRITICAL: Include roles in opaque tokens to fix authorization
-            userInfo.put("roles", secureUser.getUser().getRoles());
 
-            System.out.println("REDIS STORE: Stored " +
-                             (secureUser.getUser().getRoles() != null ? secureUser.getUser().getRoles().size() : "null") +
-                             " roles in userInfo map");
+            // CRITICAL FIX: Convert roles to serializable format for Redis
+            // Redis cannot properly serialize/deserialize Set<Role> objects
+            // So we convert to List<Map<String, String>> which preserves all role data
+            if (secureUser.getUser().getRoles() != null && !secureUser.getUser().getRoles().isEmpty()) {
+                List<Map<String, String>> rolesList = secureUser.getUser().getRoles().stream()
+                    .map(role -> {
+                        Map<String, String> roleMap = new HashMap<>();
+                        roleMap.put("code", role.getCode());
+                        roleMap.put("name", role.getName());
+                        roleMap.put("tenantId", role.getTenantId());
+                        return roleMap;
+                    })
+                    .collect(Collectors.toList());
+                userInfo.put("roles", rolesList);
+                log.info("REDIS STORE: Converted {} roles to Map format for Redis storage", rolesList.size());
+                rolesList.forEach(roleMap ->
+                    log.info("  REDIS STORE: Storing role - code: {}, name: {}, tenantId: {}",
+                        roleMap.get("code"), roleMap.get("name"), roleMap.get("tenantId"))
+                );
+            } else {
+                userInfo.put("roles", new ArrayList<>());
+                log.warn("REDIS STORE: User has null/empty roles, storing empty list");
+            }
 
             tokenMetadata.put("UserRequest", userInfo);
             tokenMetadata.put("userId", secureUser.getUser().getId());
