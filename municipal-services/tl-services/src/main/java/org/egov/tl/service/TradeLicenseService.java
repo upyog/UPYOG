@@ -926,16 +926,9 @@ public class TradeLicenseService {
 			for (TradeLicense license : newList) {
 
 				// for NEW TL
-				if ((StringUtils.equalsIgnoreCase(license.getBusinessService(), TLConstants.businessService_NewTL)
-						&& StringUtils.equalsIgnoreCase(license.getApplicationType(),
-								TLConstants.APPLICATION_TYPE_NEW)
-						&& StringUtils.equalsIgnoreCase(license.getAction(), TLConstants.ACTION_APPROVE)) || // for
-																												// RENEWAL
-																												// TL
-						(StringUtils.equalsIgnoreCase(license.getBusinessService(), TLConstants.businessService_NewTL)
-								&& StringUtils.equalsIgnoreCase(license.getApplicationType(),
-										TLConstants.APPLICATION_TYPE_RENEWAL)
-								&& StringUtils.equalsIgnoreCase(license.getAction(), TLConstants.ACTION_APPROVE))) {
+				if (StringUtils.equalsIgnoreCase(license.getBusinessService(), TLConstants.businessService_NewTL)
+						&& StringUtils.equalsIgnoreCase(license.getAction(), TLConstants.ACTION_APPROVE)
+					) {
 
 					TradeLicenseRequest tradeLicenseRequest1 = TradeLicenseRequest.builder()
 							.requestInfo(tradeLicenseRequest.getRequestInfo())
