@@ -165,39 +165,47 @@ public class UserRequestControllerTest {
     //             .andExpect(content().json(getFileContents("updateValidatedCitizenSuccessResponse.json")));
     // }
 
-    @Test
-    @WithMockUser
-    @Ignore
-    public void testShouldThrowErrorWhileUpdatingWithDuplicateCitizen() throws Exception {
-        DuplicateUserNameException exception = new DuplicateUserNameException(UserSearchCriteria.builder().userName
-                ("test").build());
-        when(userService.updateWithoutOtpValidation(any(org.egov.user.domain.model.User.class), any())).thenThrow(exception);
+	/*
+	 * @Test
+	 * 
+	 * @WithMockUser
+	 * 
+	 * @Ignore public void testShouldThrowErrorWhileUpdatingWithDuplicateCitizen()
+	 * throws Exception { DuplicateUserNameException exception = new
+	 * DuplicateUserNameException(UserSearchCriteria.builder().userName
+	 * ("test").build());
+	 * when(userService.updateWithoutOtpValidation(any(org.egov.user.domain.model.
+	 * User.class), any())).thenThrow(exception);
+	 * 
+	 * String fileContents =
+	 * getFileContents("updateCitizenUnsuccessfulRequest.json");
+	 * mockMvc.perform(post("/users/1/_updatenovalidate")
+	 * .contentType(MediaType.APPLICATION_JSON_UTF8) .content(fileContents) )
+	 * .andExpect(status().isBadRequest())
+	 * .andExpect(content().contentTypeCompatibleWith(MediaType.
+	 * APPLICATION_JSON_UTF8)) .andExpect(content().json(getFileContents(
+	 * "updateCitizenUnsuccessfulResponse.json"))); }
+	 */
 
-        String fileContents = getFileContents("updateCitizenUnsuccessfulRequest.json");
-        mockMvc.perform(post("/users/1/_updatenovalidate")
-                .contentType(MediaType.APPLICATION_JSON_UTF8)
-                .content(fileContents)
-        )
-                .andExpect(status().isBadRequest())
-                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON_UTF8))
-                .andExpect(content().json(getFileContents("updateCitizenUnsuccessfulResponse.json")));
-    }
-
-    @Test
-    @WithMockUser
-    @Ignore
-    public void testShouldThrowErrorWhileUpdatingWithInvalidCitizen() throws Exception {
-        UserNotFoundException exception = new UserNotFoundException(UserSearchCriteria.builder().userName
-                ("test").build());
-        when(userService.updateWithoutOtpValidation(any(org.egov.user.domain.model.User.class), any())).thenThrow(exception);
-
-        String fileContents = getFileContents("updateCitizenUnsuccessfulRequest.json");
-        mockMvc.perform(post("/users/1/_updatenovalidate")
-                .contentType(MediaType.APPLICATION_JSON_UTF8)
-                .content(fileContents)
-        )
-                .andExpect(status().isBadRequest())
-                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON_UTF8))
-                .andExpect(content().json(getFileContents("updateInvalidCitizenUnsuccessfulResponse.json")));
-    }
+	/*
+	 * @Test
+	 * 
+	 * @WithMockUser
+	 * 
+	 * @Ignore public void testShouldThrowErrorWhileUpdatingWithInvalidCitizen()
+	 * throws Exception { UserNotFoundException exception = new
+	 * UserNotFoundException(UserSearchCriteria.builder().userName
+	 * ("test").build());
+	 * when(userService.updateWithoutOtpValidation(any(org.egov.user.domain.model.
+	 * User.class), any())).thenThrow(exception);
+	 * 
+	 * String fileContents =
+	 * getFileContents("updateCitizenUnsuccessfulRequest.json");
+	 * mockMvc.perform(post("/users/1/_updatenovalidate")
+	 * .contentType(MediaType.APPLICATION_JSON_UTF8) .content(fileContents) )
+	 * .andExpect(status().isBadRequest())
+	 * .andExpect(content().contentTypeCompatibleWith(MediaType.
+	 * APPLICATION_JSON_UTF8)) .andExpect(content().json(getFileContents(
+	 * "updateInvalidCitizenUnsuccessfulResponse.json"))); }
+	 */
 }
