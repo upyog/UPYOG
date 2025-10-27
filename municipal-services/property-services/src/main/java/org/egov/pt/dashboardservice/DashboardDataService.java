@@ -1,5 +1,6 @@
 package org.egov.pt.dashboardservice;
 
+import java.io.ByteArrayOutputStream;
 import java.math.BigInteger;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -13,6 +14,11 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.pt.config.PropertyConfiguration;
 import org.egov.pt.models.DashboardData;
@@ -29,6 +35,12 @@ import org.egov.pt.service.PropertyService;
 import org.egov.pt.util.PropertyUtil;
 import org.egov.pt.web.contracts.DashboardRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.ContentDisposition;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
@@ -102,6 +114,7 @@ public class DashboardDataService {
 		services.setPropertiesPendingSelfAssessment(dashboardDataRepository.getTotalPropertyPendingselfAssessedCount(dashboardDataSearch));
 		services.setPropertiesWithAppealSubmitted(dashboardDataRepository.getTotalPropertyAppealSubmitedCount(dashboardDataSearch));
 		services.setAppealsPending(dashboardDataRepository.getTotalPropertyAppealPendingCount(dashboardDataSearch));
+		services.setPropertiesPaid(dashboardDataRepository.getTotalPropertyPaidCount(dashboardDataSearch));
 		
 		revenue.setTotalTaxCollected(dashboardDataRepository.getTotalTaxCollectedAmount(dashboardDataSearch));
 		revenue.setPropertyTaxShare(dashboardDataRepository.getPropertyTaxShareAmount(dashboardDataSearch));
@@ -391,8 +404,75 @@ public class DashboardDataService {
 		
 		dashboardData.setServices(service);
 		dashboardData.setRevenue(revenue);
-	
+		
 		return dashboardData;
 	}
+	
+	public ResponseEntity<Resource> generateExcelResponse(DashboardReport dashboardData, String filename) throws Exception {
+	    ByteArrayOutputStream out = new ByteArrayOutputStream();
+	    Workbook workbook = new XSSFWorkbook();
+
+	    writeReportToExcel(workbook, dashboardData);
+
+	    workbook.write(out);
+	    workbook.close();
+
+	    byte[] excelBytes = out.toByteArray();
+	    ByteArrayResource resource = new ByteArrayResource(excelBytes);
+	    return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"report.xlsx\"")
+                .contentLength(excelBytes.length)
+                .contentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
+                .body(resource);
+	}
+
+
+    private void writeReportToExcel(Workbook workbook, DashboardReport report) {
+        writeSection(workbook.createSheet("Services"), report.getServices());
+        writeSection(workbook.createSheet("Revenue"), report.getRevenue());
+    }
+
+    private void writeSection(Sheet sheet, List<ServiceWithProperties> items) {
+        int rowNum = 0;
+
+        for (ServiceWithProperties item : items) {
+            // Write service type as a merged header row
+            Row typeRow = sheet.createRow(rowNum++);
+            Cell typeCell = typeRow.createCell(0);
+            typeCell.setCellValue(item.getType());
+
+            // You can style this cell as bold if you want (optional)
+
+            // If no properties, write "No Properties" below the type
+            if (item.getProperties() == null || item.getProperties().isEmpty()) {
+                Row noPropRow = sheet.createRow(rowNum++);
+                noPropRow.createCell(0).setCellValue("No Properties");
+                continue; // next item
+            }
+
+            // Otherwise write properties header row
+            Row headerRow = sheet.createRow(rowNum++);
+            headerRow.createCell(0).setCellValue("Property ID");
+            headerRow.createCell(1).setCellValue("Property Name");
+            // Add more headers if you have more fields in Property
+
+            // Now write each property in its own row
+            for (Property prop : item.getProperties()) {
+                Row propRow = sheet.createRow(rowNum++);
+                propRow.createCell(0).setCellValue(prop.getId());      // Adjust getter
+                propRow.createCell(1).setCellValue(prop.getPropertyId());    // Adjust getter
+                // Add more cells here if needed
+            }
+
+            // Blank row between services (optional)
+            rowNum++;
+        }
+
+        // Autosize columns for readability
+        for (int i = 0; i < 5; i++) {
+            sheet.autoSizeColumn(i);
+        }
+    }
+
 
 }
