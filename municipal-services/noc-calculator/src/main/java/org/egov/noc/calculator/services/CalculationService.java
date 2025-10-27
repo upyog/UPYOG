@@ -16,6 +16,8 @@ import org.egov.noc.calculator.web.models.demand.TaxHeadEstimate;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
+
 import com.fasterxml.jackson.databind.JsonNode;
 
 import java.math.BigDecimal;
@@ -25,6 +27,7 @@ import java.time.LocalDateTime;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -80,6 +83,7 @@ public class CalculationService {
 			BigDecimal basementArea = new BigDecimal(0);
 			String category = "";
 			String finYear = "";
+			String roadType = "";
 			
 			if(criteria.getNoc().getNocDetails().getAdditionalDetails() != null) {
 				Map<String, Object> siteDetails = (Map<String, Object>)((Map<String, Object>)criteria.getNoc().getNocDetails().getAdditionalDetails()).get("siteDetails");
@@ -91,16 +95,18 @@ public class CalculationService {
 					basementArea = new BigDecimal(siteDetails.getOrDefault("basementArea", "0").toString().trim());
 				if(siteDetails.get("specificationBuildingCategory") != null)
 					category = siteDetails.get("specificationBuildingCategory").toString().trim();
+				if(siteDetails.get("roadType") != null)
+					roadType = siteDetails.get("roadType").toString().trim();
 				
 				LocalDate today = LocalDate.now();
 				if(today.getMonthValue() > 3)
-					finYear = today.getYear() + "-" + ((today.getYear() % 2000) +1);
+					finYear = today.getYear() + "-" + ((today.getYear() % 100) +1);
 				else
-					finYear = (today.getYear()-1) + "-" + (today.getYear()) % 2000;
+					finYear = (today.getYear()-1) + "-" + (today.getYear()) % 100;
 				
 			}
 			Object mdmsData = mdmsService.getMDMSSanctionFeeCharges(calculationReq.getRequestInfo(), tenantId, NOCConstants.MDMS_CHARGES_TYPE_CODE, category, finYear);
-			estimates = calculateFee(calculationReq.getRequestInfo(), mdmsData, plotArea, builtUpArea, basementArea);
+			estimates = calculateFee(mdmsData, plotArea, builtUpArea, basementArea, roadType);
 			if(estimates.isEmpty())
 				throw new CustomException("NO_FEE_CONFIGURED","No fee configured for the application");	
 			
@@ -140,21 +146,20 @@ public class CalculationService {
 	
 	/**
 	 * Calculate the Sanction fee of the BPA application
-	 * @param requestInfo to call the MDMS API
-	 * @param tanentId required to call the MDMS API
+	 * @param mdmsData required to get Charges types
 	 * @param plotArea Plot area of the Building
 	 * @param builtUpArea Build-up area of the Building
 	 * @param basementArea Basement area of the Building
-	 * @param category Usage type of the Building
-	 * @param finYear Current financial year
+	 * @param roadType Road Type of the Building
 	 * @return List of TaxHeadEstimate for the Demand creation
 	 */
-	private List<TaxHeadEstimate> calculateFee (RequestInfo requestInfo, Object mdmsData, BigDecimal plotArea, BigDecimal builtUpArea, BigDecimal basementArea) {
+	private List<TaxHeadEstimate> calculateFee (Object mdmsData, BigDecimal plotArea, BigDecimal builtUpArea, BigDecimal basementArea, String roadType) {
 		List<TaxHeadEstimate> estimates = new LinkedList<>();
 		List<Map<String,Object>> chargesTypejsonOutput = JsonPath.read(mdmsData, NOCConstants.MDMS_CHARGES_TYPE_PATH);
 		
 		chargesTypejsonOutput.forEach(chargesType -> {
-			BigDecimal rate = new BigDecimal(chargesType.containsKey("rate") ? (Double) chargesType.get("rate") : 0.0);
+			BigDecimal rate = BigDecimal.valueOf(chargesType.containsKey("rate") ? (Double) chargesType.get("rate") : 0.0);
+			BigDecimal concession = BigDecimal.valueOf(chargesType.containsKey("discount") ? (Double) chargesType.get("discount") : 0.0);
 			TaxHeadEstimate estimate = new TaxHeadEstimate();
 			BigDecimal amount= BigDecimal.ZERO;
 			String taxhead= chargesType.get("taxHeadCode").toString();
@@ -162,42 +167,29 @@ public class CalculationService {
 			switch (taxhead) {
 			
 			case NOCConstants.NOC_PROCESSING_FEES:
-			case NOCConstants.NOC_CLU_CHARGES:
 			case NOCConstants.NOC_EXTERNAL_DEVELOPMENT_CHARGES:
-				amount=rate.multiply(builtUpArea).setScale(0, RoundingMode.HALF_UP);
-				break;
-			case NOCConstants.NOC_MALBA_CHARGES:
-				BigDecimal sqFeetArea = builtUpArea.multiply(NOCConstants.SQYARD_TO_SQFEET);
-				Double slabAmount = (Double)((List<Map<String, Object>>)chargesType.get("slabs")).stream().filter(slab -> {
-					return sqFeetArea.compareTo(new BigDecimal(slab.get("fromPlotArea").toString())) >= 0 
-					        && sqFeetArea.compareTo(new BigDecimal(slab.get("toPlotArea").toString())) <= 0;
-				}).map(slab -> slab.get("rate")).findFirst().orElse(0.0);
-				if(slabAmount == 0.0) {
-					List<Object> slabs = (List<Object>)chargesType.get("slabs");
-					Map<String, Object> maxSlab = (Map<String, Object>)slabs.get(slabs.size() -1 );
-					amount = sqFeetArea.subtract(new BigDecimal((Double)maxSlab.get("toPlotArea")))
-							.multiply(rate).add(new BigDecimal((Double)maxSlab.get("rate")));
-				}else
-					amount = new BigDecimal(slabAmount);
-				break;
-			case NOCConstants.NOC_MINING_CHARGES:
-				amount=rate.multiply(basementArea.multiply(NOCConstants.SQYARD_TO_SQFEET)).setScale(0, RoundingMode.HALF_UP);
-				break;
-			case NOCConstants.NOC_LABOUR_CESS:
-				amount=rate.multiply(builtUpArea.multiply(NOCConstants.SQYARD_TO_SQFEET)).setScale(0, RoundingMode.HALF_UP);
-				break;
-			case NOCConstants.NOC_CLUBBING_CHARGES:
 				amount=rate.multiply(plotArea).setScale(0, RoundingMode.HALF_UP);
 				break;
-			case NOCConstants.NOC_WATER_CHARGES:
+			case NOCConstants.NOC_CLU_CHARGES:
+				if(chargesType.containsKey("slabs")) {
+					Map<String,Double> slabAmountMap = ((List<Map<String, Object>>)chargesType.get("slabs")).stream()
+							.collect(Collectors.toMap(slab -> slab.get("roadType").toString(), slab -> (Double)slab.get("rate")));
+					Double cluSlabAmount = slabAmountMap.containsKey(roadType) ? slabAmountMap.get(roadType) : slabAmountMap.get("Other Road");
+					amount = BigDecimal.valueOf(cluSlabAmount).multiply(plotArea).setScale(0, RoundingMode.HALF_UP);
+				}
+				break;
 			case NOCConstants.NOC_URBAN_DEVELOPMENT_CESS:
-			case NOCConstants.NOC_GAUSHALA_CHARGES_CESS:
-			case NOCConstants.NOC_RAIN_WATER_HARVESTING_CHARGES:
-			case NOCConstants.NOC_SUB_DIVISION_CHARGES:
-			case NOCConstants.NOC_OTHER_CHARGES:
-				amount = rate.setScale(0, RoundingMode.HALF_UP);
-				break;	
+				amount= rate.setScale(0, RoundingMode.HALF_UP);
+				break;
+			case NOCConstants.NOC_COMPOUNDING_FEES:
+				amount = rate.multiply(builtUpArea).setScale(0, RoundingMode.HALF_UP);
+				break;
+			default:
+				amount = BigDecimal.ZERO;
 			}
+			
+			if(!concession.equals(BigDecimal.ZERO))
+				amount = amount.subtract(amount.divide(new BigDecimal(100)).multiply(concession)).setScale(0, RoundingMode.HALF_UP);
 			
 			estimate.setEstimateAmount(amount);
 			estimate.setCategory(Category.FEE);
@@ -213,14 +205,6 @@ public class CalculationService {
 					est.getTaxHeadCode().equalsIgnoreCase(NOCConstants.NOC_EXTERNAL_DEVELOPMENT_CHARGES))
 			.map(est -> est.getEstimateAmount()).reduce(BigDecimal.ZERO, BigDecimal::add);
 			estimate.setEstimateAmount(estimate.getEstimateAmount().multiply(totalFee).divide(BigDecimal.valueOf(100.0)).setScale(0, RoundingMode.HALF_UP));
-		});
-		
-		//Updating Water Charges based on Malba Charges
-		estimates.stream().filter(est -> est.getTaxHeadCode().equalsIgnoreCase(NOCConstants.NOC_WATER_CHARGES)).forEach(estimate -> {
-			BigDecimal amount = estimates.stream().filter(est -> est.getTaxHeadCode().equalsIgnoreCase(NOCConstants.NOC_MALBA_CHARGES))
-					.map(est -> est.getEstimateAmount()).findFirst().orElse(BigDecimal.ZERO)
-					.multiply(estimate.getEstimateAmount()).divide(new BigDecimal(100.0)).setScale(0, RoundingMode.HALF_UP);
-			estimate.setEstimateAmount(amount);
 		});
 		
 		return estimates;

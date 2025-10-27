@@ -109,23 +109,7 @@ public class NOCConstants {
 
 	public static final String NOC_URBAN_DEVELOPMENT_CESS = "NOC_URBAN_DEVELOPMENT_CESS";
 
-	public static final String NOC_MALBA_CHARGES = "NOC_MALBA_CHARGES";
-
-	public static final String NOC_WATER_CHARGES = "NOC_WATER_CHARGES";
-
-	public static final String NOC_MINING_CHARGES = "NOC_MINING_CHARGES";
-
-	public static final String NOC_GAUSHALA_CHARGES_CESS = "NOC_GAUSHALA_CHARGES_CESS";
-
-	public static final String NOC_LABOUR_CESS = "NOC_LABOUR_CESS";
-
-	public static final String NOC_RAIN_WATER_HARVESTING_CHARGES = "NOC_RAIN_WATER_HARVESTING_CHARGES";
-
-	public static final String NOC_CLUBBING_CHARGES = "NOC_CLUBBING_CHARGES";
-
-	public static final String NOC_SUB_DIVISION_CHARGES = "NOC_SUB-DIVISION_CHARGES";
-
-	public static final String NOC_OTHER_CHARGES = "NOC_OTHER_CHARGES";
+	public static final String NOC_COMPOUNDING_FEES = "NOC_COMPOUNDING_FEES";
 	
 	public static final BigDecimal SQYARD_TO_SQFEET = BigDecimal.valueOf(9.0);
 	
