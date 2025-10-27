@@ -504,23 +504,53 @@ public class DemandService {
 			 * 
 			 * */
 			
-			Object mdmsResponse = getMdmsResponse(requestInfo, tenantId );
-			List<String> mdmsUsageCategory = JsonPath.read(mdmsResponse, "$.MdmsRes.tenant.meterReadingMapping[0].usageCategory");
-			List<String> dbUsageCategory = waterCalculatorDao.fetchUsageCategory(consumerCode);
+			Object mdmsResponse = null;
+	        String relatedSwConn = "";
+	        List<String> matchingUsages = new ArrayList<>();
+	        List<String> dbUsageCategory = new ArrayList<>();
 
-	        List<String> matchingUsages = mdmsUsageCategory.stream().filter(dbUsageCategory::contains).collect(Collectors.toList());
+
+			List<String> mdmsUsageCategory = new ArrayList<>();
+
+			try {
+			    mdmsResponse = getMdmsResponse(requestInfo, tenantId);
+
+			    if (mdmsResponse != null) {
+			        // Safely try to read usageCategory from MDMS
+			        try {
+			            mdmsUsageCategory = JsonPath.read(mdmsResponse, "$.MdmsRes.tenant.meterReadingMapping[0].usageCategory");
+			        } catch (Exception e) {
+			            log.error("Error reading usageCategory from MDMS response for tenantId: {} | Message: {}", tenantId, e.getMessage());
+			            mdmsUsageCategory = new ArrayList<>();
+			        }
+			    } else {
+			        log.error("MDMS response is null for tenantId: {}", tenantId);
+			        mdmsUsageCategory = new ArrayList<>();
+			    }
+
+			} catch (Exception e) {
+			    log.error("Exception while fetching MDMS response for tenantId: {} | {}", tenantId, e.getMessage());
+			    mdmsUsageCategory = new ArrayList<>();
+			}
+			if (mdmsUsageCategory !=null && !mdmsUsageCategory.isEmpty()) {
+				 dbUsageCategory = waterCalculatorDao.fetchUsageCategory(consumerCode);
+
+		         matchingUsages = mdmsUsageCategory.stream().filter(dbUsageCategory::contains).collect(Collectors.toList());
+		        try {
+		            relatedSwConn = dao.getSwConnection(tenantId , consumerCode);
+		        } catch(Exception e){
+		            log.info("relatedSwConn not found in the table");
+		            relatedSwConn = "";
+		        }
+				
+			}
+			
 	        
 //	        List<String> sewConnectionList = waterCalculatorDao.fetchSewConnection(consumerCode); 
 //	        sewConsumerCode = sewConnectionList.isEmpty() ? "" : sewConnectionList.get(0).toString();
 	        
 //	        WSCalculationDaoImpl dao = new WSCalculationDaoImpl();
-	        String relatedSwConn = "";
-	        try {
-	            relatedSwConn = dao.getSwConnection(tenantId , consumerCode);
-	        } catch(Exception e){
-	            log.info("relatedSwConn not found in the table");
-	            relatedSwConn = "";
-	        }
+	       
         	
 	        if (!matchingUsages.isEmpty() && relatedSwConn != null && !relatedSwConn.isEmpty()) {
 	        	// For the metered connections demand has to create one by one
