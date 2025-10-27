@@ -66,10 +66,9 @@ public class CalculationService {
 				code = NDCConstants.COMMERCIAL;
 			}
 			else if(calculationReq.getCalculationCriteria()
-					.get(0).getNdcApplicationRequest()
-					.getApplications()!=null && !calculationReq.getCalculationCriteria()
-					.get(0).getNdcApplicationRequest()
-					.getApplications().isEmpty()) {
+					.get(0).getNdcApplicationRequest() !=null &&
+                    !calculationReq.getCalculationCriteria()
+                            .get(0).getNdcApplicationRequest().getApplications().isEmpty()) {
 				List<NdcDetailsRequest> ndcDetails = calculationReq.getCalculationCriteria()
 						.get(0).getNdcApplicationRequest()
 						.getApplications().get(0).getNdcDetails();
