@@ -175,9 +175,15 @@ public class PDFRequestGenerator {
 
 		
 
-		int year = Integer.parseInt(grbgBillTracker.get(0).getYear());
-		grbg.put("finYear", year + "-" + (year + 1));
-		grbg.put("finYear", grbgBillTracker.get(0).getYear() + "-" + (year + 1));
+		if(!grbgBillTracker.get(0).getType().equals("ARREAR"))
+		{
+			int year = Integer.parseInt(grbgBillTracker.get(0).getYear());
+			grbg.put("finYear", year + "-" + (year + 1));
+			grbg.put("finYear", grbgBillTracker.get(0).getYear() + "-" + (year + 1));
+		}
+		else {
+			grbg.put("finYear", grbgBillTracker.get(0).getYear());
+		}
 		grbg.put("district", "district");
 		grbg.put("wardNumber", grbgAccount.getAddresses().get(0).getWardName());
 		grbg.put("unitCategory", escapeHtml(grbgAccount.getGrbgCollectionUnits().get(0).getCategory()));

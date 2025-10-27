@@ -79,6 +79,7 @@ public class MdmsService {
 						BigDecimal fee = BigDecimal.valueOf(Double.valueOf(obj.get("fee").toString()));
 						
 						calculationBreakdown.put("fee", fee.toString());
+						calculationBreakdown.put("subcategorytype", garbageAccount.getGrbgCollectionUnits().get(0).getSubCategoryType());
 //						taxAmount.set(BigDecimal.valueOf(Double.valueOf(obj.get("fee").toString())));
 						//this condition needs to be changed for or on the basis of categorization
 						

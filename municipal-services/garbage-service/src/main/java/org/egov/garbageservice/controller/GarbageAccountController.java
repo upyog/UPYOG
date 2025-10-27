@@ -16,6 +16,7 @@ import org.egov.garbageservice.model.SearchCriteriaGarbageAccountRequest;
 import org.egov.garbageservice.model.TotalCountRequest;
 import org.egov.garbageservice.service.GarbageAccountService;
 import org.egov.garbageservice.util.RequestInfoWrapper;
+import org.egov.garbageservice.model.GenrateArrearRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
@@ -115,5 +116,11 @@ public class GarbageAccountController {
 	public ResponseEntity<GarbageAccountResponse> updateStatus(
 			@RequestBody GarbageAccountRequest createGarbageRequest) {
 		return ResponseEntity.ok(service.updateStatus(createGarbageRequest));
+	}
+	
+	@PostMapping("/_createArear")
+	public ResponseEntity<Map<String, Object>> createArear(
+			@Valid @RequestBody GenrateArrearRequest genrateArrearRequest) {
+		return ResponseEntity.ok(service.generateArrear(genrateArrearRequest));
 	}
 }
