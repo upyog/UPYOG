@@ -100,7 +100,8 @@ if(appealId && billData?.canLoad) {
         appDetailsToShow?.documents.forEach(element => {
             pdfFiles.fileStoreIds.forEach(file => {
                 if(element?.fileStoreId === file.id) {
-                    element.url = file?.url
+                  let url = file?.url.split(',')
+                    element.url = url[0]
                 }
             });
         });

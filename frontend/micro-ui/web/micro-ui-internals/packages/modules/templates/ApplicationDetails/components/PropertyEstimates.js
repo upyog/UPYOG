@@ -55,11 +55,11 @@ const calculateApplicableRebate = (taxHeadEstimates, taxableAPV) => {
 const calculateAnnualPropertyTax = (taxableAPV, applicableRebate) => {
   
   let val = 0;
-  if(taxableAPV && applicableRebate) {
-    val = taxableAPV - applicableRebate
+  if(taxableAPV) {
+    val = taxableAPV
   }
   // console.log("val==",val);
-  let APT = val.toFixed(2) * 0.08;
+  let APT = val * 0.08;
   return APT.toFixed(2);
 
   // val = val.toFixed(2);
@@ -128,7 +128,7 @@ function PropertyEstimates({ taxHeadEstimatesCalculation }) {
 
     const APT = arr.some(e => e.taxHeadCode === "PT_ANNUAL_PROPERTY_TAX");
     if (!APT) {
-      const insertAt = Math.max(arr.length - 3, 0);
+      const insertAt = Math.max(arr.length - 4, 0);
       arr.splice(insertAt, 0, {
         taxHeadCode: "PT_ANNUAL_PROPERTY_TAX",
         estimateAmount: annualPropertyTax,
