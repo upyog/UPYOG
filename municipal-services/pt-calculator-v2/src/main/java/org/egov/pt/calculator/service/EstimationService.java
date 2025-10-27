@@ -72,6 +72,8 @@ import java.math.RoundingMode;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.Month;
+import java.time.Year;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -1134,27 +1136,32 @@ public class EstimationService {
 			if(taxAfterVacExemption.compareTo(BigDecimal.ZERO)==0 && totalAmount.compareTo(BigDecimal.ZERO)>=0)
 				taxAfterVacExemption=taxAmt;
 
-			if(Boolean.FALSE==utils.isBetweenMonths(LocalDate.now()))
+			complementary_rebate=taxAfterVacExemption.multiply(new BigDecimal(CALCULATION_92).divide(new BigDecimal(CALCULATION_100)).negate());
+			complementary_rebate=complementary_rebate.setScale(CALCULATION_2,CALCULATION_2);
+			estimates.add(TaxHeadEstimate.builder().taxHeadCode(PT_COMPLEMENTARY_REBATE).category(Category.REBATE).estimateAmount( complementary_rebate).calculatedPercentage(new BigDecimal(CALCULATION_92)).build());
+			updatedtaxammount=taxAfterVacExemption.add(complementary_rebate);
+			
+			if(Boolean.FALSE==utils.isBetweenMonths(LocalDate.now(), assessmentYear))
 			{
 				switch (criteria.getModeOfPayment()) {
 				case QUARTERLY:
-					modeofpayment_rebate=taxAfterVacExemption.multiply(new BigDecimal(CALCULATION_3).divide(new BigDecimal(CALCULATION_100)).negate());
+					modeofpayment_rebate=updatedtaxammount.multiply(new BigDecimal(CALCULATION_3).divide(new BigDecimal(CALCULATION_100)).negate());
 					modeofpayment_rebate=modeofpayment_rebate.setScale(CALCULATION_2,CALCULATION_2);
-					updatedtaxammount=taxAfterVacExemption.add(modeofpayment_rebate);
+					//updatedtaxammount=taxAfterVacExemption.add(modeofpayment_rebate);
 					calculatedPercentage=new BigDecimal(CALCULATION_3);
 					break;
 
 				case HALFYEARLY:
-					modeofpayment_rebate=taxAfterVacExemption.multiply(new BigDecimal(CALCULATION_6).divide(new BigDecimal(CALCULATION_100)).negate());
+					modeofpayment_rebate=updatedtaxammount.multiply(new BigDecimal(CALCULATION_6).divide(new BigDecimal(CALCULATION_100)).negate());
 					modeofpayment_rebate=modeofpayment_rebate.setScale(CALCULATION_2,CALCULATION_2);
-					updatedtaxammount=taxAfterVacExemption.add(modeofpayment_rebate);
+					//updatedtaxammount=taxAfterVacExemption.add(modeofpayment_rebate);
 					calculatedPercentage=new BigDecimal(CALCULATION_6);
 					break;
 
 				case YEARLY:
-					modeofpayment_rebate=taxAfterVacExemption.multiply(new BigDecimal(CALCULATION_10).divide(new BigDecimal(CALCULATION_100)).negate());
+					modeofpayment_rebate=updatedtaxammount.multiply(new BigDecimal(CALCULATION_10).divide(new BigDecimal(CALCULATION_100)).negate());
 					modeofpayment_rebate=modeofpayment_rebate.setScale(CALCULATION_2,CALCULATION_2);
-					updatedtaxammount=taxAfterVacExemption.add(modeofpayment_rebate);
+					//updatedtaxammount=taxAfterVacExemption.add(modeofpayment_rebate);
 					calculatedPercentage=new BigDecimal(CALCULATION_10);
 					break;
 
@@ -1165,12 +1172,12 @@ public class EstimationService {
 				estimates.add(TaxHeadEstimate.builder().taxHeadCode(PT_MODEOFPAYMENT_REBATE).category(Category.REBATE).estimateAmount( modeofpayment_rebate).calculatedPercentage(calculatedPercentage).build());
 
 			}
-			else
-				updatedtaxammount=taxAfterVacExemption;
+			//else
+				//updatedtaxammount=taxAfterVacExemption;
 
 
-			complementary_rebate=updatedtaxammount.multiply(new BigDecimal(CALCULATION_92).divide(new BigDecimal(CALCULATION_100)).negate());
-			complementary_rebate=complementary_rebate.setScale(CALCULATION_2,CALCULATION_2);
+			//complementary_rebate=updatedtaxammount.multiply(new BigDecimal(CALCULATION_92).divide(new BigDecimal(CALCULATION_100)).negate());
+			//complementary_rebate=complementary_rebate.setScale(CALCULATION_2,CALCULATION_2);
 
 			//if(taxAmt.compareTo(new BigDecimal(600)) > 0) 
 			//taxAmt=taxAmt.multiply(new BigDecimal(8)).divide(new BigDecimal(100)).setScale(2,2);
@@ -1183,7 +1190,7 @@ public class EstimationService {
 			 * });
 			 */
 			
-			estimates.add(TaxHeadEstimate.builder().taxHeadCode(PT_COMPLEMENTARY_REBATE).category(Category.REBATE).estimateAmount( complementary_rebate).calculatedPercentage(new BigDecimal(CALCULATION_92)).build());
+			//estimates.add(TaxHeadEstimate.builder().taxHeadCode(PT_COMPLEMENTARY_REBATE).category(Category.REBATE).estimateAmount( complementary_rebate).calculatedPercentage(new BigDecimal(CALCULATION_92)).build());
 
 		}
 		//Incase of Exemption and Heritage
@@ -1319,7 +1326,8 @@ public class EstimationService {
 		totalAmount=totalAmount.add(payblepenalty);
 		estimates.add(TaxHeadEstimate.builder().taxHeadCode(PT_TIME_PENALTY).category(Category.TAX).estimateAmount( payblepenalty).build());
 		//Added For Manipur 
-		TaxHeadEstimate decimalEstimate = payService.roundOfDecimals(totalAmount, BigDecimal.ZERO);
+		TaxHeadEstimate decimalEstimate = payService.calculateRoundOff(totalAmount);
+		//TaxHeadEstimate decimalEstimate = payService.roundOfDecimals(totalAmount, BigDecimal.ZERO);
 		//TaxHeadEstimate decimalEstimate = payService.roundOfDecimals(taxAmt.add(penalty).add(collectedAmtForOldDemand), rebate.add(exemption).add(complementary_rebate).add(modeofpayment_rebate));
 
 		//BigDecimal roundofpos=BigDecimal.ZERO;
@@ -1375,8 +1383,8 @@ public class EstimationService {
 		Set<String> q3 = new HashSet<>(Arrays.asList("10","11","12"));
 		Set<String> q4 = new HashSet<>(Arrays.asList("1","2","3"));
 
-		Set<String> h1 = new HashSet<>(Arrays.asList("4","5","6","7","8","9"));
-		Set<String> h2 = new HashSet<>(Arrays.asList("10","11","12","1","2","3"));
+		Set<String> h1 = new HashSet<>(Arrays.asList("4","5","6"));
+		Set<String> h2 = new HashSet<>(Arrays.asList("7","8","9","10","11","12","1","2","3"));
 
 		SimpleDateFormat sdf=new SimpleDateFormat(DD_MM_YYYY);
 		SimpleDateFormat year=new SimpleDateFormat("yyyy");
@@ -1404,7 +1412,12 @@ public class EstimationService {
 			String q3startDate=MONTH_01_10+dateyear;
 			String q3endDate=MONTH_31_12+dateyear;
 			String q4startDate=MONTH_01_01+nextyear;
-			String q4endDate=MONTH_31_03+nextyear;
+			
+			Year leapyear = Year.of(Integer.valueOf(nextyear));
+			LocalDate febEndDate = leapyear.atMonth(Month.FEBRUARY).atEndOfMonth();
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+			String q4endDate = febEndDate.format(formatter);
+			
 
 			int quater=0;
 			if(q1.contains(datemonth))
@@ -1468,9 +1481,9 @@ public class EstimationService {
 		case HALFYEARLY:
 
 			String h1startDate=MONTH_01_04+dateyear;
-			String h1endDate=MONTH_30_09+dateyear;
-			String h2startDate=MONTH_01_10+dateyear;
-			String h2endDate=MONTH_31_03+nextyear;
+			String h1endDate=MONTH_30_06+dateyear;
+			String h2startDate=MONTH_01_07+dateyear;
+			String h2endDate=MONTH_31_12+dateyear;
 
 			int halfyear=0;
 			if(h1.contains(datemonth))
