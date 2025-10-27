@@ -3,6 +3,7 @@ package org.egov.bpa.calculator.services;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -346,7 +347,7 @@ public class CalculationService {
 		if(!node.containsKey("usage"))
 			throw new CustomException(BPACalculatorConstants.PARSING_ERROR, "Usage should not be null!!");
 		
-		Map<String,Object> fee = (Map<String,Object>)node.get("selfCertificationCharges");
+//		Map<String,Object> fee = node.containsKey("selfCertificationCharges") ? (Map<String, Object>)node.get("selfCertificationCharges") : new HashMap<>();
 		
 		List<Map<String,Object>> adjustedAmountsList = node.get("adjustedAmounts") != null ? (List<Map<String,Object>>)node.get("adjustedAmounts") : new ArrayList();
 		
@@ -357,9 +358,13 @@ public class CalculationService {
 		BigDecimal plotArea = new BigDecimal((String)node.get("area")).multiply(BPACalculatorConstants.SQMETER_TO_SQYARD);  //In Sq Yard
 		BigDecimal basementArea = BigDecimal.ZERO;
 		String category = (String)node.get("usage");
-		String approvedColony = node.containsKey("approvedColony") ? (String)node.get("approvedColony") : "NO";
-		String buildingStatus  = node.containsKey("buildingStatus") ? (String)node.get("buildingStatus") : "";
-		String NocNumber  = node.containsKey("NocNumber") ? (String)node.get("NocNumber") : "";
+		String approvedColony = (String)node.getOrDefault("approvedColony", "NO");
+//		String buildingStatus  = (String)node.getOrDefault("buildingStatus", "");
+		Map<String, Double> farDetails  = (Map<String, Double>)node.getOrDefault("farDetails", new HashMap<>());
+		String roadType  = (String)node.getOrDefault("roadType", "OTHER ROAD");
+		String NocNumber  = (String)node.getOrDefault("NocNumber", "");
+		Boolean isClubbedPlot  = (Boolean)node.getOrDefault("isClubbedPlot", false);
+		Boolean purchasedFAR = (Boolean)node.getOrDefault("purchasedFAR", false);
 		
 		List<TaxHeadEstimate> estimates = new LinkedList<>();
 		Object mdmsData = mdmsService.getMDMSSanctionFeeCharges(requestInfo, tanentId, BPACalculatorConstants.MDMS_CHARGES_TYPE_CODE, category, finYear);
@@ -367,6 +372,7 @@ public class CalculationService {
 		
 		chargesTypejsonOutput.forEach(chargesType -> {
 			BigDecimal rate = new BigDecimal(chargesType.containsKey("rate") ? (Double) chargesType.get("rate") : 0.0);
+			BigDecimal discount = new BigDecimal(chargesType.containsKey("discount") ? (Double) chargesType.get("discount") : 0.0);
 			TaxHeadEstimate estimate = new TaxHeadEstimate();
 			BigDecimal amount= BigDecimal.ZERO;
 			String taxhead= chargesType.get("taxHeadCode").toString();
@@ -374,10 +380,17 @@ public class CalculationService {
 			switch (taxhead) {
 			
 			case BPACalculatorConstants.BPA_PROCESSING_FEES:
-			case BPACalculatorConstants.BPA_CLU_CHARGES:
 			case BPACalculatorConstants.BPA_EXTERNAL_DEVELOPMENT_CHARGES:
 				if(approvedColony.equalsIgnoreCase("LAL_LAKEER") || (approvedColony.equalsIgnoreCase("NO") && StringUtils.isEmpty(NocNumber)))
 					amount=rate.multiply(builtUpArea).setScale(0, RoundingMode.HALF_UP);
+				break;
+			case BPACalculatorConstants.BPA_CLU_CHARGES:
+				if(approvedColony.equalsIgnoreCase("LAL_LAKEER") || (approvedColony.equalsIgnoreCase("NO") && StringUtils.isEmpty(NocNumber))) {
+					Map<String,Double> slabAmountMap = ((List<Map<String, Object>>)chargesType.get("slabs")).stream()
+							.collect(Collectors.toMap(slab -> slab.get("roadType").toString(), slab -> (Double)slab.get("rate")));
+					Double CLUSlabAmount = slabAmountMap.containsKey(roadType) ? slabAmountMap.get(roadType) : slabAmountMap.get("OTHER ROAD");
+					amount = new BigDecimal(CLUSlabAmount).multiply(builtUpArea).setScale(0, RoundingMode.HALF_UP);
+				}
 				break;
 			case BPACalculatorConstants.BPA_MALBA_CHARGES:
 				BigDecimal sqFeetArea = builtUpArea.multiply(BPACalculatorConstants.SQYARD_TO_SQFEET);
@@ -400,7 +413,8 @@ public class CalculationService {
 				amount=rate.multiply(builtUpArea.multiply(BPACalculatorConstants.SQYARD_TO_SQFEET)).setScale(0, RoundingMode.HALF_UP);
 				break;
 			case BPACalculatorConstants.BPA_CLUBBING_CHARGES:
-				amount=rate.multiply(plotArea).setScale(0, RoundingMode.HALF_UP);
+				if(isClubbedPlot)
+					amount=rate.multiply(plotArea).setScale(0, RoundingMode.HALF_UP);
 				break;
 			case BPACalculatorConstants.BPA_WATER_CHARGES:
 			case BPACalculatorConstants.BPA_URBAN_DEVELOPMENT_CESS:
@@ -409,20 +423,16 @@ public class CalculationService {
 			case BPACalculatorConstants.BPA_SUB_DIVISION_CHARGES:
 				amount = rate.setScale(0, RoundingMode.HALF_UP);
 				break;	
-			case BPACalculatorConstants.BPA_OTHER_CHARGES:
-			case BPACalculatorConstants.BPA_DEVELOPMENT_CHARGES:
-				if(fee.containsKey(taxhead) && fee.get(taxhead) != null && !fee.get(taxhead).toString().trim().isEmpty() && !fee.get(taxhead).toString().equalsIgnoreCase("undefined"))
-					amount = new BigDecimal(fee.get(taxhead).toString()).setScale(0, RoundingMode.HALF_UP);
+			case BPACalculatorConstants.BPA_PURCHASABLE_FAR_CHARGES:
+				if(farDetails != null && farDetails.containsKey("purchasableFar") && purchasedFAR)
+					amount = new BigDecimal(farDetails.get("purchasableFar")).multiply(rate).setScale(0, RoundingMode.HALF_UP);
 				else
-					amount = rate.setScale(0, RoundingMode.HALF_UP);
+					amount = BigDecimal.ZERO;
 				break;
-//			case BPACalculatorConstants.BPA_LESS_ADJUSMENT_PLOT:
-//				if(fee.containsKey(taxhead) && fee.get(taxhead) != null && !fee.get(taxhead).toString().trim().isEmpty() && !fee.get(taxhead).toString().equalsIgnoreCase("undefined"))
-//					amount = new BigDecimal(fee.get(taxhead).toString()).multiply(rate).setScale(0, RoundingMode.HALF_UP);
-//				else
-//					amount = BigDecimal.ZERO;
-//				break;
 			}
+			
+			if(!discount.equals(BigDecimal.ZERO))
+				amount = amount.subtract(amount.divide(new BigDecimal(100)).multiply(discount)).setScale(0, RoundingMode.HALF_UP);
 			
 			Map<String, Object> adjustedAmount = adjustedAmounts.containsKey(taxhead) ? 
 					(Map<String, Object>)adjustedAmounts.get(taxhead) : new LinkedHashMap<String, Object>();
