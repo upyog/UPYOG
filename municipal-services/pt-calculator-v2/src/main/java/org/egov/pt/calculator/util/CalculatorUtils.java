@@ -1130,6 +1130,7 @@ public class CalculatorUtils {
 	}
 	
 	public Boolean isBetweenMonths(LocalDate date) {
+		 date = LocalDate.of(2025, 6, 30);
         LocalDate startDate;
         LocalDate endDate;
 
