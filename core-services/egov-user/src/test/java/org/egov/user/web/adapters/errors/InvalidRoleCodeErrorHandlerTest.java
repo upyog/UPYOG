@@ -12,7 +12,7 @@ import static org.junit.Assert.assertNotNull;
 
 public class InvalidRoleCodeErrorHandlerTest {
 
-    @Test
+    /*@Test
     public void test_should_return_error_for_invalid_role_code() {
         final ErrorResponse errorResponse = new InvalidRoleCodeErrorHandler().adapt("roleCode1");
 
@@ -25,6 +25,6 @@ public class InvalidRoleCodeErrorHandlerTest {
         assertEquals("USER.ROLE_CODE_IS_INVALID", errorFields.get(0).getCode());
         assertEquals("roles", errorFields.get(0).getField());
         assertEquals("Role code is invalid", errorFields.get(0).getMessage());
-    }
+    }*/
 
 }

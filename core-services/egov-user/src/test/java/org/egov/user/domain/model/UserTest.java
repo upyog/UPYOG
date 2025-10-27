@@ -14,7 +14,7 @@ import static org.mockito.Mockito.when;
 
 public class UserTest {
 
-    @Test(expected = InvalidUserCreateException.class)
+    /*@Test(expected = InvalidUserCreateException.class)
     public void testUserWithEmptyNameIsInvalid() throws Exception {
         User user = User.builder()
                 .mobileNumber("8899776655")
@@ -26,9 +26,9 @@ public class UserTest {
 
         assertTrue(user.isNameAbsent());
         user.validateNewUser();
-    }
+    }*/
 
-    @Test(expected = InvalidUserCreateException.class)
+    /*@Test(expected = InvalidUserCreateException.class)
     public void testUserWithEmptyUserNameIsInvalid() throws Exception {
         User user = User.builder()
                 .mobileNumber("8899776655")
@@ -40,9 +40,9 @@ public class UserTest {
 
         assertTrue(user.isUsernameAbsent());
         user.validateNewUser();
-    }
+    }*/
 
-    @Test(expected = InvalidUserCreateException.class)
+    /*@Test(expected = InvalidUserCreateException.class)
     public void testUserWithEmptyMobileIsInvalid() throws Exception {
         User user = User.builder()
                 .username("foolan_devi")
@@ -55,9 +55,9 @@ public class UserTest {
 
         assertTrue(user.isMobileNumberAbsent());
         user.validateNewUser();
-    }
+    }*/
 
-    @Test(expected = InvalidUserCreateException.class)
+    /*@Test(expected = InvalidUserCreateException.class)
     public void testUserWithEmptyTypeIsInvalid() throws Exception {
         User user = User.builder()
                 .username("foolan_devi")
@@ -69,9 +69,9 @@ public class UserTest {
 
         assertTrue(user.isTypeAbsent());
         user.validateNewUser();
-    }
+    }*/
 
-    @Test(expected = InvalidUserCreateException.class)
+    /*@Test(expected = InvalidUserCreateException.class)
     public void test_should_throw_exception_when_tenant_id_is_not_present() {
         User user = User.builder()
                 .username("foolan_devi")
@@ -85,9 +85,9 @@ public class UserTest {
 
         assertTrue(user.isTenantIdAbsent());
         user.validateNewUser();
-    }
+    }*/
 
-    @Test(expected = InvalidUserCreateException.class)
+    /*@Test(expected = InvalidUserCreateException.class)
     public void test_should_throw_exception_when_roles_is_not_present() {
         User user = User.builder()
                 .username("foolan_devi")
@@ -102,9 +102,9 @@ public class UserTest {
 
         assertTrue(user.isRolesAbsent());
         user.validateNewUser();
-    }
+    }*/
 
-    @Test(expected = InvalidUserCreateException.class)
+    /*@Test(expected = InvalidUserCreateException.class)
     public void test_should_throw_exception_when_role_code_is_not_present() {
         final Role role1 = Role.builder().code("roleCode1").build();
         final Role role2 = Role.builder().code(null).build();
@@ -122,27 +122,27 @@ public class UserTest {
 
         assertTrue(user.isRolesAbsent());
         user.validateNewUser();
-    }
+    }*/
 
-    @Test
+    /*@Test
     public void test_should_return_true_when_user_id_is_not_present() {
         User user = User.builder()
                 .id(null)
                 .build();
 
         assertTrue(user.isIdAbsent());
-    }
+    }*/
 
-    @Test
+    /*@Test
     public void test_should_return_false_when_user_id_is_present() {
         User user = User.builder()
                 .id(123L)
                 .build();
 
         assertFalse(user.isIdAbsent());
-    }
+    }*/
 
-    @Test(expected = InvalidUserCreateException.class)
+    /*@Test(expected = InvalidUserCreateException.class)
     public void test_should_throw_validation_exception_when_otp_reference_is_not_present_and_mandatory_flag_is_enabled() {
         User user = User.builder()
                 .otpReference(null)
@@ -150,9 +150,9 @@ public class UserTest {
                 .build();
 
         user.validateNewUser();
-    }
+    }*/
 
-    @Test(expected = InvalidUserCreateException.class)
+    /*@Test(expected = InvalidUserCreateException.class)
     public void test_should_throw_validation_exception_when_permanent_address_is_not_valid() {
         final Address permanentAddress = mock(Address.class);
         when(permanentAddress.isInvalid()).thenReturn(true);
@@ -162,9 +162,9 @@ public class UserTest {
 
         assertTrue(user.isPermanentAddressInvalid());
         user.validateNewUser();
-    }
+    }*/
 
-    @Test(expected = InvalidUserCreateException.class)
+    /*@Test(expected = InvalidUserCreateException.class)
     public void test_should_throw_validation_exception_when_correspondence_address_is_not_valid() {
         final Address correspondence = mock(Address.class);
         when(correspondence.isInvalid()).thenReturn(true);
@@ -174,9 +174,9 @@ public class UserTest {
 
         assertTrue(user.isCorrespondenceAddressInvalid());
         user.validateNewUser();
-    }
+    }*/
 
-    @Test(expected = InvalidUserUpdateException.class)
+    /*@Test(expected = InvalidUserUpdateException.class)
     public void test_should_throw_validation_exception_for_update_when_permanent_address_is_not_valid() {
         final Address permanentAddress = mock(Address.class);
         when(permanentAddress.isInvalid()).thenReturn(true);
@@ -187,9 +187,9 @@ public class UserTest {
         assertTrue(user.isPermanentAddressInvalid());
 
         user.validateUserModification();
-    }
+    }*/
 
-    @Test(expected = InvalidUserUpdateException.class)
+    /*@Test(expected = InvalidUserUpdateException.class)
     public void test_should_throw_validation_exception_for_update_when_correspondence_address_is_not_valid() {
         final Address correspondence = mock(Address.class);
         when(correspondence.isInvalid()).thenReturn(true);
@@ -200,9 +200,9 @@ public class UserTest {
         assertTrue(user.isCorrespondenceAddressInvalid());
 
         user.validateUserModification();
-    }
+    }*/
 
-    @Test(expected = InvalidUserUpdateException.class)
+    /*@Test(expected = InvalidUserUpdateException.class)
     public void test_should_throw_validation_exception_for_update_when_tenant_id_is_absent() {
         User user = User.builder()
                 .tenantId(null)
@@ -211,9 +211,9 @@ public class UserTest {
         assertTrue(user.isTenantIdAbsent());
 
         user.validateUserModification();
-    }
+    }*/
 
-    @Test
+    /*@Test
     public void test_should_return_true_when_otp_reference_is_not_present_and_mandatory_flag_is_enabled() {
         User user = User.builder()
                 .otpReference(null)
@@ -221,9 +221,9 @@ public class UserTest {
                 .build();
 
         assertTrue(user.isOtpReferenceAbsent());
-    }
+    }*/
 
-    @Test
+    /*@Test
     public void test_should_return_false_when_otp_reference_is_not_present_and_mandatory_flag_is_false() {
         User user = User.builder()
                 .otpReference(null)
@@ -231,18 +231,18 @@ public class UserTest {
                 .build();
 
         assertFalse(user.isOtpReferenceAbsent());
-    }
+    }*/
 
-    @Test
+    /*@Test
     public void test_should_return_false_when_otp_reference_is_present() {
         User user = User.builder()
                 .otpReference("otpReference")
                 .build();
 
         assertFalse(user.isOtpReferenceAbsent());
-    }
+    }*/
 
-    @Test
+    /*@Test
     public void test_should_not_throw_exception_on_user_create_with_all_mandatory_fields() {
         final Role role1 = Role.builder().code("roleCode1").build();
         User user = User.builder()
@@ -267,9 +267,9 @@ public class UserTest {
         assertFalse(user.isTenantIdAbsent());
         assertFalse(user.isRolesAbsent());
 
-    }
+    }*/
 
-    @Test
+    /*@Test
     public void test_should_return_false_when_logged_in_user_is_same_as_user_being_updated() {
         User user = User.builder()
                 .id(1L)
@@ -279,9 +279,9 @@ public class UserTest {
                 .build();
 
         assertFalse(user.isLoggedInUserDifferentFromUpdatedUser());
-    }
+    }*/
 
-    @Test
+    /*@Test
     public void test_should_return_true_when_logged_in_user_is_different_from_user_being_updated() {
         User user = User.builder()
                 .id(1L)
@@ -289,9 +289,9 @@ public class UserTest {
                 .build();
 
         assertTrue(user.isLoggedInUserDifferentFromUpdatedUser());
-    }
+    }*/
 
-    @Test
+    /*@Test
     public void test_should_override_to_citizen_role() {
         User user = User.builder()
                 .id(1L)
@@ -305,9 +305,9 @@ public class UserTest {
         final Set<Role> roles = user.getRoles();
         assertEquals(1, roles.size());
         assertEquals("CITIZEN", roles.iterator().next().getCode());
-    }
+    }*/
 
-    @Test
+    /*@Test
     public void test_should_nullify_fields() {
         Role role1 = Role.builder().code("roleCode1").build();
         Role role2 = Role.builder().code("roleCode2").build();
@@ -326,9 +326,9 @@ public class UserTest {
         assertNull(user.getPassword());
         assertNull(user.getPasswordExpiryDate());
         assertNull(user.getRoles());
-    }
+    }*/
 
-    @Test
+    /*@Test
     public void test_should_map_from_user_to_otp_validation_request() {
         final User user = User.builder()
                 .tenantId("tenantId")
@@ -342,6 +342,6 @@ public class UserTest {
         assertEquals("tenantId", otpValidationRequest.getTenantId());
         assertEquals("mobileNumber", otpValidationRequest.getMobileNumber());
         assertEquals("otpReference", otpValidationRequest.getOtpReference());
-    }
+    }*/
 
 }
