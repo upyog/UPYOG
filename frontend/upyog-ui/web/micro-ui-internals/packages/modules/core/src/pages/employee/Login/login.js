@@ -14,7 +14,7 @@ const setEmployeeDetail = (userObject, token) => {
   localStorage.setItem("locale", locale);
   localStorage.setItem("Employee.locale", locale);
   localStorage.setItem("token", token);
-  localStorage.setItem("Employee.token", token);
+  // localStorage.setItem("Employee.token", token);
   localStorage.setItem("user-info", JSON.stringify(userObject));
   localStorage.setItem("Employee.user-info", JSON.stringify(userObject));
 };
@@ -40,7 +40,7 @@ const Login = ({ config: propsConfig, t, isDisabled }) => {
     const filteredRoles = user?.info?.roles?.filter((role) => role.tenantId === Digit.SessionStorage.get("Employee.tenantId"));
     if (user?.info?.roles?.length > 0) user.info.roles = filteredRoles;
     Digit.UserService.setUser(user);
-    setEmployeeDetail(user?.info, user?.access_token);
+    setEmployeeDetail(user?.info,"");
     let redirectPath = "/upyog-ui/employee";
 
     /* logic to redirect back to same screen where we left off  */

@@ -64,7 +64,7 @@ const setCitizenDetail = ( authData) => {
   localStorage.setItem("Citizen.locale", locale);
   localStorage.setItem("token", authData?.access_token);
   localStorage.setItem("user-info", JSON.stringify(authData?.UserRequest));
-  localStorage.setItem("Citizen.token", authData?.access_token);
+  // localStorage.setItem("Citizen.token", authData?.access_token);
   localStorage.setItem("user-info", JSON.stringify(authData?.UserRequest));
   localStorage.setItem("Citizen.user-info", JSON.stringify(authData?.UserRequest));
 };
