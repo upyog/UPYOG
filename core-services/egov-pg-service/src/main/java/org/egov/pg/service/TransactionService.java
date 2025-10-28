@@ -212,6 +212,7 @@ public class TransactionService {
 		String response="200|Y|SUCCESSFUL";
 		String transactionId="";
 		String transactionAmmount="";
+		String flagFromRequest="";
 		String message="";
 		try {
 
@@ -232,13 +233,23 @@ public class TransactionService {
 			if(message.split("[|]")[0].equalsIgnoreCase("S")) {
 				transactionId= message.split("[|]")[4];
 				transactionAmmount=message.split("[|]")[6];
+				flagFromRequest = message.split("[|]")[0];
+				requestParams.put("transactionAmmount", transactionAmmount);
 			}
 			else if(message.split("[|]")[0].equalsIgnoreCase("F")) {
 				transactionId= message.split("[|]")[2];
+				flagFromRequest = message.split("[|]")[0];
+				
+			}
+			else if(message.split("[|]")[0].equalsIgnoreCase("I")) {
+				transactionId= message.split("[|]")[2];
+				flagFromRequest = message.split("[|]")[0];
+				
 			}
 
 			requestParams.put("transactionId", transactionId );
-			requestParams.put("transactionAmmount", transactionAmmount);
+			requestParams.put("flagFromRequest", flagFromRequest );
+			
 			Transaction currentTxnStatus = validator.validateUpdateTxn(requestParams);
 			Transaction newTxn = null;
 
