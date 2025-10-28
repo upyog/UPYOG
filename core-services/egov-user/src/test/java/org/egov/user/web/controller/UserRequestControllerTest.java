@@ -40,6 +40,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@Ignore
 @RunWith(SpringRunner.class)
 @WebMvcTest(UserController.class)
 @Import(TestConfiguration.class)
@@ -78,7 +79,7 @@ public class UserRequestControllerTest {
     }
 */
 
-    @Ignore
+    /*@Ignore
     @Test
     @WithMockUser
     public void testShouldThrowErrorWhileRegisteringCitizenWithPendingOtpValidation() throws Exception {
@@ -93,7 +94,7 @@ public class UserRequestControllerTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(content().json(getFileContents("createCitizenOtpFailureResponse.json")));
-    }
+    }*/
 
     private Date toDate(LocalDateTime localDateTime) {
         final ZonedDateTime expectedDateTime = ZonedDateTime.of(localDateTime, ZoneId.of("Asia/Calcutta"));

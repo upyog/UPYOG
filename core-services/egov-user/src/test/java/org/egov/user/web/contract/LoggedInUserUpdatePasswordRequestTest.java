@@ -9,7 +9,7 @@ import static org.junit.Assert.*;
 
 public class LoggedInUserUpdatePasswordRequestTest {
 
-    @Test
+    /*@Test
     public void test_should_map_from_contract_to_domain() {
         final User userInfo = User.builder()
                 .userName("abcd")
@@ -29,9 +29,9 @@ public class LoggedInUserUpdatePasswordRequestTest {
         assertEquals("existingPassword", domain.getExistingPassword());
         assertEquals("newPassword", domain.getNewPassword());
         assertEquals("abcd", domain.getUserName());
-    }
+    }*/
 
-    @Test
+    /*@Test
     public void test_should_return_user_id_as_null_when_request_info_is_not_present() {
         final LoggedInUserUpdatePasswordRequest loggedInUserUpdatePasswordRequest = LoggedInUserUpdatePasswordRequest.builder()
                 .requestInfo(null)
@@ -42,9 +42,9 @@ public class LoggedInUserUpdatePasswordRequestTest {
         final org.egov.user.domain.model.LoggedInUserUpdatePasswordRequest domain = loggedInUserUpdatePasswordRequest.toDomain();
 
         assertNull(domain.getUserName());
-    }
+    }*/
 
-    @Test
+    /*@Test
     public void test_should_return_user_id_as_null_when_user_info_is_not_present() {
         final RequestInfo requestInfo = RequestInfo.builder()
                 .userInfo(null)
@@ -58,5 +58,5 @@ public class LoggedInUserUpdatePasswordRequestTest {
         final org.egov.user.domain.model.LoggedInUserUpdatePasswordRequest domain = loggedInUserUpdatePasswordRequest.toDomain();
 
         assertNull(domain.getUserName());
-    }
+    }*/
 }

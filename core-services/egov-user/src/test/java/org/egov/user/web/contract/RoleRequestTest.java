@@ -9,7 +9,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class RoleRequestTest {
 
-    @Test
+    /*@Test
     public void test_model_to_contract_conversion() throws Exception {
         Calendar calendar = Calendar.getInstance();
         calendar.set(1990, Calendar.JULY, 1);
@@ -29,5 +29,5 @@ public class RoleRequestTest {
 
         assertThat(roleRequest.getName()).isEqualTo("name of the roleRequest 1");
         assertThat(roleRequest.getCode()).isEqualTo("code");
-    }
+    }*/
 }

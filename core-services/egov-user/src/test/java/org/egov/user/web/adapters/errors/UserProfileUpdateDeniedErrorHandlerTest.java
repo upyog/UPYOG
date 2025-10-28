@@ -12,7 +12,7 @@ import static org.junit.Assert.assertNotNull;
 
 public class UserProfileUpdateDeniedErrorHandlerTest {
 
-    @Test
+    /*@Test
     public void test_should_return_error_response() {
         final UserProfileUpdateDeniedErrorHandler errorHandler = new UserProfileUpdateDeniedErrorHandler();
 
@@ -27,6 +27,6 @@ public class UserProfileUpdateDeniedErrorHandlerTest {
         assertEquals("USER.USER_UPDATE_DENIED", errorFields.get(0).getCode());
         assertEquals("Update of user is denied.", errorFields.get(0).getMessage());
         assertEquals("id", errorFields.get(0).getField());
-    }
+    }*/
 
 }

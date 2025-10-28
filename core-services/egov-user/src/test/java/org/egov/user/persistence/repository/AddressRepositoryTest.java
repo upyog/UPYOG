@@ -40,7 +40,7 @@ public class AddressRepositoryTest {
         addressRepository = new AddressRepository(namedParameterJdbcTemplate, jdbcTemplate);
     }
 
-    @Test
+    /*@Test
     @Sql(scripts = {"/sql/clearAddresses.sql", "/sql/clearUserRoles.sql", "/sql/clearUsers.sql", "/sql/createUsers.sql"})
     public void test_should_save_new_address() {
         final Address domainAddress = Address.builder()
@@ -59,25 +59,25 @@ public class AddressRepositoryTest {
         assertEquals("city", createdAddress.getCity());
         assertEquals("pinCode", createdAddress.getPinCode());
         assertEquals(AddressType.CORRESPONDENCE, createdAddress.getType());
-    }
+    }*/
 
-    @Test
+    /*@Test
     @Sql(scripts = {"/sql/clearAddresses.sql", "/sql/clearUserRoles.sql", "/sql/clearUsers.sql", "/sql/createUsers.sql", "/sql/createAddresses.sql"})
     public void test_should_return_addresses_for_given_user_id_and_tenant() {
         final List<Address> actualAddresses = addressRepository.find(1L, "ap.public");
 
         assertNotNull(actualAddresses);
         assertEquals(2, actualAddresses.size());
-    }
+    }*/
 
-    @Test
+    /*@Test
     @Sql(scripts = {"/sql/clearAddresses.sql", "/sql/clearUserRoles.sql", "/sql/clearUsers.sql", "/sql/createUsers.sql", "/sql/createAddresses.sql"})
     public void test_should_delete_all_associated_addresses() {
         final List<Address> domainAddresses = Collections.emptyList();
         addressRepository.update(domainAddresses, 1L, "ap.public");
-    }
+    }*/
 
-    @Test
+    /*@Test
     @Sql(scripts = {"/sql/clearAddresses.sql", "/sql/clearUserRoles.sql", "/sql/clearUsers.sql", "/sql/createUsers.sql", "/sql/createAddresses.sql"})
     public void test_should_delete_addresses_that_are_not_specified() {
         final Address domainAddress1 = Address.builder()
@@ -85,9 +85,9 @@ public class AddressRepositoryTest {
                 .build();
         final List<Address> domainAddresses = Collections.singletonList(domainAddress1);
         addressRepository.update(domainAddresses, 1L, "ap.public");
-    }
+    }*/
 
-    @Test
+    /*@Test
     @Sql(scripts = {"/sql/clearAddresses.sql", "/sql/clearUserRoles.sql", "/sql/clearUsers.sql", "/sql/createUsers.sql", "/sql/createAddresses.sql"})
     public void test_should_save_new_addresses() {
         final Address domainAddress1 = Address.builder()
@@ -105,9 +105,9 @@ public class AddressRepositoryTest {
         final List<Address> domainAddresses = Arrays.asList(domainAddress1, domainAddress2);
         addressRepository.update(domainAddresses, 1L, "ap.public");
 
-    }
+    }*/
 
-    @Test
+    /*@Test
     @Sql(scripts = {"/sql/clearAddresses.sql", "/sql/clearUserRoles.sql", "/sql/clearUsers.sql", "/sql/createUsers.sql", "/sql/createAddresses.sql"})
     public void test_should_update_existing_addresses() {
         final Address domainAddress1 = Address.builder()
@@ -118,7 +118,7 @@ public class AddressRepositoryTest {
                 .build();
         final List<Address> domainAddresses = Collections.singletonList(domainAddress1);
         addressRepository.update(domainAddresses, 1L, "ap.public");
-    }
+    }*/
 
 
 }

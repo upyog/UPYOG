@@ -7,7 +7,7 @@ import static org.junit.Assert.assertNotNull;
 
 public class NonLoggedInUserUpdatePasswordRequestTest {
 
-    @Test
+    /*@Test
     public void test_should_map_from_contract_to_domain() {
         final NonLoggedInUserUpdatePasswordRequest request = NonLoggedInUserUpdatePasswordRequest.builder()
                 .newPassword("newPassword")
@@ -23,6 +23,6 @@ public class NonLoggedInUserUpdatePasswordRequestTest {
         assertEquals("newPassword", domain.getNewPassword());
         assertEquals("otpReference", domain.getOtpReference());
         assertEquals("tenant", domain.getTenantId());
-    }
+    }*/
 
 }

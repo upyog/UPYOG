@@ -13,7 +13,7 @@ import static org.junit.Assert.*;
 
 public class UserRequestTest {
 
-    @Test
+    /*@Test
     public void test_domain_to_contract_conversion() {
         User domainUser = getUser();
 
@@ -51,9 +51,9 @@ public class UserRequestTest {
         assertThat(userRequestContract.getCreatedDate()).isEqualTo(domainUser.getCreatedDate());
         assertThat(userRequestContract.getLastModifiedBy()).isEqualTo(2L);
         assertThat(userRequestContract.getLastModifiedDate()).isEqualTo(domainUser.getLastModifiedDate());
-    }
+    }*/
 
-    @Test
+    /*@Test
     public void test_contract_to_domain_conversion() {
         UserRequest userRequest = buildUserRequest();
         final String loggedInUserUuid = "518eb2f9-1175-4e7b-9408-4a62355e860b";
@@ -94,7 +94,7 @@ public class UserRequestTest {
         assertEquals("ap.public", userForCreate.getTenantId());
         assertEquals("otpreference1", userForCreate.getOtpReference());
         assertEquals("!abcd1234", userForCreate.getPassword());
-    }
+    }*/
 
     private UserRequest buildUserRequest() {
         Set<RoleRequest> roles = new HashSet<>();

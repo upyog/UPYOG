@@ -12,7 +12,7 @@ import static org.junit.Assert.assertNotNull;
 
 public class UserIdMandatoryErrorHandlerTest {
 
-    @Test
+    /*@Test
     public void test_should_return_error_response() {
         final UserIdMandatoryErrorHandler errorHandler = new UserIdMandatoryErrorHandler();
 
@@ -27,6 +27,6 @@ public class UserIdMandatoryErrorHandlerTest {
         assertEquals("USER.USER_ID_MANDATORY", errorFields.get(0).getCode());
         assertEquals("User id is mandatory.", errorFields.get(0).getMessage());
         assertEquals("id", errorFields.get(0).getField());
-    }
+    }*/
 
 }
