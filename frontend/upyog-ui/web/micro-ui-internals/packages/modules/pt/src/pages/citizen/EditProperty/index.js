@@ -79,7 +79,10 @@ const getPropertyEditDetails = (data = { }) => {
   data.address.pincode = data?.address?.pincode;
   data.address.city = { code: data?.tenantId, i18nKey: `TENANT_TENANTS_${stringReplaceAll(data?.tenantId.toUpperCase(),".","_")}` };
   data.address.locality.i18nkey = data?.tenantId.replace(".", "_").toUpperCase() + "_" + "REVENUE" + "_" + data?.address?.locality?.code;
-  let addressDocs = data?.documents?.filter((doc) => doc?.documentType?.includes("ADDRESSPROOF"));
+  console.log("data?.documentsdata?.documents",data,data.documents)
+  let addressDocs = (data?.documents ?? []).filter(
+    (doc) => doc?.documentType?.includes("ADDRESSPROOF")
+  );
   if (checkArrayLength(addressDocs)) {
     addressDocs[0].documentType = { code: addressDocs[0]?.documentType, i18nKey: stringReplaceAll(addressDocs[0]?.documentType, ".", "_") };
   }

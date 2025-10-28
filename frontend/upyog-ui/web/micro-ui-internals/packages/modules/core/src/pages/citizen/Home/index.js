@@ -70,7 +70,7 @@ const setCitizenDetail = (userObject, token, tenantId) => {
   localStorage.setItem("locale", locale);
   localStorage.setItem("Citizen.locale", locale);
   localStorage.setItem("token", token);
-  localStorage.setItem("Citizen.token", token);
+  // localStorage.setItem("Citizen.token", token);
   localStorage.setItem("user-info", JSON.stringify(userObject));
   localStorage.setItem("Citizen.user-info", JSON.stringify(userObject));
 };
@@ -86,7 +86,7 @@ const setCitizenDetail = (userObject, token, tenantId) => {
       }
       const { ResponseInfo, UserRequest: info, ...tokens } = await Digit.DigiLockerService.token({ TokenReq })
       setUser({ info, ...tokens });
-      setCitizenDetail(info, tokens?.access_token, info?.tenantId)
+      setCitizenDetail(info, "", info?.tenantId)
     }
   }, [])
 useEffect(() => {
@@ -95,7 +95,7 @@ useEffect(() => {
   }
   Digit.SessionStorage.set("citizen.userRequestObject", user);
   Digit.UserService.setUser(user);
-  setCitizenDetail(user?.info, user?.access_token, "pg");
+  setCitizenDetail(user?.info, "", "pg");
   const redirectPath = location.state?.from || DEFAULT_REDIRECT_URL;
   if (!Digit.ULBService.getCitizenCurrentTenant(true)) {
     history.replace("/upyog-ui/citizen/select-location", {

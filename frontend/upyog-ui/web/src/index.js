@@ -32,21 +32,21 @@ if (!user || !user.access_token || !user.info) {
 
   const token = getFromStorage("token")
 
-  const citizenToken = getFromStorage("Citizen.token")
+  // const citizenToken = getFromStorage("Citizen.token")
   const citizenInfo = getFromStorage("Citizen.user-info")
   const citizenTenantId = getFromStorage("Citizen.tenant-id")
 
-  const employeeToken = getFromStorage("Employee.token")
+  // const employeeToken = getFromStorage("Employee.token")
   const employeeInfo = getFromStorage("Employee.user-info")
   const employeeTenantId = getFromStorage("Employee.tenant-id")
 
-  const userType = token === citizenToken ? "citizen" : "employee";
+  const userType = token === window.location.href.includes("citizen") ? "citizen" : "employee";
   window.Digit.SessionStorage.set("user_type", userType);
   window.Digit.SessionStorage.set("userType", userType);
 
-  const getUserDetails = (access_token, info) => ({ token: access_token, access_token, info })
+  const getUserDetails = ( info) => ({ token: "", access_token:"", info })
 
-  const userDetails = userType === "citizen" ? getUserDetails(citizenToken, citizenInfo) : getUserDetails(employeeToken, employeeInfo)
+  const userDetails = userType === "citizen" ? getUserDetails(citizenInfo) : getUserDetails(employeeInfo)
 
   window.Digit.SessionStorage.set("User", userDetails);
   window.Digit.SessionStorage.set("Citizen.tenantId", citizenTenantId);

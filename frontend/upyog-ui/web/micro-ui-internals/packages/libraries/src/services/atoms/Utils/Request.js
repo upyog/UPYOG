@@ -6,7 +6,7 @@ import Axios from "axios";
  * @author jagankumar-egov
  *
  */
-
+Axios.defaults.withCredentials = true;
 Axios.interceptors.response.use(
   (res) => res,
   (err) => {
@@ -74,9 +74,9 @@ export const Request = async ({
     data.RequestInfo = {
       apiId: "Rainmaker",
     };
-    if (auth || !!Digit.UserService.getUser()?.access_token) {
-      data.RequestInfo = { ...data.RequestInfo, ...requestInfo() };
-    }
+    // if (auth || !!Digit.UserService.getUser()?.access_token) {
+    //   data.RequestInfo = { ...data.RequestInfo, ...requestInfo() };
+    // }
     if (userService) {
       data.RequestInfo = { ...data.RequestInfo, ...userServiceData() };
     }
@@ -140,7 +140,7 @@ export const Request = async ({
       url: _url,
       data: multipartData.data,
       params,
-      headers: { "Content-Type": "multipart/form-data", "auth-token": Digit.UserService.getUser()?.access_token || null },
+      headers: { "Content-Type": "multipart/form-data"},
     });
     return multipartFormDataRes;
   }
