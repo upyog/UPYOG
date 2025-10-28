@@ -51,7 +51,7 @@ public class EnrichmentService {
         String txnId = idGenService.generateTxnId(transactionRequest);
         transaction.setTxnId(txnId);
         transaction.setUser(userService.createOrSearchUser(transactionRequest));
-        transaction.setTxnStatus(Transaction.TxnStatusEnum.PENDING);
+        transaction.setTxnStatus(Transaction.TxnStatusEnum.INITIATED);
         transaction.setTxnStatusMsg(PgConstants.TXN_INITIATED);
 
         if(Objects.isNull(transaction.getAdditionalDetails())){
