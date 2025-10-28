@@ -52,25 +52,44 @@ public class CustomTokenEnhancer implements TokenEnhancer {
         ServletRequestAttributes attributes =
             (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
 
+        log.info("=== CustomTokenEnhancer: Starting cookie creation for user: {} ===",
+            authentication.getName());
+        log.info("Access Token (first 20 chars): {}...",
+            accessToken.getValue().substring(0, Math.min(20, accessToken.getValue().length())));
+
         if (attributes != null) {
             HttpServletResponse response = attributes.getResponse();
+            log.info("ServletRequestAttributes found, response object: {}",
+                response != null ? "Available" : "NULL");
 
             if (response != null) {
                 // Set access token as HttpOnly cookie
+                log.info("Setting access_token cookie with path: /");
                 cookieUtil.setAccessTokenCookie(response, accessToken.getValue());
 
                 // Set refresh token as HttpOnly cookie if available
                 if (accessToken.getRefreshToken() != null) {
+                    log.info("Setting refresh_token cookie with path: /user/oauth");
                     cookieUtil.setRefreshTokenCookie(response,
                         accessToken.getRefreshToken().getValue());
+                } else {
+                    log.warn("No refresh token available to set in cookie");
                 }
 
                 // Add SameSite attribute
                 cookieUtil.addSameSiteAttribute(response);
 
-                log.info("OAuth2 tokens set as HttpOnly cookies for user: {}",
+                // Log all Set-Cookie headers
+                String setCookieHeader = response.getHeader("Set-Cookie");
+                log.info("Set-Cookie header after setting: {}", setCookieHeader);
+
+                log.info("=== OAuth2 tokens successfully set as HttpOnly cookies for user: {} ===",
                     authentication.getName());
+            } else {
+                log.error("HttpServletResponse is NULL - cookies cannot be set!");
             }
+        } else {
+            log.error("ServletRequestAttributes is NULL - not in HTTP request context!");
         }
 
         // Return the enhanced token (includes both additionalInformation and cookies)

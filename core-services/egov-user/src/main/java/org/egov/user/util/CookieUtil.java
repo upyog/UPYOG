@@ -41,9 +41,12 @@ public class CookieUtil {
      * @param token Access token value
      */
     public void setAccessTokenCookie(HttpServletResponse response, String token) {
+        log.info("Creating access_token cookie - Name: {}, MaxAge: {}, Path: {}, Secure: {}, HttpOnly: true",
+            ACCESS_TOKEN_COOKIE_NAME, accessTokenMaxAge, "/", secureCookieEnabled);
+        log.info("Token value (first 20 chars): {}...", token.substring(0, Math.min(20, token.length())));
         Cookie cookie = createSecureCookie(ACCESS_TOKEN_COOKIE_NAME, token, accessTokenMaxAge, "/");
         response.addCookie(cookie);
-        log.debug("Access token cookie set successfully");
+        log.info("✓ access_token cookie added to response");
     }
 
     /**
@@ -53,9 +56,12 @@ public class CookieUtil {
      * @param token Refresh token value
      */
     public void setRefreshTokenCookie(HttpServletResponse response, String token) {
+        log.info("Creating refresh_token cookie - Name: {}, MaxAge: {}, Path: {}, Secure: {}, HttpOnly: true",
+            REFRESH_TOKEN_COOKIE_NAME, refreshTokenMaxAge, "/user/oauth", secureCookieEnabled);
+        log.info("Token value (first 20 chars): {}...", token.substring(0, Math.min(20, token.length())));
         Cookie cookie = createSecureCookie(REFRESH_TOKEN_COOKIE_NAME, token, refreshTokenMaxAge, "/user/oauth");
         response.addCookie(cookie);
-        log.debug("Refresh token cookie set successfully");
+        log.info("✓ refresh_token cookie added to response");
     }
 
     /**
@@ -167,9 +173,17 @@ public class CookieUtil {
     public void addSameSiteAttribute(HttpServletResponse response) {
         if (sameSitePolicy != null && !sameSitePolicy.isEmpty()) {
             String setCookieHeader = response.getHeader("Set-Cookie");
+            log.info("Adding SameSite attribute: {} to cookie header", sameSitePolicy);
             if (setCookieHeader != null && !setCookieHeader.contains("SameSite")) {
                 response.setHeader("Set-Cookie", setCookieHeader + "; SameSite=" + sameSitePolicy);
+                log.info("✓ SameSite attribute added successfully");
+            } else if (setCookieHeader == null) {
+                log.warn("⚠ Set-Cookie header is NULL - cannot add SameSite");
+            } else {
+                log.info("SameSite already present in cookie header");
             }
+        } else {
+            log.warn("SameSite policy not configured");
         }
     }
 }
