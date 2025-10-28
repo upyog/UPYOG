@@ -1138,7 +1138,7 @@ public class EstimationService {
 
 			complementary_rebate=taxAfterVacExemption.multiply(new BigDecimal(CALCULATION_92).divide(new BigDecimal(CALCULATION_100)).negate());
 			complementary_rebate=complementary_rebate.setScale(CALCULATION_2,CALCULATION_2);
-			estimates.add(TaxHeadEstimate.builder().taxHeadCode(PT_COMPLEMENTARY_REBATE).category(Category.REBATE).estimateAmount( complementary_rebate).calculatedPercentage(new BigDecimal(CALCULATION_92)).build());
+			//estimates.add(TaxHeadEstimate.builder().taxHeadCode(PT_COMPLEMENTARY_REBATE).category(Category.REBATE).estimateAmount( complementary_rebate).calculatedPercentage(new BigDecimal(CALCULATION_92)).build());
 			updatedtaxammount=taxAfterVacExemption.add(complementary_rebate);
 			
 			if(Boolean.FALSE==utils.isBetweenMonths(LocalDate.now(), assessmentYear))
@@ -1178,7 +1178,7 @@ public class EstimationService {
 
 			//complementary_rebate=updatedtaxammount.multiply(new BigDecimal(CALCULATION_92).divide(new BigDecimal(CALCULATION_100)).negate());
 			//complementary_rebate=complementary_rebate.setScale(CALCULATION_2,CALCULATION_2);
-
+			estimates.add(TaxHeadEstimate.builder().taxHeadCode(PT_COMPLEMENTARY_REBATE).category(Category.REBATE).estimateAmount( complementary_rebate).calculatedPercentage(new BigDecimal(CALCULATION_92)).build());
 			//if(taxAmt.compareTo(new BigDecimal(600)) > 0) 
 			//taxAmt=taxAmt.multiply(new BigDecimal(8)).divide(new BigDecimal(100)).setScale(2,2);
 
