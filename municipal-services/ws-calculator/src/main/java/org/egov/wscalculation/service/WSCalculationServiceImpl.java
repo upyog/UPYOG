@@ -670,14 +670,26 @@ So, both lists are now filtered to include only records with INITIATED status, w
 							.consumerCodes(ImmutableSet.copyOf(conectionNoList)).billSchedular(billSchedular).build();
 
 					
-					String localityCode = billSchedular.getLocality() != null 
-		                      ? billSchedular.getLocality() 
-		                      : billSchedular.getGrup();
-					
-					int batchCount = count;          // batch number or counter
-					String firstConnection = conectionNoList.get(0); // first consumer code in batch
+					String localityCode;
 
-					String key = localityCode + "-" + batchCount + "-" + firstConnection;
+					if (billSchedular.getLocality() != null && !billSchedular.getLocality().trim().isEmpty()) {
+					    localityCode = billSchedular.getLocality();
+					} else if (billSchedular.getGrup() != null && !billSchedular.getGrup().trim().isEmpty()) {
+					    localityCode = billSchedular.getGrup();
+					} else {
+					    localityCode = "NA";
+					}
+					
+					int batchCount = count;       
+					String tenantId = billSchedular.getTenantId();
+					String cityName = "Unknown";
+
+					if (tenantId != null && tenantId.contains(".")) {
+					    cityName = tenantId.substring(tenantId.indexOf('.') + 1); // get part after dot
+					    cityName = cityName.substring(0, 1).toUpperCase() + cityName.substring(1).toLowerCase(); // capitalize
+					}
+
+					String key =cityName+"-"+ localityCode + "-" + batchCount;
 					producer.push(configs.getBillGenerateSchedulerTopic(), key,billGeneraterReq);
 					log.info("Bill Scheduler pushed connections size:{} to kafka topic of batch no: ",
 							conectionNoList.size(), count++);
