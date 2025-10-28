@@ -1856,6 +1856,11 @@ public class BillServicev2 {
 		default:
 			break;
 		}
+		
+		
+		
+		BillAccountDetailV2 updatedBillAmount =  taxCodeAccountdetailMap.get(PROPERTY_TAX);
+		totalAmountForDemand = updatedBillAmount.getAmount();		
 		DemandRequest dmr = new DemandRequest();
 
 		demand.setAdvanceAmount(advancedBillAmount);
@@ -2094,8 +2099,9 @@ public class BillServicev2 {
 
 		// Calculate rounding difference
 		BigDecimal total = taxAmount.add(conservancyAmount).add(streetLightAmount).add(interestAmount).add(penaltyAmount);
-		BigDecimal roundingDiff = totalAmount.subtract(total);
-		
+		BigDecimal roundingDiff = getRemainderValue(total);
+		total = total.add(roundingDiff);
+		taxAmount  = total;
 		BillAccountDetailV2 propertytaxaccountDetail = BillAccountDetailV2.builder().demandDetailId(demand.getId())
 				.tenantId(demand.getTenantId()).id(UUID.randomUUID().toString())
 				.adjustedAmount(BigDecimal.ZERO).taxHeadCode(PROPERTY_TAX).amount(taxAmount).glcode(glcodePTTAX)
@@ -2304,6 +2310,17 @@ public class BillServicev2 {
 	    // Not between March 1–31
 	    return BigDecimal.valueOf(10);
 	}
-
+	
+	private BigDecimal getRemainderValue(BigDecimal dec) {
+		BigDecimal returnValue = BigDecimal.ZERO;
+		
+		System.out.println(dec.remainder(BigDecimal.valueOf(10)));
+		if(dec.remainder(BigDecimal.valueOf(10)).compareTo(BigDecimal.valueOf(5))>=0) {
+			returnValue = BigDecimal.valueOf(10).subtract(dec.remainder(BigDecimal.valueOf(10)));
+		}else {
+			returnValue = dec.remainder(BigDecimal.valueOf(10)).negate();
+		}
+		return returnValue;
+	}
 
 }
