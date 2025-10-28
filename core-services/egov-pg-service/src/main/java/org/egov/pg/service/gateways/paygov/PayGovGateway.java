@@ -452,6 +452,7 @@ public class PayGovGateway implements Gateway {
             log.debug("Auth Info : "+ authStr);
             log.debug("requestmsg : "+ requestmsg);
             // make a request
+            log.info("RequestBody Sent to PayGov: {}",entity);
             ResponseEntity<String> response = new RestTemplate().exchange(GATEWAY_TRANSACTION_STATUS_URL, HttpMethod.POST, entity, String.class);
             HttpStatus statusCode = response.getStatusCode();
             if(statusCode.equals(HttpStatus.OK)) {
@@ -526,7 +527,7 @@ public class PayGovGateway implements Gateway {
 
             //Validate the response against the checksum
             PayGovUtils.validateTransaction(resp, secretKey);
-
+        	//resp ="I|UATSCBSG0000000207|PG_PG_2025_10_24_000612_22|SecuChhawani||ORDER_INITIATED|2020-07-22 10:27:28.312|481313839";
             String[] splitArray = resp.split("[|]");
             Transaction txStatus=null;
             PayGovGatewayStatusResponse statusResponse = new PayGovGatewayStatusResponse(splitArray[0]);
@@ -700,7 +701,7 @@ public class PayGovGateway implements Gateway {
 
             //Validate the response against the checksum
             PayGovUtils.validateTransaction(resp, secretKey);
-
+        //	resp = "I|UATSCBSG0000000207|PB_PG_2020_07_22_000168_45|SecuChhawani||ORDER_INITIATED|2020-07-22 10:27:28.312|481313839";
             String[] splitArray = resp.split("[|]");
             Transaction txStatus=null;
             PayGovGatewayStatusResponse statusResponse = new PayGovGatewayStatusResponse(splitArray[0]);
