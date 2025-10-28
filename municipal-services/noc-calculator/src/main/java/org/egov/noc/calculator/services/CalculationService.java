@@ -88,11 +88,14 @@ public class CalculationService {
 			if(criteria.getNoc().getNocDetails().getAdditionalDetails() != null) {
 				Map<String, Object> siteDetails = (Map<String, Object>)((Map<String, Object>)criteria.getNoc().getNocDetails().getAdditionalDetails()).get("siteDetails");
 				if(siteDetails.get("specificationPlotArea") != null)
-					plotArea = new BigDecimal(siteDetails.getOrDefault("specificationPlotArea", "0").toString().trim());
+					plotArea = new BigDecimal(siteDetails.getOrDefault("specificationPlotArea", "0").toString().trim())
+					.multiply(NOCConstants.SQMETER_TO_SQYARD); // Sq Yard
 				if(siteDetails.get("totalFloorArea") != null)
-					builtUpArea = new BigDecimal(siteDetails.getOrDefault("totalFloorArea", "0").toString().trim());
+					builtUpArea = new BigDecimal(siteDetails.getOrDefault("totalFloorArea", "0").toString().trim())
+							.multiply(NOCConstants.SQMETER_TO_SQYARD); // Sq Yard
 				if(siteDetails.get("basementArea") != null)
-					basementArea = new BigDecimal(siteDetails.getOrDefault("basementArea", "0").toString().trim());
+					basementArea = new BigDecimal(siteDetails.getOrDefault("basementArea", "0").toString().trim())
+							.multiply(NOCConstants.SQMETER_TO_SQYARD); // Sq Yard
 				if(siteDetails.get("specificationBuildingCategory") != null)
 					category = siteDetails.get("specificationBuildingCategory").toString().trim();
 				if(siteDetails.get("roadType") != null)
@@ -159,7 +162,7 @@ public class CalculationService {
 		
 		chargesTypejsonOutput.forEach(chargesType -> {
 			BigDecimal rate = BigDecimal.valueOf(chargesType.containsKey("rate") ? (Double) chargesType.get("rate") : 0.0);
-			BigDecimal concession = BigDecimal.valueOf(chargesType.containsKey("discount") ? (Double) chargesType.get("discount") : 0.0);
+			BigDecimal concession = BigDecimal.valueOf(chargesType.containsKey("concession") ? (Double) chargesType.get("concession") : 0.0);
 			TaxHeadEstimate estimate = new TaxHeadEstimate();
 			BigDecimal amount= BigDecimal.ZERO;
 			String taxhead= chargesType.get("taxHeadCode").toString();
