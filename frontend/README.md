@@ -1,4 +1,4 @@
-# Starting with UPYOG-UI Internal Development (Engineering Team) - MICRO-UI
+# Starting with UPYOG-UI Internal Development- MICRO-UI
 cd into /micro-ui/web/micro-ui-internals
 In the project directory, you can run:
 ### `yarn install`
