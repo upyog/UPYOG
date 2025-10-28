@@ -332,10 +332,10 @@ public class BPAService {
 		}
 
 		String tenantId = criteria.getTenantId();
-		// if(landInfo.isEmpty() && !tenantId.isEmpty() && tenantId !=null)
-		// {
-  //         return bpas;
-		// }
+		 if(landInfo.isEmpty() && !tenantId.isEmpty() && tenantId !=null)
+		 {
+           return bpas;
+		 }
 
 		bpas = getBPAFromLandId(criteria, requestInfo, null);
 		if (!landInfo.isEmpty()) {
