@@ -379,7 +379,6 @@ public class BillServicev2 {
 				List<BillDetailV2> updatedbills = null;
 				if(billToBeReturned!=null && !billToBeReturned.isEmpty())
 				{
-					 if(!billToBeReturned.get(0).getBillDetails().get(0).isPreviousYearAssesment() && billToBeReturned.get(0).getBillDetails().get(0).getAdjusmentfromdate()!=null) {
 						DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd MM yyyy");
 						BigDecimal totalAmount;
 						String date = billToBeReturned.get(0).getBillDetails().get(0).getAdjusmentfromdate();
