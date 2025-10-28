@@ -379,6 +379,8 @@ public class BillServicev2 {
 				List<BillDetailV2> updatedbills = null;
 				if(billToBeReturned!=null && !billToBeReturned.isEmpty())
 				{
+	
+					if(!billToBeReturned.get(0).getBillDetails().get(0).isPreviousYearAssesment() && billToBeReturned.get(0).getBillDetails().get(0).getAdjusmentfromdate()!=null) {
 						DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd MM yyyy");
 						BigDecimal totalAmount;
 						String date = billToBeReturned.get(0).getBillDetails().get(0).getAdjusmentfromdate();
@@ -412,6 +414,123 @@ public class BillServicev2 {
 
 							res.setBill(billToBeReturned);							
 							return res;
+						}
+					}
+					
+					else if(!billToBeReturned.get(0).getBillDetails().get(0).isPreviousYearAssesment() 
+							&& billsToBeReturned.get(0).getBillDetails().get(0).getPaymentPeriod().equalsIgnoreCase("Q4"))
+					{
+						BigDecimal totalAmount;
+						if (!LocalDate.now().isBefore(LocalDate.now().withMonth(3).withDayOfMonth(1)) 
+							    && !LocalDate.now().isAfter(LocalDate.now().withMonth(3).withDayOfMonth(31)))
+						{
+							LocalDate endDate = LocalDate.now();
+							BigDecimal daysdiff=new BigDecimal(endDate.getDayOfMonth());
+							BigDecimal interestonamount=billToBeReturned.get(0).getBillDetails().get(0).getAmount();
+							BigDecimal interestamount=interestonamount.multiply(daysdiff).multiply(new BigDecimal(InterestPrecentage).divide(new BigDecimal(100)));
+							
+							if(daysdiff.compareTo(new BigDecimal(0))>0 && interestamount.compareTo(new BigDecimal(0))>0) {
+								totalAmount=interestamount.add(billToBeReturned.get(0).getBillDetails().get(0).getAmount());
+								totalAmount= totalAmount.setScale(0,RoundingMode.HALF_UP);
+							
+								List<Object> preparedStmtList = new ArrayList<>();
+								preparedStmtList.add(interestamount);
+								preparedStmtList.add(daysdiff);
+								preparedStmtList.add(totalAmount);
+								preparedStmtList.add(billToBeReturned.get(0).getBillDetails().get(0).getId());
+
+								jdbcTemplate.update(BillQueryBuilder.BILL_DETAIL_UPDATE_BASE_QUERY, preparedStmtList.toArray());
+								updatedbills=billToBeReturned.get(0).getBillDetails();
+								updatedbills.get(0).setAmount(totalAmount);
+								updatedbills.get(0).setInterestfornoofdays(Integer.parseInt(daysdiff.toString()));
+								updatedbills.get(0).setInterestonamount(interestonamount);
+								billToBeReturned.get(0).setTotalAmount(totalAmount);
+								billToBeReturned.get(0).setBillDetails(updatedbills);
+
+								res.setBill(billToBeReturned);							
+								return res;
+							}
+						}
+					}
+					
+					else if(!billToBeReturned.get(0).getBillDetails().get(0).isPreviousYearAssesment() 
+							&& billsToBeReturned.get(0).getBillDetails().get(0).getPaymentPeriod().equalsIgnoreCase("H2"))
+					{
+						BigDecimal totalAmount;
+						if (!LocalDate.now().isBefore(LocalDate.now().withDayOfYear(1)) 
+								&& !LocalDate.now().isAfter(LocalDate.now().withMonth(3).withDayOfMonth(31)))
+						{
+							LocalDate startDate = LocalDate.now().withMonth(1).withDayOfMonth(1);
+							LocalDate endDate = LocalDate.now();
+							BigDecimal daysdiff=new BigDecimal(ChronoUnit.DAYS.between(startDate, endDate));
+							BigDecimal interestonamount=billToBeReturned.get(0).getBillDetails().get(0).getAmount();
+							BigDecimal interestamount=interestonamount.multiply(daysdiff).multiply(new BigDecimal(InterestPrecentage).divide(new BigDecimal(100)));
+							
+							if(daysdiff.compareTo(new BigDecimal(0))>0 && interestamount.compareTo(new BigDecimal(0))>0) {
+								totalAmount=interestamount.add(billToBeReturned.get(0).getBillDetails().get(0).getAmount());
+								totalAmount= totalAmount.setScale(0,RoundingMode.HALF_UP);
+							
+								List<Object> preparedStmtList = new ArrayList<>();
+								preparedStmtList.add(interestamount);
+								preparedStmtList.add(daysdiff);
+								preparedStmtList.add(totalAmount);
+								preparedStmtList.add(billToBeReturned.get(0).getBillDetails().get(0).getId());
+
+								jdbcTemplate.update(BillQueryBuilder.BILL_DETAIL_UPDATE_BASE_QUERY, preparedStmtList.toArray());
+								updatedbills=billToBeReturned.get(0).getBillDetails();
+								updatedbills.get(0).setAmount(totalAmount);
+								updatedbills.get(0).setInterestfornoofdays(Integer.parseInt(daysdiff.toString()));
+								updatedbills.get(0).setInterestonamount(interestonamount);
+								billToBeReturned.get(0).setTotalAmount(totalAmount);
+								billToBeReturned.get(0).setBillDetails(updatedbills);
+
+								res.setBill(billToBeReturned);							
+								return res;
+							}
+						}
+					}
+					
+					else if(!billToBeReturned.get(0).getBillDetails().get(0).isPreviousYearAssesment() 
+							&& billsToBeReturned.get(0).getBillDetails().get(0).getPaymentPeriod().equalsIgnoreCase("YR"))
+					{
+						BigDecimal totalAmount;
+						String yearRange = billsToBeReturned.get(0).getBillDetails().get(0).getAssesmentyear();
+
+						int startYear = Integer.parseInt(yearRange.substring(0, 4)); 
+						int endYear = Integer.parseInt("20" + yearRange.substring(5, 7)); 
+
+						LocalDate startDate = LocalDate.of(startYear, 7, 1);   
+						LocalDate expDate = LocalDate.of(endYear, 3, 31);      
+						LocalDate today = LocalDate.now();
+						if (!today.isBefore(startDate) && !today.isAfter(expDate))
+						{
+							//LocalDate startDate = LocalDate.now().withMonth(1).withDayOfMonth(1);
+							LocalDate endDate = LocalDate.now();
+							BigDecimal daysdiff=new BigDecimal(ChronoUnit.DAYS.between(startDate, endDate));
+							BigDecimal interestonamount=billToBeReturned.get(0).getBillDetails().get(0).getAmount();
+							BigDecimal interestamount=interestonamount.multiply(daysdiff).multiply(new BigDecimal(InterestPrecentage).divide(new BigDecimal(100)));
+							
+							if(daysdiff.compareTo(new BigDecimal(0))>0 && interestamount.compareTo(new BigDecimal(0))>0) {
+								totalAmount=interestamount.add(billToBeReturned.get(0).getBillDetails().get(0).getAmount());
+								totalAmount= totalAmount.setScale(0,RoundingMode.HALF_UP);
+							
+								List<Object> preparedStmtList = new ArrayList<>();
+								preparedStmtList.add(interestamount);
+								preparedStmtList.add(daysdiff);
+								preparedStmtList.add(totalAmount);
+								preparedStmtList.add(billToBeReturned.get(0).getBillDetails().get(0).getId());
+
+								jdbcTemplate.update(BillQueryBuilder.BILL_DETAIL_UPDATE_BASE_QUERY, preparedStmtList.toArray());
+								updatedbills=billToBeReturned.get(0).getBillDetails();
+								updatedbills.get(0).setAmount(totalAmount);
+								updatedbills.get(0).setInterestfornoofdays(Integer.parseInt(daysdiff.toString()));
+								updatedbills.get(0).setInterestonamount(interestonamount);
+								billToBeReturned.get(0).setTotalAmount(totalAmount);
+								billToBeReturned.get(0).setBillDetails(updatedbills);
+
+								res.setBill(billToBeReturned);							
+								return res;
+							}
 						}
 					}
 				}
@@ -889,8 +1008,8 @@ public class BillServicev2 {
 		Set<Integer> q3 = new HashSet<>(Arrays.asList(10, 11, 12));
 		Set<Integer> q4 = new HashSet<>(Arrays.asList(1, 2, 3));
 
-		Set<Integer> h1 = new HashSet<>(Arrays.asList(4, 5, 6, 7, 8, 9));
-		Set<Integer> h2 = new HashSet<>(Arrays.asList(10, 11, 12, 1, 2, 3));
+		Set<Integer> h1 = new HashSet<>(Arrays.asList(4, 5, 6));
+		Set<Integer> h2 = new HashSet<>(Arrays.asList(7, 8, 9, 10, 11, 12, 1, 2, 3));
 
 		String paymentPeriod = null;
 		String expiryDate = null;
@@ -1115,7 +1234,7 @@ public class BillServicev2 {
 					mpdList.add(mpdObj);
 				}
 				
-				inp = getInterestPenalty( BigDecimal.ZERO,  null, null,null, null , BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,false);
+				inp = getInterestPenalty( BigDecimal.ZERO,  null, financialYearFromDemand.toString(),null, null , BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,false);
 				addBillAccDetailInTaxCodeAccDetailMap(taxCodeAccountdetailMap,demand, billDetailId, totalAmountForDemand, BigDecimal.ZERO, quaterPenalty, requestInfo);
 
 			} else if (q2.contains(cuurentMonth)) {
@@ -1123,11 +1242,12 @@ public class BillServicev2 {
 				BigDecimal totalAMountForInterest = BigDecimal.ZERO;
 				String calculationFinalDateForInterest=null;
 				BigDecimal noFODays =  BigDecimal.ZERO;
-				String firstDayAfterexpiryDateQ2 = "01-07-" + currentyear;
+				String firstDayAfterexpiryDateQ1 = "01-07-" + currentyear;
 				BigDecimal totalInterestAmunt = BigDecimal.ZERO;
 				Map<String, BigDecimal> interestMap = new HashMap<>();
 				BigDecimal totalAmountForInterestCal=BigDecimal.ZERO;
 				BigDecimal adjustedQ1Amount=BigDecimal.ZERO;
+				inp = getInterestPenalty( BigDecimal.ZERO,  null, financialYearFromDemand.toString(),null, null , BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,false);
 
 				if (!quaterly.contains("Q1")) {
 					if(advancedBillAmount.compareTo(amountforquaterly)>0)
@@ -1147,7 +1267,7 @@ public class BillServicev2 {
 					}
 
 					calculationFinalDateForInterest = currentDateWithAssesmentYear(currentyear.toString());
-					noFODays = getDateDifference(firstDayAfterexpiryDateQ2,currentDateWithAssesmentYear(currentyear.toString()));
+					noFODays = getDateDifference(firstDayAfterexpiryDateQ1,currentDateWithAssesmentYear(currentyear.toString()));
 					totalAMountForInterest = totalAMountForInterest.add(adjustedQ1Amount).multiply(noFODays).multiply(new BigDecimal(InterestPrecentage).divide(new BigDecimal(100)));
 					totalAMountForInterest=totalAMountForInterest.setScale(2,2);
 					totalAmountForInterestCal=adjustedQ1Amount;
@@ -1164,11 +1284,16 @@ public class BillServicev2 {
 					mpdObj.setInterestAmount(totalAMountForInterest);
 					mpdObj.setRemaingAdvance(advancedBillAmount);
 					mpdList.add(mpdObj);
+					
+					for(Map.Entry<String, BigDecimal> intmap : interestMap.entrySet()) {
+						totalInterestAmunt= totalInterestAmunt.add(intmap.getValue());
+					}
+					inp = getInterestPenalty( totalInterestAmunt,  firstDayAfterexpiryDateQ1, financialYearFromDemand.toString() ,"Q2", "Q1" , new BigDecimal(InterestPrecentage),noFODays,totalAmountForInterestCal,previousYear);
 				}
 
 				paymentPeriod = Q2;
 				expiryDate = "30-09-" + currentyear;
-				String firstDayAfterexpiryDateQ1 = "01-07-" + currentyear;
+				//String firstDayAfterexpiryDateQ1 = "01-07-" + currentyear;
 
 				// 150
 				// newTotalAmountForModeOfPayment = totalAmountForDemand.divide(new
@@ -1191,7 +1316,7 @@ public class BillServicev2 {
 				totalInterestAmunt = 	totalInterestAmunt.setScale(0, RoundingMode.HALF_UP);
 				//totalAmountForDemand = amountforquaterly.add(quaterlyammount).add(totalInterestAmunt);
 				totalAmountForDemand = amountforquaterly.add(amountwithpastdue).add(totalInterestAmunt);
-				inp = getInterestPenalty( totalInterestAmunt,  firstDayAfterexpiryDateQ1, financialYearFromDemand.toString() ,"Q2", "Q1" , new BigDecimal(InterestPrecentage),noFODays,totalAmountForInterestCal,previousYear);
+				//inp = getInterestPenalty( totalInterestAmunt,  firstDayAfterexpiryDateQ1, financialYearFromDemand.toString() ,"Q2", "Q1" , new BigDecimal(InterestPrecentage),noFODays,totalAmountForInterestCal,previousYear);
 
 
 				if (advancedBillAmount.compareTo(totalAmountForDemand) > 0) {
@@ -1238,6 +1363,7 @@ public class BillServicev2 {
 				Map<String, BigDecimal> interestMap = new HashMap<>();
 				BigDecimal adjustedQ1Amount=BigDecimal.ZERO;
 				BigDecimal adjustedQ2Amount=BigDecimal.ZERO;
+				inp = getInterestPenalty( BigDecimal.ZERO,  null, financialYearFromDemand.toString(),null, null , BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,false);
 
 				if (!quaterly.contains("Q2")) {
 					if(!quaterly.contains("Q1")) {
@@ -1309,7 +1435,11 @@ public class BillServicev2 {
 					mpdObj.setInterestAmount(adjustedQ2Amount.multiply(noFODays).multiply(new BigDecimal(InterestPrecentage).divide(new BigDecimal(100))).setScale(2,2));
 					mpdObj.setRemaingAdvance(advancedBillAmount);
 					mpdList.add(mpdObj);
-
+					
+					for(Map.Entry<String, BigDecimal> intmap : interestMap.entrySet()) {
+						totalInterestAmunt= totalInterestAmunt.add(intmap.getValue());
+					}
+					inp = getInterestPenalty( totalInterestAmunt,  firstDayAfterexpiryDateQ2, financialYearFromDemand.toString() ,"Q3", "Q2" , new BigDecimal(InterestPrecentage),noFODays,totalAmountForInterestCal,previousYear);
 				}
 
 				paymentPeriod = Q3;
@@ -1331,7 +1461,7 @@ public class BillServicev2 {
 				//totalAmountForDemand = amountforquaterly.add(quaterlyammount).add(totalInterestAmunt);
 				//Calculation is done interest 
 				totalAmountForDemand = amountforquaterly.add(amountwithpastdue).add(adjustedQ2Amount).add(totalInterestAmunt);
-				inp = getInterestPenalty( totalInterestAmunt,  firstDayAfterexpiryDateQ2, financialYearFromDemand.toString() ,"Q3", "Q2" , new BigDecimal(InterestPrecentage),noFODays,totalAmountForInterestCal,previousYear);
+				//inp = getInterestPenalty( totalInterestAmunt,  firstDayAfterexpiryDateQ2, financialYearFromDemand.toString() ,"Q3", "Q2" , new BigDecimal(InterestPrecentage),noFODays,totalAmountForInterestCal,previousYear);
 
 
 				if (advancedBillAmount.compareTo(totalAmountForDemand) > 0) {
@@ -1380,6 +1510,7 @@ public class BillServicev2 {
 				BigDecimal adjustedQ3Amount=BigDecimal.ZERO;
 				BigDecimal adjustedInterestQ4Amount=BigDecimal.ZERO;
 				BigDecimal marchDayDiiference =BigDecimal.ZERO;
+				inp = getInterestPenalty( BigDecimal.ZERO,  null, financialYearFromDemand.toString(),null, null , BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,false);
 
 				if(previousYear)
 				{
@@ -1464,6 +1595,7 @@ public class BillServicev2 {
 						mpdObj.setInterestAmount(adjustedQ2Amount.multiply(new BigDecimal(Q2FlatDays)).multiply(new BigDecimal(InterestPrecentage).divide(new BigDecimal(100))).setScale(2,2));				
 						mpdObj.setRemaingAdvance(advancedBillAmount);
 						mpdList.add(mpdObj);
+								
 					}
 
 					if(advancedBillAmount.compareTo(amountforquaterly)>0)
@@ -1509,23 +1641,7 @@ public class BillServicev2 {
 					totalAMountForInterest=totalAMountForInterest.setScale(2,2);
 					interestMap.put("Q3",totalAMountForInterest );
 					totalAmountForInterestCal=adjustedQ3Amount;
-					
-					
-					 marchDayDiiference = getDaysFromMarchFirstIfInMarch();
-					
-					if(marchDayDiiference.compareTo(BigDecimal.ZERO)>0){
-						totalAMountForInterest = totalAMountForInterest.add(amountforquaterly).multiply(marchDayDiiference).multiply(new BigDecimal(InterestPrecentage).divide(new BigDecimal(100)));
-						totalAMountForInterest=totalAMountForInterest.setScale(2,2);
-						adjustedInterestQ4Amount = totalAMountForInterest;
-						interestMap.put("Q4",totalAMountForInterest );
-						totalAmountForInterestCal=amountforquaterly;
-					}
-					
-					//check for cuurent date if start from march 1 between  31 march calculate the day diifrence and return  
-					
-					
-					
-
+						
 					String startDateQ3 = "01-10-" + currentyear;
 					String expiryDateQ3 = "31-12-" + currentyear;
 					mpdObj = new ModeOfPaymentDetails();
@@ -1535,6 +1651,11 @@ public class BillServicev2 {
 					mpdObj.setInterestAmount(adjustedQ3Amount.multiply(noFODays).multiply(new BigDecimal(InterestPrecentage).divide(new BigDecimal(100))).setScale(2,2));
 					mpdObj.setRemaingAdvance(advancedBillAmount);
 					mpdList.add(mpdObj);
+					
+					for(Map.Entry<String, BigDecimal> intmap : interestMap.entrySet()) {
+						totalInterestAmunt= totalInterestAmunt.add(intmap.getValue());
+					}
+					inp = getInterestPenalty( totalInterestAmunt,  firstDayAfterexpiryDateQ3, financialYearFromDemand.toString() ,"Q4", "Q3" , new BigDecimal(InterestPrecentage),noFODays,totalAmountForInterestCal,previousYear);
 				}
 				paymentPeriod = Q4;
 				expiryDate = "31-03-" + nextYear;
@@ -1544,6 +1665,15 @@ public class BillServicev2 {
 				// BigDecimal(4));
 
 				// 450
+				 marchDayDiiference = getDaysFromMarchFirstIfInMarch();
+					
+					if(marchDayDiiference.compareTo(BigDecimal.ZERO)>0){
+						totalAMountForInterest = totalAMountForInterest.add(amountforquaterly).multiply(marchDayDiiference).multiply(new BigDecimal(InterestPrecentage).divide(new BigDecimal(100)));
+						totalAMountForInterest=totalAMountForInterest.setScale(2,2);
+						adjustedInterestQ4Amount = totalAMountForInterest;
+						interestMap.put("Q4",totalAMountForInterest );
+						totalAmountForInterestCal=amountforquaterly;
+					}
 				quaterlyammount = ammountForTransactionperiod(Q3, amountforquaterly);
 				// 1050
 				quaterlyammount = quaterlyammount.add(pastDue);
@@ -1568,8 +1698,8 @@ public class BillServicev2 {
 					        .format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));
 					inp = getInterestPenalty( totalInterestAmunt,  marchFirst, financialYearFromDemand.toString() ,"Q4", "Q4" , new BigDecimal(InterestPrecentage),marchDayDiiference,totalAmountForInterestCal,previousYear);
 				}
-				else
-				inp = getInterestPenalty( totalInterestAmunt,  firstDayAfterexpiryDateQ3, financialYearFromDemand.toString() ,"Q4", "Q3" , new BigDecimal(InterestPrecentage),noFODays,totalAmountForInterestCal,previousYear);
+				//else
+				//inp = getInterestPenalty( totalInterestAmunt,  firstDayAfterexpiryDateQ3, financialYearFromDemand.toString() ,"Q4", "Q3" , new BigDecimal(InterestPrecentage),noFODays,totalAmountForInterestCal,previousYear);
 
 				if (advancedBillAmount.compareTo(totalAmountForDemand) > 0) {
 					advancedBillAmount = advancedBillAmount.subtract(totalAmountForDemand);
@@ -1652,7 +1782,7 @@ public class BillServicev2 {
 					mpdList.add(mpdObj);
 				}
 
-				inp = getInterestPenalty( BigDecimal.ZERO,  null, null,null, null , BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,false);
+				inp = getInterestPenalty( BigDecimal.ZERO,  null, financialYearFromDemand.toString(),null, null , BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,false);
 				addBillAccDetailInTaxCodeAccDetailMap(taxCodeAccountdetailMap,demand, billDetailId, totalAmountForDemand, halfPenalty, penalty, requestInfo);
 				
 			} else if (h2.contains(cuurentMonth)) {
@@ -1665,6 +1795,7 @@ public class BillServicev2 {
 				Map<String, BigDecimal> interestMap = new HashMap<>();
 				BigDecimal totalAmountForInterestCal=BigDecimal.ZERO;
 				BigDecimal adjustedH1Amount=BigDecimal.ZERO;
+				inp = getInterestPenalty( BigDecimal.ZERO,  null, financialYearFromDemand.toString(),null, null , BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,false);
 
 				if(previousYear)
 				{
@@ -1715,6 +1846,8 @@ public class BillServicev2 {
 					mpdObj.setInterestAmount(adjustedH1Amount.multiply(noFODays).multiply(new BigDecimal(InterestPrecentage).divide(new BigDecimal(100))).setScale(2,2));
 					mpdObj.setRemaingAdvance(advancedBillAmount);
 					mpdList.add(mpdObj);
+					
+					inp = getInterestPenalty( totalInterestAmunt,  firstDayAfterexpiryDateH1, financialYearFromDemand.toString() ,"H2", "H1" , new BigDecimal(InterestPrecentage),noFODays,totalAmountForInterestCal,previousYear);
 				}
 				paymentPeriod = H2;
 				String startDateh2 = "01-07-" + currentyear;
@@ -1756,7 +1889,7 @@ public class BillServicev2 {
 				totalInterestAmunt = 	totalInterestAmunt.setScale(0, RoundingMode.HALF_UP);
 				//totalAmountForDemand = ammountforhalfyearly.add(halfyearlyammount).add(totalInterestAmunt);
 				totalAmountForDemand = ammountforhalfyearly.add(amountwithpastduehalf).add(totalInterestAmunt);
-				inp = getInterestPenalty( totalInterestAmunt,  firstDayAfterexpiryDateH1, financialYearFromDemand.toString() ,"H2", "H1" , new BigDecimal(InterestPrecentage),noFODays,totalAmountForInterestCal,previousYear);
+				//inp = getInterestPenalty( totalInterestAmunt,  firstDayAfterexpiryDateH1, financialYearFromDemand.toString() ,"H2", "H1" , new BigDecimal(InterestPrecentage),noFODays,totalAmountForInterestCal,previousYear);
 
 				//This block of code for testing
 				/*if (!dateToCheck.isBefore(LocalDate.of(dateToCheck.getYear(), 1, 1)) &&
@@ -1814,7 +1947,7 @@ public class BillServicev2 {
 			BigDecimal totalAMountForInterest=BigDecimal.ZERO;
 			BigDecimal totalAmountForInterestCal=BigDecimal.ZERO;
 			Map<String, BigDecimal> interestMap = new HashMap<>();
-			inp = getInterestPenalty( BigDecimal.ZERO,  null, null,null, null , BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,false);
+			inp = getInterestPenalty( BigDecimal.ZERO,  null, financialYearFromDemand.toString(),null, null , BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,false);
 			
 			if (!LocalDate.now().isBefore(LocalDate.of(currentyear, 7, 1)) && 
 				    !LocalDate.now().isAfter(LocalDate.of(nextYear, 3, 31))) {
