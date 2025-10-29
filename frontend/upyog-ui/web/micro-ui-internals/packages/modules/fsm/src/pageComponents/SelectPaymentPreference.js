@@ -121,7 +121,7 @@ const SelectPaymentPreference = ({ config, formData, t, onSelect, userType }) =>
 console.log("advance",advanceAmount,totalAmount,MinAmount)
   return (
     <React.Fragment>
-      <Timeline currentStep={3} flow="APPLY" />
+      <Timeline currentStep={2} flow="APPLY" />
       <FormStep
         config={config}
         onSelect={onSubmit}

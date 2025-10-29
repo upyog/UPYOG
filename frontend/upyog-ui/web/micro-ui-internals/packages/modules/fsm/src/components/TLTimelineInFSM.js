@@ -22,10 +22,9 @@ const getAction = (flow) => {
       ]
         break;
     default: actions = [
-      'TL_COMMON_TR_DETAILS',
-      'TL_LOCATION_AND_OWNER_DETAILS',
-      'TL_DOCUMENT_DETAIL',
-      'TL_COMMON_SUMMARY',
+      'FSM_TIMELINE_PROPERTY_DETAILS',
+      'FSM_PAYMENT_DETAILS',
+      'FSM_TIMELINE_SUMMARY',
     ]
   }
 }

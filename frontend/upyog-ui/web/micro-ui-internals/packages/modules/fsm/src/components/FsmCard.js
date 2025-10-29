@@ -111,8 +111,8 @@ const FSMCard = () => {
         hyperlink: true,
       }, */
       {
-        label: t("ES_COMMON_HOME"),
-        link: "/upyog-ui/employee/fsm/fstp-operations",
+        label: t("ES_COMMON_INBOX"),
+        link: "/upyog-ui/employee/fsm/fstp-inbox",
       },
     ],
   };

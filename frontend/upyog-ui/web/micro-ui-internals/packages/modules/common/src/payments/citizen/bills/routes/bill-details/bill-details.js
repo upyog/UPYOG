@@ -274,7 +274,7 @@ const BillDetails = ({ paymentRules, businessService }) => {
                 <TextInput className="text-indent-xl" onChange={(e) => onChangeAmount(e.target.value)} value={amount} disable={getTotal() === 0} />
               )
             ) : businessService === "FSM.TRIP_CHARGES" ? (
-              <TextInput className="text-indent-xl" value={application?.pdfData?.advanceAmount} onChange={() => {}} disable={true} />
+              <TextInput className="text-indent-xl" value={application?.pdfData?.advanceAmount !== 0 ? application?.pdfData?.advanceAmount:application?.pdfData?.totalAmount} onChange={() => {}} disable={true} />
             ):((
               <TextInput className="text-indent-xl" value={getTotal()} onChange={() => {}} disable={true} />
             ))}
