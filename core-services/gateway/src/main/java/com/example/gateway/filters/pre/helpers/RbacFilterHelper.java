@@ -101,7 +101,7 @@ public class RbacFilterHelper implements RewriteFunction<Map, Map> {
         log.info("RBAC CHECK: Calling access-control service at {} with {} roles for URI {}",
                 applicationProperties.getAuthorizationUrl(), request.getRoles().size(), requestUri);
 
-        boolean isUriAuthorised = isUriAuthorized(request , exchange);
+        boolean isUriAuthorised = isUriAuthorized(request, requestInfo, exchange);
 
         log.info("RBAC CHECK: Authorization result for URI {} : {}", requestUri, isUriAuthorised);
 
@@ -111,9 +111,11 @@ public class RbacFilterHelper implements RewriteFunction<Map, Map> {
 
     }
 
-    private boolean isUriAuthorized(AuthorizationRequest authorizationRequest , ServerWebExchange exchange) {
+    private boolean isUriAuthorized(AuthorizationRequest authorizationRequest, RequestInfo requestInfo, ServerWebExchange exchange) {
 
-        AuthorizationRequestWrapper authorizationRequestWrapper = new AuthorizationRequestWrapper(new RequestInfo(), authorizationRequest);
+        // Use the RequestInfo from the incoming request which includes authToken for authentication
+        // This ensures external access-control services can authenticate the request
+        AuthorizationRequestWrapper authorizationRequestWrapper = new AuthorizationRequestWrapper(requestInfo, authorizationRequest);
 
         final HttpHeaders headers = new HttpHeaders();
 
