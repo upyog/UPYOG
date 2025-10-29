@@ -44,7 +44,7 @@ public class ActionRestRepositoryTest {
 				.andRespond(withSuccess(resources.getFileContents("actionsResponse.json"),
 						MediaType.APPLICATION_JSON_UTF8));
 
-		final List<Action> actions = actionRestRepository.getActionByRoleCodes(getRoles(), "default");
+		final List<Action> actions = actionRestRepository.getActionByRoleCodes(getRoles(), "default", null);
 
 		server.verify();
 		assertEquals(2, actions.size());
