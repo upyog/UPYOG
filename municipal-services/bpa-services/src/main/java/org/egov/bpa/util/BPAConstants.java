@@ -401,6 +401,8 @@ public class BPAConstants {
 	public static final String PAYMENT_LINK_PLACEHOLDER = "{PAYMENT_LINK}";
 	
 	public static final Double MAAX_BUILDING_HEIGHT = 15.01;
+	
+	public static final String BUILDING_HEIGHT = "BuildingHeight";
 
 
 }
