@@ -141,6 +141,7 @@ export const Request = async ({
       data: multipartData.data,
       params,
       headers: { "Content-Type": "multipart/form-data"},
+      withCredentials: true,
     });
     return multipartFormDataRes;
   }
@@ -158,8 +159,8 @@ export const Request = async ({
   }
 
   const res = userDownload
-    ? await Axios({ method, url: _url, data, params, headers, responseType: "arraybuffer" })
-    : await Axios({ method, url: _url, data, params, headers });
+    ? await Axios({ method, url: _url, data, params, headers, responseType: "arraybuffer",withCredentials: true })
+    : await Axios({ method, url: _url, data, params, headers,withCredentials: true});
 
   if (userDownload) return res;
 
