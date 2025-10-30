@@ -235,6 +235,7 @@ public class UserRepository {
         params.put("loginTime", session.getLoginTime() != null ? Timestamp.valueOf(session.getLoginTime()) : null);
         params.put("logoutTime", session.getLogoutTime() != null ? Timestamp.valueOf(session.getLogoutTime()) : null);
         params.put("ipAddress", session.getIpAddress());
+        params.put("usertype", session.getUserType());
         params.put("iscurrentlylogin", session.getIsCurrentlyLoggedIn());
         params.put("isautologout", session.getIsautologout());
 

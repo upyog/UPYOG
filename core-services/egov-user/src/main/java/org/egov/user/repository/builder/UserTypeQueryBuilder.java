@@ -298,9 +298,9 @@ public class UserTypeQueryBuilder {
 
     public String getInsertUserSessionQuery() {
         return "INSERT INTO user_sessions (" +
-                "id, user_uuid, user_id, username, login_time, logout_time, ip_address, iscurrentlylogin, isautologout" +
+                "id, user_uuid, user_id, username, login_time, logout_time, ip_address,usertype, iscurrentlylogin, isautologout" +
                 ") VALUES (" +
-                ":id, :userUuid, :userId, :username, :loginTime, :logoutTime, :ipAddress, :iscurrentlylogin, :isautologout" +
+                ":id, :userUuid, :userId, :username, :loginTime, :logoutTime, :ipAddress, :usertype, :iscurrentlylogin, :isautologout" +
                 ")";
     }
 

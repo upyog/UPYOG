@@ -14,6 +14,7 @@ public class UserSession {
     private String userUuid;
     private Long userId;
     private String userName;
+    private String userType;
     private LocalDateTime  loginTime;
     private LocalDateTime  logoutTime;
     private String ipAddress;

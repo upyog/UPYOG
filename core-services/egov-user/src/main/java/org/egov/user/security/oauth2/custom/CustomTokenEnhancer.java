@@ -58,7 +58,8 @@ public class CustomTokenEnhancer extends TokenEnhancerChain {
         }
         ZoneId IST = ZoneId.of("Asia/Kolkata");
         ZonedDateTime nowIST = ZonedDateTime.now(IST);
-
+        
+        
         UserSession session = UserSession.builder()
                 .id(UUID.randomUUID())
                 .userUuid(su.getUser().getUuid())
@@ -66,6 +67,7 @@ public class CustomTokenEnhancer extends TokenEnhancerChain {
                 .loginTime(nowIST.toLocalDateTime()) // store actual IST time
                 .ipAddress(ipAddress)
                 .userName(su.getUsername())
+                .userType(su.getUser().getType())
                 .isCurrentlyLoggedIn(true)
                 .isautologout(false)
                 .build();
