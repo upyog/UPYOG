@@ -750,7 +750,7 @@ public class EstimationService {
 		Object categoryObj = additionalDetails.get(WSCalculationConstant.connectionCategory);
 		String category = categoryObj != null ? categoryObj.toString().toUpperCase() : null;
 
-		if ("REGULARIZED".equals(category) || "LEGACY".equals(category)) {
+		if ("REGULARIZED".equals(category) || "LEGACY".equals(category)|| "DISCHARGE_CONNECTION".equals(category)) {
 //		    if (otherCharges.compareTo(BigDecimal.ZERO) != 0) {
 			otherCharges = (otherCharges == null) ? BigDecimal.ZERO : otherCharges;
 		        estimates.add(TaxHeadEstimate.builder()
