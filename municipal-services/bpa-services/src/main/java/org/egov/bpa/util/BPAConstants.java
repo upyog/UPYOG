@@ -404,5 +404,6 @@ public class BPAConstants {
 	
 	public static final String BUILDING_HEIGHT = "BuildingHeight";
 
+	public static final String ACTION_VERIFY = "VERIFY";
 
 }
