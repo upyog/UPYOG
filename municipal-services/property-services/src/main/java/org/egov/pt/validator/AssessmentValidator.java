@@ -1,5 +1,7 @@
 package org.egov.pt.validator;
 
+import java.time.Instant;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -30,6 +32,8 @@ import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+
+import com.mchange.v2.lang.SystemUtils;
 
 @Service
 public class AssessmentValidator {
@@ -176,8 +180,23 @@ public class AssessmentValidator {
 		if(!checkIfPropertyExists(assessmentReq.getRequestInfo(), assessment.getPropertyId(), assessment.getTenantId())) {
 			throw new CustomException("PROPERTY_NOT_FOUND", "You're trying to assess a non-existing property.");
 		}
-		if (assessment.getAssessmentDate() > new Date().getTime()) {
-			errorMap.put(ErrorConstants.ASSMENT_DATE_FUTURE_ERROR_CODE, ErrorConstants.ASSMENT_DATE_FUTURE_ERROR_MSG);
+		
+		
+		long assessmentDateMillis = assessment.getAssessmentDate();
+
+		int asmt_year = Instant.ofEpochMilli(assessmentDateMillis)
+		                  .atZone(ZoneId.systemDefault())
+		                  .getYear();
+		
+		long now = new Date().getTime();
+
+		int current_year = Instant.ofEpochMilli(now)
+		                  .atZone(ZoneId.systemDefault())
+		                  .getYear();
+		
+		//if(current_year>asmt_year)
+		if (asmt_year >current_year+1) {
+			errorMap.put(ErrorConstants.ASSMENT_DATE_FUTURE_ERROR_CODE, ErrorConstants.ASSESSMENT_FUTURE_YEAR);
 		}
 
 		if (isUpdate) {
