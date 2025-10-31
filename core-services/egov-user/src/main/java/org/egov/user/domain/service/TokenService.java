@@ -89,7 +89,18 @@ public class TokenService {
             else
                 tenantId = secureUser.getTenantId();
 
-            List<Action> actions = actionRestRepository.getActionByRoleCodes(secureUser.getRoleCodes(), tenantId);
+            // Create RequestInfo with authToken for access-control authentication
+            // This ensures external access-control services can authenticate the request
+            org.egov.common.contract.request.RequestInfo requestInfo =
+                org.egov.common.contract.request.RequestInfo.builder()
+                    .apiId("egov-user")
+                    .ver("1.0")
+                    .ts(System.currentTimeMillis())
+                    .msgId("egov-user-" + System.currentTimeMillis())
+                    .authToken(accessToken)  // Include token for access-control authentication
+                    .build();
+
+            List<Action> actions = actionRestRepository.getActionByRoleCodes(secureUser.getRoleCodes(), tenantId, requestInfo);
             log.info("returning STATE-LEVEL roleactions for tenant: " + tenantId);
             return new UserDetail(secureUser, actions);
         }
