@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.egov.user.domain.model.SecureUser;
 import org.egov.user.util.CookieUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.oauth2.common.DefaultOAuth2AccessToken;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
@@ -17,12 +18,15 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Token enhancer that:
- * 1. Revokes old tokens before setting new ones (logout-on-login pattern)
- * 2. Sets OAuth2 access tokens as HttpOnly cookies for security
- * 3. Adds ResponseInfo and UserRequest to token response for backward compatibility
+ * 1. Implements SINGLE-SESSION authentication (only one device active per user)
+ * 2. Revokes ALL old tokens for user before setting new ones
+ * 3. Sets OAuth2 access tokens as HttpOnly cookies for security
+ * 4. Adds ResponseInfo and UserRequest to token response for backward compatibility
  */
 @Component
 @Slf4j
@@ -33,6 +37,12 @@ public class CustomTokenEnhancer implements TokenEnhancer {
 
     @Autowired
     private TokenStore tokenStore;
+
+    @Autowired
+    private RedisTemplate<String, String> redisTemplate;
+
+    // Redis key prefix for tracking user's active tokens
+    private static final String USER_TOKEN_KEY_PREFIX = "user:session:";
 
     @Override
     public OAuth2AccessToken enhance(OAuth2AccessToken accessToken, OAuth2Authentication authentication) {
@@ -70,13 +80,15 @@ public class CustomTokenEnhancer implements TokenEnhancer {
                 response != null ? "Available" : "NULL");
 
             if (response != null && request != null) {
-                // SECURITY: Logout-on-login pattern - revoke old tokens before setting new ones
-                // This prevents session fixation attacks and ensures clean session state
-                revokeOldTokensIfPresent(request);
+                // SECURITY: SINGLE-SESSION - Revoke ALL tokens for this user (logout other devices)
+                String username = authentication.getName();
+                revokeAllUserTokens(username);
 
-                // Clear old cookies before setting new ones
-                log.info("Clearing old authentication cookies before setting new ones");
-                cookieUtil.clearAuthCookies(response);
+                // Store new token mapping for this user in Redis
+                storeUserTokenMapping(username, accessToken);
+
+                // Note: No need to explicitly clear cookies - setting a cookie with same name/path
+                // automatically replaces the old one in browser. Clearing causes conflicts.
 
                 // Set access token as HttpOnly cookie
                 log.info("Setting access_token cookie with path: /");
@@ -112,47 +124,94 @@ public class CustomTokenEnhancer implements TokenEnhancer {
     }
 
     /**
-     * Revokes old tokens from Redis TokenStore if they exist in the request cookies
-     * This implements the logout-on-login security pattern
+     * SINGLE-SESSION IMPLEMENTATION
+     * Revokes ALL tokens for a given username across all devices
+     *
+     * When user logs in on Device 2, this will:
+     * 1. Find all tokens associated with this username
+     * 2. Remove those tokens from Redis TokenStore
+     * 3. Effectively logout the user from all other devices
      *
      * Security Benefits:
-     * 1. Prevents session fixation attacks
-     * 2. Ensures only one active session per user at a time
-     * 3. Invalidates old tokens in backend (not just browser)
-     * 4. Provides clean session state on each login
+     * 1. Only one active session per user at a time
+     * 2. Prevents token theft/reuse across devices
+     * 3. User can "kick out" attacker by logging in again
+     * 4. High-security pattern for sensitive applications
      *
-     * @param request HttpServletRequest containing potential old cookies
+     * @param username Username whose tokens should be revoked
      */
-    private void revokeOldTokensIfPresent(HttpServletRequest request) {
+    private void revokeAllUserTokens(String username) {
         try {
-            // Check if old access token exists in cookies
-            String oldAccessToken = cookieUtil.getAccessTokenFromCookie(request);
+            log.info("=== SINGLE-SESSION: Revoking all existing tokens for user: {} ===", username);
 
-            if (oldAccessToken != null && !oldAccessToken.isEmpty()) {
-                log.info("Found existing access_token in cookies, revoking from Redis...");
+            // Get Redis key for this user's token mapping
+            String userTokenKey = USER_TOKEN_KEY_PREFIX + username;
 
-                // Read the token from Redis
-                OAuth2AccessToken redisToken = tokenStore.readAccessToken(oldAccessToken);
+            // Get all token IDs stored for this user
+            Set<String> tokenIds = redisTemplate.opsForSet().members(userTokenKey);
 
-                if (redisToken != null) {
-                    // Remove access token and associated refresh token from Redis
-                    tokenStore.removeAccessToken(redisToken);
-                    log.info("Old access_token revoked successfully from Redis");
+            if (tokenIds != null && !tokenIds.isEmpty()) {
+                log.info("Found {} existing token(s) for user: {}", tokenIds.size(), username);
 
-                    // If there's a refresh token, revoke it too
-                    if (redisToken.getRefreshToken() != null) {
-                        tokenStore.removeRefreshToken(redisToken.getRefreshToken());
-                        log.info("Old refresh_token revoked successfully from Redis");
+                int revokedCount = 0;
+                for (String tokenId : tokenIds) {
+                    try {
+                        // Read token from TokenStore
+                        OAuth2AccessToken token = tokenStore.readAccessToken(tokenId);
+
+                        if (token != null) {
+                            // Remove access token
+                            tokenStore.removeAccessToken(token);
+                            revokedCount++;
+
+                            // Remove refresh token if exists
+                            if (token.getRefreshToken() != null) {
+                                tokenStore.removeRefreshToken(token.getRefreshToken());
+                            }
+
+                            log.debug("✓ Revoked token: {}...", tokenId.substring(0, Math.min(20, tokenId.length())));
+                        }
+                    } catch (Exception e) {
+                        log.warn("Failed to revoke token {}: {}", tokenId, e.getMessage());
                     }
-                } else {
-                    log.info("Old access_token not found in Redis (may have already expired)");
                 }
+
+                // Clear the user's token set in Redis
+                redisTemplate.delete(userTokenKey);
+
+                log.info("✓ Successfully revoked {} token(s) for user: {}", revokedCount, username);
+                log.info("✓ All other devices for user {} are now logged out", username);
             } else {
-                log.info("No existing access_token found in cookies (first login or cookies cleared)");
+                log.info("No existing tokens found for user: {} (first login)", username);
             }
         } catch (Exception e) {
             // Don't fail the login if token revocation fails
-            log.error("Error while revoking old tokens (continuing with login): {}", e.getMessage());
+            log.error("Error while revoking user tokens (continuing with login): {}", e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Stores mapping of username to token ID in Redis
+     * This allows us to find and revoke all tokens for a user during next login
+     *
+     * @param username Username to map
+     * @param accessToken Token to store
+     */
+    private void storeUserTokenMapping(String username, OAuth2AccessToken accessToken) {
+        try {
+            String userTokenKey = USER_TOKEN_KEY_PREFIX + username;
+            String tokenId = accessToken.getValue();
+
+            // Add token ID to user's set in Redis
+            redisTemplate.opsForSet().add(userTokenKey, tokenId);
+
+            // Set expiration matching token expiration (24 hours + buffer)
+            redisTemplate.expire(userTokenKey, 25, TimeUnit.HOURS);
+
+            log.info("✓ Stored token mapping for user: {} → token: {}...",
+                username, tokenId.substring(0, Math.min(20, tokenId.length())));
+        } catch (Exception e) {
+            log.error("Error storing user-token mapping: {}", e.getMessage());
         }
     }
 }
