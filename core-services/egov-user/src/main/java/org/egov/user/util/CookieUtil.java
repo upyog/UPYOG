@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Collection;
 
 /**
  * Utility class for managing HttpOnly authentication cookies
@@ -46,7 +47,7 @@ public class CookieUtil {
         log.info("Token value (first 20 chars): {}...", token.substring(0, Math.min(20, token.length())));
         Cookie cookie = createSecureCookie(ACCESS_TOKEN_COOKIE_NAME, token, accessTokenMaxAge, "/");
         response.addCookie(cookie);
-        log.info("✓ access_token cookie added to response");
+        log.info("access_token cookie added to response");
     }
 
     /**
@@ -61,7 +62,7 @@ public class CookieUtil {
         log.info("Token value (first 20 chars): {}...", token.substring(0, Math.min(20, token.length())));
         Cookie cookie = createSecureCookie(REFRESH_TOKEN_COOKIE_NAME, token, refreshTokenMaxAge, "/user/oauth");
         response.addCookie(cookie);
-        log.info("✓ refresh_token cookie added to response");
+        log.info("refresh_token cookie added to response");
     }
 
     /**
@@ -168,19 +169,37 @@ public class CookieUtil {
      * Adds SameSite attribute to Set-Cookie header
      * This is a workaround for Servlet versions < 6.0
      *
+     * FIXED: Now properly handles multiple Set-Cookie headers (access_token and refresh_token)
+     * Previous bug: response.getHeader() only returned first header, response.setHeader() overwrote all headers
+     *
      * @param response HttpServletResponse object
      */
     public void addSameSiteAttribute(HttpServletResponse response) {
         if (sameSitePolicy != null && !sameSitePolicy.isEmpty()) {
-            String setCookieHeader = response.getHeader("Set-Cookie");
-            log.info("Adding SameSite attribute: {} to cookie header", sameSitePolicy);
-            if (setCookieHeader != null && !setCookieHeader.contains("SameSite")) {
-                response.setHeader("Set-Cookie", setCookieHeader + "; SameSite=" + sameSitePolicy);
-                log.info("✓ SameSite attribute added successfully");
-            } else if (setCookieHeader == null) {
-                log.warn("⚠ Set-Cookie header is NULL - cannot add SameSite");
+            Collection<String> setCookieHeaders = response.getHeaders("Set-Cookie");
+            log.info("Adding SameSite attribute: {} to {} cookie headers", sameSitePolicy,
+                setCookieHeaders != null ? setCookieHeaders.size() : 0);
+
+            if (setCookieHeaders != null && !setCookieHeaders.isEmpty()) {
+                // Clear existing Set-Cookie headers
+                response.setHeader("Set-Cookie", null);
+
+                // Re-add each cookie with SameSite attribute
+                int cookieCount = 0;
+                for (String header : setCookieHeaders) {
+                    if (!header.contains("SameSite")) {
+                        response.addHeader("Set-Cookie", header + "; SameSite=" + sameSitePolicy);
+                        cookieCount++;
+                        log.debug("Added SameSite to cookie: {}",
+                            header.substring(0, Math.min(50, header.length())) + "...");
+                    } else {
+                        response.addHeader("Set-Cookie", header);
+                        cookieCount++;
+                    }
+                }
+                log.info("SameSite attribute added successfully to {} cookies", cookieCount);
             } else {
-                log.info("SameSite already present in cookie header");
+                log.warn("No Set-Cookie headers found - cannot add SameSite");
             }
         } else {
             log.warn("SameSite policy not configured");
