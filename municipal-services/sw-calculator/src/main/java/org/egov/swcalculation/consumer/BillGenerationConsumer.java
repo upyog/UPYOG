@@ -1,6 +1,7 @@
 package org.egov.swcalculation.consumer;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -40,10 +41,11 @@ public class BillGenerationConsumer {
 	@KafkaListener(topics = {
 	"${egov.swcalculatorservice.billgenerate.topic}" }, containerFactory = "kafkaListenerContainerFactoryBatch")
 	public void listen(final List<Message<?>> records) {
+		BillGeneratorReq billGeneratorReq =null;
 		try {
 			log.info("bill generator consumer received records:  " + records.size());
 
-			BillGeneratorReq billGeneratorReq = mapper.convertValue(records.get(0).getPayload(), BillGeneratorReq.class);
+			 billGeneratorReq = mapper.convertValue(records.get(0).getPayload(), BillGeneratorReq.class);
 			log.info("Number of batch records:  " + billGeneratorReq.getConsumerCodes().size());
 
 			if(billGeneratorReq.getConsumerCodes() != null && !billGeneratorReq.getConsumerCodes().isEmpty() && billGeneratorReq.getTenantId() != null) {
@@ -56,7 +58,7 @@ public class BillGenerationConsumer {
 			                new ArrayList<>(billGeneratorReq.getConsumerCodes()),
 				            billGeneratorReq.getBillSchedular().getId(),
 				            billGeneratorReq.getBillSchedular().getLocality(),
-				            SWCalculationConstant.INITIATED,
+				            SWCalculationConstant.INPROGRESS,
 				            billGeneratorReq.getBillSchedular().getTenantId(),
 				            SWCalculationConstant.INITIATED_MESSAGE,
 				            milliseconds
@@ -79,7 +81,30 @@ public class BillGenerationConsumer {
 		}catch(Exception exception) {
 			log.error("Exception occurred while generating bills in the sw bill generator consumer");
 		}
+		   try {
+		        if (billGeneratorReq != null) {
+		            List<String> stillInitiatedConnections = billGeneratorDao.getConnectionsByStatus(
+		            		billGeneratorReq.getBillSchedular().getId(),
+		                    SWCalculationConstant.INITIATED
+		            );
 
+		            if (stillInitiatedConnections != null && !stillInitiatedConnections.isEmpty()) {
+		                log.info("Reprocessing still initiated connections: {}", stillInitiatedConnections);
+
+		                List<String> reprocessedConnections = demandService.fetchBillSchedulerSingle(
+		                        new HashSet<>(stillInitiatedConnections),
+		                        billGeneratorReq.getTenantId(),
+		                        billGeneratorReq.getRequestInfoWrapper().getRequestInfo(),
+		                        new ArrayList<>(),
+		                        billGeneratorReq.getBillSchedular().getId(),
+		                        billGeneratorReq.getBillSchedular().getLocality()
+		                );
+		                log.info("Reprocessing completed for connections: {}", reprocessedConnections);
+		            }
+		        }
+		    } catch (Exception ex) {
+		        log.error("Exception occurred while reprocessing initiated connections", ex);
+		    }
 	}
 
 }

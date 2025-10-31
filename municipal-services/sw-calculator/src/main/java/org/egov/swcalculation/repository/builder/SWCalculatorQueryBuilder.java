@@ -1,6 +1,7 @@
 package org.egov.swcalculation.repository.builder;
 
 import java.util.List;
+import java.util.Map;
 import java.util.StringJoiner;
 
 import org.egov.swcalculation.constants.SWCalculationConstant;
@@ -18,6 +19,8 @@ public class SWCalculatorQueryBuilder {
 	
 	private static final String LocalityListAsPerBatchQuery = "SELECT distinct(localitycode) FROM eg_bndry_mohalla conn";
 	
+	private static final String SEARCH_INITIATED_CONNECTION = "SELECT consumercode FROM eg_sw_bill_scheduler_connection_status WHERE 1=1";
+
 	
 	private static final String connectionNoNonCommercialListQuery = "SELECT DISTINCT conn.connectionno, sw.connectionexecutiondate "
 			+ "FROM eg_sw_connection conn "
@@ -551,6 +554,23 @@ public class SWCalculatorQueryBuilder {
 		return query.toString();
 		
 	}		
+	
+	
+	public String buildGetConnectionsByStatusQuery(Map<String, Object> criteria, List<Object> preparedStmtList) {
+	    StringBuilder query = new StringBuilder(SEARCH_INITIATED_CONNECTION);
+
+	    if (criteria.get("billSchedulerId") != null) {
+	        query.append(" AND eg_sw_scheduler_id = ?");
+	        preparedStmtList.add(criteria.get("billSchedulerId"));
+	    }
+
+	    if (criteria.get("status") != null) {
+	        query.append(" AND status = ?");
+	        preparedStmtList.add(criteria.get("status"));
+	    }
+
+	    return query.toString();
+	}
 		
 	
 	public String getConnectionNumberListForCommercialOnlySewerage(String tenantId, String connectionType, String status, Long taxPeriodFrom, Long taxPeriodTo, String cone, List<Object> preparedStatement) {

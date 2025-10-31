@@ -229,6 +229,8 @@ public class WSCalculationConstant {
 
 	public static final String INITIATED = "Initiated";
 
+	public static final String INPROGRESS = "Inprogress";
+
 	
 	
 	
