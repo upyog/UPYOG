@@ -1077,6 +1077,11 @@ public class PropertyService {
 					PtTaxCalculatorTracker ptTaxCalculatorTracker = propertyService
 							.saveToPtTaxCalculatorTracker(ptTaxCalculatorTrackerRequest);
 				}
+				else 
+				{
+					throw new CustomException("INVALID_CONSUMERCODE",
+							"Bill not generated");
+				}
 			});
 			message = "Arear Generated Successfully";
 		} else {
