@@ -1,5 +1,5 @@
-import { CardLabel, FormStep, Dropdown, TextInput, Toast, SearchIcon,  Row, ImageViewer, StatusTable, LinkButton, Header, SubmitBar, CardHeader } from "@upyog/digit-ui-react-components";
-import DisplayPhotos from "../../../../react-components/src/atoms/DisplayPhotos";
+import { CardLabel, FormStep, Dropdown, TextInput, Toast, SearchIcon, Row, ImageViewer, StatusTable, LinkButton, Header, SubmitBar, CardHeader } from "@upyog/digit-ui-react-components";
+import DisplayPhotosnew from "../../../../react-components/src/atoms/DisplayPhotosnew";
 import React, { useEffect, useState } from "react";
 import { PreApprovedPlanService } from "../../../../libraries/src/services/elements/PREAPPROVEDPLAN";
 import  usePreApprovedSearch  from "../../../../libraries/src/hooks/obps/usePreApprovedSearch";
@@ -324,7 +324,7 @@ const getDetailsRow = (estimateDetails) => {
           {imagesToShowBelowComplaintDetails?.thumbs ? (
             <div>
               <CardLabel style={{ marginTop: '18px', fontWeight: 'bolder', marginBottom: "15px" }}>{t("")}</CardLabel>
-              <DisplayPhotos srcs={imagesToShowBelowComplaintDetails} onClick={(source, index) => zoomImageWrapper(source, index)} />
+              <DisplayPhotosnew srcs={imagesToShowBelowComplaintDetails} onClick={(source, index) => zoomImageWrapper(source, index)} />
             </div>
           ) : null}
           {preApprovedResponse?.data && preApprovedResponse?.data.length===0 ? (
