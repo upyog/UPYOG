@@ -384,8 +384,8 @@ public class BillServicev2 {
 						DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd MM yyyy");
 						BigDecimal totalAmount;
 						String date = billToBeReturned.get(0).getBillDetails().get(0).getAdjusmentfromdate();
-						//LocalDate endDate = LocalDate.now();
-						LocalDate endDate=LocalDate.of(2025, 10, 24);
+						LocalDate endDate = LocalDate.now();
+						//LocalDate endDate=LocalDate.of(2025, 10, 24);
 						date = date.replace("-"," ");
 						LocalDate startDate = LocalDate.parse(date, dtf);
 						BigDecimal daysdiff=new BigDecimal(ChronoUnit.DAYS.between(startDate, endDate));
@@ -395,7 +395,8 @@ public class BillServicev2 {
 
 						if(extraNoOfDays.compareTo(new BigDecimal(0))>0 && interestamount.compareTo(new BigDecimal(0))>0) {
 							totalAmount=interestamount.add(billToBeReturned.get(0).getBillDetails().get(0).getAmount());
-							totalAmount= totalAmount.setScale(0,RoundingMode.HALF_UP);
+							totalAmount= util.calculateRoundOff(totalAmount, billToBeReturned);
+							
 							extraNoOfDays = extraNoOfDays.add(new BigDecimal(billToBeReturned.get(0).getBillDetails().get(0).getInterestfornoofdays()));
 
 							List<Object> preparedStmtList = new ArrayList<>();
@@ -431,7 +432,7 @@ public class BillServicev2 {
 							
 							if(daysdiff.compareTo(new BigDecimal(0))>0 && interestamount.compareTo(new BigDecimal(0))>0) {
 								totalAmount=interestamount.add(billToBeReturned.get(0).getBillDetails().get(0).getAmount());
-								totalAmount= totalAmount.setScale(0,RoundingMode.HALF_UP);
+								totalAmount= util.calculateRoundOff(totalAmount, billToBeReturned);
 							
 								List<Object> preparedStmtList = new ArrayList<>();
 								preparedStmtList.add(interestamount);
@@ -468,7 +469,7 @@ public class BillServicev2 {
 							
 							if(daysdiff.compareTo(new BigDecimal(0))>0 && interestamount.compareTo(new BigDecimal(0))>0) {
 								totalAmount=interestamount.add(billToBeReturned.get(0).getBillDetails().get(0).getAmount());
-								totalAmount= totalAmount.setScale(0,RoundingMode.HALF_UP);
+								totalAmount= util.calculateRoundOff(totalAmount, billToBeReturned);
 							
 								List<Object> preparedStmtList = new ArrayList<>();
 								preparedStmtList.add(interestamount);
@@ -512,7 +513,7 @@ public class BillServicev2 {
 							
 							if(daysdiff.compareTo(new BigDecimal(0))>0 && interestamount.compareTo(new BigDecimal(0))>0) {
 								totalAmount=interestamount.add(billToBeReturned.get(0).getBillDetails().get(0).getAmount());
-								totalAmount= totalAmount.setScale(0,RoundingMode.HALF_UP);
+								totalAmount= util.calculateRoundOff(totalAmount, billToBeReturned);
 							
 								List<Object> preparedStmtList = new ArrayList<>();
 								preparedStmtList.add(interestamount);

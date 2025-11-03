@@ -157,9 +157,10 @@ public class PayGovGateway implements Gateway {
         SimpleDateFormat format = new SimpleDateFormat(TX_DATE_FORMAT);
         Date currentDate = new Date();
         queryMap.put(REQUEST_DATE_TIME_KEY, format.format(currentDate));
-        String returnUrl = transaction.getCallbackUrl().replace(CITIZEN_URL, "");
-
+        String returnUrl = transaction.getCallbackUrl().replace(CITIZEN_URL, "");        
+        //for production need TO CHANGE
         //queryMap.put(SERVICE_ID_KEY, getModuleCode(transaction));
+        //for dev need TO CHANGE
         queryMap.put(SERVICE_ID_KEY,"MMPTBTEST01");
         String domainName =  returnUrl.replaceAll("http(s)?://|www\\.|/.*", "");
         String citizenReturnURL = returnUrl.split(domainName)[1];
@@ -451,16 +452,15 @@ public class PayGovGateway implements Gateway {
             log.debug("requestmsg : "+ requestmsg);
             // make a request
             log.info("RequestBody Sent to PayGov: {}",entity);
-           // ResponseEntity<String> response = new RestTemplate().exchange(GATEWAY_TRANSACTION_STATUS_URL, HttpMethod.POST, entity, String.class);
-            HttpStatus statusCode = HttpStatus.OK;//response.getStatusCode();
-            String staticResponse = "S|0100|MMPTBSG0000000449|MNPTB11|MN_PG_2025_10_20_000013_24|4c6d40a2-795a-43d8-a796-70c83194e24a|413.00|INR|UPI|20-10-2025 13:49:06|51468987|pay_RVew3oB7wKDVvg|A|9612818970|111111|111111|21106013100000273|MNPTB11|||4268039549";
+            ResponseEntity<String> response = new RestTemplate().exchange(GATEWAY_TRANSACTION_STATUS_URL, HttpMethod.POST, entity, String.class);
+            HttpStatus statusCode = response.getStatusCode();
             if(statusCode.equals(HttpStatus.OK)) {
-                Transaction resp = transformRawResponse(staticResponse, currentStatus, PAYGOV_MERCHENT_SECERET_KEY);
+                Transaction resp = transformRawResponse(response.getBody(), currentStatus, PAYGOV_MERCHENT_SECERET_KEY);
                 log.debug("RESPONSE ON SUCCESS "+resp);
                 return resp;
             }else {
                 log.error("tx input "+ currentStatus);
-               // log.error("NOT A SUCCESSFUL TX "+response);
+                log.error("NOT A SUCCESSFUL TX "+response);
                 throw new CustomException(UNABLE_TO_FETCH_STATUS, UNABLE_TO_FETCH_STATUS_FROM_PAY_GOV_GATEWAY);
             }
         }catch (HttpStatusCodeException ex) {
@@ -525,7 +525,7 @@ public class PayGovGateway implements Gateway {
         if (resp!=null) {
 
             //Validate the response against the checksum
-           // PayGovUtils.validateTransaction(resp, secretKey);
+            PayGovUtils.validateTransaction(resp, secretKey);
         	//resp ="I|UATSCBSG0000000207|PG_PG_2025_10_24_000612_22|SecuChhawani||ORDER_INITIATED|2020-07-22 10:27:28.312|481313839";
             String[] splitArray = resp.split("[|]");
             Transaction txStatus=null;
@@ -547,19 +547,14 @@ public class PayGovGateway implements Gateway {
                     statusResponse.setMessageType(splitArray[++index]);
                     statusResponse.setSurePayMerchantId(splitArray[++index]);
                     statusResponse.setServiceId(splitArray[++index]);
-                    //Setting static for issue fix 
-                  //  statusResponse.setOrderId(splitArray[++index]);
-                    statusResponse.setOrderId(currentStatus.getTxnId());
+                    statusResponse.setOrderId(splitArray[++index]);
                     statusResponse.setCustomerId(splitArray[++index]);
-                    //statusResponse.setTransactionAmount(splitArray[++index]);
-                    //Setting static for issue fix 
-                    statusResponse.setTransactionAmount(currentStatus.getTxnAmount());
+                    statusResponse.setTransactionAmount(splitArray[++index]);
                     statusResponse.setCurrencyCode(splitArray[++index]);
                     statusResponse.setPaymentMode(splitArray[++index]);
                     statusResponse.setResponseDateTime(splitArray[++index]);
                     statusResponse.setSurePayTxnId(splitArray[++index]);
                     statusResponse.setBankTransactionNo(splitArray[++index]);
-                    
                     statusResponse.setTransactionStatus(splitArray[++index]);
                     statusResponse.setAdditionalInfo1(splitArray[++index]);
                     statusResponse.setAdditionalInfo2(splitArray[++index]);
@@ -571,7 +566,7 @@ public class PayGovGateway implements Gateway {
                     statusResponse.setCheckSum(splitArray[++index]);
                     //Build tx Response object
                     txStatus = Transaction.builder().txnId(currentStatus.getTxnId())
-                            .txnAmount(Utils.formatAmtAsRupee(currentStatus.getTxnAmount()))
+                            .txnAmount(Utils.formatAmtAsRupee(statusResponse.getTransactionAmount()))
                             .txnStatus(Transaction.TxnStatusEnum.SUCCESS)
                             .txnStatusMsg(PgConstants.TXN_SUCCESS)
                             .gatewayTxnId(statusResponse.getSurePayTxnId())
