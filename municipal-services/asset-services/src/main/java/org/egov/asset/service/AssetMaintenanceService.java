@@ -72,8 +72,7 @@ public class AssetMaintenanceService {
         // Fetch the asset details
         Asset asset = assetUtil.fetchAssetById(maintenance.getAssetId(), tenantId);
 
-        // Update the asset status if applicable
-        assetUtil.updateAssetStatusAndUsage(asset, null, maintenance.getAssetMaintenanceStatus());
+        // Asset fetched for maintenance
 
         // Enrich the maintenance request
         enrichmentService.enrichMaintenanceCreateOperations(request);
@@ -141,7 +140,6 @@ public class AssetMaintenanceService {
                 .asset(asset)
                 .build();
         assetService.updateAssetInSystem(assetRequest);
-        log.info("Updated asset ID: {} with status: {} and usage: {}",
-                asset.getId(), asset.getAssetStatus(), asset.getAssetUsage());
+        log.info("Updated asset ID: {}", asset.getId());
     }
 }

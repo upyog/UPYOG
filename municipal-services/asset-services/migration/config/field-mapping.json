@@ -1,0 +1,48 @@
+{
+  "basic_fields": {
+    "Asset Name": "assetName",
+    "Asset Category": "assetCategory",
+    "Asset Sub Category": "assetSubCategory", 
+    "Department": "department",
+    "Tenant ID": "tenantId",
+    "Purchase Date": "purchaseDate",
+    "Purchase Cost": "purchaseCost",
+    "Current Value": "currentValue",
+    "Description": "description"
+  },
+  "address_fields": {
+    "Address Line 1": "addressLine1",
+    "Address Line 2": "addressLine2", 
+    "City": "city",
+    "Pincode": "pincode",
+    "Ward": "ward",
+    "Zone": "zone",
+    "Locality": "locality"
+  },
+  "movable_additional": {
+    "Serial Number": "serialNumber",
+    "Model": "model", 
+    "Manufacturer": "manufacturer",
+    "Warranty Expiry": "warrantyExpiry",
+    "Condition": "condition",
+    "Maintenance Schedule": "maintenanceSchedule",
+    "Insurance Policy": "insurancePolicy"
+  },
+  "immovable_additional": {
+    "Plot Area": "plotArea",
+    "Built Up Area": "builtUpArea",
+    "Floor Number": "floorNumber", 
+    "Room Number": "roomNumber",
+    "Property Type": "propertyType",
+    "Construction Year": "constructionYear",
+    "Condition": "condition"
+  },
+  "inventory_fields": {
+    "Asset Reference": "assetId",
+    "Quantity": "quantity",
+    "Unit": "unit",
+    "Supplier": "supplier",
+    "Purchase Order": "purchaseOrder",
+    "Invoice Number": "invoiceNumber"
+  }
+}

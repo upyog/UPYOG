@@ -7,6 +7,8 @@ import SearchApp from "./SearchApp";
 import SearchReport from "./SearchReport";
 import Inbox from "./Inbox";
 
+const Search = SearchApp; // Using SearchApp as Search component
+
 const EmployeeApp = ({ path, url, userType }) => {
   const { t } = useTranslation();
   const location = useLocation();
@@ -50,10 +52,23 @@ const EmployeeApp = ({ path, url, userType }) => {
   const MaintenanceApplication = Digit?.ComponentRegistryService?.getComponent("MaintenanceApplication");
   const EditAssetMaintenance = Digit?.ComponentRegistryService?.getComponent("EditAssetMaintenance");
   const EditResponse = Digit?.ComponentRegistryService?.getComponent("editResponse");
+  const EditVendorResponse = Digit?.ComponentRegistryService?.getComponent("EditVendorResponse"); 
   const EditAsset = Digit?.ComponentRegistryService?.getComponent("editAsset");
   const NewAssetReturnApplication = Digit?.ComponentRegistryService?.getComponent("returnAssets");
   const ApplicationDetails = Digit?.ComponentRegistryService?.getComponent("ApplicationDetails");
   const ASSETCreate = Digit?.ComponentRegistryService?.getComponent("AssetCreateNew");
+  const InventoryCreation = Digit?.ComponentRegistryService?.getComponent("InventoryCreation");
+  const AssetRegistryUp = Digit?.ComponentRegistryService?.getComponent("AssetRegistryUp");
+  const EditAssetRegistryUp = Digit?.ComponentRegistryService?.getComponent("EditAssetRegistryUp");
+  const EditAssetVendorUp = Digit?.ComponentRegistryService?.getComponent("EditAssetVendorUp");
+  const EditProcurementRequest = Digit?.ComponentRegistryService?.getComponent("EditProcurementRequest");
+  const CreateProcurement = Digit?.ComponentRegistryService?.getComponent("ProcurementRequest");
+  const VendorForUP = Digit?.ComponentRegistryService?.getComponent("VendorInventoryForUP");
+  const EditProcurementResponse = Digit?.ComponentRegistryService?.getComponent("EditProcurementResponse");
+
+  const AssetRegistryList = Digit?.ComponentRegistryService?.getComponent("AssetRegistryList");
+  const AssetVendorList = Digit?.ComponentRegistryService?.getComponent("AssetVendorList");
+  const ProcurementList = Digit?.ComponentRegistryService?.getComponent("ProcurementList");
   const Response = Digit?.ComponentRegistryService?.getComponent("AssetResponse");
   const Maintenance = Digit?.ComponentRegistryService?.getComponent("Maintenance");
   const EditMaintenance = Digit?.ComponentRegistryService?.getComponent("EditMaintenance");
@@ -62,7 +77,6 @@ const EmployeeApp = ({ path, url, userType }) => {
   const ReturnResponse = Digit?.ComponentRegistryService?.getComponent("returnResponse");
   const isRes = window.location.href.includes("asset/response");
   const isNewRegistration = window.location.href.includes("new-assets") || window.location.href.includes("asset/assetservice/application-details");
-
   return (
     <Switch>
       <AppContainer>
@@ -90,6 +104,7 @@ const EmployeeApp = ({ path, url, userType }) => {
               />
             )}
           />
+
           
           <PrivateRoute path={`${path}/assetservice/assign-assets/:id`} component={() => <NewAssetAssignApplication parentUrl={url} />} />
           <PrivateRoute path={`${path}/assetservice/maintenance-assets/:id`} component={() => <MaintenanceApplication parentUrl={url} />} />
@@ -110,12 +125,23 @@ const EmployeeApp = ({ path, url, userType }) => {
           <PrivateRoute path={`${path}/assetservice/my-asset`} component={(props) => <SearchApp {...props} parentRoute={path} />} />
           <PrivateRoute path={`${path}/assetservice/report`} component={(props) => <SearchReport {...props} parentRoute={path} />} />
           <PrivateRoute path={`${path}/assetservice/edit-response`} component={(props) => <EditResponse {...props} parentRoute={path} />} />
-
+          <PrivateRoute path={`${path}/assetservice-up/vendor`} component={(props) => <VendorForUP {...props} parentRoute={path} />} />
+          <PrivateRoute path={`${path}/assetservice-up/asset-registry`} component={(props) => <AssetRegistryUp {...props} parentRoute={path} />} />
+          <PrivateRoute path={`${path}/assetservice-up/procurement`} component={(props) => <CreateProcurement {...props} parentRoute={path} />} />
+          <PrivateRoute path={`${path}/assetservice-up/inventory-creation`} component={(props) => <InventoryCreation {...props} parentRoute={path} />} />
+          <PrivateRoute path={`${path}/assetservice/asset-edit/:id`} component={() => <EditAssetRegistryUp  parentRoute={path} />} />
+          <PrivateRoute path={`${path}/assetservice-up/registry/list`} component={(props) => <AssetRegistryList {...props} parentRoute={path} />} />
+          <PrivateRoute path={`${path}/assetservice-up/vendor-list`} component={(props) => <AssetVendorList {...props} parentRoute={path} />} />
+          <PrivateRoute path={`${path}/assetservice/asset-vendor-edit/:id`} component={() => <EditAssetVendorUp  parentRoute={path} />} />
+          <PrivateRoute path={`${path}/assetservice/edit-vendor-response`} component={(props) => <EditVendorResponse {...props} parentRoute={path} />} />
+           <PrivateRoute path={`${path}/assetservice-up/procurement-list`} component={(props) => <ProcurementList {...props} parentRoute={path} />} />
+           <PrivateRoute path={`${path}/assetservice/procurement-edit/:id`} component={() => <EditProcurementRequest  parentRoute={path} />} />
+           <PrivateRoute path={`${path}/assetservice/edit-procurement-response`} component={(props) => <EditProcurementResponse {...props} parentRoute={path} />} />
         </div>
       </React.Fragment>
       </AppContainer>
+
     </Switch>
   );
 };
-
 export default EmployeeApp;

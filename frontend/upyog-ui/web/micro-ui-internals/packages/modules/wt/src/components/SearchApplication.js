@@ -1,6 +1,6 @@
   import React, { useCallback, useMemo, useEffect} from "react"
   import { useForm, Controller } from "react-hook-form";
-  import { TextInput, SubmitBar, DatePicker, CardLabelError, SearchForm, SearchField, Dropdown, Table, Card, MobileNumber, Loader, Header } from "@upyog/digit-ui-react-components";
+  import { TextInput, SubmitBar, DatePicker, CardLabelError, SearchForm, SearchField, Dropdown, Table, Card, MobileNumber, Loader, Header } from "@nudmcdgnpm/digit-ui-react-components";
   import { Link} from "react-router-dom";
   import { APPLICATION_PATH} from "../utils";
 
@@ -98,6 +98,8 @@
           { i18nKey: "Booking Created", code: "BOOKING_CREATED", value: t("WT_BOOKING_CREATED") },
           { i18nKey: "Booking Approved", code: "APPROVED", value: t("WT_BOOKING_APPROVED") },
           { i18nKey: "Tanker Delivered", code: "TANKER_DELIVERED", value: t("WT_TANKER_DELIVERED") },
+          { i18nKey: "Vendor Assigned", code: "ASSIGN_VENDOR", value: t("WT_ASSIGN_VENDOR") },
+          { i18nKey: "Rejected", code: "REJECT", value: t("WT_BOOKING_REJECTED") }
         ];
 
         const statusOptionForTreePruning = [
@@ -105,6 +107,11 @@
             i18nKey: "TP_BOOKING_CREATED",
             code: "BOOKING_CREATED",
             value: t("TP_BOOKING_CREATED")
+          },
+          {
+            i18nKey: "TP_PENDING_FOR_APPROVAL",
+            code: "PENDING_FOR_APPROVAL",
+            value: t("TP_PENDING_FOR_APPROVAL")
           },
           {
             i18nKey: "TP_PAYMENT_PENDING",

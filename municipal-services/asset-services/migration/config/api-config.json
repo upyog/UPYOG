@@ -1,0 +1,21 @@
+{
+  "base_url": "http://localhost:8098",
+  "endpoints": {
+    "asset_create": "/asset-services/v1/assets/_create",
+    "inventory_create": "/asset-services/inventory/v1/_create"
+  },
+  "headers": {
+    "Content-Type": "application/json",
+    "Accept": "application/json"
+  },
+  "batch_size": 50,
+  "retry_attempts": 3,
+  "timeout": 30,
+  "tenant_id": "pg.citya",
+  "user_info": {
+    "uuid": "migration-user",
+    "userName": "migration-script",
+    "name": "Asset Migration Script",
+    "type": "SYSTEM"
+  }
+}

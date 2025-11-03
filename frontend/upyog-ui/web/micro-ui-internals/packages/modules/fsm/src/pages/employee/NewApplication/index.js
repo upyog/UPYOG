@@ -400,7 +400,7 @@ export const NewApplication = ({ parentUrl, heading }) => {
           "nextStep": "tank-size"
         },
         {
-          "label": "ES_NEW_APPLICATION_PIT_TYPE",
+          "label": "ES_NEW_APPLICATION_PIT_TYPE6",
           "isMandatory": true,
           "type": "component",
           "route": "pit-type",

@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from "react";
-import { FormStep, CardLabel, Dropdown , Modal} from "@upyog/digit-ui-react-components";
+import { FormStep, CardLabel, Dropdown , Modal} from "@nudmcdgnpm/digit-ui-react-components";
 
 /* This file is made for choosing the particular request type.  
     It provides a dropdown menu that allows users to select a service type, such as  

@@ -63,8 +63,6 @@ const VendorInbox = (props) => {
 
   useEffect(() => {
     if (props.selectedTab === "DRIVER" || props.selectedTab === "VEHICLE") refetchVendor();
-    refetchVendor();
-    props.refetchData();
   }, [props.selectedTab]);
 
   useEffect(() => {
@@ -247,9 +245,9 @@ const VendorInbox = (props) => {
       case "VENDOR":
         return history.push("/upyog-ui/employee/vendor/registry/new-vendor");
       case "VEHICLE":
-        return history.push("/upyog-ui/employee/vendor/registry/new-vehicle");
+        return history.push("/upyog-ui/employee/fsm/registry/new-vehicle");
       case "DRIVER":
-        return history.push("/upyog-ui/employee/vendor/registry/new-driver");
+        return history.push("/upyog-ui/employee/fsm/registry/new-driver");
       default:
         break;
     }

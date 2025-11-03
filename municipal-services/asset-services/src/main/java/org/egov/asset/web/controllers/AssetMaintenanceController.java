@@ -22,6 +22,7 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequestMapping("/maintenance/v1")
+@CrossOrigin(origins = "http://localhost:3000")
 public class AssetMaintenanceController {
 
     @Autowired
