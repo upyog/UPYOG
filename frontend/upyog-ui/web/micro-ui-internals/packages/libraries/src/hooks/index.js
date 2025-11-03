@@ -287,12 +287,19 @@ import useAssetDocumentsMDMS from "./asset/useAssetDocumentsMDMS";
 import useAssetSubType from "./asset/useAssetSubType";
 import useAssetdetail from "./asset/useAssetdetail";
 import useAssetCreateAPI from "./asset/useAssetCreateAPI";
+import useInventoryApplication from "./asset/useInventoryApplication";
 import useAssetApplicationDetail from "./asset/useAssetApplicationDetail";
+import useAssetApplicationSearch from "./asset/useAssetApplicationSearch";
 import useASSETSearch from "./asset/useASSETSearch";
+import useAssetVendorList from "./asset/useAssetVendorList";
+import useProcurementList from "./asset/useProcurementList";
+import useAssetVendorDetail from "./asset/useAssetVendorDetail";
 import useTenantsASSET from "./asset/useTenants"
 import useASSETApplicationAction from "./asset/useASSETApplicationAction";
 import useAssetparentSubType from "./asset/useAssetparentSubType";
 import useAssignCreateAPI from "./asset/useAssignCreateAPI";
+import useProcerementCreateAPI from "./asset/useProcerementCreateAPI";
+import useInventoryCreationAPI from "./asset/useInventoryCreationAPI";
 import useReturnAPI from "./asset/useReturnAPI";
 import useEditUpdateAPI from "./asset/useEditUpdateAPI";
 import useMaintenanceAPI from "./asset/useMaintenanceAPI";
@@ -632,15 +639,22 @@ const asset = {
   useAssetSubType,
   useAssetdetail,
   useAssetCreateAPI,
+  useInventoryApplication,
   useAssetApplicationDetail,
+  useAssetApplicationSearch,
   useASSETApplicationAction,
   useASSETSearch,
+  useAssetVendorList,
+  useProcurementList,
+  useAssetVendorDetail,
   useAssetparentSubType,
   useTenants: useTenantsASSET,
   useAssignCreateAPI,
   useMaintenanceAPI,
   useReturnAPI,
-  useEditUpdateAPI
+  useEditUpdateAPI,
+  useProcerementCreateAPI,
+  useInventoryCreationAPI
 };
 
 const sv = {

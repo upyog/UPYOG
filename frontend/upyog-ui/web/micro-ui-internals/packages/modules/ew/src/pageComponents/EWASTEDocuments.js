@@ -129,10 +129,7 @@ const EWASTEDocuments = ({ t, config, onSelect, formData }) => {
       >
         {files.map((file, index) => (
           <LabelFieldPair key={index} style={{ marginBottom: "24px" }}>
-            <CardLabel className="card-label-smaller">
-              {t("EWASTE_PR_DOCUMENT") + (index !== 0 ? " " + (index + 1) : " 1")} <span style={{ color: "red" }}>*</span> <span style={{ fontSize: "12px" }}>{t("ONLY_PNG_JPEG_JPG_")}</span>
-            </CardLabel>
-
+            <CardLabel className="card-label-smaller">{t("EWASTE_PR_DOCUMENT") + (index !== 0 ? " " + (index + 1) : " 1")}</CardLabel>
             <div className="field" style={{ display: "flex", alignItems: "center" }}>
               <UploadFile
                 onUpload={(e) => handleFileSelect(e, index)}
@@ -147,7 +144,7 @@ const EWASTEDocuments = ({ t, config, onSelect, formData }) => {
                 message={uploadedFiles[index] ? `1 ${t("CS_ACTION_FILEUPLOADED")}` : t("CS_ACTION_NO_FILEUPLOADED")}
                 textStyles={{ width: "100%" }}
                 inputStyles={{ width: "280px" }}
-                accept=".png,.jpg,.jpeg"
+                accept=".png"
                 buttonType="button"
                 error={!uploadedFiles[index]}
               />

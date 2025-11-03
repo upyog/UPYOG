@@ -397,7 +397,7 @@ import {
       <hr style={{color:"#cccccc",backgroundColor:"#cccccc",height:"2px",marginTop:"20px",marginBottom:"20px"}}/>
       <CardHeader>{t("BPA_COMMON_TOTAL_AMT")}</CardHeader> 
       <CardHeader>₹ {paymentDetails?.Bill?.[0]?.billDetails[0]?.amount || "0"}</CardHeader> 
-      <SubmitBar label={value.businessService==="BPA-PAP"? t("SUBMIT"):t("BPA_SEND_TO_CITIZEN_LABEL")} onSubmit={onSubmit} />
+      <SubmitBar label={t("BPA_SEND_TO_CITIZEN_LABEL")} onSubmit={onSubmit} />
       </Card>
     </React.Fragment>
     );

@@ -33,8 +33,7 @@ public class Asset implements AssetDTO {
     @JsonProperty("tenantId")
     private String tenantId;
 
-    @JsonProperty("assetBookRefNo")
-    private String assetBookRefNo;
+
 
     @JsonProperty("assetName")
     private String assetName;
@@ -53,9 +52,6 @@ public class Asset implements AssetDTO {
 
     @JsonProperty("assetSubCategory")
     private String assetSubCategory;
-
-    @JsonProperty("department")
-    private String department;
 
     @JsonProperty("applicationNo")
     private String applicationNo;
@@ -86,6 +82,9 @@ public class Asset implements AssetDTO {
     @JsonProperty("assetAssignment")
     private AssetAssignment assetAssignment;
 
+    @JsonProperty("assetInventory")
+    private AssetInventory assetInventory;
+
     @JsonProperty("additionalDetails")
     private Object additionalDetails;
 
@@ -95,68 +94,23 @@ public class Asset implements AssetDTO {
     @JsonProperty("remarks")
     private String remarks;
 
-    @JsonProperty("financialYear")
-    private String financialYear;
-
-    @JsonProperty("sourceOfFinance")
-    private String sourceOfFinance;
-
     @JsonProperty("workflow")
     private ProcessInstance workflow;
-
-    @JsonProperty("scheme")
-    private String scheme;
-
-    @JsonProperty("subScheme")
-    private String subScheme;
-
-    @JsonProperty("purchaseCost")
-    private double purchaseCost;
-
-    @JsonProperty("acquisitionCost")
-    private double acquisitionCost;
-
-    @JsonProperty("bookValue")
-    private double bookValue;
-
-    @JsonProperty("invoiceDate")
-    private Long invoiceDate;
-
-    @JsonProperty("invoiceNumber")
-    private String invoiceNumber;
 
     @JsonProperty("purchaseDate")
     private Long purchaseDate;
 
-    @JsonProperty("purchaseOrderNumber")
-    private String purchaseOrderNumber;
-
-    @JsonProperty("location")
-    private String location;
-
-    @JsonProperty("oldCode")
-    private Long oldCode;
-
-    @JsonProperty("modeOfPossessionOrAcquisition")
-    private String modeOfPossessionOrAcquisition;
+    @JsonProperty("bookRefNo")
+    private String bookRefNo;
 
     @JsonProperty("unitOfMeasurement")
     private Long unitOfMeasurement;
 
-    @JsonProperty("lifeOfAsset")
-    private String lifeOfAsset;
-
-    @JsonProperty("assetUsage")
-    private String assetUsage;
-
     @JsonProperty("assetType")
     private String assetType;
 
-    @JsonProperty("assetStatus")
-    private String assetStatus;
-
-    @JsonProperty("originalBookValue")
-    private double originalBookValue;
+    @JsonProperty("acquisitionCost")
+    private double acquisitionCost;
 
     @JsonProperty("minimumValue")
     private String minimumValue;
@@ -164,10 +118,14 @@ public class Asset implements AssetDTO {
     @JsonProperty("islegacyData")
     private String islegacyData;
 
+    @JsonProperty("division")
+    private String division;
+
+    @JsonProperty("district")
+    private String district;
+
     @Transient
     private String accumulatedDepreciartion;
-
-    private boolean assetAssignable;
 
 //      @JsonProperty("parentAssetSpecificDetails")
 //      private AssetParentAssetSpecificDetails parentAssetSpecificDetails = null;
@@ -179,4 +137,3 @@ public class Asset implements AssetDTO {
 
 
 }
-

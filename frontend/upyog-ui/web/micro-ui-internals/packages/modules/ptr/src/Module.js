@@ -22,6 +22,7 @@ import PTRCard from "./components/PTRCard";
 import InboxFilter from "./components/inbox/NewInboxFilter";
 import { TableConfig } from "./config/inbox-table-config";
 import ApplicationDetails from "./pages/employee/ApplicationDetails";
+import PropertySearch from "./pageComponents/PropertySearch";
 import NewApplication from "./pages/employee/NewApplication";
 
 
@@ -41,6 +42,7 @@ const componentsToRegister = {
   PTRSelectProofIdentity,
   PTRServiceDoc,
   PTRWFApplicationTimeline,
+  PropertySearch, // component added for property search
 };
 
 // function of component registry to add entries in the registry

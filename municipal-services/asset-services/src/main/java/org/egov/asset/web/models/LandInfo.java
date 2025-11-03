@@ -27,21 +27,6 @@ public class LandInfo {
     @JsonProperty("assetAssetSubCategory")
     private String assetAssetSubCategory = null;
 
-    @JsonProperty("OSRLand")
-    private String osRLand = null;
-
-    @JsonProperty("isitfenced")
-    private String isitfenced = null;
-
-    @JsonProperty("isItfenced")
-    private String isItfencedDesc = null;
-
-    @JsonProperty("isThereAnyBuiltupOnSite")
-    private String isThereAnyBuiltupOnSite = null;
-
-    @JsonProperty("isThereAnyBuiltupOnSiteDesc")
-    private String isThereAnyBuiltupOnSiteDesc = null;
-
     @JsonProperty("typeofTreesOnSite")
     private String typeofTreesOnSite = null;
 
@@ -51,53 +36,11 @@ public class LandInfo {
     @JsonProperty("typeofTreesOnSiteDesc")
     private String typeofTreesOnSiteDesc = null;
 
-    @JsonProperty("AwardNumber")
-    private String awardNumber = null;
-
-    @JsonProperty("BookValue")
-    private String bookValue = null;
-
-    @JsonProperty("CollectororderNumber")
-    private String collectororderNumber = null;
-
-    @JsonProperty("Costafterdepriciation")
-    private String costafterdepriciation = null;
-
-    @JsonProperty("CouncilResolutionNumber")
-    private String councilResolutionNumber = null;
-
     @JsonProperty("Currentassetvalue")
     private String currentassetvalue = null;
 
-    @JsonProperty("DateofDeedExecution")
-    private String dateofDeedExecution = null;
-
-    @JsonProperty("DateofPossesion")
-    private String dateofPossesion = null;
-
-    @JsonProperty("DepriciationRate")
-    private String depriciationRate = null;
-
-    @JsonProperty("FromWhomDeedTaken")
-    private String fromWhomDeedTaken = null;
-
-    @JsonProperty("GovernmentorderNumber")
-    private String governmentorderNumber = null;
-
-    @JsonProperty("OandMCOI")
-    private String oandMCOI = null;
-
-    @JsonProperty("OandMTaskDetail")
-    private String oandMTaskDetail = null;
-
     @JsonProperty("Revenuegeneratedbyasset")
     private String revenuegeneratedbyasset = null;
-
-    @JsonProperty("Totalcost")
-    private String totalcost = null;
-
-    @JsonProperty("howassetbeingused")
-    private String howassetbeingused = null;
 
     @JsonProperty("acquisitionProsessionDetails")
     private String LandAcquisitionProssessionInfo = null;

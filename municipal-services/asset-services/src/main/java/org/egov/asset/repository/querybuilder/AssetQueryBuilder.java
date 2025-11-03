@@ -19,18 +19,13 @@ public class AssetQueryBuilder {
     private static final String LEFT_OUTER_JOIN_STRING = " LEFT OUTER JOIN ";
 
     private static final String QUERY = "SELECT asset.id, "
-            + "asset.bookrefno, asset.name, asset.description, asset.classification, "
-            + "asset.parentcategory, asset.category, asset.subcategory, asset.department, "
+            + "asset.name, asset.description, asset.classification, "
+            + "asset.parentcategory, asset.category, asset.subcategory, "
             + "asset.applicationno, asset.approvalno, asset.tenantid, asset.status, "
             + "asset.businessservice, asset.additionaldetails, asset.createdtime, "
             + "asset.lastmodifiedtime, asset.approvaldate, asset.applicationdate, "
             + "asset.accountid, asset.createdby, asset.lastmodifiedby, asset.remarks, "
-            + "asset.financialyear, asset.sourceoffinance, "
-            + "asset.invoicedate, asset.invoicenumber, asset.purchasedate, "
-            + "asset.purchaseordernumber, asset.location, asset.purchasecost, "
-            + "asset.acquisitioncost, asset.bookvalue, asset.lifeofasset, "
-            + "asset.modeofpossessionoracquisition, asset.assettype, "
-            + "asset.assetusage, asset.assetstatus, asset.originalbookvalue, asset.assetAssignable, "
+            + "asset.purchasedate, asset.assettype, asset.acquisitioncost, asset.bookrefno, asset.unitofmeasurement, asset.division, asset.district, "
             + "address.doorno, address.latitude, address.longitude, address.addressid, "
             + "address.addressnumber, address.type, address.addressline1, address.addressline2, "
             + "address.landmark, address.city, address.pincode, address.detail, "
@@ -47,21 +42,14 @@ public class AssetQueryBuilder {
 
     private static final String LIMITED_DATA_QUERY = "SELECT asset.id, "
             + "asset.tenantid, "
-            + "asset.bookrefno, "
             + "asset.applicationno, "
             + "asset.classification, "
             + "asset.parentcategory, "
             + "asset.category, "
             + "asset.subcategory, "
             + "asset.name, "
-            + "asset.department, "
             + "asset.status, "
-            + "asset.assetusage, "
-            + "asset.bookvalue, "
-            + "asset.location, "
-            + "asset.assetstatus, "
             + "asset.createdtime, "
-            + "asset.assetAssignable, "
             + "assign.isassigned, "
             + "assign.assignedusername, "
             + "assign.employeecode, "
@@ -212,6 +200,64 @@ public class AssetQueryBuilder {
             addClauseIfRequired(preparedStmtList, builder);
             builder.append(" asset.createdtime >= ").append(criteria.getFromDate());
         }
+
+        // New search criteria - division and district not in schema, skip them
+
+        if (criteria.getOffice() != null) {
+            addClauseIfRequired(preparedStmtList, builder);
+            builder.append(" asset.tenantid = ?");
+            preparedStmtList.add(criteria.getOffice());
+        }
+
+        if (criteria.getUain() != null) {
+            addClauseIfRequired(preparedStmtList, builder);
+            builder.append(" asset.applicationno ILIKE ?");
+            preparedStmtList.add("%" + criteria.getUain() + "%");
+        }
+
+        if (criteria.getParentCategory() != null) {
+            addClauseIfRequired(preparedStmtList, builder);
+            builder.append(" asset.parentcategory = ?");
+            preparedStmtList.add(criteria.getParentCategory());
+        }
+
+        if (criteria.getCategory() != null) {
+            addClauseIfRequired(preparedStmtList, builder);
+            builder.append(" asset.category = ?");
+            preparedStmtList.add(criteria.getCategory());
+        }
+
+        if (criteria.getAssetName() != null) {
+            addClauseIfRequired(preparedStmtList, builder);
+            builder.append(" asset.name ILIKE ?");
+            preparedStmtList.add("%" + criteria.getAssetName() + "%");
+        }
+
+        if (criteria.getAssetDescription() != null) {
+            addClauseIfRequired(preparedStmtList, builder);
+            builder.append(" asset.description ILIKE ?");
+            preparedStmtList.add("%" + criteria.getAssetDescription() + "%");
+        }
+
+        if (criteria.getAcquisitionCost() != null) {
+            addClauseIfRequired(preparedStmtList, builder);
+            builder.append(" asset.acquisitioncost = ?");
+            preparedStmtList.add(criteria.getAcquisitionCost());
+        }
+
+        if (criteria.getMinAcquisitionCost() != null && criteria.getMaxAcquisitionCost() != null) {
+            addClauseIfRequired(preparedStmtList, builder);
+            builder.append(" asset.acquisitioncost BETWEEN ? AND ?");
+            preparedStmtList.add(criteria.getMinAcquisitionCost());
+            preparedStmtList.add(criteria.getMaxAcquisitionCost());
+        }
+
+        if (criteria.getAcquisitionDate() != null) {
+            addClauseIfRequired(preparedStmtList, builder);
+            builder.append(" asset.purchasedate = ?");
+            preparedStmtList.add(criteria.getAcquisitionDate());
+        }
+
         return addPaginationWrapper(builder.toString(), preparedStmtList, criteria);
     }
 
@@ -331,6 +377,64 @@ public class AssetQueryBuilder {
             addClauseIfRequired(preparedStmtList, builder);
             builder.append(" asset.createdtime >= ").append(criteria.getFromDate());
         }
+
+        // New search criteria for limited data query - division and district not in schema, skip them
+
+        if (criteria.getOffice() != null) {
+            addClauseIfRequired(preparedStmtList, builder);
+            builder.append(" asset.tenantid = ?");
+            preparedStmtList.add(criteria.getOffice());
+        }
+
+        if (criteria.getUain() != null) {
+            addClauseIfRequired(preparedStmtList, builder);
+            builder.append(" asset.applicationno ILIKE ?");
+            preparedStmtList.add("%" + criteria.getUain() + "%");
+        }
+
+        if (criteria.getParentCategory() != null) {
+            addClauseIfRequired(preparedStmtList, builder);
+            builder.append(" asset.parentcategory = ?");
+            preparedStmtList.add(criteria.getParentCategory());
+        }
+
+        if (criteria.getCategory() != null) {
+            addClauseIfRequired(preparedStmtList, builder);
+            builder.append(" asset.category = ?");
+            preparedStmtList.add(criteria.getCategory());
+        }
+
+        if (criteria.getAssetName() != null) {
+            addClauseIfRequired(preparedStmtList, builder);
+            builder.append(" asset.name ILIKE ?");
+            preparedStmtList.add("%" + criteria.getAssetName() + "%");
+        }
+
+        if (criteria.getAssetDescription() != null) {
+            addClauseIfRequired(preparedStmtList, builder);
+            builder.append(" asset.description ILIKE ?");
+            preparedStmtList.add("%" + criteria.getAssetDescription() + "%");
+        }
+
+        if (criteria.getAcquisitionCost() != null) {
+            addClauseIfRequired(preparedStmtList, builder);
+            builder.append(" asset.acquisitioncost = ?");
+            preparedStmtList.add(criteria.getAcquisitionCost());
+        }
+
+        if (criteria.getMinAcquisitionCost() != null && criteria.getMaxAcquisitionCost() != null) {
+            addClauseIfRequired(preparedStmtList, builder);
+            builder.append(" asset.acquisitioncost BETWEEN ? AND ?");
+            preparedStmtList.add(criteria.getMinAcquisitionCost());
+            preparedStmtList.add(criteria.getMaxAcquisitionCost());
+        }
+
+        if (criteria.getAcquisitionDate() != null) {
+            addClauseIfRequired(preparedStmtList, builder);
+            builder.append(" asset.purchasedate = ?");
+            preparedStmtList.add(criteria.getAcquisitionDate());
+        }
+
         return addPaginationWrapper(builder.toString(), preparedStmtList, criteria);
     }
 
@@ -403,12 +507,8 @@ public class AssetQueryBuilder {
         if (criteria.getOffset() != null)
             offset = criteria.getOffset();
 
-        if (limit == -1) {
-            finalQuery = finalQuery.replace("WHERE offset_ > ? AND offset_ <= ?", "");
-        } else {
-            preparedStmtList.add(offset);
-            preparedStmtList.add(limit + offset);
-        }
+        // Temporarily disable pagination for testing
+        finalQuery = finalQuery.replace("WHERE offset_ > ? AND offset_ <= ?", "");
 
         return finalQuery;
 

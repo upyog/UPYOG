@@ -132,12 +132,8 @@ const AddVendor = ({ parentUrl, heading }) => {
       onSuccess: (data, variables) => {
         setShowToast({ key: "success", action: "ADD_VENDOR" });
         setTimeout(closeToast, 5000);
-        queryClient.invalidateQueries("DSO_SEARCH");
-        setTimeout(() => {
-          closeToast();
-          history.push("/upyog-ui/employee/vendor/search-vendor?selectedTabs=VENDOR");
-        }, 5000);
-                       
+       // queryClient.invalidateQueries("DSO_SEARCH");                  // automatically open search tab after 5 seconds
+        
       },
     });
 

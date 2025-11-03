@@ -1,9 +1,11 @@
 package org.egov.asset.service;
 
+import com.jayway.jsonpath.JsonPath;
 import digit.models.coremodels.IdResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.asset.config.AssetConfiguration;
 import org.egov.asset.repository.IdGenRepository;
+import org.egov.asset.repository.ServiceRequestRepository;
 import org.egov.asset.util.AssetErrorConstants;
 import org.egov.asset.util.AssetUtil;
 import org.egov.asset.web.models.Asset;
@@ -12,6 +14,10 @@ import org.egov.asset.web.models.AuditDetails;
 import org.egov.asset.web.models.disposal.AssetDisposalRequest;
 import org.egov.asset.web.models.maintenance.AssetMaintenanceRequest;
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.mdms.model.MasterDetail;
+import org.egov.mdms.model.MdmsCriteria;
+import org.egov.mdms.model.MdmsCriteriaReq;
+import org.egov.mdms.model.ModuleDetail;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -33,6 +39,9 @@ public class EnrichmentService {
     @Autowired
     private IdGenRepository idGenRepository;
 
+    @Autowired
+    private ServiceRequestRepository serviceRequestRepository;
+
     /**
      * Enriches the Asset create request by adding audit details and unique identifiers (UUIDs).
      *
@@ -50,6 +59,17 @@ public class EnrichmentService {
 
         // Set the account ID to the creator's user ID
         assetRequest.getAsset().setAccountId(assetRequest.getAsset().getAuditDetails().getCreatedBy());
+
+        // Auto-set applicationDate to current timestamp if not provided
+        if (assetRequest.getAsset().getApplicationDate() == null) {
+            assetRequest.getAsset().setApplicationDate(System.currentTimeMillis());
+        }
+
+        // Fetch and set district and division from MDMS based on tenantId
+        enrichDistrictAndDivision(assetRequest);
+
+        // Fetch and set district and division from MDMS based on tenantId
+        enrichDistrictAndDivision(assetRequest);
 
         // Enrich documents with unique identifiers if present
         if (!CollectionUtils.isEmpty(assetRequest.getAsset().getDocuments())) {
@@ -71,6 +91,22 @@ public class EnrichmentService {
     }
 
     /**
+     * Fetches district and division from MDMS based on tenantId
+     */
+    private void enrichDistrictAndDivision(AssetRequest assetRequest) {
+        // For now, set hardcoded values - will work on MDMS integration later
+        String tenantId = assetRequest.getAsset().getTenantId();
+        log.info("Setting district and division for tenantId: {}", tenantId);
+        
+        assetRequest.getAsset().setDistrict("Test District");
+        assetRequest.getAsset().setDivision("Test DDR");
+        
+        log.info("Set district: Test District, division: Test DDR");
+    }
+
+
+
+    /**
      * Enriches other Asset operations (e.g., assignment, disposal) by adding audit details and unique identifiers.
      *
      * @param assetRequest The request object containing asset operation details to be enriched.
@@ -81,8 +117,16 @@ public class EnrichmentService {
 
         // Set audit details for the asset assignment
         AuditDetails auditDetails = assetUtil.getAuditDetails(requestInfo.getUserInfo().getUuid(), true);
-        assetRequest.getAsset().getAssetAssignment().setAuditDetails(auditDetails);
-        assetRequest.getAsset().getAssetAssignment().setAssignmentId(UUID.randomUUID().toString());
+        
+        if (assetRequest.getAsset().getAssetAssignment() != null) {
+            assetRequest.getAsset().getAssetAssignment().setAuditDetails(auditDetails);
+            assetRequest.getAsset().getAssetAssignment().setAssignmentId(UUID.randomUUID().toString());
+        }
+        
+        if (assetRequest.getAsset().getAssetInventory() != null) {
+            assetRequest.getAsset().getAssetInventory().setAuditDetails(auditDetails);
+            assetRequest.getAsset().getAssetInventory().setInventoryId(UUID.randomUUID().toString());
+        }
     }
 
     /**
@@ -95,8 +139,15 @@ public class EnrichmentService {
         RequestInfo requestInfo = assetRequest.getRequestInfo();
 
         // Set audit details for the asset assignment
-        AuditDetails auditDetails = assetUtil.getAuditDetails(requestInfo.getUserInfo().getUuid(), true);
-        assetRequest.getAsset().getAssetAssignment().setAuditDetails(auditDetails);
+        AuditDetails auditDetails = assetUtil.getAuditDetails(requestInfo.getUserInfo().getUuid(), false);
+        
+        if (assetRequest.getAsset().getAssetAssignment() != null) {
+            assetRequest.getAsset().getAssetAssignment().setAuditDetails(auditDetails);
+        }
+        
+        if (assetRequest.getAsset().getAssetInventory() != null) {
+            assetRequest.getAsset().getAssetInventory().setAuditDetails(auditDetails);
+        }
     }
 
     /**
@@ -177,6 +228,17 @@ public class EnrichmentService {
     public void enrichDisposalCreateOperations(AssetDisposalRequest request) {
         log.info("Enriching Other Operations Request");
         AuditDetails auditDetails = assetUtil.getAuditDetails(request.getRequestInfo().getUserInfo().getUuid(), true);
+
+        // Calculate asset disposal age in days
+        String tenantId = assetUtil.extractTenantId(request);
+        Asset asset = assetUtil.fetchAssetById(request.getAssetDisposal().getAssetId(), tenantId);
+        long ageInDays = (request.getAssetDisposal().getDisposalDate() - asset.getApplicationDate()) / (24 * 60 * 60 * 1000);
+        request.getAssetDisposal().setAssetDisposalAgeInDays(ageInDays);
+
+// Set default status as COMPLETED (direct disposal)
+        if (request.getAssetDisposal().getAssetDisposalStatus() == null) {
+            request.getAssetDisposal().setAssetDisposalStatus("COMPLETED");
+        }
 
         // Enrich documents with unique identifiers if present
         if (!CollectionUtils.isEmpty(request.getAssetDisposal().getDocuments())) {

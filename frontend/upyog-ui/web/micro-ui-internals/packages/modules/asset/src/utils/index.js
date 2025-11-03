@@ -8,8 +8,6 @@ export const convertDotValues = (value = "") => {
   );
 };
 
-
-
 export const getFixedFilename = (filename = "", size = 5) => {
   if (filename.length <= size) {
     return filename;
@@ -21,34 +19,21 @@ export const shouldHideBackButton = (config = []) => {
   return config.filter((key) => window.location.href.includes(key.screenPath)).length > 0 ? true : false;
 };
 
-
 export const CompareTwoObjects = (ob1, ob2) => {
   let comp = 0;
-Object.keys(ob1).map((key) =>{
-  if(typeof ob1[key] == "object")
-  {
-    if(key == "institution")
-    {
-      if((ob1[key].name || ob2[key].name) && ob1[key]?.name !== ob2[key]?.name)
-      comp=1
-      else if(ob1[key]?.type?.code !== ob2[key]?.type?.code)
-      comp=1
-      
+  Object.keys(ob1).map((key) => {
+    if (typeof ob1[key] == "object") {
+      if (key == "institution") {
+        if ((ob1[key].name || ob2[key].name) && ob1[key]?.name !== ob2[key]?.name) comp = 1;
+        else if (ob1[key]?.type?.code !== ob2[key]?.type?.code) comp = 1;
+      } else if (ob1[key]?.code !== ob2[key]?.code) comp = 1;
+    } else {
+      if ((ob1[key] || ob2[key]) && ob1[key] !== ob2[key]) comp = 1;
     }
-    else if(ob1[key]?.code !== ob2[key]?.code)
-    comp=1
-  }
-  else
-  {
-    if((ob1[key] || ob2[key]) && ob1[key] !== ob2[key])
-    comp=1
-  }
-});
-if(comp==1)
-return false
-else
-return true;
-}
+  });
+  if (comp == 1) return false;
+  else return true;
+};
 
 /*   method to check value  if not returns NA*/
 export const checkForNA = (value = "") => {
@@ -93,13 +78,55 @@ export const convertDateToEpoch = (dateString) => {
 
 export const convertStringToFloat = (amountString) => {
   // Remove commas if present and convert to float
-  const cleanedString = amountString.replace(/,/g, '');
-  
+  const cleanedString = amountString.replace(/,/g, "");
+
   // Convert to float and return
   const floatValue = parseFloat(cleanedString);
-  
+
   // Return the float value, or NaN if conversion fails
   return isNaN(floatValue) ? null : floatValue;
+};
+
+//prepare payload for UP
+export const assetDataUP = (data) => {
+  const keysToRemove = [
+    "acquisitionCost",
+    "acquisitionDate",
+    "assetDescription",
+    "assetName",
+    "assetUniqueNo",
+    "assetclassification",
+    "assetsubtype",
+    "assettype",
+    "otherCategory"
+  ];
+  const assetDetails = data?.assetDetails || {};
+  const filteredAdditionalDetails = Object.keys(assetDetails)
+    .filter((key) => !keysToRemove.includes(key)) // Remove unwanted keys
+    .reduce((acc, key) => {
+      acc[key] = assetDetails[key]; // Add remaining keys to the accumulator
+      return acc;
+    }, {});
+  const payLoadData = {
+    Asset: {
+      id: "",
+      tenantId: "pg.citya",
+      assetName: data?.assetDetails?.assetName,
+      description: data?.assetDetails?.assetDescription,
+      assetClassification: data?.assetDetails?.assetclassification?.code,
+      assetParentCategory: data?.assetDetails?.assettype?.code,
+      assetCategory: data?.assetDetails?.assetsubtype?.code,
+      assetSubCategory: data?.assetDetails?.otherCategory,
+      acquisitionCost: convertStringToFloat(data?.assetDetails?.acquisitionCost),
+      purchaseDate: convertDateToEpoch(data?.assetDetails?.acquisitionDate),
+      assetUniqueNo: data?.assetDetails?.assetUniqueNo,
+      status:"ACTIVE",
+      additionalDetails: filteredAdditionalDetails
+    },
+    
+  };
+
+  return payLoadData;
 };
 
 
@@ -115,16 +142,15 @@ export const Assetdata = (data) => {
     "purchaseOrderNumber",
     "purchaseCost",
     "location",
-    "lifeOfAsset" 
+    "lifeOfAsset",
   ];
 
   // Ensure data?.assetDetails exists before attempting to filter
   const assetDetails = data?.assetDetails || {}; // Default to empty object if undefined or null
-  
 
   // Filter out the keys to remove from assetDetails
   const filteredAdditionalDetails = Object.keys(assetDetails)
-    .filter(key => !keysToRemove.includes(key)) // Remove unwanted keys
+    .filter((key) => !keysToRemove.includes(key)) // Remove unwanted keys
     .reduce((acc, key) => {
       acc[key] = assetDetails[key]; // Add remaining keys to the accumulator
       return acc;
@@ -136,10 +162,11 @@ export const Assetdata = (data) => {
       assetBookRefNo: data?.asset?.BookPagereference,
       assetName: data?.asset?.AssetName,
       description: data?.asset?.Assetdescription,
-      assetClassification:data?.asset?.assetclassification?.code,
+      assetClassification: data?.asset?.assetclassification?.code,
+      vendorDetail: data?.asset?.vendorDetail?.code,
       assetParentCategory: data?.asset?.assettype?.code,
-      assetCategory:data?.asset?.assetsubtype?.code,
-      assetSubCategory:data?.asset?.assetparentsubCategory?.code,
+      assetCategory: data?.asset?.assetsubtype?.code,
+      assetSubCategory: data?.asset?.assetparentsubCategory?.code,
       department: data?.asset?.Department?.code,
       // assetType: data?.asset?.assetsOfType?.code,
       assetUsage: data?.asset?.assetsUsage?.code,
@@ -169,33 +196,101 @@ export const Assetdata = (data) => {
       businessService: "asset-create",
 
       addressDetails: {
-        addressLine1:data?.address?.addressLine1,
-        addressLine2:data?.address?.addressLine2,
-        buildingName:data?.address?.buildingName,
-        doorNo:data?.address?.doorNo,
-        street:data?.address?.street,
-        pincode:data?.address?.pincode,
-        city:data?.address?.city?.name,
-        locality: { code: data?.address?.locality?.code,
-                    area: data?.address?.locality?.area,
-                    latitude: data?.address?.latitude,
-                    longitude: data?.address?.longitude },
-
+        addressLine1: data?.address?.addressLine1,
+        addressLine2: data?.address?.addressLine2,
+        buildingName: data?.address?.buildingName,
+        doorNo: data?.address?.doorNo,
+        street: data?.address?.street,
+        pincode: data?.address?.pincode,
+        city: data?.address?.city?.name,
+        locality: {
+          code: data?.address?.locality?.code,
+          area: data?.address?.locality?.area,
+          latitude: data?.address?.latitude,
+          longitude: data?.address?.longitude,
+        },
       },
       documents: data?.documents?.documents,
-      workflow : {
+      workflow: {
         action: "INITIATE",
         businessService: "asset-create",
-        moduleName: "asset-services"
+        moduleName: "asset-services",
       },
 
       additionalDetails: filteredAdditionalDetails,
-
     },
   };
 
   return formdata;
 };
+
+export const InventoryVendorData = (data) => {
+  
+  const payLoadInventoryVendor = {
+    Vendor: {
+      vendorId: "",
+      tenantId: "pg.citya",
+      vendorName: data?.inventoryVendor?.vendorName,
+      contactPerson: data?.inventoryVendor?.contactPerson,
+      vendorNumber: data?.inventoryVendor?.vendorNumber,
+      contactNumber: data?.inventoryVendor?.contactNumber,
+      contactEmail: data?.inventoryVendor?.contactEmail,
+      gstin: data?.inventoryVendor?.gstin,
+      pan: data?.inventoryVendor?.pan,
+      vendorAddress: data?.inventoryVendor?.vendorAddress,
+      identificationNo: data?.inventoryVendor?.identificationNo,
+      status:"ACTIVE"
+    }
+  };
+  return payLoadInventoryVendor;
+};
+
+export const ProcerementData = (data) => {
+  
+  const payLoadProcerement = {
+    ProcurementRequest: {
+      requestId: "",
+      tenantId: "pg.citya",
+      item: data?.procurementReq?.parentCategory?.code,
+      itemType: data?.procurementReq?.subCategory?.code,
+      quantity: convertStringToFloat(data?.procurementReq.quantity),
+      identificationNo: data?.procurementReq.identificationNo,
+      assetApplicationNumber: data?.procurementReq.requestIdNo,
+      status:"PENDING"
+    }
+  };
+  return payLoadProcerement;
+};
+export const InventoryCreationData = (data) => {
+  
+  const payLoadInventoryCreation = {
+    Asset: {
+      tenantId: data?.inventory?.office,
+      assetInventory:{
+          procurementRequestId: data?.inventory?.requestId?.code,
+          office: data?.inventory?.office,
+          item: data?.inventory.item,
+          itemType: data?.inventory.itemType,
+          itemDescription: data?.inventory.itemDescription,
+          attributes: data?.inventory.attributes,
+          vendorNumber: data?.inventory?.vendorDetails?.code,
+          purchaseMode: data?.inventory?.purchaseMode?.code,
+          purchaseDate: convertDateToEpoch(data?.inventory.purchaseDate),
+          deliveryDate: convertDateToEpoch(data?.inventory.deliveryDate),
+          endOfLife: data?.inventory.endOfLife,
+          endOfSupport: data?.inventory.endOfSupport,
+          quantity: data?.inventory.quantity,
+          unitPrice: convertStringToFloat(data?.inventory.unitPrice),
+          totalPrice: convertStringToFloat(data?.inventory.totalPrice),
+          uain: data?.inventory.assetApplicationNumber,
+          insuranceApplicability: data?.insuranceApplicability?.code,
+          inventoryStatus:"ACTIVE"
+      }
+    }
+  };
+  return payLoadInventoryCreation;
+};
+
 export const stringReplaceAll = (str = "", searcher = "", replaceWith = "") => {
   if (searcher == "") return str;
   while (str.includes(searcher)) {
@@ -218,9 +313,7 @@ export const checkArrayLength = (obj = [], length = 0) => {
 
 export const getWorkflow = (data = {}) => {
   return {
-
     businessService: `asset-create`,
     moduleName: "asset-services",
   };
 };
-

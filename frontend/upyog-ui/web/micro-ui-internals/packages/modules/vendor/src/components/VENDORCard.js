@@ -19,10 +19,17 @@ const VENDORCard = () => {
     //   label: t("Inbox"),
     //   link: `/upyog-ui/employee/asset/assetservice/inbox`,
     // },
-    
+    {
+      label: t("ADDITIONAL_VENDOR_DETAILS"),
+      link: `/upyog-ui/employee/vendor/registry/additionaldetails`
+    },
+    {
+      label: t("VENDOR_NEW_REGISTERATION"),
+      link: `/upyog-ui/employee/vendor/registry/new-vendor`
+    },
     {
       label: t("SEARCH_VENDOR"),
-      link: `/upyog-ui/employee/vendor/search-vendor?selectedTabs=VENDOR`
+      link: `/upyog-ui/employee/vendor/search-vendor`
     },
     // {
     //   label: t("MY_ASSET_APPLICATION"),

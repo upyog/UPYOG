@@ -10,7 +10,7 @@ public class AssetAssignmentRowMapper implements RowMapper<AssetAssignment> {
     public AssetAssignment mapRow(ResultSet rs, int rowNum) throws SQLException {
         return AssetAssignment.builder()
                 .assignmentId(rs.getString("assignmentid"))
-                .assetApplicaltionNo(rs.getString("applicationno"))
+                .assetApplicationNo(rs.getString("applicationno"))
                 .tenantId(rs.getString("tenantid"))
                 .assignedUserName(rs.getString("assignedusername"))
                 .employeeCode(rs.getString("employeecode"))
