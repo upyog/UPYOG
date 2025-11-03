@@ -144,6 +144,9 @@ public class InboxService {
     private BillingAmendmentInboxFilterService billInboxFilterService;
 
     @Autowired
+    private ChallanInboxFilterService challanInboxFilterService;
+
+    @Autowired
     private RestTemplate restTemplate;
 
     @Autowired
@@ -258,11 +261,13 @@ public class InboxService {
     boolean isAdvFlag = "advandhoarding-services".equalsIgnoreCase(moduleNm);
     boolean isNocFlag = "noc-service".equalsIgnoreCase(moduleNm);
     boolean isChbFlag = "CHB".equalsIgnoreCase(moduleNm);
+    boolean isChallanFlag = "Challan_Generation".equalsIgnoreCase(moduleNm);
 
-    if(isNdcFlag || isPetFlag || isAdvFlag || isNocFlag || isChbFlag){
+    if(isNdcFlag || isPetFlag || isAdvFlag || isNocFlag || isChbFlag || isChallanFlag){
             moduleSearchCriteria.put("tenantId", criteria.getTenantId());
             moduleSearchCriteria.put("offset", criteria.getOffset());
             moduleSearchCriteria.put("limit", criteria.getLimit());
+
         }
 
         if (!CollectionUtils.isEmpty(moduleSearchCriteria)) {
@@ -369,6 +374,14 @@ public class InboxService {
                     List<String> statuses = new ArrayList<>();
                     processCriteria.getStatus().forEach(status -> {
                         // For CHB, we directly use the status values as-is (instead of looking them up in StatusIdNameMap)
+                        statuses.add(status);
+                    });
+                    moduleSearchCriteria.put(applicationStatusParam, StringUtils.arrayToDelimitedString(statuses.toArray(), ","));
+                }
+                else if (processCriteria.getModuleName().equals("Challan_Generation") && !CollectionUtils.isEmpty(processCriteria.getStatus())) {
+                    List<String> statuses = new ArrayList<>();
+                    processCriteria.getStatus().forEach(status -> {
+                        // For CHallan, we directly use the status values as-is (instead of looking them up in StatusIdNameMap)
                         statuses.add(status);
                     });
                     moduleSearchCriteria.put(applicationStatusParam, StringUtils.arrayToDelimitedString(statuses.toArray(), ","));
@@ -652,6 +665,22 @@ public class InboxService {
                     moduleSearchCriteria.put(applNosParam, applicationNumbers);
                     businessKeys.addAll(applicationNumbers);
                     moduleSearchCriteria.remove(STATUS_PARAM);
+                    moduleSearchCriteria.remove(LOCALITY_PARAM);
+                    moduleSearchCriteria.remove(OFFSET_PARAM);
+                } else {
+                    isSearchResultEmpty = true;
+                }
+            }
+
+            if (processCriteria != null && !ObjectUtils.isEmpty(processCriteria.getModuleName())
+                    && isChallanFlag) {
+                totalCount = challanInboxFilterService.fetchApplicationCountFromSearcher(criteria, StatusIdNameMap, requestInfo);
+                List<String> applicationNumbers = challanInboxFilterService.fetchApplicationNumbersFromSearcher(criteria, StatusIdNameMap, requestInfo);
+                if (!CollectionUtils.isEmpty(applicationNumbers)) {
+                    String applNosParam = srvMap.get("applNosParam");
+                    moduleSearchCriteria.put(applNosParam, applicationNumbers);
+                    businessKeys.addAll(applicationNumbers);
+                    moduleSearchCriteria.remove(srvMap.get("applsStatusParam"));
                     moduleSearchCriteria.remove(LOCALITY_PARAM);
                     moduleSearchCriteria.remove(OFFSET_PARAM);
                 } else {
@@ -1048,6 +1077,13 @@ public class InboxService {
                                 .map(Map.Entry::getKey)
                                 .collect(Collectors.toList());
                         processCriteria.setStatus(matchingIdsChb);
+                    }
+                    if(isChallanFlag) {
+                        List<String> matchingIdsChallan = StatusIdNameMap.entrySet().stream()
+                                .filter(entry -> processCriteria.getStatus().contains(entry.getValue()))
+                                .map(Map.Entry::getKey)
+                                .collect(Collectors.toList());
+                        processCriteria.setStatus(matchingIdsChallan);
                     }
                     processInstanceResponse = workflowService.getProcessInstance(processCriteria, requestInfo);
             	}
