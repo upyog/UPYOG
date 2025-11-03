@@ -1115,7 +1115,7 @@ public class EstimationService {
 		BigDecimal totalAmount=BigDecimal.ZERO;
 		BigDecimal calculatedPercentage=BigDecimal.ZERO;
 		
-		estimates.add(TaxHeadEstimate.builder().taxHeadCode(PT_VACANT_LAND_EXEMPTION).category(Category.EXEMPTION).estimateAmount( taxAfterVacExemption.negate()).build());
+		estimates.add(TaxHeadEstimate.builder().taxHeadCode(PT_VACANT_LAND_EXEMPTION).category(Category.EXEMPTION).estimateAmount( taxAfterVacExemption).build());
 		estimates.add(TaxHeadEstimate.builder().taxHeadCode(PT_COMPLEMENTARY_REBATE).category(Category.REBATE).estimateAmount( complementary_rebate).calculatedPercentage(new BigDecimal(CALCULATION_92)).build());
 		estimates.add(TaxHeadEstimate.builder().taxHeadCode(PT_MODEOFPAYMENT_REBATE).category(Category.REBATE).estimateAmount( modeofpayment_rebate).calculatedPercentage(calculatedPercentage).build());
 		//Incase of Exemption and Heritage
