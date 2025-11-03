@@ -61,7 +61,7 @@ const DisplayPhotos = ({ srcs, drawingNos = [], onClick }) => {
       className="photos-wrap"
       style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))" }}
     >
-      {srcs.map((source, index) => (
+      {srcs?.map((source, index) => (
         <ImageOrPDFIcon
           key={index}
           source={source}
