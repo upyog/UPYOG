@@ -287,7 +287,6 @@ public class CreateVoucher {
 			LOGGER.debug("Initializing CreateVoucher Service");
 
 	}
-	@Autowired
 
 	/**
 	 * creates voucher From billId
