@@ -179,6 +179,9 @@ public class SsoService {
 		if (userSso != null) {
 			searchCriteria.setUuid(Collections.singletonList(userSso.getUserUuid()));
 		}
+		else {
+			searchCriteria.setMobileNumber(user.getMobileNumber());
+		}
 		List<User> userInDb = userService.searchUsers(searchCriteria, false, null);
 		User newUser;
 		if (CollectionUtils.isEmpty(userInDb)) {
