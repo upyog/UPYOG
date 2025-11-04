@@ -356,6 +356,10 @@ public class WorkflowQueryBuilder {
             with_query_builder.append(" AND pi_outer.businessservice =? ");
             preparedStmtList.add(criteria.getBusinessService());
         }
+        if(!StringUtils.isEmpty(criteria.getModuleName())){
+            with_query_builder.append(" AND pi_outer.modulename =? ");
+            preparedStmtList.add(criteria.getModuleName());
+        }
         
         if(!ObjectUtils.isEmpty(criteria.getIsNearingSlaCount()) && criteria.getIsNearingSlaCount()){
             with_query_builder.append(" AND ((select extract(epoch from current_timestamp)) * 1000 - pi_outer.lastmodifiedTime) BETWEEN ? AND ? ");
