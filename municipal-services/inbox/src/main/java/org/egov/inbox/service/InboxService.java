@@ -150,6 +150,8 @@ public class InboxService {
     private LayoutInboxFilterService  layoutInboxFilterService;
 
     @Autowired
+    private CluInboxFilterService cluInboxFilterService;
+    @Autowired
     private RestTemplate restTemplate;
 
     @Autowired
@@ -266,8 +268,9 @@ public class InboxService {
     boolean isChbFlag = "CHB".equalsIgnoreCase(moduleNm);
     boolean isChallanFlag = "Challan_Generation".equalsIgnoreCase(moduleNm);
     boolean isLayoutFlag = "layout-service".equalsIgnoreCase(moduleNm);
+    boolean isCluFlag= "clu-service".equalsIgnoreCase(moduleNm);
 
-    if(isNdcFlag || isPetFlag || isAdvFlag || isNocFlag || isChbFlag || isChallanFlag || isLayoutFlag){
+    if(isNdcFlag || isPetFlag || isAdvFlag || isNocFlag || isChbFlag || isChallanFlag || isLayoutFlag || isCluFlag){
             moduleSearchCriteria.put("tenantId", criteria.getTenantId());
             moduleSearchCriteria.put("offset", criteria.getOffset());
             moduleSearchCriteria.put("limit", criteria.getLimit());
@@ -391,6 +394,14 @@ public class InboxService {
                     moduleSearchCriteria.put(applicationStatusParam, StringUtils.arrayToDelimitedString(statuses.toArray(), ","));
                 }
                 else if (processCriteria.getModuleName().equals("layout-service") && !CollectionUtils.isEmpty(processCriteria.getStatus())) {
+                    List<String> statuses = new ArrayList<>();
+                    processCriteria.getStatus().forEach(status -> {
+                        // For CHallan, we directly use the status values as-is (instead of looking them up in StatusIdNameMap)
+                        statuses.add(status);
+                    });
+                    moduleSearchCriteria.put(applicationStatusParam, StringUtils.arrayToDelimitedString(statuses.toArray(), ","));
+                }
+                else if (processCriteria.getModuleName().equals("clu-service") && !CollectionUtils.isEmpty(processCriteria.getStatus())) {
                     List<String> statuses = new ArrayList<>();
                     processCriteria.getStatus().forEach(status -> {
                         // For CHallan, we directly use the status values as-is (instead of looking them up in StatusIdNameMap)
@@ -704,6 +715,21 @@ public class InboxService {
                     && isLayoutFlag) {
                 totalCount = layoutInboxFilterService.fetchApplicationCountFromSearcher(criteria, StatusIdNameMap, requestInfo);
                 List<String> applicationNumbers = layoutInboxFilterService.fetchApplicationNumbersFromSearcher(criteria, StatusIdNameMap, requestInfo);
+                if (!CollectionUtils.isEmpty(applicationNumbers)) {
+                    String applNosParam = srvMap.get("applNosParam");
+                    moduleSearchCriteria.put(applNosParam, applicationNumbers);
+                    businessKeys.addAll(applicationNumbers);
+                    moduleSearchCriteria.remove(srvMap.get("applsStatusParam"));
+                    moduleSearchCriteria.remove(LOCALITY_PARAM);
+                    moduleSearchCriteria.remove(OFFSET_PARAM);
+                } else {
+                    isSearchResultEmpty = true;
+                }
+            }
+            if (processCriteria != null && !ObjectUtils.isEmpty(processCriteria.getModuleName())
+                    && isCluFlag) {
+                totalCount = cluInboxFilterService.fetchApplicationCountFromSearcher(criteria, StatusIdNameMap, requestInfo);
+                List<String> applicationNumbers = cluInboxFilterService.fetchApplicationNumbersFromSearcher(criteria, StatusIdNameMap, requestInfo);
                 if (!CollectionUtils.isEmpty(applicationNumbers)) {
                     String applNosParam = srvMap.get("applNosParam");
                     moduleSearchCriteria.put(applNosParam, applicationNumbers);
@@ -1119,6 +1145,13 @@ public class InboxService {
                                 .map(Map.Entry::getKey)
                                 .collect(Collectors.toList());
                         processCriteria.setStatus(matchingIdsLayout);
+                    }
+                    if(isCluFlag) {
+                        List<String> matchingIdsClu = StatusIdNameMap.entrySet().stream()
+                                .filter(entry -> processCriteria.getStatus().contains(entry.getValue()))
+                                .map(Map.Entry::getKey)
+                                .collect(Collectors.toList());
+                        processCriteria.setStatus(matchingIdsClu);
                     }
                     processInstanceResponse = workflowService.getProcessInstance(processCriteria, requestInfo);
             	}
