@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.egov.wscalculation.constants.WSCalculationConstant;
 import org.egov.wscalculation.repository.BillGeneratorDao;
 import org.egov.wscalculation.service.DemandService;
@@ -38,76 +39,55 @@ public class BillGenerationConsumer {
 	 * @param records
 	 *            would be bill generator request.
 	 */
-	@KafkaListener(topics = {
-	"${egov.watercalculatorservice.billgenerate.topic}" }, containerFactory = "kafkaListenerContainerFactoryBatch")
-	public void listen(final List<Message<?>> records) {
-	    BillGeneratorReq billGeneratorReq = null;
+	@KafkaListener(
+		    topics = "${egov.swcalculatorservice.billgenerate.topic}",
+		    containerFactory = "kafkaListenerContainerFactoryBatch"
+		)
+		public void listen(final List<ConsumerRecord<String, Object>> records) {
+		    log.info("📥 SW bill generator consumer received batch with {} records", records.size());
 
-	    try {
-	        log.info("bill generator consumer received records: {}", records.size());
+		    for (int i = 0; i < records.size(); i++) {
+		        ConsumerRecord<String, Object> record = records.get(i);
+		        try {
+		            log.info("🔸 [Record {}] key={}, offset={}, partition={}, value={}",
+		                    i + 1, record.key(), record.offset(), record.partition(), record.value());
 
-	        billGeneratorReq = mapper.convertValue(records.get(0).getPayload(), BillGeneratorReq.class);
-	        log.info("Number of batch records: {}", billGeneratorReq.getConsumerCodes().size());
+		            // Convert record value to BillGeneratorReq
+		            BillGeneratorReq billGeneratorReq = mapper.convertValue(record.value(), BillGeneratorReq.class);
 
-	        long timeStamp = System.currentTimeMillis();
-	        if (billGeneratorReq.getConsumerCodes() != null && !billGeneratorReq.getConsumerCodes().isEmpty() 
-	                && billGeneratorReq.getTenantId() != null) {
+		            if (billGeneratorReq == null) {
+		                log.warn("⚠️ Skipping record {} — unable to parse BillGeneratorReq", i + 1);
+		                continue;
+		            }
 
-	            log.info("Fetch Bill generator initiated for Consumers: {}", billGeneratorReq.getConsumerCodes());
-	            List<String> failureConsumerCodes = new ArrayList<>();
+		            log.info("🧾 Parsed Request -> Consumers: {}, TenantId: {}",
+		                    billGeneratorReq.getConsumerCodes(), billGeneratorReq.getTenantId());
 
-	            billGeneratorDao.insertBillSchedulerConnectionStatus(
-	                    new ArrayList<>(billGeneratorReq.getConsumerCodes()),
-	                    billGeneratorReq.getBillSchedular().getId(),
-	                    billGeneratorReq.getBillSchedular().getLocality(),
-	                    WSCalculationConstant.INPROGRESS,
-	                    billGeneratorReq.getBillSchedular().getTenantId(),
-	                    WSCalculationConstant.INPROGRESS,
-	                    timeStamp
-	            );
+		            if (billGeneratorReq.getConsumerCodes() == null ||
+		                billGeneratorReq.getConsumerCodes().isEmpty() ||
+		                billGeneratorReq.getTenantId() == null) {
+		                log.warn("⚠️ Skipping record {} — missing consumerCodes or tenantId", i + 1);
+		                continue;
+		            }
 
-	            List<String> fetchBillSuccessConsumercodes = demandService.fetchBillSchedulerSingle(
-	                    billGeneratorReq.getConsumerCodes(),
-	                    billGeneratorReq.getTenantId(),
-	                    billGeneratorReq.getRequestInfoWrapper().getRequestInfo(),
-	                    failureConsumerCodes,
-	                    billGeneratorReq.getBillSchedular().getId(),
-	                    billGeneratorReq.getBillSchedular().getLocality()
-	            );
+		            log.info("🚀 Fetch Bill generator initiated for Consumers: {}", billGeneratorReq.getConsumerCodes());
 
-	            log.info("Fetch Bill generator completed for consumers: {}", fetchBillSuccessConsumercodes);
-	        }
+		            List<String> failureConsumerCodes = new ArrayList<>();
 
-	    } catch (Exception exception) {
-	        log.error("Exception occurred while generating bills in the sw bill generator consumer", exception);
-	    }
+		            List<String> fetchBillSuccessConsumercodes = demandService.fetchBillSchedulerSingle(
+		                    billGeneratorReq.getConsumerCodes(),
+		                    billGeneratorReq.getTenantId(),
+		                    billGeneratorReq.getRequestInfoWrapper().getRequestInfo(),
+		                    failureConsumerCodes,
+		                    billGeneratorReq.getBillSchedular().getId(),
+		                    billGeneratorReq.getBillSchedular().getLocality()
+		            );
 
-		/* Recheck and reprocess outside main try-catch, in separate safe block */
-	    try {
-	        if (billGeneratorReq != null) {
-	            List<String> stillInitiatedConnections = billGeneratorDao.getConnectionsByStatus(
-	                    billGeneratorReq.getBillSchedular().getId(),
-	                    WSCalculationConstant.INITIATED
-	            );
-
-	            if (stillInitiatedConnections != null && !stillInitiatedConnections.isEmpty()) {
-	                log.info("Reprocessing still initiated connections: {}", stillInitiatedConnections);
-
-	                List<String> reprocessedConnections = demandService.fetchBillSchedulerSingle(
-	                        new HashSet<>(stillInitiatedConnections),
-	                        billGeneratorReq.getTenantId(),
-	                        billGeneratorReq.getRequestInfoWrapper().getRequestInfo(),
-	                        new ArrayList<>(),
-	                        billGeneratorReq.getBillSchedular().getId(),
-	                        billGeneratorReq.getBillSchedular().getLocality()
-	                );
-	                log.info("Reprocessing completed for connections: {}", reprocessedConnections);
-	            }
-	        }
-	    } catch (Exception ex) {
-	        log.error("Exception occurred while reprocessing initiated connections", ex);
-	    }
-	}
-
+		            log.info("✅ Fetch Bill generator completed for consumers: {}", fetchBillSuccessConsumercodes);
+		        } catch (Exception ex) {
+		            log.error("❌ Exception while processing record {} -> {}", i + 1, ex.getMessage(), ex);
+		        }
+		    }
+		}
 
 }

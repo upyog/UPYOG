@@ -17,6 +17,7 @@ import org.egov.mdms.model.MasterDetail;
 import org.egov.mdms.model.MdmsCriteria;
 import org.egov.mdms.model.MdmsCriteriaReq;
 import org.egov.mdms.model.ModuleDetail;
+import org.egov.swcalculation.web.models.BillV2;
 import org.egov.tracer.model.CustomException;
 import org.egov.mdms.model.MdmsCriteriaReq;
 import org.egov.wscalculation.config.WSCalculationConfiguration;
@@ -1811,6 +1812,8 @@ public class DemandService {
 	    List<String> successConsumerCodes = new ArrayList<>();
 
 	    for (String consumerCode : consumerCodes) {
+			List<BillV2> bills =null;
+
 	        try {
 	        	
 	            StringBuilder fetchBillURL = calculatorUtils.getFetchBillURL(tenantId, consumerCode);
@@ -1821,8 +1824,31 @@ public class DemandService {
 	            );
 
 	            BillResponseV2 billResponse = mapper.convertValue(result, BillResponseV2.class);
-	            List<BillV2> bills = billResponse.getBill();
-
+	            if (billResponse == null) {
+	                log.warn("⚠️ BillResponseV2 is null after conversion.");
+	                billGeneratorDao.updateBillSchedulerConnectionStatus(
+	            			  consumerCode,
+			            		 schedlerId,
+		  				        localitycode,
+		  				        WSCalculationConstant.FAILURE,
+		  				        tenantId,
+		  				        "BillResponseV2 is null after conversion.",
+		  				      System.currentTimeMillis()
+		  				    );
+	            } else if (billResponse.getBill() == null) {
+	                log.warn("⚠️ Bill list is null in BillResponseV2.");
+	                billGeneratorDao.updateBillSchedulerConnectionStatus(
+	            			  consumerCode,
+			            		 schedlerId,
+		  				        localitycode,
+		  				        WSCalculationConstant.FAILURE,
+		  				        tenantId,
+		  				        "Bill list is null in BillResponseV2.",
+		  				      System.currentTimeMillis()
+		  				    );
+	            } else {
+	                bills = billResponse.getBill();
+	            }
 	        	
 	            
 	            if (bills != null && !bills.isEmpty()) {
