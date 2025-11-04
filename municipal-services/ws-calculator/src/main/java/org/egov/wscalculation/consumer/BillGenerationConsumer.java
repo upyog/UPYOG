@@ -40,11 +40,11 @@ public class BillGenerationConsumer {
 	 *            would be bill generator request.
 	 */
 	@KafkaListener(
-		    topics = "${egov.swcalculatorservice.billgenerate.topic}",
+		    topics = "${egov.watercalculatorservice.billgenerate.topic}",
 		    containerFactory = "kafkaListenerContainerFactoryBatch"
 		)
 		public void listen(final List<ConsumerRecord<String, Object>> records) {
-		    log.info("📥 SW bill generator consumer received batch with {} records", records.size());
+		    log.info("📥 WS bill generator consumer received batch with {} records", records.size());
 
 		    for (int i = 0; i < records.size(); i++) {
 		        ConsumerRecord<String, Object> record = records.get(i);
