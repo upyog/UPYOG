@@ -72,6 +72,14 @@ public class ProcessInstanceSearchCriteria {
     @JsonIgnore
     private Long slotPercentageSlaLimit;
 
+    @JsonIgnore
+    private Long sla;
+    
+    @JsonIgnore
+    private String startSlaState;
+    
+    @JsonIgnore
+    private List<String> currentStates;
 
 
 

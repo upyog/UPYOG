@@ -17,12 +17,7 @@ import org.egov.wf.web.models.StatusCountRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
-
+import org.springframework.web.bind.annotation.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 
@@ -119,6 +114,17 @@ public class WorkflowController {
         criteria.setIsNearingSlaCount(Boolean.TRUE);
         Integer count = workflowService.count(requestInfoWrapper.getRequestInfo(),criteria);
         return new ResponseEntity<>(count,HttpStatus.OK);
+    }
+    
+    @PostMapping("/escalate/_searchautoescalationeligibleapp")
+    public ResponseEntity<ProcessInstanceResponse> searchAutoEscalationEligibleApplications(@Valid @RequestBody RequestInfoWrapper requestInfoWrapper,
+                                                          @Valid @ModelAttribute ProcessInstanceSearchCriteria criteria) {
+        List<ProcessInstance> processInstances = workflowService.getAutoEscalationEligibleApplications(criteria);
+        ProcessInstanceResponse response  = ProcessInstanceResponse.builder()
+        		.processInstances(processInstances)
+        		.totalCount(processInstances.size())
+        		.build();
+        return new ResponseEntity<>(response,HttpStatus.OK);
     }
 
 }
