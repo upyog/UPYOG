@@ -180,7 +180,10 @@ public class BPAConfiguration {
 
 	@Value("${employee.allowed.search.params}")
 	private String allowedEmployeeSearchParameters;
-
+	
+	@Value("${system.allowed.search.params}")
+	private String allowedSystemSearchParameters;
+	
 	@Value("${egov.tl.previous.allowed}")
 	private Boolean isPreviousTLAllowed;
 
@@ -208,6 +211,9 @@ public class BPAConfiguration {
 
 	@Value("${is.external.workflow.enabled}")
 	private Boolean isExternalWorkFlowEnabled;
+	
+	@Value("${workflow.escalate.search.autoescalation.path}")
+	private String wfAutoEscalationPath;
 
 	// USER EVENTS
 	@Value("${egov.ui.app.host}")
