@@ -276,9 +276,11 @@ public class TokenService {
                             if (roleItem instanceof Map) {
                                 // Handle Map representation (from Redis JSON deserialization)
                                 Map<String, Object> roleMap = (Map<String, Object>) roleItem;
+                                // CRITICAL FIX: Constructor parameter order is (name, code, tenantId)
+                                // NOT (code, name, tenantId) - this was causing role codes and names to be swapped!
                                 return new org.egov.user.web.contract.auth.Role(
-                                    (String) roleMap.get("code"),
-                                    (String) roleMap.get("name"),
+                                    (String) roleMap.get("name"),     // First param = name
+                                    (String) roleMap.get("code"),     // Second param = code
                                     (String) roleMap.get("tenantId")
                                 );
                             } else if (roleItem instanceof org.egov.user.web.contract.auth.Role) {
