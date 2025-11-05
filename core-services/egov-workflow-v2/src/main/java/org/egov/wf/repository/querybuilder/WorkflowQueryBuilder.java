@@ -2,6 +2,7 @@ package org.egov.wf.repository.querybuilder;
 
 import static java.util.Objects.isNull;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -70,6 +71,18 @@ public class WorkflowQueryBuilder {
             " FROM eg_wf_processinstance_v2 wf LEFT OUTER JOIN eg_wf_assignee_v2 assg ON wf.id = assg.processinstanceid WHERE wf.businessid IN ({BASE_QUERY})";
 
     private static final String FINAL_ESCALATED_QUERY ="SELECT businessid from ( {RANKED_QUERY} ) final WHERE outer_rank = 2 ";
+    
+    private static final String AUTO_ESCALATION_QUERY_RANKED_PREFIX = "WITH ranked_pi AS (SELECT ROW_NUMBER() OVER "
+    		+ "(PARTITION BY pi.businessid ORDER BY pi.lastmodifiedTime DESC ) AS rn,";
+    
+    private static final String AUTO_ESCALATION_QUERY_WHERE_CLAUSE = "st.state = ? "
+			+ "  AND EXISTS ( "
+			+ "      SELECT 1 " + "      FROM eg_wf_processinstance_v2 pi2 "
+			+ "      JOIN eg_wf_state_v2 st2 ON st2.uuid = pi2.status "
+			+ "      WHERE pi2.businessid = pi.businessid " + "        AND pi2.businessservice = ? "
+			+ "        AND pi2.modulename = ?" + "        AND pi2.latest = 'true' "
+			+ "        AND st2.state IN ({0})" + "  )) "
+			+ "SELECT * FROM ranked_pi where rn = 1 AND ((extract(epoch FROM current_timestamp) * 1000) - wf_lastModifiedTime) >= ?";
 
     private String getProcessInstanceSearchQueryWithoutPagination(ProcessInstanceSearchCriteria criteria, List<Object> preparedStmtList){
 
@@ -588,4 +601,19 @@ public class WorkflowQueryBuilder {
         String countQuery = STATUS_COUNT_WRAPPER.replace("{INTERNAL_QUERY}", query);
         return countQuery;
     }
+    
+	public String getAutoEscalationEligibleApplicationsSearchQuery(ProcessInstanceSearchCriteria criteria,
+			List<Object> preparedStmtList) {
+
+		String query = QUERY.replace("SELECT", AUTO_ESCALATION_QUERY_RANKED_PREFIX) + AUTO_ESCALATION_QUERY_WHERE_CLAUSE;
+		query = MessageFormat.format(query, createQuery(criteria.getCurrentStates()));
+
+		preparedStmtList.add(criteria.getStartSlaState());
+		preparedStmtList.add(criteria.getBusinessService());
+		preparedStmtList.add(criteria.getModuleName());
+		preparedStmtList.addAll(criteria.getCurrentStates());
+		preparedStmtList.add(criteria.getSla());
+
+		return query;
+	}
 }
