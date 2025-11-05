@@ -2233,7 +2233,7 @@ public class BillServicev2 {
 		// Calculate rounding difference
 		BigDecimal total = taxAmount.add(conservancyAmount).add(streetLightAmount).add(interestAmount).add(penaltyAmount);
 		BigDecimal roundingDiff = getRemainderValue(total);
-		total = total.add(roundingDiff);
+		//total = total.add(roundingDiff);
 		//taxAmount  = total;//530
 		BillAccountDetailV2 propertytaxaccountDetail = BillAccountDetailV2.builder().demandDetailId(demand.getId())
 				.tenantId(demand.getTenantId()).id(UUID.randomUUID().toString())
