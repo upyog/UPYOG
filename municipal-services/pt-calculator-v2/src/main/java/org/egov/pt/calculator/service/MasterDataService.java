@@ -47,9 +47,6 @@ public class MasterDataService {
 	@Autowired
 	private ObjectMapper mapper;
 
-	@Value("${egov.mdms.local.path}")
-	private String localMdmsBasePath;
-
 	@Autowired
 	private CalculatorUtils calculatorUtils;
 
