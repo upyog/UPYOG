@@ -1950,11 +1950,26 @@ public class BillServicev2 {
 			Map<String, BigDecimal> interestMap = new HashMap<>();
 			inp = getInterestPenalty( BigDecimal.ZERO,  null, financialYearFromDemand.toString(),null, null , BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,false);
 			
+			
+			
 			if (!LocalDate.now().isBefore(LocalDate.of(currentyear, 7, 1)) && 
 				    !LocalDate.now().isAfter(LocalDate.of(nextYear, 3, 31))) {
 				    // current date is between July 1, 2025 and March 31, 2026 inclusive
 				
 				noFODays = getDateDifference("01-07-"+currentyear,currentDateWithAssesmentYear(currentyear.toString()));
+				if(previousYear)
+				{
+					try {
+						SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+						String pastStartDate = dateFormat.format(startPeriod);
+						String pastEndDate = dateFormat.format(endPeriod);
+						currentyear=Integer.parseInt(pastStartDate.split("/")[2]);
+						nextYear=Integer.parseInt(pastEndDate.split("/")[2]);
+						noFODays=getDateDifference("01-07-"+currentyear,"31-03-"+nextYear);
+					} catch (Exception e) {
+						log.info("Exception is"+e.getLocalizedMessage());
+					}
+				}
 				totalAMountForInterest = totalAMountForInterest.add(totalAmountForDemand).multiply(noFODays).multiply(new BigDecimal(InterestPrecentage).divide(new BigDecimal(100)));
 				totalAMountForInterest=totalAMountForInterest.setScale(2,2);
 				totalAmountForInterestCal=totalAmountForDemand;
