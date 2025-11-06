@@ -58,6 +58,8 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
 
   useEffect(() => {
     if (financialYearsData && financialYearsData["egf-master"]) {
+      let data = sortFinancialYears(financialYearsData)
+      console.log("datadatadata",data)
       setFinancialYears(financialYearsData["egf-master"]?.["FinancialYear"]);
     }
   }, [financialYearsData]);
@@ -68,6 +70,9 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
 
   function selectFile(e) {
     setFile(e.target.files[0]);
+  }
+  function sortFinancialYears(data) {
+    return data.sort((a, b) => a.startingDate - b.startingDate);
   }
 
   useEffect(() => {
