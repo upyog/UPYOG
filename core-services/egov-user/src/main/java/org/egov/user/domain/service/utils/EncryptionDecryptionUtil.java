@@ -139,14 +139,19 @@ public class EncryptionDecryptionUtil {
         }
 
         try {
-            // Get the appropriate key for decryption based on user context
-            if (key == null && requestInfo != null && requestInfo.getUserInfo() != null) {
+            // Get the appropriate key and purpose for decryption based on user context
+            String purpose = null;
+            if (requestInfo != null && requestInfo.getUserInfo() != null) {
                 Map<String, String> keyPurposeMap = getKeyToDecrypt(objectToDecrypt, requestInfo.getUserInfo());
-                key = keyPurposeMap.get("key");
+                purpose = keyPurposeMap.get("purpose");
+
+                if (key == null) {
+                    key = keyPurposeMap.get("key");
+                }
 
                 // Log decryption attempt for audit - convert object to JsonNode
                 try {
-                    auditService.audit(objectMapper.valueToTree(objectToDecrypt), key, keyPurposeMap.get("purpose"), requestInfo);
+                    auditService.audit(objectMapper.valueToTree(objectToDecrypt), key, purpose, requestInfo);
                 } catch (Exception auditException) {
                     log.warn("Failed to audit decryption attempt", auditException);
                 }
@@ -155,6 +160,11 @@ public class EncryptionDecryptionUtil {
             // If key is still null, use default
             if (key == null) {
                 key = "User";
+            }
+
+            // If purpose is still null, use default based on ABAC setting
+            if (purpose == null) {
+                purpose = abacEnabled ? "BulkSearchResult" : "AbacDisabled";
             }
 
             // Create a safe RequestInfo for encryption service to avoid null user info issues
@@ -175,7 +185,9 @@ public class EncryptionDecryptionUtil {
                     .build();
             }
 
-            Object decryptedObject = encryptionService.decryptJson(safeRequestInfo, objectToDecrypt, key, stateLevelTenantId, classType);
+            // CRITICAL FIX: Pass purpose (not stateLevelTenantId) as 4th parameter
+            // The encryptionService.decryptJson signature is: (RequestInfo, Object, String model, String purpose, Class)
+            Object decryptedObject = encryptionService.decryptJson(safeRequestInfo, objectToDecrypt, key, purpose, classType);
             // PERMANENT FIX: Restore roles after decryption
             restoreRolesAfterDecryption(decryptedObject, userRolesMap);
             return (P) decryptedObject;
