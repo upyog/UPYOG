@@ -425,7 +425,7 @@ public class CalculationService {
 				break;	
 			case BPACalculatorConstants.BPA_PURCHASABLE_FAR_CHARGES:
 				if(farDetails != null && farDetails.containsKey("purchasableFar") && purchasedFAR)
-					amount = new BigDecimal(farDetails.get("purchasableFar")).multiply(rate).setScale(0, RoundingMode.HALF_UP);
+					amount = BigDecimal.valueOf(farDetails.get("purchasableFar") != null ? farDetails.get("purchasableFar") : 0.0).multiply(rate).setScale(0, RoundingMode.HALF_UP);
 				else
 					amount = BigDecimal.ZERO;
 				break;

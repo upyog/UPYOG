@@ -67,7 +67,12 @@ public class EDCRService {
 		String riskType = request.getBPA().getRiskType();
 		StringBuilder uri = new StringBuilder(config.getEdcrHost());
 		BPA bpa = request.getBPA();
+		Double maxBuildingHight = 0.0;
 
+		List<Double> buildingHightList = JsonPath.read(mdmsData, "$.MdmsRes.BPA.BuildingHeight.[?( @.name=='SELF_CERTIFICATION' )].value");
+		if(buildingHightList != null && !buildingHightList.isEmpty())
+			maxBuildingHight = buildingHightList.get(0);
+		
 		BPASearchCriteria criteria = new BPASearchCriteria();
 		criteria.setEdcrNumber(bpa.getEdcrNumber());
 		List<BPA> bpas = bpaRepository.getBPAData(criteria, null);
@@ -162,7 +167,7 @@ public class EDCRService {
 		}
 		this.validateOCEdcr(OccupancyTypes, plotAreas, buildingHeights, applicationType, masterData, riskType);
 		
-		if(buildingHeights != null && !buildingHeights.isEmpty() && buildingHeights.get(0) <  BPAConstants.MAAX_BUILDING_HEIGHT ) {
+		if(buildingHeights != null && !buildingHeights.isEmpty() && buildingHeights.get(0) <  maxBuildingHight ) {
 			request.getBPA().setBusinessService(BPAConstants.BPA_LOW_MODULE_CODE);
 		}else {
 			request.getBPA().setBusinessService(null);
