@@ -13,8 +13,6 @@
     "micro-ui-internals/packages/modules/obps",
     "micro-ui-internals/packages/modules/engagement",
     "micro-ui-internals/packages/modules/fsm",
-    "micro-ui-internals/packages/modules/ptr",
-    "micro-ui-internals/packages/modules/wt",
     "micro-ui-internals/packages/modules/vendor",
     "micro-ui-internals/packages/modules/tl"
   ],
