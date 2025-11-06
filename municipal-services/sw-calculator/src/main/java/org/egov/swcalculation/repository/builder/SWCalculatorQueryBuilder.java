@@ -266,25 +266,44 @@ public class SWCalculatorQueryBuilder {
 			List<Object> preparedStatement) {
 		StringBuilder query = new StringBuilder(billGenerationSchedulerSearchQuery);
 		query.append("egsw inner join eg_bndry_mohalla egbm on egsw.locality = egbm.localitycode ");
-		if(!StringUtils.isEmpty(criteria.getTenantId())) {
-			addClauseIfRequired(preparedStatement, query);
-			query.append(" egsw.tenantid= ? ");
-			preparedStatement.add(criteria.getTenantId());
+		if (!StringUtils.isEmpty(criteria.getTenantId())) {
+		    addClauseIfRequired(preparedStatement, query);
+		    query.append(" egsw.tenantid = ? ");
+		    preparedStatement.add(criteria.getTenantId());
 		}
-		
+
+		if (!StringUtils.isEmpty(criteria.getLocality())) {
+		    addClauseIfRequired(preparedStatement, query);
+		    query.append(" egbm.localitycode = ? ");
+		    preparedStatement.add(criteria.getLocality());
+		}
+
 		if (criteria.getStatus() != null) {
-			addClauseIfRequired(preparedStatement, query);
-			query.append(" egsw.status = ? ");
-			preparedStatement.add(criteria.getStatus());
+		    addClauseIfRequired(preparedStatement, query);
+		    query.append(" egsw.status = ? ");
+		    preparedStatement.add(criteria.getStatus());
 		}
-		
-		
+
 		if (criteria.getBatch() != null) {
-			addClauseIfRequired(preparedStatement, query);
-			query.append(" egbm.blockcode = ? ");
-			preparedStatement.add(criteria.getBatch());
+		    addClauseIfRequired(preparedStatement, query);
+		    query.append(" egbm.blockcode = ? ");
+		    preparedStatement.add(criteria.getBatch());
 		}
-		query.append(" ORDER BY egsw.createdtime ");
+
+
+		if (criteria.getBillingcycleStartdate() != null) {
+		    addClauseIfRequired(preparedStatement, query);
+		    query.append(" egsw.billingcyclestartdate >= ? ");
+		    preparedStatement.add(criteria.getBillingcycleStartdate());
+		}
+
+		if (criteria.getBillingcycleEnddate() != null) {
+		    addClauseIfRequired(preparedStatement, query);
+		    query.append(" egsw.billingcycleenddate <= ? ");
+		    preparedStatement.add(criteria.getBillingcycleEnddate());
+		}
+
+		query.append(" ORDER BY egsw.createdtime DESC LIMIT 1 ");
 		return query.toString();
 	}
 	
