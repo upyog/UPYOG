@@ -27,15 +27,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneId;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
@@ -1019,5 +1011,40 @@ public class CalculatorUtils {
 
 		return uri;
 	}
+
+   public MdmsCriteriaReq prepareMdmsRequest(RequestInfo requestInfo, String tenantId, String moduleName, List<String> masterNames) {
+
+
+       List<MasterDetail> masterDetails = new ArrayList<>();
+
+       if (masterNames == null || masterNames.isEmpty()) {
+
+           masterDetails.add(MasterDetail.builder().name("Penalty").build());
+           masterDetails.add(MasterDetail.builder().name("Rebate").build());
+           masterDetails.add(MasterDetail.builder().name("FireCess").build());
+           masterDetails.add(MasterDetail.builder().name("Interest").build());
+           masterDetails.add(MasterDetail.builder().name("LocalityRates").build());
+           masterDetails.add(MasterDetail.builder().name("Ots").build());
+       } else {
+           for (String master : masterNames) {
+               masterDetails.add(MasterDetail.builder().name(master).build());
+           }
+       }
+
+       ModuleDetail moduleDetail = ModuleDetail.builder()
+               .moduleName(moduleName)
+               .masterDetails(masterDetails)
+               .build();
+
+       MdmsCriteria mdmsCriteria = MdmsCriteria.builder()
+               .tenantId(tenantId)
+               .moduleDetails(Collections.singletonList(moduleDetail))
+               .build();
+
+       return MdmsCriteriaReq.builder()
+               .requestInfo(requestInfo)
+               .mdmsCriteria(mdmsCriteria)
+               .build();
+   }
 
 }

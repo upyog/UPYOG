@@ -1,5 +1,6 @@
 package org.egov.pt.calculator.service;
 
+import java.io.File;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -8,6 +9,7 @@ import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
 import com.jayway.jsonpath.JsonPath;
+import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.mdms.model.MdmsCriteriaReq;
 import org.egov.mdms.model.MdmsResponse;
@@ -24,6 +26,7 @@ import org.egov.pt.calculator.web.models.demand.TaxPeriodResponse;
 import org.egov.pt.calculator.web.models.property.RequestInfoWrapper;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
@@ -31,8 +34,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import net.minidev.json.JSONArray;
 
+import static jdk.nashorn.internal.runtime.regexp.joni.Config.log;
 import static org.egov.pt.calculator.util.CalculatorConstants.*;
 
+@Slf4j
 @Service
 public class MasterDataService {
 
@@ -41,7 +46,10 @@ public class MasterDataService {
 	
 	@Autowired
 	private ObjectMapper mapper;
-	
+
+	@Value("${egov.mdms.local.path}")
+	private String localMdmsBasePath;
+
 	@Autowired
 	private CalculatorUtils calculatorUtils;
 
@@ -337,5 +345,71 @@ public class MasterDataService {
 
 		return masterMap;
 	}
-	
+
+	@SuppressWarnings("unchecked")
+	public Map<String, JSONArray> getAllPropertyTaxMdmsData(RequestInfo requestInfo, String tenantId) {
+
+		Map<String, JSONArray> propertyTaxData = new HashMap<>();
+
+		try {
+			String stateTenantId = tenantId.split("\\.")[0];
+
+
+			MdmsCriteriaReq mdmsCriteriaReq = calculatorUtils.prepareMdmsRequest(
+					requestInfo, stateTenantId, "PropertyTax", null);
+
+
+			StringBuilder mdmsUrl = calculatorUtils.getMdmsSearchUrl();
+
+			Object response = repository.fetchResult(mdmsUrl, mdmsCriteriaReq);
+
+			if (response == null) {
+				return propertyTaxData;
+			}
+
+			MdmsResponse mdmsResponse = mapper.convertValue(response, MdmsResponse.class);
+
+			if (mdmsResponse == null || mdmsResponse.getMdmsRes() == null) {
+				return propertyTaxData;
+			}
+
+			Map<String, Map<String, JSONArray>> mdmsRes = mdmsResponse.getMdmsRes();
+			Map<String, JSONArray> propertyTaxModule = null;
+
+			if (mdmsRes.containsKey("PropertyTax")) {
+				propertyTaxModule = mdmsRes.get("PropertyTax");
+			}
+			if (propertyTaxModule == null || propertyTaxModule.isEmpty()) {
+				return propertyTaxData;
+			}
+
+			String targetFY = "2013-14";
+
+			for (Map.Entry<String, JSONArray> entry : propertyTaxModule.entrySet()) {
+				String masterName = entry.getKey();
+				JSONArray masterArray = entry.getValue();
+
+				JSONArray filteredArray = new JSONArray();
+
+				for (Object obj : masterArray) {
+					Map<String, Object> record = (Map<String, Object>) obj;
+
+					String fromFY = (String) record.getOrDefault("fromFY", record.get("financialYear"));
+
+					if (fromFY != null && fromFY.equalsIgnoreCase(targetFY)) {
+						filteredArray.add(record);
+					}
+				}
+
+				propertyTaxData.put(masterName, filteredArray);
+
+			}
+
+
+		} catch (Exception e) {
+			log.info("Error fetching PropertyTax data from MDMS: {}", e.getMessage(), e.getMessage());
+		}
+
+		return propertyTaxData;
+	}
 }
