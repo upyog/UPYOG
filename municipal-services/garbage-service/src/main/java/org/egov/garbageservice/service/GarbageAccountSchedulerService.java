@@ -31,6 +31,8 @@ import org.egov.garbageservice.producer.GarbageProducer;
 import org.egov.garbageservice.model.OnDemandBillRequest;
 import org.egov.garbageservice.model.SearchCriteriaGarbageAccount;
 import org.egov.garbageservice.model.SearchCriteriaGarbageAccountRequest;
+import org.egov.garbageservice.model.UserSearchRequest;
+import org.egov.garbageservice.model.contract.OwnerInfo;
 import org.egov.tracer.model.CustomException;
 import org.egov.tracer.model.ServiceCallException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,6 +59,9 @@ public class GarbageAccountSchedulerService {
 
 	@Autowired
 	private DemandService demandService;
+	
+	@Autowired
+	private UserService userService ;
 
 	@Autowired
 	private BillService billService;
@@ -249,10 +254,26 @@ public class GarbageAccountSchedulerService {
 
 		return garbageAccounts;
 	}
+	
+	private Boolean checkUuidNumber(GarbageAccount garbageAccount) {
+		UserSearchRequest userSearchRequest = UserSearchRequest.builder().active(true).userType("CITIZEN").tenantId("hp").mobileNumber(garbageAccount.getMobileNumber()).build();
+		List<OwnerInfo> users = userService.userSearch(userSearchRequest);
+		if (users != null && !users.isEmpty()) {
+			if(users.get(0).getUuid().equals(garbageAccount.getUserUuid())) {
+				return true;
+			}else {
+				return false;
+			}
+		}else {
+			return false;
+		}
+	}
 
 	private BillResponse generateDemandAndBill(GenerateBillRequest generateBillRequest, GarbageAccount garbageAccount,
 			BigDecimal billAmount,String Type) {
 		try {
+			if(!checkUuidNumber(garbageAccount))
+				return null;
 			List<Demand> savedDemands = new ArrayList<>();
 			
 			// generate demand
@@ -268,6 +289,7 @@ public class GarbageAccountSchedulerService {
 		    additionalDetails.put("mobileNumber", garbageAccount.getMobileNumber());
 		    additionalDetails.put("ward", garbageAccount.getAddresses().get(0).getWardName());
 		    additionalDetails.put("category", garbageAccount.getGrbgCollectionUnits().get(0).getCategory());
+		    additionalDetails.put("SubCategoryType", garbageAccount.getGrbgCollectionUnits().get(0).getSubCategoryType());
 		    additionalDetails.put("application_no", garbageAccount.getGrbgApplicationNumber());
 		    additionalDetails.put("type", Type);
 		    additionalDetails.put("oldGarbageId", 
