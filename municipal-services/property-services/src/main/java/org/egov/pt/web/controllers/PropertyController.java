@@ -25,6 +25,8 @@ import org.egov.pt.models.PropertySearchResponse;
 import org.egov.pt.models.enums.Channel;
 import org.egov.pt.models.enums.Status;
 import org.egov.pt.models.oldProperty.OldPropertyCriteria;
+import org.egov.pt.models.user.UserDetailResponse;
+import org.egov.pt.models.user.UserSearchResponse;
 import org.egov.pt.service.FuzzySearchService;
 import org.egov.pt.service.MigrationService;
 import org.egov.pt.service.PropertyEncryptionService;
@@ -32,6 +34,7 @@ import org.egov.pt.service.PropertyService;
 import org.egov.pt.util.PTConstants;
 import org.egov.pt.util.ResponseInfoFactory;
 import org.egov.pt.validator.PropertyValidator;
+import org.egov.pt.web.contracts.CreateObPassUserRequest;
 import org.egov.pt.web.contracts.GenrateArrearRequest;
 import org.egov.pt.web.contracts.PropertyRequest;
 import org.egov.pt.web.contracts.PropertyResponse;
@@ -388,6 +391,22 @@ public class PropertyController {
 		response.put("ResponseInfo", resInfo);
 		response.put("message", message);
 		return new ResponseEntity<>(response, HttpStatus.OK);
+	}
+	
+	@PostMapping("/_checkAndCreateUser")
+	public ResponseEntity<Map<String, Object>> checkAndCreateUser(
+			@Valid @RequestBody CreateObPassUserRequest createUserRequest) {
+		
+		ResponseEntity<?> resInfo = propertyService.checkAndCreateUser(createUserRequest);
+		Map<String, Object> response = new HashMap<>();
+		response.put("ResponseInfo", response);
+		response.put("message", "Success");
+
+		@SuppressWarnings("unchecked")
+		Map<String, Object> body = (Map<String, Object>) resInfo.getBody();
+return ResponseEntity
+        .status(HttpStatus.OK)
+        .body(body);//		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 
 }

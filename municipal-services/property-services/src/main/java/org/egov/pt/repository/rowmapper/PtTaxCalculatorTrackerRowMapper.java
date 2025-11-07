@@ -38,7 +38,9 @@ public class PtTaxCalculatorTrackerRowMapper implements RowMapper<PtTaxCalculato
 				.additionalDetails(getAdditionalDetail(rs, "additionaldetails")).billId(rs.getString("bill_id"))
 				.rebateAmount(rs.getBigDecimal("rebateamount")).penaltyAmount(rs.getBigDecimal("penaltyamount"))
 				.propertyTaxWithoutRebate(rs.getBigDecimal("propertytaxwithoutrebate"))
-				.billStatus(BillStatus.fromValue(rs.getString("bill_status"))).build();
+				.billStatus(BillStatus.fromValue(rs.getString("bill_status")))
+				.type(rs.getString("type"))
+				.build();
 	}
 
 	private JsonNode getAdditionalDetail(ResultSet rs, String column) {
