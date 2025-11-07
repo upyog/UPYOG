@@ -311,7 +311,17 @@ public class UserService {
         /* decrypt here / final reponse decrypted*/
 
         // Decrypt user list - role preservation is now handled in EncryptionDecryptionUtil
-        list = encryptionDecryptionUtil.decryptObject(list, null, User.class, requestInfo);
+        // Use same defensive error handling as /oauth/token endpoint to handle corrupted ciphertext
+        try {
+            list = encryptionDecryptionUtil.decryptObject(list, null, User.class, requestInfo);
+            log.info("Successfully decrypted user list with {} users", list != null ? list.size() : 0);
+        } catch (Exception e) {
+            log.warn("Failed to decrypt user list, returning encrypted/partial data. Error: {}", e.getMessage());
+            log.debug("Decryption error stack trace:", e);
+            // Return list as-is (encrypted or partially encrypted)
+            // This matches the behavior of /oauth/token which returns encrypted user on decryption error
+            // allowing the request to succeed even with corrupted ciphertext in database
+        }
 
         setFileStoreUrlsByFileStoreIds(list);
         return list;
