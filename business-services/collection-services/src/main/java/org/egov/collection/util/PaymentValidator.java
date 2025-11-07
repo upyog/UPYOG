@@ -85,7 +85,7 @@ public class PaymentValidator {
 
     public Payment validatePaymentForCreate(PaymentRequest paymentRequest) {
         Map<String, String> errorMap = new HashMap<>();
-        Payment payment = paymentRequest.getPayment()
+        Payment payment = paymentRequest.getPayment();
 	log.info("payment request time {}",System.currentTimeMillis());
         log.info("payment request {}",paymentRequest.getPayment().getTransactionNumber());
         log.info("payment request {}",paymentRequest);    
