@@ -2362,7 +2362,11 @@ public class GarbageAccountService {
 				if (additionalDetails == null) {
 					additionalDetails = new HashMap<>();
 				}
-				additionalDetails.put("Type", "ARREAR");
+				additionalDetails.put("type", "ARREAR");
+				additionalDetails.put("name", garbageAccount.getName());
+				additionalDetails.put("ward", garbageAccount.getAddresses().get(0).getWardName());
+				additionalDetails.put("category", garbageAccount.getGrbgCollectionUnits().get(0).getCategory());
+				additionalDetails.put("mobileNumber", garbageAccount.getMobileNumber());
 				additionalDetails.put("subCategoryType", garbageAccount.getGrbgCollectionUnits().get(0).getSubCategoryType());
 				demand.setAdditionalDetails(additionalDetails);
 				Calendar cal = Calendar.getInstance();
