@@ -513,17 +513,18 @@ public class PropertyQueryBuilder {
 //			builder.append("property.createdBy IN (").append(createQuery(criteria.getCreatedBy())).append(")");
 //			addToPreparedStatement(preparedStmtList, criteria.getCreatedBy());
 //		}
-		if(!CollectionUtils.isEmpty(criteria.getCreatedBy())) {
-			if ( criteria.getIsCitizen()) {
-				addClauseIfRequired(preparedStmtList, builder);
-				builder.append("owner.userid IN (").append(createQuery(criteria.getCreatedBy())).append(")");
-				addToPreparedStatement(preparedStmtList, criteria.getCreatedBy());
-			}else {
-				addClauseIfRequired(preparedStmtList, builder);
-				builder.append("property.createdBy IN (").append(createQuery(criteria.getCreatedBy())).append(")");
-				addToPreparedStatement(preparedStmtList, criteria.getCreatedBy());
-			}	
-		}
+//
+//		if(!CollectionUtils.isEmpty(criteria.getCreatedBy()) && criteria.getCreatedBy() != null) {
+//			if ( criteria.getIsCitizen()) {
+//				addClauseIfRequired(preparedStmtList, builder);
+//				builder.append("owner.userid IN (").append(createQuery(criteria.getCreatedBy())).append(")");
+//				addToPreparedStatement(preparedStmtList, criteria.getCreatedBy());
+//			}else {
+//				addClauseIfRequired(preparedStmtList, builder);
+//				builder.append("property.createdBy IN (").append(createQuery(criteria.getCreatedBy())).append(")");
+//				addToPreparedStatement(preparedStmtList, criteria.getCreatedBy());
+//			}	
+//		}
 
 		if (!CollectionUtils.isEmpty(criteria.getAdditionalDetailsPropertyIds())) {
 			addClauseIfRequired(preparedStmtList, builder);

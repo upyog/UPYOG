@@ -25,10 +25,12 @@ import org.egov.pt.models.user.UserDetailResponse;
 import org.egov.pt.models.user.UserSearchRequest;
 import org.egov.pt.models.user.UserSearchResponse;
 import org.egov.pt.repository.ServiceRequestRepository;
+import org.egov.pt.web.contracts.CreateObPassUserRequest;
 import org.egov.pt.web.contracts.PropertyRequest;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
@@ -598,6 +600,43 @@ public class UserService {
 			});
 		}
 		return uuidToUserMap;
+	}
+	
+	public ResponseEntity<?> createNewObPassUser(CreateObPassUserRequest request ,RequestInfo requestInfo ){
+		
+		OwnerInfo ownerFromRequest = OwnerInfo.builder()
+				.tenantId("hp")
+				.mobileNumber(request.getMobileNumber()).build();
+		
+		UserDetailResponse userDetailResponse = userExists(ownerFromRequest, requestInfo);
+		Role role = getCitizenRole();
+		addUserDefaultFields(ownerFromRequest.getTenantId(), role, ownerFromRequest);
+		List<OwnerInfo> existingUsersFromService = userDetailResponse.getUser();
+		
+		Map<String, List<OwnerInfo>> ownerMapFromSearch = existingUsersFromService.stream()
+			    .collect(Collectors.groupingBy(OwnerInfo::getMobileNumber));
+
+		if (CollectionUtils.isEmpty(existingUsersFromService)) {
+
+			ownerFromRequest.setUserName(UUID.randomUUID().toString());
+			ownerFromRequest.setName(request.getName());
+			ownerFromRequest.setOwnerInfoUuid(UUID.randomUUID().toString());;
+			userDetailResponse = createUser(requestInfo, ownerFromRequest);
+		}
+		
+		return getUserAccesToken(userDetailResponse.getUser().get(0).getUuid());
+		
+		
+
+		
+	}
+	
+	
+	public ResponseEntity<?> getUserAccesToken(String uuid) {
+		//rest call user for uuid
+        String url = userHost+"user/login/_uuid?uuid=" + uuid;
+       return restTemplate.getForEntity(url, Map.class);
+       
 	}
 
 }
