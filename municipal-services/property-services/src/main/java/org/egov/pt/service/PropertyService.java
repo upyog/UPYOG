@@ -49,6 +49,7 @@ import org.egov.pt.models.report.PDFRequest;
 import org.egov.pt.models.report.PDFRequestGenerator;
 import org.egov.pt.models.user.UserDetailResponse;
 import org.egov.pt.models.user.UserSearchRequest;
+import org.egov.pt.models.user.UserSearchResponse;
 import org.egov.pt.models.workflow.BusinessServiceResponse;
 import org.egov.pt.models.workflow.State;
 import org.egov.pt.producer.PropertyProducer;
@@ -58,9 +59,11 @@ import org.egov.pt.repository.PropertyRepository;
 import org.egov.pt.util.EncryptionDecryptionUtil;
 import org.egov.pt.util.PTConstants;
 import org.egov.pt.util.PropertyUtil;
+import org.egov.pt.util.RequestInfoUtils;
 import org.egov.pt.util.ResponseInfoFactory;
 import org.egov.pt.util.UnmaskingUtil;
 import org.egov.pt.validator.PropertyValidator;
+import org.egov.pt.web.contracts.CreateObPassUserRequest;
 import org.egov.pt.web.contracts.GenrateArrearRequest;
 import org.egov.pt.web.contracts.PropertyRequest;
 import org.egov.pt.web.contracts.PropertyResponse;
@@ -81,7 +84,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.collect.Sets;
-
+import org.egov.common.contract.request.RequestInfo;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -156,6 +159,9 @@ public class PropertyService {
 
 	@Autowired
 	private PropertyService propertyService;
+	
+	@Autowired
+	private RequestInfoUtils requestInfoUtils;
 
 	/**
 	 * Enriches the Request and pushes to the Queue
@@ -1069,7 +1075,7 @@ public class PropertyService {
 				if (null != billResponse && !CollectionUtils.isEmpty(billResponse.getBill())) {
 
 					CalculateTaxRequest calculateTaxRequest = CalculateTaxRequest.builder().requestInfo(genrateArrearRequest.getRequestInfo()).fromDate(new Date(demand.getTaxPeriodFrom()))
-										.toDate(new Date(demand.getTaxPeriodTo())).type("AREAR").financialYear(getFinancialYearFromTimestamps(demand.getTaxPeriodFrom(),demand.getTaxPeriodTo())).build();
+										.toDate(new Date(demand.getTaxPeriodTo())).type("ARREAR").financialYear(getFinancialYearFromTimestamps(demand.getTaxPeriodFrom(),demand.getTaxPeriodTo())).build();
 					JsonNode node = mapper.createObjectNode();
 					PtTaxCalculatorTrackerRequest ptTaxCalculatorTrackerRequest = enrichmentService
 							.enrichTaxCalculatorTrackerCreateRequest(properties.get(0), calculateTaxRequest,
@@ -1155,7 +1161,7 @@ public class PropertyService {
 				StringUtils.isNotEmpty(property.getOwners().get(0).getMobileNumber())
 						? property.getOwners().get(0).getMobileNumber()
 						: "N/A");
-		node.put("billtype", "AREAR");
+		node.put("billtype", "ARREAR");
 		newDemand.setAdditionalDetails(node);
 		newDemand.setPayer(User.builder().uuid(property.getOwners().get(0).getUuid()).build());
 		newDemand.setBusinessService(PTConstants.MODULE_PROPERTY);
@@ -1180,5 +1186,15 @@ public class PropertyService {
 	public void removePtBillFailure(PropertyBillFailure propertyBillFailure) {
 		producer.push(config.getRemoveBillFailureTopic(), propertyBillFailure);
 	}
+	
+	
+	public ResponseEntity<?> checkAndCreateUser(CreateObPassUserRequest createUserRequest) {
+		
+		RequestInfo requestInfo = requestInfoUtils.getSystemRequestInfo();
+		
+		return userService.createNewObPassUser(createUserRequest,requestInfo);
+			
+	}
+	
 
 }
