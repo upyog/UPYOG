@@ -4,7 +4,9 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import org.egov.swcalculation.constants.SWCalculationConstant;
@@ -67,6 +69,30 @@ public class BillGeneratorDao {
 		return jdbcTemplate.query(query, preparedStatement.toArray(), billGenerateSchedulerRowMapper);
 	}
 	
+	
+	public List<String> getConnectionsByStatus(String string, String status) {
+	    List<Object> preparedStatement = new ArrayList<>();
+
+	    // ✅ Use Map instead of a class
+	    Map<String, Object> criteria = new HashMap<>();
+	    criteria.put("billSchedulerId", string);
+	    criteria.put("status", status);
+
+	    // ✅ Build query dynamically using your queryBuilder
+	    String query = queryBuilder.buildGetConnectionsByStatusQuery(criteria, preparedStatement);
+	    if (query == null) {
+	        return Collections.emptyList();
+	    }
+
+	    log.debug("getConnectionsByStatus | Query: {} | Params: {}", query, preparedStatement);
+
+	    // ✅ Execute query and map result
+	    return jdbcTemplate.query(
+	            query,
+	            preparedStatement.toArray(),
+	            (rs, rowNum) -> rs.getString("consumercode")
+	    );
+	}
 	/**
 	 * executes query to update bill scheduler status 
 	 * @param billIds

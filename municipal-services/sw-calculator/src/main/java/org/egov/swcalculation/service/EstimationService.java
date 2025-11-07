@@ -626,7 +626,7 @@ public class EstimationService {
 		        ? additionalDetails.get(SWCalculationConstant.connectionCategory).toString()
 		        : "null";
 
-		if ("REGULARIZED".equalsIgnoreCase(concategory) || "LEGACY".equalsIgnoreCase(concategory)) {
+		if ("REGULARIZED".equalsIgnoreCase(concategory) || "LEGACY".equalsIgnoreCase(concategory)|| "DISCHARGE_CONNECTION".equalsIgnoreCase(concategory)) {
 			/*
 			 For legacy sw connection - PI-18845
 			 --->Sharan Gakhar (branch : pmidc_testing)

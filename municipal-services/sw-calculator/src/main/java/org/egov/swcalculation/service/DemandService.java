@@ -1719,6 +1719,7 @@ public List<String> fetchBillSchedulerBatch(Set<String> consumerCodes,String ten
 		List<String> successConsumerCodes = new ArrayList<>();
 
 		for (String consumerCode : consumerCodes) {
+			List<BillV2> bills =null;
 			try {
 				StringBuilder fetchBillURL = calculatorUtils.getFetchBillURL(tenantId, consumerCode);
 
@@ -1726,7 +1727,20 @@ public List<String> fetchBillSchedulerBatch(Set<String> consumerCodes,String ten
 						RequestInfoWrapper.builder().requestInfo(requestInfo).build());
 
 				BillResponseV2 billResponse = mapper.convertValue(result, BillResponseV2.class);
-				List<BillV2> bills = billResponse.getBill();
+				  if (billResponse == null) {
+				        log.warn("⚠️ BillResponseV2 is null after conversion.");
+				        billGeneratorDao.updateBillSchedulerConnectionStatus(consumerCode, schedulerId, localityCode,
+								SWCalculationConstant.FAILURE, tenantId, "BillResponseV2 is null after conversion.", System.currentTimeMillis());
+
+				    } else if (billResponse.getBill() == null) {
+				        log.warn("⚠️ Bill list is null in BillResponseV2.");
+				        billGeneratorDao.updateBillSchedulerConnectionStatus(consumerCode, schedulerId, localityCode,
+								SWCalculationConstant.FAILURE, tenantId, "Bill list is null in BillResponseV2.", System.currentTimeMillis());
+
+				    } else {
+				        bills = billResponse.getBill();
+				    }
+			
 
 				if (bills != null && !bills.isEmpty()) {
 					billGeneratorDao.updateBillSchedulerConnectionStatus(consumerCode, schedulerId, localityCode,

@@ -681,6 +681,17 @@ public class SWCalculationServiceImpl implements SWCalculationService {
 					}
 
 					String key =cityName+"-"+ localityCode + "-" + batchCount;
+					
+					 billGeneratorDao.insertBillSchedulerConnectionStatus(
+			                    new ArrayList<>(billGeneraterReq.getConsumerCodes()),
+			                    billGeneraterReq.getBillSchedular().getId(),
+			                    billGeneraterReq.getBillSchedular().getLocality(),
+			                    SWCalculationConstant.INITIATED,
+			                    billGeneraterReq.getBillSchedular().getTenantId(),
+			                    SWCalculationConstant.INITIATED,
+			                    System.currentTimeMillis()
+			            );
+					
 					producer.push(configs.getBillGenerateSchedulerTopic(),key, billGeneraterReq);
 					log.info("Bill Scheduler pushed connections size:{} to kafka topic of batch no: ", conectionNoList.size(), count++);
 

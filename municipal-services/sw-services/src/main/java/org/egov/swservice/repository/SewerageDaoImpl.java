@@ -136,7 +136,18 @@ public class SewerageDaoImpl implements SewerageDao {
 				sewerageConnectionRequest.getSewerageConnection().setStatus(Connection.StatusEnum.ACTIVE);
 			}
 			sewarageConnectionProducer.push(updateSewarageConnection, sewerageConnectionRequest);
-		}  else {
+		} else if (sewerageConnectionRequest.getSewerageConnection().getApplicationType()
+		        .equalsIgnoreCase(SWConstants.DISCONNECT_SEWERAGE_CONNECTION)) {
+
+		    if (SWConstants.APPROVE_CONNECTION.equalsIgnoreCase(reqAction)) {
+				sewerageConnectionRequest.getSewerageConnection().setStatus(Connection.StatusEnum.INACTIVE);
+			}
+			if ((sewerageConnectionRequest.isReconnectRequest() || sewerageConnectionRequest.getSewerageConnection().getApplicationType().equalsIgnoreCase(SWConstants.SEWERAGE_RECONNECTION)) && SWConstants.ACTIVATE_CONNECTION_CONST.equalsIgnoreCase(reqAction)) {
+				sewerageConnectionRequest.getSewerageConnection().setStatus(Connection.StatusEnum.ACTIVE);
+			}
+			sewarageConnectionProducer.push(updateSewarageConnection, sewerageConnectionRequest);
+
+		} else {
 			sewarageConnectionProducer.push(swConfiguration.getWorkFlowUpdateTopic(), sewerageConnectionRequest);
 		}
 	}

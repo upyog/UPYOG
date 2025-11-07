@@ -198,7 +198,7 @@ public class MDMSValidator {
 			if (waterConnection.getRoadCuttingInfo() == null 
 			        && connectionCategory != null 
 			        && !(connectionCategory.equalsIgnoreCase("REGULARIZED") 
-			             || connectionCategory.equalsIgnoreCase("LEGACY"))) {
+			             || connectionCategory.equalsIgnoreCase("LEGACY") || connectionCategory.equalsIgnoreCase("DISCHARGE_CONNECTION"))) {
 			    errorMap.put("INVALID_ROAD_INFO", "Road Cutting Information should not be empty");
 			}
 
