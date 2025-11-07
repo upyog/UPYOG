@@ -122,9 +122,19 @@ export const SuccessfulPayment = (props)=>{
     );
   }
 
+  
+
   const paymentData = data?.payments?.Payments[0];
   const amount = reciept_data?.paymentDetails?.[0]?.totalAmountPaid;
   const transactionDate = paymentData?.transactionDate;
+
+  const rowContainerStyle = {
+    padding: "4px 0px",
+    justifyContent: "space-between",
+  };
+
+  const ommitRupeeSymbol = ["PT"].includes(business_service);
+  
   const printCertificate = async () => {
     //const tenantId = Digit.ULBService.getCurrentTenantId();
     const state = tenantId;
@@ -290,15 +300,80 @@ export const SuccessfulPayment = (props)=>{
 
   // if (billDataLoading) return <Loader />;
 
-  const rowContainerStyle = {
-    padding: "4px 0px",
-    justifyContent: "space-between",
-  };
-
-  const ommitRupeeSymbol = ["PT"].includes(business_service);
+  // const rowContainerStyle = {
+  //   padding: "4px 0px",
+  //   justifyContent: "space-between",
+  // };
+  
+  // const ommitRupeeSymbol = ["PT"].includes(business_service);
 
   if ((window.location.href.includes("bpa") || window.location.href.includes("BPA")) && isBpaSearchLoading) return <Loader />
+if (payments?.Payments && payments?.Payments?.length !== 0 && data.txnStatus === "PENDING") {
+    return (
+      <Card>
+        <Banner
+          message={t("Transaction Pending")}
+          info={t("CS_PAYMENT_TRANSANCTION_ID")}
+          applicationNumber={egId}
+          successful={false}
+        />
+        <CardText>{t("You Transaction is pending")}</CardText>
+        <StatusTable>
+        <Row rowContainerStyle={rowContainerStyle} last label={t(label)} text={applicationNo} />
+        {(business_service === "PT" || workflw) && (
+          <Row
+            rowContainerStyle={rowContainerStyle}
+            last
+            label={t("CS_PAYMENT_BILLING_PERIOD")}
+            text={getBillingPeriod(reciept_data?.paymentDetails[0]?.bill?.billDetails[0])}
+          />
+        )}
 
+        {(business_service === "PT" || workflw) && (
+          <Row
+            rowContainerStyle={rowContainerStyle}
+            last
+            label={t("CS_PAYMENT_AMOUNT_PENDING")}
+            text={(reciept_data?.paymentDetails?.[0]?.totalDue && reciept_data?.paymentDetails?.[0]?.totalAmountPaid ) ? `₹ ${reciept_data?.paymentDetails?.[0]?.totalDue - reciept_data?.paymentDetails?.[0]?.totalAmountPaid}` : `₹ ${0}`}
+          />
+        )}
+
+        <Row rowContainerStyle={rowContainerStyle} last label={t("CS_PAYMENT_TRANSANCTION_ID")} text={egId} />
+        <Row
+          rowContainerStyle={rowContainerStyle}
+          last
+          label={t(ommitRupeeSymbol ? "CS_PAYMENT_AMOUNT_PAID_WITHOUT_SYMBOL" : "CS_PAYMENT_AMOUNT_PAID")}
+          text={reciept_data?.paymentDetails?.[0]?.totalAmountPaid ? ("₹ " +  reciept_data?.paymentDetails?.[0]?.totalAmountPaid) : `₹ 0` }
+        />
+        {(business_service !== "PT" || workflw) && (
+          <Row
+            rowContainerStyle={rowContainerStyle}
+            last
+            label={t("CS_PAYMENT_TRANSANCTION_DATE")}
+            text={transactionDate && new Date(transactionDate).toLocaleDateString("in")}
+          />
+        )}
+      </StatusTable>
+        {!(business_service?.includes("PT")) ? (
+          <Link to={`/digit-ui/citizen`}>
+            <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} />
+          </Link>
+        ) : (
+          <React.Fragment>
+            {/* <Link to={(applicationNo && `/digit-ui/citizen/payment/my-bills/${business_service}/${applicationNo}`) || "/digit-ui/citizen"}>
+              <SubmitBar label={t("CS_PAYMENT_TRY_AGAIN")} />
+            </Link> */}
+            {/* {business_service?.includes("PT") &&<div style={{marginTop:"10px"}}><Link to={`/digit-ui/citizen/feedback?redirectedFrom=${"digit-ui/citizen/payment/success"}&propertyId=${consumerCode? consumerCode : ""}&acknowldgementNumber=${egId ? egId : ""}&tenantId=${tenantId}&creationReason=${business_service?.split(".")?.[1]}`}>
+              <SubmitBar label={t("CS_REVIEW_AND_FEEDBACK")} />
+            </Link></div>} */}
+            <div className="link" style={isMobile ? { marginTop: "8px", width: "100%", textAlign: "center" } : { marginTop: "8px" }}>
+              <Link to={`/digit-ui/citizen`}>{t("CORE_COMMON_GO_TO_HOME")}</Link>
+            </div>
+          </React.Fragment>
+        )}
+      </Card>
+    );
+  }
   return (
     <Card>
       <Banner

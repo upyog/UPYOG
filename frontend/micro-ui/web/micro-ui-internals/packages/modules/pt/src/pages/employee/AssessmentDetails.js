@@ -134,7 +134,9 @@ const AssessmentDetails = () => {
             {
               setShowToast({ key: "success", action: { action: "ASSESSMENT" } });
               setTimeout(closeToast, 5000);
-              history.push(`/digit-ui/citizen/pt-home`);
+              setTimeout(() => {
+                history.push(`/digit-ui/citizen/pt-home`);
+              }, 2000);
             }
             else{
               proceeedToPay()
