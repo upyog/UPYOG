@@ -29,6 +29,7 @@ public class DailyDashboardDatapushConfig {
 		CronTriggerFactoryBean cronTriggerFactoryBean = new CronTriggerFactoryBean();
 		cronTriggerFactoryBean.setJobDetail(dashboardDatapush);
 		//cronTriggerFactoryBean.setCronExpression("1 * * * * ?"); // runs every minute for testing
+		//cronTriggerFactoryBean.setCronExpression("0 0/15 * * * ?"); // runs every 15 mins
 		cronTriggerFactoryBean.setCronExpression("0 55 23 * * ?"); // runs everyday 11:55 PM
 		cronTriggerFactoryBean.setTimeZone(TimeZone.getTimeZone("Asia/Calcutta"));
 		cronTriggerFactoryBean.setGroup("Dashboard-data");

@@ -157,9 +157,10 @@ public class PayGovGateway implements Gateway {
         SimpleDateFormat format = new SimpleDateFormat(TX_DATE_FORMAT);
         Date currentDate = new Date();
         queryMap.put(REQUEST_DATE_TIME_KEY, format.format(currentDate));
-        String returnUrl = transaction.getCallbackUrl().replace(CITIZEN_URL, "");
-
-       // queryMap.put(SERVICE_ID_KEY, getModuleCode(transaction));
+        String returnUrl = transaction.getCallbackUrl().replace(CITIZEN_URL, "");        
+        //for production need TO CHANGE
+        //queryMap.put(SERVICE_ID_KEY, getModuleCode(transaction));
+        //for dev need TO CHANGE
         queryMap.put(SERVICE_ID_KEY,"MMPTBTEST01");
         String domainName =  returnUrl.replaceAll("http(s)?://|www\\.|/.*", "");
         String citizenReturnURL = returnUrl.split(domainName)[1];
@@ -216,9 +217,7 @@ public class PayGovGateway implements Gateway {
         ObjectMapper mapper = new ObjectMapper();
         try {
             urlData= mapper.writeValueAsString(queryMap);
-            System.out.println("URLDATA::::::::::::::::::::"+urlData);
-            System.out.println("QUERY:::::::::::::::::::::::::::::::::::::MAP:---->>>>"+queryMap);
-        } catch (Exception e) {
+	          } catch (Exception e) {
             // TODO Auto-generated catch block
             log.error("PAYGOV URL generation failed", e);
             throw new CustomException("URL_GEN_FAILED",

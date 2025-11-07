@@ -59,7 +59,6 @@ public class AssessmentEnrichmentService {
 		Assessment assessment = request.getAssessment();
 		assessment.setId(String.valueOf(UUID.randomUUID()));
 		assessment.setAssessmentNumber(getAssessmentNo(request));
-
 		System.out.println("AssessMent Workflow Status:::" + config.getIsAssessmentWorkflowEnabled());
 		if (config.getIsAssessmentWorkflowEnabled())
 			assessment.setStatus(Status.INWORKFLOW);

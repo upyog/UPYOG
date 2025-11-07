@@ -23,9 +23,13 @@ public class PropertyApplication {
 
     @Value("${app.timezone}")
     private String timeZone;
+
+    @Value("${assessment.workflow.enabled}")
+    private Boolean isAssessmentWorkflowEnabled;
     
     @Bean
     public ObjectMapper objectMapper(){
+    System.out.println("WORKFLOW_ENABLED:::::"+isAssessmentWorkflowEnabled);
     return new ObjectMapper()
     		.configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true)
     		.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
