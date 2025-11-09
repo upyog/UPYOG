@@ -303,7 +303,7 @@ public class SWCalculatorQueryBuilder {
 		    preparedStatement.add(criteria.getBillingcycleEnddate());
 		}
 
-		query.append(" ORDER BY egsw.createdtime DESC LIMIT 1 ");
+		query.append(" ORDER BY egsw.createdtime DESC");
 		return query.toString();
 	}
 	

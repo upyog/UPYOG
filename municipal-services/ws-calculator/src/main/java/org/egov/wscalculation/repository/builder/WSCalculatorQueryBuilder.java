@@ -1062,7 +1062,7 @@ StringBuilder query = new StringBuilder(connectionNoListQueryUpdate);
 	        query.append(" egws.billingcycleenddate <= ? ");
 	        preparedStatement.add(criteria.getBillingcycleEnddate());
 	    }
-		query.append(" ORDER BY egws.createdtime desc limit 1 ");
+		query.append(" ORDER BY egws.createdtime desc ");
 		return query.toString();
 	}
 	
