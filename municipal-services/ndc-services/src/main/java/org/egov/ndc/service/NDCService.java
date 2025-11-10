@@ -135,6 +135,8 @@ public class NDCService {
 
 	public NdcApplicationRequest updateNdcApplication(boolean skipWorkFlow,NdcApplicationRequest ndcApplicationRequest) {
 		RequestInfo requestInfo = ndcApplicationRequest.getRequestInfo();
+		log.info("Request: {}", ndcApplicationRequest);
+		log.info("Request: {}", ndcApplicationRequest.getRequestInfo());
 		String userUuidFromRequestInfo = requestInfo.getUserInfo().getUuid();
 		List<Application> applications = ndcApplicationRequest.getApplications();
 		if (applications == null || applications.isEmpty()) {
