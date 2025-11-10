@@ -147,7 +147,7 @@ function PropertyEstimates({ taxHeadEstimatesCalculation }) {
       <StatusTable>
         <Row label={t("ES_PT_TITLE_TAX_HEADS")} text={t("ES_PT_TITLE_AMOUNT")} className="border-none" textStyle={{ fontWeight: "bold" }} />
         <BreakLine style={{ margin: "16px 0", width: "40%" }} />
-        {taxHeadEstimates?.filter(e => e.taxHeadCode !== "PT_COMPLEMENTARY_REBATE")?.map((estimate, index) => {
+        {taxHeadEstimates?.filter(e => e.taxHeadCode !== "PT_COMPLEMENTARY_REBATE" && e.taxHeadCode !== "PT_ROUNDOFF")?.map((estimate, index) => {
           return (
             <Row
               key={t(estimate.taxHeadCode)}
@@ -167,7 +167,13 @@ function PropertyEstimates({ taxHeadEstimatesCalculation }) {
           className="border-none"
           textStyle={{ fontSize: "16px", fontWeight: "bold" }}
         />
-        <div style={{fontSize: "12px", fontStyle: "italic"}}>N.B.: Minimum Payable Amount to reach ULB's Notified Lower Limit is applicabe when Assessed Property Tax is lesser than ULB's Notified Lower Limit.</div>
+        <div style={{ fontSize: "12px", fontStyle: "italic", marginTop: "8px", display: "flex", alignItems: "flex-start", gap: "12px" }}>
+          <div style={{ fontWeight: "bold", minWidth: "20px" }}>N.B.:</div>
+          <ol style={{ margin: 0 }}>
+            <li>1. Property Tax Due Amount is rounded off to the nearest ten rupees.</li>
+            <li>2. Minimum payable amount to reach ULB's notified lower limit is applicable when assessed property tax is lesser than the ULB's notified lower limit.</li>
+          </ol>
+        </div>
       </StatusTable>
     </div>
   );
