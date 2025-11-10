@@ -2061,6 +2061,21 @@ public class BillServicev2 {
 		default:
 			break;
 		}
+		
+		BillAccountDetailV2 propertytaxinterestaccountDetail = BillAccountDetailV2.builder()
+				.demandDetailId(demand.getId()).tenantId(demand.getTenantId()).id(UUID.randomUUID().toString())
+				.adjustedAmount(BigDecimal.ZERO).taxHeadCode(PROPERTY_TAX_INTEREST).amount(inp.getInterestonamount())
+				.order(5).billDetailId(billDetailId).build();
+
+		taxCodeAccountdetailMap.put(PROPERTY_TAX_INTEREST, propertytaxinterestaccountDetail);
+
+		BigDecimal roundingDiff = getRemainderValue(totalAmountForDemand);
+		BillAccountDetailV2 propertytaxroundingaccountDetail = BillAccountDetailV2.builder()
+				.demandDetailId(demand.getId()).tenantId(demand.getTenantId()).id(UUID.randomUUID().toString())
+				.adjustedAmount(BigDecimal.ZERO).taxHeadCode(ROUND_OFF).amount(roundingDiff)
+				.order(6).billDetailId(billDetailId).build();
+
+		taxCodeAccountdetailMap.put(ROUND_OFF, propertytaxroundingaccountDetail);
 
 		BillAccountDetailV2 updatedBillAmount = taxCodeAccountdetailMap.get(ROUND_OFF);
 		totalAmountForDemand = totalAmountForDemand.add(updatedBillAmount.getAmount());
