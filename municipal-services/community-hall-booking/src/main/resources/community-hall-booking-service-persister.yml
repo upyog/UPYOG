@@ -1,0 +1,304 @@
+serviceMaps:
+  serviceName: chb-service
+  mappings:
+    - version: 1.0
+      description: Persists incomplete community hall booking details in community_hall_booking_init  table
+      fromTopic: save-community-hall-booking-init
+      isTransaction: true
+      queryMaps:
+
+        - query: INSERT INTO public.community_hall_booking_init(booking_id, tenant_id, community_hall_id, booking_status, booking_details, createdby, createdtime, lastmodifiedby, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);
+          basePath: hallsBookingApplication
+          jsonMaps:
+            - jsonPath: $.hallsBookingApplication.bookingId
+
+            - jsonPath: $.hallsBookingApplication.tenantId
+
+            - jsonPath: $.hallsBookingApplication.communityHallId
+
+            - jsonPath: $.hallsBookingApplication.bookingStatus
+
+            - jsonPath: $.hallsBookingApplication.bookingDetails
+              type: JSON
+              dbType: JSONB
+
+            - jsonPath: $.hallsBookingApplication.createdBy
+
+            - jsonPath: $.hallsBookingApplication.createdDate
+
+            - jsonPath: $.hallsBookingApplication.lastModifiedBy
+
+            - jsonPath: $.hallsBookingApplication.lastModifiedDate
+
+
+
+    - version: 1.0
+      description: Persists community hall booking details after application is completed community_hall_booking  table
+      fromTopic: save-community-hall-booking
+      isTransaction: true
+      queryMaps:
+
+        - query: INSERT INTO public.eg_chb_booking_detail(booking_id, booking_no, payment_date, application_date, tenant_id, community_hall_code, community_hall_name, booking_status, special_category, purpose, purpose_description, receipt_no, createdby, createdtime, lastmodifiedby, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+          basePath: hallsBookingApplication
+          jsonMaps:
+            - jsonPath: $.hallsBookingApplication.bookingId
+
+            - jsonPath: $.hallsBookingApplication.bookingNo
+
+            - jsonPath: $.hallsBookingApplication.paymentDate
+
+            - jsonPath: $.hallsBookingApplication.applicationDate
+
+            - jsonPath: $.hallsBookingApplication.tenantId
+
+            - jsonPath: $.hallsBookingApplication.communityHallCode
+            - jsonPath: $.hallsBookingApplication.communityHallName
+
+            - jsonPath: $.hallsBookingApplication.bookingStatus
+
+            - jsonPath: $.hallsBookingApplication.specialCategory.category
+
+            - jsonPath: $.hallsBookingApplication.purpose.purpose
+
+            - jsonPath: $.hallsBookingApplication.purposeDescription
+
+            - jsonPath: $.hallsBookingApplication.receiptNo
+
+            - jsonPath: $.hallsBookingApplication.auditDetails.createdBy
+
+            - jsonPath: $.hallsBookingApplication.auditDetails.createdTime
+
+            - jsonPath: $.hallsBookingApplication.auditDetails.lastModifiedBy
+
+            - jsonPath: $.hallsBookingApplication.auditDetails.lastModifiedTime
+
+        - query: INSERT INTO public.eg_chb_slot_detail(slot_id, booking_id, hall_code, capacity, booking_date,booking_end_date ,booking_from_time, booking_to_time, status,
+            createdby, createdtime, lastmodifiedby, lastmodifiedtime) VALUES (?, ?, ?, ?, ?::DATE, ?::DATE, ?::TIME, ?::TIME, ?, ?, ?, ?, ?);
+          basePath: hallsBookingApplication.bookingSlotDetails.*
+          jsonMaps:
+            - jsonPath: $.hallsBookingApplication.bookingSlotDetails.*.slotId
+
+            - jsonPath: $.hallsBookingApplication.bookingSlotDetails.*.bookingId
+
+            - jsonPath: $.hallsBookingApplication.bookingSlotDetails.*.hallCode
+
+            - jsonPath: $.hallsBookingApplication.bookingSlotDetails.*.capacity
+
+            - jsonPath: $.hallsBookingApplication.bookingSlotDetails.*.bookingDate
+
+            - jsonPath: $.hallsBookingApplication.bookingSlotDetails.*.bookingEndDate
+
+            - jsonPath: $.hallsBookingApplication.bookingSlotDetails.*.bookingFromTime
+
+            - jsonPath: $.hallsBookingApplication.bookingSlotDetails.*.bookingToTime
+
+            - jsonPath: $.hallsBookingApplication.bookingSlotDetails.*.status
+
+            - jsonPath: $.hallsBookingApplication.auditDetails.createdBy
+
+            - jsonPath: $.hallsBookingApplication.auditDetails.createdTime
+
+            - jsonPath: $.hallsBookingApplication.auditDetails.lastModifiedBy
+
+            - jsonPath: $.hallsBookingApplication.auditDetails.lastModifiedTime
+
+        #       - query: INSERT INTO public.eg_chb_document_detail(document_detail_id, booking_id, document_type, filestore_id, createdby,
+        #               lastmodifiedby, createdtime, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?);
+        #         basePath: hallsBookingApplication.documents.*
+        #         jsonMaps:
+        #          - jsonPath: $.hallsBookingApplication.documents.*.documentDetailId
+        #
+        #          - jsonPath: $.hallsBookingApplication.documents.*.bookingId
+        #
+        #          - jsonPath: $.hallsBookingApplication.documents.*.documentType
+        #
+        #          - jsonPath: $.hallsBookingApplication.documents.*.fileStoreId
+        #
+        #          - jsonPath: $.hallsBookingApplication.auditDetails.createdBy
+        #
+        #          - jsonPath: $.hallsBookingApplication.auditDetails.lastModifiedBy
+        #
+        #          - jsonPath: $.hallsBookingApplication.auditDetails.createdTime
+        #
+        #          - jsonPath: $.hallsBookingApplication.auditDetails.lastModifiedTime
+
+        - query: INSERT INTO public.eg_chb_applicant_detail(applicant_detail_id, booking_id, applicant_name, applicant_email_id, applicant_mobile_no, applicant_alternate_mobile_no, account_no, ifsc_code, bank_name, bank_branch_name, account_holder_name, createdby, lastmodifiedby, createdtime, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+          basePath: hallsBookingApplication.applicantDetail
+          jsonMaps:
+            - jsonPath: $.hallsBookingApplication.applicantDetail.applicantDetailId
+
+            - jsonPath: $.hallsBookingApplication.applicantDetail.bookingId
+
+            - jsonPath: $.hallsBookingApplication.applicantDetail.applicantName
+
+            - jsonPath: $.hallsBookingApplication.applicantDetail.applicantEmailId
+
+            - jsonPath: $.hallsBookingApplication.applicantDetail.applicantMobileNo
+
+            - jsonPath: $.hallsBookingApplication.applicantDetail.applicantAlternateMobileNo
+
+            - jsonPath: $.hallsBookingApplication.applicantDetail.accountNumber
+
+            - jsonPath: $.hallsBookingApplication.applicantDetail.ifscCode
+
+            - jsonPath: $.hallsBookingApplication.applicantDetail.bankName
+
+            - jsonPath: $.hallsBookingApplication.applicantDetail.bankBranchName
+
+            - jsonPath: $.hallsBookingApplication.applicantDetail.accountHolderName
+
+            - jsonPath: $.hallsBookingApplication.applicantDetail.auditDetails.createdBy
+
+            - jsonPath: $.hallsBookingApplication.applicantDetail.auditDetails.lastModifiedBy
+
+            - jsonPath: $.hallsBookingApplication.applicantDetail.auditDetails.createdTime
+
+            - jsonPath: $.hallsBookingApplication.applicantDetail.auditDetails.lastModifiedTime
+
+        - query: INSERT INTO public.eg_chb_owner(uuid, tenantid, booking_id, status, isprimaryowner, ownertype, ownershippercentage, institutionid, relationship, createdby, createdtime, lastmodifiedby, lastmodifiedtime, additionaldetails) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+          basePath: hallsBookingApplication.owners.*
+          jsonMaps:
+            - jsonPath: $.hallsBookingApplication.owners.*.uuid
+
+            - jsonPath: $.hallsBookingApplication.owners.*.tenantId
+
+            - jsonPath: $.hallsBookingApplication.bookingId
+
+            - jsonPath: $.hallsBookingApplication.owners.*.status
+
+            - jsonPath: $.hallsBookingApplication.owners.*.isPrimaryOwner
+
+            - jsonPath: $.hallsBookingApplication.owners.*.ownerType
+
+            - jsonPath: $.hallsBookingApplication.owners.*.ownerShipPercentage
+
+            - jsonPath: $.hallsBookingApplication.owners.*.institutionId
+
+            - jsonPath: $.hallsBookingApplication.owners.*.relationship
+
+            - jsonPath: $.hallsBookingApplication.auditDetails.createdBy
+
+            - jsonPath: $.hallsBookingApplication.auditDetails.createdTime
+
+            - jsonPath: $.hallsBookingApplication.auditDetails.lastModifiedBy
+
+            - jsonPath: $.hallsBookingApplication.auditDetails.lastModifiedTime
+
+            - jsonPath: $.hallsBookingApplication.owners.*.additionalDetails
+              type: JSON
+              dbType: JSONB
+
+        - query: INSERT INTO public.eg_chb_address_detail(address_id, applicant_detail_id, door_no, house_no, street_name, address_line_1, landmark, city, city_code, locality, locality_code, pincode) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+          basePath: hallsBookingApplication.address
+
+          jsonMaps:
+            - jsonPath: $.hallsBookingApplication.address.addressId
+
+            - jsonPath: $.hallsBookingApplication.address.applicantDetailId
+
+            - jsonPath: $.hallsBookingApplication.address.doorNo
+
+            - jsonPath: $.hallsBookingApplication.address.houseNo
+
+            - jsonPath: $.hallsBookingApplication.address.streetName
+
+            - jsonPath: $.hallsBookingApplication.address.addressLine1
+
+            - jsonPath: $.hallsBookingApplication.address.landmark
+
+            - jsonPath: $.hallsBookingApplication.address.city
+
+            - jsonPath: $.hallsBookingApplication.address.cityCode
+
+            - jsonPath: $.hallsBookingApplication.address.locality
+
+            - jsonPath: $.hallsBookingApplication.address.localityCode
+
+            - jsonPath: $.hallsBookingApplication.address.pincode
+
+        - query: INSERT INTO public.eg_chb_booking_detail_audit SELECT * FROM public.eg_chb_booking_detail WHERE booking_id = ?;
+          basePath: hallsBookingApplication
+          jsonMaps:
+            - jsonPath: $.hallsBookingApplication.bookingId
+
+        - query: INSERT INTO public.eg_chb_slot_detail_audit SELECT * FROM public.eg_chb_slot_detail WHERE slot_id = ?;
+          basePath: hallsBookingApplication.bookingSlotDetails.*
+          jsonMaps:
+            - jsonPath: $.hallsBookingApplication.bookingSlotDetails.*.slotId
+
+    - version: 1.0
+      description: Update community hall booking details after application is changed
+      fromTopic: update-community-hall-booking
+      isTransaction: true
+      queryMaps:
+        - query: UPDATE public.eg_chb_booking_detail SET booking_status= ?, payment_date = ?, receipt_no = ?, lastmodifiedby = ?, lastmodifiedtime = ?, permission_letter_filestore_id = ?, payment_receipt_filestore_id = ? WHERE booking_id = ?;
+          basePath: hallsBookingApplication
+          jsonMaps:
+            - jsonPath: $.hallsBookingApplication.bookingStatus
+            - jsonPath: $.hallsBookingApplication.paymentDate
+            - jsonPath: $.hallsBookingApplication.receiptNo
+            - jsonPath: $.hallsBookingApplication.auditDetails.lastModifiedBy
+            - jsonPath: $.hallsBookingApplication.auditDetails.lastModifiedTime
+            - jsonPath: $.hallsBookingApplication.permissionLetterFilestoreId
+            - jsonPath: $.hallsBookingApplication.paymentReceiptFilestoreId
+            - jsonPath: $.hallsBookingApplication.bookingId
+
+        - query: UPDATE public.eg_chb_slot_detail SET status=?, lastmodifiedby=?, lastmodifiedtime=? WHERE slot_id=?
+          basePath: hallsBookingApplication.bookingSlotDetails.*
+          jsonMaps:
+            - jsonPath: $.hallsBookingApplication.bookingSlotDetails.*.status
+            - jsonPath: $.hallsBookingApplication.auditDetails.lastModifiedBy
+            - jsonPath: $.hallsBookingApplication.auditDetails.lastModifiedTime
+            - jsonPath: $.hallsBookingApplication.bookingSlotDetails.*.slotId
+
+        - query: INSERT INTO public.eg_chb_booking_detail_audit SELECT * FROM public.eg_chb_booking_detail WHERE booking_id = ?;
+          basePath: hallsBookingApplication
+          jsonMaps:
+            - jsonPath: $.hallsBookingApplication.bookingId
+
+        - query: INSERT INTO public.eg_chb_slot_detail_audit SELECT * FROM public.eg_chb_slot_detail WHERE slot_id = ?;
+          basePath: hallsBookingApplication.bookingSlotDetails.*
+          jsonMaps:
+            - jsonPath: $.hallsBookingApplication.bookingSlotDetails.*.slotId
+
+
+        - query: >
+            INSERT INTO public.eg_chb_document_detail (
+              document_detail_id, booking_id, document_type, filestore_id, createdby,
+              lastmodifiedby, createdtime, lastmodifiedtime
+            )
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            ON CONFLICT (document_detail_id) DO UPDATE
+            SET
+              booking_id = EXCLUDED.booking_id,
+              document_type = EXCLUDED.document_type,
+              filestore_id = EXCLUDED.filestore_id,
+              lastmodifiedby = EXCLUDED.lastmodifiedby,
+              lastmodifiedtime = EXCLUDED.lastmodifiedtime;
+          basePath: $.hallsBookingApplication.documents.*
+          jsonMaps:
+            - jsonPath: $.hallsBookingApplication.documents.*.documentDetailId
+            - jsonPath: $.hallsBookingApplication.documents.*.bookingId
+            - jsonPath: $.hallsBookingApplication.documents.*.documentType
+            - jsonPath: $.hallsBookingApplication.documents.*.fileStoreId
+            - jsonPath: $.hallsBookingApplication.auditDetails.createdBy
+            - jsonPath: $.hallsBookingApplication.auditDetails.lastModifiedBy
+            - jsonPath: $.hallsBookingApplication.auditDetails.createdTime
+            - jsonPath: $.hallsBookingApplication.auditDetails.lastModifiedTime
+
+        - query: UPDATE public.eg_chb_owner SET status = ?, isprimaryowner = ?, ownertype = ?, ownershippercentage = ?, institutionid = ?, relationship = ?, additionaldetails = ?, lastmodifiedby = ?, lastmodifiedtime = ? WHERE booking_id = ? AND uuid = ?
+          basePath: hallsBookingApplication.owners.*
+          jsonMaps:
+            - jsonPath: $.hallsBookingApplication.owners.*.status
+            - jsonPath: $.hallsBookingApplication.owners.*.isPrimaryOwner
+            - jsonPath: $.hallsBookingApplication.owners.*.ownerType
+            - jsonPath: $.hallsBookingApplication.owners.*.ownerShipPercentage
+            - jsonPath: $.hallsBookingApplication.owners.*.institutionId
+            - jsonPath: $.hallsBookingApplication.owners.*.relationship
+            - jsonPath: $.hallsBookingApplication.owners.*.additionalDetails
+              type: JSON
+              dbType: JSONB
+            - jsonPath: $.hallsBookingApplication.auditDetails.lastModifiedBy
+            - jsonPath: $.hallsBookingApplication.auditDetails.lastModifiedTime
+            - jsonPath: $.hallsBookingApplication.bookingId
+            - jsonPath: $.hallsBookingApplication.owners.*.uuid

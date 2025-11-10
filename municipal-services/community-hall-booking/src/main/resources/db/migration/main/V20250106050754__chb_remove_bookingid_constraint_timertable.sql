@@ -1,0 +1,1 @@
+ALTER TABLE eg_chb_payment_timer DROP CONSTRAINT eg_chb_payment_timer_booking_id_key;
