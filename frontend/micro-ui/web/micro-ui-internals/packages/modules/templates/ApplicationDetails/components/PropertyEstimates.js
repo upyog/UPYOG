@@ -167,6 +167,7 @@ function PropertyEstimates({ taxHeadEstimatesCalculation }) {
           className="border-none"
           textStyle={{ fontSize: "16px", fontWeight: "bold" }}
         />
+        <div style={{fontSize: "12px", fontStyle: "italic"}}>N.B.: Minimum Payable Amount to reach ULB's Notified Lower Limit is applicabe when Assessed Property Tax is lesser than ULB's Notified Lower Limit.</div>
       </StatusTable>
     </div>
   );
