@@ -105,7 +105,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
             }
             
             log.info("User found - ID: {}, UUID: {}, Active: {}", user.getId(), user.getUuid(), user.getActive());
-            
+
             // Check account status
             if (user.getAccountLocked() != null && user.getAccountLocked()) {
                 log.warn("Account is locked for user: {}", username);
@@ -120,15 +120,30 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
                     .build();
                 user = unlockAccount(user, unlockRequestInfo);
             }
-            
+
             // Validate password
             UserType userTypeEnum = UserType.fromValue(userType);
             boolean isOtpBased = (userTypeEnum == UserType.CITIZEN && citizenLoginPasswordOtpEnabled) ||
                                (userTypeEnum == UserType.EMPLOYEE && employeeLoginPasswordOtpEnabled);
-            
+
             log.info("Password validation - OTP based: {}, UserType: {}", isOtpBased, userTypeEnum);
-            
-            if (!isPasswordMatch(isOtpBased, password, user, authentication)) {
+
+            // CRITICAL FIX: Restore fixed OTP validation logic from Dev-3.0 (lost during upgrade)
+            // This allows citizen login with fixed OTP for testing/automation without calling external OTP service
+            boolean isPasswordMatched;
+            if (userTypeEnum == UserType.CITIZEN && isOtpBased) {
+                if (fixedOTPEnabled && fixedOTPPassword != null && !fixedOTPPassword.isEmpty() && fixedOTPPassword.equals(password)) {
+                    log.info("Fixed OTP validation successful for citizen user: {}", username);
+                    isPasswordMatched = true;  // Skip external OTP service call
+                } else {
+                    log.info("Fixed OTP not enabled or not matching, validating via OTP service");
+                    isPasswordMatched = isPasswordMatch(isOtpBased, password, user, authentication);
+                }
+            } else {
+                isPasswordMatched = isPasswordMatch(isOtpBased, password, user, authentication);
+            }
+
+            if (!isPasswordMatched) {
                 log.error("Password validation failed for user: {}", username);
                 throw new BadCredentialsException("Invalid password");
             }
