@@ -63,7 +63,13 @@ public class WorkflowIntegrator {
 	public void callWorkFlow(SewerageConnectionRequest sewerageConnectionRequest, Property property) {
 		String wfBusinessServiceName = config.getBusinessServiceValue();
 		
-		if(sewerageConnectionRequest.isDisconnectRequest()
+//		if(sewerageConnectionRequest.isDisconnectRequest()
+//				|| (sewerageConnectionRequest.getSewerageConnection().getApplicationStatus().equalsIgnoreCase(SWConstants.PENDING_FOR_PAYMENT_STATUS_CODE)
+//				&& sewerageConnectionRequest.getSewerageConnection().getApplicationNo().contains(SWConstants.APPLICATION_DISCONNECTION_CODE))) {
+//			wfBusinessServiceName = config.getDisconnectBusinessServiceName();
+//		} 
+		if((sewerageConnectionRequest.isDisconnectRequest() || sewerageConnectionRequest.getSewerageConnection().getApplicationType().equalsIgnoreCase(SWConstants.DISCONNECT_SEWERAGE_CONNECTION)) && 
+				!(sewerageConnectionRequest.isReconnectRequest() || sewerageConnectionRequest.getSewerageConnection().getApplicationType().equalsIgnoreCase(SWConstants.SEWERAGE_RECONNECTION))
 				|| (sewerageConnectionRequest.getSewerageConnection().getApplicationStatus().equalsIgnoreCase(SWConstants.PENDING_FOR_PAYMENT_STATUS_CODE)
 				&& sewerageConnectionRequest.getSewerageConnection().getApplicationNo().contains(SWConstants.APPLICATION_DISCONNECTION_CODE))) {
 			wfBusinessServiceName = config.getDisconnectBusinessServiceName();
