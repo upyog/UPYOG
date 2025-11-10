@@ -40,12 +40,25 @@ public class RbacPreCheckFilter implements GlobalFilter, Ordered {
 
         String endPointPath = exchange.getRequest().getPath().value();
 
-        if(applicationProperties.getOpenEndpointsWhitelist().contains(endPointPath) || anonymousEndpointsWhitelist.contains(endPointPath)){
+        // CRITICAL FIX: Check AUTH_BOOLEAN_FLAG_NAME to determine if RBAC should run
+        // RBAC requires user enrichment from AuthFilter. If Auth is skipped, RBAC must be skipped too.
+        // This fixes mixed-mode endpoints where AUTH=false but RBAC was incorrectly set to true.
+        Boolean authFlag = exchange.getAttribute(AUTH_BOOLEAN_FLAG_NAME);
+
+        log.info("RBAC PRE-CHECK: Endpoint: {}, authFlag: {}", endPointPath, authFlag);
+
+        // Skip RBAC for: open endpoints, anonymous endpoints, OR when auth will be skipped
+        // Also check mixedModeEndpointsWhitelist to match Zuul behavior
+        if(applicationProperties.getOpenEndpointsWhitelist().contains(endPointPath)
+            || (anonymousEndpointsWhitelist != null && anonymousEndpointsWhitelist.contains(endPointPath))
+            || applicationProperties.getMixedModeEndpointsWhitelist().contains(endPointPath)
+            || (authFlag != null && !authFlag)) {  // If Auth is false, RBAC must be false
             exchange.getAttributes().put(RBAC_BOOLEAN_FLAG_NAME, false);
-            log.info(SKIP_RBAC, endPointPath);
+            log.info("RBAC PRE-CHECK: {} - RBAC DISABLED (open/anonymous/mixed-mode or auth disabled)", endPointPath);
         }
         else {
             exchange.getAttributes().put(RBAC_BOOLEAN_FLAG_NAME, true);
+            log.info("RBAC PRE-CHECK: {} - RBAC ENABLED (protected endpoint)", endPointPath);
         }
         return  chain.filter(exchange);
 
