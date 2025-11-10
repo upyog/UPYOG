@@ -174,4 +174,10 @@ public class WorKflowRepository {
         Integer count =  jdbcTemplate.queryForObject(query, preparedStmtList.toArray(), Integer.class);
         return count;
     }
+    
+    public List<ProcessInstance> getAutoEscalationEligibleApplications(ProcessInstanceSearchCriteria criteria){
+        List<Object> preparedStmtList = new ArrayList<>();
+        String query = queryBuilder.getAutoEscalationEligibleApplicationsSearchQuery(criteria, preparedStmtList);
+        return jdbcTemplate.query(query, preparedStmtList.toArray(), rowMapper);
+    }
 }

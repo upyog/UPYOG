@@ -363,7 +363,7 @@ public class CalculationService {
 		Map<String, Double> farDetails  = (Map<String, Double>)node.getOrDefault("farDetails", new HashMap<>());
 		String roadType  = (String)node.getOrDefault("roadType", "OTHER ROAD");
 		String NocNumber  = (String)node.getOrDefault("NocNumber", "");
-		Boolean isClubbedPlot  = (Boolean)node.getOrDefault("isClubbedPlot", false);
+		boolean isClubbedPlot  = (boolean)node.getOrDefault("isClubbedPlot", false);
 		Boolean purchasedFAR = (Boolean)node.getOrDefault("purchasedFAR", false);
 		
 		List<TaxHeadEstimate> estimates = new LinkedList<>();
@@ -413,8 +413,16 @@ public class CalculationService {
 				amount=rate.multiply(builtUpArea.multiply(BPACalculatorConstants.SQYARD_TO_SQFEET)).setScale(0, RoundingMode.HALF_UP);
 				break;
 			case BPACalculatorConstants.BPA_CLUBBING_CHARGES:
-				if(isClubbedPlot)
-					amount=rate.multiply(plotArea).setScale(0, RoundingMode.HALF_UP);
+				if(isClubbedPlot) {
+					Double clubbingSlabAmount = (Double)((List<Map<String, Object>>)chargesType.get("slabs")).stream().filter(slab -> {
+						return plotArea.doubleValue() > (Double)slab.get("fromPlotArea") 
+						        && plotArea.doubleValue() <= (Double)slab.get("toPlotArea");
+					}).map(slab -> slab.get("rate")).findFirst().orElse(0.0);
+					if(clubbingSlabAmount == 0.0)
+						amount=rate.multiply(plotArea).setScale(0, RoundingMode.HALF_UP);
+					else
+						amount=BigDecimal.valueOf(clubbingSlabAmount).multiply(plotArea).setScale(0, RoundingMode.HALF_UP);
+				}
 				break;
 			case BPACalculatorConstants.BPA_WATER_CHARGES:
 			case BPACalculatorConstants.BPA_URBAN_DEVELOPMENT_CESS:
