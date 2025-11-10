@@ -17,7 +17,7 @@ const getOwnerDetails = (application, t) => {
         { title: t("TL_NEW_OWNER_DETAILS_EMAIL_LABEL"), value: application?.tradeLicenseDetail?.owners[0]?.emailId || t("CS_NA") },
         { title: t("TL_OWNER_SPECIAL_CATEGORY"), value: application?.tradeLicenseDetail?.owners[0]?.ownerType ? t(`COMMON_MASTERS_OWNERTYPE_${application?.tradeLicenseDetail?.owners[0]?.ownerType}`) : t("CS_NA") },
         { title: t("TL_NEW_OWNER_DETAILS_ADDR_LABEL"), value: application?.tradeLicenseDetail?.owners[0]?.permanentAddress || t("CS_NA") },
-        { title: t("TL_NEW_OWNER_DETAILS_OWNERSHIP_CATEGORY"), value: application?.tradeLicenseDetail?.subOwnerShipCategory || t("CS_NA") },
+        { title: t("TL_NEW_OWNER_DETAILS_OWNERSHIP_CATEGORY"), value: t(application?.tradeLicenseDetail?.subOwnerShipCategory) || t("CS_NA") },
       ],
     };
   } else { //if (application?.subOwnerShipCategory?.includes("INDIVIDUAL"))
