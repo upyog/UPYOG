@@ -2054,8 +2054,8 @@ public class BillServicev2 {
 			mpdObj.setInterestAmount(interestMap.getOrDefault("YR", BigDecimal.ZERO));
 			mpdList.add(mpdObj);
 
-			addBillAccDetailInTaxCodeAccDetailMap(taxCodeAccountdetailMap, demand, billDetailId, totalAmountForDemand,
-					totalAMountForInterest, penalty, requestInfo);
+			//addBillAccDetailInTaxCodeAccDetailMap(taxCodeAccountdetailMap, demand, billDetailId, totalAmountForDemand,
+				//	totalAMountForInterest, penalty, requestInfo);
 
 			break;
 		default:
