@@ -151,6 +151,18 @@ public class RbacFilter extends ZuulFilter {
             }
         }
 
+        if(Utils.isFormDataCompatible(request) && !isNull(queryParams) 
+        		&& queryParams.containsKey(REQUEST_TENANT_ID_KEY) 
+        		&& !queryParams.get(REQUEST_TENANT_ID_KEY).isEmpty()) {
+
+            String tenantId = queryParams.get(REQUEST_TENANT_ID_KEY).get(0);
+            if(tenantId.contains(",")){
+                tenantIds.addAll(Arrays.asList(tenantId.split(",")));
+            } else
+                tenantIds.add(tenantId);
+
+        }
+        
         if (tenantIds.isEmpty()) {
             tenantIds.add(((User) ctx.get(USER_INFO_KEY)).getTenantId());
         }
