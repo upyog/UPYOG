@@ -150,16 +150,19 @@ public class RbacFilter extends ZuulFilter {
                     " API gateway"));
             }
         }
-
-        if(Utils.isFormDataCompatible(request) && !isNull(queryParams) 
+        else if(Utils.isFormDataCompatible(request) && !isNull(queryParams) 
         		&& queryParams.containsKey(REQUEST_TENANT_ID_KEY) 
         		&& !queryParams.get(REQUEST_TENANT_ID_KEY).isEmpty()) {
-
-            String tenantId = queryParams.get(REQUEST_TENANT_ID_KEY).get(0);
-            if(tenantId.contains(",")){
-                tenantIds.addAll(Arrays.asList(tenantId.split(",")));
-            } else
-                tenantIds.add(tenantId);
+        	try {
+        		String tenantId = queryParams.get(REQUEST_TENANT_ID_KEY).get(0);
+                if(tenantId.contains(",")){
+                    tenantIds.addAll(Arrays.asList(tenantId.split(",")));
+                } else
+                    tenantIds.add(tenantId);
+			} catch (Exception e) {
+				throw new RuntimeException( new CustomException("REQUEST_PARSE_FAILED", HttpStatus.UNAUTHORIZED.value() ,"Failed to parse request at" +
+	                    " API gateway"));
+			}
 
         }
         
