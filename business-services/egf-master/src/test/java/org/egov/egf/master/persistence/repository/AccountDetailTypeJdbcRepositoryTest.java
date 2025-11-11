@@ -1,7 +1,7 @@
 package org.egov.egf.master.persistence.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -9,16 +9,16 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.egov.common.domain.exception.InvalidDataException;
 import org.egov.common.domain.model.Pagination;
 import org.egov.egf.master.domain.model.AccountDetailType;
 import org.egov.egf.master.domain.model.AccountDetailTypeSearch;
 import org.egov.egf.master.persistence.entity.AccountDetailTypeEntity;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataAccessException;
@@ -26,18 +26,18 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.test.context.jdbc.Sql;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
-@Ignore
+@Disabled
 public class AccountDetailTypeJdbcRepositoryTest {
 
 	private AccountDetailTypeJdbcRepository accountDetailTypeJdbcRepository;
 	@Autowired
 	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		accountDetailTypeJdbcRepository = new AccountDetailTypeJdbcRepository(namedParameterJdbcTemplate);
 	}
@@ -61,15 +61,16 @@ public class AccountDetailTypeJdbcRepositoryTest {
 
 	}
 
-	@Test(expected = DataIntegrityViolationException.class)
-	@Sql(scripts = { "/sql/clearAccountDetailType.sql" })
-	public void test_create_with_tenantId_null() {
+	@Test
+@Sql(scripts = { "/sql/clearAccountDetailType.sql" })
+public void test_create_with_tenantId_null() {
 
 		AccountDetailTypeEntity accountDetailType = AccountDetailTypeEntity.builder().tablename("contractor")
 				.fullyQualifiedName("abc/contractor").name("name").active(true).build();
-		accountDetailTypeJdbcRepository.create(accountDetailType);
-
-	}
+    assertThrows(DataIntegrityViolationException.class, () -> {
+        accountDetailTypeJdbcRepository.create(accountDetailType);
+    });
+}
 
 	@Test
 	@Sql(scripts = { "/sql/clearAccountDetailType.sql", "/sql/insertAccountDetailType.sql" })
@@ -134,15 +135,16 @@ public class AccountDetailTypeJdbcRepositoryTest {
 
 	}
 
-	@Test(expected = InvalidDataException.class)
-	@Sql(scripts = { "/sql/clearAccountDetailType.sql", "/sql/insertAccountDetailType.sql" })
-	public void test_search_invalid_sort_option() {
+	@Test
+@Sql(scripts = { "/sql/clearAccountDetailType.sql", "/sql/insertAccountDetailType.sql" })
+public void test_search_invalid_sort_option() {
 
 		AccountDetailTypeSearch search = getAccountDetailTypeSearch();
 		search.setSortBy("desc");
-		accountDetailTypeJdbcRepository.search(search);
-
-	}
+    assertThrows(InvalidDataException.class, () -> {
+        accountDetailTypeJdbcRepository.search(search);
+    });
+}
 
 	@Test
 	@Sql(scripts = { "/sql/clearAccountDetailType.sql", "/sql/insertAccountDetailType.sql" })
