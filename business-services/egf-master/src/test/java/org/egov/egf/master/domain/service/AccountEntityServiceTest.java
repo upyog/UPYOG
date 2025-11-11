@@ -9,13 +9,14 @@ import org.egov.egf.master.domain.model.AccountEntity;
 import org.egov.egf.master.domain.model.AccountEntitySearch;
 import org.egov.egf.master.domain.repository.AccountDetailTypeRepository;
 import org.egov.egf.master.domain.repository.AccountEntityRepository;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.context.annotation.Import;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.SmartValidator;
@@ -23,12 +24,12 @@ import org.springframework.validation.SmartValidator;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.any;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 @Import(TestConfiguration.class)
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 public class AccountEntityServiceTest {
 
     @InjectMocks
@@ -47,7 +48,7 @@ public class AccountEntityServiceTest {
     private RequestInfo requestInfo = new RequestInfo();
     private List<AccountEntity> accountEntities = new ArrayList<>();
 
-    @Before
+    @BeforeEach
     public void setup() {
     }
 
@@ -113,14 +114,16 @@ public class AccountEntityServiceTest {
         assertEquals(expextedResult.get(0).getName(), actualResult.get(0).getAccountDetailType().getName());
     }
 
-    @Test(expected = InvalidDataException.class)
+    @Test
     public final void test_fetch_related_data_when_parentid_is_wrong() {
         List<AccountDetailType> expextedResult = new ArrayList<>();
         expextedResult.add(getAccountDetaialType());
         List<AccountEntity> accountEntities = new ArrayList<>();
         accountEntities.add(getAccountEntity());
         when(accountEntityRepository.findById(any(AccountEntity.class))).thenReturn(null);
-        accountEntityService.fetchRelated(accountEntities);
+        assertThrows(InvalidDataException.class, () -> {
+            accountEntityService.fetchRelated(accountEntities);
+        });
     }
 
     private List<AccountEntity> getAccountEntitys() {

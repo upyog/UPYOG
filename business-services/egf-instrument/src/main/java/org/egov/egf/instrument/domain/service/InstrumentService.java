@@ -310,6 +310,7 @@ public class InstrumentService {
         FinancialStatusContract financialStatusContract = new FinancialStatusContract();
         financialStatusContract.setCode("Deposited");
         financialStatusContract.setModuleType("Instrument");
+        financialStatusContract.setTenantId(instrument.getTenantId());
 
         instrument = instrumentRepository.findById(instrument);
         FinancialStatusContract financialStatusContract1 = new FinancialStatusContract();
@@ -330,6 +331,7 @@ public class InstrumentService {
         FinancialStatusContract financialStatusContract = new FinancialStatusContract();
         financialStatusContract.setCode("Deposited");
         financialStatusContract.setModuleType("Instrument");
+        financialStatusContract.setTenantId(instrument.getTenantId());
 
         instrument = instrumentRepository.findById(instrument);
         FinancialStatusContract financialStatusContract1 = new FinancialStatusContract();

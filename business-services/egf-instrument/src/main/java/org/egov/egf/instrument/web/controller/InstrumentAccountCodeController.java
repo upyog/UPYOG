@@ -1,6 +1,7 @@
 package org.egov.egf.instrument.web.controller;
 
 import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -175,8 +176,8 @@ public class InstrumentAccountCodeController {
 
     private ResponseInfo getResponseInfo(RequestInfo requestInfo) {
         return ResponseInfo.builder().apiId(requestInfo.getApiId()).ver(requestInfo.getVer())
-                .ts(new SimpleDateFormat("dd-MM-yyyy HH:mm:ss").format(new Date())).resMsgId(requestInfo.getMsgId())
-                .resMsgId(PLACEHOLDER).status(PLACEHOLDER).build();
+                .ts(Instant.now().toEpochMilli()).resMsgId(requestInfo.getMsgId())
+                .status(PLACEHOLDER).build();
     }
 
 }

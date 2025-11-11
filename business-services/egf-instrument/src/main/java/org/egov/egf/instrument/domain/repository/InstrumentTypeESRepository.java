@@ -46,6 +46,7 @@ public class InstrumentTypeESRepository extends ESRepository {
         Pagination<InstrumentType> page = new Pagination<>();
         if (searchResponse.getHits() == null || searchResponse.getHits().getTotalHits() == 0L)
             return page;
+
         List<InstrumentType> instrumentTypes = new ArrayList<InstrumentType>();
         InstrumentType instrumentType = null;
         for (SearchHit hit : searchResponse.getHits()) {
@@ -68,7 +69,7 @@ public class InstrumentTypeESRepository extends ESRepository {
             instrumentTypes.add(instrumentType);
         }
 
-        page.setTotalResults(Long.valueOf(searchResponse.getHits().getTotalHits()).intValue());
+        page.setTotalResults((int) searchResponse.getHits().getTotalHits());
         page.setPagedData(instrumentTypes);
 
         return page;

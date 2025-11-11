@@ -1,0 +1,646 @@
+{
+	"info": {
+		"_postman_id": "adc632d5-e9fd-47f4-81bb-7c56fd495fcb",
+		"name": "Egf- Instrument",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "29823029"
+	},
+	"item": [
+		{
+			"name": "Create intrument",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n   \"requestInfo\":{\n      \"resMsgId\":\"placeholder\",\n      \"status\":\"200\",\n      \"apiId\":null,\n      \"ver\":null,\n      \"ts\":1483212661000,\n      \"key\":null,\n      \"authToken\":\"\",\n      \"userInfo\":{\n         \"id\":1\n      }\n   },\n   \"instruments\":[\n      {\n         \"id\":\"hello\",\n         \"transactionNumber\":\"transactionNumber\",\n         \"transactionDate\":\"23-08-2017\",\n         \"amount\":100,\n         \"payee\":\"payee\",\n         \"transactionType\":\"Credit\",\n         \"bank\":{\n            \"id\":10,\n            \"code\":\"10\",\n            \"name\":\"nameupdate\",\n            \"description\":\"descriptionupdate\",\n            \"active\":true,\n            \"type\":\"typeupdate\",\n            \"tenantId\":\"default\"\n         },\n         \"bankAccount\":{\n          \"id\":\"1\",\n            \"bankBranch\":{\n               \"id\":\"1\",\n               \"bank\":{\n                  \"id\":10000,\n                  \"code\":\"10\",\n                  \"name\":\"neameupdate\",\n                  \"description\":\"descriptionupdate\",\n                  \"active\":true,\n                  \"type\":\"typeupdate\",\n                  \"tenantId\":\"default\"\n               },\n               \"code\":\"Rajesh\",\n               \"name\":\"Rajesh\",\n               \"active\":true,\n               \"micr\":\"Rajesh\",\n               \"tenantId\":\"default\"\n            },\n            \"chartOfAccount\":{\n               \"id\":\"1223\",\n               \"tenantId\":\"default\"\n            },\n            \"fund\":{\n               \"id\":\"1\",\n               \"tenantId\":\"default\"\n            },\n            \"accountNumber\":\"000000000001\",\n            \"accountType\":\"OTHER SCHEDULED BANKS\",\n            \"active\":true,\n            \"type\":\"RECEIPTS_PAYMENTS\",\n            \"tenantId\":\"default\"\n         },\n         \"instrumentType\":{\n            \"id\":\"f3ae954c-74b0-47d9-9c17-088362c31e35\",\n            \"name\":\"Online\",\n            \"active\":\"true\",\n            \"tenantId\":\"default\"\n         },\n         \"serialNo\":\"serialNo\",\n         \"tenantId\":\"default\"\n      }\n   ]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8480/egf-instrument/instruments/_create",
+					"host": [
+						"localhost"
+					],
+					"port": "8480",
+					"path": [
+						"egf-instrument",
+						"instruments",
+						"_create"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Search Instrument",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"RequestInfo\": {\n      \"apiId\": \"Rainmaker\",\n      \"ver\": \".01\",\n      \"ts\": \"01-01-2017 12:00:00\",\n      \"action\": \"_search\",\n      \"did\": \"1\",\n      \"key\": \"\",\n      \"msgId\": \"20170310130900|en_IN\",\n      \"authToken\": \"your-auth-token-here\",\n      \"userInfo\": {\n        \"id\": 1,\n        \"userName\": \"admin\",\n        \"name\": \"Administrator\",\n        \"type\": \"EMPLOYEE\",\n        \"mobileNumber\": \"9999999999\",\n        \"emailId\": \"admin@egovernments.org\",\n        \"roles\": [\n          {\n            \"name\": \"Employee\",\n            \"code\": \"EMPLOYEE\",\n            \"tenantId\": \"default\"\n          }\n        ],\n        \"tenantId\": \"default\",\n        \"uuid\": \"string\"\n      }\n    }\n  }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8480/egf-instrument/instruments/_search?tenantId=default&pageSize=10&offset=0",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8480",
+					"path": [
+						"egf-instrument",
+						"instruments",
+						"_search"
+					],
+					"query": [
+						{
+							"key": "tenantId",
+							"value": "default"
+						},
+						{
+							"key": "pageSize",
+							"value": "10"
+						},
+						{
+							"key": "offset",
+							"value": "0"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Instrument",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"RequestInfo\": {\n      \"apiId\": \"Rainmaker\",\n      \"ver\": \".01\",\n      \"ts\": \"01-01-2017 12:00:00\",\n      \"action\": \"_update\",\n      \"did\": \"1\",\n      \"key\": \"\",\n      \"msgId\": \"20170310130900|en_IN\",\n      \"authToken\": \"your-auth-token-here\",\n      \"userInfo\": {\n        \"id\": 1,\n        \"userName\": \"admin\",\n        \"name\": \"Administrator\",\n        \"type\": \"EMPLOYEE\",\n        \"mobileNumber\": \"9999999999\",\n        \"emailId\": \"admin@egovernments.org\",\n        \"roles\": [\n          {\n            \"name\": \"Employee\",\n            \"code\": \"EMPLOYEE\",\n            \"tenantId\": \"default\"\n          }\n        ],\n        \"tenantId\": \"default\",\n        \"uuid\": \"string\"\n      }\n    },\n    \"Instruments\": [\n      {\n        \"id\": \"29d6a9ea2f95444093299a8459cc3d09\",\n        \"transactionNumber\": \"updatedTransactionNumber\",\n        \"transactionDate\": \"24-08-2017\",\n        \"amount\": 150,\n        \"instrumentType\": {\n          \"id\": \"2dfcf972-efb2-4509-99fe-5c42167b2ea7\",\n          \"name\": \"Online\",\n          \"description\": \"Instrument type online\",\n          \"active\": true,\n          \"tenantId\": \"default\"\n        },\n        \"bank\": {\n          \"id\": \"10\",\n          \"code\": \"10\",\n          \"name\": \"nameupdate\",\n          \"description\": \"descriptionupdate\",\n          \"active\": true,\n          \"type\": \"typeupdate\",\n          \"tenantId\": \"default\"\n        },\n        \"branchName\": \"Updated Branch\",\n        \"bankAccount\": {\n          \"id\": \"1\",\n          \"bankBranch\": {\n            \"id\": \"1\",\n            \"bank\": {\n              \"id\": \"10000\",\n              \"code\": \"10\",\n              \"name\": \"neameupdate\",\n              \"description\": \"descriptionupdate\",\n              \"active\": true,\n              \"type\": \"typeupdate\",\n              \"tenantId\": \"default\"\n            },\n            \"code\": \"Rajesh\",\n            \"name\": \"Rajesh\",\n            \"address\": null,\n            \"address2\": null,\n            \"city\": null,\n            \"state\": null,\n            \"pincode\": null,\n            \"phone\": null,\n            \"fax\": null,\n            \"contactPerson\": null,\n            \"active\": true,\n            \"description\": null,\n            \"micr\": \"Rajesh\",\n            \"tenantId\": \"default\"\n          },\n          \"chartOfAccount\": {\n            \"id\": \"1223\",\n            \"glcode\": null,\n            \"name\": null,\n            \"accountCodePurpose\": null,\n            \"description\": null,\n            \"isActiveForPosting\": null,\n            \"parentId\": null,\n            \"type\": null,\n            \"classification\": null,\n            \"functionRequired\": null,\n            \"budgetCheckRequired\": null,\n            \"majorCode\": null,\n            \"isSubLedger\": null,\n            \"tenantId\": \"default\"\n          },\n          \"fund\": {\n            \"tenantId\": \"default\",\n            \"id\": \"1\",\n            \"name\": null,\n            \"code\": null,\n            \"identifier\": null,\n            \"level\": null,\n            \"parent\": null,\n            \"active\": null\n          },\n          \"accountNumber\": \"000000000001\",\n          \"accountType\": \"OTHER SCHEDULED BANKS\",\n          \"description\": null,\n          \"active\": true,\n          \"payTo\": null,\n          \"type\": \"RECEIPTS_PAYMENTS\",\n          \"tenantId\": \"default\"\n        },\n        \"financialStatus\": null,\n        \"remittanceVoucherId\": null,\n        \"transactionType\": {\n          \"name\": \"Credit\"\n        },\n        \"payee\": \"Updated Payee\",\n        \"drawer\": \"Updated Drawer\",\n        \"serialNo\": \"updatedSerialNo\",\n        \"instrumentVouchers\": [],\n        \"tenantId\": \"default\"\n      }\n    ]\n  }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8480/egf-instrument/instruments/_update",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8480",
+					"path": [
+						"egf-instrument",
+						"instruments",
+						"_update"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Intrument",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"RequestInfo\": {\n      \"apiId\": \"Rainmaker\",\n      \"ver\": \".01\",\n      \"ts\": \"01-01-2017 12:00:00\",\n      \"action\": \"_delete\",\n      \"did\": \"1\",\n      \"key\": \"\",\n      \"msgId\": \"20170310130900|en_IN\",\n      \"authToken\": \"your-auth-token-here\",\n      \"userInfo\": {\n        \"id\": 1,\n        \"userName\": \"admin\",\n        \"name\": \"Administrator\",\n        \"type\": \"EMPLOYEE\",\n        \"mobileNumber\": \"9999999999\",\n        \"emailId\": \"admin@egovernments.org\",\n        \"roles\": [\n          {\n            \"name\": \"Employee\",\n            \"code\": \"EMPLOYEE\",\n            \"tenantId\": \"default\"\n          }\n        ],\n        \"tenantId\": \"default\",\n        \"uuid\": \"string\"\n      }\n    },\n    \"Instruments\": [\n      {\n        \"id\": \"29d6a9ea2f95444093299a8459cc3d09\",\n        \"tenantId\": \"default\",\n        \"deleteReason\": \"User requested deletion\"\n      }\n    ]\n  }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8480/egf-instrument/instruments/_delete",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8480",
+					"path": [
+						"egf-instrument",
+						"instruments",
+						"_delete"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Deposit Intrument",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"RequestInfo\": {\n      \"apiId\": \"Rainmaker\",\n      \"ver\": \".01\",\n      \"ts\": \"01-01-2017 12:00:00\",\n      \"action\": \"_deposit\",\n      \"did\": \"1\",\n      \"key\": \"\",\n      \"msgId\": \"20170310130900|en_IN\",\n      \"authToken\": \"your-auth-token-here\",\n      \"userInfo\": {\n        \"id\": 1,\n        \"userName\": \"admin\",\n        \"name\": \"Administrator\",\n        \"type\": \"EMPLOYEE\",\n        \"mobileNumber\": \"9999999999\",\n        \"emailId\": \"admin@egovernments.org\",\n        \"roles\": [\n          {\n            \"name\": \"Employee\",\n            \"code\": \"EMPLOYEE\",\n            \"tenantId\": \"default\"\n          }\n        ],\n        \"tenantId\": \"default\",\n        \"uuid\": \"string\"\n      }\n    },\n    \"Instruments\": [\n      {\n        \"id\": \"29d6a9ea2f95444093299a8459cc3d09\",\n        \"remittanceVoucherId\": \"REM001\",\n        \"tenantId\": \"default\"\n      }\n    ]\n  }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8480/egf-instrument/instruments/_deposit",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8480",
+					"path": [
+						"egf-instrument",
+						"instruments",
+						"_deposit"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Dishonor Instrument",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"RequestInfo\": {\n      \"apiId\": \"Rainmaker\",\n      \"ver\": \".01\",\n      \"ts\": \"01-01-2017 12:00:00\",\n      \"action\": \"_dishonor\",\n      \"did\": \"1\",\n      \"key\": \"\",\n      \"msgId\": \"20170310130900|en_IN\",\n      \"authToken\": \"your-auth-token-here\",\n      \"userInfo\": {\n        \"id\": 1,\n        \"userName\": \"admin\",\n        \"name\": \"Administrator\",\n        \"type\": \"EMPLOYEE\",\n        \"mobileNumber\": \"9999999999\",\n        \"emailId\": \"admin@egovernments.org\",\n        \"roles\": [\n          {\n            \"name\": \"Employee\",\n            \"code\": \"EMPLOYEE\",\n            \"tenantId\": \"default\"\n          }\n        ],\n        \"tenantId\": \"default\",\n        \"uuid\": \"string\"\n      }\n    },\n    \"instruments\": [\n      {\n        \"id\": \"d6043e33bebf43e9bca8577638dbb0d4\",\n        \"tenantId\": \"default\"\n      }\n    ]\n  }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8480/egf-instrument/instruments/_dishonor",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8480",
+					"path": [
+						"egf-instrument",
+						"instruments",
+						"_dishonor"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Instrument type",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"RequestInfo\": {\n      \"apiId\": \"Rainmaker\",\n      \"ver\": \".01\",\n      \"ts\": \"01-01-2017 12:00:00\",\n      \"action\": \"_create\",\n      \"did\": \"1\",\n      \"key\": \"\",\n      \"msgId\": \"20170310130900|en_IN\",\n      \"authToken\": \"your-auth-token-here\",\n      \"userInfo\": {\n        \"id\": 1,\n        \"userName\": \"admin\",\n        \"name\": \"Administrator\",\n        \"type\": \"EMPLOYEE\",\n        \"mobileNumber\": \"9999999999\",\n        \"emailId\": \"admin@egovernments.org\",\n        \"roles\": [\n          {\n            \"name\": \"Employee\",\n            \"code\": \"EMPLOYEE\",\n            \"tenantId\": \"default\"\n          }\n        ],\n        \"tenantId\": \"default\",\n        \"uuid\": \"string\"\n      }\n    },\n    \"instrumentTypes\": [\n      {\n        \"name\": \"UPI\",\n        \"description\": \"Unified Payments Interface\",\n        \"active\": true,\n        \"tenantId\": \"default\"\n      }\n    ]\n  }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8480/egf-instrument/instrumenttypes/_create",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8480",
+					"path": [
+						"egf-instrument",
+						"instrumenttypes",
+						"_create"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Instrument type",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"RequestInfo\": {\n      \"apiId\": \"Rainmaker\",\n      \"ver\": \".01\",\n      \"ts\": \"01-01-2017 12:00:00\",\n      \"action\": \"_update\",\n      \"did\": \"1\",\n      \"key\": \"\",\n      \"msgId\": \"20170310130900|en_IN\",\n      \"authToken\": \"your-auth-token-here\",\n      \"userInfo\": {\n        \"id\": 1,\n        \"userName\": \"admin\",\n        \"name\": \"Administrator\",\n        \"type\": \"EMPLOYEE\",\n        \"mobileNumber\": \"9999999999\",\n        \"emailId\": \"admin@egovernments.org\",\n        \"roles\": [\n          {\n            \"name\": \"Employee\",\n            \"code\": \"EMPLOYEE\",\n            \"tenantId\": \"default\"\n          }\n        ],\n        \"tenantId\": \"default\",\n        \"uuid\": \"string\"\n      }\n    },\n    \"InstrumentTypes\": [\n      {\n        \"id\": \"2dfcf972-efb2-4509-99fe-5c42167b2ea7\",\n        \"name\": \"UPI_Updated\",\n        \"description\": \"Updated Unified Payments Interface\",\n        \"active\": true,\n        \"tenantId\": \"default\"\n      }\n    ]\n  }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8480/egf-instrument/instrumenttypes/_update",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8480",
+					"path": [
+						"egf-instrument",
+						"instrumenttypes",
+						"_update"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Instrument type",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"RequestInfo\": {\n      \"apiId\": \"Rainmaker\",\n      \"ver\": \".01\",\n      \"ts\": \"01-01-2017 12:00:00\",\n      \"action\": \"_delete\",\n      \"did\": \"1\",\n      \"key\": \"\",\n      \"msgId\": \"20170310130900|en_IN\",\n      \"authToken\": \"your-auth-token-here\",\n      \"userInfo\": {\n        \"id\": 1,\n        \"userName\": \"admin\",\n        \"name\": \"Administrator\",\n        \"type\": \"EMPLOYEE\",\n        \"mobileNumber\": \"9999999999\",\n        \"emailId\": \"admin@egovernments.org\",\n        \"roles\": [\n          {\n            \"name\": \"Employee\",\n            \"code\": \"EMPLOYEE\",\n            \"tenantId\": \"default\"\n          }\n        ],\n        \"tenantId\": \"default\",\n        \"uuid\": \"string\"\n      }\n    },\n    \"instrumentTypes\": [\n      {\n        \"id\": \"2dfcf972-efb2-4509-99fe-5c42167b2ea7\",\n        \"tenantId\": \"default\"\n      }\n    ]\n  }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8480/egf-instrument/instrumenttypes/_delete",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8480",
+					"path": [
+						"egf-instrument",
+						"instrumenttypes",
+						"_delete"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Instrument Account Code",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"RequestInfo\": {\n      \"apiId\": \"Rainmaker\",\n      \"ver\": \".01\",\n      \"ts\": \"01-01-2017 12:00:00\",\n      \"action\": \"_create\",\n      \"did\": \"1\",\n      \"key\": \"\",\n      \"msgId\": \"20170310130900|en_IN\",\n      \"authToken\": \"your-auth-token-here\",\n      \"userInfo\": {\n        \"id\": 1,\n        \"userName\": \"admin\",\n        \"name\": \"Administrator\",\n        \"type\": \"EMPLOYEE\",\n        \"mobileNumber\": \"9999999999\",\n        \"emailId\": \"admin@egovernments.org\",\n        \"roles\": [\n          {\n            \"name\": \"Employee\",\n            \"code\": \"EMPLOYEE\",\n            \"tenantId\": \"default\"\n          }\n        ],\n        \"tenantId\": \"default\",\n        \"uuid\": \"string\"\n      }\n    },\n    \"InstrumentAccountCodes\": [\n      {\n        \"instrumentType\": {\n          \"name\": \"Online\"\n        },\n        \"accountCode\": {\n          \"glcode\": \"1101001\"\n        },\n        \"tenantId\": \"default\"\n      }\n    ]\n  }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8480/egf-instrument/instrumentaccountcodes/_create",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8480",
+					"path": [
+						"egf-instrument",
+						"instrumentaccountcodes",
+						"_create"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Instrument Account Code",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"RequestInfo\": {\n      \"apiId\": \"Rainmaker\",\n      \"ver\": \".01\",\n      \"ts\": \"01-01-2017 12:00:00\",\n      \"action\": \"_update\",\n      \"did\": \"1\",\n      \"key\": \"\",\n      \"msgId\": \"20170310130900|en_IN\",\n      \"authToken\": \"your-auth-token-here\",\n      \"userInfo\": {\n        \"id\": 1,\n        \"userName\": \"admin\",\n        \"name\": \"Administrator\",\n        \"type\": \"EMPLOYEE\",\n        \"mobileNumber\": \"9999999999\",\n        \"emailId\": \"admin@egovernments.org\",\n        \"roles\": [\n          {\n            \"name\": \"Employee\",\n            \"code\": \"EMPLOYEE\",\n            \"tenantId\": \"default\"\n          }\n        ],\n        \"tenantId\": \"default\",\n        \"uuid\": \"string\"\n      }\n    },\n    \"InstrumentAccountCodes\": [\n      {\n        \"id\": \"account-code-id-here\",\n        \"instrumentType\": {\n          \"name\": \"Online\"\n        },\n        \"accountCode\": {\n          \"glcode\": \"1101002\"\n        },\n        \"tenantId\": \"default\"\n      }\n    ]\n  }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8480/egf-instrument/instrumentaccountcodes/_update",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8480",
+					"path": [
+						"egf-instrument",
+						"instrumentaccountcodes",
+						"_update"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Instrument Account Code",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"RequestInfo\": {\n      \"apiId\": \"Rainmaker\",\n      \"ver\": \".01\",\n      \"ts\": \"01-01-2017 12:00:00\",\n      \"action\": \"_delete\",\n      \"did\": \"1\",\n      \"key\": \"\",\n      \"msgId\": \"20170310130900|en_IN\",\n      \"authToken\": \"your-auth-token-here\",\n      \"userInfo\": {\n        \"id\": 1,\n        \"userName\": \"admin\",\n        \"name\": \"Administrator\",\n        \"type\": \"EMPLOYEE\",\n        \"mobileNumber\": \"9999999999\",\n        \"emailId\": \"admin@egovernments.org\",\n        \"roles\": [\n          {\n            \"name\": \"Employee\",\n            \"code\": \"EMPLOYEE\",\n            \"tenantId\": \"default\"\n          }\n        ],\n        \"tenantId\": \"default\",\n        \"uuid\": \"string\"\n      }\n    },\n    \"InstrumentAccountCodes\": [\n      {\n        \"id\": \"account-code-id-here\",\n        \"tenantId\": \"default\"\n      }\n    ]\n  }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8480/egf-instrument/instrumentaccountcodes/_delete",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8480",
+					"path": [
+						"egf-instrument",
+						"instrumentaccountcodes",
+						"_delete"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Search Instrument Account Code",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"RequestInfo\": {\n      \"apiId\": \"Rainmaker\",\n      \"ver\": \".01\",\n      \"ts\": \"01-01-2017 12:00:00\",\n      \"action\": \"_search\",\n      \"did\": \"1\",\n      \"key\": \"\",\n      \"msgId\": \"20170310130900|en_IN\",\n      \"authToken\": \"your-auth-token-here\",\n      \"userInfo\": {\n        \"id\": 1,\n        \"userName\": \"admin\",\n        \"name\": \"Administrator\",\n        \"type\": \"EMPLOYEE\",\n        \"mobileNumber\": \"9999999999\",\n        \"emailId\": \"admin@egovernments.org\",\n        \"roles\": [\n          {\n            \"name\": \"Employee\",\n            \"code\": \"EMPLOYEE\",\n            \"tenantId\": \"default\"\n          }\n        ],\n        \"tenantId\": \"default\",\n        \"uuid\": \"string\"\n      }\n    }\n  }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8480/egf-instrument/instrumentaccountcodes/_search?tenantId=default&pageSize=10&offset=0",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8480",
+					"path": [
+						"egf-instrument",
+						"instrumentaccountcodes",
+						"_search"
+					],
+					"query": [
+						{
+							"key": "tenantId",
+							"value": "default"
+						},
+						{
+							"key": "pageSize",
+							"value": "10"
+						},
+						{
+							"key": "offset",
+							"value": "0"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Surrender Reasons",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"RequestInfo\": {\n      \"apiId\": \"Rainmaker\",\n      \"ver\": \".01\",\n      \"ts\": \"01-01-2017 12:00:00\",\n      \"action\": \"_create\",\n      \"did\": \"1\",\n      \"key\": \"\",\n      \"msgId\": \"20170310130900|en_IN\",\n      \"authToken\": \"your-auth-token-here\",\n      \"userInfo\": {\n        \"id\": 1,\n        \"userName\": \"admin\",\n        \"name\": \"Administrator\",\n        \"type\": \"EMPLOYEE\",\n        \"mobileNumber\": \"9999999999\",\n        \"emailId\": \"admin@egovernments.org\",\n        \"roles\": [\n          {\n            \"name\": \"Employee\",\n            \"code\": \"EMPLOYEE\",\n            \"tenantId\": \"default\"\n          }\n        ],\n        \"tenantId\": \"default\",\n        \"uuid\": \"string\"\n      }\n    },\n    \"SurrenderReasons\": [\n      {\n        \"name\": \"Damaged Cheque\",\n        \"description\": \"Cheque is physically damaged and cannot be processed\",\n        \"tenantId\": \"default\"\n      }\n    ]\n  }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8480/egf-instrument/surrenderreasons/_create",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8480",
+					"path": [
+						"egf-instrument",
+						"surrenderreasons",
+						"_create"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Surrender Reasons",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"RequestInfo\": {\n      \"apiId\": \"Rainmaker\",\n      \"ver\": \".01\",\n      \"ts\": \"01-01-2017 12:00:00\",\n      \"action\": \"_update\",\n      \"did\": \"1\",\n      \"key\": \"\",\n      \"msgId\": \"20170310130900|en_IN\",\n      \"authToken\": \"your-auth-token-here\",\n      \"userInfo\": {\n        \"id\": 1,\n        \"userName\": \"admin\",\n        \"name\": \"Administrator\",\n        \"type\": \"EMPLOYEE\",\n        \"mobileNumber\": \"9999999999\",\n        \"emailId\": \"admin@egovernments.org\",\n        \"roles\": [\n          {\n            \"name\": \"Employee\",\n            \"code\": \"EMPLOYEE\",\n            \"tenantId\": \"default\"\n          }\n        ],\n        \"tenantId\": \"default\",\n        \"uuid\": \"string\"\n      }\n    },\n    \"SurrenderReasons\": [\n      {\n        \"id\": \"surrender-reason-id-here\",\n        \"name\": \"Damaged Cheque Updated\",\n        \"description\": \"Updated description for damaged cheque that cannot be processed\",\n        \"tenantId\": \"default\"\n      }\n    ]\n  }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8480/egf-instrument/surrenderreasons/_update",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8480",
+					"path": [
+						"egf-instrument",
+						"surrenderreasons",
+						"_update"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Surrender Reasons",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"RequestInfo\": {\n      \"apiId\": \"Rainmaker\",\n      \"ver\": \".01\",\n      \"ts\": \"01-01-2017 12:00:00\",\n      \"action\": \"_delete\",\n      \"did\": \"1\",\n      \"key\": \"\",\n      \"msgId\": \"20170310130900|en_IN\",\n      \"authToken\": \"your-auth-token-here\",\n      \"userInfo\": {\n        \"id\": 1,\n        \"userName\": \"admin\",\n        \"name\": \"Administrator\",\n        \"type\": \"EMPLOYEE\",\n        \"mobileNumber\": \"9999999999\",\n        \"emailId\": \"admin@egovernments.org\",\n        \"roles\": [\n          {\n            \"name\": \"Employee\",\n            \"code\": \"EMPLOYEE\",\n            \"tenantId\": \"default\"\n          }\n        ],\n        \"tenantId\": \"default\",\n        \"uuid\": \"string\"\n      }\n    },\n    \"SurrenderReasons\": [\n      {\n        \"id\": \"surrender-reason-id-here\",\n        \"tenantId\": \"default\"\n      }\n    ]\n  }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8480/egf-instrument/surrenderreasons/_delete",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8480",
+					"path": [
+						"egf-instrument",
+						"surrenderreasons",
+						"_delete"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Search Surrender Reasons",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"RequestInfo\": {\n      \"apiId\": \"Rainmaker\",\n      \"ver\": \".01\",\n      \"ts\": \"01-01-2017 12:00:00\",\n      \"action\": \"_search\",\n      \"did\": \"1\",\n      \"key\": \"\",\n      \"msgId\": \"20170310130900|en_IN\",\n      \"authToken\": \"your-auth-token-here\",\n      \"userInfo\": {\n        \"id\": 1,\n        \"userName\": \"admin\",\n        \"name\": \"Administrator\",\n        \"type\": \"EMPLOYEE\",\n        \"mobileNumber\": \"9999999999\",\n        \"emailId\": \"admin@egovernments.org\",\n        \"roles\": [\n          {\n            \"name\": \"Employee\",\n            \"code\": \"EMPLOYEE\",\n            \"tenantId\": \"default\"\n          }\n        ],\n        \"tenantId\": \"default\",\n        \"uuid\": \"string\"\n      }\n    }\n  }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8480/egf-instrument/surrenderreasons/_search?tenantId=default&pageSize=10&offset=0",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8480",
+					"path": [
+						"egf-instrument",
+						"surrenderreasons",
+						"_search"
+					],
+					"query": [
+						{
+							"key": "tenantId",
+							"value": "default"
+						},
+						{
+							"key": "pageSize",
+							"value": "10"
+						},
+						{
+							"key": "offset",
+							"value": "0"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
