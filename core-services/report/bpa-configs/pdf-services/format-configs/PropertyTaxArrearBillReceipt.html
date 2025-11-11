@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>Property Tax - Bill Receipt</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 30px;
+      line-height: 1.6;
+      background-color: #f9f9f9;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+      background-color: #fff;
+    }
+
+    th,
+    td {
+      border: 1px solid #aaa;
+      padding: 10px;
+      text-align: left;
+    }
+
+    th {
+      background-color: #f0f0f0;
+    }
+
+    .no-border td {
+      border: none !important;
+      padding: 5px 10px;
+    }
+
+    .bold {
+      font-weight: bold;
+    }
+
+    .section {
+      margin-bottom: 10px;
+    }
+
+    .section1 {
+      text-align: center;
+    }
+
+    .top-header td {
+      border: none;
+      padding: 0 10px;
+      vertical-align: middle;
+    }
+
+    .top-header img {
+      max-height: 80px;
+    }
+
+    .top-header h2 {
+      margin: 0;
+      font-size: 20px;
+      font-weight: bold;
+    }
+
+    .header-container {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .section strong {
+      display: inline-block;
+      margin-bottom: 8px;
+    }
+
+    .section em {
+      display: block;
+      font-size: 13px;
+      color: #555;
+    }
+
+    .property-details-table th,
+    .property-details-table td {
+      text-align: center;
+    }
+
+    .property-details-table td.bold {
+      text-align: right;
+    }
+	.hp-govt {
+				width: 180px;
+			}
+  </style>
+</head>
+
+<body>
+
+	<table class="top-header">
+	   <tr>
+	     <td style="width: 30%; vertical-align: top; text-align: left;">
+	      	<img class="hp-govt" th:src="${hpLogo}" alt="Government of Himachal Pradesh" />
+	     </td>
+	     <td style="width: 40%; text-align: center;">
+	     <h2>Property Tax - Bill Receipt</h2>
+			<h2><span th:text="${ulbType}">NA</span>, <span th:text="${ulbName}">NA</span>, Himachal Pradesh</h2>
+	     <!-- <h3>Govt. of Himachal Pradesh</h3> -->
+	     </td>
+	    	<td>
+				<img class="udd-logo" th:src="${UDDLogo}" alt="Directorate of Urban Development" />
+			</td>
+	   </tr>
+	 </table>
+
+  <!-- Bill Info -->
+  <div class="section1">
+    <table class="no-border">
+      <tr>
+        <td><strong>Bill No.:</strong> <span th:text="${billNo}">NA</span></td>
+        <td><strong>Date:</strong> <span th:text="${date}">NA</span></td>
+      </tr>
+      <tr>
+        <td><strong>Bill Period:</strong> <span th:text="${billPeriod}">NA</span></td>
+        <td><strong>From:</strong> <span th:text="${from}">NA</span> <strong>To:</strong> <span th:text="${to}">NA</span></td>
+      </tr>
+    </table>
+  </div>
+
+  <!-- Property Owner Info -->
+  <div class="section">
+    <table>
+      <tr>
+        <td><strong>District:</strong></td>
+        <td><span th:text="${district}">NA</span></td>
+      </tr>
+      <tr>
+        <td><strong>ULB:</strong></td>
+        <td><span th:text="${ulbType}">NA</span>, <span th:text="${ulbName}">NA</span></td>
+      </tr>
+      <tr>
+        <td><strong>Ward Number:</strong></td>
+        <td><span th:text="${wardNumber}">NA</span></td>
+      </tr>
+      <tr>
+        <td><strong>Address:</strong></td>
+        <td><span th:text="${address}">NA</span></td>
+      </tr>
+      <tr>
+        <td><strong>Customer ID:</strong></td>
+        <td><span th:text="${customerId}">NA</span></td>
+      </tr>
+      <tr>
+        <td><strong>Property ID:</strong></td>
+        <td><span th:text="${propertyId}">NA</span></td>
+      </tr>
+      <tr>
+        <td><strong>Owner/Occupier:</strong></td>
+        <td><span th:text="${ownerOrOccupier}">NA</span></td>
+      </tr>
+      <tr>
+        <td><strong>Father's/Husband's Name:</strong></td>
+        <td><span th:text="${fatherOrHusbandName}">NA</span></td>
+      </tr>
+      <!--<tr>
+        <td><strong>No. of Stories:</strong></td>
+        <td><span th:text="${noOfStories}">NA</span></td>
+      </tr>-->
+      <tr>
+        <td><strong>Building No:</strong></td>
+        <td><span th:text="${buildingNo}">NA</span></td>
+      </tr>
+    </table>
+  </div>
+
+  <!-- Property Details -->
+
+
+  <!-- Tax Details -->
+  <div class="section">
+    <table>
+      <tr>
+        <td><strong>Property Tax:</strong></td>
+        <td><span th:text="${propertyTax}">NA</span></td>
+      </tr>
+      <tr>
+        <td><strong>Arrear:</strong></td>
+        <td><span th:text="${arrear}">NA</span></td>
+      </tr>
+      <tr>
+        <td><strong>Property Tax + Arrear:</strong></td>
+        <td><span th:text="${propertyTaxPlusArrear}">NA</span></td>
+      </tr>
+      <tr>
+        <td><strong>Rebate (Within <span th:text="${rebateDays}">NA</span> Days):</strong></td>
+        <td><span th:text="${rebate}">NA</span></td>
+      </tr>
+      <tr>
+        <td><strong>Penalty:</strong></td>
+        <td><span th:text="${penalty}">NA</span></td>
+      </tr>
+      <tr>
+        <td><strong>Total Tax:</strong></td>
+        <td><span th:text="${totalTax}">NA</span></td>
+      </tr>
+      <tr>
+        <td><strong>Amount Paid:</strong></td>
+        <td><span th:text="${amountPaid}">NA</span></td>
+      </tr>
+      <tr>
+        <td><strong>Payment Status:</strong></td>
+        <td><span th:text="${paymentStatus}">NA</span></td>
+      </tr>
+    </table>
+  </div>
+
+  <!-- Dates -->
+  <div class="section">
+    <table class="no-border">
+      <tr>
+        <td><strong>Bill Generated Date:</strong> <span th:text="${billGeneratedDate}">NA</span></td>
+        <td><strong>Payment Date:</strong> <span th:text="${paymentDate}">NA</span></td>
+      </tr>
+    </table>
+  </div>
+
+  <!-- Disclaimer -->
+  <div class="section">
+    <em>Disclaimer: Property Tax payment does not legalize unauthorized properties.</em>
+  </div>
+
+  <!-- Auto-print -->
+  <script>
+    window.onload = function () {
+      window.print();
+    };
+  </script>
+
+</body>
+
+</html>
