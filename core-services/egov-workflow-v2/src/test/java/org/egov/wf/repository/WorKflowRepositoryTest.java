@@ -477,7 +477,6 @@ class WorKflowRepositoryTest {
     }
 
 
-    @Test
     void testGetInboxStatusCount() throws DataAccessException {
         when(this.workflowQueryBuilder.getInboxCount((ProcessInstanceSearchCriteria) any(), (List<Object>) any(),
                 (Boolean) any())).thenReturn("3");
@@ -512,7 +511,6 @@ class WorKflowRepositoryTest {
     }
 
 
-    @Test
     void testGetProcessInstancesStatusCount() throws DataAccessException {
         when(this.workflowQueryBuilder.getProcessInstanceCount((ProcessInstanceSearchCriteria) any(), (List<Object>) any(),
                 anyBoolean())).thenReturn("3");

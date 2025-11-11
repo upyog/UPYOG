@@ -156,9 +156,57 @@ public class UserController {
      * @return
      */
     @PostMapping("/_details")
-    public CustomUserDetails getUser(@RequestParam(value = "access_token") String accessToken) {
+    public org.egov.common.contract.request.User getUser(@RequestParam(value = "access_token") String accessToken) {
+        log.info("/_details endpoint called with token: {}...", accessToken.substring(0, Math.min(8, accessToken.length())));
+
         final UserDetail userDetail = tokenService.getUser(accessToken);
-        return new CustomUserDetails(userDetail);
+        log.info("TokenService returned userDetail: {}", userDetail != null ? "not null" : "NULL");
+
+        // CRITICAL FIX: Return common contract User instead of CustomUserDetails for proper gateway deserialization
+        org.egov.user.web.contract.auth.User authUser = userDetail.getSecureUser().getUser();
+        log.info("AuthUser extracted from userDetail - id: {}, uuid: {}, userName: {}",
+            authUser.getId(), authUser.getUuid(), authUser.getUserName());
+        log.info("AuthUser roles: {} (size: {})",
+            authUser.getRoles(), authUser.getRoles() != null ? authUser.getRoles().size() : "NULL");
+
+        if (authUser.getRoles() != null && !authUser.getRoles().isEmpty()) {
+            authUser.getRoles().forEach(role ->
+                log.info("  Role - code: {}, name: {}, tenantId: {}",
+                    role.getCode(), role.getName(), role.getTenantId())
+            );
+        }
+
+        org.egov.common.contract.request.User commonUser = org.egov.common.contract.request.User.builder()
+            .id(authUser.getId())
+            .uuid(authUser.getUuid())
+            .userName(authUser.getUserName())
+            .name(authUser.getName())
+            .mobileNumber(authUser.getMobileNumber())
+            .emailId(authUser.getEmailId())
+            .type(authUser.getType())
+            .tenantId(authUser.getTenantId())
+            .roles(authUser.getRoles() != null ?
+                authUser.getRoles().stream()
+                    .map(role -> org.egov.common.contract.request.Role.builder()
+                        .code(role.getCode())
+                        .name(role.getName())
+                        .tenantId(role.getTenantId())
+                        .build())
+                    .collect(Collectors.toList()) : Collections.emptyList())
+            .build();
+
+        // Debug logging for authorization troubleshooting
+        log.info("/_details endpoint returning commonUser {} with {} roles",
+            commonUser.getUuid(),
+            commonUser.getRoles().size());
+
+        if (commonUser.getRoles().isEmpty()) {
+            log.warn("WARNING: User {} has no roles - this will cause RBAC authorization failures!",
+                commonUser.getUuid());
+            log.warn("This means authUser.getRoles() was either null or empty");
+        }
+
+        return commonUser;
         //  no encrypt/decrypt
     }
 

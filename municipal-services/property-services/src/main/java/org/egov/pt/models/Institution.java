@@ -1,5 +1,7 @@
 package org.egov.pt.models;
 
+import org.egov.tracer.annotations.CustomSafeHtml;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.AllArgsConstructor;
@@ -8,7 +10,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import org.hibernate.validator.constraints.SafeHtml;
 
 /**
  * Institution
@@ -22,27 +23,27 @@ import org.hibernate.validator.constraints.SafeHtml;
 @Builder
 public class Institution {
 
-	@SafeHtml
+	@CustomSafeHtml
 	@JsonProperty("id")
 	private String id;
 
-	@SafeHtml
+	@CustomSafeHtml
 	@JsonProperty("tenantId")
 	private String tenantId;
 
-	@SafeHtml
+	@CustomSafeHtml
 	@JsonProperty("name")	
 	private String name;
 
-	@SafeHtml
+	@CustomSafeHtml
 	@JsonProperty("type")
 	private String type;
 
-	@SafeHtml
+	@CustomSafeHtml
 	@JsonProperty("designation")
 	private String designation;
 
-	@SafeHtml
+	@CustomSafeHtml
 	@JsonProperty("nameOfAuthorizedPerson")
 	private String nameOfAuthorizedPerson;
 

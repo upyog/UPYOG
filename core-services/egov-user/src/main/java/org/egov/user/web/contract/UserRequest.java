@@ -281,11 +281,12 @@ public class UserRequest {
     }
 
     private Set<Role> toDomainRoles() {
+        // CRITICAL FIX: Return empty HashSet instead of null to prevent gateway authorization failures
         return this.roles != null
                 ? this.roles.stream()
                 .map(RoleRequest::toDomain)
                 .distinct()
                 .collect(Collectors.toSet())
-                : null;
+                : new HashSet<>();
     }
 }

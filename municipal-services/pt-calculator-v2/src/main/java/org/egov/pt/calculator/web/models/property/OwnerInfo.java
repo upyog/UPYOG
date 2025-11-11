@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 
 import org.egov.common.contract.request.Role;
 import org.springframework.validation.annotation.Validated;
@@ -26,7 +26,7 @@ import lombok.ToString;
  * OwnerInfo
  */
 @Validated
-@javax.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2018-05-11T14:12:44.497+05:30")
+@jakarta.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2018-05-11T14:12:44.497+05:30")
 
 @Getter
 @Setter

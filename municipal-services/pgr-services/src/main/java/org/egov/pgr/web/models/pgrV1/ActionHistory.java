@@ -16,7 +16,7 @@ import java.util.Objects;
  * Each Object of action History will point to the Service.
  */
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.languages.SpringCodegen", date = "2018-03-23T08:00:37.661Z")
+@jakarta.annotation.Generated(value = "io.swagger.codegen.languages.SpringCodegen", date = "2018-03-23T08:00:37.661Z")
 
 @AllArgsConstructor
 @NoArgsConstructor

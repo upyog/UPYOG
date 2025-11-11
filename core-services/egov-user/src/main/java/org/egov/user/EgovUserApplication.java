@@ -48,7 +48,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 // import org.springframework.security.oauth2.provider.token.store.redis.RedisTokenStore;
 // import org.egov.user.security.CustomAuthenticationKeyGenerator;
 
-@SpringBootApplication
+@SpringBootApplication(exclude = {org.springframework.boot.autoconfigure.flyway.FlywayAutoConfiguration.class})
 @Slf4j
 @Import({TracerConfiguration.class, EncryptionConfiguration.class})
 public class EgovUserApplication {

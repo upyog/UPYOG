@@ -2,7 +2,7 @@ package org.egov.swcalculation.web.models;
 
 import java.util.Objects;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 
 import org.springframework.validation.annotation.Validated;
 
@@ -14,7 +14,7 @@ import io.swagger.annotations.ApiModelProperty;
  * SewerageConnection
  */
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-03-13T11:29:47.358+05:30[Asia/Kolkata]")
+@jakarta.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-03-13T11:29:47.358+05:30[Asia/Kolkata]")
 public class SewerageConnection extends Connection {
 	@JsonProperty("proposedWaterClosets")
 	private Integer proposedWaterClosets = null;

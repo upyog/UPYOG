@@ -31,6 +31,11 @@
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-web</artifactId>
     </dependency>
+    <dependency>
+  	<groupId>jakarta.validation</groupId>
+  	<artifactId>jakarta.validation-api</artifactId>
+  	<version>3.0.2</version>
+	</dependency>
 <!--    <dependency>
       <groupId>commons-lang</groupId>
       <artifactId>commons-lang</artifactId>
@@ -57,7 +62,6 @@
     <dependency>
       <groupId>org.postgresql</groupId>
       <artifactId>postgresql</artifactId>
-      <version>42.7.1</version>
     </dependency>
     <dependency>
       <groupId>org.projectlombok</groupId>

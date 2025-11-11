@@ -17,6 +17,7 @@ import org.egov.fsm.util.FSMUtil;
 import org.egov.fsm.web.model.AuditDetails;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -26,6 +27,7 @@ public class PlantMappingService {
 	private FSMUtil util;
 
 	@Autowired
+	@Lazy
 	private PlantMappingValidator validaor;
 
 	@Autowired
