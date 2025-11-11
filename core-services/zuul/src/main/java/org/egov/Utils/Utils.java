@@ -14,6 +14,7 @@ public class Utils {
 
     private static final String EMPTY_STRING = "";
     private static final String JSON_TYPE = "json";
+    private static final String FORM_DATA_TYPE = "form-data";
 
     public static String getResponseBody(RequestContext ctx) throws IOException {
         String body = ctx.getResponseBody();
@@ -32,7 +33,8 @@ public class Utils {
                 || PUT.equalsIgnoreCase(getRequestMethod(servletRequest))
                 || PATCH.equalsIgnoreCase(getRequestMethod(servletRequest))
             )
-            && getRequestContentType(servletRequest).contains(JSON_TYPE);
+            && (getRequestContentType(servletRequest).contains(JSON_TYPE)
+            		|| getRequestContentType(servletRequest).contains(FORM_DATA_TYPE));
     }
 
     private static String getRequestMethod(HttpServletRequest servletRequest) {
