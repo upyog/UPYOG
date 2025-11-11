@@ -1,0 +1,181 @@
+{
+	"key": "PropertyTaxBillReceipt",
+	"DataConfigs": {
+		"version": "1.0.0",
+		"baseKeyPath": "$.ptbr",
+		"mappings": [
+			{
+				"direct": [
+					{
+						"variable": "ulbType",
+						"value": {
+							"path": "$.ulbType"
+						}
+					},
+					{
+						"variable": "ulbName",
+						"value": {
+							"path": "$.ulbName"
+						}
+					},
+					{
+						"variable": "billNo",
+						"value": {
+							"path": "$.billNo"
+						}
+					},
+					{
+						"variable": "date",
+						"value": {
+							"path": "$.date"
+						}
+					},
+					{
+						"variable": "billPeriod",
+						"value": {
+							"path": "$.billPeriod"
+						}
+					},
+					{
+						"variable": "from",
+						"value": {
+							"path": "$.from"
+						}
+					},
+					{
+						"variable": "to",
+						"value": {
+							"path": "$.to"
+						}
+					},
+					{
+						"variable": "district",
+						"value": {
+							"path": "$.district"
+						}
+					},
+					{
+						"variable": "wardNumber",
+						"value": {
+							"path": "$.wardNumber"
+						}
+					},
+					{
+						"variable": "address",
+						"value": {
+							"path": "$.address"
+						}
+					},
+					{
+						"variable": "customerId",
+						"value": {
+							"path": "$.customerId"
+						}
+					},
+					{
+						"variable": "propertyId",
+						"value": {
+							"path": "$.propertyId"
+						}
+					},
+					{
+						"variable": "ownerOrOccupier",
+						"value": {
+							"path": "$.ownerOrOccupier"
+						}
+					},
+					{
+						"variable": "fatherOrHusbandName",
+						"value": {
+							"path": "$.fatherOrHusbandName"
+						}
+					},
+					{
+						"variable": "noOfStories",
+						"value": {
+							"path": "$.noOfStories"
+						}
+					},
+					{
+						"variable": "buildingNo",
+						"value": {
+							"path": "$.buildingNo"
+						}
+					},
+					{
+						"variable": "plinthAreaTotal",
+						"value": {
+							"path": "$.plinthAreaTotal"
+						}
+					},
+					{
+						"variable": "propertyTax",
+						"value": {
+							"path": "$.propertyTax"
+						}
+					},
+					{
+						"variable": "arrear",
+						"value": {
+							"path": "$.arrear"
+						}
+					},
+					{
+						"variable": "propertyTaxPlusArrear",
+						"value": {
+							"path": "$.propertyTaxPlusArrear"
+						}
+					},
+					{
+						"variable": "rebateDays",
+						"value": {
+							"path": "$.rebateDays"
+						}
+					},
+					{
+						"variable": "rebate",
+						"value": {
+							"path": "$.rebate"
+						}
+					},
+					{
+						"variable": "penalty",
+						"value": {
+							"path": "$.penalty"
+						}
+					},
+					{
+						"variable": "totalTax",
+						"value": {
+							"path": "$.totalTax"
+						}
+					},
+					{
+						"variable": "amountPaid",
+						"value": {
+							"path": "$.amountPaid"
+						}
+					},
+					{
+						"variable": "paymentStatus",
+						"value": {
+							"path": "$.paymentStatus"
+						}
+					},
+					{
+						"variable": "billGeneratedDate",
+						"value": {
+							"path": "$.billGeneratedDate"
+						}
+					},
+					{
+						"variable": "paymentDate",
+						"value": {
+							"path": "$.paymentDate"
+						}
+					}
+				]
+			}
+		]
+	}
+}
