@@ -15,6 +15,7 @@ import org.egov.vendor.driver.web.model.DriverSearchCriteria;
 import org.egov.vendor.web.model.user.User;
 import org.egov.vendor.web.model.user.UserDetailResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -28,6 +29,7 @@ public class DriverService {
 	private DriverRepository driverRepository;
 
 	@Autowired
+	@Lazy
 	private DriverEnrichmentService enrichmentService;
 
 	@Autowired
