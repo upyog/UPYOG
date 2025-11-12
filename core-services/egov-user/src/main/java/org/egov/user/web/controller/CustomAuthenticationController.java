@@ -89,13 +89,41 @@ public class CustomAuthenticationController {
         }
     }
 
-    private ResponseEntity<?> handlePasswordGrant(String username, String password, 
-                                                String tenantId, String userType, 
+    private ResponseEntity<?> handlePasswordGrant(String username, String password,
+                                                String tenantId, String userType,
                                                 String scope, HttpServletRequest request) {
-        
-        log.info("Handling password grant for user: {} in tenant: {}", username, tenantId);
-        
+
+        // CRITICAL FIX: Fallback to HttpServletRequest parameters if @RequestParam didn't capture them
+        // This handles cases where parameters might be in different encoding or Content-Type
+        // Pattern already proven working in line 114 of this same controller
+        if (username == null) {
+            username = request.getParameter("username");
+            // Support citizen login with mobileNumber parameter (common in UPYOG frontends)
+            if (username == null) {
+                username = request.getParameter("mobileNumber");
+                if (username != null) {
+                    log.info("Using mobileNumber parameter as username for login");
+                }
+            }
+        }
+        if (password == null) {
+            password = request.getParameter("password");
+        }
+        if (tenantId == null) {
+            tenantId = request.getParameter("tenantId");
+        }
+        if (userType == null) {
+            userType = request.getParameter("userType");
+        }
+        if (scope == null) {
+            scope = request.getParameter("scope");
+        }
+
+        log.info("Handling password grant for user: {} in tenant: {} with userType: {}", username, tenantId, userType);
+
         if (username == null || password == null || tenantId == null || userType == null) {
+            log.error("Missing required parameters after fallback - username: {}, password: {}, tenantId: {}, userType: {}",
+                     username != null, password != null, tenantId, userType);
             return ResponseEntity.badRequest()
                 .body(createErrorResponse("invalid_request", "Missing required parameters"));
         }
