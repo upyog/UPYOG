@@ -44,8 +44,9 @@ import java.text.SimpleDateFormat;
 import java.util.Locale;
 import java.util.TimeZone;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 
+import lombok.extern.slf4j.Slf4j;
 import org.egov.tracer.config.TracerConfiguration;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
@@ -62,6 +63,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @SpringBootApplication
 @Component
 @Import(TracerConfiguration.class)
+@Slf4j
 public class CollectionServicesApplication {
 
 
@@ -72,6 +74,7 @@ public class CollectionServicesApplication {
 
 	@PostConstruct
 	public void initialize() {
+		log.info("Collection Service is running with latest LTS upgrades 2.0.0!");
 		TimeZone.setDefault(TimeZone.getTimeZone(timeZone));
 	}
 

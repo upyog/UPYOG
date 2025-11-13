@@ -90,6 +90,23 @@ config:
       - work-dir: "core-services/egov-accesscontrol"
         image-name: "egov-accesscontrol"
         dockerfile: "build/maven/Dockerfile"
+  
+  - name: "builds/upyog/business-services/verification-service"
+    build:
+      - work-dir: "business-services/verification-service"
+        image-name: "verification-service"
+        dockerfile: "build/maven/Dockerfile"  
+      - work-dir: "business-services/verification-service/src/main/resources/db"
+        image-name: "verification-service-db" 
+  
+  - name: "builds/upyog/business-services/employee-dashboard"
+    build:
+      - work-dir: "business-services/employee-dashboard"
+        image-name: "employee-dashboard"
+        dockerfile: "build/maven/Dockerfile"
+      - work-dir: "business-services/employee-dashboard/src/main/resources/db"
+        image-name: "employee-dashboard-db"
+        
 # Core Services
   - name: "builds/upyog/core-services/audit-service"
     build:

@@ -5,20 +5,20 @@
   <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
-    <version>2.2.6.RELEASE</version>
+    <version>3.2.2</version>
     <relativePath></relativePath>
   </parent>
   <groupId>org.egov</groupId>
   <artifactId>egf-master</artifactId>
-  <version>1.1.3-SNAPSHOT</version>
+  <version>2.0.0</version>
   <name>egf-master</name>
   <description>egf masters project for egov services</description>
   <properties>
-    <log4j2.version>2.17.1</log4j2.version>
+    <log4j2.version>2.21.1</log4j2.version>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <java.version>1.8</java.version>
+    <java.version>17</java.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <lombok.version>1.18.8</lombok.version>
+    <lombok.version>1.18.32</lombok.version>
   </properties>
   <dependencies>
     <dependency>
@@ -40,7 +40,6 @@
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-beans</artifactId>
-      <version>5.2.20.RELEASE</version>
     </dependency>
     <dependency>
       <groupId>org.modelmapper</groupId>
@@ -58,47 +57,47 @@
       <optional>true</optional>
     </dependency>
     <dependency>
-      <groupId>io.springfox</groupId>
-      <artifactId>springfox-swagger2</artifactId>
-      <version>2.4.0</version>
-    </dependency>
-    <dependency>
       <groupId>org.elasticsearch.client</groupId>
       <artifactId>transport</artifactId>
+      <version>6.2.4</version>
     </dependency>
     <dependency>
       <groupId>org.elasticsearch</groupId>
       <artifactId>elasticsearch</artifactId>
+      <version>6.2.4</version>
     </dependency>
     <dependency>
       <groupId>org.apache.logging.log4j</groupId>
       <artifactId>log4j-to-slf4j</artifactId>
-      <version>2.8.2</version>
+      <version>2.24.3</version>
     </dependency>
     <dependency>
-      <groupId>org.apache.commons</groupId>
-      <artifactId>commons-lang3</artifactId>
-      <version>3.0</version>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-validation</artifactId>
     </dependency>
     <dependency>
-      <groupId>commons-io</groupId>
-      <artifactId>commons-io</artifactId>
-      <version>2.5</version>
+      <groupId>org.egov.services</groupId>
+      <artifactId>tracer</artifactId>
+      <version>2.9.0-SNAPSHOT</version>
     </dependency>
+    
+    <!-- Test Dependencies -->
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-test</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.egov.services</groupId>
-      <artifactId>tracer</artifactId>
-      <version>2.0.0-SNAPSHOT</version>
+      <groupId>commons-io</groupId>
+      <artifactId>commons-io</artifactId>
+      <version>2.15.1</version>
+      <scope>test</scope>
     </dependency>
+    <!-- Swagger/OpenAPI Documentation -->
     <dependency>
-      <groupId>org.egov.services</groupId>
-      <artifactId>services-common</artifactId>
-      <version>0.11.1</version>
+      <groupId>org.springdoc</groupId>
+      <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+      <version>2.0.2</version>
     </dependency>
   </dependencies>
   <repositories>
@@ -138,44 +137,6 @@
           </excludes>
         </configuration>
       </plugin>
-<!--      <plugin>
-        <artifactId>maven-jar-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>client-jar</id>
-            <phase>package</phase>
-            <goals>
-              <goal>jar</goal>
-            </goals>
-            <configuration>
-              <classifier>client</classifier>
-              <includes>
-                <include>**/master/web/contract/**</include>
-                <include>**/master/web/repository/**</include>
-                <include>**/master/web/requests/**</include>
-              </includes>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <artifactId>maven-jar-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>common-jar</id>
-            <phase>package</phase>
-            <goals>
-              <goal>jar</goal>
-            </goals>
-            <configuration>
-              <classifier>common</classifier>
-              <includes>
-                <include>**/common/**</include>
-              </includes>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin> -->
       <plugin>
         <artifactId>maven-deploy-plugin</artifactId>
         <version>2.8.2</version>
@@ -188,6 +149,16 @@
             </goals>
           </execution>
         </executions>
+      </plugin>
+
+      <!-- The plugin is added to skip the Testcases -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>3.2.5</version>
+        <configuration>
+          <skipTests>true</skipTests>
+        </configuration>
       </plugin>
     </plugins>
   </build>

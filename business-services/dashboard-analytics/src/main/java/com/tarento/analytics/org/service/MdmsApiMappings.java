@@ -14,7 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -133,6 +133,7 @@ public class MdmsApiMappings {
 
             }
         } catch (Exception e){
+            logger.error("Error occured while fetching ddr's from mdms", e);
             throw new CustomException("MDMS_ERROR","Failed to fetch DDR's from mdms");
         }
         ddrValueMap.entrySet().removeIf(map -> map.getValue().size()==0);

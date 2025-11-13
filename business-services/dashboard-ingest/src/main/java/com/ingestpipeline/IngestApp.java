@@ -1,3 +1,4 @@
+
 package com.ingestpipeline;
 
 import org.springframework.boot.SpringApplication;
@@ -6,8 +7,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
-
 import com.ingestpipeline.util.Constants;
 import javax.net.ssl.*;
 import java.security.cert.CertificateException;
@@ -54,16 +53,17 @@ public class IngestApp {
 	public RestTemplate restTemplate() {
 	    return new RestTemplate();
 	}
-	
-	 @Bean
-	    public WebMvcConfigurer corsConfigurer() {
-	        return new WebMvcConfigurerAdapter() {
-	            @Override
-	            public void addCorsMappings(CorsRegistry registry) {
-	                registry.addMapping("/**").allowedMethods(Constants.ALLOWED_METHODS_GET,Constants.ALLOWED_METHODS_POST
-	                		).allowedOrigins("*")
-	                        .allowedHeaders("*");
-	            }
-	        };
-	    }
+
+	@Bean
+	public WebMvcConfigurer corsConfigurer() {
+		return new WebMvcConfigurer() {
+			@Override
+			public void addCorsMappings(CorsRegistry registry) {
+				registry.addMapping("/**")
+						.allowedMethods(Constants.ALLOWED_METHODS_GET, Constants.ALLOWED_METHODS_POST)
+						.allowedOrigins("*")
+						.allowedHeaders("*");
+			}
+		};
+	}
 }

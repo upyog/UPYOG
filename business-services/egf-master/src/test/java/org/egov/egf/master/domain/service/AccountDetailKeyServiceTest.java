@@ -1,7 +1,8 @@
 package org.egov.egf.master.domain.service;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.any;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
@@ -16,19 +17,19 @@ import org.egov.egf.master.domain.model.AccountDetailKeySearch;
 import org.egov.egf.master.domain.model.AccountDetailType;
 import org.egov.egf.master.domain.repository.AccountDetailKeyRepository;
 import org.egov.egf.master.domain.repository.AccountDetailTypeRepository;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.context.annotation.Import;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.SmartValidator;
 
 @Import(TestConfiguration.class)
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 public class AccountDetailKeyServiceTest {
 
 	@InjectMocks
@@ -47,7 +48,7 @@ public class AccountDetailKeyServiceTest {
 	private RequestInfo requestInfo = new RequestInfo();
 	private List<AccountDetailKey> accountDetailKies = new ArrayList<>();
 
-	@Before
+	@BeforeEach
 	public void setup() {
 	}
 
@@ -114,14 +115,16 @@ public class AccountDetailKeyServiceTest {
 		assertEquals(expextedResult.get(0).getName(), actualResult.get(0).getAccountDetailType().getName());
 	}
 
-	@Test(expected = InvalidDataException.class)
+	@Test
 	public final void test_fetch_related_data_when_parentid_is_wrong() {
 		List<AccountDetailType> expextedResult = new ArrayList<>();
 		expextedResult.add(getAccountDetailType());
 		List<AccountDetailKey> accountDetailKies = new ArrayList<>();
 		accountDetailKies.add(getAccountDetailKey());
 		when(accountDetailKeyRepository.findById(any(AccountDetailKey.class))).thenReturn(null);
-		accountDetailKeyService.fetchRelated(accountDetailKies);
+		assertThrows(InvalidDataException.class, () -> {
+			accountDetailKeyService.fetchRelated(accountDetailKies);
+		});
 	}
 
 	private List<AccountDetailKey> getAccountDetailKeys() {

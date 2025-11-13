@@ -5,6 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,14 +39,12 @@ class EmployeeRepositoryTest {
         ArrayList<Employee> employeeList = new ArrayList<>();
         employeeResponse.setEmployees(employeeList);
         employeeResponse.setResponseInfo(new ResponseInfo());
-        when(this.restTemplate.postForObject((String) any(), (Object) any(), (Class<EmployeeResponse>) any(),
-                (Object[]) any())).thenReturn(employeeResponse);
+        when(this.restTemplate.postForObject(anyString(), any(), eq(EmployeeResponse.class), any(), any())).thenReturn(employeeResponse);
         List<Employee> actualPositionsForEmployee = this.employeeRepository.getPositionsForEmployee(new RequestInfo(), 123L,
                 "42");
         assertSame(employeeList, actualPositionsForEmployee);
         assertTrue(actualPositionsForEmployee.isEmpty());
-        verify(this.restTemplate).postForObject((String) any(), (Object) any(), (Class<EmployeeResponse>) any(),
-                (Object[]) any());
+        verify(this.restTemplate).postForObject(anyString(), any(), eq(EmployeeResponse.class), any(), any());
     }
 }
 

@@ -13,20 +13,25 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.flyway.FlywayMigrationStrategy;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.Primary;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.text.SimpleDateFormat;
 import java.util.TimeZone;
 
 @Import({ TracerConfiguration.class })
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = {
+    "org.egov.egf.instrument",
+    "org.egov.egf.master.web.repository",
+    "org.egov.common.util"
+})
 public class EgfInstrumentApplication {
 
     public static void main(String[] args) {
@@ -59,6 +64,7 @@ public class EgfInstrumentApplication {
     }
 
     @Bean
+    @Primary
     public MappingJackson2HttpMessageConverter jacksonConverter() {
         MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
         ObjectMapper mapper = new ObjectMapper();
@@ -72,10 +78,10 @@ public class EgfInstrumentApplication {
     }
 
     @Bean
-    public WebMvcConfigurerAdapter webMvcConfigurerAdapter() {
-        return new WebMvcConfigurerAdapter() {
+    @Primary
+    public WebMvcConfigurer webMvcConfigurerAdapter() {
+        return new WebMvcConfigurer() {
 
-            @Override
             public void configureContentNegotiation(ContentNegotiationConfigurer configurer) {
                 configurer.defaultContentType(MediaType.APPLICATION_JSON_UTF8);
             }
@@ -84,16 +90,19 @@ public class EgfInstrumentApplication {
     }
 
     @Bean
+    @Primary
     public TransportClient getTransportClient() {
         return client;
     }
 
     @Bean
+    @Primary
     public RestTemplate restTemplate() {
         return new RestTemplate();
     }
     
     @Bean
+    @Primary
     public FlywayMigrationStrategy cleanMigrateStrategy() {
         return flyway -> {
             flyway.repair();

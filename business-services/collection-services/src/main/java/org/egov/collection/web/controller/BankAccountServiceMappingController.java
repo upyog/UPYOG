@@ -41,7 +41,7 @@ package org.egov.collection.web.controller;
 
 import java.util.List;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 
 import org.egov.collection.model.BankAccountServiceMappingSearchCriteria;
 import org.egov.collection.service.BankAccountMappingService;
