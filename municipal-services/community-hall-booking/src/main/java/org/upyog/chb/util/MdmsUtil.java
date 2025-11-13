@@ -150,7 +150,59 @@ public class MdmsUtil {
 
 	}
 
-	// Utility accessors (if needed elsewhere) can remain, but prefer direct map usage
+    public List<AdditionalFeeRate> getCowCessForHall(RequestInfo requestInfo, String tenantId, String moduleName,
+                                                     CommunityHallBookingDetail bookingDetail) {
+
+        String masterName = "CowCess";
+        List<AdditionalFeeRate> cowCessRates = new ArrayList<>();
+
+        StringBuilder uri = new StringBuilder();
+        uri.append(config.getMdmsHost()).append(config.getMdmsPath());
+
+        MdmsCriteriaReq mdmsCriteriaReq = getMdmsRequestTaxHeadMaster(requestInfo, tenantId, moduleName, masterName,
+                null);
+
+        try {
+            MdmsResponse mdmsResponse = mapper.convertValue(serviceRequestRepository.fetchResult(uri, mdmsCriteriaReq),
+                    MdmsResponse.class);
+
+            if (mdmsResponse.getMdmsRes().get(moduleName) == null) {
+                log.info("CowCess configuration not available in MDMS for tenant: {}", tenantId);
+                return cowCessRates;
+            }
+
+            JSONArray jsonArray = mdmsResponse.getMdmsRes().get(moduleName).get(masterName);
+
+            com.fasterxml.jackson.databind.JsonNode rootNode = null;
+            try {
+                rootNode = mapper.readTree(jsonArray.toJSONString());
+            } catch (com.fasterxml.jackson.core.JsonProcessingException e) {
+                log.error("Error parsing CowCess JSON: ", e);
+            }
+
+            if (rootNode != null) {
+                String hallCode = bookingDetail.getCommunityHallCode();
+                for (com.fasterxml.jackson.databind.JsonNode hallNode : rootNode) {
+                    com.fasterxml.jackson.databind.JsonNode faceAreaNode = hallNode.get(hallCode);
+                    if (faceAreaNode != null) {
+                        try {
+                            cowCessRates = mapper.readValue(faceAreaNode.toString(),
+                                    mapper.getTypeFactory().constructCollectionType(List.class, AdditionalFeeRate.class));
+                        } catch (com.fasterxml.jackson.core.JsonProcessingException e) {
+                            log.error("Error converting CowCess rates: ", e);
+                        }
+                    }
+                }
+            }
+
+        } catch (Exception e) {
+            log.error("Exception occurred while fetching CowCess from MDMS: {}", e.getMessage());
+        }
+
+        return cowCessRates != null ? cowCessRates : new ArrayList<>();
+    }
+
+    // Utility accessors (if needed elsewhere) can remain, but prefer direct map usage
 	public static void setMDMSDataForTenant(String tenantId, Object mdmsData) {
 		mdmsMap.put(tenantId, mdmsData);
 	}

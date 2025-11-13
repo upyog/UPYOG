@@ -245,6 +245,34 @@ public class CalculationService {
 			}
 		}
 
+
+        // 5. Cow Cess (hall-specific configuration in MDMS)
+        List<AdditionalFeeRate> cowCessRates = mdmsUtil.getCowCessForHall(
+                bookingRequest.getRequestInfo(), tenantId, config.getModuleName(),
+                bookingRequest.getHallsBookingApplication());
+
+        for (AdditionalFeeRate cow : cowCessRates) {
+            BigDecimal amount = feeCalculationUtil.calculateFeeAmount(
+                    cow, baseAmount, daysAfterEvent, currentFY);
+
+            if (amount.compareTo(BigDecimal.ZERO) > 0) {
+                DemandDetail demand = DemandDetail.builder()
+                        .taxAmount(amount)
+                        .taxHeadMasterCode("CHB_COW_CESS")
+                        .tenantId(tenantId)
+                        .build();
+
+                if (cow.isTaxApplicable()) {
+                    // treat as taxable
+                    taxableDemands.add(demand);
+                } else {
+                    demandDetails.add(demand);
+                }
+
+                log.info("CowCess added: {} for hall {}", amount, bookingRequest.getHallsBookingApplication().getCommunityHallCode());
+            }
+        }
+
 		// 3. PenaltyFee (only after event, non-taxable)
 		if (daysAfterEvent > 0) {
 			List<AdditionalFeeRate> penaltyFees = mdmsUtil.getPenaltyFees(
