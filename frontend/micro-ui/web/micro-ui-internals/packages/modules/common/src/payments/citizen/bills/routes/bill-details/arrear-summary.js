@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import ArrearTable from "./arrear-table";
 
 const styles = {
-  buttonStyle: { display: "flex", justifyContent: "flex-end", color: "#a82227" },
+  buttonStyle: { display: "flex", justifyContent: "flex-end", color: "#0f4f9e" },
   headerStyle: {
     marginTop: "10px",
     fontSize: "16px",
@@ -45,7 +45,7 @@ const ArrearSummary = ({ bill = {} }) => {
   const arrears = sortedBillDetails?.reduce((total, current, index) => (index === 0 ? total : total + current.amount), 0) || 0;
   let arrearsAmount = `₹ ${arrears?.toFixed?.(0) || Number(0).toFixed(0)}`;
 
-  sortedBillDetails.shift();
+  // sortedBillDetails.shift();
   sortedBillDetails.map((bill) => {
     let fee = formatTaxHeaders(bill);
     fees[getFinancialYears(bill.fromPeriod, bill.toPeriod)] = fee;

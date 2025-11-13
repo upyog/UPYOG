@@ -26,6 +26,7 @@ import javax.validation.constraints.Size;
 
 import static org.springframework.util.ObjectUtils.isEmpty;
 
+@NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
@@ -85,7 +86,10 @@ public class User {
     private boolean otpValidationMandatory;
     private boolean mobileValidationMandatory = true;
     private String alternateMobileNumber;
-
+    
+    private String captchaUuid;
+    private String captcha;
+    
     public User addAddressItem(Address addressItem) {
         if (this.addresses == null) {
             this.addresses = new HashSet<>();
