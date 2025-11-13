@@ -53,9 +53,6 @@ public class CalculationService {
 	private SewerageDao sewerageDao;
 
 	@Autowired
-	private SewerageService sewerageService;
-
-	@Autowired
 	private EnrichmentService enrichmentService;
 
 	/**

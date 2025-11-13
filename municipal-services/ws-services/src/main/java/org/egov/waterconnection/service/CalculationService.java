@@ -20,6 +20,7 @@ import org.egov.waterconnection.web.models.collection.BillResponse;
 import org.egov.waterconnection.web.models.collection.Payment;
 import org.egov.waterconnection.workflow.WorkflowIntegrator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -38,7 +39,7 @@ public class CalculationService {
 
 	@Autowired
 	private ServiceRequestRepository serviceRequestRepository;
-    
+
 	@Autowired
 	private WaterServicesUtil waterServiceUtil;
 
@@ -52,6 +53,7 @@ public class CalculationService {
 	private WaterDao waterDao;
 
 	@Autowired
+	@Lazy
 	private WaterService waterService;
 
 	@Autowired
