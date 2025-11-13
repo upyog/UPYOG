@@ -187,7 +187,7 @@ public class BillServicev2 {
 			throw new CustomException("EG_BS_CANCEL_BILL_ERROR", "Only one consumer code can be provided in the Cancel request");
 		} else {
 			int result = billRepository.updateBillStatus(cancelBillCriteria);
-			sendNotificationForBillCancellation(updateBillRequest.getRequestInfo(), cancelBillCriteria);
+//			sendNotificationForBillCancellation(updateBillRequest.getRequestInfo(), cancelBillCriteria);
 			return result;
 		}
 	}

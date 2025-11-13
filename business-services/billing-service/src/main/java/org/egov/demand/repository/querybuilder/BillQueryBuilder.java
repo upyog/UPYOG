@@ -23,6 +23,8 @@ public class BillQueryBuilder {
 	
 	public static final String BILL_STATUS_UPDATE_BASE_QUERY = "UPDATE egbs_bill_v1 SET lastmodifieddate=?, status=? {replace} WHERE status='ACTIVE' AND tenantId = ? ";
 	
+	public static final String BILL_CANCEL_UPDATE_BASE_QUERY = "UPDATE egbs_bill_v1 SET lastmodifieddate=?, status=? {replace} WHERE status IN('ACTIVE','EXPIRED') AND tenantId = ? ";
+
 	public static final String BILL_STATUS_UPDATE_QUERY = "UPDATE egbs_bill_v1 SET status=? {replace} WHERE status='ACTIVE'";
 	
 	public static final String INSERT_BILL_QUERY = "INSERT into egbs_bill_v1 "
@@ -268,6 +270,29 @@ public class BillQueryBuilder {
 		}
 
 
+		return builder.toString();
+	}
+	
+	public String getBillCancelQuery(UpdateBillCriteria updateBillCriteria, List<Object> preparedStmtList) {
+		String additionalDetailsQuery = ", additionaldetails = ?";
+		StringBuilder builder = new StringBuilder();
+		
+		preparedStmtList.add(System.currentTimeMillis());
+		preparedStmtList.add(updateBillCriteria.getStatusToBeUpdated().toString());
+
+		if (!StringUtils.isEmpty(updateBillCriteria.getTenantId())) {
+				builder.append(BILL_CANCEL_UPDATE_BASE_QUERY.replace(REPLACE_STRING, additionalDetailsQuery));
+				preparedStmtList.add(util.getPGObject(updateBillCriteria.getAdditionalDetails()));
+			/*
+			 * where condition parameters
+			 */
+			preparedStmtList.add(updateBillCriteria.getTenantId());
+		}
+		if (!CollectionUtils.isEmpty(updateBillCriteria.getBillIds())) {
+
+			builder.append(" AND id IN ( ");
+			appendListToQuery(updateBillCriteria.getBillIds(), preparedStmtList, builder);
+		}
 		return builder.toString();
 	}
 	

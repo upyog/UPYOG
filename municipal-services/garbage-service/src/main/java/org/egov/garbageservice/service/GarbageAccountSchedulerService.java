@@ -10,9 +10,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Arrays;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
@@ -148,6 +150,10 @@ public class GarbageAccountSchedulerService {
 		producer.push(properties.getSanatizeLogger(),generateBillRequest.getUlbNames().get(0));
 	}
 	
+//	private void testKafka() {
+//		producer.push(properties.getTestKafka(),generateBillRequest.getUlbNames().get(0));
+//	}
+	
 	
 	private void createFailureLog(GarbageAccount garbageAccount,GenerateBillRequest generateBillRequest, BillResponse billResponse,List<String> errorMap) {
 		GrbgBillFailure grbgBillFailure	= garbageAccountService.enrichGrbgBillFailure(garbageAccount, generateBillRequest,billResponse,errorMap);
@@ -160,7 +166,7 @@ public class GarbageAccountSchedulerService {
 				.collect(Collectors.toSet());
 
 		GrbgBillTrackerSearchCriteria grbgBillTrackerSearchCriteria = GrbgBillTrackerSearchCriteria.builder()
-				.grbgApplicationIds(grbgApplicationIds).type("MONTHLY").build();
+				.grbgApplicationIds(grbgApplicationIds).type("MONTHLY").status(new HashSet<>(Arrays.asList("ACTIVE", "PAID"))).build();
 
 		List<GrbgBillTracker> grbgBillTrackers = garbageAccountService
 				.getBillCalculatedGarbageAccounts(grbgBillTrackerSearchCriteria);
@@ -190,6 +196,7 @@ public class GarbageAccountSchedulerService {
 	private void setFromDateToDate(GenerateBillRequest generateBillRequest) {
 		LocalDate lastMonthDate;
 		LocalDate startOfMonth;
+		
 		LocalDate endOfMonth;
 
 		if (!StringUtils.isEmpty(generateBillRequest.getMonth())
@@ -291,6 +298,7 @@ public class GarbageAccountSchedulerService {
 		    additionalDetails.put("category", garbageAccount.getGrbgCollectionUnits().get(0).getCategory());
 		    additionalDetails.put("SubCategoryType", garbageAccount.getGrbgCollectionUnits().get(0).getSubCategoryType());
 		    additionalDetails.put("application_no", garbageAccount.getGrbgApplicationNumber());
+		    additionalDetails.put("MONTH", generateBillRequest.getMonth());
 		    additionalDetails.put("type", Type);
 		    additionalDetails.put("oldGarbageId", 
 		    	    garbageAccount.getGrbgOldDetails() != null 

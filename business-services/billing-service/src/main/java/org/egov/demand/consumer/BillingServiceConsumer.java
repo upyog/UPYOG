@@ -2,6 +2,7 @@ package org.egov.demand.consumer;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -12,6 +13,7 @@ import org.egov.demand.helper.CollectionReceiptRequest;
 import org.egov.demand.model.BillDetail.StatusEnum;
 import org.egov.demand.model.BillV2;
 import org.egov.demand.model.PaymentBackUpdateAudit;
+import org.egov.demand.producer.Producer;
 import org.egov.demand.repository.BillRepository;
 import org.egov.demand.repository.DemandRepository;
 import org.egov.demand.service.DemandService;
@@ -30,6 +32,7 @@ import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.support.KafkaHeaders;
 import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.stereotype.Service;
+
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -65,6 +68,9 @@ public class BillingServiceConsumer {
 	
 	@Autowired
 	private Util util;
+	
+	@Autowired
+	private Producer producer;
 
 
 	@KafkaListener(topics = { "${kafka.topics.receipt.update.collecteReceipt}", "${kafka.topics.save.bill}",
@@ -74,6 +80,7 @@ public class BillingServiceConsumer {
 	public void processMessage(Map<String, Object> consumerRecord, @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
 
 		log.debug("key:" + topic + ":" + "value:" + consumerRecord);
+
 
 		/*
 		 * save demand topic
@@ -132,6 +139,7 @@ public class BillingServiceConsumer {
 		 */
 		else if (applicationProperties.getReceiptCancellationTopicV2().equals(topic)) {
 
+			
 			Boolean isReceiptCancellation = true;
 			updateDemandsFromPayment(consumerRecord, isReceiptCancellation);
 		}
@@ -191,6 +199,7 @@ public class BillingServiceConsumer {
 		bills.get(0).setAdditionalDetails(util.setValuesAndGetAdditionalDetails(null, Constants.PAYMENT_ID_KEY, paymentId));
 		validatePaymentForDuplicateUpdates(isReceiptCancelled, paymentId);
 
+
 		for (int i = 0; i < bills.size(); i++) {
 			
 			BillV2 bill = bills.get(i);
@@ -205,6 +214,11 @@ public class BillingServiceConsumer {
 
 			} else {
 				bill.setStatus(org.egov.demand.model.BillV2.BillStatus.PAID);
+				Map<String, Object> billMap = new HashMap<String, Object>();
+				billMap.put("bill",bill);
+				billMap.put("requestInfo", requestInfo);
+				if(bill.getBusinessService().equals("GB"))
+					producer.push("garbage-bill-tracker-status-update",billMap);
 			}
 		}
 	}
