@@ -77,6 +77,7 @@ import java.sql.Date;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.Year;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -1031,6 +1032,8 @@ public class BillServicev2 {
 
 		String paymentPeriod = null;
 		String expiryDate = null;
+		String payPeriodFrom=null;
+		String payPeriodTo=null;
 		// BigDecimal newTotalAmountForModeOfPayment = new BigDecimal(0);
 
 		BillSearchCriteria billCriteria = new BillSearchCriteria();
@@ -1218,6 +1221,8 @@ public class BillServicev2 {
 			if (q1.contains(cuurentMonth)) {
 				paymentPeriod = Q1;
 				expiryDate = "30-06-" + currentyear;
+				payPeriodFrom= "01-04-" + currentyear;
+				payPeriodTo= "30-06-" + currentyear;
 				// newTotalAmountForModeOfPayment = totalAmountForDemand.divide(new
 				// BigDecimal(4));
 				totalAmountForDemand = amountforquaterly.add(pastDue);
@@ -1312,6 +1317,8 @@ public class BillServicev2 {
 
 				paymentPeriod = Q2;
 				expiryDate = "30-09-" + currentyear;
+				payPeriodFrom= "01-07-" + currentyear;
+				payPeriodTo= "30-09-" + currentyear;
 				// String firstDayAfterexpiryDateQ1 = "01-07-" + currentyear;
 
 				// 150
@@ -1465,6 +1472,8 @@ public class BillServicev2 {
 
 				paymentPeriod = Q3;
 				expiryDate = "31-12-" + currentyear;
+				payPeriodFrom= "01-10-" + currentyear;
+				payPeriodTo= "31-12-" + currentyear;
 				quaterlyammount = ammountForTransactionperiod(Q2, amountforquaterly);
 				quaterlyammount = quaterlyammount.add(pastDue);
 
@@ -1684,6 +1693,8 @@ public class BillServicev2 {
 				}
 				paymentPeriod = Q4;
 				expiryDate = "31-03-" + nextYear;
+				payPeriodFrom= "01-01-" + nextYear;
+				payPeriodTo = (Year.isLeap(nextYear) ? "29" : "28") + "-02-" + nextYear;
 
 				// String firstDayAfterexpiryDateQ3 = "01-01-" + nextYear;
 				// newTotalAmountForModeOfPayment = totalAmountForDemand.divide(new
@@ -1783,7 +1794,8 @@ public class BillServicev2 {
 			if (h1.contains(cuurentMonth)) {
 				paymentPeriod = H1;
 				expiryDate = "30-06-" + currentyear;
-
+				payPeriodFrom= "01-04-" + currentyear;
+				payPeriodTo = "30-06-" + currentyear;
 				// newTotalAmountForModeOfPayment = totalAmountForDemand.divide(new
 				// BigDecimal(2));
 				totalAmountForDemand = ammountforhalfyearly.add(pastDue);
@@ -1887,6 +1899,8 @@ public class BillServicev2 {
 				paymentPeriod = H2;
 				String startDateh2 = "01-07-" + currentyear;
 				expiryDate = "31-03-" + nextYear;
+				payPeriodFrom= "01-07-" + currentyear;
+				payPeriodTo = "31-12-" + currentyear;
 				// String firstDayAfterexpiryDateH1 = "01-07-" + currentyear;
 
 				// This is for testing
@@ -1989,6 +2003,8 @@ public class BillServicev2 {
 			paymentPeriod = YR;
 			String startDateyr = "01-04-" + currentyear;
 			expiryDate = "31-03-" + nextYear;
+			payPeriodFrom= "01-04-" + currentyear;
+			payPeriodTo = (Year.isLeap(nextYear) ? "29" : "28") + "-02-" + nextYear;
 			BigDecimal noFODays = BigDecimal.ZERO;
 			BigDecimal totalAMountForInterest = BigDecimal.ZERO;
 			BigDecimal totalAmountForInterestCal = BigDecimal.ZERO;
@@ -2091,6 +2107,8 @@ public class BillServicev2 {
 
 		// Long billExpiryDate = getExpiryDateForDemand(demand);
 		Long billExpiryDate = getDateInMilisec(expiryDate, false);
+		Long billPayPeriodFrom = getDateInMilisec(payPeriodFrom, false);
+		Long billPayPeriodTo = getDateInMilisec(payPeriodTo, false);
 
 		totalAmountForDemand = roundOfDecimals(totalAmountForDemand);
 
@@ -2111,6 +2129,7 @@ public class BillServicev2 {
 				.interestonamount(inp.getInterestonamount()).interestpercentage(inp.getInterestpercentage())
 				.assesmentyear(inp.getAssesmentyear()).adjustedtosession(inp.getAdjustedtosession())
 				.totalAmountForIntCal(inp.getTotalAMountForInterest()).previousYearAssesment(inp.isPreviousYear())
+				.payPeriodFrom(billPayPeriodFrom).payPeriodTo(billPayPeriodTo)
 				.build();
 
 	}
