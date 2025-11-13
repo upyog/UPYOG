@@ -7,7 +7,7 @@ serviceMaps:
     isTransaction: true
     queryMaps:
 
-    - query: INSERT INTO eg_echallan( id, accountid, tenantid, challanNo, businessService, referenceId, applicationStatus, receiptnumber, taxPeriodFrom,taxPeriodTo, additionalDetail, createdby, lastmodifiedby, createdtime, lastmodifiedtime,description,filestoreid) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?,?);
+    - query: INSERT INTO eg_echallan( id, accountid, tenantid, challanNo, businessService, referenceId, applicationStatus, receiptnumber, taxPeriodFrom,taxPeriodTo, additionalDetail,status, createdby, lastmodifiedby, createdtime, lastmodifiedtime,description,filestoreid) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?,?,?);
       basePath: Challan
       jsonMaps:
       - jsonPath: $.Challan.id
@@ -31,8 +31,12 @@ serviceMaps:
       - jsonPath: $.Challan.taxPeriodTo
 
       - jsonPath: $.Challan.additionalDetail
+
         type: JSON
+
         dbType: JSONB
+
+      - jsonPath: $.Challan.status
       
       - jsonPath: $.Challan.auditDetails.createdBy
 
@@ -99,7 +103,7 @@ serviceMaps:
     isTransaction: true
     queryMaps:
     
-    - query: UPDATE eg_echallan SET applicationStatus = ?, receiptnumber = ?, taxPeriodFrom = ?,taxPeriodTo = ?, lastmodifiedby = ?,  lastmodifiedtime = ?,description = ?, additionalDetail = ?, filestoreid = ? WHERE id=?;
+    - query: UPDATE eg_echallan SET applicationStatus = ?, receiptnumber = ?, taxPeriodFrom = ?,taxPeriodTo = ?, lastmodifiedby = ?,  lastmodifiedtime = ?,description = ?, additionalDetail = ?, filestoreid = ?, status = ? WHERE id=?;
       basePath: Challan
       jsonMaps:
       
@@ -116,10 +120,13 @@ serviceMaps:
       - jsonPath: $.Challan.auditDetails.lastModifiedTime
 
       - jsonPath: $.Challan.description
-
+      
       - jsonPath: $.Challan.additionalDetail
-        type: JSON
+        type: JSON	
         dbType: JSONB
+      - jsonPath: $.Challan.status
+   
+       
 
       - jsonPath: $.Challan.filestoreid
 

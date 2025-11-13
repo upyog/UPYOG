@@ -30,6 +30,9 @@ public class ChallanService {
 	@Autowired
 	private ResponseInfoFactory responseInfoFactory;
 
+	@Autowired
+	private WorkflowService workflowService;
+	
     private UserService userService;
     
     private ChallanRepository repository;
@@ -64,10 +67,17 @@ public class ChallanService {
 	public Challan create(ChallanRequest request) {
 		Object mdmsData = utils.mDMSCall(request);
 		validator.validateFields(request, mdmsData,"create");
+		
 		enrichmentService.enrichCreateRequest(request);
+		
 		userService.createUser(request);
+		
 		calculationService.addCalculation(request);
+		
+		workflowService.updateWorkflow(request);
+
 		repository.save(request);
+		
 		return request.getChallan();
 	}
 	
@@ -166,6 +176,12 @@ public class ChallanService {
 		 validator.validateUpdateRequest(request,searchResult);
 		 enrichmentService.enrichUpdateRequest(request);
 		 calculationService.addCalculation(request);
+		 
+//		 if(request.getChallan().getStatus().equalsIgnoreCase("CANN"))
+//		 workflowService.updateWorkflow(request);
+		workflowService.updateWorkflow(request);
+
+
 		 repository.update(request);
 		 return request.getChallan();
 		}

@@ -22,6 +22,7 @@ import javax.validation.constraints.NotNull;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.response.ResponseInfo;
 import org.springframework.validation.annotation.Validated;
+import org.egov.echallan.web.models.workflow.ProcessInstance;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -56,6 +57,9 @@ public class ChallanRequest {
 	 @JsonProperty("Challan")
      @Valid
      private Challan challan = null;
+	 
+
+
 
 
   
