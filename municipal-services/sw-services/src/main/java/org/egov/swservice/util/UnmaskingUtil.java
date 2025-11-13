@@ -13,6 +13,7 @@ import org.egov.swservice.web.models.SewerageConnection;
 import org.egov.swservice.web.models.users.UserDetailResponse;
 import org.egov.swservice.web.models.users.UserSearchRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
@@ -23,6 +24,7 @@ public class UnmaskingUtil {
     private static List<String> plainRequestFieldsList;
 
     @Autowired
+    @Lazy
     private UserService userService;
 
     public void getOwnerDetailsUnmasked(SewerageConnection waterConnection, RequestInfo requestInfo) {
