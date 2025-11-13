@@ -210,5 +210,18 @@ public class ChallanConfiguration {
     
     @Value("${egov.challan.validity}")
     private String challanValidity;
+    
+	// Workflow configs
+	@Value("${workflow.host}")
+	private String wfHost;
+
+	@Value("${workflow.transition.path}")
+	private String wfTransitionPath;
+
+	@Value("${workflow.businessservice.search.path}")
+	private String wfBusinessServiceSearchPath;
+
+	@Value("${workflow.processinstance.search.path}")
+	private String wfProcessSearchPath;
 
 }

@@ -1,0 +1,1 @@
+ALTER TABLE eg_echallan ADD COLUMN IF NOT EXISTS status character varying(25);

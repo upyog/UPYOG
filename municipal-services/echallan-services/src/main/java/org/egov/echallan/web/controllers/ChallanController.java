@@ -55,12 +55,14 @@ public class ChallanController {
 		 String tenantId = criteria.getTenantId();
 	     List<Challan> challans = challanService.search(criteria, requestInfoWrapper.getRequestInfo());
 	    	 
-	     
 	     Map<String,Integer> dynamicData = challanService.getDynamicData(tenantId);
 	    	 
 	     int countOfServices = dynamicData.get(ChallanConstants.TOTAL_SERVICES);
+	     
 	     int totalAmountCollected = dynamicData.get(ChallanConstants.TOTAL_COLLECTION);
+	     
 	     int validity = challanService.getChallanValidity();
+	     
 	     int totalCount = challanService.countForSearch(criteria,requestInfoWrapper.getRequestInfo());
 
 	     ChallanResponse response = ChallanResponse.builder().challans(challans).countOfServices(countOfServices)
@@ -93,4 +95,14 @@ public class ChallanController {
 		producer.push("update-challan",challanRequest);
 		return new ResponseEntity(HttpStatus.OK);
 	}
+	
+	 @PostMapping("/_updateStatus")
+	 public ResponseEntity<ChallanResponse> _updateStatus(@Valid @RequestBody ChallanRequest challanRequest) {
+		Challan challan = challanService.update(challanRequest);
+		ResponseInfo resInfo = responseInfoFactory.createResponseInfoFromRequestInfo(challanRequest.getRequestInfo(), true);
+		ChallanResponse response = ChallanResponse.builder().challans(Arrays.asList(challan))
+				.responseInfo(resInfo)
+				.build();
+		return new ResponseEntity<>(response, HttpStatus.OK);
+		}
 }

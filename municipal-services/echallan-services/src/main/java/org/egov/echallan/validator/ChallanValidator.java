@@ -96,7 +96,10 @@ public class ChallanValidator {
 			if (totalAmt <= 0)
 				errorMap.put("Zero amount", "Challan cannot be generated for zero amount");
 			if (!currentTaxHeadCodes.isEmpty() && !requiredTaxHeadCodes.isEmpty()) {
-				if (!currentTaxHeadCodes.containsAll(requiredTaxHeadCodes))
+				boolean containsAny = requiredTaxHeadCodes.stream()
+					    .anyMatch(currentTaxHeadCodes::contains);
+				//if (!currentTaxHeadCodes.containsAll(requiredTaxHeadCodes))
+				if(!containsAny)
 					errorMap.put("INAVLID_TAXHEAD_CODE_DETAILS",
 							"Mandatory taxhead codes details are not present in request for provided business service");
 			} else
