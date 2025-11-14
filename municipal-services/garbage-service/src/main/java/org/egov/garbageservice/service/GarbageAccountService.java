@@ -2362,7 +2362,7 @@ public class GarbageAccountService {
 				if (additionalDetails == null) {
 					additionalDetails = new HashMap<>();
 				}
-				additionalDetails.put("Type", "ARREAR");
+				additionalDetails.put("type", "ARREAR");
 				additionalDetails.put("subCategoryType", garbageAccount.getGrbgCollectionUnits().get(0).getSubCategoryType());
 				demand.setAdditionalDetails(additionalDetails);
 				Calendar cal = Calendar.getInstance();

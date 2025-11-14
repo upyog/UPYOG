@@ -68,11 +68,26 @@ public class BillTrackerStatusUpdateConsumer {
 
 			AuditDetails audit = grbgUtils.buildCreateAuditDetails(reqInfo);
 			bill.getBillDetails().stream().forEach(detail->{
-				GrbgBillTracker grbgBillTracker = GrbgBillTracker.builder().status(bill.getStatus().toString()).grbgApplicationId(bill.getConsumerCode())
-						.month(detail.getAdditionalDetails().get("MONTH").asText()).auditDetails(audit).build();
+				GrbgBillTracker grbgBillTracker = null;
+				if(detail.getAdditionalDetails().get("type").asText().equals("ARREAR")) {
+		    		String year = detail.getAdditionalDetails().get("financialYear").asText();
+			        String[] parts = year.split("-");
+			        String startYear = parts[0];
+			        String endYear = parts[1];
+			        String endShort = endYear.substring(2);
+
+			        String yearConvert =  startYear + "-" + endShort;
+					 grbgBillTracker = GrbgBillTracker.builder().status(bill.getStatus().toString()).grbgApplicationId(bill.getConsumerCode())
+							.type(detail.getAdditionalDetails().get("type").asText()).auditDetails(audit).year(yearConvert).build();
+					
+				}else {
+					 grbgBillTracker = GrbgBillTracker.builder().status(bill.getStatus().toString()).grbgApplicationId(bill.getConsumerCode())
+							.month(detail.getAdditionalDetails().get("MONTH").asText()).type(detail.getAdditionalDetails().get("type").asText()).auditDetails(audit).build();
+				}
+				
 				trackerRepository.updateStatusBillTracker(grbgBillTracker);
 			});
-    		System.out.println("kasjhka");
+//    		System.out.println("kasjhka");
 
         }catch(Exception e){
             log.error("Exception while reading from the queue: ", e);
