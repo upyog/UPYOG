@@ -116,8 +116,8 @@ public class GarbageAccountSchedulerService {
 //							GrbgBillFailure grbgBillFailure	= garbageAccountService.enrichGrbgBillFailure(garbageAccount, generateBillRequest,billResponse,errorList);
 //							garbageAccountService.removeGarbageBillFailure(grbgBillFailure);
 //							triggerNotifications
-//							notificationService.triggerNotificationsGenerateBill(garbageAccount, billResponse.getBill().get(0),
-//									generateBillRequest.getRequestInfo(),grbgBillTracker);
+							notificationService.triggerNotificationsGenerateBill(garbageAccount, billResponse.getBill().get(0),
+								generateBillRequest.getRequestInfo(),grbgBillTracker);
 						}else {
 							errorList.add("Issues In Bill Generation Probably Demand Already Exists");
 							createFailureLog(garbageAccount, generateBillRequest,billResponse,errorList);

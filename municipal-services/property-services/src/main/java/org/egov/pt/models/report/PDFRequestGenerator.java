@@ -193,9 +193,17 @@ public class PDFRequestGenerator {
 
 		dataObject.putAll(tableRowMap);
 		dataObject.put("ptbr", ptbr);
+		
+		
+		if(ptTaxCalculatorTracker.getType().equals("ARREAR")) {
+			return PDFRequest.builder().RequestInfo(requestInfoWrapper.getRequestInfo()).key("PropertyTaxArrearBillReceipt")
+					.tenantId("hp").data(dataObject).build();
+		}else {
+			return PDFRequest.builder().RequestInfo(requestInfoWrapper.getRequestInfo()).key("PropertyTaxBillReceipt")
+					.tenantId("hp").data(dataObject).build();
+		}
 
-		return PDFRequest.builder().RequestInfo(requestInfoWrapper.getRequestInfo()).key("PropertyTaxBillReceipt")
-				.tenantId("hp").data(dataObject).build();
+	
 	}
 	
 	private String escapeHtml(String input) {

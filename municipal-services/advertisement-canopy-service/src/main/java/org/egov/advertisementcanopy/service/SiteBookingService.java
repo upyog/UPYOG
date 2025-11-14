@@ -682,8 +682,19 @@ public class SiteBookingService {
 				throw new CustomException("BOOKING_NOT_FOUND","Booking id not found: "+booking.getApplicationNo());
 			}
 			
-			Long fromDateInMillis = existingSiteBooking.getFromDate() * 1000;
-			Long toDateInMillis = existingSiteBooking.getToDate() * 1000;
+			Long fromDateInMillis;
+			Long toDateInMillis;
+			// If to check workflow
+			if (!siteBookingRequest.getSiteBookings().get(0).getIsOnlyWorkflowCall()) {
+
+				fromDateInMillis = siteBookingRequest.getSiteBookings().get(0).getFromDate() * 1000;
+				toDateInMillis = siteBookingRequest.getSiteBookings().get(0).getToDate() * 1000;
+
+			} else {
+				fromDateInMillis = existingSiteBooking.getFromDate() * 1000;
+				toDateInMillis = existingSiteBooking.getToDate() * 1000;
+			}
+			
 			Long differenceInMillis = Math.abs(toDateInMillis - fromDateInMillis);
 	        Long numberOfDays = differenceInMillis / (1000 * 60 * 60 * 24);
 	        numberOfDays = numberOfDays + 1; 

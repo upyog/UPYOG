@@ -254,11 +254,16 @@ public class UserService {
     }
 
     private String getStateLevelTenantForCitizen(String tenantId, UserType userType) {
-        if (!isNull(userType) && userType.equals(UserType.CITIZEN) && !isEmpty(tenantId) && tenantId.contains("."))
+        if (!isNull(userType) 
+                && (userType.equals(UserType.CITIZEN) || userType.equals(UserType.SYSTEM)) 
+                && !isEmpty(tenantId) 
+                && tenantId.contains(".")) {
             return tenantId.split("\\.")[0];
-        else
+        } else {
             return tenantId;
+        }
     }
+
 
     /**
      * api will create the citizen with otp

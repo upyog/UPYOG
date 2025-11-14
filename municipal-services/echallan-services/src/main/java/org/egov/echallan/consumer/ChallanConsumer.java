@@ -37,8 +37,8 @@ public class ChallanConsumer {
   
             challanRequest = mapper.convertValue(record, ChallanRequest.class);
 
-        if(topic.equalsIgnoreCase(config.getSaveChallanTopic()))
-        	notificationService.sendChallanNotification(challanRequest,true);
+//        if(topic.equalsIgnoreCase(config.getSaveChallanTopic()))
+//        	notificationService.sendChallanNotification(challanRequest,true);
 //        else if(topic.equalsIgnoreCase(config.getUpdateChallanTopic()))
 //            notificationService.sendChallanNotification(challanRequest,false);
         } catch (final Exception e) {

@@ -16,6 +16,7 @@ import java.util.Objects;
 
 import org.egov.common.contract.response.ResponseInfo;
 import org.egov.echallan.web.models.calculation.Calculation;
+import org.egov.echallan.web.models.workflow.ProcessInstance;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -106,6 +107,9 @@ public class Challan {
   @JsonProperty("auditDetails")
 
   private AuditDetails auditDetails = null;
+  
+  private ProcessInstance workflow = null;
+  
   public Challan citizen(UserInfo citizen) {
     this.citizen = citizen;
     return this;
@@ -144,6 +148,9 @@ public class Challan {
   @JsonProperty("applicationStatus")
   private StatusEnum applicationStatus = null;
 
+  @JsonProperty("status")
+  private String status = null;
+  
   @JsonProperty("receiptNumber")
     private String receiptNumber = null;
 }
