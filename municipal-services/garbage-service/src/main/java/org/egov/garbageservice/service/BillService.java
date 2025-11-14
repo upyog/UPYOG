@@ -8,6 +8,7 @@ import org.egov.garbageservice.contract.bill.BillRepository;
 import org.egov.garbageservice.contract.bill.BillResponse;
 import org.egov.garbageservice.contract.bill.BillSearchCriteria;
 import org.egov.garbageservice.contract.bill.GenerateBillCriteria;
+import org.egov.garbageservice.contract.bill.UpdateBillCriteria;
 import org.egov.garbageservice.util.ResponseInfoFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -47,5 +48,13 @@ public class BillService {
 		return BillResponse.builder().resposneInfo(responseInfoFactory.createResponseInfoFromRequestInfo(requestInfo, true))
 				.bill(bills).build();
 	}
+	
+	public void cancelBill(UpdateBillCriteria updateBillCriteria, RequestInfo requestInfo) {
+
+		 billRepository.cancelBill(updateBillCriteria, requestInfo);
+//		return BillResponse.builder().resposneInfo(responseInfoFactory.createResponseInfoFromRequestInfo(requestInfo, true))
+//				.bill(bills).build();
+	}
+	
 	
 }

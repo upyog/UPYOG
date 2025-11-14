@@ -84,6 +84,9 @@ public class BillRepository {
         if(billCriteria.getBillId() != null) {
             uri = uri.concat("&billId=").concat(StringUtils.join(billCriteria.getBillId(), ","));
         }
+        if(billCriteria.getStatus() != null) {
+            uri = uri.concat("&status=").concat(billCriteria.getStatus().toString());
+        }
 
         Object result = restCallRepository.fetchResult(new StringBuilder(uri),RequestInfoWrapper.builder()
                                                              .requestInfo(requestInfo).build());
@@ -91,6 +94,17 @@ public class BillRepository {
         BillResponse billResponse = objectMapper.convertValue(result, BillResponse.class);
         
         return billResponse.getBill();
+	}
+	
+	public void cancelBill(UpdateBillCriteria updateBillCriteria, RequestInfo requestInfo){
+		String uri = config.getBillHost().concat(config.getCancleBillEndpoint());
+		
+		try {
+			restCallRepository.fetchResult(new StringBuilder(uri),UpdateBillRequest.builder()
+					.RequestInfo(requestInfo).UpdateBillCriteria(updateBillCriteria).build());
+		}catch(Exception e) {
+			log.error("Exception while fetching user: ", e);
+		}
 	}
 	
 	

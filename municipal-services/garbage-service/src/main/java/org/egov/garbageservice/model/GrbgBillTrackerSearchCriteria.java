@@ -1,5 +1,6 @@
 package org.egov.garbageservice.model;
 
+import java.util.List;
 import java.util.Set;
 
 import lombok.AllArgsConstructor;
@@ -18,6 +19,8 @@ public class GrbgBillTrackerSearchCriteria {
 	private String type;
 	
 	private String month;
+	
+	private Set<String> status;
 
 	private Set<String> tenantIds;
 

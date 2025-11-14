@@ -5,24 +5,53 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Collections;
 
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.garbageservice.contract.bill.UpdateBillRequest;
 import org.egov.garbageservice.model.AuditDetails;
 import org.egov.garbageservice.model.GarbageBill;
 import org.egov.garbageservice.model.GarbageBillRequest;
 import org.egov.garbageservice.model.GarbageBillSearchCriteria;
+import org.egov.garbageservice.model.GrbgBillTracker;
 import org.egov.garbageservice.model.SearchGarbageBillRequest;
 import org.egov.garbageservice.repository.GarbageBillRepository;
+import org.egov.garbageservice.repository.GarbageBillTrackerRepository;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.egov.garbageservice.contract.bill.BillResponse;
+import org.egov.garbageservice.contract.bill.BillSearchCriteria;
+import org.egov.garbageservice.contract.bill.CancleBillRequest;
+import org.egov.garbageservice.contract.bill.Demand;
+import org.egov.garbageservice.contract.bill.Demand.StatusEnum;
+import org.egov.garbageservice.contract.bill.UpdateBillCriteria;
+import org.egov.garbageservice.util.GrbgUtils;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 
 @Service
 public class GarbageBillService {
 
 	@Autowired
 	private GarbageBillRepository repository;
+	
+	@Autowired
+	private BillService billService;
+	
+	@Autowired
+	private DemandService demandService;
+	
+	@Autowired
+	private ObjectMapper objectMapper;
+	
+	@Autowired
+	private GrbgUtils grbgUtils;
+	
+	@Autowired
+	private GarbageBillTrackerRepository trackerRepository;
 
 	public List<GarbageBill> createGarbageBills(GarbageBillRequest garbageBillRequest) {
 
@@ -189,5 +218,67 @@ public class GarbageBillService {
 		}
 
 	}
+	
+	public Boolean cancelGarbageBill(CancleBillRequest cancleBillRequest) {
 
+		BillSearchCriteria billSearchCriteria = BillSearchCriteria.builder().status(StatusEnum.ACTIVE)
+				.tenantId(cancleBillRequest.getTenantId()).consumerCode(cancleBillRequest.getConsumerCode()).build();
+		BillResponse billResponse = billService.searchBill(billSearchCriteria, cancleBillRequest.getRequestInfo());
+		if (!CollectionUtils.isEmpty(billResponse.getBill())) {
+
+			if (billResponse != null && billResponse.getBill() != null && !billResponse.getBill().isEmpty()
+					&& billResponse.getBill().get(0).getBillDetails() != null
+					&& !billResponse.getBill().get(0).getBillDetails().isEmpty()
+					&& billResponse.getBill().get(0).getBillDetails().size() == 1) {
+				billResponse.getBill().stream().forEach(bill -> {
+
+					bill.getBillDetails().stream().forEach(BillDetail -> {
+						demandService.cancelDemand(BillDetail.getTenantId(),
+								Collections.singleton(BillDetail.getDemandId()), cancleBillRequest.getRequestInfo(),
+								bill.getBusinessService());
+					});
+
+					Map<String, Object> additionalDetails = null;
+					if (bill.getAdditionalDetails() != null && !bill.getAdditionalDetails().isNull()
+							&& !bill.getAdditionalDetails().isEmpty()) {
+						additionalDetails = (Map<String, Object>) bill.getAdditionalDetails();
+					}
+					// if null, initialize
+					if (additionalDetails == null) {
+						additionalDetails = new HashMap<>();
+					}
+
+//					Map<String, Object> additionalDetails = new HashMap<>();
+					additionalDetails.put("reasonMessage", cancleBillRequest.getReason());
+					additionalDetails.put("reason", cancleBillRequest.getReason());
+
+					JsonNode additionalDetailsNode = objectMapper.valueToTree(additionalDetails);
+
+					UpdateBillCriteria updateBillCriteria = UpdateBillCriteria.builder().tenantId(bill.getTenantId())
+							.statusToBeUpdated(StatusEnum.CANCELLED)
+							.consumerCodes(Collections.singleton(bill.getConsumerCode()))
+							.additionalDetails(additionalDetailsNode).businessService(bill.getBusinessService())
+							.build();
+					billService.cancelBill(updateBillCriteria, cancleBillRequest.getRequestInfo());
+					AuditDetails audit = grbgUtils.buildCreateAuditDetails(cancleBillRequest.getRequestInfo());
+					GrbgBillTracker grbgBillTracker = GrbgBillTracker.builder().status("CANCELLED")
+							.billId(bill.getId()).auditDetails(audit).build();
+					trackerRepository.updateStatusBillTracker(grbgBillTracker);
+//					bill.getBillDetails().stream().forEach(BillDetail -> {
+//						demandService.cancelDemand(BillDetail.getTenantId(),
+//								Collections.singleton(BillDetail.getManualReceiptDate()),
+//								cancleBillRequest.getRequestInfo(), bill.getBusinessService());
+//					});
+				});
+				return true;
+			}
+			 else {
+					throw new CustomException("INVALID UPDATE",
+							"Multi Demand Cancellation Is Not Allowed");
+				}
+		} else {
+			throw new CustomException("INVALID UPDATE",
+					"No Bill exists for The application Number: " + cancleBillRequest.getConsumerCode());
+		}
+	}
 }

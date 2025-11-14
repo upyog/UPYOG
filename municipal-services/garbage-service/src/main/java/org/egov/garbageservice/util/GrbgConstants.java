@@ -106,6 +106,9 @@ public class GrbgConstants {
 	
 	@Value(("${kafka.topics.sanatize.failure}"))
 	private String sanatizeLogger;
+	
+	@Value(("${kafka.topics.bill.tracker.status.update}"))
+	private String testKafka;
 
 	@Value(("${egov.grbg.bill.expiry.after}"))
 	private String grbgBillExpiryAfter;
@@ -142,6 +145,9 @@ public class GrbgConstants {
 
 	@Value("${egov.demand.update.endpoint}")
 	public String demandUpdateEndpoint;
+	
+	@Value("${egov.cancel.bill.endpoint}")
+	public String cancleBillEndpoint;
 
 	@Value("${egov.report.host}")
 	public String reportHost;

@@ -3,7 +3,9 @@ package org.egov.garbageservice.service;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -14,6 +16,7 @@ import org.egov.common.contract.request.RequestInfo;
 import org.egov.garbageservice.model.UserSearchResponse;
 import org.egov.garbageservice.service.UserService;
 import org.egov.garbageservice.contract.bill.Demand;
+import org.egov.garbageservice.contract.bill.Demand.StatusEnum;
 import org.egov.garbageservice.contract.bill.DemandDetail;
 import org.egov.garbageservice.contract.bill.DemandRepository;
 import org.egov.garbageservice.contract.bill.DemandResponse;
@@ -21,6 +24,7 @@ import org.egov.garbageservice.model.GarbageAccount;
 import org.egov.garbageservice.model.GenerateBillRequest;
 import org.egov.garbageservice.util.GrbgConstants;
 import org.egov.garbageservice.util.RequestInfoWrapper;
+import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -123,5 +127,39 @@ public class DemandService {
 			return response.getDemands();
 
 	}
+	
+	List<Demand> searchDemandId(String tenantId, Set<String> demandIds, RequestInfo requestInfo,
+			String businessService) {
+
+		RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(requestInfo).build();
+		DemandResponse response = demandRepository.searchId(tenantId, demandIds, requestInfoWrapper, businessService);
+
+		if (CollectionUtils.isEmpty(response.getDemands()))
+			return null;
+
+		else
+			return response.getDemands();
+
+	}
+	
+    public List<Demand> cancelDemand(String tenantId, Set<String> demandIds, RequestInfo requestInfo,
+			String businessService){
+        List<Demand> demands = new LinkedList<>();
+//        for(Calculation calculation : calculations) {
+
+            List<Demand> searchResult = searchDemandId(tenantId,demandIds, requestInfo,businessService);
+
+            if(CollectionUtils.isEmpty(searchResult))
+                throw new CustomException("INVALID UPDATE","No demand exists for applicationNumber: ");
+            
+            Demand demand = searchResult.get(0);
+            	demand.setStatus(StatusEnum.CANCELLED);
+//            List<DemandDetail> demandDetails = demand.getDemandDetails();
+//            List<DemandDetail> updatedDemandDetails = getUpdatedDemandDetails(calculation,demandDetails);
+//            demand.setDemandDetails(updatedDemandDetails);
+            demands.add(demand);
+//        }
+         return demandRepository.updateDemand(requestInfo,demands);
+    }
 
 }

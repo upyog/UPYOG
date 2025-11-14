@@ -93,6 +93,28 @@ public class DemandRepository {
         
 		return response;
 	}
+	
+	public DemandResponse searchId(String tenantId, Set<String> demandIds, RequestInfoWrapper requestInfoWrapper,
+			String businessService) {
+		
+        String uri = config.getBillHost().concat(config.getDemandSearchEndpoint());
+        uri = uri.replace("consumerCode","demandId");
+        uri = uri.replace("{1}",tenantId);
+        uri = uri.replace("{2}",businessService);
+        uri = uri.replace("{3}",StringUtils.join(demandIds, ','));
+
+        Object result = restCallRepository.fetchResult(new StringBuilder(uri),requestInfoWrapper);
+        DemandResponse response = null;
+        
+        try {
+             response = objectMapper.convertValue(result, DemandResponse.class);
+        }
+        catch (IllegalArgumentException e){
+            throw new CustomException("PARSING ERROR","Failed to parse response from Demand Search");
+        }
+        
+		return response;
+	}
 
 
 }
