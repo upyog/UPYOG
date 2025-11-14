@@ -168,6 +168,12 @@ public class GarbageBillTrackerRepository {
 			builder.append(" AND month = :month");
 			builder.append(" AND grbg_application_id = :grbgApplicationId");
 		}
+		
+		if(!StringUtils.isEmpty(grbgBillTracker.getType())) {
+	        updateTrackerStatus.put("type",grbgBillTracker.getType());
+			builder.append(" AND type = :type");
+		}
+		
 
         updateTrackerStatus.put("status",grbgBillTracker.getStatus());
         updateTrackerStatus.put("lastModifiedTime", grbgBillTracker.getAuditDetails().getLastModifiedDate());
