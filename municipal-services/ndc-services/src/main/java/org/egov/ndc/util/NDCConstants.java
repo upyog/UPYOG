@@ -60,7 +60,11 @@ public class NDCConstants {
 	public static final String ACTION_STATUS_CREATED = "null_INITIATED";
 	
 	public static final String ACTION_STATUS_INITIATED = "INITIATE_INITIATED";
-	
+	public static final String ACTION_STATUS_PENDING_PAYMENT = "APPLY_PENDINGPAYMENT";
+	public static final String ACTION_STATUS_PAYMENT_CONFIRMATION = "PAY_DOCUMENTVERIFY";
+	public static final String ACTION_STATUS_FORWARD_REVIEW = "FORWARD_PT-VERIFICATION";
+	public static final String ACTION_STATUS_CITIZEN_ACTION_REQ = "SENDBACKTOCITIZEN_CITIZENACTIONREQUIRED";
+
 	public static final String ACTION_STATUS_REJECTED = "REJECT_REJECTED";
 	
 	public static final String ACTION_STATUS_APPROVED = "APPROVE_APPROVED";
@@ -70,4 +74,8 @@ public class NDCConstants {
 	public static final String ADDITIONAL_DETAILS_FEE_TYPE_PARAM = "propertyType";
 	public static final String RESIDENTIAL = "RESIDENTIAL";
 	public static final String COMMERCIAL = "COMMERCIAL";
+	public static final String DEPARTMENT_PMIDC = "PMIDC";
+	public static final String HELPLINE_NUMBER = "01828-222050";
+	public static final String PORTAL_LINK = "https://mseva.lgpunjab.gov.in/digit-ui/citizen";
+	public static final String OFFICE_NAME = "Local Office";
 }
