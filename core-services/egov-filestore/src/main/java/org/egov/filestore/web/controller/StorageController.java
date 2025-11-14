@@ -30,7 +30,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.multipart.MultipartFile;
@@ -96,11 +95,11 @@ public class StorageController {
 	@PostMapping(produces = APPLICATION_JSON_UTF8_VALUE)
 	@ResponseStatus(HttpStatus.CREATED)
 	@ResponseBody
-	public StorageResponse storeFiles(@RequestPart("file") List<MultipartFile> files,
-			@RequestPart(value = "tenantId") String tenantId,
-			@RequestPart(value = "module", required = true) String module,
-			@RequestPart(value = "tag", required = false) String tag,
-			@RequestPart(value = "requestInfo", required = false) String requestInfo
+	public StorageResponse storeFiles(@RequestParam("file") List<MultipartFile> files,
+			@RequestParam(value = "tenantId") String tenantId,
+			@RequestParam(value = "module", required = true) String module,
+			@RequestParam(value = "tag", required = false) String tag,
+			@RequestParam(value = "requestInfo", required = false) String requestInfo
 			) {
 		RequestInfo reqInfo = storageUtil.getRequestInfo(requestInfo);
 		final List<String> fileStoreIds = storageService.save(files, module, tag, tenantId, reqInfo);
