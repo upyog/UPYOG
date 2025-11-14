@@ -1862,7 +1862,16 @@ if(collectedAmtForOldDemand.compareTo(BigDecimal.ZERO) > 0)
 		RequestInfo requestInfo = mapper.convertValue(requestInfoNode, RequestInfo.class);
 		CalculationCriteria criteria = mapper.convertValue(calculationCriteriaNode, CalculationCriteria.class);
 
+		JSONObject main_jobj = new JSONObject();
+		JSONObject jobj_ResponseInfo = new JSONObject();
+		jobj_ResponseInfo.put("apiId", JSONObject.NULL);
+		jobj_ResponseInfo.put("ver", JSONObject.NULL);
+		jobj_ResponseInfo.put("ts", JSONObject.NULL);
+		jobj_ResponseInfo.put("resMsgId", JSONObject.NULL);
+		jobj_ResponseInfo.put("msgId", JSONObject.NULL);
+		jobj_ResponseInfo.put("status", JSONObject.NULL);
 
+		main_jobj.put("ResponseInfo", jobj_ResponseInfo);
 		double PT_TAX = 0, PT_TAX_NET = 0, exemption = 0, unit_usage_exemption = 0, FireCess = 0;
 
 		try {
@@ -1871,9 +1880,9 @@ if(collectedAmtForOldDemand.compareTo(BigDecimal.ZERO) > 0)
 			JsonNode propertyDetails = properties.get("propertyDetails").get(0);
 			String assessmentYear = propertyDetails.get("financialYear").asText();
 			JsonNode addressNode = properties.path("address");
+			//JsonNode units = properties.get("unit");
 			JsonNode localityNode = addressNode.path("locality");
 			String TargetlocalityCode = localityNode.path("code").asText("");
-
 
 			if (!"2013-14".equals(assessmentYear)) {
 				throw new IllegalArgumentException("2013-14 calculation called for " + assessmentYear);
@@ -1937,9 +1946,27 @@ if(collectedAmtForOldDemand.compareTo(BigDecimal.ZERO) > 0)
 			}
 
 			JsonNode units = propertyDetails.get("units");
+		//	double floorNo = Double.parseDouble(String.valueOf(units.get("floorNo")));
+			ArrayNode updatedUnits = mapper.createArrayNode();
+
 			if (units != null && units.isArray()) {
 				for (JsonNode unit : units) {
+					ObjectNode unitObj = (ObjectNode) unit;
 					if (unit.has("active") && !unit.get("active").asBoolean()) continue;
+
+					double floorNo = 0.0;
+					if (unit.has("floorNo") && !unit.get("floorNo").isNull()) {
+						try {
+							floorNo = unit.get("floorNo").asDouble();
+						} catch (Exception e) {
+							log.warn("Invalid floorNo format, defaulting to 0: {}", unit.get("floorNo"));
+							floorNo = 0.0;
+						}
+					}
+
+					unitObj.put("floorNo", floorNo);
+					updatedUnits.add(unitObj);
+
 
 					String occ = unit.get("occupancyType").asText();
 					String usage = unit.get("usageCategoryMajor").asText();
@@ -1982,6 +2009,7 @@ if(collectedAmtForOldDemand.compareTo(BigDecimal.ZERO) > 0)
 						FireCess = 0;
 					}
 				}
+				((ObjectNode) propertyDetails).set("units", updatedUnits);
 			}
 
 			JsonNode owners = propertyDetails.get("owners");
@@ -2042,32 +2070,24 @@ if(collectedAmtForOldDemand.compareTo(BigDecimal.ZERO) > 0)
 			calculation.put("exemption", exemption);
 			calculation.put("rebate", additional_rebate);
 			calculation.put("taxAmount", tax_payable_roundoff);
-
-			calculation.put("taxAmount", tax_payable_roundoff);
 			calculation.put("totalAmount", tax_payable_roundoff);
 			calculation.put("penalty", penality);
+
 			calculation.set("taxHeadEstimates", taxHeadEstimates);
 
-				Property propertyObj = mapper.convertValue(properties, Property.class);
-				List<BillingSlab> billingSlabs = billingSlabService
-						.searchBillingSlabs(requestInfo, BillingSlabSearchCriteria.builder().tenantId(tenantId).build()).getBillingSlab();
-				List<BillingSlab> filteredSlabs = billingSlabs.stream()
-						.filter(slab -> {
-							String propType = propertyObj.getPropertyDetails().get(0).getPropertyType();
-							return slab.getPropertyType().equalsIgnoreCase(propType)
-									|| slab.getPropertyType().equalsIgnoreCase("ALL");
-						}).collect(Collectors.toList());
 			ArrayNode billingSlabIds = mapper.createArrayNode();
-			BillingSlab selectedSlab = filteredSlabs.get(0);
-			billingSlabIds.add(selectedSlab.getId());
+			billingSlabIds.add("");
 			calculation.set("billingSlabIds", billingSlabIds);
-
 
 			calculation.put("serviceNumber", properties.path("acknowldgementNumber").asText(null));
 			calculation.put("fromDate", 1364774400); // epoch for 1-apr-2013 "AC-2025-10-01-2900664"
 			calculation.put("toDate", System.currentTimeMillis() / 1000);
 			calculationsArray.add(calculation);
+
+			responseNode.set("ResponseInfo", mapper.readTree(main_jobj.get("ResponseInfo").toString())); // ✅ add this
 			responseNode.set("Calculation", calculationsArray);
+
+
 
 		} catch (Exception ex) {
 			log.error("Error in 2013 calculation: {}", ex.getMessage(), ex);
