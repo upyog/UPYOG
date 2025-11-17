@@ -188,6 +188,16 @@ public class EncryptionDecryptionUtil {
             // CRITICAL FIX: Pass purpose (not stateLevelTenantId) as 4th parameter
             // The encryptionService.decryptJson signature is: (RequestInfo, Object, String model, String purpose, Class)
             Object decryptedObject = encryptionService.decryptJson(safeRequestInfo, objectToDecrypt, key, purpose, classType);
+
+            // Handle case where encryption service returns a List even for single objects
+            if (decryptedObject instanceof List && !(objectToDecrypt instanceof List)) {
+                List<?> decryptedList = (List<?>) decryptedObject;
+                if (!decryptedList.isEmpty()) {
+                    decryptedObject = decryptedList.get(0);
+                    log.info("Unwrapped single object from list returned by encryption service");
+                }
+            }
+
             // PERMANENT FIX: Restore roles after decryption
             restoreRolesAfterDecryption(decryptedObject, userRolesMap);
             return (P) decryptedObject;
