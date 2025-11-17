@@ -14,6 +14,7 @@ import org.egov.tracer.model.CustomException;
 import org.egov.user.domain.exception.*;
 import org.egov.user.domain.model.LoggedInUserUpdatePasswordRequest;
 import org.egov.user.domain.model.NonLoggedInUserUpdatePasswordRequest;
+import org.egov.user.domain.model.Role;
 import org.egov.user.domain.model.User;
 import org.egov.user.domain.model.UserSearchCriteria;
 import org.egov.user.domain.model.enums.UserType;
@@ -138,7 +139,7 @@ public class UserService {
      * @param tenantId
      * @return
      */
-    public User getUniqueUser(String userName, String tenantId, UserType userType) {
+    public User getUniqueUser(String userName, String tenantId, UserType userType, RequestInfo requestInfo) {
 
         UserSearchCriteria userSearchCriteria = UserSearchCriteria.builder()
                 .userName(userName)
@@ -163,7 +164,83 @@ public class UserService {
         if (users.size() > 1)
             throw new DuplicateUserNameException(userSearchCriteria);
 
-        return users.get(0);
+        /* decrypt here */
+        User user = users.get(0);
+
+        // Check if this is an authentication context where RequestInfo doesn't have user info
+        if (requestInfo != null && requestInfo.getUserInfo() == null) {
+            // For authentication scenarios, skip decryption to avoid circular dependency
+            // The user will be decrypted later in the process when we have proper context
+            log.info("Skipping decryption during authentication - no user context available");
+            return user;
+        }
+
+        try {
+            User decryptedUser = encryptionDecryptionUtil.decryptObject(user, "User", User.class, requestInfo);
+            log.info("decrypted user: {}", decryptedUser);
+            return decryptedUser;
+        } catch (Exception e) {
+            log.warn("Failed to decrypt user, returning encrypted user: {}", e.getMessage());
+            return user;
+        }
+    }
+
+    /**
+     * Decrypt a user with proper user context for token generation
+     */
+    public User decryptUserWithContext(User encryptedUser, org.egov.user.web.contract.auth.User authenticatedUser) {
+        if (encryptedUser == null) {
+            return null;
+        }
+
+        try {
+            // Create RequestInfo with authenticated user context
+            RequestInfo requestInfo = RequestInfo.builder()
+                .action("token_generation")
+                .ts(System.currentTimeMillis())
+                .userInfo(org.egov.common.contract.request.User.builder()
+                    .uuid(authenticatedUser.getUuid())
+                    .id(authenticatedUser.getId())
+                    .userName(authenticatedUser.getUserName())
+                    .type(authenticatedUser.getType())
+                    .roles(authenticatedUser.getRoles() != null ?
+                        authenticatedUser.getRoles().stream()
+                            .map(role -> org.egov.common.contract.request.Role.builder()
+                                .code(role.getCode())
+                                .name(role.getName())
+                                .build())
+                            .collect(Collectors.toList()) : new ArrayList<>())
+                    .build())
+                .build();
+
+            // The encryption service expects a List<User>, not a single User
+            // Wrap in list, decrypt, then extract the single user (same pattern as searchUsers)
+            List<User> userList = Collections.singletonList(encryptedUser);
+
+            try {
+                log.info("Attempting decryption with null key using List<User> (same as searchUsers)");
+                List<User> decryptedUserList = encryptionDecryptionUtil.decryptObject(userList, null, User.class, requestInfo);
+                User decryptedUser = decryptedUserList.get(0);
+                log.info("Successfully decrypted user with null key: {}", decryptedUser.getUsername());
+                return decryptedUser;
+            } catch (Exception e1) {
+                log.warn("Decryption with null key failed, trying with 'User' key: {}", e1.getMessage());
+                try {
+                    List<User> decryptedUserList = encryptionDecryptionUtil.decryptObject(userList, "User", User.class, requestInfo);
+                    User decryptedUser = decryptedUserList.get(0);
+
+                    log.info("Successfully decrypted user with 'User' key: {}", decryptedUser.getUsername());
+                    return decryptedUser;
+                } catch (Exception e2) {
+                    log.warn("Both decryption attempts failed: {}", e2.getMessage());
+                    throw e2;
+                }
+            }
+
+        } catch (Exception e) {
+            log.warn("Failed to decrypt user with context, returning encrypted user: {}", e.getMessage());
+            return encryptedUser;
+        }
     }
 
     public User getUserByUuid(String uuid) {
@@ -233,7 +310,18 @@ public class UserService {
 
         /* decrypt here / final reponse decrypted*/
 
-        list = encryptionDecryptionUtil.decryptObject(list, null, User.class, requestInfo);
+        // Decrypt user list - role preservation is now handled in EncryptionDecryptionUtil
+        // Use same defensive error handling as /oauth/token endpoint to handle corrupted ciphertext
+        try {
+            list = encryptionDecryptionUtil.decryptObject(list, null, User.class, requestInfo);
+            log.info("Successfully decrypted user list with {} users", list != null ? list.size() : 0);
+        } catch (Exception e) {
+            log.warn("Failed to decrypt user list, returning encrypted/partial data. Error: {}", e.getMessage());
+            log.debug("Decryption error stack trace:", e);
+            // Return list as-is (encrypted or partially encrypted)
+            // This matches the behavior of /oauth/token which returns encrypted user on decryption error
+            // allowing the request to succeed even with corrupted ciphertext in database
+        }
 
         setFileStoreUrlsByFileStoreIds(list);
         return list;
@@ -390,7 +478,7 @@ public class UserService {
      */
     // TODO Fix date formats
     public User updateWithoutOtpValidation(User user, RequestInfo requestInfo) {
-        
+
          	User existingUser = getUserByUuid(user.getUuid());
             user.setTenantId(getStateLevelTenantForCitizen(user.getTenantId(), user.getType()));
             validateUserRoles(user);
@@ -488,7 +576,7 @@ public class UserService {
     public void updatePasswordForLoggedInUser(LoggedInUserUpdatePasswordRequest updatePasswordRequest) {
         updatePasswordRequest.validate();
         final User user = getUniqueUser(updatePasswordRequest.getUserName(), updatePasswordRequest.getTenantId(),
-                updatePasswordRequest.getType());
+                updatePasswordRequest.getType(), null);
 
         if (user.getType().toString().equals(UserType.CITIZEN.toString()) && isCitizenLoginOtpBased)
             throw new InvalidUpdatePasswordRequestException();
@@ -509,7 +597,7 @@ public class UserService {
     public void updatePasswordForNonLoggedInUser(NonLoggedInUserUpdatePasswordRequest request, RequestInfo requestInfo) {
         request.validate();
         // validateOtp(request.getOtpValidationRequest());
-        User user = getUniqueUser(request.getUserName(), request.getTenantId(), request.getType());
+        User user = getUniqueUser(request.getUserName(), request.getTenantId(), request.getType(), requestInfo);
         if (user.getType().toString().equals(UserType.CITIZEN.toString()) && isCitizenLoginOtpBased) {
             log.info("CITIZEN forgot password flow is disabled");
             throw new InvalidUpdatePasswordRequestException();
@@ -755,4 +843,5 @@ public class UserService {
         if (user != null && user.getUuid() != null)
             userRepository.resetFailedLoginAttemptsForUser(user.getUuid());
     }
+
 }

@@ -2,6 +2,8 @@ package org.egov.user.security;
 
 import org.egov.user.domain.service.RedisOAuth2AuthorizationService;
 import org.egov.user.security.oauth2.custom.CustomTokenEnhancer;
+import org.egov.user.security.oauth2.custom.CustomOpaqueTokenGenerator;
+import org.egov.user.security.oauth2.custom.CustomOpaqueRefreshTokenGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -66,6 +68,9 @@ public class AuthorizationServerConfiguration {
     @Value("${refresh.token.validity.in.minutes}")
     private int refreshTokenValidityInMinutes;
 
+    @Value("${oauth2.token.format:jwt}")
+    private String tokenFormat;
+
     @Autowired
     @Qualifier("customAuthenticationManager")
     private AuthenticationManager customAuthenticationManager;
@@ -75,11 +80,19 @@ public class AuthorizationServerConfiguration {
     
     @Autowired
     private CustomTokenEnhancer customTokenEnhancer;
+    
+    @Autowired
+    private RedisTemplate<String, Object> redisTemplate;
 
     @Bean
-    @Order(1)
+    @Order(2)
     public SecurityFilterChain authorizationServerSecurityFilterChain(HttpSecurity http) throws Exception {
         OAuth2AuthorizationServerConfiguration.applyDefaultSecurity(http);
+
+        // Only handle standard OAuth2 endpoints, exclude our custom endpoint
+        http.securityMatcher(
+            org.springframework.security.web.util.matcher.AntPathRequestMatcher.antMatcher("/oauth2/**")
+        );
 
         http.getConfigurer(OAuth2AuthorizationServerConfigurer.class)
             .oidc(Customizer.withDefaults());
@@ -95,11 +108,11 @@ public class AuthorizationServerConfiguration {
     }
 
     @Bean
-    @Order(2)
+    @Order(3)
     public SecurityFilterChain authServerSecurityFilterChain(HttpSecurity http) throws Exception {
         return http
             .authorizeHttpRequests((authorize) -> authorize
-                .requestMatchers("/login", "/error", "/oauth2/**", "/auth/**").permitAll()  // Added /auth/**
+                .requestMatchers("/login", "/error").permitAll()
                 .anyRequest().authenticated()
             )
             .formLogin(Customizer.withDefaults())
@@ -170,14 +183,27 @@ public class AuthorizationServerConfiguration {
 
     @Bean
     public OAuth2TokenGenerator<?> tokenGenerator(JwtEncoder jwtEncoder) {
-        JwtGenerator jwtGenerator = new JwtGenerator(jwtEncoder);
-        jwtGenerator.setJwtCustomizer(customTokenEnhancer);
-        
-        OAuth2AccessTokenGenerator accessTokenGenerator = new OAuth2AccessTokenGenerator();
-        OAuth2RefreshTokenGenerator refreshTokenGenerator = new OAuth2RefreshTokenGenerator();
-        
-        return new DelegatingOAuth2TokenGenerator(
-            jwtGenerator, accessTokenGenerator, refreshTokenGenerator);
+        if ("opaque".equals(tokenFormat)) {
+            // Use opaque UUID-based tokens
+            CustomOpaqueTokenGenerator opaqueTokenGenerator = new CustomOpaqueTokenGenerator();
+            opaqueTokenGenerator.setRedisTemplate(redisTemplate);
+            
+            CustomOpaqueRefreshTokenGenerator opaqueRefreshTokenGenerator = new CustomOpaqueRefreshTokenGenerator();
+            opaqueRefreshTokenGenerator.setRedisTemplate(redisTemplate);
+            
+            return new DelegatingOAuth2TokenGenerator(
+                opaqueTokenGenerator, opaqueRefreshTokenGenerator);
+        } else {
+            // Use JWT tokens (default behavior)
+            JwtGenerator jwtGenerator = new JwtGenerator(jwtEncoder);
+            jwtGenerator.setJwtCustomizer(customTokenEnhancer);
+            
+            OAuth2AccessTokenGenerator accessTokenGenerator = new OAuth2AccessTokenGenerator();
+            OAuth2RefreshTokenGenerator refreshTokenGenerator = new OAuth2RefreshTokenGenerator();
+            
+            return new DelegatingOAuth2TokenGenerator(
+                jwtGenerator, accessTokenGenerator, refreshTokenGenerator);
+        }
     }
 
     @Bean

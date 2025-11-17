@@ -1,7 +1,7 @@
 package org.egov.egf.master.web.controller;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.any;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -19,10 +19,10 @@ import org.egov.egf.master.domain.model.ChartOfAccount;
 import org.egov.egf.master.domain.model.ChartOfAccountSearch;
 import org.egov.egf.master.domain.service.ChartOfAccountService;
 import org.egov.egf.master.web.requests.ChartOfAccountRequest;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,11 +30,11 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.validation.BindingResult;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @WebMvcTest(ChartOfAccountController.class)
 @Import(TestConfiguration.class)
 public class ChartOfAccountControllerTest {
@@ -50,11 +50,11 @@ public class ChartOfAccountControllerTest {
 	@Captor
 	private ArgumentCaptor<ChartOfAccountRequest> captor;
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() throws Exception {
 	}
 
@@ -64,8 +64,8 @@ public class ChartOfAccountControllerTest {
 				.thenReturn((getChartOfAccounts()));
 		
 		mockMvc.perform(post("/chartofaccounts/_create?tenantId=default").content(resources.readRequest("chartofaccount/chartofaccount_create_valid_request.json"))
-				.contentType(MediaType.APPLICATION_JSON_UTF8)).andExpect(status().is(201))
-				.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+				.contentType(MediaType.APPLICATION_JSON)).andExpect(status().is(201))
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
 				.andExpect(content().json(resources.readResponse("chartofaccount/chartofaccount_create_valid_response.json")));
 		
 		verify(chartOfAccountService).addToQue(captor.capture());
@@ -84,8 +84,8 @@ public class ChartOfAccountControllerTest {
 				.thenReturn((getUpdatedChartOfAccounts()));
 
 		mockMvc.perform(post("/chartofaccounts/_update?tenantId=default").content(resources.readRequest("chartofaccount/chartofaccount_update_valid_request.json"))
-				.contentType(MediaType.APPLICATION_JSON_UTF8)).andExpect(status().is(201))
-				.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+				.contentType(MediaType.APPLICATION_JSON)).andExpect(status().is(201))
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
 				.andExpect(content().json(resources.readResponse("chartofaccount/chartofaccount_update_valid_response.json")));
 		
 		verify(chartOfAccountService).addToQue(captor.capture());
@@ -107,8 +107,8 @@ public class ChartOfAccountControllerTest {
 		.thenReturn((getPagination()));
 		
 		mockMvc.perform(
-				post("/chartofaccounts/_search?tenantId=default").content(resources.getRequestInfo()).contentType(MediaType.APPLICATION_JSON_UTF8))
-				.andExpect(status().is(200)).andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+				post("/chartofaccounts/_search?tenantId=default").content(resources.getRequestInfo()).contentType(MediaType.APPLICATION_JSON))
+				.andExpect(status().is(200)).andExpect(content().contentType(MediaType.APPLICATION_JSON))
 				.andExpect(content().json(resources.readResponse("chartofaccount/chartofaccount_search_valid_response.json")));
 		
 

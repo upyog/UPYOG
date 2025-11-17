@@ -1,7 +1,7 @@
 package org.egov.egf.master.web.controller;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.any;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -19,8 +19,8 @@ import org.egov.egf.master.TestConfiguration;
 import org.egov.egf.master.domain.model.AccountCodePurpose;
 import org.egov.egf.master.domain.model.AccountCodePurposeSearch;
 import org.egov.egf.master.domain.service.AccountCodePurposeService;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,11 +28,11 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.validation.BindingResult;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @WebMvcTest(AccountCodePurposeController.class)
 @Import(TestConfiguration.class)
 public class AccountCodePurposeControllerTest {
@@ -54,8 +54,8 @@ public class AccountCodePurposeControllerTest {
 				.thenReturn(getAccountCodePurposes());
 		mockMvc.perform(post("/accountcodepurposes/_create?tenantId=default")
 				.content(resources.readRequest("accountcodepurpose/accountcodepurpose_create_request.json"))
-				.contentType(MediaType.APPLICATION_JSON_UTF8)).andExpect(status().is(201))
-				.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8)).andExpect(content().json(
+				.contentType(MediaType.APPLICATION_JSON)).andExpect(status().is(201))
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON)).andExpect(content().json(
 						resources.readResponse("accountcodepurpose/accountcodepurpose_create_response.json")));
 
 		verify(accountCodePurposeService).create(captor.capture(), any(BindingResult.class), any(RequestInfo.class));
@@ -71,7 +71,7 @@ public class AccountCodePurposeControllerTest {
 				.thenReturn(getAccountCodePurposes());
 		mockMvc.perform(post("/accountcodepurposes/_create")
 				.content(resources.readRequest("accountcodepurpose/accountcodepurpose_create_invalid_field_value.json"))
-				.contentType(MediaType.APPLICATION_JSON_UTF8)).andExpect(status().is5xxServerError());
+				.contentType(MediaType.APPLICATION_JSON)).andExpect(status().is5xxServerError());
 
 	}
 
@@ -82,8 +82,8 @@ public class AccountCodePurposeControllerTest {
 
 		mockMvc.perform(post("/accountcodepurposes/_update?tenantId=default")
 				.content(resources.readRequest("accountcodepurpose/accountcodepurpose_update_request.json"))
-				.contentType(MediaType.APPLICATION_JSON_UTF8)).andExpect(status().is(201))
-				.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8)).andExpect(content().json(
+				.contentType(MediaType.APPLICATION_JSON)).andExpect(status().is(201))
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON)).andExpect(content().json(
 						resources.readResponse("accountcodepurpose/accountcodepurpose_update_response.json")));
 
 		verify(accountCodePurposeService).update(captor.capture(), any(BindingResult.class), any(RequestInfo.class));
@@ -107,8 +107,8 @@ public class AccountCodePurposeControllerTest {
 				.thenReturn(page);
 
 		mockMvc.perform(post("/accountcodepurposes/_search?tenantId=default").content(resources.getRequestInfo())
-				.contentType(MediaType.APPLICATION_JSON_UTF8)).andExpect(status().is(200))
-				.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8)).andExpect(content().json(
+				.contentType(MediaType.APPLICATION_JSON)).andExpect(status().is(200))
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON)).andExpect(content().json(
 						resources.readResponse("accountcodepurpose/accountcodepurpose_search_response.json")));
 
 	}

@@ -66,17 +66,8 @@ public class CustomPreAuthenticatedProvider implements AuthenticationProvider {
 
         User user;
         try {
-            user = userService.getUniqueUser(userName, tenantId, UserType.fromValue(userType));
-            /* decrypt here */
-            Set<org.egov.user.domain.model.Role> domain_roles = user.getRoles();
-            List<org.egov.common.contract.request.Role> contract_roles = new ArrayList<>();
-            for (org.egov.user.domain.model.Role role : domain_roles) {
-                contract_roles.add(org.egov.common.contract.request.Role.builder().code(role.getCode()).name(role.getName()).build());
-            }
-            org.egov.common.contract.request.User userInfo = org.egov.common.contract.request.User.builder().uuid(user.getUuid())
-                    .type(user.getType() != null ? user.getType().name() : null).roles(contract_roles).build();
-            RequestInfo requestInfo = RequestInfo.builder().userInfo(userInfo).build();
-            user = encryptionDecryptionUtil.decryptObject(user, "UserSelf", User.class, requestInfo);
+            RequestInfo requestInfo = RequestInfo.builder().build();
+            user = userService.getUniqueUser(userName, tenantId, UserType.fromValue(userType), requestInfo);
         } catch (UserNotFoundException e) {
             log.error("User not found", e);
             // CHANGED: OAuth2Exception -> BadCredentialsException

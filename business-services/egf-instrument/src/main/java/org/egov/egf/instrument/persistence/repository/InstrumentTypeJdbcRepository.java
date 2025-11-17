@@ -1,9 +1,6 @@
 package org.egov.egf.instrument.persistence.repository;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.egov.common.domain.model.Pagination;
 import org.egov.common.persistence.repository.JdbcRepository;
@@ -35,7 +32,8 @@ public class InstrumentTypeJdbcRepository extends JdbcRepository {
 
     public InstrumentTypeEntity create(InstrumentTypeEntity entity) {
 
-        // entity.setId(UUID.randomUUID().toString().replace("-", ""));
+        // uncommented the below line to generate the id for instrument type 
+         entity.setId(UUID.randomUUID().toString().replace("-", ""));
         super.create(entity);
         return entity;
     }

@@ -6,8 +6,8 @@ import org.egov.common.contract.request.RequestInfo;
 import org.egov.swcalculation.web.models.BulkBillCriteria;
 import org.springframework.validation.annotation.Validated;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 
 @Validated
 @Getter

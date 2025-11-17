@@ -210,7 +210,7 @@ public class MinioRepository implements CloudFilesManager {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return signedUrl;
+        return signedUrl;
 	}
 
 	public Resource read(FileLocation fileLocation) {

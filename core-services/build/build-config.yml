@@ -171,6 +171,12 @@ config:
       - work-dir: "zuul"
         image-name: "zuul"
         dockerfile: "build/maven/Dockerfile"
+        
+  - name: "builds/core-services/gateway"
+    build:
+      - work-dir: "gateway"
+        image-name: "gateway"
+        dockerfile: "build/maven/Dockerfile"      
 
   - name: "builds/core-services/internal-gateway"
     build:
@@ -272,4 +278,4 @@ config:
         image-name: "egov-document-uploader"
         dockerfile: "build/maven/Dockerfile"
       - work-dir: "egov-document-uploader/src/main/resources/db"
-        image-name: "egov-document-uploader-db"
+        image-name: "egov-document-uploader-db"     

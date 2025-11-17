@@ -15,21 +15,21 @@ import org.egov.egf.master.domain.model.ChartOfAccount;
 import org.egov.egf.master.domain.model.ChartOfAccountDetail;
 import org.egov.egf.master.domain.model.ChartOfAccountDetailSearch;
 import org.egov.egf.master.persistence.entity.ChartOfAccountDetailEntity;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.test.context.jdbc.Sql;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
-@Ignore
+@Disabled
 public class ChartOfAccountDetailJdbcRepositoryTest {
 
 	private ChartOfAccountDetailJdbcRepository chartOfAccountDetailJdbcRepository;
@@ -40,7 +40,7 @@ public class ChartOfAccountDetailJdbcRepositoryTest {
 	@Autowired
         private AccountDetailTypeJdbcRepository accountDetailTypeJdbcRepository;
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		chartOfAccountDetailJdbcRepository = new ChartOfAccountDetailJdbcRepository(
 				namedParameterJdbcTemplate,accountDetailTypeJdbcRepository);
