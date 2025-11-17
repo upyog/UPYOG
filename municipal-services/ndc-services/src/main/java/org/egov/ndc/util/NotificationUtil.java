@@ -212,7 +212,7 @@ public class NotificationUtil {
 
 	private String getPaymentConfirmationMsg(Application ndc, String message) {
 		message = message.replace("[Citizen Name]", ndc.getOwners().get(0).getName());
-		message = message.replace("[Amount]", "Amount");
+		message = message.replace("[Date]", timestampToDate(ndc.getAuditDetails().getLastModifiedTime()));
 		message = message.replace("[Application ID]", ndc.getApplicationNo());
 		message = message.replace("[Department Name]", DEPARTMENT_PMIDC);
 		return message;
@@ -222,7 +222,7 @@ public class NotificationUtil {
 		message = message.replace("[Citizen Name]", ndc.getOwners().get(0).getName());
 		message = message.replace("[Application ID]", ndc.getApplicationNo());
 		message = message.replace("[Helpline Number]", HELPLINE_NUMBER);
-		message = message.replace("[Portal/Office name]", PORTAL_LINK);
+		message = message.replace("[Portal/Office Name]", PORTAL_LINK);
 		message = message.replace("[Department Name]", DEPARTMENT_PMIDC);
 
 		return message;
