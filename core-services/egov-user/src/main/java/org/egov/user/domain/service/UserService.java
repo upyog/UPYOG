@@ -187,6 +187,7 @@ public class UserService {
 
     /**
      * Decrypt a user with proper user context for token generation
+     * CRITICAL FIX: Don't include encrypted fields in RequestInfo.userInfo for ABAC to work
      */
     public User decryptUserWithContext(User encryptedUser, org.egov.user.web.contract.auth.User authenticatedUser) {
         if (encryptedUser == null) {
@@ -194,20 +195,31 @@ public class UserService {
         }
 
         try {
-            // Create RequestInfo with authenticated user context
+            // CRITICAL FIX: Create RequestInfo without encrypted fields
+            // The RequestInfo.userInfo should NOT contain encrypted data (userName, mobileNumber, emailId, name)
+            // because the egov-enc-service ABAC policy evaluator cannot work with encrypted data in RequestInfo.
+            // For CITIZEN users, userName and mobileNumber come from encrypted Redis token data.
+            // For EMPLOYEE users, these are already decrypted (which is why EMPLOYEE searches work).
+            // By only including non-encrypted identifiers (uuid, id, type, tenantId, roles),
+            // the ABAC policy can properly identify the user and validate "Self" purpose decryption.
             RequestInfo requestInfo = RequestInfo.builder()
                 .action("token_generation")
                 .ts(System.currentTimeMillis())
                 .userInfo(org.egov.common.contract.request.User.builder()
-                    .uuid(authenticatedUser.getUuid())
-                    .id(authenticatedUser.getId())
-                    .userName(authenticatedUser.getUserName())
-                    .type(authenticatedUser.getType())
+                    .uuid(authenticatedUser.getUuid())        // ✓ Not encrypted
+                    .id(authenticatedUser.getId())            // ✓ Not encrypted
+                    .type(authenticatedUser.getType())        // ✓ Not encrypted
+                    .tenantId(authenticatedUser.getTenantId()) // ✓ Not encrypted
+                    // REMOVED: .userName() - Can be encrypted for CITIZEN, causes ABAC to fail
+                    // REMOVED: .mobileNumber() - Can be encrypted for CITIZEN, causes ABAC to fail
+                    // REMOVED: .emailId() - Can be encrypted, causes ABAC to fail
+                    // REMOVED: .name() - Can be encrypted, causes ABAC to fail
                     .roles(authenticatedUser.getRoles() != null ?
                         authenticatedUser.getRoles().stream()
                             .map(role -> org.egov.common.contract.request.Role.builder()
                                 .code(role.getCode())
                                 .name(role.getName())
+                                .tenantId(role.getTenantId()) // Added for proper ABAC evaluation
                                 .build())
                             .collect(Collectors.toList()) : new ArrayList<>())
                     .build())
