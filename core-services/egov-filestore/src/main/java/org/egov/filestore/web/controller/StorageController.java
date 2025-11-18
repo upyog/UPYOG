@@ -24,6 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -92,7 +93,7 @@ public class StorageController {
 		return responseFactory.getFilesByTagResponse(fileInfoList);
 	}
 
-	@PostMapping(produces = APPLICATION_JSON_UTF8_VALUE)
+	@PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = APPLICATION_JSON_UTF8_VALUE)
 	@ResponseStatus(HttpStatus.CREATED)
 	@ResponseBody
 	public StorageResponse storeFiles(@RequestParam("file") List<MultipartFile> files,

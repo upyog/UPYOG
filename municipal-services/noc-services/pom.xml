@@ -13,7 +13,7 @@
 		<maven.compiler.target>${java.version}</maven.compiler.target>
 		<lombok.version>1.18.22</lombok.version>
 		<springfox-version>2.7.0</springfox-version>
-		<logback.version>1.2.0</logback.version>
+		<logback.version>1.4.14</logback.version>
 	</properties>
 	<parent>
 		<groupId>org.springframework.boot</groupId>
@@ -80,7 +80,7 @@
 		<dependency>
 			<groupId>org.egov.services</groupId>
 			<artifactId>services-common</artifactId>
-			<version>2.9.0-SNAPSHOT</version>
+			<version>1.1.1-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.projectlombok</groupId>
