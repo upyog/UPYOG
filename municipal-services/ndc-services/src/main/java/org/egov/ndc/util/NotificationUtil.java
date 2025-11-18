@@ -12,7 +12,6 @@ import org.egov.common.contract.request.RequestInfo;
 import org.egov.ndc.config.NDCConfiguration;
 import org.egov.ndc.producer.Producer;
 import org.egov.ndc.repository.ServiceRequestRepository;
-import org.egov.ndc.web.model.Ndc;
 import org.egov.ndc.web.model.SMSRequest;
 import org.egov.ndc.web.model.ndc.Application;
 import org.json.JSONObject;
@@ -138,11 +137,6 @@ public class NotificationUtil {
 				if (!StringUtils.isEmpty(messageTemplate))
 					message = getInitiatedMsg(ndc, messageTemplate);
 				break;
-            case ACTION_STATUS_PENDING_PAYMENT:
-				messageTemplate = getMessageTemplate(messageCode, localizationMessage);
-				if (!StringUtils.isEmpty(messageTemplate))
-					message = getPendingPaymentMsg(ndc, messageTemplate);
-				break;
 			case ACTION_STATUS_PAYMENT_CONFIRMATION:
 				messageTemplate = getMessageTemplate(messageCode, localizationMessage);
 				if (!StringUtils.isEmpty(messageTemplate))
@@ -246,34 +240,11 @@ public class NotificationUtil {
 		return message;
 	}
 
-	private String getPendingPaymentMsg(Application ndc, String message) {
-		message = message.replace("[Citizen Name]", ndc.getOwners().get(0).getName());
-		message = message.replace("[Application ID]", ndc.getApplicationNo());
-		message = message.replace("[Deadline]", "within 72 hours");
-		message = message.replace("[Department Name]", DEPARTMENT_PMIDC);
-		return message;
-	}
-
 	private String timestampToDate (long millis){
 			Instant instant = Instant.ofEpochMilli(millis);
 			ZoneId zone = ZoneId.of("Asia/Kolkata");
 			ZonedDateTime dateTime = instant.atZone(zone);
 			String formattedDate = dateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
 			return formattedDate;
-	}
-
-	private LocalDate getNextWorkingDayFromEpoch(long epochMilli) {
-		ZoneId zone = ZoneId.of("Asia/Kolkata");
-		LocalDate lastModifiedDate = Instant.ofEpochMilli(epochMilli).atZone(zone).toLocalDate();
-		DayOfWeek day = lastModifiedDate.getDayOfWeek();
-
-		switch (day) {
-			case FRIDAY:
-				return lastModifiedDate.plusDays(3); // Monday
-			case SATURDAY:
-				return lastModifiedDate.plusDays(2); // Monday
-			default:
-				return lastModifiedDate.plusDays(1); // Next day
-		}
 	}
 }
