@@ -184,6 +184,16 @@ const Home = ({
 
   return (
     <div className={classname}>
+              <style>
+          {
+            `
+            .citizen-card-input .citizen-card-input--front
+            {
+              height:40px !important;
+            }
+            `
+          }
+        </style>
       <TopBarSideBar
         t={t}
         stateInfo={stateInfo}

@@ -209,7 +209,7 @@ if (property !== "undefined")
   }
   return (
     <React.Fragment>
-      {window.location.href.includes("/fsm") ? <Timeline currentStep={2} /> : <Timeline currentStep={1} flow="APPLY" />}
+      {window.location.href.includes("/fsm") ? <Timeline currentStep={1}  flow="APPLY"/> : <Timeline currentStep={1} flow="APPLY" />}
       <FormStep
         config={{ ...config, inputs }}
         isMandatory={true}
