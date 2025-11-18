@@ -52,21 +52,26 @@ public class ChallanController {
 	 @RequestMapping(value = "/_search", method = RequestMethod.POST)
 	 public ResponseEntity<ChallanResponse> search(@Valid @RequestBody RequestInfoWrapper requestInfoWrapper,
 	                                                       @Valid @ModelAttribute SearchCriteria criteria) {
-		 String tenantId = criteria.getTenantId();
+		if( requestInfoWrapper.getRequestInfo().getUserInfo().getType().contentEquals("CITIZEN")) {
+			 criteria.setAccountId(requestInfoWrapper.getRequestInfo().getUserInfo().getUuid());
+		}else {
+			 String tenantId = criteria.getTenantId();
+		}
+	
 	     List<Challan> challans = challanService.search(criteria, requestInfoWrapper.getRequestInfo());
 	    	 
-	     Map<String,Integer> dynamicData = challanService.getDynamicData(tenantId);
+	    // Map<String,Integer> dynamicData = challanService.getDynamicData(challans.get(0).getTenantId());
 	    	 
-	     int countOfServices = dynamicData.get(ChallanConstants.TOTAL_SERVICES);
-	     
-	     int totalAmountCollected = dynamicData.get(ChallanConstants.TOTAL_COLLECTION);
-	     
-	     int validity = challanService.getChallanValidity();
+//	     int countOfServices = dynamicData.get(ChallanConstants.TOTAL_SERVICES);
+//	     
+//	     int totalAmountCollected = dynamicData.get(ChallanConstants.TOTAL_COLLECTION);
+//	     
+//	     int validity = challanService.getChallanValidity();
 	     
 	     int totalCount = challanService.countForSearch(criteria,requestInfoWrapper.getRequestInfo());
 
-	     ChallanResponse response = ChallanResponse.builder().challans(challans).countOfServices(countOfServices)
-				 .totalAmountCollected(totalAmountCollected).validity(validity).totalCount(totalCount)
+	     ChallanResponse response = ChallanResponse.builder().challans(challans).countOfServices(0)
+				 .totalAmountCollected(0).validity(0).totalCount(totalCount)
 				 .responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(requestInfoWrapper.getRequestInfo(), true))
 				 .build();
 	     return new ResponseEntity<>(response, HttpStatus.OK);
