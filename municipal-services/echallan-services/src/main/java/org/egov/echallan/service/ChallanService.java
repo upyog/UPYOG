@@ -177,11 +177,9 @@ public class ChallanService {
 		 enrichmentService.enrichUpdateRequest(request);
 		 calculationService.addCalculation(request);
 		 
-//		 if(request.getChallan().getStatus().equalsIgnoreCase("CANN"))
-//		 workflowService.updateWorkflow(request);
-		workflowService.updateWorkflow(request);
-
-
+		 if(request.getChallan().getBusinessService().equalsIgnoreCase("REQSERV"))
+			 workflowService.updateWorkflow(request);
+	
 		 repository.update(request);
 		 return request.getChallan();
 		}

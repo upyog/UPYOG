@@ -26,9 +26,8 @@ import javax.validation.constraints.NotNull;
 @Builder
 public class SearchCriteria {
 
-	@NotNull
 	@JsonProperty("tenantId")
-	private String tenantId;
+	private String tenantId = null;
 
 	@JsonProperty("ids")
 	private List<String> ids;
