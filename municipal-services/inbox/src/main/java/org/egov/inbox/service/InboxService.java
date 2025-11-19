@@ -233,6 +233,9 @@ public class InboxService {
         // Load actionable statuses
         HashMap<String, String> statusIdNameMap =
                 workflowService.getActionableStatusesForRole(requestInfo, businessSrvs, processCriteria);
+        if (!CollectionUtils.isEmpty(inputStatuses)) {
+            statusIdNameMap.entrySet().removeIf(entry -> !inputStatuses.contains(entry.getValue()));
+        }
         List<String> statusIds = new ArrayList<>(statusIdNameMap.keySet());
         
         Map<String, Object> updatedMap =
@@ -327,69 +330,67 @@ public class InboxService {
         return response;
     }
 
-    private Map<String, Object> handleModuleSearchCriteria(String moduleName,
+    private Map<String, Object> handleModuleSearchCriteria(
+            String moduleName,
             InboxSearchCriteria criteria,
             Map<String, String> statusIdNameMap,
             RequestInfo requestInfo,
             Map<String, Object> moduleSearchCriteria,
-            List<String> businessKeys)
-    {
+            List<String> businessKeys) {
 
-		if (SWACH.equalsIgnoreCase(moduleName)) {
+        if (moduleName == null) return moduleSearchCriteria;
 
-			HashMap<String, String> statusIdNameStringMap = new HashMap<>();
-			statusIdNameMap.forEach((key, value) -> statusIdNameStringMap.put(String.valueOf(key), value));
+        // Convert status map
+        HashMap<String, String> statusIdNameStringMap = new HashMap<>();
+        statusIdNameMap.forEach((key, value) -> statusIdNameStringMap.put(String.valueOf(key), value));
 
-			List<String> applicationNos = swachInboxFilterService.fetchApplicationNumbersFromSearcher(criteria,
-					statusIdNameStringMap, requestInfo);
-			if (!CollectionUtils.isEmpty(applicationNos)) {
-				moduleSearchCriteria.put(PGRANDSWACH_APPLICATION_PARAM, applicationNos);
-				businessKeys.addAll(applicationNos);
-			}
-		}
-		
-		else if (PT.equalsIgnoreCase(moduleName)) {
-			HashMap<String, String> statusIdNameStringMap = new HashMap<>();
-			statusIdNameMap.forEach((key, value) -> statusIdNameStringMap.put(String.valueOf(key), value));
-			List<String> applicationNos = ptInboxFilterService.fetchAcknowledgementIdsFromSearcher(criteria,
-					statusIdNameStringMap, requestInfo);
-			if (!CollectionUtils.isEmpty(applicationNos)) {
+        List<String> applicationNumbers = Collections.emptyList();
 
-				moduleSearchCriteria.put(ACKNOWLEDGEMENT_IDS_PARAM, applicationNos);
-				businessKeys.addAll(applicationNos);
-			}
-		}
-		
+        switch (moduleName.toLowerCase()) {
+            case SWACH:
+                applicationNumbers = swachInboxFilterService.fetchApplicationNumbersFromSearcher(
+                        criteria, statusIdNameStringMap, requestInfo);
+                if (!CollectionUtils.isEmpty(applicationNumbers))
+                    moduleSearchCriteria.put(PGRANDSWACH_APPLICATION_PARAM, applicationNumbers);
+                break;
 
-        else if ("pet-service".equalsIgnoreCase(moduleName)) {
-			HashMap<String, String> statusIdNameStringMap = new HashMap<>();
-			statusIdNameMap.forEach((key, value) -> statusIdNameStringMap.put(String.valueOf(key), value));
-	        List<String> applicationNumbers = petInboxFilterService.fetchApplicationNumbersFromSearcher(criteria, statusIdNameStringMap, requestInfo);
+            case PT:
+                applicationNumbers = ptInboxFilterService.fetchAcknowledgementIdsFromSearcher(
+                        criteria, statusIdNameStringMap, requestInfo);
+                if (!CollectionUtils.isEmpty(applicationNumbers))
+                    moduleSearchCriteria.put(ACKNOWLEDGEMENT_IDS_PARAM, applicationNumbers);
+                break;
 
-			if (!CollectionUtils.isEmpty(applicationNumbers)) {
+            case "pet-service":
+                applicationNumbers = petInboxFilterService.fetchApplicationNumbersFromSearcher(
+                        criteria, statusIdNameStringMap, requestInfo);
+                if (!CollectionUtils.isEmpty(applicationNumbers))
+                    moduleSearchCriteria.put("applicationNumber", applicationNumbers);
+                break;
 
-				moduleSearchCriteria.put("applicationNumber", applicationNumbers);
-				businessKeys.addAll(applicationNumbers);
-			}
-		}
-		
-		
-		else if ("advandhoarding-services".equalsIgnoreCase(moduleName)) {
-			HashMap<String, String> statusIdNameStringMap = new HashMap<>();
-			statusIdNameMap.forEach((key, value) -> statusIdNameStringMap.put(String.valueOf(key), value));
-            List<String> applicationNumbers = advInboxFilterService.fetchApplicationNumbersFromSearcher(criteria, statusIdNameStringMap, requestInfo);
+            case "advandhoarding-services":
+                applicationNumbers = advInboxFilterService.fetchApplicationNumbersFromSearcher(
+                        criteria, statusIdNameStringMap, requestInfo);
+                if (!CollectionUtils.isEmpty(applicationNumbers))
+                    moduleSearchCriteria.put("applicationNumber", applicationNumbers);
+                break;
 
-			if (!CollectionUtils.isEmpty(applicationNumbers)) {
+            default:
+                // No action for unknown modules
+                break;
+        }
 
-				moduleSearchCriteria.put("applicationNumber", applicationNumbers);
-				businessKeys.addAll(applicationNumbers);
-			}
-		}
-		moduleSearchCriteria.remove(TLConstants.STATUS_PARAM);
-		moduleSearchCriteria.remove(LOCALITY_PARAM);
-		moduleSearchCriteria.remove(OFFSET_PARAM);
-		return moduleSearchCriteria;
-	}
+        if (!applicationNumbers.isEmpty())
+            businessKeys.addAll(applicationNumbers);
+
+        // Remove common criteria keys
+        moduleSearchCriteria.remove(TLConstants.STATUS_PARAM);
+        moduleSearchCriteria.remove(LOCALITY_PARAM);
+        moduleSearchCriteria.remove(OFFSET_PARAM);
+
+        return moduleSearchCriteria;
+    }
+
 
     
     private Object findClosestBusinessObject(String businessId, Map<String, Object> businessMap) {

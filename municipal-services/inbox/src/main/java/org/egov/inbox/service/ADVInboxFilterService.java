@@ -48,6 +48,8 @@ public class ADVInboxFilterService {
         {
             searchCriteria.put(NO_OF_RECORDS_PARAM, criteria.getLimit());
         }
+        
+       
         moduleSearchCriteria.put(LIMIT_PARAM, criteria.getLimit());
 
         searcherRequest.put(REQUESTINFO_PARAM, requestInfo);
@@ -116,6 +118,16 @@ public class ADVInboxFilterService {
             if (!matchingIds.isEmpty()) {
                 searchCriteria.put("status", matchingIds);
             }
+        }
+        else {
+        	 if (StatusIdNameMap != null && !StatusIdNameMap.isEmpty()) {
+//        	        String statusKeys = String.join(",", StatusIdNameMap.keySet());
+//        	        searchCriteria.put("status", statusKeys);
+        		 List<String> bookingStatuskey = new ArrayList<>(StatusIdNameMap.keySet());
+         	    searchCriteria.put("status", bookingStatuskey);
+        		 List<String> bookingStatusValues = new ArrayList<>(StatusIdNameMap.values());
+         	    searchCriteria.put("bookingStatus", bookingStatusValues);
+        	    }
         }
         if (moduleSearchCriteria != null && moduleSearchCriteria.containsKey("applicationNumber")) {
             searchCriteria.put("applicationNumber", moduleSearchCriteria.get("applicationNumber"));

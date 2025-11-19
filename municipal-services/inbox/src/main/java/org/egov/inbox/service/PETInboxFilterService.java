@@ -98,6 +98,11 @@ public class PETInboxFilterService {
                 searchCriteria.put("status", matchingIdsPet);
             }
         }
+		else {
+			// If no status filter is provided, include all statuses
+			searchCriteria.put("status", new ArrayList<>(StatusIdNameMap.keySet()));
+		}
+        
         if (moduleSearchCriteria != null && moduleSearchCriteria.containsKey("applicationNumber")) {
             searchCriteria.put("applicationNumber", moduleSearchCriteria.get("applicationNumber"));
         }
