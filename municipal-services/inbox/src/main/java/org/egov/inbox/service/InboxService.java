@@ -372,7 +372,19 @@ public class InboxService {
 				businessKeys.addAll(applicationNumbers);
 			}
 		}
+		
+		
+		else if ("advandhoarding-services".equalsIgnoreCase(moduleName)) {
+			HashMap<String, String> statusIdNameStringMap = new HashMap<>();
+			statusIdNameMap.forEach((key, value) -> statusIdNameStringMap.put(String.valueOf(key), value));
+            List<String> applicationNumbers = advInboxFilterService.fetchApplicationNumbersFromSearcher(criteria, statusIdNameStringMap, requestInfo);
 
+			if (!CollectionUtils.isEmpty(applicationNumbers)) {
+
+				moduleSearchCriteria.put("applicationNumber", applicationNumbers);
+				businessKeys.addAll(applicationNumbers);
+			}
+		}
 		moduleSearchCriteria.remove(TLConstants.STATUS_PARAM);
 		moduleSearchCriteria.remove(LOCALITY_PARAM);
 		moduleSearchCriteria.remove(OFFSET_PARAM);
