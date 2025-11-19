@@ -165,6 +165,7 @@ public class GarbageAccountService {
 
 	public GarbageAccountResponse create(GarbageAccountRequest createGarbageRequest) {
 
+		RequestInfo info = createGarbageRequest.getRequestInfo();
 		List<GarbageAccount> garbageAccounts = new ArrayList<>();
 
 		List<String> propertyIds = createGarbageRequest.getGarbageAccounts().stream()
@@ -211,7 +212,7 @@ public class GarbageAccountService {
 						org.egov.garbageservice.model.contract.Role role = org.egov.garbageservice.model.contract.Role.builder()
 								.code("CITIZEN").name("Citizen").build();
 						// map user uuid
-						userService.processGarbageAccount(null,role, subAccount);
+						userService.processGarbageAccount(info,role, subAccount);
 						// create garbage sub account
 						garbageAccountRepository.create(subAccount);
 						// create garbage objects
