@@ -71,7 +71,7 @@ const ProcurementCheckPage = ({ onSubmit, value = {} }) => {
 
             <Row
               label={t("PROC_IDENTIFICATION_NO")}
-              text={`${t(checkForNA(procurementReq?.identificationNo))}`}
+              ttext={`${t(checkForNA(procurementReq?.assetApplicationNumber?.code))}`}
               actionButton={<ActionButton jumpTo={`/upyog-ui/employee/asset/assetservice-up/procurement/create`} />}
             />
     

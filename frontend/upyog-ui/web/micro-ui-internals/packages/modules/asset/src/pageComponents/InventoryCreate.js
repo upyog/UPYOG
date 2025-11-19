@@ -306,20 +306,20 @@ const InventoryCreate = ({ t, config, onSelect, userType, formData }) => {
             </CardLabel>
             <TextInput
               t={t}
-              type={"text"}
+              type={"date"}
               isMandatory={false}
               optionKey="i18nKey"
               name="endOfLife"
               value={inventory.endOfLife || ""}
-              onChange={handleInputChange}
               ValidationRequired={false}
-              {...(validation = {
-                isRequired: true,
-                pattern: "^[a-zA-Z0-9/-]*$",
-                type: "text",
-                title: t("PT_NAME_ERROR_MESSAGE"),
-              })}
+              onChange={handleInputChange}
+              rules={{
+                required: t("CORE_COMMON_REQUIRED_ERRMSG"),
+                validDate: (val) => (/^\d{4}-\d{2}-\d{2}$/.test(val) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")),
+              }}
             />
+
+
           </div>
           <div>
             <CardLabel>

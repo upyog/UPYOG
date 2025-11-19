@@ -27,7 +27,7 @@ const InventoryCheckPage = ({ onSubmit, value = {} }) => {
   const stateTenantId = Digit.ULBService.getStateId();
 
   const {inventory, index } = value;
-
+console.log("inventory", inventory )
   const setdeclarationhandler = () => {
     setAgree(!agree);
   };
@@ -62,13 +62,13 @@ const InventoryCheckPage = ({ onSubmit, value = {} }) => {
             />
             <Row
               label={t("INV_CATEGORY")}
-              text={`${t(checkForNA(inventory?.category))}`}
+              text={`${t(checkForNA(inventory?.item))}`}
               actionButton={<ActionButton jumpTo={`/upyog-ui/employee/asset/assetservice-up/inventory-creation/create`} />}
             />
 
             <Row
               label={t("INV_ITEM_NAME")}
-              text={`${t(checkForNA(inventory?.itemName))}`}
+              text={`${t(checkForNA(inventory?.itemType))}`}
               actionButton={<ActionButton jumpTo={`/upyog-ui/employee/asset/assetservice-up/inventory-creation/create`} />}
             />
 
@@ -90,7 +90,7 @@ const InventoryCheckPage = ({ onSubmit, value = {} }) => {
             />
             <Row
               label={t("INV_UAIN")}
-              text={`${t(checkForNA(inventory?.uain))}`}
+              text={`${t(checkForNA(inventory?.assetApplicationNumber))}`}
               actionButton={<ActionButton jumpTo={`/upyog-ui/employee/asset/assetservice-up/inventory-creation/create`} />}
             />
             <Row

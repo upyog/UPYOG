@@ -21,7 +21,19 @@ const ProcurementReq = ({ t, config, onSelect, userType, formData }) => {
       return activeData;
     },
   });
-  
+
+  const {  isSuccess, isError, data: { Assets: searchReult, Count: count } = {} } = Digit.Hooks.asset.useASSETSearch(
+    { tenantId, filters: {} },
+    config
+  );
+
+  console.log("listOFIdentificationNO:- ", searchReult);
+  let listOFIdentificationNO = [];
+  searchReult &&
+    searchReult.map((asset) => {
+      listOFIdentificationNO.push({ i18nKey: `${asset?.applicationNo}`, value: `${asset?.applicationNo}`, code: `${asset?.applicationNo}` });
+    });
+
   let item_type = [];
   Menu_Asset &&
     Menu_Asset.map((asset_mdms) => {
@@ -183,22 +195,24 @@ const ProcurementReq = ({ t, config, onSelect, userType, formData }) => {
             <CardLabel>
               {t("PROC_IDENTIFICATION_NO")} <span style={{ color: "red" }}>*</span>
             </CardLabel>
-            <TextInput
-              t={t}
-              type={"text"}
-              isMandatory={false}
-              optionKey="i18nKey"
-              name="identificationNo"
-              value={procurementReq.identificationNo || ""}
-              onChange={handleInputChange}
-              ValidationRequired={false}
-              {...(validation = {
-                isRequired: true,
-                pattern: "^[a-zA-Z0-9/-]*$",
-                type: "text",
-                title: t("PT_NAME_ERROR_MESSAGE"),
-              })}
+            <Controller
+              control={control}
+              name="assetApplicationNumber"
+              defaultValue={procurementReq?.assetApplicationNumber}
+              rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG") }}
+              render={(props) => (
+                <Dropdown
+                  className="form-field"
+                  selected={procurementReq?.assetApplicationNumber}
+                  select={(e) => handleInputChange(e, "assetApplicationNumber")}
+                  option={listOFIdentificationNO}
+                  optionKey="i18nKey"
+                  placeholder={"Search UAIN"}
+                  t={t}
+                />
+              )}
             />
+            
           </div>
         </div>
       </FormStep>

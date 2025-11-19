@@ -254,8 +254,7 @@ export const ProcerementData = (data) => {
       item: data?.procurementReq?.parentCategory?.code,
       itemType: data?.procurementReq?.subCategory?.code,
       quantity: convertStringToFloat(data?.procurementReq.quantity),
-      identificationNo: data?.procurementReq.identificationNo,
-      assetApplicationNumber: data?.procurementReq.requestIdNo,
+      assetApplicationNumber: data?.procurementReq.assetApplicationNumber?.code,
       status:"PENDING"
     }
   };
@@ -277,7 +276,7 @@ export const InventoryCreationData = (data) => {
           purchaseMode: data?.inventory?.purchaseMode?.code,
           purchaseDate: convertDateToEpoch(data?.inventory.purchaseDate),
           deliveryDate: convertDateToEpoch(data?.inventory.deliveryDate),
-          endOfLife: data?.inventory.endOfLife,
+          endOfLife: convertDateToEpoch(data?.inventory.endOfLife),
           endOfSupport: data?.inventory.endOfSupport,
           quantity: data?.inventory.quantity,
           unitPrice: convertStringToFloat(data?.inventory.unitPrice),

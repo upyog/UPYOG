@@ -556,13 +556,12 @@ const SearchAssetForUP = ({ isLoading, t, onSubmit, data, count, ActionBarStyle 
           </SearchField>
         </SearchForm>
 
-        <br></br>
         {data !== "" ? (
           <div style={{ display: "flex", justifyContent: "flex-end", marginTop: "10px" }}>
             {/* <button onClick={downloadXLS} style = {{ color: "maroon", border: "2px solid #333", padding: "10px 20px",cursor: "pointer"}}>Download XLS</button>  */}
             <button
               onClick={downloadQRReport}
-              style={{ color: "maroon", border: "2px solid #333", padding: "10px 20px", cursor: "pointer", marginLeft: "15px" }}
+              style={{ color: "maroon", border: "2px solid #333", padding: "10px 20px", cursor: "pointer", margin: "10px 0px" }}
             >
               Download QR Report
             </button>
@@ -570,8 +569,6 @@ const SearchAssetForUP = ({ isLoading, t, onSubmit, data, count, ActionBarStyle 
         ) : (
           ""
         )}
-
-        <br></br>
         {!isLoading && data?.display ? (
           <Card style={{ marginTop: 20 }}>
             {t(data.display)

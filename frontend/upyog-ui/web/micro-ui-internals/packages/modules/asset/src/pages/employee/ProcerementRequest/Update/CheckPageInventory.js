@@ -93,7 +93,7 @@ const CheckPageInventory = ({ onSubmit, value = {} }) => {
             />
             <Row
               label={t("INV_UNIQUE_VENDOR_IDENTIFICATION_NO")}
-              text={`${t(checkForNA(inventoryVendor?.identificationNo))}`}
+              text={`${t(checkForNA(inventoryVendor?.assetApplicationNumber))}`}
               actionButton={<ActionButton jumpTo={`/upyog-ui/employee/asset/assetservice-up/create-inventory/create`} />}
             />
     

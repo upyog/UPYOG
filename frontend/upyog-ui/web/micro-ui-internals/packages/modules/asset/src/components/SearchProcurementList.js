@@ -69,28 +69,28 @@ const SearchProcurementList = ({ isLoading, t, onSubmit, data, count, setShowToa
 
   const columns = useMemo(() => ([
     {
-      Header: t("PRO_REQUEST_ID"),
+      Header: t("INVENTORY_REQUEST_ID"),
       Cell: (row) => {
         return GetCell(`${row?.row?.original?.["requestId"]}`)
       },
       disableSortBy: true,
     },
     {
-      Header: t("PRO_ITEM_NAME"),
+      Header: t("PROC_ITEM_PARENTCAT"),
       Cell: (row) => {
         return GetCell(`${row?.row?.original?.["item"]}`)
       },
       disableSortBy: true,
     },
     {
-      Header: t("PRO_ITEM_TYPE"),
+      Header: t("PROC_ITEM_SUBCAT"),
       Cell: (row) => {
         return GetCell(`${row?.row?.original?.["itemType"]}`)
       },
       disableSortBy: true,
     },
     {
-      Header: t("PRO_QUANTITY"),
+      Header: t("PROC_QUANTITY"),
       Cell: ({ row }) => {
         return GetCell(`${row?.original?.["quantity"]}`)
       },
@@ -98,7 +98,7 @@ const SearchProcurementList = ({ isLoading, t, onSubmit, data, count, setShowToa
 
     },
     {
-      Header: t("PRO_STATUS"),
+      Header: t("PROCUREMENT_STATUS"),
       Cell: ({ row }) => {
         return GetCell(`${row?.original?.["status"]}`)
       },
@@ -107,7 +107,7 @@ const SearchProcurementList = ({ isLoading, t, onSubmit, data, count, setShowToa
    
  //later will convert it into the action bar same as i have iused in ApplicationDetailsActionBar.js file in template
     {
-      Header: t("PRO_ACTIONS"),// take action button
+      Header: t("AST_ACTIONS"),// take action button
       Cell: ({ row }) => {
         const [isMenuOpen, setIsMenuOpen] = useState(false);
         const menuRef = useRef();

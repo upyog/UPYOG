@@ -136,7 +136,7 @@ const CheckPage = ({ onSubmit, value = {} }) => {
                 <Row
                   key={index}
                   label={t(row.code+ "_INFO")}
-                  text={`${extractValue(row.name)}`}
+                  text={`${t(extractValue(row.name))}`}
                   actionButton={<ActionButton jumpTo={`/upyog-ui/employee/asset/assetservice-up/asset-registry/create`} />}
                 />
               ))}
