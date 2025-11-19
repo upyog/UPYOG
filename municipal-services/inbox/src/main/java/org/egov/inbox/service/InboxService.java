@@ -48,6 +48,7 @@ import static org.egov.inbox.util.PGRConstants.PGR_ADDRESSCODE_PARAM;
 
 import java.util.*;
 import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -62,6 +63,7 @@ import org.egov.inbox.model.vehicle.VehicleTripDetail;
 import org.egov.inbox.model.vehicle.VehicleTripDetailResponse;
 import org.egov.inbox.model.vehicle.VehicleTripSearchCriteria;
 import org.egov.inbox.repository.ElasticSearchRepository;
+import org.egov.inbox.repository.RetryTemplate;
 import org.egov.inbox.repository.ServiceRequestRepository;
 import org.egov.inbox.util.*;
 import org.egov.inbox.web.model.Inbox;
@@ -95,6 +97,8 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Service
 public class InboxService {
+
+    private final RetryTemplate retryTemplate;
 
     private InboxConfiguration config;
 
@@ -175,7 +179,7 @@ public class InboxService {
 
     @Autowired
     public InboxService(InboxConfiguration config, ServiceRequestRepository serviceRequestRepository,
-                        ObjectMapper mapper, WorkflowService workflowService, CHBInboxFilterService chbInboxFilterService) {
+                        ObjectMapper mapper, WorkflowService workflowService, CHBInboxFilterService chbInboxFilterService, RetryTemplate retryTemplate) {
         this.config = config;
         this.serviceRequestRepository = serviceRequestRepository;
         this.mapper = mapper;
@@ -183,9 +187,224 @@ public class InboxService {
         this.mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
 
         this.workflowService = workflowService;
+
+        this.retryTemplate = retryTemplate;
+    }
+    public InboxResponse fetchInboxData(InboxSearchCriteria criteria, RequestInfo requestInfo) {
+
+        List<Inbox> inboxes = new ArrayList<>();
+        List<String> businessKeys = new ArrayList<>();
+        ProcessInstanceSearchCriteria processCriteria = criteria.getProcessSearchCriteria();
+        HashMap<String, Object> moduleSearchCriteria = criteria.getModuleSearchCriteria();
+
+        processCriteria.setTenantId(criteria.getTenantId());
+
+        // Maintain incoming filters
+        List<String> inputStatuses = CollectionUtils.isEmpty(processCriteria.getStatus())
+                ? new ArrayList<>()
+                : new ArrayList<>(processCriteria.getStatus());
+
+        String assigneeUuid = ObjectUtils.isEmpty(processCriteria.getAssignee())
+                ? null
+                : processCriteria.getAssignee();
+
+        String moduleName = processCriteria.getModuleName();
+
+        processCriteria.setStatus(inputStatuses);
+        processCriteria.setAssignee(assigneeUuid);
+
+        // Business service validation
+        List<String> businessServiceName = processCriteria.getBusinessService();
+        if (CollectionUtils.isEmpty(businessServiceName)) {
+            throw new CustomException(ErrorConstants.MODULE_SEARCH_INVLAID,
+                    "Business Service is mandatory for module search");
+        }
+
+        // Load business service meta
+        Map<String, Long> businessServiceSlaMap = new HashMap<>();
+        List<BusinessService> businessSrvs = new ArrayList<>();
+        for (String businessSrv : businessServiceName) {
+            BusinessService service = workflowService.getBusinessService(
+                    criteria.getTenantId(), requestInfo, businessSrv);
+            businessSrvs.add(service);
+            businessServiceSlaMap.put(service.getBusinessService(), service.getBusinessServiceSla());
+        }
+
+        // Load actionable statuses
+        HashMap<String, String> statusIdNameMap =
+                workflowService.getActionableStatusesForRole(requestInfo, businessSrvs, processCriteria);
+        List<String> statusIds = new ArrayList<>(statusIdNameMap.keySet());
+        
+        Map<String, Object> updatedMap =
+                handleModuleSearchCriteria(moduleName, criteria, statusIdNameMap, requestInfo,
+                        moduleSearchCriteria, businessKeys);
+
+        processCriteria.setStatus(statusIds);
+        processCriteria.setBusinessIds(new ArrayList<>(businessKeys));
+        processCriteria.setTenantId(criteria.getTenantId());
+        processCriteria.setIsProcessCountCall(Boolean.FALSE);
+
+        ProcessInstanceResponse processInstanceResponse =
+                workflowService.getProcessInstance(processCriteria, requestInfo);
+
+        List<ProcessInstance> processInstances = processInstanceResponse.getProcessInstances();
+
+        // prepare status map for UI
+       
+
+        // Load module objects
+        Map<String, String> srvMap = fetchAppropriateServiceMap(businessServiceName, moduleName);
+        if (CollectionUtils.isEmpty(srvMap)) {
+            throw new CustomException(ErrorConstants.INVALID_MODULE,
+                    "Config not found for the businessService: " + businessServiceName);
+        }
+
+        String businessIdParam = srvMap.get("businessIdProperty");
+
+        Map<String, ProcessInstance> processInstanceMap =
+                processInstances.stream()
+                        .filter(pi -> pi.getBusinessId() != null && !pi.getBusinessId().trim().isEmpty())
+                        .collect(Collectors.toMap(
+                                ProcessInstance::getBusinessId,
+                                Function.identity(),
+                                (oldVal, newVal) -> newVal
+                        ));
+
+        // FIXED: store businessIds as List<String>, not CSV
+        moduleSearchCriteria.put(srvMap.get("applNosParam"), new ArrayList<>(processInstanceMap.keySet()));
+        moduleSearchCriteria.put("tenantId", criteria.getTenantId());
+
+        JSONArray businessObjects =
+                fetchModuleObjects(moduleSearchCriteria, businessServiceName, criteria.getTenantId(), requestInfo, srvMap);
+
+        Map<String, Object> businessMap =
+                StreamSupport.stream(businessObjects.spliterator(), false)
+                        .collect(Collectors.toMap(s -> ((JSONObject) s).get(businessIdParam).toString(), s -> s));
+
+        
+        Map<String, List<ProcessInstance>> groupedByStatus =
+                processInstances.stream().collect(Collectors.groupingBy(pi -> pi.getState().getUuid()));
+
+        List<HashMap<String, Object>> statusMap = new ArrayList<>();
+
+        groupedByStatus.forEach((statusId, list) -> {
+            ProcessInstance pi = list.get(0);
+
+            HashMap<String, Object> map = new HashMap<>();
+            map.put("count", list.size());
+            map.put("applicationstatus", pi.getState().getApplicationStatus());
+            map.put("businessservice", pi.getBusinessService());
+            map.put("statusid", statusId);
+
+            statusMap.add(map);
+        });
+        // Populate Inbox Items
+        if (businessObjects != null && businessObjects.length() > 0 && !processInstances.isEmpty()) {
+
+            processInstanceMap.forEach((businessId, processInstance) -> {
+                Object businessObj = businessMap.get(businessId);
+
+                if (businessObj == null) {
+                    businessObj = findClosestBusinessObject(businessId, businessMap);
+                }
+
+                Inbox inbox = new Inbox();
+                inbox.setProcessInstance(processInstance);
+
+                if (businessObj != null)
+                    inbox.setBusinessObject(toMap((JSONObject) businessObj));
+
+                inboxes.add(inbox);
+            });
+        }
+
+        // Build final response
+        InboxResponse response = new InboxResponse();
+        response.setTotalCount(processInstances.size());   // FIXED
+        response.setItems(inboxes);
+        response.setStatusMap(statusMap);
+
+        return response;
     }
 
-    public InboxResponse fetchInboxData(InboxSearchCriteria criteria, RequestInfo requestInfo) {
+    private Map<String, Object> handleModuleSearchCriteria(String moduleName,
+            InboxSearchCriteria criteria,
+            Map<String, String> statusIdNameMap,
+            RequestInfo requestInfo,
+            Map<String, Object> moduleSearchCriteria,
+            List<String> businessKeys)
+    {
+
+		if (SWACH.equalsIgnoreCase(moduleName)) {
+
+			HashMap<String, String> statusIdNameStringMap = new HashMap<>();
+			statusIdNameMap.forEach((key, value) -> statusIdNameStringMap.put(String.valueOf(key), value));
+
+			List<String> applicationNos = swachInboxFilterService.fetchApplicationNumbersFromSearcher(criteria,
+					statusIdNameStringMap, requestInfo);
+			if (!CollectionUtils.isEmpty(applicationNos)) {
+				moduleSearchCriteria.put(PGRANDSWACH_APPLICATION_PARAM, applicationNos);
+				businessKeys.addAll(applicationNos);
+			}
+		}
+		
+		else if (PT.equalsIgnoreCase(moduleName)) {
+			HashMap<String, String> statusIdNameStringMap = new HashMap<>();
+			statusIdNameMap.forEach((key, value) -> statusIdNameStringMap.put(String.valueOf(key), value));
+			List<String> applicationNos = ptInboxFilterService.fetchAcknowledgementIdsFromSearcher(criteria,
+					statusIdNameStringMap, requestInfo);
+			if (!CollectionUtils.isEmpty(applicationNos)) {
+
+				moduleSearchCriteria.put(ACKNOWLEDGEMENT_IDS_PARAM, applicationNos);
+				businessKeys.addAll(applicationNos);
+			}
+		}
+		
+
+        else if ("pet-service".equalsIgnoreCase(moduleName)) {
+			HashMap<String, String> statusIdNameStringMap = new HashMap<>();
+			statusIdNameMap.forEach((key, value) -> statusIdNameStringMap.put(String.valueOf(key), value));
+	        List<String> applicationNumbers = petInboxFilterService.fetchApplicationNumbersFromSearcher(criteria, statusIdNameStringMap, requestInfo);
+
+			if (!CollectionUtils.isEmpty(applicationNumbers)) {
+
+				moduleSearchCriteria.put("applicationNumber", applicationNumbers);
+				businessKeys.addAll(applicationNumbers);
+			}
+		}
+
+		moduleSearchCriteria.remove(TLConstants.STATUS_PARAM);
+		moduleSearchCriteria.remove(LOCALITY_PARAM);
+		moduleSearchCriteria.remove(OFFSET_PARAM);
+		return moduleSearchCriteria;
+	}
+
+    
+    private Object findClosestBusinessObject(String businessId, Map<String, Object> businessMap) {
+
+        // 1. Exact match
+        if (businessMap.containsKey(businessId)) return businessMap.get(businessId);
+
+        // 2. Match ignoring case
+        for (String key : businessMap.keySet()) {
+            if (key.equalsIgnoreCase(businessId)) {
+                return businessMap.get(key);
+            }
+        }
+
+        // 3. Match by contains (useful when business IDs contain prefixes)
+        for (String key : businessMap.keySet()) {
+            if (businessId.contains(key) || key.contains(businessId)) {
+                return businessMap.get(key);
+            }
+        }
+
+        // No match
+        return null;
+    }
+
+    
+    public InboxResponse fetchInboxDataBackup(InboxSearchCriteria criteria, RequestInfo requestInfo) {
     	
         ProcessInstanceSearchCriteria processCriteria = criteria.getProcessSearchCriteria();
         HashMap moduleSearchCriteria = criteria.getModuleSearchCriteria();
