@@ -690,6 +690,15 @@ So, both lists are now filtered to include only records with INITIATED status, w
 					}
 
 					String key =cityName+"-"+ localityCode + "-" + batchCount;
+					 billGeneratorDao.insertBillSchedulerConnectionStatus(
+			                    new ArrayList<>(billGeneraterReq.getConsumerCodes()),
+			                    billGeneraterReq.getBillSchedular().getId(),
+			                    billGeneraterReq.getBillSchedular().getLocality(),
+			                    WSCalculationConstant.INITIATED,
+			                    billGeneraterReq.getBillSchedular().getTenantId(),
+			                    WSCalculationConstant.INITIATED,
+			                    System.currentTimeMillis()
+			            );
 					producer.push(configs.getBillGenerateSchedulerTopic(), key,billGeneraterReq);
 					log.info("Bill Scheduler pushed connections size:{} to kafka topic of batch no: ",
 							conectionNoList.size(), count++);

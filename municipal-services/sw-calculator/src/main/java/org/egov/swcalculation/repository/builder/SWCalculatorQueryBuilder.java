@@ -1,6 +1,7 @@
 package org.egov.swcalculation.repository.builder;
 
 import java.util.List;
+import java.util.Map;
 import java.util.StringJoiner;
 
 import org.egov.swcalculation.constants.SWCalculationConstant;
@@ -18,6 +19,8 @@ public class SWCalculatorQueryBuilder {
 	
 	private static final String LocalityListAsPerBatchQuery = "SELECT distinct(localitycode) FROM eg_bndry_mohalla conn";
 	
+	private static final String SEARCH_INITIATED_CONNECTION = "SELECT consumercode FROM eg_sw_bill_scheduler_connection_status WHERE 1=1";
+
 	
 	private static final String connectionNoNonCommercialListQuery = "SELECT DISTINCT conn.connectionno, sw.connectionexecutiondate "
 			+ "FROM eg_sw_connection conn "
@@ -263,25 +266,44 @@ public class SWCalculatorQueryBuilder {
 			List<Object> preparedStatement) {
 		StringBuilder query = new StringBuilder(billGenerationSchedulerSearchQuery);
 		query.append("egsw inner join eg_bndry_mohalla egbm on egsw.locality = egbm.localitycode ");
-		if(!StringUtils.isEmpty(criteria.getTenantId())) {
-			addClauseIfRequired(preparedStatement, query);
-			query.append(" egsw.tenantid= ? ");
-			preparedStatement.add(criteria.getTenantId());
+		if (!StringUtils.isEmpty(criteria.getTenantId())) {
+		    addClauseIfRequired(preparedStatement, query);
+		    query.append(" egsw.tenantid = ? ");
+		    preparedStatement.add(criteria.getTenantId());
 		}
-		
+
+		if (!StringUtils.isEmpty(criteria.getLocality())) {
+		    addClauseIfRequired(preparedStatement, query);
+		    query.append(" egbm.localitycode = ? ");
+		    preparedStatement.add(criteria.getLocality());
+		}
+
 		if (criteria.getStatus() != null) {
-			addClauseIfRequired(preparedStatement, query);
-			query.append(" egsw.status = ? ");
-			preparedStatement.add(criteria.getStatus());
+		    addClauseIfRequired(preparedStatement, query);
+		    query.append(" egsw.status = ? ");
+		    preparedStatement.add(criteria.getStatus());
 		}
-		
-		
+
 		if (criteria.getBatch() != null) {
-			addClauseIfRequired(preparedStatement, query);
-			query.append(" egbm.blockcode = ? ");
-			preparedStatement.add(criteria.getBatch());
+		    addClauseIfRequired(preparedStatement, query);
+		    query.append(" egbm.blockcode = ? ");
+		    preparedStatement.add(criteria.getBatch());
 		}
-		query.append(" ORDER BY egsw.createdtime ");
+
+
+		if (criteria.getBillingcycleStartdate() != null) {
+		    addClauseIfRequired(preparedStatement, query);
+		    query.append(" egsw.billingcyclestartdate >= ? ");
+		    preparedStatement.add(criteria.getBillingcycleStartdate());
+		}
+
+		if (criteria.getBillingcycleEnddate() != null) {
+		    addClauseIfRequired(preparedStatement, query);
+		    query.append(" egsw.billingcycleenddate <= ? ");
+		    preparedStatement.add(criteria.getBillingcycleEnddate());
+		}
+
+		query.append(" ORDER BY egsw.createdtime DESC");
 		return query.toString();
 	}
 	
@@ -551,6 +573,23 @@ public class SWCalculatorQueryBuilder {
 		return query.toString();
 		
 	}		
+	
+	
+	public String buildGetConnectionsByStatusQuery(Map<String, Object> criteria, List<Object> preparedStmtList) {
+	    StringBuilder query = new StringBuilder(SEARCH_INITIATED_CONNECTION);
+
+	    if (criteria.get("billSchedulerId") != null) {
+	        query.append(" AND eg_sw_scheduler_id = ?");
+	        preparedStmtList.add(criteria.get("billSchedulerId"));
+	    }
+
+	    if (criteria.get("status") != null) {
+	        query.append(" AND status = ?");
+	        preparedStmtList.add(criteria.get("status"));
+	    }
+
+	    return query.toString();
+	}
 		
 	
 	public String getConnectionNumberListForCommercialOnlySewerage(String tenantId, String connectionType, String status, Long taxPeriodFrom, Long taxPeriodTo, String cone, List<Object> preparedStatement) {

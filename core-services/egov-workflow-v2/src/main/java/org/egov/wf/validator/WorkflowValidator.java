@@ -244,7 +244,25 @@ public class WorkflowValidator {
 
     }
 
-
+    /**
+     * Validates the Auto Escalation Eligible Request Promontories
+     * @param requestInfo
+     * @param processStateAndActions
+     */
+    public void validateAutoEscalationEligibleRequest(ProcessInstanceSearchCriteria criteria) {
+    	
+    	if(StringUtils.isEmpty(criteria.getBusinessService()))
+    		throw new CustomException("INVALID_BUSINESS_SERVICE","Business Service cannot be null or Empty.");
+    	if(StringUtils.isEmpty(criteria.getModuleName()))
+    		throw new CustomException("INVALID_MODULE_NAME","Module Name cannot be null or Empty.");
+    	if(criteria.getSla() == null || criteria.getSla() <= 0l)
+    		throw new CustomException("INVALID_SLA","SLA cannot be null or Zero.");
+    	if(StringUtils.isEmpty(criteria.getStartSlaState()))
+    		throw new CustomException("INVALID_START_SLA_STATE","Start SLA State cannot be null or Empty.");
+    	if(CollectionUtils.isEmpty(criteria.getCurrentStates()))
+    		throw new CustomException("INVALID_CURRENT_STATES","Current States cannot be null or Empty.");
+    	
+    }
 
 
 

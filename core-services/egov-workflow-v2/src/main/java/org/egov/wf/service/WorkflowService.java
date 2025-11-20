@@ -283,4 +283,11 @@ public class WorkflowService {
         count = workflowRepository.getEscalatedApplicationsCount(requestInfo,criteria);
         return count;
     }
+    
+    public List<ProcessInstance> getAutoEscalationEligibleApplications(ProcessInstanceSearchCriteria criteria) {
+    	workflowValidator.validateAutoEscalationEligibleRequest(criteria);
+    	
+        return workflowRepository.getAutoEscalationEligibleApplications(criteria);
+    }
+
 }
