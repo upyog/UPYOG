@@ -116,11 +116,14 @@ public class SWACHInboxFilterService {
             	}
             	else {
             		searchCriteria.put(STATUS_PARAM, processCriteria.getStatus());
+            		
             	}
             }else{
                 if(StatusIdNameMap.values().size() > 0) {
                     if(CollectionUtils.isEmpty(processCriteria.getStatus())) {
                         searchCriteria.put(STATUS_PARAM, StatusIdNameMap.keySet());
+                        searchCriteria.put("applicationstatus", StatusIdNameMap.values());
+
                     }
                 }
             }
