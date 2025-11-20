@@ -1121,7 +1121,9 @@ const generateQRCodes = async (
     'svidentitycard',
     'cnd-service',
     'request-service.water_tanker-receipt',
-    'request-service.mobile_toilet-receipt'
+    'request-service.mobile_toilet-receipt',
+    'chbpermissionletter',
+    'advpermissionletter'
   ];
 
   for (var i = 0, len = qrcodeMappings.length; i < len; i++) {
