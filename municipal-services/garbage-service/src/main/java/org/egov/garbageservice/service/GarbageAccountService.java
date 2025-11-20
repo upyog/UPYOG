@@ -1418,6 +1418,7 @@ public class GarbageAccountService {
 	public GarbageAccountResponse searchGarbageAccounts(
 			SearchCriteriaGarbageAccountRequest searchCriteriaGarbageAccountRequest, Boolean isIndex) {
 
+		searchCriteriaGarbageAccountRequest.getSearchCriteriaGarbageAccount().setUserType(searchCriteriaGarbageAccountRequest.getRequestInfo().getUserInfo().getType());
 		// validate search criteria
 		validateAndEnrichSearchGarbageAccount(searchCriteriaGarbageAccountRequest);
 

@@ -16,6 +16,7 @@ import org.egov.garbageservice.model.GrbgCollectionUnit;
 import org.egov.garbageservice.model.SearchCriteriaGarbageAccount;
 import org.egov.garbageservice.model.TotalCountRequest;
 import org.egov.garbageservice.repository.rowmapper.GarbageAccountRowMapper;
+import org.egov.garbageservice.util.GrbgConstants;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -484,12 +485,39 @@ public class GarbageAccountRepository {
             whereClause.append(" acc.id IN ( ").append(getQueryForCollection(searchCriteriaGarbageAccount.getId(),
                     preparedStatementValues)).append(" )");
         }
-
-        if (!CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getCreatedBy())) {
-            isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, whereClause);
-            whereClause.append(" acc.created_by IN ( ").append(getQueryForCollection(searchCriteriaGarbageAccount.getCreatedBy(),
-                    preparedStatementValues)).append(" )");
+        
+        
+        if(searchCriteriaGarbageAccount.getUserType().equalsIgnoreCase(GrbgConstants.USER_TYPE_EMPLOYEE)) {
+            if (!CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getCreatedBy())) {
+                isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, whereClause);
+                whereClause.append(" acc.created_by IN ( ").append(getQueryForCollection(searchCriteriaGarbageAccount.getCreatedBy(),
+                        preparedStatementValues)).append(" )");
+            }
+            
+            if (!CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getUser_uuid())) {
+            	isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, whereClause);
+            	whereClause.append(" acc.user_uuid IN ( ").append(getQueryForCollection(searchCriteriaGarbageAccount.getUser_uuid(),
+            			preparedStatementValues)).append(" )");
+            }
+        }else {
+        	 if (!CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getCreatedBy())) {
+                 isAppendAndClause = addORClauseIfRequired(isAppendAndClause, whereClause);
+                 whereClause.append(" acc.created_by IN ( ").append(getQueryForCollection(searchCriteriaGarbageAccount.getCreatedBy(),
+                         preparedStatementValues)).append(" )");
+             }
+             
+             if (!CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getUser_uuid())) {
+             	isAppendAndClause = addORClauseIfRequired(isAppendAndClause, whereClause);
+             	whereClause.append(" acc.user_uuid IN ( ").append(getQueryForCollection(searchCriteriaGarbageAccount.getUser_uuid(),
+             			preparedStatementValues)).append(" )");
+             }
         }
+
+//        if (!CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getCreatedBy())) {
+//            isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, whereClause);
+//            whereClause.append(" acc.created_by IN ( ").append(getQueryForCollection(searchCriteriaGarbageAccount.getCreatedBy(),
+//                    preparedStatementValues)).append(" )");
+//        }
         
 
         if (!CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getGarbageId())) {
@@ -504,11 +532,11 @@ public class GarbageAccountRepository {
                     preparedStatementValues)).append(" )");
         }
         
-        if (!CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getUuid())) {
-        	isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, whereClause);
-        	whereClause.append(" acc.uuid IN ( ").append(getQueryForCollection(searchCriteriaGarbageAccount.getUuid(),
-        			preparedStatementValues)).append(" )");
-        }
+//        if (!CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getUuid())) {
+//        	isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, whereClause);
+//        	whereClause.append(" acc.uuid IN ( ").append(getQueryForCollection(searchCriteriaGarbageAccount.getUuid(),
+//        			preparedStatementValues)).append(" )");
+//        }
         
         if (!CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getUser_uuid())) {
         	isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, whereClause);
@@ -689,4 +717,10 @@ public class GarbageAccountRepository {
         List<String> userNames = jdbcTemplate.query(searchQuery.toString(), preparedStmtList.toArray(),(rs, rowNum) -> rs.getString("code"));
 		return userNames.get(0);
 	}
+	
+	private boolean addORClauseIfRequired(final boolean appendAndClauseFlag, final StringBuilder queryString) {
+        if (appendAndClauseFlag)
+            queryString.append(" OR ");
+        return true;
+    }
 }

@@ -74,6 +74,8 @@ public class SearchCriteriaGarbageAccount {
 
 	private Long limit;
 	
+    private String userType;
+	
 	public SearchCriteriaGarbageAccount copy() {
 		return SearchCriteriaGarbageAccount.builder().id(copyList(this.id)).garbageId(copyList(this.garbageId))
 				.propertyId(copyList(this.propertyId)).uuid(copyList(this.uuid)).type(copyList(this.type))
