@@ -243,8 +243,10 @@ public class InboxService {
                         moduleSearchCriteria, businessKeys);
 
         if (CollectionUtils.isEmpty(businessKeys)) {
-            throw new CustomException("NO_APPLICATION_FOUND", 
-                "No application found in the database. Please check filters.");
+        	response.setTotalCount(null);
+            response.setItems(null);
+            response.setStatusMap(null);
+            return response;
         }     
         processCriteria.setStatus(statusIds);
         processCriteria.setBusinessIds(new ArrayList<>(businessKeys));
