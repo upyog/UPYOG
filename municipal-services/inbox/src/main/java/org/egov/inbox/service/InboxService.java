@@ -217,10 +217,8 @@ public class InboxService {
         // Business service validation
         List<String> businessServiceName = processCriteria.getBusinessService();
         if (CollectionUtils.isEmpty(businessServiceName)) {
-        	response.setTotalCount(null);
-            response.setItems(null);
-            response.setStatusMap(null);
-            return response;
+        	throw new CustomException(ErrorConstants.MODULE_SEARCH_INVLAID,
+                    "Business Service is mandatory for module search");
 
         }
 
@@ -247,8 +245,10 @@ public class InboxService {
                         moduleSearchCriteria, businessKeys);
 
         if (CollectionUtils.isEmpty(businessKeys)) {
-            throw new CustomException("NO_APPLICATION_FOUND", 
-                "No application found in the database. Please check filters.");
+        	response.setTotalCount(null);
+            response.setItems(null);
+            response.setStatusMap(null);
+            return response;
         }     
         processCriteria.setStatus(statusIds);
         processCriteria.setBusinessIds(new ArrayList<>(businessKeys));

@@ -95,6 +95,22 @@ public class SWACHInboxFilterService {
             if(moduleSearchCriteria.containsKey(PGR_APPLICATION_NUMBER_PARAM)){
                 searchCriteria.put(PGR_APPLICATION_NUMBER_PARAM, moduleSearchCriteria.get(PGR_APPLICATION_NUMBER_PARAM));
             }
+            
+            if (moduleSearchCriteria.containsKey(PGR_SERVICECODE_PARAM)) {
+                Object value = moduleSearchCriteria.get(PGR_SERVICECODE_PARAM);
+
+                // Convert to list format
+                List<Object> listValue = new ArrayList<>();
+
+                if (value instanceof List) {
+                    listValue.addAll((List<?>) value);
+                } else {
+                    listValue.add(value);
+                }
+
+                searchCriteria.put(PGR_SERVICECODE_PARAM, listValue);
+            }
+
             if(moduleSearchCriteria.containsKey(APPLICATION_NUMBER_PARAM)) {
                 searchCriteria.put(APPLICATION_NUMBER_PARAM, moduleSearchCriteria.get(APPLICATION_NUMBER_PARAM));
             }
