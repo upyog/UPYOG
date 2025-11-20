@@ -41,7 +41,9 @@ public class RequestInfoUtils {
 	}
 
 	private RequestInfo createDefaultRequestInfo() {
-		User userInfo = User.builder().uuid(SYSTEM).type(SYSTEM).roles(Collections.emptyList()).id(0L).build();
+		User userInfo = User.builder()
+				.uuid(SYSTEM)
+				.type(SYSTEM).roles(Collections.emptyList()).id(0L).build();
 
 		RequestInfo requestInfo = new RequestInfo();
 		requestInfo.setUserInfo(userInfo);

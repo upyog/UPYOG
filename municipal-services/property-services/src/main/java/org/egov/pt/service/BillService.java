@@ -2,6 +2,7 @@ package org.egov.pt.service;
 
 import java.util.List;
 
+
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.pt.models.bill.BillSearchCriteria;
 import org.egov.pt.models.bill.GenerateBillCriteria;
@@ -13,6 +14,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import lombok.extern.slf4j.Slf4j;
+import org.egov.tracer.model.CustomException;
+
+
+import org.egov.pt.web.contracts.UpdatePropertyBillCriteria;
+import org.egov.pt.models.collection.Bill.StatusEnum;
+
 
 @Service
 @Slf4j
@@ -52,5 +59,25 @@ public class BillService {
 
 		return billRepository.updateBill(requestInfo, bills);
 	}
+	
+	public List<Bill> updateBillStatus(UpdatePropertyBillCriteria criteria, RequestInfo requestInfo) {
+	    BillSearchCriteria searchCriteria = BillSearchCriteria.builder()
+	            .tenantId(criteria.getTenantId())
+	            .consumerCode(criteria.getConsumerCodes())
+	            .service(criteria.getBusinessService())
+	            .build();
+
+	    List<Bill> bills = billRepository.searchBill(searchCriteria, requestInfo);
+	    if (bills == null || bills.isEmpty())
+	        throw new CustomException("INVALID UPDATE", "No bills found for update");
+
+	    bills.forEach(bill -> {
+	    	bill.setStatus(StatusEnum.CANCELLED);
+	        bill.setAdditionalDetails(criteria.getAdditionalDetails());
+	    });
+
+	    return billRepository.updateBill(requestInfo, bills);
+	}
+
 
 }
