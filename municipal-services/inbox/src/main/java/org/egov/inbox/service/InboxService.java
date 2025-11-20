@@ -278,8 +278,13 @@ public class InboxService {
                         .collect(Collectors.toMap(
                                 ProcessInstance::getBusinessId,
                                 Function.identity(),
-                                (oldVal, newVal) -> newVal
+                                (oldVal, newVal) ->
+                                        oldVal.getAuditDetails().getLastModifiedTime() >
+                                        newVal.getAuditDetails().getLastModifiedTime()
+                                                ? oldVal
+                                                : newVal
                         ));
+
 
         // FIXED: store businessIds as List<String>, not CSV
         moduleSearchCriteria.put(srvMap.get("applNosParam"), new ArrayList<>(processInstanceMap.keySet()));
@@ -294,7 +299,8 @@ public class InboxService {
 
         
         Map<String, List<ProcessInstance>> groupedByStatus =
-                processInstances.stream().collect(Collectors.groupingBy(pi -> pi.getState().getUuid()));
+                processInstanceMap.values().stream()
+                        .collect(Collectors.groupingBy(pi -> pi.getState().getUuid()));
 
         List<HashMap<String, Object>> statusMap = new ArrayList<>();
 
@@ -309,6 +315,7 @@ public class InboxService {
 
             statusMap.add(map);
         });
+
         // Populate Inbox Items
         if (businessObjects != null && businessObjects.length() > 0 && !processInstances.isEmpty()) {
 
@@ -330,7 +337,7 @@ public class InboxService {
         }
 
         // Build final response
-        response.setTotalCount(processInstances.size());   // FIXED
+        response.setTotalCount(processInstanceMap.size());   // CORRECT
         response.setItems(inboxes);
         response.setStatusMap(statusMap);
 
