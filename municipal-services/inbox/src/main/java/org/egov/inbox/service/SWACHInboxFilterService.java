@@ -113,6 +113,8 @@ public class SWACHInboxFilterService {
             		    .collect(Collectors.toList());
             		
             		searchCriteria.put(STATUS_PARAM, matchingKeys);
+                    searchCriteria.put("applicationstatus", StatusIdNameMap.values());
+
             	}
             	else {
             		searchCriteria.put(STATUS_PARAM, processCriteria.getStatus());
