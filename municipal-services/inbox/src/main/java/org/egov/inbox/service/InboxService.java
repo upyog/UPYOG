@@ -385,6 +385,7 @@ public class InboxService {
                 break;
 
             case BPA:
+            case "bpa-service":
                 applicationNumbers = bpaInboxFilterService.fetchApplicationNumbersFromSearcher(
                         criteria, statusIdNameStringMap, requestInfo);
                 break;
