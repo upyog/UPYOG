@@ -343,6 +343,7 @@ public class InboxService {
             List<String> businessKeys) {
 
         if (moduleName == null) return moduleSearchCriteria;
+        List<String> roles = requestInfo.getUserInfo().getRoles().stream().map(Role::getCode).collect(Collectors.toList());
 
         // Convert status map
         HashMap<String, String> statusIdNameStringMap = new HashMap<>();
@@ -378,7 +379,63 @@ public class InboxService {
                 if (!CollectionUtils.isEmpty(applicationNumbers))
                     moduleSearchCriteria.put("applicationNumber", applicationNumbers);
                 break;
+                
+            case BPA:
+                applicationNumbers =  bpaInboxFilterService.fetchApplicationNumbersFromSearcher(criteria,
+                		statusIdNameStringMap, requestInfo);
+                break;
+                
+            case BPAREG:
+            case TL:
+                applicationNumbers = tlInboxFilterService.fetchApplicationNumbersFromSearcher(
+                        criteria, statusIdNameStringMap, requestInfo);
+                break;
+            
+            case NDC_MODULE:
+            	applicationNumbers = ndcInboxFilterService.fetchApplicationNumbersFromSearcher(criteria, statusIdNameStringMap, requestInfo);
+				break;
+            case PGR:
+                applicationNumbers = pgrInboxFilterService.fetchApplicationNumbersFromSearcher(
+                        criteria, statusIdNameStringMap, requestInfo);
+                if (!CollectionUtils.isEmpty(applicationNumbers))
+                    moduleSearchCriteria.put(PGRANDSWACH_APPLICATION_PARAM, applicationNumbers);
+                break;
 
+            case "noc-service":
+                applicationNumbers = nocInboxFilterService.fetchApplicationNumbersFromSearcher(
+                        criteria, statusIdNameStringMap, requestInfo);
+                if (!CollectionUtils.isEmpty(applicationNumbers))
+                    moduleSearchCriteria.put("applicationNo", applicationNumbers);
+                break;
+
+            case "CHB":
+                applicationNumbers = chbInboxFilterService.fetchApplicationNumbersFromSearcher(
+                        criteria, statusIdNameStringMap, requestInfo);
+                if (!CollectionUtils.isEmpty(applicationNumbers))
+                    moduleSearchCriteria.put("applicationNumber", applicationNumbers);
+                break;
+
+            case "Challan_Generation":
+                applicationNumbers = challanInboxFilterService.fetchApplicationNumbersFromSearcher(
+                        criteria, statusIdNameStringMap, requestInfo);
+                if (!CollectionUtils.isEmpty(applicationNumbers))
+                    moduleSearchCriteria.put("challanNo", applicationNumbers);
+                break;
+
+            case "layout-service":
+                applicationNumbers = layoutInboxFilterService.fetchApplicationNumbersFromSearcher(
+                        criteria, statusIdNameStringMap, requestInfo);
+                if (!CollectionUtils.isEmpty(applicationNumbers))
+                    moduleSearchCriteria.put("applicationNumber", applicationNumbers);
+                break;
+
+            case "clu-service":
+                applicationNumbers = cluInboxFilterService.fetchApplicationNumbersFromSearcher(
+                        criteria, statusIdNameStringMap, requestInfo);
+                if (!CollectionUtils.isEmpty(applicationNumbers))
+                    moduleSearchCriteria.put("applicationNumber", applicationNumbers);
+                break;
+                            
             default:
                 // No action for unknown modules
                 break;
