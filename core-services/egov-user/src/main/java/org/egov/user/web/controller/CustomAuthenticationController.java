@@ -223,68 +223,6 @@ public class CustomAuthenticationController {
     /**
      * Convert domain User to contract User for UserService method compatibility
      */
-    private org.egov.user.web.contract.auth.User convertToContractUser(org.egov.user.domain.model.User domainUser) {
-        if (domainUser == null) {
-            return null;
-        }
-
-        return org.egov.user.web.contract.auth.User.builder()
-            .id(domainUser.getId())
-            .uuid(domainUser.getUuid())
-            .userName(domainUser.getUsername())
-            .name(domainUser.getName())
-            .mobileNumber(domainUser.getMobileNumber())
-            .emailId(domainUser.getEmailId())
-            .locale(domainUser.getLocale())
-            .active(domainUser.getActive())
-            .type(domainUser.getType() != null ? domainUser.getType().name() : null)
-            .tenantId(domainUser.getTenantId())
-            .roles(convertRoles(domainUser.getRoles()))
-            .build();
-    }
-
-    /**
-     * Convert domain Roles to contract Roles
-     */
-    private Set<org.egov.user.web.contract.auth.Role> convertRoles(Set<org.egov.user.domain.model.Role> domainRoles) {
-        if (domainRoles == null) {
-            return new HashSet<>();
-        }
-
-        return domainRoles.stream()
-            .map(domainRole -> new org.egov.user.web.contract.auth.Role(domainRole))
-            .collect(Collectors.toSet());
-    }
-
-    /**
-     * Convert contract User to domain User for decryption
-     */
-    private org.egov.user.domain.model.User convertContractToDomainUser(org.egov.user.web.contract.auth.User contractUser) {
-        if (contractUser == null) {
-            return null;
-        }
-
-        return org.egov.user.domain.model.User.builder()
-            .id(contractUser.getId())
-            .uuid(contractUser.getUuid())
-            .username(contractUser.getUserName())
-            .name(contractUser.getName())
-            .mobileNumber(contractUser.getMobileNumber())
-            .emailId(contractUser.getEmailId())
-            .locale(contractUser.getLocale())
-            .active(contractUser.isActive())
-            .type(contractUser.getType() != null ? UserType.fromValue(contractUser.getType()) : null)
-            .tenantId(contractUser.getTenantId())
-            .roles(contractUser.getRoles() != null ?
-                contractUser.getRoles().stream()
-                    .map(role -> org.egov.user.domain.model.Role.builder()
-                        .name(role.getName())
-                        .code(role.getCode())
-                        .tenantId(role.getTenantId())
-                        .build())
-                    .collect(Collectors.toSet()) : null)
-            .build();
-    }
 
     private String generateAccessToken(SecureUser secureUser, String scope) {
         if ("opaque".equals(tokenFormat)) {
@@ -303,28 +241,53 @@ public class CustomAuthenticationController {
 
         org.egov.user.web.contract.auth.User user = secureUser.getUser();
         if (user != null) {
-            // Log roles before storing
-            log.info("REDIS STORE: User {} has {} roles", user.getUserName(),
-                     user.getRoles() != null ? user.getRoles().size() : "null");
+            // CRITICAL FIX: Decrypt user data BEFORE storing in Redis
+            // This ensures that subsequent token lookups (_details endpoint) have decrypted data
+            // Without this, CITIZEN users get encrypted mobile numbers in token metadata
+            // because ABAC policy cannot validate "Self" purpose with encrypted identifiers in RequestInfo
+            org.egov.user.web.contract.auth.User userToStore = user;
+            try {
+                log.info("REDIS STORE: Attempting to decrypt user data before storing. User ID: {}, Type: {}",
+                    user.getId(), user.getType());
+                org.egov.user.domain.model.User domainUser = convertContractToDomainUser(user);
+                org.egov.user.domain.model.User decryptedDomainUser = userService.decryptUserWithContext(domainUser, user);
+                userToStore = convertToContractUser(decryptedDomainUser);
 
-            // Store minimal user data
+                // Check if mobile number was successfully decrypted
+                boolean mobileDecrypted = userToStore.getMobileNumber() != null &&
+                    !userToStore.getMobileNumber().contains("|");
+                log.info("REDIS STORE: User data decryption completed. Mobile decrypted: {}, UserName decrypted: {}",
+                    mobileDecrypted,
+                    userToStore.getUserName() != null && !userToStore.getUserName().contains("|"));
+            } catch (Exception e) {
+                log.warn("REDIS STORE: Failed to decrypt user data, storing encrypted data. Error: {} - {}",
+                    e.getClass().getSimpleName(), e.getMessage());
+                // Fall back to storing encrypted data (maintains backward compatibility)
+                userToStore = user;
+            }
+
+            // Log roles before storing
+            log.info("REDIS STORE: User {} has {} roles", userToStore.getUserName(),
+                     userToStore.getRoles() != null ? userToStore.getRoles().size() : "null");
+
+            // Store minimal user data (now decrypted if decryption succeeded)
             Map<String, Object> userInfo = new HashMap<>();
-            userInfo.put("id", user.getId());
-            userInfo.put("uuid", user.getUuid());
-            userInfo.put("userName", user.getUserName());
-            userInfo.put("name", user.getName());
-            userInfo.put("mobileNumber", user.getMobileNumber());
-            userInfo.put("emailId", user.getEmailId());
-            userInfo.put("locale", user.getLocale());
-            userInfo.put("type", user.getType());
-            userInfo.put("tenantId", user.getTenantId());
-            userInfo.put("active", user.isActive());
+            userInfo.put("id", userToStore.getId());
+            userInfo.put("uuid", userToStore.getUuid());
+            userInfo.put("userName", userToStore.getUserName());
+            userInfo.put("name", userToStore.getName());
+            userInfo.put("mobileNumber", userToStore.getMobileNumber());
+            userInfo.put("emailId", userToStore.getEmailId());
+            userInfo.put("locale", userToStore.getLocale());
+            userInfo.put("type", userToStore.getType());
+            userInfo.put("tenantId", userToStore.getTenantId());
+            userInfo.put("active", userToStore.isActive());
 
             // CRITICAL FIX: Convert roles to serializable format for Redis
             // Redis cannot properly serialize/deserialize Set<Role> objects
             // So we convert to List<Map<String, String>> which preserves all role data
-            if (user.getRoles() != null && !user.getRoles().isEmpty()) {
-                java.util.List<Map<String, String>> rolesList = user.getRoles().stream()
+            if (userToStore.getRoles() != null && !userToStore.getRoles().isEmpty()) {
+                java.util.List<Map<String, String>> rolesList = userToStore.getRoles().stream()
                     .map(role -> {
                         Map<String, String> roleMap = new HashMap<>();
                         roleMap.put("code", role.getCode());
@@ -345,10 +308,10 @@ public class CustomAuthenticationController {
             }
 
             tokenMetadata.put("UserRequest", userInfo);
-            tokenMetadata.put("userId", user.getId());
-            tokenMetadata.put("userName", user.getUserName());
-            tokenMetadata.put("userType", user.getType());
-            tokenMetadata.put("tenantId", user.getTenantId());
+            tokenMetadata.put("userId", userToStore.getId());
+            tokenMetadata.put("userName", userToStore.getUserName());
+            tokenMetadata.put("userType", userToStore.getType());
+            tokenMetadata.put("tenantId", userToStore.getTenantId());
         }
         
         // Add ResponseInfo
@@ -513,32 +476,106 @@ public class CustomAuthenticationController {
         Map<String, Object> responseInfo = createResponseInfo("Access Token generated successfully");
         response.put("ResponseInfo", responseInfo);
 
-        // Decrypt user data for token response using the authenticated user context
+        // UPDATED: User data is already decrypted in generateOpaqueAccessToken before storing in Redis
+        // So we can use it directly without additional decryption
+        // This was previously causing redundant decryption attempts
         org.egov.user.web.contract.auth.User contractUser = secureUser.getUser();
         if (contractUser != null) {
-            log.info("Starting user decryption for token response. User: {}, encrypted userName: {}",
-                contractUser.getId(), contractUser.getUserName());
-            try {
-                // Convert contract user to domain user for decryption
-                org.egov.user.domain.model.User domainUser = convertContractToDomainUser(contractUser);
-                log.info("Converted to domain user, calling decryptUserWithContext");
+            // Check if data needs decryption (for backward compatibility or if stored before this fix)
+            boolean needsDecryption = contractUser.getMobileNumber() != null &&
+                contractUser.getMobileNumber().contains("|");
 
-                // Decrypt user with proper authenticated context
-                org.egov.user.domain.model.User decryptedDomainUser = userService.decryptUserWithContext(domainUser, contractUser);
-                log.info("Decryption completed, converting back to contract user");
-
-                // Convert back to contract user for response
-                org.egov.user.web.contract.auth.User decryptedUser = convertToContractUser(decryptedDomainUser);
-                log.info("Token response using decrypted user data. Decrypted userName: {}", decryptedUser.getUserName());
-                response.put("UserRequest", decryptedUser);
-            } catch (Exception e) {
-                log.error("Failed to decrypt user for token response: {}", e.getMessage(), e);
-                log.info("Falling back to encrypted user data for token response");
+            if (needsDecryption) {
+                log.info("Token response: User data appears encrypted, attempting decryption. User: {}",
+                    contractUser.getId());
+                try {
+                    // Convert contract user to domain user for decryption
+                    org.egov.user.domain.model.User domainUser = convertContractToDomainUser(contractUser);
+                    // Decrypt user with proper authenticated context
+                    org.egov.user.domain.model.User decryptedDomainUser = userService.decryptUserWithContext(domainUser, contractUser);
+                    // Convert back to contract user for response
+                    org.egov.user.web.contract.auth.User decryptedUser = convertToContractUser(decryptedDomainUser);
+                    log.info("Token response: User data decrypted successfully");
+                    response.put("UserRequest", decryptedUser);
+                } catch (Exception e) {
+                    log.error("Token response: Failed to decrypt user data: {}", e.getMessage(), e);
+                    log.info("Token response: Falling back to as-is user data");
+                    response.put("UserRequest", contractUser);
+                }
+            } else {
+                // Data is already decrypted (new flow after this fix)
+                log.info("Token response: User data already decrypted, using as-is. User: {}", contractUser.getId());
                 response.put("UserRequest", contractUser);
             }
         }
 
         return response;
+    }
+
+    /**
+     * Convert contract User to domain User for decryption
+     */
+    private org.egov.user.domain.model.User convertContractToDomainUser(org.egov.user.web.contract.auth.User contractUser) {
+        if (contractUser == null) {
+            return null;
+        }
+
+        return org.egov.user.domain.model.User.builder()
+            .id(contractUser.getId())
+            .uuid(contractUser.getUuid())
+            .username(contractUser.getUserName())
+            .name(contractUser.getName())
+            .mobileNumber(contractUser.getMobileNumber())
+            .emailId(contractUser.getEmailId())
+            .locale(contractUser.getLocale())
+            .active(contractUser.isActive())
+            .type(contractUser.getType() != null ? UserType.fromValue(contractUser.getType()) : null)
+            .tenantId(contractUser.getTenantId())
+            .roles(contractUser.getRoles() != null ?
+                contractUser.getRoles().stream()
+                    .map(role -> org.egov.user.domain.model.Role.builder()
+                        .name(role.getName())
+                        .code(role.getCode())
+                        .tenantId(role.getTenantId())
+                        .build())
+                    .collect(Collectors.toSet()) : null)
+            .build();
+    }
+
+    /**
+     * Convert domain User to contract User
+     */
+    private org.egov.user.web.contract.auth.User convertToContractUser(org.egov.user.domain.model.User domainUser) {
+        if (domainUser == null) {
+            return null;
+        }
+
+        return org.egov.user.web.contract.auth.User.builder()
+            .id(domainUser.getId())
+            .uuid(domainUser.getUuid())
+            .userName(domainUser.getUsername())
+            .name(domainUser.getName())
+            .mobileNumber(domainUser.getMobileNumber())
+            .emailId(domainUser.getEmailId())
+            .locale(domainUser.getLocale())
+            .active(domainUser.getActive())
+            .type(domainUser.getType() != null ? domainUser.getType().name() : null)
+            .tenantId(domainUser.getTenantId())
+            .roles(convertRoles(domainUser.getRoles()))
+            .build();
+    }
+
+    /**
+     * Convert domain Roles to contract Roles
+     */
+    private Set<org.egov.user.web.contract.auth.Role> convertRoles(Set<org.egov.user.domain.model.Role> domainRoles) {
+        if (domainRoles == null) {
+            return new HashSet<>();
+        }
+
+        return domainRoles.stream()
+            .map(domainRole -> new org.egov.user.web.contract.auth.Role(domainRole))
+            .collect(Collectors.toSet());
     }
 
     private Map<String, Object> createResponseInfo(String status) {
