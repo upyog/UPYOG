@@ -106,6 +106,7 @@ public class PDFRequestGenerator {
 		List<String> f4Values = new ArrayList<>();
 		List<String> f5Values = new ArrayList<>();
 		List<String> plinthAreas = new ArrayList<>();
+		List<String> taxCalculated = new ArrayList<>();
 		List<String> floorNos = new ArrayList<>();
 		BigDecimal plinthAreaTotal = BigDecimal.ZERO;
 
@@ -116,7 +117,11 @@ public class PDFRequestGenerator {
 		    .collect(Collectors.toSet());
 		
 		for (Unit unit : property.getUnits()) {
-			if (trackerUnitIds.contains(unit.getId())) { 
+			JsonNode matchedNode = StreamSupport.stream(additionalDetailsNode.spliterator(), false)
+			        .filter(node -> node.has("unitId") && node.get("unitId").asText().equals(unit.getId()))
+			        .findFirst()
+			        .orElse(null);
+			if (matchedNode !=null) { 
 				JsonNode unitAdditionalDetails = objectMapper.valueToTree(unit.getAdditionalDetails());
 				slNos.add(String.valueOf(conut++));
 				f1Values.add(escapeHtml(addressAdditionalDetails.get("zone").asText()));
@@ -125,6 +130,7 @@ public class PDFRequestGenerator {
 				f4Values.add(escapeHtml(unitAdditionalDetails.get("propType").asText()));
 				f5Values.add(escapeHtml(unitAdditionalDetails.get("useOfBuilding").asText()));
 				plinthAreas.add(escapeHtml(unitAdditionalDetails.get("propArea").asText()));
+				taxCalculated.add(matchedNode.get("propertyTaxCalculated").asText());
 				floorNos.add(escapeHtml(unit.getFloorNo().toString()));
 			}
 		}
@@ -140,6 +146,7 @@ public class PDFRequestGenerator {
 		ptDetailsTableRow.put("f5", f5Values);
 		ptDetailsTableRow.put("f5", f5Values);
 		ptDetailsTableRow.put("plinthArea", plinthAreas);
+		ptDetailsTableRow.put("taxCalculated", taxCalculated);
 		ptDetailsTableRow.put("floorNo", floorNos);
 		plinthAreaTotal = plinthAreas.stream().map(BigDecimal::new).reduce(BigDecimal.ZERO, BigDecimal::add);
 
@@ -202,8 +209,6 @@ public class PDFRequestGenerator {
 			return PDFRequest.builder().RequestInfo(requestInfoWrapper.getRequestInfo()).key("PropertyTaxBillReceipt")
 					.tenantId("hp").data(dataObject).build();
 		}
-
-	
 	}
 	
 	private String escapeHtml(String input) {
