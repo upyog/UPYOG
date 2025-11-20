@@ -104,7 +104,10 @@ public class NOCInboxFilterService {
                 searchCriteria.put("status", matchingIds);
             }
         }
-
+        else {
+			// If no status filter is provided, include all statuses
+			searchCriteria.put("status", new ArrayList<>(StatusIdNameMap.keySet()));
+		}
         if (moduleSearchCriteria != null && moduleSearchCriteria.containsKey("applicationNo")) {
             searchCriteria.put("applicationNo", moduleSearchCriteria.get("applicationNo"));
         }
