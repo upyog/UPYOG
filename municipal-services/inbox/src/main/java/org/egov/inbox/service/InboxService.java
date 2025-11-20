@@ -191,7 +191,8 @@ public class InboxService {
         this.retryTemplate = retryTemplate;
     }
     public InboxResponse fetchInboxData(InboxSearchCriteria criteria, RequestInfo requestInfo) {
-
+        InboxResponse response = new InboxResponse();
+        
         List<Inbox> inboxes = new ArrayList<>();
         List<String> businessKeys = new ArrayList<>();
         ProcessInstanceSearchCriteria processCriteria = criteria.getProcessSearchCriteria();
@@ -216,8 +217,11 @@ public class InboxService {
         // Business service validation
         List<String> businessServiceName = processCriteria.getBusinessService();
         if (CollectionUtils.isEmpty(businessServiceName)) {
-            throw new CustomException(ErrorConstants.MODULE_SEARCH_INVLAID,
-                    "Business Service is mandatory for module search");
+        	response.setTotalCount(null);
+            response.setItems(null);
+            response.setStatusMap(null);
+            return response;
+
         }
 
         // Load business service meta
@@ -326,7 +330,6 @@ public class InboxService {
         }
 
         // Build final response
-        InboxResponse response = new InboxResponse();
         response.setTotalCount(processInstances.size());   // FIXED
         response.setItems(inboxes);
         response.setStatusMap(statusMap);
