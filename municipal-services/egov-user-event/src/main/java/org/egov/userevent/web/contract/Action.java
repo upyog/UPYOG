@@ -3,6 +3,8 @@ package org.egov.userevent.web.contract;
 import java.util.List;
 
 import jakarta.validation.constraints.NotNull;
+
+import org.egov.userevent.validation.SanitizeHtml;
 import org.springframework.validation.annotation.Validated;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -24,11 +26,13 @@ import lombok.ToString;
 @ToString
 @Builder
 public class Action {
-
+	@SanitizeHtml
 	private String tenantId;
 
+	@SanitizeHtml
 	private String id;
 
+	@SanitizeHtml
 	private String eventId;
 	
 	@NotNull

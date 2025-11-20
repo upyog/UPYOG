@@ -5,9 +5,9 @@ package org.egov.vehicle.web.model.hrms;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 import org.egov.vehicle.web.model.AuditDetails;
 import org.egov.vehicle.web.model.user.User;

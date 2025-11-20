@@ -1,6 +1,8 @@
 package org.egov.ptr.models;
 
-import javax.validation.constraints.Size;
+import jakarta.validation.constraints.Size;
+
+import org.egov.ptr.validator.SanitizeHtml;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -10,8 +12,6 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
-import org.hibernate.validator.constraints.SafeHtml;
-
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -20,7 +20,7 @@ import org.hibernate.validator.constraints.SafeHtml;
 public class Document {
 
 	@Size(max = 64)
-	@SafeHtml
+	@SanitizeHtml
 	@JsonProperty("id")
 	private String id;
 
@@ -28,22 +28,22 @@ public class Document {
 	private Boolean active;
 
 	@Size(max = 64)
-	@SafeHtml
+	@SanitizeHtml
 	@JsonProperty("tenantId")
 	private String tenantId = null;
 
 	@Size(max = 64)
-	@SafeHtml
+	@SanitizeHtml
 	@JsonProperty("documentType")
 	private String documentType = null;
 
 	@Size(max = 64)
-	@SafeHtml
+	@SanitizeHtml
 	@JsonProperty("filestoreId")
 	private String filestoreId = null;
 
 	@Size(max = 64)
-	@SafeHtml
+	@SanitizeHtml
 	@JsonProperty("documentUid")
 	private String documentUid;
 

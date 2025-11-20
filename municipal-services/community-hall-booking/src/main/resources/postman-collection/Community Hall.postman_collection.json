@@ -1,0 +1,399 @@
+{
+	"info": {
+		"_postman_id": "29555840-1cf4-46b8-9756-36057d9569e9",
+		"name": "Community Hall",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "33631355"
+	},
+	"item": [
+		{
+			"name": "SlotSearch",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "accept",
+						"value": "application/json, text/plain, */*"
+					},
+					{
+						"key": "accept-language",
+						"value": "en-GB,en-US;q=0.9,en;q=0.8,hi;q=0.7"
+					},
+					{
+						"key": "content-type",
+						"value": "application/json;charset=UTF-8"
+					},
+					{
+						"key": "origin",
+						"value": "https://niuatt.niua.in"
+					},
+					{
+						"key": "priority",
+						"value": "u=1, i"
+					},
+					{
+						"key": "referer",
+						"value": "https://niuatt.niua.in/upyog-ui/citizen/chb/bookHall/searchhall"
+					},
+					{
+						"key": "sec-ch-ua",
+						"value": "\"Not;A=Brand\";v=\"99\", \"Google Chrome\";v=\"139\", \"Chromium\";v=\"139\""
+					},
+					{
+						"key": "sec-ch-ua-mobile",
+						"value": "?0"
+					},
+					{
+						"key": "sec-ch-ua-platform",
+						"value": "\"macOS\""
+					},
+					{
+						"key": "sec-fetch-dest",
+						"value": "empty"
+					},
+					{
+						"key": "sec-fetch-mode",
+						"value": "cors"
+					},
+					{
+						"key": "sec-fetch-site",
+						"value": "same-origin"
+					},
+					{
+						"key": "user-agent",
+						"value": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36"
+					},
+					{
+						"key": "Cookie",
+						"value": "_ga=GA1.1.1866793165.1747538221; _clck=7xvixy%7C2%7Cfw0%7C0%7C1964; _ga_E39TFV5YXM=GS2.1.s1747538268$o1$g1$t1747538317$j0$l0$h0; _ga_VZ9TNBTB3X=GS2.1.s1747538221$o1$g1$t1747538338$j0$l0$h0"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"RequestInfo\":{\"apiId\":\"Rainmaker\",\"authToken\":\"cfae2005-f9b2-490b-bbf1-14624a2bf0cf\",\"userInfo\":{\"id\":811,\"uuid\":\"f789d679-352d-4aec-8198-4d61af1e0566\",\"userName\":\"8010012414\",\"name\":\"OWNER\",\"mobileNumber\":\"8010012414\",\"emailId\":\"cghvjbnk@gmail.com\",\"locale\":null,\"type\":\"CITIZEN\",\"roles\":[{\"name\":\"Citizen\",\"code\":\"CITIZEN\",\"tenantId\":\"pg\"}],\"active\":true,\"tenantId\":\"pg\",\"permanentCity\":null},\"msgId\":\"1757331173074|en_IN\",\"plainAccessRequest\":{}}}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8881/chb-services/booking/v1/_slot-search?tenantId=pg.mohali&communityHallCode=Sector_71&bookingStartDate=2025-09-22&bookingEndDate=2025-09-23&hallCode=Hall+Code-1&isTimerRequired=false&_=1757331173074",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8881",
+					"path": [
+						"chb-services",
+						"booking",
+						"v1",
+						"_slot-search"
+					],
+					"query": [
+						{
+							"key": "tenantId",
+							"value": "pg.mohali"
+						},
+						{
+							"key": "communityHallCode",
+							"value": "Sector_71"
+						},
+						{
+							"key": "bookingStartDate",
+							"value": "2025-09-22"
+						},
+						{
+							"key": "bookingEndDate",
+							"value": "2025-09-23"
+						},
+						{
+							"key": "hallCode",
+							"value": "Hall+Code-1"
+						},
+						{
+							"key": "isTimerRequired",
+							"value": "false"
+						},
+						{
+							"key": "_",
+							"value": "1757331173074"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Estimate",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "accept",
+						"value": "application/json, text/plain, */*"
+					},
+					{
+						"key": "accept-language",
+						"value": "en-GB,en-US;q=0.9,en;q=0.8,hi;q=0.7"
+					},
+					{
+						"key": "content-type",
+						"value": "application/json;charset=UTF-8"
+					},
+					{
+						"key": "origin",
+						"value": "https://niuatt.niua.in"
+					},
+					{
+						"key": "priority",
+						"value": "u=1, i"
+					},
+					{
+						"key": "referer",
+						"value": "https://niuatt.niua.in/upyog-ui/citizen/chb/bookHall/applicant-details"
+					},
+					{
+						"key": "sec-ch-ua",
+						"value": "\"Not;A=Brand\";v=\"99\", \"Google Chrome\";v=\"139\", \"Chromium\";v=\"139\""
+					},
+					{
+						"key": "sec-ch-ua-mobile",
+						"value": "?0"
+					},
+					{
+						"key": "sec-ch-ua-platform",
+						"value": "\"macOS\""
+					},
+					{
+						"key": "sec-fetch-dest",
+						"value": "empty"
+					},
+					{
+						"key": "sec-fetch-mode",
+						"value": "cors"
+					},
+					{
+						"key": "sec-fetch-site",
+						"value": "same-origin"
+					},
+					{
+						"key": "user-agent",
+						"value": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36"
+					},
+					{
+						"key": "Cookie",
+						"value": "_ga=GA1.1.1866793165.1747538221; _clck=7xvixy%7C2%7Cfw0%7C0%7C1964; _ga_E39TFV5YXM=GS2.1.s1747538268$o1$g1$t1747538317$j0$l0$h0; _ga_VZ9TNBTB3X=GS2.1.s1747538221$o1$g1$t1747538338$j0$l0$h0"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"tenantId\":\"pg.mohali\",\"bookingSlotDetails\":[{\"hallCode\":\"Hall Code-1\",\"bookingDate\":\"2025-09-22\",\"bookingFromTime\":\"06:00\",\"bookingToTime\":\"05:59\",\"status\":\"BOOKING_CREATED\",\"capacity\":\"100 Person\"},{\"hallCode\":\"Hall Code-1\",\"bookingDate\":\"2025-09-23\",\"bookingFromTime\":\"06:00\",\"bookingToTime\":\"05:59\",\"status\":\"BOOKING_CREATED\",\"capacity\":\"100 Person\"}],\"communityHallCode\":\"Sector_71\",\"RequestInfo\":{\"apiId\":\"Rainmaker\",\"authToken\":\"cfae2005-f9b2-490b-bbf1-14624a2bf0cf\",\"userInfo\":{\"id\":811,\"uuid\":\"f789d679-352d-4aec-8198-4d61af1e0566\",\"userName\":\"8010012414\",\"name\":\"OWNER\",\"mobileNumber\":\"8010012414\",\"emailId\":\"cghvjbnk@gmail.com\",\"locale\":null,\"type\":\"CITIZEN\",\"roles\":[{\"name\":\"Citizen\",\"code\":\"CITIZEN\",\"tenantId\":\"pg\"}],\"active\":true,\"tenantId\":\"pg\",\"permanentCity\":null},\"msgId\":\"1757331217143|en_IN\",\"plainAccessRequest\":{}}}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8881/chb-services/booking/v1/_estimate",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8881",
+					"path": [
+						"chb-services",
+						"booking",
+						"v1",
+						"_estimate"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "accept",
+						"value": "application/json, text/plain, */*"
+					},
+					{
+						"key": "accept-language",
+						"value": "en-GB,en-US;q=0.9,en;q=0.8,hi;q=0.7"
+					},
+					{
+						"key": "content-type",
+						"value": "application/json;charset=UTF-8"
+					},
+					{
+						"key": "origin",
+						"value": "https://niuatt.niua.in"
+					},
+					{
+						"key": "priority",
+						"value": "u=1, i"
+					},
+					{
+						"key": "referer",
+						"value": "https://niuatt.niua.in/upyog-ui/citizen/chb/bookHall/acknowledgement"
+					},
+					{
+						"key": "sec-ch-ua",
+						"value": "\"Not;A=Brand\";v=\"99\", \"Google Chrome\";v=\"139\", \"Chromium\";v=\"139\""
+					},
+					{
+						"key": "sec-ch-ua-mobile",
+						"value": "?0"
+					},
+					{
+						"key": "sec-ch-ua-platform",
+						"value": "\"macOS\""
+					},
+					{
+						"key": "sec-fetch-dest",
+						"value": "empty"
+					},
+					{
+						"key": "sec-fetch-mode",
+						"value": "cors"
+					},
+					{
+						"key": "sec-fetch-site",
+						"value": "same-origin"
+					},
+					{
+						"key": "user-agent",
+						"value": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36"
+					},
+					{
+						"key": "Cookie",
+						"value": "_ga=GA1.1.1866793165.1747538221; _clck=7xvixy%7C2%7Cfw0%7C0%7C1964; _ga_E39TFV5YXM=GS2.1.s1747538268$o1$g1$t1747538317$j0$l0$h0; _ga_VZ9TNBTB3X=GS2.1.s1747538221$o1$g1$t1747538338$j0$l0$h0"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"hallsBookingApplication\": {\n        \"tenantId\": \"pg.mohali\",\n        \"applicantDetail\": {\n            \"accountNumber\": \"123456789\",\n            \"ifscCode\": \"PUNB0730000\",\n            \"bankName\": \"Punjab National Bank\",\n            \"bankBranchName\": \"SRI VIJAY NAGAR\",\n            \"accountHolderName\": \"sdfdsf\",\n            \"applicantName\": \"Nikhil\",\n            \"applicantMobileNo\": \"8010012414\",\n            \"applicantAlternateMobileNo\": \"\",\n            \"applicantEmailId\": \"nikhil@gmail.com\"\n        },\n        \"address\": {\n            \"pincode\": \"143001\",\n            \"city\": \"City A\",\n            \"cityCode\": \"1013\",\n            \"locality\": \"Main Road Abadpura\",\n            \"localityCode\": \"JLC476\",\n            \"streetName\": \"sdfdsf\",\n            \"houseNo\": \"432432\",\n            \"landmark\": \"dsfsdfs\"\n        },\n        \"purposeDescription\": \"dsfsdf\",\n        \"documents\": [\n            {\n                \"documentType\": \"APPLICANT.BANKACCOUNTPROOF.BANKPASSBOOK\",\n                \"fileStoreId\": \"16803b82-7edf-4478-afa9-9b3d89832c30\",\n                \"documentUid\": \"16803b82-7edf-4478-afa9-9b3d89832c30\"\n            },\n            {\n                \"documentType\": \"APPLICANT.ADDRESSPROOF.ELECTRICITYBILL\",\n                \"fileStoreId\": \"559a8444-3211-4b53-b341-4a3829f51215\",\n                \"documentUid\": \"559a8444-3211-4b53-b341-4a3829f51215\"\n            },\n            {\n                \"documentType\": \"APPLICANT.IDENTITYPROOF.AADHAAR\",\n                \"fileStoreId\": \"cae5f98b-f519-4080-933d-9deb9d1b078e\",\n                \"documentUid\": \"cae5f98b-f519-4080-933d-9deb9d1b078e\"\n            }\n        ],\n        \"bookingStatus\": \"BOOKING_CREATED\",\n        \"communityHallCode\": \"Sector_71\",\n        \"communityHallName\": \"Sector 71\",\n        \"specialCategory\": {\n            \"category\": \"None\"\n        },\n        \"purpose\": {\n            \"purpose\": \"None\"\n        },\n        \"bookingSlotDetails\": [\n            {\n                \"communityHallCode\": \"Sector_71\",\n                \"communityHallName\": \"Sector 71\",\n                \"hallCode\": \"Hall Code-1\",\n                \"bookingDate\": \"2025-09-22\",\n                \"bookingFromTime\": \"06:00\",\n                \"bookingToTime\": \"05:59\",\n                \"status\": \"BOOKING_CREATED\",\n                \"capacity\": \"100 Person\"\n            },\n            {\n                \"communityHallCode\": \"Sector_71\",\n                \"communityHallName\": \"Sector 71\",\n                \"hallCode\": \"Hall Code-1\",\n                \"bookingDate\": \"2025-09-23\",\n                \"bookingFromTime\": \"06:00\",\n                \"bookingToTime\": \"05:59\",\n                \"status\": \"BOOKING_CREATED\",\n                \"capacity\": \"100 Person\"\n            }\n        ],\n        \"workflow\": null\n    },\n    \"RequestInfo\": {\n        \"apiId\": \"Rainmaker\",\n        \"authToken\": \"cfae2005-f9b2-490b-bbf1-14624a2bf0cf\",\n        \"userInfo\": {\n            \"id\": 811,\n            \"uuid\": \"f789d679-352d-4aec-8198-4d61af1e0566\",\n            \"userName\": \"8010012414\",\n            \"name\": \"OWNER\",\n            \"mobileNumber\": \"8010012414\",\n            \"emailId\": \"cghvjbnk@gmail.com\",\n            \"locale\": null,\n            \"type\": \"CITIZEN\",\n            \"roles\": [\n                {\n                    \"name\": \"Citizen\",\n                    \"code\": \"CITIZEN\",\n                    \"tenantId\": \"pg\"\n                }\n            ],\n            \"active\": true,\n            \"tenantId\": \"pg\",\n            \"permanentCity\": null\n        },\n        \"msgId\": \"1757331284227|en_IN\",\n        \"plainAccessRequest\": {}\n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8881/chb-services/booking/v1/_create",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8881",
+					"path": [
+						"chb-services",
+						"booking",
+						"v1",
+						"_create"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Search",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "sec-ch-ua-platform",
+						"value": "\"macOS\""
+					},
+					{
+						"key": "Referer",
+						"value": "https://niuatt.niua.in/upyog-ui/citizen/chb/application/CHB-1013-000748/pg.citya"
+					},
+					{
+						"key": "User-Agent",
+						"value": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json, text/plain, */*"
+					},
+					{
+						"key": "sec-ch-ua",
+						"value": "\"Not;A=Brand\";v=\"99\", \"Google Chrome\";v=\"139\", \"Chromium\";v=\"139\""
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json;charset=UTF-8"
+					},
+					{
+						"key": "sec-ch-ua-mobile",
+						"value": "?0"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"RequestInfo\":{\"apiId\":\"Rainmaker\",\"authToken\":\"275d4391-66c1-4096-bf81-4f4e728d9f09\",\"userInfo\":{\"id\":811,\"uuid\":\"f789d679-352d-4aec-8198-4d61af1e0566\",\"userName\":\"8010012414\",\"name\":\"OWNER\",\"mobileNumber\":\"8010012414\",\"emailId\":\"cghvjbnk@gmail.com\",\"locale\":null,\"type\":\"CITIZEN\",\"roles\":[{\"name\":\"Citizen\",\"code\":\"CITIZEN\",\"tenantId\":\"pg\"}],\"active\":true,\"tenantId\":\"pg\",\"permanentCity\":null},\"msgId\":\"1757396551926|en_IN\",\"plainAccessRequest\":{}}}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8881/chb-services/booking/v1/_search?tenantId=pg.citya&bookingNo=CHB-1013-000748&_=1757396551926",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8881",
+					"path": [
+						"chb-services",
+						"booking",
+						"v1",
+						"_search"
+					],
+					"query": [
+						{
+							"key": "tenantId",
+							"value": "pg.citya"
+						},
+						{
+							"key": "bookingNo",
+							"value": "CHB-1013-000748"
+						},
+						{
+							"key": "_",
+							"value": "1757396551926"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Trigger",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8881/chb-services/booking/trigger-workflow-update",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8881",
+					"path": [
+						"chb-services",
+						"booking",
+						"trigger-workflow-update"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

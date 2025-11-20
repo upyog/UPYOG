@@ -2,7 +2,7 @@ package org.egov.vehicle.trip.controller;
 
 import java.util.List;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 
 import org.egov.vehicle.trip.service.VehicleTripService;
 import org.egov.vehicle.trip.web.model.VehicleTrip;

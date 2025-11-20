@@ -26,6 +26,11 @@ import org.springframework.util.CollectionUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import static org.egov.ptr.util.PTRConstants.*;
+
+/**
+ * Service class to handle workflow operations related to Pet Registration.
+ */
 @Service
 public class WorkflowService {
 
@@ -41,25 +46,38 @@ public class WorkflowService {
 	@Autowired
 	ServiceRequestRepository serviceRequestRepository;
 
-	public void updateWorkflowStatus(PetRegistrationRequest petRegistrationRequest) {
-		petRegistrationRequest.getPetRegistrationApplications().forEach(application -> {
+	/**
+	 * Updates the workflow status of a pet registration application.
+	 *
+	 * @param petRegistrationRequest The request containing pet registration details.
+	 * @return The updated workflow state.
+	 */
+	public State updateWorkflowStatus(PetRegistrationRequest petRegistrationRequest) {
+		PetRegistrationApplication application = petRegistrationRequest.getPetRegistrationApplications().get(0);
 			ProcessInstance processInstance = getProcessInstanceForPTR(application,
 					petRegistrationRequest.getRequestInfo());
 			ProcessInstanceRequest workflowRequest = new ProcessInstanceRequest(petRegistrationRequest.getRequestInfo(),
 					Collections.singletonList(processInstance));
-			callWorkFlow(workflowRequest);
-		});
+			State state = callWorkFlow(workflowRequest);
+		return state;
 	}
 
+	/**
+	 * Constructs a ProcessInstance object for workflow processing.
+	 *
+	 * @param application The pet registration application.
+	 * @param requestInfo The request info.
+	 * @return The constructed ProcessInstance.
+	 */
 	private ProcessInstance getProcessInstanceForPTR(PetRegistrationApplication application, RequestInfo requestInfo) {
 		Workflow workflow = application.getWorkflow();
 
 		ProcessInstance processInstance = new ProcessInstance();
 		processInstance.setBusinessId(application.getApplicationNumber());
 		processInstance.setAction(workflow.getAction());
-		processInstance.setModuleName("pet-services");
+		processInstance.setModuleName(PET_MODULE_NAME);
 		processInstance.setTenantId(application.getTenantId());
-		processInstance.setBusinessService("ptr");
+		processInstance.setBusinessService(PET_BUSINESS_SERVICE);
 		processInstance.setDocuments(workflow.getDocuments());
 		processInstance.setComment(workflow.getComments());
 
@@ -155,9 +173,11 @@ public class WorkflowService {
 	}
 
 	/**
-	 * Creates url for searching processInstance
+	 * Constructs the search URL for fetching workflow process instances.
 	 *
-	 * @return The search url
+	 * @param tenantId The tenant ID.
+	 * @param businessId The business ID.
+	 * @return The constructed URL.
 	 */
 	private StringBuilder getWorkflowSearchURLWithParams(String tenantId, String businessId) {
 
@@ -171,9 +191,12 @@ public class WorkflowService {
 	}
 
 	/**
-	 * Fetches the workflow object for the given assessment
-	 * 
-	 * @return
+	 * Retrieves the current state of a workflow process instance.
+	 *
+	 * @param requestInfo The request info.
+	 * @param tenantId The tenant ID.
+	 * @param businessId The business ID.
+	 * @return The current state of the process instance.
 	 */
 	public State getCurrentState(RequestInfo requestInfo, String tenantId, String businessId) {
 

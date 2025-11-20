@@ -3,14 +3,13 @@ package org.egov.ptr.models;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 
 import org.egov.common.contract.request.Role;
-//import org.egov.ptr.models.enums.Relationship;
 import org.egov.ptr.models.enums.Status;
 import org.egov.ptr.models.user.User;
-import org.hibernate.validator.constraints.SafeHtml;
+import org.egov.ptr.validator.SanitizeHtml;
 import org.springframework.util.CollectionUtils;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -28,19 +27,19 @@ import lombok.Setter;
 
 public class OwnerInfo extends User {
 
-	@SafeHtml
+	@SanitizeHtml
 	@JsonProperty("ownerInfoUuid")
 	private String ownerInfoUuid;
 
-	@SafeHtml
+	@SanitizeHtml
 	@JsonProperty("gender")
 	private String gender;
 
-	@SafeHtml
+	@SanitizeHtml
 	@JsonProperty("fatherOrHusbandName")
 	private String fatherOrHusbandName;
 
-	@SafeHtml
+	@SanitizeHtml
 	@JsonProperty("correspondenceAddress")
 	private String correspondenceAddress;
 
@@ -51,11 +50,11 @@ public class OwnerInfo extends User {
 	private Double ownerShipPercentage;
 
 	@NotNull
-	@SafeHtml
+	@SanitizeHtml
 	@JsonProperty("ownerType")
 	private String ownerType;
 
-	@SafeHtml
+	@SanitizeHtml
 	@JsonProperty("institutionId")
 	private String institutionId;
 

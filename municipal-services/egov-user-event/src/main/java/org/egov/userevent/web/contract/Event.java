@@ -10,6 +10,7 @@ import org.egov.userevent.model.AuditDetails;
 import org.egov.userevent.model.RecepientEvent;
 import org.egov.userevent.model.enums.Source;
 import org.egov.userevent.model.enums.Status;
+import org.egov.userevent.validation.SanitizeHtml;
 import org.springframework.validation.annotation.Validated;
 
 import lombok.AllArgsConstructor;
@@ -31,22 +32,29 @@ import lombok.ToString;
 public class Event {
 
 	@NotNull
+	@SanitizeHtml
 	private String tenantId;
 
+	@SanitizeHtml
 	private String id;
 
+	@SanitizeHtml
 	private String referenceId;
 
 	@NotNull
+	@SanitizeHtml
 	private String eventType;
 
+	@SanitizeHtml
 	private String eventCategory;
 
 	@NotNull
+	@SanitizeHtml
 	@Size(max = 65)
 	private String name;
 
 	@NotNull
+	@SanitizeHtml
 	@Size(max = 500)
 	private String description;
 
@@ -55,6 +63,7 @@ public class Event {
 	@NotNull
 	private Source source;
 
+	@SanitizeHtml
 	private String postedBy;
 
 	private Recepient recepient;
