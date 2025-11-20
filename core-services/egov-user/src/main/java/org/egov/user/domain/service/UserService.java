@@ -225,29 +225,23 @@ public class UserService {
                     .build())
                 .build();
 
-            // CRITICAL FIX: Use "UserSelf" key explicitly for self-decryption during token generation
-            // This key is specifically designed for users decrypting their own data
-            // and should decrypt ALL fields including mobileNumber for both EMPLOYEE and CITIZEN
-            // This restores the behavior from Dev-3.0 where mobile numbers were decrypted for all users
+            // The encryption service expects a List<User>, not a single User
+            // Wrap in list, decrypt, then extract the single user (same pattern as searchUsers)
+            List<User> userList = Collections.singletonList(encryptedUser);
             try {
-                log.info("Attempting decryption with UserSelf key for token generation (user decrypting own data)");
-                User decryptedUser = encryptionDecryptionUtil.decryptObject(encryptedUser, "UserSelf", User.class, requestInfo);
-                log.info("Successfully decrypted user with UserSelf key. Username: {}, Mobile decrypted: {}",
-                         decryptedUser.getUsername(),
-                         decryptedUser.getMobileNumber() != null && !decryptedUser.getMobileNumber().contains("|"));
+                log.info("Attempting decryption with null key using List<User> (same as searchUsers)");
+                List<User> decryptedUserList = encryptionDecryptionUtil.decryptObject(userList, "User", User.class, requestInfo);
+                User decryptedUser = decryptedUserList.get(0);
+                log.info("Successfully decrypted user with \"User\" key: {}", decryptedUser.getUsername());
                 return decryptedUser;
             } catch (Exception e1) {
-                log.warn("Decryption with UserSelf key failed: {}, trying with null key (auto-detect)", e1.getMessage());
+                log.warn("Decryption with null key failed, trying with \"User\" key: {}", e1.getMessage());
                 try {
-                    // Fallback: Let encryption util auto-detect the key based on context
-                    List<User> userList = Collections.singletonList(encryptedUser);
                     List<User> decryptedUserList = encryptionDecryptionUtil.decryptObject(userList, null, User.class, requestInfo);
                     User decryptedUser = decryptedUserList.get(0);
-                    log.info("Successfully decrypted user with auto-detected key. Mobile decrypted: {}",
-                             decryptedUser.getMobileNumber() != null && !decryptedUser.getMobileNumber().contains("|"));
                     return decryptedUser;
                 } catch (Exception e2) {
-                    log.warn("Both decryption attempts failed. UserSelf error: {}, Auto-detect error: {}",
+                    log.warn("Both decryption attempts failed. User key error: {}, Auto-detect error: {}",
                              e1.getMessage(), e2.getMessage());
                     throw e2;
                 }
