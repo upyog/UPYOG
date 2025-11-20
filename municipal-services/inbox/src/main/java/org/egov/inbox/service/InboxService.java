@@ -351,6 +351,8 @@ public class InboxService {
 
         List<String> applicationNumbers = Collections.emptyList();
 
+        boolean moduleHandled = true;
+
         switch (moduleName.toLowerCase()) {
             case SWACH:
                 applicationNumbers = swachInboxFilterService.fetchApplicationNumbersFromSearcher(
@@ -379,21 +381,23 @@ public class InboxService {
                 if (!CollectionUtils.isEmpty(applicationNumbers))
                     moduleSearchCriteria.put("applicationNumber", applicationNumbers);
                 break;
-                
+
             case BPA:
-                applicationNumbers =  bpaInboxFilterService.fetchApplicationNumbersFromSearcher(criteria,
-                		statusIdNameStringMap, requestInfo);
+                applicationNumbers = bpaInboxFilterService.fetchApplicationNumbersFromSearcher(
+                        criteria, statusIdNameStringMap, requestInfo);
                 break;
-                
+
             case BPAREG:
             case TL:
                 applicationNumbers = tlInboxFilterService.fetchApplicationNumbersFromSearcher(
                         criteria, statusIdNameStringMap, requestInfo);
                 break;
-            
+
             case NDC_MODULE:
-            	applicationNumbers = ndcInboxFilterService.fetchApplicationNumbersFromSearcher(criteria, statusIdNameStringMap, requestInfo);
-				break;
+                applicationNumbers = ndcInboxFilterService.fetchApplicationNumbersFromSearcher(
+                        criteria, statusIdNameStringMap, requestInfo);
+                break;
+
             case PGR:
                 applicationNumbers = pgrInboxFilterService.fetchApplicationNumbersFromSearcher(
                         criteria, statusIdNameStringMap, requestInfo);
@@ -408,6 +412,7 @@ public class InboxService {
                     moduleSearchCriteria.put("applicationNo", applicationNumbers);
                 break;
 
+            case "chb":
             case "CHB":
                 applicationNumbers = chbInboxFilterService.fetchApplicationNumbersFromSearcher(
                         criteria, statusIdNameStringMap, requestInfo);
@@ -415,6 +420,7 @@ public class InboxService {
                     moduleSearchCriteria.put("applicationNumber", applicationNumbers);
                 break;
 
+            case "challan_generation":
             case "Challan_Generation":
                 applicationNumbers = challanInboxFilterService.fetchApplicationNumbersFromSearcher(
                         criteria, statusIdNameStringMap, requestInfo);
@@ -435,10 +441,16 @@ public class InboxService {
                 if (!CollectionUtils.isEmpty(applicationNumbers))
                     moduleSearchCriteria.put("applicationNumber", applicationNumbers);
                 break;
-                            
+
             default:
-                // No action for unknown modules
+                moduleHandled = false;
                 break;
+        }
+
+        // NEW: Throw error if module not configured
+        if (!moduleHandled) {
+            throw new CustomException("MODULE_NOT_CONFIGURED",
+                    "Module '" + moduleName + "' is not configured for Inbox search");
         }
 
         if (!applicationNumbers.isEmpty())
