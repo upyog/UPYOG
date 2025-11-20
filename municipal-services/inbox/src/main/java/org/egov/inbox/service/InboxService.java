@@ -354,14 +354,16 @@ public class InboxService {
         boolean moduleHandled = true;
 
         switch (moduleName.toLowerCase()) {
-            case SWACH:
+      
+        case SWACH:
                 applicationNumbers = swachInboxFilterService.fetchApplicationNumbersFromSearcher(
                         criteria, statusIdNameStringMap, requestInfo);
                 if (!CollectionUtils.isEmpty(applicationNumbers))
                     moduleSearchCriteria.put(PGRANDSWACH_APPLICATION_PARAM, applicationNumbers);
                 break;
 
-            case PT:
+
+            case "pt":
                 applicationNumbers = ptInboxFilterService.fetchAcknowledgementIdsFromSearcher(
                         criteria, statusIdNameStringMap, requestInfo);
                 if (!CollectionUtils.isEmpty(applicationNumbers))
@@ -387,13 +389,14 @@ public class InboxService {
                         criteria, statusIdNameStringMap, requestInfo);
                 break;
 
-            case BPAREG:
+            case "bpareg":
             case TL:
                 applicationNumbers = tlInboxFilterService.fetchApplicationNumbersFromSearcher(
                         criteria, statusIdNameStringMap, requestInfo);
                 break;
 
-            case NDC_MODULE:
+            case "ndc":
+
                 applicationNumbers = ndcInboxFilterService.fetchApplicationNumbersFromSearcher(
                         criteria, statusIdNameStringMap, requestInfo);
                 break;
