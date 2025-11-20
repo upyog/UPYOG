@@ -242,6 +242,10 @@ public class InboxService {
                 handleModuleSearchCriteria(moduleName, criteria, statusIdNameMap, requestInfo,
                         moduleSearchCriteria, businessKeys);
 
+        if (CollectionUtils.isEmpty(businessKeys)) {
+            throw new CustomException("NO_APPLICATION_FOUND", 
+                "No application found in the database. Please check filters.");
+        }     
         processCriteria.setStatus(statusIds);
         processCriteria.setBusinessIds(new ArrayList<>(businessKeys));
         processCriteria.setTenantId(criteria.getTenantId());
