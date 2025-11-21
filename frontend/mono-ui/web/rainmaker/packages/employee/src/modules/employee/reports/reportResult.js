@@ -1176,6 +1176,7 @@ class ShowField extends Component {
           </td>
           <td></td>
           <td></td>
+          <td></td>
           <td>{tenantData.entries}</td>
           <td>{this.addCommas(tenantData.acquisitioncost)}</td>
         </tr>
@@ -1196,6 +1197,7 @@ class ShowField extends Component {
                 </a>
               </td>
               <td></td>
+              <td></td>
               <td>{classData.entries}</td>
               <td>{this.addCommas(classData.acquisitioncost)}</td>
             </tr>
@@ -1215,6 +1217,7 @@ class ShowField extends Component {
                       {expandedRows[parentKey] ? '▼' : '▶'} {parentcategory}
                     </a>
                   </td>
+                  <td></td>
                   <td>{parentData.entries}</td>
                   <td>{this.addCommas(parentData.acquisitioncost)}</td>
                 </tr>
