@@ -1126,6 +1126,48 @@ public class PropertyService {
 		if (!CollectionUtils.isEmpty(properties)) {
 			checkPropertyArears(genrateArrearRequest.getDemands(), properties.get(0));
 			genrateArrearRequest.getDemands().stream().forEach(demand -> {
+				
+				Map<String, Object> demandAdditionalDetail = null;
+
+				if (demand.getAdditionalDetails() instanceof Map) {
+				    Map<?, ?> map = (Map<?, ?>) demand.getAdditionalDetails();
+
+				    if (!map.isEmpty()) {
+				        // Now safely cast
+				    	demandAdditionalDetail = (Map<String, Object>) map;
+				    }
+				}
+
+				// If null or empty → initialize
+				if (demandAdditionalDetail == null) {
+					demandAdditionalDetail = new HashMap<>();
+				}
+				JsonNode addDetail = mapper.valueToTree(properties.get(0).getAddress().getAdditionalDetails());
+
+				String wardName = null;
+				if (addDetail != null && addDetail.has("wardNumber")) {
+					wardName = addDetail.get("wardNumber").asText();
+				}
+				demandAdditionalDetail.put("type", "ARREAR");
+				demandAdditionalDetail.put("ward", StringUtils.isNotEmpty(wardName) ? wardName : "N/A");
+				demandAdditionalDetail.put("oldPropertyId",
+						StringUtils.isNotEmpty(properties.get(0).getOldPropertyId()) ? properties.get(0).getOldPropertyId() : "N/A");
+				demandAdditionalDetail.put("ownerOldCustomerId",
+						StringUtils.isNotEmpty(
+								properties.get(0).getOwners().get(0).getAdditionalDetails().get("ownerOldCustomerId").asText())
+										? properties.get(0).getOwners().get(0).getAdditionalDetails().get("ownerOldCustomerId").asText()
+										: "N/A");
+				demandAdditionalDetail.put("ownerName",
+						StringUtils.isNotEmpty(properties.get(0).getOwners().get(0).getPropertyOwnerName())
+								? properties.get(0).getOwners().get(0).getPropertyOwnerName()
+								: "N/A");
+				demandAdditionalDetail.put("contactNumber",
+						StringUtils.isNotEmpty(properties.get(0).getOwners().get(0).getMobileNumber())
+								? properties.get(0).getOwners().get(0).getMobileNumber()
+								: "N/A");
+				
+				demand.setAdditionalDetails(demandAdditionalDetail);
+				
 				List<Demand> savedDemands = demandRepository.saveDemand(genrateArrearRequest.getRequestInfo(),
 						createArearDemand(demand, properties.get(0)));
 				if (CollectionUtils.isEmpty(savedDemands)) {

@@ -165,6 +165,7 @@ public class GarbageAccountService {
 
 	public GarbageAccountResponse create(GarbageAccountRequest createGarbageRequest) {
 
+		RequestInfo info = createGarbageRequest.getRequestInfo();
 		List<GarbageAccount> garbageAccounts = new ArrayList<>();
 
 		List<String> propertyIds = createGarbageRequest.getGarbageAccounts().stream()
@@ -211,7 +212,7 @@ public class GarbageAccountService {
 						org.egov.garbageservice.model.contract.Role role = org.egov.garbageservice.model.contract.Role.builder()
 								.code("CITIZEN").name("Citizen").build();
 						// map user uuid
-						userService.processGarbageAccount(null,role, subAccount);
+						userService.processGarbageAccount(info,role, subAccount);
 						// create garbage sub account
 						garbageAccountRepository.create(subAccount);
 						// create garbage objects
@@ -1417,6 +1418,7 @@ public class GarbageAccountService {
 	public GarbageAccountResponse searchGarbageAccounts(
 			SearchCriteriaGarbageAccountRequest searchCriteriaGarbageAccountRequest, Boolean isIndex) {
 
+		searchCriteriaGarbageAccountRequest.getSearchCriteriaGarbageAccount().setUserType(searchCriteriaGarbageAccountRequest.getRequestInfo().getUserInfo().getType());
 		// validate search criteria
 		validateAndEnrichSearchGarbageAccount(searchCriteriaGarbageAccountRequest);
 
@@ -1430,6 +1432,9 @@ public class GarbageAccountService {
 		Map<Integer, SearchCriteriaGarbageAccount> garbageCriteriaMap = new HashMap<>();
 		Integer counter = 1;
 
+		searchCriteriaGarbageAccountRequest.getSearchCriteriaGarbageAccount().setCreatedBy(Collections
+				.singletonList(searchCriteriaGarbageAccountRequest.getRequestInfo().getUserInfo().getUuid()));
+		
 		garbageCriteriaMap.put(counter++, searchCriteriaGarbageAccountRequest.getSearchCriteriaGarbageAccount());
 
 		if (isCriteriaEmpty(searchCriteriaGarbageAccountRequest.getSearchCriteriaGarbageAccount())
