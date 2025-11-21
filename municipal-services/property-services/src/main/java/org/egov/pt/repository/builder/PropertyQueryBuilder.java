@@ -36,6 +36,14 @@ public class PropertyQueryBuilder {
 	private static final String PT_TAX_CALCULATOR_TRACKER_SEARCH_QUERY = "SELECT * FROM eg_pt_tax_calculator_tracker eptct";
 	
 	private static final String PT_TAX_CALCULATOR_TRACKER_TENANT_ID_SEARCH_QUERY = "SELECT distinct(eptct.tenantid) FROM eg_pt_tax_calculator_tracker eptct";
+	
+	public static final String UPDATE_TRACKER_STATUS =
+	        "UPDATE eg_pt_tax_calculator_tracker " +
+	        "SET bill_status = :status, " +
+	        "lastmodifiedby = :lastModifiedBy, " +
+	        "lastmodifiedtime = :lastModifiedTime " +
+	        "WHERE propertyid = :consumerCode " +
+	        "AND tenantid = :tenantId";
 
 	private static final String SELECT = "SELECT ";
 	private static final String INNER_JOIN = "INNER JOIN";

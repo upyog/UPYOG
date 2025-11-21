@@ -92,6 +92,8 @@ import lombok.extern.slf4j.Slf4j;
 import com.fasterxml.jackson.databind.ObjectMapper; 
 import org.egov.pt.web.contracts.UpdatePropertyBillCriteria;
 
+
+
 @Slf4j
 @Service
 public class PropertyService {
@@ -173,6 +175,9 @@ public class PropertyService {
 
 	@Autowired
 	private RequestInfoUtils requestInfoUtils;
+	
+	@Autowired
+	private PTTaxCalculatorService ptTaxCalculatorService;
 
 	/**
 	 * Enriches the Request and pushes to the Queue
@@ -1078,6 +1083,14 @@ public class PropertyService {
 				.statusToBeUpdated(StatusEnum.CANCELLED)
 				.businessService(bill.getBusinessService()).additionalDetails(addDetailsNode).build();
 		billService.updateBillStatus(updateBillCriteria, cancelRequest.getRequestInfo());
+		
+		// UPDATE PT TRACKER STATUS
+	    ptTaxCalculatorService.cancelTrackerRecord(
+	            bill.getTenantId(),
+	            bill.getConsumerCode(),
+	            cancelRequest.getRequestInfo().getUserInfo().getUuid()
+	    );
+		
 
 		return true;
 	}
