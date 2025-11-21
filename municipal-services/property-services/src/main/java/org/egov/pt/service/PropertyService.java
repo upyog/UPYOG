@@ -1166,7 +1166,7 @@ public class PropertyService {
 								? properties.get(0).getOwners().get(0).getMobileNumber()
 								: "N/A");
 				
-				demand.setAdditionalDetails(demandAdditionalDetail);
+				demand.setAdditionalDetails(demandAdditionalDetail); 
 				
 				List<Demand> savedDemands = demandRepository.saveDemand(genrateArrearRequest.getRequestInfo(),
 						createArearDemand(demand, properties.get(0)));
