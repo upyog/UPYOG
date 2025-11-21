@@ -61,6 +61,7 @@ import org.egov.hrms.utils.ResponseInfoFactory;
 import org.egov.hrms.web.contract.*;
 import org.egov.tracer.kafka.LogAwareKafkaTemplate;
 import org.egov.tracer.model.CustomException;
+import org.egov.tracer.model.ServiceCallException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -92,16 +93,16 @@ public class EmployeeService {
 
 	@Autowired
 	private HRMSProducer hrmsProducer;
-	
+
 	@Autowired
 	private EmployeeRepository repository;
-	
+
 	@Autowired
 	private HRMSUtils hrmsUtils;
-	
+
 	@Autowired
 	private NotificationService notificationService;
-	
+
 	@Autowired
 	private ObjectMapper objectMapper;
 
@@ -111,7 +112,7 @@ public class EmployeeService {
 	 * 2. Enriches the employee object with required parameters
 	 * 3. Creates user in the egov-user service.
 	 * 4. Sends notification upon successful creation
-	 * 
+	 *
 	 * @param employeeRequest
 	 * @return
 	 */
@@ -119,20 +120,22 @@ public class EmployeeService {
 		RequestInfo requestInfo = employeeRequest.getRequestInfo();
 		Map<String, String> pwdMap = new HashMap<>();
 		idGenService.setIds(employeeRequest);
-		employeeRequest.getEmployees().stream().forEach(employee -> {
+		for(Employee employee : employeeRequest.getEmployees()) {
 			enrichCreateRequest(employee, requestInfo);
-			createUser(employee, requestInfo);
-			pwdMap.put(employee.getUuid(), employee.getUser().getPassword());
+			boolean isNewlyCreatedUser = createUser(employee, requestInfo);
+			if(isNewlyCreatedUser) {
+				pwdMap.put(employee.getUuid(), employee.getUser().getPassword());
+			}
 			employee.getUser().setPassword(null);
-		});
+		}
 		hrmsProducer.push(propertiesManager.getSaveEmployeeTopic(), employeeRequest);
 		notificationService.sendNotification(employeeRequest, pwdMap);
 		return generateResponse(employeeRequest);
 	}
-	
+
 	/**
 	 * Searches employees on a given criteria.
-	 * 
+	 *
 	 * @param criteria
 	 * @param requestInfo
 	 * @return
@@ -143,25 +146,25 @@ public class EmployeeService {
 			criteria.setIsActive(true);
 		else
 			criteria.setIsActive(false);*/
-        Map<String, User> mapOfUsers = new HashMap<String, User>();
+		Map<String, User> mapOfUsers = new HashMap<String, User>();
 		if(!StringUtils.isEmpty(criteria.getPhone()) || !CollectionUtils.isEmpty(criteria.getRoles())) {
-            Map<String, Object> userSearchCriteria = new HashMap<>();
-            userSearchCriteria.put(HRMSConstants.HRMS_USER_SEARCH_CRITERA_TENANTID,criteria.getTenantId());
-            if(!StringUtils.isEmpty(criteria.getPhone()))
-                userSearchCriteria.put(HRMSConstants.HRMS_USER_SEARCH_CRITERA_MOBILENO,criteria.getPhone());
-            if( !CollectionUtils.isEmpty(criteria.getRoles()) )
-                userSearchCriteria.put(HRMSConstants.HRMS_USER_SEARCH_CRITERA_ROLECODES,criteria.getRoles());
-            UserResponse userResponse = userService.getUser(requestInfo, userSearchCriteria);
+			Map<String, Object> userSearchCriteria = new HashMap<>();
+			userSearchCriteria.put(HRMSConstants.HRMS_USER_SEARCH_CRITERA_TENANTID,criteria.getTenantId());
+			if(!StringUtils.isEmpty(criteria.getPhone()))
+				userSearchCriteria.put(HRMSConstants.HRMS_USER_SEARCH_CRITERA_MOBILENO,criteria.getPhone());
+			if( !CollectionUtils.isEmpty(criteria.getRoles()) )
+				userSearchCriteria.put(HRMSConstants.HRMS_USER_SEARCH_CRITERA_ROLECODES,criteria.getRoles());
+			UserResponse userResponse = userService.getUser(requestInfo, userSearchCriteria);
 			userChecked =true;
-            if(!CollectionUtils.isEmpty(userResponse.getUser())) {
-                 mapOfUsers.putAll(userResponse.getUser().stream()
-                        .collect(Collectors.toMap(User::getUuid, Function.identity())));
-            }
+			if(!CollectionUtils.isEmpty(userResponse.getUser())) {
+				mapOfUsers.putAll(userResponse.getUser().stream()
+						.collect(Collectors.toMap(User::getUuid, Function.identity())));
+			}
 			List<String> userUUIDs = userResponse.getUser().stream().map(User :: getUuid).collect(Collectors.toList());
-            if(!CollectionUtils.isEmpty(criteria.getUuids()))
-                criteria.setUuids(criteria.getUuids().stream().filter(userUUIDs::contains).collect(Collectors.toList()));
-            else
-                criteria.setUuids(userUUIDs);
+			if(!CollectionUtils.isEmpty(criteria.getUuids()))
+				criteria.setUuids(criteria.getUuids().stream().filter(userUUIDs::contains).collect(Collectors.toList()));
+			else
+				criteria.setUuids(userUUIDs);
 		}
 		//checks if above criteria met and result is not  null will check for name search if list of names are given as user search on name is not bulk api
 
@@ -189,66 +192,78 @@ public class EmployeeService {
 		}
 		if(userChecked)
 			criteria.setTenantId(null);
-        List <Employee> employees = new ArrayList<>();
-        if(!((!CollectionUtils.isEmpty(criteria.getRoles()) || !CollectionUtils.isEmpty(criteria.getNames()) || !StringUtils.isEmpty(criteria.getPhone())) && CollectionUtils.isEmpty(criteria.getUuids())))
-            employees = repository.fetchEmployees(criteria, requestInfo);
-        List<String> uuids = employees.stream().map(Employee :: getUuid).collect(Collectors.toList());
-        log.info("Active employees are::" + employees.size() + "uuids are :::" + uuids);
+		List <Employee> employees = new ArrayList<>();
+		if(!((!CollectionUtils.isEmpty(criteria.getRoles()) || !CollectionUtils.isEmpty(criteria.getNames()) || !StringUtils.isEmpty(criteria.getPhone())) && CollectionUtils.isEmpty(criteria.getUuids())))
+			employees = repository.fetchEmployees(criteria, requestInfo);
+		List<String> uuids = employees.stream().map(Employee :: getUuid).collect(Collectors.toList());
+		log.info("Active employees are::" + employees.size() + "uuids are :::" + uuids);
 
 		if(!CollectionUtils.isEmpty(uuids)){
-            Map<String, Object> UserSearchCriteria = new HashMap<>();
-            UserSearchCriteria.put(HRMSConstants.HRMS_USER_SEARCH_CRITERA_UUID,uuids);
-            if(mapOfUsers.isEmpty()){
-            UserResponse userResponse = userService.getUser(requestInfo, UserSearchCriteria);
-			if(!CollectionUtils.isEmpty(userResponse.getUser())) {
-				mapOfUsers = userResponse.getUser().stream()
-						.collect(Collectors.toMap(User :: getUuid, Function.identity()));
-            }
-            }
-            for(Employee employee: employees){
-                employee.setUser(mapOfUsers.get(employee.getUuid()));
-            }
+			Map<String, Object> UserSearchCriteria = new HashMap<>();
+			UserSearchCriteria.put(HRMSConstants.HRMS_USER_SEARCH_CRITERA_UUID,uuids);
+			if(mapOfUsers.isEmpty()){
+				UserResponse userResponse = userService.getUser(requestInfo, UserSearchCriteria);
+				if(!CollectionUtils.isEmpty(userResponse.getUser())) {
+					mapOfUsers = userResponse.getUser().stream()
+							.collect(Collectors.toMap(User :: getUuid, Function.identity()));
+				}
+			}
+			for(Employee employee: employees){
+				employee.setUser(mapOfUsers.get(employee.getUuid()));
+			}
 		}
 		return EmployeeResponse.builder().responseInfo(factory.createResponseInfoFromRequestInfo(requestInfo, true))
 				.employees(employees).build();
 	}
-	
-	
-	
-	
-	
-	
+
+
+
+
+
+
 	public EmployeewardResponse searchemployee(EmployeeWithWard criteria, RequestInfo requestInfo) {
-	
-	    List<EmployeeWithWard> employees = new ArrayList<>();
 
-	    // Fetch employees based on criteria
-	    employees = repository.fetchEmployeesward(criteria, requestInfo);
+		List<EmployeeWithWard> employees = new ArrayList<>();
 
-	    return EmployeewardResponse.builder()
-	            .responseInfo(factory.createResponseInfoFromRequestInfo(requestInfo, true))
-	            .employees(employees)
-	            .build();
+		// Fetch employees based on criteria
+		employees = repository.fetchEmployeesward(criteria, requestInfo);
+
+		return EmployeewardResponse.builder()
+				.responseInfo(factory.createResponseInfoFromRequestInfo(requestInfo, true))
+				.employees(employees)
+				.build();
 	}
 
-	
+
 	/**
 	 * Creates user by making call to egov-user.
-	 * 
+	 *
 	 * @param employee
 	 * @param requestInfo
 	 */
-	private void createUser(Employee employee, RequestInfo requestInfo) {
+	private boolean createUser(Employee employee, RequestInfo requestInfo) {
 		enrichUser(employee);
+		Optional<User> existingUser = fetchExistingUser(employee, requestInfo);
+		if(existingUser.isPresent()) {
+			assignUserIdentifiers(employee, existingUser.get());
+			employee.getUser().setPassword(null);
+			return false;
+		}
 		UserRequest request = UserRequest.builder().requestInfo(requestInfo).user(employee.getUser()).build();
 		try {
 			UserResponse response = userService.createUser(request);
 			User user = response.getUser().get(0);
-			employee.setId(user.getId());
-			employee.setUuid(user.getUuid());
-			employee.getUser().setId(user.getId());
-			employee.getUser().setUuid(user.getUuid());
+			assignUserIdentifiers(employee, user);
+			return true;
 		}catch(Exception e) {
+			if(isDuplicateUserNameException(e)) {
+				Optional<User> duplicateUser = fetchExistingUser(employee, requestInfo);
+				if(duplicateUser.isPresent()) {
+					assignUserIdentifiers(employee, duplicateUser.get());
+					employee.getUser().setPassword(null);
+					return false;
+				}
+			}
 			log.error("Exception while creating user: ",e);
 			log.error("request: "+request);
 			throw new CustomException(ErrorConstants.HRMS_USER_CREATION_FAILED_CODE, ErrorConstants.HRMS_USER_CREATION_FAILED_MSG);
@@ -258,7 +273,7 @@ public class EmployeeService {
 
 	/**
 	 * Enriches the user object.
-	 * 
+	 *
 	 * @param employee
 	 */
 	private void enrichUser(Employee employee) {
@@ -273,9 +288,35 @@ public class EmployeeService {
 		employee.getUser().setType(UserType.EMPLOYEE.toString());
 	}
 
+	private Optional<User> fetchExistingUser(Employee employee, RequestInfo requestInfo) {
+		Map<String, Object> userSearchCriteria = new HashMap<>();
+		userSearchCriteria.put(HRMSConstants.HRMS_USER_SEARCH_CRITERA_TENANTID, employee.getTenantId());
+		userSearchCriteria.put(HRMSConstants.HRMS_USER_SEARCH_CRITERA_USERNAME, employee.getCode());
+		UserResponse userResponse = userService.getUser(requestInfo, userSearchCriteria);
+		if(Objects.nonNull(userResponse) && !CollectionUtils.isEmpty(userResponse.getUser())) {
+			return userResponse.getUser().stream().findFirst();
+		}
+		return Optional.empty();
+	}
+
+	private void assignUserIdentifiers(Employee employee, User user) {
+		employee.setId(user.getId());
+		employee.setUuid(user.getUuid());
+		employee.getUser().setId(user.getId());
+		employee.getUser().setUuid(user.getUuid());
+	}
+
+	private boolean isDuplicateUserNameException(Exception exception) {
+		if(exception instanceof ServiceCallException) {
+			String message = exception.getMessage();
+			return message != null && message.contains("DuplicateUserNameException");
+		}
+		return false;
+	}
+
 	/**
 	 * Enriches employee object by setting parent ids to all the child objects
-	 * 
+	 *
 	 * @param employee
 	 * @param requestInfo
 	 */
@@ -285,7 +326,7 @@ public class EmployeeService {
 				.createdBy(requestInfo.getUserInfo().getUuid())
 				.createdDate(new Date().getTime())
 				.build();
-		
+
 		employee.getJurisdictions().stream().forEach(jurisdiction -> {
 			jurisdiction.setId(UUID.randomUUID().toString());
 			jurisdiction.setAuditDetails(auditDetails);
@@ -330,7 +371,7 @@ public class EmployeeService {
 		employee.setAuditDetails(auditDetails);
 		employee.setIsActive(true);
 	}
-	
+
 	/**
 	 * Fetches next value from the position sequence table
 	 * @return
@@ -343,7 +384,7 @@ public class EmployeeService {
 	 * Service method to update user. Performs the following:
 	 * 1. Enriches the employee object with required parameters.
 	 * 2. Updates user by making call to the user service.
-	 * 
+	 *
 	 * @param employeeRequest
 	 * @return
 	 */
@@ -363,10 +404,10 @@ public class EmployeeService {
 		//notificationService.sendReactivationNotification(employeeRequest);
 		return generateResponse(employeeRequest);
 	}
-	
+
 	/**
 	 * Updates the user by making call to the user service.
-	 * 
+	 *
 	 * @param employee
 	 * @param requestInfo
 	 */
@@ -384,7 +425,7 @@ public class EmployeeService {
 
 	/**
 	 * Enriches update request with required parameters.
-	 * 
+	 *
 	 * @param employee
 	 * @param requestInfo
 	 * @param existingEmployeesData

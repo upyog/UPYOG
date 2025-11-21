@@ -463,6 +463,10 @@ public class MsevaSsoService {
 	                username = username.replaceAll("[^a-zA-Z0-9\\s]", "");
 	                String mobno = (String) dataObject.get(propertiesManager.hrmsEsevaApiResponseObjectMobile);
 	                String distname = (String) dataObject.get(propertiesManager.hrmsEsevaApiResponseObjectDistrict);
+
+					if ("SAS NAGAR".equalsIgnoreCase(distname)){
+					   distname="Mohali";
+				   }
 	                String email = (String) dataObject.get(propertiesManager.hrmsEsevaApiResponseObjectEmail);
 	                String fullname = (String) dataObject.get(propertiesManager.hrmsEsevaApiResponseObjectFullname);
 	                fullname = fullname.replaceAll("[^a-zA-Z0-9\\s]", "");
