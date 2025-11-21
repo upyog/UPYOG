@@ -46,6 +46,17 @@ public class AuthPreCheckFilter implements GlobalFilter, Ordered {
             return chain.filter(exchange);
         }
         else {
+            String contentType = exchange.getRequest().getHeaders().getFirst(HttpHeaders.CONTENT_TYPE);
+
+            // Skip body modification for multipart/form-data and application/x-www-form-urlencoded
+            // These content types cannot be parsed as Map and should pass through unchanged
+            if (contentType != null && (contentType.contains("multipart/form-data") ||
+                contentType.contains("application/x-www-form-urlencoded"))) {
+                // Set auth flag to true but skip body parsing - auth token will come from header
+                exchange.getAttributes().put(AUTH_BOOLEAN_FLAG_NAME, Boolean.TRUE);
+                return chain.filter(exchange);
+            }
+
             return modifyRequestBodyFilter.apply(new ModifyRequestBodyGatewayFilterFactory.Config()
                             .setRewriteFunction(Map.class, Map.class, authPreCheckFilterHelper))
                             .filter(exchange, chain);
