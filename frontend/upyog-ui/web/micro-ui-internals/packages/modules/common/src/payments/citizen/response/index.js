@@ -121,7 +121,7 @@ export const convertEpochToDate = (dateEpoch) => {
           successful={false}
         />
         <CardText>{t("CS_PAYMENT_FAILURE_MESSAGE")}</CardText>
-        {!(business_service?.includes("PT")) && !(business_service?.includes("TL")) ? (
+        {!(business_service?.includes("PT")) ? (
           <Link to={`/upyog-ui/citizen`}>
             <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} />
           </Link>
@@ -820,7 +820,7 @@ export const convertEpochToDate = (dateEpoch) => {
       />
       <CardText></CardText>
       <StatusTable>
-        <Row rowContainerStyle={rowContainerStyle} last label={business_service==="TL" ? t("CS_PAYMENT_APPLICATION_NUMBER") : t(label)} text={applicationNo} />
+        <Row rowContainerStyle={rowContainerStyle} last label={t(label)} text={applicationNo} />
         {/** TODO : move this key and value into the hook based on business Service */}
         {(business_service === "PT" || workflw) && (
           <Row
@@ -957,11 +957,11 @@ export const convertEpochToDate = (dateEpoch) => {
       {business_service?.includes("PT") &&<div style={{marginTop:"10px"}}><Link to={`/upyog-ui/citizen/feedback?redirectedFrom=${"upyog-ui/citizen/payment/success"}&propertyId=${consumerCode? consumerCode : ""}&acknowldgementNumber=${egId ? egId : ""}&tenantId=${tenantId}&creationReason=${business_service?.split(".")?.[1]}`}>
           <SubmitBar label={t("CS_REVIEW_AND_FEEDBACK")} />
       </Link></div>}
-      {/* {business_service?.includes("PT") ? (
+      {business_service?.includes("PT") ? (
         <div className="link" style={isMobile ? { marginTop: "8px", width: "100%", textAlign: "center" } : { marginTop: "8px" }} onClick={printReciept}>
             {t("CS_DOWNLOAD_RECEIPT")}
           </div>
-      ) : null} */}
+      ) : null}
       {business_service?.includes("WS") ? (
         <div className="link" style={isMobile ? { marginTop: "8px", width: "100%", textAlign: "center" } : { marginTop: "8px" }} onClick={printReciept}>
             {t("CS_DOWNLOAD_RECEIPT")}
@@ -1045,17 +1045,17 @@ export const convertEpochToDate = (dateEpoch) => {
           {t("SV_ID_CARD")}
         </div>
       ) : null}
-      {!(business_service?.includes("TL")) || !(business_service?.includes("PT")) && <SubmitBar onSubmit={printReciept} label={t("COMMON_DOWNLOAD_RECEIPT")} />}
+      {!(business_service == "TL") || !(business_service?.includes("PT")) && <SubmitBar onSubmit={printReciept} label={t("COMMON_DOWNLOAD_RECEIPT")} />}
       {!(business_service == "TL") || !(business_service?.includes("PT")) && (
         <div className="link" style={isMobile ? { marginTop: "8px", width: "100%", textAlign: "center" } : { marginTop: "8px" }}>
           <Link to={`/upyog-ui/citizen`}>{t("CORE_COMMON_GO_TO_HOME")}</Link>
         </div>
       )}
-      {/* {business_service == "TL" && (
+      {business_service == "TL" && (
         <Link to={`/upyog-ui/citizen`}>
           <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} />
         </Link>
-      )} */}
+      )}
       {business_service == "pet-services" && (
         <Link to={`/upyog-ui/citizen`}>
           <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} />

@@ -66,10 +66,8 @@ const CheckPage = ({ onSubmit, value = {} }) => {
       name: product.code,
       quantity: ewdet?.prlistQuantity[index].code,
       unit_price: product.price,
-      total_price: parseFloat(
-        (ewdet?.prlistQuantity[index].code * product.price).toFixed(2)
-      ),
-      })) || [];
+      total_price: ewdet?.prlistQuantity[index].code * product.price,
+    })) || [];
 
   const [agree, setAgree] = useState(false);
   const setdeclarationhandler = () => {

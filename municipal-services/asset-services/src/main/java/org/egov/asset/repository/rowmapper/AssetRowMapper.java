@@ -40,50 +40,40 @@ public class AssetRowMapper implements ResultSetExtractor<List<Asset>> {
 
         while (rs.next()) {
             String id = rs.getString("id");
-            String tenantId = rs.getString("tenantId");
-            String financialYear = rs.getString("financialYear");
-            String sourceOfFinance = rs.getString("sourceOfFinance");
-            double bookValue = rs.getDouble("bookvalue");
+            String tenantId = rs.getString("tenantid");
+
             Asset currentAsset = assetMap.get(id);
             if (currentAsset == null) {
 
                 currentAsset = Asset.builder()
                         .id(id)
                         .tenantId(tenantId)
-                        .financialYear(financialYear)
-                        .sourceOfFinance(sourceOfFinance)
-                        .assetBookRefNo(rs.getString("bookRefNo"))
+
                         .assetName(rs.getString("name"))
                         .description(rs.getString("description"))
                         .assetClassification(rs.getString("classification"))
-                        .assetParentCategory(rs.getString("parentCategory"))
+                        .assetParentCategory(rs.getString("parentcategory"))
                         .assetCategory(rs.getString("category"))
-                        .assetSubCategory(rs.getString("subCategory"))
-                        .department(rs.getString("department"))
-                        .applicationNo(rs.getString("applicationNo"))
-                        .approvalNo(rs.getString("approvalNo"))
-                        .approvalDate(rs.getLong("approvalDate"))
-                        .applicationDate(rs.getLong("applicationDate"))
+                        .assetSubCategory(rs.getString("subcategory"))
+
+                        .applicationNo(rs.getString("applicationno"))
+                        .approvalNo(rs.getString("approvalno"))
+                        .approvalDate(rs.getLong("approvaldate"))
+                        .applicationDate(rs.getLong("applicationdate"))
                         .status(rs.getString("status"))
-                        .accountId(rs.getString("accountId"))
-                        .assetCategory(rs.getString("category"))
-                        .assetSubCategory(rs.getString("subCategory"))
+                        .accountId(rs.getString("accountid"))
                         .remarks(rs.getString("remarks"))
-                        .purchaseCost(rs.getDouble("purchaseCost"))
-                        .acquisitionCost(rs.getDouble("acquisitionCost"))
-                        .bookValue(bookValue)
-                        .originalBookValue(rs.getDouble("originalBookValue"))
-                        .invoiceDate(rs.getLong("invoiceDate"))
-                        .invoiceNumber(rs.getString("invoiceNumber"))
-                        .purchaseDate(rs.getLong("purchaseDate"))
-                        .purchaseOrderNumber(rs.getString("purchaseOrderNumber"))
-                        .location(rs.getString("location"))
-                        .modeOfPossessionOrAcquisition(rs.getString("modeOfPossessionOrAcquisition"))
-                        .lifeOfAsset(rs.getString("lifeOfAsset"))
-                        .assetUsage(rs.getString("assetUsage"))
-                        .assetType(rs.getString("assetType"))
-                        .assetStatus(rs.getString("assetStatus"))
-                        .assetAssignable(rs.getBoolean("assetAssignable"))
+
+                        .acquisitionCost(rs.getDouble("acquisitioncost"))
+
+                        .purchaseDate(rs.getLong("purchasedate"))
+                        .bookRefNo(rs.getString("bookrefno"))
+
+                        .assetType(rs.getString("assettype"))
+                        .division(rs.getString("division"))
+                        .district(rs.getString("district"))
+                        .unitOfMeasurement(rs.getLong("unitofmeasurement"))
+
                         .build();
 
                 assetMap.put(id, currentAsset);
@@ -98,22 +88,20 @@ public class AssetRowMapper implements ResultSetExtractor<List<Asset>> {
         Document document = new Document();
         // Mapping AddressDetails
         Address addressDetails = new Address();
-        addressDetails.setAddressLine1(rs.getString("addressLine1"));
-        addressDetails.setAddressLine1(rs.getString("addressLine2"));
-        addressDetails.setTenantId(rs.getString("tenantId"));
-        addressDetails.setDoorNo(rs.getString("doorNo"));
+        addressDetails.setAddressLine1(rs.getString("addressline1"));
+        addressDetails.setAddressLine2(rs.getString("addressline2"));
+        addressDetails.setTenantId(rs.getString("tenantid"));
+        addressDetails.setDoorNo(rs.getString("doorno"));
         addressDetails.setLatitude(rs.getDouble("latitude"));
         addressDetails.setLongitude(rs.getDouble("longitude"));
-        addressDetails.setAddressId(rs.getString("addressId"));
-        addressDetails.setAddressNumber(rs.getString("addressNumber"));
+        addressDetails.setAddressId(rs.getString("addressid"));
+        addressDetails.setAddressNumber(rs.getString("addressnumber"));
         addressDetails.setType(rs.getString("type"));
-        addressDetails.setAddressLine1(rs.getString("addressLine1"));
-        addressDetails.setAddressLine2(rs.getString("addressLine2"));
         addressDetails.setLandmark(rs.getString("landmark"));
         addressDetails.setCity(rs.getString("city"));
         addressDetails.setPincode(rs.getString("pincode"));
         addressDetails.setDetail(rs.getString("detail"));
-        addressDetails.setBuildingName(rs.getString("buildingName"));
+        addressDetails.setBuildingName(rs.getString("buildingname"));
         addressDetails.setStreet(rs.getString("street"));
 
         //Mapping locality in addressDetails
@@ -128,26 +116,26 @@ public class AssetRowMapper implements ResultSetExtractor<List<Asset>> {
 
         // Mapping AuditDetails
         AuditDetails auditDetails = new AuditDetails();
-        auditDetails.setCreatedBy(rs.getString("createdBy"));
-        auditDetails.setCreatedTime(rs.getLong("createdTime"));
-        auditDetails.setLastModifiedBy(rs.getString("lastModifiedBy"));
-        auditDetails.setLastModifiedTime(rs.getLong("lastModifiedTime"));
+        auditDetails.setCreatedBy(rs.getString("createdby"));
+        auditDetails.setCreatedTime(rs.getLong("createdtime"));
+        auditDetails.setLastModifiedBy(rs.getString("lastmodifiedby"));
+        auditDetails.setLastModifiedTime(rs.getLong("lastmodifiedtime"));
         asset.setAuditDetails(auditDetails);
 
         // Mapping AssignmDetails
         AssetAssignment assetAssignment = new AssetAssignment();
-        assetAssignment.setAssignmentId(rs.getString("assignmentId"));
-        assetAssignment.setAssignedUserName(rs.getString("assignedUserName"));
-        assetAssignment.setEmployeeCode(rs.getString("employeeCode"));
+        assetAssignment.setAssignmentId(rs.getString("assignmentid"));
+        assetAssignment.setAssignedUserName(rs.getString("assignedusername"));
+        assetAssignment.setEmployeeCode(rs.getString("employeecode"));
         assetAssignment.setDesignation(rs.getString("designation"));
         assetAssignment.setDepartment(rs.getString("department"));
-        assetAssignment.setAssignedDate(rs.getLong("assignedDate"));
-        assetAssignment.setReturnDate(rs.getLong("returnDate"));
-        assetAssignment.setIsAssigned(rs.getBoolean("isAssigned"));
+        assetAssignment.setAssignedDate(rs.getLong("assigneddate"));
+        assetAssignment.setReturnDate(rs.getLong("returndate"));
+        assetAssignment.setIsAssigned(rs.getBoolean("isassigned"));
         asset.setAssetAssignment(assetAssignment);
 
         // Mapping additionalDetails
-        PGobject additionalDetails = (PGobject) rs.getObject("additionalDetails");
+        PGobject additionalDetails = (PGobject) rs.getObject("additionaldetails");
         if (additionalDetails != null) {
             try {
                 JsonNode additionalDetailsNode = objectMapper.readTree(additionalDetails.getValue());
@@ -158,14 +146,13 @@ public class AssetRowMapper implements ResultSetExtractor<List<Asset>> {
         }
 
         // Mapping documents
-        //List<Document> documents = new ArrayList<>();
         try {
             // Fetching document related columns from the result set
-            String documentId = rs.getString("documentId");
-            String documentType = rs.getString("documentType");
-            String fileStoreId = rs.getString("fileStoreId");
-            String documentUid = rs.getString("documentUid");
-            String docDetailsStr = rs.getString("docDetails");
+            String documentId = rs.getString("documentid");
+            String documentType = rs.getString("documenttype");
+            String fileStoreId = rs.getString("filestoreid");
+            String documentUid = rs.getString("documentuid");
+            String docDetailsStr = rs.getString("docdetails");
 
             // Mapping docDetails to Object if available
             Object docDetails = null;
@@ -179,14 +166,12 @@ public class AssetRowMapper implements ResultSetExtractor<List<Asset>> {
             document.setFileStoreId(fileStoreId);
             document.setDocumentUid(documentUid);
             document.setDocDetails(docDetails);
-            //documents.add(document);
 
         } catch (Exception e) {
             // Handle exception
             e.printStackTrace();
         }
-        //asset.setDocuments(documents);
-        //asset.getDocuments().add(document);
+
         if (asset != null) {
             // Process documents
             List<Document> assetDocuments = asset.getDocuments();

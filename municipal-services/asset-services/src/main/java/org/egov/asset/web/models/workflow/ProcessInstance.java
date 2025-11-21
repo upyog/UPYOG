@@ -39,7 +39,7 @@ public class ProcessInstance {
 
     @NotNull
     @Size(max = 128)
-    @JsonProperty("businessId")
+    @JsonProperty("businessId")	
     private String businessId;
 
     @NotNull

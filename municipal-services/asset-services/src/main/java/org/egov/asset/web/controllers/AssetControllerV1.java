@@ -10,6 +10,7 @@ import org.egov.asset.service.AssetService;
 import org.egov.asset.util.ResponseInfoFactory;
 import org.egov.asset.web.models.*;
 import org.egov.asset.web.models.calcontract.*;
+import org.egov.asset.web.models.calcontract.DepreciationDetail;
 import org.egov.asset.web.models.disposal.AssetDisposalRequest;
 import org.egov.asset.web.models.disposal.AssetDisposalResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +27,7 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequestMapping("/v1/assets")
+@CrossOrigin(origins = "http://localhost:3000")
 public class AssetControllerV1 {
 
     @Autowired
@@ -136,12 +138,19 @@ public class AssetControllerV1 {
     public ResponseEntity<DepreciationRes> getAssetDepreciationList(
             @ApiParam(value = "Details for updating existing assets + RequestInfo metadata.", required = true) @Valid @RequestBody AssetRequest assetRequest) {
         DepreciationRes apiresponse = assetCalculationClient.getAssetDepreciationList(assetRequest.getRequestInfo().getUserInfo().getTenantId(), assetRequest.getAsset().getId());
-        List<DepreciationDetail> clonedDetails = new ArrayList<>(apiresponse.getDepreciation());
+        
+        List<DepreciationDetail> clonedDetails = new ArrayList<>();
+        if (apiresponse != null && apiresponse.getDepreciation() != null) {
+            clonedDetails = new ArrayList<>(apiresponse.getDepreciation());
+        }
+        
         DepreciationRes response = DepreciationRes.builder()
-                .responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(null, true))
+                .responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(assetRequest.getRequestInfo(), true))
                 .depreciation(clonedDetails)
                 .build();
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+
+
 
 }

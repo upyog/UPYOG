@@ -31,7 +31,7 @@ const sidebarHiddenFor = [
   "/upyog-ui/citizen/select-location",
   "/upyog-ui/citizen/login",
   "/upyog-ui/citizen/register/otp",
-  // "/upyog-ui/citizen/verificationsearch-home" // route for verificationsearch component
+  "/upyog-ui/citizen/verificationsearch-home" // route for verificationsearch component
 ];
 import { APPLICATION_PATH } from "./Home/EDCR/utils";
 const getTenants = (codes, tenants) => {

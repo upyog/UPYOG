@@ -89,19 +89,17 @@ public class AssetRepository {
 
     public List<Asset> getAssetData(AssetSearchCriteria searchCriteria) {
         List<Object> preparedStmtList = new ArrayList<>();
-        String query = null;
-        if (searchCriteria.getApplicationNo() != null) {
-            query = queryBuilder.getAssetSearchQuery(searchCriteria, preparedStmtList);
-            log.info("Final query: " + query);
-            return jdbcTemplate.query(query, preparedStmtList.toArray(), rowMapper);
-        } else {
-            query = queryBuilder.getAssetSearchQueryForLimitedData(searchCriteria, preparedStmtList);
-            log.info("Final query: " + query);
-            return jdbcTemplate.query(query, preparedStmtList.toArray(), assetLimitedDateRowMapper);
-        }
+        String query = queryBuilder.getAssetSearchQuery(searchCriteria, preparedStmtList);
+        log.info("Final query: " + query);
+        log.info("Query parameters: " + preparedStmtList);
+        List<Asset> results = jdbcTemplate.query(query, preparedStmtList.toArray(), rowMapper);
+        log.info("Query returned " + results.size() + " results");
+        return results;
     }
 
     public List<AssetAssignment> getAssetAssignmentDetails(String tenantId, String assetId) {
         return jdbcTemplate.query(queryBuilder.ASSIGNMENT_DETAILS, new AssetAssignmentRowMapper(), assetId);
     }
+
+
 }

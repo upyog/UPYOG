@@ -67,6 +67,9 @@ public class AssetDisposal {
     @JsonProperty("assetDisposalStatus")
     private String assetDisposalStatus;
 
+    @JsonProperty("assetDisposalAgeInDays")
+    private Long assetDisposalAgeInDays;
+
     @JsonProperty("additionalDetails")
     private Object additionalDetails;
 

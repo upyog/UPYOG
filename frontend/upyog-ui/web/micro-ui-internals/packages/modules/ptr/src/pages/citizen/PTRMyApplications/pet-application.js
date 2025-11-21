@@ -1,6 +1,6 @@
 /**
  * This component, `PetApplication`, displays the details of a single pet registration application.
- * It uses `Card` and `KeyNote` components from `@upyog/digit-ui-react-components` 
+ * It uses `Card` and `KeyNote` components from `@nudmcdgnpm/digit-ui-react-components` 
  * to present the application's information in a structured format.
  * 
  * Key Features:
