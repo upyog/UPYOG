@@ -1,7 +1,13 @@
 package org.egov.ptr.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.*;
+import java.math.BigDecimal;
+import java.util.TimeZone;
+import jakarta.annotation.PostConstruct;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.egov.tracer.config.TracerConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -9,10 +15,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.stereotype.Component;
-
-import javax.annotation.PostConstruct;
-
-import java.util.TimeZone;
 
 @Import({ TracerConfiguration.class })
 @Getter
@@ -45,13 +47,25 @@ public class PetConfiguration {
 	@Value("${ptr.kafka.update.topic}")
 	private String updatePtrTopic;
 
+	@Value("${ptr.kafka.renew.topic}")
+	private String renewPtrTopic;
+
 	// USER
 	@Value("${egov.user.host}")
 	private String userHost;
 
 	@Value("${egov.user.search.path}")
 	private String userSearchEndpoint;
+	
+	@Value("${egov.user.context.path}")
+	private String userContextPath;
 
+	@Value("${egov.user.create.path}")
+	private String userCreateEndpoint;
+
+	@Value("${egov.user.update.path}")
+	private String userUpdateEndpoint;
+	
 	// IDGEN config
 
 	@Value("${egov.idgen.host}")
@@ -65,6 +79,12 @@ public class PetConfiguration {
 
 	@Value("${egov.idgen.ptrid.name}")
 	private String petIdGenName;
+
+	@Value("${egov.idgen.ptrtoken.format}")
+	private String petTokenFormat;
+
+	@Value("${egov.idgen.ptrtoken.name}")
+	private String petTokenName;
 
 	// NOTIFICATION TOPICS
 	@Value("${kafka.topics.notification.sms}")
@@ -91,11 +111,6 @@ public class PetConfiguration {
 	@Value("${egov.ptr.businessService}")
 	private String businessService;
 
-	// Notif variables
-
-	@Value("${egov.usr.events.download.receipt.link}")
-	private String userEventReceiptDownloadLink;
-
 	// Localization
 	@Value("${egov.localization.host}")
 	private String localizationHost;
@@ -120,12 +135,6 @@ public class PetConfiguration {
 
 	@Value("${egov.user.event.notification.enabled}")
 	private Boolean isUserEventsNotificationEnabled;
-
-	@Value("${egov.msg.download.receipt.link}")
-	private String receiptDownloadLink;
-
-	@Value("${egov.msg.pay.link}")
-	private String payLinkSMS;
 
 	@Value("${workflow.host}")
 	private String wfHost;
@@ -152,7 +161,24 @@ public class PetConfiguration {
 
 	@Value("${egov.mdms.search.endpoint}")
 	private String mdmsEndpoint;
-
+	
+	@Value("${upyog.mdms.v2.host}")
+	private String mdmsV2Host;
+	
+	@Value("${upyog.mdms.v2.search.endpoint}")
+	private String mdmsV2Endpoint;
+	
+	@Value("${upyog.mdms.v2.enabled}")
+	private boolean mdmsV2Enabled;
+	
+	@PostConstruct
+	public void init() {
+		if(mdmsV2Enabled) {
+			mdmsHost = mdmsV2Host;
+			mdmsEndpoint = mdmsV2Endpoint;
+		}
+	}
+	
 	// Billing-Service
 
 	@Value("${egbs.host}")
@@ -178,5 +204,19 @@ public class PetConfiguration {
 
 	@Value("${egov.bill.gen.endpoint}")
 	private String billGenerateEndpoint;
+	
+	@Value("${egov.ptr.newapplication.fee}")
+	private BigDecimal newApplicationFee;
+	
+	@Value("${egov.ptr.renewapplication.fee}")
+	private BigDecimal renewApplicationFee;
+	
+	@Value("${internal.microservice.user.username}")
+	private String internalMicroserviceUserName;
 
+	@Value("${internal.microservice.user.type}")
+	private String internalMicroserviceUserType;
+
+	@Value("${state.level.tenant.id}")
+	private String stateLevelTenantId;
 }

@@ -1,0 +1,271 @@
+{
+	"info": {
+		"_postman_id": "2480f6ef-344d-41f3-9690-18b7bbf47f9b",
+		"name": "PGR-AI",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "33631355"
+	},
+	"item": [
+		{
+			"name": "Create",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "sec-ch-ua-platform",
+						"value": "\"macOS\""
+					},
+					{
+						"key": "Referer",
+						"value": "https://niuatt.niua.in/upyog-ui/citizen/pgrai/fileGrievance/acknowledgement"
+					},
+					{
+						"key": "User-Agent",
+						"value": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json, text/plain, */*"
+					},
+					{
+						"key": "sec-ch-ua",
+						"value": "\"Not;A=Brand\";v=\"99\", \"Google Chrome\";v=\"139\", \"Chromium\";v=\"139\""
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json;charset=UTF-8"
+					},
+					{
+						"key": "sec-ch-ua-mobile",
+						"value": "?0"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"service\":{\"tenantId\":\"pg.citya\",\"serviceCode\":\"StrayAnimals\",\"serviceType\":\"Animals\",\"inputGrievance\":\"street \",\"additionalDetail\":{},\"source\":\"web\",\"address\":{\"landmark\":\"jk\",\"city\":\"Delhi\",\"pincode\":\"110045\",\"locality\":{\"code\":\"JLC476\",\"name\":\"JLC476\"},\"geoLocation\":{\"latitude\":28.582450505970876,\"longitude\":77.08089972629764,\"additionalDetails\":{}}}},\"workflow\":{\"action\":\"APPLY\",\"verificationDocuments\":[]},\"RequestInfo\":{\"apiId\":\"Rainmaker\",\"authToken\":\"71624b73-24cd-479b-b7a6-8295edd31e38\",\"userInfo\":{\"id\":811,\"uuid\":\"f789d679-352d-4aec-8198-4d61af1e0566\",\"userName\":\"8010012414\",\"name\":\"OWNER\",\"mobileNumber\":\"8010012414\",\"emailId\":\"cghvjbnk@gmail.com\",\"locale\":null,\"type\":\"CITIZEN\",\"roles\":[{\"name\":\"Citizen\",\"code\":\"CITIZEN\",\"tenantId\":\"pg\"}],\"active\":true,\"tenantId\":\"pg\",\"permanentCity\":null},\"msgId\":\"1756967093826|en_IN\",\"plainAccessRequest\":{}}}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8221/pgr-ai-services/v1/request/_create?tenantId=pg.citya",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8221",
+					"path": [
+						"pgr-ai-services",
+						"v1",
+						"request",
+						"_create"
+					],
+					"query": [
+						{
+							"key": "tenantId",
+							"value": "pg.citya"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Search",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "accept",
+						"value": "application/json, text/plain, */*"
+					},
+					{
+						"key": "accept-language",
+						"value": "en-GB,en-US;q=0.9,en;q=0.8,hi;q=0.7"
+					},
+					{
+						"key": "content-type",
+						"value": "application/json;charset=UTF-8"
+					},
+					{
+						"key": "origin",
+						"value": "https://niuatt.niua.in"
+					},
+					{
+						"key": "priority",
+						"value": "u=1, i"
+					},
+					{
+						"key": "referer",
+						"value": "https://niuatt.niua.in/upyog-ui/citizen/pgrai/myGrievance"
+					},
+					{
+						"key": "sec-ch-ua",
+						"value": "\"Not;A=Brand\";v=\"99\", \"Google Chrome\";v=\"139\", \"Chromium\";v=\"139\""
+					},
+					{
+						"key": "sec-ch-ua-mobile",
+						"value": "?0"
+					},
+					{
+						"key": "sec-ch-ua-platform",
+						"value": "\"macOS\""
+					},
+					{
+						"key": "sec-fetch-dest",
+						"value": "empty"
+					},
+					{
+						"key": "sec-fetch-mode",
+						"value": "cors"
+					},
+					{
+						"key": "sec-fetch-site",
+						"value": "same-origin"
+					},
+					{
+						"key": "user-agent",
+						"value": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36"
+					},
+					{
+						"key": "Cookie",
+						"value": "_ga=GA1.1.1866793165.1747538221; _clck=7xvixy%7C2%7Cfw0%7C0%7C1964; _ga_E39TFV5YXM=GS2.1.s1747538268$o1$g1$t1747538317$j0$l0$h0; _ga_VZ9TNBTB3X=GS2.1.s1747538221$o1$g1$t1747538338$j0$l0$h0"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"RequestInfo\":{\"apiId\":\"Rainmaker\",\"authToken\":\"20e5a426-b1a5-4078-84ce-ea7ec65ceffa\",\"userInfo\":{\"id\":811,\"uuid\":\"f789d679-352d-4aec-8198-4d61af1e0566\",\"userName\":\"8010012414\",\"name\":\"OWNER\",\"mobileNumber\":\"8010012414\",\"emailId\":\"cghvjbnk@gmail.com\",\"locale\":null,\"type\":\"CITIZEN\",\"roles\":[{\"name\":\"Citizen\",\"code\":\"CITIZEN\",\"tenantId\":\"pg\"}],\"active\":true,\"tenantId\":\"pg\",\"permanentCity\":null},\"msgId\":\"1757305489340|en_IN\",\"plainAccessRequest\":{}}}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8221/pgr-ai-services/v1/request/_search?tenantId=pg.citya&limit=50&offset=0&_=1757305489340",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8221",
+					"path": [
+						"pgr-ai-services",
+						"v1",
+						"request",
+						"_search"
+					],
+					"query": [
+						{
+							"key": "tenantId",
+							"value": "pg.citya"
+						},
+						{
+							"key": "limit",
+							"value": "50"
+						},
+						{
+							"key": "offset",
+							"value": "0"
+						},
+						{
+							"key": "_",
+							"value": "1757305489340"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "accept",
+						"value": "application/json, text/plain, */*"
+					},
+					{
+						"key": "accept-language",
+						"value": "en-GB,en-US;q=0.9,en;q=0.8,hi;q=0.7"
+					},
+					{
+						"key": "content-type",
+						"value": "application/json;charset=UTF-8"
+					},
+					{
+						"key": "origin",
+						"value": "https://niuatt.niua.in"
+					},
+					{
+						"key": "priority",
+						"value": "u=1, i"
+					},
+					{
+						"key": "referer",
+						"value": "https://niuatt.niua.in/upyog-ui/employee/pgrai/complaint-details/PG-PGR-2025-09-07-000241"
+					},
+					{
+						"key": "sec-ch-ua",
+						"value": "\"Not;A=Brand\";v=\"99\", \"Google Chrome\";v=\"139\", \"Chromium\";v=\"139\""
+					},
+					{
+						"key": "sec-ch-ua-mobile",
+						"value": "?0"
+					},
+					{
+						"key": "sec-ch-ua-platform",
+						"value": "\"macOS\""
+					},
+					{
+						"key": "sec-fetch-dest",
+						"value": "empty"
+					},
+					{
+						"key": "sec-fetch-mode",
+						"value": "cors"
+					},
+					{
+						"key": "sec-fetch-site",
+						"value": "same-origin"
+					},
+					{
+						"key": "user-agent",
+						"value": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36"
+					},
+					{
+						"key": "Cookie",
+						"value": "_ga=GA1.1.1866793165.1747538221; _clck=7xvixy%7C2%7Cfw0%7C0%7C1964; _ga_E39TFV5YXM=GS2.1.s1747538268$o1$g1$t1747538317$j0$l0$h0; _ga_VZ9TNBTB3X=GS2.1.s1747538221$o1$g1$t1747538338$j0$l0$h0"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"details\":{\"CS_COMPLAINT_DETAILS_COMPLAINT_NO\":\"PG-PGR-2025-09-07-000241\",\"CS_COMPLAINT_DETAILS_APPLICATION_STATUS\":\"CS_COMMON_PENDINGFORASSIGNMENT\",\"CS_ADDCOMPLAINT_COMPLAINT_TYPE\":\"SERVICEDEFS.STREETLIGHTS\",\"CS_ADDCOMPLAINT_COMPLAINT_SUB_TYPE\":\"SERVICEDEFS.STREETLIGHTNOTWORKING\",\"CS_COMPLAINT_FILED_DATE\":\"7-Sep-2025\",\"ES_CREATECOMPLAINT_ADDRESS\":[\"Anuman Mandeer\",null,null,\"421201\"]},\"workflow\":{\"action\":\"ASSIGN\",\"assignes\":[\"046f5d2d-f936-427e-84fb-0fc8dfe97eee\"],\"comments\":\"sdf\",\"verificationDocuments\":[]},\"service\":{\"active\":true,\"citizen\":{\"id\":1764,\"userName\":\"9527522658\",\"name\":\"अनिल मुहित्य\",\"type\":\"CITIZEN\",\"mobileNumber\":\"9527522658\",\"emailId\":null,\"roles\":[{\"id\":null,\"name\":\"Citizen\",\"code\":\"CITIZEN\",\"tenantId\":\"pg\"}],\"tenantId\":\"pg\",\"uuid\":\"b921b7ef-c075-4812-8e4e-51e8ecaa1c26\",\"active\":true},\"id\":\"27762f13-ef38-436f-8cff-6141c1147e23\",\"tenantId\":\"pg.citya\",\"serviceCode\":\"StreetLightNotWorking\",\"serviceRequestId\":\"PG-PGR-2025-09-07-000241\",\"accountId\":\"b921b7ef-c075-4812-8e4e-51e8ecaa1c26\",\"rating\":null,\"additionalDetail\":{},\"applicationStatus\":\"PENDINGFORASSIGNMENT\",\"source\":\"web\",\"address\":{\"tenantId\":\"pg.citya\",\"doorNo\":null,\"plotNo\":null,\"id\":\"d3de45e1-c71d-4d1d-b1ce-74c85d2283a1\",\"landmark\":\"Anuman Mandeer\",\"city\":null,\"district\":null,\"region\":\"\",\"state\":\"\",\"country\":null,\"pincode\":\"421201\",\"additionDetails\":null,\"buildingName\":null,\"street\":null,\"locality\":{\"code\":\"\",\"name\":null,\"label\":null,\"latitude\":null,\"longitude\":null,\"children\":null,\"materializedPath\":null},\"geoLocation\":{\"latitude\":0,\"longitude\":0,\"additionalDetails\":null}},\"auditDetails\":{\"createdBy\":\"b71fb331-542f-4ec0-a3e5-4ae63c28c6ba\",\"lastModifiedBy\":\"b71fb331-542f-4ec0-a3e5-4ae63c28c6ba\",\"createdTime\":1757241437841,\"lastModifiedTime\":1757241437841},\"priority\":null,\"serviceType\":\"StreetLights\",\"inputGrievance\":\"मेरे यहां पर light नहीं आ रही।\"},\"audit\":{\"citizen\":{\"id\":1764,\"userName\":\"9527522658\",\"name\":\"अनिल मुहित्य\",\"type\":\"CITIZEN\",\"mobileNumber\":\"9527522658\",\"emailId\":null,\"roles\":[{\"id\":null,\"name\":\"Citizen\",\"code\":\"CITIZEN\",\"tenantId\":\"pg\"}],\"tenantId\":\"pg\",\"uuid\":\"b921b7ef-c075-4812-8e4e-51e8ecaa1c26\",\"active\":true},\"details\":{\"createdBy\":\"b71fb331-542f-4ec0-a3e5-4ae63c28c6ba\",\"lastModifiedBy\":\"b71fb331-542f-4ec0-a3e5-4ae63c28c6ba\",\"createdTime\":1757241437841,\"lastModifiedTime\":1757241437841},\"source\":\"web\",\"rating\":null,\"serviceCode\":\"StreetLightNotWorking\"},\"RequestInfo\":{\"apiId\":\"Rainmaker\",\"authToken\":\"d0d40fc6-956b-4296-91b6-f0237fc5bc7c\",\"userInfo\":{\"id\":831,\"uuid\":\"4b73b3e7-6662-4d30-b4c1-1872c1c43c0e\",\"userName\":\"GRO\",\"name\":\"Shivank\",\"mobileNumber\":\"7890789078\",\"emailId\":null,\"locale\":null,\"type\":\"EMPLOYEE\",\"roles\":[{\"name\":\"Department Grievance Routing Officer\",\"code\":\"DGRO\",\"tenantId\":\"pg.citya\"},{\"name\":\"Grievance Officer\",\"code\":\"GO\",\"tenantId\":\"pg.citya\"},{\"name\":\"Grievance Routing Officer\",\"code\":\"GRO\",\"tenantId\":\"pg.citya\"},{\"name\":\"Redressal Officer\",\"code\":\"RO\",\"tenantId\":\"pg.citya\"}],\"active\":true,\"tenantId\":\"pg.citya\",\"permanentCity\":null},\"msgId\":\"1757305611288|en_IN\",\"plainAccessRequest\":{}}}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://niuatt.niua.in/pgr-ai-services/v1/request/_update",
+					"protocol": "https",
+					"host": [
+						"niuatt",
+						"niua",
+						"in"
+					],
+					"path": [
+						"pgr-ai-services",
+						"v1",
+						"request",
+						"_update"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

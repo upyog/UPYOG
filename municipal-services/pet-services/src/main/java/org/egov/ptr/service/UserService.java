@@ -16,7 +16,8 @@ import java.util.stream.Collectors;
 
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.Role;
-import org.egov.ptr.models.OwnerInfo;
+import org.egov.common.contract.request.User;
+import org.egov.ptr.config.PetConfiguration;
 import org.egov.ptr.models.PetRegistrationApplication;
 import org.egov.ptr.models.PetRegistrationRequest;
 import org.egov.ptr.models.user.CreateUserRequest;
@@ -25,7 +26,6 @@ import org.egov.ptr.models.user.UserSearchRequest;
 import org.egov.ptr.repository.ServiceRequestRepository;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
@@ -41,23 +41,11 @@ public class UserService {
 	@Autowired
 	private ServiceRequestRepository serviceRequestRepository;
 
-	@Value("${egov.user.host}")
-	private String userHost;
-
-	@Value("${egov.user.context.path}")
-	private String userContextPath;
-
-	@Value("${egov.user.create.path}")
-	private String userCreateEndpoint;
-
-	@Value("${egov.user.search.path}")
-	private String userSearchEndpoint;
-
-	@Value("${egov.user.update.path}")
-	private String userUpdateEndpoint;
+	@Autowired
+	private PetConfiguration petConfiguration;
 
 	/**
-	 * Creates user of the owners of pet if it is not created already
+	 * Creates user if it is not created already
 	 * 
 	 * @param request PetRegistrationRequest received for creating application
 	 */
@@ -66,12 +54,12 @@ public class UserService {
 		PetRegistrationApplication petApplication = request.getPetRegistrationApplications().get(0);
 		RequestInfo requestInfo = request.getRequestInfo();
 		Role role = getCitizenRole();
-		OwnerInfo owner = new OwnerInfo();
+		User owner = new User();
 		addUserDefaultFields(petApplication.getTenantId(), role, owner);
 		UserDetailResponse userDetailResponse = userExists(owner, requestInfo);
-		List<OwnerInfo> existingUsersFromService = userDetailResponse.getUser();
-		Map<String, OwnerInfo> ownerMapFromSearch = existingUsersFromService.stream()
-				.collect(Collectors.toMap(OwnerInfo::getUuid, Function.identity()));
+		List<User> existingUsersFromService = userDetailResponse.getUser();
+		Map<String, User> ownerMapFromSearch = existingUsersFromService.stream()
+				.collect(Collectors.toMap(User::getUuid, Function.identity()));
 
 		if (CollectionUtils.isEmpty(existingUsersFromService)) {
 
@@ -98,7 +86,7 @@ public class UserService {
 	 * 
 	 */
 	private UserDetailResponse updateExistingUser(PetRegistrationApplication petApplication, RequestInfo requestInfo,
-			Role role, OwnerInfo ownerFromRequest, OwnerInfo ownerInfoFromSearch) {
+			Role role, User ownerFromRequest, User ownerInfoFromSearch) {
 
 		UserDetailResponse userDetailResponse;
 
@@ -106,17 +94,20 @@ public class UserService {
 		ownerFromRequest.setUuid(ownerInfoFromSearch.getUuid());
 		addUserDefaultFields(petApplication.getTenantId(), role, ownerFromRequest);
 
-		StringBuilder uri = new StringBuilder(userHost).append(userContextPath).append(userUpdateEndpoint);
-		userDetailResponse = userCall(new CreateUserRequest(requestInfo, ownerFromRequest), uri);
+		StringBuilder uri = new StringBuilder(petConfiguration.getUserHost())
+				.append(petConfiguration.getUserContextPath()).append(petConfiguration.getUserSearchEndpoint());
+		userDetailResponse = userCall(
+				CreateUserRequest.builder().requestInfo(requestInfo).user(ownerFromRequest).build(), uri);
 		if (userDetailResponse.getUser().get(0).getUuid() == null) {
 			throw new CustomException("INVALID USER RESPONSE", "The user updated has uuid as null");
 		}
 		return userDetailResponse;
 	}
 
-	private UserDetailResponse createUser(RequestInfo requestInfo, OwnerInfo owner) {
+	private UserDetailResponse createUser(RequestInfo requestInfo, User owner) {
 		UserDetailResponse userDetailResponse;
-		StringBuilder uri = new StringBuilder(userHost).append(userContextPath).append(userCreateEndpoint);
+		StringBuilder uri = new StringBuilder(petConfiguration.getUserHost())
+				.append(petConfiguration.getUserContextPath()).append(petConfiguration.getUserSearchEndpoint());
 
 		CreateUserRequest userRequest = CreateUserRequest.builder().requestInfo(requestInfo).user(owner).build();
 
@@ -138,16 +129,11 @@ public class UserService {
 	 * @param role     The role of the user set in this case to CITIZEN
 	 * @param owner    The user whose fields are to be set
 	 */
-	private void addUserDefaultFields(String tenantId, Role role, OwnerInfo owner) {
+	private void addUserDefaultFields(String tenantId, Role role, User owner) {
 
-		owner.setActive(true);
 		owner.setTenantId(tenantId);
 		owner.setRoles(Collections.singletonList(role));
 		owner.setType("CITIZEN");
-		owner.setCreatedDate(null);
-		owner.setCreatedBy(null);
-		owner.setLastModifiedDate(null);
-		owner.setLastModifiedBy(null);
 	}
 
 	private Role getCitizenRole() {
@@ -164,14 +150,15 @@ public class UserService {
 	 * @return UserDetailResponse containing the user if present and the
 	 *         responseInfo
 	 */
-	private UserDetailResponse userExists(OwnerInfo owner, RequestInfo requestInfo) {
+	private UserDetailResponse userExists(User owner, RequestInfo requestInfo) {
 
 		UserSearchRequest userSearchRequest = getBaseUserSearchRequest(owner.getTenantId(), requestInfo);
 		userSearchRequest.setMobileNumber(owner.getMobileNumber());
 		userSearchRequest.setUserType(owner.getType());
 		userSearchRequest.setName(owner.getName());
 
-		StringBuilder uri = new StringBuilder(userHost).append(userSearchEndpoint);
+		StringBuilder uri = new StringBuilder(petConfiguration.getUserHost())
+				.append(petConfiguration.getUserSearchEndpoint());
 		return userCall(userSearchRequest, uri);
 	}
 
@@ -183,7 +170,7 @@ public class UserService {
 	 * @param listOfMobileNumber list of unique mobileNumbers in the
 	 *                           PetRegistrationRequest
 	 */
-	private void setUserName(OwnerInfo owner, Set<String> listOfMobileNumber) {
+	private void setUserName(User owner, Set<String> listOfMobileNumber) {
 
 		if (listOfMobileNumber.contains(owner.getMobileNumber())) {
 			owner.setUserName(owner.getMobileNumber());
@@ -204,7 +191,8 @@ public class UserService {
 	 */
 	public UserDetailResponse getUser(UserSearchRequest userSearchRequest) {
 
-		StringBuilder uri = new StringBuilder(userHost).append(userSearchEndpoint);
+		StringBuilder uri = new StringBuilder(petConfiguration.getUserHost())
+				.append(petConfiguration.getUserSearchEndpoint());
 		UserDetailResponse userDetailResponse = userCall(userSearchRequest, uri);
 		return userDetailResponse;
 	}
@@ -219,11 +207,7 @@ public class UserService {
 	@SuppressWarnings("unchecked")
 	private UserDetailResponse userCall(Object userRequest, StringBuilder url) {
 
-		String dobFormat = null;
-		if (url.indexOf(userSearchEndpoint) != -1 || url.indexOf(userUpdateEndpoint) != -1)
-			dobFormat = "yyyy-MM-dd";
-		else if (url.indexOf(userCreateEndpoint) != -1)
-			dobFormat = "dd/MM/yyyy";
+		String dobFormat = determineDobFormat(url.toString());
 		try {
 			Optional<Object> response = serviceRequestRepository.fetchResult(url, userRequest);
 
@@ -242,6 +226,21 @@ public class UserService {
 		}
 	}
 
+	/**
+	 * Determines the date format based on the URL endpoint
+	 * 
+	 * @param url The URL of the endpoint
+	 * @return The appropriate date format
+	 */
+	private String determineDobFormat(String url) {
+		if (url.contains(petConfiguration.getUserSearchEndpoint()) || url.contains(petConfiguration.getUserSearchEndpoint())) {
+			return "yyyy-MM-dd";
+		} else if (url.contains(petConfiguration.getUserSearchEndpoint())) {
+			return "dd/MM/yyyy";
+		}
+		return null;
+	}
+	
 	/**
 	 * Parses date formats to long for all users in responseMap
 	 * 
@@ -295,16 +294,11 @@ public class UserService {
 	 * @param userDetailResponse userDetailResponse from the user Service
 	 *                           corresponding to the given owner
 	 */
-	private void setOwnerFields(OwnerInfo owner, UserDetailResponse userDetailResponse, RequestInfo requestInfo) {
+	private void setOwnerFields(User owner, UserDetailResponse userDetailResponse, RequestInfo requestInfo) {
 
 		owner.setUuid(userDetailResponse.getUser().get(0).getUuid());
 		owner.setId(userDetailResponse.getUser().get(0).getId());
 		owner.setUserName((userDetailResponse.getUser().get(0).getUserName()));
-		owner.setCreatedBy(requestInfo.getUserInfo().getUuid());
-		owner.setCreatedDate(System.currentTimeMillis());
-		owner.setLastModifiedBy(requestInfo.getUserInfo().getUuid());
-		owner.setLastModifiedDate(System.currentTimeMillis());
-		owner.setActive(userDetailResponse.getUser().get(0).getActive());
 	}
 
 	/**
@@ -326,9 +320,9 @@ public class UserService {
 				.build();
 	}
 
-	private UserDetailResponse searchByUserName(String userName, String tenantId) {
+	public UserDetailResponse searchByUserName(String userName, String tenantId) {
 		UserSearchRequest userSearchRequest = new UserSearchRequest();
-		userSearchRequest.setUserType("CITIZEN");
+		userSearchRequest.setUserType(petConfiguration.getInternalMicroserviceUserType());
 		userSearchRequest.setUserName(userName);
 		userSearchRequest.setTenantId(tenantId);
 		return getUser(userSearchRequest);
@@ -338,7 +332,7 @@ public class UserService {
 		return tenantId.split("\\.")[0];
 	}
 
-	private UserDetailResponse searchedSingleUserExists(OwnerInfo owner, RequestInfo requestInfo) {
+	private UserDetailResponse searchedSingleUserExists(User owner, RequestInfo requestInfo) {
 
 		UserSearchRequest userSearchRequest = getBaseUserSearchRequest(owner.getTenantId(), requestInfo);
 		userSearchRequest.setUserType(owner.getType());
@@ -346,7 +340,8 @@ public class UserService {
 		uuids.add(owner.getUuid());
 		userSearchRequest.setUuid(uuids);
 
-		StringBuilder uri = new StringBuilder(userHost).append(userSearchEndpoint);
+		StringBuilder uri = new StringBuilder(petConfiguration.getUserHost())
+				.append(petConfiguration.getUserSearchEndpoint());
 		return userCall(userSearchRequest, uri);
 	}
 
