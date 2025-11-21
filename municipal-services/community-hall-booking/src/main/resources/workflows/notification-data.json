@@ -1,0 +1,358 @@
+
+Version 1
+{
+    "RequestInfo": {
+        "apiId": "Rainmaker",
+        "action": "",
+        "did": 1,
+        "key": "",
+        "msgId": "20170310130900|en_IN",
+        "requesterId": "",
+        "ts": 1513579888683,
+        "ver": ".01",
+        "authToken": "2d7fd668-9c29-4eff-a7a0-1909d9078b6f",
+        "userInfo": {
+            "id": 92,
+            "uuid": "9920481a-15a0-4424-b1d2-e913213f71d8",
+            "userName": "GRO",
+            "name": "GRO",
+            "mobileNumber": "8855899544",
+            "emailId": null,
+            "locale": null,
+            "type": "EMPLOYEE",
+            "roles": [
+                {
+                    "name": "PGR Last Mile Employee",
+                    "code": "PGR_LME",
+                    "tenantId": "pg.citya"
+                },
+                {
+                    "name": "Employee",
+                    "code": "EMPLOYEE",
+                    "tenantId": "pg"
+                },
+                {
+                    "name": "Grievance Routing Officer",
+                    "code": "GRO",
+                    "tenantId": "pg.citya"
+                },
+                {
+                    "name": "Super User",
+                    "code": "SUPERUSER",
+                    "tenantId": "pg"
+                }
+            ],
+            "active": true,
+            "tenantId": "pg.citya",
+            "permanentCity": null
+        }
+    },
+    "tenantId": "pg",
+    "messages": [
+        {
+            "code": "NOTIFICATION_BOOKING_CREATED",
+            "message": "Dear Citizen, Your OTP to complete your UPYOG Registration is 12345.\n\nUPYOG#1207167462318135756#1207167462307097438",
+            "module": "rainmaker-chb-notification",
+            "locale": "en_IN"
+        },
+        {
+            "code": "NOTIFICATION_BOOKED",
+            "message": "Hi {APPLICANT_NAME} your booking no {BOOKING_NO} for community hall {COMMUNITY_HALL_NAME} is confirmed. Please download permission letter using link {CHB_PERMISSION_LETTER_LINK}",
+            "module": "rainmaker-chb-notification",
+            "locale": "en_IN"
+        },
+        {
+            "code": "PAYMENT_FAILED",
+            "message": "Hi {APPLICANT_NAME} your payment for booking no {BOOKING_NO} for community hall {COMMUNITY_HALL_NAME} has failed. Please try after 30 mins",
+            "module": "rainmaker-chb-notification",
+            "locale": "en_IN"
+        }
+
+    ]
+}
+
+
+
+version 2
+------
+
+
+{
+    "RequestInfo": {
+        "apiId": "Rainmaker",
+        "action": "",
+        "did": 1,
+        "key": "",
+        "msgId": "20170310130900|en_IN",
+        "requesterId": "",
+        "ts": 1513579888683,
+        "ver": ".01",
+        "authToken": "2d7fd668-9c29-4eff-a7a0-1909d9078b6f",
+        "userInfo": {
+            "id": 92,
+            "uuid": "9920481a-15a0-4424-b1d2-e913213f71d8",
+            "userName": "GRO",
+            "name": "GRO",
+            "mobileNumber": "8855899544",
+            "emailId": null,
+            "locale": null,
+            "type": "EMPLOYEE",
+            "roles": [
+                {
+                    "name": "PGR Last Mile Employee",
+                    "code": "PGR_LME",
+                    "tenantId": "pg.citya"
+                },
+                {
+                    "name": "Employee",
+                    "code": "EMPLOYEE",
+                    "tenantId": "pg"
+                },
+                {
+                    "name": "Grievance Routing Officer",
+                    "code": "GRO",
+                    "tenantId": "pg.citya"
+                },
+                {
+                    "name": "Super User",
+                    "code": "SUPERUSER",
+                    "tenantId": "pg"
+                }
+            ],
+            "active": true,
+            "tenantId": "pg.citya",
+            "permanentCity": null
+        }
+    },
+    "tenantId": "pg",
+    "messages": [
+        {
+            "code": "NOTIFICATION_BOOKING_CREATED",
+            "message": "Hi {APPLICANT_NAME} your booking no {BOOKING_NO} for community hall {COMMUNITY_HALL_NAME} is created. Please pay using link {CHB_PAYMENT_LINK}",
+            "module": "rainmaker-chb-notification",
+            "locale": "en_IN"
+        },
+        {
+            "code": "NOTIFICATION_BOOKED",
+            "message": "Hi {APPLICANT_NAME} your booking no {BOOKING_NO} for community hall {COMMUNITY_HALL_NAME} is confirmed. Please download permission letter using link {CHB_PERMISSION_LETTER_LINK}",
+            "module": "rainmaker-chb-notification",
+            "locale": "en_IN"
+        },
+        {
+            "code": "PAYMENT_FAILED",
+            "message": "Hi {APPLICANT_NAME} your payment for booking no {BOOKING_NO} for community hall {COMMUNITY_HALL_NAME} has failed. Please try after 30 mins",
+            "module": "rainmaker-chb-notification",
+            "locale": "en_IN"
+        }
+
+    ]
+}
+
+
+version 3: 21 september
+
+{
+    "RequestInfo": {
+        "apiId": "Rainmaker",
+        "action": "",
+        "did": 1,
+        "key": "",
+        "msgId": "20170310130900|en_IN",
+        "requesterId": "",
+        "ts": 1513579888683,
+        "ver": ".01",
+        "authToken": "2d7fd668-9c29-4eff-a7a0-1909d9078b6f",
+        "userInfo": {
+            "id": 92,
+            "uuid": "9920481a-15a0-4424-b1d2-e913213f71d8",
+            "userName": "GRO",
+            "name": "GRO",
+            "mobileNumber": "8855899544",
+            "emailId": null,
+            "locale": null,
+            "type": "EMPLOYEE",
+            "roles": [
+                {
+                    "name": "PGR Last Mile Employee",
+                    "code": "PGR_LME",
+                    "tenantId": "pg.citya"
+                },
+                {
+                    "name": "Employee",
+                    "code": "EMPLOYEE",
+                    "tenantId": "pg"
+                },
+                {
+                    "name": "Grievance Routing Officer",
+                    "code": "GRO",
+                    "tenantId": "pg.citya"
+                },
+                {
+                    "name": "Super User",
+                    "code": "SUPERUSER",
+                    "tenantId": "pg"
+                }
+            ],
+            "active": true,
+            "tenantId": "pg.citya",
+            "permanentCity": null
+        }
+    },
+    "tenantId": "pg",
+    "messages": [
+        {
+            "code": "BOOKING_CREATED_EVENT",
+            "message": "Hi %s your booking no %s for community hall %s is created. Please pay to confirm the booking using link %s",
+            "module": "rainmaker-chb-notification",
+            "locale": "en_IN"
+        },
+         {
+            "code": "BOOKING_CREATED_SMS",
+            "message": "Hi %s your booking no %s for community hall %s is created. Please pay to confirm the booking.",
+            "module": "rainmaker-chb-notification",
+            "locale": "en_IN"
+        },
+        {
+            "code": "BOOKED_EVENT",
+            "message": "Hi %s your booking no %s for community hall %s is confirmed. Please download permission letter using link %s",
+            "module": "rainmaker-chb-notification",
+            "locale": "en_IN"
+        },
+        {
+            "code": "BOOKED_SMS",
+            "message": "Hi %s your booking no %s for community hall %s is confirmed. Please download permission letter using link %s",
+            "module": "rainmaker-chb-notification",
+            "locale": "en_IN"
+        },
+        {
+            "code": "PAYMENT_FAILED_EVENT",
+            "message": "Hi %s your payment for booking no %s for community hall %s has failed. Please try after 30 mins",
+            "module": "rainmaker-chb-notification",
+            "locale": "en_IN"
+        },
+        {
+            "code": "PAYMENT_FAILED_SMS",
+            "message": "Hi %s your payment for booking no %s for community hall %s has failed. Please try after 30 mins",
+            "module": "rainmaker-chb-notification",
+            "locale": "en_IN"
+        },
+        {
+            "code": "CANCELLED_EVENT",
+            "message": "Hi %s your payment for booking no %s for community hall %s has failed. Please try after 30 mins",
+            "module": "rainmaker-chb-notification",
+            "locale": "en_IN"
+        },
+        {
+            "code": "CANCELLED_SMS",
+            "message": "Hi %s your payment for booking no %s for community hall %s has failed. Please try after 30 mins",
+            "module": "rainmaker-chb-notification",
+            "locale": "en_IN"
+        }
+
+    ]
+}
+
+
+-------- 24 sept 2024 -------
+
+
+{
+    "RequestInfo": {
+        "apiId": "Rainmaker",
+        "action": "",
+        "did": 1,
+        "key": "",
+        "msgId": "20170310130900|en_IN",
+        "requesterId": "",
+        "ts": 1513579888683,
+        "ver": ".01",
+        "authToken": "2d7fd668-9c29-4eff-a7a0-1909d9078b6f",
+        "userInfo": {
+            "id": 92,
+            "uuid": "9920481a-15a0-4424-b1d2-e913213f71d8",
+            "userName": "GRO",
+            "name": "GRO",
+            "mobileNumber": "8855899544",
+            "emailId": null,
+            "locale": null,
+            "type": "EMPLOYEE",
+            "roles": [
+                {
+                    "name": "PGR Last Mile Employee",
+                    "code": "PGR_LME",
+                    "tenantId": "pg.citya"
+                },
+                {
+                    "name": "Employee",
+                    "code": "EMPLOYEE",
+                    "tenantId": "pg"
+                },
+                {
+                    "name": "Grievance Routing Officer",
+                    "code": "GRO",
+                    "tenantId": "pg.citya"
+                },
+                {
+                    "name": "Super User",
+                    "code": "SUPERUSER",
+                    "tenantId": "pg"
+                }
+            ],
+            "active": true,
+            "tenantId": "pg.citya",
+            "permanentCity": null
+        }
+    },
+    "tenantId": "pg",
+    "messages": [
+        {
+            "code": "BOOKING_CREATED_EVENT",
+            "message": "Hi %s your booking no %s for community hall %s is created. Please pay to confirm the booking.",
+            "module": "rainmaker-chb-notification",
+            "locale": "en_IN"
+        },
+         {
+            "code": "BOOKING_CREATED_SMS",
+            "message": "Hi %s your booking no %s for community hall %s is created. Please pay to confirm the booking.",
+            "module": "rainmaker-chb-notification",
+            "locale": "en_IN"
+        },
+        {
+            "code": "BOOKED_EVENT",
+            "message": "Hi %s your booking no %s for community hall %s is confirmed. You can login into your UPYOG account and download the certificate.",
+            "module": "rainmaker-chb-notification",
+            "locale": "en_IN"
+        },
+        {
+            "code": "BOOKED_SMS",
+            "message": "Hi %s your booking no %s for community hall %s is confirmed. You can login into your UPYOG account and download the certificate.",
+            "module": "rainmaker-chb-notification",
+            "locale": "en_IN"
+        },
+        {
+            "code": "PAYMENT_FAILED_EVENT",
+            "message": "Hi %s your payment for booking no %s for community hall %s has failed. Please try after 30 mins",
+            "module": "rainmaker-chb-notification",
+            "locale": "en_IN"
+        },
+        {
+            "code": "PAYMENT_FAILED_SMS",
+            "message": "Hi %s your payment for booking no %s for community hall %s has failed. Please try after 30 mins",
+            "module": "rainmaker-chb-notification",
+            "locale": "en_IN"
+        },
+        {
+            "code": "CANCELLED_EVENT",
+            "message": "Hi %s your booking for booking no %s for community hall %s is cancelled successfully. You can login into your UPYOG account and see gthe details.",
+            "module": "rainmaker-chb-notification",
+            "locale": "en_IN"
+        },
+        {
+            "code": "CANCELLED_SMS",
+            "message": "Hi %s your booking for booking no %s for community hall %s is cancelled successfully. You can login into your UPYOG account and see gthe details.",
+            "module": "rainmaker-chb-notification",
+            "locale": "en_IN"
+        }
+
+    ]
+}

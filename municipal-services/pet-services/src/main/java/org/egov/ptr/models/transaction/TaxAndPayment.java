@@ -2,7 +2,7 @@ package org.egov.ptr.models.transaction;
 
 import lombok.*;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 import java.math.BigDecimal;
 
 @Getter

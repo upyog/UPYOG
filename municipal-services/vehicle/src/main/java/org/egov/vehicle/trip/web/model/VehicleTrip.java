@@ -2,16 +2,16 @@ package org.egov.vehicle.trip.web.model;
 
 import java.util.List;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 import org.egov.common.contract.request.User;
+import org.egov.vehicle.validation.SanitizeHtml;
 import org.egov.vehicle.web.model.AuditDetails;
 import org.egov.vehicle.web.model.Vehicle;
-import org.hibernate.validator.constraints.SafeHtml;
 import org.springframework.validation.annotation.Validated;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -28,7 +28,7 @@ import lombok.Setter;
  * Request schema of VehicleTrip.  
  */
 // @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-12-23T12:08:13.326Z[GMT]")
+@jakarta.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-12-23T12:08:13.326Z[GMT]")
 
 @Builder
 @AllArgsConstructor
@@ -37,13 +37,13 @@ import lombok.Setter;
 @Setter
 public class VehicleTrip   {
 
-  @SafeHtml
+  @SanitizeHtml
   @JsonProperty("id")
   private String id = null;
 
   @NotNull
   @NotBlank
-  @SafeHtml
+  @SanitizeHtml
   @Size(max=64)
   @JsonProperty("tenantId")
   private String tenantId = null;
@@ -52,7 +52,7 @@ public class VehicleTrip   {
   @Valid
   private User tripOwner = null;
   
-  @SafeHtml
+  @SanitizeHtml
   @JsonProperty("tripOwnerId")
   private String tripOwnerId = null;
   
@@ -61,7 +61,7 @@ public class VehicleTrip   {
   private User driver = null;
   
   @JsonProperty("driverId")
-  @SafeHtml
+  @SanitizeHtml
   @Size(max=64)
   private String driverId = null;
   
@@ -70,11 +70,11 @@ public class VehicleTrip   {
   @Valid
   private Vehicle vehicle;
   
-  @SafeHtml
+  @SanitizeHtml
   @JsonProperty("vehicleId")
   private String vehicleId = null;
 
-  @SafeHtml
+  @SanitizeHtml
   @JsonProperty("applicationNo")
   private String applicationNo = null;
   
@@ -113,11 +113,11 @@ public class VehicleTrip   {
 
   @NotNull
   @NotBlank
-  @SafeHtml
+  @SanitizeHtml
   @JsonProperty("businessService")
   private String businessService = null;
 
-  @SafeHtml
+  @SanitizeHtml
   @JsonProperty("applicationStatus")
   private String applicationStatus = null;
 

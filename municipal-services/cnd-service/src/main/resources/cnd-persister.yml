@@ -1,0 +1,81 @@
+serviceMaps:
+  serviceName: cdwm-service
+  mappings:
+    - version: 1.0
+      description: Persists C&D waste application details
+      fromTopic: save-cnd-application
+      isTransaction: true
+      queryMaps:
+        - query: INSERT INTO public.cnd_application_detail(application_id, tenant_id, application_number, application_type, type_of_construction, deposit_centre_details, applicant_detail_id, requested_pickup_date, application_status, additional_details, house_area, construction_from_date, construction_to_date, property_type, total_waste_quantity, no_of_trips, vehicle_id, vendor_id, pickup_date, completed_on, created_by, created_time, last_modified_by, last_modified_time) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+          basePath: cndApplication
+          jsonMaps:
+            - jsonPath: $.cndApplication.applicationId
+            - jsonPath: $.cndApplication.tenantId
+            - jsonPath: $.cndApplication.applicationNumber
+            - jsonPath: $.cndApplication.applicationType
+            - jsonPath: $.cndApplication.typeOfConstruction
+            - jsonPath: $.cndApplication.depositCentreDetails
+            - jsonPath: $.cndApplication.applicantDetailId
+            - jsonPath: $.cndApplication.requestedPickupDate
+            - jsonPath: $.cndApplication.applicationStatus
+            - jsonPath: $.cndApplication.additionalDetails
+              type: JSON
+              dbType: JSONB
+            - jsonPath: $.cndApplication.houseArea
+            - jsonPath: $.cndApplication.constructionFromDate
+            - jsonPath: $.cndApplication.constructionToDate
+            - jsonPath: $.cndApplication.propertyType
+            - jsonPath: $.cndApplication.totalWasteQuantity
+            - jsonPath: $.cndApplication.noOfTrips
+            - jsonPath: $.cndApplication.vehicleId
+            - jsonPath: $.cndApplication.vendorId
+            - jsonPath: $.cndApplication.pickupDate
+            - jsonPath: $.cndApplication.completedOn
+            - jsonPath: $.cndApplication.auditDetails.createdBy
+            - jsonPath: $.cndApplication.auditDetails.createdTime
+            - jsonPath: $.cndApplication.auditDetails.lastModifiedBy
+            - jsonPath: $.cndApplication.auditDetails.lastModifiedTime
+
+        - query: INSERT INTO public.cnd_waste_type_detail(waste_type_id, application_id, quantity, metrics, entered_by_user_type, created_by, created_time, last_modified_by, last_modified_time) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);
+          basePath: cndApplication.wasteTypeDetails.*
+          jsonMaps:
+            - jsonPath: $.cndApplication.wasteTypeDetails.*.wasteTypeId
+            - jsonPath: $.cndApplication.applicationId
+            - jsonPath: $.cndApplication.wasteTypeDetails.*.quantity
+            - jsonPath: $.cndApplication.wasteTypeDetails.*.metrics
+            - jsonPath: $.cndApplication.wasteTypeDetails.*.enteredByUserType
+            - jsonPath: $.cndApplication.auditDetails.createdBy
+            - jsonPath: $.cndApplication.auditDetails.createdTime
+            - jsonPath: $.cndApplication.auditDetails.lastModifiedBy
+            - jsonPath: $.cndApplication.auditDetails.lastModifiedTime
+
+        - query: INSERT INTO public.cnd_facility_center_detail(facility_center_id, application_id, vehicle_id, vehicle_depot_no, net_weight, gross_weight, dumping_station_name, disposal_date, disposal_type, name_of_disposal_site, created_by, created_time, last_modified_by, last_modified_time) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+          basePath: cndApplication.facilityCenterDetail
+          jsonMaps:
+            - jsonPath: $.cndApplication.facilityCenterDetail.facilityCenterId
+            - jsonPath: $.cndApplication.applicationId
+            - jsonPath: $.cndApplication.facilityCenterDetail.vehicleId
+            - jsonPath: $.cndApplication.facilityCenterDetail.vehicleDepotNo
+            - jsonPath: $.cndApplication.facilityCenterDetail.netWeight
+            - jsonPath: $.cndApplication.facilityCenterDetail.grossWeight
+            - jsonPath: $.cndApplication.facilityCenterDetail.dumpingStationName
+            - jsonPath: $.cndApplication.facilityCenterDetail.disposalDate
+            - jsonPath: $.cndApplication.facilityCenterDetail.disposalType
+            - jsonPath: $.cndApplication.facilityCenterDetail.nameOfDisposalSite
+            - jsonPath: $.cndApplication.auditDetails.createdBy
+            - jsonPath: $.cndApplication.auditDetails.createdTime
+            - jsonPath: $.cndApplication.auditDetails.lastModifiedBy
+            - jsonPath: $.cndApplication.auditDetails.lastModifiedTime
+
+        - query: INSERT INTO public.cnd_document_detail(document_detail_id, application_id, document_type, uploaded_by_user_type, file_store_id, created_by, created_time, last_modified_by, last_modified_time) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);
+          basePath: cndApplication.documentDetails.*
+          jsonMaps:
+            - jsonPath: $.cndApplication.documentDetails.*.documentDetailId
+            - jsonPath: $.cndApplication.applicationId
+            - jsonPath: $.cndApplication.documentDetails.*.documentType
+            - jsonPath: $.cndApplication.documentDetails.*.uploadedByUserType
+            - jsonPath: $.cndApplication.documentDetails.*.fileStoreId
+            - jsonPath: $.cndApplication.auditDetails.createdBy
+            - jsonPath: $.cndApplication.auditDetails.createdTime
+            - jsonPath: $.cndApplication.auditDetails.lastModifiedBy
+            - jsonPath: $.cndApplication.auditDetails.lastModifiedTime

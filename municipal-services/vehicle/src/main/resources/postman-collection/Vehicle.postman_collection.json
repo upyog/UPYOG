@@ -1,0 +1,420 @@
+{
+	"info": {
+		"_postman_id": "e207234a-2cb2-4b9c-96f9-a27328c777a5",
+		"name": "Vehicle",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "33631355"
+	},
+	"item": [
+		{
+			"name": "vehicle-controller",
+			"item": [
+				{
+					"name": "Search Vehicle",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "accept",
+								"value": "application/json, text/plain, */*"
+							},
+							{
+								"key": "accept-language",
+								"value": "en-GB,en-US;q=0.9,en;q=0.8,hi;q=0.7"
+							},
+							{
+								"key": "content-type",
+								"value": "application/json;charset=UTF-8"
+							},
+							{
+								"key": "origin",
+								"value": "https://niuatt.niua.in"
+							},
+							{
+								"key": "priority",
+								"value": "u=1, i"
+							},
+							{
+								"key": "referer",
+								"value": "https://niuatt.niua.in/upyog-ui/citizen/wt/booking-details/WT-1013-001060"
+							},
+							{
+								"key": "sec-ch-ua",
+								"value": "\"Not;A=Brand\";v=\"99\", \"Google Chrome\";v=\"139\", \"Chromium\";v=\"139\""
+							},
+							{
+								"key": "sec-ch-ua-mobile",
+								"value": "?0"
+							},
+							{
+								"key": "sec-ch-ua-platform",
+								"value": "\"macOS\""
+							},
+							{
+								"key": "sec-fetch-dest",
+								"value": "empty"
+							},
+							{
+								"key": "sec-fetch-mode",
+								"value": "cors"
+							},
+							{
+								"key": "sec-fetch-site",
+								"value": "same-origin"
+							},
+							{
+								"key": "user-agent",
+								"value": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36"
+							},
+							{
+								"key": "Cookie",
+								"value": "_ga=GA1.1.1866793165.1747538221; _clck=7xvixy%7C2%7Cfw0%7C0%7C1964; _ga_E39TFV5YXM=GS2.1.s1747538268$o1$g1$t1747538317$j0$l0$h0; _ga_VZ9TNBTB3X=GS2.1.s1747538221$o1$g1$t1747538338$j0$l0$h0"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"Rainmaker\",\n        \"authToken\": \"4cffa6e4-5225-47a1-bb26-7792b60381f1\",\n        \"userInfo\": {\n            \"id\": 821,\n            \"uuid\": \"bba4f350-a9b1-47cc-878d-5b2ab46061cd\",\n            \"userName\": \"7033145533\",\n            \"name\": \"abhijeet\",\n            \"mobileNumber\": \"7033145533\",\n            \"emailId\": \"\",\n            \"locale\": \"en_IN\",\n            \"type\": \"CITIZEN\",\n            \"roles\": [\n                {\n                    \"name\": \"Water Tanker Vendor\",\n                    \"code\": \"WT_VENDOR\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"name\": \"Citizen\",\n                    \"code\": \"CITIZEN\",\n                    \"tenantId\": \"pg\"\n                }\n            ],\n            \"active\": true,\n            \"tenantId\": \"pg\",\n            \"permanentCity\": null\n        },\n        \"msgId\": \"1757586260580|en_IN\",\n        \"plainAccessRequest\": {}\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8061/vehicle/v1/_search?tenantId=pg&_=1757586260580",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8061",
+							"path": [
+								"vehicle",
+								"v1",
+								"_search"
+							],
+							"query": [
+								{
+									"key": "tenantId",
+									"value": "pg"
+								},
+								{
+									"key": "_",
+									"value": "1757586260580"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Vehicle Create",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "sec-ch-ua-platform",
+								"value": "\"macOS\""
+							},
+							{
+								"key": "Referer",
+								"value": "https://niuatt.niua.in/upyog-ui/employee/vendor/registry/new-vehicle"
+							},
+							{
+								"key": "User-Agent",
+								"value": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json, text/plain, */*"
+							},
+							{
+								"key": "sec-ch-ua",
+								"value": "\"Not;A=Brand\";v=\"99\", \"Google Chrome\";v=\"139\", \"Chromium\";v=\"139\""
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json;charset=UTF-8"
+							},
+							{
+								"key": "sec-ch-ua-mobile",
+								"value": "?0"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"vehicle\": {\n        \"tenantId\": \"pg.citya\",\n        \"registrationNumber\": \"PB 02 CD 1111\",\n        \"model\": \"TANKER\",\n        \"type\": \"TANKER.TANKER_1000\",\n        \"tankCapacity\": \"1000\",\n        \"suctionType\": \"SEWER_SUCTION_MACHINE\",\n        \"pollutionCertiValidTill\": null,\n        \"InsuranceCertValidTill\": null,\n        \"fitnessValidTill\": null,\n        \"roadTaxPaidTill\": null,\n        \"gpsEnabled\": true,\n        \"source\": \"Municipal records\",\n        \"owner\": {\n            \"tenantId\": \"pg\",\n            \"name\": \"khalid owner\",\n            \"fatherOrHusbandName\": \"khalid owner\",\n            \"relationship\": \"OTHER\",\n            \"gender\": \"FEMALE\",\n            \"dob\": -19800000,\n            \"emailId\": \"abc@egov.com\",\n            \"correspondenceAddress\": \"\",\n            \"mobileNumber\": \"9911937281\"\n        },\n        \"additionalDetails\": {\n            \"serviceType\": \"WT\"\n        }\n    },\n    \"RequestInfo\": {\n        \"apiId\": \"Rainmaker\",\n        \"authToken\": \"57a2635d-a0ad-45e4-bf12-d9e9a4db2661\",\n        \"userInfo\": {\n            \"id\": 806,\n            \"uuid\": \"769ed09e-42ad-4253-bdab-6f3c1e3b2f1b\",\n            \"userName\": \"VENDOR_LOGIN\",\n            \"name\": \"VENDOR\",\n            \"mobileNumber\": \"8529337935\",\n            \"emailId\": null,\n            \"locale\": null,\n            \"type\": \"EMPLOYEE\",\n            \"roles\": [\n                {\n                    \"name\": \"Pet Counter Employee\",\n                    \"code\": \"PTR_CEMP\",\n                    \"tenantId\": \"pg.citya\"\n                },\n                {\n                    \"name\": \"FSM Administrator\",\n                    \"code\": \"FSM_ADMIN\",\n                    \"tenantId\": \"pg.citya\"\n                },\n                {\n                    \"name\": \"Counter Employee\",\n                    \"code\": \"CEMP\",\n                    \"tenantId\": \"pg.citya\"\n                },\n                {\n                    \"name\": \"VENDOR\",\n                    \"code\": \"VENDOR\",\n                    \"tenantId\": \"pg.citya\"\n                },\n                {\n                    \"name\": \"PT Counter Approver\",\n                    \"code\": \"PT_APPROVER\",\n                    \"tenantId\": \"pg.citya\"\n                }\n            ],\n            \"active\": true,\n            \"tenantId\": \"pg.citya\",\n            \"permanentCity\": null\n        },\n        \"msgId\": \"1757589460618|en_IN\",\n        \"plainAccessRequest\": {}\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8061/vehicle/v1/_create?tenantId=pg.citya",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8061",
+							"path": [
+								"vehicle",
+								"v1",
+								"_create"
+							],
+							"query": [
+								{
+									"key": "tenantId",
+									"value": "pg.citya"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Vehicle Update",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "accept",
+								"value": "application/json, text/plain, */*"
+							},
+							{
+								"key": "accept-language",
+								"value": "en-GB,en-US;q=0.9,en;q=0.8,hi;q=0.7"
+							},
+							{
+								"key": "content-type",
+								"value": "application/json;charset=UTF-8"
+							},
+							{
+								"key": "origin",
+								"value": "https://niuatt.niua.in"
+							},
+							{
+								"key": "priority",
+								"value": "u=1, i"
+							},
+							{
+								"key": "referer",
+								"value": "https://niuatt.niua.in/digit-ui/employee/vendor/search-vendor"
+							},
+							{
+								"key": "sec-ch-ua",
+								"value": "\"Google Chrome\";v=\"137\", \"Chromium\";v=\"137\", \"Not/A)Brand\";v=\"24\""
+							},
+							{
+								"key": "sec-ch-ua-mobile",
+								"value": "?0"
+							},
+							{
+								"key": "sec-ch-ua-platform",
+								"value": "\"macOS\""
+							},
+							{
+								"key": "sec-fetch-dest",
+								"value": "empty"
+							},
+							{
+								"key": "sec-fetch-mode",
+								"value": "cors"
+							},
+							{
+								"key": "sec-fetch-site",
+								"value": "same-origin"
+							},
+							{
+								"key": "user-agent",
+								"value": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36"
+							},
+							{
+								"key": "Cookie",
+								"value": "_ga=GA1.1.1866793165.1747538221; _clck=7xvixy%7C2%7Cfw0%7C0%7C1964; _ga_E39TFV5YXM=GS2.1.s1747538268$o1$g1$t1747538317$j0$l0$h0; _ga_VZ9TNBTB3X=GS2.1.s1747538221$o1$g1$t1747538338$j0$l0$h0"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"vehicle\": {\n        \"id\": \"6ae8c8e9-586f-4a70-9b5d-d14f88416bd1\",\n        \"tenantId\": \"pg.citya\",\n        \"registrationNumber\": \"PB 02 CD 1233\",\n        \"model\": \"MAHINDRA\",\n        \"type\": \"MAHINDRA.BOLERO_PICKUP\",\n        \"tankCapacity\": 1000,\n        \"suctionType\": \"SEWER_SUCTION_MACHINE\",\n        \"vehicleOwner\": \"ULB\",\n        \"pollutionCertiValidTill\": 1753833600000,\n        \"InsuranceCertValidTill\": 1753920000000,\n        \"fitnessValidTill\": 1753920000000,\n        \"roadTaxPaidTill\": 1753920000000,\n        \"gpsEnabled\": true,\n        \"additionalDetails\": {\n            \"serviceType\": \"FSM\"\n        },\n        \"source\": \"Municipal records\",\n        \"ownerId\": \"a97d9761-969c-4727-a607-46598a63d1a6\",\n        \"status\": \"DISABLED\",\n        \"owner\": {\n            \"id\": 3872,\n            \"uuid\": \"a97d9761-969c-4727-a607-46598a63d1a6\",\n            \"userName\": \"8d559d4a-8fcf-4d39-b690-c698715369f2\",\n            \"password\": null,\n            \"salutation\": null,\n            \"name\": \"MAn\",\n            \"gender\": \"FEMALE\",\n            \"mobileNumber\": \"9922929292\",\n            \"emailId\": \"abc@egov.com\",\n            \"altContactNumber\": null,\n            \"pan\": null,\n            \"aadhaarNumber\": null,\n            \"permanentAddress\": null,\n            \"permanentCity\": null,\n            \"permanentPinCode\": null,\n            \"correspondenceCity\": null,\n            \"correspondencePinCode\": null,\n            \"correspondenceAddress\": null,\n            \"active\": true,\n            \"dob\": 1485648000000,\n            \"pwdExpiryDate\": 1760287642000,\n            \"locale\": null,\n            \"type\": \"CITIZEN\",\n            \"signature\": null,\n            \"accountLocked\": false,\n            \"roles\": [\n                {\n                    \"id\": null,\n                    \"name\": \"FSM Driver\",\n                    \"code\": \"FSM_DRIVER\",\n                    \"tenantId\": \"pg\"\n                }\n            ],\n            \"fatherOrHusbandName\": \"MAn\",\n            \"relationship\": \"OTHER\",\n            \"bloodGroup\": null,\n            \"identificationMark\": null,\n            \"photo\": null,\n            \"createdBy\": \"806\",\n            \"createdDate\": 1752491842000,\n            \"lastModifiedBy\": \"806\",\n            \"lastModifiedDate\": 1752491842000,\n            \"otpReference\": null,\n            \"tenantId\": \"pg\"\n        },\n        \"auditDetails\": {\n            \"createdBy\": \"769ed09e-42ad-4253-bdab-6f3c1e3b2f1b\",\n            \"lastModifiedBy\": \"769ed09e-42ad-4253-bdab-6f3c1e3b2f1b\",\n            \"createdTime\": 1752472042334,\n            \"lastModifiedTime\": 1752472042334\n        }\n    },\n    \"RequestInfo\": {\n        \"apiId\": \"Rainmaker\",\n        \"authToken\": \"77846770-3d3e-40ca-8e88-def292dc57fb\",\n        \"userInfo\": {\n            \"id\": 806,\n            \"uuid\": \"769ed09e-42ad-4253-bdab-6f3c1e3b2f1b\",\n            \"userName\": \"VENDOR_LOGIN\",\n            \"name\": \"VENDOR\",\n            \"mobileNumber\": \"8529337935\",\n            \"emailId\": null,\n            \"locale\": null,\n            \"type\": \"EMPLOYEE\",\n            \"roles\": [\n                {\n                    \"name\": \"Employee\",\n                    \"code\": \"EMPLOYEE\",\n                    \"tenantId\": \"pg.citya\"\n                },\n                {\n                    \"name\": \"Pet Counter Employee\",\n                    \"code\": \"PTR_CEMP\",\n                    \"tenantId\": \"pg.citya\"\n                },\n                {\n                    \"name\": \"FSM Administrator\",\n                    \"code\": \"FSM_ADMIN\",\n                    \"tenantId\": \"pg.citya\"\n                },\n                {\n                    \"name\": \"Counter Employee\",\n                    \"code\": \"CEMP\",\n                    \"tenantId\": \"pg.citya\"\n                },\n                {\n                    \"name\": \"VENDOR\",\n                    \"code\": \"VENDOR\",\n                    \"tenantId\": \"pg.citya\"\n                },\n                {\n                    \"name\": \"PT Counter Approver\",\n                    \"code\": \"PT_APPROVER\",\n                    \"tenantId\": \"pg.citya\"\n                }\n            ],\n            \"active\": true,\n            \"tenantId\": \"pg.citya\",\n            \"permanentCity\": null\n        },\n        \"msgId\": \"1752483245581|en_IN\",\n        \"plainAccessRequest\": {}\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8061/vehicle/v1/_update?tenantId=pg.citya",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8061",
+							"path": [
+								"vehicle",
+								"v1",
+								"_update"
+							],
+							"query": [
+								{
+									"key": "tenantId",
+									"value": "pg.citya"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "v1/plainSearch",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "accept",
+								"value": "*/*"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"requestInfoWrapper\": {\n    \"RequestInfo\": {\n      \"apiId\": \"string\",\n      \"ver\": \"string\",\n      \"ts\": 0,\n      \"action\": \"string\",\n      \"did\": \"string\",\n      \"key\": \"string\",\n      \"msgId\": \"string\",\n      \"authToken\": \"string\",\n      \"correlationId\": \"string\",\n      \"plainAccessRequest\": {\n        \"recordId\": \"string\",\n        \"plainRequestFields\": [\n          \"string\"\n        ]\n      },\n      \"userInfo\": {\n        \"id\": 0,\n        \"userName\": \"string\",\n        \"name\": \"string\",\n        \"type\": \"string\",\n        \"mobileNumber\": \"string\",\n        \"emailId\": \"string\",\n        \"roles\": [\n          {\n            \"id\": 0,\n            \"name\": \"string\",\n            \"code\": \"string\",\n            \"tenantId\": \"string\"\n          }\n        ],\n        \"tenantId\": \"string\",\n        \"uuid\": \"string\"\n      }\n    }\n  },\n  \"criteria\": {\n    \"empty\": true,\n    \"offset\": 0,\n    \"limit\": 0,\n    \"tenantId\": \"string\",\n    \"mobileNumber\": \"string\",\n    \"ownerId\": [\n      \"string\"\n    ],\n    \"ids\": [\n      \"string\"\n    ],\n    \"registrationNumber\": [\n      \"string\"\n    ],\n    \"type\": [\n      \"string\"\n    ],\n    \"model\": [\n      \"string\"\n    ],\n    \"tankCapacity\": 0,\n    \"suctionType\": [\n      \"string\"\n    ],\n    \"vehicleOwner\": [\n      \"string\"\n    ],\n    \"applicationStatus\": [\n      \"string\"\n    ],\n    \"status\": [\n      \"string\"\n    ],\n    \"sortBy\": \"type\",\n    \"sortOrder\": \"ASC\",\n    \"vehicleWithNoVendor\": true,\n    \"vendorVehicleStatus\": [\n      \"string\"\n    ]\n  }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8061/vehicle/v1/_plainsearch",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8061",
+							"path": [
+								"vehicle",
+								"v1",
+								"_plainsearch"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Vehicle-trip-controller",
+			"item": [
+				{
+					"name": "vehicle/trip/v1/_search",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "accept",
+								"value": "application/json, text/plain, */*"
+							},
+							{
+								"key": "accept-language",
+								"value": "en-GB,en-US;q=0.9,en;q=0.8,hi;q=0.7"
+							},
+							{
+								"key": "content-type",
+								"value": "application/json;charset=UTF-8"
+							},
+							{
+								"key": "origin",
+								"value": "https://niuatt.niua.in"
+							},
+							{
+								"key": "priority",
+								"value": "u=1, i"
+							},
+							{
+								"key": "referer",
+								"value": "https://niuatt.niua.in/digit-ui/citizen/fsm/dso-application-details/FSM-1013-2025-05-30-000035"
+							},
+							{
+								"key": "sec-ch-ua",
+								"value": "\"Google Chrome\";v=\"137\", \"Chromium\";v=\"137\", \"Not/A)Brand\";v=\"24\""
+							},
+							{
+								"key": "sec-ch-ua-mobile",
+								"value": "?0"
+							},
+							{
+								"key": "sec-ch-ua-platform",
+								"value": "\"macOS\""
+							},
+							{
+								"key": "sec-fetch-dest",
+								"value": "empty"
+							},
+							{
+								"key": "sec-fetch-mode",
+								"value": "cors"
+							},
+							{
+								"key": "sec-fetch-site",
+								"value": "same-origin"
+							},
+							{
+								"key": "user-agent",
+								"value": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36"
+							},
+							{
+								"key": "Cookie",
+								"value": "_ga=GA1.1.1866793165.1747538221; _clck=7xvixy%7C2%7Cfw0%7C0%7C1964; _ga_E39TFV5YXM=GS2.1.s1747538268$o1$g1$t1747538317$j0$l0$h0; _ga_VZ9TNBTB3X=GS2.1.s1747538221$o1$g1$t1747538338$j0$l0$h0"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"Rainmaker\",\n        \"authToken\": \"d9ba8de1-ec3b-4f8d-90d7-3b6e60cf6f69\",\n        \"userInfo\": {\n            \"id\": 932,\n            \"uuid\": \"5fd6a90b-61ac-4199-8633-65c8e778b660\",\n            \"userName\": \"9999998888\",\n            \"name\": \"Nikhil\",\n            \"mobileNumber\": \"9999998888\",\n            \"emailId\": \"abc@egov.com\",\n            \"locale\": null,\n            \"type\": \"CITIZEN\",\n            \"roles\": [\n                {\n                    \"name\": \"FSM Desluding Operator\",\n                    \"code\": \"FSM_DSO\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"name\": \"Citizen\",\n                    \"code\": \"CITIZEN\",\n                    \"tenantId\": \"pg\"\n                }\n            ],\n            \"active\": true,\n            \"tenantId\": \"pg\",\n            \"permanentCity\": null\n        },\n        \"msgId\": \"1752484405133|en_IN\",\n        \"plainAccessRequest\": {}\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8061/vehicle/trip/v1/_search?tenantId=pg.citya&businessService=FSM_VEHICLE_TRIP&refernceNos=FSM-1013-2025-05-30-000035&_=1752484405133",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8061",
+							"path": [
+								"vehicle",
+								"trip",
+								"v1",
+								"_search"
+							],
+							"query": [
+								{
+									"key": "tenantId",
+									"value": "pg.citya"
+								},
+								{
+									"key": "businessService",
+									"value": "FSM_VEHICLE_TRIP"
+								},
+								{
+									"key": "refernceNos",
+									"value": "FSM-1013-2025-05-30-000035"
+								},
+								{
+									"key": "_",
+									"value": "1752484405133"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

@@ -1,0 +1,174 @@
+{
+    "requestInfo": {
+    "apiId": "Rainmaker",
+    "ver": ".01",
+    "ts": null,
+    "action": "_create",
+    "did": "1",
+    "key": "",
+    "msgId": "20170310130900|en_IN",
+    "authToken": "44dbcb2b-eb5e-493e-962b-695f49946f5b",
+    "userInfo": {
+      "id": 23287,
+      "uuid": "4632c941-cb1e-4b83-b2d4-200022c1a137",
+      "userName": "PalashS",
+      "name": "Palash S",
+      "mobileNumber": "9949032246",
+      "emailId": null,
+      "type": "EMPLOYEE",
+      "roles": [
+        {
+          "name": "superuser",
+          "code": "SUPERUSER",
+          "tenantId": "pg"
+        },
+        {
+          "name": "Citizen",
+          "code": "Citizen",
+          "tenantId": "pg"
+        }
+      ],
+      "tenantId": "pg"
+    }
+  },
+  "BusinessServices": [
+        {
+            "tenantId": "pg",
+            "businessService": "booking-refund",
+            "business": "chb-services",
+            "businessServiceSla": "",
+            "states": [
+                {
+                    "sla": null,
+                    "state": null,
+                    "applicationStatus": null,
+                    "docUploadRequired": false,
+                    "isStartState": true,
+                    "isTerminateState": false,
+                    "isStateUpdatable": true,
+                    "actions": [
+                        {
+                            "action": "MOVETOEMPLOYEE",
+                            "nextState": "REFUNDPENDING",
+                            "roles": [
+                                "CHB_APPROVER",
+                                "CHB_CEMP",
+                                "SYSTEM",
+                                "CITIZEN",
+                                "CHB_INTERNAL_MICROSERVICE_ROLE"
+                            ],
+                            "active": true
+                        }
+                    ]
+                },
+                {
+                    "sla": null,
+                    "state": "REFUNDPENDING",
+                    "applicationStatus": "REFUNDPENDING",
+                    "docUploadRequired": false,
+                    "isStartState": false,
+                    "isTerminateState": false,
+                    "isStateUpdatable": true,
+                    "actions": [
+                        {
+                            "action": "REJECT",
+                            "nextState": "REJECTED",
+                            "roles": [
+                                "CHB_APPROVER",
+                                "CHB_CEMP"
+                            ],
+                            "active": true
+                        },
+                        {
+                            "action": "FORWARDFORINSPECTION",
+                            "nextState": "INSPECTIONPENDING",
+                            "roles": [
+                                "CHB_APPROVER",
+                                "CHB_CEMP"
+                            ],
+                            "active": true
+                        }
+                    ]
+                },
+                {
+                    "sla": null,
+                    "state": "INSPECTIONPENDING",
+                    "applicationStatus": "INSPECTIONPENDING",
+                    "docUploadRequired": false,
+                    "isStartState": false,
+                    "isTerminateState": false,
+                    "isStateUpdatable": true,
+                    "actions": [
+                        {
+                            "action": "REJECT",
+                            "nextState": "REJECTED",
+                            "roles": [
+                                "CHB_VERIFIER",
+                                "CHB_CEMP"
+                            ],
+                            "active": true
+                        },
+                        {
+                            "action": "VERIFY",
+                            "nextState": "REFUNDAPPROVALPENDING",
+                            "roles": [
+                                "CHB_VERIFIER",
+                                "CHB_CEMP"
+                            ],
+                            "active": true
+                        }
+                    ]
+                },
+                {
+                    "sla": null,
+                    "state": "REFUNDAPPROVALPENDING",
+                    "applicationStatus": "REFUNDAPPROVALPENDING",
+                    "docUploadRequired": false,
+                    "isStartState": false,
+                    "isTerminateState": false,
+                    "isStateUpdatable": false,
+                    "actions": [
+                        {
+                            "action": "APPROVE",
+                            "nextState": "REFUNDAPPROVED",
+                            "roles": [
+                                "CHB_APPROVER",
+                                "CHB_CEMP"
+                            ],
+                            "active": true
+                        },
+                        {
+                            "action": "REJECT",
+                            "nextState": "REJECTED",
+                            "roles": [
+                                "CHB_APPROVER",
+                                "CHB_CEMP"
+                            ],
+                            "active": true
+                        }
+                    ]
+                },
+                {
+                    "sla": null,
+                    "state": "REJECTED",
+                    "applicationStatus": "REJECTED",
+                    "docUploadRequired": false,
+                    "isStartState": false,
+                    "isTerminateState": true,
+                    "isStateUpdatable": false,
+                    "actions": null
+                },
+                {
+                    "sla": null,
+                    "state": "REFUNDAPPROVED",
+                    "applicationStatus": "REFUNDAPPROVED",
+                    "docUploadRequired": false,
+                    "isStartState": false,
+                    "isTerminateState": true,
+                    "isStateUpdatable": false,
+                    "actions": null
+                }
+            ]
+        }
+    ]
+}

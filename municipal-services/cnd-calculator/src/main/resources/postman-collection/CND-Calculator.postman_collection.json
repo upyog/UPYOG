@@ -1,0 +1,47 @@
+{
+	"info": {
+		"_postman_id": "8684cebb-409d-42d3-9883-8d85303973f8",
+		"name": "CND-Calculator",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "30463692",
+		"_collection_link": "https://lively-shuttle-794783.postman.co/workspace/New-Team-Workspace~2fb69da3-f754-4f12-a455-3a7df7db3fdc/collection/30463692-8684cebb-409d-42d3-9883-8d85303973f8?action=share&source=collection_link&creator=30463692"
+	},
+	"item": [
+		{
+			"name": "http://localhost:8181/cnd-calculator/v1/_calculate",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"CalulationCriteria\": [\n        {\n            \"cndApplicationDetail\": {\n                \"applicationNumber\": \"CND-1013-000533\",\n                \"tenantId\": \"pg.citya\"\n            }\n        }\n    ],\n    \"RequestInfo\": {\n        \"apiId\": \"Rainmaker\",\n        \"authToken\": \"a7b857b1-8c33-4c32-9152-c4953c0f05be\",\n        \"userInfo\": {\n            \"id\": 4042,\n            \"uuid\": \"e570f960-bfad-4c58-903b-5d0e5c2f05f2\",\n            \"userName\": \"9876543210\",\n            \"name\": \"Shivank\",\n            \"mobileNumber\": \"9876543210\",\n            \"emailId\": null,\n            \"locale\": null,\n            \"type\": \"CITIZEN\",\n            \"roles\": [\n                {\n                    \"name\": \"Citizen\",\n                    \"code\": \"CITIZEN\",\n                    \"tenantId\": \"pg\"\n                }\n            ],\n            \"active\": true,\n            \"tenantId\": \"pg\",\n            \"permanentCity\": null\n        },\n        \"msgId\": \"1756371777861|en_IN\",\n        \"plainAccessRequest\": {}\n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8181/cnd-calculator/v1/_calculate",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8181",
+					"path": [
+						"cnd-calculator",
+						"v1",
+						"_calculate"
+					]
+				},
+				"description": "Generated from cURL: curl --location 'http://localhost:8181/cnd-calculator/v1/_calculate' \\\n--header 'Content-Type: application/json' \\\n--data '{\n    \"CalulationCriteria\": [\n        {\n            \"cndApplicationDetail\": {\n                \"applicationNumber\": \"CND-1013-000533\",\n                \"tenantId\": \"pg.citya\"\n            }\n        }\n    ],\n    \"RequestInfo\": {\n        \"apiId\": \"Rainmaker\",\n        \"authToken\": \"a7b857b1-8c33-4c32-9152-c4953c0f05be\",\n        \"userInfo\": {\n            \"id\": 4042,\n            \"uuid\": \"e570f960-bfad-4c58-903b-5d0e5c2f05f2\",\n            \"userName\": \"9876543210\",\n            \"name\": \"Shivank\",\n            \"mobileNumber\": \"9876543210\",\n            \"emailId\": null,\n            \"locale\": null,\n            \"type\": \"CITIZEN\",\n            \"roles\": [\n                {\n                    \"name\": \"Citizen\",\n                    \"code\": \"CITIZEN\",\n                    \"tenantId\": \"pg\"\n                }\n            ],\n            \"active\": true,\n            \"tenantId\": \"pg\",\n            \"permanentCity\": null\n        },\n        \"msgId\": \"1756371777861|en_IN\",\n        \"plainAccessRequest\": {}\n    }\n}'"
+			},
+			"response": []
+		}
+	]
+}

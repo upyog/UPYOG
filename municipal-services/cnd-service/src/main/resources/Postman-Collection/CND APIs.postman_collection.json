@@ -1,0 +1,377 @@
+{
+	"info": {
+		"_postman_id": "25900816-0b65-4139-8446-f2f41215eed5",
+		"name": "CND APIs",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "30463692",
+		"_collection_link": "https://lively-shuttle-794783.postman.co/workspace/New-Team-Workspace~2fb69da3-f754-4f12-a455-3a7df7db3fdc/collection/30463692-25900816-0b65-4139-8446-f2f41215eed5?action=share&source=collection_link&creator=30463692"
+	},
+	"item": [
+		{
+			"name": "Create",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json, text/plain, */*"
+					},
+					{
+						"key": "Accept-Language",
+						"value": "en-GB,en-US;q=0.9,en;q=0.8"
+					},
+					{
+						"key": "Connection",
+						"value": "keep-alive"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json;charset=UTF-8"
+					},
+					{
+						"key": "Origin",
+						"value": "http://localhost:3000"
+					},
+					{
+						"key": "Referer",
+						"value": "http://localhost:3000/"
+					},
+					{
+						"key": "Sec-Fetch-Dest",
+						"value": "empty"
+					},
+					{
+						"key": "Sec-Fetch-Mode",
+						"value": "cors"
+					},
+					{
+						"key": "Sec-Fetch-Site",
+						"value": "same-site"
+					},
+					{
+						"key": "User-Agent",
+						"value": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36"
+					},
+					{
+						"key": "sec-ch-ua",
+						"value": "\"Not;A=Brand\";v=\"99\", \"Google Chrome\";v=\"139\", \"Chromium\";v=\"139\""
+					},
+					{
+						"key": "sec-ch-ua-mobile",
+						"value": "?0"
+					},
+					{
+						"key": "sec-ch-ua-platform",
+						"value": "\"macOS\""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"cndApplication\":{\"tenantId\":\"pg.citya\",\"additionalDetails\":null,\"applicationType\":\"REQUEST_FOR_PICKUP\",\"applicationStatus\":\"BOOKING_CREATED\",\"depositCentreDetails\":\"\",\"description\":\"\",\"vehicleId\":\"\",\"vehicleType\":\"\",\"vendorId\":\"\",\"location\":\"\",\"completedOn\":\"\",\"constructionFromDate\":\"2025-07-31\",\"constructionToDate\":\"2025-08-27\",\"propertyType\":\"NONRESIDENTIAL.INDUSTRIAL\",\"houseArea\":\"121\",\"applicantDetailId\":\"e570f960-bfad-4c58-903b-5d0e5c2f05f2\",\"addressDetailId\":null,\"totalWasteQuantity\":\"121\",\"typeOfConstruction\":\"NEW_CONSTRUCTION\",\"noOfTrips\":0,\"pickupDate\":\"\",\"requestedPickupDate\":\"2025-08-29\",\"facilityCenterDetail\":{\"disposalId\":\"\",\"netWeight\":\"121\"},\"wasteTypeDetails\":[{\"applicationId\":\"\",\"wasteTypeId\":\"\",\"enteredByUserType\":\"CITIZEN\",\"wasteType\":\"MIXED_WASTE\",\"quantity\":0,\"metrics\":\"\",\"auditDetails\":null},{\"applicationId\":\"\",\"wasteTypeId\":\"\",\"enteredByUserType\":\"CITIZEN\",\"wasteType\":\"CEMENT_BAGS\",\"quantity\":0,\"metrics\":\"\",\"auditDetails\":null},{\"applicationId\":\"\",\"wasteTypeId\":\"\",\"enteredByUserType\":\"CITIZEN\",\"wasteType\":\"STEEL_METAL\",\"quantity\":0,\"metrics\":\"\",\"auditDetails\":null}],\"documentDetails\":[],\"workflow\":{\"action\":\"APPLY\",\"comments\":\"\",\"businessService\":\"cnd\",\"moduleName\":\"cnd-service\"},\"applicantDetail\":{\"nameOfApplicant\":\"Shivank\",\"mobileNumber\":\"9876543210\",\"alternateMobileNumber\":\"\",\"emailId\":\"test@gmail.com\"},\"addressDetail\":{\"houseNumber\":\"12\",\"addressLine1\":\"testone\",\"addressLine2\":\"testtwo\",\"landmark\":\"\",\"floorNumber\":null,\"locality\":\"Main Road Abadpura\",\"city\":\"City A\",\"pinCode\":\"121212\",\"addressType\":\"OTHER\"}},\"RequestInfo\":{\"apiId\":\"Rainmaker\",\"authToken\":\"a7b857b1-8c33-4c32-9152-c4953c0f05be\",\"userInfo\":{\"id\":4042,\"uuid\":\"e570f960-bfad-4c58-903b-5d0e5c2f05f2\",\"userName\":\"9876543210\",\"name\":\"Shivank\",\"mobileNumber\":\"9876543210\",\"emailId\":null,\"locale\":null,\"type\":\"CITIZEN\",\"roles\":[{\"name\":\"Citizen\",\"code\":\"CITIZEN\",\"tenantId\":\"pg\"}],\"active\":true,\"tenantId\":\"pg\",\"permanentCity\":null},\"msgId\":\"1756371777861|en_IN\",\"plainAccessRequest\":{}}}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8085/cnd-service/v1/_create",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8085",
+					"path": [
+						"cnd-service",
+						"v1",
+						"_create"
+					]
+				},
+				"description": "Generated from cURL: curl 'http://localhost:8085/cnd-service/v1/_create' \\\n  -H 'Accept: application/json, text/plain, */*' \\\n  -H 'Accept-Language: en-GB,en-US;q=0.9,en;q=0.8' \\\n  -H 'Connection: keep-alive' \\\n  -H 'Content-Type: application/json;charset=UTF-8' \\\n  -H 'Origin: http://localhost:3000' \\\n  -H 'Referer: http://localhost:3000/' \\\n  -H 'Sec-Fetch-Dest: empty' \\\n  -H 'Sec-Fetch-Mode: cors' \\\n  -H 'Sec-Fetch-Site: same-site' \\\n  -H 'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36' \\\n  -H 'sec-ch-ua: \"Not;A=Brand\";v=\"99\", \"Google Chrome\";v=\"139\", \"Chromium\";v=\"139\"' \\\n  -H 'sec-ch-ua-mobile: ?0' \\\n  -H 'sec-ch-ua-platform: \"macOS\"' \\\n  --data-raw '{\"cndApplication\":{\"tenantId\":\"pg.citya\",\"additionalDetails\":null,\"applicationType\":\"REQUEST_FOR_PICKUP\",\"applicationStatus\":\"BOOKING_CREATED\",\"depositCentreDetails\":\"\",\"description\":\"\",\"vehicleId\":\"\",\"vehicleType\":\"\",\"vendorId\":\"\",\"location\":\"\",\"completedOn\":\"\",\"constructionFromDate\":\"2025-07-31\",\"constructionToDate\":\"2025-08-27\",\"propertyType\":\"NONRESIDENTIAL.INDUSTRIAL\",\"houseArea\":\"121\",\"applicantDetailId\":\"e570f960-bfad-4c58-903b-5d0e5c2f05f2\",\"addressDetailId\":null,\"totalWasteQuantity\":\"121\",\"typeOfConstruction\":\"NEW_CONSTRUCTION\",\"noOfTrips\":0,\"pickupDate\":\"\",\"requestedPickupDate\":\"2025-08-29\",\"facilityCenterDetail\":{\"disposalId\":\"\",\"netWeight\":\"121\"},\"wasteTypeDetails\":[{\"applicationId\":\"\",\"wasteTypeId\":\"\",\"enteredByUserType\":\"CITIZEN\",\"wasteType\":\"MIXED_WASTE\",\"quantity\":0,\"metrics\":\"\",\"auditDetails\":null},{\"applicationId\":\"\",\"wasteTypeId\":\"\",\"enteredByUserType\":\"CITIZEN\",\"wasteType\":\"CEMENT_BAGS\",\"quantity\":0,\"metrics\":\"\",\"auditDetails\":null},{\"applicationId\":\"\",\"wasteTypeId\":\"\",\"enteredByUserType\":\"CITIZEN\",\"wasteType\":\"STEEL_METAL\",\"quantity\":0,\"metrics\":\"\",\"auditDetails\":null}],\"documentDetails\":[],\"workflow\":{\"action\":\"APPLY\",\"comments\":\"\",\"businessService\":\"cnd\",\"moduleName\":\"cnd-service\"},\"applicantDetail\":{\"nameOfApplicant\":\"Shivank\",\"mobileNumber\":\"9876543210\",\"alternateMobileNumber\":\"\",\"emailId\":\"test@gmail.com\"},\"addressDetail\":{\"houseNumber\":\"12\",\"addressLine1\":\"testone\",\"addressLine2\":\"testtwo\",\"landmark\":\"\",\"floorNumber\":null,\"locality\":\"Main Road Abadpura\",\"city\":\"City A\",\"pinCode\":\"121212\",\"addressType\":\"OTHER\"}},\"RequestInfo\":{\"apiId\":\"Rainmaker\",\"authToken\":\"a7b857b1-8c33-4c32-9152-c4953c0f05be\",\"userInfo\":{\"id\":4042,\"uuid\":\"e570f960-bfad-4c58-903b-5d0e5c2f05f2\",\"userName\":\"9876543210\",\"name\":\"Shivank\",\"mobileNumber\":\"9876543210\",\"emailId\":null,\"locale\":null,\"type\":\"CITIZEN\",\"roles\":[{\"name\":\"Citizen\",\"code\":\"CITIZEN\",\"tenantId\":\"pg\"}],\"active\":true,\"tenantId\":\"pg\",\"permanentCity\":null},\"msgId\":\"1756371777861|en_IN\",\"plainAccessRequest\":{}}}'"
+			},
+			"response": []
+		},
+		{
+			"name": "Search",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json, text/plain, */*"
+					},
+					{
+						"key": "Accept-Language",
+						"value": "en-GB,en-US;q=0.9,en;q=0.8"
+					},
+					{
+						"key": "Connection",
+						"value": "keep-alive"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json;charset=UTF-8"
+					},
+					{
+						"key": "Origin",
+						"value": "http://localhost:3000"
+					},
+					{
+						"key": "Referer",
+						"value": "http://localhost:3000/"
+					},
+					{
+						"key": "Sec-Fetch-Dest",
+						"value": "empty"
+					},
+					{
+						"key": "Sec-Fetch-Mode",
+						"value": "cors"
+					},
+					{
+						"key": "Sec-Fetch-Site",
+						"value": "same-site"
+					},
+					{
+						"key": "User-Agent",
+						"value": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36"
+					},
+					{
+						"key": "sec-ch-ua",
+						"value": "\"Not;A=Brand\";v=\"99\", \"Google Chrome\";v=\"139\", \"Chromium\";v=\"139\""
+					},
+					{
+						"key": "sec-ch-ua-mobile",
+						"value": "?0"
+					},
+					{
+						"key": "sec-ch-ua-platform",
+						"value": "\"macOS\""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"RequestInfo\":{\"apiId\":\"Rainmaker\",\"authToken\":\"a7b857b1-8c33-4c32-9152-c4953c0f05be\",\"userInfo\":{\"id\":4042,\"uuid\":\"e570f960-bfad-4c58-903b-5d0e5c2f05f2\",\"userName\":\"9876543210\",\"name\":\"Shivank\",\"mobileNumber\":\"9876543210\",\"emailId\":null,\"locale\":null,\"type\":\"CITIZEN\",\"roles\":[{\"name\":\"Citizen\",\"code\":\"CITIZEN\",\"tenantId\":\"pg\"}],\"active\":true,\"tenantId\":\"pg\",\"permanentCity\":null},\"msgId\":\"1756372031390|en_IN\",\"plainAccessRequest\":{}}}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8085/cnd-service/v1/_search?tenantId=pg.citya&limit=4&sortOrder=ASC&sortBy=createdTime&offset=0&mobileNumber=9876543210&_=1756372031390",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8085",
+					"path": [
+						"cnd-service",
+						"v1",
+						"_search"
+					],
+					"query": [
+						{
+							"key": "tenantId",
+							"value": "pg.citya"
+						},
+						{
+							"key": "limit",
+							"value": "4"
+						},
+						{
+							"key": "sortOrder",
+							"value": "ASC"
+						},
+						{
+							"key": "sortBy",
+							"value": "createdTime"
+						},
+						{
+							"key": "offset",
+							"value": "0"
+						},
+						{
+							"key": "mobileNumber",
+							"value": "9876543210"
+						},
+						{
+							"key": "_",
+							"value": "1756372031390"
+						}
+					]
+				},
+				"description": "Generated from cURL: curl 'http://localhost:8085/cnd-service/v1/_search?tenantId=pg.citya&limit=4&sortOrder=ASC&sortBy=createdTime&offset=0&mobileNumber=9876543210&_=1756372031390' \\\n  -H 'Accept: application/json, text/plain, */*' \\\n  -H 'Accept-Language: en-GB,en-US;q=0.9,en;q=0.8' \\\n  -H 'Connection: keep-alive' \\\n  -H 'Content-Type: application/json;charset=UTF-8' \\\n  -H 'Origin: http://localhost:3000' \\\n  -H 'Referer: http://localhost:3000/' \\\n  -H 'Sec-Fetch-Dest: empty' \\\n  -H 'Sec-Fetch-Mode: cors' \\\n  -H 'Sec-Fetch-Site: same-site' \\\n  -H 'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36' \\\n  -H 'sec-ch-ua: \"Not;A=Brand\";v=\"99\", \"Google Chrome\";v=\"139\", \"Chromium\";v=\"139\"' \\\n  -H 'sec-ch-ua-mobile: ?0' \\\n  -H 'sec-ch-ua-platform: \"macOS\"' \\\n  --data-raw '{\"RequestInfo\":{\"apiId\":\"Rainmaker\",\"authToken\":\"a7b857b1-8c33-4c32-9152-c4953c0f05be\",\"userInfo\":{\"id\":4042,\"uuid\":\"e570f960-bfad-4c58-903b-5d0e5c2f05f2\",\"userName\":\"9876543210\",\"name\":\"Shivank\",\"mobileNumber\":\"9876543210\",\"emailId\":null,\"locale\":null,\"type\":\"CITIZEN\",\"roles\":[{\"name\":\"Citizen\",\"code\":\"CITIZEN\",\"tenantId\":\"pg\"}],\"active\":true,\"tenantId\":\"pg\",\"permanentCity\":null},\"msgId\":\"1756372031390|en_IN\",\"plainAccessRequest\":{}}}'"
+			},
+			"response": []
+		},
+		{
+			"name": "Update - Assign FI",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json, text/plain, */*"
+					},
+					{
+						"key": "Accept-Language",
+						"value": "en-GB,en-US;q=0.9,en;q=0.8"
+					},
+					{
+						"key": "Connection",
+						"value": "keep-alive"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json;charset=UTF-8"
+					},
+					{
+						"key": "Origin",
+						"value": "http://localhost:3000"
+					},
+					{
+						"key": "Referer",
+						"value": "http://localhost:3000/"
+					},
+					{
+						"key": "Sec-Fetch-Dest",
+						"value": "empty"
+					},
+					{
+						"key": "Sec-Fetch-Mode",
+						"value": "cors"
+					},
+					{
+						"key": "Sec-Fetch-Site",
+						"value": "same-site"
+					},
+					{
+						"key": "User-Agent",
+						"value": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36"
+					},
+					{
+						"key": "sec-ch-ua",
+						"value": "\"Not;A=Brand\";v=\"99\", \"Google Chrome\";v=\"139\", \"Chromium\";v=\"139\""
+					},
+					{
+						"key": "sec-ch-ua-mobile",
+						"value": "?0"
+					},
+					{
+						"key": "sec-ch-ua-platform",
+						"value": "\"macOS\""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"cndApplication\":{\"tenantId\":\"pg.citya\",\"applicationNumber\":\"CND-1013-000523\",\"applicationId\":\"b61d48e9-32f7-4b6b-9245-c950910b483d\",\"applicationType\":\"REQUEST_FOR_PICKUP\",\"typeOfConstruction\":\"NEW_CONSTRUCTION\",\"depositCentreDetails\":\"\",\"description\":null,\"locality\":\"Main Road Abadpura\",\"wasteType\":null,\"vehicleType\":\"\",\"quantity\":null,\"applicantDetailId\":null,\"addressDetailId\":null,\"requestedPickupDate\":\"2025-08-29\",\"applicationStatus\":\"BOOKING_CREATED\",\"auditDetails\":{\"createdBy\":\"e570f960-bfad-4c58-903b-5d0e5c2f05f2\",\"lastModifiedBy\":\"e570f960-bfad-4c58-903b-5d0e5c2f05f2\",\"createdTime\":1756446847670,\"lastModifiedTime\":1756446847670},\"additionalDetails\":\"null\",\"houseArea\":121,\"constructionFromDate\":\"2025-07-31\",\"constructionToDate\":\"2025-08-27\",\"propertyType\":\"NONRESIDENTIAL.INDUSTRIAL\",\"totalWasteQuantity\":121,\"noOfTrips\":0,\"vehicleId\":\"\",\"vendorId\":\"\",\"createdByUserType\":\"CITIZEN\",\"pickupDate\":null,\"completedOn\":null,\"wasteTypeDetails\":[{\"applicationId\":\"b61d48e9-32f7-4b6b-9245-c950910b483d\",\"wasteTypeId\":\"9ffbacb9-a451-42df-9090-a415b45ff326\",\"enteredByUserType\":\"CITIZEN\",\"wasteType\":\"MIXED_WASTE\",\"quantity\":0,\"metrics\":\"\",\"auditDetails\":null},{\"applicationId\":\"b61d48e9-32f7-4b6b-9245-c950910b483d\",\"wasteTypeId\":\"1edf6f69-70ce-4dca-acdd-888230b143d5\",\"enteredByUserType\":\"CITIZEN\",\"wasteType\":\"CEMENT_BAGS\",\"quantity\":0,\"metrics\":\"\",\"auditDetails\":null},{\"applicationId\":\"b61d48e9-32f7-4b6b-9245-c950910b483d\",\"wasteTypeId\":\"b8f61b66-24d5-4971-b10a-581a6cd7b3d2\",\"enteredByUserType\":\"CITIZEN\",\"wasteType\":\"STEEL_METAL\",\"quantity\":0,\"metrics\":\"\",\"auditDetails\":null}],\"facilityCenterDetail\":{\"disposalId\":\"ffd0db22-0a2b-49e1-99b1-ded19e412eab\",\"applicationId\":\"b61d48e9-32f7-4b6b-9245-c950910b483d\",\"vehicleId\":null,\"vehicleDepotNo\":null,\"netWeight\":121,\"grossWeight\":null,\"dumpingStationName\":null,\"disposalDate\":null,\"disposalType\":null,\"nameOfDisposalSite\":null,\"auditDetails\":null},\"documentDetails\":[],\"workflow\":{\"action\":\"ASSIGN_FIELD_INSPECTOR\",\"comments\":\"test\",\"businessService\":\"cnd\",\"moduleName\":\"cnd-service\",\"assignes\":[\"c558dda6-4d26-4683-aae5-bb7b13dca38f\"]},\"applicantDetail\":{\"applicationId\":\"b61d48e9-32f7-4b6b-9245-c950910b483d\",\"nameOfApplicant\":\"Shivank\",\"mobileNumber\":\"9876543210\",\"alternateMobileNumber\":\"\",\"emailId\":\"test@gmail.com\",\"auditDetails\":{\"createdBy\":\"e570f960-bfad-4c58-903b-5d0e5c2f05f2\",\"lastModifiedBy\":\"e570f960-bfad-4c58-903b-5d0e5c2f05f2\",\"createdTime\":1756446847670,\"lastModifiedTime\":1756446847670}},\"addressDetail\":{\"applicationId\":\"b61d48e9-32f7-4b6b-9245-c950910b483d\",\"houseNumber\":\"12\",\"addressLine1\":\"testone\",\"addressLine2\":\"testtwo\",\"landmark\":\"\",\"floorNumber\":null,\"locality\":\"Main Road Abadpura\",\"city\":\"City A\",\"pinCode\":\"121212\",\"addressType\":\"OTHER\"},\"applicantMobileNumber\":\"9876543210\"},\"RequestInfo\":{\"apiId\":\"Rainmaker\",\"authToken\":\"8546b1a4-c457-4fd5-88d4-18c36cfb758a\",\"userInfo\":{\"id\":804,\"uuid\":\"c558dda6-4d26-4683-aae5-bb7b13dca38f\",\"userName\":\"Deep\",\"name\":\"Deepika\",\"mobileNumber\":\"8908908900\",\"emailId\":null,\"locale\":null,\"type\":\"EMPLOYEE\",\"roles\":[{\"name\":\"Construction & Demolition Waste Collection Employee Role\",\"code\":\"CND_CEMP\",\"tenantId\":\"pg.citya\"},{\"name\":\"Field Inspector for CND\",\"code\":\"FIELD_INSPECTOR\",\"tenantId\":\"pg.citya\"}],\"active\":true,\"tenantId\":\"pg.citya\",\"permanentCity\":null},\"msgId\":\"1756447315461|en_IN\",\"plainAccessRequest\":{}}}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8081/cnd-service/v1/_update",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"cnd-service",
+						"v1",
+						"_update"
+					]
+				},
+				"description": "Generated from cURL: curl 'http://localhost:8081/cnd-service/v1/_update' \\\n  -H 'Accept: application/json, text/plain, */*' \\\n  -H 'Accept-Language: en-GB,en-US;q=0.9,en;q=0.8' \\\n  -H 'Connection: keep-alive' \\\n  -H 'Content-Type: application/json;charset=UTF-8' \\\n  -H 'Origin: http://localhost:3000' \\\n  -H 'Referer: http://localhost:3000/' \\\n  -H 'Sec-Fetch-Dest: empty' \\\n  -H 'Sec-Fetch-Mode: cors' \\\n  -H 'Sec-Fetch-Site: same-site' \\\n  -H 'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36' \\\n  -H 'sec-ch-ua: \"Not;A=Brand\";v=\"99\", \"Google Chrome\";v=\"139\", \"Chromium\";v=\"139\"' \\\n  -H 'sec-ch-ua-mobile: ?0' \\\n  -H 'sec-ch-ua-platform: \"macOS\"' \\\n  --data-raw '{\"cndApplication\":{\"tenantId\":\"pg.citya\",\"applicationNumber\":\"CND-1013-000523\",\"applicationId\":\"b61d48e9-32f7-4b6b-9245-c950910b483d\",\"applicationType\":\"REQUEST_FOR_PICKUP\",\"typeOfConstruction\":\"NEW_CONSTRUCTION\",\"depositCentreDetails\":\"\",\"description\":null,\"locality\":\"Main Road Abadpura\",\"wasteType\":null,\"vehicleType\":\"\",\"quantity\":null,\"applicantDetailId\":null,\"addressDetailId\":null,\"requestedPickupDate\":\"2025-08-29\",\"applicationStatus\":\"BOOKING_CREATED\",\"auditDetails\":{\"createdBy\":\"e570f960-bfad-4c58-903b-5d0e5c2f05f2\",\"lastModifiedBy\":\"e570f960-bfad-4c58-903b-5d0e5c2f05f2\",\"createdTime\":1756446847670,\"lastModifiedTime\":1756446847670},\"additionalDetails\":\"null\",\"houseArea\":121,\"constructionFromDate\":\"2025-07-31\",\"constructionToDate\":\"2025-08-27\",\"propertyType\":\"NONRESIDENTIAL.INDUSTRIAL\",\"totalWasteQuantity\":121,\"noOfTrips\":0,\"vehicleId\":\"\",\"vendorId\":\"\",\"createdByUserType\":\"CITIZEN\",\"pickupDate\":null,\"completedOn\":null,\"wasteTypeDetails\":[{\"applicationId\":\"b61d48e9-32f7-4b6b-9245-c950910b483d\",\"wasteTypeId\":\"9ffbacb9-a451-42df-9090-a415b45ff326\",\"enteredByUserType\":\"CITIZEN\",\"wasteType\":\"MIXED_WASTE\",\"quantity\":0,\"metrics\":\"\",\"auditDetails\":null},{\"applicationId\":\"b61d48e9-32f7-4b6b-9245-c950910b483d\",\"wasteTypeId\":\"1edf6f69-70ce-4dca-acdd-888230b143d5\",\"enteredByUserType\":\"CITIZEN\",\"wasteType\":\"CEMENT_BAGS\",\"quantity\":0,\"metrics\":\"\",\"auditDetails\":null},{\"applicationId\":\"b61d48e9-32f7-4b6b-9245-c950910b483d\",\"wasteTypeId\":\"b8f61b66-24d5-4971-b10a-581a6cd7b3d2\",\"enteredByUserType\":\"CITIZEN\",\"wasteType\":\"STEEL_METAL\",\"quantity\":0,\"metrics\":\"\",\"auditDetails\":null}],\"facilityCenterDetail\":{\"disposalId\":\"ffd0db22-0a2b-49e1-99b1-ded19e412eab\",\"applicationId\":\"b61d48e9-32f7-4b6b-9245-c950910b483d\",\"vehicleId\":null,\"vehicleDepotNo\":null,\"netWeight\":121,\"grossWeight\":null,\"dumpingStationName\":null,\"disposalDate\":null,\"disposalType\":null,\"nameOfDisposalSite\":null,\"auditDetails\":null},\"documentDetails\":[],\"workflow\":{\"action\":\"ASSIGN_FIELD_INSPECTOR\",\"comments\":\"test\",\"businessService\":\"cnd\",\"moduleName\":\"cnd-service\",\"assignes\":[\"c558dda6-4d26-4683-aae5-bb7b13dca38f\"]},\"applicantDetail\":{\"applicationId\":\"b61d48e9-32f7-4b6b-9245-c950910b483d\",\"nameOfApplicant\":\"Shivank\",\"mobileNumber\":\"9876543210\",\"alternateMobileNumber\":\"\",\"emailId\":\"test@gmail.com\",\"auditDetails\":{\"createdBy\":\"e570f960-bfad-4c58-903b-5d0e5c2f05f2\",\"lastModifiedBy\":\"e570f960-bfad-4c58-903b-5d0e5c2f05f2\",\"createdTime\":1756446847670,\"lastModifiedTime\":1756446847670}},\"addressDetail\":{\"applicationId\":\"b61d48e9-32f7-4b6b-9245-c950910b483d\",\"houseNumber\":\"12\",\"addressLine1\":\"testone\",\"addressLine2\":\"testtwo\",\"landmark\":\"\",\"floorNumber\":null,\"locality\":\"Main Road Abadpura\",\"city\":\"City A\",\"pinCode\":\"121212\",\"addressType\":\"OTHER\"},\"applicantMobileNumber\":\"9876543210\"},\"RequestInfo\":{\"apiId\":\"Rainmaker\",\"authToken\":\"8546b1a4-c457-4fd5-88d4-18c36cfb758a\",\"userInfo\":{\"id\":804,\"uuid\":\"c558dda6-4d26-4683-aae5-bb7b13dca38f\",\"userName\":\"Deep\",\"name\":\"Deepika\",\"mobileNumber\":\"8908908900\",\"emailId\":null,\"locale\":null,\"type\":\"EMPLOYEE\",\"roles\":[{\"name\":\"Construction & Demolition Waste Collection Employee Role\",\"code\":\"CND_CEMP\",\"tenantId\":\"pg.citya\"},{\"name\":\"Field Inspector for CND\",\"code\":\"FIELD_INSPECTOR\",\"tenantId\":\"pg.citya\"}],\"active\":true,\"tenantId\":\"pg.citya\",\"permanentCity\":null},\"msgId\":\"1756447315461|en_IN\",\"plainAccessRequest\":{}}}'"
+			},
+			"response": []
+		},
+		{
+			"name": "Update - Approve",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json, text/plain, */*"
+					},
+					{
+						"key": "Accept-Language",
+						"value": "en-GB,en-US;q=0.9,en;q=0.8"
+					},
+					{
+						"key": "Connection",
+						"value": "keep-alive"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json;charset=UTF-8"
+					},
+					{
+						"key": "Origin",
+						"value": "http://localhost:3000"
+					},
+					{
+						"key": "Referer",
+						"value": "http://localhost:3000/"
+					},
+					{
+						"key": "Sec-Fetch-Dest",
+						"value": "empty"
+					},
+					{
+						"key": "Sec-Fetch-Mode",
+						"value": "cors"
+					},
+					{
+						"key": "Sec-Fetch-Site",
+						"value": "same-site"
+					},
+					{
+						"key": "User-Agent",
+						"value": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36"
+					},
+					{
+						"key": "sec-ch-ua",
+						"value": "\"Not;A=Brand\";v=\"99\", \"Google Chrome\";v=\"139\", \"Chromium\";v=\"139\""
+					},
+					{
+						"key": "sec-ch-ua-mobile",
+						"value": "?0"
+					},
+					{
+						"key": "sec-ch-ua-platform",
+						"value": "\"macOS\""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"cndApplication\":{\"tenantId\":\"pg.citya\",\"additionalDetails\":null,\"applicationType\":\"REQUEST_FOR_PICKUP\",\"applicationStatus\":\"BOOKING_CREATED\",\"depositCentreDetails\":\"\",\"description\":\"\",\"locality\":\"Main Road Abadpura\",\"applicationId\":\"b61d48e9-32f7-4b6b-9245-c950910b483d\",\"applicationNumber\":\"CND-1013-000523\",\"vehicleType\":\"\",\"location\":\"\",\"completedOn\":\"\",\"constructionFromDate\":\"2025-07-31\",\"constructionToDate\":\"2025-08-27\",\"propertyType\":\"NONRESIDENTIAL.INDUSTRIAL\",\"houseArea\":121,\"applicantDetailId\":null,\"totalWasteQuantity\":\"12.05\",\"typeOfConstruction\":\"NEW_CONSTRUCTION\",\"noOfTrips\":0,\"pickupDate\":\"2025-08-29\",\"requestedPickupDate\":\"2025-08-29\",\"facilityCenterDetail\":{\"disposalId\":\"\",\"netWeight\":\"12.05\"},\"wasteTypeDetails\":[{\"applicationId\":\"b61d48e9-32f7-4b6b-9245-c950910b483d\",\"wasteTypeId\":\"9ffbacb9-a451-42df-9090-a415b45ff326\",\"enteredByUserType\":\"EMPLOYEE\",\"wasteType\":\"MIXED_WASTE\",\"quantity\":\"12\",\"metrics\":\"Ton\",\"auditDetails\":null},{\"applicationId\":\"b61d48e9-32f7-4b6b-9245-c950910b483d\",\"wasteTypeId\":\"1edf6f69-70ce-4dca-acdd-888230b143d5\",\"enteredByUserType\":\"EMPLOYEE\",\"wasteType\":\"CEMENT_BAGS\",\"quantity\":\"30\",\"metrics\":\"Kilogram\",\"auditDetails\":null},{\"applicationId\":\"b61d48e9-32f7-4b6b-9245-c950910b483d\",\"wasteTypeId\":\"b8f61b66-24d5-4971-b10a-581a6cd7b3d2\",\"enteredByUserType\":\"EMPLOYEE\",\"wasteType\":\"STEEL_METAL\",\"quantity\":\"20\",\"metrics\":\"Kilogram\",\"auditDetails\":null}],\"documentDetails\":[],\"workflow\":{\"action\":\"APPROVE\",\"comments\":\"\",\"businessService\":\"cnd\",\"moduleName\":\"cnd-service\"},\"applicantDetail\":{\"nameOfApplicant\":\"Shivank\",\"mobileNumber\":\"9876543210\",\"alternateMobileNumber\":\"\",\"emailId\":\"test@gmail.com\"},\"addressDetail\":{\"houseNumber\":\"12\",\"addressLine1\":\"testone\",\"addressLine2\":\"testtwo\",\"landmark\":\"\",\"floorNumber\":null,\"locality\":\"Main Road Abadpura\",\"city\":\"City A\",\"pinCode\":\"121212\"}},\"RequestInfo\":{\"apiId\":\"Rainmaker\",\"authToken\":\"8546b1a4-c457-4fd5-88d4-18c36cfb758a\",\"userInfo\":{\"id\":804,\"uuid\":\"c558dda6-4d26-4683-aae5-bb7b13dca38f\",\"userName\":\"Deep\",\"name\":\"Deepika\",\"mobileNumber\":\"8908908900\",\"emailId\":null,\"locale\":null,\"type\":\"EMPLOYEE\",\"roles\":[{\"name\":\"Construction & Demolition Waste Collection Employee Role\",\"code\":\"CND_CEMP\",\"tenantId\":\"pg.citya\"},{\"name\":\"Field Inspector for CND\",\"code\":\"FIELD_INSPECTOR\",\"tenantId\":\"pg.citya\"}],\"active\":true,\"tenantId\":\"pg.citya\",\"permanentCity\":null},\"msgId\":\"1756447402710|en_IN\",\"plainAccessRequest\":{}}}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8081/cnd-service/v1/_update",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"cnd-service",
+						"v1",
+						"_update"
+					]
+				},
+				"description": "Generated from cURL: curl 'http://localhost:8081/cnd-service/v1/_update' \\\n  -H 'Accept: application/json, text/plain, */*' \\\n  -H 'Accept-Language: en-GB,en-US;q=0.9,en;q=0.8' \\\n  -H 'Connection: keep-alive' \\\n  -H 'Content-Type: application/json;charset=UTF-8' \\\n  -H 'Origin: http://localhost:3000' \\\n  -H 'Referer: http://localhost:3000/' \\\n  -H 'Sec-Fetch-Dest: empty' \\\n  -H 'Sec-Fetch-Mode: cors' \\\n  -H 'Sec-Fetch-Site: same-site' \\\n  -H 'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36' \\\n  -H 'sec-ch-ua: \"Not;A=Brand\";v=\"99\", \"Google Chrome\";v=\"139\", \"Chromium\";v=\"139\"' \\\n  -H 'sec-ch-ua-mobile: ?0' \\\n  -H 'sec-ch-ua-platform: \"macOS\"' \\\n  --data-raw '{\"cndApplication\":{\"tenantId\":\"pg.citya\",\"additionalDetails\":null,\"applicationType\":\"REQUEST_FOR_PICKUP\",\"applicationStatus\":\"BOOKING_CREATED\",\"depositCentreDetails\":\"\",\"description\":\"\",\"locality\":\"Main Road Abadpura\",\"applicationId\":\"b61d48e9-32f7-4b6b-9245-c950910b483d\",\"applicationNumber\":\"CND-1013-000523\",\"vehicleType\":\"\",\"location\":\"\",\"completedOn\":\"\",\"constructionFromDate\":\"2025-07-31\",\"constructionToDate\":\"2025-08-27\",\"propertyType\":\"NONRESIDENTIAL.INDUSTRIAL\",\"houseArea\":121,\"applicantDetailId\":null,\"totalWasteQuantity\":\"12.05\",\"typeOfConstruction\":\"NEW_CONSTRUCTION\",\"noOfTrips\":0,\"pickupDate\":\"2025-08-29\",\"requestedPickupDate\":\"2025-08-29\",\"facilityCenterDetail\":{\"disposalId\":\"\",\"netWeight\":\"12.05\"},\"wasteTypeDetails\":[{\"applicationId\":\"b61d48e9-32f7-4b6b-9245-c950910b483d\",\"wasteTypeId\":\"9ffbacb9-a451-42df-9090-a415b45ff326\",\"enteredByUserType\":\"EMPLOYEE\",\"wasteType\":\"MIXED_WASTE\",\"quantity\":\"12\",\"metrics\":\"Ton\",\"auditDetails\":null},{\"applicationId\":\"b61d48e9-32f7-4b6b-9245-c950910b483d\",\"wasteTypeId\":\"1edf6f69-70ce-4dca-acdd-888230b143d5\",\"enteredByUserType\":\"EMPLOYEE\",\"wasteType\":\"CEMENT_BAGS\",\"quantity\":\"30\",\"metrics\":\"Kilogram\",\"auditDetails\":null},{\"applicationId\":\"b61d48e9-32f7-4b6b-9245-c950910b483d\",\"wasteTypeId\":\"b8f61b66-24d5-4971-b10a-581a6cd7b3d2\",\"enteredByUserType\":\"EMPLOYEE\",\"wasteType\":\"STEEL_METAL\",\"quantity\":\"20\",\"metrics\":\"Kilogram\",\"auditDetails\":null}],\"documentDetails\":[],\"workflow\":{\"action\":\"APPROVE\",\"comments\":\"\",\"businessService\":\"cnd\",\"moduleName\":\"cnd-service\"},\"applicantDetail\":{\"nameOfApplicant\":\"Shivank\",\"mobileNumber\":\"9876543210\",\"alternateMobileNumber\":\"\",\"emailId\":\"test@gmail.com\"},\"addressDetail\":{\"houseNumber\":\"12\",\"addressLine1\":\"testone\",\"addressLine2\":\"testtwo\",\"landmark\":\"\",\"floorNumber\":null,\"locality\":\"Main Road Abadpura\",\"city\":\"City A\",\"pinCode\":\"121212\"}},\"RequestInfo\":{\"apiId\":\"Rainmaker\",\"authToken\":\"8546b1a4-c457-4fd5-88d4-18c36cfb758a\",\"userInfo\":{\"id\":804,\"uuid\":\"c558dda6-4d26-4683-aae5-bb7b13dca38f\",\"userName\":\"Deep\",\"name\":\"Deepika\",\"mobileNumber\":\"8908908900\",\"emailId\":null,\"locale\":null,\"type\":\"EMPLOYEE\",\"roles\":[{\"name\":\"Construction & Demolition Waste Collection Employee Role\",\"code\":\"CND_CEMP\",\"tenantId\":\"pg.citya\"},{\"name\":\"Field Inspector for CND\",\"code\":\"FIELD_INSPECTOR\",\"tenantId\":\"pg.citya\"}],\"active\":true,\"tenantId\":\"pg.citya\",\"permanentCity\":null},\"msgId\":\"1756447402710|en_IN\",\"plainAccessRequest\":{}}}'"
+			},
+			"response": []
+		}
+	]
+}

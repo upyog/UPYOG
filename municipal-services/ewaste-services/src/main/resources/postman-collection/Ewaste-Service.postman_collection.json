@@ -1,0 +1,274 @@
+{
+	"info": {
+		"_postman_id": "f5f276ea-ea77-44e8-88a6-90a777071e79",
+		"name": "Ewaste-Service",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "33443245",
+		"_collection_link": "https://ns2222-2134.postman.co/workspace/ns-Workspace~38cacaf9-0511-4c09-8038-1a9fb4900d76/collection/33443245-f5f276ea-ea77-44e8-88a6-90a777071e79?action=share&source=collection_link&creator=33443245"
+	},
+	"item": [
+		{
+			"name": "create api",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "accept",
+						"value": "application/json, text/plain, */*"
+					},
+					{
+						"key": "accept-language",
+						"value": "en-GB,en-US;q=0.9,en;q=0.8"
+					},
+					{
+						"key": "content-type",
+						"value": "application/json;charset=UTF-8"
+					},
+					{
+						"key": "origin",
+						"value": "https://niuatt.niua.in"
+					},
+					{
+						"key": "priority",
+						"value": "u=1, i"
+					},
+					{
+						"key": "referer",
+						"value": "https://niuatt.niua.in/digit-ui/citizen/ew/raiseRequest/acknowledgement"
+					},
+					{
+						"key": "sec-ch-ua",
+						"value": "\"Google Chrome\";v=\"137\", \"Chromium\";v=\"137\", \"Not/A)Brand\";v=\"24\""
+					},
+					{
+						"key": "sec-ch-ua-mobile",
+						"value": "?0"
+					},
+					{
+						"key": "sec-ch-ua-platform",
+						"value": "\"macOS\""
+					},
+					{
+						"key": "sec-fetch-dest",
+						"value": "empty"
+					},
+					{
+						"key": "sec-fetch-mode",
+						"value": "cors"
+					},
+					{
+						"key": "sec-fetch-site",
+						"value": "same-origin"
+					},
+					{
+						"key": "user-agent",
+						"value": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36"
+					},
+					{
+						"key": "Cookie",
+						"value": "_ga=GA1.1.1498208436.1748421576; _ga_VZ9TNBTB3X=GS2.1.s1748421575$o1$g0$t1748421575$j60$l0$h0; _clck=tkuuq4%7C2%7Cfwa%7C0%7C1974"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"EwasteApplication\": [\n        {\n            \"tenantId\": \"pg.citya\",\n            \"requestId\": \"\",\n            \"transactionId\": \"\",\n            \"pickUpDate\": \"\",\n            \"vendorUuid\": \"345\",\n            \"requestStatus\": \"New Request\",\n            \"calculatedAmount\": 1680,\n            \"applicant\": {\n                \"applicantName\": \"Nikhil\",\n                \"mobileNumber\": \"7000000000\",\n                \"emailId\": \"nikhil@gmail.com\",\n                \"altMobileNumber\": \"\"\n            },\n            \"ewasteDetails\": [\n                {\n                    \"productId\": \"\",\n                    \"productName\": \"Water Cooler\",\n                    \"quantity\": \"5\",\n                    \"price\": 1680\n                }\n            ],\n            \"address\": {\n                \"tenantId\": \"pg.citya\",\n                \"doorNo\": \"43534\",\n                \"latitude\": null,\n                \"longitude\": null,\n                \"addressNumber\": \"\",\n                \"type\": \"RESIDENTIAL\",\n                \"addressLine1\": \"sdfsdf\",\n                \"addressLine2\": \"sfsdf\",\n                \"landmark\": \"sdfsdf\",\n                \"city\": \"New Delhi\",\n                \"pincode\": \"143001\",\n                \"detail\": \"\",\n                \"buildingName\": \"sdfsdf\",\n                \"street\": \"india Habitat Centre\",\n                \"locality\": {\n                    \"code\": \"JLC476\",\n                    \"name\": \"\"\n                }\n            },\n            \"documents\": [\n                {\n                    \"filestoreId\": \"3140a495-c0b7-4961-8dd9-1a836811e327\",\n                    \"documentuuid\": \"3140a495-c0b7-4961-8dd9-1a836811e327\",\n                    \"documentType\": \"Photo1\"\n                }\n            ],\n            \"workflow\": {\n                \"businessService\": \"ewst\",\n                \"action\": \"CREATE\",\n                \"moduleName\": \"ewaste-services\"\n            }\n        }\n    ],\n    \"RequestInfo\": {\n        \"apiId\": \"Rainmaker\",\n        \"authToken\": \"56b1475a-b56c-47af-b9a3-7c214508147a\",\n        \"userInfo\": {\n            \"id\": 808,\n            \"uuid\": \"38dd895e-95a0-4b72-946f-023a8a782c49\",\n            \"userName\": \"7000000000\",\n            \"name\": \"Nikhil\",\n            \"mobileNumber\": \"7000000000\",\n            \"emailId\": \"nikhil@gmail.com\",\n            \"locale\": null,\n            \"type\": \"CITIZEN\",\n            \"roles\": [\n                {\n                    \"name\": \"Citizen\",\n                    \"code\": \"CITIZEN\",\n                    \"tenantId\": \"pg\"\n                }\n            ],\n            \"active\": true,\n            \"tenantId\": \"pg\",\n            \"permanentCity\": null\n        },\n        \"msgId\": \"1751882010316|en_IN\",\n        \"plainAccessRequest\": {}\n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8081/ewaste-services/ewaste-request/_create",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"ewaste-services",
+						"ewaste-request",
+						"_create"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "serach api",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "accept",
+						"value": "application/json, text/plain, */*"
+					},
+					{
+						"key": "accept-language",
+						"value": "en-GB,en-US;q=0.9,en;q=0.8"
+					},
+					{
+						"key": "content-type",
+						"value": "application/json;charset=UTF-8"
+					},
+					{
+						"key": "origin",
+						"value": "https://niuatt.niua.in"
+					},
+					{
+						"key": "priority",
+						"value": "u=1, i"
+					},
+					{
+						"key": "referer",
+						"value": "https://niuatt.niua.in/digit-ui/citizen/ew/myApplication"
+					},
+					{
+						"key": "sec-ch-ua",
+						"value": "\"Google Chrome\";v=\"137\", \"Chromium\";v=\"137\", \"Not/A)Brand\";v=\"24\""
+					},
+					{
+						"key": "sec-ch-ua-mobile",
+						"value": "?0"
+					},
+					{
+						"key": "sec-ch-ua-platform",
+						"value": "\"macOS\""
+					},
+					{
+						"key": "sec-fetch-dest",
+						"value": "empty"
+					},
+					{
+						"key": "sec-fetch-mode",
+						"value": "cors"
+					},
+					{
+						"key": "sec-fetch-site",
+						"value": "same-origin"
+					},
+					{
+						"key": "user-agent",
+						"value": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36"
+					},
+					{
+						"key": "Cookie",
+						"value": "_ga=GA1.1.1498208436.1748421576; _ga_VZ9TNBTB3X=GS2.1.s1748421575$o1$g0$t1748421575$j60$l0$h0; _clck=tkuuq4%7C2%7Cfwa%7C0%7C1974"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"Rainmaker\",\n        \"authToken\": \"56b1475a-b56c-47af-b9a3-7c214508147a\",\n        \"userInfo\": {\n            \"id\": 808,\n            \"uuid\": \"38dd895e-95a0-4b72-946f-023a8a782c49\",\n            \"userName\": \"7000000000\",\n            \"name\": \"Nikhil\",\n            \"mobileNumber\": \"7000000000\",\n            \"emailId\": \"nikhil@gmail.com\",\n            \"locale\": null,\n            \"type\": \"CITIZEN\",\n            \"roles\": [\n                {\n                    \"name\": \"Citizen\",\n                    \"code\": \"CITIZEN\",\n                    \"tenantId\": \"pg\"\n                }\n            ],\n            \"active\": true,\n            \"tenantId\": \"pg\",\n            \"permanentCity\": null\n        },\n        \"msgId\": \"1751882604065|en_IN\",\n        \"plainAccessRequest\": {}\n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8081/ewaste-services/ewaste-request/_search?tenantId=pg.citya&limit=4&sortOrder=ASC&sortBy=createdTime&offset=0&mobileNumber=7000000000&_=1751882604065",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"ewaste-services",
+						"ewaste-request",
+						"_search"
+					],
+					"query": [
+						{
+							"key": "tenantId",
+							"value": "pg.citya"
+						},
+						{
+							"key": "limit",
+							"value": "4"
+						},
+						{
+							"key": "sortOrder",
+							"value": "ASC"
+						},
+						{
+							"key": "sortBy",
+							"value": "createdTime"
+						},
+						{
+							"key": "offset",
+							"value": "0"
+						},
+						{
+							"key": "mobileNumber",
+							"value": "7000000000"
+						},
+						{
+							"key": "_",
+							"value": "1751882604065"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update api",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "sec-ch-ua-platform",
+						"value": "\"macOS\""
+					},
+					{
+						"key": "Referer",
+						"value": "https://niuatt.niua.in/digit-ui/employee/ew/application-details/PG-EW-2025-07-07-000323"
+					},
+					{
+						"key": "User-Agent",
+						"value": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json, text/plain, */*"
+					},
+					{
+						"key": "sec-ch-ua",
+						"value": "\"Google Chrome\";v=\"137\", \"Chromium\";v=\"137\", \"Not/A)Brand\";v=\"24\""
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json;charset=UTF-8"
+					},
+					{
+						"key": "sec-ch-ua-mobile",
+						"value": "?0"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"EwasteApplication\": [\n        {\n            \"id\": \"b613a5be-1ddd-4dfb-a640-3b2fe351ed1e\",\n            \"tenantId\": \"pg.citya\",\n            \"requestId\": \"PG-EW-2025-07-07-000323\",\n            \"calculatedAmount\": \"1680\",\n            \"vendorUuid\": \"345\",\n            \"requestStatus\": \"REQUESTCREATED\",\n            \"ewasteDetails\": [\n                {\n                    \"id\": null,\n                    \"productId\": \"\",\n                    \"productName\": \"Water Cooler\",\n                    \"quantity\": \"5\",\n                    \"price\": \"1680\"\n                }\n            ],\n            \"applicant\": {\n                \"id\": \"e514e3ef-6af7-4454-b4f8-6127360d9c92\",\n                \"applicantName\": \"Nikhil\",\n                \"gender\": null,\n                \"mobileNumber\": \"7000000000\",\n                \"emailId\": \"nikhil@gmail.com\",\n                \"altMobileNumber\": \"\",\n                \"tenantId\": null,\n                \"ewId\": null\n            },\n            \"address\": {\n                \"id\": \"c7a11a07-81e4-4cf5-a052-3941f9d5385d\",\n                \"tenantId\": \"pg.citya\",\n                \"registrationId\": null,\n                \"doorNo\": \"43534\",\n                \"latitude\": 0,\n                \"longitude\": 0,\n                \"addressId\": null,\n                \"addressNumber\": \"\",\n                \"type\": \"RESIDENTIAL\",\n                \"addressLine1\": \"sdfsdf\",\n                \"addressLine2\": \"sfsdf\",\n                \"landmark\": \"sdfsdf\",\n                \"city\": \"New Delhi\",\n                \"pincode\": \"143001\",\n                \"detail\": \"\",\n                \"buildingName\": \"sdfsdf\",\n                \"street\": \"india Habitat Centre\",\n                \"locality\": null,\n                \"auditDetails\": null\n            },\n            \"auditDetails\": {\n                \"createdBy\": \"38dd895e-95a0-4b72-946f-023a8a782c49\",\n                \"lastModifiedBy\": null,\n                \"createdTime\": 1751882011756,\n                \"lastModifiedTime\": null\n            },\n            \"documents\": [\n                {\n                    \"id\": \"48a6ced9-a091-4933-b3fa-98f4595ff1d4\",\n                    \"active\": null,\n                    \"tenantId\": null,\n                    \"documentType\": \"Photo1\",\n                    \"filestoreId\": \"3140a495-c0b7-4961-8dd9-1a836811e327\",\n                    \"documentUid\": null,\n                    \"auditDetails\": null\n                }\n            ],\n            \"workflow\": {\n                \"action\": \"VERIFYPRODUCT\",\n                \"comments\": \"erer\",\n                \"businessService\": \"ewst\",\n                \"moduleName\": \"ewaste-services\"\n            }\n        }\n    ],\n    \"RequestInfo\": {\n        \"apiId\": \"Rainmaker\",\n        \"authToken\": \"5a179a33-5c3f-4c42-9795-81d1eb73a13b\",\n        \"userInfo\": {\n            \"id\": 787,\n            \"uuid\": \"ff1b41ec-d97f-4ccd-a7c0-c30d16ed80d3\",\n            \"userName\": \"EWASTE\",\n            \"name\": \"Ewaste\",\n            \"mobileNumber\": \"9810010159\",\n            \"emailId\": null,\n            \"locale\": null,\n            \"type\": \"EMPLOYEE\",\n            \"roles\": [\n                {\n                    \"name\": \"Employee\",\n                    \"code\": \"EMPLOYEE\",\n                    \"tenantId\": \"pg.citya\"\n                },\n                {\n                    \"name\": \"Vendor\",\n                    \"code\": \"EW_VENDOR\",\n                    \"tenantId\": \"pg.citya\"\n                }\n            ],\n            \"active\": true,\n            \"tenantId\": \"pg.citya\",\n            \"permanentCity\": null\n        },\n        \"msgId\": \"1751884957778|en_IN\",\n        \"plainAccessRequest\": {}\n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8081/ewaste-services/ewaste-request/_update",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"ewaste-services",
+						"ewaste-request",
+						"_update"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

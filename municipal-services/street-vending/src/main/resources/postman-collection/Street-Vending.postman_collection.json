@@ -1,0 +1,367 @@
+{
+	"info": {
+		"_postman_id": "7ce6085c-ac3e-4eac-b8cf-0d419e629ead",
+		"name": "Street-Vending",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "30463692",
+		"_collection_link": "https://lively-shuttle-794783.postman.co/workspace/New-Team-Workspace~2fb69da3-f754-4f12-a455-3a7df7db3fdc/collection/30463692-7ce6085c-ac3e-4eac-b8cf-0d419e629ead?action=share&source=collection_link&creator=30463692"
+	},
+	"item": [
+		{
+			"name": "Create",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json, text/plain, */*"
+					},
+					{
+						"key": "Accept-Language",
+						"value": "en-GB,en-US;q=0.9,en;q=0.8"
+					},
+					{
+						"key": "Connection",
+						"value": "keep-alive"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json;charset=UTF-8"
+					},
+					{
+						"key": "Origin",
+						"value": "http://localhost:3000"
+					},
+					{
+						"key": "Referer",
+						"value": "http://localhost:3000/"
+					},
+					{
+						"key": "Sec-Fetch-Dest",
+						"value": "empty"
+					},
+					{
+						"key": "Sec-Fetch-Mode",
+						"value": "cors"
+					},
+					{
+						"key": "Sec-Fetch-Site",
+						"value": "same-site"
+					},
+					{
+						"key": "User-Agent",
+						"value": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36"
+					},
+					{
+						"key": "sec-ch-ua",
+						"value": "\"Not;A=Brand\";v=\"99\", \"Google Chrome\";v=\"139\", \"Chromium\";v=\"139\""
+					},
+					{
+						"key": "sec-ch-ua-mobile",
+						"value": "?0"
+					},
+					{
+						"key": "sec-ch-ua-platform",
+						"value": "\"macOS\""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"streetVendingDetail\":{\"addressDetails\":[{\"addressId\":\"\",\"addressLine1\":\"test\",\"addressLine2\":\"test two\",\"addressType\":\"\",\"city\":\"New Delhi\",\"cityCode\":\"pg.citya\",\"doorNo\":\"\",\"houseNo\":\"12\",\"landmark\":\"\",\"locality\":\"Main Road Abadpura\",\"localityCode\":\"JLC476\",\"pincode\":\"121212\",\"streetName\":\"\",\"vendorId\":\"\"},{\"addressId\":\"\",\"addressLine1\":\"test\",\"addressLine2\":\"test two\",\"addressType\":\"\",\"city\":\"New Delhi\",\"cityCode\":\"pg.citya\",\"doorNo\":\"\",\"houseNo\":\"12\",\"landmark\":\"\",\"locality\":\"Main Road Abadpura\",\"localityCode\":\"JLC476\",\"pincode\":\"121212\",\"streetName\":\"\",\"vendorId\":\"\",\"isAddressSame\":true}],\"applicationDate\":0,\"applicationId\":\"\",\"applicationNo\":\"\",\"oldApplicationNo\":null,\"applicationStatus\":\"\",\"approvalDate\":0,\"auditDetails\":{\"createdBy\":\"\",\"createdTime\":0,\"lastModifiedBy\":\"\",\"lastModifiedTime\":0},\"bankDetail\":{\"accountHolderName\":\"test\",\"accountNumber\":\"5763457354763463\",\"applicationId\":\"\",\"bankBranchName\":\"SIDHI\",\"bankName\":\"State Bank of India\",\"id\":\"\",\"ifscCode\":\"sbin0001262\",\"refundStatus\":\"\",\"refundType\":\"\",\"auditDetails\":{\"createdBy\":\"\",\"createdTime\":0,\"lastModifiedBy\":\"\",\"lastModifiedTime\":0}},\"benificiaryOfSocialSchemes\":[{\"schemeName\":\"Senior Citizens Welfare Fund (SCWF)\",\"enrollmentId\":\"\"}],\"applicationCreatedBy\":\"citizen\",\"locality\":\"pg.patiala\",\"localityValue\":\"\",\"vendingZoneValue\":\"\",\"vendorPaymentFrequency\":\"QUARTERLY\",\"enrollmentId\":\"\",\"cartLatitude\":0,\"cartLongitude\":0,\"certificateNo\":null,\"disabilityStatus\":\"NONE\",\"draftId\":\"0d736c73-de54-47fe-b716-88afccc4e2ae\",\"documentDetails\":[{\"applicationId\":\"\",\"documentType\":\"FAMILY.PHOTO.PHOTOGRAPH\",\"fileStoreId\":\"2ba46c99-c85b-47ea-86a8-ff438d056466\",\"documentDetailId\":\"2ba46c99-c85b-47ea-86a8-ff438d056466\",\"auditDetails\":{\"createdBy\":\"\",\"createdTime\":0,\"lastModifiedBy\":\"\",\"lastModifiedTime\":0}},{\"applicationId\":\"\",\"documentType\":\"PROOF.RESIDENCE.VOTERID\",\"fileStoreId\":\"9139cbc4-60d2-4e64-a51d-c1652cea4606\",\"documentDetailId\":\"9139cbc4-60d2-4e64-a51d-c1652cea4606\",\"auditDetails\":{\"createdBy\":\"\",\"createdTime\":0,\"lastModifiedBy\":\"\",\"lastModifiedTime\":0}},{\"applicationId\":\"\",\"documentType\":\"PHOTOGRAPH.VENDINGSETUP.PHOTO\",\"fileStoreId\":\"2d2a32f5-806b-442f-aee2-aa48d8d6044e\",\"documentDetailId\":\"2d2a32f5-806b-442f-aee2-aa48d8d6044e\",\"auditDetails\":{\"createdBy\":\"\",\"createdTime\":0,\"lastModifiedBy\":\"\",\"lastModifiedTime\":0}},{\"applicationId\":\"\",\"documentType\":\"IDENTITYPROOF.AADHAAR\",\"fileStoreId\":\"4ea8f9cf-f50f-45e0-9d7f-fae4870bf116\",\"documentDetailId\":\"4ea8f9cf-f50f-45e0-9d7f-fae4870bf116\",\"auditDetails\":{\"createdBy\":\"\",\"createdTime\":0,\"lastModifiedBy\":\"\",\"lastModifiedTime\":0}}],\"localAuthorityName\":\"test\",\"tenantId\":\"pg.citya\",\"termsAndCondition\":\"Y\",\"tradeLicenseNo\":\"\",\"vendingActivity\":\"STATIONARY\",\"vendingArea\":\"2.12\",\"vendingLicenseCertificateId\":\"\",\"vendingOperationTimeDetails\":[{\"applicationId\":\"\",\"auditDetails\":{\"createdBy\":\"\",\"createdTime\":0,\"lastModifiedBy\":\"\",\"lastModifiedTime\":0},\"dayOfWeek\":\"MONDAY\",\"fromTime\":\"09:00\",\"toTime\":\"21:00\",\"id\":\"\"},{\"applicationId\":\"\",\"auditDetails\":{\"createdBy\":\"\",\"createdTime\":0,\"lastModifiedBy\":\"\",\"lastModifiedTime\":0},\"dayOfWeek\":\"TUESDAY\",\"fromTime\":\"09:00\",\"toTime\":\"21:00\",\"id\":\"\"},{\"applicationId\":\"\",\"auditDetails\":{\"createdBy\":\"\",\"createdTime\":0,\"lastModifiedBy\":\"\",\"lastModifiedTime\":0},\"dayOfWeek\":\"WEDNESDAY\",\"fromTime\":\"09:00\",\"toTime\":\"21:00\",\"id\":\"\"},{\"applicationId\":\"\",\"auditDetails\":{\"createdBy\":\"\",\"createdTime\":0,\"lastModifiedBy\":\"\",\"lastModifiedTime\":0},\"dayOfWeek\":\"THURSDAY\",\"fromTime\":\"09:00\",\"toTime\":\"21:00\",\"id\":\"\"},{\"applicationId\":\"\",\"auditDetails\":{\"createdBy\":\"\",\"createdTime\":0,\"lastModifiedBy\":\"\",\"lastModifiedTime\":0},\"dayOfWeek\":\"FRIDAY\",\"fromTime\":\"09:00\",\"toTime\":\"21:00\",\"id\":\"\"},{\"applicationId\":\"\",\"auditDetails\":{\"createdBy\":\"\",\"createdTime\":0,\"lastModifiedBy\":\"\",\"lastModifiedTime\":0},\"dayOfWeek\":\"SATURDAY\",\"fromTime\":\"09:00\",\"toTime\":\"21:00\",\"id\":\"\"},{\"applicationId\":\"\",\"auditDetails\":{\"createdBy\":\"\",\"createdTime\":0,\"lastModifiedBy\":\"\",\"lastModifiedTime\":0},\"dayOfWeek\":\"SUNDAY\",\"fromTime\":\"09:00\",\"toTime\":\"21:00\",\"id\":\"\"}],\"vendingZone\":\"y1\",\"vendorDetail\":[{\"applicationId\":\"\",\"auditDetails\":{\"createdBy\":\"\",\"createdTime\":0,\"lastModifiedBy\":\"\",\"lastModifiedTime\":0},\"dob\":\"2002-01-05\",\"userCategory\":\"GEN\",\"emailId\":\"s@gmail.com\",\"fatherName\":\"test\",\"specialCategory\":\"NONE\",\"gender\":\"M\",\"id\":\"\",\"isInvolved\":true,\"mobileNo\":\"9000090000\",\"name\":\"Shivank Shukla\",\"relationshipType\":\"VENDOR\",\"vendorId\":null}],\"workflow\":{\"action\":\"APPLY\",\"comments\":\"\",\"businessService\":\"street-vending\",\"moduleName\":\"sv-services\",\"varificationDocuments\":[{\"additionalDetails\":{},\"auditDetails\":{\"createdBy\":\"\",\"createdTime\":0,\"lastModifiedBy\":\"\",\"lastModifiedTime\":0},\"documentType\":\"\",\"documentUid\":\"\",\"fileStoreId\":\"\",\"id\":\"\"}]}},\"draftApplication\":false,\"RequestInfo\":{\"apiId\":\"Rainmaker\",\"authToken\":\"2597feac-f378-426e-86cf-3ca4af0f173b\",\"userInfo\":{\"id\":1178,\"uuid\":\"cf2b6aba-e94d-43e1-b07d-9744f441085c\",\"userName\":\"9000090000\",\"name\":\"Shivank Shukla\",\"mobileNumber\":\"9000090000\",\"emailId\":\"s@gmail.com\",\"locale\":\"en_IN\",\"type\":\"CITIZEN\",\"roles\":[{\"name\":\"Citizen\",\"code\":\"CITIZEN\",\"tenantId\":\"pg\"}],\"active\":true,\"tenantId\":\"pg\",\"permanentCity\":null},\"msgId\":\"1756795155625|en_IN\",\"plainAccessRequest\":{}}}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8085/sv-services/street-vending/_create",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8085",
+					"path": [
+						"sv-services",
+						"street-vending",
+						"_create"
+					]
+				},
+				"description": "Generated from cURL: curl 'http://localhost:8085/sv-services/street-vending/_create' \\\n  -H 'Accept: application/json, text/plain, */*' \\\n  -H 'Accept-Language: en-GB,en-US;q=0.9,en;q=0.8' \\\n  -H 'Connection: keep-alive' \\\n  -H 'Content-Type: application/json;charset=UTF-8' \\\n  -H 'Origin: http://localhost:3000' \\\n  -H 'Referer: http://localhost:3000/' \\\n  -H 'Sec-Fetch-Dest: empty' \\\n  -H 'Sec-Fetch-Mode: cors' \\\n  -H 'Sec-Fetch-Site: same-site' \\\n  -H 'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36' \\\n  -H 'sec-ch-ua: \"Not;A=Brand\";v=\"99\", \"Google Chrome\";v=\"139\", \"Chromium\";v=\"139\"' \\\n  -H 'sec-ch-ua-mobile: ?0' \\\n  -H 'sec-ch-ua-platform: \"macOS\"' \\\n  --data-raw '{\"streetVendingDetail\":{\"addressDetails\":[{\"addressId\":\"\",\"addressLine1\":\"test\",\"addressLine2\":\"test two\",\"addressType\":\"\",\"city\":\"New Delhi\",\"cityCode\":\"pg.citya\",\"doorNo\":\"\",\"houseNo\":\"12\",\"landmark\":\"\",\"locality\":\"Main Road Abadpura\",\"localityCode\":\"JLC476\",\"pincode\":\"121212\",\"streetName\":\"\",\"vendorId\":\"\"},{\"addressId\":\"\",\"addressLine1\":\"test\",\"addressLine2\":\"test two\",\"addressType\":\"\",\"city\":\"New Delhi\",\"cityCode\":\"pg.citya\",\"doorNo\":\"\",\"houseNo\":\"12\",\"landmark\":\"\",\"locality\":\"Main Road Abadpura\",\"localityCode\":\"JLC476\",\"pincode\":\"121212\",\"streetName\":\"\",\"vendorId\":\"\",\"isAddressSame\":true}],\"applicationDate\":0,\"applicationId\":\"\",\"applicationNo\":\"\",\"oldApplicationNo\":null,\"applicationStatus\":\"\",\"approvalDate\":0,\"auditDetails\":{\"createdBy\":\"\",\"createdTime\":0,\"lastModifiedBy\":\"\",\"lastModifiedTime\":0},\"bankDetail\":{\"accountHolderName\":\"test\",\"accountNumber\":\"5763457354763463\",\"applicationId\":\"\",\"bankBranchName\":\"SIDHI\",\"bankName\":\"State Bank of India\",\"id\":\"\",\"ifscCode\":\"sbin0001262\",\"refundStatus\":\"\",\"refundType\":\"\",\"auditDetails\":{\"createdBy\":\"\",\"createdTime\":0,\"lastModifiedBy\":\"\",\"lastModifiedTime\":0}},\"benificiaryOfSocialSchemes\":[{\"schemeName\":\"Senior Citizens Welfare Fund (SCWF)\",\"enrollmentId\":\"\"}],\"applicationCreatedBy\":\"citizen\",\"locality\":\"pg.patiala\",\"localityValue\":\"\",\"vendingZoneValue\":\"\",\"vendorPaymentFrequency\":\"QUARTERLY\",\"enrollmentId\":\"\",\"cartLatitude\":0,\"cartLongitude\":0,\"certificateNo\":null,\"disabilityStatus\":\"NONE\",\"draftId\":\"0d736c73-de54-47fe-b716-88afccc4e2ae\",\"documentDetails\":[{\"applicationId\":\"\",\"documentType\":\"FAMILY.PHOTO.PHOTOGRAPH\",\"fileStoreId\":\"2ba46c99-c85b-47ea-86a8-ff438d056466\",\"documentDetailId\":\"2ba46c99-c85b-47ea-86a8-ff438d056466\",\"auditDetails\":{\"createdBy\":\"\",\"createdTime\":0,\"lastModifiedBy\":\"\",\"lastModifiedTime\":0}},{\"applicationId\":\"\",\"documentType\":\"PROOF.RESIDENCE.VOTERID\",\"fileStoreId\":\"9139cbc4-60d2-4e64-a51d-c1652cea4606\",\"documentDetailId\":\"9139cbc4-60d2-4e64-a51d-c1652cea4606\",\"auditDetails\":{\"createdBy\":\"\",\"createdTime\":0,\"lastModifiedBy\":\"\",\"lastModifiedTime\":0}},{\"applicationId\":\"\",\"documentType\":\"PHOTOGRAPH.VENDINGSETUP.PHOTO\",\"fileStoreId\":\"2d2a32f5-806b-442f-aee2-aa48d8d6044e\",\"documentDetailId\":\"2d2a32f5-806b-442f-aee2-aa48d8d6044e\",\"auditDetails\":{\"createdBy\":\"\",\"createdTime\":0,\"lastModifiedBy\":\"\",\"lastModifiedTime\":0}},{\"applicationId\":\"\",\"documentType\":\"IDENTITYPROOF.AADHAAR\",\"fileStoreId\":\"4ea8f9cf-f50f-45e0-9d7f-fae4870bf116\",\"documentDetailId\":\"4ea8f9cf-f50f-45e0-9d7f-fae4870bf116\",\"auditDetails\":{\"createdBy\":\"\",\"createdTime\":0,\"lastModifiedBy\":\"\",\"lastModifiedTime\":0}}],\"localAuthorityName\":\"test\",\"tenantId\":\"pg.citya\",\"termsAndCondition\":\"Y\",\"tradeLicenseNo\":\"\",\"vendingActivity\":\"STATIONARY\",\"vendingArea\":\"2.12\",\"vendingLicenseCertificateId\":\"\",\"vendingOperationTimeDetails\":[{\"applicationId\":\"\",\"auditDetails\":{\"createdBy\":\"\",\"createdTime\":0,\"lastModifiedBy\":\"\",\"lastModifiedTime\":0},\"dayOfWeek\":\"MONDAY\",\"fromTime\":\"09:00\",\"toTime\":\"21:00\",\"id\":\"\"},{\"applicationId\":\"\",\"auditDetails\":{\"createdBy\":\"\",\"createdTime\":0,\"lastModifiedBy\":\"\",\"lastModifiedTime\":0},\"dayOfWeek\":\"TUESDAY\",\"fromTime\":\"09:00\",\"toTime\":\"21:00\",\"id\":\"\"},{\"applicationId\":\"\",\"auditDetails\":{\"createdBy\":\"\",\"createdTime\":0,\"lastModifiedBy\":\"\",\"lastModifiedTime\":0},\"dayOfWeek\":\"WEDNESDAY\",\"fromTime\":\"09:00\",\"toTime\":\"21:00\",\"id\":\"\"},{\"applicationId\":\"\",\"auditDetails\":{\"createdBy\":\"\",\"createdTime\":0,\"lastModifiedBy\":\"\",\"lastModifiedTime\":0},\"dayOfWeek\":\"THURSDAY\",\"fromTime\":\"09:00\",\"toTime\":\"21:00\",\"id\":\"\"},{\"applicationId\":\"\",\"auditDetails\":{\"createdBy\":\"\",\"createdTime\":0,\"lastModifiedBy\":\"\",\"lastModifiedTime\":0},\"dayOfWeek\":\"FRIDAY\",\"fromTime\":\"09:00\",\"toTime\":\"21:00\",\"id\":\"\"},{\"applicationId\":\"\",\"auditDetails\":{\"createdBy\":\"\",\"createdTime\":0,\"lastModifiedBy\":\"\",\"lastModifiedTime\":0},\"dayOfWeek\":\"SATURDAY\",\"fromTime\":\"09:00\",\"toTime\":\"21:00\",\"id\":\"\"},{\"applicationId\":\"\",\"auditDetails\":{\"createdBy\":\"\",\"createdTime\":0,\"lastModifiedBy\":\"\",\"lastModifiedTime\":0},\"dayOfWeek\":\"SUNDAY\",\"fromTime\":\"09:00\",\"toTime\":\"21:00\",\"id\":\"\"}],\"vendingZone\":\"y1\",\"vendorDetail\":[{\"applicationId\":\"\",\"auditDetails\":{\"createdBy\":\"\",\"createdTime\":0,\"lastModifiedBy\":\"\",\"lastModifiedTime\":0},\"dob\":\"2002-01-05\",\"userCategory\":\"GEN\",\"emailId\":\"s@gmail.com\",\"fatherName\":\"test\",\"specialCategory\":\"NONE\",\"gender\":\"M\",\"id\":\"\",\"isInvolved\":true,\"mobileNo\":\"9000090000\",\"name\":\"Shivank Shukla\",\"relationshipType\":\"VENDOR\",\"vendorId\":null}],\"workflow\":{\"action\":\"APPLY\",\"comments\":\"\",\"businessService\":\"street-vending\",\"moduleName\":\"sv-services\",\"varificationDocuments\":[{\"additionalDetails\":{},\"auditDetails\":{\"createdBy\":\"\",\"createdTime\":0,\"lastModifiedBy\":\"\",\"lastModifiedTime\":0},\"documentType\":\"\",\"documentUid\":\"\",\"fileStoreId\":\"\",\"id\":\"\"}]}},\"draftApplication\":false,\"RequestInfo\":{\"apiId\":\"Rainmaker\",\"authToken\":\"2597feac-f378-426e-86cf-3ca4af0f173b\",\"userInfo\":{\"id\":1178,\"uuid\":\"cf2b6aba-e94d-43e1-b07d-9744f441085c\",\"userName\":\"9000090000\",\"name\":\"Shivank Shukla\",\"mobileNumber\":\"9000090000\",\"emailId\":\"s@gmail.com\",\"locale\":\"en_IN\",\"type\":\"CITIZEN\",\"roles\":[{\"name\":\"Citizen\",\"code\":\"CITIZEN\",\"tenantId\":\"pg\"}],\"active\":true,\"tenantId\":\"pg\",\"permanentCity\":null},\"msgId\":\"1756795155625|en_IN\",\"plainAccessRequest\":{}}}'"
+			},
+			"response": []
+		},
+		{
+			"name": "Search (without draft)",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json, text/plain, */*"
+					},
+					{
+						"key": "Accept-Language",
+						"value": "en-GB,en-US;q=0.9,en;q=0.8"
+					},
+					{
+						"key": "Connection",
+						"value": "keep-alive"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json;charset=UTF-8"
+					},
+					{
+						"key": "Origin",
+						"value": "http://localhost:3000"
+					},
+					{
+						"key": "Referer",
+						"value": "http://localhost:3000/"
+					},
+					{
+						"key": "Sec-Fetch-Dest",
+						"value": "empty"
+					},
+					{
+						"key": "Sec-Fetch-Mode",
+						"value": "cors"
+					},
+					{
+						"key": "Sec-Fetch-Site",
+						"value": "same-site"
+					},
+					{
+						"key": "User-Agent",
+						"value": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36"
+					},
+					{
+						"key": "sec-ch-ua",
+						"value": "\"Not;A=Brand\";v=\"99\", \"Google Chrome\";v=\"139\", \"Chromium\";v=\"139\""
+					},
+					{
+						"key": "sec-ch-ua-mobile",
+						"value": "?0"
+					},
+					{
+						"key": "sec-ch-ua-platform",
+						"value": "\"macOS\""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"RequestInfo\":{\"apiId\":\"Rainmaker\",\"authToken\":\"2597feac-f378-426e-86cf-3ca4af0f173b\",\"userInfo\":{\"id\":1178,\"uuid\":\"cf2b6aba-e94d-43e1-b07d-9744f441085c\",\"userName\":\"9000090000\",\"name\":\"Shivank Shukla\",\"mobileNumber\":\"9000090000\",\"emailId\":\"s@gmail.com\",\"locale\":\"en_IN\",\"type\":\"CITIZEN\",\"roles\":[{\"name\":\"Citizen\",\"code\":\"CITIZEN\",\"tenantId\":\"pg\"}],\"active\":true,\"tenantId\":\"pg\",\"permanentCity\":null},\"msgId\":\"1756795242394|en_IN\",\"plainAccessRequest\":{}}}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8085/sv-services/street-vending/_search?isDraftApplication=false&_=1756795242394",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8085",
+					"path": [
+						"sv-services",
+						"street-vending",
+						"_search"
+					],
+					"query": [
+						{
+							"key": "isDraftApplication",
+							"value": "false"
+						},
+						{
+							"key": "_",
+							"value": "1756795242394"
+						}
+					]
+				},
+				"description": "Generated from cURL: curl 'http://localhost:8085/sv-services/street-vending/_search?isDraftApplication=false&_=1756795242394' \\\n  -H 'Accept: application/json, text/plain, */*' \\\n  -H 'Accept-Language: en-GB,en-US;q=0.9,en;q=0.8' \\\n  -H 'Connection: keep-alive' \\\n  -H 'Content-Type: application/json;charset=UTF-8' \\\n  -H 'Origin: http://localhost:3000' \\\n  -H 'Referer: http://localhost:3000/' \\\n  -H 'Sec-Fetch-Dest: empty' \\\n  -H 'Sec-Fetch-Mode: cors' \\\n  -H 'Sec-Fetch-Site: same-site' \\\n  -H 'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36' \\\n  -H 'sec-ch-ua: \"Not;A=Brand\";v=\"99\", \"Google Chrome\";v=\"139\", \"Chromium\";v=\"139\"' \\\n  -H 'sec-ch-ua-mobile: ?0' \\\n  -H 'sec-ch-ua-platform: \"macOS\"' \\\n  --data-raw '{\"RequestInfo\":{\"apiId\":\"Rainmaker\",\"authToken\":\"2597feac-f378-426e-86cf-3ca4af0f173b\",\"userInfo\":{\"id\":1178,\"uuid\":\"cf2b6aba-e94d-43e1-b07d-9744f441085c\",\"userName\":\"9000090000\",\"name\":\"Shivank Shukla\",\"mobileNumber\":\"9000090000\",\"emailId\":\"s@gmail.com\",\"locale\":\"en_IN\",\"type\":\"CITIZEN\",\"roles\":[{\"name\":\"Citizen\",\"code\":\"CITIZEN\",\"tenantId\":\"pg\"}],\"active\":true,\"tenantId\":\"pg\",\"permanentCity\":null},\"msgId\":\"1756795242394|en_IN\",\"plainAccessRequest\":{}}}'"
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Draft",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json, text/plain, */*"
+					},
+					{
+						"key": "Accept-Language",
+						"value": "en-GB,en-US;q=0.9,en;q=0.8"
+					},
+					{
+						"key": "Connection",
+						"value": "keep-alive"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json;charset=UTF-8"
+					},
+					{
+						"key": "Origin",
+						"value": "http://localhost:3000"
+					},
+					{
+						"key": "Referer",
+						"value": "http://localhost:3000/"
+					},
+					{
+						"key": "Sec-Fetch-Dest",
+						"value": "empty"
+					},
+					{
+						"key": "Sec-Fetch-Mode",
+						"value": "cors"
+					},
+					{
+						"key": "Sec-Fetch-Site",
+						"value": "same-site"
+					},
+					{
+						"key": "User-Agent",
+						"value": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36"
+					},
+					{
+						"key": "sec-ch-ua",
+						"value": "\"Not;A=Brand\";v=\"99\", \"Google Chrome\";v=\"139\", \"Chromium\";v=\"139\""
+					},
+					{
+						"key": "sec-ch-ua-mobile",
+						"value": "?0"
+					},
+					{
+						"key": "sec-ch-ua-platform",
+						"value": "\"macOS\""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"RequestInfo\":{\"apiId\":\"Rainmaker\",\"authToken\":\"2597feac-f378-426e-86cf-3ca4af0f173b\",\"userInfo\":{\"id\":1178,\"uuid\":\"cf2b6aba-e94d-43e1-b07d-9744f441085c\",\"userName\":\"9000090000\",\"name\":\"Shivank Shukla\",\"mobileNumber\":\"9000090000\",\"emailId\":\"s@gmail.com\",\"locale\":\"en_IN\",\"type\":\"CITIZEN\",\"roles\":[{\"name\":\"Citizen\",\"code\":\"CITIZEN\",\"tenantId\":\"pg\"}],\"active\":true,\"tenantId\":\"pg\",\"permanentCity\":null},\"msgId\":\"1756795402846|en_IN\",\"plainAccessRequest\":{}}}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8085/sv-services/street-vending/_deletedraft?draftId=fb4c506f-1d8e-4ca7-a469-abb53960f5ed&_=1756795402846",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8085",
+					"path": [
+						"sv-services",
+						"street-vending",
+						"_deletedraft"
+					],
+					"query": [
+						{
+							"key": "draftId",
+							"value": "fb4c506f-1d8e-4ca7-a469-abb53960f5ed"
+						},
+						{
+							"key": "_",
+							"value": "1756795402846"
+						}
+					]
+				},
+				"description": "Generated from cURL: curl 'http://localhost:8085/sv-services/street-vending/_deletedraft?draftId=fb4c506f-1d8e-4ca7-a469-abb53960f5ed&_=1756795402846' \\\n  -H 'Accept: application/json, text/plain, */*' \\\n  -H 'Accept-Language: en-GB,en-US;q=0.9,en;q=0.8' \\\n  -H 'Connection: keep-alive' \\\n  -H 'Content-Type: application/json;charset=UTF-8' \\\n  -H 'Origin: http://localhost:3000' \\\n  -H 'Referer: http://localhost:3000/' \\\n  -H 'Sec-Fetch-Dest: empty' \\\n  -H 'Sec-Fetch-Mode: cors' \\\n  -H 'Sec-Fetch-Site: same-site' \\\n  -H 'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36' \\\n  -H 'sec-ch-ua: \"Not;A=Brand\";v=\"99\", \"Google Chrome\";v=\"139\", \"Chromium\";v=\"139\"' \\\n  -H 'sec-ch-ua-mobile: ?0' \\\n  -H 'sec-ch-ua-platform: \"macOS\"' \\\n  --data-raw '{\"RequestInfo\":{\"apiId\":\"Rainmaker\",\"authToken\":\"2597feac-f378-426e-86cf-3ca4af0f173b\",\"userInfo\":{\"id\":1178,\"uuid\":\"cf2b6aba-e94d-43e1-b07d-9744f441085c\",\"userName\":\"9000090000\",\"name\":\"Shivank Shukla\",\"mobileNumber\":\"9000090000\",\"emailId\":\"s@gmail.com\",\"locale\":\"en_IN\",\"type\":\"CITIZEN\",\"roles\":[{\"name\":\"Citizen\",\"code\":\"CITIZEN\",\"tenantId\":\"pg\"}],\"active\":true,\"tenantId\":\"pg\",\"permanentCity\":null},\"msgId\":\"1756795402846|en_IN\",\"plainAccessRequest\":{}}}'"
+			},
+			"response": []
+		},
+		{
+			"name": "Update",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json, text/plain, */*"
+					},
+					{
+						"key": "Accept-Language",
+						"value": "en-GB,en-US;q=0.9,en;q=0.8"
+					},
+					{
+						"key": "Connection",
+						"value": "keep-alive"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json;charset=UTF-8"
+					},
+					{
+						"key": "Origin",
+						"value": "http://localhost:3000"
+					},
+					{
+						"key": "Referer",
+						"value": "http://localhost:3000/"
+					},
+					{
+						"key": "Sec-Fetch-Dest",
+						"value": "empty"
+					},
+					{
+						"key": "Sec-Fetch-Mode",
+						"value": "cors"
+					},
+					{
+						"key": "Sec-Fetch-Site",
+						"value": "same-site"
+					},
+					{
+						"key": "User-Agent",
+						"value": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36"
+					},
+					{
+						"key": "sec-ch-ua",
+						"value": "\"Not;A=Brand\";v=\"99\", \"Google Chrome\";v=\"139\", \"Chromium\";v=\"139\""
+					},
+					{
+						"key": "sec-ch-ua-mobile",
+						"value": "?0"
+					},
+					{
+						"key": "sec-ch-ua-platform",
+						"value": "\"macOS\""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"streetVendingDetail\":{\"applicationId\":\"e78d0af5-bd3d-423b-a2e6-5e1b90a10185\",\"draftId\":null,\"tenantId\":\"pg.citya\",\"applicationNo\":\"SV-1013-002461\",\"applicationDate\":1756795156297,\"certificateNo\":null,\"approvalDate\":0,\"applicationStatus\":\"APPLIED\",\"tradeLicenseNo\":\"\",\"vendingActivity\":\"STATIONARY\",\"vendingZone\":\"y1\",\"vendingZoneValue\":\"Opposite Bajaj Agency, Sirhind road near Rajpura Bypass starting\",\"cartLatitude\":0,\"cartLongitude\":0,\"vendingArea\":2.12,\"localAuthorityName\":\"test\",\"vendingLicenseCertificateId\":\"\",\"paymentReceiptId\":null,\"vendingLicenseId\":null,\"disabilityStatus\":\"NONE\",\"locality\":\"pg.patiala\",\"localityValue\":\"Patiala\",\"applicationCreatedBy\":\"CITIZEN\",\"benificiaryOfSocialSchemes\":[{\"id\":\"df5076d7-b263-4f04-a959-c9b4bd01b141\",\"applicationId\":\"e78d0af5-bd3d-423b-a2e6-5e1b90a10185\",\"schemeName\":\"Senior Citizens Welfare Fund (SCWF)\",\"enrollmentId\":\"\"}],\"termsAndCondition\":\"Y\",\"addressDetails\":[{\"addressId\":\"e2c8a5cd-fa5a-44e3-832a-2316a82cab4c\",\"vendorId\":\"59a9e925-768d-4e8c-b440-2ef3735e0073\",\"doorNo\":null,\"houseNo\":\"12\",\"streetName\":null,\"addressLine1\":\"test\",\"addressLine2\":\"test two\",\"landmark\":\"\",\"city\":\"New Delhi\",\"cityCode\":\"pg.citya\",\"locality\":\"Main Road Abadpura\",\"localityCode\":\"JLC476\",\"pincode\":\"121212\",\"addressType\":\"\"},{\"addressId\":\"9ecb255d-ac7f-477a-8604-1b5fefd38c45\",\"vendorId\":\"59a9e925-768d-4e8c-b440-2ef3735e0073\",\"doorNo\":null,\"houseNo\":\"12\",\"streetName\":null,\"addressLine1\":\"test\",\"addressLine2\":\"test two\",\"landmark\":\"\",\"city\":\"New Delhi\",\"cityCode\":\"pg.citya\",\"locality\":\"Main Road Abadpura\",\"localityCode\":\"JLC476\",\"pincode\":\"121212\",\"addressType\":\"\"}],\"bankDetail\":{\"id\":\"22f0b267-4b06-4cfd-99fc-78b169ef6e19\",\"applicationId\":\"e78d0af5-bd3d-423b-a2e6-5e1b90a10185\",\"accountNumber\":\"5763457354763463\",\"ifscCode\":\"sbin0001262\",\"bankName\":\"State Bank of India\",\"bankBranchName\":\"SIDHI\",\"accountHolderName\":\"test\",\"refundType\":null,\"refundStatus\":null,\"auditDetails\":null},\"documentDetails\":[{\"documentDetailId\":\"2b1f4979-82ba-4aea-aaf4-a5ed17dd1f57\",\"applicationId\":\"e78d0af5-bd3d-423b-a2e6-5e1b90a10185\",\"documentType\":\"IDENTITYPROOF.AADHAAR\",\"fileStoreId\":\"4ea8f9cf-f50f-45e0-9d7f-fae4870bf116\",\"auditDetails\":null},{\"documentDetailId\":\"e0d52b7f-38a7-427b-a2b2-b52ba46d349e\",\"applicationId\":\"e78d0af5-bd3d-423b-a2e6-5e1b90a10185\",\"documentType\":\"PHOTOGRAPH.VENDINGSETUP.PHOTO\",\"fileStoreId\":\"2d2a32f5-806b-442f-aee2-aa48d8d6044e\",\"auditDetails\":null},{\"documentDetailId\":\"a9a8fbc3-b911-434f-baef-64b43fe01a10\",\"applicationId\":\"e78d0af5-bd3d-423b-a2e6-5e1b90a10185\",\"documentType\":\"PROOF.RESIDENCE.VOTERID\",\"fileStoreId\":\"9139cbc4-60d2-4e64-a51d-c1652cea4606\",\"auditDetails\":null},{\"documentDetailId\":\"9f72d120-48d4-450e-92a4-0fd8c572263f\",\"applicationId\":\"e78d0af5-bd3d-423b-a2e6-5e1b90a10185\",\"documentType\":\"FAMILY.PHOTO.PHOTOGRAPH\",\"fileStoreId\":\"2ba46c99-c85b-47ea-86a8-ff438d056466\",\"auditDetails\":null}],\"vendorDetail\":[{\"id\":\"59a9e925-768d-4e8c-b440-2ef3735e0073\",\"applicationId\":\"e78d0af5-bd3d-423b-a2e6-5e1b90a10185\",\"vendorId\":null,\"name\":\"Shivank Shukla\",\"dob\":\"05-01-2002\",\"gender\":\"M\",\"fatherName\":\"test\",\"mobileNo\":\"9000090000\",\"emailId\":\"s@gmail.com\",\"relationshipType\":\"VENDOR\",\"userCategory\":\"GEN\",\"specialCategory\":\"NONE\",\"isInvolved\":true,\"auditDetails\":null}],\"vendingOperationTimeDetails\":[{\"id\":\"837a7f73-eae7-4166-bc10-0e28d4cc22a2\",\"applicationId\":\"e78d0af5-bd3d-423b-a2e6-5e1b90a10185\",\"dayOfWeek\":\"SUNDAY\",\"fromTime\":\"09:00\",\"toTime\":\"21:00\",\"auditDetails\":null},{\"id\":\"64bf5cc1-ff4f-4801-bc04-51e0a6bf390c\",\"applicationId\":\"e78d0af5-bd3d-423b-a2e6-5e1b90a10185\",\"dayOfWeek\":\"SATURDAY\",\"fromTime\":\"09:00\",\"toTime\":\"21:00\",\"auditDetails\":null},{\"id\":\"cbb92615-f823-47f5-af58-2432eca241c5\",\"applicationId\":\"e78d0af5-bd3d-423b-a2e6-5e1b90a10185\",\"dayOfWeek\":\"FRIDAY\",\"fromTime\":\"09:00\",\"toTime\":\"21:00\",\"auditDetails\":null},{\"id\":\"c4d7b2c8-5704-49c7-b0bc-cabe321714a1\",\"applicationId\":\"e78d0af5-bd3d-423b-a2e6-5e1b90a10185\",\"dayOfWeek\":\"THURSDAY\",\"fromTime\":\"09:00\",\"toTime\":\"21:00\",\"auditDetails\":null},{\"id\":\"7413a2c2-1f9b-4d64-806c-f4cfc7fa19a6\",\"applicationId\":\"e78d0af5-bd3d-423b-a2e6-5e1b90a10185\",\"dayOfWeek\":\"WEDNESDAY\",\"fromTime\":\"09:00\",\"toTime\":\"21:00\",\"auditDetails\":null},{\"id\":\"930ac86e-d6b7-4653-ba6f-a76c81657893\",\"applicationId\":\"e78d0af5-bd3d-423b-a2e6-5e1b90a10185\",\"dayOfWeek\":\"TUESDAY\",\"fromTime\":\"09:00\",\"toTime\":\"21:00\",\"auditDetails\":null},{\"id\":\"c60202c9-0966-48d0-b18c-b73e8b1dd3cf\",\"applicationId\":\"e78d0af5-bd3d-423b-a2e6-5e1b90a10185\",\"dayOfWeek\":\"MONDAY\",\"fromTime\":\"09:00\",\"toTime\":\"21:00\",\"auditDetails\":null}],\"workflow\":{\"action\":\"FORWARD\",\"comments\":\"forwarded\",\"businessService\":\"street-vending\",\"moduleName\":\"sv-services\",\"assignes\":[\"586d4c3a-478e-452d-a1d9-9a5c9914400f\"]},\"auditDetails\":{\"createdBy\":\"cf2b6aba-e94d-43e1-b07d-9744f441085c\",\"lastModifiedBy\":\"cf2b6aba-e94d-43e1-b07d-9744f441085c\",\"createdTime\":1756795156297,\"lastModifiedTime\":1756795156297},\"validityDate\":null,\"validityDateForPersisterDate\":null,\"expireFlag\":false,\"oldApplicationNo\":null,\"renewalStatus\":null,\"vendorPaymentFrequency\":\"QUARTERLY\",\"formattedApprovalDate\":\"NA\",\"formattedApplicationDate\":\"02-09-2025\",\"issuedDate\":null,\"financialYear\":null,\"validFrom\":\"NA\",\"validTo\":\"NA\"},\"RequestInfo\":{\"apiId\":\"Rainmaker\",\"authToken\":\"9ec1017d-9cfd-447c-877f-0cbb9ee0dcf5\",\"userInfo\":{\"id\":902,\"uuid\":\"d1576567-a084-4c36-b49b-332d29c7561e\",\"userName\":\"SV_EMP\",\"name\":\"TVC Employee\",\"mobileNumber\":\"9879879879\",\"emailId\":\"test@gmail.com\",\"locale\":null,\"type\":\"EMPLOYEE\",\"roles\":[{\"name\":\"Dashboard Employee\",\"code\":\"DASHBOARD_EMPLOYEE\",\"tenantId\":\"pg.citya\"},{\"name\":\"TVC Employee\",\"code\":\"TVCEMPLOYEE\",\"tenantId\":\"pg.citya\"},{\"name\":\"SV CEMP \",\"code\":\"SVCEMP\",\"tenantId\":\"pg.citya\"},{\"name\":\"State Administrator\",\"code\":\"STADMIN\",\"tenantId\":\"pg.citya\"}],\"active\":true,\"tenantId\":\"pg.citya\",\"permanentCity\":null},\"msgId\":\"1756795554827|en_IN\",\"plainAccessRequest\":{}}}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8085/sv-services/street-vending/_update",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8085",
+					"path": [
+						"sv-services",
+						"street-vending",
+						"_update"
+					]
+				},
+				"description": "Generated from cURL: curl 'http://localhost:8085/sv-services/street-vending/_update' \\\n  -H 'Accept: application/json, text/plain, */*' \\\n  -H 'Accept-Language: en-GB,en-US;q=0.9,en;q=0.8' \\\n  -H 'Connection: keep-alive' \\\n  -H 'Content-Type: application/json;charset=UTF-8' \\\n  -H 'Origin: http://localhost:3000' \\\n  -H 'Referer: http://localhost:3000/' \\\n  -H 'Sec-Fetch-Dest: empty' \\\n  -H 'Sec-Fetch-Mode: cors' \\\n  -H 'Sec-Fetch-Site: same-site' \\\n  -H 'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36' \\\n  -H 'sec-ch-ua: \"Not;A=Brand\";v=\"99\", \"Google Chrome\";v=\"139\", \"Chromium\";v=\"139\"' \\\n  -H 'sec-ch-ua-mobile: ?0' \\\n  -H 'sec-ch-ua-platform: \"macOS\"' \\\n  --data-raw '{\"streetVendingDetail\":{\"applicationId\":\"e78d0af5-bd3d-423b-a2e6-5e1b90a10185\",\"draftId\":null,\"tenantId\":\"pg.citya\",\"applicationNo\":\"SV-1013-002461\",\"applicationDate\":1756795156297,\"certificateNo\":null,\"approvalDate\":0,\"applicationStatus\":\"APPLIED\",\"tradeLicenseNo\":\"\",\"vendingActivity\":\"STATIONARY\",\"vendingZone\":\"y1\",\"vendingZoneValue\":\"Opposite Bajaj Agency, Sirhind road near Rajpura Bypass starting\",\"cartLatitude\":0,\"cartLongitude\":0,\"vendingArea\":2.12,\"localAuthorityName\":\"test\",\"vendingLicenseCertificateId\":\"\",\"paymentReceiptId\":null,\"vendingLicenseId\":null,\"disabilityStatus\":\"NONE\",\"locality\":\"pg.patiala\",\"localityValue\":\"Patiala\",\"applicationCreatedBy\":\"CITIZEN\",\"benificiaryOfSocialSchemes\":[{\"id\":\"df5076d7-b263-4f04-a959-c9b4bd01b141\",\"applicationId\":\"e78d0af5-bd3d-423b-a2e6-5e1b90a10185\",\"schemeName\":\"Senior Citizens Welfare Fund (SCWF)\",\"enrollmentId\":\"\"}],\"termsAndCondition\":\"Y\",\"addressDetails\":[{\"addressId\":\"e2c8a5cd-fa5a-44e3-832a-2316a82cab4c\",\"vendorId\":\"59a9e925-768d-4e8c-b440-2ef3735e0073\",\"doorNo\":null,\"houseNo\":\"12\",\"streetName\":null,\"addressLine1\":\"test\",\"addressLine2\":\"test two\",\"landmark\":\"\",\"city\":\"New Delhi\",\"cityCode\":\"pg.citya\",\"locality\":\"Main Road Abadpura\",\"localityCode\":\"JLC476\",\"pincode\":\"121212\",\"addressType\":\"\"},{\"addressId\":\"9ecb255d-ac7f-477a-8604-1b5fefd38c45\",\"vendorId\":\"59a9e925-768d-4e8c-b440-2ef3735e0073\",\"doorNo\":null,\"houseNo\":\"12\",\"streetName\":null,\"addressLine1\":\"test\",\"addressLine2\":\"test two\",\"landmark\":\"\",\"city\":\"New Delhi\",\"cityCode\":\"pg.citya\",\"locality\":\"Main Road Abadpura\",\"localityCode\":\"JLC476\",\"pincode\":\"121212\",\"addressType\":\"\"}],\"bankDetail\":{\"id\":\"22f0b267-4b06-4cfd-99fc-78b169ef6e19\",\"applicationId\":\"e78d0af5-bd3d-423b-a2e6-5e1b90a10185\",\"accountNumber\":\"5763457354763463\",\"ifscCode\":\"sbin0001262\",\"bankName\":\"State Bank of India\",\"bankBranchName\":\"SIDHI\",\"accountHolderName\":\"test\",\"refundType\":null,\"refundStatus\":null,\"auditDetails\":null},\"documentDetails\":[{\"documentDetailId\":\"2b1f4979-82ba-4aea-aaf4-a5ed17dd1f57\",\"applicationId\":\"e78d0af5-bd3d-423b-a2e6-5e1b90a10185\",\"documentType\":\"IDENTITYPROOF.AADHAAR\",\"fileStoreId\":\"4ea8f9cf-f50f-45e0-9d7f-fae4870bf116\",\"auditDetails\":null},{\"documentDetailId\":\"e0d52b7f-38a7-427b-a2b2-b52ba46d349e\",\"applicationId\":\"e78d0af5-bd3d-423b-a2e6-5e1b90a10185\",\"documentType\":\"PHOTOGRAPH.VENDINGSETUP.PHOTO\",\"fileStoreId\":\"2d2a32f5-806b-442f-aee2-aa48d8d6044e\",\"auditDetails\":null},{\"documentDetailId\":\"a9a8fbc3-b911-434f-baef-64b43fe01a10\",\"applicationId\":\"e78d0af5-bd3d-423b-a2e6-5e1b90a10185\",\"documentType\":\"PROOF.RESIDENCE.VOTERID\",\"fileStoreId\":\"9139cbc4-60d2-4e64-a51d-c1652cea4606\",\"auditDetails\":null},{\"documentDetailId\":\"9f72d120-48d4-450e-92a4-0fd8c572263f\",\"applicationId\":\"e78d0af5-bd3d-423b-a2e6-5e1b90a10185\",\"documentType\":\"FAMILY.PHOTO.PHOTOGRAPH\",\"fileStoreId\":\"2ba46c99-c85b-47ea-86a8-ff438d056466\",\"auditDetails\":null}],\"vendorDetail\":[{\"id\":\"59a9e925-768d-4e8c-b440-2ef3735e0073\",\"applicationId\":\"e78d0af5-bd3d-423b-a2e6-5e1b90a10185\",\"vendorId\":null,\"name\":\"Shivank Shukla\",\"dob\":\"05-01-2002\",\"gender\":\"M\",\"fatherName\":\"test\",\"mobileNo\":\"9000090000\",\"emailId\":\"s@gmail.com\",\"relationshipType\":\"VENDOR\",\"userCategory\":\"GEN\",\"specialCategory\":\"NONE\",\"isInvolved\":true,\"auditDetails\":null}],\"vendingOperationTimeDetails\":[{\"id\":\"837a7f73-eae7-4166-bc10-0e28d4cc22a2\",\"applicationId\":\"e78d0af5-bd3d-423b-a2e6-5e1b90a10185\",\"dayOfWeek\":\"SUNDAY\",\"fromTime\":\"09:00\",\"toTime\":\"21:00\",\"auditDetails\":null},{\"id\":\"64bf5cc1-ff4f-4801-bc04-51e0a6bf390c\",\"applicationId\":\"e78d0af5-bd3d-423b-a2e6-5e1b90a10185\",\"dayOfWeek\":\"SATURDAY\",\"fromTime\":\"09:00\",\"toTime\":\"21:00\",\"auditDetails\":null},{\"id\":\"cbb92615-f823-47f5-af58-2432eca241c5\",\"applicationId\":\"e78d0af5-bd3d-423b-a2e6-5e1b90a10185\",\"dayOfWeek\":\"FRIDAY\",\"fromTime\":\"09:00\",\"toTime\":\"21:00\",\"auditDetails\":null},{\"id\":\"c4d7b2c8-5704-49c7-b0bc-cabe321714a1\",\"applicationId\":\"e78d0af5-bd3d-423b-a2e6-5e1b90a10185\",\"dayOfWeek\":\"THURSDAY\",\"fromTime\":\"09:00\",\"toTime\":\"21:00\",\"auditDetails\":null},{\"id\":\"7413a2c2-1f9b-4d64-806c-f4cfc7fa19a6\",\"applicationId\":\"e78d0af5-bd3d-423b-a2e6-5e1b90a10185\",\"dayOfWeek\":\"WEDNESDAY\",\"fromTime\":\"09:00\",\"toTime\":\"21:00\",\"auditDetails\":null},{\"id\":\"930ac86e-d6b7-4653-ba6f-a76c81657893\",\"applicationId\":\"e78d0af5-bd3d-423b-a2e6-5e1b90a10185\",\"dayOfWeek\":\"TUESDAY\",\"fromTime\":\"09:00\",\"toTime\":\"21:00\",\"auditDetails\":null},{\"id\":\"c60202c9-0966-48d0-b18c-b73e8b1dd3cf\",\"applicationId\":\"e78d0af5-bd3d-423b-a2e6-5e1b90a10185\",\"dayOfWeek\":\"MONDAY\",\"fromTime\":\"09:00\",\"toTime\":\"21:00\",\"auditDetails\":null}],\"workflow\":{\"action\":\"FORWARD\",\"comments\":\"forwarded\",\"businessService\":\"street-vending\",\"moduleName\":\"sv-services\",\"assignes\":[\"586d4c3a-478e-452d-a1d9-9a5c9914400f\"]},\"auditDetails\":{\"createdBy\":\"cf2b6aba-e94d-43e1-b07d-9744f441085c\",\"lastModifiedBy\":\"cf2b6aba-e94d-43e1-b07d-9744f441085c\",\"createdTime\":1756795156297,\"lastModifiedTime\":1756795156297},\"validityDate\":null,\"validityDateForPersisterDate\":null,\"expireFlag\":false,\"oldApplicationNo\":null,\"renewalStatus\":null,\"vendorPaymentFrequency\":\"QUARTERLY\",\"formattedApprovalDate\":\"NA\",\"formattedApplicationDate\":\"02-09-2025\",\"issuedDate\":null,\"financialYear\":null,\"validFrom\":\"NA\",\"validTo\":\"NA\"},\"RequestInfo\":{\"apiId\":\"Rainmaker\",\"authToken\":\"9ec1017d-9cfd-447c-877f-0cbb9ee0dcf5\",\"userInfo\":{\"id\":902,\"uuid\":\"d1576567-a084-4c36-b49b-332d29c7561e\",\"userName\":\"SV_EMP\",\"name\":\"TVC Employee\",\"mobileNumber\":\"9879879879\",\"emailId\":\"test@gmail.com\",\"locale\":null,\"type\":\"EMPLOYEE\",\"roles\":[{\"name\":\"Dashboard Employee\",\"code\":\"DASHBOARD_EMPLOYEE\",\"tenantId\":\"pg.citya\"},{\"name\":\"TVC Employee\",\"code\":\"TVCEMPLOYEE\",\"tenantId\":\"pg.citya\"},{\"name\":\"SV CEMP \",\"code\":\"SVCEMP\",\"tenantId\":\"pg.citya\"},{\"name\":\"State Administrator\",\"code\":\"STADMIN\",\"tenantId\":\"pg.citya\"}],\"active\":true,\"tenantId\":\"pg.citya\",\"permanentCity\":null},\"msgId\":\"1756795554827|en_IN\",\"plainAccessRequest\":{}}}'"
+			},
+			"response": []
+		}
+	]
+}

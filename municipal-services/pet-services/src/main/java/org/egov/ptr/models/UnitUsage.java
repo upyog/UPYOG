@@ -1,6 +1,6 @@
 package org.egov.ptr.models;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -8,7 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.validator.constraints.SafeHtml;
+import org.egov.ptr.validator.SanitizeHtml;
 
 @Data
 @AllArgsConstructor
@@ -16,26 +16,26 @@ import org.hibernate.validator.constraints.SafeHtml;
 @Builder
 public class UnitUsage {
 
-	@SafeHtml
+	@SanitizeHtml
 	@JsonProperty("id")
 	private String id;
 
-	@SafeHtml
+	@SanitizeHtml
 	@JsonProperty("tenantId")
 	private String tenantId;
 
 	@JsonProperty("unitId")
-	@SafeHtml
+	@SanitizeHtml
 	@NotNull
 	private String unitId;
 
 	@JsonProperty("usageCategory")
-	@SafeHtml
+	@SanitizeHtml
 	@NotNull
 	private String usageCategory;
 
 	@JsonProperty("occupancyType")
-	@SafeHtml
+	@SanitizeHtml
 	@NotNull
 	private String occupancyType;
 

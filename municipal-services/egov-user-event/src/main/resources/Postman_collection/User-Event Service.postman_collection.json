@@ -1,0 +1,223 @@
+{
+	"info": {
+		"_postman_id": "f3d7063e-f4c7-4610-9722-aec771b6dc2d",
+		"name": "User-Event Service",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "38080935"
+	},
+	"item": [
+		{
+			"name": "http://localhost:8087/egov-user-event/v1/events/_update",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"RequestInfo\": {\n    \"apiId\": \"org.egov.pt\",\n    \"ver\": \"1.0\",\n    \"ts\": 1502890899493,\n    \"action\": \"asd\",\n    \"did\": \"4354648646\",\n    \"key\": \"xyz\",\n    \"msgId\": \"654654\",\n    \"requesterId\": \"61\",\n    \"authToken\": \"d1ddc056-d5bb-4c65-ad49-c3c04595fc31\",\n    \"userInfo\": {\n      \"id\": 1,\n      \"uuid\": \"052741ef-fd24-48d6-b2e8-e7b0584520b3\",\n      \"type\": \"EMPLOYEE\",\n      \"tenantId\": \"pg.citya\",\n      \"roles\": [\n        {\n          \"name\": \"Employee\",\n          \"code\": \"EMPLOYEE\",\n          \"tenantId\": \"pg.citya\"\n        }\n      ]\n    }\n  },\n  \"events\": [\n    {\n      \"tenantId\": \"pg.citya\",\n      \"id\": \"335b84c0-5288-4476-8b9b-618ae411c322\",\n      \"eventType\": \"EVENTSONGROUND\",\n      \"eventCategory\": \"PUBLICHEALTH\",\n      \"name\": \"PT Pending Payement\",\n      \"description\": \"Dear Citizen, Creating Event After Lts Upgrade- UPDATED DESCRIPTION after Update curl-------------\",\n      \"status\": \"ACTIVE\",\n      \"source\": \"WEBAPP\",\n      \"eventDetails\": {\n        \"organizer\": \"Soorya P - Updated\",\n        \"fromDate\": 1767225600000,\n        \"toDate\": 1767312000000,\n        \"latitude\": 11.11,\n        \"longitude\": 11.11,\n        \"address\": \"Updated Address - Mcleod Road, Rani Ka Bagh, Amritsar\",\n        \"fees\": 1500\n      },\n      \"auditDetails\": {\n        \"createdBy\": \"1fec8102-0e02-4d0a-b283-cd80d5dab067\",\n        \"createdTime\": 1565079560614,\n        \"lastModifiedBy\": \"1fec8102-0e02-4d0a-b283-cd80d5dab067\",\n        \"lastModifiedTime\": 1757333919582\n      }\n    }\n  ]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8087/egov-user-event/v1/events/_update",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8087",
+					"path": [
+						"egov-user-event",
+						"v1",
+						"events",
+						"_update"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:8087/egov-user-event/v1/events/lat/_update",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"RequestInfo\": {\n    \"apiId\": \"org.egov.pt\",\n    \"ver\": \"1.0\",\n    \"ts\": 1502890899493,\n    \"action\": \"asd\",\n    \"did\": \"4354648646\",\n    \"key\": \"xyz\",\n    \"msgId\": \"654654\",\n    \"requesterId\": \"61\",\n    \"authToken\": \"685176f7-45dd-40b3-8821-93912a6d3dc0\",\n    \"userInfo\": {\n      \"id\": 1,\n      \"uuid\":\"5417dbb7-14b9-4be2-ac46-ce2decb30444\",\n      \"type\": \"CITIZEN\",\n      \"tenantId\": \"pg.citya\",\n      \"roles\": [\n        {\n          \"name\": \"Citizen\",\n          \"code\": \"CITIZEN\",\n          \"tenantId\": \"pg.citya\"\n        }\n      ]\n    }\n  }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8087/egov-user-event/v1/events/lat/_update",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8087",
+					"path": [
+						"egov-user-event",
+						"v1",
+						"events",
+						"lat",
+						"_update"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:8087/egov-user-event/v1/events/notifications/_count?tenantId=pg.citya",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"RequestInfo\": {\n    \"apiId\": \"org.egov.pt\",\n    \"ver\": \"1.0\",\n    \"ts\": 1502890899493,\n    \"action\": \"asd\",\n    \"did\": \"4354648646\",\n    \"key\": \"xyz\",\n    \"msgId\": \"654654\",\n    \"requesterId\": \"61\",\n    \"authToken\": \"0590b6f3-4906-4d24-a862-ec06070203b1\",\n    \"userInfo\": {\n      \"id\": 1,\n      \"uuid\":\"5417dbb7-14b9-4be2-ac46-ce2decb30444\",\n      \"type\": \"CITIZEN\",\n      \"tenantId\": \"pg.citya\",\n      \"roles\": [\n        {\n          \"name\": \"Citizen\",\n          \"code\": \"CITIZEN\",\n          \"tenantId\": \"pg.citya\"\n        }\n      ]\n    }\n  }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8087/egov-user-event/v1/events/notifications/_count?tenantId=pg.citya",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8087",
+					"path": [
+						"egov-user-event",
+						"v1",
+						"events",
+						"notifications",
+						"_count"
+					],
+					"query": [
+						{
+							"key": "tenantId",
+							"value": "pg.citya"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:8087/egov-user-event/v1/events/_search?tenantId=pg.citya&name=PT%20Pending%20Payement",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"RequestInfo\": {\n    \"apiId\": \"org.egov.pt\",\n    \"ver\": \"1.0\",\n    \"ts\": 1502890899493,\n    \"action\": \"_search\",\n    \"did\": \"4354648646\",\n    \"key\": \"xyz\",\n    \"msgId\": \"654654\",\n    \"requesterId\": \"61\",\n    \"authToken\": \"d9994555-7656-4a67-ab3a-a952a0d4dfc8\",\n    \"userInfo\": {\n      \"id\": 1,\n      \"uuid\": \"1fec8102-0e02-4d0a-b283-cd80d5dab067\",\n      \"type\": \"EMPLOYEE\",\n      \"tenantId\": \"pg.citya\",\n      \"roles\": [\n        {\n          \"name\": \"Employee\",\n          \"code\": \"EMPLOYEE\",\n          \"tenantId\": \"pg.citya\"\n        }\n      ]\n    }\n  }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8087/egov-user-event/v1/events/_search?tenantId=pg.citya&name=PT%20Pending%20Payement",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8087",
+					"path": [
+						"egov-user-event",
+						"v1",
+						"events",
+						"_search"
+					],
+					"query": [
+						{
+							"key": "tenantId",
+							"value": "pg.citya"
+						},
+						{
+							"key": "name",
+							"value": "PT%20Pending%20Payement"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:8087/egov-user-event/v1/events/_create",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"RequestInfo\": {\n    \"apiId\": \"org.egov.pt\",\n    \"ver\": \"1.0\",\n    \"ts\": 1502890899493,\n    \"action\": \"asd\",\n    \"did\": \"4354648646\",\n    \"key\": \"xyz\",\n    \"msgId\": \"654654\",\n    \"requesterId\": \"61\",\n    \"authToken\": \"d9994555-7656-4a67-ab3a-a952a0d4dfc8\",\n    \"userInfo\": {\n      \"id\": 1,\n      \"uuid\":\"1fec8102-0e02-4d0a-b283-cd80d5dab067\",\n      \"type\": \"EMPLOYEE\",\n      \"tenantId\": \"pg.citya\",\n      \"roles\": [\n        {\n          \"name\": \"Employee\",\n          \"code\": \"EMPLOYEE\",\n          \"tenantId\": \"pg.citya\"\n        }\n      ]\n    }\n  },\n  \"events\": [\n    {\n      \"tenantId\": \"pg.citya\",\n      \"eventType\": \"SYSTEMGENERATED\",\n      \"description\": \"Dear Citizen, Creating Event After Lts Upgrade\",\n      \"name\":\"PT Pending Payement\",\n      \"source\": \"webapp\",\n      \"actions\": {\n        \"actionUrls\": [\n          {\n            \"actionUrl\": \"https://egov-micro-dev.egovernments.org/citizen/otpLogin?mobileNo=9686987977&property-tax/assessment-form?assessmentId=AS-2019-07-17-057018&isReassesment=true&propertyId=PT-107-017534&tenantId=pg.citya&FY=2018-19\",\n            \"code\": \"PAY\"\n          }\n        ]\n      },\n      \"recepient\": {\n        \"toUsers\": [\n          \"5417dbb7-14b9-4be2-ac46-ce2decb30444\"\n        ]\n      }\n    }\n  ]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8087/egov-user-event/v1/events/_create",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8087",
+					"path": [
+						"egov-user-event",
+						"v1",
+						"events",
+						"_create"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

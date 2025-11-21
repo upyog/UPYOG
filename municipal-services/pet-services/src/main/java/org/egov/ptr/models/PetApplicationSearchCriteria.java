@@ -41,4 +41,13 @@ public class PetApplicationSearchCriteria {
 	@JsonProperty("breedType")
 	private String breedType = null;
 
+	@JsonProperty("validityDate")
+	private Long validityDate = null;
+
+	@JsonProperty("expireFlag")
+	private Boolean expireFlag = null;
+
+	@JsonProperty("applicationType")
+	private String applicationType = null;
+
 }

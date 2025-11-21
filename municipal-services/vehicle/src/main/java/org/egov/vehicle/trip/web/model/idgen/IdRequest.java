@@ -1,6 +1,6 @@
 package org.egov.vehicle.trip.web.model.idgen;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

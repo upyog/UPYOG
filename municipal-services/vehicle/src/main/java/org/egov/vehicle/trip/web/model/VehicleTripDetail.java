@@ -1,10 +1,10 @@
 package org.egov.vehicle.trip.web.model;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 import org.egov.vehicle.web.model.AuditDetails;
-import org.hibernate.validator.constraints.SafeHtml;
+import org.egov.vehicle.validation.SanitizeHtml;
 import org.springframework.validation.annotation.Validated;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -21,7 +21,7 @@ import lombok.Setter;
  * Request schema of VehicleLog.  
  */
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-12-23T12:08:13.326Z[GMT]")
+@jakarta.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-12-23T12:08:13.326Z[GMT]")
 
 @Builder
 @AllArgsConstructor
@@ -31,21 +31,21 @@ import lombok.Setter;
 
 public class VehicleTripDetail {
 
-	  @SafeHtml
+	  @SanitizeHtml
 	  @JsonProperty("id")
 	  private String id = null;
 
 	  @NotNull
-	  @SafeHtml
+	  @SanitizeHtml
 	  @NotBlank
 	  @JsonProperty("tenantId")
 	  private String tenantId = null;
 	  
-	  @SafeHtml
+	  @SanitizeHtml
 	  @JsonProperty("referenceNo")
 	  private String referenceNo = null;
 	  
-	   @SafeHtml
+	   @SanitizeHtml
 	  @JsonProperty("referenceStatus")
 	  private String referenceStatus = null;
 	  
@@ -99,7 +99,7 @@ public class VehicleTripDetail {
 	  @JsonProperty("auditDetails")
 	  private AuditDetails auditDetails = null;
 	  
-	  @SafeHtml
+	  @SanitizeHtml
 	  @JsonProperty("trip_id")
 	  private String trip_id = null;
 }

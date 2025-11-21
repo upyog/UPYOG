@@ -1,0 +1,327 @@
+{
+	"info": {
+		"_postman_id": "ce276ef5-90b3-4cc9-b6b6-87bd450af571",
+		"name": "Pet registration",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "38080935"
+	},
+	"item": [
+		{
+			"name": "http://localhost:8087/pet-services/pet-registration/_update",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "accept",
+						"value": "application/json, text/plain, */*"
+					},
+					{
+						"key": "accept-language",
+						"value": "en-GB,en-US;q=0.9,en;q=0.8"
+					},
+					{
+						"key": "content-type",
+						"value": "application/json;charset=UTF-8"
+					},
+					{
+						"key": "origin",
+						"value": "https://niuatt.niua.in"
+					},
+					{
+						"key": "priority",
+						"value": "u=1, i"
+					},
+					{
+						"key": "referer",
+						"value": "https://niuatt.niua.in/digit-ui/employee/ptr/petservice/application-details/PG-PTR-2025-09-04-000273"
+					},
+					{
+						"key": "sec-ch-ua",
+						"value": "\"Not;A=Brand\";v=\"99\", \"Google Chrome\";v=\"139\", \"Chromium\";v=\"139\""
+					},
+					{
+						"key": "sec-ch-ua-mobile",
+						"value": "?0"
+					},
+					{
+						"key": "sec-ch-ua-platform",
+						"value": "\"macOS\""
+					},
+					{
+						"key": "sec-fetch-dest",
+						"value": "empty"
+					},
+					{
+						"key": "sec-fetch-mode",
+						"value": "cors"
+					},
+					{
+						"key": "sec-fetch-site",
+						"value": "same-origin"
+					},
+					{
+						"key": "user-agent",
+						"value": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"PetRegistrationApplications\": [\n        {\n            \"renewalAuditDetails\": null,\n            \"id\": \"c97942e3-4f81-45a7-8237-6493fcc92438\",\n            \"tenantId\": \"pg.citya\",\n            \"applicationNumber\": \"PG-PTR-2025-09-04-000269\",\n            \"applicantName\": \"twetw\",\n            \"fatherName\": \"wretwrt\",\n            \"mobileNumber\": \"9999999999\",\n            \"emailId\": \"wertwe@gmail.com\",\n            \"address\": {\n                \"id\": \"8312e54b-f738-4346-8a02-c2b253bee6ad\",\n                \"tenantId\": null,\n                \"registrationId\": \"bf8acf20-229f-4ec4-9d92-28b9349a011c\",\n                \"doorNo\": \"345\",\n                \"latitude\": null,\n                \"longitude\": null,\n                \"addressLine1\": \"sgsdg\",\n                \"addressLine2\": \"sdfgsd\",\n                \"landmark\": \"sfgg\",\n                \"city\": \"New Delhi\",\n                \"pincode\": \"112233\",\n                \"buildingName\": \"Rohini\",\n                \"street\": \"dfgs\",\n                \"locality\": { \"code\": \"Main Road Abadpura\" }\n            },\n            \"auditDetails\": {\n                \"createdBy\": \"8ddbbdba-5ce1-4cbd-83a4-c8236f95766e\",\n                \"lastModifiedBy\": \"8ddbbdba-5ce1-4cbd-83a4-c8236f95766e\",\n                \"createdTime\": 1756969462759,\n                \"lastModifiedTime\": 1756969462759\n            },\n            \"petDetails\": {\n                \"id\": \"a9541dab-be78-4f07-8ba6-62ba5a94702e\",\n                \"petDetailsId\": \"bf8acf20-229f-4ec4-9d92-28b9349a011c\",\n                \"petName\": \"sadgsdfg\",\n                \"petType\": \"Cat\",\n                \"breedType\": \"Bombay Cat\",\n                \"petAge\": \"2\",\n                \"petGender\": \"MALE\",\n                \"clinicName\": \"dgd\",\n                \"doctorName\": \"sfgs\",\n                \"lastVaccineDate\": \"2025-08-11\",\n                \"vaccinationNumber\": \"s45345\",\n                \"petColor\": \"18\",\n                \"adoptionDate\": null,\n                \"birthDate\": 1752085799000,\n                \"identificationMark\": \"dfgs\"\n            },\n            \"applicationType\": \"NEWAPPLICATION\",\n            \"validityDate\": 1775001540,\n            \"status\": \"APPLIED\",\n            \"expireFlag\": false,\n            \"petToken\": \"\",\n            \"previousApplicationNumber\": null,\n            \"propertyId\": \"45353\",\n            \"documents\": [\n                {\n                    \"id\": \"61b169a9-5b15-425a-baf4-86790c90d1d9\",\n                    \"active\": true,\n                    \"tenantId\": \"pg.citya\",\n                    \"documentType\": \"OWNER.IDENTITYPROOF.AADHAAR\",\n                    \"filestoreId\": \"276fd54f-b5d8-4cea-b9e4-2209598af227\",\n                    \"documentUid\": \"276fd54f-b5d8-4cea-b9e4-2209598af227\",\n                    \"auditDetails\": {\n                        \"createdBy\": \"8ddbbdba-5ce1-4cbd-83a4-c8236f95766e\",\n                        \"lastModifiedBy\": \"8ddbbdba-5ce1-4cbd-83a4-c8236f95766e\",\n                        \"createdTime\": 1756969462759,\n                        \"lastModifiedTime\": 1756969462759\n                    }\n                },\n                {\n                    \"id\": \"6b0d3fff-373f-47b9-947b-9e65f0e65a21\",\n                    \"active\": true,\n                    \"tenantId\": \"pg.citya\",\n                    \"documentType\": \"OWNER.OWNERPHOTO\",\n                    \"filestoreId\": \"457055ef-0861-471d-b188-7cfb638c7170\",\n                    \"documentUid\": \"457055ef-0861-471d-b188-7cfb638c7170\",\n                    \"auditDetails\": {\n                        \"createdBy\": \"8ddbbdba-5ce1-4cbd-83a4-c8236f95766e\",\n                        \"lastModifiedBy\": \"8ddbbdba-5ce1-4cbd-83a4-c8236f95766e\",\n                        \"createdTime\": 1756969462759,\n                        \"lastModifiedTime\": 1756969462759\n                    }\n                },\n                {\n                    \"id\": \"8fa167ad-81c9-452d-8288-2af1c05dcce5\",\n                    \"active\": true,\n                    \"tenantId\": \"pg.citya\",\n                    \"documentType\": \"PET.VACCINATIONCERTIFICATE\",\n                    \"filestoreId\": \"b3ea9ec9-51b2-44bf-a003-8090f3d738d1\",\n                    \"documentUid\": \"b3ea9ec9-51b2-44bf-a003-8090f3d738d1\",\n                    \"auditDetails\": {\n                        \"createdBy\": \"8ddbbdba-5ce1-4cbd-83a4-c8236f95766e\",\n                        \"lastModifiedBy\": \"8ddbbdba-5ce1-4cbd-83a4-c8236f95766e\",\n                        \"createdTime\": 1756969462759,\n                        \"lastModifiedTime\": 1756969462759\n                    }\n                },\n                {\n                    \"id\": \"6f4981b7-acb0-461b-8138-4b51cbed71fb\",\n                    \"active\": true,\n                    \"tenantId\": \"pg.citya\",\n                    \"documentType\": \"PET.PETPHOTO\",\n                    \"filestoreId\": \"9b324534-987a-4f87-b206-8e9ea9db7656\",\n                    \"documentUid\": \"9b324534-987a-4f87-b206-8e9ea9db7656\",\n                    \"auditDetails\": {\n                        \"createdBy\": \"8ddbbdba-5ce1-4cbd-83a4-c8236f95766e\",\n                        \"lastModifiedBy\": \"8ddbbdba-5ce1-4cbd-83a4-c8236f95766e\",\n                        \"createdTime\": 1756969462759,\n                        \"lastModifiedTime\": 1756969462759\n                    }\n                },\n                {\n                    \"id\": \"2b98c8bb-b107-4fbf-a9ba-2a48829b22ed\",\n                    \"active\": true,\n                    \"tenantId\": \"pg.citya\",\n                    \"documentType\": \"PET.FITNESSCERTIFICATE\",\n                    \"filestoreId\": \"b1f8a91e-d1cb-43fb-9880-ed87304f7075\",\n                    \"documentUid\": \"b1f8a91e-d1cb-43fb-9880-ed87304f7075\",\n                    \"auditDetails\": {\n                        \"createdBy\": \"8ddbbdba-5ce1-4cbd-83a4-c8236f95766e\",\n                        \"lastModifiedBy\": \"8ddbbdba-5ce1-4cbd-83a4-c8236f95766e\",\n                        \"createdTime\": 1756969462759,\n                        \"lastModifiedTime\": 1756969462759\n                    }\n                }\n            ],\n            \"workflow\": {\n                \"action\": \"REJECT\",\n                \"comments\": \"jbhikhk\",\n                \"businessService\": \"ptr\",\n                \"moduleName\": \"pet-services\"\n            }\n        }\n    ],\n    \"RequestInfo\": {\n        \"apiId\": \"Rainmaker\",\n        \"authToken\": \"3044d66f-38d6-4fcf-8e6e-102c178bd953\",\n        \"userInfo\": {\n            \"id\": 786,\n            \"uuid\": \"4b662cf9-18d8-43fb-a532-a955104dd2f8\",\n            \"userName\": \"PET_CEMP\",\n            \"name\": \"Pet\",\n            \"mobileNumber\": \"9810010169\",\n            \"emailId\": null,\n            \"locale\": null,\n            \"type\": \"EMPLOYEE\",\n            \"roles\": [\n                {\n                    \"name\": \"Employee\",\n                    \"code\": \"EMPLOYEE\",\n                    \"tenantId\": \"pg.citya\"\n                },\n                {\n                    \"name\": \"Pet Counter Employee\",\n                    \"code\": \"PTR_CEMP\",\n                    \"tenantId\": \"pg.citya\"\n                },\n                {\n                    \"name\": \"Pet Document Verifier\",\n                    \"code\": \"PTR_VERIFIER\",\n                    \"tenantId\": \"pg.citya\"\n                },\n                {\n                    \"name\": \"Pet Approver\",\n                    \"code\": \"PTR_APPROVER\",\n                    \"tenantId\": \"pg.citya\"\n                }\n            ],\n            \"active\": true,\n            \"tenantId\": \"pg.citya\",\n            \"permanentCity\": null\n        },\n        \"msgId\": \"1756976187193|en_IN\",\n        \"plainAccessRequest\": {}\n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8087/pet-services/pet-registration/_update",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8087",
+					"path": [
+						"pet-services",
+						"pet-registration",
+						"_update"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:8087/pet-registration/trigger-expire-petapplications",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "accept",
+						"value": "*/*"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8087/pet-registration/trigger-expire-petapplications",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8087",
+					"path": [
+						"pet-registration",
+						"trigger-expire-petapplications"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:8087/pet-registration/trigger-advance-notification",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "accept",
+						"value": "*/*"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8087/pet-registration/trigger-advance-notification",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8087",
+					"path": [
+						"pet-registration",
+						"trigger-advance-notification"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:8087/pet-services/pet-registration/_search?tenantId=pg.citya&applicationNumber=PG-PTR-2025-09-04-000271&_=1756977798946",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "accept",
+						"value": "application/json, text/plain, */*"
+					},
+					{
+						"key": "accept-language",
+						"value": "en-GB,en-US;q=0.9,en;q=0.8"
+					},
+					{
+						"key": "content-type",
+						"value": "application/json;charset=UTF-8"
+					},
+					{
+						"key": "origin",
+						"value": "https://niuatt.niua.in"
+					},
+					{
+						"key": "priority",
+						"value": "u=1, i"
+					},
+					{
+						"key": "referer",
+						"value": "https://niuatt.niua.in/digit-ui/employee/ptr/petservice/application-details/PG-PTR-2025-09-04-000271"
+					},
+					{
+						"key": "sec-ch-ua",
+						"value": "\"Not;A=Brand\";v=\"99\", \"Google Chrome\";v=\"139\", \"Chromium\";v=\"139\""
+					},
+					{
+						"key": "sec-ch-ua-mobile",
+						"value": "?0"
+					},
+					{
+						"key": "sec-ch-ua-platform",
+						"value": "\"macOS\""
+					},
+					{
+						"key": "sec-fetch-dest",
+						"value": "empty"
+					},
+					{
+						"key": "sec-fetch-mode",
+						"value": "cors"
+					},
+					{
+						"key": "sec-fetch-site",
+						"value": "same-origin"
+					},
+					{
+						"key": "user-agent",
+						"value": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36"
+					},
+					{
+						"key": "Cookie",
+						"value": "_ga=GA1.1.1281085881.1747741867; _clck=1ggqflr%7C2%7Cfyf%7C0%7C1966; _ga_VZ9TNBTB3X=GS2.1.s1755061755$o5$g0$t1755061755$j60$l0$h0; locale=en_IN"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"Rainmaker\",\n        \"authToken\": \"3044d66f-38d6-4fcf-8e6e-102c178bd953\",\n        \"userInfo\": {\n            \"id\": 786,\n            \"uuid\": \"4b662cf9-18d8-43fb-a532-a955104dd2f8\",\n            \"userName\": \"PET_CEMP\",\n            \"name\": \"Pet\",\n            \"mobileNumber\": \"9810010169\",\n            \"emailId\": null,\n            \"locale\": null,\n            \"type\": \"EMPLOYEE\",\n            \"roles\": [\n                {\n                    \"name\": \"Employee\",\n                    \"code\": \"EMPLOYEE\",\n                    \"tenantId\": \"pg.citya\"\n                },\n                {\n                    \"name\": \"Pet Counter Employee\",\n                    \"code\": \"PTR_CEMP\",\n                    \"tenantId\": \"pg.citya\"\n                },\n                {\n                    \"name\": \"Pet Document Verifier\",\n                    \"code\": \"PTR_VERIFIER\",\n                    \"tenantId\": \"pg.citya\"\n                },\n                {\n                    \"name\": \"Pet Approver\",\n                    \"code\": \"PTR_APPROVER\",\n                    \"tenantId\": \"pg.citya\"\n                }\n            ],\n            \"active\": true,\n            \"tenantId\": \"pg.citya\",\n            \"permanentCity\": null\n        },\n        \"msgId\": \"1756977798946|en_IN\",\n        \"plainAccessRequest\": {}\n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8087/pet-services/pet-registration/_search?tenantId=pg.citya&applicationNumber=PG-PTR-2025-09-04-000271&_=1756977798946",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8087",
+					"path": [
+						"pet-services",
+						"pet-registration",
+						"_search"
+					],
+					"query": [
+						{
+							"key": "tenantId",
+							"value": "pg.citya"
+						},
+						{
+							"key": "applicationNumber",
+							"value": "PG-PTR-2025-09-04-000271"
+						},
+						{
+							"key": "_",
+							"value": "1756977798946"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:8087/pet-services/pet-registration/_create",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json, text/plain, */*"
+					},
+					{
+						"key": "Accept-Language",
+						"value": "en-GB,en-US;q=0.9,en;q=0.8"
+					},
+					{
+						"key": "Connection",
+						"value": "keep-alive"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json;charset=UTF-8"
+					},
+					{
+						"key": "Origin",
+						"value": "http://localhost:3000"
+					},
+					{
+						"key": "Referer",
+						"value": "http://localhost:3000/digit-ui/citizen/ptr/petservice/new-application/acknowledgement"
+					},
+					{
+						"key": "Sec-Fetch-Dest",
+						"value": "empty"
+					},
+					{
+						"key": "Sec-Fetch-Mode",
+						"value": "cors"
+					},
+					{
+						"key": "Sec-Fetch-Site",
+						"value": "same-origin"
+					},
+					{
+						"key": "User-Agent",
+						"value": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36"
+					},
+					{
+						"key": "sec-ch-ua",
+						"value": "\"Not;A=Brand\";v=\"99\", \"Google Chrome\";v=\"139\", \"Chromium\";v=\"139\""
+					},
+					{
+						"key": "sec-ch-ua-mobile",
+						"value": "?0"
+					},
+					{
+						"key": "sec-ch-ua-platform",
+						"value": "\"macOS\""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"PetRegistrationApplications\": [\n        {\n            \"tenantId\": \"pg.citya\",\n            \"applicantName\": \"wrtert\",\n            \"mobileNumber\": \"9999999999\",\n            \"alternateNumber\": \"\",\n            \"fatherName\": \"rtewet\",\n            \"emailId\": \"sdsg@gmail.com\",\n            \"applicationType\": \"NEWAPPLICATION\",\n            \"validityDate\": null,\n            \"status\": null,\n            \"expireflag\": false,\n            \"petToken\": \"\",\n            \"previousapplicationnumber\": null,\n            \"address\": {\n                \"pincode\": \"112233\",\n                \"landmark\": \"sfg\",\n                \"city\": \"New Delhi\",\n                \"doorNo\": \"345\",\n                \"street\": \"dfgs\",\n                \"locality\": {\n                    \"code\": \"Main Road Abadpura\"\n                },\n                \"buildingName\": \"dfgsdf\",\n                \"addressLine1\": \"dfsg\",\n                \"addressLine2\": \"sfg\"\n            },\n            \"petDetails\": {\n                \"petType\": \"Cat\",\n                \"breedType\": \"Bombay Cat\",\n                \"petGender\": \"MALE\",\n                \"birthDate\": 1752085799000,\n                \"adoptionDate\": null,\n                \"identificationMark\": \"dfgs\",\n                \"petColor\": \"18\",\n                \"clinicName\": \"dgd\",\n                \"petName\": \"sadgsdfg\",\n                \"doctorName\": \"sfgs\",\n                \"lastVaccineDate\": \"2025-08-11\",\n                \"petAge\": 2,\n                \"vaccinationNumber\": \"s45345\"\n            },\n            \"documents\": [\n                {\n                    \"documentType\": \"OWNER.IDENTITYPROOF.AADHAAR\",\n                    \"filestoreId\": \"276fd54f-b5d8-4cea-b9e4-2209598af227\",\n                    \"documentUid\": \"276fd54f-b5d8-4cea-b9e4-2209598af227\"\n                },\n                {\n                    \"documentType\": \"OWNER.OWNERPHOTO\",\n                    \"filestoreId\": \"457055ef-0861-471d-b188-7cfb638c7170\",\n                    \"documentUid\": \"457055ef-0861-471d-b188-7cfb638c7170\"\n                },\n                {\n                    \"documentType\": \"PET.VACCINATIONCERTIFICATE\",\n                    \"filestoreId\": \"b3ea9ec9-51b2-44bf-a003-8090f3d738d1\",\n                    \"documentUid\": \"b3ea9ec9-51b2-44bf-a003-8090f3d738d1\"\n                },\n                {\n                    \"documentType\": \"PET.PETPHOTO\",\n                    \"filestoreId\": \"9b324534-987a-4f87-b206-8e9ea9db7656\",\n                    \"documentUid\": \"9b324534-987a-4f87-b206-8e9ea9db7656\"\n                },\n                {\n                    \"documentType\": \"PET.FITNESSCERTIFICATE\",\n                    \"filestoreId\": \"b1f8a91e-d1cb-43fb-9880-ed87304f7075\",\n                    \"documentUid\": \"b1f8a91e-d1cb-43fb-9880-ed87304f7075\"\n                }\n            ],\n            \"propertyId\": \"45353\",\n            \"workflow\": {\n                \"businessService\": \"ptr\",\n                \"action\": \"APPLY\",\n                \"moduleName\": \"pet-services\"\n            }\n        }\n    ],\n    \"RequestInfo\": {\n        \"apiId\": \"Rainmaker\",\n        \"authToken\": \"bd98f73e-624d-4388-8a9f-e0e1702e1f9c\",\n        \"userInfo\": {\n            \"id\": 4031,\n            \"uuid\": \"8ddbbdba-5ce1-4cbd-83a4-c8236f95766e\",\n            \"userName\": \"PETEMP\",\n            \"name\": \"PETEMP\",\n            \"mobileNumber\": \"9586868696\",\n            \"emailId\": null,\n            \"locale\": null,\n            \"type\": \"EMPLOYEE\",\n            \"roles\": [\n                {\n                    \"name\": \"Pet Counter Employee\",\n                    \"code\": \"PTR_CEMP\",\n                    \"tenantId\": \"pg.citya\"\n                },\n                {\n                    \"name\": \"Pet Document Verifier\",\n                    \"code\": \"PTR_VERIFIER\",\n                    \"tenantId\": \"pg.citya\"\n                },\n                {\n                    \"name\": \"Pet Approver\",\n                    \"code\": \"PTR_APPROVER\",\n                    \"tenantId\": \"pg.citya\"\n                }\n            ],\n            \"active\": true,\n            \"tenantId\": \"pg.citya\",\n            \"permanentCity\": null\n        },\n        \"msgId\": \"1756964230011|en_IN\",\n        \"plainAccessRequest\": {}\n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8087/pet-services/pet-registration/_create",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8087",
+					"path": [
+						"pet-services",
+						"pet-registration",
+						"_create"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

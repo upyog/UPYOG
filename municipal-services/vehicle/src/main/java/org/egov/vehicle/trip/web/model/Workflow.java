@@ -2,9 +2,9 @@ package org.egov.vehicle.trip.web.model;
 
 import java.util.List;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 
-import org.hibernate.validator.constraints.SafeHtml;
+import org.egov.vehicle.validation.SanitizeHtml;
 import org.springframework.validation.annotation.Validated;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -19,7 +19,7 @@ import lombok.Setter;
  * BPA application object to capture the details of land, land owners, and address of the land.
  */
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-12-23T12:08:13.326Z[GMT]")
+@jakarta.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-12-23T12:08:13.326Z[GMT]")
 
 @Builder
 @AllArgsConstructor
@@ -27,7 +27,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class Workflow   {
-  @SafeHtml
+  @SanitizeHtml
   @JsonProperty("action")
   private String action = null;
 
@@ -35,7 +35,7 @@ public class Workflow   {
   @Valid
   private List<String> assignes = null;
 
-  @SafeHtml
+  @SanitizeHtml
   @JsonProperty("comments")
   private String comments = null;
 

@@ -2,7 +2,7 @@ package org.egov.vehicle.repository.querybuilder;
 
 import java.util.List;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 
 import org.egov.vehicle.config.VehicleConfiguration;
 import org.egov.vehicle.web.model.Vehicle;
