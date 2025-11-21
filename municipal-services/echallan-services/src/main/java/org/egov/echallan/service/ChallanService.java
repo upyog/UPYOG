@@ -74,6 +74,7 @@ public class ChallanService {
 		
 		calculationService.addCalculation(request);
 		
+		if(request.getChallan().getBusinessService().equalsIgnoreCase("REQSERV"))
 		workflowService.updateWorkflow(request);
 
 		repository.save(request);
