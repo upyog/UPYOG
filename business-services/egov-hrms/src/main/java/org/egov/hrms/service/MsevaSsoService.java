@@ -419,10 +419,10 @@ public class MsevaSsoService {
 	public Map<String, Object> fetchGenerateSsoUrlDetails(AuthenticateUserInputRequest authenticateUserInputRequest) {
 
 	    // Decode static key
-	    byte[] staticKey = Base64.getDecoder().decode(propertiesManager.hrmsMsevaSsoKey);
+	    byte[] staticKey = Base64.getDecoder().decode("6v3TyEgjUcQr3OAp9fZgO9wDOA9/AtbXtUoXT/xjVfQ=");
 
 	    // Log masked static key
-	    log.info("hrmsMsevaSsoKey (Base64): {}", propertiesManager.hrmsMsevaSsoKey);
+	   // log.info("hrmsMsevaSsoKey (Base64): {}", propertiesManager.hrmsMsevaSsoKey);
 	    log.info("Decoded Static Key (masked): {}", maskKey(staticKey));
 
 	    final byte[] staticIv = new byte[16];
