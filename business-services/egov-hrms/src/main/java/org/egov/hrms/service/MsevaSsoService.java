@@ -417,13 +417,41 @@ public class MsevaSsoService {
     }
 
 	public Map<String, Object> fetchGenerateSsoUrlDetails(AuthenticateUserInputRequest authenticateUserInputRequest) {
-		byte[] staticKey =Base64.getDecoder().decode(propertiesManager.hrmsMsevaSsoKey);
-		final byte[] StaticIv = new byte[16];
-		String inputData = authenticateUserInputRequest.getTokenName()+":"+authenticateUserInputRequest.getUserName();
-		String encdata = encryptData(inputData,staticKey,StaticIv);	
-		Map<String, Object> map1= ReadValuesFromApi2(encdata);
-		return map1;
+
+	    // Decode static key
+	    byte[] staticKey = Base64.getDecoder().decode(propertiesManager.hrmsMsevaSsoKey);
+
+	    // Log masked static key
+	    log.info("hrmsMsevaSsoKey (Base64): {}", propertiesManager.hrmsMsevaSsoKey);
+	    log.info("Decoded Static Key (masked): {}", maskKey(staticKey));
+
+	    final byte[] staticIv = new byte[16];
+
+	    String inputData = authenticateUserInputRequest.getTokenName() 
+	                        + ":" + authenticateUserInputRequest.getUserName();
+	    log.info("Input Data Before Encryption: {}", inputData);
+
+	    // Encrypt
+	    String encdata = encryptData(inputData, staticKey, staticIv);
+	    log.info("Encrypted Data: {}", encdata);
+
+	    // Call API
+	    Map<String, Object> map1 = ReadValuesFromApi2(encdata);
+	    log.info("API Response: {}", map1);
+
+	    return map1;
 	}
+
+	private String maskKey(byte[] key) {
+	    if (key == null || key.length == 0) return "null";
+	    StringBuilder sb = new StringBuilder();
+	    for (int i = 0; i < key.length; i++) {
+	        sb.append(i < 4 ? key[i] : "*");
+	        if (i < key.length - 1) sb.append(",");
+	    }
+	    return sb.toString();
+	}
+
 	
 	private Map<String, Object> ReadValuesFromApi2(String decpData) {
 	    int respValue = 0;
