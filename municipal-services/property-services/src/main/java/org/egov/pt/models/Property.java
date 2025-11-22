@@ -149,6 +149,10 @@ public class Property {
 
 	@JsonProperty("businessService")
 	private String businessService;
+	
+	@JsonProperty("isBilling")
+	private Boolean isBilling;
+
 
 //	@Builder
 //	public Property(String id, String propertyId, String surveyId, List<String> linkedProperties, String tenantId,

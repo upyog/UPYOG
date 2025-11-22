@@ -16,6 +16,8 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
+import org.egov.pt.models.enums.BillStatus;
+
 
 import org.egov.pt.service.DemandService;
 import javax.validation.Valid;
@@ -175,9 +177,6 @@ public class PropertyService {
 
 	@Autowired
 	private RequestInfoUtils requestInfoUtils;
-	
-	@Autowired
-	private PTTaxCalculatorService ptTaxCalculatorService;
 
 	/**
 	 * Enriches the Request and pushes to the Queue
@@ -1047,14 +1046,18 @@ public class PropertyService {
 	}
 
 	public Boolean cancelPropertyBill(CancelPropertyBillRequest cancelRequest) {
-		BillSearchCriteria billSearchCriteria = BillSearchCriteria.builder().tenantId(cancelRequest.getTenantId())
-				.consumerCode(cancelRequest.getConsumerCode()).service("PROPERTY").isActive(true).isCancelled(false).build();
+		BillSearchCriteria billSearchCriteria = BillSearchCriteria.builder()
+				.tenantId(cancelRequest.getTenantId())
+				.billId(Collections.singleton(cancelRequest.getBillId()))
+				.service(PTConstants.MODULE_PROPERTY)
+				.isActive(true)
+				.isCancelled(false)
+				.build();
 
 		BillResponse billResponse = billService.searchBill(billSearchCriteria, cancelRequest.getRequestInfo());
 
 		if (billResponse == null || CollectionUtils.isEmpty(billResponse.getBill())) {
-			throw new CustomException("INVALID UPDATE",
-					"No Bill exists for consumerCode: " + cancelRequest.getConsumerCode());
+			throw new CustomException("INVALID UPDATE","No Bill exists for billId: " + cancelRequest.getBillId());
 		}
 
 		Bill bill = billResponse.getBill().get(0);
@@ -1080,17 +1083,24 @@ public class PropertyService {
 		// Update bill status
 		UpdatePropertyBillCriteria updateBillCriteria = UpdatePropertyBillCriteria.builder().tenantId(bill.getTenantId())
 				.consumerCodes(Collections.singleton(bill.getConsumerCode()))
+				.billIds(Collections.singleton(bill.getId()))
 				.statusToBeUpdated(StatusEnum.CANCELLED)
 				.businessService(bill.getBusinessService()).additionalDetails(addDetailsNode).build();
 		billService.updateBillStatus(updateBillCriteria, cancelRequest.getRequestInfo());
 		
 		// UPDATE PT TRACKER STATUS
-	    ptTaxCalculatorService.cancelTrackerRecord(
-	            bill.getTenantId(),
-	            bill.getConsumerCode(),
-	            cancelRequest.getRequestInfo().getUserInfo().getUuid()
-	    );
-		
+		PtTaxCalculatorTracker tracker = PtTaxCalculatorTracker.builder()
+		        .tenantId(bill.getTenantId())
+		        .billId(bill.getId())
+		        .billStatus(BillStatus.CANCELLED)
+		        .build();
+
+		PtTaxCalculatorTrackerRequest trackerRequest = PtTaxCalculatorTrackerRequest.builder()
+		        .requestInfo(cancelRequest.getRequestInfo())
+		        .ptTaxCalculatorTracker(tracker)
+		        .build();
+
+		propertyService.saveToPtTaxCalculatorTracker(trackerRequest);
 
 		return true;
 	}

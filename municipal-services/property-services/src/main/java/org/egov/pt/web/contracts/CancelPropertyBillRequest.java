@@ -35,5 +35,8 @@ public class CancelPropertyBillRequest {
 	
 	@NotNull
 	private String reason;
+	
+	@NotNull
+	private String billId;
 
 }
