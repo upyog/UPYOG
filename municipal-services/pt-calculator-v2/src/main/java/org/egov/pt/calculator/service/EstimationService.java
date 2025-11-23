@@ -170,9 +170,21 @@ public class EstimationService {
 		CalculationCriteria criteria = request.getCalculationCriteria().get(0);
 		Property property = criteria.getProperty();
 		PropertyDetail detail = property.getPropertyDetails().get(0);
+		String assessmentYear = criteria.getProperty().getPropertyDetails().get(0).getFinancialYear();
+
+		if ("2013-14".equals(assessmentYear)) {
+			log.info("Calling 2013-14 special tax calculation...");
+			JsonNode requestBody = mapper.convertValue(request, JsonNode.class);
+			JsonNode legacyResponseJson = calculateFor2013(requestBody);
+			CalculationRes response = mapper.convertValue(legacyResponseJson, CalculationRes.class);
+
+			return response;
+
+
+		}
+
 		calcValidator.validatePropertyForCalculation(detail);
 		Map<String, Object> masterMap = mDataService.getMasterMap(request);
-		String assessmentYear = criteria.getProperty().getPropertyDetails().get(0).getFinancialYear();
 
 
 		if (assessmentRequestV2 != null) {
@@ -183,19 +195,6 @@ public class EstimationService {
 			Long endingDateForFinicialYear = Long.valueOf(finicialYears.get(assessmentRequestV2.getAssessment().getFinancialYear()).get("endingDate").toString());
 			criteria.setToDate(endingDateForFinicialYear);
 		}
-
-		if ("2013-14".equals(assessmentYear)) {
-			log.info("Calling 2013-14 special tax calculation...");
-			//ensureFloorNoForUnits(criteria.getProperty());
-			JsonNode requestBody = mapper.convertValue(request, JsonNode.class);
-			JsonNode legacyResponseJson = calculateFor2013(requestBody);
-			CalculationRes response = mapper.convertValue(legacyResponseJson, CalculationRes.class);
-
-			return response;
-
-
-		}
-
 
 		Demand demand = utils.getLatestDemandForCurrentFinancialYear(request.getRequestInfo(), request.getCalculationCriteria().get(0));
 		return new CalculationRes(new ResponseInfo(), Collections.singletonList(getCalculation(request.getRequestInfo(), criteria, demand, masterMap)));
@@ -1870,9 +1869,20 @@ public class EstimationService {
 		double PT_TAX = 0, PT_TAX_NET = 0, exemption = 0, unit_usage_exemption = 0, FireCess = 0;
 
 		try {
-			JsonNode properties = requestBody.at("/CalculationCriteria/0/property");
+			JsonNode calculationCriteriaArray = requestBody.path("CalculationCriteria");
+			if (calculationCriteriaArray == null || !calculationCriteriaArray.isArray() || calculationCriteriaArray.size() == 0) {
+				throw new IllegalArgumentException("CalculationCriteria is missing or empty");
+			}
+			JsonNode properties = calculationCriteriaArray.get(0).path("property");
+			if (properties == null || properties.isMissingNode()) {
+				throw new IllegalArgumentException("Property is missing in CalculationCriteria");
+			}
 			String tenantId = properties.get("tenantId").asText();
-			JsonNode propertyDetails = properties.get("propertyDetails").get(0);
+			JsonNode propertyDetailsArray = properties.path("propertyDetails");
+			if (propertyDetailsArray == null || !propertyDetailsArray.isArray() || propertyDetailsArray.size() == 0) {
+				throw new IllegalArgumentException("PropertyDetails is missing or empty");
+			}
+			JsonNode propertyDetails = propertyDetailsArray.get(0);
 			String assessmentYear = propertyDetails.get("financialYear").asText();
 			JsonNode addressNode = properties.path("address");
 			//JsonNode units = properties.get("unit");
@@ -1903,19 +1913,34 @@ public class EstimationService {
 			double additionalRebateRate = 0.0;
 
 			if (penaltyConfig != null && !penaltyConfig.isEmpty()) {
-				Map<String, Object> record = (Map<String, Object>) penaltyConfig.get(0);
-				Object rateValue = record.getOrDefault("rate", 0);
-				penalityRate = Double.parseDouble(rateValue.toString());
+				try {
+					Map<String, Object> record = (Map<String, Object>) penaltyConfig.get(0);
+					Object rateValue = record.getOrDefault("rate", 0);
+					penalityRate = Double.parseDouble(rateValue.toString());
+				} catch (NumberFormatException | ClassCastException e) {
+					log.warn("Error parsing penalty rate, using default 0.0: {}", e.getMessage());
+					penalityRate = 0.0;
+				}
 			}
 			if (rebateConfig != null && !rebateConfig.isEmpty()) {
-				Map<String, Object> record = (Map<String, Object>) rebateConfig.get(0);
-				Object rateValue = record.getOrDefault("rate", 0);
-				interestRate = Double.parseDouble(rateValue.toString());
+				try {
+					Map<String, Object> record = (Map<String, Object>) rebateConfig.get(0);
+					Object rateValue = record.getOrDefault("rate", 0);
+					additionalRebateRate = Double.parseDouble(rateValue.toString());
+				} catch (NumberFormatException | ClassCastException e) {
+					log.warn("Error parsing rebate rate, using default 0.0: {}", e.getMessage());
+					additionalRebateRate = 0.0;
+				}
 			}
 			if (interestConfig != null && !interestConfig.isEmpty()) {
-				Map<String, Object> record = (Map<String, Object>) interestConfig.get(0);
-				Object rateValue = record.getOrDefault("rate", 0);
-				additionalRebateRate = Double.parseDouble(rateValue.toString());
+				try {
+					Map<String, Object> record = (Map<String, Object>) interestConfig.get(0);
+					Object rateValue = record.getOrDefault("rate", 0);
+					interestRate = Double.parseDouble(rateValue.toString());
+				} catch (NumberFormatException | ClassCastException e) {
+					log.warn("Error parsing interest rate, using default 0.0: {}", e.getMessage());
+					interestRate = 0.0;
+				}
 			}
 
 			double collectorRate = 0.0;
@@ -1925,7 +1950,12 @@ public class EstimationService {
 			String usageMinor = propertyDetails.get("usageCategoryMinor").asText("");
 			Map<String, Double> rateMap = getRatesForLocality(localityRatesConfig, TargetlocalityCode);
 			//id = String.valueOf(rateMap.get("id"));
-			id = String.valueOf(((Double) rateMap.get("id")).intValue());
+			if (rateMap.get("id") != null) {
+				id = String.valueOf(((Double) rateMap.get("id")).intValue());
+			} else {
+				log.warn("No locality rate found for locality code: {}", TargetlocalityCode);
+				id = "0";
+			}
 			if (usageMajor.equalsIgnoreCase("RESIDENTIAL")) {
 				collectorRate = rateMap.getOrDefault("residentialRate", 0.0);
 			} else if (usageMajor.contains("INDUSTRIAL") || usageMinor.contains("INDUSTRIAL")) {
@@ -1933,6 +1963,9 @@ public class EstimationService {
 			} else {
 				collectorRate = rateMap.getOrDefault("commercialRate", 0.0);
 
+			}
+			if (collectorRate == 0.0 && !isVacant) {
+				log.warn("Collector rate is 0 for locality code: {}, usage: {}. Tax calculation may be incorrect.", TargetlocalityCode, usageMajor);
 			}
 
 
@@ -1947,18 +1980,25 @@ public class EstimationService {
 
 			if (units != null && units.isArray()) {
 				for (JsonNode unit : units) {
+
 					ObjectNode unitObj = (ObjectNode) unit;
 
-					if (unit.has("active") && !unit.get("active").asBoolean()) continue;
-					int floorNoInt = unit.path("floorNo").asInt(0);
-					if (floorNoInt == 0) {
-						floorNoInt = 1;
-					} else {
-						floorNoInt = floorNoInt + 1;
+					int floorNoInt = 0;
+					 String floorN = unit.get("floorNo").asText("");
+
+					if (unit.has("floorNo") && !unit.get("floorNo").isNull()) {
+						try {
+								String floorNoStr = unit.get("floorNo").asText("");
+							if (!floorNoStr.isEmpty() && !floorNoStr.equals("null")) {
+										floorNoInt = Integer.parseInt(floorNoStr);
+							}
+						} catch (NumberFormatException e) {
+							log.warn("Invalid floorNo format: {}, defaulting to 0", unit.get("floorNo").asText());
+							floorNoInt = 0;
+						}
 					}
 					unitObj.put("floorNo", String.valueOf(floorNoInt));
 					updatedUnits.add(unitObj);
-
 
 					String occ = unit.get("occupancyType").asText("");
 					String usage = unit.get("usageCategoryMajor").asText("");
@@ -1968,7 +2008,13 @@ public class EstimationService {
 					double unitTax = 0.0;
 
 					if ("RENTED".equalsIgnoreCase(occ)) {
-						double annualRent = unit.path("arv").asDouble();
+						double annualRent = 0.0;
+						if (unit.has("arv") && !unit.get("arv").isNull()) {
+							annualRent = unit.path("arv").asDouble(0.0);
+						}
+						if (annualRent <= 0) {
+							log.warn("ARV is missing or zero for RENTED unit. Unit area: {}, Usage: {}", unitAreaSqYard, usage);
+						}
 						if (usage.equalsIgnoreCase("RESIDENTIAL")) {
 							unitTax = annualRent * 3 / 100.0;
 						} else {
@@ -1998,6 +2044,7 @@ public class EstimationService {
 							|| usageSub.equalsIgnoreCase("RELIGIOUSINSTITUTION")
 							|| usageSub.equalsIgnoreCase("CHARITABLETRUST")) {
 						unit_usage_exemption += unitTax;
+						// Per legacy logic: FireCess is waived for entire property if any unit has usage exemption
 						FireCess = 0;
 					}
 				}
@@ -2005,7 +2052,11 @@ public class EstimationService {
 			}
 
 			JsonNode owners = propertyDetails.get("owners");
-			double PT_per_owner = PT_TAX / owners.size();
+			if (owners == null || !owners.isArray() || owners.size() == 0) {
+				log.warn("No owners found for property. Setting exemption to 0.");
+				owners = mapper.createArrayNode(); // Create empty array to avoid NPE
+			}
+			double PT_per_owner = owners.size() > 0 ? PT_TAX / owners.size() : 0.0;
 
 			for (JsonNode owner : owners) {
 				String type = owner.path("ownerType").asText("");
@@ -2013,6 +2064,8 @@ public class EstimationService {
 					exemption += Math.min(PT_per_owner, 5000);
 				} else if (type.equalsIgnoreCase("FREEDOMFIGHTER") || type.equalsIgnoreCase("BPL") || type.equalsIgnoreCase("DEFENSE")) {
 					exemption += PT_per_owner;
+					// Reset FireCess for owners with full exemption (FREEDOMFIGHTER, BPL, DEFENSE)
+					// This is per the legacy logic - these owner types get full exemption and no FireCess
 					FireCess = 0;
 				}
 			}
@@ -2081,6 +2134,29 @@ public class EstimationService {
 
 		} catch (Exception ex) {
 			log.error("Error in 2013 calculation: {}", ex.getMessage(), ex);
+			if (calculationsArray.size() == 0) {
+				// If no calculation was added, create an empty one with error indication
+				ObjectNode errorCalculation = mapper.createObjectNode();
+				errorCalculation.put("tenantId", "");
+				errorCalculation.put("exemption", 0.0);
+				errorCalculation.put("rebate", 0.0);
+				errorCalculation.put("taxAmount", 0.0);
+				errorCalculation.put("totalAmount", 0.0);
+				errorCalculation.put("penalty", 0.0);
+				ArrayNode emptyTaxHeads = mapper.createArrayNode();
+				errorCalculation.set("taxHeadEstimates", emptyTaxHeads);
+				ArrayNode emptyBillingSlabs = mapper.createArrayNode();
+				errorCalculation.set("billingSlabIds", emptyBillingSlabs);
+				calculationsArray.add(errorCalculation);
+			}
+			try {
+				if (!responseNode.has("ResponseInfo")) {
+					responseNode.set("ResponseInfo", mapper.readTree(main_jobj.get("ResponseInfo").toString()));
+				}
+			} catch (Exception e) {
+				log.error("Error setting ResponseInfo: {}", e.getMessage());
+			}
+			responseNode.set("Calculation", calculationsArray);
 		}
 
 		return responseNode;
@@ -2100,22 +2176,39 @@ public class EstimationService {
 
 		if (localityRatesConfig != null && !localityRatesConfig.isEmpty()) {
 			for (Object obj : localityRatesConfig) {
-				Map<String, Object> record = (Map<String, Object>) obj;
-				String localityCode = (String) record.getOrDefault("localityCode", "");
+				try {
+					Map<String, Object> record = (Map<String, Object>) obj;
+					String localityCode = (String) record.getOrDefault("localityCode", "");
 
-				if (localityCode.equalsIgnoreCase(targetLocalityCode)) {
-					rates.put("id", Double.parseDouble(record.get("id").toString()));
-					rates.put("residentialRate", Double.parseDouble(record.get("residentialRate").toString()));
-					rates.put("commercialRate", Double.parseDouble(record.get("commercialRate").toString()));
-					rates.put("industrialRate", Double.parseDouble(record.get("industrialRate").toString()));
-					break;
+					if (localityCode.equalsIgnoreCase(targetLocalityCode)) {
+						Object idObj = record.get("id");
+						Object residentialRateObj = record.get("residentialRate");
+						Object commercialRateObj = record.get("commercialRate");
+						Object industrialRateObj = record.get("industrialRate");
+
+						if (idObj != null) {
+							rates.put("id", Double.parseDouble(idObj.toString()));
+						}
+						if (residentialRateObj != null) {
+							rates.put("residentialRate", Double.parseDouble(residentialRateObj.toString()));
+						}
+						if (commercialRateObj != null) {
+							rates.put("commercialRate", Double.parseDouble(commercialRateObj.toString()));
+						}
+						if (industrialRateObj != null) {
+							rates.put("industrialRate", Double.parseDouble(industrialRateObj.toString()));
+						}
+						break;
+					}
+				} catch (NumberFormatException | ClassCastException e) {
+					log.warn("Error parsing locality rate record: {}", e.getMessage());
+					continue; // Skip this record and continue with next
 				}
 			}
 		}
 
 		return rates;
 	}
-
 }
 
 
