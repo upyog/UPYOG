@@ -72,7 +72,6 @@ import org.egov.userevent.web.contract.EventSearchCriteria;
 import org.egov.userevent.web.contract.NotificationCountResponse;
 import org.egov.userevent.web.validator.UserEventsValidator;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -94,7 +93,6 @@ public class UserEventsService {
 	private ResponseInfoFactory responseInfo;
 
 	@Autowired
-	@Lazy
 	private UserEventsValidator validator;
 
 	@Autowired
