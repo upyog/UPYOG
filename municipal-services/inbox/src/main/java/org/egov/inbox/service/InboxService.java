@@ -245,9 +245,10 @@ public class InboxService {
                         moduleSearchCriteria, businessKeys);
 
         if (CollectionUtils.isEmpty(businessKeys)) {
-        	response.setTotalCount(null);
-            response.setItems(null);
-            response.setStatusMap(null);
+        	response.setTotalCount(0);
+            response.setItems(new ArrayList<>());
+            response.setStatusMap(new ArrayList<>());
+            response.setNearingSlaCount(0);
             return response;
         }     
         processCriteria.setStatus(statusIds);
