@@ -1450,12 +1450,9 @@ public class GarbageAccountService {
 			if (!CollectionUtils.isEmpty(searchCriteriaGarbageAccountCreatedBy.getStatusList())) {
 				searchCriteriaGarbageAccountCreatedBy.setStatusList(null);
 			}
-
-			if(!searchCriteriaGarbageAccountRequest.getRequestInfo().getUserInfo().getType()
-						.equalsIgnoreCase(GrbgConstants.USER_TYPE_EMPLOYEE))){
-				searchCriteriaGarbageAccountCreatedBy.setCreatedBy(Collections
+			searchCriteriaGarbageAccountCreatedBy.setCreatedBy(Collections
 					.singletonList(searchCriteriaGarbageAccountRequest.getRequestInfo().getUserInfo().getUuid()));
-			}
+
 			garbageCriteriaMap.put(counter++, searchCriteriaGarbageAccountCreatedBy);
 		}
 
