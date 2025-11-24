@@ -233,7 +233,7 @@ public class UserService {
             List<User> userList = Collections.singletonList(encryptedUser);
             try {
                 log.info("Attempting decryption with null key (auto-detect) - matches Dev-3.0 pattern");
-                List<User> decryptedUserList = encryptionDecryptionUtil.decryptObject(userList, null, User.class, requestInfo);
+                List<User> decryptedUserList = encryptionDecryptionUtil.decryptObject(userList, "UserListSelf", User.class, requestInfo);
                 User decryptedUser = decryptedUserList.get(0);
                 boolean mobileDecrypted = decryptedUser.getMobileNumber() != null &&
                     !decryptedUser.getMobileNumber().contains("|");
