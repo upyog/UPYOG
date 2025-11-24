@@ -68,6 +68,8 @@ public class EnrichmentService {
 		RequestInfo requestInfo = request.getRequestInfo();
 		Property property = request.getProperty();
 		
+		property.setIsBilling(request.getProperty().getIsBilling());
+		
 		property.setAccountId(requestInfo.getUserInfo().getUuid());
 		enrichUuidsForPropertyCreate(requestInfo, property);
 		setIdgenIds(request);
@@ -126,7 +128,7 @@ public class EnrichmentService {
         RequestInfo requestInfo = request.getRequestInfo();
         AuditDetails auditDetailsForUpdate = propertyutil.getAuditDetails(requestInfo.getUserInfo().getUuid().toString(), true);
         propertyFromDb.setAuditDetails(auditDetailsForUpdate);
-        
+        propertyFromDb.setIsBilling(property.getIsBilling());     
         
 		Boolean isWfEnabled = config.getIsWorkflowEnabled();
 		Boolean iswfStarting = propertyFromDb.getStatus().equals(Status.ACTIVE);

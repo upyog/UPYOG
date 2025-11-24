@@ -93,8 +93,15 @@ public class UnmaskingUtil {
 
 			UserDetailResponse userDetailResponse = userService.getUser(userSearchRequest);
 
+			if (userDetailResponse == null
+			        || CollectionUtils.isEmpty(userDetailResponse.getUser())) {
+			    // nothing found skping to next owner
+			    continue;
+			}
+
 			OwnerInfo unmaskedUser = userDetailResponse.getUser().get(0);
 			updateMaskedOwnerInfoWithUnmaskedFields(ownerInfo, unmaskedUser);
+
 			requestInfo.setPlainAccessRequest(apiPlainAccessRequest);
 		}
 

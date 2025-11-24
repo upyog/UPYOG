@@ -27,6 +27,8 @@ serviceMaps:
       - jsonPath: $.Property.propertyId
 
       - jsonPath: $.Property.tenantId
+	  
+	  - jsonPath: $.Property.isBilling
 
       - jsonPath: $.Property.surveyId
 
@@ -310,6 +312,8 @@ serviceMaps:
       - jsonPath: $.Property.propertyId
 
       - jsonPath: $.Property.surveyId
+	  
+	  - jsonPath: $.Property.isBilling
 
       - jsonPath: $.Property.accountId
 
