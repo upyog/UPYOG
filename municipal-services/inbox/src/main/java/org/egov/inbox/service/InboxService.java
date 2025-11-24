@@ -313,7 +313,14 @@ public class InboxService {
         // Populate Inbox Items
         if (businessObjects != null && businessObjects.length() > 0 && !processInstances.isEmpty()) {
 
-            processInstanceMap.forEach((businessId, processInstance) -> {
+            // FIXED: Iterate in the original sorted order from businessKeys
+            for (String businessId : businessKeys) {
+                ProcessInstance processInstance = processInstanceMap.get(businessId);
+
+                if (processInstance == null) {
+                    continue; // Skip if no process instance found
+                }
+
                 Object businessObj = businessMap.get(businessId);
 
                 if (businessObj == null) {
@@ -327,7 +334,7 @@ public class InboxService {
                     inbox.setBusinessObject(toMap((JSONObject) businessObj));
 
                 inboxes.add(inbox);
-            });
+            }
         }
 
         // Build final response
