@@ -121,6 +121,12 @@ public class DemandService {
 		for (CalculationCriteria criteria : criterias) {
 
 			Property property = criteria.getProperty();
+			
+			//stop demand generation if isbilling is false
+			if(Boolean.FALSE.equals(property.getIsBilling())) {
+			    log.info("Skipping demand generation for property {}, isBilling=false", property.getPropertyId());
+			    continue;
+			}
 
 			PropertyDetail detail = property.getPropertyDetails().get(0);
 

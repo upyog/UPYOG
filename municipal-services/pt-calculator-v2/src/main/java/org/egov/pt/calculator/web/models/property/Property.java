@@ -69,6 +69,9 @@ public class Property extends PropertyInfo{
 
 	@JsonProperty("occupancyDate")
 	private Long occupancyDate;
+	
+	@JsonProperty("isBilling")
+	private Boolean isBilling;
 
 	@Valid
 	@JsonProperty("propertyDetails")
