@@ -1432,8 +1432,11 @@ public class GarbageAccountService {
 		Map<Integer, SearchCriteriaGarbageAccount> garbageCriteriaMap = new HashMap<>();
 		Integer counter = 1;
 
+		if(searchCriteriaGarbageAccountRequest.getRequestInfo().getUserInfo().getType()
+						.equalsIgnoreCase(GrbgConstants.USER_TYPE_EMPLOYEE)){
 		searchCriteriaGarbageAccountRequest.getSearchCriteriaGarbageAccount().setCreatedBy(Collections
 				.singletonList(searchCriteriaGarbageAccountRequest.getRequestInfo().getUserInfo().getUuid()));
+		}
 		
 		garbageCriteriaMap.put(counter++, searchCriteriaGarbageAccountRequest.getSearchCriteriaGarbageAccount());
 
