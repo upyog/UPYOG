@@ -1450,9 +1450,6 @@ public class GarbageAccountService {
 			if (!CollectionUtils.isEmpty(searchCriteriaGarbageAccountCreatedBy.getStatusList())) {
 				searchCriteriaGarbageAccountCreatedBy.setStatusList(null);
 			}
-			searchCriteriaGarbageAccountCreatedBy.setCreatedBy(Collections
-					.singletonList(searchCriteriaGarbageAccountRequest.getRequestInfo().getUserInfo().getUuid()));
-
 			garbageCriteriaMap.put(counter++, searchCriteriaGarbageAccountCreatedBy);
 		}
 
@@ -1475,7 +1472,8 @@ public class GarbageAccountService {
 					}
 					garbageCriteriaFromExcel.setStatus(Collections.singletonList(GrbgConstants.STATUS_INITIATED));
 					garbageCriteriaFromExcel.setChannels(Collections.singletonList(GrbgConstants.CHANNEL_TYPE_MIGRATE));
-
+					garbageCriteriaFromExcel.setCreatedBy(Collections
+					.singletonList(searchCriteriaGarbageAccountRequest.getRequestInfo().getUserInfo().getUuid()));
 					garbageCriteriaMap.put(counter++, garbageCriteriaFromExcel);
 				}
 			}
