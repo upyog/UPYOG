@@ -1,8 +1,8 @@
 package org.egov.vehicle.web.model.hrms;
 
 
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 import org.egov.vehicle.web.model.AuditDetails;
 import org.springframework.validation.annotation.Validated;
