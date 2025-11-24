@@ -1,6 +1,5 @@
 package org.egov.userevent.model;
 
-import org.egov.userevent.validation.SanitizeHtml;
 import org.springframework.validation.annotation.Validated;
 
 import lombok.AllArgsConstructor;
@@ -21,10 +20,8 @@ import lombok.ToString;
 @Builder
 public class RecepientEvent {
 
-	@SanitizeHtml
 	private String recepient;
 
-	@SanitizeHtml
 	private String eventId;
 
 }
