@@ -16,10 +16,7 @@ import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.User;
 import org.egov.common.contract.response.ResponseInfo;
 import org.egov.pt.calculator.repository.Repository;
-import org.egov.pt.calculator.util.CalculatorConstants;
-import org.egov.pt.calculator.util.CalculatorUtils;
-import org.egov.pt.calculator.util.Configurations;
-import org.egov.pt.calculator.util.PBFirecessUtils;
+import org.egov.pt.calculator.util.*;
 import org.egov.pt.calculator.validator.CalculationValidator;
 import org.egov.pt.calculator.web.models.*;
 import org.egov.pt.calculator.web.models.BillingSlabSearchCriteria;
@@ -74,6 +71,9 @@ public class EstimationService {
 
 	/*@Autowired
 	private ReceiptService rcptService;*/
+
+	@Autowired
+	private ResponseInfoFactory responseInfoFactory;
 
 	@Autowired
 	private Configurations configs;
@@ -171,19 +171,7 @@ public class EstimationService {
 		Property property = criteria.getProperty();
 		PropertyDetail detail = property.getPropertyDetails().get(0);
 		String assessmentYear = criteria.getProperty().getPropertyDetails().get(0).getFinancialYear();
-
-		if ("2013-14".equals(assessmentYear)) {
-			log.info("Calling 2013-14 special tax calculation...");
-			JsonNode requestBody = mapper.convertValue(request, JsonNode.class);
-			JsonNode legacyResponseJson = calculateFor2013(requestBody);
-			CalculationRes response = mapper.convertValue(legacyResponseJson, CalculationRes.class);
-
-			return response;
-
-
-		}
-
-		calcValidator.validatePropertyForCalculation(detail);
+          calcValidator.validatePropertyForCalculation(detail);
 		Map<String, Object> masterMap = mDataService.getMasterMap(request);
 
 
@@ -197,6 +185,20 @@ public class EstimationService {
 		}
 
 		Demand demand = utils.getLatestDemandForCurrentFinancialYear(request.getRequestInfo(), request.getCalculationCriteria().get(0));
+
+		if ("2013-14".equals(assessmentYear)) {
+			log.info("Calling 2013-14 special tax calculation...");
+			JsonNode requestBody = mapper.convertValue(request, JsonNode.class);
+			JsonNode legacyResponseJson = calculateFor2013(requestBody);
+
+			JsonNode calcArray = legacyResponseJson.path("Calculation");
+			Calculation legacyCalc = mapper.convertValue(calcArray.get(0), Calculation.class);
+
+			ResponseInfo info = responseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(), true);
+			return new CalculationRes(info, Collections.singletonList(legacyCalc));
+		}
+
+
 		return new CalculationRes(new ResponseInfo(), Collections.singletonList(getCalculation(request.getRequestInfo(), criteria, demand, masterMap)));
 	}
 
@@ -1839,7 +1841,6 @@ public class EstimationService {
 
 		return unBuiltRateCalc;
 	}
-
 
 	public JsonNode calculateFor2013(JsonNode requestBody) {
 		log.info("Starting 2013–14 property tax calculation...");
