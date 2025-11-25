@@ -225,25 +225,26 @@ public class UserService {
                     .build())
                 .build();
 
-            // CRITICAL FIX: Use null key (auto-detect) to match Dev-3.0 behavior
-            // This allows encryption service to automatically select the correct key:
-            // - "UserSelf" for self-decryption during token generation (CITIZEN/EMPLOYEE decrypting own data)
-            // - "User" for admin searches
-            // The RequestInfo context (uuid, roles, tenantId) allows ABAC to properly validate permissions
+            // The encryption service expects a List<User>, not a single User
+            // Wrap in list, decrypt, then extract the single user (same pattern as searchUsers)
             List<User> userList = Collections.singletonList(encryptedUser);
             try {
-                log.info("Attempting decryption with null key (auto-detect) - matches Dev-3.0 pattern");
-                List<User> decryptedUserList = encryptionDecryptionUtil.decryptObject(userList, "UserListSelf", User.class, requestInfo);
+                log.info("Attempting decryption with null key using List<User> (same as searchUsers)");
+                List<User> decryptedUserList = encryptionDecryptionUtil.decryptObject(userList, "User", User.class, requestInfo);
                 User decryptedUser = decryptedUserList.get(0);
-                boolean mobileDecrypted = decryptedUser.getMobileNumber() != null &&
-                    !decryptedUser.getMobileNumber().contains("|");
-                log.info("Successfully decrypted user with auto-detected key. Username: {}, Mobile decrypted: {}",
-                    decryptedUser.getUsername(), mobileDecrypted);
+                log.info("Successfully decrypted user with \"User\" key: {}", decryptedUser.getUsername());
                 return decryptedUser;
-            } catch (Exception e) {
-                log.error("Decryption with auto-detect key failed: {}", e.getMessage());
-                log.debug("Decryption error details:", e);
-                throw e;
+            } catch (Exception e1) {
+                log.warn("Decryption with null key failed, trying with \"User\" key: {}", e1.getMessage());
+                try {
+                    List<User> decryptedUserList = encryptionDecryptionUtil.decryptObject(userList, null, User.class, requestInfo);
+                    User decryptedUser = decryptedUserList.get(0);
+                    return decryptedUser;
+                } catch (Exception e2) {
+                    log.warn("Both decryption attempts failed. User key error: {}, Auto-detect error: {}",
+                             e1.getMessage(), e2.getMessage());
+                    throw e2;
+                }
             }
 
         } catch (Exception e) {
