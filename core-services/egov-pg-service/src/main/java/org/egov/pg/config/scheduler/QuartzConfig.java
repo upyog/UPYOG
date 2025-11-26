@@ -23,8 +23,8 @@ import java.util.Properties;
 public class QuartzConfig {
     private final Logger log = LoggerFactory.getLogger(this.getClass().getSimpleName());
 
-    @Autowired
-    private DataSource dataSource;
+//    @Autowired
+//    private DataSource dataSource;
 
     @Autowired
     private PlatformTransactionManager transactionManager;
@@ -39,18 +39,13 @@ public class QuartzConfig {
     private void init() {
         log.debug("QuartzConfig initialized.");
     }
-    
-    @Bean(name = "quartzDataSource")
-    public DataSource quartzDataSource(DataSource dataSource) {
-        return dataSource;
-    }
 
     //     Uncomment for local dev run
 //    @DependsOn("flywayInitializer")
     @Bean
-    SchedulerFactoryBean quartzScheduler() {
+    SchedulerFactoryBean quartzScheduler(DataSource dataSource) {
         SchedulerFactoryBean quartzScheduler = new SchedulerFactoryBean();
-
+        
         quartzScheduler.setDataSource(dataSource);
         quartzScheduler.setTransactionManager(transactionManager);
         quartzScheduler.setOverwriteExistingJobs(true);
