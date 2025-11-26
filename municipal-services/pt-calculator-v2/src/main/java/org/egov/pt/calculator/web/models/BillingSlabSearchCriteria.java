@@ -41,5 +41,8 @@ public class BillingSlabSearchCriteria {
 	
 	@JsonProperty("validTo")
 	public String validTo;
+
+	@JsonProperty("areaType")
+	public String areaType;
 	
 }

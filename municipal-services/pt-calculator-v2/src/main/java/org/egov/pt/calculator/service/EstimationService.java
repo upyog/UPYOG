@@ -1842,6 +1842,10 @@ public class EstimationService {
 		return unBuiltRateCalc;
 	}
 
+
+	/**
+	 * Legacy Property Tax Calculation for FY 2013–14 (using BillingSlab rates instead of MDMS)
+	 */
 	public JsonNode calculateFor2013(JsonNode requestBody) {
 		log.info("Starting 2013–14 property tax calculation...");
 
@@ -1905,8 +1909,11 @@ public class EstimationService {
 			JSONArray penaltyConfig = propertyTaxMdmsData.get("Penalty");
 			JSONArray rebateConfig = propertyTaxMdmsData.get("Rebate");
 			JSONArray interestConfig = propertyTaxMdmsData.get("Interest");
-			JSONArray localityRatesConfig = propertyTaxMdmsData.get("LocalityRates");
+			//JSONArray localityRatesConfig = propertyTaxMdmsData.get("LocalityRates");
 			JSONArray FireCessConfig = propertyTaxMdmsData.get("FireCess");
+
+
+
 
 			//JSONArray penaltyConfig = propertyTaxMdmsData.get("Penalty");
 			double penalityRate = 0.0;
@@ -1944,31 +1951,40 @@ public class EstimationService {
 				}
 			}
 
-			double collectorRate = 0.0;
-			String id = "";
-
 			String usageMajor = propertyDetails.get("usageCategoryMajor").asText("");
 			String usageMinor = propertyDetails.get("usageCategoryMinor").asText("");
-			Map<String, Double> rateMap = getRatesForLocality(localityRatesConfig, TargetlocalityCode);
-			//id = String.valueOf(rateMap.get("id"));
-			if (rateMap.get("id") != null) {
-				id = String.valueOf(((Double) rateMap.get("id")).intValue());
-			} else {
-				log.warn("No locality rate found for locality code: {}", TargetlocalityCode);
-				id = "0";
-			}
-			if (usageMajor.equalsIgnoreCase("RESIDENTIAL")) {
-				collectorRate = rateMap.getOrDefault("residentialRate", 0.0);
-			} else if (usageMajor.contains("INDUSTRIAL") || usageMinor.contains("INDUSTRIAL")) {
-				collectorRate = rateMap.getOrDefault("industrialRate", 0.0);
-			} else {
-				collectorRate = rateMap.getOrDefault("commercialRate", 0.0);
 
-			}
-			if (collectorRate == 0.0 && !isVacant) {
-				log.warn("Collector rate is 0 for locality code: {}, usage: {}. Tax calculation may be incorrect.", TargetlocalityCode, usageMajor);
-			}
+			BillingSlabSearchCriteria slabCriteria =
+					BillingSlabSearchCriteria.builder()
+							.tenantId(tenantId)
+							.build();
 
+			List<BillingSlab> billingSlabs = billingSlabService.searchBillingSlabs(requestInfo, slabCriteria).getBillingSlab();
+
+			if (billingSlabs == null || billingSlabs.isEmpty()) {
+				throw new CustomException("BILLING_SLAB_NOT_FOUND",
+						"No billing slab found for tenantId " + tenantId + " and locality " + TargetlocalityCode);
+			}
+			String id="";
+			double collectorRate = 0.0;
+			for (BillingSlab slab : billingSlabs) {
+				if(TargetlocalityCode.equalsIgnoreCase(slab.getAreaType())){
+				String st=slab.getAreaType();
+				 id=slab.getId();
+				log.info("Matching locality found in BillingSlab: {}, {}", st, id);
+				if (usageMajor.equalsIgnoreCase("RESIDENTIAL") ) {
+					collectorRate = slab.getUnitRate();
+					break;
+				} else if (usageMajor.contains("INDUSTRIAL") || usageMinor.contains("INDUSTRIAL")) {
+					collectorRate = slab.getUnitRate();
+					break;
+				} else {
+					collectorRate = slab.getUnitRate();
+					break;
+				}
+			}}
+
+			log.info("Collector rate (BillingSlab) for locality {} = {}", TargetlocalityCode, collectorRate);
 
 			double landValue = landArea * collectorRate;
 			if (isVacant) {
@@ -2120,6 +2136,7 @@ public class EstimationService {
 
 			calculation.set("taxHeadEstimates", taxHeadEstimates);
 
+
 			ArrayNode billingSlabIds = mapper.createArrayNode();
 			billingSlabIds.add(id);
 			calculation.set("billingSlabIds", billingSlabIds);
@@ -2136,7 +2153,6 @@ public class EstimationService {
 		} catch (Exception ex) {
 			log.error("Error in 2013 calculation: {}", ex.getMessage(), ex);
 			if (calculationsArray.size() == 0) {
-				// If no calculation was added, create an empty one with error indication
 				ObjectNode errorCalculation = mapper.createObjectNode();
 				errorCalculation.put("tenantId", "");
 				errorCalculation.put("exemption", 0.0);
@@ -2172,44 +2188,7 @@ public class EstimationService {
 		return node;
 	}
 
-	public Map<String, Double> getRatesForLocality(JSONArray localityRatesConfig, String targetLocalityCode) {
-		Map<String, Double> rates = new HashMap<>();
 
-		if (localityRatesConfig != null && !localityRatesConfig.isEmpty()) {
-			for (Object obj : localityRatesConfig) {
-				try {
-					Map<String, Object> record = (Map<String, Object>) obj;
-					String localityCode = (String) record.getOrDefault("localityCode", "");
-
-					if (localityCode.equalsIgnoreCase(targetLocalityCode)) {
-						Object idObj = record.get("id");
-						Object residentialRateObj = record.get("residentialRate");
-						Object commercialRateObj = record.get("commercialRate");
-						Object industrialRateObj = record.get("industrialRate");
-
-						if (idObj != null) {
-							rates.put("id", Double.parseDouble(idObj.toString()));
-						}
-						if (residentialRateObj != null) {
-							rates.put("residentialRate", Double.parseDouble(residentialRateObj.toString()));
-						}
-						if (commercialRateObj != null) {
-							rates.put("commercialRate", Double.parseDouble(commercialRateObj.toString()));
-						}
-						if (industrialRateObj != null) {
-							rates.put("industrialRate", Double.parseDouble(industrialRateObj.toString()));
-						}
-						break;
-					}
-				} catch (NumberFormatException | ClassCastException e) {
-					log.warn("Error parsing locality rate record: {}", e.getMessage());
-					continue; // Skip this record and continue with next
-				}
-			}
-		}
-
-		return rates;
-	}
 }
 
 
