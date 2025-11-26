@@ -39,6 +39,11 @@ public class QuartzConfig {
     private void init() {
         log.debug("QuartzConfig initialized.");
     }
+    
+    @Bean(name = "quartzDataSource")
+    public DataSource quartzDataSource(DataSource dataSource) {
+        return dataSource;
+    }
 
     //     Uncomment for local dev run
 //    @DependsOn("flywayInitializer")
