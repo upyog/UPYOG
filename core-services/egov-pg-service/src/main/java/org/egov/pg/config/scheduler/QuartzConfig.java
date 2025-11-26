@@ -42,6 +42,7 @@ public class QuartzConfig {
 
     //     Uncomment for local dev run
 //    @DependsOn("flywayInitializer")
+    @Autowired
     @Bean
     SchedulerFactoryBean quartzScheduler(DataSource dataSource) {
         SchedulerFactoryBean quartzScheduler = new SchedulerFactoryBean();
