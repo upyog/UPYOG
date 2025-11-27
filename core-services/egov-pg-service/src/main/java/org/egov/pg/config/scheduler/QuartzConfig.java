@@ -39,15 +39,21 @@ public class QuartzConfig {
     private void init() {
         log.debug("QuartzConfig initialized.");
     }
+    
+    @Autowired
+    @Bean(name = "quartzDataSource")
+    public DataSource quartzDataSource(DataSource dataSource) {
+        return dataSource;
+    }
 
     //     Uncomment for local dev run
 //    @DependsOn("flywayInitializer")
-    @Autowired
+
     @Bean
-    SchedulerFactoryBean quartzScheduler(DataSource dataSource) {
+    SchedulerFactoryBean quartzScheduler(DataSource quartzDataSource) {
         SchedulerFactoryBean quartzScheduler = new SchedulerFactoryBean();
         
-        quartzScheduler.setDataSource(dataSource);
+        quartzScheduler.setDataSource(quartzDataSource);
         quartzScheduler.setTransactionManager(transactionManager);
         quartzScheduler.setOverwriteExistingJobs(true);
         quartzScheduler.setSchedulerName("pg-quartz-scheduler");
