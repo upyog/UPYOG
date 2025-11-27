@@ -296,6 +296,23 @@ public class UserTypeQueryBuilder {
                 + ":accountlocked,:bloodgroup,:photo,:identificationmark,:createddate,:lastmodifieddate,:createdby,:lastmodifiedby,:alternatemobilenumber) ";
     }
 
+    public String getInsertUserSessionQuery() {
+        return "INSERT INTO user_sessions (" +
+                "id, user_uuid, user_id, username, login_time, logout_time, ip_address,usertype, iscurrentlylogin, isautologout" +
+                ") VALUES (" +
+                ":id, :userUuid, :userId, :username, :loginTime, :logoutTime, :ipAddress, :usertype, :iscurrentlylogin, :isautologout" +
+                ")";
+    }
+
+
+    public String getUpdateUserLogoutSessionQuery() {
+        return "UPDATE user_sessions " +
+               "SET logout_time = :logoutTime,  iscurrentlylogin = :iscurrentlylogin, isautologout = :isautologout " +
+               "WHERE user_uuid = :userUuid AND logout_time IS NULL";
+    }
+
+
+    
     public String getUpdateUserQuery() {
         return "update eg_user set salutation=:Salutation,dob=:Dob,locale=:Locale,password=:Password,pwdexpirydate=:PasswordExpiryDate,mobilenumber=:MobileNumber,altcontactnumber=:AltContactNumber,emailid=:EmailId,active=:Active,name=:Name,gender=:Gender,pan=:Pan,aadhaarnumber=:AadhaarNumber,"
                 + "type=:Type,guardian=:Guardian,guardianrelation=:GuardianRelation,signature=:Signature," +
