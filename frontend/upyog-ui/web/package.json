@@ -14,7 +14,8 @@
     "micro-ui-internals/packages/modules/engagement",
     "micro-ui-internals/packages/modules/fsm",
     "micro-ui-internals/packages/modules/vendor",
-    "micro-ui-internals/packages/modules/tl"
+    "micro-ui-internals/packages/modules/tl",
+    "micro-ui-internals/packages/modules/pt"
   ],
   "engines": {
     "node": ">=14"

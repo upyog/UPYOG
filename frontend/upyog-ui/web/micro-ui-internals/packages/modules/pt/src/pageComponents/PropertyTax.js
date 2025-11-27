@@ -98,7 +98,7 @@ if(window.location.href.includes("code"))
 {
   let code =window.location.href.split("=")[1].split("&")[0]
   let TokenReq = {
-    code_verifier: sessionStorage.getItem("code_verfier"),
+    dlReqRef: sessionStorage.getItem("code_verfier"),
     code: code, module: "PT"
   }
   console.log("token",code,TokenReq,sessionStorage.getItem("code_verfier"))
