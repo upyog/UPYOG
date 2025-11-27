@@ -6,12 +6,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.PropertiesFactoryBean;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 import org.springframework.transaction.PlatformTransactionManager;
+
 
 //import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
@@ -23,10 +27,11 @@ import java.util.Properties;
 public class QuartzConfig {
     private final Logger log = LoggerFactory.getLogger(this.getClass().getSimpleName());
 
-    @Autowired
-    private DataSource dataSource;
+//    @Autowired
+//    private DataSource dataSource;
 
     @Autowired
+    @Lazy
     private PlatformTransactionManager transactionManager;
 
     @Autowired
@@ -39,14 +44,27 @@ public class QuartzConfig {
     private void init() {
         log.debug("QuartzConfig initialized.");
     }
+    
+//    @Autowired
+//    @Bean(name = "quartzDataSource")
+//    public DataSource quartzDataSource(DataSource dataSource) {
+//        return dataSource;
+//    }
+    
+    @Bean
+    @ConfigurationProperties(prefix = "spring.quartz.datasource")
+    public DataSource quartzDataSource() {
+        return DataSourceBuilder.create().build();
+    }
 
     //     Uncomment for local dev run
 //    @DependsOn("flywayInitializer")
-    @Bean
-    SchedulerFactoryBean quartzScheduler() {
-        SchedulerFactoryBean quartzScheduler = new SchedulerFactoryBean();
 
-        quartzScheduler.setDataSource(dataSource);
+    @Bean
+    SchedulerFactoryBean quartzScheduler(DataSource quartzDataSource) {
+        SchedulerFactoryBean quartzScheduler = new SchedulerFactoryBean();
+        
+        quartzScheduler.setDataSource(quartzDataSource);
         quartzScheduler.setTransactionManager(transactionManager);
         quartzScheduler.setOverwriteExistingJobs(true);
         quartzScheduler.setSchedulerName("pg-quartz-scheduler");

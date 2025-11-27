@@ -149,7 +149,59 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
             }
             
             log.info("Password validation successful");
-            
+
+            // CRITICAL FIX: Decrypt user data during authentication (like Dev-3.0)
+            // This ensures both CITIZEN and EMPLOYEE data is decrypted before storing in token
+            log.info("Decrypting user data after authentication with UserSelf key");
+            try {
+                Set<org.egov.user.domain.model.Role> domainRoles = user.getRoles();
+                List<org.egov.common.contract.request.Role> contractRoles = new ArrayList<>();
+                if (domainRoles != null) {
+                    for (org.egov.user.domain.model.Role role : domainRoles) {
+                        contractRoles.add(org.egov.common.contract.request.Role.builder()
+                            .code(role.getCode())
+                            .name(role.getName())
+                            .tenantId(role.getTenantId())
+                            .build());
+                    }
+                }
+
+                org.egov.common.contract.request.User userInfo =
+                    org.egov.common.contract.request.User.builder()
+                        .uuid(user.getUuid())
+                        .id(user.getId())
+                        .type(user.getType() != null ? user.getType().name() : null)
+                        .tenantId(user.getTenantId())
+                        .roles(contractRoles)
+                        .build();
+
+                RequestInfo decryptRequestInfo = RequestInfo.builder()
+                    .userInfo(userInfo)
+                    .action("authenticate")
+                    .ts(System.currentTimeMillis())
+                    .build();
+
+                // IMPORTANT: decryptObject expects a List, not a single object
+                // Wrap user in a list, decrypt, then extract back
+                List<User> userList = new ArrayList<>();
+                userList.add(user);
+
+                List<User> decryptedUserList = encryptionDecryptionUtil.decryptObject(
+                    userList,
+                    "UserSelf",
+                    User.class,
+                    decryptRequestInfo
+                );
+
+                if (decryptedUserList != null && !decryptedUserList.isEmpty()) {
+                    user = decryptedUserList.get(0);
+                    log.info("User data decrypted successfully after authentication");
+                }
+            } catch (Exception e) {
+                log.warn("Failed to decrypt user data after authentication: {}. Continuing with encrypted data.", e.getMessage());
+                // Continue with encrypted data - will be attempted again during token generation
+            }
+
             // Create SecureUser
             log.info("Creating SecureUser...");
             org.egov.user.web.contract.auth.User authUser = getUser(user);
