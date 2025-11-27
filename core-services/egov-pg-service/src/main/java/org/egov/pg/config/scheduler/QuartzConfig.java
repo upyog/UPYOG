@@ -11,9 +11,11 @@ import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 import org.springframework.transaction.PlatformTransactionManager;
+
 
 //import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
@@ -29,6 +31,7 @@ public class QuartzConfig {
 //    private DataSource dataSource;
 
     @Autowired
+    @Lazy
     private PlatformTransactionManager transactionManager;
 
     @Autowired
