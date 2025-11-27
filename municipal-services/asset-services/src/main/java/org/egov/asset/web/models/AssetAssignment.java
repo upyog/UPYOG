@@ -23,8 +23,8 @@ public class AssetAssignment {
     @JsonProperty("assignmentId")
     private String assignmentId;
 
-    @JsonProperty("assetApplicaltionNo")
-    private String assetApplicaltionNo;
+    @JsonProperty("assetApplicationNo")
+    private String assetApplicationNo;
 
     @JsonProperty("tenantId")
     private String tenantId;

@@ -21,12 +21,30 @@ import AssetPincode from "./pageComponents/AssetPincode";
 import AssetAddress from "./pageComponents/AssetAddress";
 import AssetStreets from "./pageComponents/AssetStreets";
 import ServiceDoc from "./pageComponents/ServiceDoc";
+import AssetRegistry from "./pageComponents/AssetRegistry";
+import EditAssetRegistry from "./pageComponents/EditAssetRegistry";
+import InventoryCreate from "./pageComponents/InventoryCreate";
+import ProcurementReq from "./pageComponents/ProcurementReq";
+import InventoryVendor from "./pageComponents/InventoryVendor";
 import ASSETCreate from "./pages/employee/TestApplication/Create";
+import AssetRegistryUp from "./pages/employee/UpAssetRegistry/Create";
+import EditAssetRegistryUp from "./pages/employee/UpAssetRegistry/Update";
+import ProcurementRequest from "./pages/employee/ProcerementRequest/Create";
+import VendorInventoryForUP from "./pages/employee/InventoryVendorUp/Create";
+import InventoryCreation from "./pages/employee/InventoryCreation/Create";
+import InventoryResponse from "./pages/employee/InventoryVendorUp/Create/InventoryResponse";
+import InventoryCheckPage from"./pages/employee/InventoryCreation/Create/InventoryCheckPage";
+import InventoryResponsePage from"./pages/employee/InventoryCreation/Create/InventoryResponsePage";
 import NewAssetClassification from "./pageComponents/NewAssetClassification";
 import NewAsset from "./pageComponents/NewAsset";
 import NewDocument from "./pageComponents/NewDocument";
-import ASTCheckPage from "./pages/employee/TestApplication/Create/CheckPage"
+import ASTCheckPage from "./pages/employee/TestApplication/Create/CheckPage";
+import ASTCheckPageForUP from "./pages/employee/UpAssetRegistry/Create/CheckPage";
+import CheckPageInventory from "./pages/employee/InventoryVendorUp/Create/CheckPageInventory";
+import ProcurementCheckPage from "./pages/employee/ProcerementRequest/Create/ProcurementCheckPage";
 import NewResponse from "./pages/employee/TestApplication/Create/NewResponse";
+import NewResponseForUP from "./pages/employee/UpAssetRegistry/Create/NewResponse";
+import ProcurementResponse from "./pages/employee/ProcerementRequest/Create/ProcurementResponse";
 import AssetAssign from "./pageComponents/AssetAssign";
 import AssetDispose from "./pageComponents/AssetDispose";
 import AssetMaintenance from "./pageComponents/AssetMaintenance";
@@ -37,11 +55,17 @@ import ReturnAssignedAsset from "./pageComponents/ReturnAssignedAsset";
 import EditAsset from "./pages/employee/EditAsset/EditAsset";
 import EditGeneralDetails from "./pageComponents/EditGeneralDetails";
 import EditAssetDetails from "./pageComponents/EditAssetDetails";
-import EditResponse from "./pages/employee/EditResponse";
+import EditResponse from "./pages/employee/UpAssetRegistry/Update/EditResponse";
+import EditVendorResponse from "./pages/employee/InventoryVendorUp/Update/InventoryResponse";
+import EditProcurementResponse from "./pages/employee/ProcerementRequest/Update/EditProcurementResponse";
 import EditAssetMaintenance from "./pages/employee/EditAssetMaintenance";
-
-
-
+import AssetRegistryList from './pages/employee/AssetRegistryList';
+import AssetVendorList from './pages/employee/AssetVendorList';
+import ProcurementList from './pages/employee/ProcurementList';
+import EditAssetVendorUp from "./pages/employee/InventoryVendorUp/Update";
+import EditProcurementRequest from "./pages/employee/ProcerementRequest/Update";
+import EditAssetVendor from "./pageComponents/EditAssetVendor";
+import EditProcurementReq from "./pageComponents/EditProcurementReq";
 
 const componentsToRegister = {
   AssignAssetApplication: NewAssetApplication,
@@ -53,11 +77,29 @@ const componentsToRegister = {
   AssetStreets,
   ServiceDoc,
   AssetCreateNew: ASSETCreate,
+  AssetRegistryUp,
+  EditAssetRegistryUp,
+  VendorInventoryForUP,
+  AssetRegistry,
+  EditAssetRegistry,
+  InventoryCreate,
+  ProcurementRequest,
+  ProcurementReq,
+  InventoryVendor,
   NewAssetClassification,
   NewAsset,
   NewDocument,
   ASTCheckPage,
+  ASTCheckPageForUP,
+  CheckPageInventory,
+  ProcurementCheckPage,
+  InventoryCheckPage,
   NewResponse,
+  NewResponseForUP,
+  InventoryResponse,
+  ProcurementResponse,
+  InventoryResponsePage,
+  InventoryCreation,
   EditAssetMaintenancePage,
   ApplicationDetails,
   AssetResponse: Response, 
@@ -75,9 +117,16 @@ const componentsToRegister = {
   editAsset:EditAsset,
   EditGeneralDetails,
   EditAssetDetails,
-  editResponse:EditResponse
-  
-  
+  editResponse:EditResponse,
+  EditVendorResponse,
+  AssetRegistryList,
+  AssetVendorList,
+  EditAssetVendorUp,
+  EditAssetVendor,
+  ProcurementList,
+  EditProcurementRequest,
+  EditProcurementReq,
+  EditProcurementResponse
 };
 
 const addComponentsToRegistry = () => {

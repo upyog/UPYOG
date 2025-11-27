@@ -63,7 +63,7 @@ export const citizenConfig =
                     "type": "component",
                     "isMandatory": true,
                     "hideInEmployee": true,
-                    "nextStep": "address",
+                    "nextStep": "property-details",
                     "texts": {
                         "submitBarLabel": "PTR_COMMON_NEXT",
                     }
@@ -76,10 +76,26 @@ export const citizenConfig =
             "body":
                 [
                     {
+                        "route": "property-details",
+                        "component": "PropertySearch",
+                        "withoutLabel": true,
+                        "key": "propertyDetails",
+                        "type": "component",
+                        "nextStep": "address",
+                        "hideInEmployee": true,
+                        "isMandatory": true,
+                        "texts": {
+                            "submitBarLabel": "COMMON_NEXT",
+                            "header": "PROPERTY_DETAILS_HEADER",
+                        }
+                    },
+
+                    {
                         "route": "address",
                         "component": "PTRSelectAddress",
                         "withoutLabel": true,
                         "texts": {
+
                             "submitBarLabel": "PTR_COMMON_NEXT",
                         },
                         "key": "address",

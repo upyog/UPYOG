@@ -1,6 +1,6 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { Loader } from "@upyog/digit-ui-react-components";
+import { Loader } from "@nudmcdgnpm/digit-ui-react-components";
 import { ApplicationCard } from "./inbox/ApplicationCard";
 import ApplicationLinks from "./inbox/ApplicationLinks";
 import PropTypes from "prop-types";

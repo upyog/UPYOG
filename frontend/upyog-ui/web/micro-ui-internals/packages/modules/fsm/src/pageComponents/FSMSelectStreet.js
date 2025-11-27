@@ -209,11 +209,11 @@ if (property !== "undefined")
   }
   return (
     <React.Fragment>
-      {window.location.href.includes("/fsm") ? <Timeline currentStep={1}  flow="APPLY"/> : <Timeline currentStep={1} flow="APPLY" />}
+      {window.location.href.includes("/fsm") ? <Timeline currentStep={2} /> : <Timeline currentStep={1} flow="APPLY" />}
       <FormStep
         config={{ ...config, inputs }}
         isMandatory={true}
-        _defaultValues={{ street: property && property?.propertyDetails && property?.propertyDetails?.address?.street || property?.address?.street, doorNo: property && property?.propertyDetails && property?.propertyDetails?.address?.doorNo || property?.address?.doorNo}}
+        _defaultValues={{ street: property && property.propertyDetails && property.propertyDetails.address.street || property.address.street, doorNo: property && property.propertyDetails && property.propertyDetails.address.doorNo || property.address.doorNo}}
         onChange={handleSkip}
         onSelect={(data) => onSelect(config.key, data)}
         onSkip={onSkip}

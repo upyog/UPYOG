@@ -1,0 +1,27 @@
+{
+  "mandatory_fields": {
+    "common": ["Asset Name", "Asset Category", "Department", "Asset Type", "Tenant ID"],
+    "movable": ["Serial Number", "Model"],
+    "immovable": ["Plot Area", "Property Type"]
+  },
+  "field_types": {
+    "Purchase Date": "date",
+    "Purchase Cost": "number",
+    "Current Value": "number", 
+    "Warranty Expiry": "date",
+    "Quantity": "number",
+    "Pincode": "number"
+  },
+  "allowed_values": {
+    "Asset Type": ["MOVABLE", "IMMOVABLE"],
+    "Condition": ["EXCELLENT", "GOOD", "FAIR", "POOR"],
+    "Unit": ["NOS", "KG", "LITER", "METER", "SQFT"]
+  },
+  "date_formats": ["DD/MM/YYYY", "DD-MM-YYYY", "YYYY-MM-DD"],
+  "max_lengths": {
+    "Asset Name": 100,
+    "Description": 500,
+    "Serial Number": 50,
+    "Model": 100
+  }
+}

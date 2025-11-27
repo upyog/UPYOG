@@ -4,7 +4,7 @@
 ## Install
 
 ```bash
-npm install --save @upyog/digit-ui-react-components
+npm install --save @nudmcdgnpm/digit-ui-react-components
 ```
 
 ## Limitation

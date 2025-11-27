@@ -39,7 +39,6 @@ const PTRCitizenPet = ({ t, config, onSelect, userType, formData, renewApplicati
     const [birthDate, setBirthDate] = useState(convertEpochToDate(renewApplication?.petDetails?.birthDate) || formData?.pets?.birthDate || "");
     const [adoptionDate, setAdoptionDate] = useState(convertEpochToDate(renewApplication?.petDetails?.adoptionDate) || formData?.pets?.adoptionDate || "");
     const stateId = Digit.ULBService.getStateId();
-    const [vaccinationMinDate, setVaccinationMinDate] = useState("");
 
     const { data: Menu } = Digit.Hooks.useEnabledMDMS(stateId, "PetService", [{ name: "PetType" }],
       {
@@ -87,23 +86,6 @@ const PTRCitizenPet = ({ t, config, onSelect, userType, formData, renewApplicati
         setpetColor(pet_color?.filter((color) => color?.colourCode === renewApplication?.petDetails?.petColor)?.[0])
         }
       }, [pet_color])
-
-    // useEffect to set minimum date for vaccination based on birth/adoption date
-    useEffect(() => {
-      if (birthDate) {
-        // For birth: vaccination cannot be before birth date
-        setVaccinationMinDate(birthDate);
-        // Clear vaccination date if it's before birth date
-        if (lastVaccineDate && lastVaccineDate < birthDate) {
-          setVaccinationDate("");
-        }
-      } else if (adoptionDate) {
-        // For adoption: pet could be vaccinated before adoption, so no minimum restriction
-        setVaccinationMinDate("");
-      } else {
-        setVaccinationMinDate("");
-      }
-    }, [birthDate, adoptionDate]);
 
     const { data: Pet_Sex } = Digit.Hooks.ptr.usePTRGenderMDMS(stateId, "common-masters", "GenderType");       // this hook is for Pet gender type { male, female}
 
@@ -459,7 +441,6 @@ const PTRCitizenPet = ({ t, config, onSelect, userType, formData, renewApplicati
               value={lastVaccineDate}
               onChange={setvaccinationdate}
               style={inputStyles}
-              min={vaccinationMinDate}
               max={new Date().toISOString().split('T')[0]}
               rules={{
                 required: t("CORE_COMMON_REQUIRED_ERRMSG"),

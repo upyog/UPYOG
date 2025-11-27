@@ -4,53 +4,34 @@ import { useQuery } from "react-query";
 const useAssetApplicationDetail = (t, tenantId, applicationNo, config = {}, userType, args) => {
   const stateTenantId = Digit.ULBService.getStateId();
   const defaultSelect = (data) => {
-     let applicationDetails = data.applicationDetails.map((obj) => {
-      return obj;
-    });    
+    let applicationDetails = data.applicationDetails;
 
     return {
-      applicationData : data,
-      applicationDetails
-    }
+      applicationData: data,
+      applicationDetails,
+    };
   };
 
-  
-    const { data: cityResponseObject} =  Digit.Hooks.useCustomMDMSV2(tenantId, "ASSET", [{ name: "AssetParentCategoryFields" }], {
-      select: (data) => {
-        
-        const formattedData = data?.["ASSET"]?.["AssetParentCategoryFields"];
-        return formattedData;
-      },
-    });
- 
-    const {data: stateResponseObject} =  Digit.Hooks.useCustomMDMSV2(stateTenantId, "ASSET", [{ name: "AssetParentCategoryFields" }], {
-      select: (data) => {
-        const formattedData = data?.["ASSET"]?.["AssetParentCategoryFields"];
-        return formattedData;
-      },
-    });
-  
-    let combinedData;
+  const { data: cityResponseObject } = Digit.Hooks.useCustomMDMSV2(tenantId, "ASSET", [{ name: "AssetParentCategoryFields" }], {
+    select: (data) => {
+      const formattedData = data?.["ASSET"]?.["AssetParentCategoryFields"];
+      return formattedData;
+    },
+  });
 
-    // if city level master is not available then fetch  from state-level
-    if (cityResponseObject) {
-      combinedData = cityResponseObject;
-    } else if (stateResponseObject) {
-      combinedData = stateResponseObject;
-    } else {
-      combinedData = [];
-    }
+  let combinedData;
 
-  //   const processDepreciation = async(assetId) => {
-     
-   
-  // }
+  // if city level master is not available then fetch  from state-level
+  if (cityResponseObject) {
+    combinedData = cityResponseObject;
+  } else {
+    combinedData = [];
+  }
 
   return useQuery(
-    ["APPLICATION_SEARCH", "ASSET_SEARCH", applicationNo, userType, combinedData,  args],
-    () => ASSETSearch.applicationDetails(t, tenantId, applicationNo, userType, combinedData,  args),
+    ["APPLICATION_SEARCH", "ASSET_SEARCH", applicationNo, userType, combinedData, args],
+    () => ASSETSearch.applicationDetails(t, tenantId, applicationNo, userType, combinedData, args),
     { select: defaultSelect, ...config }
- 
   );
 };
 

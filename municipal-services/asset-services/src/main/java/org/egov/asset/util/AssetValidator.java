@@ -38,34 +38,33 @@ public class AssetValidator {
     public void validateSearch(RequestInfo requestInfo, AssetSearchCriteria criteria) {
         String allowedParamStr = null;
         if (requestInfo.getUserInfo() != null) {
+            String userType = requestInfo.getUserInfo().getType();
+            
+            // Default to EMPLOYEE if userType is null
+            if (userType == null) {
+                userType = AssetConstants.EMPLOYEE;
+            }
 
-            if (!requestInfo.getUserInfo().getType().equalsIgnoreCase(AssetConstants.EMPLOYEE) && criteria.isEmpty())
+            if (!AssetConstants.EMPLOYEE.equalsIgnoreCase(userType) && criteria.isEmpty())
                 throw new CustomException(AssetConstants.INVALID_SEARCH, "Search without any paramters is not allowed");
 
-            if (!requestInfo.getUserInfo().getType().equalsIgnoreCase(AssetConstants.EMPLOYEE)
+            if (!AssetConstants.EMPLOYEE.equalsIgnoreCase(userType)
                     && !criteria.tenantIdOnly() && criteria.getTenantId() == null)
                 throw new CustomException(AssetConstants.INVALID_SEARCH, "TenantId is mandatory in search");
 
-            if (requestInfo.getUserInfo().getType().equalsIgnoreCase(AssetConstants.EMPLOYEE) && !criteria.isEmpty()
+            if (AssetConstants.EMPLOYEE.equalsIgnoreCase(userType) && !criteria.isEmpty()
                     && !criteria.tenantIdOnly() && criteria.getTenantId() == null)
                 throw new CustomException(AssetConstants.INVALID_SEARCH, "TenantId is mandatory in search");
 
-
-            if (requestInfo.getUserInfo().getType().equalsIgnoreCase(AssetConstants.EMPLOYEE))
-                allowedParamStr = config.getAllowedEmployeeSearchParameters();
-            else if (requestInfo.getUserInfo().getType().equalsIgnoreCase(AssetConstants.EMPLOYEE))
-                allowedParamStr = config.getAllowedEmployeeSearchParameters();
-            else
-                throw new CustomException(AssetConstants.INVALID_SEARCH,
-                        "The userType: " + requestInfo.getUserInfo().getType() + " does not have any search config");
+            // Always use employee search parameters for now
+            allowedParamStr = config.getAllowedEmployeeSearchParameters();
         } else {
             allowedParamStr = config.getAllowedEmployeeSearchParameters();
-            if (StringUtils.isEmpty(allowedParamStr) && !criteria.isEmpty())
-                throw new CustomException(AssetConstants.INVALID_SEARCH, "No search parameters as expected");
-            else {
-                List<String> allowedParams = Arrays.asList(allowedParamStr.split(","));
-                validateSearchParams(criteria, allowedParams);
-            }
+        }
+        
+        if (!StringUtils.isEmpty(allowedParamStr)) {
+            List<String> allowedParams = Arrays.asList(allowedParamStr.split(","));
+            validateSearchParams(criteria, allowedParams);
         }
     }
 

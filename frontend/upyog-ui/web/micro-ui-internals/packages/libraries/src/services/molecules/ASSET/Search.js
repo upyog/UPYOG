@@ -3,6 +3,9 @@ import { ASSETService } from "../../elements/ASSET";
 
 const convertTimestampToDate = (timestamp) => {
   // Agar timestamp 13 digits ka hai, to yeh milliseconds mein hai
+  if(!timestamp){
+    return ""
+  }
   const adjustedTimestamp = timestamp.toString().length === 13 ? timestamp / 1000 : timestamp;
 
   // Timestamp ko date object mein convert karo
@@ -266,52 +269,20 @@ export const ASSETSearch = {
       }
     ];
   },
+
+  
   applicationDetails: async (t, tenantId, applicationNo, userType, combinedData, args) => {
 
     const filter = { applicationNo, ...args };
     const response = await ASSETSearch.application(tenantId, filter);
 
-    // Fetch all data depriciation list
-    const applicationDetails = await Digit.ASSETService.depriciationList({
-      Asset: {
-        tenantId,
-        id: response?.id,
-        accountId: ""
-      }
-    });
-    const maintenanceList = await Digit.ASSETService.maintenanceList({
-      AssetMaintenanceSearchCriteria: {
-        tenantId,
-        assetIds: [response?.id],
-        "limit": 10,
-        "offset": 0
-      }
-    });
-
-    const disposalList = await Digit.ASSETService.disposalList({
-      searchCriteria: {
-        tenantId,
-        assetIds: [response?.id],
-        limit: 10,
-        offset: 0
-      }
-    });
-
-    const getAssignAsset = await Digit.ASSETService.assetAssignable({
-      Asset: {
-        tenantId,
-        id: response?.id,
-        limit: 10,
-        offset: 0
-      }
-    });
-    
     return {
       tenantId: response.tenantId,
-      applicationDetails: ASSETSearch.RegistrationDetails({ Assets: response, combinedData, t, applicationDetails, maintenanceList, disposalList, getAssignAsset}),
+      applicationDetails: ASSETSearch.RegistrationDetails({ Assets: response, combinedData, t}),
       applicationData: response,
       transformToAppDetailsForEmployee: ASSETSearch.RegistrationDetails,
 
     };
   },
+  
 };

@@ -144,4 +144,104 @@ export const ASSETService = {
       params: {},
       auth: true,
     }),
+  inventoryVendor: (details, tenantId) =>
+    Request({
+      url: Urls.asset.inventoryVendor,
+      data: details,
+      useCache: false,
+      setTimeParam: false,
+      userService: true,
+      method: "POST",
+      params: {},
+      auth: true,
+    }),
+  createProcurement: (details, tenantId) =>
+    Request({
+      url: Urls.asset.createProcurement,
+      data: details,
+      useCache: false,
+      setTimeParam: false,
+      userService: true,
+      method: "POST",
+      params: {},
+      auth: true,
+    }),
+  inventoryCreation: (details, tenantId) =>
+    Request({
+      url: Urls.asset.inventoryCreation,
+      data: details,
+      useCache: false,
+      setTimeParam: false,
+      userService: true,
+      method: "POST",
+      params: {},
+      auth: true,
+    }),
+  assetRegistry: (details, tenantId) =>
+    Request({
+      url: Urls.asset.assetRegistry,
+      data: details,
+      useCache: false,
+      setTimeParam: false,
+      userService: true,
+      method: "POST",
+      params: {},
+      auth: true,
+    }),
+    assetVendorList: ({ tenantId, filters, auth }) =>
+    Request({
+      url: Urls.asset.assetVendorList,
+      useCache: false,
+      method: "POST",
+      auth: auth === false ? auth : true,
+      userService: auth === false ? auth : true,
+      data: {
+        RequestInfo: {
+          apiId: "Rainmaker"
+        },
+        Vendor: {
+          tenantId: tenantId,
+          ...filters
+        }
+      }
+    }),
+     updateAssetVendor: (details, tenantId) =>
+      Request({
+        url: Urls.asset.updateAssetVendor,
+        data: details,
+        useCache: false,
+        setTimeParam: false,
+        userService: true,
+        method: "POST",
+        params: {},
+        auth: true,
+      }),
+  procurementList: ({ tenantId, filters, auth }) =>
+    Request({
+      url: Urls.asset.procurementList,
+      useCache: false,
+      method: "POST",
+      auth: auth === false ? auth : true,
+      userService: auth === false ? auth : true,
+      data: {
+        RequestInfo: {
+          apiId: "Rainmaker"
+        },
+        ProcurementRequest: {
+          tenantId: tenantId,
+          ...filters
+        }
+      }
+    }),
+  updateProcurement: (details, tenantId) =>
+      Request({
+        url: Urls.asset.updateProcurement,
+        data: details,
+        useCache: false,
+        setTimeParam: false,
+        userService: true,
+        method: "POST",
+        params: {},
+        auth: true,
+      }),
 };

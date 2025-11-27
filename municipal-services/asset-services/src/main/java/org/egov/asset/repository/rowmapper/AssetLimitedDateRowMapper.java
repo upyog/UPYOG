@@ -35,21 +35,14 @@ public class AssetLimitedDateRowMapper implements ResultSetExtractor<List<Asset>
                 currentAsset = Asset.builder()
                         .id(id)
                         .tenantId(tenantId)
-                        .assetBookRefNo(rs.getString("bookrefno"))
                         .applicationNo(rs.getString("applicationNo"))
                         .assetClassification(rs.getString("classification"))
                         .assetParentCategory(rs.getString("parentCategory"))
                         .assetCategory(rs.getString("category"))
                         .assetSubCategory(rs.getString("subCategory"))
                         .assetName(rs.getString("name"))
-                        .department(rs.getString("department"))
                         .status(rs.getString("status"))
-                        .bookValue(rs.getDouble("bookValue"))
-                        .assetUsage(rs.getString("assetUsage"))
-                        .assetStatus(rs.getString("assetstatus"))
                         .applicationDate(rs.getLong("createdtime"))
-                        .location(rs.getString("location"))
-                        .assetAssignable(rs.getBoolean("assetAssignable"))
                         .build();
 
                 assetMap.put(id, currentAsset);

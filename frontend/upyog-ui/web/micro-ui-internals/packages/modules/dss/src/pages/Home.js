@@ -115,12 +115,12 @@ const Chart = ({ data, moduleLevel, overview = false }) => {
 
         {response?.responseData?.data?.[0]?.headerName == "NATIONAL_DSS_TOTAL_COLLECTION" ? Digit.Utils.dss.formatter(response?.responseData?.data?.[0]?.headerValue, response?.responseData?.data?.[0]?.headerSymbol, "Cr", true, t): response?.responseData?.data?.[0]?.headerName ==  "NATIONAL_DSS_TARGET_COLLECTION"? Digit.Utils.dss.formatter(response?.responseData?.data?.[0]?.headerValue, response?.responseData?.data?.[0]?.headerSymbol, "Cr", true, t): response?.responseData?.data?.[0]?.headerName == "DSS_NON_TAX_REVENUE_PER_HOUSEHOLD"? Digit.Utils.dss.formatter(response?.responseData?.data?.[0]?.headerValue, response?.responseData?.data?.[0]?.headerSymbol, "Unit", true, t): response?.responseData?.data?.[0]?.headerName == "PropertyTaxRevenuePerHouseholdOverview" ? Digit.Utils.dss.formatter(response?.responseData?.data?.[0]?.headerValue, response?.responseData?.data?.[0]?.headerSymbol, "Unit", true, t): response?.responseData?.data?.[0]?.headerName == "DSS_STATE_GDP_REVENUE_COLLECTION"  ? Digit.Utils.dss.formatter(response?.responseData?.data?.[0]?.headerValue, response?.responseData?.data?.[0]?.headerSymbol, "UnitGDP", true, t): Digit.Utils.dss.formatter(response?.responseData?.data?.[0]?.headerValue, response?.responseData?.data?.[0]?.headerSymbol, "Unit", true, t)}
       </p>}
-      {/* {response?.responseData?.data?.[0]?.insight?.value ? (
+      {response?.responseData?.data?.[0]?.insight?.value ? (
         <p className={`p3 ${response?.responseData?.data?.[0]?.insight?.indicator === "upper_green" ? "color-green" : "color-red"}`}>
           {response?.responseData?.data?.[0]?.insight?.indicator === "upper_green" ? ArrowUpwardElement("10px") : ArrowDownwardElement("10px")}
           {insight?.[0] && `${insight[0]}% ${t(Digit.Utils.locale.getTransformedLocale("DSS" + insight?.[1] || ""))}`}
         </p>
-      ) : null} */}
+      ) : null}
     </div>
   );
 };

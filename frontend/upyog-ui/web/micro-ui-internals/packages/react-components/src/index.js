@@ -28,7 +28,6 @@ import DatePicker from "./atoms/DatePicker";
 import DateRange from "./molecules/DateRange";
 import DateWrap from "./atoms/DateWrap";
 import DisplayPhotos from "./atoms/DisplayPhotos";
-import DisplayPhotosnew from "./atoms/DisplayPhotosnew";
 import Dropdown from "./atoms/Dropdown";
 import EllipsisMenu from "./atoms/EllipsisMenu";
 import EmployeeAppContainer from "./atoms/EmployeeAppContainer";
@@ -192,6 +191,8 @@ import WhatsNewCard from "./atoms/WhatsNewCard";
 import EventCalendarView from "./atoms/EventCalendarView";
 import InboxLinks from "./atoms/InboxLinks";
 import PopupHeadingLabel from "./atoms/PopupHeadingLabel";
+
+// import { FormComposer } from "./hoc/FormComposer";
 import FormComposer from "./hoc/FormComposer";
 import Modal from "./hoc/Modal";
 import ResponseComposer from "./hoc/ResponseComposer";
@@ -272,7 +273,6 @@ export {
   LastRow,
   MediaRow,
   DisplayPhotos,
-  DisplayPhotosnew,
   ConnectingCheckPoints,
   CheckPoint,
   Rating,

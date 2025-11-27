@@ -40,8 +40,7 @@ public class AssetService {
     @Autowired
     EnrichmentService enrichmentService;
 
-    @Autowired
-    WorkflowService workflowService;
+
 
     @Autowired
     private ModelMapper modelMapper;
@@ -75,8 +74,7 @@ public class AssetService {
         // Enrich the asset creation request with necessary details
         enrichmentService.enrichAssetCreateRequest(assetRequest, mdmsData);
 
-        // Update the workflow for asset creation
-        workflowService.updateWorkflow(assetRequest, CreationReason.CREATE);
+
 
         // Save the asset data to the repository
         assetRepository.save(assetRequest);
@@ -98,11 +96,11 @@ public class AssetService {
         assetValidator.validateSearch(requestInfo, criteria);
 
         List<String> roles = new ArrayList<>();
-        if (requestInfo.getUserInfo() != null) {
-            for (Role role : requestInfo.getUserInfo().getRoles()) {
-                roles.add(role.getCode());
-            }
-        }
+//        if (requestInfo.getUserInfo() != null) {
+//            for (Role role : requestInfo.getUserInfo().getRoles()) {
+//                roles.add(role.getCode());
+//            }
+//        }
 
         // If tenant ID is the only criteria or no criteria is provided
         if ((criteria.tenantIdOnly() || criteria.isEmpty())) {
@@ -133,9 +131,6 @@ public class AssetService {
      */
     private AssetSearchDTO convertToAssetSearchDTO(Asset asset) {
         AssetSearchDTO assetSearchDTO = modelMapper.map(asset, AssetSearchDTO.class);
-        if (asset.getAssetAssignment() != null) {
-            assetSearchDTO.setAssetAssignment(modelMapper.map(asset.getAssetAssignment(), AssetAssignmentDTO.class));
-        }
         return assetSearchDTO;
     }
 
@@ -197,8 +192,7 @@ public class AssetService {
         // Enrich the asset update request with necessary details
         enrichmentService.enrichAssetUpdateRequest(assetRequest, mdmsData);
 
-        // Update the workflow for asset update
-        workflowService.updateWorkflow(assetRequest, CreationReason.UPDATE);
+
 
         // Update the asset data in the repository
         assetRepository.update(assetRequest);
@@ -284,4 +278,6 @@ public class AssetService {
     public List<AssetAssignment> getAssetAssignmentDetails(String tenantId, String assetId) {
         return assetRepository.getAssetAssignmentDetails(tenantId, assetId);
     }
+
+
 }
