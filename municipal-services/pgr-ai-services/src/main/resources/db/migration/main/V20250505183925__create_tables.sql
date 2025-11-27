@@ -67,8 +67,8 @@ CREATE TABLE IF NOT EXISTS ug_pgr_address
     lastmodifiedby character varying(128),
     lastmodifiedtime bigint,
     additionaldetails jsonb,
-    CONSTRAINT pk_eg_pgr_address PRIMARY KEY (id),
-    CONSTRAINT fk_eg_pgr_address FOREIGN KEY (parentid)
+    CONSTRAINT pk_ug_pgr_address PRIMARY KEY (id),
+    CONSTRAINT fk_ug_pgr_address FOREIGN KEY (parentid)
         REFERENCES ug_pgr_service (id) MATCH SIMPLE
         ON UPDATE NO ACTION
         ON DELETE NO ACTION
