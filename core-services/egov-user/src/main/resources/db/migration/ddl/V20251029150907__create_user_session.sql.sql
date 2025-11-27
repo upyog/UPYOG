@@ -1,4 +1,3 @@
-
 CREATE TABLE IF NOT EXISTS public.user_sessions
 (
     id uuid NOT NULL,
