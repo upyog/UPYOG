@@ -13,6 +13,7 @@ import org.egov.wscalculation.repository.builder.WSCalculatorQueryBuilder;
 import org.egov.wscalculation.repository.rowmapper.BillGenerateSchedulerRowMapper;
 import org.egov.wscalculation.web.models.BillGenerationReq;
 import org.egov.wscalculation.web.models.BillGenerationSearchCriteria;
+import org.egov.wscalculation.web.models.BillGeneratorReq;
 import org.egov.wscalculation.web.models.BillScheduler;
 import org.egov.wscalculation.web.models.BillScheduler.StatusEnum;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,8 @@ import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.stereotype.Repository;
+import java.util.HashMap;
+import java.util.Map;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -37,6 +40,7 @@ public class BillGeneratorDao {
 	@Autowired
 	private WSCalculatorQueryBuilder queryBuilder;
 
+	
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
 
@@ -66,6 +70,33 @@ public class BillGeneratorDao {
 		log.debug("Prepared Statement" + preparedStatement.toString());
 		return jdbcTemplate.query(query, preparedStatement.toArray(), billGenerateSchedulerRowMapper);
 	}
+	
+	public List<String> getConnectionsByStatus(String string, String status) {
+	    List<Object> preparedStatement = new ArrayList<>();
+
+	    // ✅ Use Map instead of a class
+	    Map<String, Object> criteria = new HashMap<>();
+	    criteria.put("billSchedulerId", string);
+	    criteria.put("status", status);
+
+	    // ✅ Build query dynamically using your queryBuilder
+	    String query = queryBuilder.buildGetConnectionsByStatusQuery(criteria, preparedStatement);
+	    if (query == null) {
+	        return Collections.emptyList();
+	    }
+
+	    log.debug("getConnectionsByStatus | Query: {} | Params: {}", query, preparedStatement);
+
+	    // ✅ Execute query and map result
+	    return jdbcTemplate.query(
+	            query,
+	            preparedStatement.toArray(),
+	            (rs, rowNum) -> rs.getString("consumercode")
+	    );
+	}
+
+
+	
 	/**
 	 * executes query to update bill scheduler status 
 	 * @param billIds

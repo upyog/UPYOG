@@ -66,7 +66,7 @@ public class WaterFieldValidator implements WaterActionValidator {
 
 		boolean isRegularizedOrLegacy = valueOfConnectionCategory != null
 				&& (valueOfConnectionCategory.equalsIgnoreCase("REGULARIZED")
-						|| valueOfConnectionCategory.equalsIgnoreCase("LEGACY"));
+						|| valueOfConnectionCategory.equalsIgnoreCase("LEGACY") || valueOfConnectionCategory.equalsIgnoreCase("DISCHARGE_CONNECTION"));
 
 		if (WCConstants.ACTIVATE_CONNECTION_CONST
 				.equalsIgnoreCase(waterConnectionRequest.getWaterConnection().getProcessInstance().getAction())) {

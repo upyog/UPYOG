@@ -1,5 +1,7 @@
 package org.egov.ndc.util;
 
+import java.time.*;
+import java.time.format.DateTimeFormatter;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -10,7 +12,6 @@ import org.egov.common.contract.request.RequestInfo;
 import org.egov.ndc.config.NDCConfiguration;
 import org.egov.ndc.producer.Producer;
 import org.egov.ndc.repository.ServiceRequestRepository;
-import org.egov.ndc.web.model.Ndc;
 import org.egov.ndc.web.model.SMSRequest;
 import org.egov.ndc.web.model.ndc.Application;
 import org.json.JSONObject;
@@ -130,26 +131,33 @@ public class NotificationUtil {
 			messageCode = ndc.getWorkflow().getAction() + "_" + ndc.getApplicationStatus();
 		switch (messageCode) {
 		case ACTION_STATUS_CREATED:
-			messageTemplate = getMessageTemplate(messageCode, localizationMessage);
+			case ACTION_STATUS_FORWARD_REVIEW:
+            case ACTION_STATUS_INITIATED:
+				messageTemplate = getMessageTemplate(messageCode, localizationMessage);
+				if (!StringUtils.isEmpty(messageTemplate))
+					message = getInitiatedMsg(ndc, messageTemplate);
+				break;
+			case ACTION_STATUS_PAYMENT_CONFIRMATION:
+				messageTemplate = getMessageTemplate(messageCode, localizationMessage);
+				if (!StringUtils.isEmpty(messageTemplate))
+					message = getPaymentConfirmationMsg(ndc, messageTemplate);
+				break;
+            case ACTION_STATUS_CITIZEN_ACTION_REQ:
+				messageTemplate = getMessageTemplate(messageCode, localizationMessage);
+				if (!StringUtils.isEmpty(messageTemplate))
+					message = getSendBackToCitizenCommonMsg(ndc, messageTemplate);
+				break;
+            case ACTION_STATUS_APPROVED:
+				messageTemplate = getMessageTemplate(messageCode, localizationMessage);
+				if (!StringUtils.isEmpty(messageTemplate))
+					message = getApproveMsg(ndc, messageTemplate);
+				break;
+            case ACTION_STATUS_REJECTED:
+                messageTemplate = getMessageTemplate(messageCode, localizationMessage);
 			if (!StringUtils.isEmpty(messageTemplate))
-				message = getInitiatedMsg(ndc, messageTemplate);
+				message = getRejectedMsg(ndc, messageTemplate);
 			break;
-		case ACTION_STATUS_INITIATED:
-			messageTemplate = getMessageTemplate(messageCode, localizationMessage);
-			if (!StringUtils.isEmpty(messageTemplate))
-				message = getInitiatedMsg(ndc, messageTemplate);
-			break;
-		case ACTION_STATUS_APPROVED:
-			messageTemplate = getMessageTemplate(messageCode, localizationMessage);
-			if (!StringUtils.isEmpty(messageTemplate))
-				message = getInitiatedMsg(ndc, messageTemplate);
-			break;
-		case ACTION_STATUS_REJECTED:
-			messageTemplate = getMessageTemplate(messageCode, localizationMessage);
-			if (!StringUtils.isEmpty(messageTemplate))
-				message = getInitiatedMsg(ndc, messageTemplate);
-			break;
-		}
+        }
 		return message;
 	}
 
@@ -189,10 +197,54 @@ public class NotificationUtil {
 	 * @return customized message for initiate
 	 */
 	private String getInitiatedMsg(Application ndc, String message) {
-		String type = NDC_MODULE;
-		message = message.replace("{1}", type);
-		message = message.replace("{2}", ndc.getApplicationNo());
+		message = message.replace("[Citizen Name]", ndc.getOwners().get(0).getName());
+		message = message.replace("[Application ID]", ndc.getApplicationNo());
+		message = message.replace("[Date]", timestampToDate(ndc.getAuditDetails().getCreatedTime()));
+		message = message.replace("[Department Name]", DEPARTMENT_PMIDC);
 		return message;
 	}
 
+	private String getPaymentConfirmationMsg(Application ndc, String message) {
+		message = message.replace("[Citizen Name]", ndc.getOwners().get(0).getName());
+		message = message.replace("[Date]", timestampToDate(ndc.getAuditDetails().getLastModifiedTime()));
+		message = message.replace("[Application ID]", ndc.getApplicationNo());
+		message = message.replace("[Department Name]", DEPARTMENT_PMIDC);
+		return message;
+	}
+
+	private String getSendBackToCitizenCommonMsg(Application ndc, String message) {
+		message = message.replace("[Citizen Name]", ndc.getOwners().get(0).getName());
+		message = message.replace("[Application ID]", ndc.getApplicationNo());
+		message = message.replace("[Helpline Number]", HELPLINE_NUMBER);
+		message = message.replace("[Portal/Office Name]", PORTAL_LINK);
+		message = message.replace("[Department Name]", DEPARTMENT_PMIDC);
+
+		return message;
+	}
+	private String getApproveMsg(Application ndc, String message) {
+		message = message.replace("[Citizen Name]", ndc.getOwners().get(0).getName());
+		message = message.replace("[Application ID]", ndc.getApplicationNo());
+		message = message.replace("[Portal Link]", PORTAL_LINK);
+		message = message.replace("[Office Name]", OFFICE_NAME);
+		message = message.replace("[Department Name]", DEPARTMENT_PMIDC);
+		return message;
+	}
+
+	private String getRejectedMsg(Application ndc, String message) {
+		message = message.replace("[Citizen Name]", ndc.getOwners().get(0).getName());
+		message = message.replace("[Application ID]", ndc.getApplicationNo());
+		message = message.replace("[Helpline Number]", HELPLINE_NUMBER);
+		message = message.replace("[Portal/Office name]", PORTAL_LINK);
+		message = message.replace("[Department Name]", DEPARTMENT_PMIDC);
+		message = message.replace("[Reason]", ndc.getWorkflow().getComment());
+		return message;
+	}
+
+	private String timestampToDate (long millis){
+			Instant instant = Instant.ofEpochMilli(millis);
+			ZoneId zone = ZoneId.of("Asia/Kolkata");
+			ZonedDateTime dateTime = instant.atZone(zone);
+			String formattedDate = dateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+			return formattedDate;
+	}
 }

@@ -2,6 +2,7 @@ package org.egov.wscalculation.repository.builder;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.StringJoiner;
@@ -81,6 +82,9 @@ public class WSCalculatorQueryBuilder {
 	private static String holderSelectValues = "connectionholder.tenantid as holdertenantid, connectionholder.connectionid as holderapplicationId, userid, connectionholder.status as holderstatus, isprimaryholder, connectionholdertype, holdershippercentage, connectionholder.relationship as holderrelationship, connectionholder.createdby as holdercreatedby, connectionholder.createdtime as holdercreatedtime, connectionholder.lastmodifiedby as holderlastmodifiedby, connectionholder.lastmodifiedtime as holderlastmodifiedtime";
 
 	private static final String INNER_JOIN_STRING = "INNER JOIN";
+	private static final String SEARCH_INITIATED_CONNECTION = "SELECT consumercode FROM eg_ws_bill_scheduler_connection_status WHERE 1=1";
+
+	
 	private static final String BILL_SCHEDULER_STATUS_UPDATE_QUERY = "UPDATE eg_ws_scheduler SET status=? where id=?";
 	private static final String LEFT_OUTER_JOIN_STRING = " LEFT OUTER JOIN ";
 	private static final String billGenerationSchedulerSearchQuery = "SELECT * from eg_ws_scheduler ";
@@ -1016,24 +1020,49 @@ StringBuilder query = new StringBuilder(connectionNoListQueryUpdate);
 			List<Object> preparedStatement) {
 		StringBuilder query = new StringBuilder(billGenerationSchedulerSearchQuery);
 		query.append("egws inner join eg_bndry_mohalla egbm on egws.locality = egbm.localitycode ");
-		if(!StringUtils.isEmpty(criteria.getTenantId())) {
-			addClauseIfRequired(preparedStatement, query);
-			query.append(" egws.tenantid= ? ");
-			preparedStatement.add(criteria.getTenantId());
-		}
 		
-		if (criteria.getStatus() != null) {
-			addClauseIfRequired(preparedStatement, query);
-			query.append(" egws.status = ? ");
-			preparedStatement.add(criteria.getStatus());
-		}
-		
-		if (criteria.getBatch() != null) {
-			addClauseIfRequired(preparedStatement, query);
-			query.append(" egbm.blockcode = ? ");
-			preparedStatement.add(criteria.getBatch());
-		}
-		query.append(" ORDER BY egws.createdtime ");
+		if (!StringUtils.isEmpty(criteria.getTenantId())) {
+	        addClauseIfRequired(preparedStatement, query);
+	        query.append(" egws.tenantid = ? ");
+	        preparedStatement.add(criteria.getTenantId());
+	    }
+	    
+	    if (!StringUtils.isEmpty(criteria.getLocality())) {
+	        addClauseIfRequired(preparedStatement, query);
+	        query.append(" egbm.localitycode = ? ");
+	        preparedStatement.add(criteria.getLocality());
+	    }
+	    
+	    if (criteria.getStatus() != null) {
+	        addClauseIfRequired(preparedStatement, query);
+	        query.append(" egws.status = ? ");
+	        preparedStatement.add(criteria.getStatus());
+	    }
+	    
+	    if (criteria.getBatch() != null) {
+	        addClauseIfRequired(preparedStatement, query);
+	        query.append(" egbm.blockcode = ? ");
+	        preparedStatement.add(criteria.getBatch());
+	    }
+	    
+	    if (criteria.getGroup() != null) {
+	        addClauseIfRequired(preparedStatement, query);
+	        query.append(" egws.groups = ? ");
+	        preparedStatement.add(criteria.getGroup());
+	    }
+	    
+	    if (criteria.getBillingcycleStartdate() != null) {
+	        addClauseIfRequired(preparedStatement, query);
+	        query.append(" egws.billingcyclestartdate >= ? ");
+	        preparedStatement.add(criteria.getBillingcycleStartdate());
+	    }
+	    
+	    if (criteria.getBillingcycleEnddate() != null) {
+	        addClauseIfRequired(preparedStatement, query);
+	        query.append(" egws.billingcycleenddate <= ? ");
+	        preparedStatement.add(criteria.getBillingcycleEnddate());
+	    }
+		query.append(" ORDER BY egws.createdtime desc ");
 		return query.toString();
 	}
 	
@@ -1058,6 +1087,23 @@ StringBuilder query = new StringBuilder(connectionNoListQueryUpdate);
 		return query.toString();
 	}
 	
+	
+	public String buildGetConnectionsByStatusQuery(Map<String, Object> criteria, List<Object> preparedStmtList) {
+	    StringBuilder query = new StringBuilder(SEARCH_INITIATED_CONNECTION);
+
+	    if (criteria.get("billSchedulerId") != null) {
+	        query.append(" AND eg_ws_scheduler_id = ?");
+	        preparedStmtList.add(criteria.get("billSchedulerId"));
+	    }
+
+	    if (criteria.get("status") != null) {
+	        query.append(" AND status = ?");
+	        preparedStmtList.add(criteria.get("status"));
+	    }
+
+	    return query.toString();
+	}
+
 	public String getRelatedSwConnenction( String tenantId , String consumerCode ,List<Object> preparedStatement) {
 		StringBuilder query = new StringBuilder( RELATED_SW_CONNECTION_SEARCH_QUERY );
 		if(!StringUtils.isEmpty(tenantId)){

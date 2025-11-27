@@ -1,5 +1,7 @@
 package org.egov.noc.service;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -187,6 +189,8 @@ public class NOCService {
 					&& !StringUtils.isEmpty(nocRequest.getNoc().getWorkflow().getAction())) {
 				
 				if (nocRequest.getNoc().getWorkflow().getAction().equalsIgnoreCase(NOCConstants.ACTION_APPROVE)) {
+					((Map<String, Object>)nocRequest.getNoc().getNocDetails()
+							.getAdditionalDetails()).put("approvedOn", LocalDate.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy")));
 					getCalculation(nocRequest);
 				}
 				

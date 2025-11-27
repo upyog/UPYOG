@@ -192,6 +192,8 @@ public class BPAValidator {
 			allowedParamStr = config.getAllowedCitizenSearchParameters();
 		else if (requestInfo.getUserInfo().getType().equalsIgnoreCase(BPAConstants.EMPLOYEE))
 			allowedParamStr = config.getAllowedEmployeeSearchParameters();
+		else if(requestInfo.getUserInfo().getType().equalsIgnoreCase(BPAConstants.SYSTEM))
+			allowedParamStr = config.getAllowedSystemSearchParameters();
 		else
 			throw new CustomException(BPAErrorConstants.INVALID_SEARCH,
 					"The userType: " + requestInfo.getUserInfo().getType() + " does not have any search config");

@@ -3,6 +3,7 @@ package org.egov.wscalculation.consumer;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.egov.wscalculation.config.WSCalculationConfiguration;
 import org.egov.wscalculation.validator.WSCalculationWorkflowValidator;
 import org.egov.wscalculation.web.models.*;
@@ -68,29 +69,34 @@ public class DemandGenerationConsumer {
 	 * CalculationReq.class); generateDemandInBatch(calculationReq); }catch (final
 	 * Exception e){ log.error("KAFKA_PROCESS_ERROR", e); } }
 	 */
-	@KafkaListener(topics = "${egov.watercalculatorservice.createdemand.topic}",
-            containerFactory = "kafkaListenerContainerFactoryBatch",
-            concurrency = "${egov.watercalculatorservice.listener.concurrency}")
-
-		public void listen(final List<Message<?>> records) {
-		    log.info("Number of batch records received: " + records.size());
-		    for (Message<?> record : records) {
+	@KafkaListener(
+		    topics = "${egov.watercalculatorservice.createdemand.topic}",
+		    containerFactory = "kafkaListenerContainerFactoryBatch",
+		    concurrency = "${egov.watercalculatorservice.listener.concurrency}"
+		)
+		public void listen(final List<ConsumerRecord<String, Object>> records) {
+		    log.info("📦 Number of batch records received: {}", records.size());
+		    for (ConsumerRecord<String, Object> record : records) {
 		        try {
-		            CalculationReq calculationReq = mapper.convertValue(record.getPayload(), CalculationReq.class);
+		            log.info("🔸 Key={}, Partition={}, Offset={}", record.key(), record.partition(), record.offset());
+
+		            CalculationReq calculationReq = mapper.convertValue(record.value(), CalculationReq.class);
 		            Map<String, Object> masterMap = mstrDataService.loadMasterData(
-		                    calculationReq.getRequestInfo(),
-		                    calculationReq.getCalculationCriteria().get(0).getTenantId()
+		                calculationReq.getRequestInfo(),
+		                calculationReq.getCalculationCriteria().get(0).getTenantId()
 		            );
+
 		            generateDemandInBatch(calculationReq, masterMap, config.getDeadLetterTopicBatch());
-		            log.info("Processed tenant: " + calculationReq.getCalculationCriteria().get(0).getTenantId() +
-		                     " with " + calculationReq.getCalculationCriteria().size() + " calculation criteria.");
+
+		            log.info("✅ Processed tenant={} | criteriaCount={}",
+		                    calculationReq.getCalculationCriteria().get(0).getTenantId(),
+		                    calculationReq.getCalculationCriteria().size());
 		        } catch (Exception e) {
-		            log.error("Error processing record: " + record.getPayload(), e);
+		            log.error("❌ Error processing record: {}", record.value(), e);
 		        }
 		    }
 		}
 
-	
 	
 
 	/**

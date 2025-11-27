@@ -33,7 +33,9 @@ public class SWConstants {
 	public static final String ACTIVATE_CONNECTION = "ACTIVATE_CONNECTION";
 	public static final String SUBMIT_APPLICATION = "SUBMIT_APPLICATION";
 	public static final String ACTION_REJECT = "REJECT";
-
+	
+	public static final String FORWARD_FOR_INSPECTION = "FORWARD_FOR_INSPECTION";
+	
 	public static final String ACTION_CANCEL = "CANCEL";
 
 	public static final String ACTION_PAY = "PAY";

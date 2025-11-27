@@ -1,29 +1,44 @@
 package org.egov.inbox.service;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.common.contract.request.Role;
 import org.egov.inbox.repository.ServiceRequestRepository;
 import org.egov.inbox.web.model.InboxSearchCriteria;
 import org.egov.inbox.web.model.workflow.ProcessInstanceSearchCriteria;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.client.RestTemplate;
 
 import com.jayway.jsonpath.JsonPath;
 
-import static org.egov.inbox.util.NdcConstants.*;
+import static org.egov.inbox.util.BpaConstants.*;
+import static org.egov.inbox.util.BpaConstants.CITIZEN;
 
+
+@Slf4j
 @Service
 public class PETInboxFilterService {
 
     @Value("${egov.searcher.host}")
     private String searcherHost;
+
+
+    @Value("${egov.user.host}")
+    private String userHost;
+
+    @Value("${egov.user.search.path}")
+    private String userSearchEndpoint;
+
 
     @Value("${egov.searcher.pet.search.path:}")
     private String petInboxSearcherEndpoint;
@@ -44,15 +59,37 @@ public class PETInboxFilterService {
             HashMap<String, String> StatusIdNameMap, RequestInfo requestInfo) {
         HashMap<String, Object> moduleSearchCriteria = criteria.getModuleSearchCriteria();
         ProcessInstanceSearchCriteria processCriteria = criteria.getProcessSearchCriteria();
+        Boolean isSearchResultEmpty = false;
+        Boolean isMobileNumberPresent = false;
+        List<String> userUUIDs = new ArrayList<>();
+        List<String> citizenRoles = Collections.emptyList();
+        if (moduleSearchCriteria.containsKey(MOBILE_NUMBER_PARAM)) {
+            isMobileNumberPresent = true;
+        }
+        if (isMobileNumberPresent) {
+            String tenantId = criteria.getTenantId();
+            String mobileNumber = String.valueOf(moduleSearchCriteria.get(MOBILE_NUMBER_PARAM));
+            Map<String, List<String>> userDetails = fetchUserUUID(mobileNumber, requestInfo, tenantId);
+            userUUIDs = userDetails.get(USER_UUID);
+            citizenRoles = userDetails.get(USER_ROLES);
+            Boolean isUserPresentForGivenMobileNumber = CollectionUtils.isEmpty(userUUIDs) ? false : true;
+            isSearchResultEmpty = !isMobileNumberPresent || !isUserPresentForGivenMobileNumber;
+            if (isSearchResultEmpty) {
+                return new ArrayList<>();
+            }
+        } else {
+            List<String> roles = requestInfo.getUserInfo().getRoles().stream().map(Role::getCode).collect(Collectors.toList());
+            if(roles.contains(CITIZEN)) {
+                userUUIDs.add(requestInfo.getUserInfo().getUuid());
+                citizenRoles = roles;
+            }
+        }
 
         Map<String, Object> searcherRequest = new HashMap<>();
-        Map<String, Object> searchCriteria = getSearchCriteria(criteria, StatusIdNameMap, moduleSearchCriteria, processCriteria);
+        Map<String, Object> searchCriteria = getSearchCriteria(criteria, StatusIdNameMap, moduleSearchCriteria, processCriteria,userUUIDs,citizenRoles);
         // Paginating searcher results
         searchCriteria.put(OFFSET_PARAM, criteria.getOffset());
-        if(!moduleSearchCriteria.containsKey(MOBILE_NUMBER_PARAM))
-        {
-            searchCriteria.put(NO_OF_RECORDS_PARAM, criteria.getLimit());
-        }
+        searchCriteria.put(NO_OF_RECORDS_PARAM, criteria.getLimit());
         moduleSearchCriteria.put(LIMIT_PARAM, criteria.getLimit());
 
         searcherRequest.put(REQUESTINFO_PARAM, requestInfo);
@@ -74,7 +111,7 @@ public class PETInboxFilterService {
     }
 
     private Map<String, Object> getSearchCriteria(InboxSearchCriteria criteria, HashMap<String, String> StatusIdNameMap,
-            HashMap<String, Object> moduleSearchCriteria, ProcessInstanceSearchCriteria processCriteria) {
+            HashMap<String, Object> moduleSearchCriteria, ProcessInstanceSearchCriteria processCriteria, List<String> userUUIDs, List<String> userRoles) {
         Map<String, Object> searchCriteria = new HashMap<>();
 
         searchCriteria.put(TENANT_ID_PARAM, criteria.getTenantId());
@@ -98,6 +135,15 @@ public class PETInboxFilterService {
                 searchCriteria.put("status", matchingIdsPet);
             }
         }
+		else {
+			// If no status filter is provided, include all statuses
+			searchCriteria.put("status", new ArrayList<>(StatusIdNameMap.keySet()));
+		}
+        if (moduleSearchCriteria != null && (moduleSearchCriteria.containsKey(MOBILE_NUMBER_PARAM) || userRoles.contains(CITIZEN))
+                && !CollectionUtils.isEmpty(userUUIDs)) {
+            searchCriteria.put(USERID_PARAM, userUUIDs);
+        }
+        
         if (moduleSearchCriteria != null && moduleSearchCriteria.containsKey("applicationNumber")) {
             searchCriteria.put("applicationNumber", moduleSearchCriteria.get("applicationNumber"));
         }
@@ -120,8 +166,33 @@ public class PETInboxFilterService {
         if (petInboxSearcherCountEndpoint != null && !petInboxSearcherCountEndpoint.isEmpty()) {
             HashMap<String, Object> moduleSearchCriteria = criteria.getModuleSearchCriteria();
             ProcessInstanceSearchCriteria processCriteria = criteria.getProcessSearchCriteria();
+            Boolean isSearchResultEmpty = false;
+            Boolean isMobileNumberPresent = false;
+            List<String> userUUIDs = new ArrayList<>();
+            List<String> citizenRoles = Collections.emptyList();
+            if (moduleSearchCriteria.containsKey(MOBILE_NUMBER_PARAM)) {
+                isMobileNumberPresent = true;
+            }
+            if (isMobileNumberPresent) {
+                String tenantId = criteria.getTenantId();
+                String mobileNumber = String.valueOf(moduleSearchCriteria.get(MOBILE_NUMBER_PARAM));
+                Map<String, List<String>> userDetails = fetchUserUUID(mobileNumber, requestInfo, tenantId);
+                userUUIDs = userDetails.get(USER_UUID);
+                citizenRoles = userDetails.get(USER_ROLES);
+                Boolean isUserPresentForGivenMobileNumber = CollectionUtils.isEmpty(userUUIDs) ? false : true;
+                isSearchResultEmpty = !isMobileNumberPresent || !isUserPresentForGivenMobileNumber;
+                if (isSearchResultEmpty) {
+                    return 0;
+                }
+            } else {
+                List<String> roles = requestInfo.getUserInfo().getRoles().stream().map(Role::getCode).collect(Collectors.toList());
+                if(roles.contains(CITIZEN)) {
+                    userUUIDs.add(requestInfo.getUserInfo().getUuid());
+                    citizenRoles = roles;
+                }
+            }
             Map<String, Object> searcherRequest = new HashMap<>();
-            Map<String, Object> searchCriteria = getSearchCriteria(criteria, StatusIdNameMap, moduleSearchCriteria, processCriteria);
+            Map<String, Object> searchCriteria = getSearchCriteria(criteria, StatusIdNameMap, moduleSearchCriteria, processCriteria,userUUIDs,citizenRoles);
             searcherRequest.put(REQUESTINFO_PARAM, requestInfo);
             searcherRequest.put(SEARCH_CRITERIA_PARAM, searchCriteria);
             StringBuilder citizenUri = new StringBuilder();
@@ -133,5 +204,29 @@ public class PETInboxFilterService {
             List<String> apps = fetchApplicationNumbersFromSearcher(criteria, StatusIdNameMap, requestInfo);
             return apps.size();
         }
+    }
+    private Map<String, List<String>> fetchUserUUID(String mobileNumber, RequestInfo requestInfo, String tenantId) {
+        Map<String, List<String>> userDetails = new ConcurrentHashMap<>();
+        StringBuilder uri = new StringBuilder();
+        uri.append(userHost).append(userSearchEndpoint);
+        Map<String, Object> userSearchRequest = new HashMap<>();
+        userSearchRequest.put("RequestInfo", requestInfo);
+        userSearchRequest.put("tenantId", tenantId);
+        userSearchRequest.put("userType", CITIZEN);
+        userSearchRequest.put("mobileNumber", mobileNumber);
+        try {
+            Object user = serviceRequestRepository.fetchResult(uri, userSearchRequest);
+            if (null != user) {
+                // log.info(user.toString());
+                userDetails.put(USER_UUID, JsonPath.read(user, "$.user.*.uuid"));
+                userDetails.put(USER_ROLES, new ArrayList<>(new HashSet<>(JsonPath.read(user, "$.user.*.roles.*.code"))));
+            } else {
+                log.error("Service returned null while fetching user for mobile number - " + mobileNumber);
+            }
+        } catch (Exception e) {
+            log.error("Exception while fetching user for mobile number - " + mobileNumber);
+            log.error("Exception trace: ", e);
+        }
+        return userDetails;
     }
 }
