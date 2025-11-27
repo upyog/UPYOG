@@ -232,7 +232,8 @@ public class EmployeeService {
 		try {
 			UserResponse response = userService.createUser(request);
 			User user = response.getUser().get(0);
-			employee.setId(UUID.fromString(user.getUuid()).getMostSignificantBits());
+			employee.setId(user.getId());
+			//employee.setId(UUID.fromString(user.getUuid()).getMostSignificantBits());
 			employee.setUuid(user.getUuid());
 			employee.getUser().setId(user.getId());
 			employee.getUser().setUuid(user.getUuid());
