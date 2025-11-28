@@ -241,8 +241,8 @@ public class UserService {
 		noc.getOwners().forEach(owner ->
 		{
 			if (owner.getUuid() == null) {
+				addUserDefaultFields(noc.getTenantId(), role, owner);
 
-				owner.setTenantId(noc.getTenantId().split("\\.")[0]);
 				UserResponse existingUserResponse = userExists(owner, requestInfo);
 
 				if (!existingUserResponse.getUser().isEmpty()) {
@@ -251,7 +251,6 @@ public class UserService {
 					owner.setUuid(existingUser.getUuid());
 					setOwnerFields(owner, existingUserResponse, requestInfo);
 				} else {
-					addUserDefaultFields(noc.getTenantId(), role, owner);
 //						  UserResponse userResponse = userExists(owner,requestInfo);
 					StringBuilder uri = new StringBuilder(userHost).append(userContextPath).append(userCreateEndpoint);
 					setUserName(owner);
