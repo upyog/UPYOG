@@ -250,7 +250,7 @@ public class CalculationService {
 		for (AdditionalFeeRate feeConfig : feeConfigs) {
 			BigDecimal feeAmount = feeCalculationUtil.calculateFeeAmount(feeConfig, baseAmount, daysElapsed, currentFY);
 			
-			if (feeAmount.compareTo(BigDecimal.ZERO) > 0) {
+			if (feeAmount.compareTo(BigDecimal.ZERO) >= 0) {
 				DemandDetail demandDetail = DemandDetail.builder()
 						.taxAmount(feeAmount)
 						.taxHeadMasterCode(taxHeadCode)
