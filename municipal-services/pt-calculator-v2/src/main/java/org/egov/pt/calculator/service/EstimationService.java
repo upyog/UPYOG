@@ -660,7 +660,7 @@ public class EstimationService {
 
 
 		// Fire cess
-		List<Object> fireCessMasterList = timeBasedExemeptionMasterMap.get(CalculatorConstants.FIRE_CESS_MASTER);
+		List<Object> fireCessMasterList = timeBasedExemeptionMasterMap.get(FIRE_CESS_MASTER);
 		BigDecimal fireCess;
 
 		//FireCess should be calculated only on commercialTaxAmt (Tax payable for NonResidential units only)
@@ -678,7 +678,7 @@ public class EstimationService {
 		}
 
 		// Cancer cess
-		List<Object> cancerCessMasterList = timeBasedExemeptionMasterMap.get(CalculatorConstants.CANCER_CESS_MASTER);
+		List<Object> cancerCessMasterList = timeBasedExemeptionMasterMap.get(CANCER_CESS_MASTER);
 		BigDecimal cancerCess = mDataService.getCess(payableTax, assessmentYear, cancerCessMasterList);
 		estimates.add(
 				TaxHeadEstimate.builder().taxHeadCode(PT_CANCER_CESS).estimateAmount(cancerCess.setScale(2, 2)).build());
@@ -766,7 +766,7 @@ public class EstimationService {
 		payableTax = payableTax.add(userExemption);
 
 		// Fire cess
-		List<Object> fireCessMasterList = timeBasedExemeptionMasterMap.get(CalculatorConstants.FIRE_CESS_MASTER);
+		List<Object> fireCessMasterList = timeBasedExemeptionMasterMap.get(FIRE_CESS_MASTER);
 		BigDecimal fireCess;
 
 		if (usePBFirecessLogic) {
@@ -781,7 +781,7 @@ public class EstimationService {
 		}
 
 		// Cancer cess
-		List<Object> cancerCessMasterList = timeBasedExemeptionMasterMap.get(CalculatorConstants.CANCER_CESS_MASTER);
+		List<Object> cancerCessMasterList = timeBasedExemeptionMasterMap.get(CANCER_CESS_MASTER);
 		BigDecimal cancerCess = mDataService.getCess(payableTax, assessmentYear, cancerCessMasterList);
 		estimates.add(
 				TaxHeadEstimate.builder().taxHeadCode(PT_CANCER_CESS).estimateAmount(cancerCess.setScale(2, 2)).build());
@@ -1389,7 +1389,7 @@ public class EstimationService {
 		if (billingSlabRes.getBillingSlab().get(0).getType().equals(MutationBillingSlab.TypeEnum.RATE)) {
 			BigDecimal rate = BigDecimal.valueOf(billingSlabRes.getBillingSlab().get(0).getRate());
 			BigDecimal marketValuefess = BigDecimal.valueOf(billingSlabSearchCriteria.getMarketValue());
-			fees = marketValuefess.multiply(rate.divide(CalculatorConstants.HUNDRED));
+			fees = marketValuefess.multiply(rate.divide(HUNDRED));
 		}
 		slabIds.add(billingSlabRes.getBillingSlab().get(0).getId());
 		calculation.setBillingSlabIds(slabIds);
@@ -1422,10 +1422,10 @@ public class EstimationService {
 
 		Long docDate = Long.valueOf(String.valueOf(additionalDetails.get(DOCUMENT_DATE)));
 		BigDecimal taxAmt = calculation.getTaxAmount();
-		BigDecimal rebate = getRebate(taxAmt, timeBasedExemptionMasterMap.get(CalculatorConstants.REBATE_MASTER), docDate);
+		BigDecimal rebate = getRebate(taxAmt, timeBasedExemptionMasterMap.get(REBATE_MASTER), docDate);
 		BigDecimal penalty = BigDecimal.ZERO;
 		if (rebate.equals(BigDecimal.ZERO)) {
-			penalty = getPenalty(taxAmt, timeBasedExemptionMasterMap.get(CalculatorConstants.PENANLTY_MASTER), docDate);
+			penalty = getPenalty(taxAmt, timeBasedExemptionMasterMap.get(PENANLTY_MASTER), docDate);
 		}
 
 		calculation.setRebate(rebate.setScale(2, 2).negate());
@@ -1638,12 +1638,12 @@ public class EstimationService {
 		for (Object object : masterList) {
 
 			Map<String, Object> objMap = (Map<String, Object>) object;
-			String objFinYear = ((String) objMap.get(CalculatorConstants.FROMFY_FIELD_NAME)).split("-")[0];
+			String objFinYear = ((String) objMap.get(FROMFY_FIELD_NAME)).split("-")[0];
 			String dateFiledName = null;
-			if (!objMap.containsKey(CalculatorConstants.STARTING_DATE_APPLICABLES)) {
-				dateFiledName = CalculatorConstants.ENDING_DATE_APPLICABLES;
+			if (!objMap.containsKey(STARTING_DATE_APPLICABLES)) {
+				dateFiledName = ENDING_DATE_APPLICABLES;
 			} else
-				dateFiledName = CalculatorConstants.STARTING_DATE_APPLICABLES;
+				dateFiledName = STARTING_DATE_APPLICABLES;
 
 			String[] time = ((String) objMap.get(dateFiledName)).split("/");
 			Calendar cal = Calendar.getInstance();
@@ -1667,7 +1667,7 @@ public class EstimationService {
 	private Long getDeadlineDate(Long docdate, Integer mutationPaymentPeriodInMonth) {
 		Long deadlineDate = null;
 		Long timeStamp = docdate / 1000L;
-		java.util.Date time = new java.util.Date((Long) timeStamp * 1000);
+		Date time = new Date((Long) timeStamp * 1000);
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(time);
 		Integer day = cal.get(Calendar.DAY_OF_MONTH);
@@ -1993,29 +1993,14 @@ public class EstimationService {
 
 			JsonNode units = propertyDetails.get("units");
 			//	double floorNo = Double.parseDouble(String.valueOf(units.get("floorNo")));
+			String floorNo = "0";
 			ArrayNode updatedUnits = mapper.createArrayNode();
 
 			if (units != null && units.isArray()) {
 				for (JsonNode unit : units) {
 
 					ObjectNode unitObj = (ObjectNode) unit;
-
-					int floorNoInt = 0;
-					 String floorN = unit.get("floorNo").asText("");
-
-					if (unit.has("floorNo") && !unit.get("floorNo").isNull()) {
-						try {
-								String floorNoStr = unit.get("floorNo").asText("");
-							if (!floorNoStr.isEmpty() && !floorNoStr.equals("null")) {
-										floorNoInt = Integer.parseInt(floorNoStr);
-							}
-						} catch (NumberFormatException e) {
-							log.warn("Invalid floorNo format: {}, defaulting to 0", unit.get("floorNo").asText());
-							floorNoInt = 0;
-						}
-					}
-					unitObj.put("floorNo", String.valueOf(floorNoInt));
-					updatedUnits.add(unitObj);
+					floorNo = unit.get("floorNo").asText("");
 
 					String occ = unit.get("occupancyType").asText("");
 					String usage = unit.get("usageCategoryMajor").asText("");
@@ -2138,7 +2123,7 @@ public class EstimationService {
 
 
 			ArrayNode billingSlabIds = mapper.createArrayNode();
-			billingSlabIds.add(id);
+			billingSlabIds.add(id + "|" + floorNo);
 			calculation.set("billingSlabIds", billingSlabIds);
 
 			calculation.put("serviceNumber", properties.path("acknowldgementNumber").asText(null));
