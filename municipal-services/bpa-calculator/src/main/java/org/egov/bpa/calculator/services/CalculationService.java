@@ -360,7 +360,7 @@ public class CalculationService {
 		String category = (String)node.get("usage");
 		String approvedColony = (String)node.getOrDefault("approvedColony", "NO");
 //		String buildingStatus  = (String)node.getOrDefault("buildingStatus", "");
-		Map<String, Double> farDetails  = (Map<String, Double>)node.getOrDefault("farDetails", new HashMap<>());
+		Map<String, Object> farDetails  = (Map<String, Object>)node.getOrDefault("farDetails", new HashMap<>());
 		String roadType  = (String)node.getOrDefault("roadType", "OTHER ROAD");
 		String NocNumber  = (String)node.getOrDefault("NocNumber", "");
 		boolean isClubbedPlot  = (boolean)node.getOrDefault("isClubbedPlot", false);
@@ -432,8 +432,8 @@ public class CalculationService {
 				amount = rate.setScale(0, RoundingMode.HALF_UP);
 				break;	
 			case BPACalculatorConstants.BPA_PURCHASABLE_FAR_CHARGES:
-				if(farDetails != null && farDetails.containsKey("purchasableFar") && purchasedFAR)
-					amount = BigDecimal.valueOf(farDetails.get("purchasableFar") != null ? farDetails.get("purchasableFar") : 0.0).multiply(rate).setScale(0, RoundingMode.HALF_UP);
+				if(farDetails != null && farDetails.containsKey("purchasableFar") && farDetails.get("purchasableFar") != null && purchasedFAR) 
+					amount = new BigDecimal(farDetails.get("purchasableFar").toString()).multiply(rate).setScale(0, RoundingMode.HALF_UP);
 				else
 					amount = BigDecimal.ZERO;
 				break;
@@ -467,7 +467,7 @@ public class CalculationService {
 		estimates.stream().filter(est -> est.getTaxHeadCode().equalsIgnoreCase(BPACalculatorConstants.BPA_WATER_CHARGES)).forEach(estimate -> {
 			BigDecimal amount = estimates.stream().filter(est -> est.getTaxHeadCode().equalsIgnoreCase(BPACalculatorConstants.BPA_MALBA_CHARGES))
 					.map(est -> est.getEstimateAmount()).findFirst().orElse(BigDecimal.ZERO)
-					.multiply(estimate.getEstimateAmount()).divide(new BigDecimal(100.0)).setScale(0, RoundingMode.HALF_UP);
+					.multiply(estimate.getEstimateAmount()).divide(BigDecimal.valueOf(100.0)).setScale(0, RoundingMode.HALF_UP);
 			estimate.setEstimateAmount(amount);
 		});
 		
