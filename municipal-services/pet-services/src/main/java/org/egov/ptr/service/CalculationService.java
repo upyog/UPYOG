@@ -125,9 +125,12 @@ public class CalculationService {
 			List<AdditionalFeeRate> feeConfigs = mdmsUtil.getFeeConfig(
 				petRegistrationRequest.getRequestInfo(), tenantId, PTRConstants.PET_MASTER_MODULE_NAME, feeType);
 			
+			// ServiceCharge and InterestAmount must always be added, even if calculation is 0
+			boolean alwaysAdd = "ServiceCharge".equals(feeType) || "InterestAmount".equals(feeType);
+			
 			// Calculate and add to demand details
 			calculateAndAddFeeToDemandDetails(feeConfigs, baseRegistrationFee, daysElapsed, 
-				currentFY, tenantId, taxHeadCode, demandDetails);
+				currentFY, tenantId, taxHeadCode, demandDetails, alwaysAdd);
 		}
 	}
 	
@@ -243,21 +246,32 @@ public class CalculationService {
 
 	/**
 	 * Calculates fee amount for given configurations and adds to demand details
+	 * @param alwaysAdd If true, adds demand detail even if feeAmount is 0 (for ServiceCharge and InterestAmount)
 	 */
 	private void calculateAndAddFeeToDemandDetails(List<AdditionalFeeRate> feeConfigs, BigDecimal baseAmount, 
-		int daysElapsed, String currentFY, String tenantId, String taxHeadCode, List<DemandDetail> demandDetails) {
+		int daysElapsed, String currentFY, String tenantId, String taxHeadCode, List<DemandDetail> demandDetails, boolean alwaysAdd) {
 		
-		for (AdditionalFeeRate feeConfig : feeConfigs) {
-			BigDecimal feeAmount = feeCalculationUtil.calculateFeeAmount(feeConfig, baseAmount, daysElapsed, currentFY);
-			
-			if (feeAmount.compareTo(BigDecimal.ZERO) >= 0) {
-				DemandDetail demandDetail = DemandDetail.builder()
-						.taxAmount(feeAmount)
-						.taxHeadMasterCode(taxHeadCode)
-						.tenantId(tenantId)
-						.build();
-				demandDetails.add(demandDetail);
+		BigDecimal totalFeeAmount = BigDecimal.ZERO;
+		
+		// Calculate total fee amount from all configurations
+		if (feeConfigs != null && !feeConfigs.isEmpty()) {
+			for (AdditionalFeeRate feeConfig : feeConfigs) {
+				BigDecimal feeAmount = feeCalculationUtil.calculateFeeAmount(feeConfig, baseAmount, daysElapsed, currentFY);
+				if (feeAmount != null && feeAmount.compareTo(BigDecimal.ZERO) >= 0) {
+					totalFeeAmount = totalFeeAmount.add(feeAmount);
+				}
 			}
+		}
+		
+		// Add demand detail if amount is >= 0, or if alwaysAdd is true (for ServiceCharge and InterestAmount)
+		// This ensures ServiceCharge and InterestAmount are always added, even if calculation is 0
+		if (alwaysAdd || totalFeeAmount.compareTo(BigDecimal.ZERO) >= 0) {
+			DemandDetail demandDetail = DemandDetail.builder()
+					.taxAmount(totalFeeAmount)
+					.taxHeadMasterCode(taxHeadCode)
+					.tenantId(tenantId)
+					.build();
+			demandDetails.add(demandDetail);
 		}
 	}
 }
