@@ -15,5 +15,8 @@ public class RoleQueryBuilder {
     public static final String DELETE_USER_ROLES = "delete from eg_userrole_v1 where user_id=:user_id and " +
 			"user_tenantid=:user_tenantid and " +
 			"role_code not in (:roles)";
+    
+    public static final String DELETE_CITIZEN_USER_ROLES = "delete from eg_userrole_v1 where user_id=:user_id and " +
+			"CONCAT(role_code,':',role_tenantid) not in (:rolesWithTenantid) ";
 }
 

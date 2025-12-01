@@ -430,7 +430,10 @@ public class UserRepository {
         namedParameterJdbcTemplate.update(userTypeQueryBuilder.getUpdateUserQuery(), updateuserInputs);
         if (user.getRoles() != null && !CollectionUtils.isEmpty(user.getRoles()) && !oldUser.getRoles().equals(user.getRoles())) {
             validateAndEnrichRoles(Collections.singletonList(user));
-            updateRoles(user);
+            if(user.getType() != null && UserType.CITIZEN.toString().equals(user.getType().toString()) && Boolean.TRUE.equals(user.getIsRoleUpdatable()))
+            	updateCitizenRoles(user);
+            else if(user.getType() != null && !UserType.CITIZEN.toString().equals(user.getType().toString()))
+            	updateRoles(user);
         }
         if (user.getPermanentAndCorrespondenceAddresses() != null) {
             addressRepository.update(user.getPermanentAndCorrespondenceAddresses(), user.getId(), user.getTenantId());
@@ -726,6 +729,24 @@ public class UserRepository {
         namedParameterJdbcTemplate.update(RoleQueryBuilder.DELETE_USER_ROLES, roleInputs);
         saveUserRoles(user);
     }
+    
+
+	/**
+	 * Updates the roles assigned to a user.
+	 *
+	 * @param user the user whose roles need to be updated
+	 *
+	 * @author Roshan Chaudhary
+	 */
+	private void updateCitizenRoles(User user) {
+		Map<String, Object> roleInputs = new HashMap<String, Object>();
+		List<String> roleCodesWithTenantid = user.getRoles().stream()
+				.map(role -> role.getCode() + ":" + role.getTenantId()).collect(Collectors.toList());
+		roleInputs.put("user_id", user.getId());
+		roleInputs.put("rolesWithTenantid", roleCodesWithTenantid);
+		namedParameterJdbcTemplate.update(RoleQueryBuilder.DELETE_CITIZEN_USER_ROLES, roleInputs);
+		saveUserRoles(user);
+	}
 
     private String getStateLevelTenant(String tenantId) {
         return tenantId.split("\\.")[0];
