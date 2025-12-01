@@ -273,6 +273,9 @@ public class UserService {
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private UserDetailResponse handleUpdateResponse(LinkedHashMap responseMap, String dobFormat) {
 		try {
+			// Parse date strings to Long before deserialization
+			parseResponse(responseMap, dobFormat);
+
 			// Parse the response as UpdateResponse
 			org.egov.fsm.web.model.user.UpdateResponse updateResponse =
 					mapper.convertValue(responseMap, org.egov.fsm.web.model.user.UpdateResponse.class);
