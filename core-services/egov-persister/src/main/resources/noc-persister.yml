@@ -7,7 +7,7 @@ serviceMaps:
    isTransaction: true
    queryMaps:
 
-       - query: INSERT INTO eg_Noc(id, applicationno, applicationstatus, tenantid, status, landid, Noctype, applicationtype, accountid, source, sourcerefid, additionaldetails, createdby, lastmodifiedby, createdtime, lastmodifiedtime, nocno, noc_date) VALUES (?, ?, ?, ?,  ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, TO_DATE(?, 'YYYY-MM-DD')); 
+       - query: INSERT INTO eg_Noc(id, applicationno, applicationstatus, tenantid, status, landid, Noctype, applicationtype, accountid, source, sourcerefid, additionaldetails, createdby, lastmodifiedby, createdtime, lastmodifiedtime, nocno) VALUES (?, ?, ?, ?,  ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, TO_DATE(?, 'YYYY-MM-DD')); 
          basePath: Noc
          jsonMaps:
           - jsonPath: $.Noc.id
@@ -46,7 +46,7 @@ serviceMaps:
             
           - jsonPath: $.Noc.nocNo
           
-          - jsonPath: $.Noc.nocDate
+         
 
 
        - query: INSERT INTO eg_noc_auditdetails SELECT * FROM eg_noc WHERE id =?;
