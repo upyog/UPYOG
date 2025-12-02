@@ -52,4 +52,33 @@ public class ApplicationProperties {
     @Value("${egov.ss.survey.save.answer}")
     private String saveAnswerTopic ;
 
+    @Value("${egov.ss.category.save}")
+    private String saveCategoryTopic ;
+
+    @Value("${egov.ss.category.update}")
+    private String updateCategoryTopic ;
+
+    @Value("${egov.ss.question.save}")
+    private String saveQuestionTopic ;
+
+    @Value("${egov.ss.question.update}")
+    private String updateQuestionTopic ;
+
+    @Value("${egov.ss.max.create.limit}")
+    private Integer maxCreateLimit ;
+    
+    @Value("${egov.ss.createsurvey.create.topic}")
+    private String createScorecardSurveyTopic ;
+
+    @Value("${egov.ss.updatesurvey.active.topic}")
+    private String updateActiveSurveyTopic ;
+
+    @Value("${egov.ss.scorecardsurvey.submitanswer.topic}")
+    private String submitAnswerScorecardSurveyTopic ;
+
+    @Value("${egov.user.host}")
+    private String userHost;
+
+    @Value("${egov.user.search.endpoint}")
+    private String userSearchEndpoint;
 }

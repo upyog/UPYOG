@@ -14,8 +14,11 @@ import java.util.List;
 public class AnswerEntity {
 
     @JsonProperty("surveyId")
-    String surveyId;
+    private String surveyId;
+
+    @JsonProperty("city")
+    private String city;
 
     @JsonProperty("answers")
-    List<Answer> answers;
+    private List<Answer> answers;
 }

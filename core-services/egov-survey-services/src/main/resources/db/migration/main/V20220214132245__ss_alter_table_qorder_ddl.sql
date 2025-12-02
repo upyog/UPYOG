@@ -1,1 +1,1 @@
-ALTER TABLE eg_ss_question ADD COLUMN qorder bigint;
+ALTER TABLE eg_ss_question ADD COLUMN IF NOT EXISTS qorder bigint;

@@ -75,11 +75,11 @@ public class SurveyRepository {
         return jdbcTemplate.query(query, preparedStmtList.toArray(), new SingleColumnRowMapper<>(String.class));
     }
 
-    public List<Answer> fetchSurveyResults(SurveyResultsSearchCriteria criteria) {
-        List<Object> preparedStmtList = new ArrayList<>();
-        String query = surveyQueryBuilder.fetchSurveyResultsQuery(criteria, preparedStmtList);
-        return jdbcTemplate.query(query, preparedStmtList.toArray(), answerRowMapper);
-    }
+//    public List<Answer> fetchSurveyResults(SurveyResultsSearchCriteria criteria) {
+//        List<Object> preparedStmtList = new ArrayList<>();
+//        String query = surveyQueryBuilder.fetchSurveyResultsQuery(criteria, preparedStmtList);
+//        return jdbcTemplate.query(query, preparedStmtList.toArray(), answerRowMapper);
+//    }
 
     public Integer fetchTotalSurveyCount(SurveySearchCriteria criteria) {
         List<Object> preparedStmtList = new ArrayList<>();

@@ -1,0 +1,1 @@
+ALTER TABLE eg_ss_survey_section ADD COLUMN sectionorder INT;

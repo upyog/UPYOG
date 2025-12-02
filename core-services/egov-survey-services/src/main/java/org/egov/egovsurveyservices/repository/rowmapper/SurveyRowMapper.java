@@ -91,7 +91,7 @@ public class SurveyRowMapper implements ResultSetExtractor<List<SurveyEntity>>{
                 .questionStatement(rs.getString("qstatement"))
                 .status(Status.fromValue(rs.getString("qstatus")))
                 .required(rs.getBoolean("qrequired"))
-                .options(Arrays.asList(rs.getString("qoptions").split(",")))
+//                .options(Arrays.asList(rs.getString("qoptions").split(",")))
                 .type(Type.fromValue(rs.getString("qtype")))
                 .qorder(rs.getLong("qorder"))
                 .auditDetails(auditdetails)
