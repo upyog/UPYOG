@@ -1432,11 +1432,10 @@ public class GarbageAccountService {
 		Map<Integer, SearchCriteriaGarbageAccount> garbageCriteriaMap = new HashMap<>();
 		Integer counter = 1;
 
-		if(searchCriteriaGarbageAccountRequest.getRequestInfo().getUserInfo().getType()
-						.equalsIgnoreCase(GrbgConstants.USER_TYPE_EMPLOYEE)){
-		searchCriteriaGarbageAccountRequest.getSearchCriteriaGarbageAccount().setCreatedBy(Collections
-				.singletonList(searchCriteriaGarbageAccountRequest.getRequestInfo().getUserInfo().getUuid()));
-		}
+//		if(searchCriteriaGarbageAccountRequest.getRequestInfo().getUserInfo().getType()
+//						.equalsIgnoreCase(GrbgConstants.USER_TYPE_EMPLOYEE)){
+//		
+//		}
 		
 		garbageCriteriaMap.put(counter++, searchCriteriaGarbageAccountRequest.getSearchCriteriaGarbageAccount());
 
@@ -1447,6 +1446,7 @@ public class GarbageAccountService {
 						.equalsIgnoreCase(GrbgConstants.USER_TYPE_EMPLOYEE)) {
 			SearchCriteriaGarbageAccount searchCriteriaGarbageAccountCreatedBy = searchCriteriaGarbageAccountRequest
 					.getSearchCriteriaGarbageAccount().copy();
+			searchCriteriaGarbageAccountCreatedBy.setUserType(searchCriteriaGarbageAccountRequest.getRequestInfo().getUserInfo().getType());
 			if (!CollectionUtils.isEmpty(searchCriteriaGarbageAccountCreatedBy.getStatusList())) {
 				searchCriteriaGarbageAccountCreatedBy.setStatusList(null);
 			}
@@ -1470,10 +1470,13 @@ public class GarbageAccountService {
 					if (!CollectionUtils.isEmpty(garbageCriteriaFromExcel.getStatusList())) {
 						garbageCriteriaFromExcel.setStatusList(null);
 					}
+					garbageCriteriaFromExcel.setCreatedBy(Collections
+							.singletonList(searchCriteriaGarbageAccountRequest.getRequestInfo().getUserInfo().getUuid()));
 					garbageCriteriaFromExcel.setStatus(Collections.singletonList(GrbgConstants.STATUS_INITIATED));
 					garbageCriteriaFromExcel.setChannels(Collections.singletonList(GrbgConstants.CHANNEL_TYPE_MIGRATE));
 					garbageCriteriaFromExcel.setCreatedBy(Collections
 					.singletonList(searchCriteriaGarbageAccountRequest.getRequestInfo().getUserInfo().getUuid()));
+					garbageCriteriaFromExcel.setUserType(searchCriteriaGarbageAccountRequest.getRequestInfo().getUserInfo().getType());
 					garbageCriteriaMap.put(counter++, garbageCriteriaFromExcel);
 				}
 			}
