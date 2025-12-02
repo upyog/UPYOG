@@ -1843,11 +1843,7 @@ public class EstimationService {
 	}
 
 
-	/**
-	 * Legacy Property Tax Calculation for FY 2013–14 (using BillingSlab rates instead of MDMS)
-	 */
 	public JsonNode calculateFor2013(JsonNode requestBody) {
-		log.info("Starting 2013–14 property tax calculation...");
 
 		ObjectMapper mapper = new ObjectMapper();
 		ObjectNode responseNode = mapper.createObjectNode();
@@ -1856,7 +1852,6 @@ public class EstimationService {
 		ArrayNode taxHeadEstimates = mapper.createArrayNode();
 		JsonNode calculationCriteriaNode = requestBody.path("CalculationCriteria").get(0);
 		JsonNode requestInfoNode = requestBody.path("RequestInfo");
-
 
 		RequestInfo requestInfo = mapper.convertValue(requestInfoNode, RequestInfo.class);
 		CalculationCriteria criteria = mapper.convertValue(calculationCriteriaNode, CalculationCriteria.class);
@@ -1904,18 +1899,13 @@ public class EstimationService {
 
 			double landArea = propertyDetails.has("landArea") ? propertyDetails.get("landArea").asDouble() : 0.0;
 
-			Map<String, JSONArray> propertyTaxMdmsData = mDataService.getAllPropertyTaxMdmsData(requestInfo, tenantId);
+			Map<String, JSONArray> propertyTaxMdmsData = mDataService.getAllPropertyTaxMdmsData(requestInfo, tenantId,assessmentYear);
 
 			JSONArray penaltyConfig = propertyTaxMdmsData.get("Penalty");
 			JSONArray rebateConfig = propertyTaxMdmsData.get("Rebate");
 			JSONArray interestConfig = propertyTaxMdmsData.get("Interest");
-			//JSONArray localityRatesConfig = propertyTaxMdmsData.get("LocalityRates");
 			JSONArray FireCessConfig = propertyTaxMdmsData.get("FireCess");
 
-
-
-
-			//JSONArray penaltyConfig = propertyTaxMdmsData.get("Penalty");
 			double penalityRate = 0.0;
 			double interestRate = 0.0;
 			double additionalRebateRate = 0.0;
@@ -1967,22 +1957,35 @@ public class EstimationService {
 			}
 			String id="";
 			double collectorRate = 0.0;
+			boolean collectorRateFound = false;
 			for (BillingSlab slab : billingSlabs) {
-				if(TargetlocalityCode.equalsIgnoreCase(slab.getAreaType())){
-				String st=slab.getAreaType();
-				 id=slab.getId();
-				log.info("Matching locality found in BillingSlab: {}, {}", st, id);
-				if (usageMajor.equalsIgnoreCase("RESIDENTIAL") ) {
-					collectorRate = slab.getUnitRate();
-					break;
-				} else if (usageMajor.contains("INDUSTRIAL") || usageMinor.contains("INDUSTRIAL")) {
-					collectorRate = slab.getUnitRate();
-					break;
-				} else {
-					collectorRate = slab.getUnitRate();
-					break;
+				if(TargetlocalityCode.equalsIgnoreCase(slab.getAreaType())) {
+					String st = slab.getAreaType();
+					id = slab.getId();
+					log.info("Matching locality found in BillingSlab: {}, {}", st, id);
+					if (usageMajor.equalsIgnoreCase("RESIDENTIAL")) {
+						collectorRate = slab.getUnitRate();
+						collectorRateFound = true;
+						break;
+					} else if (usageMajor.contains("INDUSTRIAL") || usageMinor.contains("INDUSTRIAL")) {
+						collectorRate = slab.getUnitRate();
+						collectorRateFound = true;
+						break;
+					} else {
+						collectorRate = slab.getUnitRate();
+						collectorRateFound = true;
+						break;
+					}
 				}
-			}}
+			}
+
+			if (!collectorRateFound || collectorRate <= 0) {
+				throw new CustomException(
+						"COLLECTOR_RATE_NOT_FOUND",
+						"Collector rates for this locality is missing, please contact administrator"
+				);
+			}
+
 
 			log.info("Collector rate (BillingSlab) for locality {} = {}", TargetlocalityCode, collectorRate);
 
@@ -2077,10 +2080,6 @@ public class EstimationService {
 			unit_usage_exemption = Math.round(unit_usage_exemption * 100) / 100.0;
 			PT_TAX_NET = PT_TAX - exemption - unit_usage_exemption;
 
-
-			//penalityRate = 10.0;
-			//double interestRate = 18.0;
-
 			double penality = PT_TAX_NET * penalityRate / 100.0;
 			double interestPerDay = (PT_TAX_NET) * (interestRate / 365 / 100.0);
 			LocalDate currentDate = LocalDate.now();
@@ -2135,7 +2134,10 @@ public class EstimationService {
 			responseNode.set("Calculation", calculationsArray);
 
 
-		} catch (Exception ex) {
+		}catch (CustomException ex) {
+			log.error("Business Error in 2013 calculation: {}", ex.getMessage(), ex);
+			throw ex;
+		}  catch (Exception ex) {
 			log.error("Error in 2013 calculation: {}", ex.getMessage(), ex);
 			if (calculationsArray.size() == 0) {
 				ObjectNode errorCalculation = mapper.createObjectNode();

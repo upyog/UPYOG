@@ -344,20 +344,14 @@ public class MasterDataService {
 	}
 
 	@SuppressWarnings("unchecked")
-	public Map<String, JSONArray> getAllPropertyTaxMdmsData(RequestInfo requestInfo, String tenantId) {
-
+	public Map<String, JSONArray> getAllPropertyTaxMdmsData(RequestInfo requestInfo, String tenantId, String targetFY ) {
 		Map<String, JSONArray> propertyTaxData = new HashMap<>();
 
 		try {
 			String stateTenantId = tenantId.split("\\.")[0];
-
-
 			MdmsCriteriaReq mdmsCriteriaReq = calculatorUtils.prepareMdmsRequest(
 					requestInfo, stateTenantId, "PropertyTax", null);
-
-
 			StringBuilder mdmsUrl = calculatorUtils.getMdmsSearchUrl();
-
 			Object response = repository.fetchResult(mdmsUrl, mdmsCriteriaReq);
 
 			if (response == null) {
@@ -365,27 +359,23 @@ public class MasterDataService {
 			}
 
 			MdmsResponse mdmsResponse = mapper.convertValue(response, MdmsResponse.class);
-
 			if (mdmsResponse == null || mdmsResponse.getMdmsRes() == null) {
 				return propertyTaxData;
 			}
 
 			Map<String, Map<String, JSONArray>> mdmsRes = mdmsResponse.getMdmsRes();
 			Map<String, JSONArray> propertyTaxModule = null;
-
 			if (mdmsRes.containsKey("PropertyTax")) {
 				propertyTaxModule = mdmsRes.get("PropertyTax");
 			}
+
 			if (propertyTaxModule == null || propertyTaxModule.isEmpty()) {
 				return propertyTaxData;
 			}
 
-			String targetFY = "2013-14";
-
 			for (Map.Entry<String, JSONArray> entry : propertyTaxModule.entrySet()) {
 				String masterName = entry.getKey();
 				JSONArray masterArray = entry.getValue();
-
 				JSONArray filteredArray = new JSONArray();
 
 				for (Object obj : masterArray) {
@@ -401,8 +391,6 @@ public class MasterDataService {
 				propertyTaxData.put(masterName, filteredArray);
 
 			}
-
-
 		} catch (Exception e) {
 			log.info("Error fetching PropertyTax data from MDMS: {}", e.getMessage(), e.getMessage());
 		}
