@@ -62,18 +62,25 @@ public class LandUserService {
 
 				userDetailResponse = userExists(owner, requestInfo);
 
-				if (userDetailResponse == null || CollectionUtils.isEmpty(userDetailResponse.getUser())
-						|| !owner.compareWithExistingUser(userDetailResponse.getUser().get(0))) {
+				if (userDetailResponse == null || CollectionUtils.isEmpty(userDetailResponse.getUser())) {
 					// if no user found with mobileNo or details were changed,
 					// creating new one..
 					Role role = getCitizenRole();
 					addUserDefaultFields(owner.getTenantId(), role, owner);
 					StringBuilder uri = new StringBuilder(config.getUserHost()).append(config.getUserContextPath())
 							.append(config.getUserCreateEndpoint());
-					setUserName(owner);
+//					setUserName(owner);
+					owner.setUserName(StringUtils.isEmpty(owner.getUserName()) ? owner.getMobileNumber() : owner.getUserName());
 					owner.setOwnerType(LandConstants.CITIZEN);
 					userDetailResponse = userCall(new CreateUserRequest(requestInfo, owner), uri);
 					log.debug("owner created --> " + userDetailResponse.getUser().get(0).getUuid());
+				}else if(!owner.compareWithExistingUser(userDetailResponse.getUser().get(0))) {
+					// if details were changed,
+					// Updating user..
+					StringBuilder uri = new StringBuilder(config.getUserHost()).append(config.getUserContextPath())
+							.append(config.getUserUpdateEndpoint());
+					userDetailResponse = userCall(new CreateUserRequest(requestInfo, owner), uri);
+					log.debug("owner Updated --> " + userDetailResponse.getUser().get(0).getUuid());
 				}
 				if (userDetailResponse != null)
 					setOwnerFields(owner, userDetailResponse, requestInfo);
@@ -111,6 +118,7 @@ public class LandUserService {
 		UserSearchRequest userSearchRequest = new UserSearchRequest();
 		userSearchRequest.setTenantId(owner.getTenantId().split("\\.")[0]);
 		userSearchRequest.setMobileNumber(owner.getMobileNumber());
+		userSearchRequest.setUserName(StringUtils.isEmpty(owner.getUserName()) ? owner.getMobileNumber() : owner.getUserName() );
 		if(!StringUtils.isEmpty(owner.getUuid())) {
 			List<String> uuids = new ArrayList<String>();
 			uuids.add(owner.getUuid());

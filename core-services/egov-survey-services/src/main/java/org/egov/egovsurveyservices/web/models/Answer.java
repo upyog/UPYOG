@@ -2,10 +2,9 @@ package org.egov.egovsurveyservices.web.models;
 
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.JsonNode;
 import lombok.*;
-import org.egov.egovsurveyservices.web.models.enums.Type;
 
-import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @Getter
@@ -16,11 +15,26 @@ import java.util.List;
 @ToString
 public class Answer {
 
-    @JsonProperty("uuid")
-    private String uuid;
+    @JsonProperty("answerUuid")
+    private String answerUuid;
 
-    @JsonProperty("questionId")
-    private String questionId;
+    @JsonProperty("city")
+    private String city;
+
+    @JsonProperty("surveyUuid")
+    private String surveyUuid;
+
+    @JsonProperty("sectionUuid")
+    private String sectionUuid;
+
+    @JsonProperty("questionUuid")
+    private String questionUuid;
+
+    @JsonProperty("questionStatement")
+    private String questionStatement;
+
+    @JsonProperty("comments")
+    private String comments;
 
     @JsonProperty("answer")
     private List<Object> answer;

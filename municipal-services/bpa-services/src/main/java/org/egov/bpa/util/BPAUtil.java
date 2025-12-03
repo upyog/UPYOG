@@ -103,6 +103,7 @@ public class BPAUtil {
 		bpaMasterDtls.add(MasterDetail.builder().name(BPAConstants.CalculationType).build());
 		bpaMasterDtls.add(MasterDetail.builder().name(BPAConstants.CHECKLIST_NAME).build());
 		bpaMasterDtls.add(MasterDetail.builder().name(BPAConstants.NOC_TYPE_MAPPING).build());
+		bpaMasterDtls.add(MasterDetail.builder().name(BPAConstants.BUILDING_HEIGHT).build());
 		ModuleDetail bpaModuleDtls = ModuleDetail.builder().masterDetails(bpaMasterDtls)
 				.moduleName(BPAConstants.BPA_MODULE).build();
 
@@ -275,6 +276,53 @@ public class BPAUtil {
 		}
 		return businessSrvCode;
 		
+	}
+	
+	/**
+	 * Returns the URL for Process Instances search for Auto Escalation end point
+	 *
+	 * @return URL for MDMS search end point
+	 */
+	public StringBuilder getAutoEscalationApplicationsURL(Map<String, Object> autoEscalationMdmsData) {
+		StringBuilder uri = new StringBuilder(config.getWfHost());
+		uri.append(config.getWfAutoEscalationPath());
+		uri.append("?businessService=");
+		uri.append(autoEscalationMdmsData.get("businessService"));
+		uri.append("&moduleName=");
+		uri.append(autoEscalationMdmsData.get("module"));
+		uri.append("&sla=");
+		uri.append(autoEscalationMdmsData.get("stateSLA").toString());
+		uri.append("&startSlaState=");
+		uri.append(autoEscalationMdmsData.get("startSlaState"));
+		uri.append("&currentStates=");
+		uri.append(autoEscalationMdmsData.get("state"));
+		
+		
+		return uri;
+	}
+	
+	/**
+	 * prepares the mdms request object
+	 * @param requestInfo
+	 * @param tenantId
+	 * @return
+	 */
+	public MdmsCriteriaReq getMDMSRequestForAutoEscalationData(RequestInfo requestInfo, String tenantId) {
+		final String filterCode = "$.[?(@.active=='true' && @.module=='bpa-service' && @.businessService == 'BPA_LOW' )]";
+
+		ModuleDetail bpaModuleDtls = ModuleDetail.builder()
+				.masterDetails(Arrays.asList(MasterDetail.builder().name("AutoEscalation").filter(filterCode).build()))
+				.moduleName("Workflow").build();
+		List<ModuleDetail> moduleRequest = Arrays.asList(bpaModuleDtls);
+
+		List<ModuleDetail> moduleDetails = new LinkedList<>();
+		moduleDetails.addAll(moduleRequest);
+
+		MdmsCriteria mdmsCriteria = MdmsCriteria.builder().moduleDetails(moduleDetails).tenantId(tenantId).build();
+
+		MdmsCriteriaReq mdmsCriteriaReq = MdmsCriteriaReq.builder().mdmsCriteria(mdmsCriteria).requestInfo(requestInfo)
+				.build();
+		return mdmsCriteriaReq;
 	}
 
 }

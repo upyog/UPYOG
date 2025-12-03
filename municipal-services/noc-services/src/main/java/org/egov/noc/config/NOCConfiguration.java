@@ -56,6 +56,18 @@ public class NOCConfiguration {
 	@Value("${egov.localization.search.endpoint}")
 	private String localizationSearchEndpoint;
 
+	@Value("${noc.taxhead.master.code}")
+	private String taxHeadMasterCode;
+
+	@Value("${egov.demand.create.endpoint}")
+	private String demandCreateEndpoint;
+
+	@Value("${egov.noccalculator.host}")
+	private String nocCalculatorHost;
+
+	@Value("${egov.noccalculator.endpoint}")
+	private String nocCalculatorEndpoint;
+
 	@Value("${egov.localization.statelevel}")
 	private Boolean isLocalizationStateLevel;
 	
@@ -88,7 +100,10 @@ public class NOCConfiguration {
 	
 	@Value("${persister.save.noc.topic}")
 	private String saveTopic;
-	
+
+	@Value("${egov.billingservice.host}")
+	private String billingServiceHost;
+
 	@Value("${persister.update.noc.topic}")
 	private String updateTopic;
 	
@@ -116,5 +131,9 @@ public class NOCConfiguration {
 
     @Value("${egov.bpa.search.endpoint}")
     private String bpaSearchEndpoint;
+
+
+	@Value("${spring.kafka.consumer.group-id}")
+	private String kafkaGroupId;
 
 }

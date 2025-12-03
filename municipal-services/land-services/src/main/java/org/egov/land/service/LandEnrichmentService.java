@@ -53,9 +53,12 @@ public class LandEnrichmentService {
 		landRequest.getLandInfo().setAuditDetails(auditDetails);
 		if (!isUpdate) {
 			landRequest.getLandInfo().setId(UUID.randomUUID().toString());
-			boundaryService.getAreaType(landRequest, config.getHierarchyTypeCode());
+			landRequest.getLandInfo().getAddress().getLocality().setCode("");
 		}
-
+		
+		if(!StringUtils.isEmpty(landRequest.getLandInfo().getAddress().getLocality().getCode()))
+			boundaryService.getAreaType(landRequest, config.getHierarchyTypeCode());
+		
 		if (landRequest.getLandInfo().getInstitution() != null) {
 			if (StringUtils.isEmpty(landRequest.getLandInfo().getInstitution().getId()))
 				landRequest.getLandInfo().getInstitution().setId(UUID.randomUUID().toString());
@@ -150,7 +153,8 @@ public class LandEnrichmentService {
 
 	private void enrichBoundary(List<LandInfoRequest> landRequests) {
 		landRequests.forEach(landRequest -> {
-			boundaryService.getAreaType(landRequest, config.getHierarchyTypeCode());
+			if(!StringUtils.isEmpty(landRequest.getLandInfo().getAddress().getLocality().getCode()))
+				boundaryService.getAreaType(landRequest, config.getHierarchyTypeCode());
 		});
 	}
 

@@ -61,6 +61,12 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
     @Value("${citizen.login.password.otp.fixed.enabled}")
     private boolean fixedOTPEnabled;
 
+    @Value("${otp.bypass.for}")
+    private String thirdPartyCitizen;
+    
+    @Value("${bypass.otp}")
+    private String otpForThirdparty;
+    
     @Autowired
     private HttpServletRequest request;
 
@@ -73,12 +79,20 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
     public Authentication authenticate(Authentication authentication) {
         String userName = authentication.getName();
         String password = authentication.getCredentials().toString();
+	
 
         final LinkedHashMap<String, String> details = (LinkedHashMap<String, String>) authentication.getDetails();
 
+        String thirdPartyValue = details.get("thirdPartyName");
         String tenantId = details.get("tenantId");
         String userType = details.get("userType");
 
+		if (!isEmpty(thirdPartyValue) && thirdPartyCitizen.equalsIgnoreCase(thirdPartyValue)
+				&& "CITIZEN".equalsIgnoreCase(userType) && password.equalsIgnoreCase(otpForThirdparty)) {
+			log.debug("Third Party authentication is available for enaksha.");
+		
+        	password=fixedOTPPassword;
+        }
         if (isEmpty(tenantId)) {
             throw new OAuth2Exception("TenantId is mandatory");
         }

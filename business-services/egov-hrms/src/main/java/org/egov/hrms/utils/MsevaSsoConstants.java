@@ -29,6 +29,8 @@ public class MsevaSsoConstants {
 	//MDMS API FETCHTENANTS
 	public final String MDMS_FETCH_TENANTS_REQBODY = "tenants"; 
 	public final String MDMS_FETCH_TENANT_REQUESTBODY = "tenant";
+	public final String MDMS_FETCH_DISTRICT_REQUESTBODY = "thirdpartydistrictmapping";
+
 	
 	//REQUESTINFO constants
 	public final String REQUESTINFO_API_ID = "Rainmaker";

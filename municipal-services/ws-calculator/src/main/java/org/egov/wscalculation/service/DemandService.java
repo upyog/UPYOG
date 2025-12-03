@@ -11,14 +11,22 @@ import java.util.stream.IntStream;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.Role;
+import org.egov.common.contract.request.Role.RoleBuilder;
 import org.egov.common.contract.request.User;
+import org.egov.mdms.model.MasterDetail;
+import org.egov.mdms.model.MdmsCriteria;
+import org.egov.mdms.model.MdmsCriteriaReq;
+import org.egov.mdms.model.ModuleDetail;
 import org.egov.tracer.model.CustomException;
+import org.egov.mdms.model.MdmsCriteriaReq;
 import org.egov.wscalculation.config.WSCalculationConfiguration;
 import org.egov.wscalculation.constants.WSCalculationConstant;
 import org.egov.wscalculation.producer.WSCalculationProducer;
+import org.egov.wscalculation.repository.BillGeneratorDao;
 import org.egov.wscalculation.repository.DemandRepository;
 import org.egov.wscalculation.repository.ServiceRequestRepository;
 import org.egov.wscalculation.repository.WSCalculationDao;
+import org.egov.wscalculation.repository.WSCalculationDaoImpl;
 import org.egov.wscalculation.repository.WaterConnectionRepository;
 import org.egov.wscalculation.util.CalculatorUtil;
 import org.egov.wscalculation.util.NotificationUtil;
@@ -26,6 +34,7 @@ import org.egov.wscalculation.util.WSCalculationUtil;
 import org.egov.wscalculation.validator.WSCalculationWorkflowValidator;
 import org.egov.wscalculation.web.models.*;
 import org.egov.wscalculation.web.models.Demand.StatusEnum;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.*;
@@ -34,6 +43,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jayway.jsonpath.JsonPath;
 
 import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONArray;
@@ -49,6 +59,9 @@ public class DemandService {
 
 	@Autowired
 	private ServiceRequestRepository repository;
+	
+	@Autowired
+	private BillGeneratorDao billGeneratorDao;
 
 	@Autowired
 	private ObjectMapper mapper;
@@ -97,6 +110,12 @@ public class DemandService {
 
 	@Autowired
 	private NotificationUtil notificationUtil;
+	
+	@Autowired
+	private WSCalculationDaoImpl dao;
+
+	
+	
 
 	/**
 	 * Creates or updates Demand
@@ -404,6 +423,7 @@ public class DemandService {
 	 * @param masterMap      Master MDMS Data
 	 * @return Returns list of demands
 	 */
+	@SuppressWarnings({ "unchecked", "null" })
 	private List<Demand> createDemand(CalculationReq calculationReq, List<Calculation> calculations,
 			Map<String, Object> masterMap, boolean isForConnectionNO) {
 		List<Demand> demands = new LinkedList<>();
@@ -476,69 +496,113 @@ public class DemandService {
 					.taxPeriodTo(toDate).consumerType("waterConnection").businessService(businessService)
 					.status(StatusEnum.valueOf("ACTIVE")).billExpiryTime(expiryDate)
 					.additionalDetails(additionalDetailsMap).build());
+			
+			
+			/*PI-19231
+			 * 
+			 * Sharan_Gakhar
+			 * 
+			 * */
+			
+			Object mdmsResponse = null;
+	        String relatedSwConn = "";
+	        List<String> matchingUsages = new ArrayList<>();
+	        List<String> dbUsageCategory = new ArrayList<>();
 
-			// For the metered connections demand has to create one by one
-			if (WSCalculationConstant.meteredConnectionType.equalsIgnoreCase(connection.getConnectionType())) {
-				additionalDetailsMap.put("connectionType", connection.getConnectionType());
-				demandReq.addAll(demands);
-				if (tenantId.equalsIgnoreCase("pb.amritsar")
-						&& demands.get(0).getBusinessService().equalsIgnoreCase("WS")) {
-					List<String> usageCategory = waterCalculatorDao
-							.fetchUsageCategory(demands.get(0).getConsumerCode());
-					if (usageCategory.size() > 0) {
-						if (usageCategory.get(0).equals("NONRESIDENTIAL.COMMERCIAL")) {
-							List<String> sewConsumerList = waterCalculatorDao
-									.fetchSewConnection(demands.get(0).getConsumerCode());
-							if (sewConsumerList.size() > 0) {
-								sewConsumerCode = sewConsumerList.get(0);
-							}
-						}
-					}
-					businessServices = "SW";
-					for (DemandDetail ddSew : demandDetails) {
-						DemandDetail dd1 = new DemandDetail();
-						if (ddSew.getTaxHeadMasterCode().equalsIgnoreCase("WS_CHARGE")) {
-							dd1.setTaxHeadMasterCode("SW_CHARGE");
-						} else if (ddSew.getTaxHeadMasterCode().equalsIgnoreCase("WS_Round_Off")) {
-							dd1.setTaxHeadMasterCode("SW_Round_Off");
-						} else if (ddSew.getTaxHeadMasterCode().equalsIgnoreCase("WS_ADVANCE_CARRYFORWARD")) {
-							dd1.setTaxHeadMasterCode("SW_ADVANCE_CARRYFORWARD");
-						} else {
-							dd1.setTaxHeadMasterCode("SW_CHARGE");
-						}
-						dd1.setDemandId(ddSew.getDemandId());
-						dd1.setAuditDetails(ddSew.getAuditDetails());
-						dd1.setCollectionAmount(ddSew.getCollectionAmount());
-						dd1.setId(ddSew.getId());
-						dd1.setTaxAmount(ddSew.getTaxAmount());
-						dd1.setTenantId(ddSew.getTenantId());
-						demandDetails1.add(dd1);
-					}
 
-					demandsSw.add(Demand.builder().consumerCode(consumerCode).demandDetails(demandDetails1).payer(owner)
-							.minimumAmountPayable(minimumPayableAmount).tenantId(tenantId).taxPeriodFrom(fromDate)
-							.taxPeriodTo(toDate).consumerType("sewerageConnection").businessService(businessService)
-							.status(StatusEnum.valueOf("ACTIVE")).billExpiryTime(expiryDate)
-							.additionalDetails(additionalDetailsMap).build());
-					demandsSw.get(0).setBusinessService("SW");
-					demandReq.addAll(demandsSw);
-				}
-			} else {
-				demandReq.addAll(demands);
+			List<String> mdmsUsageCategory = new ArrayList<>();
+
+			try {
+			    mdmsResponse = getMdmsResponse(requestInfo, tenantId);
+
+			    if (mdmsResponse != null) {
+			        // Safely try to read usageCategory from MDMS
+			        try {
+			            mdmsUsageCategory = JsonPath.read(mdmsResponse, "$.MdmsRes.tenant.meterReadingMapping[0].usageCategory");
+			        } catch (Exception e) {
+			            log.error("Error reading usageCategory from MDMS response for tenantId: {} | Message: {}", tenantId, e.getMessage());
+			            mdmsUsageCategory = new ArrayList<>();
+			        }
+			    } else {
+			        log.error("MDMS response is null for tenantId: {}", tenantId);
+			        mdmsUsageCategory = new ArrayList<>();
+			    }
+
+			} catch (Exception e) {
+			    log.error("Exception while fetching MDMS response for tenantId: {} | {}", tenantId, e.getMessage());
+			    mdmsUsageCategory = new ArrayList<>();
 			}
-			List<String> consumerCodes = new ArrayList<String>();
-			consumerCodes.add(sewConsumerCode);
-			waterCalculatorDao.updateBillStatus(consumerCodes, "SW", "EXPIRED");
+			if (mdmsUsageCategory !=null && !mdmsUsageCategory.isEmpty()) {
+				 dbUsageCategory = waterCalculatorDao.fetchUsageCategory(consumerCode);
+
+		         matchingUsages = mdmsUsageCategory.stream().filter(dbUsageCategory::contains).collect(Collectors.toList());
+		        try {
+		            relatedSwConn = dao.getSwConnection(tenantId , consumerCode);
+		        } catch(Exception e){
+		            log.info("relatedSwConn not found in the table");
+		            relatedSwConn = "";
+		        }
+				
+			}
+			
+	        
+//	        List<String> sewConnectionList = waterCalculatorDao.fetchSewConnection(consumerCode); 
+//	        sewConsumerCode = sewConnectionList.isEmpty() ? "" : sewConnectionList.get(0).toString();
+	        
+//	        WSCalculationDaoImpl dao = new WSCalculationDaoImpl();
+	       
+        	
+	        if (!matchingUsages.isEmpty() && relatedSwConn != null && !relatedSwConn.isEmpty()) {
+	        	// For the metered connections demand has to create one by one
+	 			if (WSCalculationConstant.meteredConnectionType.equalsIgnoreCase(connection.getConnectionType())) {
+	 				additionalDetailsMap.put("connectionType", connection.getConnectionType());
+	 				demandReq.addAll(demands);
+	 					businessServices = "SW";
+	 					for (DemandDetail ddSew : demandDetails) {
+	 						DemandDetail dd1 = new DemandDetail();
+	 						if (ddSew.getTaxHeadMasterCode().equalsIgnoreCase(WSCalculationConstant.WS_CHARGE)) {
+	 							dd1.setTaxHeadMasterCode(WSCalculationConstant.SW_CHARGE);
+	 						} else if (ddSew.getTaxHeadMasterCode().equalsIgnoreCase(WSCalculationConstant.WS_Round_Off)) {
+	 							dd1.setTaxHeadMasterCode(WSCalculationConstant.SW_ROUND_OFF);
+	 						} else if (ddSew.getTaxHeadMasterCode().equalsIgnoreCase(WSCalculationConstant.WS_ADVANCE_CARRYFORWARD)) {
+	 							dd1.setTaxHeadMasterCode(WSCalculationConstant.SW_ADVANCE_CARRYFORWARD);
+	 						} else {
+	 							dd1.setTaxHeadMasterCode(WSCalculationConstant.SW_CHARGE);
+	 						}
+	 						dd1.setDemandId(ddSew.getDemandId());
+	 						dd1.setAuditDetails(ddSew.getAuditDetails());
+	 						dd1.setCollectionAmount(ddSew.getCollectionAmount());
+	 						dd1.setId(ddSew.getId());
+	 						dd1.setTaxAmount(ddSew.getTaxAmount());
+	 						dd1.setTenantId(ddSew.getTenantId());
+	 						demandDetails1.add(dd1);
+	 					}
+	 					demandsSw.add(Demand.builder().consumerCode(relatedSwConn).demandDetails(demandDetails1).payer(owner)
+	 							.minimumAmountPayable(minimumPayableAmount).tenantId(tenantId).taxPeriodFrom(fromDate)
+	 							.taxPeriodTo(toDate).consumerType("sewerageConnection").businessService(businessService)
+	 							.status(StatusEnum.valueOf("ACTIVE")).billExpiryTime(expiryDate)
+	 							.additionalDetails(additionalDetailsMap).build());
+	 					demandsSw.get(0).setBusinessService("SW");
+	 					demandReq.addAll(demandsSw);
+	 				}else {
+	 				demandReq.addAll(demands);
+	 			}
+	        }else {
+	        	demandReq.addAll(demands);
+	        }
+	        
 		}
 
 		String billingcycle = calculatorUtils.getBillingCycle(masterMap);
 		DemandNotificationObj notificationObj = DemandNotificationObj.builder().requestInfo(requestInfo)
 				.tenantId(calculations.get(0).getTenantId()).waterConnectionIds(waterConnectionIds)
 				.billingCycle(billingcycle).build();
-		log.info("Demand Input for WSREconnection is " + demands);
-		List<Demand> demandRes = demandRepository.saveDemand(requestInfo, demandReq, notificationObj);
-		log.info("Demand Response for WSREconnection is " + demandRes);
-
+		List<Demand> demandRes = null ;
+		for(Demand demand : demandReq){
+			log.info("Demand Input for WSREconnection is " + demand);
+			demandRes = demandRepository.saveDemand(requestInfo, Collections.singletonList(demand), notificationObj);
+			log.info("Demand Response for WSREconnection is " + demand);
+		}
 		if (calculationReq.getIsReconnectionRequest())
 			fetchBillForReconnect(demandRes, requestInfo, masterMap);
 		else if (isForConnectionNO && !calculationReq.getIsReconnectionRequest())
@@ -1742,12 +1806,15 @@ public class DemandService {
 		return notificationSent;
 	}
 
-	public List<String> fetchBillSchedulerSingle(Set<String> consumerCodes, String tenantId,RequestInfo requestInfo, List<String> failureCollector
+	public List<String> fetchBillSchedulerSingle(Set<String> consumerCodes, String tenantId,RequestInfo requestInfo, List<String> failureCollector, String  schedlerId, String localitycode
 	) {
 	    List<String> successConsumerCodes = new ArrayList<>();
 
 	    for (String consumerCode : consumerCodes) {
+			List<BillV2> bills =null;
+
 	        try {
+	        	
 	            StringBuilder fetchBillURL = calculatorUtils.getFetchBillURL(tenantId, consumerCode);
 
 	            Object result = serviceRequestRepository.fetchResult(
@@ -1756,21 +1823,82 @@ public class DemandService {
 	            );
 
 	            BillResponseV2 billResponse = mapper.convertValue(result, BillResponseV2.class);
-	            List<BillV2> bills = billResponse.getBill();
-
+	            if (billResponse == null) {
+	                log.warn("⚠️ BillResponseV2 is null after conversion.");
+	                billGeneratorDao.updateBillSchedulerConnectionStatus(
+	            			  consumerCode,
+			            		 schedlerId,
+		  				        localitycode,
+		  				        WSCalculationConstant.FAILURE,
+		  				        tenantId,
+		  				        "BillResponseV2 is null after conversion.",
+		  				      System.currentTimeMillis()
+		  				    );
+	            } else if (billResponse.getBill() == null) {
+	                log.warn("⚠️ Bill list is null in BillResponseV2.");
+	                billGeneratorDao.updateBillSchedulerConnectionStatus(
+	            			  consumerCode,
+			            		 schedlerId,
+		  				        localitycode,
+		  				        WSCalculationConstant.FAILURE,
+		  				        tenantId,
+		  				        "Bill list is null in BillResponseV2.",
+		  				      System.currentTimeMillis()
+		  				    );
+	            } else {
+	                bills = billResponse.getBill();
+	            }
+	        	
+	            
 	            if (bills != null && !bills.isEmpty()) {
+	            	
+	            	
+	            	  billGeneratorDao.updateBillSchedulerConnectionStatus(
+	            			  consumerCode,
+		            		 schedlerId,
+	  				        localitycode,
+	  				        WSCalculationConstant.SUCCESS,
+	  				        tenantId,
+	  				        WSCalculationConstant.SUCCESS_MESSAGE,
+	  				      System.currentTimeMillis()
+	  				    );
+
+	            	 
+	            	
 	                successConsumerCodes.addAll(
 	                    bills.stream().map(BillV2::getConsumerCode).collect(Collectors.toList())
-	                );
+	                
+	                		);
 	                log.info("✅ Bill generated successfully for consumerCode: {}", consumerCode);
 	            } else {
+	            	  billGeneratorDao.updateBillSchedulerConnectionStatus(
+	            			  consumerCode,
+			            		 schedlerId,
+		  				        localitycode,
+		  				        WSCalculationConstant.FAILURE,
+		  				        tenantId,
+		  				        WSCalculationConstant.FAILURE_MESSAGE,
+		  				      System.currentTimeMillis()
+		  				    );
+
 	                failureCollector.add(consumerCode);
 	                log.warn("⚠️ No bills returned for consumerCode: {}", consumerCode);
 	            }
 
 	        } catch (Exception ex) {
+	        	  billGeneratorDao.updateBillSchedulerConnectionStatus(
+	        			  consumerCode,
+		            		 schedlerId,
+	  				        localitycode,
+	  				        WSCalculationConstant.FAILURE,
+	  				        tenantId,
+	  				      WSCalculationConstant.FAILURE_MESSAGE + " | Error Msg: " + ex.getMessage(),
+	  				      System.currentTimeMillis()
+	  				    );
+
 	            failureCollector.add(consumerCode);
 	            log.error("❌ Fetch Bill failed for consumerCode: {} Exception: {}", consumerCode, ex.getMessage(), ex);
+	            
 	        }
 	    }
 
@@ -1977,5 +2105,25 @@ public class DemandService {
 		}
 		return demandList;
 	}
+	
+	/*PI-19231
+	 * 
+	 * */
+	
+	public Object getMdmsResponse(RequestInfo requestInfo, String tenantId ) {
+//		StringBuilder uri = new StringBuilder(calculatorUtils.getMdmsSearchUrl());
+//		MdmsCriteriaReq mdmsCriteriaReq = calculatorUtils.getWsTest(requestInfo ,tenantId);
+		Object response = null;
+		try {
+			response = repository.fetchResult(calculatorUtils.getMdmsSearchUrl(), calculatorUtils.getUsageCategoryFromMdms(requestInfo ,tenantId));
+			log.info("response : " + response);	
+			return response;
+		}
+		catch(Exception e){
+			log.error("Error fetching result", e);
+		}
+		return response;
+		
+	}	
 
 }

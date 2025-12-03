@@ -660,13 +660,43 @@ public class SWCalculationServiceImpl implements SWCalculationService {
 							.consumerCodes(ImmutableSet.copyOf(conectionNoList))
 							.billSchedular(billSchedular)
 							.build();
+					
+					String localityCode;
 
-					producer.push(configs.getBillGenerateSchedulerTopic(), billGeneraterReq);
+					if (billSchedular.getLocality() != null && !billSchedular.getLocality().trim().isEmpty()) {
+					    localityCode = billSchedular.getLocality();
+					} else if (billSchedular.getGrup() != null && !billSchedular.getGrup().trim().isEmpty()) {
+					    localityCode = billSchedular.getGrup();
+					} else {
+					    localityCode = "NA";
+					}
+					
+					int batchCount = count;       
+					String tenantId = billSchedular.getTenantId();
+					String cityName = "Unknown";
+
+					if (tenantId != null && tenantId.contains(".")) {
+					    cityName = tenantId.substring(tenantId.indexOf('.') + 1); // get part after dot
+					    cityName = cityName.substring(0, 1).toUpperCase() + cityName.substring(1).toLowerCase(); // capitalize
+					}
+
+					String key =cityName+"-"+ localityCode + "-" + batchCount;
+					
+					 billGeneratorDao.insertBillSchedulerConnectionStatus(
+			                    new ArrayList<>(billGeneraterReq.getConsumerCodes()),
+			                    billGeneraterReq.getBillSchedular().getId(),
+			                    billGeneraterReq.getBillSchedular().getLocality(),
+			                    SWCalculationConstant.INITIATED,
+			                    billGeneraterReq.getBillSchedular().getTenantId(),
+			                    SWCalculationConstant.INITIATED,
+			                    System.currentTimeMillis()
+			            );
+					
+					producer.push(configs.getBillGenerateSchedulerTopic(),key, billGeneraterReq);
 					log.info("Bill Scheduler pushed connections size:{} to kafka topic of batch no: ", conectionNoList.size(), count++);
 
 					if(threadSleepCount == 2) {
-						//Pausing controller for every three batches.
-						Thread.sleep(10000);
+						Thread.sleep(2000);
 						threadSleepCount=1;
 					}
 					threadSleepCount++;

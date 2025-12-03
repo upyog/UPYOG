@@ -399,6 +399,8 @@ public class UserService {
                     if (user.getUserName().equalsIgnoreCase(userInfo.getUserName()) && user.getTenantId().equalsIgnoreCase(userInfo.getTenantId())
                             && user.getType().equals(UserType.fromValue(userInfo.getType())))
                         tokenStore.removeAccessToken(token);
+                    userRepository.updateUserLogoutSession(user.getUuid(), true);
+                    	
                 }
             }
         }

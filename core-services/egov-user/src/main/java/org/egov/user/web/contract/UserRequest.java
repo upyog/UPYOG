@@ -156,6 +156,8 @@ public class UserRequest {
     private Date dob;
     @JsonFormat(pattern = "dd-MM-yyyy HH:mm:ss")
     private Date pwdExpiryDate;
+    
+    private Boolean isRoleUpdatable = false;
 
     public UserRequest(User user) {
 
@@ -193,6 +195,7 @@ public class UserRequest {
         this.clientId=user.getClientId();
         mapPermanentAddress(user);
         mapCorrespondenceAddress(user);
+        this.isRoleUpdatable = user.getIsRoleUpdatable();
     }
 
     private void mapCorrespondenceAddress(User user) {
@@ -261,6 +264,7 @@ public class UserRequest {
                 .correspondenceAddress(toDomainCorrespondenceAddress())
                 .guardian(fatherOrHusbandName)
                 .guardianRelation(relationship).alternateMobileNumber(this.alternatemobilenumber)
+                .isRoleUpdatable(this.isRoleUpdatable)
                 .build();
     }
 

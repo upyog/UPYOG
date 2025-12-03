@@ -86,6 +86,7 @@ public class User {
     private boolean mobileValidationMandatory = true;
     private String alternateMobileNumber;
     private String clientId;
+    private Boolean isRoleUpdatable = false;
 
     public User addAddressItem(Address addressItem) {
         if (this.addresses == null) {

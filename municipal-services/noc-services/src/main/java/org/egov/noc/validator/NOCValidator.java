@@ -1,11 +1,6 @@
 package org.egov.noc.validator;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.egov.noc.config.NOCConfiguration;
 import org.egov.noc.util.NOCConstants;
@@ -112,19 +107,34 @@ public class NOCValidator {
 		if (jsonOutput.isEmpty()) {
 			throw new CustomException("MDMS DATA ERROR", "Unable to fetch " + noc.getNocType() + " workflow mode from MDMS");
 		}
-
+		Object additionalDetailsObj = noc.getNocDetails().getAdditionalDetails();
 		Map<String, String> businessValues = new HashMap<>();
-		businessValues.put(NOCConstants.MODE, (String) jsonOutput.get(0).get(NOCConstants.MODE));
-		if (jsonOutput.get(0).get(NOCConstants.MODE).equals(NOCConstants.ONLINE_MODE))
-			businessValues.put(NOCConstants.WORKFLOWCODE, (String) jsonOutput.get(0).get(NOCConstants.ONLINE_WF));
-		else
-			businessValues.put(NOCConstants.WORKFLOWCODE, (String) jsonOutput.get(0).get(NOCConstants.OFFLINE_WF));
+//		businessValues.put(NOCConstants.MODE, (String) jsonOutput.get(0).get(NOCConstants.MODE));
+		String uniquePropertyId = UUID.randomUUID().toString();
+		businessValues.put(NOCConstants.SOURCE_RefId, uniquePropertyId);
+//		if (jsonOutput.get(0).get(NOCConstants.MODE).equals(NOCConstants.ONLINE_MODE))
+//			businessValues.put(NOCConstants.WORKFLOWCODE, (String) jsonOutput.get(0).get(NOCConstants.ONLINE_WF));
+//		else
+//			businessValues.put(NOCConstants.WORKFLOWCODE, (String) jsonOutput.get(0).get(NOCConstants.OFFLINE_WF));
 
 		if (!ObjectUtils.isEmpty(noc.getWorkflow()) && !StringUtils.isEmpty(noc.getWorkflow().getAction()) && noc.getWorkflow().getAction().equals(NOCConstants.ACTION_INITIATE)) {
 			businessValues.put(NOCConstants.INITIATED_TIME, Long.toString(System.currentTimeMillis()));
 		}
 
-		noc.setAdditionalDetails(businessValues);
+//		noc.setAdditionalDetails(businessValues);
+//		Object additionalDetailsObj = noc.getNocDetails().getAdditionalDetails();
+
+
+		if (additionalDetailsObj instanceof Map) {
+			Map<String, String> additionalDetails = (Map<String, String>) additionalDetailsObj;
+
+			// Add all entries from additionalDetails to businessValues
+			businessValues.putAll(additionalDetails);
+		}
+		noc.getNocDetails().setAdditionalDetails(businessValues);
+
+
+
 		return businessValues;
 	}
 
@@ -154,7 +164,7 @@ public class NOCValidator {
 		if (!CollectionUtils.isEmpty(documents)) {
 			List<String> addedDocTypes = new ArrayList<String>();
 			documents.forEach(document -> {
-				if (StringUtils.isEmpty(document.getFileStoreId())) {
+				if (StringUtils.isEmpty(document.getDocumentAttachment())) {
 					throw new CustomException("NOC_FILE_EMPTY", "Filestore id is empty");
 				}
 				if (!validDocumentTypes.contains(document.getDocumentType())) {
@@ -172,11 +182,11 @@ public class NOCValidator {
 				}
 				addedDocTypes.add(documentNs);
 			});
-			addedDocTypes.forEach(documentType -> {
-				if (!docTypeMappings.contains(documentType)) {
-					throw new CustomException("NOC_INVALID_DOCUMENTTYPE", "Document Type " + documentType + " is invalid for " + noc.getNocType() + " application");
-				}
-			});
+//			addedDocTypes.forEach(documentType -> {
+////				if (!docTypeMappings.contains(documentType)) {
+////					throw new CustomException("NOC_INVALID_DOCUMENTTYPE", "Document Type " + documentType + " is invalid for " + noc.getNocType() + " application");
+////				}
+////			});
 		}
 	}
 
@@ -189,10 +199,10 @@ public class NOCValidator {
 		if (!ObjectUtils.isEmpty(noc.getDocuments())) {
 			List<String> documentFileStoreIds = new LinkedList<String>();
 			noc.getDocuments().forEach(document -> {
-				if (documentFileStoreIds.contains(document.getFileStoreId()))
+				if (documentFileStoreIds.contains(document.getDocumentAttachment()))
 					throw new CustomException("NOC_DUPLICATE_DOCUMENT", "Same document cannot be used multiple times");
 				else
-					documentFileStoreIds.add(document.getFileStoreId());
+					documentFileStoreIds.add(document.getDocumentAttachment());
 			});
 		}
 	}
@@ -225,7 +235,7 @@ public class NOCValidator {
 
 			if (!CollectionUtils.isEmpty(documents)) {
 				documents.forEach(document -> {
-					if (StringUtils.isEmpty(document.getFileStoreId())) {
+					if (StringUtils.isEmpty(document.getDocumentAttachment())) {
 						throw new CustomException("NOC_FILE_EMPTY", "Filestore id is empty");
 					}
 					if (!validDocumentTypes.contains(document.getDocumentType())) {

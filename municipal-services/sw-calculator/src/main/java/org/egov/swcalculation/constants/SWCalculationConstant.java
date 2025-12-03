@@ -400,7 +400,15 @@ public class SWCalculationConstant {
 	
 	public static final String FAILURE = "Failure";
 
+	public static final String INITIATED = "Initiated";
+	
+	public static final String INPROGRESS = "Inprogress";
+
+
 	public static final String SUCCESS_MESSAGE = "Bill is generated successfully for consumer number: ";
+	
+	public static final String INITIATED_MESSAGE = "Bill generation initiated  ";
+
 
 	public static final String FAILURE_MESSAGE = "Bill already paid or Error in bill generation";
 

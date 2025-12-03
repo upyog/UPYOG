@@ -102,7 +102,7 @@ public class BPACalculatorConstants {
 
 	public static final String BPA_SUB_DIVISION_CHARGES = "BPA_SUB-DIVISION_CHARGES";
 	
-	public static final String BPA_LESS_ADJUSMENT_PLOT = "BPA_LESS_ADJUSMENT_PLOT";
+	public static final String BPA_PURCHASABLE_FAR_CHARGES = "BPA_PURCHASABLE_FAR_CHARGES";
 	
 	public static final String BPA_DEVELOPMENT_CHARGES = "BPA_DEVELOPMENT_CHARGES";
 

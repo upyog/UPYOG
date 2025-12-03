@@ -1,0 +1,184 @@
+curl --location 'http://localhost:8080/egov-workflow-v2/egov-wf/businessservice/_create' \
+--header 'Content-Type: application/json' \
+--data '{
+"RequestInfo": {
+"apiId": "Rainmaker",
+"ver": ".01",
+"ts": null,
+"action": "_create",
+"did": "1",
+"key": "",
+"msgId": "20170310130900|en_IN",
+"authToken": "eae1c041-f9c0-419a-b6ca-7dbc58be2abb",
+"userInfo": {
+"id": 4205963,
+"uuid": "c9f4569c-9cb4-47cd-917d-afae850824d5",
+"userName": "9992983014",
+"name": "Radha",
+"mobileNumber": "9992983014",
+"emailId": null,
+"locale": null,
+"type": "CITIZEN",
+"roles": [
+{
+"name": "Citizen",
+"code": "CITIZEN",
+"tenantId": "pb"
+}
+],
+"active": true,
+"tenantId": "pb",
+"permanentCity": "pb.adampur"
+}
+},
+"BusinessServices": [
+{
+"tenantId": "pb",
+"uuid": "9b853fe8-0284-4b66-aee8-1d276067c194",
+"businessService": "ptr",
+"business": "pet-service",
+"businessServiceSla": 2764800000,
+"states": [
+{
+"state": "START",
+"applicationStatus": "START",
+"isStartState": true,
+"isTerminateState": false,
+"isStateUpdatable": false,
+"actions": [
+{
+"currentState": "START",
+"action": "INITIATE",
+"nextState": "INITIATED",
+"roles": [
+"CITIZEN",
+"PET_REG_EMPLOYEE"
+],
+"active": true
+}
+]
+},
+{
+"state": "INITIATED",
+"applicationStatus": "INITIATED",
+"isStartState": false,
+"isTerminateState": false,
+"isStateUpdatable": false,
+"actions": [
+{
+"currentState": "INITIATED",
+"action": "INITIATE",
+"nextState": "INITIATED",
+"roles": [
+"CITIZEN",
+"PET_REG_EMPLOYEE"
+],
+"active": true
+},
+{
+"currentState": "INITIATED",
+"action": "APPLY",
+"nextState": "DOCUMENTVERIFY",
+"roles": [
+"CITIZEN",
+"PET_REG_EMPLOYEE"
+],
+"active": true
+}
+]
+},
+{
+"state": "DOCUMENTVERIFY",
+"applicationStatus": "DOCUMENTVERIFY",
+"isStartState": false,
+"isTerminateState": false,
+"isStateUpdatable": false,
+"actions": [
+{
+"currentState": "DOCUMENTVERIFY",
+"action": "SENDBACKTOCITIZEN",
+"nextState": "CITIZENACTIONREQUIRED-DV",
+"roles": [
+"PET_DOC_VERIFIER"
+],
+"active": true
+},
+{
+"currentState": "DOCUMENTVERIFY",
+"action": "REJECT",
+"nextState": "REJECTED",
+"roles": [
+"PET_DOC_VERIFIER"
+],
+"active": true
+},
+{
+"currentState": "DOCUMENTVERIFY",
+"action": "APPROVE",
+"nextState": "PENDINGPAYMENT",
+"roles": [
+"PET_DOC_VERIFIER",
+"PET_DOC_APPROVER"
+],
+"active": true
+}
+]
+},
+{
+"state": "CITIZENACTIONREQUIRED-DV",
+"applicationStatus": "CITIZENACTIONREQUIRED-DV",
+"isStartState": false,
+"isTerminateState": false,
+"isStateUpdatable": true,
+"actions": [
+{
+"currentState": "CITIZENACTIONREQUIRED-DV",
+"action": "RESUBMIT",
+"nextState": "DOCUMENTVERIFY",
+"roles": [
+"CITIZEN",
+"PET_REG_EMPLOYEE"
+],
+"active": true
+}
+]
+},
+{
+"state": "PENDINGPAYMENT",
+"applicationStatus": "PENDINGPAYMENT",
+"isStartState": false,
+"isTerminateState": false,
+"isStateUpdatable": false,
+"actions": [
+{
+"currentState": "PENDINGPAYMENT",
+"action": "PAY",
+"nextState": "APPROVED",
+"roles": [
+"PET_DOC_APPROVER",
+"SYSTEM"
+],
+"active": true
+}
+]
+},
+{
+"state": "APPROVED",
+"applicationStatus": "APPROVED",
+"isStartState": false,
+"isTerminateState": true,
+"isStateUpdatable": false,
+"actions": []
+},
+{
+"state": "REJECTED",
+"applicationStatus": "REJECTED",
+"isStartState": false,
+"isTerminateState": true,
+"isStateUpdatable": false,
+"actions": []
+}
+]
+}
+]
+}'

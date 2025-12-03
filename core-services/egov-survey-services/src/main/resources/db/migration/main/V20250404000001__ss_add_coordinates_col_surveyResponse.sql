@@ -1,0 +1,1 @@
+ALTER TABLE eg_ss_survey_response ADD COLUMN coordinates VARCHAR(1000);

@@ -88,78 +88,78 @@ public class SurveyValidator {
      * based on number of questions, question type, question statement and answer options
      * @param surveyEntity object containing details of survey to be validated
      */
-    public void validateQuestions(SurveyEntity surveyEntity) {
-        // Validate if there is at least one question
-        if(CollectionUtils.isEmpty(surveyEntity.getQuestions()))
-            throw new CustomException("EG_SURVEY_NO_QUESTIONS_ERR", "There should be at least one question in the survey");
-        // Validate question types
-        surveyEntity.getQuestions().forEach(question -> {
+//    public void validateQuestions(SurveyEntity surveyEntity) {
+//        // Validate if there is at least one question
+//        if(CollectionUtils.isEmpty(surveyEntity.getQuestions()))
+//            throw new CustomException("EG_SURVEY_NO_QUESTIONS_ERR", "There should be at least one question in the survey");
+//        // Validate question types
+//        surveyEntity.getQuestions().forEach(question -> {
+//
+//            if(ObjectUtils.isEmpty(question.getType())){
+//                throw new CustomException("EG_SURVEY_QUESTION_TYPE_ERR", "Question type is not valid");
+//            }
+//        });
+//
+//
+//        surveyEntity.getQuestions().forEach(question -> {
+//            // Question statement should not be empty
+//            if(ObjectUtils.isEmpty(question.getQuestionStatement()))
+//                throw new CustomException("EG_SY_QUESTION_STMT_NOT_PROVIDED_ERR", "Question statement was not provided for uuid - " + question.getUuid());
+//            // Options should NOT be provided for open ended question types
+//            if(!question.getType().toString().equals("MULTIPLE_ANSWER_TYPE") && !question.getType().toString().equals("CHECKBOX_ANSWER_TYPE")) {
+//                if (!CollectionUtils.isEmpty(question.getOptions()))
+//                    throw new CustomException("EG_SY_OPTIONS_ERR", "Options should not be provided for open ended question types");
+//            }
+//            /* Assign NA to options in case of short answer, long answer, date and time type of questions
+//           since these type of questions are open ended. */
+//            if(CollectionUtils.isEmpty(question.getOptions()))
+//                question.setOptions(Collections.singletonList("NA"));
+//        });
+//    }
 
-            if(ObjectUtils.isEmpty(question.getType())){
-                throw new CustomException("EG_SURVEY_QUESTION_TYPE_ERR", "Question type is not valid");
-            }
-        });
 
-
-        surveyEntity.getQuestions().forEach(question -> {
-            // Question statement should not be empty
-            if(ObjectUtils.isEmpty(question.getQuestionStatement()))
-                throw new CustomException("EG_SY_QUESTION_STMT_NOT_PROVIDED_ERR", "Question statement was not provided for uuid - " + question.getUuid());
-            // Options should NOT be provided for open ended question types
-            if(!question.getType().toString().equals("MULTIPLE_ANSWER_TYPE") && !question.getType().toString().equals("CHECKBOX_ANSWER_TYPE")) {
-                if (!CollectionUtils.isEmpty(question.getOptions()))
-                    throw new CustomException("EG_SY_OPTIONS_ERR", "Options should not be provided for open ended question types");
-            }
-            /* Assign NA to options in case of short answer, long answer, date and time type of questions
-           since these type of questions are open ended. */
-            if(CollectionUtils.isEmpty(question.getOptions()))
-                question.setOptions(Collections.singletonList("NA"));
-        });
-    }
-
-
-    public void validateQuestionsWhileUpdate(SurveyEntity surveyEntity) {
-
-        Map<String, String> errorMap = new HashMap<>();
-        // Validate if there is at least one question
-        if(CollectionUtils.isEmpty(surveyEntity.getQuestions()))
-            throw new CustomException("EG_SURVEY_NO_QUESTIONS_ERR", "There should be at least one question in the survey");
-        // Validate question types
-        surveyEntity.getQuestions().forEach(question -> {
-
-            if(ObjectUtils.isEmpty(question.getType())){
-                errorMap.put("EG_SURVEY_QUESTION_TYPE_ERR", "Question type is not either null or not valid");
-                //throw new CustomException("EG_SURVEY_QUESTION_TYPE_ERR", "Question type is not valid");
-            }
-
-            if(ObjectUtils.isEmpty(question.getUuid())) {
-                log.info("Inside empty UUid" +question.getQuestionStatement());
-                surveyEntity.addInsertQuestionsForUpdateItem(question);
-            }
-
-            if(ObjectUtils.isEmpty(question.getStatus())) {
-                errorMap.put("EG_SURVEY_QUESTION_STATUS_ERR", "Status is missing for question");
-               // throw new CustomException("EG_SURVEY_QUESTION_STATUS_ERR", "Status is missing for question");
-            }
-        });
-        if (!errorMap.isEmpty())
-            throw new CustomException(errorMap);
-
-        surveyEntity.getQuestions().forEach(question -> {
-            // Question statement should not be empty
-            if(ObjectUtils.isEmpty(question.getQuestionStatement()))
-                throw new CustomException("EG_SY_QUESTION_STMT_NOT_PROVIDED_ERR", "Question statement was not provided for uuid - " + question.getUuid());
-            // Options should NOT be provided for open ended question types
-            if(!question.getType().toString().equals("MULTIPLE_ANSWER_TYPE") && !question.getType().toString().equals("CHECKBOX_ANSWER_TYPE")) {
-                if (!CollectionUtils.isEmpty(question.getOptions()))
-                    throw new CustomException("EG_SY_OPTIONS_ERR", "Options should not be provided for open ended question types");
-            }
-            /* Assign NA to options in case of short answer, long answer, date and time type of questions
-           since these type of questions are open ended. */
-            if(CollectionUtils.isEmpty(question.getOptions()))
-                question.setOptions(Collections.singletonList("NA"));
-        });
-    }
+//    public void validateQuestionsWhileUpdate(SurveyEntity surveyEntity) {
+//
+//        Map<String, String> errorMap = new HashMap<>();
+//        // Validate if there is at least one question
+//        if(CollectionUtils.isEmpty(surveyEntity.getQuestions()))
+//            throw new CustomException("EG_SURVEY_NO_QUESTIONS_ERR", "There should be at least one question in the survey");
+//        // Validate question types
+//        surveyEntity.getQuestions().forEach(question -> {
+//
+//            if(ObjectUtils.isEmpty(question.getType())){
+//                errorMap.put("EG_SURVEY_QUESTION_TYPE_ERR", "Question type is not either null or not valid");
+//                //throw new CustomException("EG_SURVEY_QUESTION_TYPE_ERR", "Question type is not valid");
+//            }
+//
+//            if(ObjectUtils.isEmpty(question.getUuid())) {
+//                log.info("Inside empty UUid" +question.getQuestionStatement());
+//                surveyEntity.addInsertQuestionsForUpdateItem(question);
+//            }
+//
+//            if(ObjectUtils.isEmpty(question.getStatus())) {
+//                errorMap.put("EG_SURVEY_QUESTION_STATUS_ERR", "Status is missing for question");
+//               // throw new CustomException("EG_SURVEY_QUESTION_STATUS_ERR", "Status is missing for question");
+//            }
+//        });
+//        if (!errorMap.isEmpty())
+//            throw new CustomException(errorMap);
+//
+//        surveyEntity.getQuestions().forEach(question -> {
+//            // Question statement should not be empty
+//            if(ObjectUtils.isEmpty(question.getQuestionStatement()))
+//                throw new CustomException("EG_SY_QUESTION_STMT_NOT_PROVIDED_ERR", "Question statement was not provided for uuid - " + question.getUuid());
+//            // Options should NOT be provided for open ended question types
+//            if(!question.getType().toString().equals("MULTIPLE_ANSWER_TYPE") && !question.getType().toString().equals("CHECKBOX_ANSWER_TYPE")) {
+//                if (!CollectionUtils.isEmpty(question.getOptions()))
+//                    throw new CustomException("EG_SY_OPTIONS_ERR", "Options should not be provided for open ended question types");
+//            }
+//            /* Assign NA to options in case of short answer, long answer, date and time type of questions
+//           since these type of questions are open ended. */
+//            if(CollectionUtils.isEmpty(question.getOptions()))
+//                question.setOptions(Collections.singletonList("NA"));
+//        });
+//    }
 
     /**
      * Validates whether all answered questions belong to the same survey or not
@@ -177,7 +177,7 @@ public class SurveyValidator {
                 mandatoryQuestionsUuids.add(question.getUuid());
         });
         answerEntity.getAnswers().forEach(answer -> {
-            questionsThatAreAnsweredUuids.add(answer.getQuestionId());
+            questionsThatAreAnsweredUuids.add(answer.getQuestionUuid());
         });
         // Check to validate whether all answers belong to same survey
         if(!allQuestionsUuids.containsAll(questionsThatAreAnsweredUuids))

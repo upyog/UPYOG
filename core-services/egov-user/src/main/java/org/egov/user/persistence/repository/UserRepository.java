@@ -7,6 +7,11 @@ import static org.springframework.util.StringUtils.isEmpty;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -30,6 +35,7 @@ import org.egov.user.domain.model.enums.Gender;
 import org.egov.user.domain.model.enums.GuardianRelation;
 import org.egov.user.domain.model.enums.UserType;
 import org.egov.user.persistence.dto.FailedLoginAttempt;
+import org.egov.user.persistence.dto.UserSession;
 import org.egov.user.repository.builder.RoleQueryBuilder;
 import org.egov.user.repository.builder.UserTypeQueryBuilder;
 import org.egov.user.repository.rowmapper.UserResultSetExtractor;
@@ -217,6 +223,39 @@ public class UserRepository {
         savedUser.setCorrespondenceAddress(savedCorrespondenceAddress);
         return savedUser;
     }
+    
+    
+    
+    public void insertUserSession(UserSession session) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("id", session.getId());
+        params.put("userUuid", session.getUserUuid());
+        params.put("userId", session.getUserId());
+        params.put("username", session.getUserName());
+        params.put("loginTime", session.getLoginTime() != null ? Timestamp.valueOf(session.getLoginTime()) : null);
+        params.put("logoutTime", session.getLogoutTime() != null ? Timestamp.valueOf(session.getLogoutTime()) : null);
+        params.put("ipAddress", session.getIpAddress());
+        params.put("usertype", session.getUserType());
+        params.put("iscurrentlylogin", session.getIsCurrentlyLoggedIn());
+        params.put("isautologout", session.getIsautologout());
+
+        namedParameterJdbcTemplate.update(userTypeQueryBuilder.getInsertUserSessionQuery(), params);
+    }
+
+
+
+    public void updateUserLogoutSession(String userUuid, Boolean isAutoLogout) {
+    	 ZoneId zone = ZoneId.of("Asia/Kolkata");
+    	    LocalDateTime nowIST = LocalDateTime.now(zone);
+    	    Map<String, Object> params = new HashMap<>();
+    	    params.put("userUuid", userUuid);
+    	    params.put("logoutTime", Timestamp.valueOf(nowIST));
+    	    params.put("isautologout", isAutoLogout);
+    	    params.put("iscurrentlylogin", false);
+
+        namedParameterJdbcTemplate.update(userTypeQueryBuilder.getUpdateUserLogoutSessionQuery(), params);
+    }
+
 
     /**
      * api will update the user details.
@@ -391,7 +430,10 @@ public class UserRepository {
         namedParameterJdbcTemplate.update(userTypeQueryBuilder.getUpdateUserQuery(), updateuserInputs);
         if (user.getRoles() != null && !CollectionUtils.isEmpty(user.getRoles()) && !oldUser.getRoles().equals(user.getRoles())) {
             validateAndEnrichRoles(Collections.singletonList(user));
-            updateRoles(user);
+            if(user.getType() != null && UserType.CITIZEN.toString().equals(user.getType().toString()) && Boolean.TRUE.equals(user.getIsRoleUpdatable()))
+            	updateCitizenRoles(user);
+            else if(user.getType() != null && !UserType.CITIZEN.toString().equals(user.getType().toString()))
+            	updateRoles(user);
         }
         if (user.getPermanentAndCorrespondenceAddresses() != null) {
             addressRepository.update(user.getPermanentAndCorrespondenceAddresses(), user.getId(), user.getTenantId());
@@ -680,10 +722,6 @@ public class UserRepository {
 		List<String> roleCodes = user.getRoles().stream().map(Role::getCode).collect(Collectors.toList());
         roleInputs.put("user_id", user.getId());
         roleInputs.put("user_tenantid", user.getTenantId());
-        List<String> bpaRolesList = Arrays.asList("BPA_ARCHITECT", "BPA_ENGINEER", "BPA_TOWNPLANNER", "BPA_SUPERVISOR");
-        
-        // Remove BPA Professional roles
-        roleCodes.removeAll(bpaRolesList);
 
 		// Add roles filter as well, other wise during concurrent update call there is a
 		// null pointer exception due to delete of roles
@@ -691,6 +729,24 @@ public class UserRepository {
         namedParameterJdbcTemplate.update(RoleQueryBuilder.DELETE_USER_ROLES, roleInputs);
         saveUserRoles(user);
     }
+    
+
+	/**
+	 * Updates the roles assigned to a user.
+	 *
+	 * @param user the user whose roles need to be updated
+	 *
+	 * @author Roshan Chaudhary
+	 */
+	private void updateCitizenRoles(User user) {
+		Map<String, Object> roleInputs = new HashMap<String, Object>();
+		List<String> roleCodesWithTenantid = user.getRoles().stream()
+				.map(role -> role.getCode() + ":" + role.getTenantId()).collect(Collectors.toList());
+		roleInputs.put("user_id", user.getId());
+		roleInputs.put("rolesWithTenantid", roleCodesWithTenantid);
+		namedParameterJdbcTemplate.update(RoleQueryBuilder.DELETE_CITIZEN_USER_ROLES, roleInputs);
+		saveUserRoles(user);
+	}
 
     private String getStateLevelTenant(String tenantId) {
         return tenantId.split("\\.")[0];

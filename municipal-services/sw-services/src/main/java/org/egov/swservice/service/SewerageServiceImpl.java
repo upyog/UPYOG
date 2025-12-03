@@ -244,7 +244,7 @@ public class SewerageServiceImpl implements SewerageService {
 			unmaskingUtil.getUnmaskedPlumberInfo(sewerageConnectionRequest.getSewerageConnection().getPlumberInfo(), previousConnectionsList.get(0).getPlumberInfo());
 
 		for(SewerageConnection connection : previousConnectionsList) {
-			if(!(connection.getApplicationStatus().equalsIgnoreCase(SWConstants.STATUS_APPROVED) || connection.getApplicationStatus().equalsIgnoreCase(SWConstants.DISCONNECTION_FINAL_STATE) || connection.getApplicationStatus().equalsIgnoreCase(SWConstants.MODIFIED_FINAL_STATE))) {
+			if(!(connection.getApplicationStatus().equalsIgnoreCase(SWConstants.STATUS_APPROVED) || connection.getApplicationStatus().equalsIgnoreCase(SWConstants.DISCONNECTION_FINAL_STATE) || connection.getApplicationStatus().equalsIgnoreCase(SWConstants.STATUS_REJECTED) || connection.getApplicationStatus().equalsIgnoreCase(SWConstants.MODIFIED_FINAL_STATE))) {
 				throw new CustomException("INVALID_REQUEST",
 						"No application should be in progress while applying for disconnection");
 			}
@@ -464,6 +464,63 @@ public class SewerageServiceImpl implements SewerageService {
 		  }
 		  return sewerageConnectionRequest;
 	}
+	
+	
+public SewerageConnectionRequest updateConnectionStatusBasedOnActionDisconnection(SewerageConnectionRequest sewerageConnectionRequest) {
+//		
+//		if(sewerageConnectionRequest.getSewerageConnection().getProcessInstance().getAction() != null 
+//				  && sewerageConnectionRequest.getSewerageConnection().getProcessInstance().getAction().equals(SWConstants.SUBMIT_APPLICATION_CONST)){
+		if (sewerageConnectionRequest.getSewerageConnection().getProcessInstance().getAction() != null 
+				    && (sewerageConnectionRequest.getSewerageConnection().getProcessInstance().getAction().equals(SWConstants.SUBMIT_APPLICATION_CONST)
+				        || sewerageConnectionRequest.getSewerageConnection().getProcessInstance().getAction().equals(SWConstants.FORWARD_FOR_INSPECTION))) {	
+			List<SewerageConnection> prevSewerageConnectionList = getAllSewerageApplications(sewerageConnectionRequest);
+			
+			 if (!prevSewerageConnectionList.isEmpty()) {
+			        // Sort by createdTime descending (latest first)
+			        prevSewerageConnectionList.sort((a, b) -> Long.compare(
+			                b.getAuditDetails().getCreatedTime(),
+			                a.getAuditDetails().getCreatedTime()
+			        ));
+
+			        // Inactivate only older connections (skip latest one)
+			        for (int i = 1; i < prevSewerageConnectionList.size(); i++) {
+			            SewerageConnection oldConn = prevSewerageConnectionList.get(i);
+			            log.info("Setting older connection (ID: {}, ApplicationNo: {}) to INACTIVE", 
+			                     oldConn.getId(), oldConn.getApplicationNo());
+			            sewerageDaoImpl.updateSewerageApplicationStatus(
+			                    oldConn.getId(), SWConstants.INACTIVE_STATUS
+			            );
+			        }
+
+			        // Keep the latest connection ACTIVE
+			        SewerageConnection latestConn = prevSewerageConnectionList.get(0);
+			        log.info("Keeping latest connection (ID: {}, ApplicationNo: {}) ACTIVE",
+			                 latestConn.getId(), latestConn.getApplicationNo());
+			    }
+
+			    // Ensure the current request (latest connection) is ACTIVE
+			    sewerageConnectionRequest.getSewerageConnection().setStatus(StatusEnum.ACTIVE);
+			}
+		  
+		  if(sewerageConnectionRequest.getSewerageConnection().getProcessInstance().getAction() != null 
+				  &&sewerageConnectionRequest.getSewerageConnection().getProcessInstance().getAction().equals(SWConstants.ACTION_REJECT)){
+			  List<SewerageConnection> prevSewerageConnectionList = getAllSewerageApplications(sewerageConnectionRequest);
+			  if (prevSewerageConnectionList.size() > 0) { 
+				  Collections.sort(prevSewerageConnectionList, Comparator.comparing((SewerageConnection sw) -> sw.getAuditDetails().getLastModifiedTime()).reversed());
+				  for (SewerageConnection previousConnectionsListObj : prevSewerageConnectionList) {
+					   if(previousConnectionsListObj.getApplicationStatus().equals(SWConstants.STATUS_APPROVED) 
+							   || previousConnectionsListObj.getApplicationStatus().equals(SWConstants.APPROVED)){
+						   sewerageDaoImpl.updateSewerageApplicationStatus(previousConnectionsListObj.getId(),
+								   SWConstants.ACTIVE_STATUS); 
+						   sewerageConnectionRequest.getSewerageConnection().setStatus(StatusEnum.INACTIVE);
+						   break;
+					   }
+				  }
+			}
+			  
+		  }
+		  return sewerageConnectionRequest;
+	}
 
 	private List<SewerageConnection> updateSewerageConnectionForDisconnectFlow(SewerageConnectionRequest sewerageConnectionRequest) {
 		SearchCriteria criteria = new SearchCriteria();
@@ -471,6 +528,7 @@ public class SewerageServiceImpl implements SewerageService {
 		sewerageConnectionValidator.validateSewerageConnection(sewerageConnectionRequest, SWConstants.DISCONNECT_CONNECTION);
 		mDMSValidator.validateMasterData(sewerageConnectionRequest, SWConstants.DISCONNECT_CONNECTION);
 		Property property = validateProperty.getOrValidateProperty(sewerageConnectionRequest);
+		sewerageConnectionRequest = updateConnectionStatusBasedOnActionDisconnection(sewerageConnectionRequest);
 		validateProperty.validatePropertyFields(property,sewerageConnectionRequest.getRequestInfo());
 		String previousApplicationStatus = workflowService.getApplicationStatus(
 				sewerageConnectionRequest.getRequestInfo(),

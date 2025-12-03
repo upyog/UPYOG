@@ -91,7 +91,11 @@ public class NDCConstants {
 
 	public static final String PARSING_ERROR = "PARSING_ERROR";
 
-    public static final String PROPERTY_BUSINESS_SERVICE_CODE = "PT";
+    public static final String PROPERTY_BUSINESS_SERVICE_CODE = "PROPERTY_BUSINESSSERVICE";
 	public static final String WATER_TAX_SERVICE_CODE = "WS";
 	public static final String SEWERAGE_TAX_SERVICE_CODE = "SW";
+    public static final String PROPERTY_BUSINESSSERVICE = "PT";
+    public static final String ADDITIONAL_DETAILS_FEE_TYPE_PARAM = "propertyType";
+	public static final String RESIDENTIAL = "RESIDENTIAL";
+	public static final String COMMERCIAL = "COMMERCIAL";
 }

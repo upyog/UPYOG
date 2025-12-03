@@ -256,6 +256,7 @@ public class WaterServiceImpl implements WaterService {
 		for (WaterConnection connection : previousConnectionsList) {
 			if (!(connection.getApplicationStatus().equalsIgnoreCase(WCConstants.STATUS_APPROVED)
 					|| connection.getApplicationStatus().equalsIgnoreCase(WCConstants.DISCONNECTION_FINAL_STATE)
+		            || connection.getApplicationStatus().equalsIgnoreCase(WCConstants.STATUS_REJECTED)
 					|| connection.getApplicationStatus().equalsIgnoreCase(WCConstants.MODIFIED_FINAL_STATE))) {
 				throw new CustomException("INVALID_REQUEST",
 						"No application should be in progress while applying for disconnection");
@@ -551,6 +552,43 @@ public class WaterServiceImpl implements WaterService {
 		  return waterConnectionRequest;
 	}
 	
+	
+public WaterConnectionRequest updateConnectionStatusBasedOnActionDisconnection(WaterConnectionRequest waterConnectionRequest) {
+		
+		if(waterConnectionRequest.getWaterConnection().getProcessInstance().getAction() != null 
+				  && waterConnectionRequest.getWaterConnection().getProcessInstance().getAction().equals(WCConstants.SUBMIT_APPLICATION_CONST)){
+			List<WaterConnection> previousConnectionsList = getAllWaterApplications(waterConnectionRequest);
+			if (previousConnectionsList.size() > 0) { 
+			  for (WaterConnection previousConnectionsListObj : previousConnectionsList) {
+				  if(previousConnectionsListObj.getStatus().equals(StatusEnum.ACTIVE)){
+					  waterDaoImpl.updateWaterApplicationStatus(previousConnectionsListObj.getId(),
+							  WCConstants.INACTIVE_STATUS); 
+				  	}
+			  	} 
+			  }
+		  waterConnectionRequest.getWaterConnection().setStatus(StatusEnum.INACTIVE);
+		}
+		  
+		  if(waterConnectionRequest.getWaterConnection().getProcessInstance().getAction() != null 
+				  && waterConnectionRequest.getWaterConnection().getProcessInstance().getAction().equals(WCConstants.ACTION_REJECT)){
+			  List<WaterConnection> previousConnectionsList = getAllWaterApplications(waterConnectionRequest);
+			  if (previousConnectionsList.size() > 0) { 
+				  Collections.sort(previousConnectionsList, Comparator.comparing((WaterConnection wc) -> wc.getAuditDetails().getLastModifiedTime()).reversed());
+				  for (WaterConnection previousConnectionsListObj : previousConnectionsList) {
+					   if(previousConnectionsListObj.getApplicationStatus().equals(WCConstants.STATUS_APPROVED) 
+							   || previousConnectionsListObj.getApplicationStatus().equals(WCConstants.APPROVED)){
+						   waterDaoImpl.updateWaterApplicationStatus(previousConnectionsListObj.getId(),
+									  WCConstants.ACTIVE_STATUS); 
+						   waterConnectionRequest.getWaterConnection().setStatus(StatusEnum.INACTIVE);
+						   break;
+					   }
+				  }
+			}
+			  
+		  }
+		  return waterConnectionRequest;
+	}
+	
 	public List<WaterConnection> updateWaterConnectionForDisconnectFlow(WaterConnectionRequest waterConnectionRequest) {
 
 		SearchCriteria criteria = new SearchCriteria();
@@ -559,6 +597,7 @@ public class WaterServiceImpl implements WaterService {
 
 		Property property = validateProperty.getOrValidateProperty(waterConnectionRequest);
 		validateProperty.validatePropertyFields(property, waterConnectionRequest.getRequestInfo());
+		waterConnectionRequest = updateConnectionStatusBasedOnActionDisconnection(waterConnectionRequest);
 		BusinessService businessService = workflowService.getBusinessService(
 				waterConnectionRequest.getWaterConnection().getTenantId(), waterConnectionRequest.getRequestInfo(),
 				config.getDisconnectBusinessServiceName());

@@ -332,10 +332,10 @@ public class BPAService {
 		}
 
 		String tenantId = criteria.getTenantId();
-		// if(landInfo.isEmpty() && !tenantId.isEmpty() && tenantId !=null)
-		// {
-  //         return bpas;
-		// }
+		 if(landInfo.isEmpty() && !tenantId.isEmpty() && tenantId !=null)
+		 {
+           return bpas;
+		 }
 
 		bpas = getBPAFromLandId(criteria, requestInfo, null);
 		if (!landInfo.isEmpty()) {
@@ -450,7 +450,7 @@ public class BPAService {
                 if ((businessSrvc.equalsIgnoreCase(BPAConstants.BPA_OC_MODULE_CODE)
                         || businessSrvc.equalsIgnoreCase(BPAConstants.BPA_BUSINESSSERVICE)
                         || businessSrvc.equalsIgnoreCase(BPAConstants.BPA_LOW_MODULE_CODE))
-                        && state.equalsIgnoreCase(BPAConstants.PENDING_APPROVAL_STATE)) {
+                        && bpa.getWorkflow().getAction().equalsIgnoreCase(BPAConstants.ACTION_VERIFY)) {
                     calculationService.addCalculation(bpaRequest, BPAConstants.SANCTION_FEE_KEY);
                 }
                 

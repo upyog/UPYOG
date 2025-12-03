@@ -669,14 +669,44 @@ So, both lists are now filtered to include only records with INITIATED status, w
 							.requestInfoWrapper(requestInfoWrapper).tenantId(billSchedular.getTenantId())
 							.consumerCodes(ImmutableSet.copyOf(conectionNoList)).billSchedular(billSchedular).build();
 
-					producer.push(configs.getBillGenerateSchedulerTopic(), billGeneraterReq);
+					
+					String localityCode;
+
+					if (billSchedular.getLocality() != null && !billSchedular.getLocality().trim().isEmpty()) {
+					    localityCode = billSchedular.getLocality();
+					} else if (billSchedular.getGrup() != null && !billSchedular.getGrup().trim().isEmpty()) {
+					    localityCode = billSchedular.getGrup();
+					} else {
+					    localityCode = "NA";
+					}
+					
+					int batchCount = count;       
+					String tenantId = billSchedular.getTenantId();
+					String cityName = "Unknown";
+
+					if (tenantId != null && tenantId.contains(".")) {
+					    cityName = tenantId.substring(tenantId.indexOf('.') + 1); // get part after dot
+					    cityName = cityName.substring(0, 1).toUpperCase() + cityName.substring(1).toLowerCase(); // capitalize
+					}
+
+					String key =cityName+"-"+ localityCode + "-" + batchCount;
+					 billGeneratorDao.insertBillSchedulerConnectionStatus(
+			                    new ArrayList<>(billGeneraterReq.getConsumerCodes()),
+			                    billGeneraterReq.getBillSchedular().getId(),
+			                    billGeneraterReq.getBillSchedular().getLocality(),
+			                    WSCalculationConstant.INITIATED,
+			                    billGeneraterReq.getBillSchedular().getTenantId(),
+			                    WSCalculationConstant.INITIATED,
+			                    System.currentTimeMillis()
+			            );
+					producer.push(configs.getBillGenerateSchedulerTopic(), key,billGeneraterReq);
 					log.info("Bill Scheduler pushed connections size:{} to kafka topic of batch no: ",
 							conectionNoList.size(), count++);
 
 					if (threadSleepCount == 2) {
 						// Pausing the controller for 10 seconds after every two batches pushed to Kafka
 						// topic
-						Thread.sleep(10000);
+						Thread.sleep(2000);
 						threadSleepCount = 1;
 					}
 					threadSleepCount++;

@@ -1,4 +1,4 @@
-CREATE TABLE eg_ss_survey(
+CREATE TABLE IF NOT EXISTS public.eg_ss_survey(
     uuid character varying(128),
     tenantid character varying(128),
     title character varying(60),
@@ -16,7 +16,7 @@ CREATE TABLE eg_ss_survey(
     CONSTRAINT pk_eg_ss_survey PRIMARY KEY (tenantid,title,status)
 );
 
-CREATE TABLE eg_ss_question(
+CREATE TABLE IF NOT EXISTS public.eg_ss_question(
     uuid character varying(128),
     surveyid character varying(128),
     questionStatement character varying(140),
@@ -32,7 +32,7 @@ CREATE TABLE eg_ss_question(
     CONSTRAINT fk_eg_ss_question FOREIGN KEY (surveyid) REFERENCES eg_ss_survey (uuid)
 );
 
-CREATE TABLE eg_ss_answer(
+CREATE TABLE IF NOT EXISTS public.eg_ss_answer(
     uuid character varying(128),
     questionid character varying(128),
     surveyid character varying(128),

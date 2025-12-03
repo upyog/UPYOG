@@ -16,7 +16,6 @@ import java.util.List;
 @ToString
 public class SurveyEntity {
 
-    @Size(max = 128)
     @JsonProperty("uuid")
     private String uuid;
 
@@ -24,15 +23,12 @@ public class SurveyEntity {
     @JsonProperty("tenantIds")
     private List<String> tenantIds;
 
-    @Size(max = 60)
     @JsonProperty("title")
     private String title;
 
-    @Size(max = 128)
     @JsonProperty("status")
     private String status;
 
-    @Size(max = 140)
     @JsonProperty("description")
     private String description;
 
@@ -49,14 +45,12 @@ public class SurveyEntity {
     @JsonProperty("endDate")
     private Long endDate;
 
-    @Size(max = 128)
     @JsonProperty("postedBy")
     private String postedBy;
 
     @JsonProperty("auditDetails")
     private AuditDetails auditDetails;
 
-    @Size(max = 128)
     @JsonProperty("tenantId")
     private String tenantId;
 
