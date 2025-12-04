@@ -534,11 +534,11 @@ public class GarbageAccountRepository {
                     preparedStatementValues)).append(" )");
         }
         
-//        if (!CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getUuid())) {
-//        	isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, whereClause);
-//        	whereClause.append(" acc.uuid IN ( ").append(getQueryForCollection(searchCriteriaGarbageAccount.getUuid(),
-//        			preparedStatementValues)).append(" )");
-//        }
+        if (!CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getUuid())) {
+        	isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, whereClause);
+        	whereClause.append(" acc.uuid IN ( ").append(getQueryForCollection(searchCriteriaGarbageAccount.getUuid(),
+        			preparedStatementValues)).append(" )");
+        }
         
         if (!CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getUser_uuid())) {
         	isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, whereClause);

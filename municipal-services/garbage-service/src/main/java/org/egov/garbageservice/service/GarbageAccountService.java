@@ -1563,7 +1563,7 @@ public class GarbageAccountService {
 					if (null != requestInfo && null != requestInfo.getUserInfo() && StringUtils
 							.equalsIgnoreCase(requestInfo.getUserInfo().getType(), GrbgConstants.USER_TYPE_CITIZEN)) {
 						searchCriteriaGarbageAccountRequest.getSearchCriteriaGarbageAccount()
-								.setCreatedBy(Collections.singletonList(requestInfo.getUserInfo().getUuid()))
+//								.setCreatedBy(Collections.singletonList(requestInfo.getUserInfo().getUuid()))
 						;
 					} else if (null != requestInfo && null != requestInfo.getUserInfo() && StringUtils
 							.equalsIgnoreCase(requestInfo.getUserInfo().getType(), GrbgConstants.USER_TYPE_EMPLOYEE)) {
@@ -1585,7 +1585,7 @@ public class GarbageAccountService {
 					.equalsIgnoreCase(requestInfo.getUserInfo().getType(), GrbgConstants.USER_TYPE_CITIZEN)) {
 				searchCriteriaGarbageAccountRequest
 						.setSearchCriteriaGarbageAccount(SearchCriteriaGarbageAccount.builder()
-						.createdBy(Collections.singletonList(requestInfo.getUserInfo().getUuid()))
+//						.createdBy(Collections.singletonList(requestInfo.getUserInfo().getUuid()))
 								.build());
 			}
 		}
