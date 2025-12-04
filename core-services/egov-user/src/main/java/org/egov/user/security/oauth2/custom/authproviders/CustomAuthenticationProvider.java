@@ -156,7 +156,10 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 				}
 				isPasswordMatched = isPasswordMatch(citizenLoginPasswordOtpEnabled, password, user, authentication);
 			}
-		} else {
+		} 
+		else if (user.getType() != null && user.getType().equals(UserType.BUSINESS))
+			isPasswordMatched = isPasswordMatch(employeeLoginPasswordOtpEnabled, password, user, authentication);
+		else {
 			if (captchaForDev) {
 				if (!userService.validateCaptcha(uuid, captcha))
 					throw new CustomException("NO_CAPTCHA_FOUND", "No Captha Found, Please Refresh");
@@ -173,7 +176,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 			 */
 			System.out.println("uuid password valid::"+uuid);
 			//restTemplate.delete(uuid);
-			if (captchaForDev)
+			if (captchaForDev && !user.getType().equals(UserType.BUSINESS))
 			userService.deleteCaptcha(uuid);
 			List<GrantedAuthority> grantedAuths = new ArrayList<>();
 			grantedAuths.add(new SimpleGrantedAuthority("ROLE_" + user.getType()));
@@ -187,6 +190,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 			// Fetch Real IP after being forwarded by reverse proxy
 			System.out.println("uuid password invalid::"+uuid);
 			//restTemplate.delete(uuid);
+			if (captchaForDev)
 			userService.deleteCaptcha(uuid);
 			userService.handleFailedLogin(user, request.getHeader(IP_HEADER_NAME), requestInfo);
 			userService.userLoginFaliedAuditReport(user,request,"FAILED");
@@ -213,7 +217,10 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 				log.error("OTP validation failed ");
 				return false;
 			}
-		} else {
+		}
+		else if (user.getType() != null && user.getType().equals(UserType.BUSINESS))
+			return bcrypt.matches(password, user.getPassword());
+		else {
 			if (null != isCallInternal && isCallInternal.equals("true")) {
 				log.debug("Skipping password validation during login.........");
 				return true;

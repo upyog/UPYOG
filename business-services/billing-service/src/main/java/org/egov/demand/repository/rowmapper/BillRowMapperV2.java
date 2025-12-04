@@ -95,6 +95,8 @@ public class BillRowMapperV2 implements ResultSetExtractor<List<BillV2>>{
 					.interestfornoofdays(rs.getInt("interestfornoofdays"))
 					.previousYearAssesment(rs.getBoolean("previousyear"))
 					.totalAmountForIntCal(rs.getBigDecimal("totalamountforintcal"))
+					.payPeriodFrom(rs.getLong("payperiodfrom"))
+					.payPeriodTo(rs.getLong("payperiodto"))
 					.build();
 
 				billDetailMap.put(billDetail.getId(), billDetail);

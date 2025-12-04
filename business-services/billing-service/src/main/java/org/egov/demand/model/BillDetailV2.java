@@ -74,6 +74,8 @@ public class BillDetailV2 {
 	private int interestfornoofdays;
 	private boolean previousYearAssesment;
 	private BigDecimal totalAmountForIntCal;
+	private Long payPeriodFrom;
+	private Long payPeriodTo;
 
 	public BillDetailV2 addBillAccountDetailsItem(BillAccountDetailV2 billAccountDetailsItem) {
 		if (this.billAccountDetails == null) {
