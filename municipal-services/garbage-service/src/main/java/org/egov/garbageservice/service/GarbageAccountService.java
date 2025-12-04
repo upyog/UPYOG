@@ -1585,7 +1585,7 @@ public class GarbageAccountService {
 					.equalsIgnoreCase(requestInfo.getUserInfo().getType(), GrbgConstants.USER_TYPE_CITIZEN)) {
 				searchCriteriaGarbageAccountRequest
 						.setSearchCriteriaGarbageAccount(SearchCriteriaGarbageAccount.builder()
-//						.createdBy(Collections.singletonList(requestInfo.getUserInfo().getUuid()))
+						.createdBy(Collections.singletonList(requestInfo.getUserInfo().getUuid()))
 								.build());
 			}
 		}
