@@ -134,6 +134,20 @@ public class FSMService {
 			calculationService.addCalculation(fsmRequest, FSMConstants.APPLICATION_FEE);
 		}
 
+		// Enrich citizen data by fetching from user service to get decrypted user details
+		// This ensures the response contains decrypted citizen data similar to search API
+		if (fsmRequest.getFsm().getAccountId() != null) {
+			List<String> accountIds = new ArrayList<>();
+			accountIds.add(fsmRequest.getFsm().getAccountId());
+			FSMSearchCriteria fsmsearch = new FSMSearchCriteria();
+			fsmsearch.setTenantId(fsmRequest.getFsm().getTenantId());
+			fsmsearch.setOwnerIds(accountIds);
+			UserDetailResponse userDetailResponse = userService.getUser(fsmsearch, requestInfo);
+			if (userDetailResponse != null && !userDetailResponse.getUser().isEmpty()) {
+				fsmRequest.getFsm().setCitizen(userDetailResponse.getUser().get(0));
+			}
+		}
+
 		return fsmRequest.getFsm();
 	}
 
@@ -205,6 +219,20 @@ public class FSMService {
 		notificationService.process(fsmRequest, oldFSM);
 
 		repository.update(fsmRequest, workflowService.isStateUpdatable(fsm.getApplicationStatus(), businessService));
+
+		// Enrich citizen data by fetching from user service to get decrypted user details
+		// This ensures the response contains decrypted citizen data similar to search API
+		if (fsmRequest.getFsm().getAccountId() != null) {
+			List<String> accountIds = new ArrayList<>();
+			accountIds.add(fsmRequest.getFsm().getAccountId());
+			FSMSearchCriteria fsmsearch = new FSMSearchCriteria();
+			fsmsearch.setTenantId(fsmRequest.getFsm().getTenantId());
+			fsmsearch.setOwnerIds(accountIds);
+			UserDetailResponse userDetailResponse = userService.getUser(fsmsearch, requestInfo);
+			if (userDetailResponse != null && !userDetailResponse.getUser().isEmpty()) {
+				fsmRequest.getFsm().setCitizen(userDetailResponse.getUser().get(0));
+			}
+		}
 
 		return fsmRequest.getFsm();
 	}
