@@ -394,7 +394,7 @@ public class EstimationService {
 		List<Boolean> commercial=new ArrayList<Boolean>();
 
 		Vacantland vctland=new Vacantland();
-		boolean iscommercial=false;
+		boolean iscommercial=true;
 
 
 
@@ -447,7 +447,7 @@ public class EstimationService {
 			if(!vacantusagecategory.equalsIgnoreCase("COMMERCIAL"))
 			{
 				taxAmt = BigDecimal.ZERO;
-				iscommercial=true;
+				iscommercial=false;
 			}
 
 		} else {
@@ -542,9 +542,9 @@ public class EstimationService {
 				{
 					String[] vacantusagecategoryMasterData  = detail.getVacantusagecategory().split("\\_");
 					String vacantusagecategory = vacantusagecategoryMasterData[CALCULATION_1];
-					if(vacantusagecategory.equalsIgnoreCase("COMMERCIAL"))
+					if(!vacantusagecategory.equalsIgnoreCase("COMMERCIAL"))
 					{
-						iscommercial=true;
+						iscommercial=false;
 					}
 				}
 
@@ -553,7 +553,7 @@ public class EstimationService {
 			taxAmt = taxAmt.add(unbuiltAmount);
 
 			//To Be Reviewd The Function
-			commercial.add(iscommercial);
+			
 
 			/*
 			 * special case to handle property with one unit
@@ -566,7 +566,7 @@ public class EstimationService {
 
 
 
-
+		commercial.add(iscommercial);
 		taxHeadEstimates = getEstimatesForTax(requestInfo,taxAmt, usageExemption, property, propertyBasedExemptionMasterMap,
 				timeBasedExemptionMasterMap,masterMap);
 
@@ -1266,7 +1266,14 @@ public class EstimationService {
 			 */
 
 		}
-
+		
+		if(detail.getPropertyType().equals(PT_TYPE_VACANT_LAND) && Boolean.FALSE.equals(commercial.get(0)))
+		{
+			estimates.stream()
+		    .filter(t -> t.getTaxHeadCode().equalsIgnoreCase(PT_MANDATORY_PAYMENT))
+		    .findFirst()
+		    .ifPresent(t -> t.setEstimateAmount(BigDecimal.ZERO));
+		}
 		// false in the argument represents that the demand shouldn't be updated from this call
 		Demand oldDemand = utils.getLatestDemandForCurrentFinancialYear(requestInfo,criteria);
 		BigDecimal collectedAmtForOldDemand = demandService.getCarryForwardAndCancelOldDemand(ptTax, criteria, requestInfo,oldDemand, false);
