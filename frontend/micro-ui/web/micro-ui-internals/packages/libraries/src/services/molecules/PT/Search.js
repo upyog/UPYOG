@@ -1,4 +1,4 @@
-import { getPropertySubtypeLocale, getPropertyTypeLocale } from "../../../utils/pt";
+import { getPropertySubtypeLocale, getPropertyTypeLocale2, getPropertyTypeLocale } from "../../../utils/pt";
 import { PTService } from "../../elements/PT";
 
 export const PTSearch = {
@@ -276,20 +276,32 @@ export const PTSearch = {
             value: response?.address?.pattaNo,
           },
           {
+            title: "PT_PROPERTY_ADDRESS_CMN_NAME_OF_BUILDING",
+            value: response?.address?.commonNameOfBuilding || t("CS_NA"),
+          },          
+          {
             title: "PT_PROPERTY_ADDRESS_NAME_OF_PRINCIPAL_ROAD",
             value: response?.address?.principalRoadName,
           },
           {
+            title: "PT_PROPERTY_ADDRESS_NAME_OF_SUB_ROAD",
+            value: response.address?.subSideRoadName || t("CS_NA"),
+          },
+          {
             title: "PT_PROPERTY_ADDRESS_TYPE_OF_ROAD",
             value: `PROPERTYTAX_ROADTYPE_${response?.address?.typeOfRoad?.code}`,
-          }
+          },
+          {
+            title: "PT_PROPERTY_ADDRESS_LANDMARK",
+            value: response.address?.landmark || t("CS_NA"),
+          },
         ],
       },
       {
         title: "PT_ASSESMENT_INFO_SUB_HEADER",
         values: [
-          { title: "PT_ASSESMENT_INFO_TYPE_OF_BUILDING", value: getPropertyTypeLocale(response?.propertyType) },
-          { title: "PT_ASSESMENT_INFO_USAGE_TYPE", value: response?.usageCategory ? getPropertySubtypeLocale(response?.usageCategory) : `N/A` },
+          { title: "PT_ASSESMENT_INFO_TYPE_OF_BUILDING", value: t(getPropertyTypeLocale2(response?.propertyType)) },
+          { title: "PT_COMMONS_PROPERTY_USAGE_TYPE", value: response?.usageCategory ? t(getPropertySubtypeLocale(response?.usageCategory)) : `N/A` },
           { title: "PT_ASSESMENT_INFO_PLOT_SIZE", value: response?.landArea },
           { title: "PT_ASSESMENT_INFO_NO_OF_FLOOR", value: response?.noOfFloors },
         ],
@@ -305,6 +317,14 @@ export const PTSearch = {
                   value: `PROPERTYTAX_BILLING_SLAB_${
                     unit?.usageCategory
                   }`,
+                },
+                {
+                  title: "PT_STRUCTURE_TYPE",
+                  value: t("PROPERTYTAX_STRUCTURETYPE_" + unit?.structureType),
+                },
+                {
+                  title: "PT_AGE_OF_PROPERTY",
+                  value: t("PROPERTYTAX_AGEOFPROPERTY_" + unit?.ageOfProperty),
                 },
                 {
                   title: "PT_ASSESMENT_INFO_OCCUPLANCY",
@@ -336,7 +356,7 @@ export const PTSearch = {
           owners: response?.owners?.map((owner, index) => {
             return {
               status: owner.status,
-              title: "ES_OWNER",
+              title: "PT_ACK_LOCALIZATION_OWNER",
               values: [
                 {
                   title: "PT_OWNERSHIP_INFO_NAME",
@@ -370,7 +390,7 @@ export const PTSearch = {
                 },
                 {
                   title: "PT_OWNERSHIP_INFO_USER_CATEGORY",
-                  value: `COMMON_MASTERS_OWNERTYPE_${owner?.ownerType}` || "NA",
+                  value: (!owner?.ownerType || owner?.ownerType=='NONE') ? 'NA' : `COMMON_MASTERS_OWNERTYPE_${owner?.ownerType}` || "NA",
                   privacy: { uuid: owner?.uuid, fieldName: "ownerType", model: "User",showValue: false,
                   loadData: {
                     serviceName: "/property-services/property/_search",
@@ -393,19 +413,21 @@ export const PTSearch = {
                     isArray: false,
                   }, },
                 },
+                { title: "PT_FORM3_RELATIONSHIP", value: owner?.relationship ? t('PT_RELATION_'+owner?.relationship) : t("CS_NA") },
+
                 { title: "PT_FORM3_OWNERSHIP_TYPE", value: response?.ownershipCategory },
-                {
-                  title: "PT_OWNERSHIP_INFO_EMAIL_ID",
-                  value: owner?.emailId,
-                  privacy: { uuid: owner?.uuid, fieldName: "emailId", model: "User", hide: !(owner?.emailId && owner?.emailId !== "NA"),showValue: false,
-                  loadData: {
-                    serviceName: "/property-services/property/_search",
-                    requestBody: {},
-                    requestParam: { tenantId:response?.tenantId, propertyIds:response?.propertyId },
-                    jsonPath: "Properties[0].owners[0].emailId",
-                    isArray: false,
-                  }, },
-                },
+                // {
+                //   title: "PT_OWNERSHIP_INFO_EMAIL_ID",
+                //   value: owner?.emailId,
+                //   privacy: { uuid: owner?.uuid, fieldName: "emailId", model: "User", hide: !(owner?.emailId && owner?.emailId !== "NA"),showValue: false,
+                //   loadData: {
+                //     serviceName: "/property-services/property/_search",
+                //     requestBody: {},
+                //     requestParam: { tenantId:response?.tenantId, propertyIds:response?.propertyId },
+                //     jsonPath: "Properties[0].owners[0].emailId",
+                //     isArray: false,
+                //   }, },
+                // },
                 {
                   title: "PT_OWNERSHIP_INFO_CORR_ADDR",
                   value: owner?.correspondenceAddress || owner?.permanentAddress,
@@ -423,6 +445,20 @@ export const PTSearch = {
                       isArray: false,
                     },
                   },
+                },
+                {
+                  title: "Owner Documents",
+                  value: owner?.documents
+                    // ?.filter((e) => e.status === "ACTIVE")
+                    ?.map((document) => {
+                      return {
+                        title: `PT_${document?.documentType.replace(".", "_")}`,
+                        documentType: document?.documentType,
+                        documentUid: document?.documentUid,
+                        fileStoreId: document?.fileStoreId,
+                        status: document.status,
+                      };
+                    }),
                 },
               ],
             };

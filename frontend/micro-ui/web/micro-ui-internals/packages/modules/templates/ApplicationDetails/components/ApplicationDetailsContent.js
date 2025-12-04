@@ -57,6 +57,7 @@ function ApplicationDetailsContent({
   oldValue,
   isInfoLabel = false
 }) {
+  console.log("applicationDetails===",applicationDetails)
   const { t } = useTranslation();
   const [parentPropertyDetails, updateparentPropertyDetails] = useState([]);
   const [isPropertyDetails, updateParentPropertyFetchDetails] = useState({
@@ -206,6 +207,7 @@ function ApplicationDetailsContent({
     getParentPropertyDetails(applicationDetails?.tenantId, applicationDetails?.applicationData?.parentPropertyId, updateparentPropertyDetails,updateParentPropertyFetchDetails);
 
   }
+
   
   return (
     <div>
@@ -239,7 +241,7 @@ function ApplicationDetailsContent({
           <React.Fragment key={index}>
             <div style={getMainDivStyles()}>
               {index === 0 && !detail.asSectionHeader ? (
-                <CardSubHeader style={{ marginBottom: "16px", fontSize: "16px" }}>{t(detail.title)}</CardSubHeader>
+                <CardSubHeader style={{ marginBottom: "16px", fontSize: "16px", color: "#0f4f9e" }}>{t(detail.title)}</CardSubHeader>
               ) : (
                 <React.Fragment>
                   <CardSectionHeader

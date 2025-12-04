@@ -1014,7 +1014,7 @@ export const ispropertyunoccupied = (value = "") => {
 /*   method to get required format from fielstore url*/
 export const pdfDownloadLink = (documents = {}, fileStoreId = "", format = "") => {
   /* Need to enhance this util to return required format*/
-
+  // console.log("pdfDownloadLink--",documents, fileStoreId, format)
   let downloadLink = documents[fileStoreId] || "";
   let differentFormats = downloadLink?.split(",") || [];
   let fileURL = "";

@@ -134,6 +134,7 @@ const ApplicationDetails = () => {
 
   if (!(appDetailsToShow?.applicationDetails?.[0]?.values?.[0].title === "PT_PROPERTY_APPLICATION_NO")) {
     appDetailsToShow?.applicationDetails?.unshift({
+      title: "Application Details",
       values: [
         { title: "PT_PROPERTY_APPLICATION_NO", value: appDetailsToShow?.applicationData?.acknowldgementNumber },
         { title: "PT_SEARCHPROPERTY_TABEL_PTUID", value: appDetailsToShow?.applicationData?.propertyId },
@@ -199,6 +200,8 @@ const ApplicationDetails = () => {
     />
    )
  } 
+
+ console.log("appDetailsToShow===203==",appDetailsToShow)
 
   return (
     <div>
