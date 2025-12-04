@@ -7,6 +7,8 @@ import Timeline from "../components/TLTimeline";
 const Proof = ({ t, config, onSelect, userType, formData }) => {
   // console.log("address====",formData)
   //let index = window.location.href.charAt(window.location.href.length - 1);
+ const Self_Declaration = "https://mnptapp-terraform.s3.ap-south-1.amazonaws.com/images/Self_Declaration.pdf"
+ 
   const { pathname: url } = useLocation();
   const isMutation = url.includes("property-mutation");
 
@@ -28,7 +30,7 @@ const Proof = ({ t, config, onSelect, userType, formData }) => {
   const stateId = Digit.ULBService.getStateId();
   const { data: Documentsob = {} } = Digit.Hooks.pt.usePropertyMDMS(stateId, "PropertyTax", "Documents");
   const docs = Documentsob?.PropertyTax?.Documents;
-  const proofOfAddress = Array.isArray(docs) && docs.filter((doc) => doc?.code.includes("ADDRESSPROOF"));
+  const proofOfAddress = Array.isArray(docs) && docs.filter((doc) => doc.code.includes("IDENTITYPROOF"));
   if (proofOfAddress.length > 0) {
     dropdownData = proofOfAddress[0]?.dropdownData;
     dropdownData.forEach((data) => {
@@ -116,9 +118,11 @@ const Proof = ({ t, config, onSelect, userType, formData }) => {
         t={t}
         isDisabled={isUpdateProperty || isEditProperty ? false : !uploadedFile || !dropdownValue || error}
       >
-        <CardLabelDesc style={{fontSize: "12px", fontFamily: "sans-serif", fontStyle:"italic"}}>{t(`PT_UPLOAD_RESTRICTIONS_TYPES`)}</CardLabelDesc>
+        <CardLabelDesc style={{fontSize: "12px", fontFamily: "sans-serif", fontStyle:"italic", marginBottom: "0px"}}>{t(`PT_UPLOAD_PATTA_JAMABANDI_DAG_CHITHA_TYPES`)}</CardLabelDesc>
+        <span style={{fontSize: "12px", fontFamily: "sans-serif", fontStyle:"italic", marginBottom: "5px"}}>Download the self declaration <a href={Self_Declaration} download={'Self_Declaration.pdf'} target="_blank" style={{fontWeight: "600", color: "blue", cursor: "pointer", textDecoration: "underline"}} >here</a> </span>
         
         <CardLabelDesc style={{fontSize: "12px", fontFamily: "sans-serif", fontStyle:"italic"}}>{t(`PT_UPLOAD_RESTRICTIONS_SIZE`)}</CardLabelDesc>
+        
         <CardLabel>{`${t("PT_CATEGORY_DOCUMENT_TYPE")}`}</CardLabel>
         <Dropdown
           t={t}

@@ -175,7 +175,9 @@ const jsPdfGenerator = async ({ breakPageLimit = null, tenantId, logo, name, ema
   let locale = Digit.SessionStorage.get("locale") || "en_IN";
   let Hind = pdfFonts[locale] || pdfFonts["Hind"];
   pdfMake.fonts = { Hind: { ...Hind } };
+  console.log("pdfMake--dd======", dd);
   const generatedPDF = pdfMake.createPdf(dd);
+  console.log("generatedPDF---", generatedPDF);
   downloadPDFFileUsingBase64(generatedPDF, "acknowledgement.pdf");
 };
 
@@ -859,7 +861,7 @@ function createContent(details, phoneNumber, breakPageLimit = null) {
       data.push({
         text: `${detail.title}`,
         font: "Hind",
-        fontSize: 18,
+        fontSize: 16,
         // bold: true,
         margin: [-25, 20, 0, 20],
       });
@@ -905,14 +907,20 @@ function createContent(details, phoneNumber, breakPageLimit = null) {
             if (index === 1) margin = [15, 0, 0, 10];
             if (index === 2) margin = [26, 0, 0, 10];
             if (index === 3) margin = [30, 0, 0, 10];
-            column2.push({
-              text: value.value,
-              font: "Hind",
-              fontSize: 9,
-              margin,
-              color: "#1a1a1a",
-              width: "25%",
-            });
+            const built = buildPdfValue(value);
+            if (typeof built === "string") {
+              column2.push({
+                text: built,
+                font: "Hind",
+                fontSize: 9,
+                margin,
+                color: "#1a1a1a",
+                width: "25%",
+              });
+            } else {
+              // built is a pdfMake object (linkable)
+              column2.push(Object.assign(built, { margin, width: "25%" }));
+            }
           });
           data.push({ columns: column1 });
           data.push({ columns: column2 });
@@ -922,7 +930,7 @@ function createContent(details, phoneNumber, breakPageLimit = null) {
       });
     }
   });
-
+  console.log("data---", data);
   return data;
 }
 
@@ -936,14 +944,12 @@ function createContentForDetailsWithLengthOfTwo(values, data, column1, column2, 
         // bold: true,
         margin: [-25, num - 10, -25, 0],
       });
-      column2.push({
-        text: value.value,
-        font: "Hind",
-        fontSize: 9,
-        margin: [-25, 5, 0, 0],
-        color: "#1a1a1a",
-        width: "25%",
-      });
+        const built0 = buildPdfValue(value);
+        if (typeof built0 === "string") {
+          column2.push({ text: built0, font: "Hind", fontSize: 9, margin: [-25, 5, 0, 0], color: "#1a1a1a", width: "25%" });
+        } else {
+          column2.push(Object.assign(built0, { margin: [-25, 5, 0, 0], width: "25%" }));
+        }
     } else {
       column1.push({
         text: value.title,
@@ -952,14 +958,12 @@ function createContentForDetailsWithLengthOfTwo(values, data, column1, column2, 
         // bold: true,
         margin: [-115, num - 10, -115, 0],
       });
-      column2.push({
-        text: value.value,
-        font: "Hind",
-        fontSize: 9,
-        margin: [15, 5, 0, 0],
-        color: "#1a1a1a",
-        width: "25%",
-      });
+        const built1 = buildPdfValue(value);
+        if (typeof built1 === "string") {
+          column2.push({ text: built1, font: "Hind", fontSize: 9, margin: [15, 5, 0, 0], color: "#1a1a1a", width: "25%" });
+        } else {
+          column2.push(Object.assign(built1, { margin: [15, 5, 0, 0], width: "25%" }));
+        }
     }
   });
   data.push({ columns: column1 });
@@ -976,14 +980,12 @@ function createContentForDetailsWithLengthOfOneAndThree(values, data, column1, c
         // bold: true,
         margin: values.length > 1 ? [-25, -5, 0, 0] : [-25, 0, 0, 0],
       });
-      column2.push({
-        text: value.value,
-        font: "Hind",
-        fontSize: 9,
-        color: "#1a1a1a",
-        margin: values.length > 1 ? [-25, 5, 0, 0] : [-25, 5, 0, 0],
-        width: "25%",
-      });
+      const builtMain = buildPdfValue(value);
+      if (typeof builtMain === "string") {
+        column2.push({ text: builtMain, font: "Hind", fontSize: 9, color: "#1a1a1a", margin: values.length > 1 ? [-25, 5, 0, 0] : [-25, 5, 0, 0], width: "25%" });
+      } else {
+        column2.push(Object.assign(builtMain, { margin: values.length > 1 ? [-25, 5, 0, 0] : [-25, 5, 0, 0], width: "25%" }));
+      }
     } else if (index === 2) {
       column1.push({
         text: value.title,
@@ -992,14 +994,12 @@ function createContentForDetailsWithLengthOfOneAndThree(values, data, column1, c
         // bold: true,
         margin: [-60, -5, 0, 0],
       });
-      column2.push({
-        text: value.value,
-        font: "Hind",
-        fontSize: 9,
-        margin: [26, 5, 0, 0],
-        color: "#1a1a1a",
-        width: "25%",
-      });
+      const built2 = buildPdfValue(value);
+      if (typeof built2 === "string") {
+        column2.push({ text: built2, font: "Hind", fontSize: 9, margin: [26, 5, 0, 0], color: "#1a1a1a", width: "25%" });
+      } else {
+        column2.push(Object.assign(built2, { margin: [26, 5, 0, 0], width: "25%" }));
+      }
     } else {
       column1.push({
         text: value.title,
@@ -1008,14 +1008,12 @@ function createContentForDetailsWithLengthOfOneAndThree(values, data, column1, c
         // bold: true,
         margin: [-28, -5, 0, 0],
       });
-      column2.push({
-        text: value.value,
-        font: "Hind",
-        fontSize: 9,
-        margin: [15, 5, 0, 0],
-        color: "#1a1a1a",
-        width: "25%",
-      });
+      const builtElse = buildPdfValue(value);
+      if (typeof builtElse === "string") {
+        column2.push({ text: builtElse, font: "Hind", fontSize: 9, margin: [15, 5, 0, 0], color: "#1a1a1a", width: "25%" });
+      } else {
+        column2.push(Object.assign(builtElse, { margin: [15, 5, 0, 0], width: "25%" }));
+      }
     }
   });
   data.push({ columns: column1 });
@@ -1149,6 +1147,29 @@ export const getFileUrl = (linkText = "") => {
     });
   return fileURL;
 };
+
+// helper to render value as plain text or a clickable link (pdfMake)
+function buildPdfValue(val) {
+  if (val === null || val === undefined) return "";
+  // If caller passed an object (e.g. { value, downloadLink, htmlValue }) normalize it
+  const obj = typeof val === "object" && val !== null ? val : { value: val };
+  const rawValue = obj.value !== undefined && obj.value !== null ? String(obj.value) : "";
+  const link = obj.downloadLink || obj.link || null;
+
+  if (link) {
+    return {
+      text: rawValue || link,
+      link: link,
+      color: "#0645AD",
+      decoration: "underline",
+      font: "Hind",
+      fontSize: 9,
+    };
+  }
+
+  // fallback plain text
+  return rawValue;
+}
 
 /* Use this util function to download the file from any s3 links */
 export const downloadPDFFromLink = async (link, openIn = "_blank") => {
