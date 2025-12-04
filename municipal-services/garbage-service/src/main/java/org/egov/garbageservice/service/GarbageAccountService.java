@@ -1563,7 +1563,7 @@ public class GarbageAccountService {
 					if (null != requestInfo && null != requestInfo.getUserInfo() && StringUtils
 							.equalsIgnoreCase(requestInfo.getUserInfo().getType(), GrbgConstants.USER_TYPE_CITIZEN)) {
 						searchCriteriaGarbageAccountRequest.getSearchCriteriaGarbageAccount()
-//								.setCreatedBy(Collections.singletonList(requestInfo.getUserInfo().getUuid()))
+								.setCreatedBy(Collections.singletonList(requestInfo.getUserInfo().getUuid()))
 						;
 					} else if (null != requestInfo && null != requestInfo.getUserInfo() && StringUtils
 							.equalsIgnoreCase(requestInfo.getUserInfo().getType(), GrbgConstants.USER_TYPE_EMPLOYEE)) {
