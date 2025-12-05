@@ -386,6 +386,7 @@ const getPTAcknowledgementData = async (application, tenantInfo, t) => {
             title: t("CS_APPLICATION_DETAILS_APPLICATION_DATE"),
             value: Digit.DateUtils.ConvertTimestampToDate(application?.auditDetails?.createdTime, "dd/MM/yyyy"),
           },
+          { title: t("Apportioned Property"), value: application?.isPartOfProperty ? t("PT_COMMON_YES") : t("PT_COMMON_NO") }
         ],
       },
       ...ensureArray(getOwner(application, t,'',res)),

@@ -288,6 +288,11 @@ const PTApplicationDetails = () => {
               label={t("Creation Reason")}
               text={t(`${property?.creationReason}`)}
             />
+            <Row
+              className="border-none"
+              label={t("Apportioned Property")}
+              text={property?.isPartOfProperty ? t("PT_COMMON_YES") : t("PT_COMMON_NO")}
+            />
 
             {isPropertyTransfer && (
               <React.Fragment>
