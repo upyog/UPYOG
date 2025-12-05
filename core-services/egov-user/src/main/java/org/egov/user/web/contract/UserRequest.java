@@ -121,6 +121,7 @@ public class UserRequest {
     @SafeHtml
     @Size(max = 300)
     private String identificationMark;
+    
     private Long createdBy;
 
     @Size(max = 64)
@@ -140,6 +141,10 @@ public class UserRequest {
     @Size(max = 36)
     private String uuid;
 
+    
+    private String captchaUuid;
+    private String captcha;
+    
 
     @JsonFormat(pattern = "dd-MM-yyyy HH:mm:ss")
     private Date createdDate;
@@ -185,6 +190,7 @@ public class UserRequest {
         this.alternatemobilenumber=user.getAlternateMobileNumber();
         mapPermanentAddress(user);
         mapCorrespondenceAddress(user);
+      
     }
 
     private void mapCorrespondenceAddress(User user) {
@@ -252,6 +258,8 @@ public class UserRequest {
                 .correspondenceAddress(toDomainCorrespondenceAddress())
                 .guardian(fatherOrHusbandName)
                 .guardianRelation(relationship).alternateMobileNumber(this.alternatemobilenumber)
+                .captcha(this.captcha)
+                .captchaUuid(this.captchaUuid)
                 .build();
     }
 

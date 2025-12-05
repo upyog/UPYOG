@@ -11,6 +11,9 @@ const ActionModal = (props) => {
   if (props?.businessService.includes("PT")) {
     return <PTActionModal {...props} />;
   }
+  if (props?.businessService.includes("ASMT")) {
+    return <PTActionModal {...props} />;
+  }
 
   if (props?.businessService.includes("NewTL") || props?.businessService.includes("TL") || props?.businessService.includes("EDITRENEWAL") || props?.businessService.includes("DIRECTRENEWAL")) {
     return <TLActionModal {...props} />;

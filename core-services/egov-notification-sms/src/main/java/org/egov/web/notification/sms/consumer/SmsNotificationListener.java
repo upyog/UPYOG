@@ -56,7 +56,7 @@ public class SmsNotificationListener {
     }
 
     @KafkaListener(
-            topics = "${kafka.topics.notification.sms.name}"
+            topics = {"${kafka.topics.notification.sms.name}","${kafka.topics.notification.sms.otp}"}
     )
     public void process(HashMap<String, Object> consumerRecord) {
         RequestContext.setId(UUID.randomUUID().toString());

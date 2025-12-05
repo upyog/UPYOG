@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { FormComposer, CardLabelDesc, Loader, Menu } from "@egovernments/digit-ui-react-components";
-import { FormStep, CardLabel, RadioButtons, RadioOrSelect } from "@egovernments/digit-ui-react-components";
-import { TextInput, LabelFieldPair, Dropdown } from "@egovernments/digit-ui-react-components";
+import { FormComposer, CardLabelDesc, Loader, Menu } from "@upyog/digit-ui-react-components";
+import { FormStep, CardLabel, RadioButtons, RadioOrSelect } from "@upyog/digit-ui-react-components";
+import { TextInput, LabelFieldPair, Dropdown } from "@upyog/digit-ui-react-components";
 import PropTypes from "prop-types";
 import { useHistory } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -86,7 +86,7 @@ const SearchChallan = ({ config: propsConfig, formData }) => {
         heading={propsConfig.texts.header}
         text={propsConfig.texts.text}
         cardStyle={{ margin: "auto" }}
-        headingStyle={{ fontSize: "32px", marginBottom: "16px" }}
+        headingStyle={{ fontSize: "16px", marginBottom: "16px" }}
       > */}
       <FormStep
         config={propsConfig}
@@ -94,7 +94,7 @@ const SearchChallan = ({ config: propsConfig, formData }) => {
         heading={propsConfig.texts.header}
         text={propsConfig.texts.text}
         cardStyle={{ margin: "auto",maxWidth:"960px" }}
-        headingStyle={{ fontSize: "32px", marginBottom: "16px" }}
+        headingStyle={{ fontSize: "16px", marginBottom: "16px" }}
         onSelect={onChallanSearch}
         componentInFront={<div className="employee-card-input employee-card-input--front">+91</div>}
         isDisabled={!Servicecateogry || !city.code}

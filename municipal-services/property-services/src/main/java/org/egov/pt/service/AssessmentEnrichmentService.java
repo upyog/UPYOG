@@ -1,11 +1,12 @@
 package org.egov.pt.service;
 
-
 import static org.egov.pt.util.PTConstants.ASMT_MODULENAME;
 import static org.egov.pt.util.PTConstants.ASMT_WORKFLOW_CODE;
 import static org.egov.pt.util.PTConstants.WORKFLOW_SENDBACK_CITIZEN;
 import static org.egov.pt.util.PTConstants.WORKFLOW_START_ACTION;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -20,6 +21,7 @@ import org.egov.pt.models.workflow.BusinessService;
 import org.egov.pt.models.workflow.ProcessInstance;
 import org.egov.pt.models.workflow.State;
 import org.egov.pt.util.AssessmentUtils;
+import org.egov.pt.util.PropertyUtil;
 import org.egov.pt.web.contracts.AssessmentRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -29,198 +31,219 @@ import org.springframework.util.StringUtils;
 @Service
 public class AssessmentEnrichmentService {
 
+	private AssessmentUtils assessmentUtils;
 
-    private AssessmentUtils assessmentUtils;
+	private PropertyConfiguration config;
 
-    private PropertyConfiguration config;
+	private WorkflowService workflowService;
 
-    private WorkflowService workflowService;
+	private PropertyUtil propertyutil;
 
 	@Autowired
 	public AssessmentEnrichmentService(AssessmentUtils assessmentUtils, PropertyConfiguration config,
-			WorkflowService workflowService) {
-		
+			WorkflowService workflowService, PropertyUtil propertyutil) {
+
 		this.assessmentUtils = assessmentUtils;
 		this.config = config;
 		this.workflowService = workflowService;
+		this.propertyutil = propertyutil;
 	}
 
-    /**
-     * Service layer to enrich assessment object in create flow
-     *
-     * @param request
-     */
-    public void enrichAssessmentCreate(AssessmentRequest request) {
-    	
-        Assessment assessment = request.getAssessment();
-        assessment.setId(String.valueOf(UUID.randomUUID()));
-        assessment.setAssessmentNumber(getAssessmentNo(request));
+	/**
+	 * Service layer to enrich assessment object in create flow
+	 *
+	 * @param request
+	 */
+	public void enrichAssessmentCreate(AssessmentRequest request) {
 
-        if(config.getIsAssessmentWorkflowEnabled())
-            assessment.setStatus(Status.INWORKFLOW);
-        else
-            assessment.setStatus(Status.ACTIVE);
-
-		AuditDetails auditDetails = assessmentUtils.getAuditDetails(request.getRequestInfo().getUserInfo().getUuid(),
-				true);
-
-        if(!CollectionUtils.isEmpty(assessment.getUnitUsageList())) {
-            for(UnitUsage unitUsage: assessment.getUnitUsageList()) {
-                unitUsage.setId(String.valueOf(UUID.randomUUID()));
-                unitUsage.setAuditDetails(auditDetails);
-                unitUsage.setTenantId(assessment.getTenantId());
-            }
-        }
-        if(!CollectionUtils.isEmpty(assessment.getDocuments())) {
-            for(Document doc: assessment.getDocuments()) {
-                doc.setId(String.valueOf(UUID.randomUUID()));
-                doc.setAuditDetails(auditDetails);
-                doc.setStatus(Status.ACTIVE);
-            }
-        }
-        assessment.setAuditDetails(auditDetails);
-
-    }
-
-
-    /**
-     * Service layer to enrich assessment object in update flow
-     *
-     * @param request
-     */
-    public void enrichAssessmentUpdate(AssessmentRequest request, Property property) {
-    	
-        Assessment assessment = request.getAssessment();
+		Assessment assessment = request.getAssessment();
+		assessment.setId(String.valueOf(UUID.randomUUID()));
+		assessment.setAssessmentNumber(getAssessmentNo(request));
+		System.out.println("AssessMent Workflow Status:::" + config.getIsAssessmentWorkflowEnabled());
+		if (config.getIsAssessmentWorkflowEnabled())
+			assessment.setStatus(Status.INWORKFLOW);
+		else
+			assessment.setStatus(Status.ACTIVE);
 
 		AuditDetails auditDetails = assessmentUtils.getAuditDetails(request.getRequestInfo().getUserInfo().getUuid(),
 				true);
 
-        if(!CollectionUtils.isEmpty(assessment.getUnitUsageList())) {
-            for(UnitUsage unitUsage: assessment.getUnitUsageList()) {
-                unitUsage.setTenantId(assessment.getTenantId());
-                if(StringUtils.isEmpty(unitUsage.getId())) {
-                    unitUsage.setId(String.valueOf(UUID.randomUUID()));
-                    unitUsage.setAuditDetails(auditDetails);
-                }
-                enrichPropertyFromAssessment(property, request.getAssessment());
-            }
-        }
-        if(!CollectionUtils.isEmpty(assessment.getDocuments())) {
-            for(Document doc: assessment.getDocuments()) {
-                if(StringUtils.isEmpty(doc.getId())) {
-                    doc.setId(String.valueOf(UUID.randomUUID()));
-                    doc.setAuditDetails(auditDetails);
-                    doc.setStatus(Status.ACTIVE);
-                }
-            }
-        }
-        assessment.getAuditDetails().setLastModifiedBy(auditDetails.getLastModifiedBy());
-        assessment.getAuditDetails().setLastModifiedTime(auditDetails.getLastModifiedTime());
-    }
+		if (!CollectionUtils.isEmpty(assessment.getUnitUsageList())) {
+			for (UnitUsage unitUsage : assessment.getUnitUsageList()) {
+				unitUsage.setId(String.valueOf(UUID.randomUUID()));
+				unitUsage.setAuditDetails(auditDetails);
+				unitUsage.setTenantId(assessment.getTenantId());
+			}
+		}
+		if (!CollectionUtils.isEmpty(assessment.getDocuments())) {
+			for (Document doc : assessment.getDocuments()) {
+				doc.setId(String.valueOf(UUID.randomUUID()));
+				doc.setAuditDetails(auditDetails);
+				doc.setStatus(Status.ACTIVE);
+			}
+		}
+		assessment.setAuditDetails(auditDetails);
 
+	}
 
+	/**
+	 * Service layer to enrich assessment object in update flow
+	 *
+	 * @param request
+	 */
+	public void enrichAssessmentUpdate(AssessmentRequest request, Property property) {
 
-    /**
-     * Enriches the processInstance
-     * @param request The assessment request
-     * @param property The property corresponding to the assessment
-     */
-    public void enrichAssessmentProcessInstance(AssessmentRequest request, Property property){
+		Assessment assessment = request.getAssessment();
 
-    	Assessment assessment = request.getAssessment();
-    	
-        if(request.getAssessment().getWorkflow().getAction().equalsIgnoreCase(WORKFLOW_SENDBACK_CITIZEN)){
+		AuditDetails auditDetails = assessmentUtils.getAuditDetails(request.getRequestInfo().getUserInfo().getUuid(),
+				true);
 
-           List<OwnerInfo> owners = assessmentUtils.getUserForWorkflow(property);
+		if (!CollectionUtils.isEmpty(assessment.getUnitUsageList())) {
+			for (UnitUsage unitUsage : assessment.getUnitUsageList()) {
+				if (unitUsage != null) {
+					unitUsage.setTenantId(assessment.getTenantId());
+					if (StringUtils.isEmpty(unitUsage.getId())) {
+						unitUsage.setId(String.valueOf(UUID.randomUUID()));
+						unitUsage.setAuditDetails(auditDetails);
+					}
+					enrichPropertyFromAssessment(property, request.getAssessment());
+				}
+			}
+		}
+		if (!CollectionUtils.isEmpty(assessment.getDocuments())) {
+			for (Document doc : assessment.getDocuments()) {
+				if (doc != null) {
+					if (StringUtils.isEmpty(doc.getId())) {
+						doc.setId(String.valueOf(UUID.randomUUID()));
+						doc.setAuditDetails(auditDetails);
+						doc.setStatus(Status.ACTIVE);
+					}
+				}
+			}
+		}
+		assessment.getAuditDetails().setLastModifiedBy(auditDetails.getLastModifiedBy());
+		assessment.getAuditDetails().setLastModifiedTime(auditDetails.getLastModifiedTime());
+	}
 
-           request.getAssessment().getWorkflow().setAssignes(owners);
-        }
+	/**
+	 * Enriches the processInstance
+	 * 
+	 * @param request  The assessment request
+	 * @param property The property corresponding to the assessment
+	 */
+	public void enrichAssessmentProcessInstance(AssessmentRequest request, Property property) {
 
-        State state = workflowService.getCurrentState(request.getRequestInfo(), assessment.getTenantId(), assessment.getAssessmentNumber());
+		Assessment assessment = request.getAssessment();
 
-        ProcessInstance processInstance = request.getAssessment().getWorkflow();
-        processInstance.setBusinessId(request.getAssessment().getAssessmentNumber());
-        processInstance.setModuleName(ASMT_MODULENAME);
-        processInstance.setTenantId(request.getAssessment().getTenantId());
-        processInstance.setBusinessService(ASMT_WORKFLOW_CODE);
-        processInstance.setState(state);
+		if (request.getAssessment().getWorkflow().getAction().equalsIgnoreCase(WORKFLOW_SENDBACK_CITIZEN)) {
 
-    }
+			List<OwnerInfo> owners = assessmentUtils.getUserForWorkflow(property);
 
+			request.getAssessment().getWorkflow().setAssignes(owners);
+		}
 
-    /**\
-     *
-     * @param state
-     * @param assessment
-     * @param businessService
-     */
-    public void enrichStatus(String state, Assessment assessment, BusinessService businessService){
+		State state = workflowService.getCurrentState(request.getRequestInfo(), assessment.getTenantId(),
+				assessment.getAssessmentNumber());
 
-        Boolean isTerminateState = false;
-        for(State stateObj : businessService.getStates()){
-            if(stateObj.getApplicationStatus()!=null && stateObj.getApplicationStatus().equalsIgnoreCase(state)){
-                isTerminateState = stateObj.getIsTerminateState();
-                break;
-            }
-        }
-        if(!isTerminateState){
-            assessment.setStatus(Status.INWORKFLOW);
-        }
-        else assessment.setStatus(Status.ACTIVE);
-    }
+		ProcessInstance processInstance = request.getAssessment().getWorkflow();
+		processInstance.setBusinessId(request.getAssessment().getAssessmentNumber());
+		processInstance.setModuleName(ASMT_MODULENAME);
+		processInstance.setTenantId(request.getAssessment().getTenantId());
+		processInstance.setBusinessService(ASMT_WORKFLOW_CODE);
+		processInstance.setState(state);
 
+	}
 
-    public String getAssessmentNo(AssessmentRequest request) {
-        return assessmentUtils.getIdList(request.getRequestInfo(), request.getAssessment().getTenantId(),
-                config.getAssessmentIdGenName(), config.getAssessmentIdGenFormat(), 1).get(0);
-    }
+	/**
+	 * \
+	 *
+	 * @param state
+	 * @param assessment
+	 * @param businessService
+	 */
+	public void enrichStatus(String state, Assessment assessment, BusinessService businessService) {
 
-    /**
-     * Enriches Units from unitUsages from assessment
-     * @param property Property for which assessment is done
-     * @param assessment
-     */
-    private void enrichPropertyFromAssessment(Property property, Assessment assessment){
+		Boolean isTerminateState = false;
+		for (State stateObj : businessService.getStates()) {
+			if (stateObj.getApplicationStatus() != null && stateObj.getApplicationStatus().equalsIgnoreCase(state)) {
+				isTerminateState = stateObj.getIsTerminateState();
+				break;
+			}
+		}
+		if (!isTerminateState) {
+			assessment.setStatus(Status.INWORKFLOW);
+		} else
+			assessment.setStatus(Status.ACTIVE);
+	}
 
-        Map<String, UnitUsage> unitIdToUnitUsage = assessment.getUnitUsageList().stream().collect(Collectors.toMap(UnitUsage::getUnitId, Function.identity()));
+	public String getAssessmentNo(AssessmentRequest request) {
 
-        List<Unit> units  = property.getUnits();
+		// Updated Changes for Manipur Removing MN-AS replacing with city code
+		List<String> masterNames = new ArrayList<>(Arrays.asList("tenants"));
 
-        for(Unit unit : units){
+		Map<String, List<String>> codes = propertyutil.getAttributeValues(config.getStateLevelTenantId(), "tenant",
+				masterNames,
+				"[?(@.city.districtTenantCode== '" + request.getAssessment().getTenantId() + "')].city.code",
+				"$.MdmsRes.tenant", request.getRequestInfo());
 
-            if(unitIdToUnitUsage.containsKey(unit.getId())){
-                UnitUsage unitUsage = unitIdToUnitUsage.get(unit.getId());
-                if(unitUsage.getOccupancyDate()!=null)
-                    unit.setOccupancyDate(unitUsage.getOccupancyDate());
+		String cityCode = codes.get("tenants").get(0);
 
-                if(unitUsage.getOccupancyType()!=null)
-                    unit.setOccupancyType(unitUsage.getOccupancyType());
+		String assesmentNumber= assessmentUtils.getIdList(request.getRequestInfo(), request.getAssessment().getTenantId(),
+				config.getAssessmentIdGenName(), config.getAssessmentIdGenFormat(), 1).get(0);
+		
+		assesmentNumber=assesmentNumber.replace("MN-AS", cityCode);
+		
+		return assesmentNumber;
+	}
 
-                if(unitUsage.getUsageCategory()!=null)
-                 unit.setUsageCategory(unitUsage.getUsageCategory());
-            }
-        }
+	/**
+	 * Enriches Units from unitUsages from assessment
+	 * 
+	 * @param property   Property for which assessment is done
+	 * @param assessment
+	 */
+	private void enrichPropertyFromAssessment(Property property, Assessment assessment) {
 
-    }
+		Map<String, UnitUsage> unitIdToUnitUsage = assessment.getUnitUsageList().stream()
+				.collect(Collectors.toMap(UnitUsage::getUnitId, Function.identity()));
 
+		List<Unit> units = property.getUnits();
 
-    /**
-     * Enriches workflow object for new assessments
-     * @param assessmentRequest
-     */
-    public void enrichWorkflowForInitiation(AssessmentRequest assessmentRequest){
+		for (Unit unit : units) {
 
-        Assessment assessment = assessmentRequest.getAssessment();
+			if (unitIdToUnitUsage.containsKey(unit.getId())) {
+				UnitUsage unitUsage = unitIdToUnitUsage.get(unit.getId());
+				if (unitUsage.getOccupancyDate() != null)
+					unit.setOccupancyDate(unitUsage.getOccupancyDate());
 
-        ProcessInstance processInstance = new ProcessInstance();
-        processInstance.setBusinessId(assessment.getAssessmentNumber());
-        processInstance.setAction(WORKFLOW_START_ACTION);
-        processInstance.setModuleName(ASMT_MODULENAME);
-        processInstance.setTenantId(assessment.getTenantId());
-        processInstance.setBusinessService(ASMT_WORKFLOW_CODE);
+				if (unitUsage.getOccupancyType() != null)
+					unit.setOccupancyType(unitUsage.getOccupancyType());
 
-        assessment.setWorkflow(processInstance);
+				if (unitUsage.getUsageCategory() != null)
+					unit.setUsageCategory(unitUsage.getUsageCategory());
+			}
+		}
 
-    }
+	}
+
+	/**
+	 * Enriches workflow object for new assessments
+	 * 
+	 * @param assessmentRequest
+	 */
+	public void enrichWorkflowForInitiation(AssessmentRequest assessmentRequest) {
+
+		Assessment assessment = assessmentRequest.getAssessment();
+
+		ProcessInstance processInstance = new ProcessInstance();
+		processInstance.setBusinessId(assessment.getAssessmentNumber());
+		processInstance.setAction(WORKFLOW_START_ACTION);
+		processInstance.setModuleName(ASMT_MODULENAME);
+		processInstance.setTenantId(assessment.getTenantId());
+		processInstance.setBusinessService(ASMT_WORKFLOW_CODE);
+
+		assessment.setWorkflow(processInstance);
+
+	}
 
 }

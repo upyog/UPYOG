@@ -15,6 +15,7 @@ import org.egov.demand.amendment.model.ProcessInstanceResponse;
 import org.egov.demand.amendment.model.State;
 import org.egov.demand.config.ApplicationProperties;
 import org.egov.demand.model.AuditDetails;
+import org.egov.demand.model.BillV2;
 import org.egov.demand.model.Demand;
 import org.egov.demand.model.DemandDetail;
 import org.egov.demand.repository.ServiceRequestRepository;
@@ -25,10 +26,15 @@ import org.egov.mdms.model.ModuleDetail;
 import org.egov.tracer.model.CustomException;
 import org.postgresql.util.PGobject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
+import org.springframework.web.client.RestTemplate;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.SQLException;
 import java.util.*;
 
@@ -39,14 +45,25 @@ import static org.egov.demand.util.Constants.*;
 @Slf4j
 public class Util {
 
+	private final RestTemplate restTemplate = new RestTemplate();
+
+	@Value("${user.service.details}")
+	private String authServiceUri;
+
+	@Value("${user.service.hostname}")
+	private String authServiceHost;
+
 	@Autowired
 	private ApplicationProperties appProps;
-	
+
 	@Autowired
 	private ObjectMapper mapper;
 
 	@Autowired
 	private ServiceRequestRepository serviceRequestRepository;
+
+	@Autowired
+	private JdbcTemplate jdbcTemplate;
 
 	/**
 	 * prepares mdms request
@@ -63,7 +80,7 @@ public class Util {
 
 		List<MasterDetail> masterDetails = new ArrayList<>();
 		names.forEach(name -> {
-				masterDetails.add(MasterDetail.builder().name(name).build());
+			masterDetails.add(MasterDetail.builder().name(name).build());
 		});
 
 		ModuleDetail moduleDetail = ModuleDetail.builder().moduleName(moduleName).masterDetails(masterDetails).build();
@@ -120,7 +137,7 @@ public class Util {
 		}
 		return builder.toString();
 	}
-	
+
 	/**
 	 * converts the object to a pgObject for persistence
 	 * 
@@ -145,20 +162,19 @@ public class Util {
 		}
 		return json;
 	}
-	
-    public JsonNode getJsonValue(PGobject pGobject){
-        try {
-            if(Objects.isNull(pGobject) || Objects.isNull(pGobject.getValue()))
-                return null;
-            else
-                return mapper.readTree( pGobject.getValue());
-        } catch (Exception e) {
-        	throw new CustomException(Constants.EG_BS_JSON_EXCEPTION_KEY, Constants.EG_BS_JSON_EXCEPTION_MSG);
-        }
-    }
 
+	public JsonNode getJsonValue(PGobject pGobject) {
+		try {
+			if (Objects.isNull(pGobject) || Objects.isNull(pGobject.getValue()))
+				return null;
+			else
+				return mapper.readTree(pGobject.getValue());
+		} catch (Exception e) {
+			throw new CustomException(Constants.EG_BS_JSON_EXCEPTION_KEY, Constants.EG_BS_JSON_EXCEPTION_MSG);
+		}
+	}
 
-    public String getApportionURL(){
+	public String getApportionURL() {
 		StringBuilder builder = new StringBuilder(appProps.getApportionHost());
 		builder.append(appProps.getApportionEndpoint());
 		return builder.toString();
@@ -166,34 +182,37 @@ public class Util {
 
 	/**
 	 * Fetches the isAdvanceAllowed flag for the given businessService
+	 * 
 	 * @param businessService
 	 * @param mdmsData
 	 * @return
 	 */
-	public Boolean getIsAdvanceAllowed(String businessService, DocumentContext mdmsData){
+	public Boolean getIsAdvanceAllowed(String businessService, DocumentContext mdmsData) {
 		String jsonpath = ADVANCE_BUSINESSSERVICE_JSONPATH_CODE;
-		jsonpath = jsonpath.replace("{}",businessService);
+		jsonpath = jsonpath.replace("{}", businessService);
 
 		List<Boolean> isAdvanceAllowed = mdmsData.read(jsonpath);
 
-		if(CollectionUtils.isEmpty(isAdvanceAllowed))
-			throw new CustomException("BUSINESSSERVICE_ERROR","Failed to fetch isAdvanceAllowed for businessService: "+businessService);
+		if (CollectionUtils.isEmpty(isAdvanceAllowed))
+			throw new CustomException("BUSINESSSERVICE_ERROR",
+					"Failed to fetch isAdvanceAllowed for businessService: " + businessService);
 
 		return isAdvanceAllowed.get(0);
 	}
-	
-	public String getValueFromAdditionalDetailsForKey (Object additionalDetails, String key) {
-		
+
+	public String getValueFromAdditionalDetailsForKey(Object additionalDetails, String key) {
+
 		@SuppressWarnings("unchecked")
 		Map<String, Object> additionalDetailMap = mapper.convertValue(additionalDetails, Map.class);
-		if(null == additionalDetails) 
+		if (null == additionalDetails)
 			return "";
-		
+
 		return (String) additionalDetailMap.get(key);
 	}
-	
+
 	/**
 	 * Setting the receiptnumber from payment to bill
+	 * 
 	 * @param request
 	 * @param uuid
 	 * @return
@@ -210,21 +229,23 @@ public class Util {
 			objectNodeDetail = (ObjectNode) additionalDetails;
 		}
 		objectNodeDetail.put(key, value);
-		
+
 		return objectNodeDetail;
 	}
 
 	/**
 	 * to Check and update whether a demand has been completely paid or not
 	 * 
-	 * demand payment will be complete when tax and collection are equal and the method is called with payment true
+	 * demand payment will be complete when tax and collection are equal and the
+	 * method is called with payment true
 	 * 
-	 * if the call happens with payment false and the demand is already tallied even then the demands won't be set to paid-completely to allow zero payment
+	 * if the call happens with payment false and the demand is already tallied even
+	 * then the demands won't be set to paid-completely to allow zero payment
 	 */
 	public void updateDemandPaymentStatus(Demand demand, Boolean isUpdateFromPayment) {
 		BigDecimal totoalTax = demand.getDemandDetails().stream().map(DemandDetail::getTaxAmount)
 				.reduce(BigDecimal.ZERO, BigDecimal::add);
-		
+
 		BigDecimal totalCollection = demand.getDemandDetails().stream().map(DemandDetail::getCollectionAmount)
 				.reduce(BigDecimal.ZERO, BigDecimal::add);
 
@@ -233,50 +254,63 @@ public class Util {
 		else if (totoalTax.compareTo(totalCollection) != 0)
 			demand.setIsPaymentCompleted(false);
 	}
-	
+
 	/**
 	 * validates state level tenant-id for citizens and employees
 	 * 
-	 * state level search is allowed for employee if they contian state level roles 
+	 * state level search is allowed for employee if they contian state level roles
 	 */
 	public void validateTenantIdForUserType(String tenantId, RequestInfo requestInfo) {
+
+		if (requestInfo.getUserInfo() == null) {
+			String authToken = requestInfo.getAuthToken();
+			String authURL = String.format("%s%s", authServiceHost, authServiceUri);
+			final HttpHeaders headers = new HttpHeaders();
+			headers.add("access_token", authToken);
+			org.egov.common.contract.request.User user = restTemplate.postForObject(authURL, headers,
+					org.egov.common.contract.request.User.class);
+			requestInfo.setUserInfo(user);
+		}
 
 		String userType = requestInfo.getUserInfo().getType();
 
 		if (Constants.EMPLOYEE_TYPE_CODE.equalsIgnoreCase(userType) && !tenantId.contains(".")) {
 
-		Set<String> rolesTenantList = new HashSet<>();
-		Set<String> rolecodeList = new HashSet<>();
-		for (Role role : requestInfo.getUserInfo().getRoles()) {
-			rolesTenantList.add(role.getTenantId());
-			rolecodeList.add(role.getCode());
-		}
-
-		//bypassing required roles from the validation
-		boolean isEmployeeSearchByStateTenantAllowed = false;
-		List<String> statelevelRolecodeExclusionList = appProps.getStatelevelRolecodeExclusionList();
-		for (String rolecode : rolecodeList) {
-			if (statelevelRolecodeExclusionList.contains(rolecode)) {
-				isEmployeeSearchByStateTenantAllowed = true;
-				break;
+			Set<String> rolesTenantList = new HashSet<>();
+			Set<String> rolecodeList = new HashSet<>();
+			for (Role role : requestInfo.getUserInfo().getRoles()) {
+				rolesTenantList.add(role.getTenantId());
+				rolecodeList.add(role.getCode());
 			}
+
+			// bypassing required roles from the validation
+			boolean isEmployeeSearchByStateTenantAllowed = false;
+			List<String> statelevelRolecodeExclusionList = appProps.getStatelevelRolecodeExclusionList();
+			for (String rolecode : rolecodeList) {
+				if (statelevelRolecodeExclusionList.contains(rolecode)) {
+					isEmployeeSearchByStateTenantAllowed = true;
+					break;
+				}
+			}
+
+			if (!isEmployeeSearchByStateTenantAllowed)
+				throw new CustomException("EG_BS_INVALID_TENANTID",
+						"Employees cannot search based on state level tenantid");
 		}
 
-		if (!isEmployeeSearchByStateTenantAllowed)
-			throw new CustomException("EG_BS_INVALID_TENANTID", "Employees cannot search based on state level tenantid");
 	}
 
-	}
-	
 	/**
 	 * Fetches the required master data from MDMS service
+	 * 
 	 * @param demandRequest The request for which master data has to be fetched
 	 * @return
 	 */
-	public DocumentContext getMDMSData(RequestInfo requestInfo, String tenantId){
-		
+	public DocumentContext getMDMSData(RequestInfo requestInfo, String tenantId) {
+
 		/*
-		 * Preparing the mdms request with billing service master and calling the mdms search API
+		 * Preparing the mdms request with billing service master and calling the mdms
+		 * search API
 		 */
 		MdmsCriteriaReq mdmsReq = prepareMdMsRequest(tenantId, MODULE_NAME, MDMS_MASTER_NAMES, MDMS_CODE_FILTER,
 				requestInfo);
@@ -284,7 +318,6 @@ public class Util {
 
 		return mdmsData;
 	}
-	
 
 	/**
 	 * Method to integrate with workflow
@@ -296,25 +329,23 @@ public class Util {
 	 */
 	public State callWorkFlow(ProcessInstance workflow, RequestInfo requestInfo) {
 
-		ProcessInstanceRequest workflowReq = ProcessInstanceRequest.builder()
-				.processInstances(Arrays.asList(workflow))
-				.requestInfo(requestInfo)
-				.build();
-				
+		ProcessInstanceRequest workflowReq = ProcessInstanceRequest.builder().processInstances(Arrays.asList(workflow))
+				.requestInfo(requestInfo).build();
+
 		ProcessInstanceResponse response = null;
 		StringBuilder url = new StringBuilder(appProps.getWfHost().concat(appProps.getWfTransitionPath()));
 		Object objectResponse = serviceRequestRepository.fetchResult(url.toString(), workflowReq);
 		response = mapper.convertValue(objectResponse, ProcessInstanceResponse.class);
 		return response.getProcessInstances().get(0).getState();
 	}
-	
+
 	/*
 	 * 
 	 * Json merge utils
 	 */
-	
+
 	/**
-	 * Method to merge additional details during update 
+	 * Method to merge additional details during update
 	 * 
 	 * @param mainNode
 	 * @param updateNode
@@ -346,19 +377,19 @@ public class Util {
 		}
 		return mainNode;
 	}
-	
+
 	public String getIdsQueryForList(Set<String> ownerIds, List<Object> preparedStmtList) {
 
 		StringBuilder query = new StringBuilder("(");
 		query.append(createPlaceHolderForList(ownerIds));
 		addToPreparedStatement(preparedStmtList, ownerIds);
 		query.append(")");
-		
+
 		return query.toString();
 	}
 
 	private String createPlaceHolderForList(Set<String> ids) {
-		
+
 		StringBuilder builder = new StringBuilder();
 		int length = ids.size();
 		for (int i = 0; i < length; i++) {
@@ -374,5 +405,34 @@ public class Util {
 			preparedStmtList.add(id);
 		});
 	}
-	
+
+	public BigDecimal calculateRoundOff(BigDecimal totalAmount, List<BillV2> billV2s) {
+		BigDecimal amount = totalAmount.setScale(2, RoundingMode.HALF_UP);
+		BigDecimal ten = new BigDecimal("10");
+		BigDecimal remainder = amount.remainder(ten);
+
+		BigDecimal roundOff = BigDecimal.ZERO;
+		if (remainder.compareTo(new BigDecimal("5")) >= 0) {
+			roundOff = ten.subtract(remainder);
+		} else if (remainder.compareTo(BigDecimal.ZERO) > 0) {
+			roundOff = remainder.negate();
+		}
+
+		if (roundOff.compareTo(BigDecimal.ZERO) != 0) {
+			final BigDecimal finalRoundOff = roundOff;
+			billV2s.stream().findFirst()
+					.ifPresent(firstBill -> firstBill.getBillDetails().stream().findFirst()
+							.ifPresent(billDetail -> billDetail.getBillAccountDetails().stream()
+									.filter(acc -> "PT_ROUNDOFF".equals(acc.getTaxHeadCode())).findFirst()
+									.ifPresent(acc -> {
+										acc.setAmount(finalRoundOff);
+										jdbcTemplate.update(
+												"UPDATE egbs_billaccountdetail_v1 SET amount = ? WHERE id = ?",
+												finalRoundOff, acc.getId());
+									})));
+			return totalAmount.add(roundOff);
+		}
+		return totalAmount;
+	}
+
 }
