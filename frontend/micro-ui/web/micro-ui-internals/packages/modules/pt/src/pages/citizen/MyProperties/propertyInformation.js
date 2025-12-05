@@ -315,6 +315,11 @@ const onAppeal =()=>{
               label={t("Creation Reason")}
               text={t(`${property?.creationReason}`)}
             />
+            <Row
+              className="border-none"
+              label={t("Apportioned Property")}
+              text={property?.isPartOfProperty ? t("PT_COMMON_YES") : t("PT_COMMON_NO")}
+            />
             <Row className="border-none" label={t("Assessment Status")} text={fetchAssessmentData==null ? 'NA' : fetchAssessmentData?.[0]?.status} />
 
             <Row className="border-none" label={t("CS_COMMON_TOTAL_AMOUNT_DUE")} text={getBillAmount(fetchBillData)=='CS_NA' ? 'NA' : `₹${t(getBillAmount(fetchBillData))}`} />
