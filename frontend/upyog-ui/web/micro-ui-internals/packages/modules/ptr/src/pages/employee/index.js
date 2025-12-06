@@ -1,3 +1,26 @@
+<<<<<<< HEAD
+=======
+/**
+ * @file EmployeeApp.js
+ * @description This component defines the routing and layout for the employee-facing application.
+ * It handles navigation, private routing, and rendering of various inbox, application, and search components.
+ * 
+ * @component
+ * - Uses `PrivateRoute` for secured routing.
+ * - Renders `Inbox`, `SearchApp`, and other employee-specific components.
+ * - Displays breadcrumbs for navigation context.
+ * - Handles new application, application details, and search pages.
+ * - Supports both desktop and mobile views.
+ * 
+ * @props
+ * @param {string} path - The base route path for the employee module.
+ * @param {string} url - The base URL for the employee module.
+ * @param {string} userType - The type of user accessing the app.
+
+ */
+
+
+>>>>>>> master-LTS
 import { PrivateRoute,BreadCrumb } from "@upyog/digit-ui-react-components";
 import React from "react";
 import { useTranslation } from "react-i18next";
@@ -43,16 +66,22 @@ const EmployeeApp = ({ path, url, userType }) => {
         content: t("ES_TITLE_INBOX"),
         show: location.pathname.includes("ptr/petservice/inbox") ? true : false,
       },
+<<<<<<< HEAD
      
     
+=======
+>>>>>>> master-LTS
       {
         path: "/upyog-ui/employee/ptr/petservice/my-applications",
         content: t("ES_COMMON_APPLICATION_SEARCH"),
         show: location.pathname.includes("/ptr/petservice/my-applications") || location.pathname.includes("/ptr/applicationsearch/application-details/") ? true : false,
       },
+<<<<<<< HEAD
       
      
       
+=======
+>>>>>>> master-LTS
     ];
   
     return <BreadCrumb style={isMobile?{display:"flex"}:{}}  spanStyle={{maxWidth:"min-content"}} crumbs={crumbs} />;
@@ -60,10 +89,13 @@ const EmployeeApp = ({ path, url, userType }) => {
 
   const NewApplication = Digit?.ComponentRegistryService?.getComponent("PTRNewApplication");
   const ApplicationDetails = Digit?.ComponentRegistryService?.getComponent("ApplicationDetails");
+<<<<<<< HEAD
 
   // const EditApplication = Digit?.ComponentRegistryService?.getComponent("PTEditApplication");
   const Response = Digit?.ComponentRegistryService?.getComponent("PTRResponse");
   const DocsRequired = Digit?.ComponentRegistryService?.getComponent("PTRDocsRequired");
+=======
+>>>>>>> master-LTS
   const isRes = window.location.href.includes("ptr/response");
   const isNewRegistration = window.location.href.includes("new-application") || window.location.href.includes("modify-application") || window.location.href.includes("ptr/application-details");
   return (
@@ -80,16 +112,27 @@ const EmployeeApp = ({ path, url, userType }) => {
                 useNewInboxAPI={true}
                 parentRoute={path}
                 businessService="ptr"
+<<<<<<< HEAD
                 filterComponent="PT_INBOX_FILTER"
+=======
+                filterComponent="PTR_INBOX_FILTER"
+>>>>>>> master-LTS
                 initialStates={inboxInitialState}
                 isInbox={true}
               />
             )}
           />
+<<<<<<< HEAD
           <PrivateRoute path={`${path}/petservice/new-application`} component={() => <NewApplication parentUrl={url} />} />
           <PrivateRoute path={`${path}/petservice/application-details/:id`} component={() => <ApplicationDetails parentRoute={path} />} />
           <PrivateRoute path={`${path}/petservice/applicationsearch/application-details/:id`} component={() => <ApplicationDetails parentRoute={path} />} />
           <PrivateRoute path={`${path}/petservice/response`} component={(props) => <Response {...props} parentRoute={path} />} />
+=======
+          <PrivateRoute path={`${path}/petservice/new-application`} component={NewApplication} />
+          <PrivateRoute path={`${path}/petservice/revised-application`} component={NewApplication} />
+          <PrivateRoute path={`${path}/petservice/application-details/:id`} component={() => <ApplicationDetails parentRoute={path} />} />
+          <PrivateRoute path={`${path}/petservice/applicationsearch/application-details/:id`} component={() => <ApplicationDetails parentRoute={path} />} />
+>>>>>>> master-LTS
           <PrivateRoute path={`${path}/petservice/search`} component={(props) => <Search {...props} t={t} parentRoute={path} />} />
           <PrivateRoute
             path={`${path}/searchold`}

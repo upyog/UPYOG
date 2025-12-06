@@ -12,6 +12,19 @@ const formConfig = {
       errorText: "",
       value: "",
     },
+    gender: {
+      id: "profile-form-gender",
+      required: true,
+      floatingLabelText: "CORE_COMMON_GENDER",
+      hintText: "CORE_COMMON_GENDER_PLACEHOLDER",
+      errorMessage: "CORE_COMMON_GENDER_ERRORMSG",
+      value: "",
+      dropDownData: [
+        { label: "MALE", value: "MALE" },
+        { label: "FEMALE", value: "FEMALE" },
+        { label: "OTHERS", value: "OTHERS" },
+      ],
+    },
     phonenumber: {
       id: "profile-form-phonenumber",
       floatingLabelText: "CORE_COMMON_PHONE_NUMBER",

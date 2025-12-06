@@ -28,15 +28,17 @@ public class FSMInboxController {
 	private ResponseInfoFactory responseInfoFactory;
 
 	@PostMapping(value = "/fetchApplicationIds")
-    public ResponseEntity<VehicleCustomResponse> fetchApplicationIds(@Valid @RequestBody RequestInfoWrapper requestInfoWrapper,@Valid @RequestBody VehicleTripSearchCriteria criteria) {
+	public ResponseEntity<VehicleCustomResponse> fetchApplicationIds(
+			@Valid @RequestBody RequestInfoWrapper requestInfoWrapper,
+			@Valid @RequestBody VehicleTripSearchCriteria criteria) {
 
 		List<String> fsmApplicationIdList = fsmInboxService.fetchApplicationIds(criteria);
 
 		VehicleCustomResponse response = VehicleCustomResponse.builder().applicationIdList(fsmApplicationIdList)
-                .responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(requestInfoWrapper.getRequestInfo(), true))
-                .build();
+				.responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(requestInfoWrapper.getRequestInfo(),
+						true))
+				.build();
 		return new ResponseEntity<>(response, HttpStatus.OK);
-    }
-
+	}
 
 }

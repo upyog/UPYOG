@@ -117,7 +117,7 @@ const setValueForm =(config,data)=>{
         <LabelFieldPair key={index}>
           <CardLabel className="card-label-smaller">
             {!checkLocation ? t(input.label) : `${t(input.label)}:`}
-            {config.isMandatory ? " * " : null}
+            {config.isMandatory ? <span className="check-page-link-button"> *</span> : null}
           </CardLabel>
           <div className="field">
             <Controller

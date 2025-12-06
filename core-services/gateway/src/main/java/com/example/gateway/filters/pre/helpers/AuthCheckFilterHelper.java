@@ -31,6 +31,7 @@ public class AuthCheckFilterHelper implements RewriteFunction<Map, Map> {
     public Publisher<Map> apply(ServerWebExchange serverWebExchange, Map body) {
         try {
             RequestInfo requestInfo = objectMapper.convertValue(body.get(REQUEST_INFO_FIELD_NAME_PASCAL_CASE), RequestInfo.class);
+<<<<<<< HEAD
             User user = userUtils.getUser(requestInfo.getAuthToken());
 
             // Log user info received from /_details endpoint
@@ -46,6 +47,9 @@ public class AuthCheckFilterHelper implements RewriteFunction<Map, Map> {
             }
 
             requestInfo.setUserInfo(user);
+=======
+            requestInfo.setUserInfo(userUtils.getUser(requestInfo.getAuthToken()));
+>>>>>>> master-LTS
             body.put(REQUEST_INFO_FIELD_NAME_PASCAL_CASE, requestInfo);
             return Mono.just(body);
         } catch (Exception ex) {

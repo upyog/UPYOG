@@ -8,6 +8,8 @@ import { useCardPaymentDetails } from "./card";
 import { useChequeDetails } from "./cheque";
 import isEqual from "lodash/isEqual";
 import { BillDetailsFormConfig } from "./Bill-details/billDetails";
+import { timerEnabledForBusinessService } from "../../citizen/bills/routes/bill-details/utils";
+import TimerServices from "../../citizen/timer-Services/timerServices";
 
 export const CollectPayment = (props) => {
   // const { formData, addParams } = props;
@@ -15,11 +17,11 @@ export const CollectPayment = (props) => {
   const { t } = useTranslation();
   const history = useHistory();
   const queryClient = useQueryClient();
-
+  const {state,search}=useLocation();
   const { path: currentPath } = useRouteMatch();
   let { consumerCode, businessService } = useParams();
   const tenantId = Digit.ULBService.getCurrentTenantId();
-  const search = useLocation().search;
+  const [Time, setTime ] = useState(0);
   if (window.location.href.includes("ISWSAPP")) consumerCode = new URLSearchParams(search).get("applicationNumber");
   if (window.location.href.includes("ISWSCON") || ModuleWorkflow === "WS") consumerCode = decodeURIComponent(consumerCode);
 
@@ -204,7 +206,7 @@ export const CollectPayment = (props) => {
   }, [selectedPaymentMode]);
 
   let config = [
-    {
+        {
       head: !ModuleWorkflow && businessService !== "TL" ? t("COMMON_PAYMENT_HEAD") : "",
       body: [
         {
@@ -339,7 +341,14 @@ export const CollectPayment = (props) => {
 
   return (
     <React.Fragment>
+       <div style={{ display: "flex", justifyContent: "space-between" }}>
       <Header styles={{ marginLeft: "15px" }}>{checkFSM ? t("PAYMENT_COLLECT_LABEL") : t("PAYMENT_COLLECT")}</Header>
+      {timerEnabledForBusinessService(businessService) && (
+            <Header styles={{ marginRight: "15px" }}>
+            <TimerServices businessService={businessService} setTime={setTime} timerValues={state?.timerValue} t={t} SlotSearchData={state?.SlotSearchData}/>
+            </Header>
+          )}
+      </div>
       <FormComposer
         cardStyle={{ paddingBottom: "100px" }}
         label={t("PAYMENT_COLLECT_LABEL")}
@@ -347,7 +356,7 @@ export const CollectPayment = (props) => {
         onSubmit={onSubmit}
         formState={formState}
         defaultValues={getDefaultValues()}
-        isDisabled={IsDisconnectionFlow ? false : businessService === "SW" || "WS" ?false:bill?.totalAmount ? !bill.totalAmount > 0 : true}
+        isDisabled={(IsDisconnectionFlow ? false : businessService === "SW" || "WS" ?false:bill?.totalAmount ? !bill.totalAmount > 0 : true) || (timerEnabledForBusinessService(businessService) && Time === 0)}
         // isDisabled={BillDetailsFormConfig({ consumerCode }, t)[businessService] ? !}
         onFormValueChange={(setValue, formValue) => {
           if (!isEqual(formValue.paymentMode, selectedPaymentMode)) {

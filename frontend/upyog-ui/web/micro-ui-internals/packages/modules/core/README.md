@@ -51,6 +51,7 @@ import { DigitUI } from "@upyog/digit-ui-module-core";
 1.7.1 UPYOG Base version
 ```
 
+<<<<<<< HEAD
 ### Contributors
 
 [jagankumar-egov] [nipunarora-eGov] [Tulika-eGov] [Ramkrishna-egov] [nabeelmd-eGov] [anil-egov] [vamshikrishnakole-wtt-egov] 
@@ -69,3 +70,12 @@ DIGIT Frontend Repo (https://github.com/upyog/UPYOG/tree/develop)
 
 
 ![Logo](https://s3.ap-south-1.amazonaws.com/works-dev-asset/mseva-white-logo.png)
+=======
+## Maintainer
+
+- [Shivank-NIUA](https://github.com/ShivankShuklaa)
+
+
+### Published from UPYOG Frontend 
+UPYOG Frontend Repo (https://github.com/upyog/UPYOG/tree/develop)
+>>>>>>> master-LTS

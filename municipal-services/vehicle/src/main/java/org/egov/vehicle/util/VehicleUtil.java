@@ -14,6 +14,7 @@ import org.egov.mdms.model.ModuleDetail;
 import org.egov.tracer.model.CustomException;
 import org.egov.vehicle.config.VehicleConfiguration;
 import org.egov.vehicle.repository.ServiceRequestRepository;
+import org.egov.vehicle.service.ModuleRoleService;
 import org.egov.vehicle.web.model.AuditDetails;
 import org.egov.vehicle.web.model.VehicleRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,6 +42,8 @@ public class VehicleUtil {
 	@Autowired
 	private ObjectMapper mapper;
 
+	@Autowired
+	private ModuleRoleService moduleRoleService;
 
 	public void defaultJsonPathConfig() {
 		Configuration.setDefaults(new Configuration.Defaults() {

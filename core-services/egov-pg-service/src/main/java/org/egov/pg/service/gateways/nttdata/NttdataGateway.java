@@ -200,7 +200,7 @@ public class NttdataGateway implements Gateway {
     @Override
     public Transaction fetchStatus(Transaction currentStatus, Map<String, String> params) {
         
-    	String merchantId = "317156";
+		String merchantId = MERCHANT_ID;
 		String merchantTxnId = currentStatus.getTxnId();
 		System.out.println("MerchantId------: " + merchantId);
 		System.out.println("Amount----------: " + currentStatus.getTxnAmount());

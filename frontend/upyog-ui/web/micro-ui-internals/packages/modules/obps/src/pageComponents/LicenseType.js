@@ -80,7 +80,7 @@ const LicenseType = ({ t, config, onSelect, userType, formData }) => {
               />
             )}
           </div>
-          {LicenseType && LicenseType?.i18nKey.includes("ARCHITECT") && <div><CardLabel>{`${t("BPA_COUNCIL_NUMBER")}*`}</CardLabel>
+          {LicenseType && LicenseType?.i18nKey.includes("ARCHITECT") && <div><CardLabel>{`${t("BPA_COUNCIL_NUMBER")}`}<span className="check-page-link-button"> *</span></CardLabel>
             <TextInput
               t={t}
               type={"text"}

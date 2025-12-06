@@ -15,7 +15,11 @@ Start your server as an simple java application
 You can view the api documentation in swagger-ui by pointing to  
 http://localhost:8080/  
 
+<<<<<<< HEAD
 Change default port value in application.properties
 
 ## Swagger URL
 http://localhost:8080/verification-service/swagger-ui/index.html#/
+=======
+Change default port value in application.properties
+>>>>>>> master-LTS

@@ -5,6 +5,8 @@ import { useHistory, useLocation, useParams, Redirect } from "react-router-dom";
 import ArrearSummary from "./arrear-summary";
 import BillSumary from "./bill-summary";
 import { stringReplaceAll } from "./utils";
+import TimerServices from "../../../timer-Services/timerServices";
+import { timerEnabledForBusinessService } from "./utils";
 
 const BillDetails = ({ paymentRules, businessService }) => {
   const { t } = useTranslation();
@@ -17,6 +19,12 @@ const BillDetails = ({ paymentRules, businessService }) => {
   const tenantId = state?.tenantId || _tenantId || Digit.UserService.getUser().info?.tenantId;
   const propertyId = state?.propertyId;
   const applicationNumber = state?.applicationNumber;
+<<<<<<< HEAD
+=======
+  const [Time, setTime ] = useState(0);
+  const skipBillingAndArrears = ["adv-services", "chb-services","request-service.mobile_toilet", "request-service.water_tanker", "request-service.tree_pruning"];
+
+>>>>>>> master-LTS
   if (wrkflow === "WNS" && consumerCode.includes("?")) consumerCode = consumerCode.substring(0, consumerCode.indexOf("?"));
   const { data, isLoading } = state?.bill
     ? { isLoading: false }
@@ -25,7 +33,7 @@ const BillDetails = ({ paymentRules, businessService }) => {
         businessService,
         consumerCode: wrkflow === "WNS" ? stringReplaceAll(consumerCode, "+", "/") : consumerCode,
       });
-
+     
   let Useruuid = data?.Bill?.[0]?.userId || "";
   let requestCriteria = [
     "/user/_search",
@@ -139,7 +147,11 @@ const BillDetails = ({ paymentRules, businessService }) => {
     }
   }, [isLoading]); 
 
+<<<<<<< HEAD
   const onSubmit = () => {debugger
+=======
+  const onSubmit = () => {
+>>>>>>> master-LTS
     let paymentAmount =
       paymentType === t("CS_PAYMENT_FULL_AMOUNT")
         ? businessService === "FSM.TRIP_CHARGES"?application?.pdfData?.advanceAmount:getTotal()
@@ -164,11 +176,21 @@ const BillDetails = ({ paymentRules, businessService }) => {
         tenantId: billDetails.tenantId,
         name: bill.payerName,
         mobileNumber: bill.mobileNumber && bill.mobileNumber?.includes("*") ? userData?.user?.[0]?.mobileNumber : bill.mobileNumber,      });
-    } else {
+    } 
+    else if (timerEnabledForBusinessService(businessService)) {
+      history.push(`/upyog-ui/citizen/payment/collect/${businessService}/${consumerCode}`, {
+        paymentAmount, 
+        tenantId: billDetails.tenantId, 
+        propertyId: propertyId ,
+        timerValue:state?.timerValue,
+        SlotSearchData:state?.SlotSearchData,
+      });
+      } 
+    else {
       history.push(`/upyog-ui/citizen/payment/collect/${businessService}/${consumerCode}`, { paymentAmount, tenantId: billDetails.tenantId, propertyId: propertyId });
     }
   };
-
+  
   const onChangeAmount = (value) => {
     setError("");
     if (isNaN(value) || value.includes(".")) {
@@ -188,11 +210,27 @@ const BillDetails = ({ paymentRules, businessService }) => {
       <Header>{t("CS_PAYMENT_BILL_DETAILS")}</Header>
       <Card>
         <div>
+        <div style={{ display: "flex", justifyContent: "space-between" }}>
           <KeyNote
             keyValue={t(businessService == "PT.MUTATION" ? "PDF_STATIC_LABEL_MUATATION_NUMBER_LABEL" : label)}
             note={wrkflow === "WNS" ? stringReplaceAll(consumerCode, "+", "/") : consumerCode}
           />
+<<<<<<< HEAD
           {businessService !== "PT.MUTATION" && businessService !== "FSM.TRIP_CHARGES" && (
+=======
+          {timerEnabledForBusinessService(businessService) && (
+            <CardSubHeader 
+              style={{ 
+                textAlign: 'right', 
+                fontSize: "24px"
+              }}
+            >
+            <TimerServices businessService={businessService} setTime={setTime} timerValues={state?.timerValue} t={t} SlotSearchData={state?.SlotSearchData}/>
+            </CardSubHeader>
+          )}
+          </div>
+          {businessService !== "PT.MUTATION" && businessService !== "FSM.TRIP_CHARGES" && !skipBillingAndArrears.includes(businessService) && (
+>>>>>>> master-LTS
             <KeyNote keyValue={t("CS_PAYMENT_BILLING_PERIOD")} note={getBillingPeriod()} />
           )}
           {businessService?.includes("PT") ||
@@ -210,7 +248,11 @@ const BillDetails = ({ paymentRules, businessService }) => {
               ) : null}
             </div>
           ) : (
+<<<<<<< HEAD
             <BillSumary billAccountDetails={getBillBreakDown()} total={getTotal()} businessService={businessService} arrears={Arrears} />
+=======
+            <BillSumary billAccountDetails={getBillBreakDown()} total={getTotal()} businessService={businessService} arrears={Arrears} skipArrears={skipBillingAndArrears}/>
+>>>>>>> master-LTS
           )}
           <ArrearSummary bill={bill} />
         </div>
@@ -247,7 +289,11 @@ const BillDetails = ({ paymentRules, businessService }) => {
                 <TextInput className="text-indent-xl" onChange={(e) => onChangeAmount(e.target.value)} value={amount} disable={getTotal() === 0} />
               )
             ) : businessService === "FSM.TRIP_CHARGES" ? (
+<<<<<<< HEAD
               <TextInput className="text-indent-xl" value={application?.pdfData?.advanceAmount} onChange={() => {}} disable={true} />
+=======
+              <TextInput className="text-indent-xl" value={application?.pdfData?.advanceAmount !== 0 ? application?.pdfData?.advanceAmount:application?.pdfData?.totalAmount} onChange={() => {}} disable={true} />
+>>>>>>> master-LTS
             ):((
               <TextInput className="text-indent-xl" value={getTotal()} onChange={() => {}} disable={true} />
             ))}

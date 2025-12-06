@@ -11,10 +11,16 @@ import {
   PTIcon,
   TLIcon,
   WSICon,
+<<<<<<< HEAD
   PTRIcon
+=======
+  PTRIcon,
+  CHBIcon
+>>>>>>> master-LTS
 } from "@upyog/digit-ui-react-components";
 import React from "react";
 import { useTranslation } from "react-i18next";
+import EmployeeDashboard from "./EmployeeDashboard";
 
 /* 
 Feature :: Citizen All service screen cards
@@ -78,6 +84,13 @@ const iconSelector = (code) => {
       return <BillsIcon className="fill-path-primary-main" />;
       case "PTR":
       return <PTRIcon className="fill-path-primary-main" />;
+<<<<<<< HEAD
+=======
+    case "CHB":
+      return <CHBIcon className="fill-path-primary-main" />;
+    case "ADS":
+      return <CHBIcon className="fill-path-primary-main" />;
+>>>>>>> master-LTS
     default:
       return <PTIcon className="fill-path-primary-main" />;
   }
@@ -129,10 +142,26 @@ const CitizenHome = ({ modules, getCitizenMenu, fetchedCitizen, isLoading }) => 
   );
 };
 
+
 const EmployeeHome = ({ modules }) => {
+  const dashboardCemp = Digit.UserService.hasAccess(["DASHBOARD_EMPLOYEE"])?true:false;
   if(window.Digit.SessionStorage.get("PT_CREATE_EMP_TRADE_NEW_FORM")) window.Digit.SessionStorage.set("PT_CREATE_EMP_TRADE_NEW_FORM",{})
+    const { data: dashboardConfig } = Digit.Hooks.useCustomMDMS(Digit.ULBService.getStateId(),"common-masters",[{ name: "CommonConfig" }],
+      {
+        select: (data) => {
+          const formattedData = data?.["common-masters"]?.["CommonConfig"];
+          // Find the object with cityDashboardEnabled and return its isActive value
+          const cityDashboardObject = formattedData?.find(
+            (item) => item?.name === "cityDashboardEnabled"
+          );
+          return cityDashboardObject?.isActive;
+        },
+      }
+    );
   return (
     <div className="employee-app-container">
+      <br />
+      {(dashboardConfig && dashboardCemp)?<EmployeeDashboard modules={modules}/>:null}
       <div className="ground-container moduleCardWrapper gridModuleWrapper">
         {modules.map(({ code }, index) => {
           const Card = Digit.ComponentRegistryService.getComponent(`${code}Card`) || (() => <React.Fragment />);

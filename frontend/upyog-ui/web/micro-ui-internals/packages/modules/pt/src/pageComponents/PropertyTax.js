@@ -61,7 +61,11 @@ const onConcent=async (e)=>{
   const data = await Digit.DigiLockerService.authorization({module:"PT"});
   e.preventDefault()
   console.log("data",data)
+<<<<<<< HEAD
   sessionStorage.setItem("code_verfier",data?.codeverifier)
+=======
+  sessionStorage.setItem("code_verfier",data?.dlReqRef)
+>>>>>>> master-LTS
   //let redirectURL=data?.redirectURL.replace("https://upyog-test.niua.org","http://localhost:3000")
   window.location.href=data?.redirectURL
     /* Number of Random Bytes to Use to Generate Code Verifier (min 32, max 96 bytes) */
@@ -98,7 +102,11 @@ if(window.location.href.includes("code"))
 {
   let code =window.location.href.split("=")[1].split("&")[0]
   let TokenReq = {
+<<<<<<< HEAD
     code_verifier: sessionStorage.getItem("code_verfier"),
+=======
+    dlReqRef: sessionStorage.getItem("code_verfier"),
+>>>>>>> master-LTS
     code: code, module: "PT"
   }
   console.log("token",code,TokenReq,sessionStorage.getItem("code_verfier"))

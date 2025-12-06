@@ -1,8 +1,16 @@
 package org.egov.vendor.web.models.vendorcontract.vendor;
 
+<<<<<<< HEAD
 import java.util.ArrayList;
 import java.util.List;
 
+=======
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonValue;
+import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
+import lombok.*;
+>>>>>>> master-LTS
 import org.egov.common.contract.request.User;
 import org.egov.vendor.web.models.AuditDetails;
 import org.egov.vendor.web.models.vendorcontract.driver.Driver;
@@ -10,6 +18,7 @@ import org.egov.vendor.web.models.vendorcontract.location.Address;
 import org.egov.vendor.web.models.vendorcontract.vehicle.Vehicle;
 import org.hibernate.annotations.Immutable;
 import org.hibernate.annotations.Type;
+<<<<<<< HEAD
 import org.springframework.validation.annotation.Validated;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -25,13 +34,28 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+=======
+import org.hibernate.annotations.TypeDef;
+import org.hibernate.validator.constraints.SafeHtml;
+import org.springframework.validation.annotation.Validated;
+
+import javax.persistence.*;
+import javax.validation.Valid;
+import javax.validation.constraints.Size;
+import java.util.ArrayList;
+import java.util.List;
+>>>>>>> master-LTS
 
 
 /**
  * Capture the vendor information in the system.
  */
 @Validated
+<<<<<<< HEAD
 @jakarta.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-01-06T05:34:12.238Z[GMT]")
+=======
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-01-06T05:34:12.238Z[GMT]")
+>>>>>>> master-LTS
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
@@ -43,17 +67,29 @@ import lombok.Setter;
 @TypeDef(name = "jsonb", typeClass = JsonBinaryType.class)
 public class Vendor {
 
+<<<<<<< HEAD
+=======
+	@SafeHtml
+>>>>>>> master-LTS
 	@Id
 	@JsonProperty("id")
 	@Column(name = "id", nullable = false, length = 64)
 	private String id = null;
 
 	@JsonProperty("tenantId")
+<<<<<<< HEAD
+=======
+	@SafeHtml
+>>>>>>> master-LTS
 	@Size(max=64)
 	@Column(name = "tenantid", length = 64)
 	private String tenantId = null;
 
 	@JsonProperty("name")
+<<<<<<< HEAD
+=======
+	@SafeHtml
+>>>>>>> master-LTS
 	@Size(max=128)
 	@Column(name = "name", length = 128)
 	private String name = null;
@@ -84,24 +120,44 @@ public class Vendor {
 	@Column(columnDefinition = "jsonb", name = "additionalDetails")
 	private Object additionalDetails = null;
 
+<<<<<<< HEAD
+=======
+	@SafeHtml
+>>>>>>> master-LTS
 	@JsonProperty("source")
 	@Column(name = "source", length = 256)
 	private String source = null;
 
+<<<<<<< HEAD
+=======
+	@SafeHtml
+>>>>>>> master-LTS
 	@JsonProperty("description")
 	@Column(name = "description", length = 256)
 	private String description = null;
 	
 	@JsonProperty("ownerId")
+<<<<<<< HEAD
+=======
+	@SafeHtml
+>>>>>>> master-LTS
 	@Size(max=64)
 	private String ownerId = null;
 
 	@JsonProperty("agencyType")
+<<<<<<< HEAD
+=======
+	@SafeHtml
+>>>>>>> master-LTS
 	@Size(max=128)
 	@Column(name = "agencytype", length = 128, nullable = false)
 	private String agencyType = null;
 	
 	@JsonProperty("paymentPreference")
+<<<<<<< HEAD
+=======
+	@SafeHtml
+>>>>>>> master-LTS
 	@Size(max=128)
 	@Column(name = "paymentpreference", length = 128, nullable = false)
 	private String paymentPreference = null;

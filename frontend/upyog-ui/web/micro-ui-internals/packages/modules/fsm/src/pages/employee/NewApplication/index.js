@@ -42,9 +42,16 @@ export const NewApplication = ({ parentUrl, heading }) => {
   };
 
   const onFormValueChange = (setValue, formData) => {
+<<<<<<< HEAD
     console.log("ProID", formData)
     if (
       formData?.pitType!==undefined &&
+=======
+    
+    if (
+      formData?.pitType!==undefined && 
+      formData?.pitDetail!==null &&
+>>>>>>> master-LTS
       formData?.tripData?.vehicleType &&
       formData?.tripData?.roadWidth!==undefined &&
       formData?.tripData?.distancefromroad!==undefined &&
@@ -54,13 +61,21 @@ export const NewApplication = ({ parentUrl, heading }) => {
       formData?.tripData?.vehicleType &&
       formData?.channel &&
       formData?.pitType &&
+<<<<<<< HEAD
+=======
+      formData?.pitDetail &&
+>>>>>>> master-LTS
       formData?.tripData?.roadWidth &&
       formData?.tripData?.distancefromroad &&
       formData?.address?.street &&
       formData?.address?.doorNo &&
       (formData?.tripData?.amountPerTrip || formData?.tripData?.amountPerTrip === 0)
     ) {
+<<<<<<< HEAD
       console.log("formDataformData",formData)
+=======
+      
+>>>>>>> master-LTS
       setSubmitValve(true);
       const pitDetailValues = formData?.pitDetail ? Object.values(formData?.pitDetail).filter((value) => value > 0) : null;
       let max = Digit.SessionStorage.get("total_amount");
@@ -96,7 +111,11 @@ export const NewApplication = ({ parentUrl, heading }) => {
   };
 
   const onSubmit = (data) => {
+<<<<<<< HEAD
     console.log("data", data)
+=======
+   
+>>>>>>> master-LTS
     const applicationChannel = data.channel;
     const sanitationtype = data?.pitType?.code;
     const pitDimension = data?.pitDetail;
@@ -414,7 +433,11 @@ export const NewApplication = ({ parentUrl, heading }) => {
         {
           "route": "tank-size",
           "component": "SelectTankSize",
+<<<<<<< HEAD
           "isMandatory": false,
+=======
+          "isMandatory": true,
+>>>>>>> master-LTS
           "texts": {
             "headerCaption": "",
             "header": "CS_FILE_APPLICATION_PIT_SEPTIC_TANK_SIZE_TITLE",
@@ -511,7 +534,11 @@ export const NewApplication = ({ parentUrl, heading }) => {
       ]
     }
   ]
+<<<<<<< HEAD
   console.log(conf, "confffffffff")
+=======
+  
+>>>>>>> master-LTS
   return (
     <React.Fragment>
       <div style={{ marginLeft: "15px" }}>

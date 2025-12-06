@@ -1,9 +1,17 @@
 package org.egov.ewst.models.workflow;
 
+<<<<<<< HEAD
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Size;
 
 import org.egov.ewst.models.AuditDetails;
+=======
+import javax.validation.Valid;
+import javax.validation.constraints.Size;
+
+import org.egov.ewst.models.AuditDetails;
+import org.hibernate.validator.constraints.SafeHtml;
+>>>>>>> master-LTS
 import org.springframework.validation.annotation.Validated;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -25,7 +33,11 @@ import java.util.List;
  */
 @ApiModel(description = "A Object holds the basic data of state")
 @Validated
+<<<<<<< HEAD
 @jakarta.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2018-12-04T11:26:25.532+05:30")
+=======
+@javax.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2018-12-04T11:26:25.532+05:30")
+>>>>>>> master-LTS
 
 @Getter
 @Setter
@@ -37,14 +49,26 @@ import java.util.List;
 public class State   {
 
         @Size(max=256)
+<<<<<<< HEAD
+=======
+        @SafeHtml
+>>>>>>> master-LTS
         @JsonProperty("uuid")
         private String uuid;
 
         @Size(max=256)
+<<<<<<< HEAD
+=======
+        @SafeHtml
+>>>>>>> master-LTS
         @JsonProperty("tenantId")
         private String tenantId;
 
         @Size(max=256)
+<<<<<<< HEAD
+=======
+        @SafeHtml
+>>>>>>> master-LTS
         @JsonProperty("businessServiceId")
         private String businessServiceId;
 
@@ -52,10 +76,18 @@ public class State   {
         private Long sla;
 
         @Size(max=256)
+<<<<<<< HEAD
+=======
+        @SafeHtml
+>>>>>>> master-LTS
         @JsonProperty("state")
         private String state;
 
         @Size(max=256)
+<<<<<<< HEAD
+=======
+        @SafeHtml
+>>>>>>> master-LTS
         @JsonProperty("applicationStatus")
         private String applicationStatus;
 

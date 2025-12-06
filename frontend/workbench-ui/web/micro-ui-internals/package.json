@@ -41,7 +41,7 @@
     "build:common": "cd packages/modules/common && yarn build",
     "build:utilities": "cd packages/modules/utilities && yarn build",
     "build:engagement": "cd packages/modules/engagement && yarn build",
-    "build:workbench": "cd packages/modules/workbench && yarn build",
+    "buildD:workbench": "cd packages/modules/workbench && yarn build",
     "deploy:jenkins": "./scripts/jenkins.sh",
     "clean": "rm -rf node_modules"
   },

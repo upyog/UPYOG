@@ -42,6 +42,9 @@ public class PaymentUpdateService {
 	private ObjectMapper mapper;
 
 	@Autowired
+	private FSMInboxService fSMInboxService;
+	
+	@Autowired
 	public PaymentUpdateService(FSMConfiguration config, FSMRepository repository, WorkflowIntegrator wfIntegrator,
 			EnrichmentService enrichmentService, ObjectMapper mapper) {
 		this.config = config;
@@ -109,6 +112,7 @@ public class PaymentUpdateService {
 						log.info(" the status of the application is : " + updateRequest.getFsm().getStatus());
 
 						repository.update(updateRequest, false);
+//						fSMInboxService.inboxEvent(updateRequest);
 					});
 				}
 

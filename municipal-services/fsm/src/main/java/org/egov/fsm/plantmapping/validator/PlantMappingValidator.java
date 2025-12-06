@@ -42,7 +42,7 @@ public class PlantMappingValidator {
 	@Autowired
 	private PlantMappingService plantMappingService;
 
-	public void validateCreateOrUpdate(@Valid PlantMappingRequest request, Object mdmsData) {
+	public void validateCreateOrUpdate(@Valid PlantMappingRequest request) {
 
 		if (StringUtils.isEmpty(request.getPlantMapping().getTenantId())) {
 			throw new CustomException(PlantMappingConstants.INVALID_TENANT, "TenantId is mandatory");
@@ -57,14 +57,12 @@ public class PlantMappingValidator {
 		if (request.getPlantMapping().getPlantCode() == null || request.getPlantMapping().getPlantCode().isEmpty()) {
 			throw new CustomException(PlantMappingConstants.INVALID_PLANT_CODE, "");
 		}
-		mdmsValidator.validateMdmsData(mdmsData);
 
 		PlantMapping plantMap = request.getPlantMapping();
 		plantMap.getEmployeeUuid();
 		if (!request.getRequestInfo().getUserInfo().getType().equalsIgnoreCase(FSMConstants.EMPLOYEE)) {
 			throw new CustomException(FSMErrorConstants.INVALID_APPLICANT_ERROR, "Applicant must be an Employee");
 		}
-		mdmsValidator.validateFSTPPlantInfo(plantMap.getPlantCode(), request.getPlantMapping().getTenantId());
 
 		UserDetailResponse userDetailResponse = userExists(request);
 

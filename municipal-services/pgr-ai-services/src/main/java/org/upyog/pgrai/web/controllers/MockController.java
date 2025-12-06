@@ -20,8 +20,13 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
+<<<<<<< HEAD
 import jakarta.validation.Valid;
 import jakarta.servlet.http.HttpServletRequest;
+=======
+import javax.validation.Valid;
+import javax.servlet.http.HttpServletRequest;
+>>>>>>> master-LTS
 
 /**
  * Controller for handling mock API requests.

@@ -171,7 +171,7 @@ const FSMSelectAddress = ({ t, config, onSelect, userType, formData }) => {
         <LabelFieldPair>
           <CardLabel className="card-label-smaller">
             {t("MYCITY_CODE_LABEL")}
-            {config.isMandatory ? " * " : null}
+            {config.isMandatory ? <span className="check-page-link-button"> *</span> : null}
           </CardLabel>
           <Dropdown
             className="form-field"
@@ -189,7 +189,11 @@ const FSMSelectAddress = ({ t, config, onSelect, userType, formData }) => {
             <LabelFieldPair>
               <CardLabel className="card-label-smaller">
                 {t("ES_NEW_APPLICATION_LOCATION_MOHALLA")}
+<<<<<<< HEAD
                 {config.isMandatory ? " * " : null}
+=======
+                {config.isMandatory ? <span className="check-page-link-button"> *</span> : null}
+>>>>>>> master-LTS
               </CardLabel>
               <Dropdown
                 className="form-field"
@@ -203,7 +207,11 @@ const FSMSelectAddress = ({ t, config, onSelect, userType, formData }) => {
             </LabelFieldPair>
             {!isNewVendor && !isEditVendor && !isUrcEnable && formData?.address?.locality?.name === "Other" && (
               <LabelFieldPair>
+<<<<<<< HEAD
                 <CardLabel className="card-label-smaller">{`${t("ES_INBOX_PLEASE_SPECIFY_LOCALITY")} *`}</CardLabel>
+=======
+                <CardLabel className="card-label-smaller">{`${t("ES_INBOX_PLEASE_SPECIFY_LOCALITY")}`}<span className="check-page-link-button"> *</span></CardLabel>
+>>>>>>> master-LTS
                 <div className="field">
                   <TextInput id="newLocality" key="newLocality" value={newLocality} onChange={(e) => onNewLocality(e.target.value)} />
                 </div>
@@ -212,7 +220,11 @@ const FSMSelectAddress = ({ t, config, onSelect, userType, formData }) => {
           </div>
         ) : (
           <LabelFieldPair>
+<<<<<<< HEAD
             <CardLabel>{`${t("CS_PROPERTY_LOCATION")} *`}</CardLabel>
+=======
+            <CardLabel>{`${t("CS_PROPERTY_LOCATION")}`}<span className="check-page-link-button"> *</span></CardLabel>
+>>>>>>> master-LTS
             <div className="field">
               <RadioButtons
                 selectedOption={selectLocation}
@@ -235,7 +247,11 @@ const FSMSelectAddress = ({ t, config, onSelect, userType, formData }) => {
       <FormStep config={config} onSelect={onSubmit} t={t} isDisabled={selectLocation ? false : true}>
         {isUrcEnable && (
           <React.Fragment>
+<<<<<<< HEAD
             <CardLabel>{`${t("CS_PROPERTY_LOCATION")} *`}</CardLabel>
+=======
+            <CardLabel>{`${t("CS_PROPERTY_LOCATION")}`}<span className="check-page-link-button"> *</span></CardLabel>
+>>>>>>> master-LTS
             <RadioOrSelect
               isMandatory={config.isMandatory}
               options={inputs}
@@ -246,7 +262,11 @@ const FSMSelectAddress = ({ t, config, onSelect, userType, formData }) => {
             />
           </React.Fragment>
         )}
+<<<<<<< HEAD
         <CardLabel>{`${t("MYCITY_CODE_LABEL")} *`}</CardLabel>
+=======
+        <CardLabel>{`${t("MYCITY_CODE_LABEL")}`}<span className="check-page-link-button"> *</span></CardLabel>
+>>>>>>> master-LTS
         <RadioOrSelect options={cities} selectedOption={selectedCity} optionKey="i18nKey" onSelect={selectCity} t={t} />
       </FormStep>
     </React.Fragment>

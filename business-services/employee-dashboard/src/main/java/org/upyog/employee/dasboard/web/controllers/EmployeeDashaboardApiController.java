@@ -27,9 +27,9 @@ public class EmployeeDashaboardApiController {
 
 	@PostMapping("/_search")
 	public ResponseEntity<EmployeeDashboardResponse> getDashboardData(
-			@Parameter(description = "Details of the Employee Dasboard for All the modules", required = true)
-			@Valid @RequestBody EmployeeDashboardRequest employeeDashboardRequest
-			) {
+	@Parameter(description = "Details of the Employee Dasboard for All the modules", required = true)
+	@Valid @RequestBody EmployeeDashboardRequest employeeDashboardRequest
+	) {
 
 		EmployeeDashboardResponse response = dashboardService.getEmployeeDashboardData(employeeDashboardRequest);
 		return new ResponseEntity<>(response, HttpStatus.OK);

@@ -97,6 +97,7 @@ export const newConfig = [
         route: "service-name",
         component: "WSServiceName",
         key: "serviceName",
+        isMandatory:true,
         nextStep: "water-connection-details",
         WATER: "water-connection-details",
         SEWERAGE: "sewerage-connection-details",

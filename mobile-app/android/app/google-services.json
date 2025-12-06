@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "677469988560",
+    "project_id": "upyog-f850a",
+    "storage_bucket": "upyog-f850a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:677469988560:android:046a17997b75daffdfa0d5",
+        "android_client_info": {
+          "package_name": "com.example.mobile_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCD2nwfgZCmXrRzpaRB2V4sCsYveFfimBc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

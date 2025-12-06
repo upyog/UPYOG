@@ -1,3 +1,25 @@
+<<<<<<< HEAD
+=======
+/**
+ * @file MobileInbox.js
+ * @description Renders the mobile inbox with filtering, search, and sorting.
+ * 
+ * @components
+ * - `ApplicationLinks`: Navigation links.
+ * - `ApplicationCard`: Displays application data.
+ * 
+ * @props
+ * - `data`: Application records.
+ * - `isLoading`: Loading state.
+ * - `isSearch`: Search mode flag.
+ * - `onFilterChange`, `onSearch`, `onSort`: Callbacks.
+ * - `parentRoute`, `linkPrefix`: Navigation routes.
+ * - `tableConfig`: Table configuration.
+ * 
+ * @methods
+ * - `getData`: Formats data for display.
+ */
+>>>>>>> master-LTS
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { ApplicationCard } from "./inbox/ApplicationCard";

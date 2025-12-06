@@ -4,9 +4,15 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
+<<<<<<< HEAD
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+=======
+import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+>>>>>>> master-LTS
 
 import org.springframework.validation.annotation.Validated;
 import org.upyog.sv.enums.ApplicationCreatedByEnum;

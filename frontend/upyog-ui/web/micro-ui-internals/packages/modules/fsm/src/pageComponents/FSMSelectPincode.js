@@ -5,7 +5,11 @@ import Timeline from "../components/TLTimelineInFSM";
 
 const FSMSelectPincode = ({ t, config, onSelect, formData = {}, userType, register, errors, props }) => {
   const tenants = Digit.Hooks.fsm.useTenants();
+<<<<<<< HEAD
   const [pincode, setPincode] = useState(formData?.cpt?.details?.address?.pincode || formData?.address?.pincode || "");
+=======
+  const [pincode, setPincode] = useState(formData?.cpt?.details?.address?.pincode);
+>>>>>>> master-LTS
   const [pincodeServicability, setPincodeServicability] = useState(null);
 
   const { pathname } = useLocation();
@@ -16,6 +20,10 @@ const FSMSelectPincode = ({ t, config, onSelect, formData = {}, userType, regist
   {
     property = JSON.parse(sessionStorage?.getItem("Digit_FSM_PT"))
   }
+<<<<<<< HEAD
+=======
+  console.log("dddd11111",formData)
+>>>>>>> master-LTS
   const inputs = [
     {
       label: "CORE_COMMON_PINCODE",
@@ -30,6 +38,7 @@ const FSMSelectPincode = ({ t, config, onSelect, formData = {}, userType, regist
       },
     },
   ];
+<<<<<<< HEAD
   useEffect(()=>{
     if(property?.propertyDetails?.address?.pincode){ 
         setPincode(property?.propertyDetails?.address?.pincode);   
@@ -44,34 +53,75 @@ const FSMSelectPincode = ({ t, config, onSelect, formData = {}, userType, regist
       setPincode(formData?.cpt?.details?.address?.pincode)
     }
   }, [formData?.address?.pincode, formData?.cpt?.details?.address?.pincode]);
+=======
+  // useEffect(()=>{
+  //   if(property?.propertyDetails?.address?.pincode){ 
+  //       setPincode(property?.propertyDetails?.address?.pincode);   
+  //   }
+  // },[ property?.propertyDetails?.address?.pincode])
 
+  // useEffect(() => {
+  //   if (formData?.address?.pincode) {
+  //     setPincode(formData.address.pincode);
+  //   }
+  //   else if(formData?.cpt?.details?.address?.pincode){
+  //     setPincode(formData?.cpt?.details?.address?.pincode)
+  //   }
+  // }, [formData?.address?.pincode, formData?.cpt?.details?.address?.pincode]);
+>>>>>>> master-LTS
+
+  // useEffect(() => {
+  //   if (formData?.address?.locality?.pincode !== pincode && userType === "employee") {
+  //     setPincode(formData?.address?.locality?.pincode || "");
+  //     setPincodeServicability(null);
+  //   }
+  // }, [formData?.address?.locality]);
   useEffect(() => {
     if (formData?.address?.locality?.pincode !== pincode && userType === "employee") {
-      setPincode(formData?.address?.locality?.pincode || "");
+      setPincode(formData?.address?.locality?.pincode ||formData?.cpt?.details?.address?.pincode||"" );
       setPincodeServicability(null);
     }
   }, [formData?.address?.locality]);
 
   useEffect(() => {
     if (userType === "employee" && pincode) {
-      onSelect(config.key, { ...formData.address, pincode: pincode?.[0] || pincode });
+      onSelect(config.key, { ...formData.address, pincode: pincode });
     }
   }, [pincode]);
 
   function onChange(e) {
-    setPincode(e.target.value);
-    setPincodeServicability(null);
+    e.preventDefault();
+    const newInput = e.target.value; // Get the new input value
+    const updatedPincode = newInput; // Update directly based on the current input value
+  
+    setPincode(updatedPincode); // Update the state with the new value
+    setPincodeServicability(null); // Reset serviceability message
+  
     if (userType === "employee") {
-      const foundValue = tenants?.find((obj) => obj.pincode?.find((item) => item.toString() === e.target.value));
+      console.log("setPincodeServicability");
+      const foundValue = tenants?.find((obj) =>
+        obj.pincode?.find((item) => item.toString() === updatedPincode)
+      );
       if (foundValue) {
-        const city = tenants.filter((obj) => obj.pincode?.find((item) => item == e.target.value))[0];
-        onSelect(config.key, { ...formData.address, city, pincode: e.target.value, slum: null });
+        const city = tenants.find((obj) =>
+          obj.pincode?.find((item) => item === updatedPincode)
+        );
+        onSelect(config.key, {
+          ...formData.address,
+          city,
+          pincode: updatedPincode,
+          slum: null,
+        });
       } else {
-        onSelect(config.key, { ...formData.address, pincode: e.target.value });
+        onSelect(config.key, {
+          ...formData.address,
+          pincode: updatedPincode,
+        });
         setPincodeServicability("CS_COMMON_PINCODE_NOT_SERVICABLE");
       }
     }
   }
+  
 
   const goNext = async (data) => {
     const foundValue = tenants?.find((obj) => obj.pincode?.find((item) => item == data?.pincode));
@@ -81,12 +131,13 @@ const FSMSelectPincode = ({ t, config, onSelect, formData = {}, userType, regist
       setPincodeServicability("CS_COMMON_PINCODE_NOT_SERVICABLE");
     }
   };
+  const onSkip = () => onSelect();
 
   if (userType === "employee") {
     return inputs?.map((input, index) => {
       return (
-        <>
-          <LabelFieldPair key={index}>
+        <Fragment key={index}>
+          <LabelFieldPair>
             <CardLabel className="card-label-smaller">
               {t(input.label)}
               {config.isMandatory ? " * " : null}
@@ -100,11 +151,11 @@ const FSMSelectPincode = ({ t, config, onSelect, formData = {}, userType, regist
               {t(pincodeServicability)}
             </CardLabelError>
           )}
-        </>
+        </Fragment>
       );
     });
   }
-  const onSkip = () => onSelect();
+
   return (
     <React.Fragment>
       <Timeline currentStep={1} flow="APPLY" />

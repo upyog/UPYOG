@@ -12,13 +12,13 @@ import {
 
 const EngagementCard = () => {
   const userRoles = Digit.SessionStorage.get("User")?.info?.roles;
-  const isEmployee = userRoles.find((role) => role.code === "EMPLOYEE");
+  const isEmployee = false;
 
   useEffect(() => {
     Digit.SessionStorage.set("CITIZENSURVEY.INBOX", null);
   }, []);
 
-  if (!isEmployee) return null;
+  if (true) return null;
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const { data: documentsCount, isLoading: isLoadingDocs } = Digit.Hooks.engagement.useDocSearch(
     { tenantIds: tenantId },

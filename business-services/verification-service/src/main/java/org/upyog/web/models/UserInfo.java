@@ -4,16 +4,28 @@ import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 
+<<<<<<< HEAD
 import java.util.ArrayList;
 import java.util.List;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+=======
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import java.util.ArrayList;
+import java.util.List;
+>>>>>>> master-LTS
 import org.springframework.validation.annotation.Validated;
 import org.upyog.web.models.Role;
 import org.upyog.web.models.TenantRole;
 
+<<<<<<< HEAD
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
+=======
+import javax.validation.Valid;
+import javax.validation.constraints.*;
+>>>>>>> master-LTS
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -23,10 +35,16 @@ import lombok.Builder;
 /**
  * This is acting ID token of the authenticated user on the server. Any value provided by the clients will be ignored and actual user based on authtoken will be used on the server.
  */
+<<<<<<< HEAD
 
 @Schema(description = "This is acting ID token of the authenticated user on the server. Any value provided by the clients will be ignored and actual user based on authtoken will be used on the server.")
 @Validated
 @jakarta.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2024-12-07T15:40:06.365+05:30")
+=======
+@ApiModel(description = "This is acting ID token of the authenticated user on the server. Any value provided by the clients will be ignored and actual user based on authtoken will be used on the server.")
+@Validated
+@javax.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2024-12-07T15:40:06.365+05:30")
+>>>>>>> master-LTS
 
 @Getter
 @Setter

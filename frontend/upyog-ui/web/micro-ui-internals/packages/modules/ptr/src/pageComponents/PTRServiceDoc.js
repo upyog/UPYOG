@@ -1,3 +1,35 @@
+<<<<<<< HEAD
+=======
+/**
+ * PTRServiceDoc Component
+ * 
+ * Description:
+ * This component displays a list of required documents for the Pet Service module.
+ * It fetches the document data using a custom hook (`Digit.Hooks.ptr.usePetMDMS`) 
+ * and renders the list conditionally based on whether the `isMutation` flag is true or false.
+ * 
+ * Key Functionalities:
+ * - Displays document headers and subheaders with multilingual support using the `t()` function.
+ * - Fetches the document list dynamically from the MDMS service based on the current state and tenant ID.
+ * - Renders a loader while fetching data and handles both mutation and non-mutation states differently.
+ * - Displays document details either as a single line or as individual items based on the mutation flag.
+ * - Provides a "Next" button for navigation to the next screen.
+ * 
+ * Props:
+ * - `t`: Translation function for multilingual support.
+ * - `config`: Configuration object that controls mutation status.
+ * - `onSelect`: Function to navigate to the next screen.
+ * - `userType`: Specifies the user type (not used in this component, but passed as a prop).
+ * - `formData`: Contains form data (not used in this component, but passed as a prop).
+ * 
+ * Dependencies:
+ * - Digit UI React components (`Card`, `CardHeader`, `CardText`, `Loader`, `SubmitBar`)
+ * - Digit MDMS hooks for fetching document data.
+ * - Utility functions (`cardBodyStyle`, `stringReplaceAll`)
+ * 
+ */
+
+>>>>>>> master-LTS
 import { Card, CardHeader, CardSubHeader, CardText, Loader, SubmitBar } from "@upyog/digit-ui-react-components";
 import React, { useEffect } from "react";
 import { cardBodyStyle, stringReplaceAll } from "../utils";
@@ -8,11 +40,17 @@ const PTRServiceDoc = ({ t, config, onSelect, userType, formData }) => {
   const stateId = Digit.ULBService.getStateId();
   sessionStorage.removeItem("docReqScreenByBack");
 
+<<<<<<< HEAD
   const docType = config?.isMutation ? ["MutationDocuments"] : "Documents";
 
   
  
   const { isLoading, data: Documentsob = {} } = Digit.Hooks.ptr.usePetMDMS(stateId, "PetService", docType);
+=======
+  
+ 
+  const { isLoading, data: Documentsob = {} } = Digit.Hooks.ptr.usePetMDMS(stateId, "PetService", "Documents");
+>>>>>>> master-LTS
   
   let docs = Documentsob?.PetService?.Documents;
   function onSave() {}

@@ -1,9 +1,23 @@
+<<<<<<< HEAD
+=======
+/*
+PTRApplicationDetails Component:
+- Displays detailed information about a pet registration application.
+- Fetches data using Digit Hooks for application details, bill data, and receipts.
+- Includes functionality to download acknowledgment forms, fee receipts, and certificates.
+- Uses Digit PaymentService to generate and print PDFs.
+- Displays application details in a series of StatusTables with applicant, pet, and address information.
+- Uses MultiLink for download options and PTRWFApplicationTimeline for workflow details.
+- Implements loading states and handles errors with toasts.
+*/
+>>>>>>> master-LTS
 import { Card, CardSubHeader, Header, LinkButton, Loader, Row, StatusTable, MultiLink, PopUp, Toast, SubmitBar } from "@upyog/digit-ui-react-components";
 import React, { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory, useParams } from "react-router-dom";
 import getPetAcknowledgementData from "../../getPetAcknowledgementData";
 import PTRWFApplicationTimeline from "../../pageComponents/PTRWFApplicationTimeline";
+<<<<<<< HEAD
 import { pdfDownloadLink } from "../../utils";
 
 
@@ -15,6 +29,15 @@ const PTRApplicationDetails = () => {
   const history = useHistory();
   const { acknowledgementIds, tenantId } = useParams();
   const [acknowldgementData, setAcknowldgementData] = useState([]);
+=======
+import { convertEpochToDate } from "../../utils";
+
+import get from "lodash/get";
+
+const PTRApplicationDetails = () => {
+  const { t } = useTranslation();
+  const { acknowledgementIds, tenantId } = useParams();
+>>>>>>> master-LTS
   const [showOptions, setShowOptions] = useState(false);
   const [popup, setpopup] = useState(false);
   const [showToast, setShowToast] = useState(null);
@@ -30,6 +53,7 @@ const PTRApplicationDetails = () => {
     },
   );
 
+<<<<<<< HEAD
 
  
 
@@ -39,6 +63,10 @@ const PTRApplicationDetails = () => {
   
 
 
+=======
+  const [billData, setBillData]=useState(null);
+
+>>>>>>> master-LTS
   const PetRegistrationApplications = get(data, "PetRegistrationApplications", []);
   
   
@@ -102,11 +130,14 @@ fetchBillData();
      pet_details.workflow = workflow;
   }
 
+<<<<<<< HEAD
   
 
   
 
  
+=======
+>>>>>>> master-LTS
   // let owners = [];
   // owners = application?.owners;
   // let docs = [];
@@ -116,8 +147,11 @@ fetchBillData();
     return <Loader />;
   }
 
+<<<<<<< HEAD
  
 
+=======
+>>>>>>> master-LTS
   const getAcknowledgementData = async () => {
     const applications = application || {};
     const tenantInfo = tenants.find((tenant) => tenant.code === applications.tenantId);
@@ -126,6 +160,7 @@ fetchBillData();
     //setAcknowldgementData(acknowldgementDataAPI);
   };
 
+<<<<<<< HEAD
   let documentDate = t("CS_NA");
   if ( pet_details?.additionalDetails?.documentDate) {
     const date = new Date( pet_details?.additionalDetails?.documentDate);
@@ -133,6 +168,8 @@ fetchBillData();
     documentDate = `${date.getDate()} ${month} ${date.getFullYear()}`;
   }
 
+=======
+>>>>>>> master-LTS
   async function getRecieptSearch({ tenantId, payments, ...params }) {
     let response = { filestoreIds: [payments?.fileStoreId] };
     response = await Digit.PaymentService.generatePdf(tenantId, { Payments: [{ ...payments }] }, "petservice-receipt");
@@ -140,6 +177,7 @@ fetchBillData();
     window.open(fileStore[response?.filestoreIds[0]], "_blank");
   };
 
+<<<<<<< HEAD
   const handleDownload = async (document, tenantid) => {
     let tenantId = tenantid ? tenantid : tenantId;
     const res = await Digit.UploadServices.Filefetch([document?.fileStoreId], tenantId);
@@ -147,6 +185,8 @@ fetchBillData();
     window.open(documentLink, "_blank");
   };
 
+=======
+>>>>>>> master-LTS
   const printCertificate = async () => {
     let response = await Digit.PaymentService.generatePdf(tenantId, { PetRegistrationApplications: [data?.PetRegistrationApplications?.[0]] }, "petservicecertificate");
     const fileStore = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: response.filestoreIds[0] });
@@ -159,19 +199,42 @@ fetchBillData();
     label: t("PTR_PET_DOWNLOAD_ACK_FORM"),
     onClick: () => getAcknowledgementData(),
   });
+<<<<<<< HEAD
 
   //commented out, need later for download receipt and certificate 
+=======
+ 
+>>>>>>> master-LTS
   if (reciept_data && reciept_data?.Payments.length > 0 && recieptDataLoading == false)
     dowloadOptions.push({
       label: t("PTR_FEE_RECIEPT"),
       onClick: () => getRecieptSearch({ tenantId: reciept_data?.Payments[0]?.tenantId, payments: reciept_data?.Payments[0] }),
     });
+<<<<<<< HEAD
     if (reciept_data?.Payments[0]?.paymentStatus === "DEPOSITED")
       dowloadOptions.push({
         label: t("PTR_CERTIFICATE"),
         onClick: () => printCertificate(),
       });
 
+=======
+  if (reciept_data && reciept_data?.Payments.length > 0 && recieptDataLoading == false)
+    dowloadOptions.push({
+      label: t("PTR_CERTIFICATE"),
+      onClick: () => printCertificate(),
+    });
+
+
+    const getDate = (epochdate) => {
+      return epochdate
+        ? new Date(epochdate * 1000).getDate() + 
+          "/" + 
+          (new Date(epochdate * 1000).getMonth() + 1) + 
+          "/" + 
+          new Date(epochdate * 1000).getFullYear().toString()
+        : "NA";
+    };
+>>>>>>> master-LTS
   
   return (
     <React.Fragment>
@@ -195,6 +258,24 @@ fetchBillData();
               text={pet_details?.applicationNumber} 
             />
           </StatusTable>
+<<<<<<< HEAD
+=======
+          <StatusTable>
+            <Row
+              className="border-none"
+              label={t("PTR_VALIDITY_DATE")}
+              text={getDate(pet_details?.validityDate)} 
+            />
+          </StatusTable>
+          {pet_details?.petToken&&pet_details?.petToken.length>0&&(
+          <StatusTable>
+            <Row
+              className="border-none"
+              label={t("PTR_TOKEN")}
+              text={pet_details?.petToken} 
+            />
+          </StatusTable>)}
+>>>>>>> master-LTS
            
           <CardSubHeader style={{ fontSize: "24px" }}>{t("PTR_ADDRESS_HEADER")}</CardSubHeader>
           <StatusTable>
@@ -220,6 +301,7 @@ fetchBillData();
             <Row className="border-none" label={t("PTR_CLINIC_NAME")} text={pet_details?.petDetails?.clinicName || t("CS_NA")} />
             <Row className="border-none" label={t("PTR_VACCINATED_DATE")} text={pet_details?.petDetails?.lastVaccineDate || t("CS_NA")} />
             <Row className="border-none" label={t("PTR_VACCINATION_NUMBER")} text={pet_details?.petDetails?.vaccinationNumber || t("CS_NA")} />
+<<<<<<< HEAD
           </StatusTable>
 
 
@@ -233,6 +315,16 @@ fetchBillData();
               </StatusTable>
             )}
           </div> */}
+=======
+            <Row className="border-none" label={t("PTR_PET_NAME")} text={pet_details?.petDetails?.petName || t("CS_NA")} />
+            <Row className="border-none" label={t("PTR_PET_AGE")} text={pet_details?.petDetails?.petAge || t("CS_NA")} />
+            <Row className="border-none" label={t("PTR_PET_SEX")} text={pet_details?.petDetails?.petGender || t("CS_NA")} />
+            <Row className="border-none" label={t("PTR_IDENTIFICATION_MARK")} text={pet_details?.petDetails?.identificationMark || t("CS_NA")} />
+            <Row className="border-none" label={t("PTR_VACCINATION_NUMBER")} text={pet_details?.petDetails?.vaccinationNumber || t("CS_NA")} />
+            {pet_details?.petDetails?.birthDate ? pet_details?.petDetails?.birthDate && <Row className="border-none" label={t("PTR_BIRTH")} text={convertEpochToDate(pet_details?.petDetails?.birthDate) || t("CS_NA")} /> : pet_details?.petDetails?.adoptionDate && <Row className="border-none" label={t("PTR_ADOPTION")} text={convertEpochToDate(pet_details?.petDetails?.adoptionDate) || t("CS_NA")} />}
+          </StatusTable>
+
+>>>>>>> master-LTS
           <PTRWFApplicationTimeline application={application} id={application?.applicationNumber} userType={"citizen"} />
           {showToast && (
           <Toast

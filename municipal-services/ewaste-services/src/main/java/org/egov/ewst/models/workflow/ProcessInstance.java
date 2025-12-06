@@ -3,12 +3,22 @@ package org.egov.ewst.models.workflow;
 import java.util.ArrayList;
 import java.util.List;
 
+<<<<<<< HEAD
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 import org.egov.ewst.models.Document;
 import org.egov.ewst.models.user.User;
+=======
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
+import org.egov.ewst.models.Document;
+import org.egov.ewst.models.user.User;
+import org.hibernate.validator.constraints.SafeHtml;
+>>>>>>> master-LTS
 import org.springframework.validation.annotation.Validated;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -29,7 +39,11 @@ import lombok.ToString;
 @SuppressWarnings("deprecation")
 @ApiModel(description = "A Object holds the basic data of a Process Instance")
 @Validated
+<<<<<<< HEAD
 @jakarta.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2018-12-04T11:26:25.532+05:30")
+=======
+@javax.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2018-12-04T11:26:25.532+05:30")
+>>>>>>> master-LTS
 
 @Getter
 @Setter
@@ -41,30 +55,54 @@ import lombok.ToString;
 public class ProcessInstance {
 
 	@Size(max = 64)
+<<<<<<< HEAD
+=======
+	@SafeHtml
+>>>>>>> master-LTS
 	@JsonProperty("id")
 	private String id;
 
 	@NotNull
+<<<<<<< HEAD
+=======
+	@SafeHtml
+>>>>>>> master-LTS
 	@Size(max = 128)
 	@JsonProperty("tenantId")
 	private String tenantId;
 
 	@NotNull
+<<<<<<< HEAD
+=======
+	@SafeHtml
+>>>>>>> master-LTS
 	@Size(max = 128)
 	@JsonProperty("businessService")
 	private String businessService;
 
 	@NotNull
+<<<<<<< HEAD
+=======
+	@SafeHtml
+>>>>>>> master-LTS
 	@Size(max = 128)
 	@JsonProperty("businessId")
 	private String businessId;
 
 	@NotNull
+<<<<<<< HEAD
+=======
+	@SafeHtml
+>>>>>>> master-LTS
 	@Size(max = 128)
 	@JsonProperty("action")
 	private String action;
 
 	@NotNull
+<<<<<<< HEAD
+=======
+	@SafeHtml
+>>>>>>> master-LTS
 	@Size(max = 64)
 	@JsonProperty("moduleName")
 	private String moduleName;
@@ -75,6 +113,10 @@ public class ProcessInstance {
 	/* for use of notification service in property */
 	private String notificationAction;
 
+<<<<<<< HEAD
+=======
+	@SafeHtml
+>>>>>>> master-LTS
 	@JsonProperty("comment")
 	private String comment;
 

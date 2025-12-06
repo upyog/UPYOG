@@ -4,12 +4,24 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+<<<<<<< HEAD
 import io.swagger.v3.oas.annotations.Operation;
+=======
+>>>>>>> master-LTS
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+<<<<<<< HEAD
 import org.springframework.web.bind.annotation.*;
+=======
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+>>>>>>> master-LTS
 import org.upyog.sv.constants.StreetVendingConstants;
 import org.upyog.sv.service.PaymentService;
 import org.upyog.sv.service.SchedulerService;
@@ -25,11 +37,18 @@ import org.upyog.sv.web.models.common.RequestInfoWrapper;
 import org.upyog.sv.web.models.common.ResponseInfo;
 import org.upyog.sv.web.models.common.ResponseInfo.StatusEnum;
 
+<<<<<<< HEAD
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 
 @jakarta.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2024-10-16T13:19:19.125+05:30")
 @Tag(name = "Street Vending Service", description = "APIs for Street Vending service operations")
+=======
+import io.swagger.annotations.ApiParam;
+
+@javax.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2024-10-16T13:19:19.125+05:30")
+
+>>>>>>> master-LTS
 @Controller
 @RequestMapping("/street-vending")
 public class StreetVendingController {
@@ -50,7 +69,10 @@ public class StreetVendingController {
 	}
 
 	@RequestMapping(value = "/_create", method = RequestMethod.POST)
+<<<<<<< HEAD
 	@Operation(summary = "Street vending create Payload", description = "Create Street vending application with valid info")
+=======
+>>>>>>> master-LTS
 	public ResponseEntity<StreetVendingResponse> createStreetVendingApplication(
 			@RequestBody StreetVendingRequest vendingRequest) {
 
@@ -71,7 +93,10 @@ public class StreetVendingController {
 	}
 
 	@RequestMapping(value = "/_search", method = RequestMethod.POST)
+<<<<<<< HEAD
 	@Operation(summary = "Street vending Search Payload", description = "Street vending search application details with valid info")
+=======
+>>>>>>> master-LTS
 	public ResponseEntity<StreetVendingListResponse> streetVendingSearch(
 			@RequestBody RequestInfoWrapper requestInfoWrapper,
 			@ModelAttribute StreetVendingSearchCriteria streetVendingSearchCriteria) {
@@ -98,9 +123,14 @@ public class StreetVendingController {
 	}
 
 	@RequestMapping(value = "/_update", method = RequestMethod.POST)
+<<<<<<< HEAD
 	@Operation(summary = "Street vending Update Details", description = "Updated Street vending details and RequestInfo meta data.")
 	public ResponseEntity<StreetVendingResponse> streetVendingUpdate(
 			@RequestBody StreetVendingRequest vendingRequest) {
+=======
+	public ResponseEntity<StreetVendingResponse> streetVendingUpdate(
+			@ApiParam(value = "Updated Street vending details and RequestInfo meta data.", required = true) @RequestBody StreetVendingRequest vendingRequest) {
+>>>>>>> master-LTS
 		validationService.validateRequest(vendingRequest); /// To validate the Update application request
 		StreetVendingDetail streetVendingDetail = streetVendingService.updateStreetVendingApplication(vendingRequest);
 
@@ -112,9 +142,14 @@ public class StreetVendingController {
 	}
 
 	@RequestMapping(value = "/_deletedraft", method = RequestMethod.POST)
+<<<<<<< HEAD
 	@Operation(summary = "Street vending delete Draft", description = "Details for draft deletion and RequestInfo meta data.")
 	public ResponseEntity<StreetVendingResponse> streetVendingDeleteDraft(
 			@RequestBody RequestInfoWrapper requestInfoWrapper,
+=======
+	public ResponseEntity<StreetVendingResponse> streetVendingDeleteDraft(
+			@ApiParam(value = "Details for draft deletion and RequestInfo meta data.", required = true) @RequestBody RequestInfoWrapper requestInfoWrapper,
+>>>>>>> master-LTS
 			@RequestParam(value = "draftId", required = true) String draftId) {
 		String draftDiscardResponse = streetVendingService.deleteStreetVendingDraft(draftId);
 		ResponseInfo responseInfo = StreetVendingUtil.createReponseInfo(requestInfoWrapper.getRequestInfo(),
@@ -125,7 +160,11 @@ public class StreetVendingController {
 
 //	@PostMapping("/_createdemand")
 //	public ResponseEntity<StreetVendingDemandResponse> createDemandForRenewal(
+<<<<<<< HEAD
 //		@RequestBody StreetVendingRequest vendingRequest) {
+=======
+//			@ApiParam(value = "Details for demand create and RequestInfo meta data.", required = true) @RequestBody StreetVendingRequest vendingRequest) {
+>>>>>>> master-LTS
 //		List<Demand> demands = streetVendingService.demandCreation(vendingRequest);
 //		ResponseInfo responseInfo = StreetVendingUtil.createReponseInfo(vendingRequest.getRequestInfo(),
 //				StreetVendingConstants.RENEWAL_DEMAND_CREATED, StatusEnum.SUCCESSFUL);

@@ -47,25 +47,64 @@
 
 package org.egov.edcr.feature;
 
+import java.math.BigDecimal;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
-import org.egov.common.entity.edcr.Plan;
+import org.egov.common.entity.dcr.helper.OccupancyHelperDetail;
+import org.egov.common.entity.edcr.*;
+import org.egov.edcr.utility.DcrConstants;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import static org.egov.edcr.constants.CommonFeatureConstants.*;
+import static org.egov.edcr.service.FeatureUtil.addScrutinyDetailtoPlan;
+import static org.egov.edcr.service.FeatureUtil.mapReportDetails;
 
 @Service
 public class RoadReserve extends FeatureProcess {
 
     @Override
     public Plan validate(Plan pl) {
-        return pl;
-    }
-
+    	
+           return pl;
+       }
     @Override
     public Plan process(Plan pl) {
+    	 List<Road> roadReserves = pl.getRoadReserves();
+    	 
+    	 ScrutinyDetail scrutinyDetail8 = new ScrutinyDetail();
+			//scrutinyDetail8.addColumnHeading(1, RULE_NO);
+			scrutinyDetail8.addColumnHeading(1, DESCRIPTION);
+			//scrutinyDetail8.addColumnHeading(3, FLOOR_NO);
+			//scrutinyDetail8.addColumnHeading(3, Room);
+			//scrutinyDetail8.addColumnHeading(4, REQUIRED);
+			scrutinyDetail8.addColumnHeading(2, PROVIDED);
+			scrutinyDetail8.addColumnHeading(3, STATUS);
+			scrutinyDetail8.setKey(COMMON_ROAD_RESERVE);
+        System.out.println("ii" + pl.getRoadReserveFront() +  pl.getRoadReserveRear());
+         
+        if(pl.getRoadReserveFront() != BigDecimal.ZERO &&  pl.getRoadReserveRear() != BigDecimal.ZERO) {
+     	setReportOutputDetails(pl, ROAD_WIDTH_FRONT_AND_REAR,
+				"" + pl.getRoadReserveFront() + METER +  AND_SPECIAL_CHAR +  pl.getRoadReserveRear() + METER, EMPTY_STRING, scrutinyDetail8);
+		//LOG.info("Room Height Validation True: (Expected/Actual) " + "" + "/" + "");
+        // setReportOutputDetails(pl, "Road Width Rear", "" + pl.getRoadReserveRear(), scrutinyDetail);
+    
+        }
         return pl;
     }
+    private void setReportOutputDetails(Plan pl, String ruleDesc,  
+			String actual, String status, ScrutinyDetail scrutinyDetail) {
+        ReportScrutinyDetail detail = new ReportScrutinyDetail();
+        detail.setDescription(ruleDesc);
+        detail.setStatus(status);
+
+        Map<String, String> details = mapReportDetails(detail);
+        addScrutinyDetailtoPlan(scrutinyDetail, pl, details);
+	}
 
     @Override
     public Map<String, Date> getAmendments() {

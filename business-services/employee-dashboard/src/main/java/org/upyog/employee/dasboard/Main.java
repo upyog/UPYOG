@@ -4,7 +4,6 @@ package org.upyog.employee.dasboard;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
-
 @SpringBootApplication
 @ComponentScan(basePackages = { "org.upyog.employee.dasboard", "org.upyog.employee.dasboard.web.controllers" , "org.upyog.employee.dasboard.config"})
 public class Main {

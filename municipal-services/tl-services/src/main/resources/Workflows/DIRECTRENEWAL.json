@@ -1,0 +1,109 @@
+"BusinessServices": [
+        {
+            "tenantId": "pg.citya",
+            "businessService": "DIRECTRENEWAL",
+            "business": "tl-services",
+            "businessServiceSla": 172800000,
+            "states": [
+                {
+                    "tenantId": "pg.citya",
+                    "sla": null,
+                    "state": null,
+                    "applicationStatus": "APPLIED",
+                    "docUploadRequired": false,
+                    "isStartState": true,
+                    "isTerminateState": false,
+                    "isStateUpdatable": false,
+                    "actions": [
+                        {
+                            "tenantId": "pg.citya",
+                            "currentState": null,
+                            "action": "INITIATE",
+                            "nextState": "PENDINGPAYMENT",
+                            "roles": [
+                                "CITIZEN",
+                                "TL_CEMP"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "tenantId": "pg.citya",
+                    "sla": null,
+                    "state": "PENDINGPAYMENT",
+                    "applicationStatus": "PENDINGPAYMENT",
+                    "docUploadRequired": false,
+                    "isStartState": true,
+                    "isTerminateState": false,
+                    "isStateUpdatable": true,
+                    "actions": [
+                        {
+                            "tenantId": "pg.citya",
+                            "currentState": "PENDINGPAYMENT",
+                            "action": "PAY",
+                            "nextState": "APPROVED",
+                            "roles": [
+                                "CITIZEN",
+                                "TL_CEMP",
+                                "SYSTEM_PAYMENT"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "tenantId": "pg.citya",
+                    "sla": null,
+                    "state": "APPROVED",
+                    "applicationStatus": "APPROVED",
+                    "docUploadRequired": false,
+                    "isStartState": false,
+                    "isTerminateState": false,
+                    "isStateUpdatable": false,
+                    "actions": [
+                        {
+                            "tenantId": "pg.citya",
+                            "currentState": "APPROVED",
+                            "action": "CANCEL",
+                            "nextState": "CANCELLED",
+                            "roles": [
+                                "TL_APPROVER"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "tenantId": "pg.citya",
+                    "sla": null,
+                    "state": "CANCELLED",
+                    "applicationStatus": "CANCELLED",
+                    "docUploadRequired": false,
+                    "isStartState": false,
+                    "isTerminateState": true,
+                    "isStateUpdatable": false,
+                    "actions": null
+                },
+                {
+                    "tenantId": "pg.citya",
+                    "sla": null,
+                    "state": "MANUALEXPIRED",
+                    "applicationStatus": "MANUALEXPIRED",
+                    "docUploadRequired": false,
+                    "isStartState": false,
+                    "isTerminateState": true,
+                    "isStateUpdatable": false,
+                    "actions": null
+                },
+                {
+                    "tenantId": "pg.citya",
+                    "sla": null,
+                    "state": "EXPIRED",
+                    "applicationStatus": "EXPIRED",
+                    "docUploadRequired": false,
+                    "isStartState": false,
+                    "isTerminateState": true,
+                    "isStateUpdatable": false,
+                    "actions": null
+                }
+            ]
+        }
+    ]

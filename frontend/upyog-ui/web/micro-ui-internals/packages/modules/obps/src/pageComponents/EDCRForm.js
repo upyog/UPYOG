@@ -104,7 +104,7 @@ const EDCRForm = ({ t, config, onSelect, userType, formData, ownerIndex = 0, add
             forcedError={error}
             isMultipleAllow={true}
         >
-            <CardLabel>{`${t("EDCR_SCRUTINY_CITY")} *`}</CardLabel>
+            <CardLabel>{`${t("EDCR_SCRUTINY_CITY")}`}<span className="check-page-link-button"> *</span></CardLabel>
             <Dropdown
                 t={t}
                 isMandatory={false}
@@ -114,7 +114,7 @@ const EDCRForm = ({ t, config, onSelect, userType, formData, ownerIndex = 0, add
                 select={setTypeOfTenantID}
                 uploadMessage={uploadMessage}
             />
-            <CardLabel>{`${t("EDCR_SCRUTINY_NAME_LABEL")} *`}</CardLabel>
+            <CardLabel>{`${t("EDCR_SCRUTINY_NAME_LABEL")}`}<span className="check-page-link-button"> *</span></CardLabel>
             <TextInput
                 isMandatory={false}
                 optionKey="i18nKey"
@@ -131,7 +131,7 @@ const EDCRForm = ({ t, config, onSelect, userType, formData, ownerIndex = 0, add
                     title: t("TL_NAME_ERROR_MESSAGE"),
                 })}
             />
-            <CardLabel>{`${t("BPA_PLAN_DIAGRAM_LABEL")} *`}</CardLabel>
+            <CardLabel>{`${t("BPA_PLAN_DIAGRAM_LABEL")}`}<span className="check-page-link-button"> *</span></CardLabel>
             <UploadFile
                 id={"edcr-doc"}
                 extraStyleName={"propertyCreate"}

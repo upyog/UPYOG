@@ -49,7 +49,6 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
-
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-jdbc</artifactId>
@@ -111,7 +110,6 @@
 			<version>3.1.1</version>
 		</dependency>
 	</dependencies>
-
 	<repositories>
 		<repository>
 			<id>repo.egovernments.org</id>

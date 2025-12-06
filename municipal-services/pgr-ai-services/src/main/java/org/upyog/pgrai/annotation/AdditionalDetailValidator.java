@@ -1,7 +1,12 @@
 package org.upyog.pgrai.annotation;
 
+<<<<<<< HEAD
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
+=======
+import javax.validation.ConstraintValidator;
+import javax.validation.ConstraintValidatorContext;
+>>>>>>> master-LTS
 
 /**
  * Validator for validating additional details based on a character size constraint.

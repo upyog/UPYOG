@@ -17,7 +17,6 @@ import lombok.Setter;
 @Schema(description = "Contract class to send response. Array of  items are used in case of search results or response for create, whereas single  item is used for update")
 @Validated
 @jakarta.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2024-10-03T17:01:27.450+05:30")
-
 @Getter
 @Setter
 @AllArgsConstructor

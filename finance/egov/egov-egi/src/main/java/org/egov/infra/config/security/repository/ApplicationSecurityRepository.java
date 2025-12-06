@@ -49,6 +49,40 @@ public class ApplicationSecurityRepository implements SecurityContextRepository 
 	@Autowired
 	public MicroserviceUtils microserviceUtils;
 
+	//old code 
+	// @Override
+	// public SecurityContext loadContext(HttpRequestResponseHolder requestResponseHolder) {
+
+	// 	SecurityContext context = new SecurityContextImpl();
+	// 	CurrentUser curUser = null;
+	// 	try {
+
+	// 		HttpServletRequest request = requestResponseHolder.getRequest();
+	// 		HttpSession session = request.getSession();
+	// 		LOGGER.info(" *** URI " + request.getRequestURL().toString());
+	// 		curUser = (CurrentUser) this.microserviceUtils.readFromRedis(request.getSession().getId(), "current_user");
+	// 		if (curUser == null) {
+	// 			LOGGER.info(" ***  Session is not available in redis.... , trying to login");
+	// 			curUser = new CurrentUser(this.getUserDetails(request));
+	// 			this.microserviceUtils.savetoRedis(session.getId(), "current_user", curUser);
+	// 		}
+	// 		String oldToken = (String) session.getAttribute(MS_USER_TOKEN);
+	// 		String newToken = (String) this.microserviceUtils.readFromRedis(session.getId(), AUTH_TOKEN);
+	// 		if (null != oldToken && null != newToken && !oldToken.equals(newToken)) {
+	// 			session.setAttribute(MS_USER_TOKEN, newToken);
+	// 		}
+	// 		LOGGER.info(" ***  Session   found  in redis.... ," + request.getSession().getId());
+
+	// 		context.setAuthentication(this.prepareAuthenticationObj(request, curUser));
+	// 	} catch (SecurityException | NotAuthorizedException e) {
+	// 		LOGGER.error(e.getMessage());
+	// 		LOGGER.error(" ***  Session is not found in Redis. Creating empty security context");
+	// 		return SecurityContextHolder.createEmptyContext();
+	// 	}
+	// 	return context;
+	// }
+
+	
 	@Override
 	public SecurityContext loadContext(HttpRequestResponseHolder requestResponseHolder) {
 
@@ -57,16 +91,27 @@ public class ApplicationSecurityRepository implements SecurityContextRepository 
 		try {
 
 			HttpServletRequest request = requestResponseHolder.getRequest();
+			LOGGER.info(" *** request AUTH_TOKEN: "+request.getParameter(AUTH_TOKEN));
 			HttpSession session = request.getSession();
+			LOGGER.info(" *** session MS_USER_TOKEN : " + session.getAttribute(MS_USER_TOKEN));
+			LOGGER.info(" *** session getId : " + session.getId());
 			LOGGER.info(" *** URI " + request.getRequestURL().toString());
 			curUser = (CurrentUser) this.microserviceUtils.readFromRedis(request.getSession().getId(), "current_user");
 			if (curUser == null) {
 				LOGGER.info(" ***  Session is not available in redis.... , trying to login");
 				curUser = new CurrentUser(this.getUserDetails(request));
+				LOGGER.info(" *** curUser inside loadcontext using getUserDetails : " + curUser);
 				this.microserviceUtils.savetoRedis(session.getId(), "current_user", curUser);
-			}
+			  } 
+			//  else {
+		    //      LOGGER.info(" *** getUserId inside loadcontext using readFromRedis : " + (curUser.getUserId()));
+		    //      LOGGER.info(" *** getUsername inside loadcontext using readFromRedis : " + (curUser.getUsername()));
+		    //      // Refresh the session details if curUser is already available in Redis
+		    //      this.refreshUserSessionDetails(request, curUser);  // Call the new method to refresh session
+		    //     }
 			String oldToken = (String) session.getAttribute(MS_USER_TOKEN);
 			String newToken = (String) this.microserviceUtils.readFromRedis(session.getId(), AUTH_TOKEN);
+			LOGGER.info(" *** old token:"+oldToken +"*** newtoken:"+newToken);
 			if (null != oldToken && null != newToken && !oldToken.equals(newToken)) {
 				session.setAttribute(MS_USER_TOKEN, newToken);
 			}
@@ -103,6 +148,52 @@ public class ApplicationSecurityRepository implements SecurityContextRepository 
 		auth.setDetails(details);
 		return auth;
 	}
+	
+	// private void refreshUserSessionDetails(HttpServletRequest request, CurrentUser curUser) throws NotAuthorizedException {
+	//     String userToken = request.getParameter(AUTH_TOKEN);
+	//     LOGGER.info("*** userToken inside refreshUserSessionDetails"+userToken);
+	//     String tenantid = request.getParameter("tenantId");
+	//     HttpSession session = request.getSession();
+	//     LOGGER.info(" *** session MS_USER_TOKEN : " + session.getAttribute(MS_USER_TOKEN));
+	// 	LOGGER.info(" *** session getId : " + session.getId());
+	//     if (userToken == null) {
+	//         session.setAttribute("error-code", 440);
+	//         throw new NotAuthorizedException("AuthToken not found");
+	//     }
+
+	//     String adminToken = this.microserviceUtils.generateAdminToken(tenantid);
+	//     LOGGER.info("*** adminToken inside refreshUserSessionDetails"+adminToken);
+	//     session.setAttribute(MS_USER_TOKEN, userToken);
+
+	//     // Fetch the user details using the token
+	//     CustomUserDetails user = this.microserviceUtils.getUserDetails(userToken, adminToken);
+	//     LOGGER.info("*** user inside refreshUserSessionDetails"+user);
+	//     if (user == null || user.getId() == null) {
+	//         throw new NotAuthorizedException("Invalid Token");
+	//     }
+
+	//     // Update session attributes
+	//     session.setAttribute(MS_TENANTID_KEY, user.getTenantId());
+	//     session.setAttribute(USERID_KEY, user.getId());
+
+	//     // Use the UserSearchResponse to refresh session data
+	//     UserSearchResponse response = this.microserviceUtils.getUserInfo(userToken, user.getTenantId(), user.getUuid());
+	//     LOGGER.info("*** response inside refreshUserSessionDetails" +response.getUserSearchResponseContent() );
+	//     LOGGER.info("*** Before saving session in Redis: " + userToken + "::" + session.getId());
+
+	//     // Save to Redis, but without removing any existing session data
+	//     this.microserviceUtils.savetoRedis(session.getId(), AUTH_TOKEN, userToken);
+	//     this.microserviceUtils.savetoRedis("session_token_fetch:" + userToken, SESSION_ID, session.getId());
+	//     this.microserviceUtils.savetoRedis(session.getId(), "_details", user);
+	//     this.microserviceUtils.saveAuthToken(userToken, session.getId());
+
+	//     // Ensure the session expires as needed
+	//     this.microserviceUtils.setExpire(session.getId());
+	//     this.microserviceUtils.setExpire(userToken);
+
+	//     LOGGER.info("User details refreshed in session and Redis: " + userToken);
+	// }
+
 
 	private User getUserDetails(HttpServletRequest request) throws NotAuthorizedException {
 		String userToken = null;
@@ -155,7 +246,12 @@ public class ApplicationSecurityRepository implements SecurityContextRepository 
 		user.setUsername(userinfo.getUserName());
 		user.setActive(userinfo.getActive());
 		user.setAccountLocked(userinfo.getAccountLocked());
-		user.setGender(Gender.valueOf(userinfo.getGender().toUpperCase()));
+		try {
+		    user.setGender(Gender.valueOf(userinfo.getGender().toUpperCase()));
+		} catch (Exception e) {
+		    LOGGER.info("Invalid or null gender for user: " + userinfo.getUserName() + ". Setting as MALE");
+		    user.setGender(Gender.MALE);
+		}
 		user.setPassword(" ");
 		user.setName(userinfo.getName());
 		user.setPwdExpiryDate(userinfo.getPwdExpiryDate());

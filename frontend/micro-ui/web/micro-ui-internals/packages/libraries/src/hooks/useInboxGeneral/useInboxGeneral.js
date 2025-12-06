@@ -2,10 +2,14 @@ import { useTranslation } from "react-i18next";
 import { useQuery, useQueryClient } from "react-query";
 import { FSMService } from "../../services/elements/FSM";
 import { PTService } from "../../services/elements/PT";
-
+import { PTRService } from "../../services/elements/PTR";
 import { filterFunctions } from "./filterFn";
 import { getSearchFields } from "./searchFields";
 import { TLService } from "../../services/elements/TL";
+import { CHBServices } from "../../services/elements/CHB";
+import { SVService } from "../../services/elements/SV";
+import { EwService } from "../../services/elements/EW";
+import { PGRAIService } from "../../services/elements/PGRAI";
 
 const inboxConfig = (tenantId, filters) => ({
   PT: {
@@ -24,6 +28,14 @@ const inboxConfig = (tenantId, filters) => ({
     fetchFilters: filterFunctions.PTR,
     _searchFn: () => PTRService.search({ tenantId, filters }),
   },
+  ASSET: {
+    services: ["asset-create"],
+    searchResponseKey: "Asset",
+    businessIdsParamForSearch: "applicationNo",
+    businessIdAliasForSearch: "applicationNo",
+    fetchFilters: filterFunctions.ASSET,
+    _searchFn: () => ASSETService.search({ tenantId, filters }),
+  },
   FSM: {
     services: ["FSM"],
     searchResponseKey: "fsm",
@@ -39,6 +51,38 @@ const inboxConfig = (tenantId, filters) => ({
     businessIdAliasForSearch: "businessId",
     fetchFilters: filterFunctions.TL,
     _searchFn: () => TLService.search(tenantId, filters),
+  },
+  EW: {
+    services: ["ewst"],
+    searchResponseKey: "EwasteApplication",
+    businessIdsParamForSearch: "requestId",
+    businessIdAliasForSearch: "requestId",
+    fetchFilters: filterFunctions.EW,
+    _searchFn: () => EwService.search({ tenantId, filters }),
+  },
+  SV: {
+    services: ["street-vending"],
+    searchResponseKey: "SVDetails",
+    businessIdsParamForSearch: "applicationNo",
+    businessIdAliasForSearch: "applicationNo",
+    fetchFilters: filterFunctions.SV,
+    _searchFn: () => SVService.search({ tenantId, filters }),
+  },
+  
+  /**
+ * PGRAI Workflow Module Configuration
+ *
+ * Configuration object for the PGRAI module used with the workflow/inbox engine.
+ * Defines how service data should be fetched, what keys to use in responses,
+ * and how filtering should be applied using predefined filter functions.
+ */
+  PGRAI: {
+    services: ["PGRAI"],
+    searchResponseKey: "ServiceWrappers",
+    businessIdsParamForSearch: "serviceRequestId",
+    businessIdAliasForSearch: "serviceRequestId",
+    fetchFilters: filterFunctions.PGRAI,
+    _searchFn: () => PGRAIService.search({ tenantId, filters }),
   },
 });
 

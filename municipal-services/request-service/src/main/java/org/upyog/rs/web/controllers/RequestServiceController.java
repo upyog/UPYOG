@@ -3,9 +3,13 @@ package org.upyog.rs.web.controllers;
 
 import java.util.List;
 
+<<<<<<< HEAD
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
+=======
+import javax.validation.Valid;
+>>>>>>> master-LTS
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -33,6 +37,7 @@ import org.upyog.rs.web.models.waterTanker.WaterTankerBookingSearchResponse;
 import org.upyog.rs.web.models.ResponseInfo.StatusEnum;
 
 import digit.models.coremodels.RequestInfoWrapper;
+<<<<<<< HEAD
 import lombok.extern.slf4j.Slf4j;
 
 @jakarta.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2025-01-16T15:46:56.897+05:30")
@@ -40,6 +45,15 @@ import lombok.extern.slf4j.Slf4j;
 @Controller
 @Slf4j
 @Tag(name = "Request Service", description = "APIs for Request Service operations")
+=======
+import io.swagger.annotations.ApiParam;
+import lombok.extern.slf4j.Slf4j;
+
+@javax.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2025-01-16T15:46:56.897+05:30")
+
+@Controller
+@Slf4j
+>>>>>>> master-LTS
 public class RequestServiceController {
 	
 	@Autowired
@@ -52,9 +66,14 @@ public class RequestServiceController {
 	private ValidatorService validatorService;
 
 	@PostMapping("/water-tanker/v1/_create")
+<<<<<<< HEAD
 	@Operation(summary = "Create application details", description = "Details for the water tanker booking time, payment and documents")
 	public ResponseEntity<WaterTankerBookingResponse> createWaterTankerBooking(
 
+=======
+	public ResponseEntity<WaterTankerBookingResponse> createWaterTankerBooking(
+			@ApiParam(value = "Details for the water tanker booking time, payment and documents", required = true)
+>>>>>>> master-LTS
 			@RequestBody WaterTankerBookingRequest waterTankerbookingRequest) {
 		log.info("waterTankerbookingRequest : {}" , waterTankerbookingRequest);
         validatorService.validateRequest(waterTankerbookingRequest);
@@ -68,9 +87,14 @@ public class RequestServiceController {
 	}
 
 	@PostMapping("/water-tanker/v1/_search")
+<<<<<<< HEAD
 	@Operation(summary = "Search application details", description = "Details for the water tanker booking time, payment and documents")
 	public ResponseEntity<WaterTankerBookingSearchResponse> searchWaterTankerBookingDetails(
 			 @Valid @RequestBody RequestInfoWrapper requestInfoWrapper,
+=======
+	public ResponseEntity<WaterTankerBookingSearchResponse> searchWaterTankerBookingDetails(
+			@ApiParam(value = "Details for the water tanker booking time, payment and documents", required = true) @Valid @RequestBody RequestInfoWrapper requestInfoWrapper,
+>>>>>>> master-LTS
 			@ModelAttribute WaterTankerBookingSearchCriteria waterTankerBookingSearchCriteria) {
 
 		List<WaterTankerBookingDetail> applications = null;
@@ -98,9 +122,14 @@ public class RequestServiceController {
 	}
 	
 	@PostMapping("/water-tanker/v1/_update")
+<<<<<<< HEAD
 	@Operation(summary = "Update application details", description = "Updated water tanker details and RequestInfo meta data.")
 	public ResponseEntity<WaterTankerBookingResponse> waterTankerUpdate(
 
+=======
+	public ResponseEntity<WaterTankerBookingResponse> waterTankerUpdate(
+			@ApiParam(value = "Updated water tanker details and RequestInfo meta data.", required = true)
+>>>>>>> master-LTS
 			@RequestBody WaterTankerBookingRequest waterTankerRequest) {
 		
 		WaterTankerBookingDetail waterTankerDetail = waterTankerService.updateWaterTankerBooking(waterTankerRequest, null);
@@ -113,9 +142,14 @@ public class RequestServiceController {
 	}
 
 	@PostMapping("/mobile-toilet/v1/_create")
+<<<<<<< HEAD
 	@Operation(summary = "Create application details",description = "Create Mobile Toilet Application with all the suitable details")
 	public ResponseEntity<MobileToiletBookingResponse> createMobileToiletBooking(
 
+=======
+	public ResponseEntity<MobileToiletBookingResponse> createMobileToiletBooking(
+			@ApiParam(value = "Details for the mobile Toilet booking time, payment and documents", required = true)
+>>>>>>> master-LTS
 			@RequestBody MobileToiletBookingRequest mobileToiletbookingRequest) {
 		log.info("mobileToiletbookingRequest : {}" , mobileToiletbookingRequest);
 		validatorService.validateRequest(mobileToiletbookingRequest);
@@ -129,9 +163,14 @@ public class RequestServiceController {
 	}
 
 	@PostMapping("/mobile-toilet/v1/_search")
+<<<<<<< HEAD
 	@Operation(summary = "Search application details",description = "Search Mobile Toilet Application details")
 	public ResponseEntity<MobileToiletBookingSearchResponse> searchMobileToiletBookingDetails(
 			 @Valid @RequestBody RequestInfoWrapper requestInfoWrapper,
+=======
+	public ResponseEntity<MobileToiletBookingSearchResponse> searchMobileToiletBookingDetails(
+			@ApiParam(value = "Details for the Mobile Toilet booking time, payment and documents", required = true) @Valid @RequestBody RequestInfoWrapper requestInfoWrapper,
+>>>>>>> master-LTS
 			@ModelAttribute MobileToiletBookingSearchCriteria mobileToiletBookingSearchCriteria) {
 
 		List<MobileToiletBookingDetail> applications = null;
@@ -159,8 +198,13 @@ public class RequestServiceController {
 	}
 
 	@PostMapping("/mobile-toilet/v1/_update")
+<<<<<<< HEAD
 	@Operation(summary = "Update application details",description = "Update Mobile Toilet details and RequestInfo meta data.")
 	public ResponseEntity<MobileToiletBookingResponse> mobileToiletUpdate(
+=======
+	public ResponseEntity<MobileToiletBookingResponse> mobileToiletUpdate(
+			@ApiParam(value = "Updated water tanker details and RequestInfo meta data.", required = true)
+>>>>>>> master-LTS
 			@RequestBody MobileToiletBookingRequest mobileToiletRequest) {
 
 		MobileToiletBookingDetail mobileToiletDetail = mobileToiletService.updateMobileToiletBooking(mobileToiletRequest, null);

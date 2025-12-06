@@ -2,8 +2,13 @@ package org.upyog.tp.web.models.billing;
 
 import java.util.List;
 
+<<<<<<< HEAD
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
+=======
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+>>>>>>> master-LTS
 
 import digit.models.coremodels.AuditDetails;
 import lombok.AllArgsConstructor;
@@ -28,7 +33,11 @@ public class TaxHeadMaster {
 	private String name;
 
 	private String code;
+<<<<<<< HEAD
 
+=======
+	
+>>>>>>> master-LTS
 	private List<GlCodeMaster> glCodes;
 
 	private Boolean isDebit = false;
@@ -38,10 +47,18 @@ public class TaxHeadMaster {
 	private Long validFrom;
 	@NotNull
 	private Long validTill;
+<<<<<<< HEAD
 
 	private Integer order;
 
 	private AuditDetails auditDetail;
 
+=======
+	
+	private Integer order;
+
+	private AuditDetails auditDetail;
+	
+>>>>>>> master-LTS
 
 }

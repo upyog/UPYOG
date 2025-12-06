@@ -1,0 +1,32 @@
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: PQM-VA
+spec:
+  schedule: "0 0 * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: IFMS-VA
+            image: egovio/pqm-cronjob
+            command: ["python3","cronJobAPIConfig.py"]
+            args: ["VA"]  
+            env:
+              - name: TENANT_ID
+                valueFrom:
+                  configMapKeyRef:
+                    name: egov-config
+                    key: state-level-tenant-id
+              - name: USER_SERVICE_HOST
+                valueFrom:
+                  configMapKeyRef:
+                    name: egov-service-host
+                    key: egov-user-egov
+              - name: PQM_SERVICE_HOST
+                valueFrom:
+                  configMapKeyRef:
+                    name: egov-service-host
+                    key: pqm
+          restartPolicy: OnFailure

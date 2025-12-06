@@ -43,7 +43,7 @@ const PTPropertyUnderStateAquire = ({ ...props }) => {
           </CardLabel> */}
           <div className="field" style={{ width: "55%" }}>
             <CheckBox
-              label={`${t("PT_MUTATION_STATE_ACQUISITION")}*`}
+              label={`${t("PT_MUTATION_STATE_ACQUISITION")}`+ <span className="check-page-link-button"> *</span>}
               name={"isPropertyUnderGovtPossession"}
               onChange={setPropertyUnderGovtPossession}
               checked={isPropertyUnderGovtPossession?.code === "YES" ? true : false}

@@ -18,7 +18,11 @@ public class TestRequestBuilder {
 
     /**
      * Creates a valid RequestServiceRequest for testing.
+<<<<<<< HEAD
      *
+=======
+     * 
+>>>>>>> master-LTS
      * @return A RequestServiceRequest with valid data
      */
     public static TreePruningBookingRequest createTreePruningRequest() {
@@ -86,10 +90,17 @@ public class TestRequestBuilder {
 
         return request;
     }
+<<<<<<< HEAD
 
     /**
      * Creates a valid RequestInfo object for testing.
      *
+=======
+    
+    /**
+     * Creates a valid RequestInfo object for testing.
+     * 
+>>>>>>> master-LTS
      * @return A RequestInfo with valid data
      */
     public static RequestInfo createRequestInfo() {
@@ -97,7 +108,11 @@ public class TestRequestBuilder {
         requestInfo.setApiId("api-id");
         requestInfo.setMsgId("msg-id");
         requestInfo.setTs(System.currentTimeMillis());
+<<<<<<< HEAD
 
+=======
+        
+>>>>>>> master-LTS
         User user = new User();
         user.setId(1L);
         user.setUuid(UUID.randomUUID().toString());
@@ -106,8 +121,16 @@ public class TestRequestBuilder {
         user.setMobileNumber("1234567890");
         user.setEmailId("test@example.com");
         user.setTenantId("pb");
+<<<<<<< HEAD
 
         requestInfo.setUserInfo(user);
         return requestInfo;
     }
 }
+=======
+        
+        requestInfo.setUserInfo(user);
+        return requestInfo;
+    }
+} 
+>>>>>>> master-LTS

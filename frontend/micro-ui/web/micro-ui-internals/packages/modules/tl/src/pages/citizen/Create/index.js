@@ -17,7 +17,7 @@ const CreateTradeLicence = ({ parentRoute }) => {
   let isReneworEditTrade = window.location.href.includes("/renew-trade/") || window.location.href.includes("/edit-application/")
 
   const stateId = Digit.ULBService.getStateId();
-  let { data: newConfig, isLoading } = Digit.Hooks.tl.useMDMS.getFormConfig(stateId, {});
+  // let { data: newConfig, isLoading } = Digit.Hooks.tl.useMDMS.getFormConfig(stateId, {});
 
   const goNext = (skipStep, index, isAddMultiple, key, isPTCreateSkip) => {
     let currentPath = pathname.split("/").pop(),
@@ -125,7 +125,8 @@ const CreateTradeLicence = ({ parentRoute }) => {
     clearParams();
     queryClient.invalidateQueries("TL_CREATE_TRADE");
   }
-  newConfig = newConfig ? newConfig : newConfigTL;
+  let newConfig = newConfigTL;
+  // newConfig ? newConfigTL : newConfigTL;
   newConfig?.forEach((obj) => {
     config = config.concat(obj.body.filter((a) => !a.hideInCitizen));
   });
@@ -139,12 +140,12 @@ const CreateTradeLicence = ({ parentRoute }) => {
   return (
     <Switch>
       {config?.map((routeObj, index) => {
-        const { component, texts, inputs, key, isSkipEnabled } = routeObj;
+        const { component, texts, inputs, key, isSkipEnabled, isMandatory } = routeObj;
         const Component = typeof component === "string" ? Digit.ComponentRegistryService.getComponent(component) : component;
         return (
           <Route path={`${match.path}/${routeObj.route}`} key={index}>
             <Component
-              config={{ texts, inputs, key, isSkipEnabled }}
+              config={{ texts, inputs, key, isSkipEnabled, isMandatory }}
               onSelect={handleSelect}
               onSkip={handleSkip}
               t={t}

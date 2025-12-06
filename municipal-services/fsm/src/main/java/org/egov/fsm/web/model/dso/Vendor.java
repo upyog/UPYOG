@@ -1,26 +1,22 @@
 package org.egov.fsm.web.model.dso;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonValue;
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.validation.Valid;
-
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.egov.fsm.web.model.AuditDetails;
 import org.egov.fsm.web.model.location.Address;
 import org.egov.fsm.web.model.user.User;
 import org.egov.fsm.web.model.vehicle.Vehicle;
 import org.hibernate.validator.constraints.SafeHtml;
 import org.springframework.validation.annotation.Validated;
-
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonValue;
-
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 /**
  * Capture the vendor information in the system.
@@ -59,6 +55,10 @@ public class Vendor {
 	@JsonProperty("drivers")
 	@Valid
 	private List<Driver> drivers;
+
+	@JsonProperty("workers")
+	@Valid
+	private List<VendorWorker> workers;
 
 	@JsonProperty("additionalDetails")
 	private Object additionalDetails;

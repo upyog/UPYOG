@@ -1,6 +1,10 @@
 package org.upyog.rs.config;
 
+<<<<<<< HEAD
 import jakarta.annotation.PostConstruct;
+=======
+import javax.annotation.PostConstruct;
+>>>>>>> master-LTS
 
 import org.egov.tracer.config.TracerConfiguration;
 import org.springframework.beans.factory.annotation.Value;

@@ -4,6 +4,8 @@ import jakarta.validation.constraints.Size;
 
 import org.egov.ptr.validator.SanitizeHtml;
 
+import org.hibernate.validator.constraints.SafeHtml;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.AllArgsConstructor;

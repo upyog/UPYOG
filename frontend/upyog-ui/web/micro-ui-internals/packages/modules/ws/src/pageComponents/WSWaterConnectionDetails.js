@@ -128,7 +128,11 @@ const WSWaterConnectionDetails = ({ t, config, userType, onSelect, formData }) =
       {userType === "citizen" && <Timeline currentStep={2} />}
       {!wsServiceCalculationLoading ? (
         <FormStep t={t} config={config} onSelect={handleSubmit} onSkip={onSkip} isDisabled={!proposedTaps || !proposedPipeSize || isDisableForNext} onAdd={onAdd}>
+<<<<<<< HEAD
           <CardLabel>{t("WS_NO_OF_TAPS_PROPOSED")}*</CardLabel>
+=======
+          <CardLabel>{t("WS_NO_OF_TAPS_PROPOSED")}<span className="check-page-link-button"> *</span></CardLabel>
+>>>>>>> master-LTS
           <TextInput
             isMandatory={false}
             optionKey="i18nKey"
@@ -143,7 +147,11 @@ const WSWaterConnectionDetails = ({ t, config, userType, onSelect, formData }) =
               type: "text",
             })}
           />
+<<<<<<< HEAD
           <CardLabel>{t("WS_PROPOSED_PIPE_SIZE")}*</CardLabel>
+=======
+          <CardLabel>{t("WS_PROPOSED_PIPE_SIZE")}<span className="check-page-link-button"> *</span></CardLabel>
+>>>>>>> master-LTS
           <RadioOrSelect
             name="proposedPipeSize"
             options={proposedPipeSizeList}

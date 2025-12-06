@@ -31,8 +31,12 @@ const Urls = {
 
   UserSearch: "/user/_search",
   UserLogout: "/user/_logout",
-
+  UserCreate:"/user/users/_createnovalidate",
+  UserUpdateAddressV2:"/user/_updateAddress",
+  UserSearchNewV2: "/user/users/v2/_search", 
   Shortener: "/egov-url-shortening/shortener",
+  UserCreateAddressV2: "/user/_createAddress", 
+  employeeDashboardSearch: "/employee-dashboard/_search",
 
   fsm: {
     search: "/fsm/v1/_search",
@@ -53,6 +57,7 @@ const Urls = {
     updateDriver: "/vendor/driver/v1/_update",
     vehicleTripCreate: "/vehicle/trip/v1/_create",
     advanceBalanceCalculate: "/fsm-calculator/v1/_advancebalancecalculate",
+    workerSearch: "/individual/v1/_search",
   },
 
   payment: {
@@ -99,8 +104,11 @@ const Urls = {
     payment_search: "/collection-services/payments/pet-services/_search",
     
   },
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> master-LTS
   dss: {
     dashboardConfig: "/dashboard-analytics/dashboard/getDashboardConfig",
     getCharts: "/dashboard-analytics/dashboard/getChartV2",
@@ -155,8 +163,12 @@ const Urls = {
   },
   edcr: {
     create: "/edcr/rest/dcr/scrutinize",
+    anonymousCreate: "/edcr/rest/dcr/anonymousScrutinize"
   },
-
+  preApproved:{
+    search: "/bpa-services/v1/preapprovedplan/_search",
+    estimate: "/bpa-calculator/_estimate",
+  },
   events: {
     search: "/egov-user-event/v1/events/_search",
     update: "/egov-user-event/v1/events/lat/_update",
@@ -196,6 +208,7 @@ const Urls = {
     disconnection_notice: "/pdf-service/v1/_createnosave",
     meter_search:"/ws-calculator/meterConnection/_search"
   },
+<<<<<<< HEAD
 digiLocker:{
   authorization:"/requester-services-dx/user/authorization/url",
   register :"/requester-services-dx/user/authorization/url/citizen",
@@ -203,6 +216,76 @@ digiLocker:{
   issueDoc:"/requester-services-dx/user/issuedfiles",
   uri:"/requester-services-dx/user/file"
 },
+=======
+
+   asset: {
+    create: "/asset-services/v1/assets/_create",
+    search: "/asset-services/v1/assets/_search",
+    update: "/asset-services/v1/assets/_update",
+    assign: "/asset-services/v1/assets/assignment/_create",
+    depriciationProcess:"/asset-services/v1/assets/depreciation/_process",  
+    maintenance:"/asset-services/maintenance/v1/_create",  
+    edit_maintenance:"/asset-services/maintenance/v1/_update", 
+    assets_Reciept_Search: "/asset-services/v1/assets/_search",    
+    assetDisposedCreate: "/asset-services/v1/disposal/_create",
+    depriciationList:"/asset-services/v1/assets/depreciation/list",   
+    maintenanceList:"/asset-services/maintenance/v1/_search", 
+    return_asset: "/asset-services/v1/assets/assignment/_update",  
+    disposalList:"/asset-services/v1/disposal/_search",
+    assetAssignable:"/asset-services/v1/assets/assignment/_search",   
+  },
+  ew: {
+    create: "/ewaste-services/ewaste-request/_create",
+    search: "/ewaste-services/ewaste-request/_search",
+    update: "/ewaste-services/ewaste-request/_update",
+  },
+
+  sv:{
+    create: "/sv-services/street-vending/_create",
+    search: "/sv-services/street-vending/_search",
+    update: "/sv-services/street-vending/_update",
+    deleteDraft:"/sv-services/street-vending/_deletedraft",
+  },
+
+  chb: {
+    create: "/chb-services/booking/v1/_create",
+    search: "/chb-services/booking/v1/_search",
+    update: "/chb-services/booking/v1/_update",
+    slot_search: "/chb-services/booking/v1/_slot-search",
+    estimateCreate: "/chb-services/booking/v1/_estimate"
+  },
+  ads: {
+    create: "/adv-services/booking/v1/_create",
+    search: "/adv-services/booking/v1/_search",
+    update: "/adv-services/booking/v1/_update",
+    slot_search: "/adv-services/booking/v1/_slot-search",
+    estimateCreate: "/adv-services/booking/v1/_estimate"
+
+  },
+
+  cm: {
+    search: "/verification-service/validity/_search"
+  },
+   // urls for making api calls for pgr-ai module
+   pgrAi:{
+    PGR_Create_AI:"/pgr-ai-services/v1/request/_create",
+    PGR_Search_AI: "/pgr-ai-services/v1/request/_search",
+    PGR_Update_AI:"/pgr-ai-services/v1/request/_update"
+  },
+
+digiLocker:{
+  authorization:"/requester-services-dx/digilocker/authorization/url",
+  register :"/requester-services-dx/digilocker/authorization/url/citizen",
+  token:"/requester-services-dx/digilocker/token/citizen",
+  issueDoc:"/requester-services-dx/digilocker/issuedfiles",
+  uri:"/requester-services-dx/digilocker/file",
+  oauth:"/user/digilocker/oauth/token"
+},
+eSign:{
+  pdfUrl:"/requester-services-dx/eSign/process",
+  fileStoreSearch:"/requester-services-dx/eSign/filestoreId/v1/_search"
+  },
+>>>>>>> master-LTS
   engagement: {
     document: {
       search: "/egov-document-uploader/egov-du/document/_search",
@@ -237,6 +320,29 @@ digiLocker:{
   access_control: "/access/v1/actions/mdms/_get",
   billgenie: "/egov-searcher",
   audit: "/inbox/v1/elastic/_search",
+
+  wt:{
+    create: "/request-service/water-tanker/v1/_create",
+    update: "/request-service/water-tanker/v1/_update",
+    search: "/request-service/water-tanker/v1/_search",
+  },
+  mt:{
+    create: "/request-service/mobile-toilet/v1/_create",
+    update: "/request-service/mobile-toilet/v1/_update",
+    search: "/request-service/mobile-toilet/v1/_search",
+  },
+  tp: {
+    create: "/tp-services/tree-pruning/v1/_create",
+    update: "/tp-services/tree-pruning/v1/_update",
+    search: "/tp-services/tree-pruning/v1/_search",
+  },
+
+  vendor: {
+    create: "/vendor-services/vendor/_create",
+    search: "/vendor-services/vendor/_search",
+    additionaldetailsCreate: "/vendor-management/api/v1/_create",
+    vendorcommonSearch: "/vendor-management/api/v1/vendorPlusAdditional/_search"
+  },
 };
 
 export default Urls;

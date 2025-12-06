@@ -20,37 +20,38 @@ const EngagementCard = () => {
 
   if (!isEmployee) return null;
   const tenantId = Digit.ULBService.getCurrentTenantId();
-  const { data: documentsCount, isLoading: isLoadingDocs } = Digit.Hooks.engagement.useDocSearch(
-    { tenantIds: tenantId },
-    {
-      select: (data) => {
-        return data?.totalCount;
-      },
-    }
-  );
-  const { data: MessagesCount, isLoading: isLoadingMessages } = Digit.Hooks.events.useInbox(
-    tenantId,
-    {},
-    { status: "ACTIVE,INACTIVE", eventTypes: "BROADCAST" },
-    {
-      select: (data) => data?.totalCount,
-    }
-  );
+  // const { data: documentsCount, isLoading: isLoadingDocs } = Digit.Hooks.engagement.useDocSearch(
+  //   { tenantIds: tenantId },
+  //   {
+  //     select: (data) => {
+  //       return data?.totalCount;
+  //     },
+  //   }
+  // );
+  // const { data: MessagesCount, isLoading: isLoadingMessages } = Digit.Hooks.events.useInbox(
+  //   tenantId,
+  //   {},
+  //   { status: "ACTIVE,INACTIVE", eventTypes: "BROADCAST" },
+  //   {
+  //     select: (data) => data?.totalCount,
+  //   }
+  // );
 
-  const { data: totalEvents, isLoading: isLoadingEvents } = Digit.Hooks.events.useInbox(
-    tenantId,
-    {},
-    { eventTypes: "EVENTSONGROUND" },
-    {
-      select: (data) => data?.totalCount,
-    }
-  );
+  // const { data: totalEvents, isLoading: isLoadingEvents } = Digit.Hooks.events.useInbox(
+  //   tenantId,
+  //   {},
+  //   { eventTypes: "EVENTSONGROUND" },
+  //   {
+  //     select: (data) => data?.totalCount,
+  //   }
+  // );
 
   const ServiceDefinitionCriteria =  {
     "tenantId": tenantId,
     "code": [],
     "module": ["engagement"],
   }
+<<<<<<< HEAD
 
   const { data: surveysCount, isLoading: isLoadingSurveys } = Digit.Hooks.survey.useCfdefinitionsearch({ServiceDefinitionCriteria});
 
@@ -58,6 +59,15 @@ const EngagementCard = () => {
   const totalEventsCount = useMemo(() => (isLoadingEvents ? "-" : totalEvents), [isLoadingEvents, totalEvents]);
   const totalMessagesCount = useMemo(() => (isLoadingMessages ? "-" : MessagesCount), [isLoadingMessages, MessagesCount]);
   const totalSurveysCount = useMemo(() => (isLoadingSurveys ? "-" : surveysCount.TotalCount), [isLoadingSurveys, surveysCount]);
+=======
+
+  const { data: surveysCount, isLoading: isLoadingSurveys } = Digit.Hooks.survey.useCfdefinitionsearch({ServiceDefinitionCriteria});
+
+  // const totalDocsCount = useMemo(() => (isLoadingDocs ? "-" : documentsCount), [isLoadingDocs, documentsCount]);
+  // const totalEventsCount = useMemo(() => (isLoadingEvents ? "-" : totalEvents), [isLoadingEvents, totalEvents]);
+  // const totalMessagesCount = useMemo(() => (isLoadingMessages ? "-" : MessagesCount), [isLoadingMessages, MessagesCount]);
+  // const totalSurveysCount = useMemo(() => (isLoadingSurveys ? "-" : surveysCount?.TotalCount || 0), [isLoadingSurveys, surveysCount]);
+>>>>>>> master-LTS
 
   const { t } = useTranslation();
   let result = null;
@@ -67,14 +77,14 @@ const EngagementCard = () => {
     moduleName: t("CS_COMMON_SURVEYS"),
     kpis: [
       {
-        count: totalSurveysCount,
+        // count: totalSurveysCount,
         label: t("TOTAL_SURVEYS"),
         link: `/upyog-ui/employee/engagement/surveys/inbox`,
       },
     ],
     links: [
       {
-        count: totalSurveysCount,
+        // count: totalSurveysCount,
         label: t("ES_TITLE_INBOX"),
         link: `/upyog-ui/employee/engagement/surveys/inbox`,
       },
@@ -90,7 +100,7 @@ const EngagementCard = () => {
     moduleName: t("ACTION_TEST_PUBLIC_MESSAGE_BROADCAST"),
     kpis: [
       {
-        count: totalMessagesCount,
+        // count: totalMessagesCount,
         label: t("TOTAL_MESSAGES"),
         link: `/upyog-ui/employee/engagement/messages/inbox`,
       },
@@ -98,7 +108,7 @@ const EngagementCard = () => {
 
     links: [
       {
-        count: totalMessagesCount,
+        // count: totalMessagesCount,
         label: t("ES_TITLE_INBOX"),
         link: `/upyog-ui/employee/engagement/messages/inbox`,
       },
@@ -113,7 +123,7 @@ const EngagementCard = () => {
     moduleName: t("TOTAL_EVENTS"),
     kpis: [
       {
-        count: totalEventsCount,
+        // count: totalEventsCount,
         label: t("TOTAL_EVENTS"),
         link: `/upyog-ui/employee/engagement/event/inbox`,
       },
@@ -121,7 +131,7 @@ const EngagementCard = () => {
 
     links: [
       {
-        count: totalEventsCount,
+        // count: totalEventsCount,
         label: t("ES_TITLE_INBOX"),
         link: `/upyog-ui/employee/engagement/event/inbox`,
       },
@@ -136,14 +146,14 @@ const EngagementCard = () => {
     moduleName: t("ES_TITLE_DOCS"),
     kpis: [
       {
-        count: totalDocsCount,
+        // count: totalDocsCount,
         label: t("TOTAL_DOCUMENTS"),
         link: `/upyog-ui/employee/engagement/documents/inbox`,
       },
     ],
     links: [
       {
-        count: totalDocsCount,
+        // count: totalDocsCount,
         label: t("ES_TITLE_INBOX"),
         link: `/upyog-ui/employee/engagement/documents/inbox`,
       },

@@ -170,7 +170,7 @@ public class FSMConstants {
 	
 	public static final String FSM_POST_PAY_BUSINESSSERVICE = "FSM_POST_PAY_SERVICE";
 	
-	public static final String FSM_ADVANCE_PAY_BUSINESSSERVICE = "FSM_ADVANCE_PAY_SERVICE_V1";
+	public static final String FSM_ADVANCE_PAY_BUSINESSSERVICE = "FSM_ADVANCE_PAY_SERVICE";
 
  	public static final String FSM_PAYMENT_PREFERENCE_POST_PAY = "POST_PAY";
 	
@@ -224,6 +224,7 @@ public class FSMConstants {
 
 	public static final String FSM_ZERO_PRICE_SERVICE = "FSM_ZERO_PAY_SERVICE";
 	public static final String FSM_LATER_PAY_SERVICE = "PAY_LATER_SERVICE";
+	public static final String WAITING_FOR_DISPOSAL = "WAITING_FOR_DISPOSAL";
 
 	
 }

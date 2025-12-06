@@ -12,8 +12,13 @@ import org.upyog.pgrai.web.models.AuditDetails;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotEmpty;
 
+<<<<<<< HEAD
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
+=======
+import javax.validation.Valid;
+import javax.validation.constraints.*;
+>>>>>>> master-LTS
 
 
 /**

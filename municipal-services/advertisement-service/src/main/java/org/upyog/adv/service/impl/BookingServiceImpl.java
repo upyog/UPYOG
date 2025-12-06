@@ -7,7 +7,11 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+<<<<<<< HEAD
 import jakarta.validation.Valid;
+=======
+import javax.validation.Valid;
+>>>>>>> master-LTS
 
 import org.apache.commons.lang.StringUtils;
 import org.egov.common.contract.request.RequestInfo;

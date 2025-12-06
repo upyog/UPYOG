@@ -70,7 +70,7 @@ const transformer = (formKey, form = {}, state = {}) => {
     profileEmployee: () => {
       const { fields } = form;
       let { userInfo: user } = state.auth;
-      user = { ...user, name: fields.name.value, mobileNumber: fields.phonenumber.value, emailId: fields.email.value };
+      user = { ...user, name: fields.name.value, gender: fields.gender.value, mobileNumber: fields.phonenumber.value, emailId: fields.email.value };
       const photos = form.files && form.files["photo"];
       let photo = (photos && photos.length && photos[0]) || null;
       if(photo&&photo.fileStoreId){

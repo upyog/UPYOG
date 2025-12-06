@@ -3,9 +3,15 @@ package org.upyog.sv.web.models.workflow;
 import java.util.ArrayList;
 import java.util.List;
 
+<<<<<<< HEAD
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+=======
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+>>>>>>> master-LTS
 
 import org.upyog.sv.web.models.common.User;
 

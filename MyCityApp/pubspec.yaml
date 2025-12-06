@@ -1,0 +1,133 @@
+name: mobile_app
+description: "A new Flutter project."
+
+publish_to: "none" # Remove this line if you wish to publish to pub.dev
+
+version: 2.4.0+131
+
+# environment:
+#   sdk: ">=3.3.2 <4.0.0"
+environment:
+  sdk: ^3.6.0
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  cupertino_icons: ^1.0.8
+  get: ^4.6.6
+  hive: ^2.2.3
+  hive_flutter: ^1.1.0
+  http: ^1.2.1
+  http_parser: ^4.0.2
+  path_provider: ^2.1.3
+  sms_autofill: ^2.4.0
+  flutter_svg: ^2.0.10+1
+  flutter_inappwebview: ^6.1.5 #^5.8.0
+  url_launcher: ^6.3.0
+  smooth_page_indicator: ^1.1.0
+  timelines_plus: ^1.0.2
+  flutter_rating_bar: ^4.0.1
+  photo_view: ^0.15.0
+  image_picker: ^1.1.2
+  json_annotation: ^4.9.0
+  dio: ^5.4.3+1
+  mime: ^2.0.0
+  syncfusion_flutter_pdfviewer: ^28.1.35
+  flutter_launcher_icons: ^0.14.2
+  flutter_localizations:
+    sdk: flutter
+  flutter_image_slideshow: ^0.1.6
+  otp_text_field: ^1.1.3
+  share_plus: ^10.0.2
+  flutter_screenutil: ^5.9.3
+
+  #Firebase
+  firebase_messaging: ^15.0.1
+  flutter_local_notifications: ^18.0.1
+  firebase_core: ^3.1.0
+  firebase_auth: ^5.1.0
+  cloud_firestore: ^5.0.1
+
+  #NttDataPayment
+  encrypt: ^5.0.3
+  crypto: ^3.0.3
+  intl: ^0.19.0
+  flutter_native_splash: ^2.4.0
+  syncfusion_flutter_datagrid: ^28.1.35
+  google_fonts: ^6.2.1
+  dropdown_search: ^6.0.1
+  geolocator: ^13.0.1
+  geocoding: ^3.0.0
+  file_picker: ^8.1.6
+  material_symbols_icons: ^4.2799.0
+  nuts_activity_indicator: ^1.0.0
+  rxdart: ^0.28.0
+  table_calendar: ^3.1.2
+  # uuid: ^4.4.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  flutter_lints: ^5.0.0
+  json_serializable: ^6.8.0
+  build_runner: ^2.4.12
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/
+    - assets/images/
+    - assets/aipay/
+    - assets/icons/
+    - assets/v2_images/
+
+flutter_launcher_icons:
+  android: "launcher_icon1"
+  ios: true
+  image_path: "assets/images/launcherIcon1.png"
+  adaptive_icon_background: "#ffffff"
+  adaptive_icon_foreground: "assets/images/launcherIcon1.png"
+  remove_alpha_ios: true
+
+# flutter_native_splash-development.yaml
+flutter_native_splash:
+  color: "#F6FCFF"
+  image: "assets/images/launcherIcon1.png"
+  branding: "assets/images/niuaWithName.png"
+
+  android_12:
+    color: "#F6FCFF"
+    image: "assets/images/launcherIcon1.png"
+    branding: "assets/images/niuaWithName.png"
+
+  android: true
+  ios: true
+
+  web: false
+
+
+  # fonts:
+  #   - family: Inter
+  #     fonts:
+  #       - asset: assets/fonts/Inter-Regular.ttf
+  #         weight: 400
+  #       - asset: assets/fonts/Inter-Medium.ttf
+  #         weight: 500
+  #       - asset: assets/fonts/Inter-SemiBold.ttf
+  #         weight: 600
+  #       - asset: assets/fonts/Inter-Bold.ttf
+  #         weight: 700
+
+  #   - family: Schyler
+  #     fonts:
+  #       - asset: fonts/Schyler-Regular.ttf
+  #       - asset: fonts/Schyler-Italic.ttf
+  #         style: italic
+  #   - family: Trajan Pro
+  #     fonts:
+  #       - asset: fonts/TrajanPro.ttf
+  #       - asset: fonts/TrajanPro_Bold.ttf
+  #         weight: 700

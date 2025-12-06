@@ -1,9 +1,13 @@
 import React, { useEffect, useState } from "react";
+<<<<<<< HEAD
 import { FormStep, RadioOrSelect, RadioButtons, LabelFieldPair, CardLabel, Dropdown, Loader } from "@upyog/digit-ui-react-components";
+=======
+import { RadioOrSelect, RadioButtons, LabelFieldPair, CardLabel, Dropdown, Loader } from "@upyog/digit-ui-react-components";
+>>>>>>> master-LTS
 import { cardBodyStyle } from "../utils";
 import { useLocation } from "react-router-dom";
 import Timeline from "../components/TLTimeline";
-
+import FormStep from "../../../../react-components/src/molecules/FormStep";
 const SelectSpecialOwnerCategoryType = ({ t, config, onSelect, userType, formData, ownerIndex }) => {
   const { pathname: url } = useLocation();
   const editScreen = url.includes("/modify-application/");

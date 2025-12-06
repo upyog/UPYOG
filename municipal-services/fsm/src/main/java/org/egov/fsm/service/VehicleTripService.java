@@ -62,17 +62,18 @@ public class VehicleTripService {
 		if (FSMConstants.FSM_PAYMENT_PREFERENCE_POST_PAY.equalsIgnoreCase(fsmRequest.getFsm().getPaymentPreference())
 				&& fsmRequest.getWorkflow().getAction().equalsIgnoreCase(FSMConstants.WF_ACTION_SCHEDULE)) {
 			postPayRequestForTripUpdate(remainingNumberOfTrips, increaseTrip, fsmRequest, fsm);
-		} 
 
-		 else if (fsmRequest.getFsm().getAdvanceAmount() == null && fsmRequest.getFsm().getPaymentPreference() != null
+		}
+
+		else if (fsmRequest.getFsm().getAdvanceAmount() == null && fsmRequest.getFsm().getPaymentPreference() != null
 
 				&& !(FSMConstants.FSM_PAYMENT_PREFERENCE_POST_PAY
 						.equalsIgnoreCase(fsmRequest.getFsm().getPaymentPreference()))
 				|| fsmRequest.getWorkflow().getAction().equalsIgnoreCase(FSMConstants.WF_ACTION_UPDATE)) {
 
-				prePayRequestForTripUpdate(remainingNumberOfTrips, increaseTrip, fsmRequest, fsm, oldNumberOfTrips);
+			prePayRequestForTripUpdate(remainingNumberOfTrips, increaseTrip, fsmRequest, fsm, oldNumberOfTrips);
 
-			}
+		}
 	}
 
 	private void prePayRequestForTripUpdate(Integer remainingNumberOfTrips, boolean increaseTrip, FSMRequest fsmRequest,
@@ -86,13 +87,13 @@ public class VehicleTripService {
 			vehicleId = vehicleTripsForApplication.get(0).getVehicle().getId();
 
 		}
-		if (vehicleId !=null && !vehicleId.equalsIgnoreCase(fsmRequest.getFsm().getVehicleId())) {
+		if (vehicleId != null && !vehicleId.equalsIgnoreCase(fsmRequest.getFsm().getVehicleId())) {
 
 			decreaseTripWhileUpdate(fsmRequest, fsm, oldNumberOfTrips);
 			increaseUpdateTripDetails(fsmRequest.getFsm().getNoOfTrips(), fsmRequest, fsm);
 		} else {
 
-			List<VehicleTripDetail> vehicleTripDetails = fsmRepository.getTrpiDetails(fsm.getApplicationNo(), 0);
+			List<VehicleTripDetail> vehicleTripDetails = fsmRepository.getTrpiDetails(fsm.getApplicationNo(), 0, false);
 			log.info("vehicleTripDetails :: " + vehicleTripDetails.size());
 			if (!vehicleTripDetails.isEmpty() && oldNumberOfTrips < fsm.getNoOfTrips()) {
 				remainingNumberOfTrips = fsm.getNoOfTrips() - oldNumberOfTrips;
@@ -108,6 +109,7 @@ public class VehicleTripService {
 				remainingNumberOfTrips = fsm.getNoOfTrips();
 				increaseTrip = true;
 			}
+
 			increaseOrDecreaseTrip(remainingNumberOfTrips, increaseTrip, fsmRequest, fsm);
 		}
 	}
@@ -119,10 +121,11 @@ public class VehicleTripService {
 
 	private void increaseOrDecreaseTrip(Integer remainingNumberOfTrips, boolean increaseTrip, FSMRequest fsmRequest,
 			FSM fsm) {
-		log.debug("remainingNumberOfTrips :: " + remainingNumberOfTrips + " increaseTrip ::" + increaseTrip);
+		log.info("remainingNumberOfTrips :: " + remainingNumberOfTrips + " increaseTrip ::" + increaseTrip);
 		try {
 			if (remainingNumberOfTrips != 0 && increaseTrip) {
 				increaseUpdateTripDetails(remainingNumberOfTrips, fsmRequest, fsm);
+
 			}
 			if (!increaseTrip) {
 				decreaseTripWhileUpdate(fsmRequest, fsm, remainingNumberOfTrips);
@@ -156,29 +159,29 @@ public class VehicleTripService {
 			vehicleTripsList.add(vehicleTrip);
 		}
 		VehicleTripResponse vehicleTripResponse = new VehicleTripResponse();
+		log.info("increaseUpdateTripDetails for pre pay");
 		updateCreatedVehicleTrip(fsmRequest, vehicleTripResponse, vehicleTripsList, createUri);
 
 	}
 
 	private void updateCreatedVehicleTrip(FSMRequest fsmRequest, VehicleTripResponse vehicleTripResponse,
 			List<VehicleTrip> vehicleTripsList, StringBuilder createUri) {
-		log.debug("WORKFLOW ACTION==> " + fsmRequest.getWorkflow().getAction());
+		log.info("WORKFLOW ACTION==> " + fsmRequest.getWorkflow().getAction());
 
-		
-			log.debug("Vehicle Trip Request call ::" + vehicleTripResponse);
-			VehicleTripRequest tripRequest = VehicleTripRequest.builder().vehicleTrip(vehicleTripsList)
-					.requestInfo(fsmRequest.getRequestInfo())
-					.workflow(Workflow.builder().action(FSMConstants.TRIP_READY_FOR_DISPOSAL).build()).build();
-			serviceRequestRepository.fetchResult(createUri, tripRequest);
+		log.info("Vehicle Trip Request call ::" + vehicleTripResponse);
+		VehicleTripRequest tripRequest = VehicleTripRequest.builder().vehicleTrip(vehicleTripsList)
+				.requestInfo(fsmRequest.getRequestInfo())
+				.workflow(Workflow.builder().action(FSMConstants.TRIP_READY_FOR_DISPOSAL).build()).build();
 
-
+		serviceRequestRepository.fetchResult(createUri, tripRequest);
 
 	}
 
 	private void decreaseTripWhileUpdate(FSMRequest fsmRequest, FSM fsm, Integer remainingNumberOfTrips) {
 		log.debug("fsmRequest.getWorkflow().getAction()-->" + fsmRequest.getWorkflow().getAction());
 		List<VehicleTripDetail> vehicleTripDetails = fsmRepository.getTrpiDetails(fsm.getApplicationNo(),
-				remainingNumberOfTrips);
+				remainingNumberOfTrips, true);
+
 		if (vehicleTripDetails != null && !vehicleTripDetails.isEmpty()) {
 			List<VehicleTrip> vehicleTripList = new ArrayList<>();
 			AuditDetails auditDetails = new AuditDetails();
@@ -321,6 +324,17 @@ public class VehicleTripService {
 				throw new CustomException(FSMErrorConstants.ILLEGAL_ARGUMENT_EXCEPTION,
 						FSMConstants.OBJECTMAPPER_CONVERT_IN_USER_CALL);
 			}
+		}
+	}
+
+	public void ValidatedecreaseTripWhileUpdate(FSMRequest fsmRequest, FSM fsm) {
+		List<VehicleTripDetail> vehicleTripDetails = fsmRepository.getTrpiDetails(fsm.getApplicationNo(), 0, false);
+
+		Integer remainingNumberOfTrips = fsm.getNoOfTrips() - fsmRequest.getFsm().getNoOfTrips();
+		List<VehicleTrip> vehicleTrips = getVehicleTrips(fsmRequest, FSMConstants.WAITING_FOR_DISPOSAL, true);
+		if (!vehicleTripDetails.isEmpty() && vehicleTrips.size() < remainingNumberOfTrips) {
+			throw new CustomException(FSMErrorConstants.DECREASE_NOT_POSSIBLE,
+					"Trips are already disposed  So, Decrease is not possible ");
 		}
 	}
 }

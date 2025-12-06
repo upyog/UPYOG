@@ -55,6 +55,7 @@ import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Date;
 
 @Repository
 public interface BudgetDetailRepository extends JpaRepository<BudgetDetail, java.lang.Long> {
@@ -75,4 +76,7 @@ public interface BudgetDetailRepository extends JpaRepository<BudgetDetail, java
     @Query("from BudgetDetail where uniqueNo=:uniqueNo and budget in (select id from Budget where referenceBudget.id=:budgetId)")
     BudgetDetail findByReferenceBudget(@Param("uniqueNo") String uniqueNo, @Param("budgetId") Long budgetId);
 
+    @Query("SELECT MAX(bd.lastModifiedDate) FROM BudgetDetail bd WHERE bd.budget IN (" +
+       "SELECT b.id FROM Budget b WHERE b.materializedPath LIKE CONCAT(:path, '.%'))")
+        Date findLastModifiedDateByMaterializedPath(@Param("path") String materializedPath);
 }

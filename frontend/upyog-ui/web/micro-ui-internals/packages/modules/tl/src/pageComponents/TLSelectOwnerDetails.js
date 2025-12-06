@@ -227,7 +227,11 @@ const TLSelectOwnerDetails = ({ t, config, onSelect, userType, formData }) => {
             return (
               <div key={`${field}-${index}`}>
                 <div>
+<<<<<<< HEAD
                   <CardLabel>{`${t("TL_INSTITUTION_NAME_LABEL")}*`}</CardLabel>
+=======
+                  <CardLabel>{`${t("TL_INSTITUTION_NAME_LABEL")}`}<span className="check-page-link-button"> *</span></CardLabel>
+>>>>>>> master-LTS
                   <TextInput
                     t={t}
                     type={"text"}
@@ -246,7 +250,11 @@ const TLSelectOwnerDetails = ({ t, config, onSelect, userType, formData }) => {
                       },
                     }}
                   />
+<<<<<<< HEAD
                   <CardLabel>{`${t("TL_INSTITUTION_TYPE_LABEL")}*`}</CardLabel>
+=======
+                  <CardLabel>{`${t("TL_INSTITUTION_TYPE_LABEL")}`}<span className="check-page-link-button"> *</span></CardLabel>
+>>>>>>> master-LTS
                   <Dropdown
                     t={t}
                     option={institutionOwnershipTypeOptions}
@@ -257,7 +265,11 @@ const TLSelectOwnerDetails = ({ t, config, onSelect, userType, formData }) => {
                     optionKey="i18nKey"
                   />
                   <CardHeader>{t("TL_AUTHORIZED_PERSON_DETAILS")}</CardHeader>
+<<<<<<< HEAD
                   <CardLabel>{`${t("TL_NEW_OWNER_DETAILS_NAME_LABEL")}`}</CardLabel>
+=======
+                  <CardLabel>{`${t("TL_NEW_OWNER_DETAILS_NAME_LABEL")}`}<span className="check-page-link-button"> *</span></CardLabel>
+>>>>>>> master-LTS
                   <TextInput
                     t={t}
                     type={"text"}
@@ -269,7 +281,11 @@ const TLSelectOwnerDetails = ({ t, config, onSelect, userType, formData }) => {
                     {...{
                       validation: {
                         // isRequired: true,
+<<<<<<< HEAD
                         pattern: "^[a-z0-9]+( [a-z0-9]+)*$",
+=======
+                        pattern: "^[a-zA-Z]+( [a-zA-Z]+)*$",
+>>>>>>> master-LTS
                         type: "text",
                         title: t("TL_NAME_ERROR_MESSAGE"),
                       },
@@ -294,7 +310,11 @@ const TLSelectOwnerDetails = ({ t, config, onSelect, userType, formData }) => {
                       },
                     }}
                   />
+<<<<<<< HEAD
                   <CardLabel>{`${t("TL_MOBILE_NUMBER_LABEL")}*`}</CardLabel>
+=======
+                  <CardLabel>{`${t("TL_MOBILE_NUMBER_LABEL")}`}<span className="check-page-link-button"> *</span></CardLabel>
+>>>>>>> master-LTS
                   <div className="field-container">
                     <span className="employee-card-input employee-card-input--front" style={{ marginTop: "-1px" }}>
                       +91
@@ -373,7 +393,11 @@ const TLSelectOwnerDetails = ({ t, config, onSelect, userType, formData }) => {
   return (
     <React.Fragment>
       {window.location.href.includes("/citizen") ? <Timeline currentStep={2} /> : null}
+<<<<<<< HEAD
       <FormStep config={config} onSelect={goNext} onSkip={onSkip} t={t} isDisabled={false} forcedError={t(error)}>
+=======
+      <FormStep config={config} onSelect={goNext} onSkip={onSkip} t={t} isDisabled={typeOfOwner=="MULTIOWNER" ? formState?.length<2 ? true : false : false} forcedError={t(error)}>
+>>>>>>> master-LTS
         {formState?.map((field, index) => {
           return (
             <div key={`${field}-${index}`}>
@@ -394,7 +418,11 @@ const TLSelectOwnerDetails = ({ t, config, onSelect, userType, formData }) => {
               >
                 <CardLabel style={{}}>{`${t(
                   "TL_NEW_OWNER_DETAILS_NAME_LABEL"
+<<<<<<< HEAD
                 )}*`}</CardLabel>
+=======
+                )}`}<span className="check-page-link-button"> *</span></CardLabel>
+>>>>>>> master-LTS
                 {typeOfOwner === "MULTIOWNER" && (
                   <LinkButton
                     label={
@@ -440,7 +468,11 @@ const TLSelectOwnerDetails = ({ t, config, onSelect, userType, formData }) => {
                     },
                   }}
                 />
+<<<<<<< HEAD
                 <CardLabel>{`${t("TL_NEW_OWNER_DETAILS_GENDER_LABEL")}*`}</CardLabel>
+=======
+                <CardLabel>{`${t("TL_NEW_OWNER_DETAILS_GENDER_LABEL")}`}<span className="check-page-link-button"> *</span></CardLabel>
+>>>>>>> master-LTS
                 {!isGenderLoading ? (
                   <RadioButtons
                     t={t}
@@ -456,7 +488,11 @@ const TLSelectOwnerDetails = ({ t, config, onSelect, userType, formData }) => {
                 ) : (
                   <Loader />
                 )}
+<<<<<<< HEAD
                 <CardLabel>{`${t("TL_MOBILE_NUMBER_LABEL")}*`}</CardLabel>
+=======
+                <CardLabel>{`${t("TL_MOBILE_NUMBER_LABEL")}`}<span className="check-page-link-button"> *</span></CardLabel>
+>>>>>>> master-LTS
                 <div className="field-container">
                   <span className="employee-card-input employee-card-input--front" style={{ marginTop: "-1px" }}>
                     +91
@@ -482,7 +518,11 @@ const TLSelectOwnerDetails = ({ t, config, onSelect, userType, formData }) => {
                     }}
                   />
                 </div>
+<<<<<<< HEAD
                 <CardLabel>{`${t("TL_NEW_OWNER_DETAILS_GUARDIAN_LABEL")}*`}</CardLabel>
+=======
+                <CardLabel>{`${t("TL_NEW_OWNER_DETAILS_GUARDIAN_LABEL")}`}<span className="check-page-link-button"> *</span></CardLabel>
+>>>>>>> master-LTS
                 <TextInput
                   style={typeOfOwner === "MULTIOWNER" ? { background: "#FAFAFA" } : {}}
                   t={t}
@@ -502,7 +542,11 @@ const TLSelectOwnerDetails = ({ t, config, onSelect, userType, formData }) => {
                     },
                   }}
                 />
+<<<<<<< HEAD
                 <CardLabel>{`${t("TL_RELATIONSHIP_WITH_GUARDIAN_LABEL")}*`}</CardLabel>
+=======
+                <CardLabel>{`${t("TL_RELATIONSHIP_WITH_GUARDIAN_LABEL")}`}<span className="check-page-link-button"> *</span></CardLabel>
+>>>>>>> master-LTS
                 <RadioButtons
                   t={t}
                   options={relationshipMenu}

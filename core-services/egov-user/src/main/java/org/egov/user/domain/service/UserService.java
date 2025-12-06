@@ -1,26 +1,26 @@
 package org.egov.user.domain.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectReader;
-import com.fasterxml.jackson.databind.ObjectWriter;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
 import org.egov.user.domain.exception.*;
+<<<<<<< HEAD
 import org.egov.user.domain.model.LoggedInUserUpdatePasswordRequest;
 import org.egov.user.domain.model.NonLoggedInUserUpdatePasswordRequest;
 import org.egov.user.domain.model.Role;
 import org.egov.user.domain.model.User;
 import org.egov.user.domain.model.UserSearchCriteria;
+=======
+import org.egov.user.domain.model.*;
+import org.egov.user.domain.model.enums.AddressType;
+>>>>>>> master-LTS
 import org.egov.user.domain.model.enums.UserType;
 import org.egov.user.domain.service.utils.EncryptionDecryptionUtil;
 import org.egov.user.domain.service.utils.NotificationUtil;
+import org.egov.user.domain.service.utils.UserConstants;
 import org.egov.user.persistence.dto.FailedLoginAttempt;
+import org.egov.user.persistence.repository.AddressRepository;
 import org.egov.user.persistence.repository.FileStoreRepository;
 import org.egov.user.persistence.repository.OtpRepository;
 import org.egov.user.persistence.repository.UserRepository;
@@ -38,7 +38,6 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
-import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
@@ -71,10 +70,15 @@ public class UserService {
     private boolean isEmployeeLoginOtpBased;
     private FileStoreRepository fileRepository;
     private EncryptionDecryptionUtil encryptionDecryptionUtil;
+<<<<<<< HEAD
     //private TokenStore tokenStore;
     
     // CHANGED: TokenStore -> OAuth2AuthorizationService
     private OAuth2AuthorizationService authorizationService;
+=======
+    private TokenStore tokenStore;
+    private AddressRepository addressRepository;
+>>>>>>> master-LTS
 
     @Value("${egov.user.host}")
     private String userHost;
@@ -103,12 +107,16 @@ public class UserService {
     @Value("${egov.user.pwd.pattern.max.length}")
     private Integer pwdMaxLength;
 
+    @Value("${user.address.mandatory.fields.enabled}")
+    private boolean addressMandatoryFieldsEnabled;
+
     @Autowired
     private RestTemplate restTemplate;
 
     @Autowired
     private NotificationUtil notificationUtil;
 
+<<<<<<< HEAD
 	public UserService(UserRepository userRepository, OtpRepository otpRepository, FileStoreRepository fileRepository,
 			PasswordEncoder passwordEncoder, EncryptionDecryptionUtil encryptionDecryptionUtil,
 			// REMOVED: OAuth2AuthorizationService authorizationService,
@@ -131,6 +139,30 @@ public class UserService {
 		this.pwdMaxLength = pwdMaxLength;
 		this.pwdMinLength = pwdMinLength;
 	}
+=======
+    public UserService(UserRepository userRepository, OtpRepository otpRepository, FileStoreRepository fileRepository,
+                       PasswordEncoder passwordEncoder, EncryptionDecryptionUtil encryptionDecryptionUtil, TokenStore tokenStore,
+                       @Value("${default.password.expiry.in.days}") int defaultPasswordExpiryInDays,
+                       @Value("${citizen.login.password.otp.enabled}") boolean isCitizenLoginOtpBased,
+                       @Value("${employee.login.password.otp.enabled}") boolean isEmployeeLoginOtpBased,
+                       @Value("${egov.user.pwd.pattern}") String pwdRegex,
+                       @Value("${egov.user.pwd.pattern.max.length}") Integer pwdMaxLength,
+                       @Value("${egov.user.pwd.pattern.min.length}") Integer pwdMinLength, AddressRepository addressRepository) {
+        this.userRepository = userRepository;
+        this.otpRepository = otpRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.defaultPasswordExpiryInDays = defaultPasswordExpiryInDays;
+        this.isCitizenLoginOtpBased = isCitizenLoginOtpBased;
+        this.isEmployeeLoginOtpBased = isEmployeeLoginOtpBased;
+        this.fileRepository = fileRepository;
+        this.encryptionDecryptionUtil = encryptionDecryptionUtil;
+        this.tokenStore = tokenStore;
+        this.pwdRegex = pwdRegex;
+        this.pwdMaxLength = pwdMaxLength;
+        this.pwdMinLength = pwdMinLength;
+        this.addressRepository = addressRepository;
+    }
+>>>>>>> master-LTS
 
     /**
      * get user By UserName And TenantId
@@ -318,6 +350,10 @@ public class UserService {
         log.info("Search Criteria :-"+ searchCriteria);
         List<org.egov.user.domain.model.User> list = userRepository.findAll(searchCriteria);
 
+        if (list.isEmpty()) {
+            return Collections.emptyList();
+        }
+
         /* decrypt here / final reponse decrypted*/
 
         // Decrypt user list - role preservation is now handled in EncryptionDecryptionUtil
@@ -333,7 +369,7 @@ public class UserService {
             // allowing the request to succeed even with corrupted ciphertext in database
         }
 
-        setFileStoreUrlsByFileStoreIds(list);
+        //setFileStoreUrlsByFileStoreIds(list);
         return list;
     }
 
@@ -488,7 +524,11 @@ public class UserService {
      */
     // TODO Fix date formats
     public User updateWithoutOtpValidation(User user, RequestInfo requestInfo) {
+<<<<<<< HEAD
 
+=======
+        
+>>>>>>> master-LTS
          	User existingUser = getUserByUuid(user.getUuid());
             user.setTenantId(getStateLevelTenantForCitizen(user.getTenantId(), user.getType()));
             validateUserRoles(user);
@@ -568,7 +608,7 @@ public class UserService {
         existingUser = encryptionDecryptionUtil.decryptObject(existingUser, "UserSelf", User.class, requestInfo);
         updatedUser = encryptionDecryptionUtil.decryptObject(updatedUser, "UserSelf", User.class, requestInfo);
 
-        setFileStoreUrlsByFileStoreIds(Collections.singletonList(updatedUser));
+        //setFileStoreUrlsByFileStoreIds(Collections.singletonList(updatedUser));
         String oldEmail = existingUser.getEmailId();
         String newEmail = updatedUser.getEmailId();
         if((oldEmail != null && !oldEmail.isEmpty()) && newEmail != null && !(newEmail.equalsIgnoreCase(oldEmail))) {
@@ -832,6 +872,7 @@ public class UserService {
     	//user = decryptionDecryptionUtil.decryptObject(user, "User", User.class);        
     	return getAccess(user, user.getOtpReference());
     	}
+<<<<<<< HEAD
     }
     
     /**
@@ -842,6 +883,103 @@ public class UserService {
     public void resetFailedLoginAttempts(User user) {
         if (user != null && user.getUuid() != null)
             userRepository.resetFailedLoginAttemptsForUser(user.getUuid());
+=======
+    }    /**
+     * Creates an address entry for the given user based on the provided UUID.
+     * It first retrieves the user ID from the database using the UUID.
+     * If the UUID is invalid (i.e., no user found), an exception is thrown.
+     * Then, the address is stored in the database using the user ID.
+     *
+     * @param userUuid The UUID of the user for whom the address is being created.
+     * @param address  The Address object containing address details.
+     * @return The saved Address object after insertion.
+     * @throws IllegalArgumentException If the provided user UUID is not valid.
+     */
+    public Address createAddress(String userUuid, Address address) {
+        Long userId = userRepository.getUserIdByUuid(userUuid);
+        if (userId == null) {
+            throw new IllegalArgumentException("USER_UUID_NOT_VALID: The provided user UUID:"+userUuid+" is not valid");
+        }
+        
+        // Validate mandatory fields if enabled
+        if (addressMandatoryFieldsEnabled && address.isMandatoryFieldsMissing(addressMandatoryFieldsEnabled)) {
+            log.error("Address validation failed - mandatory fields missing for address creation for user UUID: {}", userUuid);
+            throw new CustomException("ADDRESS_VALIDATION_ERROR", "City, pincode, and address are mandatory fields for address creation");
+        }
+        
+        // Check if Permanent or Correspondence address already exists and not Other category as Other can be created multiple times
+        if (AddressType.PERMANENT == address.getType() || AddressType.CORRESPONDENCE == address.getType()) {
+            AddressSearchCriteria addressSearchCriteria = AddressSearchCriteria.builder()
+                    .userId(userId)
+                    .addressType(address.getType())
+                    .status(UserConstants.ADDRESS_ACTIVE_STATUS)
+                    .build();
+            List<Address> existingAddresses = addressRepository.getAddressV2(addressSearchCriteria);
+            if (!existingAddresses.isEmpty()) {
+                throw new IllegalArgumentException("An address of type " + address.getType() + " already exists for user ID: " + userUuid);
+            }
+        }
+        // Encrypt address before saving
+        address = encryptionDecryptionUtil.encryptObject(address, UserConstants.USER_ADDRESS_ENCRYPTION_KEY, Address.class);
+        Address savedAddress = addressRepository.createAddressV2(address, userId, address.getTenantId());
+        // Decrypt address before returning
+        return encryptionDecryptionUtil.decryptObject(savedAddress, UserConstants.USER_ADDRESS_ENCRYPTION_KEY, Address.class, null);
+    }
+
+    /**
+     * This method fetches the address objects based on user_uuid and tenantId
+     *
+     * @param user_uuid
+     * @param tenantId
+     */
+    public List<Address> getAddress(String user_uuid, String tenantId) {
+
+        AddressSearchCriteria addressSearchCriteria = AddressSearchCriteria.builder()
+                .userUuid(user_uuid)
+                .tenantId(tenantId)
+                .status(UserConstants.ADDRESS_ACTIVE_STATUS)
+                .build();
+        List<Address> addressList = addressRepository.getAddressV2(addressSearchCriteria);
+        //if addressList is empty, return empty list
+        if (addressList.isEmpty()) {
+            return Collections.emptyList();
+        }
+        // Decrypt addresses before returning
+        return encryptionDecryptionUtil.decryptObject(addressList, UserConstants.USER_ADDRESS_ENCRYPTION_KEY, Address.class, null);
+    }
+
+    /**
+     * Updates an existing address based on the provided address ID.
+     *
+     * @param address   The updated address details.
+     * @return List of updated addresses.
+     * @throws IllegalArgumentException if the address ID does not exist in the database.
+     */
+    public Address updateAddress(Address address) {
+
+        // Validate mandatory fields if enabled
+        if (addressMandatoryFieldsEnabled && address.isMandatoryFieldsMissing(addressMandatoryFieldsEnabled)) {
+            log.error("Address validation failed - mandatory fields missing for address update with ID: {}", address.getId());
+            throw new CustomException("ADDRESS_VALIDATION_ERROR", "City, pincode, and address are mandatory fields for address creation");
+        }
+
+        AddressSearchCriteria addressSearchCriteria = AddressSearchCriteria.builder()
+                .id(address.getId())
+                .status(UserConstants.ADDRESS_ACTIVE_STATUS)
+                .build();
+        Address existingAddress = addressRepository.getAddressV2(addressSearchCriteria).get(0);
+        if (existingAddress == null) {
+            throw new IllegalArgumentException("ADDRESS_NOT_VALID: Address ID " + address.getId() + " does not exist.");
+        }
+        // Encrypt address before updating
+        address = encryptionDecryptionUtil.encryptObject(address, UserConstants.USER_ADDRESS_ENCRYPTION_KEY, Address.class);
+        // Update the old address status to inactive
+        addressRepository.updateAddressV2(address.getId(), address.getUserId(), UserConstants.ADDRESS_INACTIVE_STATUS);
+        // Create a new address entry with the updated details with the same user id
+        Address savedAddress = addressRepository.createAddressV2(address, address.getUserId(), address.getTenantId());
+        // Decrypt address before returning
+        return encryptionDecryptionUtil.decryptObject(savedAddress, UserConstants.USER_ADDRESS_ENCRYPTION_KEY, Address.class, null);
+>>>>>>> master-LTS
     }
 
     /**
@@ -854,4 +992,135 @@ public class UserService {
             userRepository.resetFailedLoginAttemptsForUser(user.getUuid());
     }
 
+
+    /**
+     * Creates a new user with address details after performing validations and encryption.
+     * Steps:
+     * 1. Generate a UUID and validate the user.
+     * 2. Validate OTP conditionally.
+     * 3. Encrypt the user object.
+     * 4. Ensure user uniqueness.
+     * 5. Handle password (generate if absent, validate otherwise).
+     * 6. Encrypt password and set default expiry.
+     * 7. Adjust tenant ID to a state-level tenant.
+     * 8. Persist the user in the database.
+     * 9. Decrypt before returning the user object.
+     *
+     * @param user        the user object containing new user details
+     * @param requestInfo metadata containing request-related details
+     * @return the created and decrypted User object
+     */
+    public User createUserWithAddressV2(User user, RequestInfo requestInfo) {
+
+        user.setUuid(UUID.randomUUID().toString());
+
+        // Validate user details, including name, mobile number, and addresses
+        user.validateNewUser(createUserValidateName);
+        conditionallyValidateOtp(user);
+        user = encryptionDecryptionUtil.encryptObject(user, "User", User.class);
+
+        // Ensure the user does not already exist
+        validateUserUniqueness(user);
+        // Handle password: if not provided, generate a random one; otherwise, validate it
+        if (isEmpty(user.getPassword())) {
+            user.setPassword(UUID.randomUUID().toString());
+        } else {
+            validatePassword(user.getPassword());
+        }
+
+        user.setPassword(encryptPwd(user.getPassword()));
+        user.setDefaultPasswordExpiry(defaultPasswordExpiryInDays);
+        user.setTenantId(getStateLevelTenantForCitizen(user.getTenantId(), user.getType()));
+
+        // Persist the validated and encrypted user in the database
+        User persistedNewUser = persistNewUserWithAddressV2(user);
+        // Decrypt the persisted user before returning the response
+        return encryptionDecryptionUtil.decryptObject(persistedNewUser, "UserSelf", User.class, requestInfo);
+    }
+
+    /**
+     * Persists a new user with address details in the database.
+     *
+     * @param user the validated and encrypted user object
+     * @return the persisted User object
+     */
+    private User persistNewUserWithAddressV2(User user) {
+        return userRepository.createWithAddressV2(user);
+    }
+
+
+    /**
+     * Updates user details along with address V2 information without requiring OTP verification.
+     *
+     * This method fetches the existing user details, applies validations, encrypts sensitive
+     * information, and updates the user record in the database. It also resets failed login attempts if
+     * the account was previously locked and is now being unlocked.
+     *
+     * @param user The user object containing updated details.
+     * @param requestInfo Request information containing user metadata.
+     * @return The updated user object with decrypted details.
+     */
+    public User updateUserV2(User user, RequestInfo requestInfo) {
+        final User existingUser = getUserByUuid(user.getUuid());
+        user.setTenantId(getStateLevelTenantForCitizen(user.getTenantId(), user.getType()));
+        validateUserRoles(user);
+        user.validateUserModification();
+        validatePassword(user.getPassword());
+        user.setPassword(encryptPwd(user.getPassword()));
+        /* encrypt */
+        user = encryptionDecryptionUtil.encryptObject(user, "User", User.class);
+        userRepository.updateV2(user, existingUser, requestInfo.getUserInfo().getId(), requestInfo.getUserInfo().getUuid());
+
+        // If user is being unlocked via update, reset failed login attempts
+        if (user.getAccountLocked() != null && !user.getAccountLocked() && existingUser.getAccountLocked())
+            resetFailedLoginAttempts(user);
+
+        User encryptedUpdatedUserfromDB = getUserByUuid(user.getUuid());
+        User decryptedupdatedUserfromDB = encryptionDecryptionUtil.decryptObject(encryptedUpdatedUserfromDB, "UserSelf", User.class, requestInfo);
+        return decryptedupdatedUserfromDB;
+    }
+
+    /**
+     * Searches for users based on the provided criteria.
+     *
+     * This method validates the search criteria, applies encryption for secure processing,
+     * performs a user search using the repository, decrypts the retrieved user data,
+     * and sets file store URLs for any associated files before returning the final user list.
+     *
+     * @param searchCriteria    The criteria used to filter users.
+     * @param isInterServiceCall A flag indicating whether the call is from another service.
+     * @param requestInfo       Metadata about the request, used for decryption.
+     * @return A list of users matching the search criteria.
+     */
+    public List<org.egov.user.domain.model.User>  searchUsersV2(UserSearchCriteria searchCriteria,
+                                                               boolean isInterServiceCall, RequestInfo requestInfo) {
+
+        searchCriteria.validate(isInterServiceCall);
+
+        searchCriteria.setTenantId(getStateLevelTenantForCitizen(searchCriteria.getTenantId(), searchCriteria.getType()));
+        String altmobnumber = null;
+
+        if (searchCriteria.getMobileNumber() != null) {
+            altmobnumber = searchCriteria.getMobileNumber();
+        }
+        /* encrypt here / encrypted searchcriteria will be used for search*/
+        searchCriteria = encryptionDecryptionUtil.encryptObject(searchCriteria, "User", UserSearchCriteria.class);
+
+        if (altmobnumber != null) {
+            searchCriteria.setAlternatemobilenumber(altmobnumber);
+        }
+
+        List<org.egov.user.domain.model.User> list = userRepository.findAllV2(searchCriteria);
+
+        // If list is null or empty, return an empty list
+        if (list == null || list.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        /* decrypt here / final reponse decrypted*/
+        list = encryptionDecryptionUtil.decryptObject(list, "User", User.class, requestInfo);
+
+        setFileStoreUrlsByFileStoreIds(list);
+        return list;
+    }
 }

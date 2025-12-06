@@ -125,7 +125,7 @@ export const UserService = {
     });
   },
   userSearch: async (tenantId, data, filters) => {
-    
+
     return ServiceRequest({
       url: Urls.UserSearch,
       params: { ...filters },

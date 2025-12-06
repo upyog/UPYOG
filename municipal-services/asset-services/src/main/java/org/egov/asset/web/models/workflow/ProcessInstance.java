@@ -6,9 +6,15 @@ import org.egov.asset.web.models.AuditDetails;
 import org.egov.asset.web.models.Document;
 import org.egov.common.contract.request.User;
 
+<<<<<<< HEAD
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+=======
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+>>>>>>> master-LTS
 import java.util.ArrayList;
 import java.util.List;
 

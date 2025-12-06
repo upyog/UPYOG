@@ -89,29 +89,32 @@ public class PlanInformation implements Serializable {
     //YES/NO/NA.Extracted from Plan info. Is plot comes under security zone flag.
     private transient Boolean securityZone = true;
     //YES/NO/NA.Extracted from Plan info.  Access width to the plot.
-	private transient BigDecimal accessWidth;
+    private transient BigDecimal accessWidth;
     //Extracted from Plan info.  In case of medical occupancy, capture number of beds present in the building. Sanitation details are decided based on number of beds present.
-	private transient BigDecimal noOfBeds;
-	//YES/NO/NA.Extracted from Plan info. NOC received from the side owner.
-	private transient String nocToAbutSideDesc = NA;
-	//YES/NO/NA.Extracted from Plan info. NOC received from the rear owner.
-	private transient String nocToAbutRearDesc = NA;
-	//YES/NO/NA.Extracted from Plan info. Any opening on sides of building.
-	private transient Boolean openingOnSide = false;
-	//YES/NO/NA.Extracted from Plan info. Any opening on rear side of building.
-	private transient Boolean openingOnRear = false;
-	//Extracted from Plan info. Number of seats present in special occupancy 
-	private transient Integer noOfSeats = 0;
-	//Extracted from Plan info. Number of mechanical parking declared in the plan
-	private transient Integer noOfMechanicalParking = 0;
-	//YES/NO/NA.Extracted from Plan info.Is plan belongs to single family building. There are few rules relaxed for single family building 
-	private transient Boolean singleFamilyBuilding;
-	//Extracted from Plan info. Revenue survey number declared in the plan
+    private transient BigDecimal noOfBeds;
+    //YES/NO/NA.Extracted from Plan info. NOC received from the side owner.
+    private transient String nocToAbutSideDesc = NA;
+    //YES/NO/NA.Extracted from Plan info. NOC received from the rear owner.
+    private transient String nocToAbutRearDesc = NA;
+    //YES/NO/NA.Extracted from Plan info. Any opening on sides of building.
+    private transient Boolean openingOnSide = false;
+    //YES/NO/NA.Extracted from Plan info. Any opening on rear side of building.
+    private transient Boolean openingOnRear = false;
+    //Extracted from Plan info. Number of seats present in special occupancy
+    private transient Integer noOfSeats = 0;
+    //Extracted from Plan info. Number of mechanical parking declared in the plan
+    private transient Integer noOfMechanicalParking = 0;
+    //YES/NO/NA.Extracted from Plan info.Is plan belongs to single family building. There are few rules relaxed for single family building
+    private transient Boolean singleFamilyBuilding;
+    //Extracted from Plan info. Revenue survey number declared in the plan
     private String reSurveyNo;
     //Extracted from Plan info. Revenue ward name declared in the plan
     private String revenueWard;
     //Extracted from Plan info. Desam name declared in the plan
     private String desam;
+
+    private String zone;
+    private String subZone;
     //Extracted from Plan info. Village name declared in the plan
     private String village;
     //Extracted from Plan info. Land Use zone. The value should be standard like RESIDENTIAL,COMMERCIAL,INDUSTRIAL,PUBLICANDSEMIPUBLIC etc.
@@ -146,8 +149,37 @@ public class PlanInformation implements Serializable {
     private transient String nocCollectorGvtLand = NA;
     //YES/NO/NA.Extracted from Plan info. Permitted with irrigation report NOC
     private transient String nocIrrigationDept = NA;
+
     //YES/NO/NA.Extracted from Plan info. Permitted with fire department NOC
     private transient String nocFireDept = NA;
+    private transient String nocNeighbour = NA;
+    private transient String nocFromNHAI = NA;
+    private transient String indemnityBasement = NA;
+
+    public String getIndemnityBasement() {
+        return indemnityBasement;
+    }
+
+    public void setIndemnityBasement(String indemnityBasement) {
+        this.indemnityBasement = indemnityBasement;
+    }
+
+    public String getNocNeighbour() {
+        return nocNeighbour;
+    }
+
+    public void setNocNeighbour(String nocNeighbour) {
+        this.nocNeighbour = nocNeighbour;
+    }
+
+    public String getNocFromNHAI() {
+        return nocFromNHAI;
+    }
+
+    public void setNocFromNHAI(String nocFromNHAI) {
+        this.nocFromNHAI = nocFromNHAI;
+    }
+
     //YES/NO/NA.Extracted from Plan info. Building near the river flag
     private transient String buildingNearToRiver = NA;
     //YES/NO/NA.Extracted from Plan info. Barrier free access for physically handicapped person provided.
@@ -159,11 +191,66 @@ public class PlanInformation implements Serializable {
     //Extracted from Plan info.Plot number.
     private String plotNo;
     //Extracted from Plan info.Khata number.
-    private String khataNo;
+    //private String khataNo;
+
+    //Extracted from Plan info.Khasra number.
+    private String khasraNo;
+
+    public String getKhasraNo() {
+        return khasraNo;
+    }
+
+    public void setKhasraNo(String khasraNo) {
+        this.khasraNo = khasraNo;
+    }
+
+
+    public String getZone() {
+        return zone;
+    }
+
+    public void setZone(String zone) {
+        this.zone = zone;
+    }
+
+    public String getSubZone() {
+        return subZone;
+    }
+
+    public void setSubZone(String subZone) {
+        this.subZone = subZone;
+    }
+
+    //Extracted from Plan info.Khatuni number.
+    private String khatuniNo;
+
+
+    public String getKhatuniNo() {
+        return khatuniNo;
+    }
+
+    public void setKhatuniNo(String khatuniNo) {
+        this.khatuniNo = khatuniNo;
+    }
+
+
     //Extracted from Plan info.Mauza number.
-    private String mauza;
+    // private String mauza;
+
     //Extracted from Plan info.District name.
     private String district;
+
+    //Extracted from Plan info.City name.
+    private String city;
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
     //YES/NO/NA.Extracted from Plan info. Rain water declared in plan.
     private transient String rwhDeclared = NA;
 
@@ -576,21 +663,21 @@ public class PlanInformation implements Serializable {
         this.plotNo = plotNo;
     }
 
-    public String getKhataNo() {
-        return khataNo;
-    }
+//    public String getKhataNo() {
+//        return khataNo;
+//    }
+//
+//    public void setKhataNo(String khataNo) {
+//        this.khataNo = khataNo;
+//    }
 
-    public void setKhataNo(String khataNo) {
-        this.khataNo = khataNo;
-    }
-
-    public String getMauza() {
-        return mauza;
-    }
-
-    public void setMauza(String mauza) {
-        this.mauza = mauza;
-    }
+//    public String getMauza() {
+//        return mauza;
+//    }
+//
+//    public void setMauza(String mauza) {
+//        this.mauza = mauza;
+//    }
 
     public String getDistrict() {
         return district;

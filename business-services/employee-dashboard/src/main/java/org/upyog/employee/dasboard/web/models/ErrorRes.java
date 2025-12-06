@@ -23,7 +23,6 @@ import lombok.Builder;
 @Schema(description = "All APIs will return ErrorRes in case of failure which will carry ResponseInfo as metadata and Error object as actual representation of error. In case of bulk apis, some apis may chose to return the array of Error objects to indicate individual failure.")
 @Validated
 @jakarta.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2024-10-03T17:01:27.450+05:30")
-
 @Getter
 @Setter
 @AllArgsConstructor

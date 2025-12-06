@@ -69,24 +69,23 @@
 					</spring:hasBindErrors>
 					<div class="panel-body">
 						<div class="form-group">
-
-							<label class="col-sm-3 control-label text-right"><spring:message
-									code="lbl.cfinancialyearid" /><span class="mandatory"></span>
+							<label class="col-sm-3 control-label text-right">
+								<spring:message code="lbl.cfinancialyearid" />
 							</label>
 							<div class="col-sm-3 add-margin">
-								<form:select path="financialYear" id="financialYear"
-									cssClass="form-control" cssErrorClass="form-control error"
-									style="pointer-events: none; cursor: default;"
-									required="required">
-									<form:option value="">
-										<spring:message code="lbl.select" />
-									</form:option>
-									<form:options items="${cFinancialYears}" itemValue="id"
-										itemLabel="finYearRange" />
-								</form:select>
+								<!-- Display the financial year as readonly text -->
+								<input type="text" class="form-control" 
+									   value="${closedPeriod.financialYear.finYearRange}" readonly />
+								
+								<!-- Hidden field to submit the ID -->
+								<input type="hidden" name="financialYear" 
+									   value="${closedPeriod.financialYear.id}" />
+								
+								<!-- Error display if any -->
 								<form:errors path="financialYear" cssClass="error-msg" />
 							</div>
 						</div>
+						
 						<div class="form-group">
 							<label class="col-sm-3 control-label text-right"><spring:message
 									code="lbl.startingdate" /> <span class="mandatory"></span> </label>

@@ -1,6 +1,7 @@
 package org.egov.user.repository.rowmapper;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.egov.user.domain.model.Address;
 import org.egov.user.domain.model.Role;
 import org.egov.user.domain.model.User;
@@ -13,13 +14,16 @@ import org.springframework.stereotype.Service;
 import lombok.extern.slf4j.Slf4j;
 
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.*;
+import java.util.stream.IntStream;
 
 import static java.util.Objects.isNull;
 import static org.egov.user.domain.model.enums.AddressType.CORRESPONDENCE;
 import static org.egov.user.domain.model.enums.AddressType.PERMANENT;
 
+@Slf4j
 @Service
 @Slf4j
 public class UserResultSetExtractor implements ResultSetExtractor<List<User>> {
@@ -35,7 +39,7 @@ public class UserResultSetExtractor implements ResultSetExtractor<List<User>> {
     public List<User> extractData(ResultSet rs) throws SQLException, DataAccessException {
 
         Map<Long, User> usersMap = new LinkedHashMap<>();
-
+        ResultSetMetaData rsMeta = rs.getMetaData();
         while (rs.next()) {
 
             Long userId = rs.getLong("id");
@@ -43,6 +47,7 @@ public class UserResultSetExtractor implements ResultSetExtractor<List<User>> {
 
             if (!usersMap.containsKey(userId)) {
 
+<<<<<<< HEAD
 				user = User.builder().id(rs.getLong("id")).tenantId(rs.getString("tenantid"))
 						.title(rs.getString("title")).salutation(rs.getString("salutation")).dob(rs.getDate("dob"))
 						.locale(rs.getString("locale")).username(rs.getString("username"))
@@ -83,6 +88,21 @@ public class UserResultSetExtractor implements ResultSetExtractor<List<User>> {
 				 * .identificationMark(rs.getString("identificationmark")).uuid(rs.getString(
 				 * "uuid")) .accountLockedDate(rs.getLong("accountlockeddate")) .build();
 				 */
+=======
+                user = User.builder().id(rs.getLong("id")).tenantId(rs.getString("tenantid")).title(rs.getString("title"))
+                        .salutation(rs.getString("salutation"))
+                        .dob(rs.getDate("dob")).locale(rs.getString("locale")).username(rs.getString("username"))
+                        .password(rs.getString("password")).passwordExpiryDate(rs.getTimestamp("pwdexpirydate"))
+                        .mobileNumber(rs.getString("mobilenumber")).altContactNumber(rs.getString("altcontactnumber"))
+                        .emailId(rs.getString("emailid")).active(rs.getBoolean("active")).name(rs.getString("name")).
+                        lastModifiedBy(rs.getLong("lastmodifiedby")).lastModifiedDate(rs.getTimestamp("lastmodifieddate"))
+                        .pan(rs.getString("pan")).aadhaarNumber(rs.getString("aadhaarnumber")).createdBy(rs.getLong("createdby"))
+                        .createdDate(rs.getTimestamp("createddate")).guardian(rs.getString("guardian")).signature(rs.getString("signature"))
+                        .accountLocked(rs.getBoolean("accountlocked")).photo(rs.getString("photo"))
+                        .identificationMark(rs.getString("identificationmark")).uuid(rs.getString("uuid")).digilockerid(rs.getString("digilockerid"))
+                        .accountLockedDate(rs.getLong("accountlockeddate")).alternateMobileNumber(rs.getString("alternatemobilenumber"))
+                        .build();
+>>>>>>> master-LTS
 
                 for (UserType type : UserType.values()) {
                     if (type.toString().equals(rs.getString("type"))) {
@@ -119,6 +139,7 @@ public class UserResultSetExtractor implements ResultSetExtractor<List<User>> {
             }
 
             Role role = populateRole(rs);
+<<<<<<< HEAD
             Address address = populateAddress(rs, user);
 
             log.debug("UserResultSetExtractor - userId: {}, uuid: {}, role: {}, current roles count: {}",
@@ -129,10 +150,16 @@ public class UserResultSetExtractor implements ResultSetExtractor<List<User>> {
                 log.debug("Added role to user. Total roles now: {}", user.getRoles().size());
             } else {
                 log.debug("Role is null, not adding to user");
+=======
+            if (!isNull(role)) {
+                user.addRolesItem(role);
+>>>>>>> master-LTS
             }
 
-            if (!isNull(address))
+            Address address = populateAddress(rs, user);
+            if (!isNull(address)) {
                 user.addAddressItem(address);
+            }
 
         }
 
@@ -173,11 +200,6 @@ public class UserResultSetExtractor implements ResultSetExtractor<List<User>> {
                 .userId(rs.getLong("addr_userid"))
                 .tenantId(rs.getString("addr_tenantid"))
                 .build();
-
-        if (address.getType().equals(PERMANENT) && isNull(user.getPermanentAddress()))
-            user.setPermanentAddress(address);
-        if (address.getType().equals(CORRESPONDENCE) && isNull(user.getCorrespondenceAddress()))
-            user.setCorrespondenceAddress(address);
 
         return address;
 

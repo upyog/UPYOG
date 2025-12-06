@@ -1,4 +1,40 @@
-import { ActionLinks, CardSectionHeader, CheckPoint, CloseSvg, ConnectingCheckPoints, Loader, SubmitBar } from "@upyog/digit-ui-react-components";
+/**
+ * PTRWFApplicationTimeline Component
+ * 
+ * Description:
+ * This component displays the workflow timeline for a Pet Service application. 
+ * It fetches and renders the application timeline using Digit's workflow hooks and 
+ * displays checkpoints with captions, images, and next actions.
+ * 
+ * Key Functionalities:
+ * - Fetches workflow details based on `tenantId`, `applicationNumber`, and `moduleCode`.
+ * - Displays the application timeline with checkpoints and captions.
+ * - Shows checkpoint details including:
+ *    - Date
+ *    - Assigner/Assignee name
+ *    - Mobile number
+ *    - Comments and workflow comments
+ *    - Thumbnails (images) with clickable preview functionality.
+ * - Renders a "Make Payment" button for citizen users when applicable.
+ * - Displays a loader while fetching data.
+ * 
+ * Props:
+ * - `application`: Contains the application details including:
+ *    - `tenantId`: ID of the current tenant.
+ *    - `applicationNumber`: Unique ID of the application.
+ *    - `workflow`: Contains business service information.
+ *    - `channel`: Channel through which the application was submitted.
+ * - `userType`: Defines whether the user is a citizen or employee.
+ * 
+ * Dependencies:
+ * - `Digit.Hooks.useWorkflowDetails`: Hook to fetch workflow details.
+ * - `Digit.DateUtils.ConvertTimestampToDate`: Utility for date conversion.
+ * - `PTRWFCaption`: Custom component for rendering captions.
+ * - `Loader`, `CardSectionHeader`, `CheckPoint`, `ConnectingCheckPoints`, `SubmitBar`: UI components from `@nudmcdgnpm/digit-ui-react-components`.
+ * 
+ */
+
+import { CardSectionHeader, CheckPoint, ConnectingCheckPoints, Loader, SubmitBar } from "@upyog/digit-ui-react-components";
 import React, { Fragment } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
@@ -9,7 +45,7 @@ const PTRWFApplicationTimeline = (props) => {
   
   const { t } = useTranslation();
   const businessService = props?.application?.workflow?.businessService;
-  // const businessService = "ptr";
+  
 
   const { isLoading, data } = Digit.Hooks.useWorkflowDetails({
     tenantId: props.application?.tenantId,
@@ -18,7 +54,7 @@ const PTRWFApplicationTimeline = (props) => {
   });
   
 
-  function OpenImage(imageSource, index, thumbnailsToShow) {
+  function OpenImage(thumbnailsToShow) {
     window.open(thumbnailsToShow?.fullImage?.[0], "_blank");
   }
 
@@ -77,15 +113,6 @@ const PTRWFApplicationTimeline = (props) => {
           </div>
           ) : null
         );
-      
-      case "SUBMIT_FEEDBACK":
-        return (
-          <div style={{ marginTop: "24px" }}>
-            <Link to={`/digit-ui/citizen/fsm/rate/${props.id}`}>
-              <SubmitBar label={t("CS_APPLICATION_DETAILS_RATE")} />
-            </Link>
-          </div>
-        );
       default:
         return null;
     }
@@ -116,14 +143,6 @@ const PTRWFApplicationTimeline = (props) => {
                 data?.timeline.map((checkpoint, index, arr) => {
                   
                   let timelineStatusPostfix = "";
-                  if (window.location.href.includes("/obps/")) {
-                    if(workflowDetails?.data?.timeline[index-1]?.state?.includes("BACK_FROM") || workflowDetails?.data?.timeline[index-1]?.state?.includes("SEND_TO_CITIZEN"))
-                    timelineStatusPostfix = `_NOT_DONE`
-                    else if(checkpoint?.performedAction === "SEND_TO_ARCHITECT")
-                    timelineStatusPostfix = `_BY_ARCHITECT_DONE`
-                    else
-                    timelineStatusPostfix = index == 0 ? "" : `_DONE`;
-                  }
                   return (
                     <React.Fragment key={index}>
                       <CheckPoint

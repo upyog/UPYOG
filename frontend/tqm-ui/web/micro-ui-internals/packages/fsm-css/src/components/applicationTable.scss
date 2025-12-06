@@ -1,0 +1,51 @@
+.fsm-table-alerts-container {
+  box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.16);
+  border-radius: 0.25rem;
+  border: 1px solid #d6d5d4;
+  background: #ffffff;
+  width: 100%;
+  flex-shrink: 0;
+  margin-top: 0.75rem;
+  padding-bottom: 2rem;
+  .table {
+    table-layout: fixed;
+    width: 100%;
+    border-collapse: collapse;
+    thead {
+      th {
+        padding: 20px 18px;
+        font-weight: 700;
+        vertical-align: middle;
+        text-align: left;
+      }
+      th:first-child {
+        min-width: 265px;
+        width: 265px;
+      }
+      .underline {
+        width: 370%;
+        margin-top: 15px;
+      }
+    }
+    tbody {
+      td {
+        border-top-width: 1px;
+        --border-opacity: 1;
+        border-color: #d6d5d4;
+        border-color: rgba(214, 213, 212, var(--border-opacity));
+        text-align: left;
+        vertical-align: middle;
+        padding: 20px 18px;
+        font-size: 16px;
+        white-space: normal;
+        /* margin-bottom: 16px;
+          padding-top: 20px;
+          text-align: left; */
+      }
+      .underline {
+        width: 370%;
+        margin-top: 15px;
+      }
+    }
+  }
+}

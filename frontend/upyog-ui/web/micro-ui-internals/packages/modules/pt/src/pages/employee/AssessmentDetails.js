@@ -443,9 +443,15 @@ const Penality_menu=[
                   taxHeadEstimatesCalculation: ptCalculationEstimateData?.Calculation[0],
                 },
               },
+<<<<<<< HEAD
               {
                 belowComponent:()=><LinkLabel onClick={()=>{showPopUp(true)}} style={isMobile ? {color:"#a82227",marginLeft:"0px"} : {color:"#a82227"}}>{t("PT_ADD_REBATE_PENALITY")}</LinkLabel>
               },
+=======
+              !(window.location.href.includes("/citizen/pt/assessment-details/")) ? {
+                belowComponent:()=><LinkLabel onClick={()=>{showPopUp(true)}} style={isMobile ? {color:"#a82227",marginLeft:"0px"} : {color:"#a82227"}}>{t("PT_ADD_REBATE_PENALITY")}</LinkLabel>
+              }:{},
+>>>>>>> master-LTS
               {
                 title: "PT_ASSESMENT_INFO_SUB_HEADER",
                 values: [

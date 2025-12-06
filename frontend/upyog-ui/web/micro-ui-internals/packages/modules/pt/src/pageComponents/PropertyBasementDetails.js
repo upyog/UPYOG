@@ -1,5 +1,10 @@
+<<<<<<< HEAD
 import { CitizenInfoLabel, FormStep, RadioButtons } from "@upyog/digit-ui-react-components";
+=======
+import { CitizenInfoLabel, RadioButtons } from "@upyog/digit-ui-react-components";
+>>>>>>> master-LTS
 import React, { useState } from "react";
+import  FormStep  from "../../../../react-components/src/molecules/FormStep";
 import Timeline from "../components/TLTimeline";
 
 const PropertyBasementsDetails = ({ t, config, onSelect, userType, formData }) => {

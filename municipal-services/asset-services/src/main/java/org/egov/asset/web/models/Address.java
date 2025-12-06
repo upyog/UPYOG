@@ -1,19 +1,34 @@
 package org.egov.asset.web.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+<<<<<<< HEAD
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 import org.springframework.validation.annotation.Validated;
 
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Id;
+=======
+import io.swagger.annotations.ApiModel;
+import lombok.*;
+import org.springframework.validation.annotation.Validated;
+
+import javax.persistence.Embedded;
+import javax.persistence.Id;
+>>>>>>> master-LTS
 
 /**
  * Representation of a address. Indiavidual APIs may choose to extend from this using allOf if more details needed to be added in their case.
  */
+<<<<<<< HEAD
 @Schema(description = "Representation of a address. Indiavidual APIs may choose to extend from this using allOf if more details needed to be added in their case. ")
 @Validated
 @jakarta.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2024-04-12T12:56:34.514+05:30")
+=======
+@ApiModel(description = "Representation of a address. Indiavidual APIs may choose to extend from this using allOf if more details needed to be added in their case. ")
+@Validated
+@javax.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2024-04-12T12:56:34.514+05:30")
+>>>>>>> master-LTS
 
 @Getter
 @Setter

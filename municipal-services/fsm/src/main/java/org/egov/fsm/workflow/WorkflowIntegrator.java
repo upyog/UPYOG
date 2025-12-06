@@ -6,13 +6,12 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.egov.fsm.config.FSMConfiguration;
 import org.egov.fsm.util.FSMConstants;
 import org.egov.fsm.util.FSMErrorConstants;
 import org.egov.fsm.web.model.FSM;
 import org.egov.fsm.web.model.FSMRequest;
+import org.egov.fsm.web.model.workflow.ProcessInstanceResponse;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,6 +19,8 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.PathNotFoundException;
@@ -92,7 +93,7 @@ public class WorkflowIntegrator {
 		obj.put(TENANTIDKEY, wfTenantId);
 
 		Double tripAmount = getAdditionalDetails(fsm.getAdditionalDetails());
-		
+
 		if (FSMConstants.FSM_PAYMENT_PREFERENCE_POST_PAY.equalsIgnoreCase(fsmRequest.getFsm().getPaymentPreference())) {
 			obj.put(BUSINESSSERVICEKEY, FSMConstants.FSM_POST_PAY_BUSINESSSERVICE);
 		} else if (FSMConstants.FSM_PAYMENT_PREFERENCE_PRE_PAY
@@ -126,10 +127,10 @@ public class WorkflowIntegrator {
 		JSONObject workFlowRequest = new JSONObject();
 		workFlowRequest.put(REQUESTINFOKEY, fsmRequest.getRequestInfo());
 		workFlowRequest.put(WORKFLOWREQUESTARRAYKEY, array);
-		String response = null;
+		ProcessInstanceResponse processInstanceResponse = null;
 		try {
-			response = rest.postForObject(config.getWfHost().concat(config.getWfTransitionPath()), workFlowRequest,
-					String.class);
+			processInstanceResponse = rest.postForObject(config.getWfHost().concat(config.getWfTransitionPath()), workFlowRequest, ProcessInstanceResponse.class);
+
 		} catch (HttpClientErrorException e) {
 
 			/*
@@ -155,17 +156,17 @@ public class WorkflowIntegrator {
 		 * on success result from work-flow read the data and set the status back to fsm
 		 * object
 		 */
-		DocumentContext responseContext = JsonPath.parse(response);
-		List<Map<String, Object>> responseArray = responseContext.read(PROCESSINSTANCESJOSNKEY);
-		Map<String, String> idStatusMap = new HashMap<>();
-		responseArray.forEach(object -> {
-
-			DocumentContext instanceContext = JsonPath.parse(object);
-			idStatusMap.put(instanceContext.read(BUSINESSIDJOSNKEY), instanceContext.read(STATUSJSONKEY));
-		});
+//		DocumentContext responseContext = JsonPath.parse(response);
+//		List<Map<String, Object>> responseArray = responseContext.read(PROCESSINSTANCESJOSNKEY);
+//		Map<String, String> idStatusMap = new HashMap<>();
+//		responseArray.forEach(object -> {
+//
+//			DocumentContext instanceContext = JsonPath.parse(object);
+//			idStatusMap.put(instanceContext.read(BUSINESSIDJOSNKEY), instanceContext.read(STATUSJSONKEY));
+//		});
 		// setting the status back to fsm object from wf response
-		fsm.setApplicationStatus(idStatusMap.get(fsm.getApplicationNo()));
-
+		fsm.setApplicationStatus(processInstanceResponse.getProcessInstances().get(0).getState().getApplicationStatus());
+		fsm.setProcessInstance(processInstanceResponse.getProcessInstances().get(0));
 	}
 
 	/**
@@ -197,6 +198,5 @@ public class WorkflowIntegrator {
 
 		return tripAmount;
 	}
-
 
 }

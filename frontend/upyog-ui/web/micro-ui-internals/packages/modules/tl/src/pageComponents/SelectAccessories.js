@@ -1,6 +1,11 @@
 import React, { useState } from "react";
 import { TypeSelectCard } from "@upyog/digit-ui-react-components";
+<<<<<<< HEAD
 import { FormStep, RadioOrSelect, RadioButtons } from "@upyog/digit-ui-react-components";
+=======
+import { RadioOrSelect, RadioButtons } from "@upyog/digit-ui-react-components";
+import FormStep from "../../../../react-components/src/molecules/FormStep"
+>>>>>>> master-LTS
 import Timeline from "../components/TLTimeline";
 
 const SelectAccessories = ({ t, config, onSelect, userType, formData }) => {

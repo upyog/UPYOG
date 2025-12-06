@@ -47,212 +47,160 @@
   --%>
 
 
-<html>
-<head>
-<%@ include file="/includes/taglibs.jsp"%>
-<%@ page language="java"%>
-<script
-        src="<cdn:url value='/resources/app/js/i18n/jquery.i18n.properties.js?rnd=${app_release_no}' context='/services/EGF'/>"></script>
-<script type="text/javascript"
-	src="/services/EGF/resources/javascript/voucherHelper.js?rnd=${app_release_no}"></script>
-<script type="text/javascript"
-	src="/services/EGF/resources/javascript/contraBTBHelper.js?rnd=${app_release_no}"></script>
-<script type="text/javascript"
-	src="/services/EGF/resources/javascript/calendar.js?rnd=${app_release_no}"></script>
-<script language="javascript"
-	src="../resources/javascript/jsCommonMethods.js?rnd=${app_release_no}"></script>
-<script type="text/javascript"
-	src="/services/EGF/resources/javascript/dateValidation.js?rnd=${app_release_no}"></script>
-<script type="text/javascript"
-	src="/services/EGF/resources/javascript/ajaxCommonFunctions.js?rnd=${app_release_no}"></script>
-<meta http-equiv="Content-Type"
-	content="text/html; charset=windows-1252">
-</head>
-<body onload="onLoadTask_new()">
-	<s:form action="contraBTB" theme="simple" name="cbtbform">
-		<s:push value="model">
-			<jsp:include page="../budget/budgetHeader.jsp">
-				<jsp:param value="Bank to Bank Transfer" name="heading" />
-			</jsp:include>
-			<div class="formmainbox">
-				<div class="formheading" />
-				<div class="subheadnew"><s:text name="lbl.create.bank.to.bank.transfer"/> </div>
-				<div id="listid" style="display: block">
-					<br />
-				</div>
+  <html>
+  <head>
+  <%@ include file="/includes/taglibs.jsp"%>
+  <%@ page language="java"%>
+  
+  <script src="<cdn:url value='/resources/global/js/jquery/jquery.min.js'/>"></script>
+  <script src="<cdn:url value='/resources/app/js/i18n/jquery.i18n.properties.js?rnd=${app_release_no}' context='/services/EGF'/>"></script>
+  <script type="text/javascript" src="/services/EGF/resources/javascript/voucherHelper.js?rnd=${app_release_no}"></script>
+  <script type="text/javascript" src="/services/EGF/resources/javascript/contraBTBHelper.js?rnd=${app_release_no}"></script>
+  <script type="text/javascript" src="/services/EGF/resources/javascript/calendar.js?rnd=${app_release_no}"></script>
+  <script language="javascript" src="../resources/javascript/jsCommonMethods.js?rnd=${app_release_no}"></script>
+  <script type="text/javascript" src="/services/EGF/resources/javascript/dateValidation.js?rnd=${app_release_no}"></script>
+  <script type="text/javascript" src="/services/EGF/resources/javascript/ajaxCommonFunctions.js?rnd=${app_release_no}"></script>
+  
+  <meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+  
+  <script type="text/javascript">
+  $(document).ready(function() {
+  
+	  // Initialize voucher date
+	  $("#voucherDate").datepicker().datepicker("setDate", new Date());
+  
+	  // Show interfund rows if funds differ
+	  var srcFund = '<s:property value="contraBean.fromFundId"/>';
+	  var desFund = '<s:property value="contraBean.toFundId"/>';
+	  if(srcFund && desFund && srcFund !== desFund) {
+		  $("#interFundRow1, #interFundRow2, #interFundRow3").css("visibility", "visible");
+	  }
+  
+	  // Handle transaction messages
+	  var button = '<s:property value="button"/>';
+	  if(button && $("#Errors").html() === '') {
+		  bootbox.alert('<s:text name="contra.transaction.succcess"/>', function() {
+			  if(button === "Save_Close") window.close();
+			  else if(button === "Save_View") {
+				  var vhId = '<s:property value="vhId"/>';
+				  document.forms[0].action = "${pageContext.request.contextPath}/voucher/preApprovedVoucher-loadvoucherview.action?vhid=" + vhId;
+				  document.forms[0].submit();
+			  }
+			  else if(button === "Save_New") {
+				  document.forms[0].button.value = '';
+				  document.forms[0].action = "contraBTB-newform.action";
+				  document.forms[0].submit();
+			  }
+		  });
+	  }
+  
+	  // Cheque grid visibility
+	  var modeOfCollection = '<s:property value="contraBean.modeOfCollection"/>';
+	  var showChequeNumber = '<s:property value="egovCommon.isShowChequeNumber()"/>' === 'true';
+	  if(showChequeNumber || modeOfCollection !== 'cheque') $("#chequeGrid").css("visibility", "visible");
+	  else $("#chequeGrid").css("visibility", "hidden");
+  
+	  // Bank balance mandatory check
+	  if(!$('#bankBalanceMandatory').val()) {
+		  $('#lblError').html('<s:text name="msg.bank.bal.mendatory.param.not.defined" />');
+	  }
+  
+	  <s:if test="%{getUserDepartment()!=null}">
+    <script type="text/javascript">
+        $("#vouchermis\\\.departmentid").val('<s:property value="getUserDepartment()"/>');
+    </script>
+</s:if>
 
-				<div align="center">
-					<font style='color: red;'>
-						<p class="error-block" id="lblError"></p>
-					</font>
-				</div>
-				<span class="mandatory1">
-					<div id="Errors">
-						<s:actionerror />
-						<s:fielderror />
-					</div> <s:actionmessage />
-				</span>
-				<table border="0" width="100%" cellspacing="0" cellpadding="0">
-					<tr>
-						<td class="bluebox"></td>
-						<s:if test="%{shouldShowHeaderField('vouchernumber')}">
-
-							<td class="bluebox" width="22%"><s:text
-									name="voucher.number" /><span class="mandatory1">*</span></td>
-							<td class="bluebox" width="22%"><s:textfield
-									name="voucherNumber" id="voucherNumber" /></td>
-						</s:if>
-						<s:hidden name="id" />
-
-						<td class="bluebox" width="18%"><s:text name="voucher.date" /><span
-							class="mandatory1">*</span></td>
-						<td class="bluebox" width="34%"><s:textfield id="voucherDate"
-								name="voucherDate" data-date-end-date="0d" value="{voucherDate}"
-								onkeyup="DateFormat(this,this.value,event,false,'3')"
-								placeholder="DD/MM/YYYY" class="form-control datepicker"
-								data-inputmask="'mask': 'd/m/y'" /></td>
-						<td class="bluebox"></td>
-						<td class="bluebox"></td>
-					</tr>
-					<%@include file="contraBTB-form.jsp"%>
-				</table>
-			</div>
-			<div class="mandatory1" align="left">* <s:text name="lbl.mendatory.field"/> </div>
-
-			</br>
-			</br>
-			<%@include file="../voucher/SaveButtons.jsp"%>
-			<input type="hidden" id=name name="name" value="BankToBank" />
-			<input type="hidden" id="type" name="type" value="Contra" />
-			<s:hidden id="bankBalanceMandatory" name="bankBalanceMandatory"
-				value="%{isBankBalanceMandatory()}" />
-			<s:hidden id="startDateForBalanceCheckStr"
-				name="startDateForBalanceCheckStr"
-				value="%{startDateForBalanceCheckStr}" />
-		</s:push>
-	</s:form>
-	<SCRIPT type="text/javascript">
-function	onLoadTask_new()
-{
-	//loadFromDepartment();
-	//loadToDepartment();
-	var 	button='<s:property value="button"/>';
-	var 	srcFund='<s:property value="contraBean.fromFundId"/>'
-	var 	desFund='<s:property value="contraBean.toFundId"/>'
-	if(srcFund!="" && desFund!="")
-	{
-		if(srcFund!=desFund)
-		{
-		document.getElementById('interFundRow1').style.visibility="visible";
-		document.getElementById('interFundRow2').style.visibility="visible";
-		document.getElementById('interFundRow3').style.visibility="visible";
-		}
-	}
-	
-	if(button!=null && button!="")
-	{
-	
-	if(document.getElementById("Errors").innerHTML=='')  
-	{
-	bootbox.alert('<s:text name="contra.transaction.succcess"/>');
-		
-	if(button=="Save_Close")
-	{
-	window.close();
-	}
-	else if(button=="Save_View")
-	{
-			var vhId='<s:property value="vhId"/>';
-			document.forms[0].action = "${pageContext.request.contextPath}/voucher/preApprovedVoucher-loadvoucherview.action?vhid="+vhId;
-			document.forms[0].submit();
-	}
-	 else if(button=="Save_New")
-	{      	document.forms[0].button.value='';
-	        document.forms[0].action = "contraBTB-newform.action";
-	 		document.forms[0].submit();
-	} 
-	}
- }
- 
- <s:if test="egovCommon.isShowChequeNumber()">
- document.getElementById("chequeGrid").style.visibility="visible";
- </s:if>
- <s:else>
- if('<s:property value="contraBean.modeOfCollection"/>'=='cheque')
- {
- document.getElementById("chequeGrid").style.visibility="hidden";
- }else
- {
- document.getElementById("chequeGrid").style.visibility="visible";
- }
- </s:else>
- 
-
-}
-
-	function toggleChequeAndRefNumber(obj) {
-			jQuery('#chequeNum').val('');
-			document.getElementById('chequeNumberlblError').innerHTML='';
-			if (obj.value == "RTGS/NEFT") {
-			document.getElementById("chequeGrid").style.visibility="visible";
-			document.getElementById("mdcNumber").innerHTML = '<s:text name="contra.refNumber" />';
-			document.getElementById("mdcDate").innerHTML = '<s:text name="contra.refDate" />';
-		} else {
-		<s:if test="egovCommon.isShowChequeNumber()">
-		 document.getElementById("chequeGrid").style.visibility="visible";
-		 </s:if>
-		 <s:else>
-		 document.getElementById("chequeGrid").style.visibility="hidden";
-		 </s:else>
-			document.getElementById("mdcNumber").innerHTML = '<s:text name="contra.chequeNumber" />';
-			document.getElementById("mdcDate").innerHTML = '<s:text name="contra.chequeDate" />';
-			
-		}
-	}
-
-	
-	function decimalvalue(obj){
-	var regexp_decimalvalue = /[^0-9.]/g ;
-	if(jQuery('#modeOfCollectioncheque').is(':checked')){
-		if(jQuery(obj).val().match(regexp_decimalvalue)){
-			jQuery(obj).val( jQuery(obj).val().replace(regexp_decimalvalue,'') );
-		}else if(jQuery(obj).val().length >= 7){
-			var subString = jQuery(obj).val().substring(0,6);
-			jQuery(obj).val(subString);
-		}		
-	}
-	}
-
-	function validateChequeNumber(obj){
-		if(jQuery('#modeOfCollectioncheque').is(':checked')){
-			document.getElementById('chequeNumberlblError').innerHTML='';
-			if(obj.value.length != 6){
-				document.getElementById('chequeNumberlblError').innerHTML =  '<s:text name="msg.cheque.number.must.be.six.digits" />';
-			}
-		}
-	}
-
-	if('<s:text name="%{isBankBalanceMandatory()}"/>'=='')
-		document.getElementById('lblError').innerHTML = '<s:text name="msg.bank.bal.mendatory.param.not.defined" />';
-		
-		<s:if test="%{!validateUser('createpayment')}">
-			//document.getElementById('errorSpan').innerHTML='<s:text name="payment.invalid.user"/>';
-			if(document.getElementById('vouchermis.departmentid'))
-			{
-				var d = document.getElementById('vouchermis.departmentid');
-				d.options[d.selectedIndex].text.value=d;
-			}
-			</s:if>
-			
-			<s:if test="%{getUserDepartment()!=null}">
-				var d = document.getElementById('vouchermis.departmentid');
-				var val='<s:text name="%{getUserDepartment()}"/>';
-				d.value=val;
-		</s:if>
-		
-		jQuery(document).ready(function() {
-			jQuery("#voucherDate").datepicker().datepicker("setDate", new Date());
-		});
-</script>
-</body>
-</html>
+  });
+  
+  // Toggle cheque/RTGS fields
+  function toggleChequeAndRefNumber(obj) {
+	  $('#chequeNum').val('');
+	  $('#chequeNumberlblError').html('');
+	  if(obj.value === "RTGS/NEFT") {
+		  $("#chequeGrid").css("visibility", "visible");
+		  $("#mdcNumber").html('<s:text name="contra.refNumber" />');
+		  $("#mdcDate").html('<s:text name="contra.refDate" />');
+	  } else {
+		  var showChequeNumber = '<s:property value="egovCommon.isShowChequeNumber()"/>' === 'true';
+		  $("#chequeGrid").css("visibility", showChequeNumber ? "visible" : "hidden");
+		  $("#mdcNumber").html('<s:text name="contra.chequeNumber" />');
+		  $("#mdcDate").html('<s:text name="contra.chequeDate" />');
+	  }
+  }
+  
+  // Decimal input validation
+  function decimalvalue(obj){
+	  var regexp_decimalvalue = /[^0-9.]/g;
+	  if($('#modeOfCollectioncheque').is(':checked')){
+		  $(obj).val($(obj).val().replace(regexp_decimalvalue,''));
+		  if($(obj).val().length >= 7) $(obj).val($(obj).val().substring(0,6));
+	  }
+  }
+  
+  // Cheque number validation
+  function validateChequeNumber(obj){
+	  if($('#modeOfCollectioncheque').is(':checked')){
+		  $('#chequeNumberlblError').html('');
+		  if(obj.value.length != 6){
+			  $('#chequeNumberlblError').html('<s:text name="msg.cheque.number.must.be.six.digits" />');
+		  }
+	  }
+  }
+  </script>
+  
+  </head>
+  <body>
+  <s:form action="contraBTB" theme="simple" name="cbtbform">
+  <s:push value="model">
+  
+  <jsp:include page="../budget/budgetHeader.jsp">
+	  <jsp:param value="Bank to Bank Transfer" name="heading" />
+  </jsp:include>
+  
+  <div class="formmainbox">
+	  <div class="formheading"></div>
+	  <div class="subheadnew"><s:text name="lbl.create.bank.to.bank.transfer"/> </div>
+	  <div id="listid" style="display: block"><br/></div>
+	  <div align="center"><font style='color: red;'><p class="error-block" id="lblError"></p></font></div>
+	  <span class="mandatory1">
+		  <div id="Errors">
+			  <s:actionerror />
+			  <s:fielderror />
+		  </div>
+		  <s:actionmessage />
+	  </span>
+  
+	  <table border="0" width="100%" cellspacing="0" cellpadding="0">
+		  <tr>
+			  <td class="bluebox"></td>
+			  <s:if test="%{shouldShowHeaderField('vouchernumber')}">
+				  <td class="bluebox" width="22%"><s:text name="voucher.number" /><span class="mandatory1">*</span></td>
+				  <td class="bluebox" width="22%"><s:textfield name="voucherNumber" id="voucherNumber" /></td>
+			  </s:if>
+			  <s:hidden name="id" />
+			  <td class="bluebox" width="18%"><s:text name="voucher.date" /><span class="mandatory1">*</span></td>
+			  <td class="bluebox" width="34%">
+				  <s:textfield id="voucherDate" name="voucherDate" data-date-end-date="0d" value="{voucherDate}" onkeyup="DateFormat(this,this.value,event,false,'3')" placeholder="DD/MM/YYYY" class="form-control datepicker" data-inputmask="'mask': 'd/m/y'" />
+			  </td>
+			  <td class="bluebox"></td>
+			  <td class="bluebox"></td>
+		  </tr>
+		  <%@include file="contraBTB-form.jsp"%>
+	  </table>
+  </div>
+  
+  <div class="mandatory1" align="left">* <s:text name="lbl.mendatory.field"/> </div>
+  <br/><br/>
+  <%@include file="../voucher/SaveButtons.jsp"%>
+  
+  <input type="hidden" id="name" name="name" value="BankToBank" />
+  <input type="hidden" id="type" name="type" value="Contra" />
+  <s:hidden id="bankBalanceMandatory" name="bankBalanceMandatory" value="%{isBankBalanceMandatory()}" />
+  <s:hidden id="startDateForBalanceCheckStr" name="startDateForBalanceCheckStr" value="%{startDateForBalanceCheckStr}" />
+  
+  </s:push>
+  </s:form>
+  </body>
+  </html>
+  

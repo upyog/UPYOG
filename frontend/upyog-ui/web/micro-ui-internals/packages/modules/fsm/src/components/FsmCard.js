@@ -111,6 +111,7 @@ const FSMCard = () => {
         hyperlink: true,
       }, */
       {
+<<<<<<< HEAD
         label: t("ES_COMMON_HOME"),
         link: "/upyog-ui/employee/fsm/fstp-operations",
       },
@@ -172,6 +173,69 @@ const FSMCard = () => {
         ],
       };
 
+=======
+        label: t("ES_COMMON_INBOX"),
+        link: "/upyog-ui/employee/fsm/fstp-inbox",
+      },
+    ],
+  };
+
+  if (isFSTPOperator && isSuccess) {
+    return <EmployeeModuleCard {...propsForFSTPO} />;
+  }
+
+  const linksForSomeFSMEmployees =
+    !DSO && !COLLECTOR && !FSM_EDITOR
+      ? [
+          {
+            label: t("ES_TITLE_NEW_DESULDGING_APPLICATION"),
+            link: `/upyog-ui/employee/fsm/new-application`,
+          },
+        ]
+      : [];
+
+  const propsForModuleCard = isFSTPOperator
+    ? {
+        Icon: <ShippingTruck />,
+        moduleName: t("ES_TITLE_VEHICLE_LOG"),
+        // kpis: isSuccess ? Object.keys(info).map((key, index) => ({
+        //             label: t(key),
+        //             count: t(info[key]),
+        //             link: "/upyog-ui/employee/fsm/fstp-inbox"
+        //         })): [],
+        links: [
+          {
+            label: t("ES_COMMON_HOME"),
+            link: "/upyog-ui/employee/fsm/fstp-operations",
+          },
+        ],
+      }
+    : {
+        Icon: <ShippingTruck />,
+        moduleName: t("ES_TITLE_FAECAL_SLUDGE_MGMT"),
+        kpis: [
+          {
+            count: total,
+            label: t("TOTAL_FSM"),
+            link: `/upyog-ui/employee/fsm/inbox`,
+          },
+          {
+            label: t("TOTAL_NEARING_SLA"),
+            link: `/upyog-ui/employee/fsm/inbox`,
+          },
+        ],
+        links: [
+          {
+            count: total,
+            label: t("ES_COMMON_INBOX"),
+            link: `/upyog-ui/employee/fsm/inbox`,
+          },
+          ...linksForSomeFSMEmployees,
+          ...moduleForSomeFSMAdmin,
+        ],
+      };
+
+>>>>>>> master-LTS
   return <EmployeeModuleCard {...propsForModuleCard} FsmHideCount={true} />;
 };
 export default FSMCard;

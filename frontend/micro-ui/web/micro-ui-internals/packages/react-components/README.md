@@ -4,13 +4,13 @@
 ## Install
 
 ```bash
-npm install --save @egovernments/digit-ui-react-components
+npm install --save @nudmcdgnpm/digit-ui-react-components
 ```
 
 ## Limitation
 
 ```bash
-This Package is more specific to DIGIT-UI's can be used across mission's
+This Package is more specific to UPYOG can be used across mission's
 ```
 
 ## Usage
@@ -49,21 +49,14 @@ class Example extends Component {
 1.7.1 UPYOG base version
 ```
 
-### Contributors
-
-[jagankumar-egov] [nipunarora-eGov] [Tulika-eGov] [Ramkrishna-egov] [nabeelmd-eGov] [anil-egov] [vamshikrishnakole-wtt-egov] 
-
 ## Documentation
 
 Documentation Site (https://core.digit.org/guides/developer-guide/ui-developer-guide/digit-ui)
 
 ## Maintainer
 
-- [jagankumar-egov](https://www.github.com/jagankumar-egov)
+- [Shivank-NIUA](https://github.com/ShivankShuklaa)
 
 
-### Published from DIGIT Frontend 
-DIGIT Frontend Repo (https://github.com/upyog/UPYOG/tree/develop)
-
-
-![Logo](https://s3.ap-south-1.amazonaws.com/works-dev-asset/mseva-white-logo.png)
+### Published from UPYOG Frontend 
+UPYOG Frontend Repo (https://github.com/upyog/UPYOG/tree/develop)

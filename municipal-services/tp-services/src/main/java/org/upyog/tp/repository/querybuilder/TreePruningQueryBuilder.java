@@ -26,7 +26,11 @@ public class TreePruningQueryBuilder {
                     "FROM public.upyog_rs_tree_pruning_booking_detail uptbd " +
                     "LEFT JOIN public.upyog_rs_tree_pruning_document_detail doc ON uptbd.booking_id = doc.booking_id"
     );
+<<<<<<< HEAD
 
+=======
+    
+>>>>>>> master-LTS
     private static final String TREE_PRUNING_BOOKING_DETAILS_SEARCH_QUERY = (
             "SELECT uptbd.booking_id, uptbd.booking_no, uptbd.applicant_uuid, uptbd.mobile_number, uptbd.locality_code, uptbd.reason_for_pruning, " +
                     "uptbd.latitude, uptbd.longitude, uptbd.payment_date, uptbd.application_date, uptbd.payment_receipt_filestore_id, " +
@@ -80,10 +84,17 @@ public class TreePruningQueryBuilder {
         }
         if (!ObjectUtils.isEmpty(criteria.getBookingNo())) {
             addClauseIfRequired(query, preparedStmtList);
+<<<<<<< HEAD
 
             // Create a comma-separated string of placeholders
             String bookingNosPlaceholders = String.join(",", Collections.nCopies(criteria.getBookingNo().split(",").length, "?"));
 
+=======
+            
+            // Create a comma-separated string of placeholders
+            String bookingNosPlaceholders = String.join(",", Collections.nCopies(criteria.getBookingNo().split(",").length, "?"));
+            
+>>>>>>> master-LTS
             query.append(" uptbd.booking_no IN (").append(bookingNosPlaceholders).append(")");
 
             // Add the booking numbers to the preparedStmtList

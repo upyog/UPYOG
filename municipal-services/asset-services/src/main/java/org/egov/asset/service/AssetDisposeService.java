@@ -13,7 +13,11 @@ import org.egov.common.contract.request.RequestInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+<<<<<<< HEAD
 import jakarta.validation.Valid;
+=======
+import javax.validation.Valid;
+>>>>>>> master-LTS
 import java.util.List;
 
 @Slf4j

@@ -19,7 +19,8 @@ const amountFormatter = (value, denomination, t) => {
   }
 };
 
-export const formatter = (value, symbol, unit, commaSeparated = true, t, isDecimal) => {
+export const formatter = (value, symbol, unit, commaSeparated = true, t, data,isDecimal,code) => {
+  console.log("formatter",value, symbol, unit,data)
   if (!value && value !== 0) return "";
   switch (symbol) {
     case "amount":
@@ -38,8 +39,16 @@ export const formatter = (value, symbol, unit, commaSeparated = true, t, isDecim
       return Nformatter.format(Math.round(value));
       case "percentage":
         const Pformatter = new Intl.NumberFormat("en-IN", { maximumSignificantDigits: 3 });
-        const formattedValue = Pformatter.format(Math.max(0, value).toFixed(2)); // Ensures value is non-negative
-        return `${formattedValue} %`;
+        const formatValue = (val) => {
+          const cappedValue = data && data.headerName.includes("SLA") 
+            ? Math.min(100, Math.max(0, val)) // Cap value between 0 and 100 for SLA
+            : Math.max(0, val); // Ensure non-negative value for others
+          return Pformatter.format(cappedValue.toFixed(2));
+        };
+      
+        return `${formatValue(value)} %`;
+             
+       
       
     default:
       return "";

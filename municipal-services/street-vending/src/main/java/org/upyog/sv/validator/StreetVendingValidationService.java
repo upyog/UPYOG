@@ -2,9 +2,15 @@ package org.upyog.sv.validator;
 
 import java.util.Set;
 
+<<<<<<< HEAD
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ValidationException;
 import jakarta.validation.Validator;
+=======
+import javax.validation.ConstraintViolation;
+import javax.validation.ValidationException;
+import javax.validation.Validator;
+>>>>>>> master-LTS
 
 import org.springframework.stereotype.Service;
 import org.upyog.sv.web.models.StreetVendingRequest;

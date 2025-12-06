@@ -74,7 +74,7 @@ public class PlanService {
 
     public Plan process(EdcrApplication dcrApplication, String applicationType) {
         Map<String, String> cityDetails = specificRuleService.getCityDetails();
-
+      
         Date asOnDate = null;
         if (dcrApplication.getPermitApplicationDate() != null) {
             asOnDate = dcrApplication.getPermitApplicationDate();
@@ -84,14 +84,16 @@ public class PlanService {
             asOnDate = new Date();
         }
 
+        String tenantId = dcrApplication.getThirdPartyUserTenant();
         AmendmentService repo = (AmendmentService) specificRuleService.find("amendmentService");
         Amendment amd = repo.getAmendments();
 
         Plan plan = extractService.extract(dcrApplication.getSavedDxfFile(), amd, asOnDate,
                 featureService.getFeatures());
+        plan.setTenantId(tenantId);    
         plan.setMdmsMasterData(dcrApplication.getMdmsMasterData());
         plan = applyRules(plan, amd, cityDetails);
-
+      
         String comparisonDcrNumber = dcrApplication.getEdcrApplicationDetails().get(0).getComparisonDcrNumber();
         if (ApplicationType.PERMIT.getApplicationTypeVal()
                 .equalsIgnoreCase(dcrApplication.getApplicationType().getApplicationType())
@@ -108,7 +110,7 @@ public class PlanService {
             comparisonRequest.setEdcrNumber(edcrApplicationDetail.getComparisonDcrNumber());
             comparisonRequest.setTenantId(edcrApplicationDetail.getApplication().getThirdPartyUserTenant());
             edcrApplicationDetail.setPlan(plan);
-
+         
             OcComparisonDetail processCombinedStatus = ocComparisonService.processCombinedStatus(comparisonRequest,
                     edcrApplicationDetail);
 
@@ -373,6 +375,7 @@ public class PlanService {
         Amendment amd = repo.getAmendments();
 
         Plan plan = extractService.extract(planFile, amd, asOnDate, featureService.getFeatures());
+        plan.setTenantId(edcrRequest.getTenantId());
         if (StringUtils.isNotBlank(edcrRequest.getApplicantName()))
             plan.getPlanInformation().setApplicantName(edcrRequest.getApplicantName());
         else

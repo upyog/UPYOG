@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 import { TextInput, Dropdown, RemoveableTag, LinkButton,LinkLabel, SearchField,SubmitBar } from '@upyog/digit-ui-react-components'
+=======
+import { TextInput, Dropdown, RemoveableTag, LinkButton,LinkLabel, SearchField,SubmitBar } from "@upyog/digit-ui-react-components"
+>>>>>>> master-LTS
 import React,{useMemo} from 'react'
 import { useHistory, Link } from "react-router-dom";
 

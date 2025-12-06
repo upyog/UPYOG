@@ -54,34 +54,86 @@ public class Door {
 	
 private static final long serialVersionUID = 105L;
     
-    private String name;
-    
-    private List<BigDecimal> widths = new ArrayList<>();
-    
-    private int colorCode;
+private String name;
 
-	public String getName() {
-		return name;
-	}
+private List<BigDecimal> widths = new ArrayList<>();
 
-	public void setName(String name) {
-		this.name = name;
-	}
+private BigDecimal doorWidth;
 
-	public List<BigDecimal> getWidths() {
-		return widths;
-	}
+private BigDecimal doorHeight;
 
-	public void setWidths(List<BigDecimal> widths) {
-		this.widths = widths;
-	}
+private List<BigDecimal> nonHabitationDoorWidths = new ArrayList<>();
 
-	public int getColorCode() {
-		return colorCode;
-	}
+private BigDecimal  nonHabitationDoorWidth;
 
-	public void setColorCode(int colorCode) {
-		this.colorCode = colorCode;
-	}
+private BigDecimal  nonHabitationDoorHeight;
+
+private int colorCode;
+
+public String getName() {
+	return name;
+}
+
+public void setName(String name) {
+	this.name = name;
+}
+
+public List<BigDecimal> getNonHabitationDoorWidths() {
+	return nonHabitationDoorWidths;
+}
+
+public void setNonHabitationDoorWidths(List<BigDecimal> nonHabitationDoorWidths) {
+	this.nonHabitationDoorWidths = nonHabitationDoorWidths;
+}
+
+public List<BigDecimal> getWidths() {
+	return widths;
+}
+
+public void setWidths(List<BigDecimal> widths) {
+	this.widths = widths;
+}
+
+
+public int getColorCode() {
+	return colorCode;
+}
+
+public void setColorCode(int colorCode) {
+	this.colorCode = colorCode;
+}
+
+public BigDecimal getDoorWidth() {
+	return doorWidth;
+}
+
+public void setDoorWidth(BigDecimal doorWidth) {
+	this.doorWidth = doorWidth;
+}
+
+public BigDecimal getDoorHeight() {
+	return doorHeight;
+}
+
+public void setDoorHeight(BigDecimal doorHeight) {
+	this.doorHeight = doorHeight;
+}
+
+public BigDecimal getNonHabitationDoorWidth() {
+	return nonHabitationDoorWidth;
+}
+
+public void setNonHabitationDoorWidth(BigDecimal nonHabitationDoorWidth) {
+	this.nonHabitationDoorWidth = nonHabitationDoorWidth;
+}
+
+public BigDecimal getNonHabitationDoorHeight() {
+	return nonHabitationDoorHeight;
+}
+
+public void setNonHabitationDoorHeight(BigDecimal nonHabitationDoorHeight) {
+	this.nonHabitationDoorHeight = nonHabitationDoorHeight;
+}
+
 
 }

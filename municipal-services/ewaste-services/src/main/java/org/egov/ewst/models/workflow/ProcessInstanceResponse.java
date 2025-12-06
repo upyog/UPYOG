@@ -3,7 +3,11 @@ package org.egov.ewst.models.workflow;
 import java.util.ArrayList;
 import java.util.List;
 
+<<<<<<< HEAD
 import jakarta.validation.Valid;
+=======
+import javax.validation.Valid;
+>>>>>>> master-LTS
 
 import org.egov.common.contract.response.ResponseInfo;
 import org.springframework.validation.annotation.Validated;
@@ -23,7 +27,11 @@ import lombok.Setter;
  */
 @ApiModel(description = "Process Instance Response")
 @Validated
+<<<<<<< HEAD
 @jakarta.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2018-12-04T11:26:25.532+05:30")
+=======
+@javax.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2018-12-04T11:26:25.532+05:30")
+>>>>>>> master-LTS
 
 @Getter
 @Setter

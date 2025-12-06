@@ -59,6 +59,7 @@ public class VirtualBuilding implements Serializable {
     private EnumSet<OccupancyType> occupancies = EnumSet.noneOf(OccupancyType.class);
     private Set<OccupancyTypeHelper> occupancyTypes = new HashSet<>();
     private BigDecimal totalBuitUpArea;
+    private Occupancy occupancy;
     private BigDecimal totalFloorArea;
     private BigDecimal totalCarpetArea;
     private BigDecimal totalExistingBuiltUpArea;
@@ -74,8 +75,22 @@ public class VirtualBuilding implements Serializable {
     private transient Boolean residentialBuilding = false;
     private BigDecimal totalConstructedArea;
     
+    private BigDecimal builtUpDeductionArea;
+    
+    public BigDecimal getBuiltUpDeductionArea() {
+        return builtUpDeductionArea;
+    }
+
+    public void setBuiltUpDeductionArea(BigDecimal builtUpDeductionArea) {
+        this.builtUpDeductionArea = builtUpDeductionArea;
+    }
+    
     public BigDecimal getTotalCarpetArea() {
         return totalCarpetArea;
+    }
+    
+    public Occupancy getOccupancy() {
+        return occupancy;
     }
 
     public BigDecimal getTotalExistingBuiltUpArea() {

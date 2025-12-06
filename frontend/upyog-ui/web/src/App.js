@@ -40,13 +40,32 @@ import {
   PTRModule,
   PTRLinks,
   PTRComponents,
+<<<<<<< HEAD
 } from "@upyog-niua/upyog-ui-module-ptr";
 
+=======
+} from "@upyog/upyog-ui-module-ptr";
+import { ASSETComponents, ASSETLinks, ASSETModule } from "@upyog/upyog-ui-module-asset";
+
+import { 
+  EWModule, 
+  EWLinks, 
+  EWComponents }
+  from "@upyog/upyog-ui-module-ew";
+
+import { SVComponents, SVLinks, SVModule } from "@upyog/upyog-ui-module-sv";
+import {CHBModule,CHBLinks,CHBComponents} from "@upyog/upyog-ui-module-chb";
+import {ADSModule,ADSLinks,ADSComponents} from "@upyog/upyog-ui-module-ads";
+import { WTModule, WTLinks, WTComponents } from "@upyog/upyog-ui-module-wt";
+import { VENDORComponents, VENDORLinks, VENDORModule } from "@upyog/upyog-ui-module-vendor";
+import { PGRAIComponents, PGRAILinks, PGRAIModule } from "@upyog/upyog-ui-module-pgrai";
+>>>>>>> master-LTS
 // import { initReportsComponents } from "@upyog/digit-ui-module-reports";
 
 initLibraries();
 
 const enabledModules = [
+  "Tqm",
   "PGR",
   "FSM",
   "Payment",
@@ -70,7 +89,20 @@ const enabledModules = [
   "FireNoc",
   "Birth",
   "Death",
+<<<<<<< HEAD
   "PTR"
+=======
+  "PTR",
+  "ASSET",
+  "ADS",
+  "EW",
+  "CHB",
+  "WT",
+  "VENDOR",
+  "MT",
+  "PGRAI",
+  "TP"
+>>>>>>> master-LTS
 ];
 window.Digit.ComponentRegistryService.setupRegistry({
   ...paymentConfigs,
@@ -88,7 +120,34 @@ window.Digit.ComponentRegistryService.setupRegistry({
   PTRModule,
   PTRLinks,
   ...PTRComponents,
+<<<<<<< HEAD
 
+=======
+  ASSETModule,
+  ASSETLinks,
+  ...ASSETComponents,
+  ADSLinks,
+  ADSModule,
+  ...ADSComponents,
+  SVModule,
+  SVLinks,
+  ...SVComponents,
+  EWModule,
+  EWLinks,
+  ...EWComponents,
+  CHBModule,
+  CHBLinks,
+  ...CHBComponents,
+  WTModule,
+  WTLinks,
+  ...WTComponents,
+  VENDORModule,
+  VENDORLinks,
+  ...VENDORComponents,
+  PGRAIModule,
+  PGRAILinks,
+  ...PGRAIComponents
+>>>>>>> master-LTS
 });
 
 initPGRComponents();

@@ -178,6 +178,12 @@ config:
         image-name: "gateway"
         dockerfile: "build/maven/Dockerfile"      
 
+  - name: "builds/core-services/gateway"
+    build:
+      - work-dir: "gateway"
+        image-name: "gateway"
+        dockerfile: "build/maven/Dockerfile"      
+
   - name: "builds/core-services/internal-gateway"
     build:
       - work-dir: "internal-gateway"

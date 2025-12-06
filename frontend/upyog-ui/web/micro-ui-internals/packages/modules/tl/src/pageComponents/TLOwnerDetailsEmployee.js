@@ -191,7 +191,7 @@ const OwnerForm = (_props) => {
             {typeOfOwner === "INSTITUTIONAL" && (
               <React.Fragment>
                 <LabelFieldPair>
-                  <CardLabel>{`${t("TL_INSTITUTION_NAME_LABEL")}*`}</CardLabel>
+                  <CardLabel>{`${t("TL_INSTITUTION_NAME_LABEL")}`}<span className="check-page-link-button"> *</span></CardLabel>
                   <div className="field">
                     <Controller
                       control={control}
@@ -220,7 +220,7 @@ const OwnerForm = (_props) => {
                 </LabelFieldPair>
                 <CardLabelError style={errorStyle}> {localFormState.touched.instituionName ? errors?.instituionName?.message : ""}</CardLabelError>
                 <LabelFieldPair>
-                  <CardLabel>{`${t("TL_INSTITUTION_TYPE_LABEL")}*`}</CardLabel>
+                  <CardLabel>{`${t("TL_INSTITUTION_TYPE_LABEL")}`}<span className="check-page-link-button"> *</span></CardLabel>
                   <div className="field">
                     <Controller
                       control={control}
@@ -250,7 +250,7 @@ const OwnerForm = (_props) => {
                 <CardLabelError style={errorStyle}>{localFormState.touched.subOwnerShipCategory ? errors?.subOwnerShipCategory?.message : ""}</CardLabelError>
                 <CardSectionHeader>{t("TL_AUTHORIZED_PERSON_DETAILS")}</CardSectionHeader>
                 <LabelFieldPair>
-                  <CardLabel>{`${t("TL_NEW_OWNER_DETAILS_NAME_LABEL")}*`}</CardLabel>
+                  <CardLabel>{`${t("TL_NEW_OWNER_DETAILS_NAME_LABEL")}`}<span className="check-page-link-button"> *</span></CardLabel>
                   <div className="field">
                     <Controller
                       control={control}
@@ -310,7 +310,7 @@ const OwnerForm = (_props) => {
                 </LabelFieldPair>
                 <CardLabelError style={errorStyle}>{localFormState.touched.designation ? errors?.designation?.message : ""}</CardLabelError>
                 <LabelFieldPair>
-                  <CardLabel>{`${t("TL_MOBILE_NUMBER_LABEL")}*`}</CardLabel>
+                  <CardLabel>{`${t("TL_MOBILE_NUMBER_LABEL")}`}<span className="check-page-link-button"> *</span></CardLabel>
                   <div className="field">
                     <Controller
                      control={control}
@@ -404,25 +404,27 @@ const OwnerForm = (_props) => {
             {typeOfOwner !== "INSTITUTIONAL" && (
               <React.Fragment>
                 <LabelFieldPair>
-                  <CardLabel className="card-label-smaller">{`${ t("TL_OWNER_S_NAME_LABEL")} * `}</CardLabel>
+                  <CardLabel className="card-label-smaller">{`${ t("TL_OWNER_S_NAME_LABEL")}`}<span className="check-page-link-button"> *</span></CardLabel>
                   <div className="field">
                     <Controller
                       control={control}
                       name={"name"}
                       defaultValue={owner?.name}
-                      rules={{ required: t("REQUIRED_FIELD"), validate: { pattern: (val) => (/^\w+( +\w+)*$/.test(val) ? true : t("INVALID_NAME")) } }}
+                      rules={{ required: t("REQUIRED_FIELD"), validate: { pattern: (val) => (/^[A-Za-z]+( [A-Za-z]+)*$/.test(val) ? true : t("INVALID_NAME")) } }}
                       render={(props) => (
                         <TextInput
                           value={props.value}
                           autoFocus={focusIndex.index === owner?.key && focusIndex.type === "name"}
                           errorStyle={localFormState.touched.name && errors?.name?.message ? true : false}
                           onChange={(e) => {
-                            if (e.target.value != owner?.name && isRenewal)
+                          const ownerNameValidation = e.target.value.replace(/[^A-Za-z ]/g, "");
+                          if (ownerNameValidation !== owner?.name && isRenewal) {
                               setPreviousLicenseDetails({ ...previousLicenseDetails, checkForRenewal: true });
-                            props.onChange(e.target.value);
+                          }
+                            props.onChange(ownerNameValidation);
                             // props.onChange(e);
                             setFocusIndex({ index: owner.key, type: "name" });
-                          }}
+                        }}
                           onBlur={(e) => {
                             setFocusIndex({ index: -1 });
                             props.onBlur(e);
@@ -439,7 +441,7 @@ const OwnerForm = (_props) => {
                   <CardLabel>{`${t("TL_NEW_OWNER_DETAILS_NAME_LABEL")}`}</CardLabel>
                 </LabelFieldPair> */}
                 <LabelFieldPair>
-                  <CardLabel className="card-label-smaller">{`${t("TL_OWNER_S_MOBILE_NUM_LABEL")} * `}</CardLabel>
+                  <CardLabel className="card-label-smaller">{`${t("TL_OWNER_S_MOBILE_NUM_LABEL")}`}<span className="check-page-link-button"> *</span></CardLabel>
                   <div className="field">
                     <Controller
                       control={control}
@@ -467,22 +469,24 @@ const OwnerForm = (_props) => {
                 </LabelFieldPair>
                 <CardLabelError style={errorStyle}>{localFormState.touched.mobileNumber ? errors?.mobileNumber?.message : ""}</CardLabelError>
                 <LabelFieldPair>
-                  <CardLabel className="card-label-smaller">{`${t("TL_GUARDIAN_S_NAME_LABEL")} * `}</CardLabel>
+                  <CardLabel className="card-label-smaller">{`${t("TL_GUARDIAN_S_NAME_LABEL")}`}<span className="check-page-link-button"> *</span></CardLabel>
                   <div className="field">
                     <Controller
                       control={control}
                       name={"fatherOrHusbandName"}
                       defaultValue={owner?.fatherOrHusbandName}
-                      rules={{ required: "NAME_REQUIRED", validate: { pattern: (val) => (/^\w+( +\w+)*$/.test(val) ? true : t("INVALID_NAME")) } }}
+                      rules={{ required: "NAME_REQUIRED", validate: { pattern: (val) => (/^[A-Za-z]+( [A-Za-z]+)*$/.test(val) ? true : t("INVALID_NAME")) } }}
                       render={(props) => (
                         <TextInput
                           value={props.value}
                           autoFocus={focusIndex.index === owner?.key && focusIndex.type === "fatherOrHusbandName"}
                           errorStyle={localFormState.touched.fatherOrHusbandName && errors?.fatherOrHusbandName?.message ? true : false}
                           onChange={(e) => {
-                            if (e.target.value != owner?.fatherOrHusbandName && isRenewal)
+                          const guardianNameValidation = e.target.value.replace(/[^A-Za-z ]/g, "");
+                          if (guardianNameValidation !== owner?.fatherOrHusbandName && isRenewal) {
                               setPreviousLicenseDetails({ ...previousLicenseDetails, checkForRenewal: true });
-                            props.onChange(e.target.value);
+                          }
+                            props.onChange(guardianNameValidation);
                             // props.onChange(e);
                             setFocusIndex({ index: owner.key, type: "fatherOrHusbandName" });
                           }}
@@ -497,7 +501,7 @@ const OwnerForm = (_props) => {
                   {localFormState.touched.fatherOrHusbandName ? errors?.fatherOrHusbandName?.message : ""}{" "}
                 </CardLabelError>
                 <LabelFieldPair>
-                  <CardLabel className="card-label-smaller">{`${t("TL_RELATIONSHIP_WITH_GUARDIAN_LABEL")} * `}</CardLabel>
+                  <CardLabel className="card-label-smaller">{`${t("TL_RELATIONSHIP_WITH_GUARDIAN_LABEL")}`}<span className="check-page-link-button"> *</span></CardLabel>
                   <Controller
                     control={control}
                     name={"relationship"}
@@ -527,7 +531,7 @@ const OwnerForm = (_props) => {
                 </LabelFieldPair>
                 <CardLabelError style={errorStyle}>{localFormState.touched.relationship ? errors?.relationship?.message : ""}</CardLabelError>
                 <LabelFieldPair>
-                  <CardLabel className="card-label-smaller">{`${t("TL_NEW_OWNER_DETAILS_GENDER_LABEL")} * `}</CardLabel>
+                  <CardLabel className="card-label-smaller">{`${t("TL_NEW_OWNER_DETAILS_GENDER_LABEL")}`}<span className="check-page-link-button"> *</span></CardLabel>
                   <Controller
                     control={control}
                     name={"gender"}

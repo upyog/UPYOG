@@ -15,7 +15,11 @@ import lombok.Builder;
  */
 @ApiModel(description = "Details of the user applying for ewaste application")
 @Validated
+<<<<<<< HEAD
 @jakarta.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2022-08-16T15:34:24.436+05:30")
+=======
+@javax.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2022-08-16T15:34:24.436+05:30")
+>>>>>>> master-LTS
 
 @Getter
 @Setter

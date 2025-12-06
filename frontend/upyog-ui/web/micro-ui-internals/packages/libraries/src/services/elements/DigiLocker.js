@@ -18,7 +18,11 @@ export const DigiLockerService = {
       method: "POST",
       auth: true,
       userService: true,
+<<<<<<< HEAD
       params: {module:"REGISTER" },
+=======
+      params: {module:"SSO" },
+>>>>>>> master-LTS
     }),
     token: ( data ) =>
     Request({
@@ -29,6 +33,19 @@ export const DigiLockerService = {
       userService: true,
       data:data,
     }),
+<<<<<<< HEAD
+=======
+    oauth: ( data ) =>
+    Request({
+      url: Urls.digiLocker.oauth,
+      useCache: false,
+      method: "POST",
+      auth: true,
+      userService: true,
+      //params:{tenantId:"pg"},
+      data:{User:data},
+    }),
+>>>>>>> master-LTS
     issueDoc: ( data ) =>
     Request({
       url: Urls.digiLocker.issueDoc,
@@ -47,7 +64,29 @@ export const DigiLockerService = {
       userService: true,
       data:data
       
+<<<<<<< HEAD
     })
+=======
+    }),
+    pdfUrl:(data) =>
+      Request({
+        url: Urls.eSign.pdfUrl,
+        useCache: false,
+        method: "POST",
+        auth: true,
+        userService: true,
+        data:{ pdfUrl:data?.TokenReq?.pdfUrl,redirectUrl:"",fileStoreId:data?.TokenReq?.fileStoreId,module:data?.TokenReq?.module,tenantId:data?.TokenReq?.tenantId,consumerCode:data?.TokenReq?.consumerCode}
+      }),
+      fileStoreSearch:(data) =>
+      Request({
+        url: Urls.eSign.fileStoreSearch,
+        useCache: false,
+        method: "POST",
+        auth: true,
+        userService: true,
+        data:{module:data?.TokenReq?.module,consumerCode:data?.TokenReq?.consumerCode}
+      })
+>>>>>>> master-LTS
 };
 
 

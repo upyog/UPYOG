@@ -1,10 +1,18 @@
 import React, { useState, useEffect, useMemo } from "react";
+<<<<<<< HEAD
 import { FormStep, RadioOrSelect, RadioButtons, LabelFieldPair, Dropdown, CardLabel, CardLabelError, CheckBox } from "@upyog/digit-ui-react-components";
+=======
+import { RadioOrSelect, RadioButtons, LabelFieldPair, Dropdown, CardLabel, CardLabelError, CheckBox } from "@upyog/digit-ui-react-components";
+>>>>>>> master-LTS
 import { cardBodyStyle } from "../utils";
 import { useLocation } from "react-router-dom";
 import Timeline from "../components/TLTimeline";
 import { getOwnersForNewApplication } from "../utils/index";
+<<<<<<< HEAD
 
+=======
+import FormStep from "../../../../react-components/src/molecules/FormStep";
+>>>>>>> master-LTS
 const TLSelectOwnerShipDetails = ({ t, config, onSelect, userType, formData, onBlur, formState, setError, clearErrors }) => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const stateId = Digit.ULBService.getStateId();

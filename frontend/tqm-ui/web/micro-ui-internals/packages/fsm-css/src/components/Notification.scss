@@ -1,0 +1,132 @@
+.button-container {
+  display: flex;
+  justify-content: flex-end;
+  margin-right: 4rem;
+}
+
+.headerContainer {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.clear-all-link {
+  color: #f47738;
+  text-decoration: underline;
+  margin-left: auto;
+  margin-top: 10px;
+  cursor: pointer;
+}
+
+.bell-icon {
+  margin-top: 8px;
+  margin-right: 10px;
+}
+@media (max-width: 700px) {
+  .bell-icon {
+    margin-top: 4px;
+    margin-bottom: 8px;
+  }
+}
+
+.notificationContent {
+  display: flex;
+  justify-content: space-between;
+  p {
+    font-size: 0.875rem;
+  }
+}
+
+.WhatsNewCard {
+  margin-bottom: 15px;
+  padding-left: 1rem;
+}
+
+.NotificationHeader {
+  display: flex;
+  justify-content: space-between;
+  font-size: 1rem;
+  margin-bottom: 0.25rem;
+  font-weight: 700;
+}
+
+.viewDetailsButton {
+  h2 {
+    color: #f47738;
+    padding: 5px 10px;
+    margin: 10px 20px;
+    overflow: inherit;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+}
+
+.view-all-button {
+  color: #f47738;
+  text-decoration: underline;
+  margin-left: auto;
+  cursor: pointer;
+}
+
+.view-all-button-container {
+  text-align: right;
+}
+
+.view-all-button:active {
+  border: none;
+}
+.Container {
+  padding-left: 1.25rem;
+  padding-right: 0.5rem;
+  .no-results-found {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    .text {
+      margin-top: 1.25rem;
+      font-size: 1rem;
+      line-height: 1.5rem;
+      color: #505a5f;
+    }
+  }
+}
+
+@media (max-width: 700px) {
+  .WhatsNewCard {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  .WhatsNewCard p {
+    font-size: 0.875rem;
+  }
+  .Container {
+    padding-left: 0;
+    padding-right: 0;
+    margin: 1rem;
+    .headerContainer {
+      .h1 {
+        margin-left: 0;
+      }
+    }
+    .NotificationItem {
+      .Notification {
+        .WhatsNewCard {
+          .NotificationHeader {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 0.44rem;
+          }
+          .notificationContent {
+            flex-direction: column;
+            .button-container {
+              margin-right: 0;
+              display: block;
+              button {
+                width: 100%;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

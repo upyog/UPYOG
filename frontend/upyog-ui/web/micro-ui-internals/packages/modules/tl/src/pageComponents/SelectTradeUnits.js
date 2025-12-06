@@ -300,7 +300,7 @@ const SelectTradeUnits = ({ t, config, onSelect, userType, formData }) => {
                     background: "#FAFAFA",
                   }}
                 >
-                  <CardLabel>{`${t("TL_NEW_TRADE_DETAILS_TRADE_CAT_LABEL")}*`}</CardLabel>
+                  <CardLabel>{`${t("TL_NEW_TRADE_DETAILS_TRADE_CAT_LABEL")}`}<span className="check-page-link-button"> *</span></CardLabel>
                   <LinkButton
                     label={
                       <div>
@@ -339,7 +339,7 @@ const SelectTradeUnits = ({ t, config, onSelect, userType, formData }) => {
                   ) : (
                     <Loader />
                   )}
-                  <CardLabel>{`${t("TL_NEW_TRADE_DETAILS_TRADE_TYPE_LABEL")}*`}</CardLabel>
+                  <CardLabel>{`${t("TL_NEW_TRADE_DETAILS_TRADE_TYPE_LABEL")}`}<span className="check-page-link-button"> *</span></CardLabel>
                   <Dropdown
                     t={t}
                     optionKey="i18nKey"
@@ -348,7 +348,7 @@ const SelectTradeUnits = ({ t, config, onSelect, userType, formData }) => {
                     selected={field?.tradetype}
                     select={(e) => selectTradeType(index, e)}
                   />
-                  <CardLabel>{`${t("TL_NEW_TRADE_DETAILS_TRADE_SUBTYPE_LABEL")}*`}</CardLabel>
+                  <CardLabel>{`${t("TL_NEW_TRADE_DETAILS_TRADE_SUBTYPE_LABEL")}`}<span className="check-page-link-button"> *</span></CardLabel>
                     <Dropdown
                       t={t}
                       optionKey="i18nKey"
@@ -371,7 +371,7 @@ const SelectTradeUnits = ({ t, config, onSelect, userType, formData }) => {
                     onChange={(e) => selectUnitOfMeasure(index, e)}
                     disable={true}
                   />
-                  <CardLabel>{`${t("TL_NEW_TRADE_DETAILS_UOM_VALUE_LABEL")}${!field.unit ? "" : "*"}`}</CardLabel>
+                  <CardLabel>{`${t("TL_NEW_TRADE_DETAILS_UOM_VALUE_LABEL")}`}{!field.unit ? "" : <span className="check-page-link-button"> *</span>}</CardLabel>
                   <TextInput
                     style={{ background: "#FAFAFA" }}
                     t={t}

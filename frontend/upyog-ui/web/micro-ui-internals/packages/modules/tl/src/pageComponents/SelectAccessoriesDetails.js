@@ -234,7 +234,7 @@ const SelectAccessoriesDetails = ({ t, config, onSelect, userType, formData }) =
                     background: "#FAFAFA",
                   }}
                 >
-                  <CardLabel>{`${t("TL_ACCESSORY_LABEL")}*`}</CardLabel>
+                  <CardLabel>{`${t("TL_ACCESSORY_LABEL")}`}<span className="check-page-link-button"> *</span></CardLabel>
                   <LinkButton
                     label={
                       <div>
@@ -272,7 +272,7 @@ const SelectAccessoriesDetails = ({ t, config, onSelect, userType, formData }) =
                   ) : (
                     <Loader />
                   )}
-                  <CardLabel>{`${t("TL_ACCESSORY_COUNT_LABEL")}*`}</CardLabel>
+                  <CardLabel>{`${t("TL_ACCESSORY_COUNT_LABEL")}`}<span className="check-page-link-button"> *</span></CardLabel>
                   <TextInput
                     style={{ background: "#FAFAFA" }}
                     t={t}
@@ -309,7 +309,7 @@ const SelectAccessoriesDetails = ({ t, config, onSelect, userType, formData }) =
             title: t("PT_NAME_ERROR_MESSAGE"),
           })} */
                   />
-                  <CardLabel>{`${t("TL_NEW_TRADE_DETAILS_UOM_VALUE_LABEL")}*`}</CardLabel>
+                  <CardLabel>{`${t("TL_NEW_TRADE_DETAILS_UOM_VALUE_LABEL")}`}<span className="check-page-link-button"> *</span></CardLabel>
                   <TextInput
                     style={{ background: "#FAFAFA" }}
                     t={t}

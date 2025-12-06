@@ -216,5 +216,20 @@ config:
           image-name: "pet-services"
           dockerfile: "build/maven/Dockerfile"
         - work-dir: "pet-services/src/main/resources/db"
-          image-name: "pet-services-db"        
+          image-name: "pet-services-db" 
 
+  - name: "builds/municipal-services/pqm"
+      build:
+        - work-dir: "pqm-service"
+          image-name: "pqm-service"
+          dockerfile: "build/maven/Dockerfile"
+        - work-dir: "pqm/src/main/resources/db"
+          image-name: "pqm-service-db" 
+          
+   - name: "builds/municipal-services/pqm-anomaly-finder"
+      build:
+        - work-dir: "pqm-anomaly-finder"
+          image-name: "pqm-anomaly-finder"
+          dockerfile: "build/maven/Dockerfile"
+        - work-dir: "pqm-anomaly-finder/src/main/resources/db"
+          image-name: "pqm-anomaly-finder-db"

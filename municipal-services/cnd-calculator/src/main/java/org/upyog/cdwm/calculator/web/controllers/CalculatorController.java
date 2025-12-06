@@ -3,10 +3,15 @@ package org.upyog.cdwm.calculator.web.controllers;
 import java.util.Collections;
 import java.util.List;
 
+<<<<<<< HEAD
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
+=======
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
+>>>>>>> master-LTS
 
 import org.egov.common.contract.request.RequestInfo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +34,11 @@ import org.upyog.cdwm.calculator.web.models.demand.DemandResponse;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+<<<<<<< HEAD
 //import io.swagger.annotations.ApiParam;
+=======
+import io.swagger.annotations.ApiParam;
+>>>>>>> master-LTS
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -38,7 +47,10 @@ import lombok.extern.slf4j.Slf4j;
 
 @RestController
 @Slf4j
+<<<<<<< HEAD
 @Tag(name = "Cnd Calculator", description = "Cnd Calculator operations")
+=======
+>>>>>>> master-LTS
 public class CalculatorController {
 
 	private ObjectMapper objectMapper;
@@ -77,8 +89,13 @@ public class CalculatorController {
      * @return A ResponseEntity containing a list of DemandResponse objects.
      */
 	@PostMapping(value = "/v1/_calculate")
+<<<<<<< HEAD
 	@Operation(summary = "Calculate Fee", description = "Calculate the Fee and genearte the Demand")
 	public ResponseEntity<DemandResponse> calculate(
+=======
+	public ResponseEntity<DemandResponse> calculate(
+			@ApiParam(value = "Details for the CND application, payment", required = true)
+>>>>>>> master-LTS
 	        @Valid @RequestBody CalculationRequest calculationReq)
 	        {
 

@@ -4,14 +4,24 @@ import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 
+<<<<<<< HEAD
+=======
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+>>>>>>> master-LTS
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.validation.annotation.Validated;
 import org.upyog.web.models.Role;
 
+<<<<<<< HEAD
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
+=======
+import javax.validation.Valid;
+import javax.validation.constraints.*;
+>>>>>>> master-LTS
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,7 +32,11 @@ import lombok.Builder;
  * User
  */
 @Validated
+<<<<<<< HEAD
 @jakarta.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2024-12-07T15:40:06.365+05:30")
+=======
+@javax.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2024-12-07T15:40:06.365+05:30")
+>>>>>>> master-LTS
 
 @Getter
 @Setter

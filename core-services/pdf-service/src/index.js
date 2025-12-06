@@ -115,7 +115,10 @@ var fontDescriptors = {
   },
   BalooPaaji:{
     normal: "src/fonts/BalooPaaji2-Regular.ttf",
-    bold: "src/fonts/BalooPaaji2-Bold.ttf"
+    bold: "src/fonts/BalooPaaji2-Bold.ttf",
+  },
+  AnmolUni:{
+    normal: "src/fonts/AnmolUni.ttf"
   }
 };
 
@@ -123,7 +126,8 @@ var defaultFontMapping = {
   en_IN: 'default',
   hi_IN: 'default',
   pn_IN: 'BalooPaaji',
-  od_IN: 'BalooBhaina'
+  od_IN: 'BalooBhaina',
+  pn_IN: 'AnmolUni'
 }
 
 const printer = new pdfMakePrinter(fontDescriptors);
@@ -1098,11 +1102,35 @@ const generateQRCodes = async (
     "$.DataConfigs.mappings.*.mappings.*.qrcodeConfig.*"
   );
 
+  // Add Module key for which QR code generation is required
+  const moduleKey = [
+    'mcollect-challan',
+    'firenoc-receipt',
+    'property-receipt',
+    'bpa-receipt',
+    'consolidatedreceipt',
+    'tradelicense-receipt',
+    'fsm-receipt',
+    'misc-receipt',
+    'ws-onetime-receipt',
+    'chbservice-receipt',
+    'advservice-receipt',
+    'advpermissionletter',
+    'svservice-receipt',
+    'svcertificate',
+    'svidentitycard',
+    'cnd-service',
+    'request-service.water_tanker-receipt',
+    'request-service.mobile_toilet-receipt',
+    'chbpermissionletter',
+    'advpermissionletter'
+  ];
+
   for (var i = 0, len = qrcodeMappings.length; i < len; i++) {
     let qrmapping = qrcodeMappings[i];
     let varname = qrmapping.variable;
     let urlQR='',qrtext;
-    if(key == 'mcollect-challan' || key == 'firenoc-receipt' || key == 'property-receipt' || key == 'bpa-receipt' || key == 'consolidatedreceipt' || key == 'tradelicense-receipt' || key == 'fsm-receipt' || key == 'misc-receipt' || key == 'ws-onetime-receipt')
+    if(moduleKey.includes(key))
     {
       urlQR=egov_host;
       urlQR=urlQR.concat(qrmapping.value);

@@ -120,8 +120,28 @@
 	}
 
 	function setApprover() {
-		document.getElementById("approverPositionId").value = '<s:property value="%{approverPositionId}"/>';
-	}
+  document.getElementById("approverPositionId").value = '<s:property value="%{approverPositionId}"/>';
+  var approverDropdown = document.getElementById('approverPositionId');
+  // Get the list of options in the dropdown (from the backend or pre-populated)
+  var options = approverDropdown.options;
+  var uniqueOptions = new Map();  // Use a Map to ensure uniqueness
+  // Iterate over the options and add only unique values and non-"0" positionId
+  for (var i = 0; i < options.length; i++) {
+    var option = options[i];
+    var positionId = option.value;  // Assuming positionId is stored in option value
+    // Only add to uniqueOptions if positionId is not "0" and the option is unique
+    if (positionId !== "0" && !uniqueOptions.has(positionId)) {
+      uniqueOptions.set(positionId, option);
+    }
+
+  }
+  // Clear the dropdown
+  approverDropdown.innerHTML = '';
+  // Append the unique options to the dropdown
+  uniqueOptions.forEach(function (option) {
+    approverDropdown.appendChild(option);
+  });
+}
 </script>
 <s:if test="%{getNextAction()!='END'}">
 	<s:if test="%{getCurrentState()!='Closed'}">

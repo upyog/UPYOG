@@ -6,6 +6,10 @@ import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+<<<<<<< HEAD
+=======
+import org.upyog.config.MainConfiguration;
+>>>>>>> master-LTS
 import org.upyog.config.ModuleConfig;
 import org.upyog.constants.VerificationSearchConstants;
 import org.upyog.mapper.CommonDetailsMapper;
@@ -40,6 +44,12 @@ public class CommonServiceImpl implements CommonService {
 	private UserService userService;
 
 	@Autowired
+<<<<<<< HEAD
+=======
+	private MainConfiguration mainConfiguration;
+
+	@Autowired
+>>>>>>> master-LTS
 	public CommonServiceImpl(ModuleConfig moduleConfig, CommonDetailsMapperFactory mapperFactory) {
 
 		this.moduleHosts = moduleConfig.getHost();
@@ -54,6 +64,12 @@ public class CommonServiceImpl implements CommonService {
 		String moduleName = request.getModuleSearchCriteria().getModuleName();
 		String applicationNumber = request.getModuleSearchCriteria().getApplicationNumber();
 		String tenantId = request.getModuleSearchCriteria().getTenantId();
+<<<<<<< HEAD
+=======
+
+		log.info("Module: {}, Host: {}, Endpoint: {}", moduleName, moduleHosts.get(moduleName), moduleEndpoints.get(moduleName));
+
+>>>>>>> master-LTS
 		String host = moduleHosts.get(moduleName);
 		if (host == null) {
 			throw new IllegalArgumentException("Invalid module name or host not configured: " + moduleName);
@@ -74,6 +90,11 @@ public class CommonServiceImpl implements CommonService {
 		StringBuilder urlBuilder = new StringBuilder();
 		urlBuilder.append(host).append(endpoint).append("?").append(uniqueIdParam).append("=").append(applicationNumber)
 				.append("&tenantId=").append(tenantId);
+<<<<<<< HEAD
+=======
+		log.info("Final URL being called: {}", urlBuilder.toString());
+
+>>>>>>> master-LTS
 		RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder()
 				.requestInfo(requestInfo.getUserInfo() != null ? requestInfo : getSystemUserDetails()).build();
 
@@ -82,10 +103,18 @@ public class CommonServiceImpl implements CommonService {
 		try {
 			log.info("urlBuilder : " + urlBuilder);
 			result = serviceRequestRepository.fetchResult(urlBuilder, requestInfoWrapper);
+<<<<<<< HEAD
+=======
+			log.info("API call successful for URL: {}", urlBuilder.toString());
+>>>>>>> master-LTS
 			JsonNode jsonNode = objectMapper.valueToTree(result);
 			CommonDetailsMapper mapper = mapperFactory.getMapper(moduleName);
 			return mapper.mapJsonToCommonDetails(jsonNode);
 		} catch (Exception e) {
+<<<<<<< HEAD
+=======
+			log.error("API call failed for URL: {}, Error: {}", urlBuilder.toString(), e.getMessage());
+>>>>>>> master-LTS
 			throw new CustomException("Error fetching details for module: " + moduleName, "MODULE_API_ERROR");
 		}
 	}
@@ -100,11 +129,19 @@ public class CommonServiceImpl implements CommonService {
 	 */
 	private RequestInfo getSystemUserDetails() {
 		UserDetailResponse userDetailResponse = userService.searchByUserName(
+<<<<<<< HEAD
 				VerificationSearchConstants.SYSTEM_CITIZEN_USERNAME, VerificationSearchConstants.VS_TENANTID);
 
 		if (userDetailResponse == null || userDetailResponse.getUser().isEmpty()) {
 			throw new IllegalStateException(
 					"SYSTEM user not found for tenant '" + VerificationSearchConstants.VS_TENANTID + "'.");
+=======
+				mainConfiguration.getInternalMicroserviceUserName(), mainConfiguration.getStateLevelTenantId());
+
+		if (userDetailResponse == null || userDetailResponse.getUser().isEmpty()) {
+			throw new IllegalStateException(
+					"SYSTEM user not found for tenant '" + mainConfiguration.getStateLevelTenantId() + "'.");
+>>>>>>> master-LTS
 		}
 
 		RequestInfo systemRequestInfo = RequestInfo.builder().userInfo(userDetailResponse.getUser().get(0)).build();

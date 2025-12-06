@@ -18,7 +18,11 @@ import TLSelectProofIdentity from "./pageComponents/TLSelectProofIdentity";
 import SelectOwnershipProof from "./pageComponents/SelectOwnershipProof";
 import SelectTradeName from "./pageComponents/SelectTradeName";
 import SelectStructureType from "./pageComponents/SelectStructureType";
+<<<<<<< HEAD
 // import SelectVehicleType from "./pageComponents/SelectVehicleType";
+=======
+import TLSelectVehicleType from "./pageComponents/TLSelectVehicleType";
+>>>>>>> master-LTS
 import SelectVehicleType from "./pageComponents/SelectVehicleType";
 import SelectBuildingType from "./pageComponents/SelectBuildingType";
 import SelectCommencementDate from "./pageComponents/SelectCommencementDate";
@@ -59,7 +63,7 @@ import RenewTrade from "./pages/citizen/Renewal/renewTrade";
 import SearchTradeComponent from "./pages/citizen/SearchTrade";
 import SelectTradeUnitsInitial from "./pageComponents/SelectTradeUnitsInitial";
 import TLTradeUnitsEmployeeInitial from "./pageComponents/TLTradeUnitsEmployeeInitial";
-
+import CommonRedirect from "./pageComponents/CommonRedirect"
 import CitizenApp from "./pages/citizen";
 import EmployeeApp from "./pages/employee";
 
@@ -111,7 +115,11 @@ const componentsToRegister = {
   TradeLicense,
   SelectTradeName,
   SelectStructureType,
+<<<<<<< HEAD
   // SelectVehicleType,
+=======
+  TLSelectVehicleType,
+>>>>>>> master-LTS
   SelectVehicleType,
   SelectBuildingType,
   SelectCommencementDate,
@@ -162,6 +170,7 @@ const componentsToRegister = {
   SelectOtherTradeDetails,
   SelectTradeUnitsInitial,
   TLTradeUnitsEmployeeInitial,
+  CommonRedirect
 };
 
 export const initTLComponents = () => {

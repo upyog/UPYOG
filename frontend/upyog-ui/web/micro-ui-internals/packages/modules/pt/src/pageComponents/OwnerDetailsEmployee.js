@@ -276,7 +276,7 @@ const OwnerForm = (_props) => {
           {!isIndividualTypeOwner ? (
             <React.Fragment>
               <LabelFieldPair>
-                <CardLabel className="card-label-smaller">{t("PT_INSTITUTION_NAME") + " *"}</CardLabel>
+                <CardLabel className="card-label-smaller">{t("PT_INSTITUTION_NAME")}<span className="check-page-link-button"> *</span></CardLabel>
                 <div className="field">
                   <Controller
                     control={control}
@@ -311,7 +311,7 @@ const OwnerForm = (_props) => {
                 {localFormState.touched?.institution?.name ? errors?.institution?.name?.message : ""}
               </CardLabelError>
               <LabelFieldPair>
-                <CardLabel className="card-label-smaller">{t("PT_INSTITUTION_TYPE") + " *"}</CardLabel>
+                <CardLabel className="card-label-smaller">{t("PT_INSTITUTION_TYPE")}<span className="check-page-link-button"> *</span></CardLabel>
                 <Controller
                   control={control}
                   name={"institution.type"}
@@ -347,7 +347,7 @@ const OwnerForm = (_props) => {
           ) : null}
 
           <LabelFieldPair>
-            <CardLabel className="card-label-smaller">{t("PT_OWNER_NAME") + " *"}</CardLabel>
+            <CardLabel className="card-label-smaller">{t("PT_OWNER_NAME")}<span className="check-page-link-button"> *</span></CardLabel>
             <div className="field">
               <Controller
                 control={control}
@@ -380,7 +380,7 @@ const OwnerForm = (_props) => {
           {isIndividualTypeOwner ? (
             <React.Fragment>
               <LabelFieldPair>
-                <CardLabel className="card-label-smaller">{t("PT_FORM3_GENDER") + " *"}</CardLabel>
+                <CardLabel className="card-label-smaller">{t("PT_FORM3_GENDER")}<span className="check-page-link-button"> *</span></CardLabel>
                 <Controller
                   control={control}
                   name={"gender"}
@@ -411,7 +411,7 @@ const OwnerForm = (_props) => {
           ) : (
             <React.Fragment>
               <LabelFieldPair>
-                <CardLabel className="card-label-smaller">{t("PT_LANDLINE_NUMBER_FLOATING_LABEL") + (isIndividualTypeOwner ? "" : " *")}</CardLabel>
+                <CardLabel className="card-label-smaller">{t("PT_LANDLINE_NUMBER_FLOATING_LABEL")}{ isIndividualTypeOwner ?"": <span className="check-page-link-button"> *</span>}</CardLabel>
                 <div className="field">
                   <Controller
                     control={control}
@@ -447,7 +447,7 @@ const OwnerForm = (_props) => {
             </React.Fragment>
           )}
           <LabelFieldPair>
-            <CardLabel className="card-label-smaller">{t("PT_FORM3_MOBILE_NUMBER") + " *"}</CardLabel>
+            <CardLabel className="card-label-smaller">{t("PT_FORM3_MOBILE_NUMBER")} <span className="check-page-link-button"> *</span></CardLabel>
             <div className="field">
               <Controller
                 control={control}
@@ -477,7 +477,7 @@ const OwnerForm = (_props) => {
           {isIndividualTypeOwner ? (
             <React.Fragment>
               <LabelFieldPair>
-                <CardLabel className="card-label-smaller">{t("PT_SEARCHPROPERTY_TABEL_GUARDIANNAME") + " *"}</CardLabel>
+                <CardLabel className="card-label-smaller">{t("PT_SEARCHPROPERTY_TABEL_GUARDIANNAME")} <span className="check-page-link-button"> *</span> </CardLabel>
                 <div className="field">
                   <Controller
                     control={control}
@@ -506,7 +506,7 @@ const OwnerForm = (_props) => {
                 {localFormState.touched.fatherOrHusbandName ? errors?.fatherOrHusbandName?.message : ""}
               </CardLabelError>
               <LabelFieldPair>
-                <CardLabel className="card-label-smaller">{t("PT_FORM3_RELATIONSHIP") + " *"}</CardLabel>
+                <CardLabel className="card-label-smaller">{t("PT_FORM3_RELATIONSHIP")} <span className="check-page-link-button"> *</span> </CardLabel>
                 <Controller
                   control={control}
                   name={"relationship"}
@@ -531,7 +531,7 @@ const OwnerForm = (_props) => {
               </LabelFieldPair>
               <CardLabelError style={errorStyle}>{localFormState.touched.relationship ? errors?.relationship?.message : ""}</CardLabelError>
               <LabelFieldPair>
-                <CardLabel className="card-label-smaller">{t("PT_FORM3_SPECIAL_CATEGORY") + " *"}</CardLabel>
+                <CardLabel className="card-label-smaller">{t("PT_FORM3_SPECIAL_CATEGORY")} <span className="check-page-link-button"> *</span> </CardLabel>
                 <Controller
                   control={control}
                   name={"ownerType"}
@@ -556,7 +556,7 @@ const OwnerForm = (_props) => {
           ) : (
             <React.Fragment>
               <LabelFieldPair>
-                <CardLabel className="card-label-smaller">{t("TL_NEW_DESIG_OWNER_LABEL") + " *"}</CardLabel>
+                <CardLabel className="card-label-smaller">{t("TL_NEW_DESIG_OWNER_LABEL")}<span className="check-page-link-button"> *</span> </CardLabel>
                 <div className="field">
                   <Controller
                     control={control}
@@ -585,7 +585,7 @@ const OwnerForm = (_props) => {
           {formValue.ownerType?.code && formValue.ownerType?.code !== "NONE" ? (
             <React.Fragment>
               <LabelFieldPair>
-                <CardLabel className="card-label-smaller">{t("PT_OWNERSHIP_DOCUMENT_TYPE") + " *"}</CardLabel>
+                <CardLabel className="card-label-smaller">{t("PT_OWNERSHIP_DOCUMENT_TYPE")} <span className="check-page-link-button"> *</span> </CardLabel>
                 <Controller
                   control={control}
                   name={"documents.documentType"}
@@ -609,7 +609,7 @@ const OwnerForm = (_props) => {
                 {localFormState.touched.documents?.documentType ? errors?.documents?.documentType?.message : ""}
               </CardLabelError>
               <LabelFieldPair>
-                <CardLabel className="card-label-smaller">{t("PT_OWNERSHIP_DOCUMENT_ID") + " *"}</CardLabel>
+                <CardLabel className="card-label-smaller">{t("PT_OWNERSHIP_DOCUMENT_ID")} <span className="check-page-link-button"> *</span> </CardLabel>
                 <div className="field">
                   <Controller
                     control={control}
@@ -671,7 +671,7 @@ const OwnerForm = (_props) => {
           </div>
 
           <LabelFieldPair>
-            <CardLabel className="card-label-smaller">{t("PT_OWNERSHIP_INFO_CORR_ADDR") + (isIndividualTypeOwner ? "" : " *")}</CardLabel>
+            <CardLabel className="card-label-smaller">{t("PT_OWNERSHIP_INFO_CORR_ADDR")}{isIndividualTypeOwner ? "": <span className="check-page-link-button"> *</span> }</CardLabel>
             <div className="field">
               <Controller
                 control={control}

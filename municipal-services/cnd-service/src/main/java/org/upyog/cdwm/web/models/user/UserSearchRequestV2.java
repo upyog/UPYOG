@@ -7,8 +7,13 @@ import lombok.Setter;
 import lombok.ToString;
 import org.egov.common.contract.request.RequestInfo;
 
+<<<<<<< HEAD
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
+=======
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
+>>>>>>> master-LTS
 import java.util.Collections;
 import java.util.List;
 

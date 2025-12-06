@@ -1,3 +1,32 @@
+<<<<<<< HEAD
+=======
+  /**
+ * @description 
+ * This component handles the **Pet Application Search** functionality.
+ * It provides a form with multiple fields for filtering applications based on:
+ * - Application number
+ * - Pet type
+ * - Application type
+ * - Mobile number
+ * - Date range (from and to dates)
+ * 
+ * It uses:
+ * - `react-hook-form` for form handling.
+ * - `Digit` services and hooks for fetching pet-related data.
+ * - `Table` component for displaying search results.
+ * - Pagination and sorting features.
+ * 
+ * @props 
+ * - `tenantId` (string): The ID of the current tenant.
+ * - `isLoading` (boolean): Flag indicating whether data is loading.
+ * - `t` (function): Translation function for multilingual support.
+ * - `onSubmit` (function): Callback function to submit the form.
+ * - `data` (object): Search results data.
+ * - `count` (number): Total records count.
+ * - `setShowToast` (function): Function to manage toast notifications.
+ */
+
+>>>>>>> master-LTS
   import React, { useCallback, useMemo, useEffect } from "react"
   import { useForm, Controller } from "react-hook-form";
   import { TextInput, SubmitBar, LinkLabel, ActionBar, CloseSvg, DatePicker, CardLabelError, SearchForm, SearchField, Dropdown, Table, Card, MobileNumber, Loader, CardText, Header } from "@upyog/digit-ui-react-components";
@@ -21,6 +50,7 @@
         register("sortOrder", "DESC")
       },[register])
       
+<<<<<<< HEAD
       const applicationStatuses = [
           {
               code: "ACTIVE",
@@ -34,12 +64,24 @@
               code: "INWORKFLOW",
               i18nKey: "WF_PTR_INWORKFLOW"
           },
+=======
+      const applicationType = [
+          {
+              code: "NEWAPPLICATION",
+              i18nKey: "NEWAPPLICATION"
+          },
+          {
+              code: "RENEWAPPLICATION",
+              i18nKey: "RENEWAPPLICATION"
+          }
+>>>>>>> master-LTS
       ]
       
       const stateId = Digit.ULBService.getStateId();
 
 
       const { data: Menu } = Digit.Hooks.ptr.usePTRPetMDMS(stateId, "PetService", "PetType");
+<<<<<<< HEAD
       // const { data: Breed_Type } = Digit.Hooks.ptr.useBreedTypeMDMS(stateId, "PetService", "BreedType");  // hooks for breed type
 
       let menu = [];
@@ -68,6 +110,14 @@
 
 
       
+=======
+      let menu = [];
+
+    Menu &&
+    Menu.map((petone) => {
+      menu.push({ i18nKey: `PTR_PET_${petone.code}`, code: `${petone.code}`, value: `${petone.name}` });
+    });      
+>>>>>>> master-LTS
       const GetCell = (value) => <span className="cell-text">{value}</span>;
       
       const columns = useMemo( () => ([
@@ -120,6 +170,17 @@
               },
               disableSortBy: true,
             },
+<<<<<<< HEAD
+=======
+            // field added for status of application
+            {
+              Header: t("PTR_APPLICATION_STATUS"),
+              Cell: ({ row }) => {
+                return GetCell(`${row?.original?.["status"]}`)
+              },
+              disableSortBy: true,
+            },
+>>>>>>> master-LTS
         ]), [] )
 
       const onSort = useCallback((args) => {
@@ -174,24 +235,41 @@
                               )}
                               />
                   </SearchField>
+<<<<<<< HEAD
                   {/* <SearchField>
                       <label>{t("PTR_SEARCH_BREED_TYPE")}</label>
                        <Controller
                               control={control}
                               name="breedType"
+=======
+                  <SearchField>
+                      <label>{t("PTR_APPLICATION_TYPE")}</label>
+                      {/* <TextInput name="petType" inputRef={register({})} /> */}
+                      <Controller
+                              control={control}
+                              name="applicationType"
+>>>>>>> master-LTS
                               render={(props) => (
                                   <Dropdown
                                   selected={props.value}
                                   select={props.onChange}
                                   onBlur={props.onBlur}
+<<<<<<< HEAD
                                   option={breed_type}
+=======
+                                  option={applicationType}
+>>>>>>> master-LTS
                                   optionKey="i18nKey"
                                   t={t}
                                   disable={false}
                                   />
                               )}
                               />
+<<<<<<< HEAD
                   </SearchField> */}
+=======
+                  </SearchField>
+>>>>>>> master-LTS
                   <SearchField>
                   <label>{t("PTR_OWNER_MOBILE_NO")}</label>
                   <MobileNumber

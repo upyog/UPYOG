@@ -7,12 +7,23 @@
     "packages/css",
     "example",
     "packages/react-components",
+<<<<<<< HEAD
     "packages/modules/common",
     "packages/modules/pt",
     "packages/modules/core",
     "packages/modules/commonPt",
     "packages/modules/dss",
     "packages/modules/fsm"
+=======
+    "packages/modules/core",
+    "packages/modules/common",
+    "packages/modules/hrms",
+    "packages/modules/dss",
+    "packages/modules/obps",
+    "packages/modules/engagement",
+    "packages/modules/fsm",
+    "packages/modules/vendor"
+>>>>>>> master-LTS
   ],
   "license": "MIT",
   "private": true,
@@ -24,12 +35,16 @@
     "sprint": "SKIP_PREFLIGHT_CHECK=true run-s start:script",
     "start:dev": "run-p dev:**",
     "start:script": "./scripts/create.sh",
-    "dev:css": "cd packages/css && yarn start",
+    "devD:css": "cd packages/css && yarn start",
     "publish:css": "cd packages/css && yarn publish --access public",
     "dev:libraries": "cd packages/libraries && yarn start",
     "dev:components": "cd packages/react-components && yarn start",
     "dev:common": "cd packages/modules/common && yarn start",
     "dev:pt": "cd packages/modules/pt && yarn start",
+<<<<<<< HEAD
+=======
+    "dev:asset": "cd packages/modules/asset && yarn start",
+>>>>>>> master-LTS
     "dev:ptr": "cd packages/modules/ptr && yarn start",
     "dev:commonPt": "cd packages/modules/commonPt && yarn start",
     "dev:core": "cd packages/modules/core && yarn start",
@@ -47,11 +62,23 @@
     "dev:bills": "cd packages/modules/bills && yarn start",
     "dev:reports": "cd packages/modules/reports && yarn start",
     "dev:example": "cd example && yarn start",
+    "dev:chb": "cd packages/modules/chb && yarn start",
+    "dev:ads": "cd packages/modules/ads && yarn start",
+    "dev:ew": "cd packages/modules/ew && yarn start",
+    "dev:sv": "cd packages/modules/sv && yarn start",
+    "dev:wt": "cd packages/modules/wt && yarn start",
+    "dev:vendor": "cd packages/modules/vendor && yarn start",
+    "dev:pgrai": "cd packages/modules/pgrai && yarn start",
     "build": "run-p build:**",
     "build:libraries": "cd packages/libraries && yarn build",
+    "buildD:asset": "cd packages/modules/asset && yarn build",
     "build:components": "cd packages/react-components && yarn build",
     "build:common": "cd packages/modules/common && yarn build",
+<<<<<<< HEAD
     "build:pt": "cd packages/modules/pt && yarn build",
+=======
+    "buildD:pt": "cd packages/modules/pt && yarn build",
+>>>>>>> master-LTS
     "buildD:ptr": "cd packages/modules/ptr && yarn build",
     "buildD:commonPt": "cd packages/modules/commonPt && yarn build",
     "build:core": "cd packages/modules/core && yarn build",
@@ -60,13 +87,28 @@
     "build:dss": "cd packages/modules/dss && yarn build",
     "buildD:mcollect": "cd packages/modules/mCollect && yarn build",
     "buildD:receipts": "cd packages/modules/receipts && yarn build",
+<<<<<<< HEAD
     "build:tl": "cd packages/modules/tl && yarn build",
     "buildD:hrms": "cd packages/modules/hrms && yarn build",
     "buildD:obps": "cd packages/modules/obps && yarn build",
     "buildD:engagement": "cd packages/modules/engagement && yarn build",
+=======
+    "buildD:tl": "cd packages/modules/tl && yarn build",
+    "build:hrms": "cd packages/modules/hrms && yarn build",
+    "build:obps": "cd packages/modules/obps && yarn build",
+    "build:engagement": "cd packages/modules/engagement && yarn build",
+>>>>>>> master-LTS
     "buildD:noc": "cd packages/modules/noc && yarn build",
     "buildD:ws": "cd packages/modules/ws && yarn build",
     "buildD:bills": "cd packages/modules/bills && yarn build",
+    "buildD:chb": "cd packages/modules/chb && yarn build",
+    "buildD:ads": "cd packages/modules/ads && yarn build",
+    "buildD:ew": "cd packages/modules/ew && yarn build",
+    "buildD:sv": "cd packages/modules/sv && yarn build",
+    "buildD:cm": "cd packages/modules/cm && yarn build",
+    "buildD:wt": "cd packages/modules/wt && yarn build",
+    "build:vendor": "cd packages/modules/vendor && yarn build",
+    "buildD:pgrai": "cd packages/modules/pgrai && yarn build",
     "buildR:reports": "cd packages/modules/reports && yarn build",
     "deploy:jenkins": "./scripts/jenkins.sh"
   },
@@ -93,6 +135,12 @@
     "**/q": "1.5.1",
     "**/@jridgewell/gen-mapping": "0.3.5",
     "**/polished":"4.2.2",
+<<<<<<< HEAD
     "**/cssesc": "3.0.0"
+=======
+    "**/cssesc": "3.0.0",
+    "glob":"7.2.3",
+    "minimatch":"3.1.2"
+>>>>>>> master-LTS
   }
 }

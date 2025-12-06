@@ -13,6 +13,13 @@ public class VerificationSearchConstants {
 	public static final String PROPERTY_MODULE_NAME = "property";
 	public static final String STREET_VENDING_MODULE_NAME = "streetvending";
 	public static final String TRADE_LICENSE_MODULE_NAME = "tradelicense";
+<<<<<<< HEAD
+=======
+	public static final String WATER_TANKER_MODULE_NAME = "wt";
+	public static final String MOBILE_TOILET_MODULE_NAME = "mt";
+	public static final String TREE_PRUNING_MODULE_NAME = "tp";
+	public static final String CND_MODULE_NAME = "cnd";
+>>>>>>> master-LTS
 	public static final String ADVERTISEMENT_APPLICATIONS = "bookingApplication";
 	public static final String BPA_APPLICATIONS = "BPA";
 	public static final String COMMUNITY_HALL_APPLICATIONS = "hallsBookingApplication";
@@ -22,8 +29,17 @@ public class VerificationSearchConstants {
 	public static final String PROPERTY_APPLICATIONS = "Properties";
 	public static final String STREET_VENDING_APPLICATIONS = "SVDetail";
 	public static final String TRADE_APPLICATIONS = "Licenses";
+<<<<<<< HEAD
 	public static final String VS_TENANTID = "pg.citya";
 	public static final String SYSTEM_CITIZEN_USERNAME = "8888888888";
 	public static final String CITIZEN = "CITIZEN";
+=======
+	public static final String CITIZEN = "CITIZEN";
+	public static final String WATER_TANKER_APPLICATIONS = "waterTankerBookingDetail";
+	public static final String MOBILE_TOILET_APPLICATIONS = "mobileToiletBookingDetails";
+	public static final String TREE_PRUNING_APPLICATIONS = "treePruningBookingDetails";
+	public static final String CND_APPLICATIONS = "cndApplicationDetail";
+
+>>>>>>> master-LTS
 
 }

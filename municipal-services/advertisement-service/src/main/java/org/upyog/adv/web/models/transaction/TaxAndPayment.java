@@ -2,7 +2,11 @@ package org.upyog.adv.web.models.transaction;
 
 import lombok.*;
 
+<<<<<<< HEAD
 import jakarta.validation.constraints.NotNull;
+=======
+import javax.validation.constraints.NotNull;
+>>>>>>> master-LTS
 import java.math.BigDecimal;
 
 @Getter

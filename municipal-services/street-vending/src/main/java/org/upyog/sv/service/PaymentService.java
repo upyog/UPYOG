@@ -433,10 +433,14 @@ public class PaymentService {
 	    boolean isPartialCycle = validityDate.isBefore(nextDueDate);
 	    LocalDate actualEndDate = isPartialCycle ? validityDate : nextDueDate;
 
+<<<<<<< HEAD
 	    UserDetailResponse systemUser = userService.searchByUserName(
 	        StreetVendingConstants.SYSTEM_CITIZEN_USERNAME,
 	        StreetVendingConstants.SYSTEM_CITIZEN_TENANTID
 	    );
+=======
+	    UserDetailResponse systemUser = userService.searchByUserName(configs.getInternalMicroserviceUserName(), configs.getStateLevelTenantId());
+>>>>>>> master-LTS
 
 	    if (systemUser == null || systemUser.getUser() == null || systemUser.getUser().isEmpty()) {
 	        log.error("System user not found");

@@ -11,7 +11,11 @@
 	</parent>
 	<groupId>org.egov</groupId>
 	<artifactId>fsm</artifactId>
+<<<<<<< HEAD
 	<version>2.9.0-SNAPSHOT</version>
+=======
+	<version>1.4.0-SNAPSHOT</version>
+>>>>>>> master-LTS
 
 	<name>fsm-services</name>
 	<description>fsm services</description>

@@ -2,7 +2,7 @@ import React from "react";
 import { HomeIcon, LanguageIcon, LogoutIcon, AddressBookIcon, LocationIcon, LoginIcon } from "@upyog/digit-ui-react-components";
 import ChangeLanguage from "../components/ChangeLanguage";
 
-const SideBarMenu = (t, closeSidebar, redirectToLoginPage, isEmployee, storeData, tenantId) => {
+const SideBarMenu = (t, closeSidebar, redirectToLoginPage, redirectToScrutinyPage ,isEmployee, storeData, tenantId) => {
   let filteredTenantData = storeData?.tenants.filter((e) => e.code === tenantId)[0]?.contactNumber || storeData?.tenants[0]?.contactNumber;
 return [
   {
@@ -28,6 +28,19 @@ return [
     icon: "LoginIcon",
     populators: {
       onClick: redirectToLoginPage,
+    },
+  },
+  /*
+    Config for "Scrutiny" button in the sidebar.
+    Triggers redirectToScrutinyPage on click.
+  */
+  {
+    id: "login-btn",
+    element: "LOGIN",
+    text: t("Scrutiny"),
+    icon: "",
+    populators: {
+      onClick: redirectToScrutinyPage,
     },
   },
   {

@@ -6,6 +6,7 @@ const ROLES = {
   LOCALISATION: ["EMPLOYEE", "SUPERUSER","EMPLOYEE_COMMON","LOC_ADMIN"],
   MDMS: ["MDMS_ADMIN", "EMPLOYEE", "SUPERUSER"],
   DSS: ["STADMIN"],
+  WORKFLOW: ["MDMS_ADMIN","EMPLOYEE", "SUPERUSER","EMPLOYEE_COMMON","LOC_ADMIN"]
 };
 
 // Mukta Overrriding the Works Home screen card
@@ -28,6 +29,11 @@ const WorkbenchCard = () => {
       link: `/${window?.contextPath}/employee/workbench/localisation-search`,
       roles: ROLES.LOCALISATION,
     },
+    {
+      label: t("ACTION_TEST_APPLY_WORKFLOW"),
+      link: `/${window?.contextPath}/employee/workbench/apply-workflow`,
+      roles: ROLES.WORKFLOW,
+    }
     // {
     //   label: t("Sample Create master"),
     //   link: `/${window?.contextPath}/employee/workbench/mdms-add-v2?moduleName=common-masters&masterName=Sample`,

@@ -1,15 +1,8 @@
 package org.egov.inbox.service;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.Role;
@@ -18,20 +11,25 @@ import org.egov.inbox.repository.ServiceRequestRepository;
 import org.egov.inbox.util.BpaConstants;
 import org.egov.inbox.util.ErrorConstants;
 import org.egov.inbox.util.FSMConstants;
+import org.egov.inbox.web.model.InboxRequest;
+import org.egov.inbox.util.VendorRole;
 import org.egov.inbox.web.model.RequestInfoWrapper;
 import org.egov.inbox.web.model.workflow.BusinessService;
 import org.egov.inbox.web.model.workflow.BusinessServiceResponse;
 import org.egov.inbox.web.model.workflow.ProcessInstanceResponse;
 import org.egov.inbox.web.model.workflow.ProcessInstanceSearchCriteria;
+import org.egov.inbox.web.model.workflow.State;
 import org.egov.tracer.model.CustomException;
-import org.egov.inbox.web.model.workflow.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import static org.egov.inbox.util.InboxConstants.CITIZEN;
 
 @Service
 public class WorkflowService {
@@ -182,6 +180,53 @@ public class WorkflowService {
 		return response.getBusinessServices().get(0);
 	}
 	
+	@Cacheable(value="businessServices")
+	public List<BusinessService> getBusinessServices(InboxRequest request) {
+		String tenantId = request.getInbox().getTenantId();
+		RequestInfo requestInfo = request.getRequestInfo() ;
+		List<String> businessServicesCodes = request.getInbox().getProcessSearchCriteria().getBusinessService();
+		String businessServiceList = String.join(",",businessServicesCodes);
+		StringBuilder url = getSearchURLWithParams(tenantId, businessServiceList);
+		RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(requestInfo).build();
+		Object result = serviceRequestRepository.fetchResult(url, requestInfoWrapper);
+		BusinessServiceResponse response = null;
+		try {
+			response = mapper.convertValue(result, BusinessServiceResponse.class);
+		} catch (IllegalArgumentException e) {
+			throw new CustomException(ErrorConstants.PARSING_ERROR, "Failed to parse response of Workflow");
+		}
+		return response.getBusinessServices();
+	}
+
+
+	public Map<String,String> getStatusIdToBusinessServiceMap(List<BusinessService> businessServices){
+
+		Map<String,String> statusIdToBusinessServiceMap = new HashMap<>();
+
+		businessServices.forEach(businessService -> {
+			businessService.getStates().forEach(state -> {
+				statusIdToBusinessServiceMap.put(state.getUuid(), businessService.getBusinessService());
+			 }
+			);
+		});
+
+		return statusIdToBusinessServiceMap;
+	}
+
+	public Map<String,String> getApplicationStatusIdToStatusMap(List<BusinessService> businessServices){
+
+		Map<String,String> statusIdToApplicationStatusMap = new HashMap<>();
+
+		businessServices.forEach(businessService -> {
+			businessService.getStates().forEach(state -> {
+				statusIdToApplicationStatusMap.put(state.getUuid(), state.getApplicationStatus());
+					}
+			);
+		});
+
+		return statusIdToApplicationStatusMap;
+	}
+	
 	private StringBuilder buildWorkflowUrl(ProcessInstanceSearchCriteria criteria, StringBuilder url,boolean noStatus) {
 		url.append("?tenantId=").append(criteria.getTenantId());
 		if(!CollectionUtils.isEmpty(criteria.getStatus()) && noStatus == Boolean.FALSE) {
@@ -268,12 +313,31 @@ public class WorkflowService {
         Map<String,List<BusinessService>> tenantIdToBuisnessSevicesMap =  getTenantIdToBuisnessSevicesMap(businessServices);
         Map<String,Set<String>> stateToRoleMap = getStateToRoleMap(businessServices);
         HashMap<String,String> actionableStatuses = new HashMap<>();
-        
+
+		// Extract allowed enum values into a list
+		List<String> allowedRoles = Stream.of(VendorRole.values())
+				.map(Enum::name)
+				.collect(Collectors.toList());
+
         for(Map.Entry<String,List<String>> entry : tenantIdToUserRolesMap.entrySet()){
-        	
+			List<String> vendorRoles = entry.getValue(); // Directly reference the original list
+
+			// Check if any allowed role exists in the userRoles list
+			boolean hasVendorRole = vendorRoles.stream().anyMatch(allowedRoles::contains);
+
+			/*
+			 * When a user has both VENDOR and CITIZEN roles, the inbox was displaying statuses related to both roles.
+			 * To make sure only vendor-related statuses are shown in the vendor inbox, we remove the CITIZEN role
+			 * if the user has a vendor role.
+			 */
+			if (hasVendorRole) {
+				vendorRoles.remove(CITIZEN);
+			}
         	String statelevelTenantId=entry.getKey().split("\\.")[0];
+
+			boolean vendorRoleWithStateLevelTenantId = (hasVendorRole && entry.getKey().equals(statelevelTenantId));
         	
-            if(entry.getKey().equals(criteria.getTenantId()) || (entry.getValue().contains(FSMConstants.FSM_DSO) && entry.getKey().equals(statelevelTenantId)) ){
+            if(entry.getKey().equals(criteria.getTenantId()) || vendorRoleWithStateLevelTenantId ){
                 List<BusinessService> businessServicesByTenantId = new ArrayList();
                 if(entry.getKey().split("\\.").length==1){
                     businessServicesByTenantId = tenantIdToBuisnessSevicesMap.get(criteria.getTenantId());

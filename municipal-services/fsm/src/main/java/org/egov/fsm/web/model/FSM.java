@@ -1,27 +1,26 @@
 package org.egov.fsm.web.model;
 
-import java.math.BigDecimal;
-
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-
-import org.egov.fsm.web.model.dso.Vendor;
-import org.egov.fsm.web.model.location.Address;
-import org.egov.fsm.web.model.user.User;
-import org.egov.fsm.web.model.vehicle.Vehicle;
-import org.hibernate.validator.constraints.SafeHtml;
-import org.springframework.validation.annotation.Validated;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
-
+import java.math.BigDecimal;
+import java.util.List;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.egov.fsm.web.model.dso.Vendor;
+import org.egov.fsm.web.model.location.Address;
+import org.egov.fsm.web.model.user.User;
+import org.egov.fsm.web.model.vehicle.Vehicle;
+import org.egov.fsm.web.model.worker.Worker;
+import org.egov.fsm.web.model.workflow.ProcessInstance;
+import org.hibernate.validator.constraints.SafeHtml;
+import org.springframework.validation.annotation.Validated;
 
 /**
  * Request schema of FSM application.  
@@ -130,6 +129,9 @@ public class FSM   {
   
   @JsonProperty("vehicle")
   private Vehicle vehicle ;
+
+  @JsonProperty("workers")
+  private List<Worker> workers;
   
   @SafeHtml
   @JsonProperty("dsoId")
@@ -170,6 +172,10 @@ public class FSM   {
   
   @JsonProperty("paymentPreference")
   private String paymentPreference ;
+
+  @JsonProperty("processInstance")
+private ProcessInstance processInstance;
+
   
  // @JsonProperty("receivedPayment")
  // private String receivedPayment;

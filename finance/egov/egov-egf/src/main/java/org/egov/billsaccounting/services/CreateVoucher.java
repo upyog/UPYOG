@@ -1107,107 +1107,109 @@ public class CreateVoucher {
 			final List<HashMap<String, Object>> accountcodedetails,
 			final List<HashMap<String, Object>> subledgerdetails) throws ApplicationRuntimeException {
 		CVoucherHeader vh;
-		Vouchermis mis;
 
 		if (LOGGER.isDebugEnabled())
-			LOGGER.debug("start | createVoucher API");
+			LOGGER.debug("Start | createVoucher API");
+
 		try {
-                        if(headerdetails.containsKey(VoucherConstant.SERVICE_NAME) && headerdetails.containsKey(VoucherConstant.REFERENCEDOC)){
-                            String serviceName = headerdetails.get(VoucherConstant.SERVICE_NAME).toString();
-                            String referenceDocument = headerdetails.get(VoucherConstant.REFERENCEDOC).toString();
-                            validateReferenceDocument(referenceDocument,serviceName);
-                        }
-		        validateMandateFields(headerdetails);
+			// Validate reference doc if present
+			if (headerdetails.containsKey(VoucherConstant.SERVICE_NAME) &&
+				headerdetails.containsKey(VoucherConstant.REFERENCEDOC)) {
+				String serviceName = headerdetails.get(VoucherConstant.SERVICE_NAME).toString();
+				String referenceDocument = headerdetails.get(VoucherConstant.REFERENCEDOC).toString();
+				validateReferenceDocument(referenceDocument, serviceName);
+			}
+
+			// Validate mandatory fields, lengths, MIS, transactions, functions
+			validateMandateFields(headerdetails);
 			validateLength(headerdetails);
 			validateVoucherMIS(headerdetails);
 			validateTransaction(accountcodedetails, subledgerdetails);
 			validateFunction(headerdetails, accountcodedetails);
+
+			// Create voucher header
 			vh = createVoucherHeader(headerdetails);
-			mis = createVouchermis(headerdetails);
+
+			// Create voucher MIS
+			Vouchermis mis = createVouchermis(headerdetails);
 			mis.setVoucherheaderid(vh);
 			vh.setVouchermis(mis);
-			// insertIntoVoucherHeader(vh);
 
-			if (LOGGER.isDebugEnabled())
-				LOGGER.debug("start | insertIntoVoucherHeader");
-			final String vdt = formatter.format(vh.getVoucherDate());
-			String fiscalPeriod = null;
-			try {
-				CFiscalPeriod fp = getFiscalPeriod(vdt);
-                                fiscalPeriod = fp.getId().toString();
-                                vh.setFiscalName(fp.getName());
-			} catch (final TaskFailedException e) {
-				throw new ApplicationRuntimeException("error while getting fiscal period");
-			}
-			if (null == fiscalPeriod)
+			// --- FISCAL YEAR FIX ---
+			Date voucherDate = vh.getVoucherDate();
+			CFiscalPeriod fy = getFiscalPeriodForDate(voucherDate);
+			if (fy == null) {
 				throw new ApplicationRuntimeException(
-						"Voucher Date not within an open period or Financial year not open for posting, fiscalPeriod := "
-								+ fiscalPeriod);
-			vh.setFiscalPeriodId(Integer.valueOf(fiscalPeriod));
+					"Voucher Date not within an open fiscal period or FY not open for posting"
+				);
+			}
+			vh.setFiscalPeriodId(fy.getId().intValue());
+			vh.setFiscalName(fy.getName());
 
+			// Set CGVN number
 			vh.setCgvn(getCGVNNumber(vh));
 
+			// Check for duplicate voucher number
 			try {
-				if (!isUniqueVN(vh.getVoucherNumber(), vdt))
-					throw new ValidationException(
-							Arrays.asList(new ValidationError("Duplicate Voucher Number", "Duplicate Voucher Number")));
+				SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy"); // or the format expected by isUniqueVN
+				String voucherDateStr = formatter.format(vh.getVoucherDate());
+
+				if (!isUniqueVN(vh.getVoucherNumber(), voucherDateStr)) {
+				    throw new ValidationException(
+				        Arrays.asList(new ValidationError("Duplicate Voucher Number", "Duplicate Voucher Number")));
+				}
+
 			} catch (final ValidationException e) {
 				LOGGER.error(ERR, e);
 				throw e;
 			}
-            /*
-             * catch (final Exception e) { LOGGER.error(ERR, e); throw new
-             * ApplicationRuntimeException(e.getMessage()); }
-             */
+
+			// Persist header with auditing
 			voucherService.applyAuditing(vh);
-			if (LOGGER.isInfoEnabled())
-				LOGGER.info("++++++++++++++++++" + vh.toString());
 			voucherService.persist(vh);
-			if (null != vh.getVouchermis().getSourcePath() && null == vh.getModuleId() && vh.getVouchermis()
-					.getSourcePath().length() == vh.getVouchermis().getSourcePath().indexOf("=") + 1) {
-				final StringBuffer sourcePath = new StringBuffer();
-				if (LOGGER.isDebugEnabled())
-					LOGGER.debug("Source Path received : " + vh.getVouchermis().getSourcePath());
-				if (LOGGER.isDebugEnabled())
-					LOGGER.debug("Voucher Header Id  : " + vh.getId());
+
+			// Fix sourcePath if needed
+			if (vh.getVouchermis().getSourcePath() != null && vh.getModuleId() == null &&
+				vh.getVouchermis().getSourcePath().length() == vh.getVouchermis().getSourcePath().indexOf("=") + 1) {
+				StringBuffer sourcePath = new StringBuffer();
 				sourcePath.append(vh.getVouchermis().getSourcePath()).append(vh.getId().toString());
 				vh.getVouchermis().setSourcePath(sourcePath.toString());
 				voucherService.applyAuditing(vh);
 				voucherService.update(vh);
 			}
 
-			if (LOGGER.isDebugEnabled())
-				LOGGER.debug("End | insertIntoVoucherHeader");
-
-			// insertIntoRecordStatus(vh);
-			final List<Transaxtion> transactions = createTransaction(headerdetails, accountcodedetails,
-					subledgerdetails, vh);
-			// persistenceService.getSession().flush();
-			// engine = ChartOfAccounts.getInstance();
-			// setChartOfAccounts();
-			Transaxtion txnList[] = new Transaxtion[transactions.size()];
-			txnList = transactions.toArray(txnList);
-			final SimpleDateFormat formatter = new SimpleDateFormat(DD_MMM_YYYY);
+			// Create transactions
+			List<Transaxtion> transactions = createTransaction(headerdetails, accountcodedetails, subledgerdetails, vh);
+			Transaxtion[] txnList = transactions.toArray(new Transaxtion[0]);
+			SimpleDateFormat formatter = new SimpleDateFormat(DD_MMM_YYYY);
 			if (!chartOfAccounts.postTransaxtions(txnList, formatter.format(vh.getVoucherDate())))
 				throw new ApplicationRuntimeException("Voucher creation Failed");
-			
-			// Generating EVENT to push the generated voucher to ES index.
+
+			// Publish event
 			finDashboardService.publishEvent(FinanceEventType.voucherCreateOrUpdate, vh);
+
+		} catch (final ValidationException ve) {
+			List<ValidationError> errors = new ArrayList<>();
+			errors.add(new ValidationError("exp", ve.getErrors().get(0).getMessage()));
+			throw new ValidationException(errors);
+		} catch (final TaskFailedException e) {
+			LOGGER.error(ERR, e);
+			throw new ApplicationRuntimeException(e.getMessage());
 		}
 
-        catch (final ValidationException ve) {
-            final List<ValidationError> errors = new ArrayList<ValidationError>();
-            errors.add(new ValidationError("exp", ve.getErrors().get(0).getMessage()));
-            throw new ValidationException(errors);
-        } catch (final TaskFailedException e) {
-            LOGGER.error(ERR, e);
-            throw new ApplicationRuntimeException(e.getMessage());
-        }
-           
 		if (LOGGER.isDebugEnabled())
 			LOGGER.debug("End | createVoucher API");
-		return vh;
 
+		return vh;
+	}
+
+	// --- HELPER TO GET OPEN FISCAL PERIOD ---
+	private CFiscalPeriod getFiscalPeriodForDate(Date voucherDate) {
+		Query query = persistenceService.getSession().createQuery(
+			"from CFiscalPeriod where :date between startingDate and endingDate and isActiveForPosting = true"
+		);
+		query.setParameter("date", voucherDate);
+		return (CFiscalPeriod) query.uniqueResult();
 	}
 
 	public void validateReferenceDocument(String referenceDocument, String serviceName) {
@@ -1552,141 +1554,93 @@ public class CreateVoucher {
 	@Transactional
 	@SuppressWarnings("deprecation")
 	public CVoucherHeader createVoucherHeader(final HashMap<String, Object> headerdetails) {
-		if (LOGGER.isDebugEnabled())
-			LOGGER.debug("START | createVoucherHeader");
-		// Connection con = null;
-		Query query = null;
-		final CVoucherHeader cVoucherHeader = new CVoucherHeader();
-		try {
-			// String voucherSubType="";
-			cVoucherHeader.setName(headerdetails.get(VoucherConstant.VOUCHERNAME).toString());
-			String voucherType = headerdetails.get(VoucherConstant.VOUCHERTYPE).toString();
-			cVoucherHeader.setType(headerdetails.get(VoucherConstant.VOUCHERTYPE).toString());
-			String vNumGenMode = null;
+    if (LOGGER.isDebugEnabled())
+        LOGGER.debug("START | createVoucherHeader");
 
-			// -- Voucher Type checking. --START
-			if (FinancialConstants.STANDARD_VOUCHER_TYPE_JOURNAL.equalsIgnoreCase(voucherType))
-				vNumGenMode = voucherTypeForULB.readVoucherTypes("Journal");
-			else
-				vNumGenMode = voucherTypeForULB.readVoucherTypes(voucherType);
-			// --END --
-			voucherType = voucherType.toUpperCase().replaceAll(" ", "");
+    CVoucherHeader cVoucherHeader = new CVoucherHeader();
+    try {
+        cVoucherHeader.setName(headerdetails.get(VoucherConstant.VOUCHERNAME).toString());
 
-			String voucherSubType = null;
-			if (headerdetails.get(VoucherConstant.VOUCHERSUBTYPE) != null) {
-				voucherSubType = (String) headerdetails.get(VoucherConstant.VOUCHERSUBTYPE);
-				voucherSubType = voucherSubType.toUpperCase().replaceAll(" ", "");
-			}
+        String voucherType = headerdetails.get(VoucherConstant.VOUCHERTYPE).toString();
+        cVoucherHeader.setType(voucherType);
 
-			// why it is type,subtype where api expects subtype,type ?
-			// if()
-			final String voucherNumberPrefix = getVoucherNumberPrefix(voucherType, voucherSubType);
-			String voucherNumber = null;
-			if (headerdetails.get(VoucherConstant.DESCRIPTION) != null)
-				cVoucherHeader.setDescription(headerdetails.get(VoucherConstant.DESCRIPTION).toString());
-			final Date voucherDate = (Date) headerdetails.get(VoucherConstant.VOUCHERDATE);
-			cVoucherHeader.setVoucherDate(voucherDate);
-			Fund fundByCode = fundDAO.fundByCode(headerdetails.get(VoucherConstant.FUNDCODE).toString());
+        String voucherSubType = null;
+        if (headerdetails.get(VoucherConstant.VOUCHERSUBTYPE) != null) {
+            voucherSubType = headerdetails.get(VoucherConstant.VOUCHERSUBTYPE).toString().toUpperCase().replaceAll(" ", "");
+        }
 
-			if (LOGGER.isDebugEnabled())
-				LOGGER.debug("Voucher Type is :" + voucherType);
-			if (LOGGER.isDebugEnabled())
-				LOGGER.debug("vNumGenMode is  :" + vNumGenMode);
+        String voucherNumberPrefix = getVoucherNumberPrefix(voucherType, voucherSubType);
+        cVoucherHeader.setVoucherNumberPrefix(voucherNumberPrefix);
 
-			if (headerdetails.get(VoucherConstant.VOUCHERNUMBER) != null)
-				cVoucherHeader.setVoucherNumber(headerdetails.get(VoucherConstant.VOUCHERNUMBER).toString());
-			if (null != headerdetails.get(VoucherConstant.MODULEID))
-				vNumGenMode = "Auto";
+        if (headerdetails.get(VoucherConstant.DESCRIPTION) != null)
+            cVoucherHeader.setDescription(headerdetails.get(VoucherConstant.DESCRIPTION).toString());
 
-			cVoucherHeader.setFundId(fundByCode);
-			if (vNumGenMode.equals("Auto")) {
-				cVoucherHeader.setVoucherNumberPrefix(voucherNumberPrefix);
-				VouchernumberGenerator v = beanResolver.getAutoNumberServiceFor(VouchernumberGenerator.class);
+        Date voucherDate = (Date) headerdetails.get(VoucherConstant.VOUCHERDATE);
+        cVoucherHeader.setVoucherDate(voucherDate);
 
-				final String strVoucherNumber = v.getNextNumber(cVoucherHeader);
+        // Set fund
+        Fund fundByCode = fundDAO.fundByCode(headerdetails.get(VoucherConstant.FUNDCODE).toString());
+        cVoucherHeader.setFundId(fundByCode);
 
-				cVoucherHeader.setVoucherNumber(strVoucherNumber);
-			}
-			/*
-			 * if("Auto".equalsIgnoreCase(vNumGenMode) || null !=
-			 * headerdetails.get(VoucherConstant.MODULEID)){
-			 * if(LOGGER.isDebugEnabled()) LOGGER.debug(
-			 * "Generating auto voucher number"); SimpleDateFormat df = new
-			 * SimpleDateFormat(DD_MM_YYYY); String vDate =
-			 * df.format(voucherDate);
-			 * cVoucherHeader.setVoucherNumber(cmImpl.getTxnNumber
-			 * (fundId.toString(),voucherNumberPrefix,vDate,con)); }else {
-			 * voucherNumber =
-			 * headerdetails.get(VoucherConstant.VOUCHERNUMBER).toString();
-			 * query=persistenceService.getSession().createQuery(
-			 * "select f.identifier from Fund f where id=:fundId");
-			 * query.setInteger("fundId", fundId); String fundIdentifier =
-			 * query.uniqueResult().toString();
-			 * cVoucherHeader.setVoucherNumber(new
-			 * StringBuffer().append(fundIdentifier
-			 * ).append(voucherNumberPrefix). append(voucherNumber).toString());
-			 * }
-			 */
+        // Generate voucher number if not provided
+        if (headerdetails.get(VoucherConstant.VOUCHERNUMBER) != null)
+            cVoucherHeader.setVoucherNumber(headerdetails.get(VoucherConstant.VOUCHERNUMBER).toString());
+        else {
+            VouchernumberGenerator v = beanResolver.getAutoNumberServiceFor(VouchernumberGenerator.class);
+            cVoucherHeader.setVoucherNumber(v.getNextNumber(cVoucherHeader));
+        }
 
-			if (headerdetails.containsKey(VoucherConstant.MODULEID)
-					&& null != headerdetails.get(VoucherConstant.MODULEID)) {
-				cVoucherHeader.setModuleId(Integer.valueOf(headerdetails.get(VoucherConstant.MODULEID).toString()));
-				cVoucherHeader.setIsConfirmed(Integer.valueOf(1));
-			} else {
-				// Fix Me
-				/*
-				 * PersistenceService<AppConfig, Integer> appConfigSer;
-				 * appConfigSer = new PersistenceService<AppConfig, Integer>();
-				 * appConfigSer.setSessionFactory(new SessionFactory());
-				 * appConfigSer.setType(AppConfig.class); AppConfig appConfig=
-				 * (AppConfig) appConfigSer.find(
-				 * "from AppConfig where key_name =?",
-				 * "JournalVoucher_ConfirmonCreate"); if(null != appConfig &&
-				 * null!= appConfig.getValues() ){ for (AppConfigValues
-				 * appConfigVal : appConfig.getValues()) { cVoucherHeader.
-				 * setIsConfirmed(Integer.valueOf(appConfigVal.getValue())); } }
-				 */
-			}
+        // Fiscal Year Fix: Set FiscalPeriodId and FiscalName
+        CFiscalPeriod fy = getFiscalPeriodForDate(voucherDate);
+        if (fy == null)
+            throw new ApplicationRuntimeException(
+                    "Voucher Date not within an open fiscal period or FY not open for posting");
+        cVoucherHeader.setFiscalPeriodId(fy.getId().intValue());
+        cVoucherHeader.setFiscalName(fy.getName());
 
-			if (headerdetails.containsKey(VoucherConstant.STATUS) && null != headerdetails.get(VoucherConstant.STATUS))
-				cVoucherHeader.setStatus(Integer.valueOf(headerdetails.get(VoucherConstant.STATUS).toString()));
-			else {
-				final List list = appConfigValuesService.getConfigValuesByModuleAndKey("EGF",
-						"DEFAULTVOUCHERCREATIONSTATUS");
-				cVoucherHeader.setStatus(Integer.parseInt(((AppConfigValues) list.get(0)).getValue()));
-			}
+        // Set module, confirmation, and status
+        if (headerdetails.containsKey(VoucherConstant.MODULEID) && headerdetails.get(VoucherConstant.MODULEID) != null) {
+            cVoucherHeader.setModuleId(Integer.valueOf(headerdetails.get(VoucherConstant.MODULEID).toString()));
+            cVoucherHeader.setIsConfirmed(1);
+        } else {
+            cVoucherHeader.setIsConfirmed(0);
+        }
 
-			if (null != headerdetails.get(VoucherConstant.ORIGIONALVOUCHER)) {
+        if (headerdetails.containsKey(VoucherConstant.STATUS) && headerdetails.get(VoucherConstant.STATUS) != null)
+            cVoucherHeader.setStatus(Integer.valueOf(headerdetails.get(VoucherConstant.STATUS).toString()));
+        else {
+            List list = appConfigValuesService.getConfigValuesByModuleAndKey("EGF", "DEFAULTVOUCHERCREATIONSTATUS");
+            cVoucherHeader.setStatus(Integer.parseInt(((AppConfigValues) list.get(0)).getValue()));
+        }
 
-				final Long origionalVId = Long
-						.parseLong(headerdetails.get(VoucherConstant.ORIGIONALVOUCHER).toString());
-				query = persistenceService.getSession().createQuery("from CVoucherHeader where id=:id");
-				query.setLong("id", origionalVId);
-				if (query.list().size() == 0)
-					throw new ApplicationRuntimeException("Not a valid origional voucherheader id");
-				else
-					cVoucherHeader.setOriginalvcId(origionalVId);
-			}
+        // Original and reference voucher
+        if (headerdetails.get(VoucherConstant.ORIGIONALVOUCHER) != null) {
+            Long originalVId = Long.parseLong(headerdetails.get(VoucherConstant.ORIGIONALVOUCHER).toString());
+            Query query = persistenceService.getSession().createQuery("from CVoucherHeader where id=:id");
+            query.setLong("id", originalVId);
+            if (query.list().size() == 0)
+                throw new ApplicationRuntimeException("Not a valid original voucherheader id");
+            else
+                cVoucherHeader.setOriginalvcId(originalVId);
+        }
 
-			cVoucherHeader.setRefvhId((Long) headerdetails.get(VoucherConstant.REFVOUCHER));
-			cVoucherHeader.setEffectiveDate(new Date());
-			Object billNumber = headerdetails.get(VoucherConstant.BILLNUMBER);
-                        cVoucherHeader.setBillNumber(billNumber != null ? billNumber.toString() : "");
-			if (LOGGER.isDebugEnabled())
-				LOGGER.debug(
-						"Printing Voucher Details------------------------------------------------------------------------------");
-			if (LOGGER.isDebugEnabled())
-				LOGGER.debug(cVoucherHeader.toString());
-			if (LOGGER.isDebugEnabled())
-				LOGGER.debug(
-						"Printing Voucher Details------------------------------------------------------------------------------");
+        cVoucherHeader.setRefvhId((Long) headerdetails.get(VoucherConstant.REFVOUCHER));
+        cVoucherHeader.setEffectiveDate(new Date());
+
+        Object billNumber = headerdetails.get(VoucherConstant.BILLNUMBER);
+        cVoucherHeader.setBillNumber(billNumber != null ? billNumber.toString() : "");
+
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Printing Voucher Details------------------------------------------------------------------------------");
+            LOGGER.debug(cVoucherHeader.toString());
+            LOGGER.debug("Printing Voucher Details------------------------------------------------------------------------------");
+        }
+
 		} catch (final ValidationException e) {
 			LOGGER.error(e.getMessage());
 			throw e;
-        } /*
-           * catch (final Exception e) { LOGGER.error(e); throw new
-           * Exception(e.getMessage()); }
-           */
+		}
+
 		if (LOGGER.isDebugEnabled())
 			LOGGER.debug("END | createVoucherHeader");
 		return cVoucherHeader;

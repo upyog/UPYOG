@@ -4,8 +4,13 @@ import lombok.*;
 import org.upyog.pgrai.web.models.Status;
 import org.springframework.validation.annotation.Validated;
 
+<<<<<<< HEAD
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
+=======
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+>>>>>>> master-LTS
 
 /**
  * Represents an event in the notification system.

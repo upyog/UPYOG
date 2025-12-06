@@ -4,6 +4,7 @@
 
 The E-Waste Management Service is a microservice designed to facilitate the management of e-waste in urban local bodies. It provides functionalities for booking, tracking, and managing e-waste disposal requests.
 This service is part of the larger e-Governance framework and integrates with various other services for user management, notifications, and billing.
+<<<<<<< HEAD
 
 ## Java 17 Migration
 
@@ -32,6 +33,8 @@ mvn clean install
 java -jar target/ewaste-services-2.0.0-SNAPSHOT.jar
 ```
 
+=======
+>>>>>>> master-LTS
 ---
 
 ## Service Dependencies

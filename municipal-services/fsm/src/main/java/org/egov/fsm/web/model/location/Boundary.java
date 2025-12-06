@@ -10,6 +10,7 @@ import javax.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.SafeHtml;
 import org.springframework.validation.annotation.Validated;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.AllArgsConstructor;
@@ -29,6 +30,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @ToString
 @Builder
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Boundary   {
   @SafeHtml
   @JsonProperty("code")

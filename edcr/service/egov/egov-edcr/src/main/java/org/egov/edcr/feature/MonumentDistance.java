@@ -1,5 +1,5 @@
 /*
- * eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
+ * UPYOG  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  * accountability and the service delivery of the government  organizations.
  *
  *  Copyright (C) <2019>  eGovernments Foundation
@@ -48,134 +48,220 @@
 package org.egov.edcr.feature;
 
 import java.math.BigDecimal;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
-import org.egov.common.entity.edcr.Block;
-import org.egov.common.entity.edcr.Plan;
-import org.egov.common.entity.edcr.Result;
-import org.egov.common.entity.edcr.ScrutinyDetail;
-import org.egov.infra.utils.StringUtils;
+import org.apache.logging.log4j.Logger;
+import org.egov.common.entity.edcr.*;
+import org.egov.edcr.service.MDMSCacheManager;
+import org.egov.edcr.utility.DcrConstants;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import static org.egov.edcr.constants.CommonFeatureConstants.*;
+import static org.egov.edcr.constants.CommonKeyConstants.DISTANCE_FROM_MONUMENT;
+import static org.egov.edcr.constants.EdcrReportConstants.*;
+import static org.egov.edcr.service.FeatureUtil.mapReportDetails;
 
 @Service
 public class MonumentDistance extends FeatureProcess {
 
-	private static final Logger LOG = LogManager.getLogger(MonumentDistance.class);
-	private static final String RULE_20 = "20";
-	public static final String MONUMENT_DESCRIPTION = "Distance from monument";
+    // Logger for logging information and errors
+    private static final Logger LOG = LogManager.getLogger(MonumentDistance.class);
 
-	@Override
-	public Plan validate(Plan pl) {
+    @Autowired
+	MDMSCacheManager cache;
 
-		return pl;
-	}
+    /**
+     * Validates the given plan object.
+     * Currently, no specific validation logic is implemented.
+     *
+     * @param pl The plan object to validate.
+     * @return The same plan object without any modifications.
+     */
+    @Override
+    public Plan validate(Plan pl) {
+        return pl;
+    }
 
-	@Override
-	public Plan process(Plan pl) {
+    /**
+     * Processes the given plan to validate the distance from monuments.
+     * Fetches permissible values for distances and validates them against the plan details.
+     *
+     * @param pl The plan object to process.
+     * @return The processed plan object with scrutiny details added.
+     */
+    
+    @Override
+    public Plan process(Plan pl) {
+        if (!isNearMonument(pl)) return pl;
 
-		ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
-		scrutinyDetail.setKey("Common_Monument Distance");
-		scrutinyDetail.addColumnHeading(1, RULE_NO);
-		scrutinyDetail.addColumnHeading(2, DESCRIPTION);
-		scrutinyDetail.addColumnHeading(3, DISTANCE);
-		scrutinyDetail.addColumnHeading(4, PERMITTED);
-		scrutinyDetail.addColumnHeading(5, PROVIDED);
-		scrutinyDetail.addColumnHeading(6, STATUS);
+        List<BigDecimal> distances = pl.getDistanceToExternalEntity().getMonuments();
+        if (distances.isEmpty()) {
+            pl.addError(DISTANCE_FROM_MONUMENT, NO_DISTANCE_PROVIDED);
+            return pl;
+        }
 
-		HashMap<String, String> errors = new HashMap<>();
-		Map<String, String> details = new HashMap<>();
-		details.put(RULE_NO, RULE_20);
-		details.put(DESCRIPTION, MONUMENT_DESCRIPTION);
+        ScrutinyDetail scrutinyDetail = initScrutinyDetail();
+        ReportScrutinyDetail details = initRuleDetails();
 
-		BigDecimal minDistanceFromMonument = BigDecimal.ZERO;
-		BigDecimal maxHeightOfBuilding = BigDecimal.ZERO;
-		List<BigDecimal> distancesFromMonument = pl.getDistanceToExternalEntity().getMonuments();
-		List<Block> blocks = pl.getBlocks();
-		Block maxBuildingHeightBlock = new Block();
+        BigDecimal minDistance = distances.stream().min(Comparator.naturalOrder()).get();
 
-		if (StringUtils.isNotBlank(pl.getPlanInformation().getBuildingNearMonument())
-				&& "YES".equalsIgnoreCase(pl.getPlanInformation().getBuildingNearMonument())) {
-			if (!distancesFromMonument.isEmpty()) {
+        
+        List<Object> rules = cache.getFeatureRules(pl, FeatureEnum.MONUMENT_DISTANCE.getValue(), false);
+         rules.stream()
+            .filter(MonumentDistanceRequirement.class::isInstance)
+            .map(MonumentDistanceRequirement.class::cast)
+            .findFirst();
 
-				minDistanceFromMonument = distancesFromMonument.stream().reduce(BigDecimal::min).get();
+        MonumentDistanceRequirement rule = (MonumentDistanceRequirement) rules.get(0);
+        BigDecimal distanceOne = rule.getMonumentDistance_distanceOne();
+        BigDecimal minDistanceTwo = rule.getMonumentDistance_minDistanceTwo();
+        BigDecimal maxHeightAllowed = rule.getMonumentDistance_maxHeightofbuilding();
+        BigDecimal maxFloorsAllowed = rule.getMonumentDistance_maxbuildingheightblock();
 
-				if (StringUtils.isNotBlank(pl.getPlanInformation().getNocNearMonument())
-						&& "YES".equalsIgnoreCase(pl.getPlanInformation().getNocNearMonument())) {
-					details.put(DISTANCE, ">300");
-					details.put(PERMITTED, "Permitted with NOC");
-					details.put(PROVIDED, minDistanceFromMonument + " with NOC");
-					details.put(STATUS, Result.Accepted.getResultVal());
-					scrutinyDetail.getDetail().add(details);
-					pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
-				} else {
+        if (hasNocNearMonument(pl)) {
+            addScrutinyDetail(scrutinyDetail, details, GREATER_THAN + distanceOne,
+                    PERMITTED_WITH_NOC, minDistance + WITH_NOC, Result.Accepted.getResultVal());
+        } else {
+            handleWithoutNoc(pl, scrutinyDetail, details, minDistance, distanceOne, minDistanceTwo,
+                    maxHeightAllowed, maxFloorsAllowed);
+        }
 
-					for (Block b : blocks) {
-						if (b.getBuilding().getBuildingHeight().compareTo(maxHeightOfBuilding) > 0) {
-							maxHeightOfBuilding = b.getBuilding().getBuildingHeight();
-							maxBuildingHeightBlock = b;
-						}
-					}
+        pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+        return pl;
+    }
+    
+    /**
+     * Checks whether the building is located near a monument based on plan information.
+     *
+     * @param pl the {@link Plan} object containing plan information.
+     * @return true if the building is near a monument, false otherwise.
+     */
+    private boolean isNearMonument(Plan pl) {
+        return DcrConstants.YES.equalsIgnoreCase(pl.getPlanInformation().getBuildingNearMonument());
+    }
 
-					if (minDistanceFromMonument.compareTo(BigDecimal.valueOf(300)) > 0) {
-						details.put(DISTANCE, ">300");
-						details.put(PERMITTED, "ALL");
-						details.put(PROVIDED, minDistanceFromMonument.toString());
-						details.put(STATUS, Result.Accepted.getResultVal());
-						scrutinyDetail.getDetail().add(details);
-						pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
-					} else {
-						if (minDistanceFromMonument.compareTo(BigDecimal.valueOf(100)) <= 0) {
-							details.put(DISTANCE, ">300");
-							details.put(PERMITTED, "No Construction is allowed with in 100 mts from monument");
-							details.put(PROVIDED, minDistanceFromMonument.toString());
-							details.put(STATUS, Result.Not_Accepted.getResultVal());
-							scrutinyDetail.getDetail().add(details);
-							pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
-						}
+    /**
+     * Checks whether the required NOC is available for buildings near monuments.
+     *
+     * @param pl the {@link Plan} object containing plan information.
+     * @return true if NOC is present for proximity to monument, false otherwise.
+     */
+    private boolean hasNocNearMonument(Plan pl) {
+        return DcrConstants.YES.equalsIgnoreCase(pl.getPlanInformation().getNocNearMonument());
+    }
 
-						if (minDistanceFromMonument.compareTo(BigDecimal.valueOf(100)) > 0
-								&& minDistanceFromMonument.compareTo(BigDecimal.valueOf(300)) <= 0) {
-							if (maxHeightOfBuilding.compareTo(BigDecimal.valueOf(7)) <= 0 && maxBuildingHeightBlock
-									.getBuilding().getFloorsAboveGround().compareTo(BigDecimal.valueOf(1)) <= 0) {
+    /**
+     * Initializes and returns a {@link ScrutinyDetail} object with standard headings
+     * for monument distance validation.
+     *
+     * @return initialized {@link ScrutinyDetail} object.
+     */
+    private ScrutinyDetail initScrutinyDetail() {
+        ScrutinyDetail sd = new ScrutinyDetail();
+        sd.setKey(COMMON_MONUMENT_DISTANCE);
+        sd.addColumnHeading(1, RULE_NO);
+        sd.addColumnHeading(2, DESCRIPTION);
+        sd.addColumnHeading(3, DISTANCE);
+        sd.addColumnHeading(4, PERMITTED);
+        sd.addColumnHeading(5, PROVIDED);
+        sd.addColumnHeading(6, STATUS);
+        return sd;
+    }
 
-								details.put(DISTANCE, "From 100 to 300");
-								details.put(PERMITTED, "Building Height: 7mt, No of floors: 1");
-								details.put(PROVIDED, "Building Height: " + maxHeightOfBuilding + "mt, No of floors: "
-										+ maxBuildingHeightBlock.getBuilding().getFloorsAboveGround());
-								details.put(STATUS, Result.Accepted.getResultVal());
-								scrutinyDetail.getDetail().add(details);
-								pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+    /**
+     * Initializes and returns a map containing rule number and description
+     * for monument distance regulations.
+     *
+     * @return a {@link Map} with keys {@code RULE_NO} and {@code DESCRIPTION}.
+     */
+    private ReportScrutinyDetail initRuleDetails() {
+        ReportScrutinyDetail detail = new ReportScrutinyDetail();
+        detail.setRuleNo(RULE_20);
+        detail.setDescription(MONUMENT_DESCRIPTION);
+        return detail;
+    }
 
-							} else {
+    /**
+     * Validates construction conditions when no NOC is provided and the building is near a monument.
+     * It applies different validation logic based on the distance from the monument.
+     *
+     * @param pl the {@link Plan} object representing the full building plan.
+     * @param sd the {@link ScrutinyDetail} object to add validation results to.
+     * @param details the rule details map containing description and rule number.
+     * @param minDist actual minimum distance from monument.
+     * @param distanceOne threshold distance for applying stricter rules.
+     * @param minDistTwo the absolute minimum distance where construction is not allowed.
+     * @param maxHeightAllowed maximum permissible height in the restricted zone.
+     * @param maxFloorsAllowed maximum permissible floors in the restricted zone.
+     */
+    private void handleWithoutNoc(Plan pl, ScrutinyDetail sd, ReportScrutinyDetail details,
+                                   BigDecimal minDist, BigDecimal distanceOne, BigDecimal minDistTwo,
+                                   BigDecimal maxHeightAllowed, BigDecimal maxFloorsAllowed) {
 
-								details.put(DISTANCE, "From 100 to 300");
-								details.put(PERMITTED, "Building Height: 7mt, No of floors: 1");
-								details.put(PROVIDED, "Building Height: " + maxHeightOfBuilding + "mt, No of floors: "
-										+ maxBuildingHeightBlock.getBuilding().getFloorsAboveGround());
-								details.put(STATUS, Result.Not_Accepted.getResultVal());
-								scrutinyDetail.getDetail().add(details);
-								pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
-							}
-						}
-					}
-				}
-			} else {
-				errors.put("Distance_From_Monumnet", "No distance is provided from monument");
-				pl.addErrors(errors);
-			}
-		}
-		return pl;
-	}
+        Block maxBlock = pl.getBlocks().stream()
+                .max(Comparator.comparing(b -> b.getBuilding().getBuildingHeight()))
+                .orElse(null);
 
-	@Override
-	public Map<String, Date> getAmendments() {
-		return new LinkedHashMap<>();
-	}
+        if (maxBlock == null) return;
 
+        BigDecimal actualHeight = maxBlock.getBuilding().getBuildingHeight();
+        BigDecimal actualFloors = maxBlock.getBuilding().getFloorsAboveGround();
+
+        if (minDist.compareTo(distanceOne) > 0) {
+            addScrutinyDetail(sd, details, GREATER_THAN + distanceOne, ALL, minDist.toString(), Result.Accepted.getResultVal());
+        } else if (minDist.compareTo(minDistTwo) <= 0) {
+            addScrutinyDetail(sd, details, GREATER_THAN + distanceOne,
+                    NO_CONSTRUCTION_ALLOWED,
+                    minDist.toString(), Result.Not_Accepted.getResultVal());
+        } else {
+            String permitted = String.format(BUILDING_HEIGHT_FORMAT, maxHeightAllowed, maxFloorsAllowed);
+            String provided = String.format(BUILDING_HEIGHT_FORMAT, actualHeight, actualFloors);
+
+            String status = (actualHeight.compareTo(maxHeightAllowed) <= 0 && actualFloors.compareTo(maxFloorsAllowed) <= 0)
+                    ? Result.Accepted.getResultVal()
+                    : Result.Not_Accepted.getResultVal();
+
+            String range = String.format(FROM_TO_FORMAT, minDistTwo, distanceOne);
+            addScrutinyDetail(sd, details, range, permitted, provided, status);
+        }
+    }
+
+    /**
+     * Adds a single row of monument scrutiny result to the {@link ScrutinyDetail} object.
+     *
+     * @param sd the scrutiny detail object to update.
+     * @param detail map containing rule number and description.
+     * @param distance actual distance from the monument as a string.
+     * @param permitted permitted construction condition based on distance.
+     * @param provided actual construction parameters provided in plan.
+     * @param status result of validation (Accepted or Not Accepted).
+     */
+    private void addScrutinyDetail(ScrutinyDetail sd, ReportScrutinyDetail detail,
+                                   String distance, String permitted, String provided, String status) {
+        detail.setDistance(distance);
+        detail.setPermitted(permitted);
+        detail.setProvided(provided);
+        detail.setStatus(status);
+        Map<String, String> details = mapReportDetails(detail);
+        sd.getDetail().add(details);
+    }
+
+
+
+    /**
+     * Returns an empty map as no amendments are defined for this feature.
+     *
+     * @return An empty map of amendments.
+     */
+    @Override
+    public Map<String, Date> getAmendments() {
+        return new LinkedHashMap<>();
+    }
 }

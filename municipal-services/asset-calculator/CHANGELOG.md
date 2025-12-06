@@ -1,5 +1,6 @@
 # Changelog
 
+<<<<<<< HEAD
 All notable changes to the Asset Calculator Service will be documented in this file.
 
 ## [2.0.0] - 2025-09-16
@@ -95,3 +96,9 @@ All notable changes to the Asset Calculator Service will be documented in this f
 - Basic REST API endpoints
 - PostgreSQL database integration
 - Kafka message processing
+=======
+
+## 1.0.0
+
+- Base version
+>>>>>>> master-LTS

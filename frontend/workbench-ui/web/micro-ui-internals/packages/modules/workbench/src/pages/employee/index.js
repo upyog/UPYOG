@@ -3,6 +3,7 @@ import { Switch, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { PrivateRoute, AppContainer, BreadCrumb } from "@egovernments/digit-ui-react-components";
 import LocalisationSearch from "./LocalisationSearch";
+import ApplyWorkflow from "./ApplyWorkflow";
 import MDMSSearch from "./MDMSSearch";
 import MDMSAdd from "./MDMSAdd";
 import MDMSAddV2 from "./MDMSAddV2";
@@ -115,6 +116,7 @@ const App = ({ path }) => {
           <PrivateRoute path={`${path}/manage-master-data`} component={() => <MDMSManageMaster parentRoute={path}/>} />
           <PrivateRoute path={`${path}/mdms-search-v2`} component={() => <MDMSSearchv2 parentRoute={path}/>} />
           <PrivateRoute path={`${path}/localisation-add`} component={() => <LocalisationAdd parentRoute={path}/>} />
+          <PrivateRoute path={`${path}/apply-workflow`} component={()=> <ApplyWorkflow parentRoute={path} /> }/>
           
         </AppContainer>
       </Switch>

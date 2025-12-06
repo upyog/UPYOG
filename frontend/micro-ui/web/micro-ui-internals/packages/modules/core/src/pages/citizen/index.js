@@ -1,4 +1,4 @@
-import { BackButton, WhatsappIcon, Card, CitizenHomeCard, CitizenInfoLabel, PrivateRoute } from "@upyog/digit-ui-react-components";
+import { BackButton, WhatsappIcon, Card, CitizenHomeCard, CitizenInfoLabel, PrivateRoute,AdvertisementModuleCard } from "@upyog/digit-ui-react-components";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { Route, Switch, useRouteMatch, useHistory, Link } from "react-router-dom";
@@ -19,15 +19,22 @@ import AcknowledgementCF from "../../components/AcknowledgementCF";
 import CitizenFeedback from "../../components/CitizenFeedback";
 import Search from "./SearchApp";
 import QRCode from "./QRCode";
+import VSearchCertificate from "./CMSearchCertificate";
+import AssetsQRCode from "./AssetsQRCode";
 import ChallanQRCode from "./ChallanQRCode";
+import EDCRScrutiny from "./Home/EdcrScrutiny";
+import { newConfig as newConfigEDCR } from "../../config/edcrConfig";
+import CreateAnonymousEDCR from "./Home/EDCR";
+import EDCRAcknowledgement from "./Home/EDCR/EDCRAcknowledgement";
 const sidebarHiddenFor = [
   "digit-ui/citizen/register/name",
   "/digit-ui/citizen/select-language",
   "/digit-ui/citizen/select-location",
   "/digit-ui/citizen/login",
   "/digit-ui/citizen/register/otp",
+  "/digit-ui/citizen/verificationsearch-home" // route for verificationsearch component
 ];
-
+import { APPLICATION_PATH } from "./Home/EDCR/utils";
 const getTenants = (codes, tenants) => {
   return tenants.filter((tenant) => codes.map((item) => item.code).includes(tenant.code));
 };
@@ -70,7 +77,7 @@ const Home = ({
     }
   );
   const isMobile = window.Digit.Utils.browser.isMobile();
-  const classname = Digit.Hooks.fsm.useRouteSubscription(pathname);
+  const classname = Digit.Hooks.useRouteSubscription(pathname);
   const { t } = useTranslation();
   const { path } = useRouteMatch();
   sourceUrl = "https://s3.ap-south-1.amazonaws.com/egov-qa-assets";
@@ -79,6 +86,11 @@ const Home = ({
   const handleClickOnWhatsApp = (obj) => {
     window.open(obj);
   };
+  // Fetches the state ID using the ULBService and retrieves the form configuration for EDCR from MDMS.
+  // If EdcrConfig is available in the fetched data, it is used; otherwise, it falls back to newConfigEDCR.
+  const stateId = Digit.ULBService.getStateId();
+  let { data: newConfig } = Digit.Hooks.obps.SearchMdmsTypes.getFormConfig(stateId, []);
+  newConfig = newConfig?.EdcrConfig ? newConfig?.EdcrConfig : newConfigEDCR;
 
   const hideSidebar = sidebarHiddenFor.some((e) => window.location.href.includes(e));
   const appRoutes = modules.map(({ code, tenants }, index) => {
@@ -89,6 +101,17 @@ const Home = ({
       </Route>
     ) : null;
   });
+  // Fetches advertisement details (e.g., image, title, location, pole number, price) 
+  // from the MDMS and formats them for display on the homepage.
+  const { data: advertisement } = Digit.Hooks.useCustomMDMS(Digit.ULBService.getStateId(), "Advertisement", [{ name: "Unipole_12_8" }], {
+    select: (data) => {
+      const formattedData = data?.["Advertisement"]?.["Unipole_12_8"].map((details) => {
+        return { imageSrc: `${details.imageSrc}`, light: `${details.light}`, title: `${details.title}`, location: `${details.location}`, poleNo:`${details.poleNo}`,price:`${details.price}`,adtype:`${details.adtype}`,faceArea:`${details.faceArea}` };
+      });
+      return formattedData;
+    },
+  });
+  const Advertisement=advertisement||[];
 
   const ModuleLevelLinkHomePages = modules.map(({ code, bannerImage }, index) => {
     let Links = Digit.ComponentRegistryService.getComponent(`${code}Links`) || (() => <React.Fragment />);
@@ -105,7 +128,7 @@ const Home = ({
           <div className="moduleLinkHomePage">
             <img src={ "https://nugp-assets.s3.ap-south-1.amazonaws.com/nugp+asset/Banner+UPYOG+%281920x500%29B+%282%29.jpg"||bannerImage || stateInfo?.bannerUrl} alt="noimagefound" />
             <BackButton className="moduleLinkHomePageBackButton" />
-           {isMobile? <h4 style={{top: "calc(16vw + 40px)",left:"1.5rem",position:"absolute",color:"white"}}>{t("MODULE_" + code.toUpperCase())}</h4>:<h1>{t("MODULE_" + code.toUpperCase())}</h1>}
+           {isMobile? <h4 style={{top: "calc(16vw + 40px)",left:"1.5rem",position:"absolute",color:"white", width:"50px", fontSize:"15px",marginTop:"6px"}}>{t("MODULE_" + code.toUpperCase())}</h4>:<h1 style={{width:"230px", marginTop:"15px"}}>{t("MODULE_" + code.toUpperCase())}</h1>}
             <div className="moduleLinkHomePageModuleLinks">
               {mdmsDataObj && (
                 <CitizenHomeCard
@@ -128,6 +151,23 @@ const Home = ({
               )}
               {/* <Links key={index} matchPath={`/digit-ui/citizen/${code.toLowerCase()}`} userType={"citizen"} /> */}
             </div>
+            {code?.toUpperCase()==="ADS" && (
+              <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "space-between" }}>
+              {Advertisement.map((ad) => (
+                <AdvertisementModuleCard
+                  imageSrc={ad.imageSrc} 
+                  poleNo={ad.poleNo} 
+                  light={ad.light} 
+                  title={ad.title} 
+                  location={ad.location} 
+                  price={ad.price} 
+                  path={`${path}/${code.toLowerCase()}/`}
+                  adType={ad.adtype}
+                  faceArea={ad.faceArea}
+                />
+              ))}
+            </div>
+            )}
             <StaticDynamicCard moduleCode={code?.toUpperCase()}/>
           </div>
         </Route>
@@ -213,11 +253,25 @@ const Home = ({
             <Search/>
           </Route>
           <Route path={`${path}/payment/verification`}>
-         <QRCode></QRCode>
+            <QRCode></QRCode>
+          </Route>
+          <Route path={`${path}/assets/services`}>
+            <AssetsQRCode></AssetsQRCode>
+          </Route>
+          <Route path={`${path}/verificationsearch-home`}>
+            <VSearchCertificate/>
           </Route>
           <Route path={`${path}/challan/details`}>
          <ChallanQRCode></ChallanQRCode>
           </Route>
+          <Route path={`${APPLICATION_PATH}/citizen/core/edcr/scrutiny`}>
+            {/* <EDCRScrutiny config={newConfigEDCR} isSubmitBtnDisable={false}/> */}
+            <CreateAnonymousEDCR />
+          </Route>
+          <Route path={`${APPLICATION_PATH}/citizen/core/edcr/scrutiny/acknowledgement`}>
+            <EDCRAcknowledgement />
+          </Route>
+
           <ErrorBoundary initData={initData}>
             {appRoutes}
             {ModuleLevelLinkHomePages}

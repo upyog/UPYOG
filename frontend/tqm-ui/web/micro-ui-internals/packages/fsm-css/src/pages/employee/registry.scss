@@ -1,0 +1,23 @@
+.search-tabs-container {
+  margin-bottom: 0;
+  border-bottom: 0;
+  .search-tab-head {
+    border: 1px solid #d6d5d4;
+    color: #505050;
+    border-radius: 0.5rem 0.5rem 0rem 0rem;
+  }
+  .search-tab-head-selected {
+    border: 1px solid #f47738;
+    border-radius: 0.5rem 0.5rem 0rem 0rem;
+    border-bottom: 4px solid #f47738;
+    margin-bottom: -4px;
+  }
+}
+
+.action-bar-wrap-registry {
+  .search-add {
+    border: 1px solid #f47738;
+    background-color: #ffffff;
+    padding: 0.5rem;
+  }
+}

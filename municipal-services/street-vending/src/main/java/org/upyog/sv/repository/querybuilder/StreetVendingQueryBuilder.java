@@ -45,6 +45,12 @@ public class StreetVendingQueryBuilder {
 	private static final String BENEFICIARY_SCHEME_SELECT_QUERY = " ,scheme.id as beneficiaryId, scheme.application_id as beneficiarySchemeApplicationId, "
 			+ "scheme.scheme_name as beneficiarySchemeName, scheme.enrollment_id as beneficiaryEnrollmentId ";
 	
+<<<<<<< HEAD
+=======
+	private static final String PAYMENT_STATUS_SELECT_QUERY = 
+		    " ,ps.status AS payment_status ";
+	
+>>>>>>> master-LTS
 	public static final String PAYMENT_SCHEDULE = "SELECT * FROM eg_sv_vendor_payment_schedule WHERE due_date = ? AND status = ?";
 	
 	public static final String VENDOR_PAYMENT_SCHEDULE = "SELECT * FROM eg_sv_vendor_payment_schedule WHERE application_no = ? AND status = ?";
@@ -55,7 +61,12 @@ public class StreetVendingQueryBuilder {
 			+ "LEFT JOIN eg_sv_document_detail doc ON sv.application_id = doc.application_id "
 			+ "LEFT JOIN eg_sv_bank_detail bank ON sv.application_id = bank.application_id "
 			+ "LEFT JOIN eg_sv_operation_time_detail opTime ON sv.application_id = opTime.application_id "
+<<<<<<< HEAD
 	        + "LEFT JOIN eg_sv_beneficiary_schemes_detail scheme ON sv.application_id = scheme.application_id ";
+=======
+	        + "LEFT JOIN eg_sv_beneficiary_schemes_detail scheme ON sv.application_id = scheme.application_id "
+	        + "LEFT JOIN eg_sv_vendor_payment_schedule ps ON sv.application_no = ps.application_no " ;
+>>>>>>> master-LTS
 
 	private final String ORDERBY_CREATEDTIME = " ORDER BY sv.createdtime DESC ";
 
@@ -74,9 +85,19 @@ public class StreetVendingQueryBuilder {
 			query.append(BANK_SELECT_QUERY);
 			query.append(OPERATION_TIME_SELECT_QUERY);
 			query.append(BENEFICIARY_SCHEME_SELECT_QUERY);
+<<<<<<< HEAD
 			query.append(FROM_TABLES);
 		} else {
 			query = new StringBuilder(applicationsCount);
+=======
+			query.append(PAYMENT_STATUS_SELECT_QUERY);
+			query.append(FROM_TABLES);
+		} else {
+			query = new StringBuilder(applicationsCount);
+			  if (!ObjectUtils.isEmpty(criteria.getPaymentStatus())) {
+		            query.append(" LEFT JOIN eg_sv_vendor_payment_schedule ps ON sv.application_no = ps.application_no ");
+		        }
+>>>>>>> master-LTS
 		}
 
 		if (!ObjectUtils.isEmpty(criteria.getTenantId())) {
@@ -147,6 +168,22 @@ public class StreetVendingQueryBuilder {
 			preparedStmtList.add(criteria.getCertificateNo());
 		}
 		
+<<<<<<< HEAD
+=======
+		if (!ObjectUtils.isEmpty(criteria.getPaymentStatus())) {
+		    addClauseIfRequired(query, preparedStmtList);
+		    query.append(" ps.status = ? ");
+		    preparedStmtList.add(criteria.getPaymentStatus());
+		}
+		
+		if (!ObjectUtils.isEmpty(criteria.getRenewalStatus())) {
+		    addClauseIfRequired(query, preparedStmtList);
+		    query.append(" sv.renewal_status = ? ");
+		    preparedStmtList.add(criteria.getRenewalStatus());
+		}
+
+		
+>>>>>>> master-LTS
 		if (!criteria.isCountCall()) {
 			query.append(ORDERBY_CREATEDTIME);
 		}

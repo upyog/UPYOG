@@ -25,7 +25,11 @@ public class CNDServiceQueryBuilder {
     	    "construction_from_date, construction_to_date, property_type, total_waste_quantity, no_of_trips, ucad.vehicle_id, " +
     	    "vendor_id, pickup_date, completed_on, ucad.created_by, ucad.last_modified_by, ucad.created_time, " +
     	    "ucad.last_modified_time, ucad.tenant_id, ucad.applicant_detail_id, ucad.address_detail_id, " +
+<<<<<<< HEAD
 	    "ucad.applicant_mobile_number, created_by_usertype " +
+=======
+    	    "ucad.applicant_mobile_number, created_by_usertype " +
+>>>>>>> master-LTS
     	    "FROM ug_cnd_application_details ucad";
 
     private static final String CND_APPLICATION_DETAILS_QUERY =
@@ -155,7 +159,11 @@ public class CNDServiceQueryBuilder {
             addClauseIfRequired(query, preparedStmtList);
             query.append(" ucad.applicant_detail_id IS NULL ");
         }
+<<<<<<< HEAD
 
+=======
+        
+>>>>>>> master-LTS
         // Apply pagination for non-count queries
         return addPaginationWrapper(query.toString(), preparedStmtList, criteria);
     }

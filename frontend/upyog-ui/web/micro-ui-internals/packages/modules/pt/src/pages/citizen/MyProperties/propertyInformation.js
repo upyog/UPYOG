@@ -427,7 +427,11 @@ const handleClick=()=>{
               </StatusTable>
             )}
           </div>
+<<<<<<< HEAD
           <div>
+=======
+          <div style={{display:"flex"}}>
+>>>>>>> master-LTS
           {property?.status === "ACTIVE" && !enableAudit && (
             <div style={{ marginTop: "1em", bottom: "0px", width: "100%", marginBottom: "1.2em" }}>               
             <button className="submit-bar" type="button" onClick={handleClickOnPtPgr} style={{fontFamily:"sans-serif", color:"white","fontSize":"19px"}}>{t("PT_PGR")}</button>

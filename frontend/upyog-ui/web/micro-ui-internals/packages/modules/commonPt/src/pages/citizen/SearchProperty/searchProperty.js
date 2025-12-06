@@ -653,6 +653,11 @@ setCityCode(city.code);
  
       {window.location.href.includes("/obps/bpa/") ?<span className="link" style={isMobile ? {display:"flex", justifyContent:"center",paddingBottom:"16px"} : {display:"flex", justifyContent:"left",paddingBottom:"16px", marginLeft: "45px"}}>
         <Link to={"/upyog-ui/citizen/obps/bpa/building_plan_scrutiny/new_construction/location"}>{t("CORE_COMMON_SKIP_CONTINUE")}</Link>
+<<<<<<< HEAD
+=======
+      </span>: window.location.href.includes("/fsm/new-application/") ? <span className="link" style={isMobile ? {display:"flex", justifyContent:"center",paddingBottom:"16px"} : {display:"flex", justifyContent:"left",paddingBottom:"16px", marginLeft: "45px"}}>
+        <Link to={"/upyog-ui/citizen/fsm/new-application/property-type"}>{t("CORE_COMMON_SKIP_CONTINUE")}</Link>
+>>>>>>> master-LTS
       </span>:
            <span className="link" style={isMobile ? {display:"flex", justifyContent:"center",paddingBottom:"16px"} : {display:"flex", justifyContent:"left",paddingBottom:"16px", marginLeft: "45px"}}>
        

@@ -3,7 +3,12 @@ package org.upyog.rs.web.models;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
+<<<<<<< HEAD
 import io.swagger.v3.oas.annotations.media.Schema;
+=======
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+>>>>>>> master-LTS
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,8 +16,13 @@ import org.springframework.validation.annotation.Validated;
 import org.upyog.rs.web.models.Error;
 import org.upyog.rs.web.models.ResponseInfo;
 
+<<<<<<< HEAD
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
+=======
+import javax.validation.Valid;
+import javax.validation.constraints.*;
+>>>>>>> master-LTS
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,9 +32,15 @@ import lombok.Builder;
 /**
  * All APIs will return ErrorRes in case of failure which will carry ResponseInfo as metadata and Error object as actual representation of error. In case of bulk apis, some apis may chose to return the array of Error objects to indicate individual failure.
  */
+<<<<<<< HEAD
 @Schema(description = "All APIs will return ErrorRes in case of failure which will carry ResponseInfo as metadata and Error object as actual representation of error. In case of bulk apis, some apis may chose to return the array of Error objects to indicate individual failure.")
 @Validated
 @jakarta.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2025-01-16T15:46:56.897+05:30")
+=======
+@ApiModel(description = "All APIs will return ErrorRes in case of failure which will carry ResponseInfo as metadata and Error object as actual representation of error. In case of bulk apis, some apis may chose to return the array of Error objects to indicate individual failure.")
+@Validated
+@javax.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2025-01-16T15:46:56.897+05:30")
+>>>>>>> master-LTS
 
 @Getter
 @Setter

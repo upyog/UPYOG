@@ -12,6 +12,14 @@ import { configNOCApproverApplication } from "./NOCApproverApplication";
 import { configWSApproverApplication } from "./WSApproverApplication";
 import { configWSDisConnectApplication } from "./WSDisconnectApplication";
 import { configPTRApproverApplication } from "./PTRApproverApplication";
+<<<<<<< HEAD
+=======
+import { configASSETApproverApplication } from "./ASSETApproverApplication";
+import { configCHBApproverApplication } from "./CHBApproverApplication";
+import { configEWApproverApplication } from "./EWApproverApplication";
+import { configSVApproverApplication } from "./SVApproverApplication";
+
+>>>>>>> master-LTS
 
 
 export {
@@ -28,5 +36,14 @@ export {
   configNOCApproverApplication,
   configWSApproverApplication,
   configWSDisConnectApplication,
+<<<<<<< HEAD
   configPTRApproverApplication
+=======
+  configPTRApproverApplication,
+  configASSETApproverApplication,
+  configCHBApproverApplication,
+  configEWApproverApplication,
+  configSVApproverApplication
+
+>>>>>>> master-LTS
 };

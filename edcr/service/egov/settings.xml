@@ -9,6 +9,12 @@
             <mirrorOf>central</mirrorOf>
             <url>http://repo.egovernments.org/nexus/content/groups/public/</url>
         </mirror>
+	<mirror>
+	  <id>insecure-repo</id>
+	  <mirrorOf>external:http:*</mirrorOf>
+	  <url>http://repo.egov.org.in/nexus/content/groups/public/</url>
+	  <blocked>false</blocked>
+	</mirror>
     </mirrors>
 	
 	<servers>

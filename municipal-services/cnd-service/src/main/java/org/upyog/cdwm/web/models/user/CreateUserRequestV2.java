@@ -6,8 +6,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.egov.common.contract.request.RequestInfo;
 
+<<<<<<< HEAD
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
+=======
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+>>>>>>> master-LTS
 
 @AllArgsConstructor
 @Getter

@@ -1,3 +1,29 @@
+  /**
+ * @description 
+ * This component handles the **Pet Application Search** functionality.
+ * It provides a form with multiple fields for filtering applications based on:
+ * - Application number
+ * - Pet type
+ * - Application type
+ * - Mobile number
+ * - Date range (from and to dates)
+ * 
+ * It uses:
+ * - `react-hook-form` for form handling.
+ * - `Digit` services and hooks for fetching pet-related data.
+ * - `Table` component for displaying search results.
+ * - Pagination and sorting features.
+ * 
+ * @props 
+ * - `tenantId` (string): The ID of the current tenant.
+ * - `isLoading` (boolean): Flag indicating whether data is loading.
+ * - `t` (function): Translation function for multilingual support.
+ * - `onSubmit` (function): Callback function to submit the form.
+ * - `data` (object): Search results data.
+ * - `count` (number): Total records count.
+ * - `setShowToast` (function): Function to manage toast notifications.
+ */
+
   import React, { useCallback, useMemo, useEffect } from "react"
   import { useForm, Controller } from "react-hook-form";
   import { TextInput, SubmitBar, LinkLabel, ActionBar, CloseSvg, DatePicker, CardLabelError, SearchForm, SearchField, Dropdown, Table, Card, MobileNumber, Loader, CardText, Header } from "@upyog/digit-ui-react-components";
@@ -21,53 +47,27 @@
         register("sortOrder", "DESC")
       },[register])
       
-      const applicationStatuses = [
+      const applicationType = [
           {
-              code: "ACTIVE",
-              i18nKey: "WF_PTR_ACTIVE"
+              code: "NEWAPPLICATION",
+              i18nKey: "NEWAPPLICATION"
           },
           {
-              code: "INACTIVE",
-              i18nKey: "WF_PTR_INACTIVE"
-          },
-          {
-              code: "INWORKFLOW",
-              i18nKey: "WF_PTR_INWORKFLOW"
-          },
+              code: "RENEWAPPLICATION",
+              i18nKey: "RENEWAPPLICATION"
+          }
       ]
       
       const stateId = Digit.ULBService.getStateId();
 
 
       const { data: Menu } = Digit.Hooks.ptr.usePTRPetMDMS(stateId, "PetService", "PetType");
-      // const { data: Breed_Type } = Digit.Hooks.ptr.useBreedTypeMDMS(stateId, "PetService", "BreedType");  // hooks for breed type
-
       let menu = [];
 
-      
-      // let breed_type = [];
-
-
-      Menu &&
+    Menu &&
     Menu.map((petone) => {
       menu.push({ i18nKey: `PTR_PET_${petone.code}`, code: `${petone.code}`, value: `${petone.name}` });
-    });
-
-    // Breed_Type &&
-    // Breed_Type.map((breedss) => {
-    //   if (breedss.PetType == menu?.code) {
-    //     breed_type.push({
-    //       i18nKey: `PTR_BREED_TYPE_${breedss.code}`,
-    //       code: `${breedss.code}`,
-    //       value: `${breedss.name}`
-    //     });
-    //   }
-
-    // });
-
-
-
-      
+    });      
       const GetCell = (value) => <span className="cell-text">{value}</span>;
       
       const columns = useMemo( () => ([
@@ -117,6 +117,14 @@
               Header: t("PTR_MOBILE_NUMBER"),
               Cell: ({ row }) => {
                 return GetCell(`${row?.original?.["mobileNumber"]}`)
+              },
+              disableSortBy: true,
+            },
+            // field added for status of application
+            {
+              Header: t("PTR_APPLICATION_STATUS"),
+              Cell: ({ row }) => {
+                return GetCell(`${row?.original?.["status"]}`)
               },
               disableSortBy: true,
             },
@@ -174,24 +182,25 @@
                               )}
                               />
                   </SearchField>
-                  {/* <SearchField>
-                      <label>{t("PTR_SEARCH_BREED_TYPE")}</label>
-                       <Controller
+                  <SearchField>
+                      <label>{t("PTR_APPLICATION_TYPE")}</label>
+                      {/* <TextInput name="petType" inputRef={register({})} /> */}
+                      <Controller
                               control={control}
-                              name="breedType"
+                              name="applicationType"
                               render={(props) => (
                                   <Dropdown
                                   selected={props.value}
                                   select={props.onChange}
                                   onBlur={props.onBlur}
-                                  option={breed_type}
+                                  option={applicationType}
                                   optionKey="i18nKey"
                                   t={t}
                                   disable={false}
                                   />
                               )}
                               />
-                  </SearchField> */}
+                  </SearchField>
                   <SearchField>
                   <label>{t("PTR_OWNER_MOBILE_NO")}</label>
                   <MobileNumber

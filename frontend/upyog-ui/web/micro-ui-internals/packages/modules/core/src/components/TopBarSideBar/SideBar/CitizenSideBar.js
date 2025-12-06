@@ -7,6 +7,7 @@ import { useHistory } from "react-router-dom";
 import SideBarMenu from "../../../config/sidebar-menu";
 import ChangeCity from "../../ChangeCity";
 import StaticCitizenSideBar from "./StaticCitizenSideBar";
+import { APPLICATION_PATH } from "../../../pages/citizen/Home/EDCR/utils";
 
 const defaultImage =
   "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAO4AAADUCAMAAACs0e/bAAAAM1BMVEXK0eL" +
@@ -96,22 +97,28 @@ export const CitizenSideBar = ({ isOpen, isMobile = false, toggleSidebar, onLogo
   const { isLoading, data } = Digit.Hooks.useAccessControl();
   const tenantId = Digit.ULBService.getCitizenCurrentTenant();
   const showProfilePage = () => {
-    const redirectUrl = isEmployee ? "/upyog-ui/employee/user/profile" : "/upyog-ui/citizen/user/profile";
+    const redirectUrl = isEmployee ? `${APPLICATION_PATH}/employee/user/profile` : `${APPLICATION_PATH}/citizen/user/profile`;
     history.push(redirectUrl);
     closeSidebar();
   };
   const redirectToLoginPage = () => {
     // localStorage.clear();
     // sessionStorage.clear();
-    history.push("/upyog-ui/citizen/login");
+    history.push(`${APPLICATION_PATH}/citizen/login`);
     closeSidebar();
   };
+  // Function to redirect the user to the EDCR scrutiny page
+  const redirectToScrutinyPage = () => {
+    // localStorage.clear();
+    // sessionStorage.clear();
+    history.push(`${APPLICATION_PATH}/citizen/core/edcr/scrutiny`);
+};
   if (islinkDataLoading || isLoading || !isFetched) {
     return <Loader />;
   }
   const filteredTenantContact = storeData?.tenants.filter((e) => e.code === tenantId)[0]?.contactNumber || storeData?.tenants[0]?.contactNumber;
 
-  let menuItems = [...SideBarMenu(t, closeSidebar, redirectToLoginPage, isEmployee, storeData, tenantId)];
+  let menuItems = [...SideBarMenu(t, closeSidebar, redirectToLoginPage, redirectToScrutinyPage, isEmployee, storeData, tenantId)];
   let profileItem;
   if (isFetched && user && user.access_token) {
     profileItem = <Profile info={user?.info} stateName={stateInfo?.name} t={t} />;

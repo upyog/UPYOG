@@ -28,11 +28,31 @@ import { initBillsComponents, BillsModule } from "@upyog/digit-ui-module-bills";
 
 // import { PGRModule, PGRLinks } from "@upyog/digit-ui-module-pgr";
 // import { Body, TopBar } from "@upyog/digit-ui-react-components";
+<<<<<<< HEAD
 import "@upyog-niua/upyog-css/example/index.css";
 
 import { PTRModule, PTRLinks, PTRComponents } from "@upyog-niua/upyog-ui-module-ptr";
 
 
+=======
+import "@upyog-niua/upyog-css";
+
+import { PTRModule, PTRLinks, PTRComponents } from "@upyog/upyog-ui-module-ptr";
+import { ASSETComponents, ASSETLinks, ASSETModule } from "@upyog/upyog-ui-module-asset";
+
+import { 
+  EWModule, 
+  EWLinks, 
+  EWComponents }
+  from "@upyog/upyog-ui-module-ew";
+
+import { SVComponents, SVLinks, SVModule } from "@upyog/upyog-ui-module-sv";
+import {CHBModule,CHBLinks,CHBComponents} from "@upyog/upyog-ui-module-chb";
+import {ADSModule,ADSLinks,ADSComponents} from "@upyog/upyog-ui-module-ads";
+import { WTModule, WTLinks, WTComponents } from "@upyog/upyog-ui-module-wt";
+import { VENDORComponents, VENDORLinks, VENDORModule } from "@upyog/upyog-ui-module-vendor";
+import { PGRAIComponents, PGRAILinks, PGRAIModule } from "@upyog/upyog-ui-module-pgrai";
+>>>>>>> master-LTS
 // import * as comps from "@upyog/digit-ui-react-components";
 
 // import { subFormRegistry } from "@upyog/digit-ui-libraries";
@@ -42,6 +62,7 @@ import { pgrCustomizations, pgrComponents } from "./pgr";
 var Digit = window.Digit || {};
 
 const enabledModules = [
+  "Tqm",
   "PGR",
   "FSM",
   "Payment",
@@ -64,7 +85,17 @@ const enabledModules = [
   "BillAmendment",
   "FireNoc",
   "Birth",
-  "Death"
+  "Death",
+  "PTR",
+  "ASSET",
+  "ADS",
+  "EW",
+  "CHB",
+  "WT",
+  "VENDOR",
+  "MT",
+  "PGRAI",
+  "TP"
 ];
 
 const initTokens = (stateCode) => {
@@ -108,11 +139,41 @@ const initDigitUI = () => {
     HRMSModule,
     ReceiptsModule,
     BillsModule,
+<<<<<<< HEAD
     // PTRModule, 
     // PTRLinks, 
     // ...PTRComponents
+=======
+    PTRModule,
+    PTRLinks,
+    ...PTRComponents,
+>>>>>>> master-LTS
     // TLModule,
     // TLLinks,
+    ASSETModule,
+    ASSETLinks,
+    ...ASSETComponents,
+    ADSLinks,
+  ADSModule,
+  ...ADSComponents,
+  SVModule,
+  SVLinks,
+  ...SVComponents,
+  EWModule,
+  EWLinks,
+  ...EWComponents,
+  CHBModule,
+  CHBLinks,
+  ...CHBComponents,
+   WTModule,
+  WTLinks,
+  ...WTComponents,
+  VENDORModule,
+  VENDORLinks,
+  ...VENDORComponents,
+  PGRAIModule,
+  PGRAILinks,
+  ...PGRAIComponents
   });
 
   initFSMComponents();

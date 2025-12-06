@@ -1,10 +1,28 @@
+<<<<<<< HEAD
 import { Banner, Card, CardText, LinkButton, LinkLabel, Loader, Row, StatusTable, SubmitBar } from "@upyog/digit-ui-react-components";
+=======
+/**
+ * PTRAcknowledgement Component
+ * 
+ * This component handles the acknowledgement display after submitting a pet registration application.
+ * It shows a banner with the application status, provides a download option for the acknowledgment form, 
+ * and offers navigation back to the home page.
+ * 
+ * Features:
+ * - Displays a success, loading, or failure message with `BannerPicker`.
+ * - Downloads the acknowledgment form in PDF format.
+ * - Redirects to either the citizen or employee home page based on the user type.
+ */
+
+import { Banner, Card, LinkButton, Loader, Row, StatusTable, SubmitBar } from "@upyog/digit-ui-react-components";
+>>>>>>> master-LTS
 import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useRouteMatch } from "react-router-dom";
 import getPetAcknowledgementData from "../../../getPetAcknowledgementData";
 import { PetDataConvert } from "../../../utils";
 
+<<<<<<< HEAD
 const GetActionMessage = (props) => {
   const { t } = useTranslation();
   if (props.isSuccess) {
@@ -16,11 +34,41 @@ const GetActionMessage = (props) => {
   }
 };
 
+=======
+/**
+ * GetActionMessage Component
+ * 
+ * Displays the appropriate message based on the application status (success, loading, or failure).
+ */
+
+const GetActionMessage = (props) => {
+  const { t } = useTranslation();
+  if (props.isSuccess) {
+    return !window.location.href.includes("revised-application") ? t("ES_PTR_RESPONSE_CREATE_ACTION") : t("PTR_REVISED_SUCCESSFULLY");
+  } else if (props.isLoading) {
+    return  t("CS_PTR_APPLICATION_PENDING");
+  } else if (!props.isSuccess) {
+    return t("CS_PTR_APPLICATION_FAILED");
+  }
+};
+
+/**
+ * Styling for the row container layout.
+ */
+>>>>>>> master-LTS
 const rowContainerStyle = {
   padding: "4px 0px",
   justifyContent: "space-between",
 };
 
+<<<<<<< HEAD
+=======
+/**
+ * BannerPicker Component
+ * 
+ * Displays the application banner with the application number and success or failure message.
+ */
+>>>>>>> master-LTS
 const BannerPicker = (props) => {
   return (
     <Banner
@@ -33,6 +81,7 @@ const BannerPicker = (props) => {
   );
 };
 
+<<<<<<< HEAD
 const PTRAcknowledgement = ({ data, onSuccess }) => {
 
   
@@ -56,18 +105,48 @@ const PTRAcknowledgement = ({ data, onSuccess }) => {
       mutation.mutate(formdata, {
         onSuccess,
       });
+=======
+
+/**
+ * PTRAcknowledgement Component
+ * 
+ * Handles the display of the application acknowledgment, including the download option and navigation buttons.
+ */
+const PTRAcknowledgement = ({ data, onSuccess }) => {
+  const { t } = useTranslation();
+  const tenantId = Digit.ULBService.getCitizenCurrentTenant(true) || Digit.ULBService.getCurrentTenantId();
+  const user = Digit.UserService.getUser().info;
+  const mutation = Digit.Hooks.ptr.usePTRCreateAPI(data.address?.city?.code); 
+  const { data: storeData } = Digit.Hooks.useStore.getInitData();
+  const { tenants } = storeData || {};
+
+  useEffect(() => {
+    try {
+      data.tenantId = tenantId;
+      let formdata = PetDataConvert(data)
+      mutation.mutate(formdata, {onSuccess});
+>>>>>>> master-LTS
     } catch (err) {
     }
   }, []);
 
   
+<<<<<<< HEAD
 
+=======
+/**
+   * Handles the PDF download of the application acknowledgment form.
+   */
+>>>>>>> master-LTS
   const handleDownloadPdf = async () => {
     const { PetRegistrationApplications = [] } = mutation.data;
     let Pet = (PetRegistrationApplications && PetRegistrationApplications[0]) || {};
     const tenantInfo = tenants.find((tenant) => tenant.code === Pet.tenantId);
     let tenantId = Pet.tenantId || tenantId;
+<<<<<<< HEAD
    
+=======
+>>>>>>> master-LTS
     const data = await getPetAcknowledgementData({ ...Pet }, tenantInfo, t);
     Digit.Utils.pdf.generate(data);
   };
@@ -87,9 +166,20 @@ const PTRAcknowledgement = ({ data, onSuccess }) => {
         )}
       </StatusTable>
       {mutation.isSuccess && <SubmitBar label={t("PTR_PET_DOWNLOAD_ACK_FORM")} onSubmit={handleDownloadPdf} />}
+<<<<<<< HEAD
       <Link to={`/upyog-ui/citizen`}>
         <LinkButton label={t("CORE_COMMON_GO_TO_HOME")} />
       </Link>
+=======
+      {user?.type==="CITIZEN"?
+      <Link to={`/upyog-ui/citizen`}>
+        <LinkButton label={t("CORE_COMMON_GO_TO_HOME")} />
+      </Link>
+      :
+      <Link to={`/upyog-ui/employee`}>
+        <LinkButton label={t("CORE_COMMON_GO_TO_HOME")} />
+      </Link>}
+>>>>>>> master-LTS
     </Card>
   );
 };

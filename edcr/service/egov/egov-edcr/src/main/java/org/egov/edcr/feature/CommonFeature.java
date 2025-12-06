@@ -8,24 +8,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.egov.common.entity.edcr.Block;
-import org.egov.common.entity.edcr.Floor;
-import org.egov.common.entity.edcr.OccupancyType;
-import org.egov.common.entity.edcr.Plan;
-import org.egov.common.entity.edcr.Ramp;
-import org.egov.common.entity.edcr.Result;
-import org.egov.common.entity.edcr.ScrutinyDetail;
+import org.egov.common.entity.edcr.*;
 import org.egov.edcr.utility.Util;
 import org.springframework.stereotype.Service;
+import static org.egov.edcr.constants.CommonKeyConstants.*;
+import static org.egov.edcr.constants.EdcrReportConstants.SUBRULE_42_5_V;
+import static org.egov.edcr.service.FeatureUtil.addScrutinyDetailtoPlan;
+import static org.egov.edcr.service.FeatureUtil.mapReportDetails;
 
 @Service
 public class CommonFeature extends FeatureProcess {
-
-    private static final String FLOOR = "Floor";
-    private static final String SUBRULE_48_3_DESC = "Minimum number of lifts";
-    private static final String SUBRULE_42_5_V = "42-5-v";
-    // private static final String SUBRULE_40A_3 = "40A(3)";
-    private static final String REMARKS = "Remarks";
 
     @Override
     public Plan validate(Plan pl) {
@@ -78,13 +70,13 @@ public class CommonFeature extends FeatureProcess {
     private void processRule42_5_V_NotAccepted(Block block, Floor floor, Plan plan, String value) {
         setReportOutputDetails(plan, SUBRULE_42_5_V, value, String.valueOf(1),
                 String.valueOf(0),
-                Result.Not_Accepted.getResultVal(), "Lift or ramp not defined on this floor");
+                Result.Not_Accepted.getResultVal(), LIFT_OR_RAMP_NOT_DEFINED);
     }
 
     private void processRule42_5_V_Accepted(Block block, Floor floor, Plan plan, String value) {
         setReportOutputDetails(plan, SUBRULE_42_5_V, value, String.valueOf(1),
                 String.valueOf(floor.getLifts().size()),
-                Result.Accepted.getResultVal(), "Lift required as ramp not defined on this floor");
+                Result.Accepted.getResultVal(), LIFT_REQUIRED);
     }
 
     private Boolean checkRampDefinedOrNot(Floor floor) {
@@ -103,15 +95,16 @@ public class CommonFeature extends FeatureProcess {
 
     private void setReportOutputDetails(Plan plan, String ruleNo, String floor, String expected, String actual, String status,
             String remarks) {
-        Map<String, String> details = new HashMap<>();
-        details.put(RULE_NO, ruleNo);
-        details.put(FLOOR, floor);
-        details.put(REQUIRED, expected);
-        details.put(PROVIDED, actual);
-        details.put(STATUS, status);
-        details.put(REMARKS, remarks);
-        scrutinyDetail.getDetail().add(details);
-        plan.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+        ReportScrutinyDetail detail = new ReportScrutinyDetail();
+        detail.setRuleNo(ruleNo);
+        detail.setFloorNo(floor);
+        detail.setRequired(expected);
+        detail.setRemarks(remarks);
+        detail.setProvided(actual);
+        detail.setStatus(status);
+
+        Map<String, String> details = mapReportDetails(detail);
+        addScrutinyDetailtoPlan(scrutinyDetail, plan, details);
     }
 
     @Override

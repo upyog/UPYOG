@@ -150,7 +150,9 @@ const MutationForm = ({ applicationData, tenantId }) => {
         type: data.owners[0].institution.type.code,
       };
     }
-
+    else {
+      submitData.Property.institution=null;
+    }
     history.replace("/upyog-ui/employee/pt/response", { Property: submitData.Property, key: "UPDATE", action: "SUBMIT" });
   };
 

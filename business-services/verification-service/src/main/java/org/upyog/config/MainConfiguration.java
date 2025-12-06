@@ -2,7 +2,11 @@ package org.upyog.config;
 
 import java.util.TimeZone;
 
+<<<<<<< HEAD
 import jakarta.annotation.PostConstruct;
+=======
+import javax.annotation.PostConstruct;
+>>>>>>> master-LTS
 
 import org.egov.tracer.config.TracerConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +32,20 @@ public class MainConfiguration {
     @Value("${app.timezone}")
     private String timeZone;
 
+<<<<<<< HEAD
+=======
+    //System User
+    @Value("${internal.microservice.user.username}")
+    private String internalMicroserviceUserName;
+
+    //System user Type
+    @Value("${internal.microservice.user.type}")
+    private String internalMicroserviceUserType;
+
+    @Value("${state.level.tenant.id}")
+    private String stateLevelTenantId;
+    
+>>>>>>> master-LTS
 	// User Config
 	@Value("${egov.user.host}")
 	private String userHost;

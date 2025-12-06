@@ -148,7 +148,7 @@ const OwnerForm1 = (_props) => {
         <div>
         <CardSectionHeader>{t("CONSUMERDETAILS")}</CardSectionHeader>
         <LabelFieldPair>
-            <CardLabel className={isMobile?"card-label-APK":"card-label-smaller"}>{`${t("UC_CONS_NAME_LABEL")} * `}</CardLabel>
+            <CardLabel className={isMobile?"card-label-APK":"card-label-smaller"}>{`${t("UC_CONS_NAME_LABEL")}`}<span className="check-page-link-button"> *</span></CardLabel>
             <div className="field">
               <Controller
                 control={control}
@@ -176,7 +176,7 @@ const OwnerForm1 = (_props) => {
           </LabelFieldPair>
           <CardLabelError style={errorStyle}>{localFormState.touched.ConsumerName ? errors?.ConsumerName?.message : ""}</CardLabelError>
           <LabelFieldPair>
-            <CardLabel style={{paddingTop:"10px"}} className="card-label-smaller">{`${t("UC_MOBILE_NUMBER")} * `}</CardLabel>
+            <CardLabel style={{paddingTop:"10px"}} className="card-label-smaller">{`${t("UC_MOBILE_NUMBER")}`}<span className="check-page-link-button"> *</span></CardLabel>
             <div className="field">
               <Controller
                 control={control}

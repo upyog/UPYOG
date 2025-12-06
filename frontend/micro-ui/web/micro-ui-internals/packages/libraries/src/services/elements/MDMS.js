@@ -806,6 +806,300 @@ const getMCollectApplicationStatusCriteria = (tenantId, moduleCode, type) => ({
   },
 });
 
+const getSVDocumentsCategory = (tenantId, moduleCode) => ({
+  details: {
+    tenantId: tenantId,
+    moduleDetails: [
+      {
+        moduleName: moduleCode,
+        masterDetails: [
+          {
+            name: "Documents",
+          },
+        ],
+      },
+    ],
+  },
+});
+const getADSDocumentsCategory = (tenantId, moduleCode) => ({
+  details: {
+    tenantId: tenantId,
+    moduleDetails: [
+      {
+        moduleName: moduleCode,
+        masterDetails: [
+          {
+            name: "Documents",
+          },
+        ],
+      },
+    ],
+  },
+});
+
+const getProductPriceList = (tenantId, moduleCode, type) => ({
+  type,
+  details: {
+    tenantId,
+    moduleDetails: [
+      {
+        moduleName: moduleCode,
+        masterDetails: [
+          {
+            name: "ProductName",
+          },
+        ],
+      },
+    ],
+  },
+});
+
+const getVendorDetailsList = (tenantId, moduleCode, type) => ({
+  type,
+  details: {
+    tenantId,
+    moduleDetails: [
+      {
+        moduleName: moduleCode,
+        masterDetails: [
+          {
+            name: "VendorName",
+          },
+        ],
+      },
+    ],
+  },
+});
+
+const getChbSpecialCategoryList = (tenantId, moduleCode, type) => ({
+  type,
+  details: {
+    tenantId,
+    moduleDetails: [
+      {
+        moduleName: moduleCode,
+        masterDetails: [
+          {
+            name: "SpecialCategory",
+          },
+        ],
+      },
+    ],
+  },
+});
+
+const getChbResidentTypeList = (tenantId, moduleCode, type) => ({
+  type,
+  details: {
+    tenantId,
+    moduleDetails: [
+      {
+        moduleName: moduleCode,
+        masterDetails: [
+          {
+            name: "ResidentType",
+          },
+        ],
+      },
+    ],
+  },
+});
+const getChbHallCodeList = (tenantId, moduleCode, type) => ({
+  type,
+  details: {
+    tenantId,
+    moduleDetails: [
+      {
+        moduleName: moduleCode,
+        masterDetails: [
+          {
+            name: "HallCode",
+          },
+        ],
+      },
+    ],
+  },
+});
+
+const getChbPurposeList = (tenantId, moduleCode, type) => ({
+  type,
+  details: {
+    tenantId,
+    moduleDetails: [
+      {
+        moduleName: moduleCode,
+        masterDetails: [
+          {
+            name: "Purpose",
+          },
+        ],
+      },
+    ],
+  },
+});
+const getChbCommunityHallsList = (tenantId, moduleCode, type) => ({
+  type,
+  details: {
+    tenantId,
+    moduleDetails: [
+      {
+        moduleName: moduleCode,
+        masterDetails: [
+          {
+            name: "CommunityHalls",
+          },
+        ],
+      },
+    ],
+  },
+});
+
+const getChbDocumentsCategory = (tenantId, moduleCode) => ({
+  details: {
+    tenantId: tenantId,
+    moduleDetails: [
+      {
+        moduleName: moduleCode,
+        masterDetails: [
+          {
+            name: "Documents",
+          },
+        ],
+      },
+    ],
+  },
+});
+
+const getChbDocuments = (MdmsRes) => {
+  MdmsRes["CHB"].Documents.filter((Documents) => Documents.active).map((dropdownData) => {
+    return {
+      ...Documents,
+      i18nKey: `${dropdownData.code}`,
+    };
+  });
+};
+const getChbSpecialCategory = (MdmsRes) => {
+  return MdmsRes["CHB"].SpecialCategory.filter((SpecialCategory) => SpecialCategory.active).map((chbDetails) => {
+    return {
+      ...chbDetails,
+      i18nKey: `CHB_SPECIAL_CATEGORY_${chbDetails.code}`,
+    };
+  });
+  //return MdmsRes;
+};
+const getChbCommunityHalls = (MdmsRes) => {
+  return MdmsRes["CHB"].CommunityHalls.filter((CommunityHalls) => CommunityHalls.active).map((chbHallDetails) => {
+    return {
+      ...chbHallDetails,
+      i18nKey: `CHB_COMMUNITY_HALLS_${chbHallDetails.name}`,
+    };
+  });
+};
+
+const getChbResidentType = (MdmsRes) => {
+  return MdmsRes["CHB"].ResidentType.filter((ResidentType) => ResidentType.active).map((chbResidentDetails) => {
+    return {
+      ...chbResidentDetails,
+      i18nKey: `CHB_RESIDENT_TYPE_${chbResidentDetails.code}`,
+    };
+  });
+  //return MdmsRes;
+};
+
+const getChbHallCode = (MdmsRes) => {
+  return MdmsRes["CHB"].HallCode.filter((HallCode) => HallCode.active).map((chbHallCodeDetails) => {
+    return {
+      ...chbHallCodeDetails,
+      i18nKey: `CHB_HALL_CODE_${chbHallCodeDetails.code}`,
+    };
+  });
+};
+
+const getChbPurpose = (MdmsRes) => {
+  return MdmsRes["CHB"].Purpose.filter((Purpose) => Purpose.active).map((chbPurposeDetails) => {
+    return {
+      ...chbPurposeDetails,
+      i18nKey: `CHB_PURPOSE_${chbPurposeDetails.code}`,
+    };
+  });
+  //return MdmsRes;
+};
+const getSVDocuments = (MdmsRes) => {
+  MdmsRes["StreetVending"].Documents.filter((Documents) => Documents.active).map((dropdownData) => {
+    return {
+      ...Documents,
+      i18nKey: `${dropdownData.code}`,
+    };
+  });
+};
+
+const getADSDocuments = (MdmsRes) => {
+  MdmsRes["Advertisement"].Documents.filter((Documents) => Documents.active).map((dropdownData) => {
+    return {
+      ...Documents,
+      i18nKey: `${dropdownData.code}`,
+    };
+  });
+};
+
+const getProductPrice = (MdmsRes) => {
+  return MdmsRes["Ewaste"].ProductName.filter((ProductName) => ProductName.active).map((ewasteDetails) => {
+    return {
+      ...ewasteDetails,
+      i18nKey: `EWASTE_${ewasteDetails.code}`,
+    };
+  });
+  //return MdmsRes;
+};   
+
+const getVendorDetails = (MdmsRes) => {
+  return MdmsRes["Ewaste"].VendorName.filter((VendorName) => VendorName.active).map((vendorDetails) => {
+    return {
+      ...vendorDetails,
+      i18nKey: `EWASTE_${vendorDetails.code}`,
+    };
+  });
+  //return MdmsRes;
+}; 
+
+
+
+const getMasterDataCategory = (tenantId, moduleCode, masterName, type) => ({
+  type,
+  details: {
+    tenantId: tenantId,
+    moduleDetails: [
+      {
+        moduleName: moduleCode,
+        masterDetails: [
+          {
+            name: masterName,
+          },
+        ],
+      },
+    ],
+  },
+});
+
+const getDataWithi18nkey = (MdmsRes, moduleName, masterName, i18nKeyString) => {
+  return MdmsRes[moduleName][masterName].filter((row) => row.active).map((item) => {
+    return {
+      ...item,
+      i18nKey: `${i18nKeyString + item.name}`,
+    };
+  });
+};
+
+const getDataWithi18nkeyandCode = (MdmsRes, moduleName, masterName, i18nKeyString) => {
+  return MdmsRes[moduleName][masterName].filter((row) => row.active).map((item) => {
+    return {
+      ...item,
+      i18nKey: `${i18nKeyString + item.name}`,
+      code: item.code
+    };
+  });
+};
+
 const getHrmsEmployeeRolesandDesignations = () => ({
   moduleDetails: [
     {
@@ -908,7 +1202,22 @@ const getTradeTypeRoleCriteria = (tenantId, moduleCode, type) => ({
     ],
   },
 });
-
+const getDisclaimerCriteria = (tenantId, moduleCode, type) => ({
+  type,
+  details: {
+    tenantId,
+    moduleDetails: [
+      {
+        moduleName: moduleCode,
+        masterDetails: [
+          {
+            name: "Disclaimer",
+          },
+        ],
+      },
+    ],
+  },
+});
 const getFSTPORejectionReasonCriteria = (tenantId, moduleCode, type) => ({
   type,
   details: {
@@ -1068,6 +1377,202 @@ const GetEgovLocations = (MdmsRes) => {
     i18nKey: obj.localname,
   }));
 };
+//adding here
+const getAssetDocuments = (MdmsRes) => {
+  MdmsRes["ASSET"].Documents.filter((Documents) => Documents.active).map((dropdownData) => {
+    return {
+      ...Documents,
+      i18nKey: `${dropdownData.code}`,
+    };
+  });
+};
+const getAssetClassification = (MdmsRes) => {
+  return MdmsRes["ASSET"].assetClassification.filter((assetClassification) => assetClassification.active).map((assetDetails) => {
+    return {
+      ...assetDetails,
+      i18nKey: `ASSET_CLASSIFIED_${assetDetails.code}`,
+    };
+  });
+  //return MdmsRes;
+};
+const getAssetparentsubcategory= (MdmsRes) => {
+  return MdmsRes["ASSET"].assetSubCategory.filter((assetSubCategory) => assetSubCategory.active).map((assetparentDetails) => {
+    return {
+      ...assetparentDetails,
+      i18nKey: `AST_${assetparentDetails.code}`,
+    };
+  });
+  //return MdmsRes;
+};
+const getAssetParent = (MdmsRes) => {
+  return MdmsRes["ASSET"].assetParentCategory.filter((assetParentCategory) => assetParentCategory.active).map((assetparentDetails) => {
+    return {
+      ...assetparentDetails,
+      i18nKey: `ASSET_CLASSIFIED_${assetparentDetails.code}`,
+    };
+  });
+  //return MdmsRes;
+};
+const getAssetSubParent = (MdmsRes) => {
+  return MdmsRes["ASSET"].assetCategory.filter((assetCategory) => assetCategory.active).map((assetsubparentDetails) => {
+    return {
+      ...assetsubparentDetails,
+      i18nKey: `ASSET_SUB_CLASSIFIED_${assetsubparentDetails.code}`,
+    };
+  });
+  //return MdmsRes;
+};   
+const getAssetcommon = (MdmsRes) => {
+  return MdmsRes["ASSET"].AssetCommonDetail.filter((AssetCommonDetail) => AssetCommonDetail.active).map((assetcommonDetails) => {
+    return {
+      ...assetcommonDetails,
+      i18nKey: `ASSET_COMMON_${assetcommonDetails.code}`,
+    };
+  });
+  //return MdmsRes;
+};   
+const Asset_Classification = (MdmsRes) => {
+  MdmsRes["ASSET"].assetClassification.filter((assetClassification) => assetClassification.active).map((asset_mdms) => {
+    return {
+      ...asset_mdms,
+      i18nKey: `ASSET_CLASS_${asset_mdms.code}`,
+    };
+  });
+};
+const AST_PARENT= (MdmsRes) => {
+  MdmsRes["ASSET"].assetSubCategory.filter((assetSubCategory) => assetSubCategory.active).map((asset_parent_mdms) => {
+    return {
+      ...asset_parent_mdms,
+      i18nKey: `AST_PAR_${asset_parent_mdms.code}`,
+    };
+  });
+};
+const AssetTypeParent = (MdmsRes) => {
+  MdmsRes["ASSET"].assetParentCategory.filter((assetParentCategory) => assetParentCategory.active).map((asset_type_mdms) => {
+    return {
+      ...asset_type_mdms,
+      i18nKey: `ASSET_PARENT_CATEGORY_${asset_type_mdms.code}`,
+    };
+  });
+};
+const AssetSubTypeParent = (MdmsRes) => {
+  MdmsRes["ASSET"].assetCategory.filter((assetCategory) => assetCategory.active).map((asset_sub_type_mdms) => {
+    return {
+      ...asset_sub_type_mdms,
+      i18nKey: `ASSET_SUB_PARENT_CATEGORY_${asset_sub_type_mdms.code}`,
+    };
+  });
+};
+const Assetcommondetail = (MdmsRes) => {
+  MdmsRes["ASSET"].AssetCommonDetail.filter((AssetCommonDetail) => AssetCommonDetail.active).map((asset_mdms_common) => {
+    return {
+      ...asset_mdms_common,
+      i18nKey: `ASSET_SUB_PARENT_CATEGORY_${asset_mdms_common.code}`,
+    };
+  });
+};
+//adding asset here
+const getAssetClassificationList = (tenantId, moduleCode, type) => ({
+  type,
+  details: {
+    tenantId,
+    moduleDetails: [
+      {
+        moduleName: moduleCode,
+        masterDetails: [
+          {
+            name: "assetClassification",
+          },
+        ],
+      },
+    ],
+  },
+});
+const getAssetparentsubcategoryList = (tenantId, moduleCode, type) => ({
+  type,
+  details: {
+    tenantId,
+    moduleDetails: [
+      {
+        moduleName: moduleCode,
+        masterDetails: [
+          {
+            name: "assetSubCategory",
+          },
+        ],
+      },
+    ],
+  },
+});
+
+const getAssetParentList = (tenantId, moduleCode, type) => ({
+  type,
+  details: {
+    tenantId,
+    moduleDetails: [
+      {
+        moduleName: moduleCode,
+        masterDetails: [
+          {
+            name: "assetParentCategory",
+          },
+        ],
+      },
+    ],
+  },
+});
+
+const getAssetSubParentList = (tenantId, moduleCode, type) => ({
+  type,
+  details: {
+    tenantId,
+    moduleDetails: [
+      {
+        moduleName: moduleCode,
+        masterDetails: [
+          {
+            name: "assetCategory",
+          },
+        ],
+      },
+    ],
+  },
+});
+
+const getAssetcommonList = (tenantId, moduleCode, type) => ({
+  type,
+  details: {
+    tenantId,
+    moduleDetails: [
+      {
+        moduleName: moduleCode,
+        masterDetails: [
+          {
+            name: "AssetCommonDetail",
+          },
+        ],
+      },
+    ],
+  },
+});
+
+const getAssetDocumentsCategory = (tenantId, moduleCode) => ({
+  details: {
+    tenantId: tenantId,
+    moduleDetails: [
+      {
+        moduleName: moduleCode,
+        masterDetails: [
+          {
+            name: "Documents",
+          },
+        ],
+      },
+    ],
+  },
+});
+
+
 
 const GetServiceDefs = (MdmsRes, moduleCode) => MdmsRes[`RAINMAKER-${moduleCode}`].ServiceDefs.filter((def) => def.active);
 
@@ -1443,7 +1948,7 @@ const GetDocumentsTypes = (MdmsRes) => MdmsRes["BPA"].DocTypeMapping;
 
 const GetChecklist = (MdmsRes) => MdmsRes["BPA"].CheckList;
 
-const transformResponse = (type, MdmsRes, moduleCode, tenantId) => {
+const transformResponse = (type, MdmsRes, moduleCode, moduleName, tenantId, masterName, i18nKeyString) => {
   switch (type) {
     case "citymodule":
       return GetCitiesWithi18nKeys(MdmsRes, moduleCode);
@@ -1553,7 +2058,68 @@ const transformResponse = (type, MdmsRes, moduleCode, tenantId) => {
 
     case "PTRBreedType":
       return PTRBreedType(MdmsRes);
-     
+    
+    case "assetClassification":
+      return getAssetClassification(MdmsRes); 
+
+    case "assetSubCategory":
+        return getAssetparentsubcategory(MdmsRes);
+    
+    case "Asset_Classification":
+      return Asset_Classification(MdmsRes);
+    case "Asset_Classification":
+        return Asset_Classification(MdmsRes);
+    case "assetParentCategory":
+          return getAssetParent(MdmsRes);
+    
+    case "assetCategory":
+          return getAssetSubParent(MdmsRes);
+    
+    case "AssetCommonDetail":
+          return getAssetcommon(MdmsRes);
+    
+    case "AssetTypeParent":
+          return AssetTypeParent(MdmsRes);
+    
+    case "Documents":
+          return getAssetDocuments(MdmsRes);
+    case "AssetSubTypeParent":
+            return AssetSubTypeParent(MdmsRes);
+      
+    case "Assetcommondetail":
+            return Assetcommondetail(MdmsRes);
+    case "AST_PARENT":
+              return AST_PARENT(MdmsRes);
+    case "Documents":
+      return getSVDocuments(MdmsRes);
+    case "Documents":
+      return getADSDocuments(MdmsRes);
+    case "ProductName":
+      return getProductPrice(MdmsRes);
+    case "VendorName":
+      return getVendorDetails(MdmsRes);
+    case "ChbSpecialCategory":
+      return getChbSpecialCategory(MdmsRes);
+
+    case "ChbResidentType":
+      return getChbResidentType(MdmsRes);
+
+    case "ChbHallCode":
+      return getChbHallCode(MdmsRes);
+
+    case "ChbPurpose":
+      return getChbPurpose(MdmsRes);
+
+    case "ChbCommunityHalls":
+      return getChbCommunityHalls(MdmsRes);
+    
+    case "Documents":
+      return getChbDocuments(MdmsRes);
+
+    case "i18nKey":
+      return getDataWithi18nkey(MdmsRes, moduleName, masterName, i18nKeyString);
+    case "i18nkey&code":
+      return getDataWithi18nkeyandCode(MdmsRes, moduleName, masterName, i18nKeyString);
     default:
       return MdmsRes;
   }
@@ -1648,14 +2214,15 @@ export const MdmsService = {
       )
     );
   },
-  getDataByCriteria: async (tenantId, mdmsDetails, moduleCode) => {
+  getDataByCriteria: async (tenantId, mdmsDetails, moduleCode, masterName, i18nKeyString) => {
+    const moduleName = moduleCode; // moduleName is used here to pass unchanged modulecode
     const key = `MDMS.${tenantId}.${moduleCode}.${mdmsDetails.type}.${JSON.stringify(mdmsDetails.details)}`;
     const inStoreValue = PersistantStorage.get(key);
     if (inStoreValue) {
       return inStoreValue;
     }
     const { MdmsRes } = await MdmsService.call(tenantId, mdmsDetails.details);
-    const responseValue = transformResponse(mdmsDetails.type, MdmsRes, moduleCode.toUpperCase(), tenantId);
+    const responseValue = transformResponse(mdmsDetails.type, MdmsRes, moduleCode.toUpperCase(), moduleName, tenantId, masterName, i18nKeyString);
     const cacheSetting = getCacheSetting(mdmsDetails.details.moduleDetails[0].moduleName);
     PersistantStorage.set(key, responseValue, cacheSetting.cacheTimeInSecs);
     return responseValue;
@@ -1683,6 +2250,37 @@ export const MdmsService = {
   },
   getPitType: (tenantId, moduleCode) => {
     return MdmsService.getDataByCriteria(tenantId, getPitTypeCriteria(tenantId, moduleCode), moduleCode);
+  },
+  //adding asset here
+  getAssetClassification: (tenantId, moduleCode, type) => {
+    return MdmsService.getDataByCriteria(tenantId, getAssetClassificationList(tenantId, moduleCode, type), moduleCode);
+  },
+  getAssetparentsubcategory: (tenantId, moduleCode, type) => {
+    return MdmsService.getDataByCriteria(tenantId, getAssetparentsubcategoryList(tenantId, moduleCode, type), moduleCode);
+  },
+  Asset_Classification: (tenantId, moduleCode, type) => {
+    return MdmsService.getDataByCriteria(tenantId, getAssetClassificationList(tenantId, moduleCode, type), moduleCode);
+  },
+  
+  AssetSubTypeParent: (tenantId, moduleCode, type) => {
+    return MdmsService.getDataByCriteria(tenantId, getAssetSubParentList(tenantId, moduleCode, type), moduleCode);
+  },
+  AST_PARENT: (tenantId, moduleCode, type) => {
+    return MdmsService.getDataByCriteria(tenantId, getAssetparentsubcategoryList(tenantId, moduleCode, type), moduleCode);
+  },
+
+  AssetTypeParent: (tenantId, moduleCode, type) => {
+    return MdmsService.getDataByCriteria(tenantId, getAssetParentList(tenantId, moduleCode, type), moduleCode);
+  },
+  getAssetParent: (tenantId, moduleCode, type) => {
+    return MdmsService.getDataByCriteria(tenantId, getAssetParentList(tenantId, moduleCode, type), moduleCode);
+  },
+  getAssetDocuments: (tenantId, moduleCode) => {
+    return MdmsService.getDataByCriteria(tenantId, getAssetDocumentsCategory(tenantId, moduleCode), moduleCode);
+  },
+  
+  Assetcommondetail: (tenantId, moduleCode, type) => {
+    return MdmsService.getDataByCriteria(tenantId, getAssetcommonList(tenantId, moduleCode, type), moduleCode);
   },
   getVehicleType: (tenantId, moduleCode, type) => {
     return MdmsService.getDataByCriteria(tenantId, getVehicleTypeCriteria(tenantId, moduleCode, type), moduleCode);
@@ -1855,6 +2453,9 @@ export const MdmsService = {
   getTradeTypeRoleTypes: (tenantId, moduleCode, type) => {
     return MdmsService.getDataByCriteria(tenantId, getTradeTypeRoleCriteria(tenantId, moduleCode, type), moduleCode);
   },
+  getDisclaimer : (tenantId, moduleCode, type) => {
+    return MdmsService.getDataByCriteria(tenantId, getDisclaimerCriteria(tenantId, moduleCode, type), moduleCode);
+  },
 
   getFSMGenderType: (tenantId, moduleCode, type) => {
     return MdmsService.getDataByCriteria(tenantId, getGenderTypeList(tenantId, moduleCode, type), moduleCode);
@@ -1904,5 +2505,56 @@ export const MdmsService = {
   },
   getStaticDataJSON: (tenantId) => {
     return MdmsService.call(tenantId, getStaticData());
-  }
+  },
+  getSVDocuments: (tenantId, moduleCode) => {
+    return MdmsService.getDataByCriteria(tenantId, getSVDocumentsCategory(tenantId, moduleCode), moduleCode);
+  },
+  getADSDocuments: (tenantId, moduleCode) => {
+    return MdmsService.getDataByCriteria(tenantId, getADSDocumentsCategory(tenantId, moduleCode), moduleCode);
+  },
+  EWProductPrice: (tenantId, moduleCode, type) => {
+    return MdmsService.getDataByCriteria(tenantId, getProductPriceList(tenantId, moduleCode, type), moduleCode);
+  },
+  EWVendor: (tenantId, moduleCode, type) => {
+    return MdmsService.getDataByCriteria(tenantId, getVendorDetailsList(tenantId, moduleCode, type), moduleCode);
+  },
+  getChbSpecialCategory: (tenantId, moduleCode, type) => {
+    return MdmsService.getDataByCriteria(tenantId, getChbSpecialCategoryList(tenantId, moduleCode, type), moduleCode);
+  },
+  getChbCommunityHalls: (tenantId, moduleCode, type) => {
+    return MdmsService.getDataByCriteria(tenantId, getChbCommunityHallsList(tenantId, moduleCode, type), moduleCode);
+  },
+  getChbResidentType: (tenantId, moduleCode, type) => {
+    return MdmsService.getDataByCriteria(tenantId, getChbResidentTypeList(tenantId, moduleCode, type), moduleCode);
+  },
+  getChbHallCode: (tenantId, moduleCode, type) => {
+    return MdmsService.getDataByCriteria(tenantId, getChbHallCodeList(tenantId, moduleCode, type), moduleCode);
+  },
+
+  getChbPurpose: (tenantId, moduleCode, type) => {
+    return MdmsService.getDataByCriteria(tenantId, getChbPurposeList(tenantId, moduleCode, type), moduleCode);
+  },
+
+  getChbDocuments: (tenantId, moduleCode) => {
+    return MdmsService.getDataByCriteria(tenantId, getChbDocumentsCategory(tenantId, moduleCode), moduleCode);
+  },
+
+
+
+  /**
+   * getMasterData - Fetches master data based on the provided criteria.
+   * 
+   * @param {string} tenantId - The ID of the tenant for which the data is being fetched.
+   * @param {string} moduleCode - The module code associated with the master data.
+   * @param {string} masterName - The name of the master data to be fetched.
+   * @param {string} type - The type to be passed in switch case for fetching filtered data.
+   * 
+   * @description
+   * This function retrieves master data by calling the `MdmsServiceV2.getDataByCriteria` method.
+   * It constructs the criteria for fetching the data using the `getMasterDataCategory` function,
+   * which is passed the tenantId, moduleCode, masterName, and type as parameters.
+   */
+  getMasterData: (tenantId, moduleCode, masterName, i18nKeyString = "", type) => {
+    return MdmsService.getDataByCriteria(tenantId, getMasterDataCategory(tenantId, moduleCode, masterName, type), moduleCode, masterName, i18nKeyString);
+  },
 };

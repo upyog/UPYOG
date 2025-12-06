@@ -43,7 +43,7 @@ public class UserSearchResponseContent {
     private String correspondencePinCode;
     private String alternatemobilenumber;
 
-    @JsonIgnore
+//    @JsonIgnore // This is removed to include address details in user search response V2
     private Set<Address> addresses;
 
     private Boolean active;
@@ -220,11 +220,16 @@ public class UserSearchResponseContent {
                     })
                     .collect(Collectors.toSet());
             user.setRoles(roleEntities);
+<<<<<<< HEAD
         } else {
             // CRITICAL FIX: Ensure roles is never null, always initialize to empty set
             user.setRoles(new HashSet<>());
         }
 
+=======
+        }
+ 
+>>>>>>> master-LTS
         return user;
     }
 }

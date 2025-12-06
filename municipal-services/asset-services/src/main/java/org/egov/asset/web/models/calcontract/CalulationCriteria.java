@@ -3,8 +3,13 @@ package org.egov.asset.web.models.calcontract;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
+<<<<<<< HEAD
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+=======
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+>>>>>>> master-LTS
 
 @Getter
 @Setter
