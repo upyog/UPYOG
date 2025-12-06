@@ -61,9 +61,15 @@ const Electricity = ({ t, config, onSelect, value, userType, formData, setError:
       label: "PT_ELECTRICITY_LABEL",
       type: "text",
       name: "electricity",
+<<<<<<< HEAD
+      isMandatory : "true",
+      validation: {
+        required: true,
+=======
       isMandatory : "",
       validation: {
 
+>>>>>>> master-LTS
         minLength: 10,
         maxLength: 10
       }
@@ -94,13 +100,21 @@ const Electricity = ({ t, config, onSelect, value, userType, formData, setError:
       return (
         <React.Fragment>
           <LabelFieldPair key={index}>
+<<<<<<< HEAD
+            <CardLabel className="card-label-smaller">{t(input.label) + " *"}</CardLabel>
+=======
             <CardLabel className="card-label-smaller">{t(input.label)}<span className="check-page-link-button"> *</span></CardLabel>
+>>>>>>> master-LTS
             <div className="field">
 
               <TextInput
                 key={input.name}
                 id={input.name}
+<<<<<<< HEAD
+                //isMandatory={config.isMandatory}
+=======
                 //isMandatory={true}
+>>>>>>> master-LTS
                 value={electricity}
                 onChange={handleElectricityChange}
                 //onChange={setElectricityNo}
@@ -136,11 +150,19 @@ const Electricity = ({ t, config, onSelect, value, userType, formData, setError:
         isDisabled={electricity.length===10 ? false: true}
         showErrorBelowChildren={true}
       >
+<<<<<<< HEAD
+        <CardLabel>{`${t("PT_ELECTRICITY")}`}</CardLabel>
+        <TextInput
+          t={t}
+          type={"number"}
+          isMandatory={false}
+=======
         <CardLabel>{`${t("PT_ELECTRICITY")}`}<span className="check-page-link-button"> *</span></CardLabel>
         <TextInput
           t={t}
           type={"number"}
           //isMandatory="true"
+>>>>>>> master-LTS
           optionKey="i18nKey"
           name="electricity"
           value={electricity}

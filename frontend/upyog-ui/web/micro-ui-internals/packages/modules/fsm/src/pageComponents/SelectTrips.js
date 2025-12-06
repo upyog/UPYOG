@@ -86,6 +86,9 @@ const SelectTrips = ({ t, config, onSelect, formData = {}, userType, styles, FSM
   }
   //console.log(formdata)
   function setValue(value, input) {
+<<<<<<< HEAD
+    value && input && onSelect(config.key, { ...formData[config.key], [input]: value });
+=======
     if (input === 'noOfTrips' || input === 'distancefromroad' || input === 'roadWidth') {
       value = value === '' ? '' : value;
     }
@@ -103,6 +106,7 @@ const SelectTrips = ({ t, config, onSelect, formData = {}, userType, styles, FSM
     }else {
       value && input && onSelect(config.key, { ...formData[config.key], [input]: value });
     }
+>>>>>>> master-LTS
   }
 
   useEffect(() => {
@@ -188,7 +192,11 @@ const SelectTrips = ({ t, config, onSelect, formData = {}, userType, styles, FSM
               style={{ ...styles, ...FSMTextFieldStyle }}
               onChange={(e) => setValue(e.target.value, input.name)}
               key={input.name}
+<<<<<<< HEAD
+              value={formData && formData[config.key] ? formData[config.key][input.name] : null}
+=======
               value={input.name === "noOfTrips" ? noOfTrips : input.name ==="distancefromroad" ? distancefromroad : input.name === "roadWidth" ? roadWidth : formData[config.key]?.[input.name] || ''}
+>>>>>>> master-LTS
               {...input.validation}
               disable={input.disable}
             />

@@ -2,8 +2,13 @@ package org.egov.asset.calculator.web.controllers;
 
 import java.util.List;
 
+<<<<<<< HEAD
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
+=======
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+>>>>>>> master-LTS
 
 import org.egov.asset.calculator.services.CalculationService;
 import org.egov.asset.calculator.services.ProcessDepreciation;
@@ -18,10 +23,19 @@ import org.springframework.web.bind.annotation.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.extern.slf4j.Slf4j;
+<<<<<<< HEAD
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+=======
+>>>>>>> master-LTS
 
 @RestController
 @RequestMapping("/v1")
 @Slf4j
+<<<<<<< HEAD
+@Tag(name = "Asset Calculator", description = "APIs for Asset Calculator operations")
+=======
+>>>>>>> master-LTS
 public class CalculatorController {
 
 	private final ProcessDepreciation depreciationService;
@@ -44,6 +58,10 @@ public class CalculatorController {
 	 * @return CalculationRes with calculated results.
 	 */
 	@PostMapping("/depreciation/_calculate")
+<<<<<<< HEAD
+	@Operation(summary = "Asset Depriciation Calculate", description = "Calculated the depreciation for the given asset")
+=======
+>>>>>>> master-LTS
 	public ResponseEntity<CalculationRes> calculate(@Valid @RequestBody CalculationReq calculationReq) {
 		CalculationRes calculationRes = calculationService.calculate(calculationReq);
 		log.info("Depreciation calculation response: {}", calculationRes.getMessage());
@@ -63,6 +81,10 @@ public class CalculatorController {
 	 * @return List of depreciation details for the provided assetId.
 	 */
 	@GetMapping("/depreciation/{assetId}/details")
+<<<<<<< HEAD
+	@Operation(summary = "Asset Depriciation Calculate", description = "Calculated the depreciation for the given assetid")
+=======
+>>>>>>> master-LTS
 	public ResponseEntity<DepreciationRes> getDepreciationDetails(@PathVariable String assetId) {
 		List<DepreciationDetail> depreciationDetails = depreciationService.getDepreciationDetails(assetId);
 		// Build the response object

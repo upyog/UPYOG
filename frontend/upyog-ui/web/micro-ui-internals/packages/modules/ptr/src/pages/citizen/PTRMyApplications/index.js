@@ -1,3 +1,5 @@
+<<<<<<< HEAD
+=======
 /**
  * This component, `PTRMyApplications`, displays a list of pet registration applications 
  * for a citizen. It provides functionalities such as:
@@ -17,6 +19,7 @@
  */
 
 
+>>>>>>> master-LTS
 import { Header, Loader } from "@upyog/digit-ui-react-components";
 import React from "react";
 import { Link } from "react-router-dom";

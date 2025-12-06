@@ -232,7 +232,10 @@ export const SuccessfulPayment = (props) => {
           const paymentData=payments.Payments[0];
           let bpaResponse = await Digit.OBPSService.BPASearch( payments.Payments[0].tenantId, queryObj);
           const formattedStakeholderType=bpaResponse?.BPA[0]?.additionalDetails?.typeOfArchitect
+<<<<<<< HEAD
+=======
           const stakeholderType=formattedStakeholderType.charAt(0).toUpperCase()+formattedStakeholderType.slice(1).toLowerCase()
+>>>>>>> master-LTS
           const updatedpayments={
             ...paymentData,
            
@@ -242,10 +245,14 @@ export const SuccessfulPayment = (props) => {
                     additionalDetails:{
                       ...paymentData.paymentDetails[0].additionalDetails,
                       "propertyID":bpaResponse?.BPA[0]?.additionalDetails?.propertyID,
+<<<<<<< HEAD
+                      "stakeholderType":formattedStakeholderType.charAt(0).toUpperCase()+formattedStakeholderType.slice(1).toLowerCase()
+=======
                       "stakeholderType":formattedStakeholderType.charAt(0).toUpperCase()+formattedStakeholderType.slice(1).toLowerCase(),
                       "contact":bpaResponse?.BPA[0]?.businessService==="BPA-PAP"? t("APPLICANT_CONTACT") : `${stakeholderType} Contact`,
                         "idType":bpaResponse?.BPA[0]?.businessService==="BPA-PAP" ? t("APPLICATION_NUMBER"):`${stakeholderType} ID`,
                         "name":bpaResponse?.BPA[0]?.businessService==="BPA-PAP" ? t("APPLICANT_NAME"):`${stakeholderType} Name`,
+>>>>>>> master-LTS
                     },
                   },
                 ],  
@@ -254,7 +261,11 @@ export const SuccessfulPayment = (props) => {
           response = await Digit.PaymentService.generatePdf(state, { Payments: [{...updatedpayments}] }, generatePdfKey);
         }
         else {
+<<<<<<< HEAD
+          console.log("0987", payments.Payments)
+=======
           
+>>>>>>> master-LTS
           response = await Digit.PaymentService.generatePdf(state, { Payments: payments.Payments }, generatePdfKey);
         }
       
@@ -269,7 +280,11 @@ export const SuccessfulPayment = (props) => {
     await Digit.Utils.downloadReceipt(consumercode, businessService, "consolidatedreceipt", tenantid);
   }
   const printRecieptNew = async (payment) => {
+<<<<<<< HEAD
+    console.log("paymentpayment",payment,payment.Payments[0].paymentDetails[0].receiptNumber,payment.Payments[0])
+=======
    
+>>>>>>> master-LTS
     const tenantId = Digit.ULBService.getCurrentTenantId();
     const state = Digit.ULBService.getStateId();
     let paymentArray=[];
@@ -474,7 +489,11 @@ export const SuccessfulPayment = (props) => {
         }
     
          paymentArray[0]=payments.Payments[0]
+<<<<<<< HEAD
+        console.log("payments",payments)
+=======
        
+>>>>>>> master-LTS
         if(payment.Payments[0].paymentDetails[0].businessService == "PT.MUTATION")
         {
           response = await Digit.PaymentService.generatePdf(state, { Payments: paymentArray }, "pt-receipt");

@@ -3,12 +3,14 @@ package org.egov.swagger.model;
 import java.util.Objects;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+
+import jakarta.validation.constraints.NotNull;
+
 import com.fasterxml.jackson.annotation.JsonCreator;
 
 
 import java.util.ArrayList;
 import java.util.List;
-import javax.validation.constraints.*;
 
 /**
  * User role carries the tenant related role information for the user. A user can have multiple roles per tenant based on the need of the tenant. A user may also have multiple roles for multiple tenants.

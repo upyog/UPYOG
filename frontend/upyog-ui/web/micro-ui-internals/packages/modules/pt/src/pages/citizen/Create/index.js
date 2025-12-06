@@ -822,7 +822,11 @@ config.indexRoute = "info";
       <div>
     <Switch>
       {config.map((routeObj, index) => {
+<<<<<<< HEAD
+        const { component, texts, inputs, key } = routeObj;
+=======
         const { component, texts, inputs, key, isMandatory } = routeObj;
+>>>>>>> master-LTS
         
         const Component = typeof component === "string" ? Digit.ComponentRegistryService.getComponent(component) : component;
         return (

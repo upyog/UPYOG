@@ -2,6 +2,7 @@ package org.egov.fsm.service;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedHashMap;
@@ -212,7 +213,7 @@ public class UserService {
 
 	/**
 	 * Returns UserDetailResponse by calling user service with given uri and object
-	 * 
+	 *
 	 * @param userRequest Request object for user service
 	 * @param uri         The address of the end point
 	 * @return Response from user service as parsed as userDetailResponse
@@ -227,10 +228,52 @@ public class UserService {
 			dobFormat = "dd/MM/yyyy";
 		try {
 			LinkedHashMap responseMap = (LinkedHashMap) serviceRequestRepository.fetchResult(uri, userRequest);
-			parseResponse(responseMap, dobFormat);
-			return mapper.convertValue(responseMap, UserDetailResponse.class);
+
+			// Handle update endpoint response differently
+			if (uri.toString().contains(config.getUserUpdateEndpoint())) {
+				return handleUpdateResponse(responseMap, dobFormat);
+			} else {
+				parseResponse(responseMap, dobFormat);
+				return mapper.convertValue(responseMap, UserDetailResponse.class);
+			}
 		} catch (IllegalArgumentException e) {
 			throw new CustomException("IllegalArgumentException", "ObjectMapper not able to convertValue in userCall");
+		}
+	}
+
+	/**
+	 * Handles the response from user update endpoint which returns UpdateResponse
+	 * instead of UserDetailResponse
+	 *
+	 * @param responseMap Response map from update endpoint
+	 * @param dobFormat Date format for parsing
+	 * @return UserDetailResponse converted from UpdateResponse
+	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	private UserDetailResponse handleUpdateResponse(LinkedHashMap responseMap, String dobFormat) {
+		try {
+			// Parse date strings to Long before deserialization
+			parseResponse(responseMap, dobFormat);
+
+			// Parse the response as UpdateResponse
+			org.egov.fsm.web.model.user.UpdateResponse updateResponse =
+					mapper.convertValue(responseMap, org.egov.fsm.web.model.user.UpdateResponse.class);
+
+			// Convert UpdateRequest list to User list
+			List<User> users = new ArrayList<>();
+			if (updateResponse.getUser() != null) {
+				for (org.egov.fsm.web.model.user.UpdateRequest updateRequest : updateResponse.getUser()) {
+					users.add(updateRequest.toUser());
+				}
+			}
+
+			// Create and return UserDetailResponse
+			return new UserDetailResponse(updateResponse.getResponseInfo(), users);
+
+		} catch (IllegalArgumentException e) {
+			log.error("Error converting UpdateResponse to UserDetailResponse", e);
+			throw new CustomException("IllegalArgumentException",
+					"ObjectMapper not able to convertValue in handleUpdateResponse: " + e.getMessage());
 		}
 	}
 

@@ -8,8 +8,13 @@ import java.util.List;
 
 import org.egov.common.contract.request.RequestInfo;
 import org.springframework.validation.annotation.Validated;
+<<<<<<< HEAD
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.*;
+=======
 import javax.validation.Valid;
 import javax.validation.constraints.*;
+>>>>>>> master-LTS
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,7 +27,11 @@ import lombok.Builder;
  */
 @ApiModel(description = "Contract class to process instance receive request. Array of Ewaste items are used in case of create, whereas single Ewaste item is used for update")
 @Validated
+<<<<<<< HEAD
+@jakarta.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2018-12-04T11:26:25.532+05:30")
+=======
 @javax.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2018-12-04T11:26:25.532+05:30")
+>>>>>>> master-LTS
 
 @Getter
 @Setter

@@ -1,5 +1,28 @@
 package org.upyog.rs.config;
 
+<<<<<<< HEAD
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.servers.Server;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+import java.util.List;
+
+@Configuration
+public class SwaggerConfiguration {
+
+	@Bean
+	public OpenAPI customOpenAPI() {
+		return new OpenAPI()
+				.servers(List.of(new Server().url("/request-service")))
+				.info(new Info()
+						.title("Request Service API")
+						.description("API details of  Request Service API")
+						.version("2.0"));
+	}
+}
+=======
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -28,3 +51,4 @@ public class SwaggerConfiguration {
                 .description("API details of the Request service").version("1.0").build();
     }
 }
+>>>>>>> master-LTS

@@ -1,3 +1,5 @@
+<<<<<<< HEAD
+=======
 /**
  * @description 
  * This component renders a **timeline** with multiple steps, indicating the progress of an application flow.
@@ -17,6 +19,7 @@
  * - **Localization:** Uses translation keys to display step labels in the appropriate language.
  */
 
+>>>>>>> master-LTS
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { TickMark } from "@upyog/digit-ui-react-components";

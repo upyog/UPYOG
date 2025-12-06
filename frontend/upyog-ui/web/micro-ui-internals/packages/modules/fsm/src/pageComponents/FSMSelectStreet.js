@@ -28,8 +28,13 @@ if (property !== "undefined")
   const { errors } = localFormState;
   const checkLocation = window.location.href.includes("tl/new-application") || window.location.href.includes("tl/renew-application-details") || window.location.href.includes("tl/edit-application-details/") || window.location.href.includes("/tl/tradelicence/new-application/street") || window.location.href.includes("/tl/tradelicence/renew-trade") || window.location.href.includes("/tl/tradelicence/edit-application") ;
   const isRenewal = window.location.href.includes("edit-application") || window.location.href.includes("tl/renew-application-details");
+<<<<<<< HEAD
+  const [street, setStreet] = useState(property?.propertyDetails?.address?.street);
+  const [doorNo, setDoorNo] = useState(property?.propertyDetails?.address?.doorNo);
+=======
   const [street, setStreet] = useState(property?.propertyDetails?.address?.street ||property?.address?.street );
   const [doorNo, setDoorNo] = useState(property?.propertyDetails?.address?.doorNo ||property?.address?.doorNo);
+>>>>>>> master-LTS
   let inputs;
   if (window.location.href.includes("tl")) {
     inputs = config.inputs;
@@ -43,7 +48,11 @@ if (property !== "undefined")
         label: "PT_PROPERTY_ADDRESS_STREET_NAME",
         type: "text",
         name: "street",
+<<<<<<< HEAD
+        isMandatory: true,
+=======
         // isMandatory: true,
+>>>>>>> master-LTS
         validation: {
           pattern: "[a-zA-Z0-9 ]{1,255}",
           // maxlength: 256,
@@ -54,7 +63,11 @@ if (property !== "undefined")
         label: "PT_PROPERTY_ADDRESS_HOUSE_NO",
         type: "text",
         name: "doorNo",
+<<<<<<< HEAD
+        isMandatory: true,
+=======
         // isMandatory: true,
+>>>>>>> master-LTS
         validation: {
           pattern: "[A-Za-z0-9#,/ -]{1,63}",
           // maxlength: 256,
@@ -209,11 +222,19 @@ if (property !== "undefined")
   }
   return (
     <React.Fragment>
+<<<<<<< HEAD
+      {window.location.href.includes("/fsm") ? <Timeline currentStep={2} /> : <Timeline currentStep={1} flow="APPLY" />}
+      <FormStep
+        config={{ ...config, inputs }}
+        isMandatory={true}
+        _defaultValues={{ street: property.propertyDetails.address.street, doorNo: property.propertyDetails.address.doorNo }}
+=======
       {window.location.href.includes("/fsm") ? <Timeline currentStep={1}  flow="APPLY"/> : <Timeline currentStep={1} flow="APPLY" />}
       <FormStep
         config={{ ...config, inputs }}
         isMandatory={true}
         _defaultValues={{ street: property && property?.propertyDetails && property?.propertyDetails?.address?.street || property?.address?.street, doorNo: property && property?.propertyDetails && property?.propertyDetails?.address?.doorNo || property?.address?.doorNo}}
+>>>>>>> master-LTS
         onChange={handleSkip}
         onSelect={(data) => onSelect(config.key, data)}
         onSkip={onSkip}

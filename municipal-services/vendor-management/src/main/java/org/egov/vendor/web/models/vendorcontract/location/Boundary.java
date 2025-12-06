@@ -2,11 +2,18 @@ package org.egov.vendor.web.models.vendorcontract.location;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
+<<<<<<< HEAD
+import org.springframework.validation.annotation.Validated;
+
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+=======
 import org.hibernate.validator.constraints.SafeHtml;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+>>>>>>> master-LTS
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -15,7 +22,11 @@ import java.util.Objects;
  * Boundary
  */
 @Validated
+<<<<<<< HEAD
+@jakarta.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-01-06T05:34:12.238Z[GMT]")
+=======
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-01-06T05:34:12.238Z[GMT]")
+>>>>>>> master-LTS
 @AllArgsConstructor
 @EqualsAndHashCode
 @NoArgsConstructor
@@ -23,6 +34,20 @@ import java.util.Objects;
 @Builder
 public class Boundary {
 
+<<<<<<< HEAD
+	@JsonProperty("code")
+	private String code = null;
+
+	@JsonProperty("name")
+	private String name = null;
+
+	@JsonProperty("label")
+	private String label = null;
+
+	@JsonProperty("latitude")
+	private String latitude = null;
+
+=======
 	@SafeHtml
 	@JsonProperty("code")
 	private String code = null;
@@ -40,6 +65,7 @@ public class Boundary {
 	private String latitude = null;
 
 	@SafeHtml
+>>>>>>> master-LTS
 	@JsonProperty("longitude")
 	private String longitude = null;
 
@@ -47,7 +73,10 @@ public class Boundary {
 	@Valid
 	private List<Boundary> children = null;
 
+<<<<<<< HEAD
+=======
 	@SafeHtml
+>>>>>>> master-LTS
 	@JsonProperty("materializedPath")
 	private String materializedPath = null;
 

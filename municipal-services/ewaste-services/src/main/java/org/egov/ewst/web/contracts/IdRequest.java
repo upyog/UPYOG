@@ -1,6 +1,10 @@
 package org.egov.ewst.web.contracts;
 
+<<<<<<< HEAD
+import jakarta.validation.constraints.NotNull;
+=======
 import javax.validation.constraints.NotNull;
+>>>>>>> master-LTS
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

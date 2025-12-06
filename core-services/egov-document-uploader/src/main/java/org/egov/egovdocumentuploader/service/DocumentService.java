@@ -12,6 +12,7 @@ import org.egov.egovdocumentuploader.web.models.DocumentRequest;
 import org.egov.egovdocumentuploader.web.models.DocumentSearchCriteria;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -24,6 +25,7 @@ import java.util.UUID;
 public class DocumentService {
 
     @Autowired
+    @Lazy
     private DocumentValidator documentValidator;
 
     @Autowired

@@ -505,7 +505,11 @@ const SelectPTUnits = React.memo(({ t, config, onSelect, userType, formData }) =
                     }}
                   />
                 
+<<<<<<< HEAD
+              <CardLabel>{`${t("PT_FORM2_RENTED_MONTHS")}*`}</CardLabel>
+=======
               <CardLabel>{`${t("PT_FORM2_RENTED_MONTHS")}`}<span className="check-page-link-button"> *</span></CardLabel>
+>>>>>>> master-LTS
               <div className={"form-pt-dropdown-only"}>
                 <Dropdown
                   t={t}
@@ -518,7 +522,11 @@ const SelectPTUnits = React.memo(({ t, config, onSelect, userType, formData }) =
               </div>
               { rentedMonthsCodes.includes(field?.rentedMonths?.code) && (
               <>
+<<<<<<< HEAD
+              <CardLabel>{`${t("PT_FORM2_NONRENTED_MONTHS_USAGE")}*`}</CardLabel>
+=======
               <CardLabel>{`${t("PT_FORM2_NONRENTED_MONTHS_USAGE")}`}<span className="check-page-link-button"> *</span></CardLabel>
+>>>>>>> master-LTS
               <div className={"form-pt-dropdown-only"}>
                 <Dropdown
                   t={t}

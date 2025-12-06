@@ -2,7 +2,11 @@ package org.upyog.adv.service;
 
 import java.util.List;
 
+<<<<<<< HEAD
+import jakarta.validation.Valid;
+=======
 import javax.validation.Valid;
+>>>>>>> master-LTS
 
 import org.egov.common.contract.request.RequestInfo;
 import org.upyog.adv.enums.BookingStatusEnum;

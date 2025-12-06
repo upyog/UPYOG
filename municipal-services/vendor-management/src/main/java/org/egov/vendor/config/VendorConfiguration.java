@@ -1,6 +1,10 @@
 package org.egov.vendor.config;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
+<<<<<<< HEAD
+
+=======
+>>>>>>> master-LTS
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.egov.tracer.config.TracerConfiguration;
 import org.modelmapper.ModelMapper;
@@ -16,7 +20,11 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+<<<<<<< HEAD
+import jakarta.annotation.PostConstruct;
+=======
 import javax.annotation.PostConstruct;
+>>>>>>> master-LTS
 import java.util.TimeZone;
 
 import org.apache.kafka.clients.consumer.ConsumerConfig;

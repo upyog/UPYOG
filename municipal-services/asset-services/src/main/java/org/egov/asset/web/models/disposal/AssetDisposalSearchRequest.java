@@ -7,7 +7,11 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+<<<<<<< HEAD
+import jakarta.validation.Valid;
+=======
 import javax.validation.Valid;
+>>>>>>> master-LTS
 
 @Builder
 @Data

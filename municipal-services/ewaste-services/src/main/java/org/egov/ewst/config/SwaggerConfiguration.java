@@ -1,4 +1,26 @@
 package org.egov.ewst.config;
+<<<<<<< HEAD
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.servers.Server;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+import java.util.List;
+
+@Configuration
+public class SwaggerConfiguration {
+
+    @Bean
+    public OpenAPI customOpenAPI() {
+        return new OpenAPI()
+                .servers(List.of(new Server().url("/ewaste-service")))
+                .info(new Info()
+                        .title("Ewaste Service API")
+                        .description("API details of the Ewaste Service module")
+                        .version("2.0.0"));
+    }
+=======
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -26,4 +48,5 @@ public class SwaggerConfiguration {
 		return new ApiInfoBuilder().title("E-waste API")
 				.description("API details of e-waste service").version("1.0").build();
 	}
+>>>>>>> master-LTS
 }

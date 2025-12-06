@@ -1,4 +1,8 @@
+<<<<<<< HEAD
+import { CardLabel, CardLabelDesc, FormStep, UploadFile } from "@upyog/digit-ui-react-components";
+=======
 import { CardLabel, CardLabelDesc,  UploadFile, FormStep } from "@upyog/digit-ui-react-components";
+>>>>>>> master-LTS
 import React, { useEffect, useState } from "react";
 import Timeline from "../components/TLTimeline";
 

@@ -1,3 +1,14 @@
+<<<<<<< HEAD
+import { Card, KeyNote, SubmitBar } from "@upyog/digit-ui-react-components";
+import React from "react";
+import { useTranslation } from "react-i18next";
+import { Link } from "react-router-dom";
+
+const PetApplication = ({ application, tenantId, buttonLabel }) => {
+  
+  
+  const { t } = useTranslation();
+=======
 /**
  * This component, `PetApplication`, displays the details of a single pet registration application.
  * It uses `Card` and `KeyNote` components from `@upyog/digit-ui-react-components` 
@@ -33,10 +44,16 @@ const PetApplication = ({ application, tenantId, buttonLabel }) => {
     history.push(`/upyog-ui/citizen/ptr/petservice/revised-application`);
   };
 
+>>>>>>> master-LTS
   return (
     <Card>
       <KeyNote keyValue={t("PTR_APPLICATION_NO_LABEL")} note={application?.applicationNumber} />
       <KeyNote keyValue={t("PTR_APPLICANT_NAME")} note={application?.applicantName} />
+<<<<<<< HEAD
+      <KeyNote keyValue={t("PTR_APPLICATION_CATEGORY")} note={t("PTR_APPLICATION")} />
+      <KeyNote keyValue={t("PTR_SEARCH_PET_TYPE")} note={application?.petDetails?.petType} />
+      {/* <KeyNote keyValue={t("PT_COMMON_TABLE_COL_STATUS_LABEL")} note={t(`PTR_COMMON_${application?.status}`)} /> */}
+=======
       <KeyNote keyValue={t("PTR_APPLICATION_TYPE")} note={application?.applicationType} />
       <KeyNote keyValue={t("PTR_APPLICATION_STATUS")} note={application?.status} />
       <KeyNote keyValue={t("PTR_SEARCH_PET_TYPE")} note={application?.petDetails?.petType} />
@@ -44,6 +61,7 @@ const PetApplication = ({ application, tenantId, buttonLabel }) => {
       {(application?.status == "Expired") && 
       <SubmitBar style={{ marginBottom: "5px" }} label={"Renewal"} onSubmit={handleRenewalClick} />
 }
+>>>>>>> master-LTS
       <Link to={`/upyog-ui/citizen/ptr/petservice/application/${application?.applicationNumber}/${application?.tenantId}`}>
         <SubmitBar label={buttonLabel} />
       </Link>

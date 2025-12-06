@@ -20,9 +20,9 @@ import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
 import java.util.*;
 
-import javax.validation.constraints.*;
+import jakarta.validation.constraints.*;
 import javax.validation.Valid;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import static org.egov.tl.util.TLConstants.businessService_TL;
 

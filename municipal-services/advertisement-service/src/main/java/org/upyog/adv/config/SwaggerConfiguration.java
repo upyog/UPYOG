@@ -1,5 +1,16 @@
 package org.upyog.adv.config;
 
+<<<<<<< HEAD
+
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.servers.Server;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+import java.util.List;
+
+=======
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -24,10 +35,20 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
  * - API information such as title, description, and version
  */
 @EnableSwagger2
+>>>>>>> master-LTS
 @Configuration
 public class SwaggerConfiguration {
 
     @Bean
+<<<<<<< HEAD
+    public OpenAPI customOpenAPI() {
+        return new OpenAPI()
+                .servers(List.of(new Server().url("/adv-services")))
+                .info(new Info()
+                        .title("Advertisement Service API")
+                        .description("API details of the Advertisement service")
+                        .version("2.0"));
+=======
     public Docket api() {
         return new Docket(DocumentationType.SWAGGER_2).select()
                 .apis(RequestHandlerSelectors.basePackage("org.upyog.adv.web.controllers")) 
@@ -38,5 +59,6 @@ public class SwaggerConfiguration {
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder().title("Advertisement Booking API") 
                 .description("API details of the Advertisement service").version("1.0").build();
+>>>>>>> master-LTS
     }
 }

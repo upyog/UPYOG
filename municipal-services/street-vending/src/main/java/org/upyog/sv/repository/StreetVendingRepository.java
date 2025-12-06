@@ -3,7 +3,11 @@ package org.upyog.sv.repository;
 import java.time.LocalDate;
 import java.util.List;
 
+<<<<<<< HEAD
+import jakarta.validation.Valid;
+=======
 import javax.validation.Valid;
+>>>>>>> master-LTS
 
 import org.egov.common.contract.request.RequestInfo;
 import org.upyog.sv.web.models.PaymentScheduleStatus;

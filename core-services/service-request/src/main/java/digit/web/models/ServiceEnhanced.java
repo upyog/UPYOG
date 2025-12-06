@@ -1,7 +1,8 @@
 package digit.web.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import digit.models.coremodels.AuditDetails;
+//import digit.models.coremodels.AuditDetails;
+import org.egov.common.contract.models.AuditDetails;
 import io.swagger.models.auth.In;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;

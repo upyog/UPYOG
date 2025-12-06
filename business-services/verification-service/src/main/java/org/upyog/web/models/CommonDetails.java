@@ -1,19 +1,32 @@
 package org.upyog.web.models;
 
+<<<<<<< HEAD
+import io.swagger.v3.oas.annotations.media.Schema;
+=======
+>>>>>>> master-LTS
 import org.springframework.validation.annotation.Validated;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+<<<<<<< HEAD
+=======
 import io.swagger.annotations.ApiModel;
+>>>>>>> master-LTS
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+<<<<<<< HEAD
+@Schema(description = "A Object holds the basic data for any Module")
+@Validated
+@jakarta.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2024-12-07T15:40:06.365+05:30")
+=======
 @ApiModel(description = "A Object holds the basic data for any Module")
 @Validated
 @javax.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2024-12-07T15:40:06.365+05:30")
+>>>>>>> master-LTS
 
 @Getter
 @Setter

@@ -2,22 +2,37 @@ package org.egov.asset.web.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+<<<<<<< HEAD
+import io.swagger.v3.oas.annotations.media.Schema;
+=======
 import io.swagger.annotations.ApiModel;
+>>>>>>> master-LTS
 import lombok.*;
 import org.egov.asset.dto.AssetDTO;
 import org.egov.asset.web.models.workflow.ProcessInstance;
 import org.springframework.validation.annotation.Validated;
 
+<<<<<<< HEAD
+import jakarta.persistence.Transient;
+import jakarta.validation.Valid;
+=======
 import javax.persistence.Transient;
 import javax.validation.Valid;
+>>>>>>> master-LTS
 import java.util.List;
 
 /**
  * An object representing an asset
  */
+<<<<<<< HEAD
+@Schema(description = "Object representing an asset")
+@Validated
+@jakarta.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2024-04-12T12:56:34.514+05:30")
+=======
 @ApiModel(description = "Object representing an asset")
 @Validated
 @javax.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2024-04-12T12:56:34.514+05:30")
+>>>>>>> master-LTS
 
 
 @Getter
@@ -79,7 +94,10 @@ public class Asset implements AssetDTO {
     @Valid
     private List<Document> documents;
 
+<<<<<<< HEAD
+=======
     @JsonIgnore
+>>>>>>> master-LTS
     @JsonProperty("auditDetails")
     private AuditDetails auditDetails;
 

@@ -21,8 +21,14 @@ import lombok.ToString;
 @AllArgsConstructor
 @ToString
 public class Error {
-	@JsonProperty("code")
-	private String code = null;
+    @JsonProperty("id")
+    private String id = null;
+
+    @JsonProperty("parentId")
+    private String parentId = null;
+
+    @JsonProperty("code")
+    private String code = null;
 
 	@JsonProperty("message")
 	private String message = null;
@@ -32,5 +38,12 @@ public class Error {
 
 	@JsonProperty("params")
 	private List<String> params = null;
+
+    public Error(String id, String code, String message, String description){
+        this.id = id;
+        this.code = code;
+        this.message = message;
+        this.description = description;
+    }
 
 }

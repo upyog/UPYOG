@@ -3,9 +3,15 @@ package org.upyog.tp.web.models.workflow;
 import java.util.ArrayList;
 import java.util.List;
 
+<<<<<<< HEAD
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+=======
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+>>>>>>> master-LTS
 
 import org.egov.common.contract.request.User;
 
@@ -102,7 +108,11 @@ public class ProcessInstance {
 	 * public ProcessInstance addDocumentsItem(DocumentDetail documentsItem) { if
 	 * (this.documents == null) { this.documents = new ArrayList<>(); } if
 	 * (!this.documents.contains(documentsItem)) this.documents.add(documentsItem);
+<<<<<<< HEAD
+	 *
+=======
 	 * 
+>>>>>>> master-LTS
 	 * return this; }
 	 */
 

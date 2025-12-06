@@ -1,6 +1,10 @@
 package org.upyog.sv.config;
 
+<<<<<<< HEAD
+import jakarta.annotation.PostConstruct;
+=======
 import javax.annotation.PostConstruct;
+>>>>>>> master-LTS
 
 import org.egov.tracer.config.TracerConfiguration;
 import org.springframework.beans.factory.annotation.Value;
@@ -89,8 +93,13 @@ public class StreetVendingConfiguration {
 	@Value("${sv.service.quaterly.name}")
 	private String serviceNameQuaterly;
 
+<<<<<<< HEAD
+//	@Value("${sv.payment.business.service.name}")
+//	private String paymentBusinessServiceName;
+=======
 	@Value("${sv.payment.business.service.name}")
 	private String paymentBusinessServiceName;
+>>>>>>> master-LTS
 
 	@Value("${sv.business.service.name}")
 	private String businessServiceName;
@@ -161,6 +170,18 @@ public class StreetVendingConfiguration {
 	@Value("${egov.url.shortner.endpoint}")
 	private String shortenerEndpoint;
 
+<<<<<<< HEAD
+//	@Value("${chb.claculation.tax.applicable}")
+//	private String applicableTaxes;
+
+	// Billing-Service
+
+//	@Value("${egbs.host}")
+//	private String egbsHost;
+//
+//	@Value("${egbs.fetchbill.endpoint}")
+//	private String egbsFetchBill;
+=======
 	@Value("${chb.claculation.tax.applicable}")
 	private String applicableTaxes;
 
@@ -171,6 +192,7 @@ public class StreetVendingConfiguration {
 
 	@Value("${egbs.fetchbill.endpoint}")
 	private String egbsFetchBill;
+>>>>>>> master-LTS
 
 	@Value("${egov.localization.statelevel}")
 	private Boolean isLocalizationStateLevel;
@@ -220,8 +242,13 @@ public class StreetVendingConfiguration {
 	@Value("${egov.localization.search.endpoint}")
 	private String localizationSearchEndpoint;
 
+<<<<<<< HEAD
+//	@Value("${egov.localization.fallback.locale}")
+//	private String fallBackLocale;
+=======
 	@Value("${egov.localization.fallback.locale}")
 	private String fallBackLocale;
+>>>>>>> master-LTS
  	
  	 @Value("${egov.download.receipt.link}")
      private String downloadReceiptLink;
@@ -253,4 +280,8 @@ public class StreetVendingConfiguration {
 	@Value("${state.level.tenant.id}")
 	private String stateLevelTenantId;
  	
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> master-LTS

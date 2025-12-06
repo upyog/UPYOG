@@ -23,7 +23,11 @@ public enum TaxHeadCategory {
 	FINES("FINES"),
 
 	CHARGES("CHARGES"),
+<<<<<<< HEAD
+
+=======
 	
+>>>>>>> master-LTS
 	SW_RECONNECTION("SW_RECONNECTION");
 
 	private String value;

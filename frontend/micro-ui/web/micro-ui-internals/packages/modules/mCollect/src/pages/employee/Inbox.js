@@ -175,6 +175,7 @@ const Inbox = ({
       {
         label: t("UC_CHALLAN_NUMBER"),
         name: "challanNo",
+        
       },
       {
         label: t("UC_MOBILE_NUMBER_LABEL"),
@@ -187,6 +188,7 @@ const Inbox = ({
       {
         label: t("UC_RECIEPT_NUMBER_LABEL"),
         name: "receiptNumber",
+        
       },
     ];
   };

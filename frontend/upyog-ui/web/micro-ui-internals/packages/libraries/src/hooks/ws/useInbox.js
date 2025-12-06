@@ -14,7 +14,7 @@ const useWSInbox = ({ tenantId, filters, config = {} }) => {
     }
   },[filters?.searchForm?.applicationNumber,filters?.searchForm?.consumerNo,filters?.searchForm?.mobileNumber])
 
-  if (!window.location.href.includes("upyog-ui/employee/")) {
+  if (!window.location.href.includes("digit-ui/employee/")) {
     moduleName = moduleName;
   } else {
     if (window.location.href.includes("water/inbox")) moduleName = "ws-services";

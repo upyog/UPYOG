@@ -1,5 +1,9 @@
 import React, { useState, useEffect } from "react";
+<<<<<<< HEAD
+import { CardText, FormStep, CitizenConsentForm, Loader, CheckBox } from "@upyog/digit-ui-react-components";
+=======
 import { CardText, FormStep, CitizenConsentForm, Loader, CheckBox,Modal,Card ,CardHeader} from "@upyog/digit-ui-react-components";
+>>>>>>> master-LTS
 import { Link } from "react-router-dom";
 
 const SelectMobileNumber = ({ t, onSelect, showRegisterLink, mobileNumber, onMobileChange, config, canSubmit }) => {
@@ -64,6 +68,15 @@ const SelectMobileNumber = ({ t, onSelect, showRegisterLink, mobileNumber, onMob
   };
   if (isLoading) return <Loader />
   const register = async (e) => {
+<<<<<<< HEAD
+    const data = await Digit.DigiLockerService.register({ module: "REGISTER" });
+    e.preventDefault()
+    const redirectUrl = data.redirectURL
+    console.log("data", data)
+    sessionStorage.setItem("code_verfier_register", data?.codeverifier)
+    window.location.href = redirectUrl
+  }
+=======
     const data = await Digit.DigiLockerService.register({ module: "SSO" });
     e.preventDefault()
     const redirectUrl = data.redirectURL
@@ -100,6 +113,7 @@ const SelectMobileNumber = ({ t, onSelect, showRegisterLink, mobileNumber, onMob
     register(e)
   }
 
+>>>>>>> master-LTS
   return (
     <FormStep
       isDisabled={checkDisbaled()}
@@ -133,6 +147,9 @@ const SelectMobileNumber = ({ t, onSelect, showRegisterLink, mobileNumber, onMob
         />
       </div>)}
       <div className="col col-md-4  text-md-center p-0" style={{width:"40%", marginTop:"5px"}}>
+<<<<<<< HEAD
+             <button className="digilocker-btn"type="submit" onClick={(e)=> register(e)}><img src="https://meripehchaan.gov.in/assets/img/icon/digi.png" class="mr-2" style={{"width":"12%"}}></img>Register with DigiLocker</button>
+=======
       <button className="digilocker-btn"type="submit" onClick={(e)=>setShowToast(true)} style={{marginBottom:"10px", border:"1px solid black"}}><img src="https://meripehchaan.gov.in/assets/img/icon/digi.png" class="mr-2" style={{"width":"12%"}}></img>Register/Login with DigiLocker</button>
      { showToast &&   <Modal
       headerBarMain={<Heading label={t("Consent")} />}
@@ -148,6 +165,7 @@ const SelectMobileNumber = ({ t, onSelect, showRegisterLink, mobileNumber, onMob
     </Card>
      </div>
       </Modal>}
+>>>>>>> master-LTS
                 </div>
     </FormStep>
   );

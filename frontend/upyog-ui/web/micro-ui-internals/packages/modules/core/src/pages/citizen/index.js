@@ -1,4 +1,8 @@
+<<<<<<< HEAD
+import { BackButton, WhatsappIcon, Card, CitizenHomeCard, CitizenInfoLabel, PrivateRoute } from "@upyog/digit-ui-react-components";
+=======
 import { BackButton, WhatsappIcon, Card, CitizenHomeCard, CitizenInfoLabel, PrivateRoute,AdvertisementModuleCard } from "@upyog/digit-ui-react-components";
+>>>>>>> master-LTS
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { Route, Switch, useRouteMatch, useHistory, Link } from "react-router-dom";
@@ -19,12 +23,16 @@ import AcknowledgementCF from "../../components/AcknowledgementCF";
 import CitizenFeedback from "../../components/CitizenFeedback";
 import Search from "./SearchApp";
 import QRCode from "./QRCode";
+<<<<<<< HEAD
+import ChallanQRCode from "./ChallanQRCode";
+=======
 import VSearchCertificate from "./CMSearchCertificate";
 import AssetsQRCode from "./AssetsQRCode";
 import ChallanQRCode from "./ChallanQRCode";
 import { newConfig as newConfigEDCR } from "../../config/edcrConfig";
 import CreateAnonymousEDCR from "./Home/EDCR";
 import EDCRAcknowledgement from "./Home/EDCR/EDCRAcknowledgement";
+>>>>>>> master-LTS
 const sidebarHiddenFor = [
   "upyog-ui/citizen/register/name",
   "/upyog-ui/citizen/select-language",
@@ -71,13 +79,30 @@ const Home = ({
             a[b.parentModule] = a[b.parentModule]?.length > 0 ? [b, ...a[b.parentModule]] : [b];
             return a;
           }, {});
+<<<<<<< HEAD
+          Object.keys(formattedData).forEach(key => {
+            const value = formattedData[key];
+            value.map((item) => {
+              if (!item["state"]) {
+                item["navigationURL"] = item["navigationURL"].replace("digit-ui", "upyog-ui");
+                item["url"] = item["url"].replace("digit-ui", "upyog-ui");
+                return item
+              }
+            });
+          });
+=======
+>>>>>>> master-LTS
         return formattedData;
       },
     }
   );
   const isMobile = window.Digit.Utils.browser.isMobile();
+<<<<<<< HEAD
+  const classname = Digit.Hooks.fsm.useRouteSubscription(pathname);
+=======
   // const classname = Digit.Hooks.fsm.useRouteSubscription(pathname);
   const classname = Digit.Hooks.useRouteSubscription(pathname);
+>>>>>>> master-LTS
   const { t } = useTranslation();
   const { path } = useRouteMatch();
   sourceUrl = "https://s3.ap-south-1.amazonaws.com/egov-qa-assets";
@@ -264,6 +289,9 @@ const Home = ({
             <Search/>
           </Route>
           <Route path={`${path}/payment/verification`}>
+<<<<<<< HEAD
+         <QRCode></QRCode>
+=======
             <QRCode></QRCode>
           </Route>
           <Route path={`${path}/assets/services`}>
@@ -271,10 +299,13 @@ const Home = ({
           </Route>
           <Route path={`${path}/verificationsearch-home`}>
             <VSearchCertificate/>
+>>>>>>> master-LTS
           </Route>
           <Route path={`${path}/challan/details`}>
          <ChallanQRCode></ChallanQRCode>
           </Route>
+<<<<<<< HEAD
+=======
           <Route path={`${APPLICATION_PATH}/citizen/core/edcr/scrutiny`}>
             <CreateAnonymousEDCR />
           </Route>
@@ -282,6 +313,7 @@ const Home = ({
             <EDCRAcknowledgement />
           </Route>
 
+>>>>>>> master-LTS
           <ErrorBoundary initData={initData}>
             {appRoutes}
             {ModuleLevelLinkHomePages}

@@ -17,7 +17,11 @@ const Rating = (props) => {
     } else {
       return percentage
     }
+<<<<<<< HEAD
+  } 
+=======
   } */
+>>>>>>> master-LTS
   for (var i = 1; i <= props.maxRating; i++) {
     if (i - props.currentRating <= 0) {
       const index = i;

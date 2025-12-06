@@ -1,5 +1,15 @@
 package org.upyog.cdwm.config;
 
+<<<<<<< HEAD
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.servers.Server;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+import java.util.List;
+
+=======
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -12,10 +22,22 @@ import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 @EnableSwagger2
+>>>>>>> master-LTS
 @Configuration
 public class SwaggerConfiguration {
 
     @Bean
+<<<<<<< HEAD
+    public OpenAPI customOpenAPI() {
+        return new OpenAPI()
+                .servers(List.of(new Server().url("/cnd-service")))
+                .info(new Info()
+                        .title("cnd-service API")
+                        .description("API details of the cnd-service")
+                        .version("2.0"));
+    }
+}
+=======
     public Docket api() {
         return new Docket(DocumentationType.SWAGGER_2).select()
                 .apis(RequestHandlerSelectors.basePackage("org.upyog.cdwm.web.controllers")) 
@@ -28,3 +50,4 @@ public class SwaggerConfiguration {
                 .description("API details of the CND service").version("1.0").build();
     }
 }
+>>>>>>> master-LTS

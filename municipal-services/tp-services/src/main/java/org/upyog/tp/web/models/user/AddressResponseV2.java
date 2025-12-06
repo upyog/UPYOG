@@ -8,11 +8,19 @@ import java.util.List;
 /**
  * AddressResponseV2 is a model class that represents the response
  * structure for address-related requests in the system.
+<<<<<<< HEAD
+ *
+ * Key Components:
+ * - responseInfo: Contains metadata about the response, such as status and messages.
+ * - address: A list of AddressV2 objects representing the address details in the response.
+ *
+=======
  * 
  * Key Components:
  * - responseInfo: Contains metadata about the response, such as status and messages.
  * - address: A list of AddressV2 objects representing the address details in the response.
  * 
+>>>>>>> master-LTS
  * Annotations:
  * - @AllArgsConstructor: Automatically generates a constructor with all fields.
  * - @Getter: Automatically generates getter methods for all fields.

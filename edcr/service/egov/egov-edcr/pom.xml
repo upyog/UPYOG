@@ -40,6 +40,10 @@
 	</parent>
 	<artifactId>egov-edcr</artifactId>
 	<name>e-governments edcr</name>
+<<<<<<< HEAD
+	<dependencies>
+	<dependency>
+=======
 	
 	<dependencies>
 		<!--		Below dependency is commented out to avoid jenkinds build issue -->
@@ -54,6 +58,7 @@
 
 		</dependency>-->
 		<dependency>
+>>>>>>> master-LTS
 			<groupId>org.apache.pdfbox</groupId>
 			<artifactId>pdfbox</artifactId>
 			<version>2.0.28</version>

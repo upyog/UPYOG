@@ -1,12 +1,12 @@
 package org.egov.egf.master.domain.service;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.any;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.List;
-
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.domain.exception.InvalidDataException;
 import org.egov.common.domain.model.Pagination;
@@ -15,20 +15,20 @@ import org.egov.egf.master.TestConfiguration;
 import org.egov.egf.master.domain.model.Function;
 import org.egov.egf.master.domain.model.FunctionSearch;
 import org.egov.egf.master.domain.repository.FunctionRepository;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.context.annotation.Import;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.SmartValidator;
 
 
 @Import(TestConfiguration.class)
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 public class FunctionServiceTest {
 
 	@InjectMocks
@@ -44,7 +44,7 @@ public class FunctionServiceTest {
 	private RequestInfo requestInfo = new RequestInfo();
 	private List<Function> functions = new ArrayList<>();
 
-	@Before
+	@BeforeEach
 	public void setup() {
 	}
 
@@ -110,16 +110,19 @@ public class FunctionServiceTest {
 		assertEquals(expextedResult.get(0).getName(), actualResult.get(0).getParentId().getName());
 	}
 
-	@Test(expected = InvalidDataException.class)
-	public final void test_fetch_related_data_when_parentid_is_wrong() {
+	@Test
+
+public final void test_fetch_related_data_when_parentid_is_wrong() {
 		List<Function> expextedResult = new ArrayList<>();
 		expextedResult.add(getParentFunction());
 		List<Function> functions = new ArrayList<>();
 		functions.add(getFunction());
 		ApplicationThreadLocals.setTenantId("default");
 		when(functionRepository.findById(any(Function.class))).thenReturn(null);
-		functionService.fetchRelated(functions);
-	}
+    	assertThrows(InvalidDataException.class, () -> {
+        functionService.fetchRelated(functions);
+    });
+}
 
 	private List<Function> getFunctions() {
 		List<Function> functions = new ArrayList<Function>();

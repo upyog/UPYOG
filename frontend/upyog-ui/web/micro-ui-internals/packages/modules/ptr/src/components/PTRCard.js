@@ -1,3 +1,9 @@
+<<<<<<< HEAD
+import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
+import { EmployeeModuleCard, PTRIcon } from "@upyog/digit-ui-react-components";
+=======
 /**
  * @file PTRCard.js
  * @description Displays the pet registration module card with KPIs and navigation links for the employee portal.
@@ -28,6 +34,7 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { EmployeeModuleCard, PropertyHouse } from "@upyog/digit-ui-react-components";
+>>>>>>> master-LTS
 
 const PTRCard = () => {
   const { t } = useTranslation();
@@ -71,7 +78,11 @@ const PTRCard = () => {
   ]
   const PTR_CEMP = Digit.UserService.hasAccess(["PTR_APPROVER", "PTR_CEMP", "PTR_VERIFIER"]) || false;
   const propsForModuleCard = {
+<<<<<<< HEAD
+    Icon: <PTRIcon />,
+=======
     Icon: <PropertyHouse />,
+>>>>>>> master-LTS
     moduleName: t("PTR_TITLE_PET_REGISTRATION"),
     kpis: [
       {

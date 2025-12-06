@@ -33,6 +33,8 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Component
 public class EwasteRequestValidator {
+<<<<<<< HEAD
+=======
 
 	@Autowired
 	private EwasteConfiguration configs;
@@ -46,6 +48,7 @@ public class EwasteRequestValidator {
 	@Autowired
 	private WorkflowService workflowService;
 
+>>>>>>> master-LTS
 	@Autowired
 	private EwasteApplicationRepository repository;
 

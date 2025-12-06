@@ -42,7 +42,7 @@ package org.egov.collection.web.contract;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 
 @Setter
 @Getter

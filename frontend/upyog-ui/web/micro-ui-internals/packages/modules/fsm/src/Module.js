@@ -62,10 +62,13 @@ import SelectTrips from "./pageComponents/SelectTrips";
 import PlusMinusInput from "./pageComponents/PlusMinusInput";
 import ConfirmationBox from "./components/Confirmation";
 import SelectLocalityOrGramPanchayat from "./pageComponents/SelectLocalityOrGramPanchayat";
+<<<<<<< HEAD
+=======
 import AddWorker from "./pages/employee/FSMRegistry/Worker/AddWorker"
 import EditWorker from "./pages/employee/FSMRegistry/Worker/EditWorker";
 import WorkerDetails from "./pages/employee/FSMRegistry/Worker/WorkerDetails";
 import TqmCard from "./components/TqmCard";
+>>>>>>> master-LTS
 
 const FSMModule = ({ stateCode, userType, tenants }) => {
   const moduleCode = "FSM";
@@ -223,10 +226,13 @@ const componentsToRegister = {
   PlusMinusInput,
   ConfirmationBox,
   SelectLocalityOrGramPanchayat,
+<<<<<<< HEAD
+=======
   AddWorker,
   EditWorker,
   WorkerDetails,
   TqmCard,
+>>>>>>> master-LTS
 };
 
 export const initFSMComponents = () => {

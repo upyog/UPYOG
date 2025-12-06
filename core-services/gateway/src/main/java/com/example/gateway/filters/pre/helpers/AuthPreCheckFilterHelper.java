@@ -45,7 +45,11 @@ public class AuthPreCheckFilterHelper implements RewriteFunction<Map, Map> {
     @Override
     public Publisher<Map> apply(ServerWebExchange exchange, Map body) {
 
+<<<<<<< HEAD
+        String authToken = null;
+=======
         String authToken;
+>>>>>>> master-LTS
         String endPointPath = exchange.getRequest().getPath().value();
 
         if (openEndpointsWhitelist.contains(endPointPath)) {
@@ -54,15 +58,31 @@ public class AuthPreCheckFilterHelper implements RewriteFunction<Map, Map> {
             return Mono.just(body);
         }
 
+<<<<<<< HEAD
+        // CRITICAL FIX: Extract authToken gracefully, similar to Zuul's approach
+        // If extraction fails, authToken remains null and we check mixed-mode whitelist before throwing
+=======
+>>>>>>> master-LTS
         try {
             RequestInfo requestInfo = objectMapper.convertValue(body.get(REQUEST_INFO_FIELD_NAME_PASCAL_CASE), RequestInfo.class);
             authToken = requestInfo.getAuthToken();
         } catch (Exception e) {
             log.error(AUTH_TOKEN_RETRIEVE_FAILURE_MESSAGE, e);
+<<<<<<< HEAD
+            // Don't throw immediately - check if this is a mixed-mode endpoint first
+            authToken = null;
+        }
+
+        // Check authorization based on authToken presence
+        if (ObjectUtils.isEmpty(authToken)) {
+            // CRITICAL FIX: Check mixed-mode whitelist before throwing 401
+            // This matches Zuul behavior where mixed-mode endpoints allow anonymous access
+=======
             throw new CustomException(AUTH_TOKEN_RETRIEVE_FAILURE_MESSAGE, e.getMessage());
         }
 
         if (ObjectUtils.isEmpty(authToken)) {
+>>>>>>> master-LTS
             if (mixedModeEndpointsWhitelist.contains(endPointPath)) {
                 log.info(ROUTING_TO_ANONYMOUS_ENDPOINT_MESSAGE, endPointPath);
                 exchange.getAttributes().put(AUTH_BOOLEAN_FLAG_NAME, Boolean.FALSE);

@@ -2058,6 +2058,9 @@ const transformResponse = (type, MdmsRes, moduleCode, moduleName, tenantId, mast
 
     case "PTRBreedType":
       return PTRBreedType(MdmsRes);
+<<<<<<< HEAD
+     
+=======
     
     case "assetClassification":
       return getAssetClassification(MdmsRes); 
@@ -2120,6 +2123,7 @@ const transformResponse = (type, MdmsRes, moduleCode, moduleName, tenantId, mast
       return getDataWithi18nkey(MdmsRes, moduleName, masterName, i18nKeyString);
     case "i18nkey&code":
       return getDataWithi18nkeyandCode(MdmsRes, moduleName, masterName, i18nKeyString);
+>>>>>>> master-LTS
     default:
       return MdmsRes;
   }

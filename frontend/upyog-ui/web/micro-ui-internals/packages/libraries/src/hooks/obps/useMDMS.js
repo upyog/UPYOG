@@ -9,9 +9,12 @@ const useMDMS = (tenantId, moduleCode, type, config = {}, payload = []) => {
   const useTradeTypetoRoleMapping = () => {
     return useQuery("ROLE_DOCUMENT_MAPPING", () => MdmsService.getTradeTypeRoleTypes(tenantId, moduleCode, type), queryConfig);
   };
+<<<<<<< HEAD
+=======
   const useDisclaimer = () => {
     return useQuery([tenantId, moduleCode, type], () => MdmsService.getDisclaimer(tenantId, moduleCode, type), config);
   };
+>>>>>>> master-LTS
   const _default = () => {
     return useQuery([tenantId, moduleCode, type], () => MdmsService.getMultipleTypes(tenantId, moduleCode, type), config);
   };

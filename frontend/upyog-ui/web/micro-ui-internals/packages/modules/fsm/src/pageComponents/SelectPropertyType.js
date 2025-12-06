@@ -18,6 +18,11 @@ if (property !== "undefined")
 {
   property = JSON.parse(sessionStorage?.getItem("Digit_FSM_PT"))
 }
+<<<<<<< HEAD
+  const usageType = property?.propertyDetails?.usageCategory || property?.usageCategory
+  console.log("formData",formData)
+  const [propertyType, setPropertyType] = useState(formData?.propertyType || "" );
+=======
 const usageType = property?.propertyDetails?.usageCategory
 ? property?.propertyDetails?.usageCategory.includes("INSTITUTIONAL") || property?.propertyDetails?.usageCategory.includes("COMMERCIAL")
   ? property?.propertyDetails?.usageCategory.split('.')[1] 
@@ -31,6 +36,7 @@ const usageType = property?.propertyDetails?.usageCategory
   const [propertyType, setPropertyType] = useState(formData?.propertyType || "" );
   formData.propertyType = propertyType
   
+>>>>>>> master-LTS
 useEffect(()=>{
  if(userType === "employee" && property && propertyTypesData.data)
     {
@@ -40,7 +46,11 @@ useEffect(()=>{
       propertyType = propertyTypesData?.data.filter((city) => {
           return city.code == formData?.propertyType
         })
+<<<<<<< HEAD
+        console.log("SSSSSS",propertyType,propertyTypesData)
+=======
 
+>>>>>>> master-LTS
         if(propertyType.length >0)
         {
           onSelect(config.key, propertyType[0].code)
@@ -49,6 +59,14 @@ useEffect(()=>{
      
     }
     if(property){
+<<<<<<< HEAD
+      console.log("property",property,propertyTypesData)
+      if(property?.propertyDetails?.usageCategory == "COMMERCIAL" || property?.propertyDetails?.usageCategory == 
+      "RESIDENTIAL" ||property?.propertyDetails?.usageCategory == "INSTITUTIONAL")
+      {
+        setPropertyType(usageType)
+      }
+=======
       
       if(property?.propertyDetails?.usageCategory == "COMMERCIAL" || property?.propertyDetails?.usageCategory == 
       "RESIDENTIAL")
@@ -62,23 +80,35 @@ useEffect(()=>{
       // else{
       //   setPropertyType("")
       // }
+>>>>>>> master-LTS
      
     }
 },[propertyTypesData.isLoading])
   useEffect(() => {
+<<<<<<< HEAD
+    console.log("usageType",usageType)
+=======
     
+>>>>>>> master-LTS
     if (!propertyTypesData.isLoading && propertyTypesData.data && usageType) {
       const preFilledPropertyType = propertyTypesData.data.filter(
         (propertyType) => propertyType.code === (usageType||formData?.propertyType?.code || formData?.propertyType)
       )[0];
+<<<<<<< HEAD
+      console.log("preFilledPropertyType",preFilledPropertyType)
+=======
 
+>>>>>>> master-LTS
       if(preFilledPropertyType !== undefined)
       {
         setPropertyType(preFilledPropertyType);
       }
+<<<<<<< HEAD
+=======
       else if(usageType==="COMMERCIAL" || usageType==="INSTITUTIONAL"){
         setPropertyType(usageType)
       }
+>>>>>>> master-LTS
      
     }
   }, [property, formData?.propertyType, propertyTypesData.data]);
@@ -88,7 +118,11 @@ useEffect(()=>{
     onSelect(config.key, propertyType);
   };
   function selectedValue(value) {
+<<<<<<< HEAD
+    console.log("vvv",value)
+=======
 
+>>>>>>> master-LTS
     setPropertyType(value);
   }
   function selectedType(value) {
@@ -105,7 +139,11 @@ useEffect(()=>{
     }
     return content;
   };
+<<<<<<< HEAD
+console.log("propertyType",propertyType)
+=======
 
+>>>>>>> master-LTS
   if (propertyTypesData.isLoading) {
     return <Loader />;
   }
@@ -126,7 +164,11 @@ useEffect(()=>{
       <React.Fragment>
         <Timeline currentStep={1} flow="APPLY" />
         <FormStep config={config} onSelect={goNext} isDisabled={!propertyType} t={t}>
+<<<<<<< HEAD
+          <CardLabel>{`${t("CS_FILE_APPLICATION_PROPERTY_LABEL")} *`}</CardLabel>
+=======
           <CardLabel>{`${t("CS_FILE_APPLICATION_PROPERTY_LABEL")}`}<span className="check-page-link-button"> *</span></CardLabel>
+>>>>>>> master-LTS
           <RadioOrSelect
             options={propertyTypesData.data?.sort((a, b) => a.name.localeCompare(b.name))}
             selectedOption={propertyType}

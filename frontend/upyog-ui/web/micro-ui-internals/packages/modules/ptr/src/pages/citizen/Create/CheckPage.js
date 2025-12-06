@@ -1,3 +1,5 @@
+<<<<<<< HEAD
+=======
 /**
  * CheckPage Component
  * 
@@ -13,10 +15,15 @@
  * - Implements routing with `useHistory` for navigation between pages.
  */
 
+>>>>>>> master-LTS
 import {
   Card,
   CardHeader,
   CardSubHeader,
+<<<<<<< HEAD
+  CardText,
+=======
+>>>>>>> master-LTS
   CheckBox,
   LinkButton,
   Row,
@@ -27,7 +34,12 @@ import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
 import {
+<<<<<<< HEAD
+  checkForNA,
+  getFixedFilename, 
+=======
   checkForNA 
+>>>>>>> master-LTS
 } from "../../../utils";
 import Timeline from "../../../components/PTRTimeline";
 
@@ -43,6 +55,27 @@ const ActionButton = ({ jumpTo }) => {
 
 const CheckPage = ({ onSubmit, value = {} }) => {
   const { t } = useTranslation();
+<<<<<<< HEAD
+  const history = useHistory();
+  
+
+  
+
+  
+
+  const {
+    address,
+    pets,
+    index,    
+    isEditPET,
+    isUpdatePET,
+    ownerss,
+   
+  } = value;
+
+
+
+=======
   const {
     address,
     pets,   
@@ -50,6 +83,7 @@ const CheckPage = ({ onSubmit, value = {} }) => {
     isUpdatePET,
     ownerss,
   } = value;
+>>>>>>> master-LTS
   const typeOfApplication = !isEditPET && !isUpdatePET ? `new-application` : `edit-application`;
 
 
@@ -59,11 +93,21 @@ const CheckPage = ({ onSubmit, value = {} }) => {
   };
   return (
     <React.Fragment>
+<<<<<<< HEAD
+     {window.location.href.includes("/citizen") ? <Timeline currentStep={5}/> : null}
+=======
      {<Timeline currentStep={5}/>}
+>>>>>>> master-LTS
     <Card>
       <CardHeader>{t("PTR_CHECK_YOUR_DETAILS")}</CardHeader>
       <div>
         <br></br>
+<<<<<<< HEAD
+      
+        
+
+=======
+>>>>>>> master-LTS
         <CardSubHeader>{t("ES_TITILE_OWNER_DETAILS")}</CardSubHeader>
         <br></br>
         <StatusTable>
@@ -71,24 +115,51 @@ const CheckPage = ({ onSubmit, value = {} }) => {
             label={t("PTR_APPLICANT_NAME")}
             text={`${t(checkForNA(ownerss?.applicantName))}`}
             actionButton={<ActionButton jumpTo={`/upyog-ui/citizen/ptr/petservice/${typeOfApplication}/owners`} />}
+<<<<<<< HEAD
+
         />
+
+=======
+        />
+>>>>>>> master-LTS
         <Row
             label={t("PTR_FATHER_HUSBAND_NAME")}
             text={`${t(checkForNA(ownerss?.fatherName))}`}
             actionButton={<ActionButton jumpTo={`/upyog-ui/citizen/ptr/petservice/${typeOfApplication}/owners`} />}
+<<<<<<< HEAD
+
         />
+
+=======
+        />
+>>>>>>> master-LTS
         <Row
             label={t("PTR_MOBILE_NUMBER")}
             text={`${t(checkForNA(ownerss?.mobileNumber))}`}
             actionButton={<ActionButton jumpTo={`/upyog-ui/citizen/ptr/petservice/${typeOfApplication}/owners`} />}
+<<<<<<< HEAD
+
         />
+
+=======
+        />
+>>>>>>> master-LTS
         <Row
             label={t("PTR_EMAIL_ID")}
             text={`${t(checkForNA(ownerss?.emailId))}`}
             actionButton={<ActionButton jumpTo={`/upyog-ui/citizen/ptr/petservice/${typeOfApplication}/owners`} />}
+<<<<<<< HEAD
+
+        />
+
+        </StatusTable>
+        <br></br>
+
+=======
         />
         </StatusTable>
         <br></br>
+>>>>>>> master-LTS
         <CardSubHeader>{t("ES_TITILE_PET_DETAILS")}</CardSubHeader>
         <br></br>
         <StatusTable>
@@ -96,44 +167,79 @@ const CheckPage = ({ onSubmit, value = {} }) => {
             label={t("PTR_SEARCH_PET_TYPE")}
             text={`${t(checkForNA(pets?.petType?.value))}`}
             actionButton={<ActionButton jumpTo={`/upyog-ui/citizen/ptr/petservice/${typeOfApplication}/pet-details`} />}
+<<<<<<< HEAD
+
+=======
+>>>>>>> master-LTS
         />
 
         <Row
             label={t("PTR_SEARCH_BREED_TYPE")}
             text={`${t(checkForNA(pets?.breedType?.value))}`}
             actionButton={<ActionButton jumpTo={`/upyog-ui/citizen/ptr/petservice/${typeOfApplication}/pet-details`} />}
+<<<<<<< HEAD
+
+=======
+>>>>>>> master-LTS
         />
 
         <Row
             label={t("PTR_PET_NAME")}
             text={`${t(checkForNA(pets?.petName))}`}
             actionButton={<ActionButton jumpTo={`/upyog-ui/citizen/ptr/petservice/${typeOfApplication}/pet-details`} />}
+<<<<<<< HEAD
+
         />
+
+=======
+        />
+>>>>>>> master-LTS
         <Row
             label={t("PTR_DOCTOR_NAME")}
             text={`${t(checkForNA(pets?.doctorName))}`}
             actionButton={<ActionButton jumpTo={`/upyog-ui/citizen/ptr/petservice/${typeOfApplication}/pet-details`} />}
+<<<<<<< HEAD
+
+=======
+>>>>>>> master-LTS
         />
 
         <Row
             label={t("PTR_CLINIC_NAME")}
             text={`${t(checkForNA(pets?.clinicName))}`}
             actionButton={<ActionButton jumpTo={`/upyog-ui/citizen/ptr/petservice/${typeOfApplication}/pet-details`} />}
+<<<<<<< HEAD
+
         />
+
+=======
+        />
+>>>>>>> master-LTS
         <Row
             label={t("PTR_VACCINATED_DATE")}
             text={`${t(checkForNA(pets?.lastVaccineDate))}`}
             actionButton={<ActionButton jumpTo={`/upyog-ui/citizen/ptr/petservice/${typeOfApplication}/pet-details`} />}
+<<<<<<< HEAD
+
+=======
+>>>>>>> master-LTS
         />
          <Row
             label={t("PTR_PET_AGE")}
             text={`${t(checkForNA(pets?.petAge + " Months"))}`}
             actionButton={<ActionButton jumpTo={`/upyog-ui/citizen/ptr/petservice/${typeOfApplication}/pet-details`} />}
+<<<<<<< HEAD
+
+=======
+>>>>>>> master-LTS
         />
          <Row
             label={t("PTR_PET_SEX")}
             text={`${t(checkForNA(pets?.petGender?.name))}`}
             actionButton={<ActionButton jumpTo={`/upyog-ui/citizen/ptr/petservice/${typeOfApplication}/pet-details`} />}
+<<<<<<< HEAD
+
+=======
         />
           <Row
             label={t("PTR_IDENTIFICATION_MARK")}
@@ -154,6 +260,7 @@ const CheckPage = ({ onSubmit, value = {} }) => {
             label={t("PTR_SEARCH_BIRTH_ADOPTION")}
             text={`${t(checkForNA(pets?.adoptionDate ? pets?.adoptionDate : pets?.birthDate))}`}
             actionButton={<ActionButton jumpTo={`/upyog-ui/citizen/ptr/petservice/${typeOfApplication}/pet-details`} />}
+>>>>>>> master-LTS
         />
 
         </StatusTable>
@@ -163,6 +270,29 @@ const CheckPage = ({ onSubmit, value = {} }) => {
         <StatusTable>
         <Row
             label={t("PTR_HOUSE_NO")}
+<<<<<<< HEAD
+            text={`${t(checkForNA(address?.doorNo))}`}
+            actionButton={<ActionButton jumpTo={`/upyog-ui/citizen/ptr/petservice/${typeOfApplication}/street`} />}
+
+        />
+         <Row
+            label={t("PTR_STREET_NAME")}
+            text={`${t(checkForNA(address?.street))}`}
+            actionButton={<ActionButton jumpTo={`/upyog-ui/citizen/ptr/petservice/${typeOfApplication}/street`} />}
+
+        />
+         <Row
+            label={t("PTR_ADDRESS_LINE1")}
+            text={`${t(checkForNA(address?.addressLine1))}`}
+            actionButton={<ActionButton jumpTo={`/upyog-ui/citizen/ptr/petservice/${typeOfApplication}/street`} />}
+
+        />
+         
+         <Row
+            label={t("PTR_ADDRESS_PINCODE")}
+            text={`${t(checkForNA(address?.pincode))}`}
+            actionButton={<ActionButton jumpTo={`/upyog-ui/citizen/ptr/petservice/${typeOfApplication}/pincode`} />}
+=======
             text={`${t(checkForNA(address?.houseNo))}`}
             actionButton={<ActionButton jumpTo={`/upyog-ui/citizen/ptr/petservice/${typeOfApplication}/address`} />}
         />
@@ -193,6 +323,7 @@ const CheckPage = ({ onSubmit, value = {} }) => {
             label={t("PTR_ADDRESS_PINCODE")}
             text={`${t(checkForNA(address?.pincode))}`}
             actionButton={<ActionButton jumpTo={`/upyog-ui/citizen/ptr/petservice/${typeOfApplication}/address`} />}
+>>>>>>> master-LTS
         />
          <Row
             label={t("MYCITY_CODE_LABEL")}
@@ -201,6 +332,12 @@ const CheckPage = ({ onSubmit, value = {} }) => {
         />
          <Row
             label={t("PTR_LOCALITY")}
+<<<<<<< HEAD
+            text={`${t(checkForNA(address?.locality?.name))}`}
+            actionButton={<ActionButton jumpTo={`/upyog-ui/citizen/ptr/petservice/${typeOfApplication}/address`} />}
+        />
+
+=======
             text={`${t(checkForNA(address?.locality?.i18nKey))}`}
             actionButton={<ActionButton jumpTo={`/upyog-ui/citizen/ptr/petservice/${typeOfApplication}/address`} />}
         />
@@ -209,6 +346,7 @@ const CheckPage = ({ onSubmit, value = {} }) => {
             text={`${t(checkForNA(address?.landmark))}`}
             actionButton={<ActionButton jumpTo={`/upyog-ui/citizen/ptr/petservice/${typeOfApplication}/address`} />}
         />
+>>>>>>> master-LTS
         </StatusTable>
         <br></br>
        
@@ -217,6 +355,10 @@ const CheckPage = ({ onSubmit, value = {} }) => {
           label={t("PTR_FINAL_DECLARATION_MESSAGE")}
           onChange={setdeclarationhandler}
           styles={{ height: "auto" }}
+<<<<<<< HEAD
+          //disabled={!agree}
+=======
+>>>>>>> master-LTS
         />
       </div>
       <SubmitBar label={t("PTR_COMMON_BUTTON_SUBMIT")} onSubmit={onSubmit} disabled={!agree} />

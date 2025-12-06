@@ -1,6 +1,9 @@
 import cloneDeep from "lodash/cloneDeep";
 import { v4 as uuid_v4 } from 'uuid';
+<<<<<<< HEAD
+=======
 import { PreApprovedPlanService } from "../../../../libraries/src/services/elements/PREAPPROVEDPLAN";
+>>>>>>> master-LTS
 
 export const getPattern = (type) => {
   switch (type) {

@@ -1,6 +1,9 @@
 package org.egov.user.web.contract;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -9,8 +12,6 @@ import org.egov.user.config.UserServiceConstants;
 import org.egov.user.domain.model.UserSearchCriteria;
 import org.egov.user.domain.model.enums.UserType;
 
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
 import java.util.Collections;
 import java.util.List;
 
@@ -80,6 +81,9 @@ public class UserSearchRequest {
     @JsonProperty("roleCodes")
     private List<String> roleCodes;
 
+//    @JsonProperty("digilockerSearch")
+//    private boolean digilockerSearch;
+
     public UserSearchCriteria toDomain() {
         return UserSearchCriteria.builder()
                 .id(id)
@@ -97,6 +101,7 @@ public class UserSearchRequest {
                 .tenantId(tenantId)
                 .roleCodes(roleCodes)
                 .uuid(uuid)
+                //.digilockersearch(digilockerSearch)
                 .build();
     }
 }

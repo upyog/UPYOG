@@ -127,6 +127,9 @@ function SelectDocument({ t, key, document: doc, setDocuments, error, setError, 
 
   return (
     <div style={{ marginBottom: "24px" }}>
+<<<<<<< HEAD
+      <CardLabel>{doc?.required ? `${t(doc?.i18nKey)} *` : `${t(doc?.i18nKey)}`}</CardLabel>
+=======
       <CardLabel style={{fontWeight: "700" }}>
           {doc?.required ? (
             <React.Fragment>
@@ -136,6 +139,7 @@ function SelectDocument({ t, key, document: doc, setDocuments, error, setError, 
                 t(doc?.i18nKey)
           )}
       </CardLabel>
+>>>>>>> master-LTS
       <Dropdown t={t} isMandatory={false} option={doc?.dropdownData} selected={selectedDocument} optionKey="i18nKey" select={handleSelectDocument} />
       <UploadFile
         id={`noc-doc-${key}`}

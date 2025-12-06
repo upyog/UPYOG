@@ -4,7 +4,11 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 import org.egov.common.contract.response.ResponseInfo;
 
+<<<<<<< HEAD
+import jakarta.validation.Valid;
+=======
 import javax.validation.Valid;
+>>>>>>> master-LTS
 import java.util.List;
 
 

@@ -1,12 +1,15 @@
 package org.egov;
 
+import ch.qos.logback.classic.Logger;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import org.apache.commons.logging.Log;
 import org.egov.tracer.config.TracerConfiguration;
 import org.egov.tracer.kafka.LogAwareKafkaTemplate;
 import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.common.settings.Settings;
+import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.common.transport.TransportAddress;
 import org.elasticsearch.transport.client.PreBuiltTransportClient;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,18 +23,21 @@ import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.TimeZone;
 
 @Import({ TracerConfiguration.class })
 @SpringBootApplication
-public class EgfMasterApplication {
+@Slf4j
+public class
+EgfMasterApplication {
 
 	public static void main(String[] args) {
+		log.info("EGF Master Service is running with latest LTS upgrades 2.0.0!");
 		SpringApplication.run(EgfMasterApplication.class, args);
 	}
 
@@ -65,7 +71,6 @@ public class EgfMasterApplication {
 
 	@Bean
 	public MappingJackson2HttpMessageConverter jacksonConverter() {
-		// DateFormat std=DateFormat.getInstance().f
 		MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
 		ObjectMapper mapper = new ObjectMapper();
 		mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
@@ -76,12 +81,12 @@ public class EgfMasterApplication {
 	}
 
 	@Bean
-	public WebMvcConfigurerAdapter webMvcConfigurerAdapter() {
-		return new WebMvcConfigurerAdapter() {
+	public WebMvcConfigurer webMvcConfigurer() {
+		return new WebMvcConfigurer() {
 
 			@Override
 			public void configureContentNegotiation(ContentNegotiationConfigurer configurer) {
-				configurer.defaultContentType(MediaType.APPLICATION_JSON_UTF8);
+				configurer.defaultContentType(MediaType.APPLICATION_JSON);
 			}
 
 		};

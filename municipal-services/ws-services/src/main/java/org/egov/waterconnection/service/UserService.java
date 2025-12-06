@@ -14,6 +14,7 @@ import org.egov.waterconnection.web.models.*;
 import org.egov.waterconnection.web.models.users.UserDetailResponse;
 import org.egov.waterconnection.web.models.users.UserSearchRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
@@ -33,6 +34,7 @@ public class UserService {
 	private ObjectMapper mapper;
 
 	@Autowired
+	@Lazy
 	private EnrichmentService enrichmentService;
 
 	/**

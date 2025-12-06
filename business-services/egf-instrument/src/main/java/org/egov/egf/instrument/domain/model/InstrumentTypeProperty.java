@@ -1,6 +1,6 @@
 package org.egov.egf.instrument.domain.model;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 
 import org.egov.common.domain.model.Auditable;
 import org.egov.egf.master.web.contract.FinancialStatusContract;

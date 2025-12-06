@@ -8,6 +8,12 @@ import {
   Loader,
   Row,
   StatusTable,
+<<<<<<< HEAD
+  LinkButton
+} from "@upyog/digit-ui-react-components";
+import { values } from "lodash";
+import React, { Fragment, useEffect,useState } from "react";
+=======
   LinkButton,
   PDFSvg,
   EditIcon,
@@ -16,6 +22,7 @@ import {
 } from "@upyog/digit-ui-react-components";
 import { values } from "lodash";
 import React, { Fragment,useState } from "react";
+>>>>>>> master-LTS
 import { useTranslation } from "react-i18next";
 import { Link, useParams } from "react-router-dom";
 import BPADocuments from "./BPADocuments";
@@ -53,16 +60,25 @@ function ApplicationDetailsContent({
   isInfoLabel = false,
 }) {
   const { t } = useTranslation();
+<<<<<<< HEAD
+  
+const ownersSequences= applicationDetails?.applicationData?.owners
+console.log("appl", applicationDetails)
+=======
   let { id: applicationNo } = useParams(); // Extracts PG-1013-2025-I-001019
   const ownersSequences = applicationDetails?.applicationData?.owners;
   console.log("ownersSequences:- ", ownersSequences);
+>>>>>>> master-LTS
 
   function OpenImage(imageSource, index, thumbnailsToShow) {
     window.open(thumbnailsToShow?.fullImage?.[0], "_blank");
   }
 
   const [fetchBillData, updatefetchBillData] = useState({});
+<<<<<<< HEAD
+=======
 
+>>>>>>> master-LTS
   const setBillData = async (tenantId, propertyIds, updatefetchBillData, updateCanFetchBillData) => {
     const assessmentData = await Digit.PTService.assessmentSearch({ tenantId, filters: { propertyIds } });
     let billData = {};
@@ -120,9 +136,15 @@ function ApplicationDetailsContent({
       };
       return <TLCaption data={caption} />;
     } else if (window.location.href.includes("/obps/") || window.location.href.includes("/noc/") || window.location.href.includes("/ws/")) {
+<<<<<<< HEAD
+      const privacy = { 
+        uuid: checkpoint?.assignes?.[0]?.uuid, 
+        fieldName: "mobileNumber", 
+=======
       const privacy = {
         uuid: checkpoint?.assignes?.[0]?.uuid,
         fieldName: "mobileNumber",
+>>>>>>> master-LTS
         model: "User",
         showValue: false,
         loadData: {
@@ -135,6 +157,24 @@ function ApplicationDetailsContent({
             let resultstring = "";
             resultstring = `+91 ${_.get(res, `ProcessInstances[${index}].assignes[0].mobileNumber`)}`;
             return resultstring;
+<<<<<<< HEAD
+          }
+        },
+      };
+      const previousCheckpoint = timeline[index - 1];
+      const caption = {
+        date: checkpoint?.auditDetails?.lastModified,
+        name: checkpoint?.assignes?.[0]?.name,
+        mobileNumber: applicationData?.processInstance?.assignes?.[0]?.uuid === checkpoint?.assignes?.[0]?.uuid && applicationData?.processInstance?.assignes?.[0]?.mobileNumber 
+                     ? applicationData?.processInstance?.assignes?.[0]?.mobileNumber 
+                     : checkpoint?.assignes?.[0]?.mobileNumber,
+        comment: t(checkpoint?.comment),
+        wfComment: previousCheckpoint ? previousCheckpoint.wfComment : [],
+        thumbnailsToShow: checkpoint?.thumbnailsToShow,
+      };
+      
+  
+=======
           },
         },
       };
@@ -152,8 +192,10 @@ function ApplicationDetailsContent({
         thumbnailsToShow: checkpoint?.thumbnailsToShow,
       };
 
+>>>>>>> master-LTS
       return <TLCaption data={caption} OpenImage={OpenImage} privacy={privacy} />;
     } else {
+  
       const caption = {
         date: convertEpochToDateDMY(applicationData?.auditDetails?.lastModifiedTime),
         name: checkpoint?.assignes?.[0]?.name,
@@ -161,8 +203,13 @@ function ApplicationDetailsContent({
         mobileNumber: checkpoint?.assignes?.[0]?.mobileNumber,
         thumbnailsToShow: checkpoint?.thumbnailsToShow,
       };
+<<<<<<< HEAD
+      
+      return <TLCaption data={caption} />;
+=======
 
       return <TLCaption data={caption} OpenImage={OpenImage} />;
+>>>>>>> master-LTS
     }
   };
 
@@ -241,16 +288,29 @@ function ApplicationDetailsContent({
     } else {
       return "WS_CLICK_ON_INFO_LABEL";
     }
+<<<<<<< HEAD
+  }
+  
+  const [showAllTimeline, setShowAllTimeline]=useState(false);
+=======
   };
 
 
   const [showAllTimeline, setShowAllTimeline] = useState(false);
+>>>>>>> master-LTS
   const getClickInfoDetails1 = () => {
     if (window.location.href.includes("disconnection") || window.location.href.includes("application")) {
       return "WS_DISCONNECTION_CLICK_ON_INFO1_LABEL";
     } else {
       return "";
     }
+<<<<<<< HEAD
+  }
+  const toggleTimeline=()=>{
+    setShowAllTimeline((prev)=>!prev);
+  }
+  // console.log("applicationDetails?.applicationDetails",applicationDetails?.applicationDetails)
+=======
   };
   const toggleTimeline = () => {
     setShowAllTimeline((prev) => !prev);
@@ -286,6 +346,7 @@ function ApplicationDetailsContent({
   };
 
 
+>>>>>>> master-LTS
   return (
     <Card style={{ position: "relative" }} className={"employeeCard-override"}>
       {/* For UM-4418 changes */}
@@ -318,7 +379,7 @@ function ApplicationDetailsContent({
                   {detail?.Component ? <detail.Component /> : null}
                 </CardSectionHeader>
               </React.Fragment>
-            )}
+            )}           
             {/* TODO, Later will move to classes */}
             {/* Here Render the table for adjustment amount details detail.isTable is true for that table*/}
 
@@ -434,9 +495,36 @@ function ApplicationDetailsContent({
                         textStyle={{ wordBreak: "break-all" }}
                       />
                     );
-                  }
+                  }                 
                   return (
                     <div>
+<<<<<<< HEAD
+                      {window.location.href.includes("modify") ?  (
+                      <Row
+                        className="border-none"
+                        key={`${value.title}`}
+                        label={`${t(`${value.title}`)}`}
+                        privacy={value?.privacy}
+                        text={value?.oldValue ? value?.oldValue : value?.value ? value?.value : ""}
+                        labelStyle={{wordBreak: "break-all"}}
+                        textStyle={{wordBreak: "break-all"}}
+                      /> ) : (<Row
+                        key={t(value.title)}
+                        label={t(value.title)}
+                        text={getTextValue(value)}
+                        last={index === detail?.values?.length - 1}
+                        caption={value.caption}
+                        className="border-none"
+                        /* privacy object set to the Row Component */
+                        privacy={value?.privacy}
+                        // TODO, Later will move to classes
+                        rowContainerStyle={getRowStyles()}
+                        labelStyle={{wordBreak: "break-all"}}
+                        textStyle={{wordBreak: "break-all"}}
+                      />
+                    )}
+                    {value.title === "PT_TOTAL_DUES"? <ArrearSummary bill={fetchBillData.Bill?.[0]} />:""}
+=======
                       {window.location.href.includes("modify") ? (
                         <Row
                           className="border-none"
@@ -474,6 +562,7 @@ function ApplicationDetailsContent({
                         />
                       )}
                       {value.title === "PT_TOTAL_DUES" ? <ArrearSummary bill={fetchBillData.Bill?.[0]} /> : ""}
+>>>>>>> master-LTS
                     </div>
                   );
                 })}
@@ -555,6 +644,53 @@ function ApplicationDetailsContent({
           {!workflowDetails?.isLoading && !isDataLoading && (
             <Fragment>
               <div id="timeline">
+<<<<<<< HEAD
+              <CardSectionHeader style={{ marginBottom: "16px", marginTop: "32px" }}>
+                {t("ES_APPLICATION_DETAILS_APPLICATION_TIMELINE")}
+              </CardSectionHeader>
+              {workflowDetails?.data?.timeline && workflowDetails?.data?.timeline?.length === 1 ? (
+                <CheckPoint
+                  isCompleted={true}
+                   label={t(`${timelineStatusPrefix}${workflowDetails?.data?.timeline[0]?.state}`)}
+                   customChild={getTimelineCaptions(workflowDetails?.data?.timeline[0],workflowDetails?.data?.timeline)}
+                />
+              ) : (
+                <ConnectingCheckPoints>
+                  {workflowDetails?.data?.timeline &&
+                    workflowDetails?.data?.timeline.slice(0,showAllTimeline? workflowDetails?.data.timeline.length:2).map((checkpoint, index, arr) => {
+                      let timelineStatusPostfix = "";
+                      if (window.location.href.includes("/obps/")) {
+                        if(workflowDetails?.data?.timeline[index-1]?.state?.includes("BACK_FROM") || workflowDetails?.data?.timeline[index-1]?.state?.includes("SEND_TO_CITIZEN"))
+                        timelineStatusPostfix = `_NOT_DONE`
+                        else if(checkpoint?.performedAction === "SEND_TO_ARCHITECT")
+                        timelineStatusPostfix = `_BY_ARCHITECT_DONE`
+                        else
+                        timelineStatusPostfix = index == 0 ? "" : `_DONE`;
+                      }
+                      
+                      return (
+                        <React.Fragment key={index}>
+                          <CheckPoint
+                            keyValue={index}
+                            isCompleted={index === 0}
+                            info={checkpoint.comment}
+                            label={t(
+                              `${timelineStatusPrefix}${
+                                checkpoint?.performedAction === "REOPEN" ? checkpoint?.performedAction : checkpoint?.[statusAttribute]
+                              }${timelineStatusPostfix}`
+                            )}
+                            customChild={getTimelineCaptions(checkpoint,index,workflowDetails?.data?.timeline)}
+                          />
+                        </React.Fragment>
+                      );
+                    })}
+                </ConnectingCheckPoints>
+              )}
+              {workflowDetails?.data?.timeline?.length > 2 && (
+                <LinkButton label={showAllTimeline? t("COLLAPSE") : t("VIEW_TIMELINE")} onClick={toggleTimeline}>
+                </LinkButton>   
+              )} 
+=======
                 <CardSectionHeader style={{ marginBottom: "16px", marginTop: "32px" }}>
                   {t("ES_APPLICATION_DETAILS_APPLICATION_TIMELINE")}
                 </CardSectionHeader>
@@ -602,6 +738,7 @@ function ApplicationDetailsContent({
                 {workflowDetails?.data?.timeline?.length > 2 && (
                   <LinkButton label={showAllTimeline ? t("COLLAPSE") : t("VIEW_TIMELINE")} onClick={toggleTimeline}></LinkButton>
                 )}
+>>>>>>> master-LTS
               </div>
             </Fragment>
           )}

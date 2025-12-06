@@ -1,3 +1,5 @@
+<<<<<<< HEAD
+=======
 /**
  * PTRDocument Component
  * 
@@ -26,6 +28,7 @@
  * - Basic inline styling for spacing, padding, and colors.
  */
 
+>>>>>>> master-LTS
 import { Loader } from "@upyog/digit-ui-react-components";
 import React from "react";
 import { useTranslation } from "react-i18next";

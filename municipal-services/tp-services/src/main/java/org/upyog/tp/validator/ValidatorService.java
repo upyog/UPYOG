@@ -1,7 +1,13 @@
 package org.upyog.tp.validator;
+<<<<<<< HEAD
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ValidationException;
+import jakarta.validation.Validator;
+=======
 import javax.validation.ConstraintViolation;
 import javax.validation.ValidationException;
 import javax.validation.Validator;
+>>>>>>> master-LTS
 import java.util.Set;
 import java.util.stream.Collectors;
 

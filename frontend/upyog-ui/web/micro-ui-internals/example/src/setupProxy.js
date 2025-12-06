@@ -67,6 +67,8 @@ module.exports = function (app) {
     "/pet-services/pet-registration/_create",
     "/pet-services/pet-registration/_search",
     "/pet-services/pet-registration/_update",
+<<<<<<< HEAD
+=======
     "/sv-services/street-vending/_create",
     "/sv-services/street-vending/_search",
     "/sv-services/street-vending/_update",
@@ -119,6 +121,7 @@ module.exports = function (app) {
     "/individual/v1/_search",
     "/bpa-services/v1/preapprovedplan/_search",
     "/bpa-calculator/_estimate"
+>>>>>>> master-LTS
   ].forEach((location) => app.use(location, createProxy));
   ["/pb-egov-assets"].forEach((location) => app.use(location, assetsProxy));
 };

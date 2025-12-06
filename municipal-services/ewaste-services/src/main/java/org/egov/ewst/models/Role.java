@@ -13,7 +13,11 @@ import lombok.Builder;
  * Role
  */
 @Validated
+<<<<<<< HEAD
+@jakarta.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2023-08-20T09:30:27.617+05:30")
+=======
 @javax.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2023-08-20T09:30:27.617+05:30")
+>>>>>>> master-LTS
 
 @Getter
 @Setter

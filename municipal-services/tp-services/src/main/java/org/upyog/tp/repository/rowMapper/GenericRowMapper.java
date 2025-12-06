@@ -89,7 +89,11 @@ public class GenericRowMapper<T> implements ResultSetExtractor<List<T>> {
                         documentDetails.add(documentDetail);
                         bookingDetail.setDocumentDetails(documentDetails);
                     }
+<<<<<<< HEAD
+
+=======
                     
+>>>>>>> master-LTS
                     /*
                      * Extract applicant and address details only when isUserProfileEnabled=false.
                      * When user profile is disabled, booking needs complete applicant and address info
@@ -101,7 +105,11 @@ public class GenericRowMapper<T> implements ResultSetExtractor<List<T>> {
                         bookingDetail.setApplicantDetail(applicantDetail);
                         bookingDetail.getApplicantDetail().setAuditDetails(auditDetails);
                     }
+<<<<<<< HEAD
+
+=======
                     
+>>>>>>> master-LTS
                     Address address = extractAddressDetails(tp);
                     if (address != null) {
                         bookingDetail.setAddress(address);
@@ -173,7 +181,11 @@ public class GenericRowMapper<T> implements ResultSetExtractor<List<T>> {
                 .auditDetails(bookingDetail.getAuditDetails())
                 .build();
     }
+<<<<<<< HEAD
+
+=======
     
+>>>>>>> master-LTS
     /**
      * Extracts applicant details from the ResultSet.
      * Returns null if no applicant details are available.
@@ -187,7 +199,11 @@ public class GenericRowMapper<T> implements ResultSetExtractor<List<T>> {
             if (applicantId == null) {
                 return null; // No applicant details available
             }
+<<<<<<< HEAD
+
+=======
             
+>>>>>>> master-LTS
             ApplicantDetail applicantDetail = new ApplicantDetail();
             applicantDetail.setApplicantId(applicantId);
             applicantDetail.setName(tp.getString("name"));
@@ -201,7 +217,11 @@ public class GenericRowMapper<T> implements ResultSetExtractor<List<T>> {
             return null;
         }
     }
+<<<<<<< HEAD
+
+=======
     
+>>>>>>> master-LTS
     /**
      * Extracts address details from the ResultSet.
      * Returns null if no address details are available.

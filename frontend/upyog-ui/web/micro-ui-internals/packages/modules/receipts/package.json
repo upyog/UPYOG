@@ -1,6 +1,10 @@
 {
   "name": "@upyog/digit-ui-module-receipts",
+<<<<<<< HEAD
+  "version": "1.8.0",
+=======
   "version": "3.0.1",
+>>>>>>> master-LTS
   "description": "RECEIPTS",
   "license": "MIT",
   "main": "dist/index.js",
@@ -15,7 +19,11 @@
     "prepublish": "yarn build"
   },
   "dependencies": {
+<<<<<<< HEAD
+    "@upyog/digit-ui-react-components": "1.8.0",
+=======
     "@upyog/digit-ui-react-components": "3.10.0",
+>>>>>>> master-LTS
     "microbundle-crl": "^0.13.11",
     "react": "17.0.2",
     "react-dom": "17.0.2",

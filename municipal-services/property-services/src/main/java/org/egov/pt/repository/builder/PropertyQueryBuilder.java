@@ -209,6 +209,7 @@ public class PropertyQueryBuilder {
 				&& null == criteria.getName()
 				&& null == criteria.getDoorNo()
 				&& null == criteria.getOldPropertyId()
+				&& null == criteria.getLocality()
 				&& (null == criteria.getFromDate() && null == criteria.getToDate())
 				&& CollectionUtils.isEmpty(criteria.getCreationReason());
 
@@ -361,6 +362,9 @@ public class PropertyQueryBuilder {
 
 
 		String withClauseQuery = WITH_CLAUSE_QUERY.replace(REPLACE_STRING, builder);
+		log.info("Query is: " +withClauseQuery);
+		log.info("Parameters are: " +preparedStmtList);
+
 		if (onlyIds || criteria.getIsRequestForCount())
 			return builder.toString();
 		else

@@ -1,3 +1,5 @@
+<<<<<<< HEAD
+=======
 /**
  * @file PetCaption.js
  * @description Displays pet-related details including date, name, contact, source, and comments.
@@ -16,6 +18,7 @@
  *    - `otherComment`: Additional comment.
  */
 
+>>>>>>> master-LTS
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { TelePhone } from "@upyog/digit-ui-react-components";

@@ -223,7 +223,11 @@ const property = sessionStorage.getItem("Digit_FSM_PT")
           <div>
             <LabelFieldPair>
               <CardLabel className="card-label-smaller">
+<<<<<<< HEAD
+                {`${t("CS_CREATECOMPLAINT_MOHALLA")} *`}
+=======
                 {`${t("CS_CREATECOMPLAINT_MOHALLA")}`}<span className="check-page-link-button"> *</span>
+>>>>>>> master-LTS
                 {/* {config.isMandatory ? " * " : null} */}
               </CardLabel>
               <Dropdown
@@ -245,7 +249,11 @@ const property = sessionStorage.getItem("Digit_FSM_PT")
                 <LabelFieldPair>
                   <CardLabel className="card-label-smaller">{`${t(
                     "ES_INBOX_PLEASE_SPECIFY_LOCALITY"
+<<<<<<< HEAD
+                  )} *`}</CardLabel>
+=======
                   )}`}<span className="check-page-link-button"> *</span></CardLabel>
+>>>>>>> master-LTS
                   <div className="field">
                     <TextInput
                       id="newLocality"
@@ -259,7 +267,11 @@ const property = sessionStorage.getItem("Digit_FSM_PT")
           </div>
         ) : (
           <LabelFieldPair>
+<<<<<<< HEAD
+            <CardLabel>{`${t("CS_PROPERTY_LOCATION")} *`}</CardLabel>
+=======
             <CardLabel>{`${t("CS_PROPERTY_LOCATION")}`}<span className="check-page-link-button"> *</span></CardLabel>
+>>>>>>> master-LTS
             <div className="field">
               <RadioButtons
                 selectedOption={selectLocation}
@@ -287,7 +299,11 @@ const property = sessionStorage.getItem("Digit_FSM_PT")
       >
         {isUrcEnable && (
           <>
+<<<<<<< HEAD
+            <CardLabel>{`${t("CS_PROPERTY_LOCATION")} *`}</CardLabel>
+=======
             <CardLabel>{`${t("CS_PROPERTY_LOCATION")}`}<span className="check-page-link-button"> *</span></CardLabel>
+>>>>>>> master-LTS
             <RadioOrSelect
               isMandatory={config.isMandatory}
               options={inputs}
@@ -302,7 +318,11 @@ const property = sessionStorage.getItem("Digit_FSM_PT")
             />
           </>
         )}
+<<<<<<< HEAD
+        <CardLabel>{`${t("MYCITY_CODE_LABEL")} *`}</CardLabel>
+=======
         <CardLabel>{`${t("MYCITY_CODE_LABEL")}`}<span className="check-page-link-button"> *</span></CardLabel>
+>>>>>>> master-LTS
         <RadioOrSelect
           options={cities?.sort((a, b) => a.name.localeCompare(b.name))}
           selectedOption={cities?.length === 1 ? cities[0] : selectedCity}

@@ -4,11 +4,17 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyMap;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.egov.collection.model.Payment;
 
@@ -99,8 +105,21 @@ class NotificationConsumerTest {
 
     @Test
     void testListen5() throws IllegalArgumentException, RestClientException {
-        when(this.restTemplate.postForObject((String) any(), (Object) any(), (Class<Map<Object, Object>>) any(),
-                (Object[]) any())).thenReturn(new HashMap<>());
+        // Build the expected MDMS response structure
+        Map<String, Object> mdmsRes = new HashMap<>();
+        Map<String, Object> billingService = new HashMap<>();
+        List<String> businessServiceList = new ArrayList<>();
+        businessServiceList.add("AdhocService"); // Add a dummy business service code
+        billingService.put("BusinessService", businessServiceList);
+        Map<String, Object> mdmsResRoot = new HashMap<>();
+        mdmsResRoot.put("BillingService", billingService);
+        mdmsRes.put("MdmsRes", mdmsResRoot);
+
+        when(this.restTemplate.postForObject(
+                anyString(),
+                any(),
+                eq(Map.class)
+        )).thenReturn(mdmsRes);
 
         Payment payment = new Payment();
         payment.setTenantId("42");
@@ -108,8 +127,7 @@ class NotificationConsumerTest {
 
         when(this.objectMapper.convertValue((Object) any(), (Class<Object>) any())).thenReturn(paymentRequest);
         this.notificationConsumer.listen(new HashMap<>(), "Topic");
-        verify(this.restTemplate).postForObject((String) any(), (Object) any(), (Class<Map<Object, Object>>) any(),
-                (Object[]) any());
+        verify(this.restTemplate).postForObject(anyString(), any(), eq(Map.class));
         verify(this.objectMapper).convertValue((Object) any(), (Class<Object>) any());
     }
 }

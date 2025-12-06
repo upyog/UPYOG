@@ -18,7 +18,11 @@ export const DigiLockerService = {
       method: "POST",
       auth: true,
       userService: true,
+<<<<<<< HEAD
+      params: {module:"REGISTER" },
+=======
       params: {module:"SSO" },
+>>>>>>> master-LTS
     }),
     token: ( data ) =>
     Request({
@@ -29,6 +33,8 @@ export const DigiLockerService = {
       userService: true,
       data:data,
     }),
+<<<<<<< HEAD
+=======
     oauth: ( data ) =>
     Request({
       url: Urls.digiLocker.oauth,
@@ -39,6 +45,7 @@ export const DigiLockerService = {
       //params:{tenantId:"pg"},
       data:{User:data},
     }),
+>>>>>>> master-LTS
     issueDoc: ( data ) =>
     Request({
       url: Urls.digiLocker.issueDoc,
@@ -57,6 +64,9 @@ export const DigiLockerService = {
       userService: true,
       data:data
       
+<<<<<<< HEAD
+    })
+=======
     }),
     pdfUrl:(data) =>
       Request({
@@ -76,6 +86,7 @@ export const DigiLockerService = {
         userService: true,
         data:{module:data?.TokenReq?.module,consumerCode:data?.TokenReq?.consumerCode}
       })
+>>>>>>> master-LTS
 };
 
 

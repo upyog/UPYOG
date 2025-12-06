@@ -3,7 +3,7 @@ package org.egov.demand.web.contract;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 
 import org.egov.demand.model.AuditDetail;
 import org.egov.demand.model.BillV2;

@@ -13,7 +13,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.*;
 import org.springframework.stereotype.Repository;
 
-import javax.annotation.*;
+import jakarta.annotation.PostConstruct;
+
 import java.util.*;
 import java.util.stream.Collectors;
 

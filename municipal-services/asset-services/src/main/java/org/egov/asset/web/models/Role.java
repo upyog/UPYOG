@@ -10,7 +10,11 @@ import java.time.LocalDate;
  * Role
  */
 @Validated
+<<<<<<< HEAD
+@jakarta.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2024-04-12T12:56:34.514+05:30")
+=======
 @javax.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2024-04-12T12:56:34.514+05:30")
+>>>>>>> master-LTS
 
 @Getter
 @Setter

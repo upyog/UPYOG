@@ -66,7 +66,11 @@ public class CommunityHallBookingApplication {
 				.findAndRegisterModules();
 	}
 
+<<<<<<< HEAD
+	@Bean
+=======
 	@Autowired
+>>>>>>> master-LTS
 	public MappingJackson2HttpMessageConverter jacksonConverter(ObjectMapper objectMapper) {
 		MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
 		converter.setObjectMapper(objectMapper);

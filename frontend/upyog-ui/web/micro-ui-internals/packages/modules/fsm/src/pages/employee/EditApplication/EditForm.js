@@ -473,7 +473,10 @@ const EditForm = ({ tenantId, applicationData, channelMenu, vehicleMenu, sanitat
           },
           "type": "component",
           "key": "pitDetail",
+<<<<<<< HEAD
+=======
           "isMandatory":true,
+>>>>>>> master-LTS
           "nextStep": "select-payment-preference",
           "label": "ES_NEW_APPLICATION_PIT_DIMENSION"
         },

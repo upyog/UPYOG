@@ -69,6 +69,9 @@ module.exports = function (app) {
     "/pet-services/pet-registration/_create",
     "/pet-services/pet-registration/_search",
     "/pet-services/pet-registration/_update",
+<<<<<<< HEAD
+    "/requester-services-dx",
+=======
     "/sv-services/street-vending/_create",
     "/sv-services/street-vending/_search",
     "/sv-services/street-vending/_update",
@@ -120,6 +123,7 @@ module.exports = function (app) {
     "/pgr-ai-services/v1/request/_update",
     "/individual/v1/_search"
     
+>>>>>>> master-LTS
   ].forEach((location) => app.use(location, createProxy));
   ["/pb-egov-assets"].forEach((location) => app.use(location, assetsProxy));
 };

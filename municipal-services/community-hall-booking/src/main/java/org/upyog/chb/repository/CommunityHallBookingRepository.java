@@ -2,7 +2,11 @@ package org.upyog.chb.repository;
 
 import java.util.List;
 
+<<<<<<< HEAD
+import jakarta.validation.Valid;
+=======
 import javax.validation.Valid;
+>>>>>>> master-LTS
 
 import org.egov.common.contract.request.RequestInfo;
 import org.upyog.chb.web.models.BookingPaymentTimerDetails;

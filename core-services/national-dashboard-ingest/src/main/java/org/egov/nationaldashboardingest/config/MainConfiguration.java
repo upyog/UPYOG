@@ -2,6 +2,9 @@ package org.egov.nationaldashboardingest.config;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import jakarta.annotation.PostConstruct;
+
 import org.egov.tracer.config.TracerConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -9,7 +12,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 
-import javax.annotation.PostConstruct;
 import java.util.TimeZone;
 
 @Import({TracerConfiguration.class})

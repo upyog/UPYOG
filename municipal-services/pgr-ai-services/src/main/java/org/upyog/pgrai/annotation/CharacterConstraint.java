@@ -1,7 +1,12 @@
 package org.upyog.pgrai.annotation;
 
+<<<<<<< HEAD
+import jakarta.validation.Constraint;
+import jakarta.validation.Payload;
+=======
 import javax.validation.Constraint;
 import javax.validation.Payload;
+>>>>>>> master-LTS
 import java.lang.annotation.*;
 
 /**

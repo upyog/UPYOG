@@ -1,3 +1,5 @@
+<<<<<<< HEAD
+=======
 /**
  * @file Inbox.js
  * @description This component renders the Inbox view for both desktop and mobile screens. 
@@ -34,6 +36,7 @@
  * />
  */
 
+>>>>>>> master-LTS
 import React, { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Header } from "@upyog/digit-ui-react-components";

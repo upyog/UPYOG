@@ -2,12 +2,20 @@ package org.upyog.adv.web.controllers;
 
 import java.util.List;
 
+<<<<<<< HEAD
+import jakarta.validation.Valid;
+=======
 import javax.validation.Valid;
+>>>>>>> master-LTS
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+<<<<<<< HEAD
+import org.springframework.web.bind.annotation.RestController;
+=======
+>>>>>>> master-LTS
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -31,6 +39,17 @@ import org.upyog.adv.web.models.ResponseInfo;
 import org.upyog.adv.web.models.ResponseInfo.StatusEnum;
 import org.upyog.adv.web.models.SlotSearchRequest;
 import org.upyog.adv.web.models.billing.Demand;
+<<<<<<< HEAD
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import digit.models.coremodels.RequestInfoWrapper;
+import lombok.extern.slf4j.Slf4j;
+
+@jakarta.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2024-10-15T13:40:01.245+05:30")
+
+@RestController
+@Tag(name = "Advertisement Controller", description = "Operations related to Advertisement Booking")
+=======
 
 import digit.models.coremodels.RequestInfoWrapper;
 import io.swagger.annotations.Api;
@@ -41,6 +60,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Controller
 @Api(value = "Advertisement Controller", description = "Operations related to Advertisement Booking")
+>>>>>>> master-LTS
 @RequestMapping("/booking")
 @Slf4j
 public class AdvertisementServiceApiController {
@@ -58,9 +78,16 @@ public class AdvertisementServiceApiController {
 	
 	
 
+<<<<<<< HEAD
+	@Operation(summary = "Create Advertisement Booking", description = "Creates a new advertisement booking with all the required details")
+	@RequestMapping(value = "/v1/_create", method = RequestMethod.POST)
+	public ResponseEntity<AdvertisementResponse> createBooking(
+			@Valid @RequestBody BookingRequest bookingRequest) {
+=======
 	@RequestMapping(value = "/v1/_create", method = RequestMethod.POST)
 	public ResponseEntity<AdvertisementResponse> createBooking(
 			@ApiParam(value = "Details for theadvertisement booking time, payment and documents", required = true) @Valid @RequestBody BookingRequest bookingRequest) {
+>>>>>>> master-LTS
 		log.info("bookingRequest : {}" , bookingRequest);
 		log.info("bookingRequest.isDraftApplication() {} ", bookingRequest.isDraftApplication());
 		validationService.validateRequest(bookingRequest);
@@ -78,6 +105,10 @@ public class AdvertisementServiceApiController {
 		return new ResponseEntity<AdvertisementResponse>(response, HttpStatus.OK);
 	}
 	
+<<<<<<< HEAD
+	@Operation(summary = "Search Advertisement Bookings", description = "Searches for bookings based on parameters like application number, status, booking dates, and applicant details")
+=======
+>>>>>>> master-LTS
 	@RequestMapping(value = "/v1/_search", method = RequestMethod.POST)
 	public ResponseEntity<AdvertisementResponse> v1SearchAdvertisement(@Valid @RequestBody RequestInfoWrapper requestInfoWrapper,
 	        @Valid @ModelAttribute AdvertisementSearchCriteria criteria) {
@@ -100,6 +131,10 @@ public class AdvertisementServiceApiController {
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 
+<<<<<<< HEAD
+	@Operation(summary = "Search Available Slots", description = "Returns available slots for selected holdings based on location, date, and duration")
+=======
+>>>>>>> master-LTS
 	@RequestMapping(value = "/v1/_slot-search", method = RequestMethod.POST)
 	public ResponseEntity<AdvertisementSlotAvailabilityResponse> v1GetAdvertisementSlotAvailablity(
 			@Valid @RequestBody SlotSearchRequest slotSearchRequest) {
@@ -125,9 +160,15 @@ public class AdvertisementServiceApiController {
 
 
 	
+<<<<<<< HEAD
+	 @Operation(summary = "Update Advertisement Booking", description = "Updates an existing advertisement booking with modified information")
+	 @RequestMapping(value = "/v1/_update", method = RequestMethod.POST)
+	    public ResponseEntity<AdvertisementResponse> v1UpdateAdvertisementBooking(
+=======
 	 @RequestMapping(value = "/v1/_update", method = RequestMethod.POST)
 	    public ResponseEntity<AdvertisementResponse> v1UpdateAdvertisementBooking(
 	            @ApiParam(value = "Details for the new (s) + RequestInfo meta data.", required = true) 
+>>>>>>> master-LTS
 	            @Valid @RequestBody BookingRequest advertisementBookingRequest) {
 	        
 	        /**
@@ -149,9 +190,16 @@ public class AdvertisementServiceApiController {
 	 
 	 //This calculates the estimate amount to be paid for the advetisement booking :
 	 // Gets the demand 
+<<<<<<< HEAD
+	 @Operation(summary = "Get Cost Estimate", description = "Generates a cost estimate for the selected advertisement slot before booking")
+	 @RequestMapping(value = "/v1/_estimate", method = RequestMethod.POST)
+		public ResponseEntity<AdvertisementDemandEstimationResponse> v1GetEstimateDemand(
+				@Valid @RequestBody AdvertisementDemandEstimationCriteria estimationCriteria) {
+=======
 	 @RequestMapping(value = "/v1/_estimate", method = RequestMethod.POST)
 		public ResponseEntity<AdvertisementDemandEstimationResponse> v1GetEstimateDemand(
 				@ApiParam(value = "Details for the advertisement booking for demand estimation", required = true) @Valid @RequestBody AdvertisementDemandEstimationCriteria estimationCriteria) {
+>>>>>>> master-LTS
 			List<Demand> demands = demandService.getDemand(estimationCriteria);
 			ResponseInfo info = BookingUtil.createReponseInfo(estimationCriteria.getRequestInfo(), BookingConstants.ADVERTISEMENT_DEMAND_ESTIMATION,
 					StatusEnum.SUCCESSFUL);
@@ -161,11 +209,19 @@ public class AdvertisementServiceApiController {
 			return new ResponseEntity<>(response, HttpStatus.OK);
 		}
 	 
+<<<<<<< HEAD
+	 @Operation(summary = "Delete Draft", description = "Deletes a draft advertisement booking")
+	 @RequestMapping(value = "/_deletedraft", method = RequestMethod.POST)
+		public ResponseEntity<AdvertisementResponse> advertisementDeleteDraft(
+				@RequestBody RequestInfoWrapper requestInfoWrapper,
+                @RequestParam(value = "draftId", required = true) String draftId) {
+=======
 	 @RequestMapping(value = "/_deletedraft", method = RequestMethod.POST)
 		public ResponseEntity<AdvertisementResponse> advertisementDeleteDraft(
 				@ApiParam(value = "Details for draft deletion + RequestInfo meta data.", required = true) 
 				@RequestBody RequestInfoWrapper requestInfoWrapper,
 				@RequestParam(value = "draftId", required = true) String draftId) {
+>>>>>>> master-LTS
 			String draftDiscardResponse = bookingService.deleteAdvertisementDraft(draftId);
 			ResponseInfo responseInfo = BookingUtil.createReponseInfo(requestInfoWrapper.getRequestInfo(),
 					draftDiscardResponse, StatusEnum.SUCCESSFUL);

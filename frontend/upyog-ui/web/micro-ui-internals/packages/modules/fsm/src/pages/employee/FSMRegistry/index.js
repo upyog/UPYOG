@@ -98,13 +98,17 @@ const FSMRegistry = () => {
     {
       vehicleIds: vehicleIds,
       driverIds: driverIds,
-      status: "ACTIVE",
+      // status: "ACTIVE",
     },
     { enabled: false },
     t
   );
+<<<<<<< HEAD
+  const inboxTotalCount = dsoData?.totalCount || 50;
+=======
   
   const inboxTotalCount = dsoData?.TotalCount || dsoData?.totalCount ;
+>>>>>>> master-LTS
 
   useEffect(() => {
     refetch();
@@ -112,14 +116,24 @@ const FSMRegistry = () => {
 
   useEffect(() => {
     setPageOffset(0);
+<<<<<<< HEAD
     refetch();
   }, [searchParams]);
 
   useEffect(() => {
+=======
+>>>>>>> master-LTS
+    refetch();
+  }, [searchParams]);
+
+  useEffect(() => {
+<<<<<<< HEAD
+=======
     refetch();
   }, [sortParams, pageOffset, pageSize]);
 
   useEffect(() => {
+>>>>>>> master-LTS
     if (dsoData?.vehicle && selectedTabs === "VEHICLE") {
       let vehicleIds = "";
       dsoData.vehicle.map((data) => {
@@ -136,6 +150,8 @@ const FSMRegistry = () => {
       setDriverIds(driverIds);
       setTableData(dsoData?.driver);
     }
+<<<<<<< HEAD
+=======
     // if (dsoData?.driver && selectedTabs === "WORKER") {
     //   let driverIds = "";
     //   dsoData.Individual.map((data) => {
@@ -144,6 +160,7 @@ const FSMRegistry = () => {
     //   setDriverIds(driverIds);
     //   setTableData(dsoData?.driver);
     // }
+>>>>>>> master-LTS
     if (dsoData?.vendor && selectedTabs === "VENDOR") {
       const tableData = dsoData.vendor.map((dso) => ({
         mobileNumber: dso.owner?.mobileNumber,

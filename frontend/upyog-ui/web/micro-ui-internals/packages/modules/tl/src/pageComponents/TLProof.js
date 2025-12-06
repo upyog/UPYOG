@@ -1,15 +1,27 @@
 import React, { useState, useEffect } from "react";
+<<<<<<< HEAD
+import { FormStep, UploadFile, CardLabelDesc, Dropdown, CardLabel } from "@upyog/digit-ui-react-components";
+import { stringReplaceAll } from "../utils";
+import Timeline from "../components/TLTimeline";
+
+const TLProof = ({ t, config, onSelect, userType, formData }) => {
+=======
 import { UploadFile, CardLabelDesc, Dropdown, CardLabel, FormStep } from "@upyog/digit-ui-react-components";
 import { stringReplaceAll } from "../utils";
 import Timeline from "../components/TLTimeline";
 
 const TLProof = ({ t, config, onSelect, userType, formData, isMandatory }) => {
+>>>>>>> master-LTS
   //let index = window.location.href.charAt(window.location.href.length - 1);
   const [uploadedFile, setUploadedFile] = useState(formData?.owners?.documents?.OwnerPhotoProof?.fileStoreId || null);
   const [file, setFile] = useState(formData?.owners?.documents?.OwnerPhotoProof);
   const [error, setError] = useState(null);
   const cityDetails = Digit.ULBService.getCurrentUlb();
+<<<<<<< HEAD
+  let acceptFormat = ".jpg,.png,.pdf,.jpeg";
+=======
   let acceptFormat = ".jpg,.png,.jpeg";
+>>>>>>> master-LTS
 
   const [dropdownValue, setDropdownValue] = useState(formData?.owners?.documents?.OwnerPhotoProof?.documentType || null);
   // let dropdownData = [];
@@ -78,10 +90,17 @@ const TLProof = ({ t, config, onSelect, userType, formData, isMandatory }) => {
   return (
     <React.Fragment>
       {window.location.href.includes("/citizen") ? <Timeline currentStep={3} /> : null}
+<<<<<<< HEAD
+      <FormStep config={config} onSelect={handleSubmit} onSkip={onSkip} t={t} isDisabled={!uploadedFile || error}>
+        <CardLabelDesc style={{ fontWeight: "unset" }}>{t(`TL_UPLOAD_PHOTO_RESTRICTIONS_TYPES`)}</CardLabelDesc>
+        <CardLabelDesc style={{ fontWeight: "unset" }}>{t(`TL_UPLOAD_RESTRICTIONS_SIZE`)}</CardLabelDesc>
+        <CardLabel>{`${t("TL_CATEGORY_DOCUMENT_TYPE")}`}</CardLabel>
+=======
       <FormStep config={config} onSelect={handleSubmit} onSkip={onSkip} t={t} isDisabled={!uploadedFile || error} isMandatory={isMandatory}>
         <CardLabelDesc style={{ fontWeight: "unset" }}>{t(`TL_UPLOAD_PHOTO_RESTRICTIONS_TYPES`)}</CardLabelDesc>
         <CardLabelDesc style={{ fontWeight: "unset" }}>{t(`TL_UPLOAD_PHOTO_RESTRICTIONS_SIZE`)}</CardLabelDesc>
         <CardLabel>{`${t("TL_CATEGORY_DOCUMENT_TYPE")}`}<span className="check-page-link-button"> *</span></CardLabel>
+>>>>>>> master-LTS
         {/* <Dropdown
         t={t}
         isMandatory={false}
@@ -94,7 +113,11 @@ const TLProof = ({ t, config, onSelect, userType, formData, isMandatory }) => {
         <UploadFile
           id={"tl-doc"}
           extraStyleName={"propertyCreate"}
+<<<<<<< HEAD
+          accept=".jpg,.png,.pdf,.jpeg"
+=======
           accept=".jpg,.png,.jpeg"
+>>>>>>> master-LTS
           onUpload={selectfile}
           onDelete={() => {
             setUploadedFile(null);

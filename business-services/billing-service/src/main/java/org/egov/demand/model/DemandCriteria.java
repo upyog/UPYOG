@@ -42,7 +42,7 @@ package org.egov.demand.model;
 import java.math.BigDecimal;
 import java.util.Set;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 
 import org.egov.demand.model.enums.Type;
 

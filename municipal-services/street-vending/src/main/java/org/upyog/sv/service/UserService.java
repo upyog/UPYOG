@@ -156,10 +156,29 @@ public class UserService {
 		}
 	}
 
+<<<<<<< HEAD
+	/**
+	 * provides a user search request with basic mandatory parameters
+	 * 
+	 * @param tenantId
+	 * @param requestInfo
+	 * @return
+	 */
+	public UserSearchRequest getBaseUserSearchRequest(String tenantId, RequestInfo requestInfo) {
+
+		return UserSearchRequest.builder().requestInfo(requestInfo).userType(StreetVendingConstants.CITIZEN).tenantId(tenantId).active(true)
+				.build();
+	}
+
+	public UserDetailResponse searchByUserName(String userName, String tenantId) {
+		UserSearchRequest userSearchRequest = new UserSearchRequest();
+		userSearchRequest.setUserType(StreetVendingConstants.CITIZEN);
+=======
 
 	public UserDetailResponse searchByUserName(String userName, String tenantId) {
 		UserSearchRequest userSearchRequest = new UserSearchRequest();
 		userSearchRequest.setUserType(config.getInternalMicroserviceUserType());
+>>>>>>> master-LTS
 		userSearchRequest.setUserName(userName);
 		userSearchRequest.setTenantId(tenantId);
 		return getUser(userSearchRequest);

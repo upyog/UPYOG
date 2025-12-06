@@ -2,8 +2,11 @@ package org.egov.ptr.repository;
 
 import java.util.ArrayList;
 import java.util.List;
+<<<<<<< HEAD
+=======
 
 import lombok.extern.slf4j.Slf4j;
+>>>>>>> master-LTS
 import org.egov.ptr.models.PetApplicationSearchCriteria;
 import org.egov.ptr.models.PetRegistrationApplication;
 import org.egov.ptr.repository.builder.PetApplicationQueryBuilder;
@@ -12,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.SingleColumnRowMapper;
 import org.springframework.stereotype.Repository;
+import lombok.extern.slf4j.Slf4j;
 
 
 

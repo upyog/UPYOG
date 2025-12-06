@@ -43,7 +43,11 @@ export const convertEpochToDate = (dateEpoch) => {
     staleTime: Infinity,
     refetchOnWindowFocus: false,
   });
+<<<<<<< HEAD
+ 
+=======
   console.log("datatatataty",data)
+>>>>>>> master-LTS
 
   const { label } = Digit.Hooks.useApplicationsForBusinessServiceSearch({ businessService: business_service }, { enabled: false });
 
@@ -56,11 +60,14 @@ export const convertEpochToDate = (dateEpoch) => {
   //   { tenantId, consumerCode, businessService: business_service },
   //   { enabled: allowFetchBill, retry: false, staleTime: Infinity, refetchOnWindowFocus: false }
   // );
+<<<<<<< HEAD
+=======
   const mutation = Digit.Hooks.chb.useChbCreateAPI(tenantId, false);
   const AdvertisementCreateApi = Digit.Hooks.ads.useADSCreateAPI(tenantId, false);
   const waterTankerCreateApi = Digit.Hooks.wt.useTankerCreateAPI(tenantId,false); 
   const mobileToiletCreateApi = Digit.Hooks.wt.useMobileToiletCreateAPI(tenantId,false);
   const treePruningCreateApi =Digit.Hooks.wt.useTreePruningCreateAPI(tenantId,false);
+>>>>>>> master-LTS
   const newTenantId=business_service.includes("WS.ONE_TIME_FEE" || "SW.ONE_TIME_FEE")?Digit.ULBService.getStateId():tenantId;
   const { data: reciept_data, isLoading: recieptDataLoading } = Digit.Hooks.useRecieptSearch(
     {
@@ -130,7 +137,7 @@ export const convertEpochToDate = (dateEpoch) => {
             <Link to={(applicationNo && `/upyog-ui/citizen/payment/my-bills/${business_service}/${applicationNo}`) || "/upyog-ui/citizen"}>
               <SubmitBar label={t("CS_PAYMENT_TRY_AGAIN")} />
             </Link>
-            {/* {business_service?.includes("PT") &&<div style={{marginTop:"10px"}}><Link to={`/upyog-ui/citizen/feedback?redirectedFrom=${"digit-ui/citizen/payment/success"}&propertyId=${consumerCode? consumerCode : ""}&acknowldgementNumber=${egId ? egId : ""}&tenantId=${tenantId}&creationReason=${business_service?.split(".")?.[1]}`}>
+            {/* {business_service?.includes("PT") &&<div style={{marginTop:"10px"}}><Link to={`/upyog-ui/citizen/feedback?redirectedFrom=${"upyog-ui/citizen/payment/success"}&propertyId=${consumerCode? consumerCode : ""}&acknowldgementNumber=${egId ? egId : ""}&tenantId=${tenantId}&creationReason=${business_service?.split(".")?.[1]}`}>
               <SubmitBar label={t("CS_REVIEW_AND_FEEDBACK")} />
             </Link></div>} */}
             <div className="link" style={isMobile ? { marginTop: "8px", width: "100%", textAlign: "center" } : { marginTop: "8px" }}>
@@ -223,7 +230,10 @@ export const convertEpochToDate = (dateEpoch) => {
             let queryObj = { applicationNo: payments.Payments[0].paymentDetails[0]?.bill?.consumerCode };
             let bpaResponse = await Digit.OBPSService.BPASearch( payments.Payments[0].tenantId, queryObj);
             const formattedStakeholderType=bpaResponse?.BPA[0]?.additionalDetails?.typeOfArchitect
+<<<<<<< HEAD
+=======
             const stakeholderType=formattedStakeholderType.charAt(0).toUpperCase()+formattedStakeholderType.slice(1).toLowerCase()
+>>>>>>> master-LTS
             const updatedpayments={
               ...paymentData,
              
@@ -233,10 +243,14 @@ export const convertEpochToDate = (dateEpoch) => {
                       additionalDetails:{
                         ...paymentData.paymentDetails[0].additionalDetails,
                         "propertyID":bpaResponse?.BPA[0]?.additionalDetails?.propertyID,
+<<<<<<< HEAD
+                        "stakeholderType":formattedStakeholderType.charAt(0).toUpperCase()+formattedStakeholderType.slice(1).toLowerCase()
+=======
                         "stakeholderType":formattedStakeholderType.charAt(0).toUpperCase()+formattedStakeholderType.slice(1).toLowerCase(),
                         "contact":bpaResponse?.BPA[0]?.businessService==="BPA-PAP"? t("APPLICANT_CONTACT") : `${stakeholderType} Contact`,
                         "idType":bpaResponse?.BPA[0]?.businessService==="BPA-PAP" ? t("APPLICATION_NUMBER"):`${stakeholderType} ID`,
                         "name":bpaResponse?.BPA[0]?.businessService==="BPA-PAP" ? t("APPLICANT_NAME"):`${stakeholderType} Name`,
+>>>>>>> master-LTS
                       },
                     },
                   ],  
@@ -398,7 +412,10 @@ export const convertEpochToDate = (dateEpoch) => {
     padding: "4px 0px",
     justifyContent: "space-between",
   };
+  //New Payment Reciept For PT module with year bifurcations
 
+<<<<<<< HEAD
+=======
   const printPermissionLetter = async () => {
     //const tenantId = Digit.ULBService.getCurrentTenantId();
     const applicationDetails = await Digit.CHBServices.search({  tenantId,
@@ -583,6 +600,7 @@ export const convertEpochToDate = (dateEpoch) => {
 
   //New Payment Reciept For PT module with year bifurcations
 
+>>>>>>> master-LTS
   const printRecieptNew = async (payment) => {
     console.log("paymentpayment",payment,payment.Payments[0].paymentDetails[0].receiptNumber,payment.Payments[0])
     const tenantId = Digit.ULBService.getCurrentTenantId();
@@ -799,7 +817,7 @@ export const convertEpochToDate = (dateEpoch) => {
     window.open(fileStore[response.filestoreIds[0]], "_blank");
   };
   const ommitRupeeSymbol = ["PT"].includes(business_service);
-
+console.log("business_service",business_service)
   if ((window.location.href.includes("bpa") || window.location.href.includes("BPA")) && isBpaSearchLoading) return <Loader />
 
   return (
@@ -884,6 +902,8 @@ export const convertEpochToDate = (dateEpoch) => {
           {t("PTR_FEE_RECEIPT")}
         </div>
       ) : null}
+<<<<<<< HEAD
+=======
       {business_service == "pet-services" ? (
         <div className="primary-label-btn d-grid" style={{ marginLeft: "unset", marginRight: "20px", marginTop:"15px",marginBottom:"15px" }} onClick={petCertificate}>
           <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#a82227">
@@ -893,6 +913,7 @@ export const convertEpochToDate = (dateEpoch) => {
           {t("PTR_CERTIFICATE")}
         </div>
       ) : null}
+>>>>>>> master-LTS
       {window.location.href.includes("mcollect") ?
          <div className="primary-label-btn d-grid" style={{ marginLeft: "unset", marginRight: "20px" }} onClick={printReciept}>
          <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24">
@@ -902,6 +923,8 @@ export const convertEpochToDate = (dateEpoch) => {
          {t("CS_COMMON_PRINT_RECEIPT")}
        </div>
       :null}
+<<<<<<< HEAD
+=======
        {business_service == "request-service.water_tanker" && (
         <div style={{ display: "flex", justifyContent: "flex-start", width: "100%" }}>
           <div className="primary-label-btn d-grid" style={{ marginLeft: "unset", marginTop:"15px" }} onClick={printWTReceipt}>
@@ -935,6 +958,7 @@ export const convertEpochToDate = (dateEpoch) => {
           </div>
         </div>
       )}
+>>>>>>> master-LTS
       {bpaData?.[0]?.businessService === "BPA_OC" && (bpaData?.[0]?.status==="APPROVED" || bpaData?.[0]?.status==="PENDING_SANC_FEE_PAYMENT") ? (
         <div className="primary-label-btn d-grid" style={{ marginLeft: "unset" }} onClick={e => getPermitOccupancyOrderSearch("occupancy-certificate")}>
           <DownloadPrefixIcon />
@@ -967,6 +991,14 @@ export const convertEpochToDate = (dateEpoch) => {
             {t("CS_DOWNLOAD_RECEIPT")}
           </div>
       ) : null}
+<<<<<<< HEAD
+      {business_service?.includes("WS") ? (
+        <div className="link" style={isMobile ? { marginTop: "8px", width: "100%", textAlign: "center" } : { marginTop: "8px" }} onClick={printReciept}>
+            {t("CS_DOWNLOAD_RECEIPT")}
+          </div>
+      ) : null}
+=======
+>>>>>>> master-LTS
       {business_service?.includes("SW") ? (
         <div className="link" style={isMobile ? { marginTop: "8px", width: "100%", textAlign: "center" } : { marginTop: "8px" }} onClick={printReciept}>
             {t("CS_DOWNLOAD_RECEIPT")}
@@ -982,6 +1014,9 @@ export const convertEpochToDate = (dateEpoch) => {
             {t("CS_DOWNLOAD_RECEIPT")}
           </div>
       ) : null}
+<<<<<<< HEAD
+      {!(business_service == "TL") || !(business_service?.includes("PT")) && <SubmitBar onSubmit={printReciept} label={t("COMMON_DOWNLOAD_RECEIPT")} />}
+=======
       {business_service == "chb-services" ? (
         <div  style={{ display: 'flex', justifyContent: 'flex-end', gap: '20px', marginRight: "20px", marginTop: "15px", marginBottom: "15px" }}>
         <div className="primary-label-btn d-grid" onClick={printCHBReceipt}>
@@ -1046,6 +1081,7 @@ export const convertEpochToDate = (dateEpoch) => {
         </div>
       ) : null}
       {!(business_service?.includes("TL")) || !(business_service?.includes("PT")) && <SubmitBar onSubmit={printReciept} label={t("COMMON_DOWNLOAD_RECEIPT")} />}
+>>>>>>> master-LTS
       {!(business_service == "TL") || !(business_service?.includes("PT")) && (
         <div className="link" style={isMobile ? { marginTop: "8px", width: "100%", textAlign: "center" } : { marginTop: "8px" }}>
           <Link to={`/upyog-ui/citizen`}>{t("CORE_COMMON_GO_TO_HOME")}</Link>
@@ -1074,6 +1110,11 @@ export const convertEpochToDate = (dateEpoch) => {
       {business_service == "sv-services" && (
         <Link to={`/upyog-ui/citizen`}>
           <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} style={{marginTop:"15px"}} />
+        </Link>
+      )}
+      {business_service == "pet-services" && (
+        <Link to={`/upyog-ui/citizen`}>
+          <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} />
         </Link>
       )}
     </Card>

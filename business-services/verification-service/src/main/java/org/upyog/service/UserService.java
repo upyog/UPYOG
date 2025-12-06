@@ -171,7 +171,11 @@ public class UserService {
 
 	public UserDetailResponse searchByUserName(String userName, String tenantId) {
 		UserSearchRequest userSearchRequest = new UserSearchRequest();
+<<<<<<< HEAD
+		userSearchRequest.setUserType("CITIZEN");
+=======
 		userSearchRequest.setUserType(config.getInternalMicroserviceUserType());
+>>>>>>> master-LTS
 		userSearchRequest.setUserName(userName);
 		userSearchRequest.setTenantId(tenantId);
 		return getUser(userSearchRequest);

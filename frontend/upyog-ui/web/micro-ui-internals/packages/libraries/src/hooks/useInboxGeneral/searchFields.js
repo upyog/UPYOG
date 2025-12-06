@@ -53,6 +53,8 @@ const inboxSearchFields = {
       },
     },
   ],
+<<<<<<< HEAD
+=======
   ASSET: [
     {
       label: "ES_ASSET_RESPONSE_CREATE_LABEL",
@@ -204,6 +206,7 @@ const inboxSearchFields = {
         },
       },
     ]
+>>>>>>> master-LTS
 };
 
 const searchFieldsForSearch = {

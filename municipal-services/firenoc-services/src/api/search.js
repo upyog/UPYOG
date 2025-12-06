@@ -103,7 +103,7 @@ export const searchApiResponse = async (request, next = {}) => {
     for (var i = 0; i < userSearchResponseJson.user.length; i++) {
       userUUIDArray.push(userSearchResponseJson.user[i].uuid);
     }
-    console.log("User Search Response uuid-> " + userUUIDArray.length);
+    //console.log("User Search Response uuid-> " + userUUIDArray.length);
 
     let firenocIdQuery = `SELECT FN.uuid as FID FROM eg_fn_firenoc FN JOIN eg_fn_firenocdetail FD ON (FN.uuid = FD.firenocuuid) JOIN eg_fn_owner FO ON (FD.uuid = FO.firenocdetailsuuid) where `;
 
@@ -164,7 +164,7 @@ export const searchApiResponse = async (request, next = {}) => {
           ? mapIDsToList(dbResponse.rows)
           : [];
     }
-    console.log("firenocIds is " + firenocIds);
+    //console.log("firenocIds is " + firenocIds);
 
    
     if (queryObj.hasOwnProperty("ids")) {
@@ -255,7 +255,7 @@ export const searchApiResponse = async (request, next = {}) => {
   sqlQuery = `${sqlQuery}) s ORDER BY fid `;
 }
 
-  console.log("SQL QUery:" +sqlQuery);
+  //console.log("SQL QUery:" +sqlQuery);
   const dbResponse = await db.query(sqlQuery);
   //console.log("dbResponse"+JSON.stringify(dbResponse));
   if (dbResponse.err) {

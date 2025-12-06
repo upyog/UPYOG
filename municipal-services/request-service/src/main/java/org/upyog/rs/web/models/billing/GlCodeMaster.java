@@ -1,6 +1,10 @@
 package org.upyog.rs.web.models.billing;
 
+<<<<<<< HEAD
+import jakarta.validation.constraints.NotNull;
+=======
 import javax.validation.constraints.NotNull;
+>>>>>>> master-LTS
 
 import digit.models.coremodels.AuditDetails;
 import lombok.AllArgsConstructor;

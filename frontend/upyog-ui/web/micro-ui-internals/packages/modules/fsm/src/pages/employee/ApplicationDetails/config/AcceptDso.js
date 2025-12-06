@@ -1,5 +1,9 @@
 import React from "react";
+<<<<<<< HEAD
+import { CardLabelError, Dropdown } from "@upyog/digit-ui-react-components";
+=======
 import { CardLabelError, Dropdown, MultiSelectDropdown, RemoveableTag, LabelFieldPair, CardLabel } from "@upyog/digit-ui-react-components";
+>>>>>>> master-LTS
 
 // steps
 // get individualIds array from workers array in vendor object

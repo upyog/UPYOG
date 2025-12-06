@@ -2,7 +2,7 @@ package org.egov.demand.model;
 
 import java.math.BigDecimal;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -11,7 +11,7 @@ import lombok.Builder;
 import lombok.Builder.Default;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.validator.constraints.SafeHtml;
+import org.egov.demand.validation.SanitizeHtml;
 
 /**
  * A object holds a demand and collection values for a tax head and period.
@@ -23,15 +23,15 @@ import org.hibernate.validator.constraints.SafeHtml;
 @Builder
 public class DemandDetail   {
 
-        @SafeHtml
+        @SanitizeHtml
         @JsonProperty("id")
         private String id;
 
-        @SafeHtml
+        @SanitizeHtml
         @JsonProperty("demandId")
         private String demandId;
 
-        @SafeHtml
+        @SanitizeHtml
         @NotNull @JsonProperty("taxHeadMasterCode")
         private String taxHeadMasterCode;
 
@@ -47,7 +47,7 @@ public class DemandDetail   {
         @JsonProperty("auditDetails")
         private AuditDetails auditDetails;
 
-        @SafeHtml
+        @SanitizeHtml
         @JsonProperty("tenantId")
         private String tenantId;
 }

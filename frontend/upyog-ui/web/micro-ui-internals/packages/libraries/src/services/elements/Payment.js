@@ -138,6 +138,8 @@ export const PaymentService = {
       auth: true,
       params: { tenantId, ...params },
     }),
+<<<<<<< HEAD
+=======
     useAssetQrCodeService: (tenantId, params) =>
       Request({
         url:Urls.asset.assets_Reciept_Search,
@@ -146,6 +148,7 @@ export const PaymentService = {
         auth: true,
         params: { tenantId, ...params },
       }),
+>>>>>>> master-LTS
   getBulkPdfRecordsDetails: (filters) =>
     Request({
       url: Urls.payment.getBulkPdfRecordsDetails,

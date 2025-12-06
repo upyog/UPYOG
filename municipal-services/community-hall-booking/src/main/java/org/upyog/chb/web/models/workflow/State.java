@@ -3,15 +3,24 @@ package org.upyog.chb.web.models.workflow;
 import java.util.ArrayList;
 import java.util.List;
 
+<<<<<<< HEAD
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Size;
+=======
 import javax.validation.Valid;
 import javax.validation.constraints.Size;
+>>>>>>> master-LTS
 
 import org.springframework.validation.annotation.Validated;
 import org.upyog.chb.web.models.AuditDetails;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+<<<<<<< HEAD
+import io.swagger.v3.oas.annotations.media.Schema;
+=======
 import io.swagger.annotations.ApiModel;
+>>>>>>> master-LTS
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -23,9 +32,15 @@ import lombok.ToString;
 /**
  * A Object holds the basic data for a bpa
  */
+<<<<<<< HEAD
+@Schema(description = "A Object holds the basic data for a bpa")
+@Validated
+@jakarta.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2018-12-04T11:26:25.532+05:30")
+=======
 @ApiModel(description = "A Object holds the basic data for a bpa")
 @Validated
 @javax.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2018-12-04T11:26:25.532+05:30")
+>>>>>>> master-LTS
 
 @Getter
 @Setter

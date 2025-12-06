@@ -93,4 +93,3 @@ class EscalationQueryBuilderTest {
         assertEquals(4, objectList.size());
     }
 }
-

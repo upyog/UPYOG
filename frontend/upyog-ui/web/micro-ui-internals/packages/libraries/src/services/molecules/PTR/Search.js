@@ -1,3 +1,41 @@
+<<<<<<< HEAD
+/*
+
+
+@author - Shivank shukla -NIUA
+
+this file is created to show the Application Detail page from both search application and inbox
+as this file is specially designed for Pet-Registration 
+
+The hook useApplicationdetailPTR uses the useQuery hook to call the PTRSearch.applicationDetails method, passing in the parameters.
+
+The data returned from that API call is processed in the select method to extract just the applicationDetails array from the response.
+
+
+
+
+Note- Please Do Not Copy and paste this file without understanding the context  **it may conflit**
+          
+
+
+*/
+
+
+
+
+import { PTRService } from "../../elements/PTR";
+
+export const PTRSearch = {
+  
+  all: async (tenantId, filters = {}) => {
+    
+    const response = await PTRService.search({ tenantId, filters });
+    
+    return response;
+  },
+
+  
+=======
 /**
 *@author - Shivank shukla -NIUA
 *this file is created to show the Application Detail page from both search application and inbox
@@ -13,10 +51,14 @@ export const PTRSearch = {
     const response = await PTRService.search({ tenantId, filters });
     return response;
   },
+>>>>>>> master-LTS
   application: async (tenantId, filters = {}) => {
     const response = await PTRService.search({ tenantId, filters });
     return response.PetRegistrationApplications[0];
   },
+<<<<<<< HEAD
+  RegistrationDetails: ({ PetRegistrationApplications: response, t }) => {
+=======
   RegistrationDetails: ({ PetRegistrationApplications: response, t,pet_color }) => {
     const filterEmptyValues = (values) => values.filter(item => item.value);
     const getDate = (epochdate) => {
@@ -42,18 +84,23 @@ export const PTRSearch = {
         return null;
       }
     };
+>>>>>>> master-LTS
     return [
 
       {
         title: "PTR_APPLICANT_DETAILS_HEADER",
         asSectionHeader: true,
         values: [
+<<<<<<< HEAD
+          { title: "PTR_APPLICATION_NUMBER", value: response?.applicationNumber },
+=======
           { title: "PTR_APPLICATION_NUMBER", value: response?.applicationNumber},
           { title: "PTR_VALIDITY_DATE", value:getDate(response?.validityDate)},
           ...(response?.petToken && response.petToken.length > 0 
             ? [{title: "PTR_TOKEN", value: response.petToken, isBold:true}]
             : []
           ),
+>>>>>>> master-LTS
           { title: "PTR_APPLICANT_NAME", value: response?.applicantName },
           { title: "PTR_FATHER/HUSBAND_NAME", value: response?.fatherName },
           { title: "PTR_APPLICANT_MOBILE_NO", value: response?.mobileNumber },
@@ -64,8 +111,12 @@ export const PTRSearch = {
       {
         title: "PTR_PET_DETAILS_HEADER",
         asSectionHeader: true,
+<<<<<<< HEAD
+        values: [
+=======
         values: filterEmptyValues([
           { title: "PTR_PET_TOKEN", value: response?.petToken },
+>>>>>>> master-LTS
           { title: "PTR_PET_TYPE", value: response?.petDetails?.petType },
           { title: "PTR_BREED_TYPE", value: response?.petDetails?.breedType },
           { title: "PTR_PET_NAME", value: response?.petDetails?.petName },
@@ -74,12 +125,19 @@ export const PTRSearch = {
           { title: "PTR_VACCINATED_DATE", value: response?.petDetails?.lastVaccineDate },
           { title: "PTR_VACCINATION_NUMBER", value: response?.petDetails?.vaccinationNumber },
           { title: "PTR_PET_AGE", value: response?.petDetails?.petAge + " Months" },
+<<<<<<< HEAD
+          { title: "PTR_PET_SEX", value: response?.petDetails?.petGender },
+
+
+        ],
+=======
           { title: "PTR_IDENTIFICATION_MARK", value: response?.petDetails?.identificationMark },
           { title: "PTR_PET_SEX", value: response?.petDetails?.petGender },
           { title: "PTR_PET_COLOR", value: pet_color?.filter((color) => color?.colourCode === response?.petDetails?.petColor)?.[0]?.i18nKey },
           { title: "PTR_BIRTH", value: convertEpochToDate(response?.petDetails?.birthDate) },
           { title: "PTR_ADOPTION", value: convertEpochToDate(response?.petDetails?.adoptionDate) },
         ]),
+>>>>>>> master-LTS
       },
 
       {
@@ -88,6 +146,12 @@ export const PTRSearch = {
         values: [
           { title: "PTR_ADDRESS_PINCODE", value: response?.address?.pincode },
           { title: "PTR_ADDRESS_CITY", value: response?.address?.city },
+<<<<<<< HEAD
+          { title: "PTR_STREET_NAME",value: response?.address?.street, },
+          { title: "PTR_HOUSE_NO",value: response?.address?.doorNo,},
+          
+  
+=======
           { title: "PTR_STREET_NAME",value: response?.address?.street },
           { title: "PTR_HOUSE_NO",value: response?.address?.doorNo},
           { title: "PTR_ADDRESS_LINE1",value: response?.address?.addressLine1},
@@ -95,6 +159,7 @@ export const PTRSearch = {
           { title: "PTR_HOUSE_NAME",value: response?.address?.buildingName},
           { title: "PTR_LOCALITY",value: response?.address?.locality},
           { title: "PTR_LANDMARK",value: response?.address?.landmark},
+>>>>>>> master-LTS
         ],
       },
 
@@ -122,13 +187,21 @@ export const PTRSearch = {
       },
     ];
   },
+<<<<<<< HEAD
+  applicationDetails: async (t, tenantId, applicationNumber, userType, args) => {
+=======
   applicationDetails: async (t, tenantId, applicationNumber, pet_color, args) => {
+>>>>>>> master-LTS
     const filter = { applicationNumber, ...args };
     const response = await PTRSearch.application(tenantId, filter);
 
     return {
       tenantId: response.tenantId,
+<<<<<<< HEAD
+      applicationDetails: PTRSearch.RegistrationDetails({ PetRegistrationApplications: response, t }),
+=======
       applicationDetails: PTRSearch.RegistrationDetails({ PetRegistrationApplications: response, t,pet_color }),
+>>>>>>> master-LTS
       applicationData: response,
       transformToAppDetailsForEmployee: PTRSearch.RegistrationDetails,
       

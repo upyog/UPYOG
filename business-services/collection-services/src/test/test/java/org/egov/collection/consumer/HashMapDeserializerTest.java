@@ -4,8 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.kafka.support.converter.DefaultJackson2JavaTypeMapper;
-import org.springframework.kafka.support.converter.Jackson2JavaTypeMapper;
+import org.springframework.kafka.support.mapping.DefaultJackson2JavaTypeMapper;
+import org.springframework.kafka.support.mapping.Jackson2JavaTypeMapper;
 
 class HashMapDeserializerTest {
     /**
@@ -22,4 +22,3 @@ class HashMapDeserializerTest {
         assertEquals("__ContentTypeId__", ((DefaultJackson2JavaTypeMapper) typeMapper).getContentClassIdFieldName());
     }
 }
-

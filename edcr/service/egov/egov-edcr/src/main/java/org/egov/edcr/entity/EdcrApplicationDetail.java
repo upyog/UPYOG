@@ -114,6 +114,12 @@ public class EdcrApplicationDetail extends AbstractAuditable {
 
     @Length(min = 1, max = 128)
     private String comparisonDcrNumber;
+<<<<<<< HEAD
+    
+    @SafeHtml
+    private String tenantId;
+=======
+>>>>>>> master-LTS
 
 	@Override
     public Long getId() {

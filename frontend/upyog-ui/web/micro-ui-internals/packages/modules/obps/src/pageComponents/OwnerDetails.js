@@ -34,6 +34,11 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
     formData?.owners?.owners?.forEach(owner => {
         if(owner.isPrimaryOwner == "false" ) owner.isPrimaryOwner = false
     })
+<<<<<<< HEAD
+    let [fields, setFeilds] = useState(
+        (formData?.owners && formData?.owners?.owners) || [{ name: "", gender: "", mobileNumber: null, isPrimaryOwner: true }]
+    );
+=======
     let [fields, setFeilds] = useState(() => {
         const owners = formData?.owners?.owners || [{ name: "", gender: "", mobileNumber: null, isPrimaryOwner: true }];
         return owners.map(owner => ({
@@ -41,6 +46,7 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
           gender: typeof owner.gender === 'object'||owner.gender===null ? owner.gender : { value: owner.gender }
         }));
       });
+>>>>>>> master-LTS
 
     useEffect(() => {
         var flag=0;
@@ -369,8 +375,13 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
                         active:true,
                         name: owner.name,
                         mobileNumber: owner.mobileNumber,
+<<<<<<< HEAD
+                        isPrimaryOwner: owner.isPrimaryOwner,
+                        gender: owner.gender.code,
+=======
                         isPrimaryOwner: ownerStep?.owners.length>1 ?owner.isPrimaryOwner:true,
                         gender: owner.gender?.code || owner.gender,
+>>>>>>> master-LTS
                         emailId:owner.emailId!==null?owner.emailId:emailId,
                         fatherOrHusbandName: "NAME"
                     })
@@ -394,6 +405,12 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
                    Property.ownershipCategory= ownershipCategory.code,
                    Property.usageCategory= formData?.data?.occupancyType.toUpperCase();
                    Property.owners= conversionOwners?.map((owner, index)=>({
+<<<<<<< HEAD
+                        ...owner,
+                     ownerType:"NONE",
+                      permanentaddress:"",
+                      additionalDetails:{
+=======
                         name:owner.name,
                         mobileNumber:owner.mobileNumber,
                         correspondenceAddress:owner.correspondenceAddress,
@@ -405,13 +422,19 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
                         ownerType:"NONE",
                         permanentaddress:"",
                         additionalDetails:{
+>>>>>>> master-LTS
                         ownerSequence: index,
                         ownerName: owner.name
                       }
                     })) || [],
                     //Property.additionalDetails.owners=Property.owners;
+<<<<<<< HEAD
+                    Property.landArea=formData?.data?.edcrDetails?.planDetail?.blocks?.[0]?.building?.totalBuitUpArea.toFixed(2);
+                    Property.noOfFloors=formData?.data?.edcrDetails?.planDetail?.blocks?.[0]?.building?.totalFloors;
+=======
                     Property.landArea=formData?.data?.edcrDetails?.planDetail?.blocks?.[0]?.building?.totalBuitUpArea.toFixed(2)||formData?.data?.edcrDetails?.drawingDetail?.totalBuitUpArea;
                     Property.noOfFloors=formData?.data?.edcrDetails?.planDetail?.blocks?.[0]?.building?.totalFloors||formData?.data?.edcrDetails?.drawingDetail?.blocks?.[0]?.building?.totalFloors;
+>>>>>>> master-LTS
                     Property.additionalDetails= {
                       isRainwaterHarvesting:false,
                       owners:conversionOwners?.map((owner, index)=>({
@@ -523,7 +546,11 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
             if(flag !== 1 && (!ob?.name || !ob?.mobileNumber || !ob?.gender?.code) )
             flag = 1;
         })
+<<<<<<< HEAD
+        console.log("flag",flag)
+=======
         
+>>>>>>> master-LTS
         if(flag == 0)
         return false;
         else

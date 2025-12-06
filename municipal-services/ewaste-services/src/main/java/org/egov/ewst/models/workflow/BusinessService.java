@@ -3,9 +3,15 @@ package org.egov.ewst.models.workflow;
 import java.util.ArrayList;
 import java.util.List;
 
+<<<<<<< HEAD
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+=======
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+>>>>>>> master-LTS
 
 import org.egov.ewst.models.AuditDetails;
 import org.springframework.validation.annotation.Validated;
@@ -29,7 +35,11 @@ import lombok.ToString;
  */
 @ApiModel(description = "A Object holds the Business Service")
 @Validated
+<<<<<<< HEAD
+@jakarta.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2018-12-04T11:26:25.532+05:30")
+=======
 @javax.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2018-12-04T11:26:25.532+05:30")
+>>>>>>> master-LTS
 
 @Getter
 @Setter

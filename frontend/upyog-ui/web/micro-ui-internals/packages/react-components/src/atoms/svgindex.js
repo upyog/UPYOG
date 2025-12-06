@@ -1228,5 +1228,8 @@ export {
   DeathIcon,
   InfoIcon,
   PTRIcon,
+<<<<<<< HEAD
+=======
   CHBIcon
+>>>>>>> master-LTS
 };

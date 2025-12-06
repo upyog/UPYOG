@@ -344,9 +344,12 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
             const usersResponse = await Digit.UserService.userSearch(Digit.ULBService.getStateId(), { userName: field?.mobileNumber }, {});
             if(usersResponse?.user?.[0]?.dob){ 
                 usersResponse.user[0].dob = convertDateToEpoch(usersResponse?.user?.[0]?.dob);}
+<<<<<<< HEAD
+=======
             if(usersResponse?.user?.[0]?.gender===null ||usersResponse?.user?.[0]?.gender===undefined){
                 usersResponse.user[0].gender=gender;
             }
+>>>>>>> master-LTS
             if (usersResponse?.user?.[0]?.createdDate) {
                     usersResponse.user[0].createdDate = convertDateTimeToEpoch(usersResponse?.user?.[0]?.createdDate);
                     usersResponse.user[0].lastModifiedDate = convertDateTimeToEpoch(usersResponse?.user?.[0]?.lastModifiedDate);
@@ -369,7 +372,11 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
                         active:true,
                         name: owner.name,
                         mobileNumber: owner.mobileNumber,
+<<<<<<< HEAD
+                        isPrimaryOwner: owner.isPrimaryOwner,
+=======
                         isPrimaryOwner: ownerStep?.owners.length>1 ?owner.isPrimaryOwner:true,
+>>>>>>> master-LTS
                         gender: owner.gender?.code || owner.gender,
                         emailId:owner.emailId!==null?owner.emailId:emailId,
                         fatherOrHusbandName: "NAME"

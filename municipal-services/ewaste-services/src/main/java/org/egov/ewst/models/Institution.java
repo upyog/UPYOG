@@ -8,7 +8,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+<<<<<<< HEAD
+=======
 import org.hibernate.validator.constraints.SafeHtml;
+>>>>>>> master-LTS
 
 /**
  * Institution
@@ -22,6 +25,23 @@ import org.hibernate.validator.constraints.SafeHtml;
 @Builder
 public class Institution {
 
+<<<<<<< HEAD
+	@JsonProperty("id")
+	private String id;
+
+	@JsonProperty("tenantId")
+	private String tenantId;
+
+	@JsonProperty("name")
+	private String name;
+
+	@JsonProperty("type")
+	private String type;
+
+	@JsonProperty("designation")
+	private String designation;
+
+=======
 	@SafeHtml
 	@JsonProperty("id")
 	private String id;
@@ -43,6 +63,7 @@ public class Institution {
 	private String designation;
 
 	@SafeHtml
+>>>>>>> master-LTS
 	@JsonProperty("nameOfAuthorizedPerson")
 	private String nameOfAuthorizedPerson;
 

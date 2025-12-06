@@ -57,6 +57,11 @@
 			<id>JBoss Repository</id>
 			<url>https://repository.jboss.org/nexus/content/groups/public/</url>
 		</repository>
+		<!--<repository>
+			<id>AsposeJavaAPI</id>
+			<name>Aspose Java API</name>
+			<url>https://repository.aspose.com/repo/</url>
+		</repository>-->
 		<repository>
 			<id>AsposeJavaAPI</id>
 			<name>Aspose Java API</name>
@@ -209,9 +214,17 @@
 					</exclusion>
 				</exclusions>
 			</dependency>
+<<<<<<< HEAD
+			<!--<dependency>
+				<groupId>com.aspose</groupId>
+				<artifactId>aspose-cad</artifactId>
+				<version>20.10</version>
+			</dependency>-->
+=======
 
 			<!--		Below dependency is commented out to avoid jenkinds build issue -->
 		
+>>>>>>> master-LTS
 			<dependency>
 				<groupId>org.egov.edcr</groupId>
 				<artifactId>egov-egi</artifactId>

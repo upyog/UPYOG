@@ -566,7 +566,11 @@ const Home = ({ stateCode }) => {
                       </div>
                     </div>
                   );
+<<<<<<< HEAD
+                } else {
+=======
                 } else if(item?.moduleLevel!=="BIRTH-DEATH") {
+>>>>>>> master-LTS
                   return (
                     <div
                       className={`dss-card-parent  ${

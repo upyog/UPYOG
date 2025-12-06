@@ -14,17 +14,18 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.web.client.RestTemplate;
-
-import java.util.concurrent.TimeUnit;
-
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import javax.net.ssl.*;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+
+import java.util.concurrent.TimeUnit;
 
 @SpringBootApplication
 @Configuration
 @EnableCaching
 @PropertySource("classpath:application.properties")
+@EnableAspectJAutoProxy
 public class IndexerInfraApplication {
     @Autowired
     private Environment env;

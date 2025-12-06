@@ -127,6 +127,7 @@ public class ChartOfAccountsAction extends BaseFormAction {
     boolean budgetCheckRequired = false;
     Long coaId;
     Long parentId;
+
     @Autowired
     AppConfigValueService appConfigValuesService;
     @Autowired
@@ -283,6 +284,10 @@ public class ChartOfAccountsAction extends BaseFormAction {
         model.setFunctionReqd(functionRequired);
         model.setBudgetCheckReq(budgetCheckRequired);
         dropdownData.put("mappedAccountDetailTypeList", accountDetailType);
+<<<<<<< HEAD
+        
+=======
+>>>>>>> master-LTS
         setPurposeOnCoa();
         populateAccountCodePurpose();
         chartOfAccountsService.persist(model);
@@ -703,6 +708,10 @@ public class ChartOfAccountsAction extends BaseFormAction {
             model.setMajorCode(model.getGlcode().substring(0, majorCodeLength));
             setPurposeOnCoa();
             populateAccountCodePurpose();
+<<<<<<< HEAD
+
+=======
+>>>>>>> master-LTS
             model.setIsActiveForPosting(activeForPosting);
             populateAccountDetailType();
             chartOfAccountsService.persist(model);

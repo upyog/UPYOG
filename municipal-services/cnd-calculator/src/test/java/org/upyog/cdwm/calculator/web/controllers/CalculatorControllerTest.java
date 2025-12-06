@@ -3,22 +3,40 @@ package org.upyog.cdwm.calculator.web.controllers;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+<<<<<<< HEAD
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.extension.ExtendWith;
+=======
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+>>>>>>> master-LTS
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
+<<<<<<< HEAD
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.upyog.cdwm.calculator.TestConfiguration;
+import org.junit.jupiter.api.Test;
+=======
+import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.web.servlet.MockMvc;
+import org.upyog.cdwm.calculator.TestConfiguration;
+>>>>>>> master-LTS
 
 /**
 * API tests for V1ApiController
 */
+<<<<<<< HEAD
+@Disabled
+@ExtendWith(SpringExtension.class)   // ✅ JUnit 5 extension
+=======
 @Ignore
 @RunWith(SpringRunner.class)
+>>>>>>> master-LTS
 @WebMvcTest(CalculatorControllerTest.class)
 @Import(TestConfiguration.class)
 public class CalculatorControllerTest {

@@ -1,3 +1,5 @@
+<<<<<<< HEAD
+=======
 /**
  * @file SearchApp.js
  * @description This component handles the search functionality for the employee application.
@@ -16,6 +18,7 @@
  * <SearchApp path="/upyog-ui/employee/ptr/petservice/search" />
  */
 
+>>>>>>> master-LTS
 import React, { useState } from "react"
 import { TextInput, Label, SubmitBar, LinkLabel, ActionBar, CloseSvg, DatePicker, CardLabelError, SearchForm, SearchField, Dropdown, Toast } from "@upyog/digit-ui-react-components";
 import { useForm, Controller } from "react-hook-form";

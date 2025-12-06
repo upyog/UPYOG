@@ -9,6 +9,21 @@
     "start": "react-scripts start"
   },
   "devDependencies": {
+<<<<<<< HEAD
+    "@upyog/digit-ui-module-bills": "1.8.0",
+    "@upyog/digit-ui-module-common": "2.0.0",
+    "@upyog/digit-ui-module-engagement": "1.8.0",
+    "@upyog/digit-ui-module-fsm": "1.8.18",
+    "@upyog/digit-ui-module-mcollect": "2.0.0",
+    "@upyog/digit-ui-module-noc": "1.8.0",
+    "@upyog/digit-ui-module-obps": "1.8.16",
+    "@upyog/digit-ui-module-pgr": "1.8.5",
+    "@upyog/digit-ui-module-pt": "1.8.17",
+    "@upyog/digit-ui-module-receipts": "1.8.0",
+    "@upyog/digit-ui-module-tl": "2.0.0",
+    "@upyog/digit-ui-module-ws": "1.8.16",
+    "@upyog/digit-ui-module-commonpt": "2.0.0",
+=======
     "@upyog/digit-ui-module-bills": "3.10.0",
     "@upyog/digit-ui-module-common": "3.10.0",
     "@upyog/digit-ui-module-engagement": "3.10.0",
@@ -33,6 +48,7 @@
     "@upyog/upyog-ui-module-wt":"3.10.0",
     "@upyog/upyog-ui-module-pgrai":"3.10.0",
     "@upyog/digit-ui-module-core": "3.10.0",
+>>>>>>> master-LTS
     "http-proxy-middleware": "1.0.5",
     "react": "17.0.2",
     "react-dom": "17.0.2",

@@ -57,6 +57,26 @@ const initDigitUI = () => {
 1.7.1 UPYOG Base version
 ```
 
+<<<<<<< HEAD
+### Contributors
+
+[jagankumar-egov] [Tulika-eGov]  [vamshikrishnakole-wtt-egov] 
+
+## Documentation
+
+Documentation Site (https://core.digit.org/guides/developer-guide/ui-developer-guide/digit-ui)
+
+## Maintainer
+
+- [jagankumar-egov](https://www.github.com/jagankumar-egov)
+
+
+### Published from DIGIT Frontend 
+DIGIT Frontend Repo (https://github.com/upyog/UPYOG/tree/develop)
+
+
+![Logo](https://s3.ap-south-1.amazonaws.com/works-dev-asset/mseva-white-logo.png)
+=======
 
 ## Maintainer
 
@@ -66,3 +86,4 @@ const initDigitUI = () => {
 ### Published from UPYOG Frontend 
 UPYOG Frontend Repo (https://github.com/upyog/UPYOG/tree/develop)
 
+>>>>>>> master-LTS

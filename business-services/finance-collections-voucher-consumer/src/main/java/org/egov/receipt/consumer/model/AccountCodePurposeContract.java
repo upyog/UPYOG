@@ -38,9 +38,9 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 package org.egov.receipt.consumer.model;
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 
-import org.hibernate.validator.constraints.Length;
+import jakarta.validation.constraints.Size;
 
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
@@ -61,7 +61,7 @@ public class AccountCodePurposeContract extends AuditableContract {
 	private String id;
 
 	@NotNull
-	@Length(max = 256, min = 3)
+	@Size(max = 256, min = 3)
 	private String name;
 
 	public AccountCodePurposeContract(String id) {

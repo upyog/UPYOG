@@ -1,14 +1,22 @@
 package org.upyog.cdwm.web.models.workflow;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+<<<<<<< HEAD
+
+=======
 import io.swagger.annotations.ApiModel;
+>>>>>>> master-LTS
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.egov.common.contract.response.ResponseInfo;
 import org.springframework.validation.annotation.Validated;
+<<<<<<< HEAD
+import jakarta.validation.Valid;
+=======
 import javax.validation.Valid;
+>>>>>>> master-LTS
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -21,9 +29,15 @@ import lombok.Builder;
  * search results or response for create, whereas single booking item is used
  * for update
  */
+<<<<<<< HEAD
+
+@Validated
+@jakarta.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2018-12-04T11:26:25.532+05:30")
+=======
 @ApiModel(description = "Contract class to send response. Array of booking items are used in case of search results or response for create, whereas single booking item is used for update")
 @Validated
 @javax.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2018-12-04T11:26:25.532+05:30")
+>>>>>>> master-LTS
 
 @Getter
 @Setter

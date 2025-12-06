@@ -1,7 +1,10 @@
 package org.egov.user.domain.model;
 
+<<<<<<< HEAD
+=======
 import javax.validation.constraints.NotNull;
 
+>>>>>>> master-LTS
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.AllArgsConstructor;

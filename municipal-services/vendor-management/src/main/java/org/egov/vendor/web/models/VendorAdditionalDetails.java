@@ -7,8 +7,13 @@ import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+<<<<<<< HEAD
+import jakarta.persistence.*;
+import jakarta.validation.Valid;
+=======
 import javax.persistence.*;
 import javax.validation.Valid;
+>>>>>>> master-LTS
 import java.util.List;
 
 @Entity

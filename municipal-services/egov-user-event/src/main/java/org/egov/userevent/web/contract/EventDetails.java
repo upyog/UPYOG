@@ -1,11 +1,11 @@
 package org.egov.userevent.web.contract;
 
 import java.math.BigDecimal;
+
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.egov.userevent.model.Document;
-import org.hibernate.validator.constraints.SafeHtml;
 import org.springframework.validation.annotation.Validated;
 
 import lombok.AllArgsConstructor;
@@ -26,13 +26,10 @@ import lombok.ToString;
 @Builder
 public class EventDetails {
 
-	@SafeHtml
 	private String id;
 
-	@SafeHtml
 	private String eventId;
 
-	@SafeHtml
 	private String organizer;
 
 	private Long fromDate;
@@ -43,7 +40,6 @@ public class EventDetails {
 	
 	private BigDecimal longitude;
 
-	@SafeHtml
 	private String address;
 	
 	private List<Document> documents;

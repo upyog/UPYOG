@@ -3,9 +3,8 @@
  */
 package org.egov.report.repository;
 
-import static org.junit.Assert.*;
+import org.junit.jupiter.api.Test;
 
-import org.junit.Test;
 
 /**
  * @author senthilkumar

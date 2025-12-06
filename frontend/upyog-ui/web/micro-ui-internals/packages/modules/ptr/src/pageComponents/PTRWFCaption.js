@@ -1,3 +1,9 @@
+<<<<<<< HEAD
+import React from "react";
+import { useTranslation } from "react-i18next";
+import { TelePhone, DisplayPhotos } from "@upyog/digit-ui-react-components";
+import PTRWFReason from "./PTRWFReason";
+=======
 /**
  * @file PTRWFCaption.js
  * @description 
@@ -29,6 +35,7 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { TelePhone, DisplayPhotos } from "@upyog/digit-ui-react-components";
 
+>>>>>>> master-LTS
 
 const PTRWFCaption = ({ data,OpenImage }) => {
   const { t } = useTranslation();

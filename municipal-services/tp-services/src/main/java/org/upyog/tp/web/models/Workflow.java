@@ -3,14 +3,22 @@ package org.upyog.tp.web.models;
 import java.util.ArrayList;
 import java.util.List;
 
+<<<<<<< HEAD
+import jakarta.validation.Valid;
+=======
 import javax.validation.Valid;
+>>>>>>> master-LTS
 
 import org.springframework.validation.annotation.Validated;
 import org.upyog.tp.web.models.workflow.Document;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+<<<<<<< HEAD
+import io.swagger.v3.oas.annotations.media.Schema;
+=======
 import io.swagger.annotations.ApiModel;
+>>>>>>> master-LTS
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -21,9 +29,15 @@ import lombok.Setter;
  * Represents a workflow object used for tracking actions, status, and related details
  * in the Tree Pruning booking process.
  */
+<<<<<<< HEAD
+@Schema(description = "Represents a workflow object used for tracking actions, status, and related details in the Tree Pruning booking process.")
+@Validated
+@jakarta.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-06-23T05:52:32.717Z[GMT]")
+=======
 @ApiModel(description = "Represents a workflow object used for tracking actions, status, and related details in the Tree Pruning booking process.")
 @Validated
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-06-23T05:52:32.717Z[GMT]")
+>>>>>>> master-LTS
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
@@ -49,10 +63,17 @@ public class Workflow {
 
 	@JsonProperty("businessService")
 	private String businessService = null;
+<<<<<<< HEAD
+
+	@JsonProperty("moduleName")
+	private String moduleName = null;
+
+=======
 	
 	@JsonProperty("moduleName")
 	private String moduleName = null;
 	
+>>>>>>> master-LTS
 	public Workflow addDocumentsItem(Document documentsItem) {
 		if (this.documents == null) {
 			this.documents = new ArrayList<>();
@@ -60,7 +81,11 @@ public class Workflow {
 		this.documents.add(documentsItem);
 		return this;
 	}
+<<<<<<< HEAD
+
+=======
 	
+>>>>>>> master-LTS
 	@JsonProperty("rating")
 	private Integer rating = null;
 

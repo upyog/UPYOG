@@ -11,8 +11,12 @@ import {
   PTIcon,
   TLIcon,
   WSICon,
+<<<<<<< HEAD
+  PTRIcon
+=======
   PTRIcon,
   CHBIcon
+>>>>>>> master-LTS
 } from "@upyog/digit-ui-react-components";
 import React from "react";
 import { useTranslation } from "react-i18next";
@@ -80,10 +84,13 @@ const iconSelector = (code) => {
       return <BillsIcon className="fill-path-primary-main" />;
       case "PTR":
       return <PTRIcon className="fill-path-primary-main" />;
+<<<<<<< HEAD
+=======
     case "CHB":
       return <CHBIcon className="fill-path-primary-main" />;
     case "ADS":
       return <CHBIcon className="fill-path-primary-main" />;
+>>>>>>> master-LTS
     default:
       return <PTIcon className="fill-path-primary-main" />;
   }

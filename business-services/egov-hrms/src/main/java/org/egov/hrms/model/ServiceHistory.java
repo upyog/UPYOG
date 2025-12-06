@@ -42,9 +42,9 @@ package org.egov.hrms.model;
 
 import lombok.*;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 
-import org.hibernate.validator.constraints.SafeHtml;
+import org.egov.hrms.validation.SanitizeHtml;
 import org.springframework.validation.annotation.Validated;
 
 @Validated
@@ -57,23 +57,23 @@ import org.springframework.validation.annotation.Validated;
 @ToString
 public class ServiceHistory {
 
-	@SafeHtml
+	@SanitizeHtml
 	private String id;
 
-	@SafeHtml
+	@SanitizeHtml
 	private String serviceStatus;
 
 	private Long serviceFrom;
 
 	private Long serviceTo;
 
-	@SafeHtml
+	@SanitizeHtml
 	private String orderNo;
 
-	@SafeHtml
+	@SanitizeHtml
 	private String location;
 
-	@SafeHtml
+	@SanitizeHtml
 	private String tenantId;	
 
 	private  Boolean isCurrentPosition;

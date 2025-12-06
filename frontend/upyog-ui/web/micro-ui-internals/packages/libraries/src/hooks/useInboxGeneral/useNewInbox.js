@@ -31,6 +31,8 @@ const inboxConfig = (tenantId, filters) => ({
     fetchFilters: filterFunctions.PTR,
     _searchFn: () => PTRService.search({ tenantId, filters }),
   },
+<<<<<<< HEAD
+=======
   ASSET: {
     services: ["asset-create"],
     searchResponseKey: "Asset",
@@ -39,6 +41,7 @@ const inboxConfig = (tenantId, filters) => ({
     fetchFilters: filterFunctions.ASSET,
     _searchFn: () => ASSETService.search({ tenantId, filters }),
   },
+>>>>>>> master-LTS
   FSM: {
     services: ["FSM"],
     searchResponseKey: "fsm",

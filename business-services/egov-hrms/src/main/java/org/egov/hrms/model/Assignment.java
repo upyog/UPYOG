@@ -42,9 +42,9 @@ package org.egov.hrms.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 
-import org.hibernate.validator.constraints.SafeHtml;
+import org.egov.hrms.validation.SanitizeHtml;
 import org.springframework.validation.annotation.Validated;
 
 @Validated
@@ -57,16 +57,16 @@ import org.springframework.validation.annotation.Validated;
 @ToString
 public class Assignment {
 
-	@SafeHtml
+	@SanitizeHtml
 	private String id;
 
 	private Long position;
 
-	@SafeHtml
+	@SanitizeHtml
 	@NotNull
 	private String designation;
 
-	@SafeHtml
+	@SanitizeHtml
 	@NotNull
 	private String department;
 
@@ -75,13 +75,13 @@ public class Assignment {
 
 	private Long toDate;
 
-	@SafeHtml
+	@SanitizeHtml
 	private String govtOrderNumber;
 
-	@SafeHtml
+	@SanitizeHtml
 	private String tenantid;
 
-	@SafeHtml
+	@SanitizeHtml
 	private  String reportingTo;
 
 	@JsonProperty("isHOD")

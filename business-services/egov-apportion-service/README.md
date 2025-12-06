@@ -70,3 +70,25 @@ The apportion request and respose are stored for audit using persister
     - **save-apportion-bill-response** :- This topic is used to save the bill apportion response for audit.
     - **save-apportion-demand-request** :- This topic is used to save the demand apportion request for audit.
     - **save-apportion-demand-response** :- This topic is used to save the demand apportion response for audit.
+
+## Technology Stack
+- **Java**: 17
+- **Spring Boot**: 3.2.2
+- **Database**: PostgreSQL 42.7.1
+- **Build Tool**: Maven
+- **API Documentation**: SpringDoc OpenAPI 2.5.0
+- **Database Migration**: Flyway . 9.22.3
+
+- **Validation**: Jakarta Validation API 3.1.1
+- **JSON Processing**: Jackson JSR310 2.19.1
+- **Code Generation**: Lombok 1.18.32
+
+
+### Prerequisites
+- Java 17+
+- Maven 3.9+
+- PostgreSQL 12+
+- 
+### API Documentation
+- **Swagger UI**: http://localhost:8280/apportion-service/swagger-ui/index.html
+- **OpenAPI JSON**: http://localhost:8280/apportion-service/v3/api-docs

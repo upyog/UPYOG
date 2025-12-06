@@ -176,7 +176,10 @@ import {
   InfoIcon,
   LoginIcon,
   PTRIcon,
+<<<<<<< HEAD
+=======
   CHBIcon
+>>>>>>> master-LTS
 } from "./atoms/svgindex";
 import Table from "./atoms/Table";
 import TelePhone from "./atoms/TelePhone";
@@ -467,10 +470,14 @@ export {
   InfoIcon,
   LoginIcon,
   CitizenConsentForm,
+<<<<<<< HEAD
+  PTRIcon
+=======
   PTRIcon,
   CHBIcon,
   AddressDetails,
   ApplicantDetails,
   Timeline
   
+>>>>>>> master-LTS
 };

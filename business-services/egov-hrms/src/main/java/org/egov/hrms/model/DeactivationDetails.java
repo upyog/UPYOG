@@ -1,10 +1,10 @@
 package org.egov.hrms.model;
 
 import lombok.*;
-import org.hibernate.validator.constraints.SafeHtml;
+import org.egov.hrms.validation.SanitizeHtml;
 import org.springframework.validation.annotation.Validated;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 
 @Validated
 @EqualsAndHashCode(exclude = {"auditDetails"})
@@ -16,23 +16,23 @@ import javax.validation.constraints.NotNull;
 @Builder
 public class DeactivationDetails {
 
-	@SafeHtml
+	@SanitizeHtml
 	private String id;
 
-	@SafeHtml
+	@SanitizeHtml
 	@NotNull
 	private String reasonForDeactivation;
 
-	@SafeHtml
+	@SanitizeHtml
 	private String orderNo;
 
-	@SafeHtml
+	@SanitizeHtml
 	private String remarks;
 
 	@NotNull
 	private Long effectiveFrom;
 
-	@SafeHtml
+	@SanitizeHtml
 	private String tenantId;
 
 	private AuditDetails auditDetails;

@@ -39,6 +39,10 @@ export const formatter = (value, symbol, unit, commaSeparated = true, t, data,is
       return Nformatter.format(Math.round(value));
       case "percentage":
         const Pformatter = new Intl.NumberFormat("en-IN", { maximumSignificantDigits: 3 });
+<<<<<<< HEAD
+        const formattedValue = Pformatter.format(Math.max(0, value).toFixed(2)); // Ensures value is non-negative
+        return `${formattedValue} %`;
+=======
         const formatValue = (val) => {
           const cappedValue = data && data.headerName.includes("SLA") 
             ? Math.min(100, Math.max(0, val)) // Cap value between 0 and 100 for SLA
@@ -49,6 +53,7 @@ export const formatter = (value, symbol, unit, commaSeparated = true, t, data,is
         return `${formatValue(value)} %`;
              
        
+>>>>>>> master-LTS
       
     default:
       return "";

@@ -1,10 +1,16 @@
+<<<<<<< HEAD
+import React, { useState, useEffect } from "react";
+=======
 import React, { useState, useEffect, useRef } from "react";
+>>>>>>> master-LTS
 
 function ChatBot() {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   // const [chatHistory,setChatHistory] = useState([])
+<<<<<<< HEAD
+=======
   const [isLoading, setIsLoading] = useState(false);
 
   // Create a ref to track the bottom of messages container
@@ -19,28 +25,44 @@ function ChatBot() {
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
+>>>>>>> master-LTS
 
   const toggleChatbot = () => {
     setIsOpen(!isOpen);
   };
 
+<<<<<<< HEAD
+=======
   const apiEndPoint = 'https://upyogchatbot.niua.in:8000/chatbot';
 
+>>>>>>> master-LTS
   const handleMessageSend = async () => {
     if (input.trim() !== "") {
       setMessages([...messages, { sender: "user", text: input }]);
       setInput("");
+<<<<<<< HEAD
+  
+      try {
+        const response = await fetch('https://selco-demo.ddns.net/chat', {
+=======
       setIsLoading(true);  // Show loading indicator while waiting for response
   
       try {
         const response = await fetch(apiEndPoint, {
+>>>>>>> master-LTS
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
+<<<<<<< HEAD
+          body: JSON.stringify({ message: input }),
+        });
+  
+=======
           body: JSON.stringify({ user_input: input }),
         });
         console.log("Response from Await",response);
+>>>>>>> master-LTS
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
@@ -49,7 +71,10 @@ function ChatBot() {
         const botReply = data.response; 
   
         setTimeout(() => {
+<<<<<<< HEAD
+=======
           setIsLoading(false);
+>>>>>>> master-LTS
           setMessages((prevMessages) => [
             ...prevMessages,
             { sender: "bot", text: botReply },
@@ -59,7 +84,10 @@ function ChatBot() {
         console.error("Error fetching response:", error);
         // Handle error or fallback message
         setTimeout(() => {
+<<<<<<< HEAD
+=======
           setIsLoading(false);
+>>>>>>> master-LTS
           setMessages((prevMessages) => [
             ...prevMessages,
             { sender: "bot", text: "Sorry, I'm having trouble understanding you right now." },
@@ -104,7 +132,11 @@ function ChatBot() {
         <button
           style={{
             position: "fixed",
+<<<<<<< HEAD
+            bottom: "20px",
+=======
             bottom: "30px",
+>>>>>>> master-LTS
             right: "20px",
             padding: "10px",
             fontSize: "16px",
@@ -219,6 +251,8 @@ function ChatBot() {
                 </div>
               </div>
             ))}
+<<<<<<< HEAD
+=======
             {/* Loading Indicator
             - Shows three animated dots when isLoading is true
             - Uses CSS modules for styling
@@ -250,6 +284,7 @@ function ChatBot() {
             - Used as target for scrollIntoView
             - Placed at bottom of message container */}
             <div ref={messagesEndRef} />
+>>>>>>> master-LTS
           </div>
           <div
             style={{

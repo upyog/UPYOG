@@ -1,3 +1,7 @@
+<<<<<<< HEAD
+import { Loader } from "@upyog/digit-ui-react-components";
+import React ,{Fragment}from "react";
+=======
 /**
  * PTRCreate Component
  * 
@@ -16,6 +20,7 @@
 
 import { Loader } from "@upyog/digit-ui-react-components";
 import React, { Fragment, useContext, useEffect } from "react";
+>>>>>>> master-LTS
 import { useTranslation } from "react-i18next";
 import { useQueryClient } from "react-query";
 import { Redirect, Route, Switch, useHistory, useLocation, useRouteMatch } from "react-router-dom";
@@ -29,6 +34,17 @@ const PTRCreate = ({ parentRoute }) => {
   const { t } = useTranslation();
   const { pathname } = useLocation();
   const history = useHistory();
+<<<<<<< HEAD
+  let config = [];
+  const [params, setParams, clearParams] = Digit.Hooks.useSessionStorage("PTR_CREATE_PET", {});
+  let { data: commonFields, isLoading } = Digit.Hooks.useCustomMDMS(Digit.ULBService.getStateId(), "PetService", [{ name: "CommonFieldsConfig" }],
+  {
+    select: (data) => {
+        const formattedData = data?.["PetService"]?.["CommonFieldsConfig"]
+        return formattedData;
+    },
+});
+=======
   const stateId = Digit.ULBService.getStateId();
 
   let config = [];
@@ -66,13 +82,17 @@ const PTRCreate = ({ parentRoute }) => {
    * @param {string} key - Current form field key
    */
 
+>>>>>>> master-LTS
   const goNext = (skipStep, index, isAddMultiple, key) => {
     let currentPath = pathname.split("/").pop(),
       lastchar = currentPath.charAt(currentPath.length - 1),
       isMultiple = false,
       nextPage;
+<<<<<<< HEAD
+=======
 
       // Handles multi-step form navigation
+>>>>>>> master-LTS
     if (Number(parseInt(currentPath)) || currentPath == "0" || currentPath == "-1") {
       if (currentPath == "-1" || currentPath == "-2") {
         currentPath = pathname.slice(0, -3);
@@ -89,11 +109,19 @@ const PTRCreate = ({ parentRoute }) => {
     if (!isNaN(lastchar)) {
       isMultiple = true;
     }
+<<<<<<< HEAD
+    
+    let { nextStep = {} } = config.find((routeObj) => routeObj.route === (currentPath || '0'));
+
+
+    
+=======
     // let { nextStep = {} } = config.find((routeObj) => routeObj.route === currentPath);
     let { nextStep = {} } = config.find((routeObj) => routeObj.route === (currentPath || '0'));
 
 
 
+>>>>>>> master-LTS
     let redirectWithHistory = history.push;
     if (skipStep) {
       redirectWithHistory = history.replace;
@@ -107,26 +135,41 @@ const PTRCreate = ({ parentRoute }) => {
     if (!isNaN(nextStep.split("/").pop())) {
       nextPage = `${match.path}/${nextStep}`;
     }
+<<<<<<< HEAD
+     else {
+=======
     else {
+>>>>>>> master-LTS
       nextPage = isMultiple && nextStep !== "map" ? `${match.path}/${nextStep}/${index}` : `${match.path}/${nextStep}`;
     }
 
     redirectWithHistory(nextPage);
   };
 
+<<<<<<< HEAD
+
+=======
  
  // Clears parameters on back navigation
+>>>>>>> master-LTS
   if(params && Object.keys(params).length>0 && window.location.href.includes("/info") && sessionStorage.getItem("docReqScreenByBack") !== "true")
     {
       clearParams();
       queryClient.invalidateQueries("PTR_CREATE_PET");
+<<<<<<< HEAD
+    }
+
+=======
 
     }
  // Navigates to the acknowledgment page
+>>>>>>> master-LTS
   const ptrcreate = async () => {
     history.push(`${match.path}/acknowledgement`);
   };
 
+<<<<<<< HEAD
+=======
  /**
    * Handles form field selection and updates session storage
    * @param {string} key - Field key
@@ -136,6 +179,7 @@ const PTRCreate = ({ parentRoute }) => {
    * @param {boolean} isAddMultiple - Whether multiple steps are added
    */
 
+>>>>>>> master-LTS
   function handleSelect(key, data, skipStep, index, isAddMultiple = false) {
     if (key === "owners") {
       let owners = params.owners || [];
@@ -153,6 +197,14 @@ const PTRCreate = ({ parentRoute }) => {
     goNext(skipStep, index, isAddMultiple, key);
   }
 
+<<<<<<< HEAD
+  const handleSkip = () => {};
+  const handleMultiple = () => {};
+
+  const onSuccess = () => {
+    clearParams();
+    queryClient.invalidateQueries("PTR_CREATE_PET");
+=======
   const handleSkip = () => { };
   const handleMultiple = () => { };
 
@@ -162,25 +214,40 @@ const PTRCreate = ({ parentRoute }) => {
     queryClient.invalidateQueries("PTR_CREATE_PET");
     sessionStorage.removeItem(["applicationType","petId"]);
     sessionStorage.removeItem("petToken");
+>>>>>>> master-LTS
   };
   if (isLoading) {
     return <Loader />;
   }
 
+<<<<<<< HEAD
+ 
+  commonFields = commonFields? commonFields:citizenConfig;
+  commonFields.forEach((obj) => {
+    config = config.concat(obj.body.filter((a) => !a.hideInCitizen));
+  });
+  
+=======
 // Merges common fields configuration with citizen configuration
   commonFields = commonFields ? commonFields : citizenConfig;
   commonFields.forEach((obj) => {
     config = config.concat(obj.body.filter((a) => !a.hideInCitizen));
   });
 
+>>>>>>> master-LTS
   config.indexRoute = "info";
 
   const CheckPage = Digit?.ComponentRegistryService?.getComponent("PTRCheckPage");
   const PTRAcknowledgement = Digit?.ComponentRegistryService?.getComponent("PTRAcknowledgement");
 
+<<<<<<< HEAD
+  
+  
+=======
 
 
 
+>>>>>>> master-LTS
   return (
     <Switch>
       {config.map((routeObj, index) => {
@@ -188,12 +255,20 @@ const PTRCreate = ({ parentRoute }) => {
         const Component = typeof component === "string" ? Digit.ComponentRegistryService.getComponent(component) : component;
         return (
           <Route path={`${match.path}/${routeObj.route}`} key={index}>
+<<<<<<< HEAD
+            <Component config={{ texts, inputs, key }} onSelect={handleSelect} onSkip={handleSkip} t={t} formData={params} onAdd={handleMultiple} />
+=======
             <Component config={{ texts, inputs, key }} onSelect={handleSelect} onSkip={handleSkip} t={t} formData={params} onAdd={handleMultiple} renewApplication={pathname.includes("new-application") ? {} : dataComingfromAPI} />
+>>>>>>> master-LTS
           </Route>
         );
       })}
 
+<<<<<<< HEAD
+      
+=======
 
+>>>>>>> master-LTS
       <Route path={`${match.path}/check`}>
         <CheckPage onSubmit={ptrcreate} value={params} />
       </Route>

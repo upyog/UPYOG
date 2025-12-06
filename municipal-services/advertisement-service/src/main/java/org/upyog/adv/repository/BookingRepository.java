@@ -4,7 +4,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+<<<<<<< HEAD
+import jakarta.validation.Valid;
+=======
 import javax.validation.Valid;
+>>>>>>> master-LTS
 
 import org.egov.common.contract.request.RequestInfo;
 import org.upyog.adv.web.models.AdvertisementDraftDetail;

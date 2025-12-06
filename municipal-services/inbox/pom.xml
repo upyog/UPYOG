@@ -4,21 +4,25 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.2.6.RELEASE</version>
+		<version>3.2.2</version>
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>org.egov</groupId>
 	<artifactId>inbox</artifactId>
-	<version>1.2.2-SNAPSHOT</version>
+	<version>2.9.0-SNAPSHOT</version>
 	<name>inbox-services</name>
 	<description>inbox services</description>
 
 	<properties>
 		<log4j2.version>2.17.1</log4j2.version>
-		<java.version>1.8</java.version>
+		<java.version>17</java.version>
 		<maven.compiler.source>${java.version}</maven.compiler.source>
 		<maven.compiler.target>${java.version}</maven.compiler.target>
+<<<<<<< HEAD
+		<lombok.version>1.18.22</lombok.version>
+=======
 		<lombok.version>1.18.28</lombok.version>
+>>>>>>> master-LTS
 	</properties>
 
 	<dependencies>
@@ -29,9 +33,7 @@
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-beans</artifactId>
-			<version>5.2.20.RELEASE</version>
 		</dependency>
-
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-jdbc</artifactId>
@@ -42,7 +44,6 @@
 			<artifactId>commons-collections4</artifactId>
 			<version>4.4</version>
 		</dependency>
-
 		<dependency>
 			<groupId>com.google.code.gson</groupId>
 			<artifactId>gson</artifactId>
@@ -118,12 +119,12 @@
 		<dependency>
 			<groupId>org.egov.services</groupId>
 			<artifactId>tracer</artifactId>
-			<version>2.1.2-SNAPSHOT</version>
+			<version>2.9.0-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.egov.services</groupId>
 			<artifactId>services-common</artifactId>
-			<version>1.1.1-SNAPSHOT</version>
+			<version>2.9.0-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.projectlombok</groupId>
@@ -134,9 +135,13 @@
 			<groupId>com.fasterxml.jackson.datatype</groupId>
 			<artifactId>jackson-datatype-jsr310</artifactId>
 		</dependency>
+				<dependency>
+			<groupId>jakarta.validation</groupId>
+			<artifactId>jakarta.validation-api</artifactId>
+		</dependency>
 		<dependency>
-			<groupId>javax.validation</groupId>
-			<artifactId>validation-api</artifactId>
+			<groupId>net.minidev</groupId>
+			<artifactId>json-smart</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.postgresql</groupId>
@@ -146,7 +151,7 @@
 		<dependency>
 			<groupId>org.egov</groupId>
 			<artifactId>mdms-client</artifactId>
-			<version>0.0.2-SNAPSHOT</version>
+			<version>2.9.0-SNAPSHOT</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
@@ -168,7 +173,7 @@
 		<dependency>
 			<groupId>org.egov</groupId>
 			<artifactId>enc-client</artifactId>
-			<version>2.0.3-SNAPSHOT</version>
+			<version>2.9.0</version>
 			<exclusions>
 				<exclusion>
 					<groupId>org.springframework.kafka</groupId>

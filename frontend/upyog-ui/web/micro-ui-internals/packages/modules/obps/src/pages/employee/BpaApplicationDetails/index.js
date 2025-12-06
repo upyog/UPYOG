@@ -81,6 +81,9 @@ const BpaApplicationDetail = () => {
        response = { filestoreIds: [payments?.fileStoreId] };      
     }
     else{
+<<<<<<< HEAD
+       response = await Digit.PaymentService.generatePdf(stateId, { Payments: [{...payments}] }, "bpa-receipt");
+=======
       const formattedStakeholderType=data?.applicationData?.additionalDetails?.typeOfArchitect
             const stakeholderType=formattedStakeholderType.charAt(0).toUpperCase()+formattedStakeholderType.slice(1).toLowerCase()
       const updatedpayments={
@@ -102,6 +105,7 @@ const BpaApplicationDetail = () => {
          
       }
        response = await Digit.PaymentService.generatePdf(stateId, { Payments: [{...updatedpayments}] }, "bpa-receipt");
+>>>>>>> master-LTS
     }    
     const fileStore = await Digit.PaymentService.printReciept(stateId, { fileStoreIds: response.filestoreIds[0] });
     window.open(fileStore[response?.filestoreIds[0]], "_blank");

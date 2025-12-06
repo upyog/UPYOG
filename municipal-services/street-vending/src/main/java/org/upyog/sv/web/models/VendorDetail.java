@@ -1,6 +1,10 @@
 package org.upyog.sv.web.models;
 
+<<<<<<< HEAD
+import jakarta.validation.constraints.NotBlank;
+=======
 import javax.validation.constraints.NotBlank;
+>>>>>>> master-LTS
 
 import org.springframework.validation.annotation.Validated;
 import org.upyog.sv.util.StreetVendingUtil;

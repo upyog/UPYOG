@@ -1,7 +1,7 @@
 package org.egov.egf.master.domain.service;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.any;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
@@ -13,19 +13,19 @@ import org.egov.egf.master.TestConfiguration;
 import org.egov.egf.master.domain.model.AccountCodePurpose;
 import org.egov.egf.master.domain.model.AccountCodePurposeSearch;
 import org.egov.egf.master.domain.repository.AccountCodePurposeRepository;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.context.annotation.Import;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.SmartValidator;
 
 @Import(TestConfiguration.class)
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 public class AccountCodePurposeServiceTest {
 
 	@InjectMocks
@@ -41,7 +41,7 @@ public class AccountCodePurposeServiceTest {
 	private RequestInfo requestInfo = new RequestInfo();
 	private List<AccountCodePurpose> accountCodePurposes = new ArrayList<>();
 
-	@Before
+	@BeforeEach
 	public void setup() {
 	}
 

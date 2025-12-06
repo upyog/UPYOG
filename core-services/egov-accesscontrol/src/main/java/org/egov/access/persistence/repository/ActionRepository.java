@@ -49,6 +49,7 @@ import org.egov.access.web.contract.action.ActionRequest;
 import org.egov.access.web.contract.action.ActionService;
 import org.egov.access.web.contract.action.Module;
 import org.egov.common.contract.request.RequestInfo;
+//import org.egov.common.utils.MultiStateInstanceUtil;
 import org.egov.mdms.model.MasterDetail;
 import org.egov.mdms.model.MdmsCriteria;
 import org.egov.mdms.model.MdmsCriteriaReq;
@@ -101,6 +102,8 @@ public class ActionRepository {
 	@Value("${mdms.actionstest.path}")
 	private String actionTestPath;
 	
+//	@Autowired
+//	private MultiStateInstanceUtil centralInstanceUtil;
 	
 
 	@Autowired
@@ -638,7 +641,17 @@ private List<Action> convertToAction(ActionRequest actionRequest,JSONArray actio
 		act.setUrl(actionsArray.getJSONObject(i).getString("url"));
 		} else {act.setUrl("");}
 		if(actionsArray.getJSONObject(i).has("enabled")){
-		act.setEnabled(actionsArray.getJSONObject(i).getBoolean("enabled"));
+			// Handle both boolean and string values for "enabled" field
+			// This is needed because JsonPath.read().toString() in line 585 converts booleans to strings
+			// in Spring Boot 3.x, causing JSONException when calling getBoolean()
+			Object enabledValue = actionsArray.getJSONObject(i).get("enabled");
+			if (enabledValue instanceof Boolean) {
+				act.setEnabled((Boolean) enabledValue);
+			} else if (enabledValue instanceof String) {
+				act.setEnabled(Boolean.parseBoolean((String) enabledValue));
+			} else {
+				act.setEnabled(false);
+			}
 		} else {act.setEnabled(false);}
 		if(actionsArray.getJSONObject(i).has("id")){
 		act.setId(actionsArray.getJSONObject(i).getLong("id"));

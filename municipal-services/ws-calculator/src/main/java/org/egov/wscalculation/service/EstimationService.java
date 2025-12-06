@@ -17,6 +17,7 @@ import org.egov.wscalculation.util.CalculatorUtil;
 import org.egov.wscalculation.util.WSCalculationUtil;
 import org.egov.wscalculation.util.WaterCessUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
@@ -33,6 +34,7 @@ import net.minidev.json.JSONObject;
 public class EstimationService {
 
 	@Autowired
+	@Lazy
 	private WaterCessUtil waterCessUtil;
 	
 	@Autowired

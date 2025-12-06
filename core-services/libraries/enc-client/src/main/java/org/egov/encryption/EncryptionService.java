@@ -2,7 +2,7 @@ package org.egov.encryption;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import org.egov.common.contract.request.User;
-
+import org.egov.common.contract.request.RequestInfo;
 import java.io.IOException;
 import java.util.List;
 

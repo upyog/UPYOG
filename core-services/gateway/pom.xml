@@ -117,6 +117,23 @@
 		</plugins>
 	</build>
 	<repositories>
+<<<<<<< HEAD
+		<repository>
+			<id>repo.egovernments.org</id>
+			<name>eGov ERP Releases Repository</name>
+			<url>https://nexus-repo.egovernments.org/nexus/content/repositories/releases/</url>
+		</repository>
+		<repository>
+			<id>repo.egovernments.org.snapshots</id>
+			<name>eGov ERP Releases Repository</name>
+			<url>https://nexus-repo.egovernments.org/nexus/content/repositories/snapshots/</url>
+		</repository>
+<!--		<repository>
+			<id>repo.egovernments.org.public</id>
+			<name>eGov Public Repository Group</name>
+			<url>https://nexus-repo.egovernments.org/nexus/content/groups/public/</url>
+		</repository>
+=======
 <!--		<repository>-->
 <!--			<id>repo.egovernments.org</id>-->
 <!--			<name>eGov ERP Releases Repository</name>-->
@@ -132,10 +149,15 @@
 <!--			<name>eGov Public Repository Group</name>-->
 <!--			<url>https://nexus-repo.egovernments.org/nexus/content/groups/public/</url>-->
 <!--		</repository>-->
+>>>>>>> master-LTS
 		<repository>
 			<id>repo.digit.org</id>
 			<name>eGov DIGIT Releases Repository</name>
 			<url>https://nexus-repo.digit.org/nexus/content/repositories/snapshots/</url>
+<<<<<<< HEAD
+		</repository>-->
+=======
 		</repository>
+>>>>>>> master-LTS
 	</repositories>
 </project>

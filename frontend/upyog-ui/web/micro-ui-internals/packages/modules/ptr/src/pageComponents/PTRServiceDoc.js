@@ -1,3 +1,5 @@
+<<<<<<< HEAD
+=======
 /**
  * PTRServiceDoc Component
  * 
@@ -27,6 +29,7 @@
  * 
  */
 
+>>>>>>> master-LTS
 import { Card, CardHeader, CardSubHeader, CardText, Loader, SubmitBar } from "@upyog/digit-ui-react-components";
 import React, { useEffect } from "react";
 import { cardBodyStyle, stringReplaceAll } from "../utils";
@@ -37,9 +40,17 @@ const PTRServiceDoc = ({ t, config, onSelect, userType, formData }) => {
   const stateId = Digit.ULBService.getStateId();
   sessionStorage.removeItem("docReqScreenByBack");
 
+<<<<<<< HEAD
+  const docType = config?.isMutation ? ["MutationDocuments"] : "Documents";
+
+  
+ 
+  const { isLoading, data: Documentsob = {} } = Digit.Hooks.ptr.usePetMDMS(stateId, "PetService", docType);
+=======
   
  
   const { isLoading, data: Documentsob = {} } = Digit.Hooks.ptr.usePetMDMS(stateId, "PetService", "Documents");
+>>>>>>> master-LTS
   
   let docs = Documentsob?.PetService?.Documents;
   function onSave() {}

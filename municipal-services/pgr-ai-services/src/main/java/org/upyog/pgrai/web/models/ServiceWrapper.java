@@ -3,7 +3,11 @@ package org.upyog.pgrai.web.models;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
+<<<<<<< HEAD
+import jakarta.validation.Valid;
+=======
 import javax.validation.Valid;
+>>>>>>> master-LTS
 
 @Data
 @AllArgsConstructor

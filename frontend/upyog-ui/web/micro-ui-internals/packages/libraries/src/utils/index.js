@@ -225,13 +225,19 @@ const BPAAccess = () => {
 
 const ptAccess = () => {
   const userInfo = Digit.UserService.getUser();
+<<<<<<< HEAD
+  console.log("userInfo",userInfo);
+=======
   console.log("userInfo", userInfo);
+>>>>>>> master-LTS
   const userRoles = userInfo?.info?.roles?.map((roleData) => roleData?.code);
   const ptRoles = ["PT_APPROVER", "PT_CEMP", "PT_DOC_VERIFIER", "PT_FIELD_INSPECTOR"];
   const PT_ACCESS = userRoles?.filter((role) => ptRoles?.includes(role));
   return PT_ACCESS?.length > 0;
 };
 
+<<<<<<< HEAD
+=======
 const ewAccess = () => {
   const userInfo = Digit.UserService.getUser();
   const userRoles = userInfo?.info?.roles?.map((roleData) => roleData?.code);
@@ -265,6 +271,7 @@ const adsAccess = () => {
   return ADS_ACCESS?.length > 0;
 };
 
+>>>>>>> master-LTS
 const ptrAccess = () => {
   const userInfo = Digit.UserService.getUser();
   
@@ -276,6 +283,8 @@ const ptrAccess = () => {
   return PTR_ACCESS?.length > 0;
 };
 
+<<<<<<< HEAD
+=======
 const assetAccess = () => {
   const userInfo = Digit.UserService.getUser();
   const userRoles = userInfo?.info?.roles?.map((roleData) => roleData?.code);
@@ -284,6 +293,7 @@ const assetAccess = () => {
   return ASSET_ACCESS?.length > 0;
 };
 
+>>>>>>> master-LTS
 const tlAccess = () => {
   const userInfo = Digit.UserService.getUser();
   const userRoles = userInfo?.info?.roles?.map((roleData) => roleData?.code);

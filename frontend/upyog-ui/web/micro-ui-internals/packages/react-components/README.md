@@ -4,13 +4,21 @@
 ## Install
 
 ```bash
+<<<<<<< HEAD
+npm install --save @egovernments/digit-ui-react-components
+=======
 npm install --save @upyog/digit-ui-react-components
+>>>>>>> master-LTS
 ```
 
 ## Limitation
 
 ```bash
+<<<<<<< HEAD
+This Package is more specific to DIGIT-UI's can be used across mission's
+=======
 This Package is more specific to UPYOG can be used across mission's
+>>>>>>> master-LTS
 ```
 
 ## Usage
@@ -59,10 +67,17 @@ Documentation Site (https://core.digit.org/guides/developer-guide/ui-developer-g
 
 ## Maintainer
 
+<<<<<<< HEAD
+- [jagankumar-egov](https://www.github.com/jagankumar-egov)
+
+
+### Published from DIGIT Frontend 
+=======
 - [Shivank-NIUA](https://github.com/ShivankShuklaa)
 
 
 ### Published from UPYOG Frontend 
+>>>>>>> master-LTS
 DIGIT Frontend Repo (https://github.com/upyog/UPYOG/tree/develop)
 
 
