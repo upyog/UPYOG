@@ -821,16 +821,12 @@ config:
       - work-dir: frontend/workbench-ui/
         dockerfile: frontend/workbench-ui/web/workbench/Dockerfile
         image-name: workbench-ui
-<<<<<<< HEAD
-=======
   - name: builds/upyog/frontend/micro-ui/tqm-ui
     build:
       - work-dir: frontend/tqm-ui/
         dockerfile: frontend/tqm-ui/web/docker/Dockerfile
         image-name: tqm-ui
   #EDCR
->>>>>>> master-LTS
-  
   - name: builds/upyog/edcr/dcr-client/egov-dcr
     build:
       - work-dir: edcr/client/egov
@@ -940,9 +936,7 @@ config:
         dockerfile: "build/maven/Dockerfile"  
       - work-dir: "municipal-services/asset-calculator/src/main/resources/db"
         image-name: "asset-calculator-db" 
-
-<<<<<<< HEAD
-=======
+        
   - name: builds/upyog/frontend/cnd-ui
     build:
       - work-dir: frontend/cnd-ui/
@@ -979,9 +973,6 @@ config:
       - work-dir: "municipal-services/tp-services/src/main/resources/db"
         image-name: "tp-services-db"
 
- 
->>>>>>> master-LTS
-
   - name: "builds/upyog/municipal-services/request-service"
     build:
       - work-dir: "municipal-services/request-service"
@@ -998,7 +989,6 @@ config:
       - work-dir: "municipal-services/vendor-management/src/main/resources/db"
         image-name: "vendor-management-db" 
 
-<<<<<<< HEAD
   - name: builds/upyog/frontend/cnd-ui
     build:
       - work-dir: frontend/cnd-ui/
@@ -1012,10 +1002,6 @@ config:
         dockerfile: "build/maven/Dockerfile"
       - work-dir: "municipal-services/cnd-service/src/main/resources/db"
         image-name: "cnd-service-db"
-
-=======
- 
->>>>>>> master-LTS
         
   - name: 'builds/upyog/municipal-services/cnd-calculator'
     build:
@@ -1025,7 +1011,6 @@ config:
    #   - work-dir: "municipal-services/cnd-calculator/src/main/resources/db"
    #     image-name: "cnd-calculate-db"
 
-<<<<<<< HEAD
   - name: 'builds/upyog/municipal-services/pgr-ai-services'
     build:
       - work-dir: 'municipal-services/pgr-ai-services'
@@ -1041,5 +1026,4 @@ config:
         dockerfile: "build/maven/Dockerfile"
       - work-dir: "municipal-services/tp-services/src/main/resources/db"
         image-name: "tp-services-db"      
-=======
->>>>>>> master-LTS
+
