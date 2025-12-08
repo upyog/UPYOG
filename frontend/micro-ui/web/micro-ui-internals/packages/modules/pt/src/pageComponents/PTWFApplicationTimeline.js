@@ -123,7 +123,7 @@ const PTWFApplicationTimeline = (props) => {
       {!isLoading && (
         <Fragment>
           {data?.timeline?.length > 0 && (
-            <CardSectionHeader style={{ marginBottom: "16px", marginTop: "32px" }}>
+            <CardSectionHeader style={{ color: 'rgb(15, 79, 158)', marginBottom: "16px", marginTop: "32px" }}>
               {t("CS_APPLICATION_DETAILS_APPLICATION_TIMELINE")}
             </CardSectionHeader>
           )}

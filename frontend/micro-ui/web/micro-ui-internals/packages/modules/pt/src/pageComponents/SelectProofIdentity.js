@@ -5,7 +5,6 @@ import { useLocation } from "react-router-dom";
 import Timeline from "../components/TLTimeline";
 
 const SelectProofIdentity = ({ t, config, onSelect, userType, formData, ownerIndex = 0, addNewOwner }) => {
-const Self_Declaration = "https://mnptapp-terraform.s3.ap-south-1.amazonaws.com/images/Self_Declaration.pdf"
   const { pathname: url } = useLocation();
   // const editScreen = url.includes("/modify-application/");
   const isMutation = url.includes("property-mutation");
@@ -26,7 +25,7 @@ const Self_Declaration = "https://mnptapp-terraform.s3.ap-south-1.amazonaws.com/
   const stateId = Digit.ULBService.getStateId();
   const { data: Documentsob = {} } = Digit.Hooks.pt.usePropertyMDMS(stateId, "PropertyTax", "Documents");
   const docs = Documentsob?.PropertyTax?.Documents;
-  const proofIdentity = Array.isArray(docs) && docs.filter((doc) => doc.code.includes("IDENTITYPROOF"));
+  const proofIdentity = Array.isArray(docs) && docs.filter((doc) => doc.code.includes("ADDRESSPROOF"));
   if (proofIdentity.length > 0) {
     dropdownData = proofIdentity[0]?.dropdownData;
     dropdownData.forEach((data) => {
@@ -150,8 +149,7 @@ const Self_Declaration = "https://mnptapp-terraform.s3.ap-south-1.amazonaws.com/
         onAdd={onAdd}
         isMultipleAllow={formData?.ownershipCategory?.value == "INDIVIDUAL.MULTIPLEOWNERS"}
       >
-        <CardLabelDesc style={{fontSize: "12px", fontFamily: "sans-serif", fontStyle:"italic", marginBottom: "0px"}}>{t(`PT_UPLOAD_PATTA_JAMABANDI_DAG_CHITHA_TYPES`)}</CardLabelDesc>
-        <span style={{fontSize: "12px", fontFamily: "sans-serif", fontStyle:"italic", marginBottom: "5px"}}>Download the self declaration <a href={Self_Declaration} download={'Self_Declaration.pdf'} target="_blank" style={{fontWeight: "600", color: "blue", cursor: "pointer", textDecoration: "underline"}} >here</a> </span>
+        <CardLabelDesc style={{fontSize: "12px", fontFamily: "sans-serif", fontStyle:"italic"}}>{t(`PT_UPLOAD_RESTRICTIONS_TYPES`)}</CardLabelDesc>
         <CardLabelDesc style={{fontSize: "12px", fontFamily: "sans-serif", fontStyle:"italic"}}>{t(`PT_UPLOAD_RESTRICTIONS_SIZE`)}</CardLabelDesc>
         <CardLabel>{`${t("PT_CATEGORY_DOCUMENT_TYPE")}`}</CardLabel>
         <Dropdown

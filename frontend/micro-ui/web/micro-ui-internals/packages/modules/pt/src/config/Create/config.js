@@ -83,7 +83,7 @@ export const newConfig =[
                     "withoutLabel": true,
                     "texts": {
                         "headerCaption": "PT_PROPERTY_LOCATION_CAPTION",
-                        "header": "PT_PROOF_OF_ADDRESS_HEADER",
+                        "header": "PT_PROOF_IDENTITY_HEADER",
                         "cardText": "",
                         "nextText": "PT_COMMONS_NEXT",
                         "submitBarLabel": "PT_COMMONS_NEXT"
@@ -547,7 +547,7 @@ export const newConfig =[
                     "component": "SelectProofIdentity",
                     "texts": {
                         "headerCaption": "PT_DOCUMENT_DETAILS",
-                        "header": "PT_PROOF_IDENTITY_HEADER",
+                        "header": "PT_PROOF_OF_ADDRESS_HEADER",
                         "cardText": "",
                         "submitBarLabel": "PT_COMMON_NEXT",
                         "addMultipleText": "PT_COMMON_ADD_APPLICANT_LABEL"
@@ -597,7 +597,7 @@ export const newConfig =[
                     "component": "SelectProofIdentity",
                     "texts": {
                         "headerCaption": "PT_OWNERS_DETAILS",
-                        "header": "PT_PROOF_IDENTITY_HEADER",
+                        "header": "PT_PROOF_OF_ADDRESS_HEADER",
                         "cardText": "",
                         "submitBarLabel": "PT_COMMON_NEXT"
                     },

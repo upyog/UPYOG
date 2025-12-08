@@ -50,7 +50,7 @@ const ApplicationDetails = (props) => {
     isInfoLabel = false,
     clearDataDetails
   } = props;
-
+  console.log("applicationDetails===53---",applicationDetails);
   console.log("workflowDetails===",workflowDetails)
   
   useEffect(() => {

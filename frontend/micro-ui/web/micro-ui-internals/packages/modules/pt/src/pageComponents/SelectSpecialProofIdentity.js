@@ -100,7 +100,7 @@ const SelectSpecialProofIdentity = ({ t, config, onSelect, userType, formData, o
         t={t}
         isDisabled={isUpdateProperty || isEditProperty ? false : !uploadedFile || !dropdownValue || error}
       >
-        <CardLabelDesc>{t(`PT_UPLOAD_RESTRICTIONS_TYPES`)}</CardLabelDesc>
+        {/* <CardLabelDesc>{t(`PT_UPLOAD_RESTRICTIONS_TYPES`)}</CardLabelDesc> */}
         <CardLabelDesc>{t(`PT_UPLOAD_RESTRICTIONS_SIZE`)}</CardLabelDesc>
         <CardLabel>{`${t("PT_CATEGORY_DOCUMENT_TYPE")}`}</CardLabel>
         <Dropdown

@@ -134,10 +134,13 @@ const ApplicationDetails = () => {
 
   if (!(appDetailsToShow?.applicationDetails?.[0]?.values?.[0].title === "PT_PROPERTY_APPLICATION_NO")) {
     appDetailsToShow?.applicationDetails?.unshift({
+      title: "Application Details",
       values: [
         { title: "PT_PROPERTY_APPLICATION_NO", value: appDetailsToShow?.applicationData?.acknowldgementNumber },
         { title: "PT_SEARCHPROPERTY_TABEL_PTUID", value: appDetailsToShow?.applicationData?.propertyId },
         { title: "ES_APPLICATION_CHANNEL", value: `ES_APPLICATION_DETAILS_APPLICATION_CHANNEL_${appDetailsToShow?.applicationData?.channel}` },
+        { title: "Apportioned Property", value: appDetailsToShow?.applicationData?.isPartOfProperty ? t("PT_COMMON_YES") : t("PT_COMMON_NO") },
+
       ],
     });
   }
@@ -199,6 +202,8 @@ const ApplicationDetails = () => {
     />
    )
  } 
+
+ console.log("appDetailsToShow===203==",appDetailsToShow)
 
   return (
     <div>
