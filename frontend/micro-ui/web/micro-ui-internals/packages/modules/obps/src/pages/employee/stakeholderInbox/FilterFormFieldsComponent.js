@@ -1,5 +1,5 @@
 import React, { Fragment, useMemo } from "react"
-import { FilterFormField, Loader, RadioButtons, Localities, RemoveableTag, Dropdown, CheckBox } from "@egovernments/digit-ui-react-components";
+import { FilterFormField, Loader, RadioButtons, Localities, RemoveableTag, Dropdown, CheckBox } from "@upyog/digit-ui-react-components";
 import { Controller, useWatch } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 

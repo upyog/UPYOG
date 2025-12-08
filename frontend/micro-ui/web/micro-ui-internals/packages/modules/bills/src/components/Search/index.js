@@ -1,4 +1,4 @@
-import { Loader, Card, Header, SearchForm, Table, DownloadIcon, MultiLink, DownloadBtnCommon } from "@egovernments/digit-ui-react-components";
+import { Loader, Card, Header, SearchForm, Table, DownloadIcon, MultiLink, DownloadBtnCommon } from "@upyog/digit-ui-react-components";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { getActionButton, getBillNumber } from "../../utils";
@@ -225,7 +225,7 @@ const SearchApplication = ({ showTable, showLoader, isLoading, tenantId, t, onSu
         data &&
         data.length > 0 && (
           <div style={{ backgroundColor: "white" }}>
-            <div className="sideContent" style={{ float: "left", padding: "20px 10px", fontSize: "24px", fontWeight: "700", fontFamily: "Roboto" }}>
+            <div className="sideContent" style={{ float: "left", padding: "20px 10px", fontSize: "16px", fontWeight: "700", fontFamily: "Open Sans" }}>
               {t("ABG_SEARCH_RESULTS_HEADER")}
             </div>
             <div className="sideContent" style={{ float: "right", padding: "10px 30px" }}>

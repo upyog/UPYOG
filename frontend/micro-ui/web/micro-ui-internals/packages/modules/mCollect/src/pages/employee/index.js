@@ -2,7 +2,7 @@ import React from "react";
 import { MCollectLinks } from "../../Module";
 import Inbox from "./Inbox";
 import { Switch, useLocation, Link } from "react-router-dom";
-import { PrivateRoute } from "@egovernments/digit-ui-react-components";
+import { PrivateRoute } from "@upyog/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 // import EmployeeChallan from "../../EmployeeChallan";
 // import CreateChallen from "../employee/CreateChallan";

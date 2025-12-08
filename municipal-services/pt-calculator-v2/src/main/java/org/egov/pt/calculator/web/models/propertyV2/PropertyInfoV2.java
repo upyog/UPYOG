@@ -1,10 +1,18 @@
 package org.egov.pt.calculator.web.models.propertyV2;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.*;
+import java.util.List;
 
 import javax.validation.Valid;
-import java.util.List;
+
+import org.egov.pt.calculator.web.models.Address;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
 /**
  * This is lightweight property object that can be used as reference by
@@ -18,6 +26,12 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PropertyInfoV2 {
+
+	public PropertyInfoV2(String id2, String propertyId2, String surveyId2, List<String> linkedProperties2,
+			String tenantId2, String accountId2, String oldPropertyId2, String status2,
+			org.egov.pt.calculator.web.models.property.Address addressV2) {
+		// TODO Auto-generated constructor stub
+	}
 
 	@JsonProperty("id")
 	private String id;
@@ -45,5 +59,5 @@ public class PropertyInfoV2 {
 	private String status;
 
 	@JsonProperty("address")
-	private AddressV2 address;
+	private Address address;
 }
