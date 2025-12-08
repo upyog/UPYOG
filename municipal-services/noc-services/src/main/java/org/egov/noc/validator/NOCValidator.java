@@ -124,7 +124,15 @@ public class NOCValidator {
 			businessValues.put(NOCConstants.INITIATED_TIME, Long.toString(System.currentTimeMillis()));
 		}
 
-		noc.setAdditionalDetails(businessValues);
+		// merge user provided additionalDetails with system generated ones
+		Map<String, Object> existing = (Map<String, Object>) noc.getAdditionalDetails();
+		if (existing != null) {
+		    existing.putAll(businessValues); // add mode/workflowCode
+		    noc.setAdditionalDetails(existing);
+		} else {
+		    noc.setAdditionalDetails(businessValues);
+		}
+
 		return businessValues;
 	}
 

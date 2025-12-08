@@ -45,11 +45,31 @@ public class NocRowMapper implements ResultSetExtractor<List<Noc>> {
                 noc.setSource(rs.getString("source"));
                 noc.setSourceRefId(rs.getString("sourceRefId"));
                 noc.setAccountId(rs.getString("AccountId"));
+                
+                noc.setApplicantName(rs.getString("applicantname"));
+                noc.setFatherName(rs.getString("fathername"));
+                noc.setMobile(rs.getString("mobile"));
+                noc.setDob(rs.getString("dob"));
+                noc.setGender(rs.getString("gender"));
+                noc.setEmail(rs.getString("email"));
+                noc.setAddress(rs.getString("address"));
+                noc.setNocReason(rs.getString("nocreason"));
+                noc.setConnectionType(rs.getString("connectiontype"));
 
                 Object additionalDetails = new Gson().fromJson(rs.getString("additionalDetails").equals("{}")
 						|| rs.getString("additionalDetails").equals("null") ? null : rs.getString("additionalDetails"),
 						Object.class);
                 noc.setAdditionalDetails(additionalDetails);
+                
+                Object locationDetail = new Gson().fromJson(
+                        rs.getString("location_detail") == null ||
+                        rs.getString("location_detail").equals("{}") ||
+                        rs.getString("location_detail").equals("null")
+                                ? null
+                                : rs.getString("locationdetail"),
+                        Object.class
+                );
+                noc.setLocationDetail(locationDetail);
                 
                 AuditDetails auditdetails = AuditDetails.builder()
                         .createdBy(rs.getString("noc_createdBy"))

@@ -1,6 +1,7 @@
 package org.egov.noc.web.model;
 
 import java.util.Objects;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
@@ -12,6 +13,7 @@ import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.time.LocalDate;
 
 import org.egov.noc.web.model.enums.ApplicationType;
 import org.egov.noc.web.model.enums.Status;
@@ -90,6 +92,45 @@ public class Noc   {
 
   @JsonProperty("additionalDetails")
   private Object additionalDetails = null;
+  
+  @SafeHtml
+  @JsonProperty("applicantName")
+  private String applicantName;
+
+  @SafeHtml
+  @JsonProperty("fatherName")
+  private String fatherName;
+
+  @SafeHtml
+  @JsonProperty("mobile")
+  private String mobile;
+
+  @JsonProperty("dob")
+  private String dob;
+
+  @SafeHtml
+  @JsonProperty("gender")
+  private String gender;
+
+  @SafeHtml
+  @JsonProperty("email")
+  private String email;
+
+  @SafeHtml
+  @JsonProperty("address")
+  private String address;
+
+  @SafeHtml
+  @JsonProperty("nocReason")
+  private String nocReason;
+
+  @SafeHtml
+  @JsonProperty("connectionType")
+  private String connectionType;
+
+  @JsonProperty("locationDetail")
+  private Object locationDetail; 
+
 
   public Noc id(String id) {
     this.id = id;
@@ -404,6 +445,87 @@ public class Noc   {
   public void setAdditionalDetails(Object additionalDetails) {
     this.additionalDetails = additionalDetails;
   }
+  
+  public String getApplicantName() {
+	    return applicantName;
+	}
+
+	public void setApplicantName(String applicantName) {
+	    this.applicantName = applicantName;
+	}
+
+	public String getFatherName() {
+	    return fatherName;
+	}
+
+	public void setFatherName(String fatherName) {
+	    this.fatherName = fatherName;
+	}
+
+	public String getMobile() {
+	    return mobile;
+	}
+
+	public void setMobile(String mobile) {
+	    this.mobile = mobile;
+	}
+
+	public String getDob() {
+	    return dob;
+	}
+
+	public void setDob(String dob) {
+	    this.dob = dob;
+	}
+
+	public String getGender() {
+	    return gender;
+	}
+
+	public void setGender(String gender) {
+	    this.gender = gender;
+	}
+
+	public String getEmail() {
+	    return email;
+	}
+
+	public void setEmail(String email) {
+	    this.email = email;
+	}
+
+	public String getAddress() {
+	    return address;
+	}
+
+	public void setAddress(String address) {
+	    this.address = address;
+	}
+
+	public String getNocReason() {
+	    return nocReason;
+	}
+
+	public void setNocReason(String nocReason) {
+	    this.nocReason = nocReason;
+	}
+
+	public String getConnectionType() {
+	    return connectionType;
+	}
+
+	public void setConnectionType(String connectionType) {
+	    this.connectionType = connectionType;
+	}
+
+	public Object getLocationDetail() {
+	    return locationDetail;
+	}
+
+	public void setLocationDetail(Object locationDetail) {
+	    this.locationDetail = locationDetail;
+	}
+
 
 
   @Override
@@ -430,12 +552,23 @@ public class Noc   {
         Objects.equals(this.documents, noc.documents) &&
         Objects.equals(this.workflow, noc.workflow) &&
         Objects.equals(this.auditDetails, noc.auditDetails) &&
-        Objects.equals(this.additionalDetails, noc.additionalDetails);
+        Objects.equals(this.additionalDetails, noc.additionalDetails) &&
+        Objects.equals(this.applicantName, noc.applicantName) &&
+        Objects.equals(this.fatherName, noc.fatherName) &&
+        Objects.equals(this.mobile, noc.mobile) &&
+        Objects.equals(this.dob, noc.dob) &&
+        Objects.equals(this.gender, noc.gender) &&
+        Objects.equals(this.email, noc.email) &&
+        Objects.equals(this.address, noc.address) &&
+        Objects.equals(this.nocReason, noc.nocReason) &&
+        Objects.equals(this.connectionType, noc.connectionType) &&
+        Objects.equals(this.locationDetail, noc.locationDetail);
+        
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, tenantId, applicationNo, nocNo, applicationType, nocType, accountId, source, sourceRefId, landId, status, applicationStatus, documents, workflow, auditDetails, additionalDetails);
+    return Objects.hash(id, tenantId, applicationNo, nocNo, applicationType, nocType, accountId, source, sourceRefId, landId, status, applicationStatus, documents, workflow, auditDetails, additionalDetails, applicantName, fatherName, mobile, dob, gender, email, address, nocReason, connectionType, locationDetail);
   }
 
   @Override
@@ -459,6 +592,16 @@ public class Noc   {
     sb.append("    workflow: ").append(toIndentedString(workflow)).append("\n");
     sb.append("    auditDetails: ").append(toIndentedString(auditDetails)).append("\n");
     sb.append("    additionalDetails: ").append(toIndentedString(additionalDetails)).append("\n");
+    sb.append("    applicantName: ").append(toIndentedString(applicantName)).append("\n");
+    sb.append("    fatherName: ").append(toIndentedString(fatherName)).append("\n");
+    sb.append("    mobile: ").append(toIndentedString(mobile)).append("\n");
+    sb.append("    dob: ").append(toIndentedString(dob)).append("\n");
+    sb.append("    gender: ").append(toIndentedString(gender)).append("\n");
+    sb.append("    email: ").append(toIndentedString(email)).append("\n");
+    sb.append("    address: ").append(toIndentedString(address)).append("\n");
+    sb.append("    nocReason: ").append(toIndentedString(nocReason)).append("\n");
+    sb.append("    connectionType: ").append(toIndentedString(connectionType)).append("\n");
+    sb.append("    locationDetail: ").append(toIndentedString(locationDetail)).append("\n");
     sb.append("}");
     return sb.toString();
   }
