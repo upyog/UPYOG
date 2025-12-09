@@ -23,7 +23,6 @@ import static java.util.Objects.isNull;
 import static org.egov.user.domain.model.enums.AddressType.CORRESPONDENCE;
 import static org.egov.user.domain.model.enums.AddressType.PERMANENT;
 
-@Slf4j
 @Service
 @Slf4j
 public class UserResultSetExtractor implements ResultSetExtractor<List<User>> {

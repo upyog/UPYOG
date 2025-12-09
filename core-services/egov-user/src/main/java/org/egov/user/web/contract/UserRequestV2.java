@@ -2,6 +2,9 @@ package org.egov.user.web.contract;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 import org.egov.user.config.UserServiceConstants;
 import org.egov.user.domain.model.Address;
@@ -9,10 +12,6 @@ import org.egov.user.domain.model.Role;
 import org.egov.user.domain.model.User;
 import org.egov.user.domain.model.enums.*;
 import org.hibernate.validator.constraints.Email;
-import org.hibernate.validator.constraints.SafeHtml;
-
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -27,11 +26,9 @@ public class UserRequestV2 {
 
     private Long id;
 
-    @SafeHtml
     @Size(max = 64)
     private String userName;
 
-    @SafeHtml
     @Size(max = 5)
     private String salutation;
 
@@ -53,15 +50,12 @@ public class UserRequestV2 {
     @Size(max = 128)
     private String emailId;
 
-    @SafeHtml
     @Size(max = 50)
     private String altContactNumber;
 
-    @SafeHtml
     @Size(max = 10)
     private String pan;
 
-    @SafeHtml
     @Size(max = 20)
     private String aadhaarNumber;
 
@@ -69,7 +63,6 @@ public class UserRequestV2 {
 
     private Set<Address> addresses;
 
-    @SafeHtml
     @Size(max = 16)
     private String locale;
 
@@ -82,19 +75,15 @@ public class UserRequestV2 {
     private String fatherOrHusbandName;
     private GuardianRelation relationship;
 
-    @SafeHtml
     @Size(max = 36)
     private String signature;
 
-    @SafeHtml
     @Size(max = 32)
     private String bloodGroup;
 
-    @SafeHtml
     @Size(max = 36)
     private String photo;
 
-    @SafeHtml
     @Size(max = 300)
     private String identificationMark;
     private Long createdBy;
@@ -102,7 +91,6 @@ public class UserRequestV2 {
     @Size(max = 64)
     private String password;
 
-    @SafeHtml
     private String otpReference;
     private Long lastModifiedBy;
 
@@ -112,7 +100,6 @@ public class UserRequestV2 {
 
     private Set<RoleRequest> roles;
 
-    @SafeHtml
     @Size(max = 36)
     private String uuid;
 
