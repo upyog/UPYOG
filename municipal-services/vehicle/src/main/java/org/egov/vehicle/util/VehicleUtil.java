@@ -42,8 +42,8 @@ public class VehicleUtil {
 	@Autowired
 	private ObjectMapper mapper;
 
-	@Autowired
-	private ModuleRoleService moduleRoleService;
+//	@Autowired
+//	private ModuleRoleService moduleRoleService;
 
 	public void defaultJsonPathConfig() {
 		Configuration.setDefaults(new Configuration.Defaults() {

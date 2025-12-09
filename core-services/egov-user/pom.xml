@@ -20,12 +20,8 @@
         <java.version>17</java.version>
         <joda-time-version>2.9.6</joda-time-version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-<<<<<<< HEAD
         <lombok.version>1.18.22</lombok.version>
-=======
-        <lombok.version>1.16.12</lombok.version>
          <skipTests>true</skipTests>
->>>>>>> master-LTS
     </properties>
     <dependencies>
         <dependency>
@@ -53,7 +49,6 @@
             <!--<version>2.9.0-SNAPSHOT</version>-->
              <version>1.1.1-SNAPSHOT</version>
         </dependency>
-
         <dependency>
             <groupId>org.egov</groupId>
             <artifactId>enc-client</artifactId>
@@ -99,7 +94,6 @@
 		    <groupId>com.fasterxml.jackson.datatype</groupId>
 		    <artifactId>jackson-datatype-jsr310</artifactId>
 		</dependency>
-        
         <dependency>
             <groupId>com.jayway.jsonpath</groupId>
             <artifactId>json-path</artifactId>
@@ -176,7 +170,6 @@
             <artifactId>jsoup</artifactId>
             <version>1.10.2</version>
         </dependency>
-<<<<<<< HEAD
         <dependency>
 		    <groupId>org.springframework.security</groupId>
 		    <artifactId>spring-security-crypto</artifactId>
@@ -185,7 +178,6 @@
             <groupId>org.reflections</groupId>
             <artifactId>reflections</artifactId>
             <version>0.9.12</version>
-=======
         <!-- For generating Swagger documentation -->
         <dependency>
             <groupId>io.springfox</groupId>
@@ -198,7 +190,6 @@
             <groupId>io.springfox</groupId>
             <artifactId>springfox-swagger-ui</artifactId>
             <version>2.9.2</version>
->>>>>>> master-LTS
         </dependency>
     </dependencies>
     <repositories>
