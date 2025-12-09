@@ -220,16 +220,11 @@ public class UserSearchResponseContent {
                     })
                     .collect(Collectors.toSet());
             user.setRoles(roleEntities);
-<<<<<<< HEAD
         } else {
             // CRITICAL FIX: Ensure roles is never null, always initialize to empty set
             user.setRoles(new HashSet<>());
         }
 
-=======
-        }
- 
->>>>>>> master-LTS
         return user;
     }
 }

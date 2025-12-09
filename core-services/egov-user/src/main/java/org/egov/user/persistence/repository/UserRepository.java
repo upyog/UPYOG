@@ -319,10 +319,6 @@ public class UserRepository {
                 updateRoles(user);
             }
             if (user.getPermanentAndCorrespondenceAddresses() != null) {
-<<<<<<< HEAD
-                addressRepository.update(user.getPermanentAndCorrespondenceAddresses(), user.getId(), user.getTenantId());
-            }
-=======
                 // this will update the addresses only if the address soft update flag is enabled from properties file
             // this is put to bypass existing logic of updating addresses where addresses were deleted and recreated
             if (addressSoftUpdateFlag) {
@@ -332,7 +328,6 @@ public class UserRepository {
                 addressRepository.update(user.getPermanentAndCorrespondenceAddresses(), user.getId(), user.getTenantId());
             }
             }
->>>>>>> master-LTS
         }
     }
 

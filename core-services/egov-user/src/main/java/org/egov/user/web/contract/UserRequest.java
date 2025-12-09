@@ -31,17 +31,9 @@ public class UserRequest {
     @Size(max = 64)
     private String userName;
 
-<<<<<<< HEAD
     @Size(max = 40)
     private String access_token;
 
-=======
-    @SafeHtml
-    @Size(max = 40)
-    private String access_token;
-
-    @SafeHtml
->>>>>>> master-LTS
     @Size(max = 5)
     private String salutation;
 
@@ -135,10 +127,6 @@ public class UserRequest {
     @Size(max = 36)
     private String uuid;
 
-<<<<<<< HEAD
-=======
-    @SafeHtml
->>>>>>> master-LTS
     @Size(max = 36)
     private String digilockerid;
 

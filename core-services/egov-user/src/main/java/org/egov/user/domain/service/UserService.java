@@ -5,16 +5,14 @@ import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
 import org.egov.user.domain.exception.*;
-<<<<<<< HEAD
+import org.egov.user.domain.model.Address;
+import org.egov.user.domain.model.AddressSearchCriteria;
 import org.egov.user.domain.model.LoggedInUserUpdatePasswordRequest;
 import org.egov.user.domain.model.NonLoggedInUserUpdatePasswordRequest;
 import org.egov.user.domain.model.Role;
 import org.egov.user.domain.model.User;
 import org.egov.user.domain.model.UserSearchCriteria;
-=======
-import org.egov.user.domain.model.*;
 import org.egov.user.domain.model.enums.AddressType;
->>>>>>> master-LTS
 import org.egov.user.domain.model.enums.UserType;
 import org.egov.user.domain.service.utils.EncryptionDecryptionUtil;
 import org.egov.user.domain.service.utils.NotificationUtil;
@@ -70,15 +68,11 @@ public class UserService {
     private boolean isEmployeeLoginOtpBased;
     private FileStoreRepository fileRepository;
     private EncryptionDecryptionUtil encryptionDecryptionUtil;
-<<<<<<< HEAD
     //private TokenStore tokenStore;
+    private AddressRepository addressRepository;
     
     // CHANGED: TokenStore -> OAuth2AuthorizationService
     private OAuth2AuthorizationService authorizationService;
-=======
-    private TokenStore tokenStore;
-    private AddressRepository addressRepository;
->>>>>>> master-LTS
 
     @Value("${egov.user.host}")
     private String userHost;
@@ -116,7 +110,6 @@ public class UserService {
     @Autowired
     private NotificationUtil notificationUtil;
 
-<<<<<<< HEAD
 	public UserService(UserRepository userRepository, OtpRepository otpRepository, FileStoreRepository fileRepository,
 			PasswordEncoder passwordEncoder, EncryptionDecryptionUtil encryptionDecryptionUtil,
 			// REMOVED: OAuth2AuthorizationService authorizationService,
@@ -125,7 +118,7 @@ public class UserService {
 			@Value("${employee.login.password.otp.enabled}") boolean isEmployeeLoginOtpBased,
 			@Value("${egov.user.pwd.pattern}") String pwdRegex,
 			@Value("${egov.user.pwd.pattern.max.length}") Integer pwdMaxLength,
-			@Value("${egov.user.pwd.pattern.min.length}") Integer pwdMinLength) {
+			@Value("${egov.user.pwd.pattern.min.length}") Integer pwdMinLength, AddressRepository addressRepository) {
 		this.userRepository = userRepository;
 		this.otpRepository = otpRepository;
 		this.passwordEncoder = passwordEncoder;
@@ -138,31 +131,8 @@ public class UserService {
 		this.pwdRegex = pwdRegex;
 		this.pwdMaxLength = pwdMaxLength;
 		this.pwdMinLength = pwdMinLength;
+		this.addressRepository = addressRepository;
 	}
-=======
-    public UserService(UserRepository userRepository, OtpRepository otpRepository, FileStoreRepository fileRepository,
-                       PasswordEncoder passwordEncoder, EncryptionDecryptionUtil encryptionDecryptionUtil, TokenStore tokenStore,
-                       @Value("${default.password.expiry.in.days}") int defaultPasswordExpiryInDays,
-                       @Value("${citizen.login.password.otp.enabled}") boolean isCitizenLoginOtpBased,
-                       @Value("${employee.login.password.otp.enabled}") boolean isEmployeeLoginOtpBased,
-                       @Value("${egov.user.pwd.pattern}") String pwdRegex,
-                       @Value("${egov.user.pwd.pattern.max.length}") Integer pwdMaxLength,
-                       @Value("${egov.user.pwd.pattern.min.length}") Integer pwdMinLength, AddressRepository addressRepository) {
-        this.userRepository = userRepository;
-        this.otpRepository = otpRepository;
-        this.passwordEncoder = passwordEncoder;
-        this.defaultPasswordExpiryInDays = defaultPasswordExpiryInDays;
-        this.isCitizenLoginOtpBased = isCitizenLoginOtpBased;
-        this.isEmployeeLoginOtpBased = isEmployeeLoginOtpBased;
-        this.fileRepository = fileRepository;
-        this.encryptionDecryptionUtil = encryptionDecryptionUtil;
-        this.tokenStore = tokenStore;
-        this.pwdRegex = pwdRegex;
-        this.pwdMaxLength = pwdMaxLength;
-        this.pwdMinLength = pwdMinLength;
-        this.addressRepository = addressRepository;
-    }
->>>>>>> master-LTS
 
     /**
      * get user By UserName And TenantId
@@ -524,11 +494,6 @@ public class UserService {
      */
     // TODO Fix date formats
     public User updateWithoutOtpValidation(User user, RequestInfo requestInfo) {
-<<<<<<< HEAD
-
-=======
-        
->>>>>>> master-LTS
          	User existingUser = getUserByUuid(user.getUuid());
             user.setTenantId(getStateLevelTenantForCitizen(user.getTenantId(), user.getType()));
             validateUserRoles(user);
@@ -872,7 +837,6 @@ public class UserService {
     	//user = decryptionDecryptionUtil.decryptObject(user, "User", User.class);        
     	return getAccess(user, user.getOtpReference());
     	}
-<<<<<<< HEAD
     }
     
     /**
@@ -883,7 +847,6 @@ public class UserService {
     public void resetFailedLoginAttempts(User user) {
         if (user != null && user.getUuid() != null)
             userRepository.resetFailedLoginAttemptsForUser(user.getUuid());
-=======
     }    /**
      * Creates an address entry for the given user based on the provided UUID.
      * It first retrieves the user ID from the database using the UUID.
@@ -979,7 +942,6 @@ public class UserService {
         Address savedAddress = addressRepository.createAddressV2(address, address.getUserId(), address.getTenantId());
         // Decrypt address before returning
         return encryptionDecryptionUtil.decryptObject(savedAddress, UserConstants.USER_ADDRESS_ENCRYPTION_KEY, Address.class, null);
->>>>>>> master-LTS
     }
 
     /**

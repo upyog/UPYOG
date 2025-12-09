@@ -24,12 +24,6 @@ import org.springframework.util.CollectionUtils;
 
 import java.util.*;
 import java.util.stream.Collectors;
-<<<<<<< HEAD
-=======
-
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
->>>>>>> master-LTS
 
 import static org.springframework.util.ObjectUtils.isEmpty;
 
@@ -383,7 +377,6 @@ public class User {
                     })
                     .collect(Collectors.toSet());
             user.setRoles(roleEntities);
-<<<<<<< HEAD
         } else {
             // CRITICAL FIX: Ensure roles is never null, always initialize to empty set
             user.setRoles(new HashSet<>());
@@ -416,12 +409,6 @@ public class User {
             this.roles = roles;
         }
     }
-=======
-        }
- 
-        return user;
-    }
->>>>>>> master-LTS
 }
 
 

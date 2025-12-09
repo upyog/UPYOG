@@ -2,18 +2,10 @@ package org.egov.user.persistence.repository;
 
 import org.egov.user.domain.model.Address;
 import org.egov.user.domain.model.enums.AddressType;
-<<<<<<< HEAD
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
-=======
-import org.egov.user.repository.builder.AddressQueryBuilder;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.runner.RunWith;
->>>>>>> master-LTS
 import org.mockito.InjectMocks;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

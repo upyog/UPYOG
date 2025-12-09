@@ -12,11 +12,7 @@ import java.util.Date;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-<<<<<<< HEAD
 @EqualsAndHashCode(of = {"id"})
-=======
-@EqualsAndHashCode(of = {"id","pinCode","city","address","type","address2","houseNumber","houseName","streetName","landmark","locality"})
->>>>>>> master-LTS
 public class Address {
     private String pinCode;
     private String city;

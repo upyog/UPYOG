@@ -2,11 +2,8 @@ package org.egov.user.web.controller;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-<<<<<<< HEAD
 
 import jakarta.validation.Valid;
-=======
->>>>>>> master-LTS
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.response.ResponseInfo;
 import org.egov.user.domain.model.*;
@@ -341,9 +338,7 @@ public class UserController {
     }
 /// Author - Abhijeet
 
-<<<<<<< HEAD
-}
-=======
+
     /**
      * Endpoint to create a new address for a user identified by their UUID.
      *
@@ -489,4 +484,3 @@ public class UserController {
         return new UserDetailResponseV2(responseInfo, Collections.singletonList(userRequestV2));
     }
 }
->>>>>>> master-LTS
