@@ -2,6 +2,7 @@ package org.egov.user.persistence.repository;
 
 import org.egov.user.domain.model.Address;
 import org.egov.user.domain.model.enums.AddressType;
+import org.egov.user.repository.builder.AddressQueryBuilder;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.BeforeEach;
