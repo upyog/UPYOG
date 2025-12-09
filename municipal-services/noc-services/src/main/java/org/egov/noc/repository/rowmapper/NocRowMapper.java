@@ -62,9 +62,9 @@ public class NocRowMapper implements ResultSetExtractor<List<Noc>> {
                 noc.setAdditionalDetails(additionalDetails);
                 
                 Object locationDetail = new Gson().fromJson(
-                        rs.getString("location_detail") == null ||
-                        rs.getString("location_detail").equals("{}") ||
-                        rs.getString("location_detail").equals("null")
+                        rs.getString("locationdetail") == null ||
+                        rs.getString("locationdetail").equals("{}") ||
+                        rs.getString("locationdetail").equals("null")
                                 ? null
                                 : rs.getString("locationdetail"),
                         Object.class
