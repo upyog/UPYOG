@@ -14,7 +14,6 @@ import org.egov.garbageservice.model.GarbageAccount;
 import org.egov.garbageservice.model.GrbgBillTracker;
 import org.egov.garbageservice.model.contract.PDFRequest;
 import org.egov.garbageservice.contract.bill.Bill;
-import org.egov.garbageservice.enums.Status;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -45,13 +44,9 @@ public class PDFRequestGenerator {
 		grbg.put("ulbType", grbgAccount.getAddresses().get(0).getUlbType());
 
 		Map<String, BigDecimal> grbgTaxMap = new HashMap<>();
-		Map<String, BigDecimal> grbgTaxMapActive = new HashMap<>();
 		for (GrbgBillTracker grbgBillTrackerObj : grbgBillTracker) {
 			if (grbgBillTrackerObj.getGrbgBillAmount() != null) {
 				grbgTaxMap.put(grbgBillTrackerObj.getGrbgApplicationId(), grbgBillTrackerObj.getGrbgBillAmount());
-			}
-			if (grbgBillTrackerObj.getGrbgBillAmount() != null && grbgBillTrackerObj.getStatus().equalsIgnoreCase(Status.ACTIVE.toString())) {
-				grbgTaxMapActive.put(grbgBillTrackerObj.getGrbgApplicationId(), grbgBillTrackerObj.getGrbgBillAmount());
 			}
 		}
 
@@ -102,13 +97,9 @@ public class PDFRequestGenerator {
 
 			String unit = "1";
 			BigDecimal tax = grbgTaxMap.getOrDefault(consumerCode, BigDecimal.ZERO);
-			BigDecimal taxActive = grbgTaxMapActive.getOrDefault(consumerCode, BigDecimal.ZERO);
 			BigDecimal arrear = billObj.getTotalAmount().subtract(tax);
-			BigDecimal arrearActive = billObj.getTotalAmount().subtract(taxActive);
 			BigDecimal interest = BigDecimal.ZERO;
-			BigDecimal interestActive = BigDecimal.ZERO;
 			BigDecimal grbgTaxPlusArrear = tax.add(arrear);
-			BigDecimal grbgTaxPlusArrearActive = tax.add(arrearActive);
 
 			grbgObj.get("serialNo").add(String.valueOf(count++));
 			grbgObj.get("units").add(unit);
@@ -126,7 +117,6 @@ public class PDFRequestGenerator {
 			grbgObj.get("paymentDates").add(paymentDate);
 			grbgObj.get("paymentStatuses").add(billObj.getStatus().toString());
 			grbgObj.get("grbgTaxPlusArrear").add(grbgTaxPlusArrear.toString());
-			grbgObj.get("grbgTaxPlusArrearActive").add(grbgTaxPlusArrearActive.toString());
 		}
 
 		Map<String, Object> gbDetailsTableRow = new HashMap<>();
@@ -139,11 +129,9 @@ public class PDFRequestGenerator {
 		List<String> allGrbgTaxs = grbgObj.get("grbgTaxs");
 		List<String> allArrears = grbgObj.get("arrears");
 		List<String> allInterest = grbgObj.get("interest");
-		List<String> allInterestActive = grbgObj.get("interestActive");
 		List<String> allPaymentDates = grbgObj.get("paymentDates");
 		List<String> allPaymentStatuses = grbgObj.get("paymentStatuses");
 		List<String> allGrbgTaxPlusArrear = grbgObj.get("grbgTaxPlusArrear");
-		List<String> allGrbgTaxPlusArrearActive = grbgObj.get("grbgTaxPlusArrearActive");
 
 		gbDetailsTableRow.put("allSerialNo", allSerialNo);
 		gbDetailsTableRow.put("allGrbgAccounts", allGrbgAccounts);
@@ -158,9 +146,7 @@ public class PDFRequestGenerator {
 		gbDetailsTableRow.put("allPaymentStatuses", allPaymentStatuses);
 		gbDetailsTableRow.put("allGrbgTaxPlusArrear", allGrbgTaxPlusArrear);
 		
-//		BigDecimal totalTax = allGrbgTaxPlusArrear.stream().map(BigDecimal::new).reduce(BigDecimal.ZERO,
-//				BigDecimal::add);
-		BigDecimal totalTax = allGrbgTaxPlusArrearActive.stream().map(BigDecimal::new).reduce(BigDecimal.ZERO,
+		BigDecimal totalTax = allGrbgTaxPlusArrear.stream().map(BigDecimal::new).reduce(BigDecimal.ZERO,
 				BigDecimal::add);
 		grbg.put("totalTax", totalTax);
 
