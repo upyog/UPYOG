@@ -5,11 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
-<<<<<<< HEAD
 import jakarta.persistence.*;
-=======
-import javax.persistence.*;
->>>>>>> master-LTS
 import java.sql.Timestamp;
 import java.time.LocalDate;
 
@@ -44,11 +40,7 @@ public class DepreciationDetail {
     @Column(name = "book_value", nullable = false)
     private Double bookValue;
 
-<<<<<<< HEAD
     @Column(name = "depreciation_method")
-=======
-    @Column(name = "depreciationMethod")
->>>>>>> master-LTS
     private String depreciationMethod;
 
     @Column(name = "rate", nullable = false)

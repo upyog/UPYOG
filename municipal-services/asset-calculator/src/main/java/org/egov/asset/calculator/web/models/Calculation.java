@@ -2,13 +2,8 @@ package org.egov.asset.calculator.web.models;
 
 import java.util.List;
 import org.egov.asset.calculator.utils.CalculatorConstants;
-<<<<<<< HEAD
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-=======
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
->>>>>>> master-LTS
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

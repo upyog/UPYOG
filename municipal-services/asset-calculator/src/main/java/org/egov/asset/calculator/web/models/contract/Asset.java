@@ -1,7 +1,6 @@
 package org.egov.asset.calculator.web.models.contract;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-<<<<<<< HEAD
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
@@ -12,28 +11,13 @@ import org.springframework.validation.annotation.Validated;
 import jakarta.persistence.*;
 
 import java.time.Instant;
-=======
-import io.swagger.annotations.ApiModel;
-import lombok.*;
-import org.springframework.validation.annotation.Validated;
-
-import javax.persistence.*;
->>>>>>> master-LTS
 
 /**
  * An object representing an asset
  */
-<<<<<<< HEAD
 @Schema(description = "Object representing an asset")
 @Validated
 @jakarta.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2024-04-12T12:56:34.514+05:30")
-=======
-@ApiModel(description = "Object representing an asset")
-@Validated
-@javax.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2024-04-12T12:56:34.514+05:30")
->>>>>>> master-LTS
-
-
 @Entity
 @Getter
 @Setter
@@ -108,7 +92,6 @@ public class Asset {
     @JsonProperty("businessService")
     private String businessService;
 
-<<<<<<< HEAD
 //    @Transient
     // @Column(name = "additionaldetails", columnDefinition = "jsonb")
     // @JsonProperty("additionalDetails")
@@ -116,10 +99,6 @@ public class Asset {
 
     @Column(name = "additionaldetails", columnDefinition = "jsonb")
     @JdbcTypeCode(SqlTypes.JSON)
-=======
-    @Transient
-    @Column(name = "additionaldetails", columnDefinition = "jsonb")
->>>>>>> master-LTS
     @JsonProperty("additionalDetails")
     private Object additionalDetails;
 

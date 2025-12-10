@@ -5,11 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-<<<<<<< HEAD
 import jakarta.persistence.*;
-=======
-import javax.persistence.*;
->>>>>>> master-LTS
 import java.io.Serializable;
 
 @Data

@@ -2,11 +2,7 @@ package org.egov.asset.calculator.web.models;
 
 import java.util.List;
 
-<<<<<<< HEAD
 import jakarta.validation.Valid;
-=======
-import javax.validation.Valid;
->>>>>>> master-LTS
 
 import org.springframework.validation.annotation.Validated;
 
@@ -23,11 +19,7 @@ import lombok.ToString;
  * Boundary
  */
 @Validated
-<<<<<<< HEAD
 @jakarta.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-06-23T05:54:07.373Z[GMT]")
-=======
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-06-23T05:54:07.373Z[GMT]")
->>>>>>> master-LTS
 @Getter
 @Setter
 @AllArgsConstructor
