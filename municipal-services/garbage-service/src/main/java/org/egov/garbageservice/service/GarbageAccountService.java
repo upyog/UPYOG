@@ -46,7 +46,6 @@ import org.egov.garbageservice.contract.workflow.ProcessInstanceRequest;
 import org.egov.garbageservice.contract.workflow.ProcessInstanceResponse;
 import org.egov.garbageservice.contract.workflow.State;
 import org.egov.garbageservice.contract.workflow.WorkflowService;
-import org.egov.garbageservice.enums.Status;
 import org.egov.garbageservice.model.AuditDetails;
 import org.egov.garbageservice.model.GarbageAccount;
 import org.egov.garbageservice.model.GarbageAccountActionRequest;
@@ -2162,8 +2161,7 @@ public class GarbageAccountService {
 
 		}
 		GrbgBillTrackerSearchCriteria grbgTrackerSearchCriteria = GrbgBillTrackerSearchCriteria.builder()
-				.type(grbgTaxCalculatorMonthTracker.getType()).grbgApplicationIds(garbapplicationNos)
-				.month(grbgTaxCalculatorMonthTracker.getMonth()).status(Collections.singleton(Status.ACTIVE.toString()))
+				.type(grbgTaxCalculatorMonthTracker.getType()).grbgApplicationIds(garbapplicationNos).month(grbgTaxCalculatorMonthTracker.getMonth())
 				.build();
 
 		List<GrbgBillTracker> grbgTaxCalculatorTracker = getBillCalculatedGarbageAccounts(grbgTrackerSearchCriteria);
