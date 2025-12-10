@@ -4,13 +4,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 import org.egov.common.contract.response.ResponseInfo;
 
-<<<<<<< HEAD
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
-=======
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
->>>>>>> master-LTS
 import java.util.ArrayList;
 import java.util.List;
 

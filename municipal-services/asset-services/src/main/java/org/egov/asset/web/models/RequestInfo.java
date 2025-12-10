@@ -1,27 +1,16 @@
 package org.egov.asset.web.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-<<<<<<< HEAD
 import io.swagger.v3.oas.annotations.media.Schema;
-=======
-import io.swagger.annotations.ApiModel;
->>>>>>> master-LTS
 import lombok.*;
 import org.springframework.validation.annotation.Validated;
 
 /**
  * RequestInfo should be used to carry meta information about the requests to the server as described in the fields below. All eGov APIs will use requestinfo as a part of the request body to carry this meta information. Some of this information will be returned back from the server as part of the ResponseInfo in the response body to ensure correlation.
  */
-<<<<<<< HEAD
 @Schema(description = "RequestInfo should be used to carry meta information about the requests to the server as described in the fields below. All eGov APIs will use requestinfo as a part of the request body to carry this meta information. Some of this information will be returned back from the server as part of the ResponseInfo in the response body to ensure correlation.")
 @Validated
 @jakarta.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2024-04-12T12:56:34.514+05:30")
-=======
-@ApiModel(description = "RequestInfo should be used to carry meta information about the requests to the server as described in the fields below. All eGov APIs will use requestinfo as a part of the request body to carry this meta information. Some of this information will be returned back from the server as part of the ResponseInfo in the response body to ensure correlation.")
-@Validated
-@javax.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2024-04-12T12:56:34.514+05:30")
->>>>>>> master-LTS
-
 @Getter
 @Setter
 @AllArgsConstructor

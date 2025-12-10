@@ -7,11 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.egov.common.contract.request.RequestInfo;
 
-<<<<<<< HEAD
 import jakarta.validation.Valid;
-=======
-import javax.validation.Valid;
->>>>>>> master-LTS
 import java.util.List;
 
 

@@ -14,11 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-<<<<<<< HEAD
 import jakarta.validation.Valid;
-=======
-import javax.validation.Valid;
->>>>>>> master-LTS
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;

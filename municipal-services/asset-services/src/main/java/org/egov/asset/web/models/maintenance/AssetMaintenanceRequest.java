@@ -8,11 +8,7 @@ import lombok.NoArgsConstructor;
 import org.egov.asset.web.models.disposal.AssetDisposal;
 import org.egov.common.contract.request.RequestInfo;
 
-<<<<<<< HEAD
 import jakarta.validation.Valid;
-=======
-import javax.validation.Valid;
->>>>>>> master-LTS
 
 
 @Builder

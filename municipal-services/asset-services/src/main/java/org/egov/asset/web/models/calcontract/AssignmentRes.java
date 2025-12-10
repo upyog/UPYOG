@@ -5,11 +5,7 @@ import lombok.*;
 import org.egov.asset.web.models.AssetAssignment;
 import org.egov.common.contract.response.ResponseInfo;
 
-<<<<<<< HEAD
 import jakarta.validation.Valid;
-=======
-import javax.validation.Valid;
->>>>>>> master-LTS
 import java.util.List;
 
 

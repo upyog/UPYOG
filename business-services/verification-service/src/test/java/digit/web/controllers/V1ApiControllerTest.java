@@ -1,6 +1,5 @@
 package digit.web.controllers;
 
-<<<<<<< HEAD
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -9,49 +8,18 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.upyog.web.controllers.VerificationServiceController;
 import org.springframework.context.annotation.Import;
-=======
-import org.junit.Test;
-import org.junit.Ignore;
-import org.junit.runner.RunWith;
-import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.test.web.servlet.MockMvc;
-import org.upyog.web.controllers.VerificationServiceController;
-import org.upyog.web.models.CommonModuleRequest;
-import org.upyog.web.models.CommonModuleResponse;
-import org.upyog.web.models.ErrorRes;
-import org.upyog.web.models.RequestInfo;
-import org.springframework.context.annotation.Import;
-import org.springframework.http.HttpStatus;
->>>>>>> master-LTS
 import org.springframework.http.MediaType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import digit.TestConfiguration;
-
-<<<<<<< HEAD
-
-=======
-    import java.util.ArrayList;
-    import java.util.HashMap;
-    import java.util.List;
-    import java.util.Map;
-
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.when;
->>>>>>> master-LTS
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
 * API tests for VerificationServiceController
 */
-<<<<<<< HEAD
 @Disabled
 @ExtendWith(SpringExtension.class)
-=======
-@Ignore
-@RunWith(SpringRunner.class)
->>>>>>> master-LTS
 @WebMvcTest(VerificationServiceController.class)
 @Import(TestConfiguration.class)
 public class V1ApiControllerTest {

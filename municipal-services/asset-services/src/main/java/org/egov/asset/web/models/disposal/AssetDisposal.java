@@ -6,17 +6,10 @@ import lombok.*;
 import org.egov.asset.web.models.AuditDetails;
 import org.egov.asset.web.models.Document;
 
-<<<<<<< HEAD
 import jakarta.persistence.Column;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.validation.Valid;
-=======
-import javax.persistence.Column;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.validation.Valid;
->>>>>>> master-LTS
 import java.util.List;
 
 
@@ -82,10 +75,6 @@ public class AssetDisposal {
     @Valid
     private List<Document> documents;
 
-<<<<<<< HEAD
-=======
-    @JsonIgnore
->>>>>>> master-LTS
     @JsonProperty("auditDetails")
     private AuditDetails auditDetails;
 

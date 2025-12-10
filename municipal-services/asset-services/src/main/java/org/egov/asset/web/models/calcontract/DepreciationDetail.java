@@ -6,11 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-<<<<<<< HEAD
 import jakarta.persistence.*;
-=======
-import javax.persistence.*;
->>>>>>> master-LTS
 import java.sql.Timestamp;
 import java.time.LocalDate;
 

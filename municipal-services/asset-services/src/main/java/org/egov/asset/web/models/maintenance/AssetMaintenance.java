@@ -2,12 +2,8 @@ package org.egov.asset.web.models.maintenance;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-<<<<<<< HEAD
 //import io.swagger.annotations.Schema;
 import io.swagger.v3.oas.annotations.media.Schema;
-=======
-import io.swagger.annotations.ApiModel;
->>>>>>> master-LTS
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -16,7 +12,6 @@ import org.egov.asset.web.models.AuditDetails;
 import org.egov.asset.web.models.Document;
 import org.springframework.validation.annotation.Validated;
 
-<<<<<<< HEAD
 import jakarta.persistence.*;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -24,15 +19,6 @@ import java.util.List;
 
 
 @Schema(description = "Object representing an asset maintenance details")
-=======
-import javax.persistence.*;
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-import java.util.List;
-
-
-@ApiModel(description = "Object representing an asset maintenance details")
->>>>>>> master-LTS
 @Validated
 
 @Data
@@ -113,10 +99,6 @@ public class AssetMaintenance {
     @Valid
     private List<Document> documents;
 
-<<<<<<< HEAD
-=======
-    @JsonIgnore
->>>>>>> master-LTS
     @JsonProperty("auditDetails")
     private AuditDetails auditDetails;
 

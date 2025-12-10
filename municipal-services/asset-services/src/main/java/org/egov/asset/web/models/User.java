@@ -4,13 +4,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 import org.springframework.validation.annotation.Validated;
 
-<<<<<<< HEAD
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Size;
-=======
-import javax.validation.Valid;
-import javax.validation.constraints.Size;
->>>>>>> master-LTS
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,12 +14,7 @@ import java.util.List;
  * User
  */
 @Validated
-<<<<<<< HEAD
 @jakarta.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2024-04-12T12:56:34.514+05:30")
-=======
-@javax.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2024-04-12T12:56:34.514+05:30")
->>>>>>> master-LTS
-
 @Getter
 @Setter
 @AllArgsConstructor

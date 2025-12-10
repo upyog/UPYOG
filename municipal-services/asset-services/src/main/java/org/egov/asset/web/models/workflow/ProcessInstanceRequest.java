@@ -1,38 +1,22 @@
 package org.egov.asset.web.models.workflow;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-<<<<<<< HEAD
 import io.swagger.v3.oas.annotations.media.Schema;
-=======
-import io.swagger.annotations.ApiModel;
->>>>>>> master-LTS
 import lombok.*;
 import org.egov.common.contract.request.RequestInfo;
 import org.springframework.validation.annotation.Validated;
 
-<<<<<<< HEAD
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
-=======
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
->>>>>>> master-LTS
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Contract class to receive process instance request.
  */
-<<<<<<< HEAD
 @Schema(description = "Contract class to process instance receive request. Array of TradeLicense items are used in case of create, whereas single TradeLicense item is used for update")
 @Validated
 @jakarta.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2018-12-04T11:26:25.532+05:30")
-=======
-@ApiModel(description = "Contract class to process instance receive request. Array of TradeLicense items are used in case of create, whereas single TradeLicense item is used for update")
-@Validated
-@javax.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2018-12-04T11:26:25.532+05:30")
->>>>>>> master-LTS
-
 @Getter
 @Setter
 @AllArgsConstructor
