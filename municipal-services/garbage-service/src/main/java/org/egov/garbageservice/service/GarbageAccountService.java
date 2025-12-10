@@ -2141,8 +2141,7 @@ public class GarbageAccountService {
 		}
 
 		GrbgBillTrackerSearchCriteria grbgTrackerMonthSearchCriteria = GrbgBillTrackerSearchCriteria.builder()
-				.grbgApplicationIds(Collections.singleton(grbgId)).billIds(Collections.singleton(billid))
-				.status(Collections.singleton(Status.ACTIVE.toString())).build();
+				.grbgApplicationIds(Collections.singleton(grbgId)).billIds(Collections.singleton(billid)).build();
 
 		List<GrbgBillTracker> grbgTaxCalculatorMonth = getBillCalculatedGarbageAccounts(grbgTrackerMonthSearchCriteria);
 
@@ -2163,7 +2162,8 @@ public class GarbageAccountService {
 
 		}
 		GrbgBillTrackerSearchCriteria grbgTrackerSearchCriteria = GrbgBillTrackerSearchCriteria.builder()
-				.type(grbgTaxCalculatorMonthTracker.getType()).grbgApplicationIds(garbapplicationNos).month(grbgTaxCalculatorMonthTracker.getMonth())
+				.type(grbgTaxCalculatorMonthTracker.getType()).grbgApplicationIds(garbapplicationNos)
+				.month(grbgTaxCalculatorMonthTracker.getMonth()).status(Collections.singleton(Status.ACTIVE.toString()))
 				.build();
 
 		List<GrbgBillTracker> grbgTaxCalculatorTracker = getBillCalculatedGarbageAccounts(grbgTrackerSearchCriteria);
