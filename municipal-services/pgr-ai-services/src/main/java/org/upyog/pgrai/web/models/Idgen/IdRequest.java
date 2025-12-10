@@ -6,11 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-<<<<<<< HEAD
 import jakarta.validation.constraints.NotNull;
-=======
-import javax.validation.constraints.NotNull;
->>>>>>> master-LTS
 
 /**
  * Represents a request for generating a unique ID in the system.

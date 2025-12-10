@@ -1,10 +1,6 @@
 package org.egov.ewst.models;
 
-<<<<<<< HEAD
 import jakarta.validation.constraints.Size;
-=======
-import javax.validation.constraints.Size;
->>>>>>> master-LTS
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -14,10 +10,6 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
-<<<<<<< HEAD
-=======
-import org.hibernate.validator.constraints.SafeHtml;
->>>>>>> master-LTS
 
 /**
  * Represents a document in the Ewaste application.
@@ -31,10 +23,6 @@ import org.hibernate.validator.constraints.SafeHtml;
 public class Document {
 
 	@Size(max = 64)
-<<<<<<< HEAD
-=======
-	@SafeHtml
->>>>>>> master-LTS
 	@JsonProperty("id")
 	private String id;
 
@@ -42,34 +30,18 @@ public class Document {
 	private Boolean active;
 
 	@Size(max = 64)
-<<<<<<< HEAD
-=======
-	@SafeHtml
->>>>>>> master-LTS
 	@JsonProperty("tenantId")
 	private String tenantId = null;
 
 	@Size(max = 64)
-<<<<<<< HEAD
-=======
-	@SafeHtml
->>>>>>> master-LTS
 	@JsonProperty("documentType")
 	private String documentType = null;
 
 	@Size(max = 64)
-<<<<<<< HEAD
-=======
-	@SafeHtml
->>>>>>> master-LTS
 	@JsonProperty("filestoreId")
 	private String filestoreId = null;
 
 	@Size(max = 64)
-<<<<<<< HEAD
-=======
-	@SafeHtml
->>>>>>> master-LTS
 	@JsonProperty("documentUid")
 	private String documentUid;
 

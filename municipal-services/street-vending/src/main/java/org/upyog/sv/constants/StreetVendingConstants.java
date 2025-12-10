@@ -4,10 +4,6 @@ public class StreetVendingConstants {
 
 	public static final String EMPLOYEE = "EMPLOYEE";
 	public static final String CITIZEN = "CITIZEN";
-<<<<<<< HEAD
-=======
-	public static final String SYSTEM= "SYSTEM";
->>>>>>> master-LTS
 	public static final String APPLICATION_CREATED = "Application Created";
 	public static final String INVALID_TENANT = "INVALID TENANT";
 	public static final String INVALID_SEARCH = "INVALID SEARCH";
@@ -122,11 +118,8 @@ public class StreetVendingConstants {
 
 	public static final String ACTION_STATUS_APPLICATION_EXPIRED = "APPLICATIONEXPIRED";
 
-<<<<<<< HEAD
 	public static final String SYSTEM_CITIZEN_USERNAME = "8888888888";
 
-=======
->>>>>>> master-LTS
 	public static final String SYSTEM_CITIZEN_TENANTID = "pg";
 
 	public static final String STATUS_EXPIRED = "EXPIRED";

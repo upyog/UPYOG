@@ -2,11 +2,7 @@ package org.egov.ewst.models;
 
 import java.util.List;
 
-<<<<<<< HEAD
 import jakarta.validation.Valid;
-=======
-import javax.validation.Valid;
->>>>>>> master-LTS
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

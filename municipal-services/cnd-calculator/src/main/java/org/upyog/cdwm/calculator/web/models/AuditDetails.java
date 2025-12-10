@@ -3,19 +3,11 @@ package org.upyog.cdwm.calculator.web.models;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
-<<<<<<< HEAD
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import org.springframework.validation.annotation.Validated;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
-=======
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import org.springframework.validation.annotation.Validated;
-import javax.validation.Valid;
-import javax.validation.constraints.*;
->>>>>>> master-LTS
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -25,15 +17,9 @@ import lombok.Builder;
 /**
  * Collection of audit related fields used by most models
  */
-<<<<<<< HEAD
 @Schema(description = "Collection of audit related fields used by most models")
 @Validated
 @jakarta.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2025-03-03T17:38:50.367+05:30")
-=======
-@ApiModel(description = "Collection of audit related fields used by most models")
-@Validated
-@javax.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2025-03-03T17:38:50.367+05:30")
->>>>>>> master-LTS
 
 @Getter
 @Setter

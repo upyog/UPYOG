@@ -1,12 +1,7 @@
 package org.upyog.sv.validator;
 
-<<<<<<< HEAD
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
-=======
-import javax.validation.Constraint;
-import javax.validation.Payload;
->>>>>>> master-LTS
 
 import org.upyog.sv.util.StreetVendingUtil;
 

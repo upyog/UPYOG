@@ -6,11 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Email;
 
-<<<<<<< HEAD
 import jakarta.validation.constraints.Size;
-=======
-import javax.validation.constraints.Size;
->>>>>>> master-LTS
 import java.util.List;
 
 /**

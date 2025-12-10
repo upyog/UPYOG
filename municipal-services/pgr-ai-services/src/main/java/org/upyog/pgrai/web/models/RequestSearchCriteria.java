@@ -6,12 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-<<<<<<< HEAD
 import org.upyog.pgrai.validation.SanitizeHtml;
-=======
-import org.hibernate.validator.constraints.SafeHtml;
-
->>>>>>> master-LTS
 import java.util.Set;
 
 @Data
@@ -20,11 +15,7 @@ import java.util.Set;
 @Builder
 public class RequestSearchCriteria {
 
-<<<<<<< HEAD
     @SanitizeHtml
-=======
-    @SafeHtml
->>>>>>> master-LTS
     @JsonProperty("tenantId")
     private String tenantId;
 
@@ -37,19 +28,11 @@ public class RequestSearchCriteria {
     @JsonProperty("applicationStatus")
     private Set<String> applicationStatus;
 
-<<<<<<< HEAD
     @SanitizeHtml
     @JsonProperty("mobileNumber")
     private String mobileNumber;
 
     @SanitizeHtml
-=======
-    @SafeHtml
-    @JsonProperty("mobileNumber")
-    private String mobileNumber;
-
-    @SafeHtml
->>>>>>> master-LTS
     @JsonProperty("serviceRequestId")
     private String serviceRequestId;
 
@@ -101,11 +84,7 @@ public class RequestSearchCriteria {
         serviceRequestId
     }
 
-<<<<<<< HEAD
     @SanitizeHtml
-=======
-    @SafeHtml
->>>>>>> master-LTS
     @JsonProperty("accountId")
     private String accountId;
 

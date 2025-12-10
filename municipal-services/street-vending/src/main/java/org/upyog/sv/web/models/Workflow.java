@@ -1,11 +1,7 @@
 package org.upyog.sv.web.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-<<<<<<< HEAD
 import io.swagger.v3.oas.annotations.media.Schema;
-=======
-import io.swagger.annotations.ApiModel;
->>>>>>> master-LTS
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -18,25 +14,15 @@ import java.util.List;
 import org.springframework.validation.annotation.Validated;
 import org.upyog.sv.web.models.workflow.Document;
 
-<<<<<<< HEAD
 import jakarta.validation.Valid;
-=======
-import javax.validation.Valid;
->>>>>>> master-LTS
 
 /**
  * Represents a workflow object used for tracking actions, status, and related details
  * in the street vending application process.
  */
-<<<<<<< HEAD
 @Schema(description = "Represents a workflow object used for tracking actions, status, and related details in the street vending application process.")
 @Validated
 @jakarta.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-06-23T05:52:32.717Z[GMT]")
-=======
-@ApiModel(description = "Represents a workflow object used for tracking actions, status, and related details in the street vending application process.")
-@Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-06-23T05:52:32.717Z[GMT]")
->>>>>>> master-LTS
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter

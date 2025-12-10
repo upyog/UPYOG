@@ -7,11 +7,7 @@ import lombok.Builder;
 import lombok.NoArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 
-<<<<<<< HEAD
 import jakarta.validation.Valid;
-=======
-import javax.validation.Valid;
->>>>>>> master-LTS
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -28,11 +24,7 @@ import java.util.Objects;
  * This class is part of the PGR V1 module.
  */
 @Validated
-<<<<<<< HEAD
 @jakarta.annotation.Generated(value = "io.swagger.codegen.languages.SpringCodegen", date = "2018-03-23T08:00:37.661Z")
-=======
-@javax.annotation.Generated(value = "io.swagger.codegen.languages.SpringCodegen", date = "2018-03-23T08:00:37.661Z")
->>>>>>> master-LTS
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder

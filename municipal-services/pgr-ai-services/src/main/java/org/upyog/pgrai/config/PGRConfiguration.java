@@ -13,11 +13,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.stereotype.Component;
 
-<<<<<<< HEAD
 import jakarta.annotation.PostConstruct;
-=======
-import javax.annotation.PostConstruct;
->>>>>>> master-LTS
 import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;

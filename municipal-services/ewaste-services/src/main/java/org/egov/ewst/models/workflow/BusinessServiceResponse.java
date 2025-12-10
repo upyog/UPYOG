@@ -9,13 +9,8 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.egov.common.contract.response.ResponseInfo;
 
-<<<<<<< HEAD
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
-=======
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
->>>>>>> master-LTS
 import java.util.ArrayList;
 import java.util.List;
 

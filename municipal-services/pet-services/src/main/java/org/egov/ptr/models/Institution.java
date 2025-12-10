@@ -1,10 +1,6 @@
 package org.egov.ptr.models;
 
-<<<<<<< HEAD
 import org.egov.ptr.validator.SanitizeHtml;
-=======
-import org.hibernate.validator.constraints.SafeHtml;
->>>>>>> master-LTS
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

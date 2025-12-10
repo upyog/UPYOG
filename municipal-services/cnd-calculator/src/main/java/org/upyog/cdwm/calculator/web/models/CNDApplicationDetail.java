@@ -20,11 +20,7 @@ import lombok.ToString;
  * Request schema of CND application.  
  */
 @Validated
-<<<<<<< HEAD
 @jakarta.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-12-23T12:08:13.326Z[GMT]")
-=======
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-12-23T12:08:13.326Z[GMT]")
->>>>>>> master-LTS
 
 @Getter
 @Setter

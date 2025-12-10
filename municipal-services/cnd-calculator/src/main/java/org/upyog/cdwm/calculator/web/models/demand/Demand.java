@@ -4,11 +4,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-<<<<<<< HEAD
 import jakarta.validation.Valid;
-=======
-import javax.validation.Valid;
->>>>>>> master-LTS
 
 import org.egov.common.contract.request.User;
 import org.upyog.cdwm.calculator.web.models.AuditDetails;

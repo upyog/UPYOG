@@ -3,11 +3,7 @@ package org.egov.ewst.models.event;
 import lombok.*;
 import org.springframework.validation.annotation.Validated;
 
-<<<<<<< HEAD
 import jakarta.validation.constraints.NotNull;
-=======
-import javax.validation.constraints.NotNull;
->>>>>>> master-LTS
 import java.util.List;
 
 /**

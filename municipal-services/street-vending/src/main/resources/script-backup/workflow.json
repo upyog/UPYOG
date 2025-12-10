@@ -1,5 +1,4 @@
 {
-<<<<<<< HEAD
   "RequestInfo": {
     "apiId": "Rainmaker",
     "action": "",
@@ -174,194 +173,6 @@
           ]
         },
         {
-=======
-"RequestInfo": {
-  "apiId": "Rainmaker",
-  "action": "",
-  "did": 1,
-  "key": "",
-  "msgId": "20230910130900|en_IN",
-  "requesterId": "",
-  "ts": 1513579888772,
-  "ver": ".01",
-  "authToken": "{{devAuth}}",
-  "userInfo": {
-      "id": 2130,
-      "uuid": "f9517ac8-a630-4b4a-adbf-717a7d99fa5c",
-      "userName": "9999009999",
-      "name": "KS",
-      "mobileNumber": "9999009999",
-      "emailId": "test@test.com",
-      "locale": null,
-      "type": "CITIZEN",
-      "roles": [
-          {
-              "name": "Citizen",
-              "code": "CITIZEN",
-              "tenantId": "pg"
-          }
-      ],
-      "active": true,
-      "tenantId": "pg",
-      "permanentCity": null
-  }
-},
-"BusinessServices": [
-  {
-      "tenantId": "pg",
-      "businessService": "street-vending",
-      "business": "sv-services",
-      "businessServiceSla": null,
-      "states": [
-          {
-              "sla": null,
-              "state": null,
-              "applicationStatus": null,
-              "docUploadRequired": true,
-              "isStartState": true,
-              "isTerminateState": false,
-              "isStateUpdatable": true,
-              "actions": [
-                  {
-                      "action": "APPLY",
-                      "nextState": "APPLIED",
-                      "roles": [
-                          "CITIZEN",
-                          "SVCEMP"
-                      ]
-                  }
-              ]
-          },
-          {
-              "sla": null,
-              "state": "CITIZENACTIONREQUIRED",
-              "applicationStatus": "CITIZENACTIONREQUIRED",
-              "docUploadRequired": false,
-              "isStartState": false,
-              "isTerminateState": false,
-              "isStateUpdatable": true,
-              "actions": [
-                  {
-                      "action": "RESUBMIT",
-                      "nextState": "APPLIED",
-                      "roles": [
-                          "CITIZEN",
-                          "SVCEMP"
-                      ]
-                  }
-              ]
-          },
-          {
-              "sla": null,
-              "state": "APPLIED",
-              "applicationStatus": "APPLIED",
-              "docUploadRequired": false,
-              "isStartState": false,
-              "isTerminateState": true,
-              "isStateUpdatable": false,
-              "actions": [
-                  {
-                      "action": "FORWARD",
-                      "nextState": "INPECTIONPENDING",
-                      "roles": [
-                          "TVCEMPLOYEE",
-                          "SVCEMP"
-                      ]
-                  },
-                  {
-                      "action": "APPROVE",
-                      "nextState": "APPROVED",
-                      "roles": [
-                          "TVCEMPLOYEE",
-                          "SVCEMP"
-                      ]
-                  },
-                  {
-                      "action": "REJECT",
-                      "nextState": "REJECTED",
-                      "roles": [
-                          "TVCEMPLOYEE",
-                          "SVCEMP"
-                      ]
-                  },
-                  {
-                      "action": "SENDBACKTOCITIZEN",
-                      "nextState": "CITIZENACTIONREQUIRED",
-                      "roles": [
-                          "TVCEMPLOYEE",
-                          "SVCEMP"
-                      ]
-                  }
-              ]
-          },
-          {
-              "sla": null,
-              "state": "INPECTIONPENDING",
-              "applicationStatus": "INPECTIONPENDING",
-              "docUploadRequired": false,
-              "isStartState": false,
-              "isTerminateState": true,
-              "isStateUpdatable": false,
-              "actions": [
-                  {
-                      "action": "FORWARD",
-                      "nextState": "APPROVALPENDING",
-                      "roles": [
-                          "INSPECTIONOFFICER",
-                          "SVCEMP"
-                      ]
-                  }
-              ]
-          },
-          {
-              "sla": null,
-              "state": "APPROVALPENDING",
-              "applicationStatus": "APPROVALPENDING",
-              "docUploadRequired": false,
-              "isStartState": false,
-              "isTerminateState": true,
-              "isStateUpdatable": false,
-              "actions": [
-                  {
-                      "action": "APPROVE",
-                      "nextState": "APPROVED",
-                      "roles": [
-                          "TVCEMPLOYEE",
-                          "SVCEMP"
-                      ]
-                  },
-                  {
-                      "action": "REJECT",
-                      "nextState": "REJECTED",
-                      "roles": [
-                          "TVCEMPLOYEE",
-                          "SVCEMP"
-                      ]
-                  }
-              ]
-          },
-          {
-              "sla": null,
-              "state": "APPROVED",
-              "applicationStatus": "APPROVED",
-              "docUploadRequired": false,
-              "isStartState": false,
-              "isTerminateState": false,
-              "isStateUpdatable": false,
-              "actions": [
-                  {
-                      "action": "PAY",
-                      "nextState": "REGISTRATIONCOMPLETED",
-                      "roles": [
-                          "SYSTEM_PAYMENT",
-                          "CITIZEN",
-                          "SVCEMP"
-                      ]
-                  }
-          ]
-      },
-      {
->>>>>>> master-LTS
           "sla": null,
           "state": "REJECTED",
           "applicationStatus": "REJECTED",
@@ -370,13 +181,8 @@
           "isTerminateState": true,
           "isStateUpdatable": false,
           "actions": null
-<<<<<<< HEAD
         },
         {
-=======
-      },
-      {
->>>>>>> master-LTS
           "sla": null,
           "state": "REGISTRATIONCOMPLETED",
           "applicationStatus": "REGISTRATIONCOMPLETED",
@@ -385,15 +191,8 @@
           "isTerminateState": true,
           "isStateUpdatable": false,
           "actions": null
-<<<<<<< HEAD
         }
       ]
     }
   ]
-=======
-      }
-  ]
-}
-]
->>>>>>> master-LTS
 }

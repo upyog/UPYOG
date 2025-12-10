@@ -144,7 +144,6 @@ public class FSMService {
 				|| tripAmount > 0) {
 			calculationService.addCalculation(fsmRequest, FSMConstants.APPLICATION_FEE);
 		}
-<<<<<<< HEAD
 
 		// Enrich citizen data by fetching from user service to get decrypted user details
 		// This ensures the response contains decrypted citizen data similar to search API
@@ -160,10 +159,6 @@ public class FSMService {
 			}
 		}
 
-=======
-		
-//		fSMInboxService.inboxEvent(fsmRequest);
->>>>>>> master-LTS
 		return fsmRequest.getFsm();
 	}
 
@@ -236,7 +231,6 @@ public class FSMService {
 
 		createOrUpdateFsmApplicationWorkers(fsmRequest);
 		repository.update(fsmRequest, workflowService.isStateUpdatable(fsm.getApplicationStatus(), businessService));
-<<<<<<< HEAD
 
 		// Enrich citizen data by fetching from user service to get decrypted user details
 		// This ensures the response contains decrypted citizen data similar to search API
@@ -252,9 +246,6 @@ public class FSMService {
 			}
 		}
 
-=======
-//		fSMInboxService.inboxEvent( fsmRequest);
->>>>>>> master-LTS
 		return fsmRequest.getFsm();
 	}
 

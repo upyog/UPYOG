@@ -3,11 +3,7 @@ package org.egov.ewst.models;
 import java.util.ArrayList;
 import java.util.List;
 
-<<<<<<< HEAD
 import jakarta.validation.Valid;
-=======
-import javax.validation.Valid;
->>>>>>> master-LTS
 
 import org.javers.core.metamodel.annotation.DiffIgnore;
 import org.springframework.validation.annotation.Validated;
@@ -29,11 +25,7 @@ import lombok.Setter;
  */
 @ApiModel(description = "A Object holds the basic data for a E-waste Application")
 @Validated
-<<<<<<< HEAD
 @jakarta.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2023-08-20T09:30:27.617+05:30")
-=======
-@javax.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2023-08-20T09:30:27.617+05:30")
->>>>>>> master-LTS
 
 @Getter
 @Setter

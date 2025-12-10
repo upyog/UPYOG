@@ -11,10 +11,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Import;
-<<<<<<< HEAD
-=======
 import org.springframework.jdbc.core.JdbcTemplate;
->>>>>>> master-LTS
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -30,10 +27,6 @@ import net.javacrumbs.shedlock.spring.annotation.EnableSchedulerLock;
 		"org.egov.ptr.repository" })
 @Import({ TracerConfiguration.class })
 @EnableScheduling
-<<<<<<< HEAD
-=======
-@EnableSchedulerLock(defaultLockAtMostFor = "PT30M")
->>>>>>> master-LTS
 public class PetApplication {
 
 	@Value("${app.timezone}")

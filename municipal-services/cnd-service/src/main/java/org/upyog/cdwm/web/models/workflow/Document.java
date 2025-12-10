@@ -1,29 +1,16 @@
 package org.upyog.cdwm.web.models.workflow;
 
 import java.util.Objects;
-<<<<<<< HEAD
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Size;
 
 import org.upyog.cdwm.validation.SanitizeHtml;
-=======
-
-import javax.validation.Valid;
-import javax.validation.constraints.Size;
-
-import org.hibernate.validator.constraints.SafeHtml;
->>>>>>> master-LTS
 import org.springframework.validation.annotation.Validated;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import digit.models.coremodels.AuditDetails;
-<<<<<<< HEAD
-=======
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
->>>>>>> master-LTS
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
@@ -32,20 +19,13 @@ import lombok.NoArgsConstructor;
  * This object holds list of documents attached during the transaciton for a
  * property
  */
-<<<<<<< HEAD
 
 @Validated
 @jakarta.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-06-23T05:54:07.373Z[GMT]")
-=======
-@ApiModel(description = "This object holds list of documents attached during the transaciton for a property")
-@Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-06-23T05:54:07.373Z[GMT]")
->>>>>>> master-LTS
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class Document {
-<<<<<<< HEAD
 	@SanitizeHtml
 	@JsonProperty("id")
 	private String id = null;
@@ -59,21 +39,6 @@ public class Document {
 	private String fileStoreId = null;
 
 	@SanitizeHtml
-=======
-	@SafeHtml
-	@JsonProperty("id")
-	private String id = null;
-
-	@SafeHtml
-	@JsonProperty("documentType")
-	private String documentType = null;
-
-	@SafeHtml
-	@JsonProperty("fileStoreId")
-	private String fileStoreId = null;
-
-	@SafeHtml
->>>>>>> master-LTS
 	@JsonProperty("documentUid")
 	private String documentUid = null;
 
@@ -93,12 +58,7 @@ public class Document {
 	 * 
 	 * @return id
 	 **/
-<<<<<<< HEAD
 	 @Schema(description = "system id of the Document.")
-=======
-	@ApiModelProperty(value = "system id of the Document.")
->>>>>>> master-LTS
-
 	@Size(max = 64)
 	public String getId() {
 		return id;
@@ -118,12 +78,7 @@ public class Document {
 	 * 
 	 * @return documentType
 	 **/
-<<<<<<< HEAD
 	 @Schema(description = "unique document type code, should be validated with document type master")
-=======
-	@ApiModelProperty(value = "unique document type code, should be validated with document type master")
->>>>>>> master-LTS
-
 	public String getDocumentType() {
 		return documentType;
 	}
@@ -142,12 +97,7 @@ public class Document {
 	 * 
 	 * @return fileStoreId
 	 **/
-<<<<<<< HEAD
 	@Schema(description = "File store reference key.")
-=======
-	@ApiModelProperty(value = "File store reference key.")
->>>>>>> master-LTS
-
 	public String getFileStoreId() {
 		return fileStoreId;
 	}
@@ -166,12 +116,7 @@ public class Document {
 	 * 
 	 * @return documentUid
 	 **/
-<<<<<<< HEAD
 	@Schema(description = "The unique id(Pancard Number,Adhar etc.) of the given Document.")
-=======
-	@ApiModelProperty(value = "The unique id(Pancard Number,Adhar etc.) of the given Document.")
->>>>>>> master-LTS
-
 	@Size(max = 64)
 	public String getDocumentUid() {
 		return documentUid;
@@ -192,12 +137,7 @@ public class Document {
 	 * 
 	 * @return additionalDetails
 	 **/
-<<<<<<< HEAD
 	@Schema(description = "Json object to capture any extra information which is not accommodated by model")
-=======
-	@ApiModelProperty(value = "Json object to capture any extra information which is not accommodated by model")
->>>>>>> master-LTS
-
 	public Object getAdditionalDetails() {
 		return additionalDetails;
 	}
@@ -216,12 +156,7 @@ public class Document {
 	 * 
 	 * @return geoLocation
 	 **/
-<<<<<<< HEAD
 	@Schema(description = "")
-=======
-	@ApiModelProperty(value = "")
->>>>>>> master-LTS
-
 	@Valid
 	public AuditDetails getAuditDetails() {
 		return auditDetails;

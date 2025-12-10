@@ -3,13 +3,8 @@ package org.upyog.cdwm.web.models.workflow;
 import java.util.ArrayList;
 import java.util.List;
 
-<<<<<<< HEAD
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
-=======
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
->>>>>>> master-LTS
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

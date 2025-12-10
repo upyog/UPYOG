@@ -3,11 +3,7 @@ package org.upyog.cdwm.config;
 
 import lombok.Getter;
 
-<<<<<<< HEAD
 import jakarta.annotation.PostConstruct;
-=======
-import javax.annotation.PostConstruct;
->>>>>>> master-LTS
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;

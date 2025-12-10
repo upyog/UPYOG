@@ -54,12 +54,9 @@
 		<dependency>
 			<groupId>org.postgresql</groupId>
 			<artifactId>postgresql</artifactId>
-<<<<<<< HEAD
 			<version>42.7.2</version>
 		</dependency>
-=======
-			<version>42.7.1</version>
-		</dependency>
+
 		<dependency>
 			<groupId>io.springfox</groupId>
 			<artifactId>springfox-swagger2</artifactId>
@@ -73,7 +70,6 @@
 		</dependency>
 
 		<!-- https://mvnrepository.com/artifact/org.javers/javers-core -->
->>>>>>> master-LTS
 		<dependency>
 			<groupId>org.javers</groupId>
 			<artifactId>javers-core</artifactId>

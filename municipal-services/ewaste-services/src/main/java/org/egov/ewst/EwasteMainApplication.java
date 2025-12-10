@@ -13,19 +13,13 @@ import org.springframework.context.annotation.Import;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-<<<<<<< HEAD
 import lombok.extern.slf4j.Slf4j;
-=======
->>>>>>> master-LTS
 
 /**
  * Main application class for the e-waste service.
  * This class initializes the Spring Boot application and configures necessary beans.
  */
-<<<<<<< HEAD
 @Slf4j
-=======
->>>>>>> master-LTS
 @SpringBootApplication
 @ComponentScan(basePackages = { "org.egov.ewst", "org.egov.ewst.web.controllers", "org.egov.ewst.config",
 		"org.egov.ewst.repository" })
@@ -56,10 +50,7 @@ public class EwasteMainApplication {
 	 * @throws Exception If an error occurs during application startup.
 	 */
 	public static void main(String[] args) throws Exception {
-<<<<<<< HEAD
 		log.info("Ewaste Service is running with latest LTS upgrades 2.0.0!");
-=======
->>>>>>> master-LTS
 		// Disable Spring DevTools restart feature
 		System.setProperty("spring.devtools.restart.enabled", "false");
 
