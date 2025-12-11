@@ -136,136 +136,196 @@ public class NOCService {
 	 * @param nocRequest
 	 * @return
 	 */
+//	public List<Noc> search(NocSearchCriteria criteria, RequestInfo requestInfo) {
+//		/*
+//		 * List<String> uuids = new ArrayList<String>();
+//		 * uuids.add(requestInfo.getUserInfo().getUuid()); criteria.setAccountId(uuids);
+//		 */
+//		BPASearchCriteria bpaCriteria = new BPASearchCriteria();
+//		ArrayList<String> sourceRef = new ArrayList<String>();
+//		List<Noc> nocs = new ArrayList<Noc>();
+//
+//		RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(requestInfo).build();
+//		if (criteria.getMobileNumber() != null) {
+//			StringBuilder uri = new StringBuilder(config.getBpaHost()).append(config.getBpaContextPath())
+//					.append(config.getBpaSearchEndpoint());
+//			uri.append("?tenantId=").append(criteria.getTenantId());
+//
+//			if (criteria.getSourceRefId() != null)
+//			{   uri.append("&applicationNo=").append(criteria.getSourceRefId());
+//				uri.append("&mobileNumber=").append(criteria.getMobileNumber());
+//			}else
+//			{   uri.append("&mobileNumber=").append(criteria.getMobileNumber());}
+//			log.info("BPA CALL STARTED");
+//			LinkedHashMap responseMap = (LinkedHashMap) serviceRequestRepository.fetchResult(uri, requestInfoWrapper);
+//			BPAResponse bpaResponse = mapper.convertValue(responseMap, BPAResponse.class);
+//			List<BPA> bpas = bpaResponse.getBPA();
+//			Map<String, String> bpaDetails = new HashMap<String, String>();
+//			bpas.forEach(bpa -> {
+//				bpaDetails.put("applicantName", bpa.getLandInfo().getOwners().get(0).getName());
+//				bpaDetails.put("sourceRef", bpa.getApplicationNo());
+//				sourceRef.add(bpa.getApplicationNo());
+//			});
+//			if (!sourceRef.isEmpty()) {
+//				criteria.setSourceRefId(sourceRef.toString());
+//			}
+//			if(criteria.getMobileNumber() != null && CollectionUtils.isEmpty(bpas)){
+//				return nocs;
+//			}
+//			log.info("NOC CALL STARTED" + criteria.getSourceRefId());
+//			nocs = nocRepository.getNocData(criteria);
+//			nocs.forEach(noc -> {
+//				Map<String, String> additionalDetails = noc.getAdditionalDetails() != null
+//						? (Map<String, String>) noc.getAdditionalDetails()
+//						: new HashMap<String, String>();
+//				for (BPA bpa : bpas) {
+//					if (bpa.getApplicationNo().equals(noc.getSourceRefId())) {
+//						additionalDetails.put("applicantName", bpa.getLandInfo().getOwners().get(0).getName());
+//					}
+//				}
+//				StringBuilder url = new StringBuilder(config.getWfHost());
+//				url.append(config.getWfProcessPath());
+//				url.append("?businessIds=");
+//				url.append(noc.getApplicationNo());
+//				url.append("&tenantId=");
+//				url.append(noc.getTenantId());
+//					
+//				log.info("Process CALL STARTED" + url);
+//				Object result = serviceRequestRepository.fetchResult(url, requestInfoWrapper);
+//				ProcessInstanceResponse response = null;
+//				try {
+//					response = mapper.convertValue(result, ProcessInstanceResponse.class);
+//				} catch (IllegalArgumentException e) {
+//					throw new CustomException(NOCConstants.PARSING_ERROR, "Failed to parse response of Workflow");
+//				}
+//				if(response.getProcessInstances()!=null && !response.getProcessInstances().isEmpty()) {
+//					ProcessInstance nocProcess = response.getProcessInstances().get(0);
+//					if (nocProcess.getAssignee() != null) {
+//						additionalDetails.put("currentOwner", nocProcess.getAssignee().getName());
+//					} else {
+//						additionalDetails.put("currentOwner", null);
+//					}
+//				} else {
+//					additionalDetails.put("currentOwner", null);
+//				}
+//			});
+//
+//		} else {
+//			log.info("IN 2 NOC CALL STARTED" + criteria.getSourceRefId());
+//			nocs = nocRepository.getNocData(criteria);
+//			nocs.forEach(noc -> {
+//				Map<String, String> additionalDetails = noc.getAdditionalDetails() != null
+//						? (Map<String, String>) noc.getAdditionalDetails()
+//						: new HashMap<String, String>();
+//
+//				// BPA CALL
+//				StringBuilder uri = new StringBuilder(config.getBpaHost()).append(config.getBpaContextPath())
+//						.append(config.getBpaSearchEndpoint());
+//
+//				uri.append("?tenantId=").append(noc.getTenantId());
+//				uri.append("&applicationNo=").append(noc.getSourceRefId());
+//				System.out.println("BPA CALL STARTED");
+//				LinkedHashMap responseMap = (LinkedHashMap) serviceRequestRepository.fetchResult(uri,
+//						requestInfoWrapper);
+//				BPAResponse bpaResponse = mapper.convertValue(responseMap, BPAResponse.class);
+//				List<BPA> bpaList = new ArrayList<BPA>();
+//				bpaList = bpaResponse.getBPA();
+//				bpaList.forEach(bpa -> {
+//					additionalDetails.put("applicantName", bpa.getLandInfo().getOwners().get(0).getName());
+//				});
+//				log.info("ADDITIONAL DETAILS :: " + additionalDetails.get("applicantName"));
+//				// PROCESS CALL
+//				StringBuilder url = new StringBuilder(config.getWfHost());
+//				url.append(config.getWfProcessPath());
+//				url.append("?businessIds=");
+//				url.append(noc.getApplicationNo());
+//				url.append("&tenantId=");
+//				url.append(noc.getTenantId());
+//							
+//				log.info("Process 2 CALL STARTED" + url);
+//				Object result = serviceRequestRepository.fetchResult(url, requestInfoWrapper);
+//				ProcessInstanceResponse response = null;
+//				try {
+//					response = mapper.convertValue(result, ProcessInstanceResponse.class);
+//				} catch (IllegalArgumentException e) {
+//					throw new CustomException(NOCConstants.PARSING_ERROR, "Failed to parse response of Workflow");
+//				}
+//				log.info("ProcessInstance :: " + response.getProcessInstances());
+//				if(response.getProcessInstances()!=null && !response.getProcessInstances().isEmpty()) {
+//					ProcessInstance nocProcess = response.getProcessInstances().get(0);
+//					if (nocProcess.getAssignee() != null) {
+//						additionalDetails.put("currentOwner", nocProcess.getAssignee().getName());
+//					} else {
+//						additionalDetails.put("currentOwner", null);
+//					}
+//				}else {
+//					additionalDetails.put("currentOwner", null);
+//				}
+//				log.info("ADDITIONAL DETAILS :: " + additionalDetails.get("currentOwner"));
+//			});
+//		}
+//		return nocs.isEmpty() ? Collections.emptyList() : nocs;
+//	}
+	
+	
+	//calling search without bpa call
 	public List<Noc> search(NocSearchCriteria criteria, RequestInfo requestInfo) {
-		/*
-		 * List<String> uuids = new ArrayList<String>();
-		 * uuids.add(requestInfo.getUserInfo().getUuid()); criteria.setAccountId(uuids);
-		 */
-		BPASearchCriteria bpaCriteria = new BPASearchCriteria();
-		ArrayList<String> sourceRef = new ArrayList<String>();
-		List<Noc> nocs = new ArrayList<Noc>();
 
-		RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(requestInfo).build();
-		if (criteria.getMobileNumber() != null) {
-			StringBuilder uri = new StringBuilder(config.getBpaHost()).append(config.getBpaContextPath())
-					.append(config.getBpaSearchEndpoint());
-			uri.append("?tenantId=").append(criteria.getTenantId());
+	    List<Noc> nocs = nocRepository.getNocData(criteria);
+	    RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder()
+	            .requestInfo(requestInfo)
+	            .build();
 
-			if (criteria.getSourceRefId() != null)
-			{   uri.append("&applicationNo=").append(criteria.getSourceRefId());
-				uri.append("&mobileNumber=").append(criteria.getMobileNumber());
-			}else
-			{   uri.append("&mobileNumber=").append(criteria.getMobileNumber());}
-			log.info("BPA CALL STARTED");
-			LinkedHashMap responseMap = (LinkedHashMap) serviceRequestRepository.fetchResult(uri, requestInfoWrapper);
-			BPAResponse bpaResponse = mapper.convertValue(responseMap, BPAResponse.class);
-			List<BPA> bpas = bpaResponse.getBPA();
-			Map<String, String> bpaDetails = new HashMap<String, String>();
-			bpas.forEach(bpa -> {
-				bpaDetails.put("applicantName", bpa.getLandInfo().getOwners().get(0).getName());
-				bpaDetails.put("sourceRef", bpa.getApplicationNo());
-				sourceRef.add(bpa.getApplicationNo());
-			});
-			if (!sourceRef.isEmpty()) {
-				criteria.setSourceRefId(sourceRef.toString());
-			}
-			if(criteria.getMobileNumber() != null && CollectionUtils.isEmpty(bpas)){
-				return nocs;
-			}
-			log.info("NOC CALL STARTED" + criteria.getSourceRefId());
-			nocs = nocRepository.getNocData(criteria);
-			nocs.forEach(noc -> {
-				Map<String, String> additionalDetails = noc.getAdditionalDetails() != null
-						? (Map<String, String>) noc.getAdditionalDetails()
-						: new HashMap<String, String>();
-				for (BPA bpa : bpas) {
-					if (bpa.getApplicationNo().equals(noc.getSourceRefId())) {
-						additionalDetails.put("applicantName", bpa.getLandInfo().getOwners().get(0).getName());
-					}
-				}
-				StringBuilder url = new StringBuilder(config.getWfHost());
-				url.append(config.getWfProcessPath());
-				url.append("?businessIds=");
-				url.append(noc.getApplicationNo());
-				url.append("&tenantId=");
-				url.append(noc.getTenantId());
-					
-				log.info("Process CALL STARTED" + url);
-				Object result = serviceRequestRepository.fetchResult(url, requestInfoWrapper);
-				ProcessInstanceResponse response = null;
-				try {
-					response = mapper.convertValue(result, ProcessInstanceResponse.class);
-				} catch (IllegalArgumentException e) {
-					throw new CustomException(NOCConstants.PARSING_ERROR, "Failed to parse response of Workflow");
-				}
-				if(response.getProcessInstances()!=null && !response.getProcessInstances().isEmpty()) {
-					ProcessInstance nocProcess = response.getProcessInstances().get(0);
-					if (nocProcess.getAssignee() != null) {
-						additionalDetails.put("currentOwner", nocProcess.getAssignee().getName());
-					} else {
-						additionalDetails.put("currentOwner", null);
-					}
-				} else {
-					additionalDetails.put("currentOwner", null);
-				}
-			});
+	    // If no NOC found → return empty list
+	    if (CollectionUtils.isEmpty(nocs)) {
+	        return Collections.emptyList();
+	    }
 
-		} else {
-			log.info("IN 2 NOC CALL STARTED" + criteria.getSourceRefId());
-			nocs = nocRepository.getNocData(criteria);
-			nocs.forEach(noc -> {
-				Map<String, String> additionalDetails = noc.getAdditionalDetails() != null
-						? (Map<String, String>) noc.getAdditionalDetails()
-						: new HashMap<String, String>();
+	    // For each NOC enrich only workflow details
+	    nocs.forEach(noc -> {
 
-				// BPA CALL
-				StringBuilder uri = new StringBuilder(config.getBpaHost()).append(config.getBpaContextPath())
-						.append(config.getBpaSearchEndpoint());
+	        Map<String, String> additionalDetails = noc.getAdditionalDetails() != null
+	                ? (Map<String, String>) noc.getAdditionalDetails()
+	                : new HashMap<>();
 
-				uri.append("?tenantId=").append(noc.getTenantId());
-				uri.append("&applicationNo=").append(noc.getSourceRefId());
-				System.out.println("BPA CALL STARTED");
-				LinkedHashMap responseMap = (LinkedHashMap) serviceRequestRepository.fetchResult(uri,
-						requestInfoWrapper);
-				BPAResponse bpaResponse = mapper.convertValue(responseMap, BPAResponse.class);
-				List<BPA> bpaList = new ArrayList<BPA>();
-				bpaList = bpaResponse.getBPA();
-				bpaList.forEach(bpa -> {
-					additionalDetails.put("applicantName", bpa.getLandInfo().getOwners().get(0).getName());
-				});
-				log.info("ADDITIONAL DETAILS :: " + additionalDetails.get("applicantName"));
-				// PROCESS CALL
-				StringBuilder url = new StringBuilder(config.getWfHost());
-				url.append(config.getWfProcessPath());
-				url.append("?businessIds=");
-				url.append(noc.getApplicationNo());
-				url.append("&tenantId=");
-				url.append(noc.getTenantId());
-							
-				log.info("Process 2 CALL STARTED" + url);
-				Object result = serviceRequestRepository.fetchResult(url, requestInfoWrapper);
-				ProcessInstanceResponse response = null;
-				try {
-					response = mapper.convertValue(result, ProcessInstanceResponse.class);
-				} catch (IllegalArgumentException e) {
-					throw new CustomException(NOCConstants.PARSING_ERROR, "Failed to parse response of Workflow");
-				}
-				log.info("ProcessInstance :: " + response.getProcessInstances());
-				if(response.getProcessInstances()!=null && !response.getProcessInstances().isEmpty()) {
-					ProcessInstance nocProcess = response.getProcessInstances().get(0);
-					if (nocProcess.getAssignee() != null) {
-						additionalDetails.put("currentOwner", nocProcess.getAssignee().getName());
-					} else {
-						additionalDetails.put("currentOwner", null);
-					}
-				}else {
-					additionalDetails.put("currentOwner", null);
-				}
-				log.info("ADDITIONAL DETAILS :: " + additionalDetails.get("currentOwner"));
-			});
-		}
-		return nocs.isEmpty() ? Collections.emptyList() : nocs;
+	        // ---- WORKFLOW CALL (KEEPING THIS) ----
+	        StringBuilder url = new StringBuilder(config.getWfHost());
+	        url.append(config.getWfProcessPath());
+	        url.append("?businessIds=");
+	        url.append(noc.getApplicationNo());
+	        url.append("&tenantId=");
+	        url.append(noc.getTenantId());
+
+	        log.info("WF Process CALL: " + url);
+
+	        Object result = serviceRequestRepository.fetchResult(url, requestInfoWrapper);
+	        ProcessInstanceResponse response;
+
+	        try {
+	            response = mapper.convertValue(result, ProcessInstanceResponse.class);
+	        } catch (IllegalArgumentException e) {
+	            throw new CustomException(NOCConstants.PARSING_ERROR,
+	                    "Failed to parse workflow response");
+	        }
+
+	        if (response.getProcessInstances() != null && !response.getProcessInstances().isEmpty()) {
+	            ProcessInstance instance = response.getProcessInstances().get(0);
+
+	            if (instance.getAssignee() != null) {
+	                additionalDetails.put("currentOwner", instance.getAssignee().getName());
+	            } else {
+	                additionalDetails.put("currentOwner", null);
+	            }
+	        } else {
+	            additionalDetails.put("currentOwner", null);
+	        }
+
+	        noc.setAdditionalDetails(additionalDetails);
+	    });
+
+	    return nocs;
 	}
+
 	
 	/**
 	 * Fetch the noc based on the id to update the NOC record
