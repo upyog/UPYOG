@@ -46,14 +46,9 @@ public class NocRowMapper implements ResultSetExtractor<List<Noc>> {
                 noc.setSourceRefId(rs.getString("sourceRefId"));
                 noc.setAccountId(rs.getString("AccountId"));
                 
-                noc.setApplicantName(rs.getString("applicantname"));
-                noc.setFatherName(rs.getString("fathername"));
-                noc.setMobile(rs.getString("mobile"));
-                noc.setDob(rs.getString("dob"));
-                noc.setGender(rs.getString("gender"));
-                noc.setEmail(rs.getString("email"));
-                noc.setAddress(rs.getString("address"));
+                
                 noc.setNocReason(rs.getString("nocreason"));
+                noc.setBusinessService(rs.getString("businessservice"));
                 noc.setConnectionType(rs.getString("connectiontype"));
 
                 Object additionalDetails = new Gson().fromJson(rs.getString("additionalDetails").equals("{}")
@@ -61,15 +56,25 @@ public class NocRowMapper implements ResultSetExtractor<List<Noc>> {
 						Object.class);
                 noc.setAdditionalDetails(additionalDetails);
                 
-                Object locationDetail = new Gson().fromJson(
-                        rs.getString("locationdetail") == null ||
-                        rs.getString("locationdetail").equals("{}") ||
-                        rs.getString("locationdetail").equals("null")
+                Object propertyDetail = new Gson().fromJson(
+                        rs.getString("propertydetail") == null ||
+                        rs.getString("propertydetail").equals("{}") ||
+                        rs.getString("propertydetail").equals("null")
                                 ? null
-                                : rs.getString("locationdetail"),
+                                : rs.getString("propertydetail"),
                         Object.class
                 );
-                noc.setLocationDetail(locationDetail);
+                noc.setPropertyDetail(propertyDetail);
+                
+                Object citizenDetail = new Gson().fromJson(
+                        rs.getString("citizendetail") == null ||
+                        rs.getString("citizendetail").equals("{}") ||
+                        rs.getString("citizendetail").equals("null")
+                                ? null
+                                : rs.getString("citizendetail"),
+                        Object.class
+                );
+                noc.setCitizenDetail(citizenDetail);
                 
                 AuditDetails auditdetails = AuditDetails.builder()
                         .createdBy(rs.getString("noc_createdBy"))

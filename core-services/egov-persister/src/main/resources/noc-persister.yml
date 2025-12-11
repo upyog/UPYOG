@@ -9,12 +9,11 @@ serviceMaps:
         - query: >
             INSERT INTO eg_Noc(
               id, applicationno, applicationstatus, tenantid, status, landid,
-              Noctype, applicantname, fathername, mobile, dob, gender, email,
-              address, nocreason, connectiontype, locationdetail, applicationtype,
+              Noctype, nocreason, businessservice, connectiontype, propertydetail, citizendetail, applicationtype,
               accountid, source, sourcerefid, additionaldetails, createdby,
               lastmodifiedby, createdtime, lastmodifiedtime, nocno
             )
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, TO_DATE(?, 'YYYY-MM-DD'));
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, TO_DATE(?, 'YYYY-MM-DD'));
           basePath: Noc
           jsonMaps:
             - jsonPath: $.Noc.id
@@ -24,16 +23,13 @@ serviceMaps:
             - jsonPath: $.Noc.status
             - jsonPath: $.Noc.landId
             - jsonPath: $.Noc.nocType
-            - jsonPath: $.Noc.applicantName
-            - jsonPath: $.Noc.fatherName
-            - jsonPath: $.Noc.mobile
-            - jsonPath: $.Noc.dob
-            - jsonPath: $.Noc.gender
-            - jsonPath: $.Noc.email
-            - jsonPath: $.Noc.address
             - jsonPath: $.Noc.nocReason
+            - jsonPath: $.Noc.businessService
             - jsonPath: $.Noc.connectionType
-            - jsonPath: $.Noc.locationDetail
+            - jsonPath: $.Noc.propertyDetail
+              type: JSON
+              dbType: JSONB
+            - jsonPath: $.Noc.citizenDetail
               type: JSON
               dbType: JSONB
             - jsonPath: $.Noc.applicationType
@@ -49,7 +45,7 @@ serviceMaps:
             - jsonPath: $.Noc.auditDetails.lastModifiedTime
             - jsonPath: $.Noc.nocNo
 
-        - query: INSERT INTO eg_noc_auditdetails SELECT * FROM eg_noc WHERE id =?;
+        - query: INSERT INTO eg_noc_auditdetails SELECT * FROM eg_noc WHERE id = ?;
           basePath: Noc
           jsonMaps:
             - jsonPath: $.Noc.id
@@ -104,7 +100,7 @@ serviceMaps:
             - jsonPath: $.Noc.auditDetails.lastModifiedTime
             - jsonPath: $.Noc.id
 
-        - query: INSERT INTO eg_noc_auditdetails SELECT * FROM eg_noc WHERE id =?;
+        - query: INSERT INTO eg_noc_auditdetails SELECT * FROM eg_noc WHERE id = ?;
           basePath: Noc
           jsonMaps:
             - jsonPath: $.Noc.id
@@ -174,7 +170,7 @@ serviceMaps:
             - jsonPath: $.Noc.auditDetails.lastModifiedBy
             - jsonPath: $.Noc.auditDetails.lastModifiedTime
 
-        - query: INSERT INTO eg_noc_auditdetails SELECT * FROM eg_noc WHERE id =?;
+        - query: INSERT INTO eg_noc_auditdetails SELECT * FROM eg_noc WHERE id = ?;
           basePath: Noc
           jsonMaps:
             - jsonPath: $.Noc.id
