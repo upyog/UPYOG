@@ -1,1 +1,1 @@
-alter table eg_user add column digilockerid character(36);
+alter table eg_user add column IF NOT EXISTS digilockerid character(36);
