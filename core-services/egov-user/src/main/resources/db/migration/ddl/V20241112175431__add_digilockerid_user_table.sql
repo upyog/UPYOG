@@ -1,1 +1,0 @@
-alter table eg_user add column digilockerid character(36);
