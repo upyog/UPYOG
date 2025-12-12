@@ -11,7 +11,7 @@ RUN npm install
 RUN npm run build
 
 # Create runtime image
-FROM node:12-alpine
+FROM node:18-alpine
 
 
 WORKDIR /opt/egov
