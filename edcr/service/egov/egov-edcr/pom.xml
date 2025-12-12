@@ -40,25 +40,8 @@
 	</parent>
 	<artifactId>egov-edcr</artifactId>
 	<name>e-governments edcr</name>
-<<<<<<< HEAD
 	<dependencies>
-	<dependency>
-=======
-	
-	<dependencies>
-		<!--		Below dependency is commented out to avoid jenkinds build issue -->
-	
-
-		<!--<dependency>
-			<groupId>com.aspose</groupId>
-			<artifactId>aspose-cad</artifactId>
-			<version>20.10</version>
-			<scope>system</scope>
-			<systemPath>/Users/nehasharma/upyog-21may/UPYOG/edcr/service/egov/egov-edcr/library/aspose-cad-20.10.jar</systemPath>
-
-		</dependency>-->
 		<dependency>
->>>>>>> master-LTS
 			<groupId>org.apache.pdfbox</groupId>
 			<artifactId>pdfbox</artifactId>
 			<version>2.0.28</version>
