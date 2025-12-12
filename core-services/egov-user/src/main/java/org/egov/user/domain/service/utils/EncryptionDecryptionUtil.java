@@ -217,8 +217,12 @@ public class EncryptionDecryptionUtil {
             if (listToDecrypt.size() > 1)
                 return false;
             userToDecrypt = (org.egov.user.domain.model.User) listToDecrypt.get(0);
+        } else if (objectToDecrypt instanceof org.egov.user.domain.model.User) {
+            // FIX: Handle single User object
+            userToDecrypt = (org.egov.user.domain.model.User) objectToDecrypt;
         } else {
-            throw new CustomException("DECRYPTION_NOTLIST_ERROR", objectToDecrypt + " is not of type List of User");
+            // Not a User or List of Users (could be Address, etc.)
+            return false;
         }
 
         if ((userToDecrypt != null && userToDecrypt.getUuid() != null) && userInfo != null && userToDecrypt.getUuid().equalsIgnoreCase(userInfo.getUuid()))
@@ -232,13 +236,32 @@ public class EncryptionDecryptionUtil {
             List<?> listToDecrypt = (List<?>) objectToDecrypt;
             if (listToDecrypt != null && listToDecrypt.size() == 1)
                 return true;
+        } else if (objectToDecrypt instanceof org.egov.user.domain.model.User) {
+            // FIX: Single User object is also individual user decryption
+            return true;
         }
         return false;
     }
 
     public Map<String,String> getKeyToDecrypt(Object objectToDecrypt, User userInfo) {
         Map<String,String> keyPurposeMap = new HashMap<>();
-        Object firstObject = ((List) objectToDecrypt).get(0);
+
+        // FIX: Handle both single objects and Lists
+        Object firstObject;
+        if (objectToDecrypt instanceof List) {
+            List<?> listToDecrypt = (List<?>) objectToDecrypt;
+            if (listToDecrypt.isEmpty()) {
+                // Default for empty list
+                keyPurposeMap.put("key", "User");
+                keyPurposeMap.put("purpose", "BulkSearchResult");
+                return keyPurposeMap;
+            }
+            firstObject = listToDecrypt.get(0);
+        } else {
+            // Single object (not a list) - could be User or Address
+            firstObject = objectToDecrypt;
+        }
+
         if (!abacEnabled){
             keyPurposeMap.put("key","UserSelf");
             keyPurposeMap.put("purpose","AbacDisabled");
