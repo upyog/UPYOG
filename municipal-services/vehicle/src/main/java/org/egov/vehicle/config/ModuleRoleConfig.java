@@ -16,6 +16,7 @@ import org.egov.vehicle.web.model.user.ModuleRoleMapping;
 import org.egov.vehicle.web.model.user.ModuleRoleMapping.MappingType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -26,6 +27,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class ModuleRoleConfig {
 
+    @Lazy
     @Autowired
     private VehicleUtil util;
 
