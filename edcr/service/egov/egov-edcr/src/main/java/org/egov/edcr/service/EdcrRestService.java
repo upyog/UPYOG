@@ -636,7 +636,7 @@ public class EdcrRestService {
             final Criteria criteria = getCriteriaofSingleTenant(edcrRequest, userInfo, userId, onlyTenantId, isStakeholder);
 
             LOG.info(criteria.toString());
-            criteria.setFirstResult(offset);isBlank(edcrRequest.getRequestInfo().getUserInfo().getUuid()
+            criteria.setFirstResult(offset);
             criteria.setMaxResults(limit);
             edcrApplications = criteria.list();
         }
