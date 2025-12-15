@@ -1,9 +1,5 @@
 import React,{Fragment} from 'react'
-<<<<<<< HEAD
-import { Header,BreakLine, CardHeader,Card,CardSubHeader } from '@upyog/digit-ui-react-components'
-=======
 import { Header,BreakLine, CardHeader,Card,CardSubHeader } from "@upyog/digit-ui-react-components"
->>>>>>> master-LTS
 
 const WhoHasResponded = ({t,userInfo}) => {
     const data = Object.entries(userInfo);

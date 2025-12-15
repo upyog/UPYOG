@@ -10,10 +10,7 @@ const OBPSResponse = (props) => {
   const { t } = useTranslation();
   const tenantId = Digit.ULBService.getCurrentTenantId();
   let bpaData={}
-<<<<<<< HEAD
-=======
   let updateData=JSON.parse(sessionStorage.getItem("updateData"))
->>>>>>> master-LTS
   if(state?.data?.response){
     bpaData = state?.data?.response?.BPA?.[0];
   }

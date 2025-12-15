@@ -1,5 +1,3 @@
-<<<<<<< HEAD
-=======
   /**
  * @description 
  * This component handles the **Pet Application Search** functionality.
@@ -26,7 +24,6 @@
  * - `setShowToast` (function): Function to manage toast notifications.
  */
 
->>>>>>> master-LTS
   import React, { useCallback, useMemo, useEffect } from "react"
   import { useForm, Controller } from "react-hook-form";
   import { TextInput, SubmitBar, LinkLabel, ActionBar, CloseSvg, DatePicker, CardLabelError, SearchForm, SearchField, Dropdown, Table, Card, MobileNumber, Loader, CardText, Header } from "@upyog/digit-ui-react-components";
@@ -50,21 +47,6 @@
         register("sortOrder", "DESC")
       },[register])
       
-<<<<<<< HEAD
-      const applicationStatuses = [
-          {
-              code: "ACTIVE",
-              i18nKey: "WF_PTR_ACTIVE"
-          },
-          {
-              code: "INACTIVE",
-              i18nKey: "WF_PTR_INACTIVE"
-          },
-          {
-              code: "INWORKFLOW",
-              i18nKey: "WF_PTR_INWORKFLOW"
-          },
-=======
       const applicationType = [
           {
               code: "NEWAPPLICATION",
@@ -74,50 +56,18 @@
               code: "RENEWAPPLICATION",
               i18nKey: "RENEWAPPLICATION"
           }
->>>>>>> master-LTS
       ]
       
       const stateId = Digit.ULBService.getStateId();
 
 
       const { data: Menu } = Digit.Hooks.ptr.usePTRPetMDMS(stateId, "PetService", "PetType");
-<<<<<<< HEAD
-      // const { data: Breed_Type } = Digit.Hooks.ptr.useBreedTypeMDMS(stateId, "PetService", "BreedType");  // hooks for breed type
-
-      let menu = [];
-
-      
-      // let breed_type = [];
-
-
-      Menu &&
-    Menu.map((petone) => {
-      menu.push({ i18nKey: `PTR_PET_${petone.code}`, code: `${petone.code}`, value: `${petone.name}` });
-    });
-
-    // Breed_Type &&
-    // Breed_Type.map((breedss) => {
-    //   if (breedss.PetType == menu?.code) {
-    //     breed_type.push({
-    //       i18nKey: `PTR_BREED_TYPE_${breedss.code}`,
-    //       code: `${breedss.code}`,
-    //       value: `${breedss.name}`
-    //     });
-    //   }
-
-    // });
-
-
-
-      
-=======
       let menu = [];
 
     Menu &&
     Menu.map((petone) => {
       menu.push({ i18nKey: `PTR_PET_${petone.code}`, code: `${petone.code}`, value: `${petone.name}` });
     });      
->>>>>>> master-LTS
       const GetCell = (value) => <span className="cell-text">{value}</span>;
       
       const columns = useMemo( () => ([
@@ -170,8 +120,6 @@
               },
               disableSortBy: true,
             },
-<<<<<<< HEAD
-=======
             // field added for status of application
             {
               Header: t("PTR_APPLICATION_STATUS"),
@@ -180,7 +128,6 @@
               },
               disableSortBy: true,
             },
->>>>>>> master-LTS
         ]), [] )
 
       const onSort = useCallback((args) => {
@@ -235,41 +182,25 @@
                               )}
                               />
                   </SearchField>
-<<<<<<< HEAD
-                  {/* <SearchField>
-                      <label>{t("PTR_SEARCH_BREED_TYPE")}</label>
-                       <Controller
-                              control={control}
-                              name="breedType"
-=======
                   <SearchField>
                       <label>{t("PTR_APPLICATION_TYPE")}</label>
                       {/* <TextInput name="petType" inputRef={register({})} /> */}
                       <Controller
                               control={control}
                               name="applicationType"
->>>>>>> master-LTS
                               render={(props) => (
                                   <Dropdown
                                   selected={props.value}
                                   select={props.onChange}
                                   onBlur={props.onBlur}
-<<<<<<< HEAD
-                                  option={breed_type}
-=======
                                   option={applicationType}
->>>>>>> master-LTS
                                   optionKey="i18nKey"
                                   t={t}
                                   disable={false}
                                   />
                               )}
                               />
-<<<<<<< HEAD
-                  </SearchField> */}
-=======
                   </SearchField>
->>>>>>> master-LTS
                   <SearchField>
                   <label>{t("PTR_OWNER_MOBILE_NO")}</label>
                   <MobileNumber

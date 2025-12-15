@@ -54,20 +54,12 @@ const SubMenu = ({ item }) => {
         <div className={`sidebar-link  ${pathname === item?.navigationURL ? "active" : ""}`}>
           <div className="actions">
             {leftIcon}
-<<<<<<< HEAD
-            {item.navigationURL?.indexOf("/digit-ui") === -1? (
-=======
             {item.navigationURL?.indexOf("/digit-ui")||item.navigationURL?.indexOf("/upyog-ui") === -1? (
->>>>>>> master-LTS
               <a
                 data-tip="React-tooltip"
                 data-for={`jk-side-${getModuleName}`}
                 className="custom-link"
-<<<<<<< HEAD
-                href={getOrigin + `${item.navigationURL.includes("/workbench-ui")?"":"/employee/"}`+ item.navigationURL}
-=======
                 href={getOrigin + window.location.href.includes("/upyog-ui") && (item.navigationURL.includes("digit-ui") || item.navigationURL.includes("/workbench-ui"))? item.navigationURL.replace("digit-ui","upyog-ui") : item.navigationURL.includes("upyog-ui") ? item.navigationURL :"/employee/"+item.navigationURL}
->>>>>>> master-LTS
               >
                 <span> {trimModuleName} </span>
 

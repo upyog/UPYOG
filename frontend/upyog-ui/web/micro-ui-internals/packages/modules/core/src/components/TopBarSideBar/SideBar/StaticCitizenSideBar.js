@@ -18,12 +18,8 @@ import {
   BirthIcon,
   DeathIcon,
   FirenocIcon,
-<<<<<<< HEAD
-  LoginIcon
-=======
   LoginIcon,
   CHBIcon
->>>>>>> master-LTS
 } from "@upyog/digit-ui-react-components";
 import { Link, useLocation } from "react-router-dom";
 import SideBarMenu from "../../../config/sidebar-menu";
@@ -61,11 +57,7 @@ Feature :: Citizen Webview sidebar
 const Profile = ({ info, stateName, t, profilePhotoUrl }) => (
   <div className="profile-section">
     <div className="imageloader imageloader-loaded">
-<<<<<<< HEAD
-      <img className="img-responsive img-circle img-Profile" src={info?.photo ? info?. photo : defaultImage} />
-=======
       <img className="img-responsive img-circle img-Profile" src={profilePhotoUrl ? profilePhotoUrl : defaultImage} />
->>>>>>> master-LTS
     </div>
     <div id="profile-name" className="label-container name-Profile">
       <div className="label-text"> {info?.name} </div>
@@ -169,11 +161,7 @@ const StaticCitizenSideBar = ({ linkData, islinkDataLoading }) => {
   //const tenantId = Digit.ULBService.getCitizenCurrentTenant();
   const filteredTenantContact = storeData?.tenants.filter((e) => e.code === tenantId)[0]?.contactNumber || storeData?.tenants[0]?.contactNumber;
 
-<<<<<<< HEAD
-  let menuItems = [...SideBarMenu(t, showProfilePage, redirectToLoginPage, isEmployee, storeData, tenantId)];
-=======
   let menuItems = [...SideBarMenu(t, showProfilePage, redirectToLoginPage, redirectToScrutinyPage, isEmployee, storeData, tenantId)];
->>>>>>> master-LTS
 
   menuItems = menuItems.filter((item) => item.element !== "LANGUAGE");
 

@@ -68,7 +68,7 @@ const ApplicationDetails = (props) => {
         setWarningPopUp(true);
       } else if (action?.redirectionUrll) {
         if (action?.redirectionUrll?.action === "ACTIVATE_CONNECTION") {
-          // window.location.assign(`${window.location.origin}upyog-ui/employee/ws/${action?.redirectionUrll?.pathname}`, { data: action?.redirectionUrll?.state });
+          // window.location.assign(`${window.location.origin}digit-ui/employee/ws/${action?.redirectionUrll?.pathname}`, { data: action?.redirectionUrll?.state });
 
           history.push(`${action?.redirectionUrll?.pathname}`, JSON.stringify({ data: action?.redirectionUrll?.state, url: `${location?.pathname}${location.search}` }));
         }
@@ -134,10 +134,7 @@ const ApplicationDetails = (props) => {
           return;
         }
       }
-<<<<<<< HEAD
-=======
       sessionStorage.setItem("updateData",JSON.stringify(data))
->>>>>>> master-LTS
       if (mutate) {
         setIsEnableLoader(true);
         mutate(data, {
@@ -150,19 +147,11 @@ const ApplicationDetails = (props) => {
             sessionStorage.removeItem("WS_SESSION_APPLICATION_DETAILS");
             setIsEnableLoader(false);
             if (isOBPS?.bpa) {
-<<<<<<< HEAD
-              data.selectedAction = selectedAction;
-              history.replace(`/upyog-ui/employee/obps/response`, { data: data });
-            }
-            if (isOBPS?.isStakeholder) {
-              data.selectedAction = selectedAction;
-=======
              // data.selectedAction = selectedAction;
               history.replace(`/upyog-ui/employee/obps/response`, { data: data });
             }
             if (isOBPS?.isStakeholder) {
              // data.selectedAction = selectedAction;
->>>>>>> master-LTS
               history.push(`/upyog-ui/employee/obps/stakeholder-response`, { data: data });
             }
             if (isOBPS?.isNoc) {

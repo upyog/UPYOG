@@ -2,10 +2,6 @@ import { Surveys } from "../../services/elements/Surveys";
 import { useQuery } from "react-query";
 
 const useCfdefinitionsearchresult = (filters, config) => {
-<<<<<<< HEAD
-    console.log(config,"useCfdefinitionsearchresult")
-=======
->>>>>>> master-LTS
   return useQuery(`useCfdefinitionsearchresult_search_surveys_${new Date()}`, () => Surveys.cfdefinitionsearch(filters), { ...config });
 };
 

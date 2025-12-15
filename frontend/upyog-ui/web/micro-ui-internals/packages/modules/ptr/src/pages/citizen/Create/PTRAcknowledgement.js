@@ -1,6 +1,3 @@
-<<<<<<< HEAD
-import { Banner, Card, CardText, LinkButton, LinkLabel, Loader, Row, StatusTable, SubmitBar } from "@upyog/digit-ui-react-components";
-=======
 /**
  * PTRAcknowledgement Component
  * 
@@ -15,26 +12,12 @@ import { Banner, Card, CardText, LinkButton, LinkLabel, Loader, Row, StatusTable
  */
 
 import { Banner, Card, LinkButton, Loader, Row, StatusTable, SubmitBar } from "@upyog/digit-ui-react-components";
->>>>>>> master-LTS
 import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useRouteMatch } from "react-router-dom";
 import getPetAcknowledgementData from "../../../getPetAcknowledgementData";
 import { PetDataConvert } from "../../../utils";
 
-<<<<<<< HEAD
-const GetActionMessage = (props) => {
-  const { t } = useTranslation();
-  if (props.isSuccess) {
-    return !window.location.href.includes("edit-application") ? t("ES_PTR_RESPONSE_CREATE_ACTION") : t("CS_PTR_UPDATE_APPLICATION_SUCCESS");
-  } else if (props.isLoading) {
-    return !window.location.href.includes("edit-application") ? t("CS_PTR_APPLICATION_PENDING") : t("CS_PTR_UPDATE_APPLICATION_PENDING");
-  } else if (!props.isSuccess) {
-    return !window.location.href.includes("edit-application") ? t("CS_PTR_APPLICATION_FAILED") : t("CS_PTR_UPDATE_APPLICATION_FAILED");
-  }
-};
-
-=======
 /**
  * GetActionMessage Component
  * 
@@ -55,20 +38,16 @@ const GetActionMessage = (props) => {
 /**
  * Styling for the row container layout.
  */
->>>>>>> master-LTS
 const rowContainerStyle = {
   padding: "4px 0px",
   justifyContent: "space-between",
 };
 
-<<<<<<< HEAD
-=======
 /**
  * BannerPicker Component
  * 
  * Displays the application banner with the application number and success or failure message.
  */
->>>>>>> master-LTS
 const BannerPicker = (props) => {
   return (
     <Banner
@@ -81,31 +60,6 @@ const BannerPicker = (props) => {
   );
 };
 
-<<<<<<< HEAD
-const PTRAcknowledgement = ({ data, onSuccess }) => {
-
-  
-  const { t } = useTranslation();
-  
-  const tenantId = Digit.ULBService.getCurrentTenantId();
-  const mutation = Digit.Hooks.ptr.usePTRCreateAPI(data.address?.city?.code); 
-  const { data: storeData } = Digit.Hooks.useStore.getInitData();
-  const match = useRouteMatch();
-  const { tenants } = storeData || {};
-
-
-  useEffect(() => {
-    try {
-      
-      data.tenantId = data.address?.city?.code;
-      let formdata = PetDataConvert(data)
-      
-
-      
-      mutation.mutate(formdata, {
-        onSuccess,
-      });
-=======
 
 /**
  * PTRAcknowledgement Component
@@ -125,28 +79,19 @@ const PTRAcknowledgement = ({ data, onSuccess }) => {
       data.tenantId = tenantId;
       let formdata = PetDataConvert(data)
       mutation.mutate(formdata, {onSuccess});
->>>>>>> master-LTS
     } catch (err) {
     }
   }, []);
 
   
-<<<<<<< HEAD
-
-=======
 /**
    * Handles the PDF download of the application acknowledgment form.
    */
->>>>>>> master-LTS
   const handleDownloadPdf = async () => {
     const { PetRegistrationApplications = [] } = mutation.data;
     let Pet = (PetRegistrationApplications && PetRegistrationApplications[0]) || {};
     const tenantInfo = tenants.find((tenant) => tenant.code === Pet.tenantId);
     let tenantId = Pet.tenantId || tenantId;
-<<<<<<< HEAD
-   
-=======
->>>>>>> master-LTS
     const data = await getPetAcknowledgementData({ ...Pet }, tenantInfo, t);
     Digit.Utils.pdf.generate(data);
   };
@@ -166,11 +111,6 @@ const PTRAcknowledgement = ({ data, onSuccess }) => {
         )}
       </StatusTable>
       {mutation.isSuccess && <SubmitBar label={t("PTR_PET_DOWNLOAD_ACK_FORM")} onSubmit={handleDownloadPdf} />}
-<<<<<<< HEAD
-      <Link to={`/upyog-ui/citizen`}>
-        <LinkButton label={t("CORE_COMMON_GO_TO_HOME")} />
-      </Link>
-=======
       {user?.type==="CITIZEN"?
       <Link to={`/upyog-ui/citizen`}>
         <LinkButton label={t("CORE_COMMON_GO_TO_HOME")} />
@@ -179,7 +119,6 @@ const PTRAcknowledgement = ({ data, onSuccess }) => {
       <Link to={`/upyog-ui/employee`}>
         <LinkButton label={t("CORE_COMMON_GO_TO_HOME")} />
       </Link>}
->>>>>>> master-LTS
     </Card>
   );
 };

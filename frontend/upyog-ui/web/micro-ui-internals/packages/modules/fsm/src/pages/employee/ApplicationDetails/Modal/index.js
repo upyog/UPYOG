@@ -129,8 +129,6 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
   const [pitDetail, setPitDetail] = useState();
   const [fstpoRejectionReason, setFstpoRejectionReason] = useState();
   const [noOfTrips, setNoOfTrips] = useState(null);
-<<<<<<< HEAD
-=======
 
   const [workers,setWorkers] = useState([]);
   const [drivers,setDrivers] = useState([]);
@@ -178,7 +176,6 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
       },
     },
   });
->>>>>>> master-LTS
 
   const [defaultValues, setDefautValue] = useState({
     capacity: vehicle?.capacity,
@@ -250,13 +247,9 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
     if (isSuccess && isDsoSuccess && applicationData && applicationData.dsoId) {
       const [dso] = dsoData.filter((dso) => dso.id === applicationData.dsoId);
       const tempList = dso?.vehicles?.filter((vehicle) => vehicle.capacity == applicationData?.vehicleCapacity);
-<<<<<<< HEAD
-      const vehicleNoList = tempList.sort((a,b) => (a.registrationNumber > b.registrationNumber ? 1 : -1 ));
-=======
       const vehicleNoList = tempList?.sort((a,b) => (a?.registrationNumber > b?.registrationNumber ? 1 : -1 ));
       const tempDriverList = dso?.drivers
       setVehicleDriverList(tempDriverList)
->>>>>>> master-LTS
       setVehicleNoList(vehicleNoList);
     }
   }, [isSuccess, isDsoSuccess]);

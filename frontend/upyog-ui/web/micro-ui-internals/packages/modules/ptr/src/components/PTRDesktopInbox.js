@@ -1,5 +1,3 @@
-<<<<<<< HEAD
-=======
 /**
  * @description 
  * This page renders the **desktop view** for the **PTR (Pet Registration)** module inbox. 
@@ -14,7 +12,6 @@
  */
 
 
->>>>>>> master-LTS
 import { Card, Loader } from "@upyog/digit-ui-react-components";
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";

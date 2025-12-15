@@ -1,9 +1,4 @@
 import React, {Fragment} from "react"
-<<<<<<< HEAD
-import { Controller, useWatch } from "react-hook-form";
-import { TextInput, SubmitBar, LinkLabel, ActionBar, CloseSvg, DatePicker, CardLabelError, SearchForm, SearchField, Dropdown, Table, Card, MobileNumber, Loader, CardText, Header } from "@upyog/digit-ui-react-components";
-
-=======
 import { Controller, useWatch } from "react-hook-form"; // Importing form handling utilities from react-hook-form
  // Importing UI components from digit-ui-react-components library
 import { TextInput, SubmitBar, LinkLabel, ActionBar, CloseSvg, DatePicker, CardLabelError, SearchForm, SearchField, Dropdown, Table, Card, MobileNumber, Loader, CardText, Header } from "@upyog/digit-ui-react-components";
@@ -28,7 +23,6 @@ import { TextInput, SubmitBar, LinkLabel, ActionBar, CloseSvg, DatePicker, CardL
  * @param {Function} previousPage - Function to navigate to the previous page
  */
 
->>>>>>> master-LTS
 const SearchFields = ({register, control, reset, tenantId, t, formState, setShowToast, previousPage }) => {
 
     

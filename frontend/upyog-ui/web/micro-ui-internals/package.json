@@ -7,14 +7,6 @@
     "packages/css",
     "example",
     "packages/react-components",
-<<<<<<< HEAD
-    "packages/modules/common",
-    "packages/modules/pt",
-    "packages/modules/core",
-    "packages/modules/commonPt",
-    "packages/modules/dss",
-    "packages/modules/fsm"
-=======
     "packages/modules/core",
     "packages/modules/common",
     "packages/modules/hrms",
@@ -23,7 +15,6 @@
     "packages/modules/engagement",
     "packages/modules/fsm",
     "packages/modules/vendor"
->>>>>>> master-LTS
   ],
   "license": "MIT",
   "private": true,
@@ -41,10 +32,7 @@
     "dev:components": "cd packages/react-components && yarn start",
     "dev:common": "cd packages/modules/common && yarn start",
     "dev:pt": "cd packages/modules/pt && yarn start",
-<<<<<<< HEAD
-=======
     "dev:asset": "cd packages/modules/asset && yarn start",
->>>>>>> master-LTS
     "dev:ptr": "cd packages/modules/ptr && yarn start",
     "dev:commonPt": "cd packages/modules/commonPt && yarn start",
     "dev:core": "cd packages/modules/core && yarn start",
@@ -74,11 +62,7 @@
     "buildD:asset": "cd packages/modules/asset && yarn build",
     "build:components": "cd packages/react-components && yarn build",
     "build:common": "cd packages/modules/common && yarn build",
-<<<<<<< HEAD
-    "build:pt": "cd packages/modules/pt && yarn build",
-=======
     "buildD:pt": "cd packages/modules/pt && yarn build",
->>>>>>> master-LTS
     "buildD:ptr": "cd packages/modules/ptr && yarn build",
     "buildD:commonPt": "cd packages/modules/commonPt && yarn build",
     "build:core": "cd packages/modules/core && yarn build",
@@ -87,17 +71,10 @@
     "build:dss": "cd packages/modules/dss && yarn build",
     "buildD:mcollect": "cd packages/modules/mCollect && yarn build",
     "buildD:receipts": "cd packages/modules/receipts && yarn build",
-<<<<<<< HEAD
-    "build:tl": "cd packages/modules/tl && yarn build",
-    "buildD:hrms": "cd packages/modules/hrms && yarn build",
-    "buildD:obps": "cd packages/modules/obps && yarn build",
-    "buildD:engagement": "cd packages/modules/engagement && yarn build",
-=======
     "buildD:tl": "cd packages/modules/tl && yarn build",
     "build:hrms": "cd packages/modules/hrms && yarn build",
     "build:obps": "cd packages/modules/obps && yarn build",
     "build:engagement": "cd packages/modules/engagement && yarn build",
->>>>>>> master-LTS
     "buildD:noc": "cd packages/modules/noc && yarn build",
     "buildD:ws": "cd packages/modules/ws && yarn build",
     "buildD:bills": "cd packages/modules/bills && yarn build",
@@ -135,12 +112,8 @@
     "**/q": "1.5.1",
     "**/@jridgewell/gen-mapping": "0.3.5",
     "**/polished":"4.2.2",
-<<<<<<< HEAD
-    "**/cssesc": "3.0.0"
-=======
     "**/cssesc": "3.0.0",
     "glob":"7.2.3",
     "minimatch":"3.1.2"
->>>>>>> master-LTS
   }
 }

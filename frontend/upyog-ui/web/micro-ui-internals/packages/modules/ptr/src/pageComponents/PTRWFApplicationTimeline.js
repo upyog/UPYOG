@@ -1,6 +1,3 @@
-<<<<<<< HEAD
-import { ActionLinks, CardSectionHeader, CheckPoint, CloseSvg, ConnectingCheckPoints, Loader, SubmitBar } from "@upyog/digit-ui-react-components";
-=======
 /**
  * PTRWFApplicationTimeline Component
  * 
@@ -38,7 +35,6 @@ import { ActionLinks, CardSectionHeader, CheckPoint, CloseSvg, ConnectingCheckPo
  */
 
 import { CardSectionHeader, CheckPoint, ConnectingCheckPoints, Loader, SubmitBar } from "@upyog/digit-ui-react-components";
->>>>>>> master-LTS
 import React, { Fragment } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
@@ -49,11 +45,7 @@ const PTRWFApplicationTimeline = (props) => {
   
   const { t } = useTranslation();
   const businessService = props?.application?.workflow?.businessService;
-<<<<<<< HEAD
-  // const businessService = "ptr";
-=======
   
->>>>>>> master-LTS
 
   const { isLoading, data } = Digit.Hooks.useWorkflowDetails({
     tenantId: props.application?.tenantId,
@@ -62,11 +54,7 @@ const PTRWFApplicationTimeline = (props) => {
   });
   
 
-<<<<<<< HEAD
-  function OpenImage(imageSource, index, thumbnailsToShow) {
-=======
   function OpenImage(thumbnailsToShow) {
->>>>>>> master-LTS
     window.open(thumbnailsToShow?.fullImage?.[0], "_blank");
   }
 
@@ -125,18 +113,6 @@ const PTRWFApplicationTimeline = (props) => {
           </div>
           ) : null
         );
-<<<<<<< HEAD
-      
-      case "SUBMIT_FEEDBACK":
-        return (
-          <div style={{ marginTop: "24px" }}>
-            <Link to={`/upyog-ui/citizen/fsm/rate/${props.id}`}>
-              <SubmitBar label={t("CS_APPLICATION_DETAILS_RATE")} />
-            </Link>
-          </div>
-        );
-=======
->>>>>>> master-LTS
       default:
         return null;
     }
@@ -167,17 +143,6 @@ const PTRWFApplicationTimeline = (props) => {
                 data?.timeline.map((checkpoint, index, arr) => {
                   
                   let timelineStatusPostfix = "";
-<<<<<<< HEAD
-                  if (window.location.href.includes("/obps/")) {
-                    if(workflowDetails?.data?.timeline[index-1]?.state?.includes("BACK_FROM") || workflowDetails?.data?.timeline[index-1]?.state?.includes("SEND_TO_CITIZEN"))
-                    timelineStatusPostfix = `_NOT_DONE`
-                    else if(checkpoint?.performedAction === "SEND_TO_ARCHITECT")
-                    timelineStatusPostfix = `_BY_ARCHITECT_DONE`
-                    else
-                    timelineStatusPostfix = index == 0 ? "" : `_DONE`;
-                  }
-=======
->>>>>>> master-LTS
                   return (
                     <React.Fragment key={index}>
                       <CheckPoint

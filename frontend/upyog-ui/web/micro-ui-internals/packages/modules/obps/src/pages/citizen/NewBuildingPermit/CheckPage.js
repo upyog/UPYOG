@@ -2,23 +2,16 @@ import {
     Card, CardHeader, CardSubHeader, CardText,
     CitizenInfoLabel, Header, LinkButton, Row, StatusTable, SubmitBar, Table, CardSectionHeader, EditIcon, PDFSvg, Loader
   } from "@upyog/digit-ui-react-components";
-<<<<<<< HEAD
-  import React,{ useMemo }  from "react";
-=======
   import React,{ useMemo, useEffect }  from "react";
->>>>>>> master-LTS
   import { useTranslation } from "react-i18next";
   import { useHistory, useRouteMatch } from "react-router-dom";
   import Timeline from "../../../components/Timeline";
   import { convertEpochToDateDMY, stringReplaceAll, getOrderDocuments } from "../../../utils";
   import DocumentsPreview from "../../../../../templates/ApplicationDetails/components/DocumentsPreview";
   import { format } from "date-fns";
-<<<<<<< HEAD
-=======
   import { PreApprovedPlanService } from "../../../../../../libraries/src/services/elements/PREAPPROVEDPLAN";
   import usePreApprovedSearch from "../../../../../../libraries/src/hooks/obps/usePreApprovedSearch";
   import useEstimateDetails from "../../../../../../libraries/src/hooks/obps/useEstimateDetails";
->>>>>>> master-LTS
 
   const CheckPage = ({ onSubmit, value }) => {
     const { t } = useTranslation();
@@ -26,11 +19,7 @@ import {
     const match = useRouteMatch();
     let user = Digit.UserService.getUser();
     const tenantId = Digit.ULBService.getCurrentTenantId() || user?.info?.permanentCity || value?.tenantId;
-<<<<<<< HEAD
-   
-=======
   
->>>>>>> master-LTS
     let BusinessService;
     if(value.businessService === "BPA_LOW")
     BusinessService="BPA.LOW_RISK_PERMIT_FEE";

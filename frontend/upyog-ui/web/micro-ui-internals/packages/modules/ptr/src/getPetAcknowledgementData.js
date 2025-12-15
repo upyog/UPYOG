@@ -1,10 +1,3 @@
-<<<<<<< HEAD
-  const capitalize = (text) => text.substr(0, 1).toUpperCase() + text.substr(1);
-  const ulbCamel = (ulb) => ulb.toLowerCase().split(" ").map(capitalize).join(" ");
-
-
-
-=======
   // Capitalizes the first letter of a string
   const capitalize = (text) => text.substr(0, 1).toUpperCase() + text.substr(1);
   // Converts ULB (Urban Local Body) name to camel case format
@@ -17,7 +10,6 @@
  * @param {Function} t - Translation function for localization
  * @returns {Object} - Assessment info object with title and values
  */
->>>>>>> master-LTS
   const getAssessmentInfo = (application, t) => {
   
     let values = [
@@ -47,14 +39,6 @@
   };
 
 
-<<<<<<< HEAD
-
-
-
-  const getPetAcknowledgementData = async (application, tenantInfo, t) => {
-    const filesArray = application?.documents?.map((value) => value?.fileStoreId);
-    const res = filesArray?.length > 0 && (await Digit.UploadServices.Filefetch(filesArray, Digit.ULBService.getStateId()));
-=======
 /**
  * Generates pet acknowledgement data for displaying on the UI
  * @param {Object} application - The application object containing all pet-related info
@@ -79,7 +63,6 @@
           new Date(epochdate * 1000).getFullYear().toString()
         : "NA";
     };
->>>>>>> master-LTS
 
 
     return {
@@ -88,14 +71,6 @@
       name: `${t(tenantInfo?.i18nKey)} ${ulbCamel(t(`ULBGRADE_${tenantInfo?.city?.ulbGrade.toUpperCase().replace(" ", "_").replace(".", "_")}`))}`,
       email: tenantInfo?.emailId,
       phoneNumber: tenantInfo?.contactNumber,
-<<<<<<< HEAD
-      heading: t("PTR_ACKNOWLEDGEMENT"),
-      details: [
-        {
-          title: t("CS_TITLE_APPLICATION_DETAILS"),
-          values: [
-            { title: t("PTR_APPLICATION_NUMBER"), value: application?.applicationNumber },
-=======
       applicationNumber: application?.applicationNumber,
       heading: t("PTR_ACKNOWLEDGEMENT"),
       details: [
@@ -105,7 +80,6 @@
           values: [
             // { title: t("PTR_APPLICATION_NUMBER"), value: application?.applicationNumber },
             { title: t("PTR_VALIDITY_DATE"), value: getDate(application?.validityDate)},
->>>>>>> master-LTS
             
             {
               title: t("PTR_APPLICANT_NAME"),
@@ -125,17 +99,10 @@
             },
           ],
         },
-<<<<<<< HEAD
-      
-        getAssessmentInfo(application, t),
-        {
-          
-=======
        // Pet assessment details section
         getAssessmentInfo(application, t),
         {
           // Location details section
->>>>>>> master-LTS
           title: t("PTR_LOCATION_DETAILS"),
           values: [
             { title: t("PTR_PINCODE"), value: application?.address?.pincode },

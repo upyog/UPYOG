@@ -5,11 +5,7 @@ import Timeline from "../components/TLTimelineInFSM";
 
 const FSMSelectPincode = ({ t, config, onSelect, formData = {}, userType, register, errors, props }) => {
   const tenants = Digit.Hooks.fsm.useTenants();
-<<<<<<< HEAD
-  const [pincode, setPincode] = useState(formData?.cpt?.details?.address?.pincode || formData?.address?.pincode || "");
-=======
   const [pincode, setPincode] = useState(formData?.cpt?.details?.address?.pincode);
->>>>>>> master-LTS
   const [pincodeServicability, setPincodeServicability] = useState(null);
 
   const { pathname } = useLocation();
@@ -20,10 +16,7 @@ const FSMSelectPincode = ({ t, config, onSelect, formData = {}, userType, regist
   {
     property = JSON.parse(sessionStorage?.getItem("Digit_FSM_PT"))
   }
-<<<<<<< HEAD
-=======
   console.log("dddd11111",formData)
->>>>>>> master-LTS
   const inputs = [
     {
       label: "CORE_COMMON_PINCODE",
@@ -38,22 +31,6 @@ const FSMSelectPincode = ({ t, config, onSelect, formData = {}, userType, regist
       },
     },
   ];
-<<<<<<< HEAD
-  useEffect(()=>{
-    if(property?.propertyDetails?.address?.pincode){ 
-        setPincode(property?.propertyDetails?.address?.pincode);   
-    }
-  },[ property?.propertyDetails?.address?.pincode])
-
-  useEffect(() => {
-    if (formData?.address?.pincode) {
-      setPincode(formData.address.pincode);
-    }
-    else if(formData?.cpt?.details?.address?.pincode){
-      setPincode(formData?.cpt?.details?.address?.pincode)
-    }
-  }, [formData?.address?.pincode, formData?.cpt?.details?.address?.pincode]);
-=======
   // useEffect(()=>{
   //   if(property?.propertyDetails?.address?.pincode){ 
   //       setPincode(property?.propertyDetails?.address?.pincode);   
@@ -68,7 +45,6 @@ const FSMSelectPincode = ({ t, config, onSelect, formData = {}, userType, regist
   //     setPincode(formData?.cpt?.details?.address?.pincode)
   //   }
   // }, [formData?.address?.pincode, formData?.cpt?.details?.address?.pincode]);
->>>>>>> master-LTS
 
   // useEffect(() => {
   //   if (formData?.address?.locality?.pincode !== pincode && userType === "employee") {

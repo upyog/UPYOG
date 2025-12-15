@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-import { CardLabel, CardLabelDesc, Dropdown, FormStep, UploadFile } from "@upyog/digit-ui-react-components";
-=======
 import { CardLabel, CardLabelDesc, Dropdown, UploadFile, FormStep } from "@upyog/digit-ui-react-components";
->>>>>>> master-LTS
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { stringReplaceAll } from "../utils";

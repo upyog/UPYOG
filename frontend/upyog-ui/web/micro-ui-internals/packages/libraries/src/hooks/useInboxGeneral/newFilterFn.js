@@ -94,8 +94,6 @@ export const filterFunctions = {
    
     return { searchFilters, workflowFilters, limit, offset, sortBy, sortOrder };
   },
-<<<<<<< HEAD
-=======
   ASSET: (filtersArg) => {
     let { uuid } = Digit.UserService.getUser()?.info || {};
     const searchFilters = {};
@@ -536,5 +534,4 @@ export const filterFunctions = {
     return { searchFilters, workflowFilters, limit, offset, sortOrder };
 
 },
->>>>>>> master-LTS
 };
