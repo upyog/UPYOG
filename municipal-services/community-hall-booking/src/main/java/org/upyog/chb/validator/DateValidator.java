@@ -1,12 +1,7 @@
 package org.upyog.chb.validator;
 
-<<<<<<< HEAD
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
-=======
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
->>>>>>> master-LTS
 
 import org.upyog.chb.util.CommunityHallBookingUtil;
 

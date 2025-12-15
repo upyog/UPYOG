@@ -2,11 +2,7 @@ package org.upyog.chb.web.models;
 
 import java.util.List;
 
-<<<<<<< HEAD
 import jakarta.validation.constraints.NotBlank;
-=======
-import javax.validation.constraints.NotBlank;
->>>>>>> master-LTS
 
 import org.upyog.chb.validator.ValidDate;
 

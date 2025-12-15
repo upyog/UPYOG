@@ -1,10 +1,6 @@
 package org.upyog.chb.web.models;
 
-<<<<<<< HEAD
 import jakarta.validation.constraints.NotNull;
-=======
-import javax.validation.constraints.NotNull;
->>>>>>> master-LTS
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
