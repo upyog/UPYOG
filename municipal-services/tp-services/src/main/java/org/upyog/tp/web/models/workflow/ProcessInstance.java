@@ -98,11 +98,7 @@ public class ProcessInstance {
 	 * public ProcessInstance addDocumentsItem(DocumentDetail documentsItem) { if
 	 * (this.documents == null) { this.documents = new ArrayList<>(); } if
 	 * (!this.documents.contains(documentsItem)) this.documents.add(documentsItem);
-<<<<<<< HEAD
 	 *
-=======
-	 * 
->>>>>>> master-LTS
 	 * return this; }
 	 */
 

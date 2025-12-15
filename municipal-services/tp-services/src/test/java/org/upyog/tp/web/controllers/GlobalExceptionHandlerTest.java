@@ -65,19 +65,7 @@ public class GlobalExceptionHandlerTest {
     public void testHandleJsonParseException() throws Exception {
         // Create a request with invalid JSON
         String invalidJson = "{ invalid json }";
-<<<<<<< HEAD
 
-        // Mock the controller to throw HttpMessageNotReadableException
-        lenient().when(treePruningController.createTreePruningBooking(any()))
-                .thenThrow(new HttpMessageNotReadableException("Invalid JSON", new RuntimeException()));
-
-=======
-        
-        // Mock the controller to throw HttpMessageNotReadableException
-        lenient().when(treePruningController.createTreePruningBooking(any()))
-                .thenThrow(new HttpMessageNotReadableException("Invalid JSON", new RuntimeException()));
-        
->>>>>>> master-LTS
         // Perform the request and verify the response
         mockMvc.perform(post("/tree-pruning/v1/_create")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -94,40 +82,25 @@ public class GlobalExceptionHandlerTest {
     public void testHandleMethodArgumentNotValidExceptionCreate() throws Exception {
         // Create a request with invalid data
         TreePruningBookingRequest request = TestRequestBuilder.createTreePruningRequest();
-<<<<<<< HEAD
 
-=======
-        
->>>>>>> master-LTS
         // Create a MethodArgumentNotValidException with field errors
         BindingResult bindingResult = org.mockito.Mockito.mock(BindingResult.class);
         List<FieldError> fieldErrors = new ArrayList<>();
         fieldErrors.add(new FieldError("treePruningRequest", "request.description", null, false, null, null, "must not be null"));
         when(bindingResult.getFieldErrors()).thenReturn(fieldErrors);
         when(bindingResult.getAllErrors()).thenReturn(new ArrayList<>(fieldErrors));
-<<<<<<< HEAD
+
 
         // Create a MethodParameter for the createRequest method
         Method createRequestMethod = TreePruningController.class.getMethod("createRequest", TreePruningBookingRequest.class);
         MethodParameter methodParameter = new MethodParameter(createRequestMethod, 0);
 
-=======
-        
-        // Create a MethodParameter for the createRequest method
-        Method createRequestMethod = TreePruningController.class.getMethod("createRequest", TreePruningBookingRequest.class);
-        MethodParameter methodParameter = new MethodParameter(createRequestMethod, 0);
-        
->>>>>>> master-LTS
         // Mock the controller to throw the exception
         lenient().when(treePruningController.createTreePruningBooking(any()))
                 .thenAnswer(invocation -> {
                     throw new MethodArgumentNotValidException(methodParameter, bindingResult);
                 });
-<<<<<<< HEAD
 
-=======
-        
->>>>>>> master-LTS
         // Perform the request and verify the response
         mockMvc.perform(post("/tree-pruning/v1/_create")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -144,19 +117,13 @@ public class GlobalExceptionHandlerTest {
     public void testHandleCustomException() throws Exception {
         // Create a request
         TreePruningBookingRequest request = TestRequestBuilder.createTreePruningRequest();
-<<<<<<< HEAD
+
 
         // Mock the controller to throw CustomException
         lenient().when(treePruningController.createTreePruningBooking(any()))
                 .thenThrow(new CustomException("CUSTOM_ERROR", "Custom validation error"));
 
-=======
-        
-        // Mock the controller to throw CustomException
-        lenient().when(treePruningController.createTreePruningBooking(any()))
-                .thenThrow(new CustomException("CUSTOM_ERROR", "Custom validation error"));
-        
->>>>>>> master-LTS
+
         // Perform the request and verify the response
         mockMvc.perform(post("/water-tanker/v1/_create")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -173,19 +140,12 @@ public class GlobalExceptionHandlerTest {
     public void testHandleHttpClientErrorException() throws Exception {
         // Create a request
         TreePruningBookingRequest request = TestRequestBuilder.createTreePruningRequest();
-<<<<<<< HEAD
+
 
         // Mock the controller to throw HttpClientErrorException
         lenient().when(treePruningController.createTreePruningBooking(any()))
                 .thenThrow(new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Client error"));
 
-=======
-        
-        // Mock the controller to throw HttpClientErrorException
-        lenient().when(treePruningController.createTreePruningBooking(any()))
-                .thenThrow(new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Client error"));
-        
->>>>>>> master-LTS
         // Perform the request and verify the response
         mockMvc.perform(post("/tree-pruning/v1/_create")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -202,19 +162,11 @@ public class GlobalExceptionHandlerTest {
     public void testHandleHttpServerErrorException() throws Exception {
         // Create a request
         TreePruningBookingRequest request = TestRequestBuilder.createTreePruningRequest();
-<<<<<<< HEAD
 
         // Mock the controller to throw HttpServerErrorException
         lenient().when(treePruningController.createTreePruningBooking(any()))
                 .thenThrow(new HttpServerErrorException(HttpStatus.INTERNAL_SERVER_ERROR, "Server error"));
 
-=======
-        
-        // Mock the controller to throw HttpServerErrorException
-        lenient().when(treePruningController.createTreePruningBooking(any()))
-                .thenThrow(new HttpServerErrorException(HttpStatus.INTERNAL_SERVER_ERROR, "Server error"));
-        
->>>>>>> master-LTS
         // Perform the request and verify the response
         mockMvc.perform(post("/tree-pruning/v1/_create")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -231,19 +183,10 @@ public class GlobalExceptionHandlerTest {
     public void testHandleResourceAccessException() throws Exception {
         // Create a request
         TreePruningBookingRequest request = TestRequestBuilder.createTreePruningRequest();
-<<<<<<< HEAD
-
         // Mock the controller to throw ResourceAccessException
         lenient().when(treePruningController.createTreePruningBooking(any()))
                 .thenThrow(new ResourceAccessException("Connection timeout"));
 
-=======
-        
-        // Mock the controller to throw ResourceAccessException
-        lenient().when(treePruningController.createTreePruningBooking(any()))
-                .thenThrow(new ResourceAccessException("Connection timeout"));
-        
->>>>>>> master-LTS
         // Perform the request and verify the response
         mockMvc.perform(post("/tree-pruning/v1/_create")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -260,19 +203,12 @@ public class GlobalExceptionHandlerTest {
     public void testHandleUnknownHostException() throws Exception {
         // Create a request
         TreePruningBookingRequest request = TestRequestBuilder.createTreePruningRequest();
-<<<<<<< HEAD
+
 
         // Mock the controller to throw UnknownHostException wrapped in RuntimeException
         lenient().when(treePruningController.createTreePruningBooking(any()))
                 .thenThrow(new RuntimeException(new UnknownHostException("Unknown host")));
 
-=======
-        
-        // Mock the controller to throw UnknownHostException wrapped in RuntimeException
-        lenient().when(treePruningController.createTreePruningBooking(any()))
-                .thenThrow(new RuntimeException(new UnknownHostException("Unknown host")));
-        
->>>>>>> master-LTS
         // Perform the request and verify the response
         mockMvc.perform(post("/tree-pruning/v1/_create")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -289,19 +225,11 @@ public class GlobalExceptionHandlerTest {
     public void testHandleGenericException() throws Exception {
         // Create a request
         TreePruningBookingRequest request = TestRequestBuilder.createTreePruningRequest();
-<<<<<<< HEAD
 
         // Mock the controller to throw a generic Exception
         lenient().when(treePruningController.createTreePruningBooking(any()))
                 .thenThrow(new RuntimeException("Unexpected error"));
 
-=======
-        
-        // Mock the controller to throw a generic Exception
-        lenient().when(treePruningController.createTreePruningBooking(any()))
-                .thenThrow(new RuntimeException("Unexpected error"));
-        
->>>>>>> master-LTS
         // Perform the request and verify the response
         mockMvc.perform(post("/tree-pruning/v1/_create")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -310,8 +238,4 @@ public class GlobalExceptionHandlerTest {
                 .andExpect(jsonPath("$.error.code").value(500))
                 .andExpect(jsonPath("$.error.message").value("Internal Server Error: Unexpected error"));
     }
-<<<<<<< HEAD
 }
-=======
-} 
->>>>>>> master-LTS
