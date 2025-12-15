@@ -2,12 +2,7 @@ package org.upyog.rs.web.models.events;
 
 import lombok.*;
 import org.springframework.validation.annotation.Validated;
-
-<<<<<<< HEAD
 import jakarta.validation.constraints.NotNull;
-=======
-import javax.validation.constraints.NotNull;
->>>>>>> master-LTS
 import java.util.List;
 
 @Validated
