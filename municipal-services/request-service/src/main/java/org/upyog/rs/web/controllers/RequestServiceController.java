@@ -97,7 +97,7 @@ public class RequestServiceController {
 	@PostMapping("/water-tanker/v1/_update")
 	@Operation(summary = "Update application details", description = "Updated water tanker details and RequestInfo meta data.")
 	public ResponseEntity<WaterTankerBookingResponse> waterTankerUpdate(@RequestBody WaterTankerBookingRequest waterTankerRequest) {
-		
+
 		WaterTankerBookingDetail waterTankerDetail = waterTankerService.updateWaterTankerBooking(waterTankerRequest, null);
 
 		WaterTankerBookingResponse response = WaterTankerBookingResponse.builder().waterTankerBookingApplication(waterTankerDetail)
@@ -155,7 +155,6 @@ public class RequestServiceController {
 	@PostMapping("/mobile-toilet/v1/_update")
 	@Operation(summary = "Update application details",description = "Update Mobile Toilet details and RequestInfo meta data.")
 	public ResponseEntity<MobileToiletBookingResponse> mobileToiletUpdate(
-
 			@RequestBody MobileToiletBookingRequest mobileToiletRequest) {
 
 		MobileToiletBookingDetail mobileToiletDetail = mobileToiletService.updateMobileToiletBooking(mobileToiletRequest, null);

@@ -104,7 +104,6 @@ public class GenericRowMapper<T> implements ResultSetExtractor<List<T>> {
                         bookingDetail.getApplicantDetail().setAuditDetails(auditDetails);
                     }
 
-
                     Address address = extractAddressDetails(rs);
                     if (address != null) {
                         bookingDetail.setAddress(address);
@@ -117,7 +116,6 @@ public class GenericRowMapper<T> implements ResultSetExtractor<List<T>> {
                     AuditDetails auditDetails = extractAuditDetails(rs);
                     bookingDetail.setAuditDetails(auditDetails);
 
-
                     /*
                      * Extract applicant and address details only when isUserProfileEnabled=false.
                      * When user profile is disabled, booking needs complete applicant and address info
@@ -129,7 +127,6 @@ public class GenericRowMapper<T> implements ResultSetExtractor<List<T>> {
                         bookingDetail.setApplicantDetail(applicantDetail);
                         bookingDetail.getApplicantDetail().setAuditDetails(auditDetails);
                     }
-
 
                     Address address = extractAddressDetails(rs);
                     if (address != null) {
@@ -187,7 +184,6 @@ public class GenericRowMapper<T> implements ResultSetExtractor<List<T>> {
         return auditDetails;
     }
 
-
     /**
      * Extracts applicant details from the ResultSet.
      * Returns null if no applicant details are available.
@@ -202,7 +198,6 @@ public class GenericRowMapper<T> implements ResultSetExtractor<List<T>> {
                 return null; // No applicant details available
             }
 
-
             ApplicantDetail applicantDetail = new ApplicantDetail();
             applicantDetail.setApplicantId(applicantId);
             applicantDetail.setName(rs.getString("name"));
@@ -216,7 +211,6 @@ public class GenericRowMapper<T> implements ResultSetExtractor<List<T>> {
             return null;
         }
     }
-
 
     /**
      * Extracts address details from the ResultSet.
