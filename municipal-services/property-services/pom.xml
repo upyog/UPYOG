@@ -119,7 +119,7 @@
 	</dependencies>
 	<repositories>
 		<repository>
-			<id>repo.digit.org</id>
+			<id>repo.egovernments.org.snapshots</id>
 			<name>eGov DIGIT Releases Repository</name>
 			<url>https://nexus-repo.digit.org/nexus/content/repositories/snapshots/</url>
 		</repository>
