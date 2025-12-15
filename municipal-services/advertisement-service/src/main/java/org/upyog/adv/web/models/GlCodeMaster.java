@@ -1,10 +1,9 @@
 package org.upyog.adv.web.models;
 
-<<<<<<< HEAD
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
-=======
-import javax.validation.constraints.NotNull;
->>>>>>> master-LTS
+import jakarta.validation.constraints.Size;
+
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

@@ -1,15 +1,11 @@
 package org.upyog.adv.web.models.events;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+
 import lombok.*;
 import org.springframework.validation.annotation.Validated;
 
-<<<<<<< HEAD
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
-=======
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
->>>>>>> master-LTS
 
 @Validated
 @AllArgsConstructor

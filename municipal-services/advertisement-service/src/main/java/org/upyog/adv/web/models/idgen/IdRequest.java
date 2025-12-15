@@ -1,16 +1,12 @@
 package org.upyog.adv.web.models.idgen;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-<<<<<<< HEAD
-import jakarta.validation.constraints.NotNull;
-=======
-import javax.validation.constraints.NotNull;
->>>>>>> master-LTS
 
 /**
  * <h1>IdRequest</h1>
