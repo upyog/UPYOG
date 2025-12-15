@@ -148,8 +148,8 @@ public class MDMSService {
     		additionalDetails.put("serviceType", serviceType.get(0).toString());
     		additionalDetails.put("applicationType", applicationType.get(0).toString());
             }            
-            log.debug("applicationType is " + additionalDetails.get("applicationType"));
-            log.debug("serviceType is " + additionalDetails.get("serviceType"));
+            log.info("applicationType is " + additionalDetails.get("applicationType"));
+            log.info("serviceType is " + additionalDetails.get("serviceType"));
             String filterExp = "$.[?((@.applicationType == '"+ additionalDetails.get("applicationType")+"' || @.applicationType === 'ALL' ) &&  @.feeType == '"+feeType+"')]";
             List<Object> calTypes = JsonPath.read(jsonOutput, filterExp);
             
