@@ -10,11 +10,7 @@ import lombok.NoArgsConstructor;
 
 import org.egov.common.contract.request.User;
 
-<<<<<<< HEAD
 import jakarta.validation.Valid;
-=======
-import javax.validation.Valid;
->>>>>>> master-LTS
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
