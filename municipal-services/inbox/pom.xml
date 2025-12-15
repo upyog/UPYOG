@@ -18,11 +18,7 @@
 		<java.version>17</java.version>
 		<maven.compiler.source>${java.version}</maven.compiler.source>
 		<maven.compiler.target>${java.version}</maven.compiler.target>
-<<<<<<< HEAD
-		<lombok.version>1.18.22</lombok.version>
-=======
 		<lombok.version>1.18.28</lombok.version>
->>>>>>> master-LTS
 	</properties>
 
 	<dependencies>
