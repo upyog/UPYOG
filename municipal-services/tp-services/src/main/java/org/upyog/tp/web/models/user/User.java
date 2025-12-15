@@ -194,11 +194,6 @@ public class User   {
         @SanitizeHtml
         @JsonProperty("tenantId")
         private String tenantId;
-
-        @Size(max=50)
-        @SanitizeHtml
-        @JsonProperty("tenantId")
-        private String tenantId;
         
         @Size(max=50)
         @SanitizeHtml
