@@ -3,11 +3,7 @@ package org.upyog.rs.web.models;
 import java.util.ArrayList;
 import java.util.List;
 
-<<<<<<< HEAD
 import jakarta.validation.Valid;
-=======
-import javax.validation.Valid;
->>>>>>> master-LTS
 
 import org.springframework.validation.annotation.Validated;
 import org.upyog.rs.web.models.workflow.Document;
@@ -15,11 +11,7 @@ import org.upyog.rs.web.models.workflow.State;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-<<<<<<< HEAD
 import io.swagger.v3.oas.annotations.media.Schema;
-=======
-import io.swagger.annotations.ApiModel;
->>>>>>> master-LTS
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -30,15 +22,9 @@ import lombok.Setter;
  * BPA application object to capture the details of land, land owners, and
  * address of the land.
  */
-<<<<<<< HEAD
 @Schema(description = "BPA application object to capture the details of land, land owners, and address of the land.")
 @Validated
 @jakarta.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-06-23T05:52:32.717Z[GMT]")
-=======
-@ApiModel(description = "BPA application object to capture the details of land, land owners, and address of the land.")
-@Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-06-23T05:52:32.717Z[GMT]")
->>>>>>> master-LTS
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
