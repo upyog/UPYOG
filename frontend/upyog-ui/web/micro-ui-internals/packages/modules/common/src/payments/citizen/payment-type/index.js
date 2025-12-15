@@ -12,10 +12,7 @@ import {
   Loader,
   Toast,
   CardText,
-<<<<<<< HEAD
-=======
   CardSubHeader,
->>>>>>> master-LTS
 } from "@upyog/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 import { useForm, Controller } from "react-hook-form";

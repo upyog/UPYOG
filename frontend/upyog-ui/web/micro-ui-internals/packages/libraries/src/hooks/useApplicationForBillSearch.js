@@ -3,15 +3,12 @@ import { PTService } from "../services/elements/PT";
 import { useQuery } from "react-query";
 import { MCollectService } from "../services/elements/MCollect";
 import { PTRService } from "../services/elements/PTR";
-<<<<<<< HEAD
-=======
 import { CHBServices } from "../services/elements/CHB";
 import {ADSServices} from "../services/elements/ADS";
 import { SVService } from "../services/elements/SV";
 import { WTService } from "../services/elements/WT";
 import { MTService } from "../services/elements/MT";
 import { TPService } from "../services/elements/TP";
->>>>>>> master-LTS
 
 const fsmApplications = async (tenantId, filters) => {
   return (await FSMService.search(tenantId, { ...filters, limit: 10000 })).fsm;
@@ -156,8 +153,6 @@ export const useApplicationsForBusinessServiceSearch = ({ tenantId, businessServ
   if (window.location.href.includes("pet-services")) {
     _key = "ptr"
   } 
-<<<<<<< HEAD
-=======
   if (window.location.href.includes("sv-services")) {
     _key = "street"
   } 
@@ -177,7 +172,6 @@ export const useApplicationsForBusinessServiceSearch = ({ tenantId, businessServ
     _key = "tp"
   }
   
->>>>>>> master-LTS
 
   /* key from application ie being used as consumer code in bill */
   const { searchFn, key, label } = refObj(tenantId, filters)[_key];

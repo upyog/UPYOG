@@ -22,11 +22,7 @@ const getOwnerDetails = (application, t) => {
     };
   } else { //if (application?.subOwnerShipCategory?.includes("INDIVIDUAL"))
     let values = [];
-<<<<<<< HEAD
-    application?.tradeLicenseDetail?.owners?.map((owner) => {
-=======
     application?.tradeLicenseDetail?.owners?.map((owner, index) => {
->>>>>>> master-LTS
       let indOwner = [
         application?.tradeLicenseDetail?.subOwnerShipCategory == "INDIVIDUAL.MULTIPLEOWNERS" ? { title: t("TL_OWNER_S_NUMBER"), value: index+1 } : "",
         { title: t("TL_OWNER_S_NAME_LABEL"), value: owner?.name || t("CS_NA") },
@@ -37,10 +33,7 @@ const getOwnerDetails = (application, t) => {
         { title: t("TL_NEW_OWNER_DETAILS_EMAIL_LABEL"), value: owner?.emailId || t("CS_NA") },
         { title: t("TL_OWNER_SPECIAL_CATEGORY"), value: owner?.ownerType ? t(`COMMON_MASTERS_OWNERTYPE_${owner?.ownerType}`) : t("CS_NA") },
         { title: t("TL_NEW_OWNER_DETAILS_ADDR_LABEL"), value: owner?.permanentAddress || t("CS_NA") },
-<<<<<<< HEAD
-=======
         { title: t("TL_NEW_OWNER_DETAILS_OWNERSHIP_CATEGORY"), value: application?.tradeLicenseDetail?.subOwnerShipCategory || t("CS_NA") },
->>>>>>> master-LTS
               ];
      values.push(...indOwner);
     });

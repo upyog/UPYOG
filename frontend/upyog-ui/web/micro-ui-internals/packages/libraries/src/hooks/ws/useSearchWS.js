@@ -17,11 +17,7 @@ const getAddress = (address, t, shortAddress) => {
 
 const getOwnerNames = (propertyData) => {
   const getActiveOwners = propertyData?.owners?.filter((owner) => owner?.active);
-<<<<<<< HEAD
-  const getOwnersList = getActiveOwners.sort((a,b)=>a.additionalDetails?.ownerSequence- b.additionalDetails?.ownerSequence)?.map((activeOwner) => activeOwner?.name)?.join(",");
-=======
   const getOwnersList = getActiveOwners.sort((a,b)=>(a.additionalDetails?.ownerSequence || 0) - (b.additionalDetails?.ownerSequence || 0))?.map((activeOwner) => activeOwner?.name)?.join(",");
->>>>>>> master-LTS
   return getOwnersList ? getOwnersList : t("NA");
 };
 

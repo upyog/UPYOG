@@ -1,25 +1,15 @@
-<<<<<<< HEAD
-import { Card,CardLabel, CardCaption, TextInput, CardHeader, Label, StatusTable, Row, SubmitBar, Loader, FormStep } from "@upyog/digit-ui-react-components";
-=======
 import { Card,CardLabel, CardCaption, TextInput, CardHeader, TextArea, Label, StatusTable, Row, SubmitBar, Loader, FormStep } from "@upyog/digit-ui-react-components";
->>>>>>> master-LTS
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import Timeline from "../components/Timeline";
 
 const PlotDetails = ({ formData, onSelect, config }) => {
   const { t } = useTranslation();
-<<<<<<< HEAD
-  const [holdingNumber, setHoldingNumber] = useState("");
-  const [boundaryWallLength, setBoundaryWallLength] = useState("");
-  const [registrationDetails, setRegistrationDetails] = useState("");
-=======
   const [holdingNumber, setHoldingNumber] = useState(formData?.holdingNumber||formData?.additionalDetails?.holdingNo||"");
   const [boundaryWallLength, setBoundaryWallLength] = useState("");
   const [registrationDetails, setRegistrationDetails] = useState(formData?.registrationDetails||formData?.additionalDetails?.registrationDetails||"");
   const [plotNo, setPlotNo] = useState(formData?.plotNo||formData?.additionalDetails?.plotNo||"");
   const [khataNo, setKhataNo] = useState(formData?.khataNo||formData?.additionalDetails?.khataNo||"");
->>>>>>> master-LTS
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const checkingFlow = formData?.uiFlow?.flow ? formData?.uiFlow?.flow :formData?.selectedPlot||formData?.businessService==="BPA-PAP" ? "PRE_APPROVE":"";
   const state = Digit.ULBService.getStateId();
@@ -49,14 +39,6 @@ const PlotDetails = ({ formData, onSelect, config }) => {
 
   return (
     <div>
-<<<<<<< HEAD
-      <Timeline flow= {checkingFlow === "OCBPA" ? "OCBPA" : ""}/>
-      <FormStep config={config} onSelect={handleSubmit} childrenAtTheBottom={false} t={t} _defaultValues={formData?.data} onSkip={onSkip}  >
-        <StatusTable>
-          <Row className="border-none" label={t(`BPA_PLOT_NUMBER_LABEL`)} text={data?.planDetail?.planInformation?.plotNo} />
-          <Row className="border-none" label={t(`BPA_KHATHA_NUMBER_LABEL`)} text={data?.planDetail?.planInformation?.khataNo}/>
-        </StatusTable>
-=======
       <Timeline currentStep={checkingFlow==="PRE_APPROVE" ? 3 : 1 } flow={checkingFlow}/>
       {formData?.selectedPlot||formData?.businessService==="BPA-PAP" ? (
         <FormStep config={config} onSelect={handleSubmit} childrenAtTheBottom={false} t={t}  isDisabled={plotNo===""||khataNo===""||holdingNumber===""}>
@@ -100,7 +82,6 @@ const PlotDetails = ({ formData, onSelect, config }) => {
         
         
         
->>>>>>> master-LTS
       </FormStep>
       ):
       <FormStep config={config} onSelect={handleSubmit} childrenAtTheBottom={false} t={t} _defaultValues={formData?.data} onSkip={onSkip}  >

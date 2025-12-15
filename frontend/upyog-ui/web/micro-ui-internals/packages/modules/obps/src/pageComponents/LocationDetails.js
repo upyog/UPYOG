@@ -86,17 +86,6 @@ const LocationDetails = ({ t, config, onSelect, userType, formData, ownerIndex =
 
   const [localities, setLocalities] = useState();
 
-<<<<<<< HEAD
-  const [selectedLocality, setSelectedLocality] = useState(propertyData?.address.locality ||null);
-  
-
-  useEffect(() => {
-    console.log("HEUUUU")
-    if (selectedCity && fetchedLocalities  && !Pinerror) {
-      let __localityList = fetchedLocalities;
-      let filteredLocalityList = [];
-      console.log("fetchedLocalities",fetchedLocalities)
-=======
   const [selectedLocality, setSelectedLocality] = useState(formData?.address?.locality||propertyData?.address.locality ||null);
   
 
@@ -106,7 +95,6 @@ const LocationDetails = ({ t, config, onSelect, userType, formData, ownerIndex =
       let __localityList = fetchedLocalities;
       let filteredLocalityList = [];
       
->>>>>>> master-LTS
       if (formData?.address?.locality && formData?.address?.locality?.code === selectedLocality?.code) {
         setSelectedLocality(formData.address.locality);
       }
@@ -117,11 +105,7 @@ const LocationDetails = ({ t, config, onSelect, userType, formData, ownerIndex =
       }
       if(!localities || (filteredLocalityList.length > 0 && localities.length !== filteredLocalityList.length) || (filteredLocalityList.length <=0 && localities && localities.length !==__localityList.length))
       {
-<<<<<<< HEAD
-        console.log("filteredLocalityList",filteredLocalityList)
-=======
         
->>>>>>> master-LTS
         setLocalities(() => (filteredLocalityList.length > 0 ? filteredLocalityList : __localityList));
       }
       if (filteredLocalityList.length === 1 && ((selectedLocality == null) || (selectedLocality && filteredLocalityList[0]?.code !== selectedLocality?.code))) {
@@ -300,11 +284,7 @@ const LocationDetails = ({ t, config, onSelect, userType, formData, ownerIndex =
        )}
          {!isOpen  && propertyData?.address?.locality.name && (
         <span className={"form-pt-dropdown-only"}>
-<<<<<<< HEAD
-          <CardLabel>{`${t("BPA_LOC_MOHALLA_LABEL")}*`}</CardLabel>
-=======
           <CardLabel>{`${t("BPA_LOC_MOHALLA_LABEL")}`}<span className="check-page-link-button"> *</span></CardLabel>
->>>>>>> master-LTS
           <TextInput
             optionCardStyles={{ maxHeight:"20vmax", overflow:"scroll" }}
             isMandatory={config.isMandatory}

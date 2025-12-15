@@ -61,9 +61,6 @@ const Home = () => {
   const handleClickOnWhatsAppBanner = (obj) => {
     window.open(obj?.navigationUrl);
   };
-<<<<<<< HEAD
-  console.log("citizenServicesObjcitizenServicesObj",citizenServicesObj)
-=======
   /* set citizen details to enable backward compatiable */
 const setCitizenDetail = (userObject, token, tenantId) => {
   let locale = JSON.parse(sessionStorage.getItem("Digit.initData"))?.value?.selectedLanguage;
@@ -109,7 +106,6 @@ useEffect(() => {
   }
 }, [user]);
 console.log("citizenServicesObjcitizenServicesObj",citizenServicesObj)
->>>>>>> master-LTS
   const allCitizenServicesProps = {
     header: t(citizenServicesObj?.headerLabel),
     sideOption: {

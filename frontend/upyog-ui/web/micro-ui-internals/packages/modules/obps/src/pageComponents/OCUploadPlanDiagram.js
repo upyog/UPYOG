@@ -57,11 +57,7 @@ const OCUploadPlanDiagram = ({ t, config, onSelect, userType, formData, ownerInd
             onAdd={onAdd}
             isMultipleAllow={true}
         >
-<<<<<<< HEAD
-            <CardLabel>{`${t("BPA_OC_PLAN_DIAGRAM_DXF")} *`}</CardLabel>
-=======
             <CardLabel>{`${t("BPA_OC_PLAN_DIAGRAM_DXF")}`}<span className="check-page-link-button"> *</span></CardLabel>
->>>>>>> master-LTS
             <CardText>{t("please upload same/updated dxf file")}</CardText>
             <UploadFile
                 id={"oc-doc"}

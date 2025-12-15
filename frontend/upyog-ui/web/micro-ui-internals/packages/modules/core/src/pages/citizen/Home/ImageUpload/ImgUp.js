@@ -1,9 +1,5 @@
 import React,{useState,useEffect} from "react";
-<<<<<<< HEAD
-import{UploadFile} from '@upyog/digit-ui-react-components';
-=======
 import{UploadFile} from "@upyog/digit-ui-react-components";
->>>>>>> master-LTS
 const ImgUp=()=>{
     const [uploadedFile, setUploadedFile] = useState("a");
     const [file,setFile] = useState("")

@@ -6,13 +6,8 @@ import {
     Toast,
     Loader,
     FormStep,
-<<<<<<< HEAD
-    MultiUploadWrapper,
-    CitizenInfoLabel
-=======
     CitizenInfoLabel,
     MultiUploadWrapper
->>>>>>> master-LTS
 } from "@upyog/digit-ui-react-components";
 import Timeline from "../components/Timeline";
 import DocumentsPreview from "../../../templates/ApplicationDetails/components/DocumentsPreview";

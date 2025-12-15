@@ -20,12 +20,7 @@ const SelectPropertySubtype = ({ config, onSelect, t, userType, formData }) => {
   const [subtype, setSubtype] = useState();
 
   const [subtypeOptions, setSubtypeOptions] = useState([]);
-<<<<<<< HEAD
-  console.log("propertyType",formData)
-  formData.propertyType = property?.usageCategory || formData.propertyType
-=======
   
->>>>>>> master-LTS
   const { propertyType } =formData || {};
 
   useEffect(() => {
@@ -43,11 +38,7 @@ const SelectPropertySubtype = ({ config, onSelect, t, userType, formData }) => {
   }, [propertyType, formData?.subtype, propertySubtypesData]);
 
   useEffect(() => {
-<<<<<<< HEAD
-    console.log("propertyType2222",propertyType)
-=======
     
->>>>>>> master-LTS
     if (!propertySubtypesDataLoading && propertyType) {
     
       const subTypes = propertySubtypesData.filter((item) => item.propertyType === (propertyType?.code || propertyType));
@@ -93,11 +84,7 @@ const SelectPropertySubtype = ({ config, onSelect, t, userType, formData }) => {
       <React.Fragment>
         <Timeline currentStep={1} flow="APPLY" />
         <FormStep config={config} onSelect={goNext} isDisabled={!subtype} t={t}>
-<<<<<<< HEAD
-          <CardLabel>{`${t("CS_FILE_APPLICATION_PROPERTY_SUBTYPE_LABEL")} *`}</CardLabel>
-=======
           <CardLabel>{`${t("CS_FILE_APPLICATION_PROPERTY_SUBTYPE_LABEL")}`}<span className="check-page-link-button"> *</span></CardLabel>
->>>>>>> master-LTS
           <RadioOrSelect
             options={subtypeOptions?.sort((a, b) => a.name.localeCompare(b.name))}
             selectedOption={subtype}

@@ -5,13 +5,9 @@ import { MdmsService } from "./MDMS";
 import React from "react";
 import { UploadServices } from "../atoms/UploadServices";
 import { PTService } from "./PT";
-<<<<<<< HEAD
-
-=======
 import usePreApprovedSearch from "../../hooks/obps/usePreApprovedSearch";
 import { PreApprovedPlanService } from "./PREAPPROVEDPLAN";
 import { useTranslation } from "react-i18next";
->>>>>>> master-LTS
 export const OBPSService = {
   scrutinyDetails: (tenantId, params) =>
     Request({
@@ -582,11 +578,7 @@ export const OBPSService = {
           { title: BPA?.businessService !== "BPA_OC" ? "BPA_EDCR_NO_LABEL" : "BPA_OC_EDCR_NO_LABEL", value: BPA?.edcrNumber || "NA" },
         ],
         scruntinyDetails: [
-<<<<<<< HEAD
-          { title: "BPA_UPLOADED_PLAN_DIAGRAM", value: edcr?.updatedDxfFile, text: "Uploaded Plan.pdf" },
-=======
           { title: "BPA_UPLOADED_PLAN_DIAGRAM", value: edcr?.updatedDxfFile|| edcr?.documents.find(doc => doc?.additionalDetails?.fileName.includes("pdf"))?.additionalDetails?.fileUrl, text: "Uploaded Plan.pdf" },
->>>>>>> master-LTS
           { title: "BPA_SCRUNTINY_REPORT_OUTPUT", value: edcr?.planReport, text: "BPA_SCRUTINY_REPORT_PDF" },
         ]
       }
@@ -666,11 +658,7 @@ export const OBPSService = {
               { title: "BPA_APPLICANT_GENDER_LABEL", value: owner?.gender },
               { title: "CORE_COMMON_MOBILE_NUMBER", value: owner?.mobileNumber },
               { title: "CORE_COMMON_EMAIL_ID", value: owner?.emailId },
-<<<<<<< HEAD
-              { title: "BPA_IS_PRIMARY_OWNER_LABEL", value: owner?.isPrimaryOwner, isNotTranslated: false }
-=======
               { title: BPA?.businessService === "BPA-PAP" ? "PRIMARY_OWNER_LABEL" : "BPA_IS_PRIMARY_OWNER_LABEL", value: BPA?.businessService === "BPA-PAP" ? (Number(checkOwnerLength) > 1) ? "Multiple Owner" : "Single Owner" : owner?.isPrimaryOwner, isNotTranslated: false }
->>>>>>> master-LTS
             ],
           };
         })

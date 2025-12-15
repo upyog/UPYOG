@@ -226,10 +226,7 @@ const WrapCheckPage = ({ onSubmit, value }) => {
                 <Row className="border-none" label={t("TL_GUARDIAN_S_NAME_LABEL")} text={t(owner?.fatherOrHusbandName) || t("CS_NA")} />
                 <Row className="border-none" label={t("TL_RELATIONSHIP_WITH_GUARDIAN_LABEL")} text={t(owner?.relationship?.i18nKey) || t("CS_NA")} />
                 <Row className="border-none" label={t("TL_EMAIL_ID_LABEL")} text={t(owner?.emailId) || t("CS_NA")} />
-<<<<<<< HEAD
-=======
                 <Row className="border-none" label={t("TL_COMMON_TABLE_COL_OWN_CATEGORY_SHIP")} text={t(value?.ownershipCategory?.code)} />
->>>>>>> master-LTS
                 <Row
                   className="border-none"
                   label={t("TL_CORRESPONDENCE_ADDRESS")}

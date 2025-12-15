@@ -1,10 +1,6 @@
 import React, { useState } from "react";
 import { Loader, TypeSelectCard } from "@upyog/digit-ui-react-components";
-<<<<<<< HEAD
-import { FormStep, RadioOrSelect, RadioButtons, CitizenInfoLabel } from "@upyog/digit-ui-react-components";
-=======
 import { RadioOrSelect, RadioButtons, CitizenInfoLabel } from "@upyog/digit-ui-react-components";
->>>>>>> master-LTS
 import Timeline from "../components/TLTimeline";
 import FormStep from "../../../../react-components/src/molecules/FormStep"
 const SelectBuildingType = ({ t, config, onSelect, userType, formData }) => {

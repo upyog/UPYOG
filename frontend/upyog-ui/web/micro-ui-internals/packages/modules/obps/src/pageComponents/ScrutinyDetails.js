@@ -237,10 +237,6 @@ const ScrutinyDetails = ({ onSelect, userType, formData, config }) => {
             <div>
             <Row
             className="border-none"
-<<<<<<< HEAD
-            label={t("BPA_UPLOADED_PLAN_DIAGRAM")}
-            text={<ActionButton label={t("Uploaded Plan.pdf")} jumpTo={data?.updatedDxfFile} />}
-=======
             label={t("BPA_UPLOADED_PDF_DIAGRAM")}
             text={<ActionButton label={t(formData?.data?.edcrDetails?.documents.find(doc => doc?.additionalDetails?.fileName.includes("pdf"))?.additionalDetails?.fileName)} jumpTo={ formData?.data?.edcrDetails?.documents.find(doc => doc?.additionalDetails?.fileName.includes("dxf"))?.additionalDetails?.fileUrl} />}
           ></Row>
@@ -248,7 +244,6 @@ const ScrutinyDetails = ({ onSelect, userType, formData, config }) => {
             className="border-none"
             label={t("BPA_UPLOADED_CAD_DIAGRAM")}
             text={<ActionButton label={t(formData?.data?.edcrDetails?.documents.find(doc => doc?.additionalDetails?.fileName.includes("dxf"))?.additionalDetails?.fileName)} jumpTo={ formData?.data?.edcrDetails?.documents.find(doc => doc?.additionalDetails?.fileName.includes("dxf"))?.additionalDetails?.fileUrl} />}
->>>>>>> master-LTS
           ></Row>
           <Row
             className="border-none"

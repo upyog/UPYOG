@@ -1,5 +1,3 @@
-<<<<<<< HEAD
-=======
 /**
  * @file MobileInbox.js
  * @description Renders the mobile inbox with filtering, search, and sorting.
@@ -19,7 +17,6 @@
  * @methods
  * - `getData`: Formats data for display.
  */
->>>>>>> master-LTS
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { ApplicationCard } from "./inbox/ApplicationCard";

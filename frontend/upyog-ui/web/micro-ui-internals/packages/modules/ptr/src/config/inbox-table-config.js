@@ -1,5 +1,3 @@
-<<<<<<< HEAD
-=======
   /**
  * @file TableConfig.js
  * @description 
@@ -39,7 +37,6 @@
  * const columns = tableConfig.PTR.inboxColumns({ parentRoute: "/dashboard" });
  */
 
->>>>>>> master-LTS
   import React from "react";
   import { Link } from "react-router-dom";
 
