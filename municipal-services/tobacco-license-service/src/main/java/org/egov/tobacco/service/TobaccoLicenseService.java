@@ -7,7 +7,7 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
-import java.util.UUID;
+import java.util.UUID; 
 
 @Service
 public class TobaccoLicenseService {
