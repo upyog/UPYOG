@@ -1,17 +1,14 @@
 package org.upyog.adv.web.models;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+
 import java.util.ArrayList;
 import java.util.List;
 
-<<<<<<< HEAD
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-=======
-import javax.validation.Valid;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
->>>>>>> master-LTS
 
 import org.springframework.validation.annotation.Validated;
 //import org.upyog.adv.web.models.workflow.ProcessInstance;
@@ -19,11 +16,6 @@ import org.upyog.adv.validator.CreateApplicationGroup;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-<<<<<<< HEAD
-import io.swagger.v3.oas.annotations.media.Schema;
-=======
-import io.swagger.annotations.ApiModel;
->>>>>>> master-LTS
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -34,15 +26,6 @@ import lombok.ToString;
 /**
  * Details for new booking of advertisement
  */
-<<<<<<< HEAD
-@Schema(description = "Details for new booking of advertisement")
-@Validated
-@jakarta.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2024-04-19T11:17:29.419+05:30")
-=======
-@ApiModel(description = "Details for new booking of advertisement")
-@Validated
-@javax.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2024-04-19T11:17:29.419+05:30")
->>>>>>> master-LTS
 @Getter
 @Setter
 @AllArgsConstructor

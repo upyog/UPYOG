@@ -1,14 +1,15 @@
 package org.upyog.adv.web.models;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+
 import java.sql.Date;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
-<<<<<<< HEAD
-import jakarta.validation.constraints.NotBlank;
-=======
-import javax.validation.constraints.NotBlank;
->>>>>>> master-LTS
 
 import org.upyog.adv.util.BookingUtil;
 import org.upyog.adv.validator.CreateApplicationGroup;
