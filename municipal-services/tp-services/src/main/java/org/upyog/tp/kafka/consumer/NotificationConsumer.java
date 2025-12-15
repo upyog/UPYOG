@@ -36,19 +36,12 @@ public class NotificationConsumer {
      * @param topic  the name of the Kafka topic from which the message was received
      */
 
-<<<<<<< HEAD
 
     @KafkaListener(topics = {
             "${persister.update.tree-pruning.topic}",
             "${persister.create.tree-pruning.topic}",
             "${persister.create.tree-pruning.with.profile.topic}"
     })
-
-=======
-    @KafkaListener(topics = {
-            "${persister.update.tree-pruning.topic}", "${persister.create.tree-pruning.topic}, ${persister.create.tree-pruning.with.profile.topic}"
-    })
->>>>>>> master-LTS
     public void listen(final HashMap<String, Object> record, @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
         Object request = null;
         String applicationStatus = null;
@@ -93,7 +86,3 @@ public class NotificationConsumer {
         }
     }
 }
-<<<<<<< HEAD
-=======
-
->>>>>>> master-LTS
