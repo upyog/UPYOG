@@ -1,12 +1,9 @@
 package org.upyog.adv.config;
 
+import jakarta.annotation.PostConstruct;
+
 import java.util.TimeZone;
 
-<<<<<<< HEAD
-import jakarta.annotation.PostConstruct;
-=======
-import javax.annotation.PostConstruct;
->>>>>>> master-LTS
 
 import org.egov.tracer.config.TracerConfiguration;
 import org.springframework.beans.factory.annotation.Value;

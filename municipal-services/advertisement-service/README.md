@@ -109,13 +109,8 @@
 ### Producer Topics
 | Topic Name                   | Purpose                                     |
 |------------------------------|---------------------------------------------|
-<<<<<<< HEAD
 | `save-adv-vendor`            | Publishes vendor creation events            |
 | `update-adv-vendor`          | Publishes vendor update events              |
-=======
-| `save-sv-vendor`             | Publishes vendor creation events            |
-| `update-sv-vendor`           | Publishes vendor update events              |
->>>>>>> master-LTS
 | `egov.core.notification.sms` | Sends SMS notifications                     |
 
 ### Consumer Topics
@@ -132,7 +127,6 @@
 - Optional support for encrypting sensitive fields.
 - Use:
   - `/egov-enc-service/crypto/v1/_encrypt`
-<<<<<<< HEAD
   - `/egov-enc-service/crypto/v1/_decrypt`
 
 ## Version 2.0 LTS
@@ -144,7 +138,7 @@
 - **Spring Boot**: Updated to version 3.2.2
 - **PostgreSQL Driver**: Updated to version 42.7.1
 - **SpringDoc OpenAPI**: Integrated version 2.3.0 for enhanced API documentation
-- **eGov Dependencies**: 
+- **eGov Dependencies**:
   - tracer: 2.9.0-SNAPSHOT
   - enc-client: 2.9.0
   - digit-models: 1.0.0-SNAPSHOT
@@ -167,6 +161,3 @@
 - Ensure Java 17 is installed before upgrading
 - Update any custom configurations for Spring Boot 3.x compatibility
 - Review API client implementations for OpenAPI 3.0 compatibility
-=======
-  - `/egov-enc-service/crypto/v1/_decrypt`
->>>>>>> master-LTS

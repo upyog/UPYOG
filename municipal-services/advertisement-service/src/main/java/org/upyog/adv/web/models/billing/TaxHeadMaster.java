@@ -1,14 +1,11 @@
 package org.upyog.adv.web.models.billing;
 
-import java.util.List;
-
-<<<<<<< HEAD
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
-=======
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
->>>>>>> master-LTS
+import jakarta.validation.constraints.Size;
+
+import java.util.List;
+
 
 import org.upyog.adv.web.models.AuditDetails;
 import org.upyog.adv.web.models.GlCodeMaster;

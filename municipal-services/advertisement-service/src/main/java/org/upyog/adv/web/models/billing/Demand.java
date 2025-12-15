@@ -1,14 +1,12 @@
 package org.upyog.adv.web.models.billing;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-<<<<<<< HEAD
-import jakarta.validation.Valid;
-=======
-import javax.validation.Valid;
->>>>>>> master-LTS
 
 import org.egov.common.contract.request.User;
 import org.upyog.adv.web.models.AuditDetails;
